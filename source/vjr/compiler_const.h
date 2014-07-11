@@ -159,8 +159,11 @@
 	const u32		_ERROR_SYNTAX									= 9;
 	const u32		_ERROR_UNRECOGNIZED_PARAMETER					= 10;
 	const u32		_ERROR_OUT_OF_RANGE								= 11;
+	const u32		_ERROR_COMMA_EXPECTED							= 12;
+	const u32		_ERROR_TOO_MANY_PARAMETERS						= 13;
 
 	// Messages
+	const s8		cgcComponentError[]								= "Error in component, column ";
 	const s8		cgcOutOfMemory[]								= "out of memory";
 	const s8		cgcUnexpectedCommand[]							= "unexpected command";
 	const s8		cgcContextHasChanged[]							= "context has changed";
@@ -172,6 +175,8 @@
 	const s8		cgcSyntaxError[]								= "syntax error";
 	const s8		cgcUnrecognizedParameter[]						= "unrecognized parameter";
 	const s8		cgcOutOfRange[]									= "out of range";
+	const s8		cgcCommaExpected[]								= "comma expected";
+	const s8		cgcTooManyParameters[]							= "too many parameters";
 	
 
 //////////

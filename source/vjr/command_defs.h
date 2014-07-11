@@ -56,7 +56,8 @@ struct SVariable;
 	// Temporary error reporting until the proper engine is constructed.
 	void				iError_report								(cs8* constantErrorText);
 	void				iError_report								(s8* errorText);
-	void				iError_reportByNumber						(u32 tnErrorNum);
+	void				iiError_reportComp							(SComp* comp);
+	void				iError_reportByNumber						(u32 tnErrorNum, SComp* comp);
 
 
 //////////
@@ -91,6 +92,7 @@ struct SVariable;
 		//////
 			union {
 				u32			_func;
+				SVariable*	(*func_0p)		(void);
 				SVariable*	(*func_1p)		(SVariable* p1);
 				SVariable*	(*func_2p)		(SVariable* p1, SVariable* p2);
 				SVariable*	(*func_3p)		(SVariable* p1, SVariable* p2, SVariable* p3);

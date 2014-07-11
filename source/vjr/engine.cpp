@@ -143,6 +143,7 @@
 								{
 									// Unknown parameter
 									iError_report(cgcUnrecognizedParameter);
+									iWindow_render(gWinScreen);
 									return(false);
 								}
 							}
@@ -362,6 +363,167 @@
 //////
 	SVariable* iEngine_getFunctionResult(SComp* comp, bool& tlManufactured)
 	{
-// TODO:  working here
+		u32				lnParamsFound;
+		SFunctionList*	lfl;
+		SVariable*		p1;
+		SVariable*		p2;
+		SVariable*		p3;
+		SVariable*		p4;
+		SVariable*		p5;
+		SVariable*		p6;
+		SVariable*		p7;
+		SVariable*		result;
+		SComp*			compLeftParen;
+		
+		
+		// Make sure our environment is sane
+		if (comp && (compLeftParen = (SComp*)comp->ll.next) && compLeftParen->iCode == _ICODE_PARENTHESIS_LEFT)
+		{
+			// Right now, we know we have something like:  xyz(
+
+			// Iterate through each function for matches
+			lfl = &gsKnownFunctions[0];
+			while (lfl && lfl->_func != 0)
+			{
+				// Is this the named function?
+				if (lfl->iCode == comp->iCode)
+				{
+					// We need to find the minimum number of parameters between)
+					if (!iiEngine_getParametersBetween(compLeftParen, &lnParamsFound, lfl->requiredCount, lfl->parameterCount, &p1, &p2, &p3, &p4, &p5, &p6, &p7))
+						return(NULL);
+
+					// When we get here we found the correct number of parameters
+					switch (lfl->parameterCount)
+					{
+						case 0:			// Zero parameters for this function
+							result = lfl->func_0p();
+							break;
+
+						case 1:			// One parameter max
+							result = lfl->func_1p(p1);
+							break;
+
+						case 2:			// Two parameters max
+							result = lfl->func_2p(p1, p2);
+							break;
+
+						case 3:			// Two parameters max
+							result = lfl->func_3p(p1, p2, p3);
+							break;
+
+						case 4:			// Two parameters max
+							result = lfl->func_4p(p1, p2, p3, p4);
+							break;
+
+						case 5:			// Two parameters max
+							result = lfl->func_5p(p1, p2, p3, p4, p5);
+							break;
+
+						case 6:			// Two parameters max
+							result = lfl->func_6p(p1, p2, p3, p4, p5, p6);
+							break;
+
+						case 7:			// Two parameters max
+							result = lfl->func_7p(p1, p2, p3, p4, p5, p6, p7);
+							break;
+
+						default:
+							MessageBox(NULL, "Need to add more parameter functions to iEngine_getFunctionResult()", "VJr Programmer Error", MB_OK);
+							return(NULL);
+					}
+					// We need to free anything that needs freed
+					if (p1)		iVariable_delete(p1, true);
+					if (p2)		iVariable_delete(p2, true);
+					if (p3)		iVariable_delete(p3, true);
+					if (p4)		iVariable_delete(p4, true);
+					if (p5)		iVariable_delete(p5, true);
+					if (p6)		iVariable_delete(p6, true);
+					if (p7)		iVariable_delete(p7, true);
+
+					// Indicate our return value
+					return(result);
+				}
+
+				// Move to next function
+				++lfl;
+			}
+		}
 		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Called to obtain the parameters between the indicated parenthesis.
+//
+//////
+	bool iiEngine_getParametersBetween(SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable** p1, SVariable** p2, SVariable** p3, SVariable** p4, SVariable** p5, SVariable** p6, SVariable** p7)
+	{
+		u32			lnParamCount;
+		bool		llManufactured;
+		SVariable*	var;
+		SComp*		comp;
+		SComp*		compComma;
+
+
+		// Initialize the parameters to null
+		*p1 = NULL;
+		*p2 = NULL;
+		*p3 = NULL;
+		*p4 = NULL;
+		*p5 = NULL;
+		*p6 = NULL;
+		*p7 = NULL;
+
+		// Begin to the thing to the right of the left parenthesis
+		lnParamCount	= 1;
+		comp			= (SComp*)compLeftParen->ll.next;
+		while (comp && comp->iCode != _ICODE_PARENTHESIS_RIGHT)
+		{
+			//////////
+			// See if we've gone over our limit
+			//////
+				if (lnParamCount >= maxCount)
+				{
+					// Too many parameters
+					iError_reportByNumber(_ERROR_TOO_MANY_PARAMETERS, comp);
+					return(NULL);
+				}
+
+			//////////
+			// The component after this must be a comma
+			//////
+				compComma = (SComp*)comp->ll.next;
+				if (compComma->iCode != _ICODE_COMMA)
+				{
+					// Comma expected error
+					iError_reportByNumber(_ERROR_COMMA_EXPECTED, comp);
+					return(NULL);
+				}
+
+
+			//////////
+			// Derive whatever this is as a variable
+			//////
+				     if (lnParamCount == 1)		{	var = (*p1 = iEngine_getVariableFromComponent(comp, llManufactured));		}
+				else if (lnParamCount == 2)		{	var = (*p2 = iEngine_getVariableFromComponent(comp, llManufactured));		}
+				else if (lnParamCount == 3)		{	var = (*p3 = iEngine_getVariableFromComponent(comp, llManufactured));		}
+				else if (lnParamCount == 4)		{	var = (*p4 = iEngine_getVariableFromComponent(comp, llManufactured));		}
+				else if (lnParamCount == 5)		{	var = (*p5 = iEngine_getVariableFromComponent(comp, llManufactured));		}
+				else if (lnParamCount == 6)		{	var = (*p6 = iEngine_getVariableFromComponent(comp, llManufactured));		}
+				else if (lnParamCount == 7)		{	var = (*p7 = iEngine_getVariableFromComponent(comp, llManufactured));		}
+
+
+			// Move to next component
+			++lnParamCount;
+			comp = (SComp*)compComma->ll.next;
+		}
+
+		// Indicate how many we found
+		*paramsFound = lnParamCount - 1;
+
+		// Indicate success
+		return((comp != NULL));
 	}

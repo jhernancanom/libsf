@@ -52,6 +52,19 @@
 		iEditChainManager_appendLine(screenData, errorText, -1);
 	}
 
+	void iiError_reportComp(SComp* comp)
+	{
+		s8 buffer[256];
+
+		memset(buffer, 0, sizeof(buffer));
+		memcpy(buffer, cgcComponentError, sizeof(cgcComponentError) - 1);
+		sprintf(buffer + strlen(buffer), "%u:", comp->start);
+		memcpy(buffer + strlen(buffer), comp->line->sourceCode->data + comp->start, comp->length);
+
+		// Append the error to the ECM
+		iEditChainManager_appendLine(screenData, buffer, -1);
+	}
+
 
 
 
@@ -60,50 +73,28 @@
 // Reports an error by number.
 //
 //////
-	void iError_reportByNumber(u32 tnErrorNum)
+	void iError_reportByNumber(u32 tnErrorNum, SComp* comp)
 	{
 		switch (tnErrorNum)
 		{
-			case _ERROR_OUT_OF_MEMORY:
-				iError_report((s8*)cgcOutOfMemory);
-				break;
-
-			case _ERROR_UNEXPECTED_COMMAND:
-				iError_report((s8*)cgcUnexpectedCommand);
-				break;
-
-			case _ERROR_CONTEXT_HAS_CHANGED:
-				iError_report((s8*)cgcContextHasChanged);
-				break;
-
-			case _ERROR_FULL_RECOMPILE_REQUIRED:
-				iError_report((s8*)cgcFullRecompileRequired);
-				break;
-
-			case _ERROR_NOT_A_VARIABLE:
-				iError_report((s8*)cgcNotAVariable);
-				break;
-
-			case _ERROR_NUMERIC_OVERFLOW:
-				iError_report((s8*)cgcNumericOverflow);
-				break;
-
-			case _ERROR_NOT_NUMERIC:
-				iError_report((s8*)cgcNotNumeric);
-				break;
-
-			case _ERROR_EMPTY_STRING:
-				iError_report((s8*)cgcEmptyString);
-				break;
-
-			case _ERROR_SYNTAX:
-				iError_report((s8*)cgcSyntaxError);
-				break;
-
-			case _ERROR_UNRECOGNIZED_PARAMETER:
-				iError_report((s8*)cgcUnrecognizedParameter);
-				break;
+			case _ERROR_OUT_OF_MEMORY:						{	iError_report((s8*)cgcOutOfMemory);					break;	}
+			case _ERROR_UNEXPECTED_COMMAND:					{	iError_report((s8*)cgcUnexpectedCommand);			break;	}
+			case _ERROR_CONTEXT_HAS_CHANGED:				{	iError_report((s8*)cgcContextHasChanged);			break;	}
+			case _ERROR_FULL_RECOMPILE_REQUIRED:			{	iError_report((s8*)cgcFullRecompileRequired);		break;	}
+			case _ERROR_NOT_A_VARIABLE:						{	iError_report((s8*)cgcNotAVariable);				break;	}
+			case _ERROR_NUMERIC_OVERFLOW:					{	iError_report((s8*)cgcNumericOverflow);				break;	}
+			case _ERROR_NOT_NUMERIC:						{	iError_report((s8*)cgcNotNumeric);					break;	}
+			case _ERROR_EMPTY_STRING:						{	iError_report((s8*)cgcEmptyString);					break;	}
+			case _ERROR_SYNTAX:								{	iError_report((s8*)cgcSyntaxError);					break;	}
+			case _ERROR_UNRECOGNIZED_PARAMETER:				{	iError_report((s8*)cgcUnrecognizedParameter);		break;	}
+			case _ERROR_OUT_OF_RANGE:						{	iError_report((s8*)cgcOutOfRange);					break;	}
+			case _ERROR_COMMA_EXPECTED:						{	iError_report((s8*)cgcCommaExpected);				break;	}
+			case _ERROR_TOO_MANY_PARAMETERS:				{	iError_report((s8*)cgcTooManyParameters);			break;	}
 		}
+
+		// Display the component
+		if (comp && comp->line && comp->line->sourceCode && comp->line->sourceCode->data && comp->line->sourceCodePopulated != 0)
+			iiError_reportComp(comp);
 	}
 
 
@@ -149,7 +140,7 @@
         // It must be at least one character long
 		//////
 			if (p1->value.length == 0)
-				iError_reportByNumber(_ERROR_EMPTY_STRING);
+				iError_reportByNumber(_ERROR_EMPTY_STRING, NULL);
 
 
 		//////////
@@ -236,7 +227,7 @@
 			} else if (error) {
 				// The iVariable_getAs_s32() function reported an error.
 				// This means the user is trying to obtain an integer value from a logical, or something similar.
-				iError_reportByNumber(errorNum);
+				iError_reportByNumber(errorNum, NULL);
 				return(NULL);
 			}
 

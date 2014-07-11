@@ -790,13 +790,12 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 	SComp* iComps_translateSourceLineTo(SAsciiCompSearcher* tsComps, SEditChain* line)
 	{
 		s32						lnI, lnMaxLength, lnStart, lnLength, lnLacsLength;
-		bool					llSigned, llResult;
+		bool					llSigned;
 		SComp*					compFirst;
 		SComp*					compLast;
 		SComp*					comp;
 		s8*						lcData;
 		SAsciiCompSearcher*		lacs;
-		SCompCallback			lccb;
 
 
 		// Make sure the environment's sane
@@ -828,91 +827,65 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 						if (iTranslateToCompsTest((s8*)lacs->keyword, lcData + lnI, lacs->length) == 0)
 						{
 							// It matches
-							// Is there a secondary validation?
-							if (lacs->_validate)
+							// mark its current condition
+							lnStart		= lnI;
+							lnLength	= lnLacsLength;
+							// See if it's allowed to repeat
+							if (lacs->repeats)
 							{
-								// Yes, make sure it validates there as well
-								lccb.text					= lcData + lnI;
-								lccb.length					= lacs->length;
-								lccb.iCode					= lacs->iCode;
-								lccb._insertCompByComp		= NULL;
-								lccb._insertCompByParams	= NULL;
-								lccb._deleteComps			= NULL;
-								lccb._cloneComps			= NULL;
-								lccb._mergeComps			= NULL;
-
-								// Perform the validation
-								llResult = lacs->validate(&lccb);
-
-							} else {
-								// If there is no extra validation, we just pass through
-								llResult = true;
-							}
-							
-							// Are we still good?
-							if (llResult)
-							{
-								// mark its current condition
-								lnStart		= lnI;
-								lnLength	= lnLacsLength;
-								// See if it's allowed to repeat
-								if (lacs->repeats)
+								while (	lnStart + lnLength + lnLacsLength <= lnMaxLength
+										&& iTranslateToCompsTest((s8*)lacs->keyword, lcData + lnStart + lnLength, lacs->length) == 0)
 								{
-									while (	lnStart + lnLength + lnLacsLength <= lnMaxLength
-											&& iTranslateToCompsTest((s8*)lacs->keyword, lcData + lnStart + lnLength, lacs->length) == 0)
-									{
-										// We found another repeated entry
-										lnLength += lnLacsLength;
-									}
-									// When we get here, every repeated entry has been found (if any)
+									// We found another repeated entry
+									lnLength += lnLacsLength;
 								}
-								// When we get here, we have the starting point and the full length (including any repeats)
-
-
-								//////////
-								// Allocate this entry
-								///////
-									comp = (SComp*)iLl_appendNewNode((SLL**)&line->compilerInfo->firstComp, (SLL*)compLast, NULL, (SLL*)compLast, iGetNextUid(), sizeof(SComp));
-
-
-								//////////
-								// Populate the component with specified information
-								//////
-									//
-									//////
-										if (comp)
-										{
-											// Update the back links
-											if (compLast)	compLast->ll.next = (SLL*)comp;			// Previous one points to this one
-											comp->ll.prev	= (SLL*)compLast;						// This one points back to previous one
-
-											// Update the component's information
-											comp->line		= line;
-											comp->start		= lnStart;
-											comp->length	= lnLength;
-											comp->iCode		= lacs->iCode;
-
-											// Update our first component (if it's not updated already)
-											if (!compFirst)	compFirst = comp;
-
-											// All done
-											compLast = comp;
-										}
-									//////
-									//
-								//////
-								// END
-								//////////
-
-
-								//////////
-								// Move beyond this entry, and continue on search again afterward
-								//////
-									lnI += lnLength;
-									break;		// leaves lnJ loop, continues with lnI loop
+								// When we get here, every repeated entry has been found (if any)
 							}
+							// When we get here, we have the starting point and the full length (including any repeats)
+
+
+							//////////
+							// Allocate this entry
+							///////
+								comp = (SComp*)iLl_appendNewNode((SLL**)&line->compilerInfo->firstComp, (SLL*)compLast, NULL, (SLL*)compLast, iGetNextUid(), sizeof(SComp));
+
+
+							//////////
+							// Populate the component with specified information
+							//////
+								//
+								//////
+									if (comp)
+									{
+										// Update the back links
+										if (compLast)	compLast->ll.next = (SLL*)comp;			// Previous one points to this one
+										comp->ll.prev	= (SLL*)compLast;						// This one points back to previous one
+
+										// Update the component's information
+										comp->line		= line;
+										comp->start		= lnStart;
+										comp->length	= lnLength;
+										comp->iCode		= lacs->iCode;
+
+										// Update our first component (if it's not updated already)
+										if (!compFirst)	compFirst = comp;
+
+										// All done
+										compLast = comp;
+									}
+								//////
+								//
+							//////
+							// END
+							//////////
+
+
+							//////////
+							// Move beyond this entry, and continue on search again afterward
+							//////
+								lnI += lnLength;
+								break;		// leaves lnJ loop, continues with lnI loop
 						}
-						//else it doesn't match, this isn't a good find
 					}
 				}
 				// When we get here, we've processed through everything here
@@ -936,62 +909,40 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // alpha/alphanumeric/numeric forms to other forms.
 //
 //////
-	bool iComps_translateToOthers(SAsciiCompSearcher* tacs, SEditChain* line)
+	void iComps_translateToOthers(SAsciiCompSearcher* tacsRoot, SEditChain* line)
 	{
-		bool			llResult;
-		s32				lnTacsLength;
-		SComp*			comp;
-		SCompCallback	lccb;
+		bool					llResult;
+		s32						lnTacsLength;
+		SComp*					comp;
+		SAsciiCompSearcher*		tacs;
 
 
 		// Make sure the environment is sane
 		llResult = false;
-		if (tacs && line)
+		if (tacsRoot && line)
 		{
 			// Grab our pointers into recognizable thingamajigs
 			comp = line->compilerInfo->firstComp;
-
-			// Iterate through this item to see if any match
-			for (/* tacs is initialize above */; tacs->length != 0; tacs++)
+			while (comp)
 			{
-				// Grab the normalized length
-				lnTacsLength = abs(tacs->length);
-
-				// We only test if they're the same length
-				if (lnTacsLength == comp->length || (tacs->repeats && lnTacsLength <= comp->length))
+				// Iterate through this item to see if any match
+				tacs = tacsRoot;
+				for (/* tacs is initialize above */; tacs->length != 0; tacs++)
 				{
-					// We only test if this item is not the first item on line, or if must be the first
-					// item on the line, then this component must be the first component on the line.  Simple, yes? :-)
-					if (!tacs->firstOnLine || comp->start == 0)
+					// Grab the normalized length
+					lnTacsLength = abs(tacs->length);
+
+					// We only test if they're the same length
+					if (lnTacsLength == comp->length || (tacs->repeats && lnTacsLength <= comp->length))
 					{
-						// Physically conduct the exact comparison
-						if (iComps_translateToOthers_test((s8*)tacs->keyword, comp->line->sourceCode->data + comp->start, tacs->length) == 0)
+						// We only test if this item is not the first item on line, or if must be the first
+						// item on the line, then this component must be the first component on the line.  Simple, yes? :-)
+						if (!tacs->firstOnLine || !comp->ll.prev)
 						{
-							// This is a match
-							// Is there a secondary test?
-							if (tacs->_validate)
+							// Physically conduct the exact comparison
+							if (iComps_translateToOthers_test((s8*)tacs->keyword, comp->line->sourceCode->data + comp->start, tacs->length) == 0)
 							{
-								// Yes, make sure it validates there as well
-								lccb.comp					= comp;
-								lccb.length					= 0;
-								lccb.iCode					= tacs->iCode;
-								// Setup the functions the custom handler would require
-								lccb._insertCompByComp		= (u64)&iiComps_xlatToOthersCallback__insertCompByCompCallback;
-								lccb._insertCompByParams	= (u64)&iiComps_xlatToOthersCallback__insertCompByParamsCallback;
-								lccb._deleteComps			= (u64)&iiComps_xlatToOthersCallback__deleteCompsCallback;
-								lccb._cloneComps			= (u64)&iiComps_xlatToOthersCallback__cloneCompsCallback;
-								lccb._mergeComps			= (u64)&iiComps_xlatToOthersCallback__mergeCompsCallback;
-
-								// Perform the validation
-								llResult = tacs->validate(&lccb);
-
-							} else {
-								// No, just let it fall through
-								llResult = true;
-							}
-
-							if (llResult)
-							{
+								// This is a match
 								// Convert it, translate it, whatever you want to call it, just make it be the new code, per the user's request, got it? :-)
 								comp->iCode = tacs->iCode;
 								comp->iCat	= tacs->iCat;
@@ -1001,11 +952,11 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 						}
 					}
 				}
-			}
 
+				// Move to next component
+				comp = (SComp*)comp->ll.next;
+			}
 		}
-		// We always simulate a false condition so we'll keep receiving each item
-		return(false);
 	}
 
 
@@ -1543,6 +1494,104 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 
 //////////
 //
+// Called to combine things like [.][t][.] into [.t.]
+//
+//////
+	u32 iComps_combineAdjacentDotForms(SEditChain* line)
+	{
+		u32		lnCombined;
+		u8		c;
+		SComp*	compFirst;
+		SComp*	compMiddle;
+		SComp*	compThird;
+
+
+		// Make sure our environment is sane
+		lnCombined = 0;
+		if (line && line->compilerInfo)
+		{
+			// Begin at the beginning and check across all components
+			compFirst = line->compilerInfo->firstComp;
+			while (compFirst)
+			{
+				// Dots begin the things we're searching for
+				if (compFirst->iCode == _ICODE_DOT)
+				{
+					// Grab the next two components, they must all be adjacent, and the third one must also be a dot
+					if (	(compMiddle	= (SComp*)compFirst->ll.next)										&& iiComps_charactersBetween(compFirst,		compMiddle) == 0
+						&&	(compThird	= (SComp*)compMiddle->ll.next)	&& compThird->iCode == _ICODE_DOT	&& iiComps_charactersBetween(compMiddle,	compThird) == 0)
+					{
+						// What is the component in the middle?
+						if (compMiddle->iCode == _ICODE_ALPHA)
+						{
+							switch (compMiddle->length)
+							{
+								case 1:
+									// Could be .t., .f., .o., .p., .x., .y., .z.
+									c = compMiddle->line->sourceCode->data[compMiddle->start];
+
+									// Which one is it?
+									     if (c == 't' || c == 'T')				{ iComps_combineNextN(compFirst, 3, _ICODE_TRUE);				lnCombined += 3; }
+									else if (c == 'f' || c == 'F')				{ iComps_combineNextN(compFirst, 3, _ICODE_FALSE);				lnCombined += 3; }
+									else if (c == 'o' || c == 'O')				{ iComps_combineNextN(compFirst, 3, _ICODE_OTHER);				lnCombined += 3; }
+									else if (c == 'p' || c == 'P')				{ iComps_combineNextN(compFirst, 3, _ICODE_PARTIAL);			lnCombined += 3; }
+									else if (c == 'x' || c == 'X')				{ iComps_combineNextN(compFirst, 3, _ICODE_EXTRA);				lnCombined += 3; }
+									else if (c == 'y' || c == 'Y')				{ iComps_combineNextN(compFirst, 3, _ICODE_YET_ANOTHER);		lnCombined += 3; }
+									else if (c == 'z' || c == 'Z')				{ iComps_combineNextN(compFirst, 3, _ICODE_ZATS_ALL_FOLKS);		lnCombined += 3; }
+									break;
+
+								case 2:
+									// Could be .or.
+									if (_memicmp(compMiddle->line->sourceCode->data, "or", 2) == 0)
+									{
+										iComps_combineNextN(compFirst, 3, _ICODE_OR);
+										lnCombined += 3;
+									}
+									break;
+
+								case 3:
+									// Could be .and., .not.
+									if (_memicmp(compMiddle->line->sourceCode->data, "and", 3) == 0)
+									{
+										// AND
+										iComps_combineNextN(compFirst, 3, _ICODE_AND);
+										lnCombined += 3;
+
+									} else if (_memicmp(compMiddle->line->sourceCode->data, "not", 3) == 0) {
+										// NOT
+										iComps_combineNextN(compFirst, 3, _ICODE_NOT);
+										lnCombined += 3;
+									}
+									break;
+
+								case 4:
+									// Could be .null.
+									if (_memicmp(compMiddle->line->sourceCode->data, "null", 4) == 0)
+									{
+										// NULL
+										iComps_combineNextN(compFirst, 3, _ICODE_NULL);
+										lnCombined += 3;
+									}
+									break;
+							}
+						}
+					}
+				}
+
+				// Move to the next component
+				compFirst = (SComp*)compFirst->ll.next;
+			}
+		}
+
+		// Indicate how many we combined
+		return(lnCombined);
+	}
+
+
+
+
+//////////
+//
 // Called to combine everything between two components
 //
 // Source:		u8 name[] = "foo"
@@ -1850,6 +1899,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 			//////
 				iComps_combineAdjacentAlphanumeric(line);
 				iComps_combineAdjacentNumeric(line);
+				iComps_combineAdjacentDotForms(line);
 		}
 	}
 
@@ -2582,11 +2632,9 @@ _asm int 3;
 //////
 	bool iioss_translateCompsToOthersCallback(SStartEndCallback* cb)
 	{
-		bool					llResult;
 		s32						lnLacsLength;
-		SComp*				comp;
+		SComp*					comp;
 		SAsciiCompSearcher*		lacs;
-		SCompCallback		lccb;
 
 
 		// Make sure the environment is sane
@@ -2609,7 +2657,7 @@ _asm int 3;
 				{
 					// We only test if this item is not the first item on line, or if must be the first
 					// item on the line, then this component must be the first component on the line.  Simple, yes? :-)
-					if (!lacs->firstOnLine || comp->start == 0)
+					if (!lacs->firstOnLine || !comp->ll.prev)
 					{
 						// Physically conduct the exact comparison
 						if (iTranslateToCompsTest((s8*)lacs->keyword, 
@@ -2617,34 +2665,10 @@ _asm int 3;
 														lacs->length) == 0)
 						{
 							// This is a match
-							// Is there a secondary test?
-							if (lacs->_validate)
-							{
-								// Yes, make sure it validates there as well
-								lccb.comp					= comp;
-								lccb.length					= 0;
-								lccb.iCode					= lacs->iCode;
-								lccb._insertCompByComp		= (u32)&iiComps_xlatToOthersCallback__insertCompByCompCallback;
-								lccb._insertCompByParams	= (u32)&iiComps_xlatToOthersCallback__insertCompByParamsCallback;
-								lccb._deleteComps			= (u32)&iiComps_xlatToOthersCallback__deleteCompsCallback;
-								lccb._cloneComps			= (u32)&iiComps_xlatToOthersCallback__cloneCompsCallback;
-								lccb._mergeComps			= (u32)&iiComps_xlatToOthersCallback__mergeCompsCallback;
-
-								// Perform the validation
-								llResult = lacs->validate(&lccb);
-
-							} else {
-								// No, just let it fall through
-								llResult = true;
-							}
-							
-							if (llResult)
-							{
-								// Convert it, translate it, whatever you want to call it, just make it be the new code, per the user's request, got it? :-)
-								comp->iCode = lacs->iCode;
-								// All done with this component
-								break;
-							}
+							// Convert it, translate it, whatever you want to call it, just make it be the new code, per the user's request, got it? :-)
+							comp->iCode = lacs->iCode;
+							// All done with this component
+							break;
 						}
 					}
 				}
@@ -4516,18 +4540,18 @@ _asm int 3;
 					if (_set_logical == _LOGICAL_TF)
 					{
 						// True/False
-						if (var->value.data[0] == 0)		iDatum_duplicate(&varDisp->value, cgcTText, -1);
-						else								iDatum_duplicate(&varDisp->value, cgcFText, -1);
+						if (var->value.data[0] == 0)		iDatum_duplicate(&varDisp->value, cgcFText, -1);
+						else								iDatum_duplicate(&varDisp->value, cgcTText, -1);
 
 					} else if (_set_logical == _LOGICAL_YN) {
 						// Yes/No
-						if (var->value.data[0] == 0)		iDatum_duplicate(&varDisp->value, cgcYText, -1);
-						else								iDatum_duplicate(&varDisp->value, cgcNText, -1);
+						if (var->value.data[0] == 0)		iDatum_duplicate(&varDisp->value, cgcNText, -1);
+						else								iDatum_duplicate(&varDisp->value, cgcYText, -1);
 
 					} else {
 						// Up/Down
-						if (var->value.data[0] == 0)		iDatum_duplicate(&varDisp->value, cgcUText, -1);
-						else								iDatum_duplicate(&varDisp->value, cgcDText, -1);
+						if (var->value.data[0] == 0)		iDatum_duplicate(&varDisp->value, cgcDText, -1);
+						else								iDatum_duplicate(&varDisp->value, cgcUText, -1);
 					}
 					break;
 

@@ -115,18 +115,6 @@ struct SCompileNote;
 		s32				iCode;											// An associated code to store when this entry is found
 		bool			firstOnLine;									// Should this item ONLY be the first on line?
 		s32				iCat;											// This entry's general category (function, operator, keyword, flow)
-
-		// Used for an explicit callback to validate if this match (as by text) is really a match (as by context)
-		union {
-			u32			_validate;
-			bool		(*validate)(SCompCallback* val);
-		};
-
-		// Used for an explicit callback to handle this component or text
-		union {
-			u32			_custom;
-			void		(*custom)(void);
-		};
 	};
 
 	struct SFunction

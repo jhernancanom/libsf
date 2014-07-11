@@ -76,7 +76,7 @@ struct SVariable;
 
 	void					iComps_removeAll							(SEditChain* line);
  	SComp*					iComps_translateSourceLineTo				(SAsciiCompSearcher* tsComps, SEditChain* line);
- 	bool					iComps_translateToOthers					(SAsciiCompSearcher* tsComps, SEditChain* line);
+ 	void					iComps_translateToOthers					(SAsciiCompSearcher* tsComps, SEditChain* line);
 	s32						iComps_translateToOthers_test				(s8* tcHaystack, s8* tcNeedle, s32 tnLength);
 	SComp*					iComps_findNextBy_iCode						(SComp* comp, u32 tniCode, SComp** compLastScanned);
 	SComp*					iComps_skipPast_iCode						(SComp* comp, u32 tniCode);
@@ -85,6 +85,7 @@ struct SVariable;
 	u32						iComps_combine3								(SEditChain* line, u32 tniCodeNeedle1, u32 tniCodeNeedle2, u32 tniCodeNeedle3, u32 tniCodeCombined);
 	u32						iComps_combineAdjacentAlphanumeric			(SEditChain* line);
 	u32						iComps_combineAdjacentNumeric				(SEditChain* line);
+	u32						iComps_combineAdjacentDotForms				(SEditChain* line);
 	u32						iComps_combineAllBetween					(SEditChain* line, u32 tniCodeNeedle,                                          u32 tniCodeCombined);
 	u32						iComps_combineAllAfter						(SEditChain* line, u32 tniCodeNeedle);
 	u32						iComps_deleteAllAfter						(SEditChain* line, u32 tniCodeNeedle);
