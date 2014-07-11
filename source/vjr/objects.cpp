@@ -3172,8 +3172,19 @@ CopyRect(&form->rcCaption, &lrc2);
 //////////
 // For temporary, we are adding additional renderings for _screen and _jdebi objects
 //////
-	if (obj == gobj_screen)		iEditChainManager_render(screenData,		gobj_screen);
-	if (obj == gobj_jdebi)		iEditChainManager_render(commandHistory,	gobj_jdebi);
+	if (obj == gobj_screen)
+	{
+		iEditChainManager_render(screenData, gobj_screen);
+		if (gWinScreen)
+			InvalidateRect(gWinScreen->hwnd, 0, FALSE);
+	}
+
+	if (obj == gobj_jdebi)
+	{
+		iEditChainManager_render(commandHistory, gobj_jdebi);
+		if (gWinJDebi)
+			InvalidateRect(gWinJDebi->hwnd, 0, FALSE);
+	}
 
 
 			//////////

@@ -21,6 +21,16 @@ struct SBuilder
 	u32			allocateBlockSize;									// Typically 16KB, the larger the size the fewer reallocs() are required
 };
 
+#ifndef cgcCr
+	const s8 cgcCr[2]	= { 13, 0 };
+#endif
+#ifndef cgcLf
+	const s8 cgcLf[2]	= { 10, 0 };
+#endif
+#ifndef cgcCrLf
+	const s8 cgcCrLf[]	= "\n";
+#endif
+
 
 
 
@@ -144,6 +154,32 @@ struct SBuilder
 		}
 		// If we get here, things are bad
 		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Called to append a CR to the builder
+//
+//////
+	s8* iBuilder_appendCr(SBuilder* buffRoot)
+	{
+		return(iBuilder_appendData(buffRoot, (s8*)cgcCr, sizeof(cgcCr) - 1));
+	}
+
+
+
+
+//////////
+//
+// Called to append a CR+LF to the builder
+//
+//////
+	s8* iBuilder_appendCrLf(SBuilder* buffRoot)
+	{
+		return(iBuilder_appendData(buffRoot, (s8*)cgcCrLf, sizeof(cgcCrLf) - 1));
 	}
 
 
@@ -286,16 +322,16 @@ struct SBuilder
 // Called to write out the indicated builder file as an 8-bit ASCII file
 //
 //////
-	u32 iBuilder_asciiWriteOutFile(SBuilder* buffRoot, s8* tcFilename)
+	u32 iBuilder_asciiWriteOutFile(SBuilder* buffRoot, s8* tcPathname)
 	{
 		FILE* lfh;
 
 
 		// Make sure there's something to write
-		if (buffRoot && tcFilename)	
+		if (buffRoot && tcPathname)	
 		{
 			// Try to create the file
-			fopen_s(&lfh, tcFilename, "wb+");
+			fopen_s(&lfh, tcPathname, "wb+");
 			if (lfh)
 			{
 				// Write out the data if need be
@@ -312,6 +348,80 @@ struct SBuilder
 		}
 		// If we get here, failure
 		return(-1);
+	}
+
+
+
+
+//////////
+//
+// Called to load a file into the indicated buffer.
+//
+//////
+	bool iBuilder_asciiReadFromFile(SBuilder** buffRoot, s8* tcPathname)
+	{
+		u32		lnSize, lnNumread, lnStart;
+		FILE*	lfh;
+
+
+		// Make sure our environment is sane
+		if (buffRoot && tcPathname)
+		{
+			//////////
+			// If we don't have a buffer, create one
+			//////
+				if (!*buffRoot)
+					iBuilder_createAndInitialize(buffRoot, -1);
+
+
+			// Try to open the indicated file
+			fopen_s(&lfh, tcPathname, "rb");
+			if (lfh)
+			{
+				//////////
+				// Find out how big the file is
+				//////
+					fseek(lfh, 0, SEEK_END);
+					lnSize = ftell(lfh);
+					fseek(lfh, 0, SEEK_SET);
+
+				
+				//////////
+				// Allocate that buffer
+				//////
+					lnStart = (*buffRoot)->populatedLength;
+					iBuilder_verifySizeForNewBytes(*buffRoot, lnSize);
+
+
+				//////////
+				// Read in the content
+				//////
+					lnNumread						= fread((*buffRoot)->data + lnStart, 1, lnSize, lfh);
+					(*buffRoot)->populatedLength	= lnStart + min(lnNumread, lnSize);
+
+
+				//////////
+				// Close the file
+				//////
+					fclose(lfh);
+
+
+				//////////
+				// Were we successful?
+				//////
+					if (lnNumread == lnSize)
+					{
+						// We're good
+						return(true);
+					}
+
+			} else {
+				// We could not open the file
+				// We don't do anything here, but just trap the condition and note it here in the comments
+			}
+		}
+		// If we get here, failure
+		return(false);
 	}
 
 

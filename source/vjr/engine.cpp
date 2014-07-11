@@ -103,6 +103,20 @@
 				comp = line->compilerInfo->firstComp;
 				switch (comp->iCode)
 				{
+					case _ICODE_QUIT:
+						// They want to quit
+						iEditChainManager_saveToDisk(screenData,		(s8*)cgcScreenDataFilename);
+						iEditChainManager_saveToDisk(commandHistory,	(s8*)cgcCommandHistoryFilename);
+						PostQuitMessage(0);
+						break;
+
+					case _ICODE_CLEAR:
+						// They want to clear the screen
+						iEditChainManager_navigateTop(screenData, gobj_screen);
+						iEditChainManager_deleteChain(&screenData, false);
+						iWindow_render(gWinScreen);
+						break;
+
 					case _ICODE_QUESTION_MARK:
 						// It is a "? something" command
 						if (!(compNext = (SComp*)comp->ll.next))

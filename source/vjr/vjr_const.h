@@ -282,6 +282,8 @@ typedef		const f64			cf64;
 	const s8			cgcDefaultFixedFont[]				= "Ubuntu Mono";
 	const s8			cgcWindowTitleBarFont[]				= "Ubuntu Condensed";
 	const s8			cgcSubwindowTitleBarFont[]			= "Ubuntu Condensed";
+	const s8			cgcScreenDataFilename[]				= "screen.vjr";
+	const s8			cgcCommandHistoryFilename[]			= "command.vjr";
 
 
 //////////

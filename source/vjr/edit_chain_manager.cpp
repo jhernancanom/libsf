@@ -62,6 +62,187 @@
 
 //////////
 //
+// Called to accumulate the indicated line range into a builder buffer.
+//
+//////
+	SBuilder* iEditChainManager_accumulateBuilder(SEditChainManager* ecm, SEditChain* ecHintStart, SEditChain* ecHintEnd)
+	{
+		SBuilder*		b;
+		SEditChain*		line;
+
+
+		// Make sure our environment is sane
+		b = NULL;
+		if (ecm)
+		{
+			//////////
+			// Create our builder
+			//////
+				iBuilder_createAndInitialize(&b, -1);
+
+
+			//////////
+			// Make sure the parameters are set.  They can pass the start or end if
+			// they only want a partial file.
+			//////
+				if (!ecHintStart)		ecHintStart = ecm->ecFirst;
+				if (!ecHintEnd)			ecHintEnd	= ecm->ecLast;
+
+
+			//////////
+			// Repeat until we're at the end
+			//////
+				if (ecHintStart && ecHintEnd)
+				{
+					//////////
+					// Build repeatedly
+					//////
+						line = ecHintStart;
+						while (line)
+						{
+							//////////
+							// If populated, append its content
+							//////
+								if (line->sourceCode && line->sourceCodePopulated > 0)
+									iBuilder_appendData(b, line->sourceCode->data, line->sourceCodePopulated);
+
+
+							//////////
+							// Append a carriage return + line feed
+							//////
+								iBuilder_appendCrLf(b);
+
+
+							//////////
+							// Was this the last line?
+							//////
+								if (line == ecHintEnd)
+									break;		// Yes, sir, it was
+
+
+							//////////
+							// Move to next line
+							//////
+								line = (SEditChain*)line->ll.next;
+						}
+						// When we get here, the block is copied out
+				}
+		}
+
+		// Indicate our status
+		return(b);
+	}
+
+
+
+
+//////////
+//
+// Called to save the indicated ECM to disk.  Saved as a raw text file.
+//
+//////
+	bool iEditChainManager_saveToDisk(SEditChainManager* ecm, s8* tcPathname)
+	{
+		SBuilder* content;
+
+
+		// Make sure our environment is sane
+		if (ecm && tcPathname)
+		{
+			// Grab the content
+			content = iEditChainManager_accumulateBuilder(ecm, NULL, NULL);
+			if (content)
+			{
+				// Write it out
+				iBuilder_asciiWriteOutFile(content, tcPathname);
+
+				// Release it
+				iBuilder_freeAndRelease(&content);
+
+				// Indicate success
+				return(true);
+			}
+		}
+		// If we get here, failure
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Loads in a text file into an ECM beginning optionally near ecHint.
+//
+//////
+	bool iEditChainManager_loadFromDisk(SEditChainManager* ecm, SEditChain* ecHint, s8* tcPathname, bool tlInsertAfter)
+	{
+		s32			lnI, lnJ, lnLast;
+		SBuilder*	content;
+
+
+		// Make sure our environment is sane
+		if (ecm && tcPathname)
+		{
+			// Find our relative position
+			if (!ecHint)
+			{
+				// Make sure we setup our hints
+				if (!tlInsertAfter)		ecHint = ecm->ecFirst;			// The first line will be inserted before, then every line inserted after that line
+				else					ecHint = ecm->ecLast;			// Appending to the end
+			}
+
+			// Read it in
+			content = NULL;
+			if (iBuilder_asciiReadFromFile(&content, tcPathname))
+			{
+				// Copy through lines into the ecm
+				for (lnI = 0, lnLast = 0; (u32)lnI < content->populatedLength; lnI++)
+				{
+					// Are we on a CR/LF combination?
+					for (lnJ = 0; content->data[lnI] == 13 || content->data[lnI] == 10 && lnJ < 2 && (u32)lnI < content->populatedLength; lnJ++)
+						++lnI;	// Increase also past this CR/LF character
+
+					// If we found a CR/LF combination
+					if (lnJ != 0 || (u32)lnI >= content->populatedLength)
+					{
+						// We've entered into a CR/LF block
+						// Append a new line
+						if (!ecm->ecFirst)			ecHint = iEditChainManager_appendLine(ecm, NULL, 0);
+						else						ecHint = iEditChainManager_insertLine(ecm, NULL, 0, ecHint, tlInsertAfter);
+
+						// From this point forward we are inserting after
+						tlInsertAfter = true;
+
+						// If we have any content, add it
+						if (lnI - lnJ - lnLast > 0)
+						{
+							iDatum_duplicate(ecHint->sourceCode, content->data + lnLast, lnI - lnJ - lnLast);
+							ecHint->sourceCodePopulated	= ecHint->sourceCode->length;
+						}
+
+						// Indicate where we are now
+						lnLast = lnI;
+					}
+					// Continue on processing the next line if we have room
+				}
+
+				// Release it
+				iBuilder_freeAndRelease(&content);
+
+				// Indicate success
+				return(true);
+			}
+		}
+		// If we get here, failure
+		return(false);
+	}
+
+
+
+
+//////////
+//
 // Duplicate the entire ECM
 //
 //////
@@ -313,15 +494,71 @@ _asm int 3;
 
 //////////
 //
-// Called to delete the entire chain
+// Called to delete the entire chain explicitly
 //
 //////
 	void iEditChainManager_deleteChain(SEditChainManager** root, bool tlDeleteSelf)
 	{
+		// Delete with no callback
+		iEditChainManager_deleteChainWithCallback(root, tlDeleteSelf, NULL);
+	}
+
+	void iEditChainManager_deleteChainWithCallback(SEditChainManager** root, bool tlDeleteSelf, SEditChainCallback* ecb)
+	{
+		SLL* nodeNext;
+		SEditChainCallback	lecb;
+
+
+		// Make sure our environment is sane
 		if (root && *root)
 		{
-// TODO:  write this code :-)
-_asm int 3;
+			//////////
+			// If we don't have an ecb, make a local one
+			//////
+				if (!ecb)
+				{
+					// Initialize and setup the pointer
+					memset(&lecb, 0, sizeof(lecb));
+					ecb = &lecb;
+				}
+
+
+			//////////
+			// Delete from the beginning
+			//////
+				ecb->ecm	= *root;
+				ecb->ec		= ecb->ecm->ecFirst;
+
+
+			// Iterate through deleting each entry after turning off the display
+			ecb->ecm->isHeavyProcessing = true;
+			while (ecb->ec)
+			{
+				//////////
+				// Grab the next node
+				//////
+					nodeNext = ecb->ec->ll.next;
+
+
+				//////////
+				// Perform the callback
+				//////
+					if (ecb && ecb->_callback)
+						ecb->callback(ecb);
+
+
+				//////////
+				// Delete the node itself
+				//////
+					ecb->ecm->ecCursorLine = ecb->ec;
+					iEditChainManager_deleteLine(ecb->ecm);
+
+
+				//////////
+				// Move to next node
+				//////
+					ecb->ec = (SEditChain*)nodeNext;
+			}
 		}
 	}
 
@@ -371,7 +608,10 @@ _asm int 3;
 
 				// Make sure the length is valid
 				if (tnTextLength == -1)
-					tnTextLength = strlen(tcText);
+				{
+					if (tcText)		tnTextLength = strlen(tcText);
+					else			tnTextLength = 0;
+				}
 
 				// Append the indicated text
 				ec->sourceCode			= iDatum_allocate(tcText, tnTextLength);
@@ -664,7 +904,7 @@ _asm int 3;
 
 
 		// Make sure our environment is sane
-		if (ecm && ecm->ecTopLine && obj)
+		if (ecm && obj)
 		{
 			// Get the top line and continue down as far as we can
 			line	= ecm->ecTopLine;
@@ -805,118 +1045,121 @@ _asm int 3;
 		RECT			lrc;
 
 
-		//////////
-		// Indicate initially that no changes were made that require a re-render
-		//////
-			font = iEditChainManager_getRectAndFont(ecm, obj, &lrc);
+		if (!ecm->isHeavyProcessing)
+		{
+			//////////
+			// Indicate initially that no changes were made that require a re-render
+			//////
+				font = iEditChainManager_getRectAndFont(ecm, obj, &lrc);
 
 
-		//////////
-		// Make sure our environment is sane
-		//////
-			llChanged = false;
-			if (ecm)
-			{
-				//////////
-				// Compute our maximum rows and cols based on visible display area
-				//////
-					lnWidth		= (lrc.right - lrc.left);
-					lnHeight	= (lrc.bottom - lrc.top);
-					lnCols		= max((lnWidth  / font->tm.tmAveCharWidth) - ((lnWidth  % font->tm.tmAveCharWidth) != 0 ? 1 : 0), 1);
-					lnRows		= max((lnHeight / font->tm.tmHeight)       - ((lnHeight % font->tm.tmHeight)       != 0 ? 1 : 0), 1);
+			//////////
+			// Make sure our environment is sane
+			//////
+				llChanged = false;
+				if (ecm)
+				{
+					//////////
+					// Compute our maximum rows and cols based on visible display area
+					//////
+						lnWidth		= (lrc.right - lrc.left);
+						lnHeight	= (lrc.bottom - lrc.top);
+						lnCols		= max((lnWidth  / font->tm.tmAveCharWidth) - ((lnWidth  % font->tm.tmAveCharWidth) != 0 ? 1 : 0), 1);
+						lnRows		= max((lnHeight / font->tm.tmHeight)       - ((lnHeight % font->tm.tmHeight)       != 0 ? 1 : 0), 1);
 
 
-				//////////
-				// Make sure we're not before it to the left
-				//////
-					if (ecm->column < ecm->leftColumn)
-					{
-						ecm->leftColumn	= ecm->column;
-						llChanged		= true;
-					}
-
-
-				//////////
-				// Make sure we're not beyond it to the right
-				//////
-					lnOldLeftColumn	= ecm->leftColumn;
-					lnNewLeftColumn = ecm->column - lnCols;
-					if (ecm->leftColumn - lnNewLeftColumn < 0)
-					{
-						ecm->leftColumn	= lnNewLeftColumn;
-						llChanged		= true;
-					}
-
-				//////////
-				// Make sure we're on-screen vertically
-				//////
-					if (!ecm->ecCursorLine)
-					{
-						// No cursor line has been set
-						if (!ecm->ecTopLine)
+					//////////
+					// Make sure we're not before it to the left
+					//////
+						if (ecm->column < ecm->leftColumn)
 						{
-							// Set the top line
-							ecm->ecTopLine		= ecm->ecFirst;
-							ecm->ecCursorLine	= ecm->ecFirst;
-
-						} else {
-							// Position it at the top line
-							ecm->ecCursorLine = ecm->ecTopLine;
+							ecm->leftColumn	= ecm->column;
+							llChanged		= true;
 						}
-						llChanged = true;
 
-					} else {
-						// Find out how many rows away the cursor line is from the top line by scanning up and down
-						lineUp	= ecm->ecTopLine;
-						lineDn	= ecm->ecTopLine;
-						for (lnUp = 0, lnDn = 0; (lineUp || lineDn) && lineUp != ecm->ecCursorLine && lineDn != ecm->ecCursorLine; )
+
+					//////////
+					// Make sure we're not beyond it to the right
+					//////
+						lnOldLeftColumn	= ecm->leftColumn;
+						lnNewLeftColumn = ecm->column - lnCols;
+						if (ecm->leftColumn - lnNewLeftColumn < 0)
 						{
-							//////////
-							// Can we go up?
-							//////
-								if (lineUp)
-								{
-									lineUp = (SEditChain*)lineUp->ll.prev;
-									++lnUp;
-								}
-
-
-							//////////
-							// Can we go down?
-							//////
-								if (lineDn)
-								{
-									lineDn = (SEditChain*)lineDn->ll.next;
-									++lnDn;
-								}
+							ecm->leftColumn	= lnNewLeftColumn;
+							llChanged		= true;
 						}
-						// When we get here, either lineUp or lineDn found the cursor line
 
-						if (lineUp == ecm->ecCursorLine)
+					//////////
+					// Make sure we're on-screen vertically
+					//////
+						if (!ecm->ecCursorLine)
 						{
-							// We went up, so set the top line to this location
-							ecm->ecTopLine = ecm->ecCursorLine;
+							// No cursor line has been set
+							if (!ecm->ecTopLine)
+							{
+								// Set the top line
+								ecm->ecTopLine		= ecm->ecFirst;
+								ecm->ecCursorLine	= ecm->ecFirst;
+
+							} else {
+								// Position it at the top line
+								ecm->ecCursorLine = ecm->ecTopLine;
+							}
 							llChanged = true;
 
-						} else if (lineDn == ecm->ecCursorLine) {
-							// We went down to find it
-							if (lnDn > lnRows)
+						} else {
+							// Find out how many rows away the cursor line is from the top line by scanning up and down
+							lineUp	= ecm->ecTopLine;
+							lineDn	= ecm->ecTopLine;
+							for (lnUp = 0, lnDn = 0; (lineUp || lineDn) && lineUp != ecm->ecCursorLine && lineDn != ecm->ecCursorLine; )
 							{
-								// And the position is too far down
-								for (lnI = 0; lnI < lnDn - lnRows; lnI++)
-									ecm->ecTopLine = (SEditChain*)ecm->ecTopLine->ll.next;
+								//////////
+								// Can we go up?
+								//////
+									if (lineUp)
+									{
+										lineUp = (SEditChain*)lineUp->ll.prev;
+										++lnUp;
+									}
 
-								// Indicate the change
+
+								//////////
+								// Can we go down?
+								//////
+									if (lineDn)
+									{
+										lineDn = (SEditChain*)lineDn->ll.next;
+										++lnDn;
+									}
+							}
+							// When we get here, either lineUp or lineDn found the cursor line
+
+							if (lineUp == ecm->ecCursorLine)
+							{
+								// We went up, so set the top line to this location
+								ecm->ecTopLine = ecm->ecCursorLine;
+								llChanged = true;
+
+							} else if (lineDn == ecm->ecCursorLine) {
+								// We went down to find it
+								if (lnDn > lnRows)
+								{
+									// And the position is too far down
+									for (lnI = 0; lnI < lnDn - lnRows; lnI++)
+										ecm->ecTopLine = (SEditChain*)ecm->ecTopLine->ll.next;
+
+									// Indicate the change
+									llChanged = true;
+								}
+
+							} else {
+								// If we get here, it wasn't found
+								ecm->ecTopLine = ecm->ecCursorLine;
 								llChanged = true;
 							}
-
-						} else {
-							// If we get here, it wasn't found
-							ecm->ecTopLine = ecm->ecCursorLine;
-							llChanged = true;
 						}
-					}
-			}
+				}
+		}
 
 
 		// Indicate our status
@@ -1763,7 +2006,7 @@ _asm int 3;
 		//////////
 		// Make sure we're valid
 		//////
-			if (ecm && !ecm->isReadOnly && ecm->ecCursorLine)
+			if (ecm && ecm->ecCursorLine)
 			{
 				//////////
 				// Grab the line and form

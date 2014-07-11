@@ -121,42 +121,59 @@
 		iObj_createWindowForForm(gobj_jdebi,	gWinJDebi,	IDI_JDEBI);
 
 		// Initially populate _screen
-		iEditChainManager_appendLine(screenData, (s8*)cgcScreenTitle, -1);
-		iEditChainManager_appendLine(screenData, NULL, 0);
-		iEditChainManager_appendLine(screenData, "Please report any bugs:  http://www.visual-freepro.org/forum", -1);
-		iEditChainManager_appendLine(screenData, "Thank you, and may the Lord Jesus Christ bless you richly. :-)", -1);
-		iEditChainManager_appendLine(screenData, NULL, 0);
-		iEditChainManager_appendLine(screenData, "              _____", -1);
-		iEditChainManager_appendLine(screenData, "             |     |", -1);
-		iEditChainManager_appendLine(screenData, "             |     |", -1);
-		iEditChainManager_appendLine(screenData, "     ________|     |________     In God's sight we've come together.", -1);
-		iEditChainManager_appendLine(screenData, "    |                       |    We've come together to help each other.", -1);
-		iEditChainManager_appendLine(screenData, "    |________       ________|    Let's grow this project up ... together!", -1);
-		iEditChainManager_appendLine(screenData, "             |     |             In service and love to The Lord, forever!", -1);
-		iEditChainManager_appendLine(screenData, "             |     |", -1);
-		iEditChainManager_appendLine(screenData, "             |     |             Sponsored by:", -1);
-		iEditChainManager_appendLine(screenData, "             |     |                LibSF -- Liberty Software Foundation", -1);
-		iEditChainManager_appendLine(screenData, "             |     |", -1);
-		iEditChainManager_appendLine(screenData, "             |     |             We need more coders. Please consider helping out.", -1);
-		iEditChainManager_appendLine(screenData, "             |     |             Your contribution would make a difference.", -1);
-		iEditChainManager_appendLine(screenData, "             |     |", -1);
-		iEditChainManager_appendLine(screenData, "             |_____|", -1);
-		iEditChainManager_appendLine(screenData, NULL, 0);
+		// Load in the history if it exists
+		if (!iEditChainManager_loadFromDisk(screenData, NULL, (s8*)cgcScreenDataFilename, true))
+		{
+			iEditChainManager_appendLine(screenData, (s8*)cgcScreenTitle, -1);
+			iEditChainManager_appendLine(screenData, NULL, 0);
+			iEditChainManager_appendLine(screenData, "Please report any bugs:  http://www.visual-freepro.org/forum", -1);
+			iEditChainManager_appendLine(screenData, "Thank you, and may the Lord Jesus Christ bless you richly. :-)", -1);
+			iEditChainManager_appendLine(screenData, NULL, 0);
+			iEditChainManager_appendLine(screenData, "              _____", -1);
+			iEditChainManager_appendLine(screenData, "             |     |", -1);
+			iEditChainManager_appendLine(screenData, "             |     |", -1);
+			iEditChainManager_appendLine(screenData, "     ________|     |________     In God's sight we've come together.", -1);
+			iEditChainManager_appendLine(screenData, "    |                       |    We've come together to help each other.", -1);
+			iEditChainManager_appendLine(screenData, "    |________       ________|    Let's grow this project up ... together!", -1);
+			iEditChainManager_appendLine(screenData, "             |     |             In service and love to The Lord, forever!", -1);
+			iEditChainManager_appendLine(screenData, "             |     |", -1);
+			iEditChainManager_appendLine(screenData, "             |     |             Sponsored by:", -1);
+			iEditChainManager_appendLine(screenData, "             |     |                LibSF -- Liberty Software Foundation", -1);
+			iEditChainManager_appendLine(screenData, "             |     |", -1);
+			iEditChainManager_appendLine(screenData, "             |     |             We need more coders. Please consider helping out.", -1);
+			iEditChainManager_appendLine(screenData, "             |     |             Your contribution would make a difference.", -1);
+			iEditChainManager_appendLine(screenData, "             |     |", -1);
+			iEditChainManager_appendLine(screenData, "             |_____|", -1);
+			iEditChainManager_appendLine(screenData, NULL, 0);
+		}
+		// Navigate to the end of the content
 		iEditChainManager_navigateEnd(screenData, gobj_screen);
+		// Redraw
 		gobj_screen->isDirty = true;
-		iObj_render(gobj_screen, true, true);
+		iWindow_render(gWinScreen);
 
 		// Initially populate _jdebi
-		iEditChainManager_appendLine(commandHistory, "*** Welcome to Visual FreePro, Junior! :-)", -1);
-		iEditChainManager_appendLine(commandHistory, "*** For now, this can be thought of as a command window ... with a twist.", -1);
-		iEditChainManager_appendLine(commandHistory, "*** It works like an editor window.  You can insert new lines, edit old ones, etc.", -1);
-		iEditChainManager_appendLine(commandHistory, "*** To execute a command, press F6 or Enter if you're on the last line, or use F6 on any line.", -1);
-		iEditChainManager_appendLine(commandHistory, "*** You can use ? 999 and ? \"sample\" in this daily build.", -1);
-		iEditChainManager_appendLine(commandHistory, "-----", -1);
-		iEditChainManager_appendLine(commandHistory, NULL, 0);
+		// Load in the history if it exists
+		if (!iEditChainManager_loadFromDisk(commandHistory, NULL, (s8*)cgcCommandHistoryFilename, true))
+		{
+			iEditChainManager_appendLine(commandHistory, "*** Welcome to Visual FreePro, Junior! :-)", -1);
+			iEditChainManager_appendLine(commandHistory, "*** For now, this can be thought of as a command window ... with a twist.", -1);
+			iEditChainManager_appendLine(commandHistory, "*** It works like an editor window.  You can insert new lines, edit old ones, etc.", -1);
+			iEditChainManager_appendLine(commandHistory, "*** To execute a command, press F6 or Enter if you're on the last line, or use F6 on any line.", -1);
+			iEditChainManager_appendLine(commandHistory, "*** You can use clear, quit, ? 999, and ? \"sample\" in this daily build.", -1);
+			iEditChainManager_appendLine(commandHistory, "*** Remember this always:  Love makes you smile. It keeps an inward peace unlike any other. :-)", -1);
+		}
+		// Navigate to the last line
 		iEditChainManager_navigateEnd(commandHistory, gobj_jdebi);
+		// Make sure there's a blank line at the end
+		if (commandHistory->ecCursorLine->sourceCodePopulated != 0)
+		{
+			iEditChainManager_appendLine(commandHistory, NULL, 0);
+			iEditChainManager_navigateEnd(commandHistory, gobj_jdebi);
+		}
+		// Redraw
 		gobj_jdebi->isDirty = true;
-		iObj_render(gobj_jdebi, true, true);
+		iWindow_render(gWinJDebi);
 	}
 
 

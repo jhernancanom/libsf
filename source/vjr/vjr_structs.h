@@ -107,6 +107,7 @@ struct SEditChainManager
 		bool			isOverwrite;									// Are we in overwrite mode?
 		bool			showCursorLine;									// Should we render the cursor line?
 		bool			showEndLine;									// Should we render the end line in a different color?
+		bool			isHeavyProcessing;								// When large amounts of processing will be conducted, the display can be disabled
 
 		s32				column;											// Column we're currently inputting
 		s32				leftColumn;										// The column we're displaying at the left-most position (of horizontally scrolled, this will be greater than 0)
@@ -150,6 +151,19 @@ struct SEditChainManager
 			// If referenced through ecm->undoHistory, then theUndo is the one in use here
 			SUndo*				theUndo;								// If referenced through ecm->undoHistory-> then it only uses theUndo
 		};
+};
+
+struct SEditChainCallback
+{
+	SEditChainManager*	ecm;											// The manager
+	SEditChain*			ec;												// This line
+
+	// Functions to use to access this extra info block
+	union {
+		u32				_callback;
+		void			(*callback)		(SEditChainCallback* ecb);		// Callback to delete any extra information.  The ec->sourceCode and ec itself will be deleted automatically.
+	};
+
 };
 
 struct SFont

@@ -46,9 +46,13 @@
 // Forward declarations
 //////
 	SEditChainManager*		iEditChainManager_allocate				(void);
+	SBuilder*				iEditChainManager_accumulateBuilder		(SEditChainManager* ecm, SEditChain* ecHintStart, SEditChain* ecHintEnd);
+	bool					iEditChainManager_saveToDisk			(SEditChainManager* ecm, s8* tcPathname);
+	bool					iEditChainManager_loadFromDisk			(SEditChainManager* ecm, SEditChain* ecHint, s8* tcPathname, bool tlInsertAfter);
 	bool					iEditChainManager_duplicate				(SEditChainManager** root, SEditChainManager* chain, bool tlIncludeUndoHistory);
 	void					iEditChainManager_delete				(SEditChainManager** root, bool tlDeleteSelf);
 	void					iEditChainManager_deleteChain			(SEditChainManager** root, bool tlDeleteSelf);
+	void					iEditChainManager_deleteChainWithCallback(SEditChainManager** root, bool tlDeleteSelf, SEditChainCallback* ecb);
 	SEditChain*				iEditChainManager_appendLine			(SEditChainManager* ecm, s8* tcText, s32 tnTextLength);
 	SEditChain*				iEditChainManager_insertLine			(SEditChainManager* ecm, s8* tcText, s32 tnTextLength, SEditChain* line, bool tlInsertAfter);
 	void					iEditChainManager_deleteLine			(SEditChainManager* ecm);
