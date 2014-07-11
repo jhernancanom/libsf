@@ -31,6 +31,15 @@
 // Thank you.  And may The Lord bless you richly as you lift up your life, your
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
 //
+//////
+// Steps to add a new function:
+//		(1)  Add the function definition to the "Functions" section below (search for "STEP1:").
+//		(2)  Add the function information to the "Translation" gsKnownFunctions data by inserting it where it should go (search for "STEP2:").
+//		(3)  Add the function to commands.cpp (search for "STEP3").
+//		(4)  Debug and test the function.
+//		(5)  Email your changes to Rick C. Hodgin at the address on the www.visual-freepro.org/vjr/indexmain.html web page.
+//		(6)  Happy coding!
+//
 //
 
 
@@ -52,9 +61,11 @@ struct SVariable;
 
 //////////
 // Functions
+// STEP1:
 //////
 	SVariable*			function_asc								(SVariable* p1);
 	SVariable*			function_chr								(SVariable* p1);
+	SVariable*			function_datetime							(SVariable* pYear, SVariable* pMonth, SVariable* pDay, SVariable* pHour, SVariable* pMinute, SVariable* pSecond, SVariable* pMillisecond);
 
 
 //////////
@@ -62,22 +73,52 @@ struct SVariable;
 //////
 	struct SFunctionList
 	{
-		s32		iCode;
-		union {
-			u32			_func;
-			SVariable*	(*func_1p)		(SVariable* p1);
-			SVariable*	(*func_2p)		(SVariable* p1, SVariable* p2);
-			SVariable*	(*func_3p)		(SVariable* p1, SVariable* p2, SVariable* p3);
-			SVariable*	(*func_4p)		(SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4);
-			SVariable*	(*func_5p)		(SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5);
-		};
-		s32		parameters;
+		//////////
+		// The iCode relates to the known commands.
+		// See cgcFundamentalSymbols and cgcKeywordKeywords in compiler_globals.h
+		//////
+			s32		iCode;
+
+
+		//////////
+		// Return variables this function generates
+		//////
+			s32		returnCount;
+
+
+		//////////
+		// Function prototype to call internally
+		//////
+			union {
+				u32			_func;
+				SVariable*	(*func_1p)		(SVariable* p1);
+				SVariable*	(*func_2p)		(SVariable* p1, SVariable* p2);
+				SVariable*	(*func_3p)		(SVariable* p1, SVariable* p2, SVariable* p3);
+				SVariable*	(*func_4p)		(SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4);
+				SVariable*	(*func_5p)		(SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5);
+				SVariable*	(*func_6p)		(SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6);
+				SVariable*	(*func_7p)		(SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6, SVariable* p7);
+			};
+
+
+		//////////
+		// Input parameters this function handles
+		//////
+			s32		requiredCount;
+			s32		parameterCount;
 	};
 
 	SFunctionList gsKnownFunctions[] = {
-		{	_ICODE_ASC,			(u32)&function_asc,		1	},
-		{	_ICODE_CHR,			(u32)&function_chr,		1	},
-
-		// Do not delete this line, it is used to terminate the searching list
+		//                      Return										Parameters		Parameter
+		//	iCode				Count		Function						Required		Maximum Count
+		//  ------------------	------		--------------------------		----------		-------------
+		{	_ICODE_ASC,			1,			(u32)&function_asc,				1,				1	},
+		{	_ICODE_CHR,			1,			(u32)&function_chr,				1,				1	},
+		{	_ICODE_DATETIME,	1,			(u32)&function_datetime,		0,				7	},
+	//////
+	// Insert above this step somewhere in the list of functions.
+	// STEP2:
+	//////////
+		// Note:  Do not delete this line, it is used to terminate the search list
 		{	0,					NULL,					0	}
 	};

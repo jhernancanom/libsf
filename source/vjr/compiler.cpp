@@ -4261,14 +4261,58 @@ _asm int 3;
 
 //////////
 //
+// Called to search the chain and find the indicated variable name.
+//
+// Note:  VJr does not require variables have names.  Also, their names can be duplicated.
+//        This is by design and relates to the data-driven model of its internal engine,
+//        rather than a name-driven model.  However, names are still used nearly everywhere. :-)
+//
+//////
+	SVariable* iVariable_searchForName(SVariable* varRoot, s8* tcVarName, u32 tnVarNameLength)
+	{
+		SVariable* var;
+
+
+		// Make sure our environment is sane
+		var = NULL;
+		if (varRoot)
+		{
+			// Iterate from beginning through
+			var = varRoot;
+			while (var)
+			{
+				// Is the name the same length?
+				if (var->name.length == tnVarNameLength)
+				{
+					// Does it match
+					if (_memicmp(tcVarName, var->name.data, tnVarNameLength) == 0)
+						return(var);		// This is it
+				}
+
+				// Move to next variable
+				var = (SVariable*)var->ll.next;
+			}
+		}
+
+		// Indicate our status
+		return(var);
+	}
+
+
+
+
+//////////
+//
 // Converts the indicated variable to a form suitable for display.
 //
 //////
 	SVariable* iVariable_convertForDisplay(SVariable* var)
 	{
 		s32			lnI, lnYearOffset;
+		u32			lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond;
 		f64			lfValue64;
 		SVariable*	varDisp;
+		SDateTime*	dt;
 		char		buffer[64];
 		char		formatter[16];
 
@@ -4277,6 +4321,9 @@ _asm int 3;
 		varDisp = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 		if (var && varDisp)
 		{
+			// Initialize
+			memset(buffer, 0, sizeof(buffer));
+
 			// Based on the type, convert to a form for display
 			switch (var->varType)
 			{
@@ -4376,9 +4423,6 @@ _asm int 3;
 				case _VAR_TYPE_DATE:
 					// We can convert this from its text form into numeric if we're auto-converting
 // TODO:  This needs to go into a DTOC() function
-					// Reset our buffer
-					memset(buffer, 0, sizeof(buffer));
-
 					// Prepare for our year
 					if (_set_century)		lnYearOffset = 0;
 					else					lnYearOffset = 2;
@@ -4489,8 +4533,13 @@ _asm int 3;
 
 				case _VAR_TYPE_DATETIME:
 					// Translate from encoded form to components, then assemble as MM/DD/YYYY HH:MM:SS AM/PM
-// TODO:  Write this code
-					iDatum_duplicate(&varDisp->value, cgcFeatureNotYetSupported, -1);
+// TODO:  We need to honor the _set_date settings.  For now we use MM/DD/YYYY HH:MM:SS.Mss
+// TODO:  We need to add the AM/PM settings.  For now we just use military time.
+					dt = (SDateTime*)var->value.data;
+					iiVariable_computeYyyyMmDd_fromJulianDayNumber(dt->julian, &lnYear, &lnMonth, &lnDay);
+					iiVariable_computeHhMmSsMss_fromf32(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+					sprintf(buffer, "%02u/%02u/%04u %02u:%02u:%02u.%03u", lnMonth, lnDay, lnYear, lnHour, lnMinute, lnSecond, lnMillisecond);
+					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_CURRENCY:
@@ -4923,6 +4972,86 @@ _asm int 3;
 
 
 //////////
+//
+// Computes the julian day number from a day, month, year.
+// Algorithm used from:
+//		https://en.wikipedia.org/wiki/Julian_day#Calculation
+//
+// Summary:
+//	a = floor((14 - month) / 12)		Note:  Using 1 for both January and February, 0 for other months
+//	y = year + 4800 - a
+//	m = month + 12 * a - 3				Note:  Using 0 for March, 11 for February
+//
+// For Gregorian calendar dates:
+//		jg = day + floor((153*m + 2) / 5) + (365 * y) + floor(y/4) - floor(y/100) + floor(y/400) - 32045
+//		Note:  The value in VFP matches this calculation if the month adjustment notes are not performed above.
+//
+// For Julian calendar dates:
+//		jj = day + floor((153*m + 2) / 5) + (365 * y) + floor(y/4) - 32083
+//
+// Input:
+//		year		-- 1600..2400
+//		month		-- 1..12
+//		day			-- 1..31 (not validated, as this is an iiFunction)
+//
+// Returns:
+//		julian		-- The julian day number
+//
+//////
+	s32 iiVariable_julianDayNumber_fromYyyyMmDd(f32* tfJulianDayNumber, u32 year, u32 month, u32 day)
+	{
+		s32		monthAdjust1, monthAdjust2;
+		f64		a, y, m;
+
+
+		//////////
+		// Adjust the months
+		// Note:  To provide compatibility with VFP, we do not perform the month adjustments.
+		//////
+			monthAdjust1	= month;	// not performed:  ((month <= 2) ? 1 : 0);
+			monthAdjust2	= month;	// not performed:  ((month == 3) ? 0 : ((month == 2) ? 11 : month));
+
+
+		//////////
+		// Compute a, y, m
+		//////
+			a = floor((14.0 - (f64)monthAdjust1) / 12.0);
+			y = (f64)year + 4800.0 - a;
+			m = (f64)monthAdjust2 + (12.0 * a) - 3.0;
+
+
+		//////////
+		// For Gregorian calendar dates (dates after October 15, 1582):
+		//////
+			*tfJulianDayNumber = (f32)((f64)day + 
+									floor(((153.0 * m) + 2.0) / 5.0) + 
+									(365.0 * y) +
+									floor(y / 4.0) -
+									floor(y / 100.0) +
+									floor(y / 400.0) -
+									32045.0);
+
+
+// 		//////////
+// 		// For Julian calendar dates (dates before October 15, 1582):
+// 		//////
+// 			*tfJulianDayNumber = (f32)((f64)day + 
+// 									floor(((153.0 * m) + 2.0) / 5.0) + 
+// 									(365.0 * y) +
+// 									floor(y / 4.0) -
+// 									32083.0);
+
+
+		// Return the rounded result
+		return((s32)*tfJulianDayNumber);
+	}
+
+
+
+
+//////////
+//
+// Computes the day, month, and year from a julian day number.
 //
 // Taken from:
 //		http://stason.org/TULARC/society/calendars/2-15-1-Is-there-a-formula-for-calculating-the-Julian-day-nu.html

@@ -207,7 +207,12 @@
 		s64			value;
 
 
+//////////
+// TODO:  We currently have no context as to what this relates to.
+//        We need to pass something here so it can look to a function definition for parameters, locals, return variables
+//////////
 		// Make sure our environment is sane
+		tlManufactured = false;
 		if (comp)
 		{
 			switch (comp->iCode)
@@ -241,10 +246,79 @@
 						return(var);
 
 
+				case _ICODE_TRUE:
+				case _ICODE_YES:
+				case _ICODE_UP:
+					// It's a .T. or some equivalent
+					var					= iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+					tlManufactured		= true;
+					var->value.data[0]	= _LOGICAL_TRUE;
+					return(var);
+
+
+				case _ICODE_FALSE:
+				case _ICODE_NO:
+				case _ICODE_DOWN:
+					// It's a .F. or some equivalent
+					var					= iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+					tlManufactured		= true;
+					var->value.data[0]	= _LOGICAL_FALSE;
+					return(var);
+
+
+				case _ICODE_EXTRA:
+					// It's a .X.
+					var					= iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+					tlManufactured		= true;
+					var->value.data[0]	= _LOGICALX_EXTRA;
+					return(var);
+
+
+				case _ICODE_YET_ANOTHER:
+					// It's a .Y.
+					var					= iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+					tlManufactured		= true;
+					var->value.data[0]	= _LOGICALX_YET_ANOTHER;
+					return(var);
+
+
+				case _ICODE_ZATS_ALL_FOLKS:
+					// It's a .X.
+					var					= iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+					tlManufactured		= true;
+					var->value.data[0]	= _LOGICALX_ZATS_ALL_FOLKS;
+					return(var);
+
+
 				case _ICODE_ALPHANUMERIC:
 				case _ICODE_ALPHA:
 					// It's some kind of text, could be a field or variable
-_asm int 3;
+					if (_set_variablesFirst)
+					{
+						// Searching variables first, field names last.
+						if (var = iVariable_searchForName(varGlobals, comp->line->sourceCode->data + comp->start, comp->length))
+						{
+							// It was found in the global variables
+							return(var);
+
+/* We do not have work areas setup yet, so we cannot search them. :-)
+						} else if (var = iWorkarea_searchFieldName(comp->line->sourceCode->data + comp->start, comp->length)) {
+							// It was found in a table field
+							return(var);*/
+						}
+
+					} else {
+						// Search field names first, variables last.
+/*						if (var = iWorkarea_searchFieldName(comp->line->sourceCode->data + comp->start, comp->length))
+						{
+							// It was found in a table field
+							return(var);
+
+						} else*/ if (var = iVariable_searchForName(varGlobals, comp->line->sourceCode->data + comp->start, comp->length)) {
+							// It was found in the global variables
+							return(var);
+						}
+					}
 					break;
 
 

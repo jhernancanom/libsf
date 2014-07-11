@@ -265,3 +265,166 @@
 		//////
 	        return result;
     }
+
+
+
+
+//////////
+//
+// Function: DATETIME()
+// Returns the current local time, or uses the input variables to create the indicated datetime.
+//
+//////
+// Version 0.30
+// Last update:
+//     Jul.10.2014
+//////
+// Change log:
+//     Jul.10.2014 - Initial creation
+//////
+// Parameters:
+//     pYear		-- (optional) Numeric, in the range 1600..2400
+//     pMonth		-- (optional) Numeric, in the range 1..12
+//     pDay			-- (optional) Numeric, in the range 1..(varies based on month+year, not more than 31)
+//     pHour		-- (optional) Numeric, in the range 0..23
+//     pMinute		-- (optional) Numeric, in the range 0..59
+//     pSecond		-- (optional) Numeric, in the range 0..59
+//     pMillisecond	-- (optional) Numeric, in the range 0..999
+//
+//////
+// Returns:
+//    Datetime		-- Current datetime(), or input converted to datetime
+//
+//////
+	SVariable* function_datetime(SVariable* pYear, SVariable* pMonth, SVariable* pDay, SVariable* pHour, SVariable* pMinute, SVariable* pSecond, SVariable* pMillisecond)
+	{
+		SVariable*	result;
+		SDateTime*	dt;
+		f32			lfJulian;
+		u32			errorNum;
+		bool		error;
+		SYSTEMTIME	lst;
+
+
+		// Have they provided us with data?
+		if (!pYear)
+		{
+			// Nope, we are creating the current system time
+			GetLocalTime(&lst);
+
+		} else {
+			// They have provided us at least something
+// TODO:  Incomplete feature
+return(NULL);
+// 			// Default to 01/01/1600 00:00:00.000
+// 			lst.wYear		= 1600;
+// 			lst.wMonth		= 1;
+// 			lst.wDay		= 1;
+// 			lst.wHour		= 0;
+// 			lst.wMinute		= 0;
+// 			lst.wSecond		= 0;
+// 			lst.wMilliseconds	= 0;
+// 
+// 
+// 			//////////
+// 			// pYear must be numeric, and in the range of 1600..2400
+// 			//////
+// 				if (!iVariable_isValid(pYear) || iVariable_getType(pYear) != _VAR_TYPE_NUMERIC)
+// 				{
+// 					iError_report("Parameter 1 is not correct");
+// 					return(NULL);
+// 				}
+// 				lst.wYear = (u16)iiVariable_getAs_s32(pYear, false, &error, &errorNum);
+// 				if (!error && (lst.wYear < 1600 || lst.wYear > 2400))
+// 				{
+// 					iError_reportByNumber(_ERROR_OUT_OF_RANGE);
+// 					return(NULL);
+// 				}
+		}
+
+
+		//////////
+		// Convert lst.* into a VJr datetime variable
+		//////
+			result = iVariable_create(_VAR_TYPE_DATETIME, NULL);
+			dt = (SDateTime*)result->value.data;
+
+			// Date is stored as julian day number
+			dt->julian	= iiVariable_julianDayNumber_fromYyyyMmDd(&lfJulian, lst.wYear, lst.wMonth, lst.wDay);
+
+			// Time is stored as seconds since midnight
+			dt->seconds = (f32)(lst.wHour * 60 * 60) + (f32)(lst.wMinute * 60) + (f32)lst.wSecond + ((f32)lst.wMilliseconds / 1000.0f);
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
+	}
+
+
+
+
+//////////
+//
+// Your new function will go here.  Uncomment only the definition with the appropriate number of input parameters.
+// If you are creating more than one function, duplicate this block, including this comment section and the blank
+// before this comment section below.
+//
+// STEP3:
+// Code away! :-)
+//
+//////
+	// After you have chosen the function template, delete the other lines
+	SVariable* function_your_new_function1(SVariable* p1)
+	// SVariable* function_your_new_function2(SVariable* p1, SVariable* p2)
+	// SVariable* function_your_new_function3(SVariable* p1, SVariable* p2, SVariable* p3)
+	// SVariable* function_your_new_function4(SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4)
+	// SVariable* function_your_new_function5(SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5)
+	{
+		SVariable* result;
+
+
+		//////////
+        // Parameter 1 must be ... (choose the correct one, repeat for each parameter)
+		//////
+			if (!iVariable_isValid(p1) || iVariable_getType(p1) != _VAR_TYPE_NUMERIC)
+			// if (!iVariable_isValid(p1) || iVariable_getType(p1) != _VAR_TYPE_CHARACTER)
+			// if (!iVariable_isValid(p1) || iVariable_getType(p1) != _VAR_TYPE_LOGICAL)
+			{
+				iError_report("Parameter 1 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+		// Carry out the logic of your function here
+		//////
+			// Code here
+
+
+		//////////
+        // Create the return result
+		//////
+	        result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+			if (!result)
+			{
+				iError_report("Internal error.");
+				return(NULL);
+			}
+
+
+		//////////
+        // Populate the return value in whatever way
+		//////
+			// Code here
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
+	}
+//////
+// END
+//////////

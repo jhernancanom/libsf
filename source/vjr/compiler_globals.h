@@ -897,6 +897,7 @@
 		{ "down",					4,          false,      _ICODE_DOWN,							false,              _ICAT_GENERIC,		NULL,                   NULL },
 		{ ".o.",                  	3,          false,      _ICODE_OTHER,							false,              _ICAT_GENERIC,		NULL,                   NULL },
 		{ ".p.",                  	3,          false,      _ICODE_PARTIAL,							false,              _ICAT_GENERIC,		NULL,                   NULL },
+		{ ".x.",                  	3,          false,      _ICODE_EXTRA,							false,              _ICAT_GENERIC,		NULL,                   NULL },
 		{ ".y.",                  	3,          false,      _ICODE_YET_ANOTHER,						false,              _ICAT_GENERIC,		NULL,                   NULL },
 		{ ".z.",                  	3,          false,      _ICODE_ZATS_ALL_FOLKS,					false,              _ICAT_GENERIC,		NULL,                   NULL },
 

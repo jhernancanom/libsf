@@ -49,9 +49,12 @@
 	s64					systemStartedMs						= 0;
 
 
-	// JDebi window items
+	// Window display histories
 	SEditChainManager*	screenData							= NULL;									// The data displayed on the screen
 	SEditChainManager*	commandHistory						= NULL;									// The command window history
+
+	// Global variables
+	SVariable*			varGlobals							= NULL;									// All global variables are stored
 
 	// App icons
 	SBitmap*			bmpVjrIcon							= NULL;

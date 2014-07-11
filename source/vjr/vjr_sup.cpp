@@ -114,6 +114,10 @@
 		iObj_render(gobj_screen, true, true);
 		iObj_render(gobj_jdebi, true, true);
 
+		// Create our global variables
+		varGlobals = function_datetime(NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+		iDatum_duplicate(&varGlobals->name, cgcName_startupTime, -1);
+
 		// Attach them to physical windows
 		gWinScreen	= iWindow_allocate();
 		gWinJDebi	= iWindow_allocate();
@@ -160,7 +164,7 @@
 			iEditChainManager_appendLine(commandHistory, "*** For now, this can be thought of as a command window ... with a twist.", -1);
 			iEditChainManager_appendLine(commandHistory, "*** It works like an editor window.  You can insert new lines, edit old ones, etc.", -1);
 			iEditChainManager_appendLine(commandHistory, "*** To execute a command, press F6 or Enter if you're on the last line, or use F6 on any line.", -1);
-			iEditChainManager_appendLine(commandHistory, "*** You can use clear, quit, ? 999, and ? \"sample\" in this daily build.", -1);
+			iEditChainManager_appendLine(commandHistory, "*** You can use clear, quit, ? 999, ? \"sample\" (literals), and ? _startupTime (global variable) in this daily build.", -1);
 			iEditChainManager_appendLine(commandHistory, "*** Remember this always:  Love makes you smile. It keeps an inward peace unlike any other. :-)", -1);
 		}
 		// Navigate to the last line

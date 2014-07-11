@@ -123,6 +123,18 @@
 
 
 //////////
+// Logical and LogicalX definitions
+//////
+	const s8		_LOGICAL_FALSE									= 0;
+	const s8		_LOGICAL_TRUE									= -1;
+	const s8		_LOGICALX_OTHER									= 'O';
+	const s8		_LOGICALX_PARTIAL								= 'P';
+	const s8		_LOGICALX_EXTRA									= 'X';
+	const s8		_LOGICALX_YET_ANOTHER							= 'Y';
+	const s8		_LOGICALX_ZATS_ALL_FOLKS						= 'Z';
+
+
+//////////
 // Warnings
 //////
 	const u32		_WARNING_SPURIOUS_COMPONENTS_IGNORED			= 1;
@@ -146,6 +158,7 @@
 	const u32		_ERROR_EMPTY_STRING								= 8;
 	const u32		_ERROR_SYNTAX									= 9;
 	const u32		_ERROR_UNRECOGNIZED_PARAMETER					= 10;
+	const u32		_ERROR_OUT_OF_RANGE								= 11;
 
 	// Messages
 	const s8		cgcOutOfMemory[]								= "out of memory";
@@ -158,6 +171,7 @@
 	const s8		cgcEmptyString[]								= "empty string";
 	const s8		cgcSyntaxError[]								= "syntax error";
 	const s8		cgcUnrecognizedParameter[]						= "unrecognized parameter";
+	const s8		cgcOutOfRange[]									= "out of range";
 	
 
 //////////
@@ -340,8 +354,9 @@
 	const u32	    _ICODE_DOWN										= 605;
 	const u32	    _ICODE_OTHER									= 606;
 	const u32	    _ICODE_PARTIAL									= 607;
-	const u32	    _ICODE_YET_ANOTHER								= 608;
-	const u32	    _ICODE_ZATS_ALL_FOLKS							= 609;
+	const u32		_ICODE_EXTRA									= 608;
+	const u32	    _ICODE_YET_ANOTHER								= 609;
+	const u32	    _ICODE_ZATS_ALL_FOLKS							= 610;
 
 
 	// Functions

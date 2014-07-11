@@ -287,6 +287,12 @@ typedef		const f64			cf64;
 
 
 //////////
+// Internal variable names
+//////
+	const s8			cgcName_startupTime[]				= "_startupTime";
+
+
+//////////
 // Base class control names
 //////
 	const s8			cgcName_empty[]						= "empty";
