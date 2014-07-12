@@ -260,16 +260,19 @@ struct SLL
 struct SVariable
 {
 	SLL			ll;
-	SVariable*	indirect;												// If non-NULL, this variable is an indirect reference to an underlying variable
+	SVariable*	indirect;												// If non-NULL, and not an object or thisCode, this variable is an indirect reference to an underlying variable.
+	bool		isVarAllocated;											// If true, this variable structure was allocated, and needs to be released upon delete.
+	bool		isValueAllocated;										// If true, the data pointed to by this->value.data was allocated
 
 	// Variable data
-	SDatum		name;													// Name of this variable
+	SDatum		name;													// Name of this variable (alway allocated)
+	u32			arrayRows;												// If created as an array, how many rows
+	u32			arrayCols;												// If created as an array, how many columns
 
 	// Variable content based on type
 	u32			varType;												// Variable type (see _VAR_TYPE_* constants)
-	bool		isVarAllocated;											// If true, it was a variable that was allocated, and needs to be released.
 	union {
-		SObject*		obj;											// If the lower-bit of type is clear, and it's an object, the object it relates to
+		SObject*		obj;											// The object this item relates to.  If isValueAllocated is set, this variable owns the object.
 		SFunction*		thisCode;										// Pointer to the code block this relates to
 		SDatum			value;											// If the lower-bit of type is clear, the actual data value based on its type
 	};
@@ -277,11 +280,30 @@ struct SVariable
 	// If assign or access
 	SFunction*	assign;													// Source code executed whenever this variable is assigned
 	SFunction*	access;													// Source code executed whenever this variable is accessed
+};
 
-	// Used only during compilation
-	bool		isStale;												// Variables are marked stale if the line they're defined on changes and needs recompiled.
-																		// Once recompiled, if the variable declaration still exists, the isStale flag is lowered.
-																		// If the variable no longer exists, any lines of code referencing the old variable are
-																		// marked for recompilation and errors will likely be generated.
-																		// To avoid this issue, use symbol refactoring in the IDE.
+struct SBaseclassList
+{
+	s32		objType;					// Translation between objType...
+
+	cs8*	textName;					// ...and the text-based name of the base class
+	u32		textNameLength;
+};
+
+struct SPropertyList
+{
+	// Property name
+	cs8*	textName;
+	u32		textNameLength;
+
+	// Accessors
+	union {
+		u32		_set;
+		void*	(*set)		(SObject* obj, SVariable* var);
+	};
+
+	union {
+		u32		_get;
+		void*	(*get)		(SObject* obj);
+	};
 };

@@ -97,15 +97,15 @@
 	const u32		_NODE_RIGHT										= 5;
 
 	const u32		_VAR_TYPE_NULL									= 0;
-	const u32		_VAR_TYPE_EMPTYOBJECT							= 1;
-	const u32		_VAR_TYPE_THISCODE								= 2;
+	const u32		_VAR_TYPE_OBJECT								= 1;			// Object reference
+	const u32		_VAR_TYPE_THISCODE								= 2;			// Code reference
 	const u32		_VAR_TYPE_CHARACTER								= 3;
-	const u32		_VAR_TYPE_NUMERIC_START							= 4;
+	const u32								_VAR_TYPE_NUMERIC_START	= 4;
 	const u32		_VAR_TYPE_INTEGER								= 4;			// Stored as an s32, a 4-byte signed integer
 	const u32		_VAR_TYPE_NUMERIC								= 5;			// Stored as a character (like "200.50"), but converted to numeric at each reference.
 	const u32		_VAR_TYPE_FLOAT									= 6;			// Stored as an f32
 	const u32		_VAR_TYPE_DOUBLE								= 7;			// Stored as an f64
-	const u32		_VAR_TYPE_CURRENCY								= 8;
+	const u32		_VAR_TYPE_CURRENCY								= 8;			// Stored as an s64 with an implied 4-decimals (divide by 10,000 to get the actual floating point value)
 	const u32		_VAR_TYPE_S32									= 9;
 	const u32		_VAR_TYPE_S64									= 10;
 	const u32		_VAR_TYPE_U32									= 11;
@@ -118,10 +118,10 @@
 	const u32		_VAR_TYPE_S8									= 18;
 	const u32		_VAR_TYPE_U16									= 19;
 	const u32		_VAR_TYPE_U8									= 20;
-	const u32		_VAR_TYPE_NUMERIC_END							= 20;
+	const u32								_VAR_TYPE_NUMERIC_END	= 20;
 	const u32		_VAR_TYPE_DATE									= 21;
 	const u32		_VAR_TYPE_DATETIME								= 22;
-	const u32		_VAR_TYPE_LOGICAL								= 23;
+	const u32		_VAR_TYPE_LOGICAL								= 23;			// Note:  This includes the logicalx types, but the value stored determines the logicalx setting.
 
 
 //////////
@@ -163,6 +163,8 @@
 	const u32		_ERROR_OUT_OF_RANGE								= 11;
 	const u32		_ERROR_COMMA_EXPECTED							= 12;
 	const u32		_ERROR_TOO_MANY_PARAMETERS						= 13;
+	const u32		_ERROR_DATA_TYPE_MISMATCH						= 14;
+	const u32		_ERROR_FEATURE_NOT_AVAILABLE					= 15;
 
 	// Messages
 	const s8		cgcComponentError[]								= "Error in component, column ";
@@ -179,6 +181,8 @@
 	const s8		cgcOutOfRange[]									= "out of range";
 	const s8		cgcCommaExpected[]								= "comma expected";
 	const s8		cgcTooManyParameters[]							= "too many parameters";
+	const s8		cgcDataTypeMismatch[]							= "data type mismatch";
+	const s8		cgcFeatureNotAvailable[]						= "feature not available";
 	
 
 //////////
@@ -203,6 +207,8 @@
 
 	const s8		cgcPseudoFunctionName[]							= "__top_of_code_block";
 	const s8		cgcNullText[]									= ".NULL.";
+	const s8		cgcObjectText[]									= "(object)";
+	const s8		cgcThisCodeText[]								= "(thisCode)";
 	const s8		cgcTText[]										= ".T.";
 	const s8		cgcFText[]										= ".F.";
 	const s8		cgcYText[]										= ".Y.";

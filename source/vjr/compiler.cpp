@@ -4289,43 +4289,51 @@ _asm int 3;
 				// Populate
 				varNew->indirect		= varIndirect;
 				varNew->isVarAllocated	= true;
-				varNew->varType		= tnVarType;
+				varNew->varType			= tnVarType;
 
-				// Initially allocate for certain fixed variable types
-				switch (tnVarType)
+				// If it's not an indirect reference, we need to initialize the data
+				if (!varNew->indirect)
 				{
-					case _VAR_TYPE_INTEGER:
-					case _VAR_TYPE_S32:
-					case _VAR_TYPE_U32:
-					case _VAR_TYPE_F32:
-					case _VAR_TYPE_FLOAT:
-						// Allocate 4 bytes
-						iDatum_allocateSpace(&varNew->value, 4);
-						break;
+					// Initially allocate for certain fixed variable types
+					switch (tnVarType)
+					{
+						case _VAR_TYPE_INTEGER:
+						case _VAR_TYPE_S32:
+						case _VAR_TYPE_U32:
+						case _VAR_TYPE_F32:
+						case _VAR_TYPE_FLOAT:
+							// Allocate 4 bytes
+							varNew->isValueAllocated = true;
+							iDatum_allocateSpace(&varNew->value, 4);
+							break;
 
-					case _VAR_TYPE_S64:
-					case _VAR_TYPE_U64:
-					case _VAR_TYPE_F64:
-					case _VAR_TYPE_DOUBLE:
-					case _VAR_TYPE_DATE:
-					case _VAR_TYPE_DATETIME:
-					case _VAR_TYPE_CURRENCY:
-						// Allocate 8 bytes
-						iDatum_allocateSpace(&varNew->value, 8);
-						break;
+						case _VAR_TYPE_S64:
+						case _VAR_TYPE_U64:
+						case _VAR_TYPE_F64:
+						case _VAR_TYPE_DOUBLE:
+						case _VAR_TYPE_DATE:
+						case _VAR_TYPE_DATETIME:
+						case _VAR_TYPE_CURRENCY:
+							// Allocate 8 bytes
+							varNew->isValueAllocated = true;
+							iDatum_allocateSpace(&varNew->value, 8);
+							break;
 
-					case _VAR_TYPE_S16:
-					case _VAR_TYPE_U16:
-						// Allocate 2 bytes
-						iDatum_allocateSpace(&varNew->value, 2);
-						break;
+						case _VAR_TYPE_S16:
+						case _VAR_TYPE_U16:
+							// Allocate 2 bytes
+							varNew->isValueAllocated = true;
+							iDatum_allocateSpace(&varNew->value, 2);
+							break;
 
-					case _VAR_TYPE_S8:
-					case _VAR_TYPE_U8:
-					case _VAR_TYPE_LOGICAL:
-						// Allocate 1 byte
-						iDatum_allocateSpace(&varNew->value, 1);
-						break;
+						case _VAR_TYPE_S8:
+						case _VAR_TYPE_U8:
+						case _VAR_TYPE_LOGICAL:
+							// Allocate 1 byte
+							varNew->isValueAllocated = true;
+							iDatum_allocateSpace(&varNew->value, 1);
+							break;
+					}
 				}
 			}
 
@@ -4348,9 +4356,11 @@ _asm int 3;
 //        rather than a name-driven model.  However, names are still used nearly everywhere. :-)
 //
 //////
-	SVariable* iVariable_searchForName(SVariable* varRoot, s8* tcVarName, u32 tnVarNameLength)
+	SVariable* iVariable_searchForName(SVariable* varRoot, s8* tcVarName, u32 tnVarNameLength, SComp* comp)
 	{
-		SVariable* var;
+		SVariable*	var;
+		SComp*		compNext;
+		SComp*		compNext2;
 
 
 		// Make sure our environment is sane
@@ -4361,12 +4371,35 @@ _asm int 3;
 			var = varRoot;
 			while (var)
 			{
-				// Is the name the same length?
-				if (var->name.length == tnVarNameLength)
+				// Is the name the same length?  And if so, does it match?
+				if (var->name.length == tnVarNameLength && _memicmp(tcVarName, var->name.data, tnVarNameLength) == 0)
 				{
-					// Does it match
-					if (_memicmp(tcVarName, var->name.data, tnVarNameLength) == 0)
-						return(var);		// This is it
+					// This is the name, but for certain types we can reference sub-properties below
+					switch (var->varType)
+					{
+						case _VAR_TYPE_OBJECT:
+							// If the next component is a ., and the one after that is an alpha or alphanumeric, then they are referencing an object property
+							if ((compNext = (SComp*)comp->ll.next) && compNext->iCode == _ICODE_DOT && (compNext2 = (SComp*)compNext->ll.next) && (compNext2->iCode == _ICODE_ALPHA || compNext2->iCode == _ICODE_ALPHANUMERIC))
+							{
+								// We've found something like "lo." where lo is an object, and there is a name reference after it
+								var = iObj_getPropertyAsVariable(var->obj, compNext2->line->sourceCode->data + compNext2->start, compNext2->length, compNext2);
+							}
+							// If we get here, then they did not have a "." after the the object reference, and are referencing the object directly
+							break;
+
+						case _VAR_TYPE_THISCODE:
+							// They could be referencing a variable from that location
+							if ((compNext = (SComp*)comp->ll.next) && compNext->iCode == _ICODE_DOT)
+							{
+								// We've found something like "fred." where fred is a thisCode, and there is a name reference after it
+// TODO:  We need to search the thisCode object for the indicated name
+_asm int 3;
+							}
+							// If we get here, then they did not have a "." after the thisCode reference, and are referencing it directly
+							break;
+					}
+					// If we get here, this is our variable
+					return(var);
 				}
 
 				// Move to next variable
@@ -4376,6 +4409,36 @@ _asm int 3;
 
 		// Indicate our status
 		return(var);
+	}
+
+
+
+
+//////////
+//
+// Are the two variable types comparable?  This function is used to relate numeric forms
+// which can be in a wide variety of internal storage mechanisms, but are all still numeric.
+//
+//////
+	bool iVariable_areTypesCompatible(SVariable* var1, SVariable* var2)
+	{
+		if (var1 && var2)
+		{
+			// Are they the same?  If so, they're compatible. :-)
+			if (var1->varType == var2->varType)
+				return(true);
+
+			// Are they both numeric?
+			if (iVariable_isTypeNumeric(var1) && iVariable_isTypeNumeric(var2))
+				return(true);
+
+			// Are they all logical
+
+			// If we get here, they're not compatible
+		}
+
+		// Indicate failure
+		return(false);
 	}
 
 
@@ -4396,6 +4459,13 @@ _asm int 3;
 		if (varDst && varSrc)
 		{
 			//////////
+			// Are they being goofballs?
+			//////
+				if (varDst == varSrc)
+					return(true);	// Yes
+
+
+			//////////
 			// Make sure we're dealing with the actual variable
 			//////
 				varDst = iiVariable_terminateIndirect(varDst);
@@ -4414,20 +4484,20 @@ _asm int 3;
 				varDst->varType = varSrc->varType;
 				switch (varSrc->varType)
 				{
-					case _VAR_TYPE_EMPTYOBJECT:
 					case _VAR_TYPE_NULL:
 						// Nothing is allocated
 						break;
 
-
+					case _VAR_TYPE_OBJECT:
 					case _VAR_TYPE_THISCODE:
-						// Indirect reference only
+						// Indirect references only
 						varDst->indirect = varSrc;
 						break;
 
 
 					default:
 						// As big as it is
+						varDst->isValueAllocated = true;
 						iDatum_duplicate(&varDst->value, &varSrc->value);
 				}
 
@@ -4471,6 +4541,7 @@ _asm int 3;
 				case _VAR_TYPE_NUMERIC:
 				case _VAR_TYPE_CHARACTER:
 					// Numeric and character forms are already stored as text
+					var->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, &var->value);
 					break;
 
@@ -4478,48 +4549,56 @@ _asm int 3;
 				case _VAR_TYPE_INTEGER:
 					// Convert to integer form, then store text
 					sprintf(buffer, "%d\0", *(s32*)var->value.data);
+					var->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_U32:
 					// Convert to unsigned integer form, then store text
 					sprintf(buffer, "%u\0", *(u32*)var->value.data);
+					var->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_U64:
 					// Convert to unsigned integer form, then store text
 					sprintf(buffer, "%I64u\0", *(u64*)var->value.data);
+					var->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_S64:
 					// Convert to unsigned integer form, then store text
 					sprintf(buffer, "%I64d\0", *(s64*)var->value.data);
+					var->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_S16:
 					// Convert to integer form, then store text
 					sprintf(buffer, "%d\0", (s32)*(s16*)var->value.data);
+					var->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_S8:
 					// Convert to integer form, then store text
 					sprintf(buffer, "%d\0", (s32)*(s8*)var->value.data);
+					var->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_U16:
 					// Convert to unsigned integer form, then store text
 					sprintf(buffer, "%u\0", (u32)*(u16*)var->value.data);
+					var->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_U8:
 					// Convert to unsigned integer form, then store text
 					sprintf(buffer, "%u\0", (u32)*(u8*)var->value.data);
+					var->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
@@ -4534,6 +4613,7 @@ _asm int 3;
 						++lnI;
 
 					// Append its form
+					var->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer + lnI, -1);
 					break;
 
@@ -4548,16 +4628,19 @@ _asm int 3;
 						++lnI;
 
 					// Append its form
+					var->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer + lnI, -1);
 					break;
 
 				case _VAR_TYPE_BI:
 // TODO:  BI needs coded
+					var->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, cgcBigInteger, -1);
 					break;
 
 				case _VAR_TYPE_BFP:
 // TODO:  BFP needs coded
+					var->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, cgcBigFloatingPoint, -1);
 					break;
 
@@ -4657,16 +4740,19 @@ _asm int 3;
 					if (_set_logical == _LOGICAL_TF)
 					{
 						// True/False
+						var->isValueAllocated = true;
 						if (var->value.data[0] == 0)		iDatum_duplicate(&varDisp->value, cgcFText, -1);
 						else								iDatum_duplicate(&varDisp->value, cgcTText, -1);
 
 					} else if (_set_logical == _LOGICAL_YN) {
 						// Yes/No
+						var->isValueAllocated = true;
 						if (var->value.data[0] == 0)		iDatum_duplicate(&varDisp->value, cgcNText, -1);
 						else								iDatum_duplicate(&varDisp->value, cgcYText, -1);
 
 					} else {
 						// Up/Down
+						var->isValueAllocated = true;
 						if (var->value.data[0] == 0)		iDatum_duplicate(&varDisp->value, cgcDText, -1);
 						else								iDatum_duplicate(&varDisp->value, cgcUText, -1);
 					}
@@ -4680,6 +4766,7 @@ _asm int 3;
 					iiVariable_computeYyyyMmDd_fromJulianDayNumber(dt->julian, &lnYear, &lnMonth, &lnDay);
 					iiVariable_computeHhMmSsMss_fromf32(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 					sprintf(buffer, "%02u/%02u/%04u %02u:%02u:%02u.%03u", lnMonth, lnDay, lnYear, lnHour, lnMinute, lnSecond, lnMillisecond);
+					var->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
@@ -4693,6 +4780,7 @@ _asm int 3;
 						++lnI;
 
 					// Append its form
+					var->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer + lnI, -1);
 					break;
 			}
@@ -4701,7 +4789,10 @@ _asm int 3;
 			// Nothing was defined.
 			// Populate a ".null." variable display
 			if (varDisp)
+			{
+				var->isValueAllocated = true;
 				iDatum_duplicate(&varDisp->value, cgcNullText, -1);
+			}
 		}
 
 		// Indicate our status
@@ -4719,31 +4810,38 @@ _asm int 3;
 	void iVariable_delete(SVariable* var, bool tlDeleteSelf)
 	{
 		// Make sure our environment is sane
-		if (var && !var->indirect)
+		if (var)
 		{
+			//////////
+			// Delete the name (if populated)
+			//////
+				iDatum_delete(&var->name, false);
+
+
 			//////////
 			// Do we need to delete this item?
 			//////
-				if (var->isVarAllocated)
+				if (!var->indirect && var->isValueAllocated)
 				{
 					// We only delete the empty objects, or hard values
 					switch (var->varType)
 					{
-						case _VAR_TYPE_EMPTYOBJECT:
+						case _VAR_TYPE_OBJECT:
 							// Delete the object
 							iObj_delete(&var->obj, true);
 							break;
 
-// 						case _VAR_TYPE_THISCODE:
-// 							// All thisCodes are references
-// 							break;
-
 						default:
 							// Delete the datum
-							iDatum_delete(&var->value, false);
-							memset(&var->value, 0, sizeof(SDatum));
+							if (var->isValueAllocated)
+							{
+								iDatum_delete(&var->value, false);
+								memset(&var->value, 0, sizeof(SDatum));
+							}
 							break;
 					}
+					// Lower the value allocated flag
+					var->isValueAllocated = false;
 				}
 
 
@@ -4757,8 +4855,7 @@ _asm int 3;
 
 				} else {
 					// We just need to reset its values as this variable slot will persist
-					var->varType		= _VAR_TYPE_NULL;
-					var->isVarAllocated	= false;
+					var->varType = _VAR_TYPE_NULL;
 				}
 		}
 	}
@@ -4782,6 +4879,7 @@ _asm int 3;
 		if (root && *root)
 		{
 // TODO:  Untested code.  Breakpoint and examine.
+// Remember var->isValueAllocated
 _asm int 3;
 			// Use the linked list functions, which will callback repeatedly for every entry
 			var			= *root;
@@ -5101,8 +5199,618 @@ _asm int 3;
 
 //////////
 //
+// Called to return the value of the indicated variable as an s64 (signed 64-bit integer).
+//
+// Uses:
+//		_set_autoConvert
+//
+//////
+	s64 iiVariable_getAs_s64(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
+	{
+		s8		buffer[16];
+		union {
+			s8			lnValue_s8;
+			s16			lnValue_s16;
+			u8			lnValue_u8;
+			u16			lnValue_u16;
+			u32			lnValue_u32;
+			s64			lnValue_s64;
+			u64			lnValue_u64;
+			f32			lnValue_f32;
+			f64			lnValue_f64;
+			SDateTime	dt;
+		};
+
+
+		*tlError	= false;
+		*tnErrorNum	= 0;
+		// Based on the type of variable it is, return the value
+		switch (var->varType)
+		{
+			case _VAR_TYPE_NUMERIC:
+				//////////
+				// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
+				//////
+					return(_atoi64(var->value.data));
+
+
+			case _VAR_TYPE_S32:
+			case _VAR_TYPE_INTEGER:
+				//////////
+				// We can directly return the value
+				//////
+					return((s64)*(u32*)var->value.data);
+
+
+			case _VAR_TYPE_U32:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					return((s64)*(u32*)var->value.data);
+
+
+			case _VAR_TYPE_U64:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					lnValue_u64 = *(u64*)var->value.data;
+					if (lnValue_u64 <= (u64)_s64_max)
+						return((s64)lnValue_u64);
+
+
+				//////////
+				// If we get here, it's not in range
+				//////
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+
+
+			case _VAR_TYPE_S64:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					return(*(s64*)var->value.data);
+
+
+			case _VAR_TYPE_S16:
+				//////////
+				// We can directly return the value after upsizing to 32-bits
+				//////
+					return((s64)*(s16*)var->value.data);
+
+
+			case _VAR_TYPE_S8:
+				//////////
+				// We can directly return the value after upsizing to 32-bits
+				//////
+					return((s64)*(s8*)var->value.data);
+
+
+			case _VAR_TYPE_U16:
+				//////////
+				// We can directly return the value after upsizing to 32-bits
+				//////
+					return((s64)*(u16*)var->value.data);
+
+
+			case _VAR_TYPE_U8:
+				//////////
+				// We can directly return the value after upsizing to 32-bits
+				//////
+					return((s64)*(u8*)var->value.data);
+
+
+			case _VAR_TYPE_FLOAT:
+			case _VAR_TYPE_F32:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					lnValue_f32 = *(f32*)var->value.data;
+					if (lnValue_f32 < (f32)_s64_min || lnValue_f32 > (f32)_s64_max)
+						return((s64)lnValue_f32);
+
+
+				//////////
+				// If we get here, it's not in range
+				//////
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+
+
+			case _VAR_TYPE_DOUBLE:
+			case _VAR_TYPE_F64:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					lnValue_f64 = *(f64*)var->value.data;
+					if (lnValue_f64 < (f64)_s64_min || lnValue_f64 > (f64)_s64_max)
+						return((s64)lnValue_f64);
+
+
+				//////////
+				// If we get here, it's not in range
+				//////
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+
+
+			case _VAR_TYPE_BI:
+// TODO:  BI needs coded
+				break;
+
+			case _VAR_TYPE_BFP:
+// TODO:  BFP needs coded
+				break;
+
+			case _VAR_TYPE_CHARACTER:
+				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				if (tlForceConvert || _set_autoConvert)
+				{
+					//////////
+					// We can convert this from its text form into numeric
+					//////
+						return(_atoi64(var->value.data));
+				}
+				// If we get here, an invalid variable type was encountered
+				break;
+
+			case _VAR_TYPE_DATE:
+				// We can convert this from its text form into numeric if we're auto-converting
+				if (tlForceConvert || _set_autoConvert)
+				{
+					//////////
+					// Dates are stored internally in text form as YYYYMMDD.
+					// This will produce an integer suitable for sorting, comparing, etc.
+					//////
+						buffer[8] = 0;
+						memcpy(buffer, var->value.data, 8);
+						return(_atoi64(buffer));
+				}
+
+
+			case _VAR_TYPE_LOGICAL:
+				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				if (tlForceConvert || _set_autoConvert)
+				{
+					//////////
+					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
+					//////
+						if (var->value.data[0] == 0)	return(0);
+						else							return(1);
+				}
+				// If we get here, an invalid variable type was encountered
+
+
+			case _VAR_TYPE_DATETIME:
+				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				if (tlForceConvert || _set_autoConvert)
+				{
+					//////////
+					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
+					//////
+						return(iiVariable_computeDatetimeDifference(var, _datetime_Jan_01_2000));
+				}
+				break;
+
+			case _VAR_TYPE_CURRENCY:
+				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				if (tlForceConvert || _set_autoConvert)
+				{
+					//////////
+					// We can return the value after verifying it is not out of range for a 32-bit signed integer
+					//////
+						return((*(s64*)var->value.data / 10000));
+				}
+				break;
+		}
+
+		// If we get here, we could not convert it
+		*tlError	= true;
+		*tnErrorNum	= _ERROR_NOT_NUMERIC;
+		return(0);
+	}
+
+
+
+
+//////////
+//
+// Called to return the value of the indicated variable as an f32 (32-bit floating point).
+//
+// Uses:
+//		_set_autoConvert
+//
+//////
+	f32 iiVariable_getAs_f32(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
+	{
+		s8		buffer[16];
+		union {
+			s8			lnValue_s8;
+			s16			lnValue_s16;
+			u8			lnValue_u8;
+			u16			lnValue_u16;
+			u32			lnValue_u32;
+			s64			lnValue_s64;
+			u64			lnValue_u64;
+			f32			lnValue_f32;
+			f64			lnValue_f64;
+			SDateTime	dt;
+		};
+
+
+		*tlError	= false;
+		*tnErrorNum	= 0;
+		// Based on the type of variable it is, return the value
+		switch (var->varType)
+		{
+			case _VAR_TYPE_NUMERIC:
+				//////////
+				// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
+				//////
+					return((f32)_atoi64(var->value.data));
+
+
+			case _VAR_TYPE_S32:
+			case _VAR_TYPE_INTEGER:
+				//////////
+				// We can directly return the value
+				//////
+					return((f32)*(u32*)var->value.data);
+
+
+			case _VAR_TYPE_U32:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					return((f32)*(u32*)var->value.data);
+
+
+			case _VAR_TYPE_U64:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					return((f32)*(u64*)var->value.data);
+
+
+			case _VAR_TYPE_S64:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					return((f32)*(s64*)var->value.data);
+
+
+			case _VAR_TYPE_S16:
+				//////////
+				// We can directly return the value after upsizing to 32-bits
+				//////
+					return((f32)*(s16*)var->value.data);
+
+
+			case _VAR_TYPE_S8:
+				//////////
+				// We can directly return the value after upsizing to 32-bits
+				//////
+					return((f32)*(s8*)var->value.data);
+
+
+			case _VAR_TYPE_U16:
+				//////////
+				// We can directly return the value after upsizing to 32-bits
+				//////
+					return((f32)*(u16*)var->value.data);
+
+
+			case _VAR_TYPE_U8:
+				//////////
+				// We can directly return the value after upsizing to 32-bits
+				//////
+					return((f32)*(u8*)var->value.data);
+
+
+			case _VAR_TYPE_FLOAT:
+			case _VAR_TYPE_F32:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					return(*(f32*)var->value.data);
+
+
+			case _VAR_TYPE_DOUBLE:
+			case _VAR_TYPE_F64:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					lnValue_f64 = *(f64*)var->value.data;
+					if (lnValue_f64 < (f64)_f32_min || lnValue_f64 > (f64)_f32_max)
+						return((f32)lnValue_f64);
+
+
+				//////////
+				// If we get here, it's not in range
+				//////
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+
+
+			case _VAR_TYPE_BI:
+// TODO:  BI needs coded
+				break;
+
+			case _VAR_TYPE_BFP:
+// TODO:  BFP needs coded
+				break;
+
+			case _VAR_TYPE_CHARACTER:
+				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				if (tlForceConvert || _set_autoConvert)
+				{
+					//////////
+					// We can convert this from its text form into numeric
+					//////
+						return((f32)_atoi64(var->value.data));
+				}
+				// If we get here, an invalid variable type was encountered
+				break;
+
+			case _VAR_TYPE_DATE:
+				// We can convert this from its text form into numeric if we're auto-converting
+				if (tlForceConvert || _set_autoConvert)
+				{
+					//////////
+					// Dates are stored internally in text form as YYYYMMDD.
+					// This will produce an integer suitable for sorting, comparing, etc.
+					//////
+						buffer[8] = 0;
+						memcpy(buffer, var->value.data, 8);
+						return((f32)_atoi64(buffer));
+				}
+
+
+			case _VAR_TYPE_LOGICAL:
+				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				if (tlForceConvert || _set_autoConvert)
+				{
+					//////////
+					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
+					//////
+						if (var->value.data[0] == 0)	return(0.0f);
+						else							return(1.0f);
+				}
+				// If we get here, an invalid variable type was encountered
+
+
+			case _VAR_TYPE_DATETIME:
+				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				if (tlForceConvert || _set_autoConvert)
+				{
+					//////////
+					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
+					//////
+						return((f32)iiVariable_computeDatetimeDifference(var, _datetime_Jan_01_2000));
+				}
+				break;
+
+			case _VAR_TYPE_CURRENCY:
+				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				if (tlForceConvert || _set_autoConvert)
+				{
+					//////////
+					// We can return the value after verifying it is not out of range for a 32-bit signed integer
+					//////
+						return((f32)(*(s64*)var->value.data / 10000));
+				}
+				break;
+		}
+
+		// If we get here, we could not convert it
+		*tlError	= true;
+		*tnErrorNum	= _ERROR_NOT_NUMERIC;
+		return(0);
+	}
+
+
+
+
+//////////
+//
+// Called to return the value of the indicated variable as an f64 (64-bit floating point).
+//
+// Uses:
+//		_set_autoConvert
+//
+//////
+	f64 iiVariable_getAs_f64(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
+	{
+		s8		buffer[16];
+		union {
+			s8			lnValue_s8;
+			s16			lnValue_s16;
+			u8			lnValue_u8;
+			u16			lnValue_u16;
+			u32			lnValue_u32;
+			s64			lnValue_s64;
+			u64			lnValue_u64;
+			f32			lnValue_f32;
+			f64			lnValue_f64;
+			SDateTime	dt;
+		};
+
+
+		*tlError	= false;
+		*tnErrorNum	= 0;
+		// Based on the type of variable it is, return the value
+		switch (var->varType)
+		{
+			case _VAR_TYPE_NUMERIC:
+				//////////
+				// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
+				//////
+					return((f64)_atoi64(var->value.data));
+
+
+			case _VAR_TYPE_S32:
+			case _VAR_TYPE_INTEGER:
+				//////////
+				// We can directly return the value
+				//////
+					return((f64)*(u32*)var->value.data);
+
+
+			case _VAR_TYPE_U32:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					return((f64)*(u32*)var->value.data);
+
+
+			case _VAR_TYPE_U64:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					return((f64)*(u64*)var->value.data);
+
+
+			case _VAR_TYPE_S64:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					return((f64)*(s64*)var->value.data);
+
+
+			case _VAR_TYPE_S16:
+				//////////
+				// We can directly return the value after upsizing to 32-bits
+				//////
+					return((f64)*(s16*)var->value.data);
+
+
+			case _VAR_TYPE_S8:
+				//////////
+				// We can directly return the value after upsizing to 32-bits
+				//////
+					return((f64)*(s8*)var->value.data);
+
+
+			case _VAR_TYPE_U16:
+				//////////
+				// We can directly return the value after upsizing to 32-bits
+				//////
+					return((f64)*(u16*)var->value.data);
+
+
+			case _VAR_TYPE_U8:
+				//////////
+				// We can directly return the value after upsizing to 32-bits
+				//////
+					return((f64)*(u8*)var->value.data);
+
+
+			case _VAR_TYPE_FLOAT:
+			case _VAR_TYPE_F32:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					return((f64)*(f32*)var->value.data);
+
+
+			case _VAR_TYPE_DOUBLE:
+			case _VAR_TYPE_F64:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					return((f64)*(f64*)var->value.data);
+
+
+			case _VAR_TYPE_BI:
+// TODO:  BI needs coded
+				break;
+
+			case _VAR_TYPE_BFP:
+// TODO:  BFP needs coded
+				break;
+
+			case _VAR_TYPE_CHARACTER:
+				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				if (tlForceConvert || _set_autoConvert)
+				{
+					//////////
+					// We can convert this from its text form into numeric
+					//////
+						return((f64)_atoi64(var->value.data));
+				}
+				// If we get here, an invalid variable type was encountered
+				break;
+
+			case _VAR_TYPE_DATE:
+				// We can convert this from its text form into numeric if we're auto-converting
+				if (tlForceConvert || _set_autoConvert)
+				{
+					//////////
+					// Dates are stored internally in text form as YYYYMMDD.
+					// This will produce an integer suitable for sorting, comparing, etc.
+					//////
+						buffer[8] = 0;
+						memcpy(buffer, var->value.data, 8);
+						return((f64)_atoi64(buffer));
+				}
+
+
+			case _VAR_TYPE_LOGICAL:
+				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				if (tlForceConvert || _set_autoConvert)
+				{
+					//////////
+					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
+					//////
+						if (var->value.data[0] == 0)	return(0.0);
+						else							return(1.0);
+				}
+				// If we get here, an invalid variable type was encountered
+
+
+			case _VAR_TYPE_DATETIME:
+				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				if (tlForceConvert || _set_autoConvert)
+				{
+					//////////
+					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
+					//////
+						return((f64)iiVariable_computeDatetimeDifference(var, _datetime_Jan_01_2000));
+				}
+				break;
+
+			case _VAR_TYPE_CURRENCY:
+				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				if (tlForceConvert || _set_autoConvert)
+				{
+					//////////
+					// We can return the value after verifying it is not out of range for a 32-bit signed integer
+					//////
+						return((f64)(*(s64*)var->value.data / 10000));
+				}
+				break;
+		}
+
+		// If we get here, we could not convert it
+		*tlError	= true;
+		*tnErrorNum	= _ERROR_NOT_NUMERIC;
+		return(0);
+	}
+
+
+
+
+//////////
+//
 // Called to get the value stored in the component as an s64.
 // Note:  We simply process the component's content here.  No type checking.
+// Note:  We expect that the component has been identified appropriately as a numeric type, and that
+//        there is some character after which will cease its conversion, and thereby make it convert
+//        without forcing a NULL in there at the end before converting.
 //
 //////
 	s64 iiVariable_getCompAs_s64(SComp* comp)

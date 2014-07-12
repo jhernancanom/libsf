@@ -169,16 +169,20 @@ struct SVariable;
 	void					iFunction_politelyDeleteCompiledInfo		(SFunction* func, bool tlDeleteSelf);
 
 	// Variable functions
-	SVariable*				iiVariable_terminateIndirect					(SVariable* var);
+	SVariable*				iiVariable_terminateIndirect				(SVariable* var);
 	SVariable*				iVariable_create							(u32 tnVarType, SVariable* varIndirect);
-	SVariable*				iVariable_searchForName						(SVariable* varRoot, s8* tcVarName, u32 tnVarNameLength);
+	SVariable*				iVariable_searchForName						(SVariable* varRoot, s8* tcVarName, u32 tnVarNameLength, SComp* comp);
+	bool					iVariable_areTypesCompatible				(SVariable* var1, SVariable* var2);
 	bool					iVariable_copyVariable						(SVariable* varDst, SVariable* varSrc);
 	SVariable*				iVariable_convertForDisplay					(SVariable* var);
 	void					iVariable_delete							(SVariable* var, bool tlDeleteSelf);
 	void					iVariable_politelyDeleteChain				(SVariable** root, bool tlDeleteSelf);
 	void					iVariable_politelyDeleteChain_callback		(SLLCallback* cb);
 	s32						iiVariable_getAs_s32						(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
-	s64						iiVariable_getCompAs_s64						(SComp* comp);
+	s64						iiVariable_getAs_s64						(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
+	f32						iiVariable_getAs_f32						(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
+	f64						iiVariable_getAs_f64						(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
+	s64						iiVariable_getCompAs_s64					(SComp* comp);
 	// Support functions
 	s32						iiVariable_julianDayNumber_fromYyyyMmDd			(f32* tnJulianDayNumber, u32  year, u32  month, u32  day);
 	void					iiVariable_computeYyyyMmDd_fromJulianDayNumber	(u32  tnJulianDayNumber, u32* year, u32* month, u32* day);

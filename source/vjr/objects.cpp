@@ -36,6 +36,72 @@
 
 
 
+
+
+
+//////////
+// Baseclass translation text name to objType, and objType to full record
+//////
+	SBaseclassList gsKnownBaseclasses[] = {
+		//	objType					Text name				Length of name
+		//  ------------------		-----------------		-------------------------------
+		{	_OBJ_TYPE_EMPTY,		cgcName_empty,			sizeof(cgcName_empty)		- 1		},
+		{	_OBJ_TYPE_FORM,			cgcName_form,			sizeof(cgcName_form)		- 1		},
+		{	_OBJ_TYPE_SUBFORM,		cgcName_subform,		sizeof(cgcName_subform)		- 1		},
+		{	_OBJ_TYPE_LABEL,		cgcName_label,			sizeof(cgcName_label)		- 1		},
+		{	_OBJ_TYPE_TEXTBOX,		cgcName_textbox,		sizeof(cgcName_textbox)		- 1		},
+		{	_OBJ_TYPE_BUTTON,		cgcName_button,			sizeof(cgcName_button)		- 1		},
+		{	_OBJ_TYPE_EDITBOX,		cgcName_editbox,		sizeof(cgcName_editbox)		- 1		},
+		{	_OBJ_TYPE_IMAGE,		cgcName_image,			sizeof(cgcName_image)		- 1		},
+		{	_OBJ_TYPE_CHECKBOX,		cgcName_checkbox,		sizeof(cgcName_checkbox)	- 1		},
+		{	_OBJ_TYPE_OPTION,		cgcName_option,			sizeof(cgcName_option)		- 1		},
+		{	_OBJ_TYPE_RADIO,		cgcName_radio,			sizeof(cgcName_radio)		- 1		},
+		// Note:  Do not delete this line, it is used to terminate the search list
+		{	0,						NULL,					0	}
+	};
+
+
+//////////
+// Property translation text name to property value
+//////
+	SPropertyList gsBaseObjectProperties[] = {
+		{	cgcName_parent,					sizeof(cgcName_parent) - 1,					(u32)&iObj_setProperty_parent,					(u32)&iObj_getProperty_parent				},
+		{	cgcName_tabIndex,				sizeof(cgcName_tabIndex) - 1,				(u32)&iObj_setProperty_tabIndex,				(u32)&iObj_getProperty_tabIndex				},
+		{	cgcName_tabStop,				sizeof(cgcName_tabStop) - 1,				(u32)&iObj_setProperty_tabStop,					(u32)&iObj_getProperty_tabStop				},
+		{	cgcName_helpContextId,			sizeof(cgcName_helpContextId) - 1,			(u32)&iObj_setProperty_helpContextId,			(u32)&iObj_getProperty_helpContextId		},
+		{	cgcName_hasWhatsThisButton,		sizeof(cgcName_hasWhatsThisButton) - 1,		(u32)&iObj_setProperty_hasWhatsThisButton,		(u32)&iObj_getProperty_hasWhatsThisButton	},
+		{	cgcName_hasWhatsThisHelp,		sizeof(cgcName_hasWhatsThisHelp) - 1,		(u32)&iObj_setProperty_hasWhatsThisHelp,		(u32)&iObj_getProperty_hasWhatsThisHelp		},
+		{	cgcName_whatsThisHelpId,		sizeof(cgcName_whatsThisHelpId) - 1,		(u32)&iObj_setProperty_whatsThisHelpId,			(u32)&iObj_getProperty_whatsThisHelpId		},
+		{	cgcName_name,					sizeof(cgcName_name) - 1,					(u32)&iObj_setProperty_name,					(u32)&iObj_getProperty_name					},
+		{	cgcName_className,				sizeof(cgcName_className) - 1,				(u32)&iObj_setProperty_className,				(u32)&iObj_getProperty_className			},
+		{	cgcName_classLibrary,			sizeof(cgcName_classLibrary) - 1,			(u32)&iObj_setProperty_classLibrary,			(u32)&iObj_getProperty_classLibrary			},
+		{	cgcName_comment,				sizeof(cgcName_comment) - 1,				(u32)&iObj_setProperty_comment,					(u32)&iObj_getProperty_comment				},
+		{	cgcName_toolTip,				sizeof(cgcName_toolTip) - 1,				(u32)&iObj_setProperty_toolTip,					(u32)&iObj_getProperty_toolTip				},
+		{	cgcName_tag,					sizeof(cgcName_tag) - 1,					(u32)&iObj_setProperty_tag,						(u32)&iObj_getProperty_tag					},
+		{	cgcName_mousePointer,			sizeof(cgcName_mousePointer) - 1,			(u32)&iObj_setProperty_mousePointer,			(u32)&iObj_getProperty_mousePointer			},
+		{	cgcName_isEnabled,				sizeof(cgcName_isEnabled) - 1,				(u32)&iObj_setProperty_isEnabled,				(u32)&iObj_getProperty_isEnabled			},
+		{	cgcName_hasFocus,				sizeof(cgcName_hasFocus) - 1,				(u32)&iObj_setProperty_hasFocus,				(u32)&iObj_getProperty_hasFocus				},
+		{	cgcName_isMovable,				sizeof(cgcName_isMovable) - 1,				(u32)&iObj_setProperty_isMovable,				(u32)&iObj_getProperty_isMovable			},
+		{	cgcName_isRendered,				sizeof(cgcName_isRendered) - 1,				(u32)&iObj_setProperty_isRendered,				(u32)&iObj_getProperty_isRendered			},
+		{	cgcName_isPublished,			sizeof(cgcName_isPublished) - 1,			(u32)&iObj_setProperty_isPublished,				(u32)&iObj_getProperty_isPublished			},
+		{	cgcName_isVisible,				sizeof(cgcName_isVisible) - 1,				(u32)&iObj_setProperty_isVisible,				(u32)&iObj_getProperty_isVisible			},
+		{	cgcName_isDirty,				sizeof(cgcName_isDirty) - 1,				(u32)&iObj_setProperty_isDirty,					(u32)&iObj_getProperty_isDirty				},
+		{	cgcName_left,					sizeof(cgcName_left) - 1,					(u32)&iObj_setProperty_left,					(u32)&iObj_getProperty_left					},
+		{	cgcName_top,					sizeof(cgcName_top) - 1,					(u32)&iObj_setProperty_top,						(u32)&iObj_getProperty_top					},
+		{	cgcName_width,					sizeof(cgcName_width) - 1,					(u32)&iObj_setProperty_width,					(u32)&iObj_getProperty_width				},
+		{	cgcName_height,					sizeof(cgcName_height) - 1,					(u32)&iObj_setProperty_height,					(u32)&iObj_getProperty_height				},
+		{	cgcName_anchor,					sizeof(cgcName_anchor) - 1,					(u32)&iObj_setProperty_anchor,					(u32)&iObj_getProperty_anchor				},
+		{	cgcName_scrollX,				sizeof(cgcName_scrollX) - 1,				(u32)&iObj_setProperty_scrollX,					(u32)&iObj_getProperty_scrollX				},
+		{	cgcName_scrollY,				sizeof(cgcName_scrollY) - 1,				(u32)&iObj_setProperty_scrollY,					(u32)&iObj_getProperty_scrollY				},
+		{	cgcName_scaleX,					sizeof(cgcName_scaleX) - 1,					(u32)&iObj_setProperty_scaleX,					(u32)&iObj_getProperty_scaleX				},
+		{	cgcName_scaleY,					sizeof(cgcName_scaleY) - 1,					(u32)&iObj_setProperty_scaleY,					(u32)&iObj_getProperty_scaleY				},
+		// Note:  Do not delete this line, it is used to terminate the search list
+		{	0, 0, 0, 0	}
+	};
+
+
+
+
 //////////
 //
 // Creates the object structure
@@ -675,6 +741,33 @@
 
 //////////
 //
+// Searches the indicated object for the indicated property
+//
+//////
+	SVariable* iObj_getPropertyAsVariable(SObject* obj, s8* tcPropertyName, u32 tnPropertyNameLength, SComp* comp)
+	{
+		SBaseclassList* lbcl;
+
+
+		// Make sure our environment is sane
+		if (obj)
+		{
+			// Find out our property interface
+			lbcl = iiObj_getBaseclass_byType(obj->objType);
+			if (lbcl)
+			{
+				// Search through the properties
+			}
+		}
+		// If we get here, wasn't found
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
 // Called to reset the object's properties to their default values.
 // Only an internal function, and only used during initialization.
 // After that the main gobj_default* objects are used for creating
@@ -815,6 +908,62 @@
 			obj->scrollOffsetX	= 0;
 			obj->scrollOffsetY	= 0;
 			obj->isScaled		= false;
+	}
+
+
+
+
+//////////
+//
+// Called to translate the text-based class name to its internal object type.
+//
+//////
+	s32 iiObj_getBaseclass_byName(s8* tcTextname, s32 tnTextnameLength)
+	{
+		SBaseclassList* lbcl;
+		
+		
+		// Iterate through each function for matches
+		lbcl = &gsKnownBaseclasses[0];
+		while (lbcl && lbcl->textName != NULL)
+		{
+			// Is this the named function?
+			if (lbcl->textNameLength == tnTextnameLength && _memicmp(tcTextname, (s8*)lbcl->textName, tnTextnameLength) == 0)
+				return(lbcl->objType);
+
+			// Move to next function
+			++lbcl;
+		}
+		// If we get here, not found
+		return(-1);
+	}
+
+
+
+
+//////////
+//
+// Called to translate the class object type to its text-base name
+//
+//////
+	SBaseclassList* iiObj_getBaseclass_byType(u32 tnObjType)
+	{
+		SBaseclassList* lbcl;
+		
+		
+		// Iterate through each function for matches
+		lbcl = &gsKnownBaseclasses[0];
+		while (lbcl && lbcl->textName != NULL)
+		{
+			// Is this the named function?
+			if (lbcl->objType == tnObjType)
+				return(lbcl);
+
+			// Move to next function
+			++lbcl;
+		}
+		// If we get here, not found
+		return(NULL);
 	}
 
 

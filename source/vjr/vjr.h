@@ -87,6 +87,7 @@
 
 #include "vjr_sup.cpp"
 #include "objects.cpp"
+#include "object_accessors.cpp"
 #include "callbacks.cpp"
 #include "events.cpp"
 #include "bitmaps.cpp"

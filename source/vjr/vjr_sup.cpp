@@ -390,14 +390,18 @@
 					return(iMouse_processMessage(win, m, w, l));
 					break;
 
+				case WM_SYSKEYDOWN:
+//				case WM_SYSKEYUP:
+//				case WM_SYSCHAR:
+//				case WM_SYSDEADCHAR:
+					if (w == VK_F10)
+						return(iKeyboard_processMessage(win, m, w, l));
+					break;
+
 				case WM_KEYDOWN:
 //				case WM_KEYUP:
 //				case WM_CHAR:
 //				case WM_DEADCHAR:
-//				case WM_SYSKEYDOWN:
-//				case WM_SYSKEYUP:
-//				case WM_SYSCHAR:
-//				case WM_SYSDEADCHAR:
 					return(iKeyboard_processMessage(win, m, w, l));
 					break;
 

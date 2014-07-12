@@ -86,8 +86,10 @@ typedef		const f64			cf64;
 	#define iVariable_isTypeLogical(var)			(var->varType == _VAR_TYPE_LOGICAL)
 	#define iVariable_isTypeCharacter(var)			(var->varType == _VAR_TYPE_CHARACTER)
 	#define iVariable_isTypeNumeric(var)			(var->varType >= _VAR_TYPE_NUMERIC_START && var->varType <= _VAR_TYPE_NUMERIC_END)
+	#define iVariable_isNumeric64Bit(var)			(var->varType == _VAR_TYPE_S64 || var->varType == _VAR_TYPE_U64 || var->varType == _VAR_TYPE_CURRENCY)
 	#define iVariable_isTypeDate(var)				(var->varType == _VAR_TYPE_DATE)
 	#define iVariable_isTypeDatetime(var)			(var->varType == _VAR_TYPE_DATETIME)
+	#define iVariable_isTypeBig(var)				(var->varType == _VAR_TYPE_BI || var->varType == _VAR_TYPE_BFP)
 	#define iVariable_isTypeFloatingPoint(var)		(var->varType == _VAR_TYPE_F32 || var->varType == _VAR_TYPE_F64 || var->varType == _VAR_TYPE_FLOAT || var->varType == _VAR_TYPE_DOUBLE)
 	#define iVariable_isTypeFloat(var)				(var->varType == _VAR_TYPE_F32 || var->varType == _VAR_TYPE_FLOAT)
 	#define iVariable_isTypeDouble(var)				(var->varType == _VAR_TYPE_F64 || var->varType == _VAR_TYPE_DOUBLE)
@@ -136,6 +138,8 @@ typedef		const f64			cf64;
 	const s64			_s64_min							= 0xffffffffffffffff;
 	const s64			_s64_max							= 0x7fffffffffffffff;
 	const u64			_u64_max							= 0xffffffffffffffff;
+	const f32			_f32_min							= 3.402823466e+38f;
+	const f32			_f32_max							= 1.175494351e-38f;
 
 
 //////////
@@ -152,6 +156,33 @@ typedef		const f64			cf64;
 	const u32			_OBJ_TYPE_CHECKBOX					= 8;						// A checkbox
 	const u32			_OBJ_TYPE_OPTION					= 9;						// A combination selection
 	const u32			_OBJ_TYPE_RADIO						= 10;						// A radio dial, which can also present as a slider or spinner
+
+//////////
+// A shortcut timesaver offered out of the goodness of my heart. :-)
+// 	switch (obj->objType)
+// 	{
+// 		case _OBJ_TYPE_FORM:
+// 			break;
+// 		case _OBJ_TYPE_SUBFORM:
+// 			break;
+// 		case _OBJ_TYPE_LABEL:
+// 			break;
+// 		case _OBJ_TYPE_TEXTBOX:
+// 			break;
+// 		case _OBJ_TYPE_BUTTON:
+// 			break;
+// 		case _OBJ_TYPE_EDITBOX:
+// 			break;
+// 		case _OBJ_TYPE_IMAGE:
+// 			break;
+// 		case _OBJ_TYPE_CHECKBOX:
+// 			break;
+// 		case _OBJ_TYPE_OPTION:
+// 			break;
+// 		case _OBJ_TYPE_RADIO:
+// 			break;
+// 	}
+//////
 
 
 //////////
@@ -317,6 +348,42 @@ typedef		const f64			cf64;
 	const s8			cgcName_checkbox[]					= "checkbox";
 	const s8			cgcName_option[]					= "option";
 	const s8			cgcName_radio[]						= "radio";
+
+
+//////////
+// Base object property names
+//////
+	const s8			cgcName_parent[]					= "parent";
+	const s8			cgcName_tabIndex[]					= "tabIndex";
+	const s8			cgcName_tabStop[]					= "tabStop";
+	const s8			cgcName_helpContextId[]				= "helpContextId";
+	const s8			cgcName_hasWhatsThisButton[]		= "hasWhatsThisButton";
+	const s8			cgcName_hasWhatsThisHelp[]			= "hasWhatsThisHelp";
+	const s8			cgcName_whatsThisHelpId[]			= "whatsThisHelpId";
+	const s8			cgcName_name[]						= "name";
+	const s8			cgcName_className[]					= "classname";
+	const s8			cgcName_classLibrary[]				= "classLibrary";
+	const s8			cgcName_comment[]					= "comment";
+	const s8			cgcName_toolTip[]					= "toolTip";
+	const s8			cgcName_tag[]						= "tag";
+	const s8			cgcName_mousePointer[]				= "mousePointer";
+	const s8			cgcName_isEnabled[]					= "isEnabled";
+	const s8			cgcName_hasFocus[]					= "hasFocus";
+	const s8			cgcName_isMovable[]					= "isMovable";
+	const s8			cgcName_isRendered[]				= "isRendered";
+	const s8			cgcName_isPublished[]				= "isPublished";
+	const s8			cgcName_isVisible[]					= "visible";
+	const s8			cgcName_isDirty[]					= "isDirty";
+	const s8			cgcName_left[]						= "left";
+	const s8			cgcName_top[]						= "top";
+	const s8			cgcName_width[]						= "width";
+	const s8			cgcName_height[]					= "height";
+	const s8			cgcName_anchor[]					= "anchor";
+	const s8			cgcName_scrollX[]					= "scrollX";
+	const s8			cgcName_scrollY[]					= "scrollY";
+	const s8			cgcName_scaleX[]					= "scaleX";
+	const s8			cgcName_scaleY[]					= "scaleY";
+
 
 
 //////////

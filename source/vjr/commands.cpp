@@ -32,13 +32,7 @@
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
 //
 //////
-// Steps to add a new function:
-//		(1)  STEP1:  Add the function definition to the "Functions" section below (search for "STEP1:").
-//		(2)  STEP2:  Add the function information to the "Translation" gsKnownFunctions data by inserting it where it should go (search for "STEP2:").
-//		(3)  STEP3:  Add the function to commands.cpp (search for "STEP3").
-//		(4)  Code, debug, and test the function thoroughly.
-//		(5)  Email your changes to Rick C. Hodgin at the address on the www.visual-freepro.org/vjr/indexmain.html web page.
-//		(6)  Happy coding!
+// To add a new function, see the instructions in command_defs.h.
 //
 //
 
@@ -99,6 +93,8 @@
 			case _ERROR_OUT_OF_RANGE:						{	iError_report((s8*)cgcOutOfRange);					break;	}
 			case _ERROR_COMMA_EXPECTED:						{	iError_report((s8*)cgcCommaExpected);				break;	}
 			case _ERROR_TOO_MANY_PARAMETERS:				{	iError_report((s8*)cgcTooManyParameters);			break;	}
+			case _ERROR_DATA_TYPE_MISMATCH:					{	iError_report((s8*)cgcDataTypeMismatch);			break;	}
+			case _ERROR_FEATURE_NOT_AVAILABLE:				{	iError_report((s8*)cgcFeatureNotAvailable);			break;	}
 		}
 
 		// Display the component
@@ -265,6 +261,95 @@
 		//////
 	        return result;
     }
+
+
+
+
+//////////
+//
+// Function: CREATEOBJECT()
+// Instantiates and instance of the indicated class.
+//
+//////
+// Version 0.30
+// Last update:
+//     Jul.12.2014
+//////
+// Change log:
+//     Jul.12.2014 - Initial creation
+//////
+// Parameters:
+//     pClassname	-- The name of the class
+//     Note:  A future extension will allow parameters passed to the class's init() event
+//
+//////
+// Returns:
+//    Object		-- The class instance object is returned
+//
+//////
+	SVariable* function_createobject(SVariable* p1)
+	{
+		u32			lnObjType;
+		SObject*	obj;
+        SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be character
+		//////
+			if (!iVariable_isValid(p1) || iVariable_getType(p1) != _VAR_TYPE_CHARACTER)
+			{
+				iError_report("Parameter 1 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // It must be at least one character long
+		//////
+			if (p1->value.length == 0)
+				iError_reportByNumber(_ERROR_EMPTY_STRING, NULL);
+
+
+		//////////
+		// See if we know the class
+		//////
+			lnObjType = iiObj_getBaseclass_byName(p1->value.data, p1->value.length);
+			if (lnObjType <= 0)
+			{
+				iError_report("Unknown class");
+				return(NULL);
+			}
+
+			// Create our object
+			obj = iObj_create(lnObjType, NULL);
+			if (!obj)
+			{
+				iError_report("Internal error on create object.");
+				return(NULL);
+			}
+
+
+		//////////
+        // Create our return result variable, which is a reference to the new object
+		//////
+	        result = iVariable_create(_VAR_TYPE_OBJECT, NULL);
+			if (!result)
+			{
+				iObj_delete(&obj, true);
+				iError_report("Internal error on create variable.");
+				return(NULL);
+			}
+
+			// Store the object reference
+			result->obj = obj;
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
+	}
 
 
 
@@ -482,6 +567,430 @@
         // Return our converted result
 		//////
 	        return result;
+	}
+
+
+
+
+//////////
+//
+// Function: MAX()
+// Returns the maximum value of the two inputs.
+//
+//////
+// Version 0.30   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Jul.12.2014
+//////
+// Change log:
+//     Jul.12.2014 - Initial creation
+//////
+// Parameters:
+//     pLeft		-- Left-side value, first parameter
+//     pRight		-- Right-side value, second parameter
+//
+//////
+// Returns:
+//    Either pLeft or pRight copied, depending on which is greater.
+//    If they're equal, a copy of pLeft is returned.
+//
+//////
+	SVariable* function_max(SVariable* pLeft, SVariable* pRight)
+	{
+		bool		llLeft;
+		s32			lnLeft32, lnRight32;
+		s64			lnLeft64, lnRight64;
+		f64			lfLeft64, lfRight64;
+		bool		error;
+		u32			errorNum;
+		SDateTime*	dtLeft;
+		SDateTime*	dtRight;
+		SVariable*	result;
+// TODO:  We need to add support for comparable types, such as numeric that are integer, and float, which can still be compared
+
+
+		//////////
+        // Parameter 1 must be numeric
+		//////
+			if (!iVariable_isValid(pLeft))
+			{
+				iError_report("Parameter 1 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 2 must be numeric
+		//////
+			if (!iVariable_isValid(pRight))
+			{
+				iError_report("Parameter 2 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+		// They must be the same type
+		//////
+			if (pLeft->varType != pRight->varType)
+			{
+				// Operand mismatch
+				iError_reportByNumber(_ERROR_DATA_TYPE_MISMATCH, NULL);
+				return(NULL);
+			}
+
+
+		//////////
+		// Determine what we're comparing
+		//////
+			llLeft = false;
+			switch (pLeft->varType)
+			{
+				case _VAR_TYPE_DATE:			// Note:  Dates are stored internally as YYYYMMDD, so they can be directly compared
+				case _VAR_TYPE_CHARACTER:
+					if (pLeft->value.length == 0 || pRight->value.length == 0)
+					{
+						// At least one of them is null, return the left
+						llLeft = true;
+
+					} else {
+						// They both have a non-zero length
+						switch (_memicmp(pLeft->value.data, pRight->value.data, min(pLeft->value.length, pRight->value.length)))
+						{
+							case -1:
+							case 0:
+								// Left is less than or equal to right
+								llLeft = true;
+								break;
+
+							default:
+								// Right is less
+								break;
+						}
+					}
+					break;
+
+				case _VAR_TYPE_DATETIME:
+					dtLeft	= (SDateTime*)pLeft->value.data;
+					dtRight	= (SDateTime*)pRight->value.data;
+					if (dtLeft->julian < dtRight->julian)
+					{
+						// Left is less
+						llLeft = true;
+
+					} else if (dtLeft->julian > dtRight->julian) {
+						// Right is less
+
+					} else {
+						// They are equal, compare the time
+						if (dtLeft->seconds <= dtRight->seconds)
+						{
+							// Left is less or equal
+							llLeft = true;
+
+						} else {
+							// Right is less
+						}
+					}
+					break;
+
+				default:
+					if (iVariable_isTypeBig(pLeft))
+					{
+						// It's a character compared to a character
+						iError_reportByNumber(_ERROR_FEATURE_NOT_AVAILABLE, NULL);
+						return(NULL);
+
+					} else if (iVariable_isTypeFloatingPoint(pLeft)) {
+						// Comparing floating point values
+						lfLeft64	= iiVariable_getAs_f64(pLeft, false, &error, &errorNum);
+						if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+						lfRight64	= iiVariable_getAs_f64(pRight, false, &error, &errorNum);
+						if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+						// Perform the test
+						if (lfLeft64 <= lfRight64)
+						{
+							// Left is less
+							llLeft = true;
+
+						} else {
+							// Right is less
+						}
+
+					} else if (iVariable_isTypeNumeric(pLeft)) {
+						// Comparing numerics
+						if (iVariable_isNumeric64Bit(pLeft) || iVariable_isNumeric64Bit(pRight))
+						{
+							// It requires a 64-bit signed compare
+							lnLeft64	= iiVariable_getAs_s64(pLeft, false, &error, &errorNum);
+							if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+							lnRight64	= iiVariable_getAs_s64(pRight, false, &error, &errorNum);
+							if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+							// Perform the test
+							if (lnLeft64 <= lnRight64)
+							{
+								// Left is less
+								llLeft = true;
+
+							} else {
+								// Right is less
+							}
+
+						} else {
+							// It can be done in a 32-bit signed compare
+							lnLeft32	= iiVariable_getAs_s32(pLeft, false, &error, &errorNum);
+							if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+							lnRight32	= iiVariable_getAs_s32(pRight, false, &error, &errorNum);
+							if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+							// Perform the test
+							if (lnLeft32 <= lnRight32)
+							{
+								// Left is less
+								llLeft = true;
+
+							} else {
+								// Right is less
+							}
+						}
+
+					} else {
+						// We cannot compare these types
+						iError_reportByNumber(_ERROR_FEATURE_NOT_AVAILABLE, NULL);
+						return(NULL);
+					}
+			}
+			// When we get here, llLeft is populated with our intent
+			result = iVariable_create(pLeft->varType, NULL);
+			if (llLeft)
+			{
+				// Left is less, so duplicate right
+				iDatum_duplicate(&result->value, &pRight->value);
+
+			} else {
+				// Right is less, so duplicate left
+				iDatum_duplicate(&result->value, &pLeft->value);
+			}
+
+			// Indicate our result
+			return(result);
+	}
+
+
+
+
+//////////
+//
+// Function: MIN()
+// Returns the minimum value of the two inputs.
+//
+//////
+// Version 0.30   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Jul.12.2014
+//////
+// Change log:
+//     Jul.12.2014 - Initial creation
+//////
+// Parameters:
+//     pLeft		-- Left-side value, first parameter
+//     pRight		-- Right-side value, second parameter
+//
+//////
+// Returns:
+//    Either pLeft or pRight copied, depending on which is less.
+//    If they're equal, a copy of pLeft is returned.
+//
+//////
+	SVariable* function_min(SVariable* pLeft, SVariable* pRight)
+	{
+		bool		llLeft;
+		s32			lnLeft32, lnRight32;
+		s64			lnLeft64, lnRight64;
+		f64			lfLeft64, lfRight64;
+		bool		error;
+		u32			errorNum;
+		SDateTime*	dtLeft;
+		SDateTime*	dtRight;
+		SVariable*	result;
+// TODO:  We need to add support for comparable types, such as numeric that are integer, and float, which can still be compared
+
+
+		//////////
+        // Parameter 1 must be numeric
+		//////
+			if (!iVariable_isValid(pLeft))
+			{
+				iError_report("Parameter 1 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 2 must be numeric
+		//////
+			if (!iVariable_isValid(pRight))
+			{
+				iError_report("Parameter 2 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+		// They must be the same type
+		//////
+			if (pLeft->varType != pRight->varType)
+			{
+				// Operand mismatch
+				iError_reportByNumber(_ERROR_DATA_TYPE_MISMATCH, NULL);
+				return(NULL);
+			}
+
+
+		//////////
+		// Determine what we're comparing
+		//////
+			llLeft = false;
+			switch (pLeft->varType)
+			{
+				case _VAR_TYPE_DATE:			// Note:  Dates are stored internally as YYYYMMDD, so they can be directly compared
+				case _VAR_TYPE_CHARACTER:
+					if (pLeft->value.length == 0 || pRight->value.length == 0)
+					{
+						// At least one of them is null, return the left
+						llLeft = true;
+
+					} else {
+						// They both have a non-zero length
+						switch (_memicmp(pLeft->value.data, pRight->value.data, min(pLeft->value.length, pRight->value.length)))
+						{
+							case -1:
+							case 0:
+								// Left is less than or equal to right
+								llLeft = true;
+								break;
+
+							default:
+								// Right is less
+								break;
+						}
+					}
+					break;
+
+				case _VAR_TYPE_DATETIME:
+					dtLeft	= (SDateTime*)pLeft->value.data;
+					dtRight	= (SDateTime*)pRight->value.data;
+					if (dtLeft->julian < dtRight->julian)
+					{
+						// Left is less
+						llLeft = true;
+
+					} else if (dtLeft->julian > dtRight->julian) {
+						// Right is less
+
+					} else {
+						// They are equal, compare the time
+						if (dtLeft->seconds <= dtRight->seconds)
+						{
+							// Left is less or equal
+							llLeft = true;
+
+						} else {
+							// Right is less
+						}
+					}
+					break;
+
+				default:
+					if (iVariable_isTypeBig(pLeft))
+					{
+						// It's a character compared to a character
+						iError_reportByNumber(_ERROR_FEATURE_NOT_AVAILABLE, NULL);
+						return(NULL);
+
+					} else if (iVariable_isTypeFloatingPoint(pLeft)) {
+						// Comparing floating point values
+						lfLeft64	= iiVariable_getAs_f64(pLeft, false, &error, &errorNum);
+						if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+						lfRight64	= iiVariable_getAs_f64(pRight, false, &error, &errorNum);
+						if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+						// Perform the test
+						if (lfLeft64 <= lfRight64)
+						{
+							// Left is less
+							llLeft = true;
+
+						} else {
+							// Right is less
+						}
+
+					} else if (iVariable_isTypeNumeric(pLeft)) {
+						// Comparing numerics
+						if (iVariable_isNumeric64Bit(pLeft) || iVariable_isNumeric64Bit(pRight))
+						{
+							// It requires a 64-bit signed compare
+							lnLeft64	= iiVariable_getAs_s64(pLeft, false, &error, &errorNum);
+							if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+							lnRight64	= iiVariable_getAs_s64(pRight, false, &error, &errorNum);
+							if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+							// Perform the test
+							if (lnLeft64 <= lnRight64)
+							{
+								// Left is less
+								llLeft = true;
+
+							} else {
+								// Right is less
+							}
+
+						} else {
+							// It can be done in a 32-bit signed compare
+							lnLeft32	= iiVariable_getAs_s32(pLeft, false, &error, &errorNum);
+							if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+							lnRight32	= iiVariable_getAs_s32(pRight, false, &error, &errorNum);
+							if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+							// Perform the test
+							if (lnLeft32 <= lnRight32)
+							{
+								// Left is less
+								llLeft = true;
+
+							} else {
+								// Right is less
+							}
+						}
+
+					} else {
+						// We cannot compare these types
+						iError_reportByNumber(_ERROR_FEATURE_NOT_AVAILABLE, NULL);
+						return(NULL);
+					}
+			}
+			// When we get here, llLeft is populated with our intent
+			result = iVariable_create(pLeft->varType, NULL);
+			if (llLeft)
+			{
+				// Left is less
+				iDatum_duplicate(&result->value, &pLeft->value);
+
+			} else {
+				// Right is less
+				iDatum_duplicate(&result->value, &pRight->value);
+			}
+
+			// Indicate our result
+			return(result);
 	}
 
 

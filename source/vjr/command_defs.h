@@ -62,16 +62,25 @@ struct SVariable;
 
 //////////
 // Functions
-// STEP1:
+// STEP1: Define your function
 //////
 	SVariable*			function_asc								(SVariable* p1);
 	SVariable*			function_chr								(SVariable* p1);
+	SVariable*			function_createobject						(SVariable* p1);
 	SVariable*			function_datetime							(SVariable* pYear, SVariable* pMonth, SVariable* pDay, SVariable* pHour, SVariable* pMinute, SVariable* pSecond, SVariable* pMillisecond);
-	SVariable*			function_stuff								(SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4);
+	SVariable*			function_max								(SVariable* pLeft, SVariable* pRight);
+	SVariable*			function_min								(SVariable* pLeft, SVariable* pRight);
+	SVariable*			function_stuff								(SVariable* pOriginalString, SVariable* pStartPos, SVariable* pNumToRemove, SVariable* pStuffString);
+//////
+// STEP3: Copy the code above near one of the other functions in commands.cpp.
+//        You may be able to right-click on one of the functions and choose "go to definition".
+//////////
+
+
 
 
 //////////
-// Translation
+// Translation between iCodes and function definitions.
 //////
 	struct SFunctionList
 	{
@@ -112,13 +121,16 @@ struct SVariable;
 	};
 
 	SFunctionList gsKnownFunctions[] = {
-		//                      Return										Parameters		Parameter
-		//	iCode				Count		Function						Required		Maximum Count
-		//  ------------------	------		--------------------------		----------		-------------
-		{	_ICODE_ASC,			1,			(u32)&function_asc,				1,				1	},
-		{	_ICODE_CHR,			1,			(u32)&function_chr,				1,				1	},
-		{	_ICODE_DATETIME,	1,			(u32)&function_datetime,		0,				7	},
-		{	_ICODE_STUFF,		1,			(u32)&function_stuff,			2,				4	},
+		//							Return										Parameters		Parameter
+		//	iCode					Count		Function						Required		Maximum Count
+		//  ------------------		------		--------------------------		----------		-------------
+		{	_ICODE_ASC,				1,			(u32)&function_asc,				1,				1	},
+		{	_ICODE_CHR,				1,			(u32)&function_chr,				1,				1	},
+		{	_ICODE_CREATEOBJECT,	1,			(u32)&function_createobject,	1,				1	},
+		{	_ICODE_DATETIME,		1,			(u32)&function_datetime,		0,				7	},
+		{	_ICODE_MAX,				1,			(u32)&function_max,				2,				2	},
+		{	_ICODE_MIN,				1,			(u32)&function_min,				2,				2	},
+		{	_ICODE_STUFF,			1,			(u32)&function_stuff,			3,				4	},
 	//////
 	// Insert above this step somewhere in the list of functions.
 	// STEP2:
