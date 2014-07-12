@@ -31,6 +31,15 @@
 // Thank you.  And may The Lord bless you richly as you lift up your life, your
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
 //
+//////
+// Steps to add a new function:
+//		(1)  STEP1:  Add the function definition to the "Functions" section below (search for "STEP1:").
+//		(2)  STEP2:  Add the function information to the "Translation" gsKnownFunctions data by inserting it where it should go (search for "STEP2:").
+//		(3)  STEP3:  Add the function to commands.cpp (search for "STEP3").
+//		(4)  Code, debug, and test the function thoroughly.
+//		(5)  Email your changes to Rick C. Hodgin at the address on the www.visual-freepro.org/vjr/indexmain.html web page.
+//		(6)  Happy coding!
+//
 //
 
 
@@ -207,7 +216,7 @@
 		//////////
         // Parameter 1 must be numeric
 		//////
-			if (!iVariable_isValid(p1))
+			if (!iVariable_isValid(p1) || !iVariable_isTypeNumeric(p1))
 			{
 				iError_report("Parameter 1 is not correct");
 				return(NULL);
@@ -307,30 +316,6 @@
 			// They have provided us at least something
 // TODO:  Incomplete feature
 return(NULL);
-// 			// Default to 01/01/1600 00:00:00.000
-// 			lst.wYear		= 1600;
-// 			lst.wMonth		= 1;
-// 			lst.wDay		= 1;
-// 			lst.wHour		= 0;
-// 			lst.wMinute		= 0;
-// 			lst.wSecond		= 0;
-// 			lst.wMilliseconds	= 0;
-// 
-// 
-// 			//////////
-// 			// pYear must be numeric, and in the range of 1600..2400
-// 			//////
-// 				if (!iVariable_isValid(pYear) || iVariable_getType(pYear) != _VAR_TYPE_NUMERIC)
-// 				{
-// 					iError_report("Parameter 1 is not correct");
-// 					return(NULL);
-// 				}
-// 				lst.wYear = (u16)iiVariable_getAs_s32(pYear, false, &error, &errorNum);
-// 				if (!error && (lst.wYear < 1600 || lst.wYear > 2400))
-// 				{
-// 					iError_reportByNumber(_ERROR_OUT_OF_RANGE);
-// 					return(NULL);
-// 				}
 		}
 
 
@@ -358,30 +343,41 @@ return(NULL);
 
 //////////
 //
-// Your new function will go here.  Uncomment only the definition with the appropriate number of input parameters.
-// If you are creating more than one function, duplicate this block, including this comment section and the blank
-// before this comment section below.
-//
-// STEP3:
-// Code away! :-)
+// Function: STUFF()
+// Returns a string which has been modified, having optionally some characters optionally removed, some optionally inserted.
 //
 //////
-	// After you have chosen the function template, delete the other lines
-	SVariable* function_your_new_function1(SVariable* p1)
-	// SVariable* function_your_new_function2(SVariable* p1, SVariable* p2)
-	// SVariable* function_your_new_function3(SVariable* p1, SVariable* p2, SVariable* p3)
-	// SVariable* function_your_new_function4(SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4)
-	// SVariable* function_your_new_function5(SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5)
+// Version 0.30   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Jul.12.2014
+//////
+// Change log:
+//     Jul.12.2014 - Initial creation
+//////
+// Parameters:
+//     pOriginalString		-- Input string
+//     pStartPos			-- Starting position
+//     pNumToRemove			-- Number of characters to remove
+//     pStuffString			-- String to insert there
+//
+//////
+// Returns:
+//    Character		-- String has been modified as per the STUFF() function.
+//
+//////
+	SVariable* function_stuff(SVariable* pOriginalString, SVariable* pStartPos, SVariable* pNumToRemove, SVariable* pStuffString)
 	{
-		SVariable* result;
+		s32			lnStartPosition, lnRemoveCount, lnBufferLength;
+		bool		error;
+		u32			errorNum;
+		s8*			lcBuffer;
+		SVariable*	result;
 
 
 		//////////
-        // Parameter 1 must be ... (choose the correct one, repeat for each parameter)
+        // Parameter 1 must be character
 		//////
-			if (!iVariable_isValid(p1) || iVariable_getType(p1) != _VAR_TYPE_NUMERIC)
-			// if (!iVariable_isValid(p1) || iVariable_getType(p1) != _VAR_TYPE_CHARACTER)
-			// if (!iVariable_isValid(p1) || iVariable_getType(p1) != _VAR_TYPE_LOGICAL)
+			if (!iVariable_isValid(pOriginalString) || !iVariable_isTypeCharacter(pOriginalString))
 			{
 				iError_report("Parameter 1 is not correct");
 				return(NULL);
@@ -389,9 +385,87 @@ return(NULL);
 
 
 		//////////
-		// Carry out the logic of your function here
+        // Parameter 2 must be numeric
 		//////
-			// Code here
+			if (!iVariable_isValid(pStartPos) || !iVariable_isTypeNumeric(pStartPos))
+			{
+				iError_report("Parameter 2 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 3 must be numeric
+		//////
+			if (!iVariable_isValid(pNumToRemove) || !iVariable_isTypeNumeric(pNumToRemove))
+			{
+				iError_report("Parameter 3 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 4 must be character
+		//////
+			if (!iVariable_isValid(pStuffString) || !iVariable_isTypeCharacter(pStuffString))
+			{
+				iError_report("Parameter 4 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+		// Grab the parameters as usable values
+		//////
+			// Your algorithm code goes here
+			lnStartPosition	= iiVariable_getAs_s32(pStartPos, false, &error, &errorNum);
+			lnRemoveCount	= iiVariable_getAs_s32(pNumToRemove, false, &error, &errorNum);
+
+
+		//////////
+		// If they are trying to do negative things, report it
+		//////
+			if (lnStartPosition < 1)		lnStartPosition		= 1;
+			if (lnRemoveCount   < 0)		lnRemoveCount		= 0;
+
+
+		//////////
+		// Adjust them based on real-world observations from the string
+		//////
+			// Are they trying to start beyond the end of the string?  If so, reduce to the end.
+			if (lnStartPosition > pOriginalString->value.length)
+				lnStartPosition = pOriginalString->value.length + 1;
+
+			// Are they trying to remove more than can be extracted?
+			if (lnStartPosition - 1 + lnRemoveCount > pOriginalString->value.length)
+				lnRemoveCount = pOriginalString->value.length - lnStartPosition + 1;
+
+
+		//////////
+		// Construct our destination
+		//////
+			lnBufferLength	= pOriginalString->value.length - lnRemoveCount + pStuffString->value.length;
+			lcBuffer = (s8*)malloc(lnBufferLength);
+			if (!lcBuffer)
+			{
+				iError_reportByNumber(_ERROR_OUT_OF_MEMORY, NULL);
+				return(NULL);
+			}
+
+			// Copy the first part of the original string, plus the stuffed in part, plus the end of the last part of the original string
+			--lnStartPosition;
+
+			// We only copy the first part if there is something to copy
+			if (lnStartPosition > 0)
+				memcpy(lcBuffer, pOriginalString->value.data, lnStartPosition);
+
+			// We only insert our stuff string if there is something to put there
+			if (pStuffString->value.length > 0)
+				memcpy(lcBuffer + lnStartPosition, pStuffString->value.data, pStuffString->value.length);
+
+			// We only copy over the last part if there's something there
+			if (pOriginalString->value.length - lnStartPosition - lnRemoveCount > 0)
+				memcpy(lcBuffer + lnStartPosition + pStuffString->value.length, pOriginalString->value.data + lnStartPosition + lnRemoveCount, pOriginalString->value.length - lnStartPosition - lnRemoveCount);
 
 
 		//////////
@@ -406,9 +480,15 @@ return(NULL);
 
 
 		//////////
-        // Populate the return value in whatever way
+        // Populate the return value
 		//////
-			// Code here
+			iDatum_duplicate(&result->value, lcBuffer, lnBufferLength);
+
+
+		//////////
+		// Release the temporary buffer
+		//////
+			free(lcBuffer);
 
 
 		//////////

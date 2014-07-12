@@ -1507,13 +1507,15 @@
 				switch (vKey)
 				{
 					case VK_F6:
+					case VK_F8:
 					case VK_F10:
+					case VK_F11:
 						// Execute this line of code
 						if (commandHistory && commandHistory->ecCursorLine && commandHistory->ecCursorLine->sourceCodePopulated > 0 && iEngine_executeStandaloneCommand(commandHistory->ecCursorLine))
 							iWindow_render(gWinScreen);
 
 						// Move to next line and redraw
-						if (iEditChainManager_navigate(commandHistory, win->obj, 1, -commandHistory->column))
+						if (iEditChainManager_navigate(commandHistory, win->obj, 1, 0))
 							iWindow_render(win);
 						break;
 
@@ -1927,8 +1929,8 @@ _asm int 3;
 			if (data && dataLength)
 			{
 				// We may need to set the length
-				if (dataLength < 1)
-					dataLength = max(strlen(data), 1);
+				if (dataLength < 0)
+					dataLength = strlen(data);
 
 				// Initialize
 				memset(datumNew, 0, sizeof(SDatum));
@@ -1948,21 +1950,28 @@ _asm int 3;
 		if (datum && data)
 		{
 			// We may need to set the length
-			if (dataLength < 1)
-				dataLength = max(strlen(data), 1);
+			if (dataLength < 0)
+				dataLength = strlen(data);
 
 			// Release anything that's already there
 			iiDatum_delete(datum);
 
 			// Store the new data
-			datum->data = (s8*)malloc(dataLength);
-
-			// Copy over if we were successful
-			if (datum->data)
+			if (dataLength > 0)
 			{
-				memcpy(datum->data, data, dataLength);
-				datum->length = dataLength;
+				datum->data = (s8*)malloc(dataLength);
+
+				// Copy over if we were successful
+				if (datum->data)
+					memcpy(datum->data, data, dataLength);
+
+			} else {
+				// There is no data here
+				datum->data = NULL;
 			}
+
+			// Store the new length
+			datum->length = dataLength;
 		}
 	}
 

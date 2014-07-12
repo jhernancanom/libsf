@@ -100,11 +100,12 @@
 	const u32		_VAR_TYPE_EMPTYOBJECT							= 1;
 	const u32		_VAR_TYPE_THISCODE								= 2;
 	const u32		_VAR_TYPE_CHARACTER								= 3;
+	const u32		_VAR_TYPE_NUMERIC_START							= 4;
 	const u32		_VAR_TYPE_INTEGER								= 4;			// Stored as an s32, a 4-byte signed integer
 	const u32		_VAR_TYPE_NUMERIC								= 5;			// Stored as a character (like "200.50"), but converted to numeric at each reference.
 	const u32		_VAR_TYPE_FLOAT									= 6;			// Stored as an f32
 	const u32		_VAR_TYPE_DOUBLE								= 7;			// Stored as an f64
-	const u32		_VAR_TYPE_LOGICAL								= 8;
+	const u32		_VAR_TYPE_CURRENCY								= 8;
 	const u32		_VAR_TYPE_S32									= 9;
 	const u32		_VAR_TYPE_S64									= 10;
 	const u32		_VAR_TYPE_U32									= 11;
@@ -117,9 +118,10 @@
 	const u32		_VAR_TYPE_S8									= 18;
 	const u32		_VAR_TYPE_U16									= 19;
 	const u32		_VAR_TYPE_U8									= 20;
+	const u32		_VAR_TYPE_NUMERIC_END							= 20;
 	const u32		_VAR_TYPE_DATE									= 21;
 	const u32		_VAR_TYPE_DATETIME								= 22;
-	const u32		_VAR_TYPE_CURRENCY								= 23;
+	const u32		_VAR_TYPE_LOGICAL								= 23;
 
 
 //////////

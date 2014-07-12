@@ -126,6 +126,8 @@
 						{
 							// Syntax error, expected "? something" got only "?"
 							iEditChainManager_appendLine(screenData, (s8*)cgcSyntaxError, -1);
+							iEditChainManager_navigateEnd(screenData, gobj_screen);
+							iWindow_render(gWinScreen);
 							return(false);
 
 						} else {
@@ -137,6 +139,7 @@
 								{
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error
+									iEditChainManager_navigateEnd(screenData, gobj_screen);
 									iWindow_render(gWinScreen);
 									return(false);
 								}
@@ -147,6 +150,7 @@
 								{
 									// Unknown parameter
 									iError_report(cgcUnrecognizedParameter);
+									iEditChainManager_navigateEnd(screenData, gobj_screen);
 									iWindow_render(gWinScreen);
 									return(false);
 								}
@@ -156,6 +160,7 @@
 
 							// Add its contents to _screen
 							iEditChainManager_appendLine(screenData, varText->value.data, varText->value.length);
+							iEditChainManager_navigateEnd(screenData, gobj_screen);
 
 							// Release the variable if it was manufactured
 							iVariable_delete(varText, true);
@@ -176,6 +181,7 @@
 								{
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error
+									iEditChainManager_navigateEnd(screenData, gobj_screen);
 									iWindow_render(gWinScreen);
 									return(false);
 								}
@@ -186,6 +192,7 @@
 								{
 									// Unknown parameter
 									iError_report(cgcUnrecognizedParameter);
+									iEditChainManager_navigateEnd(screenData, gobj_screen);
 									iWindow_render(gWinScreen);
 									return(false);
 								}

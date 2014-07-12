@@ -79,10 +79,21 @@ typedef		const f64			cf64;
 
 
 //////////
-// Processing helpers
+// Macro helpers
 //////
-	#define iVariable_isValid(var)					(var && var->value.data && var->value.length != 0)
+	#define iVariable_isValid(var)					(var && (var->varType == _VAR_TYPE_CHARACTER/*0-length character variables do not have allocated buffers*/ || var->value.data && var->value.length != 0))
 	#define iVariable_getType(var)					var->varType
+	#define iVariable_isTypeLogical(var)			(var->varType == _VAR_TYPE_LOGICAL)
+	#define iVariable_isTypeCharacter(var)			(var->varType == _VAR_TYPE_CHARACTER)
+	#define iVariable_isTypeNumeric(var)			(var->varType >= _VAR_TYPE_NUMERIC_START && var->varType <= _VAR_TYPE_NUMERIC_END)
+	#define iVariable_isTypeDate(var)				(var->varType == _VAR_TYPE_DATE)
+	#define iVariable_isTypeDatetime(var)			(var->varType == _VAR_TYPE_DATETIME)
+	#define iVariable_isTypeFloatingPoint(var)		(var->varType == _VAR_TYPE_F32 || var->varType == _VAR_TYPE_F64 || var->varType == _VAR_TYPE_FLOAT || var->varType == _VAR_TYPE_DOUBLE)
+	#define iVariable_isTypeFloat(var)				(var->varType == _VAR_TYPE_F32 || var->varType == _VAR_TYPE_FLOAT)
+	#define iVariable_isTypeDouble(var)				(var->varType == _VAR_TYPE_F64 || var->varType == _VAR_TYPE_DOUBLE)
+	#define iVariable_isTypeCurrency(var)			(var->varType == _VAR_TYPE_CURRENCY)
+	#define iVariable_isTypeBigInteger(var)			(var->varType == _VAR_TYPE_BI)
+	#define iVariable_isTypeBigFloatingPoint(var)	(var->varType == _VAR_TYPE_BFP)
 
 
 //////////

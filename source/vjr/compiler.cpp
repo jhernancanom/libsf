@@ -1608,7 +1608,6 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 		SComp*	compSearcher;
 
 
-// UNTESTED CODE:  breakpoint and examine
 		// Make sure our environment is sane
 		lnCount = 0;
 		if (line && line->compilerInfo && line->compilerInfo->firstComp)

@@ -33,10 +33,10 @@
 //
 //////
 // Steps to add a new function:
-//		(1)  Add the function definition to the "Functions" section below (search for "STEP1:").
-//		(2)  Add the function information to the "Translation" gsKnownFunctions data by inserting it where it should go (search for "STEP2:").
-//		(3)  Add the function to commands.cpp (search for "STEP3").
-//		(4)  Debug and test the function.
+//		(1)  STEP1:  Add the function definition to the "Functions" section below (search for "STEP1:").
+//		(2)  STEP2:  Add the function information to the "Translation" gsKnownFunctions data by inserting it where it should go (search for "STEP2:").
+//		(3)  STEP3:  Add the function to commands.cpp (search for "STEP3").
+//		(4)  Code, debug, and test the function thoroughly.
 //		(5)  Email your changes to Rick C. Hodgin at the address on the www.visual-freepro.org/vjr/indexmain.html web page.
 //		(6)  Happy coding!
 //
@@ -67,6 +67,7 @@ struct SVariable;
 	SVariable*			function_asc								(SVariable* p1);
 	SVariable*			function_chr								(SVariable* p1);
 	SVariable*			function_datetime							(SVariable* pYear, SVariable* pMonth, SVariable* pDay, SVariable* pHour, SVariable* pMinute, SVariable* pSecond, SVariable* pMillisecond);
+	SVariable*			function_stuff								(SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4);
 
 
 //////////
@@ -117,6 +118,7 @@ struct SVariable;
 		{	_ICODE_ASC,			1,			(u32)&function_asc,				1,				1	},
 		{	_ICODE_CHR,			1,			(u32)&function_chr,				1,				1	},
 		{	_ICODE_DATETIME,	1,			(u32)&function_datetime,		0,				7	},
+		{	_ICODE_STUFF,		1,			(u32)&function_stuff,			2,				4	},
 	//////
 	// Insert above this step somewhere in the list of functions.
 	// STEP2:

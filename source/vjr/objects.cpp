@@ -509,9 +509,9 @@
 
 
 		// Make sure our environment is sane
-_asm int 3;
 		if (objSrc && objSrc->firstChild)
 		{
+//_asm int 3;
 			// Duplicate this entry
 			objChild = objSrc->firstChild;
 			while (objChild)
