@@ -505,10 +505,11 @@
 	void iObj_duplicateChildren(SObject* objDst, SObject* objSrc)
 	{
 		SObject*	objChild;
-		SObject*	objCopy;
+//		SObject*	objCopy;
 
 
 		// Make sure our environment is sane
+_asm int 3;
 		if (objSrc && objSrc->firstChild)
 		{
 			// Duplicate this entry

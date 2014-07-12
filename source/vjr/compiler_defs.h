@@ -140,6 +140,7 @@ struct SVariable;
 	SLL*					iLl_createOrphanNode						(                           SLL* nodePrev, SLL* nodeNext, u32 tnUniqueId, u32 tnSize);
 	SLL*					iLl_appendNewNodeAtEnd						(SLL** root, u32 tnSize);
 	bool					iLl_appendExistingNodeAtEnd					(SLL** root, SLL* node);
+	bool					iLl_appendExistingNodeAtBeginning			(SLL** root, SLL* node);
 	SLL*					iLl_deleteNode								(SLL* node, bool tlDeleteSelf);
 	void					iLl_deleteNodesWithCallback					(SLLCallback* cb);
 	bool					iLl_insertNode								(SLL* node, SLL* nodeRef, bool tlAfter);
@@ -168,8 +169,10 @@ struct SVariable;
 	void					iFunction_politelyDeleteCompiledInfo		(SFunction* func, bool tlDeleteSelf);
 
 	// Variable functions
+	SVariable*				iiVariable_terminateIndirect					(SVariable* var);
 	SVariable*				iVariable_create							(u32 tnVarType, SVariable* varIndirect);
 	SVariable*				iVariable_searchForName						(SVariable* varRoot, s8* tcVarName, u32 tnVarNameLength);
+	bool					iVariable_copyVariable						(SVariable* varDst, SVariable* varSrc);
 	SVariable*				iVariable_convertForDisplay					(SVariable* var);
 	void					iVariable_delete							(SVariable* var, bool tlDeleteSelf);
 	void					iVariable_politelyDeleteChain				(SVariable** root, bool tlDeleteSelf);

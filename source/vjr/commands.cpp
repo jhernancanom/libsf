@@ -207,7 +207,7 @@
 		//////////
         // Parameter 1 must be numeric
 		//////
-			if (!iVariable_isValid(p1) || iVariable_getType(p1) != _VAR_TYPE_NUMERIC)
+			if (!iVariable_isValid(p1))
 			{
 				iError_report("Parameter 1 is not correct");
 				return(NULL);
@@ -218,16 +218,16 @@
         // It must be in the range 0..255
 		//////
 			value = iiVariable_getAs_s32(p1, false, &error, &errorNum);
-			if (value > 255 || value < 0)
+			if (error)
 			{
-				// We report our own error
-				iError_report("Parameter must be in the range 0..255");
-				return(NULL);
-
-			} else if (error) {
 				// The iVariable_getAs_s32() function reported an error.
 				// This means the user is trying to obtain an integer value from a logical, or something similar.
 				iError_reportByNumber(errorNum, NULL);
+				return(NULL);
+
+			} else if (value > 255 || value < 0) {
+				// We report our own error
+				iError_report("Parameter must be in the range 0..255");
 				return(NULL);
 			}
 

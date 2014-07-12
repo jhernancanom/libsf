@@ -3334,6 +3334,7 @@ _asm int 3;
 		if (root && node)
 		{
 			// Determine where it goes
+			llAppended = true;
 			if (!*root)
 			{
 				// First entry
@@ -3348,6 +3349,44 @@ _asm int 3;
 				// Append here
 				nodeLast->next	= node;			// Last one currently existing points here
 				node->prev		= nodeLast;		// Node points back to previous last one
+			}
+		}
+
+		// Indicate our status
+		return(llAppended);
+	}
+
+
+
+
+//////////
+//
+// Called to append the existing node at the beginning
+//
+//////
+	bool iLl_appendExistingNodeAtBeginning(SLL** root, SLL* node)
+	{
+		bool	llAppended;
+		SLL*	nodeFirst;
+
+
+		// Make sure our environment is sane
+		llAppended = false;
+		if (root && node)
+		{
+			// Determine where it goes
+			llAppended = true;
+			if (!*root)
+			{
+				// First entry
+				*root = node;
+
+			} else {
+				// Append to beginning
+				nodeFirst		= *root;
+				node->next		= nodeFirst;
+				nodeFirst->prev	= node;
+				*root			= node;
 				llAppended		= true;
 			}
 		}
@@ -4207,6 +4246,24 @@ _asm int 3;
 
 //////////
 //
+// Called to terminate the indirect references to the point of
+//
+//////
+	SVariable* iiVariable_terminateIndirect(SVariable* var)
+	{
+		// Is there an indirect reference?
+		if (var->indirect)
+			return(iiVariable_terminateIndirect(var->indirect));
+
+		// We're done
+		return(var);
+	}
+
+
+
+
+//////////
+//
 // Called to create a new variable.  It is an orphan and initialized, but has
 // no identity.
 //
@@ -4320,6 +4377,67 @@ _asm int 3;
 
 		// Indicate our status
 		return(var);
+	}
+
+
+
+
+//////////
+//
+// Called to replace the varDst with the varSrc.
+//
+//////
+	bool iVariable_copyVariable(SVariable* varDst, SVariable* varSrc)
+	{
+		bool llResult;
+
+
+		// Make sure our environment is sane
+		llResult = false;
+		if (varDst && varSrc)
+		{
+			//////////
+			// Make sure we're dealing with the actual variable
+			//////
+				varDst = iiVariable_terminateIndirect(varDst);
+				varSrc = iiVariable_terminateIndirect(varSrc);
+
+
+			//////////
+			// Delete the existing variable contents
+			//////
+				iVariable_delete(varDst, false);
+
+
+			//////////
+			// Make the contents of varDst be that of varSrc
+			//////
+				varDst->varType = varSrc->varType;
+				switch (varSrc->varType)
+				{
+					case _VAR_TYPE_EMPTYOBJECT:
+					case _VAR_TYPE_NULL:
+						// Nothing is allocated
+						break;
+
+
+					case _VAR_TYPE_THISCODE:
+						// Indirect reference only
+						varDst->indirect = varSrc;
+						break;
+
+
+					default:
+						// As big as it is
+						iDatum_duplicate(&varDst->value, &varSrc->value);
+				}
+
+				// Indicate success
+				return(true);
+		}
+
+		// Indicate our status
+		return(llResult);
 	}
 
 
@@ -4727,7 +4845,8 @@ _asm int 3;
 		};
 
 
-_asm int 3;
+		*tlError	= false;
+		*tnErrorNum	= 0;
 		// Based on the type of variable it is, return the value
 		switch (var->varType)
 		{
@@ -5447,6 +5566,14 @@ _asm int 3;
 			iCompileNote_removeAll(&compilerInfo->warnings);
 			iCompileNote_removeAll(&compilerInfo->errors);
 			iNode_politelyDeleteAll(&compilerInfo->firstNode, true, true, true, true, true, true);
+			iLl_deleteNodeChain((SLL**)&compilerInfo->firstComp);
+
+			// Delete self if need be
+			if (tlDeleteSelf)
+			{
+				*root = NULL;
+				free(compilerInfo);
+			}
 		}
 	}
 

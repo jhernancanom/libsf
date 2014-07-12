@@ -53,6 +53,7 @@
 // vjr.cpp
 //////
 //	int APIENTRY			WinMain									(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, s32 nCmdShow);
+	void					iInit_vjr								(HACCEL* hAccelTable);
 
 
 //////////
@@ -197,7 +198,6 @@
 //////////
 // vjr_sup.cpp
 //////
-	void					iInit_vjr								(HACCEL* hAccelTable);
 	void					iInit_createMessageWindow				(void);
 	bool					isValidWindow							(u32 tnWindow);
 	void					iInit_createDefaultObjects				(void);

@@ -46,7 +46,9 @@
 		bool		llManufactured;
 		SComp*		comp;
 		SComp*		compNext;
+		SComp*		compThird;
 		SVariable*	var;
+		SVariable*	varExisting;
 		SVariable*	varText;
 
 
@@ -100,7 +102,8 @@
 			//////////
 			// Based on the first keyword, process it
 			//////
-				comp = line->compilerInfo->firstComp;
+				comp		= line->compilerInfo->firstComp;
+				compNext	= (SComp*)comp->ll.next;
 				switch (comp->iCode)
 				{
 					case _ICODE_QUIT:
@@ -119,7 +122,7 @@
 
 					case _ICODE_QUESTION_MARK:
 						// It is a "? something" command
-						if (!(compNext = (SComp*)comp->ll.next))
+						if (!compNext)
 						{
 							// Syntax error, expected "? something" got only "?"
 							iEditChainManager_appendLine(screenData, (s8*)cgcSyntaxError, -1);
@@ -134,6 +137,7 @@
 								{
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error
+									iWindow_render(gWinScreen);
 									return(false);
 								}
 
@@ -160,29 +164,53 @@
 						}
 						break;
 
-// 					case _ICODE_WAIT:
-// 						if (comp->ll.next && ((SComp*)comp->ll.next)->iCode == _ICODE_WINDOW)
-// 						{
-// 							// It's a wait window
-// 
-// 						} else {
-// 							// Not a currently supported command
-// 							return(false);
-// 						}
-// 						break;
-// 
 					default:
-						if (comp->ll.next && ((SComp*)comp->ll.next)->iCode == _ICODE_EQUAL_SIGN)
+						if ((comp->iCode == _ICODE_ALPHA || comp->iCode == _ICODE_ALPHANUMERIC) && compNext && compNext->iCode == _ICODE_EQUAL_SIGN)
 						{
 							// It is an assignment
-// TODO:  Working here
+							compThird = (SComp*)compNext->ll.next;
+							if (compThird->iCat == _ICAT_FUNCTION)
+							{
+								// It is something like "? func(x)"
+								if (!(var = iEngine_getFunctionResult(compThird, llManufactured)))
+								{
+									// Unknown function, or parameters were not correct
+									// In any case, the iEngine_getFunctionResult() has reported the error
+									iWindow_render(gWinScreen);
+									return(false);
+								}
+
+							} else if (compThird->iCat == _ICAT_GENERIC) {
+								// It is something like "x = y" or "x = 29"
+								if (!(var = iEngine_getVariableFromComponent(compThird, llManufactured)))
+								{
+									// Unknown parameter
+									iError_report(cgcUnrecognizedParameter);
+									iWindow_render(gWinScreen);
+									return(false);
+								}
+							}
+
+							// If we get here, we have the variable they're storing
+							// Based on the name from comp, see if it's a variable we already possess
+							varExisting = iVariable_searchForName(varGlobals, comp->line->sourceCode->data + comp->start, comp->length);
+							if (varExisting)
+							{
+								// We are updating the value
+								iVariable_copyVariable(varExisting, var);
+								iVariable_delete(var, true);
+
+							} else {
+								// We are creating a new variable
+								iDatum_duplicate(&var->name, comp->line->sourceCode->data + comp->start, comp->length);
+								iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)var);
+							}
 
 						} else {
 							// Not a currently supported command
 							return(false);
 						}
 				}
-// TODO:  Working here
 				// If we get here, we're good
 				return(true);
 
@@ -485,7 +513,7 @@
 			//////////
 			// See if we've gone over our limit
 			//////
-				if (lnParamCount >= maxCount)
+				if (lnParamCount > maxCount)
 				{
 					// Too many parameters
 					iError_reportByNumber(_ERROR_TOO_MANY_PARAMETERS, comp);
@@ -496,7 +524,7 @@
 			// The component after this must be a comma
 			//////
 				compComma = (SComp*)comp->ll.next;
-				if (compComma->iCode != _ICODE_COMMA)
+				if (compComma->iCode != _ICODE_COMMA && compComma->iCode != _ICODE_PARENTHESIS_RIGHT && lnParamCount > requiredCount)
 				{
 					// Comma expected error
 					iError_reportByNumber(_ERROR_COMMA_EXPECTED, comp);
@@ -522,8 +550,8 @@
 		}
 
 		// Indicate how many we found
-		*paramsFound = lnParamCount - 1;
+		*paramsFound = --lnParamCount;
 
 		// Indicate success
-		return((comp != NULL));
+		return(lnParamCount >= requiredCount && lnParamCount <= maxCount);
 	}
