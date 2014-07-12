@@ -313,9 +313,155 @@
 			GetLocalTime(&lst);
 
 		} else {
-			// They have provided us at least something
-// TODO:  Incomplete feature
-return(NULL);
+			// They have provided us datetime parameters.
+			// Default to 01/01/1600 00:00:00.000 for any 
+			lst.wYear			= 1600;
+			lst.wMonth			= 1;
+			lst.wDay			= 1;
+			lst.wHour			= 0;
+			lst.wMinute			= 0;
+			lst.wSecond			= 0;
+			lst.wMilliseconds	= 0;
+
+
+			//////////
+			// pYear must be numeric, and in the range of 1600..2400
+			//////
+				if (iVariable_isValid(pYear))
+				{
+					// They gave us a pYear
+					if (!iVariable_isTypeNumeric(pYear))
+					{
+						iError_report("Year must be numeric");
+						return(NULL);
+					}
+					lst.wYear = (u16)iiVariable_getAs_s32(pYear, false, &error, &errorNum);
+					if (!error && (lst.wYear < 1600 || lst.wYear > 2400))
+					{
+						iError_reportByNumber(_ERROR_OUT_OF_RANGE, NULL);
+						return(NULL);
+					}
+				}
+
+
+			//////////
+			// pMonth must be numeric, and in the range of 1..12
+			//////
+				if (iVariable_isValid(pMonth))
+				{
+					// They gave us a pMonth
+					if (!iVariable_isTypeNumeric(pMonth))
+					{
+						iError_report("Month must be numeric");
+						return(NULL);
+					}
+					lst.wMonth = (u16)iiVariable_getAs_s32(pMonth, false, &error, &errorNum);
+					if (!error && (lst.wMonth < 1 || lst.wMonth > 12))
+					{
+						iError_reportByNumber(_ERROR_OUT_OF_RANGE, NULL);
+						return(NULL);
+					}
+				}
+
+
+			//////////
+			// pDay must be numeric, and in a valid range for the year and month
+			//////
+				if (iVariable_isValid(pDay))
+				{
+					// They gave us a pDay
+					if (!iVariable_isTypeNumeric(pDay))
+					{
+						iError_report("Day must be numeric");
+						return(NULL);
+					}
+					lst.wDay = (u16)iiVariable_getAs_s32(pDay, false, &error, &errorNum);
+					if (!error && !iVariable_isDayValidForDate(lst.wYear, lst.wMonth, lst.wDay))
+					{
+						iError_reportByNumber(_ERROR_OUT_OF_RANGE, NULL);
+						return(NULL);
+					}
+				}
+
+
+			//////////
+			// pHour must be numeric, and in the range of 0..23
+			//////
+				if (iVariable_isValid(pHour))
+				{
+					// They gave us a pHour
+					if (!iVariable_isTypeNumeric(pHour))
+					{
+						iError_report("Hours must be numeric");
+						return(NULL);
+					}
+					lst.wHour = (u16)iiVariable_getAs_s32(pHour, false, &error, &errorNum);
+					if (!error && (lst.wHour < 0 || lst.wHour > 23))
+					{
+						iError_reportByNumber(_ERROR_OUT_OF_RANGE, NULL);
+						return(NULL);
+					}
+				}
+
+
+			//////////
+			// pMinute must be numeric, and in the range of 0..59
+			//////
+				if (iVariable_isValid(pMinute))
+				{
+					// They gave us a pMinute
+					if (!iVariable_isTypeNumeric(pMinute))
+					{
+						iError_report("Minutes must be numeric");
+						return(NULL);
+					}
+					lst.wMinute = (u16)iiVariable_getAs_s32(pMinute, false, &error, &errorNum);
+					if (!error && (lst.wMinute < 0 || lst.wMinute > 59))
+					{
+						iError_reportByNumber(_ERROR_OUT_OF_RANGE, NULL);
+						return(NULL);
+					}
+				}
+
+
+			//////////
+			// pSecond must be numeric, and in the range of 0..59
+			//////
+				if (iVariable_isValid(pSecond))
+				{
+					// They gave us a pSecond
+					if (!iVariable_isTypeNumeric(pSecond))
+					{
+						iError_report("Seconds must be numeric");
+						return(NULL);
+					}
+					lst.wSecond = (u16)iiVariable_getAs_s32(pSecond, false, &error, &errorNum);
+					if (!error && (lst.wSecond < 0 || lst.wSecond > 59))
+					{
+						iError_reportByNumber(_ERROR_OUT_OF_RANGE, NULL);
+						return(NULL);
+					}
+				}
+
+
+			//////////
+			// pMillisecond must be numeric, and in the range of 0..999
+			//////
+				if (iVariable_isValid(pMillisecond))
+				{
+					// They gave us a pMillisecond
+					if (!iVariable_isTypeNumeric(pMillisecond))
+					{
+						iError_report("Milliseconds must be numeric");
+						return(NULL);
+					}
+					lst.wMilliseconds = (u16)iiVariable_getAs_s32(pMillisecond, false, &error, &errorNum);
+					if (!error && (lst.wMilliseconds < 0 || lst.wMilliseconds > 999))
+					{
+						iError_reportByNumber(_ERROR_OUT_OF_RANGE, NULL);
+						return(NULL);
+					}
+				}
 		}
 
 

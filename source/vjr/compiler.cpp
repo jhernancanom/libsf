@@ -5295,6 +5295,45 @@ _asm int 3;
 
 //////////
 //
+// Called to calculate if the indicated day number is appropriate for the month.
+//
+//////
+	bool iVariable_isDayValidForDate(u32 year, u32 month, u32 day)
+	{
+		// The only valid days are 1..31
+		if (day < 1 || day > 31)
+			return(false);
+
+		// Days 1..28 are always valid
+		if (day <= 28)
+			return(true);
+
+		// Days 29 and 30 are valid in months all months except february
+		if (day <= 30 && month != 2)
+			return(true);
+
+		// Day 31 is valid in jan, mar, may, jul, aug, oct, dec
+		if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12)
+			return(true);
+
+		// If we're not in February at this point, it is a failure
+		if (month == 4 || month == 6 || month == 9 || month == 11)
+			return(false);
+
+		// Now, for february we have to compute if we're in a leap year
+		// Leap years occur every 4 years, except in century years, except for centuries evenly divisible by 400
+		if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0) && day <= 29)
+			return(true);		// We are in a leap year
+
+		// If we get here, it's not a leap year
+		return(false);
+	}
+
+
+
+
+//////////
+//
 // Called to set the op type.
 //
 //////
