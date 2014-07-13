@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr.cpp
 //
 //////
-// Version 0.30
+// Version 0.31
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -141,9 +141,12 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		screenData		= iEditChainManager_allocate();
 		commandHistory	= iEditChainManager_allocate();
 
+		// Set the end line to show on both
+		screenData->showEndLine			= true;
+		commandHistory->showEndLine		= true;
+
 		// Set the cursor line data on commandHistory only
 		commandHistory->showCursorLine	= true;
-		commandHistory->showEndLine		= true;
 
 		// Create our main screen window
 		iInit_create_screenObject();

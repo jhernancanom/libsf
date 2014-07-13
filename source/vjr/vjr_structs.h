@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_structs.h
 //
 //////
-// Version 0.30
+// Version 0.31
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -274,7 +274,7 @@ struct SObject
 
 	// Mouse information
 	SBitmap*	mouseIcon;												// The mouse icon
-	u32			mousePointer;											// The mouse pointer to use
+	s32			mousePointer;											// The mouse pointer to use
 
 	// Object flags
 	bool		isEnabled;												// If it is responding to events
@@ -302,7 +302,7 @@ struct SObject
 		RECT		rc;													// Object's current position in its parent
 		RECT		rco;												// Object's original position in its parent
 		RECT		rcp;												// Original size of parent at creation
-		u32			anchor;												// Method this item uses when its parent is resized
+		s32			anchor;												// Method this item uses when its parent is resized
 
 
 	//////////
@@ -353,7 +353,7 @@ struct SSubObjForm
 	bool		alwaysOnTop;											// Is this form always on the top of the z-order?
 	bool		autoCenter;												// Should this form auto-center itself relative to its parent?
 	s32			borderStyle;											// 0=none, 1=fixed, 2=fixed standard presentation, 3=sizable presentation
-	bool		isCloseable;											// Is the form closeable through user interaction?
+	bool		isClosable;											// Is the form closeable through user interaction?
 	bool		processKeyPreviewEvents;								// Do keystrokes for controls on the form go through the form's Key* events as well?
 	bool		hasControlBox;											// Does the form show its control box?
 	bool		hasMinButton;											// Is the minimize button shown?

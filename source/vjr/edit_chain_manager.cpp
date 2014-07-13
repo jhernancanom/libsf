@@ -3,7 +3,7 @@
 // /libsf/source/vjr/edit_chain_manager.cpp
 //
 //////
-// Version 0.30
+// Version 0.31
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -949,7 +949,7 @@ _asm int 3;
 						SetTextColor(bmp->hdc, RGB(currentStatementForeColor.red, currentStatementForeColor.grn, currentStatementForeColor.blu));
 						fillColor.color = currentStatementBackColor.color;
 
-					} else if (line->ll.next || !ecm->showCursorLine || ecm->showEndLine) {
+					} else if (line->ll.next || (!ecm->showCursorLine && !ecm->showEndLine)) {
 						// Display in normal background color
 						SetBkColor(bmp->hdc, RGB(backColor.red, backColor.grn, backColor.blu));
 						SetBkMode(bmp->hdc, OPAQUE);

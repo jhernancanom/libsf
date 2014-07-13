@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_const.h
 //
 //////
-// Version 0.30
+// Version 0.31
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -83,6 +83,8 @@ typedef		const f64			cf64;
 //////
 	#define iVariable_isValid(var)					(var && (var->varType == _VAR_TYPE_CHARACTER/*0-length character variables do not have allocated buffers*/ || var->value.data && var->value.length != 0))
 	#define iVariable_getType(var)					var->varType
+	#define iVariable_isTypeObject(var)				(var->varType == _VAR_TYPE_OBJECT)
+	#define iVariable_isTypethisCode(var)			(var->varType == _VAR_TYPE_THISCODE)
 	#define iVariable_isTypeLogical(var)			(var->varType == _VAR_TYPE_LOGICAL)
 	#define iVariable_isTypeCharacter(var)			(var->varType == _VAR_TYPE_CHARACTER)
 	#define iVariable_isTypeNumeric(var)			(var->varType >= _VAR_TYPE_NUMERIC_START && var->varType <= _VAR_TYPE_NUMERIC_END)
@@ -318,8 +320,8 @@ typedef		const f64			cf64;
 //////
 	const s8			cgcMessageWindowClass[]				= "VJr.MessageWindow";
 	const s8			cgcWindowClass[]					= "VJr.Window";
-	const s8			cgcScreenTitle[]					= "Visual FreePro, Jr. 0.30 -- Jul.12.2014";
-	const s8			cgcJDebiTitle[]						= "JDebi Debugger 0.30 -- Jul.12.2014";
+	const s8			cgcScreenTitle[]					= "Visual FreePro, Jr. 0.31 -- Jul.13.2014";
+	const s8			cgcJDebiTitle[]						= "JDebi Debugger 0.31 -- Jul.13.2014";
 	const s8			cgcDefaultFont[]					= "Ubuntu";
 	const s8			cgcDefaultFixedFont[]				= "Ubuntu Mono";
 	const s8			cgcWindowTitleBarFont[]				= "Ubuntu Condensed";
@@ -396,6 +398,7 @@ typedef		const f64			cf64;
 	const s8			cgcName_maxWidth[]					= "maxWidth";
 	const s8			cgcName_maxHeight[]					= "maxHeight";
 	const s8			cgcName_fontName[]					= "fontName";
+	const s8			cgcName_fontSize[]					= "fontSize";
 	const s8			cgcName_fontBold[]					= "fontBold";
 	const s8			cgcName_fontItalic[]				= "fontItalic";
 	const s8			cgcName_fontUnderline[]				= "fontUnderline";

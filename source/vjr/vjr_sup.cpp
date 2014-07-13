@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_sup.cpp
 //
 //////
-// Version 0.30
+// Version 0.31
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -177,7 +177,7 @@
 	void iInit_create_screenObject(void)
 	{
 		s32				lnLeft, lnTop, lnWidth, lnHeight;
-		SSubObjForm*	sof;
+		SSubObjForm*	form;
 		RECT			lrc;
 
 
@@ -185,32 +185,35 @@
 		// Create the object
 		//////
 			// Create sub-object
-			sof = iSubobj_createForm((SSubObjForm*)gobj_defaultForm->sub_obj, NULL);
-			if (!sof)
+			form = iSubobj_createForm((SSubObjForm*)gobj_defaultForm->sub_obj, NULL);
+			if (!form)
 				return;
 
 			// Create object
-			gobj_screen = iObj_create(_OBJ_TYPE_FORM, sof);
+			gobj_screen = iObj_create(_OBJ_TYPE_FORM, form);
 			if (!gobj_screen)
 			{
-				iSubobj_deleteForm(sof, true);
+				iSubobj_deleteForm(form, true);
 				return;
 			}
 
 			// Set the app icon
-			iSubobj_form_setIcon(gobj_screen, bmpVjrIcon);
+			iiSubobj_form_setIcon(gobj_screen, bmpVjrIcon);
 
 			// Give it a caption
-			iSubobj_form_setCaption(gobj_screen, (s8*)cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
-			iSubobj_form_setCaptionColor(gobj_screen, black.color);
+			iDatum_duplicate(&form->caption, (s8*)cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
+			form->captionColor.color = black.color;
 
 			// Set its colors
-			iSubobj_form_setBorderRgba(gobj_screen, NwColor.color, NeColor.color, SwColor.color, SeColor.color);
-			iSubobj_form_setBackColor(gobj_screen, white.color);
-			iSubobj_form_setForeColor(gobj_screen, black.color);
+			form->nwRgba.color		= NwColor.color;
+			form->neRgba.color		= NeColor.color;
+			form->swRgba.color		= SwColor.color;
+			form->seRgba.color		= SeColor.color;
+			form->backColor.color	= white.color;
+			form->foreColor.color	= black.color;
 
 			// Give it a fixed point font
-			iSubobj_form_setFont(gobj_screen, (s8*)cgcDefaultFixedFont, 9, false, false, false, false, false, false);
+			form->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
 
 			// Set it visible
 			iObj_setVisible(gobj_screen, true);
@@ -266,22 +269,26 @@
 			}
 
 			// Set the app icon
-			iSubobj_form_setIcon(gobj_jdebi, bmpJDebiIcon);
+			iiSubobj_form_setIcon(gobj_jdebi, bmpJDebiIcon);
+
+			// Give it a caption
+			SSubObjForm* form = (SSubObjForm*)gobj_jdebi->sub_obj;
+			iDatum_duplicate(&form->caption, (s8*)cgcJDebiTitle, sizeof(cgcJDebiTitle) - 1);
+			form->captionColor.color = black.color;
+
+			// Set its colors
+			form->nwRgba.color		= NwColor.color;
+			form->neRgba.color		= NeColor.color;
+			form->swRgba.color		= SwColor.color;
+			form->seRgba.color		= SeColor.color;
+			form->backColor.color	= white.color;
+			form->foreColor.color	= black.color;
+
+			// Give it a fixed point font
+			form->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
 
 			// Set it visible
 			iObj_setVisible(gobj_jdebi, true);
-
-			// Give it a caption
-			iSubobj_form_setCaption(gobj_jdebi, (s8*)cgcJDebiTitle, sizeof(cgcJDebiTitle) - 1);
-			iSubobj_form_setCaptionColor(gobj_jdebi, black.color);
-
-			// Set its colors
-			iSubobj_form_setBorderRgba(gobj_jdebi, NwColor.color, NeColor.color, SwColor.color, SeColor.color);
-			iSubobj_form_setBackColor(gobj_jdebi, white.color);
-			iSubobj_form_setForeColor(gobj_jdebi, black.color);
-
-			// Give it a fixed point font
-			iSubobj_form_setFont(gobj_jdebi, (s8*)cgcDefaultFixedFont, 10, false, false, false, false, false, false);
 
 
 		//////////
@@ -1032,21 +1039,36 @@
 		// Populate
 		//////
 			font->hdc						= CreateCompatibleDC(GetDC(GetDesktopWindow()));
-			font->_sizeUsedForCreateFont	= -MulDiv(tnFontSize, GetDeviceCaps(GetDC(GetDesktopWindow()), LOGPIXELSY), 72);
-			font->hfont						= CreateFont(font->_sizeUsedForCreateFont, 0, 0, 0, tnFontWeight, (tnItalics != 0), (tnUnderline != 0), false, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_NATURAL_QUALITY, FF_SWISS, tcFontName);
-			SelectObject(font->hdc, font->hfont);
-			iDatum_duplicate(&font->name, (s8*)tcFontName, lnLength);
+			iDatum_duplicate(&font->name, (s8*)tcFontName, lnLength + 1);
 			font->_size						= tnFontSize;
 			font->_weight					= tnFontWeight;
 			font->_italics					= tnItalics;
 			font->_underline				= tnUnderline;
-
-			// Find out the text metrics
-			GetTextMetricsA(font->hdc, &font->tm);
+			iiFont_refresh(font);
 
 
 		// Indicate our success
 		return(font);
+	}
+
+
+
+
+//////////
+//
+// Called typically after some setting on the font is changed to "refresh"
+// the font with the new settings in its device context.
+//
+//////
+	void iiFont_refresh(SFont* font)
+	{
+		// Create the font
+		font->_sizeUsedForCreateFont	= -MulDiv(font->_size, GetDeviceCaps(GetDC(GetDesktopWindow()), LOGPIXELSY), 72);
+		font->hfont						= CreateFont(font->_sizeUsedForCreateFont, 0, 0, 0, font->_weight, (font->isItalic ? 1 : 0), (font->isUnderline? 1 : 0), false, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_NATURAL_QUALITY, FF_SWISS, font->name.data);
+		SelectObject(font->hdc, font->hfont);
+
+		// Find out the text metrics
+		GetTextMetricsA(font->hdc, &font->tm);
 	}
 
 

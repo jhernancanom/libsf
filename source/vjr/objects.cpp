@@ -3,7 +3,7 @@
 // /libsf/source/vjr/objects.cpp
 //
 //////
-// Version 0.30
+// Version 0.31
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -84,84 +84,85 @@
 	};
 
 	SPropertyList gsFormProperties[] = {
-		{	cgcName_minLeft,				sizeof(cgcName_minLeft) - 1,				(u32)&iSubobj_form_setMinLeft,                  (u32)&iSubobj_form_getMinLeft					},
-		{	cgcName_minTop,					sizeof(cgcName_minTop) - 1,					(u32)&iSubobj_form_setMinTop,                   (u32)&iSubobj_form_getMinTop						},
-		{	cgcName_minWidth,				sizeof(cgcName_minWidth) - 1,				(u32)&iSubobj_form_setMinWidth,                 (u32)&iSubobj_form_getMinWidth					},
-		{	cgcName_minHeight,				sizeof(cgcName_minHeight) - 1,				(u32)&iSubobj_form_setMinHeight,                (u32)&iSubobj_form_getMinHeight					},
-		{	cgcName_maxLeft,				sizeof(cgcName_maxLeft) - 1,				(u32)&iSubobj_form_setMaxLeft,                  (u32)&iSubobj_form_getMaxLeft					},
-		{	cgcName_maxTop,					sizeof(cgcName_maxTop) - 1,					(u32)&iSubobj_form_setMaxTop,                   (u32)&iSubobj_form_getMaxTop						},
-		{	cgcName_maxWidth,				sizeof(cgcName_maxWidth) - 1,				(u32)&iSubobj_form_setMaxWidth,                 (u32)&iSubobj_form_getMaxWidth					},
-		{	cgcName_maxHeight,				sizeof(cgcName_maxHeight) - 1,				(u32)&iSubobj_form_setMaxHeight,                (u32)&iSubobj_form_getMaxHeight					},
-		{	cgcName_fontName,				sizeof(cgcName_fontName) - 1,				(u32)&iSubobj_form_setFontName,                 (u32)&iSubobj_form_getFontName					},
-		{	cgcName_fontBold,				sizeof(cgcName_fontBold) - 1,				(u32)&iSubobj_form_setFontBold,                 (u32)&iSubobj_form_getFontBold					},
-		{	cgcName_fontItalic,				sizeof(cgcName_fontItalic) - 1,				(u32)&iSubobj_form_setFontItalic,               (u32)&iSubobj_form_getFontItalic					},
-		{	cgcName_fontUnderline,			sizeof(cgcName_fontUnderline) - 1,			(u32)&iSubobj_form_setFontUnderline,            (u32)&iSubobj_form_getFontUnderline				},
-		{	cgcName_fontStrikethrough,		sizeof(cgcName_fontStrikethrough) - 1,		(u32)&iSubobj_form_setFontStrikethrough,        (u32)&iSubobj_form_getFontStrikethrough			},
-		{	cgcName_fontCondensed,			sizeof(cgcName_fontCondensed) - 1,			(u32)&iSubobj_form_setFontCondensed,            (u32)&iSubobj_form_getFontCondensed				},
-		{	cgcName_fontExtended,			sizeof(cgcName_fontExtended) - 1,			(u32)&iSubobj_form_setFontExtended,             (u32)&iSubobj_form_getFontExtended				},
-		{	cgcName_fontOutline,			sizeof(cgcName_fontOutline) - 1,			(u32)&iSubobj_form_setFontOutline,              (u32)&iSubobj_form_getFontOutline				},
-		{	cgcName_fontShadow,				sizeof(cgcName_fontShadow) - 1,				(u32)&iSubobj_form_setFontShadow,               (u32)&iSubobj_form_getFontShadow					},
-		{	cgcName_nwColor,				sizeof(cgcName_nwColor) - 1,				(u32)&iSubobj_form_setNwColor,                  (u32)&iSubobj_form_getNwColor					},
-		{	cgcName_neColor,				sizeof(cgcName_neColor) - 1,				(u32)&iSubobj_form_setNeColor,                  (u32)&iSubobj_form_getNeColor					},
-		{	cgcName_swColor,				sizeof(cgcName_swColor) - 1,				(u32)&iSubobj_form_setSwColor,                  (u32)&iSubobj_form_getSwColor					},
-		{	cgcName_seColor,				sizeof(cgcName_seColor) - 1,				(u32)&iSubobj_form_setSeColor,                  (u32)&iSubobj_form_getSeColor					},
-// 		{	cgcName_backColor,				sizeof(cgcName_backColor) - 1,				(u32)&iSubobj_form_setBackColor,                (u32)&iSubobj_form_getBackColor					},
-// 		{	cgcName_foreColor,				sizeof(cgcName_foreColor) - 1,				(u32)&iSubobj_form_setForeColor,                (u32)&iSubobj_form_getForeColor					},
-// 		{	cgcName_captionColor,			sizeof(cgcName_captionColor) - 1,			(u32)&iSubobj_form_setCaptionColor,             (u32)&iSubobj_form_getCaptionColor				},
-// 		{	cgcName_caption,				sizeof(cgcName_caption) - 1,				(u32)&iSubobj_form_setCaption,                  (u32)&iSubobj_form_getCaption					},
-		{	cgcName_picture,				sizeof(cgcName_picture) - 1,				(u32)&iSubobj_form_setPicture,                  (u32)&iSubobj_form_getPicture					},
-		{	cgcName_allowOutput,			sizeof(cgcName_allowOutput) - 1,			(u32)&iSubobj_form_setAllowOutput,              (u32)&iSubobj_form_getAllowOutput				},
-		{	cgcName_alwaysOnBottom,			sizeof(cgcName_alwaysOnBottom) - 1,			(u32)&iSubobj_form_setAlwaysOnBottom,           (u32)&iSubobj_form_getAlwaysOnBottom				},
-		{	cgcName_alwaysOnTop,			sizeof(cgcName_alwaysOnTop) - 1,			(u32)&iSubobj_form_setAlwaysOnTop,              (u32)&iSubobj_form_getAlwaysOnTop				},
-		{	cgcName_autoCenter,				sizeof(cgcName_autoCenter) - 1,				(u32)&iSubobj_form_setAutoCenter,               (u32)&iSubobj_form_getAutoCenter					},
-		{	cgcName_borderStyle,			sizeof(cgcName_borderStyle) - 1,			(u32)&iSubobj_form_setBorderStyle,              (u32)&iSubobj_form_getBorderStyle				},
-		{	cgcName_isCloseable,			sizeof(cgcName_isCloseable) - 1,			(u32)&iSubobj_form_setIsCloseable,              (u32)&iSubobj_form_getIsCloseable				},
-		{	cgcName_processKeyPreviewEvents,sizeof(cgcName_processKeyPreviewEvents) - 1,(u32)&iSubobj_form_setProcessKeyPreviewEvents,  (u32)&iSubobj_form_getProcessKeyPreviewEvents	},
-		{	cgcName_hasControlBox,			sizeof(cgcName_hasControlBox) - 1,			(u32)&iSubobj_form_setHasControlBox,            (u32)&iSubobj_form_getHasControlBox				},
-		{	cgcName_hasMinButton,			sizeof(cgcName_hasMinButton) - 1,			(u32)&iSubobj_form_setHasMinButton,             (u32)&iSubobj_form_getHasMinButton				},
-		{	cgcName_hasCloseButton,			sizeof(cgcName_hasCloseButton) - 1,			(u32)&iSubobj_form_setHasCloseButton,           (u32)&iSubobj_form_getHasCloseButton				},
-		{	cgcName_scaleMode,				sizeof(cgcName_scaleMode) - 1,				(u32)&iSubobj_form_setScaleMode,                (u32)&iSubobj_form_getScaleMode					},
-		{	cgcName_showInTaskBar,			sizeof(cgcName_showInTaskBar) - 1,			(u32)&iSubobj_form_setShowInTaskBar,            (u32)&iSubobj_form_getShowInTaskBar				},
-		{	cgcName_windowState,			sizeof(cgcName_windowState) - 1,			(u32)&iSubobj_form_setWindowState,              (u32)&iSubobj_form_getWindowState				},
-		{	cgcName_bindControls,			sizeof(cgcName_bindControls) - 1,			(u32)&iSubobj_form_setBindControls,             (u32)&iSubobj_form_getBindControls				},
-		{	cgcName_bufferMode,				sizeof(cgcName_bufferMode) - 1,				(u32)&iSubobj_form_setBufferMode,               (u32)&iSubobj_form_getBufferMode					},
-		{	cgcName_clipControls,			sizeof(cgcName_clipControls) - 1,			(u32)&iSubobj_form_setClipControls,             (u32)&iSubobj_form_getClipControls				},
-		{	cgcName_colorSource,			sizeof(cgcName_colorSource) - 1,			(u32)&iSubobj_form_setColorSource,              (u32)&iSubobj_form_getColorSource				},
-		{	cgcName_continuousScroll,		sizeof(cgcName_continuousScroll) - 1,		(u32)&iSubobj_form_setContinuousScroll,         (u32)&iSubobj_form_getContinuousScroll			},
-		{	cgcName_dataSession,			sizeof(cgcName_dataSession) - 1,			(u32)&iSubobj_form_setDataSession,              (u32)&iSubobj_form_getDataSession				},
-		{	cgcName_dataSessionId,			sizeof(cgcName_dataSessionId) - 1,			(u32)&iSubobj_form_setDataSessionId,            (u32)&iSubobj_form_getDataSessionId				},
-		{	cgcName_deClass,				sizeof(cgcName_deClass) - 1,				(u32)&iSubobj_form_setDeClass,                  (u32)&iSubobj_form_getDeClass					},
-		{	cgcName_deClassLibrary,			sizeof(cgcName_deClassLibrary) - 1,			(u32)&iSubobj_form_setDeClassLibrary,           (u32)&iSubobj_form_getDeClassLibrary				},
-		{	cgcName_defOleCid,				sizeof(cgcName_defOleCid) - 1,				(u32)&iSubobj_form_setDefOleCid,                (u32)&iSubobj_form_getDefOleCid					},
-		{	cgcName_desktop,				sizeof(cgcName_desktop) - 1,				(u32)&iSubobj_form_setDesktop,                  (u32)&iSubobj_form_getDesktop					},
-		{	cgcName_isDockable,				sizeof(cgcName_isDockable) - 1,				(u32)&iSubobj_form_setIsDockable,               (u32)&iSubobj_form_getIsDockable					},
-		{	cgcName_isDocked,				sizeof(cgcName_isDocked) - 1,				(u32)&iSubobj_form_setIsDocked,                 (u32)&iSubobj_form_getIsDocked					},
-		{	cgcName_dockPosition,			sizeof(cgcName_dockPosition) - 1,			(u32)&iSubobj_form_setDockPosition,             (u32)&iSubobj_form_getDockPosition				},
-		{	cgcName_drawMode,				sizeof(cgcName_drawMode) - 1,				(u32)&iSubobj_form_setDrawMode,                 (u32)&iSubobj_form_getDrawMode					},
-		{	cgcName_drawStyle,				sizeof(cgcName_drawStyle) - 1,				(u32)&iSubobj_form_setDrawStyle,                (u32)&iSubobj_form_getDrawStyle					},
-		{	cgcName_drawWidth,				sizeof(cgcName_drawWidth) - 1,				(u32)&iSubobj_form_setDrawWidth,                (u32)&iSubobj_form_getDrawWidth					},
-		{	cgcName_fillColor,				sizeof(cgcName_fillColor) - 1,				(u32)&iSubobj_form_setFillColor,                (u32)&iSubobj_form_getFillColor					},
-		{	cgcName_fillStyle,				sizeof(cgcName_fillStyle) - 1,				(u32)&iSubobj_form_setFillStyle,                (u32)&iSubobj_form_getFillStyle					},
-		{	cgcName_halfHeightCaption,		sizeof(cgcName_halfHeightCaption) - 1,		(u32)&iSubobj_form_setHalfHeightCaption,        (u32)&iSubobj_form_getHalfHeightCaption			},
-		{	cgcName_hScrollSmallChange,		sizeof(cgcName_hScrollSmallChange) - 1,		(u32)&iSubobj_form_setHScrollSmallChange,       (u32)&iSubobj_form_getHScrollSmallChange			},
-		{	cgcName_vScrollSmallChange,		sizeof(cgcName_vScrollSmallChange) - 1,		(u32)&iSubobj_form_setVScrollSmallChange,       (u32)&iSubobj_form_getVScrollSmallChange			},
-		{	cgcName_macDesktop,				sizeof(cgcName_macDesktop) - 1,				(u32)&iSubobj_form_setMacDesktop,               (u32)&iSubobj_form_getMacDesktop					},
-		{	cgcName_mdiForm,				sizeof(cgcName_mdiForm) - 1,				(u32)&iSubobj_form_setMdiForm,                  (u32)&iSubobj_form_getMdiForm					},
-		{	cgcName_oleDragMode,			sizeof(cgcName_oleDragMode) - 1,			(u32)&iSubobj_form_setOleDragMode,              (u32)&iSubobj_form_getOleDragMode				},
-		{	cgcName_oleDragPicture,			sizeof(cgcName_oleDragPicture) - 1,			(u32)&iSubobj_form_setOleDragPicture,           (u32)&iSubobj_form_getOleDragPicture				},
-		{	cgcName_oleDropEffects,			sizeof(cgcName_oleDropEffects) - 1,			(u32)&iSubobj_form_setOleDropEffects,           (u32)&iSubobj_form_getOleDropEffects				},
-		{	cgcName_oleDropHasData,			sizeof(cgcName_oleDropHasData) - 1,			(u32)&iSubobj_form_setOleDropHasData,           (u32)&iSubobj_form_getOleDropHasData				},
-		{	cgcName_oleDropMode,			sizeof(cgcName_oleDropMode) - 1,			(u32)&iSubobj_form_setOleDropMode,              (u32)&iSubobj_form_getOleDropMode				},
-		{	cgcName_releaseType,			sizeof(cgcName_releaseType) - 1,			(u32)&iSubobj_form_setReleaseType,              (u32)&iSubobj_form_getReleaseType				},
-		{	cgcName_rightToLeft,			sizeof(cgcName_rightToLeft) - 1,			(u32)&iSubobj_form_setRightToLeft,              (u32)&iSubobj_form_getRightToLeft				},
-		{	cgcName_scrollbars,				sizeof(cgcName_scrollbars) - 1,				(u32)&iSubobj_form_setScrollbars,               (u32)&iSubobj_form_getScrollbars					},
-		{	cgcName_showTips,				sizeof(cgcName_showTips) - 1,				(u32)&iSubobj_form_setShowTips,                 (u32)&iSubobj_form_getShowTips					},
-		{	cgcName_showWindow,				sizeof(cgcName_showWindow) - 1,				(u32)&iSubobj_form_setShowWindow,               (u32)&iSubobj_form_getShowWindow					},
-		{	cgcName_sizeBox,				sizeof(cgcName_sizeBox) - 1,				(u32)&iSubobj_form_setSizeBox,                  (u32)&iSubobj_form_getSizeBox					},
-		{	cgcName_themes,					sizeof(cgcName_themes) - 1,					(u32)&iSubobj_form_setThemes,                   (u32)&iSubobj_form_getThemes						},
-		{	cgcName_titleBar,				sizeof(cgcName_titleBar) - 1,				(u32)&iSubobj_form_setTitleBar,                 (u32)&iSubobj_form_getTitleBar					},
-		{	cgcName_windowType,				sizeof(cgcName_windowType) - 1,				(u32)&iSubobj_form_setWindowType,               (u32)&iSubobj_form_getWindowType					},
-		{	cgcName_zoomBox,				sizeof(cgcName_zoomBox) - 1,				(u32)&iSubobj_form_setZoomBox,                  (u32)&iSubobj_form_getZoomBox					},
+		{	cgcName_minLeft,				sizeof(cgcName_minLeft) - 1,				(u32)&iiSubobj_form_setMinLeft,                  (u32)&iiSubobj_form_getMinLeft					},
+		{	cgcName_minTop,					sizeof(cgcName_minTop) - 1,					(u32)&iiSubobj_form_setMinTop,                   (u32)&iiSubobj_form_getMinTop					},
+		{	cgcName_minWidth,				sizeof(cgcName_minWidth) - 1,				(u32)&iiSubobj_form_setMinWidth,                 (u32)&iiSubobj_form_getMinWidth				},
+		{	cgcName_minHeight,				sizeof(cgcName_minHeight) - 1,				(u32)&iiSubobj_form_setMinHeight,                (u32)&iiSubobj_form_getMinHeight				},
+		{	cgcName_maxLeft,				sizeof(cgcName_maxLeft) - 1,				(u32)&iiSubobj_form_setMaxLeft,                  (u32)&iiSubobj_form_getMaxLeft					},
+		{	cgcName_maxTop,					sizeof(cgcName_maxTop) - 1,					(u32)&iiSubobj_form_setMaxTop,                   (u32)&iiSubobj_form_getMaxTop					},
+		{	cgcName_maxWidth,				sizeof(cgcName_maxWidth) - 1,				(u32)&iiSubobj_form_setMaxWidth,                 (u32)&iiSubobj_form_getMaxWidth				},
+		{	cgcName_maxHeight,				sizeof(cgcName_maxHeight) - 1,				(u32)&iiSubobj_form_setMaxHeight,                (u32)&iiSubobj_form_getMaxHeight				},
+		{	cgcName_fontName,				sizeof(cgcName_fontName) - 1,				(u32)&iiSubobj_form_setFontName,                 (u32)&iiSubobj_form_getFontName				},
+		{	cgcName_fontSize,				sizeof(cgcName_fontSize) - 1,				(u32)&iiSubobj_form_setFontSize,                 (u32)&iiSubobj_form_getFontSize				},
+		{	cgcName_fontBold,				sizeof(cgcName_fontBold) - 1,				(u32)&iiSubobj_form_setFontBold,                 (u32)&iiSubobj_form_getFontBold				},
+		{	cgcName_fontItalic,				sizeof(cgcName_fontItalic) - 1,				(u32)&iiSubobj_form_setFontItalic,               (u32)&iiSubobj_form_getFontItalic				},
+		{	cgcName_fontUnderline,			sizeof(cgcName_fontUnderline) - 1,			(u32)&iiSubobj_form_setFontUnderline,            (u32)&iiSubobj_form_getFontUnderline			},
+		{	cgcName_fontStrikethrough,		sizeof(cgcName_fontStrikethrough) - 1,		(u32)&iiSubobj_form_setFontStrikethrough,        (u32)&iiSubobj_form_getFontStrikethrough		},
+		{	cgcName_fontCondensed,			sizeof(cgcName_fontCondensed) - 1,			(u32)&iiSubobj_form_setFontCondensed,            (u32)&iiSubobj_form_getFontCondensed			},
+		{	cgcName_fontExtended,			sizeof(cgcName_fontExtended) - 1,			(u32)&iiSubobj_form_setFontExtended,             (u32)&iiSubobj_form_getFontExtended			},
+		{	cgcName_fontOutline,			sizeof(cgcName_fontOutline) - 1,			(u32)&iiSubobj_form_setFontOutline,              (u32)&iiSubobj_form_getFontOutline				},
+		{	cgcName_fontShadow,				sizeof(cgcName_fontShadow) - 1,				(u32)&iiSubobj_form_setFontShadow,               (u32)&iiSubobj_form_getFontShadow				},
+		{	cgcName_nwColor,				sizeof(cgcName_nwColor) - 1,				(u32)&iiSubobj_form_setNwColor,                  (u32)&iiSubobj_form_getNwColor					},
+		{	cgcName_neColor,				sizeof(cgcName_neColor) - 1,				(u32)&iiSubobj_form_setNeColor,                  (u32)&iiSubobj_form_getNeColor					},
+		{	cgcName_swColor,				sizeof(cgcName_swColor) - 1,				(u32)&iiSubobj_form_setSwColor,                  (u32)&iiSubobj_form_getSwColor					},
+		{	cgcName_seColor,				sizeof(cgcName_seColor) - 1,				(u32)&iiSubobj_form_setSeColor,                  (u32)&iiSubobj_form_getSeColor					},
+		{	cgcName_backColor,				sizeof(cgcName_backColor) - 1,				(u32)&iiSubobj_form_setBackColor,                (u32)&iiSubobj_form_getBackColor				},
+		{	cgcName_foreColor,				sizeof(cgcName_foreColor) - 1,				(u32)&iiSubobj_form_setForeColor,                (u32)&iiSubobj_form_getForeColor				},
+		{	cgcName_captionColor,			sizeof(cgcName_captionColor) - 1,			(u32)&iiSubobj_form_setCaptionColor,             (u32)&iiSubobj_form_getCaptionColor			},
+		{	cgcName_caption,				sizeof(cgcName_caption) - 1,				(u32)&iiSubobj_form_setCaption,                  (u32)&iiSubobj_form_getCaption					},
+		{	cgcName_picture,				sizeof(cgcName_picture) - 1,				(u32)&iiSubobj_form_setPicture,                  (u32)&iiSubobj_form_getPicture					},
+		{	cgcName_allowOutput,			sizeof(cgcName_allowOutput) - 1,			(u32)&iiSubobj_form_setAllowOutput,              (u32)&iiSubobj_form_getAllowOutput				},
+		{	cgcName_alwaysOnBottom,			sizeof(cgcName_alwaysOnBottom) - 1,			(u32)&iiSubobj_form_setAlwaysOnBottom,           (u32)&iiSubobj_form_getAlwaysOnBottom			},
+		{	cgcName_alwaysOnTop,			sizeof(cgcName_alwaysOnTop) - 1,			(u32)&iiSubobj_form_setAlwaysOnTop,              (u32)&iiSubobj_form_getAlwaysOnTop				},
+		{	cgcName_autoCenter,				sizeof(cgcName_autoCenter) - 1,				(u32)&iiSubobj_form_setAutoCenter,               (u32)&iiSubobj_form_getAutoCenter				},
+		{	cgcName_borderStyle,			sizeof(cgcName_borderStyle) - 1,			(u32)&iiSubobj_form_setBorderStyle,              (u32)&iiSubobj_form_getBorderStyle				},
+		{	cgcName_isCloseable,			sizeof(cgcName_isCloseable) - 1,			(u32)&iiSubobj_form_setIsCloseable,              (u32)&iiSubobj_form_getIsCloseable				},
+		{	cgcName_processKeyPreviewEvents,sizeof(cgcName_processKeyPreviewEvents) - 1,(u32)&iiSubobj_form_setProcessKeyPreviewEvents,  (u32)&iiSubobj_form_getProcessKeyPreviewEvents	},
+		{	cgcName_hasControlBox,			sizeof(cgcName_hasControlBox) - 1,			(u32)&iiSubobj_form_setHasControlBox,            (u32)&iiSubobj_form_getHasControlBox			},
+		{	cgcName_hasMinButton,			sizeof(cgcName_hasMinButton) - 1,			(u32)&iiSubobj_form_setHasMinButton,             (u32)&iiSubobj_form_getHasMinButton			},
+		{	cgcName_hasCloseButton,			sizeof(cgcName_hasCloseButton) - 1,			(u32)&iiSubobj_form_setHasCloseButton,           (u32)&iiSubobj_form_getHasCloseButton			},
+		{	cgcName_scaleMode,				sizeof(cgcName_scaleMode) - 1,				(u32)&iiSubobj_form_setScaleMode,                (u32)&iiSubobj_form_getScaleMode				},
+		{	cgcName_showInTaskBar,			sizeof(cgcName_showInTaskBar) - 1,			(u32)&iiSubobj_form_setShowInTaskBar,            (u32)&iiSubobj_form_getShowInTaskBar			},
+		{	cgcName_windowState,			sizeof(cgcName_windowState) - 1,			(u32)&iiSubobj_form_setWindowState,              (u32)&iiSubobj_form_getWindowState				},
+		{	cgcName_bindControls,			sizeof(cgcName_bindControls) - 1,			(u32)&iiSubobj_form_setBindControls,             (u32)&iiSubobj_form_getBindControls			},
+		{	cgcName_bufferMode,				sizeof(cgcName_bufferMode) - 1,				(u32)&iiSubobj_form_setBufferMode,               (u32)&iiSubobj_form_getBufferMode				},
+		{	cgcName_clipControls,			sizeof(cgcName_clipControls) - 1,			(u32)&iiSubobj_form_setClipControls,             (u32)&iiSubobj_form_getClipControls			},
+		{	cgcName_colorSource,			sizeof(cgcName_colorSource) - 1,			(u32)&iiSubobj_form_setColorSource,              (u32)&iiSubobj_form_getColorSource				},
+		{	cgcName_continuousScroll,		sizeof(cgcName_continuousScroll) - 1,		(u32)&iiSubobj_form_setContinuousScroll,         (u32)&iiSubobj_form_getContinuousScroll		},
+		{	cgcName_dataSession,			sizeof(cgcName_dataSession) - 1,			(u32)&iiSubobj_form_setDataSession,              (u32)&iiSubobj_form_getDataSession				},
+		{	cgcName_dataSessionId,			sizeof(cgcName_dataSessionId) - 1,			(u32)&iiSubobj_form_setDataSessionId,            (u32)&iiSubobj_form_getDataSessionId			},
+		{	cgcName_deClass,				sizeof(cgcName_deClass) - 1,				(u32)&iiSubobj_form_setDeClass,                  (u32)&iiSubobj_form_getDeClass					},
+		{	cgcName_deClassLibrary,			sizeof(cgcName_deClassLibrary) - 1,			(u32)&iiSubobj_form_setDeClassLibrary,           (u32)&iiSubobj_form_getDeClassLibrary			},
+		{	cgcName_defOleCid,				sizeof(cgcName_defOleCid) - 1,				(u32)&iiSubobj_form_setDefOleCid,                (u32)&iiSubobj_form_getDefOleCid				},
+		{	cgcName_desktop,				sizeof(cgcName_desktop) - 1,				(u32)&iiSubobj_form_setDesktop,                  (u32)&iiSubobj_form_getDesktop					},
+		{	cgcName_isDockable,				sizeof(cgcName_isDockable) - 1,				(u32)&iiSubobj_form_setIsDockable,               (u32)&iiSubobj_form_getIsDockable				},
+		{	cgcName_isDocked,				sizeof(cgcName_isDocked) - 1,				(u32)&iiSubobj_form_setIsDocked,                 (u32)&iiSubobj_form_getIsDocked				},
+		{	cgcName_dockPosition,			sizeof(cgcName_dockPosition) - 1,			(u32)&iiSubobj_form_setDockPosition,             (u32)&iiSubobj_form_getDockPosition			},
+		{	cgcName_drawMode,				sizeof(cgcName_drawMode) - 1,				(u32)&iiSubobj_form_setDrawMode,                 (u32)&iiSubobj_form_getDrawMode				},
+		{	cgcName_drawStyle,				sizeof(cgcName_drawStyle) - 1,				(u32)&iiSubobj_form_setDrawStyle,                (u32)&iiSubobj_form_getDrawStyle				},
+		{	cgcName_drawWidth,				sizeof(cgcName_drawWidth) - 1,				(u32)&iiSubobj_form_setDrawWidth,                (u32)&iiSubobj_form_getDrawWidth				},
+		{	cgcName_fillColor,				sizeof(cgcName_fillColor) - 1,				(u32)&iiSubobj_form_setFillColor,                (u32)&iiSubobj_form_getFillColor				},
+		{	cgcName_fillStyle,				sizeof(cgcName_fillStyle) - 1,				(u32)&iiSubobj_form_setFillStyle,                (u32)&iiSubobj_form_getFillStyle				},
+		{	cgcName_halfHeightCaption,		sizeof(cgcName_halfHeightCaption) - 1,		(u32)&iiSubobj_form_setHalfHeightCaption,        (u32)&iiSubobj_form_getHalfHeightCaption		},
+		{	cgcName_hScrollSmallChange,		sizeof(cgcName_hScrollSmallChange) - 1,		(u32)&iiSubobj_form_setHScrollSmallChange,       (u32)&iiSubobj_form_getHScrollSmallChange		},
+		{	cgcName_vScrollSmallChange,		sizeof(cgcName_vScrollSmallChange) - 1,		(u32)&iiSubobj_form_setVScrollSmallChange,       (u32)&iiSubobj_form_getVScrollSmallChange		},
+		{	cgcName_macDesktop,				sizeof(cgcName_macDesktop) - 1,				(u32)&iiSubobj_form_setMacDesktop,               (u32)&iiSubobj_form_getMacDesktop				},
+		{	cgcName_mdiForm,				sizeof(cgcName_mdiForm) - 1,				(u32)&iiSubobj_form_setMdiForm,                  (u32)&iiSubobj_form_getMdiForm					},
+		{	cgcName_oleDragMode,			sizeof(cgcName_oleDragMode) - 1,			(u32)&iiSubobj_form_setOleDragMode,              (u32)&iiSubobj_form_getOleDragMode				},
+		{	cgcName_oleDragPicture,			sizeof(cgcName_oleDragPicture) - 1,			(u32)&iObj_setError,							(u32)&iObj_getError								},
+		{	cgcName_oleDropEffects,			sizeof(cgcName_oleDropEffects) - 1,			(u32)&iiSubobj_form_setOleDropEffects,           (u32)&iiSubobj_form_getOleDropEffects			},
+		{	cgcName_oleDropHasData,			sizeof(cgcName_oleDropHasData) - 1,			(u32)&iiSubobj_form_setOleDropHasData,           (u32)&iiSubobj_form_getOleDropHasData			},
+		{	cgcName_oleDropMode,			sizeof(cgcName_oleDropMode) - 1,			(u32)&iiSubobj_form_setOleDropMode,              (u32)&iiSubobj_form_getOleDropMode				},
+		{	cgcName_releaseType,			sizeof(cgcName_releaseType) - 1,			(u32)&iiSubobj_form_setReleaseType,              (u32)&iiSubobj_form_getReleaseType				},
+		{	cgcName_rightToLeft,			sizeof(cgcName_rightToLeft) - 1,			(u32)&iiSubobj_form_setRightToLeft,              (u32)&iiSubobj_form_getRightToLeft				},
+		{	cgcName_scrollbars,				sizeof(cgcName_scrollbars) - 1,				(u32)&iiSubobj_form_setScrollbars,               (u32)&iiSubobj_form_getScrollbars				},
+		{	cgcName_showTips,				sizeof(cgcName_showTips) - 1,				(u32)&iiSubobj_form_setShowTips,                 (u32)&iiSubobj_form_getShowTips				},
+		{	cgcName_showWindow,				sizeof(cgcName_showWindow) - 1,				(u32)&iiSubobj_form_setShowWindow,               (u32)&iiSubobj_form_getShowWindow				},
+		{	cgcName_sizeBox,				sizeof(cgcName_sizeBox) - 1,				(u32)&iiSubobj_form_setSizeBox,                  (u32)&iiSubobj_form_getSizeBox					},
+		{	cgcName_themes,					sizeof(cgcName_themes) - 1,					(u32)&iiSubobj_form_setThemes,                   (u32)&iiSubobj_form_getThemes					},
+		{	cgcName_titleBar,				sizeof(cgcName_titleBar) - 1,				(u32)&iiSubobj_form_setTitleBar,                 (u32)&iiSubobj_form_getTitleBar				},
+		{	cgcName_windowType,				sizeof(cgcName_windowType) - 1,				(u32)&iiSubobj_form_setWindowType,               (u32)&iiSubobj_form_getWindowType				},
+		{	cgcName_zoomBox,				sizeof(cgcName_zoomBox) - 1,				(u32)&iiSubobj_form_setZoomBox,                  (u32)&iiSubobj_form_getZoomBox					},
 		// Note:  Do not delete this line, it is used to terminate the search list
 		{	0, 0, 0, 0	}
 	};
@@ -1799,7 +1800,7 @@
 			subobjDst->alwaysOnTop				= subobjSrc->alwaysOnTop;
 			subobjDst->autoCenter				= subobjSrc->autoCenter;
 			subobjDst->borderStyle				= subobjSrc->borderStyle;
-			subobjDst->isCloseable				= subobjSrc->isCloseable;
+			subobjDst->isClosable				= subobjSrc->isClosable;
 			subobjDst->processKeyPreviewEvents	= subobjSrc->processKeyPreviewEvents;
 			subobjDst->hasControlBox			= subobjSrc->hasControlBox;
 			subobjDst->hasMinButton				= subobjSrc->hasMinButton;
@@ -2451,7 +2452,7 @@
 			form->alwaysOnTop						= false;
 			form->autoCenter						= false;
 			form->borderStyle						= _BORDER_STYLE_SIZABLE;
-			form->isCloseable						= true;
+			form->isClosable						= true;
 			form->processKeyPreviewEvents			= false;
 			form->hasControlBox						= true;
 			form->hasMinButton						= true;
@@ -2874,7 +2875,7 @@
 // Called to set the form's icon
 //
 //////
-	void iSubobj_form_setIcon(SObject* obj, SBitmap* bmp)
+	void iiSubobj_form_setIcon(SObject* obj, SBitmap* bmp)
 	{
 		SSubObjForm* form;
 
@@ -2895,179 +2896,6 @@
 
 			// Scale the indicated icon into this one
 			iBmp_scale(form->bmpFormIcon, bmp);
-		}
-	}
-
-
-
-
-//////////
-//
-// Called to set the caption for the form
-//
-//////
-	void iSubobj_form_setCaption(SObject* obj, s8* tcCaption, u32 tnCaptionLength)
-	{
-		SSubObjForm* form;
-
-
-		// Make sure our environment is sane
-		if (obj && obj->objType == _OBJ_TYPE_FORM)
-		{
-			// Grab the form data
-			form = (SSubObjForm*)obj->sub_obj;
-
-			// Set the caption
-			iDatum_duplicate(&form->caption, tcCaption, tnCaptionLength);
-		}
-	}
-
-
-
-
-//////////
-//
-// Called to set the border colors for the indicated form
-//
-//////
-	void iSubobj_form_setBorderRgba(SObject* obj, u32 tnNwRgba, u32 tnNeRgba, u32 tnSwRgba, u32 tnSeRgba)
-	{
-		SSubObjForm* form;
-
-
-		// Make sure our environment is sane
-		if (obj && obj->objType == _OBJ_TYPE_FORM)
-		{
-			// Grab the form data
-			form = (SSubObjForm*)obj->sub_obj;
-
-			// Set the colors
-			form->nwRgba.color	= tnNwRgba;
-			form->neRgba.color	= tnNeRgba;
-			form->swRgba.color	= tnSwRgba;
-			form->seRgba.color	= tnSeRgba;
-		}
-	}
-
-
-
-
-//////////
-//
-// Called to set the back color for the indicated form
-//
-//////
-	u32 iSubobj_form_setBackColor(SObject* obj, u32 tnRgba)
-	{
-		u32				lnOldColor;
-		SSubObjForm*	form;
-
-
-		// Make sure our environment is sane
-		lnOldColor = 0;
-		if (obj && obj->objType == _OBJ_TYPE_FORM)
-		{
-			// Grab the form data
-			form = (SSubObjForm*)obj->sub_obj;
-
-			// SEt the color
-			lnOldColor				= form->backColor.color;
-			form->backColor.color	= tnRgba;
-		}
-
-		// Indicate the old color
-		return(lnOldColor);
-	}
-
-
-
-
-//////////
-//
-// Called to set the fore color for the indicated form
-//
-//////
-	u32 iSubobj_form_setForeColor(SObject* obj, u32 tnRgba)
-	{
-		u32				lnOldColor;
-		SSubObjForm*	form;
-
-
-		// Make sure our environment is sane
-		lnOldColor = 0;
-		if (obj && obj->objType == _OBJ_TYPE_FORM)
-		{
-			// Grab the form data
-			form = (SSubObjForm*)obj->sub_obj;
-
-			// SEt the color
-			lnOldColor				= form->foreColor.color;
-			form->foreColor.color	= tnRgba;
-		}
-
-		// Indicate the old color
-		return(lnOldColor);
-	}
-
-
-
-
-//////////
-//
-// Called to set the form's caption color
-//
-//////
-	u32 iSubobj_form_setCaptionColor(SObject* obj, u32 tnRgba)
-	{
-		u32				lnOldColor;
-		SSubObjForm*	form;
-
-
-		// Make sure our environment is sane
-		lnOldColor = 0;
-		if (obj && obj->sub_obj && obj->objType == _OBJ_TYPE_FORM)
-		{
-			// Grab the form data
-			form = (SSubObjForm*)obj->sub_obj;
-
-			// SEt the color
-			lnOldColor					= form->captionColor.color;
-			form->captionColor.color	= tnRgba;
-		}
-
-		// Indicate the old color
-		return(lnOldColor);
-	}
-
-
-
-
-//////////
-//
-// Called to set the indicated form font
-//
-//////
-	void iSubobj_form_setFont(SObject* obj, s8* tcFontName, u32 tnPointSize, bool tlBold, bool tlItalics, bool tlUnderline, bool tlStrikethrough, bool tlCondensed, bool tlExtended)
-	{
-		SSubObjForm*	form;
-
-
-		// Make sure our environment is sane
-		if (obj && obj->sub_obj && obj->objType == _OBJ_TYPE_FORM && tcFontName)
-		{
-			// Grab our form
-			form = (SSubObjForm*)obj->sub_obj;
-
-			// Clear out the existing font
-			iFont_delete(&form->font, true);
-
-			// Create the new font
-			form->font = iFont_create(tcFontName, tnPointSize, (tlBold) ? FW_BOLD : FW_NORMAL, tlItalics, tlUnderline);
-
-			// Update the other flags
-			form->font->isStrikethrough	= tlStrikethrough;
-			form->font->isCondensed		= tlCondensed;
-			form->font->isExtended		= tlExtended;
 		}
 	}
 
