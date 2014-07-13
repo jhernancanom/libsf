@@ -156,7 +156,7 @@ struct SVariable;
 		{	_ICODE_MAX,				1,			(u32)&function_max,				2,				2	},
 		{	_ICODE_MIN,				1,			(u32)&function_min,				2,				2	},
 		{	_ICODE_PROPER,			1,			(u32)&function_proper,			1,				1	},
-		{	_ICODE_REPLICATE,		1,			(u32)&function_left,			2,				2	},
+		{	_ICODE_REPLICATE,		1,			(u32)&function_replicate,		2,				2	},
 		{	_ICODE_RIGHT,			1,			(u32)&function_right,			2,				2	},
 		{	_ICODE_TRIM,			1,			(u32)&function_rtrim,			1,				1	},
 		{	_ICODE_RTRIM,			1,			(u32)&function_rtrim,			1,				1	},

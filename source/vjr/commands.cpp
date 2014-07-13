@@ -1391,8 +1391,66 @@
 //////
 	SVariable* function_replicate(SVariable* pString, SVariable* pCount)
 	{
-// TODO:  replicate()
-		return(NULL);
+		s32			lnI, lnCopies;
+		u32			errorNum;
+		bool		error;
+        SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be character
+		//////
+			if (!iVariable_isValid(pString) || iVariable_getType(pString) != _VAR_TYPE_CHARACTER)
+			{
+				iError_report("Parameter 1 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 2 must be nmumeric
+		//////
+			if (!iVariable_isValid(pCount) || !iVariable_isTypeNumeric(pCount))
+			{
+				iError_report("Parameter 2 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Find out how long they want our string to be
+		//////
+			lnCopies = iiVariable_getAs_s32(pCount, false, &error, &errorNum);
+			if (error)
+			{
+				iError_reportByNumber(errorNum, NULL);
+				return(NULL);
+			}
+
+
+		//////////
+        // Create our return result
+		//////
+			if (lnCopies > 0 && pString->value.length > 0)
+			{
+				result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+				if (!result)
+				{
+					iError_report("Internal error.");
+					return(NULL);
+				}
+
+				// Repeat the string as many as are indicated
+				iDatum_allocateSpace(&result->value, lnCopies * pString->value.length);
+				for (lnI = 0; lnI < lnCopies; lnI++)
+					memcpy(result->value.data + (lnI * pString->value.length), pString->value.data, pString->value.length);
+			}
+		
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
 	}
 
 
