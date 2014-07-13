@@ -107,6 +107,35 @@
 
 //////////
 //
+// Function: ALLTRIM()
+// Trims spaces off the start and end of the string.
+//
+//////
+// Version 0.30
+// Last update:
+//     Jul.12.2014
+//////
+// Change log:
+//     Jul.12.2014 - Initial creation
+//////
+// Parameters:
+//     pString		-- Character, the string to trim
+//
+//////
+// Returns:
+//    Character		-- The string with any leading and trailing spaces removed
+//////
+	SVariable* function_alltrim(SVariable* pString)
+	{
+// TODO:  alltrim()
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
 // Function: ASC()
 // Takes a character input and converts it to its ASCII value.
 //
@@ -574,6 +603,255 @@
 
 //////////
 //
+// Function: LEFT()
+// Returns the left N characters of a string.
+//
+//////
+// Version 0.30
+// Last update:
+//     Jul.12.2014
+//////
+// Change log:
+//     Jul.12.2014 - Initial creation
+//////
+// Parameters:
+//     pString		-- Character, the string to trim
+//     pCount		-- Numeric, the number of characters to copy
+//
+//////
+// Returns:
+//    Character		-- The string of the left N characters
+//////
+	SVariable* function_left(SVariable* pString, SVariable* pCount)
+	{
+		s32			lnLength;
+		u32			errorNum;
+		bool		error;
+        SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be character
+		//////
+			if (!iVariable_isValid(pString) || iVariable_getType(pString) != _VAR_TYPE_CHARACTER)
+			{
+				iError_report("Parameter 1 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 2 must be nmumeric
+		//////
+			if (!iVariable_isValid(pCount) || !iVariable_isTypeNumeric(pCount))
+			{
+				iError_report("Parameter 2 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Find out how long they want our string to be
+		//////
+			lnLength = iiVariable_getAs_s32(pCount, false, &error, &errorNum);
+			if (error)
+			{
+				iError_reportByNumber(errorNum, NULL);
+				return(NULL);
+			}
+
+
+		//////////
+        // Create our return result
+		//////
+	        result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+			if (!result)
+			{
+				iError_report("Internal error.");
+				return(NULL);
+			}
+
+
+		//////////
+        // Copy as much of the source string as will fit
+		//////
+			if (lnLength > 0)
+				iDatum_duplicate(&result->value, pString->value.data, min(pString->value.length, lnLength));
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
+	}
+
+
+
+
+//////////
+//
+// Function: LEN()
+// Returns the length of the string.
+//
+//////
+// Version 0.30
+// Last update:
+//     Jul.12.2014
+//////
+// Change log:
+//     Jul.12.2014 - Initial creation
+//////
+// Parameters:
+//     pString		-- Character, the string to return the length from
+//
+//////
+// Returns:
+//    Numeric		-- The length of the string
+//////
+	SVariable* function_len(SVariable* pString)
+	{
+        SVariable* result;
+
+
+		//////////
+        // Parameter 1 must be character
+		//////
+			if (!iVariable_isValid(pString) || iVariable_getType(pString) != _VAR_TYPE_CHARACTER)
+			{
+				iError_report("Parameter 1 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Create our return result
+		//////
+	        result = iVariable_create(_VAR_TYPE_S32, NULL);
+			if (!result)
+			{
+				iError_report("Internal error.");
+				return(NULL);
+			}
+
+
+		//////////
+		// Populate based on the length
+		//////
+			*(s32*)result->value.data = pString->value.length;
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
+	}
+
+
+
+
+//////////
+//
+// Function: LOWER()
+// Converts every character in the string to lowercase.
+//
+//////
+// Version 0.30
+// Last update:
+//     Jul.12.2014
+//////
+// Change log:
+//     Jul.12.2014 - Initial creation
+//////
+// Parameters:
+//     pString		-- Character, the string to lower
+//
+//////
+// Returns:
+//    Character		-- The string with all lowercase characters converted to lowercase
+//////
+	SVariable* function_lower(SVariable* pString)
+	{
+		s32			lnI;
+        SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be character
+		//////
+			if (!iVariable_isValid(pString) || iVariable_getType(pString) != _VAR_TYPE_CHARACTER)
+			{
+				iError_report("Parameter 1 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Create our return result
+		//////
+	        result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+			if (!result)
+			{
+				iError_report("Internal error.");
+				return(NULL);
+			}
+
+
+		//////////
+        // Copy the source string
+		//////
+	        iDatum_duplicate(&result->value, &pString->value);
+
+
+		//////////
+		// Lower every character
+		//////
+			for (lnI = 0; lnI < result->value.length; lnI++)
+			{
+				if (result->value.data[lnI] >= 'A' && result->value.data[lnI] <= 'Z')
+					result->value.data[lnI] += 0x20;
+			}
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
+	}
+
+
+
+
+//////////
+//
+// Function: LTRIM()
+// Trims spaces off the start of the string.
+//
+//////
+// Version 0.30
+// Last update:
+//     Jul.12.2014
+//////
+// Change log:
+//     Jul.12.2014 - Initial creation
+//////
+// Parameters:
+//     pString		-- Character, the string to trim
+//
+//////
+// Returns:
+//    Character		-- The string with any leading spaces removed
+//////
+	SVariable* function_ltrim(SVariable* pString)
+	{
+// TODO:  ltrim()
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
 // Function: MAX()
 // Returns the maximum value of the two inputs.
 //
@@ -998,6 +1276,330 @@
 
 //////////
 //
+// Function: PROPER()
+// Converts the first character after every space to upper-case,
+// and lowercases everything else.
+//
+//////
+// Version 0.30
+// Last update:
+//     Jul.12.2014
+//////
+// Change log:
+//     Jul.12.2014 - Initial creation
+//////
+// Parameters:
+//     pString		-- Character, the string to proper
+//
+//////
+// Returns:
+//    Character		-- The string with all words proper'd (if I can use that as a verb)
+//////
+	SVariable* function_proper(SVariable* pString)
+	{
+		s32			lnI;
+		bool		llUpperNext;
+        SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be character
+		//////
+			if (!iVariable_isValid(pString) || iVariable_getType(pString) != _VAR_TYPE_CHARACTER)
+			{
+				iError_report("Parameter 1 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Create our return result
+		//////
+			result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+			if (!result)
+			{
+				iError_report("Internal error.");
+				return(NULL);
+			}
+
+
+		//////////
+        // Copy the source string
+		//////
+	        iDatum_duplicate(&result->value, &pString->value);
+
+
+		//////////
+		// Upper every first character after a space, and lower every character
+		//////
+			llUpperNext = true;
+			for (lnI = 0; lnI < result->value.length; lnI++)
+			{
+				// Spaces are treated differently
+				if (result->value.data[lnI] == 32)
+				{
+					// We've found a space, the next one will be upper-case
+					llUpperNext = true;
+
+				} else {
+					// We're on data
+					if (llUpperNext)
+					{
+						// Make this one uppercase if it's lower
+						llUpperNext = false;
+						if (result->value.data[lnI] >= 'a' && result->value.data[lnI] <= 'z')
+							result->value.data[lnI] -= 0x20;
+
+					} else {
+						// Make this one lowercase if it's upper
+						if (result->value.data[lnI] >= 'A' && result->value.data[lnI] <= 'Z')
+							result->value.data[lnI] += 0x20;
+					}
+				}
+			}
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
+	}
+
+
+
+
+//////////
+//
+// Function: REPLICATE()
+// Returns the indicated string replicated N times.
+//
+//////
+// Version 0.30
+// Last update:
+//     Jul.12.2014
+//////
+// Change log:
+//     Jul.12.2014 - Initial creation
+//////
+// Parameters:
+//     pString		-- Character, the string to replicate
+//     pCount		-- Numeric, the number of copies to generate
+//
+//////
+// Returns:
+//    Character		-- The string of the input replicated N times
+//////
+	SVariable* function_replicate(SVariable* pString, SVariable* pCount)
+	{
+// TODO:  replicate()
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Function: RIGHT()
+// Returns the right N characters of a string.
+//
+//////
+// Version 0.30
+// Last update:
+//     Jul.12.2014
+//////
+// Change log:
+//     Jul.12.2014 - Initial creation
+//////
+// Parameters:
+//     pString		-- Character, the string to trim
+//     pCount		-- Numeric, the number of characters to copy
+//
+//////
+// Returns:
+//    Character		-- The string of the right N characters
+//////
+	SVariable* function_right(SVariable* pString, SVariable* pCount)
+	{
+		s32			lnStart, lnLength;
+		u32			errorNum;
+		bool		error;
+        SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be character
+		//////
+			if (!iVariable_isValid(pString) || iVariable_getType(pString) != _VAR_TYPE_CHARACTER)
+			{
+				iError_report("Parameter 1 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 2 must be nmumeric
+		//////
+			if (!iVariable_isValid(pCount) || !iVariable_isTypeNumeric(pCount))
+			{
+				iError_report("Parameter 2 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Find out how long they want our string to be
+		//////
+			lnLength = iiVariable_getAs_s32(pCount, false, &error, &errorNum);
+			if (error)
+			{
+				iError_reportByNumber(errorNum, NULL);
+				return(NULL);
+			}
+
+
+		//////////
+        // Create our return result
+		//////
+	        result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+			if (!result)
+			{
+				iError_report("Internal error.");
+				return(NULL);
+			}
+
+
+		//////////
+        // Copy as much of the source string as will fit
+		//////
+			if (lnLength >= pString->value.length)
+			{
+				// Copy only the length of the current string
+				iDatum_duplicate(&result->value, &pString->value);
+
+			} else if (lnLength > 0) {
+				// We can do an extraction
+				lnStart = pString->value.length - lnLength;
+				iDatum_duplicate(&result->value, pString->value.data + lnStart, lnLength);
+			}
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
+	}
+
+
+
+
+//////////
+//
+// Function: RTRIM()
+// Trims spaces off the end of the string.
+//
+//////
+// Version 0.30
+// Last update:
+//     Jul.12.2014
+//////
+// Change log:
+//     Jul.12.2014 - Initial creation
+//////
+// Parameters:
+//     pString		-- Character, the string to trim
+//
+//////
+// Returns:
+//    Character		-- The string with any trailing spaces removed
+//////
+	SVariable* function_rtrim(SVariable* pString)
+	{
+// TODO:  rtrim()
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Function: SPACE()
+// Creates a character variable initialized with spaces.
+//
+//////
+// Version 0.30
+// Last update:
+//     Jul.12.2014
+//////
+// Change log:
+//     Jul.12.2014 - Initial creation
+//////
+// Parameters:
+//     pCount		-- The number of spaces to populate
+//
+//////
+// Returns:
+//    Character		-- The string with any leading and trailing spaces removed
+//////
+	SVariable* function_space(SVariable* pCount)
+	{
+		s32			lnLength;
+		u32			errorNum;
+		bool		error;
+        SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be numeric
+		//////
+			if (!iVariable_isValid(pCount) || !iVariable_isTypeNumeric(pCount))
+			{
+				iError_report("Parameter 1 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Create our return result
+		//////
+			result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+			if (!result)
+			{
+				iError_report("Internal error.");
+				return(NULL);
+			}
+
+
+		//////////
+        // Find out how long they want our string to be
+		//////
+			lnLength = iiVariable_getAs_s32(pCount, false, &error, &errorNum);
+			if (error)
+			{
+				iError_reportByNumber(errorNum, NULL);
+				return(NULL);
+			}
+
+
+		//////////
+        // Create the source string and initialize to spaces
+		//////
+	        iDatum_allocateSpace(&result->value, lnLength);
+			memset(result->value.data, 32, lnLength);
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
+	}
+
+
+
+
+//////////
+//
 // Function: STUFF()
 // Returns a string which has been modified, having optionally some characters optionally removed, some optionally inserted.
 //
@@ -1151,6 +1753,75 @@
 		//////
 	        return result;
 	}
-//////
-// END
+
+
+
+
 //////////
+//
+// Function: UPPER()
+// Converts every character in the string to uppercase.
+//
+//////
+// Version 0.30
+// Last update:
+//     Jul.12.2014
+//////
+// Change log:
+//     Jul.12.2014 - Initial creation
+//////
+// Parameters:
+//     pString		-- Character, the string to upper
+//
+//////
+// Returns:
+//    Character		-- The string with all lowercase characters converted to uppercase
+//////
+	SVariable* function_upper(SVariable* pString)
+	{
+		s32			lnI;
+        SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be character
+		//////
+			if (!iVariable_isValid(pString) || iVariable_getType(pString) != _VAR_TYPE_CHARACTER)
+			{
+				iError_report("Parameter 1 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Create our return result
+		//////
+			result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+			if (!result)
+			{
+				iError_report("Internal error.");
+				return(NULL);
+			}
+
+
+		//////////
+        // Copy the source string
+		//////
+	        iDatum_duplicate(&result->value, &pString->value);
+
+
+		//////////
+		// Lower every character
+		//////
+			for (lnI = 0; lnI < result->value.length; lnI++)
+			{
+				if (result->value.data[lnI] >= 'a' && result->value.data[lnI] <= 'z')
+					result->value.data[lnI] -= 0x20;
+			}
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
+	}

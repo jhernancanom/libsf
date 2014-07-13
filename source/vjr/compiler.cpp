@@ -4541,7 +4541,7 @@ _asm int 3;
 				case _VAR_TYPE_NUMERIC:
 				case _VAR_TYPE_CHARACTER:
 					// Numeric and character forms are already stored as text
-					var->isValueAllocated = true;
+					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, &var->value);
 					break;
 
@@ -4549,56 +4549,56 @@ _asm int 3;
 				case _VAR_TYPE_INTEGER:
 					// Convert to integer form, then store text
 					sprintf(buffer, "%d\0", *(s32*)var->value.data);
-					var->isValueAllocated = true;
+					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_U32:
 					// Convert to unsigned integer form, then store text
 					sprintf(buffer, "%u\0", *(u32*)var->value.data);
-					var->isValueAllocated = true;
+					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_U64:
 					// Convert to unsigned integer form, then store text
 					sprintf(buffer, "%I64u\0", *(u64*)var->value.data);
-					var->isValueAllocated = true;
+					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_S64:
 					// Convert to unsigned integer form, then store text
 					sprintf(buffer, "%I64d\0", *(s64*)var->value.data);
-					var->isValueAllocated = true;
+					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_S16:
 					// Convert to integer form, then store text
 					sprintf(buffer, "%d\0", (s32)*(s16*)var->value.data);
-					var->isValueAllocated = true;
+					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_S8:
 					// Convert to integer form, then store text
 					sprintf(buffer, "%d\0", (s32)*(s8*)var->value.data);
-					var->isValueAllocated = true;
+					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_U16:
 					// Convert to unsigned integer form, then store text
 					sprintf(buffer, "%u\0", (u32)*(u16*)var->value.data);
-					var->isValueAllocated = true;
+					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_U8:
 					// Convert to unsigned integer form, then store text
 					sprintf(buffer, "%u\0", (u32)*(u8*)var->value.data);
-					var->isValueAllocated = true;
+					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
@@ -4613,7 +4613,7 @@ _asm int 3;
 						++lnI;
 
 					// Append its form
-					var->isValueAllocated = true;
+					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer + lnI, -1);
 					break;
 
@@ -4628,19 +4628,19 @@ _asm int 3;
 						++lnI;
 
 					// Append its form
-					var->isValueAllocated = true;
+					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer + lnI, -1);
 					break;
 
 				case _VAR_TYPE_BI:
 // TODO:  BI needs coded
-					var->isValueAllocated = true;
+					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, cgcBigInteger, -1);
 					break;
 
 				case _VAR_TYPE_BFP:
 // TODO:  BFP needs coded
-					var->isValueAllocated = true;
+					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, cgcBigFloatingPoint, -1);
 					break;
 
@@ -4740,13 +4740,13 @@ _asm int 3;
 					if (_set_logical == _LOGICAL_TF)
 					{
 						// True/False
-						var->isValueAllocated = true;
+						varDisp->isValueAllocated = true;
 						if (var->value.data[0] == 0)		iDatum_duplicate(&varDisp->value, cgcFText, -1);
 						else								iDatum_duplicate(&varDisp->value, cgcTText, -1);
 
 					} else if (_set_logical == _LOGICAL_YN) {
 						// Yes/No
-						var->isValueAllocated = true;
+						varDisp->isValueAllocated = true;
 						if (var->value.data[0] == 0)		iDatum_duplicate(&varDisp->value, cgcNText, -1);
 						else								iDatum_duplicate(&varDisp->value, cgcYText, -1);
 
@@ -4766,7 +4766,7 @@ _asm int 3;
 					iiVariable_computeYyyyMmDd_fromJulianDayNumber(dt->julian, &lnYear, &lnMonth, &lnDay);
 					iiVariable_computeHhMmSsMss_fromf32(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 					sprintf(buffer, "%02u/%02u/%04u %02u:%02u:%02u.%03u", lnMonth, lnDay, lnYear, lnHour, lnMinute, lnSecond, lnMillisecond);
-					var->isValueAllocated = true;
+					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
@@ -4780,7 +4780,7 @@ _asm int 3;
 						++lnI;
 
 					// Append its form
-					var->isValueAllocated = true;
+					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer + lnI, -1);
 					break;
 			}
@@ -4790,7 +4790,7 @@ _asm int 3;
 			// Populate a ".null." variable display
 			if (varDisp)
 			{
-				var->isValueAllocated = true;
+				varDisp->isValueAllocated = true;
 				iDatum_duplicate(&varDisp->value, cgcNullText, -1);
 			}
 		}

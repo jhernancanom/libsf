@@ -64,13 +64,33 @@ struct SVariable;
 // Functions
 // STEP1: Define your function
 //////
+	SVariable*			function_alltrim							(SVariable* pString);
 	SVariable*			function_asc								(SVariable* p1);
 	SVariable*			function_chr								(SVariable* p1);
 	SVariable*			function_createobject						(SVariable* p1);
 	SVariable*			function_datetime							(SVariable* pYear, SVariable* pMonth, SVariable* pDay, SVariable* pHour, SVariable* pMinute, SVariable* pSecond, SVariable* pMillisecond);
+	SVariable*			function_left								(SVariable* pString, SVariable* pCount);
+	SVariable*			function_len								(SVariable* pString);
+	SVariable*			function_lower								(SVariable* pString);
+	SVariable*			function_ltrim								(SVariable* pString);
 	SVariable*			function_max								(SVariable* pLeft, SVariable* pRight);
 	SVariable*			function_min								(SVariable* pLeft, SVariable* pRight);
+	SVariable*			function_proper								(SVariable* pString);
+	SVariable*			function_replicate							(SVariable* pString, SVariable* pCount);
+	SVariable*			function_right								(SVariable* pString, SVariable* pCount);
+	SVariable*			function_rtrim								(SVariable* pString);
+	SVariable*			function_space								(SVariable* pCount);
 	SVariable*			function_stuff								(SVariable* pOriginalString, SVariable* pStartPos, SVariable* pNumToRemove, SVariable* pStuffString);
+	SVariable*			function_upper								(SVariable* pString);
+	// at
+	// rat
+	// strtran
+	// chrtran
+	// transform
+	// occurs
+	// padl
+	// padr
+	// padc
 //////
 // STEP3: Copy the code above near one of the other functions in commands.cpp.
 //        You may be able to right-click on one of the functions and choose "go to definition".
@@ -124,13 +144,25 @@ struct SVariable;
 		//							Return										Parameters		Parameter
 		//	iCode					Count		Function						Required		Maximum Count
 		//  ------------------		------		--------------------------		----------		-------------
+		{	_ICODE_ALLTRIM,			1,			(u32)&function_alltrim,			1,				1	},
 		{	_ICODE_ASC,				1,			(u32)&function_asc,				1,				1	},
 		{	_ICODE_CHR,				1,			(u32)&function_chr,				1,				1	},
 		{	_ICODE_CREATEOBJECT,	1,			(u32)&function_createobject,	1,				1	},
 		{	_ICODE_DATETIME,		1,			(u32)&function_datetime,		0,				7	},
+		{	_ICODE_LEFT,			1,			(u32)&function_left,			2,				2	},
+		{	_ICODE_LEN,				1,			(u32)&function_len,				1,				1	},
+		{	_ICODE_LOWER,			1,			(u32)&function_lower,			1,				1	},
+		{	_ICODE_LTRIM,			1,			(u32)&function_ltrim,			1,				1	},
 		{	_ICODE_MAX,				1,			(u32)&function_max,				2,				2	},
 		{	_ICODE_MIN,				1,			(u32)&function_min,				2,				2	},
+		{	_ICODE_PROPER,			1,			(u32)&function_proper,			1,				1	},
+		{	_ICODE_REPLICATE,		1,			(u32)&function_left,			2,				2	},
+		{	_ICODE_RIGHT,			1,			(u32)&function_right,			2,				2	},
+		{	_ICODE_TRIM,			1,			(u32)&function_rtrim,			1,				1	},
+		{	_ICODE_RTRIM,			1,			(u32)&function_rtrim,			1,				1	},
+		{	_ICODE_SPACE,			1,			(u32)&function_space,			1,				1	},
 		{	_ICODE_STUFF,			1,			(u32)&function_stuff,			3,				4	},
+		{	_ICODE_UPPER,			1,			(u32)&function_upper,			1,				1	},
 	//////
 	// Insert above this step somewhere in the list of functions.
 	// STEP2:

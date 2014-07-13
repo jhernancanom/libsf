@@ -1045,6 +1045,7 @@ _asm int 3;
 		RECT			lrc;
 
 
+		llChanged = false;
 		if (!ecm->isHeavyProcessing)
 		{
 			//////////
