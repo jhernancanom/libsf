@@ -31,7 +31,12 @@
 // Thank you.  And may The Lord bless you richly as you lift up your life, your
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
 //
+// To jump immediately to a section, search for one of these here or in vjr_defs.h:
+//		OBJECT Properties
+//		FORM Properties
+//		SUBFORM Properties
 //
+//////
 
 
 
@@ -184,6 +189,13 @@ SVariable* iObj_getError(SObject* obj)
 	return(NULL);
 }
 
+
+
+
+
+//////////
+// OBJECT Properties
+//////
 SVariable* iObj_getProperty_parent(SObject* obj)
 {
 	SVariable* var;
@@ -757,6 +769,13 @@ SVariable* iObj_getProperty_scaleY(SObject* obj)
 	return(NULL);
 }
 
+
+
+
+
+//////////
+// FORM Properties
+//////
 bool iiSubobj_form_setMinLeft(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
@@ -3106,3 +3125,1057 @@ SVariable* iiSubobj_form_getZoomBox(SObject* obj)
 	return(NULL);
 }
 
+
+
+
+
+
+
+
+
+//////////
+// SUBFORM Properties
+//////
+bool iiSubobj_subform_setMinLeft(SObject* obj, SVariable* var)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_setInteger(obj, var, &subform->rcMin.left, 0, 0, false, 0));
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getMinLeft(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getInteger(obj, subform->rcMin.left));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setMinTop(SObject* obj, SVariable* var)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_setInteger(obj, var, &subform->rcMin.top, 0, 0, false, 0));
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getMinTop(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getInteger(obj, subform->rcMin.top));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setMinWidth(SObject* obj, SVariable* var)
+{
+	s32				value;
+	bool			error;
+	u32				errorNum;
+	SSubObjSubform*	subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform && iVariable_isTypeNumeric(var))
+	{
+		value = iiVariable_getAs_s32(var, false, &error, &errorNum);
+		if (error)
+		{
+			iError_reportByNumber(errorNum, NULL);
+			return(false);
+		}
+
+		// Set the value
+		subform->rcMin.right = subform->rcMin.left + value;
+	}
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getMinWidth(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getInteger(obj, subform->rcMin.right - subform->rcMin.left));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setMinHeight(SObject* obj, SVariable* var)
+{
+	s32				value;
+	bool			error;
+	u32				errorNum;
+	SSubObjSubform*	subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform && iVariable_isTypeNumeric(var))
+	{
+		value = iiVariable_getAs_s32(var, false, &error, &errorNum);
+		if (error)
+		{
+			iError_reportByNumber(errorNum, NULL);
+			return(false);
+		}
+
+		// Set the value
+		subform->rcMin.bottom = subform->rcMin.top + value;
+	}
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getMinHeight(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getInteger(obj, subform->rcMin.bottom - subform->rcMin.top));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setMaxLeft(SObject* obj, SVariable* var)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_setInteger(obj, var, &subform->rcMax.left, 0, 0, false, 0));
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getMaxLeft(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getInteger(obj, subform->rcMax.left));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setMaxTop(SObject* obj, SVariable* var)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_setInteger(obj, var, &subform->rcMax.top, 0, 0, false, 0));
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getMaxTop(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getInteger(obj, subform->rcMin.top));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setMaxWidth(SObject* obj, SVariable* var)
+{
+	s32				value;
+	bool			error;
+	u32				errorNum;
+	SSubObjSubform*	subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform && iVariable_isTypeNumeric(var))
+	{
+		value = iiVariable_getAs_s32(var, false, &error, &errorNum);
+		if (error)
+		{
+			iError_reportByNumber(errorNum, NULL);
+			return(false);
+		}
+
+		// Set the value
+		subform->rcMax.right = subform->rcMax.left + value;
+	}
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getMaxWidth(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getInteger(obj, subform->rcMax.right - subform->rcMax.left));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setMaxHeight(SObject* obj, SVariable* var)
+{
+	s32				value;
+	bool			error;
+	u32				errorNum;
+	SSubObjSubform*	subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform && iVariable_isTypeNumeric(var))
+	{
+		value = iiVariable_getAs_s32(var, false, &error, &errorNum);
+		if (error)
+		{
+			iError_reportByNumber(errorNum, NULL);
+			return(false);
+		}
+
+		// Set the value
+		subform->rcMax.bottom = subform->rcMax.top + value;
+	}
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getMaxHeight(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getInteger(obj, subform->rcMin.bottom - subform->rcMin.top));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setFontName(SObject* obj, SVariable* var)
+{
+	bool			llResult;
+	SSubObjSubform*	subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+	{
+		// Perform the update
+		llResult = iObj_setCharacter(obj, var, &subform->font->name, var->value.data, var->value.length);
+		if (llResult)
+			iiFont_refresh(subform->font);		// Refresh the font with its new settings
+
+		// Indicate our status
+		return(llResult);
+	}
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getFontName(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getCharacter(obj, &subform->font->name));
+
+	// If we get here, failure
+	return(false);
+}
+
+bool iiSubobj_subform_setFontSize(SObject* obj, SVariable* var)
+{
+	bool			llResult;
+	SSubObjSubform*	subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+	{
+		// Perform the update
+		llResult = iObj_setInteger(obj, var, (s32*)&subform->font->_size, 0, 0, false, 0);
+		if (llResult)
+			iiFont_refresh(subform->font);		// Refresh the font with its new settings
+
+		// Indicate our status
+		return(llResult);
+	}
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getFontSize(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getInteger(obj, subform->font->_size));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setFontBold(SObject* obj, SVariable* var)
+{
+	bool			llResult;
+	SSubObjSubform*	subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+	{
+		// Perform the update
+		llResult = iObj_setLogical(obj, var, &subform->font->isBold);
+		if (llResult)
+			iiFont_refresh(subform->font);		// Refresh the font with its new settings
+
+		// Indicate our status
+		return(llResult);
+	}
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getFontBold(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getLogical(obj, subform->font->isBold));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setFontItalic(SObject* obj, SVariable* var)
+{
+	bool			llResult;
+	SSubObjSubform*	subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+	{
+		// Perform the update
+		llResult = iObj_setLogical(obj, var, &subform->font->isItalic);
+		if (llResult)
+			iiFont_refresh(subform->font);		// Refresh the font with its new settings
+
+		// Indicate our status
+		return(llResult);
+	}
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getFontItalic(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getLogical(obj, subform->font->isItalic));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setFontUnderline(SObject* obj, SVariable* var)
+{
+	bool			llResult;
+	SSubObjSubform*	subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+	{
+		// Perform the update
+		llResult = iObj_setLogical(obj, var, &subform->font->isUnderline);
+		if (llResult)
+			iiFont_refresh(subform->font);		// Refresh the font with its new settings
+
+		// Indicate our status
+		return(llResult);
+	}
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getFontUnderline(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getLogical(obj, subform->font->isUnderline));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setFontStrikethrough(SObject* obj, SVariable* var)
+{
+	bool			llResult;
+	SSubObjSubform*	subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+	{
+		// Perform the update
+		llResult = iObj_setLogical(obj, var, &subform->font->isStrikethrough);
+		if (llResult)
+			iiFont_refresh(subform->font);		// Refresh the font with its new settings
+
+		// Indicate our status
+		return(llResult);
+	}
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getFontStrikethrough(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getLogical(obj, subform->font->isStrikethrough));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setFontCondensed(SObject* obj, SVariable* var)
+{
+	bool			llResult;
+	SSubObjSubform*	subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+	{
+		// Perform the update
+		llResult = iObj_setLogical(obj, var, &subform->font->isCondensed);
+		if (llResult)
+			iiFont_refresh(subform->font);		// Refresh the font with its new settings
+
+		// Indicate our status
+		return(llResult);
+	}
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getFontCondensed(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getLogical(obj, subform->font->isCondensed));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setFontExtended(SObject* obj, SVariable* var)
+{
+	bool			llResult;
+	SSubObjSubform*	subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+	{
+		// Perform the update
+		llResult = iObj_setLogical(obj, var, &subform->font->isExtended);
+		if (llResult)
+			iiFont_refresh(subform->font);		// Refresh the font with its new settings
+
+		// Indicate our status
+		return(llResult);
+	}
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getFontExtended(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getLogical(obj, subform->font->isExtended));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setFontOutline(SObject* obj, SVariable* var)
+{
+	bool			llResult;
+	SSubObjSubform*	subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+	{
+		// Perform the update
+		llResult = iObj_setLogical(obj, var, &subform->font->isOutline);
+		if (llResult)
+			iiFont_refresh(subform->font);		// Refresh the font with its new settings
+
+		// Indicate our status
+		return(llResult);
+	}
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getFontOutline(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getLogical(obj, subform->font->isOutline));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setFontShadow(SObject* obj, SVariable* var)
+{
+	bool			llResult;
+	SSubObjSubform*	subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+	{
+		// Perform the update
+		llResult = iObj_setLogical(obj, var, &subform->font->isShadow);
+		if (llResult)
+			iiFont_refresh(subform->font);		// Refresh the font with its new settings
+
+		// Indicate our status
+		return(llResult);
+	}
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getFontShadow(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getLogical(obj, subform->font->isShadow));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setNwColor(SObject* obj, SVariable* var)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_setInteger(obj, var, (s32*)&subform->nwRgba.color, 0, 0, false, 0));
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getNwColor(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getInteger(obj, subform->nwRgba.color));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setNeColor(SObject* obj, SVariable* var)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_setInteger(obj, var, (s32*)&subform->neRgba.color, 0, 0, false, 0));
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getNeColor(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getInteger(obj, subform->neRgba.color));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setSwColor(SObject* obj, SVariable* var)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_setInteger(obj, var, (s32*)&subform->swRgba.color, 0, 0, false, 0));
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getSwColor(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getInteger(obj, subform->swRgba.color));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setSeColor(SObject* obj, SVariable* var)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_setInteger(obj, var, (s32*)&subform->seRgba.color, 0, 0, false, 0));
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getSeColor(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getInteger(obj, subform->seRgba.color));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setBackColor(SObject* obj, SVariable* var)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_setInteger(obj, var, (s32*)&subform->backColor.color, 0, 0, false, 0));
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getBackColor(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getInteger(obj, subform->backColor.color));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setForeColor(SObject* obj, SVariable* var)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_setInteger(obj, var, (s32*)&subform->foreColor.color, 0, 0, false, 0));
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getForeColor(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getInteger(obj, subform->foreColor.color));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setCaptionColor(SObject* obj, SVariable* var)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_setInteger(obj, var, (s32*)&subform->captionColor.color, 0, 0, false, 0));
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getCaptionColor(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getInteger(obj, subform->captionColor.color));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setCaption(SObject* obj, SVariable* var)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_setCharacter(obj, var, &subform->caption, var->value.data, var->value.length));
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getCaption(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getCharacter(obj, &subform->caption));
+
+	// If we get here, failure
+	return(false);
+}
+
+bool iiSubobj_subform_setPicture(SObject* obj, SVariable* var)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_setCharacter(obj, var, &subform->pictureName, var->value.data, var->value.length));
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getPicture(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getCharacter(obj, &subform->pictureName));
+
+	// If we get here, failure
+	return(false);
+}
+
+bool iiSubobj_subform_setAllowOutput(SObject* obj, SVariable* var)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_setLogical(obj, var, &subform->allowOutput));
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getAllowOutput(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getLogical(obj, subform->allowOutput));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setBorderStyle(SObject* obj, SVariable* var)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_setInteger(obj, var, (s32*)&subform->borderStyle, 0, 3, true, 0));
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getBorderStyle(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getInteger(obj, subform->borderStyle));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setProcessKeyPreviewEvents(SObject* obj, SVariable* var)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_setLogical(obj, var, &subform->processKeyPreviewEvents));
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getProcessKeyPreviewEvents(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getLogical(obj, subform->processKeyPreviewEvents));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setScaleMode(SObject* obj, SVariable* var)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_setInteger(obj, var, (s32*)&subform->scaleMode, 0, 0, false, (u32)&iiSubobj_subform_setScaleMode_extraTest));
+
+	// If we get here, failure
+	return(false);
+}
+
+bool iiSubobj_subform_setScaleMode_extraTest(s32 value)
+{
+	if (value == 0 || value == 3)		return(true);
+	else								return(false);
+}
+
+SVariable* iiSubobj_subform_getScaleMode(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getInteger(obj, subform->scaleMode));
+
+	// If we get here, failure
+	return(NULL);
+}
+
+bool iiSubobj_subform_setWindowState(SObject* obj, SVariable* var)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_setInteger(obj, var, (s32*)&subform->windowState, 0, 1, true, 0));
+
+	// If we get here, failure
+	return(false);
+}
+
+SVariable* iiSubobj_subform_getWindowState(SObject* obj)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	subform = (SSubObjSubform*)obj->sub_obj;
+	if (subform)
+		return(iObj_getInteger(obj, subform->windowState));
+
+	// If we get here, failure
+	return(NULL);
+}

@@ -87,6 +87,8 @@
 	SVariable*				iObj_getCharacter						(SObject* obj, SDatum* datum);
 	bool					iObj_setError							(SObject* obj, SVariable* var);
 	SVariable*				iObj_getError							(SObject* obj);
+
+	// OBJECT Properties
 	SVariable*				iObj_getProperty_parent                 (SObject* obj);
 	bool					iObj_setProperty_tabIndex               (SObject* obj, SVariable* var);
 	SVariable*				iObj_getProperty_tabIndex               (SObject* obj);
@@ -189,7 +191,8 @@
 
 
 	// For specific sub-objects
-	void					iiSubobj_form_setIcon					(SObject*obj, SBitmap* bmp);
+	// FORM Properties
+	void					iiSubobj_form_setIcon					(SObject* obj, SBitmap* bmp);
 	bool					iiSubobj_form_setMinLeft				(SObject* obj, SVariable* var);
 	SVariable*				iiSubobj_form_getMinLeft				(SObject* obj);
 	bool					iiSubobj_form_setMinTop					(SObject* obj, SVariable* var);
@@ -349,6 +352,73 @@
 	SVariable*				iiSubobj_form_getWindowType				(SObject* obj);
 	bool					iiSubobj_form_setZoomBox				(SObject* obj, SVariable* var);
 	SVariable*				iiSubobj_form_getZoomBox				(SObject* obj);
+
+	// SUBFORM Properties
+	bool					iiSubobj_subform_setMinLeft				(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getMinLeft				(SObject* obj);
+	bool					iiSubobj_subform_setMinTop				(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getMinTop				(SObject* obj);
+	bool					iiSubobj_subform_setMinWidth			(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getMinWidth			(SObject* obj);
+	bool					iiSubobj_subform_setMinHeight			(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getMinHeight			(SObject* obj);
+	bool					iiSubobj_subform_setMaxLeft				(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getMaxLeft				(SObject* obj);
+	bool					iiSubobj_subform_setMaxTop				(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getMaxTop				(SObject* obj);
+	bool					iiSubobj_subform_setMaxWidth			(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getMaxWidth			(SObject* obj);
+	bool					iiSubobj_subform_setMaxHeight			(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getMaxHeight			(SObject* obj);
+	bool					iiSubobj_subform_setFontName			(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getFontName			(SObject* obj);
+	bool					iiSubobj_subform_setFontSize			(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getFontSize			(SObject* obj);
+	bool					iiSubobj_subform_setFontBold			(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getFontBold			(SObject* obj);
+	bool					iiSubobj_subform_setFontItalic			(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getFontItalic			(SObject* obj);
+	bool					iiSubobj_subform_setFontUnderline		(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getFontUnderline		(SObject* obj);
+	bool					iiSubobj_subform_setFontStrikethrough	(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getFontStrikethrough	(SObject* obj);
+	bool					iiSubobj_subform_setFontCondensed		(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getFontCondensed		(SObject* obj);
+	bool					iiSubobj_subform_setFontExtended		(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getFontExtended		(SObject* obj);
+	bool					iiSubobj_subform_setFontOutline			(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getFontOutline			(SObject* obj);
+	bool					iiSubobj_subform_setFontShadow			(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getFontShadow			(SObject* obj);
+	bool					iiSubobj_subform_setNwColor				(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getNwColor				(SObject* obj);
+	bool					iiSubobj_subform_setNeColor				(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getNeColor				(SObject* obj);
+	bool					iiSubobj_subform_setSwColor				(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getSwColor				(SObject* obj);
+	bool					iiSubobj_subform_setSeColor				(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getSeColor				(SObject* obj);
+	bool					iiSubobj_subform_setBackColor			(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getBackColor			(SObject* obj);
+	bool					iiSubobj_subform_setForeColor			(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getForeColor			(SObject* obj);
+	bool					iiSubobj_subform_setCaptionColor		(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getCaptionColor		(SObject* obj);
+	bool					iiSubobj_subform_setCaption				(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getCaption				(SObject* obj);
+	bool					iiSubobj_subform_setPicture				(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getPicture				(SObject* obj);
+	bool					iiSubobj_subform_setAllowOutput			(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getAllowOutput			(SObject* obj);
+	bool					iiSubobj_subform_setBorderStyle			(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getBorderStyle			(SObject* obj);
+	bool					iiSubobj_subform_setProcessKeyPreviewEvents(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getProcessKeyPreviewEvents(SObject* obj);
+	bool					iiSubobj_subform_setScaleMode			(SObject* obj, SVariable* var);
+	bool					iiSubobj_subform_setScaleMode_extraTest	(s32 value);
+	SVariable*				iiSubobj_subform_getScaleMode			(SObject* obj);
+	bool					iiSubobj_subform_setWindowState			(SObject* obj, SVariable* var);
+	SVariable*				iiSubobj_subform_getWindowState			(SObject* obj);
 
 
 	// Delete individual sub-objects
