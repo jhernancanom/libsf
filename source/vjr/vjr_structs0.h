@@ -44,6 +44,7 @@ struct SEditChain;
 struct SComp;
 struct SCompiler;
 struct SFunction;
+struct SPropertyList;
 
 
 
@@ -284,10 +285,20 @@ struct SVariable
 
 struct SBaseclassList
 {
-	s32		objType;					// Translation between objType...
+	s32				objType;											// Translation between objType...
 
-	cs8*	textName;					// ...and the text-based name of the base class
-	u32		textNameLength;
+	cs8*			textName;											// ...and the text-based name of the base class
+	u32				textNameLength;
+
+	union {
+		u32				_objProps;
+		SPropertyList*	objProps;											// Root property list for sub-objects
+	};
+
+	union {
+		u32				_subobjProps;
+		SPropertyList*	subobjProps;										// Root property list for sub-objects
+	};
 };
 
 struct SPropertyList
@@ -298,12 +309,12 @@ struct SPropertyList
 
 	// Accessors
 	union {
-		u32		_set;
-		void*	(*set)		(SObject* obj, SVariable* var);
+		u32			_set;
+		bool		(*set)		(SObject* obj, SVariable* var);
 	};
 
 	union {
-		u32		_get;
-		void*	(*get)		(SObject* obj);
+		u32			_get;
+		SVariable*	(*get)		(SObject* obj);
 	};
 };
