@@ -31,7 +31,7 @@
 // Thank you.  And may The Lord bless you richly as you lift up your life, your
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
 //
-// To jump immediately to a section, search for one of these here or in vjr_defs.h:
+// To jump immediately to a section, search for one of these here or in object_accessors.h:
 //		OBJECT Properties
 //		FORM Properties
 //		SUBFORM Properties

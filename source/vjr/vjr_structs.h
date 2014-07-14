@@ -556,7 +556,7 @@ struct SSubObjEditbox
 	// Flags for data
 	u32			style;													// See _EDITBOX_STYLE_* constants (plain, 2D, 3D)
 	u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
-	SEditChainManager*	codeBlock;										// The content being edited, typically source code
+	SEditChainManager*	ecm;											// The content being edited
 
 	// Flags for display and input
 	s32			cursor;													// Position of the flashing cursor, where input goes

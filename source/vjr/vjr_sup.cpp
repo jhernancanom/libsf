@@ -247,24 +247,65 @@
 //////
 	void iInit_create_jdebiObject(void)
 	{
-		s32		lnLeft, lnTop, lnWidth, lnHeight;
-		SSubObjForm*	sof;
+		s32				lnLeft, lnTop, lnWidth, lnHeight;
+		SSubObjForm*	form;
+// 		SSubObjSubform*	sourceCode;
+// 		SSubObjSubform*	sourceLight;
+// 		SSubObjSubform*	locals;
+// 		SSubObjSubform*	watch;
+// 		SSubObjSubform*	command;
+// 		SSubObjSubform*	debug;
+// 		SSubObjSubform*	output;
 		RECT			lrc;
 
 
 		//////////
-		// Create the object
+		// Create the object and its sub-objects
 		//////
-			// Create sub-object
-			sof = iSubobj_createForm((SSubObjForm*)gobj_defaultForm->sub_obj, NULL);
-			if (!sof)
-				return;
+			// Create sub-objects
+			form = iSubobj_createForm((SSubObjForm*)gobj_defaultForm->sub_obj, NULL);
+// 			while (1)
+// 			{
+// 				if (form)
+// 				{
+// 					// Create the sourceCode window
+// 					sourceCode = iSubobj_createSubform((SSubObjSubform*)gobj_defaultSubform->sub_obj, NULL);
+// 					if (sourceCode)
+// 					{
+// 						// Create the sourceLight window
+// 						sourceLight = iSubobj_createSubform((SSubObjSubform*)gobj_defaultSubform->sub_obj, NULL);
+// 						if (sourceLight)
+// 						{
+// 							// Create the locals window
+// 							locals = iSubobj_createSubform((SSubObjSubform*)gobj_defaultSubform->sub_obj, NULL);
+// 							if (locals)
+// 							{
+// 								// Create the watch window
+// 								watch = iSubobj_createSubform((SSubObjSubform*)gobj_defaultSubform->sub_obj, NULL);
+// 								if (watch)
+// 								{
+// 									// Create the command window
+// 									command = iSubobj_createSubform((SSubObjSubform*)gobj_defaultSubform->sub_obj, NULL);
+// 									if (command)
+// 									{
+// 										// Create the debug window
+// 										debug = iSubobj_createSubform((SSubObjSubform*)gobj_defaultSubform->sub_obj, NULL);
+// 									}
+// 								}
+// 							}
+// 						}
+// 					}
+// 				}
+// 				// If we get here, some error
+// 				MessageBoxA()
+// 			}
+			// If we get here, we're good
 
 			// Create object
-			gobj_jdebi = iObj_create(_OBJ_TYPE_FORM, sof);
+			gobj_jdebi = iObj_create(_OBJ_TYPE_FORM, form);
 			if (!gobj_jdebi)
 			{
-				iSubobj_deleteForm(sof, true);
+				iSubobj_deleteForm(form, true);
 				return;
 			}
 
@@ -272,7 +313,7 @@
 			iiSubobj_form_setIcon(gobj_jdebi, bmpJDebiIcon);
 
 			// Give it a caption
-			SSubObjForm* form = (SSubObjForm*)gobj_jdebi->sub_obj;
+			form = (SSubObjForm*)gobj_jdebi->sub_obj;
 			iDatum_duplicate(&form->caption, (s8*)cgcJDebiTitle, sizeof(cgcJDebiTitle) - 1);
 			form->captionColor.color = black.color;
 

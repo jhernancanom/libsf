@@ -37,229 +37,148 @@
 
 
 **********
-* Create _screen
+* Create _screen and _jdebi
 *****
-	PUBLIC _screen
-	_screen			= CREATEOBJECT("Form")
-	_screen.name	= "frmScreen"
-	IF NOT _screen.protected.LoadLastFromVjrUserDbf()
-		defaultScreenSetup()
-	ENDIF
+	_screen			= CREATEOBJECT("form")
+	_jdebi			= CREATEOBJECT("form")
+	_screen.name	= "_screen"
+	_jdebi.name		= "_jdebi"
 
 
 **********
-* Create _jdebi
+* Set the screen defaults
 *****
-	PUBLIC _jdebi
-	_jdebi		= CREATEOBJECT("Form")
-	_jdebi.name	= "frmJDebi"
-	IF NOT _jdebi.protected.LoadLastFromVjrUserDbf()
-		defaultJDebiSetup()
-	ENDIF
-
-
-**********
-* Enter main system loop
-*****
-	_vjr.protected.Main()
-
-
-
-
-**********
-* Called to set the main screen to its defaults
-*****
-	FUNCTION defaultScreenSetup
-	LOCAL lnMin
-		**********
-		* Set colors
-		*****
-			_screen.BackColor	= RGB(255,255,255)
-			_screen.ForeColor	= RGB(0,0,0)
-			_screen.NwColor		= RGB(222, 230, 255)
-			_screen.NeColor		= RGB(157, 194, 214)
-			_screen.SwColor		= RGB(255, 255, 255)
-			_screen.SeColor		= RGB(192, 212, 255)
-			_screen.Caption		= "Visual FreePro, Jr. -- " + VERSION(4)
-		
-		
-		**********
-		* Position screen
-		*****
-			lnMin				= MIN(SYSMETRIC(1) / 8, SYSMETRIC(2) / 8)
-			_screen.Left		= lnMin
-			_screen.Top			= lnMin
-			_screen.Width		= (SYSMETRIC(1) / 2) - lnMin
-			_screen.Height		= SYSMETRIC(2) - (2 * lnMin)
-		
-		
-		**********
-		* Make it visible.
-		* Note:  Until it is visible, it's just a rendered buffer of bits.
-		*        Once visible, it gets an OS-visible window for presentation.
-		*****
-			_screen.Visible		= .T.
-
-
-
-
-**********
-* Called to set the JDebi Debugger to its defaults
-*****
-	FUNCTION defaultJDebiSetup
-	LOCAL lnMin
+	* Set colors
+	_screen.BackColor	= RGB(255,255,255)
+	_screen.ForeColor	= RGB(0,0,0)
+	_screen.NwColor		= RGB(222, 230, 255)
+	_screen.NeColor		= RGB(157, 194, 214)
+	_screen.SwColor		= RGB(255, 255, 255)
+	_screen.SeColor		= RGB(192, 212, 255)
+	lcVersion			= VERSION(4)
+	_screen.Caption		= CONCATENATE("Visual FreePro, Jr.", lcVersion)
 	
-		**********
-		* Set colors
-		*****
-			_jdebi.BackColor	= RGB(255,255,255)
-			_jdebi.ForeColor	= RGB(0,0,0)
-			_jdebi.NwColor		= RGB(222, 230, 255)
-			_jdebi.NeColor		= RGB(157, 194, 214)
-			_jdebi.SwColor		= RGB(255, 255, 255)
-			_jdebi.SeColor		= RGB(192, 212, 255)
-			_jdebi.Caption		= "JDebi Debugger -- " + VERSION(4) FLAGS JDebi
-		
-		
-		**********
-		* Position screen
-		*****
-			lnMin				= MIN(SYSMETRIC(1) / 8, SYSMETRIC(2) / 8)
-			_jdebi.Left			= SYSMETRIC(1) / 2
-			_jdebi.Top			= lnMin
-			_jdebi.Width		= (SYSMETRIC(1) / 2) - lnMin
-			_jdebi.Height		= SYSMETRIC(2) - (2 * lnMin)
-		
-		
-		**********
-		* Add its subforms
-		*****
-			_jdebi.AddObject("sourceCode",		"subform")		FLAGS inherit
-			_jdebi.AddObject("sourceLight",		"subform")		FLAGS inherit
-			_jdebi.AddObject("locals",			"subform")		FLAGS inherit
-			_jdebi.AddObject("watchWindow",		"subform")		FLAGS inherit
-			_jdebi.AddObject("debugging",		"subform")		FLAGS inherit
-			_jdebi.AddObject("commandWindow",	"subform")		FLAGS inherit
-			_jdebi.AddObject("output",			"subform")		FLAGS inherit
-		
-		
-		**********
-		* Position and size sourceCode
-		*****
-			WITH _jdebi.sourceCode
-				* Standard positioning
-				.Left		= 0
-				.Top		= 0
-				.Width		= INT(0.8 * _jdebi.width)
-				.Height		= INT(0.6 * _jdebi.height)
+	* Position _screen
+	lnValue1			= SYSMETRIC(1)
+	lnValue1			= DIV(lnValue1, 8)
+	lnValue2			= SYSMETRIC(2)
+	lnValue28			= DIV(lnValue2, 8)
+	lnMin				= MIN(lnValue1, lnValue2)
+	
+	_screen.Left		= lnMin
+	_screen.Top			= lnMin
+	
+	lnValue1			= SYSMETRIC(1)
+	lnValue1			= DIV(lnValue1, 2)			&& lnValue1 / 2
+	_screen.Width		= SUB(lnValue1, lnMin)		&& lnValue1 - lnMin
+	
+	lnValue1			= SYSMETRIC(2)
+	lnValue2			= MUL(2, lnMin)			&& 2 * lnMin
+	_screen.Height		= SUB(lnValue1, lnValue2)	&& SYSMETRIC(2) - (2 * lnMin)
+	
+	_screen.Visible		= .T.
+
+
+
+
+**********
+* Set the JDebi Debugger defaults
+*****
+	* Set colors
+	_jdebi.BackColor	= RGB(255,255,255)
+	_jdebi.ForeColor	= RGB(0,0,0)
+	_jdebi.NwColor		= RGB(222, 230, 255)
+	_jdebi.NeColor		= RGB(157, 194, 214)
+	_jdebi.SwColor		= RGB(255, 255, 255)
+	_jdebi.SeColor		= RGB(192, 212, 255)
+	_jdebi.Caption		= CONCATENATE("JDebi Debugger -- ", lcVersion)
+	
+	* Position screen
+	lnMin				= MIN(SYSMETRIC(1) / 8, SYSMETRIC(2) / 8)
+	_jdebi.Left			= SYSMETRIC(1) / 2
+	_jdebi.Top			= lnMin
+	_jdebi.Width		= (SYSMETRIC(1) / 2) - lnMin
+	_jdebi.Height		= SYSMETRIC(2) - (2 * lnMin)
+	
+	
+	* Position and size sourceCode
+	ADDOBJECT(_jdebi, "sourceCode",		"subform")
+	_jdebi.sourceCode.Left		= 0
+	_jdebi.sourceCode.Top		= 0
+	lnValue1					= MUL(0.8, _jdebi.width)
+	_jdebi.sourceCode.Width		= INT(lnValue1)
+	lnValue1					= MUL(0.6, _jdebi.height)
+	_jdebi.sourceCode.Height	= INT(lnValue1)
 				
-				* Make it visible
-				.Visible	= .T.
-			ENDWITH
-		
-		
-		**********
-		* Position and size sourceLight
-		*****
-			WITH _jdebi.sourceLight
-				* Standard positioning
-				.Left		= _jdebi.sourceCode.Width
-				.Top		= 0
-				.Width		= _jdebi.Width - _jdebi.sourceCode.Width
-				.Height		= _jdebi.sourceCode.Height
+	* Make it visible
+	_jdebi.sourceCode.Visible	= .T.
+
+	
+	* Position and size sourceLight
+	ADDOBJECT(_jdebi, "sourceLight",	"subform")
+	_jdebi.sourceLight.Left		= _jdebi.sourceCode.Width
+	_jdebi.sourceLight.Top		= 0
+	_jdebi.sourceLight.Width	= SUB(_jdebi.Width, _jdebi.sourceCode.Width)
+	_jdebi.sourceLight.Height	= _jdebi.sourceCode.Height
 				
-				**********
-				* Add the index portion
-				*****
-					.AddObject("index", "subform")	FLAGS inherit
-					.index.Top		= INT(0.8 * .Height)
-					.index.Width	= .Width
-					.index.Height	= .Height - .index.Top
-					.index.Visible	= .T.
-				
-				* Make it visible within the JDebi form
-				.Visible	= .T.
-			ENDWITH
+	* Add the index portion
+	ADDOBJECT(_jdebi.sourceLight, "index", "subform")
+	lnValue1							= MUL(0.8, _jdebi.sourceLight.Height)
+	_jdebi.sourceLight.index.Top		= INT(lnValue1)
+	_jdebi.sourceLight.index.Width		= _jdebi.sourceLight.Width
+	_jdebi.sourceLight.index.Height		= SUB(_jdebi.sourceLight.Height, _jdebi.sourceLight.index.Top)
+	_jdebi.sourceLight.index.Visible	= .T.
+	_jdebi.sourceLight.Visible			= .T.
+	
+	
+	* Position and size locals
+	ADDOBJECT(_jdebi, "locals",			"subform")
+	_jdebi.locals.Left		= 0
+	_jdebi.locals.Top		= _jdebi.sourceCode.Height
+	_jdebi.locals.Width		= _jdebi.sourceCode.Width
+	lnValue1				= SUB(_jdebi.Height, _jdebi.sourceCode.Height)
+	_jdebi.locals.Height	= DIV(lnValue1, 2)
+	.Visible	= .T.
 		
 		
-		**********
-		* Position and size locals
-		*****
-			WITH _jdebi.locals
-				* Standard positioning
-				.Left		= 0
-				.Top		= _jdebi.sourceCode.Height
-				.Width		= _jdebi.sourceCode.Width
-				.Height		= (_jdebi.Height - _jdebi.sourceCode.Height) / 2
-				
-				* Make it visible
-				.Visible	= .T.
-			ENDWITH
+	* Position and size watch
+	ADDOBJECT(_jdebi, "watch",			"subform")
+	_jdebi.watch.Left		= 0
+	_jdebi.watch.Top		= _jdebi.locals.Top + _jdebi.locals.Height
+	_jdebi.watch.Width		= _jdebi.sourceCode.Width
+	lnValue1				= SUB(_jdebi.Height, _jdebi.sourceCode.Height)
+	_jdebi.watch.Height		= DIV(lnValue1, 2)
+	.Visible	= .T.
 		
 		
-		**********
-		* Position and size watchWindow
-		*****
-			WITH _jdebi.watchWindow
-				* Standard positioning
-				.Left		= 0
-				.Top		= _jdebi.locals.Top + _jdebi.locals.Height
-				.Width		= _jdebi.sourceCode.Width
-				.Height		= (_jdebi.Height - _jdebi.sourceCode.Height) / 2
-				
-				* Make it visible
-				.Visible	= .T.
-			ENDWITH
+	* Position and size debug
+	ADDOBJECT(_jdebi, "debug",			"subform")
+	_jdebi.debug.Left		= _jDebi.sourceCode.Width
+	_jdebi.debug.Top		= _jDebi.watchWindow.Top
+	_jdebi.debug.Width		= _jdebi.sourceLight.Width
+	lnValue1				= SUB(_jdebi.Height, _jdebi.sourceCode.Height)
+	lnValue2				= MUL(0.3, lnValue1)
+	_jdebi.debug.Height		= INT(lnValue2)
+	_jdebi.debug.Visible	= .T.
 		
 		
-		**********
-		* Position and size debugging
-		*****
-			WITH _jdebi.debugging
-				* Standard positioning
-				.Left		= _jDebi.sourceCode.Width
-				.Top		= _jDebi.watchWindow.Top
-				.Width		= _jdebi.sourceLight.Width
-				.Height		= INT(0.3 * (_jdebi.Height - _jdebi.sourceCode.Height))
-				
-				* Make it visible
-				.Visible	= .T.
-			ENDWITH
+	* Position and size command
+	ADDOBJECT(_jdebi, "command",		"subform")
+	_jdebi.command.Left		= 0
+	_jdebi.command.Top		= ADD(_jdebi.watchWindow.Top, _jdebi.watchWindow.Height)
+	_jdebi.command.Width	= _jdebi.watchWindow.Width
+	_jdebi.command.Height	= SUB(_jdebi.Height, _jdebi.command.Top)
+	_jdebi.command.Visible	= .T.
 		
 		
-		**********
-		* Position and size commandWindow
-		*****
-			WITH _jdebi.commandWindow
-				* Standard positioning
-				.Left		= 0
-				.Top		= _jdebi.watchWindow.Top + _jdebi.watchWindow.Height
-				.Width		= _jdebi.watchWindow.Width
-				.Height		= _jdebi.Height - .Top
-				
-				* Make it visible
-				.Visible	= .T.
-			ENDWITH
+	* Position and size output
+	ADDOBJECT(_jdebi, "output",			"subform")
+	_jdebi.output.Left		= _jDebi.sourceCode.Width
+	_jdebi.output.Top		= ADD(_jDebi.debugging.Top, _jDebi.debugging.Height)
+	_jdebi.output.Width		= _jdebi.debugging.Width
+	_jdebi.output.Height	= _jdebi.Height - .Top
+	_jdebi.output.Visible	= .T.
 		
-		
-		**********
-		* Position and size output
-		*****
-			WITH _jdebi.output
-				* Standard positioning
-				.Left		= _jDebi.sourceCode.Width
-				.Top		= _jDebi.debugging.Top + _jDebi.debugging.Height
-				.Width		= _jdebi.debugging.Width
-				.Height		= _jdebi.Height - .Top
-				
-				* Make it visible
-				.Visible	= .T.
-			ENDWITH
-		
-		
-		**********
-		* Make it visible.
-		* Note:  Until it is visible, it's just a rendered buffer of bits.
-		*        Once visible, it gets an OS-visible window for presentation.
-		*****
-			_jdebi.Visible		= .T.
+
+		* Make JDebi visible
+	_jdebi.Visible			= .T.

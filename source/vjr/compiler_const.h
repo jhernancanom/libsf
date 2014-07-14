@@ -805,9 +805,15 @@
 	const u32		_ICODE_XMLUPDATEGRAM                            = 1429;
 	const u32		_ICODE_YEAR                                     = 1430;
 
+// Temporarily added until the processing engine is coded
+	const u32       _ICODE_ADD                                      = 1900;
+	const u32       _ICODE_SUB                                      = 1901;
+	const u32       _ICODE_MUL                                      = 1902;
+	const u32       _ICODE_DIV                                      = 1903;
+
 	// Commands
 	const u32       _ICODE_ACTIVATE                                 = 2000;
-	const u32       _ICODE_ADD                                      = 2001;
+//	const u32       _ICODE_ADD                                      = 2001;
 	const u32       _ICODE_ALTER                                    = 2002;
 	const u32       _ICODE_ALTERNATE                                = 2003;
 	const u32       _ICODE_ANSI                                     = 2004;

@@ -564,9 +564,15 @@
 		{ "xmlupdategram",          13,         false,      _ICODE_XMLUPDATEGRAM,                   false,              _ICAT_FUNCTION },
 		{ "year",                   4,          false,      _ICODE_YEAR,                            false,              _ICAT_FUNCTION },
 
+// Temporarily added until the processing engine is completed
+		{ "add",                   	3,          false,      _ICODE_ADD,								false,              _ICAT_FUNCTION },
+		{ "sub",                   	3,          false,      _ICODE_SUB,								false,              _ICAT_FUNCTION },
+		{ "mul",                   	3,          false,      _ICODE_MUL,								false,              _ICAT_FUNCTION },
+		{ "div",                   	3,          false,      _ICODE_DIV,								false,              _ICAT_FUNCTION },
+
 		// Commands
 		{ "activate",              	8,          false,      _ICODE_ACTIVATE,						false,              _ICAT_GENERIC },
-		{ "add",                   	3,          false,      _ICODE_ADD,								false,              _ICAT_GENERIC },
+//		{ "add",                   	3,          false,      _ICODE_ADD,								false,              _ICAT_GENERIC },
 		{ "alter",                 	5,          false,      _ICODE_ALTER,							false,              _ICAT_GENERIC },
 		{ "alternate",             	9,          false,      _ICODE_ALTERNATE,						false,              _ICAT_GENERIC },
 		{ "ansi",                  	4,          false,      _ICODE_ANSI,							false,              _ICAT_GENERIC },
@@ -917,7 +923,7 @@
 		{ "flowout",				7,			false,		_ICODE_FLOWOUT,							false,				_ICAT_GENERIC },
 		{ "flow",					4,			false,		_ICODE_FLOW,							false,				_ICAT_GENERIC },
 		{ "subflow",				7,			false,		_ICODE_SUBFLOW,							false,				_ICAT_GENERIC },
-		{ "rgba",					4,			false,		_ICODE_RGBA,							false,				_ICAT_GENERIC },
+		{ "rgba",					4,			false,		_ICODE_RGBA,							false,				_ICAT_FUNCTION },
 		{ "lobject",				7,			false,		_ICODE_LOBJECT,							true,				_ICAT_GENERIC },
 		{ "params",					7,			false,		_ICODE_PARAMS,							true,				_ICAT_GENERIC },
 		{ "returns",				7,			false,		_ICODE_RETURNS,							true,				_ICAT_GENERIC },

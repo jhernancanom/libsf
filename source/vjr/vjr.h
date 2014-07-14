@@ -63,6 +63,8 @@
 #include "edit_chain_manager.h"
 #include "edit_chain.h"
 
+#include "object_accessors.h"
+
 #include "graphics\h\app_icon.h"
 #include "graphics\h\move.h"
 #include "graphics\h\minimize.h"

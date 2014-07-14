@@ -603,6 +603,72 @@
 
 //////////
 //
+// Function: INT()
+// Takes a value and returns the INT(n) of that value.
+//
+//////
+// Version 0.31
+// Last update:
+//     Jul.13.2014
+//////
+// Change log:
+//     Jul.13.2014 - Initial creation
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    INT(n) of the value in p1
+//////
+    SVariable* function_int(SVariable* p1)
+    {
+		f64			fValue;
+		u32			errorNum;
+        bool		error;
+        SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be numeric
+		//////
+			if (!iVariable_isValid(p1) || !iVariable_isTypeNumeric(p1))
+			{
+				iError_report("Parameter 1 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Based on its type, process it accordingly
+		//////
+			if (iVariable_isTypeFloatingPoint(p1))
+			{
+				fValue = iiVariable_getAs_f64(p1, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+				// Convert to S64
+				result = iVariable_create(_VAR_TYPE_S64, NULL);
+				*(s64*)result->value.data = (s64)fValue;
+
+			} else {
+				// Copy whatever it already is
+				result = iVariable_create(p1->varType, NULL);
+				iDatum_duplicate(&result->value, &p1->value);
+			}
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
+    }
+
+
+
+
+//////////
+//
 // Function: LEFT()
 // Returns the left N characters of a string.
 //
@@ -1458,6 +1524,327 @@
 
 //////////
 //
+// Function: RGB()
+// Returns the RGB() of the three input values.
+//
+//////
+// Version 0.31   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Jul.13.2014
+//////
+// Change log:
+//     Jul.13.2014 - Initial creation
+//////
+// Parameters:
+//     pRed			-- Red, in the range 0..255, or 0.0..1.0
+//     pGrn			-- Green, in the range 0..255, or 0.0..1.0
+//     pBlu			-- Blue, in the range 0..255, or 0.0..1.0
+//
+//////
+// Returns:
+//    Numeric		-- Constructed RGB() integer
+//
+//////
+	SVariable* function_rgb(SVariable* pRed, SVariable* pGrn, SVariable* pBlu)
+	{
+		f32			lfRed, lfGrn, lfBlu;
+		s32			lnRed, lnGrn, lnBlu;
+		bool		error;
+		u32			errorNum;
+		SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be numeric
+		//////
+			if (!iVariable_isValid(pRed) || !iVariable_isTypeNumeric(pRed))
+			{
+				iError_report("Parameter 1 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 2 must be numeric
+		//////
+			if (!iVariable_isValid(pGrn) || !iVariable_isTypeNumeric(pGrn))
+			{
+				iError_report("Parameter 2 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 3 must be numeric
+		//////
+			if (!iVariable_isValid(pBlu) || !iVariable_isTypeNumeric(pBlu))
+			{
+				iError_report("Parameter 3 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+		// Grab the parameters as usable values
+		//////
+			if (iVariable_isTypeFloatingPoint(pRed))
+			{
+				// It is a floating point, which means it must be in the range 0..1
+				lfRed = iiVariable_getAs_f32(pRed, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+				lnRed = (s32)(255.0f * min(max(lfRed, 0.0f), 1.0f));
+				
+			} else {
+				// It is an integer, which means it must be in the range 0..255
+				lnRed = iiVariable_getAs_s32(pRed, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+			}
+			if (lnRed < 0 || lnRed > 255)
+			{
+				iError_reportByNumber(_ERROR_OUT_OF_RANGE, NULL);
+				return(NULL);
+			}
+
+			if (iVariable_isTypeFloatingPoint(pGrn))
+			{
+				// It is a floating point, which means it must be in the range 0..1
+				lfGrn = iiVariable_getAs_f32(pGrn, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+				lnGrn = (s32)(255.0f * min(max(lfGrn, 0.0f), 1.0f));
+
+			} else {
+				// It is an integer, which means it must be in the range 0..255
+				lnGrn = iiVariable_getAs_s32(pGrn, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+			}
+			if (lnGrn < 0 || lnGrn > 255)
+			{
+				iError_reportByNumber(_ERROR_OUT_OF_RANGE, NULL);
+				return(NULL);
+			}
+
+			if (iVariable_isTypeFloatingPoint(pBlu))
+			{
+				// It is a floating point, which means it must be in the range 0..1
+				lfBlu = iiVariable_getAs_f32(pBlu, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+				lnBlu = (s32)(255.0f * min(max(lfBlu, 0.0f), 1.0f));
+
+			} else {
+				// It is an integer, which means it must be in the range 0..255
+				lnBlu	= iiVariable_getAs_s32(pBlu, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+			}
+			if (lnBlu < 0 || lnBlu > 255)
+			{
+				iError_reportByNumber(_ERROR_OUT_OF_RANGE, NULL);
+				return(NULL);
+			}
+
+
+		//////////
+        // Create the return result
+		//////
+	        result = iVariable_create(_VAR_TYPE_U32, NULL);
+			if (!result)
+			{
+				iError_report("Internal error.");
+				return(NULL);
+			}
+
+
+		//////////
+        // Populate the return value
+		//////
+			*(u32*)result->value.data = bgra((u32)lnBlu, (u32)lnGrn, (u32)lnRed, 0);
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
+	}
+
+
+
+
+//////////
+//
+// Function: RGBA()
+// Returns the RGBA() of the four input values.
+//
+//////
+// Version 0.31   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Jul.13.2014
+//////
+// Change log:
+//     Jul.13.2014 - Initial creation
+//////
+// Parameters:
+//     pRed			-- Red, in the range 0..255, or 0.0..1.0
+//     pGrn			-- Green, in the range 0..255, or 0.0..1.0
+//     pBlu			-- Blue, in the range 0..255, or 0.0..1.0
+//     pAlp			-- Blue, in the range 0..255, or 0.0..1.0
+//
+//////
+// Returns:
+//    Numeric		-- Constructed RGBA() integer
+//
+//////
+	SVariable* function_rgba(SVariable* pRed, SVariable* pGrn, SVariable* pBlu, SVariable* pAlp)
+	{
+		f32			lfRed, lfGrn, lfBlu, lfAlp;
+		s32			lnRed, lnGrn, lnBlu, lnAlp;
+		bool		error;
+		u32			errorNum;
+		SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be numeric
+		//////
+			if (!iVariable_isValid(pRed) || !iVariable_isTypeNumeric(pRed))
+			{
+				iError_report("Parameter 1 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 2 must be numeric
+		//////
+			if (!iVariable_isValid(pGrn) || !iVariable_isTypeNumeric(pGrn))
+			{
+				iError_report("Parameter 2 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 3 must be numeric
+		//////
+			if (!iVariable_isValid(pBlu) || !iVariable_isTypeNumeric(pBlu))
+			{
+				iError_report("Parameter 3 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 4 must be numeric
+		//////
+			if (!iVariable_isValid(pAlp) || !iVariable_isTypeNumeric(pAlp))
+			{
+				iError_report("Parameter 4 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+		// Grab the parameters as usable values
+		//////
+			if (iVariable_isTypeFloatingPoint(pRed))
+			{
+				// It is a floating point, which means it must be in the range 0..1
+				lfRed = iiVariable_getAs_f32(pRed, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+				lnRed = (s32)(255.0f * min(max(lfRed, 0.0f), 1.0f));
+				
+			} else {
+				// It is an integer, which means it must be in the range 0..255
+				lnRed = iiVariable_getAs_s32(pRed, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+			}
+			if (lnRed < 0 || lnRed > 255)
+			{
+				iError_reportByNumber(_ERROR_OUT_OF_RANGE, NULL);
+				return(NULL);
+			}
+
+			if (iVariable_isTypeFloatingPoint(pGrn))
+			{
+				// It is a floating point, which means it must be in the range 0..1
+				lfGrn = iiVariable_getAs_f32(pGrn, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+				lnGrn = (s32)(255.0f * min(max(lfGrn, 0.0f), 1.0f));
+
+			} else {
+				// It is an integer, which means it must be in the range 0..255
+				lnGrn = iiVariable_getAs_s32(pGrn, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+			}
+			if (lnGrn < 0 || lnGrn > 255)
+			{
+				iError_reportByNumber(_ERROR_OUT_OF_RANGE, NULL);
+				return(NULL);
+			}
+
+			if (iVariable_isTypeFloatingPoint(pBlu))
+			{
+				// It is a floating point, which means it must be in the range 0..1
+				lfBlu = iiVariable_getAs_f32(pBlu, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+				lnBlu = (s32)(255.0f * min(max(lfBlu, 0.0f), 1.0f));
+
+			} else {
+				// It is an integer, which means it must be in the range 0..255
+				lnBlu	= iiVariable_getAs_s32(pBlu, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+			}
+			if (lnBlu < 0 || lnBlu > 255)
+			{
+				iError_reportByNumber(_ERROR_OUT_OF_RANGE, NULL);
+				return(NULL);
+			}
+
+			if (iVariable_isTypeFloatingPoint(pAlp))
+			{
+				// It is a floating point, which means it must be in the range 0..1
+				lfAlp = iiVariable_getAs_f32(pAlp, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+				lnAlp = (s32)(255.0f * min(max(lfAlp, 0.0f), 1.0f));
+
+			} else {
+				// It is an integer, which means it must be in the range 0..255
+				lnAlp	= iiVariable_getAs_s32(pAlp, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+			}
+			if (lnAlp < 0 || lnAlp > 255)
+			{
+				iError_reportByNumber(_ERROR_OUT_OF_RANGE, NULL);
+				return(NULL);
+			}
+
+
+		//////////
+        // Create the return result
+		//////
+	        result = iVariable_create(_VAR_TYPE_U32, NULL);
+			if (!result)
+			{
+				iError_report("Internal error.");
+				return(NULL);
+			}
+
+
+		//////////
+        // Populate the return value
+		//////
+			*(u32*)result->value.data = bgra((u32)lnBlu, (u32)lnGrn, (u32)lnRed, (u32)lnAlp);
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
+	}
+
+
+
+
+//////////
+//
 // Function: RIGHT()
 // Returns the right N characters of a string.
 //
@@ -1882,4 +2269,497 @@
         // Return our converted result
 		//////
 	        return result;
+	}
+
+
+
+
+//////////
+//
+// Function: ADD()
+// Note:  This is a temporary function until the main compiler engine is coded.
+// Adds two values and returns the result.
+//
+//////
+// Version 0.31   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Jul.13.2014
+//////
+// Change log:
+//     Jul.13.2014 - Initial creation
+//////
+// Parameters:
+//     p1		-- Value1 to add
+//     p2		-- Value2 to add
+//
+//////
+// Returns:
+//    The sum of p1 + p2
+//
+//////
+	SVariable* function_add(SVariable* p1, SVariable* p2)
+	{
+		s64			lnValue1, lnValue2;
+		f64			lfValue1, lfValue2;
+		bool		error;
+		u32			errorNum;
+		SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be numeric
+		//////
+			if (!iVariable_isValid(p1) || !iVariable_isTypeNumeric(p1))
+			{
+				iError_report("Parameter 1 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 2 must be numeric
+		//////
+			if (!iVariable_isValid(p2) || !iVariable_isTypeNumeric(p2))
+			{
+				iError_report("Parameter 2 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+		// Determine what we're comparing
+		//////
+			if (iVariable_isTypeFloatingPoint(p1))
+			{
+				// p1 is floating point, meaning the result will be too
+				lfValue1 = iiVariable_getAs_f64(p1, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+				// Create our floating point result
+				result = iVariable_create(_VAR_TYPE_F64, NULL);
+
+				// Grab p2
+				if (iVariable_isTypeFloatingPoint(p2))
+				{
+					// p2 is floating point
+					lfValue2 = iiVariable_getAs_f64(p2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+					// Store the result
+					*(f64*)result->value.data = lfValue1 + lfValue2;
+
+				} else  {
+					// p2 is not floating point, so we'll get it as an integer
+					lnValue2 = iiVariable_getAs_s64(p2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+					// Store the result
+					*(f64*)result->value.data = lfValue1 + (f64)lnValue2;
+				}
+
+			} else {
+				// p1 is integer, result is determined by what p2 is, either integer or floating point
+				lnValue1 = iiVariable_getAs_s64(p1, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+				// Grab p2
+				if (iVariable_isTypeFloatingPoint(p2))
+				{
+					// p2 is floating point
+					lfValue2 = iiVariable_getAs_f64(p2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+					// Create our floating point result
+					result = iVariable_create(_VAR_TYPE_F64, NULL);
+
+					// Store the result
+					*(f64*)result->value.data = (f64)lnValue1 + lfValue2;
+
+				} else  {
+					// p2 is not floating point, so we'll get it as an integer
+					lnValue2 = iiVariable_getAs_s64(p2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+					// Create our floating point result
+					result = iVariable_create(_VAR_TYPE_S64, NULL);
+
+					// Store the result
+					*(s64*)result->value.data = lnValue1 + lnValue2;
+				}
+			}
+
+
+		//////////
+		// Indicate our result
+		//////
+			return(result);
+	}
+
+
+
+
+//////////
+//
+// Function: SUB()
+// Note:  This is a temporary function until the main compiler engine is coded.
+// Subtracts two values and returns the result.
+//
+//////
+// Version 0.31   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Jul.13.2014
+//////
+// Change log:
+//     Jul.13.2014 - Initial creation
+//////
+// Parameters:
+//     p1		-- Value1 to subtract value2 from
+//     p2		-- Value2
+//
+//////
+// Returns:
+//    The sum of p1 - p2
+//
+//////
+	SVariable* function_sub(SVariable* p1, SVariable* p2)
+	{
+		s64			lnValue1, lnValue2;
+		f64			lfValue1, lfValue2;
+		bool		error;
+		u32			errorNum;
+		SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be numeric
+		//////
+			if (!iVariable_isValid(p1) || !iVariable_isTypeNumeric(p1))
+			{
+				iError_report("Parameter 1 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 2 must be numeric
+		//////
+			if (!iVariable_isValid(p2) || !iVariable_isTypeNumeric(p2))
+			{
+				iError_report("Parameter 2 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+		// Determine what we're comparing
+		//////
+			if (iVariable_isTypeFloatingPoint(p1))
+			{
+				// p1 is floating point, meaning the result will be too
+				lfValue1 = iiVariable_getAs_f64(p1, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+				// Create our floating point result
+				result = iVariable_create(_VAR_TYPE_F64, NULL);
+
+				// Grab p2
+				if (iVariable_isTypeFloatingPoint(p2))
+				{
+					// p2 is floating point
+					lfValue2 = iiVariable_getAs_f64(p2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+					// Store the result
+					*(f64*)result->value.data = lfValue1 - lfValue2;
+
+				} else  {
+					// p2 is not floating point, so we'll get it as an integer
+					lnValue2 = iiVariable_getAs_s64(p2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+					// Store the result
+					*(f64*)result->value.data = lfValue1 - (f64)lnValue2;
+				}
+
+			} else {
+				// p1 is integer, result is determined by what p2 is, either integer or floating point
+				lnValue1 = iiVariable_getAs_s64(p1, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+				// Grab p2
+				if (iVariable_isTypeFloatingPoint(p2))
+				{
+					// p2 is floating point
+					lfValue2 = iiVariable_getAs_f64(p2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+					// Create our floating point result
+					result = iVariable_create(_VAR_TYPE_F64, NULL);
+
+					// Store the result
+					*(f64*)result->value.data = (f64)lnValue1 - lfValue2;
+
+				} else  {
+					// p2 is not floating point, so we'll get it as an integer
+					lnValue2 = iiVariable_getAs_s64(p2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+					// Create our floating point result
+					result = iVariable_create(_VAR_TYPE_S64, NULL);
+
+					// Store the result
+					*(s64*)result->value.data = lnValue1 - lnValue2;
+				}
+			}
+
+
+		//////////
+		// Indicate our result
+		//////
+			return(result);
+	}
+
+
+
+
+//////////
+//
+// Function: MUL()
+// Note:  This is a temporary function until the main compiler engine is coded.
+// Multiplies two values and returns the result.
+//
+//////
+// Version 0.31   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Jul.13.2014
+//////
+// Change log:
+//     Jul.13.2014 - Initial creation
+//////
+// Parameters:
+//     p1		-- Value1 to multiply
+//     p2		-- Value2 to multiply
+//
+//////
+// Returns:
+//    The sum of p1 * p2
+//
+//////
+	SVariable* function_mul(SVariable* p1, SVariable* p2)
+	{
+		s64			lnValue1, lnValue2;
+		f64			lfValue1, lfValue2;
+		bool		error;
+		u32			errorNum;
+		SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be numeric
+		//////
+			if (!iVariable_isValid(p1) || !iVariable_isTypeNumeric(p1))
+			{
+				iError_report("Parameter 1 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 2 must be numeric
+		//////
+			if (!iVariable_isValid(p2) || !iVariable_isTypeNumeric(p2))
+			{
+				iError_report("Parameter 2 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+		// Determine what we're comparing
+		//////
+			if (iVariable_isTypeFloatingPoint(p1))
+			{
+				// p1 is floating point, meaning the result will be too
+				lfValue1 = iiVariable_getAs_f64(p1, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+				// Create our floating point result
+				result = iVariable_create(_VAR_TYPE_F64, NULL);
+
+				// Grab p2
+				if (iVariable_isTypeFloatingPoint(p2))
+				{
+					// p2 is floating point
+					lfValue2 = iiVariable_getAs_f64(p2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+					// Store the result
+					*(f64*)result->value.data = lfValue1 * lfValue2;
+
+				} else  {
+					// p2 is not floating point, so we'll get it as an integer
+					lnValue2 = iiVariable_getAs_s64(p2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+					// Store the result
+					*(f64*)result->value.data = lfValue1 * (f64)lnValue2;
+				}
+
+			} else {
+				// p1 is integer, result is determined by what p2 is, either integer or floating point
+				lnValue1 = iiVariable_getAs_s64(p1, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+				// Grab p2
+				if (iVariable_isTypeFloatingPoint(p2))
+				{
+					// p2 is floating point
+					lfValue2 = iiVariable_getAs_f64(p2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+					// Create our floating point result
+					result = iVariable_create(_VAR_TYPE_F64, NULL);
+
+					// Store the result
+					*(f64*)result->value.data = (f64)lnValue1 * lfValue2;
+
+				} else  {
+					// p2 is not floating point, so we'll get it as an integer
+					lnValue2 = iiVariable_getAs_s64(p2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+					// Create our floating point result
+					result = iVariable_create(_VAR_TYPE_S64, NULL);
+
+					// Store the result
+					*(s64*)result->value.data = lnValue1 * lnValue2;
+				}
+			}
+
+
+		//////////
+		// Indicate our result
+		//////
+			return(result);
+	}
+
+
+
+
+//////////
+//
+// Function: DIV()
+// Note:  This is a temporary function until the main compiler engine is coded.
+// Divides two values and returns the result.
+//
+//////
+// Version 0.31   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Jul.13.2014
+//////
+// Change log:
+//     Jul.13.2014 - Initial creation
+//////
+// Parameters:
+//     p1		-- Value1 to divide by value2
+//     p2		-- Value2
+//
+//////
+// Returns:
+//    The sum of p1 / p2
+//
+//////
+	SVariable* function_div(SVariable* p1, SVariable* p2)
+	{
+		s64			lnValue1, lnValue2;
+		f64			lfValue1, lfValue2;
+		bool		error;
+		u32			errorNum;
+		SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be numeric
+		//////
+			if (!iVariable_isValid(p1) || !iVariable_isTypeNumeric(p1))
+			{
+				iError_report("Parameter 1 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 2 must be numeric
+		//////
+			if (!iVariable_isValid(p2) || !iVariable_isTypeNumeric(p2))
+			{
+				iError_report("Parameter 2 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+		// Determine what we're comparing
+		//////
+			if (iVariable_isTypeFloatingPoint(p1))
+			{
+				// p1 is floating point, meaning the result will be too
+				lfValue1 = iiVariable_getAs_f64(p1, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+				// Create our floating point result
+				result = iVariable_create(_VAR_TYPE_F64, NULL);
+
+				// Grab p2
+				if (iVariable_isTypeFloatingPoint(p2))
+				{
+					// p2 is floating point
+					lfValue2 = iiVariable_getAs_f64(p2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+					// Store the result
+					*(f64*)result->value.data = lfValue1 / lfValue2;
+
+				} else  {
+					// p2 is not floating point, so we'll get it as an integer
+					lnValue2 = iiVariable_getAs_s64(p2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+					// Store the result
+					*(f64*)result->value.data = lfValue1 / (f64)lnValue2;
+				}
+
+			} else {
+				// p1 is integer, result is determined by what p2 is, either integer or floating point
+				lnValue1 = iiVariable_getAs_s64(p1, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+				// Create our floating point result
+				result = iVariable_create(_VAR_TYPE_F64, NULL);
+
+				// Grab p2
+				if (iVariable_isTypeFloatingPoint(p2))
+				{
+					// p2 is floating point
+					lfValue2 = iiVariable_getAs_f64(p2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+					// Store the result
+					*(f64*)result->value.data = (f64)lnValue1 / lfValue2;
+
+				} else  {
+					// p2 is not floating point, so we'll get it as an integer
+					lnValue2 = iiVariable_getAs_s64(p2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+					// Store the result
+					*(f64*)result->value.data = (f64)lnValue1 / (f64)lnValue2;
+				}
+			}
+
+
+		//////////
+		// Indicate our result
+		//////
+			return(result);
 	}

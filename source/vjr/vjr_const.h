@@ -113,6 +113,16 @@ typedef		const f64			cf64;
 											((g & 0xff) <<  8) + \
 											((b & 0xff))
 
+	#define bgra(b,g,r,a)					((a & 0xff) << 24) + \
+											((b & 0xff) << 16) + \
+											((g & 0xff) <<  8) + \
+											((r & 0xff))
+
+	#define bgr(b,g,r)						(0xff       << 24) + \
+											((b & 0xff) << 16) + \
+											((g & 0xff) <<  8) + \
+											((r & 0xff))
+
 	#define alp(rgbaColor)					((rgbaColor >> 24) & 0xff)
 	#define red(rgbaColor)					((rgbaColor >> 16) & 0xff)
 	#define grn(rgbaColor)					((rgbaColor >> 8)  & 0xff)
@@ -387,7 +397,7 @@ typedef		const f64			cf64;
 	const s8			cgcName_scaleY[]					= "scaleY";
 
 //////////
-// Form sub-object property names
+// Sub-object property names
 //////
 	const s8			cgcName_minLeft[]					= "minLeft";
 	const s8			cgcName_minTop[]					= "minTop";

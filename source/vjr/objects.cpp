@@ -2158,7 +2158,7 @@
 		//////
 			subobjDst->style						= subobjSrc->style;
 			subobjDst->alignment					= subobjSrc->alignment;
-			iEditChainManager_duplicate(&subobjDst->codeBlock, subobjSrc->codeBlock, true);
+			iEditChainManager_duplicate(&subobjDst->ecm, subobjSrc->ecm, true);
 			subobjDst->isOpaque						= subobjSrc->isOpaque;
 			subobjDst->isBorder						= subobjSrc->isBorder;
 			subobjDst->borderColor.color			= subobjSrc->borderColor.color;
@@ -3085,7 +3085,7 @@
 		// Free subobject components
 		//////
 			iFont_delete(&editbox->font, true);
-			iEditChainManager_delete(&editbox->codeBlock, true);
+			iEditChainManager_delete(&editbox->ecm, true);
 
 
 		//////////
@@ -3226,7 +3226,7 @@
 	u32 iSubobj_renderForm(SObject* obj, SSubObjForm* form, bool tlRenderChildren, bool tlRenderSiblings)
 	{
 		u32				lnPixelsRendered;
-//		SObject*		objSib;
+		SObject*		objSib;
 		RECT			lrc, lrc2, lrc3, lrc4;
 		HFONT			lhfontOld;
 
@@ -3239,7 +3239,7 @@
 			// Traverse and render any children
 			//////
 				if (tlRenderChildren && obj->firstChild)
-					lnPixelsRendered += iObj_render(obj->firstChild, true, tlRenderSiblings);
+					lnPixelsRendered += iObj_render(obj->firstChild, true, true);
 
 
 			//////////
@@ -3379,18 +3379,18 @@ CopyRect(&form->rcCaption, &lrc2);
 			//////////
 			// Render any siblings
 			//////
-// 				if (tlRenderSiblings && obj->ll.next)
-// 				{
-// 					objSib = (SObject*)obj->ll.next;
-// 					while (objSib)
-// 					{
-// 						// Render this sibling
-// 						lnPixelsRendered += iObj_render(objSib, tlRenderChildren, false);
-// 
-// 						// Move to next sibling
-// 						objSib = (SObject*)objSib->ll.next;
-// 					}
-// 				}
+				if (tlRenderSiblings && obj->ll.next)
+				{
+					objSib = (SObject*)obj->ll.next;
+					while (objSib)
+					{
+						// Render this sibling
+						lnPixelsRendered += iObj_render(objSib, tlRenderChildren, false);
+
+						// Move to next sibling
+						objSib = (SObject*)objSib->ll.next;
+					}
+				}
 		}
 
 		// Indicate how many pixels were drawn
@@ -3410,13 +3410,139 @@ CopyRect(&form->rcCaption, &lrc2);
 //////
 	u32 iSubobj_renderSubform(SObject* obj, SSubObjSubform* subform, bool tlRenderChildren, bool tlRenderSiblings)
 	{
+		u32				lnPixelsRendered;
+		SObject*		objSib;
+		RECT			lrc, lrc2, lrc3;
+		HFONT			lhfontOld;
+
+
+		// Make sure our environment is sane
+		lnPixelsRendered = 0;
+		if (obj && subform)
+		{
+			//////////
+			// Traverse and render any children
+			//////
+				if (tlRenderChildren && obj->firstChild)
+					lnPixelsRendered += iObj_render(obj->firstChild, true, true);
+
+
+			//////////
+			// If we need re-rendering, re-render
+			//////
+				// The entire bmp
+				SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+
+				// Do we need to redraw?  Or can we just copy?
+				if (obj->isDirty)
+				{
+					//////////
+					// Frame it
+					//////
+						// Draw the window border
+						iBmp_fillRect(obj->bmp, &lrc, subform->nwRgba, subform->neRgba, subform->swRgba, subform->seRgba, true);
+
+						// Frame it
+						iBmp_frameRect(obj->bmp, &lrc, black, black, black, black, false);
+
+						// Draw the client area
+						SetRect(&lrc2, 0, subform->bmpFormIcon->bi.biHeight + 2, lrc.right - subform->bmpFormIcon->bi.biHeight - 2, lrc.bottom);
+						// Make everything white
+						iBmp_fillRect(obj->bmp, &lrc2, white, white, white, white, false);
+// These rc* copies were added temporarily until the full object structure is coded and working
+CopyRect(&subform->rcClient, &lrc2);
+						// Put a border around the client area
+						InflateRect(&lrc2, 1, 1);
+						iBmp_frameRect(obj->bmp, &lrc2, black, black, black, black, false);
+
+
+
+					//////////
+					// Subform icon and standard controls
+					//////
+						// Subform icon
+						SetRect(&lrc3,	bmpArrowUl->bi.biWidth + 8, 1, bmpArrowUl->bi.biWidth + 8 + subform->bmpFormIcon->bi.biWidth, 1 + subform->bmpFormIcon->bi.biHeight);
+						iBmp_bitBltMask(obj->bmp, &lrc3, subform->bmpFormIcon);
+CopyRect(&subform->rcIcon, &lrc3);
+
+//////////
+// Subforms don't currently have automatic close, maximize, minimize, or move buttons, but they can be added programmatically.
+// I may change that in the future.  It will depend on how well they integrated into the JDebi Debugger.
+// 						// Close
+// 						SetRect(&lrc2,	lrc.right - bmpArrowUr->bi.biWidth - 8 - bmpClose->bi.biWidth, lrc.top + 1, lrc.right - bmpArrowUr->bi.biWidth - 8, lrc.bottom - 1);
+// 						iBmp_bitBltMask(obj->bmp, &lrc2, bmpClose);
+// CopyRect(&subform->rcClose, &lrc2);
+// 
+// 						// Maximize
+// 						SetRect(&lrc2,	lrc2.left - bmpMaximize->bi.biWidth - 1, lrc2.top, lrc2.left - 1, lrc2.bottom);
+// 						iBmp_bitBltMask(obj->bmp, &lrc2, bmpMaximize);
+// CopyRect(&subform->rcMaximize, &lrc2);
+// 
+// 						// Minimize
+// 						SetRect(&lrc2,	lrc2.left - bmpMinimize->bi.biWidth - 1, lrc2.top, lrc2.left - 1, lrc2.bottom);
+// 						iBmp_bitBltMask(obj->bmp, &lrc2, bmpMinimize);
+// CopyRect(&subform->rcMinimize, &lrc2);
+// 
+// 						// Move
+// 						SetRect(&lrc4,	lrc2.left - bmpMove->bi.biWidth - 1, lrc2.top, lrc2.left - 1, lrc2.bottom);
+// 						iBmp_bitBltMask(obj->bmp, &lrc4, bmpMove);
+// CopyRect(&subform->rcMove, &lrc4);
+//////
+
+
+					//////////
+					// Subform caption
+					//////
+						SetRect(&lrc2, lrc3.right + 8, lrc3.top, lrc3.right - 8, lrc3.bottom);
+CopyRect(&subform->rcCaption, &lrc2);
+						lhfontOld = (HFONT)SelectObject(obj->bmp->hdc, gsWindowTitleBarFont->hfont);
+						SetTextColor(obj->bmp->hdc, (COLORREF)RGB(subform->captionColor.red, subform->captionColor.grn, subform->captionColor.blu));
+						SetBkMode(obj->bmp->hdc, TRANSPARENT);
+						DrawTextA(obj->bmp->hdc, subform->caption.data, subform->caption.length, &lrc2, DT_VCENTER);
+						SelectObject(obj->bmp->hdc, lhfontOld);
+
+
+					//////////
+					// Copy to prior rendered bitmap
+					//////
+						// Make sure our bmpPriorRendered exists
+						obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+						// Copy to the prior rendered version
+						lnPixelsRendered += iBmp_bitBlt(obj->bmpPriorRendered, &lrc, obj->bmp);
+						// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+				} else {
+					// Render from its prior rendered version
+					lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+				}
 
 
 			//////////
 			// Indicate we're no longer dirty, that we have everything
 			//////
 				obj->isDirty = false;
-		return(0);
+
+
+			//////////
+			// Render any siblings
+			//////
+				if (tlRenderSiblings && obj->ll.next)
+				{
+					objSib = (SObject*)obj->ll.next;
+					while (objSib)
+					{
+						// Render this sibling
+						lnPixelsRendered += iObj_render(objSib, tlRenderChildren, false);
+
+						// Move to next sibling
+						objSib = (SObject*)objSib->ll.next;
+					}
+				}
+		}
+
+		// Indicate how many pixels were drawn
+		return(lnPixelsRendered);
 	}
 
 

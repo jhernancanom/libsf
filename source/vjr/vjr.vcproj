@@ -515,6 +515,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\object_accessors.h"
+					>
+				</File>
+				<File
 					RelativePath=".\objects.cpp"
 					>
 					<FileConfiguration

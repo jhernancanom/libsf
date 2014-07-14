@@ -69,6 +69,7 @@ struct SVariable;
 	SVariable*			function_chr								(SVariable* p1);
 	SVariable*			function_createobject						(SVariable* p1);
 	SVariable*			function_datetime							(SVariable* pYear, SVariable* pMonth, SVariable* pDay, SVariable* pHour, SVariable* pMinute, SVariable* pSecond, SVariable* pMillisecond);
+	SVariable*			function_int								(SVariable* p1);
 	SVariable*			function_left								(SVariable* pString, SVariable* pCount);
 	SVariable*			function_len								(SVariable* pString);
 	SVariable*			function_lower								(SVariable* pString);
@@ -77,11 +78,18 @@ struct SVariable;
 	SVariable*			function_min								(SVariable* pLeft, SVariable* pRight);
 	SVariable*			function_proper								(SVariable* pString);
 	SVariable*			function_replicate							(SVariable* pString, SVariable* pCount);
+	SVariable*			function_rgb								(SVariable* pRed, SVariable* pGrn, SVariable* pBlu);
+	SVariable*			function_rgba								(SVariable* pRed, SVariable* pGrn, SVariable* pBlu, SVariable* pAlp);
 	SVariable*			function_right								(SVariable* pString, SVariable* pCount);
 	SVariable*			function_rtrim								(SVariable* pString);
 	SVariable*			function_space								(SVariable* pCount);
 	SVariable*			function_stuff								(SVariable* pOriginalString, SVariable* pStartPos, SVariable* pNumToRemove, SVariable* pStuffString);
 	SVariable*			function_upper								(SVariable* pString);
+// Added temporarily until the processing engine is coded
+	SVariable*			function_add								(SVariable* p1, SVariable* p2);
+	SVariable*			function_sub								(SVariable* p1, SVariable* p2);
+	SVariable*			function_mul								(SVariable* p1, SVariable* p2);
+	SVariable*			function_div								(SVariable* p1, SVariable* p2);
 	// at
 	// rat
 	// strtran
@@ -149,6 +157,7 @@ struct SVariable;
 		{	_ICODE_CHR,				1,			(u32)&function_chr,				1,				1	},
 		{	_ICODE_CREATEOBJECT,	1,			(u32)&function_createobject,	1,				1	},
 		{	_ICODE_DATETIME,		1,			(u32)&function_datetime,		0,				7	},
+		{	_ICODE_INT,				1,			(u32)&function_int,				1,				1	},
 		{	_ICODE_LEFT,			1,			(u32)&function_left,			2,				2	},
 		{	_ICODE_LEN,				1,			(u32)&function_len,				1,				1	},
 		{	_ICODE_LOWER,			1,			(u32)&function_lower,			1,				1	},
@@ -157,12 +166,19 @@ struct SVariable;
 		{	_ICODE_MIN,				1,			(u32)&function_min,				2,				2	},
 		{	_ICODE_PROPER,			1,			(u32)&function_proper,			1,				1	},
 		{	_ICODE_REPLICATE,		1,			(u32)&function_replicate,		2,				2	},
+		{	_ICODE_RGB,				1,			(u32)&function_rgb,				3,				3	},
+		{	_ICODE_RGBA,			1,			(u32)&function_rgba,			4,				4	},
 		{	_ICODE_RIGHT,			1,			(u32)&function_right,			2,				2	},
 		{	_ICODE_TRIM,			1,			(u32)&function_rtrim,			1,				1	},
 		{	_ICODE_RTRIM,			1,			(u32)&function_rtrim,			1,				1	},
 		{	_ICODE_SPACE,			1,			(u32)&function_space,			1,				1	},
 		{	_ICODE_STUFF,			1,			(u32)&function_stuff,			3,				4	},
 		{	_ICODE_UPPER,			1,			(u32)&function_upper,			1,				1	},
+// Added temporarily until the processing engine is coded
+		{	_ICODE_ADD,				1,			(u32)&function_add,				2,				2	},
+		{	_ICODE_SUB,				1,			(u32)&function_sub,				2,				2	},
+		{	_ICODE_MUL,				1,			(u32)&function_mul,				2,				2	},
+		{	_ICODE_DIV,				1,			(u32)&function_div,				2,				2	},
 	//////
 	// Insert above this step somewhere in the list of functions.
 	// STEP2:
