@@ -565,6 +565,7 @@
 		{ "year",                   4,          false,      _ICODE_YEAR,                            false,              _ICAT_FUNCTION },
 
 // Temporarily added until the processing engine is completed
+		{ "concatenate",            11,         false,      _ICODE_CONCATENATE,						false,              _ICAT_FUNCTION },
 		{ "add",                   	3,          false,      _ICODE_ADD,								false,              _ICAT_FUNCTION },
 		{ "sub",                   	3,          false,      _ICODE_SUB,								false,              _ICAT_FUNCTION },
 		{ "mul",                   	3,          false,      _ICODE_MUL,								false,              _ICAT_FUNCTION },

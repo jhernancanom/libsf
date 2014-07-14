@@ -84,8 +84,11 @@ struct SVariable;
 	SVariable*			function_rtrim								(SVariable* pString);
 	SVariable*			function_space								(SVariable* pCount);
 	SVariable*			function_stuff								(SVariable* pOriginalString, SVariable* pStartPos, SVariable* pNumToRemove, SVariable* pStuffString);
+	SVariable*			function_sysmetric							(SVariable* pIndex);
 	SVariable*			function_upper								(SVariable* pString);
+	SVariable*			function_version							(SVariable* pIndex);
 // Added temporarily until the processing engine is coded
+	SVariable*			function_concatenate						(SVariable* p1, SVariable* p2);
 	SVariable*			function_add								(SVariable* p1, SVariable* p2);
 	SVariable*			function_sub								(SVariable* p1, SVariable* p2);
 	SVariable*			function_mul								(SVariable* p1, SVariable* p2);
@@ -173,8 +176,11 @@ struct SVariable;
 		{	_ICODE_RTRIM,			1,			(u32)&function_rtrim,			1,				1	},
 		{	_ICODE_SPACE,			1,			(u32)&function_space,			1,				1	},
 		{	_ICODE_STUFF,			1,			(u32)&function_stuff,			3,				4	},
+		{	_ICODE_SYSMETRIC,		1,			(u32)&function_sysmetric,		1,				1	},
 		{	_ICODE_UPPER,			1,			(u32)&function_upper,			1,				1	},
+		{	_ICODE_VERSION,			1,			(u32)&function_version,			0,				1	},
 // Added temporarily until the processing engine is coded
+		{	_ICODE_CONCATENATE,		1,			(u32)&function_concatenate,		2,				2	},
 		{	_ICODE_ADD,				1,			(u32)&function_add,				2,				2	},
 		{	_ICODE_SUB,				1,			(u32)&function_sub,				2,				2	},
 		{	_ICODE_MUL,				1,			(u32)&function_mul,				2,				2	},

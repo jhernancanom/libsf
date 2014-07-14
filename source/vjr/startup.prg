@@ -10,7 +10,8 @@
 *     Jun.17.2014
 *****
 * Change log:
-*     Jun.17.2014 - Initial creation
+*     Jul.13.2014 - Modification to work with the early processing engine
+*     Jun.17.2014 - Initial creation and design
 *****
 *
 * This software is released as Liberty Software under a Repeat License, as governed
@@ -102,7 +103,7 @@
 	
 	
 	* Position and size sourceCode
-	ADDOBJECT(_jdebi, "sourceCode",		"subform")
+	ADDOBJECT(_jdebi, "sourceCode", "subform")
 	_jdebi.sourceCode.Left		= 0
 	_jdebi.sourceCode.Top		= 0
 	lnValue1					= MUL(0.8, _jdebi.width)
@@ -115,7 +116,7 @@
 
 	
 	* Position and size sourceLight
-	ADDOBJECT(_jdebi, "sourceLight",	"subform")
+	ADDOBJECT(_jdebi, "sourceLight", "subform")
 	_jdebi.sourceLight.Left		= _jdebi.sourceCode.Width
 	_jdebi.sourceLight.Top		= 0
 	_jdebi.sourceLight.Width	= SUB(_jdebi.Width, _jdebi.sourceCode.Width)
@@ -132,7 +133,7 @@
 	
 	
 	* Position and size locals
-	ADDOBJECT(_jdebi, "locals",			"subform")
+	ADDOBJECT(_jdebi, "locals", "subform")
 	_jdebi.locals.Left		= 0
 	_jdebi.locals.Top		= _jdebi.sourceCode.Height
 	_jdebi.locals.Width		= _jdebi.sourceCode.Width
@@ -142,7 +143,7 @@
 		
 		
 	* Position and size watch
-	ADDOBJECT(_jdebi, "watch",			"subform")
+	ADDOBJECT(_jdebi, "watch", "subform")
 	_jdebi.watch.Left		= 0
 	_jdebi.watch.Top		= _jdebi.locals.Top + _jdebi.locals.Height
 	_jdebi.watch.Width		= _jdebi.sourceCode.Width
@@ -152,7 +153,7 @@
 		
 		
 	* Position and size debug
-	ADDOBJECT(_jdebi, "debug",			"subform")
+	ADDOBJECT(_jdebi, "debug", "subform")
 	_jdebi.debug.Left		= _jDebi.sourceCode.Width
 	_jdebi.debug.Top		= _jDebi.watchWindow.Top
 	_jdebi.debug.Width		= _jdebi.sourceLight.Width
@@ -163,7 +164,7 @@
 		
 		
 	* Position and size command
-	ADDOBJECT(_jdebi, "command",		"subform")
+	ADDOBJECT(_jdebi, "command", "subform")
 	_jdebi.command.Left		= 0
 	_jdebi.command.Top		= ADD(_jdebi.watchWindow.Top, _jdebi.watchWindow.Height)
 	_jdebi.command.Width	= _jdebi.watchWindow.Width
@@ -172,7 +173,7 @@
 		
 		
 	* Position and size output
-	ADDOBJECT(_jdebi, "output",			"subform")
+	ADDOBJECT(_jdebi, "output", "subform")
 	_jdebi.output.Left		= _jDebi.sourceCode.Width
 	_jdebi.output.Top		= ADD(_jDebi.debugging.Top, _jDebi.debugging.Height)
 	_jdebi.output.Width		= _jdebi.debugging.Width

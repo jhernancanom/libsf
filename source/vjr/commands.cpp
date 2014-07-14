@@ -2204,6 +2204,226 @@
 
 //////////
 //
+// Function: SYSMETRIC()
+// Based on the index, returns a wide array of information.
+//
+//////
+// Version 0.31
+// Last update:
+//     Jul.13.2014
+//////
+// Change log:
+//     Jul.13.2014 - Initial creation
+//////
+// Parameters:
+//     pIndex		-- Numeric, in the range 1..34
+//
+//////
+// Returns:
+//    Numeric		-- Depending on index, various value ranges are returned
+//////
+    SVariable* function_sysmetric(SVariable* pIndex)
+    {
+        s32			index;
+		RECT		lrc;
+		u32			errorNum;
+        bool		error;
+        SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be numeric
+		//////
+			if (!iVariable_isValid(pIndex) || !iVariable_isTypeNumeric(pIndex))
+			{
+				iError_report("Parameter 1 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // It must be in the range 1..34
+		//////
+			index = iiVariable_getAs_s32(pIndex, false, &error, &errorNum);
+			if (error)
+			{
+				iError_reportByNumber(errorNum, NULL);
+				return(NULL);
+
+			} else if (index > 34 || index < 1) {
+				// We report our own error
+				iError_report("Parameter must be in the range 1..34");
+				return(NULL);
+			}
+
+
+		//////////
+        // Create our return result
+		//////
+	        result = iVariable_create(_VAR_TYPE_S32, NULL);
+			if (!result)
+			{
+				iError_report("Internal error.");
+				return(NULL);
+			}
+
+
+		//////////
+        // Populate the result with its sysmetric()
+		//////
+			GetWindowRect(GetDesktopWindow(), &lrc);
+			switch (index)
+			{
+				case 1:
+					// Screen width
+					*(s32*)result->value.data = (lrc.right - lrc.left);
+					break;
+				case 2:
+					// Screen height
+					*(s32*)result->value.data = (lrc.bottom - lrc.top);
+					break;
+				case 3:
+					// Width of a sizable window frame
+					*(s32*)result->value.data = bmpVjrIcon->bi.biWidth;
+					break;
+				case 4:
+					// Height of a sizable window frame
+					*(s32*)result->value.data = bmpVjrIcon->bi.biHeight;
+					break;
+				case 5:
+					// Width of scroll arrows on a vertical scroll bar
+					*(s32*)result->value.data = 0;
+					break;
+				case 6:
+					// Height of scroll arrows on a vertical scroll bar
+					*(s32*)result->value.data = 0;
+					break;
+				case 7:
+					// Width of scroll arrows on a horizontal scroll bar
+					*(s32*)result->value.data = 0;
+					break;
+				case 8:
+					// Height of scroll arrows on a horizontal scroll bar
+					*(s32*)result->value.data = 0;
+					break;
+				case 9:
+					// Height of form caption
+					*(s32*)result->value.data = bmpVjrIcon->bi.biHeight;
+					break;
+				case 10:
+					// Width of non-sizable window frame
+					*(s32*)result->value.data = bmpVjrIcon->bi.biWidth;
+					break;
+				case 11:
+					// Height of a non-sizable window frame
+					*(s32*)result->value.data = bmpVjrIcon->bi.biHeight;
+					break;
+				case 12:
+					// Width of a double or panel window frame
+					*(s32*)result->value.data = bmpVjrIcon->bi.biWidth;
+					break;
+				case 13:
+					// Height of a double or panel window frame
+					*(s32*)result->value.data = bmpVjrIcon->bi.biHeight;
+					break;
+				case 14:
+					// Scroll box width on horizontal scroll bars in text editing windows
+					*(s32*)result->value.data = 0;
+					break;
+				case 15:
+					// Scroll box height on horizontal scroll bars in text editing windows
+					*(s32*)result->value.data = 0;
+					break;
+				case 16:
+					// Minimized window icon width
+					*(s32*)result->value.data = bmpVjrIcon->bi.biWidth;
+					break;
+				case 17:
+					// Minimized window icon height
+					*(s32*)result->value.data = bmpVjrIcon->bi.biHeight;
+					break;
+				case 18:
+					// Maximum insertion point width
+					*(s32*)result->value.data = 0;
+					break;
+				case 19:
+					// Maximum insertion point height
+					*(s32*)result->value.data = 0;
+					break;
+				case 20:
+					// Single-line menu bar height
+					*(s32*)result->value.data = _MENU_BAR_HEIGHT;
+					break;
+				case 21:
+					// Maximized window width
+					*(s32*)result->value.data = (lrc.right - lrc.left);
+					break;
+				case 22:
+					// Maximized window height
+					*(s32*)result->value.data = (lrc.bottom - lrc.top);
+					break;
+				case 23:
+					// Kanji window height
+					*(s32*)result->value.data = ((GetSystemMetrics(SM_CYKANJIWINDOW) != 0) ? 1 : 0);
+					break;
+				case 24:
+					// Minimum sizable window width
+					*(s32*)result->value.data = 2 * bmpVjrIcon->bi.biWidth;
+					break;
+				case 25:
+					// Minimum sizable window height
+					*(s32*)result->value.data = 2 * bmpVjrIcon->bi.biHeight;
+					break;
+				case 26:
+					// Minimum window width
+					*(s32*)result->value.data = 2 * bmpVjrIcon->bi.biWidth;
+					break;
+				case 27:
+					// Minimum window height
+					*(s32*)result->value.data = 2 * bmpVjrIcon->bi.biHeight;
+					break;
+				case 28:
+					// Window controls width
+					*(s32*)result->value.data = 2 * bmpClose->bi.biWidth;
+					break;
+				case 29:
+					// Window controls height
+					*(s32*)result->value.data = 2 * bmpClose->bi.biHeight;
+					break;
+				case 30:
+					// 1 if mouse hardware present, 0 otherwise
+					*(s32*)result->value.data = ((GetSystemMetrics(SM_MOUSEPRESENT) != 0) ? 1 : 0);
+					break;
+				case 31:
+					// 1 for Microsoft Windows debugging version, 0 otherwise
+					*(s32*)result->value.data = ((GetSystemMetrics(SM_DEBUG) != 0) ? 1 : 0);
+					break;
+				case 32:
+					// 1 if mouse buttons are swapped, 0 otherwise
+					*(s32*)result->value.data = ((GetSystemMetrics(SM_SWAPBUTTON) != 0) ? 1 : 0);
+					break;
+				case 33:
+					// width of a button in a half-height title bar
+					*(s32*)result->value.data = bmpClose->bi.biWidth;
+					break;
+				case 34:
+					// Height of half-height caption area
+					*(s32*)result->value.data = bmpClose->bi.biHeight;
+					break;
+			}
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
+    }
+
+
+
+
+//////////
+//
 // Function: UPPER()
 // Converts every character in the string to uppercase.
 //
@@ -2269,6 +2489,184 @@
         // Return our converted result
 		//////
 	        return result;
+	}
+
+
+
+
+//////////
+//
+// Function: VERSION()
+// Based on input, retrieves various version information.
+//
+//////
+// Version 0.31
+// Last update:
+//     Jul.13.2014
+//////
+// Change log:
+//     Jul.13.2014 - Initial creation
+//////
+// Parameters:
+//     pIndex		-- (Optional) If present, Numeric, in the range 1..5
+//
+//////
+// Returns:
+//    Numeric or Character	-- Depending on index, various values are returned
+//////
+    SVariable* function_version(SVariable* pIndex)
+    {
+        s32			index;
+		u32			errorNum;
+        bool		error;
+		s8*			lptr;
+        SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be numeric
+		//////
+			lptr = NULL;
+			if (!iVariable_isValid(pIndex))
+			{
+				// They are requesting the default information
+				lptr = (s8*)cgcVersionText;
+
+			} else if (!iVariable_isTypeNumeric(pIndex)) {
+				// The parameter is not numeric
+				iError_report("Parameter 1 is not correct");
+				return(NULL);
+			} else {
+				// It must be in the range 1..5
+				index = iiVariable_getAs_s32(pIndex, false, &error, &errorNum);
+				if (error)
+				{
+					iError_reportByNumber(errorNum, NULL);
+					return(NULL);
+
+				} else if (index > 5 || index < 1) {
+					// We report our own error
+					iError_report("Parameter must be in the range 1..34");
+					return(NULL);
+				}
+			}
+
+
+		//////////
+        // Create our return result
+		//////
+			if (lptr || index == 1 || index == 4)
+			{
+				// Character return
+				result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+				if (lptr)
+				{
+					// Copy the version info
+					iDatum_duplicate(&result->value, lptr, -1);
+
+				} else if (index == 1) {
+					// Copy the version1 info
+					iDatum_duplicate(&result->value, cgcVersion1Text, -1);
+
+				} else {
+					// Copy the version4 info
+					iDatum_duplicate(&result->value, cgcVersion4Text, -1);
+				}
+
+			} else {
+				result = iVariable_create(_VAR_TYPE_S32, NULL);
+				if (index == 2)
+				{
+					// 0=runtime, 1=standard, 2=professional
+					*(s32*)result->value.data = gnVersion2;	// Oh yeah!
+
+				} else if (index == 3) {
+					// Localized version
+					*(s32*)result->value.data = gnVersion3;	// English
+
+				} else {
+					// Version in a form like Major.Minor as M.mm, or 123 for version 1.23
+					*(s32*)result->value.data = gnVersion5;
+				}
+			}
+			if (!result)
+			{
+				iError_report("Internal error.");
+				return(NULL);
+			}
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
+    }
+
+
+
+
+//////////
+//
+// Function: CONCATENATE()
+// Note:  This is a temporary function until the main compiler engine is coded.
+// Concatenates two strings together.
+//
+//////
+// Version 0.31   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Jul.13.2014
+//////
+// Change log:
+//     Jul.13.2014 - Initial creation
+//////
+// Parameters:
+//     p1		-- String1
+//     p2		-- String2
+//
+//////
+// Returns:
+//    The sum of p1 + p2
+//
+//////
+	SVariable* function_concatenate(SVariable* p1, SVariable* p2)
+	{
+		SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be character
+		//////
+			if (!iVariable_isValid(p1) || !iVariable_isTypeCharacter(p1))
+			{
+				iError_report("Parameter 1 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 2 must be character
+		//////
+			if (!iVariable_isValid(p2) || !iVariable_isTypeCharacter(p2))
+			{
+				iError_report("Parameter 2 is not correct");
+				return(NULL);
+			}
+
+
+		//////////
+		// Allocate enough space for the assemblage
+		//////
+			result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+			iDatum_allocateSpace(&result->value, p1->value.length + p2->value.length);
+			// Create the concatenated string
+			memcpy(result->value.data,						p1->value.data,		p1->value.length);
+			memcpy(result->value.data + p1->value.length,	p2->value.data,		p2->value.length);
+
+
+		//////////
+		// Indicate our result
+		//////
+			return(result);
 	}
 
 

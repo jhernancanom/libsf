@@ -806,10 +806,11 @@
 	const u32		_ICODE_YEAR                                     = 1430;
 
 // Temporarily added until the processing engine is coded
-	const u32       _ICODE_ADD                                      = 1900;
-	const u32       _ICODE_SUB                                      = 1901;
-	const u32       _ICODE_MUL                                      = 1902;
-	const u32       _ICODE_DIV                                      = 1903;
+	const u32		_ICODE_CONCATENATE								= 1900;
+	const u32       _ICODE_ADD                                      = 1901;
+	const u32       _ICODE_SUB                                      = 1902;
+	const u32       _ICODE_MUL                                      = 1903;
+	const u32       _ICODE_DIV                                      = 1904;
 
 	// Commands
 	const u32       _ICODE_ACTIVATE                                 = 2000;
