@@ -229,6 +229,41 @@
 
 //////////
 //
+// Called to save the indicated bitmap to a disk file.
+//
+//////
+	void iBmp_saveToDisk(SBitmap* bmp, s8* tcPathname)
+	{
+		FILE* lfh;
+
+
+		//////////
+		// Simple disk write
+		//////
+			lfh = fopen(tcPathname, "wb+");
+			if (lfh)
+			{
+				// Write file header, info header, bitmap bits
+				bmp->bh.bfType		= 'MB';
+				bmp->bh.bfReserved1	= 0;
+				bmp->bh.bfReserved2	= 0;
+				bmp->bh.bfOffBits	= sizeof(bmp->bh) + sizeof(bmp->bi);
+				bmp->bh.bfSize		= bmp->bh.bfOffBits + bmp->bi.biSizeImage;
+
+				fwrite(&bmp->bh, 1, sizeof(bmp->bh), lfh);
+				fwrite(&bmp->bi, 1, sizeof(bmp->bi), lfh);
+				fwrite(bmp->bd, 1, bmp->bi.biSizeImage, lfh);
+
+				// Close
+				fclose(lfh);
+			}
+	}
+
+
+
+
+//////////
+//
 // Called to convert the indicated bitmap to 32-bits if need be
 //
 //////
@@ -661,6 +696,10 @@
 									if (lbgraSrc->alp == 255)
 									{
 										// Opaque
+										lbgraDst->red	= lbgraSrc->red;
+										lbgraDst->grn	= lbgraSrc->grn;
+										lbgraDst->blu	= lbgraSrc->blu;
+
 									} else {
 										// Some degree of transparency
 										lfAlp			= ((f64)lbgraSrc->alp / 255.0);
@@ -1013,41 +1052,42 @@
 		SBgra*	lbgra;
 
 
-		// Get our starting point
-		lbgr	= (SBgr*)(bmp->bd  + ((bmp->bi.biHeight - tnY - 1) * bmp->rowWidth) + (tnX1 * (bmp->bi.biBitCount / 8)));
-		lbgra	= (SBgra*)(bmp->bd + ((bmp->bi.biHeight - tnY - 1) * bmp->rowWidth) + (tnX1 * (bmp->bi.biBitCount / 8)));
-
-		if (bmp->bi.biBitCount == 24)
+		if (tnY >= 0 && tnY < bmp->bi.biHeight)
 		{
-			// Iterate for each column
-			for (lnX = tnX1; lnX <= tnX2; lnX++)
-			{
-				// Are we on the bitmap?
-				if (lnX >= 0 && lnX < bmp->bi.biWidth)
-				{
-					// Draw the pixel
-					lbgr->red	= color.red;
-					lbgr->grn	= color.grn;
-					lbgr->blu	= color.blu;
+			// Get our starting point
+			lbgr	= (SBgr*)(bmp->bd  + ((bmp->bi.biHeight - tnY - 1) * bmp->rowWidth) + (tnX1 * (bmp->bi.biBitCount / 8)));
+			lbgra	= (SBgra*)(bmp->bd + ((bmp->bi.biHeight - tnY - 1) * bmp->rowWidth) + (tnX1 * (bmp->bi.biBitCount / 8)));
 
+			if (bmp->bi.biBitCount == 24)
+			{
+				// Iterate for each column
+				for (lnX = tnX1; lnX <= tnX2; lnX++)
+				{
+					// Are we on the bitmap?
+					if (lnX >= 0 && lnX < bmp->bi.biWidth)
+					{
+						// Draw the pixel
+						lbgr->red	= color.red;
+						lbgr->grn	= color.grn;
+						lbgr->blu	= color.blu;
+					}
 					// Move to next column
 					++lbgr;
 				}
-			}
 
-		} else if (bmp->bi.biBitCount == 32) {
-			// Iterate for each column
-			for (lnX = tnX1; lnX <= tnX2; lnX++)
-			{
-				// Are we on the bitmap?
-				if (lnX >= 0 && lnX < bmp->bi.biWidth)
+			} else if (bmp->bi.biBitCount == 32) {
+				// Iterate for each column
+				for (lnX = tnX1; lnX <= tnX2; lnX++)
 				{
-					// Draw the pixel
-					lbgra->alp	= 255;
-					lbgra->red	= color.red;
-					lbgra->grn	= color.grn;
-					lbgra->blu	= color.blu;
-
+					// Are we on the bitmap?
+					if (lnX >= 0 && lnX < bmp->bi.biWidth)
+					{
+						// Draw the pixel
+						lbgra->alp	= 255;
+						lbgra->red	= color.red;
+						lbgra->grn	= color.grn;
+						lbgra->blu	= color.blu;
+					}
 					// Move to next column
 					++lbgra;
 				}
@@ -1062,41 +1102,42 @@
 		SBgra*	lbgra;
 
 
-		// Get our starting point
-		lbgr	= (SBgr*)(bmp->bd  + ((bmp->bi.biHeight - tnY1 - 1) * bmp->rowWidth) + (tnX * (bmp->bi.biBitCount / 8)));
-		lbgra	= (SBgra*)(bmp->bd + ((bmp->bi.biHeight - tnY1 - 1) * bmp->rowWidth) + (tnX * (bmp->bi.biBitCount / 8)));
-
-		if (bmp->bi.biBitCount == 24)
+		if (tnX >= 0 && tnX < bmp->bi.biWidth)
 		{
-			// Iterate for each column
-			for (lnY = tnY1; lnY <= tnY2; lnY++)
-			{
-				// Are we on the bitmap?
-				if (lnY >= 0 && lnY < bmp->bi.biHeight)
-				{
-					// Draw the pixel
-					lbgr->red	= color.red;
-					lbgr->grn	= color.grn;
-					lbgr->blu	= color.blu;
+			// Get our starting point
+			lbgr	= (SBgr*)(bmp->bd  + ((bmp->bi.biHeight - tnY1 - 1) * bmp->rowWidth) + (tnX * (bmp->bi.biBitCount / 8)));
+			lbgra	= (SBgra*)(bmp->bd + ((bmp->bi.biHeight - tnY1 - 1) * bmp->rowWidth) + (tnX * (bmp->bi.biBitCount / 8)));
 
+			if (bmp->bi.biBitCount == 24)
+			{
+				// Iterate for each column
+				for (lnY = tnY1; lnY <= tnY2; lnY++)
+				{
+					// Are we on the bitmap?
+					if (lnY >= 0 && lnY < bmp->bi.biHeight)
+					{
+						// Draw the pixel
+						lbgr->red	= color.red;
+						lbgr->grn	= color.grn;
+						lbgr->blu	= color.blu;
+					}
 					// Move to next row
 					lbgr = (SBgr*)((s8*)lbgr - bmp->rowWidth);
 				}
-			}
 
-		} else if (bmp->bi.biBitCount == 32) {
-			// Iterate for each column
-			for (lnY = tnY1; lnY <= tnY2; lnY++)
-			{
-				// Are we on the bitmap?
-				if (lnY >= 0 && lnY < bmp->bi.biHeight)
+			} else if (bmp->bi.biBitCount == 32) {
+				// Iterate for each column
+				for (lnY = tnY1; lnY <= tnY2; lnY++)
 				{
-					// Draw the pixel
-					lbgra->alp	= 255;
-					lbgra->red	= color.red;
-					lbgra->grn	= color.grn;
-					lbgra->blu	= color.blu;
-
+					// Are we on the bitmap?
+					if (lnY >= 0 && lnY < bmp->bi.biHeight)
+					{
+						// Draw the pixel
+						lbgra->alp	= 255;
+						lbgra->red	= color.red;
+						lbgra->grn	= color.grn;
+						lbgra->blu	= color.blu;
+					}
 					// Move to next row
 					lbgra = (SBgra*)((s8*)lbgra - bmp->rowWidth);
 				}
@@ -1135,10 +1176,9 @@
 					lbgr->red	= (u8)tfRed;
 					lbgr->grn	= (u8)tfGrn;
 					lbgr->blu	= (u8)tfBlu;
-
-					// Move to next column
-					++lbgr;
 				}
+				// Move to next column
+				++lbgr;
 			}
 
 		} else if (bmp->bi.biBitCount == 32) {
@@ -1153,10 +1193,9 @@
 					lbgra->red	= (u8)tfRed;
 					lbgra->grn	= (u8)tfGrn;
 					lbgra->blu	= (u8)tfBlu;
-
-					// Move to next column
-					++lbgra;
 				}
+				// Move to next column
+				++lbgra;
 			}
 		}
 	}
@@ -1184,10 +1223,9 @@
 					lbgr->red	= (u8)tfRed;
 					lbgr->grn	= (u8)tfGrn;
 					lbgr->blu	= (u8)tfBlu;
-
-					// Move to next row
-					lbgr = (SBgr*)((s8*)lbgr - bmp->rowWidth);
 				}
+				// Move to next row
+				lbgr = (SBgr*)((s8*)lbgr - bmp->rowWidth);
 			}
 
 		} else if (bmp->bi.biBitCount == 32) {
@@ -1202,10 +1240,9 @@
 					lbgra->red	= (u8)tfRed;
 					lbgra->grn	= (u8)tfGrn;
 					lbgra->blu	= (u8)tfBlu;
-
-					// Move to next row
-					lbgra = (SBgra*)((s8*)lbgra - bmp->rowWidth);
 				}
+				// Move to next row
+				lbgra = (SBgra*)((s8*)lbgra - bmp->rowWidth);
 			}
 		}
 	}

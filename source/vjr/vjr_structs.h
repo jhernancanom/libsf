@@ -252,7 +252,7 @@ struct SEvents
 struct SObject
 {
 	SLL			ll;														// Linked list
-	SObject*	parent;													// Pointer to parent object for this instance
+	SObject*	objParent;												// Pointer to parent object for this instance
 	SObject*	firstChild;												// Pointer to child objects (all objects are containers)
 
 	// Information about the object itself
@@ -321,13 +321,13 @@ struct SObject
 struct SSubObjEmpty
 {
 	// _OBJECT_TYPE_EMPTY
-	SObject*	parent;													// parent object this object belongs to
+	SObject*	objParent;												// Parent object this object belongs to
 };
 
 struct SSubObjForm
 {
 	// _OBJECT_TYPE_FORM
-	SObject*	parent;													// parent object this object belongs to
+	SObject*	objParent;												// Parent object this object belongs to
 
 	RECT		rcMax;													// The maximum rectangle for the form
 	RECT		rcMin;													// The minimum rectangle for the form
@@ -425,7 +425,7 @@ struct SSubObjForm
 struct SSubObjSubform
 {
 	// _OBJECT_TYPE_SUBFORM
-	SObject*	parent;													// parent object this object belongs to
+	SObject*	objParent;												// Parent object this object belongs to
 
 	RECT		rcMax;													// The maximum rectangle for the form
 	RECT		rcMin;													// The minimum rectangle for the form
@@ -489,7 +489,7 @@ struct SSubObjLabel
 struct SSubObjTextbox
 {
 	// _OBJECT_TYPE_TEXTBOX
-	SObject*	parent;													// parent object this object belongs to
+	SObject*	objParent;												// Parent object this object belongs to
 
 	SFont*		font;													// Default font instance
 	SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
@@ -547,7 +547,7 @@ struct SSubObjButton
 struct SSubObjEditbox
 {
 	// _OBJECT_TYPE_EDITBOX
-	SObject*	parent;													// parent object this object belongs to
+	SObject*	objParent;												// Parent object this object belongs to
 
 	SFont*		font;													// Default font instance
 	SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
@@ -580,7 +580,7 @@ struct SSubObjEditbox
 struct SSubObjImage
 {
 	// _OBJECT_TYPE_IMAGE
-	SObject*	parent;													// parent object this object belongs to
+	SObject*	objParent;												// Parent object this object belongs to
 
 	u32			style;													// See _EDITBOX_STYLE_* constants (plain, 2D, 3D)
 
@@ -594,7 +594,7 @@ struct SSubObjImage
 struct SSubObjCheckbox
 {
 	// _OBJECT_TYPE_CHECKBOX
-	SObject*	parent;													// parent object this object belongs to
+	SObject*	objParent;												// Parent object this object belongs to
 
 	SFont*		font;													// Default font instance
 	SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
@@ -621,7 +621,7 @@ struct SSubObjCheckbox
 struct SSubObjOption
 {
 	// _OBJECT_TYPE_OPTION
-	SObject*	parent;													// parent object this object belongs to
+	SObject*	objParent;												// Parent object this object belongs to
 
 	SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
 	SBgra		foreColor;												// Default text fore color
@@ -644,7 +644,7 @@ struct SSubObjOption
 struct SSubObjRadio
 {
 	// _OBJECT_TYPE_RADIO
-	SObject*	parent;													// parent object this object belongs to
+	SObject*	objParent;												// Parent object this object belongs to
 
 	SFont*		font;													// Default font instance
 	SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)

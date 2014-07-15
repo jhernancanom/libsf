@@ -46,7 +46,7 @@
 // Creates the object structure
 //
 //////
-	SObject* iObj_create(u32 tnBaseType, void* obj_data)
+	SObject* iObj_create(u32 objType, void* obj_data, SObject* objParent)
 	{
 		SObject* obj;
 
@@ -66,7 +66,8 @@
 				memset(obj, 0, sizeof(SObject));
 
 				// Initially populate
-				obj->objType = tnBaseType;
+				obj->objType	= objType;
+				obj->objParent	= objParent;
 
 				// If they gave us a child, we'll use that
 				if (obj_data)
@@ -76,7 +77,7 @@
 
 				} else {
 					// We need to create it
-					switch (tnBaseType)
+					switch (objType)
 					{
 						case _OBJ_TYPE_EMPTY:		// Empty, used as a placeholder object that is not drawn
 							iDatum_duplicate(&obj->name,		cgcName_empty, -1);
@@ -174,7 +175,7 @@
 //		sub_obj_output	-- Populated with the pointer of the sub-object
 //
 //////
-	SObject* iObj_addChild(SObject* objParent, u32 tnBaseType, void** sub_obj_output)
+	SObject* iObj_addChild(SObject* objParent, u32 objType, void** sub_obj_output)
 	{
 		SObject* objNew;
 
@@ -184,7 +185,7 @@
 		if (objParent)
 		{
 			// Create the new object using the default template
-			objNew = iObj_create(tnBaseType, NULL);
+			objNew = iObj_create(objType, NULL, objParent);
 			if (objNew)
 			{
 				// Append it to the child chain of the parent object
@@ -234,7 +235,7 @@
 			// Update the next and parent, and clear out any bmpScaled
 			//////
 				obj->ll.next	= (SLL*)next;
-				obj->parent		= parent;
+				obj->objParent		= parent;
 				obj->bmpScaled	= NULL;
 
 
@@ -404,80 +405,122 @@
 //////
 	u32 iObj_publish(SBitmap* bmpDst, RECT* rc, SObject* obj, bool tlPublishChildren, bool tlPublishSiblings)
 	{
-		u32			lnWidth, lnHeight, lnPixelsRendered;
-		RECT		lrc;
-		SObject*	objSib;
+		u32					lnWidth, lnHeight, lnPixelsRendered;
+		RECT				lrc;
+		SObject*			objSib;
+		union {
+			SSubObjForm*	form;
+			SSubObjSubform*	subform;
+		};
 
 
-		//////////
-		// Determine the position within the parent's rectangle where this object will go
-		//////
-			lnPixelsRendered = 0;
-			SetRect(&lrc,
-					rc->left	+ obj->rc.left,
-					rc->top		+ obj->rc.top,
-					rc->left	+ obj->rc.right,
-					rc->top		+ obj->rc.bottom);
-
-
-		//////////
-		// Publish any children
-		//////
-			if (tlPublishChildren && obj->firstChild)
-				lnPixelsRendered += iObj_publish(obj->bmp, &lrc, obj->firstChild, true, true);
-
-
-		//////////
-		// Publish this item
-		//////
-			// The size of the bitmap should equal the size of the rectangle on the parent.
-			lnWidth		= obj->rc.right - obj->rc.left;
-			lnHeight	= obj->rc.bottom - obj->rc.top;
-			// If it's different, then we need to scale the content
-			if (lnWidth != obj->bmp->bi.biWidth || lnHeight != obj->bmp->bi.biHeight)
-			{
-				// Need to scale, but do we need to create or alter our scaled target bitmap?
-				if (!obj->bmpScaled || lnWidth != obj->bmpScaled->bi.biWidth || lnHeight != obj->bmpScaled->bi.biHeight)
+		// Make sure our environment is sane
+		lnPixelsRendered = 0;
+		if (obj && obj->bmp)
+		{
+			//////////
+			// Determine the position within the parent's rectangle where this object will go
+			//////
+				if (obj->objParent)
 				{
-					// Delete any existing bitmap
-					iBmp_delete(&obj->bmpScaled, true, true);
+					// Adjust this item within the parent's rectangle
+					SetRect(&lrc,	rc->left	+ obj->rc.left,
+									rc->top		+ obj->rc.top,
+									rc->left	+ obj->rc.right,
+									rc->top		+ obj->rc.bottom);
 
-					// Create the new one
-					obj->bmpScaled = iBmp_allocate();
-					iBmp_createBySize(obj->bmpScaled, lnWidth, lnHeight, 32);
-					// Now when we scale into it, it will be the right size
+				} else {
+					// This is a top-level entry, so adjust everything to rcClient, or to 0
+					switch (obj->objType)
+					{
+						case _OBJ_TYPE_FORM:
+							// Bypass the frame
+							form = (SSubObjForm*)obj->sub_obj;
+							CopyRect(&lrc, &form->rcClient);
+							break;
+
+						case _OBJ_TYPE_SUBFORM:
+							// Bypass the frame
+							subform = (SSubObjSubform*)obj->sub_obj;
+							CopyRect(&lrc, &subform->rcClient);
+							break;
+
+						default:
+							// The object occupies its entire space
+							SetRect(&lrc,	0,
+											0,
+											obj->rc.right - obj->rc.left,
+											obj->rc.bottom -obj->rc.top);
+					}
 				}
 
-				// Perform the scale
-				iBmp_scale(obj->bmpScaled, obj->bmp);
 
-				// Perform the bitblt
-				if (bmpDst)
-					lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmpScaled);
-
-			} else {
-				// We can just copy
-				if (bmpDst)
-					lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
-			}
+			//////////
+			// Publish any children
+			//////
+				if (tlPublishChildren && obj->firstChild)
+					lnPixelsRendered += iObj_publish(obj->bmp, &lrc, obj->firstChild, true, true);
 
 
-		//////////
-		// Publish any siblings
-		//////
-			if (tlPublishSiblings && obj->ll.next)
-			{
-				// Begin at the next sibling
-				objSib = (SObject*)obj->ll.next;
-				while (objSib)
+			//////////
+			// Publish this item
+			//////
+				// The size of the bitmap should equal the size of the rectangle on the parent.
+				lnWidth		= obj->rc.right - obj->rc.left;
+				lnHeight	= obj->rc.bottom - obj->rc.top;
+				// If it's different, then we need to scale the content
+				if (lnWidth != obj->bmp->bi.biWidth || lnHeight != obj->bmp->bi.biHeight)
 				{
-					// Render this sibling
-					lnPixelsRendered += iObj_publish(bmpDst, rc, objSib, tlPublishChildren, false);
+					// Need to scale, but do we need to create or alter our scaled target bitmap?
+					if (!obj->bmpScaled || lnWidth != obj->bmpScaled->bi.biWidth || lnHeight != obj->bmpScaled->bi.biHeight)
+					{
+						// Delete any existing bitmap
+						iBmp_delete(&obj->bmpScaled, true, true);
 
-					// Move to next sibling
-					objSib = (SObject*)objSib->ll.next;
+						// Create the new one
+						obj->bmpScaled = iBmp_allocate();
+						iBmp_createBySize(obj->bmpScaled, lnWidth, lnHeight, 24);
+						// Now when we scale into it, it will be the right size
+					}
+
+					// Perform the scale
+					iBmp_scale(obj->bmpScaled, obj->bmp);
+
+					// Perform the bitblt
+					if (bmpDst)
+						lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmpScaled);
+
+				} else {
+					// We can just copy
+// s8 buffer[256];
+// sprintf(buffer, "c:\\temp\\publish_obj%u.bmp\0", (u32)obj);
+// iBmp_saveToDisk(obj->bmp, buffer);
+					if (bmpDst)
+						lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
 				}
-			}
+
+
+			//////////
+			// Publish any siblings
+			//////
+				if (tlPublishSiblings && obj->ll.next)
+				{
+					// Begin at the next sibling
+					objSib = (SObject*)obj->ll.next;
+					while (objSib)
+					{
+						// Render this sibling
+						lnPixelsRendered += iObj_publish(bmpDst, rc, objSib, true, true);
+
+						// Move to next sibling
+						objSib = (SObject*)objSib->ll.next;
+					}
+				}
+		}
+// s8 buffer[256];
+// sprintf(buffer, "c:\\temp\\publish_%u.bmp\0", (u32)obj);
+// iBmp_saveToDisk(bmpDst, buffer);
+
 
 
 		//////////
@@ -589,11 +632,57 @@
 //////
 	void iObj_setSize(SObject* obj, s32 tnLeft, s32 tnTop, s32 tnWidth, s32 tnHeight)
 	{
+		union {
+			SSubObjForm*		form;
+			SSubObjSubform*		subform;
+		};
+
 		// Resize if need be
 		obj->bmp = iBmp_verifySizeOrResize(obj->bmp, tnWidth, tnHeight);
 
 		// Position and size its rectangle
 		SetRect(&obj->rc, tnLeft, tnTop, tnLeft + tnWidth, tnTop + tnHeight);
+
+		// Update the client area
+		switch (obj->objType)
+		{
+			case _OBJ_TYPE_EMPTY:
+				break;
+
+			case _OBJ_TYPE_FORM:
+				form = (SSubObjForm*)obj->sub_obj;
+				SetRect(&form->rcClient, 8, form->bmpFormIcon->bi.biHeight + 2, tnWidth - form->bmpFormIcon->bi.biHeight - 2, tnHeight - form->bmpFormIcon->bi.biHeight - 1);
+				break;
+
+			case _OBJ_TYPE_SUBFORM:
+				subform = (SSubObjSubform*)obj->sub_obj;
+				SetRect(&subform->rcClient, 0, subform->bmpSubformIcon->bi.biHeight + 2, tnWidth - subform->bmpSubformIcon->bi.biHeight - 2, tnHeight);
+				break;
+
+			case _OBJ_TYPE_LABEL:
+				break;
+
+			case _OBJ_TYPE_TEXTBOX:
+				break;
+
+			case _OBJ_TYPE_BUTTON:
+				break;
+
+			case _OBJ_TYPE_EDITBOX:
+				break;
+
+			case _OBJ_TYPE_IMAGE:
+				break;
+
+			case _OBJ_TYPE_CHECKBOX:
+				break;
+
+			case _OBJ_TYPE_OPTION:
+				break;
+
+			case _OBJ_TYPE_RADIO:
+				break;
+		}
 
 		// Mark it dirty for a full re-render
 		obj->isDirty = true;
@@ -1011,7 +1100,7 @@
 				memset(subobj, 0, sizeof(SSubObjEmpty));
 
 				// Initially populate
-				subobj->parent	= parent;
+				subobj->objParent	= parent;
 
 				// Initialize based on template
 				if (template_subobj)
@@ -1041,7 +1130,7 @@
 // Creates the form object structure
 //
 //////
-	SSubObjForm* iSubobj_createForm(SSubObjForm* template_subobj, SObject* parent)
+	SSubObjForm* iSubobj_createForm(SSubObjForm* template_subobj, SObject* objParent)
 	{
 		SSubObjForm*	subobj;
 		SObject*		icon;
@@ -1067,7 +1156,7 @@
 				memset(subobj, 0, sizeof(SSubObjForm));
 
 				// Initially populate
-				subobj->parent = parent;
+				subobj->objParent = objParent;
 
 				// Initialize based on template
 				if (template_subobj)
@@ -1083,12 +1172,12 @@
 					//////////
 					// Create the default children for this object
 					//////
-						icon		= iObj_create(_OBJ_TYPE_IMAGE, NULL);
-						caption		= iObj_create(_OBJ_TYPE_LABEL, NULL);
-						move		= iObj_create(_OBJ_TYPE_IMAGE, NULL);
-						minimize	= iObj_create(_OBJ_TYPE_IMAGE, NULL);
-						maximize	= iObj_create(_OBJ_TYPE_IMAGE, NULL);
-						close		= iObj_create(_OBJ_TYPE_IMAGE, NULL);
+						icon		= iObj_create(_OBJ_TYPE_IMAGE, NULL, objParent);
+						caption		= iObj_create(_OBJ_TYPE_LABEL, NULL, objParent);
+						move		= iObj_create(_OBJ_TYPE_IMAGE, NULL, objParent);
+						minimize	= iObj_create(_OBJ_TYPE_IMAGE, NULL, objParent);
+						maximize	= iObj_create(_OBJ_TYPE_IMAGE, NULL, objParent);
+						close		= iObj_create(_OBJ_TYPE_IMAGE, NULL, objParent);
 
 
 					//////////
@@ -1105,12 +1194,12 @@
 					//////////
 					// Append to the parent
 					//////
-						iObj_appendObjToParent(parent, icon);
-						iObj_appendObjToParent(parent, caption);
-						iObj_appendObjToParent(parent, move);
-						iObj_appendObjToParent(parent, minimize);
-						iObj_appendObjToParent(parent, maximize);
-						iObj_appendObjToParent(parent, close);
+						iObj_appendObjToParent(objParent, icon);
+						iObj_appendObjToParent(objParent, caption);
+						iObj_appendObjToParent(objParent, move);
+						iObj_appendObjToParent(objParent, minimize);
+						iObj_appendObjToParent(objParent, maximize);
+						iObj_appendObjToParent(objParent, close);
 				}
 			}
 
@@ -1149,7 +1238,7 @@
 				memset(subobj, 0, sizeof(SSubObjSubform));
 
 				// Initially populate
-				subobj->parent = parent;
+				subobj->objParent = parent;
 
 				// Initialize based on template
 				if (template_subobj)
@@ -1247,7 +1336,7 @@
 				memset(subobj, 0, sizeof(SSubObjTextbox));
 
 				// Initially populate
-				subobj->parent = parent;
+				subobj->objParent = parent;
 
 				// Initialize based on template
 				if (template_subobj)
@@ -1345,7 +1434,7 @@
 				memset(subobj, 0, sizeof(SSubObjEditbox));
 
 				// Initially populate
-				subobj->parent = parent;
+				subobj->objParent = parent;
 
 				// Initialize based on template
 				if (template_subobj)
@@ -1394,7 +1483,7 @@
 				memset(subobj, 0, sizeof(SSubObjImage));
 
 				// Initially populate
-				subobj->parent = parent;
+				subobj->objParent = parent;
 
 				// Initialize based on template
 				if (template_subobj)
@@ -1443,7 +1532,7 @@
 				memset(subobj, 0, sizeof(SSubObjCheckbox));
 
 				// Initially populate
-				subobj->parent = parent;
+				subobj->objParent = parent;
 
 				// Initialize based on template
 				if (template_subobj)
@@ -1492,7 +1581,7 @@
 				memset(subobj, 0, sizeof(SSubObjOption));
 
 				// Initially populate
-				subobj->parent = parent;
+				subobj->objParent = parent;
 
 				// Initialize based on template
 				if (template_subobj)
@@ -1541,7 +1630,7 @@
 				memset(subobj, 0, sizeof(SSubObjRadio));
 
 				// Initially populate
-				subobj->parent = parent;
+				subobj->objParent = parent;
 
 				// Initialize based on template
 				if (template_subobj)
@@ -1575,7 +1664,7 @@
 		//////////
 		// Duplicate all children for this object
 		//////
-			iObj_duplicateChildren(subobjDst->parent, subobjSrc->parent);
+			iObj_duplicateChildren(subobjDst->objParent, subobjSrc->objParent);
 	}
 
 
@@ -1705,7 +1794,7 @@
 		//////////
 		// Duplicate all children for this object
 		//////
-			iObj_duplicateChildren(subobjDst->parent, subobjSrc->parent);
+			iObj_duplicateChildren(subobjDst->objParent, subobjSrc->objParent);
 	}
 
 
@@ -1784,7 +1873,7 @@
 		//////////
 		// Duplicate all children for this object
 		//////
-			iObj_duplicateChildren(subobjDst->parent, subobjSrc->parent);
+			iObj_duplicateChildren(subobjDst->objParent, subobjSrc->objParent);
 	}
 
 
@@ -1892,7 +1981,7 @@
 		//////////
 		// Duplicate all children for this object
 		//////
-			iObj_duplicateChildren(subobjDst->parent, subobjSrc->parent);
+			iObj_duplicateChildren(subobjDst->objParent, subobjSrc->objParent);
 	}
 
 
@@ -1997,7 +2086,7 @@
 		//////////
 		// Duplicate all children for this object
 		//////
-			iObj_duplicateChildren(subobjDst->parent, subobjSrc->parent);
+			iObj_duplicateChildren(subobjDst->objParent, subobjSrc->objParent);
 	}
 
 
@@ -2027,7 +2116,7 @@
 		//////////
 		// Duplicate all children for this object
 		//////
-			iObj_duplicateChildren(subobjDst->parent, subobjSrc->parent);
+			iObj_duplicateChildren(subobjDst->objParent, subobjSrc->objParent);
 	}
 
 
@@ -2077,7 +2166,7 @@
 		//////////
 		// Duplicate all children for this object
 		//////
-			iObj_duplicateChildren(subobjDst->parent, subobjSrc->parent);
+			iObj_duplicateChildren(subobjDst->objParent, subobjSrc->objParent);
 	}
 
 
@@ -2124,7 +2213,7 @@
 		//////////
 		// Duplicate all children for this object
 		//////
-			iObj_duplicateChildren(subobjDst->parent, subobjSrc->parent);
+			iObj_duplicateChildren(subobjDst->objParent, subobjSrc->objParent);
 	}
 
 
@@ -2176,7 +2265,7 @@
 		//////////
 		// Duplicate all children for this object
 		//////
-			iObj_duplicateChildren(subobjDst->parent, subobjSrc->parent);
+			iObj_duplicateChildren(subobjDst->objParent, subobjSrc->objParent);
 	}
 
 
@@ -2193,7 +2282,7 @@
 
 
 		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
-		obj = empty->parent;
+		obj = empty->objParent;
 		if (obj && tlResetObject)
 		{
 			//////////
@@ -2211,7 +2300,7 @@
 
 
 		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
-		obj = form->parent;
+		obj = form->objParent;
 		if (obj && tlResetObject)
 		{
 			//////////
@@ -2352,7 +2441,7 @@
 
 
 		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
-		obj = subform->parent;
+		obj = subform->objParent;
 		if (tlResetObject)
 		{
 			//////////
@@ -2479,7 +2568,7 @@
 
 
 		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
-		obj = textbox->parent;
+		obj = textbox->objParent;
 		if (tlResetObject)
 		{
 			//////////
@@ -2575,7 +2664,7 @@
 
 
 		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
-		obj = editbox->parent;
+		obj = editbox->objParent;
 		if (tlResetObject)
 		{
 			editbox->font							= iFont_duplicate(gsFont);
@@ -2608,7 +2697,7 @@
 
 
 		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
-		obj = image->parent;
+		obj = image->objParent;
 		if (tlResetObject)
 		{
 			image->style						= _IMAGE_STYLE_OPAQUE;
@@ -2624,7 +2713,7 @@
 
 
 		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
-		obj = checkbox->parent;
+		obj = checkbox->objParent;
 		if (tlResetObject)
 		{
 			checkbox->font							= iFont_duplicate(gsFont);
@@ -2653,7 +2742,7 @@
 
 
 		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
-		obj = option->parent;
+		obj = option->objParent;
 		if (tlResetObject)
 		{
 			option->backColor.color				= white.color;
@@ -2666,9 +2755,9 @@
 			option->multiSelect					= false;
 
 			// Create the two objects
-			option->firstOption					= iObj_create(_OBJ_TYPE_LABEL, NULL);
+			option->firstOption					= iObj_create(_OBJ_TYPE_LABEL, NULL, obj);
 			if (option->firstOption)
-				option->firstOption->ll.next	= (SLL*)iObj_create(_OBJ_TYPE_LABEL, NULL);
+				option->firstOption->ll.next	= (SLL*)iObj_create(_OBJ_TYPE_LABEL, NULL, obj);
 
 			// Copy the events
 			*(u32*)&option->onSelect			= *(u32*)&iDefaultCallback_onSelect;
@@ -2684,7 +2773,7 @@
 
 
 		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
-		obj = radio->parent;
+		obj = radio->objParent;
 		if (tlResetObject)
 		{
 			radio->font							= iFont_duplicate(gsFont);
@@ -2734,7 +2823,7 @@
 
 			// Create a new icon that is 24x24
 			form->bmpFormIcon = iBmp_allocate();
-			iBmp_createBySize(form->bmpFormIcon, 24, 24, 32);
+			iBmp_createBySize(form->bmpFormIcon, 24, 24, 24);
 
 			// Scale the indicated icon into this one
 			iBmp_scale(form->bmpFormIcon, bmp);
@@ -3052,7 +3141,7 @@
 				if (!obj->bmp)
 				{
 					obj->bmp = iBmp_allocate();
-					iBmp_createBySize(obj->bmp, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, 32);
+					iBmp_createBySize(obj->bmp, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, 24);
 				}
 
 
@@ -3085,7 +3174,7 @@
 						SetRect(&lrc2, 8, form->bmpFormIcon->bi.biHeight + 2, lrc.right - form->bmpFormIcon->bi.biHeight - 2, lrc.bottom - form->bmpFormIcon->bi.biHeight - 1);
 						iBmp_fillRect(obj->bmp, &lrc2, white, white, white, white, false);
 // These rc* copies were added temporarily until the full object structure is coded and working
-CopyRect(&form->rcClient, &lrc2);
+//CopyRect(&form->rcClient, &lrc2);
 
 						// Put a border around the client area
 						InflateRect(&lrc2, 1, 1);
@@ -3148,7 +3237,7 @@ CopyRect(&form->rcArrowLr, &lrc2);
 					//////////
 					// Form caption
 					//////
-						SetRect(&lrc2, lrc3.right + 8, lrc3.top, lrc4.right - 8, lrc3.bottom);
+						SetRect(&lrc2, lrc3.right + 8, lrc3.top + 1, lrc4.right - 8, lrc3.bottom + 1);
 CopyRect(&form->rcCaption, &lrc2);
 						lhfontOld = (HFONT)SelectObject(obj->bmp->hdc, gsWindowTitleBarFont->hfont);
 						SetTextColor(obj->bmp->hdc, (COLORREF)RGB(form->captionColor.red, form->captionColor.grn, form->captionColor.blu));
@@ -3195,6 +3284,9 @@ CopyRect(&form->rcCaption, &lrc2);
 			// Indicate we're no longer dirty, that we have everything
 			//////
 				obj->isDirty = false;
+// s8 buffer[256];
+// sprintf(buffer, "c:\\temp\\form_%u.bmp\0", (u32)obj);
+// iBmp_saveToDisk(obj->bmp, buffer);
 
 
 			//////////
@@ -3213,6 +3305,7 @@ CopyRect(&form->rcCaption, &lrc2);
 					}
 				}
 		}
+
 
 		// Indicate how many pixels were drawn
 		return(lnPixelsRendered);
@@ -3239,15 +3332,20 @@ CopyRect(&form->rcCaption, &lrc2);
 
 		// Make sure our environment is sane
 		lnPixelsRendered = 0;
-		if (obj && subform)
+		if (obj && subform && obj->rc.right > 0 && obj->rc.bottom > 0 && obj->rc.right >= obj->rc.left && obj->rc.bottom >= obj->rc.bottom && obj->rc.right - obj->rc.left < 4400 && obj->rc.bottom - obj->rc.top < 4400)
 		{
 			//////////
 			// Make sure there is a bit bucket
 			//////
 				if (!obj->bmp)
 				{
+					// Initially allocate
 					obj->bmp = iBmp_allocate();
-					iBmp_createBySize(obj->bmp, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, 32);
+					iBmp_createBySize(obj->bmp, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, 24);
+
+				} else if (obj->bmp->bi.biWidth != obj->rc.right - obj->rc.left || obj->bmp->bi.biHeight != obj->rc.bottom - obj->rc.top) {
+					// Resize
+					obj->bmp = iBmp_verifySizeOrResize(obj->bmp, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top);
 				}
 
 
@@ -3274,17 +3372,19 @@ CopyRect(&form->rcCaption, &lrc2);
 						iBmp_fillRect(obj->bmp, &lrc, subform->nwRgba, subform->neRgba, subform->swRgba, subform->seRgba, true);
 
 						// Frame it
-						iBmp_frameRect(obj->bmp, &lrc, black, black, black, black, false);
+						CopyRect(&lrc2, &lrc);
+						SetRect(&lrc2, lrc2.left - 1, lrc2.top - 1, lrc2.right + 1, lrc2.bottom + 1);
+						iBmp_frameRect(obj->bmp, &lrc2, black, black, black, black, false);
 
 						// Draw the client area
-						SetRect(&lrc2, 0, subform->bmpSubformIcon->bi.biHeight + 2, lrc.right - subform->bmpSubformIcon->bi.biHeight - 2, lrc.bottom);
+						SetRect(&lrc2, 0, subform->bmpSubformIcon->bi.biHeight - 1, lrc.right - 8, lrc.bottom);
 						// Make everything white
 						iBmp_fillRect(obj->bmp, &lrc2, white, white, white, white, false);
 // These rc* copies were added temporarily until the full object structure is coded and working
-CopyRect(&subform->rcClient, &lrc2);
+//CopyRect(&subform->rcClient, &lrc2);
 						// Put a border around the client area
-						InflateRect(&lrc2, 1, 1);
-						iBmp_frameRect(obj->bmp, &lrc2, black, black, black, black, false);
+						SetRect(&lrc2, -1, lrc2.top, lrc2.right, lrc2.bottom + 1);
+//						iBmp_frameRect(obj->bmp, &lrc2, black, black, black, black, false);
 
 
 
@@ -3292,7 +3392,7 @@ CopyRect(&subform->rcClient, &lrc2);
 					// Subform icon and standard controls
 					//////
 						// Subform icon
-						SetRect(&lrc3,	subform->bmpSubformIcon->bi.biWidth + 8, 1, subform->bmpSubformIcon->bi.biWidth + 8 + subform->bmpSubformIcon->bi.biWidth, 1 + subform->bmpSubformIcon->bi.biHeight);
+						SetRect(&lrc3, 0, 0, subform->bmpSubformIcon->bi.biWidth + 8 + subform->bmpSubformIcon->bi.biWidth, subform->bmpSubformIcon->bi.biHeight);
 						iBmp_bitBltMask(obj->bmp, &lrc3, subform->bmpSubformIcon);
 CopyRect(&subform->rcIcon, &lrc3);
 
@@ -3324,7 +3424,7 @@ CopyRect(&subform->rcIcon, &lrc3);
 					//////////
 					// Subform caption
 					//////
-						SetRect(&lrc2, lrc3.right + 8, lrc3.top, lrc3.right - 8, lrc3.bottom);
+						SetRect(&lrc2, subform->bmpSubformIcon->bi.biWidth + 8, lrc3.top, obj->bmp->bi.biWidth - 8, lrc3.bottom);
 CopyRect(&subform->rcCaption, &lrc2);
 						lhfontOld = (HFONT)SelectObject(obj->bmp->hdc, gsWindowTitleBarFont->hfont);
 						SetTextColor(obj->bmp->hdc, (COLORREF)RGB(subform->captionColor.red, subform->captionColor.grn, subform->captionColor.blu));
@@ -3353,6 +3453,9 @@ CopyRect(&subform->rcCaption, &lrc2);
 			// Indicate we're no longer dirty, that we have everything
 			//////
 				obj->isDirty = false;
+// s8 buffer[256];
+// sprintf(buffer, "c:\\temp\\subform_%u.bmp\0", (u32)obj);
+// iBmp_saveToDisk(obj->bmp, buffer);
 
 
 			//////////

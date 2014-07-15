@@ -351,7 +351,7 @@
 			}
 
 			// Create our object
-			obj = iObj_create(lnObjType, NULL);
+			obj = iObj_create(lnObjType, NULL, NULL);
 			if (!obj)
 			{
 				iError_report("Internal error on create object.");

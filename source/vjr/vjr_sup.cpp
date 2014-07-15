@@ -152,18 +152,18 @@
 		//////////
 		// Create each default object
 		//////
-			gobj_defaultEmpty		= iObj_create(_OBJ_TYPE_EMPTY,		NULL);
-			gobj_defaultLabel		= iObj_create(_OBJ_TYPE_LABEL,		NULL);
-			gobj_defaultTextbox		= iObj_create(_OBJ_TYPE_TEXTBOX,		NULL);
-			gobj_defaultButton		= iObj_create(_OBJ_TYPE_BUTTON,		NULL);
-			gobj_defaultImage		= iObj_create(_OBJ_TYPE_IMAGE,		NULL);
-			gobj_defaultCheckbox	= iObj_create(_OBJ_TYPE_CHECKBOX,	NULL);
+			gobj_defaultEmpty		= iObj_create(_OBJ_TYPE_EMPTY,		NULL,	NULL);
+			gobj_defaultLabel		= iObj_create(_OBJ_TYPE_LABEL,		NULL,	NULL);
+			gobj_defaultTextbox		= iObj_create(_OBJ_TYPE_TEXTBOX,	NULL,	NULL);
+			gobj_defaultButton		= iObj_create(_OBJ_TYPE_BUTTON,		NULL,	NULL);
+			gobj_defaultImage		= iObj_create(_OBJ_TYPE_IMAGE,		NULL,	NULL);
+			gobj_defaultCheckbox	= iObj_create(_OBJ_TYPE_CHECKBOX,	NULL,	NULL);
 			// Option and radio both have label controls within
-			gobj_defaultOption		= iObj_create(_OBJ_TYPE_OPTION,		NULL);
-			gobj_defaultRadio		= iObj_create(_OBJ_TYPE_RADIO,		NULL);
+			gobj_defaultOption		= iObj_create(_OBJ_TYPE_OPTION,		NULL,	NULL);
+			gobj_defaultRadio		= iObj_create(_OBJ_TYPE_RADIO,		NULL,	NULL);
 			// Forms and subforms are created last because they have internal child objects references to classes which must be created before
-			gobj_defaultForm		= iObj_create(_OBJ_TYPE_FORM,		NULL);
-			gobj_defaultSubform		= iObj_create(_OBJ_TYPE_SUBFORM,	NULL);
+			gobj_defaultForm		= iObj_create(_OBJ_TYPE_FORM,		NULL,	NULL);
+			gobj_defaultSubform		= iObj_create(_OBJ_TYPE_SUBFORM,	NULL,	NULL);
 	}
 
 
@@ -190,7 +190,7 @@
 				return;
 
 			// Create object
-			gobj_screen = iObj_create(_OBJ_TYPE_FORM, form);
+			gobj_screen = iObj_create(_OBJ_TYPE_FORM, form, NULL);
 			if (!gobj_screen)
 			{
 				iSubobj_deleteForm(form, true);
@@ -266,7 +266,7 @@
 			// If we get here, we're good
 
 			// Create object
-			gobj_jdebi = iObj_create(_OBJ_TYPE_FORM, form);
+			gobj_jdebi = iObj_create(_OBJ_TYPE_FORM, form, NULL);
 			if (!gobj_jdebi)
 			{
 				iSubobj_deleteForm(form, true);
@@ -325,12 +325,12 @@
 		// Position and size each window
 		//////
 			lnHeight = (form->rcClient.bottom - form->rcClient.top) / 8;
-			SetRect(&objSourceCode->rc,		0,								0,									form->rcClient.right - form->rcClient.left,					2 * lnHeight);
-			SetRect(&objLocals->rc,			0,								objSourceCode->rc.bottom + 1,		objSourceCode->rc.right,									objSourceCode->rc.bottom	+ 1 + (2 * lnHeight));
-			SetRect(&objWatch->rc,			0,								objLocals->rc.bottom + 1,			objLocals->rc.right,										objLocals->rc.bottom		+ 1 + (2 * lnHeight));
-			SetRect(&objCommand->rc,		0,								objWatch->rc.bottom + 1,			objWatch->rc.right / 2,										objWatch->rc.bottom			+ 1 + (2 * lnHeight));
-			SetRect(&objDebug->rc,			objCommand->rc.right + 1,		objCommand->rc.top,					2 * (objWatch->rc.right - objCommand->rc.right) / 3,		objCommand->rc.bottom);
-			SetRect(&objOutput->rc,			objDebug->rc.right + 1,			objCommand->rc.top,					objWatch->rc.right,											objCommand->rc.bottom);
+			iObj_setSize(objSourceCode, 0,						0,							form->rcClient.right - form->rcClient.left,							4 * lnHeight);
+			iObj_setSize(objLocals,		0,						objSourceCode->rc.bottom,	form->rcClient.right - form->rcClient.left,							lnHeight);
+			iObj_setSize(objWatch,		0,						objLocals->rc.bottom,		form->rcClient.right - form->rcClient.left,							lnHeight);
+			iObj_setSize(objCommand,	0,						objWatch->rc.bottom,		objWatch->rc.right / 2,												form->rcClient.bottom - form->rcClient.top - objWatch->rc.bottom);
+			iObj_setSize(objDebug,		objCommand->rc.right,	objCommand->rc.top,			objCommand->rc.right / 2,											form->rcClient.bottom - form->rcClient.top - objWatch->rc.bottom);
+			iObj_setSize(objOutput,		objDebug->rc.right,		objCommand->rc.top,			form->rcClient.right - form->rcClient.left - objDebug->rc.right,	form->rcClient.bottom - form->rcClient.top - objWatch->rc.bottom);
 
 
 		//////////
@@ -343,35 +343,35 @@
 		//////////
 		// Locals window caption and font
 		//////
-			iDatum_duplicate(&locals->caption, (s8*)cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
+			iDatum_duplicate(&locals->caption, (s8*)cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
 			locals->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
 
 
 		//////////
 		// Watch window caption and font
 		//////
-			iDatum_duplicate(&watch->caption, (s8*)cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
+			iDatum_duplicate(&watch->caption, (s8*)cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
 			watch->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
 
 
 		//////////
 		// Command window caption and font
 		//////
-			iDatum_duplicate(&command->caption, (s8*)cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
+			iDatum_duplicate(&command->caption, (s8*)cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
 			command->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
 
 
 		//////////
-		// Debugwindow caption and font
+		// Debug window caption and font
 		//////
-			iDatum_duplicate(&debug->caption, (s8*)cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
+			iDatum_duplicate(&debug->caption, (s8*)cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
 			debug->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
 
 
 		//////////
 		// Output window caption and font
 		//////
-			iDatum_duplicate(&output->caption, (s8*)cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
+			iDatum_duplicate(&output->caption, (s8*)cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
 			output->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
 
 

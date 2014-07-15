@@ -60,8 +60,8 @@
 // objects.cpp
 // Note:  Property accessors are in the object_accessors.h and object_accessors.cpp source files
 //////
-	SObject*				iObj_create								(u32 tnBaseType, void* obj_data);
-	SObject*				iObj_addChild							(SObject* objParent, u32 tnBaseType, void** sub_obj_output);
+	SObject*				iObj_create								(u32 objType, void* obj_data, SObject* objParent);
+	SObject*				iObj_addChild							(SObject* objParent, u32 objType, void** sub_obj_output);
 	SObject*				iObj_copy								(SObject* template_obj, SObject* next, SObject* parent, bool tlCopyChildren, bool tlCopySubobjects, bool tlCreateSeparateBitmapBuffers);
 	void					iObj_delete								(SObject** obj, bool tlDeleteSelf);
 	u32						iObj_render								(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings);
@@ -276,6 +276,7 @@
 	SBitmap*				iBmp_verifyCopyIsSameSize				(SBitmap* bmpCopy, SBitmap* bmp);
 	SBitmap*				iBmp_verifySizeOrResize					(SBitmap* bmp, u32 tnWidth, u32 tnHeight);
 	SBitmap*				iBmp_rawLoad							(cu8* bmpRawFileData);
+	void					iBmp_saveToDisk							(SBitmap* bmp, s8* tcPathname);
 	void					iBmp_convertTo32Bits					(SBitmap* bmp);
 	void					iBmp_copy24To32							(SBitmap* bmp32, SBitmap* bmp24);
 	bool					iBmp_validate							(SBitmap* bmp);

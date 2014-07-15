@@ -223,6 +223,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			iEditChainManager_appendLine(commandHistory, NULL, 0);
 			iEditChainManager_navigateEnd(commandHistory, gobj_jdebi);
 		}
+
 		// Redraw
 		gobj_jdebi->isDirty = true;
 		iWindow_render(gWinJDebi);
