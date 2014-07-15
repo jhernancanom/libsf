@@ -61,11 +61,12 @@
 // Note:  Property accessors are in the object_accessors.h and object_accessors.cpp source files
 //////
 	SObject*				iObj_create								(u32 tnBaseType, void* obj_data);
+	SObject*				iObj_addChild							(SObject* objParent, u32 tnBaseType, void** sub_obj_output);
 	SObject*				iObj_copy								(SObject* template_obj, SObject* next, SObject* parent, bool tlCopyChildren, bool tlCopySubobjects, bool tlCreateSeparateBitmapBuffers);
 	void					iObj_delete								(SObject** obj, bool tlDeleteSelf);
 	u32						iObj_render								(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings);
 	void					iObj_renderChildrenAndSiblings			(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings);
-	u32						iObj_publish							(SBitmap* bmpDst, RECT* trc, SObject* obj, bool tlPublishChildren, bool tlPublishSiblings);
+	u32						iObj_publish							(SBitmap* bmpDst, RECT* rc, SObject* obj, bool tlPublishChildren, bool tlPublishSiblings);
 	void					iObj_duplicateChain						(SObject** root, SObject* chain);
 	void					iObj_appendObjToParent					(SObject* parent, SObject* obj);
 	void					iObj_duplicateChildren					(SObject* objDst, SObject* objSrc);

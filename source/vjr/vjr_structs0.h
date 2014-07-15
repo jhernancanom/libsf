@@ -182,6 +182,7 @@ struct SWindow
 	bool				isValid;										// When windows fall out of scope they are marked not valid
 
 	HWND				hwnd;											// The window's hwnd
+	SBitmap*			bmp;											// Accumulation buffer for drawing
 	RECT				rc;												// Rectangle of window's physical position
 	SObject*			obj;											// The top-level object being rendered in this window
 

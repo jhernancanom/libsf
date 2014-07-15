@@ -439,7 +439,7 @@ struct SSubObjSubform
 	SBgra		foreColor;												// Default text fore color
 	SBgra		captionColor;											// Color of the caption
 
-	SBitmap*	bmpFormIcon;											// Icon for the form
+	SBitmap*	bmpSubformIcon;											// Icon for the subform
 	SDatum		caption;												// Caption
 
 	SDatum		pictureName;											// The name of the file used for the picture

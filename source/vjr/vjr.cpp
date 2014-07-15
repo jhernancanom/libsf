@@ -110,22 +110,28 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		//////////
 		// Load our icons and images
 		//////
-			bmpVjrIcon		= iBmp_rawLoad(cgc_appIconBmp);
-			bmpJDebiIcon	= iBmp_rawLoad(cgc_jdebiAppIconBmp);
+			bmpVjrIcon			= iBmp_rawLoad(cgc_appIconBmp);
+			bmpJDebiIcon		= iBmp_rawLoad(cgc_jdebiAppIconBmp);
+			bmpSourceCodeIcon	= iBmp_rawLoad(cgc_jdebiAppIconBmp);
+			bmpLocalsIcon		= iBmp_rawLoad(cgc_jdebiAppIconBmp);
+			bmpWatchIcon		= iBmp_rawLoad(cgc_jdebiAppIconBmp);
+			bmpCommandIcon		= iBmp_rawLoad(cgc_jdebiAppIconBmp);
+			bmpDebugIcon		= iBmp_rawLoad(cgc_jdebiAppIconBmp);
+			bmpOutputIcon		= iBmp_rawLoad(cgc_jdebiAppIconBmp);
 
 			// Create a 1x1 no image bitmap placeholder
-			bmpNoImage		= iBmp_allocate();
+			bmpNoImage			= iBmp_allocate();
 			iBmp_createBySize(bmpNoImage, 1, 1, 32);
 
-			bmpClose		= iBmp_rawLoad(cgc_closeBmp);
-			bmpMaximize		= iBmp_rawLoad(cgc_maximizeBmp);
-			bmpMinimize		= iBmp_rawLoad(cgc_minimizeBmp);
-			bmpMove			= iBmp_rawLoad(cgc_moveBmp);
+			bmpClose			= iBmp_rawLoad(cgc_closeBmp);
+			bmpMaximize			= iBmp_rawLoad(cgc_maximizeBmp);
+			bmpMinimize			= iBmp_rawLoad(cgc_minimizeBmp);
+			bmpMove				= iBmp_rawLoad(cgc_moveBmp);
 
-			bmpArrowUl		= iBmp_rawLoad(cgc_arrowUlBmp);
-			bmpArrowUr		= iBmp_rawLoad(cgc_arrowUrBmp);
-			bmpArrowLl		= iBmp_rawLoad(cgc_arrowLlBmp);
-			bmpArrowLr		= iBmp_rawLoad(cgc_arrowLrBmp);
+			bmpArrowUl			= iBmp_rawLoad(cgc_arrowUlBmp);
+			bmpArrowUr			= iBmp_rawLoad(cgc_arrowUrBmp);
+			bmpArrowLl			= iBmp_rawLoad(cgc_arrowLlBmp);
+			bmpArrowLr			= iBmp_rawLoad(cgc_arrowLrBmp);
 
 
 		// Create the default reference datetimes

@@ -3136,6 +3136,30 @@ SVariable* iiSubobj_form_getZoomBox(SObject* obj)
 //////////
 // SUBFORM Properties
 //////
+void iiSubobj_subform_setIcon(SObject* obj, SBitmap* bmp)
+{
+	SSubObjSubform* subform;
+
+
+	// Make sure our environment is sane
+	if (obj && bmp && obj->objType == _OBJ_TYPE_FORM)
+	{
+		// Grab the form data
+		subform = (SSubObjSubform*)obj->sub_obj;
+
+		// Delete the old icon if any
+		if (subform->bmpSubformIcon)
+			iBmp_delete(&subform->bmpSubformIcon, true, true);
+
+		// Create a new icon that is 24x24
+		subform->bmpSubformIcon = iBmp_allocate();
+		iBmp_createBySize(subform->bmpSubformIcon, 24, 24, 32);
+
+		// Scale the indicated icon into this one
+		iBmp_scale(subform->bmpSubformIcon, bmp);
+	}
+}
+
 bool iiSubobj_subform_setMinLeft(SObject* obj, SVariable* var)
 {
 	SSubObjSubform* subform;

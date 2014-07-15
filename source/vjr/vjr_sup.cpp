@@ -161,9 +161,9 @@
 			// Option and radio both have label controls within
 			gobj_defaultOption		= iObj_create(_OBJ_TYPE_OPTION,		NULL);
 			gobj_defaultRadio		= iObj_create(_OBJ_TYPE_RADIO,		NULL);
-			// Forms and subforms are created last because they have objects referenced within which must be created before
+			// Forms and subforms are created last because they have internal child objects references to classes which must be created before
 			gobj_defaultForm		= iObj_create(_OBJ_TYPE_FORM,		NULL);
-			gobj_defaultSubform		= iObj_create(_OBJ_TYPE_SUBFORM,		NULL);
+			gobj_defaultSubform		= iObj_create(_OBJ_TYPE_SUBFORM,	NULL);
 	}
 
 
@@ -202,21 +202,9 @@
 
 			// Give it a caption
 			iDatum_duplicate(&form->caption, (s8*)cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
-			form->captionColor.color = black.color;
-
-			// Set its colors
-			form->nwRgba.color		= NwColor.color;
-			form->neRgba.color		= NeColor.color;
-			form->swRgba.color		= SwColor.color;
-			form->seRgba.color		= SeColor.color;
-			form->backColor.color	= white.color;
-			form->foreColor.color	= black.color;
 
 			// Give it a fixed point font
 			form->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
-
-			// Set it visible
-			iObj_setVisible(gobj_screen, true);
 
 
 		//////////
@@ -235,6 +223,12 @@
 			lnWidth		-= lnLeft;
 			lnHeight	-= (2 * lnTop);
 			iObj_setSize(gobj_screen, lnLeft, lnTop, lnWidth, lnHeight);
+
+
+		//////////
+		// Set it visible
+		//////
+			iObj_setVisible(gobj_screen, true);
 	}
 
 
@@ -247,16 +241,21 @@
 //////
 	void iInit_create_jdebiObject(void)
 	{
-		s32				lnLeft, lnTop, lnWidth, lnHeight;
-		SSubObjForm*	form;
-// 		SSubObjSubform*	sourceCode;
-// 		SSubObjSubform*	sourceLight;
-// 		SSubObjSubform*	locals;
-// 		SSubObjSubform*	watch;
-// 		SSubObjSubform*	command;
-// 		SSubObjSubform*	debug;
-// 		SSubObjSubform*	output;
-		RECT			lrc;
+		s32					lnLeft, lnTop, lnWidth, lnHeight;
+		SSubObjForm*		form;
+		SObject*			objSourceCode;
+		SObject*			objLocals;
+		SObject*			objWatch;
+		SObject*			objCommand;
+		SObject*			objDebug;
+		SObject*			objOutput;
+		SSubObjSubform*		sourceCode;
+		SSubObjSubform*		locals;
+		SSubObjSubform*		watch;
+		SSubObjSubform*		command;
+		SSubObjSubform*		debug;
+		SSubObjSubform*		output;
+		RECT				lrc;
 
 
 		//////////
@@ -264,41 +263,6 @@
 		//////
 			// Create sub-objects
 			form = iSubobj_createForm((SSubObjForm*)gobj_defaultForm->sub_obj, NULL);
-// 			while (1)
-// 			{
-// 				if (form)
-// 				{
-// 					// Create the sourceCode window
-// 					sourceCode = iSubobj_createSubform((SSubObjSubform*)gobj_defaultSubform->sub_obj, NULL);
-// 					if (sourceCode)
-// 					{
-// 						// Create the sourceLight window
-// 						sourceLight = iSubobj_createSubform((SSubObjSubform*)gobj_defaultSubform->sub_obj, NULL);
-// 						if (sourceLight)
-// 						{
-// 							// Create the locals window
-// 							locals = iSubobj_createSubform((SSubObjSubform*)gobj_defaultSubform->sub_obj, NULL);
-// 							if (locals)
-// 							{
-// 								// Create the watch window
-// 								watch = iSubobj_createSubform((SSubObjSubform*)gobj_defaultSubform->sub_obj, NULL);
-// 								if (watch)
-// 								{
-// 									// Create the command window
-// 									command = iSubobj_createSubform((SSubObjSubform*)gobj_defaultSubform->sub_obj, NULL);
-// 									if (command)
-// 									{
-// 										// Create the debug window
-// 										debug = iSubobj_createSubform((SSubObjSubform*)gobj_defaultSubform->sub_obj, NULL);
-// 									}
-// 								}
-// 							}
-// 						}
-// 					}
-// 				}
-// 				// If we get here, some error
-// 				MessageBoxA()
-// 			}
 			// If we get here, we're good
 
 			// Create object
@@ -315,21 +279,9 @@
 			// Give it a caption
 			form = (SSubObjForm*)gobj_jdebi->sub_obj;
 			iDatum_duplicate(&form->caption, (s8*)cgcJDebiTitle, sizeof(cgcJDebiTitle) - 1);
-			form->captionColor.color = black.color;
-
-			// Set its colors
-			form->nwRgba.color		= NwColor.color;
-			form->neRgba.color		= NeColor.color;
-			form->swRgba.color		= SwColor.color;
-			form->seRgba.color		= SeColor.color;
-			form->backColor.color	= white.color;
-			form->foreColor.color	= black.color;
 
 			// Give it a fixed point font
 			form->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
-
-			// Set it visible
-			iObj_setVisible(gobj_jdebi, true);
 
 
 		//////////
@@ -344,10 +296,89 @@
 		// Size and position it
 		//////
 			lnLeft		= lnWidth;
-			lnTop		= 3 * lnHeight / 4;
+			lnTop		= (lrc.bottom - lrc.top)   / 32;
 			lnWidth		-= ((lrc.right - lrc.left) / 32);
-			lnHeight	= lnHeight / 4 - ((lrc.bottom - lrc.top) / 32);
+			lnHeight	-= (2 * lnTop);
 			iObj_setSize(gobj_jdebi, lnLeft, lnTop, lnWidth, lnHeight);
+
+
+		//////////
+		// Create the subforms
+		//////
+			objSourceCode	= iObj_addChild(gobj_jdebi, _OBJ_TYPE_SUBFORM, (void**)&sourceCode);
+			objLocals		= iObj_addChild(gobj_jdebi, _OBJ_TYPE_SUBFORM, (void**)&locals);
+			objWatch		= iObj_addChild(gobj_jdebi, _OBJ_TYPE_SUBFORM, (void**)&watch);
+			objCommand		= iObj_addChild(gobj_jdebi, _OBJ_TYPE_SUBFORM, (void**)&command);
+			objDebug		= iObj_addChild(gobj_jdebi, _OBJ_TYPE_SUBFORM, (void**)&debug);
+			objOutput		= iObj_addChild(gobj_jdebi, _OBJ_TYPE_SUBFORM, (void**)&output);
+
+			// Set the icons
+			iiSubobj_subform_setIcon(objSourceCode,	bmpSourceCodeIcon);
+			iiSubobj_subform_setIcon(objLocals,		bmpLocalsIcon);
+			iiSubobj_subform_setIcon(objWatch,		bmpWatchIcon);
+			iiSubobj_subform_setIcon(objCommand,	bmpCommandIcon);
+			iiSubobj_subform_setIcon(objDebug,		bmpDebugIcon);
+			iiSubobj_subform_setIcon(objOutput,		bmpOutputIcon);
+
+
+		//////////
+		// Position and size each window
+		//////
+			lnHeight = (form->rcClient.bottom - form->rcClient.top) / 8;
+			SetRect(&objSourceCode->rc,		0,								0,									form->rcClient.right - form->rcClient.left,					2 * lnHeight);
+			SetRect(&objLocals->rc,			0,								objSourceCode->rc.bottom + 1,		objSourceCode->rc.right,									objSourceCode->rc.bottom	+ 1 + (2 * lnHeight));
+			SetRect(&objWatch->rc,			0,								objLocals->rc.bottom + 1,			objLocals->rc.right,										objLocals->rc.bottom		+ 1 + (2 * lnHeight));
+			SetRect(&objCommand->rc,		0,								objWatch->rc.bottom + 1,			objWatch->rc.right / 2,										objWatch->rc.bottom			+ 1 + (2 * lnHeight));
+			SetRect(&objDebug->rc,			objCommand->rc.right + 1,		objCommand->rc.top,					2 * (objWatch->rc.right - objCommand->rc.right) / 3,		objCommand->rc.bottom);
+			SetRect(&objOutput->rc,			objDebug->rc.right + 1,			objCommand->rc.top,					objWatch->rc.right,											objCommand->rc.bottom);
+
+
+		//////////
+		// SourceCode window caption and font
+		//////
+			iDatum_duplicate(&sourceCode->caption, (s8*)cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
+			sourceCode->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
+
+
+		//////////
+		// Locals window caption and font
+		//////
+			iDatum_duplicate(&locals->caption, (s8*)cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
+			locals->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
+
+
+		//////////
+		// Watch window caption and font
+		//////
+			iDatum_duplicate(&watch->caption, (s8*)cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
+			watch->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
+
+
+		//////////
+		// Command window caption and font
+		//////
+			iDatum_duplicate(&command->caption, (s8*)cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
+			command->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
+
+
+		//////////
+		// Debugwindow caption and font
+		//////
+			iDatum_duplicate(&debug->caption, (s8*)cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
+			debug->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
+
+
+		//////////
+		// Output window caption and font
+		//////
+			iDatum_duplicate(&output->caption, (s8*)cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
+			output->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
+
+
+		//////////
+		// Set it visible
+		//////
+			iObj_setVisible(gobj_jdebi, true);
 	}
 
 
@@ -527,6 +558,10 @@
 					CopyRect(&winNew->rc, &obj->rc);
 					winNew->obj = obj;
 
+					// Create our accumulation buffer
+					win->bmp = iBmp_allocate();
+					iBmp_createBySize(win->bmp, winNew->rc.right - winNew->rc.left, winNew->rc.bottom - winNew->rc.top, 32);
+
 
 					//////////
 					// Register the general window class if need be
@@ -694,6 +729,7 @@
 		if (win && win->obj)
 		{
 			iObj_render(win->obj, true, true);
+			iObj_publish(win->bmp, &win->rc, win->obj, true, true);
 			InvalidateRect(win->hwnd, 0, FALSE);
 		}
 	}

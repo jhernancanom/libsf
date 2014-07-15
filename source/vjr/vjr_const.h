@@ -338,6 +338,12 @@ typedef		const f64			cf64;
 	const s8			cgcWindowClass[]					= "VJr.Window";
 	const s8			cgcScreenTitle[]					= "Visual FreePro, Jr. 0.31 -- Jul.13.2014";
 	const s8			cgcJDebiTitle[]						= "JDebi Debugger 0.31 -- Jul.13.2014";
+	const s8			cgcSourceCodeTitle[]				= "SourceCode";
+	const s8			cgcLocalsTitle[]					= "Locals";
+	const s8			cgcWatchTitle[]						= "Watch";
+	const s8			cgcCommandTitle[]					= "Command";
+	const s8			cgcDebugTitle[]						= "Debug";
+	const s8			cgcOutputTitle[]					= "Output";
 	const s8			cgcVersionText[]					= "Visual FreePro, Jr. 00.31.9999.9999 for Windows";
 	const s8			cgcVersion1Text[]					= "Visual FreePro, Jr. 00.31.9999.9999 for Windows [Jul.13.2014 00:00:00] Product ID 31415-926-5358979-32384";
 	const s32			gnVersion2							= 2;	// Professional

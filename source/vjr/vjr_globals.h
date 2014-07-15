@@ -59,6 +59,12 @@
 	// App icons
 	SBitmap*			bmpVjrIcon							= NULL;
 	SBitmap*			bmpJDebiIcon						= NULL;
+	SBitmap*			bmpSourceCodeIcon					= NULL;
+	SBitmap*			bmpLocalsIcon						= NULL;
+	SBitmap*			bmpWatchIcon						= NULL;
+	SBitmap*			bmpCommandIcon						= NULL;
+	SBitmap*			bmpDebugIcon						= NULL;
+	SBitmap*			bmpOutputIcon						= NULL;
 
 	// When there is no image
 	SBitmap*			bmpNoImage							= NULL;
