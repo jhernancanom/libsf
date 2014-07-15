@@ -503,14 +503,14 @@
 			//////////
 			// Publish any siblings
 			//////
-				if (tlPublishSiblings && obj->ll.next)
+				if (tlPublishSiblings)
 				{
 					// Begin at the next sibling
 					objSib = (SObject*)obj->ll.next;
 					while (objSib)
 					{
 						// Render this sibling
-						lnPixelsRendered += iObj_publish(bmpDst, rc, objSib, true, true);
+						lnPixelsRendered += iObj_publish(bmpDst, rc, objSib, true, false);
 
 						// Move to next sibling
 						objSib = (SObject*)objSib->ll.next;
@@ -656,7 +656,7 @@
 
 			case _OBJ_TYPE_SUBFORM:
 				subform = (SSubObjSubform*)obj->sub_obj;
-				SetRect(&subform->rcClient, 0, subform->bmpSubformIcon->bi.biHeight + 2, tnWidth - subform->bmpSubformIcon->bi.biHeight - 2, tnHeight);
+				SetRect(&subform->rcClient, 0, subform->bmpSubformIcon->bi.biHeight, tnWidth - 8, tnHeight);
 				break;
 
 			case _OBJ_TYPE_LABEL:
@@ -3240,8 +3240,8 @@ CopyRect(&form->rcArrowLr, &lrc2);
 						SetRect(&lrc2, lrc3.right + 8, lrc3.top + 1, lrc4.right - 8, lrc3.bottom + 1);
 CopyRect(&form->rcCaption, &lrc2);
 						lhfontOld = (HFONT)SelectObject(obj->bmp->hdc, gsWindowTitleBarFont->hfont);
-						SetTextColor(obj->bmp->hdc, (COLORREF)RGB(form->captionColor.red, form->captionColor.grn, form->captionColor.blu));
 						SetBkMode(obj->bmp->hdc, TRANSPARENT);
+						SetTextColor(obj->bmp->hdc, (COLORREF)RGB(form->captionColor.red, form->captionColor.grn, form->captionColor.blu));
 						DrawTextA(obj->bmp->hdc, form->caption.data, form->caption.length, &lrc2, DT_VCENTER);
 						SelectObject(obj->bmp->hdc, lhfontOld);
 
@@ -3263,7 +3263,7 @@ CopyRect(&form->rcCaption, &lrc2);
 
 
 //////////
-// For temporary, we are adding additional renderings for _screen and _jdebi objects
+// For temporary, we are adding additional renderings for _screen
 //////
 	if (obj == gobj_screen)
 	{
@@ -3271,13 +3271,6 @@ CopyRect(&form->rcCaption, &lrc2);
 		if (gWinScreen)
 			InvalidateRect(gWinScreen->hwnd, 0, FALSE);
 	}
-
-// 	if (obj == gobj_jdebi)
-// 	{
-// 		iEditChainManager_render(commandHistory, gobj_jdebi);
-// 		if (gWinJDebi)
-// 			InvalidateRect(gWinJDebi->hwnd, 0, FALSE);
-// 	}
 
 
 			//////////
@@ -3424,13 +3417,23 @@ CopyRect(&subform->rcIcon, &lrc3);
 					//////////
 					// Subform caption
 					//////
-						SetRect(&lrc2, subform->bmpSubformIcon->bi.biWidth + 8, lrc3.top, obj->bmp->bi.biWidth - 8, lrc3.bottom);
+						SetRect(&lrc2, subform->bmpSubformIcon->bi.biWidth + 8, lrc3.top + 2, obj->bmp->bi.biWidth - 8, lrc3.bottom);
 CopyRect(&subform->rcCaption, &lrc2);
-						lhfontOld = (HFONT)SelectObject(obj->bmp->hdc, gsWindowTitleBarFont->hfont);
-						SetTextColor(obj->bmp->hdc, (COLORREF)RGB(subform->captionColor.red, subform->captionColor.grn, subform->captionColor.blu));
+						lhfontOld = (HFONT)SelectObject(obj->bmp->hdc, gsWindowTitleBarFontSubform->hfont);
 						SetBkMode(obj->bmp->hdc, TRANSPARENT);
+						SetTextColor(obj->bmp->hdc, (COLORREF)RGB(subform->captionColor.red, subform->captionColor.grn, subform->captionColor.blu));
 						DrawTextA(obj->bmp->hdc, subform->caption.data, subform->caption.length, &lrc2, DT_VCENTER);
 						SelectObject(obj->bmp->hdc, lhfontOld);
+
+
+//////////
+// For temporary, we are adding additional renderings for the command subform
+//////
+if (iDatum_compare(&subform->caption, (s8*)cgcCommandTitle, -1) == 0)
+{
+	gobj_jdebi_command = obj;
+	iEditChainManager_render(commandHistory, obj);
+}
 
 
 					//////////

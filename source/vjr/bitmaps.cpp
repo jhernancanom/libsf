@@ -155,7 +155,7 @@
 		{
 			// Something has changed
 			bmpNew = iBmp_allocate();
-			iBmp_createBySize(bmpNew, tnWidth, tnHeight, ((bmp) ? bmp->bi.biBitCount : 32));
+			iBmp_createBySize(bmpNew, tnWidth, tnHeight, ((bmp) ? bmp->bi.biBitCount : 24));
 
 			// Process the old
 			if (bmp)
@@ -213,9 +213,9 @@
 				// Compute the row width
 				bmp->rowWidth = iBmp_computeRowWidth(bmp);
 
-				// Convert to 32-bit if need be
-				if (bmp->bi.biBitCount == 24)
-					iBmp_convertTo32Bits(bmp);
+				// Convert to 24-bit if need be
+				if (bmp->bi.biBitCount == 32)
+					iBmp_convertTo24Bits(bmp);
 			}
 
 		//////////
@@ -291,6 +291,44 @@
 
 				// Copy our bitmap to the destination
 				memcpy(bmp, &bmp32, sizeof(SBitmap));
+			}
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to convert the indicated bitmap to 32-bits if need be
+//
+//////
+	void iBmp_convertTo24Bits(SBitmap* bmp)
+	{
+		SBitmap	bmp24;
+		RECT	lrc;
+
+
+		// Are we already there?
+		if (bmp && bmp->bi.biBitCount != 24)
+		{
+			// No, but we only know how to handle 32-bit bitmaps
+			if (bmp->bi.biBitCount == 32)
+			{
+				// We need to convert it
+				// Create the 24-bit version
+				memset(&bmp24, 0, sizeof(SBitmap));
+				iBmp_createBySize(&bmp24, bmp->bi.biWidth, bmp->bi.biHeight, 24);
+
+				// Copy it
+				SetRect(&lrc, 0, 0, bmp->bi.biWidth, bmp->bi.biHeight);
+				iBmp_bitBlt(&bmp24, &lrc, bmp);
+
+				// Free the (now old) bitmap
+				iBmp_delete(&bmp, true, false);
+
+				// Copy our bitmap to the destination
+				memcpy(bmp, &bmp24, sizeof(SBitmap));
 			}
 		}
 	}
@@ -416,8 +454,9 @@
 	void iBmp_createBySize(SBitmap* bmp, u32 width, u32 height, u32 tnBitCount)
 	{
 		// Populate the initial structure
-		if (tnBitCount == 24)		iBmp_populateBitmapStructure(bmp, width, height, 24);
-		else						iBmp_populateBitmapStructure(bmp, width, height, 32);
+		iBmp_populateBitmapStructure(bmp, width, height, 24);
+//		if (tnBitCount == 24)		iBmp_populateBitmapStructure(bmp, width, height, 24);
+//		else						iBmp_populateBitmapStructure(bmp, width, height, 32);
 
 		// Create the HDC and DIB Section
 		bmp->hdc	= CreateCompatibleDC(GetDC(GetDesktopWindow()));
@@ -444,7 +483,7 @@
 		bmp->bi.biHeight			= tnHeight;
 		bmp->bi.biCompression		= 0;
 		bmp->bi.biPlanes			= 1;
-		bmp->bi.biBitCount			= (u16)((tnBitCount == 24 || tnBitCount == 32) ? tnBitCount : 32);
+		bmp->bi.biBitCount			= (u16)((tnBitCount == 24 || tnBitCount == 32) ? tnBitCount : 24);
 		bmp->bi.biXPelsPerMeter		= 2835;	// Assume 72 dpi
 		bmp->bi.biYPelsPerMeter		= 2835;
 		bmp->rowWidth				= iBmp_computeRowWidth(bmp);
@@ -534,6 +573,7 @@
 				for (lnX = tnUlX; lnX < tnLrX && lnX < bmp->bi.biWidth; lnX++, lbgra++)
 				{
 					// Copy the pixel
+					lbgra->alp	= 255;
 					lbgra->red	= 255 - lbgra->red;
 					lbgra->grn	= 255 - lbgra->grn;
 					lbgra->blu	= 255 - lbgra->blu;
@@ -696,6 +736,7 @@
 									if (lbgraSrc->alp == 255)
 									{
 										// Opaque
+										lbgraDst->alp	= 255;
 										lbgraDst->red	= lbgraSrc->red;
 										lbgraDst->grn	= lbgraSrc->grn;
 										lbgraDst->blu	= lbgraSrc->blu;
@@ -704,7 +745,7 @@
 										// Some degree of transparency
 										lfAlp			= ((f64)lbgraSrc->alp / 255.0);
 										lfMalp			= 1.0 - lfAlp;
-//	 									lbgraDst->alp	= lbgraSrc->alp;
+	 									lbgraDst->alp	= 255;
 										lbgraDst->red	= (u8)min(max(((f64)lbgraDst->red * lfMalp) + (lbgraSrc->red * lfAlp), 0.0), 255.0);
 										lbgraDst->grn	= (u8)min(max(((f64)lbgraDst->grn * lfMalp) + (lbgraSrc->grn * lfAlp), 0.0), 255.0);
 										lbgraDst->blu	= (u8)min(max(((f64)lbgraDst->blu * lfMalp) + (lbgraSrc->blu * lfAlp), 0.0), 255.0);
@@ -862,6 +903,7 @@
 										if (lbgraSrc->alp == 255)
 										{
 											// Opaque
+											lbgraDst->alp	= 255;
 											lbgraDst->red	= lbgraSrc->red;
 											lbgraDst->grn	= lbgraSrc->grn;
 											lbgraDst->blu	= lbgraSrc->blu;
@@ -870,7 +912,7 @@
 											// Some degree of transparency
 											lfAlp			= ((f64)lbgraSrc->alp / 255.0);
 											lfMalp			= 1.0 - lfAlp;
-//											lbgraDst->alp	= lbgraSrc->alp;
+											lbgraDst->alp	= 255;
 											lbgraDst->red	= (u8)min(max(((f64)lbgraDst->red * lfMalp) + (lbgraSrc->red * lfAlp), 0.0), 255.0);
 											lbgraDst->grn	= (u8)min(max(((f64)lbgraDst->grn * lfMalp) + (lbgraSrc->grn * lfAlp), 0.0), 255.0);
 											lbgraDst->blu	= (u8)min(max(((f64)lbgraDst->blu * lfMalp) + (lbgraSrc->blu * lfAlp), 0.0), 255.0);

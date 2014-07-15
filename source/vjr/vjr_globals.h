@@ -84,6 +84,7 @@
 	// Default screens used by VJr
 	SObject*			gobj_screen							= NULL;
 	SObject*			gobj_jdebi							= NULL;
+	SObject*			gobj_jdebi_command					= NULL;
 	SWindow*			gWinScreen							= NULL;
 	SWindow*			gWinJDebi							= NULL;
 
@@ -104,9 +105,10 @@
 	//////
 		SFont*			gsFont								= NULL;									// Default font, Ubuntu 10 pt
 		SFont*			gsWindowTitleBarFont				= NULL;									// Default font, Ubuntu Bold 12 pt
+		SFont*			gsWindowTitleBarFontSubform			= NULL;									// Default font, Ubuntu Bold 10 pt
 		// Global colors
 		const SBgra		white								= { rgba(255, 255, 255, 255) };
-		const SBgra		dark_blue							= { rgba(0, 0, 128, 255) };
+		const SBgra		dark_blue							= { rgba(0, 0, 80, 255) };
 		const SBgra		black								= { rgba(0, 0, 0, 255) };
 		const SBgra		gray								= { rgba(192, 192, 192, 255) };
 		const SBgra		breadcrumbBackColor					= { rgba(180, 220, 240, 255) };			// Cyanish

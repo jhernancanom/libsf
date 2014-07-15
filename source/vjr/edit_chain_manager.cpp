@@ -919,8 +919,8 @@ _asm int 3;
 				iEditChainManager_getColors(ecm, obj, backColor, foreColor);
 				backColorLast.color = backColor.color;
 				foreColorLast.color = foreColor.color;
-				iColor_adjustBrightness(backColorLast, -10.0f);
-				iColor_adjustBrightness(foreColorLast, 10.0f);
+				iColor_adjustBrightness(backColorLast, -5.0f);
+				iColor_adjustBrightness(foreColorLast, 5.0f);
 
 
 			// Prepare

@@ -264,6 +264,7 @@
 	void					iDatum_duplicate						(SDatum* datumDst, SDatum* datumSrc);
 	bool					iDatum_resize							(SDatum* datum, s32 newDataLength);
 	s32						iDatum_compare							(SDatum* datumLeft, SDatum* datumRight);
+	s32						iDatum_compare							(SDatum* datumLeft, s8* data, s32 dataLength);
 	void					iDatum_delete							(SDatum* datum, bool tlDeleteSelf);
 	void					iiDatum_delete							(SDatum* datum);
 
@@ -278,6 +279,7 @@
 	SBitmap*				iBmp_rawLoad							(cu8* bmpRawFileData);
 	void					iBmp_saveToDisk							(SBitmap* bmp, s8* tcPathname);
 	void					iBmp_convertTo32Bits					(SBitmap* bmp);
+	void					iBmp_convertTo24Bits					(SBitmap* bmp);
 	void					iBmp_copy24To32							(SBitmap* bmp32, SBitmap* bmp24);
 	bool					iBmp_validate							(SBitmap* bmp);
 	s32						iBmp_computeRowWidth					(SBitmap* bmp);

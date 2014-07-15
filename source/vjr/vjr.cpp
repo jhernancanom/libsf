@@ -103,8 +103,9 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		systemStartedMs = iTime_getLocalMs();
 
 		// Default font
-		gsFont					= iFont_create(cgcDefaultFont,			10, FW_NORMAL,	0, 0);
-		gsWindowTitleBarFont	= iFont_create(cgcWindowTitleBarFont,	12, FW_NORMAL,	0, 0);
+		gsFont						= iFont_create(cgcDefaultFont,			10, FW_NORMAL,	0, 0);
+		gsWindowTitleBarFont		= iFont_create(cgcWindowTitleBarFont,	12, FW_NORMAL,	0, 0);
+		gsWindowTitleBarFontSubform	= iFont_create(cgcWindowTitleBarFont,	10, FW_NORMAL,	0, 0);
 
 
 		//////////
@@ -216,12 +217,12 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			iEditChainManager_appendLine(commandHistory, "*** Remember this always:  Love makes you smile. It keeps an inward peace unlike any other. :-)", -1);
 		}
 		// Navigate to the last line
-		iEditChainManager_navigateEnd(commandHistory, gobj_jdebi);
+		iEditChainManager_navigateEnd(commandHistory, gobj_jdebi_command);
 		// Make sure there's a blank line at the end
 		if (commandHistory->ecCursorLine->sourceCodePopulated != 0)
 		{
 			iEditChainManager_appendLine(commandHistory, NULL, 0);
-			iEditChainManager_navigateEnd(commandHistory, gobj_jdebi);
+			iEditChainManager_navigateEnd(commandHistory, gobj_jdebi_command);
 		}
 
 		// Redraw

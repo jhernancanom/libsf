@@ -336,20 +336,20 @@ typedef		const f64			cf64;
 //////
 	const s8			cgcMessageWindowClass[]				= "VJr.MessageWindow";
 	const s8			cgcWindowClass[]					= "VJr.Window";
-	const s8			cgcScreenTitle[]					= "Visual FreePro, Jr. 0.31 -- Jul.13.2014";
-	const s8			cgcJDebiTitle[]						= "JDebi Debugger 0.31 -- Jul.13.2014";
+	const s8			cgcScreenTitle[]					= "Visual FreePro, Jr. 0.32 -- Jul.15.2014";
+	const s8			cgcJDebiTitle[]						= "JDebi Debugger 0.32 -- Jul.15.2014";
 	const s8			cgcSourceCodeTitle[]				= "SourceCode";
 	const s8			cgcLocalsTitle[]					= "Locals";
 	const s8			cgcWatchTitle[]						= "Watch";
 	const s8			cgcCommandTitle[]					= "Command";
 	const s8			cgcDebugTitle[]						= "Debug";
 	const s8			cgcOutputTitle[]					= "Output";
-	const s8			cgcVersionText[]					= "Visual FreePro, Jr. 00.31.9999.9999 for Windows";
-	const s8			cgcVersion1Text[]					= "Visual FreePro, Jr. 00.31.9999.9999 for Windows [Jul.13.2014 00:00:00] Product ID 31415-926-5358979-32384";
+	const s8			cgcVersionText[]					= "Visual FreePro, Jr. 00.32.9999.9999 for Windows";
+	const s8			cgcVersion1Text[]					= "Visual FreePro, Jr. 00.32.9999.9999 for Windows [Jul.15.2014 00:00:00] Product ID 31415-926-5358979-32384";
 	const s32			gnVersion2							= 2;	// Professional
 	const s32			gnVersion3							= 0;	// English
-	const s8			cgcVersion4Text[]					= "00.31.9999.9999";
-	const s32			gnVersion5							= 31;	// 0.31
+	const s8			cgcVersion4Text[]					= "00.32.9999.9999";
+	const s32			gnVersion5							= 32;	// 0.31
 	const s8			cgcDefaultFont[]					= "Ubuntu";
 	const s8			cgcDefaultFixedFont[]				= "Ubuntu Mono";
 	const s8			cgcWindowTitleBarFont[]				= "Ubuntu Condensed";

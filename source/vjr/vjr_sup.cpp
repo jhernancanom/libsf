@@ -328,9 +328,9 @@
 			iObj_setSize(objSourceCode, 0,						0,							form->rcClient.right - form->rcClient.left,							4 * lnHeight);
 			iObj_setSize(objLocals,		0,						objSourceCode->rc.bottom,	form->rcClient.right - form->rcClient.left,							lnHeight);
 			iObj_setSize(objWatch,		0,						objLocals->rc.bottom,		form->rcClient.right - form->rcClient.left,							lnHeight);
-			iObj_setSize(objCommand,	0,						objWatch->rc.bottom,		objWatch->rc.right / 2,												form->rcClient.bottom - form->rcClient.top - objWatch->rc.bottom);
-			iObj_setSize(objDebug,		objCommand->rc.right,	objCommand->rc.top,			objCommand->rc.right / 2,											form->rcClient.bottom - form->rcClient.top - objWatch->rc.bottom);
-			iObj_setSize(objOutput,		objDebug->rc.right,		objCommand->rc.top,			form->rcClient.right - form->rcClient.left - objDebug->rc.right,	form->rcClient.bottom - form->rcClient.top - objWatch->rc.bottom);
+			iObj_setSize(objCommand,	0,						objWatch->rc.bottom,		objWatch->rc.right / 2,												(form->rcClient.bottom - form->rcClient.top) - objWatch->rc.bottom);
+			iObj_setSize(objDebug,		objCommand->rc.right,	objCommand->rc.top,			objCommand->rc.right / 2,											(form->rcClient.bottom - form->rcClient.top) - objWatch->rc.bottom);
+			iObj_setSize(objOutput,		objDebug->rc.right,		objCommand->rc.top,			form->rcClient.right - form->rcClient.left - objDebug->rc.right,	(form->rcClient.bottom - form->rcClient.top) - objWatch->rc.bottom);
 
 
 		//////////
@@ -725,6 +725,29 @@
 //////
 	void iWindow_render(SWindow* win)
 	{
+//////////
+// Temporarily force the commandWindow to be marked dirty
+//////
+	SObject* obj;
+	SSubObjSubform* subform;
+	obj = gobj_jdebi->firstChild;
+	while (obj)
+	{
+		if (obj->objType == _OBJ_TYPE_SUBFORM)
+		{
+			subform = (SSubObjSubform*)obj->sub_obj;
+			if (iDatum_compare(&subform->caption, (s8*)cgcCommandTitle, -1) == 0)
+				obj->isDirty = true;
+		}
+
+		// Move to next item
+		obj = (SObject*)obj->ll.next;
+	}
+//////
+// END
+//////////
+
+
 		// Make sure we have something to render
 		if (win && win->obj)
 		{
@@ -1618,37 +1641,37 @@
 							iWindow_render(gWinScreen);
 
 						// Move to next line and redraw
-						if (iEditChainManager_navigate(commandHistory, win->obj, 1, 0))
+						if (iEditChainManager_navigate(commandHistory, gobj_jdebi_command, 1, 0))
 							iWindow_render(win);
 						break;
 
 					case VK_UP:
-						if (iEditChainManager_navigate(commandHistory, win->obj, -1, 0))
+						if (iEditChainManager_navigate(commandHistory, gobj_jdebi_command, -1, 0))
 							iWindow_render(win);
 						return(1);
 
 					case VK_DOWN:
-						if (iEditChainManager_navigate(commandHistory, win->obj, 1, 0))
+						if (iEditChainManager_navigate(commandHistory, gobj_jdebi_command, 1, 0))
 							iWindow_render(win);
 						return(1);
 
 					case VK_PRIOR:		// Page up
-						if (iEditChainManager_navigatePages(commandHistory, win->obj, -1))
+						if (iEditChainManager_navigatePages(commandHistory, gobj_jdebi_command, -1))
 							iWindow_render(win);
 						return(1);
 
 					case VK_NEXT:		// Page down
-						if (iEditChainManager_navigatePages(commandHistory, win->obj, 1))
+						if (iEditChainManager_navigatePages(commandHistory, gobj_jdebi_command, 1))
 							iWindow_render(win);
 						return(1);
 
 					case VK_ESCAPE:		// They hit escape, and are cancelling the input
-						if (iEditChainManager_clearLine(commandHistory, win->obj))
+						if (iEditChainManager_clearLine(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 
 					case VK_TAB:
-						if (iEditChainManager_tabIn(commandHistory, win->obj))
+						if (iEditChainManager_tabIn(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 
@@ -1663,46 +1686,46 @@
 						//////////
 						// Draw it like normal
 						//////
-							if (iEditChainManager_returnKey(commandHistory, win->obj))
+							if (iEditChainManager_returnKey(commandHistory, gobj_jdebi_command))
 								iWindow_render(win);
 
 						return(1);
 
 					case VK_LEFT:
-						if (iEditChainManager_navigate(commandHistory, win->obj, 0, -1))
+						if (iEditChainManager_navigate(commandHistory, gobj_jdebi_command, 0, -1))
 							iWindow_render(win);
 						return(1);
 
 					case VK_RIGHT:
-						if (iEditChainManager_navigate(commandHistory, win->obj, 0, 1))
+						if (iEditChainManager_navigate(commandHistory, gobj_jdebi_command, 0, 1))
 							iWindow_render(win);
 						return(1);
 
 					case VK_HOME:
-						if (iEditChainManager_navigate(commandHistory, win->obj, 0, -(commandHistory->column)))
+						if (iEditChainManager_navigate(commandHistory, gobj_jdebi_command, 0, -(commandHistory->column)))
 							iWindow_render(win);
 						return(1);
 
 					case VK_END:
 						if (commandHistory->column != commandHistory->ecCursorLine->sourceCodePopulated)
 						{
-							iEditChainManager_navigate(commandHistory, win->obj, 0, commandHistory->ecCursorLine->sourceCodePopulated - commandHistory->column);
+							iEditChainManager_navigate(commandHistory, gobj_jdebi_command, 0, commandHistory->ecCursorLine->sourceCodePopulated - commandHistory->column);
 							iWindow_render(win);
 						}
 						return(1);
 
 					case VK_INSERT:
-						if (iEditChainManager_toggleInsert(commandHistory, win->obj))
+						if (iEditChainManager_toggleInsert(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 
 					case VK_BACK:
-						if (iEditChainManager_deleteLeft(commandHistory, win->obj))
+						if (iEditChainManager_deleteLeft(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 
 					case VK_DELETE:
-					if (iEditChainManager_deleteRight(commandHistory, win->obj))
+					if (iEditChainManager_deleteRight(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 				}
@@ -1712,22 +1735,22 @@
 				switch (vKey)
 				{
 					case 'A':		// Select all
-						if (iEditChainManager_selectAll(commandHistory, win->obj))
+						if (iEditChainManager_selectAll(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 
 					case 'X':		// Cut
-						if (iEditChainManager_cut(commandHistory, win->obj))
+						if (iEditChainManager_cut(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 
 					case 'C':		// Copy
-						if (iEditChainManager_copy(commandHistory, win->obj))
+						if (iEditChainManager_copy(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 
 					case 'V':		// Paste
-						if (iEditChainManager_paste(commandHistory, win->obj))
+						if (iEditChainManager_paste(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 
@@ -1738,32 +1761,32 @@
 						break;
 
 					case VK_LEFT:	// Word left
-						if (iEditChainManager_navigateWordLeft(commandHistory, win->obj))
+						if (iEditChainManager_navigateWordLeft(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 
 					case VK_RIGHT:	// Word right
-						if (iEditChainManager_navigateWordRight(commandHistory, win->obj))
+						if (iEditChainManager_navigateWordRight(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 
 					case VK_HOME:	// Home (go to top of content)
-						if (iEditChainManager_navigateTop(commandHistory, win->obj))
+						if (iEditChainManager_navigateTop(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 
 					case VK_END:	// Page down (go to end of content)
-						if (iEditChainManager_navigateEnd(commandHistory, win->obj))
+						if (iEditChainManager_navigateEnd(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 
 					case VK_BACK:
-						if (iEditChainManager_deleteWordLeft(commandHistory, win->obj))
+						if (iEditChainManager_deleteWordLeft(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 
 					case VK_DELETE:
-						if (iEditChainManager_deleteWordRight(commandHistory, win->obj))
+						if (iEditChainManager_deleteWordRight(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 				}
@@ -1773,37 +1796,37 @@
 				switch (vKey)
 				{
 					case VK_UP:		// Select line up
-						if (iEditChainManager_selectLineUp(commandHistory, win->obj))
+						if (iEditChainManager_selectLineUp(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 
 					case VK_DOWN:	// Select line down
-						if (iEditChainManager_selectLineDown(commandHistory, win->obj))
+						if (iEditChainManager_selectLineDown(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 
 					case VK_LEFT:	// Select left
-						if (iEditChainManager_selectLeft(commandHistory, win->obj))
+						if (iEditChainManager_selectLeft(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 
 					case VK_RIGHT:	// Select right
-						if (iEditChainManager_selectRight(commandHistory, win->obj))
+						if (iEditChainManager_selectRight(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 
 					case VK_END:	// Select to end
-						if (iEditChainManager_selectToEndOfLine(commandHistory, win->obj))
+						if (iEditChainManager_selectToEndOfLine(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 
 					case VK_HOME:	// Select to start
-						if (iEditChainManager_selectToBeginOfLine(commandHistory, win->obj))
+						if (iEditChainManager_selectToBeginOfLine(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 
 					case VK_TAB:	// Shift tab
-						if (iEditChainManager_tabOut(commandHistory, win->obj))
+						if (iEditChainManager_tabOut(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 				}
@@ -1813,12 +1836,12 @@
 				switch (vKey)
 				{
 					case 'K':		// Select column mode
-						if (iEditChainManager_selectColumnToggle(commandHistory, win->obj))
+						if (iEditChainManager_selectColumnToggle(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 
 					case 'L':		// Select full line mode
-						if (iEditChainManager_selectLineToggle(commandHistory, win->obj))
+						if (iEditChainManager_selectLineToggle(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 				}
@@ -1828,12 +1851,12 @@
 				switch (vKey)
 				{
 					case VK_LEFT:	// Select word left
-						if (iEditChainManager_selectWordLeft(commandHistory, win->obj))
+						if (iEditChainManager_selectWordLeft(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 
 					case VK_RIGHT:	// Select word right
-						if (iEditChainManager_selectWordRight(commandHistory, win->obj))
+						if (iEditChainManager_selectWordRight(commandHistory, gobj_jdebi_command))
 							iWindow_render(win);
 						return(1);
 				}
@@ -1852,7 +1875,7 @@
 			if (llIsAscii)
 			{
 				// It's a regular input key
-				if (iEditChainManager_keystroke(commandHistory, win->obj, (u8)lnAsciiChar))
+				if (iEditChainManager_keystroke(commandHistory, gobj_jdebi_command, (u8)lnAsciiChar))
 					iWindow_render(win);
 				return(1);
 			}
@@ -2148,6 +2171,29 @@ _asm int 3;
 		{
 			// Do a standard compare
 			lnResult = memcmp(datumLeft->data, datumRight->data, min(datumLeft->length, datumRight->length));
+		}
+
+		// Indicate our result
+		return(lnResult);
+	}
+
+	s32 iDatum_compare(SDatum* datumLeft, s8* data, s32 dataLength)
+	{
+		s32 lnResult;
+
+
+		// Default to invalid data
+		lnResult = -2;
+
+		// Make sure our environment is sane
+		if (datumLeft && data)
+		{
+			// Make sure our length is set
+			if (dataLength < 0)
+				dataLength = strlen(data);
+
+			// Do a standard compare
+			lnResult = memcmp(datumLeft->data, data, min(datumLeft->length, dataLength));
 		}
 
 		// Indicate our result
