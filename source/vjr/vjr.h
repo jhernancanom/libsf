@@ -87,6 +87,13 @@
 
 #include "graphics\h\jdebi_app_icon.h"
 
+#include "graphics\h\output_icon.h"
+#include "graphics\h\debug_icon.h"
+#include "graphics\h\command_icon.h"
+#include "graphics\h\watch_icon.h"
+#include "graphics\h\locals_icon.h"
+#include "graphics\h\sourcecode_icon.h"
+
 #include "vjr_sup.cpp"
 #include "objects.cpp"
 #include "object_accessors.cpp"

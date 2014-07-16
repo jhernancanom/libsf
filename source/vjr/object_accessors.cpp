@@ -3142,7 +3142,7 @@ void iiSubobj_subform_setIcon(SObject* obj, SBitmap* bmp)
 
 
 	// Make sure our environment is sane
-	if (obj && bmp && obj->objType == _OBJ_TYPE_FORM)
+	if (obj && bmp && obj->objType == _OBJ_TYPE_SUBFORM)
 	{
 		// Grab the form data
 		subform = (SSubObjSubform*)obj->sub_obj;

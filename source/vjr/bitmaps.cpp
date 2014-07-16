@@ -189,7 +189,9 @@
 	{
 		BITMAPFILEHEADER*	bh;
 		BITMAPINFOHEADER*	bi;
+		SBitmap				bmpLoad;
 		SBitmap*			bmp;
+		RECT				lrc;
 
 
 		//////////
@@ -205,13 +207,18 @@
 			bmp = iBmp_allocate();
 			if (bmp)
 			{
-				// Copy to bmp
-				memcpy(&bmp->bh, bh, sizeof(bmp->bh));
-				memcpy(&bmp->bi, bi, sizeof(bmp->bi));
-				bmp->bd = (s8*)(bmpRawFileData + bh->bfOffBits);
+				// Prepare bmpLoad
+				memcpy(&bmpLoad.bh, bh, sizeof(bmp->bh));
+				memcpy(&bmpLoad.bi, bi, sizeof(bmp->bi));
+				bmpLoad.bd			= (s8*)(bmpRawFileData + bh->bfOffBits);
+				bmpLoad.rowWidth	= iBmp_computeRowWidth(&bmpLoad);
 
-				// Compute the row width
-				bmp->rowWidth = iBmp_computeRowWidth(bmp);
+				// Create 24x24 icon in 24 bit form
+				iBmp_createBySize(bmp, bmpLoad.bi.biWidth, bmpLoad.bi.biHeight, 24);
+
+				// Copy it over
+				SetRect(&lrc, 0, 0, bmpLoad.bi.biWidth, bmpLoad.bi.biHeight);
+				iBmp_bitBlt(bmp, &lrc, &bmpLoad);
 
 				// Convert to 24-bit if need be
 				if (bmp->bi.biBitCount == 32)

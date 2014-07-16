@@ -113,12 +113,12 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		//////
 			bmpVjrIcon			= iBmp_rawLoad(cgc_appIconBmp);
 			bmpJDebiIcon		= iBmp_rawLoad(cgc_jdebiAppIconBmp);
-			bmpSourceCodeIcon	= iBmp_rawLoad(cgc_jdebiAppIconBmp);
-			bmpLocalsIcon		= iBmp_rawLoad(cgc_jdebiAppIconBmp);
-			bmpWatchIcon		= iBmp_rawLoad(cgc_jdebiAppIconBmp);
-			bmpCommandIcon		= iBmp_rawLoad(cgc_jdebiAppIconBmp);
-			bmpDebugIcon		= iBmp_rawLoad(cgc_jdebiAppIconBmp);
-			bmpOutputIcon		= iBmp_rawLoad(cgc_jdebiAppIconBmp);
+			bmpSourceCodeIcon	= iBmp_rawLoad(cgc_sourcecodeIconBmp);
+			bmpLocalsIcon		= iBmp_rawLoad(cgc_localsIconBmp);
+			bmpWatchIcon		= iBmp_rawLoad(cgc_watchIconBmp);
+			bmpCommandIcon		= iBmp_rawLoad(cgc_commandIconBmp);
+			bmpDebugIcon		= iBmp_rawLoad(cgc_debugIconBmp);
+			bmpOutputIcon		= iBmp_rawLoad(cgc_outputIconBmp);
 
 			// Create a 1x1 no image bitmap placeholder
 			bmpNoImage			= iBmp_allocate();

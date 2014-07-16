@@ -202,8 +202,8 @@
 	void					iInit_createDefaultDatetimes			(void);
 
 	DWORD	WINAPI			iReadEvents_messageWindow				(LPVOID lpParameter);
-	LRESULT	CALLBACK		iMessage_wndProcWindow					(HWND hwnd, UINT m, WPARAM w, LPARAM l);
-	LRESULT	CALLBACK		iWindow_wndProc							(HWND hwnd, UINT m, WPARAM w, LPARAM l);
+	LRESULT	CALLBACK		iWindow_wndProcMessage					(HWND hwnd, UINT m, WPARAM w, LPARAM l);
+	LRESULT	CALLBACK		iWindow_wndProcForms					(HWND hwnd, UINT m, WPARAM w, LPARAM l);
 	SWindow* 				iWindow_createForObject					(SObject* obj, SWindow* win, s32 icon);
 	SWindow*				iWindow_findByHwnd						(HWND hwnd);
 	SWindow*				iWindow_allocate						(void);

@@ -61,7 +61,7 @@
 					classa.cbSize				= sizeof(WNDCLASSEXA);
 					classa.hInstance			= ghInstance;
 					classa.lpszClassName		= cgcMessageWindowClass;
-					classa.lpfnWndProc			= &iMessage_wndProcWindow;
+					classa.lpfnWndProc			= &iWindow_wndProcMessage;
 
 					// Register
 					atom = RegisterClassExA(&classa);
@@ -133,7 +133,7 @@
 // Processes internal messages to process things internally.
 //
 //////
-	LRESULT CALLBACK iMessage_wndProcWindow(HWND hwnd, UINT m, WPARAM w, LPARAM l)
+	LRESULT CALLBACK iWindow_wndProcMessage(HWND hwnd, UINT m, WPARAM w, LPARAM l)
 	{
 		// Call Windows' default procedure handler
 		return(DefWindowProc(hwnd, m, w, l));
@@ -411,7 +411,7 @@
 // Processes messages from the interface window, to forward on to the original window
 //
 //////
-	LRESULT CALLBACK iWindow_wndProc(HWND h, UINT m, WPARAM w, LPARAM l)
+	LRESULT CALLBACK iWindow_wndProcForms(HWND h, UINT m, WPARAM w, LPARAM l)
 	{
 		SWindow*		win;
 		HDC				lhdc;
@@ -580,7 +580,7 @@
 							classex.lpszClassName		= bufferClass;
 							classex.hIcon				= LoadIcon(ghInstance, MAKEINTRESOURCE(icon));
 							classex.hCursor				= LoadCursor(NULL, IDC_ARROW);
-							classex.lpfnWndProc			= &iWindow_wndProc;
+							classex.lpfnWndProc			= &iWindow_wndProcForms;
 
 							// Register
 							atom = RegisterClassExA(&classex);
@@ -728,6 +728,8 @@
 //////////
 // Temporarily force the commandWindow to be marked dirty
 //////
+if (win->obj == gobj_jdebi)
+{
 	SObject* obj;
 	SSubObjSubform* subform;
 	obj = gobj_jdebi->firstChild;
@@ -743,16 +745,23 @@
 		// Move to next item
 		obj = (SObject*)obj->ll.next;
 	}
+}
 //////
 // END
 //////////
 
 
 		// Make sure we have something to render
+//u32 st1, st2, st3;
 		if (win && win->obj)
 		{
+//if (win->obj == gobj_jdebi)		st1 = GetTickCount();
 			iObj_render(win->obj, true, true);
+//if (win->obj == gobj_jdebi)		st2 = GetTickCount();
 			iObj_publish(win->bmp, &win->rc, win->obj, true, true);
+//if (win->obj == gobj_jdebi)		st3 = GetTickCount();
+//if (win->obj == gobj_jdebi)
+//	_asm nop;
 			InvalidateRect(win->hwnd, 0, FALSE);
 		}
 	}

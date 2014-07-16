@@ -3159,7 +3159,7 @@
 				SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
 
 				// Do we need to redraw?  Or can we just copy?
-				if (obj->isDirty)
+				if (obj->isDirty || lnPixelsRendered != 0)
 				{
 					//////////
 					// Frame it
@@ -3256,9 +3256,9 @@ CopyRect(&form->rcCaption, &lrc2);
 						lnPixelsRendered += iBmp_bitBlt(obj->bmpPriorRendered, &lrc, obj->bmp);
 						// Right now, we can use the bmpPriorRendered for a fast copy rather than 
 
-				} else {
-					// Render from its prior rendered version
-					lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+// 				} else {
+// 					// Render from its prior rendered version
+// 					lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
 				}
 
 
@@ -3356,7 +3356,7 @@ CopyRect(&form->rcCaption, &lrc2);
 				SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
 
 				// Do we need to redraw?  Or can we just copy?
-				if (obj->isDirty)
+				if (obj->isDirty || lnPixelsRendered != 0)
 				{
 					//////////
 					// Frame it
@@ -3446,9 +3446,9 @@ if (iDatum_compare(&subform->caption, (s8*)cgcCommandTitle, -1) == 0)
 						lnPixelsRendered += iBmp_bitBlt(obj->bmpPriorRendered, &lrc, obj->bmp);
 						// Right now, we can use the bmpPriorRendered for a fast copy rather than 
 
-				} else {
-					// Render from its prior rendered version
-					lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+// 				} else {
+// 					// Render from its prior rendered version
+// 					lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
 				}
 
 

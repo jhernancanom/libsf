@@ -22,3 +22,10 @@
 \libsf\vvm\bin\f2h raw\save.bmp saveBmp h\save.h
 
 \libsf\vvm\bin\f2h raw\jdebi_app_icon.bmp jdebiAppIconBmp h\jdebi_app_icon.h
+
+\libsf\vvm\bin\f2h raw\output_icon.bmp outputIconBmp h\output_icon.h
+\libsf\vvm\bin\f2h raw\debug_icon.bmp debugIconBmp h\debug_icon.h
+\libsf\vvm\bin\f2h raw\command_icon.bmp commandIconBmp h\command_icon.h
+\libsf\vvm\bin\f2h raw\watch_icon.bmp watchIconBmp h\watch_icon.h
+\libsf\vvm\bin\f2h raw\locals_icon.bmp localsIconBmp h\locals_icon.h
+\libsf\vvm\bin\f2h raw\sourcecode_icon.bmp sourcecodeIconBmp h\sourcecode_icon.h
