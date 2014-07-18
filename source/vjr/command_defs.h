@@ -64,7 +64,8 @@ struct SVariable;
 // Functions
 // STEP1: Define your function
 //////
-	SVariable*			function_alltrim							(SVariable* pString);
+	SVariable*			function_alltrim							(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2);
+	SVariable*			iFunction_trimCommon						(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2, bool trimStart, bool trimEnd);
 	SVariable*			function_asc								(SVariable* p1);
 	SVariable*			function_chr								(SVariable* p1);
 	SVariable*			function_createobject						(SVariable* p1);
@@ -73,7 +74,7 @@ struct SVariable;
 	SVariable*			function_left								(SVariable* pString, SVariable* pCount);
 	SVariable*			function_len								(SVariable* pString);
 	SVariable*			function_lower								(SVariable* pString);
-	SVariable*			function_ltrim								(SVariable* pString);
+	SVariable*			function_ltrim								(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2);
 	SVariable*			function_max								(SVariable* pLeft, SVariable* pRight);
 	SVariable*			function_min								(SVariable* pLeft, SVariable* pRight);
 	SVariable*			function_proper								(SVariable* pString);
@@ -81,7 +82,7 @@ struct SVariable;
 	SVariable*			function_rgb								(SVariable* pRed, SVariable* pGrn, SVariable* pBlu);
 	SVariable*			function_rgba								(SVariable* pRed, SVariable* pGrn, SVariable* pBlu, SVariable* pAlp);
 	SVariable*			function_right								(SVariable* pString, SVariable* pCount);
-	SVariable*			function_rtrim								(SVariable* pString);
+	SVariable*			function_rtrim								(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2);
 	SVariable*			function_space								(SVariable* pCount);
 	SVariable*			function_stuff								(SVariable* pOriginalString, SVariable* pStartPos, SVariable* pNumToRemove, SVariable* pStuffString);
 	SVariable*			function_sysmetric							(SVariable* pIndex);
@@ -155,7 +156,7 @@ struct SVariable;
 		//							Return										Parameters		Parameter
 		//	iCode					Count		Function						Required		Maximum Count
 		//  ------------------		------		--------------------------		----------		-------------
-		{	_ICODE_ALLTRIM,			1,			(u32)&function_alltrim,			1,				1	},
+		{	_ICODE_ALLTRIM,			1,			(u32)&function_alltrim,			1,				4	},
 		{	_ICODE_ASC,				1,			(u32)&function_asc,				1,				1	},
 		{	_ICODE_CHR,				1,			(u32)&function_chr,				1,				1	},
 		{	_ICODE_CREATEOBJECT,	1,			(u32)&function_createobject,	1,				1	},

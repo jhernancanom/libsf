@@ -95,6 +95,13 @@
 			case _ERROR_TOO_MANY_PARAMETERS:				{	iError_report((s8*)cgcTooManyParameters);			break;	}
 			case _ERROR_DATA_TYPE_MISMATCH:					{	iError_report((s8*)cgcDataTypeMismatch);			break;	}
 			case _ERROR_FEATURE_NOT_AVAILABLE:				{	iError_report((s8*)cgcFeatureNotAvailable);			break;	}
+			case _ERROR_P1_IS_INCORRECT:					{	iError_report((s8*)cgcP1IsIncorrect);				break;	}
+			case _ERROR_P2_IS_INCORRECT:					{	iError_report((s8*)cgcP2IsIncorrect);				break;	}
+			case _ERROR_P3_IS_INCORRECT:					{	iError_report((s8*)cgcP3IsIncorrect);				break;	}
+			case _ERROR_P4_IS_INCORRECT:					{	iError_report((s8*)cgcP4IsIncorrect);				break;	}
+			case _ERROR_P5_IS_INCORRECT:					{	iError_report((s8*)cgcP5IsIncorrect);				break;	}
+			case _ERROR_P6_IS_INCORRECT:					{	iError_report((s8*)cgcP6IsIncorrect);				break;	}
+			case _ERROR_P7_IS_INCORRECT:					{	iError_report((s8*)cgcP7IsIncorrect);				break;	}
 		}
 
 		// Display the component
@@ -120,15 +127,234 @@
 //////
 // Parameters:
 //     pString		-- Character, the string to trim
+//     pLookChar	-- (Optional) Character, the character to scan for
 //
 //////
 // Returns:
 //    Character		-- The string with any leading and trailing spaces removed
 //////
-	SVariable* function_alltrim(SVariable* pString)
+	SVariable* function_alltrim(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2)
 	{
-// TODO:  alltrim()
-		return(NULL);
+		return(iFunction_trimCommon(pString, pCaseInsensitive, pTrimChars1, pTrimChars2, true, true));
+	}
+
+
+
+
+//////////
+//
+// Logic used for ALLTRIM(), LTRIM(), RTRIM()
+//
+//////
+// Syntax forms supported:
+//	    (1)  *TRIM(cString[, cTrimString])
+//	    (2)  *TRIM(cString[, nCaseSensitive|lCaseSensitive[, cTrimChar1[, cTrimChar2]]]) 
+//
+//////
+	SVariable* iFunction_trimCommon(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2, bool trimTheStart, bool trimEnd)
+	{
+		s32			lnI, lnClipStartPos, lnEnd, lnClipEndPos;
+		s8			lc;
+		bool		llCaseInsensitive, error, llSyntaxForm1, llFound;
+		u32			errorNum;
+		s8*			trim1ptr;
+		s8*			trim2ptr;
+		u32			trim1Length, trim2Length;
+        SVariable*	result;
+
+
+// TODO:  Incomplete function.  Breakpoint, debug, and finish development
+_asm int 3;
+		//////////
+        // Parameter 1 must be character
+		//////
+			if (!iVariable_isValid(pString) || !iVariable_isTypeCharacter(pString))
+			{
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
+				return(NULL);
+			}
+
+
+		//////////
+        // If pCaseInsensitive is present, indicates case-insensitive
+		//////
+			llSyntaxForm1		= false;
+			llCaseInsensitive	= false;
+			if (pCaseInsensitive)
+			{
+				// See what the parameter is
+				if (!iVariable_isValid(pCaseInsensitive))
+				{
+					iError_reportByNumber(_ERROR_P2_IS_INCORRECT, NULL);
+					return(NULL);
+
+				} else if (iVariable_isTypeNumeric(pCaseInsensitive)) {
+					// They are indicating case sensitivity by an integer, should be 1 for case-insensitive, otherwise case-sensitive
+					// If 1, case-insensitive
+					if (*(s32*)pCaseInsensitive->value.data == 1)
+						llCaseInsensitive = true;
+
+				} else if (iVariable_isTypeLogical(pCaseInsensitive)) {
+					// They are indicating case sensitivity by a logical flag, should be .t. for case-insensitive, otherwise case-sensitive
+					if (pCaseInsensitive->value.data[0] != 0)
+						llCaseInsensitive = true;
+
+				} else if (iVariable_isTypeCharacter(pCaseInsensitive)) {
+					// They're using the syntax form:
+					//		ALLTRIM(cString[, cTrimString])
+					trim1ptr		= pCaseInsensitive->value.data;
+					trim1Length		= pCaseInsensitive->value.length;
+					trim2ptr		= NULL;
+					trim2Length		= 0;
+					llSyntaxForm1	= true;
+
+				} else {
+					iError_reportByNumber(_ERROR_P2_IS_INCORRECT, NULL);
+					return(NULL);
+				}
+			}
+
+
+		//////////
+		// If they specified trimCharss
+		//////
+			if (pTrimChars1)
+			{
+				// If they're using syntax form1, then the presence of this parameter is a syntax error
+				if (llSyntaxForm1)
+				{
+					iError_reportByNumber(_ERROR_TOO_MANY_PARAMETERS, NULL);
+					return(NULL);
+
+				} else if (iVariable_isTypeCharacter(pTrimChars1)) {
+					// They specified characters to scan
+					trim1ptr	= pTrimChars1->value.data;
+					trim1Length	= pTrimChars1->value.length;
+
+				} else {
+					iError_reportByNumber(_ERROR_P3_IS_INCORRECT, NULL);
+					return(NULL);
+				}
+			}
+
+
+		//////////
+        // Create our return result
+		//////
+	        result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+			if (!result)
+			{
+				iError_report("Internal error.");
+				return(NULL);
+			}
+
+
+		//////////
+        // It must be at least one character long to be adjusted
+		//////
+			if (pString->value.length >= 1)
+			{
+				//////////
+				// Find out how many characters match this at the beginning
+				//////
+					lnClipStartPos = 0;
+					if (trimTheStart)
+					{
+						// Based on the comparison, we 
+						if (llCaseInsensitive)
+						{
+							// Compare character by character exactly as they are
+							for ( ; lnClipStartPos < pString->value.length; ++lnClipStartPos)
+							{
+								//////////
+								// Grab the character
+								//////
+									lc = pString->value.data[lnClipStartPos];
+
+
+								//////////
+								// Scan the trim1 characters
+								//////
+									// If we're not on a character that we know, we're done
+									llFound = false;
+									if (trim1ptr)
+									{
+										for (lnI = 0; lnI < trim1Length; lnI++)
+										{
+											// If this character matches, we've found a match, which means we're still trimming characters
+											if (lc == trim1ptr[lnI])
+											{
+												llFound = true;
+												break;
+											}
+										}
+									}
+
+
+								//////////
+								// Scan the trim2 characters
+								//////
+									if (!llFound)
+									{
+										// We still need to search through the trim2 characters list
+										if (trim2ptr)
+										{
+											for (lnI = 0; lnI < trim2Length; lnI++)
+											{
+												// If this character matches, we've found a match, which means we're still trimming characters
+												if (lc == trim2ptr[lnI])
+												{
+													llFound = true;
+													break;
+												}
+											}
+										}
+									}
+
+
+								//////////
+								// If we found a character, we continue, otherwise we're done
+								//////
+									if (!llFound)
+										break;
+							}
+							// When we get here, we have determined the number of characters on the left
+
+						} else {
+							// Compare character by character accounting for case
+// TODO:  Working here
+						}
+					}
+
+
+				//////////
+				// Did we find a non-lookChar character?
+				//////
+					if (lnClipStartPos < pString->value.length)
+					{
+						//////////
+						// Find out how many characters match this at the beginning
+						//////
+							lnClipEndPos = 0;
+							if (trimEnd)
+							{
+								for (lnEnd = pString->value.length - 1; lnEnd > 0 && pString->value.data[lnEnd] == lookChar; lnClipEndPos++)
+									--lnEnd;
+							}
+
+
+						//////////
+						// Copy the portion of the string
+						//////
+							iDatum_duplicate(&result->value, pString->value.data + lnClipStartPos, pString->value.length - lnClipStartPos - lnClipEndPos);
+					}
+			}
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
 	}
 
 
@@ -163,9 +389,9 @@
 		//////////
         // Parameter 1 must be character
 		//////
-			if (!iVariable_isValid(p1) || iVariable_getType(p1) != _VAR_TYPE_CHARACTER)
+			if (!iVariable_isValid(p1) || !iVariable_isTypeCharacter(p1))
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -243,7 +469,7 @@
 		//////
 			if (!iVariable_isValid(p1) || !iVariable_isTypeNumeric(p1))
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -326,9 +552,9 @@
 		//////////
         // Parameter 1 must be character
 		//////
-			if (!iVariable_isValid(p1) || iVariable_getType(p1) != _VAR_TYPE_CHARACTER)
+			if (!iVariable_isValid(p1) || !iVariable_isTypeCharacter(p1))
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -634,7 +860,7 @@
 		//////
 			if (!iVariable_isValid(p1) || !iVariable_isTypeNumeric(p1))
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -701,7 +927,7 @@
 		//////
 			if (!iVariable_isValid(pString) || iVariable_getType(pString) != _VAR_TYPE_CHARACTER)
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -711,7 +937,7 @@
 		//////
 			if (!iVariable_isValid(pCount) || !iVariable_isTypeNumeric(pCount))
 			{
-				iError_report("Parameter 2 is not correct");
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -784,7 +1010,7 @@
 		//////
 			if (!iVariable_isValid(pString) || iVariable_getType(pString) != _VAR_TYPE_CHARACTER)
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -846,7 +1072,7 @@
 		//////
 			if (!iVariable_isValid(pString) || iVariable_getType(pString) != _VAR_TYPE_CHARACTER)
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -907,10 +1133,9 @@
 // Returns:
 //    Character		-- The string with any leading spaces removed
 //////
-	SVariable* function_ltrim(SVariable* pString)
+	SVariable* function_ltrim(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2)
 	{
-// TODO:  ltrim()
-		return(NULL);
+		return(iFunction_trimCommon(pString, pCaseInsensitive, pTrimChars1, pTrimChars2, true, false));
 	}
 
 
@@ -958,7 +1183,7 @@
 		//////
 			if (!iVariable_isValid(pLeft))
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -968,7 +1193,7 @@
 		//////
 			if (!iVariable_isValid(pRight))
 			{
-				iError_report("Parameter 2 is not correct");
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -1170,7 +1395,7 @@
 		//////
 			if (!iVariable_isValid(pLeft))
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -1180,7 +1405,7 @@
 		//////
 			if (!iVariable_isValid(pRight))
 			{
-				iError_report("Parameter 2 is not correct");
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -1373,7 +1598,7 @@
 		//////
 			if (!iVariable_isValid(pString) || iVariable_getType(pString) != _VAR_TYPE_CHARACTER)
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -1468,7 +1693,7 @@
 		//////
 			if (!iVariable_isValid(pString) || iVariable_getType(pString) != _VAR_TYPE_CHARACTER)
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -1478,7 +1703,7 @@
 		//////
 			if (!iVariable_isValid(pCount) || !iVariable_isTypeNumeric(pCount))
 			{
-				iError_report("Parameter 2 is not correct");
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -1559,7 +1784,7 @@
 		//////
 			if (!iVariable_isValid(pRed) || !iVariable_isTypeNumeric(pRed))
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -1569,7 +1794,7 @@
 		//////
 			if (!iVariable_isValid(pGrn) || !iVariable_isTypeNumeric(pGrn))
 			{
-				iError_report("Parameter 2 is not correct");
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -1579,7 +1804,7 @@
 		//////
 			if (!iVariable_isValid(pBlu) || !iVariable_isTypeNumeric(pBlu))
 			{
-				iError_report("Parameter 3 is not correct");
+				iError_reportByNumber(_ERROR_P3_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -1706,7 +1931,7 @@
 		//////
 			if (!iVariable_isValid(pRed) || !iVariable_isTypeNumeric(pRed))
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -1716,7 +1941,7 @@
 		//////
 			if (!iVariable_isValid(pGrn) || !iVariable_isTypeNumeric(pGrn))
 			{
-				iError_report("Parameter 2 is not correct");
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -1726,7 +1951,7 @@
 		//////
 			if (!iVariable_isValid(pBlu) || !iVariable_isTypeNumeric(pBlu))
 			{
-				iError_report("Parameter 3 is not correct");
+				iError_reportByNumber(_ERROR_P3_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -1736,7 +1961,7 @@
 		//////
 			if (!iVariable_isValid(pAlp) || !iVariable_isTypeNumeric(pAlp))
 			{
-				iError_report("Parameter 4 is not correct");
+				iError_reportByNumber(_ERROR_P3_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -1877,7 +2102,7 @@
 		//////
 			if (!iVariable_isValid(pString) || iVariable_getType(pString) != _VAR_TYPE_CHARACTER)
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -1887,7 +2112,7 @@
 		//////
 			if (!iVariable_isValid(pCount) || !iVariable_isTypeNumeric(pCount))
 			{
-				iError_report("Parameter 2 is not correct");
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -1958,10 +2183,9 @@
 // Returns:
 //    Character		-- The string with any trailing spaces removed
 //////
-	SVariable* function_rtrim(SVariable* pString)
+	SVariable* function_rtrim(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2)
 	{
-// TODO:  rtrim()
-		return(NULL);
+		return(iFunction_trimCommon(pString, pCaseInsensitive, pTrimChars1, pTrimChars2, false, true));
 	}
 
 
@@ -2000,7 +2224,7 @@
 		//////
 			if (!iVariable_isValid(pCount) || !iVariable_isTypeNumeric(pCount))
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -2081,7 +2305,7 @@
 		//////
 			if (!iVariable_isValid(pOriginalString) || !iVariable_isTypeCharacter(pOriginalString))
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -2091,7 +2315,7 @@
 		//////
 			if (!iVariable_isValid(pStartPos) || !iVariable_isTypeNumeric(pStartPos))
 			{
-				iError_report("Parameter 2 is not correct");
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -2101,7 +2325,7 @@
 		//////
 			if (!iVariable_isValid(pNumToRemove) || !iVariable_isTypeNumeric(pNumToRemove))
 			{
-				iError_report("Parameter 3 is not correct");
+				iError_reportByNumber(_ERROR_P3_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -2111,7 +2335,7 @@
 		//////
 			if (!iVariable_isValid(pStuffString) || !iVariable_isTypeCharacter(pStuffString))
 			{
-				iError_report("Parameter 4 is not correct");
+				iError_reportByNumber(_ERROR_P3_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -2236,7 +2460,7 @@
 		//////
 			if (!iVariable_isValid(pIndex) || !iVariable_isTypeNumeric(pIndex))
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -2453,7 +2677,7 @@
 		//////
 			if (!iVariable_isValid(pString) || iVariable_getType(pString) != _VAR_TYPE_CHARACTER)
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -2534,7 +2758,7 @@
 
 			} else if (!iVariable_isTypeNumeric(pIndex)) {
 				// The parameter is not numeric
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			} else {
 				// It must be in the range 1..5
@@ -2638,7 +2862,7 @@
 		//////
 			if (!iVariable_isValid(p1) || !iVariable_isTypeCharacter(p1))
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -2648,7 +2872,7 @@
 		//////
 			if (!iVariable_isValid(p2) || !iVariable_isTypeCharacter(p2))
 			{
-				iError_report("Parameter 2 is not correct");
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -2709,7 +2933,7 @@
 		//////
 			if (!iVariable_isValid(p1) || !iVariable_isTypeNumeric(p1))
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -2719,7 +2943,7 @@
 		//////
 			if (!iVariable_isValid(p2) || !iVariable_isTypeNumeric(p2))
 			{
-				iError_report("Parameter 2 is not correct");
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -2833,7 +3057,7 @@
 		//////
 			if (!iVariable_isValid(p1) || !iVariable_isTypeNumeric(p1))
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -2843,7 +3067,7 @@
 		//////
 			if (!iVariable_isValid(p2) || !iVariable_isTypeNumeric(p2))
 			{
-				iError_report("Parameter 2 is not correct");
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -2957,7 +3181,7 @@
 		//////
 			if (!iVariable_isValid(p1) || !iVariable_isTypeNumeric(p1))
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -2967,7 +3191,7 @@
 		//////
 			if (!iVariable_isValid(p2) || !iVariable_isTypeNumeric(p2))
 			{
-				iError_report("Parameter 2 is not correct");
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -3081,7 +3305,7 @@
 		//////
 			if (!iVariable_isValid(p1) || !iVariable_isTypeNumeric(p1))
 			{
-				iError_report("Parameter 1 is not correct");
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 
@@ -3091,7 +3315,7 @@
 		//////
 			if (!iVariable_isValid(p2) || !iVariable_isTypeNumeric(p2))
 			{
-				iError_report("Parameter 2 is not correct");
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, NULL);
 				return(NULL);
 			}
 

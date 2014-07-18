@@ -165,6 +165,13 @@
 	const u32		_ERROR_TOO_MANY_PARAMETERS						= 13;
 	const u32		_ERROR_DATA_TYPE_MISMATCH						= 14;
 	const u32		_ERROR_FEATURE_NOT_AVAILABLE					= 15;
+	const u32		_ERROR_P1_IS_INCORRECT							= 16;
+	const u32		_ERROR_P2_IS_INCORRECT							= 17;
+	const u32		_ERROR_P3_IS_INCORRECT							= 18;
+	const u32		_ERROR_P4_IS_INCORRECT							= 19;
+	const u32		_ERROR_P5_IS_INCORRECT							= 20;
+	const u32		_ERROR_P6_IS_INCORRECT							= 21;
+	const u32		_ERROR_P7_IS_INCORRECT							= 22;
 
 	// Messages
 	const s8		cgcComponentError[]								= "Error in component, column ";
@@ -183,6 +190,13 @@
 	const s8		cgcTooManyParameters[]							= "too many parameters";
 	const s8		cgcDataTypeMismatch[]							= "data type mismatch";
 	const s8		cgcFeatureNotAvailable[]						= "feature not available";
+	const s8		cgcP1IsIncorrect[]								= "parameter 1 is incorrect";
+	const s8		cgcP2IsIncorrect[]								= "parameter 2 is incorrect";
+	const s8		cgcP3IsIncorrect[]								= "parameter 3 is incorrect";
+	const s8		cgcP4IsIncorrect[]								= "parameter 4 is incorrect";
+	const s8		cgcP5IsIncorrect[]								= "parameter 5 is incorrect";
+	const s8		cgcP6IsIncorrect[]								= "parameter 6 is incorrect";
+	const s8		cgcP7IsIncorrect[]								= "parameter 7 is incorrect";
 	
 
 //////////
