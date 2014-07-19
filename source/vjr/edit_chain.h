@@ -39,10 +39,10 @@
 //////////
 // Forward declarations
 //////
-	void					iEditChain_free							(SEditChain** root, bool tlDeleteSelf);
-	void					iEditChain_ensureLineLength				(SEditChain* ecm, s32 newLineLength);
+	void					iEditChain_free							(SEdit** root, bool tlDeleteSelf);
+	void					iEditChain_ensureLineLength				(SEdit* ecm, s32 newLineLength);
 
 	// For editing
-	bool					iEditChain_characterInsert				(SEditChainManager* ecm, u8 asciiChar);
-	bool					iEditChain_characterOverwrite			(SEditChainManager* ecm, u8 asciiChar);
-	bool					iEditChain_characterDelete				(SEditChainManager* ecm);
+	bool					iEditChain_characterInsert				(SEM* ecm, u8 asciiChar);
+	bool					iEditChain_characterOverwrite			(SEM* ecm, u8 asciiChar);
+	bool					iEditChain_characterDelete				(SEM* ecm);

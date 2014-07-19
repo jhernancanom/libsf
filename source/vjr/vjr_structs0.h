@@ -39,8 +39,8 @@
 // Forward definition for references
 struct SObject;
 struct SVariable;
-struct SEditChainManager;
-struct SEditChain;
+struct SEM;
+struct SEdit;
 struct SComp;
 struct SCompiler;
 struct SFunction;

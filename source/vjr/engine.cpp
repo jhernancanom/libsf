@@ -41,7 +41,7 @@
 // Called to execute a stand-alone command, such as from the command window.
 //
 //////
-	bool iEngine_executeStandaloneCommand(SEditChain* line)
+	bool iEngine_executeStandaloneCommand(SEdit* line)
 	{
 		bool		llManufactured;
 		SComp*		comp;

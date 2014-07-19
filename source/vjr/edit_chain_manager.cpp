@@ -43,15 +43,15 @@
 //////
 	SEditChainManager* iEditChainManager_allocate(void)
 	{
-		SEditChainManager* ecm;
+		SEM* ecm;
 
 
 		// Allocate a new structure
-		ecm = (SEditChainManager*)malloc(sizeof(SEditChainManager));
+		ecm = (SEM*)malloc(sizeof(SEM));
 
 		// Initialize
 		if (ecm)
-			memset(ecm, 0, sizeof(SEditChainManager));
+			memset(ecm, 0, sizeof(SEM));
 
 		// Indicate our status
 		return(ecm);
@@ -65,10 +65,10 @@
 // Called to accumulate the indicated line range into a builder buffer.
 //
 //////
-	SBuilder* iEditChainManager_accumulateBuilder(SEditChainManager* ecm, SEditChain* ecHintStart, SEditChain* ecHintEnd)
+	SBuilder* iEditChainManager_accumulateBuilder(SEM* ecm, SEdit* ecHintStart, SEdit* ecHintEnd)
 	{
 		SBuilder*		b;
-		SEditChain*		line;
+		SEdit*		line;
 
 
 		// Make sure our environment is sane
@@ -123,7 +123,7 @@
 							//////////
 							// Move to next line
 							//////
-								line = (SEditChain*)line->ll.next;
+								line = (SEdit*)line->ll.next;
 						}
 						// When we get here, the block is copied out
 				}
@@ -141,7 +141,7 @@
 // Called to save the indicated ECM to disk.  Saved as a raw text file.
 //
 //////
-	bool iEditChainManager_saveToDisk(SEditChainManager* ecm, s8* tcPathname)
+	bool iEditChainManager_saveToDisk(SEM* ecm, s8* tcPathname)
 	{
 		SBuilder* content;
 
@@ -175,7 +175,7 @@
 // Loads in a text file into an ECM beginning optionally near ecHint.
 //
 //////
-	bool iEditChainManager_loadFromDisk(SEditChainManager* ecm, SEditChain* ecHint, s8* tcPathname, bool tlInsertAfter)
+	bool iEditChainManager_loadFromDisk(SEM* ecm, SEdit* ecHint, s8* tcPathname, bool tlInsertAfter)
 	{
 		s32			lnI, lnJ, lnLast;
 		SBuilder*	content;
@@ -246,7 +246,7 @@
 // Duplicate the entire ECM
 //
 //////
-	bool iEditChainManager_duplicate(SEditChainManager** root, SEditChainManager* ecmSource, bool tlIncludeUndoHistory)
+	bool iEditChainManager_duplicate(SEM** root, SEM* ecmSource, bool tlIncludeUndoHistory)
 	{
 // 		SEditChainManager*	ecmNew;
 // 		SEditChain*			ecSource;
@@ -447,9 +447,9 @@ _asm int 3;
 // Called to free the ECM content, and optionally itself
 //
 //////
-	void iEditChainManager_delete(SEditChainManager** root, bool tlDeleteSelf)
+	void iEditChainManager_delete(SEM** root, bool tlDeleteSelf)
 	{
-		SEditChainManager* ecm;
+		SEM* ecm;
 
 
 		// Make sure our environment is sane
@@ -497,16 +497,16 @@ _asm int 3;
 // Called to delete the entire chain explicitly
 //
 //////
-	void iEditChainManager_deleteChain(SEditChainManager** root, bool tlDeleteSelf)
+	void iEditChainManager_deleteChain(SEM** root, bool tlDeleteSelf)
 	{
 		// Delete with no callback
 		iEditChainManager_deleteChainWithCallback(root, tlDeleteSelf, NULL);
 	}
 
-	void iEditChainManager_deleteChainWithCallback(SEditChainManager** root, bool tlDeleteSelf, SEditChainCallback* ecb)
+	void iEditChainManager_deleteChainWithCallback(SEM** root, bool tlDeleteSelf, SEcCallback* ecb)
 	{
 		SLL* nodeNext;
-		SEditChainCallback	lecb;
+		SEcCallback	lecb;
 
 
 		// Make sure our environment is sane
@@ -557,7 +557,7 @@ _asm int 3;
 				//////////
 				// Move to next node
 				//////
-					ecb->ec = (SEditChain*)nodeNext;
+					ecb->ec = (SEdit*)nodeNext;
 			}
 		}
 	}
@@ -570,9 +570,9 @@ _asm int 3;
 // Called to append a line of text to the indicated ECM.
 //
 //////
-	SEditChain* iEditChainManager_appendLine(SEditChainManager* ecm, s8* tcText, s32 tnTextLength)
+	SEdit* iEditChainManager_appendLine(SEM* ecm, s8* tcText, s32 tnTextLength)
 	{
-		SEditChain* ec;
+		SEdit* ec;
 
 
 		// Make sure our environment is sane
@@ -584,11 +584,11 @@ _asm int 3;
 			if (ecm->ecLast)
 			{
 				// Append after the last line
-				ec = (SEditChain*)iLl_appendNewNodeAtEnd((SLL**)&ecm->ecLast, sizeof(SEditChain));
+				ec = (SEdit*)iLl_appendNewNodeAtEnd((SLL**)&ecm->ecLast, sizeof(SEdit));
 
 			} else {
 				// This is the first line, add it and set the last line to the same
-				ec = (SEditChain*)iLl_appendNewNodeAtEnd((SLL**)&ecm->ecFirst, sizeof(SEditChain));
+				ec = (SEdit*)iLl_appendNewNodeAtEnd((SLL**)&ecm->ecFirst, sizeof(SEdit));
 				if (ec)
 				{
 					// Update defaults
@@ -631,9 +631,9 @@ _asm int 3;
 // Called to insert a line before or after the indicated line
 //
 //////
-	SEditChain* iEditChainManager_insertLine(SEditChainManager* ecm, s8* tcText, s32 tnTextLength, SEditChain* line, bool tlInsertAfter)
+	SEdit* iEditChainManager_insertLine(SEM* ecm, s8* tcText, s32 tnTextLength, SEdit* line, bool tlInsertAfter)
 	{
-		SEditChain* lineNew;
+		SEdit* lineNew;
 
 
 		// Make sure our environment is sane
@@ -642,11 +642,11 @@ _asm int 3;
 		if (ecm && line)
 		{
 			// Create a new entry
-			lineNew = (SEditChain*)malloc(sizeof(SEditChain));
+			lineNew = (SEdit*)malloc(sizeof(SEdit));
 			if (lineNew)
 			{
 				// Initialize
-				memset(lineNew, 0, sizeof(SEditChain));
+				memset(lineNew, 0, sizeof(SEdit));
 
 				// Append a blank line
 				lineNew->sourceCode = iDatum_allocate(tcText, tnTextLength);
@@ -726,10 +726,10 @@ _asm int 3;
 // Delete the indicated line
 //
 //////
-	void iEditChainManager_deleteLine(SEditChainManager* ecm)
+	void iEditChainManager_deleteLine(SEM* ecm)
 	{
-		SEditChain* lineDeleted;
-		SEditChain* lineNewCursorLine;
+		SEdit* lineDeleted;
+		SEdit* lineNewCursorLine;
 
 
 		// Make sure the environment is sane
@@ -743,7 +743,7 @@ _asm int 3;
 
 			// Delete the line itself, and determine which one would be the new line
 			lineDeleted			= ecm->ecCursorLine;
-			lineNewCursorLine	= (SEditChain*)iLl_deleteNode((SLL*)ecm->ecCursorLine, true);
+			lineNewCursorLine	= (SEdit*)iLl_deleteNode((SLL*)ecm->ecCursorLine, true);
 
 			// Update anything that may have changed as a result
 			if (ecm->ecLast == lineDeleted)
@@ -767,7 +767,7 @@ _asm int 3;
 // Called to get the colors
 //
 //////
-	void iEditChainManager_getColors(SEditChainManager* ecm, SObject* obj, SBgra& backColor, SBgra& foreColor)
+	void iEditChainManager_getColors(SEM* ecm, SObject* obj, SBgra& backColor, SBgra& foreColor)
 	{
 		union {
 			SSubObjForm*		form;
@@ -830,7 +830,7 @@ _asm int 3;
 // otherwise we use the object's rc.
 //
 //////
-	SFont* iEditChainManager_getRectAndFont(SEditChainManager* ecm, SObject* obj, RECT* rc)
+	SFont* iEditChainManager_getRectAndFont(SEM* ecm, SObject* obj, RECT* rc)
 	{
 		SFont* font;
 		union {
@@ -892,11 +892,11 @@ _asm int 3;
 // Called to render the ECM in the indicated rectangle on the object's bitmap
 //
 //////
-	void iEditChainManager_render(SEditChainManager* ecm, SObject* obj)
+	void iEditChainManager_render(SEM* ecm, SObject* obj)
 	{
 		s32				lnTop, lnLeft, lnRight;
 		SFont*			font;
-		SEditChain*		line;
+		SEdit*		line;
 		SBitmap*		bmp;
 		HGDIOBJ			hfontOld;
 		SBgra			foreColor, backColor, fillColor, backColorLast, foreColorLast;
@@ -1015,7 +1015,7 @@ _asm int 3;
 				// Move down to the next row
 				//////
 					lnTop	+= font->tm.tmHeight;
-					line	= (SEditChain*)line->ll.next;
+					line	= (SEdit*)line->ll.next;
 			}
 
 			// Fill in the remainder of the display
@@ -1035,12 +1035,12 @@ _asm int 3;
 // Called to verify the cursor is visible by adjuting ecm->leftColumn
 //
 //////
-	bool iEditChainManager_verifyCursorIsVisible(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_verifyCursorIsVisible(SEM* ecm, SObject* obj)
 	{
 		s32				lnI, lnUp, lnDn, lnOldLeftColumn, lnNewLeftColumn, lnCols, lnRows, lnWidth, lnHeight;
 		bool			llChanged;
-		SEditChain*		lineUp;
-		SEditChain*		lineDn;
+		SEdit*		lineUp;
+		SEdit*		lineDn;
 		SFont*			font;
 		RECT			lrc;
 
@@ -1119,7 +1119,7 @@ _asm int 3;
 								//////
 									if (lineUp)
 									{
-										lineUp = (SEditChain*)lineUp->ll.prev;
+										lineUp = (SEdit*)lineUp->ll.prev;
 										++lnUp;
 									}
 
@@ -1129,7 +1129,7 @@ _asm int 3;
 								//////
 									if (lineDn)
 									{
-										lineDn = (SEditChain*)lineDn->ll.next;
+										lineDn = (SEdit*)lineDn->ll.next;
 										++lnDn;
 									}
 							}
@@ -1147,7 +1147,7 @@ _asm int 3;
 								{
 									// And the position is too far down
 									for (lnI = 0; lnI < lnDn - lnRows; lnI++)
-										ecm->ecTopLine = (SEditChain*)ecm->ecTopLine->ll.next;
+										ecm->ecTopLine = (SEdit*)ecm->ecTopLine->ll.next;
 
 									// Indicate the change
 									llChanged = true;
@@ -1175,7 +1175,7 @@ _asm int 3;
 // Called to process the ASCII character into the input buffer.
 //
 //////
-	bool iEditChainManager_keystroke(SEditChainManager* ecm, SObject* obj, u8 asciiChar)
+	bool iEditChainManager_keystroke(SEM* ecm, SObject* obj, u8 asciiChar)
 	{
 		bool	llChanged;
 		SFont*	font;
@@ -1259,13 +1259,13 @@ _asm int 3;
 // Called to navigate rows (deltaY) or columns (deltaX) or both.
 //
 //////
-	bool iEditChainManager_navigate(SEditChainManager* ecm, SObject* obj, s32 deltaY, s32 deltaX)
+	bool iEditChainManager_navigate(SEM* ecm, SObject* obj, s32 deltaY, s32 deltaX)
 	{
 		s32				lnI, lnTop, lnBottom;
 		bool			llResetTopLine;
 		SFont*			font;
-		SEditChain*		line;
-		SEditChain*		lineRunner;
+		SEdit*		line;
+		SEdit*		lineRunner;
 		RECT			lrc;
 
 
@@ -1295,7 +1295,7 @@ _asm int 3;
 						{
 							// Going forward
 							for (lnI = 0; line->ll.next && lnI != deltaY; lnI++)
-								line = (SEditChain*)line->ll.next;
+								line = (SEdit*)line->ll.next;
 
 							// We need to scan forward from ecTopLine to see if we'd be off screen.
 							// If so, we drag ecTopLine forward until we reach the visible portion
@@ -1310,7 +1310,7 @@ _asm int 3;
 									if (lnTop > lnBottom)
 									{
 										// We're off screen, so we're dragging the top forward
-										ecm->ecTopLine = (SEditChain*)ecm->ecTopLine->ll.next;
+										ecm->ecTopLine = (SEdit*)ecm->ecTopLine->ll.next;
 
 									} else {
 										// Still on the same page
@@ -1321,7 +1321,7 @@ _asm int 3;
 								//////////
 								// Move to next line
 								//////
-									lineRunner = (SEditChain*)lineRunner->ll.next;
+									lineRunner = (SEdit*)lineRunner->ll.next;
 							}
 
 						} else {
@@ -1334,7 +1334,7 @@ _asm int 3;
 									llResetTopLine = true;
 
 								// Move back one line
-								line = (SEditChain*)line->ll.prev;
+								line = (SEdit*)line->ll.prev;
 							}
 
 							if (llResetTopLine)
@@ -1388,7 +1388,7 @@ _asm int 3;
 // Called to navigate pages (deltaY) forward or backward)
 //
 //////
-	bool iEditChainManager_navigatePages(SEditChainManager* ecm, SObject* obj, s32 deltaY)
+	bool iEditChainManager_navigatePages(SEM* ecm, SObject* obj, s32 deltaY)
 	{
 		s32		lnI;
 		SFont*	font;
@@ -1416,8 +1416,8 @@ _asm int 3;
 						for (lnI = 0; ecm->ecCursorLine->ll.next && lnI != deltaY; lnI++)
 						{
 							// Move the top line to the next line
-							ecm->ecTopLine		= (SEditChain*)ecm->ecTopLine->ll.next;
-							ecm->ecCursorLine	= (SEditChain*)ecm->ecCursorLine->ll.next;
+							ecm->ecTopLine		= (SEdit*)ecm->ecTopLine->ll.next;
+							ecm->ecCursorLine	= (SEdit*)ecm->ecCursorLine->ll.next;
 						}
 
 					} else {
@@ -1426,10 +1426,10 @@ _asm int 3;
 						{
 							// Move the top line up (if we can)
 							if (ecm->ecTopLine->ll.prev)
-								ecm->ecTopLine	= (SEditChain*)ecm->ecTopLine->ll.prev;
+								ecm->ecTopLine	= (SEdit*)ecm->ecTopLine->ll.prev;
 
 							// Move the cursor line up
-							ecm->ecCursorLine	= (SEditChain*)ecm->ecCursorLine->ll.prev;
+							ecm->ecCursorLine	= (SEdit*)ecm->ecCursorLine->ll.prev;
 						}
 
 					}
@@ -1458,7 +1458,7 @@ _asm int 3;
 // Called to clear the entire line.
 //
 //////
-	bool iEditChainManager_clearLine(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_clearLine(SEM* ecm, SObject* obj)
 	{
 		RECT	lrc;
 		SFont*	font;
@@ -1482,7 +1482,7 @@ _asm int 3;
 // Called to clear from where we are to the end of the line
 //
 //////
-	bool iEditChainManager_clearToEndOfLine(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_clearToEndOfLine(SEM* ecm, SObject* obj)
 	{
 		RECT	lrc;
 		SFont*	font;
@@ -1506,7 +1506,7 @@ _asm int 3;
 // Called to clear from one character left of where we are to the beginning of the line
 //
 //////
-	bool iEditChainManager_clearToBeginningOfLine(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_clearToBeginningOfLine(SEM* ecm, SObject* obj)
 	{
 		RECT	lrc;
 		SFont*	font;
@@ -1530,7 +1530,7 @@ _asm int 3;
 // Called to toggle insert mode
 //
 //////
-	bool iEditChainManager_toggleInsert(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_toggleInsert(SEM* ecm, SObject* obj)
 	{
 		if (ecm)
 		{
@@ -1553,7 +1553,7 @@ _asm int 3;
 // Called when the users press TAB
 //
 //////
-	bool iEditChainManager_tabIn(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_tabIn(SEM* ecm, SObject* obj)
 	{
 		RECT	lrc;
 		SFont*	font;
@@ -1577,7 +1577,7 @@ _asm int 3;
 // Called when the users presses SHIFT+TAB
 //
 //////
-	bool iEditChainManager_tabOut(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_tabOut(SEM* ecm, SObject* obj)
 	{
 		RECT	lrc;
 		SFont*	font;
@@ -1601,7 +1601,7 @@ _asm int 3;
 // 
 //
 //////
-	bool iEditChainManager_returnKey(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_returnKey(SEM* ecm, SObject* obj)
 	{
 		RECT	lrc;
 		SFont*	font;
@@ -1648,7 +1648,7 @@ _asm int 3;
 // Called to select everything
 //
 //////
-	bool iEditChainManager_selectAll(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_selectAll(SEM* ecm, SObject* obj)
 	{
 		RECT	lrc;
 		SFont*	font;
@@ -1672,7 +1672,7 @@ _asm int 3;
 // Called to cut to the clipboard
 //
 //////
-	bool iEditChainManager_cut(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_cut(SEM* ecm, SObject* obj)
 	{
 		RECT	lrc;
 		SFont*	font;
@@ -1696,7 +1696,7 @@ _asm int 3;
 // Called to copy to the clipboard
 //
 //////
-	bool iEditChainManager_copy(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_copy(SEM* ecm, SObject* obj)
 	{
 		RECT	lrc;
 		SFont*	font;
@@ -1720,7 +1720,7 @@ _asm int 3;
 // Called to paste from the clipboard
 //
 //////
-	bool iEditChainManager_paste(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_paste(SEM* ecm, SObject* obj)
 	{
 		RECT	lrc;
 		SFont*	font;
@@ -1744,10 +1744,10 @@ _asm int 3;
 // Called to navigate one word left
 //
 //////
-	bool iEditChainManager_navigateWordLeft(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_navigateWordLeft(SEM* ecm, SObject* obj)
 	{
 		SFont*			font;
-		SEditChain*		line;
+		SEdit*		line;
 		RECT			lrc;
 
 
@@ -1847,10 +1847,10 @@ _asm int 3;
 // Called to navigate one word right
 //
 //////
-	bool iEditChainManager_navigateWordRight(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_navigateWordRight(SEM* ecm, SObject* obj)
 	{
 		SFont*			font;
-		SEditChain*		line;
+		SEdit*		line;
 		RECT			lrc;
 
 
@@ -1961,7 +1961,7 @@ _asm int 3;
 // Called to navigate to the top of the chain
 //
 //////
-	bool iEditChainManager_navigateTop(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_navigateTop(SEM* ecm, SObject* obj)
 	{
 		// Make sure the environment is sane
 		if (ecm && ecm->ecFirst)
@@ -1990,11 +1990,11 @@ _asm int 3;
 // Called to navigate to the end of the chain
 //
 //////
-	bool iEditChainManager_navigateEnd(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_navigateEnd(SEM* ecm, SObject* obj)
 	{
 		s32				lnTop, lnBottom;
 		SFont*			font;
-		SEditChain*		line;
+		SEdit*		line;
 		RECT			lrc;
 
 
@@ -2030,7 +2030,7 @@ _asm int 3;
 							if (lnTop > lnBottom)
 							{
 								// We're off screen, so we're dragging the top forward
-								ecm->ecTopLine = (SEditChain*)ecm->ecTopLine->ll.next;
+								ecm->ecTopLine = (SEdit*)ecm->ecTopLine->ll.next;
 
 							} else {
 								// Still on the same page
@@ -2041,7 +2041,7 @@ _asm int 3;
 						//////////
 						// Move to next line
 						//////
-							line = (SEditChain*)line->ll.next;
+							line = (SEdit*)line->ll.next;
 					}
 
 
@@ -2076,7 +2076,7 @@ _asm int 3;
 //        which begins at an arbitrary column, and ends at an arbitrary column.
 //
 //////
-	bool iEditChainManager_selectLineUp(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_selectLineUp(SEM* ecm, SObject* obj)
 	{
 		RECT	lrc;
 		SFont*	font;
@@ -2102,7 +2102,7 @@ _asm int 3;
 //        which begins at an arbitrary column, and ends at an arbitrary column.
 //
 //////
-	bool iEditChainManager_selectLineDown(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_selectLineDown(SEM* ecm, SObject* obj)
 	{
 		RECT	lrc;
 		SFont*	font;
@@ -2128,7 +2128,7 @@ _asm int 3;
 //        the end of the line, at which time we will navigate to the next line.
 //
 //////
-	bool iEditChainManager_selectLeft(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_selectLeft(SEM* ecm, SObject* obj)
 	{
 		RECT	lrc;
 		SFont*	font;
@@ -2152,7 +2152,7 @@ _asm int 3;
 // Called to select right one character.
 //
 //////
-	bool iEditChainManager_selectRight(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_selectRight(SEM* ecm, SObject* obj)
 	{
 		RECT	lrc;
 		SFont*	font;
@@ -2176,7 +2176,7 @@ _asm int 3;
 // Called to select from where we are to the end of line
 //
 //////
-	bool iEditChainManager_selectToEndOfLine(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_selectToEndOfLine(SEM* ecm, SObject* obj)
 	{
 		RECT	lrc;
 		SFont*	font;
@@ -2200,7 +2200,7 @@ _asm int 3;
 // Called to left one character of where we are to the beginning of line
 //
 //////
-	bool iEditChainManager_selectToBeginOfLine(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_selectToBeginOfLine(SEM* ecm, SObject* obj)
 	{
 		RECT	lrc;
 		SFont*	font;
@@ -2224,7 +2224,7 @@ _asm int 3;
 // Called to toggle selection by column mode
 //
 //////
-	bool iEditChainManager_selectColumnToggle(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_selectColumnToggle(SEM* ecm, SObject* obj)
 	{
 		RECT	lrc;
 		SFont*	font;
@@ -2248,7 +2248,7 @@ _asm int 3;
 // Called to toggle selection by line mode
 //
 //////
-	bool iEditChainManager_selectLineToggle(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_selectLineToggle(SEM* ecm, SObject* obj)
 	{
 		RECT	lrc;
 		SFont*	font;
@@ -2275,7 +2275,7 @@ _asm int 3;
 //        and all of the previous line will be selected.
 //
 //////
-	bool iEditChainManager_selectWordLeft(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_selectWordLeft(SEM* ecm, SObject* obj)
 	{
 		RECT	lrc;
 		SFont*	font;
@@ -2302,7 +2302,7 @@ _asm int 3;
 //        of the next line will be selected.
 //
 //////
-	bool iEditChainManager_selectWordRight(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_selectWordRight(SEM* ecm, SObject* obj)
 	{
 		RECT	lrc;
 		SFont*	font;
@@ -2326,10 +2326,10 @@ _asm int 3;
 // Called to delete one character left (backspace)
 //
 //////
-	bool iEditChainManager_deleteLeft(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_deleteLeft(SEM* ecm, SObject* obj)
 	{
-		SEditChain*	line;
-		SEditChain*	lineLast;
+		SEdit*	line;
+		SEdit*	lineLast;
 		SFont*		font;
 		RECT		lrc;
 
@@ -2430,7 +2430,7 @@ _asm int 3;
 // Called to select one character right (delete key)
 //
 //////
-	bool iEditChainManager_deleteRight(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_deleteRight(SEM* ecm, SObject* obj)
 	{
 		SFont*	font;
 		RECT	lrc;
@@ -2482,7 +2482,7 @@ _asm int 3;
 // Called to delete one word left (ctrl+backspace)
 //
 //////
-	bool iEditChainManager_deleteWordLeft(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_deleteWordLeft(SEM* ecm, SObject* obj)
 	{
 		RECT	lrc;
 		SFont*	font;
@@ -2506,7 +2506,7 @@ _asm int 3;
 // Called to delete one word right (ctrl+delete)
 //
 //////
-	bool iEditChainManager_deleteWordRight(SEditChainManager* ecm, SObject* obj)
+	bool iEditChainManager_deleteWordRight(SEM* ecm, SObject* obj)
 	{
 		RECT	lrc;
 		SFont*	font;

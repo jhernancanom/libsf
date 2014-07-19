@@ -36,8 +36,8 @@
 
 
 
-struct SEditChainManager;
-struct SEditChain;
+struct SEM;
+struct SEdit;
 struct SFunction;
 struct SNode;
 struct SLL;
@@ -58,7 +58,7 @@ struct SVariable;
 //////////
 // compiler.cpp
 //////////
-	u32						compile_Vxbmm								(SEditChainManager* codeBlock_, SCompileContext* ccData_, bool tlEditAndContinue_);
+	u32						compile_Vxbmm								(SEM* codeBlock_, SCompileContext* ccData_, bool tlEditAndContinue_);
 	void					iiCompile_Vxbmm_precompile					(SCompileVxbmmContext* cvc);
 	void					iiCompile_Vxbmm_compile						(SCompileVxbmmContext* cvc);
 	void					iiCompile_Vxbmm_postcompile					(SCompileVxbmmContext* cvc);
@@ -70,28 +70,28 @@ struct SVariable;
 	void					iiComps_decodeSyntax_lparameters			(SCompileVxbmmContext* cvc);
 	void					iiComps_decodeSyntax_returns				(SCompileVxbmmContext* cvc);
 
-	bool					iiComps_xlatToNodes							(SEditChain* line, SCompiler* compiler);
+	bool					iiComps_xlatToNodes							(SEdit* line, SCompiler* compiler);
 	SNode*					iiComps_xlatToNodes_parenthesis_left		(SNode** root, SNode* active, SComp* comp);
 	SNode*					iiComps_xlatToNodes_parenthesis_right		(SNode** root, SNode* active, SComp* comp);
 
-	void					iComps_removeAll							(SEditChain* line);
- 	SComp*					iComps_translateSourceLineTo				(SAsciiCompSearcher* tsComps, SEditChain* line);
- 	void					iComps_translateToOthers					(SAsciiCompSearcher* tsComps, SEditChain* line);
+	void					iComps_removeAll							(SEdit* line);
+ 	SComp*					iComps_translateSourceLineTo				(SAsciiCompSearcher* tsComps, SEdit* line);
+ 	void					iComps_translateToOthers					(SAsciiCompSearcher* tsComps, SEdit* line);
 	s32						iComps_translateToOthers_test				(s8* tcHaystack, s8* tcNeedle, s32 tnLength);
 	SComp*					iComps_findNextBy_iCode						(SComp* comp, u32 tniCode, SComp** compLastScanned);
 	SComp*					iComps_skipPast_iCode						(SComp* comp, u32 tniCode);
 	u32						iComps_combineNextN							(SComp* comp, u32 tnCount, s32 tnNewICode);
-	u32						iComps_combine2								(SEditChain* line, u32 tniCodeNeedle1, u32 tniCodeNeedle2,                     u32 tniCodeCombined);
-	u32						iComps_combine3								(SEditChain* line, u32 tniCodeNeedle1, u32 tniCodeNeedle2, u32 tniCodeNeedle3, u32 tniCodeCombined);
-	u32						iComps_combineAdjacentAlphanumeric			(SEditChain* line);
-	u32						iComps_combineAdjacentNumeric				(SEditChain* line);
-	u32						iComps_combineAdjacentDotForms				(SEditChain* line);
-	u32						iComps_combineAllBetween					(SEditChain* line, u32 tniCodeNeedle,                                          u32 tniCodeCombined);
-	u32						iComps_combineAllAfter						(SEditChain* line, u32 tniCodeNeedle);
-	u32						iComps_deleteAllAfter						(SEditChain* line, u32 tniCodeNeedle);
-	u32						iComps_removeWhitespaces					(SEditChain* line);
-	void					iComps_removeStartEndComments				(SEditChain* line);
-	void					iComps_fixupNaturalGroupings				(SEditChain* line);
+	u32						iComps_combine2								(SEdit* line, u32 tniCodeNeedle1, u32 tniCodeNeedle2,                     u32 tniCodeCombined);
+	u32						iComps_combine3								(SEdit* line, u32 tniCodeNeedle1, u32 tniCodeNeedle2, u32 tniCodeNeedle3, u32 tniCodeCombined);
+	u32						iComps_combineAdjacentAlphanumeric			(SEdit* line);
+	u32						iComps_combineAdjacentNumeric				(SEdit* line);
+	u32						iComps_combineAdjacentDotForms				(SEdit* line);
+	u32						iComps_combineAllBetween					(SEdit* line, u32 tniCodeNeedle,                                          u32 tniCodeCombined);
+	u32						iComps_combineAllAfter						(SEdit* line, u32 tniCodeNeedle);
+	u32						iComps_deleteAllAfter						(SEdit* line, u32 tniCodeNeedle);
+	u32						iComps_removeWhitespaces					(SEdit* line);
+	void					iComps_removeStartEndComments				(SEdit* line);
+	void					iComps_fixupNaturalGroupings				(SEdit* line);
 	s32						iiComps_charactersBetween					(SComp* compLeft, SComp* compRight);
 
 //////////
@@ -100,11 +100,11 @@ struct SVariable;
 // refactored or deleted.
 // BEGIN
 //////
-	void					iiComps_xlatToSubInstr						(SEditChain* line);
-	SComp*					iiComps_xlatToSubInstr_findInmostExpression	(SNode* si, SEditChain* line);
+	void					iiComps_xlatToSubInstr						(SEdit* line);
+	SComp*					iiComps_xlatToSubInstr_findInmostExpression	(SNode* si, SEdit* line);
 	void					iiComps_xlatToSubInstr_findStartOfComponent	(SComp* compRoot, SOp* op);
 	void					iiComps_xlatToSubInstr_findFullComponent	(SComp* compRoot, SOp* op);
-	bool					iiComps_xlatToSubInstr_isEqualAssignment	(SEditChain* line);
+	bool					iiComps_xlatToSubInstr_isEqualAssignment	(SEdit* line);
 //////
 // END
 //////////
@@ -123,10 +123,10 @@ struct SVariable;
 	bool					iioss_translateCompsToOthersCallback		(SStartEndCallback* cb);
 	void*					iSEChain_searchByCallback					(SStartEnd* ptrSE, SStartEndCallback* cb);
 	void					iiComps_xlatToOthersCallback__insertCompByCompCallback		(SComp* compRef, SComp* compNew, bool tlInsertAfter);
-	void					iiComps_xlatToOthersCallback__insertCompByParamsCallback	(SComp* compRef, SEditChain* line, u32 tniCode, u32 tnStart, s32 tnLength, bool tlInsertAfter);
-	void					iiComps_xlatToOthersCallback__deleteCompsCallback			(SComp* comp, SEditChain* line);
-	SComp*					iiComps_xlatToOthersCallback__cloneCompsCallback			(SComp* comp, SEditChain* line);
-	SComp*					iiComps_xlatToOthersCallback__mergeCompsCallback			(SComp* comp, SEditChain* line, u32 tnCount, u32 tniCodeNew);
+	void					iiComps_xlatToOthersCallback__insertCompByParamsCallback	(SComp* compRef, SEdit* line, u32 tniCode, u32 tnStart, s32 tnLength, bool tlInsertAfter);
+	void					iiComps_xlatToOthersCallback__deleteCompsCallback			(SComp* comp, SEdit* line);
+	SComp*					iiComps_xlatToOthersCallback__cloneCompsCallback			(SComp* comp, SEdit* line);
+	SComp*					iiComps_xlatToOthersCallback__mergeCompsCallback			(SComp* comp, SEdit* line, u32 tnCount, u32 tniCodeNew);
 	void					iSEChain_deleteFrom							(SStartEnd* ptrSE, void* ptrCaller, bool tlDeletePointers);
 	SLL*					iSEChain_completelyMigrateSLLByPtr			(SStartEnd* ptrSEDst, SStartEnd* ptrSESrc, SLL* ptr, u32 tnHint, u32 tnBlockSize);
 	SLL*					iSEChain_completelyMigrateSLLByNum			(SStartEnd* ptrSEDst, SStartEnd* ptrSESrc, u32 lnSrcNum, u32 tnHint, u32 tnBlockSize);
@@ -205,11 +205,11 @@ struct SVariable;
 
 
 	// Line functions
-	void					iLine_appendError							(SEditChain* line, u32 tnErrorNum,   s8* tcMessage, u32 tnStartColumn, u32 tnLength);
-	void					iLine_appendWarning							(SEditChain* line, u32 tnWarningNum, s8* tcMessage, u32 tnStartColumn, u32 tnLength);
+	void					iLine_appendError							(SEdit* line, u32 tnErrorNum,   s8* tcMessage, u32 tnStartColumn, u32 tnLength);
+	void					iLine_appendWarning							(SEdit* line, u32 tnWarningNum, s8* tcMessage, u32 tnStartColumn, u32 tnLength);
 
 	// Compiler functions
-	SCompiler*				iCompiler_allocate							(SEditChain* parent);
+	SCompiler*				iCompiler_allocate							(SEdit* parent);
 	void					iCompiler_delete							(SCompiler** root, bool tlDeleteSelf);
 
 	// Compile note functions

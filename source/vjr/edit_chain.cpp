@@ -42,9 +42,9 @@
 // buffer for the new indicated line length.
 //
 //////
-	bool iEditChain_ensureLineLength(SEditChainManager* ecm, s32 newLineLength)
+	bool iEditChain_ensureLineLength(SEM* ecm, s32 newLineLength)
 	{
-		SEditChain* line;
+		SEdit* line;
 
 
 		// Make sure the environment is sane
@@ -78,10 +78,10 @@
 // Free the edit chain
 //
 //////
-	void iEditChain_free(SEditChain** root, bool tlDeleteSelf)
+	void iEditChain_free(SEdit** root, bool tlDeleteSelf)
 	{
-		SEditChain*		chain;
-		SEditChain*		chainNext;
+		SEdit*		chain;
+		SEdit*		chainNext;
 
 
 // TODO:  COMPLETELY UNTESTED.  BREAKPOINT AND EXAMINE.
@@ -96,7 +96,7 @@ _asm int 3;
 				//////////
 				// Note next item in chain
 				//////
-					chainNext = (SEditChain*)chain->ll.next;
+					chainNext = (SEdit*)chain->ll.next;
 
 
 				//////////
@@ -141,10 +141,10 @@ _asm int 3;
 // Called to insert a character
 //
 //////
-	bool iEditChain_characterInsert(SEditChainManager* ecm, u8 asciiChar)
+	bool iEditChain_characterInsert(SEM* ecm, u8 asciiChar)
 	{
 		s32				lnI;
-		SEditChain*		line;
+		SEdit*		line;
 
 
 		// Make sure our environment is sane
@@ -196,10 +196,10 @@ _asm int 3;
 // Called to overwrite the existing character wherever we are
 //
 //////
-	bool iEditChain_characterOverwrite(SEditChainManager* ecm, u8 asciiChar)
+	bool iEditChain_characterOverwrite(SEM* ecm, u8 asciiChar)
 	{
 		s32				lnI;
-		SEditChain*		line;
+		SEdit*		line;
 
 
 		// Make sure our environment is sane
@@ -254,10 +254,10 @@ _asm int 3;
 // will affect the line in different ways.
 //
 //////
-	bool iEditChain_characterDelete(SEditChainManager* ecm)
+	bool iEditChain_characterDelete(SEM* ecm)
 	{
 		s32			lnI;
-		SEditChain* line;
+		SEdit* line;
 
 
 		// Make sure our environment is sane

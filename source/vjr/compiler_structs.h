@@ -130,8 +130,8 @@ struct SCompileNote;
 		SFunction*		firstAdhoc;											// First ADHOC function contained within this function
 
 		// Where the function began in source code as of last compile
-		SEditChain*		firstLine;											// First line of the function
-		SEditChain*		lastLine;											// Last line of the function
+		SEdit*		firstLine;											// First line of the function
+		SEdit*		lastLine;											// Last line of the function
 	};
 
 	struct SCompileContext
@@ -155,13 +155,13 @@ struct SCompileNote;
 	struct SCompileVxbmmContext
 	{
 		// Parameters
-		SEditChainManager*	codeBlock;
+		SEM*	codeBlock;
 		SCompileContext*	ccData;
 		bool				editAndContinue;
 
 		bool				llProcessThisLine;
 		SCompileContext		ccDataLocal;
-		SEditChain*			line;
+		SEdit*			line;
 		SFunction*			func;
 		SFunction*			currentFunction;
 		SFunction*			adhoc;
@@ -247,7 +247,7 @@ struct SCompileNote;
 		SLL				ll;												// 2-way link list
 
 		// Information about the component
-		SEditChain*		line;											// The line this component relates to
+		SEdit*		line;											// The line this component relates to
 		u32				iCode;											// Refer to _ICODE_* constants
 		u32				iCat;											// Refer to _ICAT_* constants
 		s32				start;											// Start into the indicates line's source code
@@ -270,19 +270,19 @@ struct SCompileNote;
 		};
 		union {
 			u32			_insertCompByParams;
-			void		(*insertCompByParams)	(SComp* compRef, SEditChain* line, u32 tniCode, u32 tnStart, s32 tnLength, bool tlInsertAfter);
+			void		(*insertCompByParams)	(SComp* compRef, SEdit* line, u32 tniCode, u32 tnStart, s32 tnLength, bool tlInsertAfter);
 		};
 		union {
 			u32			_deleteComps;
-			void		(*deleteComps)			(SComp* comp, SEditChain* line);
+			void		(*deleteComps)			(SComp* comp, SEdit* line);
 		};
 		union {
 			u32			_cloneComps;
-			SComp*		(*cloneComps)			(SComp* comp, SEditChain* line);
+			SComp*		(*cloneComps)			(SComp* comp, SEdit* line);
 		};
 		union {
 			u32			_mergeComps;
-			SComp*		(*mergeComps)			(SComp* comp, SEditChain* line, u32 tnCount, u32 tniCodeNew);
+			SComp*		(*mergeComps)			(SComp* comp, SEdit* line, u32 tnCount, u32 tniCodeNew);
 		};
 	};
 
@@ -344,7 +344,7 @@ struct SCompileNote;
 	struct SCompiler
 	{
 		// EC was designed with source code in mind, and that means a tight compiler relationship
-		SEditChain*		parent;											// The EC this belongs to (parent->parent points back to ECM)
+		SEdit*		parent;											// The EC this belongs to (parent->parent points back to ECM)
 
 		// The last source code line
 		SDatum*			sourceCode;										// Copy at last compile of LEFT(parent->sourceCode.data, parent->sourceCodePopulated)

@@ -60,91 +60,90 @@
 // objects.cpp
 // Note:  Property accessors are in the object_accessors.h and object_accessors.cpp source files
 //////
-	SObject*				iObj_create								(u32 objType, void* obj_data, SObject* objParent);
-	SObject*				iObj_addChild							(SObject* objParent, u32 objType, void** sub_obj_output);
-	SObject*				iObj_copy								(SObject* template_obj, SObject* next, SObject* parent, bool tlCopyChildren, bool tlCopySubobjects, bool tlCreateSeparateBitmapBuffers);
+	SObject*				iObj_create								(u32 objType, SObject* objParent);
+	SObject*				iObj_addChild							(SObject* objParent, u32 objType);
+	SObject*				iObj_copy								(SObject* template_obj, SObject* next, SObject* parent, bool tlCopyChildren, bool tlCreateSeparateBitmapBuffers);
 	void					iObj_delete								(SObject** obj, bool tlDeleteSelf);
-	u32						iObj_render								(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings);
-	void					iObj_renderChildrenAndSiblings			(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings);
-	u32						iObj_publish							(SBitmap* bmpDst, RECT* rc, SObject* obj, bool tlPublishChildren, bool tlPublishSiblings);
+	u32						iObj_render								(SObject*  obj, bool tlRenderChildren, bool tlRenderSiblings);
+	void					iObj_renderChildrenAndSiblings			(SObject*  obj, bool tlRenderChildren, bool tlRenderSiblings);
 	void					iObj_duplicateChain						(SObject** root, SObject* chain);
-	void					iObj_appendObjToParent					(SObject* parent, SObject* obj);
-	void					iObj_duplicateChildren					(SObject* objDst, SObject* objSrc);
-	void					iObj_setSize							(SObject* obj, s32 tnLeft, s32 tnTop, s32 tnWidth, s32 tnHeight);
-	SWindow* 				iObj_createWindowForForm				(SObject* obj_form, SWindow* win, s32 icon);
-	bool					iObj_setVisible							(SObject* obj, bool tlNewVisible);
-	void*					iObj_copySubobj							(SObject* template_obj);
-	SVariable*				iObj_getPropertyAsVariable				(SObject* obj, s8* tcPropertyName, u32 tnPropertyNameLength, SComp* comp);
-	void					iiObj_resetToDefault					(SObject* obj, bool tlResetProperties, bool tlResetMethods);
-	void					iiObj_resetToDefaultCommon				(SObject* obj, bool tlResetProperties, bool tlResetMethods);
+	void					iObj_appendObjToParent					(SObject*  parent, SObject* obj);
+	void					iObj_duplicateChildren					(SObject*  objDst, SObject* objSrc);
+	void					iObj_setSize							(SObject*  obj, s32 tnLeft, s32 tnTop, s32 tnWidth, s32 tnHeight);
+	SWindow* 				iObj_createWindowForForm				(SObject*  form, SWindow* win, s32 icon);
+	bool					iObj_setVisible							(SObject*  obj, bool tlNewVisible);
+	SVariable*				iObj_getPropertyAsVariable				(SObject*  obj, s8* tcPropertyName, u32 tnPropertyNameLength, SComp* comp);
+	void					iiObj_resetToDefault					(SObject*  obj, bool tlResetProperties, bool tlResetMethods);
+	void					iiObj_resetToDefaultCommon				(SObject*  obj, bool tlResetProperties, bool tlResetMethods);
+	u32						iObj_publish							(SBitmap* bmpDst, RECT* rc, SObject* obj, bool tlPublishChildren, bool tlPublishSiblings);
 	s32						iiObj_getBaseclass_byName				(s8* tcTextname, s32 tnTextnameLength);
 	SBaseclassList*			iiObj_getBaseclass_byType				(u32 tnObjType);
 
 	// Creation of individual sub-objects
-	SSubObjEmpty*			iSubobj_createEmpty						(SSubObjEmpty*		template_subobj, SObject* parent);
-	SSubObjForm*			iSubobj_createForm						(SSubObjForm*		template_subobj, SObject* parent);
-	SSubObjSubform*			iSubobj_createSubform					(SSubObjSubform*	template_subobj, SObject* parent);
-	SSubObjLabel*			iSubobj_createLabel						(SSubObjLabel*		template_subobj, SObject* parent);
-	SSubObjTextbox*			iSubobj_createTextbox					(SSubObjTextbox*	template_subobj, SObject* parent);
-	SSubObjButton*			iSubobj_createButton					(SSubObjButton*		template_subobj, SObject* parent);
-	SSubObjEditbox*			iSubobj_createEditbox					(SSubObjEditbox*	template_subobj, SObject* parent);
-	SSubObjImage*			iSubobj_createImage						(SSubObjImage*		template_subobj, SObject* parent);
-	SSubObjCheckbox*		iSubobj_createCheckbox					(SSubObjCheckbox*	template_subobj, SObject* parent);
-	SSubObjOption*			iSubobj_createOption					(SSubObjOption*		template_subobj, SObject* parent);
-	SSubObjRadio*			iSubobj_createRadio						(SSubObjRadio*		template_subobj, SObject* parent);
+	SObject*				iSubobj_createEmpty						(SObject*	template_empty,		SObject* parent);
+	SObject*				iSubobj_createForm						(SObject*	template_form,		SObject* parent);
+	SObject*				iSubobj_createSubform					(SObject*	template_subform,	SObject* parent);
+	SObject*				iSubobj_createLabel						(SObject*	template_label,		SObject* parent);
+	SObject*				iSubobj_createTextbox					(SObject*	template_textbox,	SObject* parent);
+	SObject*				iSubobj_createButton					(SObject*	template_button,	SObject* parent);
+	SObject*				iSubobj_createEditbox					(SObject*	template_editbox,	SObject* parent);
+	SObject*				iSubobj_createImage						(SObject*	template_image,		SObject* parent);
+	SObject*				iSubobj_createCheckbox					(SObject*	template_checkbox,	SObject* parent);
+	SObject*				iSubobj_createOption					(SObject*	template_option,	SObject* parent);
+	SObject*				iSubobj_createRadio						(SObject*	template_radio,		SObject* parent);
 
 	// For copy operations
-	void					iiSubobj_copyEmpty						(SSubObjEmpty*		subobjDst,	SSubObjEmpty*		subobjSrc);
-	void					iiSubobj_copyForm						(SSubObjForm*		subobjDst,	SSubObjForm*		subobjSrc);
-	void					iiSubobj_copySubform					(SSubObjSubform*	subobjDst,	SSubObjSubform*		subobjSrc);
-	void					iiSubobj_copyLabel						(SSubObjLabel*		subobjDst,	SSubObjLabel*		subobjSrc);
-	void					iiSubobj_copyTextbox					(SSubObjTextbox*	subobjDst,	SSubObjTextbox*		subobjSrc);
-	void					iiSubobj_copyButton						(SSubObjButton*		subobjDst,	SSubObjButton*		subobjSrc);
-	void					iiSubobj_copyEditbox					(SSubObjEditbox*	subobjDst,	SSubObjEditbox*		subobjSrc);
-	void					iiSubobj_copyImage						(SSubObjImage*		subobjDst,	SSubObjImage*		subobjSrc);
-	void					iiSubobj_copyCheckbox					(SSubObjCheckbox*	subobjDst,	SSubObjCheckbox*	subobjSrc);
-	void					iiSubobj_copyOption						(SSubObjOption*		subobjDst,	SSubObjOption*		subobjSrc);
-	void					iiSubobj_copyRadio						(SSubObjRadio*		subobjDst,	SSubObjRadio*		subobjSrc);
+	void					iiSubobj_copyEmpty						(SObject*	emptyDst,		SObject*	emptySrc);
+	void					iiSubobj_copyForm						(SObject*	formDst,		SObject*	formSrc);
+	void					iiSubobj_copySubform					(SObject*	subformDst,		SObject*	subformSrc);
+	void					iiSubobj_copyLabel						(SObject*	labelDst,		SObject*	labelSrc);
+	void					iiSubobj_copyTextbox					(SObject*	textboxDst,		SObject*	textboxSrc);
+	void					iiSubobj_copyButton						(SObject*	buttonDst,		SObject*	buttonSrc);
+	void					iiSubobj_copyEditbox					(SObject*	editboxDst,		SObject*	editboxSrc);
+	void					iiSubobj_copyImage						(SObject*	imageDst,		SObject*	imageSrc);
+	void					iiSubobj_copyCheckbox					(SObject*	checkboxDst,	SObject*	checkboxSrc);
+	void					iiSubobj_copyOption						(SObject*	optionDst,		SObject*	optionSrc);
+	void					iiSubobj_copyRadio						(SObject*	radioDst,		SObject*	radioSrc);
 
 	// For initialization
-	void					iiSubobj_resetToDefaultEmpty			(SSubObjEmpty*		empty,		bool tlResetObject, bool tlResetProperties, bool tlResetMethods);
-	void					iiSubobj_resetToDefaultForm				(SSubObjForm*		form,		bool tlResetObject, bool tlResetProperties, bool tlResetMethods);
-	void					iiSubobj_resetToDefaultSubform			(SSubObjSubform*	subform,	bool tlResetObject, bool tlResetProperties, bool tlResetMethods);
-	void					iiSubobj_resetToDefaultLabel			(SSubObjLabel*		label,		bool tlResetObject, bool tlResetProperties, bool tlResetMethods);
-	void					iiSubobj_resetToDefaultTextbox			(SSubObjTextbox*	textbox,	bool tlResetObject, bool tlResetProperties, bool tlResetMethods);
-	void					iiSubobj_resetToDefaultButton			(SSubObjButton*		button,		bool tlResetObject, bool tlResetProperties, bool tlResetMethods);
-	void					iiSubobj_resetToDefaultEditbox			(SSubObjEditbox*	editbox,	bool tlResetObject, bool tlResetProperties, bool tlResetMethods);
-	void					iiSubobj_resetToDefaultImage			(SSubObjImage*		image,		bool tlResetObject, bool tlResetProperties, bool tlResetMethods);
-	void					iiSubobj_resetToDefaultCheckbox			(SSubObjCheckbox*	checkbox,	bool tlResetObject, bool tlResetProperties, bool tlResetMethods);
-	void					iiSubobj_resetToDefaultOption			(SSubObjOption*		option,		bool tlResetObject, bool tlResetProperties, bool tlResetMethods);
-	void					iiSubobj_resetToDefaultRadio			(SSubObjRadio*		radio,		bool tlResetObject, bool tlResetProperties, bool tlResetMethods);
+	void					iiSubobj_resetToDefaultEmpty			(SObject*	empty,		bool tlResetProperties, bool tlResetMethods);
+	void					iiSubobj_resetToDefaultForm				(SObject*	form,		bool tlResetProperties, bool tlResetMethods);
+	void					iiSubobj_resetToDefaultSubform			(SObject*	subform,	bool tlResetProperties, bool tlResetMethods);
+	void					iiSubobj_resetToDefaultLabel			(SObject*	label,		bool tlResetProperties, bool tlResetMethods);
+	void					iiSubobj_resetToDefaultTextbox			(SObject*	textbox,	bool tlResetProperties, bool tlResetMethods);
+	void					iiSubobj_resetToDefaultButton			(SObject*	button,		bool tlResetProperties, bool tlResetMethods);
+	void					iiSubobj_resetToDefaultEditbox			(SObject*	editbox,	bool tlResetProperties, bool tlResetMethods);
+	void					iiSubobj_resetToDefaultImage			(SObject*	image,		bool tlResetProperties, bool tlResetMethods);
+	void					iiSubobj_resetToDefaultCheckbox			(SObject*	checkbox,	bool tlResetProperties, bool tlResetMethods);
+	void					iiSubobj_resetToDefaultOption			(SObject*	option,		bool tlResetProperties, bool tlResetMethods);
+	void					iiSubobj_resetToDefaultRadio			(SObject*	radio,		bool tlResetProperties, bool tlResetMethods);
 
 	// Delete individual sub-objects
-	void					iSubobj_deleteEmpty						(SSubObjEmpty*		empty,		bool tlDeleteSelf);
-	void					iSubobj_deleteForm						(SSubObjForm*		form,		bool tlDeleteSelf);
-	void					iSubobj_deleteSubform					(SSubObjSubform*	subform,	bool tlDeleteSelf);
-	void					iSubobj_deleteLabel						(SSubObjLabel*		label,		bool tlDeleteSelf);
-	void					iSubobj_deleteTextbox					(SSubObjTextbox*	textbox,	bool tlDeleteSelf);
-	void					iSubobj_deleteButton					(SSubObjButton*		button,		bool tlDeleteSelf);
-	void					iSubobj_deleteEditbox					(SSubObjEditbox*	editbox,	bool tlDeleteSelf);
-	void					iSubobj_deleteImage						(SSubObjImage*		image,		bool tlDeleteSelf);
-	void					iSubobj_deleteCheckbox					(SSubObjCheckbox*	checkbox,	bool tlDeleteSelf);
-	void					iSubobj_deleteOption					(SSubObjOption*		option,		bool tlDeleteSelf);
-	void					iSubobj_deleteRadio						(SSubObjRadio*		radio,		bool tlDeleteSelf);
+	void					iSubobj_deleteEmpty						(SObject*	empty,		bool tlDeleteSelf);
+	void					iSubobj_deleteForm						(SObject*	form,		bool tlDeleteSelf);
+	void					iSubobj_deleteSubform					(SObject*	subform,	bool tlDeleteSelf);
+	void					iSubobj_deleteLabel						(SObject*	label,		bool tlDeleteSelf);
+	void					iSubobj_deleteTextbox					(SObject*	textbox,	bool tlDeleteSelf);
+	void					iSubobj_deleteButton					(SObject*	button,		bool tlDeleteSelf);
+	void					iSubobj_deleteEditbox					(SObject*	editbox,	bool tlDeleteSelf);
+	void					iSubobj_deleteImage						(SObject*	image,		bool tlDeleteSelf);
+	void					iSubobj_deleteCheckbox					(SObject*	checkbox,	bool tlDeleteSelf);
+	void					iSubobj_deleteOption					(SObject*	option,		bool tlDeleteSelf);
+	void					iSubobj_deleteRadio						(SObject*	radio,		bool tlDeleteSelf);
 
 
 	// Default render of sub-objects
-	u32						iSubobj_renderEmpty						(SObject* obj,		SSubObjEmpty*		empty,		bool tlRenderChildren,	bool tlRenderSiblings);
-	u32						iSubobj_renderForm						(SObject* obj,		SSubObjForm*		form,		bool tlRenderChildren,	bool tlRenderSiblings);
-	u32						iSubobj_renderSubform					(SObject* obj,		SSubObjSubform*		subform,	bool tlRenderChildren,	bool tlRenderSiblings);
-	u32						iSubobj_renderLabel						(SObject* obj,		SSubObjLabel*		label,		bool tlRenderChildren,	bool tlRenderSiblings);
-	u32						iSubobj_renderTextbox					(SObject* obj,		SSubObjTextbox*		textbox,	bool tlRenderChildren,	bool tlRenderSiblings);
-	u32						iSubobj_renderButton					(SObject* obj,		SSubObjButton*		button,		bool tlRenderChildren,	bool tlRenderSiblings);
-	u32						iSubobj_renderEditbox					(SObject* obj,		SSubObjEditbox*		editbox,	bool tlRenderChildren,	bool tlRenderSiblings);
-	u32						iSubobj_renderImage						(SObject* obj,		SSubObjImage*		image,		bool tlRenderChildren,	bool tlRenderSiblings);
-	u32						iSubobj_renderCheckbox					(SObject* obj,		SSubObjCheckbox*	checkbox,	bool tlRenderChildren,	bool tlRenderSiblings);
-	u32						iSubobj_renderOption					(SObject* obj,		SSubObjOption*		option,		bool tlRenderChildren,	bool tlRenderSiblings);
-	u32						iSubobj_renderRadio						(SObject* obj,		SSubObjRadio*		radio,		bool tlRenderChildren,	bool tlRenderSiblings);
+	u32						iSubobj_renderEmpty						(SObject* empty,	bool tlRenderChildren,	bool tlRenderSiblings);
+	u32						iSubobj_renderForm						(SObject* form,		bool tlRenderChildren,	bool tlRenderSiblings);
+	u32						iSubobj_renderSubform					(SObject* subform,	bool tlRenderChildren,	bool tlRenderSiblings);
+	u32						iSubobj_renderLabel						(SObject* label,	bool tlRenderChildren,	bool tlRenderSiblings);
+	u32						iSubobj_renderTextbox					(SObject* textbox,	bool tlRenderChildren,	bool tlRenderSiblings);
+	u32						iSubobj_renderButton					(SObject* button,	bool tlRenderChildren,	bool tlRenderSiblings);
+	u32						iSubobj_renderEditbox					(SObject* editbox,	bool tlRenderChildren,	bool tlRenderSiblings);
+	u32						iSubobj_renderImage						(SObject* image,	bool tlRenderChildren,	bool tlRenderSiblings);
+	u32						iSubobj_renderCheckbox					(SObject* checkbox,	bool tlRenderChildren,	bool tlRenderSiblings);
+	u32						iSubobj_renderOption					(SObject* option,	bool tlRenderChildren,	bool tlRenderSiblings);
+	u32						iSubobj_renderRadio						(SObject* radio,	bool tlRenderChildren,	bool tlRenderSiblings);
 
 
 //////////
@@ -204,7 +203,7 @@
 	DWORD	WINAPI			iReadEvents_messageWindow				(LPVOID lpParameter);
 	LRESULT	CALLBACK		iWindow_wndProcMessage					(HWND hwnd, UINT m, WPARAM w, LPARAM l);
 	LRESULT	CALLBACK		iWindow_wndProcForms					(HWND hwnd, UINT m, WPARAM w, LPARAM l);
-	SWindow* 				iWindow_createForObject					(SObject* obj, SWindow* win, s32 icon);
+	SWindow* 				iWindow_createForObject					(SObject* obj, SWindow* winReuse, s32 icon);
 	SWindow*				iWindow_findByHwnd						(HWND hwnd);
 	SWindow*				iWindow_allocate						(void);
 	void					iWindow_render							(SWindow* win);
@@ -254,7 +253,7 @@
 	void*					iTranslate_p2_to_p1						(SBuilder* root, void* ptr);
 
 	// ExtraInfo
-	void					iExtraInfo_free							(SEditChainManager* ecm, SEditChain* ec, SExtraInfo** root, bool tlDeleteSelf);
+	void					iExtraInfo_free							(SEM* ecm, SEdit* ec, SExtraInfo** root, bool tlDeleteSelf);
 
 	// Datum
 	void					iDatum_allocateSpace					(SDatum* datum,            s32 dataLength);

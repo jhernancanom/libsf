@@ -51,7 +51,7 @@
 // start over.
 //
 //////
-	u32 compile_Vxbmm(SEditChainManager* codeBlock_, SCompileContext* ccData_, bool tlEditAndContinue_)
+	u32 compile_Vxbmm(SEM* codeBlock_, SCompileContext* ccData_, bool tlEditAndContinue_)
 	{
 		SCompileVxbmmContext	cvc;
 
@@ -362,7 +362,7 @@
 			//////////
 			// Move to the next line
 			//////
-				cvc->line = (SEditChain*)cvc->line->ll.next;
+				cvc->line = (SEdit*)cvc->line->ll.next;
 		}
 	}
 
@@ -374,7 +374,7 @@
 // Called to post-compile, primarily to flag variables that are not referenced
 // 
 //////
-	void iiCompile_Vxbmm_postcompile(SEditChainManager* codeBlock, SCompileContext* ccData, bool tlEditAndContinue)
+	void iiCompile_Vxbmm_postcompile(SEM* codeBlock, SCompileContext* ccData, bool tlEditAndContinue)
 	{
 	}
 
@@ -515,7 +515,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Translates components into a sequence of sub-instruction operations.
 //
 /////
-	bool iiComps_xlatToNodes(SEditChain* line, SCompiler* compiler)
+	bool iiComps_xlatToNodes(SEdit* line, SCompiler* compiler)
 	{
 		SComp*		comp;
 		SComp*		compLast;
@@ -762,7 +762,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Called to remove all components for this line
 //
 //////
-	void iComps_removeAll(SEditChain* line)
+	void iComps_removeAll(SEdit* line)
 	{
 		if (line && line->compilerInfo)
 		{
@@ -787,7 +787,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 //		The first component created (if any)
 //
 //////
-	SComp* iComps_translateSourceLineTo(SAsciiCompSearcher* tsComps, SEditChain* line)
+	SComp* iComps_translateSourceLineTo(SAsciiCompSearcher* tsComps, SEdit* line)
 	{
 		s32						lnI, lnMaxLength, lnStart, lnLength, lnLacsLength;
 		bool					llSigned;
@@ -909,7 +909,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // alpha/alphanumeric/numeric forms to other forms.
 //
 //////
-	void iComps_translateToOthers(SAsciiCompSearcher* tacsRoot, SEditChain* line)
+	void iComps_translateToOthers(SAsciiCompSearcher* tacsRoot, SEdit* line)
 	{
 		bool					llResult;
 		s32						lnTacsLength;
@@ -1189,7 +1189,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // After:		[define][whitespace][user32][whitespace][something][here]
 //
 //////
-	u32 iComps_combine2(SEditChain* line, u32 tniCodeNeedle1, u32 tniCodeNeedle2, u32 tniCodeCombined)
+	u32 iComps_combine2(SEdit* line, u32 tniCodeNeedle1, u32 tniCodeNeedle2, u32 tniCodeCombined)
 	{
 		u32		lnCount;
 		SComp*	compNext;
@@ -1271,7 +1271,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // After:		[sadf32][whitespace][a][comma][20.50]
 //
 //////
-	u32 iComps_combine3(SEditChain* line, u32 tniCodeNeedle1, u32 tniCodeNeedle2, u32 tniCodeNeedle3, u32 tniCodeCombined)
+	u32 iComps_combine3(SEdit* line, u32 tniCodeNeedle1, u32 tniCodeNeedle2, u32 tniCodeNeedle3, u32 tniCodeCombined)
 	{
 		u32		lnCount;
 		SComp*	compNext;
@@ -1355,7 +1355,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // branded as alphanumeric.
 //
 //////
-	u32 iComps_combineAdjacentAlphanumeric(SEditChain* line)
+	u32 iComps_combineAdjacentAlphanumeric(SEdit* line)
 	{
 		u32		lnCombined;
 		SComp*	comp;
@@ -1414,7 +1414,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // adjacent, it is included as well.
 //
 //////
-	u32 iComps_combineAdjacentNumeric(SEditChain* line)
+	u32 iComps_combineAdjacentNumeric(SEdit* line)
 	{
 		u32		lnCombined;
 		SComp*	comp;
@@ -1497,7 +1497,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Called to combine things like [.][t][.] into [.t.]
 //
 //////
-	u32 iComps_combineAdjacentDotForms(SEditChain* line)
+	u32 iComps_combineAdjacentDotForms(SEdit* line)
 	{
 		u32		lnCombined;
 		u8		c;
@@ -1600,7 +1600,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // After:		[u8][whitespace][name][left bracket][right bracket][whitespace][equal][whitespace][double quote text]
 //
 //////
-	u32 iComps_combineAllBetween(SEditChain* line, u32 tniCodeNeedle, u32 tniCodeCombined)
+	u32 iComps_combineAllBetween(SEdit* line, u32 tniCodeNeedle, u32 tniCodeCombined)
 	{
 		u32		lnCount;
 		SComp*	compNext;
@@ -1684,7 +1684,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Called to combine everything after the indicated component into that one component.
 //
 //////
-	u32 iComps_combineAllAfter(SEditChain* line, u32 tniCodeNeedle)
+	u32 iComps_combineAllAfter(SEdit* line, u32 tniCodeNeedle)
 	{
 		u32		lnCombined;
 		SComp*	comp;
@@ -1731,7 +1731,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Called to delete everything after the indicated component
 //
 //////
-	u32 iComps_deleteAllAfter(SEditChain* line, u32 tniCodeNeedle)
+	u32 iComps_deleteAllAfter(SEdit* line, u32 tniCodeNeedle)
 	{
 		u32		lnDeleted;
 		SComp*	comp;
@@ -1787,7 +1787,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 //        processed, such that all quoted text items are already combined into a single icode.
 //
 //////
-	u32 iComps_removeWhitespaces(SEditChain* line)
+	u32 iComps_removeWhitespaces(SEdit* line)
 	{
 		u32		lnRemoved;
 		SComp*	comp;
@@ -1832,7 +1832,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Called to remove any /* comments */ from the current chain of comps.
 //
 //////
-	void iComps_removeStartEndComments(SEditChain* line)
+	void iComps_removeStartEndComments(SEdit* line)
 	{
 		SComp* comp;
 
@@ -1879,7 +1879,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Fixes up common things found in VXB-- source code.
 //
 //////
-	void iComps_fixupNaturalGroupings(SEditChain* line)
+	void iComps_fixupNaturalGroupings(SEdit* line)
 	{
 		if (line && line->compilerInfo && line->compilerInfo->firstComp)
 		{
@@ -2004,7 +2004,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Called to translate the indicated keywords into their corresponding operation.
 //
 //////
-	void iiComps_xlatToSubInstr(SEditChain* line)
+	void iiComps_xlatToSubInstr(SEdit* line)
 	{
 		SNode	si;
 		SComp*		saveComps;
@@ -2068,7 +2068,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 //		(6)		
 //
 //////
-	SComp* iiComps_xlatToSubInstr_findInmostExpression(SNode* si, SEditChain* line)
+	SComp* iiComps_xlatToSubInstr_findInmostExpression(SNode* si, SEdit* line)
 	{
 		bool	llFound;
 		SComp*	comp;
@@ -2251,7 +2251,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 //		x = y
 //
 //////
-	bool iiComps_xlatToSubInstr_isEqualAssignment(SEditChain* line)
+	bool iiComps_xlatToSubInstr_isEqualAssignment(SEdit* line)
 	{
 // TODO:  Write this function :-)
 		return(false);
@@ -2766,7 +2766,7 @@ _asm int 3;
 // Called as a callback from the custom handler callback function, to do some manual insertion.
 //
 //////
-	void iiComps_xlatToOthersCallback__insertCompByParamsCallback(SComp* compRef, SEditChain* line, u32 tniCode, u32 tnStart, s32 tnLength, bool tlInsertAfter)
+	void iiComps_xlatToOthersCallback__insertCompByParamsCallback(SComp* compRef, SEdit* line, u32 tniCode, u32 tnStart, s32 tnLength, bool tlInsertAfter)
 	{
 		SComp* compNew;
 
@@ -2804,7 +2804,7 @@ _asm int 3;
 // indicated component.
 //
 //////
-	void iiComps_xlatToOthersCallback__deleteCompsCallback(SComp* comp, SEditChain* line)
+	void iiComps_xlatToOthersCallback__deleteCompsCallback(SComp* comp, SEdit* line)
 	{
 // TODO:  untested code, breakpoint and examine
 _asm int 3;
@@ -2844,7 +2844,7 @@ _asm int 3;
 // component.  If line is not NULL, the component is automatically added to line->comps;
 //
 //////
-	SComp* iiComps_xlatToOthersCallback__cloneCompsCallback(SComp* comp, SEditChain* line)
+	SComp* iiComps_xlatToOthersCallback__cloneCompsCallback(SComp* comp, SEdit* line)
 	{
 		SComp* compNew;
 
@@ -2899,7 +2899,7 @@ _asm int 3;
 //        handle that condition.
 //
 //////
-	SComp* iiComps_xlatToOthersCallback__mergeCompsCallback(SComp* comp, SEditChain* line, u32 tnCount, u32 tniCodeNew)
+	SComp* iiComps_xlatToOthersCallback__mergeCompsCallback(SComp* comp, SEdit* line, u32 tnCount, u32 tniCodeNew)
 	{
 		u32			lnI;
 		SComp*	compThis;
@@ -4209,8 +4209,8 @@ _asm int 3;
 //////
 	void iFunction_politelyDeleteCompiledInfo(SFunction* func, bool tlDeleteSelf)
 	{
-		SEditChain* line;
-		SEditChain* lineLast;
+		SEdit* line;
+		SEdit* lineLast;
 
 
 		// Make sure our environment is sane
@@ -4230,7 +4230,7 @@ _asm int 3;
 
 				// Move to next line
 				lineLast	= line;
-				line		= (SEditChain*)line->ll.next;
+				line		= (SEdit*)line->ll.next;
 
 			} while (lineLast != func->lastLine && line);
 
@@ -6227,7 +6227,7 @@ _asm int 3;
 // Called to append an error the indicated source code line
 //
 //////
-	void iLine_appendError(SEditChain* line, u32 tnErrorNum, s8* tcMessage, u32 tnStartColumn, u32 tnLength)
+	void iLine_appendError(SEdit* line, u32 tnErrorNum, s8* tcMessage, u32 tnStartColumn, u32 tnLength)
 	{
 		if (line && line->compilerInfo)
 		{
@@ -6243,7 +6243,7 @@ _asm int 3;
 // Called to append a warning to the indicated source code line
 //
 //////
-	void iLine_appendWarning(SEditChain* line, u32 tnWarningNum, s8* tcMessage, u32 tnStartColumn, u32 tnLength)
+	void iLine_appendWarning(SEdit* line, u32 tnWarningNum, s8* tcMessage, u32 tnStartColumn, u32 tnLength)
 	{
 		if (line && line->compilerInfo)
 		{
@@ -6259,7 +6259,7 @@ _asm int 3;
 // Allocates an SCompiler structure.  Initializes it to all NULLs.
 //
 //////
-	SCompiler* iCompiler_allocate(SEditChain* parent)
+	SCompiler* iCompiler_allocate(SEdit* parent)
 	{
 		SCompiler* compilerNew;
 

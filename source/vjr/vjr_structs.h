@@ -44,14 +44,14 @@ struct SExtraInfo
 	SDatum		info;													// The extra info
 
 	// Functions to use to access this extra info block
-	void		(*onAccess)					(SEditChainManager* chainMgr, SEditChain* chain, SExtraInfo* extra_info);	// When the parent chain is accessed
-	void		(*onArrival)				(SEditChainManager* chainMgr, SEditChain* chain, SExtraInfo* extra_info);	// When the target implementation is sitting on the chain record
-	void		(*onUpdate)					(SEditChainManager* chainMgr, SEditChain* chain, SExtraInfo* extra_info);	// When the parent chain is updated
+	void		(*onAccess)					(SEM* chainMgr, SEdit* chain, SExtraInfo* extra_info);	// When the parent chain is accessed
+	void		(*onArrival)				(SEM* chainMgr, SEdit* chain, SExtraInfo* extra_info);	// When the target implementation is sitting on the chain record
+	void		(*onUpdate)					(SEM* chainMgr, SEdit* chain, SExtraInfo* extra_info);	// When the parent chain is updated
 
 	// Functions called before freeing, and after allocating, the this.info datum
-	SExtraInfo*	(*extra_info_allocate)		(SEditChainManager* chainMgr, SEditChain* chain, SExtraInfo* extra_info);	// Called to allocate this.info per needs
-	SExtraInfo*	(*extra_info_duplicate)		(SEditChainManager* chainMgr, SEditChain* chain, SExtraInfo* extra_info);	// Called when a chain is duplicated, determines what if any of the source's data needs to be duplicated as well
-	SExtraInfo*	(*extra_info_free)			(SEditChainManager* chainMgr, SEditChain* chain, SExtraInfo* extra_info);	// Called to free any data in this.info
+	SExtraInfo*	(*extra_info_allocate)		(SEM* chainMgr, SEdit* chain, SExtraInfo* extra_info);	// Called to allocate this.info per needs
+	SExtraInfo*	(*extra_info_duplicate)		(SEM* chainMgr, SEdit* chain, SExtraInfo* extra_info);	// Called when a chain is duplicated, determines what if any of the source's data needs to be duplicated as well
+	SExtraInfo*	(*extra_info_free)			(SEM* chainMgr, SEdit* chain, SExtraInfo* extra_info);	// Called to free any data in this.info
 };
 
 struct SDateTime
@@ -65,12 +65,12 @@ struct SUndo
 	u32			uidBefore;												// The item before
 	u32			uidAfter;												// The item after
 
-	SEditChain*	first;													// The first SEditChain that would've gone between them
+	SEdit*	first;													// The first SEditChain that would've gone between them
 	// If multiple lines were deleted, the chain is moved here.
 	// If the line was changed, the old value is here
 };
 
-struct SEditChain
+struct SEdit
 {
 	SLL			ll;														// Link list throughout
 	u32			uid;													// Unique id for this line, used for undos and identifying individual lines which may move about
@@ -87,81 +87,82 @@ struct SEditChain
 	SExtraInfo*	extra_info;												// Extra information about this item in the chain
 };
 
-struct SEditChainManager
+// SEM is short for "SEditManager"
+struct SEM
 {
-	SEditChain*			ecFirst;										// First in the chain (first->prev is NULL)
-	SEditChain*			ecLast;											// Last in the chain (last->next is NULL)
-	bool				isReadOnly;										// If read-only no changes are allowed, only navigation
+	SEdit*			ecFirst;										// First in the chain (first->prev is NULL)
+	SEdit*			ecLast;											// Last in the chain (last->next is NULL)
+	bool		isReadOnly;										// If read-only no changes are allowed, only navigation
 
 	// If populated, this ECM is only a placeholder for this instance, and the this->reference points to the real ECM we should use
-	SEditChainManager*	indirect;										// If not NULL, this ECM points to another ECM which is the real code block
+	SEM*		indirect;										// If not NULL, this ECM points to another ECM which is the real code block
 	// NOTE:  Everything below is used ONLY IF INDIRECT IS NULL
 
 
-	//////////
-	// For display
-	//////
-		SEditChain*		ecTopLine;										// Top item in the current view
-		SEditChain*		ecCursorLine;									// Line where the cursor is
-		SEditChain*		ecCursorLineLast;								// The last location before movement was made
-		bool			isOverwrite;									// Are we in overwrite mode?
-		bool			showCursorLine;									// Should we render the cursor line?
-		bool			showEndLine;									// Should we render the end line in a different color?
-		bool			isHeavyProcessing;								// When large amounts of processing will be conducted, the display can be disabled
+//////////
+// For display
+//////
+	SEdit*			ecTopLine;										// Top item in the current view
+	SEdit*			ecCursorLine;									// Line where the cursor is
+	SEdit*			ecCursorLineLast;								// The last location before movement was made
+	bool		isOverwrite;									// Are we in overwrite mode?
+	bool		showCursorLine;									// Should we render the cursor line?
+	bool		showEndLine;									// Should we render the end line in a different color?
+	bool		isHeavyProcessing;								// When large amounts of processing will be conducted, the display can be disabled
 
-		s32				column;											// Column we're currently inputting
-		s32				leftColumn;										// The column we're displaying at the left-most position (of horizontally scrolled, this will be greater than 0)
-
-
-	//////////
-	// Selected lines
-	//////
-		SEditChain*		ecSelectedLineStart;							// First line that's selected
-		SEditChain*		ecSelectedLineEnd;								// Last line that's selected
+	s32			column;											// Column we're currently inputting
+	s32			leftColumn;										// The column we're displaying at the left-most position (of horizontally scrolled, this will be greater than 0)
 
 
-	//////////
-	// Note:  If not isColumn or isAnchor, then it is full line select.
-	//        If isColumn, then column select mode.
-	//        If isAnchor, then anchor select mode.
-	//////
-		bool			isColumn;										// If column select mode...
-		u32				selectedColumnStart;							// Column select mode start
-		u32				selectedColumnEnd;								// end
-		bool			isAnchor;										// If anchor select mode...
-		u32				selectedAnchorStart;							// Anchor select mode start
-		u32				selectedAnchorEnd;								// end
+//////////
+// Selected lines
+//////
+	SEdit*			ecSelectedLineStart;							// First line that's selected
+	SEdit*			ecSelectedLineEnd;								// Last line that's selected
 
 
-	//////////
-	// For compiled programs
-	//////
-		SFunction		firstFunction;									// By default, we always create a function head for any code blocks that don't have an explicit "FUNCTION" at the top.
+//////////
+// Note:  If not isColumn or isAnchor, then it is full line select.
+//        If isColumn, then column select mode.
+//        If isAnchor, then anchor select mode.
+//////
+	bool		isColumn;										// If column select mode...
+	u32			selectedColumnStart;							// Column select mode start
+	u32			selectedColumnEnd;								// end
+	bool		isAnchor;										// If anchor select mode...
+	u32			selectedAnchorStart;							// Anchor select mode start
+	u32			selectedAnchorEnd;								// end
 
 
-	//////////
-	// The undo history operates in two levels:
-	// (1) When going through ecm-> it is undoHistory.
-	// (2) If accessing ecm->undoHistory-> then it is theUndo, which holds the undo information for that operation.
-	//////
-		union {
-			// If referenced through ecm-> then undoHistory is the undo history for this sec
-			SEditChainManager*	undoHistory;							// The lines affected by the undo
+//////////
+// For compiled programs
+//////
+	SFunction	firstFunction;									// By default, we always create a function head for any code blocks that don't have an explicit "FUNCTION" at the top.
 
-			// If referenced through ecm->undoHistory, then theUndo is the one in use here
-			SUndo*				theUndo;								// If referenced through ecm->undoHistory-> then it only uses theUndo
-		};
+
+//////////
+// The undo history operates in two levels:
+// (1) When going through ecm-> it is undoHistory.
+// (2) If accessing ecm->undoHistory-> then it is theUndo, which holds the undo information for that operation.
+//////
+	union {
+		// If referenced through ecm-> then undoHistory is the undo history for this sec
+		SEM*	undoHistory;									// The lines affected by the undo
+
+		// If referenced through ecm->undoHistory, then theUndo is the one in use here
+		SUndo*	theUndo;										// If referenced through ecm->undoHistory-> then it only uses theUndo
+	};
 };
 
-struct SEditChainCallback
+struct SEcCallback
 {
-	SEditChainManager*	ecm;											// The manager
-	SEditChain*			ec;												// This line
+	SEM*		ecm;											// The manager
+	SEdit*			ec;												// This line
 
 	// Functions to use to access this extra info block
 	union {
 		u32				_callback;
-		void			(*callback)		(SEditChainCallback* ecb);		// Callback to delete any extra information.  The ec->sourceCode and ec itself will be deleted automatically.
+		void			(*callback)		(SEcCallback* ecb);		// Callback to delete any extra information.  The ec->sourceCode and ec itself will be deleted automatically.
 	};
 
 };
@@ -256,12 +257,8 @@ struct SEvents
 	SEventsKeyboard		keyboard;										// Keyboard events for the object
 };
 
-struct SObject
+struct SProperties
 {
-	SLL			ll;														// Linked list
-	SObject*	objParent;												// Pointer to parent object for this instance
-	SObject*	firstChild;												// Pointer to child objects (all objects are containers)
-
 	// Information about the object itself
 	s32			tabIndex;												// The tab order
 	bool		tabStop;												// Does this object stop for tabs?
@@ -270,32 +267,18 @@ struct SObject
 	bool		hasWhatsThisHelp;										// Does it have what's this help?
 	s32			whatsThisHelpId;										// The what's this help id
 
-	// Defined class, class information
-	SDatum		name;													// If a user object, this object's name
-	u32			objType;												// Object base type/class (see _OBJECT_TYPE_* constants)
-	SDatum		className;												// The class
-	SDatum		classLibrary;											// The class location
-	SDatum		comment;
-	SDatum		tooltip;
-	SDatum		tag;
-
 	// Mouse information
-	SBitmap*	mouseIcon;												// The mouse icon
 	s32			mousePointer;											// The mouse pointer to use
 
 	// Object flags
 	bool		isEnabled;												// If it is responding to events
 	bool		hasFocus;												// Does this object have focus?
 	bool		isMovable;												// Is this object movable?
-	bool		isRendered;												// Is it rendered (can be rendered even if it's not visible)?
-	bool		isPublished;											// Should this control be published?  Every object has a .lockScreen property which allows it to not be published while changes are made.
 	bool		isVisible;												// If it's visible
-	bool		isDirty;												// Is set if this or any child object needs re-rendered
 
 	RECT		rcMax;													// The maximum rectangle for the form
 	RECT		rcMin;													// The minimum rectangle for the form
 
-	SFont*		font;													// Default font instance
 	SBgra		nwRgba;													// Northwest back color for border
 	SBgra		neRgba;													// Northeast back color for border
 	SBgra		swRgba;													// Southwest back color for border
@@ -303,12 +286,6 @@ struct SObject
 	SBgra		backColor;												// Back color for the client content
 	SBgra		foreColor;												// Default text fore color
 	SBgra		captionColor;											// Color of the caption
-
-	SBitmap*	bmpFormIcon;											// Icon for the form
-	SDatum		caption;												// Caption
-
-	SDatum		pictureName;											// The name of the file used for the picture
-	SBitmap*	bmpPicture;												// The image for the picture
 
 	// General flags and settings
 	bool		allowOutput;											// Allow output to the form?
@@ -332,10 +309,7 @@ struct SObject
 	bool		clipControls;											// Ignored. VJr always re-renders the entire control.
 	s32			colorSource;											// Ignored. VJr always uses its themed controls.
 	bool		continuousScroll;										// Ignored.
-	SObject*	dataSession;											// Ignored, always set to .NULL..
 	s32			dataSessionId;											// Ignored, always set to -1.
-	SDatum		declass;												// Ignored, always empty.
-	SDatum		declasslibrary;											// Ignored, always empty.
 	s32			defolecid;												// Ignored, always uses system locale.
 	bool		desktop;												// Ignored, all VJr forms can be shown anywhere.  To keep inside a window, parent it to _screen or a form.
 	bool		isDockable;												// Ignored, always set to .F., docking is not supported in VJr.
@@ -352,7 +326,6 @@ struct SObject
 	bool		macDesktop;												// Ignored, always set to .F..
 	bool		mdiForm;												// Ignroed, always set to .F..
 	s32			oleDragMode;											// Ignored, always set to 0.
-	SBitmap*	oleDragPicture;											// Ignored, always set to .NULL..
 	s32			oleDropEffects;											// Ignored, always set to 3.
 	s32			oleDropHasData;											// Ignored, always set to -1.
 	s32			oleDropMode;											// Ignored, always set to 0.
@@ -366,176 +339,120 @@ struct SObject
 	s32			titleBar;												// Ignored, returns what is indicated by borderStyle.
 	s32			windowType;												// Ignored, always returns 0=modeless, all forms in VJr are modeless.
 	bool		zoomBox;												// Ignored, always returns .F.
+	s32			anchor;												// Method this item uses when its parent is resized
 
-	// Data unique to this object
-	void*		sub_obj;												// Varies by type, see SObject* structures below
+	// Used only for labels in lists, like SObjectOption
+	bool		selected;												// Is this item selected?
+
+	// Flags for data
+	u32			style;													// See _TEXTBOX_STYLE_* constants (plain, 2D, 3D)
+	u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
+
+	// Flags for display and input
+	s32			cursor;													// Position of the flashing cursor, where input goes
+	s32			selectStart;											// Where does the selection begin?
+	s32			selectEnd;												// Where does the selection end?
+
+	// Flags for rendering
+	bool		isOpaque;												// Is the label opaque?
+	bool		isBorder;												// Is there a border?
+	SBgra		borderColor;											// Border color
+	SBgra		selectedBackColor;										// Selected background color
+	SBgra		selectedForeColor;										// Selected foreground color
+	SBgra		disabledBackColor;										// Disabled background color
+	SBgra		disabledForeColor;										// Disabled foreground color
+
+	SEM*		ecm;													// The content being edited
+
+// Image
+	SBitmap*	image;													// Image displayed when the mouse IS NOT over this control
+	SBitmap*	imageOver;												// Image displayed when the mouse IS over this control
+
+	u32			optionCount;											// How many options are there?
+	bool		multiSelect;											// Allow multiple items to be selected?
+
+	f64			minValue;												// Minimum value to display
+	f64			maxValue;												// Maximum value to display
+	f64			roundTo;												// Round 10=tens place, 1=whole integers, 0.1=one decimal place, 0.01=two decimal places, and so on
+};
+
+struct SPropertiesA
+{
+	SFont*		font;													// Default font instance
+
+	SBitmap*	bmpIcon;											// Icon for the form
+	SBitmap*	mouseIcon;												// The mouse icon
+
+	SDatum		name;													// If a user object, this object's name
+	SDatum		caption;												// Caption
+	SDatum		className;												// The class
+	SDatum		classLibrary;											// The class location
+
+	SDatum		comment;
+	SDatum		tooltip;
+	SDatum		tag;
+
+	SVariable*	value;													// Value for the control
+	SVariable*	picture;												// Picture for the control
+	SVariable*	mask;													// Input mask for the control
+
+	SDatum		pictureName;											// The name of the file used for the picture
+	SBitmap*	bmpPicture;												// The image for the picture
+
+	SObject*	dataSession;											// Ignored, always set to .NULL..
+	SDatum		declass;												// Ignored, always empty.
+	SDatum		declasslibrary;											// Ignored, always empty.
+
+	SBitmap*	oleDragPicture;											// Ignored, always set to .NULL..
+
+	SObject*	firstOption;											// Each option has its own set of properties, and each is of _OBJECT_TYPE_LABEL
+};
+
+struct SObject
+{
+	SLL			ll;														// Linked list
+	SObject*	parent;													// Pointer to parent object for this instance
+	SObject*	firstChild;												// Pointer to child objects (all objects are containers)
+
+	// Object flags
+	bool		isRendered;												// Is it rendered (can be rendered even if it's not visible)?
+	bool		isPublished;											// Should this control be published?  Every object has a .lockScreen property which allows it to not be published while changes are made.
+	bool		isDirty;												// Is set if this or any child object needs re-rendered
+
+	// Defined class, class information
+	u32			objType;												// Object base type/class (see _OBJECT_TYPE_* constants)
+
+	// Common properties that are literal(p) and allocated(pa) values
+	SProperties		p;													// Common object properties
+	SPropertiesA	pa;													// Common object properties allocated
 
 	// Related position in the member hierarchy
-	SVariable*			firstProperty;									// Runtime-added user-defined property
-	SEditChainManager*	firstMethod;									// Runtime-added user-defined methods
+	SVariable*	firstProperty;											// Runtime-added user-defined property
+	SEM*		firstMethod;											// Runtime-added user-defined methods
 
 	// Events
 	SEvents		ev;														// Events for this object
 
 
-	//////////
-	// Object size in pixels, per the .Left, .Top, .Width, and .Height properties
-	//////
-		RECT		rc;													// Object's current position in its parent
-		RECT		rco;												// Object's original position in its parent
-		RECT		rcp;												// Original size of parent at creation
-		s32			anchor;												// Method this item uses when its parent is resized
-
-// Label
-		SFont*		font;													// Default font instance
-		SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
-		SBgra		foreColor;												// Default text fore color
-
-		// Data
-		u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
-		SDatum		caption;												// Caption
-
-		// Flags for rendering
-		bool		isOpaque;												// Is the label opaque?
-		bool		isBorder;												// Is there a border?
-		SBgra		borderColor;											// Border color
-		SBgra		disabledBackColor;										// Disabled background color
-		SBgra		disabledForeColor;										// Disabled foreground color
-
-		// Used only for labels in lists, like SObjectOption
-		bool		selected;												// Is this item selected?
-// Textbox
-		SFont*		font;													// Default font instance
-		SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
-		SBgra		foreColor;												// Default text fore color
-
-		// Flags for data
-		u32			style;													// See _TEXTBOX_STYLE_* constants (plain, 2D, 3D)
-		u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
-		SDatum		value;													// Space allocated for the current value.  Note that LEFT(value, valueLength) is the actual value
-		u32			valueLength;											// Length of the field
-		SDatum		picture;												// Picture clause (value is formated to this form for input)
-		SDatum		mask;													// Only allow these input characters
-
-		// Flags for display and input
-		s32			cursor;													// Position of the flashing cursor, where input goes
-		s32			selectStart;											// Where does the selection begin?
-		s32			selectEnd;												// Where does the selection end?
-
-		// Flags for rendering
-		bool		isOpaque;												// Is the label opaque?
-		bool		isBorder;												// Is there a border?
-		SBgra		borderColor;											// Border color
-		SBgra		selectedBackColor;										// Selected background color
-		SBgra		selectedForeColor;										// Selected foreground color
-		SBgra		disabledBackColor;										// Disabled background color
-		SBgra		disabledForeColor;										// Disabled foreground color
-
-// Button
-		SFont*		font;													// Default font instance
-		SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
-		SBgra		foreColor;												// Default text fore color
-
-		// Flags for data
-		u32			style;													// See _BUTTON_STYLE_* constants (plain, 2D, 3D)
-		u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
-		SDatum		caption;												// Caption
-
-		SBgra		disabledBackColor;										// Disabled background color
-		SBgra		disabledForeColor;										// Disabled foreground color
-
-// Editbox
-		SFont*		font;													// Default font instance
-		SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
-		SBgra		foreColor;												// Default text fore color
-
-		// Flags for data
-		u32			style;													// See _EDITBOX_STYLE_* constants (plain, 2D, 3D)
-		u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
-		SEditChainManager*	ecm;											// The content being edited
-
-		// Flags for display and input
-		s32			cursor;													// Position of the flashing cursor, where input goes
-		s32			selectStart;											// Where does the selection begin?
-		s32			selectEnd;												// Where does the selection end?
-
-		// Flags for rendering
-		bool		isOpaque;												// Is the label opaque?
-		bool		isBorder;												// Is there a border?
-		SBgra		borderColor;											// Border color
-		SBgra		selectedBackColor;										// Selected background color
-		SBgra		selectedForeColor;										// Selected foreground color
-		SBgra		disabledBackColor;										// Disabled background color
-		SBgra		disabledForeColor;										// Disabled foreground color
-
-// Image
-		u32			style;													// See _EDITBOX_STYLE_* constants (plain, 2D, 3D)
-
-		SBitmap*	image;													// Image displayed when the mouse IS NOT over this control
-		SBitmap*	imageOver;												// Image displayed when the mouse IS over this control
-
-// Checkbox
-		SFont*		font;													// Default font instance
-		SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
-		SBgra		foreColor;												// Default text fore color
-
-		// Data
-		u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
-		u32			style;													// See _CHECKBOX_STYLE_* constants (plain, 2D, 3D)
-		s32			value;													// 0=unchecked, positive=checked, negative=multiple
-		SDatum		caption;												// Caption stored for this object (if any)
-
-		// Flags for rendering
-		bool		isOpaque;												// Is the label opaque?
-		bool		isBorder;												// Is there a border?
-		SBgra		borderColor;											// Border color
-		SBgra		disabledBackColor;										// Disabled background color
-		SBgra		disabledForeColor;										// Disabled foreground color
-
-// Option
-		SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
-		SBgra		foreColor;												// Default text fore color
-
-		// Data
-		u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
-		u32			style;													// See _RADIO_STYLE_* constants (radio, slider, spinner)
-
-		u32			optionCount;											// How many options are there?
-		SObject*	firstOption;											// Each option has its own set of properties, and each is of _OBJECT_TYPE_LABEL
-		bool		multiSelect;											// Allow multiple items to be selected?
-
-// Radio
-		SFont*		font;													// Default font instance
-		SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
-		SBgra		foreColor;												// Default text fore color
-
-		// Data
-		u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
-		u32			style;													// See _RADIO_STYLE_* constants (radio, slider, spinner)
-		f64			value;													// Current value
-		f64			minValue;												// Minimum value to display
-		f64			maxValue;												// Maximum value to display
-		f64			roundTo;												// Round 10=tens place, 1=whole integers, 0.1=one decimal place, 0.01=two decimal places, and so on
-
-		// Flags for rendering
-		bool		isOpaque;												// Is the label opaque?
-		bool		isBorder;												// Is there a border?
-		SBgra		borderColor;											// Border color
-		SBgra		disabledBackColor;										// Disabled background color
-		SBgra		disabledForeColor;										// Disabled foreground color
+//////////
+// Object size in pixels, per the .Left, .Top, .Width, and .Height properties
+//////
+	RECT		rc;													// Object's current position in its parent
+	RECT		rco;												// Object's original position in its parent
+	RECT		rcp;												// Original size of parent at creation
 
 
-	//////////
-	// Drawing canvas
-	//////
-		SBitmap*	bmp;												// If exists, canvas for the content
-		SBitmap*	bmpPriorRendered;									// Used for speedups when not isDirty
-		// If not scaled:
-		s32			scrollOffsetX;										// If the bmp->bi coordinates are larger than its display area, the upper-left X coordinate
-		s32			scrollOffsetY;										// ...the upper-left Y coordinate
-		// If scaled, updated only during publish():
-		bool		isScaled;											// If the bmp->bi coordinates are larger than its display area, should it be scaled?
-		SBitmap*	bmpScaled;											// The bmp scaled into RC's size
+//////////
+// Drawing canvas
+//////
+	SBitmap*	bmp;												// If exists, canvas for the content
+	SBitmap*	bmpPriorRendered;									// Used for speedups when not isDirty
+	// If not scaled:
+	s32			scrollOffsetX;										// If the bmp->bi coordinates are larger than its display area, the upper-left X coordinate
+	s32			scrollOffsetY;										// ...the upper-left Y coordinate
+	// If scaled, updated only during publish():
+	bool		isScaled;											// If the bmp->bi coordinates are larger than its display area, should it be scaled?
+	SBitmap*	bmpScaled;											// The bmp scaled into RC's size
 
 
 //////////

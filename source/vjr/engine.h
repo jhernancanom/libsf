@@ -90,7 +90,7 @@
 //////////
 // Forward declarations
 //////
-	bool					iEngine_executeStandaloneCommand		(SEditChain* line);
+	bool					iEngine_executeStandaloneCommand		(SEdit* line);
 	SVariable*				iEngine_getVariableFromComponent		(SComp* comp, bool& tlManufactured);
 	SVariable*				iEngine_getFunctionResult				(SComp* comp, bool& tlManufactured);
 	bool					iiEngine_getParametersBetween			(SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable** p1, SVariable** p2, SVariable** p3, SVariable** p4, SVariable** p5, SVariable** p6, SVariable** p7);

@@ -206,7 +206,7 @@ SVariable* iObj_getProperty_parent(SObject* obj)
 	{
 		// Create a new variable
 		var = iVariable_create(_VAR_TYPE_OBJECT, NULL);
-		var->obj = obj->objParent;
+		var->obj = obj->parent;
 		return(var);
 	}
 	// If we get here, failure

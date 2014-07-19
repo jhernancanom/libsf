@@ -152,18 +152,18 @@
 		//////////
 		// Create each default object
 		//////
-			gobj_defaultEmpty		= iObj_create(_OBJ_TYPE_EMPTY,		NULL,	NULL);
-			gobj_defaultLabel		= iObj_create(_OBJ_TYPE_LABEL,		NULL,	NULL);
-			gobj_defaultTextbox		= iObj_create(_OBJ_TYPE_TEXTBOX,	NULL,	NULL);
-			gobj_defaultButton		= iObj_create(_OBJ_TYPE_BUTTON,		NULL,	NULL);
-			gobj_defaultImage		= iObj_create(_OBJ_TYPE_IMAGE,		NULL,	NULL);
-			gobj_defaultCheckbox	= iObj_create(_OBJ_TYPE_CHECKBOX,	NULL,	NULL);
+			gobj_defaultEmpty		= iObj_create(_OBJ_TYPE_EMPTY,		NULL);
+			gobj_defaultLabel		= iObj_create(_OBJ_TYPE_LABEL,		NULL);
+			gobj_defaultTextbox		= iObj_create(_OBJ_TYPE_TEXTBOX,	NULL);
+			gobj_defaultButton		= iObj_create(_OBJ_TYPE_BUTTON,		NULL);
+			gobj_defaultImage		= iObj_create(_OBJ_TYPE_IMAGE,		NULL);
+			gobj_defaultCheckbox	= iObj_create(_OBJ_TYPE_CHECKBOX,	NULL);
 			// Option and radio both have label controls within
-			gobj_defaultOption		= iObj_create(_OBJ_TYPE_OPTION,		NULL,	NULL);
-			gobj_defaultRadio		= iObj_create(_OBJ_TYPE_RADIO,		NULL,	NULL);
+			gobj_defaultOption		= iObj_create(_OBJ_TYPE_OPTION,		NULL);
+			gobj_defaultRadio		= iObj_create(_OBJ_TYPE_RADIO,		NULL);
 			// Forms and subforms are created last because they have internal child objects references to classes which must be created before
-			gobj_defaultForm		= iObj_create(_OBJ_TYPE_FORM,		NULL,	NULL);
-			gobj_defaultSubform		= iObj_create(_OBJ_TYPE_SUBFORM,	NULL,	NULL);
+			gobj_defaultForm		= iObj_create(_OBJ_TYPE_FORM,		NULL);
+			gobj_defaultSubform		= iObj_create(_OBJ_TYPE_SUBFORM,	NULL);
 	}
 
 
@@ -176,21 +176,21 @@
 //////
 	void iInit_create_screenObject(void)
 	{
-		s32				lnLeft, lnTop, lnWidth, lnHeight;
-		SSubObjForm*	form;
-		RECT			lrc;
+		s32			lnLeft, lnTop, lnWidth, lnHeight;
+		SObject*	form;
+		RECT		lrc;
 
 
 		//////////
 		// Create the object
 		//////
 			// Create sub-object
-			form = iSubobj_createForm((SSubObjForm*)gobj_defaultForm->sub_obj, NULL);
+			form = iSubobj_createForm(gobj_defaultForm, NULL);
 			if (!form)
 				return;
 
 			// Create object
-			gobj_screen = iObj_create(_OBJ_TYPE_FORM, form, NULL);
+			gobj_screen = iObj_create(_OBJ_TYPE_FORM, form);
 			if (!gobj_screen)
 			{
 				iSubobj_deleteForm(form, true);
@@ -198,13 +198,13 @@
 			}
 
 			// Set the app icon
-			iiSubobj_form_setIcon(gobj_screen, bmpVjrIcon);
+			iObj_setIcon(gobj_screen, bmpVjrIcon);
 
 			// Give it a caption
-			iDatum_duplicate(&form->caption, (s8*)cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
+			iDatum_duplicate(&form->pa.caption, (s8*)cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
 
 			// Give it a fixed point font
-			form->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
+			form->pa.font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
 
 
 		//////////
@@ -241,47 +241,32 @@
 //////
 	void iInit_create_jdebiObject(void)
 	{
-		s32					lnLeft, lnTop, lnWidth, lnHeight;
-		SSubObjForm*		form;
-		SObject*			objSourceCode;
-		SObject*			objLocals;
-		SObject*			objWatch;
-		SObject*			objCommand;
-		SObject*			objDebug;
-		SObject*			objOutput;
-		SSubObjSubform*		sourceCode;
-		SSubObjSubform*		locals;
-		SSubObjSubform*		watch;
-		SSubObjSubform*		command;
-		SSubObjSubform*		debug;
-		SSubObjSubform*		output;
-		RECT				lrc;
+		s32			lnLeft, lnTop, lnWidth, lnHeight;
+		RECT		lrc;
+		SObject*	sourceCode;
+		SObject*	locals;
+		SObject*	watch;
+		SObject*	command;
+		SObject*	debug;
+		SObject*	output;
 
 
 		//////////
 		// Create the object and its sub-objects
 		//////
-			// Create sub-objects
-			form = iSubobj_createForm((SSubObjForm*)gobj_defaultForm->sub_obj, NULL);
-			// If we get here, we're good
-
 			// Create object
-			gobj_jdebi = iObj_create(_OBJ_TYPE_FORM, form, NULL);
+			gobj_jdebi = iObj_create(_OBJ_TYPE_FORM, NULL);
 			if (!gobj_jdebi)
-			{
-				iSubobj_deleteForm(form, true);
 				return;
-			}
 
 			// Set the app icon
-			iiSubobj_form_setIcon(gobj_jdebi, bmpJDebiIcon);
+			iObj_setIcon(gobj_jdebi, bmpJDebiIcon);
 
 			// Give it a caption
-			form = (SSubObjForm*)gobj_jdebi->sub_obj;
-			iDatum_duplicate(&form->caption, (s8*)cgcJDebiTitle, sizeof(cgcJDebiTitle) - 1);
+			iDatum_duplicate(&gobj_jdebi->pa.caption, (s8*)cgcJDebiTitle, sizeof(cgcJDebiTitle) - 1);
 
 			// Give it a fixed point font
-			form->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
+			gobj_jdebi->pa.font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
 
 
 		//////////
@@ -305,74 +290,74 @@
 		//////////
 		// Create the subforms
 		//////
-			objSourceCode	= iObj_addChild(gobj_jdebi, _OBJ_TYPE_SUBFORM, (void**)&sourceCode);
-			objLocals		= iObj_addChild(gobj_jdebi, _OBJ_TYPE_SUBFORM, (void**)&locals);
-			objWatch		= iObj_addChild(gobj_jdebi, _OBJ_TYPE_SUBFORM, (void**)&watch);
-			objCommand		= iObj_addChild(gobj_jdebi, _OBJ_TYPE_SUBFORM, (void**)&command);
-			objDebug		= iObj_addChild(gobj_jdebi, _OBJ_TYPE_SUBFORM, (void**)&debug);
-			objOutput		= iObj_addChild(gobj_jdebi, _OBJ_TYPE_SUBFORM, (void**)&output);
+			sourceCode	= iObj_addChild(gobj_jdebi, _OBJ_TYPE_SUBFORM);
+			locals		= iObj_addChild(gobj_jdebi, _OBJ_TYPE_SUBFORM);
+			watch		= iObj_addChild(gobj_jdebi, _OBJ_TYPE_SUBFORM);
+			command		= iObj_addChild(gobj_jdebi, _OBJ_TYPE_SUBFORM);
+			debug		= iObj_addChild(gobj_jdebi, _OBJ_TYPE_SUBFORM);
+			output		= iObj_addChild(gobj_jdebi, _OBJ_TYPE_SUBFORM);
 
 			// Set the icons
-			iiSubobj_subform_setIcon(objSourceCode,	bmpSourceCodeIcon);
-			iiSubobj_subform_setIcon(objLocals,		bmpLocalsIcon);
-			iiSubobj_subform_setIcon(objWatch,		bmpWatchIcon);
-			iiSubobj_subform_setIcon(objCommand,	bmpCommandIcon);
-			iiSubobj_subform_setIcon(objDebug,		bmpDebugIcon);
-			iiSubobj_subform_setIcon(objOutput,		bmpOutputIcon);
+			iObj_setIcon(sourceCode,	bmpSourceCodeIcon);
+			iObj_setIcon(locals,		bmpLocalsIcon);
+			iObj_setIcon(watch,			bmpWatchIcon);
+			iObj_setIcon(command,		bmpCommandIcon);
+			iObj_setIcon(debug,			bmpDebugIcon);
+			iObj_setIcon(output,		bmpOutputIcon);
 
 
 		//////////
 		// Position and size each window
 		//////
-			lnHeight = (form->rcClient.bottom - form->rcClient.top) / 8;
-			iObj_setSize(objSourceCode, 0,						0,							form->rcClient.right - form->rcClient.left,							4 * lnHeight);
-			iObj_setSize(objLocals,		0,						objSourceCode->rc.bottom,	form->rcClient.right - form->rcClient.left,							lnHeight);
-			iObj_setSize(objWatch,		0,						objLocals->rc.bottom,		form->rcClient.right - form->rcClient.left,							lnHeight);
-			iObj_setSize(objCommand,	0,						objWatch->rc.bottom,		objWatch->rc.right / 2,												(form->rcClient.bottom - form->rcClient.top) - objWatch->rc.bottom);
-			iObj_setSize(objDebug,		objCommand->rc.right,	objCommand->rc.top,			objCommand->rc.right / 2,											(form->rcClient.bottom - form->rcClient.top) - objWatch->rc.bottom);
-			iObj_setSize(objOutput,		objDebug->rc.right,		objCommand->rc.top,			form->rcClient.right - form->rcClient.left - objDebug->rc.right,	(form->rcClient.bottom - form->rcClient.top) - objWatch->rc.bottom);
+			lnHeight = (gobj_jdebi->rcClient.bottom - gobj_jdebi->rcClient.top) / 8;
+			iObj_setSize(sourceCode, 0,					0,						gobj_jdebi->rcClient.right - gobj_jdebi->rcClient.left,						4 * lnHeight);
+			iObj_setSize(locals,	0,					sourceCode->rc.bottom,	gobj_jdebi->rcClient.right - gobj_jdebi->rcClient.left,						lnHeight);
+			iObj_setSize(watch,		0,					locals->rc.bottom,		gobj_jdebi->rcClient.right - gobj_jdebi->rcClient.left,						lnHeight);
+			iObj_setSize(command,	0,					watch->rc.bottom,		watch->rc.right / 2,														(gobj_jdebi->rcClient.bottom - gobj_jdebi->rcClient.top) - watch->rc.bottom);
+			iObj_setSize(debug,		command->rc.right,	command->rc.top,		command->rc.right / 2,														(gobj_jdebi->rcClient.bottom - gobj_jdebi->rcClient.top) - watch->rc.bottom);
+			iObj_setSize(output,	debug->rc.right,	command->rc.top,		gobj_jdebi->rcClient.right - gobj_jdebi->rcClient.left - debug->rc.right,	(gobj_jdebi->rcClient.bottom - gobj_jdebi->rcClient.top) - watch->rc.bottom);
 
 
 		//////////
 		// SourceCode window caption and font
 		//////
-			iDatum_duplicate(&sourceCode->caption, (s8*)cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
-			sourceCode->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
+			iDatum_duplicate(&sourceCode->pa.caption, (s8*)cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
+			sourceCode->pa.font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
 
 
 		//////////
 		// Locals window caption and font
 		//////
-			iDatum_duplicate(&locals->caption, (s8*)cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
-			locals->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
+			iDatum_duplicate(&locals->pa.caption, (s8*)cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
+			locals->pa.font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
 
 
 		//////////
 		// Watch window caption and font
 		//////
-			iDatum_duplicate(&watch->caption, (s8*)cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
-			watch->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
+			iDatum_duplicate(&watch->pa.caption, (s8*)cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
+			watch->pa.font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
 
 
 		//////////
 		// Command window caption and font
 		//////
-			iDatum_duplicate(&command->caption, (s8*)cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
-			command->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
+			iDatum_duplicate(&command->pa.caption, (s8*)cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
+			command->pa.font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
 
 
 		//////////
 		// Debug window caption and font
 		//////
-			iDatum_duplicate(&debug->caption, (s8*)cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
-			debug->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
+			iDatum_duplicate(&debug->pa.caption, (s8*)cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
+			debug->pa.font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
 
 
 		//////////
 		// Output window caption and font
 		//////
-			iDatum_duplicate(&output->caption, (s8*)cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
-			output->font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
+			iDatum_duplicate(&output->pa.caption, (s8*)cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
+			output->pa.font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
 
 
 		//////////
@@ -523,7 +508,7 @@
 // Note:  Any object can be presented in a window, though typically on form objects are.
 //
 //////
-	SWindow* iWindow_createForObject(SObject* obj, SWindow* win, s32 icon)
+	SWindow* iWindow_createForObject(SObject* obj, SWindow* winReuse, s32 icon)
 	{
 		SWindow*		winNew;
 		WNDCLASSEXA		classex;
@@ -539,8 +524,8 @@
 			//////////
 			// Create if need be
 			//////
-				if (!win)		winNew = iWindow_allocate();
-				else			winNew = win;
+				if (!winReuse)		winNew = iWindow_allocate();
+				else				winNew = winReuse;
 
 
 			//////////
@@ -559,8 +544,8 @@
 					winNew->obj = obj;
 
 					// Create our accumulation buffer
-					win->bmp = iBmp_allocate();
-					iBmp_createBySize(win->bmp, winNew->rc.right - winNew->rc.left, winNew->rc.bottom - winNew->rc.top, 32);
+					winReuse->bmp = iBmp_allocate();
+					iBmp_createBySize(winReuse->bmp, winNew->rc.right - winNew->rc.left, winNew->rc.bottom - winNew->rc.top, 32);
 
 
 					//////////
@@ -591,8 +576,8 @@
 					// Physically create the window
 					//////
 						// Window name
-						if (obj->name.data)		memcpy(buffer, obj->name.data,		min(obj->name.length, sizeof(buffer) - 1));
-						else					memcpy(buffer, cgcScreenTitle,		sizeof(cgcScreenTitle));
+						if (obj->pa.name.data)		memcpy(buffer, obj->pa.name.data,	min(obj->pa.name.length, sizeof(buffer) - 1));
+						else						memcpy(buffer, cgcScreenTitle,		sizeof(cgcScreenTitle));
 
 						// Build it
 						winNew->hwnd = CreateWindow(bufferClass, buffer, WS_POPUP, obj->rc.left, obj->rc.top, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, NULL, NULL, ghInstance, 0);
@@ -601,7 +586,7 @@
 						PostMessage(winNew->hwnd, WMVJR_FIRST_CREATION, 0, 0);
 
 						// If visible, show it
-						if (obj->isVisible)
+						if (obj->p.isVisible)
 							ShowWindow(winNew->hwnd, SW_SHOW);
 
 					// Unlock
@@ -731,14 +716,12 @@
 if (win->obj == gobj_jdebi)
 {
 	SObject* obj;
-	SSubObjSubform* subform;
 	obj = gobj_jdebi->firstChild;
 	while (obj)
 	{
 		if (obj->objType == _OBJ_TYPE_SUBFORM)
 		{
-			subform = (SSubObjSubform*)obj->sub_obj;
-			if (iDatum_compare(&subform->caption, (s8*)cgcCommandTitle, -1) == 0)
+			if (iDatum_compare(&obj->pa.caption, (s8*)cgcCommandTitle, -1) == 0)
 				obj->isDirty = true;
 		}
 
@@ -1290,7 +1273,7 @@ if (win->obj == gobj_jdebi)
 		//////////
 		// If we're a valid window, process the mouse
 		//////
-			if (win && win->obj && win->obj->sub_obj && win->obj->rc.right > win->obj->rc.left)
+			if (win && win->obj && win->obj->rc.right > win->obj->rc.left)
 			{
 				// Translate the mouse from the scaled position to its real position
 				iiMouse_translatePosition(win, (POINTS*)&l);
@@ -1314,14 +1297,14 @@ if (win->obj == gobj_jdebi)
 //////
 	void iiMouse_translatePosition(SWindow* win, POINTS* pt)
 	{
-		SSubObjForm*	form;
-		POINT			lpt;
+		SObject*	form;
+		POINT		lpt;
 
 
 		//////////
 		// Grab the related form object
 		//////
-			form = (SSubObjForm*)win->obj->sub_obj;
+			form = win->obj;
 
 
 		//////////
@@ -1383,16 +1366,14 @@ if (win->obj == gobj_jdebi)
 //////
 	s32 iiMouse_processMouseEvents_client(SWindow* win, UINT m, WPARAM w, LPARAM l)
 	{
-		s32				lnResult;
-		SObject*		obj;
-		SSubObjForm*	form;
+		s32			lnResult;
+		SObject*	obj;
 
 
 		//////////
-		// Grab our pointers
+		// Grab our pointer
 		//////
-			obj		= win->obj;
-			form	= (SSubObjForm*)obj->sub_obj;
+			obj = win->obj;
 
 
 		//////////
@@ -1415,19 +1396,17 @@ if (win->obj == gobj_jdebi)
 //////
 	s32 iiMouse_processMouseEvents_nonclient(SWindow* win, UINT m, WPARAM w, LPARAM l)
 	{
-		s32				lnResult, lnDeltaX, lnDeltaY, lnWidth, lnHeight, lnLeft, lnTop;
-		bool			llCtrl, llAlt, llShift, llLeft, llRight, llMiddle, llCaps;
-		SObject*		obj;
-		SSubObjForm*	form;
-		RECT			lrc;
-		POINT			pt, ptScreen;
+		s32			lnResult, lnDeltaX, lnDeltaY, lnWidth, lnHeight, lnLeft, lnTop;
+		bool		llCtrl, llAlt, llShift, llLeft, llRight, llMiddle, llCaps;
+		SObject*	obj;
+		RECT		lrc;
+		POINT		pt, ptScreen;
 
 
 		//////////
-		// Grab our pointers
+		// Grab our pointer
 		//////
-			obj		= win->obj;
-			form	= (SSubObjForm*)obj->sub_obj;
+			obj = win->obj;
 
 
 		//////////
@@ -1446,13 +1425,13 @@ if (win->obj == gobj_jdebi)
 			if (m == WM_LBUTTONDOWN)
 			{
 				// Close button
-				if (PtInRect(&form->rcClose, pt))
+				if (PtInRect(&obj->rcClose, pt))
 				{
 					// Send the quit message
 					PostQuitMessage(0);
 
 				// Minimize button
-				} else if (PtInRect(&form->rcMinimize, pt)) {
+				} else if (PtInRect(&obj->rcMinimize, pt)) {
 					// Minimize the window
 					CloseWindow(win->hwnd);
 
@@ -1499,10 +1478,10 @@ if (win->obj == gobj_jdebi)
 					if (llLeft)
 					{
 						// Did they move in a button?
-						if (!(PtInRect(&form->rcIcon, pt) || PtInRect(&form->rcMove, pt) || PtInRect(&form->rcMinimize, pt) || PtInRect(&form->rcMaximize, pt) || PtInRect(&form->rcClose, pt)))
+						if (!(PtInRect(&obj->rcIcon, pt) || PtInRect(&obj->rcMove, pt) || PtInRect(&obj->rcMinimize, pt) || PtInRect(&obj->rcMaximize, pt) || PtInRect(&obj->rcClose, pt)))
 						{
 							// Nope.  Are they moving in a resizing arrow?
-							if (PtInRect(&form->rcArrowUl, pt) || PtInRect(&form->rcArrowUr, pt) || PtInRect(&form->rcArrowLl, pt) || PtInRect(&form->rcArrowLr, pt))
+							if (PtInRect(&obj->rcArrowUl, pt) || PtInRect(&obj->rcArrowUr, pt) || PtInRect(&obj->rcArrowLl, pt) || PtInRect(&obj->rcArrowLr, pt))
 							{
 								// We are beginning a resize
 								win->isResizing	= true;
@@ -1966,7 +1945,7 @@ _asm int 3;
 // Called to free the extra info associated with this entry
 //
 //////
-	void iExtraInfo_free(SEditChainManager* ecm, SEditChain* ec, SExtraInfo** root, bool tlDeleteSelf)
+	void iExtraInfo_free(SEM* ecm, SEdit* ec, SExtraInfo** root, bool tlDeleteSelf)
 	{
 		SExtraInfo*		ei;
 		SExtraInfo*		eiNext;
