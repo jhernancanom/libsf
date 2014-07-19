@@ -159,7 +159,7 @@
 		u32			errorNum;
 		s8*			trim1ptr;
 		s8*			trim2ptr;
-		u32			trim1Length, trim2Length;
+		s32			trim1Length, trim2Length;
         SVariable*	result;
 
 
@@ -233,6 +233,24 @@ _asm int 3;
 
 				} else {
 					iError_reportByNumber(_ERROR_P3_IS_INCORRECT, NULL);
+					return(NULL);
+				}
+			}
+
+
+		//////////
+		// If they specified trimCharss
+		//////
+			if (pTrimChars2)
+			{
+				if (iVariable_isTypeCharacter(pTrimChars2))
+				{
+					// They specified characters to scan
+					trim2ptr	= pTrimChars2->value.data;
+					trim2Length	= pTrimChars2->value.length;
+
+				} else {
+					iError_reportByNumber(_ERROR_P4_IS_INCORRECT, NULL);
 					return(NULL);
 				}
 			}
@@ -338,7 +356,7 @@ _asm int 3;
 							lnClipEndPos = 0;
 							if (trimEnd)
 							{
-								for (lnEnd = pString->value.length - 1; lnEnd > 0 && pString->value.data[lnEnd] == lookChar; lnClipEndPos++)
+								for (lnEnd = pString->value.length - 1; lnEnd > 0 && pString->value.data[lnEnd] == lc; lnClipEndPos++)
 									--lnEnd;
 							}
 
