@@ -196,22 +196,29 @@ struct SFont
 
 struct SEventsGeneral
 {
-	bool		(*onLoad)			(SObject* o);							// Called to load anything needed by the init() event (holds a template/skeleton object)
-	bool		(*onInit)			(SObject* o);							// Called to initialize anything
-	bool		(*onCreated)		(SObject* o);							// Called after initialization, before the object is sized
-	bool		(*onResize)			(SObject* o, u32* widthRequired_out, u32* heightRequired_out);	// Called to size or resize the object
-	bool		(*onMoved)			(SObject* o, u32* xOverride_out, u32* yOverride_out);			// Called when the object has been moved
-	bool		(*onRender)			(SObject* o);							// Called to render to bmp (returns if anything was drawn)
-	bool		(*onPublish)		(SObject* o);							// Called to publish the control onto the parent (which will populate bmpScale if need be)
-	bool		(*onQueryUnload)	(SObject* o);							// Called before onDestroy, determines if the form should actually be destroyed
-	bool		(*onDestroy)		(SObject* o);							// Called when the object will be destroyed
-	bool		(*onUnload)			(SObject* o);							// Called after the object has been destroyed, to unload anything (holds a template/skeleton object)
-	bool		(*onGotFocus)		(SObject* o);							// Called when the object receives focus (note multiple items can have simultaneous focus)
-	bool		(*onLostFocus)		(SObject* o);							// Called when the object loses focus
-	bool		(*onAddObject)		(SObject* o);							// Called when an object is added
-	bool		(*onAddProperty)	(SObject* o);							// Called when a property is added
-	bool		(*onError)			(SObject* o);							// Called when an error is triggered in code on an object
-	bool		(*onScrolled)		(SObject* o);							// Called when an object has been scrolled
+	bool		(*onLoad)					(SObject* o);							// Called to load anything needed by the init() event (holds a template/skeleton object)
+	bool		(*onInit)					(SObject* o);							// Called to initialize anything
+	bool		(*onCreated)				(SObject* o);							// Called after initialization, before the object is sized
+	bool		(*onResize)					(SObject* o, u32* widthRequired_out, u32* heightRequired_out);	// Called to size or resize the object
+	bool		(*onMoved)					(SObject* o, u32* xOverride_out, u32* yOverride_out);			// Called when the object has been moved
+	bool		(*onRender)					(SObject* o);							// Called to render to bmp (returns if anything was drawn)
+	bool		(*onPublish)				(SObject* o);							// Called to publish the control onto the parent (which will populate bmpScale if need be)
+	bool		(*onQueryUnload)			(SObject* o);							// Called before onDestroy, determines if the form should actually be destroyed
+	bool		(*onDestroy)				(SObject* o);							// Called when the object will be destroyed
+	bool		(*onUnload)					(SObject* o);							// Called after the object has been destroyed, to unload anything (holds a template/skeleton object)
+	bool		(*onGotFocus)				(SObject* o);							// Called when the object receives focus (note multiple items can have simultaneous focus)
+	bool		(*onLostFocus)				(SObject* o);							// Called when the object loses focus
+	bool		(*onAddObject)				(SObject* o);							// Called when an object is added
+	bool		(*onAddProperty)			(SObject* o);							// Called when a property is added
+	bool		(*onError)					(SObject* o);							// Called when an error is triggered in code on an object
+	bool		(*onScrolled)				(SObject* o);							// Called when an object has been scrolled
+	bool		(*activate)					(SObject* o);							// Called when activated
+	bool		(*deactivate)				(SObject* o);							// Called when deactivated
+	bool		(*onSelect)					(SObject* o, SObject* oItem);			// When an option is selected
+	bool		(*onDeselect)				(SObject* o, SObject* oItem);			// When an option is deselected
+	bool		(*interactiveChange)		(SObject* o);							// Called when the data changes
+	bool		(*programmaticChange)		(SObject* o);							// Called when the data changes
+
 };
 
 struct SEventsMouse
@@ -284,50 +291,6 @@ struct SObject
 	bool		isPublished;											// Should this control be published?  Every object has a .lockScreen property which allows it to not be published while changes are made.
 	bool		isVisible;												// If it's visible
 	bool		isDirty;												// Is set if this or any child object needs re-rendered
-
-	// Data unique to this object
-	void*		sub_obj;												// Varies by type, see SObject* structures below
-
-	// Related position in the member hierarchy
-	SVariable*			firstProperty;									// Runtime-added user-defined property
-	SEditChainManager*	firstMethod;									// Runtime-added user-defined methods
-
-	// Events
-	SEvents		ev;														// Events for this object
-
-
-	//////////
-	// Object size in pixels, per the .Left, .Top, .Width, and .Height properties
-	//////
-		RECT		rc;													// Object's current position in its parent
-		RECT		rco;												// Object's original position in its parent
-		RECT		rcp;												// Original size of parent at creation
-		s32			anchor;												// Method this item uses when its parent is resized
-
-
-	//////////
-	// Drawing canvas
-	//////
-		SBitmap*	bmp;												// If exists, canvas for the content
-		SBitmap*	bmpPriorRendered;									// Used for speedups when not isDirty
-		// If not scaled:
-		s32			scrollOffsetX;										// If the bmp->bi coordinates are larger than its display area, the upper-left X coordinate
-		s32			scrollOffsetY;										// ...the upper-left Y coordinate
-		// If scaled, updated only during publish():
-		bool		isScaled;											// If the bmp->bi coordinates are larger than its display area, should it be scaled?
-		SBitmap*	bmpScaled;											// The bmp scaled into RC's size
-};
-
-struct SSubObjEmpty
-{
-	// _OBJECT_TYPE_EMPTY
-	SObject*	objParent;												// Parent object this object belongs to
-};
-
-struct SSubObjForm
-{
-	// _OBJECT_TYPE_FORM
-	SObject*	objParent;												// Parent object this object belongs to
 
 	RECT		rcMax;													// The maximum rectangle for the form
 	RECT		rcMin;													// The minimum rectangle for the form
@@ -404,11 +367,181 @@ struct SSubObjForm
 	s32			windowType;												// Ignored, always returns 0=modeless, all forms in VJr are modeless.
 	bool		zoomBox;												// Ignored, always returns .F.
 
-	// Events unique to this object
-	bool		(*activate)							(SObject* o);		// Called when activated
-	bool		(*deactivate)						(SObject* o);		// Called when deactivated
+	// Data unique to this object
+	void*		sub_obj;												// Varies by type, see SObject* structures below
 
-	// Updating each render
+	// Related position in the member hierarchy
+	SVariable*			firstProperty;									// Runtime-added user-defined property
+	SEditChainManager*	firstMethod;									// Runtime-added user-defined methods
+
+	// Events
+	SEvents		ev;														// Events for this object
+
+
+	//////////
+	// Object size in pixels, per the .Left, .Top, .Width, and .Height properties
+	//////
+		RECT		rc;													// Object's current position in its parent
+		RECT		rco;												// Object's original position in its parent
+		RECT		rcp;												// Original size of parent at creation
+		s32			anchor;												// Method this item uses when its parent is resized
+
+// Label
+		SFont*		font;													// Default font instance
+		SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
+		SBgra		foreColor;												// Default text fore color
+
+		// Data
+		u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
+		SDatum		caption;												// Caption
+
+		// Flags for rendering
+		bool		isOpaque;												// Is the label opaque?
+		bool		isBorder;												// Is there a border?
+		SBgra		borderColor;											// Border color
+		SBgra		disabledBackColor;										// Disabled background color
+		SBgra		disabledForeColor;										// Disabled foreground color
+
+		// Used only for labels in lists, like SObjectOption
+		bool		selected;												// Is this item selected?
+// Textbox
+		SFont*		font;													// Default font instance
+		SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
+		SBgra		foreColor;												// Default text fore color
+
+		// Flags for data
+		u32			style;													// See _TEXTBOX_STYLE_* constants (plain, 2D, 3D)
+		u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
+		SDatum		value;													// Space allocated for the current value.  Note that LEFT(value, valueLength) is the actual value
+		u32			valueLength;											// Length of the field
+		SDatum		picture;												// Picture clause (value is formated to this form for input)
+		SDatum		mask;													// Only allow these input characters
+
+		// Flags for display and input
+		s32			cursor;													// Position of the flashing cursor, where input goes
+		s32			selectStart;											// Where does the selection begin?
+		s32			selectEnd;												// Where does the selection end?
+
+		// Flags for rendering
+		bool		isOpaque;												// Is the label opaque?
+		bool		isBorder;												// Is there a border?
+		SBgra		borderColor;											// Border color
+		SBgra		selectedBackColor;										// Selected background color
+		SBgra		selectedForeColor;										// Selected foreground color
+		SBgra		disabledBackColor;										// Disabled background color
+		SBgra		disabledForeColor;										// Disabled foreground color
+
+// Button
+		SFont*		font;													// Default font instance
+		SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
+		SBgra		foreColor;												// Default text fore color
+
+		// Flags for data
+		u32			style;													// See _BUTTON_STYLE_* constants (plain, 2D, 3D)
+		u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
+		SDatum		caption;												// Caption
+
+		SBgra		disabledBackColor;										// Disabled background color
+		SBgra		disabledForeColor;										// Disabled foreground color
+
+// Editbox
+		SFont*		font;													// Default font instance
+		SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
+		SBgra		foreColor;												// Default text fore color
+
+		// Flags for data
+		u32			style;													// See _EDITBOX_STYLE_* constants (plain, 2D, 3D)
+		u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
+		SEditChainManager*	ecm;											// The content being edited
+
+		// Flags for display and input
+		s32			cursor;													// Position of the flashing cursor, where input goes
+		s32			selectStart;											// Where does the selection begin?
+		s32			selectEnd;												// Where does the selection end?
+
+		// Flags for rendering
+		bool		isOpaque;												// Is the label opaque?
+		bool		isBorder;												// Is there a border?
+		SBgra		borderColor;											// Border color
+		SBgra		selectedBackColor;										// Selected background color
+		SBgra		selectedForeColor;										// Selected foreground color
+		SBgra		disabledBackColor;										// Disabled background color
+		SBgra		disabledForeColor;										// Disabled foreground color
+
+// Image
+		u32			style;													// See _EDITBOX_STYLE_* constants (plain, 2D, 3D)
+
+		SBitmap*	image;													// Image displayed when the mouse IS NOT over this control
+		SBitmap*	imageOver;												// Image displayed when the mouse IS over this control
+
+// Checkbox
+		SFont*		font;													// Default font instance
+		SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
+		SBgra		foreColor;												// Default text fore color
+
+		// Data
+		u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
+		u32			style;													// See _CHECKBOX_STYLE_* constants (plain, 2D, 3D)
+		s32			value;													// 0=unchecked, positive=checked, negative=multiple
+		SDatum		caption;												// Caption stored for this object (if any)
+
+		// Flags for rendering
+		bool		isOpaque;												// Is the label opaque?
+		bool		isBorder;												// Is there a border?
+		SBgra		borderColor;											// Border color
+		SBgra		disabledBackColor;										// Disabled background color
+		SBgra		disabledForeColor;										// Disabled foreground color
+
+// Option
+		SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
+		SBgra		foreColor;												// Default text fore color
+
+		// Data
+		u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
+		u32			style;													// See _RADIO_STYLE_* constants (radio, slider, spinner)
+
+		u32			optionCount;											// How many options are there?
+		SObject*	firstOption;											// Each option has its own set of properties, and each is of _OBJECT_TYPE_LABEL
+		bool		multiSelect;											// Allow multiple items to be selected?
+
+// Radio
+		SFont*		font;													// Default font instance
+		SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
+		SBgra		foreColor;												// Default text fore color
+
+		// Data
+		u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
+		u32			style;													// See _RADIO_STYLE_* constants (radio, slider, spinner)
+		f64			value;													// Current value
+		f64			minValue;												// Minimum value to display
+		f64			maxValue;												// Maximum value to display
+		f64			roundTo;												// Round 10=tens place, 1=whole integers, 0.1=one decimal place, 0.01=two decimal places, and so on
+
+		// Flags for rendering
+		bool		isOpaque;												// Is the label opaque?
+		bool		isBorder;												// Is there a border?
+		SBgra		borderColor;											// Border color
+		SBgra		disabledBackColor;										// Disabled background color
+		SBgra		disabledForeColor;										// Disabled foreground color
+
+
+	//////////
+	// Drawing canvas
+	//////
+		SBitmap*	bmp;												// If exists, canvas for the content
+		SBitmap*	bmpPriorRendered;									// Used for speedups when not isDirty
+		// If not scaled:
+		s32			scrollOffsetX;										// If the bmp->bi coordinates are larger than its display area, the upper-left X coordinate
+		s32			scrollOffsetY;										// ...the upper-left Y coordinate
+		// If scaled, updated only during publish():
+		bool		isScaled;											// If the bmp->bi coordinates are larger than its display area, should it be scaled?
+		SBitmap*	bmpScaled;											// The bmp scaled into RC's size
+
+
+//////////
+// Temporary properties added during development to facilitate display until such time as the full object hierarchy is created for every object.
+// Updated each render
+//////
 	RECT		rcClient;												// The client area of the form
 	RECT		rcCaption;												// The caption area (used for moving the form around)
 	RECT		rcArrowUl;												// The upper-left resize arrow is
@@ -421,252 +554,3 @@ struct SSubObjForm
 	RECT		rcMaximize;												// The maximize button of the form
 	RECT		rcClose;												// The close button of the form
 };
-
-struct SSubObjSubform
-{
-	// _OBJECT_TYPE_SUBFORM
-	SObject*	objParent;												// Parent object this object belongs to
-
-	RECT		rcMax;													// The maximum rectangle for the form
-	RECT		rcMin;													// The minimum rectangle for the form
-
-	SFont*		font;													// Default font instance
-	SBgra		nwRgba;													// Northwest back color for border
-	SBgra		neRgba;													// Northeast back color for border
-	SBgra		swRgba;													// Southwest back color for border
-	SBgra		seRgba;													// Southeast back color for border
-	SBgra		backColor;												// Back color for the client content
-	SBgra		foreColor;												// Default text fore color
-	SBgra		captionColor;											// Color of the caption
-
-	SBitmap*	bmpSubformIcon;											// Icon for the subform
-	SDatum		caption;												// Caption
-
-	SDatum		pictureName;											// The name of the file used for the picture
-	SBitmap*	bmpPicture;												// The image for the picture
-
-	// General flags and settings
-	bool		allowOutput;											// Allow output to the form?
-	s32			borderStyle;											// 0=none, 1=fixed, 2=fixed standard presentation, 3=sizable presentation
-	bool		processKeyPreviewEvents;								// Do keystrokes for controls on the form go through the form's Key* events as well?
-	s32			scaleMode;												// 0=foxels, 3=pixels (default)
-	s32			windowState;											// 0=normal, 1=minimized
-
-	// Events unique to this object
-	bool		(*activate)							(SObject* o);		// Called when activated
-	bool		(*deactivate)						(SObject* o);		// Called when deactivated
-
-	// Updating each render
-	RECT		rcClient;												// The client area of the subform
-	RECT		rcCaption;												// The caption area (used for moving the subform around)
-	RECT		rcIcon;													// The subform icon
-};
-
-struct SSubObjLabel
-{
-	// _OBJECT_TYPE_LABEL
-	SObject*	parent;													// parent object this object belongs to
-
-	SFont*		font;													// Default font instance
-	SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
-	SBgra		foreColor;												// Default text fore color
-
-	// Data
-	u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
-	SDatum		caption;												// Caption
-
-	// Flags for rendering
-	bool		isOpaque;												// Is the label opaque?
-	bool		isBorder;												// Is there a border?
-	SBgra		borderColor;											// Border color
-	SBgra		disabledBackColor;										// Disabled background color
-	SBgra		disabledForeColor;										// Disabled foreground color
-
-	// Used only for labels in lists, like SObjectOption
-	bool		selected;												// Is this item selected?
-};
-
-struct SSubObjTextbox
-{
-	// _OBJECT_TYPE_TEXTBOX
-	SObject*	objParent;												// Parent object this object belongs to
-
-	SFont*		font;													// Default font instance
-	SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
-	SBgra		foreColor;												// Default text fore color
-
-	// Flags for data
-	u32			style;													// See _TEXTBOX_STYLE_* constants (plain, 2D, 3D)
-	u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
-	SDatum		value;													// Space allocated for the current value.  Note that LEFT(value, valueLength) is the actual value
-	u32			valueLength;											// Length of the field
-	SDatum		picture;												// Picture clause (value is formated to this form for input)
-	SDatum		mask;													// Only allow these input characters
-
-	// Flags for display and input
-	s32			cursor;													// Position of the flashing cursor, where input goes
-	s32			selectStart;											// Where does the selection begin?
-	s32			selectEnd;												// Where does the selection end?
-
-	// Flags for rendering
-	bool		isOpaque;												// Is the label opaque?
-	bool		isBorder;												// Is there a border?
-	SBgra		borderColor;											// Border color
-	SBgra		selectedBackColor;										// Selected background color
-	SBgra		selectedForeColor;										// Selected foreground color
-	SBgra		disabledBackColor;										// Disabled background color
-	SBgra		disabledForeColor;										// Disabled foreground color
-
-	// Events unique to this object
-	bool		(*interactiveChange)				(SObject* o);		// Called when the data changes
-	bool		(*programmaticChange)				(SObject* o);		// Called when the data changes
-};
-
-struct SSubObjButton
-{
-	// _OBJECT_TYPE_BUTTON
-	SObject*	parent;													// parent object this object belongs to
-
-	SFont*		font;													// Default font instance
-	SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
-	SBgra		foreColor;												// Default text fore color
-
-	// Flags for data
-	u32			style;													// See _BUTTON_STYLE_* constants (plain, 2D, 3D)
-	u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
-	SDatum		caption;												// Caption
-
-	SBgra		disabledBackColor;										// Disabled background color
-	SBgra		disabledForeColor;										// Disabled foreground color
-
-	// Events unique to this object
-	bool		(*interactiveChange)				(SObject* o);		// Called when the data changes
-	bool		(*programmaticChange)				(SObject* o);		// Called when the data changes
-};
-
-struct SSubObjEditbox
-{
-	// _OBJECT_TYPE_EDITBOX
-	SObject*	objParent;												// Parent object this object belongs to
-
-	SFont*		font;													// Default font instance
-	SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
-	SBgra		foreColor;												// Default text fore color
-
-	// Flags for data
-	u32			style;													// See _EDITBOX_STYLE_* constants (plain, 2D, 3D)
-	u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
-	SEditChainManager*	ecm;											// The content being edited
-
-	// Flags for display and input
-	s32			cursor;													// Position of the flashing cursor, where input goes
-	s32			selectStart;											// Where does the selection begin?
-	s32			selectEnd;												// Where does the selection end?
-
-	// Flags for rendering
-	bool		isOpaque;												// Is the label opaque?
-	bool		isBorder;												// Is there a border?
-	SBgra		borderColor;											// Border color
-	SBgra		selectedBackColor;										// Selected background color
-	SBgra		selectedForeColor;										// Selected foreground color
-	SBgra		disabledBackColor;										// Disabled background color
-	SBgra		disabledForeColor;										// Disabled foreground color
-
-	// Events unique to this object
-	bool		(*interactiveChange)				(SObject* o);		// Called when the data changes
-	bool		(*programmaticChange)				(SObject* o);		// Called when the data changes
-};
-
-struct SSubObjImage
-{
-	// _OBJECT_TYPE_IMAGE
-	SObject*	objParent;												// Parent object this object belongs to
-
-	u32			style;													// See _EDITBOX_STYLE_* constants (plain, 2D, 3D)
-
-	SBitmap*	image;													// Image displayed when the mouse IS NOT over this control
-	SBitmap*	imageOver;												// Image displayed when the mouse IS over this control
-
-	// Events unique to this object
-	bool		(*programmaticChange)				(SObject* o);		// Called when the data changes
-};
-
-struct SSubObjCheckbox
-{
-	// _OBJECT_TYPE_CHECKBOX
-	SObject*	objParent;												// Parent object this object belongs to
-
-	SFont*		font;													// Default font instance
-	SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
-	SBgra		foreColor;												// Default text fore color
-
-	// Data
-	u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
-	u32			style;													// See _CHECKBOX_STYLE_* constants (plain, 2D, 3D)
-	s32			value;													// 0=unchecked, positive=checked, negative=multiple
-	SDatum		caption;												// Caption stored for this object (if any)
-
-	// Flags for rendering
-	bool		isOpaque;												// Is the label opaque?
-	bool		isBorder;												// Is there a border?
-	SBgra		borderColor;											// Border color
-	SBgra		disabledBackColor;										// Disabled background color
-	SBgra		disabledForeColor;										// Disabled foreground color
-
-	// Events unique to this object
-	bool		(*interactiveChange)				(SObject* o);		// Called when the data changes
-	bool		(*programmaticChange)				(SObject* o);		// Called when the data changes
-};
-
-struct SSubObjOption
-{
-	// _OBJECT_TYPE_OPTION
-	SObject*	objParent;												// Parent object this object belongs to
-
-	SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
-	SBgra		foreColor;												// Default text fore color
-
-	// Data
-	u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
-	u32			style;													// See _RADIO_STYLE_* constants (radio, slider, spinner)
-
-	u32			optionCount;											// How many options are there?
-	SObject*	firstOption;											// Each option has its own set of properties, and each is of _OBJECT_TYPE_LABEL
-	bool		multiSelect;											// Allow multiple items to be selected?
-
-	// Events unique to this object
-	bool		(*onSelect)							(SObject* o, SObject* oItem);	// When an option is selected
-	bool		(*onDeselect)						(SObject* o, SObject* oItem);	// When an option is deselected
-	bool		(*interactiveChange)				(SObject* o);		// Called when the data changes
-	bool		(*programmaticChange)				(SObject* o);		// Called when the data changes
-};
-
-struct SSubObjRadio
-{
-	// _OBJECT_TYPE_RADIO
-	SObject*	objParent;												// Parent object this object belongs to
-
-	SFont*		font;													// Default font instance
-	SBgra		backColor;												// Back color (only RGB() channels are used, but RGBA() channels are maintained)
-	SBgra		foreColor;												// Default text fore color
-
-	// Data
-	u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
-	u32			style;													// See _RADIO_STYLE_* constants (radio, slider, spinner)
-	f64			value;													// Current value
-	f64			minValue;												// Minimum value to display
-	f64			maxValue;												// Maximum value to display
-	f64			roundTo;												// Round 10=tens place, 1=whole integers, 0.1=one decimal place, 0.01=two decimal places, and so on
-
-	// Flags for rendering
-	bool		isOpaque;												// Is the label opaque?
-	bool		isBorder;												// Is there a border?
-	SBgra		borderColor;											// Border color
-	SBgra		disabledBackColor;										// Disabled background color
-	SBgra		disabledForeColor;										// Disabled foreground color
-
-	// Events unique to this object
-	bool		(*interactiveChange)				(SObject* o);		// Called when the data changes
-	bool		(*programmaticChange)				(SObject* o);		// Called when the data changes
-};
-

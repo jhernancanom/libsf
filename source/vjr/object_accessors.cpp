@@ -776,7 +776,7 @@ SVariable* iObj_getProperty_scaleY(SObject* obj)
 //////////
 // FORM Properties
 //////
-bool iiSubobj_form_setMinLeft(SObject* obj, SVariable* var)
+bool iObj_setMinLeft(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -790,7 +790,7 @@ bool iiSubobj_form_setMinLeft(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getMinLeft(SObject* obj)
+SVariable* iObj_getMinLeft(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -804,7 +804,7 @@ SVariable* iiSubobj_form_getMinLeft(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setMinTop(SObject* obj, SVariable* var)
+bool iObj_setMinTop(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -818,7 +818,7 @@ bool iiSubobj_form_setMinTop(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getMinTop(SObject* obj)
+SVariable* iObj_getMinTop(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -832,7 +832,7 @@ SVariable* iiSubobj_form_getMinTop(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setMinWidth(SObject* obj, SVariable* var)
+bool iObj_setMinWidth(SObject* obj, SVariable* var)
 {
 	s32				value;
 	bool			error;
@@ -859,7 +859,7 @@ bool iiSubobj_form_setMinWidth(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getMinWidth(SObject* obj)
+SVariable* iObj_getMinWidth(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -873,7 +873,7 @@ SVariable* iiSubobj_form_getMinWidth(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setMinHeight(SObject* obj, SVariable* var)
+bool iObj_setMinHeight(SObject* obj, SVariable* var)
 {
 	s32				value;
 	bool			error;
@@ -900,7 +900,7 @@ bool iiSubobj_form_setMinHeight(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getMinHeight(SObject* obj)
+SVariable* iObj_getMinHeight(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -914,7 +914,7 @@ SVariable* iiSubobj_form_getMinHeight(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setMaxLeft(SObject* obj, SVariable* var)
+bool iObj_setMaxLeft(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -928,7 +928,7 @@ bool iiSubobj_form_setMaxLeft(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getMaxLeft(SObject* obj)
+SVariable* iObj_getMaxLeft(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -942,7 +942,7 @@ SVariable* iiSubobj_form_getMaxLeft(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setMaxTop(SObject* obj, SVariable* var)
+bool iObj_setMaxTop(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -956,7 +956,7 @@ bool iiSubobj_form_setMaxTop(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getMaxTop(SObject* obj)
+SVariable* iObj_getMaxTop(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -970,7 +970,7 @@ SVariable* iiSubobj_form_getMaxTop(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setMaxWidth(SObject* obj, SVariable* var)
+bool iObj_setMaxWidth(SObject* obj, SVariable* var)
 {
 	s32				value;
 	bool			error;
@@ -997,7 +997,7 @@ bool iiSubobj_form_setMaxWidth(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getMaxWidth(SObject* obj)
+SVariable* iObj_getMaxWidth(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1011,7 +1011,7 @@ SVariable* iiSubobj_form_getMaxWidth(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setMaxHeight(SObject* obj, SVariable* var)
+bool iObj_setMaxHeight(SObject* obj, SVariable* var)
 {
 	s32				value;
 	bool			error;
@@ -1038,7 +1038,7 @@ bool iiSubobj_form_setMaxHeight(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getMaxHeight(SObject* obj)
+SVariable* iObj_getMaxHeight(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1052,7 +1052,7 @@ SVariable* iiSubobj_form_getMaxHeight(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setFontName(SObject* obj, SVariable* var)
+bool iObj_setFontName(SObject* obj, SVariable* var)
 {
 	bool			llResult;
 	SSubObjForm*	form;
@@ -1075,7 +1075,7 @@ bool iiSubobj_form_setFontName(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getFontName(SObject* obj)
+SVariable* iObj_getFontName(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1089,7 +1089,7 @@ SVariable* iiSubobj_form_getFontName(SObject* obj)
 	return(false);
 }
 
-bool iiSubobj_form_setFontSize(SObject* obj, SVariable* var)
+bool iObj_setFontSize(SObject* obj, SVariable* var)
 {
 	bool			llResult;
 	SSubObjForm*	form;
@@ -1112,7 +1112,7 @@ bool iiSubobj_form_setFontSize(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getFontSize(SObject* obj)
+SVariable* iObj_getFontSize(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1126,7 +1126,7 @@ SVariable* iiSubobj_form_getFontSize(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setFontBold(SObject* obj, SVariable* var)
+bool iObj_setFontBold(SObject* obj, SVariable* var)
 {
 	bool			llResult;
 	SSubObjForm*	form;
@@ -1149,7 +1149,7 @@ bool iiSubobj_form_setFontBold(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getFontBold(SObject* obj)
+SVariable* iObj_getFontBold(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1163,7 +1163,7 @@ SVariable* iiSubobj_form_getFontBold(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setFontItalic(SObject* obj, SVariable* var)
+bool iObj_setFontItalic(SObject* obj, SVariable* var)
 {
 	bool			llResult;
 	SSubObjForm*	form;
@@ -1186,7 +1186,7 @@ bool iiSubobj_form_setFontItalic(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getFontItalic(SObject* obj)
+SVariable* iObj_getFontItalic(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1200,7 +1200,7 @@ SVariable* iiSubobj_form_getFontItalic(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setFontUnderline(SObject* obj, SVariable* var)
+bool iObj_setFontUnderline(SObject* obj, SVariable* var)
 {
 	bool			llResult;
 	SSubObjForm*	form;
@@ -1223,7 +1223,7 @@ bool iiSubobj_form_setFontUnderline(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getFontUnderline(SObject* obj)
+SVariable* iObj_getFontUnderline(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1237,7 +1237,7 @@ SVariable* iiSubobj_form_getFontUnderline(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setFontStrikethrough(SObject* obj, SVariable* var)
+bool iObj_setFontStrikethrough(SObject* obj, SVariable* var)
 {
 	bool			llResult;
 	SSubObjForm*	form;
@@ -1260,7 +1260,7 @@ bool iiSubobj_form_setFontStrikethrough(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getFontStrikethrough(SObject* obj)
+SVariable* iObj_getFontStrikethrough(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1274,7 +1274,7 @@ SVariable* iiSubobj_form_getFontStrikethrough(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setFontCondensed(SObject* obj, SVariable* var)
+bool iObj_setFontCondensed(SObject* obj, SVariable* var)
 {
 	bool			llResult;
 	SSubObjForm*	form;
@@ -1297,7 +1297,7 @@ bool iiSubobj_form_setFontCondensed(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getFontCondensed(SObject* obj)
+SVariable* iObj_getFontCondensed(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1311,7 +1311,7 @@ SVariable* iiSubobj_form_getFontCondensed(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setFontExtended(SObject* obj, SVariable* var)
+bool iObj_setFontExtended(SObject* obj, SVariable* var)
 {
 	bool			llResult;
 	SSubObjForm*	form;
@@ -1334,7 +1334,7 @@ bool iiSubobj_form_setFontExtended(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getFontExtended(SObject* obj)
+SVariable* iObj_getFontExtended(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1348,7 +1348,7 @@ SVariable* iiSubobj_form_getFontExtended(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setFontOutline(SObject* obj, SVariable* var)
+bool iObj_setFontOutline(SObject* obj, SVariable* var)
 {
 	bool			llResult;
 	SSubObjForm*	form;
@@ -1371,7 +1371,7 @@ bool iiSubobj_form_setFontOutline(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getFontOutline(SObject* obj)
+SVariable* iObj_getFontOutline(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1385,7 +1385,7 @@ SVariable* iiSubobj_form_getFontOutline(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setFontShadow(SObject* obj, SVariable* var)
+bool iObj_setFontShadow(SObject* obj, SVariable* var)
 {
 	bool			llResult;
 	SSubObjForm*	form;
@@ -1408,7 +1408,7 @@ bool iiSubobj_form_setFontShadow(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getFontShadow(SObject* obj)
+SVariable* iObj_getFontShadow(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1422,7 +1422,7 @@ SVariable* iiSubobj_form_getFontShadow(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setNwColor(SObject* obj, SVariable* var)
+bool iObj_setNwColor(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -1436,7 +1436,7 @@ bool iiSubobj_form_setNwColor(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getNwColor(SObject* obj)
+SVariable* iObj_getNwColor(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1450,7 +1450,7 @@ SVariable* iiSubobj_form_getNwColor(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setNeColor(SObject* obj, SVariable* var)
+bool iObj_setNeColor(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -1464,7 +1464,7 @@ bool iiSubobj_form_setNeColor(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getNeColor(SObject* obj)
+SVariable* iObj_getNeColor(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1478,7 +1478,7 @@ SVariable* iiSubobj_form_getNeColor(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setSwColor(SObject* obj, SVariable* var)
+bool iObj_setSwColor(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -1492,7 +1492,7 @@ bool iiSubobj_form_setSwColor(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getSwColor(SObject* obj)
+SVariable* iObj_getSwColor(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1506,7 +1506,7 @@ SVariable* iiSubobj_form_getSwColor(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setSeColor(SObject* obj, SVariable* var)
+bool iObj_setSeColor(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -1520,7 +1520,7 @@ bool iiSubobj_form_setSeColor(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getSeColor(SObject* obj)
+SVariable* iObj_getSeColor(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1534,7 +1534,7 @@ SVariable* iiSubobj_form_getSeColor(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setBackColor(SObject* obj, SVariable* var)
+bool iObj_setBackColor(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -1548,7 +1548,7 @@ bool iiSubobj_form_setBackColor(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getBackColor(SObject* obj)
+SVariable* iObj_getBackColor(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1562,7 +1562,7 @@ SVariable* iiSubobj_form_getBackColor(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setForeColor(SObject* obj, SVariable* var)
+bool iObj_setForeColor(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -1576,7 +1576,7 @@ bool iiSubobj_form_setForeColor(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getForeColor(SObject* obj)
+SVariable* iObj_getForeColor(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1590,7 +1590,7 @@ SVariable* iiSubobj_form_getForeColor(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setCaptionColor(SObject* obj, SVariable* var)
+bool iObj_setCaptionColor(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -1604,7 +1604,7 @@ bool iiSubobj_form_setCaptionColor(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getCaptionColor(SObject* obj)
+SVariable* iObj_getCaptionColor(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1618,7 +1618,7 @@ SVariable* iiSubobj_form_getCaptionColor(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setCaption(SObject* obj, SVariable* var)
+bool iObj_setCaption(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -1632,7 +1632,7 @@ bool iiSubobj_form_setCaption(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getCaption(SObject* obj)
+SVariable* iObj_getCaption(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1646,7 +1646,7 @@ SVariable* iiSubobj_form_getCaption(SObject* obj)
 	return(false);
 }
 
-bool iiSubobj_form_setPicture(SObject* obj, SVariable* var)
+bool iObj_setPicture(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -1660,7 +1660,7 @@ bool iiSubobj_form_setPicture(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getPicture(SObject* obj)
+SVariable* iObj_getPicture(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1674,7 +1674,7 @@ SVariable* iiSubobj_form_getPicture(SObject* obj)
 	return(false);
 }
 
-bool iiSubobj_form_setAllowOutput(SObject* obj, SVariable* var)
+bool iObj_setAllowOutput(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -1688,7 +1688,7 @@ bool iiSubobj_form_setAllowOutput(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getAllowOutput(SObject* obj)
+SVariable* iObj_getAllowOutput(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1702,7 +1702,7 @@ SVariable* iiSubobj_form_getAllowOutput(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setAlwaysOnBottom(SObject* obj, SVariable* var)
+bool iObj_setAlwaysOnBottom(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -1716,7 +1716,7 @@ bool iiSubobj_form_setAlwaysOnBottom(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getAlwaysOnBottom(SObject* obj)
+SVariable* iObj_getAlwaysOnBottom(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1730,7 +1730,7 @@ SVariable* iiSubobj_form_getAlwaysOnBottom(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setAlwaysOnTop(SObject* obj, SVariable* var)
+bool iObj_setAlwaysOnTop(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -1744,7 +1744,7 @@ bool iiSubobj_form_setAlwaysOnTop(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getAlwaysOnTop(SObject* obj)
+SVariable* iObj_getAlwaysOnTop(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1758,7 +1758,7 @@ SVariable* iiSubobj_form_getAlwaysOnTop(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setAutoCenter(SObject* obj, SVariable* var)
+bool iObj_setAutoCenter(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -1772,7 +1772,7 @@ bool iiSubobj_form_setAutoCenter(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getAutoCenter(SObject* obj)
+SVariable* iObj_getAutoCenter(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1786,7 +1786,7 @@ SVariable* iiSubobj_form_getAutoCenter(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setBorderStyle(SObject* obj, SVariable* var)
+bool iObj_setBorderStyle(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -1800,7 +1800,7 @@ bool iiSubobj_form_setBorderStyle(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getBorderStyle(SObject* obj)
+SVariable* iObj_getBorderStyle(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1814,7 +1814,7 @@ SVariable* iiSubobj_form_getBorderStyle(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setIsCloseable(SObject* obj, SVariable* var)
+bool iObj_setIsCloseable(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -1828,7 +1828,7 @@ bool iiSubobj_form_setIsCloseable(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getIsCloseable(SObject* obj)
+SVariable* iObj_getIsCloseable(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1842,7 +1842,7 @@ SVariable* iiSubobj_form_getIsCloseable(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setProcessKeyPreviewEvents(SObject* obj, SVariable* var)
+bool iObj_setProcessKeyPreviewEvents(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -1856,7 +1856,7 @@ bool iiSubobj_form_setProcessKeyPreviewEvents(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getProcessKeyPreviewEvents(SObject* obj)
+SVariable* iObj_getProcessKeyPreviewEvents(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1870,7 +1870,7 @@ SVariable* iiSubobj_form_getProcessKeyPreviewEvents(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setHasControlBox(SObject* obj, SVariable* var)
+bool iObj_setHasControlBox(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -1884,7 +1884,7 @@ bool iiSubobj_form_setHasControlBox(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getHasControlBox(SObject* obj)
+SVariable* iObj_getHasControlBox(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1898,7 +1898,7 @@ SVariable* iiSubobj_form_getHasControlBox(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setHasMinButton(SObject* obj, SVariable* var)
+bool iObj_setHasMinButton(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -1912,7 +1912,7 @@ bool iiSubobj_form_setHasMinButton(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getHasMinButton(SObject* obj)
+SVariable* iObj_getHasMinButton(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1926,7 +1926,7 @@ SVariable* iiSubobj_form_getHasMinButton(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setHasCloseButton(SObject* obj, SVariable* var)
+bool iObj_setHasCloseButton(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -1940,7 +1940,7 @@ bool iiSubobj_form_setHasCloseButton(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getHasCloseButton(SObject* obj)
+SVariable* iObj_getHasCloseButton(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1954,7 +1954,7 @@ SVariable* iiSubobj_form_getHasCloseButton(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setScaleMode(SObject* obj, SVariable* var)
+bool iObj_setScaleMode(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -1962,19 +1962,19 @@ bool iiSubobj_form_setScaleMode(SObject* obj, SVariable* var)
 	// Make sure our environment is sane
 	form = (SSubObjForm*)obj->sub_obj;
 	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->scaleMode, 0, 0, false, (u32)&iiSubobj_form_setScaleMode_extraTest));
+		return(iObj_setInteger(obj, var, (s32*)&form->scaleMode, 0, 0, false, (u32)&iObj_setScaleMode_extraTest));
 
 	// If we get here, failure
 	return(false);
 }
 
-bool iiSubobj_form_setScaleMode_extraTest(s32 value)
+bool iObj_setScaleMode_extraTest(s32 value)
 {
 	if (value == 0 || value == 3)		return(true);
 	else								return(false);
 }
 
-SVariable* iiSubobj_form_getScaleMode(SObject* obj)
+SVariable* iObj_getScaleMode(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -1988,7 +1988,7 @@ SVariable* iiSubobj_form_getScaleMode(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setShowInTaskBar(SObject* obj, SVariable* var)
+bool iObj_setShowInTaskBar(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2002,7 +2002,7 @@ bool iiSubobj_form_setShowInTaskBar(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getShowInTaskBar(SObject* obj)
+SVariable* iObj_getShowInTaskBar(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2016,7 +2016,7 @@ SVariable* iiSubobj_form_getShowInTaskBar(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setWindowState(SObject* obj, SVariable* var)
+bool iObj_setWindowState(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2030,7 +2030,7 @@ bool iiSubobj_form_setWindowState(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getWindowState(SObject* obj)
+SVariable* iObj_getWindowState(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2044,7 +2044,7 @@ SVariable* iiSubobj_form_getWindowState(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setBindControls(SObject* obj, SVariable* var)
+bool iObj_setBindControls(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2058,7 +2058,7 @@ bool iiSubobj_form_setBindControls(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getBindControls(SObject* obj)
+SVariable* iObj_getBindControls(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2072,7 +2072,7 @@ SVariable* iiSubobj_form_getBindControls(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setBufferMode(SObject* obj, SVariable* var)
+bool iObj_setBufferMode(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2086,7 +2086,7 @@ bool iiSubobj_form_setBufferMode(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getBufferMode(SObject* obj)
+SVariable* iObj_getBufferMode(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2100,7 +2100,7 @@ SVariable* iiSubobj_form_getBufferMode(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setClipControls(SObject* obj, SVariable* var)
+bool iObj_setClipControls(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2114,7 +2114,7 @@ bool iiSubobj_form_setClipControls(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getClipControls(SObject* obj)
+SVariable* iObj_getClipControls(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2128,7 +2128,7 @@ SVariable* iiSubobj_form_getClipControls(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setColorSource(SObject* obj, SVariable* var)
+bool iObj_setColorSource(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2142,7 +2142,7 @@ bool iiSubobj_form_setColorSource(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getColorSource(SObject* obj)
+SVariable* iObj_getColorSource(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2156,7 +2156,7 @@ SVariable* iiSubobj_form_getColorSource(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setContinuousScroll(SObject* obj, SVariable* var)
+bool iObj_setContinuousScroll(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2170,7 +2170,7 @@ bool iiSubobj_form_setContinuousScroll(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getContinuousScroll(SObject* obj)
+SVariable* iObj_getContinuousScroll(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2184,7 +2184,7 @@ SVariable* iiSubobj_form_getContinuousScroll(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setDataSession(SObject* obj, SVariable* var)
+bool iObj_setDataSession(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2206,7 +2206,7 @@ bool iiSubobj_form_setDataSession(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getDataSession(SObject* obj)
+SVariable* iObj_getDataSession(SObject* obj)
 {
 	SSubObjForm*	form;
 	SVariable*		var;
@@ -2228,7 +2228,7 @@ SVariable* iiSubobj_form_getDataSession(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setDataSessionId(SObject* obj, SVariable* var)
+bool iObj_setDataSessionId(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2242,7 +2242,7 @@ bool iiSubobj_form_setDataSessionId(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getDataSessionId(SObject* obj)
+SVariable* iObj_getDataSessionId(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2256,7 +2256,7 @@ SVariable* iiSubobj_form_getDataSessionId(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setDeClass(SObject* obj, SVariable* var)
+bool iObj_setDeClass(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2270,7 +2270,7 @@ bool iiSubobj_form_setDeClass(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getDeClass(SObject* obj)
+SVariable* iObj_getDeClass(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2284,7 +2284,7 @@ SVariable* iiSubobj_form_getDeClass(SObject* obj)
 	return(false);
 }
 
-bool iiSubobj_form_setDeClassLibrary(SObject* obj, SVariable* var)
+bool iObj_setDeClassLibrary(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2298,7 +2298,7 @@ bool iiSubobj_form_setDeClassLibrary(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getDeClassLibrary(SObject* obj)
+SVariable* iObj_getDeClassLibrary(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2312,7 +2312,7 @@ SVariable* iiSubobj_form_getDeClassLibrary(SObject* obj)
 	return(false);
 }
 
-bool iiSubobj_form_setDefOleCid(SObject* obj, SVariable* var)
+bool iObj_setDefOleCid(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2326,7 +2326,7 @@ bool iiSubobj_form_setDefOleCid(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getDefOleCid(SObject* obj)
+SVariable* iObj_getDefOleCid(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2340,7 +2340,7 @@ SVariable* iiSubobj_form_getDefOleCid(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setDesktop(SObject* obj, SVariable* var)
+bool iObj_setDesktop(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2354,7 +2354,7 @@ bool iiSubobj_form_setDesktop(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getDesktop(SObject* obj)
+SVariable* iObj_getDesktop(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2368,7 +2368,7 @@ SVariable* iiSubobj_form_getDesktop(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setIsDockable(SObject* obj, SVariable* var)
+bool iObj_setIsDockable(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2382,7 +2382,7 @@ bool iiSubobj_form_setIsDockable(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getIsDockable(SObject* obj)
+SVariable* iObj_getIsDockable(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2396,7 +2396,7 @@ SVariable* iiSubobj_form_getIsDockable(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setIsDocked(SObject* obj, SVariable* var)
+bool iObj_setIsDocked(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2410,7 +2410,7 @@ bool iiSubobj_form_setIsDocked(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getIsDocked(SObject* obj)
+SVariable* iObj_getIsDocked(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2424,7 +2424,7 @@ SVariable* iiSubobj_form_getIsDocked(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setDockPosition(SObject* obj, SVariable* var)
+bool iObj_setDockPosition(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2438,7 +2438,7 @@ bool iiSubobj_form_setDockPosition(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getDockPosition(SObject* obj)
+SVariable* iObj_getDockPosition(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2452,7 +2452,7 @@ SVariable* iiSubobj_form_getDockPosition(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setDrawMode(SObject* obj, SVariable* var)
+bool iObj_setDrawMode(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2466,7 +2466,7 @@ bool iiSubobj_form_setDrawMode(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getDrawMode(SObject* obj)
+SVariable* iObj_getDrawMode(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2480,7 +2480,7 @@ SVariable* iiSubobj_form_getDrawMode(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setDrawStyle(SObject* obj, SVariable* var)
+bool iObj_setDrawStyle(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2494,7 +2494,7 @@ bool iiSubobj_form_setDrawStyle(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getDrawStyle(SObject* obj)
+SVariable* iObj_getDrawStyle(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2508,7 +2508,7 @@ SVariable* iiSubobj_form_getDrawStyle(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setDrawWidth(SObject* obj, SVariable* var)
+bool iObj_setDrawWidth(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2522,7 +2522,7 @@ bool iiSubobj_form_setDrawWidth(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getDrawWidth(SObject* obj)
+SVariable* iObj_getDrawWidth(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2536,7 +2536,7 @@ SVariable* iiSubobj_form_getDrawWidth(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setFillColor(SObject* obj, SVariable* var)
+bool iObj_setFillColor(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2550,7 +2550,7 @@ bool iiSubobj_form_setFillColor(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getFillColor(SObject* obj)
+SVariable* iObj_getFillColor(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2564,7 +2564,7 @@ SVariable* iiSubobj_form_getFillColor(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setFillStyle(SObject* obj, SVariable* var)
+bool iObj_setFillStyle(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2578,7 +2578,7 @@ bool iiSubobj_form_setFillStyle(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getFillStyle(SObject* obj)
+SVariable* iObj_getFillStyle(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2592,7 +2592,7 @@ SVariable* iiSubobj_form_getFillStyle(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setHalfHeightCaption(SObject* obj, SVariable* var)
+bool iObj_setHalfHeightCaption(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2606,7 +2606,7 @@ bool iiSubobj_form_setHalfHeightCaption(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getHalfHeightCaption(SObject* obj)
+SVariable* iObj_getHalfHeightCaption(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2620,7 +2620,7 @@ SVariable* iiSubobj_form_getHalfHeightCaption(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setHScrollSmallChange(SObject* obj, SVariable* var)
+bool iObj_setHScrollSmallChange(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2634,7 +2634,7 @@ bool iiSubobj_form_setHScrollSmallChange(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getHScrollSmallChange(SObject* obj)
+SVariable* iObj_getHScrollSmallChange(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2648,7 +2648,7 @@ SVariable* iiSubobj_form_getHScrollSmallChange(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setVScrollSmallChange(SObject* obj, SVariable* var)
+bool iObj_setVScrollSmallChange(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2662,7 +2662,7 @@ bool iiSubobj_form_setVScrollSmallChange(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getVScrollSmallChange(SObject* obj)
+SVariable* iObj_getVScrollSmallChange(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2676,7 +2676,7 @@ SVariable* iiSubobj_form_getVScrollSmallChange(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setMacDesktop(SObject* obj, SVariable* var)
+bool iObj_setMacDesktop(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2690,7 +2690,7 @@ bool iiSubobj_form_setMacDesktop(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getMacDesktop(SObject* obj)
+SVariable* iObj_getMacDesktop(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2704,7 +2704,7 @@ SVariable* iiSubobj_form_getMacDesktop(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setMdiForm(SObject* obj, SVariable* var)
+bool iObj_setMdiForm(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2718,7 +2718,7 @@ bool iiSubobj_form_setMdiForm(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getMdiForm(SObject* obj)
+SVariable* iObj_getMdiForm(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2732,7 +2732,7 @@ SVariable* iiSubobj_form_getMdiForm(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setOleDragMode(SObject* obj, SVariable* var)
+bool iObj_setOleDragMode(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2746,7 +2746,7 @@ bool iiSubobj_form_setOleDragMode(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getOleDragMode(SObject* obj)
+SVariable* iObj_getOleDragMode(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2760,7 +2760,7 @@ SVariable* iiSubobj_form_getOleDragMode(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setOleDropEffects(SObject* obj, SVariable* var)
+bool iObj_setOleDropEffects(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2774,7 +2774,7 @@ bool iiSubobj_form_setOleDropEffects(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getOleDropEffects(SObject* obj)
+SVariable* iObj_getOleDropEffects(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2788,7 +2788,7 @@ SVariable* iiSubobj_form_getOleDropEffects(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setOleDropHasData(SObject* obj, SVariable* var)
+bool iObj_setOleDropHasData(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2802,7 +2802,7 @@ bool iiSubobj_form_setOleDropHasData(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getOleDropHasData(SObject* obj)
+SVariable* iObj_getOleDropHasData(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2816,7 +2816,7 @@ SVariable* iiSubobj_form_getOleDropHasData(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setOleDropMode(SObject* obj, SVariable* var)
+bool iObj_setOleDropMode(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2830,7 +2830,7 @@ bool iiSubobj_form_setOleDropMode(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getOleDropMode(SObject* obj)
+SVariable* iObj_getOleDropMode(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2844,7 +2844,7 @@ SVariable* iiSubobj_form_getOleDropMode(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setReleaseType(SObject* obj, SVariable* var)
+bool iObj_setReleaseType(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2858,7 +2858,7 @@ bool iiSubobj_form_setReleaseType(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getReleaseType(SObject* obj)
+SVariable* iObj_getReleaseType(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2872,7 +2872,7 @@ SVariable* iiSubobj_form_getReleaseType(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setRightToLeft(SObject* obj, SVariable* var)
+bool iObj_setRightToLeft(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2886,7 +2886,7 @@ bool iiSubobj_form_setRightToLeft(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getRightToLeft(SObject* obj)
+SVariable* iObj_getRightToLeft(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2900,7 +2900,7 @@ SVariable* iiSubobj_form_getRightToLeft(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setScrollbars(SObject* obj, SVariable* var)
+bool iObj_setScrollbars(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2914,7 +2914,7 @@ bool iiSubobj_form_setScrollbars(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getScrollbars(SObject* obj)
+SVariable* iObj_getScrollbars(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2928,7 +2928,7 @@ SVariable* iiSubobj_form_getScrollbars(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setShowTips(SObject* obj, SVariable* var)
+bool iObj_setShowTips(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2942,7 +2942,7 @@ bool iiSubobj_form_setShowTips(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getShowTips(SObject* obj)
+SVariable* iObj_getShowTips(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2956,7 +2956,7 @@ SVariable* iiSubobj_form_getShowTips(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setShowWindow(SObject* obj, SVariable* var)
+bool iObj_setShowWindow(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2970,7 +2970,7 @@ bool iiSubobj_form_setShowWindow(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getShowWindow(SObject* obj)
+SVariable* iObj_getShowWindow(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -2984,7 +2984,7 @@ SVariable* iiSubobj_form_getShowWindow(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setSizeBox(SObject* obj, SVariable* var)
+bool iObj_setSizeBox(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -2998,7 +2998,7 @@ bool iiSubobj_form_setSizeBox(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getSizeBox(SObject* obj)
+SVariable* iObj_getSizeBox(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -3012,7 +3012,7 @@ SVariable* iiSubobj_form_getSizeBox(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setThemes(SObject* obj, SVariable* var)
+bool iObj_setThemes(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -3026,7 +3026,7 @@ bool iiSubobj_form_setThemes(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getThemes(SObject* obj)
+SVariable* iObj_getThemes(SObject* obj)
 {
 	return(NULL);
 	SSubObjForm* form;
@@ -3041,7 +3041,7 @@ SVariable* iiSubobj_form_getThemes(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setTitleBar(SObject* obj, SVariable* var)
+bool iObj_setTitleBar(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -3055,7 +3055,7 @@ bool iiSubobj_form_setTitleBar(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getTitleBar(SObject* obj)
+SVariable* iObj_getTitleBar(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -3069,7 +3069,7 @@ SVariable* iiSubobj_form_getTitleBar(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setWindowType(SObject* obj, SVariable* var)
+bool iObj_setWindowType(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -3083,7 +3083,7 @@ bool iiSubobj_form_setWindowType(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getWindowType(SObject* obj)
+SVariable* iObj_getWindowType(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -3097,7 +3097,7 @@ SVariable* iiSubobj_form_getWindowType(SObject* obj)
 	return(NULL);
 }
 
-bool iiSubobj_form_setZoomBox(SObject* obj, SVariable* var)
+bool iObj_setZoomBox(SObject* obj, SVariable* var)
 {
 	SSubObjForm* form;
 
@@ -3111,7 +3111,7 @@ bool iiSubobj_form_setZoomBox(SObject* obj, SVariable* var)
 	return(false);
 }
 
-SVariable* iiSubobj_form_getZoomBox(SObject* obj)
+SVariable* iObj_getZoomBox(SObject* obj)
 {
 	SSubObjForm* form;
 
@@ -3120,1085 +3120,6 @@ SVariable* iiSubobj_form_getZoomBox(SObject* obj)
 	form = (SSubObjForm*)obj->sub_obj;
 	if (form)
 		return(iObj_getLogical(obj, form->zoomBox));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-
-
-
-
-
-
-
-
-//////////
-// SUBFORM Properties
-//////
-void iiSubobj_subform_setIcon(SObject* obj, SBitmap* bmp)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	if (obj && bmp && obj->objType == _OBJ_TYPE_SUBFORM)
-	{
-		// Grab the form data
-		subform = (SSubObjSubform*)obj->sub_obj;
-
-		// Delete the old icon if any
-		if (subform->bmpSubformIcon)
-			iBmp_delete(&subform->bmpSubformIcon, true, true);
-
-		// Create a new icon that is 24x24
-		subform->bmpSubformIcon = iBmp_allocate();
-		iBmp_createBySize(subform->bmpSubformIcon, 24, 24, 32);
-
-		// Scale the indicated icon into this one
-		iBmp_scale(subform->bmpSubformIcon, bmp);
-	}
-}
-
-bool iiSubobj_subform_setMinLeft(SObject* obj, SVariable* var)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_setInteger(obj, var, &subform->rcMin.left, 0, 0, false, 0));
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getMinLeft(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getInteger(obj, subform->rcMin.left));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setMinTop(SObject* obj, SVariable* var)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_setInteger(obj, var, &subform->rcMin.top, 0, 0, false, 0));
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getMinTop(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getInteger(obj, subform->rcMin.top));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setMinWidth(SObject* obj, SVariable* var)
-{
-	s32				value;
-	bool			error;
-	u32				errorNum;
-	SSubObjSubform*	subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform && iVariable_isTypeNumeric(var))
-	{
-		value = iiVariable_getAs_s32(var, false, &error, &errorNum);
-		if (error)
-		{
-			iError_reportByNumber(errorNum, NULL);
-			return(false);
-		}
-
-		// Set the value
-		subform->rcMin.right = subform->rcMin.left + value;
-	}
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getMinWidth(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getInteger(obj, subform->rcMin.right - subform->rcMin.left));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setMinHeight(SObject* obj, SVariable* var)
-{
-	s32				value;
-	bool			error;
-	u32				errorNum;
-	SSubObjSubform*	subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform && iVariable_isTypeNumeric(var))
-	{
-		value = iiVariable_getAs_s32(var, false, &error, &errorNum);
-		if (error)
-		{
-			iError_reportByNumber(errorNum, NULL);
-			return(false);
-		}
-
-		// Set the value
-		subform->rcMin.bottom = subform->rcMin.top + value;
-	}
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getMinHeight(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getInteger(obj, subform->rcMin.bottom - subform->rcMin.top));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setMaxLeft(SObject* obj, SVariable* var)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_setInteger(obj, var, &subform->rcMax.left, 0, 0, false, 0));
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getMaxLeft(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getInteger(obj, subform->rcMax.left));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setMaxTop(SObject* obj, SVariable* var)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_setInteger(obj, var, &subform->rcMax.top, 0, 0, false, 0));
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getMaxTop(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getInteger(obj, subform->rcMin.top));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setMaxWidth(SObject* obj, SVariable* var)
-{
-	s32				value;
-	bool			error;
-	u32				errorNum;
-	SSubObjSubform*	subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform && iVariable_isTypeNumeric(var))
-	{
-		value = iiVariable_getAs_s32(var, false, &error, &errorNum);
-		if (error)
-		{
-			iError_reportByNumber(errorNum, NULL);
-			return(false);
-		}
-
-		// Set the value
-		subform->rcMax.right = subform->rcMax.left + value;
-	}
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getMaxWidth(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getInteger(obj, subform->rcMax.right - subform->rcMax.left));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setMaxHeight(SObject* obj, SVariable* var)
-{
-	s32				value;
-	bool			error;
-	u32				errorNum;
-	SSubObjSubform*	subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform && iVariable_isTypeNumeric(var))
-	{
-		value = iiVariable_getAs_s32(var, false, &error, &errorNum);
-		if (error)
-		{
-			iError_reportByNumber(errorNum, NULL);
-			return(false);
-		}
-
-		// Set the value
-		subform->rcMax.bottom = subform->rcMax.top + value;
-	}
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getMaxHeight(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getInteger(obj, subform->rcMin.bottom - subform->rcMin.top));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setFontName(SObject* obj, SVariable* var)
-{
-	bool			llResult;
-	SSubObjSubform*	subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-	{
-		// Perform the update
-		llResult = iObj_setCharacter(obj, var, &subform->font->name, var->value.data, var->value.length);
-		if (llResult)
-			iiFont_refresh(subform->font);		// Refresh the font with its new settings
-
-		// Indicate our status
-		return(llResult);
-	}
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getFontName(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getCharacter(obj, &subform->font->name));
-
-	// If we get here, failure
-	return(false);
-}
-
-bool iiSubobj_subform_setFontSize(SObject* obj, SVariable* var)
-{
-	bool			llResult;
-	SSubObjSubform*	subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-	{
-		// Perform the update
-		llResult = iObj_setInteger(obj, var, (s32*)&subform->font->_size, 0, 0, false, 0);
-		if (llResult)
-			iiFont_refresh(subform->font);		// Refresh the font with its new settings
-
-		// Indicate our status
-		return(llResult);
-	}
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getFontSize(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getInteger(obj, subform->font->_size));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setFontBold(SObject* obj, SVariable* var)
-{
-	bool			llResult;
-	SSubObjSubform*	subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-	{
-		// Perform the update
-		llResult = iObj_setLogical(obj, var, &subform->font->isBold);
-		if (llResult)
-			iiFont_refresh(subform->font);		// Refresh the font with its new settings
-
-		// Indicate our status
-		return(llResult);
-	}
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getFontBold(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getLogical(obj, subform->font->isBold));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setFontItalic(SObject* obj, SVariable* var)
-{
-	bool			llResult;
-	SSubObjSubform*	subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-	{
-		// Perform the update
-		llResult = iObj_setLogical(obj, var, &subform->font->isItalic);
-		if (llResult)
-			iiFont_refresh(subform->font);		// Refresh the font with its new settings
-
-		// Indicate our status
-		return(llResult);
-	}
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getFontItalic(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getLogical(obj, subform->font->isItalic));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setFontUnderline(SObject* obj, SVariable* var)
-{
-	bool			llResult;
-	SSubObjSubform*	subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-	{
-		// Perform the update
-		llResult = iObj_setLogical(obj, var, &subform->font->isUnderline);
-		if (llResult)
-			iiFont_refresh(subform->font);		// Refresh the font with its new settings
-
-		// Indicate our status
-		return(llResult);
-	}
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getFontUnderline(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getLogical(obj, subform->font->isUnderline));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setFontStrikethrough(SObject* obj, SVariable* var)
-{
-	bool			llResult;
-	SSubObjSubform*	subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-	{
-		// Perform the update
-		llResult = iObj_setLogical(obj, var, &subform->font->isStrikethrough);
-		if (llResult)
-			iiFont_refresh(subform->font);		// Refresh the font with its new settings
-
-		// Indicate our status
-		return(llResult);
-	}
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getFontStrikethrough(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getLogical(obj, subform->font->isStrikethrough));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setFontCondensed(SObject* obj, SVariable* var)
-{
-	bool			llResult;
-	SSubObjSubform*	subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-	{
-		// Perform the update
-		llResult = iObj_setLogical(obj, var, &subform->font->isCondensed);
-		if (llResult)
-			iiFont_refresh(subform->font);		// Refresh the font with its new settings
-
-		// Indicate our status
-		return(llResult);
-	}
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getFontCondensed(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getLogical(obj, subform->font->isCondensed));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setFontExtended(SObject* obj, SVariable* var)
-{
-	bool			llResult;
-	SSubObjSubform*	subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-	{
-		// Perform the update
-		llResult = iObj_setLogical(obj, var, &subform->font->isExtended);
-		if (llResult)
-			iiFont_refresh(subform->font);		// Refresh the font with its new settings
-
-		// Indicate our status
-		return(llResult);
-	}
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getFontExtended(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getLogical(obj, subform->font->isExtended));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setFontOutline(SObject* obj, SVariable* var)
-{
-	bool			llResult;
-	SSubObjSubform*	subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-	{
-		// Perform the update
-		llResult = iObj_setLogical(obj, var, &subform->font->isOutline);
-		if (llResult)
-			iiFont_refresh(subform->font);		// Refresh the font with its new settings
-
-		// Indicate our status
-		return(llResult);
-	}
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getFontOutline(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getLogical(obj, subform->font->isOutline));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setFontShadow(SObject* obj, SVariable* var)
-{
-	bool			llResult;
-	SSubObjSubform*	subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-	{
-		// Perform the update
-		llResult = iObj_setLogical(obj, var, &subform->font->isShadow);
-		if (llResult)
-			iiFont_refresh(subform->font);		// Refresh the font with its new settings
-
-		// Indicate our status
-		return(llResult);
-	}
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getFontShadow(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getLogical(obj, subform->font->isShadow));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setNwColor(SObject* obj, SVariable* var)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_setInteger(obj, var, (s32*)&subform->nwRgba.color, 0, 0, false, 0));
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getNwColor(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getInteger(obj, subform->nwRgba.color));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setNeColor(SObject* obj, SVariable* var)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_setInteger(obj, var, (s32*)&subform->neRgba.color, 0, 0, false, 0));
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getNeColor(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getInteger(obj, subform->neRgba.color));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setSwColor(SObject* obj, SVariable* var)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_setInteger(obj, var, (s32*)&subform->swRgba.color, 0, 0, false, 0));
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getSwColor(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getInteger(obj, subform->swRgba.color));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setSeColor(SObject* obj, SVariable* var)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_setInteger(obj, var, (s32*)&subform->seRgba.color, 0, 0, false, 0));
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getSeColor(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getInteger(obj, subform->seRgba.color));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setBackColor(SObject* obj, SVariable* var)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_setInteger(obj, var, (s32*)&subform->backColor.color, 0, 0, false, 0));
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getBackColor(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getInteger(obj, subform->backColor.color));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setForeColor(SObject* obj, SVariable* var)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_setInteger(obj, var, (s32*)&subform->foreColor.color, 0, 0, false, 0));
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getForeColor(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getInteger(obj, subform->foreColor.color));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setCaptionColor(SObject* obj, SVariable* var)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_setInteger(obj, var, (s32*)&subform->captionColor.color, 0, 0, false, 0));
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getCaptionColor(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getInteger(obj, subform->captionColor.color));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setCaption(SObject* obj, SVariable* var)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_setCharacter(obj, var, &subform->caption, var->value.data, var->value.length));
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getCaption(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getCharacter(obj, &subform->caption));
-
-	// If we get here, failure
-	return(false);
-}
-
-bool iiSubobj_subform_setPicture(SObject* obj, SVariable* var)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_setCharacter(obj, var, &subform->pictureName, var->value.data, var->value.length));
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getPicture(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getCharacter(obj, &subform->pictureName));
-
-	// If we get here, failure
-	return(false);
-}
-
-bool iiSubobj_subform_setAllowOutput(SObject* obj, SVariable* var)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_setLogical(obj, var, &subform->allowOutput));
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getAllowOutput(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getLogical(obj, subform->allowOutput));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setBorderStyle(SObject* obj, SVariable* var)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_setInteger(obj, var, (s32*)&subform->borderStyle, 0, 3, true, 0));
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getBorderStyle(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getInteger(obj, subform->borderStyle));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setProcessKeyPreviewEvents(SObject* obj, SVariable* var)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_setLogical(obj, var, &subform->processKeyPreviewEvents));
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getProcessKeyPreviewEvents(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getLogical(obj, subform->processKeyPreviewEvents));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setScaleMode(SObject* obj, SVariable* var)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_setInteger(obj, var, (s32*)&subform->scaleMode, 0, 0, false, (u32)&iiSubobj_subform_setScaleMode_extraTest));
-
-	// If we get here, failure
-	return(false);
-}
-
-bool iiSubobj_subform_setScaleMode_extraTest(s32 value)
-{
-	if (value == 0 || value == 3)		return(true);
-	else								return(false);
-}
-
-SVariable* iiSubobj_subform_getScaleMode(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getInteger(obj, subform->scaleMode));
-
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iiSubobj_subform_setWindowState(SObject* obj, SVariable* var)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_setInteger(obj, var, (s32*)&subform->windowState, 0, 1, true, 0));
-
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iiSubobj_subform_getWindowState(SObject* obj)
-{
-	SSubObjSubform* subform;
-
-
-	// Make sure our environment is sane
-	subform = (SSubObjSubform*)obj->sub_obj;
-	if (subform)
-		return(iObj_getInteger(obj, subform->windowState));
 
 	// If we get here, failure
 	return(NULL);

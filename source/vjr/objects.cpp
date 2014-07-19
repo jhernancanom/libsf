@@ -1031,10 +1031,10 @@
 		
 		// Iterate through each function for matches
 		lbcl = &gsKnownBaseclasses[0];
-		while (lbcl && lbcl->textName != NULL)
+		while (lbcl && lbcl->baseclassName != NULL)
 		{
 			// Is this the named function?
-			if (lbcl->textNameLength == tnTextnameLength && _memicmp(tcTextname, (s8*)lbcl->textName, tnTextnameLength) == 0)
+			if (lbcl->baseclassNameLength == tnTextnameLength && _memicmp(tcTextname, (s8*)lbcl->baseclassName, tnTextnameLength) == 0)
 				return(lbcl->objType);
 
 			// Move to next function
@@ -1059,7 +1059,7 @@
 		
 		// Iterate through each function for matches
 		lbcl = &gsKnownBaseclasses[0];
-		while (lbcl && lbcl->textName != NULL)
+		while (lbcl && lbcl->baseclassName != NULL)
 		{
 			// Is this the named function?
 			if (lbcl->objType == tnObjType)

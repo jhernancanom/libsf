@@ -326,6 +326,24 @@ typedef		const f64			cf64;
 
 
 //////////
+// Object property flags
+//////
+	const u32			_EMPTY								= 1;
+	const u32			_FORM								= 2;
+	const u32			_SUBFORM							= 4;
+	const u32			_LABEL								= 8;
+	const u32			_TEXTBOX							= 16;
+	const u32			_BUTTON								= 32;
+	const u32			_EDITBOX							= 64;
+	const u32			_IMAGE								= 128;
+	const u32			_CHECKBOX							= 256;
+	const u32			_OPTION								= 512;
+	const u32			_RADIO								= 1024;
+	const u32			_ALL								= _EMPTY + _FORM + _SUBFORM + _LABEL + _TEXTBOX + _BUTTON + _EDITBOX + _IMAGE + _CHECKBOX + _OPTION + _RADIO;
+
+
+
+//////////
 // Internal messages
 //////
 	const u32			WMVJR_FIRST_CREATION				= WM_USER + 1;

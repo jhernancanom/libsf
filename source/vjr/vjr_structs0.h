@@ -288,17 +288,13 @@ struct SBaseclassList
 {
 	s32				objType;											// Translation between objType...
 
-	cs8*			textName;											// ...and the text-based name of the base class
-	u32				textNameLength;
+	// Class name
+	cs8*			baseclassName;										// ...and the text-based name of the base class
+	u32				baseclassNameLength;
 
 	union {
 		u32				_objProps;
-		SPropertyList*	objProps;											// Root property list for sub-objects
-	};
-
-	union {
-		u32				_subobjProps;
-		SPropertyList*	subobjProps;										// Root property list for sub-objects
+		SPropertyList*	objProps;										// Root property list for this object
 	};
 };
 
@@ -307,6 +303,9 @@ struct SPropertyList
 	// Property name
 	cs8*	textName;
 	u32		textNameLength;
+
+	// Valid base class flags
+	u32		valid;
 
 	// Accessors
 	union {
