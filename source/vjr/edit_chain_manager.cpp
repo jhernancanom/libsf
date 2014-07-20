@@ -3,7 +3,7 @@
 // /libsf/source/vjr/edit_chain_manager.cpp
 //
 //////
-// Version 0.31
+// Version 0.33
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -179,6 +179,7 @@
 	{
 		s32			lnI, lnJ, lnLast;
 		SBuilder*	content;
+		s8			buffer[_MAX_PATH + 64];
 
 
 		// Make sure our environment is sane
@@ -231,6 +232,8 @@
 				iBuilder_freeAndRelease(&content);
 
 				// Indicate success
+				sprintf(buffer, "Loaded: %s\0", tcPathname);
+				iEditChainManager_appendLine(outputData, buffer, strlen(buffer));
 				return(true);
 			}
 		}
@@ -929,7 +932,7 @@ _asm int 3;
 				//////////
 				// Clear the rest of the line
 				//////
-					iBmp_fillRect(bmp, &lrc3, fillColor, fillColor, fillColor, fillColor, false);
+					iBmp_fillRect(bmp, &lrc3, fillColor, fillColor, fillColor, fillColor, false, NULL, false);
 
 
 				//////////
@@ -952,7 +955,7 @@ _asm int 3;
 
 			// Fill in the remainder of the display
 			SetRect(&lrc, rc.left, rc.top + lnTop, rc.right, rc.bottom);
-			iBmp_fillRect(bmp, &lrc, backColor, backColor, backColor, backColor, false);
+			iBmp_fillRect(bmp, &lrc, backColor, backColor, backColor, backColor, false, NULL, false);
 
 			// Reset the font
 			SelectObject(bmp->hdc, hfontOld);

@@ -3,7 +3,7 @@
 // /libsf/source/vjr/commands.cpp
 //
 //////
-// Version 0.31
+// Version 0.33
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -118,7 +118,7 @@
 // Trims spaces off the start and end of the string.
 //
 //////
-// Version 0.31
+// Version 0.33
 // Last update:
 //     Jul.12.2014
 //////
@@ -151,9 +151,9 @@
 //	    (2)  *TRIM(cString[, nCaseSensitive|lCaseSensitive[, cTrimChar1[, cTrimChar2]]]) 
 //
 //////
-	SVariable* iFunction_trimCommon(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2, bool trimTheStart, bool trimEnd)
+	SVariable* iFunction_trimCommon(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2, bool trimTheStart, bool trimTheEnd)
 	{
-		s32			lnI, lnClipStartPos, lnEnd, lnClipEndPos;
+		s32			lnI, lnClipStartPos, lnClipEndPos;
 		s8			lc;
 		bool		llCaseInsensitive, error, llSyntaxForm1, llFound;
 		u32			errorNum;
@@ -164,7 +164,7 @@
 
 
 // TODO:  Incomplete function.  Breakpoint, debug, and finish development
-_asm int 3;
+//_asm int 3;
 		//////////
         // Parameter 1 must be character
 		//////
@@ -176,10 +176,19 @@ _asm int 3;
 
 
 		//////////
+		// Initialize
+		//////
+			llSyntaxForm1		= false;		// Two syntax forms are available
+			llCaseInsensitive	= false;		// By default case-sensitive compare
+			trim1ptr		= (s8*)cgc_spaceText;
+			trim1Length		= 1;
+			trim2ptr		= NULL;
+			trim2Length		= 0;
+
+
+		//////////
         // If pCaseInsensitive is present, indicates case-insensitive
 		//////
-			llSyntaxForm1		= false;
-			llCaseInsensitive	= false;
 			if (pCaseInsensitive)
 			{
 				// See what the parameter is
@@ -248,6 +257,12 @@ _asm int 3;
 					// They specified characters to scan
 					trim2ptr	= pTrimChars2->value.data;
 					trim2Length	= pTrimChars2->value.length;
+					if (trim1ptr == (s8*)cgc_spaceText)
+					{
+						// They gave us the second trim characters, so we'll use it
+						trim1ptr		= NULL;
+						trim1Length		= 0;
+					}
 
 				} else {
 					iError_reportByNumber(_ERROR_P4_IS_INCORRECT, NULL);
@@ -273,99 +288,213 @@ _asm int 3;
 			if (pString->value.length >= 1)
 			{
 				//////////
-				// Find out how many characters match this at the beginning
+				// START
 				//////
 					lnClipStartPos = 0;
 					if (trimTheStart)
 					{
-						// Based on the comparison, we 
+						// Based on the comparison, we either compare character-by-character, or convert case and compare character-by-character
 						if (llCaseInsensitive)
 						{
 							// Compare character by character exactly as they are
 							for ( ; lnClipStartPos < pString->value.length; ++lnClipStartPos)
 							{
-								//////////
 								// Grab the character
-								//////
-									lc = pString->value.data[lnClipStartPos];
+								lc = pString->value.data[lnClipStartPos];
 
-
-								//////////
 								// Scan the trim1 characters
-								//////
-									// If we're not on a character that we know, we're done
-									llFound = false;
-									if (trim1ptr)
+								// If we're not on a character that we know, we're done
+								llFound = false;
+								if (trim1ptr)
+								{
+									for (lnI = 0; lnI < trim1Length; lnI++)
 									{
-										for (lnI = 0; lnI < trim1Length; lnI++)
+										// If this character matches, we've found a match, which means we're still trimming characters
+										if (lc == trim1ptr[lnI])
 										{
-											// If this character matches, we've found a match, which means we're still trimming characters
-											if (lc == trim1ptr[lnI])
-											{
-												llFound = true;
-												break;
-											}
+											llFound = true;
+											break;
 										}
 									}
+								}
 
 
-								//////////
 								// Scan the trim2 characters
-								//////
-									if (!llFound)
+								// We still need to search through the trim2 characters list
+								if (!llFound && trim2ptr)
+								{
+									for (lnI = 0; lnI < trim2Length; lnI++)
 									{
-										// We still need to search through the trim2 characters list
-										if (trim2ptr)
+										// If this character matches, we've found a match, which means we're still trimming characters
+										if (lc == trim2ptr[lnI])
 										{
-											for (lnI = 0; lnI < trim2Length; lnI++)
-											{
-												// If this character matches, we've found a match, which means we're still trimming characters
-												if (lc == trim2ptr[lnI])
-												{
-													llFound = true;
-													break;
-												}
-											}
+											llFound = true;
+											break;
 										}
 									}
+								}
 
-
-								//////////
-								// If we found a character, we continue, otherwise we're done
-								//////
-									if (!llFound)
-										break;
+								// If we didn't find a trim character, we've reached the end
+								if (!llFound)
+									break;
 							}
-							// When we get here, we have determined the number of characters on the left
 
 						} else {
 							// Compare character by character accounting for case
-// TODO:  Working here
+							// Compare character by character exactly as they are
+							for ( ; lnClipStartPos < pString->value.length; ++lnClipStartPos)
+							{
+								// Grab the character
+								lc = iLowerCase(pString->value.data[lnClipStartPos]);
+
+								// Scan the trim1 characters
+								// If we're not on a character that we know, we're done
+								llFound = false;
+								if (trim1ptr)
+								{
+									for (lnI = 0; lnI < trim1Length; lnI++)
+									{
+										// If this character matches, we've found a match, which means we're still trimming characters
+										if (lc == iLowerCase(trim1ptr[lnI]))
+										{
+											llFound = true;
+											break;
+										}
+									}
+								}
+
+
+								// Scan the trim2 characters
+								// We still need to search through the trim2 characters list
+								if (!llFound && trim2ptr)
+								{
+									for (lnI = 0; lnI < trim2Length; lnI++)
+									{
+										// If this character matches, we've found a match, which means we're still trimming characters
+										if (lc == iLowerCase(trim2ptr[lnI]))
+										{
+											llFound = true;
+											break;
+										}
+									}
+								}
+
+								// If we didn't find a trim character, we've reached the end
+								if (!llFound)
+									break;
+							}
+						}
+
+						// When we get here, we have determined the number of characters on the left
+						if (lnClipStartPos >= pString->value.length)
+							return(result);		// The entire character string is empty, so we just return the blank string
+					}
+
+
+				//////////
+				// END
+				//////
+					lnClipEndPos = pString->value.length - 1;
+					if (trimTheEnd)
+					{
+						// Based on the comparison, we either compare character-by-character, or convert case and compare character-by-character
+						if (llCaseInsensitive)
+						{
+							// Compare character by character exactly as they are
+							for ( ; lnClipEndPos > 0; lnClipEndPos--)
+							{
+								// Grab the character
+								lc = pString->value.data[lnClipEndPos];
+
+								// Scan the trim1 characters
+								// If we're not on a character that we know, we're done
+								llFound = false;
+								if (trim1ptr)
+								{
+									for (lnI = 0; lnI < trim1Length; lnI++)
+									{
+										// If this character matches, we've found a match, which means we're still trimming characters
+										if (lc == trim1ptr[lnI])
+										{
+											llFound = true;
+											break;
+										}
+									}
+								}
+
+
+								// Scan the trim2 characters
+								// We still need to search through the trim2 characters list
+								if (!llFound && trim2ptr)
+								{
+									for (lnI = 0; lnI < trim2Length; lnI++)
+									{
+										// If this character matches, we've found a match, which means we're still trimming characters
+										if (lc == trim2ptr[lnI])
+										{
+											llFound = true;
+											break;
+										}
+									}
+								}
+
+								// If we didn't find a trim character, we've reached the end
+								if (!llFound)
+									break;
+							}
+
+						} else {
+							// Compare character by character accounting for case
+							// Compare character by character exactly as they are
+							for ( ; lnClipEndPos > 0; lnClipEndPos--)
+							{
+								// Grab the character
+								lc = iLowerCase(pString->value.data[lnClipEndPos]);
+
+								// Scan the trim1 characters
+								// If we're not on a character that we know, we're done
+								llFound = false;
+								if (trim1ptr)
+								{
+									for (lnI = 0; lnI < trim1Length; lnI++)
+									{
+										// If this character matches, we've found a match, which means we're still trimming characters
+										if (lc == iLowerCase(trim1ptr[lnI]))
+										{
+											llFound = true;
+											break;
+										}
+									}
+								}
+
+
+								// Scan the trim2 characters
+								// We still need to search through the trim2 characters list
+								if (!llFound && trim2ptr)
+								{
+									for (lnI = 0; lnI < trim2Length; lnI++)
+									{
+										// If this character matches, we've found a match, which means we're still trimming characters
+										if (lc == iLowerCase(trim2ptr[lnI]))
+										{
+											llFound = true;
+											break;
+										}
+									}
+								}
+
+								// If we didn't find a trim character, we've reached the end
+								if (!llFound)
+									break;
+							}
 						}
 					}
 
 
 				//////////
-				// Did we find a non-lookChar character?
+				// Copy the portion of the string
 				//////
-					if (lnClipStartPos < pString->value.length)
-					{
-						//////////
-						// Find out how many characters match this at the beginning
-						//////
-							lnClipEndPos = 0;
-							if (trimEnd)
-							{
-								for (lnEnd = pString->value.length - 1; lnEnd > 0 && pString->value.data[lnEnd] == lc; lnClipEndPos++)
-									--lnEnd;
-							}
-
-
-						//////////
-						// Copy the portion of the string
-						//////
-							iDatum_duplicate(&result->value, pString->value.data + lnClipStartPos, pString->value.length - lnClipStartPos - lnClipEndPos);
-					}
+					iDatum_duplicate(&result->value, pString->value.data + lnClipStartPos, lnClipEndPos - lnClipStartPos + 1);
 			}
 
 
@@ -384,7 +513,7 @@ _asm int 3;
 // Takes a character input and converts it to its ASCII value.
 //
 //////
-// Version 0.31
+// Version 0.33
 // Last update:
 //     Jul.05.2014
 //////
@@ -459,7 +588,7 @@ _asm int 3;
 // Takes a numeric input in the range 0..255, and converts it to its ASCII character.
 //
 //////
-// Version 0.31
+// Version 0.33
 // Last update:
 //     Jul.05.2014
 //////
@@ -544,7 +673,7 @@ _asm int 3;
 // Instantiates and instance of the indicated class.
 //
 //////
-// Version 0.31
+// Version 0.33
 // Last update:
 //     Jul.12.2014
 //////
@@ -633,7 +762,7 @@ _asm int 3;
 // Returns the current local time, or uses the input variables to create the indicated datetime.
 //
 //////
-// Version 0.31
+// Version 0.33
 // Last update:
 //     Jul.10.2014
 //////
@@ -851,7 +980,7 @@ _asm int 3;
 // Takes a value and returns the INT(n) of that value.
 //
 //////
-// Version 0.31
+// Version 0.33
 // Last update:
 //     Jul.13.2014
 //////
@@ -917,7 +1046,7 @@ _asm int 3;
 // Returns the left N characters of a string.
 //
 //////
-// Version 0.31
+// Version 0.33
 // Last update:
 //     Jul.12.2014
 //////
@@ -1004,7 +1133,7 @@ _asm int 3;
 // Returns the length of the string.
 //
 //////
-// Version 0.31
+// Version 0.33
 // Last update:
 //     Jul.12.2014
 //////
@@ -1065,7 +1194,7 @@ _asm int 3;
 // Converts every character in the string to lowercase.
 //
 //////
-// Version 0.31
+// Version 0.33
 // Last update:
 //     Jul.12.2014
 //////
@@ -1137,7 +1266,7 @@ _asm int 3;
 // Trims spaces off the start of the string.
 //
 //////
-// Version 0.31
+// Version 0.33
 // Last update:
 //     Jul.12.2014
 //////
@@ -1165,7 +1294,7 @@ _asm int 3;
 // Returns the maximum value of the two inputs.
 //
 //////
-// Version 0.31   (Determine the current version from the header in vjr.cpp)
+// Version 0.33   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.12.2014
 //////
@@ -1377,7 +1506,7 @@ _asm int 3;
 // Returns the minimum value of the two inputs.
 //
 //////
-// Version 0.31   (Determine the current version from the header in vjr.cpp)
+// Version 0.33   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.12.2014
 //////
@@ -1590,7 +1719,7 @@ _asm int 3;
 // and lowercases everything else.
 //
 //////
-// Version 0.31
+// Version 0.33
 // Last update:
 //     Jul.12.2014
 //////
@@ -1683,7 +1812,7 @@ _asm int 3;
 // Returns the indicated string replicated N times.
 //
 //////
-// Version 0.31
+// Version 0.33
 // Last update:
 //     Jul.12.2014
 //////
@@ -1771,7 +1900,7 @@ _asm int 3;
 // Returns the RGB() of the three input values.
 //
 //////
-// Version 0.31   (Determine the current version from the header in vjr.cpp)
+// Version 0.33   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -1917,7 +2046,7 @@ _asm int 3;
 // Returns the RGBA() of the four input values.
 //
 //////
-// Version 0.31   (Determine the current version from the header in vjr.cpp)
+// Version 0.33   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -2092,7 +2221,7 @@ _asm int 3;
 // Returns the right N characters of a string.
 //
 //////
-// Version 0.31
+// Version 0.33
 // Last update:
 //     Jul.12.2014
 //////
@@ -2187,7 +2316,7 @@ _asm int 3;
 // Trims spaces off the end of the string.
 //
 //////
-// Version 0.31
+// Version 0.33
 // Last update:
 //     Jul.12.2014
 //////
@@ -2215,7 +2344,7 @@ _asm int 3;
 // Creates a character variable initialized with spaces.
 //
 //////
-// Version 0.31
+// Version 0.33
 // Last update:
 //     Jul.12.2014
 //////
@@ -2291,7 +2420,7 @@ _asm int 3;
 // Returns a string which has been modified, having optionally some characters optionally removed, some optionally inserted.
 //
 //////
-// Version 0.31   (Determine the current version from the header in vjr.cpp)
+// Version 0.33   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.12.2014
 //////
@@ -2450,7 +2579,7 @@ _asm int 3;
 // Based on the index, returns a wide array of information.
 //
 //////
-// Version 0.31
+// Version 0.33
 // Last update:
 //     Jul.13.2014
 //////
@@ -2670,7 +2799,7 @@ _asm int 3;
 // Converts every character in the string to uppercase.
 //
 //////
-// Version 0.31
+// Version 0.33
 // Last update:
 //     Jul.12.2014
 //////
@@ -2742,7 +2871,7 @@ _asm int 3;
 // Based on input, retrieves various version information.
 //
 //////
-// Version 0.31
+// Version 0.33
 // Last update:
 //     Jul.13.2014
 //////
@@ -2854,7 +2983,7 @@ _asm int 3;
 // Concatenates two strings together.
 //
 //////
-// Version 0.31   (Determine the current version from the header in vjr.cpp)
+// Version 0.33   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -2921,7 +3050,7 @@ _asm int 3;
 // Adds two values and returns the result.
 //
 //////
-// Version 0.31   (Determine the current version from the header in vjr.cpp)
+// Version 0.33   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -3045,7 +3174,7 @@ _asm int 3;
 // Subtracts two values and returns the result.
 //
 //////
-// Version 0.31   (Determine the current version from the header in vjr.cpp)
+// Version 0.33   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -3169,7 +3298,7 @@ _asm int 3;
 // Multiplies two values and returns the result.
 //
 //////
-// Version 0.31   (Determine the current version from the header in vjr.cpp)
+// Version 0.33   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -3293,7 +3422,7 @@ _asm int 3;
 // Divides two values and returns the result.
 //
 //////
-// Version 0.31   (Determine the current version from the header in vjr.cpp)
+// Version 0.33   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////

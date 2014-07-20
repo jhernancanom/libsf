@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_sup.cpp
 //
 //////
-// Version 0.31
+// Version 0.33
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -176,35 +176,26 @@
 //////
 	void iInit_create_screenObject(void)
 	{
-		s32			lnLeft, lnTop, lnWidth, lnHeight;
-		SObject*	form;
-		RECT		lrc;
+		s32		lnLeft, lnTop, lnWidth, lnHeight;
+		RECT	lrc;
 
 
 		//////////
 		// Create the object
 		//////
-			// Create sub-object
-			form = iSubobj_createForm(gobj_defaultForm, NULL);
-			if (!form)
-				return;
-
 			// Create object
-			gobj_screen = iObj_create(_OBJ_TYPE_FORM, form);
+			gobj_screen = iObj_create(_OBJ_TYPE_FORM, NULL);
 			if (!gobj_screen)
-			{
-				iSubobj_deleteForm(form, true);
 				return;
-			}
 
 			// Set the app icon
 			iObj_setIcon(gobj_screen, bmpVjrIcon);
 
 			// Give it a caption
-			iDatum_duplicate(&form->pa.caption, (s8*)cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
+			iDatum_duplicate(&gobj_screen->pa.caption, (s8*)cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
 
 			// Give it a fixed point font
-			form->pa.font = iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
+			gobj_screen->pa.font = iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 
 
 		//////////
@@ -357,7 +348,7 @@
 		// Output window caption and font
 		//////
 			iDatum_duplicate(&output->pa.caption, (s8*)cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
-			output->pa.font = iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
+			output->pa.font = iFont_create((s8*)cgcDefaultFontName, 8, FW_MEDIUM, false, false);
 
 
 		//////////
@@ -713,38 +704,39 @@
 //////////
 // Temporarily force the commandWindow to be marked dirty
 //////
-if (win->obj == gobj_jdebi)
-{
-	SObject* obj;
-	obj = gobj_jdebi->firstChild;
-	while (obj)
+	if (win->obj == gobj_jdebi)
 	{
-		if (obj->objType == _OBJ_TYPE_SUBFORM)
+		SObject* obj;
+		obj = gobj_jdebi->firstChild;
+		while (obj)
 		{
-			if (iDatum_compare(&obj->pa.caption, (s8*)cgcCommandTitle, -1) == 0)
+			if (obj->objType == _OBJ_TYPE_SUBFORM)
 				obj->isDirty = true;
-		}
 
-		// Move to next item
-		obj = (SObject*)obj->ll.next;
+			// Move to next item
+			obj = (SObject*)obj->ll.next;
+		}
 	}
-}
 //////
 // END
 //////////
 
 
 		// Make sure we have something to render
-//u32 st1, st2, st3;
+// u32 st1, st2, st3;
+// s8 buffer[64];
 		if (win && win->obj)
 		{
-//if (win->obj == gobj_jdebi)		st1 = GetTickCount();
+// if (win->obj == gobj_jdebi)		st1 = GetTickCount();
 			iObj_render(win->obj, true, true);
-//if (win->obj == gobj_jdebi)		st2 = GetTickCount();
+// if (win->obj == gobj_jdebi)		st2 = GetTickCount();
 			iObj_publish(win->bmp, &win->rc, win->obj, true, true);
-//if (win->obj == gobj_jdebi)		st3 = GetTickCount();
-//if (win->obj == gobj_jdebi)
-//	_asm nop;
+// if (win->obj == gobj_jdebi)		st3 = GetTickCount();
+// if (win->obj == gobj_jdebi)
+// {
+// 	sprintf(buffer, "render: %u, publish: %u\0", st2 - st1, st3 - st2);
+// 	iEditChainManager_appendLine(outputData, buffer, strlen(buffer));
+// }
 			InvalidateRect(win->hwnd, 0, FALSE);
 		}
 	}
@@ -990,6 +982,26 @@ if (win->obj == gobj_jdebi)
 	s64 iMath_delta(s64 tnBaseValue, s64 tnSubtractionValue)
 	{
 		return(tnBaseValue - tnSubtractionValue);
+	}
+
+
+
+
+//////////
+//
+// Convert the case.
+//
+//////
+	s8 iLowerCase(s8 c)
+	{
+		if (c >= 'A' && c <= 'Z')		return(c + 0x20);
+		else							return(c);
+	}
+
+	s8 iUpperCase(s8 c)
+	{
+		if (c >= 'a' && c <= 'z')		return(c - 0x20);
+		else							return(c);
 	}
 
 

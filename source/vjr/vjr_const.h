@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_const.h
 //
 //////
-// Version 0.31
+// Version 0.33
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -354,26 +354,27 @@ typedef		const f64			cf64;
 //////
 	const s8			cgcMessageWindowClass[]				= "VJr.MessageWindow";
 	const s8			cgcWindowClass[]					= "VJr.Window";
-	const s8			cgcScreenTitle[]					= "Visual FreePro, Jr. 0.32 -- Jul.15.2014";
-	const s8			cgcJDebiTitle[]						= "JDebi Debugger 0.32 -- Jul.15.2014";
+	const s8			cgcScreenTitle[]					= "Visual FreePro, Jr. 0.33 -- Jul.20.2014";
+	const s8			cgcJDebiTitle[]						= "JDebi Debugger 0.33 -- Jul.20.2014";
 	const s8			cgcSourceCodeTitle[]				= "SourceCode";
 	const s8			cgcLocalsTitle[]					= "Locals";
 	const s8			cgcWatchTitle[]						= "Watch";
 	const s8			cgcCommandTitle[]					= "Command";
 	const s8			cgcDebugTitle[]						= "Debug";
 	const s8			cgcOutputTitle[]					= "Output";
-	const s8			cgcVersionText[]					= "Visual FreePro, Jr. 00.32.9999.9999 for Windows";
-	const s8			cgcVersion1Text[]					= "Visual FreePro, Jr. 00.32.9999.9999 for Windows [Jul.15.2014 00:00:00] Product ID 31415-926-5358979-32384";
+	const s8			cgcVersionText[]					= "Visual FreePro, Jr. 00.33.9999.9999 for Windows";
+	const s8			cgcVersion1Text[]					= "Visual FreePro, Jr. 00.33.9999.9999 for Windows [Jul.20.2014 00:00:00] Product ID 31415-926-5358979-32384";
 	const s32			gnVersion2							= 2;	// Professional
 	const s32			gnVersion3							= 0;	// English
-	const s8			cgcVersion4Text[]					= "00.32.9999.9999";
-	const s32			gnVersion5							= 32;	// 0.31
+	const s8			cgcVersion4Text[]					= "00.33.9999.9999";
+	const s32			gnVersion5							= 33;	// 0.33
 	const s8			cgcDefaultFontName[]				= "Ubuntu";
 	const s8			cgcDefaultFixedFontName[]			= "Ubuntu Mono";
 	const s8			cgcWindowTitleBarFontName[]			= "Ubuntu Condensed";
 	const s8			cgcSubwindowTitleBarFont[]			= "Ubuntu Condensed";
 	const s8			cgcScreenDataFilename[]				= "screen.vjr";
 	const s8			cgcCommandHistoryFilename[]			= "command.vjr";
+	const s8			cgcStartupPrgFilename[]				= "startup.prg";
 
 
 //////////
@@ -403,6 +404,7 @@ typedef		const f64			cf64;
 //////
 	const s8			cgc_defaultNumeric[]				= "0";
 	const s8			cgc_defaultDate[]					= "        ";
+	const s8			cgc_spaceText[]						= " ";
 
 
 //////////

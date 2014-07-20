@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr.cpp
 //
 //////
-// Version 0.31
+// Version 0.33
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -147,7 +147,12 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		// Create the buffers for screen and command history
 		screenData		= iEditChainManager_allocate();
+		sourceCodeData	= iEditChainManager_allocate();
+		localsData		= iEditChainManager_allocate();
+		watchData		= iEditChainManager_allocate();
 		commandHistory	= iEditChainManager_allocate();
+		debugData		= iEditChainManager_allocate();
+		outputData		= iEditChainManager_allocate();
 
 		// Set the end line to show on both
 		screenData->showEndLine			= true;
@@ -225,6 +230,9 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			iEditChainManager_appendLine(commandHistory, NULL, 0);
 			iEditChainManager_navigateEnd(commandHistory, gobj_jdebi_command);
 		}
+
+		// Load some source code
+		iEditChainManager_loadFromDisk(sourceCodeData, NULL, (s8*)cgcStartupPrgFilename, true);
 
 		// Redraw
 		gobj_jdebi->isDirty = true;

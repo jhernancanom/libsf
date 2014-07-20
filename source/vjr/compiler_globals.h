@@ -3,7 +3,7 @@
 // /libsf/source/vjr/compiler_globals.h
 //
 //////
-// Version 0.31
+// Version 0.33
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:

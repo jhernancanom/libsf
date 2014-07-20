@@ -3,7 +3,7 @@
 // /libsf/source/vjr/bitmaps.cpp
 //
 //////
-// Version 0.31
+// Version 0.33
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -955,7 +955,7 @@
 		}
 	}
 
-	void iBmp_fillRect(SBitmap* bmp, RECT* rc, SBgra colorNW, SBgra colorNE, SBgra colorSW, SBgra colorSE, bool tlUseGradient)
+	void iBmp_fillRect(SBitmap* bmp, RECT* rc, SBgra colorNW, SBgra colorNE, SBgra colorSW, SBgra colorSE, bool tlUseGradient, RECT* rcClip, bool tluseClip)
 	{
 		s32		lnY;
 		f32		lfRed, lfGrn, lfBlu, lfRedTo, lfGrnTo, lfBluTo, lfRedInc, lfGrnInc, lfBluInc, lfPercent, lfPercentInc, lfHeight, lfWidth;
@@ -998,7 +998,7 @@
 					//////////
 					// Draw this line with its gradient
 					//////
-						iBmp_drawHorizontalLineGradient(bmp, rc->left, rc->right - 1, lnY, lfRed, lfGrn, lfBlu, lfRedInc, lfGrnInc, lfBluInc);
+						iBmp_drawHorizontalLineGradient(bmp, rc->left, rc->right - 1, lnY, lfRed, lfGrn, lfBlu, lfRedInc, lfGrnInc, lfBluInc, rcClip, tluseClip);
 
 				} else {
 					// Draw this line with the NW color
@@ -1007,7 +1007,7 @@
 			}
 	}
 
-	void iBmp_frameRect(SBitmap* bmp, RECT* rc, SBgra colorNW, SBgra colorNE, SBgra colorSW, SBgra colorSE, bool tlUseGradient)
+	void iBmp_frameRect(SBitmap* bmp, RECT* rc, SBgra colorNW, SBgra colorNE, SBgra colorSW, SBgra colorSE, bool tlUseGradient, RECT* rcClip, bool tluseClip)
 	{
 		f32 lfRed, lfGrn, lfBlu, lfRedTo, lfGrnTo, lfBluTo, lfRedInc, lfGrnInc, lfBluInc, lfHeight, lfWidth;
 
@@ -1032,7 +1032,7 @@
 				lfBluInc	= (lfBluTo - lfBlu) / lfWidth;
 
 				// Draw it
-				iBmp_drawHorizontalLineGradient(bmp, rc->left, rc->right - 1, rc->top, lfRed, lfGrn, lfBlu, lfRedInc, lfGrnInc, lfBluInc);
+				iBmp_drawHorizontalLineGradient(bmp, rc->left, rc->right - 1, rc->top, lfRed, lfGrn, lfBlu, lfRedInc, lfGrnInc, lfBluInc, rcClip, true);
 
 
 			//////////
@@ -1049,7 +1049,7 @@
 				lfBluInc	= (lfBluTo - lfBlu) / lfWidth;
 
 				// Draw it
-				iBmp_drawHorizontalLineGradient(bmp, rc->left, rc->right - 1, rc->bottom - 1, lfRed, lfGrn, lfBlu, lfRedInc, lfGrnInc, lfBluInc);
+				iBmp_drawHorizontalLineGradient(bmp, rc->left, rc->right - 1, rc->bottom - 1, lfRed, lfGrn, lfBlu, lfRedInc, lfGrnInc, lfBluInc, rcClip, true);
 
 
 			//////////
@@ -1066,7 +1066,7 @@
 				lfBluInc	= (lfBluTo - lfBlu) / lfWidth;
 
 				// Draw it
-				iBmp_drawVerticalLineGradient(bmp, rc->top, rc->bottom - 1, rc->left, lfRed, lfGrn, lfBlu, lfRedInc, lfGrnInc, lfBluInc);
+				iBmp_drawVerticalLineGradient(bmp, rc->top, rc->bottom - 1, rc->left, lfRed, lfGrn, lfBlu, lfRedInc, lfGrnInc, lfBluInc, rcClip, true);
 
 
 			//////////
@@ -1083,7 +1083,7 @@
 				lfBluInc	= (lfBluTo - lfBlu) / lfWidth;
 
 				// Draw it
-				iBmp_drawVerticalLineGradient(bmp, rc->top, rc->bottom - 1, rc->right - 1, lfRed, lfGrn, lfBlu, lfRedInc, lfGrnInc, lfBluInc);
+				iBmp_drawVerticalLineGradient(bmp, rc->top, rc->bottom - 1, rc->right - 1, lfRed, lfGrn, lfBlu, lfRedInc, lfGrnInc, lfBluInc, rcClip, true);
 
 		} else {
 			// Just draw in a solid color
@@ -1202,7 +1202,7 @@
 // Gradient line algorithms
 //
 //////
-	void iBmp_drawHorizontalLineGradient(SBitmap* bmp, s32 tnX1, s32 tnX2, s32 tnY, f32 tfRed, f32 tfGrn, f32 tfBlu, f32 tfRedInc, f32 tfGrnInc, f32 tfBluInc)
+	void iBmp_drawHorizontalLineGradient(SBitmap* bmp, s32 tnX1, s32 tnX2, s32 tnY, f32 tfRed, f32 tfGrn, f32 tfBlu, f32 tfRedInc, f32 tfGrnInc, f32 tfBluInc, RECT* rcClip, bool tluseClip)
 	{
 		s32		lnX;
 		SBgr*	lbgr;
@@ -1219,7 +1219,7 @@
 			for (lnX = tnX1; lnX <= tnX2; lnX++, tfRed += tfRedInc, tfGrn += tfGrnInc, tfBlu += tfBluInc)
 			{
 				// Are we on the bitmap?
-				if (lnX >= 0 && lnX < bmp->bi.biWidth)
+				if (lnX >= 0 && lnX < bmp->bi.biWidth && (!tluseClip || !(tnY >= rcClip->top && tnY <= rcClip->bottom && lnX >= rcClip->left && lnX <= rcClip->right)))
 				{
 					// Draw the pixel
 					lbgr->red	= (u8)tfRed;
@@ -1235,7 +1235,7 @@
 			for (lnX = tnX1; lnX <= tnX2; lnX++, tfRed += tfRedInc, tfGrn += tfGrnInc, tfBlu += tfBluInc)
 			{
 				// Are we on the bitmap?
-				if (lnX >= 0 && lnX < bmp->bi.biWidth)
+				if (lnX >= 0 && lnX < bmp->bi.biWidth && (!tluseClip || !(tnY >= rcClip->top && tnY <= rcClip->bottom && lnX >= rcClip->left && lnX <= rcClip->right)))
 				{
 					// Draw the pixel
 					lbgra->alp	= 255;
@@ -1249,7 +1249,7 @@
 		}
 	}
 
-	void iBmp_drawVerticalLineGradient(SBitmap* bmp, s32 tnY1, s32 tnY2, s32 tnX, f32 tfRed, f32 tfGrn, f32 tfBlu, f32 tfRedInc, f32 tfGrnInc, f32 tfBluInc)
+	void iBmp_drawVerticalLineGradient(SBitmap* bmp, s32 tnY1, s32 tnY2, s32 tnX, f32 tfRed, f32 tfGrn, f32 tfBlu, f32 tfRedInc, f32 tfGrnInc, f32 tfBluInc, RECT* rcClip, bool tluseClip)
 	{
 		s32		lnY;
 		SBgr*	lbgr;
@@ -1266,7 +1266,7 @@
 			for (lnY = tnY1; lnY <= tnY2; lnY++, tfRed += tfRedInc, tfGrn += tfGrnInc, tfBlu += tfBluInc)
 			{
 				// Are we on the bitmap?
-				if (lnY >= 0 && lnY < bmp->bi.biHeight)
+				if (lnY >= 0 && lnY < bmp->bi.biHeight && !(lnY >= rcClip->top && lnY <= rcClip->bottom && tnX >= rcClip->left && tnX <= rcClip->right))
 				{
 					// Draw the pixel
 					lbgr->red	= (u8)tfRed;
@@ -1282,7 +1282,7 @@
 			for (lnY = tnY1; lnY <= tnY2; lnY++, tfRed += tfRedInc, tfGrn += tfGrnInc, tfBlu += tfBluInc)
 			{
 				// Are we on the bitmap?
-				if (lnY >= 0 && lnY < bmp->bi.biHeight)
+				if (lnY >= 0 && lnY < bmp->bi.biHeight && !(lnY >= rcClip->top && lnY <= rcClip->bottom && tnX >= rcClip->left && tnX <= rcClip->right))
 				{
 					// Draw the pixel
 					lbgra->alp	= 255;

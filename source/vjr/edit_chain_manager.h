@@ -3,7 +3,7 @@
 // /libsf/source/vjr/edit_chain_manager.h
 //
 //////
-// Version 0.31
+// Version 0.33
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -53,8 +53,8 @@
 	void					iEditChainManager_delete				(SEM** root, bool tlDeleteSelf);
 	void					iEditChainManager_deleteChain			(SEM** root, bool tlDeleteSelf);
 	void					iEditChainManager_deleteChainWithCallback(SEM** root, bool tlDeleteSelf, SEcCallback* ecb);
-	SEdit*				iEditChainManager_appendLine			(SEM* ecm, s8* tcText, s32 tnTextLength);
-	SEdit*				iEditChainManager_insertLine			(SEM* ecm, s8* tcText, s32 tnTextLength, SEdit* line, bool tlInsertAfter);
+	SEdit*					iEditChainManager_appendLine			(SEM* ecm, s8* tcText, s32 tnTextLength);
+	SEdit*					iEditChainManager_insertLine			(SEM* ecm, s8* tcText, s32 tnTextLength, SEdit* line, bool tlInsertAfter);
 	void					iEditChainManager_deleteLine			(SEM* ecm);
 	SFont*					iEditChainManager_getRectAndFont		(SEM* ecm, SObject* obj, RECT* rc);
 	void					iEditChainManager_getColors				(SEM* ecm, SObject* obj, SBgra& backColor, SBgra& foreColor);

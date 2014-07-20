@@ -3,7 +3,7 @@
 // /libsf/source/vjr/objects.cpp
 //
 //////
-// Version 0.31
+// Version 0.33
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -2741,20 +2741,20 @@
 					// Frame it
 					//////
 						// Draw the window border
-						iBmp_fillRect(form->bmp, &lrc, form->p.nwRgba, form->p.neRgba, form->p.swRgba, form->p.seRgba, true);
+						iBmp_fillRect(form->bmp, &lrc, form->p.nwRgba, form->p.neRgba, form->p.swRgba, form->p.seRgba, true, &form->rcClient, true);
 
 						// Frame it
-						iBmp_frameRect(form->bmp, &lrc, black, black, black, black, false);
+						iBmp_frameRect(form->bmp, &lrc, black, black, black, black, false, NULL, false);
 
 						// Draw the client area
 						SetRect(&lrc2, 8, form->pa.bmpIcon->bi.biHeight + 2, lrc.right - form->pa.bmpIcon->bi.biHeight - 2, lrc.bottom - form->pa.bmpIcon->bi.biHeight - 1);
-						iBmp_fillRect(form->bmp, &lrc2, white, white, white, white, false);
+						iBmp_fillRect(form->bmp, &lrc2, white, white, white, white, false, NULL, false);
 // These rc* copies were added temporarily until the full object structure is coded and working
 //CopyRect(&form->rcClient, &lrc2);
 
 						// Put a border around the client area
 						InflateRect(&lrc2, 1, 1);
-						iBmp_frameRect(form->bmp, &lrc2, black, black, black, black, false);
+						iBmp_frameRect(form->bmp, &lrc2, black, black, black, black, false, NULL, false);
 
 
 					//////////
@@ -2938,17 +2938,17 @@ CopyRect(&form->rcCaption, &lrc2);
 					// Frame it
 					//////
 						// Draw the window border
-						iBmp_fillRect(subform->bmp, &lrc, subform->p.nwRgba, subform->p.neRgba, subform->p.swRgba, subform->p.seRgba, true);
+						iBmp_fillRect(subform->bmp, &lrc, subform->p.nwRgba, subform->p.neRgba, subform->p.swRgba, subform->p.seRgba, true, &subform->rcClient, true);
 
 						// Frame it
 						CopyRect(&lrc2, &lrc);
 						SetRect(&lrc2, lrc2.left - 1, lrc2.top - 1, lrc2.right + 1, lrc2.bottom + 1);
-						iBmp_frameRect(subform->bmp, &lrc2, black, black, black, black, false);
+						iBmp_frameRect(subform->bmp, &lrc2, black, black, black, black, false, NULL, false);
 
 						// Draw the client area
 						SetRect(&lrc2, 0, subform->pa.bmpIcon->bi.biHeight - 1, lrc.right - 8, lrc.bottom);
 						// Make everything white
-						iBmp_fillRect(subform->bmp, &lrc2, white, white, white, white, false);
+						iBmp_fillRect(subform->bmp, &lrc2, white, white, white, white, false, NULL, false);
 // These rc* copies were added temporarily until the full object structure is coded and working
 //CopyRect(&subform->rcClient, &lrc2);
 						// Put a border around the client area
@@ -3009,6 +3009,31 @@ if (iDatum_compare(&subform->pa.caption, (s8*)cgcCommandTitle, -1) == 0)
 {
 	gobj_jdebi_command = subform;
 	iEditChainManager_render(commandHistory, subform);
+
+} else if (iDatum_compare(&subform->pa.caption, (s8*)cgcSourceCodeTitle, -1) == 0) {
+	gobj_jdebi_sourceCode = subform;
+	iEditChainManager_navigateEnd(sourceCodeData, subform);
+	iEditChainManager_render(sourceCodeData, subform);
+
+} else if (iDatum_compare(&subform->pa.caption, (s8*)cgcLocalsTitle, -1) == 0) {
+	gobj_jdebi_locals = subform;
+	iEditChainManager_navigateEnd(localsData, subform);
+	iEditChainManager_render(localsData, subform);
+
+} else if (iDatum_compare(&subform->pa.caption, (s8*)cgcWatchTitle, -1) == 0) {
+	gobj_jdebi_watch = subform;
+	iEditChainManager_navigateEnd(watchData, subform);
+	iEditChainManager_render(watchData, subform);
+
+} else if (iDatum_compare(&subform->pa.caption, (s8*)cgcDebugTitle, -1) == 0) {
+	gobj_jdebi_debug = subform;
+	iEditChainManager_navigateEnd(debugData, subform);
+	iEditChainManager_render(debugData, subform);
+
+} else if (iDatum_compare(&subform->pa.caption, (s8*)cgcOutputTitle, -1) == 0) {
+	gobj_jdebi_output = subform;
+	iEditChainManager_navigateEnd(outputData, subform);
+	iEditChainManager_render(outputData, subform);
 }
 
 

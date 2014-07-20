@@ -3,7 +3,7 @@
 // /libsf/source/vjr/compiler.cpp
 //
 //////
-// Version 0.31
+// Version 0.33
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -1137,7 +1137,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 			//////////
 			// Combine the next N items
 			//////
-				for (lnCount = 0; lnCount < tnCount; lnCount++)
+				for (lnCount = 1; lnCount < tnCount; lnCount++)
 				{
 					// Grab the next component
 					compNext = (SComp*)comp->ll.next;
@@ -1168,7 +1168,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 			//////////
 			// Indicate how many we merged
 			//////
-				return(lnCount);
+				return(lnCount - 1);
 
 		} else {
 			// Indicate failure

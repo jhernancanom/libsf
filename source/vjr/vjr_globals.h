@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_globals.h
 //
 //////
-// Version 0.31
+// Version 0.33
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -50,8 +50,13 @@
 
 
 	// Window display histories
-	SEM*	screenData							= NULL;									// The data displayed on the screen
-	SEM*	commandHistory						= NULL;									// The command window history
+	SEM*				screenData							= NULL;									// The data displayed on the screen
+	SEM*				sourceCodeData						= NULL;									// Source code
+	SEM*				localsData							= NULL;									// Local variables
+	SEM*				watchData							= NULL;									// Watch variables
+	SEM*				commandHistory						= NULL;									// The command window history
+	SEM*				debugData							= NULL;									// The debug window data
+	SEM*				outputData							= NULL;									// The output window data
 
 	// Global variables
 	SVariable*			varGlobals							= NULL;									// All global variables are stored
@@ -84,7 +89,12 @@
 	// Default screens used by VJr
 	SObject*			gobj_screen							= NULL;
 	SObject*			gobj_jdebi							= NULL;
+	SObject*			gobj_jdebi_sourceCode					= NULL;
+	SObject*			gobj_jdebi_locals					= NULL;
+	SObject*			gobj_jdebi_watch					= NULL;
 	SObject*			gobj_jdebi_command					= NULL;
+	SObject*			gobj_jdebi_debug					= NULL;
+	SObject*			gobj_jdebi_output					= NULL;
 	SWindow*			gWinScreen							= NULL;
 	SWindow*			gWinJDebi							= NULL;
 
