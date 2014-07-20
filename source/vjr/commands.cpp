@@ -51,8 +51,8 @@
 
 	void iError_report(s8* errorText)
 	{
-		// Append the error to the ECM
-		iEditChainManager_appendLine(screenData, errorText, -1);
+		// Append the error to the EM
+		iEditManager_appendLine(screenData, errorText, -1);
 	}
 
 	void iiError_reportComp(SComp* comp)
@@ -64,8 +64,8 @@
 		sprintf(buffer + strlen(buffer), "%u:", comp->start);
 		memcpy(buffer + strlen(buffer), comp->line->sourceCode->data + comp->start, comp->length);
 
-		// Append the error to the ECM
-		iEditChainManager_appendLine(screenData, buffer, -1);
+		// Append the error to the EM
+		iEditManager_appendLine(screenData, buffer, -1);
 	}
 
 

@@ -410,35 +410,18 @@
 					break;
 
 				case WM_LBUTTONDOWN:
-					return(iMouse_processMessage(win, m, w, l));
-					break;
-
 				case WM_LBUTTONUP:
-					return(iMouse_processMessage(win, m, w, l));
-					break;
-
 				case WM_RBUTTONDOWN:
-					return(iMouse_processMessage(win, m, w, l));
-					break;
-
 				case WM_RBUTTONUP:
-					return(iMouse_processMessage(win, m, w, l));
-					break;
-
 				case WM_MBUTTONDOWN:
-					return(iMouse_processMessage(win, m, w, l));
-					break;
-
 				case WM_MBUTTONUP:
-					return(iMouse_processMessage(win, m, w, l));
-					break;
-
 				case WM_RBUTTONDBLCLK:
 				case WM_LBUTTONDBLCLK:
 				case WM_MBUTTONDBLCLK:
 				case WM_MOUSEHWHEEL:
 				case WM_MOUSEWHEEL:
 				case WM_MOUSEMOVE:
+				case WM_MOUSEHOVER:
 					win->isMouseLeftButton		= ((w & MK_LBUTTON) != 0);		// The left mouse button is down
 					win->isMouseMiddleButton	= ((w & MK_MBUTTON) != 0);		// The middle mouse button is down
 					win->isMouseRightButton		= ((w & MK_RBUTTON) != 0);		// The right mouse button is down
@@ -446,19 +429,14 @@
 					break;
 
 				case WM_SYSKEYDOWN:
-//				case WM_SYSKEYUP:
-//				case WM_SYSCHAR:
-//				case WM_SYSDEADCHAR:
+				case WM_SYSKEYUP:
 					if (w == VK_F10)
-						return(iKeyboard_processMessage(win, m, w, l));
+						return(iKeyboard_processMessage(win, ((WM_SYSKEYDOWN) ? WM_KEYDOWN : WM_KEYUP), w, l));
 					break;
 
 				case WM_KEYDOWN:
-//				case WM_KEYUP:
-//				case WM_CHAR:
-//				case WM_DEADCHAR:
+				case WM_KEYUP:
 					return(iKeyboard_processMessage(win, m, w, l));
-					break;
 
 				case WM_CAPTURECHANGED:
 					if (win->isMoving)
@@ -735,7 +713,7 @@
 // if (win->obj == gobj_jdebi)
 // {
 // 	sprintf(buffer, "render: %u, publish: %u\0", st2 - st1, st3 - st2);
-// 	iEditChainManager_appendLine(outputData, buffer, strlen(buffer));
+// 	iEditManager_appendLine(outputData, buffer, strlen(buffer));
 // }
 			InvalidateRect(win->hwnd, 0, FALSE);
 		}
@@ -1602,10 +1580,14 @@
 //////
 	s32 iKeyboard_processMessage(SWindow* win, UINT m, WPARAM vKey, LPARAM tnScanCode)
 	{
-		s16		lnAsciiChar;
-		u32		lnScanCode;
-		bool	llCtrl, llAlt, llShift, llLeft, llMiddle, llRight, llCaps, llIsAscii;
-		u8		keyboardState[256];
+		s16			lnAsciiChar;
+		u32			lnI, lnScanCode, lnObjFocusControlsCount;
+		SObject**	objFocusControls;
+		SEM**		emBuffers;
+		SObject*	obj;
+		SEM*		em;
+		bool		llCtrl, llAlt, llShift, llLeft, llMiddle, llRight, llCaps, llIsAscii, llIsCAS;
+		u8			keyboardState[256];
 
 
 		//////////
@@ -1624,261 +1606,37 @@
 
 
 		//////////
-		// Are we already inputting?
-		// If not, and it's a printable character, we can start
+		// Find out which objects within has focus
 		//////
-			if (!llCtrl && !llShift && !llAlt)
+			lnObjFocusControlsCount = 0;
+			iObj_findFocusControls(win->obj, objFocusControls, emBuffers, &lnObjFocusControlsCount, true);
+			if (lnObjFocusControlsCount == 0)
+				return(0);		// Nothing to process
+
+
+		//////////
+		// Send it to each control with focus
+		//////
+			for (lnI = 0; lnI < lnObjFocusControlsCount; lnI++)
 			{
-				// Regular key without special flags
-				switch (vKey)
+				// Grab this object and its buffer
+				obj	= objFocusControls[lnI];
+				em	= emBuffers[lnI];
+				
+				// Make sure we have buffers to process
+				if (obj && em && obj->ev.keyboard._onKeyDown)
 				{
-					case VK_F6:
-					case VK_F8:
-					case VK_F10:
-					case VK_F11:
-						// Execute this line of code
-						if (commandHistory && commandHistory->ecCursorLine && commandHistory->ecCursorLine->sourceCodePopulated > 0 && iEngine_executeStandaloneCommand(commandHistory->ecCursorLine))
-							iWindow_render(gWinScreen);
-
-						// Move to next line and redraw
-						if (iEditChainManager_navigate(commandHistory, gobj_jdebi_command, 1, 0))
-							iWindow_render(win);
-						break;
-
-					case VK_UP:
-						if (iEditChainManager_navigate(commandHistory, gobj_jdebi_command, -1, 0))
-							iWindow_render(win);
-						return(1);
-
-					case VK_DOWN:
-						if (iEditChainManager_navigate(commandHistory, gobj_jdebi_command, 1, 0))
-							iWindow_render(win);
-						return(1);
-
-					case VK_PRIOR:		// Page up
-						if (iEditChainManager_navigatePages(commandHistory, gobj_jdebi_command, -1))
-							iWindow_render(win);
-						return(1);
-
-					case VK_NEXT:		// Page down
-						if (iEditChainManager_navigatePages(commandHistory, gobj_jdebi_command, 1))
-							iWindow_render(win);
-						return(1);
-
-					case VK_ESCAPE:		// They hit escape, and are cancelling the input
-						if (iEditChainManager_clearLine(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-
-					case VK_TAB:
-						if (iEditChainManager_tabIn(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-
-					case VK_RETURN:
-						//////////
-						// Are we on the last line?
-						//////
-							if (commandHistory && commandHistory->ecCursorLine && !commandHistory->ecCursorLine->ll.next && commandHistory->ecCursorLine->sourceCodePopulated > 0 && iEngine_executeStandaloneCommand(commandHistory->ecCursorLine))
-								iWindow_render(gWinScreen);
-
-
-						//////////
-						// Draw it like normal
-						//////
-							if (iEditChainManager_returnKey(commandHistory, gobj_jdebi_command))
-								iWindow_render(win);
-
-						return(1);
-
-					case VK_LEFT:
-						if (iEditChainManager_navigate(commandHistory, gobj_jdebi_command, 0, -1))
-							iWindow_render(win);
-						return(1);
-
-					case VK_RIGHT:
-						if (iEditChainManager_navigate(commandHistory, gobj_jdebi_command, 0, 1))
-							iWindow_render(win);
-						return(1);
-
-					case VK_HOME:
-						if (iEditChainManager_navigate(commandHistory, gobj_jdebi_command, 0, -(commandHistory->column)))
-							iWindow_render(win);
-						return(1);
-
-					case VK_END:
-						if (commandHistory->column != commandHistory->ecCursorLine->sourceCodePopulated)
-						{
-							iEditChainManager_navigate(commandHistory, gobj_jdebi_command, 0, commandHistory->ecCursorLine->sourceCodePopulated - commandHistory->column);
-							iWindow_render(win);
-						}
-						return(1);
-
-					case VK_INSERT:
-						if (iEditChainManager_toggleInsert(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-
-					case VK_BACK:
-						if (iEditChainManager_deleteLeft(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-
-					case VK_DELETE:
-					if (iEditChainManager_deleteRight(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
+						 if (m == WM_KEYDOWN)		obj->ev.keyboard.onKeyDown	(win, obj, llCtrl, llAlt, llShift, llCaps, lnAsciiChar, vKey, llIsCAS, llIsAscii);
+					else if (m == WM_KEYUP)			obj->ev.keyboard.onKeyUp	(win, obj, llCtrl, llAlt, llShift, llCaps, lnAsciiChar, vKey, llIsCAS, llIsAscii);
 				}
-
-			} else if (llCtrl && !llShift && !llAlt) {
-				// CTRL+
-				switch (vKey)
-				{
-					case 'A':		// Select all
-						if (iEditChainManager_selectAll(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-
-					case 'X':		// Cut
-						if (iEditChainManager_cut(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-
-					case 'C':		// Copy
-						if (iEditChainManager_copy(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-
-					case 'V':		// Paste
-						if (iEditChainManager_paste(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-
-					case 'W':		// Save and close
-						break;
-
-					case 'Q':		// Quit
-						break;
-
-					case VK_LEFT:	// Word left
-						if (iEditChainManager_navigateWordLeft(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-
-					case VK_RIGHT:	// Word right
-						if (iEditChainManager_navigateWordRight(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-
-					case VK_HOME:	// Home (go to top of content)
-						if (iEditChainManager_navigateTop(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-
-					case VK_END:	// Page down (go to end of content)
-						if (iEditChainManager_navigateEnd(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-
-					case VK_BACK:
-						if (iEditChainManager_deleteWordLeft(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-
-					case VK_DELETE:
-						if (iEditChainManager_deleteWordRight(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-				}
-
-			} else if (!llCtrl && llShift && !llAlt) {
-				// SHIFT+
-				switch (vKey)
-				{
-					case VK_UP:		// Select line up
-						if (iEditChainManager_selectLineUp(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-
-					case VK_DOWN:	// Select line down
-						if (iEditChainManager_selectLineDown(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-
-					case VK_LEFT:	// Select left
-						if (iEditChainManager_selectLeft(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-
-					case VK_RIGHT:	// Select right
-						if (iEditChainManager_selectRight(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-
-					case VK_END:	// Select to end
-						if (iEditChainManager_selectToEndOfLine(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-
-					case VK_HOME:	// Select to start
-						if (iEditChainManager_selectToBeginOfLine(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-
-					case VK_TAB:	// Shift tab
-						if (iEditChainManager_tabOut(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-				}
-
-			} else if (!llCtrl && !llShift && llAlt) {
-				// ALT+
-				switch (vKey)
-				{
-					case 'K':		// Select column mode
-						if (iEditChainManager_selectColumnToggle(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-
-					case 'L':		// Select full line mode
-						if (iEditChainManager_selectLineToggle(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-				}
-
-			} else if (llCtrl && llShift && !llAlt) {
-				// CTRL+SHIFT+
-				switch (vKey)
-				{
-					case VK_LEFT:	// Select word left
-						if (iEditChainManager_selectWordLeft(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-
-					case VK_RIGHT:	// Select word right
-						if (iEditChainManager_selectWordRight(commandHistory, gobj_jdebi_command))
-							iWindow_render(win);
-						return(1);
-				}
-
-			} else if (llCtrl && !llShift && llAlt) {
-				// CTRL+ALT+
-
-			} else if (!llCtrl && llShift && llAlt) {
-				// SHIFT+ALT
-
-			} else if (llCtrl && llShift && llAlt) {
-				// CTRL+ALT+SHIFT+
 			}
+		
 
-			// If we get here, it wasn't processed above.  Try to stick it in the buffer
-			if (llIsAscii)
-			{
-				// It's a regular input key
-				if (iEditChainManager_keystroke(commandHistory, gobj_jdebi_command, (u8)lnAsciiChar))
-					iWindow_render(win);
-				return(1);
-			}
+		//////////
+		// Release the focus control list
+		//////
+			if (objFocusControls)		free(objFocusControls);
+			if (emBuffers)				free(emBuffers);
 
 
 		// All done
@@ -1957,7 +1715,7 @@ _asm int 3;
 // Called to free the extra info associated with this entry
 //
 //////
-	void iExtraInfo_free(SEM* ecm, SEdit* ec, SExtraInfo** root, bool tlDeleteSelf)
+	void iExtraInfo_free(SEM* em, SEdit* ec, SExtraInfo** root, bool tlDeleteSelf)
 	{
 		SExtraInfo*		ei;
 		SExtraInfo*		eiNext;

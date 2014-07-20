@@ -217,6 +217,51 @@
 
 //////////
 //
+// Called to get a list of controls which have focus
+//
+//////
+	void iObj_findFocusControls(SObject* obj, SObjectpp& objFocusControls, SEMpp& emBuffers, u32* tnFocusControlsCount, bool tlProcessSiblings)
+	{
+		SObject* objSib;
+
+
+		//////////
+		// Process any children first
+		//////
+			if (obj->firstChild)
+				iObj_findFocusControls(obj->firstChild, objFocusControls, emBuffers, tnFocusControlsCount, true);
+
+		
+		//////////
+		// Process self
+		//////
+// TODO:  Working here
+			_asm blah blah blah;
+
+
+		//////////
+		// Process any siblings
+		//////
+			if (tlProcessSiblings)
+			{
+				// Iterate through every sibling and process it, but don't process its siblings
+				objSib = (SObject*)obj->ll.next;
+				while (objSib)
+				{
+					// Process this sibling
+					iObj_findFocusControls(objSib, objFocusControls, emBuffers, tnFocusControlsCount, false);
+
+					// Move to next sibling
+					objSib = (SObject*)objSib->ll.next;
+				}
+			}
+	}
+
+
+
+
+//////////
+//
 // Called to render the indicated object
 //
 //////
@@ -694,7 +739,7 @@
 		// Any methods defined
 		//////
 			if (tlResetMethods)
-				iEditChainManager_deleteChain(&obj->firstMethod, true);
+				iEditManager_deleteChain(&obj->firstMethod, true);
 
 
 		//////////
@@ -2561,7 +2606,7 @@
 		// Free subobject components
 		//////
 			iFont_delete(&editbox->pa.font,				true);
-			iEditChainManager_delete(&editbox->pa.ecm,	true);
+			iEditManager_delete(&editbox->pa.em,	true);
 
 
 		//////////
@@ -2843,7 +2888,7 @@ CopyRect(&form->rcCaption, &lrc2);
 //////
 	if (form == gobj_screen)
 	{
-		iEditChainManager_render(screenData, gobj_screen);
+		iEditManager_render(screenData, gobj_screen);
 		if (gWinScreen)
 			InvalidateRect(gWinScreen->hwnd, 0, FALSE);
 	}
@@ -3008,32 +3053,32 @@ CopyRect(&subform->rcCaption, &lrc2);
 if (iDatum_compare(&subform->pa.caption, (s8*)cgcCommandTitle, -1) == 0)
 {
 	gobj_jdebi_command = subform;
-	iEditChainManager_render(commandHistory, subform);
+	iEditManager_render(commandHistory, subform);
 
 } else if (iDatum_compare(&subform->pa.caption, (s8*)cgcSourceCodeTitle, -1) == 0) {
 	gobj_jdebi_sourceCode = subform;
-	iEditChainManager_navigateEnd(sourceCodeData, subform);
-	iEditChainManager_render(sourceCodeData, subform);
+	iEditManager_navigateEnd(sourceCodeData, subform);
+	iEditManager_render(sourceCodeData, subform);
 
 } else if (iDatum_compare(&subform->pa.caption, (s8*)cgcLocalsTitle, -1) == 0) {
 	gobj_jdebi_locals = subform;
-	iEditChainManager_navigateEnd(localsData, subform);
-	iEditChainManager_render(localsData, subform);
+	iEditManager_navigateEnd(localsData, subform);
+	iEditManager_render(localsData, subform);
 
 } else if (iDatum_compare(&subform->pa.caption, (s8*)cgcWatchTitle, -1) == 0) {
 	gobj_jdebi_watch = subform;
-	iEditChainManager_navigateEnd(watchData, subform);
-	iEditChainManager_render(watchData, subform);
+	iEditManager_navigateEnd(watchData, subform);
+	iEditManager_render(watchData, subform);
 
 } else if (iDatum_compare(&subform->pa.caption, (s8*)cgcDebugTitle, -1) == 0) {
 	gobj_jdebi_debug = subform;
-	iEditChainManager_navigateEnd(debugData, subform);
-	iEditChainManager_render(debugData, subform);
+	iEditManager_navigateEnd(debugData, subform);
+	iEditManager_render(debugData, subform);
 
 } else if (iDatum_compare(&subform->pa.caption, (s8*)cgcOutputTitle, -1) == 0) {
 	gobj_jdebi_output = subform;
-	iEditChainManager_navigateEnd(outputData, subform);
-	iEditChainManager_render(outputData, subform);
+	iEditManager_navigateEnd(outputData, subform);
+	iEditManager_render(outputData, subform);
 }
 
 

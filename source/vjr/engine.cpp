@@ -108,15 +108,15 @@
 				{
 					case _ICODE_QUIT:
 						// They want to quit
-						iEditChainManager_saveToDisk(screenData,		(s8*)cgcScreenDataFilename);
-						iEditChainManager_saveToDisk(commandHistory,	(s8*)cgcCommandHistoryFilename);
+						iEditManager_saveToDisk(screenData,		(s8*)cgcScreenDataFilename);
+						iEditManager_saveToDisk(commandHistory,	(s8*)cgcCommandHistoryFilename);
 						PostQuitMessage(0);
 						break;
 
 					case _ICODE_CLEAR:
 						// They want to clear the screen
-						iEditChainManager_navigateTop(screenData, gobj_screen);
-						iEditChainManager_deleteChain(&screenData, false);
+						iEditManager_navigateTop(screenData, gobj_screen);
+						iEditManager_deleteChain(&screenData, false);
 						iWindow_render(gWinScreen);
 						break;
 
@@ -125,8 +125,8 @@
 						if (!compNext)
 						{
 							// Syntax error, expected "? something" got only "?"
-							iEditChainManager_appendLine(screenData, (s8*)cgcSyntaxError, -1);
-							iEditChainManager_navigateEnd(screenData, gobj_screen);
+							iEditManager_appendLine(screenData, (s8*)cgcSyntaxError, -1);
+							iEditManager_navigateEnd(screenData, gobj_screen);
 							iWindow_render(gWinScreen);
 							return(false);
 
@@ -139,7 +139,7 @@
 								{
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error
-									iEditChainManager_navigateEnd(screenData, gobj_screen);
+									iEditManager_navigateEnd(screenData, gobj_screen);
 									iWindow_render(gWinScreen);
 									return(false);
 								}
@@ -150,7 +150,7 @@
 								{
 									// Unknown parameter
 									iError_report(cgcUnrecognizedParameter);
-									iEditChainManager_navigateEnd(screenData, gobj_screen);
+									iEditManager_navigateEnd(screenData, gobj_screen);
 									iWindow_render(gWinScreen);
 									return(false);
 								}
@@ -159,8 +159,8 @@
 							varText = iVariable_convertForDisplay(var);
 
 							// Add its contents to _screen
-							iEditChainManager_appendLine(screenData, varText->value.data, varText->value.length);
-							iEditChainManager_navigateEnd(screenData, gobj_screen);
+							iEditManager_appendLine(screenData, varText->value.data, varText->value.length);
+							iEditManager_navigateEnd(screenData, gobj_screen);
 
 							// Release the variable if it was manufactured
 							iVariable_delete(varText, true);
@@ -181,7 +181,7 @@
 								{
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error
-									iEditChainManager_navigateEnd(screenData, gobj_screen);
+									iEditManager_navigateEnd(screenData, gobj_screen);
 									iWindow_render(gWinScreen);
 									return(false);
 								}
@@ -192,7 +192,7 @@
 								{
 									// Unknown parameter
 									iError_report(cgcUnrecognizedParameter);
-									iEditChainManager_navigateEnd(screenData, gobj_screen);
+									iEditManager_navigateEnd(screenData, gobj_screen);
 									iWindow_render(gWinScreen);
 									return(false);
 								}

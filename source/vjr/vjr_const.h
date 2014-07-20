@@ -37,6 +37,8 @@
 
 
 struct SVariable;
+struct SObject;
+struct SEM;
 
 
 // Unsigned
@@ -70,6 +72,10 @@ typedef		const u64			cu64;
 // Constant floating point
 typedef		const f64			cf64;
 typedef		const f64			cf64;
+
+// Used for passing complex parameters as references, such as SObjectpp&, or SEMpp&
+typedef SObject**	SObjectpp;
+typedef SEM**		SEMpp;
 
 
 //////////

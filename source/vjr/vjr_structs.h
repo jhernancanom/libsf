@@ -90,8 +90,8 @@ struct SEdit
 // SEM is short for "SEditManager"
 struct SEM
 {
-	SEdit*			ecFirst;										// First in the chain (first->prev is NULL)
-	SEdit*			ecLast;											// Last in the chain (last->next is NULL)
+	SEdit*		ecFirst;										// First in the chain (first->prev is NULL)
+	SEdit*		ecLast;											// Last in the chain (last->next is NULL)
 	bool		isReadOnly;										// If read-only no changes are allowed, only navigation
 
 	// If populated, this ECM is only a placeholder for this instance, and the this->reference points to the real ECM we should use
@@ -102,9 +102,9 @@ struct SEM
 //////////
 // For display
 //////
-	SEdit*			ecTopLine;										// Top item in the current view
-	SEdit*			ecCursorLine;									// Line where the cursor is
-	SEdit*			ecCursorLineLast;								// The last location before movement was made
+	SEdit*		ecTopLine;										// Top item in the current view
+	SEdit*		ecCursorLine;									// Line where the cursor is
+	SEdit*		ecCursorLineLast;								// The last location before movement was made
 	bool		isOverwrite;									// Are we in overwrite mode?
 	bool		showCursorLine;									// Should we render the cursor line?
 	bool		showEndLine;									// Should we render the end line in a different color?
@@ -156,8 +156,8 @@ struct SEM
 
 struct SEcCallback
 {
-	SEM*		ecm;											// The manager
-	SEdit*			ec;												// This line
+	SEM*		em;												// The manager
+	SEdit*		ec;												// This line
 
 	// Functions to use to access this extra info block
 	union {
@@ -197,29 +197,94 @@ struct SFont
 
 struct SEventsGeneral
 {
-	bool		(*onLoad)					(SObject* o);							// Called to load anything needed by the init() event (holds a template/skeleton object)
-	bool		(*onInit)					(SObject* o);							// Called to initialize anything
-	bool		(*onCreated)				(SObject* o);							// Called after initialization, before the object is sized
-	bool		(*onResize)					(SObject* o, u32* widthRequired_out, u32* heightRequired_out);	// Called to size or resize the object
-	bool		(*onMoved)					(SObject* o, u32* xOverride_out, u32* yOverride_out);			// Called when the object has been moved
-	bool		(*onRender)					(SObject* o);							// Called to render to bmp (returns if anything was drawn)
-	bool		(*onPublish)				(SObject* o);							// Called to publish the control onto the parent (which will populate bmpScale if need be)
-	bool		(*onQueryUnload)			(SObject* o);							// Called before onDestroy, determines if the form should actually be destroyed
-	bool		(*onDestroy)				(SObject* o);							// Called when the object will be destroyed
-	bool		(*onUnload)					(SObject* o);							// Called after the object has been destroyed, to unload anything (holds a template/skeleton object)
-	bool		(*onGotFocus)				(SObject* o);							// Called when the object receives focus (note multiple items can have simultaneous focus)
-	bool		(*onLostFocus)				(SObject* o);							// Called when the object loses focus
-	bool		(*onAddObject)				(SObject* o);							// Called when an object is added
-	bool		(*onAddProperty)			(SObject* o);							// Called when a property is added
-	bool		(*onError)					(SObject* o);							// Called when an error is triggered in code on an object
-	bool		(*onScrolled)				(SObject* o);							// Called when an object has been scrolled
-	bool		(*activate)					(SObject* o);							// Called when activated
-	bool		(*deactivate)				(SObject* o);							// Called when deactivated
-	bool		(*onSelect)					(SObject* o, SObject* oItem);			// When an option is selected
-	bool		(*onDeselect)				(SObject* o, SObject* oItem);			// When an option is deselected
-	bool		(*interactiveChange)		(SObject* o);							// Called when the data changes
-	bool		(*programmaticChange)		(SObject* o);							// Called when the data changes
-
+	union {
+		u32		_onLoad;
+		bool	(*onLoad)					(SWindow* win, SObject* obj);							// Called to load anything needed by the init() event (holds a template/skeleton object)
+	};
+	union {
+		u32		_onInit;
+		bool	(*onInit)					(SWindow* win, SObject* obj);							// Called to initialize anything
+	};
+	union {
+		u32		_onCreated;
+		bool	(*onCreated)				(SWindow* win, SObject* obj);							// Called after initialization, before the object is sized
+	};
+	union {
+		u32		_onResize;
+		bool	(*onResize)					(SWindow* win, SObject* obj, u32* widthRequired_out, u32* heightRequired_out);	// Called to size or resize the object
+	};
+	union {
+		u32		_onMoved;
+		bool	(*onMoved)					(SWindow* win, SObject* obj, u32* xOverride_out, u32* yOverride_out);			// Called when the object has been moved
+	};
+	union {
+		u32		_onRender;
+		bool	(*onRender)					(SWindow* win, SObject* obj);							// Called to render to bmp (returns if anything was drawn)
+	};
+	union {
+		u32		_onPublish;
+		bool	(*onPublish)				(SWindow* win, SObject* obj);							// Called to publish the control onto the parent (which will populate bmpScale if need be)
+	};
+	union {
+		u32		_onQueryUnload;
+		bool	(*onQueryUnload)			(SWindow* win, SObject* obj);							// Called before onDestroy, determines if the form should actually be destroyed
+	};
+	union {
+		u32		_onDestroy;
+		bool	(*onDestroy)				(SWindow* win, SObject* obj);							// Called when the object will be destroyed
+	};
+	union {
+		u32		_onUnload;
+		bool	(*onUnload)					(SWindow* win, SObject* obj);							// Called after the object has been destroyed, to unload anything (holds a template/skeleton object)
+	};
+	union {
+		u32		_onGotFocus;
+		bool	(*onGotFocus)				(SWindow* win, SObject* obj);							// Called when the object receives focus (note multiple items can have simultaneous focus)
+	};
+	union {
+		u32		_onLostFocus;
+		bool	(*onLostFocus)				(SWindow* win, SObject* obj);							// Called when the object loses focus
+	};
+	union {
+		u32		_onAddObject;
+		bool	(*onAddObject)				(SWindow* win, SObject* obj);							// Called when an object is added
+	};
+	union {
+		u32		_onAddProperty;
+		bool	(*onAddProperty)			(SWindow* win, SObject* obj);							// Called when a property is added
+	};
+	union {
+		u32		_onError;
+		bool	(*onError)					(SWindow* win, SObject* obj);							// Called when an error is triggered in code on an object
+	};
+	union {
+		u32		_onScrolled;
+		bool	(*onScrolled)				(SWindow* win, SObject* obj);							// Called when an object has been scrolled
+	};
+	union {
+		u32		_activate;
+		bool	(*activate)					(SWindow* win, SObject* obj);							// Called when activated
+	};
+	union {
+		u32		_deactivate;
+		bool	(*deactivate)				(SWindow* win, SObject* obj);							// Called when deactivated
+	};
+	union {
+		u32		_onSelect;
+		bool	(*onSelect)					(SWindow* win, SObject* obj, SObject* oItem);			// When an option is selected
+	};
+	union {
+		u32		_onDeselect;
+		bool	(*onDeselect)				(SWindow* win, SObject* obj, SObject* oItem);			// When an option is deselected
+	};
+	union {
+		u32		_interactiveChange;
+		bool	(*interactiveChange)		(SWindow* win, SObject* obj);							// Called when the data changes
+	};
+	union {
+		u32		_programmaticChange;
+		bool	(*programmaticChange)		(SWindow* win, SObject* obj);							// Called when the data changes
+	};
 };
 
 struct SEventsMouse
@@ -232,22 +297,52 @@ struct SEventsMouse
 	// Mouse callbacks issued by VJr to the internal object controller.
 	// These will be translated by the internal object controller into executable VJr VXB-- code.
 	// Return value indicates if the event should be sent to its parent instead (if NODEFAULT was issued during execution).
-	bool		(*onMouseClickEx)		(SObject* o, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);	// 1=left, 2=middle, 4=right, 2^n bit positions indicate which buttons are clicked
-	bool		(*onMouseWheel)		(SObject* o, s32 tnUnits);				// Signed units indicating direction and velocity
-	bool		(*onMouseMove)		(SObject* o, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);	// Coordinates for the move
-	bool		(*onMouseDown)		(SObject* o, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick, u32 tnLastClick);	// Coordinates for where the mouse button changed
-	bool		(*onMouseUp)		(SObject* o, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick, u32 tnLastClick);	// Coordinates for where the mouse button changed
-	bool		(*onMouseEnter)		(SObject* o);							// When mouse enters an object
-	bool		(*onMouseLeave)		(SObject* o);							// When mouse leaves an object
-	bool		(*onMouseHover)		(SObject* o, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);	// Coordinates where hovering
+	union {
+		u32		_onMouseClickEx;
+		bool	(*onMouseClickEx)		(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);	// 1=left, 2=middle, 4=right, 2^n bit positions indicate which buttons are clicked
+	};
+	union {
+		u32		_onMouseWheel;
+		bool	(*onMouseWheel)			(SWindow* win, SObject* obj, s32 tnUnits);			// Signed units indicating direction and velocity
+	};
+	union {
+		u32		_onMouseMove;
+		bool	(*onMouseMove)			(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);	// Coordinates for the move
+	};
+	union {
+		u32		_onMouseDown;
+		bool	(*onMouseDown)			(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick, u32 tnLastClick);	// Coordinates for where the mouse button changed
+	};
+	union {
+		u32		_onMouseUp;
+		bool	(*onMouseUp)			(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick, u32 tnLastClick);	// Coordinates for where the mouse button changed
+	};
+	union {
+		u32		_onMouseEnter;
+		bool	(*onMouseEnter)			(SWindow* win, SObject* obj);						// When mouse enters an object
+	};
+	union {
+		u32		_onMouseLeave;
+		bool	(*onMouseLeave)			(SWindow* win, SObject* obj);						// When mouse leaves an object
+	};
+	union {
+		u32		_onMouseHover;
+		bool	(*onMouseHover)			(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);	// Coordinates where hovering
+	};
 };
 
 struct SEventsKeyboard
 {
 	// Keyboard callbacks
 	// Bool indicates if the event should be sent to its parent instead
-	bool		(*onKeyDown)		(SObject* o, bool tlCtrl, bool tlAlt, bool tlShift, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
-	bool		(*onKeyUp)			(SObject* o, bool tlCtrl, bool tlAlt, bool tlShift, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
+	union {
+		u32		_onKeyDown;
+		bool	(*onKeyDown)		(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tnAsciiChar, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
+	};
+	union {
+		u32		_onKeyUp;
+		bool	(*onKeyUp)			(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tnAsciiChar, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
+	};
 };
 
 struct SEvents
@@ -394,7 +489,7 @@ struct SPropertiesA
 	SVariable*	picture;												// Picture for the control
 	SVariable*	mask;													// Input mask for the control
 
-	SEM*		ecm;													// The content being edited
+	SEM*		em;													// The content being edited
 
 	SDatum		pictureName;											// The name of the file used for the picture
 	SBitmap*	bmpPicture;												// The image for the picture

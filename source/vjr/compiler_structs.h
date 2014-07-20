@@ -344,7 +344,7 @@ struct SCompileNote;
 	struct SCompiler
 	{
 		// EC was designed with source code in mind, and that means a tight compiler relationship
-		SEdit*		parent;											// The EC this belongs to (parent->parent points back to ECM)
+		SEdit*		parent;											// The EC this belongs to (parent->parent points back to EM)
 
 		// The last source code line
 		SDatum*			sourceCode;										// Copy at last compile of LEFT(parent->sourceCode.data, parent->sourceCodePopulated)

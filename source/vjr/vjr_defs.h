@@ -64,6 +64,7 @@
 	SObject*				iObj_addChild							(SObject* objParent, u32 objType);
 	SObject*				iObj_copy								(SObject* template_obj, SObject* next, SObject* parent, bool tlCopyChildren, bool tlCreateSeparateBitmapBuffers);
 	void					iObj_delete								(SObject** obj, bool tlDeleteSelf);
+	void					iObj_findFocusControls					(SObject*  obj, SObjectpp& objFocusControls, SEMpp& emBuffers, u32* tnFocusControlsCount, bool tlProcessSiblings);
 	u32						iObj_render								(SObject*  obj, bool tlRenderChildren, bool tlRenderSiblings);
 	void					iObj_renderChildrenAndSiblings			(SObject*  obj, bool tlRenderChildren, bool tlRenderSiblings);
 	void					iObj_duplicateChain						(SObject** root, SObject* chain);
@@ -241,7 +242,7 @@
 	// For processing keystrokes
 	s32						iKeyboard_processMessage				(SWindow* win, UINT m, WPARAM w, LPARAM l);
 
-	// EditChainManager
+	// EditManager
 	// Moved to edit_chain_manager.cpp
 
 	// Edit Chain
@@ -255,7 +256,7 @@
 	void*					iTranslate_p2_to_p1						(SBuilder* root, void* ptr);
 
 	// ExtraInfo
-	void					iExtraInfo_free							(SEM* ecm, SEdit* ec, SExtraInfo** root, bool tlDeleteSelf);
+	void					iExtraInfo_free							(SEM* em, SEdit* ec, SExtraInfo** root, bool tlDeleteSelf);
 
 	// Datum
 	void					iDatum_allocateSpace					(SDatum* datum,            s32 dataLength);
