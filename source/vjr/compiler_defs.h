@@ -174,6 +174,7 @@ struct SVariable;
 	SVariable*				iVariable_searchForName						(SVariable* varRoot, s8* tcVarName, u32 tnVarNameLength, SComp* comp);
 	bool					iVariable_areTypesCompatible				(SVariable* var1, SVariable* var2);
 	bool					iVariable_copyVariable						(SVariable* varDst, SVariable* varSrc);
+	void					iVariable_reset								(SVariable* var);
 	SVariable*				iVariable_convertForDisplay					(SVariable* var);
 	void					iVariable_delete							(SVariable* var, bool tlDeleteSelf);
 	void					iVariable_politelyDeleteChain				(SVariable** root, bool tlDeleteSelf);

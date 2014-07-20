@@ -215,117 +215,117 @@ SVariable* iObj_getProperty_parent(SObject* obj)
 
 bool iObj_setProperty_tabIndex(SObject* obj, SVariable* var)
 {
-	return(iObj_setInteger(obj, var, &obj->tabIndex, 0, 0, false, 0));
+	return(iObj_setInteger(obj, var, &obj->p.tabIndex, 0, 0, false, 0));
 }
 
 SVariable* iObj_getProperty_tabIndex(SObject* obj)
 {
-	return(iObj_getInteger(obj, obj->tabIndex));
+	return(iObj_getInteger(obj, obj->p.tabIndex));
 }
 
 bool iObj_setProperty_tabStop(SObject* obj, SVariable* var)
 {
-	return(iObj_setLogical(obj, var, &obj->tabStop));
+	return(iObj_setLogical(obj, var, &obj->p.tabStop));
 }
 
 SVariable* iObj_getProperty_tabStop(SObject* obj)
 {
-	return(iObj_getLogical(obj, obj->tabStop));
+	return(iObj_getLogical(obj, obj->p.tabStop));
 }
 
 bool iObj_setProperty_helpContextId(SObject* obj, SVariable* var)
 {
-	return(iObj_setInteger(obj, var, &obj->helpContextId, 0, 0, false, 0));
+	return(iObj_setInteger(obj, var, &obj->p.helpContextId, 0, 0, false, 0));
 }
 
 SVariable* iObj_getProperty_helpContextId(SObject* obj)
 {
-	return(iObj_getInteger(obj, obj->helpContextId));
+	return(iObj_getInteger(obj, obj->p.helpContextId));
 }
 
 bool iObj_setProperty_hasWhatsThisButton(SObject* obj, SVariable* var)
 {
-	return(iObj_setLogical(obj, var, &obj->hasWhatsThisButton));
+	return(iObj_setLogical(obj, var, &obj->p.hasWhatsThisButton));
 }
 
 SVariable* iObj_getProperty_hasWhatsThisButton(SObject* obj)
 {
-	return(iObj_getLogical(obj, obj->hasWhatsThisButton));
+	return(iObj_getLogical(obj, obj->p.hasWhatsThisButton));
 }
 
 bool iObj_setProperty_hasWhatsThisHelp(SObject* obj, SVariable* var)
 {
-	return(iObj_setLogical(obj, var, &obj->hasWhatsThisHelp));
+	return(iObj_setLogical(obj, var, &obj->p.hasWhatsThisHelp));
 }
 
 SVariable* iObj_getProperty_hasWhatsThisHelp(SObject* obj)
 {
-	return(iObj_getLogical(obj, obj->hasWhatsThisHelp));
+	return(iObj_getLogical(obj, obj->p.hasWhatsThisHelp));
 }
 
 bool iObj_setProperty_whatsThisHelpId(SObject* obj, SVariable* var)
 {
-	return(iObj_setInteger(obj, var, &obj->whatsThisHelpId, 0, 0, false, 0));
+	return(iObj_setInteger(obj, var, &obj->p.whatsThisHelpId, 0, 0, false, 0));
 }
 
 SVariable* iObj_getProperty_whatsThisHelpId(SObject* obj)
 {
-	return(iObj_getInteger(obj, obj->whatsThisHelpId));
+	return(iObj_getInteger(obj, obj->p.whatsThisHelpId));
 }
 
 bool iObj_setProperty_name(SObject* obj, SVariable* var)
 {
-	return(iObj_setCharacter(obj, var, &obj->name, var->value.data, var->value.length));
+	return(iObj_setCharacter(obj, var, &obj->pa.name, var->value.data, var->value.length));
 }
 
 SVariable* iObj_getProperty_name(SObject* obj)
 {
-	return(iObj_getCharacter(obj, &obj->name));
+	return(iObj_getCharacter(obj, &obj->pa.name));
 }
 
 SVariable* iObj_getProperty_className(SObject* obj)
 {
-	return(iObj_getCharacter(obj, &obj->className));
+	return(iObj_getCharacter(obj, &obj->pa.className));
 }
 
 SVariable* iObj_getProperty_classLibrary(SObject* obj)
 {
-	return(iObj_getCharacter(obj, &obj->classLibrary));
+	return(iObj_getCharacter(obj, &obj->pa.classLibrary));
 }
 
 bool iObj_setProperty_comment(SObject* obj, SVariable* var)
 {
-	return(iObj_setCharacter(obj, var, &obj->comment, var->value.data, var->value.length));
+	return(iObj_setCharacter(obj, var, &obj->pa.comment, var->value.data, var->value.length));
 }
 
 SVariable* iObj_getProperty_comment(SObject* obj)
 {
-	return(iObj_getCharacter(obj, &obj->comment));
+	return(iObj_getCharacter(obj, &obj->pa.comment));
 }
 
 bool iObj_setProperty_toolTip(SObject* obj, SVariable* var)
 {
-	return(iObj_setCharacter(obj, var, &obj->tooltip, var->value.data, var->value.length));
+	return(iObj_setCharacter(obj, var, &obj->pa.tooltip, var->value.data, var->value.length));
 }
 
 SVariable* iObj_getProperty_toolTip(SObject* obj)
 {
-	return(iObj_getCharacter(obj, &obj->tooltip));
+	return(iObj_getCharacter(obj, &obj->pa.tooltip));
 }
 
 bool iObj_setProperty_tag(SObject* obj, SVariable* var)
 {
-	return(iObj_setCharacter(obj, var, &obj->tag, var->value.data, var->value.length));
+	return(iObj_setCharacter(obj, var, &obj->pa.tag, var->value.data, var->value.length));
 }
 
 SVariable* iObj_getProperty_tag(SObject* obj)
 {
-	return(iObj_getCharacter(obj, &obj->tag));
+	return(iObj_getCharacter(obj, &obj->pa.tag));
 }
 
 bool iObj_setProperty_mousePointer(SObject* obj, SVariable* var)
 {
-	return(iObj_setInteger(obj, var, &obj->mousePointer, 0, 17, true, (u32)&iObj_setProperty_mousePointer_extraSetTest));
+	return(iObj_setInteger(obj, var, &obj->p.mousePointer, 0, 17, true, (u32)&iObj_setProperty_mousePointer_extraSetTest));
 }
 
 bool iObj_setProperty_mousePointer_extraSetTest(s32 value)
@@ -336,37 +336,37 @@ bool iObj_setProperty_mousePointer_extraSetTest(s32 value)
 
 SVariable* iObj_getProperty_mousePointer(SObject* obj)
 {
-	return(iObj_getInteger(obj, obj->mousePointer));
+	return(iObj_getInteger(obj, obj->p.mousePointer));
 }
 
 bool iObj_setProperty_isEnabled(SObject* obj, SVariable* var)
 {
-	return(iObj_setLogical(obj, var, &obj->isEnabled));
+	return(iObj_setLogical(obj, var, &obj->p.isEnabled));
 }
 
 SVariable* iObj_getProperty_isEnabled(SObject* obj)
 {
-	return(iObj_getLogical(obj, obj->isEnabled));
+	return(iObj_getLogical(obj, obj->p.isEnabled));
 }
 
 bool iObj_setProperty_hasFocus(SObject* obj, SVariable* var)
 {
-	return(iObj_setLogical(obj, var, &obj->hasFocus));
+	return(iObj_setLogical(obj, var, &obj->p.hasFocus));
 }
 
 SVariable* iObj_getProperty_hasFocus(SObject* obj)
 {
-	return(iObj_getLogical(obj, obj->hasFocus));
+	return(iObj_getLogical(obj, obj->p.hasFocus));
 }
 
 bool iObj_setProperty_isMovable(SObject* obj, SVariable* var)
 {
-	return(iObj_setLogical(obj, var, &obj->isMovable));
+	return(iObj_setLogical(obj, var, &obj->p.isMovable));
 }
 
 SVariable* iObj_getProperty_isMovable(SObject* obj)
 {
-	return(iObj_getLogical(obj, obj->isMovable));
+	return(iObj_getLogical(obj, obj->p.isMovable));
 }
 
 bool iObj_setProperty_isRendered(SObject* obj, SVariable* var)
@@ -391,12 +391,12 @@ SVariable* iObj_getProperty_isPublished(SObject* obj)
 
 bool iObj_setProperty_isVisible(SObject* obj, SVariable* var)
 {
-	return(iObj_setLogical(obj, var, &obj->isVisible));
+	return(iObj_setLogical(obj, var, &obj->p.isVisible));
 }
 
 SVariable* iObj_getProperty_isVisible(SObject* obj)
 {
-	return(iObj_getLogical(obj, obj->isVisible));
+	return(iObj_getLogical(obj, obj->p.isVisible));
 }
 
 bool iObj_setProperty_isDirty(SObject* obj, SVariable* var)
@@ -595,12 +595,12 @@ SVariable* iObj_getProperty_height(SObject* obj)
 
 bool iObj_setProperty_anchor(SObject* obj, SVariable* var)
 {
-	return(iObj_setInteger(obj, var, &obj->anchor, 0, 0, false, 0));
+	return(iObj_setInteger(obj, var, &obj->p.anchor, 0, 0, false, 0));
 }
 
 SVariable* iObj_getProperty_anchor(SObject* obj)
 {
-	return(iObj_getInteger(obj, obj->anchor));
+	return(iObj_getInteger(obj, obj->p.anchor));
 }
 
 bool iObj_setProperty_scrollX(SObject* obj, SVariable* var)
@@ -769,22 +769,22 @@ SVariable* iObj_getProperty_scaleY(SObject* obj)
 	return(NULL);
 }
 
+void iObj_setIcon(SObject* obj, SBitmap* bmp)
+{
+	if (obj)
+	{
+		// Delete the old
+		iBmp_delete(&obj->pa.bmpIcon, true, true);
 
+		// Set the new
+		obj->pa.bmpIcon = iBmp_copy(bmp);
+	}
+}
 
-
-
-//////////
-// FORM Properties
-//////
 bool iObj_setMinLeft(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, &form->rcMin.left, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, &obj->p.rcMin.left, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -792,13 +792,8 @@ bool iObj_setMinLeft(SObject* obj, SVariable* var)
 
 SVariable* iObj_getMinLeft(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->rcMin.left));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.rcMin.left));
 
 	// If we get here, failure
 	return(NULL);
@@ -806,13 +801,8 @@ SVariable* iObj_getMinLeft(SObject* obj)
 
 bool iObj_setMinTop(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, &form->rcMin.top, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, &obj->p.rcMin.top, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -820,13 +810,8 @@ bool iObj_setMinTop(SObject* obj, SVariable* var)
 
 SVariable* iObj_getMinTop(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->rcMin.top));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.rcMin.top));
 
 	// If we get here, failure
 	return(NULL);
@@ -834,15 +819,13 @@ SVariable* iObj_getMinTop(SObject* obj)
 
 bool iObj_setMinWidth(SObject* obj, SVariable* var)
 {
-	s32				value;
-	bool			error;
-	u32				errorNum;
-	SSubObjForm*	form;
+	s32		value;
+	bool	error;
+	u32		errorNum;
 
 
 	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form && iVariable_isTypeNumeric(var))
+	if (obj && iVariable_isTypeNumeric(var))
 	{
 		value = iiVariable_getAs_s32(var, false, &error, &errorNum);
 		if (error)
@@ -852,7 +835,7 @@ bool iObj_setMinWidth(SObject* obj, SVariable* var)
 		}
 
 		// Set the value
-		form->rcMin.right = form->rcMin.left + value;
+		obj->p.rcMin.right = obj->p.rcMin.left + value;
 	}
 
 	// If we get here, failure
@@ -861,13 +844,8 @@ bool iObj_setMinWidth(SObject* obj, SVariable* var)
 
 SVariable* iObj_getMinWidth(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->rcMin.right - form->rcMin.left));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.rcMin.right - obj->p.rcMin.left));
 
 	// If we get here, failure
 	return(NULL);
@@ -875,15 +853,13 @@ SVariable* iObj_getMinWidth(SObject* obj)
 
 bool iObj_setMinHeight(SObject* obj, SVariable* var)
 {
-	s32				value;
-	bool			error;
-	u32				errorNum;
-	SSubObjForm*	form;
+	s32		value;
+	bool	error;
+	u32		errorNum;
 
 
 	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form && iVariable_isTypeNumeric(var))
+	if (obj && iVariable_isTypeNumeric(var))
 	{
 		value = iiVariable_getAs_s32(var, false, &error, &errorNum);
 		if (error)
@@ -893,7 +869,7 @@ bool iObj_setMinHeight(SObject* obj, SVariable* var)
 		}
 
 		// Set the value
-		form->rcMin.bottom = form->rcMin.top + value;
+		obj->p.rcMin.bottom = obj->p.rcMin.top + value;
 	}
 
 	// If we get here, failure
@@ -902,13 +878,8 @@ bool iObj_setMinHeight(SObject* obj, SVariable* var)
 
 SVariable* iObj_getMinHeight(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->rcMin.bottom - form->rcMin.top));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.rcMin.bottom - obj->p.rcMin.top));
 
 	// If we get here, failure
 	return(NULL);
@@ -916,13 +887,8 @@ SVariable* iObj_getMinHeight(SObject* obj)
 
 bool iObj_setMaxLeft(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, &form->rcMax.left, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, &obj->p.rcMax.left, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -930,13 +896,8 @@ bool iObj_setMaxLeft(SObject* obj, SVariable* var)
 
 SVariable* iObj_getMaxLeft(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->rcMax.left));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.rcMax.left));
 
 	// If we get here, failure
 	return(NULL);
@@ -944,13 +905,8 @@ SVariable* iObj_getMaxLeft(SObject* obj)
 
 bool iObj_setMaxTop(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, &form->rcMax.top, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, &obj->p.rcMax.top, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -958,13 +914,8 @@ bool iObj_setMaxTop(SObject* obj, SVariable* var)
 
 SVariable* iObj_getMaxTop(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->rcMin.top));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.rcMin.top));
 
 	// If we get here, failure
 	return(NULL);
@@ -972,15 +923,13 @@ SVariable* iObj_getMaxTop(SObject* obj)
 
 bool iObj_setMaxWidth(SObject* obj, SVariable* var)
 {
-	s32				value;
-	bool			error;
-	u32				errorNum;
-	SSubObjForm*	form;
+	s32		value;
+	bool	error;
+	u32		errorNum;
 
 
 	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form && iVariable_isTypeNumeric(var))
+	if (obj && iVariable_isTypeNumeric(var))
 	{
 		value = iiVariable_getAs_s32(var, false, &error, &errorNum);
 		if (error)
@@ -990,7 +939,7 @@ bool iObj_setMaxWidth(SObject* obj, SVariable* var)
 		}
 
 		// Set the value
-		form->rcMax.right = form->rcMax.left + value;
+		obj->p.rcMax.right = obj->p.rcMax.left + value;
 	}
 
 	// If we get here, failure
@@ -999,13 +948,8 @@ bool iObj_setMaxWidth(SObject* obj, SVariable* var)
 
 SVariable* iObj_getMaxWidth(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->rcMax.right - form->rcMax.left));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.rcMax.right - obj->p.rcMax.left));
 
 	// If we get here, failure
 	return(NULL);
@@ -1013,15 +957,13 @@ SVariable* iObj_getMaxWidth(SObject* obj)
 
 bool iObj_setMaxHeight(SObject* obj, SVariable* var)
 {
-	s32				value;
-	bool			error;
-	u32				errorNum;
-	SSubObjForm*	form;
+	s32		value;
+	bool	error;
+	u32		errorNum;
 
 
 	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form && iVariable_isTypeNumeric(var))
+	if (obj && iVariable_isTypeNumeric(var))
 	{
 		value = iiVariable_getAs_s32(var, false, &error, &errorNum);
 		if (error)
@@ -1031,7 +973,7 @@ bool iObj_setMaxHeight(SObject* obj, SVariable* var)
 		}
 
 		// Set the value
-		form->rcMax.bottom = form->rcMax.top + value;
+		obj->p.rcMax.bottom = obj->p.rcMax.top + value;
 	}
 
 	// If we get here, failure
@@ -1040,13 +982,8 @@ bool iObj_setMaxHeight(SObject* obj, SVariable* var)
 
 SVariable* iObj_getMaxHeight(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->rcMin.bottom - form->rcMin.top));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.rcMin.bottom - obj->p.rcMin.top));
 
 	// If we get here, failure
 	return(NULL);
@@ -1054,18 +991,16 @@ SVariable* iObj_getMaxHeight(SObject* obj)
 
 bool iObj_setFontName(SObject* obj, SVariable* var)
 {
-	bool			llResult;
-	SSubObjForm*	form;
+	bool	llResult;
 
 
 	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
+	if (obj)
 	{
 		// Perform the update
-		llResult = iObj_setCharacter(obj, var, &form->font->name, var->value.data, var->value.length);
+		llResult = iObj_setCharacter(obj, var, &obj->pa.font->name, var->value.data, var->value.length);
 		if (llResult)
-			iiFont_refresh(form->font);		// Refresh the font with its new settings
+			iiFont_refresh(obj->pa.font);		// Refresh the font with its new settings
 
 		// Indicate our status
 		return(llResult);
@@ -1077,13 +1012,8 @@ bool iObj_setFontName(SObject* obj, SVariable* var)
 
 SVariable* iObj_getFontName(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getCharacter(obj, &form->font->name));
+	if (obj)
+		return(iObj_getCharacter(obj, &obj->pa.font->name));
 
 	// If we get here, failure
 	return(false);
@@ -1091,18 +1021,16 @@ SVariable* iObj_getFontName(SObject* obj)
 
 bool iObj_setFontSize(SObject* obj, SVariable* var)
 {
-	bool			llResult;
-	SSubObjForm*	form;
+	bool	llResult;
 
 
 	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
+	if (obj)
 	{
 		// Perform the update
-		llResult = iObj_setInteger(obj, var, (s32*)&form->font->_size, 0, 0, false, 0);
+		llResult = iObj_setInteger(obj, var, (s32*)&obj->pa.font->_size, 0, 0, false, 0);
 		if (llResult)
-			iiFont_refresh(form->font);		// Refresh the font with its new settings
+			iiFont_refresh(obj->pa.font);		// Refresh the font with its new settings
 
 		// Indicate our status
 		return(llResult);
@@ -1114,13 +1042,8 @@ bool iObj_setFontSize(SObject* obj, SVariable* var)
 
 SVariable* iObj_getFontSize(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->font->_size));
+	if (obj)
+		return(iObj_getInteger(obj, obj->pa.font->_size));
 
 	// If we get here, failure
 	return(NULL);
@@ -1128,18 +1051,16 @@ SVariable* iObj_getFontSize(SObject* obj)
 
 bool iObj_setFontBold(SObject* obj, SVariable* var)
 {
-	bool			llResult;
-	SSubObjForm*	form;
+	bool	llResult;
 
 
 	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
+	if (obj)
 	{
 		// Perform the update
-		llResult = iObj_setLogical(obj, var, &form->font->isBold);
+		llResult = iObj_setLogical(obj, var, &obj->pa.font->isBold);
 		if (llResult)
-			iiFont_refresh(form->font);		// Refresh the font with its new settings
+			iiFont_refresh(obj->pa.font);		// Refresh the font with its new settings
 
 		// Indicate our status
 		return(llResult);
@@ -1151,13 +1072,8 @@ bool iObj_setFontBold(SObject* obj, SVariable* var)
 
 SVariable* iObj_getFontBold(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->font->isBold));
+	if (obj)
+		return(iObj_getLogical(obj, obj->pa.font->isBold));
 
 	// If we get here, failure
 	return(NULL);
@@ -1165,18 +1081,16 @@ SVariable* iObj_getFontBold(SObject* obj)
 
 bool iObj_setFontItalic(SObject* obj, SVariable* var)
 {
-	bool			llResult;
-	SSubObjForm*	form;
+	bool	llResult;
 
 
 	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
+	if (obj)
 	{
 		// Perform the update
-		llResult = iObj_setLogical(obj, var, &form->font->isItalic);
+		llResult = iObj_setLogical(obj, var, &obj->pa.font->isItalic);
 		if (llResult)
-			iiFont_refresh(form->font);		// Refresh the font with its new settings
+			iiFont_refresh(obj->pa.font);		// Refresh the font with its new settings
 
 		// Indicate our status
 		return(llResult);
@@ -1188,13 +1102,8 @@ bool iObj_setFontItalic(SObject* obj, SVariable* var)
 
 SVariable* iObj_getFontItalic(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->font->isItalic));
+	if (obj)
+		return(iObj_getLogical(obj, obj->pa.font->isItalic));
 
 	// If we get here, failure
 	return(NULL);
@@ -1202,18 +1111,16 @@ SVariable* iObj_getFontItalic(SObject* obj)
 
 bool iObj_setFontUnderline(SObject* obj, SVariable* var)
 {
-	bool			llResult;
-	SSubObjForm*	form;
+	bool	llResult;
 
 
 	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
+	if (obj)
 	{
 		// Perform the update
-		llResult = iObj_setLogical(obj, var, &form->font->isUnderline);
+		llResult = iObj_setLogical(obj, var, &obj->pa.font->isUnderline);
 		if (llResult)
-			iiFont_refresh(form->font);		// Refresh the font with its new settings
+			iiFont_refresh(obj->pa.font);		// Refresh the font with its new settings
 
 		// Indicate our status
 		return(llResult);
@@ -1225,13 +1132,8 @@ bool iObj_setFontUnderline(SObject* obj, SVariable* var)
 
 SVariable* iObj_getFontUnderline(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->font->isUnderline));
+	if (obj)
+		return(iObj_getLogical(obj, obj->pa.font->isUnderline));
 
 	// If we get here, failure
 	return(NULL);
@@ -1239,18 +1141,16 @@ SVariable* iObj_getFontUnderline(SObject* obj)
 
 bool iObj_setFontStrikethrough(SObject* obj, SVariable* var)
 {
-	bool			llResult;
-	SSubObjForm*	form;
+	bool	llResult;
 
 
 	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
+	if (obj)
 	{
 		// Perform the update
-		llResult = iObj_setLogical(obj, var, &form->font->isStrikethrough);
+		llResult = iObj_setLogical(obj, var, &obj->pa.font->isStrikethrough);
 		if (llResult)
-			iiFont_refresh(form->font);		// Refresh the font with its new settings
+			iiFont_refresh(obj->pa.font);		// Refresh the font with its new settings
 
 		// Indicate our status
 		return(llResult);
@@ -1262,13 +1162,8 @@ bool iObj_setFontStrikethrough(SObject* obj, SVariable* var)
 
 SVariable* iObj_getFontStrikethrough(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->font->isStrikethrough));
+	if (obj)
+		return(iObj_getLogical(obj, obj->pa.font->isStrikethrough));
 
 	// If we get here, failure
 	return(NULL);
@@ -1276,18 +1171,16 @@ SVariable* iObj_getFontStrikethrough(SObject* obj)
 
 bool iObj_setFontCondensed(SObject* obj, SVariable* var)
 {
-	bool			llResult;
-	SSubObjForm*	form;
+	bool	llResult;
 
 
 	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
+	if (obj)
 	{
 		// Perform the update
-		llResult = iObj_setLogical(obj, var, &form->font->isCondensed);
+		llResult = iObj_setLogical(obj, var, &obj->pa.font->isCondensed);
 		if (llResult)
-			iiFont_refresh(form->font);		// Refresh the font with its new settings
+			iiFont_refresh(obj->pa.font);		// Refresh the font with its new settings
 
 		// Indicate our status
 		return(llResult);
@@ -1299,13 +1192,8 @@ bool iObj_setFontCondensed(SObject* obj, SVariable* var)
 
 SVariable* iObj_getFontCondensed(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->font->isCondensed));
+	if (obj)
+		return(iObj_getLogical(obj, obj->pa.font->isCondensed));
 
 	// If we get here, failure
 	return(NULL);
@@ -1313,18 +1201,16 @@ SVariable* iObj_getFontCondensed(SObject* obj)
 
 bool iObj_setFontExtended(SObject* obj, SVariable* var)
 {
-	bool			llResult;
-	SSubObjForm*	form;
+	bool llResult;
 
 
 	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
+	if (obj)
 	{
 		// Perform the update
-		llResult = iObj_setLogical(obj, var, &form->font->isExtended);
+		llResult = iObj_setLogical(obj, var, &obj->pa.font->isExtended);
 		if (llResult)
-			iiFont_refresh(form->font);		// Refresh the font with its new settings
+			iiFont_refresh(obj->pa.font);		// Refresh the font with its new settings
 
 		// Indicate our status
 		return(llResult);
@@ -1336,13 +1222,8 @@ bool iObj_setFontExtended(SObject* obj, SVariable* var)
 
 SVariable* iObj_getFontExtended(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->font->isExtended));
+	if (obj)
+		return(iObj_getLogical(obj, obj->pa.font->isExtended));
 
 	// If we get here, failure
 	return(NULL);
@@ -1350,18 +1231,16 @@ SVariable* iObj_getFontExtended(SObject* obj)
 
 bool iObj_setFontOutline(SObject* obj, SVariable* var)
 {
-	bool			llResult;
-	SSubObjForm*	form;
+	bool	llResult;
 
 
 	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
+	if (obj)
 	{
 		// Perform the update
-		llResult = iObj_setLogical(obj, var, &form->font->isOutline);
+		llResult = iObj_setLogical(obj, var, &obj->pa.font->isOutline);
 		if (llResult)
-			iiFont_refresh(form->font);		// Refresh the font with its new settings
+			iiFont_refresh(obj->pa.font);		// Refresh the font with its new settings
 
 		// Indicate our status
 		return(llResult);
@@ -1373,13 +1252,8 @@ bool iObj_setFontOutline(SObject* obj, SVariable* var)
 
 SVariable* iObj_getFontOutline(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->font->isOutline));
+	if (obj)
+		return(iObj_getLogical(obj, obj->pa.font->isOutline));
 
 	// If we get here, failure
 	return(NULL);
@@ -1387,18 +1261,16 @@ SVariable* iObj_getFontOutline(SObject* obj)
 
 bool iObj_setFontShadow(SObject* obj, SVariable* var)
 {
-	bool			llResult;
-	SSubObjForm*	form;
+	bool	llResult;
 
 
 	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
+	if (obj)
 	{
 		// Perform the update
-		llResult = iObj_setLogical(obj, var, &form->font->isShadow);
+		llResult = iObj_setLogical(obj, var, &obj->pa.font->isShadow);
 		if (llResult)
-			iiFont_refresh(form->font);		// Refresh the font with its new settings
+			iiFont_refresh(obj->pa.font);		// Refresh the font with its new settings
 
 		// Indicate our status
 		return(llResult);
@@ -1410,13 +1282,8 @@ bool iObj_setFontShadow(SObject* obj, SVariable* var)
 
 SVariable* iObj_getFontShadow(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->font->isShadow));
+	if (obj)
+		return(iObj_getLogical(obj, obj->pa.font->isShadow));
 
 	// If we get here, failure
 	return(NULL);
@@ -1424,13 +1291,8 @@ SVariable* iObj_getFontShadow(SObject* obj)
 
 bool iObj_setNwColor(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->nwRgba.color, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.nwRgba.color, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -1438,13 +1300,8 @@ bool iObj_setNwColor(SObject* obj, SVariable* var)
 
 SVariable* iObj_getNwColor(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->nwRgba.color));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.nwRgba.color));
 
 	// If we get here, failure
 	return(NULL);
@@ -1452,13 +1309,8 @@ SVariable* iObj_getNwColor(SObject* obj)
 
 bool iObj_setNeColor(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->neRgba.color, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.neRgba.color, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -1466,13 +1318,8 @@ bool iObj_setNeColor(SObject* obj, SVariable* var)
 
 SVariable* iObj_getNeColor(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->neRgba.color));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.neRgba.color));
 
 	// If we get here, failure
 	return(NULL);
@@ -1480,13 +1327,8 @@ SVariable* iObj_getNeColor(SObject* obj)
 
 bool iObj_setSwColor(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->swRgba.color, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.swRgba.color, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -1494,13 +1336,8 @@ bool iObj_setSwColor(SObject* obj, SVariable* var)
 
 SVariable* iObj_getSwColor(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->swRgba.color));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.swRgba.color));
 
 	// If we get here, failure
 	return(NULL);
@@ -1508,13 +1345,8 @@ SVariable* iObj_getSwColor(SObject* obj)
 
 bool iObj_setSeColor(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->seRgba.color, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.seRgba.color, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -1522,13 +1354,8 @@ bool iObj_setSeColor(SObject* obj, SVariable* var)
 
 SVariable* iObj_getSeColor(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->seRgba.color));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.seRgba.color));
 
 	// If we get here, failure
 	return(NULL);
@@ -1536,13 +1363,8 @@ SVariable* iObj_getSeColor(SObject* obj)
 
 bool iObj_setBackColor(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->backColor.color, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.backColor.color, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -1550,13 +1372,8 @@ bool iObj_setBackColor(SObject* obj, SVariable* var)
 
 SVariable* iObj_getBackColor(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->backColor.color));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.backColor.color));
 
 	// If we get here, failure
 	return(NULL);
@@ -1564,13 +1381,8 @@ SVariable* iObj_getBackColor(SObject* obj)
 
 bool iObj_setForeColor(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->foreColor.color, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.foreColor.color, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -1578,13 +1390,8 @@ bool iObj_setForeColor(SObject* obj, SVariable* var)
 
 SVariable* iObj_getForeColor(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->foreColor.color));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.foreColor.color));
 
 	// If we get here, failure
 	return(NULL);
@@ -1592,13 +1399,8 @@ SVariable* iObj_getForeColor(SObject* obj)
 
 bool iObj_setCaptionColor(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->captionColor.color, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.captionColor.color, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -1606,13 +1408,8 @@ bool iObj_setCaptionColor(SObject* obj, SVariable* var)
 
 SVariable* iObj_getCaptionColor(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->captionColor.color));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.captionColor.color));
 
 	// If we get here, failure
 	return(NULL);
@@ -1620,13 +1417,8 @@ SVariable* iObj_getCaptionColor(SObject* obj)
 
 bool iObj_setCaption(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setCharacter(obj, var, &form->caption, var->value.data, var->value.length));
+	if (obj)
+		return(iObj_setCharacter(obj, var, &obj->pa.caption, var->value.data, var->value.length));
 
 	// If we get here, failure
 	return(false);
@@ -1634,13 +1426,8 @@ bool iObj_setCaption(SObject* obj, SVariable* var)
 
 SVariable* iObj_getCaption(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getCharacter(obj, &form->caption));
+	if (obj)
+		return(iObj_getCharacter(obj, &obj->pa.caption));
 
 	// If we get here, failure
 	return(false);
@@ -1648,13 +1435,8 @@ SVariable* iObj_getCaption(SObject* obj)
 
 bool iObj_setPicture(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setCharacter(obj, var, &form->pictureName, var->value.data, var->value.length));
+	if (obj)
+		return(iObj_setCharacter(obj, var, &obj->pa.pictureName, var->value.data, var->value.length));
 
 	// If we get here, failure
 	return(false);
@@ -1662,13 +1444,8 @@ bool iObj_setPicture(SObject* obj, SVariable* var)
 
 SVariable* iObj_getPicture(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getCharacter(obj, &form->pictureName));
+	if (obj)
+		return(iObj_getCharacter(obj, &obj->pa.pictureName));
 
 	// If we get here, failure
 	return(false);
@@ -1676,13 +1453,8 @@ SVariable* iObj_getPicture(SObject* obj)
 
 bool iObj_setAllowOutput(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->allowOutput));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.allowOutput));
 
 	// If we get here, failure
 	return(false);
@@ -1690,13 +1462,8 @@ bool iObj_setAllowOutput(SObject* obj, SVariable* var)
 
 SVariable* iObj_getAllowOutput(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->allowOutput));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.allowOutput));
 
 	// If we get here, failure
 	return(NULL);
@@ -1704,13 +1471,8 @@ SVariable* iObj_getAllowOutput(SObject* obj)
 
 bool iObj_setAlwaysOnBottom(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->alwaysOnBottom));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.alwaysOnBottom));
 
 	// If we get here, failure
 	return(false);
@@ -1718,13 +1480,8 @@ bool iObj_setAlwaysOnBottom(SObject* obj, SVariable* var)
 
 SVariable* iObj_getAlwaysOnBottom(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->alwaysOnBottom));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.alwaysOnBottom));
 
 	// If we get here, failure
 	return(NULL);
@@ -1732,13 +1489,8 @@ SVariable* iObj_getAlwaysOnBottom(SObject* obj)
 
 bool iObj_setAlwaysOnTop(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->alwaysOnTop));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.alwaysOnTop));
 
 	// If we get here, failure
 	return(false);
@@ -1746,13 +1498,8 @@ bool iObj_setAlwaysOnTop(SObject* obj, SVariable* var)
 
 SVariable* iObj_getAlwaysOnTop(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->alwaysOnTop));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.alwaysOnTop));
 
 	// If we get here, failure
 	return(NULL);
@@ -1760,13 +1507,8 @@ SVariable* iObj_getAlwaysOnTop(SObject* obj)
 
 bool iObj_setAutoCenter(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->autoCenter));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.autoCenter));
 
 	// If we get here, failure
 	return(false);
@@ -1774,13 +1516,8 @@ bool iObj_setAutoCenter(SObject* obj, SVariable* var)
 
 SVariable* iObj_getAutoCenter(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->autoCenter));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.autoCenter));
 
 	// If we get here, failure
 	return(NULL);
@@ -1788,13 +1525,8 @@ SVariable* iObj_getAutoCenter(SObject* obj)
 
 bool iObj_setBorderStyle(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->borderStyle, 0, 3, true, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.borderStyle, 0, 3, true, 0));
 
 	// If we get here, failure
 	return(false);
@@ -1802,13 +1534,8 @@ bool iObj_setBorderStyle(SObject* obj, SVariable* var)
 
 SVariable* iObj_getBorderStyle(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->borderStyle));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.borderStyle));
 
 	// If we get here, failure
 	return(NULL);
@@ -1816,13 +1543,8 @@ SVariable* iObj_getBorderStyle(SObject* obj)
 
 bool iObj_setIsCloseable(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->isClosable));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.isClosable));
 
 	// If we get here, failure
 	return(false);
@@ -1830,13 +1552,8 @@ bool iObj_setIsCloseable(SObject* obj, SVariable* var)
 
 SVariable* iObj_getIsCloseable(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->isClosable));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.isClosable));
 
 	// If we get here, failure
 	return(NULL);
@@ -1844,13 +1561,8 @@ SVariable* iObj_getIsCloseable(SObject* obj)
 
 bool iObj_setProcessKeyPreviewEvents(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->processKeyPreviewEvents));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.processKeyPreviewEvents));
 
 	// If we get here, failure
 	return(false);
@@ -1858,13 +1570,8 @@ bool iObj_setProcessKeyPreviewEvents(SObject* obj, SVariable* var)
 
 SVariable* iObj_getProcessKeyPreviewEvents(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->processKeyPreviewEvents));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.processKeyPreviewEvents));
 
 	// If we get here, failure
 	return(NULL);
@@ -1872,13 +1579,8 @@ SVariable* iObj_getProcessKeyPreviewEvents(SObject* obj)
 
 bool iObj_setHasControlBox(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->hasControlBox));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.hasControlBox));
 
 	// If we get here, failure
 	return(false);
@@ -1886,13 +1588,8 @@ bool iObj_setHasControlBox(SObject* obj, SVariable* var)
 
 SVariable* iObj_getHasControlBox(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->hasControlBox));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.hasControlBox));
 
 	// If we get here, failure
 	return(NULL);
@@ -1900,13 +1597,8 @@ SVariable* iObj_getHasControlBox(SObject* obj)
 
 bool iObj_setHasMinButton(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->hasMinButton));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.hasMinButton));
 
 	// If we get here, failure
 	return(false);
@@ -1914,13 +1606,8 @@ bool iObj_setHasMinButton(SObject* obj, SVariable* var)
 
 SVariable* iObj_getHasMinButton(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->hasMinButton));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.hasMinButton));
 
 	// If we get here, failure
 	return(NULL);
@@ -1928,13 +1615,8 @@ SVariable* iObj_getHasMinButton(SObject* obj)
 
 bool iObj_setHasCloseButton(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->hasCloseButton));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.hasCloseButton));
 
 	// If we get here, failure
 	return(false);
@@ -1942,13 +1624,8 @@ bool iObj_setHasCloseButton(SObject* obj, SVariable* var)
 
 SVariable* iObj_getHasCloseButton(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->hasCloseButton));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.hasCloseButton));
 
 	// If we get here, failure
 	return(NULL);
@@ -1956,13 +1633,8 @@ SVariable* iObj_getHasCloseButton(SObject* obj)
 
 bool iObj_setScaleMode(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->scaleMode, 0, 0, false, (u32)&iObj_setScaleMode_extraTest));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.scaleMode, 0, 0, false, (u32)&iObj_setScaleMode_extraTest));
 
 	// If we get here, failure
 	return(false);
@@ -1976,13 +1648,8 @@ bool iObj_setScaleMode_extraTest(s32 value)
 
 SVariable* iObj_getScaleMode(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->scaleMode));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.scaleMode));
 
 	// If we get here, failure
 	return(NULL);
@@ -1990,13 +1657,8 @@ SVariable* iObj_getScaleMode(SObject* obj)
 
 bool iObj_setShowInTaskBar(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->showInTaskBar));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.showInTaskBar));
 
 	// If we get here, failure
 	return(false);
@@ -2004,13 +1666,8 @@ bool iObj_setShowInTaskBar(SObject* obj, SVariable* var)
 
 SVariable* iObj_getShowInTaskBar(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->showInTaskBar));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.showInTaskBar));
 
 	// If we get here, failure
 	return(NULL);
@@ -2018,13 +1675,8 @@ SVariable* iObj_getShowInTaskBar(SObject* obj)
 
 bool iObj_setWindowState(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->windowState, 0, 1, true, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.windowState, 0, 1, true, 0));
 
 	// If we get here, failure
 	return(false);
@@ -2032,13 +1684,8 @@ bool iObj_setWindowState(SObject* obj, SVariable* var)
 
 SVariable* iObj_getWindowState(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->windowState));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.windowState));
 
 	// If we get here, failure
 	return(NULL);
@@ -2046,13 +1693,8 @@ SVariable* iObj_getWindowState(SObject* obj)
 
 bool iObj_setBindControls(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->bindControls));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.bindControls));
 
 	// If we get here, failure
 	return(false);
@@ -2060,13 +1702,8 @@ bool iObj_setBindControls(SObject* obj, SVariable* var)
 
 SVariable* iObj_getBindControls(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->bindControls));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.bindControls));
 
 	// If we get here, failure
 	return(NULL);
@@ -2074,13 +1711,8 @@ SVariable* iObj_getBindControls(SObject* obj)
 
 bool iObj_setBufferMode(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->bufferMode, 0, 1, true, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.bufferMode, 0, 1, true, 0));
 
 	// If we get here, failure
 	return(false);
@@ -2088,13 +1720,8 @@ bool iObj_setBufferMode(SObject* obj, SVariable* var)
 
 SVariable* iObj_getBufferMode(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->bufferMode));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.bufferMode));
 
 	// If we get here, failure
 	return(NULL);
@@ -2102,13 +1729,8 @@ SVariable* iObj_getBufferMode(SObject* obj)
 
 bool iObj_setClipControls(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->clipControls));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.clipControls));
 
 	// If we get here, failure
 	return(false);
@@ -2116,13 +1738,8 @@ bool iObj_setClipControls(SObject* obj, SVariable* var)
 
 SVariable* iObj_getClipControls(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->clipControls));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.clipControls));
 
 	// If we get here, failure
 	return(NULL);
@@ -2130,13 +1747,8 @@ SVariable* iObj_getClipControls(SObject* obj)
 
 bool iObj_setColorSource(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->colorSource, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.colorSource, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -2144,13 +1756,8 @@ bool iObj_setColorSource(SObject* obj, SVariable* var)
 
 SVariable* iObj_getColorSource(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->colorSource));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.colorSource));
 
 	// If we get here, failure
 	return(NULL);
@@ -2158,13 +1765,8 @@ SVariable* iObj_getColorSource(SObject* obj)
 
 bool iObj_setContinuousScroll(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->continuousScroll));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.continuousScroll));
 
 	// If we get here, failure
 	return(false);
@@ -2172,13 +1774,8 @@ bool iObj_setContinuousScroll(SObject* obj, SVariable* var)
 
 SVariable* iObj_getContinuousScroll(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->continuousScroll));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.continuousScroll));
 
 	// If we get here, failure
 	return(NULL);
@@ -2186,57 +1783,18 @@ SVariable* iObj_getContinuousScroll(SObject* obj)
 
 bool iObj_setDataSession(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure the environment is sane
-	if (obj && obj->sub_obj && var && iVariable_isTypeObject(var))
-	{
-		// Grab the form
-		form = (SSubObjForm*)obj->sub_obj;
-
-		// Set the value
-		form->dataSession = var->obj;
-
-		// Indicate success
-		return(true);
-	}
-
-	// If we get here, failure
 	return(false);
 }
 
 SVariable* iObj_getDataSession(SObject* obj)
 {
-	SSubObjForm*	form;
-	SVariable*		var;
-
-
-	// Make sure our environment is sane
-	if (obj && obj->sub_obj)
-	{
-		// Grab the form
-		form = (SSubObjForm*)obj->sub_obj;
-
-		// Create a new variable
-		var = iVariable_create(_VAR_TYPE_OBJECT, NULL);
-		var->obj = form->dataSession;
-		return(var);
-	}
-
-	// If we get here, failure
 	return(NULL);
 }
 
 bool iObj_setDataSessionId(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->dataSessionId, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.dataSessionId, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -2244,13 +1802,8 @@ bool iObj_setDataSessionId(SObject* obj, SVariable* var)
 
 SVariable* iObj_getDataSessionId(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->dataSessionId));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.dataSessionId));
 
 	// If we get here, failure
 	return(NULL);
@@ -2258,13 +1811,8 @@ SVariable* iObj_getDataSessionId(SObject* obj)
 
 bool iObj_setDeClass(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setCharacter(obj, var, &form->declass, var->value.data, var->value.length));
+	if (obj)
+		return(iObj_setCharacter(obj, var, &obj->pa.declass, var->value.data, var->value.length));
 
 	// If we get here, failure
 	return(false);
@@ -2272,13 +1820,8 @@ bool iObj_setDeClass(SObject* obj, SVariable* var)
 
 SVariable* iObj_getDeClass(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getCharacter(obj, &form->declass));
+	if (obj)
+		return(iObj_getCharacter(obj, &obj->pa.declass));
 
 	// If we get here, failure
 	return(false);
@@ -2286,13 +1829,8 @@ SVariable* iObj_getDeClass(SObject* obj)
 
 bool iObj_setDeClassLibrary(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setCharacter(obj, var, &form->declasslibrary, var->value.data, var->value.length));
+	if (obj)
+		return(iObj_setCharacter(obj, var, &obj->pa.declasslibrary, var->value.data, var->value.length));
 
 	// If we get here, failure
 	return(false);
@@ -2300,13 +1838,8 @@ bool iObj_setDeClassLibrary(SObject* obj, SVariable* var)
 
 SVariable* iObj_getDeClassLibrary(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getCharacter(obj, &form->declasslibrary));
+	if (obj)
+		return(iObj_getCharacter(obj, &obj->pa.declasslibrary));
 
 	// If we get here, failure
 	return(false);
@@ -2314,13 +1847,8 @@ SVariable* iObj_getDeClassLibrary(SObject* obj)
 
 bool iObj_setDefOleCid(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->defolecid, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.defolecid, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -2328,13 +1856,8 @@ bool iObj_setDefOleCid(SObject* obj, SVariable* var)
 
 SVariable* iObj_getDefOleCid(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->defolecid));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.defolecid));
 
 	// If we get here, failure
 	return(NULL);
@@ -2342,13 +1865,8 @@ SVariable* iObj_getDefOleCid(SObject* obj)
 
 bool iObj_setDesktop(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->desktop));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.desktop));
 
 	// If we get here, failure
 	return(false);
@@ -2356,13 +1874,8 @@ bool iObj_setDesktop(SObject* obj, SVariable* var)
 
 SVariable* iObj_getDesktop(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->desktop));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.desktop));
 
 	// If we get here, failure
 	return(NULL);
@@ -2370,13 +1883,8 @@ SVariable* iObj_getDesktop(SObject* obj)
 
 bool iObj_setIsDockable(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->isDockable));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.isDockable));
 
 	// If we get here, failure
 	return(false);
@@ -2384,13 +1892,8 @@ bool iObj_setIsDockable(SObject* obj, SVariable* var)
 
 SVariable* iObj_getIsDockable(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->isDockable));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.isDockable));
 
 	// If we get here, failure
 	return(NULL);
@@ -2398,13 +1901,8 @@ SVariable* iObj_getIsDockable(SObject* obj)
 
 bool iObj_setIsDocked(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->isDocked));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.isDocked));
 
 	// If we get here, failure
 	return(false);
@@ -2412,13 +1910,8 @@ bool iObj_setIsDocked(SObject* obj, SVariable* var)
 
 SVariable* iObj_getIsDocked(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->isDocked));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.isDocked));
 
 	// If we get here, failure
 	return(NULL);
@@ -2426,13 +1919,8 @@ SVariable* iObj_getIsDocked(SObject* obj)
 
 bool iObj_setDockPosition(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->dockPosition, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.dockPosition, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -2440,13 +1928,8 @@ bool iObj_setDockPosition(SObject* obj, SVariable* var)
 
 SVariable* iObj_getDockPosition(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->dockPosition));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.dockPosition));
 
 	// If we get here, failure
 	return(NULL);
@@ -2454,13 +1937,8 @@ SVariable* iObj_getDockPosition(SObject* obj)
 
 bool iObj_setDrawMode(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->drawmode, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.drawmode, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -2468,13 +1946,8 @@ bool iObj_setDrawMode(SObject* obj, SVariable* var)
 
 SVariable* iObj_getDrawMode(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->drawmode));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.drawmode));
 
 	// If we get here, failure
 	return(NULL);
@@ -2482,13 +1955,8 @@ SVariable* iObj_getDrawMode(SObject* obj)
 
 bool iObj_setDrawStyle(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->drawstyle, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.drawstyle, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -2496,13 +1964,8 @@ bool iObj_setDrawStyle(SObject* obj, SVariable* var)
 
 SVariable* iObj_getDrawStyle(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->drawstyle));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.drawstyle));
 
 	// If we get here, failure
 	return(NULL);
@@ -2510,13 +1973,8 @@ SVariable* iObj_getDrawStyle(SObject* obj)
 
 bool iObj_setDrawWidth(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->drawwidth, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.drawwidth, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -2524,13 +1982,8 @@ bool iObj_setDrawWidth(SObject* obj, SVariable* var)
 
 SVariable* iObj_getDrawWidth(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->drawwidth));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.drawwidth));
 
 	// If we get here, failure
 	return(NULL);
@@ -2538,13 +1991,8 @@ SVariable* iObj_getDrawWidth(SObject* obj)
 
 bool iObj_setFillColor(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->fillColor.color, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.fillColor.color, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -2552,13 +2000,8 @@ bool iObj_setFillColor(SObject* obj, SVariable* var)
 
 SVariable* iObj_getFillColor(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->fillColor.color));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.fillColor.color));
 
 	// If we get here, failure
 	return(NULL);
@@ -2566,13 +2009,8 @@ SVariable* iObj_getFillColor(SObject* obj)
 
 bool iObj_setFillStyle(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->fillStyle, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.fillStyle, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -2580,13 +2018,8 @@ bool iObj_setFillStyle(SObject* obj, SVariable* var)
 
 SVariable* iObj_getFillStyle(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->fillStyle));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.fillStyle));
 
 	// If we get here, failure
 	return(NULL);
@@ -2594,13 +2027,8 @@ SVariable* iObj_getFillStyle(SObject* obj)
 
 bool iObj_setHalfHeightCaption(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->halfHeightCaption));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.halfHeightCaption));
 
 	// If we get here, failure
 	return(false);
@@ -2608,13 +2036,8 @@ bool iObj_setHalfHeightCaption(SObject* obj, SVariable* var)
 
 SVariable* iObj_getHalfHeightCaption(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->halfHeightCaption));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.halfHeightCaption));
 
 	// If we get here, failure
 	return(NULL);
@@ -2622,13 +2045,8 @@ SVariable* iObj_getHalfHeightCaption(SObject* obj)
 
 bool iObj_setHScrollSmallChange(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->hScrollSmallChange, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.hScrollSmallChange, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -2636,13 +2054,8 @@ bool iObj_setHScrollSmallChange(SObject* obj, SVariable* var)
 
 SVariable* iObj_getHScrollSmallChange(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->hScrollSmallChange));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.hScrollSmallChange));
 
 	// If we get here, failure
 	return(NULL);
@@ -2650,13 +2063,8 @@ SVariable* iObj_getHScrollSmallChange(SObject* obj)
 
 bool iObj_setVScrollSmallChange(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->vScrollSmallChange, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.vScrollSmallChange, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -2664,13 +2072,8 @@ bool iObj_setVScrollSmallChange(SObject* obj, SVariable* var)
 
 SVariable* iObj_getVScrollSmallChange(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->vScrollSmallChange));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.vScrollSmallChange));
 
 	// If we get here, failure
 	return(NULL);
@@ -2678,13 +2081,8 @@ SVariable* iObj_getVScrollSmallChange(SObject* obj)
 
 bool iObj_setMacDesktop(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->macDesktop));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.macDesktop));
 
 	// If we get here, failure
 	return(false);
@@ -2692,13 +2090,8 @@ bool iObj_setMacDesktop(SObject* obj, SVariable* var)
 
 SVariable* iObj_getMacDesktop(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->macDesktop));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.macDesktop));
 
 	// If we get here, failure
 	return(NULL);
@@ -2706,13 +2099,8 @@ SVariable* iObj_getMacDesktop(SObject* obj)
 
 bool iObj_setMdiForm(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->mdiForm));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.mdiForm));
 
 	// If we get here, failure
 	return(false);
@@ -2720,13 +2108,8 @@ bool iObj_setMdiForm(SObject* obj, SVariable* var)
 
 SVariable* iObj_getMdiForm(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->mdiForm));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.mdiForm));
 
 	// If we get here, failure
 	return(NULL);
@@ -2734,13 +2117,8 @@ SVariable* iObj_getMdiForm(SObject* obj)
 
 bool iObj_setOleDragMode(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->oleDragMode, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.oleDragMode, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -2748,13 +2126,8 @@ bool iObj_setOleDragMode(SObject* obj, SVariable* var)
 
 SVariable* iObj_getOleDragMode(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->oleDragMode));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.oleDragMode));
 
 	// If we get here, failure
 	return(NULL);
@@ -2762,13 +2135,8 @@ SVariable* iObj_getOleDragMode(SObject* obj)
 
 bool iObj_setOleDropEffects(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->oleDropEffects, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.oleDropEffects, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -2776,13 +2144,8 @@ bool iObj_setOleDropEffects(SObject* obj, SVariable* var)
 
 SVariable* iObj_getOleDropEffects(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->oleDropEffects));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.oleDropEffects));
 
 	// If we get here, failure
 	return(NULL);
@@ -2790,13 +2153,8 @@ SVariable* iObj_getOleDropEffects(SObject* obj)
 
 bool iObj_setOleDropHasData(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->oleDropHasData, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.oleDropHasData, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -2804,13 +2162,8 @@ bool iObj_setOleDropHasData(SObject* obj, SVariable* var)
 
 SVariable* iObj_getOleDropHasData(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->oleDropHasData));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.oleDropHasData));
 
 	// If we get here, failure
 	return(NULL);
@@ -2818,13 +2171,8 @@ SVariable* iObj_getOleDropHasData(SObject* obj)
 
 bool iObj_setOleDropMode(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->oleDropMode, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.oleDropMode, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -2832,13 +2180,8 @@ bool iObj_setOleDropMode(SObject* obj, SVariable* var)
 
 SVariable* iObj_getOleDropMode(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->oleDropMode));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.oleDropMode));
 
 	// If we get here, failure
 	return(NULL);
@@ -2846,13 +2189,8 @@ SVariable* iObj_getOleDropMode(SObject* obj)
 
 bool iObj_setReleaseType(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->releaseType, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.releaseType, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -2860,13 +2198,8 @@ bool iObj_setReleaseType(SObject* obj, SVariable* var)
 
 SVariable* iObj_getReleaseType(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->releaseType));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.releaseType));
 
 	// If we get here, failure
 	return(NULL);
@@ -2874,13 +2207,8 @@ SVariable* iObj_getReleaseType(SObject* obj)
 
 bool iObj_setRightToLeft(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->rightToLeft));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.rightToLeft));
 
 	// If we get here, failure
 	return(false);
@@ -2888,13 +2216,8 @@ bool iObj_setRightToLeft(SObject* obj, SVariable* var)
 
 SVariable* iObj_getRightToLeft(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->rightToLeft));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.rightToLeft));
 
 	// If we get here, failure
 	return(NULL);
@@ -2902,13 +2225,8 @@ SVariable* iObj_getRightToLeft(SObject* obj)
 
 bool iObj_setScrollbars(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->scrollbars, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.scrollbars, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -2916,13 +2234,8 @@ bool iObj_setScrollbars(SObject* obj, SVariable* var)
 
 SVariable* iObj_getScrollbars(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->scrollbars));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.scrollbars));
 
 	// If we get here, failure
 	return(NULL);
@@ -2930,13 +2243,8 @@ SVariable* iObj_getScrollbars(SObject* obj)
 
 bool iObj_setShowTips(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->showTips, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.showTips, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -2944,13 +2252,8 @@ bool iObj_setShowTips(SObject* obj, SVariable* var)
 
 SVariable* iObj_getShowTips(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->showTips));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.showTips));
 
 	// If we get here, failure
 	return(NULL);
@@ -2958,13 +2261,8 @@ SVariable* iObj_getShowTips(SObject* obj)
 
 bool iObj_setShowWindow(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->showWindow, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.showWindow, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -2972,13 +2270,8 @@ bool iObj_setShowWindow(SObject* obj, SVariable* var)
 
 SVariable* iObj_getShowWindow(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->showWindow));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.showWindow));
 
 	// If we get here, failure
 	return(NULL);
@@ -2986,13 +2279,8 @@ SVariable* iObj_getShowWindow(SObject* obj)
 
 bool iObj_setSizeBox(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->sizeBox));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.sizeBox));
 
 	// If we get here, failure
 	return(false);
@@ -3000,13 +2288,8 @@ bool iObj_setSizeBox(SObject* obj, SVariable* var)
 
 SVariable* iObj_getSizeBox(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->sizeBox));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.sizeBox));
 
 	// If we get here, failure
 	return(NULL);
@@ -3014,13 +2297,8 @@ SVariable* iObj_getSizeBox(SObject* obj)
 
 bool iObj_setThemes(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->themes));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.themes));
 
 	// If we get here, failure
 	return(false);
@@ -3028,14 +2306,8 @@ bool iObj_setThemes(SObject* obj, SVariable* var)
 
 SVariable* iObj_getThemes(SObject* obj)
 {
-	return(NULL);
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->themes));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.themes));
 
 	// If we get here, failure
 	return(NULL);
@@ -3043,13 +2315,8 @@ SVariable* iObj_getThemes(SObject* obj)
 
 bool iObj_setTitleBar(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->titleBar, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.titleBar, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -3057,13 +2324,8 @@ bool iObj_setTitleBar(SObject* obj, SVariable* var)
 
 SVariable* iObj_getTitleBar(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->titleBar));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.titleBar));
 
 	// If we get here, failure
 	return(NULL);
@@ -3071,13 +2333,8 @@ SVariable* iObj_getTitleBar(SObject* obj)
 
 bool iObj_setWindowType(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setInteger(obj, var, (s32*)&form->windowType, 0, 0, false, 0));
+	if (obj)
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.windowType, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -3085,13 +2342,8 @@ bool iObj_setWindowType(SObject* obj, SVariable* var)
 
 SVariable* iObj_getWindowType(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getInteger(obj, form->windowType));
+	if (obj)
+		return(iObj_getInteger(obj, obj->p.windowType));
 
 	// If we get here, failure
 	return(NULL);
@@ -3099,13 +2351,8 @@ SVariable* iObj_getWindowType(SObject* obj)
 
 bool iObj_setZoomBox(SObject* obj, SVariable* var)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_setLogical(obj, var, &form->zoomBox));
+	if (obj)
+		return(iObj_setLogical(obj, var, &obj->p.zoomBox));
 
 	// If we get here, failure
 	return(false);
@@ -3113,13 +2360,8 @@ bool iObj_setZoomBox(SObject* obj, SVariable* var)
 
 SVariable* iObj_getZoomBox(SObject* obj)
 {
-	SSubObjForm* form;
-
-
-	// Make sure our environment is sane
-	form = (SSubObjForm*)obj->sub_obj;
-	if (form)
-		return(iObj_getLogical(obj, form->zoomBox));
+	if (obj)
+		return(iObj_getLogical(obj, obj->p.zoomBox));
 
 	// If we get here, failure
 	return(NULL);

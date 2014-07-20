@@ -362,8 +362,6 @@ struct SProperties
 	SBgra		disabledBackColor;										// Disabled background color
 	SBgra		disabledForeColor;										// Disabled foreground color
 
-	SEM*		ecm;													// The content being edited
-
 // Image
 	SBitmap*	image;													// Image displayed when the mouse IS NOT over this control
 	SBitmap*	imageOver;												// Image displayed when the mouse IS over this control
@@ -395,6 +393,8 @@ struct SPropertiesA
 	SVariable*	value;													// Value for the control
 	SVariable*	picture;												// Picture for the control
 	SVariable*	mask;													// Input mask for the control
+
+	SEM*		ecm;													// The content being edited
 
 	SDatum		pictureName;											// The name of the file used for the picture
 	SBitmap*	bmpPicture;												// The image for the picture

@@ -103,7 +103,8 @@
 	//////////
 	// General defaults
 	//////
-		SFont*			gsFont								= NULL;									// Default font, Ubuntu 10 pt
+		SFont*			gsFontDefault						= NULL;									// Default font, Ubuntu 10 pt
+		SFont*			gsFontDefaultFixedPoint				= NULL;									// Default font, Ubuntu Mono 10 pt
 		SFont*			gsWindowTitleBarFont				= NULL;									// Default font, Ubuntu Bold 12 pt
 		SFont*			gsWindowTitleBarFontSubform			= NULL;									// Default font, Ubuntu Bold 10 pt
 		// Global colors

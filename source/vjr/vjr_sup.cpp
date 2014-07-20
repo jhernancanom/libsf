@@ -204,7 +204,7 @@
 			iDatum_duplicate(&form->pa.caption, (s8*)cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
 
 			// Give it a fixed point font
-			form->pa.font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
+			form->pa.font = iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 
 
 		//////////
@@ -266,7 +266,7 @@
 			iDatum_duplicate(&gobj_jdebi->pa.caption, (s8*)cgcJDebiTitle, sizeof(cgcJDebiTitle) - 1);
 
 			// Give it a fixed point font
-			gobj_jdebi->pa.font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
+			gobj_jdebi->pa.font = iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 
 
 		//////////
@@ -322,42 +322,42 @@
 		// SourceCode window caption and font
 		//////
 			iDatum_duplicate(&sourceCode->pa.caption, (s8*)cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
-			sourceCode->pa.font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
+			sourceCode->pa.font = iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 
 
 		//////////
 		// Locals window caption and font
 		//////
 			iDatum_duplicate(&locals->pa.caption, (s8*)cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
-			locals->pa.font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
+			locals->pa.font = iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 
 
 		//////////
 		// Watch window caption and font
 		//////
 			iDatum_duplicate(&watch->pa.caption, (s8*)cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
-			watch->pa.font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
+			watch->pa.font = iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 
 
 		//////////
 		// Command window caption and font
 		//////
 			iDatum_duplicate(&command->pa.caption, (s8*)cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
-			command->pa.font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
+			command->pa.font = iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 
 
 		//////////
 		// Debug window caption and font
 		//////
 			iDatum_duplicate(&debug->pa.caption, (s8*)cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
-			debug->pa.font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
+			debug->pa.font = iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 
 
 		//////////
 		// Output window caption and font
 		//////
 			iDatum_duplicate(&output->pa.caption, (s8*)cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
-			output->pa.font = iFont_create((s8*)cgcDefaultFixedFont, 10, FW_MEDIUM, false, false);
+			output->pa.font = iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 
 
 		//////////

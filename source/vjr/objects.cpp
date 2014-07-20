@@ -560,22 +560,6 @@
 					++lpl;
 				}
 				// If we get here, we didn't find it on the object
-
-				// Search the sub-object
-				lpl = lbcl->subobjProps;
-				while (lpl && lpl->textName)
-				{
-					// Is this the name?
-					if (lpl->textNameLength == tnPropertyNameLength && _memicmp(tcPropertyName, lpl->textName, tnPropertyNameLength) == 0)
-					{
-						// This is the property, retrieve its value
-						return(lpl->get(obj));
-					}
-
-					// Move to next property
-					++lpl;
-				}
-				// If we get here, it wasn't found
 			}
 		}
 		// If we get here, wasn't found
@@ -602,47 +586,47 @@
 			switch (obj->objType)
 			{
 				case _OBJ_TYPE_EMPTY:		// Empty, used as a placeholder object that is not drawn
-					iiSubobj_resetToDefaultEmpty(obj, true, tlResetProperties, tlResetMethods);
+					iiSubobj_resetToDefaultEmpty(obj, tlResetProperties, tlResetMethods);
 					break;
 
 				case _OBJ_TYPE_FORM:			// Form class, the main outer window the OS sees
-					iiSubobj_resetToDefaultForm(obj, true, tlResetProperties, tlResetMethods);
+					iiSubobj_resetToDefaultForm(obj, tlResetProperties, tlResetMethods);
 					break;
 
 				case _OBJ_TYPE_SUBFORM:		// A new class which has its own drawing content and can be moved about using UI features
-					iiSubobj_resetToDefaultSubform(obj, true, tlResetProperties, tlResetMethods);
+					iiSubobj_resetToDefaultSubform(obj, tlResetProperties, tlResetMethods);
 					break;
 
 				case _OBJ_TYPE_LABEL:		// A label
-					iiSubobj_resetToDefaultLabel(obj, true, tlResetProperties, tlResetMethods);
+					iiSubobj_resetToDefaultLabel(obj, tlResetProperties, tlResetMethods);
 					break;
 
 				case _OBJ_TYPE_TEXTBOX:		// An input textbox
-					iiSubobj_resetToDefaultTextbox(obj, true, tlResetProperties, tlResetMethods);
+					iiSubobj_resetToDefaultTextbox(obj, tlResetProperties, tlResetMethods);
 					break;
 
 				case _OBJ_TYPE_BUTTON:		// A push button
-					iiSubobj_resetToDefaultButton(obj, true, tlResetProperties, tlResetMethods);
+					iiSubobj_resetToDefaultButton(obj, tlResetProperties, tlResetMethods);
 					break;
 
 				case _OBJ_TYPE_EDITBOX:		// An input multi-line editbox
-					iiSubobj_resetToDefaultEditbox(obj, true, tlResetProperties, tlResetMethods);
+					iiSubobj_resetToDefaultEditbox(obj, tlResetProperties, tlResetMethods);
 					break;
 
 				case _OBJ_TYPE_IMAGE:		// A graphical image
-					iiSubobj_resetToDefaultImage(obj, true, tlResetProperties, tlResetMethods);
+					iiSubobj_resetToDefaultImage(obj, tlResetProperties, tlResetMethods);
 					break;
 
 				case _OBJ_TYPE_CHECKBOX:		// A checkbox
-					iiSubobj_resetToDefaultCheckbox(obj, true, tlResetProperties, tlResetMethods);
+					iiSubobj_resetToDefaultCheckbox(obj, tlResetProperties, tlResetMethods);
 					break;
 
 				case _OBJ_TYPE_OPTION:		// A combination selection
-					iiSubobj_resetToDefaultOption(obj, true, tlResetProperties, tlResetMethods);
+					iiSubobj_resetToDefaultOption(obj, tlResetProperties, tlResetMethods);
 					break;
 
 				case _OBJ_TYPE_RADIO:		// A radio dial, which can also present as a slider or spinner
-					iiSubobj_resetToDefaultRadio(obj, true, tlResetProperties, tlResetMethods);
+					iiSubobj_resetToDefaultRadio(obj, tlResetProperties, tlResetMethods);
 					break;
 
 				default:
@@ -952,7 +936,7 @@
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultEmpty(emptyNew, true, true, true);
+					iiSubobj_resetToDefaultEmpty(emptyNew, true, true);
 				}
 
 			}
@@ -1011,7 +995,7 @@
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultForm(formNew, true, true, true);
+					iiSubobj_resetToDefaultForm(formNew, true, true);
 
 
 					//////////
@@ -1096,7 +1080,7 @@
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultSubform(subformNew, true, true, true);
+					iiSubobj_resetToDefaultSubform(subformNew, true, true);
 				}
 			}
 
@@ -1148,7 +1132,7 @@
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultLabel(labelNew, true, true, true);
+					iiSubobj_resetToDefaultLabel(labelNew, true, true);
 				}
 			}
 
@@ -1200,7 +1184,7 @@
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultTextbox(textboxNew, true, true, true);
+					iiSubobj_resetToDefaultTextbox(textboxNew, true, true);
 				}
 			}
 
@@ -1252,7 +1236,7 @@
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultButton(buttonNew, true, true, true);
+					iiSubobj_resetToDefaultButton(buttonNew, true, true);
 				}
 			}
 
@@ -1304,7 +1288,7 @@
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultEditbox(editboxNew, true, true, true);
+					iiSubobj_resetToDefaultEditbox(editboxNew, true, true);
 				}
 			}
 
@@ -1356,7 +1340,7 @@
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultImage(imageNew, true, true, true);
+					iiSubobj_resetToDefaultImage(imageNew, true, true);
 				}
 			}
 
@@ -1408,7 +1392,7 @@
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultCheckbox(checkboxNew, true, true, true);
+					iiSubobj_resetToDefaultCheckbox(checkboxNew, true, true);
 				}
 			}
 
@@ -1460,7 +1444,7 @@
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultOption(optionNew, true, true, true);
+					iiSubobj_resetToDefaultOption(optionNew, true, true);
 				}
 			}
 
@@ -1512,7 +1496,7 @@
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultRadio(radioNew, true, true, true);
+					iiSubobj_resetToDefaultRadio(radioNew, true, true);
 				}
 			}
 
@@ -1687,9 +1671,9 @@
 			textboxDst->pa.value	= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 			textboxDst->pa.picture	= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 			textboxDst->pa.mask		= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
-			iVariable_copyVariable(&textboxDst->pa.value,	&textboxSrc->pa.value);
-			iVariable_copyVariable(&textboxDst->pa.picture,	&textboxSrc->pa.picture);
-			iVariable_copyVariable(&textboxDst->pa.mask,	&textboxSrc->pa.mask);
+			iVariable_copyVariable(textboxDst->pa.value,	textboxSrc->pa.value);
+			iVariable_copyVariable(textboxDst->pa.picture,	textboxSrc->pa.picture);
+			iVariable_copyVariable(textboxDst->pa.mask,		textboxSrc->pa.mask);
 
 
 		//////////
@@ -1775,9 +1759,9 @@
 			editboxDst->pa.value	= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 			editboxDst->pa.picture	= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 			editboxDst->pa.mask		= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
-			iVariable_copyVariable(&editboxDst->pa.value,	&editboxSrc->pa.value);
-			iVariable_copyVariable(&editboxDst->pa.picture,	&editboxSrc->pa.picture);
-			iVariable_copyVariable(&editboxDst->pa.mask,	&editboxSrc->pa.mask);
+			iVariable_copyVariable(editboxDst->pa.value,	editboxSrc->pa.value);
+			iVariable_copyVariable(editboxDst->pa.picture,	editboxSrc->pa.picture);
+			iVariable_copyVariable(editboxDst->pa.mask,		editboxSrc->pa.mask);
 
 
 		//////////
@@ -1939,7 +1923,7 @@
 	void iiSubobj_resetToDefaultEmpty(SObject* empty, bool tlResetProperties, bool tlResetMethods)
 	{
 		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
-		if (empty && tlResetObject)
+		if (empty)
 		{
 			//////////
 			// Reset the common settings
@@ -1972,119 +1956,120 @@
 			//////////
 			// Set default anchor to fixed in all positions, no resize
 			//////
-				form->anchor = _ANCHOR_FIXED_NORESIZE;
+				form->p.anchor				= _ANCHOR_FIXED_NORESIZE;
+		
+
+			//////////
+			// Set the default font
+			//////
+				iFont_delete(&form->pa.font, true);
+				form->pa.font					= iFont_duplicate(gsFontDefault);
+
+
+			//////////
+			// Set the default colors
+			//////
+				form->p.nwRgba.color		= NwColor.color;
+				form->p.neRgba.color		= NeColor.color;
+				form->p.swRgba.color		= SwColor.color;
+				form->p.seRgba.color		= SeColor.color;
+				form->p.backColor.color		= white.color;
+				form->p.foreColor.color		= black.color;
+				form->p.captionColor.color	= dark_blue.color;
+
+
+			//////////
+			// Set the default form icon
+			//////
+				iBmp_delete(&form->pa.bmpIcon, true, true);
+				form->pa.bmpIcon			= iBmp_copy(bmpVjrIcon);
+
+
+			//////////
+			// Set the default caption
+			//////
+				iDatum_duplicate(&form->pa.caption, cgcName_form, -1);
+
+
+			//////////
+			// Set the default form-specific events
+			//////
+				*(u32*)&form->ev.general.activate		= (u32)&iDefaultCallback_onActivate;
+				*(u32*)&form->ev.general.deactivate		= (u32)&iDefaultCallback_onDeactivate;
+
+
+			//////////
+			// Reset our min/max
+			//////
+				SetRect(&form->p.rcMax, -1, -1, -1, -1);
+				SetRect(&form->p.rcMin, -1, -1, -1, -1);
+
+
+			//////////
+			// Clear the picture
+			//////
+				iBmp_delete(&form->pa.bmpPicture, true, true);
+
+
+			//////////
+			// General flags and settings
+			//////
+				form->p.allowOutput						= true;
+				form->p.alwaysOnBottom					= false;
+				form->p.alwaysOnTop						= false;
+				form->p.autoCenter						= false;
+				form->p.borderStyle						= _BORDER_STYLE_SIZABLE;
+				form->p.isClosable						= true;
+				form->p.processKeyPreviewEvents			= false;
+				form->p.hasControlBox					= true;
+				form->p.hasMinButton					= true;
+				form->p.hasMaxButton					= true;
+				form->p.hasCloseButton					= true;
+				form->p.scaleMode						= _SCALE_MODE_PIXELS;
+				form->p.showInTaskBar					= true;
+				form->p.windowState						= _WINDOW_STATE_NORMAL;
+
+				// The following are ignored, maintained only for backward compatibility
+				form->p.bindControls					= true;
+				form->p.bufferMode						= 2;
+				form->p.clipControls					= false;
+				form->p.colorSource						= 4;
+				form->p.continuousScroll				= true;
+				iObj_delete(&form->pa.dataSession, true);
+				form->p.dataSessionId					= -1;
+				iDatum_delete(&form->pa.declass, false);
+				iDatum_delete(&form->pa.declasslibrary, false);
+				form->p.defolecid						= -1;
+				form->p.desktop							= false;
+				form->p.isDockable						= false;
+				form->p.isDocked						= false;
+				form->p.dockPosition					= -1;
+				form->p.drawmode						= -1;
+				form->p.drawstyle						= 13;
+				form->p.drawwidth						= 1;
+				form->p.fillColor.color					= rgba(255,255,255,255);
+				form->p.fillStyle						= 0;
+				form->p.halfHeightCaption				= false;
+				form->p.hScrollSmallChange				= 10;
+				form->p.vScrollSmallChange				= 10;
+				form->p.macDesktop						= false;
+				form->p.mdiForm							= false;
+				form->p.oleDragMode						= 0;
+				iBmp_delete(&form->pa.oleDragPicture, true, true);
+				form->p.oleDropEffects					= 3;
+				form->p.oleDropHasData					= -1;
+				form->p.oleDropMode						= 0;
+				form->p.releaseType						= 0;
+				form->p.rightToLeft						= false;
+				form->p.scrollbars						= 3;
+				form->p.showTips						= true;
+				form->p.showWindow						= 2;
+				form->p.sizeBox							= false;
+				form->p.themes							= true;
+				form->p.titleBar						= 1;
+				form->p.windowType						= 0;
+				form->p.zoomBox							= false;
 		}
-
-		//////////
-		// Set the default font
-		//////
-			iFont_delete(&form->font, true);
-			form->font					= iFont_duplicate(gsFont);
-
-
-		//////////
-		// Set the default colors
-		//////
-			form->nwRgba.color			= NwColor.color;
-			form->neRgba.color			= NeColor.color;
-			form->swRgba.color			= SwColor.color;
-			form->seRgba.color			= SeColor.color;
-			form->backColor.color		= white.color;
-			form->foreColor.color		= black.color;
-			form->captionColor.color	= dark_blue.color;
-
-
-		//////////
-		// Set the default form icon
-		//////
-			iBmp_delete(&form->bmpFormIcon, true, true);
-			form->bmpFormIcon			= iBmp_copy(bmpVjrIcon);
-
-
-		//////////
-		// Set the default caption
-		//////
-			iDatum_duplicate(&form->caption, cgcName_form, -1);
-
-
-		//////////
-		// Set the default form-specific events
-		//////
-			*(u32*)&form->activate		= (u32)&iDefaultCallback_onActivate;
-			*(u32*)&form->deactivate	= (u32)&iDefaultCallback_onDeactivate;
-
-
-		//////////
-		// Reset our min/max
-		//////
-			SetRect(&form->rcMax, -1, -1, -1, -1);
-			SetRect(&form->rcMin, -1, -1, -1, -1);
-
-
-		//////////
-		// Clear the picture
-		//////
-			iBmp_delete(&form->bmpPicture, true, true);
-
-
-		//////////
-		// General flags and settings
-		//////
-			form->allowOutput						= true;
-			form->alwaysOnBottom					= false;
-			form->alwaysOnTop						= false;
-			form->autoCenter						= false;
-			form->borderStyle						= _BORDER_STYLE_SIZABLE;
-			form->isClosable						= true;
-			form->processKeyPreviewEvents			= false;
-			form->hasControlBox						= true;
-			form->hasMinButton						= true;
-			form->hasMaxButton						= true;
-			form->hasCloseButton					= true;
-			form->scaleMode							= _SCALE_MODE_PIXELS;
-			form->showInTaskBar						= true;
-			form->windowState						= _WINDOW_STATE_NORMAL;
-
-			// The following are ignored, maintained only for backward compatibility
-			form->bindControls						= true;
-			form->bufferMode						= 2;
-			form->clipControls						= false;
-			form->colorSource						= 4;
-			form->continuousScroll					= true;
-			iObj_delete(&form->dataSession, true);
-			form->dataSessionId						= -1;
-			iDatum_delete(&form->declass, false);
-			iDatum_delete(&form->declasslibrary, false);
-			form->defolecid							= -1;
-			form->desktop							= false;
-			form->isDockable						= false;
-			form->isDocked							= false;
-			form->dockPosition						= -1;
-			form->drawmode							= -1;
-			form->drawstyle							= 13;
-			form->drawwidth							= 1;
-			form->fillColor.color					= rgba(255,255,255,255);
-			form->fillStyle							= 0;
-			form->halfHeightCaption					= false;
-			form->hScrollSmallChange				= 10;
-			form->vScrollSmallChange				= 10;
-			form->macDesktop						= false;
-			form->mdiForm							= false;
-			form->oleDragMode						= 0;
-			iBmp_delete(&form->oleDragPicture, true, true);
-			form->oleDropEffects					= 3;
-			form->oleDropHasData					= -1;
-			form->oleDropMode						= 0;
-			form->releaseType						= 0;
-			form->rightToLeft						= false;
-			form->scrollbars						= 3;
-			form->showTips							= true;
-			form->showWindow						= 2;
-			form->sizeBox							= false;
-			form->themes							= true;
-			form->titleBar							= 1;
-			form->windowType						= 0;
-			form->zoomBox							= false;
 	}
 
 	void iiSubobj_resetToDefaultSubform(SObject* subform, bool tlResetProperties, bool tlResetMethods)
@@ -2101,55 +2086,55 @@
 			//////////
 			// Set default size and position
 			//////
-				SetRect(&obj->rc, 0, 0, 275, 150);
-				SetRect(&obj->rco, 0, 0, 275, 150);
-				SetRect(&obj->rcp, 0, 0, 275, 150);
+				SetRect(&subform->rc, 0, 0, 275, 150);
+				SetRect(&subform->rco, 0, 0, 275, 150);
+				SetRect(&subform->rcp, 0, 0, 275, 150);
 
 
 			//////////
 			// Set default anchor to fixed in all positions, no resize
 			//////
-				obj->anchor = _ANCHOR_FIXED_NORESIZE;
+				subform->p.anchor = _ANCHOR_FIXED_NORESIZE;
+
+
+			//////////
+			// Set the default font
+			//////
+				iFont_delete(&subform->pa.font, true);
+				subform->pa.font				= iFont_duplicate(gsFontDefault);
+
+
+			//////////
+			// Set the default colors
+			//////
+				subform->p.nwRgba.color			= NwColor.color;
+				subform->p.neRgba.color			= NeColor.color;
+				subform->p.swRgba.color			= SwColor.color;
+				subform->p.seRgba.color			= SeColor.color;
+				subform->p.backColor.color		= white.color;
+				subform->p.foreColor.color		= black.color;
+				subform->p.captionColor.color	= dark_blue.color;
+
+
+			//////////
+			// Set the default form icon
+			//////
+				iBmp_delete(&subform->pa.bmpIcon, true, true);
+				subform->pa.bmpIcon			= iBmp_copy(bmpVjrIcon);
+
+
+			//////////
+			// Set the default caption
+			//////
+				iDatum_duplicate(&subform->pa.caption, cgcName_subform, -1);
+
+
+			//////////
+			// Set the default form-specific events
+			//////
+				*(u32*)&subform->ev.general.activate		= (u32)&iDefaultCallback_onActivate;
+				*(u32*)&subform->ev.general.deactivate		= (u32)&iDefaultCallback_onDeactivate;
 		}
-
-
-		//////////
-		// Set the default font
-		//////
-			iFont_delete(&subform->font, true);
-			subform->font					= iFont_duplicate(gsFont);
-
-
-		//////////
-		// Set the default colors
-		//////
-			subform->nwRgba.color			= NwColor.color;
-			subform->neRgba.color			= NeColor.color;
-			subform->swRgba.color			= SwColor.color;
-			subform->seRgba.color			= SeColor.color;
-			subform->backColor.color		= white.color;
-			subform->foreColor.color		= black.color;
-			subform->captionColor.color		= dark_blue.color;
-
-
-		//////////
-		// Set the default form icon
-		//////
-			iBmp_delete(&subform->bmpSubformIcon, true, true);
-			subform->bmpSubformIcon			= iBmp_copy(bmpVjrIcon);
-
-
-		//////////
-		// Set the default caption
-		//////
-			iDatum_duplicate(&subform->caption, cgcName_subform, -1);
-
-
-		//////////
-		// Set the default form-specific events
-		//////
-			*(u32*)&subform->activate		= (u32)&iDefaultCallback_onActivate;
-			*(u32*)&subform->deactivate		= (u32)&iDefaultCallback_onDeactivate;
 	}
 
 	void iiSubobj_resetToDefaultLabel(SObject* label, bool tlResetProperties, bool tlResetMethods)
@@ -2169,8 +2154,8 @@
 			//////////
 			// Set default size and position
 			//////
-				lnHeight = max(gsFont->tm.tmHeight + 2, 10);
-				SetRect(label->rc, 0, 0, 275, lnHeight);
+				lnHeight = max(gsFontDefault->tm.tmHeight + 2, 10);
+				SetRect(&label->rc, 0, 0, 275, lnHeight);
 				SetRect(&label->rco, 0, 0, 275, lnHeight);
 				SetRect(&label->rcp, 0, 0, 275, lnHeight);
 
@@ -2178,34 +2163,34 @@
 			//////////
 			// Set default anchor to fixed in all positions, no resize
 			//////
-				label->anchor = _ANCHOR_FIXED_NORESIZE;
+				label->p.anchor = _ANCHOR_FIXED_NORESIZE;
+
+
+			//////////
+			// Set the default font
+			//////
+				iFont_delete(&label->pa.font, true);
+				label->pa.font						= iFont_duplicate(gsFontDefault);
+
+
+			//////////
+			// Set the default colors
+			//////
+				label->p.backColor.color				= white.color;
+				label->p.foreColor.color				= black.color;
+
+
+			//////////
+			// Set the characteristics
+			//////
+				label->p.alignment					= _ALIGNMENT_LEFT;
+				iDatum_duplicate(&label->pa.caption, cgcName_label, 5);
+				label->p.isOpaque					= true;
+				label->p.isBorder					= false;
+				label->p.borderColor.color			= black.color;
+				label->p.disabledBackColor.color	= disabledBackColor.color;
+				label->p.disabledForeColor.color	= disabledForeColor.color;
 		}
-
-
-		//////////
-		// Set the default font
-		//////
-			iFont_delete(&label->font, true);
-			label->font							= iFont_duplicate(gsFont);
-
-
-		//////////
-		// Set the default colors
-		//////
-			label->backColor.color				= white.color;
-			label->foreColor.color				= black.color;
-
-
-		//////////
-		// Set the characteristics
-		//////
-			label->alignment					= _ALIGNMENT_LEFT;
-			iDatum_duplicate(&label->caption, cgcName_label, 5);
-			label->isOpaque						= true;
-			label->isBorder						= false;
-			label->borderColor.color			= black.color;
-			label->disabledBackColor.color		= disabledBackColor.color;
-			label->disabledForeColor.color		= disabledForeColor.color;
 	}
 
 	void iiSubobj_resetToDefaultTextbox(SObject* textbox, bool tlResetProperties, bool tlResetMethods)
@@ -2216,7 +2201,7 @@
 			//////////
 			// Reset the common settings
 			//////
-				iiObj_resetToDefaultCommon(obj, true, true);
+				iiObj_resetToDefaultCommon(textbox, true, true);
 
 
 			//////////
@@ -2230,49 +2215,49 @@
 			//////////
 			// Set default anchor to fixed in all positions, no resize
 			//////
-				textbox->anchor = _ANCHOR_FIXED_NORESIZE;
+				textbox->p.anchor = _ANCHOR_FIXED_NORESIZE;
+
+
+			//////////
+			// Set the default font
+			//////
+				iFont_delete(&textbox->pa.font, true);
+				textbox->pa.font					= iFont_duplicate(gsFontDefault);
+
+
+			//////////
+			// Set the default colors
+			//////
+				textbox->p.backColor.color			= white.color;
+				textbox->p.foreColor.color			= black.color;
+
+
+			//////////
+			// Set the characteristics
+			//////
+				textbox->p.style					= _STYLE_3D;
+				textbox->p.alignment				= _ALIGNMENT_LEFT;
+				iVariable_delete(textbox->pa.value, false);
+
+				textbox->p.cursor					= 0;
+				textbox->p.selectStart				= -1;
+				textbox->p.selectEnd				= -1;
+
+				textbox->p.isOpaque					= true;
+				textbox->p.isBorder					= false;
+				textbox->p.borderColor.color		= black.color;
+				textbox->p.selectedBackColor.color	= selectedBackColor.color;
+				textbox->p.selectedForeColor.color	= selectedForeColor.color;
+				textbox->p.disabledBackColor.color	= disabledBackColor.color;
+				textbox->p.disabledForeColor.color	= disabledForeColor.color;
+
+
+			//////////
+			// Indicate the callback handler
+			//////
+				*(u32*)&textbox->ev.general.interactiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
+				*(u32*)&textbox->ev.general.programmaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
-
-
-		//////////
-		// Set the default font
-		//////
-			iFont_delete(&textbox->font, true);
-			textbox->font						= iFont_duplicate(gsFont);
-
-
-		//////////
-		// Set the default colors
-		//////
-			textbox->backColor.color			= white.color;
-			textbox->foreColor.color			= black.color;
-
-
-		//////////
-		// Set the characteristics
-		//////
-			textbox->style						= _STYLE_3D;
-			textbox->alignment					= _ALIGNMENT_LEFT;
-			textbox->valueLength				= 0;
-
-			textbox->cursor						= 0;
-			textbox->selectStart				= -1;
-			textbox->selectEnd					= -1;
-
-			textbox->isOpaque					= true;
-			textbox->isBorder					= false;
-			textbox->borderColor.color			= black.color;
-			textbox->selectedBackColor.color	= selectedBackColor.color;
-			textbox->selectedForeColor.color	= selectedForeColor.color;
-			textbox->disabledBackColor.color	= disabledBackColor.color;
-			textbox->disabledForeColor.color	= disabledForeColor.color;
-
-
-		//////////
-		// Indicate the callback handler
-		//////
-			*(u32*)&textbox->interactiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
-			*(u32*)&textbox->programmaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 	}
 
 	void iiSubobj_resetToDefaultButton(SObject* button, bool tlResetProperties, bool tlResetMethods)
@@ -2280,19 +2265,19 @@
 		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
 		if (button)
 		{
-			button->font						= iFont_duplicate(gsFont);
-			button->backColor.color				= white.color;
-			button->foreColor.color				= black.color;
+			button->pa.font						= iFont_duplicate(gsFontDefault);
+			button->p.backColor.color			= white.color;
+			button->p.foreColor.color			= black.color;
 
-			button->style						= _STYLE_3D;
-			button->alignment					= _ALIGNMENT_LEFT;
-			iDatum_duplicate(&button->caption,	"Button", 6);
+			button->p.style						= _STYLE_3D;
+			button->p.alignment					= _ALIGNMENT_LEFT;
+			iDatum_duplicate(&button->pa.caption,	"Button", 6);
 
-			button->disabledBackColor.color		= disabledBackColor.color;
-			button->disabledForeColor.color		= disabledForeColor.color;
+			button->p.disabledBackColor.color	= disabledBackColor.color;
+			button->p.disabledForeColor.color	= disabledForeColor.color;
 
-			*(u32*)&button->interactiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
-			*(u32*)&button->programmaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
+			*(u32*)&button->ev.general.interactiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
+			*(u32*)&button->ev.general.programmaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
@@ -2301,27 +2286,27 @@
 		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
 		if (editbox)
 		{
-			editbox->font							= iFont_duplicate(gsFont);
-			editbox->backColor.color				= white.color;
-			editbox->foreColor.color				= black.color;
+			editbox->pa.font						= iFont_duplicate(gsFontDefault);
+			editbox->p.backColor.color				= white.color;
+			editbox->p.foreColor.color				= black.color;
 
-			editbox->style							= _STYLE_3D;
-			editbox->alignment						= _ALIGNMENT_LEFT;
+			editbox->p.style						= _STYLE_3D;
+			editbox->p.alignment					= _ALIGNMENT_LEFT;
 
-			editbox->cursor							= 0;
-			editbox->selectStart					= -1;
-			editbox->selectEnd						= -1;
+			editbox->p.cursor						= 0;
+			editbox->p.selectStart					= -1;
+			editbox->p.selectEnd					= -1;
 
-			editbox->isOpaque						= true;
-			editbox->isBorder						= false;
-			editbox->borderColor.color				= black.color;
-			editbox->selectedBackColor.color		= selectedBackColor.color;
-			editbox->selectedForeColor.color		= selectedForeColor.color;
-			editbox->disabledBackColor.color		= disabledBackColor.color;
-			editbox->disabledForeColor.color		= disabledForeColor.color;
+			editbox->p.isOpaque						= true;
+			editbox->p.isBorder						= false;
+			editbox->p.borderColor.color			= black.color;
+			editbox->p.selectedBackColor.color		= selectedBackColor.color;
+			editbox->p.selectedForeColor.color		= selectedForeColor.color;
+			editbox->p.disabledBackColor.color		= disabledBackColor.color;
+			editbox->p.disabledForeColor.color		= disabledForeColor.color;
 
-			*(u32*)&editbox->interactiveChange		= *(u32*)&iDefaultCallback_onInteractiveChange;
-			*(u32*)&editbox->programmaticChange		= *(u32*)&iDefaultCallback_onProgrammaticChange;
+			*(u32*)&editbox->ev.general.interactiveChange		= *(u32*)&iDefaultCallback_onInteractiveChange;
+			*(u32*)&editbox->ev.general.programmaticChange		= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
@@ -2330,10 +2315,10 @@
 		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
 		if (image)
 		{
-			image->style						= _IMAGE_STYLE_OPAQUE;
-			image->image						= iBmp_copy(bmpNoImage);
+			image->p.style						= _IMAGE_STYLE_OPAQUE;
+			image->p.image						= iBmp_copy(bmpNoImage);
 
-			*(u32*)&image->programmaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
+			*(u32*)&image->ev.general.programmaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
@@ -2342,50 +2327,55 @@
 		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
 		if (checkbox)
 		{
-			checkbox->font							= iFont_duplicate(gsFont);
-			checkbox->backColor.color				= white.color;
-			checkbox->foreColor.color				= black.color;
+			checkbox->pa.font						= iFont_duplicate(gsFontDefault);
+			checkbox->p.backColor.color				= white.color;
+			checkbox->p.foreColor.color				= black.color;
 
-			checkbox->alignment						= _ALIGNMENT_LEFT;
-			checkbox->style							= _STYLE_3D;
-			checkbox->value							= 0;
-			iDatum_duplicate(&checkbox->caption, cgcName_checkbox, 8);
+			checkbox->p.alignment					= _ALIGNMENT_LEFT;
+			checkbox->p.style						= _STYLE_3D;
+			iVariable_delete(checkbox->pa.value, false);
+			iDatum_duplicate(&checkbox->pa.caption, cgcName_checkbox, 8);
 
-			checkbox->isOpaque						= true;
-			checkbox->isBorder						= false;
-			checkbox->borderColor.color				= black.color;
-			checkbox->disabledBackColor.color		= disabledBackColor.color;
-			checkbox->disabledForeColor.color		= disabledForeColor.color;
+			checkbox->p.isOpaque					= true;
+			checkbox->p.isBorder					= false;
+			checkbox->p.borderColor.color			= black.color;
+			checkbox->p.disabledBackColor.color		= disabledBackColor.color;
+			checkbox->p.disabledForeColor.color		= disabledForeColor.color;
 
-			*(u32*)&checkbox->interactiveChange		= *(u32*)&iDefaultCallback_onInteractiveChange;
-			*(u32*)&checkbox->programmaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
+			*(u32*)&checkbox->ev.general.interactiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
+			*(u32*)&checkbox->ev.general.programmaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
 	void iiSubobj_resetToDefaultOption(SObject* option, bool tlResetProperties, bool tlResetMethods)
 	{
+		SObject* label1;
+		SObject* label2;
+
+
 		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
 		if (option)
 		{
-			option->backColor.color				= white.color;
-			option->foreColor.color				= black.color;
+			option->p.backColor.color			= white.color;
+			option->p.foreColor.color			= black.color;
 
-			option->alignment					= _ALIGNMENT_LEFT;
-			option->style						= _STYLE_3D;
+			option->p.alignment					= _ALIGNMENT_LEFT;
+			option->p.style						= _STYLE_3D;
 
-			option->optionCount					= 2;
-			option->multiSelect					= false;
+			option->p.optionCount				= 2;
+			option->p.multiSelect				= false;
 
 			// Create the two objects
-			option->firstOption					= iObj_create(_OBJ_TYPE_LABEL, NULL, obj);
-			if (option->firstOption)
-				option->firstOption->ll.next	= (SLL*)iObj_create(_OBJ_TYPE_LABEL, NULL, obj);
+			label1 = iObj_create(_OBJ_TYPE_LABEL, option);
+			label2 = iObj_create(_OBJ_TYPE_LABEL, option);
+			iLl_appendExistingNodeAtEnd((SLL**)&option->pa.firstOption, (SLL*)label1);
+			iLl_appendExistingNodeAtEnd((SLL**)&option->pa.firstOption, (SLL*)label2);
 
 			// Copy the events
-			*(u32*)&option->onSelect			= *(u32*)&iDefaultCallback_onSelect;
-			*(u32*)&option->onDeselect			= *(u32*)&iDefaultCallback_onDeselect;
-			*(u32*)&option->interactiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
-			*(u32*)&option->programmaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
+			*(u32*)&option->ev.general.onSelect				= *(u32*)&iDefaultCallback_onSelect;
+			*(u32*)&option->ev.general.onDeselect			= *(u32*)&iDefaultCallback_onDeselect;
+			*(u32*)&option->ev.general.interactiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
+			*(u32*)&option->ev.general.programmaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
@@ -2394,25 +2384,25 @@
 		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
 		if (radio)
 		{
-			radio->font							= iFont_duplicate(gsFont);
-			radio->backColor.color				= white.color;
-			radio->foreColor.color				= black.color;
+			radio->pa.font						= iFont_duplicate(gsFontDefault);
+			radio->p.backColor.color			= white.color;
+			radio->p.foreColor.color			= black.color;
 
-			radio->alignment					= _ALIGNMENT_LEFT;
-			radio->style						= _STYLE_3D;
-			radio->value						= 0;
-			radio->minValue						= 0;
-			radio->maxValue						= 100;
-			radio->roundTo						= 1.0f;
+			radio->p.alignment					= _ALIGNMENT_LEFT;
+			radio->p.style						= _STYLE_3D;
+			iVariable_reset(radio->pa.value);
+			radio->p.minValue					= 0;
+			radio->p.maxValue					= 100;
+			radio->p.roundTo					= 1.0f;
 
-			radio->isOpaque						= true;
-			radio->isBorder						= false;
-			radio->borderColor.color			= black.color;
-			radio->disabledBackColor.color		= disabledBackColor.color;
-			radio->disabledForeColor.color		= disabledForeColor.color;
+			radio->p.isOpaque					= true;
+			radio->p.isBorder					= false;
+			radio->p.borderColor.color			= black.color;
+			radio->p.disabledBackColor.color	= disabledBackColor.color;
+			radio->p.disabledForeColor.color	= disabledForeColor.color;
 
-			*(u32*)&radio->interactiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
-			*(u32*)&radio->programmaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
+			*(u32*)&radio->ev.general.interactiveChange		= *(u32*)&iDefaultCallback_onInteractiveChange;
+			*(u32*)&radio->ev.general.programmaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
@@ -2446,9 +2436,9 @@
 		//////////
 		// Free subobject components
 		//////
-			iFont_delete(&form->font, true);
-			iBmp_delete(&form->bmpFormIcon, true, true);
-			iDatum_delete(&form->caption, false);
+			iFont_delete(&form->pa.font,		true);
+			iBmp_delete(&form->pa.bmpIcon,		true, true);
+			iDatum_delete(&form->pa.caption,	false);
 
 
 		//////////
@@ -2471,9 +2461,9 @@
 		//////////
 		// Free subobject components
 		//////
-			iFont_delete(&subform->font, true);
-			iBmp_delete(&subform->bmpSubformIcon, true, true);
-			iDatum_delete(&subform->caption, false);
+			iFont_delete(&subform->pa.font,		true);
+			iBmp_delete(&subform->pa.bmpIcon,	true, true);
+			iDatum_delete(&subform->pa.caption,	false);
 
 
 		//////////
@@ -2496,8 +2486,8 @@
 		//////////
 		// Free subobject components
 		//////
-			iFont_delete(&label->font, true);
-			iDatum_delete(&label->caption, false);
+			iFont_delete(&label->pa.font,		true);
+			iDatum_delete(&label->pa.caption,	false);
 
 
 		//////////
@@ -2520,10 +2510,10 @@
 		//////////
 		// Free subobject components
 		//////
-			iFont_delete(&textbox->font, true);
-			iDatum_delete(&textbox->value, false);
-			iDatum_delete(&textbox->picture, false);
-			iDatum_delete(&textbox->mask, false);
+			iFont_delete(&textbox->pa.font,			true);
+			iVariable_delete(textbox->pa.value,		false);
+			iVariable_delete(textbox->pa.picture,	false);
+			iVariable_delete(textbox->pa.mask,		false);
 
 
 		//////////
@@ -2546,8 +2536,8 @@
 		//////////
 		// Free subobject components
 		//////
-			iFont_delete(&button->font, true);
-			iDatum_delete(&button->caption, false);
+			iFont_delete(&button->pa.font,		true);
+			iDatum_delete(&button->pa.caption,	false);
 
 
 		//////////
@@ -2570,8 +2560,8 @@
 		//////////
 		// Free subobject components
 		//////
-			iFont_delete(&editbox->font, true);
-			iEditChainManager_delete(&editbox->ecm, true);
+			iFont_delete(&editbox->pa.font,				true);
+			iEditChainManager_delete(&editbox->pa.ecm,	true);
 
 
 		//////////
@@ -2751,13 +2741,13 @@
 					// Frame it
 					//////
 						// Draw the window border
-						iBmp_fillRect(form->bmp, &lrc, form->nwRgba, form->neRgba, form->swRgba, form->seRgba, true);
+						iBmp_fillRect(form->bmp, &lrc, form->p.nwRgba, form->p.neRgba, form->p.swRgba, form->p.seRgba, true);
 
 						// Frame it
 						iBmp_frameRect(form->bmp, &lrc, black, black, black, black, false);
 
 						// Draw the client area
-						SetRect(&lrc2, 8, form->bmpIcon->bi.biHeight + 2, lrc.right - form->bmpIcon->bi.biHeight - 2, lrc.bottom - form->bmpIcon->bi.biHeight - 1);
+						SetRect(&lrc2, 8, form->pa.bmpIcon->bi.biHeight + 2, lrc.right - form->pa.bmpIcon->bi.biHeight - 2, lrc.bottom - form->pa.bmpIcon->bi.biHeight - 1);
 						iBmp_fillRect(form->bmp, &lrc2, white, white, white, white, false);
 // These rc* copies were added temporarily until the full object structure is coded and working
 //CopyRect(&form->rcClient, &lrc2);
@@ -2771,8 +2761,8 @@
 					// Form icon and standard controls
 					//////
 						// Form icon
-						SetRect(&lrc3,	bmpArrowUl->bi.biWidth + 8, 1, bmpArrowUl->bi.biWidth + 8 + form->bmpIcon->bi.biWidth, 1 + form->bmpIcon->bi.biHeight);
-						iBmp_bitBltMask(form->bmp, &lrc3, form->bmpIcon);
+						SetRect(&lrc3,	bmpArrowUl->bi.biWidth + 8, 1, bmpArrowUl->bi.biWidth + 8 + form->pa.bmpIcon->bi.biWidth, 1 + form->pa.bmpIcon->bi.biHeight);
+						iBmp_bitBltMask(form->bmp, &lrc3, form->pa.bmpIcon);
 CopyRect(&form->rcIcon, &lrc3);
 
 						// Close
@@ -2827,8 +2817,8 @@ CopyRect(&form->rcArrowLr, &lrc2);
 CopyRect(&form->rcCaption, &lrc2);
 						lhfontOld = (HFONT)SelectObject(form->bmp->hdc, gsWindowTitleBarFont->hfont);
 						SetBkMode(form->bmp->hdc, TRANSPARENT);
-						SetTextColor(form->bmp->hdc, (COLORREF)RGB(form->captionColor.red, form->captionColor.grn, form->captionColor.blu));
-						DrawTextA(form->bmp->hdc, form->caption.data, form->caption.length, &lrc2, DT_VCENTER);
+						SetTextColor(form->bmp->hdc, (COLORREF)RGB(form->p.captionColor.red, form->p.captionColor.grn, form->p.captionColor.blu));
+						DrawTextA(form->bmp->hdc, form->pa.caption.data, form->pa.caption.length, &lrc2, DT_VCENTER);
 						SelectObject(form->bmp->hdc, lhfontOld);
 
 
@@ -2948,7 +2938,7 @@ CopyRect(&form->rcCaption, &lrc2);
 					// Frame it
 					//////
 						// Draw the window border
-						iBmp_fillRect(subform->bmp, &lrc, subform->nwRgba, subform->neRgba, subform->swRgba, subform->seRgba, true);
+						iBmp_fillRect(subform->bmp, &lrc, subform->p.nwRgba, subform->p.neRgba, subform->p.swRgba, subform->p.seRgba, true);
 
 						// Frame it
 						CopyRect(&lrc2, &lrc);
@@ -2956,7 +2946,7 @@ CopyRect(&form->rcCaption, &lrc2);
 						iBmp_frameRect(subform->bmp, &lrc2, black, black, black, black, false);
 
 						// Draw the client area
-						SetRect(&lrc2, 0, subform->bmpSubformIcon->bi.biHeight - 1, lrc.right - 8, lrc.bottom);
+						SetRect(&lrc2, 0, subform->pa.bmpIcon->bi.biHeight - 1, lrc.right - 8, lrc.bottom);
 						// Make everything white
 						iBmp_fillRect(subform->bmp, &lrc2, white, white, white, white, false);
 // These rc* copies were added temporarily until the full object structure is coded and working
@@ -2971,8 +2961,8 @@ CopyRect(&form->rcCaption, &lrc2);
 					// Subform icon and standard controls
 					//////
 						// Subform icon
-						SetRect(&lrc3, 0, 0, subform->bmpIcon->bi.biWidth + 8 + subform->bmpIcon->bi.biWidth, subform->bmpIcon->bi.biHeight);
-						iBmp_bitBltMask(subform->bmp, &lrc3, subform->bmpIcon);
+						SetRect(&lrc3, 0, 0, subform->pa.bmpIcon->bi.biWidth + 8 + subform->pa.bmpIcon->bi.biWidth, subform->pa.bmpIcon->bi.biHeight);
+						iBmp_bitBltMask(subform->bmp, &lrc3, subform->pa.bmpIcon);
 CopyRect(&subform->rcIcon, &lrc3);
 
 //////////
@@ -3003,19 +2993,19 @@ CopyRect(&subform->rcIcon, &lrc3);
 					//////////
 					// Subform caption
 					//////
-						SetRect(&lrc2, subform->bmpIcon->bi.biWidth + 8, lrc3.top + 2, subform->bmp->bi.biWidth - 8, lrc3.bottom);
+						SetRect(&lrc2, subform->pa.bmpIcon->bi.biWidth + 8, lrc3.top + 2, subform->bmp->bi.biWidth - 8, lrc3.bottom);
 CopyRect(&subform->rcCaption, &lrc2);
 						lhfontOld = (HFONT)SelectObject(subform->bmp->hdc, gsWindowTitleBarFontSubform->hfont);
 						SetBkMode(subform->bmp->hdc, TRANSPARENT);
-						SetTextColor(subform->bmp->hdc, (COLORREF)RGB(subform->captionColor.red, subform->captionColor.grn, subform->captionColor.blu));
-						DrawTextA(subform->bmp->hdc, subform->caption.data, subform->caption.length, &lrc2, DT_VCENTER);
+						SetTextColor(subform->bmp->hdc, (COLORREF)RGB(subform->p.captionColor.red, subform->p.captionColor.grn, subform->p.captionColor.blu));
+						DrawTextA(subform->bmp->hdc, subform->pa.caption.data, subform->pa.caption.length, &lrc2, DT_VCENTER);
 						SelectObject(subform->bmp->hdc, lhfontOld);
 
 
 //////////
 // For temporary, we are adding additional renderings for the command subform
 //////
-if (iDatum_compare(&subform->caption, (s8*)cgcCommandTitle, -1) == 0)
+if (iDatum_compare(&subform->pa.caption, (s8*)cgcCommandTitle, -1) == 0)
 {
 	gobj_jdebi_command = subform;
 	iEditChainManager_render(commandHistory, subform);
@@ -3078,7 +3068,7 @@ if (iDatum_compare(&subform->caption, (s8*)cgcCommandTitle, -1) == 0)
 // Note:  See "Note" on iRenderForm().
 //
 //////
-	u32 iSubobj_renderLabel(SObject* obj, SSubObjLabel* label, bool tlRenderChildren, bool tlRenderSiblings)
+	u32 iSubobj_renderLabel(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings)
 	{
 
 
@@ -3099,7 +3089,7 @@ if (iDatum_compare(&subform->caption, (s8*)cgcCommandTitle, -1) == 0)
 // Note:  See "Note" on iRenderForm().
 //
 //////
-	u32 iSubobj_renderTextbox(SObject* obj, SSubObjTextbox* textbox, bool tlRenderChildren, bool tlRenderSiblings)
+	u32 iSubobj_renderTextbox(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings)
 	{
 
 
@@ -3120,7 +3110,7 @@ if (iDatum_compare(&subform->caption, (s8*)cgcCommandTitle, -1) == 0)
 // Note:  See "Note" on iRenderForm().
 //
 //////
-	u32 iSubobj_renderButton(SObject* obj, SSubObjButton* button, bool tlRenderChildren, bool tlRenderSiblings)
+	u32 iSubobj_renderButton(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings)
 	{
 
 
@@ -3141,7 +3131,7 @@ if (iDatum_compare(&subform->caption, (s8*)cgcCommandTitle, -1) == 0)
 // Note:  See "Note" on iRenderForm().
 //
 //////
-	u32 iSubobj_renderEditbox(SObject* obj, SSubObjEditbox* editbox, bool tlRenderChildren, bool tlRenderSiblings)
+	u32 iSubobj_renderEditbox(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings)
 	{
 
 
@@ -3162,7 +3152,7 @@ if (iDatum_compare(&subform->caption, (s8*)cgcCommandTitle, -1) == 0)
 // Note:  See "Note" on iRenderForm().
 //
 //////
-	u32 iSubobj_renderImage(SObject* obj, SSubObjImage* image, bool tlRenderChildren, bool tlRenderSiblings)
+	u32 iSubobj_renderImage(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings)
 	{
 
 
@@ -3183,7 +3173,7 @@ if (iDatum_compare(&subform->caption, (s8*)cgcCommandTitle, -1) == 0)
 // Note:  See "Note" on iRenderForm().
 //
 //////
-	u32 iSubobj_renderCheckbox(SObject* obj, SSubObjCheckbox* checkbox, bool tlRenderChildren, bool tlRenderSiblings)
+	u32 iSubobj_renderCheckbox(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings)
 	{
 
 
@@ -3204,7 +3194,7 @@ if (iDatum_compare(&subform->caption, (s8*)cgcCommandTitle, -1) == 0)
 // Note:  See "Note" on iRenderForm().
 //
 //////
-	u32 iSubobj_renderOption(SObject* obj, SSubObjOption* option, bool tlRenderChildren, bool tlRenderSiblings)
+	u32 iSubobj_renderOption(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings)
 	{
 
 
@@ -3225,7 +3215,7 @@ if (iDatum_compare(&subform->caption, (s8*)cgcCommandTitle, -1) == 0)
 // Note:  See "Note" on iRenderForm().
 //
 //////
-	u32 iSubobj_renderRadio(SObject* obj, SSubObjRadio* radio, bool tlRenderChildren, bool tlRenderSiblings)
+	u32 iSubobj_renderRadio(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings)
 	{
 
 

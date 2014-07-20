@@ -41,7 +41,7 @@
 // Called to create a new ECM (Edit Chain Manager)
 //
 //////
-	SEditChainManager* iEditChainManager_allocate(void)
+	SEM* iEditChainManager_allocate(void)
 	{
 		SEM* ecm;
 
@@ -248,7 +248,7 @@
 //////
 	bool iEditChainManager_duplicate(SEM** root, SEM* ecmSource, bool tlIncludeUndoHistory)
 	{
-// 		SEditChainManager*	ecmNew;
+// 		SEM*	ecmNew;
 // 		SEditChain*			ecSource;
 // 		SEditChain*			ecNew;
 // 		SEditChain*			ecLast;
@@ -263,13 +263,13 @@
 		// Create the master record
 // TODO:  COMPLETELY UNTESTED.  BREAKPOINT AND EXAMINE.
 _asm int 3;
-// 		ecmNew = (SEditChainManager*)malloc(sizeof(SEditChainManager));
+// 		ecmNew = (SEM*)malloc(sizeof(SEM));
 // 		if (ecmNew)
 // 		{
 // 			//////////
 // 			// Initialize
 // 			//////
-// 				memcpy(ecmNew, ecmSource, sizeof(SEditChainManager));
+// 				memcpy(ecmNew, ecmSource, sizeof(SEM));
 // 
 // 
 // 			//////////
@@ -769,54 +769,17 @@ _asm int 3;
 //////
 	void iEditChainManager_getColors(SEM* ecm, SObject* obj, SBgra& backColor, SBgra& foreColor)
 	{
-		union {
-			SSubObjForm*		form;
-			SSubObjSubform*		subform;
-			SSubObjEditbox*		editbox;
-		};
-
-
 		// Make sure our environment is sane
-		if (ecm && obj && obj->sub_obj)
+		if (ecm && obj)
 		{
 			// What is the object?
-			switch (obj->objType)
-			{
-				case _OBJ_TYPE_FORM:
-					// Use the rcClient
-					form		= (SSubObjForm*)obj->sub_obj;
-					backColor	= form->backColor;
-					foreColor	= form->foreColor;
-					break;
-
-				case _OBJ_TYPE_SUBFORM:
-					// Use the rcClient
-					subform		= (SSubObjSubform*)obj->sub_obj;
-					backColor	= subform->backColor;
-					foreColor	= subform->foreColor;
-					break;
-
-				case _OBJ_TYPE_EDITBOX:
-					// Use the object default
-					editbox		= (SSubObjEditbox*)obj->sub_obj;
-					backColor	= editbox->backColor;
-					foreColor	= editbox->foreColor;
-					break;
-
-				default:
-					// Use the system fonts
-					form		= (SSubObjForm*)gobj_defaultForm->sub_obj;
-					backColor	= form->backColor;
-					foreColor	= form->foreColor;
-					break;
-			}
-			// When we get here, we have our rect in relative coordinates.
+			backColor	= obj->p.backColor;
+			foreColor	= obj->p.foreColor;
 
 		} else {
-			// It's insane, so we set our rc to something that will prevent processing
-			form		= (SSubObjForm*)gobj_defaultForm->sub_obj;
-			backColor	= form->backColor;
-			foreColor	= form->foreColor;
+			// It's insane, so we set our colors to default
+			backColor	= white;
+			foreColor	= black;
 		}
 	}
 
@@ -833,51 +796,20 @@ _asm int 3;
 	SFont* iEditChainManager_getRectAndFont(SEM* ecm, SObject* obj, RECT* rc)
 	{
 		SFont* font;
-		union {
-			SSubObjForm*		form;
-			SSubObjSubform*		subform;
-			SSubObjEditbox*		editbox;
-		};
 
 
 		// Make sure our environment is sane
-		font = gsFont;
-		if (ecm && obj && obj->sub_obj)
+		font = gsFontDefault;
+		if (ecm && obj)
 		{
-			// What is the object?
-			switch (obj->objType)
-			{
-				case _OBJ_TYPE_FORM:
-					// Use the rcClient
-					form = (SSubObjForm*)obj->sub_obj;
-					font = form->font;
-					CopyRect(rc, &form->rcClient);
-					break;
-
-				case _OBJ_TYPE_SUBFORM:
-					// Use the rcClient
-					subform	= (SSubObjSubform*)obj->sub_obj;
-					font	= subform->font;
-					CopyRect(rc, &subform->rcClient);
-					break;
-
-				case _OBJ_TYPE_EDITBOX:
-					// Use the object default
-					editbox	= (SSubObjEditbox*)obj->sub_obj;
-					font	= editbox->font;
-					CopyRect(rc, &obj->rc);
-					break;
-
-				default:
-					// Use the rc and use the system font
-					CopyRect(rc, &obj->rc);
-					break;
-			}
-			// When we get here, we have our rect in relative coordinates.
+			// Get the client rect
+			CopyRect(rc, &obj->rcClient);
+			font = obj->pa.font;
 
 		} else {
 			// It's insane, so we set our rc to something that will prevent processing
 			SetRect(rc, 0, 0, 0, 0);
+			font = gsFontDefault;
 		}
 
 		// Return the font
@@ -894,13 +826,13 @@ _asm int 3;
 //////
 	void iEditChainManager_render(SEM* ecm, SObject* obj)
 	{
-		s32				lnTop, lnLeft, lnRight;
-		SFont*			font;
+		s32			lnTop, lnLeft, lnRight;
+		SFont*		font;
 		SEdit*		line;
-		SBitmap*		bmp;
-		HGDIOBJ			hfontOld;
-		SBgra			foreColor, backColor, fillColor, backColorLast, foreColorLast;
-		RECT			rc, lrc, lrc2, lrc3;
+		SBitmap*	bmp;
+		HGDIOBJ		hfontOld;
+		SBgra		foreColor, backColor, fillColor, backColorLast, foreColorLast;
+		RECT		rc, lrc, lrc2, lrc3;
 
 
 		// Make sure our environment is sane

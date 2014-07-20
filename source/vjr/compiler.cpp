@@ -4514,6 +4514,83 @@ _asm int 3;
 
 //////////
 //
+// Reset the variables to their default types
+//
+//////
+	void iVariable_reset(SVariable* var)
+	{
+		if (var)
+		{
+			switch (var->varType)
+			{
+				case _VARIABLE_TYPE_NUMERIC:
+					iDatum_duplicate(&var->value, cgc_defaultNumeric, sizeof(cgc_defaultNumeric) - 1);
+					break;
+
+				case _VARIABLE_TYPE_CHARACTER:
+					iDatum_delete(&var->value, false);
+					break;
+
+				case _VARIABLE_TYPE_LOGICAL:
+				case _VARIABLE_TYPE_S8:
+				case _VARIABLE_TYPE_U8:
+					var->value.data[0] = 0;
+					break;
+
+				case _VARIABLE_TYPE_S16:
+				case _VARIABLE_TYPE_U16:
+					*(u16*)var->value.data[0] = 0;
+					break;
+
+				case _VARIABLE_TYPE_F32:
+				case _VARIABLE_TYPE_S32:
+				case _VARIABLE_TYPE_U32:
+				case _VARIABLE_TYPE_COLOR:
+				case _VARIABLE_TYPE_COLORA:
+				case _VARIABLE_TYPE_OBJECT:
+				case _VARIABLE_TYPE_THISCODE:
+					*(u32*)var->value.data[0] = 0;
+					break;
+
+				case _VARIABLE_TYPE_F64:
+				case _VARIABLE_TYPE_S64:
+				case _VARIABLE_TYPE_U64:
+				case _VARIABLE_TYPE_CURRENCY:
+					*(u64*)var->value.data[0] = 0;
+					break;
+
+				case _VARIABLE_TYPE_DATE:
+					iDatum_duplicate(&var->value, cgc_defaultDate, sizeof(cgc_defaultDate) - 1);
+					break;
+
+				case _VARIABLE_TYPE_DATETIME:
+				case _VARIABLE_TYPE_DATETIMEX:
+// Not yet supported
+_asm int 3;
+					break;
+
+				case _VARIABLE_TYPE_BI:
+				case _VARIABLE_TYPE_BFP:
+// Not yet supported
+_asm int 3;
+					break;
+
+				case _VARIABLE_TYPE_ARRAY:
+				case _VARIABLE_TYPE_GUID8:
+				case _VARIABLE_TYPE_GUID16:
+				case _VARIABLE_TYPE_FIELD:
+// Not yet supported
+_asm int 3;
+					break;
+			}
+		}
+	}
+
+
+
+
+//////////
+//
 // Converts the indicated variable to a form suitable for display.
 //
 //////

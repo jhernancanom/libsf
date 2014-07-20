@@ -368,9 +368,9 @@ typedef		const f64			cf64;
 	const s32			gnVersion3							= 0;	// English
 	const s8			cgcVersion4Text[]					= "00.32.9999.9999";
 	const s32			gnVersion5							= 32;	// 0.31
-	const s8			cgcDefaultFont[]					= "Ubuntu";
-	const s8			cgcDefaultFixedFont[]				= "Ubuntu Mono";
-	const s8			cgcWindowTitleBarFont[]				= "Ubuntu Condensed";
+	const s8			cgcDefaultFontName[]				= "Ubuntu";
+	const s8			cgcDefaultFixedFontName[]			= "Ubuntu Mono";
+	const s8			cgcWindowTitleBarFontName[]			= "Ubuntu Condensed";
 	const s8			cgcSubwindowTitleBarFont[]			= "Ubuntu Condensed";
 	const s8			cgcScreenDataFilename[]				= "screen.vjr";
 	const s8			cgcCommandHistoryFilename[]			= "command.vjr";
@@ -396,6 +396,13 @@ typedef		const f64			cf64;
 	const s8			cgcName_checkbox[]					= "checkbox";
 	const s8			cgcName_option[]					= "option";
 	const s8			cgcName_radio[]						= "radio";
+
+
+//////////
+// Default values for various types
+//////
+	const s8			cgc_defaultNumeric[]				= "0";
+	const s8			cgc_defaultDate[]					= "        ";
 
 
 //////////

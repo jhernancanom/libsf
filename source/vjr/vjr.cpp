@@ -103,9 +103,10 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		systemStartedMs = iTime_getLocalMs();
 
 		// Default font
-		gsFont						= iFont_create(cgcDefaultFont,			10, FW_NORMAL,	0, 0);
-		gsWindowTitleBarFont		= iFont_create(cgcWindowTitleBarFont,	12, FW_NORMAL,	0, 0);
-		gsWindowTitleBarFontSubform	= iFont_create(cgcWindowTitleBarFont,	10, FW_NORMAL,	0, 0);
+		gsFontDefault				= iFont_create(cgcDefaultFontName,			10, FW_NORMAL,	0, 0);
+		gsFontDefaultFixedPoint		= iFont_create(cgcDefaultFixedFontName,		10, FW_NORMAL,	0, 0);
+		gsWindowTitleBarFont		= iFont_create(cgcWindowTitleBarFontName,	12, FW_NORMAL,	0, 0);
+		gsWindowTitleBarFontSubform	= iFont_create(cgcWindowTitleBarFontName,	10, FW_NORMAL,	0, 0);
 
 
 		//////////
