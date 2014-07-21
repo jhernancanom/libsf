@@ -233,7 +233,7 @@
 
 				// Indicate success
 				sprintf(buffer, "Loaded: %s\0", tcPathname);
-				iEditManager_appendLine(outputData, buffer, strlen(buffer));
+				iEditManager_appendLine(output_editbox->pa.em, buffer, strlen(buffer));
 				return(true);
 			}
 		}
@@ -908,7 +908,7 @@ _asm int 3;
 
 
 		// Make sure our environment is sane
-		if (obj && obj->objType == _OBJ_TYPE_EDITBOX)
+		if (obj && obj->objType == _OBJ_TYPE_EDITBOX && obj->pa.em)
 		{
 			// Grab the EM for this
 			em = obj->pa.em;
@@ -1132,8 +1132,9 @@ _asm int 3;
 // Called to render the ECM in the indicated rectangle on the object's bitmap
 //
 //////
-	void iEditManager_render(SEM* em, SObject* obj)
+	u32 iEditManager_render(SEM* em, SObject* obj)
 	{
+		u32			lnPixelsRendered;
 		s32			lnTop, lnLeft, lnRight;
 		SFont*		font;
 		SEdit*		line;
@@ -1144,6 +1145,7 @@ _asm int 3;
 
 
 		// Make sure our environment is sane
+		lnPixelsRendered = 1;
 		if (em && obj)
 		{
 			// Get the top line and continue down as far as we can
@@ -1265,6 +1267,9 @@ _asm int 3;
 			// Reset the font
 			SelectObject(bmp->hdc, hfontOld);
 		}
+
+		// Indicate how many pixels were rendered
+		return(lnPixelsRendered);
 	}
 
 
@@ -1402,6 +1407,8 @@ _asm int 3;
 				}
 		}
 
+		// If something has changed, we need to re-render
+		iObj_setDirty(obj, true);
 
 		// Indicate our status
 		return(llChanged);

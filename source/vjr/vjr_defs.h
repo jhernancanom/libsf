@@ -64,7 +64,8 @@
 	SObject*				iObj_addChild							(SObject* objParent, u32 objType);
 	SObject*				iObj_copy								(SObject* template_obj, SObject* next, SObject* parent, bool tlCopyChildren, bool tlCreateSeparateBitmapBuffers);
 	void					iObj_delete								(SObject** obj, bool tlDeleteSelf);
-	void					iObj_findFocusControls					(SObject*  obj, SObjectpp& objFocusControls, SEMpp& emBuffers, u32* tnFocusControlsCount, bool tlProcessSiblings);
+	void					iObj_findFocusControls					(SObject*  obj, SBuilder* objFocusControls, bool tlProcessSiblings);
+	void					iObj_setDirty							(SObject* obj, bool tlMarkParents);
 	u32						iObj_render								(SObject*  obj, bool tlRenderChildren, bool tlRenderSiblings);
 	void					iObj_renderChildrenAndSiblings			(SObject*  obj, bool tlRenderChildren, bool tlRenderSiblings);
 	void					iObj_duplicateChain						(SObject** root, SObject* chain);

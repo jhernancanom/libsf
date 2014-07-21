@@ -146,28 +146,18 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iInit_createDefaultObjects();
 
 		// Create the buffers for screen and command history
-		screenData		= iEditManager_allocate();
-		sourceCodeData	= iEditManager_allocate();
-		localsData		= iEditManager_allocate();
-		watchData		= iEditManager_allocate();
-		commandHistory	= iEditManager_allocate();
-		debugData		= iEditManager_allocate();
-		outputData		= iEditManager_allocate();
+		screenData = iEditManager_allocate();
 
 		// Set the end line to show on both
-		screenData->showEndLine			= true;
-		commandHistory->showEndLine		= true;
-
-		// Set the cursor line data on commandHistory only
-		commandHistory->showCursorLine	= true;
+		screenData->showEndLine = true;
 
 		// Create our main screen window
 		iInit_create_screenObject();
 		iInit_create_jdebiObject();
 
 		// Initially render each one
-		iObj_render(gobj_screen, true, true);
-		iObj_render(gobj_jdebi, true, true);
+		iObj_render(gobj_screen,	true, true);
+		iObj_render(gobj_jdebi,		true, true);
 
 		// Create our global variables
 		varGlobals = function_datetime(NULL, NULL, NULL, NULL, NULL, NULL, NULL);
@@ -178,6 +168,9 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		gWinJDebi	= iWindow_allocate();
 		iObj_createWindowForForm(gobj_screen,	gWinScreen,	IDI_VJR);
 		iObj_createWindowForForm(gobj_jdebi,	gWinJDebi,	IDI_JDEBI);
+
+		// Set the cursor line data on command history only
+		command_editbox->pa.em->showCursorLine	= true;
 
 		// Initially populate _screen
 		// Load in the history if it exists
@@ -213,26 +206,26 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		// Initially populate _jdebi
 		// Load in the history if it exists
-		if (!iEditManager_loadFromDisk(commandHistory, NULL, (s8*)cgcCommandHistoryFilename, true))
+		if (!iEditManager_loadFromDisk(command_editbox->pa.em, NULL, (s8*)cgcCommandHistoryFilename, true))
 		{
-			iEditManager_appendLine(commandHistory, "*** Welcome to Visual FreePro, Junior! :-)", -1);
-			iEditManager_appendLine(commandHistory, "*** For now, this can be thought of as a command window ... with a twist.", -1);
-			iEditManager_appendLine(commandHistory, "*** It works like an editor window.  You can insert new lines, edit old ones, etc.", -1);
-			iEditManager_appendLine(commandHistory, "*** To execute a command, press F6 or Enter if you're on the last line, or use F6 on any line.", -1);
-			iEditManager_appendLine(commandHistory, "*** You can use clear, quit, ? 999, ? \"sample\" (literals), and ? _startupTime (global variable) in this daily build.", -1);
-			iEditManager_appendLine(commandHistory, "*** Remember this always:  Love makes you smile. It keeps an inward peace unlike any other. :-)", -1);
+			iEditManager_appendLine(command_editbox->pa.em, "*** Welcome to Visual FreePro, Junior! :-)", -1);
+			iEditManager_appendLine(command_editbox->pa.em, "*** For now, this can be thought of as a command window ... with a twist.", -1);
+			iEditManager_appendLine(command_editbox->pa.em, "*** It works like an editor window.  You can insert new lines, edit old ones, etc.", -1);
+			iEditManager_appendLine(command_editbox->pa.em, "*** To execute a command, press F6 or Enter if you're on the last line, or use F6 on any line.", -1);
+			iEditManager_appendLine(command_editbox->pa.em, "*** You can use clear, quit, ? 999, ? \"sample\" (literals), and ? _startupTime (global variable) in this daily build.", -1);
+			iEditManager_appendLine(command_editbox->pa.em, "*** Remember this always:  Love makes you smile. It keeps an inward peace unlike any other. :-)", -1);
 		}
 		// Navigate to the last line
-		iEditManager_navigateEnd(commandHistory, gobj_jdebi_command);
+		iEditManager_navigateEnd(command_editbox->pa.em, command_editbox);
 		// Make sure there's a blank line at the end
-		if (commandHistory->ecCursorLine->sourceCodePopulated != 0)
+		if (command_editbox->pa.em->ecCursorLine->sourceCodePopulated != 0)
 		{
-			iEditManager_appendLine(commandHistory, NULL, 0);
-			iEditManager_navigateEnd(commandHistory, gobj_jdebi_command);
+			iEditManager_appendLine(command_editbox->pa.em, NULL, 0);
+			iEditManager_navigateEnd(command_editbox->pa.em, command_editbox);
 		}
 
 		// Load some source code
-		iEditManager_loadFromDisk(sourceCodeData, NULL, (s8*)cgcStartupPrgFilename, true);
+		iEditManager_loadFromDisk(sourceCode_editbox->pa.em, NULL, (s8*)cgcStartupPrgFilename, true);
 
 		// Redraw
 		gobj_jdebi->isDirty = true;

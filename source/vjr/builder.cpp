@@ -161,6 +161,33 @@ struct SBuilder
 
 //////////
 //
+// Appends the indicated 32-bit value.
+//
+//////
+	s8* iBuilder_append_u32(SBuilder* buffRoot, u32 tnValue)
+	{
+		// Make sure our environment is sane
+		if (buffRoot)
+		{
+			// Make sure this much data will fit there in the buffer
+			iBuilder_verifySizeForNewBytes(buffRoot, 4);
+
+			// Copy the data
+			if (buffRoot->data)
+				*(u32*)(buffRoot->data + buffRoot->populatedLength - 4) = tnValue;
+			
+			// Indicate where the start of that buffer is
+			return(buffRoot->data + buffRoot->populatedLength - 4);
+		}
+		// If we get here, things are bad
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
 // Called to append a CR to the builder
 //
 //////

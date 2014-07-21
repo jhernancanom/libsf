@@ -220,7 +220,7 @@
 // Called to get a list of controls which have focus
 //
 //////
-	void iObj_findFocusControls(SObject* obj, SObjectpp& objFocusControls, SEMpp& emBuffers, u32* tnFocusControlsCount, bool tlProcessSiblings)
+	void iObj_findFocusControls(SObject* obj, SBuilder* objFocusControls, bool tlProcessSiblings)
 	{
 		SObject* objSib;
 
@@ -229,14 +229,14 @@
 		// Process any children first
 		//////
 			if (obj->firstChild)
-				iObj_findFocusControls(obj->firstChild, objFocusControls, emBuffers, tnFocusControlsCount, true);
+				iObj_findFocusControls(obj->firstChild, objFocusControls, true);
 
 		
 		//////////
 		// Process self
 		//////
-// TODO:  Working here
-			_asm blah blah blah;
+			if (obj->p.hasFocus)
+				iBuilder_append_u32(objFocusControls, (u32)obj);
 
 
 		//////////
@@ -249,12 +249,33 @@
 				while (objSib)
 				{
 					// Process this sibling
-					iObj_findFocusControls(objSib, objFocusControls, emBuffers, tnFocusControlsCount, false);
+					iObj_findFocusControls(objSib, objFocusControls, false);
 
 					// Move to next sibling
 					objSib = (SObject*)objSib->ll.next;
 				}
 			}
+	}
+
+
+
+
+//////////
+//
+// Called to mark the object dirty.
+//
+//////
+	void iObj_setDirty(SObject* obj, bool tlMarkParents)
+	{
+		if (obj)
+		{
+			// Mark the object dirty
+			obj->isDirty = true;
+
+			// Mark the parent
+			if (tlMarkParents && obj->parent)
+				iObj_setDirty(obj->parent, true);
+		}
 	}
 
 
@@ -3050,36 +3071,30 @@ CopyRect(&subform->rcCaption, &lrc2);
 //////////
 // For temporary, we are adding additional renderings for the command subform
 //////
-if (iDatum_compare(&subform->pa.caption, (s8*)cgcCommandTitle, -1) == 0)
-{
-	gobj_jdebi_command = subform;
-	iEditManager_render(commandHistory, subform);
-
-} else if (iDatum_compare(&subform->pa.caption, (s8*)cgcSourceCodeTitle, -1) == 0) {
-	gobj_jdebi_sourceCode = subform;
-	iEditManager_navigateEnd(sourceCodeData, subform);
-	iEditManager_render(sourceCodeData, subform);
-
-} else if (iDatum_compare(&subform->pa.caption, (s8*)cgcLocalsTitle, -1) == 0) {
-	gobj_jdebi_locals = subform;
-	iEditManager_navigateEnd(localsData, subform);
-	iEditManager_render(localsData, subform);
-
-} else if (iDatum_compare(&subform->pa.caption, (s8*)cgcWatchTitle, -1) == 0) {
-	gobj_jdebi_watch = subform;
-	iEditManager_navigateEnd(watchData, subform);
-	iEditManager_render(watchData, subform);
-
-} else if (iDatum_compare(&subform->pa.caption, (s8*)cgcDebugTitle, -1) == 0) {
-	gobj_jdebi_debug = subform;
-	iEditManager_navigateEnd(debugData, subform);
-	iEditManager_render(debugData, subform);
-
-} else if (iDatum_compare(&subform->pa.caption, (s8*)cgcOutputTitle, -1) == 0) {
-	gobj_jdebi_output = subform;
-	iEditManager_navigateEnd(outputData, subform);
-	iEditManager_render(outputData, subform);
-}
+// if (iDatum_compare(&subform->pa.caption, (s8*)cgcCommandTitle, -1) == 0)
+// {
+// 	iEditManager_render(command_editbox->pa.em, subform);
+// 
+// } else if (iDatum_compare(&subform->pa.caption, (s8*)cgcSourceCodeTitle, -1) == 0) {
+// 	iEditManager_navigateEnd(sourceCode_editbox->pa.em, subform);
+// 	iEditManager_render(sourceCode_editbox->pa.em, subform);
+// 
+// } else if (iDatum_compare(&subform->pa.caption, (s8*)cgcLocalsTitle, -1) == 0) {
+// 	iEditManager_navigateEnd(locals_editbox->pa.em, subform);
+// 	iEditManager_render(locals_editbox->pa.em, subform);
+// 
+// } else if (iDatum_compare(&subform->pa.caption, (s8*)cgcWatchTitle, -1) == 0) {
+// 	iEditManager_navigateEnd(watch_editbox->pa.em, subform);
+// 	iEditManager_render(watch_editbox->pa.em, subform);
+// 
+// } else if (iDatum_compare(&subform->pa.caption, (s8*)cgcDebugTitle, -1) == 0) {
+// 	iEditManager_navigateEnd(debug_editbox->pa.em, subform);
+// 	iEditManager_render(debug_editbox->pa.em, subform);
+// 
+// } else if (iDatum_compare(&subform->pa.caption, (s8*)cgcOutputTitle, -1) == 0) {
+// 	iEditManager_navigateEnd(output_editbox->pa.em, subform);
+// 	iEditManager_render(output_editbox->pa.em, subform);
+// }
 
 
 					//////////
@@ -3203,13 +3218,16 @@ if (iDatum_compare(&subform->pa.caption, (s8*)cgcCommandTitle, -1) == 0)
 //////
 	u32 iSubobj_renderEditbox(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings)
 	{
+		u32 lnPixelsRendered;
 
+//		iEditManager_navigateEnd(obj->pa.em, obj);
+		lnPixelsRendered = iEditManager_render(obj->pa.em, obj);
 
-			//////////
-			// Indicate we're no longer dirty, that we have everything
-			//////
-				obj->isDirty = false;
-		return(0);
+		// Indicate we're no longer dirty, that we have everything
+		obj->isDirty = false;
+
+		// Indicate status
+		return(lnPixelsRendered);
 	}
 
 

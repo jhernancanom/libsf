@@ -108,8 +108,8 @@
 				{
 					case _ICODE_QUIT:
 						// They want to quit
-						iEditManager_saveToDisk(screenData,		(s8*)cgcScreenDataFilename);
-						iEditManager_saveToDisk(commandHistory,	(s8*)cgcCommandHistoryFilename);
+						iEditManager_saveToDisk(screenData,				(s8*)cgcScreenDataFilename);
+						iEditManager_saveToDisk(command_editbox->pa.em,	(s8*)cgcCommandHistoryFilename);
 						PostQuitMessage(0);
 						break;
 

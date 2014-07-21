@@ -51,12 +51,6 @@
 
 	// Window display histories
 	SEM*				screenData							= NULL;									// The data displayed on the screen
-	SEM*				sourceCodeData						= NULL;									// Source code
-	SEM*				localsData							= NULL;									// Local variables
-	SEM*				watchData							= NULL;									// Watch variables
-	SEM*				commandHistory						= NULL;									// The command window history
-	SEM*				debugData							= NULL;									// The debug window data
-	SEM*				outputData							= NULL;									// The output window data
 
 	// Global variables
 	SVariable*			varGlobals							= NULL;									// All global variables are stored
@@ -89,12 +83,20 @@
 	// Default screens used by VJr
 	SObject*			gobj_screen							= NULL;
 	SObject*			gobj_jdebi							= NULL;
-	SObject*			gobj_jdebi_sourceCode					= NULL;
-	SObject*			gobj_jdebi_locals					= NULL;
-	SObject*			gobj_jdebi_watch					= NULL;
-	SObject*			gobj_jdebi_command					= NULL;
-	SObject*			gobj_jdebi_debug					= NULL;
-	SObject*			gobj_jdebi_output					= NULL;
+	SObject*			sourceCode							= NULL;
+	SObject*			locals								= NULL;
+	SObject*			watch								= NULL;
+	SObject*			command								= NULL;
+	SObject*			debug								= NULL;
+	SObject*			output								= NULL;
+	SObject*			sourceCode_editbox					= NULL;
+	SObject*			locals_editbox						= NULL;
+	SObject*			watch_editbox						= NULL;
+	SObject*			command_editbox						= NULL;
+	SObject*			debug_editbox						= NULL;
+	SObject*			output_editbox						= NULL;
+
+	// Windows related to the objects
 	SWindow*			gWinScreen							= NULL;
 	SWindow*			gWinJDebi							= NULL;
 

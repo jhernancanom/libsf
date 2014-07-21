@@ -227,19 +227,13 @@
 
 //////////
 //
-// 
+// Temporary manual function to create the new JDebi screen.
 //
 //////
 	void iInit_create_jdebiObject(void)
 	{
-		s32			lnLeft, lnTop, lnWidth, lnHeight;
-		RECT		lrc;
-		SObject*	sourceCode;
-		SObject*	locals;
-		SObject*	watch;
-		SObject*	command;
-		SObject*	debug;
-		SObject*	output;
+		s32		lnLeft, lnTop, lnWidth, lnHeight;
+		RECT	lrc;
 
 
 		//////////
@@ -310,45 +304,81 @@
 
 
 		//////////
+		// Add the editbox controls to the subforms
+		//////
+			sourceCode_editbox	= iObj_addChild(sourceCode,	_OBJ_TYPE_EDITBOX);
+			locals_editbox		= iObj_addChild(locals,		_OBJ_TYPE_EDITBOX);
+			watch_editbox		= iObj_addChild(watch,		_OBJ_TYPE_EDITBOX);
+			command_editbox		= iObj_addChild(command,	_OBJ_TYPE_EDITBOX);
+			debug_editbox		= iObj_addChild(debug,		_OBJ_TYPE_EDITBOX);
+			output_editbox		= iObj_addChild(output,		_OBJ_TYPE_EDITBOX);
+
+
+		//////////
+		// Position and size each control
+		//////
+			lnHeight = (gobj_jdebi->rcClient.bottom - gobj_jdebi->rcClient.top) / 8;
+			iObj_setSize(sourceCode_editbox,	sourceCode->rcClient.left,	sourceCode->rcClient.top,	sourceCode->rcClient.right	- sourceCode->rcClient.left,	sourceCode->rcClient.bottom	- sourceCode->rcClient.top);
+			iObj_setSize(locals_editbox,		locals->rcClient.left,		locals->rcClient.top,		locals->rcClient.right		- locals->rcClient.left,		locals->rcClient.bottom		- locals->rcClient.top);
+			iObj_setSize(watch_editbox,			watch->rcClient.left,		watch->rcClient.top,		watch->rcClient.right		- watch->rcClient.left,			watch->rcClient.bottom		- watch->rcClient.top);
+			iObj_setSize(command_editbox,		command->rcClient.left,		command->rcClient.top,		command->rcClient.right		- command->rcClient.left,		command->rcClient.bottom	- command->rcClient.top);
+			iObj_setSize(debug_editbox,			debug->rcClient.left,		debug->rcClient.top,		debug->rcClient.right		- debug->rcClient.left,			debug->rcClient.bottom		- debug->rcClient.top);
+			iObj_setSize(output_editbox,		output->rcClient.left,		output->rcClient.top,		output->rcClient.right		- output->rcClient.left,		output->rcClient.bottom		- output->rcClient.top);
+
+
+		//////////
 		// SourceCode window caption and font
 		//////
 			iDatum_duplicate(&sourceCode->pa.caption, (s8*)cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
-			sourceCode->pa.font = iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
+			sourceCode_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
+			sourceCode_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown_sourceCode;
+			sourceCode_editbox->pa.em					= iEditManager_allocate();
 
 
 		//////////
 		// Locals window caption and font
 		//////
 			iDatum_duplicate(&locals->pa.caption, (s8*)cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
-			locals->pa.font = iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
+			locals_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
+			locals_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
+			locals_editbox->pa.em					= iEditManager_allocate();
 
 
 		//////////
 		// Watch window caption and font
 		//////
 			iDatum_duplicate(&watch->pa.caption, (s8*)cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
-			watch->pa.font = iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
+			watch_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
+			watch_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
+			watch_editbox->pa.em					= iEditManager_allocate();
 
 
 		//////////
 		// Command window caption and font
 		//////
 			iDatum_duplicate(&command->pa.caption, (s8*)cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
-			command->pa.font = iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
+			command_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
+			command_editbox->ev.keyboard._onKeyDown		= (u32)&iEditManager_onKeyDown_sourceCode;
+			command_editbox->p.hasFocus					= true;
+			command_editbox->pa.em						= iEditManager_allocate();
 
 
 		//////////
 		// Debug window caption and font
 		//////
 			iDatum_duplicate(&debug->pa.caption, (s8*)cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
-			debug->pa.font = iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
+			debug_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
+			debug_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
+			debug_editbox->pa.em					= iEditManager_allocate();
 
 
 		//////////
 		// Output window caption and font
 		//////
 			iDatum_duplicate(&output->pa.caption, (s8*)cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
-			output->pa.font = iFont_create((s8*)cgcDefaultFontName, 8, FW_MEDIUM, false, false);
+			output_editbox->pa.font					= iFont_create((s8*)cgcDefaultFontName, 8, FW_MEDIUM, false, false);
+			output_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
+			output_editbox->pa.em					= iEditManager_allocate();
 
 
 		//////////
@@ -430,8 +460,8 @@
 
 				case WM_SYSKEYDOWN:
 				case WM_SYSKEYUP:
-					if (w == VK_F10)
-						return(iKeyboard_processMessage(win, ((WM_SYSKEYDOWN) ? WM_KEYDOWN : WM_KEYUP), w, l));
+					if (w == VK_F10)		return(iKeyboard_processMessage(win, ((WM_SYSKEYDOWN) ? WM_KEYDOWN : WM_KEYUP), w, l));
+					else					return(iKeyboard_processMessage(win, m, w, l));		// Send it as is
 					break;
 
 				case WM_KEYDOWN:
@@ -1582,10 +1612,8 @@
 	{
 		s16			lnAsciiChar;
 		u32			lnI, lnScanCode, lnObjFocusControlsCount;
-		SObject**	objFocusControls;
-		SEM**		emBuffers;
+		SBuilder*	objFocusControls;
 		SObject*	obj;
-		SEM*		em;
 		bool		llCtrl, llAlt, llShift, llLeft, llMiddle, llRight, llCaps, llIsAscii, llIsCAS;
 		u8			keyboardState[256];
 
@@ -1606,12 +1634,25 @@
 
 
 		//////////
+		// Create buffers
+		//////
+			objFocusControls = NULL;
+			iBuilder_createAndInitialize((SBuilder**)&objFocusControls,	-1);
+
+
+		//////////
 		// Find out which objects within has focus
 		//////
-			lnObjFocusControlsCount = 0;
-			iObj_findFocusControls(win->obj, objFocusControls, emBuffers, &lnObjFocusControlsCount, true);
+			iObj_findFocusControls(win->obj, objFocusControls, true);
+			lnObjFocusControlsCount = objFocusControls->populatedLength / sizeof(SObject*);
 			if (lnObjFocusControlsCount == 0)
 				return(0);		// Nothing to process
+
+
+		//////////
+		// Determine if this keystroke is only a CTRL, SHIFT, or ALT.
+		//////
+			llIsCAS = (vKey == VK_SHIFT || vKey == VK_CONTROL || vKey == VK_MENU);
 
 
 		//////////
@@ -1620,14 +1661,17 @@
 			for (lnI = 0; lnI < lnObjFocusControlsCount; lnI++)
 			{
 				// Grab this object and its buffer
-				obj	= objFocusControls[lnI];
-				em	= emBuffers[lnI];
-				
-				// Make sure we have buffers to process
-				if (obj && em && obj->ev.keyboard._onKeyDown)
+				obj	= *(SObject**)(objFocusControls->data + (lnI * sizeof(SObject*)));
+
+				// Call the appropriate handler
+				if (m == WM_KEYDOWN && obj->ev.keyboard._onKeyDown)
 				{
-						 if (m == WM_KEYDOWN)		obj->ev.keyboard.onKeyDown	(win, obj, llCtrl, llAlt, llShift, llCaps, lnAsciiChar, vKey, llIsCAS, llIsAscii);
-					else if (m == WM_KEYUP)			obj->ev.keyboard.onKeyUp	(win, obj, llCtrl, llAlt, llShift, llCaps, lnAsciiChar, vKey, llIsCAS, llIsAscii);
+					// Signal the down key event
+					obj->ev.keyboard.onKeyDown	(win, obj, llCtrl, llAlt, llShift, llCaps, lnAsciiChar, vKey, llIsCAS, llIsAscii);
+
+				} else if (m == WM_KEYUP && obj->ev.keyboard._onKeyUp) {
+					// Signal the up key event
+					obj->ev.keyboard.onKeyUp	(win, obj, llCtrl, llAlt, llShift, llCaps, lnAsciiChar, vKey, llIsCAS, llIsAscii);
 				}
 			}
 		
@@ -1635,8 +1679,8 @@
 		//////////
 		// Release the focus control list
 		//////
-			if (objFocusControls)		free(objFocusControls);
-			if (emBuffers)				free(emBuffers);
+			if (objFocusControls)
+				iBuilder_freeAndRelease(&objFocusControls);
 
 
 		// All done
