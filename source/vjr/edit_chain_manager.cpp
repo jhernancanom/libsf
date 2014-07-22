@@ -598,7 +598,7 @@ _asm int 3;
 					em->ecCursorLine			= ec;
 					em->ecCursorLineLast		= ec;
 					em->ecTopLine				= ec;
-					em->ecSelectedLineStart	= NULL;
+					em->ecSelectedLineStart		= NULL;
 					em->ecSelectedLineEnd		= NULL;
 				}
 			}
@@ -1119,6 +1119,9 @@ _asm int 3;
 			if (tlIsAscii)
 				iEditManager_keystroke(em, obj, (u8)tnAsciiChar);		// It's a regular input key
 		}
+
+		// Re-render the window if need be
+		iWindow_render(win);
 
 		// Indicate additional events should be processed
 		return(true);

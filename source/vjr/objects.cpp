@@ -493,7 +493,8 @@
 		obj->bmp = iBmp_verifySizeOrResize(obj->bmp, tnWidth, tnHeight);
 
 		// Position and size its rectangle
-		SetRect(&obj->rc, tnLeft, tnTop, tnLeft + tnWidth, tnTop + tnHeight);
+		SetRect(&obj->rc,			tnLeft, tnTop, tnLeft + tnWidth, tnTop + tnHeight);
+		CopyRect(&obj->rcClient,	&obj->rc);
 
 		// Update the client area
 		switch (obj->objType)
@@ -502,13 +503,11 @@
 				break;
 
 			case _OBJ_TYPE_FORM:
-				form = obj;
-				SetRect(&form->rcClient, 8, form->pa.bmpIcon->bi.biHeight + 2, tnWidth - form->pa.bmpIcon->bi.biHeight - 2, tnHeight - form->pa.bmpIcon->bi.biHeight - 1);
+				SetRect(&obj->rcClient, 8, obj->pa.bmpIcon->bi.biHeight + 2, tnWidth - obj->pa.bmpIcon->bi.biHeight - 2, tnHeight - obj->pa.bmpIcon->bi.biHeight - 1);
 				break;
 
 			case _OBJ_TYPE_SUBFORM:
-				subform = obj;
-				SetRect(&subform->rcClient, 0, subform->pa.bmpIcon->bi.biHeight, tnWidth - 8, tnHeight);
+				SetRect(&obj->rcClient, 0, obj->pa.bmpIcon->bi.biHeight, tnWidth - 8, tnHeight);
 				break;
 
 			case _OBJ_TYPE_LABEL:

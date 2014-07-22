@@ -295,12 +295,12 @@
 		// Position and size each window
 		//////
 			lnHeight = (gobj_jdebi->rcClient.bottom - gobj_jdebi->rcClient.top) / 8;
-			iObj_setSize(sourceCode, 0,					0,						gobj_jdebi->rcClient.right - gobj_jdebi->rcClient.left,						4 * lnHeight);
-			iObj_setSize(locals,	0,					sourceCode->rc.bottom,	gobj_jdebi->rcClient.right - gobj_jdebi->rcClient.left,						lnHeight);
-			iObj_setSize(watch,		0,					locals->rc.bottom,		gobj_jdebi->rcClient.right - gobj_jdebi->rcClient.left,						lnHeight);
-			iObj_setSize(command,	0,					watch->rc.bottom,		watch->rc.right / 2,														(gobj_jdebi->rcClient.bottom - gobj_jdebi->rcClient.top) - watch->rc.bottom);
-			iObj_setSize(debug,		command->rc.right,	command->rc.top,		command->rc.right / 2,														(gobj_jdebi->rcClient.bottom - gobj_jdebi->rcClient.top) - watch->rc.bottom);
-			iObj_setSize(output,	debug->rc.right,	command->rc.top,		gobj_jdebi->rcClient.right - gobj_jdebi->rcClient.left - debug->rc.right,	(gobj_jdebi->rcClient.bottom - gobj_jdebi->rcClient.top) - watch->rc.bottom);
+			iObj_setSize(sourceCode,	0,					0,						gobj_jdebi->rcClient.right - gobj_jdebi->rcClient.left,						4 * lnHeight);
+			iObj_setSize(locals,		0,					sourceCode->rc.bottom,	gobj_jdebi->rcClient.right - gobj_jdebi->rcClient.left,						lnHeight);
+			iObj_setSize(watch,			0,					locals->rc.bottom,		gobj_jdebi->rcClient.right - gobj_jdebi->rcClient.left,						lnHeight);
+			iObj_setSize(command,		0,					watch->rc.bottom,		watch->rc.right / 2,														(gobj_jdebi->rcClient.bottom - gobj_jdebi->rcClient.top) - watch->rc.bottom);
+			iObj_setSize(debug,			command->rc.right,	command->rc.top,		command->rc.right / 2,														(gobj_jdebi->rcClient.bottom - gobj_jdebi->rcClient.top) - watch->rc.bottom);
+			iObj_setSize(output,		debug->rc.right,	command->rc.top,		gobj_jdebi->rcClient.right - gobj_jdebi->rcClient.left - debug->rc.right,	(gobj_jdebi->rcClient.bottom - gobj_jdebi->rcClient.top) - watch->rc.bottom);
 
 
 		//////////
@@ -318,12 +318,12 @@
 		// Position and size each control
 		//////
 			lnHeight = (gobj_jdebi->rcClient.bottom - gobj_jdebi->rcClient.top) / 8;
-			iObj_setSize(sourceCode_editbox,	sourceCode->rcClient.left,	sourceCode->rcClient.top,	sourceCode->rcClient.right	- sourceCode->rcClient.left,	sourceCode->rcClient.bottom	- sourceCode->rcClient.top);
-			iObj_setSize(locals_editbox,		locals->rcClient.left,		locals->rcClient.top,		locals->rcClient.right		- locals->rcClient.left,		locals->rcClient.bottom		- locals->rcClient.top);
-			iObj_setSize(watch_editbox,			watch->rcClient.left,		watch->rcClient.top,		watch->rcClient.right		- watch->rcClient.left,			watch->rcClient.bottom		- watch->rcClient.top);
-			iObj_setSize(command_editbox,		command->rcClient.left,		command->rcClient.top,		command->rcClient.right		- command->rcClient.left,		command->rcClient.bottom	- command->rcClient.top);
-			iObj_setSize(debug_editbox,			debug->rcClient.left,		debug->rcClient.top,		debug->rcClient.right		- debug->rcClient.left,			debug->rcClient.bottom		- debug->rcClient.top);
-			iObj_setSize(output_editbox,		output->rcClient.left,		output->rcClient.top,		output->rcClient.right		- output->rcClient.left,		output->rcClient.bottom		- output->rcClient.top);
+			iObj_setSize(sourceCode_editbox,	0,	0,		sourceCode->rcClient.right	- sourceCode->rcClient.left,	sourceCode->rcClient.bottom	- sourceCode->rcClient.top);
+			iObj_setSize(locals_editbox,		0,	0,		locals->rcClient.right		- locals->rcClient.left,		locals->rcClient.bottom		- locals->rcClient.top);
+			iObj_setSize(watch_editbox,			0,	0,		watch->rcClient.right		- watch->rcClient.left,			watch->rcClient.bottom		- watch->rcClient.top);
+			iObj_setSize(command_editbox,		0,	0,		command->rcClient.right		- command->rcClient.left,		command->rcClient.bottom	- command->rcClient.top);
+			iObj_setSize(debug_editbox,			0,	0,		debug->rcClient.right		- debug->rcClient.left,			debug->rcClient.bottom		- debug->rcClient.top);
+			iObj_setSize(output_editbox,		0,	0,		output->rcClient.right		- output->rcClient.left,		output->rcClient.bottom		- output->rcClient.top);
 
 
 		//////////
@@ -709,25 +709,25 @@
 //////
 	void iWindow_render(SWindow* win)
 	{
-//////////
-// Temporarily force the commandWindow to be marked dirty
-//////
-	if (win->obj == gobj_jdebi)
-	{
-		SObject* obj;
-		obj = gobj_jdebi->firstChild;
-		while (obj)
-		{
-			if (obj->objType == _OBJ_TYPE_SUBFORM)
-				obj->isDirty = true;
-
-			// Move to next item
-			obj = (SObject*)obj->ll.next;
-		}
-	}
-//////
-// END
-//////////
+// //////////
+// // Temporarily force the commandWindow to be marked dirty
+// //////
+// 	if (win->obj == gobj_jdebi)
+// 	{
+// 		SObject* obj;
+// 		obj = gobj_jdebi->firstChild;
+// 		while (obj)
+// 		{
+// 			if (obj->objType == _OBJ_TYPE_SUBFORM)
+// 				obj->isDirty = true;
+// 
+// 			// Move to next item
+// 			obj = (SObject*)obj->ll.next;
+// 		}
+// 	}
+// //////
+// // END
+// //////////
 
 
 		// Make sure we have something to render
