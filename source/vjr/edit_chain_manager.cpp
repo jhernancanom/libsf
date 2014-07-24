@@ -851,20 +851,28 @@ _asm int 3;
 					case VK_F11:
 						// Execute this line of code
 						if (em && em->ecCursorLine && em->ecCursorLine->sourceCodePopulated > 0)
+						{
 							iEngine_executeStandaloneCommand(em->ecCursorLine);
 
-						// Move to next line and redraw
-						iEditManager_navigate(em, obj, 1, 0);
-						return(true);
+							// Move to next line and redraw
+							iEditManager_navigate(em, obj, 1, 0);
+							iWindow_render(win, false);
+							return(true);
+						}
+						break;
 
 					case VK_RETURN:
 						// Are we on the last line?
 						if (em && em->ecCursorLine && !em->ecCursorLine->ll.next && em->ecCursorLine->sourceCodePopulated > 0)
+						{
 							iEngine_executeStandaloneCommand(em->ecCursorLine);
 
-						// Draw it like normal
-						iEditManager_returnKey(em, obj);
-						return(true);
+							// Draw it like normal
+							iEditManager_returnKey(em, obj);
+							iWindow_render(win, false);
+							return(true);
+						}
+						break;
 				}
 
 			} else if (tlCtrl && !tlShift && !tlAlt) {
@@ -904,10 +912,12 @@ _asm int 3;
 //////
 	bool iEditManager_onKeyDown(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tnAsciiChar, u16 tnVKey, bool tlIsCAS, bool tlIsAscii)
 	{
-		SEM* em;
+		bool	llProcessed;
+		SEM*	em;
 
 
 		// Make sure our environment is sane
+		llProcessed = false;
 		if (obj && obj->objType == _OBJ_TYPE_EDITBOX && obj->pa.em)
 		{
 			// Grab the EM for this
@@ -929,30 +939,51 @@ _asm int 3;
 
 						// Move to next line and redraw
 						iEditManager_navigate(em, obj, 1, 0);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_UP:
 						iEditManager_navigate(em, obj, -1, 0);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_DOWN:
 						iEditManager_navigate(em, obj, 1, 0);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_PRIOR:		// Page up
 						iEditManager_navigatePages(em, obj, -1);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_NEXT:		// Page down
 						iEditManager_navigatePages(em, obj, 1);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_ESCAPE:		// They hit escape, and are cancelling the input
 						iEditManager_clearLine(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_TAB:
 						iEditManager_tabIn(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_RETURN:
@@ -962,37 +993,60 @@ _asm int 3;
 
 						// Draw it like normal
 						iEditManager_returnKey(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_LEFT:
 						iEditManager_navigate(em, obj, 0, -1);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_RIGHT:
 						iEditManager_navigate(em, obj, 0, 1);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_HOME:
 						iEditManager_navigate(em, obj, 0, -(em->column));
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_END:
 						if (em->column != em->ecCursorLine->sourceCodePopulated)
 							iEditManager_navigate(em, obj, 0, em->ecCursorLine->sourceCodePopulated - em->column);
 
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_INSERT:
 						iEditManager_toggleInsert(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_BACK:
 						iEditManager_deleteLeft(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_DELETE:
-					iEditManager_deleteRight(em, obj);
-					break;
+						iEditManager_deleteRight(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
+						break;
 				}
 
 			} else if (tlCtrl && !tlShift && !tlAlt) {
@@ -1001,18 +1055,30 @@ _asm int 3;
 				{
 					case 'A':		// Select all
 						iEditManager_selectAll(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case 'X':		// Cut
 						iEditManager_cut(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case 'C':		// Copy
 						iEditManager_copy(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case 'V':		// Paste
 						iEditManager_paste(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case 'W':		// Save and close
@@ -1023,26 +1089,44 @@ _asm int 3;
 
 					case VK_LEFT:	// Word left
 						iEditManager_navigateWordLeft(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_RIGHT:	// Word right
 						iEditManager_navigateWordRight(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_HOME:	// Home (go to top of content)
 						iEditManager_navigateTop(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_END:	// Page down (go to end of content)
 						iEditManager_navigateEnd(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_BACK:
 						iEditManager_deleteWordLeft(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_DELETE:
 						iEditManager_deleteWordRight(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 				}
 
@@ -1052,30 +1136,51 @@ _asm int 3;
 				{
 					case VK_UP:		// Select line up
 						iEditManager_selectLineUp(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_DOWN:	// Select line down
 						iEditManager_selectLineDown(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_LEFT:	// Select left
 						iEditManager_selectLeft(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_RIGHT:	// Select right
 						iEditManager_selectRight(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_END:	// Select to end
 						iEditManager_selectToEndOfLine(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_HOME:	// Select to start
 						iEditManager_selectToBeginOfLine(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_TAB:	// Shift tab
 						iEditManager_tabOut(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 				}
 
@@ -1085,10 +1190,16 @@ _asm int 3;
 				{
 					case 'K':		// Select column mode
 						iEditManager_selectColumnToggle(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case 'L':		// Select full line mode
 						iEditManager_selectLineToggle(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 				}
 
@@ -1098,10 +1209,16 @@ _asm int 3;
 				{
 					case VK_LEFT:	// Select word left
 						iEditManager_selectWordLeft(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 
 					case VK_RIGHT:	// Select word right
 						iEditManager_selectWordRight(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
 						break;
 				}
 
@@ -1113,15 +1230,16 @@ _asm int 3;
 
 			} else if (tlCtrl && tlShift && tlAlt) {
 				// CTRL+ALT+SHIFT+
+
 			}
 
 			// If we get here, it wasn't processed above.  Try to stick it in the buffer
-			if (tlIsAscii)
+			if (!llProcessed && tlIsAscii)
 				iEditManager_keystroke(em, obj, (u8)tnAsciiChar);		// It's a regular input key
 		}
 
 		// Re-render the window if need be
-		iWindow_render(win);
+		iWindow_render(win, false);
 
 		// Indicate additional events should be processed
 		return(true);
@@ -1266,6 +1384,10 @@ _asm int 3;
 			// Fill in the remainder of the display
 			SetRect(&lrc, rc.left, rc.top + lnTop, rc.right, rc.bottom);
 			iBmp_fillRect(bmp, &lrc, backColor, backColor, backColor, backColor, false, NULL, false);
+
+// s8 buffer[256];
+// sprintf(buffer, "c:\\temp\\ems\\%u.bmp\0", (u32)em);
+// iBmp_saveToDisk(bmp, buffer);
 
 			// Reset the font
 			SelectObject(bmp->hdc, hfontOld);

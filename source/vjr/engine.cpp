@@ -117,7 +117,7 @@
 						// They want to clear the screen
 						iEditManager_navigateTop(screenData, gobj_screen);
 						iEditManager_deleteChain(&screenData, false);
-						iWindow_render(gWinScreen);
+						iWindow_render(gWinScreen, false);
 						break;
 
 					case _ICODE_QUESTION_MARK:
@@ -127,7 +127,7 @@
 							// Syntax error, expected "? something" got only "?"
 							iEditManager_appendLine(screenData, (s8*)cgcSyntaxError, -1);
 							iEditManager_navigateEnd(screenData, gobj_screen);
-							iWindow_render(gWinScreen);
+							iWindow_render(gWinScreen, false);
 							return(false);
 
 						} else {
@@ -140,7 +140,7 @@
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error
 									iEditManager_navigateEnd(screenData, gobj_screen);
-									iWindow_render(gWinScreen);
+									iWindow_render(gWinScreen, false);
 									return(false);
 								}
 
@@ -151,7 +151,7 @@
 									// Unknown parameter
 									iError_report(cgcUnrecognizedParameter);
 									iEditManager_navigateEnd(screenData, gobj_screen);
-									iWindow_render(gWinScreen);
+									iWindow_render(gWinScreen, false);
 									return(false);
 								}
 							}
@@ -161,6 +161,7 @@
 							// Add its contents to _screen
 							iEditManager_appendLine(screenData, varText->value.data, varText->value.length);
 							iEditManager_navigateEnd(screenData, gobj_screen);
+							iWindow_render(gWinScreen, false);
 
 							// Release the variable if it was manufactured
 							iVariable_delete(varText, true);
@@ -182,7 +183,7 @@
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error
 									iEditManager_navigateEnd(screenData, gobj_screen);
-									iWindow_render(gWinScreen);
+									iWindow_render(gWinScreen, false);
 									return(false);
 								}
 
@@ -193,7 +194,7 @@
 									// Unknown parameter
 									iError_report(cgcUnrecognizedParameter);
 									iEditManager_navigateEnd(screenData, gobj_screen);
-									iWindow_render(gWinScreen);
+									iWindow_render(gWinScreen, false);
 									return(false);
 								}
 							}

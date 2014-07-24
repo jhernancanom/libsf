@@ -509,6 +509,7 @@
 //////
 	SWindow* iWindow_createForObject(SObject* obj, SWindow* winReuse, s32 icon)
 	{
+		s32				lnWidth, lnHeight;
 		SWindow*		winNew;
 		WNDCLASSEXA		classex;
 		ATOM			atom;
@@ -539,12 +540,14 @@
 					memset(buffer, 0, sizeof(buffer));
 
 					// Populate
-					CopyRect(&winNew->rc, &obj->rc);
+					lnWidth		= obj->rc.right - obj->rc.left;
+					lnHeight	= obj->rc.bottom - obj->rc.top;
+					SetRect(&winNew->rc, 0, 0, lnWidth, lnHeight);
 					winNew->obj = obj;
 
 					// Create our accumulation buffer
 					winReuse->bmp = iBmp_allocate();
-					iBmp_createBySize(winReuse->bmp, winNew->rc.right - winNew->rc.left, winNew->rc.bottom - winNew->rc.top, 32);
+					iBmp_createBySize(winReuse->bmp, lnWidth, lnHeight, 24);
 
 
 					//////////
@@ -707,7 +710,7 @@
 // Called to re-render the indicated window
 //
 //////
-	void iWindow_render(SWindow* win)
+	void iWindow_render(SWindow* win, bool tlForceRedraw)
 	{
 // //////////
 // // Temporarily force the commandWindow to be marked dirty
@@ -736,9 +739,11 @@
 		if (win && win->obj)
 		{
 // if (win->obj == gobj_jdebi)		st1 = GetTickCount();
-			iObj_render(win->obj, true, true);
+			iObj_renderChildrenAndSiblings(win->obj, true, true, tlForceRedraw);
+
 // if (win->obj == gobj_jdebi)		st2 = GetTickCount();
 			iObj_publish(win->bmp, &win->rc, win->obj, true, true);
+
 // if (win->obj == gobj_jdebi)		st3 = GetTickCount();
 // if (win->obj == gobj_jdebi)
 // {
@@ -1969,10 +1974,10 @@ _asm int 3;
 		lnResult = -2;
 
 		// Make sure our environment is sane
-		if (datumLeft && datumRight)
+		if (datumLeft && datumLeft->data && datumLeft->length != 0 && datumRight && datumRight->data && datumRight->length > 0)
 		{
 			// Do a standard compare
-			lnResult = memcmp(datumLeft->data, datumRight->data, min(datumLeft->length, datumRight->length));
+			lnResult = _memicmp(datumLeft->data, datumRight->data, min(datumLeft->length, datumRight->length));
 		}
 
 		// Indicate our result
@@ -1988,14 +1993,14 @@ _asm int 3;
 		lnResult = -2;
 
 		// Make sure our environment is sane
-		if (datumLeft && data)
+		if (datumLeft && datumLeft->data && datumLeft->length != 0 && data)
 		{
 			// Make sure our length is set
 			if (dataLength < 0)
 				dataLength = strlen(data);
 
 			// Do a standard compare
-			lnResult = memcmp(datumLeft->data, data, min(datumLeft->length, dataLength));
+			lnResult = _memicmp(datumLeft->data, data, min(datumLeft->length, dataLength));
 		}
 
 		// Indicate our result

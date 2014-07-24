@@ -156,8 +156,8 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iInit_create_jdebiObject();
 
 		// Initially render each one
-		iObj_render(gobj_screen,	true, true);
-		iObj_render(gobj_jdebi,		true, true);
+		iObj_render(gobj_screen,	true);
+		iObj_render(gobj_jdebi,		true);
 
 		// Create our global variables
 		varGlobals = function_datetime(NULL, NULL, NULL, NULL, NULL, NULL, NULL);
@@ -200,9 +200,6 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		}
 		// Navigate to the end of the content
 		iEditManager_navigateEnd(screenData, gobj_screen);
-		// Redraw
-		gobj_screen->isDirty = true;
-		iWindow_render(gWinScreen);
 
 		// Initially populate _jdebi
 		// Load in the history if it exists
@@ -228,6 +225,8 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iEditManager_loadFromDisk(sourceCode_editbox->pa.em, NULL, (s8*)cgcStartupPrgFilename, true);
 
 		// Redraw
-		gobj_jdebi->isDirty = true;
-		iWindow_render(gWinJDebi);
+		iWindow_render(gWinJDebi, true);
+
+		// Redraw
+		iWindow_render(gWinScreen, true);
 	}

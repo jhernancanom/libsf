@@ -286,7 +286,7 @@
 // Called to render the indicated object
 //
 //////
-	u32 iObj_render(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings)
+	u32 iObj_render(SObject* obj, bool tlForceRender)
 	{
 		u32 lnPixelsRendered;
 
@@ -295,50 +295,54 @@
 		lnPixelsRendered = 0;
 		if (obj)
 		{
+			// If they're forcing a render, set it up
+			obj->isDirty |= tlForceRender;
+
+			// Which object are they rendering?
 			switch (obj->objType)
 			{
 				case _OBJ_TYPE_EMPTY:		// Empty, used as a placeholder object that is not drawn
-					lnPixelsRendered += iSubobj_renderEmpty(obj, tlRenderChildren, tlRenderSiblings);
+					lnPixelsRendered += iSubobj_renderEmpty(obj);
 					break;
 
 				case _OBJ_TYPE_FORM:			// Form class, the main outer window the OS sees
-					lnPixelsRendered += iSubobj_renderForm(obj, tlRenderChildren, tlRenderSiblings);
+					lnPixelsRendered += iSubobj_renderForm(obj);
 					break;
 
 				case _OBJ_TYPE_SUBFORM:		// A new class which has its own drawing content and can be moved about using UI features
-					lnPixelsRendered += iSubobj_renderSubform(obj, tlRenderChildren, tlRenderSiblings);
+					lnPixelsRendered += iSubobj_renderSubform(obj);
 					break;
 
 				case _OBJ_TYPE_LABEL:		// A label
-					lnPixelsRendered += iSubobj_renderLabel(obj, tlRenderChildren, tlRenderSiblings);
+					lnPixelsRendered += iSubobj_renderLabel(obj);
 					break;
 
 				case _OBJ_TYPE_TEXTBOX:		// An input textbox
-					lnPixelsRendered += iSubobj_renderTextbox(obj, tlRenderChildren, tlRenderSiblings);
+					lnPixelsRendered += iSubobj_renderTextbox(obj);
 					break;
 
 				case _OBJ_TYPE_BUTTON:		// A push button
-					lnPixelsRendered += iSubobj_renderButton(obj, tlRenderChildren, tlRenderSiblings);
+					lnPixelsRendered += iSubobj_renderButton(obj);
 					break;
 
 				case _OBJ_TYPE_EDITBOX:		// An input multi-line editbox
-					lnPixelsRendered += iSubobj_renderEditbox(obj, tlRenderChildren, tlRenderSiblings);
+					lnPixelsRendered += iSubobj_renderEditbox(obj);
 					break;
 
 				case _OBJ_TYPE_IMAGE:		// A graphical image
-					lnPixelsRendered += iSubobj_renderImage(obj, tlRenderChildren, tlRenderSiblings);
+					lnPixelsRendered += iSubobj_renderImage(obj);
 					break;
 
 				case _OBJ_TYPE_CHECKBOX:		// A checkbox
-					lnPixelsRendered += iSubobj_renderCheckbox(obj, tlRenderChildren, tlRenderSiblings);
+					lnPixelsRendered += iSubobj_renderCheckbox(obj);
 					break;
 
 				case _OBJ_TYPE_OPTION:		// A combination selection
-					lnPixelsRendered += iSubobj_renderOption(obj, tlRenderChildren, tlRenderSiblings);
+					lnPixelsRendered += iSubobj_renderOption(obj);
 					break;
 
 				case _OBJ_TYPE_RADIO:		// A radio dial, which can also present as a slider or spinner
-					lnPixelsRendered += iSubobj_renderRadio(obj, tlRenderChildren, tlRenderSiblings);
+					lnPixelsRendered += iSubobj_renderRadio(obj);
 					break;
 
 				default:
@@ -359,7 +363,7 @@
 // Called from subobjects to render any object children and sibling they may have based on flags
 //
 //////
-	void iObj_renderChildrenAndSiblings(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings)
+	void iObj_renderChildrenAndSiblings(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings, bool tlForceRender)
 	{
 		SObject* objSib;
 
@@ -368,8 +372,13 @@
 		// Render any children
 		//////
 			if (tlRenderChildren && obj->firstChild)
-				iObj_render(obj->firstChild, true, true);
+				iObj_renderChildrenAndSiblings(obj->firstChild, true, true, tlForceRender);
 
+
+		//////////
+		// Render self
+		//////
+			iObj_render(obj, tlForceRender);
 
 		//////////
 		// Render any siblings
@@ -380,7 +389,7 @@
 				while (objSib)
 				{
 					// Render this sibling
-					iObj_render(objSib, true, true);
+					iObj_renderChildrenAndSiblings(objSib, true, false, tlForceRender);
 
 					// Move to next sibling
 					objSib = (SObject*)objSib->ll.next;
@@ -484,11 +493,6 @@
 //////
 	void iObj_setSize(SObject* obj, s32 tnLeft, s32 tnTop, s32 tnWidth, s32 tnHeight)
 	{
-		union {
-			SObject*	form;
-			SObject*	subform;
-		};
-
 		// Resize if need be
 		obj->bmp = iBmp_verifySizeOrResize(obj->bmp, tnWidth, tnHeight);
 
@@ -500,6 +504,7 @@
 		switch (obj->objType)
 		{
 			case _OBJ_TYPE_EMPTY:
+				// Just use the default rcClient settings above
 				break;
 
 			case _OBJ_TYPE_FORM:
@@ -511,27 +516,35 @@
 				break;
 
 			case _OBJ_TYPE_LABEL:
+				// Just use the default rcClient settings above
 				break;
 
 			case _OBJ_TYPE_TEXTBOX:
+				// Just use the default rcClient settings above
 				break;
 
 			case _OBJ_TYPE_BUTTON:
+				// Just use the default rcClient settings above
 				break;
 
 			case _OBJ_TYPE_EDITBOX:
+				// Just use the default rcClient settings above
 				break;
 
 			case _OBJ_TYPE_IMAGE:
+				// Just use the default rcClient settings above
 				break;
 
 			case _OBJ_TYPE_CHECKBOX:
+				// Just use the default rcClient settings above
 				break;
 
 			case _OBJ_TYPE_OPTION:
+				// Just use the default rcClient settings above
 				break;
 
 			case _OBJ_TYPE_RADIO:
+				// Just use the default rcClient settings above
 				break;
 		}
 
@@ -791,7 +804,7 @@
 	u32 iObj_publish(SBitmap* bmpDst, RECT* rc, SObject* obj, bool tlPublishChildren, bool tlPublishSiblings)
 	{
 		u32			lnWidth, lnHeight, lnPixelsRendered;
-		RECT		lrc;
+		RECT		lrc, lrcParent;
 		SObject*	objSib;
 
 
@@ -802,39 +815,38 @@
 			//////////
 			// Determine the position within the parent's rectangle where this object will go
 			//////
-				if (obj->parent)
+				// Adjust this item within the parent's rectangle
+				SetRect(&lrc,	rc->left	+ obj->rc.left,
+								rc->top		+ obj->rc.top,
+								rc->left	+ obj->rc.right,
+								rc->top		+ obj->rc.bottom);
+
+				// Default the parent rectangle for any subsequent drawing within
+				SetRect(&lrcParent, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+
+				// This is a top-level entry, so adjust everything to rcClient, or to 0
+				switch (obj->objType)
 				{
-					// Adjust this item within the parent's rectangle
-					SetRect(&lrc,	rc->left	+ obj->rc.left,
-									rc->top		+ obj->rc.top,
-									rc->left	+ obj->rc.right,
-									rc->top		+ obj->rc.bottom);
-
-				} else {
-					// This is a top-level entry, so adjust everything to rcClient, or to 0
-					switch (obj->objType)
-					{
-						case _OBJ_TYPE_FORM:
-						case _OBJ_TYPE_SUBFORM:
-							// Bypass the frame area
-							CopyRect(&lrc, &obj->rcClient);
-							break;
-
-						default:
-							// The object occupies its entire space
-							SetRect(&lrc,	0,
-											0,
-											obj->rc.right - obj->rc.left,
-											obj->rc.bottom -obj->rc.top);
-					}
+					case _OBJ_TYPE_FORM:
+					case _OBJ_TYPE_SUBFORM:
+						// Bypass the frame area
+						CopyRect(&lrcParent, &obj->rcClient);
+						break;
 				}
+
+
+			//////////
+			// Clip the publication to the target rectangle
+			//////
+				lrc.right	= min(rc->right, lrc.right);
+				lrc.bottom	= min(rc->bottom, lrc.bottom);
 
 
 			//////////
 			// Publish any children
 			//////
 				if (tlPublishChildren && obj->firstChild)
-					lnPixelsRendered += iObj_publish(obj->bmp, &lrc, obj->firstChild, true, true);
+					lnPixelsRendered += iObj_publish(obj->bmp, &lrcParent, obj->firstChild, true, true);
 
 
 			//////////
@@ -862,15 +874,12 @@
 					iBmp_scale(obj->bmpScaled, obj->bmp);
 
 					// Perform the bitblt
-					if (bmpDst)
+					if (bmpDst && obj->isPublished)
 						lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmpScaled);
 
 				} else {
 					// We can just copy
-// s8 buffer[256];
-// sprintf(buffer, "c:\\temp\\publish_obj%u.bmp\0", (u32)obj);
-// iBmp_saveToDisk(obj->bmp, buffer);
-					if (bmpDst)
+					if (bmpDst && obj->isPublished)
 						lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
 				}
 
@@ -988,8 +997,10 @@
 				memset(emptyNew, 0, sizeof(SObject));
 
 				// Initially populate
-				emptyNew->objType	= _OBJ_TYPE_EMPTY;
-				emptyNew->parent	= parent;
+				emptyNew->objType		= _OBJ_TYPE_EMPTY;
+				emptyNew->parent		= parent;
+				emptyNew->isRendered	= true;
+				emptyNew->isPublished	= true;
 				iDatum_duplicate(&emptyNew->pa.name,		cgcName_empty, -1);
 				iDatum_duplicate(&emptyNew->pa.className,	cgcName_empty, -1);
 
@@ -1047,8 +1058,10 @@
 				memset(formNew, 0, sizeof(SObject));
 
 				// Initially populate
-				formNew->objType	= _OBJ_TYPE_FORM;
-				formNew->parent		= parent;
+				formNew->objType		= _OBJ_TYPE_FORM;
+				formNew->parent			= parent;
+				formNew->isRendered		= true;
+				formNew->isPublished	= true;
 				iDatum_duplicate(&formNew->pa.name,			cgcName_form, -1);
 				iDatum_duplicate(&formNew->pa.className,	cgcName_form, -1);
 
@@ -1132,8 +1145,10 @@
 				memset(subformNew, 0, sizeof(SObject));
 
 				// Initially populate
-				subformNew->objType	= _OBJ_TYPE_SUBFORM;
-				subformNew->parent	= parent;
+				subformNew->objType		= _OBJ_TYPE_SUBFORM;
+				subformNew->parent		= parent;
+				subformNew->isRendered	= true;
+				subformNew->isPublished	= true;
 				iDatum_duplicate(&subformNew->pa.name,		cgcName_subform, -1);
 				iDatum_duplicate(&subformNew->pa.className,	cgcName_subform, -1);
 
@@ -1184,8 +1199,10 @@
 				memset(labelNew, 0, sizeof(SObject));
 
 				// Initially populate
-				labelNew->objType	= _OBJ_TYPE_LABEL;
-				labelNew->parent	= parent;
+				labelNew->objType		= _OBJ_TYPE_LABEL;
+				labelNew->parent		= parent;
+				labelNew->isRendered	= true;
+				labelNew->isPublished	= true;
 				iDatum_duplicate(&labelNew->pa.name,		cgcName_label, -1);
 				iDatum_duplicate(&labelNew->pa.className,	cgcName_label, -1);
 
@@ -1236,8 +1253,10 @@
 				memset(textboxNew, 0, sizeof(SObject));
 
 				// Initially populate
-				textboxNew->objType	= _OBJ_TYPE_TEXTBOX;
-				textboxNew->parent	= parent;
+				textboxNew->objType		= _OBJ_TYPE_TEXTBOX;
+				textboxNew->parent		= parent;
+				textboxNew->isRendered	= true;
+				textboxNew->isPublished	= true;
 				iDatum_duplicate(&textboxNew->pa.name,		cgcName_textbox, -1);
 				iDatum_duplicate(&textboxNew->pa.className,	cgcName_textbox, -1);
 
@@ -1288,8 +1307,10 @@
 				memset(buttonNew, 0, sizeof(SObject));
 
 				// Initially populate
-				buttonNew->objType	= _OBJ_TYPE_BUTTON;
-				buttonNew->parent	= parent;
+				buttonNew->objType		= _OBJ_TYPE_BUTTON;
+				buttonNew->parent		= parent;
+				buttonNew->isRendered	= true;
+				buttonNew->isPublished	= true;
 				iDatum_duplicate(&buttonNew->pa.name,		cgcName_button, -1);
 				iDatum_duplicate(&buttonNew->pa.className,	cgcName_button, -1);
 
@@ -1340,8 +1361,10 @@
 				memset(editboxNew, 0, sizeof(SObject));
 
 				// Initially populate
-				editboxNew->objType	= _OBJ_TYPE_EDITBOX;
-				editboxNew->parent	= parent;
+				editboxNew->objType		= _OBJ_TYPE_EDITBOX;
+				editboxNew->parent		= parent;
+				editboxNew->isRendered	= true;
+				editboxNew->isPublished	= true;
 				iDatum_duplicate(&editboxNew->pa.name,		cgcName_editbox, -1);
 				iDatum_duplicate(&editboxNew->pa.className,	cgcName_editbox, -1);
 
@@ -1392,8 +1415,10 @@
 				memset(imageNew, 0, sizeof(SObject));
 
 				// Initially populate
-				imageNew->objType	= _OBJ_TYPE_IMAGE;
-				imageNew->parent	= parent;
+				imageNew->objType		= _OBJ_TYPE_IMAGE;
+				imageNew->parent		= parent;
+				imageNew->isRendered	= true;
+				imageNew->isPublished	= true;
 				iDatum_duplicate(&imageNew->pa.name,		cgcName_image, -1);
 				iDatum_duplicate(&imageNew->pa.className,	cgcName_image, -1);
 
@@ -1444,8 +1469,10 @@
 				memset(checkboxNew, 0, sizeof(SObject));
 
 				// Initially populate
-				checkboxNew->objType	= _OBJ_TYPE_CHECKBOX;
-				checkboxNew->parent		= parent;
+				checkboxNew->objType		= _OBJ_TYPE_CHECKBOX;
+				checkboxNew->parent			= parent;
+				checkboxNew->isRendered		= true;
+				checkboxNew->isPublished	= true;
 				iDatum_duplicate(&checkboxNew->pa.name,			cgcName_checkbox, -1);
 				iDatum_duplicate(&checkboxNew->pa.className,	cgcName_checkbox, -1);
 
@@ -1496,8 +1523,10 @@
 				memset(optionNew, 0, sizeof(SObject));
 
 				// Initially populate
-				optionNew->objType	= _OBJ_TYPE_OPTION;
-				optionNew->parent	= parent;
+				optionNew->objType		= _OBJ_TYPE_OPTION;
+				optionNew->parent		= parent;
+				optionNew->isRendered	= true;
+				optionNew->isPublished	= true;
 				iDatum_duplicate(&optionNew->pa.name,		cgcName_option, -1);
 				iDatum_duplicate(&optionNew->pa.className,	cgcName_option, -1);
 
@@ -1548,8 +1577,10 @@
 				memset(radioNew, 0, sizeof(SObject));
 
 				// Initially populate
-				radioNew->objType	= _OBJ_TYPE_RADIO;
-				radioNew->parent	= parent;
+				radioNew->objType		= _OBJ_TYPE_RADIO;
+				radioNew->parent		= parent;
+				radioNew->isRendered	= true;
+				radioNew->isPublished	= true;
 				iDatum_duplicate(&radioNew->pa.name,		cgcName_radio, -1);
 				iDatum_duplicate(&radioNew->pa.className,	cgcName_radio, -1);
 
@@ -2734,14 +2765,8 @@
 // non-visual purposes exist.  As such, render calls are still made to it.
 //
 //////
-	u32 iSubobj_renderEmpty(SObject* empty, bool tlRenderChildren, bool tlRenderSiblings)
+	u32 iSubobj_renderEmpty(SObject* empty)
 	{
-		//////////
-		// Do any requisite processing
-		//////
-			iObj_renderChildrenAndSiblings(empty, tlRenderChildren, tlRenderSiblings);
-
-
 		//////////
 		// Success!
 		//////
@@ -2764,12 +2789,11 @@
 //        network resource.
 //
 //////
-	u32 iSubobj_renderForm(SObject* form, bool tlRenderChildren, bool tlRenderSiblings)
+	u32 iSubobj_renderForm(SObject* form)
 	{
-		u32				lnPixelsRendered;
-		SObject*		objSib;
-		RECT			lrc, lrc2, lrc3, lrc4;
-		HFONT			lhfontOld;
+		u32		lnPixelsRendered;
+		RECT	lrc, lrc2, lrc3, lrc4;
+		HFONT	lhfontOld;
 
 
 		// Make sure our environment is sane
@@ -2784,13 +2808,6 @@
 					form->bmp = iBmp_allocate();
 					iBmp_createBySize(form->bmp, form->rc.right - form->rc.left, form->rc.bottom - form->rc.top, 24);
 				}
-
-
-			//////////
-			// Traverse and render any children
-			//////
-				if (tlRenderChildren && form->firstChild)
-					lnPixelsRendered += iObj_render(form->firstChild, true, true);
 
 
 			//////////
@@ -2919,25 +2936,8 @@ CopyRect(&form->rcCaption, &lrc2);
 			//////
 				form->isDirty = false;
 // s8 buffer[256];
-// sprintf(buffer, "c:\\temp\\form_%u.bmp\0", (u32)obj);
-// iBmp_saveToDisk(obj->bmp, buffer);
-
-
-			//////////
-			// Render any siblings
-			//////
-				if (tlRenderSiblings && form->ll.next)
-				{
-					objSib = (SObject*)form->ll.next;
-					while (objSib)
-					{
-						// Render this sibling
-						lnPixelsRendered += iObj_render(objSib, true, true);
-
-						// Move to next sibling
-						objSib = (SObject*)objSib->ll.next;
-					}
-				}
+// sprintf(buffer, "c:\\temp\\forms\\%u.bmp\0", (u32)form);
+// iBmp_saveToDisk(form->bmp, buffer);
 		}
 
 
@@ -2956,12 +2956,11 @@ CopyRect(&form->rcCaption, &lrc2);
 // Note:  See "Note" on iRenderForm().
 //
 //////
-	u32 iSubobj_renderSubform(SObject* subform, bool tlRenderChildren, bool tlRenderSiblings)
+	u32 iSubobj_renderSubform(SObject* subform)
 	{
-		u32				lnPixelsRendered;
-		SObject*		objSib;
-		RECT			lrc, lrc2, lrc3;
-		HFONT			lhfontOld;
+		u32		lnPixelsRendered;
+		RECT	lrc, lrc2, lrc3;
+		HFONT	lhfontOld;
 
 
 		// Make sure our environment is sane
@@ -2981,13 +2980,6 @@ CopyRect(&form->rcCaption, &lrc2);
 					// Resize
 					subform->bmp = iBmp_verifySizeOrResize(subform->bmp, subform->rc.right - subform->rc.left, subform->rc.bottom - subform->rc.top);
 				}
-
-
-			//////////
-			// Traverse and render any children
-			//////
-				if (tlRenderChildren && subform->firstChild)
-					lnPixelsRendered += iObj_render(subform->firstChild, true, true);
 
 
 			//////////
@@ -3117,25 +3109,8 @@ CopyRect(&subform->rcCaption, &lrc2);
 			//////
 				subform->isDirty = false;
 // s8 buffer[256];
-// sprintf(buffer, "c:\\temp\\subform_%u.bmp\0", (u32)obj);
-// iBmp_saveToDisk(obj->bmp, buffer);
-
-
-			//////////
-			// Render any siblings
-			//////
-				if (tlRenderSiblings && subform->ll.next)
-				{
-					objSib = (SObject*)subform->ll.next;
-					while (objSib)
-					{
-						// Render this sibling
-						lnPixelsRendered += iObj_render(objSib, true, true);
-
-						// Move to next sibling
-						objSib = (SObject*)objSib->ll.next;
-					}
-				}
+// sprintf(buffer, "c:\\temp\\subforms\\%u.bmp\0", (u32)subform);
+// iBmp_saveToDisk(subform->bmp, buffer);
 		}
 
 		// Indicate how many pixels were drawn
@@ -3152,7 +3127,7 @@ CopyRect(&subform->rcCaption, &lrc2);
 // Note:  See "Note" on iRenderForm().
 //
 //////
-	u32 iSubobj_renderLabel(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings)
+	u32 iSubobj_renderLabel(SObject* obj)
 	{
 
 
@@ -3173,7 +3148,7 @@ CopyRect(&subform->rcCaption, &lrc2);
 // Note:  See "Note" on iRenderForm().
 //
 //////
-	u32 iSubobj_renderTextbox(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings)
+	u32 iSubobj_renderTextbox(SObject* obj)
 	{
 
 
@@ -3194,7 +3169,7 @@ CopyRect(&subform->rcCaption, &lrc2);
 // Note:  See "Note" on iRenderForm().
 //
 //////
-	u32 iSubobj_renderButton(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings)
+	u32 iSubobj_renderButton(SObject* obj)
 	{
 
 
@@ -3215,11 +3190,13 @@ CopyRect(&subform->rcCaption, &lrc2);
 // Note:  See "Note" on iRenderForm().
 //
 //////
-	u32 iSubobj_renderEditbox(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings)
+	u32 iSubobj_renderEditbox(SObject* obj)
 	{
 		u32 lnPixelsRendered;
 
 //		iEditManager_navigateEnd(obj->pa.em, obj);
+// if (iDatum_compare(&obj->parent->pa.caption, "command", 7) == 0)
+// 	_asm nop;
 		lnPixelsRendered = iEditManager_render(obj->pa.em, obj);
 
 		// Indicate we're no longer dirty, that we have everything
@@ -3239,7 +3216,7 @@ CopyRect(&subform->rcCaption, &lrc2);
 // Note:  See "Note" on iRenderForm().
 //
 //////
-	u32 iSubobj_renderImage(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings)
+	u32 iSubobj_renderImage(SObject* obj)
 	{
 
 
@@ -3260,7 +3237,7 @@ CopyRect(&subform->rcCaption, &lrc2);
 // Note:  See "Note" on iRenderForm().
 //
 //////
-	u32 iSubobj_renderCheckbox(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings)
+	u32 iSubobj_renderCheckbox(SObject* obj)
 	{
 
 
@@ -3281,7 +3258,7 @@ CopyRect(&subform->rcCaption, &lrc2);
 // Note:  See "Note" on iRenderForm().
 //
 //////
-	u32 iSubobj_renderOption(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings)
+	u32 iSubobj_renderOption(SObject* obj)
 	{
 
 
@@ -3302,7 +3279,7 @@ CopyRect(&subform->rcCaption, &lrc2);
 // Note:  See "Note" on iRenderForm().
 //
 //////
-	u32 iSubobj_renderRadio(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings)
+	u32 iSubobj_renderRadio(SObject* obj)
 	{
 
 

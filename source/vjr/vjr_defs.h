@@ -66,8 +66,8 @@
 	void					iObj_delete								(SObject** obj, bool tlDeleteSelf);
 	void					iObj_findFocusControls					(SObject*  obj, SBuilder* objFocusControls, bool tlProcessSiblings);
 	void					iObj_setDirty							(SObject* obj, bool tlMarkParents);
-	u32						iObj_render								(SObject*  obj, bool tlRenderChildren, bool tlRenderSiblings);
-	void					iObj_renderChildrenAndSiblings			(SObject*  obj, bool tlRenderChildren, bool tlRenderSiblings);
+	u32						iObj_render								(SObject*  obj, bool tlForceRender);
+	void					iObj_renderChildrenAndSiblings			(SObject*  obj, bool tlRenderChildren, bool tlRenderSiblings, bool tlForceRender);
 	void					iObj_duplicateChain						(SObject** root, SObject* chain);
 	void					iObj_appendObjToParent					(SObject*  parent, SObject* obj);
 	void					iObj_duplicateChildren					(SObject*  objDst, SObject* objSrc);
@@ -135,17 +135,17 @@
 
 
 	// Default render of sub-objects
-	u32						iSubobj_renderEmpty						(SObject* empty,	bool tlRenderChildren,	bool tlRenderSiblings);
-	u32						iSubobj_renderForm						(SObject* form,		bool tlRenderChildren,	bool tlRenderSiblings);
-	u32						iSubobj_renderSubform					(SObject* subform,	bool tlRenderChildren,	bool tlRenderSiblings);
-	u32						iSubobj_renderLabel						(SObject* label,	bool tlRenderChildren,	bool tlRenderSiblings);
-	u32						iSubobj_renderTextbox					(SObject* textbox,	bool tlRenderChildren,	bool tlRenderSiblings);
-	u32						iSubobj_renderButton					(SObject* button,	bool tlRenderChildren,	bool tlRenderSiblings);
-	u32						iSubobj_renderEditbox					(SObject* editbox,	bool tlRenderChildren,	bool tlRenderSiblings);
-	u32						iSubobj_renderImage						(SObject* image,	bool tlRenderChildren,	bool tlRenderSiblings);
-	u32						iSubobj_renderCheckbox					(SObject* checkbox,	bool tlRenderChildren,	bool tlRenderSiblings);
-	u32						iSubobj_renderOption					(SObject* option,	bool tlRenderChildren,	bool tlRenderSiblings);
-	u32						iSubobj_renderRadio						(SObject* radio,	bool tlRenderChildren,	bool tlRenderSiblings);
+	u32						iSubobj_renderEmpty						(SObject* empty);
+	u32						iSubobj_renderForm						(SObject* form);
+	u32						iSubobj_renderSubform					(SObject* subform);
+	u32						iSubobj_renderLabel						(SObject* label);
+	u32						iSubobj_renderTextbox					(SObject* textbox);
+	u32						iSubobj_renderButton					(SObject* button);
+	u32						iSubobj_renderEditbox					(SObject* editbox);
+	u32						iSubobj_renderImage						(SObject* image);
+	u32						iSubobj_renderCheckbox					(SObject* checkbox);
+	u32						iSubobj_renderOption					(SObject* option);
+	u32						iSubobj_renderRadio						(SObject* radio);
 
 
 //////////
@@ -208,7 +208,7 @@
 	SWindow* 				iWindow_createForObject					(SObject* obj, SWindow* winReuse, s32 icon);
 	SWindow*				iWindow_findByHwnd						(HWND hwnd);
 	SWindow*				iWindow_allocate						(void);
-	void					iWindow_render							(SWindow* win);
+	void					iWindow_render							(SWindow* win, bool tlForceRedraw);
 	void					iColor_adjustBrightness					(SBgra& color, f32 tfPercent);
 	bool					iInit_shutdownPolitely					(void);
 
