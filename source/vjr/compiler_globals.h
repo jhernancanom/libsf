@@ -37,7 +37,7 @@
 
 
 //////////
-// Basic symbols known to VXB--
+// Basic symbols known to VXB
 /////
 	SAsciiCompSearcher	cgcFundamentalSymbols[] =
 	{
@@ -126,7 +126,7 @@
 
 
 //////////
-// Keywords for VXB--
+// Keywords for VXB
 //////
 	SAsciiCompSearcher	cgcKeywordKeywords[] =
 	{
@@ -904,7 +904,7 @@
 		{ ".y.",                  	3,          false,      _ICODE_YET_ANOTHER,						false,              _ICAT_GENERIC },
 		{ ".z.",                  	3,          false,      _ICODE_ZATS_ALL_FOLKS,					false,              _ICAT_GENERIC },
 
-		// VXB-- specific
+		// VXB specific
 		{ "_vjr",					4,			false,		_ICODE_VJR,								false,				_ICAT_GENERIC },
 		{ "_jdebi",					6,			false,		_ICODE_JDEBI,							false,				_ICAT_GENERIC },
 		{ "_cmd",					4,			false,		_ICODE_CMD,								false,				_ICAT_GENERIC },

@@ -186,18 +186,27 @@ struct SWindow
 	RECT				rc;												// Rectangle of window's physical position
 	SObject*			obj;											// The top-level object being rendered in this window
 
-	SXYS32				mousePosition;									// Mouse position in this window
+	// Mouse data
+	POINT				mousePosition;									// Mouse position in this window
+	s32					mouseWheelDelta;								// How far the vertical mouse wheel has scrolled
+	s32					mouseHWheelDelta;								// How far the horizontal mouse wheel has scrolled
 	bool				isMouseLeftButton;								// Is the left mouse button down?
 	bool				isMouseMiddleButton;							// Is the middle mouse button down?
 	bool				isMouseRightButton;								// Is the right mouse button down?
+	bool				isCaps;											// Is caps lock on?
+	bool				isCtrl;											// Is the control key down?
+	bool				isAlt;											// Is the alt key down?
+	bool				isShift;										// Is the shift key down?
+
+	// For manual movement
 	bool				isMoving;										// Is this window moving?
 	bool				isResizing;										// Is this window resizing?
 	u32					resizingFrom;									// If resizing, the arrow (upper-left, upper-right, lower-left, lower-right)
 
 	// Updated as the mouse moves across the form
-	SXYS32				mouseLastPosition;								// The last recorded position of the mouse on the form (the mouse may have moved off the form and is somewhere else, but this is the last point)
-	SXYS32				mousePositionClick;								// When the mouse was last left-clicked, this is where it was clicked
-	SXYS32				mousePositionClickScreen;						// In screen coordinates, the location where the mouse was last left-button clicked down
+	POINT				mouseAdjustedPosition;								// The last recorded position of the mouse on the form (the mouse may have moved off the form and is somewhere else, but this is the last point)
+	POINT				mousePositionClick;								// When the mouse was last left-clicked, this is where it was clicked
+	POINT				mousePositionClickScreen;						// In screen coordinates, the location where the mouse was last left-button clicked down
 	bool				isMouseInClientArea;							// When the mouse is in the client area (not on the form border)
 
 	CRITICAL_SECTION	cs;												// Atomic access

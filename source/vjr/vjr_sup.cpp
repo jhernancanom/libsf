@@ -452,9 +452,6 @@
 				case WM_MOUSEWHEEL:
 				case WM_MOUSEMOVE:
 				case WM_MOUSEHOVER:
-					win->isMouseLeftButton		= ((w & MK_LBUTTON) != 0);		// The left mouse button is down
-					win->isMouseMiddleButton	= ((w & MK_MBUTTON) != 0);		// The middle mouse button is down
-					win->isMouseRightButton		= ((w & MK_RBUTTON) != 0);		// The right mouse button is down
 					return(iMouse_processMessage(win, m, w, l));
 					break;
 
@@ -542,7 +539,7 @@
 					// Populate
 					lnWidth		= obj->rc.right - obj->rc.left;
 					lnHeight	= obj->rc.bottom - obj->rc.top;
-					SetRect(&winNew->rc, 0, 0, lnWidth, lnHeight);
+					CopyRect(&winNew->rc, &obj->rc);
 					winNew->obj = obj;
 
 					// Create our accumulation buffer
@@ -582,7 +579,15 @@
 						else						memcpy(buffer, cgcScreenTitle,		sizeof(cgcScreenTitle));
 
 						// Build it
-						winNew->hwnd = CreateWindow(bufferClass, buffer, WS_POPUP, obj->rc.left, obj->rc.top, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, NULL, NULL, ghInstance, 0);
+						winNew->hwnd = CreateWindow(bufferClass, buffer, WS_POPUP, 
+														winNew->rc.left, 
+														winNew->rc.top, 
+														winNew->rc.right - winNew->rc.left, 
+														winNew->rc.bottom - winNew->rc.top, 
+														NULL, NULL, ghInstance, 0);
+
+						// Set the coordinates for the form within the window
+						SetRect(&obj->rc, 0, 0, lnWidth, lnHeight);
 
 						// Initialize it internally
 						PostMessage(winNew->hwnd, WMVJR_FIRST_CREATION, 0, 0);
@@ -1354,12 +1359,18 @@
 			if (win->isMoving || win->isResizing)
 				return;
 
-		
+
+		//////////
+		// Get the mouse flags
+		//////
+			iiMouse_getFlags(&win->isCtrl, &win->isAlt, &win->isShift, &win->isMouseLeftButton, &win->isMouseMiddleButton, &win->isMouseRightButton, &win->isCaps);
+
+
 		//////////
 		// Store the mouse position on the form in form coordinates
 		//////
-			win->mouseLastPosition.x	= lpt.x -= (SHORT)form->rcClient.left;
-			win->mouseLastPosition.y	= lpt.x -= (SHORT)form->rcClient.top;
+			win->mouseAdjustedPosition.x	= lpt.x - (SHORT)form->rcClient.left;
+			win->mouseAdjustedPosition.y	= lpt.y - (SHORT)form->rcClient.top;
 
 
 		//////////
@@ -1377,7 +1388,6 @@
 			} else {
 				// We're not in the client area
 				win->isMouseInClientArea	= false;
-				win->isMouseInClientArea	= false;
 			}
 	}
 
@@ -1392,6 +1402,7 @@
 	s32 iiMouse_processMouseEvents_client(SWindow* win, UINT m, WPARAM w, LPARAM l)
 	{
 		s32			lnResult;
+		bool		llProcessed;
 		SObject*	obj;
 
 
@@ -1404,11 +1415,363 @@
 		//////////
 		// Iterate through objects to see where it is the mouse is traipsing
 		//////
+			// Note:  win->mouseLastPosition holds the coordinates
+			// Note:  win->is* flags indicate both button and keyboard state conditions (ctrl, alt, shift, caps)
+			switch (m)
+			{
+				case WM_MOUSEWHEEL:
+					// Signal a mouseScroll
+					win->mouseWheelDelta	= (s32)((s16)(((u32)w) >> 16));
+					win->mouseHWheelDelta	= 0;
+//					iiMouse_processMouseEvents_client_mouseWheel(win, obj, &obj->rc, true, true);
+					break;
+
+				case WM_MOUSEHWHEEL:
+					// Signal a mouseHScroll
+					win->mouseWheelDelta	= 0;
+					win->mouseHWheelDelta	= (s32)((s16)(((u32)w) >> 16));
+//					iiMouse_processMouseEvents_client_mouseHWheel(win, obj, &obj->rc, true, true);
+					break;
+
+				case WM_MOUSEMOVE:
+					// Check for mouseEnter and mouseLeave, then a mouse move
+					iiMouse_processMouseEvents_client_mouseEnter_mouseLeave(win, obj, &obj->rc, true, true);
+
+					// The mouse has moved, reset the hover counter
+					obj->ev.mouse.startHoverTickCount	= GetTickCount();
+					obj->ev.mouse.hasHoverSignaled		= false;
+					break;
+
+
+				case WM_LBUTTONDOWN:
+				case WM_RBUTTONDOWN:
+				case WM_MBUTTONDOWN:
+					// Signal a mouseDown, then a click
+					llProcessed = false;
+					iiMouse_processMouseEvents_client_mouseDown(win, obj, &obj->rc, true, true, &llProcessed);
+					break;
+
+				case WM_LBUTTONUP:
+				case WM_RBUTTONUP:
+				case WM_MBUTTONUP:
+					// Signal a mouseUp
+					llProcessed = false;
+					iiMouse_processMouseEvents_client_mouseUp(win, obj, &obj->rc, true, true, &llProcessed);
+					break;
+
+				case WM_LBUTTONDBLCLK:
+					// Signal a double click
+//					iiMouse_processMouseEvents_client_dblClickEx(win, obj, &obj->rc, _MOUSE_LEFT_BUTTON, true, true);
+					break;
+
+				case WM_RBUTTONDBLCLK:
+					// Signal a double click
+//					iiMouse_processMouseEvents_client_dblClickEx(win, obj, &obj->rc, _MOUSE_RIGHT_BUTTON, true, true);
+					break;
+
+				case WM_MBUTTONDBLCLK:
+					// Signal a double click
+//					iiMouse_processMouseEvents_client_dblClickEx(win, obj, &obj->rc, _MOUSE_MIDDLE_BUTTON, true, true);
+					break;
+			}
 
 
 		// Indicate our status
 		lnResult = 0;
 		return(lnResult);
+	}
+
+
+
+
+//////////
+//
+// Called to process mouseEnter and mouseLeave events based on mouse movement
+//
+//////
+	void iiMouse_processMouseEvents_client_mouseEnter_mouseLeave(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings)
+	{
+// TODO:  This logic is not correctly accounting for the frame of forms and subforms, so the coordinates are off
+		u32			lnClick;
+		RECT		lrc;
+		SObject*	objSib;
+
+
+		// Make sure our environment is sane
+		if (obj && obj->p.isEnabled && obj->bmp)
+		{
+			//////////
+			// Determine the position within the parent's rectangle where this object will go
+			//////
+				// Adjust this item within the parent's rectangle
+				SetRect(&lrc,	rc->left	+ obj->rc.left,
+								rc->top		+ obj->rc.top,
+								rc->left	+ obj->rc.right,
+								rc->top		+ obj->rc.bottom);
+
+
+			//////////
+			// Process any children
+			//////
+				if (tlProcessChildren && obj->firstChild)
+					iiMouse_processMouseEvents_client_mouseEnter_mouseLeave(win, obj->firstChild, &lrc, true, true);
+
+
+			//////////
+			// Are we within this object?
+			//////
+				if (PtInRect(&lrc, win->mouseAdjustedPosition))
+				{
+					// We are in this object
+					if (!obj->ev.mouse.isMouseOver)
+					{
+						// We are newly over this object, raise the flag
+						obj->ev.mouse.isMouseOver = true;
+
+						// Signal the mouseEnter event
+						if (obj->ev.mouse._onMouseLeave)
+							obj->ev.mouse.onMouseEnter(win, obj);
+					}
+
+					//////////
+					// Determine the click flags
+					//////
+						lnClick = 0;
+						lnClick	|= ((win->isMouseLeftButton)	? _MOUSE_LEFT_BUTTON	: 0);
+						lnClick	|= ((win->isMouseMiddleButton)	? _MOUSE_MIDDLE_BUTTON	: 0);
+						lnClick	|= ((win->isMouseRightButton)	? _MOUSE_RIGHT_BUTTON	: 0);
+					
+
+					//////////
+					// Signal the mouseMoveevent
+					//////
+						if (obj->ev.mouse._onMouseMove)
+							obj->ev.mouse.onMouseMove(win, obj, win->mouseAdjustedPosition.x - lrc.left, win->mouseAdjustedPosition.y - lrc.top, win->isCtrl, win->isAlt, win->isShift, lnClick);
+
+				} else {
+					// We are outside of this object
+					if (obj->ev.mouse.isMouseOver)
+					{
+						// We are no longer over this object, lower the flag
+						obj->ev.mouse.isMouseOver = false;
+
+						// Signal the mouseLeave event
+						if (obj->ev.mouse._onMouseLeave)
+							obj->ev.mouse.onMouseLeave(win, obj);
+					}
+				}
+
+
+			//////////
+			// Process any siblings
+			//////
+				if (tlProcessSiblings)
+				{
+					// Begin at the next sibling
+					objSib = (SObject*)obj->ll.next;
+					while (objSib)
+					{
+						// Process this sibling
+						iiMouse_processMouseEvents_client_mouseEnter_mouseLeave(win, objSib, rc, true, false);
+
+						// Move to next sibling
+						objSib = (SObject*)objSib->ll.next;
+					}
+				}
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to signal a mouseDown event, then the mouseClickEx event
+//
+//////
+	void iiMouse_processMouseEvents_client_mouseDown(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed)
+	{
+// TODO:  This logic is not correctly accounting for the frame of forms and subforms, so the coordinates are off
+		u32			lnClick;
+		RECT		lrc;
+		SObject*	objSib;
+
+
+		// Make sure our environment is sane
+		if (obj && obj->p.isEnabled && obj->bmp)
+		{
+			//////////
+			// Determine the position within the parent's rectangle where this object will go
+			//////
+				// Adjust this item within the parent's rectangle
+				SetRect(&lrc,	rc->left	+ obj->rc.left,
+								rc->top		+ obj->rc.top,
+								rc->left	+ obj->rc.right,
+								rc->top		+ obj->rc.bottom);
+
+
+			//////////
+			// Process any children
+			//////
+				if (tlProcessChildren && obj->firstChild)
+					iiMouse_processMouseEvents_client_mouseDown(win, obj->firstChild, &lrc, true, true, tlProcessed);
+
+
+			//////////
+			// Are we still needing processing?
+			//////
+				if (!*tlProcessed)
+				{
+					// Are we in this object?
+					if (PtInRect(&lrc, win->mouseAdjustedPosition))
+					{
+						//////////
+						// Indicate we've processed this
+						//////
+							*tlProcessed = true;
+
+
+						//////////
+						// Determine the click flags
+						//////
+							lnClick = 0;
+							lnClick	|= ((win->isMouseLeftButton)	? _MOUSE_LEFT_BUTTON	: 0);
+							lnClick	|= ((win->isMouseMiddleButton)	? _MOUSE_MIDDLE_BUTTON	: 0);
+							lnClick	|= ((win->isMouseRightButton)	? _MOUSE_RIGHT_BUTTON	: 0);
+						
+
+						//////////
+						// Signal the mouseDown event
+						//////
+							if (obj->ev.mouse._onMouseDown)
+								obj->ev.mouse.onMouseDown(win, obj, win->mouseAdjustedPosition.x - lrc.left, win->mouseAdjustedPosition.y - lrc.top, win->isCtrl, win->isAlt, win->isShift, lnClick);
+						
+
+						//////////
+						// Signal the click event
+						//////
+							if (obj->ev.mouse._onMouseClickEx)
+								obj->ev.mouse.onMouseClickEx(win, obj, win->mouseAdjustedPosition.x - lrc.left, win->mouseAdjustedPosition.y - lrc.top, win->isCtrl, win->isAlt, win->isShift, lnClick);
+
+
+						//////////
+						// Set the last click
+						//////
+							obj->ev.mouse._lastClick = lnClick;
+					}
+
+
+				//////////
+				// Process any siblings
+				//////
+					if (tlProcessSiblings)
+					{
+						// Begin at the next sibling
+						objSib = (SObject*)obj->ll.next;
+						while (!*tlProcessed && objSib)
+						{
+							// Process this sibling
+							iiMouse_processMouseEvents_client_mouseDown(win, objSib, rc, true, false, tlProcessed);
+
+							// Move to next sibling
+							objSib = (SObject*)objSib->ll.next;
+						}
+					}
+			}
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to signal a mouseUp event
+//
+//////
+	void iiMouse_processMouseEvents_client_mouseUp(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed)
+	{
+// TODO:  This logic is not correctly accounting for the frame of forms and subforms, so the coordinates are off
+		u32			lnClick;
+		RECT		lrc;
+		SObject*	objSib;
+
+
+		// Make sure our environment is sane
+		if (obj && obj->p.isEnabled && obj->bmp)
+		{
+			//////////
+			// Determine the position within the parent's rectangle where this object will go
+			//////
+				// Adjust this item within the parent's rectangle
+				SetRect(&lrc,	rc->left	+ obj->rc.left,
+								rc->top		+ obj->rc.top,
+								rc->left	+ obj->rc.right,
+								rc->top		+ obj->rc.bottom);
+
+
+			//////////
+			// Process any children
+			//////
+				if (tlProcessChildren && obj->firstChild)
+					iiMouse_processMouseEvents_client_mouseUp(win, obj->firstChild, &lrc, true, true, tlProcessed);
+
+
+			//////////
+			// Are we still needing processing?
+			//////
+				if (!*tlProcessed)
+				{
+					// Are we in this object?
+					if (PtInRect(&lrc, win->mouseAdjustedPosition))
+					{
+						//////////
+						// Indicate we've processed this
+						//////
+							*tlProcessed = true;
+
+
+						//////////
+						// Determine the click flags
+						//////
+							lnClick = 0;
+							lnClick	|= ((win->isMouseLeftButton)	? _MOUSE_LEFT_BUTTON	: 0);
+							lnClick	|= ((win->isMouseMiddleButton)	? _MOUSE_MIDDLE_BUTTON	: 0);
+							lnClick	|= ((win->isMouseRightButton)	? _MOUSE_RIGHT_BUTTON	: 0);
+						
+
+						//////////
+						// Signal the mouseUp event
+						//////
+							if (obj->ev.mouse._onMouseDown)
+								obj->ev.mouse.onMouseDown(win, obj, win->mouseAdjustedPosition.x - lrc.left, win->mouseAdjustedPosition.y - lrc.top, win->isCtrl, win->isAlt, win->isShift, lnClick);
+
+
+						//////////
+						// Set the last click
+						//////
+							obj->ev.mouse._lastClick = lnClick;
+					}
+
+
+				//////////
+				// Process any siblings
+				//////
+					if (tlProcessSiblings)
+					{
+						// Begin at the next sibling
+						objSib = (SObject*)obj->ll.next;
+						while (!*tlProcessed && objSib)
+						{
+							// Process this sibling
+							iiMouse_processMouseEvents_client_mouseUp(win, objSib, rc, true, false, tlProcessed);
+
+							// Move to next sibling
+							objSib = (SObject*)objSib->ll.next;
+						}
+					}
+			}
+		}
 	}
 
 
@@ -1443,8 +1806,8 @@
 		//////////
 		// Iterate through the known objects
 		//////
-			pt.x = win->mouseLastPosition.x;
-			pt.y = win->mouseLastPosition.y;
+			pt.x = win->mouseAdjustedPosition.x;
+			pt.y = win->mouseAdjustedPosition.y;
 
 			// They clicked on something
 			if (m == WM_LBUTTONDOWN)

@@ -781,6 +781,92 @@
 
 //////////
 //
+// Called to grayscale a bitmap, or a portion of a bitmap
+//
+//////
+	u32 iBmp_grayscale(SBitmap* bmp, RECT* trc)
+	{
+		u8		gray;
+		u32		lnPixelsRendered;
+		s32		lnY, lnX;
+		SBgr*	lbgr;
+		SBgra*	lbgra;
+
+
+		//////////
+		// Draw it
+		//////
+			lnPixelsRendered = 0;
+			for (lnY = trc->top; lnY < bmp->bi.biHeight && lnY < trc->bottom; lnY++)
+			{
+				// Are we on the image?
+				if (lnY >= 0)
+				{
+					// What exactly are we copying?
+					if (bmp->bi.biBitCount == 24)
+					{
+						// Build the pointer
+						lbgr = (SBgr*)((s8*)bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth));
+
+						// Iterate through every visible column
+						for (lnX = trc->left; lnX < bmp->bi.biWidth && lnX < trc->right; lnX++)
+						{
+							// Are we on the image?
+							if (lnX >= 0)
+							{
+								// Compute the grayscale
+								gray = (u8)min(max(((f32)lbgr->red * 0.35f + (f32)lbgr->grn * 0.54f + (f32)lbgr->blu * 0.11f), 0.0f), 255.0f);
+
+								// Copy the pixel
+								lbgr->red	= gray;
+								lbgr->grn	= gray;
+								lbgr->blu	= gray;
+								++lnPixelsRendered;
+							}
+
+							// Move to next pixel
+							++lbgr;
+						}
+
+					} else if (bmp->bi.biBitCount == 32) {
+						// Build the pointer
+						lbgra = (SBgra*)((s8*)bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth));
+
+						// Iterate through every visible column
+						for (lnX = trc->left; lnX < bmp->bi.biWidth && lnX < trc->right; lnX++)
+						{
+							// Are we on the image?
+							if (lnX >= 0)
+							{
+								// Compute the grayscale
+								gray = (u8)min(max(((f32)lbgra->red * 0.35f + (f32)lbgra->grn * 0.54f + (f32)lbgra->blu * 0.11f), 0.0f), 255.0f);
+
+								// Copy the pixel
+								lbgra->red	= gray;
+								lbgra->grn	= gray;
+								lbgra->blu	= gray;
+								++lnPixelsRendered;
+							}
+
+							// Move to next pixel
+							++lbgra;
+						}
+					}
+				}
+			}
+
+
+		//////////
+		// Indicate how many pixels were rendered
+		//////
+			return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
 // Physically render the bitmap atop the bitmap, with without the mask bits rgb(222,22,222)
 //
 //////

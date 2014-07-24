@@ -282,6 +282,14 @@ typedef SEM**		SEMpp;
 
 
 //////////
+// Object clickEx click flags
+//////
+	const u32			_MOUSE_LEFT_BUTTON					= 1;
+	const u32			_MOUSE_MIDDLE_BUTTON				= 2;
+	const u32			_MOUSE_RIGHT_BUTTON					= 4;
+
+
+//////////
 // Object anchor mode bit masks
 // Note:  If conflicting values are attempted, they are ignored.
 //////

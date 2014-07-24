@@ -43,7 +43,7 @@
 
 //////////
 //
-// Compiles a VXB-- source code block.  If tlEditAndContinue is true, then only those
+// Compiles a VXB source code block.  If tlEditAndContinue is true, then only those
 // lines which have differing line->compilerInfo->sourceCode and line->sourceCode are
 // compiled.  If the current debug environment is operating on this line, the debugger
 // will need to take special note about the before and after sub-instructions to
@@ -1876,7 +1876,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 
 //////////
 //
-// Fixes up common things found in VXB-- source code.
+// Fixes up common things found in VXB source code.
 //
 //////
 	void iComps_fixupNaturalGroupings(SEdit* line)

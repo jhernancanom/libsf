@@ -293,7 +293,7 @@
 
 		// Make sure our environment is sane
 		lnPixelsRendered = 0;
-		if (obj)
+		if (obj && obj->isRendered)
 		{
 			// If they're forcing a render, set it up
 			obj->isDirty |= tlForceRender;
@@ -395,6 +395,147 @@
 					objSib = (SObject*)objSib->ll.next;
 				}
 			}
+	}
+
+
+
+
+//////////
+//
+// Called to publish the indicated object, which takes the rendered bitmaps of all child objects
+// and overlays them where they should be.
+//
+//////
+	u32 iObj_publish(SBitmap* bmpDst, RECT* rc, SObject* obj, bool tlPublishChildren, bool tlPublishSiblings)
+	{
+		u32			lnWidth, lnHeight, lnPixelsRendered;
+		RECT		lrc, lrcParent, lrc2;
+		SObject*	objSib;
+
+
+		// Make sure our environment is sane
+		lnPixelsRendered = 0;
+		if (obj && obj->bmp)
+		{
+			//////////
+			// Determine the position within the parent's rectangle where this object will go
+			//////
+				// Adjust this item within the parent's rectangle
+				SetRect(&lrc,	rc->left	+ obj->rc.left,
+								rc->top		+ obj->rc.top,
+								rc->left	+ obj->rc.right,
+								rc->top		+ obj->rc.bottom);
+
+				// Default the parent rectangle for any subsequent drawing within
+				SetRect(&lrcParent, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+
+				// This is a top-level entry, so adjust everything to rcClient, or to 0
+				switch (obj->objType)
+				{
+					case _OBJ_TYPE_FORM:
+					case _OBJ_TYPE_SUBFORM:
+						// Bypass the frame area
+						CopyRect(&lrcParent, &obj->rcClient);
+						break;
+				}
+
+
+			//////////
+			// Clip the publication to the target rectangle
+			//////
+				lrc.right	= min(rc->right, lrc.right);
+				lrc.bottom	= min(rc->bottom, lrc.bottom);
+
+
+			//////////
+			// Publish any children
+			//////
+				if (tlPublishChildren && obj->firstChild)
+					lnPixelsRendered += iObj_publish(obj->bmp, &lrcParent, obj->firstChild, true, true);
+
+
+			//////////
+			// Publish this item
+			//////
+				// The size of the bitmap should equal the size of the rectangle on the parent.
+				lnWidth		= obj->rc.right - obj->rc.left;
+				lnHeight	= obj->rc.bottom - obj->rc.top;
+				// If it's different, then we need to scale the content
+				if (lnWidth != obj->bmp->bi.biWidth || lnHeight != obj->bmp->bi.biHeight)
+				{
+					// Need to scale, but do we need to create or alter our scaled target bitmap?
+					if (!obj->bmpScaled || lnWidth != obj->bmpScaled->bi.biWidth || lnHeight != obj->bmpScaled->bi.biHeight)
+					{
+						// Delete any existing bitmap
+						iBmp_delete(&obj->bmpScaled, true, true);
+
+						// Create the new one
+						obj->bmpScaled = iBmp_allocate();
+						iBmp_createBySize(obj->bmpScaled, lnWidth, lnHeight, 24);
+						// Now when we scale into it, it will be the right size
+					}
+
+					// Perform the scale
+					iBmp_scale(obj->bmpScaled, obj->bmp);
+
+					// Perform the bitblt
+					if (bmpDst && obj->isPublished)
+					{
+						// If it's not enabled, grayscale it
+						if (!obj->p.isEnabled)
+						{
+							SetRect(&lrc2, 0, 0, obj->bmpScaled->bi.biWidth, obj->bmpScaled->bi.biHeight);
+							iBmp_grayscale(obj->bmpScaled, &lrc2);
+						}
+
+						// Copy
+						lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmpScaled);
+					}
+
+				} else {
+					// We can just copy
+					if (bmpDst && obj->isPublished)
+					{
+						// If it's not enabled, grayscale it
+						if (!obj->p.isEnabled)
+						{
+							SetRect(&lrc2, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+							iBmp_grayscale(obj->bmp, &lrc2);
+						}
+
+						// Copy
+						lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
+					}
+				}
+
+
+			//////////
+			// Publish any siblings
+			//////
+				if (tlPublishSiblings)
+				{
+					// Begin at the next sibling
+					objSib = (SObject*)obj->ll.next;
+					while (objSib)
+					{
+						// Publish this sibling
+						lnPixelsRendered += iObj_publish(bmpDst, rc, objSib, true, false);
+
+						// Move to next sibling
+						objSib = (SObject*)objSib->ll.next;
+					}
+				}
+		}
+// s8 buffer[256];
+// sprintf(buffer, "c:\\temp\\publish_%u.bmp\0", (u32)obj);
+// iBmp_saveToDisk(bmpDst, buffer);
+
+
+
+		//////////
+		// Indicate how many pixels were painted
+		//////
+			return(lnPixelsRendered);
 	}
 
 
@@ -797,127 +938,6 @@
 
 //////////
 //
-// Called to publish the indicated object, which takes the rendered bitmaps of all child objects
-// and overlays them where they should be.
-//
-//////
-	u32 iObj_publish(SBitmap* bmpDst, RECT* rc, SObject* obj, bool tlPublishChildren, bool tlPublishSiblings)
-	{
-		u32			lnWidth, lnHeight, lnPixelsRendered;
-		RECT		lrc, lrcParent;
-		SObject*	objSib;
-
-
-		// Make sure our environment is sane
-		lnPixelsRendered = 0;
-		if (obj && obj->bmp)
-		{
-			//////////
-			// Determine the position within the parent's rectangle where this object will go
-			//////
-				// Adjust this item within the parent's rectangle
-				SetRect(&lrc,	rc->left	+ obj->rc.left,
-								rc->top		+ obj->rc.top,
-								rc->left	+ obj->rc.right,
-								rc->top		+ obj->rc.bottom);
-
-				// Default the parent rectangle for any subsequent drawing within
-				SetRect(&lrcParent, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
-
-				// This is a top-level entry, so adjust everything to rcClient, or to 0
-				switch (obj->objType)
-				{
-					case _OBJ_TYPE_FORM:
-					case _OBJ_TYPE_SUBFORM:
-						// Bypass the frame area
-						CopyRect(&lrcParent, &obj->rcClient);
-						break;
-				}
-
-
-			//////////
-			// Clip the publication to the target rectangle
-			//////
-				lrc.right	= min(rc->right, lrc.right);
-				lrc.bottom	= min(rc->bottom, lrc.bottom);
-
-
-			//////////
-			// Publish any children
-			//////
-				if (tlPublishChildren && obj->firstChild)
-					lnPixelsRendered += iObj_publish(obj->bmp, &lrcParent, obj->firstChild, true, true);
-
-
-			//////////
-			// Publish this item
-			//////
-				// The size of the bitmap should equal the size of the rectangle on the parent.
-				lnWidth		= obj->rc.right - obj->rc.left;
-				lnHeight	= obj->rc.bottom - obj->rc.top;
-				// If it's different, then we need to scale the content
-				if (lnWidth != obj->bmp->bi.biWidth || lnHeight != obj->bmp->bi.biHeight)
-				{
-					// Need to scale, but do we need to create or alter our scaled target bitmap?
-					if (!obj->bmpScaled || lnWidth != obj->bmpScaled->bi.biWidth || lnHeight != obj->bmpScaled->bi.biHeight)
-					{
-						// Delete any existing bitmap
-						iBmp_delete(&obj->bmpScaled, true, true);
-
-						// Create the new one
-						obj->bmpScaled = iBmp_allocate();
-						iBmp_createBySize(obj->bmpScaled, lnWidth, lnHeight, 24);
-						// Now when we scale into it, it will be the right size
-					}
-
-					// Perform the scale
-					iBmp_scale(obj->bmpScaled, obj->bmp);
-
-					// Perform the bitblt
-					if (bmpDst && obj->isPublished)
-						lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmpScaled);
-
-				} else {
-					// We can just copy
-					if (bmpDst && obj->isPublished)
-						lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
-				}
-
-
-			//////////
-			// Publish any siblings
-			//////
-				if (tlPublishSiblings)
-				{
-					// Begin at the next sibling
-					objSib = (SObject*)obj->ll.next;
-					while (objSib)
-					{
-						// Render this sibling
-						lnPixelsRendered += iObj_publish(bmpDst, rc, objSib, true, false);
-
-						// Move to next sibling
-						objSib = (SObject*)objSib->ll.next;
-					}
-				}
-		}
-// s8 buffer[256];
-// sprintf(buffer, "c:\\temp\\publish_%u.bmp\0", (u32)obj);
-// iBmp_saveToDisk(bmpDst, buffer);
-
-
-
-		//////////
-		// Indicate how many pixels were painted
-		//////
-			return(lnPixelsRendered);
-	}
-
-
-
-
-//////////
-//
 // Called to translate the text-based class name to its internal object type.
 //
 //////
@@ -999,10 +1019,12 @@
 				// Initially populate
 				emptyNew->objType		= _OBJ_TYPE_EMPTY;
 				emptyNew->parent		= parent;
+				emptyNew->p.isEnabled	= true;
 				emptyNew->isRendered	= true;
 				emptyNew->isPublished	= true;
 				iDatum_duplicate(&emptyNew->pa.name,		cgcName_empty, -1);
 				iDatum_duplicate(&emptyNew->pa.className,	cgcName_empty, -1);
+				iEvents_resetToDefault(&emptyNew->ev);
 
 				// Initialize based on template
 				if (template_empty)
@@ -1060,10 +1082,12 @@
 				// Initially populate
 				formNew->objType		= _OBJ_TYPE_FORM;
 				formNew->parent			= parent;
+				formNew->p.isEnabled	= true;
 				formNew->isRendered		= true;
 				formNew->isPublished	= true;
 				iDatum_duplicate(&formNew->pa.name,			cgcName_form, -1);
 				iDatum_duplicate(&formNew->pa.className,	cgcName_form, -1);
+				iEvents_resetToDefault(&formNew->ev);
 
 				// Initialize based on template
 				if (template_form)
@@ -1147,10 +1171,12 @@
 				// Initially populate
 				subformNew->objType		= _OBJ_TYPE_SUBFORM;
 				subformNew->parent		= parent;
+				subformNew->p.isEnabled	= true;
 				subformNew->isRendered	= true;
 				subformNew->isPublished	= true;
 				iDatum_duplicate(&subformNew->pa.name,		cgcName_subform, -1);
 				iDatum_duplicate(&subformNew->pa.className,	cgcName_subform, -1);
+				iEvents_resetToDefault(&subformNew->ev);
 
 				// Initialize based on template
 				if (template_subform)
@@ -1201,10 +1227,12 @@
 				// Initially populate
 				labelNew->objType		= _OBJ_TYPE_LABEL;
 				labelNew->parent		= parent;
+				labelNew->p.isEnabled	= true;
 				labelNew->isRendered	= true;
 				labelNew->isPublished	= true;
 				iDatum_duplicate(&labelNew->pa.name,		cgcName_label, -1);
 				iDatum_duplicate(&labelNew->pa.className,	cgcName_label, -1);
+				iEvents_resetToDefault(&labelNew->ev);
 
 				// Initialize based on template
 				if (template_label)
@@ -1255,10 +1283,12 @@
 				// Initially populate
 				textboxNew->objType		= _OBJ_TYPE_TEXTBOX;
 				textboxNew->parent		= parent;
+				textboxNew->p.isEnabled	= true;
 				textboxNew->isRendered	= true;
 				textboxNew->isPublished	= true;
 				iDatum_duplicate(&textboxNew->pa.name,		cgcName_textbox, -1);
 				iDatum_duplicate(&textboxNew->pa.className,	cgcName_textbox, -1);
+				iEvents_resetToDefault(&textboxNew->ev);
 
 				// Initialize based on template
 				if (template_textbox)
@@ -1309,10 +1339,12 @@
 				// Initially populate
 				buttonNew->objType		= _OBJ_TYPE_BUTTON;
 				buttonNew->parent		= parent;
+				buttonNew->p.isEnabled	= true;
 				buttonNew->isRendered	= true;
 				buttonNew->isPublished	= true;
 				iDatum_duplicate(&buttonNew->pa.name,		cgcName_button, -1);
 				iDatum_duplicate(&buttonNew->pa.className,	cgcName_button, -1);
+				iEvents_resetToDefault(&buttonNew->ev);
 
 				// Initialize based on template
 				if (template_button)
@@ -1363,10 +1395,12 @@
 				// Initially populate
 				editboxNew->objType		= _OBJ_TYPE_EDITBOX;
 				editboxNew->parent		= parent;
+				editboxNew->p.isEnabled	= true;
 				editboxNew->isRendered	= true;
 				editboxNew->isPublished	= true;
 				iDatum_duplicate(&editboxNew->pa.name,		cgcName_editbox, -1);
 				iDatum_duplicate(&editboxNew->pa.className,	cgcName_editbox, -1);
+				iEvents_resetToDefault(&editboxNew->ev);
 
 				// Initialize based on template
 				if (template_editbox)
@@ -1417,10 +1451,12 @@
 				// Initially populate
 				imageNew->objType		= _OBJ_TYPE_IMAGE;
 				imageNew->parent		= parent;
+				imageNew->p.isEnabled	= true;
 				imageNew->isRendered	= true;
 				imageNew->isPublished	= true;
 				iDatum_duplicate(&imageNew->pa.name,		cgcName_image, -1);
 				iDatum_duplicate(&imageNew->pa.className,	cgcName_image, -1);
+				iEvents_resetToDefault(&imageNew->ev);
 
 				// Initialize based on template
 				if (template_image)
@@ -1471,10 +1507,12 @@
 				// Initially populate
 				checkboxNew->objType		= _OBJ_TYPE_CHECKBOX;
 				checkboxNew->parent			= parent;
+				checkboxNew->p.isEnabled	= true;
 				checkboxNew->isRendered		= true;
 				checkboxNew->isPublished	= true;
 				iDatum_duplicate(&checkboxNew->pa.name,			cgcName_checkbox, -1);
 				iDatum_duplicate(&checkboxNew->pa.className,	cgcName_checkbox, -1);
+				iEvents_resetToDefault(&checkboxNew->ev);
 
 				// Initialize based on template
 				if (template_checkbox)
@@ -1525,10 +1563,12 @@
 				// Initially populate
 				optionNew->objType		= _OBJ_TYPE_OPTION;
 				optionNew->parent		= parent;
+				optionNew->p.isEnabled	= true;
 				optionNew->isRendered	= true;
 				optionNew->isPublished	= true;
 				iDatum_duplicate(&optionNew->pa.name,		cgcName_option, -1);
 				iDatum_duplicate(&optionNew->pa.className,	cgcName_option, -1);
+				iEvents_resetToDefault(&optionNew->ev);
 
 				// Initialize based on template
 				if (template_option)
@@ -1579,10 +1619,12 @@
 				// Initially populate
 				radioNew->objType		= _OBJ_TYPE_RADIO;
 				radioNew->parent		= parent;
+				radioNew->p.isEnabled	= true;
 				radioNew->isRendered	= true;
 				radioNew->isPublished	= true;
 				iDatum_duplicate(&radioNew->pa.name,		cgcName_radio, -1);
 				iDatum_duplicate(&radioNew->pa.className,	cgcName_radio, -1);
+				iEvents_resetToDefault(&radioNew->ev);
 
 				// Initialize based on template
 				if (template_radio)
@@ -2351,8 +2393,8 @@
 			//////////
 			// Indicate the callback handler
 			//////
-				*(u32*)&textbox->ev.general.interactiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
-				*(u32*)&textbox->ev.general.programmaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
+				*(u32*)&textbox->ev.general.onInteractiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
+				*(u32*)&textbox->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
@@ -2372,8 +2414,8 @@
 			button->p.disabledBackColor.color	= disabledBackColor.color;
 			button->p.disabledForeColor.color	= disabledForeColor.color;
 
-			*(u32*)&button->ev.general.interactiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
-			*(u32*)&button->ev.general.programmaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
+			*(u32*)&button->ev.general.onInteractiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
+			*(u32*)&button->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
@@ -2401,8 +2443,8 @@
 			editbox->p.disabledBackColor.color		= disabledBackColor.color;
 			editbox->p.disabledForeColor.color		= disabledForeColor.color;
 
-			*(u32*)&editbox->ev.general.interactiveChange		= *(u32*)&iDefaultCallback_onInteractiveChange;
-			*(u32*)&editbox->ev.general.programmaticChange		= *(u32*)&iDefaultCallback_onProgrammaticChange;
+			*(u32*)&editbox->ev.general.onInteractiveChange		= *(u32*)&iDefaultCallback_onInteractiveChange;
+			*(u32*)&editbox->ev.general.onProgrammaticChange		= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
@@ -2414,7 +2456,7 @@
 			image->p.style						= _IMAGE_STYLE_OPAQUE;
 			image->p.image						= iBmp_copy(bmpNoImage);
 
-			*(u32*)&image->ev.general.programmaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
+			*(u32*)&image->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
@@ -2438,8 +2480,8 @@
 			checkbox->p.disabledBackColor.color		= disabledBackColor.color;
 			checkbox->p.disabledForeColor.color		= disabledForeColor.color;
 
-			*(u32*)&checkbox->ev.general.interactiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
-			*(u32*)&checkbox->ev.general.programmaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
+			*(u32*)&checkbox->ev.general.onInteractiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
+			*(u32*)&checkbox->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
@@ -2470,8 +2512,8 @@
 			// Copy the events
 			*(u32*)&option->ev.general.onSelect				= *(u32*)&iDefaultCallback_onSelect;
 			*(u32*)&option->ev.general.onDeselect			= *(u32*)&iDefaultCallback_onDeselect;
-			*(u32*)&option->ev.general.interactiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
-			*(u32*)&option->ev.general.programmaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
+			*(u32*)&option->ev.general.onInteractiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
+			*(u32*)&option->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
@@ -2497,8 +2539,8 @@
 			radio->p.disabledBackColor.color	= disabledBackColor.color;
 			radio->p.disabledForeColor.color	= disabledForeColor.color;
 
-			*(u32*)&radio->ev.general.interactiveChange		= *(u32*)&iDefaultCallback_onInteractiveChange;
-			*(u32*)&radio->ev.general.programmaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
+			*(u32*)&radio->ev.general.onInteractiveChange		= *(u32*)&iDefaultCallback_onInteractiveChange;
+			*(u32*)&radio->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 

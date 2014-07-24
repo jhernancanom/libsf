@@ -195,6 +195,12 @@ struct SFont
 	TEXTMETRIC	tm;
 };
 
+struct SHover
+{
+	HWND		hwnd;						// Window for the hover
+	SBitmap*	bmp;						// Bitmap for the hover text
+};
+
 struct SEventsGeneral
 {
 	union {
@@ -278,28 +284,34 @@ struct SEventsGeneral
 		bool	(*onDeselect)				(SWindow* win, SObject* obj, SObject* oItem);			// When an option is deselected
 	};
 	union {
-		u32		_interactiveChange;
-		bool	(*interactiveChange)		(SWindow* win, SObject* obj);							// Called when the data changes
+		u32		_onInteractiveChange;
+		bool	(*onInteractiveChange)		(SWindow* win, SObject* obj);							// Called when the data changes
 	};
 	union {
-		u32		_programmaticChange;
-		bool	(*programmaticChange)		(SWindow* win, SObject* obj);							// Called when the data changes
+		u32		_onProgrammaticChange;
+		bool	(*onProgrammaticChange)		(SWindow* win, SObject* obj);							// Called when the data changes
 	};
 };
 
 struct SEventsMouse
 {
 	// Holds status for changes
-	u32			_lastClick;
+	u32			_lastClick;													// When the last mouseClickEx was called, what was the tnClick value?
 	bool		isMouseOver;												// Used for signaling enter/leave events
-	u64			startHoverTimer;											// At each last mouseMove the startHoverTimer is set, if the interval elapses the hover event is triggered
+	u32			startHoverTickCount;										// At each last mouseMove the startHoverTickCount is set, if the interval elapses the hover event is triggered
+	SHover*		hover;														// If there's an active hover, this value is not NULL
+	bool		hasHoverSignaled;											// If the hover has signaled already on this control
 
 	// Mouse callbacks issued by VJr to the internal object controller.
-	// These will be translated by the internal object controller into executable VJr VXB-- code.
+	// These will be translated by the internal object controller into executable VJr VXB code.
 	// Return value indicates if the event should be sent to its parent instead (if NODEFAULT was issued during execution).
 	union {
 		u32		_onMouseClickEx;
 		bool	(*onMouseClickEx)		(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);	// 1=left, 2=middle, 4=right, 2^n bit positions indicate which buttons are clicked
+	};
+	union {
+		u32		_onMouseDblClickEx;
+		bool	(*onMouseDblClickEx)	(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);	// 1=left, 2=middle, 4=right, 2^n bit positions indicate which buttons are clicked
 	};
 	union {
 		u32		_onMouseWheel;
@@ -311,11 +323,11 @@ struct SEventsMouse
 	};
 	union {
 		u32		_onMouseDown;
-		bool	(*onMouseDown)			(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick, u32 tnLastClick);	// Coordinates for where the mouse button changed
+		bool	(*onMouseDown)			(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);	// Coordinates for where the mouse button changed
 	};
 	union {
 		u32		_onMouseUp;
-		bool	(*onMouseUp)			(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick, u32 tnLastClick);	// Coordinates for where the mouse button changed
+		bool	(*onMouseUp)			(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);	// Coordinates for where the mouse button changed
 	};
 	union {
 		u32		_onMouseEnter;

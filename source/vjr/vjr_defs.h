@@ -68,6 +68,7 @@
 	void					iObj_setDirty							(SObject* obj, bool tlMarkParents);
 	u32						iObj_render								(SObject*  obj, bool tlForceRender);
 	void					iObj_renderChildrenAndSiblings			(SObject*  obj, bool tlRenderChildren, bool tlRenderSiblings, bool tlForceRender);
+	u32						iObj_publish							(SBitmap* bmpDst, RECT* rc, SObject* obj, bool tlPublishChildren, bool tlPublishSiblings);
 	void					iObj_duplicateChain						(SObject** root, SObject* chain);
 	void					iObj_appendObjToParent					(SObject*  parent, SObject* obj);
 	void					iObj_duplicateChildren					(SObject*  objDst, SObject* objSrc);
@@ -77,7 +78,6 @@
 	SVariable*				iObj_getPropertyAsVariable				(SObject*  obj, s8* tcPropertyName, u32 tnPropertyNameLength, SComp* comp);
 	void					iiObj_resetToDefault					(SObject*  obj, bool tlResetProperties, bool tlResetMethods);
 	void					iiObj_resetToDefaultCommon				(SObject*  obj, bool tlResetProperties, bool tlResetMethods);
-	u32						iObj_publish							(SBitmap* bmpDst, RECT* rc, SObject* obj, bool tlPublishChildren, bool tlPublishSiblings);
 	s32						iiObj_getBaseclass_byName				(s8* tcTextname, s32 tnTextnameLength);
 	SBaseclassList*			iiObj_getBaseclass_byType				(u32 tnObjType);
 
@@ -151,38 +151,39 @@
 //////////
 // callbacks.cpp
 //////
-	bool					iDefaultCallback_onLoad					(SObject* o);
-	bool					iDefaultCallback_onInit					(SObject* o);
-	bool					iDefaultCallback_onCreated				(SObject* o);
-	bool					iDefaultCallback_onResize				(SObject* o, u32* widthRequired_out, u32* heightRequired_out);
-	bool					iDefaultCallback_onRender				(SObject* o);
-	bool					iDefaultCallback_onPublish				(SObject* o);
-	bool					iDefaultCallback_onDestroy				(SObject* o);
-	bool					iDefaultCallback_onUnload				(SObject* o);
-	bool					iDefaultCallback_onGotFocus				(SObject* o);
-	bool					iDefaultCallback_onLostFocus			(SObject* o);
-	bool					iDefaultCallback_onMouseClickEx			(SObject* o, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);
-	bool					iDefaultCallback_onMouseWheel			(SObject* o, s32 tnUnits);
-	bool					iDefaultCallback_onMouseMove			(SObject* o, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);
-	bool					iDefaultCallback_onMouseDown			(SObject* o, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick, u32 tnLastClick);
-	bool					iDefaultCallback_onMouseUp				(SObject* o, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick, u32 tnLastClick);
-	bool					iDefaultCallback_onMouseEnter			(SObject* o);
-	bool					iDefaultCallback_onMouseLeave			(SObject* o);
-	bool					iDefaultCallback_onMouseHover			(SObject* o, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);
-	bool					iDefaultCallback_onKeyDown				(SObject* o, bool tlCtrl, bool tlAlt, bool tlShift, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
-	bool					iDefaultCallback_onKeyUp				(SObject* o, bool tlCtrl, bool tlAlt, bool tlShift, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
-	bool					iDefaultCallback_onActivate				(SObject* o);
-	bool					iDefaultCallback_onDeactivate			(SObject* o);
-	bool					iDefaultCallback_onInteractiveChange	(SObject* o);
-	bool					iDefaultCallback_onProgrammaticChange	(SObject* o);
-	bool					iDefaultCallback_onSelect				(SObject* o, SObject* oItem);
-	bool					iDefaultCallback_onDeselect				(SObject* o, SObject* oItem);
-	bool					iDefaultCallback_onMoved				(SObject* o, u32* xOverride_out, u32* yOverride_out);
-	bool					iDefaultCallback_onQueryUnload			(SObject* o);
-	bool					iDefaultCallback_onAddObject			(SObject* o);
-	bool					iDefaultCallback_onAddProperty			(SObject* o);
-	bool					iDefaultCallback_onError				(SObject* o);
-	bool					iDefaultCallback_onScrolled				(SObject* o);
+	bool					iDefaultCallback_onLoad					(SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onInit					(SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onCreated				(SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onResize				(SWindow* win, SObject* obj, u32* widthRequired_out, u32* heightRequired_out);
+	bool					iDefaultCallback_onRender				(SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onPublish				(SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onDestroy				(SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onUnload				(SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onGotFocus				(SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onLostFocus			(SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onMouseClickEx			(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);
+	bool					iDefaultCallback_onMouseDblClickEx		(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);
+	bool					iDefaultCallback_onMouseWheel			(SWindow* win, SObject* obj, s32 tnUnits);
+	bool					iDefaultCallback_onMouseMove			(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);
+	bool					iDefaultCallback_onMouseDown			(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);
+	bool					iDefaultCallback_onMouseUp				(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);
+	bool					iDefaultCallback_onMouseEnter			(SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onMouseLeave			(SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onMouseHover			(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);
+	bool					iDefaultCallback_onKeyDown				(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
+	bool					iDefaultCallback_onKeyUp				(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
+	bool					iDefaultCallback_onActivate				(SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onDeactivate			(SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onInteractiveChange	(SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onProgrammaticChange	(SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onSelect				(SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onDeselect				(SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onMoved				(SWindow* win, SObject* obj, u32* xOverride_out, u32* yOverride_out);
+	bool					iDefaultCallback_onQueryUnload			(SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onAddObject			(SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onAddProperty			(SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onError				(SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onScrolled				(SWindow* win, SObject* obj);
 
 
 //////////
@@ -237,6 +238,9 @@
 	s32						iMouse_processMessage					(SWindow* win, UINT m, WPARAM w, LPARAM l);
 	void					iiMouse_translatePosition				(SWindow* win, POINTS* pt);
 	s32						iiMouse_processMouseEvents_client		(SWindow* win, UINT m, WPARAM w, LPARAM l);
+	void					iiMouse_processMouseEvents_client_mouseEnter_mouseLeave	(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings);
+	void					iiMouse_processMouseEvents_client_mouseDown				(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed);
+	void					iiMouse_processMouseEvents_client_mouseUp				(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed);
 	s32						iiMouse_processMouseEvents_nonclient	(SWindow* win, UINT m, WPARAM w, LPARAM l);
 	void					iiMouse_getFlags						(bool* tlCtrl, bool* tlAlt, bool* tlShift, bool* tlLeft, bool* tlMiddle, bool* tlRight, bool* tlCaps);
 
@@ -293,6 +297,7 @@
 	void					iBmp_bitBltObject						(SBitmap* bmpDst, SObject* obj, SBitmap* bmpSrc);
 	void					iBmp_bitBltObjectMask					(SBitmap* bmpDst, SObject* obj, SBitmap* bmpSrc);
 	u32						iBmp_bitBlt								(SBitmap* bmpDst, RECT* trc, SBitmap* bmpSrc);
+	u32						iBmp_grayscale							(SBitmap* bmp, RECT* trc);
 // TODO:  The following void functions need to be changed to u32 and indicate how many pixels were rendered
 	void					iBmp_bitBltMask							(SBitmap* bmpDst, RECT* trc, SBitmap* bmpSrc);
 	void					iBmp_drawPoint							(SBitmap* bmp, s32 tnX, s32 tnY, SBgra color);
