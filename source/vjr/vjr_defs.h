@@ -161,15 +161,15 @@
 	bool					iDefaultCallback_onUnload				(SWindow* win, SObject* obj);
 	bool					iDefaultCallback_onGotFocus				(SWindow* win, SObject* obj);
 	bool					iDefaultCallback_onLostFocus			(SWindow* win, SObject* obj);
-	bool					iDefaultCallback_onMouseClickEx			(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);
-	bool					iDefaultCallback_onMouseDblClickEx		(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);
+	bool					iDefaultCallback_onMouseClickEx			(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);
+	bool					iDefaultCallback_onMouseDblClickEx		(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);
 	bool					iDefaultCallback_onMouseWheel			(SWindow* win, SObject* obj, s32 tnUnits);
-	bool					iDefaultCallback_onMouseMove			(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);
-	bool					iDefaultCallback_onMouseDown			(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);
-	bool					iDefaultCallback_onMouseUp				(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);
+	bool					iDefaultCallback_onMouseMove			(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);
+	bool					iDefaultCallback_onMouseDown			(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);
+	bool					iDefaultCallback_onMouseUp				(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);
 	bool					iDefaultCallback_onMouseEnter			(SWindow* win, SObject* obj);
 	bool					iDefaultCallback_onMouseLeave			(SWindow* win, SObject* obj);
-	bool					iDefaultCallback_onMouseHover			(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);
+	bool					iDefaultCallback_onMouseHover			(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);
 	bool					iDefaultCallback_onKeyDown				(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
 	bool					iDefaultCallback_onKeyUp				(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
 	bool					iDefaultCallback_onActivate				(SWindow* win, SObject* obj);
@@ -237,11 +237,11 @@
 	// Mouse processing (callback from iWindow_wndProc()
 	s32						iMouse_processMessage					(SWindow* win, UINT m, WPARAM w, LPARAM l);
 	void					iiMouse_translatePosition				(SWindow* win, POINTS* pt);
-	s32						iiMouse_processMouseEvents_client		(SWindow* win, UINT m, WPARAM w, LPARAM l);
-	void					iiMouse_processMouseEvents_client_mouseEnter_mouseLeave	(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings);
-	void					iiMouse_processMouseEvents_client_mouseDown				(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed);
-	void					iiMouse_processMouseEvents_client_mouseUp				(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed);
-	s32						iiMouse_processMouseEvents_nonclient	(SWindow* win, UINT m, WPARAM w, LPARAM l);
+	s32						iiMouse_processMouseEvents				(SWindow* win, UINT m, WPARAM w, LPARAM l);
+	void					iiMouse_processMouseEvents_mouseMove	(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings);
+	void					iiMouse_processMouseEvents_mouseDown	(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed);
+	void					iiMouse_processMouseEvents_mouseUp		(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed);
+//	s32						iiMouse_processMouseEvents_nonclient	(SWindow* win, UINT m, WPARAM w, LPARAM l);
 	void					iiMouse_getFlags						(bool* tlCtrl, bool* tlAlt, bool* tlShift, bool* tlLeft, bool* tlMiddle, bool* tlRight, bool* tlCaps);
 
 	// For processing keystrokes

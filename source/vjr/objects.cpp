@@ -378,7 +378,8 @@
 		//////////
 		// Render self
 		//////
-			iObj_render(obj, tlForceRender);
+			if (obj->isDirty)
+				iObj_render(obj, tlForceRender);
 
 		//////////
 		// Render any siblings

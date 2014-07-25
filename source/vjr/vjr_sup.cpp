@@ -1309,8 +1309,7 @@
 				iiMouse_translatePosition(win, (POINTS*)&l);
 
 				// Signal the event(s)
-				if (win->isMouseInClientArea)		return(iiMouse_processMouseEvents_client(win, m, w, l));			// In the client area
-				else								return(iiMouse_processMouseEvents_nonclient(win, m, w, l));		// In the non-client area
+				iiMouse_processMouseEvents(win, m, w, l);
 			}
 			// If we get here, invalid
 			return(-1);
@@ -1327,30 +1326,29 @@
 //////
 	void iiMouse_translatePosition(SWindow* win, POINTS* pt)
 	{
-		SObject*	form;
-		POINT		lpt;
-
-
-		//////////
-		// Grab the related form object
-		//////
-			form = win->obj;
+		POINT lpt;
 
 
 		//////////
 		// If we're moving or resizing, we're reading screen coordinate mouse data
 		//////
 			if (win->isMoving || win->isResizing)
-				GetCursorPos(&lpt);		// Get the mouse pointer in screen coordinates
+			{
+				// Get the mouse pointer in screen coordinates
+				GetCursorPos(&lpt);
+
+			} else {
+				// Use the indicated coordinates
+				lpt.x = pt->x;
+				lpt.y = pt->y;
+			}
 
 
 		//////////
 		// Translate our SHORT points structure to the LONG point structure
 		//////
-			lpt.x						= pt->x;
-			lpt.y						= pt->y;
-			win->mousePosition.x		= lpt.x;
-			win->mousePosition.y		= lpt.y;
+			win->mousePosition.x = lpt.x;
+			win->mousePosition.y = lpt.y;
 
 
 		//////////
@@ -1364,31 +1362,6 @@
 		// Get the mouse flags
 		//////
 			iiMouse_getFlags(&win->isCtrl, &win->isAlt, &win->isShift, &win->isMouseLeftButton, &win->isMouseMiddleButton, &win->isMouseRightButton, &win->isCaps);
-
-
-		//////////
-		// Store the mouse position on the form in form coordinates
-		//////
-			win->mouseAdjustedPosition.x	= lpt.x - (SHORT)form->rcClient.left;
-			win->mouseAdjustedPosition.y	= lpt.y - (SHORT)form->rcClient.top;
-
-
-		//////////
-		// Are we inside the client area?
-		//////
-			if (PtInRect(&form->rcClient, lpt))
-			{
-				// Yes
-				win->isMouseInClientArea	= true;
-
-				// Update our caller for the translated point
-				pt->x	= (s16)win->mousePosition.x;
-				pt->y	= (s16)win->mousePosition.y;
-
-			} else {
-				// We're not in the client area
-				win->isMouseInClientArea	= false;
-			}
 	}
 
 
@@ -1399,7 +1372,7 @@
 // Process the mouse events in the client area for this form
 //
 //////
-	s32 iiMouse_processMouseEvents_client(SWindow* win, UINT m, WPARAM w, LPARAM l)
+	s32 iiMouse_processMouseEvents(SWindow* win, UINT m, WPARAM w, LPARAM l)
 	{
 		s32			lnResult;
 		bool		llProcessed;
@@ -1434,8 +1407,8 @@
 					break;
 
 				case WM_MOUSEMOVE:
-					// Check for mouseEnter and mouseLeave, then a mouse move
-					iiMouse_processMouseEvents_client_mouseEnter_mouseLeave(win, obj, &obj->rc, true, true);
+					// Check for mouseEnter and mouseLeave, then a mouseMove
+					iiMouse_processMouseEvents_mouseMove(win, obj, &obj->rc, true, true);
 
 					// The mouse has moved, reset the hover counter
 					obj->ev.mouse.startHoverTickCount	= GetTickCount();
@@ -1448,7 +1421,7 @@
 				case WM_MBUTTONDOWN:
 					// Signal a mouseDown, then a click
 					llProcessed = false;
-					iiMouse_processMouseEvents_client_mouseDown(win, obj, &obj->rc, true, true, &llProcessed);
+					iiMouse_processMouseEvents_mouseDown(win, obj, &obj->rc, true, true, &llProcessed);
 					break;
 
 				case WM_LBUTTONUP:
@@ -1456,7 +1429,7 @@
 				case WM_MBUTTONUP:
 					// Signal a mouseUp
 					llProcessed = false;
-					iiMouse_processMouseEvents_client_mouseUp(win, obj, &obj->rc, true, true, &llProcessed);
+					iiMouse_processMouseEvents_mouseUp(win, obj, &obj->rc, true, true, &llProcessed);
 					break;
 
 				case WM_LBUTTONDBLCLK:
@@ -1489,11 +1462,12 @@
 // Called to process mouseEnter and mouseLeave events based on mouse movement
 //
 //////
-	void iiMouse_processMouseEvents_client_mouseEnter_mouseLeave(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings)
+	void iiMouse_processMouseEvents_mouseMove(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings)
 	{
-// TODO:  This logic is not correctly accounting for the frame of forms and subforms, so the coordinates are off
+		s32			lnX, lnY;
 		u32			lnClick;
-		RECT		lrc;
+		bool		llInClientArea;
+		RECT		lrc, lrcClient;
 		SObject*	objSib;
 
 
@@ -1511,16 +1485,55 @@
 
 
 			//////////
+			// Are we in the client area?
+			//////
+				switch (obj->objType)
+				{
+					case _OBJ_TYPE_FORM:
+					case _OBJ_TYPE_SUBFORM:
+						// Adjust by the client coordinates
+						SetRect(&lrcClient,	lrc.left	+ obj->rcClient.left,
+										lrc.top		+ obj->rcClient.top,
+										lrc.left	+ obj->rcClient.left	+ (obj->rcClient.right	- obj->rcClient.left),
+										lrc.top		+ obj->rcClient.top		+ (obj->rcClient.bottom	- obj->rcClient.top));
+						break;
+
+					default:
+						// Use the full coordinates
+						CopyRect(&lrcClient, &lrc);
+						break;
+				}
+				// Update to the client area
+				llInClientArea = ((PtInRect(&lrcClient, win->mousePosition)) ? true : false);
+
+
+			//////////
+			// Clip to the parent rectangle
+			//////
+				lrc.right	= min(rc->right,	lrc.right);
+				lrc.bottom	= min(rc->bottom,	lrc.bottom);
+
+
+			//////////
 			// Process any children
 			//////
 				if (tlProcessChildren && obj->firstChild)
-					iiMouse_processMouseEvents_client_mouseEnter_mouseLeave(win, obj->firstChild, &lrc, true, true);
+					iiMouse_processMouseEvents_mouseMove(win, obj->firstChild, &lrcClient, true, true);
+
+
+			//////////
+			// Determine the click flags
+			//////
+				lnClick = 0;
+				lnClick	|= ((win->isMouseLeftButton)	? _MOUSE_LEFT_BUTTON	: 0);
+				lnClick	|= ((win->isMouseMiddleButton)	? _MOUSE_MIDDLE_BUTTON	: 0);
+				lnClick	|= ((win->isMouseRightButton)	? _MOUSE_RIGHT_BUTTON	: 0);
 
 
 			//////////
 			// Are we within this object?
 			//////
-				if (PtInRect(&lrc, win->mouseAdjustedPosition))
+				if (llInClientArea)
 				{
 					// We are in this object
 					if (!obj->ev.mouse.isMouseOver)
@@ -1533,20 +1546,17 @@
 							obj->ev.mouse.onMouseEnter(win, obj);
 					}
 
-					//////////
-					// Determine the click flags
-					//////
-						lnClick = 0;
-						lnClick	|= ((win->isMouseLeftButton)	? _MOUSE_LEFT_BUTTON	: 0);
-						lnClick	|= ((win->isMouseMiddleButton)	? _MOUSE_MIDDLE_BUTTON	: 0);
-						lnClick	|= ((win->isMouseRightButton)	? _MOUSE_RIGHT_BUTTON	: 0);
-					
 
 					//////////
-					// Signal the mouseMoveevent
+					// Signal the mouseMove event
 					//////
 						if (obj->ev.mouse._onMouseMove)
-							obj->ev.mouse.onMouseMove(win, obj, win->mouseAdjustedPosition.x - lrc.left, win->mouseAdjustedPosition.y - lrc.top, win->isCtrl, win->isAlt, win->isShift, lnClick);
+						{
+							obj->ev.mouse.onMouseMove(win, obj, 
+														win->mousePosition.x - lrc.left, 
+														win->mousePosition.y - lrc.top, 
+														win->isCtrl, win->isAlt, win->isShift, lnClick);
+						}
 
 				} else {
 					// We are outside of this object
@@ -1559,6 +1569,18 @@
 						if (obj->ev.mouse._onMouseLeave)
 							obj->ev.mouse.onMouseLeave(win, obj);
 					}
+
+
+					//////////
+					// Signal the mouseMove event in the non-client area, which means negative values, or values outside of the width
+					//////
+						if (PtInRect(&lrc, win->mousePosition) && obj->ev.mouse._onMouseMove)
+						{
+							// For non-client areas, we translate to negative if to the left or above the client area
+							lnX = win->mousePosition.x - lrcClient.left;
+							lnY = win->mousePosition.y - lrcClient.top;
+							obj->ev.mouse.onMouseMove(win, obj, lnX, lnY, win->isCtrl, win->isAlt, win->isShift, lnClick);
+						}
 				}
 
 
@@ -1572,7 +1594,7 @@
 					while (objSib)
 					{
 						// Process this sibling
-						iiMouse_processMouseEvents_client_mouseEnter_mouseLeave(win, objSib, rc, true, false);
+						iiMouse_processMouseEvents_mouseMove(win, objSib, rc, true, false);
 
 						// Move to next sibling
 						objSib = (SObject*)objSib->ll.next;
@@ -1589,9 +1611,8 @@
 // Called to signal a mouseDown event, then the mouseClickEx event
 //
 //////
-	void iiMouse_processMouseEvents_client_mouseDown(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed)
+	void iiMouse_processMouseEvents_mouseDown(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed)
 	{
-// TODO:  This logic is not correctly accounting for the frame of forms and subforms, so the coordinates are off
 		u32			lnClick;
 		RECT		lrc;
 		SObject*	objSib;
@@ -1611,10 +1632,17 @@
 
 
 			//////////
+			// Clip to the parent rectangle
+			//////
+				lrc.right	= min(rc->right,	lrc.right);
+				lrc.bottom	= min(rc->bottom,	lrc.bottom);
+
+
+			//////////
 			// Process any children
 			//////
 				if (tlProcessChildren && obj->firstChild)
-					iiMouse_processMouseEvents_client_mouseDown(win, obj->firstChild, &lrc, true, true, tlProcessed);
+					iiMouse_processMouseEvents_mouseDown(win, obj->firstChild, &lrc, true, true, tlProcessed);
 
 
 			//////////
@@ -1623,7 +1651,7 @@
 				if (!*tlProcessed)
 				{
 					// Are we in this object?
-					if (PtInRect(&lrc, win->mouseAdjustedPosition))
+					if (PtInRect(&lrc, win->mousePosition))
 					{
 						//////////
 						// Indicate we've processed this
@@ -1644,14 +1672,14 @@
 						// Signal the mouseDown event
 						//////
 							if (obj->ev.mouse._onMouseDown)
-								obj->ev.mouse.onMouseDown(win, obj, win->mouseAdjustedPosition.x - lrc.left, win->mouseAdjustedPosition.y - lrc.top, win->isCtrl, win->isAlt, win->isShift, lnClick);
+								obj->ev.mouse.onMouseDown(win, obj, win->mousePosition.x - lrc.left, win->mousePosition.y - lrc.top, win->isCtrl, win->isAlt, win->isShift, lnClick);
 						
 
 						//////////
 						// Signal the click event
 						//////
 							if (obj->ev.mouse._onMouseClickEx)
-								obj->ev.mouse.onMouseClickEx(win, obj, win->mouseAdjustedPosition.x - lrc.left, win->mouseAdjustedPosition.y - lrc.top, win->isCtrl, win->isAlt, win->isShift, lnClick);
+								obj->ev.mouse.onMouseClickEx(win, obj, win->mousePosition.x - lrc.left, win->mousePosition.y - lrc.top, win->isCtrl, win->isAlt, win->isShift, lnClick);
 
 
 						//////////
@@ -1671,7 +1699,7 @@
 						while (!*tlProcessed && objSib)
 						{
 							// Process this sibling
-							iiMouse_processMouseEvents_client_mouseDown(win, objSib, rc, true, false, tlProcessed);
+							iiMouse_processMouseEvents_mouseDown(win, objSib, rc, true, false, tlProcessed);
 
 							// Move to next sibling
 							objSib = (SObject*)objSib->ll.next;
@@ -1689,9 +1717,8 @@
 // Called to signal a mouseUp event
 //
 //////
-	void iiMouse_processMouseEvents_client_mouseUp(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed)
+	void iiMouse_processMouseEvents_mouseUp(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed)
 	{
-// TODO:  This logic is not correctly accounting for the frame of forms and subforms, so the coordinates are off
 		u32			lnClick;
 		RECT		lrc;
 		SObject*	objSib;
@@ -1711,10 +1738,17 @@
 
 
 			//////////
+			// Clip to the parent rectangle
+			//////
+				lrc.right	= min(rc->right,	lrc.right);
+				lrc.bottom	= min(rc->bottom,	lrc.bottom);
+
+
+			//////////
 			// Process any children
 			//////
 				if (tlProcessChildren && obj->firstChild)
-					iiMouse_processMouseEvents_client_mouseUp(win, obj->firstChild, &lrc, true, true, tlProcessed);
+					iiMouse_processMouseEvents_mouseUp(win, obj->firstChild, &lrc, true, true, tlProcessed);
 
 
 			//////////
@@ -1723,7 +1757,7 @@
 				if (!*tlProcessed)
 				{
 					// Are we in this object?
-					if (PtInRect(&lrc, win->mouseAdjustedPosition))
+					if (PtInRect(&lrc, win->mousePosition))
 					{
 						//////////
 						// Indicate we've processed this
@@ -1744,7 +1778,7 @@
 						// Signal the mouseUp event
 						//////
 							if (obj->ev.mouse._onMouseDown)
-								obj->ev.mouse.onMouseDown(win, obj, win->mouseAdjustedPosition.x - lrc.left, win->mouseAdjustedPosition.y - lrc.top, win->isCtrl, win->isAlt, win->isShift, lnClick);
+								obj->ev.mouse.onMouseDown(win, obj, win->mousePosition.x - lrc.left, win->mousePosition.y - lrc.top, win->isCtrl, win->isAlt, win->isShift, lnClick);
 
 
 						//////////
@@ -1764,7 +1798,7 @@
 						while (!*tlProcessed && objSib)
 						{
 							// Process this sibling
-							iiMouse_processMouseEvents_client_mouseUp(win, objSib, rc, true, false, tlProcessed);
+							iiMouse_processMouseEvents_mouseUp(win, objSib, rc, true, false, tlProcessed);
 
 							// Move to next sibling
 							objSib = (SObject*)objSib->ll.next;
@@ -1773,166 +1807,166 @@
 			}
 		}
 	}
-
-
-
-
-//////////
-//
-// Process the mouse events in the non-client area for this form
-//
-//////
-	s32 iiMouse_processMouseEvents_nonclient(SWindow* win, UINT m, WPARAM w, LPARAM l)
-	{
-		s32			lnResult, lnDeltaX, lnDeltaY, lnWidth, lnHeight, lnLeft, lnTop;
-		bool		llCtrl, llAlt, llShift, llLeft, llRight, llMiddle, llCaps;
-		SObject*	obj;
-		RECT		lrc;
-		POINT		pt, ptScreen;
-
-
-		//////////
-		// Grab our pointer
-		//////
-			obj = win->obj;
-
-
-		//////////
-		// Determine mouse button and keyboard key attributes
-		//////
-			iiMouse_getFlags(&llCtrl, &llAlt, &llShift, &llLeft, &llMiddle, &llRight, &llCaps);
-
-
-		//////////
-		// Iterate through the known objects
-		//////
-			pt.x = win->mouseAdjustedPosition.x;
-			pt.y = win->mouseAdjustedPosition.y;
-
-			// They clicked on something
-			if (m == WM_LBUTTONDOWN)
-			{
-				// Close button
-				if (PtInRect(&obj->rcClose, pt))
-				{
-					// Send the quit message
-					PostQuitMessage(0);
-
-				// Minimize button
-				} else if (PtInRect(&obj->rcMinimize, pt)) {
-					// Minimize the window
-					CloseWindow(win->hwnd);
-
-				} else {
-					// The mouse has gone down in a nonclient area.
-					// Note where the mouse went down in case they are beginning a move.
-					win->mousePositionClick.x = pt.x;
-					win->mousePositionClick.y = pt.y;
-
-					// Get the current mouse position
-					GetCursorPos(&ptScreen);
-					win->mousePositionClickScreen.x = ptScreen.x;
-					win->mousePositionClickScreen.y = ptScreen.y;
-				}
-
-			} else if (m == WM_MOUSEMOVE) {
-				// The mouse is moving
-				if (win->isMoving)
-				{
-					// Update to the new position
-					// Get the current mouse position
-					GetCursorPos(&ptScreen);
-
-					// Determine the deltas
-					lnDeltaX = ptScreen.x - win->mousePositionClickScreen.x;
-					lnDeltaY = ptScreen.y - win->mousePositionClickScreen.y;
-
-					// Position the window at that delta
-					GetWindowRect(win->hwnd, &lrc);
-
-					// It has moved since the last positioning
-					SetWindowPos(win->hwnd, NULL,
-									obj->rc.left + lnDeltaX,
-									obj->rc.top + lnDeltaY,
-									obj->rc.right  - obj->rc.left,
-									obj->rc.bottom - obj->rc.top,
-									SWP_NOSIZE | SWP_NOREPOSITION);
-
-				} else if (win->isResizing) {
-					// Update to the new size
-
-				} else if (!glIsMoving && !glIsResizing) {
-					// They may be beginning a move or resize
-					if (llLeft)
-					{
-						// Did they move in a button?
-						if (!(PtInRect(&obj->rcIcon, pt) || PtInRect(&obj->rcMove, pt) || PtInRect(&obj->rcMinimize, pt) || PtInRect(&obj->rcMaximize, pt) || PtInRect(&obj->rcClose, pt)))
-						{
-							// Nope.  Are they moving in a resizing arrow?
-							if (PtInRect(&obj->rcArrowUl, pt) || PtInRect(&obj->rcArrowUr, pt) || PtInRect(&obj->rcArrowLl, pt) || PtInRect(&obj->rcArrowLr, pt))
-							{
-								// We are beginning a resize
-								win->isResizing	= true;
-								glIsResizing	= true;
-								SetCapture(win->hwnd);
-// TODO:  write the resizing code
-
-							} else {
-								// We are beginning a move
-								win->isMoving	= true;
-								glIsMoving		= true;
-								SetCapture(win->hwnd);
-							}
-						}
-					}
-				}
-
-			} else if (m == WM_LBUTTONUP) {
-				// They've released the mouse
-				if (win->isMoving)
-				{
-					// We're done moving
-					win->isMoving	= false;
-					glIsMoving		= false;
-					ReleaseCapture();
-
-					// Get the current mouse position
-					GetCursorPos(&ptScreen);
-
-					// Determine the deltas
-					lnDeltaX = ptScreen.x - win->mousePositionClickScreen.x;
-					lnDeltaY = ptScreen.y - win->mousePositionClickScreen.y;
-
-					// Position the window finally
-					lnWidth		= obj->rc.right  - obj->rc.left;
-					lnHeight	= obj->rc.bottom - obj->rc.top;
-					lnLeft		= obj->rc.left   + lnDeltaX;
-					lnTop		= obj->rc.top    + lnDeltaY;
-					SetRect(&obj->rc, lnLeft, lnTop, lnLeft + lnWidth, lnTop + lnHeight);
-
-					// Position the window at that delta
-					SetWindowPos(win->hwnd, NULL, lnLeft, lnTop, lnWidth, lnHeight, SWP_NOSIZE | SWP_NOREPOSITION);
-
-				} else if (win->isResizing) {
-					// We're done resizing
-					win->isResizing = false;
-					glIsResizing	= false;
-					ReleaseCapture();
-
-				} else {
-					// The mouse is simply released.  How nice. :-)
-					win->isMoving	= false;
-					win->isResizing = false;
-					glIsMoving		= false;
-					glIsResizing	= false;
-				}
-			}
-
-
-		// Indicate our status
-		lnResult = 0;
-		return(lnResult);
-	}
+// 
+// 
+// 
+// 
+// //////////
+// //
+// // Process the mouse events in the non-client area for this form
+// //
+// //////
+// 	s32 iiMouse_processMouseEvents_nonclient(SWindow* win, UINT m, WPARAM w, LPARAM l)
+// 	{
+// 		s32			lnResult, lnDeltaX, lnDeltaY, lnWidth, lnHeight, lnLeft, lnTop;
+// 		bool		llCtrl, llAlt, llShift, llLeft, llRight, llMiddle, llCaps;
+// 		SObject*	obj;
+// 		RECT		lrc;
+// 		POINT		pt, ptScreen;
+// 
+// 
+// 		//////////
+// 		// Grab our pointer
+// 		//////
+// 			obj = win->obj;
+// 
+// 
+// 		//////////
+// 		// Determine mouse button and keyboard key attributes
+// 		//////
+// 			iiMouse_getFlags(&llCtrl, &llAlt, &llShift, &llLeft, &llMiddle, &llRight, &llCaps);
+// 
+// 
+// 		//////////
+// 		// Iterate through the known objects
+// 		//////
+// 			pt.x = win->mouseAdjustedPosition.x;
+// 			pt.y = win->mouseAdjustedPosition.y;
+// 
+// 			// They clicked on something
+// 			if (m == WM_LBUTTONDOWN)
+// 			{
+// 				// Close button
+// 				if (PtInRect(&obj->rcClose, pt))
+// 				{
+// 					// Send the quit message
+// 					PostQuitMessage(0);
+// 
+// 				// Minimize button
+// 				} else if (PtInRect(&obj->rcMinimize, pt)) {
+// 					// Minimize the window
+// 					CloseWindow(win->hwnd);
+// 
+// 				} else {
+// 					// The mouse has gone down in a nonclient area.
+// 					// Note where the mouse went down in case they are beginning a move.
+// 					win->mousePositionClick.x = pt.x;
+// 					win->mousePositionClick.y = pt.y;
+// 
+// 					// Get the current mouse position
+// 					GetCursorPos(&ptScreen);
+// 					win->mousePositionClickScreen.x = ptScreen.x;
+// 					win->mousePositionClickScreen.y = ptScreen.y;
+// 				}
+// 
+// 			} else if (m == WM_MOUSEMOVE) {
+// 				// The mouse is moving
+// 				if (win->isMoving)
+// 				{
+// 					// Update to the new position
+// 					// Get the current mouse position
+// 					GetCursorPos(&ptScreen);
+// 
+// 					// Determine the deltas
+// 					lnDeltaX = ptScreen.x - win->mousePositionClickScreen.x;
+// 					lnDeltaY = ptScreen.y - win->mousePositionClickScreen.y;
+// 
+// 					// Position the window at that delta
+// 					GetWindowRect(win->hwnd, &lrc);
+// 
+// 					// It has moved since the last positioning
+// 					SetWindowPos(win->hwnd, NULL,
+// 									obj->rc.left + lnDeltaX,
+// 									obj->rc.top + lnDeltaY,
+// 									obj->rc.right  - obj->rc.left,
+// 									obj->rc.bottom - obj->rc.top,
+// 									SWP_NOSIZE | SWP_NOREPOSITION);
+// 
+// 				} else if (win->isResizing) {
+// 					// Update to the new size
+// 
+// 				} else if (!glIsMoving && !glIsResizing) {
+// 					// They may be beginning a move or resize
+// 					if (llLeft)
+// 					{
+// 						// Did they move in a button?
+// 						if (!(PtInRect(&obj->rcIcon, pt) || PtInRect(&obj->rcMove, pt) || PtInRect(&obj->rcMinimize, pt) || PtInRect(&obj->rcMaximize, pt) || PtInRect(&obj->rcClose, pt)))
+// 						{
+// 							// Nope.  Are they moving in a resizing arrow?
+// 							if (PtInRect(&obj->rcArrowUl, pt) || PtInRect(&obj->rcArrowUr, pt) || PtInRect(&obj->rcArrowLl, pt) || PtInRect(&obj->rcArrowLr, pt))
+// 							{
+// 								// We are beginning a resize
+// 								win->isResizing	= true;
+// 								glIsResizing	= true;
+// 								SetCapture(win->hwnd);
+// // TODO:  write the resizing code
+// 
+// 							} else {
+// 								// We are beginning a move
+// 								win->isMoving	= true;
+// 								glIsMoving		= true;
+// 								SetCapture(win->hwnd);
+// 							}
+// 						}
+// 					}
+// 				}
+// 
+// 			} else if (m == WM_LBUTTONUP) {
+// 				// They've released the mouse
+// 				if (win->isMoving)
+// 				{
+// 					// We're done moving
+// 					win->isMoving	= false;
+// 					glIsMoving		= false;
+// 					ReleaseCapture();
+// 
+// 					// Get the current mouse position
+// 					GetCursorPos(&ptScreen);
+// 
+// 					// Determine the deltas
+// 					lnDeltaX = ptScreen.x - win->mousePositionClickScreen.x;
+// 					lnDeltaY = ptScreen.y - win->mousePositionClickScreen.y;
+// 
+// 					// Position the window finally
+// 					lnWidth		= obj->rc.right  - obj->rc.left;
+// 					lnHeight	= obj->rc.bottom - obj->rc.top;
+// 					lnLeft		= obj->rc.left   + lnDeltaX;
+// 					lnTop		= obj->rc.top    + lnDeltaY;
+// 					SetRect(&obj->rc, lnLeft, lnTop, lnLeft + lnWidth, lnTop + lnHeight);
+// 
+// 					// Position the window at that delta
+// 					SetWindowPos(win->hwnd, NULL, lnLeft, lnTop, lnWidth, lnHeight, SWP_NOSIZE | SWP_NOREPOSITION);
+// 
+// 				} else if (win->isResizing) {
+// 					// We're done resizing
+// 					win->isResizing = false;
+// 					glIsResizing	= false;
+// 					ReleaseCapture();
+// 
+// 				} else {
+// 					// The mouse is simply released.  How nice. :-)
+// 					win->isMoving	= false;
+// 					win->isResizing = false;
+// 					glIsMoving		= false;
+// 					glIsResizing	= false;
+// 				}
+// 			}
+// 
+// 
+// 		// Indicate our status
+// 		lnResult = 0;
+// 		return(lnResult);
+// 	}
 
 
 

@@ -1026,18 +1026,31 @@
 	void iBmp_drawPoint(SBitmap* bmp, s32 tnX, s32 tnY, SBgra color)
 	{
 		SBgr*	lbgr;
+		SBgra*	lbgra;
 
 
 		// Make sure our coordinates are valid
 		if (tnX >= 0 && tnX < bmp->bi.biWidth && tnY >= 0 && tnY < bmp->bi.biHeight)
 		{
-			// Get our offset
-			lbgr = (SBgr*)(bmp->bd + ((bmp->bi.biHeight - tnY - 1) * bmp->rowWidth) + (tnX * (bmp->bi.biBitCount / 8)));
+			if (bmp->bi.biBitCount == 24)
+			{
+				// Get our offset
+				lbgr = (SBgr*)(bmp->bd + ((bmp->bi.biHeight - tnY - 1) * bmp->rowWidth) + (tnX * 3));
 
-			// Draw it
-			lbgr->red	= color.red;
-			lbgr->grn	= color.grn;
-			lbgr->blu	= color.blu;
+				// Draw it
+				lbgr->red	= color.red;
+				lbgr->grn	= color.grn;
+				lbgr->blu	= color.blu;
+
+			} else if (bmp->bi.biBitCount == 32) {
+				// Get our offset
+				lbgra = (SBgra*)(bmp->bd + ((bmp->bi.biHeight - tnY - 1) * bmp->rowWidth) + (tnX * 4));
+
+				// Draw it
+				lbgra->red	= color.red;
+				lbgra->grn	= color.grn;
+				lbgra->blu	= color.blu;
+			}
 		}
 	}
 

@@ -101,13 +101,13 @@
 		return(false);
 	}
 
-	bool iDefaultCallback_onMouseClickEx(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick)
+	bool iDefaultCallback_onMouseClickEx(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick)
 	{
 		// Assume we consumed the mouse click, and that the parent doesn't need to receive it
 		return(false);
 	}
 
-	bool iDefaultCallback_onMouseDblClickEx(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick)
+	bool iDefaultCallback_onMouseDblClickEx(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick)
 	{
 		// Assume we consumed the mouse click, and that the parent doesn't need to receive it
 		return(false);
@@ -119,19 +119,27 @@
 		return(false);
 	}
 
-	bool iDefaultCallback_onMouseMove(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick)
+	bool iDefaultCallback_onMouseMove(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick)
 	{
 		// Assume we consumed the mouse move, and that the parent doesn't need to receive it
+// 		if (x < 0 || y < 0)
+// 			_asm nop;
+// 
+// 		if (x > obj->bmp->bi.biWidth || y > obj->bmp->bi.biHeight)
+// 			_asm nop;
+// 
+// 		iBmp_drawPoint(obj->bmp, x, y, dark_blue);
+// 		iWindow_render(win, false);
 		return(false);
 	}
 
-	bool iDefaultCallback_onMouseDown(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick)
+	bool iDefaultCallback_onMouseDown(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick)
 	{
 		// Assume we consumed the mouse down event, and that the parent doesn't need to receive it
 		return(false);
 	}
 
-	bool iDefaultCallback_onMouseUp(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick)
+	bool iDefaultCallback_onMouseUp(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick)
 	{
 		// Assume we consumed the mosue up event, and that the parent doesn't need to receive it
 		return(false);
@@ -149,7 +157,7 @@
 		return(false);
 	}
 
-	bool iDefaultCallback_onMouseHover(SWindow* win, SObject* obj, u32 x, u32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick)
+	bool iDefaultCallback_onMouseHover(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick)
 	{
 		// Assume we consumed the hover, and that the parent doesn't need to receive it
 		return(false);

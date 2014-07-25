@@ -204,10 +204,8 @@ struct SWindow
 	u32					resizingFrom;									// If resizing, the arrow (upper-left, upper-right, lower-left, lower-right)
 
 	// Updated as the mouse moves across the form
-	POINT				mouseAdjustedPosition;								// The last recorded position of the mouse on the form (the mouse may have moved off the form and is somewhere else, but this is the last point)
 	POINT				mousePositionClick;								// When the mouse was last left-clicked, this is where it was clicked
 	POINT				mousePositionClickScreen;						// In screen coordinates, the location where the mouse was last left-button clicked down
-	bool				isMouseInClientArea;							// When the mouse is in the client area (not on the form border)
 
 	CRITICAL_SECTION	cs;												// Atomic access
 };
