@@ -411,6 +411,7 @@ typedef SEM**		SEMpp;
 	const s8			cgcName_checkbox[]					= "checkbox";
 	const s8			cgcName_option[]					= "option";
 	const s8			cgcName_radio[]						= "radio";
+	const s8			cgcName_formCaption[]				= "VJr Form";
 
 
 //////////

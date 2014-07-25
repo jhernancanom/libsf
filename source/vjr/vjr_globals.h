@@ -123,7 +123,7 @@
 		const SBgra		white								= { rgba(255, 255, 255, 255) };
 		const SBgra		dark_blue							= { rgba(0, 0, 80, 255) };
 		const SBgra		black								= { rgba(0, 0, 0, 255) };
-		const SBgra		gray								= { rgba(192, 192, 192, 255) };
+		const SBgra		lfGray								= { rgba(192, 192, 192, 255) };
 		const SBgra		breadcrumbBackColor					= { rgba(180, 220, 240, 255) };			// Cyanish
 		const SBgra		breadcrumbForeColor					= { rgba(0, 0, 164, 255) };				// Semidark blue
 		const SBgra		breakpointBackColor					= { rgba(180, 140, 220, 255) };			// Purplish
@@ -134,6 +134,9 @@
 		const SBgra		selectedForeColor					= { rgba(255, 255, 255, 255) };
 		const SBgra		disabledBackColor					= { rgba(255, 255, 255, 255) };
 		const SBgra		disabledForeColor					= { rgba(192, 192, 230, 255) };
+		const SBgra		colorMouseOver						= { rgba(255, 192, 128, 255) };			// Orangish
+		const SBgra		colorMouseDown						= { rgba(192, 192, 255, 255) };			// Pastel blue
+
 		// Four-corner window color schemes (eventually these will be loaded from themes.dbf)
 		const SBgra		NwColor								= { rgba(222, 230, 255, 255) };
 		const SBgra		NeColor								= { rgba(157, 194, 214, 255) };

@@ -867,6 +867,123 @@
 
 //////////
 //
+// Called to colorize the bitmap, or a portion of the bitmap.  If the color is clamped,
+// no scaling from its current RGB() values less than 255 up to 255 takes place, but the
+// color is used exactly as it is, meaning the pixel is grayscaled, and then that grayscale
+// value is applied to each value of the RGB() component.
+//
+//////
+	u32 iBmp_colorize(SBitmap* bmp, RECT* trc, SBgra colorTemplate, bool tlClampColor)
+	{
+		u32		lnPixelsRendered;
+		s32		lnY, lnX;
+		f32		lfGray, lfRed, lfGrn, lfBlu, lfDelta;
+		SBgr*	lbgr;
+		SBgra*	lbgra;
+
+
+		//////////
+		// Build the actual color
+		//////
+			lfRed = (f32)colorTemplate.red;
+			lfGrn = (f32)colorTemplate.grn;
+			lfBlu = (f32)colorTemplate.blu;
+			if (!tlClampColor)
+			{
+				// Compute with the colors being adjusted up toward 255 if any are below
+				lfDelta = 0.0f;
+				lfDelta = max(lfDelta, lfRed);
+				lfDelta = max(lfDelta, lfGrn);
+				lfDelta = max(lfDelta, lfBlu);
+
+				// Raise each of them by the difference if need be
+				if (lfDelta != 255.0f)
+				{
+					// Compute our overage percentage
+					lfDelta = 1.0f + ((255.0f - lfDelta) / 255.0f);
+
+					// Multiply each other
+					lfRed = min(lfRed * lfDelta, 255.0f);
+					lfGrn = min(lfGrn * lfDelta, 255.0f);
+					lfBlu = min(lfBlu * lfDelta, 255.0f);
+				}
+			}
+
+
+		//////////
+		// Draw it
+		//////
+			lnPixelsRendered = 0;
+			for (lnY = trc->top; lnY < bmp->bi.biHeight && lnY < trc->bottom; lnY++)
+			{
+				// Are we on the image?
+				if (lnY >= 0)
+				{
+					// What exactly are we copying?
+					if (bmp->bi.biBitCount == 24)
+					{
+						// Build the pointer
+						lbgr = (SBgr*)((s8*)bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth));
+
+						// Iterate through every visible column
+						for (lnX = trc->left; lnX < bmp->bi.biWidth && lnX < trc->right; lnX++)
+						{
+							// Are we on the image?
+							if (lnX >= 0)
+							{
+								// Compute the grayscale
+								lfGray = min(max(((f32)lbgr->red * 0.35f + (f32)lbgr->grn * 0.54f + (f32)lbgr->blu * 0.11f), 0.0f), 255.0f) / 255.0f;
+
+								// Apply the color proportionally
+								lbgr->red = (u8)(lfGray * lfRed);
+								lbgr->grn = (u8)(lfGray * lfGrn);
+								lbgr->blu = (u8)(lfGray * lfBlu);
+								++lnPixelsRendered;
+							}
+
+							// Move to next pixel
+							++lbgr;
+						}
+
+					} else if (bmp->bi.biBitCount == 32) {
+						// Build the pointer
+						lbgra = (SBgra*)((s8*)bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth));
+
+						// Iterate through every visible column
+						for (lnX = trc->left; lnX < bmp->bi.biWidth && lnX < trc->right; lnX++)
+						{
+							// Are we on the image?
+							if (lnX >= 0)
+							{
+								// Compute the grayscale
+								lfGray = min(max(((f32)lbgra->red * 0.35f + (f32)lbgra->grn * 0.54f + (f32)lbgra->blu * 0.11f), 0.0f), 255.0f) / 255.0f;
+
+								// Apply the color proportionally
+								lbgra->red = (u8)(lfGray * lfRed);
+								lbgra->grn = (u8)(lfGray * lfGrn);
+								lbgra->blu = (u8)(lfGray * lfBlu);
+								++lnPixelsRendered;
+							}
+
+							// Move to next pixel
+							++lbgra;
+						}
+					}
+				}
+			}
+
+
+		//////////
+		// Indicate how many pixels were rendered
+		//////
+			return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
 // Physically render the bitmap atop the bitmap, with without the mask bits rgb(222,22,222)
 //
 //////

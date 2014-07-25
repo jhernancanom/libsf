@@ -122,14 +122,6 @@
 	bool iDefaultCallback_onMouseMove(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick)
 	{
 		// Assume we consumed the mouse move, and that the parent doesn't need to receive it
-// 		if (x < 0 || y < 0)
-// 			_asm nop;
-// 
-// 		if (x > obj->bmp->bi.biWidth || y > obj->bmp->bi.biHeight)
-// 			_asm nop;
-// 
-// 		iBmp_drawPoint(obj->bmp, x, y, dark_blue);
-// 		iWindow_render(win, false);
 		return(false);
 	}
 

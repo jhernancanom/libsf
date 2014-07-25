@@ -771,13 +771,54 @@ SVariable* iObj_getProperty_scaleY(SObject* obj)
 
 void iObj_setIcon(SObject* obj, SBitmap* bmp)
 {
-	if (obj)
-	{
-		// Delete the old
-		iBmp_delete(&obj->pa.bmpIcon, true, true);
+	SObject*	objChild;
+	RECT		lrc;
 
-		// Set the new
-		obj->pa.bmpIcon = iBmp_copy(bmp);
+
+	// Make sure the environment is sane
+	if (obj && iBmp_validate(bmp))
+	{
+		// If it's a form, we also update the child icon
+		if (obj->objType == _OBJ_TYPE_FORM)
+		{
+			//////////
+			// Create the icon at 24x24
+			//////
+				iBmp_delete(&obj->pa.bmpIcon, true, true);		// Delete the old
+				obj->pa.bmpIcon = iBmp_allocate();
+				iBmp_createBySize(obj->pa.bmpIcon, bmpArrowUl->bi.biWidth, bmpArrowUl->bi.biHeight, 24);
+				iBmp_scale(obj->pa.bmpIcon, bmp);				// Scale the indicated icon into our 24x24 size
+
+
+			//////////
+			// Forms have child-objects which hold their icons (so they can respond to user events, etc.)
+			//////
+				objChild = obj->firstChild;
+				while (objChild)
+				{
+					if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_icon, sizeof(cgcName_icon) - 1) == 0)
+					{
+						// This is the one to update
+						iBmp_delete(&objChild->pa.bmpPicture,		true, true);	// Delete the old
+						iBmp_delete(&objChild->pa.bmpPictureOver,	true, true);	// Delete the old
+						iBmp_delete(&objChild->pa.bmpPictureDown,	true, true);	// Delete the old
+						objChild->pa.bmpPicture		= iBmp_copy(obj->pa.bmpIcon);	// Set the new
+						objChild->pa.bmpPictureOver	= iBmp_copy(obj->pa.bmpIcon);	// Set the new
+						objChild->pa.bmpPictureDown	= iBmp_copy(obj->pa.bmpIcon);	// Set the new
+
+						// Add highlighting for the over and down
+						SetRect(&lrc, 0, 0, 24, 24);
+						iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false);
+						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false);
+
+						// All done
+						break;
+					}
+
+					// Move to next object
+					objChild = (SObject*)objChild->ll.next;
+				}
+		}
 	}
 }
 

@@ -297,6 +297,8 @@ struct SEventsMouse
 {
 	// Holds status for changes
 	u32			_lastClick;													// When the last mouseClickEx was called, what was the tnClick value?
+	u32			thisClick;													// The tnClick parameter passed below, it is the _MOUSE_*_BUTTON amalgam based on the current mouse button state
+	bool		isMouseDown;												// Is the mouse down over this item?
 	bool		isMouseOver;												// Used for signaling enter/leave events
 	u32			startHoverTickCount;										// At each last mouseMove the startHoverTickCount is set, if the interval elapses the hover event is triggered
 	SHover*		hover;														// If there's an active hover, this value is not NULL
@@ -505,6 +507,10 @@ struct SPropertiesA
 
 	SDatum		pictureName;											// The name of the file used for the picture
 	SBitmap*	bmpPicture;												// The image for the picture
+	SDatum		pictureOverName;										// The name of the file used for the picture when the mouse is over
+	SBitmap*	bmpPictureOver;											// The image for the picture when the mouse is over
+	SDatum		pictureDownName;										// The name of the file used for the picture when the mouse is pressed down on the item
+	SBitmap*	bmpPictureDown;											// The image for the picture when the mouse is pressed down on the item
 
 	SObject*	dataSession;											// Ignored, always set to .NULL..
 	SDatum		declass;												// Ignored, always empty.

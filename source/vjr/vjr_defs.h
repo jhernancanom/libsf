@@ -61,7 +61,7 @@
 // Note:  Property accessors are in the object_accessors.h and object_accessors.cpp source files
 //////
 	SObject*				iObj_create								(u32 objType, SObject* objParent);
-	SObject*				iObj_addChild							(SObject* objParent, u32 objType);
+	SObject*				iObj_addChild							(u32 objType, SObject* objParent);
 	SObject*				iObj_copy								(SObject* template_obj, SObject* next, SObject* parent, bool tlCopyChildren, bool tlCreateSeparateBitmapBuffers);
 	void					iObj_delete								(SObject** obj, bool tlDeleteSelf);
 	void					iObj_findFocusControls					(SObject*  obj, SBuilder* objFocusControls, bool tlProcessSiblings);
@@ -242,7 +242,8 @@
 	void					iiMouse_processMouseEvents_mouseDown	(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed);
 	void					iiMouse_processMouseEvents_mouseUp		(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed);
 //	s32						iiMouse_processMouseEvents_nonclient	(SWindow* win, UINT m, WPARAM w, LPARAM l);
-	void					iiMouse_getFlags						(bool* tlCtrl, bool* tlAlt, bool* tlShift, bool* tlLeft, bool* tlMiddle, bool* tlRight, bool* tlCaps);
+	void					iiMouse_getFlags_wparam					(WPARAM w, bool* tlCtrl, bool* tlAlt, bool* tlShift, bool* tlLeft, bool* tlMiddle, bool* tlRight, bool* tlCaps);
+	void					iiMouse_getFlags_async					(          bool* tlCtrl, bool* tlAlt, bool* tlShift, bool* tlLeft, bool* tlMiddle, bool* tlRight, bool* tlCaps);
 
 	// For processing keystrokes
 	s32						iKeyboard_processMessage				(SWindow* win, UINT m, WPARAM w, LPARAM l);
@@ -271,7 +272,8 @@
 	void					iDatum_duplicate						(SDatum* datumDst, SDatum* datumSrc);
 	bool					iDatum_resize							(SDatum* datum, s32 newDataLength);
 	s32						iDatum_compare							(SDatum* datumLeft, SDatum* datumRight);
-	s32						iDatum_compare							(SDatum* datumLeft, s8* data, s32 dataLength);
+	s32						iDatum_compare							(SDatum* datumLeft, s8*  data, s32 dataLength);
+	s32						iDatum_compare							(SDatum* datumLeft, cs8* data, s32 dataLength);
 	void					iDatum_delete							(SDatum* datum, bool tlDeleteSelf);
 	void					iiDatum_delete							(SDatum* datum);
 
@@ -298,6 +300,7 @@
 	void					iBmp_bitBltObjectMask					(SBitmap* bmpDst, SObject* obj, SBitmap* bmpSrc);
 	u32						iBmp_bitBlt								(SBitmap* bmpDst, RECT* trc, SBitmap* bmpSrc);
 	u32						iBmp_grayscale							(SBitmap* bmp, RECT* trc);
+	u32						iBmp_colorize							(SBitmap* bmp, RECT* trc, SBgra colorTemplate, bool tlClampColor);
 // TODO:  The following void functions need to be changed to u32 and indicate how many pixels were rendered
 	void					iBmp_bitBltMask							(SBitmap* bmpDst, RECT* trc, SBitmap* bmpSrc);
 	void					iBmp_drawPoint							(SBitmap* bmp, s32 tnX, s32 tnY, SBgra color);

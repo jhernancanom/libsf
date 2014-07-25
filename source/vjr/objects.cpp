@@ -111,7 +111,7 @@
 //		sub_obj_output	-- Populated with the pointer of the sub-object
 //
 //////
-	SObject* iObj_addChild(SObject* objParent, u32 objType)
+	SObject* iObj_addChild(u32 objType, SObject* objParent)
 	{
 		SObject* objNew;
 
@@ -122,11 +122,10 @@
 		{
 			// Create the new object using the default template
 			objNew = iObj_create(objType, objParent);
+
+			// Append if valid
 			if (objNew)
-			{
-				// Append it to the child chain of the parent object
-				iLl_appendExistingNodeAtBeginning((SLL**)&objParent->firstChild, (SLL*)objNew);
-			}
+				iObj_appendObjToParent(objParent, objNew);
 		}
 
 		// Indicate our status
@@ -603,23 +602,73 @@
 	void iObj_duplicateChildren(SObject* objDst, SObject* objSrc)
 	{
 		SObject*	objChild;
-//		SObject*	objCopy;
+		SObject*	objCopy;
 
 
 		// Make sure our environment is sane
-		if (objSrc && objSrc->firstChild)
+		if (objDst && objSrc && objSrc->firstChild)
 		{
-//_asm int 3;
 			// Duplicate this entry
 			objChild = objSrc->firstChild;
 			while (objChild)
 			{
-				// Copy this item
+				// Create the copy (note that all children are automatically copied by using the reference as a template)
+				switch (objChild->objType)
+				{
+					case _OBJ_TYPE_EMPTY:
+						objCopy = iSubobj_createForm(objChild, objDst);
+						break;
 
-				// Append any children here
+					case _OBJ_TYPE_FORM:
+						objCopy = iSubobj_createForm(objChild, objDst);
+						break;
+
+					case _OBJ_TYPE_SUBFORM:
+						objCopy = iSubobj_createSubform(objChild, objDst);
+						break;
+
+					case _OBJ_TYPE_LABEL:
+						objCopy = iSubobj_createLabel(objChild, objDst);
+						break;
+
+					case _OBJ_TYPE_TEXTBOX:
+						objCopy = iSubobj_createTextbox(objChild, objDst);
+						break;
+
+					case _OBJ_TYPE_BUTTON:
+						objCopy = iSubobj_createButton(objChild, objDst);
+						break;
+
+					case _OBJ_TYPE_EDITBOX:
+						objCopy = iSubobj_createEditbox(objChild, objDst);
+						break;
+
+					case _OBJ_TYPE_IMAGE:
+						objCopy = iSubobj_createImage(objChild, objDst);
+						break;
+
+					case _OBJ_TYPE_CHECKBOX:
+						objCopy = iSubobj_createCheckbox(objChild, objDst);
+						break;
+
+					case _OBJ_TYPE_OPTION:
+						objCopy = iSubobj_createOption(objChild, objDst);
+						break;
+
+					case _OBJ_TYPE_RADIO:
+						objCopy = iSubobj_createRadio(objChild, objDst);
+						break;
+
+					default:
+						objCopy = NULL;
+						break;
+				}
+
+				// Append the copy if valid
+				if (objCopy)
+					iObj_appendObjToParent(objDst, objChild);
 
 				// Move to next
-// TODO:  working here
 				objChild = (SObject*)objChild->ll.next;
 			}
 		}
@@ -635,6 +684,9 @@
 //////
 	void iObj_setSize(SObject* obj, s32 tnLeft, s32 tnTop, s32 tnWidth, s32 tnHeight)
 	{
+		SObject* objChild;
+
+
 		// Resize if need be
 		obj->bmp = iBmp_verifySizeOrResize(obj->bmp, tnWidth, tnHeight);
 
@@ -650,7 +702,70 @@
 				break;
 
 			case _OBJ_TYPE_FORM:
-				SetRect(&obj->rcClient, 8, obj->pa.bmpIcon->bi.biHeight + 2, tnWidth - obj->pa.bmpIcon->bi.biHeight - 2, tnHeight - obj->pa.bmpIcon->bi.biHeight - 1);
+				SetRect(&obj->rcClient, 8, bmpArrowUl->bi.biHeight + 2, tnWidth - bmpArrowUl->bi.biHeight - 2, tnHeight - bmpArrowUl->bi.biHeight - 1);
+
+				//////////
+				// Default child settings:
+				// [icon][caption                     ][move][minimize][maximize][close]
+				//////
+					objChild = obj->firstChild;
+					while (objChild)
+					{
+						// See which object this is
+						if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_icon, sizeof(cgcName_icon) - 1) == 0)
+						{
+							// Form icon
+							SetRect(&objChild->rc,
+										bmpArrowUl->bi.biWidth + 8,
+										1 - obj->rcClient.top,
+										bmpArrowUl->bi.biWidth + 8 + bmpArrowUl->bi.biWidth,
+										1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
+
+						} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
+							// Caption
+							SetRect(&objChild->rc,
+										bmpArrowUl->bi.biWidth + 8 + bmpArrowUl->bi.biWidth + 8,
+										1 - obj->rcClient.top,
+										tnWidth - (5 * (bmpArrowUl->bi.biWidth + 8)) - 1,
+										1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
+
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMove, sizeof(cgcName_iconMove) - 1) == 0) {
+							// Move icon
+							SetRect(&objChild->rc,
+										tnWidth - (5 * (bmpArrowUl->bi.biWidth + 8)),
+										1 - obj->rcClient.top,
+										(tnWidth - (5 * (bmpArrowUl->bi.biWidth + 8))) + bmpArrowUl->bi.biWidth,
+										1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
+
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMinimize, sizeof(cgcName_iconMinimize) - 1) == 0) {
+							// Minimize icon
+							SetRect(&objChild->rc,
+										tnWidth - (4 * (bmpArrowUl->bi.biWidth + 8)),
+										1 - obj->rcClient.top,
+										(tnWidth - (4 * (bmpArrowUl->bi.biWidth + 8))) + bmpArrowUl->bi.biWidth,
+										1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
+
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMaximize, sizeof(cgcName_iconMaximize) - 1) == 0) {
+							// Maximize icon
+							SetRect(&objChild->rc,
+										tnWidth - (3 * (bmpArrowUl->bi.biWidth + 8)),
+										1 - obj->rcClient.top,
+										(tnWidth - (3 * (bmpArrowUl->bi.biWidth + 8))) + bmpArrowUl->bi.biWidth,
+										1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
+
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0) {
+							// Close icon
+							SetRect(&objChild->rc,
+										tnWidth - (2 * (bmpArrowUl->bi.biWidth + 8)),
+										1 - obj->rcClient.top,
+										(tnWidth - (2 * (bmpArrowUl->bi.biWidth + 8))) + bmpArrowUl->bi.biWidth,
+										1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
+						}
+
+						// Move to next object
+						objChild = (SObject*)objChild->ll.next;
+					}
+
 				break;
 
 			case _OBJ_TYPE_SUBFORM:
@@ -1097,19 +1212,15 @@
 					iiSubobj_copyForm(formNew, template_form);
 
 				} else {
-					// Use VJr defaults
-					iiSubobj_resetToDefaultForm(formNew, true, true);
-
-
 					//////////
 					// Create the default children for this object
 					//////
-						icon		= iObj_create(_OBJ_TYPE_IMAGE, parent);
-						caption		= iObj_create(_OBJ_TYPE_LABEL, parent);
-						move		= iObj_create(_OBJ_TYPE_IMAGE, parent);
-						minimize	= iObj_create(_OBJ_TYPE_IMAGE, parent);
-						maximize	= iObj_create(_OBJ_TYPE_IMAGE, parent);
-						close		= iObj_create(_OBJ_TYPE_IMAGE, parent);
+						icon		= iObj_addChild(_OBJ_TYPE_IMAGE, formNew);
+						caption		= iObj_addChild(_OBJ_TYPE_LABEL, formNew);
+						move		= iObj_addChild(_OBJ_TYPE_IMAGE, formNew);
+						minimize	= iObj_addChild(_OBJ_TYPE_IMAGE, formNew);
+						maximize	= iObj_addChild(_OBJ_TYPE_IMAGE, formNew);
+						close		= iObj_addChild(_OBJ_TYPE_IMAGE, formNew);
 
 
 					//////////
@@ -1124,14 +1235,9 @@
 
 
 					//////////
-					// Append to the parent
+					// Use VJr defaults
 					//////
-						iObj_appendObjToParent(parent, icon);
-						iObj_appendObjToParent(parent, caption);
-						iObj_appendObjToParent(parent, move);
-						iObj_appendObjToParent(parent, minimize);
-						iObj_appendObjToParent(parent, maximize);
-						iObj_appendObjToParent(parent, close);
+						iiSubobj_resetToDefaultForm(formNew, true, true);
 				}
 			}
 
@@ -1152,7 +1258,9 @@
 //////
 	SObject* iSubobj_createSubform(SObject* template_subform, SObject* parent)
 	{
-		SObject* subformNew;
+		SObject*	subformNew;
+		SObject*	icon;
+		SObject*	caption;
 
 
 		//////////
@@ -1186,8 +1294,24 @@
 					iiSubobj_copySubform(subformNew, template_subform);
 
 				} else {
+					//////////
+					// Create the default children for this object
+					//////
+						icon		= iObj_addChild(_OBJ_TYPE_IMAGE, subformNew);
+						caption		= iObj_addChild(_OBJ_TYPE_LABEL, subformNew);
+
+
+					//////////
+					// Give them proper names
+					//////
+						iDatum_duplicate(&icon->pa.name,	cgcName_icon,		-1);
+						iDatum_duplicate(&caption->pa.name,	cgcCaption_icon,	-1);
+
+
+					//////////
 					// Use VJr defaults
-					iiSubobj_resetToDefaultSubform(subformNew, true, true);
+					//////
+						iiSubobj_resetToDefaultSubform(subformNew, true, true);
 				}
 			}
 
@@ -1681,14 +1805,9 @@
 		//////////
 		// Copy the allocatables
 		//////
-			formDst->pa.font					= iFont_duplicate(formSrc->pa.font);
-			formDst->pa.bmpIcon					= iBmp_copy(formSrc->pa.bmpIcon);
+			formDst->pa.font		= iFont_duplicate(formSrc->pa.font);
+			formDst->pa.bmpIcon		= iBmp_copy(formSrc->pa.bmpIcon);
 			iDatum_duplicate(&formDst->pa.caption, &formSrc->pa.caption);
-
-			// Picture
-			iBmp_delete(&formDst->pa.bmpPicture, true, true);
-			formDst->pa.bmpPicture = iBmp_copy(formSrc->pa.bmpPicture);
-			iDatum_duplicate(&formDst->pa.pictureName, &formSrc->pa.pictureName);
 
 
 		//////////
@@ -2061,7 +2180,6 @@
 //////
 	void iiSubobj_resetToDefaultEmpty(SObject* empty, bool tlResetProperties, bool tlResetMethods)
 	{
-		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
 		if (empty)
 		{
 			//////////
@@ -2075,7 +2193,10 @@
 
 	void iiSubobj_resetToDefaultForm(SObject* form, bool tlResetProperties, bool tlResetMethods)
 	{
-		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
+		SObject*	objChild;
+		RECT		lrc;
+
+
 		if (form)
 		{
 			//////////
@@ -2090,6 +2211,9 @@
 				SetRect(&form->rc, 0, 0, 375, 250);
 				SetRect(&form->rco, 0, 0, 375, 250);
 				SetRect(&form->rcp, 0, 0, 375, 250);
+
+				// Set the size of the child components
+				iObj_setSize(form, 0, 0, 375, 250);
 
 
 			//////////
@@ -2208,12 +2332,126 @@
 				form->p.titleBar						= 1;
 				form->p.windowType						= 0;
 				form->p.zoomBox							= false;
+
+
+			//////////
+			// Default child settings
+			//////
+				SetRect(&lrc, 0, 0, bmpArrowUl->bi.biWidth, bmpArrowUl->bi.biHeight);
+				objChild = form->firstChild;
+				while (objChild)
+				{
+					// See which object this is
+					if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_icon, sizeof(cgcName_icon) - 1) == 0)
+					{
+						// Form icon
+						iBmp_delete(&objChild->pa.bmpPicture,		true, true);	// Delete the old
+						iBmp_delete(&objChild->pa.bmpPictureOver,	true, true);	// Delete the old
+						iBmp_delete(&objChild->pa.bmpPictureDown,	true, true);	// Delete the old
+						objChild->pa.bmpPicture		= iBmp_copy(bmpVjrIcon);		// Set the new
+						objChild->pa.bmpPictureOver	= iBmp_copy(bmpVjrIcon);		// Set the new
+						objChild->pa.bmpPictureDown	= iBmp_copy(bmpVjrIcon);		// Set the new
+
+						// Add highlighting for the over and down
+						iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false);
+						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false);
+// iBmp_saveToDisk(objChild->pa.bmpPictureOver, "c:\\temp\\over.bmp");
+// iBmp_saveToDisk(objChild->pa.bmpPictureDown, "c:\\temp\\down.bmp");
+
+						// Icon
+						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
+						objChild->pa.bmpIcon = iBmp_copy(bmpVjrIcon);				// Set the new
+
+					} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
+						// Caption
+						iDatum_delete(&objChild->pa.caption, false);
+						iDatum_duplicate(&objChild->pa.caption, cgcName_formCaption, sizeof(cgcName_formCaption) - 1);
+
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMove, sizeof(cgcName_iconMove) - 1) == 0) {
+						// Move icon
+						iBmp_delete(&objChild->pa.bmpPicture,		true, true);	// Delete the old
+						iBmp_delete(&objChild->pa.bmpPictureOver,	true, true);	// Delete the old
+						iBmp_delete(&objChild->pa.bmpPictureDown,	true, true);	// Delete the old
+						objChild->pa.bmpPicture		= iBmp_copy(bmpMove);			// Set the new
+						objChild->pa.bmpPictureOver	= iBmp_copy(bmpMove);			// Set the new
+						objChild->pa.bmpPictureDown	= iBmp_copy(bmpMove);			// Set the new
+
+						// Add highlighting for the over and down
+						iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false);
+						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false);
+// iBmp_saveToDisk(objChild->pa.bmpPictureOver, "c:\\temp\\over.bmp");
+// iBmp_saveToDisk(objChild->pa.bmpPictureDown, "c:\\temp\\down.bmp");
+
+						// Icon
+						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
+						objChild->pa.bmpIcon = iBmp_copy(bmpMove);					// Set the new
+
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMinimize, sizeof(cgcName_iconMinimize) - 1) == 0) {
+						// Minimize icon
+						iBmp_delete(&objChild->pa.bmpPicture,		true, true);	// Delete the old
+						iBmp_delete(&objChild->pa.bmpPictureOver,	true, true);	// Delete the old
+						iBmp_delete(&objChild->pa.bmpPictureDown,	true, true);	// Delete the old
+						objChild->pa.bmpPicture		= iBmp_copy(bmpMinimize);		// Set the new
+						objChild->pa.bmpPictureOver	= iBmp_copy(bmpMinimize);		// Set the new
+						objChild->pa.bmpPictureDown	= iBmp_copy(bmpMinimize);		// Set the new
+
+						// Add highlighting for the over and down
+						iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false);
+						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false);
+// iBmp_saveToDisk(objChild->pa.bmpPictureOver, "c:\\temp\\over.bmp");
+// iBmp_saveToDisk(objChild->pa.bmpPictureDown, "c:\\temp\\down.bmp");
+
+						// Icon
+						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
+						objChild->pa.bmpIcon = iBmp_copy(bmpMinimize);				// Set the new
+
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMaximize, sizeof(cgcName_iconMaximize) - 1) == 0) {
+						// Maximize icon
+						iBmp_delete(&objChild->pa.bmpPicture,		true, true);	// Delete the old
+						iBmp_delete(&objChild->pa.bmpPictureOver,	true, true);	// Delete the old
+						iBmp_delete(&objChild->pa.bmpPictureDown,	true, true);	// Delete the old
+						objChild->pa.bmpPicture		= iBmp_copy(bmpMaximize);		// Set the new
+						objChild->pa.bmpPictureOver	= iBmp_copy(bmpMaximize);		// Set the new
+						objChild->pa.bmpPictureDown	= iBmp_copy(bmpMaximize);		// Set the new
+
+						// Add highlighting for the over and down
+						iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false);
+						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false);
+// iBmp_saveToDisk(objChild->pa.bmpPictureOver, "c:\\temp\\over.bmp");
+// iBmp_saveToDisk(objChild->pa.bmpPictureDown, "c:\\temp\\down.bmp");
+
+						// Icon
+						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
+						objChild->pa.bmpIcon = iBmp_copy(bmpMaximize);				// Set the new
+
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0) {
+						// Close icon
+						iBmp_delete(&objChild->pa.bmpPicture,		true, true);	// Delete the old
+						iBmp_delete(&objChild->pa.bmpPictureOver,	true, true);	// Delete the old
+						iBmp_delete(&objChild->pa.bmpPictureDown,	true, true);	// Delete the old
+						objChild->pa.bmpPicture		= iBmp_copy(bmpClose);			// Set the new
+						objChild->pa.bmpPictureOver	= iBmp_copy(bmpClose);			// Set the new
+						objChild->pa.bmpPictureDown	= iBmp_copy(bmpClose);			// Set the new
+
+						// Add highlighting for the over and down
+						iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false);
+						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false);
+// iBmp_saveToDisk(objChild->pa.bmpPictureOver, "c:\\temp\\over.bmp");
+// iBmp_saveToDisk(objChild->pa.bmpPictureDown, "c:\\temp\\down.bmp");
+
+						// Icon
+						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
+						objChild->pa.bmpIcon = iBmp_copy(bmpClose);					// Set the new
+					}
+
+					// Move to next object
+					objChild = (SObject*)objChild->ll.next;
+				}
 		}
 	}
 
 	void iiSubobj_resetToDefaultSubform(SObject* subform, bool tlResetProperties, bool tlResetMethods)
 	{
-		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
 		if (subform)
 		{
 			//////////
@@ -2281,7 +2519,6 @@
 		u32 lnHeight;
 
 
-		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
 		if (label)
 		{
 			//////////
@@ -2334,7 +2571,6 @@
 
 	void iiSubobj_resetToDefaultTextbox(SObject* textbox, bool tlResetProperties, bool tlResetMethods)
 	{
-		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
 		if (textbox)
 		{
 			//////////
@@ -2401,7 +2637,6 @@
 
 	void iiSubobj_resetToDefaultButton(SObject* button, bool tlResetProperties, bool tlResetMethods)
 	{
-		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
 		if (button)
 		{
 			button->pa.font						= iFont_duplicate(gsFontDefault);
@@ -2422,7 +2657,6 @@
 
 	void iiSubobj_resetToDefaultEditbox(SObject* editbox, bool tlResetProperties, bool tlResetMethods)
 	{
-		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
 		if (editbox)
 		{
 			editbox->pa.font						= iFont_duplicate(gsFontDefault);
@@ -2444,14 +2678,16 @@
 			editbox->p.disabledBackColor.color		= disabledBackColor.color;
 			editbox->p.disabledForeColor.color		= disabledForeColor.color;
 
+			iEditManager_deleteChain(&editbox->pa.em, true);
+			editbox->pa.em							= iEditManager_allocate();
+
 			*(u32*)&editbox->ev.general.onInteractiveChange		= *(u32*)&iDefaultCallback_onInteractiveChange;
-			*(u32*)&editbox->ev.general.onProgrammaticChange		= *(u32*)&iDefaultCallback_onProgrammaticChange;
+			*(u32*)&editbox->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
 	void iiSubobj_resetToDefaultImage(SObject* image, bool tlResetProperties, bool tlResetMethods)
 	{
-		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
 		if (image)
 		{
 			image->p.style						= _IMAGE_STYLE_OPAQUE;
@@ -2463,7 +2699,6 @@
 
 	void iiSubobj_resetToDefaultCheckbox(SObject* checkbox, bool tlResetProperties, bool tlResetMethods)
 	{
-		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
 		if (checkbox)
 		{
 			checkbox->pa.font						= iFont_duplicate(gsFontDefault);
@@ -2492,7 +2727,6 @@
 		SObject* label2;
 
 
-		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
 		if (option)
 		{
 			option->p.backColor.color			= white.color;
@@ -2520,7 +2754,6 @@
 
 	void iiSubobj_resetToDefaultRadio(SObject* radio, bool tlResetProperties, bool tlResetMethods)
 	{
-		// Do we need to reset the object as well (Note that subobj->parent is the obj here)
 		if (radio)
 		{
 			radio->pa.font						= iFont_duplicate(gsFontDefault);
@@ -2835,8 +3068,7 @@
 	u32 iSubobj_renderForm(SObject* form)
 	{
 		u32		lnPixelsRendered;
-		RECT	lrc, lrc2, lrc3, lrc4;
-		HFONT	lhfontOld;
+		RECT	lrc, lrc2;
 
 
 		// Make sure our environment is sane
@@ -2882,33 +3114,33 @@
 						iBmp_frameRect(form->bmp, &lrc2, black, black, black, black, false, NULL, false);
 
 
-					//////////
-					// Form icon and standard controls
-					//////
-						// Form icon
-						SetRect(&lrc3,	bmpArrowUl->bi.biWidth + 8, 1, bmpArrowUl->bi.biWidth + 8 + form->pa.bmpIcon->bi.biWidth, 1 + form->pa.bmpIcon->bi.biHeight);
-						iBmp_bitBltMask(form->bmp, &lrc3, form->pa.bmpIcon);
-CopyRect(&form->rcIcon, &lrc3);
-
-						// Close
-						SetRect(&lrc2,	lrc.right - bmpArrowUr->bi.biWidth - 8 - bmpClose->bi.biWidth, lrc.top + 1, lrc.right - bmpArrowUr->bi.biWidth - 8, lrc.bottom - 1);
-						iBmp_bitBltMask(form->bmp, &lrc2, bmpClose);
-CopyRect(&form->rcClose, &lrc2);
-
-						// Maximize
-						SetRect(&lrc2,	lrc2.left - bmpMaximize->bi.biWidth - 1, lrc2.top, lrc2.left - 1, lrc2.bottom);
-						iBmp_bitBltMask(form->bmp, &lrc2, bmpMaximize);
-CopyRect(&form->rcMaximize, &lrc2);
-
-						// Minimize
-						SetRect(&lrc2,	lrc2.left - bmpMinimize->bi.biWidth - 1, lrc2.top, lrc2.left - 1, lrc2.bottom);
-						iBmp_bitBltMask(form->bmp, &lrc2, bmpMinimize);
-CopyRect(&form->rcMinimize, &lrc2);
-
-						// Move
-						SetRect(&lrc4,	lrc2.left - bmpMove->bi.biWidth - 1, lrc2.top, lrc2.left - 1, lrc2.bottom);
-						iBmp_bitBltMask(form->bmp, &lrc4, bmpMove);
-CopyRect(&form->rcMove, &lrc4);
+// 					//////////
+// 					// Form icon and standard controls
+// 					//////
+// 						// Form icon
+// 						SetRect(&lrc3,	bmpArrowUl->bi.biWidth + 8, 1, bmpArrowUl->bi.biWidth + 8 + form->pa.bmpIcon->bi.biWidth, 1 + form->pa.bmpIcon->bi.biHeight);
+// 						iBmp_bitBltMask(form->bmp, &lrc3, form->pa.bmpIcon);
+// CopyRect(&form->rcIcon, &lrc3);
+// 
+// 						// Close
+// 						SetRect(&lrc2,	lrc.right - bmpArrowUr->bi.biWidth - 8 - bmpClose->bi.biWidth, lrc.top + 1, lrc.right - bmpArrowUr->bi.biWidth - 8, lrc.bottom - 1);
+// 						iBmp_bitBltMask(form->bmp, &lrc2, bmpClose);
+// CopyRect(&form->rcClose, &lrc2);
+// 
+// 						// Maximize
+// 						SetRect(&lrc2,	lrc2.left - bmpMaximize->bi.biWidth - 1, lrc2.top, lrc2.left - 1, lrc2.bottom);
+// 						iBmp_bitBltMask(form->bmp, &lrc2, bmpMaximize);
+// CopyRect(&form->rcMaximize, &lrc2);
+// 
+// 						// Minimize
+// 						SetRect(&lrc2,	lrc2.left - bmpMinimize->bi.biWidth - 1, lrc2.top, lrc2.left - 1, lrc2.bottom);
+// 						iBmp_bitBltMask(form->bmp, &lrc2, bmpMinimize);
+// CopyRect(&form->rcMinimize, &lrc2);
+// 
+// 						// Move
+// 						SetRect(&lrc4,	lrc2.left - bmpMove->bi.biWidth - 1, lrc2.top, lrc2.left - 1, lrc2.bottom);
+// 						iBmp_bitBltMask(form->bmp, &lrc4, bmpMove);
+// CopyRect(&form->rcMove, &lrc4);
 
 
 					//////////
@@ -2935,16 +3167,18 @@ CopyRect(&form->rcArrowLl, &lrc2);
 CopyRect(&form->rcArrowLr, &lrc2);
 
 
-					//////////
-					// Form caption
-					//////
-						SetRect(&lrc2, lrc3.right + 8, lrc3.top + 1, lrc4.right - 8, lrc3.bottom + 1);
-CopyRect(&form->rcCaption, &lrc2);
-						lhfontOld = (HFONT)SelectObject(form->bmp->hdc, gsWindowTitleBarFont->hfont);
-						SetBkMode(form->bmp->hdc, TRANSPARENT);
-						SetTextColor(form->bmp->hdc, (COLORREF)RGB(form->p.captionColor.red, form->p.captionColor.grn, form->p.captionColor.blu));
-						DrawTextA(form->bmp->hdc, form->pa.caption.data, form->pa.caption.length, &lrc2, DT_VCENTER);
-						SelectObject(form->bmp->hdc, lhfontOld);
+// 					//////////
+// 					// Form caption
+// 					//////
+//						HFONT lhfontOld;
+//
+// 						SetRect(&lrc2, lrc3.right + 8, lrc3.top + 1, lrc4.right - 8, lrc3.bottom + 1);
+// CopyRect(&form->rcCaption, &lrc2);
+// 						lhfontOld = (HFONT)SelectObject(form->bmp->hdc, gsWindowTitleBarFont->hfont);
+// 						SetBkMode(form->bmp->hdc, TRANSPARENT);
+// 						SetTextColor(form->bmp->hdc, (COLORREF)RGB(form->p.captionColor.red, form->p.captionColor.grn, form->p.captionColor.blu));
+// 						DrawTextA(form->bmp->hdc, form->pa.caption.data, form->pa.caption.length, &lrc2, DT_VCENTER);
+// 						SelectObject(form->bmp->hdc, lhfontOld);
 
 
 					//////////
@@ -3261,13 +3495,37 @@ CopyRect(&subform->rcCaption, &lrc2);
 //////
 	u32 iSubobj_renderImage(SObject* obj)
 	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
 
 
-			//////////
-			// Indicate we're no longer dirty, that we have everything
-			//////
-				obj->isDirty = false;
-		return(0);
+		lnPixelsRendered = 0;
+		if (obj && obj->bmp)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+
+			// Based on the current conditions, render the appropriate image
+			if (obj->ev.mouse.isMouseDown)
+			{
+				// Mouse is over this item
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->pa.bmpPictureDown);
+
+			} else if (obj->ev.mouse.isMouseOver) {
+				// Mouse is over this item
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->pa.bmpPictureOver);
+
+			} else {
+				// Render normally
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->pa.bmpPicture);
+			}
+		}
+
+		// Indicate we're no longer dirty, that we have everything
+		obj->isDirty = false;
+
+		// Indicate status
+		return(lnPixelsRendered);
 	}
 
 
