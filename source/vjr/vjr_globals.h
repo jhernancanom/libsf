@@ -136,6 +136,7 @@
 		const SBgra		disabledForeColor					= { rgba(192, 192, 230, 255) };
 		const SBgra		colorMouseOver						= { rgba(255, 192, 128, 255) };			// Orangish
 		const SBgra		colorMouseDown						= { rgba(192, 192, 255, 255) };			// Pastel blue
+		const SBgra		maskColor							= { rgba(222, 22, 222, 255) };			// Hideous fuscia (by design)
 
 		// Four-corner window color schemes (eventually these will be loaded from themes.dbf)
 		const SBgra		NwColor								= { rgba(222, 230, 255, 255) };

@@ -333,6 +333,7 @@
 			sourceCode_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 			sourceCode_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown_sourceCode;
 			sourceCode_editbox->pa.em					= iEditManager_allocate();
+			iObj_setIcon(sourceCode, bmpSourceCodeIcon);
 
 
 		//////////
@@ -342,6 +343,7 @@
 			locals_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 			locals_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
 			locals_editbox->pa.em					= iEditManager_allocate();
+			iObj_setIcon(sourceCode, bmpLocalsIcon);
 
 
 		//////////
@@ -351,6 +353,7 @@
 			watch_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 			watch_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
 			watch_editbox->pa.em					= iEditManager_allocate();
+			iObj_setIcon(sourceCode, bmpWatchIcon);
 
 
 		//////////
@@ -361,6 +364,7 @@
 			command_editbox->ev.keyboard._onKeyDown		= (u32)&iEditManager_onKeyDown_sourceCode;
 			command_editbox->p.hasFocus					= true;
 			command_editbox->pa.em						= iEditManager_allocate();
+			iObj_setIcon(sourceCode, bmpCommandIcon);
 
 
 		//////////
@@ -370,6 +374,7 @@
 			debug_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 			debug_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
 			debug_editbox->pa.em					= iEditManager_allocate();
+			iObj_setIcon(sourceCode, bmpDebugIcon);
 
 
 		//////////
@@ -379,6 +384,7 @@
 			output_editbox->pa.font					= iFont_create((s8*)cgcDefaultFontName, 8, FW_MEDIUM, false, false);
 			output_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
 			output_editbox->pa.em					= iEditManager_allocate();
+			iObj_setIcon(sourceCode, bmpOutputIcon);
 
 
 		//////////
@@ -717,27 +723,6 @@
 //////
 	void iWindow_render(SWindow* win, bool tlForceRedraw)
 	{
-// //////////
-// // Temporarily force the commandWindow to be marked dirty
-// //////
-// 	if (win->obj == gobj_jdebi)
-// 	{
-// 		SObject* obj;
-// 		obj = gobj_jdebi->firstChild;
-// 		while (obj)
-// 		{
-// 			if (obj->objType == _OBJ_TYPE_SUBFORM)
-// 				obj->isDirty = true;
-// 
-// 			// Move to next item
-// 			obj = (SObject*)obj->ll.next;
-// 		}
-// 	}
-// //////
-// // END
-// //////////
-
-
 		// Make sure we have something to render
 // u32 st1, st2, st3;
 // s8 buffer[64];

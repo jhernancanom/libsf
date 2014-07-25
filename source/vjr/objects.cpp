@@ -377,7 +377,7 @@
 		//////////
 		// Render self
 		//////
-			if (obj->isDirty)
+			if (tlForceRender || obj->isDirty)
 				iObj_render(obj, tlForceRender);
 
 		//////////
@@ -488,8 +488,22 @@
 							iBmp_grayscale(obj->bmpScaled, &lrc2);
 						}
 
+
+						//////////
 						// Copy
-						lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmpScaled);
+						//////
+							switch (obj->objType)
+							{
+								case _OBJ_TYPE_IMAGE:
+								case _OBJ_TYPE_LABEL:
+									if (obj->p.isOpaque)		lnPixelsRendered += iBmp_bitBlt(bmpDst,		&lrc, obj->bmpScaled);
+									else						lnPixelsRendered += iBmp_bitBltMask(bmpDst,	&lrc, obj->bmpScaled);
+									break;
+
+								default:
+									lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmpScaled);
+									break;
+							}
 					}
 
 				} else {
@@ -503,8 +517,22 @@
 							iBmp_grayscale(obj->bmp, &lrc2);
 						}
 
+
+						//////////
 						// Copy
-						lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
+						//////
+							switch (obj->objType)
+							{
+								case _OBJ_TYPE_IMAGE:
+								case _OBJ_TYPE_LABEL:
+									if (obj->p.isOpaque)		lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
+									else						lnPixelsRendered += iBmp_bitBltMask(bmpDst, &lrc, obj->bmp);
+									break;
+
+								default:
+									lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
+									break;
+							}
 					}
 				}
 
@@ -716,50 +744,68 @@
 						{
 							// Form icon
 							SetRect(&objChild->rc,
-										bmpArrowUl->bi.biWidth + 8,
+										bmpArrowUl->bi.biWidth + 4 - obj->rcClient.left,
 										1 - obj->rcClient.top,
-										bmpArrowUl->bi.biWidth + 8 + bmpArrowUl->bi.biWidth,
+										bmpArrowUl->bi.biWidth + 4 - obj->rcClient.left + bmpArrowUl->bi.biWidth,
 										1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
+
+							// Update the size
+							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
 						} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
 							// Caption
 							SetRect(&objChild->rc,
-										bmpArrowUl->bi.biWidth + 8 + bmpArrowUl->bi.biWidth + 8,
+										bmpArrowUl->bi.biWidth + 4 + bmpArrowUl->bi.biWidth + 4 - obj->rcClient.left,
 										1 - obj->rcClient.top,
-										tnWidth - (5 * (bmpArrowUl->bi.biWidth + 8)) - 1,
+										tnWidth - (5 * (bmpArrowUl->bi.biWidth + 4)) - 1,
 										1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
+
+							// Update the size
+							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
 						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMove, sizeof(cgcName_iconMove) - 1) == 0) {
 							// Move icon
 							SetRect(&objChild->rc,
-										tnWidth - (5 * (bmpArrowUl->bi.biWidth + 8)),
+										tnWidth - (5 * (bmpArrowUl->bi.biWidth + 4)) - obj->rcClient.left,
 										1 - obj->rcClient.top,
-										(tnWidth - (5 * (bmpArrowUl->bi.biWidth + 8))) + bmpArrowUl->bi.biWidth,
+										(tnWidth - (5 * (bmpArrowUl->bi.biWidth + 4))) + bmpArrowUl->bi.biWidth,
 										1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
+
+							// Update the size
+							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
 						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMinimize, sizeof(cgcName_iconMinimize) - 1) == 0) {
 							// Minimize icon
 							SetRect(&objChild->rc,
-										tnWidth - (4 * (bmpArrowUl->bi.biWidth + 8)),
+										tnWidth - (4 * (bmpArrowUl->bi.biWidth + 4)) - obj->rcClient.left,
 										1 - obj->rcClient.top,
-										(tnWidth - (4 * (bmpArrowUl->bi.biWidth + 8))) + bmpArrowUl->bi.biWidth,
+										(tnWidth - (4 * (bmpArrowUl->bi.biWidth + 4))) + bmpArrowUl->bi.biWidth,
 										1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
+
+							// Update the size
+							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
 						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMaximize, sizeof(cgcName_iconMaximize) - 1) == 0) {
 							// Maximize icon
 							SetRect(&objChild->rc,
-										tnWidth - (3 * (bmpArrowUl->bi.biWidth + 8)),
+										tnWidth - (3 * (bmpArrowUl->bi.biWidth + 4)) - obj->rcClient.left,
 										1 - obj->rcClient.top,
-										(tnWidth - (3 * (bmpArrowUl->bi.biWidth + 8))) + bmpArrowUl->bi.biWidth,
+										(tnWidth - (3 * (bmpArrowUl->bi.biWidth + 4))) + bmpArrowUl->bi.biWidth,
 										1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
+
+							// Update the size
+							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
 						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0) {
 							// Close icon
 							SetRect(&objChild->rc,
-										tnWidth - (2 * (bmpArrowUl->bi.biWidth + 8)),
+										tnWidth - (2 * (bmpArrowUl->bi.biWidth + 4)) - obj->rcClient.left,
 										1 - obj->rcClient.top,
-										(tnWidth - (2 * (bmpArrowUl->bi.biWidth + 8))) + bmpArrowUl->bi.biWidth,
+										(tnWidth - (2 * (bmpArrowUl->bi.biWidth + 4))) + bmpArrowUl->bi.biWidth,
 										1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
+
+							// Update the size
+							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 						}
 
 						// Move to next object
@@ -769,7 +815,7 @@
 				break;
 
 			case _OBJ_TYPE_SUBFORM:
-				SetRect(&obj->rcClient, 0, obj->pa.bmpIcon->bi.biHeight, tnWidth - 8, tnHeight);
+				SetRect(&obj->rcClient, 0, bmpArrowUl->bi.biHeight, tnWidth - 8, tnHeight);
 				break;
 
 			case _OBJ_TYPE_LABEL:
@@ -1047,6 +1093,12 @@
 			obj->scrollOffsetX	= 0;
 			obj->scrollOffsetY	= 0;
 			obj->isScaled		= false;
+
+
+		//////////
+		// Reset the object's size
+		//////
+			iObj_setSize(obj, obj->rc.left, obj->rc.top, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top);
 	}
 
 
@@ -1204,6 +1256,7 @@
 				iDatum_duplicate(&formNew->pa.name,			cgcName_form, -1);
 				iDatum_duplicate(&formNew->pa.className,	cgcName_form, -1);
 				iEvents_resetToDefault(&formNew->ev);
+				iObj_setSize(formNew, 0, 0, 375, 250);
 
 				// Initialize based on template
 				if (template_form)
@@ -1286,6 +1339,7 @@
 				iDatum_duplicate(&subformNew->pa.name,		cgcName_subform, -1);
 				iDatum_duplicate(&subformNew->pa.className,	cgcName_subform, -1);
 				iEvents_resetToDefault(&subformNew->ev);
+				iObj_setSize(subformNew, 0, 0, 200, 100);
 
 				// Initialize based on template
 				if (template_subform)
@@ -1358,6 +1412,7 @@
 				iDatum_duplicate(&labelNew->pa.name,		cgcName_label, -1);
 				iDatum_duplicate(&labelNew->pa.className,	cgcName_label, -1);
 				iEvents_resetToDefault(&labelNew->ev);
+				iObj_setSize(labelNew, 0, 0, 40, 17);
 
 				// Initialize based on template
 				if (template_label)
@@ -1414,6 +1469,7 @@
 				iDatum_duplicate(&textboxNew->pa.name,		cgcName_textbox, -1);
 				iDatum_duplicate(&textboxNew->pa.className,	cgcName_textbox, -1);
 				iEvents_resetToDefault(&textboxNew->ev);
+				iObj_setSize(textboxNew, 0, 0, 100, 23);
 
 				// Initialize based on template
 				if (template_textbox)
@@ -1470,6 +1526,7 @@
 				iDatum_duplicate(&buttonNew->pa.name,		cgcName_button, -1);
 				iDatum_duplicate(&buttonNew->pa.className,	cgcName_button, -1);
 				iEvents_resetToDefault(&buttonNew->ev);
+				iObj_setSize(buttonNew, 0, 0, 84, 27);
 
 				// Initialize based on template
 				if (template_button)
@@ -1526,6 +1583,7 @@
 				iDatum_duplicate(&editboxNew->pa.name,		cgcName_editbox, -1);
 				iDatum_duplicate(&editboxNew->pa.className,	cgcName_editbox, -1);
 				iEvents_resetToDefault(&editboxNew->ev);
+				iObj_setSize(editboxNew, 0, 0, 100, 53);
 
 				// Initialize based on template
 				if (template_editbox)
@@ -1582,6 +1640,7 @@
 				iDatum_duplicate(&imageNew->pa.name,		cgcName_image, -1);
 				iDatum_duplicate(&imageNew->pa.className,	cgcName_image, -1);
 				iEvents_resetToDefault(&imageNew->ev);
+				iObj_setSize(imageNew, 0, 0, 100, 36);
 
 				// Initialize based on template
 				if (template_image)
@@ -1638,6 +1697,7 @@
 				iDatum_duplicate(&checkboxNew->pa.name,			cgcName_checkbox, -1);
 				iDatum_duplicate(&checkboxNew->pa.className,	cgcName_checkbox, -1);
 				iEvents_resetToDefault(&checkboxNew->ev);
+				iObj_setSize(checkboxNew, 0, 0, 60, 17);
 
 				// Initialize based on template
 				if (template_checkbox)
@@ -1694,6 +1754,7 @@
 				iDatum_duplicate(&optionNew->pa.name,		cgcName_option, -1);
 				iDatum_duplicate(&optionNew->pa.className,	cgcName_option, -1);
 				iEvents_resetToDefault(&optionNew->ev);
+				iObj_setSize(optionNew, 0, 0, 60, 40);
 
 				// Initialize based on template
 				if (template_option)
@@ -1750,6 +1811,7 @@
 				iDatum_duplicate(&radioNew->pa.name,		cgcName_radio, -1);
 				iDatum_duplicate(&radioNew->pa.className,	cgcName_radio, -1);
 				iEvents_resetToDefault(&radioNew->ev);
+				iObj_setSize(radioNew, 0, 0, 100, 100);
 
 				// Initialize based on template
 				if (template_radio)
@@ -2344,6 +2406,9 @@
 					// See which object this is
 					if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_icon, sizeof(cgcName_icon) - 1) == 0)
 					{
+						// Adjust the size
+						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
+
 						// Form icon
 						iBmp_delete(&objChild->pa.bmpPicture,		true, true);	// Delete the old
 						iBmp_delete(&objChild->pa.bmpPictureOver,	true, true);	// Delete the old
@@ -2366,8 +2431,14 @@
 						// Caption
 						iDatum_delete(&objChild->pa.caption, false);
 						iDatum_duplicate(&objChild->pa.caption, cgcName_formCaption, sizeof(cgcName_formCaption) - 1);
+						objChild->p.isOpaque = false;
+						iFont_delete(&objChild->pa.font, true);
+						objChild->pa.font = iFont_create(cgcWindowTitleBarFontName, 12, FW_SEMIBOLD, false, false);
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMove, sizeof(cgcName_iconMove) - 1) == 0) {
+						// Adjust the size
+						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
+
 						// Move icon
 						iBmp_delete(&objChild->pa.bmpPicture,		true, true);	// Delete the old
 						iBmp_delete(&objChild->pa.bmpPictureOver,	true, true);	// Delete the old
@@ -2387,6 +2458,9 @@
 						objChild->pa.bmpIcon = iBmp_copy(bmpMove);					// Set the new
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMinimize, sizeof(cgcName_iconMinimize) - 1) == 0) {
+						// Adjust the size
+						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
+
 						// Minimize icon
 						iBmp_delete(&objChild->pa.bmpPicture,		true, true);	// Delete the old
 						iBmp_delete(&objChild->pa.bmpPictureOver,	true, true);	// Delete the old
@@ -2406,6 +2480,9 @@
 						objChild->pa.bmpIcon = iBmp_copy(bmpMinimize);				// Set the new
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMaximize, sizeof(cgcName_iconMaximize) - 1) == 0) {
+						// Adjust the size
+						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
+
 						// Maximize icon
 						iBmp_delete(&objChild->pa.bmpPicture,		true, true);	// Delete the old
 						iBmp_delete(&objChild->pa.bmpPictureOver,	true, true);	// Delete the old
@@ -2425,6 +2502,9 @@
 						objChild->pa.bmpIcon = iBmp_copy(bmpMaximize);				// Set the new
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0) {
+						// Adjust the size
+						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
+
 						// Close icon
 						iBmp_delete(&objChild->pa.bmpPicture,		true, true);	// Delete the old
 						iBmp_delete(&objChild->pa.bmpPictureOver,	true, true);	// Delete the old
@@ -2463,9 +2543,12 @@
 			//////////
 			// Set default size and position
 			//////
-				SetRect(&subform->rc, 0, 0, 275, 150);
-				SetRect(&subform->rco, 0, 0, 275, 150);
-				SetRect(&subform->rcp, 0, 0, 275, 150);
+				SetRect(&subform->rc, 0, 0, 200, 100);
+				SetRect(&subform->rco, 0, 0, 200, 100);
+				SetRect(&subform->rcp, 0, 0, 200, 100);
+
+				// Set the size of the child components
+				iObj_setSize(subform, 0, 0, 200, 100);
 
 
 			//////////
@@ -2531,9 +2614,12 @@
 			// Set default size and position
 			//////
 				lnHeight = max(gsFontDefault->tm.tmHeight + 2, 10);
-				SetRect(&label->rc, 0, 0, 275, lnHeight);
-				SetRect(&label->rco, 0, 0, 275, lnHeight);
-				SetRect(&label->rcp, 0, 0, 275, lnHeight);
+				SetRect(&label->rc, 0, 0, 40, 17);
+				SetRect(&label->rco, 0, 0, 40, 17);
+				SetRect(&label->rcp, 0, 0, 40, 17);
+
+				// Set the size
+				iObj_setSize(label, 0, 0, 40, 17);
 
 
 			//////////
@@ -2582,9 +2668,12 @@
 			//////////
 			// Set default size and position
 			//////
-				SetRect(&textbox->rc, 0, 0, 100, 75);
-				SetRect(&textbox->rco, 0, 0, 100, 75);
-				SetRect(&textbox->rcp, 0, 0, 100, 75);
+				SetRect(&textbox->rc, 0, 0, 100, 23);
+				SetRect(&textbox->rco, 0, 0, 100, 23);
+				SetRect(&textbox->rcp, 0, 0, 100, 23);
+
+				// Set the size
+				iObj_setSize(textbox, 0, 0, 100, 23);
 
 
 			//////////
@@ -2639,6 +2728,23 @@
 	{
 		if (button)
 		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(button, true, true);
+
+
+			//////////
+			// Set default size and position
+			//////
+				SetRect(&button->rc, 0, 0, 84, 27);
+				SetRect(&button->rco, 0, 0, 84, 27);
+				SetRect(&button->rcp, 0, 0, 84, 27);
+
+				// Set the size
+				iObj_setSize(button, 0, 0, 84, 27);
+
+
 			button->pa.font						= iFont_duplicate(gsFontDefault);
 			button->p.backColor.color			= white.color;
 			button->p.foreColor.color			= black.color;
@@ -2659,6 +2765,23 @@
 	{
 		if (editbox)
 		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(editbox, true, true);
+
+
+			//////////
+			// Set default size and position
+			//////
+				SetRect(&editbox->rc, 0, 0, 100, 53);
+				SetRect(&editbox->rco, 0, 0, 100, 53);
+				SetRect(&editbox->rcp, 0, 0, 100, 53);
+
+				// Set the size
+				iObj_setSize(editbox, 0, 0, 100, 53);
+
+
 			editbox->pa.font						= iFont_duplicate(gsFontDefault);
 			editbox->p.backColor.color				= white.color;
 			editbox->p.foreColor.color				= black.color;
@@ -2690,6 +2813,23 @@
 	{
 		if (image)
 		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(image, true, true);
+
+
+			//////////
+			// Set default size and position
+			//////
+				SetRect(&image->rc, 0, 0, 100, 36);
+				SetRect(&image->rco, 0, 0, 100, 36);
+				SetRect(&image->rcp, 0, 0, 100, 36);
+
+				// Set the size
+				iObj_setSize(image, 0, 0, 100, 36);
+
+
 			image->p.style						= _IMAGE_STYLE_OPAQUE;
 			image->p.image						= iBmp_copy(bmpNoImage);
 
@@ -2701,6 +2841,23 @@
 	{
 		if (checkbox)
 		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(checkbox, true, true);
+
+
+			//////////
+			// Set default size and position
+			//////
+				SetRect(&checkbox->rc, 0, 0, 60, 17);
+				SetRect(&checkbox->rco, 0, 0, 60, 17);
+				SetRect(&checkbox->rcp, 0, 0, 60, 17);
+
+				// Set the size
+				iObj_setSize(checkbox, 0, 0, 60, 17);
+
+
 			checkbox->pa.font						= iFont_duplicate(gsFontDefault);
 			checkbox->p.backColor.color				= white.color;
 			checkbox->p.foreColor.color				= black.color;
@@ -2729,6 +2886,23 @@
 
 		if (option)
 		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(option, true, true);
+
+
+			//////////
+			// Set default size and position
+			//////
+				SetRect(&option->rc, 0, 0, 60, 40);
+				SetRect(&option->rco, 0, 0, 60, 40);
+				SetRect(&option->rcp, 0, 0, 60, 40);
+
+				// Set the size
+				iObj_setSize(option, 0, 0, 60, 40);
+
+
 			option->p.backColor.color			= white.color;
 			option->p.foreColor.color			= black.color;
 
@@ -2756,6 +2930,23 @@
 	{
 		if (radio)
 		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(radio, true, true);
+
+
+			//////////
+			// Set default size and position
+			//////
+				SetRect(&radio->rc, 0, 0, 100, 100);
+				SetRect(&radio->rco, 0, 0, 100, 100);
+				SetRect(&radio->rcp, 0, 0, 100, 100);
+
+				// Set the size
+				iObj_setSize(radio, 0, 0, 100, 100);
+
+
 			radio->pa.font						= iFont_duplicate(gsFontDefault);
 			radio->p.backColor.color			= white.color;
 			radio->p.foreColor.color			= black.color;
@@ -3242,7 +3433,7 @@ CopyRect(&form->rcArrowLr, &lrc2);
 
 		// Make sure our environment is sane
 		lnPixelsRendered = 0;
-		if (subform && subform->rc.right > 0 && subform->rc.bottom > 0 && subform->rc.right >= subform->rc.left && subform->rc.bottom >= subform->rc.bottom && subform->rc.right - subform->rc.left < 4400 && subform->rc.bottom - subform->rc.top < 4400)
+		if (subform && subform->isDirty && subform->isRendered && subform->rc.right > 0 && subform->rc.bottom > 0 && subform->rc.right >= subform->rc.left && subform->rc.bottom >= subform->rc.bottom && subform->rc.right - subform->rc.left < 4400 && subform->rc.bottom - subform->rc.top < 4400)
 		{
 			//////////
 			// Make sure there is a bit bucket
@@ -3406,13 +3597,64 @@ CopyRect(&subform->rcCaption, &lrc2);
 //////
 	u32 iSubobj_renderLabel(SObject* obj)
 	{
+		u32		lnPixelsRendered, lnFormat;
+		RECT	lrc;
+		HBRUSH	hbr;
 
 
-			//////////
+		// Make sure our environment is sane
+		lnPixelsRendered = 0;
+		if (obj && obj->isDirty  && obj->isRendered)
+		{
+			if (obj->p.isOpaque)
+			{
+				// Use the back color
+				hbr = CreateSolidBrush(RGB(obj->p.backColor.red, obj->p.backColor.grn, obj->p.backColor.blu));
+				SetBkColor(obj->bmp->hdc, RGB(obj->p.backColor.red, obj->p.backColor.grn, obj->p.backColor.blu));
+
+			} else {
+				// Use the mask color
+				hbr = CreateSolidBrush(RGB(maskColor.red, maskColor.grn, maskColor.blu));
+				SetBkColor(obj->bmp->hdc, RGB(maskColor.red, maskColor.grn, maskColor.blu));
+			}
+
+			// Fill in the background
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			FillRect(obj->bmp->hdc, &lrc, hbr);
+
+			// Set the text parameters
+			SetBkMode(obj->bmp->hdc, TRANSPARENT);
+			SetTextColor(obj->bmp->hdc, RGB(obj->p.foreColor.red, obj->p.foreColor.grn, obj->p.foreColor.blu));
+			SelectObject(obj->bmp->hdc, obj->pa.font->hfont);
+
+			// Determine our orientation
+			switch (obj->p.alignment)
+			{
+				case _ALIGNMENT_LEFT:
+					lnFormat = DT_LEFT;
+					break;
+
+				case _ALIGNMENT_RIGHT:
+					lnFormat = DT_RIGHT;
+					break;
+
+				case _ALIGNMENT_CENTER:
+					lnFormat = DT_CENTER;
+					break;
+			}
+
+			// Draw the text
+			DrawText(obj->bmp->hdc, obj->pa.caption.data, obj->pa.caption.length, &lrc, lnFormat | DT_END_ELLIPSIS);
+
+			// Delete the brush
+			DeleteObject((HGDIOBJ)hbr);
+
 			// Indicate we're no longer dirty, that we have everything
-			//////
-				obj->isDirty = false;
-		return(0);
+			obj->isDirty = false;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
 	}
 
 
@@ -3499,6 +3741,7 @@ CopyRect(&subform->rcCaption, &lrc2);
 		RECT	lrc;
 
 
+		// Make sure our environment is sane
 		lnPixelsRendered = 0;
 		if (obj && obj->bmp)
 		{
@@ -3519,10 +3762,10 @@ CopyRect(&subform->rcCaption, &lrc2);
 				// Render normally
 				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->pa.bmpPicture);
 			}
-		}
 
-		// Indicate we're no longer dirty, that we have everything
-		obj->isDirty = false;
+			// Indicate we're no longer dirty, that we have everything
+			obj->isDirty = false;
+		}
 
 		// Indicate status
 		return(lnPixelsRendered);
