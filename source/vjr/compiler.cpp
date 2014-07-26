@@ -3,7 +3,7 @@
 // /libsf/source/vjr/compiler.cpp
 //
 //////
-// Version 0.33
+// Version 0.34
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -4342,6 +4342,40 @@ _asm int 3;
 		// Indicate our status
 		//////
 			return(varNew);
+	}
+
+
+
+
+//////////
+//
+// Called to create and populate a new variable in one go
+//
+//////
+	SVariable* iVariable_createAndPopulate(u32 tnVarType, s8* tcData, u32 tnDataLength)
+	{
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		var = NULL;
+		if (tcData && tnDataLength > 0)
+		{
+			// Create the variable
+			var = iVariable_create(tnVarType, NULL);
+
+			// Populate it
+			if (var)
+				iDatum_duplicate(&var->value, tcData, tnDataLength);
+		}
+
+		// Indicate our status
+		return(var);
+	}
+
+	SVariable* iVariable_createAndPopulate(u32 tnVarType, cs8* tcData, u32 tnDataLength)
+	{
+		return(iVariable_createAndPopulate(tnVarType, (s8*)tcData, tnDataLength));
 	}
 
 

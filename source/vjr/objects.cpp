@@ -3,7 +3,7 @@
 // /libsf/source/vjr/objects.cpp
 //
 //////
-// Version 0.33
+// Version 0.34
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -524,9 +524,13 @@
 							switch (obj->objType)
 							{
 								case _OBJ_TYPE_IMAGE:
-								case _OBJ_TYPE_LABEL:
 									if (obj->p.isOpaque)		lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
 									else						lnPixelsRendered += iBmp_bitBltMask(bmpDst, &lrc, obj->bmp);
+									break;
+
+								case _OBJ_TYPE_LABEL:
+									if (obj->p.isOpaque)		lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
+									else						lnPixelsRendered += iBmp_bitBlt_byGraymask(bmpDst, &lrc, obj->bmp, obj->p.foreColor);
 									break;
 
 								default:
@@ -715,8 +719,8 @@
 		SObject* objChild;
 
 
-		// Resize if need be
-		obj->bmp = iBmp_verifySizeOrResize(obj->bmp, tnWidth, tnHeight);
+		// Resize if need be (32-bit bitmap for labels, 24-bit for everything else)
+		obj->bmp = iBmp_verifySizeOrResize(obj->bmp, tnWidth, tnHeight, 24);
 
 		// Position and size its rectangle
 		SetRect(&obj->rc,			tnLeft, tnTop, tnLeft + tnWidth, tnTop + tnHeight);
@@ -2433,7 +2437,7 @@
 						iDatum_duplicate(&objChild->pa.caption, cgcName_formCaption, sizeof(cgcName_formCaption) - 1);
 						objChild->p.isOpaque = false;
 						iFont_delete(&objChild->pa.font, true);
-						objChild->pa.font = iFont_create(cgcWindowTitleBarFontName, 12, FW_SEMIBOLD, false, false);
+						objChild->pa.font = iFont_create(cgcWindowTitleBarFontName, 12, FW_NORMAL, false, false);
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMove, sizeof(cgcName_iconMove) - 1) == 0) {
 						// Adjust the size
@@ -2647,7 +2651,7 @@
 			//////
 				label->p.alignment					= _ALIGNMENT_LEFT;
 				iDatum_duplicate(&label->pa.caption, cgcName_label, 5);
-				label->p.isOpaque					= true;
+				label->p.isOpaque					= false;
 				label->p.isBorder					= false;
 				label->p.borderColor.color			= black.color;
 				label->p.disabledBackColor.color	= disabledBackColor.color;
@@ -3338,22 +3342,22 @@
 					// Resizing arrows
 					//////
 						// Upper left arrow
-						SetRect(&lrc2, lrc.left, lrc.top, lrc.left + bmpArrowUl->bi.biWidth, lrc.top + bmpArrowUl->bi.biHeight);
+						SetRect(&lrc2, lrc.left + 1, lrc.top + 1, lrc.left + bmpArrowUl->bi.biWidth, lrc.top + bmpArrowUl->bi.biHeight);
 						iBmp_bitBltMask(form->bmp, &lrc2, bmpArrowUl);
 CopyRect(&form->rcArrowUl, &lrc2);
 
 						// Upper right arrow
-						SetRect(&lrc2, lrc.right - bmpArrowUr->bi.biWidth, lrc.top, lrc.right, lrc.top + bmpArrowUr->bi.biHeight);
+						SetRect(&lrc2, lrc.right - bmpArrowUr->bi.biWidth - 1, lrc.top + 1, lrc.right, lrc.top + bmpArrowUr->bi.biHeight);
 						iBmp_bitBltMask(form->bmp, &lrc2, bmpArrowUr);
 CopyRect(&form->rcArrowUr, &lrc2);
 
-						// Lower left arrow
-						SetRect(&lrc2, lrc.right - bmpArrowLr->bi.biWidth, lrc.bottom - bmpArrowLr->bi.biHeight, lrc.right, lrc.bottom);
+						// Lower right arrow
+						SetRect(&lrc2, lrc.right - bmpArrowLr->bi.biWidth - 1, lrc.bottom - bmpArrowLr->bi.biHeight - 1, lrc.right, lrc.bottom);
 						iBmp_bitBltMask(form->bmp, &lrc2, bmpArrowLr);
 CopyRect(&form->rcArrowLl, &lrc2);
 
-						// Lower right arrow
-						SetRect(&lrc2, lrc.left, lrc.bottom - bmpArrowLl->bi.biHeight, lrc.left + bmpArrowLl->bi.biWidth, lrc.bottom);
+						// Lower left arrow
+						SetRect(&lrc2, lrc.left + 1, lrc.bottom - bmpArrowLl->bi.biHeight - 1, lrc.left + bmpArrowLl->bi.biWidth, lrc.bottom);
 						iBmp_bitBltMask(form->bmp, &lrc2, bmpArrowLl);
 CopyRect(&form->rcArrowLr, &lrc2);
 
@@ -3446,7 +3450,7 @@ CopyRect(&form->rcArrowLr, &lrc2);
 
 				} else if (subform->bmp->bi.biWidth != subform->rc.right - subform->rc.left || subform->bmp->bi.biHeight != subform->rc.bottom - subform->rc.top) {
 					// Resize
-					subform->bmp = iBmp_verifySizeOrResize(subform->bmp, subform->rc.right - subform->rc.left, subform->rc.bottom - subform->rc.top);
+					subform->bmp = iBmp_verifySizeOrResize(subform->bmp, subform->rc.right - subform->rc.left, subform->rc.bottom - subform->rc.top, subform->bmp->bi.biBitCount);
 				}
 
 
@@ -3599,7 +3603,6 @@ CopyRect(&subform->rcCaption, &lrc2);
 	{
 		u32		lnPixelsRendered, lnFormat;
 		RECT	lrc;
-		HBRUSH	hbr;
 
 
 		// Make sure our environment is sane
@@ -3609,22 +3612,21 @@ CopyRect(&subform->rcCaption, &lrc2);
 			if (obj->p.isOpaque)
 			{
 				// Use the back color
-				hbr = CreateSolidBrush(RGB(obj->p.backColor.red, obj->p.backColor.grn, obj->p.backColor.blu));
 				SetBkColor(obj->bmp->hdc, RGB(obj->p.backColor.red, obj->p.backColor.grn, obj->p.backColor.blu));
+				SetTextColor(obj->bmp->hdc, RGB(obj->p.foreColor.red, obj->p.foreColor.grn, obj->p.foreColor.blu));
 
 			} else {
-				// Use the mask color
-				hbr = CreateSolidBrush(RGB(maskColor.red, maskColor.grn, maskColor.blu));
-				SetBkColor(obj->bmp->hdc, RGB(maskColor.red, maskColor.grn, maskColor.blu));
+				// Use a black and white creation
+				SetBkColor(obj->bmp->hdc, RGB(255,255,255));
+				SetTextColor(obj->bmp->hdc, RGB(0,0,0));
 			}
 
 			// Fill in the background
 			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
-			FillRect(obj->bmp->hdc, &lrc, hbr);
+			iBmp_fillRect(obj->bmp, &lrc, white, white, white, white, false, NULL, false);
 
 			// Set the text parameters
 			SetBkMode(obj->bmp->hdc, TRANSPARENT);
-			SetTextColor(obj->bmp->hdc, RGB(obj->p.foreColor.red, obj->p.foreColor.grn, obj->p.foreColor.blu));
 			SelectObject(obj->bmp->hdc, obj->pa.font->hfont);
 
 			// Determine our orientation
@@ -3644,10 +3646,11 @@ CopyRect(&subform->rcCaption, &lrc2);
 			}
 
 			// Draw the text
-			DrawText(obj->bmp->hdc, obj->pa.caption.data, obj->pa.caption.length, &lrc, lnFormat | DT_END_ELLIPSIS);
+			DrawText(obj->bmp->hdc, obj->pa.caption.data, obj->pa.caption.length, &lrc, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
 
-			// Delete the brush
-			DeleteObject((HGDIOBJ)hbr);
+			// Frame rectangle
+			if (obj->p.isBorder)
+				iBmp_frameRect(obj->bmp, &lrc, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, false, NULL, false);
 
 			// Indicate we're no longer dirty, that we have everything
 			obj->isDirty = false;

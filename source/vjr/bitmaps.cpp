@@ -3,7 +3,7 @@
 // /libsf/source/vjr/bitmaps.cpp
 //
 //////
-// Version 0.33
+// Version 0.34
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -145,7 +145,7 @@
 // the correct size and scale this one into it.
 //
 //////
-	SBitmap* iBmp_verifySizeOrResize(SBitmap* bmp, u32 tnWidth, u32 tnHeight)
+	SBitmap* iBmp_verifySizeOrResize(SBitmap* bmp, u32 tnWidth, u32 tnHeight, u32 tnBitCount)
 	{
 		SBitmap* bmpNew;
 
@@ -155,7 +155,7 @@
 		{
 			// Something has changed
 			bmpNew = iBmp_allocate();
-			iBmp_createBySize(bmpNew, tnWidth, tnHeight, ((bmp) ? bmp->bi.biBitCount : 24));
+			iBmp_createBySize(bmpNew, tnWidth, tnHeight, ((bmp) ? bmp->bi.biBitCount : ((tnBitCount == 32 || tnBitCount == 24) ? tnBitCount : 24)));
 
 			// Process the old
 			if (bmp)
@@ -480,9 +480,7 @@
 		if (bmp)
 		{
 			// Populate the initial structure
-			iBmp_populateBitmapStructure(bmp, width, height, 24);
-//			if (tnBitCount == 24)		iBmp_populateBitmapStructure(bmp, width, height, 24);
-//			else						iBmp_populateBitmapStructure(bmp, width, height, 32);
+			iBmp_populateBitmapStructure(bmp, width, height, tnBitCount);
 
 			// Create the HDC and DIB Section
 			bmp->hdc	= CreateCompatibleDC(GetDC(GetDesktopWindow()));
@@ -912,6 +910,8 @@
 		SBgra*	lbgra;
 
 
+		// Make sure the environment is sane
+		lnPixelsRendered = 0;
 		if (bmp && trc)
 		{
 		//////////
@@ -945,7 +945,6 @@
 		//////////
 		// Draw it
 		//////
-			lnPixelsRendered = 0;
 			for (lnY = trc->top; lnY < bmp->bi.biHeight && lnY < trc->bottom; lnY++)
 			{
 				// Are we on the image?
@@ -1184,6 +1183,173 @@
 		return(lnPixelsRendered);
 	}
 
+
+
+
+//////////
+//
+// Called to render the indicated image by its grayscale value (not computed, but assumed
+// as only red is sampled), with the indicated color applied onto the bmpDst bitmap.
+//
+//////
+	u32 iBmp_bitBlt_byGraymask(SBitmap* bmpDst, RECT* trc, SBitmap* bmpSrc, SBgra color)
+	{
+		u32			lnPixelsRendered;
+		s32			lnY, lnX, lnYDst, lnXDst;
+		f64			lfAlp, lfMalp, lfRed, lfGrn, lfBlu;
+		SBgr*		lbgrDst;
+		SBgr*		lbgrSrc;
+		SBgra*		lbgraDst;
+		SBgra*		lbgraSrc;
+
+
+		lnPixelsRendered = 0;
+		if (bmpDst && trc && bmpSrc)
+		{
+		//////////
+		// Draw it
+		//////
+			lfRed = (f64)color.red;
+			lfGrn = (f64)color.grn;
+			lfBlu = (f64)color.blu;
+			for (lnY = 0, lnYDst = trc->top; lnY < bmpSrc->bi.biHeight && lnYDst < trc->bottom; lnYDst++, lnY++)
+			{
+				// Are we on the image?
+				if (lnYDst >= 0 && lnYDst < bmpDst->bi.biHeight)
+				{
+					// Build the pointer
+					lbgrDst		= (SBgr*)((s8*)bmpDst->bd  + ((bmpDst->bi.biHeight - lnYDst - 1) * bmpDst->rowWidth) + (trc->left * (bmpDst->bi.biBitCount / 8)));
+					lbgrSrc		= (SBgr*)((s8*)bmpSrc->bd  + ((bmpSrc->bi.biHeight - lnY    - 1) * bmpSrc->rowWidth));
+					lbgraDst	= (SBgra*)((s8*)bmpDst->bd + ((bmpDst->bi.biHeight - lnYDst - 1) * bmpDst->rowWidth) + (trc->left * (bmpDst->bi.biBitCount / 8)));
+					lbgraSrc	= (SBgra*)((s8*)bmpSrc->bd + ((bmpSrc->bi.biHeight - lnY    - 1) * bmpSrc->rowWidth));
+
+					// What exactly are we copying?
+					if (bmpSrc->bi.biBitCount == 24)
+					{
+						// 24-bit source
+						if (bmpDst->bi.biBitCount == 24)
+						{
+							// 24-bit to 24-bit
+							// Iterate through every visible column
+							for (lnX = 0, lnXDst = trc->left; lnX < bmpSrc->bi.biWidth && lnXDst < trc->right; lnXDst++, lnX++)
+							{
+								// Are we on the image?
+								if (lnXDst >= 0 && lnXDst < bmpDst->bi.biWidth)
+								{
+									// Copy the pixel if it's not a mask pixel
+									if (!(lbgrSrc->red == 255 && lbgrSrc->grn == 255 && lbgrSrc->blu == 255))
+									{
+										lfAlp			= (f64)(255 - lbgrSrc->red) / 255.0;
+										lfMalp			= 1.0 - lfAlp;
+										lbgrDst->red	= (u8)(((f64)lbgrDst->red * lfMalp) + (lfRed * lfAlp));
+										lbgrDst->grn	= (u8)(((f64)lbgrDst->grn * lfMalp) + (lfGrn * lfAlp));
+										lbgrDst->blu	= (u8)(((f64)lbgrDst->blu * lfMalp) + (lfBlu * lfAlp));
+										++lnPixelsRendered;
+									}
+								}
+
+								// Move to next pixel on both
+								++lbgrDst;
+								++lbgrSrc;
+							}
+
+						} else {
+							// 24-bit to 32-bit
+							// Iterate through every visible column
+							for (lnX = 0, lnXDst = trc->left; lnX < bmpSrc->bi.biWidth && lnXDst < trc->right; lnXDst++, lnX++)
+							{
+								// Are we on the image?
+								if (lnXDst >= 0 && lnXDst < bmpDst->bi.biWidth)
+								{
+									// Copy the pixel if it's not a mask pixel
+									if (!(lbgrSrc->red == 255 && lbgrSrc->grn == 255 && lbgrSrc->blu == 255))
+									{
+										lfAlp			= (f64)(255 - lbgrSrc->red) / 255.0;
+										lfMalp			= 1.0 - lfAlp;
+										lbgraDst->alp	= 255;
+										lbgraDst->red	= (u8)(((f64)lbgraDst->red * lfMalp) + (lfRed * lfAlp));
+										lbgraDst->grn	= (u8)(((f64)lbgraDst->grn * lfMalp) + (lfGrn * lfAlp));
+										lbgraDst->blu	= (u8)(((f64)lbgraDst->blu * lfMalp) + (lfBlu * lfAlp));
+										++lnPixelsRendered;
+									}
+								}
+
+								// Move to next pixel on both
+								++lbgraDst;
+								++lbgrSrc;
+							}
+						}
+
+					} else {
+						// 32-bit source
+						if (bmpDst->bi.biBitCount == 24)
+						{
+							// 32-bit to 24-bit
+							// Iterate through every visible column
+							for (lnX = 0, lnXDst = trc->left; lnX < bmpSrc->bi.biWidth && lnXDst < trc->right; lnXDst++, lnX++)
+							{
+								// Are we on the image?
+								if (lnXDst >= 0 && lnXDst < bmpDst->bi.biWidth && lbgraSrc->alp != 0)
+								{
+									// Copy the pixel if it's not a mask pixel
+									if (!(lbgraSrc->red == 255 && lbgraSrc->grn == 255 && lbgraSrc->blu == 255))
+									{
+										lfAlp			= (f64)(255 - lbgraSrc->red) / 255.0;
+										lfMalp			= 1.0 - lfAlp;
+										lbgrDst->red	= (u8)(((f64)lbgrDst->red * lfMalp) + (lfRed * lfAlp));
+										lbgrDst->grn	= (u8)(((f64)lbgrDst->grn * lfMalp) + (lfGrn * lfAlp));
+										lbgrDst->blu	= (u8)(((f64)lbgrDst->blu * lfMalp) + (lfBlu * lfAlp));
+										++lnPixelsRendered;
+									}
+								}
+
+								// Move to next pixel on both
+								++lbgrDst;
+								++lbgraSrc;
+							}
+
+						} else {
+							// 32-bit to 32-bit
+							// Iterate through every visible column
+							for (lnX = 0, lnXDst = trc->left; lnX < bmpSrc->bi.biWidth && lnXDst < trc->right; lnXDst++, lnX++)
+							{
+								// Are we on the image?
+								if (lnXDst >= 0 && lnXDst < bmpDst->bi.biWidth && lbgraSrc->alp != 0)
+								{
+									// Copy the pixel if it's not a mask pixel
+									if (!(lbgraSrc->red == 255 && lbgraSrc->grn == 255 && lbgraSrc->blu == 255))
+									{
+										lfAlp			= (f64)(255 - lbgraSrc->red) / 255.0;
+										lfMalp			= 1.0 - lfAlp;
+										lbgraDst->alp	= 255;
+										lbgraDst->red	= (u8)(((f64)lbgraDst->red * lfMalp) + (lfRed * lfAlp));
+										lbgraDst->grn	= (u8)(((f64)lbgraDst->grn * lfMalp) + (lfGrn * lfAlp));
+										lbgraDst->blu	= (u8)(((f64)lbgraDst->blu * lfMalp) + (lfBlu * lfAlp));
+										++lnPixelsRendered;
+									}
+								}
+
+								// Move to next pixel on both
+								++lbgraDst;
+								++lbgraSrc;
+							}
+						}
+					}
+				}
+			}
+		}
+		// Indicate how many pixels were drawn
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Called to draw a point
+//
+//////
 	void iBmp_drawPoint(SBitmap* bmp, s32 tnX, s32 tnY, SBgra color)
 	{
 		SBgr*	lbgr;

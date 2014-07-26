@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_sup.cpp
 //
 //////
-// Version 0.33
+// Version 0.34
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -176,8 +176,9 @@
 //////
 	void iInit_create_screenObject(void)
 	{
-		s32		lnLeft, lnTop, lnWidth, lnHeight;
-		RECT	lrc;
+		s32			lnLeft, lnTop, lnWidth, lnHeight;
+		SVariable*	caption;
+		RECT		lrc;
 
 
 		//////////
@@ -191,8 +192,14 @@
 			// Set the app icon
 			iObj_setIcon(gobj_screen, bmpVjrIcon);
 
+
+			//////////
 			// Give it a caption
-			iDatum_duplicate(&gobj_screen->pa.caption, (s8*)cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
+			//////
+				caption = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
+				iObj_setCaption(gobj_screen, caption);
+				iVariable_delete(caption, true);
+
 
 			// Give it a fixed point font
 			gobj_screen->pa.font = iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
@@ -232,8 +239,9 @@
 //////
 	void iInit_create_jdebiObject(void)
 	{
-		s32		lnLeft, lnTop, lnWidth, lnHeight;
-		RECT	lrc;
+		SVariable*	caption;
+		s32			lnLeft, lnTop, lnWidth, lnHeight;
+		RECT		lrc;
 
 
 		//////////
@@ -246,9 +254,6 @@
 
 			// Set the app icon
 			iObj_setIcon(gobj_jdebi, bmpJDebiIcon);
-
-			// Give it a caption
-			iDatum_duplicate(&gobj_jdebi->pa.caption, (s8*)cgcJDebiTitle, sizeof(cgcJDebiTitle) - 1);
 
 			// Give it a fixed point font
 			gobj_jdebi->pa.font = iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
@@ -327,9 +332,17 @@
 
 
 		//////////
+		// Give it a caption
+		//////
+			caption = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgcJDebiTitle, sizeof(cgcJDebiTitle) - 1);
+			iObj_setCaption(gobj_jdebi, caption);
+
+
+		//////////
 		// SourceCode window caption and font
 		//////
-			iDatum_duplicate(&sourceCode->pa.caption, (s8*)cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
+			iDatum_duplicate(&caption->value, cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
+			iObj_setCaption(sourceCode, caption);
 			sourceCode_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 			sourceCode_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown_sourceCode;
 			sourceCode_editbox->pa.em					= iEditManager_allocate();
@@ -339,7 +352,8 @@
 		//////////
 		// Locals window caption and font
 		//////
-			iDatum_duplicate(&locals->pa.caption, (s8*)cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
+			iDatum_duplicate(&caption->value, cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
+			iObj_setCaption(locals, caption);
 			locals_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 			locals_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
 			locals_editbox->pa.em					= iEditManager_allocate();
@@ -349,7 +363,8 @@
 		//////////
 		// Watch window caption and font
 		//////
-			iDatum_duplicate(&watch->pa.caption, (s8*)cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
+			iDatum_duplicate(&caption->value, cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
+			iObj_setCaption(watch, caption);
 			watch_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 			watch_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
 			watch_editbox->pa.em					= iEditManager_allocate();
@@ -359,7 +374,8 @@
 		//////////
 		// Command window caption and font
 		//////
-			iDatum_duplicate(&command->pa.caption, (s8*)cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
+			iDatum_duplicate(&caption->value, cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
+			iObj_setCaption(command, caption);
 			command_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 			command_editbox->ev.keyboard._onKeyDown		= (u32)&iEditManager_onKeyDown_sourceCode;
 			command_editbox->p.hasFocus					= true;
@@ -370,7 +386,8 @@
 		//////////
 		// Debug window caption and font
 		//////
-			iDatum_duplicate(&debug->pa.caption, (s8*)cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
+			iDatum_duplicate(&caption->value, cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
+			iObj_setCaption(debug, caption);
 			debug_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 			debug_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
 			debug_editbox->pa.em					= iEditManager_allocate();
@@ -380,11 +397,18 @@
 		//////////
 		// Output window caption and font
 		//////
-			iDatum_duplicate(&output->pa.caption, (s8*)cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
+			iDatum_duplicate(&caption->value, cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
+			iObj_setCaption(output, caption);
 			output_editbox->pa.font					= iFont_create((s8*)cgcDefaultFontName, 8, FW_MEDIUM, false, false);
 			output_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
 			output_editbox->pa.em					= iEditManager_allocate();
 			iObj_setIcon(sourceCode, bmpOutputIcon);
+
+
+		//////////
+		// Clean house
+		//////
+			iVariable_delete(caption, true);
 
 
 		//////////

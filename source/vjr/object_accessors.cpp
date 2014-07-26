@@ -3,7 +3,7 @@
 // /libsf/source/vjr/object_accessors.cpp
 //
 //////
-// Version 0.33
+// Version 0.34
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -674,7 +674,7 @@ bool iObj_setProperty_scaleX(SObject* obj, SVariable* var)
 		// Set the value
 		// Note:  This is done by resizing the underlying bitmap.
 		lnNewWidth = (s32)((f32)(obj->rc.right - obj->rc.left) / value);
-		obj->bmp = iBmp_verifySizeOrResize(obj->bmp, lnNewWidth, obj->bmp->bi.biHeight);
+		obj->bmp = iBmp_verifySizeOrResize(obj->bmp, lnNewWidth, obj->bmp->bi.biHeight, obj->bmp->bi.biBitCount);
 
 		// Indicate success
 		return(true);
@@ -735,7 +735,7 @@ bool iObj_setProperty_scaleY(SObject* obj, SVariable* var)
 		// Set the value
 		// Note:  This is done by resizing the underlying bitmap.
 		lnNewHeight = (s32)((f32)(obj->rc.bottom - obj->rc.top) / value);
-		obj->bmp = iBmp_verifySizeOrResize(obj->bmp, obj->bmp->bi.biWidth, lnNewHeight);
+		obj->bmp = iBmp_verifySizeOrResize(obj->bmp, obj->bmp->bi.biWidth, lnNewHeight, obj->bmp->bi.biBitCount);
 
 		// Indicate success
 		return(true);
@@ -1464,11 +1464,43 @@ SVariable* iObj_getCaptionColor(SObject* obj)
 
 bool iObj_setCaption(SObject* obj, SVariable* var)
 {
-	if (obj)
-		return(iObj_setCharacter(obj, var, &obj->pa.caption, var->value.data, var->value.length));
+	bool		llResult;
+	SObject*	objChild;
 
-	// If we get here, failure
-	return(false);
+
+	llResult = false;
+	if (obj)
+	{
+		// Set the main caption
+		if ((llResult = iObj_setCharacter(obj, var, &obj->pa.caption, var->value.data, var->value.length)))
+		{
+			switch (obj->objType)
+			{
+				case _OBJ_TYPE_FORM:
+				case _OBJ_TYPE_SUBFORM:
+					objChild = obj->firstChild;
+					while (objChild)
+					{
+						// Is this one
+						if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0)
+						{
+							// Update this item
+							llResult = iObj_setCharacter(objChild, var, &objChild->pa.caption, var->value.data, var->value.length);
+
+							// All done
+							break;
+						}
+
+						// Move to next sibling
+						objChild = (SObject*)objChild->ll.next;
+					}
+					break;
+			}
+		}
+	}
+
+	// Indicate our status
+	return(llResult);
 }
 
 SVariable* iObj_getCaption(SObject* obj)

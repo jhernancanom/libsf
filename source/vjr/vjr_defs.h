@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_defs.h
 //
 //////
-// Version 0.33
+// Version 0.34
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -284,7 +284,7 @@
 	SBitmap*				iBmp_allocate							(void);
 	SBitmap*				iBmp_copy								(SBitmap* bmpSrc);
 	SBitmap*				iBmp_verifyCopyIsSameSize				(SBitmap* bmpCopy, SBitmap* bmp);
-	SBitmap*				iBmp_verifySizeOrResize					(SBitmap* bmp, u32 tnWidth, u32 tnHeight);
+	SBitmap*				iBmp_verifySizeOrResize					(SBitmap* bmp, u32 tnWidth, u32 tnHeight, u32 tnBitCount);
 	SBitmap*				iBmp_rawLoad							(cu8* bmpRawFileData);
 	void					iBmp_saveToDisk							(SBitmap* bmp, s8* tcPathname);
 	void					iBmp_convertTo32Bits					(SBitmap* bmp);
@@ -302,6 +302,7 @@
 	u32						iBmp_grayscale							(SBitmap* bmp, RECT* trc);
 	u32						iBmp_colorize							(SBitmap* bmp, RECT* trc, SBgra colorTemplate, bool tlClampColor);
 	u32						iBmp_bitBltMask							(SBitmap* bmpDst, RECT* trc, SBitmap* bmpSrc);
+	u32						iBmp_bitBlt_byGraymask					(SBitmap* bmpDst, RECT* trc, SBitmap* bmpSrc, SBgra color);
 // TODO:  The following void functions need to be changed to u32 and indicate how many pixels were rendered
 	void					iBmp_drawPoint							(SBitmap* bmp, s32 tnX, s32 tnY, SBgra color);
 	void					iBmp_fillRect							(SBitmap* bmp, RECT* rc, SBgra colorNW, SBgra colorNE, SBgra colorSW, SBgra colorSE, bool tlUseGradient, RECT* rcClip, bool tluseClip);
