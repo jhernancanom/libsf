@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_globals.h
 //
 //////
-// Version 0.34
+// Version 0.35
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -134,8 +134,9 @@
 		const SBgra		selectedForeColor					= { rgba(255, 255, 255, 255) };
 		const SBgra		disabledBackColor					= { rgba(255, 255, 255, 255) };
 		const SBgra		disabledForeColor					= { rgba(192, 192, 230, 255) };
-		const SBgra		colorMouseOver						= { rgba(255, 192, 128, 255) };			// Orangish
-		const SBgra		colorMouseDown						= { rgba(192, 192, 255, 255) };			// Pastel blue
+		const SBgra		colorTracking						= { rgba(0, 0, 255, 255) };				// Blue
+		const SBgra		colorMouseOver						= { rgba(255, 255, 0, 255) };			// Yellow
+		const SBgra		colorMouseDown						= { rgba(0, 255, 0, 255) };				// Green
 		const SBgra		maskColor							= { rgba(222, 22, 222, 255) };			// Hideous fuscia (by design)
 
 		// Four-corner window color schemes (eventually these will be loaded from themes.dbf)

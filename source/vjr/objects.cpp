@@ -3,7 +3,7 @@
 // /libsf/source/vjr/objects.cpp
 //
 //////
-// Version 0.34
+// Version 0.35
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -261,19 +261,41 @@
 
 //////////
 //
-// Called to mark the object dirty.
+// Called to mark the object dirty for rendering.
 //
 //////
-	void iObj_setDirty(SObject* obj, bool tlMarkParents)
+	void iObj_setDirtyRender(SObject* obj, bool tlMarkParents)
 	{
 		if (obj)
 		{
 			// Mark the object dirty
-			obj->isDirty = true;
+			obj->isDirtyRender	= true;
+			obj->isDirtyPublish	= true;
 
 			// Mark the parent
 			if (tlMarkParents && obj->parent)
-				iObj_setDirty(obj->parent, true);
+				iObj_setDirtyRender(obj->parent, true);
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to mark the object dirty for publishing.
+//
+//////
+	void iObj_setDirtyPublish(SObject* obj, bool tlMarkParents)
+	{
+		if (obj)
+		{
+			// Mark the object dirty
+			obj->isDirtyPublish = true;
+
+			// Mark the parent
+			if (tlMarkParents && obj->parent)
+				iObj_setDirtyPublish(obj->parent, true);
 		}
 	}
 
@@ -295,7 +317,29 @@
 		if (obj && obj->isRendered)
 		{
 			// If they're forcing a render, set it up
-			obj->isDirty |= tlForceRender;
+			obj->isDirtyRender |= tlForceRender;
+
+
+			//////////
+			// Make sure there is a bit bucket
+			//////
+				if (!obj->bmp)
+				{
+					// Initially allocate
+					obj->bmp = iBmp_allocate();
+					iBmp_createBySize(obj->bmp,
+										obj->rc.right - obj->rc.left,
+										obj->rc.bottom - obj->rc.top,
+										24);
+
+				} else if (obj->bmp->bi.biWidth != obj->rc.right - obj->rc.left || obj->bmp->bi.biHeight != obj->rc.bottom - obj->rc.top) {
+					// Resize
+					obj->bmp = iBmp_verifySizeOrResize(obj->bmp,
+														obj->rc.right - obj->rc.left,
+														obj->rc.bottom - obj->rc.top,
+														obj->bmp->bi.biBitCount);
+				}
+
 
 			// Which object are they rendering?
 			switch (obj->objType)
@@ -377,8 +421,9 @@
 		//////////
 		// Render self
 		//////
-			if (tlForceRender || obj->isDirty)
-				iObj_render(obj, tlForceRender);
+			obj->isDirtyRender |= tlForceRender;
+			iObj_render(obj, tlForceRender);
+
 
 		//////////
 		// Render any siblings
@@ -406,10 +451,10 @@
 // and overlays them where they should be.
 //
 //////
-	u32 iObj_publish(SBitmap* bmpDst, RECT* rc, SObject* obj, bool tlPublishChildren, bool tlPublishSiblings)
+	u32 iObj_publish(SBitmap* bmpDst, RECT* rc, SObject* obj, bool tlPublishChildren, bool tlPublishSiblings, bool tlForcePublish, s32 tnLevel)
 	{
 		u32			lnWidth, lnHeight, lnPixelsRendered;
-		RECT		lrc, lrcParent, lrc2;
+		RECT		lrc, lrcChild, lrc2;
 		SObject*	objSib;
 
 
@@ -417,6 +462,9 @@
 		lnPixelsRendered = 0;
 		if (obj && obj->bmp)
 		{
+			// Set the force publish flag if need be
+			obj->isDirtyPublish |= (tlForcePublish || tnLevel == 1);
+
 			//////////
 			// Determine the position within the parent's rectangle where this object will go
 			//////
@@ -426,8 +474,8 @@
 								rc->left	+ obj->rc.right,
 								rc->top		+ obj->rc.bottom);
 
-				// Default the parent rectangle for any subsequent drawing within
-				SetRect(&lrcParent, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+				// Default the parent's rectangle for any subsequent drawing within by children
+				SetRect(&lrcChild, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
 
 				// This is a top-level entry, so adjust everything to rcClient, or to 0
 				switch (obj->objType)
@@ -435,7 +483,7 @@
 					case _OBJ_TYPE_FORM:
 					case _OBJ_TYPE_SUBFORM:
 						// Bypass the frame area
-						CopyRect(&lrcParent, &obj->rcClient);
+						CopyRect(&lrcChild, &obj->rcClient);
 						break;
 				}
 
@@ -451,7 +499,7 @@
 			// Publish any children
 			//////
 				if (tlPublishChildren && obj->firstChild)
-					lnPixelsRendered += iObj_publish(obj->bmp, &lrcParent, obj->firstChild, true, true);
+					lnPixelsRendered += iObj_publish(obj->bmp, &lrcChild, obj->firstChild, true, true, tlForcePublish, tnLevel + 1);
 
 
 			//////////
@@ -479,7 +527,7 @@
 					iBmp_scale(obj->bmpScaled, obj->bmp);
 
 					// Perform the bitblt
-					if (bmpDst && obj->isPublished)
+					if (bmpDst && obj->isPublished && obj->isDirtyPublish)
 					{
 						// If it's not enabled, grayscale it
 						if (!obj->p.isEnabled)
@@ -508,7 +556,7 @@
 
 				} else {
 					// We can just copy
-					if (bmpDst && obj->isPublished)
+					if (bmpDst && obj->isPublished && obj->isDirtyPublish)
 					{
 						// If it's not enabled, grayscale it
 						if (!obj->p.isEnabled)
@@ -529,6 +577,7 @@
 									break;
 
 								case _OBJ_TYPE_LABEL:
+									// Non-opaque labels are rendered as black on white, with that grayscale being used to influence the forecolor
 									if (obj->p.isOpaque)		lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
 									else						lnPixelsRendered += iBmp_bitBlt_byGraymask(bmpDst, &lrc, obj->bmp, obj->p.foreColor);
 									break;
@@ -542,6 +591,19 @@
 
 
 			//////////
+			// Lower the flag at this level
+			//////
+				obj->isDirtyPublish = false;
+
+
+// s8 buffer[256];
+// if (tnLevel >= 0)
+// {
+// 	sprintf(buffer, "c:\\temp\\publish\\%u_%u_%d.bmp\0", ++gnNextUniqueId, (u32)obj, tnLevel);
+// 	iBmp_saveToDisk(bmpDst, buffer);
+// }
+
+			//////////
 			// Publish any siblings
 			//////
 				if (tlPublishSiblings)
@@ -551,16 +613,13 @@
 					while (objSib)
 					{
 						// Publish this sibling
-						lnPixelsRendered += iObj_publish(bmpDst, rc, objSib, true, false);
+						lnPixelsRendered += iObj_publish(bmpDst, rc, objSib, true, false, tlForcePublish, tnLevel);
 
 						// Move to next sibling
 						objSib = (SObject*)objSib->ll.next;
 					}
 				}
 		}
-// s8 buffer[256];
-// sprintf(buffer, "c:\\temp\\publish_%u.bmp\0", (u32)obj);
-// iBmp_saveToDisk(bmpDst, buffer);
 
 
 
@@ -759,9 +818,9 @@
 						} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
 							// Caption
 							SetRect(&objChild->rc,
-										bmpArrowUl->bi.biWidth + 4 + bmpArrowUl->bi.biWidth + 4 - obj->rcClient.left,
-										1 - obj->rcClient.top,
-										tnWidth - (5 * (bmpArrowUl->bi.biWidth + 4)) - 1,
+										bmpArrowUl->bi.biWidth + 4 + bmpArrowUl->bi.biWidth + 8 - obj->rcClient.left,
+										2 - obj->rcClient.top,
+										tnWidth - (5 * (bmpArrowUl->bi.biWidth + 2)) - obj->rcClient.left - 4,
 										1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
 
 							// Update the size
@@ -770,9 +829,9 @@
 						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMove, sizeof(cgcName_iconMove) - 1) == 0) {
 							// Move icon
 							SetRect(&objChild->rc,
-										tnWidth - (5 * (bmpArrowUl->bi.biWidth + 4)) - obj->rcClient.left,
+										tnWidth - (5 * (bmpArrowUl->bi.biWidth + 2)) - obj->rcClient.left,
 										1 - obj->rcClient.top,
-										(tnWidth - (5 * (bmpArrowUl->bi.biWidth + 4))) + bmpArrowUl->bi.biWidth,
+										tnWidth - (5 * (bmpArrowUl->bi.biWidth + 2)) - obj->rcClient.left + bmpArrowUl->bi.biWidth,
 										1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
 
 							// Update the size
@@ -781,9 +840,9 @@
 						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMinimize, sizeof(cgcName_iconMinimize) - 1) == 0) {
 							// Minimize icon
 							SetRect(&objChild->rc,
-										tnWidth - (4 * (bmpArrowUl->bi.biWidth + 4)) - obj->rcClient.left,
+										tnWidth - (4 * (bmpArrowUl->bi.biWidth + 2)) - obj->rcClient.left,
 										1 - obj->rcClient.top,
-										(tnWidth - (4 * (bmpArrowUl->bi.biWidth + 4))) + bmpArrowUl->bi.biWidth,
+										tnWidth - (4 * (bmpArrowUl->bi.biWidth + 2)) - obj->rcClient.left + bmpArrowUl->bi.biWidth,
 										1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
 
 							// Update the size
@@ -792,9 +851,9 @@
 						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMaximize, sizeof(cgcName_iconMaximize) - 1) == 0) {
 							// Maximize icon
 							SetRect(&objChild->rc,
-										tnWidth - (3 * (bmpArrowUl->bi.biWidth + 4)) - obj->rcClient.left,
+										tnWidth - (3 * (bmpArrowUl->bi.biWidth + 2)) - obj->rcClient.left,
 										1 - obj->rcClient.top,
-										(tnWidth - (3 * (bmpArrowUl->bi.biWidth + 4))) + bmpArrowUl->bi.biWidth,
+										tnWidth - (3 * (bmpArrowUl->bi.biWidth + 2)) - obj->rcClient.left + bmpArrowUl->bi.biWidth,
 										1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
 
 							// Update the size
@@ -803,9 +862,9 @@
 						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0) {
 							// Close icon
 							SetRect(&objChild->rc,
-										tnWidth - (2 * (bmpArrowUl->bi.biWidth + 4)) - obj->rcClient.left,
+										tnWidth - (2 * (bmpArrowUl->bi.biWidth + 2)) - obj->rcClient.left,
 										1 - obj->rcClient.top,
-										(tnWidth - (2 * (bmpArrowUl->bi.biWidth + 4))) + bmpArrowUl->bi.biWidth,
+										tnWidth - (2 * (bmpArrowUl->bi.biWidth + 2)) - obj->rcClient.left + bmpArrowUl->bi.biWidth,
 										1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
 
 							// Update the size
@@ -815,11 +874,46 @@
 						// Move to next object
 						objChild = (SObject*)objChild->ll.next;
 					}
-
 				break;
 
 			case _OBJ_TYPE_SUBFORM:
 				SetRect(&obj->rcClient, 0, bmpArrowUl->bi.biHeight, tnWidth - 8, tnHeight);
+
+				//////////
+				// Default child settings:
+				// [icon][caption                     ]
+				//////
+					objChild = obj->firstChild;
+					while (objChild)
+					{
+						// See which object this is
+						if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_icon, sizeof(cgcName_icon) - 1) == 0)
+						{
+							// Form icon
+							SetRect(&objChild->rc,
+										1,
+										1 - obj->rcClient.top,
+										1 + bmpArrowUl->bi.biWidth,
+										1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
+
+							// Update the size
+							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
+
+						} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
+							// Caption
+							SetRect(&objChild->rc,
+										1 + bmpArrowUl->bi.biWidth + 4,
+										2 - obj->rcClient.top,
+										tnWidth - 4,
+										1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
+
+							// Update the size
+							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
+						}
+
+						// Move to next object
+						objChild = (SObject*)objChild->ll.next;
+					}
 				break;
 
 			case _OBJ_TYPE_LABEL:
@@ -856,7 +950,7 @@
 		}
 
 		// Mark it dirty for a full re-render
-		obj->isDirty = true;
+		obj->isDirtyRender = true;
 	}
 
 
@@ -1065,7 +1159,7 @@
 			// Related to rendering
 			obj->isRendered					= true;
 			obj->isPublished				= true;
-			obj->isDirty					= true;
+			obj->isDirtyRender					= true;
 
 
 		//////////
@@ -2422,10 +2516,8 @@
 						objChild->pa.bmpPictureDown	= iBmp_copy(bmpVjrIcon);		// Set the new
 
 						// Add highlighting for the over and down
-						iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false);
-						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false);
-// iBmp_saveToDisk(objChild->pa.bmpPictureOver, "c:\\temp\\over.bmp");
-// iBmp_saveToDisk(objChild->pa.bmpPictureDown, "c:\\temp\\down.bmp");
+						iBmp_colorizeMask(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
+						iBmp_colorizeMask(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
 						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
@@ -2452,10 +2544,8 @@
 						objChild->pa.bmpPictureDown	= iBmp_copy(bmpMove);			// Set the new
 
 						// Add highlighting for the over and down
-						iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false);
-						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false);
-// iBmp_saveToDisk(objChild->pa.bmpPictureOver, "c:\\temp\\over.bmp");
-// iBmp_saveToDisk(objChild->pa.bmpPictureDown, "c:\\temp\\down.bmp");
+						iBmp_colorizeMask(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
+						iBmp_colorizeMask(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
 						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
@@ -2474,10 +2564,8 @@
 						objChild->pa.bmpPictureDown	= iBmp_copy(bmpMinimize);		// Set the new
 
 						// Add highlighting for the over and down
-						iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false);
-						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false);
-// iBmp_saveToDisk(objChild->pa.bmpPictureOver, "c:\\temp\\over.bmp");
-// iBmp_saveToDisk(objChild->pa.bmpPictureDown, "c:\\temp\\down.bmp");
+						iBmp_colorizeMask(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
+						iBmp_colorizeMask(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
 						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
@@ -2496,10 +2584,8 @@
 						objChild->pa.bmpPictureDown	= iBmp_copy(bmpMaximize);		// Set the new
 
 						// Add highlighting for the over and down
-						iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false);
-						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false);
-// iBmp_saveToDisk(objChild->pa.bmpPictureOver, "c:\\temp\\over.bmp");
-// iBmp_saveToDisk(objChild->pa.bmpPictureDown, "c:\\temp\\down.bmp");
+						iBmp_colorizeMask(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
+						iBmp_colorizeMask(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
 						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
@@ -2518,10 +2604,8 @@
 						objChild->pa.bmpPictureDown	= iBmp_copy(bmpClose);			// Set the new
 
 						// Add highlighting for the over and down
-						iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false);
-						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false);
-// iBmp_saveToDisk(objChild->pa.bmpPictureOver, "c:\\temp\\over.bmp");
-// iBmp_saveToDisk(objChild->pa.bmpPictureDown, "c:\\temp\\down.bmp");
+						iBmp_colorizeMask(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
+						iBmp_colorizeMask(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
 						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
@@ -2536,6 +2620,10 @@
 
 	void iiSubobj_resetToDefaultSubform(SObject* subform, bool tlResetProperties, bool tlResetMethods)
 	{
+		SObject*	objChild;
+		RECT		lrc;
+
+
 		if (subform)
 		{
 			//////////
@@ -2598,6 +2686,50 @@
 			//////
 				*(u32*)&subform->ev.general.activate		= (u32)&iDefaultCallback_onActivate;
 				*(u32*)&subform->ev.general.deactivate		= (u32)&iDefaultCallback_onDeactivate;
+
+
+			//////////
+			// Default child settings
+			//////
+				SetRect(&lrc, 0, 0, bmpArrowUl->bi.biWidth, bmpArrowUl->bi.biHeight);
+				objChild = subform->firstChild;
+				while (objChild)
+				{
+					// See which object this is
+					if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_icon, sizeof(cgcName_icon) - 1) == 0)
+					{
+						// Adjust the size
+						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
+
+						// Form icon
+						iBmp_delete(&objChild->pa.bmpPicture,		true, true);	// Delete the old
+						iBmp_delete(&objChild->pa.bmpPictureOver,	true, true);	// Delete the old
+						iBmp_delete(&objChild->pa.bmpPictureDown,	true, true);	// Delete the old
+						objChild->pa.bmpPicture		= iBmp_copy(bmpVjrIcon);		// Set the new
+						objChild->pa.bmpPictureOver	= iBmp_copy(bmpVjrIcon);		// Set the new
+						objChild->pa.bmpPictureDown	= iBmp_copy(bmpVjrIcon);		// Set the new
+
+						// Add highlighting for the over and down
+						iBmp_colorizeMask(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.5f);
+						iBmp_colorizeMask(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.5f);
+
+						// Icon
+						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
+						objChild->pa.bmpIcon = iBmp_copy(bmpVjrIcon);				// Set the new
+
+					} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
+						// Caption
+						iDatum_delete(&objChild->pa.caption, false);
+						iDatum_duplicate(&objChild->pa.caption, cgcName_formCaption, sizeof(cgcName_formCaption) - 1);
+						objChild->p.isOpaque = false;
+						iFont_delete(&objChild->pa.font, true);
+						objChild->pa.font = iFont_create(cgcWindowTitleBarFontName, 10, FW_NORMAL, false, false);
+					}
+
+					// Move to next object
+					objChild = (SObject*)objChild->ll.next;
+				}
+
 		}
 	}
 
@@ -3241,7 +3373,7 @@
 		//////////
 		// Success!
 		//////
-			empty->isDirty = false;
+			empty->isDirtyRender = false;
 			return(0);		// Indicate that nothing was rendered which will affect the screen
 	}
 
@@ -3260,7 +3392,7 @@
 //        network resource.
 //
 //////
-	u32 iSubobj_renderForm(SObject* form)
+	u32 iSubobj_renderForm(SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc, lrc2;
@@ -3268,45 +3400,35 @@
 
 		// Make sure our environment is sane
 		lnPixelsRendered = 0;
-		if (form)
+		if (obj && obj->isRendered)
 		{
-			//////////
-			// Make sure there is a bit bucket
-			//////
-				if (!form->bmp)
-				{
-					form->bmp = iBmp_allocate();
-					iBmp_createBySize(form->bmp, form->rc.right - form->rc.left, form->rc.bottom - form->rc.top, 24);
-				}
-
-
 			//////////
 			// If we need re-rendering, re-render
 			//////
 				// The entire bmp
-				SetRect(&lrc, 0, 0, form->bmp->bi.biWidth, form->bmp->bi.biHeight);
+				SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
 
 				// Do we need to redraw?  Or can we just copy?
-				if (form->isDirty || lnPixelsRendered != 0)
+				if (obj->isDirtyRender)
 				{
 					//////////
 					// Frame it
 					//////
 						// Draw the window border
-						iBmp_fillRect(form->bmp, &lrc, form->p.nwRgba, form->p.neRgba, form->p.swRgba, form->p.seRgba, true, &form->rcClient, true);
+						iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, &obj->rcClient, true);
 
 						// Frame it
-						iBmp_frameRect(form->bmp, &lrc, black, black, black, black, false, NULL, false);
+						iBmp_frameRect(obj->bmp, &lrc, black, black, black, black, false, NULL, false);
 
 						// Draw the client area
-						SetRect(&lrc2, 8, form->pa.bmpIcon->bi.biHeight + 2, lrc.right - form->pa.bmpIcon->bi.biHeight - 2, lrc.bottom - form->pa.bmpIcon->bi.biHeight - 1);
-						iBmp_fillRect(form->bmp, &lrc2, white, white, white, white, false, NULL, false);
+						SetRect(&lrc2, 8, obj->pa.bmpIcon->bi.biHeight + 2, lrc.right - obj->pa.bmpIcon->bi.biHeight - 2, lrc.bottom - obj->pa.bmpIcon->bi.biHeight - 1);
+						iBmp_fillRect(obj->bmp, &lrc2, white, white, white, white, false, NULL, false);
 // These rc* copies were added temporarily until the full object structure is coded and working
 //CopyRect(&form->rcClient, &lrc2);
 
 						// Put a border around the client area
 						InflateRect(&lrc2, 1, 1);
-						iBmp_frameRect(form->bmp, &lrc2, black, black, black, black, false, NULL, false);
+						iBmp_frameRect(obj->bmp, &lrc2, black, black, black, black, false, NULL, false);
 
 
 // 					//////////
@@ -3343,23 +3465,23 @@
 					//////
 						// Upper left arrow
 						SetRect(&lrc2, lrc.left + 1, lrc.top + 1, lrc.left + bmpArrowUl->bi.biWidth, lrc.top + bmpArrowUl->bi.biHeight);
-						iBmp_bitBltMask(form->bmp, &lrc2, bmpArrowUl);
-CopyRect(&form->rcArrowUl, &lrc2);
+						iBmp_bitBltMask(obj->bmp, &lrc2, bmpArrowUl);
+CopyRect(&obj->rcArrowUl, &lrc2);
 
 						// Upper right arrow
 						SetRect(&lrc2, lrc.right - bmpArrowUr->bi.biWidth - 1, lrc.top + 1, lrc.right, lrc.top + bmpArrowUr->bi.biHeight);
-						iBmp_bitBltMask(form->bmp, &lrc2, bmpArrowUr);
-CopyRect(&form->rcArrowUr, &lrc2);
+						iBmp_bitBltMask(obj->bmp, &lrc2, bmpArrowUr);
+CopyRect(&obj->rcArrowUr, &lrc2);
 
 						// Lower right arrow
 						SetRect(&lrc2, lrc.right - bmpArrowLr->bi.biWidth - 1, lrc.bottom - bmpArrowLr->bi.biHeight - 1, lrc.right, lrc.bottom);
-						iBmp_bitBltMask(form->bmp, &lrc2, bmpArrowLr);
-CopyRect(&form->rcArrowLl, &lrc2);
+						iBmp_bitBltMask(obj->bmp, &lrc2, bmpArrowLr);
+CopyRect(&obj->rcArrowLl, &lrc2);
 
 						// Lower left arrow
 						SetRect(&lrc2, lrc.left + 1, lrc.bottom - bmpArrowLl->bi.biHeight - 1, lrc.left + bmpArrowLl->bi.biWidth, lrc.bottom);
-						iBmp_bitBltMask(form->bmp, &lrc2, bmpArrowLl);
-CopyRect(&form->rcArrowLr, &lrc2);
+						iBmp_bitBltMask(obj->bmp, &lrc2, bmpArrowLl);
+CopyRect(&obj->rcArrowLr, &lrc2);
 
 
 // 					//////////
@@ -3380,22 +3502,22 @@ CopyRect(&form->rcArrowLr, &lrc2);
 					// Copy to prior rendered bitmap
 					//////
 						// Make sure our bmpPriorRendered exists
-						form->bmpPriorRendered = iBmp_verifyCopyIsSameSize(form->bmpPriorRendered, form->bmp);
+						obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
 
 						// Copy to the prior rendered version
-						lnPixelsRendered += iBmp_bitBlt(form->bmpPriorRendered, &lrc, form->bmp);
+						memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
 						// Right now, we can use the bmpPriorRendered for a fast copy rather than 
 
-// 				} else {
-// 					// Render from its prior rendered version
-// 					lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+				} else {
+					// Render from its prior rendered version
+					lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
 				}
 
 
 //////////
 // For temporary, we are adding additional renderings for _screen
 //////
-	if (form == gobj_screen)
+	if (obj == gobj_screen)
 	{
 		iEditManager_render(screenData, gobj_screen);
 		if (gWinScreen)
@@ -3404,12 +3526,10 @@ CopyRect(&form->rcArrowLr, &lrc2);
 
 
 			//////////
-			// Indicate we're no longer dirty, that we have everything
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
 			//////
-				form->isDirty = false;
-// s8 buffer[256];
-// sprintf(buffer, "c:\\temp\\forms\\%u.bmp\0", (u32)form);
-// iBmp_saveToDisk(form->bmp, buffer);
+				obj->isDirtyRender	= false;
+				obj->isDirtyPublish	= true;
 		}
 
 
@@ -3428,56 +3548,40 @@ CopyRect(&form->rcArrowLr, &lrc2);
 // Note:  See "Note" on iRenderForm().
 //
 //////
-	u32 iSubobj_renderSubform(SObject* subform)
+	u32 iSubobj_renderSubform(SObject* obj)
 	{
 		u32		lnPixelsRendered;
-		RECT	lrc, lrc2, lrc3;
-		HFONT	lhfontOld;
+		RECT	lrc, lrc2;
 
 
 		// Make sure our environment is sane
 		lnPixelsRendered = 0;
-		if (subform && subform->isDirty && subform->isRendered && subform->rc.right > 0 && subform->rc.bottom > 0 && subform->rc.right >= subform->rc.left && subform->rc.bottom >= subform->rc.bottom && subform->rc.right - subform->rc.left < 4400 && subform->rc.bottom - subform->rc.top < 4400)
+		if (obj && obj->isRendered && obj->rc.right > 0 && obj->rc.bottom > 0 && obj->rc.right >= obj->rc.left && obj->rc.bottom >= obj->rc.bottom && obj->rc.right - obj->rc.left < 4400 && obj->rc.bottom - obj->rc.top < 4400)
 		{
-			//////////
-			// Make sure there is a bit bucket
-			//////
-				if (!subform->bmp)
-				{
-					// Initially allocate
-					subform->bmp = iBmp_allocate();
-					iBmp_createBySize(subform->bmp, subform->rc.right - subform->rc.left, subform->rc.bottom - subform->rc.top, 24);
-
-				} else if (subform->bmp->bi.biWidth != subform->rc.right - subform->rc.left || subform->bmp->bi.biHeight != subform->rc.bottom - subform->rc.top) {
-					// Resize
-					subform->bmp = iBmp_verifySizeOrResize(subform->bmp, subform->rc.right - subform->rc.left, subform->rc.bottom - subform->rc.top, subform->bmp->bi.biBitCount);
-				}
-
-
 			//////////
 			// If we need re-rendering, re-render
 			//////
 				// The entire bmp
-				SetRect(&lrc, 0, 0, subform->bmp->bi.biWidth, subform->bmp->bi.biHeight);
+				SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
 
 				// Do we need to redraw?  Or can we just copy?
-				if (subform->isDirty || lnPixelsRendered != 0)
+				if (obj->isDirtyRender)
 				{
 					//////////
 					// Frame it
 					//////
 						// Draw the window border
-						iBmp_fillRect(subform->bmp, &lrc, subform->p.nwRgba, subform->p.neRgba, subform->p.swRgba, subform->p.seRgba, true, &subform->rcClient, true);
+						iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, &obj->rcClient, true);
 
 						// Frame it
 						CopyRect(&lrc2, &lrc);
 						SetRect(&lrc2, lrc2.left - 1, lrc2.top - 1, lrc2.right + 1, lrc2.bottom + 1);
-						iBmp_frameRect(subform->bmp, &lrc2, black, black, black, black, false, NULL, false);
+						iBmp_frameRect(obj->bmp, &lrc2, black, black, black, black, false, NULL, false);
 
 						// Draw the client area
-						SetRect(&lrc2, 0, subform->pa.bmpIcon->bi.biHeight - 1, lrc.right - 8, lrc.bottom);
+						SetRect(&lrc2, 0, obj->pa.bmpIcon->bi.biHeight - 1, lrc.right - 8, lrc.bottom);
 						// Make everything white
-						iBmp_fillRect(subform->bmp, &lrc2, white, white, white, white, false, NULL, false);
+						iBmp_fillRect(obj->bmp, &lrc2, white, white, white, white, false, NULL, false);
 // These rc* copies were added temporarily until the full object structure is coded and working
 //CopyRect(&subform->rcClient, &lrc2);
 						// Put a border around the client area
@@ -3486,100 +3590,55 @@ CopyRect(&form->rcArrowLr, &lrc2);
 
 
 
-					//////////
-					// Subform icon and standard controls
-					//////
-						// Subform icon
-						SetRect(&lrc3, 0, 0, subform->pa.bmpIcon->bi.biWidth + 8 + subform->pa.bmpIcon->bi.biWidth, subform->pa.bmpIcon->bi.biHeight);
-						iBmp_bitBltMask(subform->bmp, &lrc3, subform->pa.bmpIcon);
-CopyRect(&subform->rcIcon, &lrc3);
-
-//////////
-// Subforms don't currently have automatic close, maximize, minimize, or move buttons, but they can be added programmatically.
-// I may change that in the future.  It will depend on how well they integrated into the JDebi Debugger.
-// 						// Close
-// 						SetRect(&lrc2,	lrc.right - bmpArrowUr->bi.biWidth - 8 - bmpClose->bi.biWidth, lrc.top + 1, lrc.right - bmpArrowUr->bi.biWidth - 8, lrc.bottom - 1);
-// 						iBmp_bitBltMask(obj->bmp, &lrc2, bmpClose);
-// CopyRect(&subform->rcClose, &lrc2);
+// 					//////////
+// 					// Subform icon and standard controls
+// 					//////
+// 						// Subform icon
+// 						SetRect(&lrc3, 0, 0, subform->pa.bmpIcon->bi.biWidth + 8 + subform->pa.bmpIcon->bi.biWidth, subform->pa.bmpIcon->bi.biHeight);
+// 						iBmp_bitBltMask(subform->bmp, &lrc3, subform->pa.bmpIcon);
+// CopyRect(&subform->rcIcon, &lrc3);
 // 
-// 						// Maximize
-// 						SetRect(&lrc2,	lrc2.left - bmpMaximize->bi.biWidth - 1, lrc2.top, lrc2.left - 1, lrc2.bottom);
-// 						iBmp_bitBltMask(obj->bmp, &lrc2, bmpMaximize);
-// CopyRect(&subform->rcMaximize, &lrc2);
 // 
-// 						// Minimize
-// 						SetRect(&lrc2,	lrc2.left - bmpMinimize->bi.biWidth - 1, lrc2.top, lrc2.left - 1, lrc2.bottom);
-// 						iBmp_bitBltMask(obj->bmp, &lrc2, bmpMinimize);
-// CopyRect(&subform->rcMinimize, &lrc2);
-// 
-// 						// Move
-// 						SetRect(&lrc4,	lrc2.left - bmpMove->bi.biWidth - 1, lrc2.top, lrc2.left - 1, lrc2.bottom);
-// 						iBmp_bitBltMask(obj->bmp, &lrc4, bmpMove);
-// CopyRect(&subform->rcMove, &lrc4);
-//////
-
-
-					//////////
-					// Subform caption
-					//////
-						SetRect(&lrc2, subform->pa.bmpIcon->bi.biWidth + 8, lrc3.top + 2, subform->bmp->bi.biWidth - 8, lrc3.bottom);
-CopyRect(&subform->rcCaption, &lrc2);
-						lhfontOld = (HFONT)SelectObject(subform->bmp->hdc, gsWindowTitleBarFontSubform->hfont);
-						SetBkMode(subform->bmp->hdc, TRANSPARENT);
-						SetTextColor(subform->bmp->hdc, (COLORREF)RGB(subform->p.captionColor.red, subform->p.captionColor.grn, subform->p.captionColor.blu));
-						DrawTextA(subform->bmp->hdc, subform->pa.caption.data, subform->pa.caption.length, &lrc2, DT_VCENTER);
-						SelectObject(subform->bmp->hdc, lhfontOld);
-
-
-//////////
-// For temporary, we are adding additional renderings for the command subform
-//////
-// if (iDatum_compare(&subform->pa.caption, (s8*)cgcCommandTitle, -1) == 0)
-// {
-// 	iEditManager_render(command_editbox->pa.em, subform);
-// 
-// } else if (iDatum_compare(&subform->pa.caption, (s8*)cgcSourceCodeTitle, -1) == 0) {
-// 	iEditManager_navigateEnd(sourceCode_editbox->pa.em, subform);
-// 	iEditManager_render(sourceCode_editbox->pa.em, subform);
-// 
-// } else if (iDatum_compare(&subform->pa.caption, (s8*)cgcLocalsTitle, -1) == 0) {
-// 	iEditManager_navigateEnd(locals_editbox->pa.em, subform);
-// 	iEditManager_render(locals_editbox->pa.em, subform);
-// 
-// } else if (iDatum_compare(&subform->pa.caption, (s8*)cgcWatchTitle, -1) == 0) {
-// 	iEditManager_navigateEnd(watch_editbox->pa.em, subform);
-// 	iEditManager_render(watch_editbox->pa.em, subform);
-// 
-// } else if (iDatum_compare(&subform->pa.caption, (s8*)cgcDebugTitle, -1) == 0) {
-// 	iEditManager_navigateEnd(debug_editbox->pa.em, subform);
-// 	iEditManager_render(debug_editbox->pa.em, subform);
-// 
-// } else if (iDatum_compare(&subform->pa.caption, (s8*)cgcOutputTitle, -1) == 0) {
-// 	iEditManager_navigateEnd(output_editbox->pa.em, subform);
-// 	iEditManager_render(output_editbox->pa.em, subform);
-// }
+// 					//////////
+// 					// Subform caption
+// 					//////
+// 						SetRect(&lrc2, subform->pa.bmpIcon->bi.biWidth + 8, lrc3.top + 2, subform->bmp->bi.biWidth - 8, lrc3.bottom);
+// CopyRect(&subform->rcCaption, &lrc2);
+// 						lhfontOld = (HFONT)SelectObject(subform->bmp->hdc, gsWindowTitleBarFontSubform->hfont);
+// 						SetBkMode(subform->bmp->hdc, TRANSPARENT);
+// 						SetTextColor(subform->bmp->hdc, (COLORREF)RGB(subform->p.captionColor.red, subform->p.captionColor.grn, subform->p.captionColor.blu));
+// 						DrawTextA(subform->bmp->hdc, subform->pa.caption.data, subform->pa.caption.length, &lrc2, DT_VCENTER);
+// 						SelectObject(subform->bmp->hdc, lhfontOld);
 
 
 					//////////
 					// Copy to prior rendered bitmap
 					//////
 						// Make sure our bmpPriorRendered exists
-						subform->bmpPriorRendered = iBmp_verifyCopyIsSameSize(subform->bmpPriorRendered, subform->bmp);
+						obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
 
 						// Copy to the prior rendered version
-						lnPixelsRendered += iBmp_bitBlt(subform->bmpPriorRendered, &lrc, subform->bmp);
+						memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
 						// Right now, we can use the bmpPriorRendered for a fast copy rather than 
 
-// 				} else {
-// 					// Render from its prior rendered version
-// 					lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+				} else {
+					// Render from its prior rendered version
+					lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
 				}
 
 
 			//////////
-			// Indicate we're no longer dirty, that we have everything
+			// If the mouse is over this control, highlight it
 			//////
-				subform->isDirty = false;
+				if (obj->isPublished && obj->ev.mouse.isMouseOver && obj->objType != _OBJ_TYPE_IMAGE)
+					iBmp_alphaColorizeMask(obj->bmp, &lrc, colorTracking, 0.05f);
+
+
+			//////////
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			//////
+				obj->isDirtyRender = false;
+				obj->isDirtyPublish	= true;
 // s8 buffer[256];
 // sprintf(buffer, "c:\\temp\\subforms\\%u.bmp\0", (u32)subform);
 // iBmp_saveToDisk(subform->bmp, buffer);
@@ -3607,53 +3666,80 @@ CopyRect(&subform->rcCaption, &lrc2);
 
 		// Make sure our environment is sane
 		lnPixelsRendered = 0;
-		if (obj && obj->isDirty  && obj->isRendered)
+		if (obj && obj->isRendered)
 		{
-			if (obj->p.isOpaque)
+			if (obj->isDirtyRender)
 			{
-				// Use the back color
-				SetBkColor(obj->bmp->hdc, RGB(obj->p.backColor.red, obj->p.backColor.grn, obj->p.backColor.blu));
-				SetTextColor(obj->bmp->hdc, RGB(obj->p.foreColor.red, obj->p.foreColor.grn, obj->p.foreColor.blu));
+				if (obj->p.isOpaque)
+				{
+					// Use the back color
+					SetBkColor(obj->bmp->hdc, RGB(obj->p.backColor.red, obj->p.backColor.grn, obj->p.backColor.blu));
+					SetTextColor(obj->bmp->hdc, RGB(obj->p.foreColor.red, obj->p.foreColor.grn, obj->p.foreColor.blu));
+
+				} else {
+					// Use a black and white creation
+					SetBkColor(obj->bmp->hdc, RGB(255,255,255));
+					SetTextColor(obj->bmp->hdc, RGB(0,0,0));
+				}
+
+				// Fill in the background
+				SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+				iBmp_fillRect(obj->bmp, &lrc, white, white, white, white, false, NULL, false);
+
+				// Set the text parameters
+				SetBkMode(obj->bmp->hdc, TRANSPARENT);
+				SelectObject(obj->bmp->hdc, obj->pa.font->hfont);
+
+				// Determine our orientation
+				switch (obj->p.alignment)
+				{
+					case _ALIGNMENT_LEFT:
+						lnFormat = DT_LEFT;
+						break;
+
+					case _ALIGNMENT_RIGHT:
+						lnFormat = DT_RIGHT;
+						break;
+
+					case _ALIGNMENT_CENTER:
+						lnFormat = DT_CENTER;
+						break;
+				}
+
+				// Draw the text
+				DrawText(obj->bmp->hdc, obj->pa.caption.data, obj->pa.caption.length, &lrc, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
+
+				// Frame rectangle
+				if (obj->p.isBorder)
+					iBmp_frameRect(obj->bmp, &lrc, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
 
 			} else {
-				// Use a black and white creation
-				SetBkColor(obj->bmp->hdc, RGB(255,255,255));
-				SetTextColor(obj->bmp->hdc, RGB(0,0,0));
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
 			}
 
-			// Fill in the background
-			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
-			iBmp_fillRect(obj->bmp, &lrc, white, white, white, white, false, NULL, false);
 
-			// Set the text parameters
-			SetBkMode(obj->bmp->hdc, TRANSPARENT);
-			SelectObject(obj->bmp->hdc, obj->pa.font->hfont);
+			//////////
+			// If the mouse is over this control, highlight it
+			//////
+				if (obj->isPublished && obj->ev.mouse.isMouseOver && obj->objType != _OBJ_TYPE_IMAGE)
+					iBmp_alphaColorizeMask(obj->bmp, &lrc, colorTracking, 0.05f);
 
-			// Determine our orientation
-			switch (obj->p.alignment)
-			{
-				case _ALIGNMENT_LEFT:
-					lnFormat = DT_LEFT;
-					break;
 
-				case _ALIGNMENT_RIGHT:
-					lnFormat = DT_RIGHT;
-					break;
-
-				case _ALIGNMENT_CENTER:
-					lnFormat = DT_CENTER;
-					break;
-			}
-
-			// Draw the text
-			DrawText(obj->bmp->hdc, obj->pa.caption.data, obj->pa.caption.length, &lrc, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
-
-			// Frame rectangle
-			if (obj->p.isBorder)
-				iBmp_frameRect(obj->bmp, &lrc, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, false, NULL, false);
-
-			// Indicate we're no longer dirty, that we have everything
-			obj->isDirty = false;
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
 		}
 
 		// Indicate status
@@ -3677,7 +3763,7 @@ CopyRect(&subform->rcCaption, &lrc2);
 			//////////
 			// Indicate we're no longer dirty, that we have everything
 			//////
-				obj->isDirty = false;
+				obj->isDirtyRender = false;
 		return(0);
 	}
 
@@ -3698,7 +3784,7 @@ CopyRect(&subform->rcCaption, &lrc2);
 			//////////
 			// Indicate we're no longer dirty, that we have everything
 			//////
-				obj->isDirty = false;
+				obj->isDirtyRender = false;
 		return(0);
 	}
 
@@ -3714,15 +3800,51 @@ CopyRect(&subform->rcCaption, &lrc2);
 //////
 	u32 iSubobj_renderEditbox(SObject* obj)
 	{
-		u32 lnPixelsRendered;
+		u32		lnPixelsRendered;
+		RECT	lrc;
 
-//		iEditManager_navigateEnd(obj->pa.em, obj);
-// if (iDatum_compare(&obj->parent->pa.caption, "command", 7) == 0)
-// 	_asm nop;
-		lnPixelsRendered = iEditManager_render(obj->pa.em, obj);
 
-		// Indicate we're no longer dirty, that we have everything
-		obj->isDirty = false;
+		// Make sure our environment is sane
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Grab the rectangle
+			iEditManager_getRectAndFont(obj->pa.em, obj, &lrc);
+
+			// Are we rendering?
+			if (obj->isDirtyRender)
+			{
+				// Re-render
+				lnPixelsRendered = iEditManager_render(obj->pa.em, obj);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+
+			//////////
+			// If the mouse is over this control, highlight it
+			//////
+				if (obj->isPublished && obj->ev.mouse.isMouseOver && obj->objType != _OBJ_TYPE_IMAGE)
+					iBmp_alphaColorizeMask(obj->bmp, &lrc, colorTracking, 0.05f);
+
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
 
 		// Indicate status
 		return(lnPixelsRendered);
@@ -3746,28 +3868,47 @@ CopyRect(&subform->rcCaption, &lrc2);
 
 		// Make sure our environment is sane
 		lnPixelsRendered = 0;
-		if (obj && obj->bmp)
+		if (obj && obj->isRendered)
 		{
 			// Compute our rectangle for drawing
 			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
 
-			// Based on the current conditions, render the appropriate image
-			if (obj->ev.mouse.isMouseDown)
+			if (obj->isDirtyRender)
 			{
-				// Mouse is over this item
-				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->pa.bmpPictureDown);
+				// Based on the current conditions, render the appropriate image
+				if (obj->ev.mouse.isMouseDown)
+				{
+					// Mouse is over this item
+					lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->pa.bmpPictureDown);
 
-			} else if (obj->ev.mouse.isMouseOver) {
-				// Mouse is over this item
-				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->pa.bmpPictureOver);
+				} else if (obj->ev.mouse.isMouseOver) {
+					// Mouse is over this item
+					lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->pa.bmpPictureOver);
+
+				} else {
+					// Render normally
+					lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->pa.bmpPicture);
+				}
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
 
 			} else {
-				// Render normally
-				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->pa.bmpPicture);
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
 			}
 
-			// Indicate we're no longer dirty, that we have everything
-			obj->isDirty = false;
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
 		}
 
 		// Indicate status
@@ -3791,7 +3932,7 @@ CopyRect(&subform->rcCaption, &lrc2);
 			//////////
 			// Indicate we're no longer dirty, that we have everything
 			//////
-				obj->isDirty = false;
+				obj->isDirtyRender = false;
 		return(0);
 	}
 
@@ -3812,7 +3953,7 @@ CopyRect(&subform->rcCaption, &lrc2);
 			//////////
 			// Indicate we're no longer dirty, that we have everything
 			//////
-				obj->isDirty = false;
+				obj->isDirtyRender = false;
 		return(0);
 	}
 
@@ -3833,6 +3974,6 @@ CopyRect(&subform->rcCaption, &lrc2);
 			//////////
 			// Indicate we're no longer dirty, that we have everything
 			//////
-				obj->isDirty = false;
+				obj->isDirtyRender = false;
 		return(0);
 	}

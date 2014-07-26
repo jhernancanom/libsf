@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_sup.cpp
 //
 //////
-// Version 0.34
+// Version 0.35
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -357,7 +357,7 @@
 			locals_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 			locals_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
 			locals_editbox->pa.em					= iEditManager_allocate();
-			iObj_setIcon(sourceCode, bmpLocalsIcon);
+			iObj_setIcon(locals, bmpLocalsIcon);
 
 
 		//////////
@@ -368,7 +368,7 @@
 			watch_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 			watch_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
 			watch_editbox->pa.em					= iEditManager_allocate();
-			iObj_setIcon(sourceCode, bmpWatchIcon);
+			iObj_setIcon(watch, bmpWatchIcon);
 
 
 		//////////
@@ -380,7 +380,7 @@
 			command_editbox->ev.keyboard._onKeyDown		= (u32)&iEditManager_onKeyDown_sourceCode;
 			command_editbox->p.hasFocus					= true;
 			command_editbox->pa.em						= iEditManager_allocate();
-			iObj_setIcon(sourceCode, bmpCommandIcon);
+			iObj_setIcon(command, bmpCommandIcon);
 
 
 		//////////
@@ -391,7 +391,7 @@
 			debug_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 			debug_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
 			debug_editbox->pa.em					= iEditManager_allocate();
-			iObj_setIcon(sourceCode, bmpDebugIcon);
+			iObj_setIcon(debug, bmpDebugIcon);
 
 
 		//////////
@@ -402,7 +402,7 @@
 			output_editbox->pa.font					= iFont_create((s8*)cgcDefaultFontName, 8, FW_MEDIUM, false, false);
 			output_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
 			output_editbox->pa.em					= iEditManager_allocate();
-			iObj_setIcon(sourceCode, bmpOutputIcon);
+			iObj_setIcon(output, bmpOutputIcon);
 
 
 		//////////
@@ -437,6 +437,21 @@
 			dt.julian	= 2451545;
 			dt.seconds	= 0.0f;
 			iDatum_duplicate(&_datetime_Jan_01_2000->value, (s8*)&dt, 8);
+	}
+
+
+
+
+//////////
+//
+// Called as a central location to shutdown the system politely.
+//
+//////
+	void iVjr_shutdown(void)
+	{
+		iEditManager_saveToDisk(screenData,				(s8*)cgcScreenDataFilename);
+		iEditManager_saveToDisk(command_editbox->pa.em,	(s8*)cgcCommandHistoryFilename);
+		PostQuitMessage(0);
 	}
 
 
@@ -745,27 +760,54 @@
 // Called to re-render the indicated window
 //
 //////
-	void iWindow_render(SWindow* win, bool tlForceRedraw)
+	void iWindow_render(SWindow* win, bool tlForce)
 	{
 		// Make sure we have something to render
-// u32 st1, st2, st3;
-// s8 buffer[64];
 		if (win && win->obj)
 		{
-// if (win->obj == gobj_jdebi)		st1 = GetTickCount();
-			iObj_renderChildrenAndSiblings(win->obj, true, true, tlForceRedraw);
-
-// if (win->obj == gobj_jdebi)		st2 = GetTickCount();
-			iObj_publish(win->bmp, &win->rc, win->obj, true, true);
-
-// if (win->obj == gobj_jdebi)		st3 = GetTickCount();
-// if (win->obj == gobj_jdebi)
-// {
-// 	sprintf(buffer, "render: %u, publish: %u\0", st2 - st1, st3 - st2);
-// 	iEditManager_appendLine(outputData, buffer, strlen(buffer));
-// }
+			iObj_renderChildrenAndSiblings(win->obj, true, true, tlForce);
+			iObj_publish(win->bmp, &win->rc, win->obj, true, true, tlForce, ((win == gWinScreen) ? -200000 : 0));
 			InvalidateRect(win->hwnd, 0, FALSE);
 		}
+	}
+
+
+
+
+//////////
+//
+// Called to begin moving the window
+//
+//////
+	void iWindow_move(SWindow* win)
+	{
+		// Begin the move of this window
+	}
+
+
+
+
+//////////
+//
+// Called to minimize the window
+//
+//////
+	void iWindow_minimize(SWindow* win)
+	{
+		ShowWindow(win->hwnd, SW_MINIMIZE);
+	}
+
+
+
+
+//////////
+//
+// Called to minimize the window
+//
+//////
+	void iWindow_maximize(SWindow* win)
+	{
+		MessageBox(win->hwnd, "Feature not yet supported.", "Maximize Window", MB_OK);
 	}
 
 
@@ -1567,12 +1609,8 @@
 					// We are in this object
 					if (!obj->ev.mouse.isMouseOver)
 					{
-						// We are newly over this object, raise the flag
-						obj->ev.mouse.isMouseOver = true;
-						obj->ev.mouse.isMouseDown = (obj->ev.mouse.thisClick != 0);	// Indicate if the mouse is down here
-
 						// Signal the mouseEnter event
-						if (obj->ev.mouse._onMouseLeave)
+						if (obj->ev.mouse._onMouseEnter)
 							obj->ev.mouse.onMouseEnter(win, obj);
 					}
 
@@ -1613,10 +1651,6 @@
 					// We are outside of this object
 					if (obj->ev.mouse.isMouseOver)
 					{
-						// We are no longer over this object, lower the flag
-						obj->ev.mouse.isMouseOver = false;
-						obj->ev.mouse.isMouseDown = false;
-
 						// Signal the mouseLeave event
 						if (obj->ev.mouse._onMouseLeave)
 							obj->ev.mouse.onMouseLeave(win, obj);

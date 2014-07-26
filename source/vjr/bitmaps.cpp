@@ -3,7 +3,7 @@
 // /libsf/source/vjr/bitmaps.cpp
 //
 //////
-// Version 0.34
+// Version 0.35
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -218,7 +218,7 @@
 
 				// Copy it over
 				SetRect(&lrc, 0, 0, bmpLoad.bi.biWidth, bmpLoad.bi.biHeight);
-				iBmp_bitBlt(bmp, &lrc, &bmpLoad);
+				memcpy(bmp->bd, bmpLoad.bd, bmp->bi.biSizeImage);
 
 				// Convert to 24-bit if need be
 				if (bmp->bi.biBitCount == 32)
@@ -655,6 +655,11 @@
 		SBgra*		lbgraSrc;
 
 
+		// Use the system bitblt for speed
+		BitBlt(bmpDst->hdc, trc->left, trc->top, trc->right - trc->left, trc->bottom - trc->top, bmpSrc->hdc, 0, 0, SRCCOPY);
+		return(bmpSrc->bi.biSizeImage);
+
+
 		// Make sure the environment is sane
 		lnPixelsRendered = 0;
 		if (bmpDst && bmpSrc && trc)
@@ -901,7 +906,7 @@
 // value is applied to each value of the RGB() component.
 //
 //////
-	u32 iBmp_colorize(SBitmap* bmp, RECT* trc, SBgra colorTemplate, bool tlClampColor)
+	u32 iBmp_colorizeMask(SBitmap* bmp, RECT* trc, SBgra colorTemplate, bool clampColor, f32 minColor)
 	{
 		u32		lnPixelsRendered;
 		s32		lnY, lnX;
@@ -920,7 +925,7 @@
 			lfRed = (f32)colorTemplate.red;
 			lfGrn = (f32)colorTemplate.grn;
 			lfBlu = (f32)colorTemplate.blu;
-			if (!tlClampColor)
+			if (!clampColor)
 			{
 				// Compute with the colors being adjusted up toward 255 if any are below
 				lfDelta = 0.0f;
@@ -943,6 +948,15 @@
 
 
 		//////////
+		// Verify our minColor is in range 0..1
+		// If 1.0, then allows 0..255
+		// If 0.5, then allows 128..255
+		// If 0.0, then allows 0 or 255
+		//////
+			minColor = min(max(minColor, 0.0f), 1.0f);
+
+
+		//////////
 		// Draw it
 		//////
 			for (lnY = trc->top; lnY < bmp->bi.biHeight && lnY < trc->bottom; lnY++)
@@ -962,13 +976,22 @@
 							// Are we on the image?
 							if (lnX >= 0)
 							{
-								// Compute the grayscale
-								lfGray = min(max(((f32)lbgr->red * 0.35f + (f32)lbgr->grn * 0.54f + (f32)lbgr->blu * 0.11f), 0.0f), 255.0f) / 255.0f;
+								if (lbgr->red == 222 && lbgr->grn == 22 && lbgr->blu == 222)
+								{
+									// Every transparent color gets the colorized color
+									lbgr->red = (u8)lfRed;
+									lbgr->grn = (u8)lfGrn;
+									lbgr->blu = (u8)lfBlu;
 
-								// Apply the color proportionally
-								lbgr->red = (u8)(lfGray * lfRed);
-								lbgr->grn = (u8)(lfGray * lfGrn);
-								lbgr->blu = (u8)(lfGray * lfBlu);
+								} else {
+									// Compute the grayscale
+									lfGray = min(max(((f32)lbgr->red * 0.35f + (f32)lbgr->grn * 0.54f + (f32)lbgr->blu * 0.11f), 0.0f), 255.0f) / 255.0f;
+
+									// Apply the color proportionally
+									lbgr->red = (u8)iiBmp_squeezeColorChannel(lfGray * lfRed, minColor);
+									lbgr->grn = (u8)iiBmp_squeezeColorChannel(lfGray * lfGrn, minColor);
+									lbgr->blu = (u8)iiBmp_squeezeColorChannel(lfGray * lfBlu, minColor);
+								}
 								++lnPixelsRendered;
 							}
 
@@ -986,13 +1009,22 @@
 							// Are we on the image?
 							if (lnX >= 0)
 							{
-								// Compute the grayscale
-								lfGray = min(max(((f32)lbgra->red * 0.35f + (f32)lbgra->grn * 0.54f + (f32)lbgra->blu * 0.11f), 0.0f), 255.0f) / 255.0f;
+								if (lbgra->red == 222 && lbgra->grn == 22 && lbgra->blu == 222)
+								{
+									// Every transparent color gets the colorized color
+									lbgra->red = (u8)lfRed;
+									lbgra->grn = (u8)lfGrn;
+									lbgra->blu = (u8)lfBlu;
 
-								// Apply the color proportionally
-								lbgra->red = (u8)(lfGray * lfRed);
-								lbgra->grn = (u8)(lfGray * lfGrn);
-								lbgra->blu = (u8)(lfGray * lfBlu);
+								} else {
+									// Compute the grayscale
+									lfGray = min(max(((f32)lbgra->red * 0.35f + (f32)lbgra->grn * 0.54f + (f32)lbgra->blu * 0.11f), 0.0f), 255.0f) / 255.0f;
+
+									// Apply the color proportionally
+									lbgra->red = (u8)iiBmp_squeezeColorChannel(lfGray * lfRed, minColor);
+									lbgra->grn = (u8)iiBmp_squeezeColorChannel(lfGray * lfGrn, minColor);
+									lbgra->blu = (u8)iiBmp_squeezeColorChannel(lfGray * lfBlu, minColor);
+								}
 								++lnPixelsRendered;
 							}
 
@@ -1002,6 +1034,105 @@
 					}
 				}
 			}
+		}
+
+
+		//////////
+		// Indicate how many pixels were rendered
+		//////
+			return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Called to apply an alpha
+//
+//////
+	u32 iBmp_alphaColorizeMask(SBitmap* bmp, RECT* trc, SBgra colorAlpha, f32 alpha)
+	{
+		u32		lnPixelsRendered;
+		s32		lnY, lnX;
+		f32		lfAlp, lfMalp, lfRed, lfGrn, lfBlu;
+		SBgr*	lbgr;
+		SBgra*	lbgra;
+
+
+		// Make sure the environment is sane
+		lnPixelsRendered = 0;
+		if (bmp && trc)
+		{
+			// Verify our alpha is in range 0..1
+			lfAlp	= min(max(alpha, 0.0f), 1.0f);
+			lfMalp	= 1.0f - lfAlp;
+
+			// Grab the color
+			lfRed = (f32)colorAlpha.red * lfAlp;
+			lfGrn = (f32)colorAlpha.grn * lfAlp;
+			lfBlu = (f32)colorAlpha.blu * lfAlp;
+
+			//////////
+			// Draw it
+			//////
+				for (lnY = trc->top; lnY < bmp->bi.biHeight && lnY < trc->bottom; lnY++)
+				{
+					// Are we on the image?
+					if (lnY >= 0)
+					{
+						// What exactly are we copying?
+						if (bmp->bi.biBitCount == 24)
+						{
+							// Build the pointer
+							lbgr = (SBgr*)((s8*)bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth));
+
+							// Iterate through every visible column
+							for (lnX = trc->left; lnX < bmp->bi.biWidth && lnX < trc->right; lnX++)
+							{
+								// Are we on the image?
+								if (lnX >= 0)
+								{
+									if (!(lbgr->red == 222 && lbgr->grn == 22 && lbgr->blu == 222))
+									{
+										// Apply the color proportionally
+										lbgr->red = (u8)(((f32)lbgr->red * lfMalp) + lfRed);
+										lbgr->grn = (u8)(((f32)lbgr->grn * lfMalp) + lfGrn);
+										lbgr->blu = (u8)(((f32)lbgr->blu * lfMalp) + lfBlu);
+										++lnPixelsRendered;
+									}
+								}
+
+								// Move to next pixel
+								++lbgr;
+							}
+
+						} else if (bmp->bi.biBitCount == 32) {
+							// Build the pointer
+							lbgra = (SBgra*)((s8*)bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth));
+
+							// Iterate through every visible column
+							for (lnX = trc->left; lnX < bmp->bi.biWidth && lnX < trc->right; lnX++)
+							{
+								// Are we on the image?
+								if (lnX >= 0)
+								{
+									if (!(lbgra->red == 222 && lbgra->grn == 22 && lbgra->blu == 222))
+									{
+										// Apply the color proportionally
+										lbgra->red = (u8)(((f32)lbgra->red * lfMalp) + lfRed);
+										lbgra->grn = (u8)(((f32)lbgra->grn * lfMalp) + lfGrn);
+										lbgra->blu = (u8)(((f32)lbgra->blu * lfMalp) + lfBlu);
+										++lnPixelsRendered;
+									}
+								}
+
+								// Move to next pixel
+								++lbgra;
+							}
+						}
+					}
+				}
 		}
 
 
@@ -1028,6 +1159,11 @@
 		SBgr*		lbgrSrc;
 		SBgra*		lbgraDst;
 		SBgra*		lbgraSrc;
+
+
+// 		// Use the system bitblt for speed
+// 		BitBlt(bmpDst->hdc, trc->left, trc->top, trc->right - trc->left, trc->bottom - trc->top, bmpSrc->hdc, 0, 0, SRCCOPY);
+// 		return(bmpSrc->bi.biSizeImage);
 
 
 		lnPixelsRendered = 0;
@@ -1741,6 +1877,19 @@
 				}
 			}
 		}
+	}
+
+	// minimumRatio is in the range 0..1
+	f32 iiBmp_squeezeColorChannel(f32 colorChannel, f32 minimumRatio)
+	{
+		f32 currentRatio, newRatio, colorBase;
+
+
+		currentRatio	= colorChannel / 255.0f;
+		newRatio		= 1.0f - minimumRatio;
+		colorBase		= minimumRatio * 255.0f;
+
+		return(colorBase + (newRatio * colorChannel));
 	}
 
 

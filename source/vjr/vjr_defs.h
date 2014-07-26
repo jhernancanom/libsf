@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_defs.h
 //
 //////
-// Version 0.34
+// Version 0.35
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -65,10 +65,11 @@
 	SObject*				iObj_copy								(SObject* template_obj, SObject* next, SObject* parent, bool tlCopyChildren, bool tlCreateSeparateBitmapBuffers);
 	void					iObj_delete								(SObject** obj, bool tlDeleteSelf);
 	void					iObj_findFocusControls					(SObject*  obj, SBuilder* objFocusControls, bool tlProcessSiblings);
-	void					iObj_setDirty							(SObject* obj, bool tlMarkParents);
+	void					iObj_setDirtyRender						(SObject* obj, bool tlMarkParents);
+	void					iObj_setDirtyPublish					(SObject* obj, bool tlMarkParents);
 	u32						iObj_render								(SObject*  obj, bool tlForceRender);
 	void					iObj_renderChildrenAndSiblings			(SObject*  obj, bool tlRenderChildren, bool tlRenderSiblings, bool tlForceRender);
-	u32						iObj_publish							(SBitmap* bmpDst, RECT* rc, SObject* obj, bool tlPublishChildren, bool tlPublishSiblings);
+	u32						iObj_publish							(SBitmap* bmpDst, RECT* rc, SObject* obj, bool tlPublishChildren, bool tlPublishSiblings, bool tlForcePublish, s32 tnLevel);
 	void					iObj_duplicateChain						(SObject** root, SObject* chain);
 	void					iObj_appendObjToParent					(SObject*  parent, SObject* obj);
 	void					iObj_duplicateChildren					(SObject*  objDst, SObject* objSrc);
@@ -202,6 +203,7 @@
 	void					iInit_create_screenObject				(void);
 	void					iInit_create_jdebiObject				(void);
 	void					iInit_createDefaultDatetimes			(void);
+	void					iVjr_shutdown							(void);
 
 	DWORD	WINAPI			iReadEvents_messageWindow				(LPVOID lpParameter);
 	LRESULT	CALLBACK		iWindow_wndProcMessage					(HWND hwnd, UINT m, WPARAM w, LPARAM l);
@@ -210,6 +212,9 @@
 	SWindow*				iWindow_findByHwnd						(HWND hwnd);
 	SWindow*				iWindow_allocate						(void);
 	void					iWindow_render							(SWindow* win, bool tlForceRedraw);
+	void					iWindow_move							(SWindow* win);
+	void					iWindow_minimize						(SWindow* win);
+	void					iWindow_maximize						(SWindow* win);
 	void					iColor_adjustBrightness					(SBgra& color, f32 tfPercent);
 	bool					iInit_shutdownPolitely					(void);
 
@@ -300,7 +305,8 @@
 	void					iBmp_bitBltObjectMask					(SBitmap* bmpDst, SObject* obj, SBitmap* bmpSrc);
 	u32						iBmp_bitBlt								(SBitmap* bmpDst, RECT* trc, SBitmap* bmpSrc);
 	u32						iBmp_grayscale							(SBitmap* bmp, RECT* trc);
-	u32						iBmp_colorize							(SBitmap* bmp, RECT* trc, SBgra colorTemplate, bool tlClampColor);
+	u32						iBmp_colorizeMask						(SBitmap* bmp, RECT* trc, SBgra colorTemplate, bool clampColor, f32 minColor);
+	u32						iBmp_alphaColorizeMask					(SBitmap* bmp, RECT* trc, SBgra colorAlpha, f32 alpha);
 	u32						iBmp_bitBltMask							(SBitmap* bmpDst, RECT* trc, SBitmap* bmpSrc);
 	u32						iBmp_bitBlt_byGraymask					(SBitmap* bmpDst, RECT* trc, SBitmap* bmpSrc, SBgra color);
 // TODO:  The following void functions need to be changed to u32 and indicate how many pixels were rendered
@@ -311,6 +317,7 @@
 	void					iBmp_drawVerticalLine					(SBitmap* bmp, s32 tnY1, s32 tnY2, s32 tnX, SBgra color);
 	void					iBmp_drawHorizontalLineGradient			(SBitmap* bmp, s32 tnX1, s32 tnX2, s32 tnY, f32 tfRed, f32 tfGrn, f32 tfBlu, f32 tfRedInc, f32 tfGrnInc, f32 tfBluInc, RECT* rcClip, bool tluseClip);
 	void					iBmp_drawVerticalLineGradient			(SBitmap* bmp, s32 tnY1, s32 tnY2, s32 tnX, f32 tfRed, f32 tfGrn, f32 tfBlu, f32 tfRedInc, f32 tfGrnInc, f32 tfBluInc, RECT* rcClip, bool tluseClip);
+	f32						iiBmp_squeezeColorChannel				(f32 color, f32 minColor);
 
 	//////////
 	// For scaling

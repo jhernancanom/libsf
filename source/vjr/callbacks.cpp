@@ -3,7 +3,7 @@
 // /libsf/source/vjr/callbacks.cpp
 //
 //////
-// Version 0.34
+// Version 0.35
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -127,18 +127,66 @@
 
 	bool iDefaultCallback_onMouseDown(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick)
 	{
+		bool llMouseDown;
+
+
+		llMouseDown = true;
 		// Assume we consumed the mouse down event, and that the parent doesn't need to receive it
+		if (obj->objType == _OBJ_TYPE_IMAGE)
+		{
+			if (iDatum_compare(&obj->pa.name, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0)
+			{
+				// Close
+				iVjr_shutdown();	// They clicked quit
+
+			} else if (iDatum_compare(&obj->pa.name, cgcName_iconMove, sizeof(cgcName_iconMove) - 1) == 0) {
+				// Move
+				llMouseDown					= false;
+				obj->ev.mouse.isMouseOver	= false;
+				iWindow_move(win);
+
+			} else if (iDatum_compare(&obj->pa.name, cgcName_iconMinimize, sizeof(cgcName_iconMinimize) - 1) == 0) {
+				// Minimize
+				llMouseDown					= false;
+				obj->ev.mouse.isMouseOver	= false;
+				iWindow_minimize(win);
+
+			} else if (iDatum_compare(&obj->pa.name, cgcName_iconMaximize, sizeof(cgcName_iconMaximize) - 1) == 0) {
+				// Maximize
+				llMouseDown					= false;
+				obj->ev.mouse.isMouseOver	= false;
+				iWindow_maximize(win);
+			}
+		}
+
+		// Update our condition
+		obj->ev.mouse.isMouseDown = llMouseDown;
+		iObj_setDirtyRender(obj, true);
+		iWindow_render(win, false);
 		return(false);
 	}
 
 	bool iDefaultCallback_onMouseUp(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick)
 	{
-		// Assume we consumed the mosue up event, and that the parent doesn't need to receive it
+		// We are leaving this object, lower the flag
+		obj->ev.mouse.isMouseDown = (obj->ev.mouse.thisClick != 0);	// Indicate if the mouse is down here
+		obj->ev.mouse.isMouseDown = false;
+		iObj_setDirtyRender(obj, true);
+		iWindow_render(win, false);
 		return(false);
 	}
 
 	bool iDefaultCallback_onMouseEnter(SWindow* win, SObject* obj)
 	{
+		// We are newly over this object, raise the flag
+		obj->ev.mouse.isMouseDown = (obj->ev.mouse.thisClick != 0);	// Indicate if the mouse is down here
+		if (!obj->ev.mouse.isMouseOver)
+		{
+			obj->ev.mouse.isMouseOver = true;
+			iObj_setDirtyRender(obj, true);
+			iWindow_render(win, false);
+		}
+
 		// Assume we consumed the enter, and that the parent doesn't need to receive it
 		return(false);
 	}
@@ -146,6 +194,12 @@
 	bool iDefaultCallback_onMouseLeave(SWindow* win, SObject* obj)
 	{
 		// Assume we consumed the leave, and that the parent doesn't need to receive it
+		if (obj->ev.mouse.isMouseOver)
+		{
+			obj->ev.mouse.isMouseOver = false;
+			iObj_setDirtyRender(obj, true);
+			iWindow_render(win, false);
+		}
 		return(false);
 	}
 

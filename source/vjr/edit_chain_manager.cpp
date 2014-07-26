@@ -3,7 +3,7 @@
 // /libsf/source/vjr/edit_chain_manager.cpp
 //
 //////
-// Version 0.34
+// Version 0.35
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -1533,7 +1533,7 @@ _asm int 3;
 		}
 
 		// If something has changed, we need to re-render
-		iObj_setDirty(obj, true);
+		iObj_setDirtyRender(obj, true);
 
 		// Indicate our status
 		return(llChanged);
@@ -1613,7 +1613,7 @@ _asm int 3;
 		if (llChanged)
 		{
 			// Indicate the object needs re-rendered
-			obj->isDirty = true;
+			obj->isDirtyRender = true;
 
 			// Verify our cursor is visible
 			iEditManager_verifyCursorIsVisible(em, obj);

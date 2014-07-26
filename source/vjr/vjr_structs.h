@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_structs.h
 //
 //////
-// Version 0.34
+// Version 0.35
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -530,7 +530,8 @@ struct SObject
 	// Object flags
 	bool		isRendered;												// Is it rendered (can be rendered even if it's not visible)?
 	bool		isPublished;											// Should this control be published?  Every object has a .lockScreen property which allows it to not be published while changes are made.
-	bool		isDirty;												// Is set if this or any child object needs re-rendered
+	bool		isDirtyRender;											// Is set if this or any child object needs re-rendered
+	bool		isDirtyPublish;											// Is set if this or any child object needs re-published
 
 	// Defined class, class information
 	u32			objType;												// Object base type/class (see _OBJECT_TYPE_* constants)

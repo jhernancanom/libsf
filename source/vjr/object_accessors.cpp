@@ -3,7 +3,7 @@
 // /libsf/source/vjr/object_accessors.cpp
 //
 //////
-// Version 0.34
+// Version 0.35
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -401,12 +401,12 @@ SVariable* iObj_getProperty_isVisible(SObject* obj)
 
 bool iObj_setProperty_isDirty(SObject* obj, SVariable* var)
 {
-	return(iObj_setLogical(obj, var, &obj->isDirty));
+	return(iObj_setLogical(obj, var, &obj->isDirtyRender));
 }
 
 SVariable* iObj_getProperty_isDirty(SObject* obj)
 {
-	return(iObj_getLogical(obj, obj->isDirty));
+	return(iObj_getLogical(obj, obj->isDirtyRender));
 }
 
 bool iObj_setProperty_left(SObject* obj, SVariable* var)
@@ -801,7 +801,7 @@ void iObj_setIcon(SObject* obj, SBitmap* bmp)
 						if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_icon, sizeof(cgcName_icon) - 1) == 0)
 						{
 							// Adjust the size
-							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, obj->pa.bmpIcon->bi.biWidth, obj->pa.bmpIcon->bi.biHeight);
+							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpArrowUl->bi.biWidth, bmpArrowUl->bi.biHeight);
 
 							// This is the one to update
 							iBmp_delete(&objChild->pa.bmpPicture,		true, true);	// Delete the old
@@ -813,8 +813,8 @@ void iObj_setIcon(SObject* obj, SBitmap* bmp)
 
 							// Add highlighting for the over and down
 							SetRect(&lrc, 0, 0, 24, 24);
-							iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false);
-							iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false);
+							iBmp_colorizeMask(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
+							iBmp_colorizeMask(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 							// All done
 							break;

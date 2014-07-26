@@ -3,7 +3,7 @@
 // /libsf/source/vjr/engine.cpp
 //
 //////
-// Version 0.34
+// Version 0.35
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -108,9 +108,7 @@
 				{
 					case _ICODE_QUIT:
 						// They want to quit
-						iEditManager_saveToDisk(screenData,				(s8*)cgcScreenDataFilename);
-						iEditManager_saveToDisk(command_editbox->pa.em,	(s8*)cgcCommandHistoryFilename);
-						PostQuitMessage(0);
+						iVjr_shutdown();
 						break;
 
 					case _ICODE_CLEAR:
