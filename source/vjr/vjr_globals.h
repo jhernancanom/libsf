@@ -135,13 +135,14 @@
 		const SBgra		disabledBackColor					= { rgba(255, 255, 255, 255) };
 		const SBgra		disabledForeColor					= { rgba(192, 192, 230, 255) };
 		const SBgra		colorTracking						= { rgba(0, 0, 255, 255) };				// Blue
+		f32				trackingRatio						= 0.05f;
 		const SBgra		colorMouseOver						= { rgba(255, 255, 0, 255) };			// Yellow
 		const SBgra		colorMouseDown						= { rgba(0, 255, 0, 255) };				// Green
 		const SBgra		maskColor							= { rgba(222, 22, 222, 255) };			// Hideous fuscia (by design)
 
 		// Four-corner window color schemes (eventually these will be loaded from themes.dbf)
 		const SBgra		NwColor								= { rgba(222, 230, 255, 255) };
-		const SBgra		NeColor								= { rgba(157, 194, 214, 255) };
+		const SBgra		NeColor								= { rgba(177, 204, 214, 255) };
 		const SBgra		SwColor								= { rgba(255, 255, 255, 255) };
 		const SBgra		SeColor								= { rgba(192, 212, 255, 255) };
 

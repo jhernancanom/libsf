@@ -3631,7 +3631,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 			// If the mouse is over this control, highlight it
 			//////
 				if (obj->isPublished && obj->ev.mouse.isMouseOver && obj->objType != _OBJ_TYPE_IMAGE)
-					iBmp_alphaColorizeMask(obj->bmp, &lrc, colorTracking, 0.05f);
+					iBmp_alphaColorizeMask(obj->bmp, &lrc, colorTracking, trackingRatio);
 
 
 			//////////
@@ -3734,7 +3734,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 			// If the mouse is over this control, highlight it
 			//////
 				if (obj->isPublished && obj->ev.mouse.isMouseOver && obj->objType != _OBJ_TYPE_IMAGE)
-					iBmp_alphaColorizeMask(obj->bmp, &lrc, colorTracking, 0.05f);
+					iBmp_alphaColorizeMask(obj->bmp, &lrc, colorTracking, trackingRatio);
 
 
 			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
@@ -3838,7 +3838,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 			// If the mouse is over this control, highlight it
 			//////
 				if (obj->isPublished && obj->ev.mouse.isMouseOver && obj->objType != _OBJ_TYPE_IMAGE)
-					iBmp_alphaColorizeMask(obj->bmp, &lrc, colorTracking, 0.05f);
+					iBmp_alphaColorizeMask(obj->bmp, &lrc, colorTracking, trackingRatio);
 
 
 			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
