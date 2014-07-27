@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr.h
 //
 //////
-// Version 0.35
+// Version 0.36
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -75,15 +75,17 @@
 #include "graphics\h\arrow_lr.h"
 #include "graphics\h\arrow_ll.h"
 
-#include "graphics\h\checkbox_multi.h"
 #include "graphics\h\checkbox_off.h"
 #include "graphics\h\checkbox_on.h"
+
+#include "graphics\h\button.h"
+
+#include "graphics\h\textbox.h"
 
 #include "graphics\h\textbox_2d.h"
 #include "graphics\h\textbox_3d.h"
 
-#include "graphics\h\radio_off.h"
-#include "graphics\h\radio_on.h"
+#include "graphics\h\radio.h"
 
 #include "graphics\h\jdebi_app_icon.h"
 

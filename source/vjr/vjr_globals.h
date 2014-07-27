@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_globals.h
 //
 //////
-// Version 0.35
+// Version 0.36
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -84,6 +84,16 @@
 	SBitmap*			bmpCheckboxOn						= NULL;
 	SBitmap*			bmpCheckboxOff						= NULL;
 
+	// For button
+	SBitmap*			bmpButton							= NULL;
+
+	// For textbox
+	SBitmap*			bmpTextbox							= NULL;
+
+	// For radio
+	SBitmap*			bmpRadio							= NULL;
+	SBitmap*			bmpRadioDot							= NULL;
+
 	// Default screens used by VJr
 	SObject*			gobj_screen							= NULL;
 	SObject*			gobj_jdebi							= NULL;
@@ -99,6 +109,9 @@
 	SObject*			locals_globals						= NULL;
 	SObject*			locals_readwrite					= NULL;
 	SObject*			locals_refactor						= NULL;
+	SObject*			locals_button						= NULL;
+	SObject*			locals_textbox						= NULL;
+	SObject*			locals_radio						= NULL;
 	SObject*			watch_editbox						= NULL;
 	SObject*			command_editbox						= NULL;
 	SObject*			debug_editbox						= NULL;
@@ -125,6 +138,7 @@
 	//////
 		SFont*			gsFontDefault						= NULL;									// Default font, Ubuntu 10 pt
 		SFont*			gsFontDefault9						= NULL;									// Default font, Ubuntu 9 pt
+		SFont*			gsFontDefaultBold					= NULL;									// Default font, Ubuntu 10 pt bold
 		SFont*			gsFontDefaultFixedPoint				= NULL;									// Default font, Ubuntu Mono 10 pt
 		SFont*			gsWindowTitleBarFont				= NULL;									// Default font, Ubuntu Bold 12 pt
 		SFont*			gsWindowTitleBarFontSubform			= NULL;									// Default font, Ubuntu Bold 10 pt
@@ -132,11 +146,11 @@
 		const SBgra		white								= { rgba(255, 255, 255, 255) };
 		const SBgra		dark_blue							= { rgba(0, 0, 80, 255) };
 		const SBgra		black								= { rgba(0, 0, 0, 255) };
-		const SBgra		lfGray								= { rgba(192, 192, 192, 255) };
+		const SBgra		gray								= { rgba(192, 192, 192, 255) };
 		const SBgra		breadcrumbBackColor					= { rgba(180, 220, 240, 255) };			// Cyanish
 		const SBgra		breadcrumbForeColor					= { rgba(0, 0, 164, 255) };				// Semidark blue
 		const SBgra		breakpointBackColor					= { rgba(180, 140, 220, 255) };			// Purplish
-		const SBgra		breakpointForeColor					= { rgba(255, 255, 128, 255) };			// Pastel yellow
+		const SBgra		breakpointForeColor					= { rgba(64, 32, 92, 255) };			// Dark purple
 		const SBgra		currentStatementBackColor			= { rgba(200, 255, 164, 255) };			// Pastel lime greenish
 		const SBgra		currentStatementForeColor			= { rgba(0, 64, 0, 255) };				// Dark green
 		const SBgra		selectedBackColor					= { rgba(32, 164, 255, 255) };
@@ -144,7 +158,7 @@
 		const SBgra		disabledBackColor					= { rgba(255, 255, 255, 255) };
 		const SBgra		disabledForeColor					= { rgba(192, 192, 230, 255) };
 		const SBgra		colorTracking						= { rgba(0, 0, 255, 255) };				// Blue
-		f32				trackingRatio						= 0.05f;
+		f32				trackingRatio						= 0.025f;
 		const SBgra		colorMouseOver						= { rgba(255, 255, 0, 255) };			// Yellow
 		const SBgra		colorMouseDown						= { rgba(0, 255, 0, 255) };				// Green
 		const SBgra		maskColor							= { rgba(222, 22, 222, 255) };			// Hideous fuscia (by design)
@@ -154,6 +168,16 @@
 		const SBgra		NeColor								= { rgba(177, 204, 214, 255) };
 		const SBgra		SwColor								= { rgba(255, 255, 255, 255) };
 		const SBgra		SeColor								= { rgba(192, 212, 255, 255) };
+
+		// Colors for checkbox corners
+		const SBgra		NwCheckboxOnColor					= { rgba(24, 153, 2, 255) };			// Green
+		const SBgra		NeCheckboxOnColor					= { rgba(37, 163, 3, 255) };
+		const SBgra		SwCheckboxOnColor					= { rgba(5, 140, 0, 255) };
+		const SBgra		SeCheckboxOnColor					= { rgba(131, 220, 11, 255) };
+		const SBgra		NwCheckboxOffColor					= { rgba(193, 34, 34, 255) };			// Red
+		const SBgra		NeCheckboxOffColor					= { rgba(209, 36, 36, 255) };
+		const SBgra		SwCheckboxOffColor					= { rgba(171, 30, 39, 255) };
+		const SBgra		SeCheckboxOffColor					= { rgba(213, 34, 16, 255) };
 
 
 	//////////

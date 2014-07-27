@@ -3,7 +3,7 @@
 // /libsf/source/vjr/bitmaps.cpp
 //
 //////
-// Version 0.35
+// Version 0.36
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -968,7 +968,7 @@
 					if (bmp->bi.biBitCount == 24)
 					{
 						// Build the pointer
-						lbgr = (SBgr*)((s8*)bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth));
+						lbgr = (SBgr*)((s8*)bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth) + (trc->left * 3));
 
 						// Iterate through every visible column
 						for (lnX = trc->left; lnX < bmp->bi.biWidth && lnX < trc->right; lnX++)
@@ -1001,7 +1001,7 @@
 
 					} else if (bmp->bi.biBitCount == 32) {
 						// Build the pointer
-						lbgra = (SBgra*)((s8*)bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth));
+						lbgra = (SBgra*)((s8*)bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth) + (trc->left * 4));
 
 						// Iterate through every visible column
 						for (lnX = trc->left; lnX < bmp->bi.biWidth && lnX < trc->right; lnX++)
@@ -1682,6 +1682,150 @@
 				iBmp_drawHorizontalLine(bmp, rc->left, rc->right - 1, rc->bottom - 1, colorNW);
 				iBmp_drawVerticalLine(bmp, rc->top, rc->bottom - 1, rc->left, colorNW);
 				iBmp_drawVerticalLine(bmp, rc->top, rc->bottom - 1, rc->right - 1, colorNW);
+			}
+		}
+	}
+
+
+
+
+//////////
+//
+// Frame the indicated rectangle using the nine parts of an image:
+//
+//		 _______________________
+//		|       |       |       |
+//		|   1   |   2   |   3   |
+//		|_______|_______|_______|
+//		|       |       |       |
+//		|   4   |   5   |   6   |
+//		|_______|_______|_______|
+//		|       |       |       |
+//		|   7   |   8   |   9   |
+//		|_______|_______|_______|
+//
+// Parts 1, 3, 7, and 9, are rendered at the corners.
+// Parts 2 and 8 are repeated across the top and bottom.
+// Parts 4 and 6 are repeated down the sides.
+// The remainder of the image is colorized with the pixel color at the center of 5.
+//
+//////
+	void iiBmp_frameInNineParts(SBitmap* bmpDst, RECT* trc, SBitmap* bmpFrame)
+	{
+		s32		lnX, lnY, lnWidth, lnHeight, lnDstRight, lnDstBottom;
+		u8		lcRed, lcGrn, lcBlu;
+		SBgr*	lbgr;
+
+
+		//////////
+		// Determine the coordinates for each part
+		//////
+			lnWidth		= max(bmpFrame->bi.biWidth  / 3, 1);
+			lnHeight	= max(bmpFrame->bi.biHeight / 3, 1);
+
+
+		//////////
+		// Overlay the corners
+		//////
+			// Top
+			iiBmp_bitBltPortion(bmpDst, trc->left,				trc->top, lnWidth, lnHeight, bmpFrame, 0,								0);
+			iiBmp_bitBltPortion(bmpDst, trc->right - lnWidth,	trc->top, lnWidth, lnHeight, bmpFrame, bmpFrame->bi.biWidth - lnWidth,	0);
+			// Bottom
+			iiBmp_bitBltPortion(bmpDst, trc->left,				trc->bottom - lnHeight, lnWidth, lnHeight, bmpFrame, 0,									bmpFrame->bi.biHeight - lnHeight);
+			iiBmp_bitBltPortion(bmpDst, trc->right - lnWidth,	trc->bottom - lnHeight, lnWidth, lnHeight, bmpFrame, bmpFrame->bi.biWidth - lnWidth,	bmpFrame->bi.biHeight - lnHeight);
+
+
+		//////////
+		// Repeatedly overlay the middle and sides
+		//////
+			lnDstRight	= trc->right - trc->left - lnWidth;
+			lnDstBottom = trc->bottom - trc->top - lnHeight;
+			for (lnX = lnWidth; lnX < lnDstRight; lnX++)
+			{
+				// Middle top and bottom
+				iiBmp_bitBltPortion(bmpDst, trc->left + lnX, trc->top,					1, lnHeight, bmpFrame, lnWidth, 0);
+				iiBmp_bitBltPortion(bmpDst, trc->left + lnX, trc->bottom - lnHeight,	1, lnHeight, bmpFrame, lnWidth,	bmpFrame->bi.biHeight - lnHeight);
+			}
+			for (lnY = lnHeight; lnY < lnDstBottom; lnY++)
+			{
+				// Sides
+				iiBmp_bitBltPortion(bmpDst, trc->left,				trc->top + lnY,	lnWidth, 1, bmpFrame, 0,								lnHeight);
+				iiBmp_bitBltPortion(bmpDst, trc->right - lnWidth,	trc->top + lnY,	lnWidth, 1, bmpFrame, bmpFrame->bi.biWidth - lnWidth,	lnHeight);
+			}
+
+
+		//////////
+		// Fill the middle completely with the middle-most pixel color
+		//////
+			lbgr = (SBgr*)(bmpFrame->bd + (((bmpFrame->bi.biHeight / 2) - 1) * bmpFrame->rowWidth) + (((bmpFrame->bi.biWidth / 2) - 1) * 3));
+			lcRed	= lbgr->red;
+			lcGrn	= lbgr->grn;
+			lcBlu	= lbgr->blu;
+
+			// Iterate for the inner portion
+			for (lnY = lnHeight; lnY < lnDstBottom; lnY++)
+			{
+				if (lnY + trc->top + lnHeight >= 0 && lnY + trc->top + lnHeight < bmpDst->bi.biHeight)
+				{
+					lbgr = (SBgr*)(bmpDst->bd + ((bmpDst->bi.biHeight - trc->top - lnY - 1) * bmpDst->rowWidth) + ((trc->left + lnWidth) * 3));
+					for (lnX = lnWidth; lnX < lnDstRight; lnX++, lbgr++)
+					{
+						if (lnX + trc->left + lnWidth >= 0 && lnX + trc->left + lnWidth < bmpDst->bi.biWidth)
+						{
+							// Populate this entry
+							lbgr->red = lcRed;
+							lbgr->grn = lcGrn;
+							lbgr->blu = lcBlu;
+						}
+					}
+				}
+			}
+	}
+
+
+
+
+//////////
+//
+// Called to bitBlt a portion of a bitmap from source to destination
+//
+//////
+	void iiBmp_bitBltPortion(SBitmap* bmpDst, s32 tnX, s32 tnY, s32 tnWidth, s32 tnHeight, SBitmap* bmpSrc, s32 tnXStart, s32 tnYStart)
+	{
+		s32			lnY, lnX;
+		SBgr*		lbgrd;
+		SBgr*		lbgrs;
+
+
+		// Is there some work to do?
+		if (tnX < bmpDst->bi.biWidth && tnXStart + bmpSrc->bi.biWidth >= 0 && tnY < bmpDst->bi.biHeight && tnYStart + bmpSrc->bi.biHeight >= 0)
+		{
+			// Draw the item
+			for (lnY = 0; tnYStart + lnY < bmpSrc->bi.biHeight && lnY < tnHeight; lnY++)
+			{
+				if (lnY + tnY >= 0 && lnY + tnYStart >= 0 && lnY + tnY < bmpDst->bi.biHeight && lnY + tnYStart < bmpSrc->bi.biHeight)
+				{
+					// Compute the destination and source
+					lbgrd = (SBgr*)(bmpDst->bd + ((bmpDst->bi.biHeight - tnY      - lnY - 1) * bmpDst->rowWidth) + (tnX      * 3));
+					lbgrs = (SBgr*)(bmpSrc->bd + ((bmpSrc->bi.biHeight - tnYStart - lnY - 1) * bmpSrc->rowWidth) + (tnXStart * 3));
+
+					// Repeat for every pixel horizontally
+					for (lnX = 0; tnXStart + lnX < bmpSrc->bi.biWidth && lnX < tnWidth; lnX++)
+					{
+						// Will it fit?
+						if (lnX + tnX >= 0 && lnX + tnXStart >= 0 && lnX + tnX < bmpDst->bi.biWidth && lnX + tnXStart < bmpSrc->bi.biWidth)
+						{
+							// Copy it
+							lbgrd->red	= lbgrs->red;
+							lbgrd->grn	= lbgrs->grn;
+							lbgrd->blu	= lbgrs->blu;
+						}
+
+						// Move to next pixel
+						++lbgrd;
+						++lbgrs;
+					}
+				}
 			}
 		}
 	}

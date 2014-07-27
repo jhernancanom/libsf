@@ -3,7 +3,7 @@
 // /libsf/source/vjr/objects.cpp
 //
 //////
-// Version 0.35
+// Version 0.36
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -459,7 +459,7 @@
 // and overlays them where they should be.
 //
 //////
-	u32 iObj_publish(SBitmap* bmpDst, RECT* rc, SObject* obj, bool tlPublishChildren, bool tlPublishSiblings, bool tlForcePublish, s32 tnLevel)
+	u32 iObj_publish(SObject* obj, RECT* rc, SBitmap* bmpDst, bool tlPublishChildren, bool tlPublishSiblings, bool tlForcePublish, s32 tnLevel)
 	{
 		u32			lnWidth, lnHeight, lnPixelsRendered;
 		RECT		lrc, lrcChild, lrc2;
@@ -507,7 +507,7 @@
 			// Publish any children
 			//////
 				if (tlPublishChildren && obj->firstChild)
-					lnPixelsRendered += iObj_publish(obj->bmp, &lrcChild, obj->firstChild, true, true, tlForcePublish, tnLevel + 1);
+					lnPixelsRendered += iObj_publish(obj->firstChild, &lrcChild, obj->bmp, true, true, tlForcePublish, tnLevel + 1);
 
 
 			//////////
@@ -590,16 +590,6 @@
 									else						lnPixelsRendered += iBmp_bitBlt_byGraymask(bmpDst, &lrc, obj->bmp, obj->p.foreColor);
 									break;
 
-// 								case _OBJ_TYPE_CHECKBOX:
-// 									// Manually force render and publish the checkbox's children onto the rectangle
-// 									SetRect(&lrc2, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
-// 									lnPixelsRendered += iObj_renderChildrenAndSiblings(obj->firstChild, true, true, true);
-// 									lnPixelsRendered += iObj_publish(obj->bmp, &lrc2, obj->firstChild, true, true, true, tnLevel + 1);
-// 
-// 									// And finally... paint! :-)
-// 									lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
-// 									break;
-
 								default:
 									lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
 									break;
@@ -631,14 +621,13 @@
 					while (objSib)
 					{
 						// Publish this sibling
-						lnPixelsRendered += iObj_publish(bmpDst, rc, objSib, true, false, tlForcePublish, tnLevel);
+						lnPixelsRendered += iObj_publish(objSib, rc, bmpDst, true, false, tlForcePublish, tnLevel);
 
 						// Move to next sibling
 						objSib = (SObject*)objSib->ll.next;
 					}
 				}
 		}
-
 
 
 		//////////
@@ -936,22 +925,13 @@
 				break;
 
 			case _OBJ_TYPE_LABEL:
-				// Just use the default rcClient settings above
-				break;
-
-			case _OBJ_TYPE_TEXTBOX:
-				// Just use the default rcClient settings above
-				break;
-
+			case _OBJ_TYPE_EDITBOX:
+			case _OBJ_TYPE_IMAGE:
 			case _OBJ_TYPE_BUTTON:
 				// Just use the default rcClient settings above
 				break;
 
-			case _OBJ_TYPE_EDITBOX:
-				// Just use the default rcClient settings above
-				break;
-
-			case _OBJ_TYPE_IMAGE:
+			case _OBJ_TYPE_TEXTBOX:
 				// Just use the default rcClient settings above
 				break;
 
@@ -2991,12 +2971,13 @@
 
 
 			button->pa.font						= iFont_duplicate(gsFontDefault);
-			button->p.backColor.color			= white.color;
+			button->p.backColor.color			= gray.color;
 			button->p.foreColor.color			= black.color;
 
 			button->p.style						= _STYLE_3D;
-			button->p.alignment					= _ALIGNMENT_LEFT;
-			iDatum_duplicate(&button->pa.caption,	"Button", 6);
+			button->p.alignment					= _ALIGNMENT_CENTER;
+			button->p.isOpaque					= false;
+			iDatum_duplicate(&button->pa.caption, cgcName_button, sizeof(cgcName_button) - 1);
 
 			button->p.disabledBackColor.color	= disabledBackColor.color;
 			button->p.disabledForeColor.color	= disabledForeColor.color;
@@ -3256,12 +3237,12 @@
 			//////////
 			// Set default size and position
 			//////
-				SetRect(&radio->rc, 0, 0, 100, 100);
-				SetRect(&radio->rco, 0, 0, 100, 100);
-				SetRect(&radio->rcp, 0, 0, 100, 100);
+				SetRect(&radio->rc, 0, 0, 72, 72);
+				SetRect(&radio->rco, 0, 0, 72, 72);
+				SetRect(&radio->rcp, 0, 0, 72, 72);
 
 				// Set the size
-				iObj_setSize(radio, 0, 0, 100, 100);
+				iObj_setSize(radio, 0, 0, 72, 72);
 
 
 			radio->pa.font						= iFont_duplicate(gsFontDefault);
@@ -3834,8 +3815,9 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 //////
 	u32 iSubobj_renderLabel(SObject* obj)
 	{
-		u32		lnPixelsRendered, lnFormat;
-		RECT	lrc;
+		u32		lnPixelsRendered, lnFormat, errorNum;
+		bool	error;
+		RECT	lrc, lrc2;
 
 
 		// Make sure our environment is sane
@@ -3887,6 +3869,27 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				if (obj->p.isBorder)
 					iBmp_frameRect(obj->bmp, &lrc, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, false, NULL, false);
 
+				// For checkbox labels, we handle them differently
+				if (obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX)
+				{
+					// Append the color marker at the end of the label
+					SetRect(&lrc2, lrc.right - ((lrc.bottom - lrc.top) / 2), 0, lrc.right, lrc.bottom);
+					if (iiVariable_getAs_s32(obj->parent->pa.value, false, &error, &errorNum) == 0)
+					{
+						// It's off, so color it red
+						iBmp_fillRect(obj->bmp, &lrc2, NwCheckboxOffColor, NeCheckboxOffColor, SwCheckboxOffColor, SeCheckboxOffColor, true, NULL, false);
+
+					} else {
+						// It's on, so color it green
+						iBmp_fillRect(obj->bmp, &lrc2, NwCheckboxOnColor, NeCheckboxOnColor, SwCheckboxOnColor, SeCheckboxOnColor, true, NULL, false);
+					}
+
+					// Colorize the area
+					SetRect(&lrc2, lrc.left, lrc.top, lrc.right - ((lrc.bottom - lrc.top) / 2), lrc.bottom);
+					     if (obj->ev.mouse.isMouseDown)		iBmp_colorizeMask(obj->bmp, &lrc2, colorMouseDown,	false, 0.0f);
+					else if (obj->ev.mouse.isMouseOver)		iBmp_colorizeMask(obj->bmp, &lrc2, colorMouseOver,	false, 0.0f);
+				}
+
 
 				//////////
 				// Copy to prior rendered bitmap
@@ -3907,7 +3910,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 			//////////
 			// If the mouse is over this control, highlight it
 			//////
-				if (obj->isPublished && obj->ev.mouse.isMouseOver && obj->objType != _OBJ_TYPE_IMAGE)
+				if (obj->isPublished && obj->ev.mouse.isMouseOver && !(obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX))
 					iBmp_alphaColorizeMask(obj->bmp, &lrc, colorTracking, trackingRatio);
 
 
@@ -3930,13 +3933,92 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 //////
 	u32 iSubobj_renderTextbox(SObject* obj)
 	{
+		u32		lnPixelsRendered, lnFormat;
+		RECT	lrc;
 
 
-			//////////
-			// Indicate we're no longer dirty, that we have everything
-			//////
-				obj->isDirtyRender = false;
-		return(0);
+		// Make sure our environment is sane
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			if (obj->isDirtyRender)
+			{
+				// Fill in the background
+				SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+				iiBmp_frameInNineParts(obj->bmp, &lrc, bmpTextbox);
+
+				// Colorize
+				     if (obj->ev.mouse.isMouseDown)		iBmp_colorizeMask(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
+				else if (obj->ev.mouse.isMouseOver)		iBmp_colorizeMask(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
+				else									iBmp_colorizeMask(obj->bmp, &lrc, obj->p.backColor,	false, 0.0f);
+
+				// Inset slightly for the text part
+				InflateRect(&lrc, -4, -4);
+
+				// If we're opaque, draw the text inset by a margin, otherwise just overlay
+				if (obj->p.isOpaque)
+				{
+					// Opaque
+					SetBkColor(obj->bmp->hdc, RGB(obj->p.backColor.red, obj->p.backColor.grn, obj->p.backColor.blu));
+					SetBkMode(obj->bmp->hdc, OPAQUE);
+
+				} else {
+					// Transparent
+					SetBkMode(obj->bmp->hdc, TRANSPARENT);
+				}
+
+				// Set the text parameters
+				SetTextColor(obj->bmp->hdc, RGB(obj->p.foreColor.red, obj->p.foreColor.grn, obj->p.foreColor.blu));
+				SelectObject(obj->bmp->hdc, obj->pa.font->hfont);
+
+				// Determine our orientation
+				switch (obj->p.alignment)
+				{
+					case _ALIGNMENT_LEFT:
+						lnFormat = DT_LEFT;
+						break;
+
+					case _ALIGNMENT_RIGHT:
+						lnFormat = DT_RIGHT;
+						break;
+
+					case _ALIGNMENT_CENTER:
+						lnFormat = DT_CENTER;
+						break;
+				}
+
+				// Draw the text
+//				DrawText(obj->bmp->hdc, obj->pa.value.value.data, obj->pa.value.value.length, &lrc, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
+				DrawText(obj->bmp->hdc, obj->pa.caption.data, obj->pa.caption.length, &lrc, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
+
+				// Frame rectangle
+				if (obj->p.isBorder)
+					iBmp_frameRect(obj->bmp, &lrc, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
 	}
 
 
@@ -3949,13 +4031,91 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 //////
 	u32 iSubobj_renderButton(SObject* obj)
 	{
+		u32		lnPixelsRendered, lnFormat;
+		RECT	lrc;
 
 
-			//////////
-			// Indicate we're no longer dirty, that we have everything
-			//////
-				obj->isDirtyRender = false;
-		return(0);
+		// Make sure our environment is sane
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			if (obj->isDirtyRender)
+			{
+				// Fill in the background
+				SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+				iiBmp_frameInNineParts(obj->bmp, &lrc, bmpButton);
+
+				// Colorize
+				     if (obj->ev.mouse.isMouseDown)		iBmp_colorizeMask(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
+				else if (obj->ev.mouse.isMouseOver)		iBmp_colorizeMask(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
+				else									iBmp_colorizeMask(obj->bmp, &lrc, obj->p.backColor,	false, 0.0f);
+
+				// Inset slightly for the text part
+				InflateRect(&lrc, -4, -4);
+
+				// If we're opaque, draw the text inset by a margin, otherwise just overlay
+				if (obj->p.isOpaque)
+				{
+					// Opaque
+					SetBkColor(obj->bmp->hdc, RGB(obj->p.backColor.red, obj->p.backColor.grn, obj->p.backColor.blu));
+					SetBkMode(obj->bmp->hdc, OPAQUE);
+
+				} else {
+					// Transparent
+					SetBkMode(obj->bmp->hdc, TRANSPARENT);
+				}
+
+				// Set the text parameters
+				SetTextColor(obj->bmp->hdc, RGB(obj->p.foreColor.red, obj->p.foreColor.grn, obj->p.foreColor.blu));
+				SelectObject(obj->bmp->hdc, obj->pa.font->hfont);
+
+				// Determine our orientation
+				switch (obj->p.alignment)
+				{
+					case _ALIGNMENT_LEFT:
+						lnFormat = DT_LEFT;
+						break;
+
+					case _ALIGNMENT_RIGHT:
+						lnFormat = DT_RIGHT;
+						break;
+
+					case _ALIGNMENT_CENTER:
+						lnFormat = DT_CENTER;
+						break;
+				}
+
+				// Draw the text
+				DrawText(obj->bmp->hdc, obj->pa.caption.data, obj->pa.caption.length, &lrc, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
+
+				// Frame rectangle
+				if (obj->p.isBorder)
+					iBmp_frameRect(obj->bmp, &lrc, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
 	}
 
 
@@ -4054,6 +4214,14 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				} else {
 					// Render normally
 					lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->pa.bmpPicture);
+				}
+
+				// For checkbox images, we colorize them differently
+				if (obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX)
+				{
+					// Colorize
+						 if (obj->ev.mouse.isMouseDown)		iBmp_colorizeMask(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
+					else if (obj->ev.mouse.isMouseOver)		iBmp_colorizeMask(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
 				}
 
 
@@ -4160,11 +4328,50 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 //////
 	u32 iSubobj_renderRadio(SObject* obj)
 	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
 
 
-			//////////
-			// Indicate we're no longer dirty, that we have everything
-			//////
-				obj->isDirtyRender = false;
-		return(0);
+		// Make sure our environment is sane
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+
+			if (obj->isDirtyRender)
+			{
+				// Scale the base into it
+				iBmp_scale(obj->bmp, bmpRadio);
+
+				// Position the dial based on settings
+
+				// Colorize
+				     if (obj->ev.mouse.isMouseDown)		iBmp_colorizeMask(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
+				else if (obj->ev.mouse.isMouseOver)		iBmp_colorizeMask(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
+				else									iBmp_colorizeMask(obj->bmp, &lrc, obj->p.backColor,	false, 0.0f);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
 	}

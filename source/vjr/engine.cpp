@@ -3,7 +3,7 @@
 // /libsf/source/vjr/engine.cpp
 //
 //////
-// Version 0.35
+// Version 0.36
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:

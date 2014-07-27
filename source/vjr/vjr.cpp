@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr.cpp
 //
 //////
-// Version 0.35
+// Version 0.36
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -82,7 +82,8 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 //////
 	void iInit_vjr(HACCEL* hAccelTable)
 	{
-		HRESULT hRes;
+		HRESULT		hRes;
+		RECT		lrc;
 
 
 		// Keyboard shortcuts
@@ -105,6 +106,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		// Default font
 		gsFontDefault				= iFont_create(cgcDefaultFontName,			10,	FW_NORMAL,	0, 0);
 		gsFontDefault9				= iFont_create(cgcDefaultFontName,			9,	FW_NORMAL,	0, 0);
+		gsFontDefaultBold			= iFont_create(cgcDefaultFontName,			10,	FW_BOLD,	0, 0);
 		gsFontDefaultFixedPoint		= iFont_create(cgcDefaultFixedFontName,		10,	FW_NORMAL,	0, 0);
 		gsWindowTitleBarFont		= iFont_create(cgcWindowTitleBarFontName,	12,	FW_NORMAL,	0, 0);
 		gsWindowTitleBarFontSubform	= iFont_create(cgcWindowTitleBarFontName,	10,	FW_NORMAL,	0, 0);
@@ -138,6 +140,17 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 			bmpCheckboxOn		= iBmp_rawLoad(cgc_checkboxOnBmp);
 			bmpCheckboxOff		= iBmp_rawLoad(cgc_checkboxOffBmp);
+
+			bmpButton			= iBmp_rawLoad(cgc_buttonBmp);
+			bmpTextbox			= iBmp_rawLoad(cgc_textboxBmp);
+
+			// The radio image has a 44x44 dot in the upper-left.
+			bmpRadio			= iBmp_rawLoad(cgc_radioBmp);									// Load the raw bmpRadio
+			SetRect(&lrc, 0, 0, 44, 44);
+			bmpRadioDot			= iBmp_allocate();
+			iBmp_createBySize(bmpRadioDot, 44, 44, 24);
+			iBmp_extractRect(bmpRadioDot, &lrc, bmpRadio, 0, 0);								// Extract the 44x44 rectangle
+			iBmp_fillRect(bmpRadio, &lrc, white, white, white, white, false, NULL, false);		// And cover it up with white
 
 
 		// Create the default reference datetimes

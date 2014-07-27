@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_sup.cpp
 //
 //////
-// Version 0.35
+// Version 0.36
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -325,7 +325,7 @@
 		//////
 			lnHeight = (gobj_jdebi->rcClient.bottom - gobj_jdebi->rcClient.top) / 8;
 			iObj_setSize(sourceCode_editbox,	0,	0,		sourceCode->rcClient.right	- sourceCode->rcClient.left,	sourceCode->rcClient.bottom	- sourceCode->rcClient.top);
-			iObj_setSize(locals_editbox,		0,	0,		locals->rcClient.right		- locals->rcClient.left,		locals->rcClient.bottom		- locals->rcClient.top);
+			iObj_setSize(locals_editbox,		0,	0,		locals->rcClient.right		- locals->rcClient.left - 200,	locals->rcClient.bottom		- locals->rcClient.top);
 			iObj_setSize(watch_editbox,			0,	0,		watch->rcClient.right		- watch->rcClient.left,			watch->rcClient.bottom		- watch->rcClient.top);
 			iObj_setSize(command_editbox,		0,	0,		command->rcClient.right		- command->rcClient.left,		command->rcClient.bottom	- command->rcClient.top);
 			iObj_setSize(debug_editbox,			0,	0,		debug->rcClient.right		- debug->rcClient.left,			debug->rcClient.bottom		- debug->rcClient.top);
@@ -376,7 +376,8 @@
 			// Populate the names and position each one
 			iDatum_duplicate(&caption->value, "Autos", -1);
 			iObj_setCaption(locals_autos, caption);
-			iObj_setSize(locals_autos, 100, -19, 50, 14);
+			*locals_autos->pa.value->value.data_s32 = 1;	// Default to on
+			iObj_setSize(locals_autos, 100, -20, 56, 16);
 			iObj_setFontSize((SObject*)locals_autos->firstChild->ll.next, fontSize);
 			locals_autos->p.isVisible	= true;
 			((SObject*)locals_autos->firstChild->ll.next)->p.isOpaque = true;
@@ -384,7 +385,8 @@
 
 			iDatum_duplicate(&caption->value, "Globals", -1);
 			iObj_setCaption(locals_globals, caption);
-			iObj_setSize(locals_globals, 170, -19, 60, 14);
+			*locals_globals->pa.value->value.data_s32 = 1;	// Default to on
+			iObj_setSize(locals_globals, 176, -20, 64, 16);
 			iObj_setFontSize((SObject*)locals_globals->firstChild->ll.next, fontSize);
 			locals_globals->p.isVisible		= true;
 			((SObject*)locals_globals->firstChild->ll.next)->p.isOpaque = true;
@@ -392,7 +394,8 @@
 
 			iDatum_duplicate(&caption->value, "Read/write", -1);
 			iObj_setCaption(locals_readwrite, caption);
-			iObj_setSize(locals_readwrite, 250, -19, 80, 14);
+			*locals_readwrite->pa.value->value.data_s32 = 1;	// Default to on
+			iObj_setSize(locals_readwrite, 260, -20, 79, 16);
 			iObj_setFontSize((SObject*)locals_readwrite->firstChild->ll.next, fontSize);
 			locals_readwrite->p.isVisible	= true;
 			((SObject*)locals_readwrite->firstChild->ll.next)->p.isOpaque = true;
@@ -400,11 +403,50 @@
 
 			iDatum_duplicate(&caption->value, "Refactor", -1);
 			iObj_setCaption(locals_refactor, caption);
-			iObj_setSize(locals_refactor, 350, -19, 70, 14);
+			iObj_setSize(locals_refactor, 359, -20, 70, 16);
 			iObj_setFontSize((SObject*)locals_refactor->firstChild->ll.next, fontSize);
 			locals_refactor->p.isVisible	= true;
 			((SObject*)locals_refactor->firstChild->ll.next)->p.isOpaque = true;
 			locals_refactor->isDirtyRender	= true;
+
+
+		//////////
+		// Add a button
+		//////
+			locals_button = iObj_addChild(_OBJ_TYPE_BUTTON, locals);
+			iObj_setSize(locals_button,
+							locals->rcClient.right		- locals->rcClient.left - 180,
+							0,
+							locals_button->rc.right		- locals_button->rc.left,
+							locals_button->rc.bottom	- locals_button->rc.top);
+			// Make it visible
+			locals_button->p.isVisible = true;
+
+
+		//////////
+		// Add a textbox
+		//////
+			locals_textbox = iObj_addChild(_OBJ_TYPE_TEXTBOX, locals);
+			iObj_setSize(locals_textbox,
+							locals->rcClient.right		- locals->rcClient.left - 180,
+							30,
+							locals_textbox->rc.right	- locals_textbox->rc.left,
+							locals_textbox->rc.bottom	- locals_textbox->rc.top);
+			// Make it visible
+			locals_textbox->p.isVisible = true;
+
+
+		//////////
+		// Add a radio dial
+		//////
+			locals_radio = iObj_addChild(_OBJ_TYPE_RADIO, locals);
+			iObj_setSize(locals_radio,
+							locals->rcClient.right		- locals->rcClient.left - 72,
+							0,
+							locals_radio->rc.right	- locals_radio->rc.left,
+							locals_radio->rc.bottom	- locals_radio->rc.top);
+			// Make it visible
+			locals_textbox->p.isVisible = true;
 
 
 		//////////
@@ -813,8 +855,13 @@
 		// Make sure we have something to render
 		if (win && win->obj)
 		{
+			// Render anything needing rendering
 			iObj_renderChildrenAndSiblings(win->obj, true, true, tlForce);
-			iObj_publish(win->bmp, &win->rc, win->obj, true, true, tlForce, ((win == gWinScreen) ? -200000 : 0));
+
+			// Publish anything needing publishing
+			iObj_publish(win->obj, &win->rc, win->bmp, true, true, tlForce, ((win == gWinScreen) ? -200000 : 0));
+
+			// And force the redraw
 			InvalidateRect(win->hwnd, 0, FALSE);
 		}
 	}
@@ -1516,7 +1563,8 @@
 
 				case WM_MOUSEMOVE:
 					// Check for mouseEnter and mouseLeave, then a mouseMove
-					iiMouse_processMouseEvents_mouseMove(win, obj, &obj->rc, true, true);
+					llProcessed = false;
+					iiMouse_processMouseEvents_mouseMove(win, obj, &obj->rc, true, true, &llProcessed);
 
 					// The mouse has moved, reset the hover counter
 					obj->ev.mouse.startHoverTickCount	= GetTickCount();
@@ -1627,7 +1675,7 @@
 // Called to process mouseEnter and mouseLeave events based on mouse movement
 //
 //////
-	void iiMouse_processMouseEvents_mouseMove(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings)
+	void iiMouse_processMouseEvents_mouseMove(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed)
 	{
 		bool		llInClientArea;
 		RECT		lrc, lrcClient;
@@ -1645,7 +1693,7 @@
 			// Process any children
 			//////
 				if (tlProcessChildren && obj->firstChild)
-					iiMouse_processMouseEvents_mouseMove(win, obj->firstChild, &lrcClient, true, true);
+					iiMouse_processMouseEvents_mouseMove(win, obj->firstChild, &lrcClient, true, true, tlProcessed);
 
 
 			//////////
@@ -1654,6 +1702,7 @@
 				if (PtInRect(&lrc, win->mousePosition))
 				{
 					// We are in this object
+					*tlProcessed = true;	// Indicate we've processed this
 					if (!obj->ev.mouse.isMouseOver)
 					{
 						// Signal the mouseEnter event
@@ -1685,6 +1734,7 @@
 						// For non-client areas, we translate to negative is to the left or above the client area,
 						// with values extending beyond the width and height if it is in the outer area
 						//////
+							*tlProcessed = true;	// Indicate we've processed this
 							if (obj->ev.mouse._onMouseMove)
 							{
 								obj->ev.mouse.onMouseMove(win, obj, 
@@ -1715,7 +1765,7 @@
 					while (objSib)
 					{
 						// Process this sibling
-						iiMouse_processMouseEvents_mouseMove(win, objSib, rc, true, false);
+						iiMouse_processMouseEvents_mouseMove(win, objSib, rc, true, false, tlProcessed);
 
 						// Move to next sibling
 						objSib = (SObject*)objSib->ll.next;

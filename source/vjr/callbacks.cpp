@@ -3,7 +3,7 @@
 // /libsf/source/vjr/callbacks.cpp
 //
 //////
-// Version 0.35
+// Version 0.36
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -138,6 +138,8 @@
 		{
 			// They're clicking on a checkbox, toggle the value and re-render
 			*obj->parent->pa.value->value.data_s32 = ((*obj->parent->pa.value->value.data_s32 != 0) ? 0 : 1);
+
+			// Calling the size with its current size forces the refresh
 			iObj_setSize(obj->parent,
 							obj->parent->rc.left,
 							obj->parent->rc.top,
