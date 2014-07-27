@@ -549,3 +549,6 @@ typedef SEM**		SEMpp;
 	const s8			cgcName_iconMinimize[]				= "_minimize";							// Forms automatically get a minimize button
 	const s8			cgcName_iconMaximize[]				= "_maximize";							// Forms automatically get a maximize button
 	const s8			cgcName_iconClose[]					= "_close";								// Forms automatically get a close button
+
+	const s8			cgcName_checkboxImage[]				= "_cbimage";							// Checkboxes automatically get a checkbox image
+	const s8			cgcName_checkboxLabel[]				= "_cblabel";							// Checkboxes automatically get a checkbox label

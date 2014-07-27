@@ -1472,6 +1472,7 @@ bool iObj_setCaption(SObject* obj, SVariable* var)
 	if (obj)
 	{
 		// Set the main caption
+		obj->isDirtyRender = true;
 		if ((llResult = iObj_setCharacter(obj, var, &obj->pa.caption, var->value.data, var->value.length)))
 		{
 			switch (obj->objType)
@@ -1485,7 +1486,28 @@ bool iObj_setCaption(SObject* obj, SVariable* var)
 						if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0)
 						{
 							// Update this item
-							llResult = iObj_setCharacter(objChild, var, &objChild->pa.caption, var->value.data, var->value.length);
+							llResult				= iObj_setCharacter(objChild, var, &objChild->pa.caption, var->value.data, var->value.length);
+							objChild->isDirtyRender	= true;
+
+							// All done
+							break;
+						}
+
+						// Move to next sibling
+						objChild = (SObject*)objChild->ll.next;
+					}
+					break;
+
+				case _OBJ_TYPE_CHECKBOX:
+					objChild = obj->firstChild;
+					while (objChild)
+					{
+						// Is this one
+						if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcName_checkboxLabel, sizeof(cgcName_checkboxLabel) - 1) == 0)
+						{
+							// Update this item
+							llResult				= iObj_setCharacter(objChild, var, &objChild->pa.caption, var->value.data, var->value.length);
+							objChild->isDirtyRender	= true;
 
 							// All done
 							break;

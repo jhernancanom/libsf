@@ -240,6 +240,7 @@
 	void iInit_create_jdebiObject(void)
 	{
 		SVariable*	caption;
+		SVariable*	fontSize;
 		s32			lnLeft, lnTop, lnWidth, lnHeight;
 		RECT		lrc;
 
@@ -359,6 +360,52 @@
 			locals_editbox->pa.em					= iEditManager_allocate();
 			iObj_setIcon(locals, bmpLocalsIcon);
 
+			// Adjust the caption width
+			((SObject*)locals->firstChild->ll.next)->rc.right = 90;
+
+			// Create the checkboxes
+			locals_autos		= iObj_addChild(_OBJ_TYPE_CHECKBOX, locals);
+			locals_globals		= iObj_addChild(_OBJ_TYPE_CHECKBOX, locals);
+			locals_readwrite	= iObj_addChild(_OBJ_TYPE_CHECKBOX, locals);
+			locals_refactor		= iObj_addChild(_OBJ_TYPE_CHECKBOX, locals);
+			
+			// For the font size
+			fontSize = iVariable_create(_VAR_TYPE_U32, NULL);
+			*fontSize->value.data_s32 = 7;
+
+			// Populate the names and position each one
+			iDatum_duplicate(&caption->value, "Autos", -1);
+			iObj_setCaption(locals_autos, caption);
+			iObj_setSize(locals_autos, 100, -19, 50, 14);
+			iObj_setFontSize((SObject*)locals_autos->firstChild->ll.next, fontSize);
+			locals_autos->p.isVisible	= true;
+			((SObject*)locals_autos->firstChild->ll.next)->p.isOpaque = true;
+			locals_autos->isDirtyRender	= true;
+
+			iDatum_duplicate(&caption->value, "Globals", -1);
+			iObj_setCaption(locals_globals, caption);
+			iObj_setSize(locals_globals, 170, -19, 60, 14);
+			iObj_setFontSize((SObject*)locals_globals->firstChild->ll.next, fontSize);
+			locals_globals->p.isVisible		= true;
+			((SObject*)locals_globals->firstChild->ll.next)->p.isOpaque = true;
+			locals_globals->isDirtyRender	= true;
+
+			iDatum_duplicate(&caption->value, "Read/write", -1);
+			iObj_setCaption(locals_readwrite, caption);
+			iObj_setSize(locals_readwrite, 250, -19, 80, 14);
+			iObj_setFontSize((SObject*)locals_readwrite->firstChild->ll.next, fontSize);
+			locals_readwrite->p.isVisible	= true;
+			((SObject*)locals_readwrite->firstChild->ll.next)->p.isOpaque = true;
+			locals_readwrite->isDirtyRender	= true;
+
+			iDatum_duplicate(&caption->value, "Refactor", -1);
+			iObj_setCaption(locals_refactor, caption);
+			iObj_setSize(locals_refactor, 350, -19, 70, 14);
+			iObj_setFontSize((SObject*)locals_refactor->firstChild->ll.next, fontSize);
+			locals_refactor->p.isVisible	= true;
+			((SObject*)locals_refactor->firstChild->ll.next)->p.isOpaque = true;
+			locals_refactor->isDirtyRender	= true;
+
 
 		//////////
 		// Watch window caption and font
@@ -408,7 +455,8 @@
 		//////////
 		// Clean house
 		//////
-			iVariable_delete(caption, true);
+			iVariable_delete(caption,	true);
+			iVariable_delete(fontSize,	true);
 
 
 		//////////
@@ -1546,9 +1594,9 @@
 				case _OBJ_TYPE_SUBFORM:
 					// Adjust by the client coordinates
 					SetRect(&lrcClient,	lrc.left	+ obj->rcClient.left,
-									lrc.top		+ obj->rcClient.top,
-									lrc.left	+ obj->rcClient.left	+ (obj->rcClient.right	- obj->rcClient.left),
-									lrc.top		+ obj->rcClient.top		+ (obj->rcClient.bottom	- obj->rcClient.top));
+										lrc.top		+ obj->rcClient.top,
+										lrc.left	+ obj->rcClient.left	+ (obj->rcClient.right	- obj->rcClient.left),
+										lrc.top		+ obj->rcClient.top		+ (obj->rcClient.bottom	- obj->rcClient.top));
 					break;
 
 				default:
@@ -1570,7 +1618,6 @@
 		//////
 			return((PtInRect(&lrcClient, win->mousePosition)) ? true : false);
 	}
-
 
 
 

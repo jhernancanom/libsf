@@ -68,7 +68,7 @@
 	void					iObj_setDirtyRender						(SObject* obj, bool tlMarkParents);
 	void					iObj_setDirtyPublish					(SObject* obj, bool tlMarkParents);
 	u32						iObj_render								(SObject*  obj, bool tlForceRender);
-	void					iObj_renderChildrenAndSiblings			(SObject*  obj, bool tlRenderChildren, bool tlRenderSiblings, bool tlForceRender);
+	u32						iObj_renderChildrenAndSiblings			(SObject*  obj, bool tlRenderChildren, bool tlRenderSiblings, bool tlForceRender);
 	u32						iObj_publish							(SBitmap* bmpDst, RECT* rc, SObject* obj, bool tlPublishChildren, bool tlPublishSiblings, bool tlForcePublish, s32 tnLevel);
 	void					iObj_duplicateChain						(SObject** root, SObject* chain);
 	void					iObj_appendObjToParent					(SObject*  parent, SObject* obj);
@@ -309,6 +309,7 @@
 	u32						iBmp_alphaColorizeMask					(SBitmap* bmp, RECT* trc, SBgra colorAlpha, f32 alpha);
 	u32						iBmp_bitBltMask							(SBitmap* bmpDst, RECT* trc, SBitmap* bmpSrc);
 	u32						iBmp_bitBlt_byGraymask					(SBitmap* bmpDst, RECT* trc, SBitmap* bmpSrc, SBgra color);
+	u32						iBmp_extractRect						(SBitmap* bmpDst, RECT* trc, SBitmap* bmpSrc, s32 tnX, s32 tnY);
 // TODO:  The following void functions need to be changed to u32 and indicate how many pixels were rendered
 	void					iBmp_drawPoint							(SBitmap* bmp, s32 tnX, s32 tnY, SBgra color);
 	void					iBmp_fillRect							(SBitmap* bmp, RECT* rc, SBgra colorNW, SBgra colorNE, SBgra colorSW, SBgra colorSE, bool tlUseGradient, RECT* rcClip, bool tluseClip);

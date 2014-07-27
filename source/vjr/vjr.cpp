@@ -103,10 +103,11 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		systemStartedMs = iTime_getLocalMs();
 
 		// Default font
-		gsFontDefault				= iFont_create(cgcDefaultFontName,			10, FW_NORMAL,	0, 0);
-		gsFontDefaultFixedPoint		= iFont_create(cgcDefaultFixedFontName,		10, FW_NORMAL,	0, 0);
-		gsWindowTitleBarFont		= iFont_create(cgcWindowTitleBarFontName,	12, FW_NORMAL,	0, 0);
-		gsWindowTitleBarFontSubform	= iFont_create(cgcWindowTitleBarFontName,	10, FW_NORMAL,	0, 0);
+		gsFontDefault				= iFont_create(cgcDefaultFontName,			10,	FW_NORMAL,	0, 0);
+		gsFontDefault9				= iFont_create(cgcDefaultFontName,			9,	FW_NORMAL,	0, 0);
+		gsFontDefaultFixedPoint		= iFont_create(cgcDefaultFixedFontName,		10,	FW_NORMAL,	0, 0);
+		gsWindowTitleBarFont		= iFont_create(cgcWindowTitleBarFontName,	12,	FW_NORMAL,	0, 0);
+		gsWindowTitleBarFontSubform	= iFont_create(cgcWindowTitleBarFontName,	10,	FW_NORMAL,	0, 0);
 
 
 		//////////
@@ -134,6 +135,9 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			bmpArrowUr			= iBmp_rawLoad(cgc_arrowUrBmp);
 			bmpArrowLl			= iBmp_rawLoad(cgc_arrowLlBmp);
 			bmpArrowLr			= iBmp_rawLoad(cgc_arrowLrBmp);
+
+			bmpCheckboxOn		= iBmp_rawLoad(cgc_checkboxOnBmp);
+			bmpCheckboxOff		= iBmp_rawLoad(cgc_checkboxOffBmp);
 
 
 		// Create the default reference datetimes

@@ -406,23 +406,25 @@
 // Called from subobjects to render any object children and sibling they may have based on flags
 //
 //////
-	void iObj_renderChildrenAndSiblings(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings, bool tlForceRender)
+	u32 iObj_renderChildrenAndSiblings(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings, bool tlForceRender)
 	{
-		SObject* objSib;
+		u32			lnPixelsRendered;
+		SObject*	objSib;
 
 
 		//////////
 		// Render any children
 		//////
+			lnPixelsRendered = 0;
 			if (tlRenderChildren && obj->firstChild)
-				iObj_renderChildrenAndSiblings(obj->firstChild, true, true, tlForceRender);
+				lnPixelsRendered += iObj_renderChildrenAndSiblings(obj->firstChild, true, true, tlForceRender);
 
 
 		//////////
 		// Render self
 		//////
 			obj->isDirtyRender |= tlForceRender;
-			iObj_render(obj, tlForceRender);
+			lnPixelsRendered += iObj_render(obj, tlForceRender);
 
 
 		//////////
@@ -434,12 +436,18 @@
 				while (objSib)
 				{
 					// Render this sibling
-					iObj_renderChildrenAndSiblings(objSib, true, false, tlForceRender);
+					lnPixelsRendered += iObj_renderChildrenAndSiblings(objSib, true, false, tlForceRender);
 
 					// Move to next sibling
 					objSib = (SObject*)objSib->ll.next;
 				}
 			}
+
+
+		//////////
+		// Indicate how much was rendered
+		//////
+			return(lnPixelsRendered);
 	}
 
 
@@ -581,6 +589,16 @@
 									if (obj->p.isOpaque)		lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
 									else						lnPixelsRendered += iBmp_bitBlt_byGraymask(bmpDst, &lrc, obj->bmp, obj->p.foreColor);
 									break;
+
+// 								case _OBJ_TYPE_CHECKBOX:
+// 									// Manually force render and publish the checkbox's children onto the rectangle
+// 									SetRect(&lrc2, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+// 									lnPixelsRendered += iObj_renderChildrenAndSiblings(obj->firstChild, true, true, true);
+// 									lnPixelsRendered += iObj_publish(obj->bmp, &lrc2, obj->firstChild, true, true, true, tnLevel + 1);
+// 
+// 									// And finally... paint! :-)
+// 									lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
+// 									break;
 
 								default:
 									lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
@@ -775,7 +793,8 @@
 //////
 	void iObj_setSize(SObject* obj, s32 tnLeft, s32 tnTop, s32 tnWidth, s32 tnHeight)
 	{
-		SObject* objChild;
+		SObject*	objChild;
+		RECT		lrc;
 
 
 		// Resize if need be (32-bit bitmap for labels, 24-bit for everything else)
@@ -937,7 +956,80 @@
 				break;
 
 			case _OBJ_TYPE_CHECKBOX:
-				// Just use the default rcClient settings above
+				//////////
+				// Default child settings
+				// [check][label]
+				//////
+					SetRect(&lrc, 0, 0, tnHeight, tnHeight);
+					objChild = obj->firstChild;
+					while (objChild)
+					{
+						// See which object this is
+						if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_checkboxImage, sizeof(cgcName_checkboxImage) - 1) == 0)
+						{
+							// Adjust the size and position
+							switch (obj->p.alignment)
+							{
+								default:
+								case _ALIGNMENT_LEFT:
+									iObj_setSize(objChild, 0, 0, tnHeight, tnHeight);
+									break;
+
+								case _ALIGNMENT_RIGHT:
+									iObj_setSize(objChild, obj->rc.right - tnHeight, 0, obj->rc.right - obj->rc.left - tnHeight, tnHeight);
+									break;
+							}
+
+							// Checkbox image
+							iBmp_delete(&objChild->pa.bmpPicture,		true, true);		// Delete the old
+							iBmp_delete(&objChild->pa.bmpPictureOver,	true, true);		// Delete the old
+							iBmp_delete(&objChild->pa.bmpPictureDown,	true, true);		// Delete the old
+							objChild->pa.bmpPicture		= iBmp_allocate();
+							iBmp_createBySize(objChild->pa.bmpPicture, tnHeight, tnHeight, 24);
+
+							// Based on type, populate the image
+							if (get_s32(obj->pa.value) == 0)
+							{
+								// Off
+								iBmp_scale(objChild->pa.bmpPicture, bmpCheckboxOff);				// Set the new
+
+							} else {
+								// On
+								iBmp_scale(objChild->pa.bmpPicture, bmpCheckboxOn);					// Set the new
+							}
+
+							// Replicate that image for the over and down images
+							objChild->pa.bmpPictureOver	= iBmp_copy(objChild->pa.bmpPicture);	// Set the new
+							objChild->pa.bmpPictureDown	= iBmp_copy(objChild->pa.bmpPicture);	// Set the new
+
+							// Add highlighting for the over and down
+							iBmp_colorizeMask(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.5f);
+							iBmp_colorizeMask(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.5f);
+
+							// Mark it for re-render
+							objChild->isDirtyRender = true;
+
+						} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcName_checkboxLabel, sizeof(cgcName_checkboxLabel) - 1) == 0) {
+							// Adjust the size
+							switch (obj->p.alignment)
+							{
+								default:
+								case _ALIGNMENT_LEFT:
+									iObj_setSize(objChild, tnHeight + 4, 0, obj->rc.right - obj->rc.left - tnHeight - 4, tnHeight);
+									break;
+
+								case _ALIGNMENT_RIGHT:
+									iObj_setSize(objChild, 0, 0, obj->rc.right - obj->rc.left - tnHeight - 4, tnHeight);
+									break;
+							}
+
+							// Mark it for re-render
+							objChild->isDirtyRender = true;
+						}
+
+						// Move to next object
+						objChild = (SObject*)objChild->ll.next;
+					}
 				break;
 
 			case _OBJ_TYPE_OPTION:
@@ -1191,12 +1283,12 @@
 			obj->scrollOffsetX	= 0;
 			obj->scrollOffsetY	= 0;
 			obj->isScaled		= false;
-
-
-		//////////
-		// Reset the object's size
-		//////
-			iObj_setSize(obj, obj->rc.left, obj->rc.top, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top);
+// 
+// 
+// 		//////////
+// 		// Reset the object's size
+// 		//////
+// 			iObj_setSize(obj, obj->rc.left, obj->rc.top, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top);
 	}
 
 
@@ -1770,6 +1862,8 @@
 	SObject* iSubobj_createCheckbox(SObject* template_checkbox, SObject* parent)
 	{
 		SObject* checkboxNew;
+		SObject* image;
+		SObject* label;
 
 
 		//////////
@@ -1804,8 +1898,24 @@
 					iiSubobj_copyCheckbox(checkboxNew, template_checkbox);
 
 				} else {
+					//////////
+					// Create the default children for this object
+					//////
+						image	= iObj_addChild(_OBJ_TYPE_IMAGE, checkboxNew);
+						label	= iObj_addChild(_OBJ_TYPE_LABEL, checkboxNew);
+
+
+					//////////
+					// Give them proper names
+					//////
+						iDatum_duplicate(&image->pa.name,	cgcName_checkboxImage,	-1);
+						iDatum_duplicate(&label->pa.name,	cgcName_checkboxLabel,	-1);
+
+
+					//////////
 					// Use VJr defaults
-					iiSubobj_resetToDefaultCheckbox(checkboxNew, true, true);
+					//////
+						iiSubobj_resetToDefaultCheckbox(checkboxNew, true, true);
 				}
 			}
 
@@ -2729,7 +2839,6 @@
 					// Move to next object
 					objChild = (SObject*)objChild->ll.next;
 				}
-
 		}
 	}
 
@@ -2975,12 +3084,23 @@
 
 	void iiSubobj_resetToDefaultCheckbox(SObject* checkbox, bool tlResetProperties, bool tlResetMethods)
 	{
+		SObject*	objChild;
+		RECT		lrc;
+
+
 		if (checkbox)
 		{
 			//////////
 			// Reset the common settings
 			//////
 				iiObj_resetToDefaultCommon(checkbox, true, true);
+
+
+			//////////
+			// Create a value
+			//////
+				iVariable_delete(checkbox->pa.value, false);
+				checkbox->pa.value = iVariable_create(_VAR_TYPE_S32, NULL);
 
 
 			//////////
@@ -2994,16 +3114,15 @@
 				iObj_setSize(checkbox, 0, 0, 60, 17);
 
 
-			checkbox->pa.font						= iFont_duplicate(gsFontDefault);
+			checkbox->pa.font						= iFont_duplicate(gsFontDefault9);
 			checkbox->p.backColor.color				= white.color;
 			checkbox->p.foreColor.color				= black.color;
 
 			checkbox->p.alignment					= _ALIGNMENT_LEFT;
 			checkbox->p.style						= _STYLE_3D;
-			iVariable_delete(checkbox->pa.value, false);
 			iDatum_duplicate(&checkbox->pa.caption, cgcName_checkbox, 8);
 
-			checkbox->p.isOpaque					= true;
+			checkbox->p.isOpaque					= false;
 			checkbox->p.isBorder					= false;
 			checkbox->p.borderColor.color			= black.color;
 			checkbox->p.disabledBackColor.color		= disabledBackColor.color;
@@ -3011,6 +3130,68 @@
 
 			*(u32*)&checkbox->ev.general.onInteractiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
 			*(u32*)&checkbox->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
+
+
+			//////////
+			// Default child settings
+			//////
+				SetRect(&lrc, 0, 0, bmpArrowUl->bi.biWidth, bmpArrowUl->bi.biHeight);
+				objChild = checkbox->firstChild;
+				while (objChild)
+				{
+					// See which object this is
+					if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_checkboxImage, sizeof(cgcName_checkboxImage) - 1) == 0)
+					{
+						// Adjust the size
+						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, 17, objChild->rc.bottom);
+
+						// Checkbox image
+						iBmp_delete(&objChild->pa.bmpPicture,		true, true);		// Delete the old
+						iBmp_delete(&objChild->pa.bmpPictureOver,	true, true);		// Delete the old
+						iBmp_delete(&objChild->pa.bmpPictureDown,	true, true);		// Delete the old
+						objChild->pa.bmpPicture		= iBmp_allocate();
+						iBmp_createBySize(objChild->pa.bmpPicture, 17, 17, 24);
+
+						// Based on type, populate the image
+						if (get_s32(checkbox->pa.value) == 0)
+						{
+							// Off
+							iBmp_scale(objChild->pa.bmpPicture, bmpCheckboxOff);				// Set the new
+
+						} else {
+							// On
+							iBmp_scale(objChild->pa.bmpPicture, bmpCheckboxOn);					// Set the new
+						}
+
+						// Replicate that image for the over and down images
+						objChild->pa.bmpPictureOver	= iBmp_copy(objChild->pa.bmpPicture);	// Set the new
+						objChild->pa.bmpPictureDown	= iBmp_copy(objChild->pa.bmpPicture);	// Set the new
+
+						// Add highlighting for the over and down
+						iBmp_colorizeMask(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.5f);
+						iBmp_colorizeMask(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.5f);
+
+						// Mark it for re-rendering
+						objChild->isDirtyRender	= true;
+
+					} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcName_checkboxLabel, sizeof(cgcName_checkboxLabel) - 1) == 0) {
+						// Adjust the size
+						iObj_setSize(objChild, 17 + 4, 0, 60, objChild->rc.bottom);
+
+						// Checkbox label
+						iDatum_delete(&objChild->pa.caption, false);
+						iDatum_duplicate(&objChild->pa.caption, cgcName_checkbox, sizeof(cgcName_checkbox) - 1);
+						objChild->p.isOpaque = false;
+						iFont_delete(&objChild->pa.font, true);
+						objChild->pa.font		= iFont_duplicate(checkbox->pa.font);
+
+						// Mark it for re-rendering
+						objChild->isDirtyRender	= true;
+					}
+
+					// Move to next object
+					objChild = (SObject*)objChild->ll.next;
+				}
 		}
 	}
 
@@ -3363,9 +3544,8 @@
 
 //////////
 //
-// Renders an empty.  Note, empty objects are not rendered.  This control, however,
-// can have controls within which are rendered to off-screen buffers, used for whatever
-// non-visual purposes exist.  As such, render calls are still made to it.
+// Renders an empty.  However, empty objects are not actually rendered.
+// But they serve as placeholders for anything contained within.
 //
 //////
 	u32 iSubobj_renderEmpty(SObject* empty)
@@ -3382,8 +3562,7 @@
 
 //////////
 //
-// Renders the form, which traverses through all child objects and renders to the
-// furthest extent before rendering itself.
+// Renders the form.
 //
 // Note:  The object rendering is independent of the publication of the constructed
 //        bitmap.  The render operation only populates the bit buffer.  It will be
@@ -3542,10 +3721,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 //////////
 //
-// Renders the subform, which traverses through all child objects and renders to the
-// furthest extent before rendering itself.
-//
-// Note:  See "Note" on iRenderForm().
+// Renders the subform.
 //
 //////
 	u32 iSubobj_renderSubform(SObject* obj)
@@ -3653,9 +3829,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 //////////
 //
-// Renders the label, and traverses any child objects contained within to render them.
-//
-// Note:  See "Note" on iRenderForm().
+// Renders the label.
 //
 //////
 	u32 iSubobj_renderLabel(SObject* obj)
@@ -3751,9 +3925,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 //////////
 //
-// Renders the textbox, and traverses any child objects contained within to render them.
-//
-// Note:  See "Note" on iRenderForm().
+// Renders the textbox.
 //
 //////
 	u32 iSubobj_renderTextbox(SObject* obj)
@@ -3772,9 +3944,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 //////////
 //
-// Renders the button, and traverses any child objects contained within to render them.
-//
-// Note:  See "Note" on iRenderForm().
+// Renders the button.
 //
 //////
 	u32 iSubobj_renderButton(SObject* obj)
@@ -3793,9 +3963,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 //////////
 //
-// Renders the editbox, and traverses any child objects contained within to render them.
-//
-// Note:  See "Note" on iRenderForm().
+// Renders the editbox.
 //
 //////
 	u32 iSubobj_renderEditbox(SObject* obj)
@@ -3855,9 +4023,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 //////////
 //
-// Renders the image, and traverses any child objects contained within to render them.
-//
-// Note:  See "Note" on iRenderForm().
+// Renders the image.
 //
 //////
 	u32 iSubobj_renderImage(SObject* obj)
@@ -3920,20 +4086,49 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 //////////
 //
-// Renders the checkbox, and traverses any child objects contained within to render them.
-//
-// Note:  See "Note" on iRenderForm().
+// Renders the logical checkbox control.  The checkbox is not actually rendered, but
+// rather it reads from the parent whatever is underneath its rectangle at the point
+// of the render request, then it draws the child objects atop itself.
 //
 //////
 	u32 iSubobj_renderCheckbox(SObject* obj)
 	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
 
 
-			//////////
-			// Indicate we're no longer dirty, that we have everything
-			//////
-				obj->isDirtyRender = false;
-		return(0);
+		// Make sure our environment is sane
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+
+			// There is nothing actually rendered here, but the child renders into it
+			if (obj->isDirtyRender)
+			{
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
 	}
 
 
@@ -3941,9 +4136,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 //////////
 //
-// Renders the option, and traverses any child objects contained within to render them.
-//
-// Note:  See "Note" on iRenderForm().
+// Renders the option.
 //
 //////
 	u32 iSubobj_renderOption(SObject* obj)
@@ -3962,9 +4155,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 //////////
 //
-// Renders the radio, and traverses any child objects contained within to render them.
-//
-// Note:  See "Note" on iRenderForm().
+// Renders the radio.
 //
 //////
 	u32 iSubobj_renderRadio(SObject* obj)

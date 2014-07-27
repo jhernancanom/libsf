@@ -1483,6 +1483,27 @@
 
 //////////
 //
+// Called to extract the indicated rectangle from the source bitmap.
+//
+//////
+	u32 iBmp_extractRect(SBitmap* bmpDst, RECT* trc, SBitmap* bmpSrc, s32 tnX, s32 tnY)
+	{
+		s32 lnWidth, lnHeight;
+
+
+		lnWidth		= trc->right - trc->left;
+		lnHeight	= trc->bottom - trc->top;
+
+		StretchBlt(bmpDst->hdc, trc->left, trc->right, lnWidth, lnHeight, bmpSrc->hdc, tnX, tnY, lnWidth, lnHeight, SRCCOPY);
+// iBmp_saveToDisk(bmpDst, "c:\\temp\\publish\\extract.bmp");
+		return(lnWidth * lnHeight * (bmpDst->bi.biBitCount / 8));
+	}
+
+
+
+
+//////////
+//
 // Called to draw a point
 //
 //////

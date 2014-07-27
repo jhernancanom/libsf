@@ -5088,7 +5088,7 @@ _asm int 3;
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
 				//////
 					lnValue_u32 = *(u32*)var->value.data;
-					if (lnValue_u32 > (u32)_s32_max)
+					if (lnValue_u32 <= (u32)_s32_max)
 						return((s32)lnValue_u32);
 
 

@@ -214,7 +214,15 @@ struct SDatum
 {
 	union {
 		s8*		data;													// Content
-		u8*		udata;													// Access to it as unsigned
+		u8*		udata;													// To access the data as u8
+		u64*	data_u64;												// To access the data as u64
+		s64*	data_s64;												// To access the data as s64
+		u32*	data_u32;												// To access the data as u32
+		s32*	data_s32;												// To access the data as s32
+		u16*	data_u16;												// To access the data as u16
+		s16*	data_s16;												// To access the data as s16
+		f32*	data_f32;												// To access the data as f32
+		f64*	data_f64;												// To access the data as f64
 	};
 	s32			length;													// Content length
 };
@@ -283,7 +291,7 @@ struct SVariable
 	union {
 		SObject*		obj;											// The object this item relates to.  If isValueAllocated is set, this variable owns the object.
 		SFunction*		thisCode;										// Pointer to the code block this relates to
-		SDatum			value;											// If the lower-bit of type is clear, the actual data value based on its type
+		SDatum			value;											// The actual value
 	};
 
 	// If assign or access

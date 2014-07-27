@@ -130,32 +130,48 @@
 		bool llMouseDown;
 
 
+		// Set the flag
 		llMouseDown = true;
-		// Assume we consumed the mouse down event, and that the parent doesn't need to receive it
-		if (obj->objType == _OBJ_TYPE_IMAGE)
+
+		// For checkboxes, we toggle
+		if (obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX)
 		{
-			if (iDatum_compare(&obj->pa.name, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0)
+			// They're clicking on a checkbox, toggle the value and re-render
+			*obj->parent->pa.value->value.data_s32 = ((*obj->parent->pa.value->value.data_s32 != 0) ? 0 : 1);
+			iObj_setSize(obj->parent,
+							obj->parent->rc.left,
+							obj->parent->rc.top,
+							obj->parent->rc.right - obj->parent->rc.left,
+							obj->parent->rc.bottom - obj->parent->rc.top);
+
+		} else {
+			// Assume we consumed the mouse down event, and that the parent doesn't need to receive it
+			switch (obj->objType)
 			{
-				// Close
-				iVjr_shutdown();	// They clicked quit
+				case _OBJ_TYPE_IMAGE:
+					if (iDatum_compare(&obj->pa.name, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0) {
+						// Close
+						iVjr_shutdown();	// They clicked quit
 
-			} else if (iDatum_compare(&obj->pa.name, cgcName_iconMove, sizeof(cgcName_iconMove) - 1) == 0) {
-				// Move
-				llMouseDown					= false;
-				obj->ev.mouse.isMouseOver	= false;
-				iWindow_move(win);
+					} else if (iDatum_compare(&obj->pa.name, cgcName_iconMove, sizeof(cgcName_iconMove) - 1) == 0) {
+						// Move
+						llMouseDown					= false;
+						obj->ev.mouse.isMouseOver	= false;
+						iWindow_move(win);
 
-			} else if (iDatum_compare(&obj->pa.name, cgcName_iconMinimize, sizeof(cgcName_iconMinimize) - 1) == 0) {
-				// Minimize
-				llMouseDown					= false;
-				obj->ev.mouse.isMouseOver	= false;
-				iWindow_minimize(win);
+					} else if (iDatum_compare(&obj->pa.name, cgcName_iconMinimize, sizeof(cgcName_iconMinimize) - 1) == 0) {
+						// Minimize
+						llMouseDown					= false;
+						obj->ev.mouse.isMouseOver	= false;
+						iWindow_minimize(win);
 
-			} else if (iDatum_compare(&obj->pa.name, cgcName_iconMaximize, sizeof(cgcName_iconMaximize) - 1) == 0) {
-				// Maximize
-				llMouseDown					= false;
-				obj->ev.mouse.isMouseOver	= false;
-				iWindow_maximize(win);
+					} else if (iDatum_compare(&obj->pa.name, cgcName_iconMaximize, sizeof(cgcName_iconMaximize) - 1) == 0) {
+						// Maximize
+						llMouseDown					= false;
+						obj->ev.mouse.isMouseOver	= false;
+						iWindow_maximize(win);
+					}
+					break;
 			}
 		}
 

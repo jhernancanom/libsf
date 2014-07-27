@@ -80,6 +80,10 @@
 	SBitmap*			bmpArrowLr							= NULL;
 	SBitmap*			bmpArrowLl							= NULL;
 
+	// For checkbox
+	SBitmap*			bmpCheckboxOn						= NULL;
+	SBitmap*			bmpCheckboxOff						= NULL;
+
 	// Default screens used by VJr
 	SObject*			gobj_screen							= NULL;
 	SObject*			gobj_jdebi							= NULL;
@@ -91,6 +95,10 @@
 	SObject*			output								= NULL;
 	SObject*			sourceCode_editbox					= NULL;
 	SObject*			locals_editbox						= NULL;
+	SObject*			locals_autos						= NULL;
+	SObject*			locals_globals						= NULL;
+	SObject*			locals_readwrite					= NULL;
+	SObject*			locals_refactor						= NULL;
 	SObject*			watch_editbox						= NULL;
 	SObject*			command_editbox						= NULL;
 	SObject*			debug_editbox						= NULL;
@@ -116,6 +124,7 @@
 	// General defaults
 	//////
 		SFont*			gsFontDefault						= NULL;									// Default font, Ubuntu 10 pt
+		SFont*			gsFontDefault9						= NULL;									// Default font, Ubuntu 9 pt
 		SFont*			gsFontDefaultFixedPoint				= NULL;									// Default font, Ubuntu Mono 10 pt
 		SFont*			gsWindowTitleBarFont				= NULL;									// Default font, Ubuntu Bold 12 pt
 		SFont*			gsWindowTitleBarFontSubform			= NULL;									// Default font, Ubuntu Bold 10 pt
