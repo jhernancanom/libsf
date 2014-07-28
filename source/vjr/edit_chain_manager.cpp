@@ -2893,3 +2893,38 @@ _asm int 3;
 		// If we get here, indicate failure
 		return(false);
 	}
+
+
+
+
+//////////
+//
+// Called to navigate to the indicated position on the screen
+//
+//////
+	bool iEditManager_navigateTo_XY(SEM* em, SObject* obj, s32 x, s32 y)
+	{
+		bool	llResult;
+		RECT	lrc;
+		SFont*	font;
+
+
+		// Make sure our environment is sane
+		llResult = false;
+		if (em && obj)
+		{
+			//////////
+			// Grab the rectangle we're working in
+			//////
+				font = iEditManager_getRectAndFont(em, obj, &lrc);
+
+
+			//////////
+			// See which row and column the click would be on
+			//////
+// TODO:  Working here
+		}
+
+		// Indicate our status
+		return(llResult);
+	}

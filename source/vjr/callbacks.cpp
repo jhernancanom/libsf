@@ -150,6 +150,10 @@
 							obj->parent->rc.right - obj->parent->rc.left,
 							obj->parent->rc.bottom - obj->parent->rc.top);
 
+		} else if (obj->objType == _OBJ_TYPE_EDITBOX) {
+			// Need to navigate to the indicated x,y coordinate
+			iEditManager_navigateTo_XY(obj->pa.em, obj, x, y);
+
 		} else {
 			// Assume we consumed the mouse down event, and that the parent doesn't need to receive it
 			switch (obj->objType)
