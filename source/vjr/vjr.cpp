@@ -186,9 +186,6 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iObj_createWindowForForm(gobj_screen,	gWinScreen,	IDI_VJR);
 		iObj_createWindowForForm(gobj_jdebi,	gWinJDebi,	IDI_JDEBI);
 
-		// Set the cursor line data on command history only
-		command_editbox->pa.em->showCursorLine	= true;
-
 		// Initially populate _screen
 		// Load in the history if it exists
 		if (!iEditManager_loadFromDisk(screenData, NULL, (s8*)cgcScreenDataFilename, true))

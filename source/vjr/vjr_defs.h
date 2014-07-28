@@ -64,7 +64,12 @@
 	SObject*				iObj_addChild							(u32 objType, SObject* objParent);
 	SObject*				iObj_copy								(SObject* template_obj, SObject* next, SObject* parent, bool tlCopyChildren, bool tlCreateSeparateBitmapBuffers);
 	void					iObj_delete								(SObject** obj, bool tlDeleteSelf);
+	void					iObj_setFocus							(SWindow* win, SObject* obj, bool tlClearOtherControlsWithFocus);
+	void					iObj_clearFocus							(SWindow* win, SObject* obj, bool tlClearChildren, bool tlClearSiblings);
+	SObject*				iObj_findRootParent						(SObject*  obj);
 	void					iObj_findFocusControls					(SObject*  obj, SBuilder* objFocusControls, bool tlProcessSiblings);
+	void					iObj_setFocusObjectPrev					(SWindow* win, SObject* obj);
+	void					iObj_setFocusObjectNext					(SWindow* win, SObject* obj);
 	void					iObj_setDirtyRender						(SObject* obj, bool tlMarkParents);
 	void					iObj_setDirtyPublish					(SObject* obj, bool tlMarkParents);
 	u32						iObj_render								(SObject*  obj, bool tlForceRender);
@@ -171,8 +176,8 @@
 	bool					iDefaultCallback_onMouseEnter			(SWindow* win, SObject* obj);
 	bool					iDefaultCallback_onMouseLeave			(SWindow* win, SObject* obj);
 	bool					iDefaultCallback_onMouseHover			(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);
-	bool					iDefaultCallback_onKeyDown				(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
-	bool					iDefaultCallback_onKeyUp				(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
+	bool					iDefaultCallback_onKeyDown				(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool llCaps, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
+	bool					iDefaultCallback_onKeyUp				(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool llCaps, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
 	bool					iDefaultCallback_onActivate				(SWindow* win, SObject* obj);
 	bool					iDefaultCallback_onDeactivate			(SWindow* win, SObject* obj);
 	bool					iDefaultCallback_onInteractiveChange	(SWindow* win, SObject* obj);

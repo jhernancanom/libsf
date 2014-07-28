@@ -216,6 +216,97 @@
 
 //////////
 //
+// Called to set focus on the indicated control.
+//
+//////
+	void iObj_setFocus(SWindow* win, SObject* obj, bool tlClearOtherControlsWithFocus)
+	{
+		// Clear the focus if we should
+		if (tlClearOtherControlsWithFocus)
+			iObj_clearFocus(win, iObj_findRootParent(obj), true, true);
+
+		// Set the focus
+		if (!obj->p.hasFocus)
+		{
+			// Set focus
+			obj->p.hasFocus = true;
+
+			// Mark the object dirty
+			obj->isDirtyRender = true;
+
+			// Signal the change
+			if (obj->ev.general._onGotFocus)
+				obj->ev.general.onGotFocus(win, obj);
+		}
+	}
+
+
+
+
+//////////
+//
+// Clear the focus.
+//
+//////
+	void iObj_clearFocus(SWindow* win, SObject* obj, bool tlClearChildren, bool tlClearSiblings)
+	{
+		SObject* objSib;
+
+
+		// Clear children
+		if (tlClearChildren && obj->firstChild)
+			iObj_clearFocus(win, obj->firstChild, true, true);
+
+		// Clear self
+		if (obj->p.hasFocus)
+		{
+			// Clear focus
+			obj->p.hasFocus = false;
+
+			// Mark the object dirty
+			obj->isDirtyRender = true;
+
+			// Signal the change
+			if (obj->ev.general._onLostFocus)
+				obj->ev.general.onLostFocus(win, obj);
+		}
+
+		// Clear siblings
+		if (tlClearSiblings && obj->ll.next)
+		{
+			// Begin at the next sibling
+			objSib = (SObject*)obj->ll.next;
+			while (objSib)
+			{
+				// Clear this sibling
+				iObj_clearFocus(win, objSib, tlClearChildren, false);
+
+				// Move to the next sibling
+				objSib = (SObject*)objSib->ll.next;
+			}
+		}
+	}
+
+
+
+
+//////////
+//
+// Finds the root parent and returns that value
+//
+//////
+	SObject* iObj_findRootParent(SObject* obj)
+	{
+		// If there's a parent, continue up the chain
+		if (obj->parent)		return(iObj_findRootParent(obj->parent));
+		else					return(obj);		// This is the parent-most object
+	}
+
+
+
+
+//////////
+//
 // Called to get a list of controls which have focus
 //
 //////
@@ -254,6 +345,34 @@
 					objSib = (SObject*)objSib->ll.next;
 				}
 			}
+	}
+
+
+
+
+//////////
+//
+// Called to move to set focus on the previous control
+//
+//////
+	void iObj_setFocusObjectPrev(SWindow* win, SObject* obj)
+	{
+		if (obj->ll.prev)
+			iObj_setFocus(win, (SObject*)obj->ll.prev, true);
+	}
+
+
+
+
+/////////
+//
+// Called to move to set focus on the next control
+//
+//////
+	void iObj_setFocusObjectNext(SWindow* win, SObject* obj)
+	{
+		if (obj->ll.next)
+			iObj_setFocus(win, (SObject*)obj->ll.next, true);
 	}
 
 
@@ -564,7 +683,7 @@
 
 				} else {
 					// We can just copy
-					if (bmpDst && obj->isPublished && obj->isDirtyPublish)
+					if (bmpDst && obj->isPublished && obj->isDirtyPublish && tnLevel != 0)
 					{
 						// If it's not enabled, grayscale it
 						if (!obj->p.isEnabled)
@@ -3679,7 +3798,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 //////
 	if (obj == gobj_screen)
 	{
-		iEditManager_render(screenData, gobj_screen);
+		iEditManager_render(screenData, gobj_screen, true);
 		if (gWinScreen)
 			InvalidateRect(gWinScreen->hwnd, 0, FALSE);
 	}
@@ -4143,7 +4262,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 			if (obj->isDirtyRender)
 			{
 				// Re-render
-				lnPixelsRendered = iEditManager_render(obj->pa.em, obj);
+				lnPixelsRendered = iEditManager_render(obj->pa.em, obj, obj->p.hasFocus);
 
 
 				//////////
@@ -4160,13 +4279,6 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				// Render from its prior rendered version
 				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
 			}
-
-
-			//////////
-			// If the mouse is over this control, highlight it
-			//////
-				if (obj->isPublished && obj->ev.mouse.isMouseOver && obj->objType != _OBJ_TYPE_IMAGE)
-					iBmp_alphaColorizeMask(obj->bmp, &lrc, colorTracking, trackingRatio);
 
 
 			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing

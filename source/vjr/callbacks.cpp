@@ -133,6 +133,10 @@
 		// Set the flag
 		llMouseDown = true;
 
+		// If focus isn't already set on this control, set focus on this control
+		if (!obj->p.hasFocus)
+			iObj_setFocus(win, obj, true);
+
 		// For checkboxes, we toggle
 		if (obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX)
 		{
@@ -227,13 +231,98 @@
 		return(false);
 	}
 
-	bool iDefaultCallback_onKeyDown(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii)
+	bool iDefaultCallback_onKeyDown(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool llCaps, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii)
 	{
-		// Assume we consumed the keydown, and that the parent doesn't need to receive it
+		bool		llRender;
+		SObject*	objCheckbox;
+		SObject*	objRender2;
+
+
+		//////////
+		// See if we're on a checkbox
+		//////
+			llRender	= false;
+			objCheckbox	= NULL;
+			if (obj->objType == _OBJ_TYPE_CHECKBOX)
+			{
+				// The object itself is a checkbox
+				objCheckbox = obj;
+				objRender2	= obj;
+
+			} else if (obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX) {
+				// The parent is a checkbox
+				objCheckbox = obj->parent;
+				objRender2	= obj;
+			}
+
+			if (objCheckbox)
+			{
+				if (tnVKey == VK_SPACE || tnVKey == VK_RETURN)
+				{
+					// Toggle the value and redraw
+					*objCheckbox->pa.value->value.data_s32 = ((*objCheckbox->pa.value->value.data_s32 == 0) ? 1 : 0);
+					llRender = true;
+					iObj_setDirtyRender(objCheckbox, false);
+					if (objRender2 != objCheckbox)
+						iObj_setDirtyRender(objRender2, false);
+
+				} else if (tlShift && tnVKey == VK_TAB) {
+					// Move to previous object
+					iObj_setFocusObjectPrev(win, objCheckbox);
+
+				} else if (tnVKey == VK_TAB) {
+					// Move to next object
+					iObj_setFocusObjectNext(win, objCheckbox);
+
+				} else if (tlIsAscii) {
+					if ((u8)tcAscii == 't' || (u8)tcAscii == 'T' || (u8)tcAscii == 'y' || (u8)tcAscii == 'Y' || (u8)tcAscii == '1')
+					{
+						// Set it to on
+						*obj->parent->pa.value->value.data_s32 = 1;
+						llRender = true;
+						iObj_setDirtyRender(objCheckbox, false);
+						if (objRender2 != objCheckbox)
+							iObj_setDirtyRender(objRender2, false);
+
+					} else if ((u8)tcAscii == 'f' || (u8)tcAscii == 'F' || (u8)tcAscii == 'n' || (u8)tcAscii == 'N' || (u8)tcAscii == '0') {
+						// Set it to off
+						*obj->parent->pa.value->value.data_s32 = 0;
+						llRender = true;
+						iObj_setDirtyRender(objCheckbox, false);
+						if (objRender2 != objCheckbox)
+							iObj_setDirtyRender(objRender2, false);
+					}
+				}
+
+			} else {
+				// Not a checkbox
+				if (tlShift && tnVKey == VK_TAB)
+				{
+					// Move to previous object
+					iObj_setFocusObjectPrev(win, obj);
+
+				} else if (tnVKey == VK_TAB) {
+					// Move to next object
+					iObj_setFocusObjectNext(win, obj);
+				}
+			}
+
+
+		// Redraw if need be
+		if (llRender)
+		{
+			// Redraw the checkbox if needed
+			if (objCheckbox)
+				iObj_setSize(objCheckbox, objCheckbox->rc.left, objCheckbox->rc.top, objCheckbox->rc.right - objCheckbox->rc.left, objCheckbox->rc.bottom - objCheckbox->rc.top);
+
+			// Redraw the window
+			iWindow_render(win, false);
+		}
+		
 		return(false);
 	}
 
-	bool iDefaultCallback_onKeyUp(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii)
+	bool iDefaultCallback_onKeyUp(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool llCaps, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii)
 	{
 		// Assume we consumed the keyup, and that the parent doesn't need to receive it
 		return(false);

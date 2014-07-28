@@ -1253,7 +1253,7 @@ _asm int 3;
 // Called to render the ECM in the indicated rectangle on the object's bitmap
 //
 //////
-	u32 iEditManager_render(SEM* em, SObject* obj)
+	u32 iEditManager_render(SEM* em, SObject* obj, bool tlRenderCursorline)
 	{
 		u32			lnPixelsRendered;
 		s32			lnTop, lnLeft, lnRight;
@@ -1304,7 +1304,7 @@ _asm int 3;
 				//////////
 				// Determine the color
 				//////
-					if (em->ecCursorLine == line && em->showCursorLine)
+					if (em->ecCursorLine == line && em->showCursorLine && tlRenderCursorline)
 					{
 						// Display in the cursor color line
 						SetBkColor(bmp->hdc, RGB(currentStatementBackColor.red, currentStatementBackColor.grn, currentStatementBackColor.blu));
@@ -1312,7 +1312,7 @@ _asm int 3;
 						SetTextColor(bmp->hdc, RGB(currentStatementForeColor.red, currentStatementForeColor.grn, currentStatementForeColor.blu));
 						fillColor.color = currentStatementBackColor.color;
 
-					} else if (line->ll.next || (!em->showCursorLine && !em->showEndLine)) {
+					} else if (line->ll.next || ((!em->showCursorLine || !tlRenderCursorline) && !em->showEndLine)) {
 						// Display in normal background color
 						SetBkColor(bmp->hdc, RGB(backColor.red, backColor.grn, backColor.blu));
 						SetBkMode(bmp->hdc, OPAQUE);
@@ -1366,7 +1366,7 @@ _asm int 3;
 				//////////
 				// Draw the cursor if on the cursor line
 				//////
-					if (em->ecCursorLine == line && em->showCursorLine)
+					if (em->ecCursorLine == line && em->showCursorLine && tlRenderCursorline)
 					{
 						lnLeft	= rc.left + ((em->column - em->leftColumn) * font->tm.tmAveCharWidth);
 						lnRight	= lnLeft + font->tm.tmAveCharWidth;

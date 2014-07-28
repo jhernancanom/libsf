@@ -58,7 +58,7 @@
 	void					iEditManager_deleteLine				(SEM* em);
 	SFont*					iEditManager_getRectAndFont			(SEM* em, SObject* obj, RECT* rc);
 	void					iEditManager_getColors				(SEM* em, SObject* obj, SBgra& backColor, SBgra& foreColor);
-	u32						iEditManager_render					(SEM* em, SObject* obj);
+	u32						iEditManager_render					(SEM* em, SObject* obj, bool tlRenderCursorline);
 	bool					iEditManager_verifyCursorIsVisible	(SEM* em, SObject* obj);
 	bool					iEditManager_onKeyDown_sourceCode	(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
 	bool					iEditManager_onKeyDown				(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
