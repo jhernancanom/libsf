@@ -2542,7 +2542,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 				} else {
 					// It failed here
 // TODO:  Something major needs to happen here.  This is more or less a catastrophic failure.  It could require shutting down the VVM.
-_asm_int3;
+int3_break;
 					ptrSE->masterCount += tnBlockSize;
 				}
 
@@ -2734,7 +2734,7 @@ _asm_int3;
 	void iiComps_xlatToOthersCallback__insertCompByCompCallback(SComp* compRef, SComp* compNew, bool tlInsertAfter)
 	{
 // TODO:  untested code, breakpoint and examine
-_asm_int3;
+int3_break;
 		// Make sure our environment is sane
 		if (compRef && compNew)
 		{
@@ -2775,7 +2775,7 @@ _asm_int3;
 
 
 // TODO:  untested code, breakpoint and examine
-_asm_int3;
+int3_break;
 		// Make sure our environment is sane
 		if (compRef && line && line->compilerInfo)
 		{
@@ -2810,7 +2810,7 @@ _asm_int3;
 	void iiComps_xlatToOthersCallback__deleteCompsCallback(SComp* comp, SEdit* line)
 	{
 // TODO:  untested code, breakpoint and examine
-_asm_int3;
+int3_break;
 		//////////
 		// Disconnect the component from its siblings
 		//////
@@ -2853,8 +2853,9 @@ _asm_int3;
 
 
 // TODO:  untested code, breakpoint and examine
-_asm_int3;
+int3_break;
 		// Make sure our environment is sane
+		compNew = NULL;
 		if (comp)
 		{
 			// Are we adding to to a line?
@@ -2909,7 +2910,7 @@ _asm_int3;
 
 
 // TODO:  untested code, breakpoint and examine
-_asm_int3;
+int3_break;
 		// Make sure our environment is sane
 		if (comp)
 		{
@@ -4430,7 +4431,7 @@ _asm_int3;
 							{
 								// We've found something like "fred." where fred is a thisCode, and there is a name reference after it
 // TODO:  We need to search the thisCode object for the indicated name
-_asm_int3;
+int3_break;
 							}
 							// If we get here, then they did not have a "." after the thisCode reference, and are referencing it directly
 							break;
@@ -4603,13 +4604,13 @@ _asm_int3;
 				case _VARIABLE_TYPE_DATETIME:
 				case _VARIABLE_TYPE_DATETIMEX:
 // Not yet supported
-_asm_int3;
+int3_break;
 					break;
 
 				case _VARIABLE_TYPE_BI:
 				case _VARIABLE_TYPE_BFP:
 // Not yet supported
-_asm_int3;
+int3_break;
 					break;
 
 				case _VARIABLE_TYPE_ARRAY:
@@ -4617,7 +4618,7 @@ _asm_int3;
 				case _VARIABLE_TYPE_GUID16:
 				case _VARIABLE_TYPE_FIELD:
 // Not yet supported
-_asm_int3;
+int3_break;
 					break;
 			}
 		}
@@ -4994,7 +4995,7 @@ _asm_int3;
 		{
 // TODO:  Untested code.  Breakpoint and examine.
 // Remember var->isValueAllocated
-_asm_int3;
+int3_break;
 			// Use the linked list functions, which will callback repeatedly for every entry
 			var			= *root;
 			cb._func	= (u32)&iVariable_politelyDeleteChain_callback;
@@ -6481,6 +6482,7 @@ _asm_int3;
 
 
 		// Make sure our environment is sane
+		noteNew = NULL;
 		if (noteRoot && tcMessage)
 		{
 			// Create the new note

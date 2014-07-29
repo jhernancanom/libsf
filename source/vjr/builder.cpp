@@ -296,7 +296,7 @@ struct SBuilder
 
 						} else {
 							// Failure on resize -- should not happen
-							_asm_int3;
+							int3_break;
 						}
 				}
 		}
@@ -576,7 +576,7 @@ struct SBuilder
 
 
 // TODO:  untested, breakpoint and examine
-		_asm_int3;
+		int3_break;
 		//////////
 		// Make sure our environment is sane
 		//////

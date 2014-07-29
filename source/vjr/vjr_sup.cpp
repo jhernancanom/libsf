@@ -2487,7 +2487,7 @@
 
 
 // TODO:  COMPLETELY UNTESTED.  BREAKPOINT AND EXAMINE.
-_asm_int3;
+int3_break;
 		//////////
 		// Iterate in a top-down manner
 		//////
@@ -2515,7 +2515,7 @@ _asm_int3;
 
 
 // TODO:  COMPLETELY UNTESTED.  BREAKPOINT AND EXAMINE.
-_asm_int3;
+int3_break;
 		//////////
 		// Iterate in a top-down manner
 		//////
@@ -2551,7 +2551,7 @@ _asm_int3;
 
 
 // TODO:  COMPLETELY UNTESTED.  BREAKPOINT AND EXAMINE.
-_asm_int3;
+int3_break;
 		// Make sure our environment is sane
 		if (root && *root)
 		{

@@ -1868,15 +1868,15 @@
 		//////////
         // Create our return result
 		//////
+			result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+			if (!result)
+			{
+				iError_report("Internal error.");
+				return(NULL);
+			}
+		
 			if (lnCopies > 0 && pString->value.length > 0)
 			{
-				result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
-				if (!result)
-				{
-					iError_report("Internal error.");
-					return(NULL);
-				}
-
 				// Repeat the string as many as are indicated
 				iDatum_allocateSpace(&result->value, lnCopies * pString->value.length);
 				for (lnI = 0; lnI < lnCopies; lnI++)

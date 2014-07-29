@@ -149,12 +149,12 @@ typedef SEM**		SEMpp;
 	#define grn(rgbaColor)					((rgbaColor >> 8)  & 0xff)
 	#define blu(rgbaColor)					( rgbaColor        & 0xff)
 	
-#ifdef _WIN32
+#if !defined(_MSC_VER)
 	// gcc
-	#define _asm_int3						asm("int $3")
+	#define int3_break						asm("int $3")
 #else
 	// visual studio
-	#define _asm_int3						_asm int 3
+	#define int3_break						_asm int 3
 #endif
 
 

@@ -823,12 +823,12 @@
 		SBgra*	lbgra;
 
 
+		lnPixelsRendered = 0;
 		if (bmp && trc)
 		{
 		//////////
 		// Draw it
 		//////
-			lnPixelsRendered = 0;
 			for (lnY = trc->top; lnY < bmp->bi.biHeight && lnY < trc->bottom; lnY++)
 			{
 				// Are we on the image?

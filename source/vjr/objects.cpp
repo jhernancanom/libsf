@@ -4123,6 +4123,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				// Determine our orientation
 				switch (obj->p.alignment)
 				{
+					default:
 					case _ALIGNMENT_LEFT:
 						lnFormat = DT_LEFT;
 						break;
@@ -4264,6 +4265,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				// Determine our orientation
 				switch (obj->p.alignment)
 				{
+					default:
 					case _ALIGNMENT_LEFT:
 						lnFormat = DT_LEFT;
 						break;
@@ -4362,6 +4364,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				// Determine our orientation
 				switch (obj->p.alignment)
 				{
+					default:
 					case _ALIGNMENT_LEFT:
 						lnFormat = DT_LEFT;
 						break;

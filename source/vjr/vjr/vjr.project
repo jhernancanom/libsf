@@ -2,11 +2,20 @@
 <CodeLite_Project Name="vjr" InternalType="Console">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00010001N0005Debug000000000000]]>
+      <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
     </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
 		"name":	"Debug",
+		"enabled":	false,
+		"buildDirectory":	"build",
+		"sourceDirectory":	"$(ProjectPath)",
+		"generator":	"",
+		"buildType":	"",
+		"arguments":	[],
+		"parentProject":	""
+	}, {
+		"name":	"Release",
 		"enabled":	false,
 		"buildDirectory":	"build",
 		"sourceDirectory":	"$(ProjectPath)",
@@ -22,32 +31,32 @@
   <VirtualDirectory Name="src">
     <File Name="../vjr.cpp"/>
     <File Name="../vjr.h"/>
-    <File Name="../vjr_sup.cpp" ExcludeProjConfig="Debug"/>
-    <File Name="../bitmaps.cpp" ExcludeProjConfig="Debug"/>
-    <File Name="../builder.cpp" ExcludeProjConfig="Debug"/>
-    <File Name="../callbacks.cpp" ExcludeProjConfig="Debug"/>
-    <File Name="../command_defs.h" ExcludeProjConfig="Debug"/>
-    <File Name="../commands.cpp" ExcludeProjConfig="Debug"/>
-    <File Name="../compiler.cpp" ExcludeProjConfig="Debug"/>
-    <File Name="../compiler_const.h" ExcludeProjConfig="Debug"/>
-    <File Name="../compiler_defs.h" ExcludeProjConfig="Debug"/>
-    <File Name="../compiler_globals.h" ExcludeProjConfig="Debug"/>
-    <File Name="../compiler_structs.h" ExcludeProjConfig="Debug"/>
-    <File Name="../edit_chain.cpp" ExcludeProjConfig="Debug"/>
-    <File Name="../edit_chain.h" ExcludeProjConfig="Debug"/>
-    <File Name="../edit_chain_manager.cpp" ExcludeProjConfig="Debug"/>
-    <File Name="../edit_chain_manager.h" ExcludeProjConfig="Debug"/>
-    <File Name="../engine.cpp" ExcludeProjConfig="Debug"/>
-    <File Name="../engine.h" ExcludeProjConfig="Debug"/>
-    <File Name="../events.cpp" ExcludeProjConfig="Debug"/>
-    <File Name="../object_accessors.cpp" ExcludeProjConfig="Debug"/>
-    <File Name="../object_accessors.h" ExcludeProjConfig="Debug"/>
-    <File Name="../objects.cpp" ExcludeProjConfig="Debug"/>
-    <File Name="../vjr_const.h" ExcludeProjConfig="Debug"/>
-    <File Name="../vjr_defs.h" ExcludeProjConfig="Debug"/>
-    <File Name="../vjr_globals.h" ExcludeProjConfig="Debug"/>
-    <File Name="../vjr_structs0.h" ExcludeProjConfig="Debug"/>
-    <File Name="../vjr_structs.h" ExcludeProjConfig="Debug"/>
+    <File Name="../vjr_sup.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../bitmaps.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../builder.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../callbacks.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../command_defs.h" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../commands.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../compiler.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../compiler_const.h" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../compiler_defs.h" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../compiler_globals.h" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../compiler_structs.h" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../edit_chain.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../edit_chain.h" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../edit_chain_manager.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../edit_chain_manager.h" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../engine.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../engine.h" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../events.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../object_accessors.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../object_accessors.h" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../objects.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../vjr_const.h" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../vjr_defs.h" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../vjr_globals.h" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../vjr_structs0.h" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../vjr_structs.h" ExcludeProjConfig="Debug;Release"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
@@ -63,7 +72,7 @@
       <Compiler Options="-g;-O0;-Wall;-Wno-comment;-Wno-multichar;-Wno-narrowing;-Wno-write-strings;-Wno-format-contains-nul" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Options="" Required="yes">
+      <Linker Options="-g" Required="yes">
         <Library Value="kernel32"/>
         <Library Value="user32"/>
         <Library Value="gdi32"/>
@@ -78,7 +87,7 @@
         <Library Value="odbccp32"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="../vjr.exe" IntermediateDirectory="./Debug" Command="vjr.exe" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../" PauseExecWhenProcTerminates="yes" IsGUIProgram="yes" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -111,13 +120,26 @@
       </Completion>
     </Configuration>
     <Configuration Name="Release" CompilerType="MinGW ( CodeLite-4.8.1 )" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-Wall" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-O2;-Wall;-Wno-comment;-Wno-multichar;-Wno-narrowing;-Wno-write-strings;-Wno-format-contains-nul;-Wno-strict-aliasing" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
         <Preprocessor Value="NDEBUG"/>
       </Compiler>
-      <Linker Options="" Required="yes"/>
+      <Linker Options="" Required="yes">
+        <Library Value="kernel32"/>
+        <Library Value="user32"/>
+        <Library Value="gdi32"/>
+        <Library Value="winspool"/>
+        <Library Value="comdlg32"/>
+        <Library Value="advapi32"/>
+        <Library Value="shell32"/>
+        <Library Value="ole32"/>
+        <Library Value="oleaut32"/>
+        <Library Value="uuid"/>
+        <Library Value="odbc32"/>
+        <Library Value="odbccp32"/>
+      </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="../vjr.exe" IntermediateDirectory="./Release" Command="vjr.exe" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../" PauseExecWhenProcTerminates="yes" IsGUIProgram="yes" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
