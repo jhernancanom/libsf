@@ -248,8 +248,8 @@ struct SCompileNote;
 
 		// Information about the component
 		SEdit*		line;											// The line this component relates to
-		u32				iCode;											// Refer to _ICODE_* constants
-		u32				iCat;											// Refer to _ICAT_* constants
+		s32				iCode;											// Refer to _ICODE_* constants
+		s32				iCat;											// Refer to _ICAT_* constants
 		s32				start;											// Start into the indicates line's source code
 		s32				length;											// Length of the component
 	};

@@ -82,7 +82,7 @@ struct SBuilder
 
 
 		// See if they want to use the default size
-		if (tnAllocationBlockSize == -1)
+		if (tnAllocationBlockSize == (u32)-1)
 			tnAllocationBlockSize = 16384;		// Default to a 16KB allocation size
 
 		// Make sure our environment is sane
@@ -136,7 +136,7 @@ struct SBuilder
 		if (buffRoot)
 		{
 			// If they want us to populate the length, do so
-			if (tnDataLength == -1)
+			if (tnDataLength == (u32)-1)
 				tnDataLength = (u32)strlen(tcData);
 
 			// If there's anything to do, do it
@@ -256,7 +256,7 @@ struct SBuilder
 			//////////
 			// See if they want to make it whatever the populated size is
 			//////
-				if (tnBufferLength == -1)
+				if (tnBufferLength == (u32)-1)
 					tnBufferLength = buffRoot->populatedLength;
 
 

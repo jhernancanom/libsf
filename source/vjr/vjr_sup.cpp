@@ -649,7 +649,6 @@
 		s32				lnWidth, lnHeight;
 		SWindow*		winNew;
 		WNDCLASSEXA		classex;
-		ATOM			atom;
 		s8				buffer[128];
 		s8				bufferClass[256];
 
@@ -707,7 +706,7 @@
 							classex.lpfnWndProc			= &iWindow_wndProcForms;
 
 							// Register
-							atom = RegisterClassExA(&classex);
+							RegisterClassExA(&classex);
 						}
 
 
@@ -945,7 +944,7 @@
 				atom				= RegisterClassExA(&wcex);
 
 				// Was it registered?
-				if (atom == NULL)
+				if (!atom)
 					return;		// Nope ... when we get here, failure
 			}
 
@@ -1485,7 +1484,8 @@
 //////
 	SFont* iFont_create(cs8* tcFontName, u32 tnFontSize, u32 tnFontWeight, u32 tnItalics, u32 tnUnderline)
 	{
-		u32		lnI, lnLength;
+		s32		lnLength;
+		u32		lnI;
 		SFont*	font;
 
 
@@ -2562,7 +2562,7 @@ _asm_int3;
 				//////////
 				// Note the next entry
 				//////
-					ei = ei->next;
+					eiNext = ei->next;
 
 
 				//////////

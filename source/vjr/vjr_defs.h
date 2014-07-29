@@ -86,7 +86,7 @@
 	void					iiObj_resetToDefault					(SObject*  obj, bool tlResetProperties, bool tlResetMethods);
 	void					iiObj_resetToDefaultCommon				(SObject*  obj, bool tlResetProperties, bool tlResetMethods);
 	s32						iiObj_getBaseclass_byName				(s8* tcTextname, s32 tnTextnameLength);
-	SBaseclassList*			iiObj_getBaseclass_byType				(u32 tnObjType);
+	SBaseclassList*			iiObj_getBaseclass_byType				(s32 tnObjType);
 
 	// Creation of individual sub-objects
 	SObject*				iSubobj_createEmpty						(SObject*	template_empty,		SObject* parent);

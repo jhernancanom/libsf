@@ -305,7 +305,7 @@ struct SBaseclassList
 
 	// Class name
 	cs8*			baseclassName;										// ...and the text-based name of the base class
-	u32				baseclassNameLength;
+	s32				baseclassNameLength;
 
 	union {
 		u32				_objProps;

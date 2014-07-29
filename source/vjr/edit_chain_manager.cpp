@@ -201,7 +201,7 @@
 				for (lnI = 0, lnLast = 0; (u32)lnI < content->populatedLength; lnI++)
 				{
 					// Are we on a CR/LF combination?
-					for (lnJ = 0; content->data[lnI] == 13 || content->data[lnI] == 10 && lnJ < 2 && (u32)lnI < content->populatedLength; lnJ++)
+					for (lnJ = 0; (content->data[lnI] == 13 || content->data[lnI] == 10) && lnJ < 2 && (u32)lnI < content->populatedLength; lnJ++)
 						++lnI;	// Increase also past this CR/LF character
 
 					// If we found a CR/LF combination
@@ -1392,7 +1392,7 @@ _asm_int3;
 //////
 	bool iEditManager_verifyCursorIsVisible(SEM* em, SObject* obj)
 	{
-		s32				lnI, lnUp, lnDn, lnOldLeftColumn, lnNewLeftColumn, lnCols, lnRows, lnWidth, lnHeight;
+		s32				lnI, lnUp, lnDn, lnNewLeftColumn, lnCols, lnRows, lnWidth, lnHeight;
 		bool			llChanged;
 		SEdit*		lineUp;
 		SEdit*		lineDn;
@@ -1437,7 +1437,7 @@ _asm_int3;
 					//////////
 					// Make sure we're not beyond it to the right
 					//////
-						lnOldLeftColumn	= em->leftColumn;
+//						lnOldLeftColumn	= em->leftColumn;
 						lnNewLeftColumn = em->column - lnCols;
 						if (em->leftColumn - lnNewLeftColumn < 0)
 						{
@@ -1535,15 +1535,15 @@ _asm_int3;
 	bool iEditManager_keystroke(SEM* em, SObject* obj, u8 asciiChar)
 	{
 		bool	llChanged;
-		SFont*	font;
-		RECT	lrc;
+//		SFont*	font;
+//		RECT	lrc;
 
 
 		//////////
 		// Indicate initially that no changes were made that require a re-render
 		//////
 			llChanged = false;
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// Make sure our environment is sane
@@ -1817,14 +1817,14 @@ _asm_int3;
 //////
 	bool iEditManager_clearLine(SEM* em, SObject* obj)
 	{
-		RECT	lrc;
-		SFont*	font;
+//		RECT	lrc;
+//		SFont*	font;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// If we get here, indicate failure
@@ -1841,14 +1841,14 @@ _asm_int3;
 //////
 	bool iEditManager_clearToEndOfLine(SEM* em, SObject* obj)
 	{
-		RECT	lrc;
-		SFont*	font;
+//		RECT	lrc;
+//		SFont*	font;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// If we get here, indicate failure
@@ -1865,14 +1865,14 @@ _asm_int3;
 //////
 	bool iEditManager_clearToBeginningOfLine(SEM* em, SObject* obj)
 	{
-		RECT	lrc;
-		SFont*	font;
+//		RECT	lrc;
+//		SFont*	font;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// If we get here, indicate failure
@@ -1912,14 +1912,14 @@ _asm_int3;
 //////
 	bool iEditManager_tabIn(SEM* em, SObject* obj)
 	{
-		RECT	lrc;
-		SFont*	font;
+//		RECT	lrc;
+//		SFont*	font;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// If we get here, indicate failure
@@ -1936,14 +1936,14 @@ _asm_int3;
 //////
 	bool iEditManager_tabOut(SEM* em, SObject* obj)
 	{
-		RECT	lrc;
-		SFont*	font;
+//		RECT	lrc;
+//		SFont*	font;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// If we get here, indicate failure
@@ -1960,14 +1960,14 @@ _asm_int3;
 //////
 	bool iEditManager_returnKey(SEM* em, SObject* obj)
 	{
-		RECT	lrc;
-		SFont*	font;
+//		RECT	lrc;
+//		SFont*	font;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// Make sure the environment is sane
@@ -2007,14 +2007,14 @@ _asm_int3;
 //////
 	bool iEditManager_selectAll(SEM* em, SObject* obj)
 	{
-		RECT	lrc;
-		SFont*	font;
+//		RECT	lrc;
+//		SFont*	font;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// If we get here, indicate failure
@@ -2031,14 +2031,14 @@ _asm_int3;
 //////
 	bool iEditManager_cut(SEM* em, SObject* obj)
 	{
-		RECT	lrc;
-		SFont*	font;
+//		RECT	lrc;
+//		SFont*	font;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// If we get here, indicate failure
@@ -2055,14 +2055,14 @@ _asm_int3;
 //////
 	bool iEditManager_copy(SEM* em, SObject* obj)
 	{
-		RECT	lrc;
-		SFont*	font;
+//		RECT	lrc;
+//		SFont*	font;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// If we get here, indicate failure
@@ -2079,14 +2079,14 @@ _asm_int3;
 //////
 	bool iEditManager_paste(SEM* em, SObject* obj)
 	{
-		RECT	lrc;
-		SFont*	font;
+//		RECT	lrc;
+//		SFont*	font;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// If we get here, indicate failure
@@ -2103,15 +2103,15 @@ _asm_int3;
 //////
 	bool iEditManager_navigateWordLeft(SEM* em, SObject* obj)
 	{
-		SFont*			font;
+//		SFont*		font;
 		SEdit*		line;
-		RECT			lrc;
+//		RECT		lrc;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		//////////
@@ -2206,15 +2206,15 @@ _asm_int3;
 //////
 	bool iEditManager_navigateWordRight(SEM* em, SObject* obj)
 	{
-		SFont*			font;
+//		SFont*		font;
 		SEdit*		line;
-		RECT			lrc;
+//		RECT		lrc;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		//////////
@@ -2447,14 +2447,14 @@ _asm_int3;
 //////
 	bool iEditManager_selectLineUp(SEM* em, SObject* obj)
 	{
-		RECT	lrc;
-		SFont*	font;
+//		RECT	lrc;
+//		SFont*	font;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// If we get here, indicate failure
@@ -2473,14 +2473,14 @@ _asm_int3;
 //////
 	bool iEditManager_selectLineDown(SEM* em, SObject* obj)
 	{
-		RECT	lrc;
-		SFont*	font;
+//		RECT	lrc;
+//		SFont*	font;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// If we get here, indicate failure
@@ -2499,14 +2499,14 @@ _asm_int3;
 //////
 	bool iEditManager_selectLeft(SEM* em, SObject* obj)
 	{
-		RECT	lrc;
-		SFont*	font;
+//		RECT	lrc;
+//		SFont*	font;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// If we get here, indicate failure
@@ -2523,14 +2523,14 @@ _asm_int3;
 //////
 	bool iEditManager_selectRight(SEM* em, SObject* obj)
 	{
-		RECT	lrc;
-		SFont*	font;
+//		RECT	lrc;
+//		SFont*	font;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// If we get here, indicate failure
@@ -2547,14 +2547,14 @@ _asm_int3;
 //////
 	bool iEditManager_selectToEndOfLine(SEM* em, SObject* obj)
 	{
-		RECT	lrc;
-		SFont*	font;
+//		RECT	lrc;
+//		SFont*	font;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// If we get here, indicate failure
@@ -2571,14 +2571,14 @@ _asm_int3;
 //////
 	bool iEditManager_selectToBeginOfLine(SEM* em, SObject* obj)
 	{
-		RECT	lrc;
-		SFont*	font;
+//		RECT	lrc;
+//		SFont*	font;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// If we get here, indicate failure
@@ -2595,14 +2595,14 @@ _asm_int3;
 //////
 	bool iEditManager_selectColumnToggle(SEM* em, SObject* obj)
 	{
-		RECT	lrc;
-		SFont*	font;
+//		RECT	lrc;
+//		SFont*	font;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// If we get here, indicate failure
@@ -2619,14 +2619,14 @@ _asm_int3;
 //////
 	bool iEditManager_selectLineToggle(SEM* em, SObject* obj)
 	{
-		RECT	lrc;
-		SFont*	font;
+//		RECT	lrc;
+//		SFont*	font;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// If we get here, indicate failure
@@ -2646,14 +2646,14 @@ _asm_int3;
 //////
 	bool iEditManager_selectWordLeft(SEM* em, SObject* obj)
 	{
-		RECT	lrc;
-		SFont*	font;
+//		RECT	lrc;
+//		SFont*	font;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// If we get here, indicate failure
@@ -2673,14 +2673,14 @@ _asm_int3;
 //////
 	bool iEditManager_selectWordRight(SEM* em, SObject* obj)
 	{
-		RECT	lrc;
-		SFont*	font;
+//		RECT	lrc;
+//		SFont*	font;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// If we get here, indicate failure
@@ -2699,14 +2699,14 @@ _asm_int3;
 	{
 		SEdit*	line;
 		SEdit*	lineLast;
-		SFont*	font;
-		RECT	lrc;
+//		SFont*	font;
+//		RECT	lrc;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		//////////
@@ -2801,14 +2801,14 @@ _asm_int3;
 //////
 	bool iEditManager_deleteRight(SEM* em, SObject* obj)
 	{
-		SFont*	font;
-		RECT	lrc;
+//		SFont*	font;
+//		RECT	lrc;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		//////////
@@ -2853,14 +2853,14 @@ _asm_int3;
 //////
 	bool iEditManager_deleteWordLeft(SEM* em, SObject* obj)
 	{
-		RECT	lrc;
-		SFont*	font;
+//		RECT	lrc;
+//		SFont*	font;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// If we get here, indicate failure
@@ -2877,14 +2877,14 @@ _asm_int3;
 //////
 	bool iEditManager_deleteWordRight(SEM* em, SObject* obj)
 	{
-		RECT	lrc;
-		SFont*	font;
+//		RECT	lrc;
+//		SFont*	font;
 
 
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// If we get here, indicate failure

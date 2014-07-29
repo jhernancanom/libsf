@@ -332,7 +332,7 @@
 					if (_set_variablesFirst)
 					{
 						// Searching variables first, field names last.
-						if (var = iVariable_searchForName(varGlobals, comp->line->sourceCode->data + comp->start, comp->length, comp))
+						if ((var = iVariable_searchForName(varGlobals, comp->line->sourceCode->data + comp->start, comp->length, comp)))
 						{
 							// It was found in the global variables
 
@@ -349,7 +349,7 @@
 							// It was found in a table field
 							return(var);
 
-						} else*/ if (var = iVariable_searchForName(varGlobals, comp->line->sourceCode->data + comp->start, comp->length, comp)) {
+						} else*/ if ((var = iVariable_searchForName(varGlobals, comp->line->sourceCode->data + comp->start, comp->length, comp))) {
 							// It was found in the global variables
 						}
 					}
@@ -523,7 +523,6 @@
 	{
 		u32			lnParamCount;
 		bool		llManufactured;
-		SVariable*	var;
 		SComp*		comp;
 		SComp*		compComma;
 
@@ -567,13 +566,14 @@
 			//////////
 			// Derive whatever this is as a variable
 			//////
-				     if (lnParamCount == 1)		{	var = (*p1 = iEngine_getVariableFromComponent(comp, llManufactured));		}
-				else if (lnParamCount == 2)		{	var = (*p2 = iEngine_getVariableFromComponent(comp, llManufactured));		}
-				else if (lnParamCount == 3)		{	var = (*p3 = iEngine_getVariableFromComponent(comp, llManufactured));		}
-				else if (lnParamCount == 4)		{	var = (*p4 = iEngine_getVariableFromComponent(comp, llManufactured));		}
-				else if (lnParamCount == 5)		{	var = (*p5 = iEngine_getVariableFromComponent(comp, llManufactured));		}
-				else if (lnParamCount == 6)		{	var = (*p6 = iEngine_getVariableFromComponent(comp, llManufactured));		}
-				else if (lnParamCount == 7)		{	var = (*p7 = iEngine_getVariableFromComponent(comp, llManufactured));		}
+/*SVariable* var;*/
+				     if (lnParamCount == 1)		{	/*var =*/ (*p1 = iEngine_getVariableFromComponent(comp, llManufactured));		}
+				else if (lnParamCount == 2)		{	/*var =*/ (*p2 = iEngine_getVariableFromComponent(comp, llManufactured));		}
+				else if (lnParamCount == 3)		{	/*var =*/ (*p3 = iEngine_getVariableFromComponent(comp, llManufactured));		}
+				else if (lnParamCount == 4)		{	/*var =*/ (*p4 = iEngine_getVariableFromComponent(comp, llManufactured));		}
+				else if (lnParamCount == 5)		{	/*var =*/ (*p5 = iEngine_getVariableFromComponent(comp, llManufactured));		}
+				else if (lnParamCount == 6)		{	/*var =*/ (*p6 = iEngine_getVariableFromComponent(comp, llManufactured));		}
+				else if (lnParamCount == 7)		{	/*var =*/ (*p7 = iEngine_getVariableFromComponent(comp, llManufactured));		}
 
 
 			// Move to next component

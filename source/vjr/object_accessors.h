@@ -426,5 +426,5 @@
 		{	_OBJ_TYPE_OPTION,		cgcName_option,			sizeof(cgcName_option)		- 1,	(u32)&gsBaseObjectProperties[0]		},
 		{	_OBJ_TYPE_RADIO,		cgcName_radio,			sizeof(cgcName_radio)		- 1,	(u32)&gsBaseObjectProperties[0]		},
 		// Note:  Do not delete this line, it is used to terminate the search list
-		{	0,						NULL,					0,									NULL	}
+		{	0,						NULL,					0,									0	}
 	};

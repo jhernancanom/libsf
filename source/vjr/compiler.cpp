@@ -518,13 +518,12 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 	bool iiComps_xlatToNodes(SEdit* line, SCompiler* compiler)
 	{
 		SComp*		comp;
-		SComp*		compLast;
 		SNode*		nodeActive;			// Current active node
 
 
 		// Iterate through every component building the operations as we go
 		comp		= line->compilerInfo->firstComp;
-		compLast	= comp;
+//		compLast	= comp;
 		nodeActive	= iNode_create(&compiler->firstNode, NULL, 0, NULL, NULL, NULL, NULL, NULL);
 		while (comp)
 		{
@@ -676,7 +675,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 			//////////
 			// Move to next component
 			//////
-				compLast	= comp;
+//				compLast	= comp;
 				comp		= (SComp*)comp->ll.next;
 		}
 
@@ -790,7 +789,6 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 	SComp* iComps_translateSourceLineTo(SAsciiCompSearcher* tsComps, SEdit* line)
 	{
 		s32						lnI, lnMaxLength, lnStart, lnLength, lnLacsLength;
-		bool					llSigned;
 		SComp*					compFirst;
 		SComp*					compLast;
 		SComp*					comp;
@@ -816,7 +814,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 						lacs++)
 				{
 					// Find out our signed status and get normalized length
-					llSigned		= (lacs->length < 0);
+//					llSigned		= (lacs->length < 0);
 					lnLacsLength	= abs(lacs->length);
 
 					// Process through this entry
@@ -909,7 +907,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // alpha/alphanumeric/numeric forms to other forms.
 //
 //////
-	void iComps_translateToOthers(SAsciiCompSearcher* tacsRoot, SEdit* line)
+	bool iComps_translateToOthers(SAsciiCompSearcher* tacsRoot, SEdit* line)
 	{
 		bool					llResult;
 		s32						lnTacsLength;
@@ -943,9 +941,12 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 							if (iComps_translateToOthers_test((s8*)tacs->keyword, comp->line->sourceCode->data + comp->start, tacs->length) == 0)
 							{
 								// This is a match
+								llResult = true;
+								
 								// Convert it, translate it, whatever you want to call it, just make it be the new code, per the user's request, got it? :-)
 								comp->iCode = tacs->iCode;
 								comp->iCat	= tacs->iCat;
+								
 								// All done with this component
 								break;
 							}
@@ -957,6 +958,9 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 				comp = (SComp*)comp->ll.next;
 			}
 		}
+		
+		// Indicate our status
+		return(llResult);
 	}
 
 
@@ -1072,7 +1076,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 //		If NULL, the compLastScanned indicates the last component that was searched where it wasn't found
 //
 //////
-	SComp* iComps_findNextBy_iCode(SComp* comp, u32 tniCode, SComp** compLastScanned)
+	SComp* iComps_findNextBy_iCode(SComp* comp, s32 tniCode, SComp** compLastScanned)
 	{
 		// Initially indicate failure
 		if (compLastScanned)
@@ -1105,7 +1109,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Searches for the next non-indicated component, including itself
 //
 //////
-	SComp* iComps_skipPast_iCode(SComp* comp, u32 tniCode)
+	SComp* iComps_skipPast_iCode(SComp* comp, s32 tniCode)
 	{
 		while (comp && comp->iCode == tniCode)
 		{
@@ -1189,7 +1193,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // After:		[define][whitespace][user32][whitespace][something][here]
 //
 //////
-	u32 iComps_combine2(SEdit* line, u32 tniCodeNeedle1, u32 tniCodeNeedle2, u32 tniCodeCombined)
+	u32 iComps_combine2(SEdit* line, s32 tniCodeNeedle1, s32 tniCodeNeedle2, s32 tniCodeCombined)
 	{
 		u32		lnCount;
 		SComp*	compNext;
@@ -1271,7 +1275,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // After:		[sadf32][whitespace][a][comma][20.50]
 //
 //////
-	u32 iComps_combine3(SEdit* line, u32 tniCodeNeedle1, u32 tniCodeNeedle2, u32 tniCodeNeedle3, u32 tniCodeCombined)
+	u32 iComps_combine3(SEdit* line, s32 tniCodeNeedle1, s32 tniCodeNeedle2, s32 tniCodeNeedle3, s32 tniCodeCombined)
 	{
 		u32		lnCount;
 		SComp*	compNext;
@@ -1600,7 +1604,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // After:		[u8][whitespace][name][left bracket][right bracket][whitespace][equal][whitespace][double quote text]
 //
 //////
-	u32 iComps_combineAllBetween(SEdit* line, u32 tniCodeNeedle, u32 tniCodeCombined)
+	u32 iComps_combineAllBetween(SEdit* line, s32 tniCodeNeedle, s32 tniCodeCombined)
 	{
 		u32		lnCount;
 		SComp*	compNext;
@@ -1684,7 +1688,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Called to combine everything after the indicated component into that one component.
 //
 //////
-	u32 iComps_combineAllAfter(SEdit* line, u32 tniCodeNeedle)
+	u32 iComps_combineAllAfter(SEdit* line, s32 tniCodeNeedle)
 	{
 		u32		lnCombined;
 		SComp*	comp;
@@ -1731,7 +1735,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Called to delete everything after the indicated component
 //
 //////
-	u32 iComps_deleteAllAfter(SEdit* line, u32 tniCodeNeedle)
+	u32 iComps_deleteAllAfter(SEdit* line, s32 tniCodeNeedle)
 	{
 		u32		lnDeleted;
 		SComp*	comp;
@@ -2007,13 +2011,12 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 	void iiComps_xlatToSubInstr(SEdit* line)
 	{
 		SNode	si;
-		SComp*		saveComps;
 
 
 		//////////
 		// Copy the comps
 		//////
-			saveComps = line->compilerInfo->firstComp;
+//			saveComps = line->compilerInfo->firstComp;
 
 
 		//////////
@@ -4406,7 +4409,7 @@ _asm_int3;
 			while (var)
 			{
 				// Is the name the same length?  And if so, does it match?
-				if (var->name.length == tnVarNameLength && _memicmp(tcVarName, var->name.data, tnVarNameLength) == 0)
+				if (var->name.length == (s32)tnVarNameLength && _memicmp(tcVarName, var->name.data, tnVarNameLength) == 0)
 				{
 					// This is the name, but for certain types we can reference sub-properties below
 					switch (var->varType)
@@ -4573,7 +4576,7 @@ _asm_int3;
 
 				case _VARIABLE_TYPE_S16:
 				case _VARIABLE_TYPE_U16:
-					*(u16*)var->value.data[0] = 0;
+					*(u16*)var->value.data = 0;
 					break;
 
 				case _VARIABLE_TYPE_F32:
@@ -4583,14 +4586,14 @@ _asm_int3;
 				case _VARIABLE_TYPE_COLORA:
 				case _VARIABLE_TYPE_OBJECT:
 				case _VARIABLE_TYPE_THISCODE:
-					*(u32*)var->value.data[0] = 0;
+					*(u32*)var->value.data = (u32)0;
 					break;
 
 				case _VARIABLE_TYPE_F64:
 				case _VARIABLE_TYPE_S64:
 				case _VARIABLE_TYPE_U64:
 				case _VARIABLE_TYPE_CURRENCY:
-					*(u64*)var->value.data[0] = 0;
+					*(u64*)var->value.data = (u64)0;
 					break;
 
 				case _VARIABLE_TYPE_DATE:

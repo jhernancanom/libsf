@@ -80,7 +80,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 //////
 	void iInit_vjr(HACCEL* hAccelTable)
 	{
-		HRESULT		hRes;
+//		HRESULT		hRes;
 		RECT		lrc;
 
 

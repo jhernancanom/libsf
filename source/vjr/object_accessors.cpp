@@ -831,7 +831,7 @@ void iObj_setIcon(SObject* obj, SBitmap* bmp)
 bool iObj_setMinLeft(SObject* obj, SVariable* var)
 {
 	if (obj)
-		return(iObj_setInteger(obj, var, &obj->p.rcMin.left, 0, 0, false, 0));
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.rcMin.left, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -849,7 +849,7 @@ SVariable* iObj_getMinLeft(SObject* obj)
 bool iObj_setMinTop(SObject* obj, SVariable* var)
 {
 	if (obj)
-		return(iObj_setInteger(obj, var, &obj->p.rcMin.top, 0, 0, false, 0));
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.rcMin.top, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -935,7 +935,7 @@ SVariable* iObj_getMinHeight(SObject* obj)
 bool iObj_setMaxLeft(SObject* obj, SVariable* var)
 {
 	if (obj)
-		return(iObj_setInteger(obj, var, &obj->p.rcMax.left, 0, 0, false, 0));
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.rcMax.left, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -953,7 +953,7 @@ SVariable* iObj_getMaxLeft(SObject* obj)
 bool iObj_setMaxTop(SObject* obj, SVariable* var)
 {
 	if (obj)
-		return(iObj_setInteger(obj, var, &obj->p.rcMax.top, 0, 0, false, 0));
+		return(iObj_setInteger(obj, var, (s32*)&obj->p.rcMax.top, 0, 0, false, 0));
 
 	// If we get here, failure
 	return(false);
@@ -1063,7 +1063,7 @@ SVariable* iObj_getFontName(SObject* obj)
 		return(iObj_getCharacter(obj, &obj->pa.font->name));
 
 	// If we get here, failure
-	return(false);
+	return(NULL);
 }
 
 bool iObj_setFontSize(SObject* obj, SVariable* var)
@@ -1531,7 +1531,7 @@ SVariable* iObj_getCaption(SObject* obj)
 		return(iObj_getCharacter(obj, &obj->pa.caption));
 
 	// If we get here, failure
-	return(false);
+	return(NULL);
 }
 
 bool iObj_setPicture(SObject* obj, SVariable* var)
@@ -1549,7 +1549,7 @@ SVariable* iObj_getPicture(SObject* obj)
 		return(iObj_getCharacter(obj, &obj->pa.pictureName));
 
 	// If we get here, failure
-	return(false);
+	return(NULL);
 }
 
 bool iObj_setAllowOutput(SObject* obj, SVariable* var)
@@ -1925,7 +1925,7 @@ SVariable* iObj_getDeClass(SObject* obj)
 		return(iObj_getCharacter(obj, &obj->pa.declass));
 
 	// If we get here, failure
-	return(false);
+	return(NULL);
 }
 
 bool iObj_setDeClassLibrary(SObject* obj, SVariable* var)
@@ -1943,7 +1943,7 @@ SVariable* iObj_getDeClassLibrary(SObject* obj)
 		return(iObj_getCharacter(obj, &obj->pa.declasslibrary));
 
 	// If we get here, failure
-	return(false);
+	return(NULL);
 }
 
 bool iObj_setDefOleCid(SObject* obj, SVariable* var)

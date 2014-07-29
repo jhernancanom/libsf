@@ -151,7 +151,7 @@
 
 
 		// Make sure our environment is sane
-		if (!bmp || bmp->bi.biWidth != tnWidth || bmp->bi.biHeight != tnHeight)
+		if (!bmp || bmp->bi.biWidth != (s32)tnWidth || bmp->bi.biHeight != (s32)tnHeight)
 		{
 			// Something has changed
 			bmpNew = iBmp_allocate();
@@ -1598,7 +1598,7 @@
 
 	void iBmp_frameRect(SBitmap* bmp, RECT* rc, SBgra colorNW, SBgra colorNE, SBgra colorSW, SBgra colorSE, bool tlUseGradient, RECT* rcClip, bool tluseClip)
 	{
-		f32 lfRed, lfGrn, lfBlu, lfRedTo, lfGrnTo, lfBluTo, lfRedInc, lfGrnInc, lfBluInc, lfHeight, lfWidth;
+		f32 lfRed, lfGrn, lfBlu, lfRedTo, lfGrnTo, lfBluTo, lfRedInc, lfGrnInc, lfBluInc, lfWidth;
 
 
 		if (bmp && rc)
@@ -1607,7 +1607,7 @@
 			{
 				// Compute standards
 				lfWidth		= (f32)(rc->right  - 1 - rc->left);
-				lfHeight	= (f32)(rc->bottom - 1 - rc->top);
+//				lfHeight	= (f32)(rc->bottom - 1 - rc->top);
 
 				//////////
 				// Top (NW to NE)
@@ -2047,10 +2047,10 @@
 	// minimumRatio is in the range 0..1
 	f32 iiBmp_squeezeColorChannel(f32 colorChannel, f32 minimumRatio)
 	{
-		f32 currentRatio, newRatio, colorBase;
+		f32 newRatio, colorBase;
 
 
-		currentRatio	= colorChannel / 255.0f;
+//		currentRatio	= colorChannel / 255.0f;
 		newRatio		= 1.0f - minimumRatio;
 		colorBase		= minimumRatio * 255.0f;
 

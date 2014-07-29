@@ -200,15 +200,15 @@
 //////
 	void iObj_delete(SObject** objRoot, bool tlDeleteSelf)
 	{
-		SObject* obj;
+//		SObject* obj;
 
 
 		// Make sure our environment is sane
-		if (objRoot && *objRoot)
-		{
-			obj = *objRoot;
+//		if (objRoot && *objRoot)
+//		{
+//			obj = *objRoot;
 // TODO:  write this code
-		}
+//		}
 	}
 
 
@@ -735,7 +735,8 @@
 //////
 	u32 iObj_publish(SObject* obj, RECT* rc, SBitmap* bmpDst, bool tlPublishChildren, bool tlPublishSiblings, bool tlForcePublish, s32 tnLevel)
 	{
-		u32			lnWidth, lnHeight, lnPixelsRendered;
+		s32			lnWidth, lnHeight;
+		u32			lnPixelsRendered;
 		RECT		lrc, lrcChild, lrc2;
 		SObject*	objSib;
 
@@ -1584,7 +1585,7 @@
 // Called to translate the class object type to its text-base name
 //
 //////
-	SBaseclassList* iiObj_getBaseclass_byType(u32 tnObjType)
+	SBaseclassList* iiObj_getBaseclass_byType(s32 tnObjType)
 	{
 		SBaseclassList* lbcl;
 		
@@ -3101,9 +3102,6 @@
 
 	void iiSubobj_resetToDefaultLabel(SObject* label, bool tlResetProperties, bool tlResetMethods)
 	{
-		u32 lnHeight;
-
-
 		if (label)
 		{
 			//////////
@@ -3115,7 +3113,6 @@
 			//////////
 			// Set default size and position
 			//////
-				lnHeight = max(gsFontDefault->tm.tmHeight + 2, 10);
 				SetRect(&label->rc, 0, 0, 40, 17);
 				SetRect(&label->rco, 0, 0, 40, 17);
 				SetRect(&label->rcp, 0, 0, 40, 17);

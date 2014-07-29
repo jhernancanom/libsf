@@ -155,8 +155,7 @@
 	{
 		s32			lnI, lnClipStartPos, lnClipEndPos;
 		s8			lc;
-		bool		llCaseInsensitive, error, llSyntaxForm1, llFound;
-		u32			errorNum;
+		bool		llCaseInsensitive, llSyntaxForm1, llFound;
 		s8*			trim1ptr;
 		s8*			trim2ptr;
 		s32			trim1Length, trim2Length;

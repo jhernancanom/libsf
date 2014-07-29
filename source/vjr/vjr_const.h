@@ -42,16 +42,30 @@ struct SEM;
 
 
 // Unsigned
-typedef		unsigned __int64	u64;
-typedef		unsigned long		u32;
-typedef		unsigned short		u16;
-typedef		unsigned char		u8;
+#ifdef _WIN32
+	// gcc
+	typedef unsigned long long	u64;
+	typedef unsigned			u32;
+	typedef unsigned short		u16;
+	typedef unsigned char		u8;
 
-// Signed
-typedef		__int64				s64;
-typedef		long				s32;
-typedef		short				s16;
-typedef		char				s8;
+	typedef long long			s64;
+	typedef int					s32;
+	typedef short				s16;
+	typedef char				s8;
+
+#else
+	typedef	unsigned __int64	u64;
+	typedef	unsigned long		u32;
+	typedef	unsigned short		u16;
+	typedef	unsigned char		u8;
+
+	// Signed
+	typedef	__int64				s64;
+	typedef	long				s32;
+	typedef	short				s16;
+	typedef	char				s8;
+#endif
 
 // Floating point
 typedef		float				f32;
@@ -72,6 +86,7 @@ typedef		const u64			cu64;
 // Constant floating point
 typedef		const f64			cf64;
 typedef		const f64			cf64;
+
 
 // Used for passing complex parameters as references, such as SObjectpp&, or SEMpp&
 typedef SObject**	SObjectpp;
