@@ -265,7 +265,7 @@
 
 		// Create the master record
 // TODO:  COMPLETELY UNTESTED.  BREAKPOINT AND EXAMINE.
-_asm int 3;
+_asm_int3;
 // 		ecmNew = (SEM*)malloc(sizeof(SEM));
 // 		if (ecmNew)
 // 		{
@@ -459,7 +459,7 @@ _asm int 3;
 		if (root && *root)
 		{
 // TODO:  COMPLETELY UNTESTED.  BREAKPOINT AND EXAMINE.
-_asm int 3;
+_asm_int3;
 			em = *root;
 			//////////
 			// Are we really the thing?  Or just an indirect reference to the thing?

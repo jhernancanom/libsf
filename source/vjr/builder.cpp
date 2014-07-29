@@ -296,7 +296,7 @@ struct SBuilder
 
 						} else {
 							// Failure on resize -- should not happen
-							_asm int 3;
+							_asm_int3;
 						}
 				}
 		}
@@ -358,7 +358,7 @@ struct SBuilder
 		if (buffRoot && tcPathname)	
 		{
 			// Try to create the file
-			fopen_s(&lfh, tcPathname, "wb+");
+			lfh = fopen(tcPathname, "wb+");
 			if (lfh)
 			{
 				// Write out the data if need be
@@ -402,7 +402,7 @@ struct SBuilder
 
 
 			// Try to open the indicated file
-			fopen_s(&lfh, tcPathname, "rb");
+			lfh = fopen(tcPathname, "rb");
 			if (lfh)
 			{
 				//////////
@@ -576,7 +576,7 @@ struct SBuilder
 
 
 // TODO:  untested, breakpoint and examine
-		_asm int 3;
+		_asm_int3;
 		//////////
 		// Make sure our environment is sane
 		//////

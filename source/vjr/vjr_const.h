@@ -87,7 +87,7 @@ typedef SEM**		SEMpp;
 //////////
 // Macro helpers
 //////
-	#define iVariable_isValid(var)					(var && (var->varType == _VAR_TYPE_CHARACTER/*0-length character variables do not have allocated buffers*/ || var->value.data && var->value.length != 0))
+	#define iVariable_isValid(var)					(var && (var->varType == _VAR_TYPE_CHARACTER/*0-length character variables do not have allocated buffers*/ || (var->value.data && var->value.length != 0)))
 	#define iVariable_getType(var)					var->varType
 	#define iVariable_isTypeObject(var)				(var->varType == _VAR_TYPE_OBJECT)
 	#define iVariable_isTypethisCode(var)			(var->varType == _VAR_TYPE_THISCODE)
@@ -133,6 +133,14 @@ typedef SEM**		SEMpp;
 	#define red(rgbaColor)					((rgbaColor >> 16) & 0xff)
 	#define grn(rgbaColor)					((rgbaColor >> 8)  & 0xff)
 	#define blu(rgbaColor)					( rgbaColor        & 0xff)
+	
+#ifdef _WIN32
+	// gcc
+	#define _asm_int3						asm("int $3")
+#else
+	// visual studio
+	#define _asm_int3						_asm int 3
+#endif
 
 
 //////////

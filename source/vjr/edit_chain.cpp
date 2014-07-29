@@ -85,7 +85,7 @@
 
 
 // TODO:  COMPLETELY UNTESTED.  BREAKPOINT AND EXAMINE.
-_asm int 3;
+_asm_int3;
 		// Make sure our environment is sane
 		if (root && *root)
 		{

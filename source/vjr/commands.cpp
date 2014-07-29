@@ -164,7 +164,7 @@
 
 
 // TODO:  Incomplete function.  Breakpoint, debug, and finish development
-//_asm int 3;
+//_asm_int3;
 		//////////
         // Parameter 1 must be character
 		//////

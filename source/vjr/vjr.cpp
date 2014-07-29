@@ -34,8 +34,6 @@
 //
 
 
-
-
 #include "vjr.h"
 
 
@@ -89,9 +87,9 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		// Keyboard shortcuts
 		*hAccelTable = LoadAccelerators(ghInstance, MAKEINTRESOURCE(IDC_VJR));
 
-		// Taskbar interface
-		hRes = OleInitialize(NULL);
-		CoCreateInstance(CLSID_TaskbarList, 0, CLSCTX_INPROC_SERVER, IID_ITaskbarList, (void**)&giTaskbar);
+//		// Taskbar interface
+//		hRes = OleInitialize(NULL);
+//		CoCreateInstance(CLSID_TaskbarList, 0, CLSCTX_INPROC_SERVER, IID_ITaskbarList, (void**)&giTaskbar);
 
 		// Initialize our builder
 		iBuilder_createAndInitialize(&gWindows,	-1);
