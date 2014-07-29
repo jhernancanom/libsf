@@ -1963,7 +1963,7 @@
 				for (lnX = tnX1; lnX <= tnX2; lnX++, tfRed += tfRedInc, tfGrn += tfGrnInc, tfBlu += tfBluInc)
 				{
 					// Are we on the bitmap?
-					if (lnX >= 0 && lnX < bmp->bi.biWidth && (!tluseClip || !(tnY >= rcClip->top && tnY <= rcClip->bottom && lnX >= rcClip->left && lnX <= rcClip->right)))
+					if ((!tluseClip || !(tnY >= rcClip->top && tnY <= rcClip->bottom && lnX >= rcClip->left && lnX <= rcClip->right)) && lnX >= 0 && lnX < bmp->bi.biWidth)
 					{
 						// Draw the pixel
 						lbgr->red	= (u8)tfRed;
@@ -1979,7 +1979,7 @@
 				for (lnX = tnX1; lnX <= tnX2; lnX++, tfRed += tfRedInc, tfGrn += tfGrnInc, tfBlu += tfBluInc)
 				{
 					// Are we on the bitmap?
-					if (lnX >= 0 && lnX < bmp->bi.biWidth && (!tluseClip || !(tnY >= rcClip->top && tnY <= rcClip->bottom && lnX >= rcClip->left && lnX <= rcClip->right)))
+					if ((!tluseClip || !(tnY >= rcClip->top && tnY <= rcClip->bottom && lnX >= rcClip->left && lnX <= rcClip->right)) && lnX >= 0 && lnX < bmp->bi.biWidth)
 					{
 						// Draw the pixel
 						lbgra->alp	= 255;
@@ -2013,7 +2013,7 @@
 				for (lnY = tnY1; lnY <= tnY2; lnY++, tfRed += tfRedInc, tfGrn += tfGrnInc, tfBlu += tfBluInc)
 				{
 					// Are we on the bitmap?
-					if (lnY >= 0 && lnY < bmp->bi.biHeight && !(lnY >= rcClip->top && lnY <= rcClip->bottom && tnX >= rcClip->left && tnX <= rcClip->right))
+					if (!(lnY >= rcClip->top && lnY <= rcClip->bottom && tnX >= rcClip->left && tnX <= rcClip->right) && lnY >= 0 && lnY < bmp->bi.biHeight)
 					{
 						// Draw the pixel
 						lbgr->red	= (u8)tfRed;
@@ -2029,7 +2029,7 @@
 				for (lnY = tnY1; lnY <= tnY2; lnY++, tfRed += tfRedInc, tfGrn += tfGrnInc, tfBlu += tfBluInc)
 				{
 					// Are we on the bitmap?
-					if (lnY >= 0 && lnY < bmp->bi.biHeight && !(lnY >= rcClip->top && lnY <= rcClip->bottom && tnX >= rcClip->left && tnX <= rcClip->right))
+					if (!(lnY >= rcClip->top && lnY <= rcClip->bottom && tnX >= rcClip->left && tnX <= rcClip->right) && lnY >= 0 && lnY < bmp->bi.biHeight)
 					{
 						// Draw the pixel
 						lbgra->alp	= 255;

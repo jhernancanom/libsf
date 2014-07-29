@@ -413,10 +413,10 @@
 							// Populate the new entry
 							focus->obj	= obj;
 							focus->win	= win;
-							SetRect(&lrc,	lnX - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.left : 0) - _set_focus_highlight_pixels,
-											lnY - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.top  : 0)  - _set_focus_highlight_pixels,
-											lnX - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.left : 0) + _set_focus_highlight_pixels + obj->rc.right  - obj->rc.left,
-											lnY - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.top  : 0)  + _set_focus_highlight_pixels + obj->rc.bottom - obj->rc.top);
+							SetRect(&lrc,	lnX - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.left : 0) - _set_focus_highlight_pixels - _set_focus_highlight_border_pixels,
+											lnY - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.top  : 0) - _set_focus_highlight_pixels - _set_focus_highlight_border_pixels,
+											lnX - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.left : 0) + _set_focus_highlight_pixels + _set_focus_highlight_border_pixels + obj->rc.right  - obj->rc.left,
+											lnY - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.top  : 0) + _set_focus_highlight_pixels + _set_focus_highlight_border_pixels + obj->rc.bottom - obj->rc.top);
 
 							// Physically create the window
 							iFocusHighlight_create(focus, &lrc);
@@ -4059,13 +4059,13 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 					// Render from its prior rendered version
 					lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
 				}
-
-
-			//////////
-			// If the mouse is over this control, highlight it
-			//////
-				if (obj->isPublished && obj->ev.mouse.isMouseOver && obj->objType != _OBJ_TYPE_IMAGE)
-					iBmp_alphaColorizeMask(obj->bmp, &lrc, colorTracking, trackingRatio);
+// 
+// 
+// 			//////////
+// 			// If the mouse is over this control, highlight it
+// 			//////
+// 				if (obj->isPublished && obj->ev.mouse.isMouseOver && obj->objType != _OBJ_TYPE_IMAGE)
+// 					iBmp_alphaColorizeMask(obj->bmp, &lrc, colorTracking, trackingRatio);
 
 
 			//////////
@@ -4198,13 +4198,13 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				// Render from its prior rendered version
 				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
 			}
-
-
-			//////////
-			// If the mouse is over this control, highlight it
-			//////
-				if (obj->isPublished && obj->ev.mouse.isMouseOver && !(obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX))
-					iBmp_alphaColorizeMask(obj->bmp, &lrc, colorTracking, trackingRatio);
+// 
+// 
+// 			//////////
+// 			// If the mouse is over this control, highlight it
+// 			//////
+// 				if (obj->isPublished && obj->ev.mouse.isMouseOver && !(obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX))
+// 					iBmp_alphaColorizeMask(obj->bmp, &lrc, colorTracking, trackingRatio);
 
 
 			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing

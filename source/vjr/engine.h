@@ -68,24 +68,25 @@
 // SET settings. :-)
 // http://www.visual-freepro.org/wiki/index.php/VFrP_changes#SET_Options
 //////
-	bool		_set_indexMetaData				= false;
-	bool		_set_honorBarriers				= true;
-	bool		_set_variablesFirst				= false;
-	bool		_set_autoConvert				= false;
-	bool		_set_caseSensitiveNames			= false;
-	bool		_set_caseSensitiveCompares		= true;
-	bool		_set_namingConventions			= false;
-	s32			_set_logical					= _LOGICAL_TF;
-	bool		_set_implicitParams				= false;
-	bool		_set_stickyParameters			= true;
-	bool		_set_tableEqualAssignments		= false;
-	bool		_set_tableObjects				= false;
-	bool		_set_sloppyPrinting				= false;
-	SDatum		_set_languageTo					= { "en", 2 };
-	s32			_set_decimals					= 2;
-	s32			_set_date						= _SET_DATE_AMERICAN;		// See _SET_DATE_* constants above
-	bool		_set_century					= true;
-	s32			_set_focus_highlight_pixels		= 4;
+	bool		_set_indexMetaData						= false;
+	bool		_set_honorBarriers						= true;
+	bool		_set_variablesFirst						= false;
+	bool		_set_autoConvert						= false;
+	bool		_set_caseSensitiveNames					= false;
+	bool		_set_caseSensitiveCompares				= true;
+	bool		_set_namingConventions					= false;
+	s32			_set_logical							= _LOGICAL_TF;
+	bool		_set_implicitParams						= false;
+	bool		_set_stickyParameters					= true;
+	bool		_set_tableEqualAssignments				= false;
+	bool		_set_tableObjects						= false;
+	bool		_set_sloppyPrinting						= false;
+	SDatum		_set_languageTo							= { "en", 2 };
+	s32			_set_decimals							= 2;
+	s32			_set_date								= _SET_DATE_AMERICAN;		// See _SET_DATE_* constants above
+	bool		_set_century							= true;
+	s32			_set_focus_highlight_pixels				= 4;
+	s32			_set_focus_highlight_border_pixels		= 1;
 
 
 //////////

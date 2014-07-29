@@ -972,7 +972,7 @@
 		//////
 			GetClientRect(focus->hwnd, &lrc);
 			focus->hrgn = CreateRectRgnIndirect(&lrc);
-			InflateRect(&lrc, -_set_focus_highlight_pixels, -_set_focus_highlight_pixels);
+			InflateRect(&lrc, - _set_focus_highlight_pixels, -_set_focus_highlight_pixels);
 			lrgn = CreateRectRgnIndirect(&lrc);
 			CombineRgn(focus->hrgn, focus->hrgn, lrgn, RGN_XOR);		// Create a region with the inner part masked out
 			SetWindowRgn(focus->hwnd, focus->hrgn, TRUE);
