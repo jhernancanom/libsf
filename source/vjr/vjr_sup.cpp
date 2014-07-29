@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_sup.cpp
 //
 //////
-// Version 0.36
+// Version 0.37
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -866,6 +866,9 @@
 			// Publish anything needing publishing
 			iObj_publish(win->obj, &win->rc, win->bmp, true, true, tlForce, ((win == gWinScreen) ? -200000 : 0));
 
+			// Determine the focus highlights
+			iObj_setFocusHighlights(win, win->obj, 0, 0, true, true);
+
 			// And force the redraw
 			InvalidateRect(win->hwnd, 0, FALSE);
 		}
@@ -907,7 +910,212 @@
 //////
 	void iWindow_maximize(SWindow* win)
 	{
-		MessageBox(win->hwnd, "Feature not yet supported.", "Maximize Window", MB_OK);
+	}
+
+
+
+
+//////////
+//
+// Create a new focus highlight window
+//
+//////
+	void iFocusHighlight_create(SFocusHighlight* focus, RECT* rc)
+	{
+		WNDCLASSEX	wcex;
+		ATOM		atom;
+		HRGN		lrgn;
+		RECT		lrc, lrcParent;
+
+
+		//////////
+		// See if the class is already defined
+		//////
+			if (!GetClassInfoEx(GetModuleHandle(NULL), cgcFocusHighlightClass, &wcex))
+			{
+				// We need to create said class with our class making skills
+				// If we get here, not yet registered
+				memset(&wcex, 0, sizeof(wcex));
+				wcex.cbSize         = sizeof(wcex);
+				wcex.style          = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+				wcex.lpfnWndProc    = (WNDPROC)&iFocusHighlight_wndProc;
+				wcex.hInstance      = GetModuleHandle(NULL);
+				wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
+				wcex.lpszClassName  = cgcFocusHighlightClass;
+				atom				= RegisterClassExA(&wcex);
+
+				// Was it registered?
+				if (atom == NULL)
+					return;		// Nope ... when we get here, failure
+			}
+
+
+		//////////
+		// Create the window
+		//////
+			focus->hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, cgcFocusHighlightClass, NULL, WS_POPUP, rc->left, rc->top, rc->right - rc->left, rc->bottom - rc->top, NULL, NULL, GetModuleHandle(NULL), 0);
+
+
+		//////////
+		// If the window needs repositioned or resized, do so
+		//////
+			GetWindowRect(focus->win->hwnd, &focus->rcp);
+			CopyRect(&lrcParent, &focus->rcp);
+			AdjustWindowRect(&lrcParent, GetWindowLong(focus->win->hwnd, GWL_STYLE), (GetMenu(focus->win->hwnd) != NULL));
+			lrcParent.left	= focus->rcp.left + (focus->rcp.left - focus->rcp.left);
+			lrcParent.top	= focus->rcp.top  + (focus->rcp.top  - focus->rcp.top);
+			SetWindowPos(focus->hwnd, HWND_TOPMOST, lrcParent.left + rc->left, lrcParent.top + rc->top, rc->right - rc->left, rc->bottom - rc->top, SWP_HIDEWINDOW | SWP_NOACTIVATE);
+
+
+		//////////
+		// Cut out a region for the indicated border pixel width, so the window is transparent except for where it should cut through
+		//////
+			GetClientRect(focus->hwnd, &lrc);
+			focus->hrgn = CreateRectRgnIndirect(&lrc);
+			InflateRect(&lrc, -_set_focus_highlight_pixels, -_set_focus_highlight_pixels);
+			lrgn = CreateRectRgnIndirect(&lrc);
+			CombineRgn(focus->hrgn, focus->hrgn, lrgn, RGN_XOR);		// Create a region with the inner part masked out
+			SetWindowRgn(focus->hwnd, focus->hrgn, TRUE);
+
+
+		//////////
+		// Store the settings
+		//////
+			focus->readWriteBrush	= CreateSolidBrush(RGB(focusHighlightReadWriteColor.red,	focusHighlightReadWriteColor.grn,	focusHighlightReadWriteColor.blu));
+			focus->readOnlyBrush	= CreateSolidBrush(RGB(focusHighlightReadOnlyColor.red,		focusHighlightReadOnlyColor.grn,	focusHighlightReadOnlyColor.blu));
+			GetWindowRect(focus->hwnd, &focus->rc);
+			CopyRect(&focus->rco, &focus->rc);
+			GetWindowRect(focus->win->hwnd,	&focus->rcp);
+
+
+		//////////
+		// Display the window
+		//////
+			focus->isValid = true;
+			ShowWindow(focus->hwnd, SW_SHOW);
+	}
+
+
+
+
+//////////
+//
+// Delete a previous window
+//
+//////
+	void iFocusHighlight_delete(SFocusHighlight* focus)
+	{
+		if (focus)
+		{
+			// Delete the window
+			if (IsWindow(focus->hwnd))
+				DestroyWindow(focus->hwnd);
+
+			// Destroy the region
+			DeleteObject((HGDIOBJ)focus->hrgn);
+
+			// Release the variables
+			memset(focus, 0, sizeof(SFocusHighlight));
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to find a focus highlight window by its hwnd
+//
+//////
+	SFocusHighlight* iFocusHighlight_findByHwnd(HWND hwnd)
+	{
+		u32					lnI;
+		SFocusHighlight*	focus;
+
+
+		// Iterate through each item
+		for (lnI = 0; lnI < gFocusHighlights->populatedLength; lnI += sizeof(SFocusHighlight))
+		{
+			// Grab the pointer
+			focus = (SFocusHighlight*)(gFocusHighlights->data + lnI);
+
+			// Is this it?
+			if (focus->hwnd == hwnd)
+				return(focus);
+		}
+
+		// If we get here, it wasn't found
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Called to find a focus highlight window by its object
+//
+//////
+	SFocusHighlight* iFocusHighlight_findByObj(SObject* obj)
+	{
+		u32					lnI;
+		SFocusHighlight*	focus;
+
+
+		// Iterate through each item
+		for (lnI = 0; lnI < gFocusHighlights->populatedLength; lnI += sizeof(SFocusHighlight))
+		{
+			// Grab the pointer
+			focus = (SFocusHighlight*)(gFocusHighlights->data + lnI);
+
+			// Is this it?
+			if (focus->obj == obj)
+				return(focus);
+		}
+
+		// If we get here, it wasn't found
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Handles the focus highlight borders
+//
+//////
+	LRESULT CALLBACK iFocusHighlight_wndProc(HWND hwnd, UINT m, WPARAM w, LPARAM l)
+	{
+		SFocusHighlight*	focus;
+		HDC					lhdc;
+		PAINTSTRUCT			ps;
+
+
+		// Find the focus window
+		focus = iFocusHighlight_findByHwnd(hwnd);
+
+		// Did we find
+		if (focus && focus->isValid)
+		{
+			// The only message we handle is the paint
+			if (m == WM_PAINT)
+			{
+				// Start painting
+				lhdc = BeginPaint(hwnd, &ps);
+
+				// Paint it
+				if (focus->obj->p.isReadOnly)		FillRect(lhdc, &ps.rcPaint, focus->readOnlyBrush);
+				else								FillRect(lhdc, &ps.rcPaint, focus->readWriteBrush);
+
+				// All done
+				EndPaint(hwnd, &ps);
+				return(0);
+			}
+		}
+
+		// Default handler
+		return(DefWindowProc(hwnd, m, w, l));
 	}
 
 
@@ -918,7 +1126,7 @@
 // Adjusts the brightness of the indicated color by the indicated percentage.
 //
 //////
-	void iColor_adjustBrightness(SBgra& color, f32 tfPercent)
+	void iMisc_adjustColorBrightness(SBgra& color, f32 tfPercent)
 	{
 		f32 red, grn, blu;
 

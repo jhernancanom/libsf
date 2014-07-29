@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_structs.h
 //
 //////
-// Version 0.36
+// Version 0.37
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -384,6 +384,7 @@ struct SProperties
 	bool		hasFocus;												// Does this object have focus?
 	bool		isMovable;												// Is this object movable?
 	bool		isVisible;												// If it's visible
+	bool		isReadOnly;												// If it's read-only
 
 	RECT		rcMax;													// The maximum rectangle for the form
 	RECT		rcMin;													// The minimum rectangle for the form
@@ -573,15 +574,32 @@ struct SObject
 // Temporary properties added during development to facilitate display until such time as the full object hierarchy is created for every object.
 // Updated each render
 //////
-	RECT		rcClient;												// The client area of the form
-	RECT		rcCaption;												// The caption area (used for moving the form around)
-	RECT		rcArrowUl;												// The upper-left resize arrow is
-	RECT		rcArrowUr;												// The upper-right resize arrow is
-	RECT		rcArrowLl;												// The lower-left resize arrow is
-	RECT		rcArrowLr;												// The lower-right resize arrow is
-	RECT		rcIcon;													// The form icon
-	RECT		rcMove;													// The move button of the form
-	RECT		rcMinimize;												// The minimize button of the form
-	RECT		rcMaximize;												// The maximize button of the form
-	RECT		rcClose;												// The close button of the form
+	RECT		rcClient;											// The client area of the form
+	RECT		rcCaption;											// The caption area (used for moving the form around)
+	RECT		rcArrowUl;											// The upper-left resize arrow is
+	RECT		rcArrowUr;											// The upper-right resize arrow is
+	RECT		rcArrowLl;											// The lower-left resize arrow is
+	RECT		rcArrowLr;											// The lower-right resize arrow is
+	RECT		rcIcon;												// The form icon
+	RECT		rcMove;												// The move button of the form
+	RECT		rcMinimize;											// The minimize button of the form
+	RECT		rcMaximize;											// The maximize button of the form
+	RECT		rcClose;											// The close button of the form
+};
+
+struct SFocusHighlight
+{
+	bool		isValid;											// Is this item valid?
+
+	SWindow*	win;												// The window this focus highlight entry relates to
+	SObject*	obj;												// The object being focused
+
+	HWND		hwnd;												// The HWND for this window
+	HRGN		hrgn;												// Handle to the clip region
+	HBRUSH		readWriteBrush;										// Read-write color, bluish
+	HBRUSH		readOnlyBrush;										// Read-only color, reddish
+
+	RECT		rc;													// In screen coordinates
+	RECT		rco;												// The original screen coordinates when created
+	RECT		rcp;												// The parent's screen coordinates when created
 };

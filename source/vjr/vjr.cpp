@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr.cpp
 //
 //////
-// Version 0.36
+// Version 0.37
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -110,6 +110,9 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		gsFontDefaultFixedPoint		= iFont_create(cgcDefaultFixedFontName,		10,	FW_NORMAL,	0, 0);
 		gsWindowTitleBarFont		= iFont_create(cgcWindowTitleBarFontName,	12,	FW_NORMAL,	0, 0);
 		gsWindowTitleBarFontSubform	= iFont_create(cgcWindowTitleBarFontName,	10,	FW_NORMAL,	0, 0);
+
+		// Focus window accumulator
+		iBuilder_createAndInitialize(&gFocusHighlights, -1);
 
 
 		//////////

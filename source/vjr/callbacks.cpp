@@ -3,7 +3,7 @@
 // /libsf/source/vjr/callbacks.cpp
 //
 //////
-// Version 0.36
+// Version 0.37
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -272,11 +272,11 @@
 
 				} else if (tlShift && tnVKey == VK_TAB) {
 					// Move to previous object
-					iObj_setFocusObjectPrev(win, objCheckbox);
+					llRender = iObj_setFocusObjectPrev(win, objCheckbox);
 
 				} else if (tnVKey == VK_TAB) {
 					// Move to next object
-					iObj_setFocusObjectNext(win, objCheckbox);
+					llRender = iObj_setFocusObjectNext(win, objCheckbox);
 
 				} else if (tlIsAscii) {
 					if ((u8)tcAscii == 't' || (u8)tcAscii == 'T' || (u8)tcAscii == 'y' || (u8)tcAscii == 'Y' || (u8)tcAscii == '1')
@@ -303,11 +303,11 @@
 				if (tlShift && tnVKey == VK_TAB)
 				{
 					// Move to previous object
-					iObj_setFocusObjectPrev(win, obj);
+					llRender = iObj_setFocusObjectPrev(win, obj);
 
 				} else if (tnVKey == VK_TAB) {
 					// Move to next object
-					iObj_setFocusObjectNext(win, obj);
+					llRender = iObj_setFocusObjectNext(win, obj);
 				}
 			}
 

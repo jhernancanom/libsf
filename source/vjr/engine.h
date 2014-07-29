@@ -3,7 +3,7 @@
 // /libsf/source/vjr/engine.h
 //
 //////
-// Version 0.36
+// Version 0.37
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -85,6 +85,7 @@
 	s32			_set_decimals					= 2;
 	s32			_set_date						= _SET_DATE_AMERICAN;		// See _SET_DATE_* constants above
 	bool		_set_century					= true;
+	s32			_set_focus_highlight_pixels		= 4;
 
 
 //////////

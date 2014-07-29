@@ -3,7 +3,7 @@
 // /libsf/source/vjr/objects.cpp
 //
 //////
-// Version 0.36
+// Version 0.37
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -219,7 +219,7 @@
 // Called to set focus on the indicated control.
 //
 //////
-	void iObj_setFocus(SWindow* win, SObject* obj, bool tlClearOtherControlsWithFocus)
+	bool iObj_setFocus(SWindow* win, SObject* obj, bool tlClearOtherControlsWithFocus)
 	{
 		// Clear the focus if we should
 		if (tlClearOtherControlsWithFocus)
@@ -237,7 +237,13 @@
 			// Signal the change
 			if (obj->ev.general._onGotFocus)
 				obj->ev.general.onGotFocus(win, obj);
+
+			// Indicate we set focus
+			return(true);
 		}
+
+		// Indicate focus was not changed
+		return(false);
 	}
 
 
@@ -250,7 +256,8 @@
 //////
 	void iObj_clearFocus(SWindow* win, SObject* obj, bool tlClearChildren, bool tlClearSiblings)
 	{
-		SObject* objSib;
+		SObject*			objSib;
+		SFocusHighlight*	focus;
 
 
 		// Clear children
@@ -265,6 +272,20 @@
 
 			// Mark the object dirty
 			obj->isDirtyRender = true;
+
+			// Remove the focus highlight window around the control (if any)
+			focus = iFocusHighlight_findByObj(obj);
+			if (focus)
+				iFocusHighlight_delete(focus);
+
+			// If it was a checkbox that lost focus, then we need to release the parent as well
+			if (obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX)
+			{
+				// The control was part of a checkbox, make sure the parent is released as well
+				focus = iFocusHighlight_findByObj(obj->parent);
+				if (focus)
+					iFocusHighlight_delete(focus);
+			}
 
 			// Signal the change
 			if (obj->ev.general._onLostFocus)
@@ -300,6 +321,132 @@
 		// If there's a parent, continue up the chain
 		if (obj->parent)		return(iObj_findRootParent(obj->parent));
 		else					return(obj);		// This is the parent-most object
+	}
+
+
+
+
+//////////
+//
+// Called to set the focus highlights (blue borders around the focused control)
+//
+//////
+	void iObj_setFocusHighlights(SWindow* win, SObject* obj, s32 x, s32 y, bool tlProcessChildren, bool tlProcessSiblings)
+	{
+		u32					lnI;
+		s32					lnX, lnY;
+		bool				llFound, llChildHasFocus;
+		RECT				lrc;
+		SObject*			objSib;
+		SFocusHighlight*	focus;
+		SFocusHighlight*	focusUnused;
+
+
+		// Make sure our environment is sane
+		focus = NULL;
+		if (win && obj)
+		{
+			// Copy the variables
+			lnX = x + obj->rc.left;
+			lnY = y + obj->rc.top;
+
+			// Add in the client coordinates for forms and sub-forms
+			if (obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM)
+			{
+				lnX += obj->rcClient.left;
+				lnY += obj->rcClient.top;
+			}
+
+
+			//////////
+			// Scan through parents
+			//////
+				if (obj->firstChild && tlProcessChildren)
+					iObj_setFocusHighlights(win, obj->firstChild, lnX, lnY, true, true);
+
+
+			//////////
+			// Is this a focus window?
+			//////
+				// Search for an existing focus window for this control
+				llFound		= false;
+				focusUnused	= 0;
+				for (lnI = 0; !llFound && lnI < gFocusHighlights->populatedLength; lnI += sizeof(SFocusHighlight))
+				{
+					// Grab this pointer
+					focus = (SFocusHighlight*)(gFocusHighlights->data + lnI);
+
+					// Is this it?
+					     if (focus->isValid && focus->obj == obj)		llFound		= true;
+					else if (focusUnused == NULL)						focusUnused	= focus;
+				}
+
+				// Check the checkbox
+				llChildHasFocus = false;
+				if (obj->objType == _OBJ_TYPE_CHECKBOX)
+				{
+					// Does the image have focus?
+					llChildHasFocus  = (obj->firstChild && obj->firstChild->p.hasFocus);
+					llChildHasFocus |= (obj->firstChild && obj->firstChild->ll.next && ((SObject*)obj->firstChild->ll.next)->p.hasFocus);
+				}
+
+				// Should this control have focus?
+				if ((obj->p.hasFocus || llChildHasFocus) && !(obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX))
+				{
+					// This needs to be a focus window
+					if (!llFound)
+					{
+						// We need to add it
+						if (!focusUnused)
+						{
+							// Append a new record
+							focus = (SFocusHighlight*)iBuilder_allocateBytes(gFocusHighlights, sizeof(SFocusHighlight));
+
+						} else {
+							// Use the first unused record we found
+							focus = focusUnused;
+						}
+
+						// If the item was created okay, process it
+						if (focus)
+						{
+							// Populate the new entry
+							focus->obj	= obj;
+							focus->win	= win;
+							SetRect(&lrc,	lnX - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.left : 0) - _set_focus_highlight_pixels,
+											lnY - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.top  : 0)  - _set_focus_highlight_pixels,
+											lnX - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.left : 0) + _set_focus_highlight_pixels + obj->rc.right  - obj->rc.left,
+											lnY - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.top  : 0)  + _set_focus_highlight_pixels + obj->rc.bottom - obj->rc.top);
+
+							// Physically create the window
+							iFocusHighlight_create(focus, &lrc);
+						}
+					}
+
+				} else if (focus) {
+					// This needs to NOT be a focus window
+					if (llFound)
+						iFocusHighlight_delete(focus);
+				}
+
+
+			//////////
+			// Check siblings
+			//////
+				if (tlProcessSiblings)
+				{
+					// Begin at the first sibling
+					objSib = (SObject*)obj->ll.next;
+					while (objSib)
+					{
+						// Process this sibling
+						iObj_setFocusHighlights(win, objSib, x, y, true, false);
+
+						// Move to the next sibling
+						objSib = (SObject*)objSib->ll.next;
+					}
+				}
+		}
 	}
 
 
@@ -355,10 +502,14 @@
 // Called to move to set focus on the previous control
 //
 //////
-	void iObj_setFocusObjectPrev(SWindow* win, SObject* obj)
+	bool iObj_setFocusObjectPrev(SWindow* win, SObject* obj)
 	{
+		// Attempt the focus
 		if (obj->ll.prev)
-			iObj_setFocus(win, (SObject*)obj->ll.prev, true);
+			return(iObj_setFocus(win, (SObject*)obj->ll.prev, true));
+
+		// Nothing before
+		return(false);
 	}
 
 
@@ -369,10 +520,14 @@
 // Called to move to set focus on the next control
 //
 //////
-	void iObj_setFocusObjectNext(SWindow* win, SObject* obj)
+	bool iObj_setFocusObjectNext(SWindow* win, SObject* obj)
 	{
+		// Attempt the focus
 		if (obj->ll.next)
-			iObj_setFocus(win, (SObject*)obj->ll.next, true);
+			return(iObj_setFocus(win, (SObject*)obj->ll.next, true));
+
+		// Nothing after
+		return(false);
 	}
 
 
@@ -1032,10 +1187,13 @@
 										1 + bmpArrowUl->bi.biWidth + 4,
 										2 - obj->rcClient.top,
 										tnWidth - 4,
-										1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
+										2 - obj->rcClient.top + objChild->pa.font->tm.tmHeight + 2);
 
 							// Update the size
-							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
+							iObj_setSize(objChild,	objChild->rc.left,
+													objChild->rc.top,
+													objChild->rc.right  - objChild->rc.left,
+													objChild->rc.bottom - objChild->rc.top);
 						}
 
 						// Move to next object
@@ -3276,7 +3434,7 @@
 
 					} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcName_checkboxLabel, sizeof(cgcName_checkboxLabel) - 1) == 0) {
 						// Adjust the size
-						iObj_setSize(objChild, 17 + 4, 0, 60, objChild->rc.bottom);
+						iObj_setSize(objChild, 17, 0, 60, objChild->rc.bottom);
 
 						// Checkbox label
 						iDatum_delete(&objChild->pa.caption, false);
@@ -3981,6 +4139,17 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 						break;
 				}
 
+				// Adjust if required
+				if (obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX)
+				{
+					// Adjust for the label
+					SetRect(&lrc2, lrc.left + 4, lrc.top, lrc.right, lrc.bottom);
+
+				} else {
+					// Copy the rectangle
+					CopyRect(&lrc2, &lrc);
+				}
+
 				// Draw the text
 				DrawText(obj->bmp->hdc, obj->pa.caption.data, obj->pa.caption.length, &lrc, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
 
@@ -4007,6 +4176,11 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 					SetRect(&lrc2, lrc.left, lrc.top, lrc.right - ((lrc.bottom - lrc.top) / 2), lrc.bottom);
 					     if (obj->ev.mouse.isMouseDown)		iBmp_colorizeMask(obj->bmp, &lrc2, colorMouseDown,	false, 0.0f);
 					else if (obj->ev.mouse.isMouseOver)		iBmp_colorizeMask(obj->bmp, &lrc2, colorMouseOver,	false, 0.0f);
+
+				} else if (obj->p.isOpaque) {
+					// Colorize the area
+					     if (obj->ev.mouse.isMouseDown)		iBmp_colorizeMask(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
+					else if (obj->ev.mouse.isMouseOver)		iBmp_colorizeMask(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
 				}
 
 

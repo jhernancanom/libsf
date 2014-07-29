@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_globals.h
 //
 //////
-// Version 0.36
+// Version 0.37
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -54,6 +54,9 @@
 
 	// Global variables
 	SVariable*			varGlobals							= NULL;									// All global variables are stored
+
+	// Focus highlight windows
+	SBuilder*			gFocusHighlights					= NULL;									// Holds SFocusHighlight structures
 
 	// App icons
 	SBitmap*			bmpVjrIcon							= NULL;
@@ -175,9 +178,13 @@
 		const SBgra		SwCheckboxOnColor					= { rgba(5, 140, 0, 255) };
 		const SBgra		SeCheckboxOnColor					= { rgba(131, 220, 11, 255) };
 		const SBgra		NwCheckboxOffColor					= { rgba(193, 34, 34, 255) };			// Red
-		const SBgra		NeCheckboxOffColor					= { rgba(209, 36, 36, 255) };
-		const SBgra		SwCheckboxOffColor					= { rgba(171, 30, 39, 255) };
-		const SBgra		SeCheckboxOffColor					= { rgba(213, 34, 16, 255) };
+		const SBgra		NeCheckboxOffColor					= { rgba(181, 64, 64, 255) };
+		const SBgra		SwCheckboxOffColor					= { rgba(171, 92, 94, 255) };
+		const SBgra		SeCheckboxOffColor					= { rgba(212, 128, 131, 255) };
+
+		// Colors for the focus window
+		SBgra			focusHighlightReadWriteColor		= { rgba(112, 164, 255, 255) };
+		SBgra			focusHighlightReadOnlyColor			= { rgba(255, 112, 112, 255) };
 
 
 	//////////

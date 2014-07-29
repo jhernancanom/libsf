@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_defs.h
 //
 //////
-// Version 0.36
+// Version 0.37
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -64,16 +64,17 @@
 	SObject*				iObj_addChild							(u32 objType, SObject* objParent);
 	SObject*				iObj_copy								(SObject* template_obj, SObject* next, SObject* parent, bool tlCopyChildren, bool tlCreateSeparateBitmapBuffers);
 	void					iObj_delete								(SObject** obj, bool tlDeleteSelf);
-	void					iObj_setFocus							(SWindow* win, SObject* obj, bool tlClearOtherControlsWithFocus);
+	bool					iObj_setFocus							(SWindow* win, SObject* obj, bool tlClearOtherControlsWithFocus);
 	void					iObj_clearFocus							(SWindow* win, SObject* obj, bool tlClearChildren, bool tlClearSiblings);
-	SObject*				iObj_findRootParent						(SObject*  obj);
-	void					iObj_findFocusControls					(SObject*  obj, SBuilder* objFocusControls, bool tlProcessSiblings);
-	void					iObj_setFocusObjectPrev					(SWindow* win, SObject* obj);
-	void					iObj_setFocusObjectNext					(SWindow* win, SObject* obj);
+	SObject*				iObj_findRootParent						(SObject* obj);
+	void					iObj_setFocusHighlights					(SWindow* win, SObject* obj, s32 x, s32 y, bool tlProcessChildren, bool tlProcessSiblings);
+	void					iObj_findFocusControls					(SObject* obj, SBuilder* objFocusControls, bool tlProcessSiblings);
+	bool					iObj_setFocusObjectPrev					(SWindow* win, SObject* obj);
+	bool					iObj_setFocusObjectNext					(SWindow* win, SObject* obj);
 	void					iObj_setDirtyRender						(SObject* obj, bool tlMarkParents);
 	void					iObj_setDirtyPublish					(SObject* obj, bool tlMarkParents);
-	u32						iObj_render								(SObject*  obj, bool tlForceRender);
-	u32						iObj_renderChildrenAndSiblings			(SObject*  obj, bool tlRenderChildren, bool tlRenderSiblings, bool tlForceRender);
+	u32						iObj_render								(SObject* obj, bool tlForceRender);
+	u32						iObj_renderChildrenAndSiblings			(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings, bool tlForceRender);
 	u32						iObj_publish							(SObject* obj, RECT* rc, SBitmap* bmpDst, bool tlPublishChildren, bool tlPublishSiblings, bool tlForcePublish, s32 tnLevel);
 	void					iObj_duplicateChain						(SObject** root, SObject* chain);
 	void					iObj_appendObjToParent					(SObject*  parent, SObject* obj);
@@ -220,7 +221,14 @@
 	void					iWindow_move							(SWindow* win);
 	void					iWindow_minimize						(SWindow* win);
 	void					iWindow_maximize						(SWindow* win);
-	void					iColor_adjustBrightness					(SBgra& color, f32 tfPercent);
+
+	void					iFocusHighlight_create					(SFocusHighlight* focus, RECT* rc);
+	void					iFocusHighlight_delete					(SFocusHighlight* focus);
+	SFocusHighlight*		iFocusHighlight_findByHwnd				(HWND hwnd);
+	SFocusHighlight*		iFocusHighlight_findByObj				(SObject* obj);
+	LRESULT CALLBACK		iFocusHighlight_wndProc					(HWND hwnd, UINT m, WPARAM w, LPARAM l);
+
+	void					iMisc_adjustColorBrightness				(SBgra& color, f32 tfPercent);
 	bool					iInit_shutdownPolitely					(void);
 
 	void					iComputeScreenWindowClientAreaDimensions	(SSize* size);

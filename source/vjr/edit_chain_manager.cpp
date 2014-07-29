@@ -3,7 +3,7 @@
 // /libsf/source/vjr/edit_chain_manager.cpp
 //
 //////
-// Version 0.36
+// Version 0.37
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -929,21 +929,6 @@ _asm int 3;
 				// Regular key without special flags
 				switch (tnVKey)
 				{
-					case VK_F6:
-					case VK_F8:
-					case VK_F10:
-					case VK_F11:
-						// Execute this line of code
-						if (em && em->ecCursorLine && em->ecCursorLine->sourceCodePopulated > 0)
-							iEngine_executeStandaloneCommand(em->ecCursorLine);
-
-						// Move to next line and redraw
-						iEditManager_navigate(em, obj, 1, 0);
-
-						// Indicate our key was processed
-						llProcessed = true;
-						break;
-
 					case VK_UP:
 						iEditManager_navigate(em, obj, -1, 0);
 
@@ -1282,8 +1267,8 @@ _asm int 3;
 				iEditManager_getColors(em, obj, backColor, foreColor);
 				backColorLast.color = backColor.color;
 				foreColorLast.color = foreColor.color;
-				iColor_adjustBrightness(backColorLast, -5.0f);
-				iColor_adjustBrightness(foreColorLast, 5.0f);
+				iMisc_adjustColorBrightness(backColorLast, -5.0f);
+				iMisc_adjustColorBrightness(foreColorLast, 5.0f);
 
 
 			// Prepare
@@ -2338,12 +2323,24 @@ _asm int 3;
 		// Make sure the environment is sane
 		if (em && em->ecFirst)
 		{
+			//////////
 			// Save previous position
-			em->ecCursorLineLast	= em->ecCursorLine;
+			//////
+				em->ecCursorLineLast	= em->ecCursorLine;
 
+			
+			//////////
 			// Move to top of the document
-			em->ecTopLine			= em->ecFirst;
-			em->ecCursorLine		= em->ecFirst;
+			//////
+				em->ecTopLine			= em->ecFirst;
+				em->ecCursorLine		= em->ecFirst;
+
+
+			//////////
+			// Verify we're visible
+			//////
+				iEditManager_verifyCursorIsVisible(em, obj);
+
 
 			// Indicate we did something
 			return(true);
@@ -2904,14 +2901,16 @@ _asm int 3;
 //////
 	bool iEditManager_navigateTo_XY(SEM* em, SObject* obj, s32 x, s32 y)
 	{
-		bool	llResult;
-		RECT	lrc;
-		SFont*	font;
+		s32			lnI, lnRow;
+		bool		llResult;
+		RECT		lrc;
+		SEdit*		edit;
+		SFont*		font;
 
 
 		// Make sure our environment is sane
 		llResult = false;
-		if (em && obj)
+		if (em && em->ecTopLine && obj)
 		{
 			//////////
 			// Grab the rectangle we're working in
@@ -2922,7 +2921,33 @@ _asm int 3;
 			//////////
 			// See which row and column the click would be on
 			//////
-// TODO:  Working here
+				lnRow		= y / font->tm.tmHeight;
+				em->column	= x / font->tm.tmAveCharWidth;
+
+
+			//////////
+			// Move to that location
+			//////`
+				edit = em->ecTopLine;
+				for (lnI = 0, edit = em->ecTopLine; edit && edit->ll.next && lnI < lnRow; lnI++)
+					edit = (SEdit*)edit->ll.next;
+
+
+			///////////
+			// At this point, edit is what should be the cursor line
+			//////
+				em->ecCursorLineLast	= em->ecCursorLine;
+				em->ecCursorLine		= edit;
+
+
+			//////////
+			// Verify we're visible
+			//////
+				iEditManager_verifyCursorIsVisible(em, obj);
+
+
+			// Indicate success
+			llResult = true;
 		}
 
 		// Indicate our status
