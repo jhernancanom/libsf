@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr.h
 //
 //////
-// Version 0.37
+// Version 0.38
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -52,9 +52,11 @@
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <Shobjidl.h>
 #include "resource.h"
+
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 #include "vjr_const.h"
 

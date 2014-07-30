@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr.cpp
 //
 //////
-// Version 0.37
+// Version 0.38
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -80,16 +80,20 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 //////
 	void iInit_vjr(HACCEL* hAccelTable)
 	{
-//		HRESULT		hRes;
-		RECT		lrc;
+		RECT lrc;
 
 
 		// Keyboard shortcuts
 		*hAccelTable = LoadAccelerators(ghInstance, MAKEINTRESOURCE(IDC_VJR));
 
+//////////
+// Jul.29.2014
+// Removed due to limitations in the Shobjidl.h in MinGW.  Can be manually re-added with copy-and-paste... enjoy doing that! :-)
 //		// Taskbar interface
+//		HRESULT		hRes;
 //		hRes = OleInitialize(NULL);
 //		CoCreateInstance(CLSID_TaskbarList, 0, CLSCTX_INPROC_SERVER, IID_ITaskbarList, (void**)&giTaskbar);
+//////////
 
 		// Initialize our builder
 		iBuilder_createAndInitialize(&gWindows,	-1);
@@ -193,24 +197,24 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		{
 			iEditManager_appendLine(screenData, (s8*)cgcScreenTitle, -1);
 			iEditManager_appendLine(screenData, NULL, 0);
-			iEditManager_appendLine(screenData, "Please report any bugs:  http://www.visual-freepro.org/forum", -1);
-			iEditManager_appendLine(screenData, "Thank you, and may the Lord Jesus Christ bless you richly. :-)", -1);
+			iEditManager_appendLine(screenData, (s8*)"Please report any bugs:  http://www.visual-freepro.org/forum", -1);
+			iEditManager_appendLine(screenData, (s8*)"Thank you, and may the Lord Jesus Christ bless you richly. :-)", -1);
 			iEditManager_appendLine(screenData, NULL, 0);
-			iEditManager_appendLine(screenData, "              _____", -1);
-			iEditManager_appendLine(screenData, "             |     |", -1);
-			iEditManager_appendLine(screenData, "             |     |", -1);
-			iEditManager_appendLine(screenData, "     ________|     |________     In God's sight we've come together.", -1);
-			iEditManager_appendLine(screenData, "    |                       |    We've come together to help each other.", -1);
-			iEditManager_appendLine(screenData, "    |________       ________|    Let's grow this project up ... together!", -1);
-			iEditManager_appendLine(screenData, "             |     |             In service and love to The Lord, forever!", -1);
-			iEditManager_appendLine(screenData, "             |     |", -1);
-			iEditManager_appendLine(screenData, "             |     |             Sponsored by:", -1);
-			iEditManager_appendLine(screenData, "             |     |                LibSF -- Liberty Software Foundation", -1);
-			iEditManager_appendLine(screenData, "             |     |", -1);
-			iEditManager_appendLine(screenData, "             |     |             We need more coders. Please consider helping out.", -1);
-			iEditManager_appendLine(screenData, "             |     |             Your contribution would make a difference.", -1);
-			iEditManager_appendLine(screenData, "             |     |", -1);
-			iEditManager_appendLine(screenData, "             |_____|", -1);
+			iEditManager_appendLine(screenData, (s8*)"              _____", -1);
+			iEditManager_appendLine(screenData, (s8*)"             |     |", -1);
+			iEditManager_appendLine(screenData, (s8*)"             |     |", -1);
+			iEditManager_appendLine(screenData, (s8*)"     ________|     |________     In God's sight we've come together.", -1);
+			iEditManager_appendLine(screenData, (s8*)"    |                       |    We've come together to help each other.", -1);
+			iEditManager_appendLine(screenData, (s8*)"    |________       ________|    Let's grow this project up ... together!", -1);
+			iEditManager_appendLine(screenData, (s8*)"             |     |             In service and love to The Lord, forever!", -1);
+			iEditManager_appendLine(screenData, (s8*)"             |     |", -1);
+			iEditManager_appendLine(screenData, (s8*)"             |     |             Sponsored by:", -1);
+			iEditManager_appendLine(screenData, (s8*)"             |     |                LibSF -- Liberty Software Foundation", -1);
+			iEditManager_appendLine(screenData, (s8*)"             |     |", -1);
+			iEditManager_appendLine(screenData, (s8*)"             |     |             We need more coders. Please consider helping out.", -1);
+			iEditManager_appendLine(screenData, (s8*)"             |     |             Your contribution would make a difference.", -1);
+			iEditManager_appendLine(screenData, (s8*)"             |     |", -1);
+			iEditManager_appendLine(screenData, (s8*)"             |_____|", -1);
 			iEditManager_appendLine(screenData, NULL, 0);
 		}
 		// Navigate to the end of the content
@@ -220,12 +224,12 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		// Load in the history if it exists
 		if (!iEditManager_loadFromDisk(command_editbox->pa.em, NULL, (s8*)cgcCommandHistoryFilename, true))
 		{
-			iEditManager_appendLine(command_editbox->pa.em, "*** Welcome to Visual FreePro, Junior! :-)", -1);
-			iEditManager_appendLine(command_editbox->pa.em, "*** For now, this can be thought of as a command window ... with a twist.", -1);
-			iEditManager_appendLine(command_editbox->pa.em, "*** It works like an editor window.  You can insert new lines, edit old ones, etc.", -1);
-			iEditManager_appendLine(command_editbox->pa.em, "*** To execute a command, press F6 or Enter if you're on the last line, or use F6 on any line.", -1);
-			iEditManager_appendLine(command_editbox->pa.em, "*** You can use clear, quit, ? 999, ? \"sample\" (literals), and ? _startupTime (global variable) in this daily build.", -1);
-			iEditManager_appendLine(command_editbox->pa.em, "*** Remember this always:  Love makes you smile. It keeps an inward peace unlike any other. :-)", -1);
+			iEditManager_appendLine(command_editbox->pa.em, (s8*)"*** Welcome to Visual FreePro, Junior! :-)", -1);
+			iEditManager_appendLine(command_editbox->pa.em, (s8*)"*** For now, this can be thought of as a command window ... with a twist.", -1);
+			iEditManager_appendLine(command_editbox->pa.em, (s8*)"*** It works like an editor window.  You can insert new lines, edit old ones, etc.", -1);
+			iEditManager_appendLine(command_editbox->pa.em, (s8*)"*** To execute a command, press F6 or Enter if you're on the last line, or use F6 on any line.", -1);
+			iEditManager_appendLine(command_editbox->pa.em, (s8*)"*** You can use clear, quit, ? 999, ? \"sample\" (literals), and ? _startupTime (global variable) in this daily build.", -1);
+			iEditManager_appendLine(command_editbox->pa.em, (s8*)"*** Remember this always:  Love makes you smile. It keeps an inward peace unlike any other. :-)", -1);
 		}
 		// Navigate to the last line
 		iEditManager_navigateEnd(command_editbox->pa.em, command_editbox);

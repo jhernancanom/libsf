@@ -3,7 +3,7 @@
 // /libsf/source/vjr/bitmaps.cpp
 //
 //////
-// Version 0.37
+// Version 0.38
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -1494,7 +1494,7 @@
 		lnWidth		= trc->right - trc->left;
 		lnHeight	= trc->bottom - trc->top;
 
-		StretchBlt(bmpDst->hdc, trc->left, trc->right, lnWidth, lnHeight, bmpSrc->hdc, tnX, tnY, lnWidth, lnHeight, SRCCOPY);
+		StretchBlt(bmpDst->hdc, trc->left, trc->top, lnWidth, lnHeight, bmpSrc->hdc, tnX, tnY, lnWidth, lnHeight, SRCCOPY);
 // iBmp_saveToDisk(bmpDst, "c:\\temp\\publish\\extract.bmp");
 		return(lnWidth * lnHeight * (bmpDst->bi.biBitCount / 8));
 	}

@@ -3,7 +3,7 @@
 // /libsf/source/vjr/callbacks.cpp
 //
 //////
-// Version 0.37
+// Version 0.38
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -121,13 +121,33 @@
 
 	bool iDefaultCallback_onMouseMove(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick)
 	{
-		// Assume we consumed the mouse move, and that the parent doesn't need to receive it
+		f64 lfPercent, lfX, lfY, lfWidth, lfHeight;
+
+
+		if (tnClick != 0 && obj->objType == _OBJ_TYPE_RADIO)
+		{
+			// The mouse indicates the position
+			// Determine theta
+			lfWidth							= (f64)(obj->rc.right  - obj->rc.left);
+			lfHeight						= (f64)(obj->rc.bottom - obj->rc.top);
+			lfX								= (f64)x - (lfWidth / 2.0);
+			lfY								= (lfHeight - (f64)y) - (lfHeight / 2.0);
+
+			lfPercent						= atan2(lfY, lfX) / (M_PI * 2.0);
+			if (lfPercent < 0.0)
+				lfPercent += 1.0;
+
+			*obj->pa.value->value.data_f64	= *obj->pa.minValue->value.data_f64 + (lfPercent * (*obj->pa.maxValue->value.data_f64 - *obj->pa.minValue->value.data_f64));
+			iObj_setDirtyRender(obj, true);
+			iWindow_render(win, false);
+		}
 		return(false);
 	}
 
 	bool iDefaultCallback_onMouseDown(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick)
 	{
-		bool llMouseDown;
+		bool	llMouseDown;
+		f64		lfPercent, lfX, lfY, lfWidth, lfHeight;
 
 
 		// Set the flag
@@ -147,12 +167,24 @@
 			iObj_setSize(obj->parent,
 							obj->parent->rc.left,
 							obj->parent->rc.top,
-							obj->parent->rc.right - obj->parent->rc.left,
+							obj->parent->rc.right  - obj->parent->rc.left,
 							obj->parent->rc.bottom - obj->parent->rc.top);
 
 		} else if (obj->objType == _OBJ_TYPE_EDITBOX) {
 			// Need to navigate to the indicated x,y coordinate
 			iEditManager_navigateTo_XY(obj->pa.em, obj, x, y);
+
+		} else if (obj->objType == _OBJ_TYPE_RADIO) {
+			// The mouse indicates the position
+			// Determine theta
+			lfWidth							= (f64)(obj->rc.right  - obj->rc.left);
+			lfHeight						= (f64)(obj->rc.bottom - obj->rc.top);
+			lfX								= (f64)x - (lfWidth / 2.0);
+			lfY								= (lfHeight - (f64)y) - (lfHeight / 2.0);
+			lfPercent						= atan2(lfY, lfX) / (M_PI * 2.0);
+			if (lfPercent < 0.0)
+				lfPercent += 1.0;
+			*obj->pa.value->value.data_f64	= *obj->pa.minValue->value.data_f64 + (lfPercent * (*obj->pa.maxValue->value.data_f64 - *obj->pa.minValue->value.data_f64));
 
 		} else {
 			// Assume we consumed the mouse down event, and that the parent doesn't need to receive it

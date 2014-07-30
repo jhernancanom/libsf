@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_structs0.h
 //
 //////
-// Version 0.37
+// Version 0.38
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:

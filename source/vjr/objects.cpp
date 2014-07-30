@@ -3,7 +3,7 @@
 // /libsf/source/vjr/objects.cpp
 //
 //////
-// Version 0.37
+// Version 0.38
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -1273,11 +1273,11 @@
 							{
 								default:
 								case _ALIGNMENT_LEFT:
-									iObj_setSize(objChild, tnHeight + 4, 0, obj->rc.right - obj->rc.left - tnHeight - 4, tnHeight);
+									iObj_setSize(objChild, tnHeight, 0, obj->rc.right - obj->rc.left - tnHeight, tnHeight);
 									break;
 
 								case _ALIGNMENT_RIGHT:
-									iObj_setSize(objChild, 0, 0, obj->rc.right - obj->rc.left - tnHeight - 4, tnHeight);
+									iObj_setSize(objChild, 0, 0, obj->rc.right - obj->rc.left - tnHeight, tnHeight);
 									break;
 							}
 
@@ -3525,9 +3525,15 @@
 
 			radio->p.alignment					= _ALIGNMENT_LEFT;
 			radio->p.style						= _STYLE_3D;
-			iVariable_reset(radio->pa.value);
-			radio->p.minValue					= 0;
-			radio->p.maxValue					= 100;
+			iVariable_delete(radio->pa.value, true);
+			iVariable_delete(radio->pa.minValue, true);
+			iVariable_delete(radio->pa.maxValue, true);
+			radio->pa.value						= iVariable_create(_VAR_TYPE_F64, NULL);
+			radio->pa.minValue					= iVariable_create(_VAR_TYPE_F64, NULL);
+			radio->pa.maxValue					= iVariable_create(_VAR_TYPE_F64, NULL);
+			*radio->pa.value->value.data_f64	= 1.0;
+			*radio->pa.minValue->value.data_f64	= 1.0;
+			*radio->pa.maxValue->value.data_f64	= 100.0;
 			radio->p.roundTo					= 1.0f;
 
 			radio->p.isOpaque					= true;
@@ -4137,19 +4143,19 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 						break;
 				}
 
-				// Adjust if required
-				if (obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX)
-				{
-					// Adjust for the label
-					SetRect(&lrc2, lrc.left + 4, lrc.top, lrc.right, lrc.bottom);
+				// Copy the rectangle
+				CopyRect(&lrc2, &lrc);
 
-				} else {
-					// Copy the rectangle
-					CopyRect(&lrc2, &lrc);
-				}
+				// Adjust if need be
+				if (obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX)
+					lrc.left += 4;
 
 				// Draw the text
 				DrawText(obj->bmp->hdc, obj->pa.caption.data, obj->pa.caption.length, &lrc, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
+
+				// And adjust back if need be
+				if (obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX)
+					lrc.left -= 4;
 
 				// Frame rectangle
 				if (obj->p.isBorder)
@@ -4614,8 +4620,14 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 //////
 	u32 iSubobj_renderRadio(SObject* obj)
 	{
-		u32		lnPixelsRendered;
-		RECT	lrc;
+		u32			lnPixelsRendered, lnXCenter, lnYCenter, errorNum, lnSkip;
+		bool		error;
+		f32			lfTheta, lfRadius;
+		f64			lfValue, lfMin, lfMax;
+		SBitmap*	bmpRadioScale;
+		RECT		lrc, lrc2;
+		s8*			lcSprintfFormat;
+		s8			buffer[64];
 
 
 		// Make sure our environment is sane
@@ -4627,10 +4639,80 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 			if (obj->isDirtyRender)
 			{
-				// Scale the base into it
-				iBmp_scale(obj->bmp, bmpRadio);
+				//////////
+				// Get the values
+				//////
+					lfValue = iiVariable_getAs_f64(obj->pa.value, true, &error, &errorNum);
+					if (error)	lfValue = 0.0;
 
-				// Position the dial based on settings
+					lfMin = iiVariable_getAs_f64(obj->pa.minValue, true, &error, &errorNum);
+					if (error)	lfMin = 1.0;
+
+					lfMax = iiVariable_getAs_f64(obj->pa.maxValue, true, &error, &errorNum);
+					if (error)	lfMax = lfMin;
+
+					// Make sure max is greater than or equal to min, and value is in range
+					lfMax	= max(lfMin, lfMax);
+					lfValue	= min(max(lfValue, lfMin), lfMax);
+
+					// Determine the percentage
+					lfTheta	= (f32)((lfValue - lfMin) / (lfMax - lfMin)) * (f32)(M_PI * 2.0);
+
+
+				//////////
+				// Determine the scaling ratio for the dial indicator
+				//////
+					// Create a copy for later scaling
+					bmpRadioScale = iBmp_allocate();
+					iBmp_createBySize(bmpRadioScale, bmpRadio->bi.biWidth, bmpRadio->bi.biHeight, 24);
+					bmpRadioScale = iBmp_copy(bmpRadio);
+
+
+				//////////
+				// Compute the position the dial indicator based on settings, and build the lrc2 on it
+				//////
+					lfRadius	= (f32)bmpRadioScale->bi.biWidth * 0.225f;
+					lnXCenter	= (u32)(((f32)bmpRadioScale->bi.biWidth  / 2.0f));
+					lnYCenter	= (u32)(((f32)bmpRadioScale->bi.biHeight / 2.0f));
+
+					// Build the rect
+					SetRect(&lrc2,	(u32)(lnXCenter + (lfRadius * cos(lfTheta)) - (bmpRadioDot->bi.biWidth / 2)),
+									(u32)(lnYCenter - (lfRadius * sin(lfTheta)) - (bmpRadioDot->bi.biHeight / 2)),
+									0, 0);
+					
+					lrc2.right	= lrc2.left	+ bmpRadioDot->bi.biWidth;
+					lrc2.bottom	= lrc2.top	+ bmpRadioDot->bi.biHeight;
+					iBmp_bitBltMask(bmpRadioScale, &lrc2, bmpRadioDot);
+
+
+				// Scale the base into it
+				iBmp_scale(obj->bmp, bmpRadioScale);
+
+				// Delete the scaled dot
+				iBmp_delete(&bmpRadioScale, true, true);
+
+
+				//////////
+				// Draw the text of the value into the center
+				//////
+					lcSprintfFormat = iMath_roundTo(&lfValue, obj->p.roundTo);
+					sprintf(buffer, lcSprintfFormat, lfValue);
+
+					if (buffer[strlen(buffer)] == '.')
+						buffer[strlen(buffer)] = 0;
+
+					lnSkip = iSkipWhitespaces(buffer, strlen(buffer));
+
+					SetRect(&lrc2,	obj->bmp->bi.biWidth / 7,
+									(obj->bmp->bi.biHeight / 2) - (obj->bmp->bi.biHeight / 7),
+									obj->bmp->bi.biWidth * 6 / 7,
+									(obj->bmp->bi.biHeight / 2) + (obj->bmp->bi.biHeight / 7));
+					
+					SetTextColor(obj->bmp->hdc, RGB(obj->p.foreColor.red, obj->p.foreColor.grn, obj->p.foreColor.blu));
+					SetBkMode(obj->bmp->hdc, TRANSPARENT);
+					SelectObject(obj->bmp->hdc, ((obj->pa.font) ? obj->pa.font : gsFontDefault));
+					DrawText(obj->bmp->hdc, buffer + lnSkip, strlen(buffer + lnSkip), &lrc2, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
+
 
 				// Colorize
 				     if (obj->ev.mouse.isMouseDown)		iBmp_colorizeMask(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);

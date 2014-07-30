@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_structs.h
 //
 //////
-// Version 0.37
+// Version 0.38
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -479,8 +479,6 @@ struct SProperties
 	u32			optionCount;											// How many options are there?
 	bool		multiSelect;											// Allow multiple items to be selected?
 
-	f64			minValue;												// Minimum value to display
-	f64			maxValue;												// Maximum value to display
 	f64			roundTo;												// Round 10=tens place, 1=whole integers, 0.1=one decimal place, 0.01=two decimal places, and so on
 };
 
@@ -501,6 +499,8 @@ struct SPropertiesA
 	SDatum		tag;
 
 	SVariable*	value;													// Value for the control
+	SVariable*	minValue;												// Minimum value for the control
+	SVariable*	maxValue;												// Maximum value for the control
 	SVariable*	picture;												// Picture for the control
 	SVariable*	mask;													// Input mask for the control
 

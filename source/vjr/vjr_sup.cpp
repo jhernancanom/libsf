@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_sup.cpp
 //
 //////
-// Version 0.37
+// Version 0.38
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -1359,6 +1359,50 @@
 	{
 		return(tnBaseValue - tnSubtractionValue);
 	}
+;
+
+
+
+
+//////////
+//
+// Called to round the value to the indicated decimal place
+//
+//////
+	s8* iMath_roundTo(f64* tfValue, f64 tfRoundTo)
+	{
+		if (tfRoundTo == 1000.0)				{ *tfValue = ((f64)((s64)(*tfValue / 1000.0)) * 1000.0);						return((s8*)"%15.0lf"); }
+		if (tfRoundTo == 100.0)					{ *tfValue = ((f64)((s64)(*tfValue / 100.0)) * 100.0);							return((s8*)"%15.0lf"); }
+		if (tfRoundTo == 10.0)					{ *tfValue = ((f64)((s64)(*tfValue / 10.0)) * 10.0);							return((s8*)"%15.0lf"); }
+		if (tfRoundTo == 1.0)					{ /* This entry added for speed, as it's likely to be a very common round */	return((s8*)"%15.0lf"); }
+		if (tfRoundTo == 0.1)					{ *tfValue = ((f64)((s64)(*tfValue * 10.0)) / 10.0);							return((s8*)"%15.1lf"); }
+		if (tfRoundTo == 0.01)					{ *tfValue = ((f64)((s64)(*tfValue * 100.0)) / 100.0);							return((s8*)"%15.2lf"); }
+		if (tfRoundTo == 0.001)					{ *tfValue = ((f64)((s64)(*tfValue * 1000.0)) / 1000.0);						return((s8*)"%15.3lf"); }
+		if (tfRoundTo == 0.0001)				{ *tfValue = ((f64)((s64)(*tfValue * 10000.0)) / 10000.0);						return((s8*)"%15.4lf"); }
+		if (tfRoundTo == 0.00001)				{ *tfValue = ((f64)((s64)(*tfValue * 100000.0)) / 100000.0);					return((s8*)"%15.5lf"); }
+		if (tfRoundTo == 0.000001)				{ *tfValue = ((f64)((s64)(*tfValue * 1000000.0)) / 1000000.0);					return((s8*)"%15.6lf"); }
+		if (tfRoundTo == 0.0000001)				{ *tfValue = ((f64)((s64)(*tfValue * 10000000.0)) / 10000000.0);				return((s8*)"%15.7lf"); }
+		if (tfRoundTo == 0.00000001)			{ *tfValue = ((f64)((s64)(*tfValue * 100000000.0)) / 100000000.0);				return((s8*)"%15.8lf"); }
+		if (tfRoundTo == 0.000000001)			{ *tfValue = ((f64)((s64)(*tfValue * 1000000000.0)) / 1000000000.0);			return((s8*)"%15.9lf"); }
+		if (tfRoundTo == 0.0000000001)			{ *tfValue = ((f64)((s64)(*tfValue * 10000000000.0)) / 10000000000.0);			return((s8*)"%15.10lf"); }
+		if (tfRoundTo == 0.00000000001)			{ *tfValue = ((f64)((s64)(*tfValue * 100000000000.0)) / 100000000000.0);		return((s8*)"%15.11lf"); }
+		if (tfRoundTo == 0.000000000001)		{ *tfValue = ((f64)((s64)(*tfValue * 1000000000000.0)) / 1000000000000.0);		return((s8*)"%15.12lf"); }
+		if (tfRoundTo == 0.0000000000001)		{ *tfValue = ((f64)((s64)(*tfValue * 10000000000000.0)) / 10000000000000.0);	return((s8*)"%15.13lf"); }
+		if (tfRoundTo == 100000000000000.0)		{ *tfValue = ((f64)((s64)(*tfValue / 100000000000000.0)) * 100000000000000.0);	return((s8*)"%15.0lf"); }
+		if (tfRoundTo == 10000000000000.0)		{ *tfValue = ((f64)((s64)(*tfValue / 10000000000000.0)) * 10000000000000.0);	return((s8*)"%15.0lf"); }
+		if (tfRoundTo == 1000000000000.0)		{ *tfValue = ((f64)((s64)(*tfValue / 1000000000000.0)) * 1000000000000.0);		return((s8*)"%15.0lf"); }
+		if (tfRoundTo == 100000000000.0)		{ *tfValue = ((f64)((s64)(*tfValue / 100000000000.0)) * 100000000000.0);		return((s8*)"%15.0lf"); }
+		if (tfRoundTo == 10000000000.0)			{ *tfValue = ((f64)((s64)(*tfValue / 10000000000.0)) * 10000000000.0);			return((s8*)"%15.0lf"); }
+		if (tfRoundTo == 1000000000.0)			{ *tfValue = ((f64)((s64)(*tfValue / 1000000000.0)) * 1000000000.0);			return((s8*)"%15.0lf"); }
+		if (tfRoundTo == 100000000.0)			{ *tfValue = ((f64)((s64)(*tfValue / 100000000.0)) * 100000000.0);				return((s8*)"%15.0lf"); }
+		if (tfRoundTo == 10000000.0)			{ *tfValue = ((f64)((s64)(*tfValue / 10000000.0)) * 10000000.0);				return((s8*)"%15.0lf"); }
+		if (tfRoundTo == 1000000.0)				{ *tfValue = ((f64)((s64)(*tfValue / 1000000.0)) * 1000000.0);					return((s8*)"%15.0lf"); }
+		if (tfRoundTo == 100000.0)				{ *tfValue = ((f64)((s64)(*tfValue / 100000.0)) * 100000.0);					return((s8*)"%15.0lf"); }
+		if (tfRoundTo == 10000.0)				{ *tfValue = ((f64)((s64)(*tfValue / 10000.0)) * 10000.0);						return((s8*)"%15.0lf"); }
+
+		// If we get here, an unknown value
+		return((s8*)"%.0lf");
+	}
 
 
 
@@ -1934,7 +1978,7 @@
 								obj->ev.mouse.onMouseMove(win, obj, 
 															win->mousePosition.x - lrc.left, 
 															win->mousePosition.y - lrc.top, 
-															win->isCtrl, win->isAlt, win->isShift, obj->ev.mouse.thisClick);
+															win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
 							}
 
 					} else {
@@ -1953,7 +1997,7 @@
 								obj->ev.mouse.onMouseMove(win, obj, 
 															win->mousePosition.x - lrcClient.left, 
 															win->mousePosition.y - lrcClient.top, 
-															win->isCtrl, win->isAlt, win->isShift, obj->ev.mouse.thisClick);
+															win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
 							}
 					}
 
@@ -2033,7 +2077,7 @@
 								obj->ev.mouse.onMouseDown(win, obj, 
 															win->mousePosition.x - lrc.left, 
 															win->mousePosition.y - lrc.top, 
-															win->isCtrl, win->isAlt, win->isShift, obj->ev.mouse.thisClick);
+															win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
 						
 
 						//////////
@@ -2043,7 +2087,7 @@
 								obj->ev.mouse.onMouseClickEx(win, obj, 
 																win->mousePosition.x - lrc.left, 
 																win->mousePosition.y - lrc.top, 
-																win->isCtrl, win->isAlt, win->isShift, obj->ev.mouse.thisClick);
+																win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
 
 					} else if (PtInRect(&lrc, win->mousePosition)) {
 						//////////
@@ -2061,7 +2105,7 @@
 								obj->ev.mouse.onMouseDown(win, obj, 
 															win->mousePosition.x - lrcClient.left, 
 															win->mousePosition.y - lrcClient.top, 
-															win->isCtrl, win->isAlt, win->isShift, obj->ev.mouse.thisClick);
+															win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
 						
 
 						//////////
@@ -2071,7 +2115,7 @@
 								obj->ev.mouse.onMouseClickEx(win, obj, 
 																win->mousePosition.x - lrcClient.left, 
 																win->mousePosition.y - lrcClient.top, 
-																win->isCtrl, win->isAlt, win->isShift, obj->ev.mouse.thisClick);
+																win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
 					}
 
 
@@ -2141,7 +2185,7 @@
 								obj->ev.mouse.onMouseUp(win, obj, 
 															win->mousePosition.x - lrc.left, 
 															win->mousePosition.y - lrc.top, 
-															win->isCtrl, win->isAlt, win->isShift, obj->ev.mouse.thisClick);
+															win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
 
 					} else if (PtInRect(&lrc, win->mousePosition)) {
 						//////////
@@ -2156,7 +2200,7 @@
 								obj->ev.mouse.onMouseUp(win, obj, 
 															win->mousePosition.x - lrcClient.left, 
 															win->mousePosition.y - lrcClient.top, 
-															win->isCtrl, win->isAlt, win->isShift, obj->ev.mouse.thisClick);
+															win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
 					}
 
 

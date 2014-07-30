@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_defs.h
 //
 //////
-// Version 0.37
+// Version 0.38
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -243,7 +243,10 @@
 	s64						iTime_getLocalMs						(void);
 	s8						iLowerCase								(s8 c);
 	s8						iUpperCase								(s8 c);
+
 	s64						iMath_delta								(s64 tnBaseValue, s64 tnSubtractionValue);
+	s8*						iMath_roundTo							(f64* tfValue, f64 tfRoundTo);
+
 	s8*						iDuplicateString						(s8* tcText);
 	SFont*					iFont_allocate							(void);
 	SFont*					iFont_duplicate							(SFont* fontSource);
