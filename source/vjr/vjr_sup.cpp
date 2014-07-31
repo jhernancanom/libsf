@@ -987,7 +987,7 @@
 		WNDCLASSEX	wcex;
 		ATOM		atom;
 		HRGN		lrgn;
-		RECT		lrc, lrcParent;
+		RECT		lrc, lrcp, lrcParent;
 
 
 		//////////
@@ -1021,11 +1021,11 @@
 		//////////
 		// If the window needs repositioned or resized, do so
 		//////
-			GetWindowRect(focus->win->hwnd, &focus->rcp);
-			CopyRect(&lrcParent, &focus->rcp);
+			GetWindowRect(focus->win->hwnd, &lrcp);
+			CopyRect(&lrcParent, &lrcp);
 			AdjustWindowRect(&lrcParent, GetWindowLong(focus->win->hwnd, GWL_STYLE), (GetMenu(focus->win->hwnd) != NULL));
-			lrcParent.left	= focus->rcp.left + (focus->rcp.left - focus->rcp.left);
-			lrcParent.top	= focus->rcp.top  + (focus->rcp.top  - focus->rcp.top);
+			lrcParent.left	= lrcp.left + (lrcp.left - lrcp.left);
+			lrcParent.top	= lrcp.top  + (lrcp.top  - lrcp.top);
 
 
 		//////////
@@ -1045,8 +1045,6 @@
 			focus->readWriteBrush	= CreateSolidBrush(RGB(focusHighlightReadWriteColor.red,	focusHighlightReadWriteColor.grn,	focusHighlightReadWriteColor.blu));
 			focus->readOnlyBrush	= CreateSolidBrush(RGB(focusHighlightReadOnlyColor.red,		focusHighlightReadOnlyColor.grn,	focusHighlightReadOnlyColor.blu));
 			GetWindowRect(focus->hwnd, &focus->rc);
-			CopyRect(&focus->rco, &focus->rc);
-			GetWindowRect(focus->win->hwnd,	&focus->rcp);
 
 
 		//////////
@@ -1197,6 +1195,151 @@
 				// All done
 				EndPaint(hwnd, &ps);
 				return(0);
+			}
+		}
+
+		// Default handler
+		return(DefWindowProc(hwnd, m, w, l));
+	}
+
+
+
+
+//////////
+//
+// Called to create a new tooltip at the indicated coordinates with the indicated text
+//
+//////
+	void iTooltip_create(RECT* rc, SBitmap* bmp, s32 tnTimeoutMs)
+	{
+		WNDCLASSEX	wcex;
+		ATOM		atom;
+		RECT		lrc, lrcParent;
+
+
+		//////////
+		// See if the class is already defined
+		//////
+			if (!GetClassInfoEx(GetModuleHandle(NULL), cgcTooltipClass, &wcex))
+			{
+				// We need to create said class with our class making skills
+				// If we get here, not yet registered
+				memset(&wcex, 0, sizeof(wcex));
+				wcex.cbSize         = sizeof(wcex);
+				wcex.style          = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+				wcex.lpfnWndProc    = (WNDPROC)&iTooltip_wndProc;
+				wcex.hInstance      = GetModuleHandle(NULL);
+				wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
+				wcex.lpszClassName  = cgcFocusHighlightClass;
+				atom				= RegisterClassExA(&wcex);
+
+				// Was it registered?
+				if (!atom)
+					return;		// Nope ... when we get here, failure
+			}
+
+
+		//////////
+		// Create the window
+		//////
+			gTooltip.hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, cgcTooltipClass, NULL, WS_POPUP, rc->left, rc->top, rc->right - rc->left, rc->bottom - rc->top, NULL, NULL, GetModuleHandle(NULL), 0);
+
+
+		//////////
+		// If the window needs repositioned or resized, do so
+		//////
+			GetWindowRect(gTooltip.win->hwnd, &lrc);
+			CopyRect(&lrcParent, &lrc);
+			AdjustWindowRect(&lrcParent, GetWindowLong(gTooltip.win->hwnd, GWL_STYLE), (GetMenu(gTooltip.win->hwnd) != NULL));
+			lrcParent.left	= lrc.left + (lrc.left - lrc.left);
+			lrcParent.top	= lrc.top  + (lrc.top  - lrc.top);
+
+
+		//////////
+		// Store the settings
+		//////
+			gTooltip.bmp		= bmp;
+			gTooltip.timeoutMs	= tnTimeoutMs;
+			GetWindowRect(gTooltip.hwnd, &gTooltip.rc);
+
+
+		//////////
+		// Display the window
+		//////
+			gTooltip.isValid = true;
+			SetWindowPos(gTooltip.hwnd, HWND_TOPMOST, lrcParent.left + rc->left, lrcParent.top + rc->top, rc->right - rc->left, rc->bottom - rc->top, SWP_SHOWWINDOW | SWP_NOACTIVATE);
+
+
+		//////////
+		// Create the timer
+		//////
+			SetTimer(gTooltip.hwnd, 0, _TOOLTIP_TIMER_INTERVAL, 0);		// Every 50ms (20x per second)
+	}
+
+
+
+
+//////////
+//
+// Called to delete a specific tooltip
+//
+//////
+	void iTooltip_delete(void)
+	{
+		if (gTooltip.isValid && gTooltip.bmp)
+		{
+			// Indicate it's no longer valid
+			gTooltip.isValid = false;
+
+			// Kill the timer
+			KillTimer(gTooltip.hwnd, 0);
+
+			// Delete the bitmap
+			iBmp_delete(&gTooltip.bmp, true, true);
+
+			// Delete the window
+			DestroyWindow(gTooltip.hwnd);
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to handle window events based on the tooltip
+//
+//////
+	LRESULT CALLBACK iTooltip_wndProc(HWND hwnd, UINT m, WPARAM w, LPARAM l)
+	{
+		HDC			lhdc;
+		PAINTSTRUCT	ps;
+
+
+		// The only message we handle is the paint
+		if (gTooltip.isValid && gTooltip.bmp)
+		{
+			switch (m)
+			{
+				case WM_TIMER:
+					// Decrease by our timer interval
+					gTooltip.timeoutMs -= _TOOLTIP_TIMER_INTERVAL;
+
+					// If we're reached the timeout interval, delete it
+					if (gTooltip.timeoutMs <= 0)
+						iTooltip_delete();
+					break;
+
+				case WM_PAINT:
+					// Start painting
+					lhdc = BeginPaint(hwnd, &ps);
+
+					// Paint it
+					BitBlt(lhdc, 0, 0, gTooltip.bmp->bi.biWidth, gTooltip.bmp->bi.biHeight, gTooltip.bmp->hdc, 0, 0, SRCCOPY);
+
+					// All done
+					EndPaint(hwnd, &ps);
+					return(0);
 			}
 		}
 

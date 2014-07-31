@@ -600,6 +600,17 @@ struct SFocusHighlight
 	HBRUSH		readOnlyBrush;										// Read-only color, reddish
 
 	RECT		rc;													// In screen coordinates
-	RECT		rco;												// The original screen coordinates when created
-	RECT		rcp;												// The parent's screen coordinates when created
+};
+
+struct STooltip
+{
+	bool		isValid;											// Is this item valid?
+
+	SWindow*	win;												// The window this tooltip entry relates to
+	SObject*	obj;												// The object owning the tip
+	s32			timeoutMs;											// Tooltips have a lifetime... in milliseconds
+
+	HWND		hwnd;												// The HWND for this window
+	RECT		rc;													// In screen coordinates
+	SBitmap*	bmp;												// The rendered bitmap for the tooltip
 };

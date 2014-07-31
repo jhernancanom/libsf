@@ -55,8 +55,9 @@
 	// Global variables
 	SVariable*			varGlobals							= NULL;									// All global variables are stored
 
-	// Focus highlight windows
+	// Focus highlight windows, and tooltip window
 	SBuilder*			gFocusHighlights					= NULL;									// Holds SFocusHighlight structures
+	STooltip			gTooltip;																	// Only one tooltip at a time (for now)
 
 	// App icons
 	SBitmap*			bmpVjrIcon							= NULL;

@@ -233,6 +233,10 @@
 	SFocusHighlight*		iFocusHighlight_findByObj				(SObject* obj);
 	LRESULT CALLBACK		iFocusHighlight_wndProc					(HWND hwnd, UINT m, WPARAM w, LPARAM l);
 
+	void					iTooltip_create							(RECT* rc, SBitmap* bmp, s32 tnTimeoutMs);
+	void					iTooltip_delete							(void);
+	LRESULT CALLBACK		iTooltip_wndProc						(HWND hwnd, UINT m, WPARAM w, LPARAM l);
+
 	void					iMisc_adjustColorBrightness				(SBgra& color, f32 tfPercent);
 	bool					iInit_shutdownPolitely					(void);
 

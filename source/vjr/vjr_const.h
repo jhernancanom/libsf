@@ -387,11 +387,16 @@ typedef SEM**		SEMpp;
 	const u32			_ALL								= _EMPTY + _FORM + _SUBFORM + _LABEL + _TEXTBOX + _BUTTON + _EDITBOX + _IMAGE + _CHECKBOX + _OPTION + _RADIO;
 
 
-
 //////////
 // Internal messages
 //////
 	const u32			WMVJR_FIRST_CREATION				= WM_USER + 1;
+
+
+//////////
+// For tooltips, 20x per second
+//////
+	const u32			_TOOLTIP_TIMER_INTERVAL				= 50;
 
 
 //////////
@@ -400,6 +405,7 @@ typedef SEM**		SEMpp;
 	const s8			cgcMessageWindowClass[]				= "VJr.MessageWindow";
 	const s8			cgcWindowClass[]					= "VJr.Window";
 	const s8			cgcFocusHighlightClass[]			= "VJr.FocusWindow";
+	const s8			cgcTooltipClass[]					= "VJr.TooltipWindow";
 	const s8			cgcScreenTitle[]					= "Visual FreePro, Jr. 0.39 -- Jul.30.2014";
 	const s8			cgcJDebiTitle[]						= "JDebi Debugger 0.39 -- Jul.30.2014";
 	const s8			cgcSourceCodeTitle[]				= "SourceCode";
