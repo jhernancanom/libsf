@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_const.h
 //
 //////
-// Version 0.39
+// Version 0.40
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -394,6 +394,20 @@ typedef SEM**		SEMpp;
 
 
 //////////
+// Sound plugin DLL and functions
+//////
+	const s8		cgcSoundDllPlugin[]									= "sound.dll";
+	const s8		cgcSoundStartupWav[]								= "startup_44100_f32.wav";
+	const s8		cgcOssSoundInitialize[]								= "oss_soundInitialize";
+	const s8		cgcOssSoundCreateTone[]								= "oss_soundCreateTone";
+	const s8		cgcOssSoundCreateStream[]							= "oss_soundCreateStream";
+	const s8		cgcOssSoundSetVolume[]								= "oss_soundSetVolume";
+	const s8		cgcOssSoundPlayStart[]								= "oss_soundPlayStart";
+	const s8		cgcOssSoundPlayCancel[]								= "oss_soundPlayCancel";
+	const s8		cgcOssSoundDelete[]									= "oss_soundDelete";
+
+
+//////////
 // For tooltips, 20x per second
 //////
 	const u32			_TOOLTIP_TIMER_INTERVAL				= 50;
@@ -407,20 +421,20 @@ typedef SEM**		SEMpp;
 	const s8			cgcFocusHighlightClass[]			= "VJr.FocusWindow";
 	const s8			cgcTooltipClass[]					= "VJr.TooltipWindow";
 	const s8			cgcSplashClass[]					= "VJr.SplashWindow";
-	const s8			cgcScreenTitle[]					= "Visual FreePro, Jr. 0.39 -- Jul.30.2014";
-	const s8			cgcJDebiTitle[]						= "JDebi Debugger 0.39 -- Jul.30.2014";
+	const s8			cgcScreenTitle[]					= "Visual FreePro, Jr. 0.40 -- Jul.31.2014";
+	const s8			cgcJDebiTitle[]						= "JDebi Debugger 0.40 -- Jul.31.2014";
 	const s8			cgcSourceCodeTitle[]				= "SourceCode";
 	const s8			cgcLocalsTitle[]					= "Locals";
 	const s8			cgcWatchTitle[]						= "Watch";
 	const s8			cgcCommandTitle[]					= "Command";
 	const s8			cgcDebugTitle[]						= "Debug";
 	const s8			cgcOutputTitle[]					= "Output";
-	const s8			cgcVersionText[]					= "Visual FreePro, Jr. 00.39.9999.9999 for Windows";
-	const s8			cgcVersion1Text[]					= "Visual FreePro, Jr. 00.39.9999.9999 for Windows [Jul.30.2014 00:00:00] Product ID 31415-926-5358979-32384";
+	const s8			cgcVersionText[]					= "Visual FreePro, Jr. 00.40.9999.9999 for Windows";
+	const s8			cgcVersion1Text[]					= "Visual FreePro, Jr. 00.40.9999.9999 for Windows [Jul.31.2014 00:00:00] Product ID 31415-926-5358979-32384";
 	const s32			gnVersion2							= 2;	// Professional
 	const s32			gnVersion3							= 0;	// English
-	const s8			cgcVersion4Text[]					= "00.39.9999.9999";
-	const s32			gnVersion5							= 39;	// 0.39
+	const s8			cgcVersion4Text[]					= "00.40.9999.9999";
+	const s32			gnVersion5							= 40;	// 0.40
 	const s8			cgcDefaultFontName[]				= "Ubuntu";
 	const s8			cgcDefaultFixedFontName[]			= "Ubuntu Mono";
 	const s8			cgcWindowTitleBarFontName[]			= "Ubuntu Condensed";

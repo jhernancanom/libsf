@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr.cpp
 //
 //////
-// Version 0.39
+// Version 0.40
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -86,6 +86,10 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		// Keyboard shortcuts
 		*hAccelTable = LoadAccelerators(ghInstance, MAKEINTRESOURCE(IDC_VJR));
 
+		// Initialize the sound system
+		isound_initialize();
+		memset(&gseRootSounds, 0, sizeof(gseRootSounds));	// Initialize our root sounds array
+
 //////////
 // Jul.29.2014
 // Removed due to limitations in the Shobjidl.h in MinGW.  Can be manually re-added with copy-and-paste... enjoy doing that! :-)
@@ -106,8 +110,11 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		systemStartedMs = iTime_getLocalMs();
 
 		// Load the splash screen
-		bmpVjrSplash			= iBmp_rawLoad(cgc_splashBmp);
+		bmpVjrSplash = iBmp_rawLoad(cgc_splashBmp);
 		CreateThread(0, 0, &iSplash_show, bmpVjrSplash, 0, 0);
+
+		// Play the startup music if any
+		CreateThread(0, 0, &iPlay_ariaSplash, (LPVOID)cgcSoundStartupWav, 0, 0);
 
 		// Default font
 		gsFontDefault				= iFont_create(cgcDefaultFontName,			10,	FW_NORMAL,	0, 0);

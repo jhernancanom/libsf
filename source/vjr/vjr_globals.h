@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_globals.h
 //
 //////
-// Version 0.39
+// Version 0.40
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -48,6 +48,12 @@
 	u32					gnNextUniqueId						= 0;
 	s64					systemStartedMs						= 0;
 
+	// For splash aria and general sound support
+	static union {
+		s8*				soundData_s8;
+		f32*			soundData_f32;
+	};
+	u32					soundOffset, soundLength;
 
 	// Window display histories
 	SEM*				screenData							= NULL;									// The data displayed on the screen

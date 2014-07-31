@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_structs.h
 //
 //////
-// Version 0.39
+// Version 0.40
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -622,4 +622,14 @@ struct SSplash
 	HWND		hwnd;												// The HWND to the splash screen
 	RECT		rc;													// In screen coordinates
 	SBitmap*	bmp;												// The rendered bitmap
+};
+
+// For VJr's sound
+struct _isSSoundCallback
+{
+	// Use this function as a template for the callback function sent to sound_createStream()
+	union {
+		u64		_callback;
+		void	(WINAPI *callback)	(f32* sampleBuffer, u32 tnSamples, bool* tlContinueAfterThisSampleSet);
+	};
 };

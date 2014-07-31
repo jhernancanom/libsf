@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_sup.cpp
 //
 //////
-// Version 0.39
+// Version 0.40
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -695,6 +695,85 @@
 
 		// Default handler
 		return(DefWindowProc(hwnd, m, w, l));
+	}
+
+
+
+
+//////////
+//
+// Called to play the startup aria while the splash screen is viable.
+//
+//////
+	DWORD WINAPI iPlay_ariaSplash(LPVOID lpParameter)
+	{
+		u32		stopTickCount;
+		f32		lfVolume;
+		u64		lnSoundHandle;
+
+
+		// Load the sound file (if it exists)
+		if (iFile_readContents((s8*)lpParameter, NULL, &soundData_s8, &soundLength))
+		{
+			// Begin at the beginning
+			soundOffset = 0;
+
+			// Attempt to create the sound stream
+			lnSoundHandle	= sound_createStream(44100, (u64)&iPlay_ariaSplash_callback);
+			lfVolume		= 1.0f;//0.25f;
+			sound_playStart(lnSoundHandle, lfVolume);
+
+			// Repeat until the splash screen is over, or the song ends
+			stopTickCount = GetTickCount() + 3500;
+			while ((gSplash.isValid && soundOffset < soundLength) || GetTickCount() < stopTickCount)
+			{
+				// Wait 1/10th second
+				Sleep(100);
+			}
+
+			// If we haven't finished, continue until the volume turns down after one second
+			while (soundOffset < soundLength && lfVolume > 0.0f)
+			{
+				// Turn down the volume 1/10th
+				lfVolume -= 0.025f;
+				sound_setVolume(lnSoundHandle, lfVolume);
+
+				// Wait 1/10th second
+				Sleep(100);
+			}
+			// When we get here, we're done playing
+			sound_playCancel(lnSoundHandle);
+
+			// Raise the termination flag until we can shut down the playback
+			soundOffset = soundLength;
+
+			// Free the sound buffer
+			free(soundData_s8);
+			soundData_s8 = NULL;
+
+			// Clear the handle
+			sound_deleteHandle(lnSoundHandle);
+		}
+
+		// Completed
+		return(0);
+	}
+
+	void WINAPI iPlay_ariaSplash_callback(f32* sampleBuffer, u32 tnSamples, bool* tlContinueAfterThisSampleSet)
+	{
+		u32 lnI;
+
+
+		// Make sure we have something to do
+		for (lnI = 0; lnI < tnSamples && soundData_f32 && soundOffset < soundLength; lnI++, soundOffset++)
+			sampleBuffer[lnI] = soundData_f32[soundOffset];
+
+		// Pad with 0.0s
+		for ( ; lnI < tnSamples; lnI++)
+			sampleBuffer[lnI] = 0.0f;
+
+		// Indicate if the sound should continue after this
+		*tlContinueAfterThisSampleSet = (soundOffset < soundLength);
 	}
 
 
@@ -1481,6 +1560,65 @@
 
 		// Default handler
 		return(DefWindowProc(hwnd, m, w, l));
+	}
+
+
+
+
+//////////
+//
+// Called to read the contents of the indicated file
+//
+//////
+	bool iFile_readContents(s8* tcFilename, FILE** tfh, s8** data, u32* dataLength)
+	{
+		u32		lnNumread;
+		FILE*	lfh;
+
+
+		// Make sure our environment is sane
+		if (tcFilename && data && dataLength)
+		{
+			// Try to open the file
+			lfh = fopen(tcFilename, "rb+");
+			if (lfh)
+			{
+				// Find out how big it is
+				fseek(lfh, 0, SEEK_END);
+				*dataLength = ftell(lfh);
+				fseek(lfh, 0, SEEK_SET);
+
+				// Allocate a buffer that large
+				*data = (s8*)malloc(*dataLength);
+				if (*data)
+				{
+					// Read the contents
+					lnNumread = fread(*data, 1, *dataLength, lfh);
+					if (lnNumread == *dataLength)
+					{
+						// We read everything
+						if (tfh)
+						{
+							// Save the file handle, return it open
+							*tfh = lfh;
+
+						} else {
+							// Close the file handle
+							fclose(lfh);
+						}
+
+						// Indicate success
+						return(true);
+					}
+
+				} else {
+					// Error allocating that much memory
+					fclose(lfh);
+				}
+			}
+		}
+		// If we get here, failure
+		return(false);
 	}
 
 

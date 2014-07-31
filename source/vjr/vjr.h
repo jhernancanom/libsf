@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr.h
 //
 //////
-// Version 0.39
+// Version 0.40
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -57,11 +57,13 @@
 
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include "sound\SDL-1.2.15\include\sdl\SDL.h"
+#include "sound\SDL-1.2.15\include\sdl\SDL_audio.h"
+#include <queue>
+#include <cmath>
 
 #include "vjr_const.h"
-
 #include "builder.cpp"
-
 #include "vjr_structs0.h"
 
 #include "compiler_const.h"
@@ -74,6 +76,7 @@
 #include "vjr_globals.h"
 
 #include "command_defs.h"
+#include "sound\sound.h"
 #include "engine.h"
 #include "edit_chain_manager.h"
 #include "edit_chain.h"
@@ -124,3 +127,4 @@
 #include "engine.cpp"
 #include "edit_chain_manager.cpp"
 #include "edit_chain.cpp"
+#include "sound\sound.cpp"

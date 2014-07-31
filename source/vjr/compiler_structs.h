@@ -3,7 +3,7 @@
 // /libsf/source/vjr/compiler_structs.h
 //
 //////
-// Version 0.39
+// Version 0.40
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:

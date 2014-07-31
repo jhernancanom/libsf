@@ -3,7 +3,7 @@
 // /libsf/source/vjr/compiler.cpp
 //
 //////
-// Version 0.39
+// Version 0.40
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -2720,6 +2720,73 @@ int3_break;
 		// If we get here, failure
 		return(NULL);
 	}
+
+
+
+
+//////////
+//
+// Search for the indicated uniqueId in the chain.
+//
+// Returns:
+//		NULL if error
+//		The associated pointer if found
+//
+//////
+	void* iSEChain_searchByUniqueId(SStartEnd* ptrSE, u64 tnUniqueId)
+	{
+		u32 lnI;
+
+
+		// Make sure the environment is sane
+		if (ptrSE)
+		{
+			// Iterate through the master list until we find the associated entry
+			for (lnI = 0; lnI < ptrSE->masterCount; lnI++)
+			{
+				if (ptrSE->master[lnI] && ptrSE->master[lnI]->used && ((SLL*)(ptrSE->master[lnI]->ptr))->uniqueId == tnUniqueId)
+				{
+					// We've found our man
+					return(ptrSE->master[lnI]->ptr);
+				}
+			}
+		}
+		// If we get here, failure
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Iterates through the indicated Start/End list, calling back the callback function for every item.
+//
+//////
+	void iSEChain_iterateThroughForCallback(SStartEnd* ptrSE, SStartEndCallback* cb)
+	{
+		u32 lnI;
+
+
+		// Make sure the environment is sane
+		if (ptrSE)
+		{
+			// Iterate through the master list calling every valid entry
+			for (lnI = 0; lnI < ptrSE->masterCount; lnI++)
+			{
+				// Give this to the caller for their processing
+				if (ptrSE->master[lnI] && ptrSE->master[lnI]->used)
+				{
+					// Store the pointer for the caller
+					cb->ptr = ptrSE->master[lnI]->ptr;
+
+					// Perform the call
+					cb->funcVoid(cb);
+				}
+			}
+		}
+	}
+
 
 
 

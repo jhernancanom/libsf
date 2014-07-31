@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_defs.h
 //
 //////
-// Version 0.39
+// Version 0.40
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -218,6 +218,9 @@
 	DWORD	WINAPI			iSplash_delete							(LPVOID/*bool tlWait*/ lpParameter);
 	LRESULT CALLBACK		iSplash_wndProc							(HWND hwnd, UINT m, WPARAM w, LPARAM l);
 
+	DWORD	WINAPI			iPlay_ariaSplash						(LPVOID lpParameter);
+	void WINAPI				iPlay_ariaSplash_callback				(f32* sampleBuffer, u32 tnSamples, bool* tlContinueAfterThisSampleSet);
+
 	DWORD	WINAPI			iReadEvents_messageWindow				(LPVOID lpParameter);
 	LRESULT	CALLBACK		iWindow_wndProcMessage					(HWND hwnd, UINT m, WPARAM w, LPARAM l);
 	LRESULT	CALLBACK		iWindow_wndProcForms					(HWND hwnd, UINT m, WPARAM w, LPARAM l);
@@ -240,6 +243,8 @@
 	void					iTooltip_create							(RECT* rc, SBitmap* bmp, s32 tnTimeoutMs);
 	void					iTooltip_delete							(void);
 	LRESULT CALLBACK		iTooltip_wndProc						(HWND hwnd, UINT m, WPARAM w, LPARAM l);
+
+	bool					iFile_readContents						(s8* tcFilename, FILE** tfh, s8** data, u32* dataLength);
 
 	void					iMisc_adjustColorBrightness				(SBgra& color, f32 tfPercent);
 	bool					iInit_shutdownPolitely					(void);
