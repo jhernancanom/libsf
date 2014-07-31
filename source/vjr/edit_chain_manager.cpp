@@ -1284,7 +1284,7 @@ int3_break;
 				//////////
 				// Determine the position
 				//////
-					SetRect(&lrc, rc.left, rc.top + lnTop, rc.right, rc.top + lnTop + font->tm.tmHeight - 1);
+					SetRect(&lrc, rc.left, rc.top + lnTop, rc.right, rc.top + lnTop + font->tm.tmHeight);
 					if (lrc.bottom > rc.bottom)
 						lrc.bottom = rc.bottom;
 
@@ -1365,7 +1365,7 @@ int3_break;
 				//////////
 				// Move down to the next row
 				//////
-					lnTop	+= font->tm.tmHeight;
+					lnTop	= lrc.bottom;
 					line	= (SEdit*)line->ll.next;
 			}
 
@@ -1395,12 +1395,12 @@ int3_break;
 //////
 	bool iEditManager_verifyCursorIsVisible(SEM* em, SObject* obj)
 	{
-		s32				lnI, lnUp, lnDn, lnNewLeftColumn, lnCols, lnRows, lnWidth, lnHeight;
-		bool			llChanged;
-		SEdit*		lineUp;
-		SEdit*		lineDn;
-		SFont*			font;
-		RECT			lrc;
+		s32		lnI, lnUp, lnDn, lnNewLeftColumn, lnCols, lnRows, lnWidth, lnHeight;
+		bool	llChanged;
+		SEdit*	lineUp;
+		SEdit*	lineDn;
+		SFont*	font;
+		RECT	lrc;
 
 
 		llChanged = false;
@@ -1423,8 +1423,8 @@ int3_break;
 					//////
 						lnWidth		= (lrc.right - lrc.left);
 						lnHeight	= (lrc.bottom - lrc.top);
-						lnCols		= max((lnWidth  / font->tm.tmAveCharWidth) - ((lnWidth  % font->tm.tmAveCharWidth) != 0 ? 1 : 0), 1);
-						lnRows		= max((lnHeight / font->tm.tmHeight)       - ((lnHeight % font->tm.tmHeight)       != 0 ? 1 : 0), 1);
+						lnCols		= max((lnWidth  / font->tm.tmAveCharWidth) - 1, 1);
+						lnRows		= max((lnHeight / font->tm.tmHeight)       - 1, 1);
 
 
 					//////////
@@ -1751,8 +1751,10 @@ int3_break;
 	bool iEditManager_navigatePages(SEM* em, SObject* obj, s32 deltaY)
 	{
 		s32		lnI;
+		bool	llMoveForward;
 		SFont*	font;
 		RECT	lrc;
+		SEdit*	line;
 
 
 		//////////
@@ -1772,12 +1774,45 @@ int3_break;
 					deltaY = deltaY * ((lrc.bottom - lrc.top) / font->tm.tmHeight);
 					if (deltaY > 0)
 					{
-						// Going forward
-						for (lnI = 0; em->ecCursorLine->ll.next && lnI != deltaY; lnI++)
+						// See how many lines there are left on the page
+						llMoveForward = true;
+						if (em->ecCursorLine != em->ecLast)
 						{
-							// Move the top line to the next line
-							em->ecTopLine		= (SEdit*)em->ecTopLine->ll.next;
-							em->ecCursorLine	= (SEdit*)em->ecCursorLine->ll.next;
+							// We're not on the last line, so we first see if we can navigate a partial page down without moving the top line
+							// before we reach the end of the file
+							line = em->ecCursorLine;
+							for (lnI = 0; line->ll.next && lnI != deltaY; lnI++)
+							{
+								// Move the cursor line to the next line
+								line = (SEdit*)line->ll.next;
+							}
+
+							// If we've reached the end before reaching our delta...then...
+							if (lnI != deltaY)
+							{
+								// We can do the partial page
+								em->ecCursorLine	= line;
+								llMoveForward		= false;
+							}
+						}
+
+						// Going forward
+						if (llMoveForward)
+						{
+							if (!em->ecCursorLine->ll.next && em->ecCursorLine != em->ecTopLine)
+							{
+								// We're already at the bottom, so just move down a line
+								em->ecTopLine = (SEdit*)em->ecTopLine->ll.next;
+
+							} else {
+								// Scroll the whole page
+								for (lnI = 0; em->ecCursorLine->ll.next && lnI != deltaY; lnI++)
+								{
+									// Move the top line to the next line
+									em->ecTopLine		= (SEdit*)em->ecTopLine->ll.next;
+									em->ecCursorLine	= (SEdit*)em->ecCursorLine->ll.next;
+								}
+							}
 						}
 
 					} else {

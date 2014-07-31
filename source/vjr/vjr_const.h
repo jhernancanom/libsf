@@ -158,6 +158,14 @@ typedef SEM**		SEMpp;
 #endif
 
 
+// Definitions missing in MinGW
+#if !defined(_MSC_VER)
+	// gcc
+	#define WM_MOUSEHWHEEL                  0x020E
+	#define CLEARTYPE_NATURAL_QUALITY       6
+#endif
+
+
 //////////
 // Reference datetimes
 //////

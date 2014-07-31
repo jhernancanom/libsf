@@ -30,33 +30,7 @@
   <Dependencies/>
   <VirtualDirectory Name="src">
     <File Name="../vjr.cpp"/>
-    <File Name="../vjr.h"/>
     <File Name="../vjr_sup.cpp" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../bitmaps.cpp" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../builder.cpp" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../callbacks.cpp" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../command_defs.h" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../commands.cpp" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../compiler.cpp" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../compiler_const.h" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../compiler_defs.h" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../compiler_globals.h" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../compiler_structs.h" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../edit_chain.cpp" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../edit_chain.h" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../edit_chain_manager.cpp" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../edit_chain_manager.h" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../engine.cpp" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../engine.h" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../events.cpp" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../object_accessors.cpp" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../object_accessors.h" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../objects.cpp" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../vjr_const.h" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../vjr_defs.h" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../vjr_globals.h" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../vjr_structs0.h" ExcludeProjConfig="Debug;Release"/>
-    <File Name="../vjr_structs.h" ExcludeProjConfig="Debug;Release"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
@@ -172,4 +146,36 @@
       </Completion>
     </Configuration>
   </Settings>
+  <VirtualDirectory Name="header">
+    <File Name="../compiler_const.h"/>
+    <File Name="../compiler_defs.h"/>
+    <File Name="../compiler_globals.h"/>
+    <File Name="../compiler_structs.h"/>
+    <File Name="../edit_chain.h"/>
+    <File Name="../edit_chain_manager.h"/>
+    <File Name="../engine.h"/>
+    <File Name="../object_accessors.h"/>
+    <File Name="../vjr.h"/>
+    <File Name="../vjr_const.h"/>
+    <File Name="../vjr_defs.h"/>
+    <File Name="../vjr_globals.h"/>
+    <File Name="../vjr_structs.h"/>
+    <File Name="../vjr_structs0.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="other">
+    <File Name="../bitmaps.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../builder.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../callbacks.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../compiler.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../edit_chain.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../edit_chain_manager.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../engine.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../events.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../object_accessors.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../objects.cpp" ExcludeProjConfig="Debug;Release"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="commands">
+    <File Name="../command_defs.h"/>
+    <File Name="../commands.cpp" ExcludeProjConfig="Debug;Release"/>
+  </VirtualDirectory>
 </CodeLite_Project>

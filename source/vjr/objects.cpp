@@ -223,7 +223,7 @@
 	{
 		// Clear the focus if we should
 		if (tlClearOtherControlsWithFocus)
-			iObj_clearFocus(win, iObj_findt_rootmostObject(obj), true, true);
+			iObj_clearFocus(win, iObj_find_rootmostObject(obj), true, true);
 
 		// Set the focus
 		if (!obj->p.hasFocus)
@@ -316,10 +316,10 @@
 // Finds the root parent and returns that value
 //
 //////
-	SObject* iObj_findt_rootmostObject(SObject* obj)
+	SObject* iObj_find_rootmostObject(SObject* obj)
 	{
 		// If there's a parent, continue up the chain
-		if (obj->parent)		return(iObj_findt_rootmostObject(obj->parent));
+		if (obj->parent)		return(iObj_find_rootmostObject(obj->parent));
 		else					return(obj);		// This is the parent-most object
 	}
 
@@ -401,7 +401,7 @@
 
 		// Make sure our environment is sane
 		focus = NULL;
-		if (win && obj)
+		if (win && obj && GetActiveWindow() == win->hwnd)
 		{
 			// Copy the variables
 			lnX = x + obj->rc.left;
@@ -3920,43 +3920,13 @@
 						// Draw the client area
 						SetRect(&lrc2, 8, obj->pa.bmpIcon->bi.biHeight + 2, lrc.right - obj->pa.bmpIcon->bi.biHeight - 2, lrc.bottom - obj->pa.bmpIcon->bi.biHeight - 1);
 						iBmp_fillRect(obj->bmp, &lrc2, white, white, white, white, false, NULL, false);
-// These rc* copies were added temporarily until the full object structure is coded and working
-//CopyRect(&form->rcClient, &lrc2);
 
 						// Put a border around the client area
 						InflateRect(&lrc2, 1, 1);
 						iBmp_frameRect(obj->bmp, &lrc2, black, black, black, black, false, NULL, false);
 
 
-// 					//////////
-// 					// Form icon and standard controls
-// 					//////
-// 						// Form icon
-// 						SetRect(&lrc3,	bmpArrowUl->bi.biWidth + 8, 1, bmpArrowUl->bi.biWidth + 8 + form->pa.bmpIcon->bi.biWidth, 1 + form->pa.bmpIcon->bi.biHeight);
-// 						iBmp_bitBltMask(form->bmp, &lrc3, form->pa.bmpIcon);
-// CopyRect(&form->rcIcon, &lrc3);
-// 
-// 						// Close
-// 						SetRect(&lrc2,	lrc.right - bmpArrowUr->bi.biWidth - 8 - bmpClose->bi.biWidth, lrc.top + 1, lrc.right - bmpArrowUr->bi.biWidth - 8, lrc.bottom - 1);
-// 						iBmp_bitBltMask(form->bmp, &lrc2, bmpClose);
-// CopyRect(&form->rcClose, &lrc2);
-// 
-// 						// Maximize
-// 						SetRect(&lrc2,	lrc2.left - bmpMaximize->bi.biWidth - 1, lrc2.top, lrc2.left - 1, lrc2.bottom);
-// 						iBmp_bitBltMask(form->bmp, &lrc2, bmpMaximize);
-// CopyRect(&form->rcMaximize, &lrc2);
-// 
-// 						// Minimize
-// 						SetRect(&lrc2,	lrc2.left - bmpMinimize->bi.biWidth - 1, lrc2.top, lrc2.left - 1, lrc2.bottom);
-// 						iBmp_bitBltMask(form->bmp, &lrc2, bmpMinimize);
-// CopyRect(&form->rcMinimize, &lrc2);
-// 
-// 						// Move
-// 						SetRect(&lrc4,	lrc2.left - bmpMove->bi.biWidth - 1, lrc2.top, lrc2.left - 1, lrc2.bottom);
-// 						iBmp_bitBltMask(form->bmp, &lrc4, bmpMove);
-// CopyRect(&form->rcMove, &lrc4);
-
-
+// Note:  Eventually these will be moved to form objects, like the icon, caption, and control buttons
 					//////////
 					// Resizing arrows
 					//////
@@ -3981,20 +3951,6 @@ CopyRect(&obj->rcArrowLl, &lrc2);
 CopyRect(&obj->rcArrowLr, &lrc2);
 
 
-// 					//////////
-// 					// Form caption
-// 					//////
-//						HFONT lhfontOld;
-//
-// 						SetRect(&lrc2, lrc3.right + 8, lrc3.top + 1, lrc4.right - 8, lrc3.bottom + 1);
-// CopyRect(&form->rcCaption, &lrc2);
-// 						lhfontOld = (HFONT)SelectObject(form->bmp->hdc, gsWindowTitleBarFont->hfont);
-// 						SetBkMode(form->bmp->hdc, TRANSPARENT);
-// 						SetTextColor(form->bmp->hdc, (COLORREF)RGB(form->p.captionColor.red, form->p.captionColor.grn, form->p.captionColor.blu));
-// 						DrawTextA(form->bmp->hdc, form->pa.caption.data, form->pa.caption.length, &lrc2, DT_VCENTER);
-// 						SelectObject(form->bmp->hdc, lhfontOld);
-
-
 					//////////
 					// Copy to prior rendered bitmap
 					//////
@@ -4009,17 +3965,6 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 					// Render from its prior rendered version
 					lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
 				}
-
-
-//////////
-// For temporary, we are adding additional renderings for _screen
-//////
-	if (obj == gobj_screen)
-	{
-		iEditManager_render(screenData, gobj_screen, true);
-		if (gWinScreen)
-			InvalidateRect(gWinScreen->hwnd, 0, FALSE);
-	}
 
 
 			//////////

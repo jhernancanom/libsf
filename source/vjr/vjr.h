@@ -52,7 +52,7 @@
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <Shobjidl.h>
+//#include <Shobjidl.h>
 #include "resource.h"
 
 #define _USE_MATH_DEFINES

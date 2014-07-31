@@ -40,7 +40,7 @@
 // Global Variables
 //////
 	HINSTANCE			ghInstance							= NULL;
-	ITaskbarList*		giTaskbar							= NULL;
+//	ITaskbarList*		giTaskbar							= NULL;
 	SBuilder*			gWindows							= NULL;
 	SBuilder*			gFonts								= NULL;
 	HWND				ghwndMsg							= NULL;
@@ -99,6 +99,7 @@
 
 	// Default screens used by VJr
 	SObject*			gobj_screen							= NULL;
+	SObject*			screen_editbox						= NULL;
 	SObject*			gobj_jdebi							= NULL;
 	SObject*			sourceCode							= NULL;
 	SObject*			locals								= NULL;

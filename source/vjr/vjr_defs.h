@@ -66,7 +66,7 @@
 	void					iObj_delete								(SObject** obj, bool tlDeleteSelf);
 	bool					iObj_setFocus							(SWindow* win, SObject* obj, bool tlClearOtherControlsWithFocus);
 	void					iObj_clearFocus							(SWindow* win, SObject* obj, bool tlClearChildren, bool tlClearSiblings);
-	SObject*				iObj_findt_rootmostObject				(SObject* obj);
+	SObject*				iObj_find_rootmostObject				(SObject* obj);
 	SObject*				iObj_find_thisForm						(SObject* obj);
 	SObject*				iObj_find_thisSubform					(SObject* obj);
 	bool					iObj_isCommandWindow					(SObject* obj);
@@ -219,6 +219,7 @@
 	LRESULT	CALLBACK		iWindow_wndProcForms					(HWND hwnd, UINT m, WPARAM w, LPARAM l);
 	SWindow* 				iWindow_createForObject					(SObject* obj, SWindow* winReuse, s32 icon);
 	SWindow*				iWindow_findByHwnd						(HWND hwnd);
+	SWindow*				iWindow_findByObj						(SObject* obj);
 	SWindow*				iWindow_allocate						(void);
 	void					iWindow_render							(SWindow* win, bool tlForceRedraw);
 	void					iWindow_move							(SWindow* win);
@@ -227,6 +228,7 @@
 
 	void					iFocusHighlight_create					(SFocusHighlight* focus, RECT* rc);
 	void					iFocusHighlight_delete					(SFocusHighlight* focus);
+	void					iFocusHighlight_deleteAll				(void);
 	SFocusHighlight*		iFocusHighlight_findByHwnd				(HWND hwnd);
 	SFocusHighlight*		iFocusHighlight_findByObj				(SObject* obj);
 	LRESULT CALLBACK		iFocusHighlight_wndProc					(HWND hwnd, UINT m, WPARAM w, LPARAM l);

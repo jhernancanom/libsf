@@ -224,6 +224,18 @@
 
 
 		//////////
+		// Add the editbox
+		//////
+			screen_editbox							= iObj_addChild(_OBJ_TYPE_EDITBOX,	gobj_screen);
+			iObj_setSize(screen_editbox, 0, 0, gobj_screen->rcClient.right - gobj_screen->rcClient.left, gobj_screen->rcClient.bottom - gobj_screen->rcClient.top);
+			screen_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
+			screen_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
+			screenData								= iEditManager_allocate();
+			screen_editbox->pa.em					= screenData;
+			screen_editbox->pa.em->showCursorLine	= true;
+
+
+		//////////
 		// Set it visible
 		//////
 			iObj_setVisible(gobj_screen, true);
@@ -579,6 +591,16 @@
 					// Currently unused
 					break;
 
+				case WM_KILLFOCUS:
+				case WM_WINDOWPOSCHANGING:
+					iFocusHighlight_deleteAll();
+					break;
+
+				case WM_SETFOCUS:
+				case WM_WINDOWPOSCHANGED:
+					iWindow_render(win, true);
+					break;
+
 				case WM_LBUTTONDOWN:
 				case WM_LBUTTONUP:
 				case WM_RBUTTONDOWN:
@@ -790,6 +812,47 @@
 
 //////////
 //
+// Called to search the known windows for the indicated window by object
+//
+//////
+	SWindow* iWindow_findByObj(SObject* obj)
+	{
+		u32			lnI;
+		SObject*	wobj;
+		SWindow*	win;
+
+
+		// Iterate through all known windows and see which one is which
+		for (lnI = 0; lnI < gWindows->populatedLength; lnI += sizeof(SWindow))
+		{
+			// Grab this one
+			win = (SWindow*)(gWindows->data + lnI);
+
+			// Lock it down
+			EnterCriticalSection(&win->cs);
+
+			// Grab the object
+			wobj = win->obj;
+
+			// Unlock it
+			LeaveCriticalSection(&win->cs);
+
+			// Is this our man?
+			if (wobj == obj)
+			{
+				// Indicate our find
+				return(win);
+			}
+		}
+		// If we get here, not found
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
 // Called to
 //
 //////
@@ -963,7 +1026,6 @@
 			AdjustWindowRect(&lrcParent, GetWindowLong(focus->win->hwnd, GWL_STYLE), (GetMenu(focus->win->hwnd) != NULL));
 			lrcParent.left	= focus->rcp.left + (focus->rcp.left - focus->rcp.left);
 			lrcParent.top	= focus->rcp.top  + (focus->rcp.top  - focus->rcp.top);
-			SetWindowPos(focus->hwnd, HWND_TOPMOST, lrcParent.left + rc->left, lrcParent.top + rc->top, rc->right - rc->left, rc->bottom - rc->top, SWP_HIDEWINDOW | SWP_NOACTIVATE);
 
 
 		//////////
@@ -991,7 +1053,7 @@
 		// Display the window
 		//////
 			focus->isValid = true;
-			ShowWindow(focus->hwnd, SW_SHOW);
+			SetWindowPos(focus->hwnd, HWND_TOPMOST, lrcParent.left + rc->left, lrcParent.top + rc->top, rc->right - rc->left, rc->bottom - rc->top, SWP_SHOWWINDOW | SWP_NOACTIVATE);
 	}
 
 
@@ -1004,17 +1066,42 @@
 //////
 	void iFocusHighlight_delete(SFocusHighlight* focus)
 	{
-		if (focus)
+		if (focus && focus->isValid)
 		{
 			// Delete the window
-			if (IsWindow(focus->hwnd))
-				DestroyWindow(focus->hwnd);
+			DestroyWindow(focus->hwnd);
 
 			// Destroy the region
 			DeleteObject((HGDIOBJ)focus->hrgn);
 
 			// Release the variables
 			memset(focus, 0, sizeof(SFocusHighlight));
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to delete all of the focus highlights
+//
+//////
+	void iFocusHighlight_deleteAll(void)
+	{
+		u32					lnI;
+		SFocusHighlight*	focus;
+
+
+		// Iterate through all focus windows
+		for (lnI = 0; lnI < gFocusHighlights->populatedLength; lnI += sizeof(SFocusHighlight))
+		{
+			// Grab the focus
+			focus = (SFocusHighlight*)(gFocusHighlights->data + lnI);
+
+			// Delete it if it exists
+			if (focus && focus->isValid)
+				iFocusHighlight_delete(focus);
 		}
 	}
 
@@ -2466,7 +2553,7 @@
 		// Create buffers
 		//////
 			objFocusControls = NULL;
-			iBuilder_createAndInitialize((SBuilder**)&objFocusControls,	-1);
+			iBuilder_createAndInitialize((SBuilder**)&objFocusControls,	64);
 
 
 		//////////
