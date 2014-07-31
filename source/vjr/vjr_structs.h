@@ -614,3 +614,12 @@ struct STooltip
 	RECT		rc;													// In screen coordinates
 	SBitmap*	bmp;												// The rendered bitmap for the tooltip
 };
+
+struct SSplash
+{
+	bool		isValid;											// Is the splash screen active/displayed?
+
+	HWND		hwnd;												// The HWND to the splash screen
+	RECT		rc;													// In screen coordinates
+	SBitmap*	bmp;												// The rendered bitmap
+};

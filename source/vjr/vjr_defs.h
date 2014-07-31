@@ -214,6 +214,10 @@
 	void					iInit_createDefaultDatetimes			(void);
 	void					iVjr_shutdown							(void);
 
+	DWORD	WINAPI			iSplash_show							(LPVOID/*SBitmap* bmp*/ lpParameter);
+	DWORD	WINAPI			iSplash_delete							(LPVOID/*bool tlWait*/ lpParameter);
+	LRESULT CALLBACK		iSplash_wndProc							(HWND hwnd, UINT m, WPARAM w, LPARAM l);
+
 	DWORD	WINAPI			iReadEvents_messageWindow				(LPVOID lpParameter);
 	LRESULT	CALLBACK		iWindow_wndProcMessage					(HWND hwnd, UINT m, WPARAM w, LPARAM l);
 	LRESULT	CALLBACK		iWindow_wndProcForms					(HWND hwnd, UINT m, WPARAM w, LPARAM l);

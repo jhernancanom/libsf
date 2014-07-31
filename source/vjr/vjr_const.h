@@ -406,6 +406,7 @@ typedef SEM**		SEMpp;
 	const s8			cgcWindowClass[]					= "VJr.Window";
 	const s8			cgcFocusHighlightClass[]			= "VJr.FocusWindow";
 	const s8			cgcTooltipClass[]					= "VJr.TooltipWindow";
+	const s8			cgcSplashClass[]					= "VJr.SplashWindow";
 	const s8			cgcScreenTitle[]					= "Visual FreePro, Jr. 0.39 -- Jul.30.2014";
 	const s8			cgcJDebiTitle[]						= "JDebi Debugger 0.39 -- Jul.30.2014";
 	const s8			cgcSourceCodeTitle[]				= "SourceCode";

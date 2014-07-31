@@ -566,6 +566,142 @@
 
 //////////
 //
+// Called to display a splash screen
+//
+//////
+	DWORD WINAPI iSplash_show(LPVOID/*SBitmap**/ lpParameter)
+	{
+		s32				lnLeft, lnTop;
+		WNDCLASSEXA		classex;
+		RECT			lrc;
+		MSG				msg;
+
+
+		// Delete any existing splash screens
+		iSplash_delete((LPVOID)0);
+
+		// Create a copy of the bitmap
+		gSplash.bmp = iBmp_copy((SBitmap*)lpParameter);
+
+		// Make sure the class is registered
+		if (!GetClassInfoExA(ghInstance, cgcSplashClass, &classex))
+		{
+			// Initialize
+			memset(&classex, 0, sizeof(classex));
+
+			// Populate
+			classex.cbSize				= sizeof(WNDCLASSEXA);
+			classex.hInstance			= ghInstance;
+			classex.style				= CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+			classex.lpszClassName		= cgcSplashClass;
+			classex.hCursor				= LoadCursor(NULL, IDC_ARROW);
+			classex.lpfnWndProc			= &iSplash_wndProc;
+
+			// Register
+			RegisterClassExA(&classex);
+		}
+
+		// Create the window
+		GetWindowRect(GetDesktopWindow(), &lrc);
+		lnLeft	= ((lrc.right  - lrc.left) / 2) - (gSplash.bmp->bi.biWidth  / 2);
+		lnTop	= ((lrc.bottom - lrc.top)  / 2) - (gSplash.bmp->bi.biHeight / 2);
+		gSplash.hwnd = CreateWindowEx(WS_EX_TOPMOST, cgcSplashClass, NULL, WS_POPUP, 
+											lnLeft,
+											lnTop,
+											gSplash.bmp->bi.biWidth,
+											gSplash.bmp->bi.biHeight,
+											NULL, NULL, GetModuleHandle(NULL), 0);
+		
+		// Create a timer to send events to the window every 1/10th second
+		SetTimer(gSplash.hwnd, 0, 100, 0);
+
+		// Position above all windows
+		SetWindowPos(gSplash.hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW | SWP_NOACTIVATE);
+
+		// Read until the splash window goes bye bye
+		gSplash.isValid = true;
+		while (gSplash.isValid && GetMessage(&msg, gSplash.hwnd, 0, 0) > 0)
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+
+		// Delete the bitmap
+		iBmp_delete(&gSplash.bmp, true, true);
+
+		// Destroy the window
+		DestroyWindow(gSplash.hwnd);
+		gSplash.hwnd = 0;
+
+		// All done
+		return(0);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the splash screen (if any)
+//
+//////
+	DWORD WINAPI iSplash_delete(LPVOID lpParameter)
+	{
+		// Sleep for the indicated time
+		Sleep((u32)lpParameter);
+
+		// Indicate no longer valid
+		gSplash.isValid = false;
+
+		// All done
+		return(0);
+	}
+
+
+
+
+//////////
+//
+// Callback to handle the splash screen thingys :-)
+//
+//////
+	LRESULT CALLBACK iSplash_wndProc(HWND hwnd, UINT m, WPARAM w, LPARAM l)
+	{
+		HDC			lhdc;
+		PAINTSTRUCT	ps;
+
+
+		// The only message we handle is the paint
+		if (gSplash.isValid && gSplash.bmp)
+		{
+			switch (m)
+			{
+				case WM_DESTROY:
+					KillTimer(hwnd, 0);
+					break;
+
+				case WM_PAINT:
+					// Start painting
+					lhdc = BeginPaint(hwnd, &ps);
+
+					// Paint it
+					BitBlt(lhdc, 0, 0, gSplash.bmp->bi.biWidth, gSplash.bmp->bi.biHeight, gSplash.bmp->hdc, 0, 0, SRCCOPY);
+
+					// All done
+					EndPaint(hwnd, &ps);
+					return(0);
+			}
+		}
+
+		// Default handler
+		return(DefWindowProc(hwnd, m, w, l));
+	}
+
+
+
+
+//////////
+//
 // Processes messages from the interface window, to forward on to the original window
 //
 //////

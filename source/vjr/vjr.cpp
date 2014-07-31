@@ -105,6 +105,10 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		// Get startup time
 		systemStartedMs = iTime_getLocalMs();
 
+		// Load the splash screen
+		bmpVjrSplash			= iBmp_rawLoad(cgc_splashBmp);
+		CreateThread(0, 0, &iSplash_show, bmpVjrSplash, 0, 0);
+
 		// Default font
 		gsFontDefault				= iFont_create(cgcDefaultFontName,			10,	FW_NORMAL,	0, 0);
 		gsFontDefault9				= iFont_create(cgcDefaultFontName,			9,	FW_NORMAL,	0, 0);
@@ -248,4 +252,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		// Redraw
 		iWindow_render(gWinScreen, true);
+
+		// Remove the splash screen 1/2 second later
+		CreateThread(0, 0, &iSplash_delete, (LPVOID)500, 0, 0);;
 	}

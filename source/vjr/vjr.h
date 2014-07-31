@@ -111,6 +111,8 @@
 #include "graphics\h\locals_icon.h"
 #include "graphics\h\sourcecode_icon.h"
 
+#include "graphics\h\vjr_splash.h"
+
 #include "vjr_sup.cpp"
 #include "objects.cpp"
 #include "object_accessors.cpp"
