@@ -3,7 +3,7 @@
 // /libsf/source/vjr/objects.cpp
 //
 //////
-// Version 0.38
+// Version 0.39
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -223,7 +223,7 @@
 	{
 		// Clear the focus if we should
 		if (tlClearOtherControlsWithFocus)
-			iObj_clearFocus(win, iObj_findRootParent(obj), true, true);
+			iObj_clearFocus(win, iObj_findt_rootmostObject(obj), true, true);
 
 		// Set the focus
 		if (!obj->p.hasFocus)
@@ -316,11 +316,68 @@
 // Finds the root parent and returns that value
 //
 //////
-	SObject* iObj_findRootParent(SObject* obj)
+	SObject* iObj_findt_rootmostObject(SObject* obj)
 	{
 		// If there's a parent, continue up the chain
-		if (obj->parent)		return(iObj_findRootParent(obj->parent));
+		if (obj->parent)		return(iObj_findt_rootmostObject(obj->parent));
 		else					return(obj);		// This is the parent-most object
+	}
+
+
+
+
+//////////
+//
+// Called to find the thisForm
+//
+//////
+	SObject* iObj_find_thisForm(SObject* obj)
+	{
+		if (obj->objType == _OBJ_TYPE_FORM)
+		{
+			// This is the subform
+			return(obj);
+
+		} else {
+			// If we can traverse higher, go higher, if not we're done
+			if (obj->parent)		return(iObj_find_thisForm(obj->parent));
+			else					return(NULL);
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to find the thisSubform object
+//
+//////
+	SObject* iObj_find_thisSubform(SObject* obj)
+	{
+		if (obj->objType == _OBJ_TYPE_SUBFORM)
+		{
+			// This is the subform
+			return(obj);
+
+		} else {
+			// If we can traverse higher, go higher, if not we're done
+			if (obj->parent)		return(iObj_find_thisSubform(obj->parent));
+			else					return(NULL);
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to determine if the indicated object is the command window
+//
+//////
+	bool iObj_isCommandWindow(SObject* obj)
+	{
+		return(obj == command);
 	}
 
 

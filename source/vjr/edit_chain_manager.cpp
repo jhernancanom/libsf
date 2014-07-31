@@ -3,7 +3,7 @@
 // /libsf/source/vjr/edit_chain_manager.cpp
 //
 //////
-// Version 0.38
+// Version 0.39
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -581,7 +581,7 @@ int3_break;
 		// Make sure our environment is sane
 		// Note:  We do not test for tcText and tnTextLength because we can add blank lines
 		ec = NULL;
-		if (em)
+		if (em && !em->isReadOnly)
 		{
 			// Allocate our new structure
 			if (em->ecLast)
@@ -830,7 +830,8 @@ int3_break;
 //////
 	bool iEditManager_onKeyDown_sourceCode(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tnAsciiChar, u16 tnVKey, bool tlIsCAS, bool tlIsAscii)
 	{
-		SEM* em;
+		SEM*		em;
+		SObject*	subform;
 
 
 		// Make sure our environment is sane
@@ -862,15 +863,21 @@ int3_break;
 						break;
 
 					case VK_RETURN:
-						// Are we on the last line?
+						// Are we on the last line in the command window?
 						if (em && em->ecCursorLine && !em->ecCursorLine->ll.next && em->ecCursorLine->sourceCodePopulated > 0)
 						{
-							iEngine_executeStandaloneCommand(em->ecCursorLine);
+							subform = iObj_find_thisSubform(obj);
+							if (subform && iObj_isCommandWindow(subform))
+							{
+								// Execute the command
+								iEngine_executeStandaloneCommand(em->ecCursorLine);
 
-							// Draw it like normal
-							iEditManager_returnKey(em, obj);
-							iWindow_render(win, false);
-							return(true);
+								// Draw it like normal
+								iEditManager_returnKey(em, obj);
+								iWindow_render(win, false);
+								return(true);
+							}
+							// If we get here, we pass the return key through for editing
 						}
 						break;
 				}
@@ -972,10 +979,6 @@ int3_break;
 						break;
 
 					case VK_RETURN:
-						// Are we on the last line?
-						if (em && em->ecCursorLine && !em->ecCursorLine->ll.next && em->ecCursorLine->sourceCodePopulated > 0)
-							iEngine_executeStandaloneCommand(em->ecCursorLine);
-
 						// Draw it like normal
 						iEditManager_returnKey(em, obj);
 

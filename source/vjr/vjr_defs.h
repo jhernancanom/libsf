@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_defs.h
 //
 //////
-// Version 0.38
+// Version 0.39
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -66,7 +66,10 @@
 	void					iObj_delete								(SObject** obj, bool tlDeleteSelf);
 	bool					iObj_setFocus							(SWindow* win, SObject* obj, bool tlClearOtherControlsWithFocus);
 	void					iObj_clearFocus							(SWindow* win, SObject* obj, bool tlClearChildren, bool tlClearSiblings);
-	SObject*				iObj_findRootParent						(SObject* obj);
+	SObject*				iObj_findt_rootmostObject				(SObject* obj);
+	SObject*				iObj_find_thisForm						(SObject* obj);
+	SObject*				iObj_find_thisSubform					(SObject* obj);
+	bool					iObj_isCommandWindow					(SObject* obj);
 	void					iObj_setFocusHighlights					(SWindow* win, SObject* obj, s32 x, s32 y, bool tlProcessChildren, bool tlProcessSiblings);
 	void					iObj_findFocusControls					(SObject* obj, SBuilder* objFocusControls, bool tlProcessSiblings);
 	bool					iObj_setFocusObjectPrev					(SWindow* win, SObject* obj);

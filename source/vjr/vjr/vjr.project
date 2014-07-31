@@ -72,7 +72,7 @@
       <Compiler Options="-g;-O0;-Wall;-Wno-comment;-Wno-multichar;-Wno-narrowing;-Wno-write-strings;-Wno-format-contains-nul" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Options="-g" Required="yes">
+      <Linker Options="-g;-static-libasan" Required="yes">
         <Library Value="kernel32"/>
         <Library Value="user32"/>
         <Library Value="gdi32"/>

@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr.cpp
 //
 //////
-// Version 0.38
+// Version 0.39
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
