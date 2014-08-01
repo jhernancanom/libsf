@@ -3,7 +3,7 @@
 // /libsf/source/vjr/edit_chain_manager.cpp
 //
 //////
-// Version 0.40
+// Version 0.41
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -1512,10 +1512,10 @@ int3_break;
 
 							} else if (lineDn == em->ecCursorLine) {
 								// We went down to find it
-								if (lnDn > lnRows)
+								if (lnDn >= lnRows)
 								{
 									// And the position is too far down
-									for (lnI = 0; lnI < lnDn - lnRows; lnI++)
+									for (lnI = 0; lnI <= lnDn - lnRows; lnI++)
 										em->ecTopLine = (SEdit*)em->ecTopLine->ll.next;
 
 									// Indicate the change

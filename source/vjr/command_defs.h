@@ -3,7 +3,7 @@
 // /libsf/source/vjr/command_defs.h
 //
 //////
-// Version 0.40
+// Version 0.41
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:

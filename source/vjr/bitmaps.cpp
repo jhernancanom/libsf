@@ -3,7 +3,7 @@
 // /libsf/source/vjr/bitmaps.cpp
 //
 //////
-// Version 0.40
+// Version 0.41
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -1540,7 +1540,7 @@
 					lbgr = (SBgr*)(bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth) + (trc->left * 3));
 
 					// Iterate for every column, combining where we should
-					for (lnX = trc->left; lnX < bmp->bi.biWidth; lnX++, lbgr++)
+					for (lnX = trc->left; lnX < bmp->bi.biWidth && lnX < trc->right; lnX++, lbgr++)
 					{
 						// If this is one, remove this part
 						if (lbgr->red == 222 && lbgr->grn == 22 && lbgr->blu == 222)
@@ -1624,6 +1624,226 @@
 
 		// If we get here, invalid
 		return(black);
+	}
+
+
+
+
+//////////
+//
+// Called to locate a marker and return its position, and optionally update the source
+// to cover up the marker by mixing the pixels to either side away.  A marker is a tiny
+// upper-left coordinate marker which is a pixel, the same pixel to its right, and the
+// same pixel on the next row beneath the left-most pixel, all in the indicated red, grn,
+// and blu color.
+//
+//////
+	bool iBmp_locateMarker(SBitmap* bmp, u8 red, u8 grn, u8 blu, u32* tnX, u32* tnY, bool tlOverwriteMarker)
+	{
+		s32		lnY, lnX;
+		SBgr*	lbgr;
+		SBgr*	lbgrRight;
+		SBgr*	lbgrBelow;
+		SBgra*	lbgra;
+		SBgra*	lbgraRight;
+		SBgra*	lbgraBelow;
+
+
+		// Make sure our environment is sane
+		if (bmp)
+		{
+			// Based on its, process it
+			if (bmp->bi.biBitCount == 24)
+			{
+				// Iterate for every row
+				for (lnY = 0; lnY < bmp->bi.biHeight; lnY++)
+				{
+					// Grab the pointer to this row
+					lbgr = (SBgr*)(bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth));
+
+					// Iterate for every column, combining where we should
+					for (lnX = 0; lnX < bmp->bi.biWidth; lnX++, lbgr++)
+					{
+						// If this is one, remove this part
+						if (lbgr->red == red && lbgr->grn == grn && lbgr->blu == blu)
+						{
+							// Grab our right pixel, and the one below it
+							lbgrRight	= lbgr + 1;
+							lbgrBelow	= (SBgr*)((s8*)lbgr - bmp->rowWidth);
+
+							// Do the pixels match?
+							if (lbgrRight->red == red && lbgrRight->grn == grn && lbgrRight->blu == blu)
+							{
+								// Right matches
+								if (lbgrBelow->red == red && lbgrBelow->grn == grn && lbgrBelow->blu == blu)
+								{
+									// And below matches, this is our marker
+									// They match, this is our marker
+									if (tlOverwriteMarker)
+									{
+										// Overlay it
+										if (lnX >= 1)
+										{
+											// Grab the pixel to the left of both the lbgr and lbgrBelow
+											// Upper-left
+											lbgr->red		= (lbgr-1)->red;
+											lbgr->grn		= (lbgr-1)->grn;
+											lbgr->blu		= (lbgr-1)->blu;
+
+											// Below
+											lbgrBelow->red = (lbgrBelow - 1)->red;
+											lbgrBelow->grn = (lbgrBelow - 1)->grn;
+											lbgrBelow->blu = (lbgrBelow - 1)->blu;
+
+											if (lnX < bmp->bi.biHeight - 1)
+											{
+												// Grab the pixel to the right of lbgrRight and copy it
+												lbgrRight->red	= (lbgrRight + 1)->red;
+												lbgrRight->grn	= (lbgrRight + 1)->grn;
+												lbgrRight->blu	= (lbgrRight + 1)->blu;
+
+											} else {
+												// Duplicate lbgr into lbgrRight
+												lbgrRight->red	= lbgr->red;
+												lbgrRight->grn	= lbgr->grn;
+												lbgrRight->blu	= lbgr->blu;
+											}
+
+										} else {
+											// Grab the pixel to the right of lbgrRight and copy to all three
+											if (lnX < bmp->bi.biHeight - 1)
+											{
+												// Pixel to the right
+												lbgrRight->red	= (lbgrRight + 1)->red;
+												lbgrRight->grn	= (lbgrRight + 1)->grn;
+												lbgrRight->blu	= (lbgrRight + 1)->blu;
+
+												// Upper left pixel
+												lbgr->red		= lbgrRight->red;
+												lbgr->grn		= lbgrRight->grn;
+												lbgr->blu		= lbgrRight->blu;
+
+												// Pixel on the row below
+												lbgrBelow->red	= lbgrRight->red;
+												lbgrBelow->grn	= lbgrRight->grn;
+												lbgrBelow->blu	= lbgrRight->blu;
+
+											} else {
+												// We can't update it.  The image is too narrow
+												// We don't do anything.  I just note this condition here in the comments.
+											}
+										}
+									}
+
+									// Set our values
+									if (tnX)	*tnX = lnX;
+									if (tnY)	*tnY = lnY;
+
+									// Indicate success
+									return(true);
+								}
+							}
+						}
+					}
+				}
+
+			} else if (bmp->bi.biBitCount == 32) {
+				// Iterate for every row
+				for (lnY = 0; lnY < bmp->bi.biHeight; lnY++)
+				{
+					// Grab the pointer to this row
+					lbgra = (SBgra*)(bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth));
+
+					// Iterate for every column, combining where we should
+					for (lnX = 0; lnX < bmp->bi.biWidth; lnX++, lbgra++)
+					{
+						// If this is one, remove this part
+						if (lbgra->red == red && lbgra->grn == grn && lbgra->blu == blu)
+						{
+							// Grab our right pixel, and the one below it
+							lbgraRight	= lbgra + 1;
+							lbgraBelow	= (SBgra*)((s8*)lbgra - bmp->rowWidth);
+
+							// Do the pixels match?
+							if (lbgraRight->red == red && lbgraRight->grn == grn && lbgraRight->blu == blu)
+							{
+								// Right matches
+								if (lbgraBelow->red == red && lbgraBelow->grn == grn && lbgraBelow->blu == blu)
+								{
+									// And below matches, this is our marker
+									// They match, this is our marker
+									if (tlOverwriteMarker)
+									{
+										// Overlay it
+										if (lnX >= 1)
+										{
+											// Grab the pixel to the left of both the lbgra and lbgraBelow
+											// Upper-left
+											lbgra->red		= (lbgra-1)->red;
+											lbgra->grn		= (lbgra-1)->grn;
+											lbgra->blu		= (lbgra-1)->blu;
+
+											// Below
+											lbgraBelow->red = (lbgraBelow - 1)->red;
+											lbgraBelow->grn = (lbgraBelow - 1)->grn;
+											lbgraBelow->blu = (lbgraBelow - 1)->blu;
+
+											if (lnX < bmp->bi.biHeight - 1)
+											{
+												// Grab the pixel to the right of lbgraRight and copy it
+												lbgraRight->red	= (lbgraRight + 1)->red;
+												lbgraRight->grn	= (lbgraRight + 1)->grn;
+												lbgraRight->blu	= (lbgraRight + 1)->blu;
+
+											} else {
+												// Duplicate lbgra into lbgraRight
+												lbgraRight->red	= lbgra->red;
+												lbgraRight->grn	= lbgra->grn;
+												lbgraRight->blu	= lbgra->blu;
+											}
+
+										} else {
+											// Grab the pixel to the right of lbgraRight and copy to all three
+											if (lnX < bmp->bi.biHeight - 1)
+											{
+												// Pixel to the right
+												lbgraRight->red	= (lbgraRight + 1)->red;
+												lbgraRight->grn	= (lbgraRight + 1)->grn;
+												lbgraRight->blu	= (lbgraRight + 1)->blu;
+
+												// Upper left pixel
+												lbgra->red		= lbgraRight->red;
+												lbgra->grn		= lbgraRight->grn;
+												lbgra->blu		= lbgraRight->blu;
+
+												// Pixel on the row below
+												lbgraBelow->red	= lbgraRight->red;
+												lbgraBelow->grn	= lbgraRight->grn;
+												lbgraBelow->blu	= lbgraRight->blu;
+
+											} else {
+												// We can't update it.  The image is too narrow
+												// We don't do anything.  I just note this condition here in the comments.
+											}
+										}
+									}
+
+									// Set our values
+									if (tnX)	*tnX = lnX;
+									if (tnY)	*tnY = lnY;
+
+									// Indicate success
+									return(true);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// If we get here, not found
+		return(false);
 	}
 
 

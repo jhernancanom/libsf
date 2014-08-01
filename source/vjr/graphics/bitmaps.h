@@ -3,7 +3,7 @@
 // /libsf/source/vjr/graphics/bitmaps.h
 //
 //////
-// Version 0.40
+// Version 0.41
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -76,3 +76,4 @@
 #include "h\stoplight_red.h"
 #include "h\stoplight_amber.h"
 #include "h\stoplight_green.h"
+#include "h\stoplight_blue.h"

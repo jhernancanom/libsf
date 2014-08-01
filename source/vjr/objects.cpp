@@ -3,7 +3,7 @@
 // /libsf/source/vjr/objects.cpp
 //
 //////
-// Version 0.40
+// Version 0.41
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -3084,10 +3084,10 @@
 			//////////
 			// Set the default colors
 			//////
-				subform->p.nwRgba.color			= NwColor.color;
-				subform->p.neRgba.color			= NeColor.color;
-				subform->p.swRgba.color			= SwColor.color;
-				subform->p.seRgba.color			= SeColor.color;
+				subform->p.nwRgba.color			= NwColor2.color;
+				subform->p.neRgba.color			= NeColor2.color;
+				subform->p.swRgba.color			= SwColor2.color;
+				subform->p.seRgba.color			= SeColor2.color;
 				subform->p.backColor.color		= white.color;
 				subform->p.foreColor.color		= black.color;
 				subform->p.captionColor.color	= dark_blue.color;

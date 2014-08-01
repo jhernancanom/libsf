@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_sup.cpp
 //
 //////
-// Version 0.40
+// Version 0.41
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -563,6 +563,7 @@
 //////
 	SBitmap* iiVjr_buildSplashScreen(SBitmap* bmpSplash)
 	{
+		u32			lnX, lnY;
 		SBitmap*	bmp;
 		RECT		lrc, lrc2;
 
@@ -587,7 +588,17 @@
 		// Overlay the accomplishments
 		SetRect(&lrc2, 0, 0, bmpSplash->bi.biWidth, bmpSplash->bi.biHeight);
 		iVjr_renderAccomplishments(bmp, &lrc2);
-//iBmp_saveToDisk(bmp, "c:\\temp\\splash.bmp");
+
+		// Append the current version text
+		if (iBmp_locateMarker(bmp, 240, 24, 240, &lnX, &lnY, true))
+		{
+			// Append the version string
+			SelectObject(bmp->hdc, gsFontDefaultItalic8->hfont);
+			SetTextColor(bmp->hdc, RGB(0,0,0));
+			SetBkMode(bmp->hdc, TRANSPARENT);
+			SetRect(&lrc, lnX, lnY, (2 * bmpSplash->bi.biWidth) - (lnX - bmpSplash->bi.biWidth), lnY + gsFontDefaultItalic8->tm.tmHeight);
+			DrawText(bmp->hdc, (s8*)cgcVersionShort, sizeof(cgcVersionShort) - 1, &lrc, DT_SINGLELINE | DT_LEFT | DT_CENTER);
+		}
 
 		// Return our bitmap
 		return(bmp);
@@ -2231,6 +2242,9 @@
 			font->_weight					= tnFontWeight;
 			font->_italics					= tnItalics;
 			font->_underline				= tnUnderline;
+			font->isItalic					= ((tnItalics == 0)				? false : true);
+			font->isBold					= ((tnFontWeight > FW_NORMAL)	? true : false);
+			font->isUnderline				= ((tnUnderline == 0)			? false : true);
 			iiFont_refresh(font);
 
 
@@ -2251,7 +2265,7 @@
 	{
 		// Create the font
 		font->_sizeUsedForCreateFont	= -MulDiv(font->_size, GetDeviceCaps(GetDC(GetDesktopWindow()), LOGPIXELSY), 72);
-		font->hfont						= CreateFont(font->_sizeUsedForCreateFont, 0, 0, 0, font->_weight, (font->isItalic ? 1 : 0), (font->isUnderline? 1 : 0), false, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_NATURAL_QUALITY, FF_SWISS, font->name.data);
+		font->hfont						= CreateFont(font->_sizeUsedForCreateFont, 0, 0, 0, font->_weight, (font->isItalic ? 1 : 0), (font->isUnderline ? 1 : 0), false, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_NATURAL_QUALITY, FF_SWISS, font->name.data);
 		SelectObject(font->hdc, font->hfont);
 
 		// Find out the text metrics

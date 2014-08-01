@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_globals.h
 //
 //////
-// Version 0.40
+// Version 0.41
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -113,6 +113,7 @@
 	SBitmap*			bmpStoplightRed						= NULL;
 	SBitmap*			bmpStoplightAmber					= NULL;
 	SBitmap*			bmpStoplightGreen					= NULL;
+	SBitmap*			bmpStoplightBlue					= NULL;
 
 	// Default screens used by VJr
 	SObject*			gobj_screen							= NULL;
@@ -187,11 +188,29 @@
 		const SBgra		colorMouseDown						= { rgba(0, 255, 0, 255) };				// Green
 		const SBgra		maskColor							= { rgba(222, 22, 222, 255) };			// Hideous fuscia (by design)
 
-		// Four-corner window color schemes (eventually these will be loaded from themes.dbf)
-		const SBgra		NwColor								= { rgba(222, 230, 255, 255) };
-		const SBgra		NeColor								= { rgba(177, 204, 214, 255) };
-		const SBgra		SwColor								= { rgba(255, 255, 255, 255) };
-		const SBgra		SeColor								= { rgba(192, 212, 255, 255) };
+		// Forms four-corner window color schemes (eventually these will be loaded from themes.dbf)
+// Orange theme:
+		const SBgra		NwColor								= { rgba(255, 238, 204, 255) };
+		const SBgra		NeColor								= { rgba(255, 208, 115, 255) };
+		const SBgra		SwColor								= { rgba(255, 245, 214, 255) };
+		const SBgra		SeColor								= { rgba(235, 198, 105, 255) };
+// Purple theme
+// 		const SBgra		NwColor								= { rgba(233, 219, 255, 255) };
+// 		const SBgra		NeColor								= { rgba(205, 172, 255, 255) };
+// 		const SBgra		SwColor								= { rgba(233, 219, 255, 255) };
+// 		const SBgra		SeColor								= { rgba(182, 153, 226, 255) };
+
+		// Subforms four-corner window color schemes (eventually these will be loaded from themes.dbf)
+// Blue theme:
+		const SBgra		NwColor2							= { rgba(220, 230, 255, 255) };
+		const SBgra		NeColor2							= { rgba(192, 212, 255, 255) };
+		const SBgra		SwColor2							= { rgba(222, 230, 255, 255) };
+		const SBgra		SeColor2							= { rgba(172, 192, 235, 255) };
+// Orange theme:
+// 		const SBgra		NwColor2							= { rgba(255, 222, 156, 255) };
+// 		const SBgra		NeColor2							= { rgba(255, 200, 92, 255) };
+// 		const SBgra		SwColor2							= { rgba(255, 222, 156, 255) };
+// 		const SBgra		SeColor2							= { rgba(229, 180, 83, 255) };
 
 		// Colors for checkbox corners
 		const SBgra		NwCheckboxOnColor					= { rgba(24, 153, 2, 255) };			// Green

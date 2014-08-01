@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr.cpp
 //
 //////
-// Version 0.40
+// Version 0.41
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -162,6 +162,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			bmpStoplightRed		= iBmp_rawLoad(cgc_stoplightRedBmp);
 			bmpStoplightAmber	= iBmp_rawLoad(cgc_stoplightAmberBmp);
 			bmpStoplightGreen	= iBmp_rawLoad(cgc_stoplightGreenBmp);
+			bmpStoplightBlue	= iBmp_rawLoad(cgc_stoplightBlueBmp);
 
 			// The radio image has a 44x44 dot in the upper-left.
 			bmpRadio			= iBmp_rawLoad(cgc_radioBmp);									// Load the raw bmpRadio
@@ -319,8 +320,8 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			//////////
 			// Give it a caption
 			//////
-				caption = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
-				iObj_setCaption(gobj_screen, caption);
+				caption = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgcSystemLog, sizeof(cgcSystemLog) - 1);
+				iObj_setCaption(gobj_splashListing, caption);
 				iVariable_delete(caption, true);
 
 
@@ -404,6 +405,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 	#define _RED	0
 	#define _AMBER	1
 	#define _GREEN	2
+	#define _BLUE	3
 	void iiVjr_renderAccomplishment(SBitmap* bmp, RECT* trc, s32 tnRAG, s8* tcAccomplishment, s8* tcVersion)
 	{
 		s32			lnWidthAccomplishment, lnWidthVersion;
@@ -454,13 +456,17 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 					leftColor = iBmp_extractColorAtPoint(bmpStoplightRed, bmpStoplightRed->bi.biWidth / 2, bmpStoplightRed->bi.biHeight / 2);
 					break;
 
-				default:
 				case _AMBER:
 					leftColor = iBmp_extractColorAtPoint(bmpStoplightAmber, bmpStoplightAmber->bi.biWidth / 2, bmpStoplightAmber->bi.biHeight / 2);
 					break;
 
 				case _GREEN:
 					leftColor = iBmp_extractColorAtPoint(bmpStoplightGreen, bmpStoplightGreen->bi.biWidth / 2, bmpStoplightGreen->bi.biHeight / 2);
+					break;
+
+				default:
+				case _BLUE:
+					leftColor = iBmp_extractColorAtPoint(bmpStoplightBlue, bmpStoplightBlue->bi.biWidth / 2, bmpStoplightBlue->bi.biHeight / 2);
 					break;
 			}
 			CopyRect(&lrc2, &lrc);
@@ -478,18 +484,23 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			{
 				case _RED:
 					iBmp_bitBlt(bmp, &lrc, bmpStoplightRed);
-					textColor = RGB(64,0,0);
+					textColor = RGB(128,32,32);
 					break;
 
-				default:
 				case _AMBER:
 					iBmp_bitBlt(bmp, &lrc, bmpStoplightAmber);
-					textColor = RGB(64,48,0);
+					textColor = RGB(112,92,64);
 					break;
 
 				case _GREEN:
 					iBmp_bitBlt(bmp, &lrc, bmpStoplightGreen);
-					textColor = RGB(0,64,0);
+					textColor = RGB(16,128,16);
+					break;
+
+				default:
+				case _BLUE:
+					iBmp_bitBlt(bmp, &lrc, bmpStoplightBlue);
+					textColor = RGB(32,32,128);
 					break;
 			}
 
@@ -498,7 +509,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		// Add in the version
 		//////
 			// Move over for the next text (either version or accomplishment)
-			lrc.top += 3;
+			++lrc.top;
 			lrc.left += bmpStoplightRed->bi.biWidth + 4;
 			if (tcVersion)
 			{
@@ -524,8 +535,8 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		//////////
 		// Adjust the next rect down for the next one
 		//////
-			trc->top	+= bmpStoplightRed->bi.biHeight;
-			trc->bottom	+= bmpStoplightRed->bi.biHeight;
+			trc->top	+= bmpStoplightRed->bi.biHeight + 1;
+			trc->bottom	+= bmpStoplightRed->bi.biHeight + 1;
 	}
 
 
@@ -546,18 +557,20 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		CopyRect(&lrc, trc);
 
 		// System log
-		iiVjr_renderAccomplishment(bmp, &lrc, _RED, "Forms working (James 4:15)", "0.70");
-		iiVjr_renderAccomplishment(bmp, &lrc, _RED, "Compiler is complete (James 4:15)", "0.60");
-		iiVjr_renderAccomplishment(bmp, &lrc, _RED, "Running programs (James 4:15)", "0.55");
-		iiVjr_renderAccomplishment(bmp, &lrc, _RED, "Syntax highlighting (James 4:15)", "0.50");
+		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Forms working (James 4:15)", "0.70");
+		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Compiler is complete (James 4:15)", "0.60");
+		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Running programs (James 4:15)", "0.55");
+		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Syntax highlighting (James 4:15)", "0.50");
 
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "System log", "0.41");
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Sound support", "0.41");
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Focus highlight border bugfix", "0.41");
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Memory leak bug fixes", "0.41");
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Focus highlight border", "0.39");
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Tooltips framed", "0.39");
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Sound support", "0.40");
+
+		iiVjr_renderAccomplishment(bmp, &lrc, _AMBER, "Focus highlight border", "0.39");
+		iiVjr_renderAccomplishment(bmp, &lrc, _RED, "Tooltips framed (no hover yet)", "0.39");
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "_screen editable", "0.39");
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _AMBER, "MinGW GCC 4.8.1 and CodeLite", "0.38");
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "MinGW GCC 4.8.1 and CodeLite", "0.38");
 	}
