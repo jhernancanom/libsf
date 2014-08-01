@@ -44,9 +44,11 @@
 	SBuilder*			gWindows							= NULL;
 	SBuilder*			gFonts								= NULL;
 	HWND				ghwndMsg							= NULL;
-	CRITICAL_SECTION	gcsUniqueIdAccess;
+	CRITICAL_SECTION	cs_uniqueIdAccess;
+	CRITICAL_SECTION	cs_logData;
 	u32					gnNextUniqueId						= 0;
 	s64					systemStartedMs						= 0;
+	u32					systemStartedTickCount				= 0;
 
 	// For splash aria and general sound support
 	static union {
@@ -57,7 +59,7 @@
 
 	// Main screen display history, and system log data
 	SEM*				screenData							= NULL;									// The data displayed on the screen
-	SEM*				logData								= NULL;									// The data displayed on the screen
+	SEM*				systemLog								= NULL;									// The data displayed on the screen
 
 	// Global variables
 	SVariable*			varGlobals							= NULL;									// All global variables are stored
@@ -160,6 +162,7 @@
 		SFont*			gsFontDefault						= NULL;									// Default font, Ubuntu 10 pt
 		SFont*			gsFontDefault9						= NULL;									// Default font, Ubuntu 9 pt
 		SFont*			gsFontDefaultBold					= NULL;									// Default font, Ubuntu 10 pt bold
+		SFont*			gsFontDefaultItalic8				= NULL;									// Default font, Ubuntu 9 pt Italic
 		SFont*			gsFontDefaultFixedPoint				= NULL;									// Default font, Ubuntu Mono 10 pt
 		SFont*			gsWindowTitleBarFont				= NULL;									// Default font, Ubuntu Bold 12 pt
 		SFont*			gsWindowTitleBarFontSubform			= NULL;									// Default font, Ubuntu Bold 10 pt

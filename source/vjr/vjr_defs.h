@@ -56,7 +56,7 @@
 	void					iVjr_init								(HACCEL* hAccelTable);
 	void					iVjr_createOverlayListing				(SBitmap* bmp, RECT* trc);
 	void					iVjr_renderOverlayListing				(SBitmap* bmp, RECT* trc);
-	void					iiVjr_renderAccomplishment				(SBitmap* bmp, RECT* trc, s32 tnRAG, s8* tcAccomplishment, s8* tcAuthor);
+	void					iiVjr_renderAccomplishment				(SBitmap* bmp, RECT* trc, s32 tnRAG, s8* tcAccomplishment, s8* tcVersion);
 	void					iVjr_renderAccomplishments				(SBitmap* bmp, RECT* trc);
 
 
@@ -217,6 +217,8 @@
 	void					iInit_create_jdebiObject				(void);
 	void					iInit_createDefaultDatetimes			(void);
 	SBitmap*				iiVjr_buildSplashScreen					(SBitmap* bmpSplash);
+	void					iVjr_appendSystemLog					(s8* tcLogText);
+	void					iVjr_flushSystemLog						(void);
 	void					iVjr_shutdown							(void);
 
 	DWORD	WINAPI			iSplash_show							(LPVOID/*SBitmap* bmp*/ lpParameter);

@@ -2354,14 +2354,14 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 		u32 lnValue;
 
 		// Synchronized access
-		EnterCriticalSection(&gcsUniqueIdAccess);
+		EnterCriticalSection(&cs_uniqueIdAccess);
 
 		// Get our value and increment
 		lnValue = gnNextUniqueId;
 		++gnNextUniqueId;
 
 		// All done
-		LeaveCriticalSection(&gcsUniqueIdAccess);
+		LeaveCriticalSection(&cs_uniqueIdAccess);
 
 		// Return that value
 		return(lnValue);

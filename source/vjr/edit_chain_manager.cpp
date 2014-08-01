@@ -197,6 +197,7 @@
 			content = NULL;
 			if (iBuilder_asciiReadFromFile(&content, tcPathname))
 			{
+				// Read in the file
 				// Copy through lines into the ecm
 				for (lnI = 0, lnLast = 0; (u32)lnI < content->populatedLength; lnI++)
 				{
@@ -231,10 +232,19 @@
 				// Release it
 				iBuilder_freeAndRelease(&content);
 
+				// Log it
+				sprintf(buffer, "Load %s\0", tcPathname);
+				iVjr_appendSystemLog(buffer);
+
 				// Indicate success
 				sprintf(buffer, "Loaded: %s\0", tcPathname);
 				iEditManager_appendLine(output_editbox->pa.em, buffer, strlen(buffer));
 				return(true);
+
+			} else {
+				// Log it
+				sprintf(buffer, "Load inquiry %s\0", tcPathname);
+				iVjr_appendSystemLog(buffer);
 			}
 		}
 		// If we get here, failure
@@ -1376,6 +1386,7 @@ int3_break;
 // s8 buffer[256];
 // sprintf(buffer, "c:\\temp\\ems\\%u.bmp\0", (u32)em);
 // iBmp_saveToDisk(bmp, buffer);
+// iBmp_saveToDisk(bmp, "c:\\temp\\em.bmp");
 
 			// Reset the font
 			SelectObject(bmp->hdc, hfontOld);

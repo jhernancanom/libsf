@@ -53,11 +53,13 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 	//////
 		ghInstance = hInstance;
 		iVjr_init(&hAccelTable);
+		iVjr_appendSystemLog("Initialization complete");
 
 
 	//////////
 	// Read events
 	//////
+		iVjr_appendSystemLog("Engage main loop");
 		while (GetMessage(&msg, NULL, 0, 0))
 		{
 			if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
@@ -82,16 +84,19 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 	{
 		RECT		lrc;
 		SBitmap*	bmp;
+		s8			buffer[256];
 
 
 		// Get startup time
-		systemStartedMs = iTime_getLocalMs();
+		systemStartedTickCount	= GetTickCount();
+		systemStartedMs			= iTime_getLocalMs();
 
 		// Keyboard shortcuts
 		*hAccelTable = LoadAccelerators(ghInstance, MAKEINTRESOURCE(IDC_VJR));
 
 		// Initialize our critical sections
-		InitializeCriticalSection(&gcsUniqueIdAccess);
+		InitializeCriticalSection(&cs_uniqueIdAccess);
+		InitializeCriticalSection(&cs_logData);
 
 		// These arrows are used as a standard throughout the system for the size of an icon.
 		// They must be loaded first.
@@ -108,6 +113,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		gsFontDefault				= iFont_create(cgcDefaultFontName,			10,	FW_NORMAL,	0, 0);
 		gsFontDefault9				= iFont_create(cgcDefaultFontName,			9,	FW_NORMAL,	0, 0);
 		gsFontDefaultBold			= iFont_create(cgcDefaultFontName,			10,	FW_BOLD,	0, 0);
+		gsFontDefaultItalic8		= iFont_create(cgcDefaultFontName,			8,	FW_NORMAL,	1, 0);
 		gsFontDefaultFixedPoint		= iFont_create(cgcDefaultFixedFontName,		10,	FW_NORMAL,	0, 0);
 		gsWindowTitleBarFont		= iFont_create(cgcWindowTitleBarFontName,	12,	FW_NORMAL,	0, 0);
 		gsWindowTitleBarFontSubform	= iFont_create(cgcWindowTitleBarFontName,	10,	FW_NORMAL,	0, 0);
@@ -172,43 +178,56 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		CreateThread(0, 0, &iSplash_show, bmp, 0, 0);
 
 		// Play the startup music if any
+		sprintf(buffer, "VJr launched %u milliseconds after system boot\0", systemStartedTickCount);
+		iVjr_appendSystemLog(buffer);
 		CreateThread(0, 0, &iPlay_ariaSplash, (LPVOID)cgcSoundStartupWav, 0, 0);
 
 		// Focus window accumulator
+		iVjr_appendSystemLog("Create focus highlight buffer");
 		iBuilder_createAndInitialize(&gFocusHighlights, -1);
 
-
 		// Create the default reference datetimes
+		iVjr_appendSystemLog("Create default datetime variables");
 		iInit_createDefaultDatetimes();
 
 		// Create our message window
+		iVjr_appendSystemLog("Create message window");
 		iInit_createMessageWindow();
 
 		// Create our default objects
+		iVjr_appendSystemLog("Create default objects");
 		iInit_createDefaultObjects();
 
 		// Create our main screen window
+		iVjr_appendSystemLog("TEMPORARY:  Manually create _screen");
 		iInit_create_screenObject();
+		iVjr_appendSystemLog("TEMPORARY:  Manually create _jdebi");
 		iInit_create_jdebiObject();
 
 		// Initially render each one
+		iVjr_appendSystemLog("Render _screen");
 		iObj_render(gobj_screen,	true);
+		iVjr_appendSystemLog("Render _jdebi");
 		iObj_render(gobj_jdebi,		true);
 
 		// Create our global variables
+		iVjr_appendSystemLog("Create _startupTime");
 		varGlobals = function_datetime(NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 		iDatum_duplicate(&varGlobals->name, cgcName_startupTime, -1);
 
 		// Attach them to physical windows
 		gWinScreen	= iWindow_allocate();
 		gWinJDebi	= iWindow_allocate();
+		iVjr_appendSystemLog("Allocate OS Window for _screen");
 		iObj_createWindowForForm(gobj_screen,	gWinScreen,	IDI_VJR);
+		iVjr_appendSystemLog("Allocate OS Window for _jdebi");
 		iObj_createWindowForForm(gobj_jdebi,	gWinJDebi,	IDI_JDEBI);
 
 		// Initially populate _screen
 		// Load in the history if it exists
 		if (!iEditManager_loadFromDisk(screenData, NULL, (s8*)cgcScreenDataFilename, true))
 		{
+			iVjr_appendSystemLog("Populate _screen with default data");
 			iEditManager_appendLine(screenData, (s8*)cgcScreenTitle, -1);
 			iEditManager_appendLine(screenData, NULL, 0);
 			iEditManager_appendLine(screenData, (s8*)"Please report any bugs:  http://www.visual-freepro.org/forum", -1);
@@ -245,8 +264,10 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			iEditManager_appendLine(command_editbox->pa.em, (s8*)"*** You can use clear, quit, ? 999, ? \"sample\" (literals), and ? _startupTime (global variable) in this daily build.", -1);
 			iEditManager_appendLine(command_editbox->pa.em, (s8*)"*** Remember this always:  Love makes you smile. It keeps an inward peace unlike any other. :-)", -1);
 		}
+
 		// Navigate to the last line
 		iEditManager_navigateEnd(command_editbox->pa.em, command_editbox);
+
 		// Make sure there's a blank line at the end
 		if (command_editbox->pa.em->ecCursorLine->sourceCodePopulated != 0)
 		{
@@ -258,9 +279,11 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iEditManager_loadFromDisk(sourceCode_editbox->pa.em, NULL, (s8*)cgcStartupPrgFilename, true);
 
 		// Redraw
+		iVjr_appendSystemLog("Final render _jdebi");
 		iWindow_render(gWinJDebi, true);
 
 		// Redraw
+		iVjr_appendSystemLog("Final render _screen");
 		iWindow_render(gWinScreen, true);
 
 		// Remove the splash screen 1/2 second later
@@ -318,9 +341,9 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			iObj_setSize(gobj_splashListingEditbox, 0, 0, gobj_splashListing->rcClient.right - gobj_splashListing->rcClient.left, gobj_splashListing->rcClient.bottom - gobj_splashListing->rcClient.top);
 			gobj_splashListingEditbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 			gobj_splashListingEditbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
-			logData												= gobj_splashListingEditbox->pa.em;
-			logData->showEndLine								= true;
-			logData->showCursorLine								= true;
+			systemLog											= gobj_splashListingEditbox->pa.em;
+			systemLog->showEndLine								= true;
+			systemLog->showCursorLine							= true;
 
 
 		//////////
@@ -339,9 +362,35 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 //////
 	void iVjr_renderOverlayListing(SBitmap* bmp, RECT* trc)
 	{
-		iEditManager_navigateEnd(gobj_splashListingEditbox->pa.em, gobj_splashListing);
-		iObj_render(gobj_splashListing, true);
-		iBmp_bitBlt(bmp, trc, gobj_splashListing->bmp);
+		RECT lrc;
+
+
+		// Make sure our environment is sane
+		if (gobj_splashListing && gobj_splashListingEditbox)
+		{
+			// Move to the end of the list
+			iEditManager_navigateEnd(gobj_splashListingEditbox->pa.em, gobj_splashListing);
+
+			if (trc && gobj_splashListing->bmp)
+			{
+				// Render
+				iObj_renderChildrenAndSiblings(gobj_splashListing, true, true, true);
+
+				// Publish it if we can
+				if (bmp)
+				{
+					// Publish
+					SetRect(&lrc, 0, 0, gobj_splashListing->bmp->bi.biWidth, gobj_splashListing->bmp->bi.biHeight);
+					iObj_publish(gobj_splashListing, &lrc, bmp, true, true, true, 0);
+
+					// Update our bitmap
+					iBmp_bitBlt(bmp, trc, gobj_splashListing->bmp);
+
+					// Redraw it on the OS
+					InvalidateRect(gSplash.hwnd, 0, false);
+				}
+			}
+		}
 	}
 
 
@@ -355,16 +404,16 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 	#define _RED	0
 	#define _AMBER	1
 	#define _GREEN	2
-	void iiVjr_renderAccomplishment(SBitmap* bmp, RECT* trc, s32 tnRAG, s8* tcAccomplishment, s8* tcAuthor)
+	void iiVjr_renderAccomplishment(SBitmap* bmp, RECT* trc, s32 tnRAG, s8* tcAccomplishment, s8* tcVersion)
 	{
-		s32			lnWidthAccomplishment, lnWidthAuthor;
-		RECT		lrc, lrc2, lrcAccomplishment, lrcAuthor;
+		s32			lnWidthAccomplishment, lnWidthVersion;
+		RECT		lrc, lrc2, lrcAccomplishment, lrcVersion;
 		SBgra		leftColor;
 		COLORREF	textColor;
 
 
 		//////////
-		// Determine how big the accomplishment and author texts are
+		// Determine how big the accomplishment and version texts are
 		//////
 			SelectObject(bmp->hdc, gsFontDefault9->hfont);
 			SetRect(&lrcAccomplishment, 0, 0, bmp->bi.biWidth, bmp->bi.biHeight);
@@ -372,18 +421,18 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 
 		//////////
-		// Compute the size of the author text
+		// Compute the size of the version text
 		//////
-			if (tcAuthor)
+			if (tcVersion)
 			{
-				// There is an author
-				SelectObject(bmp->hdc, gsFontDefaultFixedPoint->hfont);
-				SetRect(&lrcAuthor, 0, 0, bmp->bi.biWidth, bmp->bi.biHeight);
-				DrawText(bmp->hdc, tcAuthor, strlen(tcAuthor), &lrcAuthor, DT_SINGLELINE | DT_LEFT | DT_CALCRECT);
+				// There is a version
+				SelectObject(bmp->hdc, gsFontDefaultItalic8->hfont);
+				SetRect(&lrcVersion, 0, 0, bmp->bi.biWidth, bmp->bi.biHeight);
+				DrawText(bmp->hdc, tcVersion, strlen(tcVersion), &lrcVersion, DT_SINGLELINE | DT_LEFT | DT_CALCRECT);
 
 			} else {
-				// No author
-				SetRect(&lrcAuthor, 0, 0, 0, 0);
+				// No version
+				SetRect(&lrcVersion, 0, 0, 0, 0);
 			}
 
 		
@@ -391,13 +440,9 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		// Build our target size rectangle
 		//////
 			lnWidthAccomplishment	= lrcAccomplishment.right - lrcAccomplishment.left;
-			lnWidthAuthor			= lrcAuthor.right - lrcAuthor.left;
-//////////
-// An alternative design is to use lnWidth and trc->right - lnWidth for the lrc.left setting
-//			s32 lnWidth
-//			lnWidth = bmpStoplightRed->bi.biWidth + 4 + lnWidthAuthor + ((lnWidthAuthor != 0) ? 12 : 0) + lnWidthAccomplishment + 4;
-//////
-			SetRect(&lrc, trc->left, trc->top, trc->right, trc->top + bmpStoplightRed->bi.biHeight);
+			lnWidthVersion			= lrcVersion.right - lrcVersion.left;
+//			s32 lnWidth				= bmpStoplightRed->bi.biWidth + 4 + lnWidthVersion + ((lnWidthVersion != 0) ? 12 : 0) + lnWidthAccomplishment + 4;
+			SetRect(&lrc, trc->left/*trc->right - lnWidth*/, trc->top, trc->right, trc->top + bmpStoplightRed->bi.biHeight);
 
 
 		//////////
@@ -419,7 +464,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 					break;
 			}
 			CopyRect(&lrc2, &lrc);
-			lrc2.right = lrc2.left + bmpStoplightRed->bi.biWidth + lnWidthAuthor + 12;
+			lrc2.right = lrc2.left + bmpStoplightRed->bi.biWidth + lnWidthVersion + 12;
 			iBmp_fillRect(bmp, &lrc2, leftColor, white, leftColor, white, true, NULL, false);
 			lrc2.left	= lrc2.right;
 			lrc2.right	= lrc.right;
@@ -450,18 +495,18 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 
 		//////////
-		// Add in the author
+		// Add in the version
 		//////
-			// Move over for the next text (either author or accomplishment)
+			// Move over for the next text (either version or accomplishment)
 			lrc.top += 3;
 			lrc.left += bmpStoplightRed->bi.biWidth + 4;
-			if (tcAuthor)
+			if (tcVersion)
 			{
-				// Draw the author
-				SelectObject(bmp->hdc, gsFontDefaultFixedPoint->hfont);
+				// Draw the version
+				SelectObject(bmp->hdc, gsFontDefaultItalic8->hfont);
 				SetTextColor(bmp->hdc, textColor);
 				SetBkMode(bmp->hdc, TRANSPARENT);
-				DrawText(bmp->hdc, tcAuthor, strlen(tcAuthor), &lrc, DT_SINGLELINE | DT_LEFT);
+				DrawText(bmp->hdc, tcVersion, strlen(tcVersion), &lrc, DT_SINGLELINE | DT_LEFT);
 			}
 
 
@@ -479,8 +524,8 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		//////////
 		// Adjust the next rect down for the next one
 		//////
-			trc->top	+= bmpStoplightRed->bi.biHeight + 4;
-			trc->bottom	+= bmpStoplightRed->bi.biHeight + 4;
+			trc->top	+= bmpStoplightRed->bi.biHeight;
+			trc->bottom	+= bmpStoplightRed->bi.biHeight;
 	}
 
 
@@ -500,12 +545,19 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		// Begin at the top
 		CopyRect(&lrc, trc);
 
-		// New splash screen
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "New splash screen", "Rick");
+		// System log
+		iiVjr_renderAccomplishment(bmp, &lrc, _RED, "Forms working (James 4:15)", "0.70");
+		iiVjr_renderAccomplishment(bmp, &lrc, _RED, "Compiler is complete (James 4:15)", "0.60");
+		iiVjr_renderAccomplishment(bmp, &lrc, _RED, "Running programs (James 4:15)", "0.55");
+		iiVjr_renderAccomplishment(bmp, &lrc, _RED, "Syntax highlighting (James 4:15)", "0.50");
 
-		// Memory leak bug fixes
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Memory leak bug fixes", "Rick");
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "System log", "0.41");
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Sound support", "0.41");
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Memory leak bug fixes", "0.41");
 
-		// STUFF() param 4 error
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "STUFF() param 4 error", "Rick");
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Focus highlight border", "0.39");
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Tooltips framed", "0.39");
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "_screen editable", "0.39");
+
+		iiVjr_renderAccomplishment(bmp, &lrc, _AMBER, "MinGW GCC 4.8.1 and CodeLite", "0.38");
 	}

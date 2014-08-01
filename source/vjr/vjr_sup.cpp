@@ -598,13 +598,65 @@
 
 //////////
 //
+// Append to the system log
+//
+//////
+	void iVjr_appendSystemLog(s8* tcLogText)
+	{
+		s8 buffer[2048];
+
+
+		// Lock it down
+		EnterCriticalSection(&cs_logData);
+
+		// Append to it
+		sprintf(buffer, "[%u] %s\0", (u32)((s64)GetTickCount() - systemStartedTickCount), tcLogText);
+		iEditManager_appendLine(systemLog, buffer, -1);
+
+		// Release it
+		LeaveCriticalSection(&cs_logData);
+
+		// Render it
+		iVjr_renderOverlayListing(gSplash.bmp, &gobj_splashListing->rc);
+	}
+
+
+
+
+//////////
+//
+// Called to flush the system log to disk
+//
+//////
+	void iVjr_flushSystemLog(void)
+	{
+		iEditManager_saveToDisk(systemLog, (s8*)cgcSystemLogFilename);
+	}
+
+
+
+
+//////////
+//
 // Called as a central location to shutdown the system politely.
 //
 //////
 	void iVjr_shutdown(void)
 	{
+		// System is shutting down
+		iVjr_appendSystemLog("Unengage VJr");
+
+		// Save where we were
 		iEditManager_saveToDisk(screenData,				(s8*)cgcScreenDataFilename);
 		iEditManager_saveToDisk(command_editbox->pa.em,	(s8*)cgcCommandHistoryFilename);
+
+		// Tell OS to unengage our process
+		iVjr_appendSystemLog("Notify OS to shutdown");
+
+		// Flush the log
+		iVjr_flushSystemLog();
+
+		// Signal quit message
 		PostQuitMessage(0);
 	}
 
@@ -689,6 +741,8 @@
 					Sleep(0);
 				}
 		}
+		// Log it
+		iVjr_appendSystemLog("Splash screen unengaged");
 
 		// Delete the timer
 		KillTimer(gSplash.hwnd, 0);
@@ -717,11 +771,18 @@
 //////
 	DWORD WINAPI iSplash_delete(LPVOID lpParameter)
 	{
-		// Sleep for the indicated time
-		Sleep((u32)lpParameter);
+		// Close any prior splash screen
+		if (gSplash.isValid)
+		{
+			// Sleep for the indicated time
+			Sleep((u32)lpParameter);
 
-		// Indicate no longer valid
-		gSplash.isValid = false;
+			// Log it
+			iVjr_appendSystemLog("Splash screen can unengage");
+
+			// Indicate no longer valid
+			gSplash.isValid = false;
+		}
 
 		// All done
 		return(0);
@@ -739,6 +800,7 @@
 	{
 		HDC			lhdc;
 		PAINTSTRUCT	ps;
+		HRGN		lrgn;
 		RECT		lrc;
 		POINT		pt;
 
@@ -747,7 +809,9 @@
 		{
 			GetCursorPos(&pt);
 			GetWindowRect(hwnd, &lrc);
-			glIsMouseOverSplash = ((PtInRect(&lrc, pt)) ? true : false);
+			lrgn = CreateRectRgn(lrc.left, lrc.top, lrc.right, lrc.bottom);
+			GetWindowRgn(hwnd, lrgn);
+			glIsMouseOverSplash = ((PtInRegion(lrgn, pt.x - lrc.left, pt.y - lrc.top)) ? true : false);
 		}
 
 		// The only message we handle is the paint
@@ -785,11 +849,16 @@
 		u32		stopTickCount;
 		f32		lfVolume;
 		u64		lnSoundHandle;
+		s8		buffer[256];
 
 
 		// Load the sound file (if it exists)
 		if (iFile_readContents((s8*)lpParameter, NULL, &soundData_s8, &soundCount))
 		{
+			// Log it
+			sprintf(buffer, "Engage %s\0", (s8*)lpParameter);
+			iVjr_appendSystemLog(buffer);
+
 			// Begin at the beginning
 			soundOffset = 0;
 			soundCount	/= 4;	// Each sound item is an f32
@@ -821,6 +890,10 @@
 				// Wait 1/10th second
 				Sleep(100);
 			}
+			// Log it
+			sprintf(buffer, "Unengage %s\0", (s8*)lpParameter);
+			iVjr_appendSystemLog(buffer);
+
 			// When we get here, we're done playing
 			sound_playCancel(lnSoundHandle);
 
@@ -833,6 +906,11 @@
 
 			// Clear the handle
 			sound_deleteHandle(lnSoundHandle);
+
+		} else {
+			// Log it
+			sprintf(buffer, "Inquiry on sound file %s\0", (s8*)lpParameter);
+			iVjr_appendSystemLog(buffer);
 		}
 
 		// Completed

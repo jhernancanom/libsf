@@ -656,8 +656,14 @@
 
 
 		// Use the system bitblt for speed
-		BitBlt(bmpDst->hdc, trc->left, trc->top, trc->right - trc->left, trc->bottom - trc->top, bmpSrc->hdc, 0, 0, SRCCOPY);
-		return(bmpSrc->bi.biSizeImage);
+// 		if (bmpDst && trc && bmpSrc)
+// 		{
+			BitBlt(bmpDst->hdc, trc->left, trc->top, trc->right - trc->left, trc->bottom - trc->top, bmpSrc->hdc, 0, 0, SRCCOPY);
+			return(bmpSrc->bi.biSizeImage);
+// 
+// 		} else {
+// 			return(0);
+// 		}
 
 
 		// Make sure the environment is sane
