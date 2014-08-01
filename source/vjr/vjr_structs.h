@@ -623,13 +623,3 @@ struct SSplash
 	RECT		rc;													// In screen coordinates
 	SBitmap*	bmp;												// The rendered bitmap
 };
-
-// For VJr's sound
-struct _isSSoundCallback
-{
-	// Use this function as a template for the callback function sent to sound_createStream()
-	union {
-		u64		_callback;
-		void	(WINAPI *callback)	(f32* sampleBuffer, u32 tnSamples, bool* tlContinueAfterThisSampleSet);
-	};
-};

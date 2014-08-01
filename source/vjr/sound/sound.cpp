@@ -344,25 +344,25 @@
 					//////
 						if (lfAccum1)
 						{
-							lfTone		+= std::cos(*lfAccum1 * gfFrequencyMultiplier);
+							lfTone		+= cos(*lfAccum1 * gfFrequencyMultiplier);
 							*lfAccum1	+= lfHertz1;
 						}
 
 						if (lfAccum2)
 						{
-							lfTone		+= std::cos(*lfAccum2 * gfFrequencyMultiplier);
+							lfTone		+= cos(*lfAccum2 * gfFrequencyMultiplier);
 							*lfAccum2	+= lfHertz2;
 						}
 
 						if (lfAccum3)
 						{
-							lfTone		+= std::cos(*lfAccum3 * gfFrequencyMultiplier);
+							lfTone		+= cos(*lfAccum3 * gfFrequencyMultiplier);
 							*lfAccum3	+= lfHertz3;
 						}
 
 						if (lfAccum4)
 						{
-							lfTone		+= std::cos(*lfAccum4 * gfFrequencyMultiplier);
+							lfTone		+= cos(*lfAccum4 * gfFrequencyMultiplier);
 							*lfAccum4	+= lfHertz4;
 						}
 

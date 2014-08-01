@@ -10,7 +10,7 @@
 //     Jul.31.2014
 //////
 // Change log:
-//     Jul.31.2013 - Initial creation
+//     Jul.31.2014 - Initial creation
 //////
 //
 // This software is released as Liberty Software under a Repeat License, as governed
@@ -70,6 +70,18 @@
 		f32				fHertz4;										// Frequency
 	};
 
+
+
+//////////
+// Use this function as a template for the callback function sent to sound_createStream()
+//////
+	struct _isSSoundCallback
+	{
+		union {
+			u64		_callback;
+			void	(WINAPI *callback)	(f32* sampleBuffer, u32 tnSamples, bool* tlContinueAfterThisSampleSet);
+		};
+	};
 
 
 

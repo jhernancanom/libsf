@@ -59,8 +59,8 @@
 #include <math.h>
 #include "sound\SDL-1.2.15\include\sdl\SDL.h"
 #include "sound\SDL-1.2.15\include\sdl\SDL_audio.h"
-#include <queue>
-#include <cmath>
+//#include <queue>
+//#include <cmath>
 
 #include "vjr_const.h"
 #include "builder.cpp"
