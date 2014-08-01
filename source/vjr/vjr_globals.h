@@ -53,10 +53,11 @@
 		s8*				soundData_s8;
 		f32*			soundData_f32;
 	};
-	u32					soundOffset, soundLength;
+	u32					soundOffset, soundCount;
 
-	// Window display histories
+	// Main screen display history, and system log data
 	SEM*				screenData							= NULL;									// The data displayed on the screen
+	SEM*				logData								= NULL;									// The data displayed on the screen
 
 	// Global variables
 	SVariable*			varGlobals							= NULL;									// All global variables are stored
@@ -106,6 +107,11 @@
 	SBitmap*			bmpRadio							= NULL;
 	SBitmap*			bmpRadioDot							= NULL;
 
+	// For accomplishments
+	SBitmap*			bmpStoplightRed						= NULL;
+	SBitmap*			bmpStoplightAmber					= NULL;
+	SBitmap*			bmpStoplightGreen					= NULL;
+
 	// Default screens used by VJr
 	SObject*			gobj_screen							= NULL;
 	SObject*			screen_editbox						= NULL;
@@ -129,6 +135,8 @@
 	SObject*			command_editbox						= NULL;
 	SObject*			debug_editbox						= NULL;
 	SObject*			output_editbox						= NULL;
+	SObject*			gobj_splashListing					= NULL;
+	SObject*			gobj_splashListingEditbox			= NULL;
 
 	// Windows related to the objects
 	SWindow*			gWinScreen							= NULL;
@@ -202,6 +210,8 @@
 	//////
 		bool			glIsMoving							= false;
 		bool			glIsResizing						= false;
+		bool			glIsMouseOverSplash					= false;
+
 // 		SXYS32			gMousePositionMoveStart				= { -1, -1 };							// Mouse position when the move started
 // 		SXYS32			gMousePositionMoveEnd				= { -1, -1 };							// Mouse position when the move ended
 // 		SXYS32			gMousePositionResizeStart			= { -1, -1 };							// Mouse position when the resize started

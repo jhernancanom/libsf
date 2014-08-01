@@ -230,9 +230,9 @@
 			iObj_setSize(screen_editbox, 0, 0, gobj_screen->rcClient.right - gobj_screen->rcClient.left, gobj_screen->rcClient.bottom - gobj_screen->rcClient.top);
 			screen_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 			screen_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
-			screenData								= iEditManager_allocate();
-			screen_editbox->pa.em					= screenData;
-			screen_editbox->pa.em->showCursorLine	= true;
+			screenData								= screen_editbox->pa.em;
+			screenData->showCursorLine				= true;
+			screenData->showEndLine					= true;
 
 
 		//////////
@@ -370,7 +370,6 @@
 			iObj_setCaption(locals, caption);
 			locals_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 			locals_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
-			locals_editbox->pa.em					= iEditManager_allocate();
 			iObj_setIcon(locals, bmpLocalsIcon);
 
 			// Adjust the caption width
@@ -469,7 +468,6 @@
 			iObj_setCaption(watch, caption);
 			watch_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 			watch_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
-			watch_editbox->pa.em					= iEditManager_allocate();
 			watch_editbox->pa.em->showCursorLine	= true;
 			iObj_setIcon(watch, bmpWatchIcon);
 
@@ -482,7 +480,6 @@
 			command_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 			command_editbox->ev.keyboard._onKeyDown		= (u32)&iEditManager_onKeyDown_sourceCode;
 			command_editbox->p.hasFocus					= true;
-			command_editbox->pa.em						= iEditManager_allocate();
 			command_editbox->pa.em->showCursorLine		= true;
 			iObj_setIcon(command, bmpCommandIcon);
 
@@ -494,7 +491,6 @@
 			iObj_setCaption(debug, caption);
 			debug_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
 			debug_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
-			debug_editbox->pa.em					= iEditManager_allocate();
 			debug_editbox->pa.em->showCursorLine	= true;
 			iObj_setIcon(debug, bmpDebugIcon);
 
@@ -506,7 +502,6 @@
 			iObj_setCaption(output, caption);
 			output_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 8, FW_MEDIUM, false, false);
 			output_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
-			output_editbox->pa.em					= iEditManager_allocate();
 			output_editbox->pa.em->showCursorLine	= true;
 			iObj_setIcon(output, bmpOutputIcon);
 
@@ -551,6 +546,58 @@
 
 //////////
 //
+// Called to build the splash screen for startup display.  This contains this format:
+//
+// These items to the left look like wings or road-signs, each independent.
+//						 ____________________ _____________________
+// 	[o New feature #1]	|                    |                     |
+// 	[o New feature #2]	|                    |                     |
+// 	[o New feature #3]	|                    |                     |
+// 	[o New feature #4]	|                    |	[Loading item 1]   |
+// 						|                    |	[Loading item 2]   |
+// 						|                    |	[Loading item 3]   |
+// 						|                    |	[Loading item N]   |
+// 						|____________________|_____________________|
+// The items to the right are in a traditional subform with an editbox contained within, and look like a text file.
+//
+//////
+	SBitmap* iiVjr_buildSplashScreen(SBitmap* bmpSplash)
+	{
+		SBitmap*	bmp;
+		RECT		lrc, lrc2;
+
+
+		// Create our target bitmap
+		bmp = iBmp_allocate();
+		iBmp_createBySize(bmp, bmpSplash->bi.biWidth * 3, bmpSplash->bi.biHeight, 24);
+
+		// Fill it with the mask color
+		SetRect(&lrc, 0, 0, bmp->bi.biWidth, bmp->bi.biHeight);
+		iBmp_fillRect(bmp, &lrc, maskColor, maskColor, maskColor, maskColor, false, NULL, false);
+
+		// Overlay the actual splash image
+		SetRect(&lrc2, bmpSplash->bi.biWidth, 0, bmpSplash->bi.biWidth * 2, bmpSplash->bi.biHeight);
+		iBmp_bitBlt(bmp, &lrc2, bmpSplash);
+
+		// Build the right side loader item list
+		SetRect(&lrc2, 2 * bmpSplash->bi.biWidth, 0, bmp->bi.biWidth, bmpSplash->bi.biHeight);
+		iVjr_createOverlayListing(bmp, &lrc2);
+		iVjr_renderOverlayListing(bmp, &lrc2);
+
+		// Overlay the accomplishments
+		SetRect(&lrc2, 0, 0, bmpSplash->bi.biWidth, bmpSplash->bi.biHeight);
+		iVjr_renderAccomplishments(bmp, &lrc2);
+//iBmp_saveToDisk(bmp, "c:\\temp\\splash.bmp");
+
+		// Return our bitmap
+		return(bmp);
+	}
+
+
+
+
+//////////
+//
 // Called as a central location to shutdown the system politely.
 //
 //////
@@ -566,22 +613,25 @@
 
 //////////
 //
-// Called to display a splash screen
+// Called to display a splash screen.
+// Note:  The incoming parameter must be a COPY of the original if
+//        the original is to persist after display.
 //
 //////
 	DWORD WINAPI iSplash_show(LPVOID/*SBitmap**/ lpParameter)
 	{
 		s32				lnLeft, lnTop;
 		WNDCLASSEXA		classex;
-		RECT			lrc;
+		RECT			lrcWindow, lrcClient;
+		HRGN			lrgn;
 		MSG				msg;
 
 
 		// Delete any existing splash screens
 		iSplash_delete((LPVOID)0);
 
-		// Create a copy of the bitmap
-		gSplash.bmp = iBmp_copy((SBitmap*)lpParameter);
+		// Store the bitmap
+		gSplash.bmp = (SBitmap*)lpParameter;
 
 		// Make sure the class is registered
 		if (!GetClassInfoExA(ghInstance, cgcSplashClass, &classex))
@@ -602,32 +652,52 @@
 		}
 
 		// Create the window
-		GetWindowRect(GetDesktopWindow(), &lrc);
-		lnLeft	= ((lrc.right  - lrc.left) / 2) - (gSplash.bmp->bi.biWidth  / 2);
-		lnTop	= ((lrc.bottom - lrc.top)  / 2) - (gSplash.bmp->bi.biHeight / 2);
+		GetWindowRect(GetDesktopWindow(), &lrcWindow);
+		lnLeft	= ((lrcWindow.right  - lrcWindow.left) / 2) - (gSplash.bmp->bi.biWidth  / 2);
+		lnTop	= ((lrcWindow.bottom - lrcWindow.top)  / 2) - (gSplash.bmp->bi.biHeight / 2);
 		gSplash.hwnd = CreateWindowEx(WS_EX_TOPMOST, cgcSplashClass, NULL, WS_POPUP, 
 											lnLeft,
 											lnTop,
 											gSplash.bmp->bi.biWidth,
 											gSplash.bmp->bi.biHeight,
 											NULL, NULL, GetModuleHandle(NULL), 0);
+
+		// Process any region info
+		GetClientRect(gSplash.hwnd, &lrcClient);
+		lrgn = iBmp_extractRgnByMask(gSplash.bmp, &lrcClient);
+		SetWindowRgn(gSplash.hwnd, lrgn, false);
 		
-		// Create a timer to send events to the window every 1/10th second
-		SetTimer(gSplash.hwnd, 0, 100, 0);
+		// Create a timer to send events to the window every 1/4 second
+		SetTimer(gSplash.hwnd, (u32)&gSplash, 250, 0);
 
 		// Position above all windows
 		SetWindowPos(gSplash.hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW | SWP_NOACTIVATE);
 
 		// Read until the splash window goes bye bye
 		gSplash.isValid = true;
-		while (gSplash.isValid && GetMessage(&msg, gSplash.hwnd, 0, 0) > 0)
+		while (glIsMouseOverSplash || gSplash.isValid)
 		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			//////////
+			// Read and process a message
+			//////
+				if (GetMessage(&msg, gSplash.hwnd, 0, 0))
+				{
+					TranslateMessage(&msg);
+					DispatchMessage(&msg);
+
+				} else {
+					Sleep(0);
+				}
 		}
+
+		// Delete the timer
+		KillTimer(gSplash.hwnd, 0);
 
 		// Delete the bitmap
 		iBmp_delete(&gSplash.bmp, true, true);
+
+		// Delete the region
+		DeleteObject((HGDIOBJ)lrgn);
 
 		// Destroy the window
 		DestroyWindow(gSplash.hwnd);
@@ -669,17 +739,22 @@
 	{
 		HDC			lhdc;
 		PAINTSTRUCT	ps;
+		RECT		lrc;
+		POINT		pt;
 
+
+		if (m == WM_TIMER)
+		{
+			GetCursorPos(&pt);
+			GetWindowRect(hwnd, &lrc);
+			glIsMouseOverSplash = ((PtInRect(&lrc, pt)) ? true : false);
+		}
 
 		// The only message we handle is the paint
-		if (gSplash.isValid && gSplash.bmp)
+		if (gSplash.bmp)
 		{
 			switch (m)
 			{
-				case WM_DESTROY:
-					KillTimer(hwnd, 0);
-					break;
-
 				case WM_PAINT:
 					// Start painting
 					lhdc = BeginPaint(hwnd, &ps);
@@ -713,10 +788,11 @@
 
 
 		// Load the sound file (if it exists)
-		if (iFile_readContents((s8*)lpParameter, NULL, &soundData_s8, &soundLength))
+		if (iFile_readContents((s8*)lpParameter, NULL, &soundData_s8, &soundCount))
 		{
 			// Begin at the beginning
 			soundOffset = 0;
+			soundCount	/= 4;	// Each sound item is an f32
 
 			// Attempt to create the sound stream
 			lnSoundHandle	= sound_createStream(44100, (u64)&iPlay_ariaSplash_callback);
@@ -724,15 +800,19 @@
 			sound_playStart(lnSoundHandle, lfVolume);
 
 			// Repeat until the splash screen is over, or the song ends
-			stopTickCount = GetTickCount() + 3500;
-			while ((gSplash.isValid && soundOffset < soundLength) || GetTickCount() < stopTickCount)
+			stopTickCount = GetTickCount() + 2500;
+			while (glIsMouseOverSplash || (gSplash.isValid && soundOffset < soundCount) || GetTickCount() < stopTickCount)
 			{
+				// Continue looping so long as the mouse is over
+				if (glIsMouseOverSplash && soundOffset >= soundCount)
+					soundOffset = 0;
+
 				// Wait 1/10th second
 				Sleep(100);
 			}
 
 			// If we haven't finished, continue until the volume turns down after one second
-			while (soundOffset < soundLength && lfVolume > 0.0f)
+			while (lfVolume > 0.0f)
 			{
 				// Turn down the volume 1/10th
 				lfVolume -= 0.025f;
@@ -745,7 +825,7 @@
 			sound_playCancel(lnSoundHandle);
 
 			// Raise the termination flag until we can shut down the playback
-			soundOffset = soundLength;
+			soundOffset = soundCount;
 
 			// Free the sound buffer
 			free(soundData_s8);
@@ -765,7 +845,7 @@
 
 
 		// Make sure we have something to do
-		for (lnI = 0; lnI < tnSamples && soundData_f32 && soundOffset < soundLength; lnI++, soundOffset++)
+		for (lnI = 0; lnI < tnSamples && soundData_f32 && soundOffset < soundCount; lnI++, soundOffset++)
 			sampleBuffer[lnI] = soundData_f32[soundOffset];
 
 		// Pad with 0.0s
@@ -773,7 +853,7 @@
 			sampleBuffer[lnI] = 0.0f;
 
 		// Indicate if the sound should continue after this
-		*tlContinueAfterThisSampleSet = (soundOffset < soundLength);
+		*tlContinueAfterThisSampleSet = (glIsMouseOverSplash || (soundOffset < soundCount));
 	}
 
 
@@ -1488,7 +1568,7 @@
 		//////////
 		// Create the timer
 		//////
-			SetTimer(gTooltip.hwnd, 0, _TOOLTIP_TIMER_INTERVAL, 0);		// Every 50ms (20x per second)
+			SetTimer(gTooltip.hwnd, (u32)&gTooltip, _TOOLTIP_TIMER_INTERVAL, 0);
 	}
 
 

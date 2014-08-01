@@ -1504,6 +1504,127 @@
 
 //////////
 //
+// Called to derive the arbitrary region using the RGB(222,22,222) color as the mask.
+// This means all RGB(222,22,222) pixels will be in the region.  To get the opposite
+// condition use it and the RGN_XOR operator to derive the opposite.
+//
+//////
+	HRGN iBmp_extractRgnByMask(SBitmap* bmp, RECT* trc)
+	{
+		s32		lnY, lnX;
+		HRGN	lrgnAccumulated, lrgnRemoveArea;
+		RECT	lrc;
+		SBgr*	lbgr;
+		SBgra*	lbgra;
+
+
+		// Create a region encompassing the entire bitmap
+		lrgnAccumulated = CreateRectRgnIndirect(trc);
+
+		// Make sure our environment is sane
+		if (bmp)
+		{
+			// Based on its, process it
+			if (bmp->bi.biBitCount == 24)
+			{
+				// Iterate for every row
+				for (lnY = trc->top; lnY < bmp->bi.biHeight && lnY <= trc->bottom; lnY++)
+				{
+					// Grab the pointer to this row
+					lbgr = (SBgr*)(bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth) + (trc->left * 3));
+
+					// Iterate for every column, combining where we should
+					for (lnX = trc->left; lnX < bmp->bi.biWidth; lnX++, lbgr++)
+					{
+						// If this is one, remove this part
+						if (lbgr->red == 222 && lbgr->grn == 22 && lbgr->blu == 222)
+						{
+							SetRect(&lrc, lnX, lnY, lnX + 1, lnY + 1);
+							lrgnRemoveArea = CreateRectRgnIndirect(&lrc);
+							CombineRgn(lrgnAccumulated, lrgnAccumulated, lrgnRemoveArea, RGN_XOR);		// Mask out lrgnRemove from lrgnMain
+							DeleteObject((HGDIOBJ)lrgnRemoveArea);
+						}
+					}
+				}
+
+			} else if (bmp->bi.biBitCount == 32) {
+				// Iterate for every row
+				for (lnY = trc->top; lnY < bmp->bi.biHeight; lnY++)
+				{
+					// Grab the pointer to this row
+					lbgra = (SBgra*)(bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth) + (trc->left * 4));
+
+					// Iterate for every column, combining where we should
+					for (lnX = trc->left; lnX < bmp->bi.biWidth && lnX <= trc->right; lnX++, lbgra++)
+					{
+						// If this is one, remove this part
+						if (lbgra->red == 222 && lbgra->grn == 22 && lbgra->blu == 222)
+						{
+							SetRect(&lrc, lnX, lnY, lnX + 1, lnY + 1);
+							lrgnRemoveArea = CreateRectRgnIndirect(&lrc);
+							CombineRgn(lrgnAccumulated, lrgnAccumulated, lrgnRemoveArea, RGN_XOR);		// Mask out lrgnRemove from lrgnMain
+							DeleteObject((HGDIOBJ)lrgnRemoveArea);
+						}
+					}
+				}
+			}
+		}
+
+		// Return the region
+		return(lrgnAccumulated);
+	}
+
+
+
+
+//////////
+//
+// Extracts the color at the indicated point
+//
+//////
+	SBgra iBmp_extractColorAtPoint(SBitmap* bmp, s32 tnX, s32 tnY)
+	{
+		SBgr*	lbgr;
+		SBgra*	lbgra;
+		SBgra	color;
+
+
+		// Make sure our environment is sane
+		if (bmp && tnX >= 0 && tnX < bmp->bi.biWidth && tnY >= 0 && tnY < bmp->bi.biHeight)
+		{
+			// Based on its, process it
+			if (bmp->bi.biBitCount == 24)
+			{
+				// Grab the pointer to this pixel
+				lbgr = (SBgr*)(bmp->bd + ((bmp->bi.biHeight - tnY - 1) * bmp->rowWidth) + tnX * 3);
+
+				// Construct the color
+				color.alp = 255;
+				color.red = lbgr->red;
+				color.grn = lbgr->grn;
+				color.blu = lbgr->blu;
+
+				// Return the color
+				return(color);
+
+			} else if (bmp->bi.biBitCount == 32) {
+				// Grab the pointer to this pixel
+				lbgra = (SBgra*)(bmp->bd + ((bmp->bi.biHeight - tnY - 1) * bmp->rowWidth) + (tnX * 4));
+
+				// Return directly
+				return(*lbgra);
+			}
+		}
+
+		// If we get here, invalid
+		return(black);
+	}
+
+
+
+
+//////////
+//
 // Called to draw a point
 //
 //////

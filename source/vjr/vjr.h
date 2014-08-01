@@ -59,8 +59,6 @@
 #include <math.h>
 #include "sound\SDL-1.2.15\include\sdl\SDL.h"
 #include "sound\SDL-1.2.15\include\sdl\SDL_audio.h"
-//#include <queue>
-//#include <cmath>
 
 #include "vjr_const.h"
 #include "builder.cpp"
@@ -80,41 +78,8 @@
 #include "engine.h"
 #include "edit_chain_manager.h"
 #include "edit_chain.h"
-
 #include "object_accessors.h"
-
-#include "graphics\h\app_icon.h"
-#include "graphics\h\move.h"
-#include "graphics\h\minimize.h"
-#include "graphics\h\maximize.h"
-#include "graphics\h\close.h"
-#include "graphics\h\arrow_ul.h"
-#include "graphics\h\arrow_ur.h"
-#include "graphics\h\arrow_lr.h"
-#include "graphics\h\arrow_ll.h"
-
-#include "graphics\h\checkbox_off.h"
-#include "graphics\h\checkbox_on.h"
-
-#include "graphics\h\button.h"
-
-#include "graphics\h\textbox.h"
-
-#include "graphics\h\textbox_2d.h"
-#include "graphics\h\textbox_3d.h"
-
-#include "graphics\h\radio.h"
-
-#include "graphics\h\jdebi_app_icon.h"
-
-#include "graphics\h\output_icon.h"
-#include "graphics\h\debug_icon.h"
-#include "graphics\h\command_icon.h"
-#include "graphics\h\watch_icon.h"
-#include "graphics\h\locals_icon.h"
-#include "graphics\h\sourcecode_icon.h"
-
-#include "graphics\h\vjr_splash.h"
+#include "graphics\bitmaps.h"
 
 #include "vjr_sup.cpp"
 #include "objects.cpp"

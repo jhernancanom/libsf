@@ -33,3 +33,7 @@
 \libsf\vvm\bin\f2h raw\sourcecode_icon.bmp sourcecodeIconBmp h\sourcecode_icon.h
 
 \libsf\vvm\bin\f2h raw\vjr_splash.bmp splashBmp h\vjr_splash.h
+
+\libsf\vvm\bin\f2h raw\stoplight_red.bmp stoplightRedBmp h\stoplight_red.h
+\libsf\vvm\bin\f2h raw\stoplight_amber.bmp stoplightAmberBmp h\stoplight_amber.h
+\libsf\vvm\bin\f2h raw\stoplight_green.bmp stoplightGreenBmp h\stoplight_green.h

@@ -53,7 +53,11 @@
 // vjr.cpp
 //////
 //	int APIENTRY			WinMain									(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, s32 nCmdShow);
-	void					iInit_vjr								(HACCEL* hAccelTable);
+	void					iVjr_init								(HACCEL* hAccelTable);
+	void					iVjr_createOverlayListing				(SBitmap* bmp, RECT* trc);
+	void					iVjr_renderOverlayListing				(SBitmap* bmp, RECT* trc);
+	void					iiVjr_renderAccomplishment				(SBitmap* bmp, RECT* trc, s32 tnRAG, s8* tcAccomplishment, s8* tcAuthor);
+	void					iVjr_renderAccomplishments				(SBitmap* bmp, RECT* trc);
 
 
 //////////
@@ -212,10 +216,12 @@
 	void					iInit_create_screenObject				(void);
 	void					iInit_create_jdebiObject				(void);
 	void					iInit_createDefaultDatetimes			(void);
+	SBitmap*				iiVjr_buildSplashScreen					(SBitmap* bmpSplash);
 	void					iVjr_shutdown							(void);
 
 	DWORD	WINAPI			iSplash_show							(LPVOID/*SBitmap* bmp*/ lpParameter);
 	DWORD	WINAPI			iSplash_delete							(LPVOID/*bool tlWait*/ lpParameter);
+	void	CALLBACK		iSplash_timerProc						(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
 	LRESULT CALLBACK		iSplash_wndProc							(HWND hwnd, UINT m, WPARAM w, LPARAM l);
 
 	DWORD	WINAPI			iPlay_ariaSplash						(LPVOID lpParameter);
@@ -344,6 +350,8 @@
 	u32						iBmp_bitBltMask							(SBitmap* bmpDst, RECT* trc, SBitmap* bmpSrc);
 	u32						iBmp_bitBlt_byGraymask					(SBitmap* bmpDst, RECT* trc, SBitmap* bmpSrc, SBgra color);
 	u32						iBmp_extractRect						(SBitmap* bmpDst, RECT* trc, SBitmap* bmpSrc, s32 tnX, s32 tnY);
+	HRGN					iBmp_extractRgnByMask					(SBitmap* bmp, RECT* trc);
+	SBgra					iBmp_extractColorAtPoint				(SBitmap* bmp, s32 tnX, s32 tnY);
 // TODO:  The following void functions need to be changed to u32 and indicate how many pixels were rendered
 	void					iBmp_drawPoint							(SBitmap* bmp, s32 tnX, s32 tnY, SBgra color);
 	void					iBmp_fillRect							(SBitmap* bmp, RECT* rc, SBgra colorNW, SBgra colorNE, SBgra colorSW, SBgra colorSE, bool tlUseGradient, RECT* rcClip, bool tluseClip);
