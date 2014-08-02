@@ -56,29 +56,6 @@ struct SCompileNote;
 //////////
 // Structures taken from Visual FreePro
 //////
-	struct SLLCallback
-	{
-		union
-		{
-			u32		_func;
-			bool	(*funcBool)	(SLLCallback* cb);
-			void	(*funcVoid)	(SLLCallback* cb);
-			//////
-			// Uses the following format for the callback:
-			//		void func(SLLCallback* cb)
-			//		bool func(SLLCallback* cb)
-			//////////
-		};
-
-		// Data items for this callback
-		SLL*	node;
-		union {
-			u32		extra;
-			u32		extra1;
-		};
-		u32		extra2;
-	};
-
 	struct SMasterList
 	{
 		SLL				ll;						// 2-way link list to hold the related pointer

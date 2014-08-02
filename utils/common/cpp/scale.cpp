@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/utils/dsf/msvc++/dsf/dsf/scale.cpp
+// /libsf/utils/common/cpp/scale.cpp
 //
 //////
 //

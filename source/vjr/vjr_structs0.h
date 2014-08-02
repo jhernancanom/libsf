@@ -267,13 +267,6 @@ struct STranslate
 // 	};
 // };
 
-struct SLL
-{
-	SLL*			next;					// Next entry in linked list
-	SLL*			prev;					// Previous entry in linked list
-	u32				uniqueId;				// Unique id associated with this object
-};
-
 struct SVariable
 {
 	SLL			ll;

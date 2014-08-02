@@ -1,0 +1,39 @@
+LIBRARY	"inquiry"
+
+EXPORTS
+
+	inquiry_get_applications
+	
+	inquiry_login
+	inquiry_logout
+	
+	inquiry_get_status_list
+	inquiry_get_priority_list
+	inquiry_get_reported_list
+	inquiry_get_target_list
+	
+	inquiry_get_by_date
+	inquiry_get_by_status
+	inquiry_get_by_priority
+	inquiry_get_by_reported
+	inquiry_get_by_target
+	
+	inquiry_get_description
+	inquiry_get_comment
+	
+	inquiry_update_title
+	inquiry_update_description
+	inquiry_update_comment
+	inquiry_update_status
+	inquiry_update_priority
+	inquiry_update_release
+	
+	inquiry_add
+	inquiry_add_comment
+	
+	inquiry_get_change_history
+	inquiry_get_change_history_description
+	inquiry_get_change_history_comment
+	
+	inquiry_check_status
+	inquiry_get_mail

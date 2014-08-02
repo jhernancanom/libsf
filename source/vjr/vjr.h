@@ -61,7 +61,8 @@
 #include "sound\SDL-1.2.15\include\sdl\SDL_audio.h"
 
 #include "vjr_const.h"
-#include "builder.cpp"
+#include "\libsf\utils\common\cpp\builder.cpp"
+#include "\libsf\utils\common\cpp\ll.cpp"
 #include "vjr_structs0.h"
 
 #include "compiler_const.h"
