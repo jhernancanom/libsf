@@ -61,7 +61,7 @@ SET SAFETY			OFF
 *****
 	SET PROCEDURE	TO inquiry_dll.prg		ADDITIVE
 	SET PROCEDURE	TO main.prg				ADDITIVE
-	SET CLASSLIB	TO helper.vcx			ADDITIVE
+*	SET CLASSLIB	TO helper.vcx			ADDITIVE
 	SET CLASSLIB	TO inquiry.vcx			ADDITIVE
 
 
@@ -81,6 +81,7 @@ SET SAFETY			OFF
 **********
 * Display the main launcher screen.
 *****
+	_vfp.Visible = .f.
 	DO FORM frmMain
 
 

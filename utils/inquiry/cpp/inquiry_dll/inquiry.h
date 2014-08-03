@@ -134,6 +134,10 @@ typedef		const f64			cf64;
 	#define int3_break						_asm int 3
 #endif
 
+class CClient;
+class CServer;
+
+
 
 
 //////////
@@ -158,6 +162,7 @@ typedef		const f64			cf64;
 // Global variables
 //////
 	HINSTANCE		ghInstance;
+	CClient*		gActiveClient						= NULL;			// The last client accessed with inquiry_get_applications()
 
 
 

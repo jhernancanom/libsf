@@ -408,7 +408,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 	#define _BLUE	3
 	void iiVjr_renderAccomplishment(SBitmap* bmp, RECT* trc, s32 tnRAG, s8* tcAccomplishment, s8* tcVersion)
 	{
-		s32			lnWidthAccomplishment, lnWidthVersion;
+		s32			lnWidthAccomplishment;//, lnWidthVersion;
 		RECT		lrc, lrc2, lrcAccomplishment, lrcVersion;
 		SBgra		baseColor, leftColor, rightColor;
 		COLORREF	textColor;
@@ -442,7 +442,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		// Build our target size rectangle
 		//////
 			lnWidthAccomplishment	= lrcAccomplishment.right - lrcAccomplishment.left;
-			lnWidthVersion			= lrcVersion.right - lrcVersion.left;
+//			lnWidthVersion			= lrcVersion.right - lrcVersion.left;
 //			s32 lnWidth				= bmpStoplightRed->bi.biWidth + 4 + lnWidthVersion + ((lnWidthVersion != 0) ? 12 : 0) + lnWidthAccomplishment + 4;
 			SetRect(&lrc, trc->left/*trc->right - lnWidth*/, trc->top, trc->right, trc->top + bmpStoplightRed->bi.biHeight);
 

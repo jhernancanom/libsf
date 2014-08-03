@@ -92,7 +92,7 @@ FUNCTION declare_inquiry_dll
 	* Retrieve all applications from the indicated Inquiry Server
 	* Note:  Connection remains active until a switch is made to another server, until the connection times out, or the application terminates
 	DECLARE INTEGER		inquiry_get_applications ;
-							IN exe\inquiry.dll
+							IN exe\inquiry.dll ;
 							STRING		cIpAddress, ;			&& IP address to query
 							STRING		cPort					&& Port to query
 							**********
@@ -178,7 +178,7 @@ FUNCTION declare_inquiry_dll
 	* Returns Request ID.  Use inquiry_check_state() and inquiry_get_mail() to retrieve content.
 	DECLARE INTEGER		inquiry_get_by_date ;
 							IN exe\inquiry.dll ;
-							STRING		cSession				&& The token received in mail after logging in
+							STRING		cSession, ;				&& The token received in mail after logging in
 							INTEGER		nYear, ;				&& Part of the datetime of records to retrieve (everything of this date or newer is retrieved)
 							INTEGER		nMonth, ;
 							INTEGER		nDay, ;
@@ -191,7 +191,7 @@ FUNCTION declare_inquiry_dll
 	* Returns Request ID.  Use inquiry_check_state() and inquiry_get_mail() to retrieve content.
 	DECLARE INTEGER		inquiry_get_by_status ;
 							IN exe\inquiry.dll ;
-							STRING		cSession				&& The token received in mail after logging in
+							STRING		cSession, ;				&& The token received in mail after logging in
 							STRING		cStatus					&& What to retrieve
 							* See create cursor c_list below
 
@@ -199,7 +199,7 @@ FUNCTION declare_inquiry_dll
 	* Returns Request ID.  Use inquiry_check_state() and inquiry_get_mail() to retrieve content.
 	DECLARE INTEGER		inquiry_get_by_priority ;
 							IN exe\inquiry.dll ;
-							STRING		cSession				&& The token received in mail after logging in
+							STRING		cSession, ;				&& The token received in mail after logging in
 							STRING		cPriority				&& What to retrieve
 							* See create cursor c_list below
 
@@ -207,7 +207,7 @@ FUNCTION declare_inquiry_dll
 	* Returns Request ID.  Use inquiry_check_state() and inquiry_get_mail() to retrieve content.
 	DECLARE INTEGER		inquiry_get_by_reported ;
 							IN exe\inquiry.dll ;
-							STRING		cSession				&& The token received in mail after logging in
+							STRING		cSession, ;				&& The token received in mail after logging in
 							STRING		cStatus					&& What to retrieve
 							* See create cursor c_list below
 
@@ -215,7 +215,7 @@ FUNCTION declare_inquiry_dll
 	* Returns Request ID.  Use inquiry_check_state() and inquiry_get_mail() to retrieve content.
 	DECLARE INTEGER		inquiry_get_by_target ;
 							IN exe\inquiry.dll ;
-							STRING		cSession				&& The token received in mail after logging in
+							STRING		cSession, ;				&& The token received in mail after logging in
 							STRING		cStatus					&& What to retrieve
 
 							**********
@@ -238,7 +238,7 @@ FUNCTION declare_inquiry_dll
 	* Returns Request ID.  Use inquiry_check_state() and inquiry_get_mail() to retrieve content.
 	DECLARE INTEGER		inquiry_get_description ;
 							IN exe\inquiry.dll ;
-							STRING		cSession				&& The token received in mail after logging in
+							STRING		cSession, ;				&& The token received in mail after logging in
 							INTEGER		nId						&& The inquiry number to request
 							**********
 							* Raw text of varying length to be, inserted into a memo field
@@ -248,8 +248,8 @@ FUNCTION declare_inquiry_dll
 	* Returns Request ID.  Use inquiry_check_state() and inquiry_get_mail() to retrieve content.
 	DECLARE INTEGER		inquiry_get_comment ;
 							IN exe\inquiry.dll ;
-							STRING		cSession				&& The token received in mail after logging in
-							INTEGER		nId						&& The inquiry number to request
+							STRING		cSession, ;				&& The token received in mail after logging in
+							INTEGER		nId, ;					&& The inquiry number to request
 							INTEGER		nCommentNumber			&& The comment number to request
 							**********
 							* Raw text of varying length to be, inserted into a memo field
@@ -258,58 +258,58 @@ FUNCTION declare_inquiry_dll
 	* Change an existing title
 	* Returns Request ID.  Use inquiry_check_state() and inquiry_get_mail() to retrieve content.
 	DECLARE INTEGER		inquiry_update_title ;
-							IN exe\dsf.dll ;
-							STRING		cSession				&& The token received in mail after logging in
-							INTEGER		nId						&& The inquiry number to request
+							IN exe\inquiry.dll ;
+							STRING		cSession, ;				&& The token received in mail after logging in
+							INTEGER		nId, ;					&& The inquiry number to request
 							STRING		cTitle					&& The new title text
 
 	* Change an existing description
 	* Returns Request ID.  Use inquiry_check_state() and inquiry_get_mail() to retrieve content.
 	DECLARE INTEGER		inquiry_update_description ;
-							IN exe\dsf.dll ;
-							STRING		cSession				&& The token received in mail after logging in
-							INTEGER		nId						&& The inquiry number to request
+							IN exe\inquiry.dll ;
+							STRING		cSession, ;				&& The token received in mail after logging in
+							INTEGER		nId, ;					&& The inquiry number to request
 							STRING		cDescription			&& The new description text
 
 	* Change an existing comment
 	* Returns Request ID.  Use inquiry_check_state() and inquiry_get_mail() to retrieve content.
 	DECLARE INTEGER		inquiry_update_comment ;
-							IN exe\dsf.dll ;
-							STRING		cSession				&& The token received in mail after logging in
-							INTEGER		nId						&& The inquiry number to request
+							IN exe\inquiry.dll ;
+							STRING		cSession, ;				&& The token received in mail after logging in
+							INTEGER		nId, ;					&& The inquiry number to request
 							INTEGER		nCommentNumber, ;		&& The comment number to update
 							STRING		cComment				&& The new comment text
 
 	* Change status of an inquiry
 	* Returns Request ID.  Use inquiry_check_state() and inquiry_get_mail() to retrieve content.
 	DECLARE INTEGER		inquiry_update_status ;
-							IN exe\dsf.dll ;
-							STRING		cSession				&& The token received in mail after logging in
-							INTEGER		nId						&& The inquiry number to request
+							IN exe\inquiry.dll ;
+							STRING		cSession, ;				&& The token received in mail after logging in
+							INTEGER		nId, ;					&& The inquiry number to request
 							STRING		cStatus					&& The new status
 
 	* Change priority of an inquiry
 	* Returns Request ID.  Use inquiry_check_state() and inquiry_get_mail() to retrieve content.
 	DECLARE INTEGER		inquiry_update_priority ;
-							IN exe\dsf.dll ;
-							STRING		cSession				&& The token received in mail after logging in
-							INTEGER		nId						&& The inquiry number to request
+							IN exe\inquiry.dll ;
+							STRING		cSession, ;				&& The token received in mail after logging in
+							INTEGER		nId, ;					&& The inquiry number to request
 							STRING		cPriority				&& The new priority
 
 	* Change release of an inquiry
 	* Returns Request ID.  Use inquiry_check_state() and inquiry_get_mail() to retrieve content.
 	DECLARE INTEGER		inquiry_update_release ;
-							IN exe\dsf.dll ;
-							STRING		cSession				&& The token received in mail after logging in
-							INTEGER		nId						&& The inquiry number to request
+							IN exe\inquiry.dll ;
+							STRING		cSession, ;				&& The token received in mail after logging in
+							INTEGER		nId, ;					&& The inquiry number to request
 							STRING		cReported, ;			&& The new reported release
 							STRING		cTarget					&& THe new target release for the fix/implementation
 
 	* Add a new inquiry
 	* Returns Request ID.  Use inquiry_check_state() and inquiry_get_mail() to retrieve content.
 	DECLARE INTEGER		inquiry_add ;
-							IN exe\dsf.dll ;
-							STRING		cSession				&& The token received in mail after logging in
+							IN exe\inquiry.dll ;
+							STRING		cSession, ;				&& The token received in mail after logging in
 							STRING		cTitle, ;				&& Title of this inquiry (up to 64 characters)
 							STRING		cDescription, ;			&& Description
 							STRING		cStatus, ;				&& Status
@@ -320,16 +320,16 @@ FUNCTION declare_inquiry_dll
 	* Add a new comment to the inquiry
 	* Returns Request ID.  Use inquiry_check_state() and inquiry_get_mail() to retrieve content.
 	DECLARE INTEGER		inquiry_add_comment ;
-							IN exe\dsf.dll ;
-							STRING		cSession				&& The token received in mail after logging in
-							INTEGER		nId						&& The inquiry number to request
+							IN exe\inquiry.dll ;
+							STRING		cSession, ;				&& The token received in mail after logging in
+							INTEGER		nId, ;					&& The inquiry number to request
 							STRING		cComment				&& The comment to add
 	
 	* Retrieve the change history
 	* Returns Request ID.  Use inquiry_check_state() and inquiry_get_mail() to retrieve content.
 	DECLARE INTEGER		inquiry_get_change_history ;
 							IN exe\inquiry.dll ;
-							STRING		cSession				&& The token received in mail after logging in
+							STRING		cSession, ;				&& The token received in mail after logging in
 							INTEGER		nId						&& The inquiry number to request
 							**********
 							* Raw text of to be parsed based on first character of each line,
@@ -348,7 +348,7 @@ FUNCTION declare_inquiry_dll
 	* Returns Request ID.  Use inquiry_check_state() and inquiry_get_mail() to retrieve content.
 	DECLARE INTEGER		inquiry_get_change_history_description ;
 							IN exe\inquiry.dll ;
-							STRING		cSession				&& The token received in mail after logging in
+							STRING		cSession, ;				&& The token received in mail after logging in
 							INTEGER		nId						&& The inquiry number to request
 							**********
 							* Raw text of varying length to be parsed, with multiple records
@@ -368,8 +368,8 @@ FUNCTION declare_inquiry_dll
 	* Returns Request ID.  Use inquiry_check_state() and inquiry_get_mail() to retrieve content.
 	DECLARE INTEGER		inquiry_get_change_history_comment ;
 							IN exe\inquiry.dll ;
-							STRING		cSession				&& The token received in mail after logging in
-							INTEGER		nId						&& The inquiry number to request
+							STRING		cSession, ;				&& The token received in mail after logging in
+							INTEGER		nId, ;					&& The inquiry number to request
 							INTEGER		nCommentNumber, ;		&& The comment number to update
 							**********
 							* Raw text of varying length to be parsed, with multiple records
@@ -388,16 +388,16 @@ FUNCTION declare_inquiry_dll
 	* Requests the status of a previously issued request.
 	* Returns 0 if no response yet, -1 if timed out, or a valid Mail ID if >= 1.
 	DECLARE INTEGER		inquiry_check_status ;
-							IN exe\dsf.dll ;
+							IN exe\inquiry.dll ;
 							INTEGER		nRequestId				&& The Request ID retrieved after the prior request
 
 	* Retrieves the mail content as a character string
 	* Returns number of bytes required.  If the message is not fully consumed, it persists.
 	* Use an nTextLength of 0 to retrieve N and allocate with SPACE(N).
 	DECLARE INTEGER		inquiry_get_mail ;
-							IN exe\dsf.dll ;
+							IN exe\inquiry.dll ;
 							INTEGER		nMailId, ;				&& The Mail ID returned by inquiry_check_status()
-							STRING@		cText					&& Where to store the text (use @)
+							STRING@		cText, ;				&& Where to store the text (use @)
 							INTEGER		nTextLength				&& How many bytes are available to store the mail
 							**********
 							* Raw text of varying length to be parsed. The request id will always be first.

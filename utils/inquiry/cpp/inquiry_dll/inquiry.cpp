@@ -100,6 +100,9 @@
 
 		// Initialize the cliserv semaphore stack
 		InitializeCriticalSection(&gcsStoreSemaphoreStack);
+
+		// Initialize cliserv
+		cliserv_initialize();
 	}
 
 
@@ -112,12 +115,47 @@
 //////
 	s32 inquiry_get_applications(s8* cIpAddress, s8* cPort)
 	{
-		return(0);
+		u32			lnTransactionId;
+		s8			localIpAddress[32];
+		CClient*	client;
+
+
+		// Launch or access a client connection
+		client = cliserv_client_launch(NULL, cIpAddress, strlen(cIpAddress), &localIpAddress[0], atoi(cPort));
+		if (client)
+		{
+			// Store as the active client
+			gActiveClient = client;
+
+			// Send the message
+			client->cscommon()->createGenericRequestCommand(client, cgc_inquiry_get_applications9, NULL, 0, &lnTransactionId);
+
+			// Return the transaction id
+			return((s32)lnTransactionId);
+		}
+		// If we get here, error
+		return(-1);
 	}
 	    
 	s32 inquiry_login(s8* cUser, s8* cPassword, s8* cAppToken)
 	{
-		return(0);
+		u32 lnTransactionId;
+
+
+		// Launch or access a client connection
+		if (gActiveClient)
+		{
+			// Construct the message
+// TODO:  Working here
+
+			// Send the message
+			gActiveClient->cscommon()->createGenericRequestCommand(gActiveClient, cgc_inquiry_login9, NULL, 0, &lnTransactionId);
+
+			// Return the transaction id
+			return((s32)lnTransactionId);
+		}
+		// If we get here, error
+		return(-1);
 	}
 	    
 	s32 inquiry_logout(s8* cAppToken)

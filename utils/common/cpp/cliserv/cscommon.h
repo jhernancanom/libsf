@@ -100,6 +100,33 @@ struct SList;
 	const u8	cgcVerbX_equals[]									= "verbxequals";
 	const s8	cgcAllItems[]										= "[all]";
 
+	// Inquiry Server requests
+	const s8	cgc_inquiry_get_applications9[]						= "inqgetapp";
+	const s8	cgc_inquiry_login9[]								= "inqlogin ";
+	const s8	cgc_inquiry_logout9[]								= "inqlogout";
+	const s8	cgc_inquiry_get_status_list9[]						= "inqgetsta";
+	const s8	cgc_inquiry_get_priority_list9[]					= "inqgetpri";
+	const s8	cgc_inquiry_get_reported_list9[]					= "inqgetrep";
+	const s8	cgc_inquiry_get_target_list9[]						= "inqgettar";
+	const s8	cgc_inquiry_get_by_date9[]							= "inqbydat ";
+	const s8	cgc_inquiry_get_by_status9[]						= "inqbysta ";
+	const s8	cgc_inquiry_get_by_priority9[]						= "inqbypri ";
+	const s8	cgc_inquiry_get_by_reported9[]						= "inqbyrep ";
+	const s8	cgc_inquiry_get_by_target9[]						= "inqbytar ";
+	const s8	cgc_inquiry_get_description9[]						= "inqgetdsc";
+	const s8	cgc_inquiry_get_comment9[]							= "inqgetcom";
+	const s8	cgc_inquiry_update_title9[]							= "inqupdtit";
+	const s8	cgc_inquiry_update_description9[]					= "inqupddes";
+	const s8	cgc_inquiry_update_comment9[]						= "inqupdcom";
+	const s8	cgc_inquiry_update_status9[]						= "inqupdsta";
+	const s8	cgc_inquiry_update_priority9[]						= "inqupdpri";
+	const s8	cgc_inquiry_update_release9[]						= "inqupdrel";
+	const s8	cgc_inquiry_add9[]									= "inqaddnew";
+	const s8	cgc_inquiry_add_comment9[]							= "inqaddcom";
+	const s8	cgc_inquiry_get_change_history9[]					= "inqgetch ";
+	const s8	cgc_inquiry_get_change_history_description9[]		= "inqgetchd";
+	const s8	cgc_inquiry_get_change_history_comment9[]			= "inqgetchc";
+
 
 	// For out processes, and the in process (only one in per instance)
 	SAppProc*			gsProcRemotes								= NULL;			// List of processes for Out (one Out can be "speaking" to multiple remote processes)
@@ -385,6 +412,13 @@ struct SList;
 //////////
 // Forward declarations
 //////
+	// Called once
+	void				cliserv_initialize							(void);
+
+	// Launch client or server
+	CClient*			cliserv_client_launch						(u32 tnHwndCallback, s8* tcRemoteIpAddressOrHostName, u32 tnRemoteIpAddressOrHostNameLength, s8* tcLocalIpAddress15, u32 tnPortNumber);
+	CServer*			cliserv_server_launch						(u32 tnHwndCallback, s8* tcLocalIpAddress15, u32 tnPortNumber);
+
 	void				iStoreSemaphoreStack						(s8* tcLocation, s8* tcId1, s8* tcId2);
 
 	void				iProcessInternalRequest						(SThreadParams* stp);
@@ -665,7 +699,7 @@ struct SList;
 		// Cliserv command functions
 		//////
 			void			createResendCommand											(SCommQueue*  cq, u32 tnBlock);
-			SCommQueue*		createGenericRequestCommand									(CClient* cc, s8* tcCommand9, s8* tcData, u32 tnDataLength);
+			SCommQueue*		createGenericRequestCommand									(CClient* cc, s8* tcCommand9, s8* tcData, u32 tnDataLength, u32* tnTransactionId);
 // 			u32				createMsodWindowImageCommand								(s8* tcWindowTitle, u32 tnWindowTitleLength);
 // 			u32				createMsodWindowDataCommand									(s8* tcWindowTitle, u32 tnWindowTitleLength, u32 tnFullFetch);
 			CXml*			createCommonXmlCommandFramework								(CXml** xmlCliserv, CXml** xmlCommand, CXml** xmlCmdAttribute, s8* tcCmd, u32 tnCmdLength, s8* tcTag = NULL);

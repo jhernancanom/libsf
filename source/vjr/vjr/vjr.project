@@ -61,6 +61,8 @@
     <File Name="../object_accessors.cpp" ExcludeProjConfig="Debug;Release"/>
     <File Name="../objects.cpp" ExcludeProjConfig="Debug;Release"/>
     <File Name="../sound/sound.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../../../utils/common/cpp/ll.cpp" ExcludeProjConfig="Debug;Release"/>
+    <File Name="../../../utils/common/cpp/builder.cpp" ExcludeProjConfig="Debug;Release"/>
   </VirtualDirectory>
   <VirtualDirectory Name="commands">
     <File Name="../command_defs.h"/>

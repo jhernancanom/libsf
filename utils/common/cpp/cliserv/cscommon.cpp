@@ -718,7 +718,170 @@
 		iStoreSemaphoreStack("commQueue unlock", identifier1, identifier2);
 		LeaveCriticalSection(&m_commQueueSemaphore);
 	}
+;
 
+
+
+
+//////////
+// 
+//////
+
+
+
+
+//////////
+//
+// Launches the specified client (connects to a remote server port).
+//
+// Returns:
+//		-1				= Error (port is already bound)
+//		tnPortNumber	= Okay
+//
+//////
+	CClient* cliserv_client_launch(u32 tnHwndCallback, s8* tcRemoteIpAddressOrHostName, u32 tnRemoteIpAddressOrHostNameLength, s8* tcLocalIpAddress15, u32 tnPortNumber)
+	{
+		CClient**	clientPrev;
+		CClient*	client;
+		CClient*	clientNew;
+		s8			remoteIp[80];
+
+
+		// See where we're adding this item
+		if (!gcRootClient)
+		{
+			// First one
+			clientPrev = &gcRootClient;
+
+		} else {
+			// We are appending to the chain
+			client = gcRootClient;
+			while (client)
+			{
+				// See if this port is already used
+				if (client->getClientPortNumber() == tnPortNumber)
+					return(client);		// This port is already being used
+
+				// See if there is a valid next item
+				if (!client->m_next)
+					break;			// Nope, so this is where it will be added
+
+				// Move to next entry
+				client = client->m_next;
+			}
+			clientPrev = &client->m_next;
+		}
+
+
+		// Create the new entry
+		clientNew = new CClient();
+		if (clientNew)
+		{
+			// Update the forward link
+			*clientPrev = clientNew;
+
+			// Initialize it (when we bind to port we are implicitly stating it's a server)
+			memset(remoteIp, 0, sizeof(remoteIp));
+			memcpy(remoteIp, tcRemoteIpAddressOrHostName, min(tnRemoteIpAddressOrHostNameLength, sizeof(remoteIp) - 1));
+			if (clientNew->connectToRemoteServer(remoteIp, tnPortNumber) == tnPortNumber)
+			{
+				// We're bound, launch the read/write threads
+				// Grab the client IP address or name
+				clientNew->getClientIpAddress(tcLocalIpAddress15, 15);
+
+				// We're bound, launch the read/write threads
+				clientNew->setHwndCallback(tnHwndCallback);
+
+				// Begin reading and writing threads to send/receive data
+				clientNew->beginReadWritePingProcessThreads(NULL);
+
+				// Success!
+				return(clientNew);
+			}
+		}
+		// Failure!
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Launches the specified server (sets up a listener, which communicates with a remote client)
+//
+// Returns:
+//		-1				= Error (port is already bound)
+//		tnPortNumber	= Okay
+//
+//////
+	u32 cliserv_server_launch(u32 tnHwndCallback, s8* tcLocalIpAddress15, u32 tnPortNumber)
+	{
+		CServer**	serverPrev;
+		CServer*	server;
+		CServer*	serverNew;
+
+
+		// See where we're adding this item
+		if (!gcRootServer)
+		{
+			// First one
+			serverPrev = &gcRootServer;
+
+		} else {
+			// We are appending to the chain
+			server = gcRootServer;
+			while (server)
+			{
+				// See if this port is already used
+				if (server->getServerPortNumber() == tnPortNumber)
+					return(-1);		// This port is already used
+
+				// See if there is a valid next item
+				if (!server->m_next)
+					break;			// Nope, so this is where it will be added
+
+				// Move to next entry
+				server = server->m_next;
+			}
+			serverPrev = &server->m_next;
+		}
+
+
+		// Create the new entry
+		serverNew = new CServer();
+		if (serverNew)
+		{
+			// Update the forward link
+			*serverPrev = serverNew;
+
+			// Initialize it (when we bind to port we are implicitly stating it's a server)
+			if (serverNew->bindToPort(tnPortNumber) == tnPortNumber)
+			{
+				// We're bound, launch the read/write threads
+				serverNew->setHwndCallback(tnHwndCallback);
+
+				// Grab the server IP address or name
+				serverNew->getServerIpAddress(tcLocalIpAddress15, 15);
+
+				// Begin listening to the port (spawns a thread which does that)
+				serverNew->beginListening();
+
+				// Success!
+				return(tnPortNumber);
+			}
+		}
+		// If we get here, failure!
+		return(-1);
+	}
+
+
+
+
+
+//////////
+// Store the semaphore entry
+//////
 	void iStoreSemaphoreStack(s8* tcLocation, s8* tcId1, s8* tcId2)
 	{
 		// Store this entry
@@ -1924,23 +2087,27 @@ finishByUnlockingTheSemaphore:
 // Creates a generic request command for the specified command9 plus data-to-follow
 //
 //////
-	SCommQueue* CCSCommon::createGenericRequestCommand(CClient* cc, s8* tcCommand9, s8* tcData, u32 tnDataLength)
+	SCommQueue* CCSCommon::createGenericRequestCommand(CClient* cc, s8* tcCommand9, s8* tcData, u32 tnDataLength, u32* tnTransactionId)
 	{
 		SCommPart*	cp;
 		SCommQueue*	cqNew;
 
 
 		// Build a suitable commQueue object for it
-// TODO:  Working here
+int3_break;
 		cqNew = createCommQueueObjectFromScratch(cc, false);
 		if (cqNew)
 		{
+			// Store the transaction id
+			if (tnTransactionId)
+				*tnTransactionId = cqNew->header.transactionId;		// Store the transaction ID
+
 			// Populate the header correctly
 			memcpy(cqNew->header.command2, cgcRequest, 2);			// "RQ" for a request command
 			memcpy(cqNew->header.command9, tcCommand9, 9);			// User-specified command
 			cqNew->header.ieIdentifier	= cgcIMsg[0];				// "I" for an internal command
-			cqNew->header.bytesOfData	= (u16)tnDataLength;		// No data
-			cqNew->header.crc32			= 0;						// No data, no CRC-32
+			cqNew->header.bytesOfData	= (u16)tnDataLength;		// Trailing data
+			cqNew->header.crc32			= iComputeCrc32(tcData, tnDataLength);
 			cqNew->header.crc16			= iComputeCrc16((s8*)&cqNew->header, sizeof(SCommHeader) - 2);
 			// TransactionId carries through
 
