@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr.cpp
 //
 //////
-// Version 0.41
+// Version 0.42
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -410,7 +410,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 	{
 		s32			lnWidthAccomplishment, lnWidthVersion;
 		RECT		lrc, lrc2, lrcAccomplishment, lrcVersion;
-		SBgra		leftColor;
+		SBgra		baseColor, leftColor, rightColor;
 		COLORREF	textColor;
 
 
@@ -453,28 +453,32 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			switch (tnRAG)
 			{
 				case _RED:
-					leftColor = iBmp_extractColorAtPoint(bmpStoplightRed, bmpStoplightRed->bi.biWidth / 2, bmpStoplightRed->bi.biHeight / 2);
+					baseColor = iBmp_extractColorAtPoint(bmpStoplightRed, bmpStoplightRed->bi.biWidth / 2, bmpStoplightRed->bi.biHeight / 2);
 					break;
 
 				case _AMBER:
-					leftColor = iBmp_extractColorAtPoint(bmpStoplightAmber, bmpStoplightAmber->bi.biWidth / 2, bmpStoplightAmber->bi.biHeight / 2);
+					baseColor = iBmp_extractColorAtPoint(bmpStoplightAmber, bmpStoplightAmber->bi.biWidth / 2, bmpStoplightAmber->bi.biHeight / 2);
 					break;
 
 				case _GREEN:
-					leftColor = iBmp_extractColorAtPoint(bmpStoplightGreen, bmpStoplightGreen->bi.biWidth / 2, bmpStoplightGreen->bi.biHeight / 2);
+					baseColor = iBmp_extractColorAtPoint(bmpStoplightGreen, bmpStoplightGreen->bi.biWidth / 2, bmpStoplightGreen->bi.biHeight / 2);
 					break;
 
 				default:
 				case _BLUE:
-					leftColor = iBmp_extractColorAtPoint(bmpStoplightBlue, bmpStoplightBlue->bi.biWidth / 2, bmpStoplightBlue->bi.biHeight / 2);
+					baseColor	= iBmp_extractColorAtPoint(bmpStoplightBlue, bmpStoplightBlue->bi.biWidth / 2, bmpStoplightBlue->bi.biHeight / 2);
 					break;
 			}
+			leftColor = iBmp_colorCombine(baseColor, white, 0.50f);
 			CopyRect(&lrc2, &lrc);
-			lrc2.right = lrc2.left + bmpStoplightRed->bi.biWidth + lnWidthVersion + 12;
+			lrc2.left	+= bmpStoplightRed->bi.biWidth;
+			lrc2.right	= (lrc2.right - lrc2.left) / 4;
 			iBmp_fillRect(bmp, &lrc2, leftColor, white, leftColor, white, true, NULL, false);
+
 			lrc2.left	= lrc2.right;
 			lrc2.right	= lrc.right;
-			iBmp_fillRect(bmp, &lrc2, white, white, white, white, false, NULL, false);
+			rightColor	= iBmp_colorCombine(baseColor, white, 0.10f);
+			iBmp_fillRect(bmp, &lrc2, white, rightColor, white, rightColor, true, NULL, false);
 
 
 		//////////
@@ -561,6 +565,8 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Compiler is complete (James 4:15)", "0.60");
 		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Running programs (James 4:15)", "0.55");
 		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Syntax highlighting (James 4:15)", "0.50");
+
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Bugfix on function parsing", "0.42");
 
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "System log", "0.41");
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Focus highlight border bugfix", "0.41");

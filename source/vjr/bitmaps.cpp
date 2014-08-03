@@ -3,7 +3,7 @@
 // /libsf/source/vjr/bitmaps.cpp
 //
 //////
-// Version 0.41
+// Version 0.42
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -1624,6 +1624,34 @@
 
 		// If we get here, invalid
 		return(black);
+	}
+
+
+
+
+//////////
+//
+// Called to combine the two colors with the ratio of:
+//		(color1 * tfAlp) + (color2 * (1.0 - tfAlp)).
+//
+//////
+	SBgra iBmp_colorCombine(SBgra color1, SBgra color2, f32 tfAlp)
+	{
+		SBgra	color;
+		f32		lfMalp;
+
+
+		// Initialize
+		tfAlp	= min(max(tfAlp, 0.0f), 1.0f);
+		lfMalp	= 1.0f - tfAlp;
+
+		// Combine
+		color.red	= (u8)min(max(((f32)color1.red * tfAlp) + ((f32)color2.red * lfMalp), 0.0f), 255.0f);
+		color.grn	= (u8)min(max(((f32)color1.grn * tfAlp) + ((f32)color2.grn * lfMalp), 0.0f), 255.0f);
+		color.blu	= (u8)min(max(((f32)color1.blu * tfAlp) + ((f32)color2.blu * lfMalp), 0.0f), 255.0f);
+
+		// Return our value
+		return(color);
 	}
 
 

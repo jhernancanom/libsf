@@ -3,7 +3,7 @@
 // /libsf/source/vjr/engine.cpp
 //
 //////
-// Version 0.41
+// Version 0.42
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -115,6 +115,7 @@
 						// They want to clear the screen
 						iEditManager_navigateTop(screenData, gobj_screen);
 						iEditManager_deleteChain(&screenData, false);
+						screen_editbox->isDirtyRender = true;
 						iWindow_render(gWinScreen, false);
 						break;
 
@@ -125,6 +126,7 @@
 							// Syntax error, expected "? something" got only "?"
 							iEditManager_appendLine(screenData, (s8*)cgcSyntaxError, -1);
 							iEditManager_navigateEnd(screenData, gobj_screen);
+							screen_editbox->isDirtyRender = true;
 							iWindow_render(gWinScreen, false);
 							return(false);
 
@@ -137,7 +139,7 @@
 								{
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error
-									iEditManager_navigateEnd(screenData, gobj_screen);
+									screen_editbox->isDirtyRender |= iEditManager_navigateEnd(screenData, gobj_screen);
 									iWindow_render(gWinScreen, false);
 									return(false);
 								}
@@ -148,7 +150,7 @@
 								{
 									// Unknown parameter
 									iError_report(cgcUnrecognizedParameter);
-									iEditManager_navigateEnd(screenData, gobj_screen);
+									screen_editbox->isDirtyRender |= iEditManager_navigateEnd(screenData, gobj_screen);
 									iWindow_render(gWinScreen, false);
 									return(false);
 								}
@@ -159,6 +161,7 @@
 							// Add its contents to _screen
 							iEditManager_appendLine(screenData, varText->value.data, varText->value.length);
 							iEditManager_navigateEnd(screenData, gobj_screen);
+							screen_editbox->isDirtyRender = true;
 							iWindow_render(gWinScreen, false);
 
 							// Release the variable if it was manufactured
@@ -180,7 +183,7 @@
 								{
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error
-									iEditManager_navigateEnd(screenData, gobj_screen);
+									screen_editbox->isDirtyRender |= iEditManager_navigateEnd(screenData, gobj_screen);
 									iWindow_render(gWinScreen, false);
 									return(false);
 								}
@@ -191,7 +194,7 @@
 								{
 									// Unknown parameter
 									iError_report(cgcUnrecognizedParameter);
-									iEditManager_navigateEnd(screenData, gobj_screen);
+									screen_editbox->isDirtyRender |= iEditManager_navigateEnd(screenData, gobj_screen);
 									iWindow_render(gWinScreen, false);
 									return(false);
 								}
@@ -555,7 +558,7 @@
 			// The component after this must be a comma
 			//////
 				compComma = (SComp*)comp->ll.next;
-				if (compComma->iCode != _ICODE_COMMA && compComma->iCode != _ICODE_PARENTHESIS_RIGHT && lnParamCount > requiredCount)
+				if (!compComma || (compComma->iCode != _ICODE_COMMA && compComma->iCode != _ICODE_PARENTHESIS_RIGHT && lnParamCount > requiredCount))
 				{
 					// Comma expected error
 					iError_reportByNumber(_ERROR_COMMA_EXPECTED, comp);

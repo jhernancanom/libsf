@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_defs.h
 //
 //////
-// Version 0.41
+// Version 0.42
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -257,13 +257,6 @@
 	void					iMisc_adjustColorBrightness				(SBgra& color, f32 tfPercent);
 	bool					iInit_shutdownPolitely					(void);
 
-	void					iComputeScreenWindowClientAreaDimensions	(SSize* size);
-	void					iComputeScreenWindowNonclientAreaDimensions	(SSize* size);
-	void					iAdjustScreenWindowDimensions				(SSize* size);
-	void					iComputeJDebiWindowClientAreaDimensions		(SSize* size);
-	void					iComputeJDebiWindowNonclientAreaDimensions	(SSize* size);
-	void					iAdjustJDebiWindowDimensions				(SSize* size);
-
 	s64						iTime_computeMilliseconds				(SYSTEMTIME* time);
 	s64						iTime_getSystemMs						(void);
 	s64						iTime_getLocalMs						(void);
@@ -354,6 +347,7 @@
 	u32						iBmp_extractRect						(SBitmap* bmpDst, RECT* trc, SBitmap* bmpSrc, s32 tnX, s32 tnY);
 	HRGN					iBmp_extractRgnByMask					(SBitmap* bmp, RECT* trc);
 	SBgra					iBmp_extractColorAtPoint				(SBitmap* bmp, s32 tnX, s32 tnY);
+	SBgra					iBmp_colorCombine						(SBgra color1, SBgra color2, f32 tfAlp);
 	bool					iBmp_locateMarker						(SBitmap* bmp, u8 red, u8 grn, u8 blu, u32* tnX, u32* tnY, bool tlOverwriteMarker);
 // TODO:  The following void functions need to be changed to u32 and indicate how many pixels were rendered
 	void					iBmp_drawPoint							(SBitmap* bmp, s32 tnX, s32 tnY, SBgra color);

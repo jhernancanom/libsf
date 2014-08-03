@@ -3,7 +3,7 @@
 // /libsf/source/vjr/compiler.cpp
 //
 //////
-// Version 0.41
+// Version 0.42
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -2605,7 +2605,7 @@ int3_break;
 			if (tcHaystack[0] == '_' && tnLength == 1)
 			{
 				// It's an explicit match of a range (this is ALWAYS subject to case as it is an explicit range)
-				for (lnI = 1; tcHaystack[lnI] != 0 || tcHaystack[lnI + 1] != 0; lnI += 2)
+				for (lnI = 1; tcHaystack[lnI] != 0 && tcHaystack[lnI + 1] != 0; lnI += 2)
 				{
 					//		within the range low			.........			up to the range high
 					if (tcNeedle[0] >= tcHaystack[lnI]			&&		tcNeedle[0] <= tcHaystack[lnI + 1])
