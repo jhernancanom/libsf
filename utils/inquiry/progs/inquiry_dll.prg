@@ -93,6 +93,7 @@ FUNCTION declare_inquiry_dll
 	* Note:  Connection remains active until a switch is made to another server, until the connection times out, or the application terminates
 	DECLARE INTEGER		inquiry_get_applications ;
 							IN exe\inquiry.dll ;
+							INTEGER		nHwnd, ;				&& The notification HWND
 							STRING		cIpAddress, ;			&& IP address to query
 							STRING		cPort					&& Port to query
 							**********

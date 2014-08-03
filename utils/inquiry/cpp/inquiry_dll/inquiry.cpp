@@ -110,10 +110,10 @@
 
 //////////
 //
-// Called to obtain the bitmap of the indicated character.
+// Called to select the active server, and retrieve a list of applications.
 //
 //////
-	s32 inquiry_get_applications(s8* cIpAddress, s8* cPort)
+	s32 inquiry_get_applications(u32 tnHwnd, s8* cIpAddress, s8* cPort)
 	{
 		u32			lnTransactionId;
 		s8			localIpAddress[32];
@@ -121,14 +121,14 @@
 
 
 		// Launch or access a client connection
-		client = cliserv_client_launch(NULL, cIpAddress, strlen(cIpAddress), &localIpAddress[0], atoi(cPort));
+		client = cliserv_client_launch(tnHwnd, cIpAddress, strlen(cIpAddress), &localIpAddress[0], atoi(cPort));
 		if (client)
 		{
 			// Store as the active client
 			gActiveClient = client;
 
 			// Send the message
-			client->cscommon()->createGenericRequestCommand(client, cgc_inquiry_get_applications9, NULL, 0, &lnTransactionId);
+			client->cscommon()->createGenericRequestCommand(client, (s8*)cgc_inquiry_get_applications9, NULL, 0, &lnTransactionId);
 
 			// Return the transaction id
 			return((s32)lnTransactionId);
@@ -136,7 +136,16 @@
 		// If we get here, error
 		return(-1);
 	}
-	    
+
+
+
+
+//////////
+//
+// Called to login on to the server and retrieve a cession token that will
+// that will be used for all future transmission.
+//
+//////
 	s32 inquiry_login(s8* cUser, s8* cPassword, s8* cAppToken)
 	{
 		u32 lnTransactionId;
@@ -146,10 +155,9 @@
 		if (gActiveClient)
 		{
 			// Construct the message
-// TODO:  Working here
 
 			// Send the message
-			gActiveClient->cscommon()->createGenericRequestCommand(gActiveClient, cgc_inquiry_login9, NULL, 0, &lnTransactionId);
+			gActiveClient->cscommon()->createGenericRequestCommand(gActiveClient, (s8*)cgc_inquiry_login9, NULL, 0, &lnTransactionId);
 
 			// Return the transaction id
 			return((s32)lnTransactionId);

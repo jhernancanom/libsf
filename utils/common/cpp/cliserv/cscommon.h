@@ -46,9 +46,11 @@ struct SList;
 // Common to both client and server
 //////
 	// Constants for communicating Cliserv changes in connections, new messages, etc., to the indicated callback hwnd (for server or callback)
-	const u32	WMCLISERV_CLIENT_CONNECTED							= WM_USER + 500;	// When a client connects, this message is sent to the callback hwnd
-	const u32	WMCLISERV_CLIENT_DISCONNECTED						= WM_USER + 501;	// When a client disconnects, this message is sent to the callback hwnd
-	const u32	WMCLISERV_INCOMING_DATA								= WM_USER + 502;	// When a remote connect sends us data, this message is sent to indicate the mail parcel for receipt
+	const u32	WMCLISERV_CLIENT_CONNECTED							= WM_USER + 500;					// When a client connects, this message is sent to the callback hwnd
+	const u32	WMCLISERV_CLIENT_DISCONNECTED						= WM_USER + 501;					// When a client disconnects, this message is sent to the callback hwnd
+	const u32	WMCLISERV_SERVER_CONNECTED							= WM_USER + 502;					// When a server connects, this message is sent to the callback hwnd
+	const u32	WMCLISERV_SERVER_DISCONNECTED						= WM_USER + 503;					// When a server disconnects, this message is sent to the callback hwnd
+	const u32	WMCLISERV_TRANSACTION_RESPONSE						= WM_USER + 504;					// When a remote connect sends us data, this message is sent to indicate the mail parcel for receipt
 
 	const u32	_CLISERV_MAX_PROCESS_THREADS						= 4;								// Maximum of 4 simultaneous processing threads per client/server connection instance
 	const u32	_CLISERV_PROCESS_SLEEP_INTERVAL_BUSY				= 0;								// Release timeslice after each iteration, but continue processing
@@ -57,7 +59,7 @@ struct SList;
 	const u32	_CLISERV_WATCHDOG_SLEEP_INTERVAL					= 5000;								// Watchdog fires every 5 seconds
 	const u32	_CLISERV_RETRY_TIMEOUT_INTERVAL						= 30000;							// If we don't receive packets after 30 seconds, we retry
 	const u32	_CLISERV_UNACK_RESEND_TIMEOUT_INTERVAL				= 15000;							// If we don't get an acknowledgment on a send after 15 seconds, we re-send
-	const u32	_CLISERV_UNACK_FAILURE_TIMEOUT_INTERVAL				= 60000;							// If we don't get an acknowledgment on a send after 60 seconds, we consider it a failure
+	const u32	_CLISERV_UNACK_FAILURE_TIMEOUT_INTERVAL				= 60000;							// If we don't get an acknowledgment on a first send after 60 seconds, we consider it a failure
 
 	// Strings used for identifying commands, populates command2 in the SCommHeader
 	const s8	cgcPing[]											= "PG";								// Ping
@@ -85,6 +87,7 @@ struct SList;
 	const u8	cgcVerbCmd[]										= "verb";							// For cliserv, for sending a "verb" or "verb x equals" to a remote ip address
 	const u8	cgcIpAddress[]										= "ipaddress";						// For cliserv, for indicating the ip address of a connection change
 	const u8	cgcPortNumber[]										= "portnumber";						// For cliserv, for indicating the port number of a connection change
+	const u8	cgcTransactionId[]									= "transactionid";					// For cliserv, for indicating the transaction id this mail relates to
 	const u8	cgcChangeType[]										= "change";							// For cliserv, for indicating the type of connection change (connect or disconnect)
 	const u8	cgcIncomingBytes[]									= "incomingbytes";					// For cliserv, for indicating the number of bytes for incoming data
 	const u8	cgcMailId[]											= "mailid";							// For cliserv, for indicating the mail id to retrieve additional information

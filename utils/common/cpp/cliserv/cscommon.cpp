@@ -718,14 +718,39 @@
 		iStoreSemaphoreStack("commQueue unlock", identifier1, identifier2);
 		LeaveCriticalSection(&m_commQueueSemaphore);
 	}
-;
 
 
 
 
 //////////
-// 
+//
+// Called only to make the initial call to Winsock2
+//
+// Returns:
+//		0				= Error (port is already bound in server mode)
+//		tnPortNumber	= Okay, server was launched
+//
 //////
+	void cliserv_initialize(void)
+	{
+		int		lnResult;
+		WSADATA wd;
+
+
+		if (!gbWSA_isInitialized)
+		{
+			// We request 2.2 or later services (for WinXP and later)
+			lnResult = WSAStartup(MAKEWORD(2,2), &wd);
+			if (lnResult != 0)
+			{
+				// This shouldn't happen unless the computer they're running on is too old
+				MessageBox(GetDesktopWindow(), "Unable to initialize Winsock 2.2", "Fatal Error", MB_OK);
+			}
+
+			// All done
+			gbWSA_isInitialized = true;
+		}
+	}
 
 
 
@@ -815,7 +840,7 @@
 //		tnPortNumber	= Okay
 //
 //////
-	u32 cliserv_server_launch(u32 tnHwndCallback, s8* tcLocalIpAddress15, u32 tnPortNumber)
+	CServer* cliserv_server_launch(u32 tnHwndCallback, s8* tcLocalIpAddress15, u32 tnPortNumber)
 	{
 		CServer**	serverPrev;
 		CServer*	server;
@@ -835,7 +860,7 @@
 			{
 				// See if this port is already used
 				if (server->getServerPortNumber() == tnPortNumber)
-					return(-1);		// This port is already used
+					return(server);		// This port is already used
 
 				// See if there is a valid next item
 				if (!server->m_next)
@@ -868,11 +893,11 @@
 				serverNew->beginListening();
 
 				// Success!
-				return(tnPortNumber);
+				return(serverNew);
 			}
 		}
 		// If we get here, failure!
-		return(-1);
+		return(NULL);
 	}
 
 
@@ -962,7 +987,7 @@
 //////
 	bool CCSCommon::parseNextReceivedCommQueueItem(SThreadParams* stp)
 	{
-		u32				lnDataMailId, lnMailId;
+		u32				lnDataMailId, lnMailId, lnTransactionId;
 		bool			lbFoundOne;
 		SCommQueue*		cq;
 		SParcel*		mail;
@@ -1000,6 +1025,9 @@
 				// Raise the flag
 				lbFoundOne = true;
 
+				// Grab the transaction id
+				lnTransactionId = cq->header.transactionId;
+
 				// Remove it from where it is now in the completed commQueue chain
 				iDetachObjectFromCommQueue(&m_firstCompletedCommQueueRead, cq);
 
@@ -1026,6 +1054,10 @@
 					else					sprintf(buffer, "%u\0", stp->client->cscommon()->getClientPortNum());
 					iAppendLabelColonValueString(&lcMail, &lnMailLength, (u8*)cgcPortNumber, sizeof(cgcPortNumber) - 1, (u8*)buffer, strlen(buffer));
 
+					// Transaction id
+					sprintf(buffer, "%u\0", lnTransactionId);
+					iAppendLabelColonValueString(&lcMail, &lnMailLength, (u8*)cgcTransactionId, sizeof(cgcTransactionId) - 1, (u8*)buffer, strlen(buffer));
+
 					// The change (connection)
 					iAppendLabelColonValueString(&lcMail, &lnMailLength, (u8*)cgcChangeType, sizeof(cgcChangeType) - 1, (u8*)cgcIncomingData, sizeof(cgcIncomingData) - 1);
 
@@ -1048,11 +1080,11 @@
 				if (stp->server)
 				{
 					// The server's window needs to be notified that this has happened
-					stp->server->postHwndCallbackMessage(WMCLISERV_INCOMING_DATA, lnMailId, ip->S_un.S_addr);
+					stp->server->postHwndCallbackMessage(WMCLISERV_TRANSACTION_RESPONSE, lnMailId, ip->S_un.S_addr);
 
 				} else if (stp->client) {
 					// The server's window needs to be notified that this has happened
-					stp->client->postHwndCallbackMessage(WMCLISERV_INCOMING_DATA, lnMailId, ip->S_un.S_addr);
+					stp->client->postHwndCallbackMessage(WMCLISERV_TRANSACTION_RESPONSE, lnMailId, ip->S_un.S_addr);
 				}
 
 			}

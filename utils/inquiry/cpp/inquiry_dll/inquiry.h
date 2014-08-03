@@ -174,7 +174,7 @@ class CServer;
 	void				initialize								(void);
 
 	// inquiry
-	s32					inquiry_get_applications				(s8* cIpAddress, s8* cPort);
+	s32					inquiry_get_applications				(u32 tnHwnd, s8* cIpAddress, s8* cPort);
 	
 	s32					inquiry_login							(s8* cUser, s8* cPassword, s8* cAppToken);
 	s32					inquiry_logout							(s8* cAppToken);
