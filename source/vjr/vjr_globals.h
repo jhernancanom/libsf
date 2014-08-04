@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_globals.h
 //
 //////
-// Version 0.42
+// Version 0.43
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -59,10 +59,11 @@
 
 	// Main screen display history, and system log data
 	SEM*				screenData							= NULL;									// The data displayed on the screen
-	SEM*				systemLog								= NULL;									// The data displayed on the screen
+	SEM*				systemLog							= NULL;									// The data displayed on the screen
 
 	// Global variables
 	SVariable*			varGlobals							= NULL;									// All global variables are stored
+	SVariable*			varConstant_space					= NULL;									// Holds a single space, and is a constant
 
 	// Focus highlight windows, and tooltip window
 	SBuilder*			gFocusHighlights					= NULL;									// Holds SFocusHighlight structures

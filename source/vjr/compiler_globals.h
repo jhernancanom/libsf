@@ -3,7 +3,7 @@
 // /libsf/source/vjr/compiler_globals.h
 //
 //////
-// Version 0.42
+// Version 0.43
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -420,6 +420,7 @@
 		{ "objnum",                 6,          false,      _ICODE_OBJNUM,                          false,              _ICAT_FUNCTION },
 		{ "objtoclient",            11,         false,      _ICODE_OBJTOCLIENT,                     false,              _ICAT_FUNCTION },
 		{ "objvar",                 6,          false,      _ICODE_OBJVAR,                          false,              _ICAT_FUNCTION },
+		{ "occursc",                7,          false,      _ICODE_OCCURSC,                         false,              _ICAT_FUNCTION },
 		{ "occurs",                 6,          false,      _ICODE_OCCURS,                          false,              _ICAT_FUNCTION },
 		{ "oemtoansi",              9,          false,      _ICODE_OEMTOANSI,                       false,              _ICAT_FUNCTION },
 		{ "oldval",                 6,          false,      _ICODE_OLDVAL,                          false,              _ICAT_FUNCTION },

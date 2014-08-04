@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr.cpp
 //
 //////
-// Version 0.42
+// Version 0.43
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -213,8 +213,10 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		// Create our global variables
 		iVjr_appendSystemLog("Create _startupTime");
-		varGlobals = function_datetime(NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+		varGlobals			= function_datetime(NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 		iDatum_duplicate(&varGlobals->name, cgcName_startupTime, -1);
+		varConstant_space	= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+		iDatum_duplicate(&varConstant_space->value, cgc_spaceText, 1);
 
 		// Attach them to physical windows
 		gWinScreen	= iWindow_allocate();
@@ -565,6 +567,8 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Compiler is complete (James 4:15)", "0.60");
 		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Running programs (James 4:15)", "0.55");
 		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Syntax highlighting (James 4:15)", "0.50");
+
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "AT(), OCCURS(), PAD(), TRANSFORM()", "0.43");
 
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Bugfix on function parsing", "0.42");
 

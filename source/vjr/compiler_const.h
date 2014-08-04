@@ -3,7 +3,7 @@
 // /libsf/source/vjr/compiler_const.h
 //
 //////
-// Version 0.42
+// Version 0.43
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -172,6 +172,7 @@
 	const u32		_ERROR_P5_IS_INCORRECT							= 20;
 	const u32		_ERROR_P6_IS_INCORRECT							= 21;
 	const u32		_ERROR_P7_IS_INCORRECT							= 22;
+	const u32		_ERROR_INTERNAL_ERROR							= 23;
 
 	// Messages
 	const s8		cgcComponentError[]								= "Error in component, column ";
@@ -197,6 +198,7 @@
 	const s8		cgcP5IsIncorrect[]								= "parameter 5 is incorrect";
 	const s8		cgcP6IsIncorrect[]								= "parameter 6 is incorrect";
 	const s8		cgcP7IsIncorrect[]								= "parameter 7 is incorrect";
+	const s8		cgcInternalError[]								= "internal error";
 	
 
 //////////
@@ -675,6 +677,7 @@
 	const u32		_ICODE_OBJNUM                                   = 1285;
 	const u32		_ICODE_OBJTOCLIENT                              = 1286;
 	const u32		_ICODE_OBJVAR                                   = 1287;
+	const u32		_ICODE_OCCURSC									= 1431;
 	const u32		_ICODE_OCCURS                                   = 1288;
 	const u32		_ICODE_OEMTOANSI                                = 1289;
 	const u32		_ICODE_OLDVAL                                   = 1290;
@@ -818,6 +821,7 @@
 	const u32		_ICODE_XMLTOCURSOR                              = 1428;
 	const u32		_ICODE_XMLUPDATEGRAM                            = 1429;
 	const u32		_ICODE_YEAR                                     = 1430;
+	// occursc = 1431
 
 // Temporarily added until the processing engine is coded
 	const u32		_ICODE_CONCATENATE								= 1900;

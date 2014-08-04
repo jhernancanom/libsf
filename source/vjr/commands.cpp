@@ -3,7 +3,7 @@
 // /libsf/source/vjr/commands.cpp
 //
 //////
-// Version 0.42
+// Version 0.43
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -104,6 +104,7 @@
 			case _ERROR_P5_IS_INCORRECT:					{	iError_report((s8*)cgcP5IsIncorrect);				break;	}
 			case _ERROR_P6_IS_INCORRECT:					{	iError_report((s8*)cgcP6IsIncorrect);				break;	}
 			case _ERROR_P7_IS_INCORRECT:					{	iError_report((s8*)cgcP7IsIncorrect);				break;	}
+			case _ERROR_INTERNAL_ERROR:						{	iError_report((s8*)cgcInternalError);				break;	}
 		}
 
 		// Display the component
@@ -120,7 +121,7 @@
 // Trims spaces off the start and end of the string.
 //
 //////
-// Version 0.42
+// Version 0.43
 // Last update:
 //     Jul.12.2014
 //////
@@ -514,7 +515,7 @@
 // Takes a character input and converts it to its ASCII value.
 //
 //////
-// Version 0.42
+// Version 0.43
 // Last update:
 //     Jul.05.2014
 //////
@@ -585,11 +586,204 @@
 
 //////////
 //
+// Functions:  AT(), ATC(), RAT(), RATC()
+// Takes a character input to search for, an expression to search, and an optional occurrence
+// to find, with and optionally with regard to case (trailing "C").
+//
+// Functions:  OCCURS(), OCCURSC()
+// Takes a character input to search for, an expression to search, and determines how many
+// times the search string is found, and optionally with regard to case (trailing "C").
+//
+//////
+// Version 0.43
+// Last update:
+//     Aug.03.2014
+//////
+// Change log:
+//     Aug.03.2014 - Initial creation
+//////
+// Parameters:
+//     pNeedle		-- What we're looking for
+//     pHaystack	-- Where we're looking
+//     pOccurrence	-- An optional instance count within the expression
+//
+//////
+// Returns:
+//    u32			-- Location of the find, or 0 if not found
+//////
+	SVariable* function_at(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence)
+	{
+		return(iFunction_atOccursCommon(pNeedle, pHaystack, pOccurrence, true, false, NULL));
+	}
+
+	SVariable* function_atc(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence)
+	{
+		return(iFunction_atOccursCommon(pNeedle, pHaystack, pOccurrence, false, false, NULL));
+	}
+
+	SVariable* function_rat(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence)
+	{
+		return(iFunction_atOccursCommon(pNeedle, pHaystack, pOccurrence, true, true, NULL));
+	}
+
+	SVariable* function_ratc(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence)
+	{
+		return(iFunction_atOccursCommon(pNeedle, pHaystack, pOccurrence, false, true, NULL));
+	}
+
+	SVariable* iFunction_atOccursCommon(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence, bool tlCaseSensitive, bool tlScanBackward, u32* tnFoundCount)
+	{
+		u32			errorNum;
+		s32			lnI, lnStart, lnInc, lnStopper, lnFoundCount, lnOccurrence;
+		bool		error;
+		SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be character
+		//////
+			if (!iVariable_isValid(pNeedle) || !iVariable_isTypeCharacter(pNeedle))
+			{
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 2 must be character
+		//////
+			if (!iVariable_isValid(pHaystack) || !iVariable_isTypeCharacter(pHaystack))
+			{
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, NULL);
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 3 is optional, but if present...
+		//////
+			if (iVariable_isValid(pOccurrence))
+			{
+				// ...it must be numeric
+				if (!iVariable_isTypeNumeric(pOccurrence))
+				{
+					iError_reportByNumber(_ERROR_P3_IS_INCORRECT, NULL);
+					return(NULL);
+				}
+
+				// Grab the occurrence
+				lnOccurrence = iiVariable_getAs_s32(pOccurrence, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+				// Validate that the occurrence is
+				if (lnOccurrence <= 0)
+				{
+					iError_report("Parameter 3 must be 1 or greater");
+					return(NULL);
+				}
+
+			} else {
+				// The first occurrence is what we're after
+				lnOccurrence = 1;
+			}
+
+
+		//////////
+		// Create the return variable
+		//////
+			result = iVariable_create(_VAR_TYPE_S32, NULL);
+
+
+		//////////
+		// If either string has a zero length, or the needle is bigger than the haystack, we cannot find it
+		//////
+			if (pNeedle->value.length == 0 || pHaystack->value.length == 0 || pNeedle->value.length > pHaystack->value.length)
+				return(result);
+
+
+		//////////
+		// Determine where
+		//////
+			if (tnFoundCount)
+			{
+				// They want to find all of the occurrences
+				lnStart			= 0;
+				lnInc			= 1;
+				lnStopper		= pHaystack->value.length - pNeedle->value.length + 1;
+				lnOccurrence	= pHaystack->value.length;
+
+			} else if (tlScanBackward) {
+				// Scan from the back of the string to the start
+				lnStart		= pHaystack->value.length - pNeedle->value.length;
+				lnInc		= -1;
+				lnStopper	= -1;
+
+			} else {
+				// Scan from the front of the string to the end
+				lnStart		= 0;
+				lnInc		= 1;
+				lnStopper	= pHaystack->value.length - pNeedle->value.length + 1;
+			}
+
+
+		//////////
+		// Scan through the text
+		//////
+			for (lnI = lnStart, lnFoundCount = 0; lnI != lnStopper; lnI += lnInc)
+			{
+				//////////
+				// Compare this portion
+				//////
+					if (tlCaseSensitive)
+					{
+						// Case-sensitive
+						if (memcmp(pNeedle->value.data, pHaystack->value.data + lnI, pNeedle->value.length) == 0)
+							++lnFoundCount;		// Here's a match
+
+					} else {
+						// Case-insensitive
+						if (_memicmp(pNeedle->value.data, pHaystack->value.data + lnI, pNeedle->value.length) == 0)
+							++lnFoundCount;		// Here's a match
+					}
+
+
+				//////////
+				// See if we're done
+				//////
+					if (lnFoundCount == lnOccurrence)
+					{
+						// Store the found location
+						*(s32*)result->value.data_s32 = lnI + 1;
+
+						// We're done, exit
+						break;
+					}
+			}
+
+
+		//////////
+		// Update the found count if it was requested
+		//////
+			if (tnFoundCount)
+				*tnFoundCount = lnFoundCount;
+
+
+		//////////
+		// Indicate our status
+		//////
+			return(result);
+	}
+
+
+
+
+//////////
+//
 // Function: CHR()
 // Takes a numeric input in the range 0..255, and converts it to its ASCII character.
 //
 //////
-// Version 0.42
+// Version 0.43
 // Last update:
 //     Jul.05.2014
 //////
@@ -674,7 +868,7 @@
 // Instantiates and instance of the indicated class.
 //
 //////
-// Version 0.42
+// Version 0.43
 // Last update:
 //     Jul.12.2014
 //////
@@ -763,7 +957,7 @@
 // Returns the current local time, or uses the input variables to create the indicated datetime.
 //
 //////
-// Version 0.42
+// Version 0.43
 // Last update:
 //     Jul.10.2014
 //////
@@ -981,7 +1175,7 @@
 // Takes a value and returns the INT(n) of that value.
 //
 //////
-// Version 0.42
+// Version 0.43
 // Last update:
 //     Jul.13.2014
 //////
@@ -1047,7 +1241,7 @@
 // Returns the left N characters of a string.
 //
 //////
-// Version 0.42
+// Version 0.43
 // Last update:
 //     Jul.12.2014
 //////
@@ -1134,7 +1328,7 @@
 // Returns the length of the string.
 //
 //////
-// Version 0.42
+// Version 0.43
 // Last update:
 //     Jul.12.2014
 //////
@@ -1195,7 +1389,7 @@
 // Converts every character in the string to lowercase.
 //
 //////
-// Version 0.42
+// Version 0.43
 // Last update:
 //     Jul.12.2014
 //////
@@ -1267,7 +1461,7 @@
 // Trims spaces off the start of the string.
 //
 //////
-// Version 0.42
+// Version 0.43
 // Last update:
 //     Jul.12.2014
 //////
@@ -1295,7 +1489,7 @@
 // Returns the maximum value of the two inputs.
 //
 //////
-// Version 0.42   (Determine the current version from the header in vjr.cpp)
+// Version 0.43   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.12.2014
 //////
@@ -1507,7 +1701,7 @@
 // Returns the minimum value of the two inputs.
 //
 //////
-// Version 0.42   (Determine the current version from the header in vjr.cpp)
+// Version 0.43   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.12.2014
 //////
@@ -1715,12 +1909,267 @@
 
 //////////
 //
+// Function: OCCURS(), and OCCURSC()
+// Counts the number of times the first parameter is found in the second, and
+// optionally with regards to case.
+//
+//////
+// Version 0.43
+// Last update:
+//     Aug.03.2014
+//////
+// Change log:
+//     Aug.03.2014 - Initial creation
+//////
+// Parameters:
+//    pNeedle		-- The string they're looking for
+//    pHaystack		-- The string being searched
+//
+//////
+// Returns:
+//    s32			-- The number of times
+//////
+	SVariable* function_occurs(SVariable* pNeedle, SVariable* pHaystack)
+	{
+		u32			lnFoundCount;
+		SVariable*	result;
+
+
+		// Compute the found count
+		result = iFunction_atOccursCommon(pNeedle, pHaystack, NULL, true, false, &lnFoundCount);
+		if (result)
+		{
+			// Update the return variable
+			*(s32*)result->value.data_s32 = lnFoundCount;
+		}
+
+		// Return our result
+		return(result);
+	}
+
+	SVariable* function_occursc(SVariable* pNeedle, SVariable* pHaystack)
+	{
+		u32			lnFoundCount;
+		SVariable*	result;
+
+
+		// Compute the found count
+		result = iFunction_atOccursCommon(pNeedle, pHaystack, NULL, false, false, &lnFoundCount);
+		if (result)
+		{
+			// Update the return variable
+			*(s32*)result->value.data_s32 = lnFoundCount;
+		}
+
+		// Return our result
+		return(result);
+	}
+
+
+
+
+//////////
+//
+// Function: PADC(), PADL(), and PADR()
+// 
+// and lowercases everything else.
+//
+//////
+// Version 0.43
+// Last update:
+//     Aug.03.2014
+//////
+// Change log:
+//     Aug.03.2014 - Initial creation
+//////
+// Parameters:
+//     pExpression		-- The input, converted to character, and then aligned
+//     pResultSize		-- The size of the result
+//     pPadCharacter	-- Optional, the character to use, if unspecified then uses SPACE(1)
+//
+//////
+// Returns:
+//    Character         -- The string is converted from whatever it was to character, and
+//                         then padded to its destination size. If the string is larger than
+//                         the destination, then it remains as it is.
+//////
+	SVariable* function_padc(SVariable* pExpression, SVariable* pResultSize, SVariable* pPadCharacter)
+	{
+		return(iFunction_padCommon(pExpression, pResultSize, pPadCharacter, true, true));
+	}
+
+	SVariable* function_padl(SVariable* pExpression, SVariable* pResultSize, SVariable* pPadCharacter)
+	{
+		return(iFunction_padCommon(pExpression, pResultSize, pPadCharacter, true, false));
+	}
+
+	SVariable* function_padr(SVariable* pExpression, SVariable* pResultSize, SVariable* pPadCharacter)
+	{
+		return(iFunction_padCommon(pExpression, pResultSize, pPadCharacter, false, true));
+	}
+
+	SVariable* iFunction_padCommon(SVariable* pExpression, SVariable* pResultSize, SVariable* pPadCharacter, bool tlPadLeft, bool tlPadRight)
+	{
+		u32			errorNum;
+		s32			lnI, lnResultSize, lnCopyStart, lnPadLeftStopper, lnPadRightStart, lnPadRightStopper;
+		bool		error;
+		SVariable*	tempVar;
+		SVariable*	result;
+
+
+		//////////
+        // Make sure our parameters are correct
+		//////
+			if (!tlPadLeft && !tlPadRight)
+			{
+				iError_reportByNumber(_ERROR_INTERNAL_ERROR, NULL);
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 1 must be valid
+		//////
+			if (!iVariable_isValid(pExpression))
+			{
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 2 must be numeric
+		//////
+			if (!iVariable_isValid(pResultSize) || !iVariable_isTypeNumeric(pResultSize))
+			{
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, NULL);
+				return(NULL);
+			}
+			lnResultSize = iiVariable_getAs_s32(pResultSize, false, &error, &errorNum);
+			if (error)	{	iError_reportByNumber(errorNum, NULL);	return(NULL);	}
+
+
+		//////////
+        // Parameter 3 is optional, but if present...
+		//////
+			if (iVariable_isValid(pPadCharacter))
+			{
+				// ...it must be character
+				if (!iVariable_isTypeCharacter(pPadCharacter))
+				{
+					iError_reportByNumber(_ERROR_P3_IS_INCORRECT, NULL);
+					return(NULL);
+				}
+
+				// Validate the pad character is at least one character long
+				if (pPadCharacter->value.length == 0)
+				{
+					iError_report("Parameter 3 must be at least one character");
+					return(NULL);
+				}
+
+			} else {
+				// The first occurrence is what we're after
+				pPadCharacter = varConstant_space;
+			}
+
+
+		//////////
+		// Create the return variable
+		//////
+			tempVar = iVariable_convertForDisplay(pExpression);
+
+			// If it wasn't created, or it's already as long or longer than its target, return it
+			if (!tempVar || tempVar->value.length >= lnResultSize)
+				return(tempVar);
+			
+			// If we get here, the result will be needed
+			result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+			iDatum_allocateSpace(&result->value, lnResultSize);
+
+
+		//////////
+		// Determine where the string should go
+		//////
+			if (tlPadLeft && tlPadRight)
+			{
+				// Pad both
+				lnCopyStart			= (lnResultSize - tempVar->value.length) / 2;
+				lnPadLeftStopper	= lnCopyStart;
+				lnPadRightStart		= lnCopyStart + tempVar->value.length;
+				lnPadRightStopper	= lnResultSize;
+
+			} else if (tlPadLeft) {
+				// Pad left
+				lnCopyStart			= lnResultSize - tempVar->value.length;
+				lnPadLeftStopper	= lnCopyStart;
+				lnPadRightStart		= -1;
+				lnPadRightStopper	= -1;
+
+			} else {
+				// Pad right
+				lnCopyStart			= 0;
+				lnPadLeftStopper	= -1;
+				lnPadRightStart		= tempVar->value.length;
+				lnPadRightStopper	= lnResultSize;
+			}
+
+
+		//////////
+		// Pad left
+		//////
+			if (lnPadLeftStopper >= 1)
+			{
+				// Iterate through every cycle required to populate the left side
+				for (lnI = 0; lnI < lnPadLeftStopper; lnI += pPadCharacter->value.length)
+				{
+					// Copy this string, or as much of it will fit
+					memcpy(result->value.data + lnI, pPadCharacter->value.data, min(lnPadLeftStopper - lnI, pPadCharacter->value.length));
+				}
+			}
+
+
+		//////////
+		// Pad right
+		//////
+			if (lnPadRightStopper >= 1)
+			{
+				// Iterate through every cycle required to populate the right side
+				for (lnI = lnPadRightStart; lnI < lnPadRightStopper; lnI += pPadCharacter->value.length)
+				{
+					// Copy this string, or as much of it will fit
+					memcpy(result->value.data + lnI, pPadCharacter->value.data, min(lnPadRightStopper - lnI, pPadCharacter->value.length));
+				}
+			}
+
+
+		//////////
+		// Copy the source string and delete the source string variable
+		//////
+			// Copy the string
+			memcpy(result->value.data + lnCopyStart, tempVar->value.data, tempVar->value.length);
+
+			// Delete our temporary variable
+			iVariable_delete(tempVar, true);
+
+
+		//////////
+		// Indicate our status
+		//////
+			return(result);
+	}
+
+
+
+
+//////////
+//
 // Function: PROPER()
 // Converts the first character after every space to upper-case,
 // and lowercases everything else.
 //
 //////
-// Version 0.42
+// Version 0.43
 // Last update:
 //     Jul.12.2014
 //////
@@ -1813,7 +2262,7 @@
 // Returns the indicated string replicated N times.
 //
 //////
-// Version 0.42
+// Version 0.43
 // Last update:
 //     Jul.12.2014
 //////
@@ -1901,7 +2350,7 @@
 // Returns the RGB() of the three input values.
 //
 //////
-// Version 0.42   (Determine the current version from the header in vjr.cpp)
+// Version 0.43   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -2047,7 +2496,7 @@
 // Returns the RGBA() of the four input values.
 //
 //////
-// Version 0.42   (Determine the current version from the header in vjr.cpp)
+// Version 0.43   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -2222,7 +2671,7 @@
 // Returns the right N characters of a string.
 //
 //////
-// Version 0.42
+// Version 0.43
 // Last update:
 //     Jul.12.2014
 //////
@@ -2317,7 +2766,7 @@
 // Trims spaces off the end of the string.
 //
 //////
-// Version 0.42
+// Version 0.43
 // Last update:
 //     Jul.12.2014
 //////
@@ -2345,7 +2794,7 @@
 // Creates a character variable initialized with spaces.
 //
 //////
-// Version 0.42
+// Version 0.43
 // Last update:
 //     Jul.12.2014
 //////
@@ -2421,7 +2870,7 @@
 // Returns a string which has been modified, having optionally some characters optionally removed, some optionally inserted.
 //
 //////
-// Version 0.42   (Determine the current version from the header in vjr.cpp)
+// Version 0.43   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.12.2014
 //////
@@ -2580,7 +3029,7 @@
 // Based on the index, returns a wide array of information.
 //
 //////
-// Version 0.42
+// Version 0.43
 // Last update:
 //     Jul.13.2014
 //////
@@ -2796,11 +3245,82 @@
 
 //////////
 //
+// Function: TRANSFORM()
+// Converts any variable input to a character form, and applies formatting based on codes.
+//
+//////
+// Version 0.43
+// Last update:
+//     Aug.03.2014
+//////
+// Change log:
+//     Aug.03.2014 - Initial creation
+//////
+// Parameters:
+//     pString		-- Character, the variable to transform
+//     pformat		-- Character, the format codes
+//
+//////
+// Returns:
+//    Character		-- The string after the variable was converted and formatted
+//////
+	SVariable* function_transform(SVariable* pVariable, SVariable* pFormat)
+	{
+		SVariable* result;
+
+
+		//////////
+        // Parameter 1 must be valid
+		//////
+			if (!iVariable_isValid(pVariable))
+			{
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 2 is optional, but if present...
+		//////
+			if (iVariable_isValid(pFormat))
+			{
+				// ...it must be character
+				if (!iVariable_isTypeCharacter(pFormat))
+				{
+					iError_reportByNumber(_ERROR_P2_IS_INCORRECT, NULL);
+					return(NULL);
+				}
+			}
+
+
+		//////////
+		// Create the return variable
+		//////
+			result = iVariable_convertForDisplay(pVariable);
+
+
+		//////////
+		// Apply the formatting
+		//////
+// TODO:  apply the formatting
+
+
+		//////////
+		// Indicate our status
+		//////
+			return(result);
+	}
+
+
+
+
+//////////
+//
 // Function: UPPER()
 // Converts every character in the string to uppercase.
 //
 //////
-// Version 0.42
+// Version 0.43
 // Last update:
 //     Jul.12.2014
 //////
@@ -2872,7 +3392,7 @@
 // Based on input, retrieves various version information.
 //
 //////
-// Version 0.42
+// Version 0.43
 // Last update:
 //     Jul.13.2014
 //////
@@ -2984,7 +3504,7 @@
 // Concatenates two strings together.
 //
 //////
-// Version 0.42   (Determine the current version from the header in vjr.cpp)
+// Version 0.43   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -3051,7 +3571,7 @@
 // Adds two values and returns the result.
 //
 //////
-// Version 0.42   (Determine the current version from the header in vjr.cpp)
+// Version 0.43   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -3175,7 +3695,7 @@
 // Subtracts two values and returns the result.
 //
 //////
-// Version 0.42   (Determine the current version from the header in vjr.cpp)
+// Version 0.43   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -3299,7 +3819,7 @@
 // Multiplies two values and returns the result.
 //
 //////
-// Version 0.42   (Determine the current version from the header in vjr.cpp)
+// Version 0.43   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -3423,7 +3943,7 @@
 // Divides two values and returns the result.
 //
 //////
-// Version 0.42   (Determine the current version from the header in vjr.cpp)
+// Version 0.43   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////

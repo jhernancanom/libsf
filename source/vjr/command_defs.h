@@ -3,7 +3,7 @@
 // /libsf/source/vjr/command_defs.h
 //
 //////
-// Version 0.42
+// Version 0.43
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -76,6 +76,9 @@ struct SVariable;
 	SVariable*			function_alltrim							(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2);
 	SVariable*			iFunction_trimCommon						(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2, bool trimStart, bool trimEnd);
 	SVariable*			function_asc								(SVariable* p1);
+	SVariable*			function_at									(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence);
+	SVariable*			function_atc								(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence);
+	SVariable*			iFunction_atOccursCommon					(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence, bool tlCaseSensitive, bool tlScanBackward, u32* tnFoundCount);
 	SVariable*			function_chr								(SVariable* p1);
 	SVariable*			function_createobject						(SVariable* p1);
 	SVariable*			function_datetime							(SVariable* pYear, SVariable* pMonth, SVariable* pDay, SVariable* pHour, SVariable* pMinute, SVariable* pSecond, SVariable* pMillisecond);
@@ -86,7 +89,15 @@ struct SVariable;
 	SVariable*			function_ltrim								(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2);
 	SVariable*			function_max								(SVariable* pLeft, SVariable* pRight);
 	SVariable*			function_min								(SVariable* pLeft, SVariable* pRight);
+	SVariable*			function_occurs								(SVariable* pNeedle, SVariable* pHaystack);
+	SVariable*			function_occursc							(SVariable* pNeedle, SVariable* pHaystack);
+	SVariable*			function_padc								(SVariable* pExpression, SVariable* pResultSize, SVariable* pPadCharacter);
+	SVariable*			function_padl								(SVariable* pExpression, SVariable* pResultSize, SVariable* pPadCharacter);
+	SVariable*			function_padr								(SVariable* pExpression, SVariable* pResultSize, SVariable* pPadCharacter);
+	SVariable*			iFunction_padCommon							(SVariable* pExpression, SVariable* pResultSize, SVariable* pPadCharacter, bool tlPadLeft, bool tlPadRight);
 	SVariable*			function_proper								(SVariable* pString);
+	SVariable*			function_rat								(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence);
+	SVariable*			function_ratc								(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence);
 	SVariable*			function_replicate							(SVariable* pString, SVariable* pCount);
 	SVariable*			function_rgb								(SVariable* pRed, SVariable* pGrn, SVariable* pBlu);
 	SVariable*			function_rgba								(SVariable* pRed, SVariable* pGrn, SVariable* pBlu, SVariable* pAlp);
@@ -95,6 +106,7 @@ struct SVariable;
 	SVariable*			function_space								(SVariable* pCount);
 	SVariable*			function_stuff								(SVariable* pOriginalString, SVariable* pStartPos, SVariable* pNumToRemove, SVariable* pStuffString);
 	SVariable*			function_sysmetric							(SVariable* pIndex);
+	SVariable*			function_transform							(SVariable* pVariable, SVariable* pFormat);
 	SVariable*			function_upper								(SVariable* pString);
 	SVariable*			function_version							(SVariable* pIndex);
 // Added temporarily until the processing engine is coded
@@ -103,15 +115,9 @@ struct SVariable;
 	SVariable*			function_sub								(SVariable* p1, SVariable* p2);
 	SVariable*			function_mul								(SVariable* p1, SVariable* p2);
 	SVariable*			function_div								(SVariable* p1, SVariable* p2);
-	// at
-	// rat
 	// strtran
 	// chrtran
-	// transform
-	// occurs
-	// padl
-	// padr
-	// padc
+	// transform (partial support, only converts to character, does not do any formatting ... yet)
 //////
 // STEP3: Copy the code above near one of the other functions in commands.cpp.
 //        You may be able to right-click on one of the functions and choose "go to definition".
@@ -167,6 +173,8 @@ struct SVariable;
 		//  ------------------		------		--------------------------		----------		-------------
 		{	_ICODE_ALLTRIM,			1,			(u32)&function_alltrim,			1,				4	},
 		{	_ICODE_ASC,				1,			(u32)&function_asc,				1,				1	},
+		{	_ICODE_AT,				1,			(u32)&function_at,				2,				3	},
+		{	_ICODE_ATC,				1,			(u32)&function_atc,				2,				3	},
 		{	_ICODE_CHR,				1,			(u32)&function_chr,				1,				1	},
 		{	_ICODE_CREATEOBJECT,	1,			(u32)&function_createobject,	1,				1	},
 		{	_ICODE_DATETIME,		1,			(u32)&function_datetime,		0,				7	},
@@ -177,16 +185,24 @@ struct SVariable;
 		{	_ICODE_LTRIM,			1,			(u32)&function_ltrim,			1,				1	},
 		{	_ICODE_MAX,				1,			(u32)&function_max,				2,				2	},
 		{	_ICODE_MIN,				1,			(u32)&function_min,				2,				2	},
+		{	_ICODE_OCCURS,			1,			(u32)&function_occurs,			2,				2	},
+		{	_ICODE_OCCURSC,			1,			(u32)&function_occursc,			2,				2	},
+		{	_ICODE_PADC,			1,			(u32)&function_padc,			2,				3	},
+		{	_ICODE_PADL,			1,			(u32)&function_padl,			2,				3	},
+		{	_ICODE_PADR,			1,			(u32)&function_padr,			2,				3	},
 		{	_ICODE_PROPER,			1,			(u32)&function_proper,			1,				1	},
+		{	_ICODE_RAT,				1,			(u32)&function_rat,				2,				3	},
+		{	_ICODE_RATC,			1,			(u32)&function_ratc,			2,				3	},
 		{	_ICODE_REPLICATE,		1,			(u32)&function_replicate,		2,				2	},
 		{	_ICODE_RGB,				1,			(u32)&function_rgb,				3,				3	},
 		{	_ICODE_RGBA,			1,			(u32)&function_rgba,			4,				4	},
 		{	_ICODE_RIGHT,			1,			(u32)&function_right,			2,				2	},
-		{	_ICODE_TRIM,			1,			(u32)&function_rtrim,			1,				1	},
 		{	_ICODE_RTRIM,			1,			(u32)&function_rtrim,			1,				1	},
 		{	_ICODE_SPACE,			1,			(u32)&function_space,			1,				1	},
 		{	_ICODE_STUFF,			1,			(u32)&function_stuff,			3,				4	},
 		{	_ICODE_SYSMETRIC,		1,			(u32)&function_sysmetric,		1,				1	},
+		{	_ICODE_TRANSFORM,		1,			(u32)&function_transform,		1,				2	},
+		{	_ICODE_TRIM,			1,			(u32)&function_rtrim,			1,				1	},
 		{	_ICODE_UPPER,			1,			(u32)&function_upper,			1,				1	},
 		{	_ICODE_VERSION,			1,			(u32)&function_version,			0,				1	},
 // Added temporarily until the processing engine is coded
