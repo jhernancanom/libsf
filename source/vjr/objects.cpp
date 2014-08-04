@@ -4204,13 +4204,6 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				// Render from its prior rendered version
 				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
 			}
-// 
-// 
-// 			//////////
-// 			// If the mouse is over this control, highlight it
-// 			//////
-// 				if (obj->isPublished && obj->ev.mouse.isMouseOver && !(obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX))
-// 					iBmp_alphaColorizeMask(obj->bmp, &lrc, colorTracking, trackingRatio);
 
 
 			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
@@ -4233,7 +4226,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 	u32 iSubobj_renderTextbox(SObject* obj)
 	{
 		u32		lnPixelsRendered, lnFormat;
-		RECT	lrc;
+		RECT	lrc, lrc2;
 
 
 		// Make sure our environment is sane
@@ -4252,7 +4245,8 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				else									iBmp_colorizeMask(obj->bmp, &lrc, obj->p.backColor,	false, 0.0f);
 
 				// Inset slightly for the text part
-				InflateRect(&lrc, -4, -4);
+				CopyRect(&lrc2, &lrc);
+				InflateRect(&lrc2, -4, -4);
 
 				// If we're opaque, draw the text inset by a margin, otherwise just overlay
 				if (obj->p.isOpaque)
@@ -4288,8 +4282,8 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				}
 
 				// Draw the text
-//				DrawText(obj->bmp->hdc, obj->pa.value.value.data, obj->pa.value.value.length, &lrc, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
-				DrawText(obj->bmp->hdc, obj->pa.caption.data, obj->pa.caption.length, &lrc, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
+				if (obj->pa.value)
+					DrawText(obj->bmp->hdc, obj->pa.value->value.data, obj->pa.value->value.length, &lrc2, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
 
 				// Frame rectangle
 				if (obj->p.isBorder)
@@ -4332,7 +4326,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 	u32 iSubobj_renderButton(SObject* obj)
 	{
 		u32		lnPixelsRendered, lnFormat;
-		RECT	lrc;
+		RECT	lrc, lrc2;
 
 
 		// Make sure our environment is sane
@@ -4351,7 +4345,8 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				else									iBmp_colorizeMask(obj->bmp, &lrc, obj->p.backColor,	false, 0.0f);
 
 				// Inset slightly for the text part
-				InflateRect(&lrc, -4, -4);
+				CopyRect(&lrc2, &lrc);
+				InflateRect(&lrc2, -4, -4);
 
 				// If we're opaque, draw the text inset by a margin, otherwise just overlay
 				if (obj->p.isOpaque)
@@ -4387,7 +4382,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				}
 
 				// Draw the text
-				DrawText(obj->bmp->hdc, obj->pa.caption.data, obj->pa.caption.length, &lrc, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
+				DrawText(obj->bmp->hdc, obj->pa.caption.data, obj->pa.caption.length, &lrc2, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
 
 				// Frame rectangle
 				if (obj->p.isBorder)

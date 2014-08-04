@@ -132,12 +132,12 @@
 		{
 			// The mouse indicates the position
 			// Determine theta
-			lfWidth							= (f64)(obj->rc.right  - obj->rc.left);
-			lfHeight						= (f64)(obj->rc.bottom - obj->rc.top);
-			lfX								= (f64)x - (lfWidth / 2.0);
-			lfY								= (lfHeight - (f64)y) - (lfHeight / 2.0);
+			lfWidth		= (f64)(obj->rc.right  - obj->rc.left);
+			lfHeight	= (f64)(obj->rc.bottom - obj->rc.top);
+			lfX			= (f64)x - (lfWidth / 2.0);
+			lfY			= (lfHeight - (f64)y) - (lfHeight / 2.0);
 
-			lfPercent						= atan2(lfY, lfX) / (M_PI * 2.0);
+			lfPercent	= atan2(lfY, lfX) / (M_PI * 2.0);
 			if (lfPercent < 0.0)
 				lfPercent += 1.0;
 
