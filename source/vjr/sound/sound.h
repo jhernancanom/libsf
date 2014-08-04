@@ -126,7 +126,7 @@
 //////////
 // Global variables and constants
 //////
-	const f32		_2PI						= (f32)M_PI * 2.0;	// 2 * pi
+	const f32		_2PI						= (f32)M_PI * 2.0f;	// 2 * pi
 	bool			glSDL_Initialized			= false;			// A global flag indicating if the SDL initialized properly
 	SStartEnd		gseRootSounds;									// List of all sound objects currently known about
 	SDL_AudioSpec	gsdlDesired;									// What we request of SDL

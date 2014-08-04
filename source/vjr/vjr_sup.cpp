@@ -994,7 +994,9 @@
 				case WM_RBUTTONDBLCLK:
 				case WM_LBUTTONDBLCLK:
 				case WM_MBUTTONDBLCLK:
+#ifdef WM_MOUSEHWHEEL
 				case WM_MOUSEHWHEEL:
+#endif
 				case WM_MOUSEWHEEL:
 				case WM_MOUSEMOVE:
 				case WM_MOUSEHOVER:
@@ -2338,12 +2340,14 @@
 //					iiMouse_processMouseEvents_client_mouseWheel(win, obj, &obj->rc, true, true);
 					break;
 
+#ifdef WM_MOUSEHWHEEL
 				case WM_MOUSEHWHEEL:
 					// Signal a mouseHScroll
 					win->mouseWheelDelta	= 0;
 					win->mouseHWheelDelta	= (s32)((s16)(((u32)w) >> 16));
 //					iiMouse_processMouseEvents_client_mouseHWheel(win, obj, &obj->rc, true, true);
 					break;
+#endif
 
 				case WM_MOUSEMOVE:
 					// Check for mouseEnter and mouseLeave, then a mouseMove

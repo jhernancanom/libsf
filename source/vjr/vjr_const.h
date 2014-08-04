@@ -42,7 +42,7 @@ struct SEM;
 
 
 // Unsigned
-#ifdef _WIN32
+#if !defined(_MSC_VER)
 	// gcc
 	typedef unsigned long long	u64;
 	typedef unsigned			u32;
