@@ -51,7 +51,14 @@
 
 		// Initialize
 		if (em)
+		{
+			// Reset all
 			memset(em, 0, sizeof(SEM));
+
+			// Default to 4-character tab width
+			em->tabWidth		= 4;
+			em->tabsEnforced	= true;
+		}
 
 		// Indicate our status
 		return(em);
@@ -210,18 +217,19 @@
 					{
 						// We've entered into a CR/LF block
 						// Append a new line
-						if (!em->ecFirst)			ecHint = iEditManager_appendLine(em, NULL, 0);
-						else						ecHint = iEditManager_insertLine(em, NULL, 0, ecHint, tlInsertAfter);
-
-						// From this point forward we are inserting after
-						tlInsertAfter = true;
-
-						// If we have any content, add it
-						if (lnI - lnJ - lnLast > 0)
-						{
-							iDatum_duplicate(ecHint->sourceCode, content->data + lnLast, lnI - lnJ - lnLast);
-							ecHint->sourceCodePopulated	= ecHint->sourceCode->length;
-						}
+						ecHint = iEditManager_appendLine(em, content->data + lnLast, lnI - lnJ - lnLast);
+// 						if (!em->ecFirst)			ecHint = iEditManager_appendLine(em, NULL, 0);
+// 						else						ecHint = iEditManager_insertLine(em, NULL, 0, ecHint, tlInsertAfter);
+// 
+// 						// From this point forward we are inserting after
+// 						tlInsertAfter = true;
+// 
+// 						// If we have any content, add it
+// 						if (lnI - lnJ - lnLast > 0)
+// 						{
+// 							iDatum_duplicate(ecHint->sourceCode, content->data + lnLast, lnI - lnJ - lnLast);
+// 							ecHint->sourceCodePopulated	= ecHint->sourceCode->length;
+// 						}
 
 						// Indicate where we are now
 						lnLast = lnI;
@@ -585,7 +593,8 @@ int3_break;
 //////
 	SEdit* iEditManager_appendLine(SEM* em, s8* tcText, s32 tnTextLength)
 	{
-		SEdit* ec;
+		s32		lnI, lnJ, lnPass, lnTextLength, lnCount;
+		SEdit*	ec;
 
 
 		// Make sure our environment is sane
@@ -626,9 +635,51 @@ int3_break;
 					else			tnTextLength = 0;
 				}
 
-				// Append the indicated text
-				ec->sourceCode			= iDatum_allocate(tcText, tnTextLength);
-				ec->sourceCodePopulated	= tnTextLength;
+				// Run two passes over the line.
+				// Pass 1 -- Determine how long the line should be with tabs expanded to spaces
+				// Pass 2 -- Populate the source into the destination padding tabs with spaces
+				for (lnPass = 0; lnPass < 2; lnPass++)
+				{
+					// Determine how long the text is (expanding tabs)
+					for (lnI = 0, lnTextLength = 0; lnI < tnTextLength; lnI++)
+					{
+						// If it's a tab, expand up to the nearest tabWidth characters
+						if (tcText[lnI] == 9)
+						{
+							// Expand up to the next tabstop
+							if (lnTextLength % em->tabWidth == 0)	lnCount = em->tabWidth;
+							else									lnCount = em->tabWidth - (lnTextLength % em->tabWidth);
+
+							// Copy if on pass 1
+							if (lnPass == 1)
+							{
+								// Expand the difference with spaces
+								for (lnJ = 0; lnJ < lnCount; lnJ++)
+									ec->sourceCode->data[lnTextLength + lnJ] = 32;		// Fill with spaces
+							}
+
+							// Skip past our added space
+							lnTextLength += lnCount;
+
+						} else {
+							// Copy one character on pass 1
+							if (lnPass == 1)
+								ec->sourceCode->data[lnTextLength] = tcText[lnI];
+
+							// Increase by one
+							++lnTextLength;
+						}
+					}
+
+					// If we're on pass 0, allocate space, on the second pass we copy
+					if (lnPass == 0)
+					{
+						// Allocate the indicated length
+						ec->sourceCode			= iDatum_allocate(NULL, 0);
+						iDatum_allocateSpace(ec->sourceCode, lnTextLength);
+						ec->sourceCodePopulated	= lnTextLength;
+					}
+				}
 			}
 		}
 
@@ -1336,7 +1387,7 @@ int3_break;
 					if (em->leftColumn < line->sourceCodePopulated)
 					{
 						// Draw the portion that will fit
-						DrawText(bmp->hdc, line->sourceCode->data + em->leftColumn, line->sourceCodePopulated - em->leftColumn, &lrc2, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_CALCRECT);
+						DrawText(bmp->hdc, line->sourceCode->data + em->leftColumn, line->sourceCodePopulated - em->leftColumn, &lrc2, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
 						lrc2.right	= min(rc.right,  lrc2.right);
 						lrc2.bottom	= min(rc.bottom, lrc2.bottom);
 
@@ -1352,7 +1403,7 @@ int3_break;
 				// Draw the text
 				//////
 					if (em->leftColumn < line->sourceCodePopulated)
-						DrawText(bmp->hdc, line->sourceCode->data + em->leftColumn, line->sourceCodePopulated - em->leftColumn, &lrc2, DT_VCENTER | DT_LEFT | DT_SINGLELINE);
+						DrawText(bmp->hdc, line->sourceCode->data + em->leftColumn, line->sourceCodePopulated - em->leftColumn, &lrc2, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 					
 
 				//////////
@@ -1621,6 +1672,92 @@ int3_break;
 		// Indicate our status
 		return(llChanged);
 	}
+;
+
+
+
+
+//////////
+//
+// Called to scroll rows (deltaY) or columns (deltaX) or both.
+//
+//////
+	bool iEditManager_scroll(SEM* em, SObject* obj, s32 deltaY, s32 deltaX)
+	{
+		s32			lnI;
+		SFont*		font;
+		RECT		lrc;
+
+
+		//////////
+		// Grab the rectangle we're working in
+		//////
+			font = iEditManager_getRectAndFont(em, obj, &lrc);
+
+
+		//////////
+		// Make sure we're valid
+		//////
+			if (em && em->ecCursorLine && em->ecCursorLine->sourceCode)
+			{
+				//////////
+				// Scroll by count
+				//////
+					if (deltaY != 0)
+					{
+						if (deltaY > 0)
+						{
+							// Going forward
+							for (lnI = 0; em->ecCursorLine->ll.next && lnI != deltaY; lnI++)
+							{
+								em->ecTopLine		= (SEdit*)em->ecTopLine->ll.next;
+								em->ecCursorLine	= (SEdit*)em->ecCursorLine->ll.next;
+							}
+
+						} else {
+							// Going backward
+							for (lnI = 0; em->ecTopLine->ll.prev && lnI != deltaY; lnI--)
+							{
+								em->ecTopLine		= (SEdit*)em->ecTopLine->ll.prev;
+								em->ecCursorLine	= (SEdit*)em->ecCursorLine->ll.prev;
+							}
+						}
+				}
+
+
+				//////////
+				// Move columns
+				//////
+					if (deltaX != 0)
+					{
+						if (deltaX < 0)
+						{
+							// Moving left
+							em->column		= max(em->column     + deltaX, 0);
+							em->leftColumn	= max(em->leftColumn + deltaX, 0);
+
+						} else {
+							// Moving right
+							em->column		+= deltaX;
+							em->leftColumn	+= deltaX;
+						}
+					}
+
+
+				//////////
+				// Verify we're visible
+				//////
+					iEditManager_verifyCursorIsVisible(em, obj);
+
+
+				// Indicate success
+				return(true);
+			}
+
+
+		// If we get here, indicate failure
+		return(false);
+	}
 
 
 
@@ -1632,12 +1769,12 @@ int3_break;
 //////
 	bool iEditManager_navigate(SEM* em, SObject* obj, s32 deltaY, s32 deltaX)
 	{
-		s32				lnI, lnTop, lnBottom;
-		bool			llResetTopLine;
-		SFont*			font;
+		s32			lnI, lnTop, lnBottom;
+		bool		llResetTopLine;
+		SFont*		font;
 		SEdit*		line;
 		SEdit*		lineRunner;
-		RECT			lrc;
+		RECT		lrc;
 
 
 		//////////

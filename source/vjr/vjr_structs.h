@@ -112,13 +112,15 @@ struct SEM
 
 	s32			column;											// Column we're currently inputting
 	s32			leftColumn;										// The column we're displaying at the left-most position (of horizontally scrolled, this will be greater than 0)
+	s32			tabWidth;										// How many characters does a tab expand to?
+	bool		tabsEnforced;									// If tabs are enforced, then navigation across whitespaces lands on tab boundaries
 
 
 //////////
 // Selected lines
 //////
-	SEdit*			ecSelectedLineStart;							// First line that's selected
-	SEdit*			ecSelectedLineEnd;								// Last line that's selected
+	SEdit*		ecSelectedLineStart;							// First line that's selected
+	SEdit*		ecSelectedLineEnd;								// Last line that's selected
 
 
 //////////
@@ -317,7 +319,7 @@ struct SEventsMouse
 	};
 	union {
 		u32		_onMouseWheel;
-		bool	(*onMouseWheel)			(SWindow* win, SObject* obj, s32 tnUnits);			// Signed units indicating direction and velocity
+		bool	(*onMouseWheel)			(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick, s32 tnUnits);			// Signed units indicating direction and velocity
 	};
 	union {
 		u32		_onMouseMove;

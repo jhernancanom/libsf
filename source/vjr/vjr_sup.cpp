@@ -2238,7 +2238,7 @@
 			if (win && win->obj && win->obj->rc.right > win->obj->rc.left)
 			{
 				// Translate the mouse from the scaled position to its real position
-				iiMouse_translatePosition(win, (POINTS*)&l);
+				iiMouse_translatePosition(win, (POINTS*)&l, m);
 
 				// Signal the event(s)
 				iiMouse_processMouseEvents(win, m, w, l);
@@ -2256,9 +2256,10 @@
 // Note:  The win parameter is required.
 //
 //////
-	void iiMouse_translatePosition(SWindow* win, POINTS* pt)
+	void iiMouse_translatePosition(SWindow* win, POINTS* pt, UINT m)
 	{
-		POINT lpt;
+		POINT	lpt;
+		bool	llWheelMessage;
 
 
 		//////////
@@ -2288,6 +2289,21 @@
 		//////
 			if (win->isMoving || win->isResizing)
 				return;
+
+
+		//////////
+		// If it's a mouse scroll, the coordinates are given in screen coordinates.
+		// Subtract off the window portion
+		//////
+			llWheelMessage = (m == WM_MOUSEWHEEL);
+#ifdef WM_MOUSEHWHEEL
+			llWheelMessage |= (m == WM_MOUSEHWHEEL);
+#endif
+			if (llWheelMessage)
+			{
+				win->mousePosition.x -= win->rc.left;
+				win->mousePosition.y -= win->rc.top;
+			}
 
 
 		//////////
@@ -2331,27 +2347,27 @@
 		//////
 			// Note:  win->mouseLastPosition holds the coordinates
 			// Note:  win->is* flags indicate both button and keyboard state conditions (ctrl, alt, shift, caps)
+			llProcessed = false;
 			switch (m)
 			{
 				case WM_MOUSEWHEEL:
 					// Signal a mouseScroll
-					win->mouseWheelDelta	= (s32)((s16)(((u32)w) >> 16));
+					win->mouseWheelDelta	= (s32)((s16)(((u32)w) >> 16)) / WHEEL_DELTA;
 					win->mouseHWheelDelta	= 0;
-//					iiMouse_processMouseEvents_client_mouseWheel(win, obj, &obj->rc, true, true);
+					iiMouse_processMouseEvents_common(win, obj, &obj->rc, m, true, true, &llProcessed);
 					break;
 
 #ifdef WM_MOUSEHWHEEL
 				case WM_MOUSEHWHEEL:
 					// Signal a mouseHScroll
 					win->mouseWheelDelta	= 0;
-					win->mouseHWheelDelta	= (s32)((s16)(((u32)w) >> 16));
-//					iiMouse_processMouseEvents_client_mouseHWheel(win, obj, &obj->rc, true, true);
+					win->mouseHWheelDelta	= (s32)((s16)(((u32)w) >> 16)) / WHEEL_DELTA;
+					iiMouse_processMouseEvents_common(win, obj, &obj->rc, m, true, true, &llProcessed);
 					break;
 #endif
 
 				case WM_MOUSEMOVE:
 					// Check for mouseEnter and mouseLeave, then a mouseMove
-					llProcessed = false;
 					iiMouse_processMouseEvents_mouseMove(win, obj, &obj->rc, true, true, &llProcessed);
 
 					// The mouse has moved, reset the hover counter
@@ -2364,8 +2380,7 @@
 				case WM_RBUTTONDOWN:
 				case WM_MBUTTONDOWN:
 					// Signal a mouseDown, then a click
-					llProcessed = false;
-					iiMouse_processMouseEvents_mouseDown(win, obj, &obj->rc, true, true, &llProcessed);
+					iiMouse_processMouseEvents_common(win, obj, &obj->rc, m, true, true, &llProcessed);
 
 					// Set the last click
 					obj->ev.mouse._lastClick = obj->ev.mouse.thisClick;
@@ -2375,8 +2390,7 @@
 				case WM_RBUTTONUP:
 				case WM_MBUTTONUP:
 					// Signal a mouseUp
-					llProcessed = false;
-					iiMouse_processMouseEvents_mouseUp(win, obj, &obj->rc, true, true, &llProcessed);
+					iiMouse_processMouseEvents_common(win, obj, &obj->rc, m, true, true, &llProcessed);
 					break;
 
 				case WM_LBUTTONDBLCLK:
@@ -2570,7 +2584,7 @@
 // Called to signal a mouseDown event, then the mouseClickEx event
 //
 //////
-	void iiMouse_processMouseEvents_mouseDown(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed)
+	void iiMouse_processMouseEvents_common(SWindow* win, SObject* obj, RECT* rc, UINT m, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed)
 	{
 		bool		llInClientArea;
 		RECT		lrc, lrcClient;
@@ -2588,7 +2602,7 @@
 			// Process any children
 			//////
 				if (tlProcessChildren && obj->firstChild)
-					iiMouse_processMouseEvents_mouseDown(win, obj->firstChild, &lrcClient, true, true, tlProcessed);
+					iiMouse_processMouseEvents_common(win, obj->firstChild, &lrcClient, m, true, true, tlProcessed);
 
 
 			//////////
@@ -2596,143 +2610,119 @@
 			//////
 				if (!*tlProcessed)
 				{
+					// Indicate if the mouse is still down here
+					obj->ev.mouse.isMouseDown = (obj->ev.mouse.thisClick != 0);
+
 					// Are we in this object?
 					if (llInClientArea)
 					{
-						//////////
-						// Signal the mouseDown event
-						//////
-							*tlProcessed				= true;		// Indicate we've processed this
-							obj->ev.mouse.isMouseDown	= true;		// Indicate the mouse is down here
-							if (obj->ev.mouse._onMouseDown)
-								obj->ev.mouse.onMouseDown(win, obj, 
-															win->mousePosition.x - lrc.left, 
-															win->mousePosition.y - lrc.top, 
-															win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
-						
-
-						//////////
-						// Signal the click event
-						//////
-							if (obj->ev.mouse._onMouseClickEx)
-								obj->ev.mouse.onMouseClickEx(win, obj, 
+						// What was the mouse message?
+						switch (m)
+						{
+							case WM_LBUTTONDOWN:
+							case WM_RBUTTONDOWN:
+							case WM_MBUTTONDOWN:
+								// Signal the mouseDown event
+								*tlProcessed = true;		// Indicate we've processed this
+								if (obj->ev.mouse._onMouseDown)
+									obj->ev.mouse.onMouseDown(win, obj, 
 																win->mousePosition.x - lrc.left, 
 																win->mousePosition.y - lrc.top, 
 																win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
+								
+								// Signal the click event
+								if (obj->ev.mouse._onMouseClickEx)
+									obj->ev.mouse.onMouseClickEx(win, obj, 
+																	win->mousePosition.x - lrc.left, 
+																	win->mousePosition.y - lrc.top, 
+																	win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
+									break;
+
+							case WM_LBUTTONUP:
+							case WM_RBUTTONUP:
+							case WM_MBUTTONUP:
+								// Signal the mouseUp event
+								*tlProcessed = true;		// Indicate we've processed this
+								if (obj->ev.mouse._onMouseUp)
+									obj->ev.mouse.onMouseUp(win, obj, 
+																win->mousePosition.x - lrc.left, 
+																win->mousePosition.y - lrc.top, 
+																win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
+								break;
+
+							case WM_MOUSEWHEEL:
+#ifdef WM_MOUSEHWHEEL
+							case WM_MOUSEHWHEEL:
+#endif
+								// Signal the mouseWheel event
+								*tlProcessed = true;		// Indicate we've processed this
+								if (obj->ev.mouse._onMouseWheel)
+									obj->ev.mouse.onMouseWheel(win, obj, 
+																win->mousePosition.x - lrc.left, 
+																win->mousePosition.y - lrc.top, 
+																win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick,
+																win->mouseWheelDelta);
+								break;
+						}
 
 					} else if (PtInRect(&lrc, win->mousePosition)) {
 						//////////
-						// Signal the mouseMove event in the non-client area, which means negative values, or values outside of the width
-						// For non-client areas, we translate to negative is to the left or above the client area,
-						// with values extending beyond the width and height if it is in the outer area
+						// Signal the mouseMove event in the non-client area, which means negative values, or values
+						// outside of the width.  For non-client areas, we translate to negative is to the left or
+						// above the client area, with values extending beyond the width and height if it is in the
+						// outer area
+						//////
 				
 
-						//////////
-						// Signal the mouseDown event
-						//////
-							*tlProcessed				= true;		// Indicate we've processed this
-							obj->ev.mouse.isMouseDown	= true;		// Indicate the mouse is down here
-							if (obj->ev.mouse._onMouseDown)
-								obj->ev.mouse.onMouseDown(win, obj, 
-															win->mousePosition.x - lrcClient.left, 
-															win->mousePosition.y - lrcClient.top, 
-															win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
-						
-
-						//////////
-						// Signal the click event
-						//////
-							if (obj->ev.mouse._onMouseClickEx)
-								obj->ev.mouse.onMouseClickEx(win, obj, 
+						// What was the mouse message?
+						switch (m)
+						{
+							case WM_LBUTTONDOWN:
+							case WM_RBUTTONDOWN:
+							case WM_MBUTTONDOWN:
+								// Signal the mouseDown event
+								*tlProcessed = true;		// Indicate we've processed this
+								if (obj->ev.mouse._onMouseDown)
+									obj->ev.mouse.onMouseDown(win, obj, 
 																win->mousePosition.x - lrcClient.left, 
 																win->mousePosition.y - lrcClient.top, 
 																win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
-					}
+								
 
+								// Signal the click event
+								if (obj->ev.mouse._onMouseClickEx)
+									obj->ev.mouse.onMouseClickEx(win, obj, 
+																	win->mousePosition.x - lrcClient.left, 
+																	win->mousePosition.y - lrcClient.top, 
+																	win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
 
-				//////////
-				// Process any siblings
-				//////
-					if (tlProcessSiblings)
-					{
-						// Begin at the next sibling
-						objSib = (SObject*)obj->ll.next;
-						while (!*tlProcessed && objSib)
-						{
-							// Process this sibling
-							iiMouse_processMouseEvents_mouseDown(win, objSib, rc, true, false, tlProcessed);
+							case WM_LBUTTONUP:
+							case WM_RBUTTONUP:
+							case WM_MBUTTONUP:
+								// Signal the mouseUp event
+								*tlProcessed = true;		// Indicate we've processed this
+								if (obj->ev.mouse._onMouseUp)
+									obj->ev.mouse.onMouseUp(win, obj, 
+																win->mousePosition.x - lrcClient.left, 
+																win->mousePosition.y - lrcClient.top, 
+																win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
+								break;
 
-							// Move to next sibling
-							objSib = (SObject*)objSib->ll.next;
+							case WM_MOUSEWHEEL:
+#ifdef WM_MOUSEHWHEEL
+							case WM_MOUSEHWHEEL:
+#endif
+								// Signal the mouseWheel event
+								*tlProcessed = true;		// Indicate we've processed this
+								if (obj->ev.mouse._onMouseWheel)
+									obj->ev.mouse.onMouseWheel(win, obj, 
+																win->mousePosition.x - lrcClient.left, 
+																win->mousePosition.y - lrcClient.top, 
+																win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick,
+																win->mouseWheelDelta);
+								break;
 						}
 					}
-			}
-		}
-	}
-
-
-
-
-//////////
-//
-// Called to signal a mouseUp event
-//
-//////
-	void iiMouse_processMouseEvents_mouseUp(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed)
-	{
-		bool		llInClientArea;
-		RECT		lrc, lrcClient;
-		SObject*	objSib;
-
-
-		// Make sure our environment is sane
-		if (obj && obj->p.isEnabled && obj->bmp)
-		{
-			// Get the rectangle we're in at this level
-			llInClientArea = iiMouse_processMouseEvents_getRectDescent(win, obj, rc, lrc, lrcClient);
-
-
-			//////////
-			// Process any children
-			//////
-				if (tlProcessChildren && obj->firstChild)
-					iiMouse_processMouseEvents_mouseUp(win, obj->firstChild, &lrcClient, true, true, tlProcessed);
-
-
-			//////////
-			// Are we still needing processing?
-			//////
-				if (!*tlProcessed)
-				{
-					// Are we in this object?
-					if (llInClientArea)
-					{
-						//////////
-						// Signal the mouseUp event
-						//////
-							*tlProcessed				= true;								// Indicate we've processed this
-							obj->ev.mouse.isMouseDown	= (obj->ev.mouse.thisClick != 0);	// Indicate if the mouse is still down here
-							if (obj->ev.mouse._onMouseDown)
-								obj->ev.mouse.onMouseUp(win, obj, 
-															win->mousePosition.x - lrc.left, 
-															win->mousePosition.y - lrc.top, 
-															win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
-
-					} else if (PtInRect(&lrc, win->mousePosition)) {
-						//////////
-						// For non-client areas, we translate to negative is to the left or above the client area,
-						// with values extending beyond the width and height if it is in the outer area
-						//
-						// Signal the mouseUp event
-						//////
-							*tlProcessed				= true;								// Indicate we've processed this
-							obj->ev.mouse.isMouseDown	= (obj->ev.mouse.thisClick != 0);	// Indicate if the mouse is still down here
-							if (obj->ev.mouse._onMouseDown)
-								obj->ev.mouse.onMouseUp(win, obj, 
-															win->mousePosition.x - lrcClient.left, 
-															win->mousePosition.y - lrcClient.top, 
-															win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
-					}
 
 
 				//////////
@@ -2745,7 +2735,7 @@
 						while (!*tlProcessed && objSib)
 						{
 							// Process this sibling
-							iiMouse_processMouseEvents_mouseUp(win, objSib, rc, true, false, tlProcessed);
+							iiMouse_processMouseEvents_common(win, objSib, rc, m, true, false, tlProcessed);
 
 							// Move to next sibling
 							objSib = (SObject*)objSib->ll.next;
@@ -3183,18 +3173,18 @@ int3_break;
 		// Make sure our environment is sane
 		if (datum)
 		{
-			if (datum->length != dataLength)
+			if (datum->data && datum->length != dataLength)
 			{
 				// Release anything that's already there
 				iiDatum_delete(datum);
-
-				// Allocate the space
-				if (dataLength > 0)
-					datum->data = (s8*)malloc(dataLength);
-
-				// Set the length
-				datum->length = dataLength;
 			}
+
+			// Allocate the space
+			if (dataLength > 0)
+				datum->data = (s8*)malloc(dataLength);
+
+			// Set the length
+			datum->length = dataLength;
 
 			// Initialize
 			if (datum->data)

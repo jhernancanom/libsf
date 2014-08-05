@@ -66,6 +66,7 @@
 
 	// Editor movements
 	bool					iEditManager_keystroke				(SEM* em, SObject* obj, u8 asciiChar);
+	bool					iEditManager_scroll					(SEM* em, SObject* obj, s32 deltaY, s32 deltaX);
 	bool					iEditManager_navigate				(SEM* em, SObject* obj, s32 deltaY, s32 deltaX);
 	bool					iEditManager_navigatePages			(SEM* em, SObject* obj, s32 deltaY);
 	bool					iEditManager_clearLine				(SEM* em, SObject* obj);

@@ -59,7 +59,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 	//////////
 	// Read events
 	//////
-		iVjr_appendSystemLog("Engage main loop");
+		iVjr_appendSystemLog("Engage main  loop");
 		while (GetMessage(&msg, NULL, 0, 0))
 		{
 			if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
@@ -100,10 +100,10 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		// These arrows are used as a standard throughout the system for the size of an icon.
 		// They must be loaded first.
-		bmpArrowUl			= iBmp_rawLoad(cgc_arrowUlBmp);
-		bmpArrowUr			= iBmp_rawLoad(cgc_arrowUrBmp);
-		bmpArrowLl			= iBmp_rawLoad(cgc_arrowLlBmp);
-		bmpArrowLr			= iBmp_rawLoad(cgc_arrowLrBmp);
+		bmpArrowUl		= iBmp_rawLoad(cgc_arrowUlBmp);
+		bmpArrowUr		= iBmp_rawLoad(cgc_arrowUrBmp);
+		bmpArrowLl		= iBmp_rawLoad(cgc_arrowLlBmp);
+		bmpArrowLr		= iBmp_rawLoad(cgc_arrowLrBmp);
 
 		// Initialize our builders
 		iBuilder_createAndInitialize(&gWindows,	-1);
@@ -164,13 +164,16 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			bmpStoplightGreen	= iBmp_rawLoad(cgc_stoplightGreenBmp);
 			bmpStoplightBlue	= iBmp_rawLoad(cgc_stoplightBlueBmp);
 
+
+			//////////
 			// The radio image has a 44x44 dot in the upper-left.
-			bmpRadio			= iBmp_rawLoad(cgc_radioBmp);									// Load the raw bmpRadio
-			SetRect(&lrc, 0, 0, 44, 44);
-			bmpRadioDot			= iBmp_allocate();
-			iBmp_createBySize(bmpRadioDot, 44, 44, 24);
-			iBmp_extractRect(bmpRadioDot, &lrc, bmpRadio, 0, 0);								// Extract the 44x44 rectangle
-			iBmp_fillRect(bmpRadio, &lrc, white, white, white, white, false, NULL, false);		// And cover it up with white
+			//////
+				bmpRadio			= iBmp_rawLoad(cgc_radioBmp);									// Load the raw bmpRadio
+				SetRect(&lrc, 0, 0, 44, 44);
+				bmpRadioDot			= iBmp_allocate();
+				iBmp_createBySize(bmpRadioDot, 44, 44, 24);
+				iBmp_extractRect(bmpRadioDot, &lrc, bmpRadio, 0, 0);								// Extract the 44x44 rectangle
+				iBmp_fillRect(bmpRadio, &lrc, white, white, white, white, false, NULL, false);		// And cover it up with white
 
 
 		// Load the splash screen

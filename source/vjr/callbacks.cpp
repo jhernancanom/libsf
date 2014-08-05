@@ -113,9 +113,25 @@
 		return(false);
 	}
 
-	bool iDefaultCallback_onMouseWheel(SWindow* win, SObject* obj, s32 tnUnits)
+	bool iDefaultCallback_onMouseWheel(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick, s32 tnUnits)
 	{
 		// Assume we consumed the mouse wheel, and that the parent doesn't need to receive it
+		if (obj->objType == _OBJ_TYPE_EDITBOX)
+		{
+			// Ctrl+MouseWheel is a normal navigate
+			if (tlCtrl)
+			{
+				// They are just moving the cursor line
+				iEditManager_navigate(obj->pa.em, obj, tnUnits * ((tlShift) ? -1 : -3), 0);
+
+			// MouseWheel is a scroll
+			} else {
+				// They want to scroll the entire window, including the cursor line
+				iEditManager_scroll(obj->pa.em, obj, tnUnits * ((tlShift) ? -1 : -3), 0);
+			}
+			iObj_setDirtyRender(obj, true);
+			iWindow_render(win, false);
+		}
 		return(false);
 	}
 
