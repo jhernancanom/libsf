@@ -3,7 +3,7 @@
 // /libsf/source/vjr/bitmaps.cpp
 //
 //////
-// Version 0.43
+// Version 0.44
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -2326,7 +2326,7 @@
 		SBgra*	lbgra;
 
 
-		if (bmp)
+		if (bmp && tnY >= 0 && tnY < bmp->bi.biHeight)
 		{
 			// Get our starting point
 			lbgr	= (SBgr*)(bmp->bd  + ((bmp->bi.biHeight - tnY - 1) * bmp->rowWidth) + (tnX1 * (bmp->bi.biBitCount / 8)));
@@ -2376,7 +2376,7 @@
 		SBgra*	lbgra;
 
 
-		if (bmp)
+		if (bmp && tnX >= 0 && tnX < bmp->bi.biWidth)
 		{
 			// Get our starting point
 			lbgr	= (SBgr*)(bmp->bd  + ((bmp->bi.biHeight - tnY1 - 1) * bmp->rowWidth) + (tnX * (bmp->bi.biBitCount / 8)));

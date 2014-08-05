@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr.cpp
 //
 //////
-// Version 0.43
+// Version 0.44
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -110,13 +110,13 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iBuilder_createAndInitialize(&gFonts,	-1);
 
 		// Default font
-		gsFontDefault				= iFont_create(cgcDefaultFontName,			10,	FW_NORMAL,	0, 0);
-		gsFontDefault9				= iFont_create(cgcDefaultFontName,			9,	FW_NORMAL,	0, 0);
-		gsFontDefaultBold			= iFont_create(cgcDefaultFontName,			10,	FW_BOLD,	0, 0);
-		gsFontDefaultItalic8		= iFont_create(cgcDefaultFontName,			8,	FW_NORMAL,	1, 0);
-		gsFontDefaultFixedPoint		= iFont_create(cgcDefaultFixedFontName,		10,	FW_NORMAL,	0, 0);
-		gsWindowTitleBarFont		= iFont_create(cgcWindowTitleBarFontName,	12,	FW_NORMAL,	0, 0);
-		gsWindowTitleBarFontSubform	= iFont_create(cgcWindowTitleBarFontName,	10,	FW_NORMAL,	0, 0);
+		gsFontDefault				= iFont_create(cgcFontName_default,			10,	FW_NORMAL,	0, 0);
+		gsFontDefault9				= iFont_create(cgcFontName_default,			9,	FW_NORMAL,	0, 0);
+		gsFontDefaultBold			= iFont_create(cgcFontName_default,			10,	FW_BOLD,	0, 0);
+		gsFontDefaultItalic8		= iFont_create(cgcFontName_default,			8,	FW_NORMAL,	1, 0);
+		gsFontDefaultFixedPoint		= iFont_create(cgcFontName_defaultFixed,	10,	FW_NORMAL,	0, 0);
+		gsWindowTitleBarFont		= iFont_create(cgcFontName_windowTitleBar,	12,	FW_NORMAL,	0, 0);
+		gsWindowTitleBarFontSubform	= iFont_create(cgcFontName_windowTitleBar,	10,	FW_NORMAL,	0, 0);
 
 		// Initialize the sound system
 		isound_initialize();
@@ -331,7 +331,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 
 			// Give it a fixed point font
-			gobj_splashListing->pa.font = iFont_create((s8*)cgcDefaultFixedFontName, 8, FW_MEDIUM, false, false);
+			gobj_splashListing->pa.font = iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_MEDIUM, false, false);
 
 
 		//////////
@@ -345,7 +345,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		//////
 			gobj_splashListingEditbox							= iObj_addChild(_OBJ_TYPE_EDITBOX,	gobj_splashListing);
 			iObj_setSize(gobj_splashListingEditbox, 0, 0, gobj_splashListing->rcClient.right - gobj_splashListing->rcClient.left, gobj_splashListing->rcClient.bottom - gobj_splashListing->rcClient.top);
-			gobj_splashListingEditbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
+			gobj_splashListingEditbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			gobj_splashListingEditbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
 			systemLog											= gobj_splashListingEditbox->pa.em;
 			systemLog->showEndLine								= true;
@@ -411,18 +411,28 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 	#define _AMBER	1
 	#define _GREEN	2
 	#define _BLUE	3
-	void iiVjr_renderAccomplishment(SBitmap* bmp, RECT* trc, s32 tnRAG, s8* tcAccomplishment, s8* tcVersion)
+
+	void iiVjr_renderAccomplishment(SBitmap* bmp, RECT* trc, s32 tnRAGB, s8* tcAccomplishment, s8* tcVersion, bool tlBold, bool tlItalic, bool tlUnderline, s32 tnAdjustAccomplishmentFontSize, s32 tnAdjustVersionFontSize)
 	{
 		s32			lnWidthAccomplishment;//, lnWidthVersion;
 		RECT		lrc, lrc2, lrcAccomplishment, lrcVersion;
 		SBgra		baseColor, leftColor, rightColor;
+		SFont*		font8;
+		SFont*		font9;
 		COLORREF	textColor;
+
+
+		//////////
+		// Construct the fonts
+		//////
+			font8 = iFont_create(cgcFontName_default, 8 + tnAdjustVersionFontSize,			((tlBold) ? FW_BOLD : FW_NORMAL), 0,					0);
+			font9 = iFont_create(cgcFontName_default, 9 + tnAdjustAccomplishmentFontSize,	((tlBold) ? FW_BOLD : FW_NORMAL), ((tlItalic) ? 1 : 0), ((tlUnderline) ? 1 : 0));
 
 
 		//////////
 		// Determine how big the accomplishment and version texts are
 		//////
-			SelectObject(bmp->hdc, gsFontDefault9->hfont);
+			SelectObject(bmp->hdc, font9->hfont);
 			SetRect(&lrcAccomplishment, 0, 0, bmp->bi.biWidth, bmp->bi.biHeight);
 			DrawText(bmp->hdc, tcAccomplishment, strlen(tcAccomplishment), &lrcAccomplishment, DT_SINGLELINE | DT_LEFT | DT_CALCRECT);
 
@@ -433,7 +443,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			if (tcVersion)
 			{
 				// There is a version
-				SelectObject(bmp->hdc, gsFontDefaultItalic8->hfont);
+				SelectObject(bmp->hdc, font8->hfont);
 				SetRect(&lrcVersion, 0, 0, bmp->bi.biWidth, bmp->bi.biHeight);
 				DrawText(bmp->hdc, tcVersion, strlen(tcVersion), &lrcVersion, DT_SINGLELINE | DT_LEFT | DT_CALCRECT);
 
@@ -455,7 +465,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		//////////
 		// Fill it with the gradient color
 		//////
-			switch (tnRAG)
+			switch (tnRAGB)
 			{
 				case _RED:
 					baseColor = iBmp_extractColorAtPoint(bmpStoplightRed, bmpStoplightRed->bi.biWidth / 2, bmpStoplightRed->bi.biHeight / 2);
@@ -489,7 +499,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		//////////
 		// Overlay the appropriate signal
 		//////
-			switch (tnRAG)
+			switch (tnRAGB)
 			{
 				case _RED:
 					iBmp_bitBlt(bmp, &lrc, bmpStoplightRed);
@@ -523,7 +533,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			if (tcVersion)
 			{
 				// Draw the version
-				SelectObject(bmp->hdc, gsFontDefaultItalic8->hfont);
+				SelectObject(bmp->hdc, font8->hfont);
 				SetTextColor(bmp->hdc, textColor);
 				SetBkMode(bmp->hdc, TRANSPARENT);
 				DrawText(bmp->hdc, tcVersion, strlen(tcVersion), &lrc, DT_SINGLELINE | DT_LEFT);
@@ -535,17 +545,24 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		//////
 			// SEt for the accomplishment
 			lrc.left = trc->right - lnWidthAccomplishment - 4;
-			SelectObject(bmp->hdc, gsFontDefault9->hfont);
+			SelectObject(bmp->hdc, font9->hfont);
 			SetTextColor(bmp->hdc, textColor);
 			SetBkMode(bmp->hdc, TRANSPARENT);
 			DrawText(bmp->hdc, tcAccomplishment, strlen(tcAccomplishment), &lrc, DT_SINGLELINE | DT_LEFT);
 
 
 		//////////
+		// Delete the fonts
+		//////
+			iFont_delete(&font8, true);
+			iFont_delete(&font9, true);
+
+
+		//////////
 		// Adjust the next rect down for the next one
 		//////
-			trc->top	+= bmpStoplightRed->bi.biHeight + 1;
-			trc->bottom	+= bmpStoplightRed->bi.biHeight + 1;
+			trc->top	+= bmpStoplightRed->bi.biHeight;
+			trc->bottom	+= bmpStoplightRed->bi.biHeight;
 	}
 
 
@@ -566,24 +583,29 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		CopyRect(&lrc, trc);
 
 		// System log
-		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Forms working (James 4:15)", "0.70");
-		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Compiler is complete (James 4:15)", "0.60");
-		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Running programs (James 4:15)", "0.55");
-		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Syntax highlighting (James 4:15)", "0.50");
+		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Forms working (future, James 4:15)",			"0.70", false, false, false, -2, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Compiler completed (future, James 4:15)",		"0.60", false, false, false, -2, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Running programs (future, James 4:15)",		"0.55", false, false, false, -2, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Syntax highlighting (future, James 4:15)",	"0.50", false, false, false, -2, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "AT(), OCCURS(), PAD(), TRANSFORM()", "0.43");
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Tabs expanded, mouse wheel",					"0.44", true, false, false, 1, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Bugfix on function parsing", "0.42");
+		iiVjr_renderAccomplishment(bmp, &lrc, _AMBER, "TRANSFORM() partially supported",			"0.43", false, true, false, 0, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "PADC(), PADL(), PADR()",						"0.43", false, false, false, 0, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "OCCURS(), OCCURSC()",						"0.43", false, false, false, 0, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "AT(), ATC(), RAT(), RATC()",					"0.43", false, false, false, 0, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "System log", "0.41");
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Focus highlight border bugfix", "0.41");
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Memory leak bug fixes", "0.41");
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Bugfix on function parsing",					"0.42", false, true, false, -2, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Sound support", "0.40");
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "System log",									"0.41", false, true, false, -2, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Focus highlight border bugfix",				"0.41", false, true, false, -2, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Memory leak bug fixes",						"0.41", false, true, false, -2, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _AMBER, "Focus highlight border", "0.39");
-		iiVjr_renderAccomplishment(bmp, &lrc, _RED, "Tooltips framed (no hover yet)", "0.39");
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "_screen editable", "0.39");
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Sound support",								"0.40", false, true, false, -2, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "MinGW GCC 4.8.1 and CodeLite", "0.38");
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Focus highlight border",						"0.39", false, true, false, -2, 0);
+// 		iiVjr_renderAccomplishment(bmp, &lrc, _RED, "Tooltips framed (no hover yet)",				"0.39", false, true, false, -2, 0);
+// 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "_screen editable",							"0.39", false, true, false, -2, 0);
+
+//		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "MinGW GCC 4.8.1 and CodeLite",				"0.38", false, true, false, -2, 0);
 	}

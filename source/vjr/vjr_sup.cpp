@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_sup.cpp
 //
 //////
-// Version 0.43
+// Version 0.44
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -202,7 +202,7 @@
 
 
 			// Give it a fixed point font
-			gobj_screen->pa.font = iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
+			gobj_screen->pa.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 
 
 		//////////
@@ -228,7 +228,7 @@
 		//////
 			screen_editbox							= iObj_addChild(_OBJ_TYPE_EDITBOX,	gobj_screen);
 			iObj_setSize(screen_editbox, 0, 0, gobj_screen->rcClient.right - gobj_screen->rcClient.left, gobj_screen->rcClient.bottom - gobj_screen->rcClient.top);
-			screen_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
+			screen_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			screen_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
 			screenData								= screen_editbox->pa.em;
 			screenData->showCursorLine				= true;
@@ -269,7 +269,7 @@
 			iObj_setIcon(gobj_jdebi, bmpJDebiIcon);
 
 			// Give it a fixed point font
-			gobj_jdebi->pa.font = iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
+			gobj_jdebi->pa.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 
 
 		//////////
@@ -356,7 +356,7 @@
 		//////
 			iDatum_duplicate(&caption->value, cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
 			iObj_setCaption(sourceCode, caption);
-			sourceCode_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
+			sourceCode_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			sourceCode_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown_sourceCode;
 			sourceCode_editbox->pa.em					= iEditManager_allocate();
 			sourceCode_editbox->pa.em->showCursorLine	= true;
@@ -368,7 +368,7 @@
 		//////
 			iDatum_duplicate(&caption->value, cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
 			iObj_setCaption(locals, caption);
-			locals_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
+			locals_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			locals_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
 			iObj_setIcon(locals, bmpLocalsIcon);
 
@@ -466,7 +466,7 @@
 		//////
 			iDatum_duplicate(&caption->value, cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
 			iObj_setCaption(watch, caption);
-			watch_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
+			watch_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			watch_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
 			watch_editbox->pa.em->showCursorLine	= true;
 			iObj_setIcon(watch, bmpWatchIcon);
@@ -477,7 +477,7 @@
 		//////
 			iDatum_duplicate(&caption->value, cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
 			iObj_setCaption(command, caption);
-			command_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
+			command_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			command_editbox->ev.keyboard._onKeyDown		= (u32)&iEditManager_onKeyDown_sourceCode;
 			command_editbox->p.hasFocus					= true;
 			command_editbox->pa.em->showCursorLine		= true;
@@ -489,7 +489,7 @@
 		//////
 			iDatum_duplicate(&caption->value, cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
 			iObj_setCaption(debug, caption);
-			debug_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 10, FW_MEDIUM, false, false);
+			debug_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			debug_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
 			debug_editbox->pa.em->showCursorLine	= true;
 			iObj_setIcon(debug, bmpDebugIcon);
@@ -500,7 +500,7 @@
 		//////
 			iDatum_duplicate(&caption->value, cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
 			iObj_setCaption(output, caption);
-			output_editbox->pa.font					= iFont_create((s8*)cgcDefaultFixedFontName, 8, FW_MEDIUM, false, false);
+			output_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_MEDIUM, false, false);
 			output_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
 			output_editbox->pa.em->showCursorLine	= true;
 			iObj_setIcon(output, bmpOutputIcon);

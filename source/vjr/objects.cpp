@@ -3,7 +3,7 @@
 // /libsf/source/vjr/objects.cpp
 //
 //////
-// Version 0.43
+// Version 0.44
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -2954,7 +2954,7 @@
 						iDatum_duplicate(&objChild->pa.caption, cgcName_formCaption, sizeof(cgcName_formCaption) - 1);
 						objChild->p.isOpaque = false;
 						iFont_delete(&objChild->pa.font, true);
-						objChild->pa.font = iFont_create(cgcWindowTitleBarFontName, 12, FW_NORMAL, false, false);
+						objChild->pa.font = iFont_create(cgcFontName_windowTitleBar, 12, FW_NORMAL, false, false);
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMove, sizeof(cgcName_iconMove) - 1) == 0) {
 						// Adjust the size
@@ -3148,7 +3148,7 @@
 						iDatum_duplicate(&objChild->pa.caption, cgcName_formCaption, sizeof(cgcName_formCaption) - 1);
 						objChild->p.isOpaque = false;
 						iFont_delete(&objChild->pa.font, true);
-						objChild->pa.font = iFont_create(cgcWindowTitleBarFontName, 10, FW_NORMAL, false, false);
+						objChild->pa.font = iFont_create(cgcFontName_windowTitleBar, 10, FW_NORMAL, false, false);
 					}
 
 					// Move to next object
