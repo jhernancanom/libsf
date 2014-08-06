@@ -74,7 +74,7 @@
 	_screen.Width		= SUB(lnValue1, lnMin)		&& lnValue1 - lnMin
 	
 	lnValue1			= SYSMETRIC(2)
-	lnValue2			= MUL(2, lnMin)			&& 2 * lnMin
+	lnValue2			= MUL(2, lnMin)				&& 2 * lnMin
 	_screen.Height		= SUB(lnValue1, lnValue2)	&& SYSMETRIC(2) - (2 * lnMin)
 	
 	_screen.Visible		= .T.
@@ -181,5 +181,5 @@
 	_jdebi.output.Visible	= .T.
 		
 
-		* Make JDebi visible
+	* Make JDebi visible
 	_jdebi.Visible			= .T.

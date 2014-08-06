@@ -3,7 +3,7 @@
 // /libsf/source/vjr/sound.cpp
 //
 //////
-// Version 0.44
+// Version 0.45
 // Copyright (c) 2013 by Rick C. Hodgin
 //////
 // Last update:

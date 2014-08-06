@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr.cpp
 //
 //////
-// Version 0.44
+// Version 0.45
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -586,12 +586,14 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Running programs (future, James 4:15)",		"0.55", false, false, false, -2, 0);
 		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Syntax highlighting (future, James 4:15)",	"0.50", false, false, false, -2, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Tabs expanded, mouse wheel",					"0.44", true, false, false, 1, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _AMBER, "Syntax highlighting",						"0.45", true, false, false, 1, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _AMBER, "TRANSFORM() partially supported",			"0.43", false, true, false, 0, 0);
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "PADC(), PADL(), PADR()",						"0.43", false, false, false, 0, 0);
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "OCCURS(), OCCURSC()",						"0.43", false, false, false, 0, 0);
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "AT(), ATC(), RAT(), RATC()",					"0.43", false, false, false, 0, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Tabs expanded, mouse wheel",					"0.44", false, false, false, 0, 0);
+
+		iiVjr_renderAccomplishment(bmp, &lrc, _AMBER, "TRANSFORM() partially supported",			"0.43", false, true, false, -2, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "PADC(), PADL(), PADR()",						"0.43", false, false, false, -2, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "OCCURS(), OCCURSC()",						"0.43", false, false, false, -2, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "AT(), ATC(), RAT(), RATC()",					"0.43", false, false, false, -2, 0);
 
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Bugfix on function parsing",					"0.42", false, true, false, -2, 0);
 
@@ -601,7 +603,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Sound support",								"0.40", false, true, false, -2, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Focus highlight border",						"0.39", false, true, false, -2, 0);
+//		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Focus highlight border",						"0.39", false, true, false, -2, 0);
 // 		iiVjr_renderAccomplishment(bmp, &lrc, _RED, "Tooltips framed (no hover yet)",				"0.39", false, true, false, -2, 0);
 // 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "_screen editable",							"0.39", false, true, false, -2, 0);
 
