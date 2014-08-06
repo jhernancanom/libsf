@@ -262,6 +262,19 @@
 	s64						iTime_getLocalMs						(void);
 	s8						iLowerCase								(s8 c);
 	s8						iUpperCase								(s8 c);
+	
+	bool					iIsNeedleInHaystack						(s8* haystack, s32 haystackLength, s8* needle, s32 needleLength);
+	bool					iIsNeedleInHaystackCase					(s8* haystack, s32 haystackLength, s8* needle, s32 needleLength);
+	bool					iIsNeedleInHaystack						(s8* haystack, s32 haystackLength, s8* needle, s32 needleLength, u32* tnStart);
+	bool					iIsNeedleInHaystackCase					(s8* haystack, s32 haystackLength, s8* needle, s32 needleLength, u32* tnStart);
+	bool					iIsCharacterInHaystack					(s8* haystack, s32 haystackLength, s8 needle, u32* tnOffset);
+	bool					iIsCharacterInHaystackCase				(s8* haystack, s32 haystackLength, s8 needle, u32* tnOffset);
+	bool					iIsCharacterInHaystackReversed			(s8* haystack, s32 haystackLength, s8 needle, u32* tnOffset);
+	bool					iIsCharacterInHaystackReversedCase		(s8* haystack, s32 haystackLength, s8 needle, u32* tnOffset);
+	bool					iDoesHaystackStartWithNeedle			(s8* haystack, s32 haystackLength, s8* needle, s32 needleLength);
+	bool					iDoesHaystackStartWithNeedleCase		(s8* haystack, s32 haystackLength, s8* needle, s32 needleLength);
+	s8						iLowerCharacter							(s8 ch);
+	u32						iSkipWhitespaces						(s8* source, u32* offset, u32 maxLength);
 
 	s64						iMath_delta								(s64 tnBaseValue, s64 tnSubtractionValue);
 	s8*						iMath_roundTo							(f64* tfValue, f64 tfRoundTo);

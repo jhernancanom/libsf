@@ -47,7 +47,7 @@
 		SComp*		comp;
 		SComp*		compNext;
 		SComp*		compThird;
-		SVariable*	var;
+		SVariable*	var;		// Note:  var is used here for examination of the contents during debugging
 		SVariable*	varExisting;
 		SVariable*	varText;
 
@@ -55,48 +55,12 @@
 		// Make sure our environment is sane
 		if (line && line->sourceCode && line->sourceCode->data && line->sourceCodePopulated > 0)
 		{
-			//////////
-			// If we have existing compiler data, get rid of it
-			//////
-				if (line->compilerInfo)		iCompiler_delete(&line->compilerInfo, false);
-				else						line->compilerInfo = iCompiler_allocate(line);		// Allocate a new one
+			// Parse it
+			comp = iEngine_parseSourceCodeLine(line);
 
-
-			//////////
-			// Parse out the line
-			//////
-				iComps_translateSourceLineTo(&cgcFundamentalSymbols[0], line);
-				if (!line->compilerInfo->firstComp)
-					return(false);		// Nothing to compile on this line
-
-
-			//////////
-			// Get the first component
-			//////
-				comp = line->compilerInfo->firstComp;
-
-
-			//////////
-			// If it's a line comment, we don't need to process it
-			//////
-				if (comp->iCode == _ICODE_COMMENT || comp->iCode == _ICODE_LINE_COMMENT)
-					return(false);
-
-
-			//////////
-			// Perform natural source code fixups
-			//////
-				iComps_removeStartEndComments(line);		// Remove /* comments */
-				iComps_fixupNaturalGroupings(line);			// Fixup natural groupings [_][aaa][999] becomes [_aaa999], [999][.][99] becomes [999.99], etc.
-				iComps_removeWhitespaces(line);				// Remove whitespaces [use][whitespace][foo] becomes [use][foo]
-
-
-			//////////
-			// Translate sequences to known keywords
-			//////
-				iComps_translateToOthers(&cgcKeywordKeywords[0], line);
-				if (!line->compilerInfo->firstComp)
-					return(false);		// Nothing to compile on this line
+			// Do we have anythign to do?
+			if (!comp || comp->iCode == _ICODE_COMMENT || comp->iCode == _ICODE_LINE_COMMENT)
+				return(false);
 
 
 			//////////
@@ -227,6 +191,68 @@
 			// Failure
 			return(false);
 		}
+	}
+
+
+
+
+//////////
+//
+// Parse the source code line into VJr's fixed, known, component parts.
+// This process does not process variables, table names, fields, etc.
+//
+//////
+	SComp* iEngine_parseSourceCodeLine(SEdit* line)
+	{
+		//////////
+		// If we have existing compiler data, get rid of it
+		//////
+			if (line->compilerInfo)		iCompiler_delete(&line->compilerInfo, false);
+			else						line->compilerInfo = iCompiler_allocate(line);		// Allocate a new one
+
+
+		//////////
+		// Parse out the line
+		//////
+			iComps_translateSourceLineTo(&cgcFundamentalSymbols[0], line);
+			if (!line->compilerInfo->firstComp)
+				return(NULL);		// Nothing to compile on this line
+
+			// Remove whitespaces [use][whitespace][foo] becomes [use][foo]
+			iComps_removeLeadingWhitespaces(line);
+
+
+		//////////
+		// If it's a line comment, we don't need to process it
+		//////
+			if (line->compilerInfo->firstComp && (line->compilerInfo->firstComp->iCode == _ICODE_COMMENT || line->compilerInfo->firstComp->iCode == _ICODE_LINE_COMMENT))
+			{
+				// Combine every item after this to a single comment
+				iComps_combineNextN(line->compilerInfo->firstComp, 99999, line->compilerInfo->firstComp->iCode, line->compilerInfo->firstComp->iCat, line->compilerInfo->firstComp->color);
+
+				// Return the first component
+				return(line->compilerInfo->firstComp);
+			}
+
+
+		//////////
+		// Perform natural source code fixups
+		//////
+			iComps_removeStartEndComments(line);		// Remove /* comments */
+			iComps_fixupNaturalGroupings(line);			// Fixup natural groupings [_][aaa][999] becomes [_aaa999], [999][.][99] becomes [999.99], etc.
+			iComps_removeWhitespaces(line);				// Remove all whitespaces after everything else was parsed [use][whitespace][foo] becomes [use][foo]
+
+
+		//////////
+		// Translate sequences to known keywords
+		//////
+			iComps_translateToOthers((SAsciiCompSearcher*)&cgcKeywordKeywords[0], line);
+
+
+		//////////
+		// Return the first component
+		//////
+			return(line->compilerInfo->firstComp);
 	}
 
 

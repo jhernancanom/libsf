@@ -5,15 +5,15 @@
 ## Release
 ProjectName            :=vjr
 ConfigurationName      :=Release
-WorkspacePath          := "C:\libsf\source\vjr\vjr"
-ProjectPath            := "C:\libsf\source\vjr\vjr"
+WorkspacePath          := "C:\libsf\source\vjr\vjr_mingw_gcc_codelite"
+ProjectPath            := "C:\libsf\source\vjr\vjr_mingw_gcc_codelite"
 IntermediateDirectory  :=./Release
 OutDir                 := $(IntermediateDirectory)
 CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Administrator
-Date                   :=08/03/14
+Date                   :=08/05/14
 CodeLitePath           :="C:\Program Files\CodeLite"
 LinkerName             :=C:\MinGW-4.8.1\bin\g++.exe 
 SharedObjectLinkerName :=C:\MinGW-4.8.1\bin\g++.exe -shared -fPIC

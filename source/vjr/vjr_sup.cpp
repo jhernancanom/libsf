@@ -358,8 +358,8 @@
 			iObj_setCaption(sourceCode, caption);
 			sourceCode_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			sourceCode_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown_sourceCode;
-			sourceCode_editbox->pa.em					= iEditManager_allocate();
 			sourceCode_editbox->pa.em->showCursorLine	= true;
+			sourceCode_editbox->pa.em->isSourceCode		= true;
 			iObj_setIcon(sourceCode, bmpSourceCodeIcon);
 
 
@@ -481,6 +481,7 @@
 			command_editbox->ev.keyboard._onKeyDown		= (u32)&iEditManager_onKeyDown_sourceCode;
 			command_editbox->p.hasFocus					= true;
 			command_editbox->pa.em->showCursorLine		= true;
+			command_editbox->pa.em->isSourceCode		= true;
 			iObj_setIcon(command, bmpCommandIcon);
 
 
@@ -1881,11 +1882,287 @@
 		return(iTime_computeMilliseconds(&time));
 	}
 
+	bool iIsNeedleInHaystack(s8* haystack, s32 haystackLength, s8* needle, s32 needleLength)
+	{
+		return(iIsNeedleInHaystack(haystack, haystackLength, needle, needleLength, NULL));
+	}
+
+	// Case sensitive variation
+	bool iIsNeedleInHaystackCase(s8* haystack, s32 haystackLength, s8* needle, s32 needleLength)
+	{
+		return(iIsNeedleInHaystackCase(haystack, haystackLength, needle, needleLength, NULL));
+	}
+
+	bool iIsNeedleInHaystack(s8* haystack, s32 haystackLength, s8* needle, s32 needleLength, u32* tnStart)
+	{
+		s32 lnI;
+
+
+		// Make sure the lengths are valid
+		if (haystackLength < 0)		haystackLength	= strlen(haystack);
+		if (needleLength < 0)		needleLength	= strlen(needle);
+
+		// Iterate to see if we find it
+		for (lnI = 0; lnI <= haystackLength - needleLength; lnI++)
+		{
+			if (_memicmp(haystack + lnI, needle, needleLength) == 0)
+			{
+				// Store the offset if we're supposed to
+				if (tnStart)
+					*tnStart = lnI;
+				// Indicate success
+				return(true);
+			}
+		}
+
+		// Failure
+		return(false);
+	}
+
+	bool iIsNeedleInHaystackCase(s8* haystack, s32 haystackLength, s8* needle, s32 needleLength, u32* tnStart)
+	{
+		s32 lnI;
+
+
+		// Make sure the lengths are valid
+		if (haystackLength < 0)		haystackLength	= strlen(haystack);
+		if (needleLength < 0)		needleLength	= strlen(needle);
+
+		// Check to see if the specified word / phrase / whatever exists on this line
+		for (lnI = 0; lnI <= haystackLength - needleLength; lnI++)
+		{
+			if (memcmp(haystack + lnI, needle, needleLength) == 0)
+			{
+				// Store the offset if we're supposed to
+				if (tnStart)
+					*tnStart = lnI;
+				// Indicate success
+				return(true);
+			}
+		}
+
+		// Failure
+		return(false);
+	}
+
+	// Search only for a single character without regard to case
+	bool iIsCharacterInHaystack(s8* haystack, s32 haystackLength, s8 needle, u32* tnOffset)
+	{
+		s32		lnI;
+		s8		c;
+
+
+		// Make sure the length is valid
+		if (haystackLength < 0)
+			haystackLength	= strlen(haystack);
+
+		// Check to see if the specified word / phrase / whatever contains this character
+		c = iLowerCharacter(needle);
+		for (lnI = 0; lnI < haystackLength; lnI++)
+		{
+			if (iLowerCharacter(haystack[lnI]) == c)
+			{
+				if (tnOffset)
+					*tnOffset = lnI;
+
+				return(true);
+			}
+		}
+
+		// Failure
+		return(false);
+	}
+
+	// Search only for a single character by case
+	bool iIsCharacterInHaystackCase(s8* haystack, s32 haystackLength, s8 needle, u32* tnOffset)
+	{
+		s32 lnI;
+
+
+		// Make sure the length is valid
+		if (haystackLength < 0)
+			haystackLength	= strlen(haystack);
+
+		// Check to see if the specified word / phrase / whatever contains this character
+		for (lnI = 0; lnI < haystackLength; lnI++)
+		{
+			if (haystack[lnI] == needle)
+			{
+				if (tnOffset)
+					*tnOffset = lnI;
+
+				return(true);
+			}
+		}
+
+		// Failure
+		return(false);
+	}
+
+	// Searches backwards for the specified character
+	bool iIsCharacterInHaystackReversed(s8* haystack, s32 haystackLength, s8 needle, u32* tnOffset)
+	{
+		s32		lnI;
+		s8		c;
+
+
+		// Make sure the length is valid
+		if (haystackLength < 0)
+			haystackLength	= strlen(haystack);
+
+		// Check to see if the specified word / phrase / whatever contains this character
+		c = iLowerCharacter(needle);
+		for (lnI = haystackLength - 1; lnI >= 0; lnI--)
+		{
+			if (iLowerCharacter(haystack[lnI]) == c)
+			{
+				if (tnOffset)
+					*tnOffset = lnI;
+
+				return(true);
+			}
+		}
+
+		// Failure
+		return(false);
+	}
+
+	bool iIsCharacterInHaystackReversedCase(s8* haystack, s32 haystackLength, s8 needle, u32* tnOffset)
+	{
+		s32 lnI;
+
+
+		// Make sure the length is valid
+		if (haystackLength < 0)
+			haystackLength	= strlen(haystack);
+
+		// Check to see if the specified word / phrase / whatever contains this character
+		for (lnI = haystackLength - 1; lnI >= 0; lnI--)
+		{
+			if (haystack[lnI] == needle)
+			{
+				if (tnOffset)
+					*tnOffset = lnI;
+
+				return(true);
+			}
+		}
+
+		// Failure
+		return(false);
+	}
+
 	s64 iMath_delta(s64 tnBaseValue, s64 tnSubtractionValue)
 	{
 		return(tnBaseValue - tnSubtractionValue);
 	}
-;
+
+
+
+
+//////////
+//
+// Checks to see if the specified needle is found at the start of the haystack
+//
+//////
+	bool iDoesHaystackStartWithNeedle(s8* haystack, s32 haystackLength, s8* needle, s32 needleLength)
+	{
+		s32 lnWhitespaces;
+
+
+		// Make sure the length is valid
+		if (haystackLength < 0)
+			haystackLength	= strlen(haystack);
+
+		// Skip past any whitespaces
+		lnWhitespaces = 0;
+		iSkipWhitespaces(haystack, (u32*)&lnWhitespaces, haystackLength);
+
+		// Check to see if the specified word / phrase / whatever exists on this line
+		if (haystackLength - lnWhitespaces >= needleLength)
+		{
+			if (_memicmp(haystack + lnWhitespaces, needle, needleLength) == 0)
+				return(true);
+		}
+
+		// Failure
+		return(false);
+	}
+
+	// Case sensitive variation
+	bool iDoesHaystackStartWithNeedleCase(s8* haystack, s32 haystackLength, s8* needle, s32 needleLength)
+	{
+		s32 lnWhitespaces;
+
+
+		// Make sure the lengths are valid
+		if (haystackLength < 0)		haystackLength	= strlen(haystack);
+		if (needleLength < 0)		needleLength	= strlen(needle);
+
+		// Skip past any whitespaces
+		lnWhitespaces = 0;
+		iSkipWhitespaces(haystack, (u32*)&lnWhitespaces, haystackLength);
+
+		// Check to see if the specified word / phrase / whatever exists on this line
+		if (haystackLength - lnWhitespaces >= needleLength)
+		{
+			if (memcmp(haystack + lnWhitespaces, needle, needleLength) == 0)
+				return(true);
+		}
+
+		// Failure
+		return(false);
+	}
+
+	s8 iLowerCharacter(s8 ch)
+	{
+		if (ch >= 'A' && ch <= 'Z')
+			ch += 0x20;
+		return(ch);
+	}
+
+
+
+
+//////////
+//
+// Skips past whitespace characters (tabs and spaces)
+// Move the offset byte forward until we're no longer sitting on a
+// whitespace character, and indicate how many we skipped.
+//
+//////
+	u32 iSkipWhitespaces(s8* source, u32* offset, u32 maxLength)
+	{
+		s8		c;
+		u32		lnLength, lnOffset;
+
+
+		// Make sure the length is valid
+		if (maxLength < 0)
+			maxLength = strlen(source);
+
+		// Make sure we have valid parameters
+		if (!offset)
+		{
+			// They didn't give us an offset, so we use our own, home-grown solution, that's right, my friend! :-)
+			lnOffset	= 0;
+			offset = &lnOffset;
+		}
+
+		// Move from the current location to its new location
+		lnLength = 0;
+		while (*offset < maxLength)
+		{
+			c = source[*offset];
+			if (c != 32/*space*/ && c != 9/*tab*/)
+				return(lnLength);		// It's no longer a whitespace
+
+			// Move to the next position
+			++lnLength;
+			++*offset;
+		}
+		return(lnLength);
+	}
 
 
 

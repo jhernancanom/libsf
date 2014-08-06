@@ -41,7 +41,7 @@
 // Called to create a new EM (Edit Manager)
 //
 //////
-	SEM* iEditManager_allocate(void)
+	SEM* iEditManager_allocate(bool tlIsSourceCode)
 	{
 		SEM* em;
 
@@ -54,6 +54,9 @@
 		{
 			// Reset all
 			memset(em, 0, sizeof(SEM));
+
+			// Store defaults
+			em->isSourceCode	= tlIsSourceCode;
 
 			// Default to 4-character tab width
 			em->tabWidth		= 4;
@@ -182,29 +185,26 @@
 // Loads in a text file into an EM beginning optionally near ecHint.
 //
 //////
-	bool iEditManager_loadFromDisk(SEM* em, SEdit* ecHint, s8* tcPathname, bool tlInsertAfter)
+	bool iEditManager_loadFromDisk(SEM* em, s8* tcPathname, bool isSourceCode)
 	{
 		s32			lnI, lnJ, lnLast;
 		SBuilder*	content;
+		SEdit*		start;
+		SEdit*		end;
 		s8			buffer[_MAX_PATH + 64];
 
 
 		// Make sure our environment is sane
 		if (em && tcPathname)
 		{
-			// Find our relative position
-			if (!ecHint)
-			{
-				// Make sure we setup our hints
-				if (!tlInsertAfter)		ecHint = em->ecFirst;			// The first line will be inserted before, then every line inserted after that line
-				else					ecHint = em->ecLast;			// Appending to the end
-			}
-
 			// Read it in
 			content = NULL;
 			if (iBuilder_asciiReadFromFile(&content, tcPathname))
 			{
 				// Read in the file
+				start	= NULL;
+				end		= NULL;
+
 				// Copy through lines into the ecm
 				for (lnI = 0, lnLast = 0; (u32)lnI < content->populatedLength; lnI++)
 				{
@@ -215,21 +215,10 @@
 					// If we found a CR/LF combination
 					if (lnJ != 0 || (u32)lnI >= content->populatedLength)
 					{
-						// We've entered into a CR/LF block
-						// Append a new line
-						ecHint = iEditManager_appendLine(em, content->data + lnLast, lnI - lnJ - lnLast);
-// 						if (!em->ecFirst)			ecHint = iEditManager_appendLine(em, NULL, 0);
-// 						else						ecHint = iEditManager_insertLine(em, NULL, 0, ecHint, tlInsertAfter);
-// 
-// 						// From this point forward we are inserting after
-// 						tlInsertAfter = true;
-// 
-// 						// If we have any content, add it
-// 						if (lnI - lnJ - lnLast > 0)
-// 						{
-// 							iDatum_duplicate(ecHint->sourceCode, content->data + lnLast, lnI - lnJ - lnLast);
-// 							ecHint->sourceCodePopulated	= ecHint->sourceCode->length;
-// 						}
+						// We've entered into a CR/LF block, append a new line
+						end = iEditManager_appendLine(em, content->data + lnLast, lnI - lnJ - lnLast);
+						if (!start)
+							start = end;
 
 						// Indicate where we are now
 						lnLast = lnI;
@@ -239,6 +228,24 @@
 
 				// Release it
 				iBuilder_freeAndRelease(&content);
+
+				// Parse the content if it's source code
+				if (isSourceCode)
+				{
+// ShowWindow(gSplash.hwnd, SW_HIDE);
+// Sleep(100);
+					// Iterate from start to end and parse each source code line
+					while (start && (SEdit*)start->ll.prev != end)
+					{
+						// Parse it
+// if (iIsNeedleInHaystack(start->sourceCode->data, start->sourceCode->length, "_screen", 7))
+// 	int3_break;
+						iEngine_parseSourceCodeLine(start);
+
+						// Move to next line
+						start = (SEdit*)start->ll.next;
+					}
+				}
 
 				// Log it
 				sprintf(buffer, "Load %s\0", tcPathname);
@@ -868,7 +875,8 @@ int3_break;
 		{
 			// Get the client rect
 			CopyRect(rc, &obj->rcClient);
-			font = obj->pa.font;
+			if (em->font)		font = em->font;
+			else				font = obj->pa.font;
 
 		} else {
 			// It's insane, so we set our rc to something that will prevent processing
@@ -1309,9 +1317,10 @@ int3_break;
 		SFont*		font;
 		SEdit*		line;
 		SBitmap*	bmp;
+		SComp*		comp;
 		HGDIOBJ		hfontOld;
-		SBgra		foreColor, backColor, fillColor, backColorLast, foreColorLast;
-		RECT		rc, lrc, lrc2, lrc3;
+		SBgra		foreColor, backColor, fillColor, backColorLast, foreColorLast, compColor;
+		RECT		rc, lrc, lrc2, lrc3, lrcComp;
 
 
 		// Make sure our environment is sane
@@ -1353,29 +1362,27 @@ int3_break;
 				//////////
 				// Determine the color
 				//////
+					SetBkMode(bmp->hdc, OPAQUE);
 					if (em->ecCursorLine == line && em->showCursorLine && tlRenderCursorline)
 					{
 						// Display in the cursor color line
 						SetBkColor(bmp->hdc, RGB(currentStatementBackColor.red, currentStatementBackColor.grn, currentStatementBackColor.blu));
-						SetBkMode(bmp->hdc, OPAQUE);
 						SetTextColor(bmp->hdc, RGB(currentStatementForeColor.red, currentStatementForeColor.grn, currentStatementForeColor.blu));
 						fillColor.color = currentStatementBackColor.color;
 
 					} else if (line->ll.next || ((!em->showCursorLine || !tlRenderCursorline) && !em->showEndLine)) {
 						// Display in normal background color
 						SetBkColor(bmp->hdc, RGB(backColor.red, backColor.grn, backColor.blu));
-						SetBkMode(bmp->hdc, OPAQUE);
 						SetTextColor(bmp->hdc, RGB(foreColor.red, foreColor.grn, foreColor.blu));
-						hfontOld = SelectObject(bmp->hdc, font->hfont);
-						fillColor.color = backColor.color;
+						hfontOld		= SelectObject(bmp->hdc, font->hfont);
+						fillColor.color	= backColor.color;
 
 					} else {
 						// This is the last line, display in the last line color
 						SetBkColor(bmp->hdc, RGB(backColorLast.red, backColorLast.grn, backColorLast.blu));
-						SetBkMode(bmp->hdc, OPAQUE);
 						SetTextColor(bmp->hdc, RGB(foreColorLast.red, foreColorLast.grn, foreColorLast.blu));
-						hfontOld = SelectObject(bmp->hdc, font->hfont);
-						fillColor.color = backColorLast.color;
+						hfontOld		= SelectObject(bmp->hdc, font->hfont);
+						fillColor.color	= backColorLast.color;
 					}
 
 
@@ -1400,17 +1407,58 @@ int3_break;
 
 
 				//////////
-				// Draw the text
-				//////
-					if (em->leftColumn < line->sourceCodePopulated)
-						DrawText(bmp->hdc, line->sourceCode->data + em->leftColumn, line->sourceCodePopulated - em->leftColumn, &lrc2, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
-					
-
-				//////////
-				// Clear the rest of the line
+				// Fill the line with the appropriate background color
 				//////
 					iBmp_fillRect(bmp, &lrc3, fillColor, fillColor, fillColor, fillColor, false, NULL, false);
 
+
+				//////////
+				// Draw the text
+				//////
+					DrawText(bmp->hdc, line->sourceCode->data + em->leftColumn, line->sourceCodePopulated - em->leftColumn, &lrc2, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+					if (em->isSourceCode && line->compilerInfo && line->compilerInfo->firstComp && em->leftColumn < line->sourceCodePopulated)
+					{
+						// Source code, syntax highlight
+						if (em->isSourceCode && line->compilerInfo && line->compilerInfo->firstComp)
+						{
+							// Redraw items that are to be colorized in their color
+							comp = line->compilerInfo->firstComp;
+							while (comp)
+							{
+								// Determine where this component would go
+								if (comp->color)		compColor.color = comp->color->color;
+								else					compColor.color = foreColor.color;
+
+								// Set the color
+								SetTextColor(bmp->hdc, RGB(compColor.red, compColor.grn, compColor.blu));
+
+								// Set the rect
+								SetRect(&lrcComp, (comp->start - em->leftColumn) * font->tm.tmAveCharWidth, lrc2.top, (comp->start + comp->length - em->leftColumn) * font->tm.tmAveCharWidth, lrc2.bottom);
+
+								// Draw this component
+								DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+
+								// If we should bold, bold it
+								if (comp->useBoldFont)
+								{
+									// Set transparent mode
+									SetBkMode(bmp->hdc, TRANSPARENT);
+
+									// Adjust right one pixel, redraw
+									++lrcComp.left;
+									++lrcComp.right;
+									DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+
+									// Set back to opaque
+									SetBkMode(bmp->hdc, OPAQUE);
+								}
+
+								// Move to next component
+								comp = (SComp*)comp->ll.next;
+							}
+						}
+					}
+					
 
 				//////////
 				// Draw the cursor if on the cursor line
@@ -1485,8 +1533,8 @@ int3_break;
 					//////
 						lnWidth		= (lrc.right - lrc.left);
 						lnHeight	= (lrc.bottom - lrc.top);
-						lnCols		= max((lnWidth  / font->tm.tmAveCharWidth) - 1, 1);
-						lnRows		= max((lnHeight / font->tm.tmHeight)       - 1, 1);
+						lnCols		= max((lnWidth  / font->tm.tmAveCharWidth),	1);
+						lnRows		= max((lnHeight / font->tm.tmHeight),		1);
 
 
 					//////////
@@ -1685,14 +1733,14 @@ int3_break;
 	bool iEditManager_scroll(SEM* em, SObject* obj, s32 deltaY, s32 deltaX)
 	{
 		s32			lnI;
-		SFont*		font;
-		RECT		lrc;
-
-
-		//////////
-		// Grab the rectangle we're working in
-		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+//		SFont*		font;
+//		RECT		lrc;
+//
+//
+//		//////////
+//		// Grab the rectangle we're working in
+//		//////
+//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		//////////
@@ -2079,6 +2127,9 @@ int3_break;
 		{
 			// Toggle the flag
 			em->isOverwrite = !em->isOverwrite;
+
+			// Something has changed, we need to re-render
+			iObj_setDirtyRender(obj, true);
 
 			// Toggling insert changes the shape of the cursor, so we always redraw
 			return(true);

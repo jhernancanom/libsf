@@ -458,7 +458,7 @@
 		if (glSDL_Initialized)
 		{
 			// Add this item to the list of sounds
-			lss = (_isSSound*)iSEChain_append(&gseRootSounds, gnNextUniqueId++, gnNextUniqueId++, sizeof(_isSSound), 1, &llResult);
+			lss = (_isSSound*)iSEChain_append(&gseRootSounds, iGetNextUid(), iGetNextUid(), sizeof(_isSSound), 1, &llResult);
 			if (lss)
 			{
 				// Store the relevant information

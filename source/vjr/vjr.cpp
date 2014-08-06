@@ -231,7 +231,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		// Initially populate _screen
 		// Load in the history if it exists
-		if (!iEditManager_loadFromDisk(screenData, NULL, (s8*)cgcScreenDataFilename, true))
+		if (!iEditManager_loadFromDisk(screenData, (s8*)cgcScreenDataFilename, false))
 		{
 			iVjr_appendSystemLog("Populate _screen with default data");
 			iEditManager_appendLine(screenData, (s8*)cgcScreenTitle, -1);
@@ -261,7 +261,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		// Initially populate _jdebi
 		// Load in the history if it exists
-		if (!iEditManager_loadFromDisk(command_editbox->pa.em, NULL, (s8*)cgcCommandHistoryFilename, true))
+		if (!iEditManager_loadFromDisk(command_editbox->pa.em, (s8*)cgcCommandHistoryFilename, true))
 		{
 			iEditManager_appendLine(command_editbox->pa.em, (s8*)"*** Welcome to Visual FreePro, Junior! :-)", -1);
 			iEditManager_appendLine(command_editbox->pa.em, (s8*)"*** For now, this can be thought of as a command window ... with a twist.", -1);
@@ -282,7 +282,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		}
 
 		// Load some source code
-		iEditManager_loadFromDisk(sourceCode_editbox->pa.em, NULL, (s8*)cgcStartupPrgFilename, true);
+		iEditManager_loadFromDisk(sourceCode_editbox->pa.em, (s8*)cgcStartupPrgFilename, true);
 
 		// Redraw
 		iVjr_appendSystemLog("Final render _jdebi");
@@ -318,8 +318,9 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			if (!gobj_splashListing)
 				return;
 
-			// Set the icon
+			// Set the icon and border
 			iObj_setIcon(gobj_splashListing, bmpOutputIcon);
+			gobj_splashListing->p.isBorder = true;
 
 
 			//////////
@@ -328,10 +329,6 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 				caption = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgcSystemLog, sizeof(cgcSystemLog) - 1);
 				iObj_setCaption(gobj_splashListing, caption);
 				iVariable_delete(caption, true);
-
-
-			// Give it a fixed point font
-			gobj_splashListing->pa.font = iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_MEDIUM, false, false);
 
 
 		//////////
@@ -345,7 +342,8 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		//////
 			gobj_splashListingEditbox							= iObj_addChild(_OBJ_TYPE_EDITBOX,	gobj_splashListing);
 			iObj_setSize(gobj_splashListingEditbox, 0, 0, gobj_splashListing->rcClient.right - gobj_splashListing->rcClient.left, gobj_splashListing->rcClient.bottom - gobj_splashListing->rcClient.top);
-			gobj_splashListingEditbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			gobj_splashListingEditbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
+			gobj_splashListingEditbox->pa.em->font				= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
 			gobj_splashListingEditbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
 			systemLog											= gobj_splashListingEditbox->pa.em;
 			systemLog->showEndLine								= true;
@@ -552,10 +550,10 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 
 		//////////
-		// Delete the fonts
+		// Draw a frame around this region so it marks the boundaries
 		//////
-			iFont_delete(&font8, true);
-			iFont_delete(&font9, true);
+			SetRect(&lrc, 0, 0, trc->right, trc->top + bmpStoplightRed->bi.biHeight);
+			iBmp_frameRect(bmp, &lrc, black, black, black, black, false, NULL, false);
 
 
 		//////////

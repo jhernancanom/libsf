@@ -45,10 +45,10 @@
 //////////
 // Forward declarations
 //////
-	SEM*					iEditManager_allocate				(void);
+	SEM*					iEditManager_allocate				(bool tlIsSourceCode);
 	SBuilder*				iEditManager_accumulateBuilder		(SEM* em, SEdit* ecHintStart, SEdit* ecHintEnd);
 	bool					iEditManager_saveToDisk				(SEM* em, s8* tcPathname);
-	bool					iEditManager_loadFromDisk			(SEM* em, SEdit* ecHint, s8* tcPathname, bool tlInsertAfter);
+	bool					iEditManager_loadFromDisk			(SEM* em, s8* tcPathname, bool isSourceCode);
 	bool					iEditManager_duplicate				(SEM** root, SEM* chain, bool tlIncludeUndoHistory);
 	void					iEditManager_delete					(SEM** root, bool tlDeleteSelf);
 	void					iEditManager_deleteChain			(SEM** root, bool tlDeleteSelf);

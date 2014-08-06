@@ -394,20 +394,6 @@ typedef SEM**		SEMpp;
 
 
 //////////
-// Sound plugin DLL and functions
-//////
-	const s8		cgcSoundDllPlugin[]									= "sound.dll";
-	const s8		cgcSoundStartupWav[]								= "startup_44100_f32.wav";
-	const s8		cgcOssSoundInitialize[]								= "oss_soundInitialize";
-	const s8		cgcOssSoundCreateTone[]								= "oss_soundCreateTone";
-	const s8		cgcOssSoundCreateStream[]							= "oss_soundCreateStream";
-	const s8		cgcOssSoundSetVolume[]								= "oss_soundSetVolume";
-	const s8		cgcOssSoundPlayStart[]								= "oss_soundPlayStart";
-	const s8		cgcOssSoundPlayCancel[]								= "oss_soundPlayCancel";
-	const s8		cgcOssSoundDelete[]									= "oss_soundDelete";
-
-
-//////////
 // For tooltips, 20x per second
 //////
 	const u32			_TOOLTIP_TIMER_INTERVAL				= 50;
@@ -609,3 +595,4 @@ typedef SEM**		SEMpp;
 	const s8			cgcScreenDataFilename[]				= "screen.vjr";
 	const s8			cgcCommandHistoryFilename[]			= "command.vjr";
 	const s8			cgcStartupPrgFilename[]				= "startup.prg";
+	const s8			cgcSoundStartupWav[]				= "startup_44100_f32.wav";

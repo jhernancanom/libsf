@@ -177,7 +177,7 @@
 		const SBgra		breadcrumbForeColor					= { rgba(0, 0, 164, 255) };				// Semidark blue
 		const SBgra		breakpointBackColor					= { rgba(180, 140, 220, 255) };			// Purplish
 		const SBgra		breakpointForeColor					= { rgba(64, 32, 92, 255) };			// Dark purple
-		const SBgra		currentStatementBackColor			= { rgba(200, 255, 164, 255) };			// Pastel lime greenish
+		const SBgra		currentStatementBackColor			= { rgba(225, 255, 192, 255) };			// Pastel lime greenish
 		const SBgra		currentStatementForeColor			= { rgba(0, 64, 0, 255) };				// Dark green
 		const SBgra		selectedBackColor					= { rgba(32, 164, 255, 255) };
 		const SBgra		selectedForeColor					= { rgba(255, 255, 255, 255) };

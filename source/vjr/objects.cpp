@@ -1217,7 +1217,8 @@
 				break;
 
 			case _OBJ_TYPE_SUBFORM:
-				SetRect(&obj->rcClient, 0, bmpArrowUl->bi.biHeight, tnWidth - 8, tnHeight);
+				if (obj->p.isBorder)	SetRect(&obj->rcClient, 1, bmpArrowUl->bi.biHeight + 1, tnWidth - 8 - 1, tnHeight - 1);
+				else					SetRect(&obj->rcClient, 0, bmpArrowUl->bi.biHeight, tnWidth - 8, tnHeight);
 
 				//////////
 				// Default child settings:
@@ -3359,7 +3360,7 @@
 			editbox->p.disabledForeColor.color		= disabledForeColor.color;
 
 			iEditManager_deleteChain(&editbox->pa.em, true);
-			editbox->pa.em							= iEditManager_allocate();
+			editbox->pa.em							= iEditManager_allocate(false);
 
 			*(u32*)&editbox->ev.general.onInteractiveChange		= *(u32*)&iDefaultCallback_onInteractiveChange;
 			*(u32*)&editbox->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
@@ -4012,42 +4013,20 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 						// Draw the window border
 						iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, &obj->rcClient, true);
 
-						// Frame it
-						CopyRect(&lrc2, &lrc);
-						SetRect(&lrc2, lrc2.left - 1, lrc2.top - 1, lrc2.right + 1, lrc2.bottom + 1);
-						iBmp_frameRect(obj->bmp, &lrc2, black, black, black, black, false, NULL, false);
+						// Make the client area white
+						iBmp_fillRect(obj->bmp, &obj->rcClient, white, white, white, white, false, NULL, false);
 
-						// Draw the client area
-						SetRect(&lrc2, 0, obj->pa.bmpIcon->bi.biHeight - 1, lrc.right - 8, lrc.bottom);
-						// Make everything white
-						iBmp_fillRect(obj->bmp, &lrc2, white, white, white, white, false, NULL, false);
-// These rc* copies were added temporarily until the full object structure is coded and working
-//CopyRect(&subform->rcClient, &lrc2);
-						// Put a border around the client area
-						SetRect(&lrc2, -1, lrc2.top, lrc2.right, lrc2.bottom + 1);
-//						iBmp_frameRect(obj->bmp, &lrc2, black, black, black, black, false);
+						// Frame the client area
+						if (obj->p.isBorder)
+						{
+							CopyRect(&lrc2, &obj->rcClient);
+							InflateRect(&lrc2, 1, 1);
+							iBmp_frameRect(obj->bmp, &lrc2, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, false, NULL, false);
+						}
 
-
-
-// 					//////////
-// 					// Subform icon and standard controls
-// 					//////
-// 						// Subform icon
-// 						SetRect(&lrc3, 0, 0, subform->pa.bmpIcon->bi.biWidth + 8 + subform->pa.bmpIcon->bi.biWidth, subform->pa.bmpIcon->bi.biHeight);
-// 						iBmp_bitBltMask(subform->bmp, &lrc3, subform->pa.bmpIcon);
-// CopyRect(&subform->rcIcon, &lrc3);
-// 
-// 
-// 					//////////
-// 					// Subform caption
-// 					//////
-// 						SetRect(&lrc2, subform->pa.bmpIcon->bi.biWidth + 8, lrc3.top + 2, subform->bmp->bi.biWidth - 8, lrc3.bottom);
-// CopyRect(&subform->rcCaption, &lrc2);
-// 						lhfontOld = (HFONT)SelectObject(subform->bmp->hdc, gsWindowTitleBarFontSubform->hfont);
-// 						SetBkMode(subform->bmp->hdc, TRANSPARENT);
-// 						SetTextColor(subform->bmp->hdc, (COLORREF)RGB(subform->p.captionColor.red, subform->p.captionColor.grn, subform->p.captionColor.blu));
-// 						DrawTextA(subform->bmp->hdc, subform->pa.caption.data, subform->pa.caption.length, &lrc2, DT_VCENTER);
-// 						SelectObject(subform->bmp->hdc, lhfontOld);
+						// Frame the entire object
+						if (obj->p.isBorder)
+							iBmp_frameRect(obj->bmp, &lrc, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, false, NULL, false);
 
 
 					//////////
@@ -4064,13 +4043,6 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 					// Render from its prior rendered version
 					lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
 				}
-// 
-// 
-// 			//////////
-// 			// If the mouse is over this control, highlight it
-// 			//////
-// 				if (obj->isPublished && obj->ev.mouse.isMouseOver && obj->objType != _OBJ_TYPE_IMAGE)
-// 					iBmp_alphaColorizeMask(obj->bmp, &lrc, colorTracking, trackingRatio);
 
 
 			//////////
@@ -4078,9 +4050,6 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 			//////
 				obj->isDirtyRender = false;
 				obj->isDirtyPublish	= true;
-// s8 buffer[256];
-// sprintf(buffer, "c:\\temp\\subforms\\%u.bmp\0", (u32)subform);
-// iBmp_saveToDisk(subform->bmp, buffer);
 		}
 
 		// Indicate how many pixels were drawn

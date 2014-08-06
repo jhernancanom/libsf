@@ -87,6 +87,7 @@ struct SEdit
 	SExtraInfo*	extra_info;												// Extra information about this item in the chain
 };
 
+struct SFont;
 // SEM is short for "SEditManager"
 struct SEM
 {
@@ -109,11 +110,13 @@ struct SEM
 	bool		showCursorLine;									// Should we render the cursor line?
 	bool		showEndLine;									// Should we render the end line in a different color?
 	bool		isHeavyProcessing;								// When large amounts of processing will be conducted, the display can be disabled
+	bool		isSourceCode;									// Is this source code?
 
 	s32			column;											// Column we're currently inputting
 	s32			leftColumn;										// The column we're displaying at the left-most position (of horizontally scrolled, this will be greater than 0)
 	s32			tabWidth;										// How many characters does a tab expand to?
 	bool		tabsEnforced;									// If tabs are enforced, then navigation across whitespaces lands on tab boundaries
+	SFont*		font;											// Optional, if not NULL then it overrides the object's font
 
 
 //////////
