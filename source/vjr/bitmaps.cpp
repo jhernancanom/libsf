@@ -3,7 +3,7 @@
 // /libsf/source/vjr/bitmaps.cpp
 //
 //////
-// Version 0.45
+// Version 0.46
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -2099,7 +2099,7 @@
 // Called to create a cask bitmap scaled to the indicated width and height
 //
 //////
-	SBitmap* iBmp_cask_createAndPopulate(s32 iCode, u32 tnWidth, u32 tnHeight, s32* tnSkipChars, u32 tnTextLength, SBgra caskColor, SBgra textColor, SBgra backgroundColor)
+	SBitmap* iBmp_cask_createAndPopulate(s32 iCode, s32 tnWidth, s32 tnHeight, s32* tnSkipChars, u32 tnTextLength, SBgra caskColor, SBgra textColor, SBgra backgroundColor)
 	{
 		s32			lnI, lnWidth, lnStop, lnLeft;
 		bool		llAddParams;

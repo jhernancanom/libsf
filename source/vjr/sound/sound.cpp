@@ -3,7 +3,7 @@
 // /libsf/source/vjr/sound.cpp
 //
 //////
-// Version 0.45
+// Version 0.46
 // Copyright (c) 2013 by Rick C. Hodgin
 //////
 // Last update:
@@ -79,14 +79,16 @@
 
 				} else {
 					// Obtain the error
-					char* error = SDL_GetError();
-					error = NULL;
+// For debugging:
+//					char* error = SDL_GetError();
+//					error = NULL;
 				}
 
 			} else {
 				// Obtain the error
-				char* error = SDL_GetError();
-				error = NULL;
+// For debugging:
+//				char* error = SDL_GetError();
+//				error = NULL;
 			}
 	}
 
@@ -413,7 +415,7 @@
 		if (glSDL_Initialized)
 		{
 			// Add this item to the list of sounds
-			lss = (_isSSound*)iSEChain_append(&gseRootSounds, gnNextUniqueId++, gnNextUniqueId++, sizeof(_isSSound), 1, &llResult);
+			lss = (_isSSound*)iSEChain_append(&gseRootSounds, iGetNextUid(), iGetNextUid(), sizeof(_isSSound), 1, &llResult);
 			if (lss)
 			{
 				// Store the relevant information
