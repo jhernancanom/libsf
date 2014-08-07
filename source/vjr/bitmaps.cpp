@@ -1714,10 +1714,6 @@
 			SetRect(&lrc, tnUlX, tnUlY, tnLrX, tnLrY);
 			BitBlt(bmpNew->hdc, 0, 0, bmpNew->bi.biWidth, bmpNew->bi.biHeight, bmpSrc->hdc, tnUlX, tnUlY, SRCCOPY);
 
-s8 buffer[128];
-sprintf(buffer, "c:\\temp\\%u_%u_%u_%u.bmp\0", tnUlX, tnUlY, tnLrX, tnLrY);
-iBmp_saveToDisk(bmpNew, buffer);
-
 			// Indicate success
 			return(bmpNew);
 
@@ -2105,7 +2101,8 @@ iBmp_saveToDisk(bmpNew, buffer);
 //////
 	SBitmap* iBmp_cask_createAndPopulate(s32 iCode, u32 tnWidth, u32 tnHeight, s32* tnSkipChars, u32 tnTextLength, SBgra caskColor, SBgra textColor, SBgra backgroundColor)
 	{
-		s32			lnI, lnWidth, lnStop;
+		s32			lnI, lnWidth, lnStop, lnLeft;
+		bool		llAddParams;
 		RECT		lrc;
 		SBitmap*	bmpCask;
 		SBitmap*	bmpNew;
@@ -2117,6 +2114,7 @@ iBmp_saveToDisk(bmpNew, buffer);
 		if (iCode >= _ICODE_CASK_MINIMUM && iCode <= _ICODE_CASK_MAXIMUM)
 		{
 			// Find out what kind of cask it is
+			llAddParams = false;
 			switch (iCode)
 			{
 				case _ICODE_CASK_ROUND_PARAMS:
@@ -2126,6 +2124,7 @@ iBmp_saveToDisk(bmpNew, buffer);
 					bmpRight		= bmpCaskRoundRight;
 					caskColor.color	= pastelGreen.color;
 					textColor.color	= dark_green.color;
+					llAddParams		= true;
 					break;
 
 				case _ICODE_CASK_SQUARE_PARAMS:
@@ -2133,8 +2132,9 @@ iBmp_saveToDisk(bmpNew, buffer);
 					*tnSkipChars	= 3;
 					bmpLeft			= bmpCaskSquareLeft;
 					bmpRight		= bmpCaskSquareRight;
-					caskColor.color	= pastelRed.color;
-					textColor.color	= dark_red.color;
+					caskColor.color	= pastelOrange.color;
+					textColor.color	= dark_orange.color;
+					llAddParams		= true;
 					break;
 
 				case _ICODE_CASK_TRIANGLE_PARAMS:
@@ -2144,7 +2144,7 @@ iBmp_saveToDisk(bmpNew, buffer);
 					bmpRight		= bmpCaskTriangleRight;
 					caskColor.color	= pastelYellow.color;
 					textColor.color	= black.color;
-					white;
+					llAddParams		= true;
 					break;
 
 				case _ICODE_CASK_TILDE_PARAMS:
@@ -2154,6 +2154,7 @@ iBmp_saveToDisk(bmpNew, buffer);
 					bmpRight		= bmpCaskTildeRight;
 					caskColor.color	= pastelBlue.color;
 					textColor.color	= black.color;
+					llAddParams		= true;
 					break;
 				
 				case _ICODE_CASK_ROUND:
@@ -2170,8 +2171,8 @@ iBmp_saveToDisk(bmpNew, buffer);
 					*tnSkipChars	= 2;
 					bmpLeft			= bmpCaskSquareLeft;
 					bmpRight		= bmpCaskSquareRight;
-					caskColor.color	= pastelRed.color;
-					textColor.color	= dark_red.color;
+					caskColor.color	= pastelOrange.color;
+					textColor.color	= dark_orange.color;
 					break;
 
 				case _ICODE_CASK_TRIANGLE:
@@ -2213,14 +2214,35 @@ iBmp_saveToDisk(bmpNew, buffer);
 			// Left side
 			//////
 				SetRect(&lrc, 0, 0, bmpLeft->bi.biWidth, bmpLeft->bi.biHeight);
-				iBmp_bitBltMask(bmpCask, &lrc, bmpLeft);
+				iBmp_bitBlt(bmpCask, &lrc, bmpLeft);
+				if (llAddParams)
+				{
+					// The cask plus params
+					lrc.left	= lrc.right;
+					lrc.right	= lrc.left + bmpCaskExtenderLeft1->bi.biWidth;
+					iBmp_bitBlt(bmpCask, &lrc, bmpCaskExtenderLeft1);
+
+					lrc.left	= lrc.right;
+					lrc.right	= lrc.left + bmpCaskExtenderMiddle->bi.biWidth;
+					iBmp_bitBlt(bmpCask, &lrc, bmpCaskExtenderMiddle);
+
+					lrc.left	= lrc.right;
+					lrc.right	= lrc.left + bmpCaskExtenderLeft2->bi.biWidth;
+					iBmp_bitBlt(bmpCask, &lrc, bmpCaskExtenderLeft2);
+
+					lnLeft = bmpLeft->bi.biWidth + bmpCaskExtenderLeft1->bi.biWidth + bmpCaskExtenderMiddle->bi.biWidth + bmpCaskExtenderLeft2->bi.biWidth;
+
+				} else {
+					// Just the cask
+					lnLeft = bmpLeft->bi.biWidth;
+				}
 
 
 			//////////
 			// Fill the middle
 			//////
 				lnStop = bmpCask->bi.biWidth - bmpRight->bi.biWidth;
-				for (lnI = bmpLeft->bi.biWidth + 1; lnI < lnStop; lnI += bmpCaskSideExtender->bi.biWidth)
+				for (lnI = lnLeft; lnI < lnStop; lnI += bmpCaskSideExtender->bi.biWidth)
 				{
 					SetRect(&lrc, lnI, 0, lnI + bmpCaskSideExtender->bi.biWidth, bmpCaskSideExtender->bi.biHeight);
 					iBmp_bitBlt(bmpCask, &lrc, bmpCaskSideExtender);
@@ -2231,7 +2253,22 @@ iBmp_saveToDisk(bmpNew, buffer);
 			// Populate right side
 			//////
 				SetRect(&lrc, lnStop, 0, bmpCask->bi.biWidth, bmpRight->bi.biHeight);
-				iBmp_bitBltMask(bmpCask, &lrc, bmpRight);
+				iBmp_bitBlt(bmpCask, &lrc, bmpRight);
+				if (llAddParams)
+				{
+					// The cask plus params
+					lrc.right	= lrc.left;
+					lrc.left	= lrc.right - bmpCaskExtenderRight1->bi.biWidth;
+					iBmp_bitBlt(bmpCask, &lrc, bmpCaskExtenderRight1);
+
+					lrc.right	= lrc.left;
+					lrc.left	= lrc.right - bmpCaskExtenderMiddle->bi.biWidth;
+					iBmp_bitBlt(bmpCask, &lrc, bmpCaskExtenderMiddle);
+
+					lrc.right	= lrc.left;
+					lrc.left	= lrc.right - bmpCaskExtenderRight2->bi.biWidth;
+					iBmp_bitBlt(bmpCask, &lrc, bmpCaskExtenderRight2);
+				}
 
 
 			//////////

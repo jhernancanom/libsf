@@ -331,7 +331,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		bmpCaskSideExtenderRight	= iBmp_createAndExtractRect(bmpCaskIconsTiled, 66, 44, 70, 79);
 		bmpCaskExtenderMiddle		= iBmp_createAndExtractRect(bmpCaskIconsTiled, 70, 86, 74, 122);
 		bmpCaskExtenderLeft1		= iBmp_createAndExtractRect(bmpCaskIconsTiled, 64, 86, 68, 122);
-		bmpCaskExtenderLeft2		= iBmp_createAndExtractRect(bmpCaskIconsTiled, 76, 86, 86, 122);
+		bmpCaskExtenderLeft2		= iBmp_createAndExtractRect(bmpCaskIconsTiled, 76, 86, 87, 122);
 		bmpCaskExtenderRight2		= iBmp_createAndExtractRect(bmpCaskIconsTiled, 89, 86, 100, 122);
 		bmpCaskExtenderRight1		= iBmp_createAndExtractRect(bmpCaskIconsTiled, 102, 86, 106, 122);
 

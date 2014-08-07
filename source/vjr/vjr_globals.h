@@ -238,10 +238,12 @@
 		const SBgra		cyan								= { rgba(0, 255, 255, 255) };
 		const SBgra		fuchsia								= { rgba(255, 255, 0, 255) };
 		const SBgra		dark_red							= { rgba(80, 0, 0, 255) };
+		const SBgra		dark_orange							= { rgba(128, 64, 0, 255) };
 		const SBgra		dark_green							= { rgba(0, 80, 0, 255) };
 		const SBgra		dark_blue							= { rgba(0, 0, 80, 255) };
 		const SBgra		pastelYellow						= { rgba(255, 255, 192, 255) };
 		const SBgra		pastelRed							= { rgba(255, 210, 210, 255) };
+		const SBgra		pastelOrange						= { rgba(255, 215, 164, 255) };
 		const SBgra		pastelGreen							= { rgba(192, 255, 192, 255) };
 		const SBgra		pastelBlue							= { rgba(210, 210, 255, 255) };
 		const SBgra		black								= { rgba(0, 0, 0, 255) };
