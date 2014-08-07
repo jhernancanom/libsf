@@ -117,6 +117,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		gsFontDefaultFixedPoint		= iFont_create(cgcFontName_defaultFixed,	10,	FW_NORMAL,	0, 0);
 		gsWindowTitleBarFont		= iFont_create(cgcFontName_windowTitleBar,	12,	FW_NORMAL,	0, 0);
 		gsWindowTitleBarFontSubform	= iFont_create(cgcFontName_windowTitleBar,	10,	FW_NORMAL,	0, 0);
+		gsFontCask					= iFont_create(cgcFontName_default,			30, FW_BOLD,	0, 0);
 
 		// Initialize the sound system
 		isound_initialize();
@@ -166,13 +167,17 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 
 			//////////
+			// Casks
+			//////
+				iVjr_init_loadCaskIcons();
+
+
+			//////////
 			// The radio image has a 44x44 dot in the upper-left.
 			//////
-				bmpRadio			= iBmp_rawLoad(cgc_radioBmp);									// Load the raw bmpRadio
+				bmpRadio	= iBmp_rawLoad(cgc_radioBmp);											// Load the raw bmpRadio
+				bmpRadioDot = iBmp_createAndExtractRect(bmpRadio, 0, 0, 44, 44);					// Extract the 44x44 rectangle
 				SetRect(&lrc, 0, 0, 44, 44);
-				bmpRadioDot			= iBmp_allocate();
-				iBmp_createBySize(bmpRadioDot, 44, 44, 24);
-				iBmp_extractRect(bmpRadioDot, &lrc, bmpRadio, 0, 0);								// Extract the 44x44 rectangle
 				iBmp_fillRect(bmpRadio, &lrc, white, white, white, white, false, NULL, false);		// And cover it up with white
 
 
@@ -294,6 +299,73 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		// Remove the splash screen 1/2 second later
 		CreateThread(0, 0, &iSplash_delete, (LPVOID)500, 0, 0);;
+	}
+
+
+
+
+//////////
+//
+// Called to load the cask icons from the icon tile image
+//
+//////
+	void iVjr_init_loadCaskIcons(void)
+	{
+// TODO:  There's a BXML file with this information (cask_icons.bxml).
+//        BXML support should be added to VJr and then that information used to do this, rather than by hard-coding.
+		bmpCaskIconsTiled			= iBmp_rawLoad(cgc_caskIconsBmp);
+		bmpCaskRoundLeft			= iBmp_createAndExtractRect(bmpCaskIconsTiled, 12, 2, 31, 38);
+		bmpCaskRoundRight			= iBmp_createAndExtractRect(bmpCaskIconsTiled, 33, 2, 52, 38);
+		bmpCaskSquareLeft			= iBmp_createAndExtractRect(bmpCaskIconsTiled, 12, 44, 31, 80);
+		bmpCaskSquareRight			= iBmp_createAndExtractRect(bmpCaskIconsTiled, 33, 44, 52, 80);
+		bmpCaskTriangleLeft			= iBmp_createAndExtractRect(bmpCaskIconsTiled, 2, 86, 31, 122);
+		bmpCaskTriangleRight		= iBmp_createAndExtractRect(bmpCaskIconsTiled, 33, 86, 62, 122);
+		bmpCaskTildeLeft			= iBmp_createAndExtractRect(bmpCaskIconsTiled, 125, 86, 142, 122);
+		bmpCaskTildeRight			= iBmp_createAndExtractRect(bmpCaskIconsTiled, 144, 86, 161, 122);
+		bmpCaskPips1				= iBmp_createAndExtractRect(bmpCaskIconsTiled, 54, 7, 65, 33);
+		bmpCaskPips2				= iBmp_createAndExtractRect(bmpCaskIconsTiled, 67, 7, 78, 33);
+		bmpCaskPips3				= iBmp_createAndExtractRect(bmpCaskIconsTiled, 80, 7, 91, 33);
+		bmpCaskSideExtender			= iBmp_createAndExtractRect(bmpCaskIconsTiled, 72, 44, 76, 79);
+		bmpCaskSideExtenderLeft		= iBmp_createAndExtractRect(bmpCaskIconsTiled, 54, 44, 58, 79);
+		bmpCaskSideExtenderMiddle	= iBmp_createAndExtractRect(bmpCaskIconsTiled, 60, 44, 64, 79);
+		bmpCaskSideExtenderRight	= iBmp_createAndExtractRect(bmpCaskIconsTiled, 66, 44, 70, 79);
+		bmpCaskExtenderMiddle		= iBmp_createAndExtractRect(bmpCaskIconsTiled, 70, 86, 74, 122);
+		bmpCaskExtenderLeft1		= iBmp_createAndExtractRect(bmpCaskIconsTiled, 64, 86, 68, 122);
+		bmpCaskExtenderLeft2		= iBmp_createAndExtractRect(bmpCaskIconsTiled, 76, 86, 86, 122);
+		bmpCaskExtenderRight2		= iBmp_createAndExtractRect(bmpCaskIconsTiled, 89, 86, 100, 122);
+		bmpCaskExtenderRight1		= iBmp_createAndExtractRect(bmpCaskIconsTiled, 102, 86, 106, 122);
+
+		// Grab the cask color masks
+		caskOrange1					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 160, 18);
+		caskOrange2					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 154, 18);
+		caskOrange3					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 148, 18);
+		caskRed1					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 160, 23);
+		caskRed2					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 154, 23);
+		caskRed3					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 148, 23);
+		caskBlue1					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 160, 28);
+		caskBlue2					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 154, 28);
+		caskBlue3					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 148, 28);
+		caskPurple1					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 160, 33);
+		caskPurple2					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 154, 33);
+		caskPurple3					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 148, 33);
+		caskCyan1					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 160, 38);
+		caskCyan2					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 154, 38);
+		caskCyan3					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 148, 38);
+		caskGreen1					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 160, 43);
+		caskGreen2					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 154, 43);
+		caskGreen3					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 148, 43);
+		caskYellow1					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 160, 48);
+		caskYellow2					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 154, 48);
+		caskYellow3					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 148, 48);
+		caskGray1					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 160, 53);
+		caskGray2					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 154, 53);
+		caskGray3					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 148, 53);
+		caskWhite1					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 160, 58);
+		caskWhite2					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 154, 58);
+		caskWhite3					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 148, 58);
+		caskBlack1					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 160, 63);
+		caskBlack2					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 154, 63);
+		caskBlack3					= iBmp_extractColorAtPoint(bmpCaskIconsTiled, 148, 63);
 	}
 
 

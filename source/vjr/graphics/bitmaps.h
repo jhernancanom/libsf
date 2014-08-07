@@ -77,3 +77,5 @@
 #include "h\stoplight_amber.h"
 #include "h\stoplight_green.h"
 #include "h\stoplight_blue.h"
+
+#include "h\cask_icons.h"

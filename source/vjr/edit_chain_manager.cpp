@@ -1317,6 +1317,7 @@ int3_break;
 		SFont*		font;
 		SEdit*		line;
 		SBitmap*	bmp;
+		SBitmap*	bmpCask;
 		SComp*		comp;
 		HGDIOBJ		hfontOld;
 		SBgra		foreColor, backColor, fillColor, backColorLast, foreColorLast, compColor;
@@ -1429,28 +1430,43 @@ int3_break;
 								if (comp->color)		compColor.color = comp->color->color;
 								else					compColor.color = foreColor.color;
 
-								// Set the color
-								SetTextColor(bmp->hdc, RGB(compColor.red, compColor.grn, compColor.blu));
-
 								// Set the rect
 								SetRect(&lrcComp, (comp->start - em->leftColumn) * font->tm.tmAveCharWidth, lrc2.top, (comp->start + comp->length - em->leftColumn) * font->tm.tmAveCharWidth, lrc2.bottom);
 
-								// Draw this component
-								DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
-
-								// If we should bold, bold it
-								if (comp->useBoldFont)
+								// Is it a cask or text?
+								if (comp->iCode >= _ICODE_CASK_MINIMUM && comp->iCode <= _ICODE_CASK_MAXIMUM)
 								{
-									// Set transparent mode
-									SetBkMode(bmp->hdc, TRANSPARENT);
+									// It's a cask, build it
+									bmpCask = iBmp_cask_createAndPopulate(comp->iCode, font->tm.tmAveCharWidth * comp->length, font->tm.tmHeight, comp->line->sourceCode->data + comp->start, comp->length, backColor, foreColor, backColor);
 
-									// Adjust right one pixel, redraw
-									++lrcComp.left;
-									++lrcComp.right;
+									// Publish it
+									iBmp_bitBlt(bmp, &lrcComp, bmpCask);
+
+									// Delete it
+									iBmp_delete(&bmpCask, true, true);
+
+								} else {
+									// Draw the text
+									// Set the color
+									SetTextColor(bmp->hdc, RGB(compColor.red, compColor.grn, compColor.blu));
+
+									// Draw this component
 									DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 
-									// Set back to opaque
-									SetBkMode(bmp->hdc, OPAQUE);
+									// If we should bold, bold it
+									if (comp->useBoldFont)
+									{
+										// Set transparent mode
+										SetBkMode(bmp->hdc, TRANSPARENT);
+
+										// Adjust right one pixel, redraw
+										++lrcComp.left;
+										++lrcComp.right;
+										DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+
+										// Set back to opaque
+										SetBkMode(bmp->hdc, OPAQUE);
+									}
 								}
 
 								// Move to next component

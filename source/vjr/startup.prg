@@ -1,3 +1,13 @@
+*
+*	(| round cask |)		(|| round cask with parameters ||)
+*	
+*	[| square cask |)		[|| square cask with parameters ||)
+*	
+*	<| triangle cask |>		<|| triangle cask with parameters ||>
+*	
+*	~| tilde cask |~		~|| tilde cask with parameters ||~
+*
+*	
 **********
 *
 * /libsf/source/vjr/startup.prg

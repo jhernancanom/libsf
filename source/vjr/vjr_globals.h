@@ -110,6 +110,66 @@
 	SBitmap*			bmpRadio							= NULL;
 	SBitmap*			bmpRadioDot							= NULL;
 
+//////////
+// Cask graphics
+// BEGIN
+//////
+	SBitmap*			bmpCaskIconsTiled					= NULL;			// Single master icon file
+	SBitmap*			bmpCaskRoundLeft					= NULL;
+	SBitmap*			bmpCaskRoundRight					= NULL;
+	SBitmap*			bmpCaskSquareLeft					= NULL;
+	SBitmap*			bmpCaskSquareRight					= NULL;
+	SBitmap*			bmpCaskTriangleLeft					= NULL;
+	SBitmap*			bmpCaskTriangleRight				= NULL;
+	SBitmap*			bmpCaskTildeLeft					= NULL;
+	SBitmap*			bmpCaskTildeRight					= NULL;
+	SBitmap*			bmpCaskPips1						= NULL;
+	SBitmap*			bmpCaskPips2						= NULL;
+	SBitmap*			bmpCaskPips3						= NULL;
+	SBitmap*			bmpCaskSideExtender					= NULL;
+	SBitmap*			bmpCaskSideExtenderLeft				= NULL;
+	SBitmap*			bmpCaskSideExtenderMiddle			= NULL;
+	SBitmap*			bmpCaskSideExtenderRight			= NULL;
+	SBitmap*			bmpCaskExtenderMiddle				= NULL;
+	SBitmap*			bmpCaskExtenderLeft1				= NULL;
+	SBitmap*			bmpCaskExtenderLeft2				= NULL;
+	SBitmap*			bmpCaskExtenderRight2				= NULL;
+	SBitmap*			bmpCaskExtenderRight1				= NULL;
+// TODO:  Cask boxes, 13 additional pieces
+	SBgra				caskOrange1;
+	SBgra				caskOrange2;
+	SBgra				caskOrange3;
+	SBgra				caskRed1;
+	SBgra				caskRed2;
+	SBgra				caskRed3;
+	SBgra				caskBlue1;
+	SBgra				caskBlue2;
+	SBgra				caskBlue3;
+	SBgra				caskPurple1;
+	SBgra				caskPurple2;
+	SBgra				caskPurple3;
+	SBgra				caskCyan1;
+	SBgra				caskCyan2;
+	SBgra				caskCyan3;
+	SBgra				caskGreen1;
+	SBgra				caskGreen2;
+	SBgra				caskGreen3;
+	SBgra				caskYellow1;
+	SBgra				caskYellow2;
+	SBgra				caskYellow3;
+	SBgra				caskGray1;
+	SBgra				caskGray2;
+	SBgra				caskGray3;
+	SBgra				caskWhite1;
+	SBgra				caskWhite2;
+	SBgra				caskWhite3;
+	SBgra				caskBlack1;
+	SBgra				caskBlack2;
+	SBgra				caskBlack3;
+//////
+// END
+//////////
+
 	// For accomplishments
 	SBitmap*			bmpStoplightRed						= NULL;
 	SBitmap*			bmpStoplightAmber					= NULL;
@@ -168,8 +228,17 @@
 		SFont*			gsFontDefaultFixedPoint				= NULL;									// Default font, Ubuntu Mono 10 pt
 		SFont*			gsWindowTitleBarFont				= NULL;									// Default font, Ubuntu Bold 12 pt
 		SFont*			gsWindowTitleBarFontSubform			= NULL;									// Default font, Ubuntu Bold 10 pt
+		SFont*			gsFontCask							= NULL;									// Cask font, Ubuntu Bold 30 pt
 		// Global colors
 		const SBgra		white								= { rgba(255, 255, 255, 255) };
+		const SBgra		yellow								= { rgba(255, 255, 0, 255) };
+		const SBgra		red									= { rgba(255, 0, 0, 255) };
+		const SBgra		green								= { rgba(0, 255, 0, 255) };
+		const SBgra		blue								= { rgba(0, 0, 255, 255) };
+		const SBgra		cyan								= { rgba(0, 255, 255, 255) };
+		const SBgra		fuchsia								= { rgba(255, 255, 0, 255) };
+		const SBgra		dark_red							= { rgba(80, 0, 0, 255) };
+		const SBgra		dark_green							= { rgba(0, 80, 0, 255) };
 		const SBgra		dark_blue							= { rgba(0, 0, 80, 255) };
 		const SBgra		black								= { rgba(0, 0, 0, 255) };
 		const SBgra		gray								= { rgba(192, 192, 192, 255) };

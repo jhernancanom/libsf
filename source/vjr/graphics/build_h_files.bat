@@ -38,3 +38,5 @@
 \libsf\vvm\bin\f2h raw\stoplight_amber.bmp stoplightAmberBmp h\stoplight_amber.h
 \libsf\vvm\bin\f2h raw\stoplight_green.bmp stoplightGreenBmp h\stoplight_green.h
 \libsf\vvm\bin\f2h raw\stoplight_blue.bmp stoplightBlueBmp h\stoplight_blue.h
+
+\libsf\vvm\bin\f2h raw_tiled\cask_icons.bmp caskIconsBmp h\cask_icons.h

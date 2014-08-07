@@ -19,8 +19,8 @@
 		<icon x1="123" y1="68" x2="128" y2="76" name="caskRoundExtendedVerticalFiller"/>
 		<icon x1="130" y1="2" x2="160" y2="8" name="caskRoundExtendedLeft4"/>
 		<icon x1="163" y1="2" x2="175" y2="8" name="caskRoundExtendedRight4"/>
-		<icon x1="125" y1="186" x2="142" y2="122" name="caskTildeLeft"/>
-		<icon x1="144" y1="186" x2="161" y2="122" name="caskTildeRight"/>
+		<icon x1="125" y1="86" x2="142" y2="122" name="caskTildeLeft"/>
+		<icon x1="144" y1="86" x2="161" y2="122" name="caskTildeRight"/>
 		<icon x1="54" y1="7" x2="64" y2="16" name="pip3"/>
 		<icon x1="68" y1="7" x2="78" y2="20" name="pip2"/>
 		<icon x1="80" y1="7" x2="90" y2="33" name="pip1"/>

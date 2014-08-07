@@ -59,24 +59,30 @@
 	SAsciiCompSearcher	cgcFundamentalSymbols[] =
 	{
 		// keyword					length		repeats?	extra (type)							first on line?		category			syntax highlight color		syntax highlight bold
-/*
+		// (||round params||)
 		{ cgcCaskRoundOpenParams,	3,			false,		_ICODE_CASK_ROUND_OPEN_PARAMS,			false,				_ICAT_GENERIC,		NULL,						false },
 		{ cgcCaskRoundCloseParams,	3,			false,		_ICODE_CASK_ROUND_CLOSE_PARAMS,			false,				_ICAT_GENERIC,		NULL,						false },
+		// [||square params||]
 		{ cgcCaskSquareOpenParams,	3,			false,		_ICODE_CASK_SQUARE_OPEN_PARAMS,			false,				_ICAT_GENERIC,		NULL,						false },
 		{ cgcCaskSquareCloseParams,	3,			false,		_ICODE_CASK_SQUARE_CLOSE_PARAMS,		false,				_ICAT_GENERIC,		NULL,						false },
+		// <||triangle params||>
 		{ cgcCaskTriangleOpenParams,3,			false,		_ICODE_CASK_TRIANGLE_OPEN_PARAMS,		false,				_ICAT_GENERIC,		NULL,						false },
 		{ cgcCaskTriangleCloseParams,3,			false,		_ICODE_CASK_TRIANGLE_CLOSE_PARAMS,		false,				_ICAT_GENERIC,		NULL,						false },
+		// ~||tilde params||~
 		{ cgcCaskTildeOpenParams,	3,			false,		_ICODE_CASK_TILDE_OPEN_PARAMS,			false,				_ICAT_GENERIC,		NULL,						false },
 		{ cgcCaskTildeCloseParams,	3,			false,		_ICODE_CASK_TILDE_CLOSE_PARAMS,			false,				_ICAT_GENERIC,		NULL,						false },
+		// (|round|)
 		{ cgcCaskRoundOpen,			2,			false,		_ICODE_CASK_ROUND_OPEN,					false,				_ICAT_GENERIC,		NULL,						false },
 		{ cgcCaskRoundClose,		2,			false,		_ICODE_CASK_ROUND_CLOSE,				false,				_ICAT_GENERIC,		NULL,						false },
+		// [|round|]
 		{ cgcCaskSquareOpen,		2,			false,		_ICODE_CASK_SQUARE_OPEN,				false,				_ICAT_GENERIC,		NULL,						false },
 		{ cgcCaskSquareClose,		2,			false,		_ICODE_CASK_SQUARE_CLOSE,				false,				_ICAT_GENERIC,		NULL,						false },
+		// <|round|>
 		{ cgcCaskTriangleOpen,		2,			false,		_ICODE_CASK_TRIANGLE_OPEN,				false,				_ICAT_GENERIC,		NULL,						false },
 		{ cgcCaskTriangleClose,		2,			false,		_ICODE_CASK_TRIANGLE_CLOSE,				false,				_ICAT_GENERIC,		NULL,						false },
+		// ~|round|~
 		{ cgcCaskTildeOpen,			2,			false,		_ICODE_CASK_TILDE_OPEN,					false,				_ICAT_GENERIC,		NULL,						false },
 		{ cgcCaskTildeClose,		2,			false,		_ICODE_CASK_TILDE_CLOSE,				false,				_ICAT_GENERIC,		NULL,						false },
-*/
 		{ "_azAZ__\000\000",		1,			true,		_ICODE_ALPHA,							false,				_ICAT_GENERIC,		NULL,						false },
 		{ "_09\000\000",			1,			true,		_ICODE_NUMERIC,							false,				_ICAT_GENERIC,		&colorSynHi_numeric,		false },
 		{ " ",						1,			true,		_ICODE_WHITESPACE,						false,				_ICAT_GENERIC,		&colorSynHi_comment1,		false },

@@ -257,6 +257,17 @@
 	const u32		_ICODE_CASK_TILDE_OPEN							= 1000015;
 	const u32		_ICODE_CASK_TILDE_CLOSE							= 1000016;
 
+	const u32		_ICODE_CASK_MINIMUM								= 1000101;
+	const u32		_ICODE_CASK_ROUND_PARAMS						= 1000101;
+	const u32		_ICODE_CASK_SQUARE_PARAMS						= 1000102;
+	const u32		_ICODE_CASK_TRIANGLE_PARAMS						= 1000103;
+	const u32		_ICODE_CASK_TILDE_PARAMS						= 1000104;
+	const u32		_ICODE_CASK_ROUND								= 1000105;
+	const u32		_ICODE_CASK_SQUARE								= 1000106;
+	const u32		_ICODE_CASK_TRIANGLE							= 1000107;
+	const u32		_ICODE_CASK_TILDE								= 1000108;
+	const u32		_ICODE_CASK_MAXIMUM								= 1000108;
+
 	// Standard types
 	const u32		_ICODE_UNKNOWN									= -1;
 	const u32		_ICODE_ALPHA									= 1;
