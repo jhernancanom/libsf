@@ -813,8 +813,8 @@ void iObj_setIcon(SObject* obj, SBitmap* bmp)
 
 							// Add highlighting for the over and down
 							SetRect(&lrc, 0, 0, 24, 24);
-							iBmp_colorizeMask(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
-							iBmp_colorizeMask(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
+							iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
+							iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 							// All done
 							break;

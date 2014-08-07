@@ -240,6 +240,10 @@
 		const SBgra		dark_red							= { rgba(80, 0, 0, 255) };
 		const SBgra		dark_green							= { rgba(0, 80, 0, 255) };
 		const SBgra		dark_blue							= { rgba(0, 0, 80, 255) };
+		const SBgra		pastelYellow						= { rgba(255, 255, 192, 255) };
+		const SBgra		pastelRed							= { rgba(255, 210, 210, 255) };
+		const SBgra		pastelGreen							= { rgba(192, 255, 192, 255) };
+		const SBgra		pastelBlue							= { rgba(210, 210, 255, 255) };
 		const SBgra		black								= { rgba(0, 0, 0, 255) };
 		const SBgra		gray								= { rgba(192, 192, 192, 255) };
 		const SBgra		breadcrumbBackColor					= { rgba(180, 220, 240, 255) };			// Cyanish

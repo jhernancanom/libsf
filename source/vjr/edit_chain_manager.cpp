@@ -1313,7 +1313,7 @@ int3_break;
 	u32 iEditManager_render(SEM* em, SObject* obj, bool tlRenderCursorline)
 	{
 		u32			lnPixelsRendered;
-		s32			lnTop, lnLeft, lnRight;
+		s32			lnTop, lnLeft, lnRight, lnSkip;
 		SFont*		font;
 		SEdit*		line;
 		SBitmap*	bmp;
@@ -1437,10 +1437,25 @@ int3_break;
 								if (comp->iCode >= _ICODE_CASK_MINIMUM && comp->iCode <= _ICODE_CASK_MAXIMUM)
 								{
 									// It's a cask, build it
-									bmpCask = iBmp_cask_createAndPopulate(comp->iCode, font->tm.tmAveCharWidth * comp->length, font->tm.tmHeight, comp->line->sourceCode->data + comp->start, comp->length, backColor, foreColor, backColor);
+									bmpCask = iBmp_cask_createAndPopulate(comp->iCode,
+																			font->tm.tmAveCharWidth * comp->length,
+																			font->tm.tmHeight,
+																			&lnSkip,
+																			comp->length,
+																			backColor,
+																			foreColor,
+																			fillColor);
 
 									// Publish it
 									iBmp_bitBlt(bmp, &lrcComp, bmpCask);
+
+									// Overlay the text
+									SetBkMode(bmp->hdc, TRANSPARENT);
+									SetTextColor(bmp->hdc, RGB(black.red, black.grn, black.blu));
+									--lrcComp.top;
+									DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start + lnSkip, comp->length - (2 * lnSkip), &lrcComp, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS);
+									++lrcComp.top;
+									SetBkMode(bmp->hdc, OPAQUE);
 
 									// Delete it
 									iBmp_delete(&bmpCask, true, true);

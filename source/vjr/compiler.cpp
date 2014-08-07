@@ -1576,6 +1576,93 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 
 //////////
 //
+// Called to search for unmatched codes, a left and right, and combines everything between
+//
+//////
+	u32 iComps_combineAllBetween2(SEdit* line, s32 tniCodeNeedleLeft, s32 tniCodeNeedleRight, s32 tniCodeCombined, s32 tniCat, SBgra* syntaxHighlightColor, bool tlUseBoldFont)
+	{
+		u32		lnCount;
+		SComp*	compNext;
+		SComp*	comp;
+		SComp*	compSearcher;
+
+
+		// Make sure our environment is sane
+		lnCount = 0;
+		if (line && line->compilerInfo && line->compilerInfo->firstComp)
+		{
+			// Grab the first component
+			comp = line->compilerInfo->firstComp;
+
+			// Continue until we get ... to ... the ... end ... (imagine you were reading that like in a baseball stadium with lots of loud echoes)
+			while (comp)
+			{
+				// Grab the next component sequentially
+				compNext = (SComp*)comp->ll.next;
+
+				// Make sure there's something to do
+				if (!compNext)
+					return(lnCount);	// We're done
+
+				// Is this our intended?
+				if (comp->iCode == tniCodeNeedleLeft)
+				{
+					// Search forward to see if there is a matching entry
+					compSearcher = compNext;
+					while (compSearcher)
+					{
+						if (compSearcher->iCode == tniCodeNeedleRight)
+						{
+							// This is the match, combine everything between
+							comp->length		= (compSearcher->start + compSearcher->length) - comp->start;
+							comp->iCode			= tniCodeCombined;
+							comp->iCat			= tniCat;
+							comp->color			= syntaxHighlightColor;
+							comp->useBoldFont	= tlUseBoldFont;
+
+							// Iterate and merge in
+							while (compNext)
+							{
+								// Increase our count
+								++lnCount;
+
+								// Delete this one (as it was technically merged above with the comp->length = line)
+								iLl_deleteNode((SLL*)compNext, true);
+
+								// See if we're done
+								if (compNext == compSearcher)
+									break;		// This was the last one, we're done
+
+								// Move to the next component (which is the comp->ll.next component again, because we just migrated the previous compNext
+								compNext = (SComp*)comp->ll.next;
+							}
+							// When we get here, everything's migrated
+
+							// Grab the new next, which is the one after the matched entry
+							compNext = (SComp*)comp->ll.next;
+
+							// Continue looking for more combinations on this line
+							break;
+						}
+
+						// Move to the next component
+						compSearcher = (SComp*)compSearcher->ll.next;
+					}
+				}
+				// Move to the next component
+				comp = compNext;
+			}
+			// When we get here, we're good
+		}
+		// Indicate the success rate at which we operated hitherto
+		return(lnCount);
+	}
+
+
+
+
+//////////
+//
 // Called to combine everything after the indicated component into that one component.
 //
 //////
@@ -1804,6 +1891,51 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 				//////
 					if (comp)
 						comp = (SComp*)comp->ll.next;
+			}
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to combine casks
+//
+//////
+	void iComps_combineCasks(SEdit* line)
+	{
+		SComp* comp;
+
+
+		// Make sure our environment is sane
+		if (line && line->compilerInfo && line->compilerInfo->firstComp)
+		{
+			// See if there are any cask components on this line
+			comp = line->compilerInfo->firstComp;
+			while (comp)
+			{
+				// Is this a cask?
+				if (comp->iCode >= _ICODE_CASK_SIDE_MINIMUM && comp->iCode <= _ICODE_CASK_SIDE_MAXIMUM)
+				{
+					// Try normal forms without parameters
+					iComps_combineAllBetween2(line,		_ICODE_CASK_ROUND_OPEN,				_ICODE_CASK_ROUND_CLOSE,				_ICODE_CASK_ROUND,				_ICAT_CASK, (SBgra*)&black, false);
+					iComps_combineAllBetween2(line,		_ICODE_CASK_SQUARE_OPEN,			_ICODE_CASK_SQUARE_CLOSE,				_ICODE_CASK_SQUARE,				_ICAT_CASK, (SBgra*)&black, false);
+					iComps_combineAllBetween2(line,		_ICODE_CASK_TRIANGLE_OPEN,			_ICODE_CASK_TRIANGLE_CLOSE,				_ICODE_CASK_TRIANGLE,			_ICAT_CASK, (SBgra*)&black, false);
+					iComps_combineAllBetween2(line,		_ICODE_CASK_TILDE_OPEN,				_ICODE_CASK_TILDE_CLOSE,				_ICODE_CASK_TILDE,				_ICAT_CASK, (SBgra*)&black, false);
+
+					// Try normal forms with parameters
+					iComps_combineAllBetween2(line,		_ICODE_CASK_ROUND_OPEN_PARAMS,		_ICODE_CASK_ROUND_CLOSE_PARAMS,			_ICODE_CASK_ROUND_PARAMS,		_ICAT_CASK, (SBgra*)&black, false);
+					iComps_combineAllBetween2(line,		_ICODE_CASK_SQUARE_OPEN_PARAMS,		_ICODE_CASK_SQUARE_CLOSE_PARAMS,		_ICODE_CASK_SQUARE_PARAMS,		_ICAT_CASK, (SBgra*)&black, false);
+					iComps_combineAllBetween2(line,		_ICODE_CASK_TRIANGLE_OPEN_PARAMS,	_ICODE_CASK_TRIANGLE_CLOSE_PARAMS,		_ICODE_CASK_TRIANGLE_PARAMS,	_ICAT_CASK, (SBgra*)&black, false);
+					iComps_combineAllBetween2(line,		_ICODE_CASK_TILDE_OPEN_PARAMS,		_ICODE_CASK_TILDE_CLOSE_PARAMS,			_ICODE_CASK_TILDE_PARAMS,		_ICAT_CASK, (SBgra*)&black, false);
+
+					// Done
+					return;
+				}
+
+				// Move to next comp
+				comp = (SComp*)comp->ll.next;
 			}
 		}
 	}

@@ -228,6 +228,7 @@
 			if (line->compilerInfo->firstComp && (line->compilerInfo->firstComp->iCode == _ICODE_COMMENT || line->compilerInfo->firstComp->iCode == _ICODE_LINE_COMMENT))
 			{
 				// Combine every item after this to a single comment
+// TODO:  This algorithm will need to be changed so casks in comments show up graphically, rather than as raw text
 				iComps_combineNextN(line->compilerInfo->firstComp, 99999, line->compilerInfo->firstComp->iCode, line->compilerInfo->firstComp->iCat, line->compilerInfo->firstComp->color);
 
 				// Return the first component
@@ -239,6 +240,7 @@
 		// Perform natural source code fixups
 		//////
 			iComps_removeStartEndComments(line);		// Remove /* comments */
+			iComps_combineCasks(line);					// Replace [(|][alpha][|)] with [(|alpha|)]
 			iComps_fixupNaturalGroupings(line);			// Fixup natural groupings [_][aaa][999] becomes [_aaa999], [999][.][99] becomes [999.99], etc.
 			iComps_removeWhitespaces(line);				// Remove all whitespaces after everything else was parsed [use][whitespace][foo] becomes [use][foo]
 

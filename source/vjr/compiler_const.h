@@ -240,6 +240,7 @@
 	const s8		cgcFeatureNotYetSupported[]						= "feature not yet supported";
 
 
+	const u32		_ICODE_CASK_SIDE_MINIMUM						= 1000001;
 	const u32		_ICODE_CASK_ROUND_OPEN_PARAMS					= 1000001;
 	const u32		_ICODE_CASK_ROUND_CLOSE_PARAMS					= 1000002;
 	const u32		_ICODE_CASK_SQUARE_OPEN_PARAMS					= 1000003;
@@ -256,6 +257,7 @@
 	const u32		_ICODE_CASK_TRIANGLE_CLOSE						= 1000014;
 	const u32		_ICODE_CASK_TILDE_OPEN							= 1000015;
 	const u32		_ICODE_CASK_TILDE_CLOSE							= 1000016;
+	const u32		_ICODE_CASK_SIDE_MAXIMUM						= 1000016;
 
 	const u32		_ICODE_CASK_MINIMUM								= 1000101;
 	const u32		_ICODE_CASK_ROUND_PARAMS						= 1000101;
@@ -1119,8 +1121,9 @@
 //////////
 // Category codes
 //////
-	const u32		_ICAT_GENERIC									= 0;
-	const u32		_ICAT_COMMAND									= 1;
-	const u32		_ICAT_FUNCTION									= 2;
-	const u32		_ICAT_FLOW										= 3;
-	const u32		_ICAT_OPERATOR									= 4;
+	const u32		_ICAT_GENERIC									= 1;
+	const u32		_ICAT_COMMAND									= 2;
+	const u32		_ICAT_FUNCTION									= 3;
+	const u32		_ICAT_FLOW										= 4;
+	const u32		_ICAT_OPERATOR									= 5;
+	const u32		_ICAT_CASK										= 6;

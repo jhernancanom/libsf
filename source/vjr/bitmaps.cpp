@@ -909,10 +909,10 @@
 // Called to colorize the bitmap, or a portion of the bitmap.  If the color is clamped,
 // no scaling from its current RGB() values less than 255 up to 255 takes place, but the
 // color is used exactly as it is, meaning the pixel is grayscaled, and then that grayscale
-// value is applied to each value of the RGB() component.
+// value is applied to each value of the RGB() component.  maskColor pixels are colored fully.
 //
 //////
-	u32 iBmp_colorizeMask(SBitmap* bmp, RECT* trc, SBgra colorTemplate, bool clampColor, f32 minColor)
+	u32 iBmp_colorize(SBitmap* bmp, RECT* trc, SBgra colorTemplate, bool clampColor, f32 minColor)
 	{
 		u32		lnPixelsRendered;
 		s32		lnY, lnX;
@@ -1023,6 +1023,142 @@
 									lbgra->blu = (u8)lfBlu;
 
 								} else {
+									// Compute the grayscale
+									lfGray = min(max(((f32)lbgra->red * 0.35f + (f32)lbgra->grn * 0.54f + (f32)lbgra->blu * 0.11f), 0.0f), 255.0f) / 255.0f;
+
+									// Apply the color proportionally
+									lbgra->red = (u8)iiBmp_squeezeColorChannel(lfGray * lfRed, minColor);
+									lbgra->grn = (u8)iiBmp_squeezeColorChannel(lfGray * lfGrn, minColor);
+									lbgra->blu = (u8)iiBmp_squeezeColorChannel(lfGray * lfBlu, minColor);
+								}
+								++lnPixelsRendered;
+							}
+
+							// Move to next pixel
+							++lbgra;
+						}
+					}
+				}
+			}
+		}
+
+
+		//////////
+		// Indicate how many pixels were rendered
+		//////
+			return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Called to colorize the bitmap, or a portion of the bitmap.  If the color is clamped,
+// no scaling from its current RGB() values less than 255 up to 255 takes place, but the
+// color is used exactly as it is, meaning the pixel is grayscaled, and then that grayscale
+// value is applied to each value of the RGB() component.  maskColor pixels are ignored.
+//
+//////
+	u32 iBmp_colorizeMask(SBitmap* bmp, RECT* trc, SBgra colorTemplate, bool clampColor, f32 minColor)
+	{
+		u32		lnPixelsRendered;
+		s32		lnY, lnX;
+		f32		lfGray, lfRed, lfGrn, lfBlu, lfDelta;
+		SBgr*	lbgr;
+		SBgra*	lbgra;
+
+
+		// Make sure the environment is sane
+		lnPixelsRendered = 0;
+		if (bmp && trc)
+		{
+		//////////
+		// Build the actual color
+		//////
+			lfRed = (f32)colorTemplate.red;
+			lfGrn = (f32)colorTemplate.grn;
+			lfBlu = (f32)colorTemplate.blu;
+			if (!clampColor)
+			{
+				// Compute with the colors being adjusted up toward 255 if any are below
+				lfDelta = 0.0f;
+				lfDelta = max(lfDelta, lfRed);
+				lfDelta = max(lfDelta, lfGrn);
+				lfDelta = max(lfDelta, lfBlu);
+
+				// Raise each of them by the difference if need be
+				if (lfDelta != 255.0f)
+				{
+					// Compute our overage percentage
+					lfDelta = 1.0f + ((255.0f - lfDelta) / 255.0f);
+
+					// Multiply each other
+					lfRed = min(lfRed * lfDelta, 255.0f);
+					lfGrn = min(lfGrn * lfDelta, 255.0f);
+					lfBlu = min(lfBlu * lfDelta, 255.0f);
+				}
+			}
+
+
+		//////////
+		// Verify our minColor is in range 0..1
+		// If 1.0, then allows 0..255
+		// If 0.5, then allows 128..255
+		// If 0.0, then allows 0 or 255
+		//////
+			minColor = min(max(minColor, 0.0f), 1.0f);
+
+
+		//////////
+		// Draw it
+		//////
+			for (lnY = trc->top; lnY < bmp->bi.biHeight && lnY < trc->bottom; lnY++)
+			{
+				// Are we on the image?
+				if (lnY >= 0)
+				{
+					// What exactly are we copying?
+					if (bmp->bi.biBitCount == 24)
+					{
+						// Build the pointer
+						lbgr = (SBgr*)((s8*)bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth) + (trc->left * 3));
+
+						// Iterate through every visible column
+						for (lnX = trc->left; lnX < bmp->bi.biWidth && lnX < trc->right; lnX++)
+						{
+							// Are we on the image?
+							if (lnX >= 0)
+							{
+								if (!(lbgr->red == 222 && lbgr->grn == 22 && lbgr->blu == 222))
+								{
+									// Compute the grayscale
+									lfGray = min(max(((f32)lbgr->red * 0.35f + (f32)lbgr->grn * 0.54f + (f32)lbgr->blu * 0.11f), 0.0f), 255.0f) / 255.0f;
+
+									// Apply the color proportionally
+									lbgr->red = (u8)iiBmp_squeezeColorChannel(lfGray * lfRed, minColor);
+									lbgr->grn = (u8)iiBmp_squeezeColorChannel(lfGray * lfGrn, minColor);
+									lbgr->blu = (u8)iiBmp_squeezeColorChannel(lfGray * lfBlu, minColor);
+								}
+								++lnPixelsRendered;
+							}
+
+							// Move to next pixel
+							++lbgr;
+						}
+
+					} else if (bmp->bi.biBitCount == 32) {
+						// Build the pointer
+						lbgra = (SBgra*)((s8*)bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth) + (trc->left * 4));
+
+						// Iterate through every visible column
+						for (lnX = trc->left; lnX < bmp->bi.biWidth && lnX < trc->right; lnX++)
+						{
+							// Are we on the image?
+							if (lnX >= 0)
+							{
+								if (!(lbgra->red == 222 && lbgra->grn == 22 && lbgra->blu == 222))
+								{
 									// Compute the grayscale
 									lfGray = min(max(((f32)lbgra->red * 0.35f + (f32)lbgra->grn * 0.54f + (f32)lbgra->blu * 0.11f), 0.0f), 255.0f) / 255.0f;
 
@@ -1967,9 +2103,9 @@ iBmp_saveToDisk(bmpNew, buffer);
 // Called to create a cask bitmap scaled to the indicated width and height
 //
 //////
-	SBitmap* iBmp_cask_createAndPopulate(s32 iCode, u32 tnWidth, u32 tnHeight, s8* tcText, u32 tnTextLength, SBgra caskColor, SBgra textColor, SBgra backgroundColor)
+	SBitmap* iBmp_cask_createAndPopulate(s32 iCode, u32 tnWidth, u32 tnHeight, s32* tnSkipChars, u32 tnTextLength, SBgra caskColor, SBgra textColor, SBgra backgroundColor)
 	{
-		s32			lnI, lnWidth, lnSidesSubtract, lnStop;
+		s32			lnI, lnWidth, lnStop;
 		RECT		lrc;
 		SBitmap*	bmpCask;
 		SBitmap*	bmpNew;
@@ -1978,74 +2114,82 @@ iBmp_saveToDisk(bmpNew, buffer);
 
 
 		// Make sure our environment is sane
-		if (iCode >= _ICODE_CASK_MINIMUM && iCode <= _ICODE_CASK_MAXIMUM && tcText)
+		if (iCode >= _ICODE_CASK_MINIMUM && iCode <= _ICODE_CASK_MAXIMUM)
 		{
 			// Find out what kind of cask it is
 			switch (iCode)
 			{
 				case _ICODE_CASK_ROUND_PARAMS:
 					// (||round||)
-					lnSidesSubtract	= 3;
+					*tnSkipChars	= 3;
 					bmpLeft			= bmpCaskRoundLeft;
 					bmpRight		= bmpCaskRoundRight;
-					caskColor.color	= green.color;
+					caskColor.color	= pastelGreen.color;
 					textColor.color	= dark_green.color;
 					break;
 
 				case _ICODE_CASK_SQUARE_PARAMS:
 					// [||square||]
-					lnSidesSubtract	= 3;
+					*tnSkipChars	= 3;
 					bmpLeft			= bmpCaskSquareLeft;
 					bmpRight		= bmpCaskSquareRight;
-					caskColor.color	= red.color;
+					caskColor.color	= pastelRed.color;
 					textColor.color	= dark_red.color;
 					break;
 
 				case _ICODE_CASK_TRIANGLE_PARAMS:
 					// <||triangle||>
-					lnSidesSubtract	= 3;
+					*tnSkipChars	= 3;
 					bmpLeft			= bmpCaskTriangleLeft;
 					bmpRight		= bmpCaskTriangleRight;
-					caskColor.color	= yellow.color;
+					caskColor.color	= pastelYellow.color;
 					textColor.color	= black.color;
 					white;
 					break;
 
 				case _ICODE_CASK_TILDE_PARAMS:
 					// ~||tilde||~
-					lnSidesSubtract	= 3;
+					*tnSkipChars	= 3;
 					bmpLeft			= bmpCaskTildeLeft;
 					bmpRight		= bmpCaskTildeRight;
-					caskColor.color	= blue.color;
-					textColor.color	= white.color;
+					caskColor.color	= pastelBlue.color;
+					textColor.color	= black.color;
 					break;
 				
-				case _ICODE_CASK_ROUND_OPEN:
+				case _ICODE_CASK_ROUND:
 					// (|round|)
-					lnSidesSubtract	= 2;
+					*tnSkipChars	= 2;
 					bmpLeft			= bmpCaskRoundLeft;
 					bmpRight		= bmpCaskRoundRight;
+					caskColor.color	= pastelGreen.color;
+					textColor.color	= dark_green.color;
 					break;
 
-				case _ICODE_CASK_SQUARE_OPEN:
+				case _ICODE_CASK_SQUARE:
 					// [|square|]
-					lnSidesSubtract	= 2;
+					*tnSkipChars	= 2;
 					bmpLeft			= bmpCaskSquareLeft;
 					bmpRight		= bmpCaskSquareRight;
+					caskColor.color	= pastelRed.color;
+					textColor.color	= dark_red.color;
 					break;
 
-				case _ICODE_CASK_TRIANGLE_OPEN:
+				case _ICODE_CASK_TRIANGLE:
 					// <|triangle|>
-					lnSidesSubtract	= 2;
+					*tnSkipChars	= 2;
 					bmpLeft			= bmpCaskTriangleLeft;
 					bmpRight		= bmpCaskTriangleRight;
+					caskColor.color	= pastelYellow.color;
+					textColor.color	= black.color;
 					break;
 
-				case _ICODE_CASK_TILDE_OPEN:
+				case _ICODE_CASK_TILDE:
 					// ~|tilde|~
-					lnSidesSubtract	= 2;
+					*tnSkipChars	= 2;
 					bmpLeft			= bmpCaskTildeLeft;
 					bmpRight		= bmpCaskTildeRight;
+					caskColor.color	= pastelBlue.color;
+					textColor.color	= black.color;
 					break;
 			}
 
@@ -2053,13 +2197,9 @@ iBmp_saveToDisk(bmpNew, buffer);
 			//////////
 			// Create our cask big enough for the sides and text
 			//////
-				lnWidth = bmpLeft->bi.biWidth + bmpRight->bi.biWidth + (tnTextLength * gsFontCask->tm.tmAveCharWidth);
+				lnWidth = bmpLeft->bi.biWidth + bmpRight->bi.biWidth + ((tnTextLength - (*tnSkipChars * 2)) * gsFontCask->tm.tmAveCharWidth);
 				bmpCask	= iBmp_allocate();
 				iBmp_createBySize(bmpCask, lnWidth, bmpLeft->bi.biHeight, 24);
-s32 lnIterator = 0;
-s8 buffer[64];
-sprintf(buffer, "c:\\temp\\cask%u.bmp\0", ++lnIterator);
-iBmp_saveToDisk(bmpCask, buffer);
 
 
 			//////////
@@ -2067,8 +2207,6 @@ iBmp_saveToDisk(bmpCask, buffer);
 			//////
 				SetRect(&lrc, 0, 0, bmpCask->bi.biWidth, bmpCask->bi.biHeight);
 				iBmp_fillRect(bmpCask, &lrc, maskColor, maskColor, maskColor, maskColor, false, NULL, false);
-sprintf(buffer, "c:\\temp\\cask%u.bmp\0", ++lnIterator);
-iBmp_saveToDisk(bmpCask, buffer);
 
 
 			/////////
@@ -2076,21 +2214,17 @@ iBmp_saveToDisk(bmpCask, buffer);
 			//////
 				SetRect(&lrc, 0, 0, bmpLeft->bi.biWidth, bmpLeft->bi.biHeight);
 				iBmp_bitBltMask(bmpCask, &lrc, bmpLeft);
-sprintf(buffer, "c:\\temp\\cask%u.bmp\0", ++lnIterator);
-iBmp_saveToDisk(bmpCask, buffer);
 
 
 			//////////
 			// Fill the middle
 			//////
 				lnStop = bmpCask->bi.biWidth - bmpRight->bi.biWidth;
-				for (lnI = bmpLeft->bi.biWidth + 1; lnI < lnStop; lnI += bmpCaskExtenderMiddle->bi.biWidth)
+				for (lnI = bmpLeft->bi.biWidth + 1; lnI < lnStop; lnI += bmpCaskSideExtender->bi.biWidth)
 				{
-					SetRect(&lrc, lnI, 0, lnI + bmpCaskExtenderMiddle->bi.biWidth, bmpCaskExtenderMiddle->bi.biHeight);
-					iBmp_bitBlt(bmpCask, &lrc, bmpCaskExtenderMiddle);
+					SetRect(&lrc, lnI, 0, lnI + bmpCaskSideExtender->bi.biWidth, bmpCaskSideExtender->bi.biHeight);
+					iBmp_bitBlt(bmpCask, &lrc, bmpCaskSideExtender);
 				}
-sprintf(buffer, "c:\\temp\\cask%u.bmp\0", ++lnIterator);
-iBmp_saveToDisk(bmpCask, buffer);
 
 
 			//////////
@@ -2098,8 +2232,6 @@ iBmp_saveToDisk(bmpCask, buffer);
 			//////
 				SetRect(&lrc, lnStop, 0, bmpCask->bi.biWidth, bmpRight->bi.biHeight);
 				iBmp_bitBltMask(bmpCask, &lrc, bmpRight);
-sprintf(buffer, "c:\\temp\\cask%u.bmp\0", ++lnIterator);
-iBmp_saveToDisk(bmpCask, buffer);
 
 
 			//////////
@@ -2107,39 +2239,33 @@ iBmp_saveToDisk(bmpCask, buffer);
 			//////
 				SetRect(&lrc, 0, 0, bmpCask->bi.biWidth, bmpCask->bi.biHeight);
 				iBmp_colorizeMask(bmpCask, &lrc, caskColor, false, 0.0f);
-sprintf(buffer, "c:\\temp\\cask%u.bmp\0", ++lnIterator);
-iBmp_saveToDisk(bmpCask, buffer);
 
 
 			//////////
 			// Convert the mask color to the background color
 			//////
 				iBmp_swapColors(bmpCask, maskColor, backgroundColor);
-sprintf(buffer, "c:\\temp\\cask%u.bmp\0", ++lnIterator);
-iBmp_saveToDisk(bmpCask, buffer);
 
 
 			//////////
-			// Overlay the text
-			//////
-				SelectObject(bmpCask->hdc, gsFontCask->hfont);
-				SetBkMode(bmpCask->hdc, TRANSPARENT);
-				SetTextColor(bmpCask->hdc, RGB(textColor.red, textColor.grn, textColor.blu));
-				lrc.left	+= bmpLeft->bi.biWidth;
-				lrc.right	-= bmpRight->bi.biWidth;
-				DrawText(bmpCask->hdc, tcText + lnSidesSubtract, tnTextLength - (lnSidesSubtract * 2), &lrc, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS);
-sprintf(buffer, "c:\\temp\\cask%u.bmp\0", ++lnIterator);
-iBmp_saveToDisk(bmpCask, buffer);
-
-
 			// Scale the bitmap into its target size
-			bmpNew = iBmp_allocate();
-			iBmp_createBySize(bmpNew, tnWidth, tnHeight, 24);
-			iBmp_scale(bmpNew, bmpCask);
-iBmp_saveToDisk(bmpNew, "c:\\temp\\cask_new.bmp");
+			//////
+				if (tnWidth == bmpCask->bi.biWidth && tnHeight == bmpCask->bi.biHeight)
+				{
+					// We already have the correct size
+					return(bmpCask);
+				}
+				// Build the scaled version
+				bmpNew = iBmp_allocate();
+				iBmp_createBySize(bmpNew, tnWidth, tnHeight, 24);
+				iBmp_scale(bmpNew, bmpCask);
 
+
+			//////////
 			// Delete the cask
-			iBmp_delete(&bmpCask, true, true);
+			//////
+				iBmp_delete(&bmpCask, true, true);
+
 
 			// Indicate our status
 			return(bmpNew);

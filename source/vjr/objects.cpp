@@ -1319,8 +1319,8 @@
 							objChild->pa.bmpPictureDown	= iBmp_copy(objChild->pa.bmpPicture);	// Set the new
 
 							// Add highlighting for the over and down
-							iBmp_colorizeMask(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.5f);
-							iBmp_colorizeMask(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.5f);
+							iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.5f);
+							iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.5f);
 
 							// Mark it for re-render
 							objChild->isDirtyRender = true;
@@ -2942,8 +2942,8 @@
 						objChild->pa.bmpPictureDown	= iBmp_copy(bmpVjrIcon);		// Set the new
 
 						// Add highlighting for the over and down
-						iBmp_colorizeMask(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
-						iBmp_colorizeMask(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
+						iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
+						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
 						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
@@ -2970,8 +2970,8 @@
 						objChild->pa.bmpPictureDown	= iBmp_copy(bmpMove);			// Set the new
 
 						// Add highlighting for the over and down
-						iBmp_colorizeMask(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
-						iBmp_colorizeMask(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
+						iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
+						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
 						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
@@ -2990,8 +2990,8 @@
 						objChild->pa.bmpPictureDown	= iBmp_copy(bmpMinimize);		// Set the new
 
 						// Add highlighting for the over and down
-						iBmp_colorizeMask(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
-						iBmp_colorizeMask(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
+						iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
+						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
 						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
@@ -3010,8 +3010,8 @@
 						objChild->pa.bmpPictureDown	= iBmp_copy(bmpMaximize);		// Set the new
 
 						// Add highlighting for the over and down
-						iBmp_colorizeMask(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
-						iBmp_colorizeMask(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
+						iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
+						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
 						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
@@ -3030,8 +3030,8 @@
 						objChild->pa.bmpPictureDown	= iBmp_copy(bmpClose);			// Set the new
 
 						// Add highlighting for the over and down
-						iBmp_colorizeMask(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
-						iBmp_colorizeMask(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
+						iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
+						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
 						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
@@ -3136,8 +3136,8 @@
 						objChild->pa.bmpPictureDown	= iBmp_copy(bmpVjrIcon);		// Set the new
 
 						// Add highlighting for the over and down
-						iBmp_colorizeMask(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.5f);
-						iBmp_colorizeMask(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.5f);
+						iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.5f);
+						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.5f);
 
 						// Icon
 						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
@@ -3481,8 +3481,8 @@
 						objChild->pa.bmpPictureDown	= iBmp_copy(objChild->pa.bmpPicture);	// Set the new
 
 						// Add highlighting for the over and down
-						iBmp_colorizeMask(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.5f);
-						iBmp_colorizeMask(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.5f);
+						iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.5f);
+						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.5f);
 
 						// Mark it for re-rendering
 						objChild->isDirtyRender	= true;
@@ -4149,13 +4149,13 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 					// Colorize the area
 					SetRect(&lrc2, lrc.left, lrc.top, lrc.right - ((lrc.bottom - lrc.top) / 2), lrc.bottom);
-					     if (obj->ev.mouse.isMouseDown)		iBmp_colorizeMask(obj->bmp, &lrc2, colorMouseDown,	false, 0.0f);
-					else if (obj->ev.mouse.isMouseOver)		iBmp_colorizeMask(obj->bmp, &lrc2, colorMouseOver,	false, 0.0f);
+					     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc2, colorMouseDown,	false, 0.0f);
+					else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc2, colorMouseOver,	false, 0.0f);
 
 				} else if (obj->p.isOpaque) {
 					// Colorize the area
-					     if (obj->ev.mouse.isMouseDown)		iBmp_colorizeMask(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
-					else if (obj->ev.mouse.isMouseOver)		iBmp_colorizeMask(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
+					     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
+					else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
 				}
 
 
@@ -4209,9 +4209,9 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				iiBmp_frameInNineParts(obj->bmp, &lrc, bmpTextbox);
 
 				// Colorize
-				     if (obj->ev.mouse.isMouseDown)		iBmp_colorizeMask(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
-				else if (obj->ev.mouse.isMouseOver)		iBmp_colorizeMask(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
-				else									iBmp_colorizeMask(obj->bmp, &lrc, obj->p.backColor,	false, 0.0f);
+				     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
+				else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
+				else									iBmp_colorize(obj->bmp, &lrc, obj->p.backColor,	false, 0.0f);
 
 				// Inset slightly for the text part
 				CopyRect(&lrc2, &lrc);
@@ -4309,9 +4309,9 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				iiBmp_frameInNineParts(obj->bmp, &lrc, bmpButton);
 
 				// Colorize
-				     if (obj->ev.mouse.isMouseDown)		iBmp_colorizeMask(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
-				else if (obj->ev.mouse.isMouseOver)		iBmp_colorizeMask(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
-				else									iBmp_colorizeMask(obj->bmp, &lrc, obj->p.backColor,	false, 0.0f);
+				     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
+				else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
+				else									iBmp_colorize(obj->bmp, &lrc, obj->p.backColor,	false, 0.0f);
 
 				// Inset slightly for the text part
 				CopyRect(&lrc2, &lrc);
@@ -4478,8 +4478,8 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				if (obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX)
 				{
 					// Colorize
-						 if (obj->ev.mouse.isMouseDown)		iBmp_colorizeMask(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
-					else if (obj->ev.mouse.isMouseOver)		iBmp_colorizeMask(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
+						 if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
+					else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
 				}
 
 
@@ -4681,9 +4681,9 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 
 				// Colorize
-				     if (obj->ev.mouse.isMouseDown)		iBmp_colorizeMask(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
-				else if (obj->ev.mouse.isMouseOver)		iBmp_colorizeMask(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
-				else									iBmp_colorizeMask(obj->bmp, &lrc, obj->p.backColor,	false, 0.0f);
+				     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
+				else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
+				else									iBmp_colorize(obj->bmp, &lrc, obj->p.backColor,	false, 0.0f);
 
 
 				//////////

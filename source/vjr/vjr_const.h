@@ -591,6 +591,7 @@ typedef SEM**		SEMpp;
 	const s8			cgcFontName_defaultFixed[]			= "Ubuntu Mono";
 	const s8			cgcFontName_windowTitleBar[]		= "Ubuntu Condensed";
 	const s8			cgcFontName_subwindowTitleBar[]		= "Ubuntu Condensed";
+	const s8			cgcFontName_cask[]					= "Ubuntu Mono";
 	const s8			cgcSystemLogFilename[]				= "system.log";
 	const s8			cgcScreenDataFilename[]				= "screen.vjr";
 	const s8			cgcCommandHistoryFilename[]			= "command.vjr";

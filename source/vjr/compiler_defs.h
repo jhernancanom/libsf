@@ -86,12 +86,14 @@ struct SVariable;
 	u32						iComps_combineAdjacentAlphanumeric			(SEdit* line);
 	u32						iComps_combineAdjacentNumeric				(SEdit* line);
 	u32						iComps_combineAdjacentDotForms				(SEdit* line);
-	u32						iComps_combineAllBetween					(SEdit* line, s32 tniCodeNeedle,                                          s32 tniCodeCombined);
+	u32						iComps_combineAllBetween					(SEdit* line, s32 tniCodeNeedle,		s32 tniCodeCombined);
+	u32						iComps_combineAllBetween2					(SEdit* line, s32 tniCodeNeedleLeft,	s32 tniCodeNeedleRight,		s32 tniCodeCombined,	s32 tniCat, SBgra* syntaxHighlightColor, bool tlUseBoldFont);
 	u32						iComps_combineAllAfter						(SEdit* line, s32 tniCodeNeedle);
 	u32						iComps_deleteAllAfter						(SEdit* line, s32 tniCodeNeedle);
 	u32						iComps_removeLeadingWhitespaces				(SEdit* line);
 	u32						iComps_removeWhitespaces					(SEdit* line);
 	void					iComps_removeStartEndComments				(SEdit* line);
+	void					iComps_combineCasks							(SEdit* line);
 	void					iComps_fixupNaturalGroupings				(SEdit* line);
 	s32						iiComps_charactersBetween					(SComp* compLeft, SComp* compRight);
 
