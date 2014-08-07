@@ -43,12 +43,15 @@
 	SBgra			colorSynHi_comment2					= { rgba(0, 148, 74, 255) };			// Green+Cyan
 	SBgra			colorSynHi_comment3					= { rgba(0, 148, 148, 255) };			// Cyan
 	SBgra			colorSynHi_function					= { rgba(164, 128, 0, 255) };			// Golden
-	SBgra			colorSynHi_command					= { rgba(0, 0, 192, 255) };				// Blue
+	SBgra			colorSynHi_command					= { rgba(64, 128, 245, 255) };			// Pastel cyan-blue
 	SBgra			colorSynHi_logical					= { rgba(200, 148, 0, 255) };			// Orange
 	SBgra			colorSynHi_numeric					= { rgba(0, 128, 255, 255) };			// Cyan-blue
 	SBgra			colorSynHi_operator					= { rgba(128, 0, 164, 255) };			// Purplish
 	SBgra			colorSynHi_bracket					= { rgba(128, 0, 0, 255) };				// Red
 	SBgra			colorSynHi_pragmas					= { rgba(192, 192, 192, 255) };			// Gray
+	SBgra			colorSynHi_variable					= { rgba(255, 128, 0, 255) };			// Orange
+	SBgra			colorSynHi_dotVariable				= { rgba(0, 128, 192, 255) };			// Cyanish
+	SBgra			colorSynHi_quotedText				= { rgba(235, 128, 128, 255) };			// Reddish
 
 
 
@@ -163,6 +166,7 @@
 		{ "adatabases",             10,         false,      _ICODEADATABASES_,                      false,              _ICAT_FUNCTION,		&colorSynHi_function,		false },
 		{ "adbobjects",             10,         false,      _ICODEADBOBJECTS_,                      false,              _ICAT_FUNCTION,		&colorSynHi_function,		false },
 		{ "addbs",                  5,          false,      _ICODE_ADDBS,                           false,              _ICAT_FUNCTION,		&colorSynHi_function,		false },
+		{ "addobject",              9,          false,      _ICODE_ADDOBJECT,                       false,              _ICAT_FUNCTION,		&colorSynHi_function,		false },
 		{ "addproperty",            11,         false,      _ICODE_ADDPROPERTY,                     false,              _ICAT_FUNCTION,		&colorSynHi_function,		false },
 		{ "adel",                   4,          false,      _ICODE_ADEL,                            false,              _ICAT_FUNCTION,		&colorSynHi_function,		false },
 		{ "adir",                   4,          false,      _ICODE_ADIR,                            false,              _ICAT_FUNCTION,		&colorSynHi_function,		false },
@@ -931,29 +935,30 @@
 		{ ".z.",                  	3,          false,      _ICODE_ZATS_ALL_FOLKS,					false,              _ICAT_GENERIC,		&colorSynHi_logical,		true },
 
 		// VXB specific
-		{ "_vjr",					4,			false,		_ICODE_VJR,								false,				_ICAT_GENERIC,		NULL,						false },
-		{ "_jdebi",					6,			false,		_ICODE_JDEBI,							false,				_ICAT_GENERIC,		NULL,						false },
-		{ "_cmd",					4,			false,		_ICODE_CMD,								false,				_ICAT_GENERIC,		NULL,						false },
-		{ "protected",				9,			false,		_ICODE_PROTECTED,						false,				_ICAT_GENERIC,		NULL,						false },
-		{ "main",					4,			false,		_ICODE_MAIN,							false,				_ICAT_GENERIC,		NULL,						false },
+		{ "_screen",				7,			false,		_ICODE_SCREEN,							false,				_ICAT_GENERIC,		&colorSynHi_variable,		true },
+		{ "_vjr",					4,			false,		_ICODE_VJR,								false,				_ICAT_GENERIC,		&colorSynHi_variable,		true },
+		{ "_jdebi",					6,			false,		_ICODE_JDEBI,							false,				_ICAT_GENERIC,		&colorSynHi_variable,		true },
+		{ "_cmd",					4,			false,		_ICODE_CMD,								false,				_ICAT_GENERIC,		&colorSynHi_variable,		true },
+		{ "protected",				9,			false,		_ICODE_PROTECTED,						false,				_ICAT_GENERIC,		&colorSynHi_command,		false },
+		{ "main",					4,			false,		_ICODE_MAIN,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false },
 		{ "loadlastfromvjruserdbf", 22,			false,		_ICODE_LOAD_LAST_FROM_VJR_USER_DBF,		false,				_ICAT_GENERIC,		NULL,						false },
-		{ "flags",					5,			false,		_ICODE_FLAGS,							false,				_ICAT_GENERIC,		NULL,						false },
-		{ "metaicase",				9,			false,		_ICODE_METAICASE,						false,				_ICAT_GENERIC,		NULL,						false },
-		{ "mefaicase",				9,			false,		_ICODE_MEFAICASE,						false,				_ICAT_GENERIC,		NULL,						false },
-		{ "meraicase",				9,			false,		_ICODE_MERAICASE,						false,				_ICAT_GENERIC,		NULL,						false },
-		{ "memaicase",				9,			false,		_ICODE_MEMAICASE,						false,				_ICAT_GENERIC,		NULL,						false },
-		{ "meta",					4,			false,		_ICODE_META,							false,				_ICAT_GENERIC,		NULL,						false },
-		{ "mefa",					4,			false,		_ICODE_MEFA,							false,				_ICAT_GENERIC,		NULL,						false },
-		{ "mera",					4,			false,		_ICODE_MERA,							false,				_ICAT_GENERIC,		NULL,						false },
-		{ "mema",					4,			false,		_ICODE_MEMA,							false,				_ICAT_GENERIC,		NULL,						false },
-		{ "flowto",					6,			false,		_ICODE_FLOWTO,							false,				_ICAT_GENERIC,		NULL,						false },
-		{ "flowout",				7,			false,		_ICODE_FLOWOUT,							false,				_ICAT_GENERIC,		NULL,						false },
-		{ "flow",					4,			false,		_ICODE_FLOW,							false,				_ICAT_GENERIC,		NULL,						false },
-		{ "subflow",				7,			false,		_ICODE_SUBFLOW,							false,				_ICAT_GENERIC,		NULL,						false },
+		{ "flags",					5,			false,		_ICODE_FLAGS,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true },
+		{ "metaicase",				9,			false,		_ICODE_METAICASE,						false,				_ICAT_GENERIC,		&colorSynHi_command,		true },
+		{ "mefaicase",				9,			false,		_ICODE_MEFAICASE,						false,				_ICAT_GENERIC,		&colorSynHi_command,		true },
+		{ "meraicase",				9,			false,		_ICODE_MERAICASE,						false,				_ICAT_GENERIC,		&colorSynHi_command,		true },
+		{ "memaicase",				9,			false,		_ICODE_MEMAICASE,						false,				_ICAT_GENERIC,		&colorSynHi_command,		true },
+		{ "meta",					4,			false,		_ICODE_META,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true },
+		{ "mefa",					4,			false,		_ICODE_MEFA,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true },
+		{ "mera",					4,			false,		_ICODE_MERA,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true },
+		{ "mema",					4,			false,		_ICODE_MEMA,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true },
+		{ "flowto",					6,			false,		_ICODE_FLOWTO,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true },
+		{ "flowout",				7,			false,		_ICODE_FLOWOUT,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true },
+		{ "flow",					4,			false,		_ICODE_FLOW,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true },
+		{ "subflow",				7,			false,		_ICODE_SUBFLOW,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true },
 		{ "rgba",					4,			false,		_ICODE_RGBA,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false },
-		{ "lobject",				7,			false,		_ICODE_LOBJECT,							true,				_ICAT_GENERIC,		NULL,						false },
-		{ "params",					7,			false,		_ICODE_PARAMS,							true,				_ICAT_GENERIC,		NULL,						false },
-		{ "returns",				7,			false,		_ICODE_RETURNS,							true,				_ICAT_GENERIC,		NULL,						false },
+		{ "lobject",				7,			false,		_ICODE_LOBJECT,							true,				_ICAT_GENERIC,		&colorSynHi_command,		true },
+		{ "params",					7,			false,		_ICODE_PARAMS,							true,				_ICAT_GENERIC,		&colorSynHi_command,		true },
+		{ "returns",				7,			false,		_ICODE_RETURNS,							true,				_ICAT_GENERIC,		&colorSynHi_command,		true },
 		{ "as",						2,			false,		_ICODE_AS,								false,				_ICAT_GENERIC,		NULL,						false },
 		{ "character",				9,			false,		_ICODE_CHARACTER,						false,				_ICAT_GENERIC,		NULL,						false },
 		{ "integer",				7,			false,		_ICODE_INTEGER,							false,				_ICAT_GENERIC,		NULL,						false },
@@ -975,8 +980,8 @@
 		{ "s8",						2,			false,		_ICODE_S8,								false,				_ICAT_GENERIC,		NULL,						false },
 		{ "u16",					3,			false,		_ICODE_U16,								false,				_ICAT_GENERIC,		NULL,						false },
 		{ "u8",						2,			false,		_ICODE_U8,								false,				_ICAT_GENERIC,		NULL,						false },
-		{ "adhoc",					5,			false,		_ICODE_ADHOC,							true,				_ICAT_GENERIC,		NULL,						false },
-		{ "endadhoc",				8,			false,		_ICODE_ENDADHOC,						true,				_ICAT_GENERIC,		NULL,						false },
+		{ "adhoc",					5,			false,		_ICODE_ADHOC,							true,				_ICAT_GENERIC,		&colorSynHi_command,		true },
+		{ "endadhoc",				8,			false,		_ICODE_ENDADHOC,						true,				_ICAT_GENERIC,		&colorSynHi_command,		true },
 
 		{ 0,						0,			0,			0,										0,					0 }
 	};

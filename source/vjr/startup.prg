@@ -1,13 +1,11 @@
+	
+	(| round cask |)				(|| round cask with parameters ||)
 
-	(| round cask |)
+	[| square cask |]				[|| square cask with parameters ||]
 
-	(|| round cask with parameters ||)
+	<| triangle cask |>				<|| triangle cask with parameters ||>
 
-	[| square cask |]		[|| square cask with parameters ||]
-
-	<| triangle cask |>		<|| triangle cask with parameters ||>
-
-	~| tilde cask |~		~|| tilde cask with parameters ||~
+	~| tilde cask |~				~|| tilde cask with parameters ||~
 
 
 **********
@@ -47,6 +45,15 @@
 *
 
 
+	ADHOC width
+	RETURNS rnWidth
+		rnWidth = SYSMETRIC(1)
+	ENDADHOC
+	
+	ADHOC height
+	RETURNS rnHeight
+		rnHeight = SYSMETRIC(2)
+	ENDADHOC
 
 
 **********
@@ -72,20 +79,20 @@
 	_screen.Caption		= CONCATENATE("Visual FreePro, Jr.", lcVersion)
 	
 	* Position _screen
-	lnValue1			= SYSMETRIC(1)
+	lnValue1			= (|width|)
 	lnValue1			= DIV(lnValue1, 8)
-	lnValue2			= SYSMETRIC(2)
+	lnValue2			= (|height|)
 	lnValue28			= DIV(lnValue2, 8)
 	lnMin				= MIN(lnValue1, lnValue2)
 	
 	_screen.Left		= lnMin
 	_screen.Top			= lnMin
 	
-	lnValue1			= SYSMETRIC(1)
+	lnValue1			= (|width|)
 	lnValue1			= DIV(lnValue1, 2)			&& lnValue1 / 2
 	_screen.Width		= SUB(lnValue1, lnMin)		&& lnValue1 - lnMin
 	
-	lnValue1			= SYSMETRIC(2)
+	lnValue1			= (|height|)
 	lnValue2			= MUL(2, lnMin)				&& 2 * lnMin
 	_screen.Height		= SUB(lnValue1, lnValue2)	&& SYSMETRIC(2) - (2 * lnMin)
 	
@@ -107,11 +114,11 @@
 	_jdebi.Caption		= CONCATENATE("JDebi Debugger -- ", lcVersion)
 	
 	* Position screen
-	lnMin				= MIN(SYSMETRIC(1) / 8, SYSMETRIC(2) / 8)
-	_jdebi.Left			= SYSMETRIC(1) / 2
+	lnMin				= MIN((|width|) / 8, (|height|) / 8)
+	_jdebi.Left			= (|width|) / 2
 	_jdebi.Top			= lnMin
-	_jdebi.Width		= (SYSMETRIC(1) / 2) - lnMin
-	_jdebi.Height		= SYSMETRIC(2) - (2 * lnMin)
+	_jdebi.Width		= ((|width|) / 2) - lnMin
+	_jdebi.Height		= (|height|) - (2 * lnMin)
 	
 	
 	* Position and size sourceCode

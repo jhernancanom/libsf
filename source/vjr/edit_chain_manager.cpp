@@ -1475,8 +1475,8 @@ int3_break;
 										SetBkMode(bmp->hdc, TRANSPARENT);
 
 										// Adjust right one pixel, redraw
-										++lrcComp.left;
-										++lrcComp.right;
+// 										++lrcComp.left;
+// 										++lrcComp.right;
 										DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 
 										// Set back to opaque
@@ -1743,6 +1743,9 @@ int3_break;
 		{
 			// Indicate the object needs re-rendered
 			obj->isDirtyRender = true;
+
+			// Reprocess the source code on the line
+			iEngine_parseSourceCodeLine(em->ecCursorLine);
 
 			// Verify our cursor is visible
 			iEditManager_verifyCursorIsVisible(em, obj);
@@ -3043,6 +3046,9 @@ int3_break;
 					}
 				}
 
+				// Reprocess the source code on the line
+				iEngine_parseSourceCodeLine(em->ecCursorLine);
+
 
 				//////////
 				// Verify we're visible
@@ -3094,6 +3100,9 @@ int3_break;
 					// Delete everything to the right
 					iEditChain_characterDelete(em);
 				}
+
+				// Reprocess the source code on the line
+				iEngine_parseSourceCodeLine(em->ecCursorLine);
 
 
 				//////////

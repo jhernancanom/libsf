@@ -256,8 +256,8 @@ int3_break;
 //////
 	bool iEditChain_characterDelete(SEM* em)
 	{
-		s32			lnI;
-		SEdit* line;
+		s32		lnI;
+		SEdit*	line;
 
 
 		// Make sure our environment is sane

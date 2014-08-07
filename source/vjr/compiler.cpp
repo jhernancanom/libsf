@@ -1396,8 +1396,10 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 	{
 		u32		lnCombined;
 		u8		c;
+		bool	llProcessed;
 		SComp*	compFirst;
 		SComp*	compMiddle;
+		SComp*	compSecond;
 		SComp*	compThird;
 
 
@@ -1410,6 +1412,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 			while (compFirst)
 			{
 				// Dots begin the things we're searching for
+				llProcessed = false;
 				if (compFirst->iCode == _ICODE_DOT)
 				{
 					// Grab the next two components, they must all be adjacent, and the third one must also be a dot
@@ -1433,6 +1436,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 									else if (c == 'x' || c == 'X')				{ iComps_combineNextN(compFirst, 3, _ICODE_EXTRA,			compFirst->iCat, compFirst->color);				lnCombined += 3; }
 									else if (c == 'y' || c == 'Y')				{ iComps_combineNextN(compFirst, 3, _ICODE_YET_ANOTHER,		compFirst->iCat, compFirst->color);		lnCombined += 3; }
 									else if (c == 'z' || c == 'Z')				{ iComps_combineNextN(compFirst, 3, _ICODE_ZATS_ALL_FOLKS,	compFirst->iCat, compFirst->color);		lnCombined += 3; }
+									llProcessed = true;
 									break;
 
 								case 2:
@@ -1442,6 +1446,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 										iComps_combineNextN(compFirst, 3, _ICODE_OR, compFirst->iCat, compFirst->color);
 										lnCombined += 3;
 									}
+									llProcessed = true;
 									break;
 
 								case 3:
@@ -1457,6 +1462,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 										iComps_combineNextN(compFirst, 3, _ICODE_NOT, compFirst->iCat, compFirst->color);
 										lnCombined += 3;
 									}
+									llProcessed = true;
 									break;
 
 								case 4:
@@ -1467,9 +1473,17 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 										iComps_combineNextN(compFirst, 3, _ICODE_NULL, compFirst->iCat, compFirst->color);
 										lnCombined += 3;
 									}
+									llProcessed = true;
 									break;
 							}
 						}
+
+					}
+
+					if (!llProcessed && (compSecond = (SComp*)compFirst->ll.next) && iiComps_charactersBetween(compFirst, compSecond) == 0 && (compSecond->iCode == _ICODE_ALPHA || compSecond->iCode == _ICODE_ALPHANUMERIC))
+					{
+						// It's a dot variable of some kind
+						iComps_combineNextN(compFirst, 2, _ICODE_DOT_VARIABLE, _ICAT_DOT_VARIABLE, &colorSynHi_dotVariable);
 					}
 				}
 
@@ -1495,7 +1509,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // After:		[u8][whitespace][name][left bracket][right bracket][whitespace][equal][whitespace][double quote text]
 //
 //////
-	u32 iComps_combineAllBetween(SEdit* line, s32 tniCodeNeedle, s32 tniCodeCombined)
+	u32 iComps_combineAllBetween(SEdit* line, s32 tniCodeNeedle, s32 tniCodeCombined, SBgra* syntaxHighlightColor)
 	{
 		u32		lnCount;
 		SComp*	compNext;
@@ -1532,6 +1546,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 							// This is the match, combine everything between
 							comp->length	= (compSearcher->start + compSearcher->length) - comp->start;
 							comp->iCode		= tniCodeCombined;
+							comp->color		= syntaxHighlightColor;
 
 							// Iterate and merge in
 							while (compNext)
@@ -1955,8 +1970,8 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 			//////////
 			// Fixup quotes, comments
 			//////
-				iComps_combineAllBetween(line, _ICODE_SINGLE_QUOTE,		_ICODE_SINGLE_QUOTED_TEXT);
-				iComps_combineAllBetween(line, _ICODE_DOUBLE_QUOTE,		_ICODE_DOUBLE_QUOTED_TEXT);
+				iComps_combineAllBetween(line, _ICODE_SINGLE_QUOTE,		_ICODE_SINGLE_QUOTED_TEXT,	&colorSynHi_quotedText);
+				iComps_combineAllBetween(line, _ICODE_DOUBLE_QUOTE,		_ICODE_DOUBLE_QUOTED_TEXT,	&colorSynHi_quotedText);
 				iComps_deleteAllAfter	(line, _ICODE_LINE_COMMENT);
 
 

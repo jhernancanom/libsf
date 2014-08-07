@@ -400,6 +400,8 @@
 	const u32	    _ICODE_YET_ANOTHER								= 609;
 	const u32	    _ICODE_ZATS_ALL_FOLKS							= 610;
 
+	// Conversions
+	const u32		_ICODE_DOT_VARIABLE								= 700;
 
 	// Functions
 	const u32		_ICODE_ABS										= 1000;
@@ -409,6 +411,7 @@
 	const u32		_ICODEADATABASES_                               = 1004;
 	const u32		_ICODEADBOBJECTS_                               = 1005;
 	const u32		_ICODE_ADDBS                                    = 1006;
+	const u32		_ICODE_ADDOBJECT								= 1432;
 	const u32		_ICODE_ADDPROPERTY                              = 1007;
 	const u32		_ICODE_ADEL                                     = 1008;
 	const u32		_ICODE_ADIR                                     = 1009;
@@ -835,6 +838,7 @@
 	const u32		_ICODE_XMLUPDATEGRAM                            = 1429;
 	const u32		_ICODE_YEAR                                     = 1430;
 	// occursc = 1431
+	// addobject = 1432
 
 // Temporarily added until the processing engine is coded
 	const u32		_ICODE_CONCATENATE								= 1900;
@@ -1127,3 +1131,4 @@
 	const u32		_ICAT_FLOW										= 4;
 	const u32		_ICAT_OPERATOR									= 5;
 	const u32		_ICAT_CASK										= 6;
+	const u32		_ICAT_DOT_VARIABLE								= 7;
