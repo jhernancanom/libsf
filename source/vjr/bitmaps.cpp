@@ -479,8 +479,8 @@
 	{
 		if (bmp)
 		{
-			// Populate the initial structure
-			iBmp_populateBitmapStructure(bmp, width, height, tnBitCount);
+			// Populate the initial structure (min of 1x1, max of 7680x4320 (4x 1920x1080)
+			iBmp_populateBitmapStructure(bmp, min(max(width, 1), 7680), min(max(height, 1), 4320), tnBitCount);
 
 			// Create the HDC and DIB Section
 			bmp->hdc	= CreateCompatibleDC(GetDC(GetDesktopWindow()));
@@ -656,14 +656,8 @@
 
 
 		// Use the system bitblt for speed
-// 		if (bmpDst && trc && bmpSrc)
-// 		{
-			BitBlt(bmpDst->hdc, trc->left, trc->top, trc->right - trc->left, trc->bottom - trc->top, bmpSrc->hdc, 0, 0, SRCCOPY);
-			return(bmpSrc->bi.biSizeImage);
-// 
-// 		} else {
-// 			return(0);
-// 		}
+		BitBlt(bmpDst->hdc, trc->left, trc->top, trc->right - trc->left, trc->bottom - trc->top, bmpSrc->hdc, 0, 0, SRCCOPY);
+		return(bmpSrc->bi.biSizeImage);
 
 
 		// Make sure the environment is sane
@@ -792,6 +786,149 @@
 										lbgraDst->grn	= (u8)min(max(((f64)lbgraDst->grn * lfMalp) + (lbgraSrc->grn * lfAlp), 0.0), 255.0);
 										lbgraDst->blu	= (u8)min(max(((f64)lbgraDst->blu * lfMalp) + (lbgraSrc->blu * lfAlp), 0.0), 255.0);
 									}
+									++lnPixelsRendered;
+								}
+
+								// Move to next pixel on both
+								++lbgraDst;
+								++lbgraSrc;
+							}
+						}
+					}
+				}
+			}
+		}
+
+
+		//////////
+		// Indicate how many pixels were rendered
+		//////
+			return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Called to overlay with alpha transparency the indicated bitmap
+//
+//////
+	u32 iBmp_bitBltAlpha(SBitmap* bmpDst, RECT* trc, SBitmap* bmpSrc, f32 alpha)
+	{
+		u32			lnPixelsRendered;
+		s32			lnY, lnX, lnYDst, lnXDst;
+		f64			lfAlp, lfMalp;
+		SBgr*		lbgrDst;
+		SBgr*		lbgrSrc;
+		SBgra*		lbgraDst;
+		SBgra*		lbgraSrc;
+
+
+		// Make sure the environment is sane
+		lnPixelsRendered = 0;
+		if (bmpDst && bmpSrc && trc)
+		{
+			lfAlp	= min(max(alpha, 0.0f), 1.0f);
+			lfMalp	= 1.0 - alpha;
+
+		//////////
+		// Draw it
+		//////
+			for (lnY = 0, lnYDst = trc->top; lnY < bmpSrc->bi.biHeight && lnYDst < trc->bottom; lnYDst++, lnY++)
+			{
+				// Are we on the image?
+				if (lnYDst >= 0 && lnYDst < bmpDst->bi.biHeight)
+				{
+					// Build the pointer
+					lbgrDst		= (SBgr*)((s8*)bmpDst->bd  + ((bmpDst->bi.biHeight - lnYDst - 1) * bmpDst->rowWidth) + (trc->left * (bmpDst->bi.biBitCount / 8)));
+					lbgrSrc		= (SBgr*)((s8*)bmpSrc->bd  + ((bmpSrc->bi.biHeight - lnY    - 1) * bmpSrc->rowWidth));
+					lbgraDst	= (SBgra*)((s8*)bmpDst->bd + ((bmpDst->bi.biHeight - lnYDst - 1) * bmpDst->rowWidth) + (trc->left * (bmpDst->bi.biBitCount / 8)));
+					lbgraSrc	= (SBgra*)((s8*)bmpSrc->bd + ((bmpSrc->bi.biHeight - lnY    - 1) * bmpSrc->rowWidth));
+
+					// What exactly are we copying?
+					if (bmpSrc->bi.biBitCount == 24)
+					{
+						// 24-bit source
+						if (bmpDst->bi.biBitCount == 24)
+						{
+							// 24-bit to 24-bit
+							// Iterate through every visible column
+							for (lnX = 0, lnXDst = trc->left; lnX < bmpSrc->bi.biWidth && lnXDst < trc->right; lnXDst++, lnX++)
+							{
+								// Are we on the image?
+								if (lnXDst >= 0 && lnXDst < bmpDst->bi.biWidth)
+								{
+									// Copy the pixel
+									lbgrDst->red	= (u8)min(max(((f64)lbgrDst->red * lfMalp) + (lbgrSrc->red * lfAlp), 0.0), 255.0);
+									lbgrDst->grn	= (u8)min(max(((f64)lbgrDst->grn * lfMalp) + (lbgrSrc->grn * lfAlp), 0.0), 255.0);
+									lbgrDst->blu	= (u8)min(max(((f64)lbgrDst->blu * lfMalp) + (lbgrSrc->blu * lfAlp), 0.0), 255.0);
+									++lnPixelsRendered;
+								}
+
+								// Move to next pixel on both
+								++lbgrDst;
+								++lbgrSrc;
+							}
+
+						} else {
+							// 24-bit to 32-bit
+							// Iterate through every visible column
+							for (lnX = 0, lnXDst = trc->left; lnX < bmpSrc->bi.biWidth && lnXDst < trc->right; lnXDst++, lnX++)
+							{
+								// Are we on the image?
+								if (lnXDst >= 0 && lnXDst < bmpDst->bi.biWidth)
+								{
+									// Copy the pixel
+									lbgraDst->alp	= 255;
+									lbgraDst->red	= (u8)min(max(((f64)lbgraDst->red * lfMalp) + (lbgrSrc->red * lfAlp), 0.0), 255.0);
+									lbgraDst->grn	= (u8)min(max(((f64)lbgraDst->grn * lfMalp) + (lbgrSrc->grn * lfAlp), 0.0), 255.0);
+									lbgraDst->blu	= (u8)min(max(((f64)lbgraDst->blu * lfMalp) + (lbgrSrc->blu * lfAlp), 0.0), 255.0);
+									++lnPixelsRendered;
+								}
+
+								// Move to next pixel on both
+								++lbgraDst;
+								++lbgrSrc;
+							}
+						}
+
+					} else if (bmpSrc->bi.biBitCount == 32) {
+						// 32-bit source
+						if (bmpDst->bi.biBitCount == 24)
+						{
+							// 32-bit to 24-bit
+							// Iterate through every visible column
+							for (lnX = 0, lnXDst = trc->left; lnX < bmpSrc->bi.biWidth && lnXDst < trc->right; lnXDst++, lnX++)
+							{
+								// Are we on the image?
+								if (lnXDst >= 0 && lnXDst < bmpDst->bi.biWidth && lbgraSrc->alp != 0)
+								{
+									// Copy the pixel
+									lbgrDst->red	= (u8)min(max(((f64)lbgrDst->red * lfMalp) + (lbgraSrc->red * lfAlp), 0.0), 255.0);
+									lbgrDst->grn	= (u8)min(max(((f64)lbgrDst->grn * lfMalp) + (lbgraSrc->grn * lfAlp), 0.0), 255.0);
+									lbgrDst->blu	= (u8)min(max(((f64)lbgrDst->blu * lfMalp) + (lbgraSrc->blu * lfAlp), 0.0), 255.0);
+									++lnPixelsRendered;
+								}
+
+								// Move to next pixel on both
+								++lbgrDst;
+								++lbgraSrc;
+							}
+
+						} else {
+							// 32-bit to 32-bit
+							// Iterate through every visible column
+							for (lnX = 0, lnXDst = trc->left; lnX < bmpSrc->bi.biWidth && lnXDst < trc->right; lnXDst++, lnX++)
+							{
+								// Are we on the image?
+								if (lnXDst >= 0 && lnXDst < bmpDst->bi.biWidth && lbgraSrc->alp != 0)
+								{
+									// Copy the pixel
+ 									lbgraDst->alp	= 255;
+									lbgraDst->red	= (u8)min(max(((f64)lbgraDst->red * lfMalp) + (lbgraSrc->red * lfAlp), 0.0), 255.0);
+									lbgraDst->grn	= (u8)min(max(((f64)lbgraDst->grn * lfMalp) + (lbgraSrc->grn * lfAlp), 0.0), 255.0);
+									lbgraDst->blu	= (u8)min(max(((f64)lbgraDst->blu * lfMalp) + (lbgraSrc->blu * lfAlp), 0.0), 255.0);
 									++lnPixelsRendered;
 								}
 

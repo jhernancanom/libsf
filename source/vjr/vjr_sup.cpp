@@ -2348,7 +2348,7 @@
 				// See if it matches
 				if (font->_size == tnFontSize && font->_weight == tnFontWeight && font->_italics == tnItalics && font->_underline == tnUnderline && font->name.length == lnLength)
 					if (_memicmp(font->name.data, tcFontName, lnLength) == 0)
-						return(font);
+						return(iFont_duplicate(font));
 			}
 
 
@@ -2379,6 +2379,64 @@
 
 
 		// Indicate our success
+		return(font);
+	}
+
+
+
+
+//////////
+//
+// Change the font size
+//
+//////
+	SFont* iFont_bigger(SFont* font, bool tlDeleteAfterCreateNew)
+	{
+		SFont* fontNew;
+
+
+		// Make sure our environment is sane
+		if (font && font->_size <= 128)
+		{
+			// Create the larger font
+			fontNew = font;
+			fontNew = iFont_create(fontNew->name.data, fontNew->_size + 1, fontNew->_weight, ((fontNew->isItalic) ? 1 : 0), ((fontNew->isUnderline) ? 1 : 0));
+			if (!fontNew)
+				return(font);
+
+			// Delete the reference font if instructed
+			if (tlDeleteAfterCreateNew)
+				iFont_delete(&font, true);
+
+			// Indicate our status
+			return(fontNew);
+		}
+		// If we get here, failure
+		return(font);
+	}
+
+	SFont* iFont_smaller(SFont* font, bool tlDeleteAfterCreateNew)
+	{
+		SFont* fontNew;
+
+
+		// Make sure our environment is sane
+		if (font && font->_size >= 4)
+		{
+			// Create the larger font
+			fontNew = font;
+			fontNew = iFont_create(fontNew->name.data, fontNew->_size - 1, fontNew->_weight, ((fontNew->isItalic) ? 1 : 0), ((fontNew->isUnderline) ? 1 : 0));
+			if (!fontNew)
+				return(font);
+
+			// Delete the reference font if instructed
+			if (tlDeleteAfterCreateNew)
+				iFont_delete(&font, true);
+
+			// Indicate our status
+			return(fontNew);
+		}
+		// If we get here, failure
 		return(font);
 	}
 
@@ -2421,19 +2479,25 @@
 			font = *fontRoot;
 
 			//////////
-			// Free components
-			//////
-				DeleteObject((HGDIOBJ)font->hfont);
-				DeleteDC(font->hdc);
-
-
-			//////////
 			// Free self
 			//////
 				if (tlDeleteSelf)
 				{
-					free(font);
-					*fontRoot = NULL;
+					// Free components
+					DeleteObject((HGDIOBJ)font->hfont);
+					DeleteDC(font->hdc);
+
+					// Physically free self
+					if ((u32)font >= (u32)gFonts->data && (u32)font <= (u32)gFonts->data + gFonts->populatedLength)
+					{
+						// It's one of our allocated fonts, mark the slot as unused
+//						font->isUsed = false;
+
+					} else {
+						// It's a raw font
+						free(font);
+						*fontRoot = NULL;
+					}
 				}
 		}
 	}

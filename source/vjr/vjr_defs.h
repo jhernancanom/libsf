@@ -284,6 +284,8 @@
 	SFont*					iFont_allocate							(void);
 	SFont*					iFont_duplicate							(SFont* fontSource);
 	SFont*					iFont_create							(cs8* tcFontName, u32 tnFontSize, u32 tnFontWeight, u32 tnItalics, u32 tnUnderline);
+	SFont*					iFont_bigger							(SFont* font, bool tlDeleteAfterCreateNew);
+	SFont*					iFont_smaller							(SFont* font, bool tlDeleteAfterCreateNew);
 	void					iiFont_refresh							(SFont* font);
 	void					iFont_delete							(SFont** font, bool tlDeleteSelf);
 	u32						iFont_findClosestSizeMatch				(s8* tcText, s8* tcFontName, u32 tnFontSize, u32 tnFontBold, u32 tnFontItalic, u32 tnFontUnderline, u32 tnWidth, u32 tnHeight, u32 tnWidthDesired, u32 tnHeightDesired);
@@ -352,6 +354,7 @@
 	void					iBmp_bitBltObject						(SBitmap* bmpDst, SObject* obj, SBitmap* bmpSrc);
 	void					iBmp_bitBltObjectMask					(SBitmap* bmpDst, SObject* obj, SBitmap* bmpSrc);
 	u32						iBmp_bitBlt								(SBitmap* bmpDst, RECT* trc, SBitmap* bmpSrc);
+	u32						iBmp_bitBltAlpha						(SBitmap* bmpDst, RECT* trc, SBitmap* bmpSrc, f32 alpha);
 	u32						iBmp_grayscale							(SBitmap* bmp, RECT* trc);
 	u32						iBmp_colorize							(SBitmap* bmp, RECT* trc, SBgra colorTemplate, bool clampColor, f32 minColor);
 	u32						iBmp_colorizeMask						(SBitmap* bmp, RECT* trc, SBgra colorTemplate, bool clampColor, f32 minColor);

@@ -1110,6 +1110,20 @@ int3_break;
 				// CTRL+
 				switch (tnVKey)
 				{
+					case VK_ADD:
+						if (em->font)			em->font = iFont_bigger(em->font,		true);
+						else					em->font = iFont_bigger(obj->pa.font,	false);
+						iObj_setDirtyRender(obj, true);
+						llProcessed = true;
+						break;
+
+					case VK_SUBTRACT:
+						if (em->font)			em->font = iFont_smaller(em->font,		true);
+						else					em->font = iFont_smaller(obj->pa.font,	false);
+						iObj_setDirtyRender(obj, true);
+						llProcessed = true;
+						break;
+
 					case 'A':		// Select all
 						iEditManager_selectAll(em, obj);
 
@@ -1322,6 +1336,9 @@ int3_break;
 		HGDIOBJ		hfontOld;
 		SBgra		foreColor, backColor, fillColor, backColorLast, foreColorLast, compColor;
 		RECT		rc, lrc, lrc2, lrc3, lrcComp;
+		// Added to work around the font->tm.* width and height values not being accurate
+		RECT		lrcCompCalcStart, lrcCompCalcDwell;
+		s8			bigBuffer[2048];
 
 
 		// Make sure our environment is sane
@@ -1355,7 +1372,9 @@ int3_break;
 				//////////
 				// Determine the position
 				//////
-					SetRect(&lrc, rc.left, rc.top + lnTop, rc.right, rc.top + lnTop + font->tm.tmHeight);
+					SetRect(&lrc2, rc.left, rc.top + lnTop, rc.right, rc.top + lnTop + (font->tm.tmHeight * 2));
+					DrawText(bmp->hdc, bigBuffer, 1, &lrc2, DT_CALCRECT);
+					SetRect(&lrc, rc.left, rc.top + lnTop, rc.right, rc.top + lnTop + (lrc2.bottom - lrc2.top));
 					if (lrc.bottom > rc.bottom)
 						lrc.bottom = rc.bottom;
 
@@ -1431,15 +1450,27 @@ int3_break;
 								else					compColor.color = foreColor.color;
 
 								// Set the rect
-								SetRect(&lrcComp, (comp->start - em->leftColumn) * font->tm.tmAveCharWidth, lrc2.top, (comp->start + comp->length - em->leftColumn) * font->tm.tmAveCharWidth, lrc2.bottom);
+								SetRect(&lrcCompCalcStart, 0, 0, lrc.right, lrc.bottom);
+								if (comp->start - em->leftColumn == 0)
+								{
+									// It's left-justified on the line
+									SetRect(&lrcCompCalcDwell, 0, 0, lrc.right, lrc.bottom);
+
+								} else {
+									// it starts over somewhat
+									DrawText(bmp->hdc, bigBuffer, comp->start - em->leftColumn, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
+									SetRect(&lrcCompCalcDwell, lrcCompCalcStart.right, 0, lrc.right, lrc.bottom);
+								}
+								DrawText(bmp->hdc, bigBuffer, comp->length, &lrcCompCalcDwell, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
+								SetRect(&lrcComp, lrcCompCalcDwell.left, lrc2.top, lrcCompCalcDwell.right, lrc2.bottom);
 
 								// Is it a cask or text?
 								if (comp->iCode >= _ICODE_CASK_MINIMUM && comp->iCode <= _ICODE_CASK_MAXIMUM)
 								{
 									// It's a cask, build it
 									bmpCask = iBmp_cask_createAndPopulate(comp->iCode,
-																			font->tm.tmAveCharWidth * comp->length,
-																			font->tm.tmHeight,
+																			lrcCompCalcDwell.right - lrcCompCalcDwell.left,
+																			lrc2.bottom - lrc2.top,
 																			&lnSkip,
 																			comp->length,
 																			backColor,
@@ -1447,15 +1478,25 @@ int3_break;
 																			fillColor);
 
 									// Publish it
-									iBmp_bitBlt(bmp, &lrcComp, bmpCask);
+									if (line == em->ecCursorLine && em->column >= comp->start && em->column <= comp->start + comp->length)
+									{
+// For now, just don't render it when we're on it
+// 										// The cursor is currently on this item, draw with a 25% transparency
+// 										iBmp_bitBltAlpha(bmp, &lrcComp, bmpCask, 0.25f);
 
-									// Overlay the text
-									SetBkMode(bmp->hdc, TRANSPARENT);
-									SetTextColor(bmp->hdc, RGB(black.red, black.grn, black.blu));
-									--lrcComp.top;
-									DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start + lnSkip, comp->length - (2 * lnSkip), &lrcComp, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS);
-									++lrcComp.top;
-									SetBkMode(bmp->hdc, OPAQUE);
+									} else {
+										// Draw completely opaque
+										iBmp_bitBlt(bmp, &lrcComp, bmpCask);
+
+// If we decide to display it with an alpha, this also may need to be brought outside of the if block
+										// Overlay the text
+										SetBkMode(bmp->hdc, TRANSPARENT);
+										SetTextColor(bmp->hdc, RGB(black.red, black.grn, black.blu));
+										--lrcComp.top;
+										DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start + lnSkip, comp->length - (2 * lnSkip), &lrcComp, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS);
+										++lrcComp.top;
+										SetBkMode(bmp->hdc, OPAQUE);
+									}
 
 									// Delete it
 									iBmp_delete(&bmpCask, true, true);
@@ -1496,9 +1537,22 @@ int3_break;
 				//////
 					if (em->ecCursorLine == line && em->showCursorLine && tlRenderCursorline)
 					{
-						lnLeft	= rc.left + ((em->column - em->leftColumn) * font->tm.tmAveCharWidth);
-						lnRight	= lnLeft + font->tm.tmAveCharWidth;
-						iBmp_invert(bmp, lnLeft, ((em->isOverwrite) ? lrc.bottom - 2 : lrc.top), lnRight, lrc.bottom);
+						SetRect(&lrcCompCalcStart, 0, 0, lrc.right, lrc.bottom);
+						if (em->column != 0)
+						{
+							// It's somewhere on the line
+							DrawText(bmp->hdc, bigBuffer, em->column - em->leftColumn, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
+							SetRect(&lrcCompCalcDwell, lrcCompCalcStart.right, 0, lrc.right, lrc.bottom);
+							DrawText(bmp->hdc, bigBuffer, 1, &lrcCompCalcDwell, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
+							SetRect(&lrcComp, lrcCompCalcDwell.left, lrc2.top, lrcCompCalcDwell.right, lrc2.bottom);
+
+						} else {
+							// It's all the way to the left
+							DrawText(bmp->hdc, bigBuffer, 1, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
+							SetRect(&lrcComp, ((em->isOverwrite) ? 0 : 1), lrc.top, lrcCompCalcDwell.right, lrc.bottom);
+						}
+
+						iBmp_invert(bmp, lrcComp.left - ((em->isOverwrite) ? 0 : 1), ((em->isOverwrite) ? lrc.bottom - 2 : lrc.top), ((em->isOverwrite) ? lrcComp.right : lrcComp.left + ((em->isOverwrite) ? 0 : 1)), lrc.bottom);
 					}
 
 
