@@ -3,7 +3,7 @@
 // /libsf/source/vjr/edit_chain_manager.cpp
 //
 //////
-// Version 0.46
+// Version 0.47
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -188,6 +188,7 @@
 	bool iEditManager_loadFromDisk(SEM* em, s8* tcPathname, bool isSourceCode)
 	{
 		s32			lnI, lnJ, lnLast;
+		bool		llOtherCharacters;
 		SBuilder*	content;
 		SEdit*		start;
 		SEdit*		end;
@@ -206,7 +207,8 @@
 				end		= NULL;
 
 				// Copy through lines into the ecm
-				for (lnI = 0, lnLast = 0; (u32)lnI < content->populatedLength; lnI++)
+				llOtherCharacters = false;
+				for (lnI = 0, lnLast = 0; (u32)lnI < content->populatedLength; )
 				{
 					// Are we on a CR/LF combination?
 					for (lnJ = 0; (content->data[lnI] == 13 || content->data[lnI] == 10) && lnJ < 2 && (u32)lnI < content->populatedLength; lnJ++)
@@ -216,12 +218,25 @@
 					if (lnJ != 0 || (u32)lnI >= content->populatedLength)
 					{
 						// We've entered into a CR/LF block, append a new line
-						end = iEditManager_appendLine(em, content->data + lnLast, lnI - lnJ - lnLast);
+						if (!llOtherCharacters)
+						{
+							// We only had CR+LF characters, no data
+							end = iEditManager_appendLine(em, content->data + lnLast, 0);
+
+						} else {
+							// We had at least some data
+							end = iEditManager_appendLine(em, content->data + lnLast, lnI - lnJ - lnLast);
+						}
 						if (!start)
 							start = end;
 
 						// Indicate where we are now
-						lnLast = lnI;
+						llOtherCharacters	= false;
+						lnLast				= lnI;
+
+					} else {
+						llOtherCharacters = true;
+						++lnI;
 					}
 					// Continue on processing the next line if we have room
 				}
@@ -232,14 +247,10 @@
 				// Parse the content if it's source code
 				if (isSourceCode)
 				{
-// ShowWindow(gSplash.hwnd, SW_HIDE);
-// Sleep(100);
 					// Iterate from start to end and parse each source code line
 					while (start && (SEdit*)start->ll.prev != end)
 					{
 						// Parse it
-// if (iIsNeedleInHaystack(start->sourceCode->data, start->sourceCode->length, "_screen", 7))
-// 	int3_break;
 						iEngine_parseSourceCodeLine(start);
 
 						// Move to next line
@@ -681,9 +692,14 @@ int3_break;
 					// If we're on pass 0, allocate space, on the second pass we copy
 					if (lnPass == 0)
 					{
-						// Allocate the indicated length
-						ec->sourceCode			= iDatum_allocate(NULL, 0);
-						iDatum_allocateSpace(ec->sourceCode, lnTextLength);
+						// Allocate the datum
+						ec->sourceCode = iDatum_allocate(NULL, 0);
+
+						// Allocate space for the copy if there's any data
+						if (lnTextLength != 0)
+							iDatum_allocateSpace(ec->sourceCode, lnTextLength);
+
+						// Set the populated length
 						ec->sourceCodePopulated	= lnTextLength;
 					}
 				}
