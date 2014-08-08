@@ -174,6 +174,7 @@ struct SEcCallback
 
 struct SFont
 {
+	bool		isUsed;						// Is this font slot used?
 	HDC			hdc;						// Device context used for its creation
 
 	// Current font instance flags

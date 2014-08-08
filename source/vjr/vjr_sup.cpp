@@ -2334,28 +2334,36 @@
 		s32		lnLength;
 		u32		lnI;
 		SFont*	font;
+		SFont*	fontFirstUnused;
 
 
 		//////////
-		// See if the indicated font already exists
+		// See if there is an unused slot
 		//////
-			lnLength = strlen(tcFontName);
+			fontFirstUnused	= NULL;
+			lnLength		= strlen(tcFontName);
 			for (lnI = 0; lnI < gFonts->populatedLength; lnI += sizeof(SFont))
 			{
 				// Grab the pointer
 				font = (SFont*)(gFonts->data + lnI);
 
-				// See if it matches
-				if (font->_size == tnFontSize && font->_weight == tnFontWeight && font->_italics == tnItalics && font->_underline == tnUnderline && font->name.length == lnLength)
-					if (_memicmp(font->name.data, tcFontName, lnLength) == 0)
-						return(iFont_duplicate(font));
+				// If used
+				if (!font->isUsed)
+				{
+					// Mark this one if we haven't found a free slot yet
+					fontFirstUnused = font;
+					break;
+				}
 			}
 
 
 		//////////
 		// Allocate a new pointer
 		//////
-			font = (SFont*)iBuilder_allocateBytes(gFonts, sizeof(SFont));
+			if (!fontFirstUnused)		font = (SFont*)iBuilder_allocateBytes(gFonts, sizeof(SFont));
+			else						font = fontFirstUnused;
+
+			// Double-check
 			if (!font)
 				return(font);
 
@@ -2366,6 +2374,7 @@
 		//////////
 		// Populate
 		//////
+			font->isUsed					= true;
 			font->hdc						= CreateCompatibleDC(GetDC(GetDesktopWindow()));
 			iDatum_duplicate(&font->name, (s8*)tcFontName, lnLength + 1);
 			font->_size						= tnFontSize;
@@ -2478,20 +2487,24 @@
 			// Grab our pointer
 			font = *fontRoot;
 
+
+			//////////
+			// Free components
+			//////
+				DeleteObject((HGDIOBJ)font->hfont);
+				DeleteDC(font->hdc);
+
+
 			//////////
 			// Free self
 			//////
 				if (tlDeleteSelf)
 				{
-					// Free components
-					DeleteObject((HGDIOBJ)font->hfont);
-					DeleteDC(font->hdc);
-
 					// Physically free self
 					if ((u32)font >= (u32)gFonts->data && (u32)font <= (u32)gFonts->data + gFonts->populatedLength)
 					{
 						// It's one of our allocated fonts, mark the slot as unused
-//						font->isUsed = false;
+						font->isUsed = false;
 
 					} else {
 						// It's a raw font

@@ -2333,7 +2333,7 @@
 
 
 			//////////
-			// Create our cask big enough for the sides and text
+			// Create our cask at its standard size, and big enough for the sides and text
 			//////
 				lnWidth = bmpLeft->bi.biWidth + bmpRight->bi.biWidth + ((tnTextLength - (*tnSkipChars * 2)) * gsFontCask->tm.tmAveCharWidth);
 				bmpCask	= iBmp_allocate();

@@ -1113,6 +1113,7 @@ int3_break;
 					case VK_ADD:
 						if (em->font)			em->font = iFont_bigger(em->font,		true);
 						else					em->font = iFont_bigger(obj->pa.font,	false);
+						iEditManager_verifyCursorIsVisible(em, obj);
 						iObj_setDirtyRender(obj, true);
 						llProcessed = true;
 						break;
@@ -1120,6 +1121,7 @@ int3_break;
 					case VK_SUBTRACT:
 						if (em->font)			em->font = iFont_smaller(em->font,		true);
 						else					em->font = iFont_smaller(obj->pa.font,	false);
+						iEditManager_verifyCursorIsVisible(em, obj);
 						iObj_setDirtyRender(obj, true);
 						llProcessed = true;
 						break;
@@ -1327,7 +1329,7 @@ int3_break;
 	u32 iEditManager_render(SEM* em, SObject* obj, bool tlRenderCursorline)
 	{
 		u32			lnPixelsRendered;
-		s32			lnTop, lnLeft, lnRight, lnSkip;
+		s32			lnTop, lnSkip, lnDeltaX;
 		SFont*		font;
 		SEdit*		line;
 		SBitmap*	bmp;
@@ -1449,28 +1451,32 @@ int3_break;
 								if (comp->color)		compColor.color = comp->color->color;
 								else					compColor.color = foreColor.color;
 
-								// Set the rect
-								SetRect(&lrcCompCalcStart, 0, 0, lrc.right, lrc.bottom);
-								if (comp->start - em->leftColumn == 0)
-								{
-									// It's left-justified on the line
-									SetRect(&lrcCompCalcDwell, 0, 0, lrc.right, lrc.bottom);
+								// Find out where it starts
+								SetRect(&lrcCompCalcStart, 0, 0, 200000, lrc.bottom);
+								if (comp->start != 0)		DrawText(bmp->hdc, comp->line->sourceCode->data, comp->start, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
+								else						SetRect(&lrcCompCalcStart, 0, 0, 0, lrc.bottom);
 
-								} else {
-									// it starts over somewhat
-									DrawText(bmp->hdc, bigBuffer, comp->start - em->leftColumn, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
-									SetRect(&lrcCompCalcDwell, lrcCompCalcStart.right, 0, lrc.right, lrc.bottom);
-								}
-								DrawText(bmp->hdc, bigBuffer, comp->length, &lrcCompCalcDwell, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
+								// Find out how long it dwells
+								SetRect(&lrcCompCalcDwell, lrcCompCalcStart.right, 0, 200000, lrc.bottom);
+								DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcCompCalcDwell, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
 								SetRect(&lrcComp, lrcCompCalcDwell.left, lrc2.top, lrcCompCalcDwell.right, lrc2.bottom);
+
+								// Do we need to adjust it back for scrolling?
+								if (em->leftColumn != 0)
+								{
+									// Adjust it for the em->leftColumn
+									lnDeltaX		= em->leftColumn * ((lrcComp.right - lrcComp.left) / comp->length);
+									lrcComp.left	-= lnDeltaX;
+									lrcComp.right	-= lnDeltaX;
+								}
 
 								// Is it a cask or text?
 								if (comp->iCode >= _ICODE_CASK_MINIMUM && comp->iCode <= _ICODE_CASK_MAXIMUM)
 								{
 									// It's a cask, build it
 									bmpCask = iBmp_cask_createAndPopulate(comp->iCode,
-																			lrcCompCalcDwell.right - lrcCompCalcDwell.left,
-																			lrc2.bottom - lrc2.top,
+																			lrcComp.right  - lrcComp.left,
+																			lrcComp.bottom - lrcComp.top,
 																			&lnSkip,
 																			comp->length,
 																			backColor,
@@ -1481,8 +1487,8 @@ int3_break;
 									if (line == em->ecCursorLine && em->column >= comp->start && em->column <= comp->start + comp->length)
 									{
 // For now, just don't render it when we're on it
-// 										// The cursor is currently on this item, draw with a 25% transparency
-// 										iBmp_bitBltAlpha(bmp, &lrcComp, bmpCask, 0.25f);
+// 										// The cursor is currently on this item, draw with a 15% transparency
+// 										iBmp_bitBltAlpha(bmp, &lrcComp, bmpCask, 0.15f);
 
 									} else {
 										// Draw completely opaque
@@ -1516,7 +1522,7 @@ int3_break;
 										SetBkMode(bmp->hdc, TRANSPARENT);
 
 										// Adjust right one pixel, redraw
-// 										++lrcComp.left;
+//										++lrcComp.left;
 // 										++lrcComp.right;
 										DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 
@@ -1549,7 +1555,7 @@ int3_break;
 						} else {
 							// It's all the way to the left
 							DrawText(bmp->hdc, bigBuffer, 1, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
-							SetRect(&lrcComp, ((em->isOverwrite) ? 0 : 1), lrc.top, lrcCompCalcDwell.right, lrc.bottom);
+							SetRect(&lrcComp, ((em->isOverwrite) ? 0 : 1), lrc.top, lrcCompCalcStart.right, lrc.bottom);
 						}
 
 						iBmp_invert(bmp, lrcComp.left - ((em->isOverwrite) ? 0 : 1), ((em->isOverwrite) ? lrc.bottom - 2 : lrc.top), ((em->isOverwrite) ? lrcComp.right : lrcComp.left + ((em->isOverwrite) ? 0 : 1)), lrc.bottom);
@@ -1618,8 +1624,8 @@ int3_break;
 					//////
 						lnWidth		= (lrc.right - lrc.left);
 						lnHeight	= (lrc.bottom - lrc.top);
-						lnCols		= max((lnWidth  / font->tm.tmAveCharWidth),	1);
-						lnRows		= max((lnHeight / font->tm.tmHeight),		1);
+						lnCols		= max((lnWidth  / font->tm.tmAveCharWidth),	2) - 1;
+						lnRows		= max((lnHeight / font->tm.tmHeight),		2) - 1;
 
 
 					//////////
@@ -3253,7 +3259,7 @@ int3_break;
 			// See which row and column the click would be on
 			//////
 				lnRow		= y / font->tm.tmHeight;
-				em->column	= x / font->tm.tmAveCharWidth;
+				em->column	= em->leftColumn + (x / font->tm.tmAveCharWidth);
 
 
 			//////////
