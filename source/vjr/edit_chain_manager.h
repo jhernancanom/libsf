@@ -98,4 +98,4 @@
 	bool					iEditManager_deleteRight			(SEM* em, SObject* obj);
 	bool					iEditManager_deleteWordLeft			(SEM* em, SObject* obj);
 	bool					iEditManager_deleteWordRight		(SEM* em, SObject* obj);
-	bool					iEditManager_navigateTo_XY			(SEM* em, SObject* obj, s32 x, s32 y);
+	bool					iEditManager_navigateTo_pixelXY		(SEM* em, SObject* obj, s32 x, s32 y);

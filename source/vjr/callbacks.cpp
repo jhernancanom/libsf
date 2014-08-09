@@ -192,7 +192,7 @@
 
 		} else if (obj->objType == _OBJ_TYPE_EDITBOX) {
 			// Need to navigate to the indicated x,y coordinate
-			iEditManager_navigateTo_XY(obj->pa.em, obj, x, y);
+			iEditManager_navigateTo_pixelXY(obj->pa.em, obj, x, y);
 
 		} else if (obj->objType == _OBJ_TYPE_RADIO) {
 			// The mouse indicates the position

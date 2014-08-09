@@ -1510,7 +1510,7 @@ int3_break;
 										// Draw completely opaque
 										iBmp_bitBlt(bmp, &lrcComp, bmpCask);
 
-// If we decide to display it with an alpha, this also may need to be brought outside of the if block
+// If it is decided to display with an alpha, this also may need to be brought outside of the if block
 										// Overlay the text
 										SetBkMode(bmp->hdc, TRANSPARENT);
 										SetTextColor(bmp->hdc, RGB(black.red, black.grn, black.blu));
@@ -1612,12 +1612,13 @@ int3_break;
 //////
 	bool iEditManager_verifyCursorIsVisible(SEM* em, SObject* obj)
 	{
-		s32		lnI, lnUp, lnDn, lnNewLeftColumn, lnCols, lnRows, lnWidth, lnHeight;
+		s32		lnI, lnUp, lnDn, lnNewLeftColumn, lnCols, lnRows, lnWidth, lnHeight, lnExtra;
 		bool	llChanged;
 		SEdit*	lineUp;
 		SEdit*	lineDn;
 		SFont*	font;
-		RECT	lrc;
+		RECT	lrc, lrc2;
+		s8		buffer[2048];
 
 
 		llChanged = false;
@@ -1638,10 +1639,18 @@ int3_break;
 					//////////
 					// Compute our maximum rows and cols based on visible display area
 					//////
+// TODO:  There must be a more elegant way to do this.
 						lnWidth		= (lrc.right - lrc.left);
 						lnHeight	= (lrc.bottom - lrc.top);
-						lnCols		= max((lnWidth  / font->tm.tmAveCharWidth),	2) - 1;
-						lnRows		= max((lnHeight / font->tm.tmHeight),		2) - 1;
+						lnExtra		= font->tm.tmMaxCharWidth - (font->tm.tmAveCharWidth * 2);			// Added to fix the bug mentioned below
+						if (lnExtra < 0)
+							lnExtra = 0;
+						lnCols		= max((lnWidth  / (font->tm.tmAveCharWidth + lnExtra)),	2);			// There is some kind of bug in the font->tm.tmAveCharWidth which prevents this from always being able to be an exact calculation, so we back off 10 characters
+						lnRows		= max((lnHeight / font->tm.tmHeight),					2);			// And for the height, we back off one
+
+						// Adjust to 90% of extents
+						lnCols		= lnCols - (lnCols / 10);
+						lnRows		= lnRows - (lnRows / 10);
 
 
 					//////////
@@ -1657,13 +1666,13 @@ int3_break;
 					//////////
 					// Make sure we're not beyond it to the right
 					//////
-//						lnOldLeftColumn	= em->leftColumn;
 						lnNewLeftColumn = em->column - lnCols;
 						if (em->leftColumn - lnNewLeftColumn < 0)
 						{
 							em->leftColumn	= lnNewLeftColumn;
 							llChanged		= true;
 						}
+
 
 					//////////
 					// Make sure we're on-screen vertically
@@ -3252,9 +3261,9 @@ int3_break;
 // Called to navigate to the indicated position on the screen
 //
 //////
-	bool iEditManager_navigateTo_XY(SEM* em, SObject* obj, s32 x, s32 y)
+	bool iEditManager_navigateTo_pixelXY(SEM* em, SObject* obj, s32 x, s32 y)
 	{
-		s32			lnI, lnRow;
+		s32			lnI, lnRow, lnExtra;
 		bool		llResult;
 		RECT		lrc;
 		SEdit*		edit;
@@ -3275,7 +3284,10 @@ int3_break;
 			// See which row and column the click would be on
 			//////
 				lnRow		= y / font->tm.tmHeight;
-				em->column	= em->leftColumn + (x / font->tm.tmAveCharWidth);
+				lnExtra		= font->tm.tmMaxCharWidth - (font->tm.tmAveCharWidth * 2);			// Added to fix the bug mentioned below
+				if (lnExtra < 0)
+					lnExtra = 0;
+				em->column	= em->leftColumn + (x / (font->tm.tmAveCharWidth + lnExtra));
 
 
 			//////////
