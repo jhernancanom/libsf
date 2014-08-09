@@ -149,6 +149,7 @@ struct SVariable;
 	SFunction*				iFunction_allocate							(s8* tcFuncName);
 	SVariable*				iFunction_addVariable_scoped				(SFunction* func);
 	void					iFunction_politelyDeleteCompiledInfo		(SFunction* func, bool tlDeleteSelf);
+	void					iFunction_politelyDeleteChain				(SFunction** rootFunc);
 
 	// Variable functions
 	SVariable*				iiVariable_terminateIndirect				(SVariable* var);

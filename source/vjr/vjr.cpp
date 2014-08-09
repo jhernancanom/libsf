@@ -165,6 +165,12 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			bmpStoplightGreen	= iBmp_rawLoad(cgc_stoplightGreenBmp);
 			bmpStoplightBlue	= iBmp_rawLoad(cgc_stoplightBlueBmp);
 
+			bmpBreakpointAlways				= iBmp_rawLoad(cgc_breakpointAlways);
+			bmpBreakpointAlwaysCountdown	= iBmp_rawLoad(cgc_breakpointAlwaysCountdown);
+			bmpConditionalTrue				= iBmp_rawLoad(cgc_breakpointConditionalTrue);
+			bmpConditionalFalse				= iBmp_rawLoad(cgc_breakpointConditionalFalse);
+			bmpConditionalTrueCountdown		= iBmp_rawLoad(cgc_breakpointConditionalTrueCountdown);
+			bmpConditionalFalseCountdown	= iBmp_rawLoad(cgc_breakpointConditionalFalseCountdown);
 
 			//////////
 			// Casks
@@ -236,58 +242,58 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		// Initially populate _screen
 		// Load in the history if it exists
-		if (!iEditManager_loadFromDisk(screenData, (s8*)cgcScreenDataFilename, false))
+		if (!iSEM_loadFromDisk(screenData, (s8*)cgcScreenDataFilename, false))
 		{
 			iVjr_appendSystemLog("Populate _screen with default data");
-			iEditManager_appendLine(screenData, (s8*)cgcScreenTitle, -1);
-			iEditManager_appendLine(screenData, NULL, 0);
-			iEditManager_appendLine(screenData, (s8*)"Please report any bugs:  http://www.visual-freepro.org/forum", -1);
-			iEditManager_appendLine(screenData, (s8*)"Thank you, and may the Lord Jesus Christ bless you richly. :-)", -1);
-			iEditManager_appendLine(screenData, NULL, 0);
-			iEditManager_appendLine(screenData, (s8*)"              _____", -1);
-			iEditManager_appendLine(screenData, (s8*)"             |     |", -1);
-			iEditManager_appendLine(screenData, (s8*)"             |     |", -1);
-			iEditManager_appendLine(screenData, (s8*)"     ________|     |________     In God's sight we've come together.", -1);
-			iEditManager_appendLine(screenData, (s8*)"    |                       |    We've come together to help each other.", -1);
-			iEditManager_appendLine(screenData, (s8*)"    |________       ________|    Let's grow this project up ... together!", -1);
-			iEditManager_appendLine(screenData, (s8*)"             |     |             In service and love to The Lord, forever!", -1);
-			iEditManager_appendLine(screenData, (s8*)"             |     |", -1);
-			iEditManager_appendLine(screenData, (s8*)"             |     |             Sponsored by:", -1);
-			iEditManager_appendLine(screenData, (s8*)"             |     |                LibSF -- Liberty Software Foundation", -1);
-			iEditManager_appendLine(screenData, (s8*)"             |     |", -1);
-			iEditManager_appendLine(screenData, (s8*)"             |     |             We need more coders. Please consider helping out.", -1);
-			iEditManager_appendLine(screenData, (s8*)"             |     |             Your contribution would make a difference.", -1);
-			iEditManager_appendLine(screenData, (s8*)"             |     |", -1);
-			iEditManager_appendLine(screenData, (s8*)"             |_____|", -1);
-			iEditManager_appendLine(screenData, NULL, 0);
+			iSEM_appendLine(screenData, (s8*)cgcScreenTitle, -1);
+			iSEM_appendLine(screenData, NULL, 0);
+			iSEM_appendLine(screenData, (s8*)"Please report any bugs:  http://www.visual-freepro.org/forum", -1);
+			iSEM_appendLine(screenData, (s8*)"Thank you, and may the Lord Jesus Christ bless you richly. :-)", -1);
+			iSEM_appendLine(screenData, NULL, 0);
+			iSEM_appendLine(screenData, (s8*)"              _____", -1);
+			iSEM_appendLine(screenData, (s8*)"             |     |", -1);
+			iSEM_appendLine(screenData, (s8*)"             |     |", -1);
+			iSEM_appendLine(screenData, (s8*)"     ________|     |________     In God's sight we've come together.", -1);
+			iSEM_appendLine(screenData, (s8*)"    |                       |    We've come together to help each other.", -1);
+			iSEM_appendLine(screenData, (s8*)"    |________       ________|    Let's grow this project up ... together!", -1);
+			iSEM_appendLine(screenData, (s8*)"             |     |             In service and love to The Lord, forever!", -1);
+			iSEM_appendLine(screenData, (s8*)"             |     |", -1);
+			iSEM_appendLine(screenData, (s8*)"             |     |             Sponsored by:", -1);
+			iSEM_appendLine(screenData, (s8*)"             |     |                LibSF -- Liberty Software Foundation", -1);
+			iSEM_appendLine(screenData, (s8*)"             |     |", -1);
+			iSEM_appendLine(screenData, (s8*)"             |     |             We need more coders. Please consider helping out.", -1);
+			iSEM_appendLine(screenData, (s8*)"             |     |             Your contribution would make a difference.", -1);
+			iSEM_appendLine(screenData, (s8*)"             |     |", -1);
+			iSEM_appendLine(screenData, (s8*)"             |_____|", -1);
+			iSEM_appendLine(screenData, NULL, 0);
 		}
 		// Navigate to the end of the content
-		iEditManager_navigateEnd(screenData, gobj_screen);
+		iSEM_navigateEnd(screenData, gobj_screen);
 
 		// Initially populate _jdebi
 		// Load in the history if it exists
-		if (!iEditManager_loadFromDisk(command_editbox->pa.em, (s8*)cgcCommandHistoryFilename, true))
+		if (!iSEM_loadFromDisk(command_editbox->pa.em, (s8*)cgcCommandHistoryFilename, true))
 		{
-			iEditManager_appendLine(command_editbox->pa.em, (s8*)"*** Welcome to Visual FreePro, Junior! :-)", -1);
-			iEditManager_appendLine(command_editbox->pa.em, (s8*)"*** For now, this can be thought of as a command window ... with a twist.", -1);
-			iEditManager_appendLine(command_editbox->pa.em, (s8*)"*** It works like an editor window.  You can insert new lines, edit old ones, etc.", -1);
-			iEditManager_appendLine(command_editbox->pa.em, (s8*)"*** To execute a command, press F6 or Enter if you're on the last line, or use F6 on any line.", -1);
-			iEditManager_appendLine(command_editbox->pa.em, (s8*)"*** You can use clear, quit, ? 999, ? \"sample\" (literals), and ? _startupTime (global variable) in this daily build.", -1);
-			iEditManager_appendLine(command_editbox->pa.em, (s8*)"*** Remember this always:  Love makes you smile. It keeps an inward peace unlike any other. :-)", -1);
+			iSEM_appendLine(command_editbox->pa.em, (s8*)"*** Welcome to Visual FreePro, Junior! :-)", -1);
+			iSEM_appendLine(command_editbox->pa.em, (s8*)"*** For now, this can be thought of as a command window ... with a twist.", -1);
+			iSEM_appendLine(command_editbox->pa.em, (s8*)"*** It works like an editor window.  You can insert new lines, edit old ones, etc.", -1);
+			iSEM_appendLine(command_editbox->pa.em, (s8*)"*** To execute a command, press F6 or Enter if you're on the last line, or use F6 on any line.", -1);
+			iSEM_appendLine(command_editbox->pa.em, (s8*)"*** You can use clear, quit, ? 999, ? \"sample\" (literals), and ? _startupTime (global variable) in this daily build.", -1);
+			iSEM_appendLine(command_editbox->pa.em, (s8*)"*** Remember this always:  Love makes you smile. It keeps an inward peace unlike any other. :-)", -1);
 		}
 
 		// Navigate to the last line
-		iEditManager_navigateEnd(command_editbox->pa.em, command_editbox);
+		iSEM_navigateEnd(command_editbox->pa.em, command_editbox);
 
 		// Make sure there's a blank line at the end
 		if (command_editbox->pa.em->ecCursorLine->sourceCodePopulated != 0)
 		{
-			iEditManager_appendLine(command_editbox->pa.em, NULL, 0);
-			iEditManager_navigateEnd(command_editbox->pa.em, command_editbox);
+			iSEM_appendLine(command_editbox->pa.em, NULL, 0);
+			iSEM_navigateEnd(command_editbox->pa.em, command_editbox);
 		}
 
 		// Load some source code
-		iEditManager_loadFromDisk(sourceCode_editbox->pa.em, (s8*)cgcStartupPrgFilename, true);
+		iSEM_loadFromDisk(sourceCode_editbox->pa.em, (s8*)cgcStartupPrgFilename, true);
 
 		// Redraw
 		iVjr_appendSystemLog("Final render _jdebi");
@@ -416,7 +422,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			iObj_setSize(gobj_splashListingEditbox, 0, 0, gobj_splashListing->rcClient.right - gobj_splashListing->rcClient.left, gobj_splashListing->rcClient.bottom - gobj_splashListing->rcClient.top);
 			gobj_splashListingEditbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
 			gobj_splashListingEditbox->pa.em->font				= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
-			gobj_splashListingEditbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
+			gobj_splashListingEditbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			systemLog											= gobj_splashListingEditbox->pa.em;
 			systemLog->showEndLine								= true;
 			systemLog->showCursorLine							= true;
@@ -445,7 +451,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		if (gobj_splashListing && gobj_splashListingEditbox)
 		{
 			// Move to the end of the list
-			iEditManager_navigateEnd(gobj_splashListingEditbox->pa.em, gobj_splashListing);
+			iSEM_navigateEnd(gobj_splashListingEditbox->pa.em, gobj_splashListing);
 
 			if (trc && gobj_splashListing->bmp)
 			{

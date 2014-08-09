@@ -41,7 +41,7 @@
 // Called to create a new EM (Edit Manager)
 //
 //////
-	SEM* iEditManager_allocate(bool tlIsSourceCode)
+	SEM* iSEM_allocate(bool tlIsSourceCode)
 	{
 		SEM* em;
 
@@ -56,11 +56,13 @@
 			memset(em, 0, sizeof(SEM));
 
 			// Store defaults
-			em->isSourceCode	= tlIsSourceCode;
+			em->isSourceCode		= tlIsSourceCode;
+			if (tlIsSourceCode)
+				em->showLineNumbers	= true;
 
 			// Default to 4-character tab width
-			em->tabWidth		= 4;
-			em->tabsEnforced	= true;
+			em->tabWidth			= 4;
+			em->tabsEnforced		= true;
 		}
 
 		// Indicate our status
@@ -75,7 +77,7 @@
 // Called to accumulate the indicated line range into a builder buffer.
 //
 //////
-	SBuilder* iEditManager_accumulateBuilder(SEM* em, SEdit* ecHintStart, SEdit* ecHintEnd)
+	SBuilder* iSEM_accumulateBuilder(SEM* em, SEdit* ecHintStart, SEdit* ecHintEnd)
 	{
 		SBuilder*	b;
 		SEdit*		line;
@@ -151,7 +153,7 @@
 // Called to save the indicated EM to disk.  Saved as a raw text file.
 //
 //////
-	bool iEditManager_saveToDisk(SEM* em, s8* tcPathname)
+	bool iSEM_saveToDisk(SEM* em, s8* tcPathname)
 	{
 		SBuilder* content;
 
@@ -160,7 +162,7 @@
 		if (em && tcPathname)
 		{
 			// Grab the content
-			content = iEditManager_accumulateBuilder(em, NULL, NULL);
+			content = iSEM_accumulateBuilder(em, NULL, NULL);
 			if (content)
 			{
 				// Write it out
@@ -185,7 +187,7 @@
 // Loads in a text file into an EM beginning optionally near ecHint.
 //
 //////
-	bool iEditManager_loadFromDisk(SEM* em, s8* tcPathname, bool isSourceCode)
+	bool iSEM_loadFromDisk(SEM* em, s8* tcPathname, bool isSourceCode)
 	{
 		s32			lnI, lnJ, lnLast;
 		bool		llOtherCharacters;
@@ -221,11 +223,11 @@
 						if (!llOtherCharacters)
 						{
 							// We only had CR+LF characters, no data
-							end = iEditManager_appendLine(em, content->data + lnLast, 0);
+							end = iSEM_appendLine(em, content->data + lnLast, 0);
 
 						} else {
 							// We had at least some data
-							end = iEditManager_appendLine(em, content->data + lnLast, lnI - lnJ - lnLast);
+							end = iSEM_appendLine(em, content->data + lnLast, lnI - lnJ - lnLast);
 						}
 						if (!start)
 							start = end;
@@ -243,6 +245,9 @@
 
 				// Release it
 				iBuilder_freeAndRelease(&content);
+
+				// Renumber everything
+				iSEM_renumber(em, 1);
 
 				// Parse the content if it's source code
 				if (isSourceCode)
@@ -264,7 +269,7 @@
 
 				// Indicate success
 				sprintf(buffer, "Loaded: %s\0", tcPathname);
-				iEditManager_appendLine(output_editbox->pa.em, buffer, strlen(buffer));
+				iSEM_appendLine(output_editbox->pa.em, buffer, strlen(buffer));
 				return(true);
 
 			} else {
@@ -285,7 +290,7 @@
 // Duplicate the entire ECM
 //
 //////
-	bool iEditManager_duplicate(SEM** root, SEM* emSource, bool tlIncludeUndoHistory)
+	bool iSEM_duplicate(SEM** root, SEM* emSource, bool tlIncludeUndoHistory)
 	{
 // 		SEM*	ecmNew;
 // 		SEditChain*			ecSource;
@@ -486,7 +491,7 @@ int3_break;
 // Called to free the EM content, and optionally itself
 //
 //////
-	void iEditManager_delete(SEM** root, bool tlDeleteSelf)
+	void iSEM_delete(SEM** root, bool tlDeleteSelf)
 	{
 		SEM* em;
 
@@ -507,7 +512,7 @@ int3_break;
 					// Free undo history
 					//////
 						if ((*root)->undoHistory)
-							iEditManager_delete(&(*root)->undoHistory, true);
+							iSEM_delete(&(*root)->undoHistory, true);
 
 
 					//////////
@@ -536,16 +541,16 @@ int3_break;
 // Called to delete the entire chain explicitly
 //
 //////
-	void iEditManager_deleteChain(SEM** root, bool tlDeleteSelf)
+	void iSEM_deleteChain(SEM** root, bool tlDeleteSelf)
 	{
 		// Delete with no callback
-		iEditManager_deleteChainWithCallback(root, tlDeleteSelf, NULL);
+		iSEM_deleteChainWithCallback(root, tlDeleteSelf, NULL);
 	}
 
-	void iEditManager_deleteChainWithCallback(SEM** root, bool tlDeleteSelf, SEcCallback* ecb)
+	void iSEM_deleteChainWithCallback(SEM** root, bool tlDeleteSelf, SEM_callback* ecb)
 	{
 		SLL* nodeNext;
-		SEcCallback	lecb;
+		SEM_callback	lecb;
 
 
 		// Make sure our environment is sane
@@ -590,7 +595,7 @@ int3_break;
 				// Delete the node itself
 				//////
 					ecb->em->ecCursorLine = ecb->ec;
-					iEditManager_deleteLine(ecb->em);
+					iSEM_deleteLine(ecb->em);
 
 
 				//////////
@@ -606,12 +611,46 @@ int3_break;
 
 //////////
 //
+// Renumber the source code lines
+//
+//////
+	void iSEM_renumber(SEM* em, u32 tnStartingLineNumber)
+	{
+		SEdit* ec;
+
+
+		// Make sure our environment is sane
+		if (em && em->ecFirst && em->ecLast)
+		{
+			// Begin at the beginning
+			ec = em->ecFirst;
+			while (ec)
+			{
+				// Set the line number
+				ec->line = tnStartingLineNumber++;
+
+				// Are we done
+				if (ec == em->ecLast)
+					break;
+
+				// Move to next line
+				ec = (SEdit*)ec->ll.next;
+			}
+		}
+	}
+
+
+
+
+//////////
+//
 // Called to append a line of text to the indicated ECM.
 //
 //////
-	SEdit* iEditManager_appendLine(SEM* em, s8* tcText, s32 tnTextLength)
+	SEdit* iSEM_appendLine(SEM* em, s8* tcText, s32 tnTextLength)
 	{
 		s32		lnI, lnJ, lnPass, lnTextLength, lnCount;
+		bool	llChanged;
 		SEdit*	ec;
 
 
@@ -703,6 +742,10 @@ int3_break;
 						ec->sourceCodePopulated	= lnTextLength;
 					}
 				}
+
+				// Renumber if need be
+				if (em->showLineNumbers)
+					iSEM_renumber(em, 1);
 			}
 		}
 
@@ -718,7 +761,7 @@ int3_break;
 // Called to insert a line before or after the indicated line
 //
 //////
-	SEdit* iEditManager_insertLine(SEM* em, s8* tcText, s32 tnTextLength, SEdit* line, bool tlInsertAfter)
+	SEdit* iSEM_insertLine(SEM* em, s8* tcText, s32 tnTextLength, SEdit* line, bool tlInsertAfter)
 	{
 		SEdit* lineNew;
 
@@ -798,6 +841,10 @@ int3_break;
 							em->ecFirst = lineNew;
 						}
 				}
+
+				// Renumber if need be
+				if (em->showLineNumbers)
+					iSEM_renumber(em, 1);
 			}
 		}
 
@@ -813,7 +860,7 @@ int3_break;
 // Delete the indicated line
 //
 //////
-	void iEditManager_deleteLine(SEM* em)
+	void iSEM_deleteLine(SEM* em)
 	{
 		SEdit* lineDeleted;
 		SEdit* lineNewCursorLine;
@@ -843,6 +890,10 @@ int3_break;
 				em->ecTopLine = lineNewCursorLine;
 
 			em->ecCursorLine = lineNewCursorLine;
+
+			// Renumber if need be
+			if (em->showLineNumbers)
+				iSEM_renumber(em, 1);
 		}
 	}
 
@@ -854,7 +905,7 @@ int3_break;
 // Called to get the colors
 //
 //////
-	void iEditManager_getColors(SEM* em, SObject* obj, SBgra& backColor, SBgra& foreColor)
+	void iSEM_getColors(SEM* em, SObject* obj, SBgra& backColor, SBgra& foreColor)
 	{
 		// Make sure our environment is sane
 		if (em && obj)
@@ -880,7 +931,7 @@ int3_break;
 // otherwise we use the object's rc.
 //
 //////
-	SFont* iEditManager_getRectAndFont(SEM* em, SObject* obj, RECT* rc)
+	SFont* iSEM_getRectAndFont(SEM* em, SObject* obj, RECT* rc)
 	{
 		SFont* font;
 
@@ -913,10 +964,11 @@ int3_break;
 // is now signaling repated keystrokes.
 //
 //////
-	bool iEditManager_onKeyDown_sourceCode(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tnAsciiChar, u16 tnVKey, bool tlIsCAS, bool tlIsAscii)
+	bool iSEM_onKeyDown_sourceCode(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tnAsciiChar, u16 tnVKey, bool tlIsCAS, bool tlIsAscii)
 	{
-		SEM*		em;
-		SObject*	subform;
+		SEM*			em;
+		SObject*		subform;
+		SBreakpoint*	bp;
 
 
 		// Make sure our environment is sane
@@ -931,6 +983,21 @@ int3_break;
 				// Regular key without special flags
 				switch (tnVKey)
 				{
+					case VK_F9:
+						// Breakpoint toggle
+						if (em && em->ecCursorLine)
+						{
+							// Toggle it
+							bp = iEditChain_toggleBreakpoint(em);
+
+							// Force the redraw
+							iObj_setDirtyRender(obj, true);
+
+							// Re-render the window
+							iWindow_render(win, false);
+						}
+						break;
+
 					case VK_F6:
 					case VK_F8:
 					case VK_F10:
@@ -941,7 +1008,7 @@ int3_break;
 							iEngine_executeStandaloneCommand(em->ecCursorLine);
 
 							// Move to next line and redraw
-							iEditManager_navigate(em, obj, 1, 0);
+							iSEM_navigate(em, obj, 1, 0);
 							iWindow_render(win, false);
 							return(true);
 						}
@@ -958,7 +1025,7 @@ int3_break;
 								iEngine_executeStandaloneCommand(em->ecCursorLine);
 
 								// Draw it like normal
-								iEditManager_returnKey(em, obj);
+								iSEM_returnKey(em, obj);
 								iWindow_render(win, false);
 								return(true);
 							}
@@ -991,7 +1058,7 @@ int3_break;
 		}
 
 		// Indicate additional events should be processed
-		return(iEditManager_onKeyDown(win, obj, tlCtrl, tlAlt, tlShift, tlCaps, tnAsciiChar, tnVKey, tlIsCAS, tlIsAscii));
+		return(iSEM_onKeyDown(win, obj, tlCtrl, tlAlt, tlShift, tlCaps, tnAsciiChar, tnVKey, tlIsCAS, tlIsAscii));
 	}
 
 
@@ -1002,7 +1069,7 @@ int3_break;
 // Called when a keypress is made, or when a prior keypress is now signaling repated keystrokes.
 //
 //////
-	bool iEditManager_onKeyDown(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tnAsciiChar, u16 tnVKey, bool tlIsCAS, bool tlIsAscii)
+	bool iSEM_onKeyDown(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tnAsciiChar, u16 tnVKey, bool tlIsCAS, bool tlIsAscii)
 	{
 		bool	llProcessed;
 		SEM*	em;
@@ -1022,42 +1089,42 @@ int3_break;
 				switch (tnVKey)
 				{
 					case VK_UP:
-						iEditManager_navigate(em, obj, -1, 0);
+						iSEM_navigate(em, obj, -1, 0);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_DOWN:
-						iEditManager_navigate(em, obj, 1, 0);
+						iSEM_navigate(em, obj, 1, 0);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_PRIOR:		// Page up
-						iEditManager_navigatePages(em, obj, -1);
+						iSEM_navigatePages(em, obj, -1);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_NEXT:		// Page down
-						iEditManager_navigatePages(em, obj, 1);
+						iSEM_navigatePages(em, obj, 1);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_ESCAPE:		// They hit escape, and are cancelling the input
-						iEditManager_clearLine(em, obj);
+						iSEM_clearLine(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_TAB:
-						iEditManager_tabIn(em, obj);
+						iSEM_tabIn(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
@@ -1065,28 +1132,28 @@ int3_break;
 
 					case VK_RETURN:
 						// Draw it like normal
-						iEditManager_returnKey(em, obj);
+						iSEM_returnKey(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_LEFT:
-						iEditManager_navigate(em, obj, 0, -1);
+						iSEM_navigate(em, obj, 0, -1);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_RIGHT:
-						iEditManager_navigate(em, obj, 0, 1);
+						iSEM_navigate(em, obj, 0, 1);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_HOME:
-						iEditManager_navigate(em, obj, 0, -(em->column));
+						iSEM_navigate(em, obj, 0, -(em->column));
 
 						// Indicate our key was processed
 						llProcessed = true;
@@ -1094,28 +1161,28 @@ int3_break;
 
 					case VK_END:
 						if (em->column != em->ecCursorLine->sourceCodePopulated)
-							iEditManager_navigate(em, obj, 0, em->ecCursorLine->sourceCodePopulated - em->column);
+							iSEM_navigate(em, obj, 0, em->ecCursorLine->sourceCodePopulated - em->column);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_INSERT:
-						iEditManager_toggleInsert(em, obj);
+						iSEM_toggleInsert(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_BACK:
-						iEditManager_deleteLeft(em, obj);
+						iSEM_deleteLeft(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_DELETE:
-						iEditManager_deleteRight(em, obj);
+						iSEM_deleteRight(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
@@ -1129,7 +1196,7 @@ int3_break;
 					case VK_ADD:
 						if (em->font)			em->font = iFont_bigger(em->font,		true);
 						else					em->font = iFont_bigger(obj->pa.font,	false);
-						iEditManager_verifyCursorIsVisible(em, obj);
+						iSEM_verifyCursorIsVisible(em, obj);
 						iObj_setDirtyRender(obj, true);
 						llProcessed = true;
 						break;
@@ -1137,34 +1204,34 @@ int3_break;
 					case VK_SUBTRACT:
 						if (em->font)			em->font = iFont_smaller(em->font,		true);
 						else					em->font = iFont_smaller(obj->pa.font,	false);
-						iEditManager_verifyCursorIsVisible(em, obj);
+						iSEM_verifyCursorIsVisible(em, obj);
 						iObj_setDirtyRender(obj, true);
 						llProcessed = true;
 						break;
 
 					case 'A':		// Select all
-						iEditManager_selectAll(em, obj);
+						iSEM_selectAll(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case 'X':		// Cut
-						iEditManager_cut(em, obj);
+						iSEM_cut(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case 'C':		// Copy
-						iEditManager_copy(em, obj);
+						iSEM_copy(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case 'V':		// Paste
-						iEditManager_paste(em, obj);
+						iSEM_paste(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
@@ -1177,42 +1244,42 @@ int3_break;
 						break;
 
 					case VK_LEFT:	// Word left
-						iEditManager_navigateWordLeft(em, obj);
+						iSEM_navigateWordLeft(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_RIGHT:	// Word right
-						iEditManager_navigateWordRight(em, obj);
+						iSEM_navigateWordRight(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_HOME:	// Home (go to top of content)
-						iEditManager_navigateTop(em, obj);
+						iSEM_navigateTop(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_END:	// Page down (go to end of content)
-						iEditManager_navigateEnd(em, obj);
+						iSEM_navigateEnd(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_BACK:
-						iEditManager_deleteWordLeft(em, obj);
+						iSEM_deleteWordLeft(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_DELETE:
-						iEditManager_deleteWordRight(em, obj);
+						iSEM_deleteWordRight(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
@@ -1224,49 +1291,49 @@ int3_break;
 				switch (tnVKey)
 				{
 					case VK_UP:		// Select line up
-						iEditManager_selectLineUp(em, obj);
+						iSEM_selectLineUp(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_DOWN:	// Select line down
-						iEditManager_selectLineDown(em, obj);
+						iSEM_selectLineDown(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_LEFT:	// Select left
-						iEditManager_selectLeft(em, obj);
+						iSEM_selectLeft(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_RIGHT:	// Select right
-						iEditManager_selectRight(em, obj);
+						iSEM_selectRight(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_END:	// Select to end
-						iEditManager_selectToEndOfLine(em, obj);
+						iSEM_selectToEndOfLine(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_HOME:	// Select to start
-						iEditManager_selectToBeginOfLine(em, obj);
+						iSEM_selectToBeginOfLine(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_TAB:	// Shift tab
-						iEditManager_tabOut(em, obj);
+						iSEM_tabOut(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
@@ -1278,14 +1345,14 @@ int3_break;
 				switch (tnVKey)
 				{
 					case 'K':		// Select column mode
-						iEditManager_selectColumnToggle(em, obj);
+						iSEM_selectColumnToggle(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case 'L':		// Select full line mode
-						iEditManager_selectLineToggle(em, obj);
+						iSEM_selectLineToggle(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
@@ -1297,14 +1364,14 @@ int3_break;
 				switch (tnVKey)
 				{
 					case VK_LEFT:	// Select word left
-						iEditManager_selectWordLeft(em, obj);
+						iSEM_selectWordLeft(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_RIGHT:	// Select word right
-						iEditManager_selectWordRight(em, obj);
+						iSEM_selectWordRight(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
@@ -1324,7 +1391,7 @@ int3_break;
 
 			// If we get here, it wasn't processed above.  Try to stick it in the buffer
 			if (!llProcessed && tlIsAscii)
-				iEditManager_keystroke(em, obj, (u8)tnAsciiChar);		// It's a regular input key
+				iSEM_keystroke(em, obj, (u8)tnAsciiChar);		// It's a regular input key
 		}
 
 		// Re-render the window if need be
@@ -1342,14 +1409,17 @@ int3_break;
 // Called to render the ECM in the indicated rectangle on the object's bitmap
 //
 //////
-	u32 iEditManager_render(SEM* em, SObject* obj, bool tlRenderCursorline)
+	u32 iSEM_render(SEM* em, SObject* obj, bool tlRenderCursorline)
 	{
 		u32			lnPixelsRendered;
 		s32			lnTop, lnSkip, lnDeltaX;
+		bool		llIsValid;
 		SFont*		font;
 		SEdit*		line;
 		SBitmap*	bmp;
 		SBitmap*	bmpCask;
+		SBitmap*	bmpBreakpoint;
+		SBitmap*	bmpBreakpointScaled;
 		SComp*		comp;
 		HGDIOBJ		hfontOld;
 		SBgra		foreColor, backColor, fillColor, backColorLast, foreColorLast, compColor;
@@ -1372,17 +1442,29 @@ int3_break;
 			//////////
 			// Grab font, coordinates, and colors
 			//////
-				font = iEditManager_getRectAndFont(em, obj, &rc);
-				iEditManager_getColors(em, obj, backColor, foreColor);
-				backColorLast.color = backColor.color;
-				foreColorLast.color = foreColor.color;
+				font = iSEM_getRectAndFont(em, obj, &rc);
+				iSEM_getColors(em, obj, backColor, foreColor);
+				backColorLast.color			= backColor.color;
+				foreColorLast.color			= foreColor.color;
 				iMisc_adjustColorBrightness(backColorLast, -5.0f);
 				iMisc_adjustColorBrightness(foreColorLast, 5.0f);
+				hfontOld = SelectObject(bmp->hdc, font->hfont);		// Save the original font, and set our current font
 
 
-			// Prepare
-			CopyRect(&lrc, &rc);
-			hfontOld = SelectObject(bmp->hdc, font->hfont);
+			//////////
+			// Prepare for rendering
+			//////
+				CopyRect(&lrc, &rc);
+				if (em->showLineNumbers)
+				{
+					// Adjust lrc over for room for line numbers
+					CopyRect(&em->rcLineNumberLastRender, &rc);
+					DrawText(bmp->hdc, "  9999 ", 7, &em->rcLineNumberLastRender, DT_SINGLELINE | DT_LEFT | DT_NOPREFIX | DT_CALCRECT);
+					SetRect(&em->rcLineNumberLastRender, rc.left, rc.top, rc.left + (em->rcLineNumberLastRender.right - em->rcLineNumberLastRender.left), rc.bottom);
+					lrc.left	= em->rcLineNumberLastRender.right;
+					rc.left		= em->rcLineNumberLastRender.right;
+				}
+
 
 			// Iterate for every visible line
 			while (line && lrc.top + font->tm.tmHeight < rc.bottom)
@@ -1429,19 +1511,20 @@ int3_break;
 				//////
 					CopyRect(&lrc2, &lrc);
 					// Will we fit?
-					if (em->leftColumn < line->sourceCodePopulated)
+					if (line->sourceCode->data && line->sourceCodePopulated > 0 && em->leftColumn < line->sourceCodePopulated)
 					{
 						// Draw the portion that will fit
 						DrawText(bmp->hdc, line->sourceCode->data + em->leftColumn, line->sourceCodePopulated - em->leftColumn, &lrc2, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
 						lrc2.right	= min(rc.right,  lrc2.right);
 						lrc2.bottom	= min(rc.bottom, lrc2.bottom);
+						// Set the clear border
+						SetRect(&lrc3, lrc2.right, lrc2.top, rc.right, lrc2.bottom);
 
 					} else {
 						// We're scrolled past this line, so the entire area must be filled in
-						SetRect(&lrc2, rc.left, lrc.top, rc.left, lrc.bottom);
+						// Set the clear border
+						CopyRect(&lrc3, &lrc);
 					}
-					// Set the clear border
-					SetRect(&lrc3, lrc2.right, lrc2.top, rc.right, lrc2.bottom);
 
 
 				//////////
@@ -1450,105 +1533,112 @@ int3_break;
 					iBmp_fillRect(bmp, &lrc3, fillColor, fillColor, fillColor, fillColor, false, NULL, false);
 
 
-				//////////
-				// Draw the text
-				//////
-					DrawText(bmp->hdc, line->sourceCode->data + em->leftColumn, line->sourceCodePopulated - em->leftColumn, &lrc2, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
-					if (em->isSourceCode && line->compilerInfo && line->compilerInfo->firstComp && em->leftColumn < line->sourceCodePopulated)
+					// Do we need to draw anything?
+					if (!line->sourceCode->data || line->sourceCodePopulated == 0 || line->sourceCodePopulated < em->leftColumn)
 					{
-						// Source code, syntax highlight
-						if (em->isSourceCode && line->compilerInfo && line->compilerInfo->firstComp)
+						// Nope, nothing to draw on this line
+
+					} else {
+					//////////
+					// Draw the text
+					//////
+						DrawText(bmp->hdc, line->sourceCode->data + em->leftColumn, line->sourceCodePopulated - em->leftColumn, &lrc2, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+						if (em->isSourceCode && line->compilerInfo && line->compilerInfo->firstComp && em->leftColumn < line->sourceCodePopulated)
 						{
-							// Redraw items that are to be colorized in their color
-							comp = line->compilerInfo->firstComp;
-							while (comp)
+							// Source code, syntax highlight
+							if (em->isSourceCode && line->compilerInfo && line->compilerInfo->firstComp)
 							{
-								// Determine where this component would go
-								if (comp->color)		compColor.color = comp->color->color;
-								else					compColor.color = foreColor.color;
-
-								// Find out where it starts
-								SetRect(&lrcCompCalcStart, 0, 0, 200000, lrc.bottom);
-								if (comp->start != 0)		DrawText(bmp->hdc, comp->line->sourceCode->data, comp->start, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
-								else						SetRect(&lrcCompCalcStart, 0, 0, 0, lrc.bottom);
-
-								// Find out how long it dwells
-								SetRect(&lrcCompCalcDwell, lrcCompCalcStart.right, 0, 200000, lrc.bottom);
-								DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcCompCalcDwell, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
-								SetRect(&lrcComp, lrcCompCalcDwell.left, lrc2.top, lrcCompCalcDwell.right, lrc2.bottom);
-
-								// Do we need to adjust it back for scrolling?
-								if (em->leftColumn != 0)
+								// Redraw items that are to be colorized in their color
+								comp = line->compilerInfo->firstComp;
+								while (comp)
 								{
-									// Adjust it for the em->leftColumn
-									lnDeltaX		= em->leftColumn * ((lrcComp.right - lrcComp.left) / comp->length);
-									lrcComp.left	-= lnDeltaX;
-									lrcComp.right	-= lnDeltaX;
-								}
+									// Determine where this component would go
+									if (comp->color)		compColor.color = comp->color->color;
+									else					compColor.color = foreColor.color;
 
-								// Is it a cask or text?
-								if (comp->iCode >= _ICODE_CASK_MINIMUM && comp->iCode <= _ICODE_CASK_MAXIMUM)
-								{
-									// It's a cask, build it
-									bmpCask = iBmp_cask_createAndPopulate(comp->iCode,
-																			lrcComp.right  - lrcComp.left,
-																			lrcComp.bottom - lrcComp.top,
-																			&lnSkip,
-																			comp->length,
-																			backColor,
-																			foreColor,
-																			fillColor);
+									// Find out where it starts
+									SetRect(&lrcCompCalcStart, 0, 0, 200000, lrc.bottom);
+									if (comp->start != 0)		DrawText(bmp->hdc, comp->line->sourceCode->data, comp->start, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
+									else						SetRect(&lrcCompCalcStart, 0, 0, 0, lrc.bottom);
 
-									// Publish it
-									if (line == em->ecCursorLine && em->column >= comp->start && em->column <= comp->start + comp->length)
+									// Find out how long it dwells
+									SetRect(&lrcCompCalcDwell, lrcCompCalcStart.right, 0, 200000, lrc.bottom);
+									DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcCompCalcDwell, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
+									SetRect(&lrcComp, rc.left + lrcCompCalcDwell.left, lrc2.top, rc.left + lrcCompCalcDwell.right, lrc2.bottom);
+
+									// Do we need to adjust it back for scrolling?
+									if (em->leftColumn != 0)
 									{
+										// Adjust it for the em->leftColumn
+										lnDeltaX		= em->leftColumn * ((lrcComp.right - lrcComp.left) / comp->length);
+										lrcComp.left	-= lnDeltaX;
+										lrcComp.right	-= lnDeltaX;
+									}
+
+									// Is it a cask or text?
+									if (comp->iCode >= _ICODE_CASK_MINIMUM && comp->iCode <= _ICODE_CASK_MAXIMUM)
+									{
+										// It's a cask, build it
+										bmpCask = iBmp_cask_createAndPopulate(comp->iCode,
+																				lrcComp.right  - lrcComp.left,
+																				lrcComp.bottom - lrcComp.top,
+																				&lnSkip,
+																				comp->length,
+																				backColor,
+																				foreColor,
+																				fillColor);
+
+										// Publish it
+										if (line == em->ecCursorLine && em->column >= comp->start && em->column <= comp->start + comp->length)
+										{
 // For now, just don't render it when we're on it
-// 										// The cursor is currently on this item, draw with a 15% transparency
-// 										iBmp_bitBltAlpha(bmp, &lrcComp, bmpCask, 0.15f);
+// 											// The cursor is currently on this item, draw with a 15% transparency
+//											iBmp_bitBltAlpha(bmp, &lrcComp, bmpCask, 0.15f);
+
+										} else {
+											// Draw completely opaque
+											iBmp_bitBlt(bmp, &lrcComp, bmpCask);
+
+// If we decide to display it with an alpha, this also may need to be brought outside of the if block
+											// Overlay the text
+											SetBkMode(bmp->hdc, TRANSPARENT);
+											SetTextColor(bmp->hdc, RGB(black.red, black.grn, black.blu));
+											--lrcComp.top;
+											DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start + lnSkip, comp->length - (2 * lnSkip), &lrcComp, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS);
+											++lrcComp.top;
+											SetBkMode(bmp->hdc, OPAQUE);
+										}
+
+										// Delete it
+										iBmp_delete(&bmpCask, true, true);
 
 									} else {
-										// Draw completely opaque
-										iBmp_bitBlt(bmp, &lrcComp, bmpCask);
+										// Draw the text
+										// Set the color
+										SetTextColor(bmp->hdc, RGB(compColor.red, compColor.grn, compColor.blu));
 
-// If it is decided to display with an alpha, this also may need to be brought outside of the if block
-										// Overlay the text
-										SetBkMode(bmp->hdc, TRANSPARENT);
-										SetTextColor(bmp->hdc, RGB(black.red, black.grn, black.blu));
-										--lrcComp.top;
-										DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start + lnSkip, comp->length - (2 * lnSkip), &lrcComp, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS);
-										++lrcComp.top;
-										SetBkMode(bmp->hdc, OPAQUE);
-									}
-
-									// Delete it
-									iBmp_delete(&bmpCask, true, true);
-
-								} else {
-									// Draw the text
-									// Set the color
-									SetTextColor(bmp->hdc, RGB(compColor.red, compColor.grn, compColor.blu));
-
-									// Draw this component
-									DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
-
-									// If we should bold, bold it
-									if (comp->useBoldFont)
-									{
-										// Set transparent mode
-										SetBkMode(bmp->hdc, TRANSPARENT);
-
-										// Adjust right one pixel, redraw
-//										++lrcComp.left;
-// 										++lrcComp.right;
+										// Draw this component
 										DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 
-										// Set back to opaque
-										SetBkMode(bmp->hdc, OPAQUE);
-									}
-								}
+										// If we should bold, bold it
+										if (comp->useBoldFont)
+										{
+											// Set transparent mode
+											SetBkMode(bmp->hdc, TRANSPARENT);
 
-								// Move to next component
-								comp = (SComp*)comp->ll.next;
+											// Adjust right one pixel, redraw
+//											++lrcComp.left;
+//	 										++lrcComp.right;
+											DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+
+											// Set back to opaque
+											SetBkMode(bmp->hdc, OPAQUE);
+										}
+									}
+
+									// Move to next component
+									comp = (SComp*)comp->ll.next;
+								}
 							}
 						}
 					}
@@ -1566,15 +1656,120 @@ int3_break;
 							DrawText(bmp->hdc, bigBuffer, em->column - em->leftColumn, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
 							SetRect(&lrcCompCalcDwell, lrcCompCalcStart.right, 0, lrc.right, lrc.bottom);
 							DrawText(bmp->hdc, bigBuffer, 1, &lrcCompCalcDwell, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
-							SetRect(&lrcComp, lrcCompCalcDwell.left, lrc2.top, lrcCompCalcDwell.right, lrc2.bottom);
+							SetRect(&lrcComp, rc.left + lrcCompCalcDwell.left, lrc2.top, rc.left + lrcCompCalcDwell.right, lrc2.bottom);
 
 						} else {
 							// It's all the way to the left
 							DrawText(bmp->hdc, bigBuffer, 1, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
-							SetRect(&lrcComp, ((em->isOverwrite) ? 0 : 1), lrc.top, lrcCompCalcStart.right, lrc.bottom);
+							SetRect(&lrcComp, rc.left + ((em->isOverwrite) ? 0 : 1), lrc.top, rc.left + lrcCompCalcStart.right, lrc.bottom);
 						}
 
 						iBmp_invert(bmp, lrcComp.left - ((em->isOverwrite) ? 0 : 1), ((em->isOverwrite) ? lrc.bottom - 2 : lrc.top), ((em->isOverwrite) ? lrcComp.right : lrcComp.left + ((em->isOverwrite) ? 0 : 1)), lrc.bottom);
+					}
+
+
+				//////////
+				// Overlay the line number
+				//////
+					if (em->showLineNumbers)
+					{
+						// Left-side overlay
+						SetRect(&lrc3, em->rcLineNumberLastRender.left, lrc2.top, em->rcLineNumberLastRender.right, lrc2.bottom);
+						iBmp_fillRect(bmp, &lrc3, lineNumberFillColor, lineNumberFillColor, lineNumberFillColor, lineNumberFillColor, false, NULL, false);
+						iBmp_drawVerticalLine(bmp, lrc3.top, lrc3.bottom, lrc3.right - 1, lineNumberBackColor);
+
+						// Get our line number
+						sprintf(bigBuffer, "%u\0", line->line);
+
+						// Back off one character, and render the line number right-justified
+						lrc3.right -= (em->rcLineNumberLastRender.right - em->rcLineNumberLastRender.left) / 7;
+						SetBkMode(bmp->hdc, TRANSPARENT);
+						SetTextColor(bmp->hdc, RGB(lineNumberForeColor.red, lineNumberForeColor.grn, lineNumberForeColor.blu));
+						DrawText(bmp->hdc, bigBuffer, strlen(bigBuffer), &lrc3, DT_SINGLELINE | DT_RIGHT | DT_NOPREFIX);
+
+
+						//////////
+						// If we're on the cursor line, extend its color influence to the left line number area
+						//////
+							if (line == em->ecCursorLine && !line->breakpoint && tlRenderCursorline)
+							{
+								SetRect(&lrc3, em->rcLineNumberLastRender.left, lrc2.top, em->rcLineNumberLastRender.right, lrc2.bottom);
+								iBmp_colorize(bmp, &lrc3, currentStatementBackColor, false, 0.0f);
+							}
+
+
+						//////////
+						// Show the breakpoint
+						//////
+							if (line->breakpoint && line->breakpoint->isUsed)
+							{
+								// Determine the breakpoint parameters
+								llIsValid = true;
+								switch (line->breakpoint->type)
+								{
+									case _BREAKPOINT_ALWAYS:
+										if (line->breakpoint->countdownResetValue == 0)			bmpBreakpoint = bmpBreakpointAlways;
+										else													bmpBreakpoint = bmpBreakpointAlwaysCountdown;
+										break;
+
+									case _BREAKPOINT_CONDITIONAL_TRUE:
+										bmpBreakpoint = bmpConditionalTrue;
+										break;
+
+									case _BREAKPOINT_CONDITIONAL_FALSE:
+										bmpBreakpoint = bmpConditionalFalse;
+										break;
+
+									case _BREAKPOINT_CONDITIONAL_TRUE_COUNTDOWN:
+										bmpBreakpoint = bmpConditionalTrueCountdown;
+										break;
+
+									case _BREAKPOINT_CONDITIONAL_FALSE_COUNTDOWN:
+										bmpBreakpoint = bmpConditionalFalseCountdown;
+										break;
+
+									default:
+										// Unknown type, ignore it
+										llIsValid = false;
+										break;
+								}
+
+								// Render the breakpoint if it's valid
+								if (llIsValid)
+								{
+									//////////
+									// Draw the icon
+									//////
+										bmpBreakpointScaled = iBmp_allocate();
+										iBmp_createBySize(bmpBreakpointScaled, (lrc3.bottom - lrc3.top), (lrc3.bottom - lrc3.top), bmpBreakpoint->bi.biBitCount);
+										iBmp_scale(bmpBreakpointScaled, bmpBreakpoint);
+										iBmp_bitBlt(bmp, &lrc3, bmpBreakpointScaled);
+										iBmp_delete(&bmpBreakpointScaled, true, true);
+
+
+									//////////
+									// Give the source code line some breakpoing color love :-)
+									//////
+										if (line == em->ecCursorLine)
+										{
+											// Just do the em->rcLineNumberLastRender portion
+											SetRect(&lrc3, em->rcLineNumberLastRender.left, lrc2.top, em->rcLineNumberLastRender.right, lrc2.bottom);
+
+										} else {
+											// Do the entire line
+											SetRect(&lrc3, 0, lrc.top, rc.right, lrc.bottom);
+										}
+
+										// Colorize it
+										iBmp_alphaColorizeMask(bmp, &lrc3, breakpointBackColor, 0.25f);
+								}
+						}
+
+
+					//////////
+					// Show any breakcrumbs
+					//////
+						
 					}
 
 
@@ -1588,6 +1783,11 @@ int3_break;
 			// Fill in the remainder of the display
 			SetRect(&lrc, rc.left, rc.top + lnTop, rc.right, rc.bottom);
 			iBmp_fillRect(bmp, &lrc, backColor, backColor, backColor, backColor, false, NULL, false);
+
+			// Line number portion
+			SetRect(&lrc3, em->rcLineNumberLastRender.left, rc.top + lnTop, em->rcLineNumberLastRender.right, rc.bottom);
+			iBmp_fillRect(bmp, &lrc3, lineNumberFillColor, lineNumberFillColor, lineNumberFillColor, lineNumberFillColor, false, NULL, false);
+			iBmp_drawVerticalLine(bmp, lrc3.top, lrc3.bottom, lrc3.right - 1, lineNumberBackColor);
 
 // s8 buffer[256];
 // sprintf(buffer, "c:\\temp\\ems\\%u.bmp\0", (u32)em);
@@ -1610,15 +1810,14 @@ int3_break;
 // Called to verify the cursor is visible by adjusting em->leftColumn
 //
 //////
-	bool iEditManager_verifyCursorIsVisible(SEM* em, SObject* obj)
+	bool iSEM_verifyCursorIsVisible(SEM* em, SObject* obj)
 	{
 		s32		lnI, lnUp, lnDn, lnNewLeftColumn, lnCols, lnRows, lnWidth, lnHeight, lnExtra;
 		bool	llChanged;
 		SEdit*	lineUp;
 		SEdit*	lineDn;
 		SFont*	font;
-		RECT	lrc, lrc2;
-		s8		buffer[2048];
+		RECT	lrc;
 
 
 		llChanged = false;
@@ -1627,7 +1826,7 @@ int3_break;
 			//////////
 			// Indicate initially that no changes were made that require a re-render
 			//////
-				font = iEditManager_getRectAndFont(em, obj, &lrc);
+				font = iSEM_getRectAndFont(em, obj, &lrc);
 
 
 			//////////
@@ -1761,7 +1960,7 @@ int3_break;
 // Called to process the ASCII character into the input buffer.
 //
 //////
-	bool iEditManager_keystroke(SEM* em, SObject* obj, u8 asciiChar)
+	bool iSEM_keystroke(SEM* em, SObject* obj, u8 asciiChar)
 	{
 		bool	llChanged;
 //		SFont*	font;
@@ -1783,14 +1982,14 @@ int3_break;
 			// Are we on a line?
 			//////
 				if (!em->ecFirst)
-					iEditManager_appendLine(em, NULL, 0);		// Append a blank line to receive this keystroke
+					iSEM_appendLine(em, NULL, 0);		// Append a blank line to receive this keystroke
 
 
 			//////////
 			// Is a line currently selected?
 			//////
 				if (!em->ecCursorLine)
-					iEditManager_navigateTop(em, obj);
+					iSEM_navigateTop(em, obj);
 
 
 			//////////
@@ -1833,7 +2032,7 @@ int3_break;
 			iEngine_parseSourceCodeLine(em->ecCursorLine);
 
 			// Verify our cursor is visible
-			iEditManager_verifyCursorIsVisible(em, obj);
+			iSEM_verifyCursorIsVisible(em, obj);
 		}
 
 		// Indicate our status
@@ -1849,7 +2048,7 @@ int3_break;
 // Called to scroll rows (deltaY) or columns (deltaX) or both.
 //
 //////
-	bool iEditManager_scroll(SEM* em, SObject* obj, s32 deltaY, s32 deltaX)
+	bool iSEM_scroll(SEM* em, SObject* obj, s32 deltaY, s32 deltaX)
 	{
 		s32			lnI;
 //		SFont*		font;
@@ -1914,7 +2113,7 @@ int3_break;
 				//////////
 				// Verify we're visible
 				//////
-					iEditManager_verifyCursorIsVisible(em, obj);
+					iSEM_verifyCursorIsVisible(em, obj);
 
 
 				// Indicate success
@@ -1934,7 +2133,7 @@ int3_break;
 // Called to navigate rows (deltaY) or columns (deltaX) or both.
 //
 //////
-	bool iEditManager_navigate(SEM* em, SObject* obj, s32 deltaY, s32 deltaX)
+	bool iSEM_navigate(SEM* em, SObject* obj, s32 deltaY, s32 deltaX)
 	{
 		s32			lnI, lnTop, lnBottom;
 		bool		llResetTopLine;
@@ -1947,7 +2146,7 @@ int3_break;
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+			font = iSEM_getRectAndFont(em, obj, &lrc);
 
 
 		//////////
@@ -2043,7 +2242,7 @@ int3_break;
 				//////////
 				// Verify we're visible
 				//////
-					iEditManager_verifyCursorIsVisible(em, obj);
+					iSEM_verifyCursorIsVisible(em, obj);
 
 
 				// Indicate success
@@ -2063,7 +2262,7 @@ int3_break;
 // Called to navigate pages (deltaY) forward or backward)
 //
 //////
-	bool iEditManager_navigatePages(SEM* em, SObject* obj, s32 deltaY)
+	bool iSEM_navigatePages(SEM* em, SObject* obj, s32 deltaY)
 	{
 		s32		lnI;
 		bool	llMoveForward;
@@ -2075,7 +2274,7 @@ int3_break;
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+			font = iSEM_getRectAndFont(em, obj, &lrc);
 
 
 		//////////
@@ -2148,7 +2347,7 @@ int3_break;
 				//////////
 				// Verify we're visible
 				//////
-					iEditManager_verifyCursorIsVisible(em, obj);
+					iSEM_verifyCursorIsVisible(em, obj);
 
 
 				// Indicate success
@@ -2168,7 +2367,7 @@ int3_break;
 // Called to clear the entire line.
 //
 //////
-	bool iEditManager_clearLine(SEM* em, SObject* obj)
+	bool iSEM_clearLine(SEM* em, SObject* obj)
 	{
 //		RECT	lrc;
 //		SFont*	font;
@@ -2192,7 +2391,7 @@ int3_break;
 // Called to clear from where we are to the end of the line
 //
 //////
-	bool iEditManager_clearToEndOfLine(SEM* em, SObject* obj)
+	bool iSEM_clearToEndOfLine(SEM* em, SObject* obj)
 	{
 //		RECT	lrc;
 //		SFont*	font;
@@ -2216,7 +2415,7 @@ int3_break;
 // Called to clear from one character left of where we are to the beginning of the line
 //
 //////
-	bool iEditManager_clearToBeginningOfLine(SEM* em, SObject* obj)
+	bool iSEM_clearToBeginningOfLine(SEM* em, SObject* obj)
 	{
 //		RECT	lrc;
 //		SFont*	font;
@@ -2240,7 +2439,7 @@ int3_break;
 // Called to toggle insert mode
 //
 //////
-	bool iEditManager_toggleInsert(SEM* em, SObject* obj)
+	bool iSEM_toggleInsert(SEM* em, SObject* obj)
 	{
 		if (em)
 		{
@@ -2266,7 +2465,7 @@ int3_break;
 // Called when the users press TAB
 //
 //////
-	bool iEditManager_tabIn(SEM* em, SObject* obj)
+	bool iSEM_tabIn(SEM* em, SObject* obj)
 	{
 //		RECT	lrc;
 //		SFont*	font;
@@ -2290,7 +2489,7 @@ int3_break;
 // Called when the users presses SHIFT+TAB
 //
 //////
-	bool iEditManager_tabOut(SEM* em, SObject* obj)
+	bool iSEM_tabOut(SEM* em, SObject* obj)
 	{
 //		RECT	lrc;
 //		SFont*	font;
@@ -2314,7 +2513,7 @@ int3_break;
 // 
 //
 //////
-	bool iEditManager_returnKey(SEM* em, SObject* obj)
+	bool iSEM_returnKey(SEM* em, SObject* obj)
 	{
 //		RECT	lrc;
 //		SFont*	font;
@@ -2333,16 +2532,16 @@ int3_break;
 			if (!em->isOverwrite)
 			{
 				// Insert mode
-				iEditManager_insertLine(em, NULL, 0, em->ecCursorLine, true);	// Append a new line after the cursor line
+				iSEM_insertLine(em, NULL, 0, em->ecCursorLine, true);	// Append a new line after the cursor line
 
 			} else {
 				// Overwrite mode
 				if (!em->ecCursorLine->ll.next)
-					iEditManager_appendLine(em, NULL, 0);		// Append a new line at the end
+					iSEM_appendLine(em, NULL, 0);		// Append a new line at the end
 			}
 
 			// Move to the new line, and to the start of that line
-			iEditManager_navigate(em, obj, 1, -em->column);
+			iSEM_navigate(em, obj, 1, -em->column);
 
 			// Indicate success
 			return(true);
@@ -2361,7 +2560,7 @@ int3_break;
 // Called to select everything
 //
 //////
-	bool iEditManager_selectAll(SEM* em, SObject* obj)
+	bool iSEM_selectAll(SEM* em, SObject* obj)
 	{
 //		RECT	lrc;
 //		SFont*	font;
@@ -2385,7 +2584,7 @@ int3_break;
 // Called to cut to the clipboard
 //
 //////
-	bool iEditManager_cut(SEM* em, SObject* obj)
+	bool iSEM_cut(SEM* em, SObject* obj)
 	{
 //		RECT	lrc;
 //		SFont*	font;
@@ -2409,7 +2608,7 @@ int3_break;
 // Called to copy to the clipboard
 //
 //////
-	bool iEditManager_copy(SEM* em, SObject* obj)
+	bool iSEM_copy(SEM* em, SObject* obj)
 	{
 //		RECT	lrc;
 //		SFont*	font;
@@ -2433,7 +2632,7 @@ int3_break;
 // Called to paste from the clipboard
 //
 //////
-	bool iEditManager_paste(SEM* em, SObject* obj)
+	bool iSEM_paste(SEM* em, SObject* obj)
 	{
 //		RECT	lrc;
 //		SFont*	font;
@@ -2457,7 +2656,7 @@ int3_break;
 // Called to navigate one word left
 //
 //////
-	bool iEditManager_navigateWordLeft(SEM* em, SObject* obj)
+	bool iSEM_navigateWordLeft(SEM* em, SObject* obj)
 	{
 //		SFont*		font;
 		SEdit*		line;
@@ -2490,21 +2689,21 @@ int3_break;
 						if (em->ecFirst != line)
 						{
 							// Go up one line
-							iEditManager_navigate(em, obj, -1, 0);
+							iSEM_navigate(em, obj, -1, 0);
 
 							// Go to the end of this line
-							iEditManager_navigate(em, obj, 0, em->ecCursorLine->sourceCodePopulated);
+							iSEM_navigate(em, obj, 0, em->ecCursorLine->sourceCodePopulated);
 
 							// Continue looking word left on this line
-							return(iEditManager_navigateWordLeft(em, obj));
+							return(iSEM_navigateWordLeft(em, obj));
 						}
 
 					} else if (line->sourceCodePopulated < em->column) {
 						// We're beyond end of line, move to the end of line
-						iEditManager_navigate(em, obj, 0, em->ecCursorLine->sourceCodePopulated - em->column);
+						iSEM_navigate(em, obj, 0, em->ecCursorLine->sourceCodePopulated - em->column);
 
 						// Then continue looking word left on this line
-						return(iEditManager_navigateWordLeft(em, obj));
+						return(iSEM_navigateWordLeft(em, obj));
 
 					} else {
 						//////////
@@ -2540,7 +2739,7 @@ int3_break;
 				//////////
 				// Verify we're visible
 				//////
-					iEditManager_verifyCursorIsVisible(em, obj);
+					iSEM_verifyCursorIsVisible(em, obj);
 
 
 				// Indicate success
@@ -2560,7 +2759,7 @@ int3_break;
 // Called to navigate one word right
 //
 //////
-	bool iEditManager_navigateWordRight(SEM* em, SObject* obj)
+	bool iSEM_navigateWordRight(SEM* em, SObject* obj)
 	{
 //		SFont*		font;
 		SEdit*		line;
@@ -2593,14 +2792,14 @@ int3_break;
 						if (em->ecLast != line)
 						{
 							// Go down one line
-							iEditManager_navigate(em, obj, 1, 0);
+							iSEM_navigate(em, obj, 1, 0);
 
 							// Go to the start of the line
 							if (em->column > 0)
-								iEditManager_navigate(em, obj, 0, -em->column);
+								iSEM_navigate(em, obj, 0, -em->column);
 
 							// Continue looking word left on this line
-							return(iEditManager_navigateWordRight(em, obj));
+							return(iSEM_navigateWordRight(em, obj));
 						}
 
 					} else {
@@ -2638,14 +2837,14 @@ int3_break;
 								if (em->ecLast != line)
 								{
 									// Go down one line
-									iEditManager_navigate(em, obj, 1, 0);
+									iSEM_navigate(em, obj, 1, 0);
 
 									// Go to the start of the line
 									if (em->column > 0)
-										iEditManager_navigate(em, obj, 0, -em->column);
+										iSEM_navigate(em, obj, 0, -em->column);
 
 									// Continue looking word left on this line
-									return(iEditManager_navigateWordLeft(em, obj));
+									return(iSEM_navigateWordLeft(em, obj));
 								}
 							}
 					}
@@ -2654,7 +2853,7 @@ int3_break;
 				//////////
 				// Verify we're visible
 				//////
-					iEditManager_verifyCursorIsVisible(em, obj);
+					iSEM_verifyCursorIsVisible(em, obj);
 
 
 				// Indicate success
@@ -2674,7 +2873,7 @@ int3_break;
 // Called to navigate to the top of the chain
 //
 //////
-	bool iEditManager_navigateTop(SEM* em, SObject* obj)
+	bool iSEM_navigateTop(SEM* em, SObject* obj)
 	{
 		// Make sure the environment is sane
 		if (em && em->ecFirst)
@@ -2695,7 +2894,7 @@ int3_break;
 			//////////
 			// Verify we're visible
 			//////
-				iEditManager_verifyCursorIsVisible(em, obj);
+				iSEM_verifyCursorIsVisible(em, obj);
 
 
 			// Indicate we did something
@@ -2715,7 +2914,7 @@ int3_break;
 // Called to navigate to the end of the chain
 //
 //////
-	bool iEditManager_navigateEnd(SEM* em, SObject* obj)
+	bool iSEM_navigateEnd(SEM* em, SObject* obj)
 	{
 		s32			lnTop, lnBottom;
 		SFont*		font;
@@ -2726,7 +2925,7 @@ int3_break;
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iEditManager_getRectAndFont(em, obj, &lrc);
+			font = iSEM_getRectAndFont(em, obj, &lrc);
 
 
 		//////////
@@ -2779,7 +2978,7 @@ int3_break;
 				//////////
 				// Verify we're visible
 				//////
-					iEditManager_verifyCursorIsVisible(em, obj);
+					iSEM_verifyCursorIsVisible(em, obj);
 
 
 				// Indicate success
@@ -2801,7 +3000,7 @@ int3_break;
 //        which begins at an arbitrary column, and ends at an arbitrary column.
 //
 //////
-	bool iEditManager_selectLineUp(SEM* em, SObject* obj)
+	bool iSEM_selectLineUp(SEM* em, SObject* obj)
 	{
 //		RECT	lrc;
 //		SFont*	font;
@@ -2827,7 +3026,7 @@ int3_break;
 //        which begins at an arbitrary column, and ends at an arbitrary column.
 //
 //////
-	bool iEditManager_selectLineDown(SEM* em, SObject* obj)
+	bool iSEM_selectLineDown(SEM* em, SObject* obj)
 	{
 //		RECT	lrc;
 //		SFont*	font;
@@ -2853,7 +3052,7 @@ int3_break;
 //        the end of the line, at which time we will navigate to the next line.
 //
 //////
-	bool iEditManager_selectLeft(SEM* em, SObject* obj)
+	bool iSEM_selectLeft(SEM* em, SObject* obj)
 	{
 //		RECT	lrc;
 //		SFont*	font;
@@ -2877,7 +3076,7 @@ int3_break;
 // Called to select right one character.
 //
 //////
-	bool iEditManager_selectRight(SEM* em, SObject* obj)
+	bool iSEM_selectRight(SEM* em, SObject* obj)
 	{
 //		RECT	lrc;
 //		SFont*	font;
@@ -2901,7 +3100,7 @@ int3_break;
 // Called to select from where we are to the end of line
 //
 //////
-	bool iEditManager_selectToEndOfLine(SEM* em, SObject* obj)
+	bool iSEM_selectToEndOfLine(SEM* em, SObject* obj)
 	{
 //		RECT	lrc;
 //		SFont*	font;
@@ -2925,7 +3124,7 @@ int3_break;
 // Called to left one character of where we are to the beginning of line
 //
 //////
-	bool iEditManager_selectToBeginOfLine(SEM* em, SObject* obj)
+	bool iSEM_selectToBeginOfLine(SEM* em, SObject* obj)
 	{
 //		RECT	lrc;
 //		SFont*	font;
@@ -2949,7 +3148,7 @@ int3_break;
 // Called to toggle selection by column mode
 //
 //////
-	bool iEditManager_selectColumnToggle(SEM* em, SObject* obj)
+	bool iSEM_selectColumnToggle(SEM* em, SObject* obj)
 	{
 //		RECT	lrc;
 //		SFont*	font;
@@ -2973,7 +3172,7 @@ int3_break;
 // Called to toggle selection by line mode
 //
 //////
-	bool iEditManager_selectLineToggle(SEM* em, SObject* obj)
+	bool iSEM_selectLineToggle(SEM* em, SObject* obj)
 	{
 //		RECT	lrc;
 //		SFont*	font;
@@ -3000,7 +3199,7 @@ int3_break;
 //        and all of the previous line will be selected.
 //
 //////
-	bool iEditManager_selectWordLeft(SEM* em, SObject* obj)
+	bool iSEM_selectWordLeft(SEM* em, SObject* obj)
 	{
 //		RECT	lrc;
 //		SFont*	font;
@@ -3027,7 +3226,7 @@ int3_break;
 //        of the next line will be selected.
 //
 //////
-	bool iEditManager_selectWordRight(SEM* em, SObject* obj)
+	bool iSEM_selectWordRight(SEM* em, SObject* obj)
 	{
 //		RECT	lrc;
 //		SFont*	font;
@@ -3051,7 +3250,7 @@ int3_break;
 // Called to delete one character left (backspace)
 //
 //////
-	bool iEditManager_deleteLeft(SEM* em, SObject* obj)
+	bool iSEM_deleteLeft(SEM* em, SObject* obj)
 	{
 		SEdit*	line;
 		SEdit*	lineLast;
@@ -3080,16 +3279,16 @@ int3_break;
 					if (em->ecFirst != em->ecLast)
 					{
 						// Delete the current line
-						iEditManager_deleteLine(em);
+						iSEM_deleteLine(em);
 
 						if (lineLast != line)
 						{
 							// Navigate up one line
-							iEditManager_navigate(em, obj, -1, 0);
+							iSEM_navigate(em, obj, -1, 0);
 						}
 
 						// Navigate to the end of the current line
-						iEditManager_navigate(em, obj, 0, em->ecCursorLine->sourceCodePopulated - em->column);
+						iSEM_navigate(em, obj, 0, em->ecCursorLine->sourceCodePopulated - em->column);
 					}
 
 				} else {
@@ -3099,16 +3298,16 @@ int3_break;
 						if (em->ecFirst != em->ecLast)
 						{
 							// Delete the current line
-							iEditManager_deleteLine(em);
+							iSEM_deleteLine(em);
 
 							if (lineLast != line)
 							{
 								// Navigate up one line
-								iEditManager_navigate(em, obj, -1, 0);
+								iSEM_navigate(em, obj, -1, 0);
 							}
 
 							// Navigate to the end of the current line
-							iEditManager_navigate(em, obj, 0, em->ecCursorLine->sourceCodePopulated - em->column);
+							iSEM_navigate(em, obj, 0, em->ecCursorLine->sourceCodePopulated - em->column);
 						}
 
 					} else if (em->column > 0 && em->column <= line->sourceCodePopulated) {
@@ -3138,7 +3337,7 @@ int3_break;
 				//////////
 				// Verify we're visible
 				//////
-					iEditManager_verifyCursorIsVisible(em, obj);
+					iSEM_verifyCursorIsVisible(em, obj);
 
 
 				// Indicate success
@@ -3158,7 +3357,7 @@ int3_break;
 // Called to select one character right (delete key)
 //
 //////
-	bool iEditManager_deleteRight(SEM* em, SObject* obj)
+	bool iSEM_deleteRight(SEM* em, SObject* obj)
 	{
 //		SFont*	font;
 //		RECT	lrc;
@@ -3179,7 +3378,7 @@ int3_break;
 				{
 					// There's no data on this line, if we're in insert mode delete the line
 					if (!em->isOverwrite)
-						iEditManager_deleteLine(em);
+						iSEM_deleteLine(em);
 
 				} else {
 					// Delete everything to the right
@@ -3193,7 +3392,7 @@ int3_break;
 				//////////
 				// Verify we're visible
 				//////
-					iEditManager_verifyCursorIsVisible(em, obj);
+					iSEM_verifyCursorIsVisible(em, obj);
 
 
 				// Indicate success
@@ -3213,7 +3412,7 @@ int3_break;
 // Called to delete one word left (ctrl+backspace)
 //
 //////
-	bool iEditManager_deleteWordLeft(SEM* em, SObject* obj)
+	bool iSEM_deleteWordLeft(SEM* em, SObject* obj)
 	{
 //		RECT	lrc;
 //		SFont*	font;
@@ -3237,7 +3436,7 @@ int3_break;
 // Called to delete one word right (ctrl+delete)
 //
 //////
-	bool iEditManager_deleteWordRight(SEM* em, SObject* obj)
+	bool iSEM_deleteWordRight(SEM* em, SObject* obj)
 	{
 //		RECT	lrc;
 //		SFont*	font;
@@ -3261,7 +3460,7 @@ int3_break;
 // Called to navigate to the indicated position on the screen
 //
 //////
-	bool iEditManager_navigateTo_pixelXY(SEM* em, SObject* obj, s32 x, s32 y)
+	bool iSEM_navigateTo_pixelXY(SEM* em, SObject* obj, s32 x, s32 y)
 	{
 		s32			lnI, lnRow, lnExtra;
 		bool		llResult;
@@ -3277,7 +3476,14 @@ int3_break;
 			//////////
 			// Grab the rectangle we're working in
 			//////
-				font = iEditManager_getRectAndFont(em, obj, &lrc);
+				font = iSEM_getRectAndFont(em, obj, &lrc);
+
+
+			//////////
+			// Back off if we're showing line numbers
+			//////
+				if (em->showLineNumbers)
+					x -= em->rcLineNumberLastRender.right;
 
 
 			//////////
@@ -3308,7 +3514,7 @@ int3_break;
 			//////////
 			// Verify we're visible
 			//////
-				iEditManager_verifyCursorIsVisible(em, obj);
+				iSEM_verifyCursorIsVisible(em, obj);
 
 
 			// Indicate success

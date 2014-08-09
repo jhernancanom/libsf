@@ -1581,7 +1581,7 @@
 		// Any methods defined
 		//////
 			if (tlResetMethods)
-				iEditManager_deleteChain(&obj->firstMethod, true);
+				iSEM_deleteChain(&obj->firstMethod, true);
 
 
 		//////////
@@ -3359,8 +3359,8 @@
 			editbox->p.disabledBackColor.color		= disabledBackColor.color;
 			editbox->p.disabledForeColor.color		= disabledForeColor.color;
 
-			iEditManager_deleteChain(&editbox->pa.em, true);
-			editbox->pa.em							= iEditManager_allocate(false);
+			iSEM_deleteChain(&editbox->pa.em, true);
+			editbox->pa.em							= iSEM_allocate(false);
 
 			*(u32*)&editbox->ev.general.onInteractiveChange		= *(u32*)&iDefaultCallback_onInteractiveChange;
 			*(u32*)&editbox->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
@@ -3760,7 +3760,7 @@
 		// Free subobject components
 		//////
 			iFont_delete(&editbox->pa.font,				true);
-			iEditManager_delete(&editbox->pa.em,	true);
+			iSEM_delete(&editbox->pa.em,	true);
 
 
 		//////////
@@ -4402,13 +4402,13 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 		if (obj && obj->isRendered)
 		{
 			// Grab the rectangle
-			iEditManager_getRectAndFont(obj->pa.em, obj, &lrc);
+			iSEM_getRectAndFont(obj->pa.em, obj, &lrc);
 
 			// Are we rendering?
 			if (obj->isDirtyRender)
 			{
 				// Re-render
-				lnPixelsRendered = iEditManager_render(obj->pa.em, obj, obj->p.hasFocus);
+				lnPixelsRendered = iSEM_render(obj->pa.em, obj, obj->p.hasFocus);
 
 
 				//////////

@@ -46,3 +46,4 @@
 	bool					iEditChain_characterInsert				(SEM* em, u8 asciiChar);
 	bool					iEditChain_characterOverwrite			(SEM* em, u8 asciiChar);
 	bool					iEditChain_characterDelete				(SEM* em);
+	SBreakpoint*			iEditChain_toggleBreakpoint				(SEM* em);

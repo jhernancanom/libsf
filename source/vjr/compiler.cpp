@@ -3802,6 +3802,46 @@ int3_break;
 
 //////////
 //
+// Called to politely delete everything contained within the function
+//
+//////
+	void iFunction_politelyDeleteChain(SFunction** rootFunc)
+	{
+		SFunction* func;
+
+
+		// Make sure our environment is sane
+		if (rootFunc && *rootFunc)
+		{
+			// Delete the items
+			func = *rootFunc;
+
+			// Clear this item
+			*rootFunc = NULL;
+
+			// Orphanize this item
+			iLl_orphanizeNode((SLL*)func);
+
+			// Delete the name
+			iDatum_delete(&func->name, false);
+
+			// Delete this function's variables
+			iVariable_politelyDeleteChain(&func->params, true);
+			iVariable_politelyDeleteChain(&func->locals, true);
+			iVariable_politelyDeleteChain(&func->returns, true);
+			iVariable_politelyDeleteChain(&func->scoped, true);
+			iVariable_politelyDeleteChain(&func->params, true);
+
+			// Delete the adhocs for this function
+			iFunction_politelyDeleteChain(&func->firstAdhoc);
+		}
+	}
+
+
+
+
+//////////
+//
 // Called to terminate the indirect references to the point of
 //
 //////

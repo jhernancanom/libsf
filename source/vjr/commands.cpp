@@ -52,7 +52,7 @@
 	void iError_report(s8* errorText)
 	{
 		// Append the error to the EM
-		iEditManager_appendLine(screenData, errorText, -1);
+		iSEM_appendLine(screenData, errorText, -1);
 		screen_editbox->isDirtyRender = true;
 	}
 
@@ -66,7 +66,7 @@
 		memcpy(buffer + strlen(buffer), comp->line->sourceCode->data + comp->start, comp->length);
 
 		// Append the error to the EM
-		iEditManager_appendLine(screenData, buffer, -1);
+		iSEM_appendLine(screenData, buffer, -1);
 		screen_editbox->isDirtyRender = true;
 	}
 

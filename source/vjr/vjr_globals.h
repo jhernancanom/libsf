@@ -41,8 +41,19 @@
 //////
 	HINSTANCE			ghInstance							= NULL;
 //	ITaskbarList*		giTaskbar							= NULL;
+
+//////////
+// TOOD: We need to add semaphores to these because the ultimate goal is to allow multiple
+//       threads running simultaneously, but each of them running completely independent programs.
+// BEGIN
+//////
 	SBuilder*			gWindows							= NULL;
 	SBuilder*			gFonts								= NULL;
+	SBuilder*			gBreakpoints						= NULL;
+//////
+// END
+//////////
+
 	HWND				ghwndMsg							= NULL;
 	CRITICAL_SECTION	cs_uniqueIdAccess;
 	CRITICAL_SECTION	cs_logData;
@@ -176,6 +187,15 @@
 	SBitmap*			bmpStoplightGreen					= NULL;
 	SBitmap*			bmpStoplightBlue					= NULL;
 
+	// For breakpoints
+	SBitmap*			bmpBreakpointAlways					= NULL;
+	SBitmap*			bmpBreakpointAlwaysCountdown		= NULL;
+	SBitmap*			bmpConditionalTrue					= NULL;
+	SBitmap*			bmpConditionalFalse					= NULL;
+	SBitmap*			bmpConditionalTrueCountdown			= NULL;
+	SBitmap*			bmpConditionalFalseCountdown		= NULL;
+
+
 	// Default screens used by VJr
 	SObject*			gobj_screen							= NULL;
 	SObject*			screen_editbox						= NULL;
@@ -248,6 +268,9 @@
 		const SBgra		pastelBlue							= { rgba(210, 210, 255, 255) };
 		const SBgra		black								= { rgba(0, 0, 0, 255) };
 		const SBgra		gray								= { rgba(192, 192, 192, 255) };
+		const SBgra		lineNumberFillColor					= { rgba(225, 245, 240, 255) };
+		const SBgra		lineNumberBackColor					= { rgba(215, 235, 230, 255) };
+		const SBgra		lineNumberForeColor					= { rgba(191, 208, 191, 255) };
 		const SBgra		breadcrumbBackColor					= { rgba(180, 220, 240, 255) };			// Cyanish
 		const SBgra		breadcrumbForeColor					= { rgba(0, 0, 164, 255) };				// Semidark blue
 		const SBgra		breakpointBackColor					= { rgba(180, 140, 220, 255) };			// Purplish

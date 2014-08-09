@@ -284,3 +284,39 @@ int3_break;
 		// If we get here, we could not overwrite
 		return(false);
 	}
+
+
+
+
+//////////
+//
+// Called to toggle the breakpoint on the current line
+//
+//////
+	SBreakpoint* iEditChain_toggleBreakpoint(SEM* em)
+	{
+		SBreakpoint* bp;
+
+
+		// Make sure our environment is sane
+		if (em && em->ecCursorLine)
+		{
+			// Grab the line
+			if (em->ecCursorLine->breakpoint)
+			{
+				// Delete the existing breakpoint
+				iBreakpoint_delete(&em->ecCursorLine->breakpoint);
+				bp = NULL;
+
+			} else {
+				// Adding a new always-stop breakpoint
+				bp = iBreakpoint_add(&em->ecCursorLine->breakpoint, _BREAKPOINT_ALWAYS);
+			}
+
+			// Indicate our statuts
+			return(bp);
+		}
+
+		// If we get here, invalid
+		return(NULL);
+	}

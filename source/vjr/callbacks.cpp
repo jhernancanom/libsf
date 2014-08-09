@@ -122,12 +122,12 @@
 			if (tlCtrl)
 			{
 				// They are just moving the cursor line
-				iEditManager_navigate(obj->pa.em, obj, tnUnits * ((tlShift) ? -1 : -3), 0);
+				iSEM_navigate(obj->pa.em, obj, tnUnits * ((tlShift) ? -1 : -3), 0);
 
 			// MouseWheel is a scroll
 			} else {
 				// They want to scroll the entire window, including the cursor line
-				iEditManager_scroll(obj->pa.em, obj, tnUnits * ((tlShift) ? -1 : -3), 0);
+				iSEM_scroll(obj->pa.em, obj, tnUnits * ((tlShift) ? -1 : -3), 0);
 			}
 			iObj_setDirtyRender(obj, true);
 			iWindow_render(win, false);
@@ -192,7 +192,7 @@
 
 		} else if (obj->objType == _OBJ_TYPE_EDITBOX) {
 			// Need to navigate to the indicated x,y coordinate
-			iEditManager_navigateTo_pixelXY(obj->pa.em, obj, x, y);
+			iSEM_navigateTo_pixelXY(obj->pa.em, obj, x, y);
 
 		} else if (obj->objType == _OBJ_TYPE_RADIO) {
 			// The mouse indicates the position

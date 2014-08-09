@@ -77,8 +77,8 @@
 
 					case _ICODE_CLEAR:
 						// They want to clear the screen
-						iEditManager_navigateTop(screenData, gobj_screen);
-						iEditManager_deleteChain(&screenData, false);
+						iSEM_navigateTop(screenData, gobj_screen);
+						iSEM_deleteChain(&screenData, false);
 						screen_editbox->isDirtyRender = true;
 						iWindow_render(gWinScreen, false);
 						break;
@@ -88,8 +88,8 @@
 						if (!compNext)
 						{
 							// Syntax error, expected "? something" got only "?"
-							iEditManager_appendLine(screenData, (s8*)cgcSyntaxError, -1);
-							iEditManager_navigateEnd(screenData, gobj_screen);
+							iSEM_appendLine(screenData, (s8*)cgcSyntaxError, -1);
+							iSEM_navigateEnd(screenData, gobj_screen);
 							screen_editbox->isDirtyRender = true;
 							iWindow_render(gWinScreen, false);
 							return(false);
@@ -103,7 +103,7 @@
 								{
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error
-									screen_editbox->isDirtyRender |= iEditManager_navigateEnd(screenData, gobj_screen);
+									screen_editbox->isDirtyRender |= iSEM_navigateEnd(screenData, gobj_screen);
 									iWindow_render(gWinScreen, false);
 									return(false);
 								}
@@ -114,7 +114,7 @@
 								{
 									// Unknown parameter
 									iError_report(cgcUnrecognizedParameter);
-									screen_editbox->isDirtyRender |= iEditManager_navigateEnd(screenData, gobj_screen);
+									screen_editbox->isDirtyRender |= iSEM_navigateEnd(screenData, gobj_screen);
 									iWindow_render(gWinScreen, false);
 									return(false);
 								}
@@ -123,8 +123,8 @@
 							varText = iVariable_convertForDisplay(var);
 
 							// Add its contents to _screen
-							iEditManager_appendLine(screenData, varText->value.data, varText->value.length);
-							iEditManager_navigateEnd(screenData, gobj_screen);
+							iSEM_appendLine(screenData, varText->value.data, varText->value.length);
+							iSEM_navigateEnd(screenData, gobj_screen);
 							screen_editbox->isDirtyRender = true;
 							iWindow_render(gWinScreen, false);
 
@@ -147,7 +147,7 @@
 								{
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error
-									screen_editbox->isDirtyRender |= iEditManager_navigateEnd(screenData, gobj_screen);
+									screen_editbox->isDirtyRender |= iSEM_navigateEnd(screenData, gobj_screen);
 									iWindow_render(gWinScreen, false);
 									return(false);
 								}
@@ -158,7 +158,7 @@
 								{
 									// Unknown parameter
 									iError_report(cgcUnrecognizedParameter);
-									screen_editbox->isDirtyRender |= iEditManager_navigateEnd(screenData, gobj_screen);
+									screen_editbox->isDirtyRender |= iSEM_navigateEnd(screenData, gobj_screen);
 									iWindow_render(gWinScreen, false);
 									return(false);
 								}
@@ -617,4 +617,154 @@
 
 		// Indicate success
 		return(lnParamCount >= requiredCount && lnParamCount <= maxCount);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the indicated breakpoint
+//
+//////
+	void iBreakpoint_delete(SBreakpoint** breakpoint)
+	{
+		SBreakpoint* bp;
+
+
+		// Make sure our environment is sane
+		if (breakpoint && *breakpoint && (*breakpoint)->isUsed && 
+			(u32)*breakpoint >= (u32)gBreakpoints->data && 
+			(u32)*breakpoint <= (u32)gBreakpoints->data + gBreakpoints->populatedLength - sizeof(SBreakpoint))
+		{
+			// Get a local copy of our pointer
+			bp = *breakpoint;
+
+			// Reset the remote
+			*breakpoint = NULL;
+
+			// Delete the items as they are
+			bp->isUsed = true;
+
+			// Delete any source code for this breakpoint
+			if (bp->executeCode)
+				iSourceCode_delete(&bp->executeCode);
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to add a new breakpoint.  It only creates the entry and populates the type.
+// For conditional breakpoints, or breakpoints with code they will need to be created
+// and added manually by the code in the calling algorithm.
+//
+//////
+	SBreakpoint* iBreakpoint_add(SBreakpoint** breakpoint, u32 tnType)
+	{
+		u32				lnI;
+		SBreakpoint*	bp;
+
+
+		// Make sure our environment is sane
+		if (breakpoint)
+		{
+			//////////
+			// Validate it's a known type
+			//////
+				switch (tnType)
+				{
+					case _BREAKPOINT_ALWAYS:
+					case _BREAKPOINT_CONDITIONAL_TRUE:
+					case _BREAKPOINT_CONDITIONAL_FALSE:
+					case _BREAKPOINT_CONDITIONAL_TRUE_COUNTDOWN:
+					case _BREAKPOINT_CONDITIONAL_FALSE_COUNTDOWN:
+						break;
+
+					default:
+						// We don't know what to do here... silently fail
+						return(NULL);
+				}
+				// If we get here, we're valid
+
+
+			//////////
+			// Make sure we've initialized our breakpoint structure
+			//////
+				if (!gBreakpoints)
+					iBuilder_createAndInitialize(&gBreakpoints, -1);
+
+
+			//////////
+			// Try to find an empty slot
+			//////
+				for (lnI = 0; lnI < gBreakpoints->populatedLength; lnI += sizeof(SBreakpoint))
+				{
+					// Grab this pointer
+					bp = (SBreakpoint*)(gBreakpoints->data + lnI);
+
+					// Is this an empty slot?
+					if (!bp->isUsed)
+						break;	// Yes, we can reuse it
+				}
+
+
+			//////////
+			// Allocate if we didn't find an empty slot
+			//////
+				if (lnI >= gBreakpoints->populatedLength)
+					bp = (SBreakpoint*)iBuilder_allocateBytes(gBreakpoints, sizeof(SBreakpoint));
+
+
+			//////////
+			// Populate it with the basic info
+			//////
+				if (bp)
+				{
+					bp->isUsed	= true;
+					bp->type	= tnType;
+				}
+
+
+			// Indicate our success or failure
+			*breakpoint	= bp;
+			return(bp);
+		}
+
+		// If we get here, failure
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the source code item
+//
+//////
+	void iSourceCode_delete(SSourceCode** sourceCode)
+	{
+		SSourceCode* sc;
+
+
+		// Make sure our environment is sane
+		if (sourceCode && *sourceCode)
+		{
+			// Get a copy of the pointer
+			sc = *sourceCode;
+
+			// Clear the pointer
+			*sourceCode = NULL;
+
+			// Delete the items
+			iFunction_politelyDeleteChain(&sc->firstFunction);
+			iVariable_politelyDeleteChain(&sc->params,	true);
+			iVariable_politelyDeleteChain(&sc->globals,	true);
+			iVariable_politelyDeleteChain(&sc->locals,	true);
+			iVariable_politelyDeleteChain(&sc->returns,	true);
+			iVariable_politelyDeleteChain(&sc->scoped,	true);
+		}
 	}

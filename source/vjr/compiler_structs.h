@@ -100,15 +100,15 @@ struct SCompileNote;
 
 	struct SFunction
 	{
-		SFunction*		next;												// Next function in the chain
-		SDatum			name;												// Function name (Note that code appearing at the top of a program without being enclosed in a function will have the source code line "FUNCTION top_of_program" automatically inserted at compile time
+		SFunction*		next;											// Next function in the chain
+		SDatum			name;											// Function name (Note that code appearing at the top of a program without being enclosed in a function will have the source code line "FUNCTION top_of_program" automatically inserted at compile time
 
 		// Knowns identified during compilation
-		SVariable*		params;												// The first parameter in the function
-		SVariable*		locals;												// The first local variable declared
-		SVariable*		returns;											// The first return variable declared
-		SVariable*		scoped;												// The first scoped/temporary variable needed by the function
-		SFunction*		firstAdhoc;											// First ADHOC function contained within this function
+		SVariable*		params;											// The first parameter in the function
+		SVariable*		locals;											// The first local variable declared
+		SVariable*		returns;										// The first return variable declared
+		SVariable*		scoped;											// The first scoped/temporary variable needed by the function
+		SFunction*		firstAdhoc;										// First ADHOC function contained within this function
 
 		// Where the function began in source code as of last compile
 		SEdit*		firstLine;											// First line of the function

@@ -229,7 +229,7 @@
 			screen_editbox							= iObj_addChild(_OBJ_TYPE_EDITBOX,	gobj_screen);
 			iObj_setSize(screen_editbox, 0, 0, gobj_screen->rcClient.right - gobj_screen->rcClient.left, gobj_screen->rcClient.bottom - gobj_screen->rcClient.top);
 			screen_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			screen_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
+			screen_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			screenData								= screen_editbox->pa.em;
 			screenData->showCursorLine				= true;
 			screenData->showEndLine					= true;
@@ -357,9 +357,10 @@
 			iDatum_duplicate(&caption->value, cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
 			iObj_setCaption(sourceCode, caption);
 			sourceCode_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			sourceCode_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown_sourceCode;
+			sourceCode_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown_sourceCode;
 			sourceCode_editbox->pa.em->showCursorLine	= true;
 			sourceCode_editbox->pa.em->isSourceCode		= true;
+			sourceCode_editbox->pa.em->showLineNumbers	= true;
 			iObj_setIcon(sourceCode, bmpSourceCodeIcon);
 
 
@@ -369,7 +370,7 @@
 			iDatum_duplicate(&caption->value, cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
 			iObj_setCaption(locals, caption);
 			locals_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			locals_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
+			locals_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			iObj_setIcon(locals, bmpLocalsIcon);
 
 			// Adjust the caption width
@@ -467,7 +468,7 @@
 			iDatum_duplicate(&caption->value, cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
 			iObj_setCaption(watch, caption);
 			watch_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			watch_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
+			watch_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			watch_editbox->pa.em->showCursorLine	= true;
 			iObj_setIcon(watch, bmpWatchIcon);
 
@@ -478,10 +479,11 @@
 			iDatum_duplicate(&caption->value, cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
 			iObj_setCaption(command, caption);
 			command_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			command_editbox->ev.keyboard._onKeyDown		= (u32)&iEditManager_onKeyDown_sourceCode;
+			command_editbox->ev.keyboard._onKeyDown		= (u32)&iSEM_onKeyDown_sourceCode;
 			command_editbox->p.hasFocus					= true;
 			command_editbox->pa.em->showCursorLine		= true;
 			command_editbox->pa.em->isSourceCode		= true;
+			command_editbox->pa.em->showLineNumbers		= true;
 			iObj_setIcon(command, bmpCommandIcon);
 
 
@@ -491,7 +493,7 @@
 			iDatum_duplicate(&caption->value, cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
 			iObj_setCaption(debug, caption);
 			debug_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			debug_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
+			debug_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			debug_editbox->pa.em->showCursorLine	= true;
 			iObj_setIcon(debug, bmpDebugIcon);
 
@@ -502,7 +504,7 @@
 			iDatum_duplicate(&caption->value, cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
 			iObj_setCaption(output, caption);
 			output_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_MEDIUM, false, false);
-			output_editbox->ev.keyboard._onKeyDown	= (u32)&iEditManager_onKeyDown;
+			output_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			output_editbox->pa.em->showCursorLine	= true;
 			iObj_setIcon(output, bmpOutputIcon);
 
@@ -623,7 +625,7 @@
 
 		// Append to it
 		sprintf(buffer, "[%u] %s\0", (u32)((s64)GetTickCount() - systemStartedTickCount), tcLogText);
-		iEditManager_appendLine(systemLog, buffer, -1);
+		iSEM_appendLine(systemLog, buffer, -1);
 
 		// Release it
 		LeaveCriticalSection(&cs_logData);
@@ -642,7 +644,7 @@
 //////
 	void iVjr_flushSystemLog(void)
 	{
-		iEditManager_saveToDisk(systemLog, (s8*)cgcSystemLogFilename);
+		iSEM_saveToDisk(systemLog, (s8*)cgcSystemLogFilename);
 	}
 
 
@@ -659,8 +661,8 @@
 		iVjr_appendSystemLog("Unengage VJr");
 
 		// Save where we were
-		iEditManager_saveToDisk(screenData,				(s8*)cgcScreenDataFilename);
-		iEditManager_saveToDisk(command_editbox->pa.em,	(s8*)cgcCommandHistoryFilename);
+		iSEM_saveToDisk(screenData,				(s8*)cgcScreenDataFilename);
+		iSEM_saveToDisk(command_editbox->pa.em,	(s8*)cgcCommandHistoryFilename);
 
 		// Tell OS to unengage our process
 		iVjr_appendSystemLog("Notify OS to shutdown");

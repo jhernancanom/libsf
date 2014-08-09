@@ -40,3 +40,10 @@
 \libsf\vvm\bin\f2h raw\stoplight_blue.bmp stoplightBlueBmp h\stoplight_blue.h
 
 \libsf\vvm\bin\f2h raw_tiled\cask_icons.bmp caskIconsBmp h\cask_icons.h
+
+\libsf\vvm\bin\f2h raw\breakpoint_always.bmp breakpointAlways h\breakpoint_always.h
+\libsf\vvm\bin\f2h raw\breakpoint_always_countdown.bmp breakpointAlwaysCountdown h\breakpoint_always_countdown.h
+\libsf\vvm\bin\f2h raw\breakpoint_conditional_true.bmp breakpointConditionalTrue h\breakpoint_conditional_true.h
+\libsf\vvm\bin\f2h raw\breakpoint_conditional_false.bmp breakpointConditionalFalse h\breakpoint_conditional_false.h
+\libsf\vvm\bin\f2h raw\breakpoint_conditional_true_countdown.bmp breakpointConditionalTrueCountdown h\breakpoint_conditional_true_countdown.h
+\libsf\vvm\bin\f2h raw\breakpoint_conditional_false_countdown.bmp breakpointConditionalFalseCountdown h\breakpoint_conditional_false_countdown.h

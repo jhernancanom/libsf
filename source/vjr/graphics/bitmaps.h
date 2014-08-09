@@ -79,3 +79,10 @@
 #include "h\stoplight_blue.h"
 
 #include "h\cask_icons.h"
+
+#include "h\breakpoint_always.h"
+#include "h\breakpoint_always_countdown.h"
+#include "h\breakpoint_conditional_true.h"
+#include "h\breakpoint_conditional_false.h"
+#include "h\breakpoint_conditional_true_countdown.h"
+#include "h\breakpoint_conditional_false_countdown.h"

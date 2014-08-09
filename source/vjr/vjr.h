@@ -76,9 +76,9 @@
 
 #include "command_defs.h"
 #include "sound\sound.h"
-#include "engine.h"
 #include "edit_chain_manager.h"
 #include "edit_chain.h"
+#include "engine.h"
 #include "object_accessors.h"
 #include "graphics\bitmaps.h"
 
