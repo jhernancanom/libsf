@@ -1977,7 +1977,7 @@
 					lnY += lnY_inc;
 
 					// Constrain
-					if (lnY < trc->top)
+					if (lnY <= trc->top)
 					{
 						// We're above, head the other way
 						lnY_inc	= 1;

@@ -1055,6 +1055,13 @@ int3_break;
 			}
 		}
 
+		// If they are holding down Ctrl+Alt+Shift, we need to re-render because this highlights information related to wherever the cursor is
+		if (tlCtrl && tlShift && tlAlt)
+		{
+			iObj_setDirtyRender(obj, true);
+			iWindow_render(win, false);
+		}
+
 		// Indicate additional events should be processed
 		return(iSEM_onKeyDown(win, obj, tlCtrl, tlAlt, tlShift, tlCaps, tnAsciiChar, tnVKey, tlIsCAS, tlIsAscii));
 	}
@@ -1411,7 +1418,7 @@ int3_break;
 	{
 		u32			lnPixelsRendered;
 		s32			lnTop, lnSkip, lnDeltaX, lnLevel;
-		bool		llIsValid;
+		bool		llIsValid, llCtrl, llAlt, llShift, llLeft, llMiddle, llRight, llCaps;
 		SFont*		font;
 		SEdit*		line;
 		SBitmap*	bmp;
@@ -1521,7 +1528,7 @@ int3_break;
 														comp2->overrideMatchingBackColor	= &overrideMatchingBackColorMultiple;
 														comp2->overrideMatchingForeColor	= &overrideMatchingForeColorMultiple;
 
-													} else if (iComps_isMateOf(comp2->iCode, compPBBLeft->iCode)) {
+													} else if (iComps_isMateOf(comp2, compPBBLeft->iCode)) {
 														// If the left-most is (, then this is a ), going shallow
 														++lnLevel;
 
@@ -1722,6 +1729,18 @@ int3_break;
 
 											// Set back to opaque
 											SetBkMode(bmp->hdc, OPAQUE);
+										}
+
+										// If they're ont he cursor line, on a flow control directive, and holding down Ctrl+Alt+Shift, then we want to show that directive's mate on the line above
+										if (line == em->ecCursorLine && comp->iCat == _ICAT_FLOW && em->column >= comp->start && em->column <= comp->start + comp->length)
+										{
+											// Grab the keyboard and mouse flags
+											iiMouse_getFlags_async(&llCtrl, &llAlt, &llShift, &llLeft, &llMiddle, &llRight, &llCaps);
+											if (llCtrl && llAlt && llShift)
+											{
+												// Based on the directive, search up or down to find the mate
+// TODO:  Working here
+											}
 										}
 									}
 

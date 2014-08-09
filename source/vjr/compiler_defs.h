@@ -82,7 +82,7 @@ struct SVariable;
 	SComp*					iComps_findNextBy_iCode						(SComp* comp, s32 tniCode, SComp** compLastScanned);
 	bool					iComps_findClosest_parensBracketsBraces		(SComp* compRelative, SComp* compStart, SComp** compPBBLeft, SComp** compPBBRight);
 	bool					iComps_isParensBracketsBraces				(SComp* comp);
-	bool					iComps_isMateOf								(s32 tniCodeTest, s32 tniCodeMate);
+	bool					iComps_isMateOf								(SComp* compTest, s32 tniCodeMate);
 	SComp*					iComps_skipPast_iCode						(SComp* comp, s32 tniCode);
 	SComp*					iComps_skipTo_iCode							(SComp* comp, s32 tniCode);
 	u32						iComps_combineNextN							(SComp* comp, u32 tnCount, s32 tnNewICode, s32 tnNewICat, SBgra* newColor);

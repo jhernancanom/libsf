@@ -924,6 +924,10 @@
 	const s32       _ICODE_DLLS                                     = 2073;
 	const s32       _ICODE_DLL                                      = 2074;
 	const s32       _ICODE_DO                                       = 2075;
+	const s32       _ICODE_DOCASE                                   = 2272;
+	const s32       _ICODE_DOFORM                                   = 2273;
+	const s32       _ICODE_DOPROGRAM                                = 2274;
+	const s32       _ICODE_DOWHILE                                  = 2275;
 	const s32       _ICODE_DOCK                                     = 2076;
 	const s32       _ICODE_DOEVENTS                                 = 2077;
 	const s32       _ICODE_DOHISTORY                                = 2078;
@@ -1016,7 +1020,7 @@
 	const s32       _ICODE_MTDLL                                    = 2165;
 	const s32       _ICODE_MULTILOCKS                               = 2166;
 	const s32       _ICODE_NEAR                                     = 2167;
-	const s32       _ICODE_NEXT                                     = 2168;
+// 	const s32       _ICODE_NEXT                                     = 2168;
 	const s32       _ICODE_NOCPTRANS                                = 2169;
 	const s32       _ICODE_NOTE                                     = 2170;
 	const s32       _ICODE_NOTIFY                                   = 2171;
@@ -1120,6 +1124,10 @@
 	const s32       _ICODE_WINDOW                                   = 2269;
 	const s32       _ICODE_WITH                                     = 2270;
 	const s32       _ICODE_ZAP                                      = 2271;
+	// _ICODE_DOCASE												= 2272;
+	// _ICODE_DOFORM												= 2273;
+	// _ICODE_DOPROGRAM												= 2274;
+	// _ICODE_DOWHILE												= 2275;
 
 
 //////////

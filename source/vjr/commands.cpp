@@ -56,23 +56,6 @@
 		screen_editbox->isDirtyRender = true;
 	}
 
-	void iiError_reportComp(SComp* comp)
-	{
-		s8 buffer[256];
-
-		memset(buffer, 0, sizeof(buffer));
-		memcpy(buffer, cgcComponentError, sizeof(cgcComponentError) - 1);
-		sprintf(buffer + strlen(buffer), "%u:", comp->start);
-		memcpy(buffer + strlen(buffer), comp->line->sourceCode->data + comp->start, comp->length);
-
-		// Flag it for error
-		comp->isError = true;
-
-		// Append the error to the EM
-		iSEM_appendLine(screenData, buffer, -1);
-		screen_editbox->isDirtyRender = true;
-	}
-
 
 
 
@@ -110,9 +93,12 @@
 			case _ERROR_INTERNAL_ERROR:						{	iError_report((s8*)cgcInternalError);				break;	}
 		}
 
-		// Display the component
+		// Flag the component
 		if (comp && comp->line && comp->line->sourceCode && comp->line->sourceCode->data && comp->line->sourceCodePopulated != 0)
-			iiError_reportComp(comp);
+		{
+			// Flag it for error
+			comp->isError = true;
+		}
 	}
 
 

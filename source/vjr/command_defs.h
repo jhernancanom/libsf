@@ -65,7 +65,6 @@ struct SVariable;
 	// Temporary error reporting until the proper engine is constructed.
 	void				iError_report								(cs8* constantErrorText);
 	void				iError_report								(s8* errorText);
-	void				iiError_reportComp							(SComp* comp);
 	void				iError_reportByNumber						(u32 tnErrorNum, SComp* comp);
 
 

@@ -1311,27 +1311,51 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Is the reference the mate of iCodeMate
 //
 //////
-	bool iComps_isMateOf(s32 tniCodeTest, s32 tniCodeMate)
+	bool iComps_isMateOf(SComp* compTest, s32 tniCodeMate)
 	{
 		switch (tniCodeMate)
 		{
 			case _ICODE_PARENTHESIS_LEFT:
-				return(tniCodeTest == _ICODE_PARENTHESIS_RIGHT);
+				return(compTest->iCode == _ICODE_PARENTHESIS_RIGHT);
 
 			case _ICODE_PARENTHESIS_RIGHT:
-				return(tniCodeTest == _ICODE_PARENTHESIS_LEFT);
+				return(compTest->iCode == _ICODE_PARENTHESIS_LEFT);
 
 			case _ICODE_BRACKET_LEFT:
-				return(tniCodeTest == _ICODE_BRACKET_RIGHT);
+				return(compTest->iCode == _ICODE_BRACKET_RIGHT);
 
 			case _ICODE_BRACKET_RIGHT:
-				return(tniCodeTest == _ICODE_BRACKET_LEFT);
+				return(compTest->iCode == _ICODE_BRACKET_LEFT);
 
 			case _ICODE_BRACE_LEFT:
-				return(tniCodeTest == _ICODE_BRACE_RIGHT);
+				return(compTest->iCode == _ICODE_BRACE_RIGHT);
 
 			case _ICODE_BRACE_RIGHT:
-				return(tniCodeTest == _ICODE_BRACE_LEFT);
+				return(compTest->iCode == _ICODE_BRACE_LEFT);
+
+			case _ICODE_ADHOC:
+				return(compTest->iCode == _ICODE_ENDADHOC);
+
+			case _ICODE_ENDADHOC:
+				return(compTest->iCode == _ICODE_ADHOC);
+
+			case _ICODE_FOR:
+				return(compTest->iCode == _ICODE_ENDFOR);
+
+			case _ICODE_ENDFOR:
+				return(compTest->iCode == _ICODE_FOR);
+
+			case _ICODE_SCAN:
+				return(compTest->iCode == _ICODE_ENDSCAN);
+
+			case _ICODE_ENDSCAN:
+				return(compTest->iCode == _ICODE_SCAN);
+
+			case _ICODE_ENDDO:
+				return(compTest->iCode == _ICODE_DOWHILE);
+
+			case _ICODE_DOWHILE:
+				return(compTest->iCode == _ICODE_ENDDO);
 		}
 		// If we get here, unknown
 		return(false);
