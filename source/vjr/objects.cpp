@@ -3,7 +3,7 @@
 // /libsf/source/vjr/objects.cpp
 //
 //////
-// Version 0.47
+// Version 0.48
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -2822,9 +2822,9 @@
 				form->p.neRgba.color		= NeColor.color;
 				form->p.swRgba.color		= SwColor.color;
 				form->p.seRgba.color		= SeColor.color;
-				form->p.backColor.color		= white.color;
-				form->p.foreColor.color		= black.color;
-				form->p.captionColor.color	= dark_blue.color;
+				form->p.backColor.color		= whiteColor.color;
+				form->p.foreColor.color		= blackColor.color;
+				form->p.captionColor.color	= darkBlueColor.color;
 
 
 			//////////
@@ -3089,9 +3089,9 @@
 				subform->p.neRgba.color			= NeColor2.color;
 				subform->p.swRgba.color			= SwColor2.color;
 				subform->p.seRgba.color			= SeColor2.color;
-				subform->p.backColor.color		= white.color;
-				subform->p.foreColor.color		= black.color;
-				subform->p.captionColor.color	= dark_blue.color;
+				subform->p.backColor.color		= whiteColor.color;
+				subform->p.foreColor.color		= blackColor.color;
+				subform->p.captionColor.color	= darkBlueColor.color;
 
 
 			//////////
@@ -3195,8 +3195,8 @@
 			//////////
 			// Set the default colors
 			//////
-				label->p.backColor.color				= white.color;
-				label->p.foreColor.color				= black.color;
+				label->p.backColor.color				= whiteColor.color;
+				label->p.foreColor.color				= blackColor.color;
 
 
 			//////////
@@ -3206,7 +3206,7 @@
 				iDatum_duplicate(&label->pa.caption, cgcName_label, 5);
 				label->p.isOpaque					= false;
 				label->p.isBorder					= false;
-				label->p.borderColor.color			= black.color;
+				label->p.borderColor.color			= blackColor.color;
 				label->p.disabledBackColor.color	= disabledBackColor.color;
 				label->p.disabledForeColor.color	= disabledForeColor.color;
 		}
@@ -3249,8 +3249,8 @@
 			//////////
 			// Set the default colors
 			//////
-				textbox->p.backColor.color			= white.color;
-				textbox->p.foreColor.color			= black.color;
+				textbox->p.backColor.color			= whiteColor.color;
+				textbox->p.foreColor.color			= blackColor.color;
 
 
 			//////////
@@ -3266,7 +3266,7 @@
 
 				textbox->p.isOpaque					= true;
 				textbox->p.isBorder					= false;
-				textbox->p.borderColor.color		= black.color;
+				textbox->p.borderColor.color		= blackColor.color;
 				textbox->p.selectedBackColor.color	= selectedBackColor.color;
 				textbox->p.selectedForeColor.color	= selectedForeColor.color;
 				textbox->p.disabledBackColor.color	= disabledBackColor.color;
@@ -3303,8 +3303,8 @@
 
 
 			button->pa.font						= iFont_duplicate(gsFontDefault);
-			button->p.backColor.color			= gray.color;
-			button->p.foreColor.color			= black.color;
+			button->p.backColor.color			= grayColor.color;
+			button->p.foreColor.color			= blackColor.color;
 
 			button->p.style						= _STYLE_3D;
 			button->p.alignment					= _ALIGNMENT_CENTER;
@@ -3341,8 +3341,8 @@
 
 
 			editbox->pa.font						= iFont_duplicate(gsFontDefault);
-			editbox->p.backColor.color				= white.color;
-			editbox->p.foreColor.color				= black.color;
+			editbox->p.backColor.color				= whiteColor.color;
+			editbox->p.foreColor.color				= blackColor.color;
 
 			editbox->p.style						= _STYLE_3D;
 			editbox->p.alignment					= _ALIGNMENT_LEFT;
@@ -3353,7 +3353,7 @@
 
 			editbox->p.isOpaque						= true;
 			editbox->p.isBorder						= false;
-			editbox->p.borderColor.color			= black.color;
+			editbox->p.borderColor.color			= blackColor.color;
 			editbox->p.selectedBackColor.color		= selectedBackColor.color;
 			editbox->p.selectedForeColor.color		= selectedForeColor.color;
 			editbox->p.disabledBackColor.color		= disabledBackColor.color;
@@ -3428,8 +3428,8 @@
 
 
 			checkbox->pa.font						= iFont_duplicate(gsFontDefault9);
-			checkbox->p.backColor.color				= white.color;
-			checkbox->p.foreColor.color				= black.color;
+			checkbox->p.backColor.color				= whiteColor.color;
+			checkbox->p.foreColor.color				= blackColor.color;
 
 			checkbox->p.alignment					= _ALIGNMENT_LEFT;
 			checkbox->p.style						= _STYLE_3D;
@@ -3437,7 +3437,7 @@
 
 			checkbox->p.isOpaque					= false;
 			checkbox->p.isBorder					= false;
-			checkbox->p.borderColor.color			= black.color;
+			checkbox->p.borderColor.color			= blackColor.color;
 			checkbox->p.disabledBackColor.color		= disabledBackColor.color;
 			checkbox->p.disabledForeColor.color		= disabledForeColor.color;
 
@@ -3533,8 +3533,8 @@
 				iObj_setSize(option, 0, 0, 60, 40);
 
 
-			option->p.backColor.color			= white.color;
-			option->p.foreColor.color			= black.color;
+			option->p.backColor.color			= whiteColor.color;
+			option->p.foreColor.color			= blackColor.color;
 
 			option->p.alignment					= _ALIGNMENT_LEFT;
 			option->p.style						= _STYLE_3D;
@@ -3578,8 +3578,8 @@
 
 
 			radio->pa.font						= iFont_duplicate(gsFontDefault);
-			radio->p.backColor.color			= white.color;
-			radio->p.foreColor.color			= black.color;
+			radio->p.backColor.color			= whiteColor.color;
+			radio->p.foreColor.color			= blackColor.color;
 
 			radio->p.alignment					= _ALIGNMENT_LEFT;
 			radio->p.style						= _STYLE_3D;
@@ -3596,7 +3596,7 @@
 
 			radio->p.isOpaque					= true;
 			radio->p.isBorder					= false;
-			radio->p.borderColor.color			= black.color;
+			radio->p.borderColor.color			= blackColor.color;
 			radio->p.disabledBackColor.color	= disabledBackColor.color;
 			radio->p.disabledForeColor.color	= disabledForeColor.color;
 
@@ -3916,15 +3916,15 @@
 						iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, &obj->rcClient, true);
 
 						// Frame it
-						iBmp_frameRect(obj->bmp, &lrc, black, black, black, black, false, NULL, false);
+						iBmp_frameRect(obj->bmp, &lrc, blackColor, blackColor, blackColor, blackColor, false, NULL, false);
 
 						// Draw the client area
 						SetRect(&lrc2, 8, obj->pa.bmpIcon->bi.biHeight + 2, lrc.right - obj->pa.bmpIcon->bi.biHeight - 2, lrc.bottom - obj->pa.bmpIcon->bi.biHeight - 1);
-						iBmp_fillRect(obj->bmp, &lrc2, white, white, white, white, false, NULL, false);
+						iBmp_fillRect(obj->bmp, &lrc2, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
 
 						// Put a border around the client area
 						InflateRect(&lrc2, 1, 1);
-						iBmp_frameRect(obj->bmp, &lrc2, black, black, black, black, false, NULL, false);
+						iBmp_frameRect(obj->bmp, &lrc2, blackColor, blackColor, blackColor, blackColor, false, NULL, false);
 
 
 // Note:  Eventually these will be moved to form objects, like the icon, caption, and control buttons
@@ -4014,7 +4014,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 						iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, &obj->rcClient, true);
 
 						// Make the client area white
-						iBmp_fillRect(obj->bmp, &obj->rcClient, white, white, white, white, false, NULL, false);
+						iBmp_fillRect(obj->bmp, &obj->rcClient, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
 
 						// Frame the client area
 						if (obj->p.isBorder)
@@ -4091,7 +4091,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 				// Fill in the background
 				SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
-				iBmp_fillRect(obj->bmp, &lrc, white, white, white, white, false, NULL, false);
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
 
 				// Set the text parameters
 				SetBkMode(obj->bmp->hdc, TRANSPARENT);

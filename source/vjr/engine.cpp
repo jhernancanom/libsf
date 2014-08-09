@@ -3,7 +3,7 @@
 // /libsf/source/vjr/engine.cpp
 //
 //////
-// Version 0.47
+// Version 0.48
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -310,6 +310,7 @@
 					//////////
 					// Return our result
 					//////
+						var->compRelated = comp;
 						return(var);
 
 
@@ -320,6 +321,7 @@
 					var					= iVariable_create(_VAR_TYPE_LOGICAL, NULL);
 					tlManufactured		= true;
 					var->value.data[0]	= _LOGICAL_TRUE;
+					var->compRelated	= comp;
 					return(var);
 
 
@@ -330,6 +332,7 @@
 					var					= iVariable_create(_VAR_TYPE_LOGICAL, NULL);
 					tlManufactured		= true;
 					var->value.data[0]	= _LOGICAL_FALSE;
+					var->compRelated	= comp;
 					return(var);
 
 
@@ -338,6 +341,7 @@
 					var					= iVariable_create(_VAR_TYPE_LOGICAL, NULL);
 					tlManufactured		= true;
 					var->value.data[0]	= _LOGICALX_EXTRA;
+					var->compRelated	= comp;
 					return(var);
 
 
@@ -346,6 +350,7 @@
 					var					= iVariable_create(_VAR_TYPE_LOGICAL, NULL);
 					tlManufactured		= true;
 					var->value.data[0]	= _LOGICALX_YET_ANOTHER;
+					var->compRelated	= comp;
 					return(var);
 
 
@@ -354,6 +359,7 @@
 					var					= iVariable_create(_VAR_TYPE_LOGICAL, NULL);
 					tlManufactured		= true;
 					var->value.data[0]	= _LOGICALX_ZATS_ALL_FOLKS;
+					var->compRelated	= comp;
 					return(var);
 
 
@@ -409,6 +415,7 @@
 							varCopy = iVariable_create(var->varType, NULL);
 							iDatum_duplicate(&varCopy->value, &var->value);
 						}
+						varCopy->compRelated = comp;
 						return(varCopy);
 					}
 					break;
@@ -432,6 +439,7 @@
 					//////////
 					// Return our result
 					//////
+						var->compRelated = comp;
 						return(var);
 
 

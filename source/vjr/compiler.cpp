@@ -3,7 +3,7 @@
 // /libsf/source/vjr/compiler.cpp
 //
 //////
-// Version 0.47
+// Version 0.48
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -1138,6 +1138,210 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 
 //////////
 //
+// Called to search the comp and forward for a parenthesis, bracket, or brace, and then to
+// search the appropriate direction and find the matching one, and return those components.
+//
+//////
+	bool iComps_findClosest_parensBracketsBraces(SComp* compRelative, SComp* compStart, SComp** compPBBLeft, SComp** compPBBRight)
+	{
+		s32		lnDirection, lniCodeNeedle, lniCodeNeedleMate, lnLevel;
+		bool	llFound;
+
+
+		// Make sure our environment is sane
+		llFound = false;
+		if (compStart && compPBBLeft && compPBBRight)
+		{
+			// Reset our receivers
+			*compPBBLeft	= NULL;
+			*compPBBRight	= NULL;
+
+			// Are we already on a target?
+			if (compStart->iCode == _ICODE_PARENTHESIS_LEFT)
+			{
+				// We're on (
+				lnDirection			= 1;
+				*compPBBLeft		= compStart;
+				lniCodeNeedle		= _ICODE_PARENTHESIS_RIGHT;
+				lniCodeNeedleMate	= _ICODE_PARENTHESIS_LEFT;
+
+			} else if (compStart->iCode == _ICODE_PARENTHESIS_RIGHT) {
+				// We're on )
+				lnDirection			= -1;
+				*compPBBRight		= compStart;
+				lniCodeNeedle		= _ICODE_PARENTHESIS_LEFT;
+				lniCodeNeedleMate	= _ICODE_PARENTHESIS_RIGHT;
+
+			} else if (compStart->iCode == _ICODE_BRACKET_LEFT) {
+				// We're on [
+				lnDirection			= 1;
+				*compPBBLeft		= compStart;
+				lniCodeNeedle		= _ICODE_BRACKET_RIGHT;
+				lniCodeNeedleMate	= _ICODE_BRACKET_LEFT;
+
+			} else if (compStart->iCode == _ICODE_BRACKET_RIGHT) {
+				// We're on ]
+				lnDirection			= -1;
+				*compPBBRight		= compStart;
+				lniCodeNeedle		= _ICODE_BRACKET_LEFT;
+				lniCodeNeedleMate	= _ICODE_BRACKET_RIGHT;
+
+			} else if (compStart->iCode == _ICODE_BRACE_LEFT) {
+				// We're on {
+				lnDirection			= 1;
+				*compPBBLeft		= compStart;
+				lniCodeNeedle		= _ICODE_BRACE_RIGHT;
+				lniCodeNeedleMate	= _ICODE_BRACE_LEFT;
+
+			} else if (compStart->iCode == _ICODE_BRACE_RIGHT) {
+				// We're on }
+				lnDirection			= -1;
+				*compPBBRight		= compStart;
+				lniCodeNeedle		= _ICODE_BRACE_LEFT;
+				lniCodeNeedleMate	= _ICODE_BRACE_RIGHT;
+
+			} else {
+				// We need to search forward to find the closest one
+				do
+				{
+					// Move to next comp
+					compStart = (SComp*)compStart->ll.next;
+
+					// Is this a target?
+					if (compStart)
+					{
+						switch (compStart->iCode)
+						{
+							case _ICODE_PARENTHESIS_RIGHT:
+							case _ICODE_BRACKET_RIGHT:
+							case _ICODE_BRACE_RIGHT:
+								if (!iComps_findClosest_parensBracketsBraces(compRelative, compStart, compPBBLeft, compPBBRight))
+									return(false);
+
+								// If the left component begins before our reference component we're good, otherwise we're still looking
+								if ((*compPBBLeft)->start < compRelative->start)
+									return(true);
+
+								// If we get here, still looking
+								break;
+						}
+					}
+
+				} while (compStart);
+
+				// If we get here, no find
+				return(false);
+			}
+
+			// When we get here we are processing for the indicated form
+			lnLevel = 0;
+			do {
+				// Move to next comp
+				if (lnDirection == -1)			compStart = (SComp*)compStart->ll.prev;
+				else							compStart = (SComp*)compStart->ll.next;
+
+				// Is this our match?
+				if (compStart)
+				{
+					if (compStart->iCode == lniCodeNeedle)
+					{
+						if (lnLevel == 0)
+						{
+							// We're there, note our findings
+							if (lnDirection == -1)		*compPBBLeft	= compStart;
+							else						*compPBBRight	= compStart;
+
+							// Report success
+							return(true);
+						}
+
+						// Going deeper, decrease our level
+						--lnLevel;
+
+					} else if (compStart->iCode == lniCodeNeedleMate) {
+						// It's the mate of what we're searching for, increase our level another level deep for nesting, going shallow
+						++lnLevel;
+					}
+				}
+
+			} while (compStart);
+
+			// When we get here, no find
+			return(false);
+		}
+		// If we get here, invalid
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to see if a component is a parenthesis, bracket, or brace
+//
+//////
+	bool iComps_isParensBracketsBraces(SComp* comp)
+	{
+		// Make sure our environment is sane
+		if (comp)
+		{
+			switch (comp->iCode)
+			{
+				case _ICODE_PARENTHESIS_LEFT:
+				case _ICODE_PARENTHESIS_RIGHT:
+				case _ICODE_BRACKET_LEFT:
+				case _ICODE_BRACKET_RIGHT:
+				case _ICODE_BRACE_LEFT:
+				case _ICODE_BRACE_RIGHT:
+					return(true);
+			}
+			// If we get here, no match
+		}
+
+		// If we get here, invalid
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Is the reference the mate of iCodeMate
+//
+//////
+	bool iComps_isMateOf(s32 tniCodeTest, s32 tniCodeMate)
+	{
+		switch (tniCodeMate)
+		{
+			case _ICODE_PARENTHESIS_LEFT:
+				return(tniCodeTest == _ICODE_PARENTHESIS_RIGHT);
+
+			case _ICODE_PARENTHESIS_RIGHT:
+				return(tniCodeTest == _ICODE_PARENTHESIS_LEFT);
+
+			case _ICODE_BRACKET_LEFT:
+				return(tniCodeTest == _ICODE_BRACKET_RIGHT);
+
+			case _ICODE_BRACKET_RIGHT:
+				return(tniCodeTest == _ICODE_BRACKET_LEFT);
+
+			case _ICODE_BRACE_LEFT:
+				return(tniCodeTest == _ICODE_BRACE_RIGHT);
+
+			case _ICODE_BRACE_RIGHT:
+				return(tniCodeTest == _ICODE_BRACE_LEFT);
+		}
+		// If we get here, unknown
+		return(false);
+	}
+
+
+
+
+//////////
+//
 // Searches for the next component that is not of type tniIcode, including itself
 //
 //////
@@ -1934,16 +2138,16 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 				if (comp->iCode >= _ICODE_CASK_SIDE_MINIMUM && comp->iCode <= _ICODE_CASK_SIDE_MAXIMUM)
 				{
 					// Try normal forms without parameters
-					iComps_combineAllBetween2(line,		_ICODE_CASK_ROUND_OPEN,				_ICODE_CASK_ROUND_CLOSE,				_ICODE_CASK_ROUND,				_ICAT_CASK, (SBgra*)&black, false);
-					iComps_combineAllBetween2(line,		_ICODE_CASK_SQUARE_OPEN,			_ICODE_CASK_SQUARE_CLOSE,				_ICODE_CASK_SQUARE,				_ICAT_CASK, (SBgra*)&black, false);
-					iComps_combineAllBetween2(line,		_ICODE_CASK_TRIANGLE_OPEN,			_ICODE_CASK_TRIANGLE_CLOSE,				_ICODE_CASK_TRIANGLE,			_ICAT_CASK, (SBgra*)&black, false);
-					iComps_combineAllBetween2(line,		_ICODE_CASK_TILDE_OPEN,				_ICODE_CASK_TILDE_CLOSE,				_ICODE_CASK_TILDE,				_ICAT_CASK, (SBgra*)&black, false);
+					iComps_combineAllBetween2(line,		_ICODE_CASK_ROUND_OPEN,				_ICODE_CASK_ROUND_CLOSE,				_ICODE_CASK_ROUND,				_ICAT_CASK, (SBgra*)&blackColor, false);
+					iComps_combineAllBetween2(line,		_ICODE_CASK_SQUARE_OPEN,			_ICODE_CASK_SQUARE_CLOSE,				_ICODE_CASK_SQUARE,				_ICAT_CASK, (SBgra*)&blackColor, false);
+					iComps_combineAllBetween2(line,		_ICODE_CASK_TRIANGLE_OPEN,			_ICODE_CASK_TRIANGLE_CLOSE,				_ICODE_CASK_TRIANGLE,			_ICAT_CASK, (SBgra*)&blackColor, false);
+					iComps_combineAllBetween2(line,		_ICODE_CASK_TILDE_OPEN,				_ICODE_CASK_TILDE_CLOSE,				_ICODE_CASK_TILDE,				_ICAT_CASK, (SBgra*)&blackColor, false);
 
 					// Try normal forms with parameters
-					iComps_combineAllBetween2(line,		_ICODE_CASK_ROUND_OPEN_PARAMS,		_ICODE_CASK_ROUND_CLOSE_PARAMS,			_ICODE_CASK_ROUND_PARAMS,		_ICAT_CASK, (SBgra*)&black, false);
-					iComps_combineAllBetween2(line,		_ICODE_CASK_SQUARE_OPEN_PARAMS,		_ICODE_CASK_SQUARE_CLOSE_PARAMS,		_ICODE_CASK_SQUARE_PARAMS,		_ICAT_CASK, (SBgra*)&black, false);
-					iComps_combineAllBetween2(line,		_ICODE_CASK_TRIANGLE_OPEN_PARAMS,	_ICODE_CASK_TRIANGLE_CLOSE_PARAMS,		_ICODE_CASK_TRIANGLE_PARAMS,	_ICAT_CASK, (SBgra*)&black, false);
-					iComps_combineAllBetween2(line,		_ICODE_CASK_TILDE_OPEN_PARAMS,		_ICODE_CASK_TILDE_CLOSE_PARAMS,			_ICODE_CASK_TILDE_PARAMS,		_ICAT_CASK, (SBgra*)&black, false);
+					iComps_combineAllBetween2(line,		_ICODE_CASK_ROUND_OPEN_PARAMS,		_ICODE_CASK_ROUND_CLOSE_PARAMS,			_ICODE_CASK_ROUND_PARAMS,		_ICAT_CASK, (SBgra*)&blackColor, false);
+					iComps_combineAllBetween2(line,		_ICODE_CASK_SQUARE_OPEN_PARAMS,		_ICODE_CASK_SQUARE_CLOSE_PARAMS,		_ICODE_CASK_SQUARE_PARAMS,		_ICAT_CASK, (SBgra*)&blackColor, false);
+					iComps_combineAllBetween2(line,		_ICODE_CASK_TRIANGLE_OPEN_PARAMS,	_ICODE_CASK_TRIANGLE_CLOSE_PARAMS,		_ICODE_CASK_TRIANGLE_PARAMS,	_ICAT_CASK, (SBgra*)&blackColor, false);
+					iComps_combineAllBetween2(line,		_ICODE_CASK_TILDE_OPEN_PARAMS,		_ICODE_CASK_TILDE_CLOSE_PARAMS,			_ICODE_CASK_TILDE_PARAMS,		_ICAT_CASK, (SBgra*)&blackColor, false);
 
 					// Done
 					return;

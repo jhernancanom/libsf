@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr.cpp
 //
 //////
-// Version 0.47
+// Version 0.48
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -184,7 +184,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 				bmpRadio	= iBmp_rawLoad(cgc_radioBmp);											// Load the raw bmpRadio
 				bmpRadioDot = iBmp_createAndExtractRect(bmpRadio, 0, 0, 44, 44);					// Extract the 44x44 rectangle
 				SetRect(&lrc, 0, 0, 44, 44);
-				iBmp_fillRect(bmpRadio, &lrc, white, white, white, white, false, NULL, false);		// And cover it up with white
+				iBmp_fillRect(bmpRadio, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);		// And cover it up with white
 
 
 		// Load the splash screen
@@ -560,16 +560,16 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 					baseColor	= iBmp_extractColorAtPoint(bmpStoplightBlue, bmpStoplightBlue->bi.biWidth / 2, bmpStoplightBlue->bi.biHeight / 2);
 					break;
 			}
-			leftColor = iBmp_colorCombine(baseColor, white, 0.50f);
+			leftColor = iBmp_colorCombine(baseColor, whiteColor, 0.50f);
 			CopyRect(&lrc2, &lrc);
 			lrc2.left	+= bmpStoplightRed->bi.biWidth;
 			lrc2.right	= (lrc2.right - lrc2.left) / 4;
-			iBmp_fillRect(bmp, &lrc2, leftColor, white, leftColor, white, true, NULL, false);
+			iBmp_fillRect(bmp, &lrc2, leftColor, whiteColor, leftColor, whiteColor, true, NULL, false);
 
 			lrc2.left	= lrc2.right;
 			lrc2.right	= lrc.right;
-			rightColor	= iBmp_colorCombine(baseColor, white, 0.10f);
-			iBmp_fillRect(bmp, &lrc2, white, rightColor, white, rightColor, true, NULL, false);
+			rightColor	= iBmp_colorCombine(baseColor, whiteColor, 0.10f);
+			iBmp_fillRect(bmp, &lrc2, whiteColor, rightColor, whiteColor, rightColor, true, NULL, false);
 
 
 		//////////
@@ -631,7 +631,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		// Draw a frame around this region so it marks the boundaries
 		//////
 			SetRect(&lrc, 0, 0, trc->right, trc->top + bmpStoplightRed->bi.biHeight);
-			iBmp_frameRect(bmp, &lrc, black, black, black, black, false, NULL, false);
+			iBmp_frameRect(bmp, &lrc, blackColor, blackColor, blackColor, blackColor, false, NULL, false);
 
 
 		//////////
@@ -664,7 +664,9 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Running programs (future, James 4:15)",		"0.55", false, false, false, -2, 0);
 		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Syntax highlighting (future, James 4:15)",	"0.50", false, false, false, -2, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Editor resize CTRL+ and CTRL-",				"0.47", true, false, false, 0, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Editor line numbers, breakpoints",			"0.48", true, false, false, 0, 0);
+
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Editor resize CTRL+ and CTRL-",				"0.47", false, false, false, 0, 0);
 
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Casks",										"0.46", false, false, false, 0, 0);
 
@@ -679,7 +681,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Bugfix on function parsing",					"0.42", false, true, false, -2, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "System log",									"0.41", false, true, false, -2, 0);
+// 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "System log",									"0.41", false, true, false, -2, 0);
 //		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Focus highlight border bugfix",				"0.41", false, true, false, -2, 0);
 //		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Memory leak bug fixes",						"0.41", false, true, false, -2, 0);
 

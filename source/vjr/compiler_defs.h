@@ -3,7 +3,7 @@
 // /libsf/source/vjr/compiler.h
 //
 //////
-// Version 0.47
+// Version 0.48
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -80,6 +80,9 @@ struct SVariable;
 	bool					iComps_areAllPrecedingCompsWhitespaces		(SComp* comp);
 	s32						iComps_translateToOthers_test				(s8* tcHaystack, s8* tcNeedle, s32 tnLength);
 	SComp*					iComps_findNextBy_iCode						(SComp* comp, s32 tniCode, SComp** compLastScanned);
+	bool					iComps_findClosest_parensBracketsBraces		(SComp* compRelative, SComp* compStart, SComp** compPBBLeft, SComp** compPBBRight);
+	bool					iComps_isParensBracketsBraces				(SComp* comp);
+	bool					iComps_isMateOf								(s32 tniCodeTest, s32 tniCodeMate);
 	SComp*					iComps_skipPast_iCode						(SComp* comp, s32 tniCode);
 	SComp*					iComps_skipTo_iCode							(SComp* comp, s32 tniCode);
 	u32						iComps_combineNextN							(SComp* comp, u32 tnCount, s32 tnNewICode, s32 tnNewICat, SBgra* newColor);

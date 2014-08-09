@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_structs0.h
 //
 //////
-// Version 0.47
+// Version 0.48
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -286,6 +286,9 @@ struct SVariable
 		SFunction*		thisCode;										// Pointer to the code block this relates to
 		SDatum			value;											// The actual value
 	};
+
+	// If this variable is related to a component, indicate it here
+	SComp*		compRelated;											// Can vary regularly, but when available at compile time and in immediate scope, relates to a component
 
 	// If assign or access
 	SFunction*	assign;													// Source code executed whenever this variable is assigned

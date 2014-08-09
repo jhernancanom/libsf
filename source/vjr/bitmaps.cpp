@@ -3,7 +3,7 @@
 // /libsf/source/vjr/bitmaps.cpp
 //
 //////
-// Version 0.47
+// Version 0.48
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -1939,6 +1939,94 @@
 
 //////////
 //
+// Draws a wavy line in the rectangle based on the indicated color.  The wavy line
+// looks like this, beginning from the bottom, going up/down at a 45 degree angle:
+//
+//		/\/\/\/\/\/\/
+//
+//////
+	u32 iBmp_wavyLine(SBitmap* bmp, RECT* trc, SBgra color)
+	{
+		s32		lnY, lnX, lnXX, lnY_inc;
+		u32		lnPixelsRendered;
+		SBgr*	lbgr;
+		SBgra*	lbgra;
+
+
+		// Make sure our environment is sane
+		lnPixelsRendered = 0;
+		if (bmp)
+		{
+			// Begin at the lower-left
+			lnY		= trc->bottom;
+			lnY_inc	= -1;
+			if (bmp->bi.biBitCount == 24)
+			{
+				// Process across the rectangle
+				for (lnX = trc->left, lnXX = 0; lnX < bmp->bi.biWidth && lnX < trc->right; lnX += (lnXX & 1), lnXX++)
+				{
+					// Grab the pointer for this part of the wavy line
+					lbgr = (SBgr*)(bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth) + (lnX * 3));
+
+					// Draw the pixel
+					lbgr->red = color.red;
+					lbgr->grn = color.grn;
+					lbgr->blu = color.blu;
+
+					// Adjust for the next pixel
+					lnY += lnY_inc;
+
+					// Constrain
+					if (lnY < trc->top)
+					{
+						// We're above, head the other way
+						lnY_inc	= 1;
+
+					} else if (lnY >= trc->bottom) {
+						// We're below, head the other way
+						lnY_inc	= -1;
+					}
+				}
+
+			} else if (bmp->bi.biBitCount == 32) {
+				// Process across the rectangle
+				for (lnX = trc->left, lnXX = 0; lnX < bmp->bi.biWidth && lnX <= trc->right; lnX += (lnXX & 1), lnXX++)
+				{
+					// Grab the pointer for this part of the wavy line
+					lbgra = (SBgra*)(bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth) + (lnX * 4));
+
+
+					// Draw the pixel
+					lbgra->red = color.red;
+					lbgra->grn = color.grn;
+					lbgra->blu = color.blu;
+
+					// Adjust for the next pixel
+					lnY += lnY_inc;
+
+					// Constrain
+					if (lnY <= trc->top)
+					{
+						// We're above, head the other way
+						lnY_inc	= 1;
+
+					} else if (lnY >= trc->bottom) {
+						// We're below, head the other way
+						lnY_inc	= -1;
+					}
+				}
+			}
+		}
+
+		// Return the region
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
 // Extracts the color at the indicated point
 //
 //////
@@ -1977,7 +2065,7 @@
 		}
 
 		// If we get here, invalid
-		return(black);
+		return(blackColor);
 	}
 
 
@@ -2259,8 +2347,8 @@
 					*tnSkipChars	= 3;
 					bmpLeft			= bmpCaskRoundLeft;
 					bmpRight		= bmpCaskRoundRight;
-					caskColor.color	= pastelGreen.color;
-					textColor.color	= dark_green.color;
+					caskColor.color	= pastelGreenColor.color;
+					textColor.color	= darkGreenColor.color;
 					llAddParams		= true;
 					break;
 
@@ -2269,8 +2357,8 @@
 					*tnSkipChars	= 3;
 					bmpLeft			= bmpCaskSquareLeft;
 					bmpRight		= bmpCaskSquareRight;
-					caskColor.color	= pastelOrange.color;
-					textColor.color	= dark_orange.color;
+					caskColor.color	= pastelOrangeColor.color;
+					textColor.color	= darkOrangeColor.color;
 					llAddParams		= true;
 					break;
 
@@ -2279,8 +2367,8 @@
 					*tnSkipChars	= 3;
 					bmpLeft			= bmpCaskTriangleLeft;
 					bmpRight		= bmpCaskTriangleRight;
-					caskColor.color	= pastelYellow.color;
-					textColor.color	= black.color;
+					caskColor.color	= pastelYellowColor.color;
+					textColor.color	= blackColor.color;
 					llAddParams		= true;
 					break;
 
@@ -2289,8 +2377,8 @@
 					*tnSkipChars	= 3;
 					bmpLeft			= bmpCaskTildeLeft;
 					bmpRight		= bmpCaskTildeRight;
-					caskColor.color	= pastelBlue.color;
-					textColor.color	= black.color;
+					caskColor.color	= pastelBlueColor.color;
+					textColor.color	= blackColor.color;
 					llAddParams		= true;
 					break;
 				
@@ -2299,8 +2387,8 @@
 					*tnSkipChars	= 2;
 					bmpLeft			= bmpCaskRoundLeft;
 					bmpRight		= bmpCaskRoundRight;
-					caskColor.color	= pastelGreen.color;
-					textColor.color	= dark_green.color;
+					caskColor.color	= pastelGreenColor.color;
+					textColor.color	= darkGreenColor.color;
 					break;
 
 				case _ICODE_CASK_SQUARE:
@@ -2308,8 +2396,8 @@
 					*tnSkipChars	= 2;
 					bmpLeft			= bmpCaskSquareLeft;
 					bmpRight		= bmpCaskSquareRight;
-					caskColor.color	= pastelOrange.color;
-					textColor.color	= dark_orange.color;
+					caskColor.color	= pastelOrangeColor.color;
+					textColor.color	= darkOrangeColor.color;
 					break;
 
 				case _ICODE_CASK_TRIANGLE:
@@ -2317,8 +2405,8 @@
 					*tnSkipChars	= 2;
 					bmpLeft			= bmpCaskTriangleLeft;
 					bmpRight		= bmpCaskTriangleRight;
-					caskColor.color	= pastelYellow.color;
-					textColor.color	= black.color;
+					caskColor.color	= pastelYellowColor.color;
+					textColor.color	= blackColor.color;
 					break;
 
 				case _ICODE_CASK_TILDE:
@@ -2326,8 +2414,8 @@
 					*tnSkipChars	= 2;
 					bmpLeft			= bmpCaskTildeLeft;
 					bmpRight		= bmpCaskTildeRight;
-					caskColor.color	= pastelBlue.color;
-					textColor.color	= black.color;
+					caskColor.color	= pastelBlueColor.color;
+					textColor.color	= blackColor.color;
 					break;
 			}
 

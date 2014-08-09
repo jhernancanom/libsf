@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_globals.h
 //
 //////
-// Version 0.47
+// Version 0.48
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -250,42 +250,47 @@
 		SFont*			gsWindowTitleBarFontSubform			= NULL;									// Default font, Ubuntu Bold 10 pt
 		SFont*			gsFontCask							= NULL;									// Cask font, Ubuntu Bold 30 pt
 		// Global colors
-		const SBgra		white								= { rgba(255, 255, 255, 255) };
-		const SBgra		yellow								= { rgba(255, 255, 0, 255) };
-		const SBgra		red									= { rgba(255, 0, 0, 255) };
-		const SBgra		green								= { rgba(0, 255, 0, 255) };
-		const SBgra		blue								= { rgba(0, 0, 255, 255) };
-		const SBgra		cyan								= { rgba(0, 255, 255, 255) };
-		const SBgra		fuchsia								= { rgba(255, 255, 0, 255) };
-		const SBgra		dark_red							= { rgba(80, 0, 0, 255) };
-		const SBgra		dark_orange							= { rgba(128, 64, 0, 255) };
-		const SBgra		dark_green							= { rgba(0, 80, 0, 255) };
-		const SBgra		dark_blue							= { rgba(0, 0, 80, 255) };
-		const SBgra		pastelYellow						= { rgba(255, 255, 192, 255) };
-		const SBgra		pastelRed							= { rgba(255, 210, 210, 255) };
-		const SBgra		pastelOrange						= { rgba(255, 215, 164, 255) };
-		const SBgra		pastelGreen							= { rgba(192, 255, 192, 255) };
-		const SBgra		pastelBlue							= { rgba(210, 210, 255, 255) };
-		const SBgra		black								= { rgba(0, 0, 0, 255) };
-		const SBgra		gray								= { rgba(192, 192, 192, 255) };
-		const SBgra		lineNumberFillColor					= { rgba(225, 245, 240, 255) };
-		const SBgra		lineNumberBackColor					= { rgba(215, 235, 230, 255) };
-		const SBgra		lineNumberForeColor					= { rgba(191, 208, 191, 255) };
-		const SBgra		breadcrumbBackColor					= { rgba(180, 220, 240, 255) };			// Cyanish
-		const SBgra		breadcrumbForeColor					= { rgba(0, 0, 164, 255) };				// Semidark blue
-		const SBgra		breakpointBackColor					= { rgba(180, 140, 220, 255) };			// Purplish
-		const SBgra		breakpointForeColor					= { rgba(64, 32, 92, 255) };			// Dark purple
-		const SBgra		currentStatementBackColor			= { rgba(225, 255, 192, 255) };			// Pastel lime greenish
-		const SBgra		currentStatementForeColor			= { rgba(0, 64, 0, 255) };				// Dark green
-		const SBgra		selectedBackColor					= { rgba(32, 164, 255, 255) };
-		const SBgra		selectedForeColor					= { rgba(255, 255, 255, 255) };
-		const SBgra		disabledBackColor					= { rgba(255, 255, 255, 255) };
-		const SBgra		disabledForeColor					= { rgba(192, 192, 230, 255) };
-		const SBgra		colorTracking						= { rgba(0, 0, 255, 255) };				// Blue
-		f32				trackingRatio						= 0.025f;
-		const SBgra		colorMouseOver						= { rgba(255, 255, 0, 255) };			// Yellow
-		const SBgra		colorMouseDown						= { rgba(0, 255, 0, 255) };				// Green
+		const SBgra		whiteColor							= { rgba(255, 255, 255, 255) };
+		const SBgra		yellowColor							= { rgba(255, 255, 0, 255) };
+		const SBgra		redColor							= { rgba(255, 0, 0, 255) };
+		const SBgra		greenColor							= { rgba(0, 255, 0, 255) };
+		const SBgra		blueColor							= { rgba(0, 0, 255, 255) };
+		const SBgra		cyanColor							= { rgba(0, 255, 255, 255) };
+		const SBgra		orangeColor							= { rgba(255, 200, 64, 255) };
+		const SBgra		fuchsiaColor						= { rgba(255, 255, 0, 255) };
+		const SBgra		darkRedColor						= { rgba(80, 0, 0, 255) };
+		const SBgra		darkOrangeColor						= { rgba(128, 64, 0, 255) };
+		const SBgra		darkGreenColor						= { rgba(0, 80, 0, 255) };
+		const SBgra		darkBlueColor						= { rgba(0, 0, 80, 255) };
+		const SBgra		pastelYellowColor					= { rgba(255, 255, 192, 255) };
+		const SBgra		pastelRedColor						= { rgba(255, 210, 210, 255) };
+		const SBgra		pastelOrangeColor					= { rgba(255, 215, 164, 255) };
+		const SBgra		pastelGreenColor					= { rgba(192, 255, 192, 255) };
+		const SBgra		pastelBlueColor						= { rgba(210, 210, 255, 255) };
+		const SBgra		blackColor							= { rgba(0, 0, 0, 255) };
+		const SBgra		grayColor							= { rgba(192, 192, 192, 255) };
 		const SBgra		maskColor							= { rgba(222, 22, 222, 255) };			// Hideous fuscia (by design)
+		SBgra			lineNumberFillColor					= { rgba(225, 245, 240, 255) };
+		SBgra			lineNumberBackColor					= { rgba(215, 235, 230, 255) };
+		SBgra			lineNumberForeColor					= { rgba(191, 208, 191, 255) };
+		SBgra			breadcrumbBackColor					= { rgba(180, 220, 240, 255) };			// Cyanish
+		SBgra			breadcrumbForeColor					= { rgba(0, 0, 164, 255) };				// Semidark blue
+		SBgra			breakpointBackColor					= { rgba(180, 140, 220, 255) };			// Purplish
+		SBgra			breakpointForeColor					= { rgba(64, 32, 92, 255) };			// Dark purple
+		SBgra			currentStatementBackColor			= { rgba(225, 255, 192, 255) };			// Pastel lime greenish
+		SBgra			currentStatementForeColor			= { rgba(0, 64, 0, 255) };				// Dark green
+		SBgra			overrideMatchingBackColor			= { rgba(0, 255, 0, 255) };				// Green
+		SBgra			overrideMatchingForeColor			= { rgba(0, 0, 0, 255) };				// Black
+		SBgra			overrideMatchingBackColorMultiple	= { rgba(0, 255, 0, 255) };				// Green
+		SBgra			overrideMatchingForeColorMultiple	= { rgba(0, 0, 0, 255) };				// Black
+		SBgra			selectedBackColor					= { rgba(32, 164, 255, 255) };
+		SBgra			selectedForeColor					= { rgba(255, 255, 255, 255) };
+		SBgra			disabledBackColor					= { rgba(255, 255, 255, 255) };
+		SBgra			disabledForeColor					= { rgba(192, 192, 230, 255) };
+		SBgra			colorTracking						= { rgba(0, 0, 255, 255) };				// Blue
+		f32				trackingRatio						= 0.025f;
+		SBgra			colorMouseOver						= { rgba(255, 255, 0, 255) };			// Yellow
+		SBgra			colorMouseDown						= { rgba(0, 255, 0, 255) };				// Green
 
 		// Forms four-corner window color schemes (eventually these will be loaded from themes.dbf)
 // Orange theme:

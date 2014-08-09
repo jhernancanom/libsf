@@ -3,7 +3,7 @@
 // /libsf/source/vjr/object_accessors.cpp
 //
 //////
-// Version 0.47
+// Version 0.48
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -96,14 +96,14 @@ bool iObj_setInteger(SObject* obj, SVariable* var, s32* tnDest, s32 tnMin, s32 t
 		value = iiVariable_getAs_s32(var, false, &error, &errorNum);
 		if (error)
 		{
-			iError_reportByNumber(errorNum, NULL);
+			iError_reportByNumber(errorNum, var->compRelated);
 			return(false);
 		}
 
 		// Test min/max
 		if (tlUseMinMaxTest && (value < tnMin || value > tnMax))
 		{
-			iError_reportByNumber(_ERROR_OUT_OF_RANGE, NULL);
+			iError_reportByNumber(_ERROR_OUT_OF_RANGE, var->compRelated);
 			return(false);
 		}
 
@@ -113,7 +113,7 @@ bool iObj_setInteger(SObject* obj, SVariable* var, s32* tnDest, s32 tnMin, s32 t
 			_extraTestFunction = tnExtraTestFunction;
 			if (!extraTestFunction(value))
 			{
-				iError_reportByNumber(_ERROR_OUT_OF_RANGE, NULL);
+				iError_reportByNumber(_ERROR_OUT_OF_RANGE, var->compRelated);
 				return(false);
 			}
 		}
@@ -179,7 +179,7 @@ SVariable* iObj_getCharacter(SObject* obj, SDatum* datum)
 
 bool iObj_setError(SObject* obj, SVariable* var)
 {
-	iError_reportByNumber(_ERROR_FEATURE_NOT_AVAILABLE, NULL);
+	iError_reportByNumber(_ERROR_FEATURE_NOT_AVAILABLE, var->compRelated);
 	return(false);
 }
 
@@ -423,7 +423,7 @@ bool iObj_setProperty_left(SObject* obj, SVariable* var)
 		value = iiVariable_getAs_s32(var, false, &error, &errorNum);
 		if (error)
 		{
-			iError_reportByNumber(errorNum, NULL);
+			iError_reportByNumber(errorNum, var->compRelated);
 			return(false);
 		}
 
@@ -470,7 +470,7 @@ bool iObj_setProperty_top(SObject* obj, SVariable* var)
 		value = iiVariable_getAs_s32(var, false, &error, &errorNum);
 		if (error)
 		{
-			iError_reportByNumber(errorNum, NULL);
+			iError_reportByNumber(errorNum, var->compRelated);
 			return(false);
 		}
 
@@ -517,7 +517,7 @@ bool iObj_setProperty_width(SObject* obj, SVariable* var)
 		value = iiVariable_getAs_s32(var, false, &error, &errorNum);
 		if (error)
 		{
-			iError_reportByNumber(errorNum, NULL);
+			iError_reportByNumber(errorNum, var->compRelated);
 			return(false);
 		}
 
@@ -562,7 +562,7 @@ bool iObj_setProperty_height(SObject* obj, SVariable* var)
 		value = iiVariable_getAs_s32(var, false, &error, &errorNum);
 		if (error)
 		{
-			iError_reportByNumber(errorNum, NULL);
+			iError_reportByNumber(errorNum, var->compRelated);
 			return(false);
 		}
 
@@ -662,12 +662,12 @@ bool iObj_setProperty_scaleX(SObject* obj, SVariable* var)
 		value = iiVariable_getAs_f32(var, false, &error, &errorNum);
 		if (error)
 		{
-			iError_reportByNumber(errorNum, NULL);
+			iError_reportByNumber(errorNum, var->compRelated);
 			return(false);
 		}
 		if (value <= 0.0f)
 		{
-			iError_reportByNumber(_ERROR_OUT_OF_RANGE, NULL);
+			iError_reportByNumber(_ERROR_OUT_OF_RANGE, var->compRelated);
 			return(false);
 		}
 
@@ -723,12 +723,12 @@ bool iObj_setProperty_scaleY(SObject* obj, SVariable* var)
 		value = iiVariable_getAs_f32(var, false, &error, &errorNum);
 		if (error)
 		{
-			iError_reportByNumber(errorNum, NULL);
+			iError_reportByNumber(errorNum, var->compRelated);
 			return(false);
 		}
 		if (value <= 0.0f)
 		{
-			iError_reportByNumber(_ERROR_OUT_OF_RANGE, NULL);
+			iError_reportByNumber(_ERROR_OUT_OF_RANGE, var->compRelated);
 			return(false);
 		}
 
@@ -877,7 +877,7 @@ bool iObj_setMinWidth(SObject* obj, SVariable* var)
 		value = iiVariable_getAs_s32(var, false, &error, &errorNum);
 		if (error)
 		{
-			iError_reportByNumber(errorNum, NULL);
+			iError_reportByNumber(errorNum, var->compRelated);
 			return(false);
 		}
 
@@ -911,7 +911,7 @@ bool iObj_setMinHeight(SObject* obj, SVariable* var)
 		value = iiVariable_getAs_s32(var, false, &error, &errorNum);
 		if (error)
 		{
-			iError_reportByNumber(errorNum, NULL);
+			iError_reportByNumber(errorNum, var->compRelated);
 			return(false);
 		}
 
@@ -981,7 +981,7 @@ bool iObj_setMaxWidth(SObject* obj, SVariable* var)
 		value = iiVariable_getAs_s32(var, false, &error, &errorNum);
 		if (error)
 		{
-			iError_reportByNumber(errorNum, NULL);
+			iError_reportByNumber(errorNum, var->compRelated);
 			return(false);
 		}
 
@@ -1015,7 +1015,7 @@ bool iObj_setMaxHeight(SObject* obj, SVariable* var)
 		value = iiVariable_getAs_s32(var, false, &error, &errorNum);
 		if (error)
 		{
-			iError_reportByNumber(errorNum, NULL);
+			iError_reportByNumber(errorNum, var->compRelated);
 			return(false);
 		}
 

@@ -3,7 +3,7 @@
 // /libsf/source/vjr/edit_chain_manager.cpp
 //
 //////
-// Version 0.47
+// Version 0.48
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -650,7 +650,6 @@ int3_break;
 	SEdit* iSEM_appendLine(SEM* em, s8* tcText, s32 tnTextLength)
 	{
 		s32		lnI, lnJ, lnPass, lnTextLength, lnCount;
-		bool	llChanged;
 		SEdit*	ec;
 
 
@@ -916,8 +915,8 @@ int3_break;
 
 		} else {
 			// It's insane, so we set our colors to default
-			backColor	= white;
-			foreColor	= black;
+			backColor	= whiteColor;
+			foreColor	= blackColor;
 		}
 	}
 
@@ -968,7 +967,6 @@ int3_break;
 	{
 		SEM*			em;
 		SObject*		subform;
-		SBreakpoint*	bp;
 
 
 		// Make sure our environment is sane
@@ -988,7 +986,7 @@ int3_break;
 						if (em && em->ecCursorLine)
 						{
 							// Toggle it
-							bp = iEditChain_toggleBreakpoint(em);
+							iEditChain_toggleBreakpoint(em);
 
 							// Force the redraw
 							iObj_setDirtyRender(obj, true);
@@ -1412,7 +1410,7 @@ int3_break;
 	u32 iSEM_render(SEM* em, SObject* obj, bool tlRenderCursorline)
 	{
 		u32			lnPixelsRendered;
-		s32			lnTop, lnSkip, lnDeltaX;
+		s32			lnTop, lnSkip, lnDeltaX, lnLevel;
 		bool		llIsValid;
 		SFont*		font;
 		SEdit*		line;
@@ -1421,6 +1419,9 @@ int3_break;
 		SBitmap*	bmpBreakpoint;
 		SBitmap*	bmpBreakpointScaled;
 		SComp*		comp;
+		SComp*		comp2;
+		SComp*		compPBBLeft;
+		SComp*		compPBBRight;
 		HGDIOBJ		hfontOld;
 		SBgra		foreColor, backColor, fillColor, backColorLast, foreColorLast, compColor;
 		RECT		rc, lrc, lrc2, lrc3, lrcComp;
@@ -1469,6 +1470,88 @@ int3_break;
 			// Iterate for every visible line
 			while (line && lrc.top + font->tm.tmHeight < rc.bottom)
 			{
+				if (line->compilerInfo && line->compilerInfo->firstComp)
+				{
+					//////////
+					// Clear off any former highlights, and highlight the current
+					//////
+						comp = line->compilerInfo->firstComp;
+						while (comp)
+						{
+							// Clear this entry
+							comp->overrideMatchingBackColor = NULL;
+							comp->overrideMatchingForeColor = NULL;
+
+							// Move to next component
+							comp = (SComp*)comp->ll.next;
+						}
+
+
+					//////////
+					// Highlight the closest parenthesis, bracket, or brace
+					//////
+						if (line == em->ecCursorLine)
+						{
+							//////////
+							// Locate the closest match
+							//////
+								comp = line->compilerInfo->firstComp;
+								while (comp)
+								{
+									// Are they on this component?
+									if (em->column >= comp->start && em->column <= comp->start + comp->length)
+									{
+										// This is the current component we're highlighting
+										if (iComps_findClosest_parensBracketsBraces(comp, comp, &compPBBLeft, &compPBBRight))
+										{
+											// We found something
+											if (iComps_isParensBracketsBraces(comp))
+											{
+												// Mark all commas between as highlighted
+												comp2	= (SComp*)compPBBLeft->ll.next;
+												lnLevel	= 0;
+												while (comp2 != compPBBRight)
+												{
+													if (lnLevel == 0 && comp2->iCode == _ICODE_COMMA)
+													{
+														// Mark this component
+														comp2->overrideMatchingBackColor	= &overrideMatchingBackColorMultiple;
+														comp2->overrideMatchingForeColor	= &overrideMatchingForeColorMultiple;
+
+														comp2->overrideMatchingBackColor	= &overrideMatchingBackColorMultiple;
+														comp2->overrideMatchingForeColor	= &overrideMatchingForeColorMultiple;
+
+													} else if (iComps_isMateOf(comp2->iCode, compPBBLeft->iCode)) {
+														// If the left-most is (, then this is a ), going shallow
+														++lnLevel;
+
+													} else if (comp2->iCode == compPBBLeft->iCode) {
+														// We're going deep
+														--lnLevel;
+													}
+
+													// Move to next component
+													comp2 = (SComp*)comp2->ll.next;
+												}
+
+											}
+											// Mark the two
+											compPBBLeft->overrideMatchingBackColor	= &overrideMatchingBackColor;
+											compPBBLeft->overrideMatchingForeColor	= &overrideMatchingForeColor;
+
+											compPBBRight->overrideMatchingBackColor	= &overrideMatchingBackColor;
+											compPBBRight->overrideMatchingForeColor	= &overrideMatchingForeColor;
+										}
+										break;
+									}
+
+									// Move to next component
+									comp = (SComp*)comp->ll.next;
+								}
+						}
+				}
+
+
 				//////////
 				// Determine the position
 				//////
@@ -1488,21 +1571,21 @@ int3_break;
 						// Display in the cursor color line
 						SetBkColor(bmp->hdc, RGB(currentStatementBackColor.red, currentStatementBackColor.grn, currentStatementBackColor.blu));
 						SetTextColor(bmp->hdc, RGB(currentStatementForeColor.red, currentStatementForeColor.grn, currentStatementForeColor.blu));
-						fillColor.color = currentStatementBackColor.color;
+						fillColor.color		= currentStatementBackColor.color;
 
 					} else if (line->ll.next || ((!em->showCursorLine || !tlRenderCursorline) && !em->showEndLine)) {
 						// Display in normal background color
 						SetBkColor(bmp->hdc, RGB(backColor.red, backColor.grn, backColor.blu));
 						SetTextColor(bmp->hdc, RGB(foreColor.red, foreColor.grn, foreColor.blu));
 						hfontOld		= SelectObject(bmp->hdc, font->hfont);
-						fillColor.color	= backColor.color;
+						fillColor.color		= backColor.color;
 
 					} else {
 						// This is the last line, display in the last line color
 						SetBkColor(bmp->hdc, RGB(backColorLast.red, backColorLast.grn, backColorLast.blu));
 						SetTextColor(bmp->hdc, RGB(foreColorLast.red, foreColorLast.grn, foreColorLast.blu));
 						hfontOld		= SelectObject(bmp->hdc, font->hfont);
-						fillColor.color	= backColorLast.color;
+						fillColor.color		= backColorLast.color;
 					}
 
 
@@ -1552,9 +1635,10 @@ int3_break;
 								comp = line->compilerInfo->firstComp;
 								while (comp)
 								{
-									// Determine where this component would go
-									if (comp->color)		compColor.color = comp->color->color;
-									else					compColor.color = foreColor.color;
+									// Fore color
+									     if (comp->overrideMatchingForeColor)		compColor.color	= comp->overrideMatchingForeColor->color;
+									else if (comp->color)							compColor.color = comp->color->color;
+									else											compColor.color = foreColor.color;
 
 									// Find out where it starts
 									SetRect(&lrcCompCalcStart, 0, 0, 200000, lrc.bottom);
@@ -1602,7 +1686,7 @@ int3_break;
 // If we decide to display it with an alpha, this also may need to be brought outside of the if block
 											// Overlay the text
 											SetBkMode(bmp->hdc, TRANSPARENT);
-											SetTextColor(bmp->hdc, RGB(black.red, black.grn, black.blu));
+											SetTextColor(bmp->hdc, RGB(blackColor.red, blackColor.grn, blackColor.blu));
 											--lrcComp.top;
 											DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start + lnSkip, comp->length - (2 * lnSkip), &lrcComp, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS);
 											++lrcComp.top;
@@ -1617,7 +1701,12 @@ int3_break;
 										// Set the color
 										SetTextColor(bmp->hdc, RGB(compColor.red, compColor.grn, compColor.blu));
 
+										// An explicit background color?
+										if (comp->overrideMatchingBackColor)		SetBkColor(bmp->hdc, RGB(comp->overrideMatchingBackColor->red, comp->overrideMatchingBackColor->grn, comp->overrideMatchingBackColor->blu));
+										else										SetBkColor(bmp->hdc, RGB(fillColor.red, fillColor.grn, fillColor.blu));
+
 										// Draw this component
+										SetBkMode(bmp->hdc, OPAQUE);
 										DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 
 										// If we should bold, bold it
@@ -1636,13 +1725,38 @@ int3_break;
 										}
 									}
 
+
+									//////////
+									// Check errors and warnings
+									//////
+										if (line != em->ecCursorLine && (comp->isError || comp->isWarning))
+										{
+											// Adjust the top down to the lower 1/4th
+											lrcComp.top += ((lrcComp.bottom - lrcComp.top) * 3) / 4;
+
+											// Is it a warning?
+											if (comp->isWarning && !comp->isError)
+											{
+												iBmp_wavyLine(bmp, &lrcComp, orangeColor);		// Overlay an amber wavy line on the lower 1/3rd of the component
+// 												iBmp_colorize(bmp, &lrcComp, pastelOrangeColor, false, 0.0f);
+											}
+
+											// Is it an error? (if there is an error and a warning, errors take precedence)
+											if (comp->isError)
+											{
+												iBmp_wavyLine(bmp, &lrcComp, redColor);			// Overlay a red wavy line on the lower 1/3rd of the component
+// 												iBmp_colorize(bmp, &lrcComp, pastelRedColor, false, 0.0f);
+											}
+										}
+
+
 									// Move to next component
 									comp = (SComp*)comp->ll.next;
 								}
 							}
 						}
 					}
-					
+
 
 				//////////
 				// Draw the cursor if on the cursor line
