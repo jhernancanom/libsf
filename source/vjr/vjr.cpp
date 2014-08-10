@@ -117,6 +117,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		gsFontDefaultFixedPoint		= iFont_create(cgcFontName_defaultFixed,	10,	FW_NORMAL,	0, 0);
 		gsWindowTitleBarFont		= iFont_create(cgcFontName_windowTitleBar,	12,	FW_NORMAL,	0, 0);
 		gsWindowTitleBarFontSubform	= iFont_create(cgcFontName_windowTitleBar,	10,	FW_NORMAL,	0, 0);
+		gsFontDefaultTooltip		= iFont_create(cgcFontName_defaultTooltip,	9,	FW_BOLD,	0, 0);
 		gsFontCask					= iFont_create(cgcFontName_cask,			20, FW_BOLD,	0, 0);
 
 		// Initialize the sound system

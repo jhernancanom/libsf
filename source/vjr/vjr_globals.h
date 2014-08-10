@@ -241,13 +241,14 @@
 	//////////
 	// General defaults
 	//////
-		SFont*			gsFontDefault						= NULL;									// Default font, Ubuntu 10 pt
-		SFont*			gsFontDefault9						= NULL;									// Default font, Ubuntu 9 pt
-		SFont*			gsFontDefaultBold					= NULL;									// Default font, Ubuntu 10 pt bold
-		SFont*			gsFontDefaultItalic8				= NULL;									// Default font, Ubuntu 9 pt Italic
-		SFont*			gsFontDefaultFixedPoint				= NULL;									// Default font, Ubuntu Mono 10 pt
-		SFont*			gsWindowTitleBarFont				= NULL;									// Default font, Ubuntu Bold 12 pt
-		SFont*			gsWindowTitleBarFontSubform			= NULL;									// Default font, Ubuntu Bold 10 pt
+		SFont*			gsFontDefault						= NULL;									// Ubuntu 10 pt
+		SFont*			gsFontDefault9						= NULL;									// Ubuntu 9 pt
+		SFont*			gsFontDefaultBold					= NULL;									// Ubuntu 10 pt bold
+		SFont*			gsFontDefaultItalic8				= NULL;									// Ubuntu 9 pt Italic
+		SFont*			gsFontDefaultFixedPoint				= NULL;									// Ubuntu Mono 10 pt
+		SFont*			gsWindowTitleBarFont				= NULL;									// Ubuntu Condensed Bold 12 pt
+		SFont*			gsWindowTitleBarFontSubform			= NULL;									// Ubuntu Condensed Bold 10 pt
+		SFont*			gsFontDefaultTooltip				= NULL;									// Ubuntu Condensed Bold 9 pt
 		SFont*			gsFontCask							= NULL;									// Cask font, Ubuntu Bold 30 pt
 		// Global colors
 		const SBgra		whiteColor							= { rgba(255, 255, 255, 255) };
@@ -270,6 +271,11 @@
 		const SBgra		blackColor							= { rgba(0, 0, 0, 255) };
 		const SBgra		grayColor							= { rgba(192, 192, 192, 255) };
 		const SBgra		maskColor							= { rgba(222, 22, 222, 255) };			// Hideous fuscia (by design)
+		SBgra			tooltipNwBackColor					= { rgba(255, 254, 230, 255) };			// Pastel yellow
+		SBgra			tooltipNeBackColor					= { rgba(249, 222, 133, 255) };			// Orange/golden yellow
+		SBgra			tooltipSwBackColor					= { rgba(252, 242, 192, 25) };			// Less pastel yellow, somewhat pale
+		SBgra			tooltipSeBackColor					= { rgba(247, 210, 96, 255) };			// More orange/golden yellow
+		SBgra			tooltipForecolor					= { rgba(84, 56, 12, 255) };			// Dark chocolate brown
 		SBgra			lineNumberFillColor					= { rgba(225, 245, 240, 255) };
 		SBgra			lineNumberBackColor					= { rgba(215, 235, 230, 255) };
 		SBgra			lineNumberForeColor					= { rgba(191, 208, 191, 255) };

@@ -1138,6 +1138,127 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 
 //////////
 //
+// Returns which component the cursor is currently on
+//
+//////
+	SComp* iComps_activeComp(SEM* em)
+	{
+		SComp* comp;
+
+
+		// Make sure our environment is sane
+		if (em && em->isSourceCode && em->ecCursorLine && em->ecCursorLine->compilerInfo && em->ecCursorLine->compilerInfo->firstComp)
+		{
+			// Begin at the beginning
+			comp = em->ecCursorLine->compilerInfo->firstComp;
+			while (comp)
+			{
+				// Is this the active component?
+				if (em->column >= comp->start && em->column <= comp->start + comp->length)
+					return(comp);
+
+				// Move to next component
+				comp = (SComp*)comp->ll.next;
+			}
+		}
+		
+		// If we get here, invalid or not found
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// If this is something that has a mate, indicate the mate's direction (forward
+// or backward in source code).
+//
+//////
+	bool iComps_getMateDirection(SComp* comp, s32* tnMateDirection)
+	{
+		if (comp && tnMateDirection)
+		{
+			switch (comp->iCode)
+			{
+				case _ICODE_PARENTHESIS_LEFT:
+					// Is (, so what is the direction to )?
+					*tnMateDirection = 1;
+					return(true);
+
+				case _ICODE_PARENTHESIS_RIGHT:
+					// Is ), so what is the direction to (?
+					*tnMateDirection = -1;
+					return(true);
+
+				case _ICODE_BRACKET_LEFT:
+					*tnMateDirection = 1;
+					return(true);
+				case _ICODE_BRACKET_RIGHT:
+					*tnMateDirection = -1;
+					return(true);
+
+				case _ICODE_BRACE_LEFT:
+					*tnMateDirection = 1;
+					return(true);
+				case _ICODE_BRACE_RIGHT:
+					*tnMateDirection = -1;
+					return(true);
+
+				case _ICODE_SCAN:
+					*tnMateDirection = 1;
+					return(true);
+				case _ICODE_ENDSCAN:
+					*tnMateDirection = -1;
+					return(true);
+
+				case _ICODE_DOWHILE:
+					*tnMateDirection = 1;
+					return(true);
+				case _ICODE_ENDDO:
+					*tnMateDirection = -1;
+					return(true);
+
+				case _ICODE_FOR:
+					*tnMateDirection = 1;
+					return(true);
+				case _ICODE_ENDFOR:
+					*tnMateDirection = -1;
+					return(true);
+
+				case _ICODE_ADHOC:
+					*tnMateDirection = 1;
+					return(true);
+				case _ICODE_ENDADHOC:
+					*tnMateDirection = -1;
+					return(true);
+
+				case _ICODE_FUNCTION:
+					*tnMateDirection = 1;
+					return(true);
+				case _ICODE_ENDFUNCTION:
+					*tnMateDirection = -1;
+					return(true);
+
+				case _ICODE_PROCEDURE:
+					*tnMateDirection = 1;
+					return(true);
+				case _ICODE_ENDPROCEDURE:
+					*tnMateDirection = -1;
+					return(true);
+			}
+		}
+
+		// If we get here, no mate
+		*tnMateDirection = 0;
+		return(false);
+	}
+
+
+
+
+//////////
+//
 // Called to search the comp and forward for a parenthesis, bracket, or brace, and then to
 // search the appropriate direction and find the matching one, and return those components.
 //

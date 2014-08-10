@@ -338,7 +338,7 @@
 		// Position and size each control
 		//////
 			lnHeight = (gobj_jdebi->rcClient.bottom - gobj_jdebi->rcClient.top) / 8;
-			iObj_setSize(sourceCode_editbox,	-1,	24,		sourceCode->rcClient.right	- sourceCode->rcClient.left - 48,	sourceCode->rcClient.bottom	- sourceCode->rcClient.top - 24);
+			iObj_setSize(sourceCode_editbox,	0,	24,		sourceCode->rcClient.right	- sourceCode->rcClient.left - 48,	sourceCode->rcClient.bottom	- sourceCode->rcClient.top - 24);
 			iObj_setSize(locals_editbox,		0,	0,		locals->rcClient.right		- locals->rcClient.left - 200,		locals->rcClient.bottom		- locals->rcClient.top);
 			iObj_setSize(watch_editbox,			0,	0,		watch->rcClient.right		- watch->rcClient.left,				watch->rcClient.bottom		- watch->rcClient.top);
 			iObj_setSize(command_editbox,		0,	0,		command->rcClient.right		- command->rcClient.left,			command->rcClient.bottom	- command->rcClient.top);
@@ -1620,7 +1620,7 @@
 // Called to create a new tooltip at the indicated coordinates with the indicated text
 //
 //////
-	void iTooltip_create(RECT* rc, SBitmap* bmp, s32 tnTimeoutMs)
+	void iTooltip_create(RECT* rc, SBitmap* bmp, s32 tnTimeoutMs, bool tlAllowMove, bool tlAllowSticky)
 	{
 		WNDCLASSEX	wcex;
 		ATOM		atom;
@@ -1647,6 +1647,12 @@
 				if (!atom)
 					return;		// Nope ... when we get here, failure
 			}
+
+
+//////////
+// TODO:  Allocate a tooltip structure and set the extra data for the window to hold the pointer.
+//        We need to have more than one tooltip positioned at any one time
+//////
 
 
 		//////////

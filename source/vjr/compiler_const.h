@@ -940,8 +940,10 @@
 	const s32       _ICODE_ENDCASE                                  = 2085;
 	const s32       _ICODE_ENDDO                                    = 2086;
 	const s32       _ICODE_ENDFOR                                   = 2087;
+	const s32		_ICODE_ENDFUNCTION								= 2276;
 	const s32       _ICODE_ENDIF                                    = 2088;
 	const s32       _ICODE_ENDPRINTJOB                              = 2089;
+	const s32		_ICODE_ENDPROCEDURE								= 2277;
 	const s32       _ICODE_ENDSCAN                                  = 2090;
 	const s32       _ICODE_ENDTEXT                                  = 2091;
 	const s32       _ICODE_ENDWITH                                  = 2092;
@@ -1128,6 +1130,8 @@
 	// _ICODE_DOFORM												= 2273;
 	// _ICODE_DOPROGRAM												= 2274;
 	// _ICODE_DOWHILE												= 2275;
+	// _ICODE_ENDFUNCTION											= 2276;
+	// _ICODE_ENDPROCEDURE											= 2277;
 
 
 //////////

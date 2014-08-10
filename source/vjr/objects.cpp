@@ -328,6 +328,134 @@
 
 //////////
 //
+// Called to find the RECT of the indicated object in screen coordinates
+//
+//////
+	bool iObj_find_screenRect(SObject* obj, RECT* rc)
+	{
+		SObject*	objRoot;
+		SWindow*	win;
+		RECT		lrcWin, lrcObj;
+
+
+		// Make sure our environment is sane
+		if (obj && rc)
+		{
+			// Grab the parent-most object
+			objRoot = iObj_find_rootmostObject(obj);
+
+			// It must be a form, so we look for the form on the window
+			win = iWindow_findByObj(objRoot);
+			if (win)
+			{
+				// Get the coordinates
+				CopyRect(&lrcWin, &win->rc);
+
+				// Adjust for the child object's location within
+				if (iObj_find_relativeRect(objRoot, obj, &lrcObj, true, true))
+				{
+					// Calculate the adjustment
+					SetRect(rc, lrcWin.left + lrcObj.left, lrcWin.top + lrcObj.top, lrcWin.left + lrcObj.right, lrcWin.top + lrcObj.bottom);
+
+					// Indicate success
+					return(true);
+				}
+			}
+		}
+		// If we get here, we could not obtain that information
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to find the relative rectangle of the indicated 
+//
+//////
+	bool iObj_find_relativeRect(SObject* objRoot, SObject* obj, RECT* lrcObj, bool tlProcessChildren, bool tlProcessSiblings)
+	{
+		RECT		lrcSave, lrcCandidate;
+		SObject*	objSib;
+
+
+		// Make sure our environment is sane
+		if (objRoot && obj)
+		{
+			//////////
+			// Are we there yet?
+			//////
+				if (objRoot == obj)
+				{
+					// Yes, adjust the final rect
+					SetRect(lrcObj,	lrcObj->left + obj->rc.left,
+										lrcObj->top  + obj->rc.top,
+										lrcObj->left + obj->rc.right,
+										lrcObj->top  + obj->rc.bottom);
+
+					// Indicate success
+					return(true);
+				}
+
+
+			//////////
+			// Adjust the rectangle for the client portion of this control
+			//////
+				SetRect(&lrcSave,	lrcObj->left + obj->rcClient.left,
+									lrcObj->top  + obj->rcClient.top,
+									lrcObj->left + obj->rcClient.right,
+									lrcObj->top  + obj->rcClient.bottom);
+
+
+			//////////
+			// See if it's in one of the children
+			//////
+				CopyRect(&lrcCandidate, &lrcSave);
+				if (tlProcessChildren && objRoot->firstChild && iObj_find_relativeRect(objRoot->firstChild, obj, &lrcCandidate, true, true))
+				{
+					// It was found, update the target and indicate success
+					CopyRect(lrcObj, &lrcCandidate);
+
+					// Indicate success
+					return(true);
+				}
+
+
+			//////////
+			// See if it's one of the siblings
+			//////
+				if (tlProcessSiblings && objRoot->ll.next)
+				{
+					// Iterate through any children
+					objSib = (SObject*)objRoot->ll.next;
+					while (objSib)
+					{
+						// Try this one
+						CopyRect(&lrcCandidate, &lrcSave);
+						if (iObj_find_relativeRect(objSib, obj, &lrcCandidate, true, false))
+						{
+							// It was found, update the target and indicate success
+							CopyRect(lrcObj, &lrcCandidate);
+
+							// Indicate success
+							return(true);
+						}
+
+						// Move to next sibling
+						objSib = (SObject*)objSib->ll.next;
+					}
+				}
+		}
+		// Invalid
+		return(false);
+	}
+
+
+
+
+//////////
+//
 // Called to find the thisForm
 //
 //////

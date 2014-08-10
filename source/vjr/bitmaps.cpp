@@ -2675,6 +2675,28 @@
 
 //////////
 //
+// Called to build a common tooltip background
+//
+//////
+	void iBmp_colorizeAsCommonTooltipBackground(SBitmap* bmp)
+	{
+		RECT lrc;
+
+
+		// Make sure our environment is sane
+		if (bmp)
+		{
+			SetRect(&lrc, 0, 0, bmp->bi.biWidth, bmp->bi.biHeight);
+			iBmp_fillRect(bmp, &lrc, tooltipNwBackColor, tooltipNeBackColor, tooltipSwBackColor, tooltipSeBackColor, false, NULL, false);
+			iBmp_frameRect(bmp, &lrc, tooltipForecolor, tooltipForecolor, tooltipForecolor, tooltipForecolor, false, NULL, false);
+		}
+	}
+
+
+
+
+//////////
+//
 // Called to draw a point
 //
 //////

@@ -102,6 +102,10 @@
 		SLL				ll;												// Link list throughout
 		u32				uid;											// Unique id for this line, used for undos and identifying individual lines which may move about
 
+		// Each render, these are udpated
+		u32				renderId;										// Each time it's rendered, this value is set
+		RECT			rcLastRender;									// The rectangle within the parent of the last render
+
 		u32				line;											// This line's number
 		SBreakpoint*	breakpoint;										// If there's a breakpoint here, what kind?
 		SDatum*			sourceCode;										// The text on this line is LEFT(d.data, dPopulated)
@@ -133,9 +137,9 @@
 			// NOTE:  Everything below is used ONLY IF INDIRECT IS NULL
 
 
-			//////////
-			// For display
-			//////
+		//////////
+		// For display
+		//////
 			SEdit*		ecTopLine;										// Top item in the current view
 			SEdit*		ecCursorLine;									// Line where the cursor is
 			SEdit*		ecCursorLineLast;								// The last location before movement was made
@@ -152,20 +156,28 @@
 			s32			tabWidth;										// How many characters does a tab expand to?
 			bool		tabsEnforced;									// If tabs are enforced, then navigation across whitespaces lands on tab boundaries
 			SFont*		font;											// Optional, if not NULL then it overrides the object's font
+			u32			renderId;										// Each time it's rendered, the count is incremented.  This allows lines to be tested to see if they are actively rendered, or were previously rendered.
 
 
-			//////////
-			// Selected lines
-			//////
+		//////////
+		// Selected lines
+		//////
 			SEdit*		ecSelectedLineStart;							// First line that's selected
 			SEdit*		ecSelectedLineEnd;								// Last line that's selected
 
+		
+		//////////
+		// Overlay highlight information to display near the cursor line
+		//////
+			SEdit*		highlightLineBefore;							// Something to highlight before the cursor line
+			SEdit*		highlightLineAfter;								// Something to highlight after the cursor line
 
-			//////////
-			// Note:  If not isColumn or isAnchor, then it is full line select.
-			//        If isColumn, then column select mode.
-			//        If isAnchor, then anchor select mode.
-			//////
+
+		//////////
+		// Note:  If not isColumn or isAnchor, then it is full line select.
+		//        If isColumn, then column select mode.
+		//        If isAnchor, then anchor select mode.
+		//////
 			bool		isColumn;										// If column select mode...
 			u32			selectedColumn_startCol;						// Column select mode start
 			u32			selectedColumn_endCol;							// end
@@ -174,17 +186,17 @@
 			u32			selectedAnchor_endCol;							// end
 
 
-			//////////
-			// For compiled programs
-			//////
+		//////////
+		// For compiled programs
+		//////
 			SFunction	firstFunction;									// By default, we always create a function head for any code blocks that don't have an explicit "FUNCTION" at the top.
 
 
-			//////////
-			// The undo history operates in two levels:
-			// (1) When going through ecm-> it is undoHistory.
-			// (2) If accessing ecm->undoHistory-> then it is theUndo, which holds the undo information for that operation.
-			//////
+		//////////
+		// The undo history operates in two levels:
+		// (1) When going through ecm-> it is undoHistory.
+		// (2) If accessing ecm->undoHistory-> then it is theUndo, which holds the undo information for that operation.
+		//////
 			union {
 				// If referenced through ecm-> then undoHistory is the undo history for this sec
 				SEM*	undoHistory;									// The lines affected by the undo
@@ -229,6 +241,8 @@
 	bool					iSEM_verifyCursorIsVisible			(SEM* em, SObject* obj);
 	bool					iSEM_onKeyDown_sourceCode			(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
 	bool					iSEM_onKeyDown						(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
+	SEdit*					iSEM_findMate						(SEM* em, SEdit* lineStart, SComp* comp);
+	void					iSEM_addTooltipHighlight			(SEM* em, SEdit* line, SObject* obj, s8* tcText, u32 tnTextLength, bool tlShowAbove);
 
 
 	// Editor movements

@@ -965,8 +965,12 @@ debug_break;
 //////
 	bool iSEM_onKeyDown_sourceCode(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tnAsciiChar, u16 tnVKey, bool tlIsCAS, bool tlIsAscii)
 	{
+		s32				lnMateDirection;
 		SEM*			em;
 		SObject*		subform;
+		SEdit*			line;
+		SEdit*			lineMate;
+		SComp*			comp;
 
 
 		// Make sure our environment is sane
@@ -1051,15 +1055,39 @@ debug_break;
 				// SHIFT+ALT
 
 			} else if (tlCtrl && tlShift && tlAlt) {
-				// CTRL+ALT+SHIFT+
-			}
-		}
+				// CTRL+ALT+SHIFT
+				switch (tnVKey)
+				{
+					case 'M':
+						// Mate, they're searching for this component's mate
+						// If they're ont he cursor line, on a flow control directive, and holding down Ctrl+Alt+Shift, then we want to show that directive's mate on the line above
+						line = em->ecCursorLine;
+						comp = iComps_activeComp(em);
+						if (comp->iCat == _ICAT_FLOW && iComps_getMateDirection(comp, &lnMateDirection))
+						{
+							// Search for the mated line
+							lineMate = iSEM_findMate(em, line, comp);
 
-		// If they are holding down Ctrl+Alt+Shift, we need to re-render because this highlights information related to wherever the cursor is
-		if (tlCtrl && tlShift && tlAlt)
-		{
-			iObj_setDirtyRender(obj, true);
-			iWindow_render(win, false);
+							// Was it found?
+							if (lineMate)
+							{
+								// Display it
+								if (lnMateDirection == -1)			em->highlightLineBefore	= lineMate;
+								else								em->highlightLineAfter	= lineMate;
+
+							} else {
+								// Display mate not found
+								if (lnMateDirection == -1)			iSEM_addTooltipHighlight(em, line, obj, (s8*)cgc_noMateFound, -1, true);	// Show above
+								else								iSEM_addTooltipHighlight(em, line, obj, (s8*)cgc_noMateFound, -1, false);	// Show below
+							}
+						}
+
+						// Redraw the window
+						iObj_setDirtyRender(obj, true);
+						iWindow_render(win, false);
+						break;
+				}
+			}
 		}
 
 		// Indicate additional events should be processed
@@ -1411,6 +1439,119 @@ debug_break;
 
 //////////
 //
+// Moves through source code to find the mated component to the line indicated
+//
+//////
+	SEdit* iSEM_findMate(SEM* em, SEdit* line, SComp* comp)
+	{
+		s32 lnMateDirection;
+
+
+		// Make sure our environment is sane
+		if (em && line && comp)
+		{
+			// Based on the directive, search up or down to find the mate
+// TODO:  We need to add a test here to determine if the movement is line-by-line, or comp-by-comp, for now it only supports line-by-line
+			if (iComps_getMateDirection(comp, &lnMateDirection))
+			{
+				// Iterate until we find it
+				do {
+					// Move to next position
+					if (lnMateDirection == -1)		line = (SEdit*)line->ll.prev;
+					else							line = (SEdit*)line->ll.next;
+
+					// Is this us?
+					if (line && line->compilerInfo && line->compilerInfo->firstComp && iComps_isMateOf(line->compilerInfo->firstComp, comp->iCode))
+						return(line);	// Yessir
+
+				} while (line);
+				// If we get here, not found
+			}
+		}
+
+		// if we get here, not found
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Called to create a tooltip above the highlighted line
+//
+//////
+	void iSEM_addTooltipHighlight(SEM* em, SEdit* line, SObject* obj, s8* tcText, u32 tnTextLength, bool tlShowAbove)
+	{
+		RECT		lrc, lrcScreen, lrcDisplay;
+		SBitmap*	bmp;
+		SFont*		font;
+
+
+		// Make sure our environment is sane
+		if (em && line && line->sourceCode && line->sourceCode->data && line->sourceCodePopulated > 0 && obj && tcText && em->renderId == line->renderId)
+		{
+			// Make sure our length is valid
+			if (tnTextLength < 0)
+				tnTextLength = strlen(tcText);
+
+			// Determine where it will go
+			if (iObj_find_screenRect(obj, &lrcScreen))
+			{
+				// This is the rectangle of the em in screen coordinates
+
+				//////////
+				// Adjust for the location of the line within
+				//////
+					if (tlShowAbove)
+					{
+						// Adjust the rectangle to the space above
+						SetRect(&lrcDisplay,	lrcScreen.left + line->rcLastRender.left,
+												lrcScreen.top  + line->rcLastRender.top - (line->rcLastRender.bottom - line->rcLastRender.top),
+												lrcScreen.left + line->rcLastRender.right,
+												lrcScreen.top + line->rcLastRender.top - 1);
+
+					} else {
+						// Adjust the rectangle to the space below
+						SetRect(&lrcDisplay,	lrcScreen.left + line->rcLastRender.left,
+												lrcScreen.top  + line->rcLastRender.bottom + 1,
+												lrcScreen.left + line->rcLastRender.right,
+												lrcScreen.top + line->rcLastRender.bottom + (line->rcLastRender.bottom - line->rcLastRender.top));
+					}
+
+
+				//////////
+				// Construct the bitmap
+				//////
+					bmp = iBmp_allocate();
+					SetRect(&lrc, 0, 0, lrcScreen.right - lrcScreen.left, lrcScreen.bottom - lrcScreen.top);
+					iBmp_createBySize(bmp, lrc.right, lrc.bottom, 24);
+					iBmp_colorizeAsCommonTooltipBackground(bmp);
+
+
+				//////////
+				// Overlay the text
+				//////
+					font = iSEM_getRectAndFont(em, obj, NULL);
+					SelectObject(bmp->hdc, ((font) ? font : gsFontDefaultTooltip));
+					SetBkMode(bmp->hdc, TRANSPARENT);
+					SetTextColor(bmp->hdc, RGB(tooltipForecolor.red, tooltipForecolor.grn, tooltipForecolor.blu));
+					DrawText(bmp->hdc, line->sourceCode->data, line->sourceCodePopulated, &lrc, DT_SINGLELINE | DT_END_ELLIPSIS | DT_LEFT | DT_NOPREFIX);
+
+
+				//////////
+				// Create the tooltip window
+				//////
+					iTooltip_create(&lrcScreen, bmp, 7500, true, true);
+			}
+		}
+	}
+
+
+
+
+//////////
+//
 // Called to render the ECM in the indicated rectangle on the object's bitmap
 //
 //////
@@ -1418,7 +1559,7 @@ debug_break;
 	{
 		u32			lnPixelsRendered;
 		s32			lnTop, lnSkip, lnDeltaX, lnLevel;
-		bool		llIsValid, llCtrl, llAlt, llShift, llLeft, llMiddle, llRight, llCaps;
+		bool		llIsValid;
 		SFont*		font;
 		SEdit*		line;
 		SBitmap*	bmp;
@@ -1445,6 +1586,9 @@ debug_break;
 			line	= em->ecTopLine;
 			bmp		= obj->bmp;
 			lnTop	= 0;
+
+			// Indicate the current render ID number
+			++em->renderId;
 
 
 			//////////
@@ -1477,6 +1621,10 @@ debug_break;
 			// Iterate for every visible line
 			while (line && lrc.top + font->tm.tmHeight < rc.bottom)
 			{
+				// Store the render ID
+				line->renderId = em->renderId;
+
+				// If there is compiler information, clear out any prior highlighting
 				if (line->compilerInfo && line->compilerInfo->firstComp)
 				{
 					//////////
@@ -1617,6 +1765,9 @@ debug_break;
 						CopyRect(&lrc3, &lrc);
 					}
 
+					// Store the rect for highlight messages
+					CopyRect(&line->rcLastRender, &lrc3);
+
 
 				//////////
 				// Fill the line with the appropriate background color
@@ -1731,18 +1882,6 @@ debug_break;
 											// Set back to opaque
 											SetBkMode(bmp->hdc, OPAQUE);
 										}
-
-										// If they're ont he cursor line, on a flow control directive, and holding down Ctrl+Alt+Shift, then we want to show that directive's mate on the line above
-										if (line == em->ecCursorLine && comp->iCat == _ICAT_FLOW && em->column >= comp->start && em->column <= comp->start + comp->length)
-										{
-											// Grab the keyboard and mouse flags
-											iiMouse_getFlags_async(&llCtrl, &llAlt, &llShift, &llLeft, &llMiddle, &llRight, &llCaps);
-											if (llCtrl && llAlt && llShift)
-											{
-												// Based on the directive, search up or down to find the mate
-// TODO:  Working here
-											}
-										}
 									}
 
 
@@ -1756,17 +1895,11 @@ debug_break;
 
 											// Is it a warning?
 											if (comp->isWarning && !comp->isError)
-											{
 												iBmp_wavyLine(bmp, &lrcComp, orangeColor);		// Overlay an amber wavy line on the lower 1/3rd of the component
-// 												iBmp_colorize(bmp, &lrcComp, pastelOrangeColor, false, 0.0f);
-											}
 
 											// Is it an error? (if there is an error and a warning, errors take precedence)
 											if (comp->isError)
-											{
 												iBmp_wavyLine(bmp, &lrcComp, redColor);			// Overlay a red wavy line on the lower 1/3rd of the component
-// 												iBmp_colorize(bmp, &lrcComp, pastelRedColor, false, 0.0f);
-											}
 										}
 
 
@@ -1882,7 +2015,7 @@ debug_break;
 
 
 									//////////
-									// Give the source code line some breakpoing color love :-)
+									// Give the source code line some breakpoint color love :-)
 									//////
 										if (line == em->ecCursorLine)
 										{
@@ -1903,7 +2036,7 @@ debug_break;
 					//////////
 					// Show any breakcrumbs
 					//////
-						
+// TODO:  Once the program execution engine is coded, breadcrumbs will need to overlay here
 					}
 
 

@@ -80,6 +80,8 @@ struct SVariable;
 	bool					iComps_areAllPrecedingCompsWhitespaces		(SComp* comp);
 	s32						iComps_translateToOthers_test				(s8* tcHaystack, s8* tcNeedle, s32 tnLength);
 	SComp*					iComps_findNextBy_iCode						(SComp* comp, s32 tniCode, SComp** compLastScanned);
+	SComp*					iComps_activeComp							(SEM* em);
+	bool					iComps_getMateDirection						(SComp* comp, s32* tnMateDirection);
 	bool					iComps_findClosest_parensBracketsBraces		(SComp* compRelative, SComp* compStart, SComp** compPBBLeft, SComp** compPBBRight);
 	bool					iComps_isParensBracketsBraces				(SComp* comp);
 	bool					iComps_isMateOf								(SComp* compTest, s32 tniCodeMate);
