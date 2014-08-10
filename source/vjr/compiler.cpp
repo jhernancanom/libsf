@@ -1145,11 +1145,9 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 	bool iComps_findClosest_parensBracketsBraces(SComp* compRelative, SComp* compStart, SComp** compPBBLeft, SComp** compPBBRight)
 	{
 		s32		lnDirection, lniCodeNeedle, lniCodeNeedleMate, lnLevel;
-		bool	llFound;
 
 
 		// Make sure our environment is sane
-		llFound = false;
 		if (compStart && compPBBLeft && compPBBRight)
 		{
 			// Reset our receivers

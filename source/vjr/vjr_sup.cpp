@@ -189,8 +189,9 @@
 			if (!gobj_screen)
 				return;
 
-			// Set the app icon
+			// Set the app icon and border
 			iObj_setIcon(gobj_screen, bmpVjrIcon);
+			gobj_screen->p.isBorder = true;
 
 
 			//////////
