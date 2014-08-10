@@ -2687,7 +2687,7 @@
 		if (bmp)
 		{
 			SetRect(&lrc, 0, 0, bmp->bi.biWidth, bmp->bi.biHeight);
-			iBmp_fillRect(bmp, &lrc, tooltipNwBackColor, tooltipNeBackColor, tooltipSwBackColor, tooltipSeBackColor, false, NULL, false);
+			iBmp_fillRect(bmp, &lrc, tooltipNwBackColor, tooltipNeBackColor, tooltipSwBackColor, tooltipSeBackColor, true, NULL, false);
 			iBmp_frameRect(bmp, &lrc, tooltipForecolor, tooltipForecolor, tooltipForecolor, tooltipForecolor, false, NULL, false);
 		}
 	}

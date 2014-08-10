@@ -338,7 +338,7 @@
 		// Position and size each control
 		//////
 			lnHeight = (gobj_jdebi->rcClient.bottom - gobj_jdebi->rcClient.top) / 8;
-			iObj_setSize(sourceCode_editbox,	0,	24,		sourceCode->rcClient.right	- sourceCode->rcClient.left - 48,	sourceCode->rcClient.bottom	- sourceCode->rcClient.top - 24);
+			iObj_setSize(sourceCode_editbox,	48,	24,		sourceCode->rcClient.right	- sourceCode->rcClient.left - 48,	sourceCode->rcClient.bottom	- sourceCode->rcClient.top - 24);
 			iObj_setSize(locals_editbox,		0,	0,		locals->rcClient.right		- locals->rcClient.left - 200,		locals->rcClient.bottom		- locals->rcClient.top);
 			iObj_setSize(watch_editbox,			0,	0,		watch->rcClient.right		- watch->rcClient.left,				watch->rcClient.bottom		- watch->rcClient.top);
 			iObj_setSize(command_editbox,		0,	0,		command->rcClient.right		- command->rcClient.left,			command->rcClient.bottom	- command->rcClient.top);
@@ -1624,7 +1624,6 @@
 	{
 		WNDCLASSEX	wcex;
 		ATOM		atom;
-		RECT		lrc, lrcParent;
 
 
 		//////////
@@ -1640,7 +1639,7 @@
 				wcex.lpfnWndProc    = (WNDPROC)&iTooltip_wndProc;
 				wcex.hInstance      = GetModuleHandle(NULL);
 				wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
-				wcex.lpszClassName  = cgcFocusHighlightClass;
+				wcex.lpszClassName  = cgcTooltipClass;
 				atom				= RegisterClassExA(&wcex);
 
 				// Was it registered?
@@ -1658,17 +1657,13 @@
 		//////////
 		// Create the window
 		//////
-			gTooltip.hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, cgcTooltipClass, NULL, WS_POPUP, rc->left, rc->top, rc->right - rc->left, rc->bottom - rc->top, NULL, NULL, GetModuleHandle(NULL), 0);
-
-
-		//////////
-		// If the window needs repositioned or resized, do so
-		//////
-			GetWindowRect(gTooltip.win->hwnd, &lrc);
-			CopyRect(&lrcParent, &lrc);
-			AdjustWindowRect(&lrcParent, GetWindowLong(gTooltip.win->hwnd, GWL_STYLE), (GetMenu(gTooltip.win->hwnd) != NULL));
-			lrcParent.left	= lrc.left + (lrc.left - lrc.left);
-			lrcParent.top	= lrc.top  + (lrc.top  - lrc.top);
+			gTooltip.hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, cgcTooltipClass, NULL, 
+												WS_POPUP, 
+												rc->left, 
+												rc->top, 
+												rc->right - rc->left, 
+												rc->bottom - rc->top, 
+												NULL, NULL, GetModuleHandle(NULL), 0);
 
 
 		//////////
@@ -1680,16 +1675,16 @@
 
 
 		//////////
-		// Display the window
-		//////
-			gTooltip.isValid = true;
-			SetWindowPos(gTooltip.hwnd, HWND_TOPMOST, lrcParent.left + rc->left, lrcParent.top + rc->top, rc->right - rc->left, rc->bottom - rc->top, SWP_SHOWWINDOW | SWP_NOACTIVATE);
-
-
-		//////////
 		// Create the timer
 		//////
 			SetTimer(gTooltip.hwnd, (u32)&gTooltip, _TOOLTIP_TIMER_INTERVAL, 0);
+
+
+		//////////
+		// Display the window
+		//////
+			gTooltip.isValid = true;
+			SetWindowPos(gTooltip.hwnd, HWND_TOPMOST, rc->left, rc->top, rc->right - rc->left, rc->bottom - rc->top, SWP_SHOWWINDOW | SWP_NOACTIVATE);
 	}
 
 
@@ -1744,6 +1739,7 @@
 					// If we're reached the timeout interval, delete it
 					if (gTooltip.timeoutMs <= 0)
 						iTooltip_delete();
+
 					break;
 
 				case WM_PAINT:

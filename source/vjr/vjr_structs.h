@@ -501,7 +501,6 @@ struct STooltip
 {
 	bool		isValid;											// Is this item valid?
 
-	SWindow*	win;												// The window this tooltip entry relates to
 	SObject*	obj;												// The object owning the tip
 	s32			timeoutMs;											// Tooltips have a lifetime... in milliseconds
 

@@ -272,8 +272,8 @@
 		const SBgra		grayColor							= { rgba(192, 192, 192, 255) };
 		const SBgra		maskColor							= { rgba(222, 22, 222, 255) };			// Hideous fuscia (by design)
 		SBgra			tooltipNwBackColor					= { rgba(255, 254, 230, 255) };			// Pastel yellow
-		SBgra			tooltipNeBackColor					= { rgba(249, 222, 133, 255) };			// Orange/golden yellow
-		SBgra			tooltipSwBackColor					= { rgba(252, 242, 192, 25) };			// Less pastel yellow, somewhat pale
+		SBgra			tooltipNeBackColor					= { rgba(252, 242, 192, 25) };			// Less pastel yellow, somewhat pale
+		SBgra			tooltipSwBackColor					= { rgba(249, 222, 133, 255) };			// Orange/golden yellow
 		SBgra			tooltipSeBackColor					= { rgba(247, 210, 96, 255) };			// More orange/golden yellow
 		SBgra			tooltipForecolor					= { rgba(84, 56, 12, 255) };			// Dark chocolate brown
 		SBgra			lineNumberFillColor					= { rgba(225, 245, 240, 255) };

@@ -241,8 +241,8 @@
 	bool					iSEM_verifyCursorIsVisible			(SEM* em, SObject* obj);
 	bool					iSEM_onKeyDown_sourceCode			(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
 	bool					iSEM_onKeyDown						(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
-	SEdit*					iSEM_findMate						(SEM* em, SEdit* lineStart, SComp* comp);
-	void					iSEM_addTooltipHighlight			(SEM* em, SEdit* line, SObject* obj, s8* tcText, u32 tnTextLength, bool tlShowAbove);
+	void*					iSEM_findMate						(SEM* em, SEdit* lineStart, SComp* comp);
+	void					iSEM_addTooltipHighlight			(SEM* em, SEdit* line, SObject* obj, s8* tcText, s32 tnTextLength, bool tlShowAbove);
 
 
 	// Editor movements

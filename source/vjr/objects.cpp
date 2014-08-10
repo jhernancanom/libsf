@@ -350,12 +350,14 @@
 			{
 				// Get the coordinates
 				CopyRect(&lrcWin, &win->rc);
+				CopyRect(&lrcObj, &win->rc);
 
 				// Adjust for the child object's location within
 				if (iObj_find_relativeRect(objRoot, obj, &lrcObj, true, true))
 				{
 					// Calculate the adjustment
 					SetRect(rc, lrcWin.left + lrcObj.left, lrcWin.top + lrcObj.top, lrcWin.left + lrcObj.right, lrcWin.top + lrcObj.bottom);
+					CopyRect(rc, &lrcObj);
 
 					// Indicate success
 					return(true);
@@ -389,7 +391,7 @@
 				if (objRoot == obj)
 				{
 					// Yes, adjust the final rect
-					SetRect(lrcObj,	lrcObj->left + obj->rc.left,
+					SetRect(lrcObj,		lrcObj->left + obj->rc.left,
 										lrcObj->top  + obj->rc.top,
 										lrcObj->left + obj->rc.right,
 										lrcObj->top  + obj->rc.bottom);
@@ -402,10 +404,10 @@
 			//////////
 			// Adjust the rectangle for the client portion of this control
 			//////
-				SetRect(&lrcSave,	lrcObj->left + obj->rcClient.left,
-									lrcObj->top  + obj->rcClient.top,
-									lrcObj->left + obj->rcClient.right,
-									lrcObj->top  + obj->rcClient.bottom);
+				SetRect(&lrcSave,	lrcObj->left + objRoot->rcClient.left,
+									lrcObj->top  + objRoot->rcClient.top,
+									lrcObj->left + objRoot->rcClient.right,
+									lrcObj->top  + objRoot->rcClient.bottom);
 
 
 			//////////
@@ -544,7 +546,7 @@
 
 
 			//////////
-			// Scan through parents
+			// Scan through children
 			//////
 				if (obj->firstChild && tlProcessChildren)
 					iObj_setFocusHighlights(win, obj->firstChild, lnX, lnY, true, true);

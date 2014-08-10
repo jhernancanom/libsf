@@ -1060,34 +1060,46 @@ debug_break;
 				{
 					case 'M':
 						// Mate, they're searching for this component's mate
-						// If they're ont he cursor line, on a flow control directive, and holding down Ctrl+Alt+Shift, then we want to show that directive's mate on the line above
+						// If they're on the cursor line, on a flow control directive, and holding down Ctrl+Alt+Shift, then we want to show that directive's mate on the line above
 						line = em->ecCursorLine;
 						comp = iComps_activeComp(em);
 						if (comp->iCat == _ICAT_FLOW && iComps_getMateDirection(comp, &lnMateDirection))
 						{
 							// Search for the mated line
-							lineMate = iSEM_findMate(em, line, comp);
+							lineMate = (SEdit*)iSEM_findMate(em, line, comp);
 
 							// Was it found?
 							if (lineMate)
 							{
 								// Display it
-								if (lnMateDirection == -1)			em->highlightLineBefore	= lineMate;
-								else								em->highlightLineAfter	= lineMate;
+								if (lnMateDirection == -1)		em->highlightLineBefore	= lineMate;
+								else							em->highlightLineAfter	= lineMate;
 
 							} else {
 								// Display mate not found
-								if (lnMateDirection == -1)			iSEM_addTooltipHighlight(em, line, obj, (s8*)cgc_noMateFound, -1, true);	// Show above
-								else								iSEM_addTooltipHighlight(em, line, obj, (s8*)cgc_noMateFound, -1, false);	// Show below
+								if (lnMateDirection == -1)		iSEM_addTooltipHighlight(em, line, obj, (s8*)cgc_noMateFound, -1, true);	// Show above
+								else							iSEM_addTooltipHighlight(em, line, obj, (s8*)cgc_noMateFound, -1, false);	// Show below
 							}
 						}
 
 						// Redraw the window
 						iObj_setDirtyRender(obj, true);
 						iWindow_render(win, false);
-						break;
+						return(true);
 				}
 			}
+		}
+
+		// When ctrl+alt+shift changes, remove the highlighted
+		if (!(tlCtrl && tlShift && tlAlt) && (em->highlightLineBefore || em->highlightLineAfter))
+		{
+			// We're done displaying the highlight
+			em->highlightLineBefore	= NULL;
+			em->highlightLineAfter	= NULL;
+
+			// Redraw
+			iObj_setDirtyRender(obj, true);
+			iWindow_render(win, false);
 		}
 
 		// Indicate additional events should be processed
@@ -1442,29 +1454,69 @@ debug_break;
 // Moves through source code to find the mated component to the line indicated
 //
 //////
-	SEdit* iSEM_findMate(SEM* em, SEdit* line, SComp* comp)
+	void* iSEM_findMate(SEM* em, SEdit* line, SComp* comp)
 	{
-		s32 lnMateDirection;
+		s32		lnMateDirection, lnLevel;
+		SComp*	compRunner;
 
 
 		// Make sure our environment is sane
-		if (em && line && comp)
+		if (em && line && comp && iComps_getMateDirection(comp, &lnMateDirection))
 		{
-			// Based on the directive, search up or down to find the mate
-// TODO:  We need to add a test here to determine if the movement is line-by-line, or comp-by-comp, for now it only supports line-by-line
-			if (iComps_getMateDirection(comp, &lnMateDirection))
+			// Based on the directive, search backward or forward to find the mate
+			lnLevel = 0;
+			if (comp->iCat == _ICAT_FLOW)
 			{
-				// Iterate until we find it
+				// Searching by lines
 				do {
 					// Move to next position
 					if (lnMateDirection == -1)		line = (SEdit*)line->ll.prev;
 					else							line = (SEdit*)line->ll.next;
 
 					// Is this us?
-					if (line && line->compilerInfo && line->compilerInfo->firstComp && iComps_isMateOf(line->compilerInfo->firstComp, comp->iCode))
-						return(line);	// Yessir
+					if (line && line->compilerInfo && line->compilerInfo->firstComp)
+					{
+						if (line->compilerInfo->firstComp->iCode == comp->iCode)
+						{
+							// We're going a level deeper
+							--lnLevel;
 
+						} else if (iComps_isMateOf(line->compilerInfo->firstComp, comp->iCode)) {
+							if (lnLevel == 0)
+								return(line);
+
+							// Going shallow
+							++lnLevel;
+						}
+					}
 				} while (line);
+				// If we get here, not found
+
+			} else {
+				// Searching by components
+				compRunner = comp;
+				do {
+					// Move to next position
+					if (lnMateDirection == -1)		compRunner = (SComp*)compRunner->ll.prev;
+					else							compRunner = (SComp*)compRunner->ll.next;
+
+					// Is this us?
+					if (compRunner)
+					{
+						if (compRunner->iCode == comp->iCode)
+						{
+							// We're going a level deeper
+							--lnLevel;
+
+						} else if (iComps_isMateOf(compRunner, comp->iCode)) {
+							if (lnLevel == 0)
+								return(comp);
+
+							// Going shallow
+							++lnLevel;
+						}
+					}
+				} while (comp);
 				// If we get here, not found
 			}
 		}
@@ -1481,9 +1533,9 @@ debug_break;
 // Called to create a tooltip above the highlighted line
 //
 //////
-	void iSEM_addTooltipHighlight(SEM* em, SEdit* line, SObject* obj, s8* tcText, u32 tnTextLength, bool tlShowAbove)
+	void iSEM_addTooltipHighlight(SEM* em, SEdit* line, SObject* obj, s8* tcText, s32 tnTextLength, bool tlShowAbove)
 	{
-		RECT		lrc, lrcScreen, lrcDisplay;
+		RECT		lrc, lrcObjInScreenCoords, lrcTooltip;
 		SBitmap*	bmp;
 		SFont*		font;
 
@@ -1496,7 +1548,7 @@ debug_break;
 				tnTextLength = strlen(tcText);
 
 			// Determine where it will go
-			if (iObj_find_screenRect(obj, &lrcScreen))
+			if (iObj_find_screenRect(obj, &lrcObjInScreenCoords))
 			{
 				// This is the rectangle of the em in screen coordinates
 
@@ -1506,17 +1558,17 @@ debug_break;
 					if (tlShowAbove)
 					{
 						// Adjust the rectangle to the space above
-						SetRect(&lrcDisplay,	lrcScreen.left + line->rcLastRender.left,
-												lrcScreen.top  + line->rcLastRender.top - (line->rcLastRender.bottom - line->rcLastRender.top),
-												lrcScreen.left + line->rcLastRender.right,
-												lrcScreen.top + line->rcLastRender.top - 1);
+						SetRect(&lrcTooltip,	lrcObjInScreenCoords.left + line->rcLastRender.left,
+												lrcObjInScreenCoords.top  + line->rcLastRender.top - (line->rcLastRender.bottom - line->rcLastRender.top),
+												lrcObjInScreenCoords.left + line->rcLastRender.right,
+												lrcObjInScreenCoords.top  + line->rcLastRender.top - 1);
 
 					} else {
 						// Adjust the rectangle to the space below
-						SetRect(&lrcDisplay,	lrcScreen.left + line->rcLastRender.left,
-												lrcScreen.top  + line->rcLastRender.bottom + 1,
-												lrcScreen.left + line->rcLastRender.right,
-												lrcScreen.top + line->rcLastRender.bottom + (line->rcLastRender.bottom - line->rcLastRender.top));
+						SetRect(&lrcTooltip,	lrcObjInScreenCoords.left + line->rcLastRender.left,
+												lrcObjInScreenCoords.top  + line->rcLastRender.bottom + 1,
+												lrcObjInScreenCoords.left + line->rcLastRender.right,
+												lrcObjInScreenCoords.top + line->rcLastRender.bottom + (line->rcLastRender.bottom - line->rcLastRender.top));
 					}
 
 
@@ -1524,7 +1576,7 @@ debug_break;
 				// Construct the bitmap
 				//////
 					bmp = iBmp_allocate();
-					SetRect(&lrc, 0, 0, lrcScreen.right - lrcScreen.left, lrcScreen.bottom - lrcScreen.top);
+					SetRect(&lrc, 0, 0, lrcTooltip.right - lrcTooltip.left, lrcTooltip.bottom - lrcTooltip.top);
 					iBmp_createBySize(bmp, lrc.right, lrc.bottom, 24);
 					iBmp_colorizeAsCommonTooltipBackground(bmp);
 
@@ -1533,16 +1585,17 @@ debug_break;
 				// Overlay the text
 				//////
 					font = iSEM_getRectAndFont(em, obj, NULL);
-					SelectObject(bmp->hdc, ((font) ? font : gsFontDefaultTooltip));
+					SelectObject(bmp->hdc, ((font) ? font->hfont : gsFontDefaultTooltip->hfont));
 					SetBkMode(bmp->hdc, TRANSPARENT);
 					SetTextColor(bmp->hdc, RGB(tooltipForecolor.red, tooltipForecolor.grn, tooltipForecolor.blu));
-					DrawText(bmp->hdc, line->sourceCode->data, line->sourceCodePopulated, &lrc, DT_SINGLELINE | DT_END_ELLIPSIS | DT_LEFT | DT_NOPREFIX);
+					InflateRect(&lrc, -4, 0);
+					DrawText(bmp->hdc, tcText, tnTextLength, &lrc, DT_SINGLELINE | DT_END_ELLIPSIS | DT_LEFT | DT_NOPREFIX);
 
 
 				//////////
 				// Create the tooltip window
 				//////
-					iTooltip_create(&lrcScreen, bmp, 7500, true, true);
+					iTooltip_create(&lrcTooltip, bmp, 7500, true, true);
 			}
 		}
 	}
@@ -1748,6 +1801,7 @@ debug_break;
 				// Determine the render rectangles (populated area on left, area to clear on right)
 				//////
 					CopyRect(&lrc2, &lrc);
+					CopyRect(&line->rcLastRender, &lrc);	// Store the rect for highlight messages
 
 					// Will we fit?
 					if (line->sourceCode->data && line->sourceCodePopulated > 0 && em->leftColumn < line->sourceCodePopulated)
@@ -1764,9 +1818,6 @@ debug_break;
 						// Set the clear border
 						CopyRect(&lrc3, &lrc);
 					}
-
-					// Store the rect for highlight messages
-					CopyRect(&line->rcLastRender, &lrc3);
 
 
 				//////////
@@ -2055,6 +2106,89 @@ debug_break;
 			SetRect(&lrc3, em->rcLineNumberLastRender.left, rc.top + lnTop, em->rcLineNumberLastRender.right, rc.bottom);
 			iBmp_fillRect(bmp, &lrc3, lineNumberFillColor, lineNumberFillColor, lineNumberFillColor, lineNumberFillColor, false, NULL, false);
 			iBmp_drawVerticalLine(bmp, lrc3.top, lrc3.bottom, lrc3.right - 1, lineNumberBackColor);
+
+
+			//////////
+			// If there are any highlights, overlay them
+			//////
+				if (em->ecCursorLine && em->ecCursorLine->renderId == em->renderId)
+				{
+					// Grab the coordinates of the cursor line
+					CopyRect(&lrc3, &em->ecCursorLine->rcLastRender);
+
+					// If there are any highlight overlays, display them
+					if (em->highlightLineBefore)
+					{
+						// Will appear before
+						line = em->highlightLineBefore;
+
+						// Move up one line
+						OffsetRect(&lrc3, 0, -(lrc3.bottom - lrc3.top));
+
+						// Colorize that entire section
+						iBmp_fillRect(bmp, &lrc3, tooltipNwBackColor, tooltipNeBackColor, tooltipSwBackColor, tooltipSeBackColor, true, NULL, false);
+						iBmp_frameRect(bmp, &lrc3, tooltipForecolor, tooltipForecolor, tooltipForecolor, tooltipForecolor, false, NULL, false);
+
+						// Overlay the text
+						if (line->sourceCode->data && line->sourceCodePopulated != 0 && line->sourceCodePopulated >= em->leftColumn)
+						{
+							SetTextColor(bmp->hdc, RGB(tooltipForecolor.red, tooltipForecolor.grn, tooltipForecolor.blu));
+							DrawText(bmp->hdc, line->sourceCode->data + em->leftColumn, line->sourceCodePopulated - em->leftColumn, &lrc3, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+
+							// Add in the line numbers
+							if (em->showLineNumbers)
+							{
+								// Adjust for the line number area
+								SetRect(&lrc3, 0, lrc3.top, lrc3.left, lrc3.bottom);
+
+								// Colorize that entire section
+								iBmp_fillRect(bmp, &lrc3, tooltipNwBackColor, tooltipNeBackColor, tooltipSwBackColor, tooltipSeBackColor, true, NULL, false);
+								iBmp_frameRect(bmp, &lrc3, tooltipForecolor, tooltipForecolor, tooltipForecolor, tooltipForecolor, false, NULL, false);
+
+								// Compute the line number
+								sprintf(bigBuffer, "%u\0", line->line);
+								DrawText(bmp->hdc, bigBuffer, strlen(bigBuffer), &lrc3, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
+							}
+						}
+					}
+
+					// If there are any highlight overlays after, display them
+					if (em->highlightLineAfter)
+					{
+						// Will appear after
+						line = em->highlightLineAfter;
+
+						// Move down one line
+						OffsetRect(&lrc3, 0, (lrc3.bottom - lrc3.top));
+
+						// Colorize that entire section
+						iBmp_fillRect(bmp, &lrc3, tooltipNwBackColor, tooltipNeBackColor, tooltipSwBackColor, tooltipSeBackColor, true, NULL, false);
+						iBmp_frameRect(bmp, &lrc3, tooltipForecolor, tooltipForecolor, tooltipForecolor, tooltipForecolor, false, NULL, false);
+
+						// Overlay the text
+						if (line->sourceCode->data && line->sourceCodePopulated != 0 && line->sourceCodePopulated >= em->leftColumn)
+						{
+							SetTextColor(bmp->hdc, RGB(tooltipForecolor.red, tooltipForecolor.grn, tooltipForecolor.blu));
+							DrawText(bmp->hdc, line->sourceCode->data + em->leftColumn, line->sourceCodePopulated - em->leftColumn, &lrc3, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+
+							// Add in the line numbers
+							if (em->showLineNumbers)
+							{
+								// Adjust for the line number area
+								SetRect(&lrc3, 0, lrc3.top, lrc3.left, lrc3.bottom);
+
+								// Colorize that entire section
+								iBmp_fillRect(bmp, &lrc3, tooltipNwBackColor, tooltipNeBackColor, tooltipSwBackColor, tooltipSeBackColor, true, NULL, false);
+								iBmp_frameRect(bmp, &lrc3, tooltipForecolor, tooltipForecolor, tooltipForecolor, tooltipForecolor, false, NULL, false);
+
+								// Compute the line number
+								sprintf(bigBuffer, "%u\0", line->line);
+								DrawText(bmp->hdc, bigBuffer, strlen(bigBuffer), &lrc3, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
+							}
+						}
+					}
+				}
+
 
 // s8 buffer[256];
 // if (obj->parent && obj->parent->objType == _OBJ_TYPE_SUBFORM && iDatum_compare(&obj->parent->pa.caption, cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1) == 0)

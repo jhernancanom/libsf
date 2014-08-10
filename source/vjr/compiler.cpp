@@ -1219,10 +1219,31 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 					*tnMateDirection = -1;
 					return(true);
 
+				case _ICODE_IF:
+					*tnMateDirection = 1;
+					return(true);
+				case _ICODE_ENDIF:
+					*tnMateDirection = -1;
+					return(true);
+
+				case _ICODE_LIF:
+					*tnMateDirection = 1;
+					return(true);
+				case _ICODE_LELSE:
+					*tnMateDirection = -1;
+					return(true);
+
 				case _ICODE_FOR:
 					*tnMateDirection = 1;
 					return(true);
 				case _ICODE_ENDFOR:
+					*tnMateDirection = -1;
+					return(true);
+
+				case _ICODE_DOCASE:
+					*tnMateDirection = 1;
+					return(true);
+				case _ICODE_ENDCASE:
 					*tnMateDirection = -1;
 					return(true);
 
@@ -1457,6 +1478,18 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 
 			case _ICODE_ENDADHOC:
 				return(compTest->iCode == _ICODE_ADHOC);
+
+			case _ICODE_IF:
+				return(compTest->iCode == _ICODE_ENDIF);
+
+			case _ICODE_ENDIF:
+				return(compTest->iCode == _ICODE_IF);
+
+			case _ICODE_LIF:
+				return(compTest->iCode == _ICODE_LELSE);
+
+			case _ICODE_LELSE:
+				return(compTest->iCode == _ICODE_LIF);
 
 			case _ICODE_FOR:
 				return(compTest->iCode == _ICODE_ENDFOR);

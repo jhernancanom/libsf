@@ -936,6 +936,7 @@
 	const s32       _ICODE_ECHO                                     = 2081;
 	const s32       _ICODE_EDIT                                     = 2082;
 	const s32       _ICODE_EJECT                                    = 2083;
+	const s32		_ICODE_ELSE										= 2280;
 	const s32       _ICODE_END                                      = 2084;
 	const s32       _ICODE_ENDCASE                                  = 2085;
 	const s32       _ICODE_ENDDO                                    = 2086;
@@ -997,7 +998,9 @@
 	const s32       _ICODE_KEYBOARD                                 = 2140;
 	const s32       _ICODE_KEYCOMP                                  = 2141;
 	const s32       _ICODE_LABEL                                    = 2142;
+	const s32		_ICODE_LELSE									= 2278;
 	const s32       _ICODE_LIBRARY                                  = 2143;
+	const s32		_ICODE_LIF										= 2279;
 	const s32       _ICODE_LISTS                                    = 2144;
 	const s32       _ICODE_LIST                                     = 2145;
 	const s32       _ICODE_LOAD                                     = 2146;
@@ -1132,6 +1135,9 @@
 	// _ICODE_DOWHILE												= 2275;
 	// _ICODE_ENDFUNCTION											= 2276;
 	// _ICODE_ENDPROCEDURE											= 2277;
+	// _ICODE_LELSE													= 2278;
+	// _ICODE_LIF													= 2279;
+	// _ICODE_ELSE													= 2280;
 
 
 //////////
