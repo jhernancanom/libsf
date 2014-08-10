@@ -40,8 +40,8 @@
 // Syntax highlight colors
 //////
 	SBgra			colorSynHi_comment1					= { rgba(0, 148, 0, 255) };				// Green
-	SBgra			colorSynHi_comment2					= { rgba(0, 148, 74, 255) };			// Green+Cyan
-	SBgra			colorSynHi_comment3					= { rgba(0, 148, 148, 255) };			// Cyan
+	SBgra			colorSynHi_comment2					= { rgba(148, 64, 148, 255) };			// Green+Cyan
+	SBgra			colorSynHi_comment3					= { rgba(148, 64, 148, 255) };			// Dark purple
 	SBgra			colorSynHi_function					= { rgba(164, 128, 0, 255) };			// Golden
 	SBgra			colorSynHi_command					= { rgba(64, 128, 245, 255) };			// Pastel cyan-blue
 	SBgra			colorSynHi_logical					= { rgba(200, 148, 0, 255) };			// Orange
@@ -101,11 +101,11 @@
 		{ "+",						1,			false,		_ICODE_PLUS,							false,				_ICAT_GENERIC,		&colorSynHi_operator,		true },
 		{ "-",						1,			false,		_ICODE_HYPHEN,							false,				_ICAT_GENERIC,		&colorSynHi_operator,		true },
 		{ "^",						1,			false,		_ICODE_EXPONENT,						false,				_ICAT_GENERIC,		&colorSynHi_operator,		true },
+		{ "/*",						2,			true,		_ICODE_COMMENT_START,					false,				_ICAT_GENERIC,		&colorSynHi_comment3,		false },
+		{ "*/",						2,			true,		_ICODE_COMMENT_END,						false,				_ICAT_GENERIC,		&colorSynHi_comment3,		false },
 		{ "*",						1,			true,		_ICODE_COMMENT,							true,				_ICAT_GENERIC,		&colorSynHi_comment1,		false },
 		{ "&&",						2,			false,		_ICODE_LINE_COMMENT,					false,				_ICAT_GENERIC,		&colorSynHi_comment2,		false },
 		{ "*",						1,			true,		_ICODE_ASTERISK,						false,				_ICAT_GENERIC,		&colorSynHi_operator,		true },
-		{ "/*",						2,			true,		_ICODE_COMMENT_START,					false,				_ICAT_GENERIC,		&colorSynHi_comment3,		false },
-		{ "*\\",					2,			true,		_ICODE_COMMENT_END,						false,				_ICAT_GENERIC,		&colorSynHi_comment3,		false },
 		{ "\\",						1,			true,		_ICODE_SLASH,							false,				_ICAT_GENERIC,		NULL,						false },
 		{ "**",						2,			false,		_ICODE_EXPONENT,						false,				_ICAT_GENERIC,		NULL,						false },
 		{ "/",						1,			true,		_ICODE_BACKSLASH,						false,				_ICAT_GENERIC,		NULL,						false },

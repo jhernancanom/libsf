@@ -93,6 +93,19 @@ struct SBitmap
 	u32					rowWidth;
 };
 
+struct SBmpCache
+{
+	SBitmap*		bmpCached;
+	u32				data1;
+	u32				data2;
+	u32				data3;
+	u32				data4;
+	u32				data5;
+	u32				data6;
+	u32				data7;
+	u32				data8;
+};
+
 
 // For processing the scaling of bitmaps
 struct SBitmapProcess

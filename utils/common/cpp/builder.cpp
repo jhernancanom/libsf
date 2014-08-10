@@ -345,7 +345,7 @@
 
 						} else {
 							// Failure on resize -- should not happen
-							int3_break;
+							debug_break;
 						}
 				}
 		}
@@ -625,7 +625,7 @@
 
 
 // TODO:  untested, breakpoint and examine
-		int3_break;
+		debug_break;
 		//////////
 		// Make sure our environment is sane
 		//////

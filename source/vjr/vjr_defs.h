@@ -341,6 +341,9 @@
 	SBitmap*				iBmp_verifyCopyIsSameSize				(SBitmap* bmpCopy, SBitmap* bmp);
 	SBitmap*				iBmp_verifySizeOrResize					(SBitmap* bmp, u32 tnWidth, u32 tnHeight, u32 tnBitCount);
 	SBitmap*				iBmp_rawLoad							(cu8* bmpRawFileData);
+	SBitmap*				iBmp_isValidCache						(SBmpCache** bmpCache,               u32 data1, u32 data2, u32 data3, u32 data4, u32 data5, u32 data6, u32 data7, u32 data8);
+	SBitmap*				iBmp_createCache						(SBmpCache** bmpCache, SBitmap* bmp, u32 data1, u32 data2, u32 data3, u32 data4, u32 data5, u32 data6, u32 data7, u32 data8);
+	SBitmap*				iBmp_deleteCache						(SBmpCache** bmpCache);
 	void					iBmp_saveToDisk							(SBitmap* bmp, s8* tcPathname);
 	void					iBmp_convertTo32Bits					(SBitmap* bmp);
 	void					iBmp_convertTo24Bits					(SBitmap* bmp);

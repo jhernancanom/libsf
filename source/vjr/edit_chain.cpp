@@ -85,7 +85,7 @@
 
 
 // TODO:  COMPLETELY UNTESTED.  BREAKPOINT AND EXAMINE.
-int3_break;
+debug_break;
 		// Make sure our environment is sane
 		if (root && *root)
 		{

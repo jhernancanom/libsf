@@ -2101,7 +2101,8 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 //////
 	void iComps_removeStartEndComments(SEdit* line)
 	{
-		SComp* comp;
+		SComp*	comp;
+		SComp*	compNext;
 
 
 		// Make sure our environment is sane
@@ -2117,15 +2118,12 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 					if (comp->iCode == _ICODE_COMMENT_START)
 					{
 						// Delete everything forward until we reach _ICODE_COMMENT_END or the last comp
-						while (comp && comp->iCode != _ICODE_COMMENT_END)
-						{
-							// Delete this component
-							comp = (SComp*)iLl_deleteNode((SLL*)comp, true);
-						}
+						while ((compNext = (SComp*)comp->ll.next) && compNext->iCode != _ICODE_COMMENT_END)
+							iComps_combineNextN(comp, 2, comp->iCode, comp->iCat, comp->color);
 
 						// When we get here, we're sitting on the _ICODE_COMMENT_END
-						if (comp && comp->iCode == _ICODE_COMMENT_END)
-							comp = (SComp*)iLl_deleteNode((SLL*)comp, true);
+						if ((compNext = (SComp*)comp->ll.next) && compNext->iCode == _ICODE_COMMENT_END)
+							iComps_combineNextN(comp, 2, comp->iCode, comp->iCat, comp->color);
 					}
 
 
@@ -2200,7 +2198,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 			//////
 				iComps_combineAllBetween(line, _ICODE_SINGLE_QUOTE,		_ICODE_SINGLE_QUOTED_TEXT,	&colorSynHi_quotedText);
 				iComps_combineAllBetween(line, _ICODE_DOUBLE_QUOTE,		_ICODE_DOUBLE_QUOTED_TEXT,	&colorSynHi_quotedText);
-				iComps_deleteAllAfter	(line, _ICODE_LINE_COMMENT);
+				iComps_combineAllAfter(line, _ICODE_LINE_COMMENT);
 
 
 			//////////
@@ -2850,7 +2848,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 				} else {
 					// It failed here
 // TODO:  Something major needs to happen here.  This is more or less a catastrophic failure.  It could require shutting down the VVM.
-int3_break;
+debug_break;
 					ptrSE->masterCount += tnBlockSize;
 				}
 
@@ -3109,7 +3107,7 @@ int3_break;
 	void iiComps_xlatToOthersCallback__insertCompByCompCallback(SComp* compRef, SComp* compNew, bool tlInsertAfter)
 	{
 // TODO:  untested code, breakpoint and examine
-int3_break;
+debug_break;
 		// Make sure our environment is sane
 		if (compRef && compNew)
 		{
@@ -3150,7 +3148,7 @@ int3_break;
 
 
 // TODO:  untested code, breakpoint and examine
-int3_break;
+debug_break;
 		// Make sure our environment is sane
 		if (compRef && line && line->compilerInfo)
 		{
@@ -3185,7 +3183,7 @@ int3_break;
 	void iiComps_xlatToOthersCallback__deleteCompsCallback(SComp* comp, SEdit* line)
 	{
 // TODO:  untested code, breakpoint and examine
-int3_break;
+debug_break;
 		//////////
 		// Disconnect the component from its siblings
 		//////
@@ -3228,7 +3226,7 @@ int3_break;
 
 
 // TODO:  untested code, breakpoint and examine
-int3_break;
+debug_break;
 		// Make sure our environment is sane
 		compNew = NULL;
 		if (comp)
@@ -3285,7 +3283,7 @@ int3_break;
 
 
 // TODO:  untested code, breakpoint and examine
-int3_break;
+debug_break;
 		// Make sure our environment is sane
 		if (comp)
 		{
@@ -4252,7 +4250,7 @@ int3_break;
 							{
 								// We've found something like "fred." where fred is a thisCode, and there is a name reference after it
 // TODO:  We need to search the thisCode object for the indicated name
-int3_break;
+debug_break;
 							}
 							// If we get here, then they did not have a "." after the thisCode reference, and are referencing it directly
 							break;
@@ -4425,13 +4423,13 @@ int3_break;
 				case _VARIABLE_TYPE_DATETIME:
 				case _VARIABLE_TYPE_DATETIMEX:
 // Not yet supported
-int3_break;
+debug_break;
 					break;
 
 				case _VARIABLE_TYPE_BI:
 				case _VARIABLE_TYPE_BFP:
 // Not yet supported
-int3_break;
+debug_break;
 					break;
 
 				case _VARIABLE_TYPE_ARRAY:
@@ -4439,7 +4437,7 @@ int3_break;
 				case _VARIABLE_TYPE_GUID16:
 				case _VARIABLE_TYPE_FIELD:
 // Not yet supported
-int3_break;
+debug_break;
 					break;
 			}
 		}
@@ -4816,7 +4814,7 @@ int3_break;
 		{
 // TODO:  Untested code.  Breakpoint and examine.
 // Remember var->isValueAllocated
-int3_break;
+debug_break;
 			// Use the linked list functions, which will callback repeatedly for every entry
 			var			= *root;
 			cb._func	= (u32)&iVariable_politelyDeleteChain_callback;

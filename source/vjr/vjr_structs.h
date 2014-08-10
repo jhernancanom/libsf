@@ -456,6 +456,7 @@ struct SObject
 //////
 	SBitmap*	bmp;												// If exists, canvas for the content
 	SBitmap*	bmpPriorRendered;									// Used for speedups when not isDirty
+	SBmpCache*	bc;													// For certain compute intensive operations (color gradient controls), the bitmap is only drawn/computed once and then copied thereafter, unless any of eight data points change
 	// If not scaled:
 	s32			scrollOffsetX;										// If the bmp->bi coordinates are larger than its display area, the upper-left X coordinate
 	s32			scrollOffsetY;										// ...the upper-left Y coordinate

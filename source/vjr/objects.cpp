@@ -3912,19 +3912,37 @@
 					//////////
 					// Frame it
 					//////
-						// Draw the window border
-						iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, &obj->rcClient, true);
+						if (!obj->bc || !iBmp_isValidCache(&obj->bc, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight))
+						{
+							// The bitmap cache is no longer valid
+							iBmp_deleteCache(&obj->bc);
+
+							// Draw the window border
+							if (obj->p.isOpaque)		iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, &obj->rcClient,	true);
+							else						iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, NULL,			false);
+
+							// Save the cache
+							iBmp_createCache(&obj->bc, obj->bmp, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+
+						} else {
+							// Copy everything over from the cache
+							memcpy(obj->bmp->bd, obj->bc->bmpCached->bd, obj->bc->bmpCached->bi.biSizeImage);
+						}
 
 						// Frame it
-						iBmp_frameRect(obj->bmp, &lrc, blackColor, blackColor, blackColor, blackColor, false, NULL, false);
+						iBmp_frameRect(obj->bmp, &lrc, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, false, NULL, false);
 
 						// Draw the client area
 						SetRect(&lrc2, 8, obj->pa.bmpIcon->bi.biHeight + 2, lrc.right - obj->pa.bmpIcon->bi.biHeight - 2, lrc.bottom - obj->pa.bmpIcon->bi.biHeight - 1);
-						iBmp_fillRect(obj->bmp, &lrc2, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+						if (obj->p.isOpaque)
+							iBmp_fillRect(obj->bmp, &lrc2, obj->p.backColor, obj->p.backColor, obj->p.backColor, obj->p.backColor, false, NULL, false);
 
 						// Put a border around the client area
-						InflateRect(&lrc2, 1, 1);
-						iBmp_frameRect(obj->bmp, &lrc2, blackColor, blackColor, blackColor, blackColor, false, NULL, false);
+						if (obj->p.isBorder)
+						{
+							InflateRect(&lrc2, 1, 1);
+							iBmp_frameRect(obj->bmp, &lrc2, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, false, NULL, false);
+						}
 
 
 // Note:  Eventually these will be moved to form objects, like the icon, caption, and control buttons
@@ -4010,11 +4028,32 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 					//////////
 					// Frame it
 					//////
-						// Draw the window border
-						iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, &obj->rcClient, true);
+						if (!obj->bc || !iBmp_isValidCache(&obj->bc, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight))
+						{
+							// The bitmap cache is no longer valid
+							iBmp_deleteCache(&obj->bc);
 
-						// Make the client area white
-						iBmp_fillRect(obj->bmp, &obj->rcClient, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+							// Draw the window border
+							if (obj->p.isOpaque)
+							{
+								// Render the subform and client area
+								iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, &obj->rcClient,	true);
+
+								// Make the client area white
+								iBmp_fillRect(obj->bmp, &obj->rcClient, obj->p.backColor, obj->p.backColor, obj->p.backColor, obj->p.backColor, false, NULL, false);
+
+							} else {
+								// Render the subform
+								iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, NULL, false);
+							}
+
+							// Save the cache
+							iBmp_createCache(&obj->bc, obj->bmp, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+
+						} else {
+							// Copy everything over from the cache
+							memcpy(obj->bmp->bd, obj->bc->bmpCached->bd, obj->bc->bmpCached->bi.biSizeImage);
+						}
 
 						// Frame the client area
 						if (obj->p.isBorder)
@@ -4410,6 +4449,8 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				// Re-render
 				lnPixelsRendered = iSEM_render(obj->pa.em, obj, obj->p.hasFocus);
 
+				if (obj->p.isBorder)
+					iBmp_frameRect(obj->bmp, &lrc, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, false, NULL, false);
 
 				//////////
 				// Copy to prior rendered bitmap

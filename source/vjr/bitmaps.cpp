@@ -234,6 +234,139 @@
 
 
 
+/////////
+//
+// Allows a bitmap to be cached, with validation on up to eight data points
+// to determine on subsequent usage if the cache is still valid.
+//
+//////
+	SBitmap* iBmp_isValidCache(SBmpCache** bmpCache, u32 data1, u32 data2, u32 data3, u32 data4, u32 data5, u32 data6, u32 data7, u32 data8)
+	{
+		SBmpCache* bc;
+
+
+		// Make sure our environment is sane
+		if (bmpCache)
+		{
+			// Grab the pointer
+			bc = *bmpCache;
+
+			// Is there a cache entry?
+			if (!bc || !bc->bmpCached)
+				return(NULL);
+
+			// Validate the data points
+			if (data1 != bc->data1)		return(NULL);
+			if (data2 != bc->data2)		return(NULL);
+			if (data3 != bc->data3)		return(NULL);
+			if (data4 != bc->data4)		return(NULL);
+			if (data5 != bc->data5)		return(NULL);
+			if (data6 != bc->data6)		return(NULL);
+			if (data7 != bc->data7)		return(NULL);
+			if (data8 != bc->data8)		return(NULL);
+
+			// If we get here, we're good
+			return(bc->bmpCached);
+		}
+
+		// If we get here, invalid
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Create a bitmap cache.
+//
+//////
+	SBitmap* iBmp_createCache(SBmpCache** bmpCache, SBitmap* bmp, u32 data1, u32 data2, u32 data3, u32 data4, u32 data5, u32 data6, u32 data7, u32 data8)
+	{
+		SBmpCache* bc;
+
+
+		// Make sure the environment is sane
+		if (bmpCache && bmp)
+		{
+			// Create or get the existing copy
+			if (!*bmpCache)
+			{
+				// Create a new entry
+				bc = (SBmpCache*)malloc(sizeof(SBmpCache));
+				if (!bc)
+					return(NULL);
+
+				// Store the cache
+				*bmpCache = bc;
+
+				// Initialize it
+				memset(bc, 0, sizeof(SBmpCache));
+
+			} else {
+				// Grab the existing cache
+				bc = *bmpCache;
+
+				// Delete the previous bitmap
+				if (bc->bmpCached)
+					iBmp_delete(&bc->bmpCached, true, true);
+			}
+
+			// Store the data points
+			bc->data1	= data1;
+			bc->data2	= data2;
+			bc->data3	= data3;
+			bc->data4	= data4;
+			bc->data5	= data5;
+			bc->data6	= data6;
+			bc->data7	= data7;
+			bc->data8	= data8;
+
+			// Copy the bitmap
+			bc->bmpCached = iBmp_copy(bmp);
+		}
+
+		// If we get here, invalid
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Delete a previously created cache.
+//
+//////
+	SBitmap* iBmp_deleteCache(SBmpCache** bmpCache)
+	{
+		SBmpCache* bc;
+
+
+		// Make sure the environment is sane
+		if (bmpCache && *bmpCache)
+		{
+			// Grab the cache
+			bc = *bmpCache;
+
+			// Reset the root
+			*bmpCache = NULL;
+
+			// Delete the previous bitmap
+			if (bc->bmpCached)
+				iBmp_delete(&bc->bmpCached, true, true);
+
+			// Delete self
+			free(bc);
+		}
+
+		// If we get here, invalid
+		return(NULL);
+	}
+
+
+
+
 //////////
 //
 // Called to save the indicated bitmap to a disk file.

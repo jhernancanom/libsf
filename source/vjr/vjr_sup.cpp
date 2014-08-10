@@ -265,8 +265,9 @@
 			if (!gobj_jdebi)
 				return;
 
-			// Set the app icon
+			// Set the app icon and enable the border
 			iObj_setIcon(gobj_jdebi, bmpJDebiIcon);
+			gobj_jdebi->p.isBorder = true;
 
 			// Give it a fixed point font
 			gobj_jdebi->pa.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
@@ -336,12 +337,12 @@
 		// Position and size each control
 		//////
 			lnHeight = (gobj_jdebi->rcClient.bottom - gobj_jdebi->rcClient.top) / 8;
-			iObj_setSize(sourceCode_editbox,	0,	0,		sourceCode->rcClient.right	- sourceCode->rcClient.left,	sourceCode->rcClient.bottom	- sourceCode->rcClient.top);
-			iObj_setSize(locals_editbox,		0,	0,		locals->rcClient.right		- locals->rcClient.left - 200,	locals->rcClient.bottom		- locals->rcClient.top);
-			iObj_setSize(watch_editbox,			0,	0,		watch->rcClient.right		- watch->rcClient.left,			watch->rcClient.bottom		- watch->rcClient.top);
-			iObj_setSize(command_editbox,		0,	0,		command->rcClient.right		- command->rcClient.left,		command->rcClient.bottom	- command->rcClient.top);
-			iObj_setSize(debug_editbox,			0,	0,		debug->rcClient.right		- debug->rcClient.left,			debug->rcClient.bottom		- debug->rcClient.top);
-			iObj_setSize(output_editbox,		0,	0,		output->rcClient.right		- output->rcClient.left,		output->rcClient.bottom		- output->rcClient.top);
+			iObj_setSize(sourceCode_editbox,	-1,	24,		sourceCode->rcClient.right	- sourceCode->rcClient.left - 48,	sourceCode->rcClient.bottom	- sourceCode->rcClient.top - 24);
+			iObj_setSize(locals_editbox,		0,	0,		locals->rcClient.right		- locals->rcClient.left - 200,		locals->rcClient.bottom		- locals->rcClient.top);
+			iObj_setSize(watch_editbox,			0,	0,		watch->rcClient.right		- watch->rcClient.left,				watch->rcClient.bottom		- watch->rcClient.top);
+			iObj_setSize(command_editbox,		0,	0,		command->rcClient.right		- command->rcClient.left,			command->rcClient.bottom	- command->rcClient.top);
+			iObj_setSize(debug_editbox,			0,	0,		debug->rcClient.right		- debug->rcClient.left,				debug->rcClient.bottom		- debug->rcClient.top);
+			iObj_setSize(output_editbox,		0,	0,		output->rcClient.right		- output->rcClient.left,			output->rcClient.bottom		- output->rcClient.top);
 
 
 		//////////
@@ -354,10 +355,12 @@
 		//////////
 		// SourceCode window caption and font
 		//////
+			sourceCode->p.isOpaque						= false;
 			iDatum_duplicate(&caption->value, cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
 			iObj_setCaption(sourceCode, caption);
 			sourceCode_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			sourceCode_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown_sourceCode;
+			sourceCode_editbox->p.isBorder				= true;
 			sourceCode_editbox->pa.em->showCursorLine	= true;
 			sourceCode_editbox->pa.em->isSourceCode		= true;
 			sourceCode_editbox->pa.em->showLineNumbers	= true;
@@ -3408,7 +3411,7 @@
 
 
 // TODO:  COMPLETELY UNTESTED.  BREAKPOINT AND EXAMINE.
-int3_break;
+debug_break;
 		//////////
 		// Iterate in a top-down manner
 		//////
@@ -3436,7 +3439,7 @@ int3_break;
 
 
 // TODO:  COMPLETELY UNTESTED.  BREAKPOINT AND EXAMINE.
-int3_break;
+debug_break;
 		//////////
 		// Iterate in a top-down manner
 		//////
@@ -3472,7 +3475,7 @@ int3_break;
 
 
 // TODO:  COMPLETELY UNTESTED.  BREAKPOINT AND EXAMINE.
-int3_break;
+debug_break;
 		// Make sure our environment is sane
 		if (root && *root)
 		{

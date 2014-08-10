@@ -151,10 +151,10 @@ typedef SEM**		SEMpp;
 	
 #if !defined(_MSC_VER)
 	// gcc
-	#define int3_break						asm("int $3")
+	#define debug_break						asm("int $3")
 #else
 	// visual studio
-	#define int3_break						_asm int 3
+	#define debug_break						_asm int 3
 #endif
 
 

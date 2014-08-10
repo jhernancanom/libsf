@@ -306,7 +306,7 @@
 
 		// Create the master record
 // TODO:  COMPLETELY UNTESTED.  BREAKPOINT AND EXAMINE.
-int3_break;
+debug_break;
 // 		ecmNew = (SEM*)malloc(sizeof(SEM));
 // 		if (ecmNew)
 // 		{
@@ -500,7 +500,7 @@ int3_break;
 		if (root && *root)
 		{
 // TODO:  COMPLETELY UNTESTED.  BREAKPOINT AND EXAMINE.
-int3_break;
+debug_break;
 			em = *root;
 			//////////
 			// Are we really the thing?  Or just an indirect reference to the thing?
@@ -940,7 +940,7 @@ int3_break;
 		if (em && obj)
 		{
 			// Get the client rect
-			CopyRect(rc, &obj->rcClient);
+			SetRect(rc, 0, 0, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top);
 			if (em->font)		font = em->font;
 			else				font = obj->pa.font;
 
@@ -1578,21 +1578,21 @@ int3_break;
 						// Display in the cursor color line
 						SetBkColor(bmp->hdc, RGB(currentStatementBackColor.red, currentStatementBackColor.grn, currentStatementBackColor.blu));
 						SetTextColor(bmp->hdc, RGB(currentStatementForeColor.red, currentStatementForeColor.grn, currentStatementForeColor.blu));
-						fillColor.color		= currentStatementBackColor.color;
+						fillColor.color	= currentStatementBackColor.color;
 
 					} else if (line->ll.next || ((!em->showCursorLine || !tlRenderCursorline) && !em->showEndLine)) {
 						// Display in normal background color
 						SetBkColor(bmp->hdc, RGB(backColor.red, backColor.grn, backColor.blu));
 						SetTextColor(bmp->hdc, RGB(foreColor.red, foreColor.grn, foreColor.blu));
 						hfontOld		= SelectObject(bmp->hdc, font->hfont);
-						fillColor.color		= backColor.color;
+						fillColor.color	= backColor.color;
 
 					} else {
 						// This is the last line, display in the last line color
 						SetBkColor(bmp->hdc, RGB(backColorLast.red, backColorLast.grn, backColorLast.blu));
 						SetTextColor(bmp->hdc, RGB(foreColorLast.red, foreColorLast.grn, foreColorLast.blu));
 						hfontOld		= SelectObject(bmp->hdc, font->hfont);
-						fillColor.color		= backColorLast.color;
+						fillColor.color	= backColorLast.color;
 					}
 
 
@@ -1600,6 +1600,7 @@ int3_break;
 				// Determine the render rectangles (populated area on left, area to clear on right)
 				//////
 					CopyRect(&lrc2, &lrc);
+
 					// Will we fit?
 					if (line->sourceCode->data && line->sourceCodePopulated > 0 && em->leftColumn < line->sourceCodePopulated)
 					{
@@ -1909,7 +1910,7 @@ int3_break;
 				//////////
 				// Move down to the next row
 				//////
-					lnTop	= lrc.bottom;
+					lnTop	+= (lrc.bottom - lrc.top);
 					line	= (SEdit*)line->ll.next;
 			}
 
@@ -1923,9 +1924,12 @@ int3_break;
 			iBmp_drawVerticalLine(bmp, lrc3.top, lrc3.bottom, lrc3.right - 1, lineNumberBackColor);
 
 // s8 buffer[256];
-// sprintf(buffer, "c:\\temp\\ems\\%u.bmp\0", (u32)em);
-// iBmp_saveToDisk(bmp, buffer);
-// iBmp_saveToDisk(bmp, "c:\\temp\\em.bmp");
+// if (obj->parent && obj->parent->objType == _OBJ_TYPE_SUBFORM && iDatum_compare(&obj->parent->pa.caption, cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1) == 0)
+// {
+// 	sprintf(buffer, "c:\\temp\\ems\\%u.bmp\0", (u32)em);
+// 	iBmp_saveToDisk(bmp, buffer);
+// 	iBmp_saveToDisk(bmp, "c:\\temp\\em.bmp");
+// }
 
 			// Reset the font
 			SelectObject(bmp->hdc, hfontOld);
