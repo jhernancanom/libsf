@@ -359,9 +359,14 @@
 			sourceCode->p.isOpaque						= false;
 			iDatum_duplicate(&caption->value, cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
 			iObj_setCaption(sourceCode, caption);
+
+			// Adjust the caption width
+			((SObject*)sourceCode->firstChild->ll.next)->rc.right = 90;
+
 			sourceCode_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			sourceCode_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown_sourceCode;
 			sourceCode_editbox->p.isBorder				= true;
+			sourceCode_editbox->p.borderColor.color		= lineNumberBackColor.color;
 			sourceCode_editbox->pa.em->showCursorLine	= true;
 			sourceCode_editbox->pa.em->isSourceCode		= true;
 			sourceCode_editbox->pa.em->showLineNumbers	= true;
@@ -378,7 +383,7 @@
 			iObj_setIcon(locals, bmpLocalsIcon);
 
 			// Adjust the caption width
-			((SObject*)locals->firstChild->ll.next)->rc.right = 90;
+			((SObject*)locals->firstChild->ll.next)->rc.right = 65;
 
 			// Create the checkboxes
 			locals_autos		= iObj_addChild(_OBJ_TYPE_CHECKBOX, locals);
@@ -476,6 +481,9 @@
 			watch_editbox->pa.em->showCursorLine	= true;
 			iObj_setIcon(watch, bmpWatchIcon);
 
+			// Adjust the caption width
+			((SObject*)watch->firstChild->ll.next)->rc.right = 65;
+
 
 		//////////
 		// Command window caption and font
@@ -490,6 +498,9 @@
 			command_editbox->pa.em->showLineNumbers		= true;
 			iObj_setIcon(command, bmpCommandIcon);
 
+			// Adjust the caption width
+			((SObject*)command->firstChild->ll.next)->rc.right = 80;
+
 
 		//////////
 		// Debug window caption and font
@@ -501,6 +512,9 @@
 			debug_editbox->pa.em->showCursorLine	= true;
 			iObj_setIcon(debug, bmpDebugIcon);
 
+			// Adjust the caption width
+			((SObject*)debug->firstChild->ll.next)->rc.right = 65;
+
 
 		//////////
 		// Output window caption and font
@@ -511,6 +525,9 @@
 			output_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			output_editbox->pa.em->showCursorLine	= true;
 			iObj_setIcon(output, bmpOutputIcon);
+
+			// Adjust the caption width
+			((SObject*)output->firstChild->ll.next)->rc.right = 70;
 
 
 		//////////

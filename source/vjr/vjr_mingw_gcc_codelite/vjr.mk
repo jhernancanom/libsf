@@ -2,18 +2,18 @@
 ## Auto Generated makefile by CodeLite IDE
 ## any manual changes will be erased      
 ##
-## Release
+## Debug
 ProjectName            :=vjr
-ConfigurationName      :=Release
+ConfigurationName      :=Debug
 WorkspacePath          := "C:\libsf\source\vjr\vjr_mingw_gcc_codelite"
 ProjectPath            := "C:\libsf\source\vjr\vjr_mingw_gcc_codelite"
-IntermediateDirectory  :=./Release
+IntermediateDirectory  :=./Debug
 OutDir                 := $(IntermediateDirectory)
 CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Administrator
-Date                   :=08/09/14
+Date                   :=08/10/14
 CodeLitePath           :="C:\Program Files\CodeLite"
 LinkerName             :=C:\MinGW-4.8.1\bin\g++.exe 
 SharedObjectLinkerName :=C:\MinGW-4.8.1\bin\g++.exe -shared -fPIC
@@ -28,7 +28,7 @@ LibraryPathSwitch      :=-L
 PreprocessorSwitch     :=-D
 SourceSwitch           :=-c 
 OutputFile             :=../vjr.exe
-Preprocessors          :=$(PreprocessorSwitch)NDEBUG 
+Preprocessors          :=
 ObjectSwitch           :=-o 
 ArchiveOutputSwitch    := 
 PreprocessOnlySwitch   :=-E
@@ -37,7 +37,7 @@ PCHCompileFlags        :=
 MakeDirCommand         :=makedir
 RcCmpOptions           := 
 RcCompilerName         :=C:\MinGW-4.8.1\bin\windres.exe 
-LinkOptions            :=  
+LinkOptions            :=  -g
 IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). 
 IncludePCH             := 
 RcIncludePath          := 
@@ -52,8 +52,8 @@ LibPath                := $(LibraryPathSwitch).
 AR       := C:\MinGW-4.8.1\bin\ar.exe rcu
 CXX      := C:\MinGW-4.8.1\bin\g++.exe 
 CC       := C:\MinGW-4.8.1\bin\gcc.exe 
-CXXFLAGS :=  -O2 -Wall -Wno-comment -Wno-multichar -Wno-narrowing -Wno-write-strings -Wno-format-contains-nul -Wno-strict-aliasing $(Preprocessors)
-CFLAGS   :=  -O2 -Wall $(Preprocessors)
+CXXFLAGS :=  -g -O0 -Wall -Wno-comment -Wno-multichar -Wno-narrowing -Wno-write-strings -Wno-format-contains-nul $(Preprocessors)
+CFLAGS   :=  -g -O0 -Wall $(Preprocessors)
 ASFLAGS  := 
 AS       := C:\MinGW-4.8.1\bin\as.exe 
 
@@ -82,7 +82,7 @@ $(OutputFile): $(IntermediateDirectory)/.d $(Objects)
 	$(LinkerName) $(OutputSwitch)$(OutputFile) @$(ObjectsFileList) $(LibPath) $(Libs) $(LinkOptions)
 
 $(IntermediateDirectory)/.d:
-	@$(MakeDirCommand) "./Release"
+	@$(MakeDirCommand) "./Debug"
 
 PreBuild:
 
@@ -109,6 +109,6 @@ clean:
 	$(RM) $(IntermediateDirectory)/vjr_vjr.cpp$(PreprocessSuffix)
 	$(RM) $(OutputFile)
 	$(RM) $(OutputFile).exe
-	$(RM) ".build-release/vjr"
+	$(RM) ".build-debug/vjr"
 
 

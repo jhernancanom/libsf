@@ -1976,7 +1976,7 @@ debug_break;
 					// Compute our maximum rows and cols based on visible display area
 					//////
 // TODO:  There must be a more elegant way to do this.
-						lnWidth		= (lrc.right - lrc.left);
+						lnWidth		= (lrc.right - lrc.left) - ((em->showLineNumbers) ? (7 * font->tm.tmAveCharWidth) : 0);
 						lnHeight	= (lrc.bottom - lrc.top);
 						lnExtra		= font->tm.tmMaxCharWidth - (font->tm.tmAveCharWidth * 2);			// Added to fix the bug mentioned below
 						if (lnExtra < 0)
@@ -2000,7 +2000,7 @@ debug_break;
 
 
 					//////////
-					// Make sure we're not beyond it to the right
+					// Make sure we're not beyond it to the right1
 					//////
 						lnNewLeftColumn = em->column - lnCols;
 						if (em->leftColumn - lnNewLeftColumn < 0)
