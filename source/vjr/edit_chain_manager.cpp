@@ -974,6 +974,7 @@ debug_break;
 
 
 		// Make sure our environment is sane
+		em = NULL;
 		if (obj && obj->objType == _OBJ_TYPE_EDITBOX)
 		{
 			// Grab the EM for this
@@ -1091,7 +1092,7 @@ debug_break;
 		}
 
 		// When ctrl+alt+shift changes, remove the highlighted
-		if (!(tlCtrl && tlShift && tlAlt) && (em->highlightLineBefore || em->highlightLineAfter))
+		if (em && !(tlCtrl && tlShift && tlAlt) && (em->highlightLineBefore || em->highlightLineAfter))
 		{
 			// We're done displaying the highlight
 			em->highlightLineBefore	= NULL;

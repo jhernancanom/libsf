@@ -1654,7 +1654,7 @@
 //////
 	void iTooltip_show(STooltip* tooltip)
 	{
-		CreateThread(NULL, NULL, &iTooltip_thread, tooltip, 0, 0);
+		CreateThread(NULL, 0, &iTooltip_thread, tooltip, 0, 0);
 	}
 
 	DWORD WINAPI iTooltip_thread(LPVOID lpParameter/*STooltip*/)
