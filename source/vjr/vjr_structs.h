@@ -504,6 +504,9 @@ struct STooltip
 	SObject*	obj;												// The object owning the tip
 	s32			timeoutMs;											// Tooltips have a lifetime... in milliseconds
 
+	bool		allowMove;											// Can the tooltip be moved?
+	bool		allowSticky;										// Can they pin the tooltip so it doesn't expire?
+
 	HWND		hwnd;												// The HWND for this window
 	RECT		rc;													// In screen coordinates
 	SBitmap*	bmp;												// The rendered bitmap for the tooltip

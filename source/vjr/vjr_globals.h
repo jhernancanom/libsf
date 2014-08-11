@@ -78,7 +78,6 @@
 
 	// Focus highlight windows, and tooltip window
 	SBuilder*			gFocusHighlights					= NULL;									// Holds SFocusHighlight structures
-	STooltip			gTooltip;																	// Only one tooltip at a time (for now)
 	SSplash				gSplash;																	// For the active splash screen
 
 	// App icons

@@ -1538,6 +1538,7 @@ debug_break;
 		RECT		lrc, lrcObjInScreenCoords, lrcTooltip;
 		SBitmap*	bmp;
 		SFont*		font;
+		STooltip*	tooltip;
 
 
 		// Make sure our environment is sane
@@ -1561,12 +1562,12 @@ debug_break;
 						SetRect(&lrcTooltip,	lrcObjInScreenCoords.left + line->rcLastRender.left,
 												lrcObjInScreenCoords.top  + line->rcLastRender.top - (line->rcLastRender.bottom - line->rcLastRender.top),
 												lrcObjInScreenCoords.left + line->rcLastRender.right,
-												lrcObjInScreenCoords.top  + line->rcLastRender.top - 1);
+												lrcObjInScreenCoords.top  + line->rcLastRender.top);
 
 					} else {
 						// Adjust the rectangle to the space below
 						SetRect(&lrcTooltip,	lrcObjInScreenCoords.left + line->rcLastRender.left,
-												lrcObjInScreenCoords.top  + line->rcLastRender.bottom + 1,
+												lrcObjInScreenCoords.top  + line->rcLastRender.bottom,
 												lrcObjInScreenCoords.left + line->rcLastRender.right,
 												lrcObjInScreenCoords.top + line->rcLastRender.bottom + (line->rcLastRender.bottom - line->rcLastRender.top));
 					}
@@ -1595,7 +1596,8 @@ debug_break;
 				//////////
 				// Create the tooltip window
 				//////
-					iTooltip_create(&lrcTooltip, bmp, 7500, true, true);
+					tooltip = iTooltip_allocate(&lrcTooltip, bmp, 7500, true, true);
+					iTooltip_show(tooltip);
 			}
 		}
 	}

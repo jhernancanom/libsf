@@ -350,14 +350,13 @@
 			{
 				// Get the coordinates
 				CopyRect(&lrcWin, &win->rc);
-				CopyRect(&lrcObj, &win->rc);
+				SetRect(&lrcObj, 0, 0, objRoot->bmp->bi.biWidth, objRoot->bmp->bi.biHeight);
 
 				// Adjust for the child object's location within
-				if (iObj_find_relativeRect(objRoot, obj, &lrcObj, true, true))
+				if (iObj_find_relativeRect(objRoot, obj, 0, 0, &lrcObj, true, true))
 				{
 					// Calculate the adjustment
 					SetRect(rc, lrcWin.left + lrcObj.left, lrcWin.top + lrcObj.top, lrcWin.left + lrcObj.right, lrcWin.top + lrcObj.bottom);
-					CopyRect(rc, &lrcObj);
 
 					// Indicate success
 					return(true);
@@ -376,25 +375,37 @@
 // Called to find the relative rectangle of the indicated 
 //
 //////
-	bool iObj_find_relativeRect(SObject* objRoot, SObject* obj, RECT* lrcObj, bool tlProcessChildren, bool tlProcessSiblings)
+	bool iObj_find_relativeRect(SObject* objThis, SObject* objTarget, s32 x, s32 y, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings)
 	{
-		RECT		lrcSave, lrcCandidate;
+		s32			lnX, lnY;
 		SObject*	objSib;
 
 
 		// Make sure our environment is sane
-		if (objRoot && obj)
+		if (objThis && objTarget)
 		{
+			// Copy the variables
+			lnX = x + objThis->rc.left;
+			lnY = y + objThis->rc.top;
+
+			// Add in the client coordinates for forms and sub-forms
+			if (objThis->objType == _OBJ_TYPE_FORM || objThis->objType == _OBJ_TYPE_SUBFORM)
+			{
+				lnX += objThis->rcClient.left;
+				lnY += objThis->rcClient.top;
+			}
+
+
 			//////////
-			// Are we there yet?
+			// Is this the control?
 			//////
-				if (objRoot == obj)
+				if (objThis == objTarget)
 				{
-					// Yes, adjust the final rect
-					SetRect(lrcObj,		lrcObj->left + obj->rc.left,
-										lrcObj->top  + obj->rc.top,
-										lrcObj->left + obj->rc.right,
-										lrcObj->top  + obj->rc.bottom);
+					// Build the rectangle
+					SetRect(rc,	lnX - ((objTarget->objType == _OBJ_TYPE_FORM || objTarget->objType == _OBJ_TYPE_SUBFORM) ? objTarget->rcClient.left : 0),
+								lnY - ((objTarget->objType == _OBJ_TYPE_FORM || objTarget->objType == _OBJ_TYPE_SUBFORM) ? objTarget->rcClient.top  : 0),
+								lnX - ((objTarget->objType == _OBJ_TYPE_FORM || objTarget->objType == _OBJ_TYPE_SUBFORM) ? objTarget->rcClient.left : 0) + objTarget->rc.right  - objTarget->rc.left,
+								lnY - ((objTarget->objType == _OBJ_TYPE_FORM || objTarget->objType == _OBJ_TYPE_SUBFORM) ? objTarget->rcClient.top  : 0) + objTarget->rc.bottom - objTarget->rc.top);
 
 					// Indicate success
 					return(true);
@@ -402,53 +413,34 @@
 
 
 			//////////
-			// Adjust the rectangle for the client portion of this control
+			// Scan through children
 			//////
-				SetRect(&lrcSave,	lrcObj->left + objRoot->rcClient.left,
-									lrcObj->top  + objRoot->rcClient.top,
-									lrcObj->left + objRoot->rcClient.right,
-									lrcObj->top  + objRoot->rcClient.bottom);
-
-
-			//////////
-			// See if it's in one of the children
-			//////
-				CopyRect(&lrcCandidate, &lrcSave);
-				if (tlProcessChildren && objRoot->firstChild && iObj_find_relativeRect(objRoot->firstChild, obj, &lrcCandidate, true, true))
+				if (objThis->firstChild && tlProcessChildren)
 				{
-					// It was found, update the target and indicate success
-					CopyRect(lrcObj, &lrcCandidate);
-
-					// Indicate success
-					return(true);
+					if (iObj_find_relativeRect(objThis->firstChild, objTarget, lnX, lnY, rc, true, true))
+						return(true);
 				}
 
 
 			//////////
-			// See if it's one of the siblings
+			// Check siblings
 			//////
-				if (tlProcessSiblings && objRoot->ll.next)
+				if (tlProcessSiblings)
 				{
-					// Iterate through any children
-					objSib = (SObject*)objRoot->ll.next;
+					// Begin at the first sibling
+					objSib = (SObject*)objThis->ll.next;
 					while (objSib)
 					{
-						// Try this one
-						CopyRect(&lrcCandidate, &lrcSave);
-						if (iObj_find_relativeRect(objSib, obj, &lrcCandidate, true, false))
-						{
-							// It was found, update the target and indicate success
-							CopyRect(lrcObj, &lrcCandidate);
-
-							// Indicate success
+						// Process this sibling
+						if (iObj_find_relativeRect(objSib, objTarget, x, y, rc, true, false))
 							return(true);
-						}
 
-						// Move to next sibling
+						// Move to the next sibling
 						objSib = (SObject*)objSib->ll.next;
 					}
 				}
-		}
+			}
+
 		// Invalid
 		return(false);
 	}

@@ -73,7 +73,7 @@
 	void					iObj_clearFocus							(SWindow* win, SObject* obj, bool tlClearChildren, bool tlClearSiblings);
 	SObject*				iObj_find_rootmostObject				(SObject* obj);
 	bool					iObj_find_screenRect					(SObject* obj, RECT* rc);
-	bool					iObj_find_relativeRect					(SObject* objRoot, SObject* obj, RECT* lrcObj, bool tlProcessChildren, bool tlProcessSiblings);
+	bool					iObj_find_relativeRect					(SObject* objThis, SObject* objTarget, s32 x, s32 y, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings);
 	SObject*				iObj_find_thisForm						(SObject* obj);
 	SObject*				iObj_find_thisSubform					(SObject* obj);
 	bool					iObj_isCommandWindow					(SObject* obj);
@@ -251,8 +251,10 @@
 	SFocusHighlight*		iFocusHighlight_findByObj				(SObject* obj);
 	LRESULT CALLBACK		iFocusHighlight_wndProc					(HWND hwnd, UINT m, WPARAM w, LPARAM l);
 
-	void					iTooltip_create							(RECT* rc, SBitmap* bmp, s32 tnTimeoutMs, bool tlAllowMove, bool tlAllowSticky);
-	void					iTooltip_delete							(void);
+	STooltip*				iTooltip_allocate						(RECT* rc, SBitmap* bmp, s32 tnTimeoutMs, bool tlAllowMove, bool tlAllowSticky);
+	void					iTooltip_show							(STooltip* tooltip);
+	DWORD WINAPI			iTooltip_thread							(LPVOID lpParameter/*STooltip*/);
+	void					iTooltip_delete							(STooltip* tooltip);
 	LRESULT CALLBACK		iTooltip_wndProc						(HWND hwnd, UINT m, WPARAM w, LPARAM l);
 
 	bool					iFile_readContents						(s8* tcFilename, FILE** tfh, s8** data, u32* dataLength);

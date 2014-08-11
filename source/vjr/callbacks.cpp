@@ -140,9 +140,6 @@
 		f64 lfPercent, lfX, lfY, lfWidth, lfHeight;
 
 
-		// Clear any tooltips
-		iTooltip_delete();
-
 		// If we're clicking on a radio button, adjust the dial
 		if (tnClick != 0 && obj->objType == _OBJ_TYPE_RADIO)
 		{

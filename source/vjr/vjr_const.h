@@ -396,7 +396,7 @@ typedef SEM**		SEMpp;
 //////////
 // For tooltips, 20x per second
 //////
-	const u32			_TOOLTIP_TIMER_INTERVAL				= 50;
+	const u32			_TOOLTIP_TIMER_INTERVAL				= 250;
 
 
 //////////

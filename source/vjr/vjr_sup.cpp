@@ -210,7 +210,7 @@
 		// Size it to just under half the screen initially
 		//////
 			GetWindowRect(GetDesktopWindow(), &lrc);
-			lnWidth		= (lrc.right - lrc.left) / 2;
+			lnWidth		= (lrc.right - lrc.left) * 7 / 16;
 			lnHeight	= (lrc.bottom - lrc.top);
 
 		
@@ -278,14 +278,14 @@
 		// Size it to just under half the screen initially
 		//////
 			GetWindowRect(GetDesktopWindow(), &lrc);
-			lnWidth		= (lrc.right - lrc.left) / 2;
+			lnWidth		= (lrc.right - lrc.left) * 9 / 16;
 			lnHeight	= (lrc.bottom - lrc.top);
 
 		
 		//////////
 		// Size and position it
 		//////
-			lnLeft		= lnWidth;
+			lnLeft		= (lrc.right - lrc.left) * 7 / 16;
 			lnTop		= (lrc.bottom - lrc.top)   / 32;
 			lnWidth		-= ((lrc.right - lrc.left) / 32);
 			lnHeight	-= (2 * lnTop);
@@ -1410,7 +1410,7 @@
 				memset(&wcex, 0, sizeof(wcex));
 				wcex.cbSize         = sizeof(wcex);
 				wcex.style          = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
-				wcex.lpfnWndProc    = (WNDPROC)&iFocusHighlight_wndProc;
+				wcex.lpfnWndProc    = &iFocusHighlight_wndProc;
 				wcex.hInstance      = GetModuleHandle(NULL);
 				wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
 				wcex.lpszClassName  = cgcFocusHighlightClass;
@@ -1617,13 +1617,53 @@
 
 //////////
 //
+// Called to allocate a tooltip structure and prepare it for display
+//
+//////
+	STooltip* iTooltip_allocate(RECT* rc, SBitmap* bmp, s32 tnTimeoutMs, bool tlAllowMove, bool tlAllowSticky)
+	{
+		STooltip* tooltip;
+
+
+		// Allocate a structure
+		tooltip = (STooltip*)malloc(sizeof(STooltip));
+		if (tooltip)
+		{
+			// Initialize
+			memset(tooltip, 0, sizeof(STooltip));
+
+			// Populate
+			CopyRect(&tooltip->rc, rc);
+			tooltip->bmp			= bmp;
+			tooltip->timeoutMs		= tnTimeoutMs;
+			tooltip->allowMove		= tlAllowMove;
+			tooltip->allowSticky	= tlAllowSticky;
+		}
+
+		// Indicate our status
+		return(tooltip);
+	}
+
+
+
+
+//////////
+//
 // Called to create a new tooltip at the indicated coordinates with the indicated text
 //
 //////
-	void iTooltip_create(RECT* rc, SBitmap* bmp, s32 tnTimeoutMs, bool tlAllowMove, bool tlAllowSticky)
+	void iTooltip_show(STooltip* tooltip)
 	{
+		CreateThread(NULL, NULL, &iTooltip_thread, tooltip, 0, 0);
+	}
+
+	DWORD WINAPI iTooltip_thread(LPVOID lpParameter/*STooltip*/)
+	{
+		s32			lnWidth, lnHeight;
 		WNDCLASSEX	wcex;
 		ATOM		atom;
+		MSG			msg;
+		STooltip*	tooltip;
 
 
 		//////////
@@ -1636,7 +1676,7 @@
 				memset(&wcex, 0, sizeof(wcex));
 				wcex.cbSize         = sizeof(wcex);
 				wcex.style          = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
-				wcex.lpfnWndProc    = (WNDPROC)&iTooltip_wndProc;
+				wcex.lpfnWndProc    = &iTooltip_wndProc;
 				wcex.hInstance      = GetModuleHandle(NULL);
 				wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
 				wcex.lpszClassName  = cgcTooltipClass;
@@ -1644,47 +1684,64 @@
 
 				// Was it registered?
 				if (!atom)
-					return;		// Nope ... when we get here, failure
+					ExitThread(-1);		// Nope ... when we get here, failure
 			}
 
 
-//////////
-// TODO:  Allocate a tooltip structure and set the extra data for the window to hold the pointer.
-//        We need to have more than one tooltip positioned at any one time
-//////
-
+		//////////
+		// Get the structure
+		//////
+			tooltip = (STooltip*)lpParameter;
 
 		//////////
 		// Create the window
 		//////
-			gTooltip.hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, cgcTooltipClass, NULL, 
-												WS_POPUP, 
-												rc->left, 
-												rc->top, 
-												rc->right - rc->left, 
-												rc->bottom - rc->top, 
+			lnWidth			= tooltip->rc.right  - tooltip->rc.left;
+			lnHeight		= tooltip->rc.bottom - tooltip->rc.top;
+			tooltip->hwnd	= CreateWindowEx(WS_EX_TOOLWINDOW, cgcTooltipClass, NULL, 
+												WS_POPUP,
+												tooltip->rc.left,
+												tooltip->rc.top,
+												lnWidth,
+												lnHeight,
 												NULL, NULL, GetModuleHandle(NULL), 0);
-
 
 		//////////
 		// Store the settings
 		//////
-			gTooltip.bmp		= bmp;
-			gTooltip.timeoutMs	= tnTimeoutMs;
-			GetWindowRect(gTooltip.hwnd, &gTooltip.rc);
-
-
-		//////////
-		// Create the timer
-		//////
-			SetTimer(gTooltip.hwnd, (u32)&gTooltip, _TOOLTIP_TIMER_INTERVAL, 0);
+			SetWindowLong(tooltip->hwnd, GWL_USERDATA, (u32)tooltip);
 
 
 		//////////
 		// Display the window
 		//////
-			gTooltip.isValid = true;
-			SetWindowPos(gTooltip.hwnd, HWND_TOPMOST, rc->left, rc->top, rc->right - rc->left, rc->bottom - rc->top, SWP_SHOWWINDOW | SWP_NOACTIVATE);
+			tooltip->isValid = true;
+			SetWindowPos(tooltip->hwnd, HWND_TOPMOST, tooltip->rc.left, tooltip->rc.top, lnWidth, lnHeight, SWP_SHOWWINDOW | SWP_NOACTIVATE);
+
+
+		//////////
+		// Create the timer
+		//////
+			SetTimer(tooltip->hwnd, (u32)tooltip, _TOOLTIP_TIMER_INTERVAL, 0);
+
+
+		//////////
+		// Process messages
+		//////
+			while (tooltip->isValid && GetMessage(&msg, NULL, 0, 0))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+
+			// Delete the window
+			iTooltip_delete(tooltip);
+
+			// Free self
+			free(tooltip);
+
+			// All done
+			ExitThread(0);
 	}
 
 
@@ -1695,22 +1752,20 @@
 // Called to delete a specific tooltip
 //
 //////
-	void iTooltip_delete(void)
+	void iTooltip_delete(STooltip* tooltip)
 	{
-		if (gTooltip.isValid && gTooltip.bmp)
-		{
-			// Indicate it's no longer valid
-			gTooltip.isValid = false;
+		// Indicate it's no longer valid
+		tooltip->isValid = false;
 
-			// Kill the timer
-			KillTimer(gTooltip.hwnd, 0);
+		// Kill the timer
+		KillTimer(tooltip->hwnd, (u32)tooltip);
 
-			// Delete the bitmap
-			iBmp_delete(&gTooltip.bmp, true, true);
+		// Delete the bitmap
+		if (tooltip->bmp)
+			iBmp_delete(&tooltip->bmp, true, true);
 
-			// Delete the window
-			DestroyWindow(gTooltip.hwnd);
-		}
+		// Delete the window
+		DestroyWindow(tooltip->hwnd);
 	}
 
 
@@ -1725,20 +1780,29 @@
 	{
 		HDC			lhdc;
 		PAINTSTRUCT	ps;
+		STooltip*	tooltip;
 
 
 		// The only message we handle is the paint
-		if (gTooltip.isValid && gTooltip.bmp)
+		tooltip = (STooltip*)GetWindowLong(hwnd, GWL_USERDATA);
+		if (tooltip)
 		{
 			switch (m)
 			{
+				case WM_LBUTTONDOWN:
+				case WM_MBUTTONDOWN:
+				case WM_RBUTTONDOWN:
+					// They clicked on it, they want it removed
+					tooltip->isValid = false;
+					break;
+
 				case WM_TIMER:
 					// Decrease by our timer interval
-					gTooltip.timeoutMs -= _TOOLTIP_TIMER_INTERVAL;
+					tooltip->timeoutMs -= _TOOLTIP_TIMER_INTERVAL;
 
 					// If we're reached the timeout interval, delete it
-					if (gTooltip.timeoutMs <= 0)
-						iTooltip_delete();
+					if (tooltip->timeoutMs <= 0)
+						tooltip->isValid = false;
 
 					break;
 
@@ -1747,7 +1811,8 @@
 					lhdc = BeginPaint(hwnd, &ps);
 
 					// Paint it
-					BitBlt(lhdc, 0, 0, gTooltip.bmp->bi.biWidth, gTooltip.bmp->bi.biHeight, gTooltip.bmp->hdc, 0, 0, SRCCOPY);
+					if (tooltip->bmp)
+						BitBlt(lhdc, 0, 0, tooltip->bmp->bi.biWidth, tooltip->bmp->bi.biHeight, tooltip->bmp->hdc, 0, 0, SRCCOPY);
 
 					// All done
 					EndPaint(hwnd, &ps);
