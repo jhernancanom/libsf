@@ -2203,6 +2203,9 @@ debug_break;
 
 			// Reset the font
 			SelectObject(bmp->hdc, hfontOld);
+
+			// Apply a dappling
+			iBmp_dapple(bmp, bmpDapple2, 255.0f, 10);
 		}
 
 		// Indicate how many pixels were rendered

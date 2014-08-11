@@ -2688,7 +2688,7 @@
 		{
 			SetRect(&lrc, 0, 0, bmp->bi.biWidth, bmp->bi.biHeight);
 			iBmp_fillRect(bmp, &lrc, tooltipNwBackColor, tooltipNeBackColor, tooltipSwBackColor, tooltipSeBackColor, true, NULL, false);
-			iBmp_dapple(bmp, bmpDapple, 200.0f);
+			iBmp_dapple(bmp, bmpDapple, 200.0f, 7);
 			iBmp_frameRect(bmp, &lrc, tooltipForecolor, tooltipForecolor, tooltipForecolor, tooltipForecolor, false, NULL, false);
 		}
 	}
@@ -2701,9 +2701,9 @@
 // Called to dapple the bitmap using a template dappler. :-)
 //
 //////
-	void iBmp_dapple(SBitmap* bmp, SBitmap* bmpDapple, f32 tfBias)
+	void iBmp_dapple(SBitmap* bmp, SBitmap* bmpDapple, f32 tfBias, f32 tfInfluence)
 	{
-		s32		lnX, lnY, lnX2, lnY2;
+		s32		lnX, lnY, lnX2, lnY2, lnInfluence;
 		f32		lfGray;
 		SBgr*	lbgrd;
 		SBgr*	lbgrs;
@@ -2714,6 +2714,8 @@
 		// Make sure the environment is sane
 		if (bmp && bmpDapple)
 		{
+			tfInfluence	= (f32)((s32)tfInfluence);
+			lnInfluence	= (s32)tfInfluence + 1;
 			if (bmp->bi.biBitCount == 24)
 			{
 				if (bmpDapple->bi.biBitCount == 24)
@@ -2733,9 +2735,9 @@
 								for (lnX2 = 0; lnX2 < bmpDapple->bi.biWidth && lnX + lnX2 < bmp->bi.biWidth; lnX2++, lbgrs++, lbgrd++)
 								{
 									lfGray		= (((f32)lbgrs->red * 0.35f) + ((f32)lbgrs->grn * 0.54f) + ((f32)lbgrs->blu * 0.11f)) / tfBias;
-									lbgrd->red	= (u8)min((s32)((f32)lbgrd->red * lfGray + (f32)lbgrd->red * 7.0f) / 8, 255);
-									lbgrd->grn	= (u8)min((s32)((f32)lbgrd->grn * lfGray + (f32)lbgrd->grn * 7.0f) / 8, 255);
-									lbgrd->blu	= (u8)min((s32)((f32)lbgrd->blu * lfGray + (f32)lbgrd->blu * 7.0f) / 8, 255);
+									lbgrd->red	= (u8)min((s32)((f32)lbgrd->red * lfGray + (f32)lbgrd->red * tfInfluence) / lnInfluence, 255);
+									lbgrd->grn	= (u8)min((s32)((f32)lbgrd->grn * lfGray + (f32)lbgrd->grn * tfInfluence) / lnInfluence, 255);
+									lbgrd->blu	= (u8)min((s32)((f32)lbgrd->blu * lfGray + (f32)lbgrd->blu * tfInfluence) / lnInfluence, 255);
 								}
 							}
 						}
@@ -2743,18 +2745,78 @@
 
 				} else if (bmpDapple->bi.biBitCount == 32) {
 					// 32-bit to 24-bit
-					debug_break;
+					for (lnY = 0; lnY < bmp->bi.biHeight; lnY += bmpDapple->bi.biHeight)
+					{
+						for (lnX = 0; lnX < bmp->bi.biWidth; lnX += bmpDapple->bi.biWidth)
+						{
+							for (lnY2 = 0; lnY2 < bmpDapple->bi.biHeight && lnY + lnY2 < bmp->bi.biHeight; lnY2++)
+							{
+								// Grab the pointer2
+								lbgrd	= (SBgr*) (bmp->bd       + ((bmp->bi.biHeight       - lnY - lnY2 - 1) * bmp->rowWidth)       + (lnX * 3));
+								lbgras	= (SBgra*)(bmpDapple->bd + ((bmpDapple->bi.biHeight       - lnY2 - 1) * bmpDapple->rowWidth));
+
+								// Iterate across the dapple source
+								for (lnX2 = 0; lnX2 < bmpDapple->bi.biWidth && lnX + lnX2 < bmp->bi.biWidth; lnX2++, lbgras++, lbgrd++)
+								{
+									lfGray		= (((f32)lbgras->red * 0.35f) + ((f32)lbgras->grn * 0.54f) + ((f32)lbgras->blu * 0.11f)) / tfBias;
+									lbgrd->red	= (u8)min((s32)((f32)lbgrd->red * lfGray + (f32)lbgrd->red * tfInfluence) / lnInfluence, 255);
+									lbgrd->grn	= (u8)min((s32)((f32)lbgrd->grn * lfGray + (f32)lbgrd->grn * tfInfluence) / lnInfluence, 255);
+									lbgrd->blu	= (u8)min((s32)((f32)lbgrd->blu * lfGray + (f32)lbgrd->blu * tfInfluence) / lnInfluence, 255);
+								}
+							}
+						}
+					}
 				}
 
 			} else if (bmp->bi.biBitCount == 32) {
 				if (bmpDapple->bi.biBitCount == 24)
 				{
 					// 24-bit to 32-bit
-					debug_break;
+					for (lnY = 0; lnY < bmp->bi.biHeight; lnY += bmpDapple->bi.biHeight)
+					{
+						for (lnX = 0; lnX < bmp->bi.biWidth; lnX += bmpDapple->bi.biWidth)
+						{
+							for (lnY2 = 0; lnY2 < bmpDapple->bi.biHeight && lnY + lnY2 < bmp->bi.biHeight; lnY2++)
+							{
+								// Grab the pointer2
+								lbgrad	= (SBgra*)(bmp->bd       + ((bmp->bi.biHeight       - lnY - lnY2 - 1) * bmp->rowWidth)       + (lnX * 4));
+								lbgrs	= (SBgr*) (bmpDapple->bd + ((bmpDapple->bi.biHeight       - lnY2 - 1) * bmpDapple->rowWidth));
+
+								// Iterate across the dapple source
+								for (lnX2 = 0; lnX2 < bmpDapple->bi.biWidth && lnX + lnX2 < bmp->bi.biWidth; lnX2++, lbgrs++, lbgrad++)
+								{
+									lfGray		= (((f32)lbgrs->red * 0.35f) + ((f32)lbgrs->grn * 0.54f) + ((f32)lbgrs->blu * 0.11f)) / tfBias;
+									lbgrad->red	= (u8)min((s32)((f32)lbgrad->red * lfGray + (f32)lbgrad->red * tfInfluence) / lnInfluence, 255);
+									lbgrad->grn	= (u8)min((s32)((f32)lbgrad->grn * lfGray + (f32)lbgrad->grn * tfInfluence) / lnInfluence, 255);
+									lbgrad->blu	= (u8)min((s32)((f32)lbgrad->blu * lfGray + (f32)lbgrad->blu * tfInfluence) / lnInfluence, 255);
+								}
+							}
+						}
+					}
 
 				} else if (bmpDapple->bi.biBitCount == 32) {
 					// 32-bit to 32-bit
-					debug_break;
+					for (lnY = 0; lnY < bmp->bi.biHeight; lnY += bmpDapple->bi.biHeight)
+					{
+						for (lnX = 0; lnX < bmp->bi.biWidth; lnX += bmpDapple->bi.biWidth)
+						{
+							for (lnY2 = 0; lnY2 < bmpDapple->bi.biHeight && lnY + lnY2 < bmp->bi.biHeight; lnY2++)
+							{
+								// Grab the pointer2
+								lbgrad	= (SBgra*)(bmp->bd       + ((bmp->bi.biHeight       - lnY - lnY2 - 1) * bmp->rowWidth)       + (lnX * 4));
+								lbgras	= (SBgra*)(bmpDapple->bd + ((bmpDapple->bi.biHeight       - lnY2 - 1) * bmpDapple->rowWidth));
+
+								// Iterate across the dapple source
+								for (lnX2 = 0; lnX2 < bmpDapple->bi.biWidth && lnX + lnX2 < bmp->bi.biWidth; lnX2++, lbgras++, lbgrad++)
+								{
+									lfGray		= (((f32)lbgras->red * 0.35f) + ((f32)lbgras->grn * 0.54f) + ((f32)lbgras->blu * 0.11f)) / tfBias;
+									lbgrad->red	= (u8)min((s32)((f32)lbgrad->red * lfGray + (f32)lbgrad->red * tfInfluence) / lnInfluence, 255);
+									lbgrad->grn	= (u8)min((s32)((f32)lbgrad->grn * lfGray + (f32)lbgrad->grn * tfInfluence) / lnInfluence, 255);
+									lbgrad->blu	= (u8)min((s32)((f32)lbgrad->blu * lfGray + (f32)lbgrad->blu * tfInfluence) / lnInfluence, 255);
+								}
+							}
+						}
+					}
 				}
 			}
 		}

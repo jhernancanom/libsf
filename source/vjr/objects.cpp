@@ -4044,7 +4044,7 @@
 							else						iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, NULL,			false);
 
 							// Apply a dappling
-							iBmp_dapple(obj->bmp, bmpDapple, 200.0f);
+							iBmp_dapple(obj->bmp, bmpDapple, 200.0f, 7);
 
 							// Save the cache
 							iBmp_createCache(&obj->bc, obj->bmp, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
@@ -4173,7 +4173,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 							}
 
 							// Apply a dappling
-							iBmp_dapple(obj->bmp, bmpDapple2, 200.0f);
+							iBmp_dapple(obj->bmp, bmpDapple2, 200.0f, 7);
 
 							// Save the cache
 							iBmp_createCache(&obj->bc, obj->bmp, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
