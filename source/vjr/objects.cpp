@@ -3,7 +3,7 @@
 // /libsf/source/vjr/objects.cpp
 //
 //////
-// Version 0.48
+// Version 0.49
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -4043,6 +4043,9 @@
 							if (obj->p.isOpaque)		iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, &obj->rcClient,	true);
 							else						iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, NULL,			false);
 
+							// Apply a dappling
+							iBmp_dapple(obj->bmp, bmpDapple, 200.0f);
+
 							// Save the cache
 							iBmp_createCache(&obj->bc, obj->bmp, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
 
@@ -4168,6 +4171,9 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 								// Render the subform
 								iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, NULL, false);
 							}
+
+							// Apply a dappling
+							iBmp_dapple(obj->bmp, bmpDapple2, 200.0f);
 
 							// Save the cache
 							iBmp_createCache(&obj->bc, obj->bmp, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);

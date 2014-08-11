@@ -3,7 +3,7 @@
 // /libsf/source/vjr/graphics/bitmaps.h
 //
 //////
-// Version 0.48
+// Version 0.49
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -86,3 +86,6 @@
 #include "h\breakpoint_conditional_false.h"
 #include "h\breakpoint_conditional_true_countdown.h"
 #include "h\breakpoint_conditional_false_countdown.h"
+
+#include "h\dapple.h"
+#include "h\dapple2.h"

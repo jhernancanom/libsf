@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_defs.h
 //
 //////
-// Version 0.48
+// Version 0.49
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -376,7 +376,8 @@
 	SBgra					iBmp_colorCombine						(SBgra color1, SBgra color2, f32 tfAlp);
 	bool					iBmp_locateMarker						(SBitmap* bmp, u8 red, u8 grn, u8 blu, u32* tnX, u32* tnY, bool tlOverwriteMarker);
 	SBitmap*				iBmp_cask_createAndPopulate				(s32 iCode, s32 tnWidth, s32 tnHeight, s32* tnSkipChars, u32 tnTextLength, SBgra backColor, SBgra textColor, SBgra backgroundColor);
-	void					iBmp_colorizeAsCommonTooltipBackground					(SBitmap* bmp);
+	void					iBmp_colorizeAsCommonTooltipBackground	(SBitmap* bmp);
+	void					iBmp_dapple								(SBitmap* bmp, SBitmap* bmpDapple, f32 tfBias);
 // TODO:  The following void functions need to be changed to u32 and indicate how many pixels were rendered
 	void					iBmp_drawPoint							(SBitmap* bmp, s32 tnX, s32 tnY, SBgra color);
 	void					iBmp_fillRect							(SBitmap* bmp, RECT* rc, SBgra colorNW, SBgra colorNE, SBgra colorSW, SBgra colorSE, bool tlUseGradient, RECT* rcClip, bool tluseClip);

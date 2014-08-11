@@ -3,7 +3,7 @@
 // /libsf/source/vjr/bitmaps.cpp
 //
 //////
-// Version 0.48
+// Version 0.49
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -2688,7 +2688,75 @@
 		{
 			SetRect(&lrc, 0, 0, bmp->bi.biWidth, bmp->bi.biHeight);
 			iBmp_fillRect(bmp, &lrc, tooltipNwBackColor, tooltipNeBackColor, tooltipSwBackColor, tooltipSeBackColor, true, NULL, false);
+			iBmp_dapple(bmp, bmpDapple, 200.0f);
 			iBmp_frameRect(bmp, &lrc, tooltipForecolor, tooltipForecolor, tooltipForecolor, tooltipForecolor, false, NULL, false);
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to dapple the bitmap using a template dappler. :-)
+//
+//////
+	void iBmp_dapple(SBitmap* bmp, SBitmap* bmpDapple, f32 tfBias)
+	{
+		s32		lnX, lnY, lnX2, lnY2;
+		f32		lfGray;
+		SBgr*	lbgrd;
+		SBgr*	lbgrs;
+		SBgra*	lbgrad;
+		SBgra*	lbgras;
+
+
+		// Make sure the environment is sane
+		if (bmp && bmpDapple)
+		{
+			if (bmp->bi.biBitCount == 24)
+			{
+				if (bmpDapple->bi.biBitCount == 24)
+				{
+					// 24-bit to 24-bit
+					for (lnY = 0; lnY < bmp->bi.biHeight; lnY += bmpDapple->bi.biHeight)
+					{
+						for (lnX = 0; lnX < bmp->bi.biWidth; lnX += bmpDapple->bi.biWidth)
+						{
+							for (lnY2 = 0; lnY2 < bmpDapple->bi.biHeight && lnY + lnY2 < bmp->bi.biHeight; lnY2++)
+							{
+								// Grab the pointer2
+								lbgrd = (SBgr*)(bmp->bd       + ((bmp->bi.biHeight       - lnY - lnY2 - 1) * bmp->rowWidth)       + (lnX * 3));
+								lbgrs = (SBgr*)(bmpDapple->bd + ((bmpDapple->bi.biHeight       - lnY2 - 1) * bmpDapple->rowWidth));
+
+								// Iterate across the dapple source
+								for (lnX2 = 0; lnX2 < bmpDapple->bi.biWidth && lnX + lnX2 < bmp->bi.biWidth; lnX2++, lbgrs++, lbgrd++)
+								{
+									lfGray		= (((f32)lbgrs->red * 0.35f) + ((f32)lbgrs->grn * 0.54f) + ((f32)lbgrs->blu * 0.11f)) / tfBias;
+									lbgrd->red	= (u8)min((s32)((f32)lbgrd->red * lfGray + (f32)lbgrd->red * 7.0f) / 8, 255);
+									lbgrd->grn	= (u8)min((s32)((f32)lbgrd->grn * lfGray + (f32)lbgrd->grn * 7.0f) / 8, 255);
+									lbgrd->blu	= (u8)min((s32)((f32)lbgrd->blu * lfGray + (f32)lbgrd->blu * 7.0f) / 8, 255);
+								}
+							}
+						}
+					}
+
+				} else if (bmpDapple->bi.biBitCount == 32) {
+					// 32-bit to 24-bit
+					debug_break;
+				}
+
+			} else if (bmp->bi.biBitCount == 32) {
+				if (bmpDapple->bi.biBitCount == 24)
+				{
+					// 24-bit to 32-bit
+					debug_break;
+
+				} else if (bmpDapple->bi.biBitCount == 32) {
+					// 32-bit to 32-bit
+					debug_break;
+				}
+			}
 		}
 	}
 

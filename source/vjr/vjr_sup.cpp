@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_sup.cpp
 //
 //////
-// Version 0.48
+// Version 0.49
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:

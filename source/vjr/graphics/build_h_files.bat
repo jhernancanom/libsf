@@ -47,3 +47,6 @@
 \libsf\vvm\bin\f2h raw\breakpoint_conditional_false.bmp breakpointConditionalFalse h\breakpoint_conditional_false.h
 \libsf\vvm\bin\f2h raw\breakpoint_conditional_true_countdown.bmp breakpointConditionalTrueCountdown h\breakpoint_conditional_true_countdown.h
 \libsf\vvm\bin\f2h raw\breakpoint_conditional_false_countdown.bmp breakpointConditionalFalseCountdown h\breakpoint_conditional_false_countdown.h
+
+\libsf\vvm\bin\f2h raw\dapple.bmp dappleBmp h\dapple.h
+\libsf\vvm\bin\f2h raw\dapple2.bmp dapple2Bmp h\dapple2.h

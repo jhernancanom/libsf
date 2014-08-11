@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_globals.h
 //
 //////
-// Version 0.48
+// Version 0.49
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -119,6 +119,10 @@
 	// For radio
 	SBitmap*			bmpRadio							= NULL;
 	SBitmap*			bmpRadioDot							= NULL;
+
+	// Dapple
+	SBitmap*			bmpDapple							= NULL;
+	SBitmap*			bmpDapple2							= NULL;
 
 //////////
 // Cask graphics
@@ -310,10 +314,15 @@
 // 		const SBgra		SeColor								= { rgba(182, 153, 226, 255) };
 
 		// Subforms four-corner window color schemes (eventually these will be loaded from themes.dbf)
+// Golden theme:
+// 		SBgra			NwColor2							= { rgba(245, 225, 175, 255) };
+// 		SBgra			NeColor2							= { rgba(252, 242, 192, 25) };			// Less pastel yellow, somewhat pale
+// 		SBgra			SwColor2							= { rgba(249, 222, 133, 255) };			// Orange/golden yellow
+// 		SBgra			SeColor2							= { rgba(247, 210, 96, 255) };			// More orange/golden yellow
 // Blue theme:
-		const SBgra		NwColor2							= { rgba(220, 230, 255, 255) };
+		const SBgra		NwColor2							= { rgba(230, 230, 255, 255) };
 		const SBgra		NeColor2							= { rgba(192, 212, 255, 255) };
-		const SBgra		SwColor2							= { rgba(222, 230, 255, 255) };
+		const SBgra		SwColor2							= { rgba(212, 212, 255, 255) };
 		const SBgra		SeColor2							= { rgba(172, 192, 235, 255) };
 // Orange theme:
 // 		const SBgra		NwColor2							= { rgba(255, 222, 156, 255) };
