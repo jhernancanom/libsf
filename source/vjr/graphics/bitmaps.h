@@ -3,7 +3,7 @@
 // /libsf/source/vjr/graphics/bitmaps.h
 //
 //////
-// Version 0.49
+// Version 0.50
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -64,6 +64,7 @@
 
 #include "h\jdebi_app_icon.h"
 
+#include "h\sourcelight_icon.h"
 #include "h\output_icon.h"
 #include "h\debug_icon.h"
 #include "h\command_icon.h"

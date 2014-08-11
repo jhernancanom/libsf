@@ -25,6 +25,7 @@
 
 \libsf\vvm\bin\f2h raw\jdebi_app_icon.bmp jdebiAppIconBmp h\jdebi_app_icon.h
 
+\libsf\vvm\bin\f2h raw\sourcelight_icon.bmp sourcelightIconBmp h\sourcelight_icon.h
 \libsf\vvm\bin\f2h raw\output_icon.bmp outputIconBmp h\output_icon.h
 \libsf\vvm\bin\f2h raw\debug_icon.bmp debugIconBmp h\debug_icon.h
 \libsf\vvm\bin\f2h raw\command_icon.bmp commandIconBmp h\command_icon.h

@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr.cpp
 //
 //////
-// Version 0.49
+// Version 0.50
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -145,6 +145,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			bmpCommandIcon		= iBmp_rawLoad(cgc_commandIconBmp);
 			bmpDebugIcon		= iBmp_rawLoad(cgc_debugIconBmp);
 			bmpOutputIcon		= iBmp_rawLoad(cgc_outputIconBmp);
+			bmpSourceLightIcon	= iBmp_rawLoad(cgc_sourcelightIconBmp);
 
 			// Create a 1x1 no image bitmap placeholder
 			bmpNoImage			= iBmp_allocate();
@@ -218,16 +219,12 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iInit_createDefaultObjects();
 
 		// Create our main screen window
-		iVjr_appendSystemLog("TEMPORARY:  Manually create _screen");
-		iInit_create_screenObject();
 		iVjr_appendSystemLog("TEMPORARY:  Manually create _jdebi");
 		iInit_create_jdebiObject();
 
 		// Initially render each one
-		iVjr_appendSystemLog("Render _screen");
-		iObj_render(gobj_screen,	true);
 		iVjr_appendSystemLog("Render _jdebi");
-		iObj_render(gobj_jdebi,		true);
+		iObj_render(_jdebi,		true);
 
 		// Create our global variables
 		iVjr_appendSystemLog("Create _startupTime");
@@ -237,12 +234,9 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iDatum_duplicate(&varConstant_space->value, cgc_spaceText, 1);
 
 		// Attach them to physical windows
-		gWinScreen	= iWindow_allocate();
-		gWinJDebi	= iWindow_allocate();
-		iVjr_appendSystemLog("Allocate OS Window for _screen");
-		iObj_createWindowForForm(gobj_screen,	gWinScreen,	IDI_VJR);
 		iVjr_appendSystemLog("Allocate OS Window for _jdebi");
-		iObj_createWindowForForm(gobj_jdebi,	gWinJDebi,	IDI_JDEBI);
+		gWinJDebi = iWindow_allocate();
+		iObj_createWindowForForm(_jdebi,	gWinJDebi,	IDI_JDEBI);
 
 		// Initially populate _screen
 		// Load in the history if it exists
@@ -272,7 +266,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			iSEM_appendLine(screenData, NULL, 0);
 		}
 		// Navigate to the end of the content
-		iSEM_navigateEnd(screenData, gobj_screen);
+		iSEM_navigateEnd(screenData, _screen);
 
 		// Initially populate _jdebi
 		// Load in the history if it exists
@@ -302,10 +296,6 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		// Redraw
 		iVjr_appendSystemLog("Final render _jdebi");
 		iWindow_render(gWinJDebi, true);
-
-		// Redraw
-		iVjr_appendSystemLog("Final render _screen");
-		iWindow_render(gWinScreen, true);
 
 		// Remove the splash screen 1/2 second later
 		CreateThread(0, 0, &iSplash_delete, (LPVOID)500, 0, 0);;
@@ -427,6 +417,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			gobj_splashListingEditbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
 			gobj_splashListingEditbox->pa.em->font				= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
 			gobj_splashListingEditbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
+			gobj_splashListingEditbox->p.isVisible				= true;
 			systemLog											= gobj_splashListingEditbox->pa.em;
 			systemLog->showEndLine								= true;
 			systemLog->showCursorLine							= true;

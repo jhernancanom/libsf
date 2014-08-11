@@ -3,7 +3,7 @@
 // /libsf/source/vjr/compiler_structs.h
 //
 //////
-// Version 0.49
+// Version 0.50
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -243,6 +243,9 @@ struct SCompileNote;
 		// If this is a character that matches something (the closest parenthesis, bracket, or brace) then this color will be populated
 		SBgra*			overrideMatchingForeColor;
 		SBgra*			overrideMatchingBackColor;
+
+		// For faster rendering in source code windows
+		SBmpCache*		bc;												// Holds drawn things (casks for example)
 	};
 
 	struct SCompCallback

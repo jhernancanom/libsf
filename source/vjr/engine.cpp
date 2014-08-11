@@ -3,7 +3,7 @@
 // /libsf/source/vjr/engine.cpp
 //
 //////
-// Version 0.49
+// Version 0.50
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -77,10 +77,10 @@
 
 					case _ICODE_CLEAR:
 						// They want to clear the screen
-						iSEM_navigateTop(screenData, gobj_screen);
+						iSEM_navigateTop(screenData, _screen);
 						iSEM_deleteChain(&screenData, false);
 						screen_editbox->isDirtyRender = true;
-						iWindow_render(gWinScreen, false);
+						iWindow_render(gWinJDebi, false);
 						break;
 
 					case _ICODE_QUESTION_MARK:
@@ -89,9 +89,9 @@
 						{
 							// Syntax error, expected "? something" got only "?"
 							iSEM_appendLine(screenData, (s8*)cgcSyntaxError, -1);
-							iSEM_navigateEnd(screenData, gobj_screen);
+							iSEM_navigateEnd(screenData, _screen);
 							screen_editbox->isDirtyRender = true;
-							iWindow_render(gWinScreen, false);
+							iWindow_render(gWinJDebi, false);
 							return(false);
 
 						} else {
@@ -103,8 +103,8 @@
 								{
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error
-									screen_editbox->isDirtyRender |= iSEM_navigateEnd(screenData, gobj_screen);
-									iWindow_render(gWinScreen, false);
+									screen_editbox->isDirtyRender |= iSEM_navigateEnd(screenData, _screen);
+									iWindow_render(gWinJDebi, false);
 									return(false);
 								}
 
@@ -114,8 +114,8 @@
 								{
 									// Unknown parameter
 									iError_report(cgcUnrecognizedParameter);
-									screen_editbox->isDirtyRender |= iSEM_navigateEnd(screenData, gobj_screen);
-									iWindow_render(gWinScreen, false);
+									screen_editbox->isDirtyRender |= iSEM_navigateEnd(screenData, _screen);
+									iWindow_render(gWinJDebi, false);
 									return(false);
 								}
 							}
@@ -124,9 +124,9 @@
 
 							// Add its contents to _screen
 							iSEM_appendLine(screenData, varText->value.data, varText->value.length);
-							iSEM_navigateEnd(screenData, gobj_screen);
+							iSEM_navigateEnd(screenData, _screen);
 							screen_editbox->isDirtyRender = true;
-							iWindow_render(gWinScreen, false);
+							iWindow_render(gWinJDebi, false);
 
 							// Release the variable if it was manufactured
 							iVariable_delete(varText, true);
@@ -147,8 +147,8 @@
 								{
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error
-									screen_editbox->isDirtyRender |= iSEM_navigateEnd(screenData, gobj_screen);
-									iWindow_render(gWinScreen, false);
+									screen_editbox->isDirtyRender |= iSEM_navigateEnd(screenData, _screen);
+									iWindow_render(gWinJDebi, false);
 									return(false);
 								}
 
@@ -158,8 +158,8 @@
 								{
 									// Unknown parameter
 									iError_report(cgcUnrecognizedParameter);
-									screen_editbox->isDirtyRender |= iSEM_navigateEnd(screenData, gobj_screen);
-									iWindow_render(gWinScreen, false);
+									screen_editbox->isDirtyRender |= iSEM_navigateEnd(screenData, _screen);
+									iWindow_render(gWinJDebi, false);
 									return(false);
 								}
 							}

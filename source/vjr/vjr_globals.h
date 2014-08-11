@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_globals.h
 //
 //////
-// Version 0.49
+// Version 0.50
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -90,6 +90,7 @@
 	SBitmap*			bmpCommandIcon						= NULL;
 	SBitmap*			bmpDebugIcon						= NULL;
 	SBitmap*			bmpOutputIcon						= NULL;
+	SBitmap*			bmpSourceLightIcon					= NULL;
 
 	// When there is no image
 	SBitmap*			bmpNoImage							= NULL;
@@ -200,24 +201,22 @@
 
 
 	// Default screens used by VJr
-	SObject*			gobj_screen							= NULL;
+	SObject*			_screen								= NULL;
 	SObject*			screen_editbox						= NULL;
-	SObject*			gobj_jdebi							= NULL;
+	SObject*			_jdebi								= NULL;
 	SObject*			sourceCode							= NULL;
 	SObject*			locals								= NULL;
 	SObject*			watch								= NULL;
 	SObject*			command								= NULL;
 	SObject*			debug								= NULL;
 	SObject*			output								= NULL;
+	SObject*			sourceLight							= NULL;
 	SObject*			sourceCode_editbox					= NULL;
 	SObject*			locals_editbox						= NULL;
-	SObject*			locals_autos						= NULL;
-	SObject*			locals_globals						= NULL;
-	SObject*			locals_readwrite					= NULL;
-	SObject*			locals_refactor						= NULL;
-	SObject*			locals_button						= NULL;
-	SObject*			locals_textbox						= NULL;
-	SObject*			locals_radio						= NULL;
+// 	SObject*			locals_autos						= NULL;
+// 	SObject*			locals_globals						= NULL;
+// 	SObject*			locals_readwrite					= NULL;
+// 	SObject*			locals_refactor						= NULL;
 	SObject*			watch_editbox						= NULL;
 	SObject*			command_editbox						= NULL;
 	SObject*			debug_editbox						= NULL;
@@ -226,7 +225,6 @@
 	SObject*			gobj_splashListingEditbox			= NULL;
 
 	// Windows related to the objects
-	SWindow*			gWinScreen							= NULL;
 	SWindow*			gWinJDebi							= NULL;
 
 	// Default class structures

@@ -3,7 +3,7 @@
 // /libsf/source/vjr/compiler.cpp
 //
 //////
-// Version 0.49
+// Version 0.50
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -263,7 +263,7 @@
 							//////////
 							// We need to clear out anything from any prior compile
 							//////
-								iComps_removeAll(cvc->line);
+								iComps_deleteAll_byLine(cvc->line);
 								iCompiler_delete(&cvc->line->compilerInfo, false);
 
 
@@ -761,16 +761,88 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Called to remove all components for this line
 //
 //////
-	void iComps_removeAll(SEdit* line)
+	void iComps_deleteAll_byLine(SEdit* line)
 	{
+		SComp*	comp;
+		SComp*	compNext;
+
+
+		// Make sure our environment is sane
 		if (line && line->compilerInfo)
 		{
 			// Delete all components
-			iLl_deleteNodeChain((SLL**)&line->compilerInfo->firstComp);
+			comp = line->compilerInfo->firstComp;
+			while (comp)
+			{
+				// Grab the next comp
+				compNext = (SComp*)comp->ll.next;
+
+				// Delete this one
+				iComps_delete(comp, true);
+
+				// Move to the next one
+				comp = compNext;
+			}
+
+			// Clear the compilerInfo
+			line->compilerInfo = NULL;
 
 			// Reset the pointer
 			line->compilerInfo->firstComp = NULL;
 		}
+	}
+
+
+
+
+//////////
+//
+// Deletes everything from this first component
+//
+//////
+	void iComps_deleteAll_byFirstComp(SComp** firstComp)
+	{
+		SComp* comp;
+		SComp* compNext;
+
+
+		// Make sure the environment is sane
+		if (firstComp && *firstComp)
+		{
+			comp = *firstComp;
+			while (comp)
+			{
+				// Grab the next comp
+				compNext = (SComp*)comp->ll.next;
+
+				// Delete this one
+				iComps_delete(comp, true);
+
+				// Move to the next one
+				comp = compNext;
+			}
+
+			// Reset the pointer
+			*firstComp = NULL;
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to delete the indicated comp
+//
+//////
+	void iComps_delete(SComp* comp, bool tlDeleteSelf)
+	{
+		// If there is a bitmap cache, delete it
+		if (comp->bc)
+			iBmp_deleteCache(&comp->bc);
+
+		// Delete this node
+		iLl_deleteNode((SLL*)comp, tlDeleteSelf);
 	}
 
 
@@ -2140,7 +2212,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 					}
 
 					// Delete from here on out
-					iLl_deleteNodeChain((SLL**)compLast);
+					iComps_deleteAll_byFirstComp(compLast);
 					break;
 				}
 
@@ -6398,7 +6470,7 @@ debug_break;
 			iCompileNote_removeAll(&compilerInfo->warnings);
 			iCompileNote_removeAll(&compilerInfo->errors);
 			iNode_politelyDeleteAll(&compilerInfo->firstNode, true, true, true, true, true, true);
-			iLl_deleteNodeChain((SLL**)&compilerInfo->firstComp);
+			iComps_deleteAll_byFirstComp(&compilerInfo->firstComp);
 
 			// Delete self if need be
 			if (tlDeleteSelf)

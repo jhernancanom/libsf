@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_sup.cpp
 //
 //////
-// Version 0.49
+// Version 0.50
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -171,82 +171,6 @@
 
 //////////
 //
-// Called to create the _screen object with all of its stuff.
-//
-//////
-	void iInit_create_screenObject(void)
-	{
-		s32			lnLeft, lnTop, lnWidth, lnHeight;
-		SVariable*	caption;
-		RECT		lrc;
-
-
-		//////////
-		// Create the object
-		//////
-			// Create object
-			gobj_screen = iObj_create(_OBJ_TYPE_FORM, NULL);
-			if (!gobj_screen)
-				return;
-
-			// Set the app icon and border
-			iObj_setIcon(gobj_screen, bmpVjrIcon);
-			gobj_screen->p.isBorder = true;
-
-
-			//////////
-			// Give it a caption
-			//////
-				caption = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
-				iObj_setCaption(gobj_screen, caption);
-				iVariable_delete(caption, true);
-
-
-			// Give it a fixed point font
-			gobj_screen->pa.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-
-
-		//////////
-		// Size it to just under half the screen initially
-		//////
-			GetWindowRect(GetDesktopWindow(), &lrc);
-			lnWidth		= (lrc.right - lrc.left) * 7 / 16;
-			lnHeight	= (lrc.bottom - lrc.top);
-
-		
-		//////////
-		// Size and position it
-		//////
-			lnLeft		= (lrc.right  - lrc.left)  / 32;
-			lnTop		= (lrc.bottom - lrc.top)   / 32;
-			lnWidth		-= lnLeft;
-			lnHeight	-= (2 * lnTop);
-			iObj_setSize(gobj_screen, lnLeft, lnTop, lnWidth, lnHeight);
-
-
-		//////////
-		// Add the editbox
-		//////
-			screen_editbox							= iObj_addChild(_OBJ_TYPE_EDITBOX,	gobj_screen);
-			iObj_setSize(screen_editbox, 0, 0, gobj_screen->rcClient.right - gobj_screen->rcClient.left, gobj_screen->rcClient.bottom - gobj_screen->rcClient.top);
-			screen_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			screen_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
-			screenData								= screen_editbox->pa.em;
-			screenData->showCursorLine				= true;
-			screenData->showEndLine					= true;
-
-
-		//////////
-		// Set it visible
-		//////
-			iObj_setVisible(gobj_screen, true);
-	}
-
-
-
-
-//////////
-//
 // Temporary manual function to create the new JDebi screen.
 //
 //////
@@ -262,45 +186,47 @@
 		// Create the object and its sub-objects
 		//////
 			// Create object
-			gobj_jdebi = iObj_create(_OBJ_TYPE_FORM, NULL);
-			if (!gobj_jdebi)
+			_jdebi = iObj_create(_OBJ_TYPE_FORM, NULL);
+			if (!_jdebi)
 				return;
 
 			// Set the app icon and enable the border
-			iObj_setIcon(gobj_jdebi, bmpJDebiIcon);
-			gobj_jdebi->p.isBorder = true;
+			iObj_setIcon(_jdebi, bmpJDebiIcon);
+			_jdebi->p.isBorder = true;
 
 			// Give it a fixed point font
-			gobj_jdebi->pa.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			_jdebi->pa.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 
 
 		//////////
 		// Size it to just under half the screen initially
 		//////
 			GetWindowRect(GetDesktopWindow(), &lrc);
-			lnWidth		= (lrc.right - lrc.left) * 9 / 16;
+			lnWidth		= (lrc.right - lrc.left);
 			lnHeight	= (lrc.bottom - lrc.top);
 
 		
 		//////////
 		// Size and position it
 		//////
-			lnLeft		= (lrc.right - lrc.left) * 7 / 16;
-			lnTop		= (lrc.bottom - lrc.top)   / 32;
-			lnWidth		-= ((lrc.right - lrc.left) / 32);
+			lnLeft		= (lrc.right  - lrc.left) / 32;
+			lnTop		= (lrc.bottom - lrc.top)  / 32;
+			lnWidth		-= (2 * lnLeft);
 			lnHeight	-= (2 * lnTop);
-			iObj_setSize(gobj_jdebi, lnLeft, lnTop, lnWidth, lnHeight);
+			iObj_setSize(_jdebi, lnLeft, lnTop, lnWidth, lnHeight);
 
 
 		//////////
 		// Create the subforms
 		//////
-			sourceCode	= iObj_addChild(_OBJ_TYPE_SUBFORM, gobj_jdebi);
-			locals		= iObj_addChild(_OBJ_TYPE_SUBFORM, gobj_jdebi);
-			watch		= iObj_addChild(_OBJ_TYPE_SUBFORM, gobj_jdebi);
-			command		= iObj_addChild(_OBJ_TYPE_SUBFORM, gobj_jdebi);
-			debug		= iObj_addChild(_OBJ_TYPE_SUBFORM, gobj_jdebi);
-			output		= iObj_addChild(_OBJ_TYPE_SUBFORM, gobj_jdebi);
+			sourceCode		= iObj_addChild(_OBJ_TYPE_SUBFORM, _jdebi);
+			locals			= iObj_addChild(_OBJ_TYPE_SUBFORM, _jdebi);
+			watch			= iObj_addChild(_OBJ_TYPE_SUBFORM, _jdebi);
+			command			= iObj_addChild(_OBJ_TYPE_SUBFORM, _jdebi);
+			debug			= iObj_addChild(_OBJ_TYPE_SUBFORM, _jdebi);
+			output			= iObj_addChild(_OBJ_TYPE_SUBFORM, _jdebi);
+			sourceLight		= iObj_addChild(_OBJ_TYPE_SUBFORM, _jdebi);
+			_screen			= iObj_addChild(_OBJ_TYPE_SUBFORM, _jdebi);
 
 			// Set the icons
 			iObj_setIcon(sourceCode,	bmpSourceCodeIcon);
@@ -309,19 +235,35 @@
 			iObj_setIcon(command,		bmpCommandIcon);
 			iObj_setIcon(debug,			bmpDebugIcon);
 			iObj_setIcon(output,		bmpOutputIcon);
+			iObj_setIcon(sourceLight,	bmpSourceLightIcon);
+			iObj_setIcon(_screen,		bmpVjrIcon);
+
+			// Make them visible
+			sourceCode->p.isVisible		= true;
+			locals->p.isVisible			= true;
+			watch->p.isVisible			= true;
+			command->p.isVisible		= true;
+// 			debug->p.isVisible			= true;
+// 			output->p.isVisible			= true;
+			sourceLight->p.isVisible	= true;
+			_screen->p.isVisible		= true;
 
 
 		//////////
 		// Position and size each window
 		//////
-			lnHeight = (gobj_jdebi->rcClient.bottom - gobj_jdebi->rcClient.top) / 8;
-			iObj_setSize(sourceCode,	0,					0,						gobj_jdebi->rcClient.right - gobj_jdebi->rcClient.left,						4 * lnHeight);
-			iObj_setSize(locals,		0,					sourceCode->rc.bottom,	gobj_jdebi->rcClient.right - gobj_jdebi->rcClient.left,						lnHeight);
-			iObj_setSize(watch,			0,					locals->rc.bottom,		gobj_jdebi->rcClient.right - gobj_jdebi->rcClient.left,						lnHeight);
-			iObj_setSize(command,		0,					watch->rc.bottom,		watch->rc.right / 2,														(gobj_jdebi->rcClient.bottom - gobj_jdebi->rcClient.top) - watch->rc.bottom);
-			iObj_setSize(debug,			command->rc.right,	command->rc.top,		command->rc.right / 2,														(gobj_jdebi->rcClient.bottom - gobj_jdebi->rcClient.top) - watch->rc.bottom);
-			iObj_setSize(output,		debug->rc.right,	command->rc.top,		gobj_jdebi->rcClient.right - gobj_jdebi->rcClient.left - debug->rc.right,	(gobj_jdebi->rcClient.bottom - gobj_jdebi->rcClient.top) - watch->rc.bottom);
+			lnWidth		= (_jdebi->rcClient.right - _jdebi->rcClient.left) / 8;
+			lnHeight	= (_jdebi->rcClient.bottom - _jdebi->rcClient.top) / 8;
+			iObj_setSize(sourceCode,	0,						0,							5 * lnWidth,																6 * lnHeight);
+			iObj_setSize(locals,		sourceCode->rc.right,	0,							lnWidth * 3 / 2,															2 * lnHeight);
+			iObj_setSize(watch,			locals->rc.right,		0,							(_jdebi->rcClient.right - _jdebi->rcClient.left) - locals->rc.right,		2 * lnHeight);
+			iObj_setSize(command,		0,						sourceCode->rc.bottom,		5 * lnWidth,																(_jdebi->rcClient.bottom - _jdebi->rcClient.top) - sourceCode->rc.bottom);
+			iObj_setSize(sourceLight,	sourceCode->rc.right,	watch->rc.bottom,			(_jdebi->rcClient.right - _jdebi->rcClient.left) - sourceCode->rc.right,	2 * lnHeight);
+			iObj_setSize(_screen,		sourceCode->rc.right,	sourceLight->rc.bottom,		(_jdebi->rcClient.right - _jdebi->rcClient.left) - sourceCode->rc.right,	(_jdebi->rcClient.bottom - _jdebi->rcClient.top) - sourceLight->rc.bottom);
 
+			// These are created, but they are not visible
+// 			iObj_setSize(debug,			command->rc.right,		watch->rc.bottom,			(sourceCode->rc.right - command->rc.right) / 2,									(_jdebi->rcClient.bottom - _jdebi->rcClient.top) - watch->rc.bottom);
+// 			iObj_setSize(output,		debug->rc.right,		watch->rc.bottom,			sourceCode->rc.right - debug->rc.right,											(_jdebi->rcClient.bottom - _jdebi->rcClient.top) - watch->rc.bottom);
 
 		//////////
 		// Add the editbox controls to the subforms
@@ -332,25 +274,39 @@
 			command_editbox		= iObj_addChild(_OBJ_TYPE_EDITBOX,	command);
 			debug_editbox		= iObj_addChild(_OBJ_TYPE_EDITBOX,	debug);
 			output_editbox		= iObj_addChild(_OBJ_TYPE_EDITBOX,	output);
+			screen_editbox		= iObj_addChild(_OBJ_TYPE_EDITBOX,	_screen);
+
+
+		//////////
+		// Add the editbox controls to the subforms
+		//////
+			sourceCode_editbox->p.isVisible	= true;
+			locals_editbox->p.isVisible		= true;
+			watch_editbox->p.isVisible		= true;
+			command_editbox->p.isVisible	= true;
+			debug_editbox->p.isVisible		= true;
+			output_editbox->p.isVisible		= true;
+			screen_editbox->p.isVisible		= true;
 
 
 		//////////
 		// Position and size each control
 		//////
-			lnHeight = (gobj_jdebi->rcClient.bottom - gobj_jdebi->rcClient.top) / 8;
+			lnHeight = (_jdebi->rcClient.bottom - _jdebi->rcClient.top) / 8;
 			iObj_setSize(sourceCode_editbox,	48,	24,		sourceCode->rcClient.right	- sourceCode->rcClient.left - 48,	sourceCode->rcClient.bottom	- sourceCode->rcClient.top - 24);
-			iObj_setSize(locals_editbox,		0,	0,		locals->rcClient.right		- locals->rcClient.left - 200,		locals->rcClient.bottom		- locals->rcClient.top);
+			iObj_setSize(locals_editbox,		0,	0,		locals->rcClient.right		- locals->rcClient.left,			locals->rcClient.bottom		- locals->rcClient.top);
 			iObj_setSize(watch_editbox,			0,	0,		watch->rcClient.right		- watch->rcClient.left,				watch->rcClient.bottom		- watch->rcClient.top);
 			iObj_setSize(command_editbox,		0,	0,		command->rcClient.right		- command->rcClient.left,			command->rcClient.bottom	- command->rcClient.top);
 			iObj_setSize(debug_editbox,			0,	0,		debug->rcClient.right		- debug->rcClient.left,				debug->rcClient.bottom		- debug->rcClient.top);
 			iObj_setSize(output_editbox,		0,	0,		output->rcClient.right		- output->rcClient.left,			output->rcClient.bottom		- output->rcClient.top);
+			iObj_setSize(screen_editbox,		0,	0,		_screen->rcClient.right		- _screen->rcClient.left,			_screen->rcClient.bottom	- _screen->rcClient.top);
 
 
 		//////////
 		// Give it a caption
 		//////
 			caption = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgcJDebiTitle, sizeof(cgcJDebiTitle) - 1);
-			iObj_setCaption(gobj_jdebi, caption);
+			iObj_setCaption(_jdebi, caption);
 
 
 		//////////
@@ -385,90 +341,86 @@
 			// Adjust the caption width
 			((SObject*)locals->firstChild->ll.next)->rc.right = 65;
 
-			// Create the checkboxes
-			locals_autos		= iObj_addChild(_OBJ_TYPE_CHECKBOX, locals);
-			locals_globals		= iObj_addChild(_OBJ_TYPE_CHECKBOX, locals);
-			locals_readwrite	= iObj_addChild(_OBJ_TYPE_CHECKBOX, locals);
-			locals_refactor		= iObj_addChild(_OBJ_TYPE_CHECKBOX, locals);
+// 			// Create the checkboxes
+// 			locals_autos		= iObj_addChild(_OBJ_TYPE_CHECKBOX, locals);
+// 			locals_globals		= iObj_addChild(_OBJ_TYPE_CHECKBOX, locals);
+// 			locals_readwrite	= iObj_addChild(_OBJ_TYPE_CHECKBOX, locals);
+// 			locals_refactor		= iObj_addChild(_OBJ_TYPE_CHECKBOX, locals);
 			
 			// For the font size
 			fontSize = iVariable_create(_VAR_TYPE_U32, NULL);
 			*fontSize->value.data_s32 = 7;
 
-			// Populate the names and position each one
-			iDatum_duplicate(&caption->value, "Autos", -1);
-			iObj_setCaption(locals_autos, caption);
-			*locals_autos->pa.value->value.data_s32 = 1;	// Default to on
-			iObj_setSize(locals_autos, 100, -20, 56, 16);
-			iObj_setFontSize((SObject*)locals_autos->firstChild->ll.next, fontSize);
-			locals_autos->p.isVisible	= true;
-			((SObject*)locals_autos->firstChild->ll.next)->p.isOpaque = true;
-			locals_autos->isDirtyRender	= true;
-
-			iDatum_duplicate(&caption->value, "Globals", -1);
-			iObj_setCaption(locals_globals, caption);
-			*locals_globals->pa.value->value.data_s32 = 1;	// Default to on
-			iObj_setSize(locals_globals, 176, -20, 64, 16);
-			iObj_setFontSize((SObject*)locals_globals->firstChild->ll.next, fontSize);
-			locals_globals->p.isVisible		= true;
-			((SObject*)locals_globals->firstChild->ll.next)->p.isOpaque = true;
-			locals_globals->isDirtyRender	= true;
-
-			iDatum_duplicate(&caption->value, "Read/write", -1);
-			iObj_setCaption(locals_readwrite, caption);
-			*locals_readwrite->pa.value->value.data_s32 = 1;	// Default to on
-			iObj_setSize(locals_readwrite, 260, -20, 79, 16);
-			iObj_setFontSize((SObject*)locals_readwrite->firstChild->ll.next, fontSize);
-			locals_readwrite->p.isVisible	= true;
-			((SObject*)locals_readwrite->firstChild->ll.next)->p.isOpaque = true;
-			locals_readwrite->isDirtyRender	= true;
-
-			iDatum_duplicate(&caption->value, "Refactor", -1);
-			iObj_setCaption(locals_refactor, caption);
-			iObj_setSize(locals_refactor, 359, -20, 70, 16);
-			iObj_setFontSize((SObject*)locals_refactor->firstChild->ll.next, fontSize);
-			locals_refactor->p.isVisible	= true;
-			((SObject*)locals_refactor->firstChild->ll.next)->p.isOpaque = true;
-			locals_refactor->isDirtyRender	= true;
-
-
-		//////////
-		// Add a button
-		//////
-			locals_button = iObj_addChild(_OBJ_TYPE_BUTTON, locals);
-			iObj_setSize(locals_button,
-							locals->rcClient.right		- locals->rcClient.left - 180,
-							0,
-							locals_button->rc.right		- locals_button->rc.left,
-							locals_button->rc.bottom	- locals_button->rc.top);
-			// Make it visible
-			locals_button->p.isVisible = true;
-
-
-		//////////
-		// Add a textbox
-		//////
-			locals_textbox = iObj_addChild(_OBJ_TYPE_TEXTBOX, locals);
-			iObj_setSize(locals_textbox,
-							locals->rcClient.right		- locals->rcClient.left - 180,
-							30,
-							locals_textbox->rc.right	- locals_textbox->rc.left,
-							locals_textbox->rc.bottom	- locals_textbox->rc.top);
-			// Make it visible
-			locals_textbox->p.isVisible = true;
-
-
-		//////////
-		// Add a radio dial
-		//////
-			locals_radio = iObj_addChild(_OBJ_TYPE_RADIO, locals);
-			iObj_setSize(locals_radio,
-							locals->rcClient.right		- locals->rcClient.left - 72,
-							0,
-							locals_radio->rc.right	- locals_radio->rc.left,
-							locals_radio->rc.bottom	- locals_radio->rc.top);
-			// Make it visible
-			locals_textbox->p.isVisible = true;
+// 			// Populate the names and position each one
+// 			iDatum_duplicate(&caption->value, "Autos", -1);
+// 			iObj_setCaption(locals_autos, caption);
+// 			*locals_autos->pa.value->value.data_s32 = 1;	// Default to on
+// 			iObj_setSize(locals_autos, 100, -20, 56, 16);
+// 			iObj_setFontSize((SObject*)locals_autos->firstChild->ll.next, fontSize);
+// 			locals_autos->p.isVisible	= true;
+// 			((SObject*)locals_autos->firstChild->ll.next)->p.isOpaque = true;
+// 
+// 			iDatum_duplicate(&caption->value, "Globals", -1);
+// 			iObj_setCaption(locals_globals, caption);
+// 			*locals_globals->pa.value->value.data_s32 = 1;	// Default to on
+// 			iObj_setSize(locals_globals, 176, -20, 64, 16);
+// 			iObj_setFontSize((SObject*)locals_globals->firstChild->ll.next, fontSize);
+// 			locals_globals->p.isVisible		= true;
+// 			((SObject*)locals_globals->firstChild->ll.next)->p.isOpaque = true;
+// 
+// 			iDatum_duplicate(&caption->value, "Edit", -1);
+// 			iObj_setCaption(locals_readwrite, caption);
+// 			*locals_readwrite->pa.value->value.data_s32 = 1;	// Default to on
+// 			iObj_setSize(locals_readwrite, 260, -20, 79, 16);
+// 			iObj_setFontSize((SObject*)locals_readwrite->firstChild->ll.next, fontSize);
+// 			locals_readwrite->p.isVisible	= true;
+// 			((SObject*)locals_readwrite->firstChild->ll.next)->p.isOpaque = true;
+// 
+// 			iDatum_duplicate(&caption->value, "Refactor", -1);
+// 			iObj_setCaption(locals_refactor, caption);
+// 			iObj_setSize(locals_refactor, 359, -20, 70, 16);
+// 			iObj_setFontSize((SObject*)locals_refactor->firstChild->ll.next, fontSize);
+// 			locals_refactor->p.isVisible	= true;
+// 			((SObject*)locals_refactor->firstChild->ll.next)->p.isOpaque = true;
+// 
+// 
+// 		//////////
+// 		// Add a button
+// 		//////
+// 			locals_button = iObj_addChild(_OBJ_TYPE_BUTTON, locals);
+// 			iObj_setSize(locals_button,
+// 							locals->rcClient.right		- locals->rcClient.left - 180,
+// 							0,
+// 							locals_button->rc.right		- locals_button->rc.left,
+// 							locals_button->rc.bottom	- locals_button->rc.top);
+// 			// Make it visible
+// 			locals_button->p.isVisible = true;
+// 
+// 
+// 		//////////
+// 		// Add a textbox
+// 		//////
+// 			locals_textbox = iObj_addChild(_OBJ_TYPE_TEXTBOX, locals);
+// 			iObj_setSize(locals_textbox,
+// 							locals->rcClient.right		- locals->rcClient.left - 180,
+// 							30,
+// 							locals_textbox->rc.right	- locals_textbox->rc.left,
+// 							locals_textbox->rc.bottom	- locals_textbox->rc.top);
+// 			// Make it visible
+// 			locals_textbox->p.isVisible = true;
+// 
+// 
+// 		//////////
+// 		// Add a radio dial
+// 		//////
+// 			locals_radio = iObj_addChild(_OBJ_TYPE_RADIO, locals);
+// 			iObj_setSize(locals_radio,
+// 							locals->rcClient.right		- locals->rcClient.left - 72,
+// 							0,
+// 							locals_radio->rc.right	- locals_radio->rc.left,
+// 							locals_radio->rc.bottom	- locals_radio->rc.top);
+// 			// Make it visible
+// 			locals_textbox->p.isVisible = true;
 
 
 		//////////
@@ -531,6 +483,35 @@
 
 
 		//////////
+		// SourceLight a caption and font
+		//////
+			caption = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgcSourceLightTitle, sizeof(cgcSourceLightTitle) - 1);
+			iObj_setCaption(sourceLight, caption);
+			sourceLight->pa.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			sourceLight->p.isVisible	= true;
+			sourceLight->p.isOpaque		= true;
+
+
+		//////////
+		// _screen a caption and font
+		//////
+			caption = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
+			iObj_setCaption(_screen, caption);
+			_screen->pa.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+
+
+		//////////
+		// Setup _screen's editbox
+		//////
+			screen_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			screen_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
+			screenData								= screen_editbox->pa.em;
+			screenData->showCursorLine				= true;
+			screenData->showEndLine					= true;
+			_screen->p.isVisible				= true;
+
+
+		//////////
 		// Clean house
 		//////
 			iVariable_delete(caption,	true);
@@ -540,7 +521,7 @@
 		//////////
 		// Set it visible
 		//////
-			iObj_setVisible(gobj_jdebi, true);
+			iObj_setVisible(_jdebi, true);
 	}
 
 
@@ -1336,7 +1317,7 @@
 			iObj_renderChildrenAndSiblings(win->obj, true, true, tlForce);
 
 			// Publish anything needing publishing
-			iObj_publish(win->obj, &win->rc, win->bmp, true, true, tlForce, ((win == gWinScreen) ? -200000 : 0));
+			iObj_publish(win->obj, &win->rc, win->bmp, true, true, tlForce, 0);
 
 			// Determine the focus highlights
 			iObj_setFocusHighlights(win, win->obj, 0, 0, true, true);

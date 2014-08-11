@@ -3,7 +3,7 @@
 // /libsf/source/vjr/compiler.h
 //
 //////
-// Version 0.49
+// Version 0.50
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -74,7 +74,9 @@ struct SVariable;
 	SNode*					iiComps_xlatToNodes_parenthesis_left		(SNode** root, SNode* active, SComp* comp);
 	SNode*					iiComps_xlatToNodes_parenthesis_right		(SNode** root, SNode* active, SComp* comp);
 
-	void					iComps_removeAll							(SEdit* line);
+	void					iComps_deleteAll_byLine						(SEdit* line);
+	void					iComps_deleteAll_byFirstComp				(SComp** firstComp);
+	void					iComps_delete								(SComp* comp, bool tlDeleteSelf);
  	SComp*					iComps_translateSourceLineTo				(SAsciiCompSearcher* tsComps, SEdit* line);
  	bool					iComps_translateToOthers					(SAsciiCompSearcher* tsComps, SEdit* line);
 	bool					iComps_areAllPrecedingCompsWhitespaces		(SComp* comp);

@@ -3,7 +3,7 @@
 // /libsf/source/vjr/edit_chain_manager.cpp
 //
 //////
-// Version 0.49
+// Version 0.50
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -1597,7 +1597,7 @@ debug_break;
 				//////////
 				// Create the tooltip window
 				//////
-					tooltip = iTooltip_allocate(&lrcTooltip, bmp, 7500, true, true);
+					tooltip = iTooltip_allocate(&lrcTooltip, bmp, _TOOLTIP_TIMER_DEFAULT_TIMEOUT, true, true);
 					iTooltip_show(tooltip);
 			}
 		}
@@ -1628,7 +1628,7 @@ debug_break;
 		SComp*		compPBBRight;
 		HGDIOBJ		hfontOld;
 		SBgra		foreColor, backColor, fillColor, backColorLast, foreColorLast, compColor;
-		RECT		rc, lrc, lrc2, lrc3, lrcComp;
+		RECT		rc, lrc, lrc2, lrc3, lrcComp, lrcText;
 		// Added to work around the font->tm.* width and height values not being accurate
 		RECT		lrcCompCalcStart, lrcCompCalcDwell;
 		s8			bigBuffer[2048];
@@ -1875,15 +1875,37 @@ debug_break;
 									// Is it a cask or text?
 									if (comp->iCode >= _ICODE_CASK_MINIMUM && comp->iCode <= _ICODE_CASK_MAXIMUM)
 									{
-										// It's a cask, build it
-										bmpCask = iBmp_cask_createAndPopulate(comp->iCode,
-																				lrcComp.right  - lrcComp.left,
-																				lrcComp.bottom - lrcComp.top,
-																				&lnSkip,
-																				comp->length,
-																				backColor,
-																				foreColor,
-																				fillColor);
+										// Is there a cask cache from a previous screen render?
+										if (!comp->bc || !iBmp_isValidCache(&comp->bc, backColor.color, foreColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, 0))
+										{
+											// The bitmap cache is no longer valid
+											iBmp_deleteCache(&obj->bc);
+
+											// It's a cask, build it
+											bmpCask = iBmp_cask_createAndPopulate(comp->iCode,
+																					lrcComp.right  - lrcComp.left,
+																					lrcComp.bottom - lrcComp.top,
+																					&lnSkip,
+																					comp->length,
+																					backColor,
+																					foreColor,
+																					fillColor);
+
+											// If we decide to display it with an alpha, this also may need to be brought outside of the if block
+											// Overlay the text
+											SetBkMode(bmpCask->hdc, TRANSPARENT);
+											SelectObject(bmpCask->hdc, font->hfont);
+											SetTextColor(bmpCask->hdc, RGB(blackColor.red, blackColor.grn, blackColor.blu));
+											SetRect(&lrcText, 0, -1, bmpCask->bi.biWidth, bmpCask->bi.biHeight);
+											DrawText(bmpCask->hdc, comp->line->sourceCode->data + comp->start + lnSkip, comp->length - (2 * lnSkip), &lrcText, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS);
+
+											// Save the cache
+											iBmp_createCache(&comp->bc, bmpCask, backColor.color, foreColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, 0, false);
+
+										} else {
+											// Use the bitmap cache
+											bmpCask = comp->bc->bmpCached;
+										}
 
 										// Publish it
 										if (line == em->ecCursorLine && em->column >= comp->start && em->column <= comp->start + comp->length)
@@ -1895,19 +1917,10 @@ debug_break;
 										} else {
 											// Draw completely opaque
 											iBmp_bitBlt(bmp, &lrcComp, bmpCask);
-
-// If we decide to display it with an alpha, this also may need to be brought outside of the if block
-											// Overlay the text
-											SetBkMode(bmp->hdc, TRANSPARENT);
-											SetTextColor(bmp->hdc, RGB(blackColor.red, blackColor.grn, blackColor.blu));
-											--lrcComp.top;
-											DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start + lnSkip, comp->length - (2 * lnSkip), &lrcComp, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS);
-											++lrcComp.top;
-											SetBkMode(bmp->hdc, OPAQUE);
 										}
 
-										// Delete it
-										iBmp_delete(&bmpCask, true, true);
+// 										// Delete it
+// 										iBmp_delete(&bmpCask, true, true);
 
 									} else {
 										// Draw the text
@@ -2204,8 +2217,11 @@ debug_break;
 			// Reset the font
 			SelectObject(bmp->hdc, hfontOld);
 
-			// Apply a dappling
-			iBmp_dapple(bmp, bmpDapple2, 255.0f, 10);
+//////////
+// This is a nice appearance, but it is slow.  If the background rendering algorithm were drawn, and the bitmap cached, it would be okay.
+// 			// Apply a dappling
+// 			iBmp_dapple(bmp, bmpDapple2, 255.0f, 10);
+//////
 		}
 
 		// Indicate how many pixels were rendered

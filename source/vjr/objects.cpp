@@ -3,7 +3,7 @@
 // /libsf/source/vjr/objects.cpp
 //
 //////
-// Version 0.49
+// Version 0.50
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -960,94 +960,97 @@
 			//////////
 			// Publish any children
 			//////
-				if (tlPublishChildren && obj->firstChild)
+				if (obj->p.isVisible && tlPublishChildren && obj->firstChild)
 					lnPixelsRendered += iObj_publish(obj->firstChild, &lrcChild, obj->bmp, true, true, tlForcePublish, tnLevel + 1);
 
 
 			//////////
 			// Publish this item
 			//////
-				// The size of the bitmap should equal the size of the rectangle on the parent.
-				lnWidth		= obj->rc.right - obj->rc.left;
-				lnHeight	= obj->rc.bottom - obj->rc.top;
-				// If it's different, then we need to scale the content
-				if (lnWidth != obj->bmp->bi.biWidth || lnHeight != obj->bmp->bi.biHeight)
+				if (obj->p.isVisible)
 				{
-					// Need to scale, but do we need to create or alter our scaled target bitmap?
-					if (!obj->bmpScaled || lnWidth != obj->bmpScaled->bi.biWidth || lnHeight != obj->bmpScaled->bi.biHeight)
+					// The size of the bitmap should equal the size of the rectangle on the parent.
+					lnWidth		= obj->rc.right - obj->rc.left;
+					lnHeight	= obj->rc.bottom - obj->rc.top;
+					// If it's different, then we need to scale the content
+					if (lnWidth != obj->bmp->bi.biWidth || lnHeight != obj->bmp->bi.biHeight)
 					{
-						// Delete any existing bitmap
-						iBmp_delete(&obj->bmpScaled, true, true);
-
-						// Create the new one
-						obj->bmpScaled = iBmp_allocate();
-						iBmp_createBySize(obj->bmpScaled, lnWidth, lnHeight, 24);
-						// Now when we scale into it, it will be the right size
-					}
-
-					// Perform the scale
-					iBmp_scale(obj->bmpScaled, obj->bmp);
-
-					// Perform the bitblt
-					if (bmpDst && obj->isPublished && obj->isDirtyPublish)
-					{
-						// If it's not enabled, grayscale it
-						if (!obj->p.isEnabled)
+						// Need to scale, but do we need to create or alter our scaled target bitmap?
+						if (!obj->bmpScaled || lnWidth != obj->bmpScaled->bi.biWidth || lnHeight != obj->bmpScaled->bi.biHeight)
 						{
-							SetRect(&lrc2, 0, 0, obj->bmpScaled->bi.biWidth, obj->bmpScaled->bi.biHeight);
-							iBmp_grayscale(obj->bmpScaled, &lrc2);
+							// Delete any existing bitmap
+							iBmp_delete(&obj->bmpScaled, true, true);
+
+							// Create the new one
+							obj->bmpScaled = iBmp_allocate();
+							iBmp_createBySize(obj->bmpScaled, lnWidth, lnHeight, 24);
+							// Now when we scale into it, it will be the right size
 						}
 
+						// Perform the scale
+						iBmp_scale(obj->bmpScaled, obj->bmp);
 
-						//////////
-						// Copy
-						//////
-							switch (obj->objType)
-							{
-								case _OBJ_TYPE_IMAGE:
-								case _OBJ_TYPE_LABEL:
-									if (obj->p.isOpaque)		lnPixelsRendered += iBmp_bitBlt(bmpDst,		&lrc, obj->bmpScaled);
-									else						lnPixelsRendered += iBmp_bitBltMask(bmpDst,	&lrc, obj->bmpScaled);
-									break;
-
-								default:
-									lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmpScaled);
-									break;
-							}
-					}
-
-				} else {
-					// We can just copy
-					if (bmpDst && obj->isPublished && obj->isDirtyPublish && tnLevel != 0)
-					{
-						// If it's not enabled, grayscale it
-						if (!obj->p.isEnabled)
+						// Perform the bitblt
+						if (bmpDst && obj->isPublished && obj->isDirtyPublish)
 						{
-							SetRect(&lrc2, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
-							iBmp_grayscale(obj->bmp, &lrc2);
+							// If it's not enabled, grayscale it
+							if (!obj->p.isEnabled)
+							{
+								SetRect(&lrc2, 0, 0, obj->bmpScaled->bi.biWidth, obj->bmpScaled->bi.biHeight);
+								iBmp_grayscale(obj->bmpScaled, &lrc2);
+							}
+
+
+							//////////
+							// Copy
+							//////
+								switch (obj->objType)
+								{
+									case _OBJ_TYPE_IMAGE:
+									case _OBJ_TYPE_LABEL:
+										if (obj->p.isOpaque)		lnPixelsRendered += iBmp_bitBlt(bmpDst,		&lrc, obj->bmpScaled);
+										else						lnPixelsRendered += iBmp_bitBltMask(bmpDst,	&lrc, obj->bmpScaled);
+										break;
+
+									default:
+										lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmpScaled);
+										break;
+								}
 						}
 
-
-						//////////
-						// Copy
-						//////
-							switch (obj->objType)
+					} else {
+						// We can just copy
+						if (bmpDst && obj->isPublished && obj->isDirtyPublish && tnLevel != 0)
+						{
+							// If it's not enabled, grayscale it
+							if (!obj->p.isEnabled)
 							{
-								case _OBJ_TYPE_IMAGE:
-									if (obj->p.isOpaque)		lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
-									else						lnPixelsRendered += iBmp_bitBltMask(bmpDst, &lrc, obj->bmp);
-									break;
-
-								case _OBJ_TYPE_LABEL:
-									// Non-opaque labels are rendered as black on white, with that grayscale being used to influence the forecolor
-									if (obj->p.isOpaque)		lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
-									else						lnPixelsRendered += iBmp_bitBlt_byGraymask(bmpDst, &lrc, obj->bmp, obj->p.foreColor);
-									break;
-
-								default:
-									lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
-									break;
+								SetRect(&lrc2, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+								iBmp_grayscale(obj->bmp, &lrc2);
 							}
+
+
+							//////////
+							// Copy
+							//////
+								switch (obj->objType)
+								{
+									case _OBJ_TYPE_IMAGE:
+										if (obj->p.isOpaque)		lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
+										else						lnPixelsRendered += iBmp_bitBltMask(bmpDst, &lrc, obj->bmp);
+										break;
+
+									case _OBJ_TYPE_LABEL:
+										// Non-opaque labels are rendered as black on white, with that grayscale being used to influence the forecolor
+										if (obj->p.isOpaque)		lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
+										else						lnPixelsRendered += iBmp_bitBlt_byGraymask(bmpDst, &lrc, obj->bmp, obj->p.foreColor);
+										break;
+
+									default:
+										lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
+										break;
+								}
+						}
 					}
 				}
 
@@ -3069,7 +3072,8 @@
 
 						// Icon
 						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
-						objChild->pa.bmpIcon = iBmp_copy(bmpVjrIcon);				// Set the new
+						objChild->pa.bmpIcon	= iBmp_copy(bmpVjrIcon);			// Set the new
+						objChild->p.isVisible	= true;
 
 					} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
 						// Caption
@@ -3077,7 +3081,8 @@
 						iDatum_duplicate(&objChild->pa.caption, cgcName_formCaption, sizeof(cgcName_formCaption) - 1);
 						objChild->p.isOpaque = false;
 						iFont_delete(&objChild->pa.font, true);
-						objChild->pa.font = iFont_create(cgcFontName_windowTitleBar, 12, FW_NORMAL, false, false);
+						objChild->pa.font		= iFont_create(cgcFontName_windowTitleBar, 12, FW_NORMAL, false, false);
+						objChild->p.isVisible	= true;
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMove, sizeof(cgcName_iconMove) - 1) == 0) {
 						// Adjust the size
@@ -3097,7 +3102,8 @@
 
 						// Icon
 						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
-						objChild->pa.bmpIcon = iBmp_copy(bmpMove);					// Set the new
+						objChild->pa.bmpIcon	= iBmp_copy(bmpMove);				// Set the new
+						objChild->p.isVisible	= true;
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMinimize, sizeof(cgcName_iconMinimize) - 1) == 0) {
 						// Adjust the size
@@ -3117,7 +3123,8 @@
 
 						// Icon
 						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
-						objChild->pa.bmpIcon = iBmp_copy(bmpMinimize);				// Set the new
+						objChild->pa.bmpIcon	= iBmp_copy(bmpMinimize);			// Set the new
+						objChild->p.isVisible	= true;
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMaximize, sizeof(cgcName_iconMaximize) - 1) == 0) {
 						// Adjust the size
@@ -3137,7 +3144,8 @@
 
 						// Icon
 						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
-						objChild->pa.bmpIcon = iBmp_copy(bmpMaximize);				// Set the new
+						objChild->pa.bmpIcon	= iBmp_copy(bmpMaximize);			// Set the new
+						objChild->p.isVisible	= true;
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0) {
 						// Adjust the size
@@ -3157,7 +3165,8 @@
 
 						// Icon
 						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
-						objChild->pa.bmpIcon = iBmp_copy(bmpClose);					// Set the new
+						objChild->pa.bmpIcon	= iBmp_copy(bmpClose);				// Set the new
+						objChild->p.isVisible	= true;
 					}
 
 					// Move to next object
@@ -3263,7 +3272,8 @@
 
 						// Icon
 						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
-						objChild->pa.bmpIcon = iBmp_copy(bmpVjrIcon);				// Set the new
+						objChild->pa.bmpIcon	= iBmp_copy(bmpVjrIcon);			// Set the new
+						objChild->p.isVisible	= true;
 
 					} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
 						// Caption
@@ -3271,7 +3281,8 @@
 						iDatum_duplicate(&objChild->pa.caption, cgcName_formCaption, sizeof(cgcName_formCaption) - 1);
 						objChild->p.isOpaque = false;
 						iFont_delete(&objChild->pa.font, true);
-						objChild->pa.font = iFont_create(cgcFontName_windowTitleBar, 10, FW_NORMAL, false, false);
+						objChild->pa.font		= iFont_create(cgcFontName_windowTitleBar, 10, FW_NORMAL, false, false);
+						objChild->p.isVisible	= true;
 					}
 
 					// Move to next object
@@ -4047,7 +4058,7 @@
 							iBmp_dapple(obj->bmp, bmpDapple, 200.0f, 7);
 
 							// Save the cache
-							iBmp_createCache(&obj->bc, obj->bmp, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+							iBmp_createCache(&obj->bc, obj->bmp, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, true);
 
 						} else {
 							// Copy everything over from the cache
@@ -4176,7 +4187,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 							iBmp_dapple(obj->bmp, bmpDapple2, 200.0f, 7);
 
 							// Save the cache
-							iBmp_createCache(&obj->bc, obj->bmp, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+							iBmp_createCache(&obj->bc, obj->bmp, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, true);
 
 						} else {
 							// Copy everything over from the cache

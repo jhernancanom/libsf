@@ -3,7 +3,7 @@
 // /libsf/source/vjr/bitmaps.cpp
 //
 //////
-// Version 0.49
+// Version 0.50
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -281,7 +281,7 @@
 // Create a bitmap cache.
 //
 //////
-	SBitmap* iBmp_createCache(SBmpCache** bmpCache, SBitmap* bmp, u32 data1, u32 data2, u32 data3, u32 data4, u32 data5, u32 data6, u32 data7, u32 data8)
+	SBitmap* iBmp_createCache(SBmpCache** bmpCache, SBitmap* bmp, u32 data1, u32 data2, u32 data3, u32 data4, u32 data5, u32 data6, u32 data7, u32 data8, bool tlCopyBitmap)
 	{
 		SBmpCache* bc;
 
@@ -322,8 +322,9 @@
 			bc->data7	= data7;
 			bc->data8	= data8;
 
-			// Copy the bitmap
-			bc->bmpCached = iBmp_copy(bmp);
+			// Store or copy the bitmap
+			if (tlCopyBitmap)		bc->bmpCached = iBmp_copy(bmp);
+			else					bc->bmpCached = bmp;
 		}
 
 		// If we get here, invalid
@@ -2710,6 +2711,9 @@
 		SBgra*	lbgrad;
 		SBgra*	lbgras;
 
+
+// Temporarily disabled until the bmpcache is implemented
+// return;
 
 		// Make sure the environment is sane
 		if (bmp && bmpDapple)
