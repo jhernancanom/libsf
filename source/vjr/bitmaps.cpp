@@ -157,15 +157,10 @@
 			bmpNew = iBmp_allocate();
 			iBmp_createBySize(bmpNew, tnWidth, tnHeight, ((bmp) ? bmp->bi.biBitCount : ((tnBitCount == 32 || tnBitCount == 24) ? tnBitCount : 24)));
 
-			// Process the old
+			// Delete the old version
 			if (bmp)
-			{
-				// Scale to the new one
-				iBmp_scale(bmpNew, bmp);
-
-				// Delete the old version
 				iBmp_delete(&bmp, true, true);
-			}
+
 			// All done!
 
 		} else {

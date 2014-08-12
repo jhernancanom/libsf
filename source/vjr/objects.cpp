@@ -49,6 +49,7 @@
 	SObject* iObj_create(u32 objType, SObject* objParent)
 	{
 		// We need to create it
+		logfunc(__FUNCTION__);
 		switch (objType)
 		{
 			case _OBJ_TYPE_EMPTY:		// Empty, used as a placeholder object that is not drawn
@@ -117,6 +118,7 @@
 
 
 		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
 		objNew = NULL;
 		if (objParent)
 		{
@@ -146,6 +148,7 @@
 
 
 		// Create the object
+		logfunc(__FUNCTION__);
 		obj = (SObject*)malloc(sizeof(SObject));
 		if (obj)
 		{
@@ -203,6 +206,7 @@
 //		SObject* obj;
 
 
+		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
 //		if (objRoot && *objRoot)
 //		{
@@ -221,6 +225,7 @@
 //////
 	bool iObj_setFocus(SWindow* win, SObject* obj, bool tlClearOtherControlsWithFocus)
 	{
+		logfunc(__FUNCTION__);
 		// Clear the focus if we should
 		if (tlClearOtherControlsWithFocus)
 			iObj_clearFocus(win, iObj_find_rootmostObject(obj), true, true);
@@ -261,6 +266,7 @@
 
 
 		// Clear children
+		logfunc(__FUNCTION__);
 		if (tlClearChildren && obj->firstChild)
 			iObj_clearFocus(win, obj->firstChild, true, true);
 
@@ -319,6 +325,7 @@
 	SObject* iObj_find_rootmostObject(SObject* obj)
 	{
 		// If there's a parent, continue up the chain
+		logfunc(__FUNCTION__);
 		if (obj->parent)		return(iObj_find_rootmostObject(obj->parent));
 		else					return(obj);		// This is the parent-most object
 	}
@@ -339,6 +346,7 @@
 
 
 		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
 		if (obj && rc)
 		{
 			// Grab the parent-most object
@@ -382,6 +390,7 @@
 
 
 		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
 		if (objThis && objTarget)
 		{
 			// Copy the variables
@@ -455,6 +464,7 @@
 //////
 	SObject* iObj_find_thisForm(SObject* obj)
 	{
+		logfunc(__FUNCTION__);
 		if (obj->objType == _OBJ_TYPE_FORM)
 		{
 			// This is the subform
@@ -477,6 +487,7 @@
 //////
 	SObject* iObj_find_thisSubform(SObject* obj)
 	{
+		logfunc(__FUNCTION__);
 		if (obj->objType == _OBJ_TYPE_SUBFORM)
 		{
 			// This is the subform
@@ -499,6 +510,7 @@
 //////
 	bool iObj_isCommandWindow(SObject* obj)
 	{
+		logfunc(__FUNCTION__);
 		return(obj == command);
 	}
 
@@ -522,6 +534,7 @@
 
 
 		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
 		focus = NULL;
 		if (win && obj && GetActiveWindow() == win->hwnd)
 		{
@@ -641,6 +654,7 @@
 		SObject* objSib;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Process any children first
 		//////
@@ -684,6 +698,7 @@
 	bool iObj_setFocusObjectPrev(SWindow* win, SObject* obj)
 	{
 		// Attempt the focus
+		logfunc(__FUNCTION__);
 		if (obj->ll.prev)
 			return(iObj_setFocus(win, (SObject*)obj->ll.prev, true));
 
@@ -702,6 +717,7 @@
 	bool iObj_setFocusObjectNext(SWindow* win, SObject* obj)
 	{
 		// Attempt the focus
+		logfunc(__FUNCTION__);
 		if (obj->ll.next)
 			return(iObj_setFocus(win, (SObject*)obj->ll.next, true));
 
@@ -719,6 +735,7 @@
 //////
 	void iObj_setDirtyRender(SObject* obj, bool tlMarkParents)
 	{
+		logfunc(__FUNCTION__);
 		if (obj)
 		{
 			// Mark the object dirty
@@ -741,6 +758,7 @@
 //////
 	void iObj_setDirtyPublish(SObject* obj, bool tlMarkParents)
 	{
+		logfunc(__FUNCTION__);
 		if (obj)
 		{
 			// Mark the object dirty
@@ -766,6 +784,7 @@
 
 
 		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
 		lnPixelsRendered = 0;
 		if (obj && obj->isRendered)
 		{
@@ -865,6 +884,7 @@
 		SObject*	objSib;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Render any children
 		//////
@@ -921,6 +941,7 @@
 
 
 		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
 		lnPixelsRendered = 0;
 		if (obj && obj->bmp)
 		{
@@ -1108,6 +1129,7 @@
 
 
 		// Create the master record
+		logfunc(__FUNCTION__);
 		if (root)
 		{
 			// Repeat adding as many entries as there are
@@ -1142,6 +1164,7 @@
 	void iObj_appendObjToParent(SObject* parent, SObject* obj)
 	{
 		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
 		if (parent && obj)
 			iLl_appendExistingNodeAtEnd((SLL**)&parent->firstChild, (SLL*)obj);
 	}
@@ -1161,6 +1184,7 @@
 
 
 		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
 		if (objDst && objSrc && objSrc->firstChild)
 		{
 			// Duplicate this entry
@@ -1241,10 +1265,16 @@
 	{
 		SObject*	objChild;
 		RECT		lrc;
+		s8			buffer[2048];
 
 
 		// Resize if need be (32-bit bitmap for labels, 24-bit for everything else)
+		logfunc(__FUNCTION__);
+		sprintf(buffer, "X:%u Y:%u W:%u H:%u\0", tnLeft, tnTop, tnWidth, tnHeight);
+		logfunc(buffer);
+		logfunc("form before bmp resize");
 		obj->bmp = iBmp_verifySizeOrResize(obj->bmp, tnWidth, tnHeight, 24);
+		logfunc("form after bmp resize");
 
 		// Position and size its rectangle
 		SetRect(&obj->rc,			tnLeft, tnTop, tnLeft + tnWidth, tnTop + tnHeight);
@@ -1270,6 +1300,7 @@
 						// See which object this is
 						if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_icon, sizeof(cgcName_icon) - 1) == 0)
 						{
+							logfunc("form icon");
 							// Form icon
 							SetRect(&objChild->rc,
 										bmpArrowUl->bi.biWidth + 4 - obj->rcClient.left,
@@ -1282,6 +1313,7 @@
 
 						} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
 							// Caption
+							logfunc("form caption");
 							SetRect(&objChild->rc,
 										bmpArrowUl->bi.biWidth + 4 + bmpArrowUl->bi.biWidth + 8 - obj->rcClient.left,
 										2 - obj->rcClient.top,
@@ -1293,6 +1325,7 @@
 
 						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMove, sizeof(cgcName_iconMove) - 1) == 0) {
 							// Move icon
+							logfunc("form move icon");
 							SetRect(&objChild->rc,
 										tnWidth - (5 * (bmpArrowUl->bi.biWidth + 2)) - obj->rcClient.left,
 										1 - obj->rcClient.top,
@@ -1304,6 +1337,7 @@
 
 						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMinimize, sizeof(cgcName_iconMinimize) - 1) == 0) {
 							// Minimize icon
+							logfunc("form minimize icon");
 							SetRect(&objChild->rc,
 										tnWidth - (4 * (bmpArrowUl->bi.biWidth + 2)) - obj->rcClient.left,
 										1 - obj->rcClient.top,
@@ -1315,6 +1349,7 @@
 
 						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMaximize, sizeof(cgcName_iconMaximize) - 1) == 0) {
 							// Maximize icon
+							logfunc("form maximize icon");
 							SetRect(&objChild->rc,
 										tnWidth - (3 * (bmpArrowUl->bi.biWidth + 2)) - obj->rcClient.left,
 										1 - obj->rcClient.top,
@@ -1326,6 +1361,7 @@
 
 						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0) {
 							// Close icon
+							logfunc("form close icon");
 							SetRect(&objChild->rc,
 										tnWidth - (2 * (bmpArrowUl->bi.biWidth + 2)) - obj->rcClient.left,
 										1 - obj->rcClient.top,
@@ -1355,7 +1391,8 @@
 						// See which object this is
 						if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_icon, sizeof(cgcName_icon) - 1) == 0)
 						{
-							// Form icon
+							// Subform icon
+							logfunc("subform icon");
 							SetRect(&objChild->rc,
 										1,
 										1 - obj->rcClient.top,
@@ -1367,6 +1404,7 @@
 
 						} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
 							// Caption
+							logfunc("subform caption");
 							SetRect(&objChild->rc,
 										1 + bmpArrowUl->bi.biWidth + 4,
 										2 - obj->rcClient.top,
@@ -1409,6 +1447,7 @@
 						if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_checkboxImage, sizeof(cgcName_checkboxImage) - 1) == 0)
 						{
 							// Adjust the size and position
+							logfunc("checkbox image");
 							switch (obj->p.alignment)
 							{
 								default:
@@ -1452,6 +1491,7 @@
 
 						} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcName_checkboxLabel, sizeof(cgcName_checkboxLabel) - 1) == 0) {
 							// Adjust the size
+							logfunc("checkbox label");
 							switch (obj->p.alignment)
 							{
 								default:
@@ -1502,6 +1542,7 @@
 
 
 		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
 		winNew = NULL;
 		if (obj_form)
 			winNew = iWindow_createForObject(obj_form, winReuse, icon);
@@ -1525,6 +1566,7 @@
 
 
 		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
 		llOldVisible = false;
 		if (obj)
 		{
@@ -1551,6 +1593,7 @@
 
 
 		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
 		if (obj)
 		{
 			// Find out our property interface
@@ -1592,6 +1635,7 @@
 	void iiObj_resetToDefault(SObject* obj, bool tlResetProperties, bool tlResetMethods)
 	{
 		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
 		if (obj)
 		{
 			// Update the sub-object data
@@ -1658,6 +1702,7 @@
 //////
 	void iiObj_resetToDefaultCommon(SObject* obj, bool tlResetProperties, bool tlResetMethods)
 	{
+		logfunc(__FUNCTION__);
 		/////////
 		// Information about the object itself
 		//////
@@ -1746,6 +1791,7 @@
 		
 		
 		// Iterate through each function for matches
+		logfunc(__FUNCTION__);
 		lbcl = &gsKnownBaseclasses[0];
 		while (lbcl && lbcl->baseclassName != NULL)
 		{
@@ -1774,6 +1820,7 @@
 		
 		
 		// Iterate through each function for matches
+		logfunc(__FUNCTION__);
 		lbcl = &gsKnownBaseclasses[0];
 		while (lbcl && lbcl->baseclassName != NULL)
 		{
@@ -1801,6 +1848,7 @@
 		SObject* emptyNew;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Create the indicated item
 		//////
@@ -1864,6 +1912,7 @@
 		SObject*	close;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Create the indicated item
 		//////
@@ -1947,6 +1996,7 @@
 		SObject*	caption;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Create the indicated item
 		//////
@@ -2020,6 +2070,7 @@
 		SObject* labelNew;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Create the indicated item
 		//////
@@ -2077,6 +2128,7 @@
 		SObject* textboxNew;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Create the indicated item
 		//////
@@ -2134,6 +2186,7 @@
 		SObject* buttonNew;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Create the indicated item
 		//////
@@ -2191,6 +2244,7 @@
 		SObject* editboxNew;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Create the indicated item
 		//////
@@ -2248,6 +2302,7 @@
 		SObject* imageNew;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Create the indicated item
 		//////
@@ -2307,6 +2362,7 @@
 		SObject* label;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Create the indicated item
 		//////
@@ -2380,6 +2436,7 @@
 		SObject* optionNew;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Create the indicated item
 		//////
@@ -2437,6 +2494,7 @@
 		SObject* radioNew;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Create the indicated item
 		//////
@@ -2491,6 +2549,7 @@
 //////
 	void iiSubobj_copyEmpty(SObject* emptyDst, SObject* emptySrc)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Duplicate all children for this object
 		//////
@@ -2507,6 +2566,7 @@
 //////
 	void iiSubobj_copyForm(SObject* formDst, SObject* formSrc)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Copy all standard properties
 		//////
@@ -2543,6 +2603,7 @@
 //////
 	void iiSubobj_copySubform(SObject* subformDst, SObject* subformSrc)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Copy all standard properties
 		//////
@@ -2584,6 +2645,7 @@
 //////
 	void iiSubobj_copyLabel(SObject* labelDst, SObject* labelSrc)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Copy all standard properties
 		//////
@@ -2621,6 +2683,7 @@
 //////
 	void iiSubobj_copyTextbox(SObject* textboxDst, SObject* textboxSrc)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Copy all standard properties
 		//////
@@ -2667,6 +2730,7 @@
 //////
 	void iiSubobj_copyButton(SObject* buttonDst, SObject* buttonSrc)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Copy all standard properties
 		//////
@@ -2709,6 +2773,7 @@
 //////
 	void iiSubobj_copyEditbox(SObject* editboxDst, SObject* editboxSrc)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Copy all standard properties
 		//////
@@ -2755,6 +2820,7 @@
 //////
 	void iiSubobj_copyImage(SObject* imageDst, SObject* imageSrc)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Copy all standard properties
 		//////
@@ -2789,6 +2855,7 @@
 //////
 	void iiSubobj_copyCheckbox(SObject* checkboxDst, SObject* checkboxSrc)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Copy all standard properties
 		//////
@@ -2823,6 +2890,7 @@
 //////
 	void iiSubobj_copyOption(SObject* optionDst, SObject* optionSrc)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Copy all standard properties
 		//////
@@ -2857,6 +2925,7 @@
 //////
 	void iiSubobj_copyRadio(SObject* radioDst, SObject* radioSrc)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Copy all standard properties
 		//////
@@ -2891,6 +2960,7 @@
 //////
 	void iiSubobj_resetToDefaultEmpty(SObject* empty, bool tlResetProperties, bool tlResetMethods)
 	{
+		logfunc(__FUNCTION__);
 		if (empty)
 		{
 			//////////
@@ -2908,6 +2978,7 @@
 		RECT		lrc;
 
 
+		logfunc(__FUNCTION__);
 		if (form)
 		{
 			//////////
@@ -3181,6 +3252,7 @@
 		RECT		lrc;
 
 
+		logfunc(__FUNCTION__);
 		if (subform)
 		{
 			//////////
@@ -3293,6 +3365,7 @@
 
 	void iiSubobj_resetToDefaultLabel(SObject* label, bool tlResetProperties, bool tlResetMethods)
 	{
+		logfunc(__FUNCTION__);
 		if (label)
 		{
 			//////////
@@ -3347,6 +3420,7 @@
 
 	void iiSubobj_resetToDefaultTextbox(SObject* textbox, bool tlResetProperties, bool tlResetMethods)
 	{
+		logfunc(__FUNCTION__);
 		if (textbox)
 		{
 			//////////
@@ -3416,6 +3490,7 @@
 
 	void iiSubobj_resetToDefaultButton(SObject* button, bool tlResetProperties, bool tlResetMethods)
 	{
+		logfunc(__FUNCTION__);
 		if (button)
 		{
 			//////////
@@ -3454,6 +3529,7 @@
 
 	void iiSubobj_resetToDefaultEditbox(SObject* editbox, bool tlResetProperties, bool tlResetMethods)
 	{
+		logfunc(__FUNCTION__);
 		if (editbox)
 		{
 			//////////
@@ -3502,6 +3578,7 @@
 
 	void iiSubobj_resetToDefaultImage(SObject* image, bool tlResetProperties, bool tlResetMethods)
 	{
+		logfunc(__FUNCTION__);
 		if (image)
 		{
 			//////////
@@ -3534,6 +3611,7 @@
 		RECT		lrc;
 
 
+		logfunc(__FUNCTION__);
 		if (checkbox)
 		{
 			//////////
@@ -3647,6 +3725,7 @@
 		SObject* label2;
 
 
+		logfunc(__FUNCTION__);
 		if (option)
 		{
 			//////////
@@ -3691,6 +3770,7 @@
 
 	void iiSubobj_resetToDefaultRadio(SObject* radio, bool tlResetProperties, bool tlResetMethods)
 	{
+		logfunc(__FUNCTION__);
 		if (radio)
 		{
 			//////////
@@ -3748,6 +3828,7 @@
 //////
 	void iSubobj_deleteEmpty(SObject* empty, bool tlDeleteSelf)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Free self
 		//////
@@ -3765,6 +3846,7 @@
 //////
 	void iSubobj_deleteForm(SObject* form, bool tlDeleteSelf)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Free subobject components
 		//////
@@ -3790,6 +3872,7 @@
 //////
 	void iSubobj_deleteSubform(SObject* subform, bool tlDeleteSelf)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Free subobject components
 		//////
@@ -3815,6 +3898,7 @@
 //////
 	void iSubobj_deleteLabel(SObject* label, bool tlDeleteSelf)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Free subobject components
 		//////
@@ -3839,6 +3923,7 @@
 //////
 	void iSubobj_deleteTextbox(SObject* textbox, bool tlDeleteSelf)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Free subobject components
 		//////
@@ -3865,6 +3950,7 @@
 //////
 	void iSubobj_deleteButton(SObject* button, bool tlDeleteSelf)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Free subobject components
 		//////
@@ -3889,6 +3975,7 @@
 //////
 	void iSubobj_deleteEditbox(SObject* editbox, bool tlDeleteSelf)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Free subobject components
 		//////
@@ -3913,6 +4000,7 @@
 //////
 	void iSubobj_deleteImage(SObject* image, bool tlDeleteSelf)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Free subobject components
 		//////
@@ -3935,6 +4023,7 @@
 //////
 	void iSubobj_deleteCheckbox(SObject* checkbox, bool tlDeleteSelf)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Free subobject components
 		//////
@@ -3957,6 +4046,7 @@
 //////
 	void iSubobj_deleteOption(SObject* option, bool tlDeleteSelf)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Free subobject components
 		//////
@@ -3979,6 +4069,7 @@
 //////
 	void iSubobj_deleteRadio(SObject* radio, bool tlDeleteSelf)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Free subobject components
 		//////
@@ -4002,6 +4093,7 @@
 //////
 	u32 iSubobj_renderEmpty(SObject* empty)
 	{
+		logfunc(__FUNCTION__);
 		//////////
 		// Success!
 		//////
@@ -4030,6 +4122,7 @@
 
 
 		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
 		lnPixelsRendered = 0;
 		if (obj && obj->isRendered)
 		{
@@ -4149,6 +4242,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 
 		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
 		lnPixelsRendered = 0;
 		if (obj && obj->isRendered && obj->rc.right > 0 && obj->rc.bottom > 0 && obj->rc.right >= obj->rc.left && obj->rc.bottom >= obj->rc.bottom && obj->rc.right - obj->rc.left < 4400 && obj->rc.bottom - obj->rc.top < 4400)
 		{
@@ -4250,6 +4344,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 
 		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
 		lnPixelsRendered = 0;
 		if (obj && obj->isRendered)
 		{
@@ -4377,6 +4472,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 
 		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
 		lnPixelsRendered = 0;
 		if (obj && obj->isRendered)
 		{
@@ -4477,6 +4573,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 
 		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
 		lnPixelsRendered = 0;
 		if (obj && obj->isRendered)
 		{
@@ -4576,6 +4673,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 
 		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
 		lnPixelsRendered = 0;
 		if (obj && obj->isRendered)
 		{
@@ -4631,6 +4729,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 
 		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
 		lnPixelsRendered = 0;
 		if (obj && obj->isRendered)
 		{
@@ -4704,6 +4803,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 
 		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
 		lnPixelsRendered = 0;
 		if (obj && obj->isRendered)
 		{
@@ -4747,6 +4847,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 //////
 	u32 iSubobj_renderOption(SObject* obj)
 	{
+		logfunc(__FUNCTION__);
 
 
 			//////////
@@ -4777,6 +4878,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 
 		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
 		lnPixelsRendered = 0;
 		if (obj && obj->isRendered)
 		{

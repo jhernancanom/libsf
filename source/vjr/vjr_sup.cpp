@@ -632,8 +632,10 @@
 		// Release it
 		LeaveCriticalSection(&cs_logData);
 
+#ifndef _VJR_LOG_ALL
 		// Render it
 		iVjr_renderOverlayListing(gSplash.bmp, &gobj_splashListing->rc);
+#endif
 	}
 
 

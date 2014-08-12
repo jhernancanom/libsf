@@ -46,6 +46,7 @@
 		SEM* em;
 
 
+		logfunc(__FUNCTION__);
 		// Allocate a new structure
 		em = (SEM*)malloc(sizeof(SEM));
 
@@ -83,6 +84,7 @@
 		SEdit*		line;
 
 
+		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
 		b = NULL;
 		if (em)
@@ -158,6 +160,7 @@
 		SBuilder* content;
 
 
+		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
 		if (em && tcPathname)
 		{
@@ -197,6 +200,7 @@
 		s8			buffer[_MAX_PATH + 64];
 
 
+		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
 		if (em && tcPathname)
 		{
@@ -496,6 +500,7 @@ debug_break;
 		SEM* em;
 
 
+		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
 		if (root && *root)
 		{
@@ -543,6 +548,7 @@ debug_break;
 //////
 	void iSEM_deleteChain(SEM** root, bool tlDeleteSelf)
 	{
+		logfunc(__FUNCTION__);
 		// Delete with no callback
 		iSEM_deleteChainWithCallback(root, tlDeleteSelf, NULL);
 	}
@@ -553,6 +559,7 @@ debug_break;
 		SEM_callback	lecb;
 
 
+		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
 		if (root && *root)
 		{
@@ -619,6 +626,7 @@ debug_break;
 		SEdit* ec;
 
 
+		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
 		if (em && em->ecFirst && em->ecLast)
 		{
@@ -653,6 +661,8 @@ debug_break;
 		SEdit*	ec;
 
 
+// Not logged because this function is called by the logging function. :-)
+//		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
 		// Note:  We do not test for tcText and tnTextLength because we can add blank lines
 		ec = NULL;
@@ -765,6 +775,7 @@ debug_break;
 		SEdit* lineNew;
 
 
+		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
 		// Note:  We do not test for tcText and tnTextLength because we can add blank lines
 		lineNew = NULL;
@@ -865,6 +876,7 @@ debug_break;
 		SEdit* lineNewCursorLine;
 
 
+		logfunc(__FUNCTION__);
 		// Make sure the environment is sane
 		if (em && !em->isReadOnly && em->ecCursorLine)
 		{
@@ -906,6 +918,7 @@ debug_break;
 //////
 	void iSEM_getColors(SEM* em, SObject* obj, SBgra& backColor, SBgra& foreColor)
 	{
+		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
 		if (em && obj)
 		{
@@ -935,6 +948,7 @@ debug_break;
 		SFont* font;
 
 
+		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
 		font = gsFontDefault;
 		if (em && obj)
@@ -973,6 +987,7 @@ debug_break;
 		SComp*			comp;
 
 
+		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
 		em = NULL;
 		if (obj && obj->objType == _OBJ_TYPE_EDITBOX)
@@ -1121,6 +1136,7 @@ debug_break;
 		SEM*	em;
 
 
+		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
 		llProcessed = false;
 		if (obj && obj->objType == _OBJ_TYPE_EDITBOX && obj->pa.em)
@@ -1461,6 +1477,7 @@ debug_break;
 		SComp*	compRunner;
 
 
+		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
 		if (em && line && comp && iComps_getMateDirection(comp, &lnMateDirection))
 		{
@@ -1542,6 +1559,7 @@ debug_break;
 		STooltip*	tooltip;
 
 
+		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
 		if (em && line && line->sourceCode && line->sourceCode->data && line->sourceCodePopulated > 0 && obj && tcText && em->renderId == line->renderId)
 		{
@@ -1635,6 +1653,7 @@ debug_break;
 		s8			bigBuffer[2048];
 
 
+		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
 		lnPixelsRendered = 1;
 		if (em && obj)
@@ -2264,6 +2283,7 @@ debug_break;
 		RECT	lrc;
 
 
+		logfunc(__FUNCTION__);
 		llChanged = false;
 		if (!em->isHeavyProcessing)
 		{
@@ -2411,6 +2431,7 @@ debug_break;
 //		RECT	lrc;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Indicate initially that no changes were made that require a re-render
 		//////
@@ -2505,6 +2526,7 @@ debug_break;
 //			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Make sure we're valid
 		//////
@@ -2587,6 +2609,7 @@ debug_break;
 		RECT		lrc;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -2715,6 +2738,7 @@ debug_break;
 		SEdit*	line;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -2817,6 +2841,7 @@ debug_break;
 //		SFont*	font;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -2841,6 +2866,7 @@ debug_break;
 //		SFont*	font;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -2865,6 +2891,7 @@ debug_break;
 //		SFont*	font;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -2885,6 +2912,7 @@ debug_break;
 //////
 	bool iSEM_toggleInsert(SEM* em, SObject* obj)
 	{
+		logfunc(__FUNCTION__);
 		if (em)
 		{
 			// Toggle the flag
@@ -2915,6 +2943,7 @@ debug_break;
 //		SFont*	font;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -2939,6 +2968,7 @@ debug_break;
 //		SFont*	font;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -2963,6 +2993,7 @@ debug_break;
 //		SFont*	font;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -3010,6 +3041,7 @@ debug_break;
 //		SFont*	font;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -3034,6 +3066,7 @@ debug_break;
 //		SFont*	font;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -3058,6 +3091,7 @@ debug_break;
 //		SFont*	font;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -3082,6 +3116,7 @@ debug_break;
 //		SFont*	font;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -3107,6 +3142,7 @@ debug_break;
 //		RECT		lrc;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -3210,6 +3246,7 @@ debug_break;
 //		RECT		lrc;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -3319,6 +3356,7 @@ debug_break;
 //////
 	bool iSEM_navigateTop(SEM* em, SObject* obj)
 	{
+		logfunc(__FUNCTION__);
 		// Make sure the environment is sane
 		if (em && em->ecFirst)
 		{
@@ -3366,6 +3404,7 @@ debug_break;
 		RECT		lrc;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -3450,6 +3489,7 @@ debug_break;
 //		SFont*	font;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -3476,6 +3516,7 @@ debug_break;
 //		SFont*	font;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -3502,6 +3543,7 @@ debug_break;
 //		SFont*	font;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -3526,6 +3568,7 @@ debug_break;
 //		SFont*	font;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -3550,6 +3593,7 @@ debug_break;
 //		SFont*	font;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -3574,6 +3618,7 @@ debug_break;
 //		SFont*	font;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -3598,6 +3643,7 @@ debug_break;
 //		SFont*	font;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -3622,6 +3668,7 @@ debug_break;
 //		SFont*	font;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -3649,6 +3696,7 @@ debug_break;
 //		SFont*	font;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -3676,6 +3724,7 @@ debug_break;
 //		SFont*	font;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -3702,6 +3751,7 @@ debug_break;
 //		RECT	lrc;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -3807,6 +3857,7 @@ debug_break;
 //		RECT	lrc;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -3862,6 +3913,7 @@ debug_break;
 //		SFont*	font;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -3886,6 +3938,7 @@ debug_break;
 //		SFont*	font;
 
 
+		logfunc(__FUNCTION__);
 		//////////
 		// Grab the rectangle we're working in
 		//////
@@ -3913,6 +3966,7 @@ debug_break;
 		SFont*		font;
 
 
+		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
 		llResult = false;
 		if (em && em->ecTopLine && obj)

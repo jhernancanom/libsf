@@ -659,9 +659,12 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Running programs (future, James 4:15)",		"0.55", false, false, false, -2, 0);
 		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Syntax highlighting (future, James 4:15)",	"0.50", false, false, false, -2, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Editor development",							"0.49", true, false, false, 1, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Editor highlights word under cursor",		"0.50", false, false, false, 0, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "UI redesign geared toward debugger",			"0.50", false, false, false, 0, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Editor line numbers, breakpoints",			"0.48", false, false, false, 0, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Editor development",							"0.49", false, false, false, -1, 0);
+
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Editor line numbers, breakpoints",			"0.48", false, false, false, -1, 0);
 
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Editor resize CTRL+ and CTRL-",				"0.47", false, false, false, -1, 0);
 
@@ -673,8 +676,8 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		iiVjr_renderAccomplishment(bmp, &lrc, _AMBER, "TRANSFORM() partially supported",			"0.43", false, true, false, -2, 0);
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "PADC(), PADL(), PADR()",						"0.43", false, true, false, -2, 0);
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "OCCURS(), OCCURSC()",						"0.43", false, true, false, -2, 0);
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "AT(), ATC(), RAT(), RATC()",					"0.43", false, true, false, -2, 0);
+// 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "OCCURS(), OCCURSC()",						"0.43", false, true, false, -2, 0);
+// 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "AT(), ATC(), RAT(), RATC()",					"0.43", false, true, false, -2, 0);
 
 // 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Bugfix on function parsing",					"0.42", false, true, false, -2, 0);
 

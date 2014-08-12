@@ -49,6 +49,17 @@
 #define _WIN32_IE 0x0700        // Change this to the appropriate value to target other versions of IE.
 #endif
 
+
+//////////
+// Aug.11.2014 -- Added to track down functions that were slowing down the system
+//#define _VJR_LOG_ALL
+//////
+	#ifdef _VJR_LOG_ALL
+		#define logfunc(x)		iVjr_appendSystemLog((s8*)x)
+	#else
+		#define logfunc(x)
+	#endif
+
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
