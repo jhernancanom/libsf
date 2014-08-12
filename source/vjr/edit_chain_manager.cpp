@@ -1063,7 +1063,7 @@ debug_break;
 						// Mate, they're searching for this component's mate
 						// If they're on the cursor line, on a flow control directive, and holding down Ctrl+Alt+Shift, then we want to show that directive's mate on the line above
 						line = em->ecCursorLine;
-						comp = iComps_activeComp(em);
+						comp = iComps_activeComp_inSEM(em);
 						if (comp->iCat == _ICAT_FLOW && iComps_getMateDirection(comp, &lnMateDirection))
 						{
 							// Search for the mated line
@@ -1623,6 +1623,7 @@ debug_break;
 		SBitmap*	bmpBreakpoint;
 		SBitmap*	bmpBreakpointScaled;
 		SComp*		comp;
+		SComp*		compHighlight;
 		SComp*		comp2;
 		SComp*		compPBBLeft;
 		SComp*		compPBBRight;
@@ -1657,6 +1658,14 @@ debug_break;
 				iMisc_adjustColorBrightness(backColorLast, -5.0f);
 				iMisc_adjustColorBrightness(foreColorLast, 5.0f);
 				hfontOld = SelectObject(bmp->hdc, font->hfont);		// Save the original font, and set our current font
+
+
+			//////////
+			// Determine what component they're currently on, and highlight any same-named references on-screen
+			//////
+				compHighlight = iComps_activeComp_inSEM(em);
+				if (compHighlight && (!compHighlight->line || !compHighlight->line->sourceCode || !compHighlight->line->sourceCode->data))
+					compHighlight = NULL;	// Invalid, ignore it
 
 
 			//////////
@@ -1931,6 +1940,10 @@ debug_break;
 										if (comp->overrideMatchingBackColor)		SetBkColor(bmp->hdc, RGB(comp->overrideMatchingBackColor->red, comp->overrideMatchingBackColor->grn, comp->overrideMatchingBackColor->blu));
 										else										SetBkColor(bmp->hdc, RGB(fillColor.red, fillColor.grn, fillColor.blu));
 
+										// Is this a component that should be highlighted?
+										if (compHighlight && comp != compHighlight && comp->length == compHighlight->length && _memicmp(comp->line->sourceCode->data + comp->start, compHighlight->line->sourceCode->data + compHighlight->start, comp->length) == 0)
+											SetBkColor(bmp->hdc, RGB(currentStatementBackColor.red, currentStatementBackColor.grn, currentStatementBackColor.blu));
+
 										// Draw this component
 										SetBkMode(bmp->hdc, OPAQUE);
 										DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
@@ -1949,6 +1962,11 @@ debug_break;
 											// Set back to opaque
 											SetBkMode(bmp->hdc, OPAQUE);
 										}
+
+										// If it's a comp that we're highlighting, highlight it
+// This is an optional way to highlight the component, one which is far too pronounced in my opinion. :-)
+// 										if (compHighlight && comp != compHighlight && comp->length == compHighlight->length && _memicmp(comp->line->sourceCode->data + comp->start, compHighlight->line->sourceCode->data + compHighlight->start, comp->length) == 0)
+// 											iBmp_colorizeHighlightGradient(bmp, &lrcComp, overrideMatchingBackColor, 0.5f, 0.25f);
 									}
 
 

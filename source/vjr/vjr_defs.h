@@ -376,6 +376,7 @@
 	bool					iBmp_locateMarker						(SBitmap* bmp, u8 red, u8 grn, u8 blu, u32* tnX, u32* tnY, bool tlOverwriteMarker);
 	SBitmap*				iBmp_cask_createAndPopulate				(s32 iCode, s32 tnWidth, s32 tnHeight, s32* tnSkipChars, u32 tnTextLength, SBgra backColor, SBgra textColor, SBgra backgroundColor);
 	void					iBmp_colorizeAsCommonTooltipBackground	(SBitmap* bmp);
+	void					iBmp_colorizeHighlightGradient			(SBitmap* bmp, RECT* rc, SBgra color, f32 tfLeftOpaque, f32 tfRightOpaque);
 	void					iBmp_dapple								(SBitmap* bmp, SBitmap* bmpDapple, f32 tfBias, f32 tfInfluence);
 // TODO:  The following void functions need to be changed to u32 and indicate how many pixels were rendered
 	void					iBmp_drawPoint							(SBitmap* bmp, s32 tnX, s32 tnY, SBgra color);

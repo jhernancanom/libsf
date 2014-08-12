@@ -2699,6 +2699,78 @@
 
 //////////
 //
+// Colorize the content from left to right using the opaque ratio
+//
+//////
+	void iBmp_colorizeHighlightGradient(SBitmap* bmp, RECT* rc, SBgra color, f32 tfLeftOpaque, f32 tfRightOpaque)
+	{
+		s32		lnX, lnY;
+		f32		lfStep, lfOpaque, lfMopaque, lfGray, lfRed, lfGrn, lfBlu;
+		SBgr*	lbgr;
+		SBgra*	lbgra;
+
+
+		// Make sure the environment is sane
+		if (bmp && rc->left < bmp->bi.biWidth && rc->top < bmp->bi.biHeight)
+		{
+			// Make sure our parameters are sane
+			tfLeftOpaque	= max(min(tfLeftOpaque,  1.0f), 0.0f);
+			tfRightOpaque	= max(min(tfRightOpaque, 1.0f), 0.0f);
+			lfStep			= (tfLeftOpaque - tfRightOpaque) / (f32)(rc->right - rc->left);
+			lfRed			= (f32)color.red;
+			lfGrn			= (f32)color.grn;
+			lfBlu			= (f32)color.blu;
+
+			// Process
+			if (bmp->bi.biBitCount == 24)
+			{
+				// Iterate through every row
+				for (lnY = rc->top; lnY <= rc->bottom && lnY < bmp->bi.biHeight; lnY++)
+				{
+					// Build the pointer for this part of the line
+					lbgr = (SBgr*)(bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth) + (rc->left * 3));
+
+					// Iterate through every column
+					for (lnX = rc->left, lfOpaque = tfLeftOpaque, lfMopaque = 1.0f - tfLeftOpaque; lnX <= rc->right && lnX < bmp->bi.biWidth; lnX++, lfOpaque += lfStep, lfMopaque -= lfStep, lbgr++)
+					{
+						// Get the grayscale value
+						lfGray = (((f32)lbgr->red * 0.35f) + ((f32)lbgr->grn * 0.54f) + ((f32)lbgr->blu * 0.11f)) / 255.0f;
+
+						// Apply our opaqueness
+						lbgr->red = (u8)min((s32)(((f32)lbgr->red * lfMopaque) + (lfRed * lfGray * lfOpaque)), 255);
+						lbgr->grn = (u8)min((s32)(((f32)lbgr->grn * lfMopaque) + (lfGrn * lfGray * lfOpaque)), 255);
+						lbgr->blu = (u8)min((s32)(((f32)lbgr->blu * lfMopaque) + (lfBlu * lfGray * lfOpaque)), 255);
+					}
+				}
+
+			} else if (bmp->bi.biBitCount == 32) {
+				// Iterate through every row
+				for (lnY = rc->top; lnY <= rc->bottom && lnY < bmp->bi.biHeight; lnY++)
+				{
+					// Build the pointer for this part of the line
+					lbgra = (SBgra*)(bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth) + (rc->left * 4));
+
+					// Iterate through every column
+					for (lnX = rc->left, lfOpaque = tfLeftOpaque, lfMopaque = 1.0f - tfLeftOpaque; lnX <= rc->right && lnX < bmp->bi.biWidth; lnX++, lfOpaque += lfStep, lfMopaque -= lfStep, lbgra++)
+					{
+						// Get the grayscale value
+						lfGray = (((f32)lbgra->red * 0.35f) + ((f32)lbgra->grn * 0.54f) + ((f32)lbgra->blu * 0.11f)) / 255.0f;
+
+						// Apply our opaqueness
+						lbgra->red = (u8)min((s32)(((f32)lbgra->red * lfMopaque) + (lfRed * lfGray * lfOpaque)), 255);
+						lbgra->grn = (u8)min((s32)(((f32)lbgra->grn * lfMopaque) + (lfGrn * lfGray * lfOpaque)), 255);
+						lbgra->blu = (u8)min((s32)(((f32)lbgra->blu * lfMopaque) + (lfBlu * lfGray * lfOpaque)), 255);
+					}
+				}
+			}
+		}
+	}
+
+
+
+
+//////////
+//
 // Called to dapple the bitmap using a template dappler. :-)
 //
 //////

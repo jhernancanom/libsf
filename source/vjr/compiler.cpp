@@ -1213,7 +1213,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Returns which component the cursor is currently on
 //
 //////
-	SComp* iComps_activeComp(SEM* em)
+	SComp* iComps_activeComp_inSEM(SEM* em)
 	{
 		SComp* comp;
 
