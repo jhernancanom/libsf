@@ -82,8 +82,10 @@
 	bool					iObj_setFocusObjectPrev					(SWindow* win, SObject* obj);
 	bool					iObj_setFocusObjectNext					(SWindow* win, SObject* obj);
 	bool					iObj_focus_descentCheck					(SObject* obj, bool tlCheckChildren, bool tlCheckSiblings);
-	void					iObj_setDirtyRender						(SObject* obj, bool tlMarkParents);
-	void					iObj_setDirtyPublish					(SObject* obj, bool tlMarkParents);
+	void					iObj_setDirtyRender_ascent				(SObject* obj, bool tlMarkParents);
+	void					iObj_setDirtyRender_descent				(SObject* obj, bool tlProcessChildren, bool tlProcessSiblings);
+	void					iObj_setDirtyPublish_ascent				(SObject* obj, bool tlMarkParents);
+	void					iObj_setDirtyPublish_descent			(SObject* obj, bool tlProcessChildren, bool tlProcessSiblings);
 	u32						iObj_render								(SObject* obj, bool tlForceRender);
 	bool					iObj_render_descentCheck				(SObject* obj, bool tlCheckChildren, bool tlCheckSiblings);
 	u32						iObj_renderChildrenAndSiblings			(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings, bool tlForceRender);
@@ -219,7 +221,7 @@
 	void					iInit_createMessageWindow				(void);
 	bool					isValidWindow							(u32 tnWindow);
 	void					iInit_createDefaultObjects				(void);
-	void					iInit_create_jdebiObject				(void);
+	void					iInit_create_jdebi						(void);
 	void					iInit_createDefaultDatetimes			(void);
 	SBitmap*				iiVjr_buildSplashScreen					(SBitmap* bmpSplash);
 	void					iVjr_appendSystemLog					(s8* tcLogText);
@@ -347,8 +349,8 @@
 	SBitmap*				iBmp_verifyCopyIsSameSize				(SBitmap* bmpCopy, SBitmap* bmp);
 	SBitmap*				iBmp_verifySizeOrResize					(SBitmap* bmp, u32 tnWidth, u32 tnHeight, u32 tnBitCount);
 	SBitmap*				iBmp_rawLoad							(cu8* bmpRawFileData);
-	SBitmap*				iBmp_isValidCache						(SBmpCache** bmpCache,               u32 data1, u32 data2, u32 data3, u32 data4, u32 data5, u32 data6, u32 data7, u32 data8);
-	SBitmap*				iBmp_createCache						(SBmpCache** bmpCache, SBitmap* bmp, u32 data1, u32 data2, u32 data3, u32 data4, u32 data5, u32 data6, u32 data7, u32 data8, bool tlCopyBitmap);
+	SBitmap*				iBmp_isValidCache						(SBmpCache** bmpCache,               u32 data1, u32 data2, u32 data3, u32 data4, u32 data5, u32 data6, u32 data7, u32 data8, u32 data9);
+	SBitmap*				iBmp_createCache						(SBmpCache** bmpCache, SBitmap* bmp, u32 data1, u32 data2, u32 data3, u32 data4, u32 data5, u32 data6, u32 data7, u32 data8, u32 data9, bool tlCopyBitmap);
 	SBitmap*				iBmp_deleteCache						(SBmpCache** bmpCache);
 	void					iBmp_saveToDisk							(SBitmap* bmp, s8* tcPathname);
 	void					iBmp_convertTo32Bits					(SBitmap* bmp);

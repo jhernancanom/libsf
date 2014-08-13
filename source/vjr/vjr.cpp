@@ -220,7 +220,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		// Create our main screen window
 		iVjr_appendSystemLog("TEMPORARY:  Manually create _jdebi");
-		iInit_create_jdebiObject();
+		iInit_create_jdebi();
 
 		// Initially render each one
 		iVjr_appendSystemLog("Render _jdebi");

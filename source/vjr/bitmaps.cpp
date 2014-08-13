@@ -235,7 +235,7 @@
 // to determine on subsequent usage if the cache is still valid.
 //
 //////
-	SBitmap* iBmp_isValidCache(SBmpCache** bmpCache, u32 data1, u32 data2, u32 data3, u32 data4, u32 data5, u32 data6, u32 data7, u32 data8)
+	SBitmap* iBmp_isValidCache(SBmpCache** bmpCache, u32 data1, u32 data2, u32 data3, u32 data4, u32 data5, u32 data6, u32 data7, u32 data8, u32 data9)
 	{
 		SBmpCache* bc;
 
@@ -259,6 +259,7 @@
 			if (data6 != bc->data6)		return(NULL);
 			if (data7 != bc->data7)		return(NULL);
 			if (data8 != bc->data8)		return(NULL);
+			if (data9 != bc->data9)		return(NULL);
 
 			// If we get here, we're good
 			return(bc->bmpCached);
@@ -276,7 +277,7 @@
 // Create a bitmap cache.
 //
 //////
-	SBitmap* iBmp_createCache(SBmpCache** bmpCache, SBitmap* bmp, u32 data1, u32 data2, u32 data3, u32 data4, u32 data5, u32 data6, u32 data7, u32 data8, bool tlCopyBitmap)
+	SBitmap* iBmp_createCache(SBmpCache** bmpCache, SBitmap* bmp, u32 data1, u32 data2, u32 data3, u32 data4, u32 data5, u32 data6, u32 data7, u32 data8, u32 data9, bool tlCopyBitmap)
 	{
 		SBmpCache* bc;
 
@@ -316,6 +317,7 @@
 			bc->data6	= data6;
 			bc->data7	= data7;
 			bc->data8	= data8;
+			bc->data9	= data9;
 
 			// Store or copy the bitmap
 			if (tlCopyBitmap)		bc->bmpCached = iBmp_copy(bmp);

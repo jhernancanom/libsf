@@ -1009,7 +1009,7 @@ debug_break;
 							iEditChain_toggleBreakpoint(em);
 
 							// Force the redraw
-							iObj_setDirtyRender(obj, true);
+							iObj_setDirtyRender_ascent(obj, true);
 
 							// Re-render the window
 							iWindow_render(win, false);
@@ -1099,7 +1099,7 @@ debug_break;
 						}
 
 						// Redraw the window
-						iObj_setDirtyRender(obj, true);
+						iObj_setDirtyRender_ascent(obj, true);
 						iWindow_render(win, false);
 						return(true);
 				}
@@ -1114,7 +1114,7 @@ debug_break;
 			em->highlightLineAfter	= NULL;
 
 			// Redraw
-			iObj_setDirtyRender(obj, true);
+			iObj_setDirtyRender_ascent(obj, true);
 			iWindow_render(win, false);
 		}
 
@@ -1259,7 +1259,7 @@ debug_break;
 						if (em->font)			em->font = iFont_bigger(em->font,		true);
 						else					em->font = iFont_bigger(obj->pa.font,	false);
 						iSEM_verifyCursorIsVisible(em, obj);
-						iObj_setDirtyRender(obj, true);
+						iObj_setDirtyRender_ascent(obj, true);
 						llProcessed = true;
 						break;
 
@@ -1267,7 +1267,7 @@ debug_break;
 						if (em->font)			em->font = iFont_smaller(em->font,		true);
 						else					em->font = iFont_smaller(obj->pa.font,	false);
 						iSEM_verifyCursorIsVisible(em, obj);
-						iObj_setDirtyRender(obj, true);
+						iObj_setDirtyRender_ascent(obj, true);
 						llProcessed = true;
 						break;
 
@@ -1904,7 +1904,7 @@ debug_break;
 									if (comp->iCode >= _ICODE_CASK_MINIMUM && comp->iCode <= _ICODE_CASK_MAXIMUM)
 									{
 										// Is there a cask cache from a previous screen render?
-										if (!comp->bc || !iBmp_isValidCache(&comp->bc, backColor.color, foreColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, 0))
+										if (!comp->bc || !iBmp_isValidCache(&comp->bc, backColor.color, foreColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, 0, 0))
 										{
 											// The bitmap cache is no longer valid
 											iBmp_deleteCache(&obj->bc);
@@ -1928,7 +1928,7 @@ debug_break;
 											DrawText(bmpCask->hdc, comp->line->sourceCode->data + comp->start + lnSkip, comp->length - (2 * lnSkip), &lrcText, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS);
 
 											// Save the cache
-											iBmp_createCache(&comp->bc, bmpCask, backColor.color, foreColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, 0, false);
+											iBmp_createCache(&comp->bc, bmpCask, backColor.color, foreColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, 0, 0, false);
 
 										} else {
 											// Use the bitmap cache
@@ -1961,7 +1961,7 @@ debug_break;
 
 										// Is this a component that should be highlighted?
 										if (compHighlight && comp != compHighlight && comp->length == compHighlight->length && _memicmp(comp->line->sourceCode->data + comp->start, compHighlight->line->sourceCode->data + compHighlight->start, comp->length) == 0)
-											SetBkColor(bmp->hdc, RGB(currentStatementBackColor.red, currentStatementBackColor.grn, currentStatementBackColor.blu));
+											SetBkColor(bmp->hdc, RGB(highlightSymbolBackColor.red, highlightSymbolBackColor.grn, highlightSymbolBackColor.blu));
 
 										// Draw this component
 										SetBkMode(bmp->hdc, OPAQUE);
@@ -2410,7 +2410,7 @@ debug_break;
 		}
 
 		// If something has changed, we need to re-render
-		iObj_setDirtyRender(obj, true);
+		iObj_setDirtyRender_ascent(obj, true);
 
 		// Indicate our status
 		return(llChanged);
@@ -2910,7 +2910,7 @@ debug_break;
 			em->isOverwrite = !em->isOverwrite;
 
 			// Something has changed, we need to re-render
-			iObj_setDirtyRender(obj, true);
+			iObj_setDirtyRender_ascent(obj, true);
 
 			// Toggling insert changes the shape of the cursor, so we always redraw
 			return(true);
@@ -3826,7 +3826,7 @@ debug_break;
 //////
 	bool iSEM_navigateTo_pixelXY(SEM* em, SObject* obj, s32 x, s32 y)
 	{
-		s32			lnI, lnRow, lnExtra;
+		s32			lnI, lnRow, lnExtra, lnCandidateCol;
 		bool		llResult;
 		RECT		lrc;
 		SEdit*		edit;
@@ -3858,7 +3858,12 @@ debug_break;
 				lnExtra		= font->tm.tmMaxCharWidth - (font->tm.tmAveCharWidth * 2);			// Added to fix the bug mentioned below
 				if (lnExtra < 0)
 					lnExtra = 0;
-				em->column	= em->leftColumn + (x / (font->tm.tmAveCharWidth + lnExtra));
+				
+				// We only go to the column if it's valid, otherwise we just move to the row
+				lnCandidateCol = em->leftColumn + (x / (font->tm.tmAveCharWidth + lnExtra));
+				if (lnCandidateCol >= 0)
+					em->column = lnCandidateCol;
+
 
 
 			//////////

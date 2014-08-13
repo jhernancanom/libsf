@@ -237,7 +237,7 @@
 			obj->p.hasFocus = true;
 
 			// Mark the object dirty
-			iObj_setDirtyRender(obj, true);
+			iObj_setDirtyRender_ascent(obj, true);
 
 			// Signal the change
 			if (obj->ev.general._onGotFocus)
@@ -277,7 +277,7 @@
 			obj->p.hasFocus = false;
 
 			// Mark the object dirty
-			iObj_setDirtyRender(obj, true);
+			iObj_setDirtyRender_ascent(obj, true);
 
 			// Remove the focus highlight window around the control (if any)
 			focus = iFocusHighlight_findByObj(obj);
@@ -785,7 +785,7 @@
 // Called to mark the object dirty for rendering.
 //
 //////
-	void iObj_setDirtyRender(SObject* obj, bool tlMarkParents)
+	void iObj_setDirtyRender_ascent(SObject* obj, bool tlMarkParents)
 	{
 		logfunc(__FUNCTION__);
 		if (obj)
@@ -796,7 +796,56 @@
 
 			// Mark the parent
 			if (tlMarkParents && obj->parent)
-				iObj_setDirtyRender(obj->parent, true);
+				iObj_setDirtyRender_ascent(obj->parent, true);
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to mark the object and optionally all its children and siblings 
+//
+//////
+	void iObj_setDirtyRender_descent(SObject* obj, bool tlProcessChildren, bool tlProcessSiblings)
+	{
+		SObject* objSib;
+
+
+		logfunc(__FUNCTION__);
+		if (obj)
+		{
+			//////////
+			// Mark the object dirty
+			//////
+				obj->isDirtyRender	= true;
+				obj->isDirtyPublish	= true;
+
+
+			//////////
+			// Process children?
+			//////
+				if (tlProcessChildren && obj->firstChild)
+					iObj_setDirtyRender_descent(obj, true, true);
+
+
+			//////////
+			// Process siblings
+			//////
+				if (tlProcessSiblings && obj->ll.next)
+				{
+					// Grab the first sibling
+					objSib = (SObject*)obj->ll.next;
+					while (objSib)
+					{
+						// Process this sibling
+						iObj_setDirtyRender_descent(objSib, true, false);
+
+						// Move to next sibling
+						objSib = (SObject*)objSib->ll.next;
+					}
+				}
 		}
 	}
 
@@ -808,7 +857,7 @@
 // Called to mark the object dirty for publishing.
 //
 //////
-	void iObj_setDirtyPublish(SObject* obj, bool tlMarkParents)
+	void iObj_setDirtyPublish_ascent(SObject* obj, bool tlMarkParents)
 	{
 		logfunc(__FUNCTION__);
 		if (obj)
@@ -818,7 +867,55 @@
 
 			// Mark the parent
 			if (tlMarkParents && obj->parent)
-				iObj_setDirtyPublish(obj->parent, true);
+				iObj_setDirtyPublish_ascent(obj->parent, true);
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to mark the object and optionally all its children and siblings 
+//
+//////
+	void iObj_setDirtyPublish_descent(SObject* obj, bool tlProcessChildren, bool tlProcessSiblings)
+	{
+		SObject* objSib;
+
+
+		logfunc(__FUNCTION__);
+		if (obj)
+		{
+			//////////
+			// Mark the object dirty for publishing
+			//////
+				obj->isDirtyPublish	= true;
+
+
+			//////////
+			// Process children?
+			//////
+				if (tlProcessChildren && obj->firstChild)
+					iObj_setDirtyPublish_descent(obj, true, true);
+
+
+			//////////
+			// Process siblings
+			//////
+				if (tlProcessSiblings && obj->ll.next)
+				{
+					// Grab the first sibling
+					objSib = (SObject*)obj->ll.next;
+					while (objSib)
+					{
+						// Process this sibling
+						iObj_setDirtyPublish_descent(objSib, true, false);
+
+						// Move to next sibling
+						objSib = (SObject*)objSib->ll.next;
+					}
+				}
 		}
 	}
 
@@ -3199,10 +3296,10 @@ if (!llPublishChildren)
 			//////////
 			// Set the default colors
 			//////
-				form->p.nwRgba.color		= NwFocusColor.color;
-				form->p.neRgba.color		= NeFocusColor.color;
-				form->p.swRgba.color		= SwFocusColor.color;
-				form->p.seRgba.color		= SeFocusColor.color;
+				form->p.nwRgba.color		= NwNonfocusColor.color;
+				form->p.neRgba.color		= NeNonfocusColor.color;
+				form->p.swRgba.color		= SwNonfocusColor.color;
+				form->p.seRgba.color		= SeNonfocusColor.color;
 				form->p.backColor.color		= whiteColor.color;
 				form->p.foreColor.color		= blackColor.color;
 				form->p.captionColor.color	= darkBlueColor.color;
@@ -3473,10 +3570,10 @@ if (!llPublishChildren)
 			//////////
 			// Set the default colors
 			//////
-				subform->p.nwRgba.color			= NwColor2.color;
-				subform->p.neRgba.color			= NeColor2.color;
-				subform->p.swRgba.color			= SwColor2.color;
-				subform->p.seRgba.color			= SeColor2.color;
+				subform->p.nwRgba.color			= NwNonfocusColor.color;
+				subform->p.neRgba.color			= NeNonfocusColor.color;
+				subform->p.swRgba.color			= SwNonfocusColor.color;
+				subform->p.seRgba.color			= SeNonfocusColor.color;
 				subform->p.backColor.color		= whiteColor.color;
 				subform->p.foreColor.color		= blackColor.color;
 				subform->p.captionColor.color	= darkBlueColor.color;
@@ -4323,7 +4420,7 @@ if (!llPublishChildren)
 					//////////
 					// Frame it
 					//////
-						if (!obj->bc || !iBmp_isValidCache(&obj->bc, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight))
+						if (!obj->bc || !iBmp_isValidCache(&obj->bc, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, 0))
 						{
 							// The bitmap cache is no longer valid
 							iBmp_deleteCache(&obj->bc);
@@ -4333,10 +4430,10 @@ if (!llPublishChildren)
 							else						iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, NULL,			false);
 
 							// Apply a dappling
-							iBmp_dapple(obj->bmp, bmpDapple, 200.0f, 7);
+							iBmp_dapple(obj->bmp, bmpDapple, 215.0f, 3);
 
 							// Save the cache
-							iBmp_createCache(&obj->bc, obj->bmp, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, true);
+							iBmp_createCache(&obj->bc, obj->bmp, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, 0, true);
 
 						} else {
 							// Copy everything over from the cache
@@ -4445,13 +4542,13 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 					// Frame it
 					//////
 						// Determine if a control on this subform has focus
-						if (!obj->bc || !iBmp_isValidCache(&obj->bc, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight))
+						llIsFocusSubform = iObj_focus_descentCheck(obj, true, false);
+						if (!obj->bc || !iBmp_isValidCache(&obj->bc, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)llIsFocusSubform))
 						{
 							// The bitmap cache is no longer valid
 							iBmp_deleteCache(&obj->bc);
 
 							// Draw the window border
-							llIsFocusSubform = iObj_focus_descentCheck(obj, true, false);
 							if (obj->p.isOpaque)
 							{
 								// Render the subform and client area
@@ -4468,10 +4565,10 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 							}
 
 							// Apply a dappling
-							iBmp_dapple(obj->bmp, bmpDapple2, 200.0f, 7);
+							iBmp_dapple(obj->bmp, bmpDapple2, 225.0f, 3);
 
 							// Save the cache
-							iBmp_createCache(&obj->bc, obj->bmp, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, true);
+							iBmp_createCache(&obj->bc, obj->bmp, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)llIsFocusSubform, true);
 
 						} else {
 							// Copy everything over from the cache

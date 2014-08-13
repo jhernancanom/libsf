@@ -104,6 +104,7 @@ struct SBmpCache
 	u32				data6;
 	u32				data7;
 	u32				data8;
+	u32				data9;
 };
 
 

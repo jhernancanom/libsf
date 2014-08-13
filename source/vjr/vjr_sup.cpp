@@ -174,7 +174,7 @@
 // Temporary manual function to create the new JDebi screen.
 //
 //////
-	void iInit_create_jdebiObject(void)
+	void iInit_create_jdebi(void)
 	{
 		SVariable*	caption;
 		SVariable*	fontSize;
@@ -294,12 +294,12 @@
 		//////
 			lnHeight = (_jdebi->rcClient.bottom - _jdebi->rcClient.top) / 8;
 			iObj_setSize(sourceCode_editbox,	48,	24,		sourceCode->rcClient.right	- sourceCode->rcClient.left - 48,	sourceCode->rcClient.bottom	- sourceCode->rcClient.top - 24);
-			iObj_setSize(locals_editbox,		0,	0,		locals->rcClient.right		- locals->rcClient.left,			locals->rcClient.bottom		- locals->rcClient.top);
-			iObj_setSize(watch_editbox,			0,	0,		watch->rcClient.right		- watch->rcClient.left,				watch->rcClient.bottom		- watch->rcClient.top);
-			iObj_setSize(command_editbox,		0,	0,		command->rcClient.right		- command->rcClient.left,			command->rcClient.bottom	- command->rcClient.top);
-			iObj_setSize(debug_editbox,			0,	0,		debug->rcClient.right		- debug->rcClient.left,				debug->rcClient.bottom		- debug->rcClient.top);
-			iObj_setSize(output_editbox,		0,	0,		output->rcClient.right		- output->rcClient.left,			output->rcClient.bottom		- output->rcClient.top);
-			iObj_setSize(screen_editbox,		0,	0,		_screen->rcClient.right		- _screen->rcClient.left,			_screen->rcClient.bottom	- _screen->rcClient.top);
+			iObj_setSize(locals_editbox,		8,	0,		locals->rcClient.right		- locals->rcClient.left - 8,		locals->rcClient.bottom		- locals->rcClient.top);
+			iObj_setSize(watch_editbox,			8,	0,		watch->rcClient.right		- watch->rcClient.left - 8,			watch->rcClient.bottom		- watch->rcClient.top);
+			iObj_setSize(command_editbox,		8,	0,		command->rcClient.right		- command->rcClient.left - 8,		command->rcClient.bottom	- command->rcClient.top);
+			iObj_setSize(debug_editbox,			8,	0,		debug->rcClient.right		- debug->rcClient.left - 8,			debug->rcClient.bottom		- debug->rcClient.top);
+			iObj_setSize(output_editbox,		8,	0,		output->rcClient.right		- output->rcClient.left - 8,		output->rcClient.bottom		- output->rcClient.top);
+			iObj_setSize(screen_editbox,		8,	0,		_screen->rcClient.right		- _screen->rcClient.left - 8,		_screen->rcClient.bottom	- _screen->rcClient.top);
 
 
 		//////////

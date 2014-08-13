@@ -129,7 +129,7 @@
 				// They want to scroll the entire window, including the cursor line
 				iSEM_scroll(obj->pa.em, obj, tnUnits * ((tlShift) ? -1 : -3), 0);
 			}
-			iObj_setDirtyRender(obj, true);
+			iObj_setDirtyRender_ascent(obj, true);
 			iWindow_render(win, false);
 		}
 		return(false);
@@ -155,7 +155,7 @@
 				lfPercent += 1.0;
 
 			*obj->pa.value->value.data_f64	= *obj->pa.minValue->value.data_f64 + (lfPercent * (*obj->pa.maxValue->value.data_f64 - *obj->pa.minValue->value.data_f64));
-			iObj_setDirtyRender(obj, true);
+			iObj_setDirtyRender_ascent(obj, true);
 			iWindow_render(win, false);
 		}
 		return(false);
@@ -179,7 +179,7 @@
 				iObj_clearFocus(win, objRoot, true, true);
 
 			iObj_setFocus(win, obj, true);
-			iObj_setDirtyRender(obj, true);
+			iObj_setDirtyRender_ascent(objRoot, true);
 		}
 
 		// For checkboxes, we toggle
@@ -244,7 +244,7 @@
 
 		// Update our condition
 		obj->ev.mouse.isMouseDown = llMouseDown;
-		iObj_setDirtyRender(obj, true);
+		iObj_setDirtyRender_ascent(obj, true);
 		iWindow_render(win, false);
 		return(false);
 	}
@@ -254,7 +254,7 @@
 		// We are leaving this object, lower the flag
 		obj->ev.mouse.isMouseDown = (obj->ev.mouse.thisClick != 0);	// Indicate if the mouse is down here
 		obj->ev.mouse.isMouseDown = false;
-		iObj_setDirtyRender(obj, true);
+		iObj_setDirtyRender_ascent(obj, true);
 		iWindow_render(win, false);
 		return(false);
 	}
@@ -266,7 +266,7 @@
 		if (!obj->ev.mouse.isMouseOver)
 		{
 			obj->ev.mouse.isMouseOver = true;
-			iObj_setDirtyRender(obj, true);
+			iObj_setDirtyRender_ascent(obj, true);
 			iWindow_render(win, false);
 		}
 
@@ -280,7 +280,7 @@
 		if (obj->ev.mouse.isMouseOver)
 		{
 			obj->ev.mouse.isMouseOver = false;
-			iObj_setDirtyRender(obj, true);
+			iObj_setDirtyRender_ascent(obj, true);
 			iWindow_render(win, false);
 		}
 		return(false);
@@ -323,9 +323,9 @@
 					// Toggle the value and redraw
 					*objCheckbox->pa.value->value.data_s32 = ((*objCheckbox->pa.value->value.data_s32 == 0) ? 1 : 0);
 					llRender = true;
-					iObj_setDirtyRender(objCheckbox, false);
+					iObj_setDirtyRender_ascent(objCheckbox, false);
 					if (objRender2 != objCheckbox)
-						iObj_setDirtyRender(objRender2, false);
+						iObj_setDirtyRender_ascent(objRender2, false);
 
 				} else if (tlShift && tnVKey == VK_TAB) {
 					// Move to previous object
@@ -341,17 +341,17 @@
 						// Set it to on
 						*obj->parent->pa.value->value.data_s32 = 1;
 						llRender = true;
-						iObj_setDirtyRender(objCheckbox, false);
+						iObj_setDirtyRender_ascent(objCheckbox, false);
 						if (objRender2 != objCheckbox)
-							iObj_setDirtyRender(objRender2, false);
+							iObj_setDirtyRender_ascent(objRender2, false);
 
 					} else if ((u8)tcAscii == 'f' || (u8)tcAscii == 'F' || (u8)tcAscii == 'n' || (u8)tcAscii == 'N' || (u8)tcAscii == '0') {
 						// Set it to off
 						*obj->parent->pa.value->value.data_s32 = 0;
 						llRender = true;
-						iObj_setDirtyRender(objCheckbox, false);
+						iObj_setDirtyRender_ascent(objCheckbox, false);
 						if (objRender2 != objCheckbox)
-							iObj_setDirtyRender(objRender2, false);
+							iObj_setDirtyRender_ascent(objRender2, false);
 					}
 				}
 

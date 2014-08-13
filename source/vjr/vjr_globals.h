@@ -294,6 +294,7 @@
 		SBgra			selectedForeColor					= { rgba(255, 255, 255, 255) };
 		SBgra			disabledBackColor					= { rgba(255, 255, 255, 255) };
 		SBgra			disabledForeColor					= { rgba(192, 192, 230, 255) };
+		SBgra			highlightSymbolBackColor			= { rgba(235, 220, 255, 255) };			// Very pastel purple
 		SBgra			colorTracking						= { rgba(0, 0, 255, 255) };				// Blue
 		f32				trackingRatio						= 0.025f;
 		SBgra			colorMouseOver						= { rgba(255, 255, 0, 255) };			// Yellow
@@ -301,15 +302,15 @@
 
 		// Forms four-corner window color schemes (eventually these will be loaded from themes.dbf)
 // Orange theme:
-		const SBgra		NwFocusColor						= { rgba(255, 238, 204, 255) };
+		const SBgra		NwFocusColor						= { rgba(255, 218, 148, 255) };
 		const SBgra		NeFocusColor						= { rgba(255, 208, 115, 255) };
-		const SBgra		SwFocusColor						= { rgba(255, 245, 214, 255) };
+		const SBgra		SwFocusColor						= { rgba(255, 208, 115, 255) };
 		const SBgra		SeFocusColor						= { rgba(235, 198, 105, 255) };
 // Purple theme
-// 		const SBgra		NwColor								= { rgba(233, 219, 255, 255) };
-// 		const SBgra		NeColor								= { rgba(205, 172, 255, 255) };
-// 		const SBgra		SwColor								= { rgba(233, 219, 255, 255) };
-// 		const SBgra		SeColor								= { rgba(182, 153, 226, 255) };
+// 		const SBgra		NwFocusColor						= { rgba(233, 219, 255, 255) };
+// 		const SBgra		NeFocusColor						= { rgba(205, 172, 255, 255) };
+// 		const SBgra		SwFocusColor						= { rgba(233, 219, 255, 255) };
+// 		const SBgra		SeFocusColor						= { rgba(182, 153, 226, 255) };
 
 		// Subforms four-corner window color schemes (eventually these will be loaded from themes.dbf)
 // Golden theme:
@@ -318,10 +319,10 @@
 // 		SBgra			SwColor2							= { rgba(249, 222, 133, 255) };			// Orange/golden yellow
 // 		SBgra			SeColor2							= { rgba(247, 210, 96, 255) };			// More orange/golden yellow
 // Blue theme:
-		const SBgra		NwColor2							= { rgba(230, 230, 255, 255) };
-		const SBgra		NeColor2							= { rgba(192, 212, 255, 255) };
-		const SBgra		SwColor2							= { rgba(212, 212, 255, 255) };
-		const SBgra		SeColor2							= { rgba(172, 192, 235, 255) };
+		const SBgra		NwNonfocusColor						= { rgba(230, 230, 255, 255) };
+		const SBgra		NeNonfocusColor						= { rgba(192, 212, 255, 255) };
+		const SBgra		SwNonfocusColor						= { rgba(212, 212, 255, 255) };
+		const SBgra		SeNonfocusColor						= { rgba(172, 192, 235, 255) };
 // Orange theme:
 // 		const SBgra		NwColor2							= { rgba(255, 222, 156, 255) };
 // 		const SBgra		NeColor2							= { rgba(255, 200, 92, 255) };
