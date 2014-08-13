@@ -780,7 +780,8 @@
 //////
 	u32 iObj_render(SObject* obj, bool tlForceRender)
 	{
-		u32 lnPixelsRendered;
+		u32		lnPixelsRendered;
+// 		bool	llRenderChildren;
 
 
 		// Make sure our environment is sane
@@ -788,8 +789,10 @@
 		lnPixelsRendered = 0;
 		if (obj && obj->isRendered)
 		{
+			//////////
 			// If they're forcing a render, set it up
-			obj->isDirtyRender |= tlForceRender;
+			//////
+				obj->isDirtyRender |= tlForceRender;
 
 
 			//////////
@@ -798,76 +801,138 @@
 				if (!obj->bmp)
 				{
 					// Initially allocate
-					obj->bmp = iBmp_allocate();
-					iBmp_createBySize(obj->bmp,
-										obj->rc.right - obj->rc.left,
-										obj->rc.bottom - obj->rc.top,
-										24);
+					obj->isDirtyRender	= true;
+					obj->bmp			= iBmp_allocate();
+					iBmp_createBySize(obj->bmp,		obj->rc.right - obj->rc.left,
+													obj->rc.bottom - obj->rc.top,
+													24);
 
 				} else if (obj->bmp->bi.biWidth != obj->rc.right - obj->rc.left || obj->bmp->bi.biHeight != obj->rc.bottom - obj->rc.top) {
 					// Resize
-					obj->bmp = iBmp_verifySizeOrResize(obj->bmp,
-														obj->rc.right - obj->rc.left,
-														obj->rc.bottom - obj->rc.top,
-														obj->bmp->bi.biBitCount);
+					obj->isDirtyRender = true;
+					obj->bmp			= iBmp_verifySizeOrResize(obj->bmp,		obj->rc.right - obj->rc.left,
+																				obj->rc.bottom - obj->rc.top,
+																				obj->bmp->bi.biBitCount);
 				}
 
 
+			//////////
+			// Check to see if anything below this level needs rendered
+			//////
+// 				llRenderChildren = obj->isDirtyRender;
+// 				if (!obj->isDirtyRender)
+// 					llRenderChildren |= iObj_render_descentCheck(obj, true, true);
+
+
+			//////////
 			// Which object are they rendering?
-			switch (obj->objType)
-			{
-				case _OBJ_TYPE_EMPTY:		// Empty, used as a placeholder object that is not drawn
-					lnPixelsRendered += iSubobj_renderEmpty(obj);
-					break;
+			//////
+				switch (obj->objType)
+				{
+					case _OBJ_TYPE_EMPTY:		// Empty, used as a placeholder object that is not drawn
+						lnPixelsRendered += iSubobj_renderEmpty(obj);
+						break;
 
-				case _OBJ_TYPE_FORM:			// Form class, the main outer window the OS sees
-					lnPixelsRendered += iSubobj_renderForm(obj);
-					break;
+					case _OBJ_TYPE_FORM:			// Form class, the main outer window the OS sees
+						lnPixelsRendered += iSubobj_renderForm(obj);
+						break;
 
-				case _OBJ_TYPE_SUBFORM:		// A new class which has its own drawing content and can be moved about using UI features
-					lnPixelsRendered += iSubobj_renderSubform(obj);
-					break;
+					case _OBJ_TYPE_SUBFORM:		// A new class which has its own drawing content and can be moved about using UI features
+						lnPixelsRendered += iSubobj_renderSubform(obj);
+						break;
 
-				case _OBJ_TYPE_LABEL:		// A label
-					lnPixelsRendered += iSubobj_renderLabel(obj);
-					break;
+					case _OBJ_TYPE_LABEL:		// A label
+						lnPixelsRendered += iSubobj_renderLabel(obj);
+						break;
 
-				case _OBJ_TYPE_TEXTBOX:		// An input textbox
-					lnPixelsRendered += iSubobj_renderTextbox(obj);
-					break;
+					case _OBJ_TYPE_TEXTBOX:		// An input textbox
+						lnPixelsRendered += iSubobj_renderTextbox(obj);
+						break;
 
-				case _OBJ_TYPE_BUTTON:		// A push button
-					lnPixelsRendered += iSubobj_renderButton(obj);
-					break;
+					case _OBJ_TYPE_BUTTON:		// A push button
+						lnPixelsRendered += iSubobj_renderButton(obj);
+						break;
 
-				case _OBJ_TYPE_EDITBOX:		// An input multi-line editbox
-					lnPixelsRendered += iSubobj_renderEditbox(obj);
-					break;
+					case _OBJ_TYPE_EDITBOX:		// An input multi-line editbox
+						lnPixelsRendered += iSubobj_renderEditbox(obj);
+						break;
 
-				case _OBJ_TYPE_IMAGE:		// A graphical image
-					lnPixelsRendered += iSubobj_renderImage(obj);
-					break;
+					case _OBJ_TYPE_IMAGE:		// A graphical image
+						lnPixelsRendered += iSubobj_renderImage(obj);
+						break;
 
-				case _OBJ_TYPE_CHECKBOX:		// A checkbox
-					lnPixelsRendered += iSubobj_renderCheckbox(obj);
-					break;
+					case _OBJ_TYPE_CHECKBOX:		// A checkbox
+						lnPixelsRendered += iSubobj_renderCheckbox(obj);
+						break;
 
-				case _OBJ_TYPE_OPTION:		// A combination selection
-					lnPixelsRendered += iSubobj_renderOption(obj);
-					break;
+					case _OBJ_TYPE_OPTION:		// A combination selection
+						lnPixelsRendered += iSubobj_renderOption(obj);
+						break;
 
-				case _OBJ_TYPE_RADIO:		// A radio dial, which can also present as a slider or spinner
-					lnPixelsRendered += iSubobj_renderRadio(obj);
-					break;
+					case _OBJ_TYPE_RADIO:		// A radio dial, which can also present as a slider or spinner
+						lnPixelsRendered += iSubobj_renderRadio(obj);
+						break;
 
-				default:
-// TODO:  We should never get here... we should fire off an internal consistency error
-					break;
-			}
+					default:
+// TODO:  We should never get here... we should fire off an internal consistency error ... or a signal flare.  Something to draw attention.
+						break;
+				}
 		}
 
 		// Indicate how many pixels were rendered
 		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Called to descend through the children to see if anything needs to be rendered.
+//
+//////
+	bool iObj_render_descentCheck(SObject* obj, bool tlCheckChildren, bool tlCheckSiblings)
+	{
+		SObject* objSib;
+
+
+		//////////
+		// If it's dirty, we need to publish
+		//////
+			if (obj->isDirtyRender)
+				return(true);
+
+
+		//////////
+		// Check the children
+		//////
+			if (tlCheckChildren && obj->firstChild && iObj_render_descentCheck(obj->firstChild, true, true))
+				return(true);
+
+
+		//////////
+		// Check the siblings
+		//////
+			if (tlCheckSiblings && obj->ll.next)
+			{
+				// Skip to the sibling
+				objSib = (SObject*)obj->ll.next;
+				while (objSib)
+				{
+					// See if this one needs anything
+					if (iObj_render_descentCheck(objSib, true, false))
+						return(true);
+
+					// Move to next sibling
+					objSib = (SObject*)objSib->ll.next;
+				}
+			}
+
+
+		//////////
+		// If we get here, this object and its children do not need to be rendered
+		//////
+			return(false);
 	}
 
 
@@ -936,6 +1001,7 @@
 	{
 		s32			lnWidth, lnHeight;
 		u32			lnPixelsRendered;
+		bool		llPublishChildren;
 		RECT		lrc, lrcChild, lrc2;
 		SObject*	objSib;
 
@@ -945,8 +1011,11 @@
 		lnPixelsRendered = 0;
 		if (obj && obj->bmp)
 		{
+			//////////
 			// Set the force publish flag if need be
-			obj->isDirtyPublish |= (tlForcePublish || tnLevel == 1);
+			//////
+				obj->isDirtyPublish |= (tlForcePublish || tnLevel == 1);
+
 
 			//////////
 			// Determine the position within the parent's rectangle where this object will go
@@ -961,12 +1030,21 @@
 				SetRect(&lrcChild, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
 
 				// This is a top-level entry, so adjust everything to rcClient, or to 0
+				llPublishChildren = true;
 				switch (obj->objType)
 				{
 					case _OBJ_TYPE_FORM:
+						// Bypass the frame area
+						CopyRect(&lrcChild, &obj->rcClient);
+						break;
+
 					case _OBJ_TYPE_SUBFORM:
 						// Bypass the frame area
 						CopyRect(&lrcChild, &obj->rcClient);
+
+						// Validate if anything has changed on this subform's children, if not then we don't need to publish anything below
+						if (!obj->isDirtyPublish && obj->firstChild)
+							llPublishChildren = iObj_publish_descentCheck(obj->firstChild, true, true);
 						break;
 				}
 
@@ -981,7 +1059,10 @@
 			//////////
 			// Publish any children
 			//////
-				if (obj->p.isVisible && tlPublishChildren && obj->firstChild)
+if (!llPublishChildren)
+	debug_break;
+
+				if (llPublishChildren && obj->p.isVisible && tlPublishChildren && obj->firstChild)
 					lnPixelsRendered += iObj_publish(obj->firstChild, &lrcChild, obj->bmp, true, true, tlForcePublish, tnLevel + 1);
 
 
@@ -1112,6 +1193,58 @@
 		// Indicate how many pixels were painted
 		//////
 			return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Called to descend through the children to see if anything needs to be published.
+//
+//////
+	bool iObj_publish_descentCheck(SObject * obj, bool tlCheckChildren, bool tlCheckSiblings)
+	{
+		SObject* objSib;
+
+
+		//////////
+		// If it's dirty, we need to publish
+		//////
+			if (obj->isDirtyPublish)
+				return(true);
+
+
+		//////////
+		// Check the children
+		//////
+			if (tlCheckChildren && obj->firstChild && iObj_publish_descentCheck(obj->firstChild, true, true))
+				return(true);
+
+
+		//////////
+		// Check the siblings
+		//////
+			if (tlCheckSiblings && obj->ll.next)
+			{
+				// Skip to the sibling
+				objSib = (SObject*)obj->ll.next;
+				while (objSib)
+				{
+					// See if this one needs anything
+					if (iObj_publish_descentCheck(objSib, true, false))
+						return(true);
+
+					// Move to next sibling
+					objSib = (SObject*)objSib->ll.next;
+				}
+			}
+
+
+		//////////
+		// If we get here, this object and its children do not need to be published
+		//////
+			return(false);
 	}
 
 

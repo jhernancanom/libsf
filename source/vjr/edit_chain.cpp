@@ -276,6 +276,9 @@ debug_break;
 				// Reduce the length of the populated portion of the line by one
 				--line->sourceCodePopulated;
 
+				// Put a space there
+				line->sourceCode->data[line->sourceCodePopulated] = 32;
+
 				// Indicate success
 				return(true);
 			}

@@ -280,3 +280,4 @@
 	bool					iSEM_deleteWordLeft					(SEM* em, SObject* obj);
 	bool					iSEM_deleteWordRight				(SEM* em, SObject* obj);
 	bool					iSEM_navigateTo_pixelXY				(SEM* em, SObject* obj, s32 x, s32 y);
+	bool					iiSEM_isBreakingCharacter			(SEM* em, SEdit* line, s32 tnDeltaTest);

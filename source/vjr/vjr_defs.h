@@ -84,8 +84,10 @@
 	void					iObj_setDirtyRender						(SObject* obj, bool tlMarkParents);
 	void					iObj_setDirtyPublish					(SObject* obj, bool tlMarkParents);
 	u32						iObj_render								(SObject* obj, bool tlForceRender);
+	bool					iObj_render_descentCheck				(SObject* obj, bool tlCheckChildren, bool tlCheckSiblings);
 	u32						iObj_renderChildrenAndSiblings			(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings, bool tlForceRender);
 	u32						iObj_publish							(SObject* obj, RECT* rc, SBitmap* bmpDst, bool tlPublishChildren, bool tlPublishSiblings, bool tlForcePublish, s32 tnLevel);
+	bool					iObj_publish_descentCheck				(SObject * obj, bool tlCheckChildren, bool tlCheckSiblings);
 	void					iObj_duplicateChain						(SObject** root, SObject* chain);
 	void					iObj_appendObjToParent					(SObject*  parent, SObject* obj);
 	void					iObj_duplicateChildren					(SObject*  objDst, SObject* objSrc);

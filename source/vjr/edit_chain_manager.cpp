@@ -2427,8 +2427,6 @@ debug_break;
 	bool iSEM_keystroke(SEM* em, SObject* obj, u8 asciiChar)
 	{
 		bool	llChanged;
-//		SFont*	font;
-//		RECT	lrc;
 
 
 		logfunc(__FUNCTION__);
@@ -2436,7 +2434,6 @@ debug_break;
 		// Indicate initially that no changes were made that require a re-render
 		//////
 			llChanged = false;
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
 
 
 		// Make sure our environment is sane
@@ -3137,18 +3134,10 @@ debug_break;
 //////
 	bool iSEM_navigateWordLeft(SEM* em, SObject* obj)
 	{
-//		SFont*		font;
-		SEdit*		line;
-//		RECT		lrc;
+		SEdit* line;
 
 
 		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
-
-
 		//////////
 		// Make sure we're valid
 		//////
@@ -3196,7 +3185,7 @@ debug_break;
 						// If we're on a whitespace character, scan left until we reach a non-whitespace character
 						//////
 							// When we get to the first non-whitespace, we break
-							for ( ; em->column > 0 && (line->sourceCode->data[em->column] == 32 || line->sourceCode->data[em->column] == 9); )
+							for ( ; em->column > 0 && iiSEM_isBreakingCharacter(em, line, 0); )
 								--em->column;
 
 
@@ -3209,7 +3198,7 @@ debug_break;
 								for ( ; em->column > 0; em->column--)
 								{
 									// Did we find a whitespace to our left?
-									if (line->sourceCode->data[em->column - 1] == 32 || line->sourceCode->data[em->column - 1] == 9 || line->sourceCode->data[em->column - 1] == ',')
+									if (iiSEM_isBreakingCharacter(em, line, -1))
 										break;	// Yes
 								}
 							}
@@ -3241,18 +3230,10 @@ debug_break;
 //////
 	bool iSEM_navigateWordRight(SEM* em, SObject* obj)
 	{
-//		SFont*		font;
-		SEdit*		line;
-//		RECT		lrc;
+		SEdit* line;
 
 
 		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
-
-
 		//////////
 		// Make sure we're valid
 		//////
@@ -3295,25 +3276,26 @@ debug_break;
 						//////////
 						// If we're on a whitespace character, scan left until we reach a non-whitespace character
 						//////
-							// When we get to the first non-whitespace, we break
-							for ( ; em->column < line->sourceCodePopulated && (line->sourceCode->data[em->column] == 32 || line->sourceCode->data[em->column] == 9); )
-								++em->column;
+							if (!iiSEM_isBreakingCharacter(em, line, 0))
+							{
+								// Continue until we find a whitespace
+								for ( ; em->column < line->sourceCodePopulated && !iiSEM_isBreakingCharacter(em, line, 0); )
+									++em->column;
+							}
+
+							if (iiSEM_isBreakingCharacter(em, line, 0))
+							{
+								// When we get to the first non-whitespace, we break
+								for ( ; em->column < line->sourceCodePopulated && iiSEM_isBreakingCharacter(em, line, 0); )
+									++em->column;
+							}
 
 
 						//////////
 						// If we're not at the end of the line, then we look for the first whitespace character
 						//////
-							if (em->column < line->sourceCodePopulated)
+							if (em->column >= line->sourceCodePopulated)
 							{
-								// Search right for the first whitespace or comma
-								for ( ; em->column < line->sourceCodePopulated; em->column++)
-								{
-									// Did we find a whitespace to our left?
-									if (line->sourceCode->data[em->column + 1] == 32 || line->sourceCode->data[em->column + 1] == 9 || line->sourceCode->data[em->column + 1] == ',')
-										break;	// Yes
-								}
-
-							} else {
 								// We have to go to the next line (if we can)
 								if (em->ecLast != line)
 								{
@@ -3325,7 +3307,7 @@ debug_break;
 										iSEM_navigate(em, obj, 0, -em->column);
 
 									// Continue looking word left on this line
-									return(iSEM_navigateWordLeft(em, obj));
+									return(iSEM_navigateWordRight(em, obj));
 								}
 							}
 					}
@@ -3692,18 +3674,6 @@ debug_break;
 //////
 	bool iSEM_selectWordLeft(SEM* em, SObject* obj)
 	{
-//		RECT	lrc;
-//		SFont*	font;
-
-
-		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
-
-
-		// If we get here, indicate failure
 		return(false);
 	}
 
@@ -3720,18 +3690,6 @@ debug_break;
 //////
 	bool iSEM_selectWordRight(SEM* em, SObject* obj)
 	{
-//		RECT	lrc;
-//		SFont*	font;
-
-
-		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
-
-
-		// If we get here, indicate failure
 		return(false);
 	}
 
@@ -3747,17 +3705,9 @@ debug_break;
 	{
 		SEdit*	line;
 		SEdit*	lineLast;
-//		SFont*	font;
-//		RECT	lrc;
 
 
 		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
-
-
 		//////////
 		// Make sure we're valid
 		//////
@@ -3853,17 +3803,7 @@ debug_break;
 //////
 	bool iSEM_deleteRight(SEM* em, SObject* obj)
 	{
-//		SFont*	font;
-//		RECT	lrc;
-
-
 		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
-
-
 		//////////
 		// Make sure we're valid
 		//////
@@ -3909,15 +3849,50 @@ debug_break;
 //////
 	bool iSEM_deleteWordLeft(SEM* em, SObject* obj)
 	{
-//		RECT	lrc;
-//		SFont*	font;
+		s32		lnI, lnColumnStart, lnColumnEnd;
+		SEdit*	line;
 
 
 		logfunc(__FUNCTION__);
 		//////////
-		// Grab the rectangle we're working in
+		// Make sure we're valid
 		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
+			if (em && !em->isReadOnly && em->ecCursorLine)
+			{
+				// Store where we are now
+				lnColumnStart	= em->column;
+				line			= em->ecCursorLine;
+
+				// See if we can navigate right
+				if (iSEM_navigateWordLeft(em, obj))
+				{
+					// Are we still on the same line?
+					if (em->ecCursorLine == line && em->column < lnColumnStart)
+					{
+						// Delete the indicated number of characters
+						lnColumnEnd = lnColumnStart - em->column;
+						for (lnI = 0; lnI < lnColumnEnd; lnI++)
+							iEditChain_characterDelete(em);
+
+					} else if (em->ecCursorLine == line && em->column == 0 && line->sourceCodePopulated > 0) {
+						// Delete to the start of line
+						lnColumnEnd = line->sourceCodePopulated;
+						for (lnI = 0; lnI < lnColumnEnd; lnI++)
+							iEditChain_characterDelete(em);
+
+					} else if (em->ecCursorLine != line && em->column < em->ecCursorLine->sourceCodePopulated) {
+						// Navigate to the end so the next delete will work
+						iSEM_navigate(em, obj, 0, em->ecCursorLine->sourceCodePopulated - em->column);
+					}
+
+					// Reprocess the source code on the line if need be
+					if (em->isSourceCode)
+						iEngine_parseSourceCodeLine(em->ecCursorLine);
+
+					// Indicate success
+					return(true);
+				}
+			}
 
 
 		// If we get here, indicate failure
@@ -3934,15 +3909,73 @@ debug_break;
 //////
 	bool iSEM_deleteWordRight(SEM* em, SObject* obj)
 	{
-//		RECT	lrc;
-//		SFont*	font;
+		s32		lnI, lnColumnStart, lnColumnEnd;
+		SEdit*	line;
 
 
 		logfunc(__FUNCTION__);
 		//////////
-		// Grab the rectangle we're working in
+		// Make sure we're valid
 		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
+			if (em && !em->isReadOnly && em->ecCursorLine)
+			{
+				// Store where we are now
+				lnColumnStart	= em->column;
+				line			= em->ecCursorLine;
+
+				// See if we can navigate right
+				if (iSEM_navigateWordRight(em, obj))
+				{
+					// Are we still on the same line?
+					if (em->ecCursorLine == line || line->sourceCodePopulated > lnColumnStart)
+					{
+						// We weren't done with the line yet
+						if (em->ecCursorLine != line && line->sourceCodePopulated > lnColumnStart)
+						{
+							em->ecCursorLine	= line;
+							em->column			= lnColumnStart;
+						}
+
+						// See how we can delete here
+						if (em->column > lnColumnStart)
+						{
+							// Delete em->column - columnStart from where we were
+							lnColumnEnd			= em->column;
+							em->ecCursorLine	= line;
+							em->column			= lnColumnStart;
+
+							// Delete the indicated number of characters
+							lnColumnEnd = lnColumnEnd - lnColumnStart;
+							for (lnI = 0; lnI < lnColumnEnd; lnI++)
+								iEditChain_characterDelete(em);
+
+							// Reprocess the source code on the line if need be
+							if (em->isSourceCode)
+								iEngine_parseSourceCodeLine(em->ecCursorLine);
+
+							// Indicate success
+							return(true);
+
+						} else if (em->column != 0 && em->column < line->sourceCodePopulated) {
+							// Delete em->column - columnStart from where we were
+							em->ecCursorLine	= line;
+							em->column			= lnColumnStart;
+
+							// Delete to the end of line
+							lnColumnEnd = line->sourceCodePopulated - em->column;
+							for (lnI = 0; lnI < lnColumnEnd; lnI++)
+								iEditChain_characterDelete(em);
+
+							// Reprocess the source code on the line if need be
+							if (em->isSourceCode)
+								iEngine_parseSourceCodeLine(em->ecCursorLine);
+
+							// Indicate success
+							return(true);
+						}
+					}
+				}
+			}
 
 
 		// If we get here, indicate failure
@@ -4021,4 +4054,37 @@ debug_break;
 
 		// Indicate our status
 		return(llResult);
+	}
+
+
+
+
+//////////
+//
+// Indicates if the character under the cursor is a breaking character
+//
+//////
+	bool iiSEM_isBreakingCharacter(SEM* em, SEdit* line, s32 tnDeltaTest)
+	{
+		if (line->sourceCode && line->sourceCode->data)
+		{
+			// If we're at the beginning of the line, or beyond the end, we're at a breaking character
+			if (em->column + tnDeltaTest <= 0 || em->column + tnDeltaTest >= line->sourceCodePopulated)
+				return(true);
+
+			// If this is a breaking character, return true
+			switch (line->sourceCode->data[em->column + tnDeltaTest])
+			{
+				case 32:	// Space
+				case 9:		// Tab
+				case '.':
+				case '(':
+				case ')':
+				case ',':
+					return(true);
+			}
+		}
+
+		// Indicate failure
+		return(false);
 	}
