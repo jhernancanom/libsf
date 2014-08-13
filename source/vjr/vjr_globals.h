@@ -301,10 +301,10 @@
 
 		// Forms four-corner window color schemes (eventually these will be loaded from themes.dbf)
 // Orange theme:
-		const SBgra		NwColor								= { rgba(255, 238, 204, 255) };
-		const SBgra		NeColor								= { rgba(255, 208, 115, 255) };
-		const SBgra		SwColor								= { rgba(255, 245, 214, 255) };
-		const SBgra		SeColor								= { rgba(235, 198, 105, 255) };
+		const SBgra		NwFocusColor						= { rgba(255, 238, 204, 255) };
+		const SBgra		NeFocusColor						= { rgba(255, 208, 115, 255) };
+		const SBgra		SwFocusColor						= { rgba(255, 245, 214, 255) };
+		const SBgra		SeFocusColor						= { rgba(235, 198, 105, 255) };
 // Purple theme
 // 		const SBgra		NwColor								= { rgba(233, 219, 255, 255) };
 // 		const SBgra		NeColor								= { rgba(205, 172, 255, 255) };

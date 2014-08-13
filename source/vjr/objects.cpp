@@ -237,7 +237,7 @@
 			obj->p.hasFocus = true;
 
 			// Mark the object dirty
-			obj->isDirtyRender = true;
+			iObj_setDirtyRender(obj, true);
 
 			// Signal the change
 			if (obj->ev.general._onGotFocus)
@@ -277,7 +277,7 @@
 			obj->p.hasFocus = false;
 
 			// Mark the object dirty
-			obj->isDirtyRender = true;
+			iObj_setDirtyRender(obj, true);
 
 			// Remove the focus highlight window around the control (if any)
 			focus = iFocusHighlight_findByObj(obj);
@@ -306,7 +306,7 @@
 			while (objSib)
 			{
 				// Clear this sibling
-				iObj_clearFocus(win, objSib, tlClearChildren, false);
+				iObj_clearFocus(win, objSib, true, false);
 
 				// Move to the next sibling
 				objSib = (SObject*)objSib->ll.next;
@@ -730,6 +730,58 @@
 
 //////////
 //
+// Called to check to see if any object at or below the indicated object has focus
+//
+//////
+	bool iObj_focus_descentCheck(SObject* obj, bool tlCheckChildren, bool tlCheckSiblings)
+	{
+		SObject* objSib;
+
+
+		//////////
+		// If it has focus we're done (because we're only looking to see IF any have focus)
+		//////
+			if (obj->p.hasFocus)
+				return(true);
+
+
+		//////////
+		// Check the children
+		//////
+			if (tlCheckChildren && obj->firstChild && iObj_focus_descentCheck(obj->firstChild, true, true))
+				return(true);
+
+
+		//////////
+		// Check the siblings
+		//////
+			if (tlCheckSiblings && obj->ll.next)
+			{
+				// Skip to the sibling
+				objSib = (SObject*)obj->ll.next;
+				while (objSib)
+				{
+					// See if this one has focus
+					if (iObj_focus_descentCheck(objSib, true, false))
+						return(true);
+
+					// Move to next sibling
+					objSib = (SObject*)objSib->ll.next;
+				}
+			}
+
+
+		//////////
+		// If we get here, this object and its children do not have focus
+		//////
+			return(false);
+	}
+
+
+
+
+//////////
+//
 // Called to mark the object dirty for rendering.
 //
 //////
@@ -897,7 +949,7 @@
 
 
 		//////////
-		// If it's dirty, we need to publish
+		// If it's dirty, we need to render
 		//////
 			if (obj->isDirtyRender)
 				return(true);
@@ -919,7 +971,7 @@
 				objSib = (SObject*)obj->ll.next;
 				while (objSib)
 				{
-					// See if this one needs anything
+					// See if this one needs rendering
 					if (iObj_render_descentCheck(objSib, true, false))
 						return(true);
 
@@ -1231,7 +1283,7 @@ if (!llPublishChildren)
 				objSib = (SObject*)obj->ll.next;
 				while (objSib)
 				{
-					// See if this one needs anything
+					// See if this one needs to be published
 					if (iObj_publish_descentCheck(objSib, true, false))
 						return(true);
 
@@ -3147,10 +3199,10 @@ if (!llPublishChildren)
 			//////////
 			// Set the default colors
 			//////
-				form->p.nwRgba.color		= NwColor.color;
-				form->p.neRgba.color		= NeColor.color;
-				form->p.swRgba.color		= SwColor.color;
-				form->p.seRgba.color		= SeColor.color;
+				form->p.nwRgba.color		= NwFocusColor.color;
+				form->p.neRgba.color		= NeFocusColor.color;
+				form->p.swRgba.color		= SwFocusColor.color;
+				form->p.seRgba.color		= SeFocusColor.color;
 				form->p.backColor.color		= whiteColor.color;
 				form->p.foreColor.color		= blackColor.color;
 				form->p.captionColor.color	= darkBlueColor.color;
@@ -4371,6 +4423,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 	u32 iSubobj_renderSubform(SObject* obj)
 	{
 		u32		lnPixelsRendered;
+		bool	llIsFocusSubform;
 		RECT	lrc, lrc2;
 
 
@@ -4391,23 +4444,27 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 					//////////
 					// Frame it
 					//////
+						// Determine if a control on this subform has focus
 						if (!obj->bc || !iBmp_isValidCache(&obj->bc, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight))
 						{
 							// The bitmap cache is no longer valid
 							iBmp_deleteCache(&obj->bc);
 
 							// Draw the window border
+							llIsFocusSubform = iObj_focus_descentCheck(obj, true, false);
 							if (obj->p.isOpaque)
 							{
 								// Render the subform and client area
-								iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, &obj->rcClient,	true);
+								if (llIsFocusSubform)		iBmp_fillRect(obj->bmp, &lrc, NwFocusColor,  NeFocusColor,  SwFocusColor,  SeFocusColor,  true, &obj->rcClient,	true);
+								else						iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, &obj->rcClient,	true);
 
 								// Make the client area white
 								iBmp_fillRect(obj->bmp, &obj->rcClient, obj->p.backColor, obj->p.backColor, obj->p.backColor, obj->p.backColor, false, NULL, false);
 
 							} else {
 								// Render the subform
-								iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, NULL, false);
+								if (llIsFocusSubform)		iBmp_fillRect(obj->bmp, &lrc, NwFocusColor,  NeFocusColor,  SwFocusColor,  SeFocusColor,  true, NULL, false);
+								else						iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, NULL, false);
 							}
 
 							// Apply a dappling

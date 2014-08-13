@@ -1306,14 +1306,14 @@ debug_break;
 						break;
 
 					case VK_LEFT:	// Word left
-						iSEM_navigateWordLeft(em, obj);
+						iSEM_navigateWordLeft(em, obj, true);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_RIGHT:	// Word right
-						iSEM_navigateWordRight(em, obj);
+						iSEM_navigateWordRight(em, obj, true);
 
 						// Indicate our key was processed
 						llProcessed = true;
@@ -2512,15 +2512,7 @@ debug_break;
 //////
 	bool iSEM_scroll(SEM* em, SObject* obj, s32 deltaY, s32 deltaX)
 	{
-		s32			lnI;
-//		SFont*		font;
-//		RECT		lrc;
-//
-//
-//		//////////
-//		// Grab the rectangle we're working in
-//		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
+		s32 lnI;
 
 
 		logfunc(__FUNCTION__);
@@ -2834,18 +2826,17 @@ debug_break;
 //////
 	bool iSEM_clearLine(SEM* em, SObject* obj)
 	{
-//		RECT	lrc;
-//		SFont*	font;
-
-
 		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
+		if (em && !em->isReadOnly && em->ecCursorLine && obj)
+		{
+			// Clear off everything on the line
+			em->ecCursorLine->sourceCodePopulated = 0;
 
+			// Indicate success
+			return(true);
+		}
 
-		// If we get here, indicate failure
+		// Indicate failure
 		return(false);
 	}
 
@@ -2859,18 +2850,18 @@ debug_break;
 //////
 	bool iSEM_clearToEndOfLine(SEM* em, SObject* obj)
 	{
-//		RECT	lrc;
-//		SFont*	font;
-
-
 		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
+		if (em && !em->isReadOnly && em->ecCursorLine && obj)
+		{
+			// Clear off everything on the line
+			if (em->ecCursorLine->sourceCodePopulated > em->column)
+				em->ecCursorLine->sourceCodePopulated = em->column;
 
+			// Indicate success
+			return(true);
+		}
 
-		// If we get here, indicate failure
+		// Indicate failure
 		return(false);
 	}
 
@@ -2884,18 +2875,21 @@ debug_break;
 //////
 	bool iSEM_clearToBeginningOfLine(SEM* em, SObject* obj)
 	{
-//		RECT	lrc;
-//		SFont*	font;
+		s32 lnI;
 
 
 		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
+		if (em && !em->isReadOnly && em->ecCursorLine && obj)
+		{
+			for (lnI = 0; lnI < em->column && lnI < em->ecCursorLine->sourceCodePopulated; lnI++)
+			{
+				// If it's not already a whitespace, replace it
+				if (!(em->ecCursorLine->sourceCode->data[lnI] == 32 || em->ecCursorLine->sourceCode->data[lnI] == 9))
+					em->ecCursorLine->sourceCode->data[lnI] = 32;
+			}
+		}
 
-
-		// If we get here, indicate failure
+		// Indicate failure
 		return(false);
 	}
 
@@ -2936,18 +2930,7 @@ debug_break;
 //////
 	bool iSEM_tabIn(SEM* em, SObject* obj)
 	{
-//		RECT	lrc;
-//		SFont*	font;
-
-
 		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
-
-
-		// If we get here, indicate failure
 		return(false);
 	}
 
@@ -2961,18 +2944,7 @@ debug_break;
 //////
 	bool iSEM_tabOut(SEM* em, SObject* obj)
 	{
-//		RECT	lrc;
-//		SFont*	font;
-
-
 		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
-
-
-		// If we get here, indicate failure
 		return(false);
 	}
 
@@ -2986,17 +2958,7 @@ debug_break;
 //////
 	bool iSEM_returnKey(SEM* em, SObject* obj)
 	{
-//		RECT	lrc;
-//		SFont*	font;
-
-
 		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
-
-
 		// Make sure the environment is sane
 		if (em && !em->isReadOnly && em->ecCursorLine && obj)
 		{
@@ -3034,18 +2996,7 @@ debug_break;
 //////
 	bool iSEM_selectAll(SEM* em, SObject* obj)
 	{
-//		RECT	lrc;
-//		SFont*	font;
-
-
 		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
-
-
-		// If we get here, indicate failure
 		return(false);
 	}
 
@@ -3059,18 +3010,7 @@ debug_break;
 //////
 	bool iSEM_cut(SEM* em, SObject* obj)
 	{
-//		RECT	lrc;
-//		SFont*	font;
-
-
 		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
-
-
-		// If we get here, indicate failure
 		return(false);
 	}
 
@@ -3084,18 +3024,7 @@ debug_break;
 //////
 	bool iSEM_copy(SEM* em, SObject* obj)
 	{
-//		RECT	lrc;
-//		SFont*	font;
-
-
 		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
-
-
-		// If we get here, indicate failure
 		return(false);
 	}
 
@@ -3109,18 +3038,7 @@ debug_break;
 //////
 	bool iSEM_paste(SEM* em, SObject* obj)
 	{
-//		RECT	lrc;
-//		SFont*	font;
-
-
 		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
-
-
-		// If we get here, indicate failure
 		return(false);
 	}
 
@@ -3132,7 +3050,7 @@ debug_break;
 // Called to navigate one word left
 //
 //////
-	bool iSEM_navigateWordLeft(SEM* em, SObject* obj)
+	bool iSEM_navigateWordLeft(SEM* em, SObject* obj, bool tlVerifyCursorIsVisible)
 	{
 		SEdit* line;
 
@@ -3164,7 +3082,7 @@ debug_break;
 							iSEM_navigate(em, obj, 0, em->ecCursorLine->sourceCodePopulated);
 
 							// Continue looking word left on this line
-							return(iSEM_navigateWordLeft(em, obj));
+							return(iSEM_navigateWordLeft(em, obj, true));
 						}
 
 					} else if (line->sourceCodePopulated < em->column) {
@@ -3172,7 +3090,7 @@ debug_break;
 						iSEM_navigate(em, obj, 0, em->ecCursorLine->sourceCodePopulated - em->column);
 
 						// Then continue looking word left on this line
-						return(iSEM_navigateWordLeft(em, obj));
+						return(iSEM_navigateWordLeft(em, obj, true));
 
 					} else {
 						//////////
@@ -3208,7 +3126,8 @@ debug_break;
 				//////////
 				// Verify we're visible
 				//////
-					iSEM_verifyCursorIsVisible(em, obj);
+					if (tlVerifyCursorIsVisible)
+						iSEM_verifyCursorIsVisible(em, obj);
 
 
 				// Indicate success
@@ -3228,7 +3147,7 @@ debug_break;
 // Called to navigate one word right
 //
 //////
-	bool iSEM_navigateWordRight(SEM* em, SObject* obj)
+	bool iSEM_navigateWordRight(SEM* em, SObject* obj, bool tlVerifyCursorIsVisible)
 	{
 		SEdit* line;
 
@@ -3261,7 +3180,7 @@ debug_break;
 								iSEM_navigate(em, obj, 0, -em->column);
 
 							// Continue looking word left on this line
-							return(iSEM_navigateWordRight(em, obj));
+							return(iSEM_navigateWordRight(em, obj, true));
 						}
 
 					} else {
@@ -3307,7 +3226,7 @@ debug_break;
 										iSEM_navigate(em, obj, 0, -em->column);
 
 									// Continue looking word left on this line
-									return(iSEM_navigateWordRight(em, obj));
+									return(iSEM_navigateWordRight(em, obj, true));
 								}
 							}
 					}
@@ -3316,7 +3235,8 @@ debug_break;
 				//////////
 				// Verify we're visible
 				//////
-					iSEM_verifyCursorIsVisible(em, obj);
+					if (tlVerifyCursorIsVisible)
+						iSEM_verifyCursorIsVisible(em, obj);
 
 
 				// Indicate success
@@ -3467,18 +3387,7 @@ debug_break;
 //////
 	bool iSEM_selectLineUp(SEM* em, SObject* obj)
 	{
-//		RECT	lrc;
-//		SFont*	font;
-
-
 		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
-
-
-		// If we get here, indicate failure
 		return(false);
 	}
 
@@ -3494,18 +3403,7 @@ debug_break;
 //////
 	bool iSEM_selectLineDown(SEM* em, SObject* obj)
 	{
-//		RECT	lrc;
-//		SFont*	font;
-
-
 		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
-
-
-		// If we get here, indicate failure
 		return(false);
 	}
 
@@ -3521,18 +3419,7 @@ debug_break;
 //////
 	bool iSEM_selectLeft(SEM* em, SObject* obj)
 	{
-//		RECT	lrc;
-//		SFont*	font;
-
-
 		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
-
-
-		// If we get here, indicate failure
 		return(false);
 	}
 
@@ -3546,18 +3433,7 @@ debug_break;
 //////
 	bool iSEM_selectRight(SEM* em, SObject* obj)
 	{
-//		RECT	lrc;
-//		SFont*	font;
-
-
 		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
-
-
-		// If we get here, indicate failure
 		return(false);
 	}
 
@@ -3571,18 +3447,7 @@ debug_break;
 //////
 	bool iSEM_selectToEndOfLine(SEM* em, SObject* obj)
 	{
-//		RECT	lrc;
-//		SFont*	font;
-
-
 		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
-
-
-		// If we get here, indicate failure
 		return(false);
 	}
 
@@ -3596,18 +3461,7 @@ debug_break;
 //////
 	bool iSEM_selectToBeginOfLine(SEM* em, SObject* obj)
 	{
-//		RECT	lrc;
-//		SFont*	font;
-
-
 		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
-
-
-		// If we get here, indicate failure
 		return(false);
 	}
 
@@ -3621,18 +3475,7 @@ debug_break;
 //////
 	bool iSEM_selectColumnToggle(SEM* em, SObject* obj)
 	{
-//		RECT	lrc;
-//		SFont*	font;
-
-
 		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
-
-
-		// If we get here, indicate failure
 		return(false);
 	}
 
@@ -3646,18 +3489,7 @@ debug_break;
 //////
 	bool iSEM_selectLineToggle(SEM* em, SObject* obj)
 	{
-//		RECT	lrc;
-//		SFont*	font;
-
-
 		logfunc(__FUNCTION__);
-		//////////
-		// Grab the rectangle we're working in
-		//////
-//			font = iEditManager_getRectAndFont(em, obj, &lrc);
-
-
-		// If we get here, indicate failure
 		return(false);
 	}
 
@@ -3674,6 +3506,7 @@ debug_break;
 //////
 	bool iSEM_selectWordLeft(SEM* em, SObject* obj)
 	{
+		logfunc(__FUNCTION__);
 		return(false);
 	}
 
@@ -3690,6 +3523,7 @@ debug_break;
 //////
 	bool iSEM_selectWordRight(SEM* em, SObject* obj)
 	{
+		logfunc(__FUNCTION__);
 		return(false);
 	}
 
@@ -3864,7 +3698,7 @@ debug_break;
 				line			= em->ecCursorLine;
 
 				// See if we can navigate right
-				if (iSEM_navigateWordLeft(em, obj))
+				if (iSEM_navigateWordLeft(em, obj, false))
 				{
 					// Are we still on the same line?
 					if (em->ecCursorLine == line && em->column < lnColumnStart)
@@ -3924,7 +3758,7 @@ debug_break;
 				line			= em->ecCursorLine;
 
 				// See if we can navigate right
-				if (iSEM_navigateWordRight(em, obj))
+				if (iSEM_navigateWordRight(em, obj, false))
 				{
 					// Are we still on the same line?
 					if (em->ecCursorLine == line || line->sourceCodePopulated > lnColumnStart)

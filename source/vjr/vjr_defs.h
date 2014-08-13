@@ -81,6 +81,7 @@
 	void					iObj_findFocusControls					(SObject* obj, SBuilder* objFocusControls, bool tlProcessSiblings);
 	bool					iObj_setFocusObjectPrev					(SWindow* win, SObject* obj);
 	bool					iObj_setFocusObjectNext					(SWindow* win, SObject* obj);
+	bool					iObj_focus_descentCheck					(SObject* obj, bool tlCheckChildren, bool tlCheckSiblings);
 	void					iObj_setDirtyRender						(SObject* obj, bool tlMarkParents);
 	void					iObj_setDirtyPublish					(SObject* obj, bool tlMarkParents);
 	u32						iObj_render								(SObject* obj, bool tlForceRender);

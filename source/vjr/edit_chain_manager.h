@@ -261,8 +261,8 @@
 	bool					iSEM_cut							(SEM* em, SObject* obj);
 	bool					iSEM_copy							(SEM* em, SObject* obj);
 	bool					iSEM_paste							(SEM* em, SObject* obj);
-	bool					iSEM_navigateWordLeft				(SEM* em, SObject* obj);
-	bool					iSEM_navigateWordRight				(SEM* em, SObject* obj);
+	bool					iSEM_navigateWordLeft				(SEM* em, SObject* obj, bool tlVerifyCursorIsVisible);
+	bool					iSEM_navigateWordRight				(SEM* em, SObject* obj, bool tlVerifyCursorIsVisible);
 	bool					iSEM_navigateTop					(SEM* em, SObject* obj);
 	bool					iSEM_navigateEnd					(SEM* em, SObject* obj);
 	bool					iSEM_selectLineUp					(SEM* em, SObject* obj);

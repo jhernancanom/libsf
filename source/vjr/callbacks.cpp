@@ -163,8 +163,9 @@
 
 	bool iDefaultCallback_onMouseDown(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick)
 	{
-		bool	llMouseDown;
-		f64		lfPercent, lfX, lfY, lfWidth, lfHeight;
+		bool		llMouseDown;
+		f64			lfPercent, lfX, lfY, lfWidth, lfHeight;
+		SObject*	objRoot;
 
 
 		// Set the flag
@@ -172,7 +173,14 @@
 
 		// If focus isn't already set on this control, set focus on this control
 		if (!obj->p.hasFocus)
+		{
+			objRoot = iObj_find_rootmostObject(obj);
+			if (objRoot)
+				iObj_clearFocus(win, objRoot, true, true);
+
 			iObj_setFocus(win, obj, true);
+			iObj_setDirtyRender(obj, true);
+		}
 
 		// For checkboxes, we toggle
 		if (obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX)
