@@ -485,7 +485,7 @@
 		//////////
 		// SourceLight a caption and font
 		//////
-			caption = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgcSourceLightTitle, sizeof(cgcSourceLightTitle) - 1);
+			iDatum_duplicate(&caption->value, cgcSourceLightTitle, sizeof(cgcSourceLightTitle) - 1);
 			iObj_setCaption(sourceLight, caption);
 			sourceLight->pa.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			sourceLight->p.isVisible	= true;
@@ -495,7 +495,7 @@
 		//////////
 		// _screen a caption and font
 		//////
-			caption = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
+			iDatum_duplicate(&caption->value, cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
 			iObj_setCaption(_screen, caption);
 			_screen->pa.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 
@@ -710,7 +710,7 @@
 		iBmp_delete(&bmpVjrSplash,					true, true);
 
 		// Focus window accumulator
-		iBuilder_createAndInitialize(&gFocusHighlights, -1);
+		iBuilder_freeAndRelease(&gFocusHighlights);
 
 		// Default reference datetimes
 		iVjr_releaseAllDefaultDatetimes();
@@ -722,11 +722,12 @@
 		iVjr_release_jdebi();
 
 		// Global variables
-		iVariable_delete(varGlobals, true);
+		iVariable_delete(varGlobals,		true);
+		iVariable_delete(varConstant_space,	true);
 
-		// screenData, systemLog
-		iSEM_delete(&screenData,	true);
-		iSEM_delete(&systemLog,		true);
+		// Delete the splash objects and images
+		iObj_delete(&gobj_splashListing, true, true, true);
+		iBmp_delete(&gSplash.bmp, true, false);
 
 		// Release our builders
 		iWindow_releaseAll(&gWindows, true);
@@ -1777,15 +1778,19 @@
 		SFocusHighlight*	focus;
 
 
-		// Iterate through all focus windows
-		for (lnI = 0; lnI < gFocusHighlights->populatedLength; lnI += sizeof(SFocusHighlight))
+		// Make sure our environment is sane
+		if (gFocusHighlights)
 		{
-			// Grab the focus
-			focus = (SFocusHighlight*)(gFocusHighlights->data + lnI);
+			// Iterate through all focus windows
+			for (lnI = 0; lnI < gFocusHighlights->populatedLength; lnI += sizeof(SFocusHighlight))
+			{
+				// Grab the focus
+				focus = (SFocusHighlight*)(gFocusHighlights->data + lnI);
 
-			// Delete it if it exists
-			if (focus && focus->isValid)
-				iFocusHighlight_delete(focus);
+				// Delete it if it exists
+				if (focus && focus->isValid)
+					iFocusHighlight_delete(focus);
+			}
 		}
 	}
 
@@ -3097,10 +3102,11 @@
 				case WM_RBUTTONDOWN:
 				case WM_MBUTTONDOWN:
 					// Signal a mouseDown, then a click
-					iiMouse_processMouseEvents_common(win, obj, &obj->rc, m, true, true, &llProcessed);
-
-					// Set the last click
-					obj->ev.mouse._lastClick = obj->ev.mouse.thisClick;
+					if (iiMouse_processMouseEvents_common(win, obj, &obj->rc, m, true, true, &llProcessed))
+					{
+						// Set the last click
+						obj->ev.mouse._lastClick = obj->ev.mouse.thisClick;
+					}
 					break;
 
 				case WM_LBUTTONUP:
@@ -3313,7 +3319,8 @@
 		if (obj && obj->p.isEnabled && obj->bmp)
 		{
 			// Get the rectangle we're in at this level
-			llInClientArea = iiMouse_processMouseEvents_getRectDescent(win, obj, rc, lrc, lrcClient);
+			llContinue		= true;
+			llInClientArea	= iiMouse_processMouseEvents_getRectDescent(win, obj, rc, lrc, lrcClient);
 
 
 			//////////
@@ -3326,7 +3333,6 @@
 			//////////
 			// Are we still needing processing?
 			//////
-				llContinue = true;
 				if (!*tlProcessed)
 				{
 					// Indicate if the mouse is still down here
@@ -3455,6 +3461,8 @@
 						{
 							// Process this sibling
 							llContinue = iiMouse_processMouseEvents_common(win, objSib, rc, m, true, false, tlProcessed);
+							if (!llContinue)
+								break;
 
 							// Move to next sibling
 							objSib = (SObject*)objSib->ll.next;

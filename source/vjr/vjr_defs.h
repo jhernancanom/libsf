@@ -143,6 +143,7 @@
 	void					iiSubobj_resetToDefaultRadio			(SObject*	radio,		bool tlResetProperties, bool tlResetMethods);
 
 	// Delete individual sub-objects
+	void					iObj_deleteCommon						(SObject* obj);
 	void					iSubobj_deleteEmpty						(SObject*	empty,		bool tlDeleteSelf);
 	void					iSubobj_deleteForm						(SObject*	form,		bool tlDeleteSelf);
 	void					iSubobj_deleteSubform					(SObject*	subform,	bool tlDeleteSelf);

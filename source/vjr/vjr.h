@@ -73,7 +73,7 @@
 // Un-comment this line to find memory leaks
 // BEGIN
 //////
-	#include "vld.h"	// Visual (memory) Leak Detector
+	//#include "vld.h"	// Visual (memory) Leak Detector
 //////
 // END
 //////////

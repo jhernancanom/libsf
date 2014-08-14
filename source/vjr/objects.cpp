@@ -1621,16 +1621,16 @@ if (!llPublishChildren)
 	{
 		SObject*	objChild;
 		RECT		lrc;
-		s8			buffer[2048];
 
 
 		// Resize if need be (32-bit bitmap for labels, 24-bit for everything else)
 		logfunc(__FUNCTION__);
-		sprintf(buffer, "X:%u Y:%u W:%u H:%u\0", tnLeft, tnTop, tnWidth, tnHeight);
-		logfunc(buffer);
-		logfunc("form before bmp resize");
-		obj->bmp = iBmp_verifySizeOrResize(obj->bmp, tnWidth, tnHeight, 24);
-		logfunc("form after bmp resize");
+		if (obj->bmp && (obj->bmp->bi.biWidth != tnWidth || obj->bmp->bi.biHeight != tnHeight))
+			iBmp_delete(&obj->bmp, true, true);
+
+		// Delete any prior rendered buffers, and any scaled buffers
+		if (obj->bmpPriorRendered)			iBmp_delete(&obj->bmpPriorRendered,		true, true);
+		if (obj->bmpScaled)					iBmp_delete(&obj->bmpScaled,			true, true);
 
 		// Position and size its rectangle
 		SetRect(&obj->rc,			tnLeft, tnTop, tnLeft + tnWidth, tnTop + tnHeight);
@@ -3955,7 +3955,11 @@ if (!llPublishChildren)
 
 
 			image->p.style						= _IMAGE_STYLE_OPAQUE;
-			image->p.image						= iBmp_copy(bmpNoImage);
+
+			if (image->pa.image)
+				iBmp_delete(&image->pa.image, true, true);
+
+			image->pa.image						= iBmp_copy(bmpNoImage);
 
 			*(u32*)&image->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
@@ -4228,6 +4232,9 @@ if (!llPublishChildren)
 			iVariable_delete(obj->pa.mask,				true);
 
 			iSEM_delete(&obj->pa.em,					true);
+
+			iBmp_delete(&obj->pa.image,					true, true);
+			iBmp_delete(&obj->pa.imageOver,				true, true);
 
 			iDatum_delete(&obj->pa.pictureName,			false);
 			iDatum_delete(&obj->pa.pictureOverName,		false);

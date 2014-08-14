@@ -514,14 +514,14 @@ debug_break;
 					// We are the thing
 					// Free undo history
 					//////
-						if ((*root)->undoHistory)
-							iSEM_delete(&(*root)->undoHistory, true);
+						if (em->undoHistory)
+							iSEM_delete(&em->undoHistory, true);
 
 
 					//////////
 					// Free content
 					//////
-						iEditChain_free(&(*root)->ecFirst, true);
+						iEditChain_free(&em->ecFirst, true);
 				}
 
 
@@ -529,7 +529,10 @@ debug_break;
 			// Free self
 			//////
 				if (tlDeleteSelf)
-					*root = NULL;	// Would've been deleted above, so we just update the pointer
+				{
+					free(em);
+					*root = NULL;
+				}
 		}
 	}
 

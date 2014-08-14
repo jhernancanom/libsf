@@ -366,10 +366,6 @@ struct SProperties
 	SBgra		disabledBackColor;										// Disabled background color
 	SBgra		disabledForeColor;										// Disabled foreground color
 
-// Image
-	SBitmap*	image;													// Image displayed when the mouse IS NOT over this control
-	SBitmap*	imageOver;												// Image displayed when the mouse IS over this control
-
 	u32			optionCount;											// How many options are there?
 	bool		multiSelect;											// Allow multiple items to be selected?
 
@@ -398,7 +394,10 @@ struct SPropertiesA
 	SVariable*	picture;												// Picture for the control
 	SVariable*	mask;													// Input mask for the control
 
-	SEM*		em;													// The content being edited
+	SEM*		em;														// The content being edited
+
+	SBitmap*	image;													// Image displayed when the mouse IS NOT over this control
+	SBitmap*	imageOver;												// Image displayed when the mouse IS over this control
 
 	SDatum		pictureName;											// The name of the file used for the picture
 	SBitmap*	bmpPicture;												// The image for the picture

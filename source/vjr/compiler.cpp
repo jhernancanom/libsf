@@ -4412,7 +4412,10 @@ debug_break;
 
 			// Populate it
 			if (var)
+			{
 				iDatum_duplicate(&var->value, tcData, tnDataLength);
+				var->isValueAllocated = true;
+			}
 		}
 
 		// Indicate our status
