@@ -4072,7 +4072,7 @@ debug_break;
 				
 				// We only go to the column if it's valid, otherwise we just move to the row
 				lnCandidateCol = em->leftColumn + (x / (font->tm.tmAveCharWidth + lnExtra));
-				if (lnCandidateCol >= 0)
+				if (lnCandidateCol > 0 && x >= em->rcLineNumberLastRender.right)
 					em->column = lnCandidateCol;
 
 

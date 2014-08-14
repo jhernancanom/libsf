@@ -290,7 +290,7 @@
 				// Append to beginning
 				nodeFirst		= *root;
 				node->next		= nodeFirst;
-				nodeFirst->prev	= node;
+				nodeFirst->prev	= node;		// Ignore the GCC warning message here... I don't know why it's throwing a warning.  Everything here is populated and tested before use.
 				*root			= node;
 				llAppended		= true;
 			}

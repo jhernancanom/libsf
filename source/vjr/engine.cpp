@@ -47,7 +47,7 @@
 		SComp*		comp;
 		SComp*		compNext;
 		SComp*		compThird;
-		SVariable*	var;		// Note:  var is used here for examination of the contents during debugging
+		SVariable*	var;	// Ignore the GCC warning message here... I don't know why it's throwing a warning.  var is used correctly below.
 		SVariable*	varExisting;
 		SVariable*	varText;
 
@@ -99,7 +99,8 @@
 							if (compNext->iCat == _ICAT_FUNCTION)
 							{
 								// It is something like "? func(x)"
-								if (!(var = iEngine_getFunctionResult(compNext, llManufactured)))
+								var = iEngine_getFunctionResult(compNext, llManufactured);
+								if (!var)
 								{
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error
@@ -110,7 +111,8 @@
 
 							} else if (compNext->iCat == _ICAT_GENERIC) {
 								// It is something like "? k" or "? 29"
-								if (!(var = iEngine_getVariableFromComponent(compNext, llManufactured)))
+								var = iEngine_getVariableFromComponent(compNext, llManufactured);
+								if (!var)
 								{
 									// Unknown parameter
 									iError_report(cgcUnrecognizedParameter);
@@ -143,7 +145,8 @@
 							if (compThird->iCat == _ICAT_FUNCTION)
 							{
 								// It is something like "? func(x)"
-								if (!(var = iEngine_getFunctionResult(compThird, llManufactured)))
+								var = iEngine_getFunctionResult(compThird, llManufactured);
+								if (!var)
 								{
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error

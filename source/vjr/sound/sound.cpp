@@ -318,7 +318,8 @@
 				++lfCount;
 
 			} else {
-				lfAccum4 = NULL;
+				lfAccum4	= NULL;
+				lfHertz4	= 1.0;	// Added to stop GCC from incorrectly warning about lfHertz4 not being initialized
 			}
 
 
