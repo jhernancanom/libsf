@@ -634,7 +634,8 @@
 
 #ifndef _VJR_LOG_ALL
 		// Render it
-		iVjr_renderOverlayListing(gSplash.bmp, &gobj_splashListing->rc);
+		if (!glShuttingDown)
+			iVjr_renderOverlayListing(gSplash.bmp, &gobj_splashListing->rc);
 #endif
 	}
 
@@ -656,23 +657,167 @@
 
 //////////
 //
+// Called to release all of the allocated memory
+//
+//////
+	void iVjr_releaseMemory(void)
+	{
+		iBmp_delete(&bmpArrowUl,					true, true);
+		iBmp_delete(&bmpArrowUr,					true, true);
+		iBmp_delete(&bmpArrowLl,					true, true);
+		iBmp_delete(&bmpArrowLr,					true, true);
+
+		// Load our icons and images
+		iBmp_delete(&bmpVjrIcon,					true, true);
+		iBmp_delete(&bmpJDebiIcon,					true, true);
+		iBmp_delete(&bmpSourceCodeIcon,				true, true);
+		iBmp_delete(&bmpLocalsIcon,					true, true);
+		iBmp_delete(&bmpWatchIcon,					true, true);
+		iBmp_delete(&bmpCommandIcon,				true, true);
+		iBmp_delete(&bmpDebugIcon,					true, true);
+		iBmp_delete(&bmpOutputIcon,					true, true);
+		iBmp_delete(&bmpSourceLightIcon,			true, true);
+		iBmp_delete(&bmpNoImage,					true, true);
+		iBmp_delete(&bmpClose,						true, true);
+		iBmp_delete(&bmpMaximize,					true, true);
+		iBmp_delete(&bmpMinimize,					true, true);
+		iBmp_delete(&bmpMove,						true, true);
+		iBmp_delete(&bmpCheckboxOn,					true, true);
+		iBmp_delete(&bmpCheckboxOff,				true, true);
+		iBmp_delete(&bmpButton,						true, true);
+		iBmp_delete(&bmpTextbox,					true, true);
+		iBmp_delete(&bmpStoplightRed,				true, true);
+		iBmp_delete(&bmpStoplightAmber,				true, true);
+		iBmp_delete(&bmpStoplightGreen,				true, true);
+		iBmp_delete(&bmpStoplightBlue,				true, true);
+		iBmp_delete(&bmpBreakpointAlways,			true, true);
+		iBmp_delete(&bmpBreakpointAlwaysCountdown,	true, true);
+		iBmp_delete(&bmpConditionalTrue,			true, true);
+		iBmp_delete(&bmpConditionalFalse,			true, true);
+		iBmp_delete(&bmpConditionalTrueCountdown,	true, true);
+		iBmp_delete(&bmpConditionalFalseCountdown,	true, true);
+		iBmp_delete(&bmpDapple,						true, true);
+		iBmp_delete(&bmpDapple2,					true, true);
+
+		// Casks
+		iVjr_releaseCaskIcons();
+
+		// The radio image has a 44x44 dot in the upper-left.
+		iBmp_delete(&bmpRadio,						true, true);
+		iBmp_delete(&bmpRadioDot,					true, true);
+
+		// Splash screen
+		iBmp_delete(&bmpVjrSplash,					true, true);
+
+		// Focus window accumulator
+		iBuilder_createAndInitialize(&gFocusHighlights, -1);
+
+		// Default reference datetimes
+		iVjr_releaseAllDefaultDatetimes();
+
+		// Default objects
+		iVjr_releaseAllDefaultObjects();
+
+		// Main screen window
+		iVjr_release_jdebi();
+
+		// Global variables
+		iVariable_delete(varGlobals, true);
+
+		// screenData, systemLog
+		iSEM_delete(&screenData,	true);
+		iSEM_delete(&systemLog,		true);
+
+		// Release our builders
+		iWindow_releaseAll(&gWindows, true);
+		iFont_releaseAll(gFonts, true);
+	}
+
+
+
+
+//////////
+//
+// Called to handle some shutdown cleanups
+//
+//////
+	void iVjr_releaseAllDefaultDatetimes(void)
+	{
+		iVariable_delete(_datetime_Jan_01_2000, true);
+	}
+
+	void iVjr_releaseAllDefaultObjects(void)
+	{
+		iObj_delete(&gobj_defaultEmpty,		true, true, true);
+		iObj_delete(&gobj_defaultLabel,		true, true, true);
+		iObj_delete(&gobj_defaultTextbox,	true, true, true);
+		iObj_delete(&gobj_defaultButton,	true, true, true);
+		iObj_delete(&gobj_defaultImage,		true, true, true);
+		iObj_delete(&gobj_defaultCheckbox,	true, true, true);
+		iObj_delete(&gobj_defaultOption,	true, true, true);
+		iObj_delete(&gobj_defaultRadio,		true, true, true);
+		iObj_delete(&gobj_defaultForm,		true, true, true);
+		iObj_delete(&gobj_defaultSubform,	true, true, true);
+	}
+
+	void iVjr_release_jdebi(void)
+	{
+		iObj_delete(&_jdebi, true, true, true);
+	}
+
+	void iVjr_releaseCaskIcons(void)
+	{
+		iBmp_delete(&bmpCaskIconsTiled,				true, true);
+		iBmp_delete(&bmpCaskRoundLeft,				true, true);
+		iBmp_delete(&bmpCaskRoundRight,				true, true);
+		iBmp_delete(&bmpCaskSquareLeft,				true, true);
+		iBmp_delete(&bmpCaskSquareRight,			true, true);
+		iBmp_delete(&bmpCaskTriangleLeft,			true, true);
+		iBmp_delete(&bmpCaskTriangleRight,			true, true);
+		iBmp_delete(&bmpCaskTildeLeft,				true, true);
+		iBmp_delete(&bmpCaskTildeRight,				true, true);
+		iBmp_delete(&bmpCaskPips1,					true, true);
+		iBmp_delete(&bmpCaskPips2,					true, true);
+		iBmp_delete(&bmpCaskPips3,					true, true);
+		iBmp_delete(&bmpCaskSideExtender,			true, true);
+		iBmp_delete(&bmpCaskSideExtenderLeft,		true, true);
+		iBmp_delete(&bmpCaskSideExtenderMiddle,		true, true);
+		iBmp_delete(&bmpCaskSideExtenderRight,		true, true);
+		iBmp_delete(&bmpCaskExtenderMiddle,			true, true);
+		iBmp_delete(&bmpCaskExtenderLeft1,			true, true);
+		iBmp_delete(&bmpCaskExtenderLeft2,			true, true);
+		iBmp_delete(&bmpCaskExtenderRight2,			true, true);
+		iBmp_delete(&bmpCaskExtenderRight1,			true, true);
+	}
+
+
+
+
+//////////
+//
 // Called as a central location to shutdown the system politely.
 //
 //////
 	void iVjr_shutdown(void)
 	{
+		// Indicate we're shutting down
+		glShuttingDown = true;
+
 		// System is shutting down
 		iVjr_appendSystemLog("Unengage VJr");
-
-		// Save where we were
-		iSEM_saveToDisk(screenData,				(s8*)cgcScreenDataFilename);
-		iSEM_saveToDisk(command_editbox->pa.em,	(s8*)cgcCommandHistoryFilename);
 
 		// Tell OS to unengage our process
 		iVjr_appendSystemLog("Notify OS to shutdown");
 
 		// Flush the log
 		iVjr_flushSystemLog();
+
+		// Save where we were
+		iSEM_saveToDisk(screenData,				(s8*)cgcScreenDataFilename);
+		iSEM_saveToDisk(command_editbox->pa.em,	(s8*)cgcCommandHistoryFilename);
+
+		// Close the allocated memory blocks
+		iVjr_releaseMemory();
 
 		// Signal quit message
 		PostQuitMessage(0);
@@ -1164,6 +1309,89 @@
 
 //////////
 //
+// Called to delete all of the windows
+//
+//////
+	void iWindow_releaseAll(SBuilder** windowRoot, bool tlDeleteSelf)
+	{
+		u32			lnI;
+		SBuilder*	windows;
+		SWindow*	win;
+
+
+		// Make sure our environment is sane
+		if (windowRoot && *windowRoot)
+		{
+			//////////
+			// Grab the pointer
+			//////
+				windows = *windowRoot;
+
+
+			//////////
+			// Iterate to delete all windows
+			//////
+				for (lnI = 0; lnI < windows->populatedLength; lnI += sizeof(SWindow))
+				{
+					// Grab this pointer
+					win = (SWindow*)(windows->data + lnI);
+
+					// Lock it down
+					EnterCriticalSection(&win->cs);
+
+					// Delete
+					if (win->isValid)
+						iWindow_delete(win, false);		// Delete the window (marks itself invalid)
+
+					// Unlock it
+					LeaveCriticalSection(&win->cs);
+				}
+
+
+			//////////
+			// Delete
+			//////
+				if (tlDeleteSelf)
+					iBuilder_freeAndRelease(windowRoot);
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to delete the indicated window.
+// Note:  When called, the window must be already locked (if required).
+//
+//////
+	void iWindow_delete(SWindow* win, bool tlDeleteSelf)
+	{
+		// Make sure our environment is sane
+		if (win && iWindow_isPointerValid(win))
+		{
+			// Delete it
+			iBmp_delete(&win->bmp, true, true);
+			iObj_delete(&win->obj, true, true, true);
+
+			// Delete self
+			if (tlDeleteSelf)
+			{
+				// Release the critical section
+				DeleteCriticalSection(&win->cs);
+				free(win);
+
+			} else {
+				win->isValid = false;
+			}
+		}
+	}
+
+
+
+
+//////////
+//
 // Called to search the known windows for the indicated window by hwnd
 //
 //////
@@ -1183,14 +1411,21 @@
 			// Lock it down
 			EnterCriticalSection(&win->cs);
 
-			// Grab the hwnd
-			lnHwnd = win->hwnd;
+			// Validate validity
+			if (win->isValid)
+			{
+				// Grab the hwnd
+				lnHwnd = win->hwnd;
+
+			} else {
+				lnHwnd = NULL;
+			}
 
 			// Unlock it
 			LeaveCriticalSection(&win->cs);
 
 			// Is this our man?
-			if (lnHwnd == hwnd)
+			if (lnHwnd && lnHwnd == hwnd)
 			{
 				// Indicate our find
 				return(win);
@@ -1224,14 +1459,21 @@
 			// Lock it down
 			EnterCriticalSection(&win->cs);
 
-			// Grab the object
-			wobj = win->obj;
+			// Validate validity
+			if (win->isValid)
+			{
+				// Grab the object
+				wobj = win->obj;
+
+			} else {
+				wobj= NULL;
+			}
 
 			// Unlock it
 			LeaveCriticalSection(&win->cs);
 
 			// Is this our man?
-			if (wobj == obj)
+			if (wobj && wobj == obj)
 			{
 				// Indicate our find
 				return(win);
@@ -1307,25 +1549,59 @@
 
 //////////
 //
+// Disconnect the object from the window
+//
+//////
+	void iWindow_disconnectObj(SWindow* win, SObject* obj)
+	{
+		if (win && win->obj && iWindow_isPointerValid(win))
+		{
+			// Lock it down
+			EnterCriticalSection(&win->cs);
+
+			// Validate validity
+			if (win->isValid)
+				win->obj = NULL;	// Remove the object reference
+
+			// Unlock it
+			LeaveCriticalSection(&win->cs);
+		}
+	}
+
+
+
+
+//////////
+//
 // Called to re-render the indicated window
 //
 //////
 	void iWindow_render(SWindow* win, bool tlForce)
 	{
 		// Make sure we have something to render
-		if (win && win->obj)
+		if (win && win->obj && iWindow_isPointerValid(win))
 		{
-			// Render anything needing rendering
-			iObj_renderChildrenAndSiblings(win->obj, true, true, tlForce);
+			// Lock it down
+			EnterCriticalSection(&win->cs);
 
-			// Publish anything needing publishing
-			iObj_publish(win->obj, &win->rc, win->bmp, true, true, tlForce, 0);
+			// Validate validity
+			if (win->isValid)
+			{
+				// Render anything needing rendering
+				iObj_renderChildrenAndSiblings(win->obj, true, true, tlForce);
 
-			// Determine the focus highlights
-			iObj_setFocusHighlights(win, win->obj, 0, 0, true, true);
+				// Publish anything needing publishing
+				iObj_publish(win->obj, &win->rc, win->bmp, true, true, tlForce, 0);
 
-			// And force the redraw
-			InvalidateRect(win->hwnd, 0, FALSE);
+				// Determine the focus highlights
+				iObj_setFocusHighlights(win, win->obj, 0, 0, true, true);
+
+				// And force the redraw
+				InvalidateRect(win->hwnd, 0, FALSE);
+			}
+
+			// Unlock
+			LeaveCriticalSection(&win->cs);
 		}
 	}
 
@@ -1365,6 +1641,23 @@
 //////
 	void iWindow_maximize(SWindow* win)
 	{
+	}
+
+
+
+
+//////////
+//
+// Called to validate if the window pointer is valid or not
+//
+//////
+	bool iWindow_isPointerValid(SWindow* win)
+	{
+		if (win && (u32)win >= (u32)gWindows->data && (u32)win <= ((u32)gWindows->data + gWindows->populatedLength))
+			return(true);	// Valid
+
+		// If we get here, invalid
+		return(false);
 	}
 
 
@@ -2343,51 +2636,9 @@
 		font = NULL;
 		if (fontSource)
 		{
-			//////////
-			// Allocate a new pointer
-			//////
-				font = iFont_allocate();
-				if (!font)
-					return(font);
-
-
-			//////////
-			// Create a copy
-			//////
-				// Initialize the copy
-				memcpy(font, fontSource, sizeof(SFont));
-				font->name.data		= NULL;
-				font->name.length	= 0;
-				iDatum_duplicate(&font->name, fontSource->name.data, fontSource->name.length);
-
-				// Set unique parts
-				font->hdc						= CreateCompatibleDC(GetDC(GetDesktopWindow()));
-				font->hfont						= CreateFont(font->_sizeUsedForCreateFont, 0, 0, 0, font->_weight, (font->_italics != 0), (font->_underline != 0), false, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, FF_DONTCARE, font->name.data);
-				SelectObject(font->hdc, font->hfont);
+			// Allocate a copy
+			return(iFont_create(fontSource->name.data, fontSource->_size, fontSource->_weight, ((fontSource->isItalic) ? 1 : 0), ((fontSource->isUnderline) ? 1 : 0)));
 		}
-		// Indicate our success or failure
-		return(font);
-	}
-
-
-
-
-//////////
-//
-// Allocate an empty structure
-//
-//////
-	SFont* iFont_allocate(void)
-	{
-		SFont* font;
-
-
-		// Allocate the indicated size
-		font = (SFont*)malloc(sizeof(SFont));
-
-		// If allocated, initialize it
-		if (font)
-			memset(font, 0, sizeof(SFont));
 
 		// Indicate our success or failure
 		return(font);
@@ -2566,25 +2817,64 @@
 			//////
 				DeleteObject((HGDIOBJ)font->hfont);
 				DeleteDC(font->hdc);
+				iDatum_delete(&font->name, false);
 
 
 			//////////
 			// Free self
 			//////
-				if (tlDeleteSelf)
+				if (tlDeleteSelf && ((u32)font < (u32)gFonts->data || (u32)font > ((u32)gFonts->data + gFonts->populatedLength)))
 				{
-					// Physically free self
-					if ((u32)font >= (u32)gFonts->data && (u32)font <= (u32)gFonts->data + gFonts->populatedLength)
-					{
-						// It's one of our allocated fonts, mark the slot as unused
-						font->isUsed = false;
+					// Delete the memory block
+					free(font);
+					*fontRoot = NULL;
 
-					} else {
-						// It's a raw font
-						free(font);
-						*fontRoot = NULL;
+				} else {
+					// Just mark it unused
+					font->isUsed = false;
+				}
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to release all fonts allocated in this block
+//
+//////
+	void iFont_releaseAll(SBuilder* fontRoot, bool tlDeleteSelf)
+	{
+		u32		lnI;
+		SFont*	font;
+
+
+		// Make sure our environment is sane
+		if (fontRoot)
+		{
+			//////////
+			// Delete all allocated fonts
+			//////
+				for (lnI = 0; lnI < fontRoot->populatedLength; lnI += sizeof(SFont))
+				{
+					// Grab the pointer
+					font = (SFont*)(fontRoot->data + lnI);
+
+					// Delete this font
+					if (font->isUsed)
+					{
+						iFont_delete(&font, false);	// Delete the font
+						font->isUsed = false;		// Mark the slot unused
 					}
 				}
+
+
+			//////////
+			// Delete self
+			//////
+				if (tlDeleteSelf)
+					iBuilder_freeAndRelease(&fontRoot);
 		}
 	}
 
@@ -3011,14 +3301,15 @@
 // Called to signal a mouseDown event, then the mouseClickEx event
 //
 //////
-	void iiMouse_processMouseEvents_common(SWindow* win, SObject* obj, RECT* rc, UINT m, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed)
+	bool iiMouse_processMouseEvents_common(SWindow* win, SObject* obj, RECT* rc, UINT m, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed)
 	{
-		bool		llInClientArea;
+		bool		llInClientArea, llContinue;
 		RECT		lrc, lrcClient;
 		SObject*	objSib;
 
 
 		// Make sure our environment is sane
+		llContinue = false;
 		if (obj && obj->p.isEnabled && obj->bmp)
 		{
 			// Get the rectangle we're in at this level
@@ -3029,12 +3320,13 @@
 			// Process any children
 			//////
 				if (tlProcessChildren && obj->firstChild)
-					iiMouse_processMouseEvents_common(win, obj->firstChild, &lrcClient, m, true, true, tlProcessed);
+					llContinue = iiMouse_processMouseEvents_common(win, obj->firstChild, &lrcClient, m, true, true, tlProcessed);
 
 
 			//////////
 			// Are we still needing processing?
 			//////
+				llContinue = true;
 				if (!*tlProcessed)
 				{
 					// Indicate if the mouse is still down here
@@ -3051,18 +3343,18 @@
 							case WM_MBUTTONDOWN:
 								// Signal the mouseDown event
 								*tlProcessed = true;		// Indicate we've processed this
-								if (obj->ev.mouse._onMouseDown)
-									obj->ev.mouse.onMouseDown(win, obj, 
-																win->mousePosition.x - lrc.left, 
-																win->mousePosition.y - lrc.top, 
-																win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
+								if (llContinue && obj->ev.mouse._onMouseDown)
+									llContinue = obj->ev.mouse.onMouseDown(	win, obj, 
+																			win->mousePosition.x - lrc.left, 
+																			win->mousePosition.y - lrc.top, 
+																			win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
 								
 								// Signal the click event
-								if (obj->ev.mouse._onMouseClickEx)
-									obj->ev.mouse.onMouseClickEx(win, obj, 
-																	win->mousePosition.x - lrc.left, 
-																	win->mousePosition.y - lrc.top, 
-																	win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
+								if (llContinue && obj->ev.mouse._onMouseClickEx)
+									llContinue = obj->ev.mouse.onMouseClickEx(	win, obj, 
+																				win->mousePosition.x - lrc.left, 
+																				win->mousePosition.y - lrc.top, 
+																				win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
 									break;
 
 							case WM_LBUTTONUP:
@@ -3070,11 +3362,11 @@
 							case WM_MBUTTONUP:
 								// Signal the mouseUp event
 								*tlProcessed = true;		// Indicate we've processed this
-								if (obj->ev.mouse._onMouseUp)
-									obj->ev.mouse.onMouseUp(win, obj, 
-																win->mousePosition.x - lrc.left, 
-																win->mousePosition.y - lrc.top, 
-																win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
+								if (llContinue && obj->ev.mouse._onMouseUp)
+									llContinue = obj->ev.mouse.onMouseUp(	win, obj, 
+																			win->mousePosition.x - lrc.left, 
+																			win->mousePosition.y - lrc.top, 
+																			win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
 								break;
 
 							case WM_MOUSEWHEEL:
@@ -3083,12 +3375,12 @@
 #endif
 								// Signal the mouseWheel event
 								*tlProcessed = true;		// Indicate we've processed this
-								if (obj->ev.mouse._onMouseWheel)
-									obj->ev.mouse.onMouseWheel(win, obj, 
-																win->mousePosition.x - lrc.left, 
-																win->mousePosition.y - lrc.top, 
-																win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick,
-																win->mouseWheelDelta);
+								if (llContinue && obj->ev.mouse._onMouseWheel)
+									llContinue = obj->ev.mouse.onMouseWheel(win, obj, 
+																			win->mousePosition.x - lrc.left, 
+																			win->mousePosition.y - lrc.top, 
+																			win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick,
+																			win->mouseWheelDelta);
 								break;
 						}
 
@@ -3109,30 +3401,30 @@
 							case WM_MBUTTONDOWN:
 								// Signal the mouseDown event
 								*tlProcessed = true;		// Indicate we've processed this
-								if (obj->ev.mouse._onMouseDown)
-									obj->ev.mouse.onMouseDown(win, obj, 
-																win->mousePosition.x - lrcClient.left, 
-																win->mousePosition.y - lrcClient.top, 
-																win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
+								if (llContinue && obj->ev.mouse._onMouseDown)
+									llContinue = obj->ev.mouse.onMouseDown(	win, obj, 
+																			win->mousePosition.x - lrcClient.left, 
+																			win->mousePosition.y - lrcClient.top, 
+																			win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
 								
 
 								// Signal the click event
-								if (obj->ev.mouse._onMouseClickEx)
-									obj->ev.mouse.onMouseClickEx(win, obj, 
-																	win->mousePosition.x - lrcClient.left, 
-																	win->mousePosition.y - lrcClient.top, 
-																	win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
+								if (llContinue && obj->ev.mouse._onMouseClickEx)
+									llContinue = obj->ev.mouse.onMouseClickEx(	win, obj, 
+																				win->mousePosition.x - lrcClient.left, 
+																				win->mousePosition.y - lrcClient.top, 
+																				win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
 
 							case WM_LBUTTONUP:
 							case WM_RBUTTONUP:
 							case WM_MBUTTONUP:
 								// Signal the mouseUp event
 								*tlProcessed = true;		// Indicate we've processed this
-								if (obj->ev.mouse._onMouseUp)
-									obj->ev.mouse.onMouseUp(win, obj, 
-																win->mousePosition.x - lrcClient.left, 
-																win->mousePosition.y - lrcClient.top, 
-																win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
+								if (llContinue && obj->ev.mouse._onMouseUp)
+									llContinue = obj->ev.mouse.onMouseUp(	win, obj, 
+																			win->mousePosition.x - lrcClient.left, 
+																			win->mousePosition.y - lrcClient.top, 
+																			win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
 								break;
 
 							case WM_MOUSEWHEEL:
@@ -3141,12 +3433,12 @@
 #endif
 								// Signal the mouseWheel event
 								*tlProcessed = true;		// Indicate we've processed this
-								if (obj->ev.mouse._onMouseWheel)
-									obj->ev.mouse.onMouseWheel(win, obj, 
-																win->mousePosition.x - lrcClient.left, 
-																win->mousePosition.y - lrcClient.top, 
-																win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick,
-																win->mouseWheelDelta);
+								if (llContinue && obj->ev.mouse._onMouseWheel)
+									llContinue = obj->ev.mouse.onMouseWheel(win, obj, 
+																			win->mousePosition.x - lrcClient.left, 
+																			win->mousePosition.y - lrcClient.top, 
+																			win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick,
+																			win->mouseWheelDelta);
 								break;
 						}
 					}
@@ -3155,14 +3447,14 @@
 				//////////
 				// Process any siblings
 				//////
-					if (tlProcessSiblings)
+					if (llContinue && tlProcessSiblings)
 					{
 						// Begin at the next sibling
 						objSib = (SObject*)obj->ll.next;
-						while (!*tlProcessed && objSib)
+						while (llContinue && !*tlProcessed && objSib)
 						{
 							// Process this sibling
-							iiMouse_processMouseEvents_common(win, objSib, rc, m, true, false, tlProcessed);
+							llContinue = iiMouse_processMouseEvents_common(win, objSib, rc, m, true, false, tlProcessed);
 
 							// Move to next sibling
 							objSib = (SObject*)objSib->ll.next;
@@ -3170,6 +3462,9 @@
 					}
 			}
 		}
+
+		// Indicate if the caller should continue
+		return(llContinue);
 	}
 
 
@@ -3542,11 +3837,11 @@ debug_break;
 		SExtraInfo*		eiNext;
 
 
-// TODO:  COMPLETELY UNTESTED.  BREAKPOINT AND EXAMINE.
-debug_break;
 		// Make sure our environment is sane
 		if (root && *root)
 		{
+// TODO:  COMPLETELY UNTESTED.  BREAKPOINT AND EXAMINE.
+debug_break;
 			// Iterate through all entries in the chain
 			ei = *root;
 			while (ei)

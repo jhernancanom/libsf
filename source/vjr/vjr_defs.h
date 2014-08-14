@@ -68,7 +68,7 @@
 	SObject*				iObj_create								(u32 objType, SObject* objParent);
 	SObject*				iObj_addChild							(u32 objType, SObject* objParent);
 	SObject*				iObj_copy								(SObject* template_obj, SObject* next, SObject* parent, bool tlCopyChildren, bool tlCreateSeparateBitmapBuffers);
-	void					iObj_delete								(SObject** obj, bool tlDeleteSelf);
+	void					iObj_delete								(SObject** obj, bool tlDeleteSelf, bool tlDeleteChildren, bool tlDeleteSiblings);
 	bool					iObj_setFocus							(SWindow* win, SObject* obj, bool tlClearOtherControlsWithFocus);
 	void					iObj_clearFocus							(SWindow* win, SObject* obj, bool tlClearChildren, bool tlClearSiblings);
 	SObject*				iObj_find_rootmostObject				(SObject* obj);
@@ -226,6 +226,11 @@
 	SBitmap*				iiVjr_buildSplashScreen					(SBitmap* bmpSplash);
 	void					iVjr_appendSystemLog					(s8* tcLogText);
 	void					iVjr_flushSystemLog						(void);
+	void					iVjr_releaseMemory						(void);
+	void					iVjr_releaseAllDefaultDatetimes			(void);
+	void					iVjr_releaseAllDefaultObjects			(void);
+	void					iVjr_release_jdebi						(void);
+	void					iVjr_releaseCaskIcons					(void);
 	void					iVjr_shutdown							(void);
 
 	DWORD	WINAPI			iSplash_show							(LPVOID/*SBitmap* bmp*/ lpParameter);
@@ -240,13 +245,17 @@
 	LRESULT	CALLBACK		iWindow_wndProcMessage					(HWND hwnd, UINT m, WPARAM w, LPARAM l);
 	LRESULT	CALLBACK		iWindow_wndProcForms					(HWND hwnd, UINT m, WPARAM w, LPARAM l);
 	SWindow* 				iWindow_createForObject					(SObject* obj, SWindow* winReuse, s32 icon);
+	void					iWindow_releaseAll						(SBuilder** windowRoot, bool tlDeleteSelf);
+	void					iWindow_delete							(SWindow* win, bool tlDeleteSelf);
 	SWindow*				iWindow_findByHwnd						(HWND hwnd);
 	SWindow*				iWindow_findByObj						(SObject* obj);
 	SWindow*				iWindow_allocate						(void);
+	void					iWindow_disconnectObj					(SWindow* win, SObject* obj);
 	void					iWindow_render							(SWindow* win, bool tlForceRedraw);
 	void					iWindow_move							(SWindow* win);
 	void					iWindow_minimize						(SWindow* win);
 	void					iWindow_maximize						(SWindow* win);
+	bool					iWindow_isPointerValid							(SWindow* win);
 
 	void					iFocusHighlight_create					(SFocusHighlight* focus, RECT* rc);
 	void					iFocusHighlight_delete					(SFocusHighlight* focus);
@@ -289,13 +298,13 @@
 	s8*						iMath_roundTo							(f64* tfValue, f64 tfRoundTo);
 
 	s8*						iDuplicateString						(s8* tcText);
-	SFont*					iFont_allocate							(void);
 	SFont*					iFont_duplicate							(SFont* fontSource);
 	SFont*					iFont_create							(cs8* tcFontName, u32 tnFontSize, u32 tnFontWeight, u32 tnItalics, u32 tnUnderline);
 	SFont*					iFont_bigger							(SFont* font, bool tlDeleteAfterCreateNew);
 	SFont*					iFont_smaller							(SFont* font, bool tlDeleteAfterCreateNew);
 	void					iiFont_refresh							(SFont* font);
 	void					iFont_delete							(SFont** font, bool tlDeleteSelf);
+	void					iFont_releaseAll						(SBuilder* fontRoot, bool tlDeleteSelf);
 	u32						iFont_findClosestSizeMatch				(s8* tcText, s8* tcFontName, u32 tnFontSize, u32 tnFontBold, u32 tnFontItalic, u32 tnFontUnderline, u32 tnWidth, u32 tnHeight, u32 tnWidthDesired, u32 tnHeightDesired);
 
 	// Mouse processing (callback from iWindow_wndProc()
@@ -303,7 +312,7 @@
 	void					iiMouse_translatePosition				(SWindow* win, POINTS* pt, UINT m);
 	s32						iiMouse_processMouseEvents				(SWindow* win, UINT m, WPARAM w, LPARAM l);
 	void					iiMouse_processMouseEvents_mouseMove	(SWindow* win, SObject* obj, RECT* rc,         bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed);
-	void					iiMouse_processMouseEvents_common		(SWindow* win, SObject* obj, RECT* rc, UINT m, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed);
+	bool					iiMouse_processMouseEvents_common		(SWindow* win, SObject* obj, RECT* rc, UINT m, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed);
 //	s32						iiMouse_processMouseEvents_nonclient	(SWindow* win, UINT m, WPARAM w, LPARAM l);
 	void					iiMouse_getFlags_wparam					(WPARAM w, bool* tlCtrl, bool* tlAlt, bool* tlShift, bool* tlLeft, bool* tlMiddle, bool* tlRight, bool* tlCaps);
 	void					iiMouse_getFlags_async					(          bool* tlCtrl, bool* tlAlt, bool* tlShift, bool* tlLeft, bool* tlMiddle, bool* tlRight, bool* tlCaps);

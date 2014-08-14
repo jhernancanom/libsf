@@ -80,49 +80,50 @@
 //////
 	void iEditChain_free(SEdit** root, bool tlDeleteSelf)
 	{
-		SEdit*		chain;
-		SEdit*		chainNext;
+		SEdit*		line;
+		SEdit*		lineNext;
 
 
-// TODO:  COMPLETELY UNTESTED.  BREAKPOINT AND EXAMINE.
-debug_break;
 		// Make sure our environment is sane
 		if (root && *root)
 		{
+			//////////
 			// Repeat throughout the entire chain
-			chain = *root;
-			while (chain)
-			{
-				//////////
-				// Note next item in chain
-				//////
-					chainNext = (SEdit*)chain->ll.next;
+			//////
+				line = *root;
+				while (line)
+				{
+					//////////
+					// Note next item in chain
+					//////
+						lineNext = (SEdit*)line->ll.next;
 
 
-				//////////
-				// Delete any extra information associated with this chain entry
-				//////
-					iExtraInfo_free(NULL, chain, &chain->extra_info, true);
+					//////////
+					// Delete any extra information associated with this chain entry
+					//////
+						iExtraInfo_free(NULL, line, &line->extra_info, true);
 
 
-				//////////
-				// Delete this item's components
-				//////
-					iDatum_delete(chain->sourceCode, true);
+					//////////
+					// Delete this item's components and source code references
+					//////
+						iComps_deleteAll_byLine(line);
+						iDatum_delete(line->sourceCode, true);
 
 
-				//////////
-				// Free self
-				//////
-					if (tlDeleteSelf)
-						free(chain);
+					//////////
+					// Free self
+					//////
+						if (tlDeleteSelf)
+							free(line);
 
 
-				//////////
-				// Move to next item in the chain
-				//////
-					chain = chainNext;
-			}
+					//////////
+					// Move to next item in the chain
+					//////
+						line = lineNext;
+				}
 
 
 			//////////

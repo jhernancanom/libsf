@@ -69,6 +69,18 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			}
 		}
 		// When the WM_QUIT message is received, we exit
+
+
+	//////////
+	// Do allocated resource shutdown
+	//////
+		if (!glShuttingDown)
+			iVjr_shutdown();
+
+
+	//////////
+	// Return our exit code
+	//////
 		return((int)msg.wParam);
 }
 

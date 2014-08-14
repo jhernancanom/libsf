@@ -201,18 +201,92 @@
 // Delete the indicated object.
 //
 //////
-	void iObj_delete(SObject** objRoot, bool tlDeleteSelf)
+	void iObj_delete(SObject** objRoot, bool tlDeleteSelf, bool tlDeleteChildren, bool tlDeleteSiblings)
 	{
-//		SObject* obj;
+		SObject* obj;
+		SObject* objSib;
+		SObject* objSibNext;
 
 
 		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
-//		if (objRoot && *objRoot)
-//		{
-//			obj = *objRoot;
-// TODO:  write this code
-//		}
+		if (objRoot && *objRoot)
+		{
+			//////////
+			// Grab our object, and mark it deleted
+			//////
+				obj			= *objRoot;
+				*objRoot	= NULL;
+
+
+			//////////
+			// Delete children
+			//////
+				if (tlDeleteChildren && obj->firstChild)
+					iObj_delete(&obj->firstChild, true, true, true);
+
+
+			//////////
+			// Delete siblings
+			//////
+				if (tlDeleteSiblings && obj->ll.next)
+				{
+					// Iterate by looking ahead to the next entry, so we update the chain
+					objSib = (SObject*)obj->ll.next;
+					while (objSib)
+					{
+						// Grab the next sibling
+						objSibNext = (SObject*)objSib->ll.next;
+
+						// Delete this sibling
+						iObj_delete(&objSib, true, true, false);
+
+						// Move to next sibling
+						objSib = objSibNext;
+					}
+				}
+
+
+			//////////
+			// Delete self
+			//////
+				switch (obj->objType)
+				{
+					case _OBJ_TYPE_EMPTY:
+						iSubobj_deleteEmpty(obj, true);
+						break;
+					case _OBJ_TYPE_FORM:
+						iSubobj_deleteForm(obj, true);
+						break;
+					case _OBJ_TYPE_SUBFORM:
+						iSubobj_deleteSubform(obj, true);
+						break;
+					case _OBJ_TYPE_LABEL:
+						iSubobj_deleteLabel(obj, true);
+						break;
+					case _OBJ_TYPE_TEXTBOX:
+						iSubobj_deleteTextbox(obj, true);
+						break;
+					case _OBJ_TYPE_BUTTON:
+						iSubobj_deleteButton(obj, true);
+						break;
+					case _OBJ_TYPE_EDITBOX:
+						iSubobj_deleteEditbox(obj, true);
+						break;
+					case _OBJ_TYPE_IMAGE:
+						iSubobj_deleteImage(obj, true);
+						break;
+					case _OBJ_TYPE_CHECKBOX:
+						iSubobj_deleteCheckbox(obj, true);
+						break;
+					case _OBJ_TYPE_OPTION:
+						iSubobj_deleteOption(obj, true);
+						break;
+					case _OBJ_TYPE_RADIO:
+						iSubobj_deleteRadio(obj, true);
+						break;
+				}
+		}
 	}
 
 
@@ -3362,7 +3436,7 @@ if (!llPublishChildren)
 				form->p.clipControls					= false;
 				form->p.colorSource						= 4;
 				form->p.continuousScroll				= true;
-				iObj_delete(&form->pa.dataSession, true);
+				iObj_delete(&form->pa.dataSession, true, true, true);
 				form->p.dataSessionId					= -1;
 				iDatum_delete(&form->pa.declass, false);
 				iDatum_delete(&form->pa.declasslibrary, false);
@@ -4105,12 +4179,89 @@ if (!llPublishChildren)
 
 //////////
 //
+// Called to delete the common properties on obj->pa (properties allocated)
+//
+//////
+	void iObj_deleteCommon(SObject* obj)
+	{
+		SWindow* win;
+
+
+		//////////
+		// See if this object is the top-level object to any windows, and if so disconnect it
+		//////
+			win = iWindow_findByObj(obj);
+			if (win)
+				iWindow_disconnectObj(win, obj);
+
+
+		//////////
+		// Delete the bitmaps and bitmap caches
+		//////
+			iBmp_delete(&obj->bmp,					true, true);
+			iBmp_delete(&obj->bmpPriorRendered,		true, true);
+			iBmp_delete(&obj->bmpScaled,			true, true);
+			iBmp_deleteCache(&obj->bc);
+
+
+		//////////
+		// Delete any allocated properties
+		//////
+			iFont_delete(&obj->pa.font,					false);
+
+			iBmp_delete(&obj->pa.bmpIcon,				true, true);
+			iBmp_delete(&obj->pa.mouseIcon,				true, true);
+
+			iDatum_delete(&obj->pa.name,				false);
+			iDatum_delete(&obj->pa.caption,				false);
+			iDatum_delete(&obj->pa.className,			false);
+			iDatum_delete(&obj->pa.classLibrary,		false);
+
+			iDatum_delete(&obj->pa.comment,				false);
+			iDatum_delete(&obj->pa.tooltip,				false);
+			iDatum_delete(&obj->pa.tag,					false);
+
+			iVariable_delete(obj->pa.value,				true);
+			iVariable_delete(obj->pa.minValue,			true);
+			iVariable_delete(obj->pa.maxValue,			true);
+			iVariable_delete(obj->pa.picture,			true);
+			iVariable_delete(obj->pa.mask,				true);
+
+			iSEM_delete(&obj->pa.em,					true);
+
+			iDatum_delete(&obj->pa.pictureName,			false);
+			iDatum_delete(&obj->pa.pictureOverName,		false);
+			iDatum_delete(&obj->pa.pictureDownName,		false);
+			iBmp_delete(&obj->pa.bmpPicture,			true, true);
+			iBmp_delete(&obj->pa.bmpPictureOver,		true, true);
+			iBmp_delete(&obj->pa.bmpPictureDown,		true, true);
+
+			iObj_delete(&obj->pa.dataSession,			true, true, true);
+			iDatum_delete(&obj->pa.declass,				false);
+			iDatum_delete(&obj->pa.declasslibrary,		false);
+
+			iBmp_delete(&obj->pa.oleDragPicture,		true, true);
+
+			iObj_delete(&obj->pa.firstOption,			true, true, true);
+	}
+
+
+
+
+//////////
+//
 // Called to delete the empty.
 //
 //////
 	void iSubobj_deleteEmpty(SObject* empty, bool tlDeleteSelf)
 	{
 		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(empty);
+
+
 		//////////
 		// Free self
 		//////
@@ -4130,11 +4281,9 @@ if (!llPublishChildren)
 	{
 		logfunc(__FUNCTION__);
 		//////////
-		// Free subobject components
+		// Free common components
 		//////
-			iFont_delete(&form->pa.font,		true);
-			iBmp_delete(&form->pa.bmpIcon,		true, true);
-			iDatum_delete(&form->pa.caption,	false);
+			iObj_deleteCommon(form);
 
 
 		//////////
@@ -4156,11 +4305,9 @@ if (!llPublishChildren)
 	{
 		logfunc(__FUNCTION__);
 		//////////
-		// Free subobject components
+		// Free common components
 		//////
-			iFont_delete(&subform->pa.font,		true);
-			iBmp_delete(&subform->pa.bmpIcon,	true, true);
-			iDatum_delete(&subform->pa.caption,	false);
+			iObj_deleteCommon(subform);
 
 
 		//////////
@@ -4182,10 +4329,9 @@ if (!llPublishChildren)
 	{
 		logfunc(__FUNCTION__);
 		//////////
-		// Free subobject components
+		// Free common components
 		//////
-			iFont_delete(&label->pa.font,		true);
-			iDatum_delete(&label->pa.caption,	false);
+			iObj_deleteCommon(label);
 
 
 		//////////
@@ -4207,12 +4353,9 @@ if (!llPublishChildren)
 	{
 		logfunc(__FUNCTION__);
 		//////////
-		// Free subobject components
+		// Free common components
 		//////
-			iFont_delete(&textbox->pa.font,			true);
-			iVariable_delete(textbox->pa.value,		false);
-			iVariable_delete(textbox->pa.picture,	false);
-			iVariable_delete(textbox->pa.mask,		false);
+			iObj_deleteCommon(textbox);
 
 
 		//////////
@@ -4234,10 +4377,9 @@ if (!llPublishChildren)
 	{
 		logfunc(__FUNCTION__);
 		//////////
-		// Free subobject components
+		// Free common components
 		//////
-			iFont_delete(&button->pa.font,		true);
-			iDatum_delete(&button->pa.caption,	false);
+			iObj_deleteCommon(button);
 
 
 		//////////
@@ -4259,10 +4401,9 @@ if (!llPublishChildren)
 	{
 		logfunc(__FUNCTION__);
 		//////////
-		// Free subobject components
+		// Free common components
 		//////
-			iFont_delete(&editbox->pa.font,				true);
-			iSEM_delete(&editbox->pa.em,	true);
+			iObj_deleteCommon(editbox);
 
 
 		//////////
@@ -4284,8 +4425,9 @@ if (!llPublishChildren)
 	{
 		logfunc(__FUNCTION__);
 		//////////
-		// Free subobject components
+		// Free common components
 		//////
+			iObj_deleteCommon(image);
 
 
 		//////////
@@ -4307,8 +4449,9 @@ if (!llPublishChildren)
 	{
 		logfunc(__FUNCTION__);
 		//////////
-		// Free subobject components
+		// Free common components
 		//////
+			iObj_deleteCommon(checkbox);
 
 
 		//////////
@@ -4330,8 +4473,9 @@ if (!llPublishChildren)
 	{
 		logfunc(__FUNCTION__);
 		//////////
-		// Free subobject components
+		// Free common components
 		//////
+			iObj_deleteCommon(option);
 
 
 		//////////
@@ -4353,8 +4497,9 @@ if (!llPublishChildren)
 	{
 		logfunc(__FUNCTION__);
 		//////////
-		// Free subobject components
+		// Free common components
 		//////
+			iObj_deleteCommon(radio);
 
 
 		//////////

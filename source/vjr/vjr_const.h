@@ -216,6 +216,8 @@ typedef SEM**		SEMpp;
 // A shortcut timesaver offered out of the goodness of my heart. :-)
 // 	switch (obj->objType)
 // 	{
+// 		case _OBJ_TYPE_EMPTY:
+// 			break;
 // 		case _OBJ_TYPE_FORM:
 // 			break;
 // 		case _OBJ_TYPE_SUBFORM:

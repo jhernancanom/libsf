@@ -219,6 +219,7 @@
 					if (iDatum_compare(&obj->pa.name, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0) {
 						// Close
 						iVjr_shutdown();	// They clicked quit
+						return(false);		// When we get here, the object no longer exists
 
 					} else if (iDatum_compare(&obj->pa.name, cgcName_iconMove, sizeof(cgcName_iconMove) - 1) == 0) {
 						// Move
@@ -246,7 +247,7 @@
 		obj->ev.mouse.isMouseDown = llMouseDown;
 		iObj_setDirtyRender_ascent(obj, true);
 		iWindow_render(win, false);
-		return(false);
+		return(true);
 	}
 
 	bool iDefaultCallback_onMouseUp(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick)

@@ -751,7 +751,6 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // TODO:  Working here
 		return(NULL);
 	}
-;
 
 
 
@@ -784,11 +783,11 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 				comp = compNext;
 			}
 
-			// Clear the compilerInfo
-			line->compilerInfo = NULL;
-
 			// Reset the pointer
 			line->compilerInfo->firstComp = NULL;
+
+			// Clear the compilerInfo
+			iCompiler_delete(&line->compilerInfo, true);
 		}
 	}
 
@@ -4986,7 +4985,7 @@ debug_break;
 					{
 						case _VAR_TYPE_OBJECT:
 							// Delete the object
-							iObj_delete(&var->obj, true);
+							iObj_delete(&var->obj, true, true, true);
 							break;
 
 						default:
@@ -6309,7 +6308,7 @@ debug_break;
 							break;
 
 						case _OP_TYPE_OBJECT:
-							iObj_delete(&op->obj, true);
+							iObj_delete(&op->obj, true, true, true);
 							break;
 
 // These types are only referenced

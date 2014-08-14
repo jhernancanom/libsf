@@ -66,6 +66,19 @@
 //#include <Shobjidl.h>
 #include "resource.h"
 
+
+//////////
+// See: https://vld.codeplex.com/
+// Install to:  c:\program files\visual leak detector\
+// Un-comment this line to find memory leaks
+// BEGIN
+//////
+	#include "vld.h"	// Visual (memory) Leak Detector
+//////
+// END
+//////////
+
+
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "sound\SDL-1.2.15\include\sdl\SDL.h"

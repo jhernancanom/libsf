@@ -922,7 +922,7 @@
 	        result = iVariable_create(_VAR_TYPE_OBJECT, NULL);
 			if (!result)
 			{
-				iObj_delete(&obj, true);
+				iObj_delete(&obj, true, true, true);
 				iError_report("Internal error on create variable.");
 				return(NULL);
 			}

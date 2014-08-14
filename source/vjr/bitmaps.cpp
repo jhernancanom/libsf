@@ -3579,6 +3579,9 @@
 		}
 		// When we get here, we've computed everything
 
+		// Release our pixel accumulator buffer
+		free(bp.pixels);
+
 		// Finished, indicate the pixel count
 		return(bmpDst->bi.biHeight * bmpDst->bi.biWidth * sizeof(SBgr));
 	}

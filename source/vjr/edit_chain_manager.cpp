@@ -504,8 +504,6 @@ debug_break;
 		// Make sure our environment is sane
 		if (root && *root)
 		{
-// TODO:  COMPLETELY UNTESTED.  BREAKPOINT AND EXAMINE.
-debug_break;
 			em = *root;
 			//////////
 			// Are we really the thing?  Or just an indirect reference to the thing?
@@ -531,10 +529,7 @@ debug_break;
 			// Free self
 			//////
 				if (tlDeleteSelf)
-				{
-					free(*root);
-					*root = NULL;
-				}
+					*root = NULL;	// Would've been deleted above, so we just update the pointer
 		}
 	}
 

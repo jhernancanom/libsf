@@ -40,6 +40,7 @@
 // Global Variables
 //////
 	HINSTANCE			ghInstance							= NULL;
+	bool				glShuttingDown						= false;
 //	ITaskbarList*		giTaskbar							= NULL;
 
 //////////
