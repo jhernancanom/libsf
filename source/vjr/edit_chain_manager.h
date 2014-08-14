@@ -49,6 +49,13 @@
 	struct SFunction;
 	struct SVariable;
 
+	// When line-selecting, indicates the type
+	const u32		_SEM_SELECT_MODE_NONE						= 0;
+	const u32		_SEM_SELECT_MODE_LINE						= 1;
+	const u32		_SEM_SELECT_MODE_COLUMN						= 2;
+	const u32		_SEM_SELECT_MODE_ANCHOR						= 3;
+
+	// Breakpoint types
 	const u32		_BREAKPOINT_NONE							= 0;	// No breakpoint
 	const u32		_BREAKPOINT_ALWAYS							= 1;	// Always stops
 	const u32		_BREAKPOINT_CONDITIONAL_TRUE				= 2;	// Breaks when the condition is true
@@ -106,7 +113,7 @@
 		u32				renderId;										// Each time it's rendered, this value is set
 		RECT			rcLastRender;									// The rectangle within the parent of the last render
 
-		u32				line;											// This line's number
+		u32				lineNumber;										// This line's number
 		SBreakpoint*	breakpoint;										// If there's a breakpoint here, what kind?
 		SDatum*			sourceCode;										// The text on this line is LEFT(d.data, dPopulated)
 		s32				sourceCodePopulated;							// The actual populated length of d (d is allocated in blocks to allow for minor edits without constantly reallocating)
@@ -117,6 +124,13 @@
 
 		// General purpose extra data
 		SExtraInfo*		extra_info;										// Extra information about this item in the chain
+	};
+
+	struct SEMPoint
+	{
+		u32				uid;
+		u32				lineNumber;
+		u32				column;
 	};
 
 
@@ -174,16 +188,13 @@
 
 
 		//////////
-		// Note:  If not isColumn or isAnchor, then it is full line select.
-		//        If isColumn, then column select mode.
-		//        If isAnchor, then anchor select mode.
+		// Note:  If isSelectingLine, then full line select mode.
+		//        If isSelectingColumn, then column select mode.
+		//        If isSelectingAnchor, then anchor select mode.
 		//////
-			bool		isColumn;										// If column select mode...
-			u32			selectedColumn_startCol;						// Column select mode start
-			u32			selectedColumn_endCol;							// end
-			bool		isAnchor;										// If anchor select mode...
-			u32			selectedAnchor_startCol;						// Anchor select mode start
-			u32			selectedAnchor_endCol;							// end
+			u32			selectMode;										// See _SEM_SELECT_MODE_* constants
+			SEMPoint	selectOrigin;									// Where the selection started
+			SEMPoint	selectEnd;										// Where the selection has ended
 
 
 		//////////
@@ -263,8 +274,8 @@
 	bool					iSEM_paste							(SEM* em, SObject* obj);
 	bool					iSEM_navigateWordLeft				(SEM* em, SObject* obj, bool tlVerifyCursorIsVisible);
 	bool					iSEM_navigateWordRight				(SEM* em, SObject* obj, bool tlVerifyCursorIsVisible);
-	bool					iSEM_navigateTop					(SEM* em, SObject* obj);
-	bool					iSEM_navigateEnd					(SEM* em, SObject* obj);
+	bool					iSEM_navigateToTopLine				(SEM* em, SObject* obj);
+	bool					iSEM_navigateToEndLine				(SEM* em, SObject* obj);
 	bool					iSEM_selectLineUp					(SEM* em, SObject* obj);
 	bool					iSEM_selectLineDown					(SEM* em, SObject* obj);
 	bool					iSEM_selectLeft						(SEM* em, SObject* obj);
@@ -273,11 +284,17 @@
 	bool					iSEM_selectToBeginOfLine			(SEM* em, SObject* obj);
 	bool					iSEM_selectColumnToggle				(SEM* em, SObject* obj);
 	bool					iSEM_selectLineToggle				(SEM* em, SObject* obj);
+	bool					iSEM_selectAnchorToggle				(SEM* em, SObject* obj);
 	bool					iSEM_selectWordLeft					(SEM* em, SObject* obj);
 	bool					iSEM_selectWordRight				(SEM* em, SObject* obj);
+	bool					iSEM_selectToTopLine				(SEM* em, SObject* obj);
+	bool					iSEM_selectToEndLine				(SEM* em, SObject* obj);
 	bool					iSEM_deleteLeft						(SEM* em, SObject* obj);
 	bool					iSEM_deleteRight					(SEM* em, SObject* obj);
 	bool					iSEM_deleteWordLeft					(SEM* em, SObject* obj);
 	bool					iSEM_deleteWordRight				(SEM* em, SObject* obj);
 	bool					iSEM_navigateTo_pixelXY				(SEM* em, SObject* obj, s32 x, s32 y);
 	bool					iiSEM_isBreakingCharacter			(SEM* em, SEdit* line, s32 tnDeltaTest);
+	void					iSEM_selectStart					(SEM* em, u32 tnSelectMode);
+	void					iSEM_selectStop						(SEM* em);
+	void					iSEM_selectUpdateExtents			(SEM* em);

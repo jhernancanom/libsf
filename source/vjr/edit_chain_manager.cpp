@@ -634,15 +634,38 @@ debug_break;
 			ec = em->ecFirst;
 			while (ec)
 			{
+				//////////
 				// Set the line number
-				ec->line = tnStartingLineNumber++;
+				//////
+					ec->lineNumber = tnStartingLineNumber++;
 
+
+				//////////
+				// See if this line is one of the selected lines
+				//////
+					if (em->selectMode != _SEM_SELECT_MODE_NONE)
+					{
+						// Update origin
+						if (ec->uid == em->selectOrigin.uid)
+							em->selectOrigin.lineNumber = ec->lineNumber;
+
+						// Update end
+						if (ec->uid == em->selectEnd.uid)
+							em->selectEnd.lineNumber = ec->lineNumber;
+					}
+
+
+				//////////
 				// Are we done
-				if (ec == em->ecLast)
-					break;
+				//////
+					if (ec == em->ecLast)
+						break;
 
+
+				//////////
 				// Move to next line
-				ec = (SEdit*)ec->ll.next;
+				//////
+					ec = (SEdit*)ec->ll.next;
 			}
 		}
 	}
@@ -1151,6 +1174,7 @@ debug_break;
 				switch (tnVKey)
 				{
 					case VK_UP:
+						iSEM_selectStop(em);
 						iSEM_navigate(em, obj, -1, 0);
 
 						// Indicate our key was processed
@@ -1158,6 +1182,7 @@ debug_break;
 						break;
 
 					case VK_DOWN:
+						iSEM_selectStop(em);
 						iSEM_navigate(em, obj, 1, 0);
 
 						// Indicate our key was processed
@@ -1165,6 +1190,7 @@ debug_break;
 						break;
 
 					case VK_PRIOR:		// Page up
+						iSEM_selectStop(em);
 						iSEM_navigatePages(em, obj, -1);
 
 						// Indicate our key was processed
@@ -1172,6 +1198,7 @@ debug_break;
 						break;
 
 					case VK_NEXT:		// Page down
+						iSEM_selectStop(em);
 						iSEM_navigatePages(em, obj, 1);
 
 						// Indicate our key was processed
@@ -1201,6 +1228,7 @@ debug_break;
 						break;
 
 					case VK_LEFT:
+						iSEM_selectStop(em);
 						iSEM_navigate(em, obj, 0, -1);
 
 						// Indicate our key was processed
@@ -1208,6 +1236,7 @@ debug_break;
 						break;
 
 					case VK_RIGHT:
+						iSEM_selectStop(em);
 						iSEM_navigate(em, obj, 0, 1);
 
 						// Indicate our key was processed
@@ -1215,6 +1244,7 @@ debug_break;
 						break;
 
 					case VK_HOME:
+						iSEM_selectStop(em);
 						iSEM_navigate(em, obj, 0, -(em->column));
 
 						// Indicate our key was processed
@@ -1222,6 +1252,7 @@ debug_break;
 						break;
 
 					case VK_END:
+						iSEM_selectStop(em);
 						if (em->column != em->ecCursorLine->sourceCodePopulated)
 							iSEM_navigate(em, obj, 0, em->ecCursorLine->sourceCodePopulated - em->column);
 
@@ -1238,6 +1269,7 @@ debug_break;
 
 					case VK_BACK:
 						iSEM_deleteLeft(em, obj);
+						iSEM_selectStop(em);
 
 						// Indicate our key was processed
 						llProcessed = true;
@@ -1245,6 +1277,7 @@ debug_break;
 
 					case VK_DELETE:
 						iSEM_deleteRight(em, obj);
+						iSEM_selectStop(em);
 
 						// Indicate our key was processed
 						llProcessed = true;
@@ -1320,14 +1353,14 @@ debug_break;
 						break;
 
 					case VK_HOME:	// Home (go to top of content)
-						iSEM_navigateTop(em, obj);
+						iSEM_navigateToTopLine(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_END:	// Page down (go to end of content)
-						iSEM_navigateEnd(em, obj);
+						iSEM_navigateToEndLine(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
@@ -1425,6 +1458,34 @@ debug_break;
 				// CTRL+SHIFT+
 				switch (tnVKey)
 				{
+					case VK_END:	// Select to end
+						iSEM_selectToEndLine(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
+						break;
+
+					case VK_HOME:	// Select to start
+						iSEM_selectToTopLine(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
+						break;
+
+					case VK_UP:		// Select line up
+						iSEM_selectLineUp(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
+						break;
+
+					case VK_DOWN:	// Select line down
+						iSEM_selectLineDown(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
+						break;
+
 					case VK_LEFT:	// Select word left
 						iSEM_selectWordLeft(em, obj);
 
@@ -1858,15 +1919,65 @@ debug_break;
 
 
 					// Do we need to draw anything?
-					if (!line->sourceCode->data || line->sourceCodePopulated == 0 || line->sourceCodePopulated < em->leftColumn)
+					if (line->sourceCode->data && line->sourceCodePopulated != 0 && line->sourceCodePopulated >= em->leftColumn)
 					{
-						// Nope, nothing to draw on this line
-
-					} else {
-					//////////
-					// Draw the text
-					//////
+						// Draw the text
 						DrawText(bmp->hdc, line->sourceCode->data + em->leftColumn, line->sourceCodePopulated - em->leftColumn, &lrc2, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+
+
+						//////////
+						// If they're selecting, highlight the selected portion
+						//////
+							if (em->selectMode != _SEM_SELECT_MODE_NONE)
+							{
+								// Are they selecting up or down
+								if (em->selectOrigin.lineNumber < em->selectEnd.lineNumber)
+								{
+									// The selection began closer to the start of the file, and continued on toward the end
+									if (line->lineNumber >= em->selectOrigin.lineNumber && line->lineNumber <= em->selectOrigin.lineNumber)
+									{
+										// This line should be displayed with selected coloring
+										if (line->lineNumber == em->selectOrigin.lineNumber)
+										{
+											// It is on the line closer to the beginning of the file
+
+										} else if (line->lineNumber == em->selectEnd.lineNumber) {
+											// It is on the line closer to the end of the file
+										}
+									}
+
+								} else if (em->selectOrigin.lineNumber > em->selectEnd.lineNumber) {
+									// The selection began closer to the end of a the file, and continued up to the top
+									if (line->lineNumber <= em->selectOrigin.lineNumber && line->lineNumber >= em->selectOrigin.lineNumber)
+									{
+										// This line should be displayed with selected coloring
+										if (line->lineNumber == em->selectOrigin.lineNumber)
+										{
+											// It is on the line closer to the end of the file
+
+										} else if (line->lineNumber == em->selectEnd.lineNumber) {
+											// It is on the line closer to the beginning of the file
+										}
+									}
+
+								} else if (em->selectOrigin.lineNumber == em->selectEnd.lineNumber && em->selectOrigin.column <= em->selectEnd.column) {
+									// The selection began on a particular line closer to column 0, and continued on to something closer to the end
+									if (line->lineNumber == em->selectOrigin.lineNumber)
+									{
+										// This line should be displayed with selected coloring
+									}
+
+								} else if (em->selectOrigin.lineNumber == em->selectEnd.lineNumber && em->selectOrigin.column > em->selectEnd.column) {
+									// The selection began on a particular line closer to column 0, and continued on to something closer to the end
+									if (line->lineNumber == em->selectOrigin.lineNumber)
+									{
+										// This line should be displayed with selected coloring
+									}
+								}
+							}
+
+
+						// For source code, we perform syntax highlighting
 						if (em->isSourceCode && line->compilerInfo && line->compilerInfo->firstComp && em->leftColumn < line->sourceCodePopulated)
 						{
 							// Source code, syntax highlight
@@ -2050,7 +2161,7 @@ debug_break;
 						iBmp_drawVerticalLine(bmp, lrc3.top, lrc3.bottom, lrc3.right - 1, lineNumberBackColor);
 
 						// Get our line number
-						sprintf(bigBuffer, "%u\0", line->line);
+						sprintf(bigBuffer, "%u\0", line->lineNumber);
 
 						// Back off one character, and render the line number right-justified
 						lrc3.right -= (em->rcLineNumberLastRender.right - em->rcLineNumberLastRender.left) / 7;
@@ -2199,7 +2310,7 @@ debug_break;
 								iBmp_frameRect(bmp, &lrc3, tooltipForecolor, tooltipForecolor, tooltipForecolor, tooltipForecolor, false, NULL, false);
 
 								// Compute the line number
-								sprintf(bigBuffer, "%u\0", line->line);
+								sprintf(bigBuffer, "%u\0", line->lineNumber);
 								DrawText(bmp->hdc, bigBuffer, strlen(bigBuffer), &lrc3, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
 							}
 						}
@@ -2235,7 +2346,7 @@ debug_break;
 								iBmp_frameRect(bmp, &lrc3, tooltipForecolor, tooltipForecolor, tooltipForecolor, tooltipForecolor, false, NULL, false);
 
 								// Compute the line number
-								sprintf(bigBuffer, "%u\0", line->line);
+								sprintf(bigBuffer, "%u\0", line->lineNumber);
 								DrawText(bmp->hdc, bigBuffer, strlen(bigBuffer), &lrc3, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
 							}
 						}
@@ -2451,7 +2562,7 @@ debug_break;
 			// Is a line currently selected?
 			//////
 				if (!em->ecCursorLine)
-					iSEM_navigateTop(em, obj);
+					iSEM_navigateToTopLine(em, obj);
 
 
 			//////////
@@ -3256,7 +3367,7 @@ debug_break;
 // Called to navigate to the top of the chain
 //
 //////
-	bool iSEM_navigateTop(SEM* em, SObject* obj)
+	bool iSEM_navigateToTopLine(SEM* em, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
 		// Make sure the environment is sane
@@ -3298,7 +3409,7 @@ debug_break;
 // Called to navigate to the end of the chain
 //
 //////
-	bool iSEM_navigateEnd(SEM* em, SObject* obj)
+	bool iSEM_navigateToEndLine(SEM* em, SObject* obj)
 	{
 		s32			lnTop, lnBottom;
 		SFont*		font;
@@ -3388,7 +3499,8 @@ debug_break;
 	bool iSEM_selectLineUp(SEM* em, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		return(false);
+		iSEM_selectStart(em, _SEM_SELECT_MODE_ANCHOR);
+		return(iSEM_navigate(em, obj, -1, 0));
 	}
 
 
@@ -3404,7 +3516,8 @@ debug_break;
 	bool iSEM_selectLineDown(SEM* em, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		return(false);
+		iSEM_selectStart(em, _SEM_SELECT_MODE_ANCHOR);
+		return(iSEM_navigate(em, obj, 1, 0));
 	}
 
 
@@ -3420,7 +3533,8 @@ debug_break;
 	bool iSEM_selectLeft(SEM* em, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		return(false);
+		iSEM_selectStart(em, _SEM_SELECT_MODE_ANCHOR);
+		return(iSEM_navigate(em, obj, 0, -1));
 	}
 
 
@@ -3434,7 +3548,8 @@ debug_break;
 	bool iSEM_selectRight(SEM* em, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		return(false);
+		iSEM_selectStart(em, _SEM_SELECT_MODE_ANCHOR);
+		return(iSEM_navigate(em, obj, 0, 1));
 	}
 
 
@@ -3447,8 +3562,24 @@ debug_break;
 //////
 	bool iSEM_selectToEndOfLine(SEM* em, SObject* obj)
 	{
+		bool llResult;
+
+
 		logfunc(__FUNCTION__);
-		return(false);
+		if (em->column >= em->ecCursorLine->sourceCodePopulated)
+		{
+			// We're past the end of the line
+			llResult = iSEM_navigate(em, obj, 0, em->column - em->ecCursorLine->sourceCodePopulated);
+			iSEM_selectStart(em, _SEM_SELECT_MODE_ANCHOR);
+
+		} else {
+			// We're before the end of the line
+			iSEM_selectStart(em, _SEM_SELECT_MODE_ANCHOR);
+			llResult = iSEM_navigate(em, obj, 0, em->ecCursorLine->sourceCodePopulated - em->column);
+		}
+
+		// Indicate our result
+		return(llResult);
 	}
 
 
@@ -3462,7 +3593,9 @@ debug_break;
 	bool iSEM_selectToBeginOfLine(SEM* em, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		return(false);
+		iSEM_selectStart(em, _SEM_SELECT_MODE_ANCHOR);
+		if (em->column > 0)		return(iSEM_navigate(em, obj, 0, -em->column));
+		else					return(true);
 	}
 
 
@@ -3476,7 +3609,17 @@ debug_break;
 	bool iSEM_selectColumnToggle(SEM* em, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		return(false);
+		if (em->selectMode != _SEM_SELECT_MODE_NONE)
+		{
+			// Turn off selecting mode
+			em->selectMode = _SEM_SELECT_MODE_NONE;
+			iSEM_selectStop(em);
+
+		} else {
+			// Turn on column select mode
+			iSEM_selectStart(em, _SEM_SELECT_MODE_COLUMN);
+		}
+		return(true);
 	}
 
 
@@ -3490,7 +3633,41 @@ debug_break;
 	bool iSEM_selectLineToggle(SEM* em, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		return(false);
+		if (em->selectMode != _SEM_SELECT_MODE_NONE)
+		{
+			// Turn off selecting mode
+			em->selectMode = _SEM_SELECT_MODE_NONE;
+			iSEM_selectStop(em);
+
+		} else {
+			// Turn on line select mode
+			iSEM_selectStart(em, _SEM_SELECT_MODE_LINE);
+		}
+		return(true);
+	}
+
+
+
+
+//////////
+//
+// Called to toggle selection by line mode
+//
+//////
+	bool iSEM_selectAnchorToggle(SEM* em, SObject* obj)
+	{
+		logfunc(__FUNCTION__);
+		if (em->selectMode != _SEM_SELECT_MODE_NONE)
+		{
+			// Turn off selecting mode
+			em->selectMode = _SEM_SELECT_MODE_NONE;
+			iSEM_selectStop(em);
+
+		} else {
+			// Turn on anchor select mode
+			iSEM_selectStart(em, _SEM_SELECT_MODE_ANCHOR);
+		}
+		return(true);
 	}
 
 
@@ -3507,7 +3684,9 @@ debug_break;
 	bool iSEM_selectWordLeft(SEM* em, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		return(false);
+		iSEM_selectStart(em, _SEM_SELECT_MODE_ANCHOR);
+		if (em->column > 0)		return(iSEM_navigateWordLeft(em, obj, true));
+		else					return(true);
 	}
 
 
@@ -3524,7 +3703,41 @@ debug_break;
 	bool iSEM_selectWordRight(SEM* em, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		return(false);
+		iSEM_selectStart(em, _SEM_SELECT_MODE_ANCHOR);
+		if (em->column > 0)		return(iSEM_navigateWordRight(em, obj, true));
+		else					return(true);
+	}
+
+
+
+
+//////////
+//
+// Select from where we are to the top of the file
+//
+//////
+	bool iSEM_selectToTopLine(SEM* em, SObject* obj)
+	{
+		logfunc(__FUNCTION__);
+		iSEM_selectStart(em, _SEM_SELECT_MODE_ANCHOR);
+		if (em->column > 0)		return(iSEM_navigateToTopLine(em, obj));
+		else					return(true);
+	}
+
+
+
+
+//////////
+//
+// Select from where we are to the top of the file
+//
+//////
+	bool iSEM_selectToEndLine(SEM* em, SObject* obj)
+	{
+		logfunc(__FUNCTION__);
+		iSEM_selectStart(em, _SEM_SELECT_MODE_ANCHOR);
+		if (em->column > 0)		return(iSEM_navigateToEndLine(em, obj));
+		else					return(true);
 	}
 
 
@@ -3926,4 +4139,70 @@ debug_break;
 
 		// Indicate failure
 		return(false);
+	}
+
+
+
+
+//////////
+//
+// Selecting begins at the current coordinates if it's not already selected.
+//
+//////
+	void iSEM_selectStart(SEM* em, u32 tnSelectMode)
+	{
+		if (em && em->selectMode == _SEM_SELECT_MODE_NONE)
+		{
+			// We're starting a new selection
+			switch (tnSelectMode)
+			{
+				case _SEM_SELECT_MODE_LINE:
+				case _SEM_SELECT_MODE_COLUMN:
+				case _SEM_SELECT_MODE_ANCHOR:
+					iSEM_renumber(em, 1);
+					em->selectMode = tnSelectMode;
+
+					// Note where we start
+					em->selectOrigin.lineNumber		= em->ecCursorLine->lineNumber;
+					em->selectOrigin.uid			= em->ecCursorLine->uid;
+					em->selectOrigin.column			= em->column;
+
+					// Update the extents
+					iSEM_selectUpdateExtents(em);
+					break;
+			}
+		}
+	}
+
+
+
+
+//////////
+//
+// Selecting has stopped
+//
+//////
+	void iSEM_selectStop(SEM* em)
+	{
+		if (em && em->selectMode != _SEM_SELECT_MODE_NONE)
+			em->selectMode = _SEM_SELECT_MODE_NONE;
+	}
+
+
+
+
+//////////
+//
+// Selecting to the current location
+//
+//////
+	void iSEM_selectUpdateExtents(SEM* em)
+	{
+		if (em && em->selectMode != _SEM_SELECT_MODE_NONE && em->ecCursorLine)
+		{
+			// Store where they are now
+			em->selectEnd.lineNumber	= em->ecCursorLine->lineNumber;
+			em->selectEnd.uid			= em->ecCursorLine->uid;
+			em->selectEnd.column		= em->column;
+		}
 	}

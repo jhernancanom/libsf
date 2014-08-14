@@ -77,7 +77,7 @@
 
 					case _ICODE_CLEAR:
 						// They want to clear the screen
-						iSEM_navigateTop(screenData, _screen);
+						iSEM_navigateToTopLine(screenData, _screen);
 						iSEM_deleteChain(&screenData, false);
 						screen_editbox->isDirtyRender = true;
 						iWindow_render(gWinJDebi, false);
@@ -89,7 +89,7 @@
 						{
 							// Syntax error, expected "? something" got only "?"
 							iSEM_appendLine(screenData, (s8*)cgcSyntaxError, -1);
-							iSEM_navigateEnd(screenData, _screen);
+							iSEM_navigateToEndLine(screenData, _screen);
 							screen_editbox->isDirtyRender = true;
 							iWindow_render(gWinJDebi, false);
 							return(false);
@@ -103,7 +103,7 @@
 								{
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error
-									screen_editbox->isDirtyRender |= iSEM_navigateEnd(screenData, _screen);
+									screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(screenData, _screen);
 									iWindow_render(gWinJDebi, false);
 									return(false);
 								}
@@ -114,7 +114,7 @@
 								{
 									// Unknown parameter
 									iError_report(cgcUnrecognizedParameter);
-									screen_editbox->isDirtyRender |= iSEM_navigateEnd(screenData, _screen);
+									screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(screenData, _screen);
 									iWindow_render(gWinJDebi, false);
 									return(false);
 								}
@@ -124,7 +124,7 @@
 
 							// Add its contents to _screen
 							iSEM_appendLine(screenData, varText->value.data, varText->value.length);
-							iSEM_navigateEnd(screenData, _screen);
+							iSEM_navigateToEndLine(screenData, _screen);
 							screen_editbox->isDirtyRender = true;
 							iWindow_render(gWinJDebi, false);
 
@@ -147,7 +147,7 @@
 								{
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error
-									screen_editbox->isDirtyRender |= iSEM_navigateEnd(screenData, _screen);
+									screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(screenData, _screen);
 									iWindow_render(gWinJDebi, false);
 									return(false);
 								}
@@ -158,7 +158,7 @@
 								{
 									// Unknown parameter
 									iError_report(cgcUnrecognizedParameter);
-									screen_editbox->isDirtyRender |= iSEM_navigateEnd(screenData, _screen);
+									screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(screenData, _screen);
 									iWindow_render(gWinJDebi, false);
 									return(false);
 								}

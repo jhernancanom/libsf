@@ -266,7 +266,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			iSEM_appendLine(screenData, NULL, 0);
 		}
 		// Navigate to the end of the content
-		iSEM_navigateEnd(screenData, _screen);
+		iSEM_navigateToEndLine(screenData, _screen);
 
 		// Initially populate _jdebi
 		// Load in the history if it exists
@@ -281,13 +281,13 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		}
 
 		// Navigate to the last line
-		iSEM_navigateEnd(command_editbox->pa.em, command_editbox);
+		iSEM_navigateToEndLine(command_editbox->pa.em, command_editbox);
 
 		// Make sure there's a blank line at the end
 		if (command_editbox->pa.em->ecCursorLine->sourceCodePopulated != 0)
 		{
 			iSEM_appendLine(command_editbox->pa.em, NULL, 0);
-			iSEM_navigateEnd(command_editbox->pa.em, command_editbox);
+			iSEM_navigateToEndLine(command_editbox->pa.em, command_editbox);
 		}
 
 		// Load some source code
@@ -446,7 +446,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		if (gobj_splashListing && gobj_splashListingEditbox)
 		{
 			// Move to the end of the list
-			iSEM_navigateEnd(gobj_splashListingEditbox->pa.em, gobj_splashListing);
+			iSEM_navigateToEndLine(gobj_splashListingEditbox->pa.em, gobj_splashListing);
 
 			if (trc && gobj_splashListing->bmp)
 			{
