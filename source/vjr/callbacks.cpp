@@ -3,7 +3,7 @@
 // /libsf/source/vjr/callbacks.cpp
 //
 //////
-// Version 0.50
+// Version 0.51
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -157,7 +157,24 @@
 			*obj->pa.value->value.data_f64	= *obj->pa.minValue->value.data_f64 + (lfPercent * (*obj->pa.maxValue->value.data_f64 - *obj->pa.minValue->value.data_f64));
 			iObj_setDirtyRender_ascent(obj, true);
 			iWindow_render(win, false);
+
+		} else if (obj->objType == _OBJ_TYPE_EDITBOX) {
+			if ((tnClick & _MOUSE_LEFT_BUTTON) != 0)
+			{
+				// They are clicking and dragging
+
+				// Need to navigate to the indicated x,y coordinate
+				iSEM_navigateTo_pixelXY(obj->pa.em, obj, x, y);
+
+				// Mark the mouse activity
+				iSEM_selectStart(obj->pa.em, _SEM_SELECT_MODE_ANCHOR);
+
+				// Redraw our changes
+				iObj_setDirtyRender_ascent(obj, true);
+				iWindow_render(win, false);
+			}
 		}
+
 		return(false);
 	}
 
@@ -198,6 +215,10 @@
 		} else if (obj->objType == _OBJ_TYPE_EDITBOX) {
 			// Need to navigate to the indicated x,y coordinate
 			iSEM_navigateTo_pixelXY(obj->pa.em, obj, x, y);
+
+			// Mark the mouse activity
+			if (!tlShift)		iSEM_selectStop(obj->pa.em);
+			else				iSEM_selectStart(obj->pa.em, _SEM_SELECT_MODE_ANCHOR);
 
 		} else if (obj->objType == _OBJ_TYPE_RADIO) {
 			// The mouse indicates the position

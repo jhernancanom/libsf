@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_sup.cpp
 //
 //////
-// Version 0.50
+// Version 0.51
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -2576,6 +2576,24 @@
 
 		// If we get here, an unknown value
 		return((s8*)"%.0lf");
+	}
+
+
+
+
+//////////
+//
+// Called to see if a value is between two others, inclusive
+//
+//////
+	bool iMath_between(s32 tnValue, s32 tnN1, s32 tnN2)
+	{
+		// The math is simple :-)
+		if (tnValue >= min(tnN1, tnN2) && tnValue <= max(tnN1, tnN2))
+			return(true);
+
+		// If we get here, not between
+		return(false);
 	}
 
 

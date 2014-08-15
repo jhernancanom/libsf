@@ -3,7 +3,7 @@
 // /libsf/source/vjr/edit_chain_manager.h
 //
 //////
-// Version 0.50
+// Version 0.51
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -130,7 +130,7 @@
 	{
 		u32				uid;
 		u32				lineNumber;
-		u32				column;
+		s32				column;
 	};
 
 
@@ -249,6 +249,7 @@
 	SFont*					iSEM_getRectAndFont					(SEM* em, SObject* obj, RECT* rc);
 	void					iSEM_getColors						(SEM* em, SObject* obj, SBgra& backColor, SBgra& foreColor);
 	u32						iSEM_render							(SEM* em, SObject* obj, bool tlRenderCursorline);
+	void					iSEM_render_highlightSelectedComps	(SEM* em, SComp* firstComp);
 	bool					iSEM_verifyCursorIsVisible			(SEM* em, SObject* obj);
 	bool					iSEM_onKeyDown_sourceCode			(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
 	bool					iSEM_onKeyDown						(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);

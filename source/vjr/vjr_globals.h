@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_globals.h
 //
 //////
-// Version 0.50
+// Version 0.51
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -291,8 +291,8 @@
 		SBgra			overrideMatchingForeColor			= { rgba(0, 0, 0, 255) };				// Black
 		SBgra			overrideMatchingBackColorMultiple	= { rgba(0, 255, 0, 255) };				// Green
 		SBgra			overrideMatchingForeColorMultiple	= { rgba(0, 0, 0, 255) };				// Black
-		SBgra			selectedBackColor					= { rgba(32, 164, 255, 255) };
-		SBgra			selectedForeColor					= { rgba(255, 255, 255, 255) };
+		SBgra			selectedBackColor					= { rgba(200, 225, 255, 255) };
+		SBgra			selectedForeColor					= { rgba(0, 0, 192, 255) };
 		SBgra			disabledBackColor					= { rgba(255, 255, 255, 255) };
 		SBgra			disabledForeColor					= { rgba(192, 192, 230, 255) };
 		SBgra			highlightSymbolBackColor			= { rgba(235, 220, 255, 255) };			// Very pastel purple

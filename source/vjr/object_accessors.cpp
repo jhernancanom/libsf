@@ -3,7 +3,7 @@
 // /libsf/source/vjr/object_accessors.cpp
 //
 //////
-// Version 0.50
+// Version 0.51
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:

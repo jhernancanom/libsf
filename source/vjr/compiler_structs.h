@@ -3,7 +3,7 @@
 // /libsf/source/vjr/compiler_structs.h
 //
 //////
-// Version 0.50
+// Version 0.51
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -239,6 +239,10 @@ struct SCompileNote;
 		// For each compilation pass, components can be marked in error or warning or both
 		bool			isError;										// Is this component part of an error?
 		bool			isWarning;										// Is this component part of a warning?
+
+		// For selected components
+		SBgra*			overrideSelectionBackColor;
+		SBgra*			overrideSelectionForeColor;
 
 		// If this is a character that matches something (the closest parenthesis, bracket, or brace) then this color will be populated
 		SBgra*			overrideMatchingForeColor;

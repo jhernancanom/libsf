@@ -3,7 +3,7 @@
 // /libsf/source/vjr/edit_chain_manager.cpp
 //
 //////
-// Version 0.50
+// Version 0.51
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -1431,6 +1431,20 @@ debug_break;
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
+
+					case VK_PRIOR:		// Page up
+						iSEM_navigatePages(em, obj, -1);
+
+						// Indicate our key was processed
+						llProcessed = true;
+						break;
+
+					case VK_NEXT:		// Page down
+						iSEM_navigatePages(em, obj, 1);
+
+						// Indicate our key was processed
+						llProcessed = true;
+						break;
 				}
 
 			} else if (!tlCtrl && !tlShift && tlAlt) {
@@ -1705,10 +1719,8 @@ debug_break;
 		SComp*		compPBBLeft;
 		SComp*		compPBBRight;
 		HGDIOBJ		hfontOld;
-		SBgra		foreColor, backColor, fillColor, backColorLast, foreColorLast, compColor;
-		RECT		rc, lrc, lrc2, lrc3, lrcComp, lrcText;
-		// Added to work around the font->tm.* width and height values not being accurate
-		RECT		lrcCompCalcStart, lrcCompCalcDwell;
+		SBgra		foreColor, defaultForeColor, defaultBackColor, fillColor, backColorLast, foreColorLast, compColor;
+		RECT		rc, lrc, lrc2, lrc3, lrcComp, lrcText, lrcCompCalcStart, lrcCompCalcDwell;
 		s8			bigBuffer[2048];
 
 
@@ -1730,9 +1742,9 @@ debug_break;
 			// Grab font, coordinates, and colors
 			//////
 				font = iSEM_getRectAndFont(em, obj, &rc);
-				iSEM_getColors(em, obj, backColor, foreColor);
-				backColorLast.color			= backColor.color;
-				foreColorLast.color			= foreColor.color;
+				iSEM_getColors(em, obj, defaultBackColor, defaultForeColor);
+				backColorLast.color			= defaultBackColor.color;
+				foreColorLast.color			= defaultForeColor.color;
 				iMisc_adjustColorBrightness(backColorLast, -5.0f);
 				iMisc_adjustColorBrightness(foreColorLast, 5.0f);
 				hfontOld = SelectObject(bmp->hdc, font->hfont);		// Save the original font, and set our current font
@@ -1870,13 +1882,15 @@ debug_break;
 						SetBkColor(bmp->hdc, RGB(currentStatementBackColor.red, currentStatementBackColor.grn, currentStatementBackColor.blu));
 						SetTextColor(bmp->hdc, RGB(currentStatementForeColor.red, currentStatementForeColor.grn, currentStatementForeColor.blu));
 						fillColor.color	= currentStatementBackColor.color;
+						foreColor.color = currentStatementForeColor.color;
 
 					} else if (line->ll.next || ((!em->showCursorLine || !tlRenderCursorline) && !em->showEndLine)) {
 						// Display in normal background color
-						SetBkColor(bmp->hdc, RGB(backColor.red, backColor.grn, backColor.blu));
-						SetTextColor(bmp->hdc, RGB(foreColor.red, foreColor.grn, foreColor.blu));
+						SetBkColor(bmp->hdc, RGB(defaultBackColor.red, defaultBackColor.grn, defaultBackColor.blu));
+						SetTextColor(bmp->hdc, RGB(defaultForeColor.red, defaultForeColor.grn, defaultForeColor.blu));
 						hfontOld		= SelectObject(bmp->hdc, font->hfont);
-						fillColor.color	= backColor.color;
+						fillColor.color	= defaultBackColor.color;
+						foreColor.color = defaultForeColor.color;
 
 					} else {
 						// This is the last line, display in the last line color
@@ -1884,6 +1898,7 @@ debug_break;
 						SetTextColor(bmp->hdc, RGB(foreColorLast.red, foreColorLast.grn, foreColorLast.blu));
 						hfontOld		= SelectObject(bmp->hdc, font->hfont);
 						fillColor.color	= backColorLast.color;
+						foreColor.color = foreColorLast.color;
 					}
 
 
@@ -1922,57 +1937,9 @@ debug_break;
 						// Draw the text
 						DrawText(bmp->hdc, line->sourceCode->data + em->leftColumn, line->sourceCodePopulated - em->leftColumn, &lrc2, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 
-
-						//////////
 						// If they're selecting, highlight the selected portion
-						//////
-							if (em->selectMode != _SEM_SELECT_MODE_NONE)
-							{
-								// Are they selecting up or down
-								if (em->selectOrigin.lineNumber < em->selectEnd.lineNumber)
-								{
-									// The selection began closer to the start of the file, and continued on toward the end
-									if (line->lineNumber >= em->selectOrigin.lineNumber && line->lineNumber <= em->selectOrigin.lineNumber)
-									{
-										// This line should be displayed with selected coloring
-										if (line->lineNumber == em->selectOrigin.lineNumber)
-										{
-											// It is on the line closer to the beginning of the file
-
-										} else if (line->lineNumber == em->selectEnd.lineNumber) {
-											// It is on the line closer to the end of the file
-										}
-									}
-
-								} else if (em->selectOrigin.lineNumber > em->selectEnd.lineNumber) {
-									// The selection began closer to the end of a the file, and continued up to the top
-									if (line->lineNumber <= em->selectOrigin.lineNumber && line->lineNumber >= em->selectOrigin.lineNumber)
-									{
-										// This line should be displayed with selected coloring
-										if (line->lineNumber == em->selectOrigin.lineNumber)
-										{
-											// It is on the line closer to the end of the file
-
-										} else if (line->lineNumber == em->selectEnd.lineNumber) {
-											// It is on the line closer to the beginning of the file
-										}
-									}
-
-								} else if (em->selectOrigin.lineNumber == em->selectEnd.lineNumber && em->selectOrigin.column <= em->selectEnd.column) {
-									// The selection began on a particular line closer to column 0, and continued on to something closer to the end
-									if (line->lineNumber == em->selectOrigin.lineNumber)
-									{
-										// This line should be displayed with selected coloring
-									}
-
-								} else if (em->selectOrigin.lineNumber == em->selectEnd.lineNumber && em->selectOrigin.column > em->selectEnd.column) {
-									// The selection began on a particular line closer to column 0, and continued on to something closer to the end
-									if (line->lineNumber == em->selectOrigin.lineNumber)
-									{
-										// This line should be displayed with selected coloring
-									}
-								}
-							}
+						if (line->compilerInfo && line->compilerInfo->firstComp)
+							iSEM_render_highlightSelectedComps(em, line->compilerInfo->firstComp);
 
 
 						// For source code, we perform syntax highlighting
@@ -1986,9 +1953,31 @@ debug_break;
 								while (comp)
 								{
 									// Fore color
-									     if (comp->overrideMatchingForeColor)		compColor.color	= comp->overrideMatchingForeColor->color;
-									else if (comp->color)							compColor.color = comp->color->color;
-									else											compColor.color = foreColor.color;
+									if (comp->overrideSelectionBackColor)
+									{
+										// Use the selection color
+										SetBkMode(bmp->hdc, OPAQUE);
+										SetBkColor(bmp->hdc, RGB(comp->overrideSelectionBackColor->red, comp->overrideSelectionBackColor->grn, comp->overrideSelectionBackColor->blu));
+										compColor.color = comp->overrideSelectionForeColor->color;
+
+									} else if (comp->overrideMatchingForeColor) {
+										// Use the matching color
+										SetBkMode(bmp->hdc, OPAQUE);
+										SetBkColor(bmp->hdc, RGB(comp->overrideMatchingBackColor->red, comp->overrideMatchingBackColor->grn, comp->overrideMatchingBackColor->blu));
+										compColor.color	= comp->overrideMatchingForeColor->color;
+
+									} else if (comp->color) {
+										// Use the component override color
+										SetBkMode(bmp->hdc, TRANSPARENT);
+										SetBkColor(bmp->hdc, RGB(fillColor.red, fillColor.grn, fillColor.blu));
+										compColor.color = comp->color->color;
+
+									} else {
+										// Use the standard display color
+										SetBkMode(bmp->hdc, TRANSPARENT);
+										SetBkColor(bmp->hdc, RGB(fillColor.red, fillColor.grn, fillColor.blu));
+										compColor.color = defaultForeColor.color;
+									}
 
 									// Find out where it starts
 									SetRect(&lrcCompCalcStart, 0, 0, 200000, lrc.bottom);
@@ -2013,7 +2002,7 @@ debug_break;
 									if (comp->iCode >= _ICODE_CASK_MINIMUM && comp->iCode <= _ICODE_CASK_MAXIMUM)
 									{
 										// Is there a cask cache from a previous screen render?
-										if (!comp->bc || !iBmp_isValidCache(&comp->bc, backColor.color, foreColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, 0, 0))
+										if (!comp->bc || !iBmp_isValidCache(&comp->bc, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, 0, 0))
 										{
 											// The bitmap cache is no longer valid
 											iBmp_deleteCache(&obj->bc);
@@ -2024,8 +2013,8 @@ debug_break;
 																					lrcComp.bottom - lrcComp.top,
 																					&lnSkip,
 																					comp->length,
-																					backColor,
-																					foreColor,
+																					defaultBackColor,
+																					defaultForeColor,
 																					fillColor);
 
 											// If we decide to display it with an alpha, this also may need to be brought outside of the if block
@@ -2035,9 +2024,10 @@ debug_break;
 											SetTextColor(bmpCask->hdc, RGB(blackColor.red, blackColor.grn, blackColor.blu));
 											SetRect(&lrcText, 0, -1, bmpCask->bi.biWidth, bmpCask->bi.biHeight);
 											DrawText(bmpCask->hdc, comp->line->sourceCode->data + comp->start + lnSkip, comp->length - (2 * lnSkip), &lrcText, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS);
+											SetBkMode(bmpCask->hdc, OPAQUE);
 
 											// Save the cache
-											iBmp_createCache(&comp->bc, bmpCask, backColor.color, foreColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, 0, 0, false);
+											iBmp_createCache(&comp->bc, bmpCask, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, 0, 0, false);
 
 										} else {
 											// Use the bitmap cache
@@ -2065,8 +2055,8 @@ debug_break;
 										SetTextColor(bmp->hdc, RGB(compColor.red, compColor.grn, compColor.blu));
 
 										// An explicit background color?
-										if (comp->overrideMatchingBackColor)		SetBkColor(bmp->hdc, RGB(comp->overrideMatchingBackColor->red, comp->overrideMatchingBackColor->grn, comp->overrideMatchingBackColor->blu));
-										else										SetBkColor(bmp->hdc, RGB(fillColor.red, fillColor.grn, fillColor.blu));
+										if (comp->overrideMatchingBackColor)
+											SetBkColor(bmp->hdc, RGB(comp->overrideMatchingBackColor->red, comp->overrideMatchingBackColor->grn, comp->overrideMatchingBackColor->blu));
 
 										// Is this a component that should be highlighted?
 										if (compHighlight && comp != compHighlight && comp->length == compHighlight->length && _memicmp(comp->line->sourceCode->data + comp->start, compHighlight->line->sourceCode->data + compHighlight->start, comp->length) == 0)
@@ -2262,7 +2252,7 @@ debug_break;
 
 			// Fill in the remainder of the display
 			SetRect(&lrc, rc.left, rc.top + lnTop, rc.right, rc.bottom);
-			iBmp_fillRect(bmp, &lrc, backColor, backColor, backColor, backColor, false, NULL, false);
+			iBmp_fillRect(bmp, &lrc, defaultBackColor, defaultBackColor, defaultBackColor, defaultBackColor, false, NULL, false);
 
 			// Line number portion
 			SetRect(&lrc3, em->rcLineNumberLastRender.left, rc.top + lnTop, em->rcLineNumberLastRender.right, rc.bottom);
@@ -2372,6 +2362,139 @@ debug_break;
 
 		// Indicate how many pixels were rendered
 		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Called to 
+//
+//////
+	void iSEM_render_highlightSelectedComps(SEM* em, SComp* firstComp)
+	{
+		bool	llSetSelectedColor;
+		SComp*	comp;
+
+
+		// Make sure the environment is sane
+		if (em && firstComp)
+		{
+			// Set the starting values
+			llSetSelectedColor	= false;
+			comp				= firstComp;
+
+			// Repeat through every component for this line
+			while (comp)
+			{
+				//////////
+				// Is anything selected?
+				//////
+					if (em->selectMode != _SEM_SELECT_MODE_NONE)
+					{
+// if (em->selectOrigin.column != em->selectEnd.column)
+// 	debug_break;
+						// Are they selecting up or down
+						if (em->selectOrigin.lineNumber < em->selectEnd.lineNumber)
+						{
+							// The selection began closer to the start of the file, and continued on toward the end
+							if (comp->line->lineNumber >= em->selectOrigin.lineNumber && comp->line->lineNumber <= em->selectEnd.lineNumber)
+							{
+								// This line is within range, and may need to be displayed with selected coloring
+								if (comp->line->lineNumber == em->selectOrigin.lineNumber)
+								{
+									// It is on the line closer to the beginning of the file, so it must appear at or after the selection start
+									if (em->selectOrigin.column <= comp->start + comp->length)
+										llSetSelectedColor = true;
+
+								} else if (comp->line->lineNumber == em->selectEnd.lineNumber) {
+									// It is on the line closer to the end of the file
+									if (comp->start <= em->selectEnd.column)
+										llSetSelectedColor = true;
+
+								} else {
+									// It's in the middle, always selected
+									llSetSelectedColor = true;
+								}
+							}
+
+						} else if (em->selectOrigin.lineNumber > em->selectEnd.lineNumber) {
+							// The selection began closer to the end of a the file, and continued up to the top
+							if (comp->line->lineNumber <= em->selectOrigin.lineNumber && comp->line->lineNumber >= em->selectEnd.lineNumber)
+							{
+								// This line should be displayed with selected coloring
+								if (comp->line->lineNumber == em->selectOrigin.lineNumber)
+								{
+									// It is on the line closer to the end of the file
+									if (comp->start <= em->selectOrigin.column)
+										llSetSelectedColor = true;
+
+								} else if (comp->line->lineNumber == em->selectEnd.lineNumber) {
+									// It is on the line closer to the beginning of the file
+									if (comp->start + comp->length >= em->selectEnd.column)
+										llSetSelectedColor = true;
+
+								} else {
+									// It's in the middle, always selected
+									llSetSelectedColor = true;
+								}
+							}
+
+						} else if (em->selectOrigin.lineNumber == em->selectEnd.lineNumber && em->selectOrigin.column <= em->selectEnd.column) {
+							// The selection began on a particular line closer to column 0, and continued on to something closer to the end
+							if (comp->line->lineNumber == em->selectOrigin.lineNumber)
+							{
+								// This line should be displayed with selected coloring
+								if (iMath_between(comp->start,					em->selectOrigin.column, em->selectEnd.column) ||
+									iMath_between(comp->start + comp->length,	em->selectOrigin.column, em->selectEnd.column) ||
+									iMath_between(em->selectOrigin.column,		comp->start, comp->start + comp->length) ||
+									iMath_between(em->selectEnd.column,			comp->start, comp->start + comp->length))
+								{
+									llSetSelectedColor = true;
+								}
+							}
+
+						} else if (em->selectOrigin.lineNumber == em->selectEnd.lineNumber && em->selectOrigin.column > em->selectEnd.column) {
+							// The selection began on a particular line closer to column 0, and continued on to something closer to the end
+							if (comp->line->lineNumber == em->selectOrigin.lineNumber)
+							{
+								// This line should be displayed with selected coloring
+								if (iMath_between(comp->start,					em->selectOrigin.column, em->selectEnd.column) ||
+									iMath_between(comp->start + comp->length,	em->selectOrigin.column, em->selectEnd.column) ||
+									iMath_between(em->selectOrigin.column,		comp->start, comp->start + comp->length) ||
+									iMath_between(em->selectEnd.column,			comp->start, comp->start + comp->length))
+								{
+									llSetSelectedColor = true;
+								}
+							}
+						}
+					}
+
+
+				//////////
+				// Set or reset the color
+				//////
+					if (llSetSelectedColor)
+					{
+						// Set the color
+						comp->overrideSelectionBackColor = &selectedBackColor;
+						comp->overrideSelectionForeColor = &selectedForeColor;
+						llSetSelectedColor = false;
+
+					} else {
+						// Reset the color
+						comp->overrideSelectionBackColor = NULL;
+						comp->overrideSelectionForeColor = NULL;
+					}
+
+
+				//////////
+				// Move to next component
+				//////
+					comp = (SComp*)comp->ll.next;
+			}
+		}
 	}
 
 
@@ -2520,6 +2643,7 @@ debug_break;
 
 		// If something has changed, we need to re-render
 		iObj_setDirtyRender_ascent(obj, true);
+		iSEM_selectUpdateExtents(em);
 
 		// Indicate our status
 		return(llChanged);
@@ -3567,7 +3691,7 @@ debug_break;
 		if (em->column >= em->ecCursorLine->sourceCodePopulated)
 		{
 			// We're past the end of the line
-			llResult = iSEM_navigate(em, obj, 0, em->column - em->ecCursorLine->sourceCodePopulated);
+			llResult = iSEM_navigate(em, obj, 0, -(em->column - em->ecCursorLine->sourceCodePopulated));
 			iSEM_selectStart(em, _SEM_SELECT_MODE_ANCHOR);
 
 		} else {
@@ -4072,7 +4196,7 @@ debug_break;
 				
 				// We only go to the column if it's valid, otherwise we just move to the row
 				lnCandidateCol = em->leftColumn + (x / (font->tm.tmAveCharWidth + lnExtra));
-				if (lnCandidateCol > 0 && x >= em->rcLineNumberLastRender.right)
+				if (lnCandidateCol > 0 && x >= lrc.left)
 					em->column = lnCandidateCol;
 
 
@@ -4149,7 +4273,7 @@ debug_break;
 //////
 	void iSEM_selectStart(SEM* em, u32 tnSelectMode)
 	{
-		if (em && em->selectMode == _SEM_SELECT_MODE_NONE)
+		if (em && em->selectMode == _SEM_SELECT_MODE_NONE && em->ecCursorLine)
 		{
 			// We're starting a new selection
 			switch (tnSelectMode)

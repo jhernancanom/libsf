@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_defs.h
 //
 //////
-// Version 0.50
+// Version 0.51
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -297,6 +297,7 @@
 
 	s64						iMath_delta								(s64 tnBaseValue, s64 tnSubtractionValue);
 	s8*						iMath_roundTo							(f64* tfValue, f64 tfRoundTo);
+	bool					iMath_between							(s32 tnValue, s32 tnN1, s32 tnN2);
 
 	s8*						iDuplicateString						(s8* tcText);
 	SFont*					iFont_duplicate							(SFont* fontSource);
