@@ -123,7 +123,7 @@
 	SBitmap*			bmpRadioDot							= NULL;
 
 	// Dapple
-	SBitmap*			bmpDapple							= NULL;
+	SBitmap*			bmpDapple1							= NULL;
 	SBitmap*			bmpDapple2							= NULL;
 
 //////////

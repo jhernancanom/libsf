@@ -696,7 +696,7 @@
 		iBmp_delete(&bmpConditionalFalse,			true, true);
 		iBmp_delete(&bmpConditionalTrueCountdown,	true, true);
 		iBmp_delete(&bmpConditionalFalseCountdown,	true, true);
-		iBmp_delete(&bmpDapple,						true, true);
+		iBmp_delete(&bmpDapple1,						true, true);
 		iBmp_delete(&bmpDapple2,					true, true);
 
 		// Casks

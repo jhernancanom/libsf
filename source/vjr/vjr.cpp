@@ -186,7 +186,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			bmpConditionalTrueCountdown		= iBmp_rawLoad(cgc_breakpointConditionalTrueCountdown);
 			bmpConditionalFalseCountdown	= iBmp_rawLoad(cgc_breakpointConditionalFalseCountdown);
 
-			bmpDapple			= iBmp_rawLoad(cgc_dappleBmp);
+			bmpDapple1			= iBmp_rawLoad(cgc_dappleBmp);
 			bmpDapple2			= iBmp_rawLoad(cgc_dapple2Bmp);
 
 			//////////

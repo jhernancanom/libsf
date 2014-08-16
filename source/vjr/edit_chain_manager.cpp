@@ -2356,7 +2356,7 @@ debug_break;
 //////////
 // This is a nice appearance, but it is slow.  If the background rendering algorithm were drawn, and the bitmap cached, it would be okay.
 // 			// Apply a dappling
-// 			iBmp_dapple(bmp, bmpDapple2, 255.0f, 10);
+// 			iBmp_dapple(bmp, bmpDapple1, 225.0f, 10);
 //////
 		}
 

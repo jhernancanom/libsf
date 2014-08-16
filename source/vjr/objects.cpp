@@ -4582,7 +4582,7 @@ if (!llPublishChildren)
 							else						iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, NULL,			false);
 
 							// Apply a dappling
-							iBmp_dapple(obj->bmp, bmpDapple, 215.0f, 3);
+							iBmp_dapple(obj->bmp, bmpDapple1, 215.0f, 3);
 
 							// Save the cache
 							iBmp_createCache(&obj->bc, obj->bmp, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, 0, true);

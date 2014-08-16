@@ -2686,7 +2686,7 @@
 		{
 			SetRect(&lrc, 0, 0, bmp->bi.biWidth, bmp->bi.biHeight);
 			iBmp_fillRect(bmp, &lrc, tooltipNwBackColor, tooltipNeBackColor, tooltipSwBackColor, tooltipSeBackColor, true, NULL, false);
-			iBmp_dapple(bmp, bmpDapple, 200.0f, 7);
+			iBmp_dapple(bmp, bmpDapple1, 200.0f, 7);
 			iBmp_frameRect(bmp, &lrc, tooltipForecolor, tooltipForecolor, tooltipForecolor, tooltipForecolor, false, NULL, false);
 		}
 	}
