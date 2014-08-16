@@ -390,7 +390,7 @@
 	SBgra					iBmp_extractColorAtPoint				(SBitmap* bmp, s32 tnX, s32 tnY);
 	SBgra					iBmp_colorCombine						(SBgra color1, SBgra color2, f32 tfAlp);
 	bool					iBmp_locateMarker						(SBitmap* bmp, u8 red, u8 grn, u8 blu, u32* tnX, u32* tnY, bool tlOverwriteMarker);
-	SBitmap*				iBmp_cask_createAndPopulate				(s32 iCode, s32 tnWidth, s32 tnHeight, s32* tnSkipChars, u32 tnTextLength, SBgra backColor, SBgra textColor, SBgra backgroundColor);
+	SBitmap*				iBmp_cask_createAndPopulate				(s32 iCode, s32 tnWidth, s32 tnHeight, s32* tnSkipChars, u32 tnTextLength, SBgra backColor, SBgra textColor, SBgra backgroundColor, bool tlOverrideColors);
 	void					iBmp_colorizeAsCommonTooltipBackground	(SBitmap* bmp);
 	void					iBmp_colorizeHighlightGradient			(SBitmap* bmp, RECT* rc, SBgra color, f32 tfLeftOpaque, f32 tfRightOpaque);
 	void					iBmp_dapple								(SBitmap* bmp, SBitmap* bmpDapple, f32 tfBias, f32 tfInfluence);

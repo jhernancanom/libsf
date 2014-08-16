@@ -158,6 +158,9 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			bmpDebugIcon		= iBmp_rawLoad(cgc_debugIconBmp);
 			bmpOutputIcon		= iBmp_rawLoad(cgc_outputIconBmp);
 			bmpSourceLightIcon	= iBmp_rawLoad(cgc_sourcelightIconBmp);
+			bmpCarouselIcon		= iBmp_rawLoad(cgc_carouselCarouselBmp);
+			bmpTabsIcon			= iBmp_rawLoad(cgc_carouselTabsBmp);
+			bmpCarouselPad		= iBmp_rawLoad(cgc_carouselPadBmp);
 
 			// Create a 1x1 no image bitmap placeholder
 			bmpNoImage			= iBmp_allocate();

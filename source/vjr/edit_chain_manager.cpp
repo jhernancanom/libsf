@@ -1705,7 +1705,7 @@ debug_break;
 	u32 iSEM_render(SEM* em, SObject* obj, bool tlRenderCursorline)
 	{
 		u32			lnPixelsRendered;
-		s32			lnTop, lnSkip, lnDeltaX, lnLevel;
+		s32			lnI, lnTop, lnSkip, lnDeltaX, lnLevel;
 		bool		llIsValid;
 		SFont*		font;
 		SEdit*		line;
@@ -1939,7 +1939,11 @@ debug_break;
 
 						// If they're selecting, highlight the selected portion
 						if (line->compilerInfo && line->compilerInfo->firstComp)
+						{
+							// Highlight both components and whitespaces
 							iSEM_render_highlightSelectedComps(em, line->compilerInfo->firstComp);
+							iSEM_render_highlightSelectedComps(em, line->compilerInfo->firstWhitespace);
+						}
 
 
 						// For source code, we perform syntax highlighting
@@ -1949,165 +1953,175 @@ debug_break;
 							if (em->isSourceCode && line->compilerInfo && line->compilerInfo->firstComp)
 							{
 								// Redraw items that are to be colorized in their color
-								comp = line->compilerInfo->firstComp;
-								while (comp)
+								for (lnI = 1; lnI < 3; lnI++)
 								{
-									// Fore color
-									if (comp->overrideSelectionBackColor)
+									// Determine if we're rendering components or whitespaces
+									if (lnI == 1)		comp = line->compilerInfo->firstComp;
+									else				comp = line->compilerInfo->firstWhitespace;
+
+									// For all of these, render them one by one
+									while (comp)
 									{
-										// Use the selection color
-										SetBkMode(bmp->hdc, OPAQUE);
-										SetBkColor(bmp->hdc, RGB(comp->overrideSelectionBackColor->red, comp->overrideSelectionBackColor->grn, comp->overrideSelectionBackColor->blu));
-										compColor.color = comp->overrideSelectionForeColor->color;
-
-									} else if (comp->overrideMatchingForeColor) {
-										// Use the matching color
-										SetBkMode(bmp->hdc, OPAQUE);
-										SetBkColor(bmp->hdc, RGB(comp->overrideMatchingBackColor->red, comp->overrideMatchingBackColor->grn, comp->overrideMatchingBackColor->blu));
-										compColor.color	= comp->overrideMatchingForeColor->color;
-
-									} else if (comp->color) {
-										// Use the component override color
-										SetBkMode(bmp->hdc, TRANSPARENT);
-										SetBkColor(bmp->hdc, RGB(fillColor.red, fillColor.grn, fillColor.blu));
-										compColor.color = comp->color->color;
-
-									} else {
-										// Use the standard display color
-										SetBkMode(bmp->hdc, TRANSPARENT);
-										SetBkColor(bmp->hdc, RGB(fillColor.red, fillColor.grn, fillColor.blu));
-										compColor.color = defaultForeColor.color;
-									}
-
-									// Find out where it starts
-									SetRect(&lrcCompCalcStart, 0, 0, 200000, lrc.bottom);
-									if (comp->start != 0)		DrawText(bmp->hdc, comp->line->sourceCode->data, comp->start, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
-									else						SetRect(&lrcCompCalcStart, 0, 0, 0, lrc.bottom);
-
-									// Find out how long it dwells
-									SetRect(&lrcCompCalcDwell, lrcCompCalcStart.right, 0, 200000, lrc.bottom);
-									DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcCompCalcDwell, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
-									SetRect(&lrcComp, rc.left + lrcCompCalcDwell.left, lrc2.top, rc.left + lrcCompCalcDwell.right, lrc2.bottom);
-
-									// Do we need to adjust it back for scrolling?
-									if (em->leftColumn != 0)
-									{
-										// Adjust it for the em->leftColumn
-										lnDeltaX		= em->leftColumn * ((lrcComp.right - lrcComp.left) / comp->length);
-										lrcComp.left	-= lnDeltaX;
-										lrcComp.right	-= lnDeltaX;
-									}
-
-									// Is it a cask or text?
-									if (comp->iCode >= _ICODE_CASK_MINIMUM && comp->iCode <= _ICODE_CASK_MAXIMUM)
-									{
-										// Is there a cask cache from a previous screen render?
-										if (!comp->bc || !iBmp_isValidCache(&comp->bc, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, 0, 0))
+										// Fore color
+										if (comp->overrideSelectionBackColor)
 										{
-											// The bitmap cache is no longer valid
-											iBmp_deleteCache(&obj->bc);
+											// Use the selection color
+											SetBkMode(bmp->hdc, OPAQUE);
+											SetBkColor(bmp->hdc, RGB(comp->overrideSelectionBackColor->red, comp->overrideSelectionBackColor->grn, comp->overrideSelectionBackColor->blu));
+											compColor.color = comp->overrideSelectionForeColor->color;
 
-											// It's a cask, build it
-											bmpCask = iBmp_cask_createAndPopulate(comp->iCode,
-																					lrcComp.right  - lrcComp.left,
-																					lrcComp.bottom - lrcComp.top,
-																					&lnSkip,
-																					comp->length,
-																					defaultBackColor,
-																					defaultForeColor,
-																					fillColor);
-
-											// If we decide to display it with an alpha, this also may need to be brought outside of the if block
-											// Overlay the text
-											SetBkMode(bmpCask->hdc, TRANSPARENT);
-											SelectObject(bmpCask->hdc, font->hfont);
-											SetTextColor(bmpCask->hdc, RGB(blackColor.red, blackColor.grn, blackColor.blu));
-											SetRect(&lrcText, 0, -1, bmpCask->bi.biWidth, bmpCask->bi.biHeight);
-											DrawText(bmpCask->hdc, comp->line->sourceCode->data + comp->start + lnSkip, comp->length - (2 * lnSkip), &lrcText, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS);
-											SetBkMode(bmpCask->hdc, OPAQUE);
-
-											// Save the cache
-											iBmp_createCache(&comp->bc, bmpCask, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, 0, 0, false);
-
-										} else {
-											// Use the bitmap cache
-											bmpCask = comp->bc->bmpCached;
-										}
-
-										// Publish it
-										if (line == em->ecCursorLine && em->column >= comp->start && em->column <= comp->start + comp->length)
-										{
-// For now, just don't render it when we're on it
-// 											// The cursor is currently on this item, draw with a 15% transparency
-//											iBmp_bitBltAlpha(bmp, &lrcComp, bmpCask, 0.15f);
-
-										} else {
-											// Draw completely opaque
-											iBmp_bitBlt(bmp, &lrcComp, bmpCask);
-										}
-
-// 										// Delete it
-// 										iBmp_delete(&bmpCask, true, true);
-
-									} else {
-										// Draw the text
-										// Set the color
-										SetTextColor(bmp->hdc, RGB(compColor.red, compColor.grn, compColor.blu));
-
-										// An explicit background color?
-										if (comp->overrideMatchingBackColor)
+										} else if (comp->overrideMatchingForeColor) {
+											// Use the matching color
+											SetBkMode(bmp->hdc, OPAQUE);
 											SetBkColor(bmp->hdc, RGB(comp->overrideMatchingBackColor->red, comp->overrideMatchingBackColor->grn, comp->overrideMatchingBackColor->blu));
+											compColor.color	= comp->overrideMatchingForeColor->color;
 
-										// Is this a component that should be highlighted?
-										if (compHighlight && comp != compHighlight && comp->length == compHighlight->length && _memicmp(comp->line->sourceCode->data + comp->start, compHighlight->line->sourceCode->data + compHighlight->start, comp->length) == 0)
-											SetBkColor(bmp->hdc, RGB(highlightSymbolBackColor.red, highlightSymbolBackColor.grn, highlightSymbolBackColor.blu));
-
-										// Draw this component
-										SetBkMode(bmp->hdc, OPAQUE);
-										DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
-
-										// If we should bold, bold it
-										if (comp->useBoldFont)
-										{
-											// Set transparent mode
+										} else if (comp->color) {
+											// Use the component override color
 											SetBkMode(bmp->hdc, TRANSPARENT);
+											SetBkColor(bmp->hdc, RGB(fillColor.red, fillColor.grn, fillColor.blu));
+											compColor.color = comp->color->color;
 
-											// Adjust right one pixel, redraw
-//											++lrcComp.left;
-//	 										++lrcComp.right;
+										} else {
+											// Use the standard display color
+											SetBkMode(bmp->hdc, TRANSPARENT);
+											SetBkColor(bmp->hdc, RGB(fillColor.red, fillColor.grn, fillColor.blu));
+											compColor.color = defaultForeColor.color;
+										}
+
+										// Find out where it starts
+										SetRect(&lrcCompCalcStart, 0, 0, 200000, lrc.bottom);
+										if (comp->start != 0)		DrawText(bmp->hdc, comp->line->sourceCode->data, comp->start, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
+										else						SetRect(&lrcCompCalcStart, 0, 0, 0, lrc.bottom);
+
+										// Find out how long it dwells
+										SetRect(&lrcCompCalcDwell, lrcCompCalcStart.right, 0, 200000, lrc.bottom);
+										DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcCompCalcDwell, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
+										SetRect(&lrcComp, rc.left + lrcCompCalcDwell.left, lrc2.top, rc.left + lrcCompCalcDwell.right, lrc2.bottom);
+
+										// Do we need to adjust it back for scrolling?
+										if (em->leftColumn != 0)
+										{
+											// Adjust it for the em->leftColumn
+											lnDeltaX		= em->leftColumn * ((lrcComp.right - lrcComp.left) / comp->length);
+											lrcComp.left	-= lnDeltaX;
+											lrcComp.right	-= lnDeltaX;
+										}
+
+										// Is it a cask or text?
+										if (comp->iCode >= _ICODE_CASK_MINIMUM && comp->iCode <= _ICODE_CASK_MAXIMUM)
+										{
+											// Is there a cask cache from a previous screen render?
+											if (!comp->bc || !iBmp_isValidCache(&comp->bc, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, ((comp->overrideSelectionBackColor) ? comp->overrideSelectionBackColor->color : 0), 0))
+											{
+												// The bitmap cache is no longer valid
+												iBmp_deleteCache(&obj->bc);
+
+												// It's a cask, build it
+												bmpCask = iBmp_cask_createAndPopulate(comp->iCode,
+																						lrcComp.right  - lrcComp.left,
+																						lrcComp.bottom - lrcComp.top,
+																						&lnSkip,
+																						comp->length,
+																						((comp->overrideSelectionBackColor) ? *comp->overrideSelectionBackColor: defaultBackColor),
+																						((comp->overrideSelectionForeColor) ? *comp->overrideSelectionForeColor: defaultForeColor),
+																						((comp->overrideSelectionBackColor) ? *comp->overrideSelectionBackColor: fillColor),
+																						(comp->overrideSelectionBackColor == NULL));
+
+												// If we decide to display it with an alpha, this also may need to be brought outside of the if block
+												// Overlay the text
+												SetBkMode(bmpCask->hdc, TRANSPARENT);
+												SelectObject(bmpCask->hdc, font->hfont);
+												SetTextColor(bmpCask->hdc, RGB(compColor.red, compColor.grn, compColor.blu));
+												SetRect(&lrcText, 0, -1, bmpCask->bi.biWidth, bmpCask->bi.biHeight);
+												DrawText(bmpCask->hdc, comp->line->sourceCode->data + comp->start + lnSkip, comp->length - (2 * lnSkip), &lrcText, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS);
+												SetBkMode(bmpCask->hdc, OPAQUE);
+
+												// Save the cache
+												iBmp_createCache(&comp->bc, bmpCask, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, ((comp->overrideSelectionBackColor) ? comp->overrideSelectionBackColor->color : 0), 0, false);
+
+											} else {
+												// Use the bitmap cache
+												bmpCask = comp->bc->bmpCached;
+											}
+
+											// Publish it
+											if (line == em->ecCursorLine && em->column >= comp->start && em->column <= comp->start + comp->length)
+											{
+	// For now, just render it in the standard color in case it's selected
+												goto renderAsText;
+	// 											// The cursor is currently on this item, draw with a 15% transparency
+	//											iBmp_bitBltAlpha(bmp, &lrcComp, bmpCask, 0.15f);
+
+											} else {
+												// Draw completely opaque
+												iBmp_bitBlt(bmp, &lrcComp, bmpCask);
+											}
+
+	// 										// Delete it
+	// 										iBmp_delete(&bmpCask, true, true);
+
+										} else {
+	renderAsText:
+											// Draw the text
+											// Set the color
+											SetTextColor(bmp->hdc, RGB(compColor.red, compColor.grn, compColor.blu));
+
+											// An explicit background color?
+											if (comp->overrideMatchingBackColor)
+												SetBkColor(bmp->hdc, RGB(comp->overrideMatchingBackColor->red, comp->overrideMatchingBackColor->grn, comp->overrideMatchingBackColor->blu));
+
+											// Is this a component that should be highlighted?
+											if (compHighlight && comp != compHighlight && comp->length == compHighlight->length && _memicmp(comp->line->sourceCode->data + comp->start, compHighlight->line->sourceCode->data + compHighlight->start, comp->length) == 0)
+												SetBkColor(bmp->hdc, RGB(highlightSymbolBackColor.red, highlightSymbolBackColor.grn, highlightSymbolBackColor.blu));
+
+											// Draw this component
+											SetBkMode(bmp->hdc, OPAQUE);
 											DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 
-											// Set back to opaque
-											SetBkMode(bmp->hdc, OPAQUE);
+											// If we should bold, bold it
+											if (comp->useBoldFont)
+											{
+												// Set transparent mode
+												SetBkMode(bmp->hdc, TRANSPARENT);
+
+												// Adjust right one pixel, redraw
+	//											++lrcComp.left;
+	//	 										++lrcComp.right;
+												DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+
+												// Set back to opaque
+												SetBkMode(bmp->hdc, OPAQUE);
+											}
+
+											// If it's a comp that we're highlighting, highlight it
+	// This is an optional way to highlight the component, one which is far too pronounced in my opinion. :-)
+	// 										if (compHighlight && comp != compHighlight && comp->length == compHighlight->length && _memicmp(comp->line->sourceCode->data + comp->start, compHighlight->line->sourceCode->data + compHighlight->start, comp->length) == 0)
+	// 											iBmp_colorizeHighlightGradient(bmp, &lrcComp, overrideMatchingBackColor, 0.5f, 0.25f);
 										}
 
-										// If it's a comp that we're highlighting, highlight it
-// This is an optional way to highlight the component, one which is far too pronounced in my opinion. :-)
-// 										if (compHighlight && comp != compHighlight && comp->length == compHighlight->length && _memicmp(comp->line->sourceCode->data + comp->start, compHighlight->line->sourceCode->data + compHighlight->start, comp->length) == 0)
-// 											iBmp_colorizeHighlightGradient(bmp, &lrcComp, overrideMatchingBackColor, 0.5f, 0.25f);
+
+										//////////
+										// Check errors and warnings
+										//////
+											if (line != em->ecCursorLine && (comp->isError || comp->isWarning))
+											{
+												// Adjust the top down to the lower 1/4th
+												lrcComp.top += ((lrcComp.bottom - lrcComp.top) * 3) / 4;
+
+												// Is it a warning?
+												if (comp->isWarning && !comp->isError)
+													iBmp_wavyLine(bmp, &lrcComp, orangeColor);		// Overlay an amber wavy line on the lower 1/3rd of the component
+
+												// Is it an error? (if there is an error and a warning, errors take precedence)
+												if (comp->isError)
+													iBmp_wavyLine(bmp, &lrcComp, redColor);			// Overlay a red wavy line on the lower 1/3rd of the component
+											}
+
+
+										// Move to next component
+										comp = (SComp*)comp->ll.next;
 									}
-
-
-									//////////
-									// Check errors and warnings
-									//////
-										if (line != em->ecCursorLine && (comp->isError || comp->isWarning))
-										{
-											// Adjust the top down to the lower 1/4th
-											lrcComp.top += ((lrcComp.bottom - lrcComp.top) * 3) / 4;
-
-											// Is it a warning?
-											if (comp->isWarning && !comp->isError)
-												iBmp_wavyLine(bmp, &lrcComp, orangeColor);		// Overlay an amber wavy line on the lower 1/3rd of the component
-
-											// Is it an error? (if there is an error and a warning, errors take precedence)
-											if (comp->isError)
-												iBmp_wavyLine(bmp, &lrcComp, redColor);			// Overlay a red wavy line on the lower 1/3rd of the component
-										}
-
-
-									// Move to next component
-									comp = (SComp*)comp->ll.next;
 								}
 							}
 						}
@@ -2354,7 +2368,7 @@ debug_break;
 			SelectObject(bmp->hdc, hfontOld);
 
 //////////
-// This is a nice appearance, but it is slow.  If the background rendering algorithm were drawn, and the bitmap cached, it would be okay.
+// This is a nice appearance, but it is slow.  If the background rendering algorithm was drawn, and the bitmap cached, it would be okay.
 // 			// Apply a dappling
 // 			iBmp_dapple(bmp, bmpDapple1, 225.0f, 10);
 //////

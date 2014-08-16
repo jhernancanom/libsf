@@ -2248,8 +2248,8 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 			comp = line->compilerInfo->firstComp;
 			while (comp && comp->iCode == _ICODE_WHITESPACE)
 			{
-				// Remove this whitespace
-				comp = (SComp*)iLl_deleteNode((SLL*)comp, true);
+				// Migrate this whitespace from firstComp to firstWhitespace
+				comp = (SComp*)iLl_migrateNodeToOther((SLL**)&line->compilerInfo->firstComp, (SLL**)&line->compilerInfo->firstWhitespace, (SLL*)comp, true);
 				++lnRemoved;
 
 				// comp is now pointing to what would've been comp->ll.next
@@ -2294,8 +2294,8 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 						if (line->compilerInfo->firstComp == comp)
 							line->compilerInfo->firstComp = (SComp*)comp->ll.next;
 
-						// Remove this whitespace
-						comp = (SComp*)iLl_deleteNode((SLL*)comp, true);
+						// Migrate this whitespace to the whitespace area
+						comp = (SComp*)iLl_migrateNodeToOther((SLL**)&line->compilerInfo->firstComp, (SLL**)&line->compilerInfo->firstWhitespace, (SLL*)comp, true);
 
 						// Increase our counter
 						++lnRemoved;
@@ -4229,7 +4229,11 @@ debug_break;
 			do {
 				// Delete every node if need be
 				if (line->compilerInfo && line->compilerInfo->firstNode)
-					iNode_politelyDeleteAll(&line->compilerInfo->firstNode, true, true, true, true, true, true);
+				{
+					// Delete from regular components, and whitespaces
+					iComps_deleteAll_byFirstComp(&line->compilerInfo->firstComp);
+					iComps_deleteAll_byFirstComp(&line->compilerInfo->firstWhitespace);
+				}
 
 				// Mark it so it will be re-compiled
 				line->forceRecompile = true;
@@ -6471,8 +6475,10 @@ debug_break;
 			// Delete the items here
 			iCompileNote_removeAll(&compilerInfo->warnings);
 			iCompileNote_removeAll(&compilerInfo->errors);
-			iNode_politelyDeleteAll(&compilerInfo->firstNode, true, true, true, true, true, true);
+
+			// Delete from regular components, and whitespaces
 			iComps_deleteAll_byFirstComp(&compilerInfo->firstComp);
+			iComps_deleteAll_byFirstComp(&compilerInfo->firstWhitespace);
 
 			// Delete self if need be
 			if (tlDeleteSelf)

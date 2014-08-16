@@ -2455,7 +2455,7 @@
 // Called to create a cask bitmap scaled to the indicated width and height
 //
 //////
-	SBitmap* iBmp_cask_createAndPopulate(s32 iCode, s32 tnWidth, s32 tnHeight, s32* tnSkipChars, u32 tnTextLength, SBgra caskColor, SBgra textColor, SBgra backgroundColor)
+	SBitmap* iBmp_cask_createAndPopulate(s32 iCode, s32 tnWidth, s32 tnHeight, s32* tnSkipChars, u32 tnTextLength, SBgra caskColor, SBgra textColor, SBgra backgroundColor, bool tlOverrideColors)
 	{
 		s32			lnI, lnWidth, lnStop, lnLeft;
 		bool		llAddParams;
@@ -2478,8 +2478,11 @@
 					*tnSkipChars	= 3;
 					bmpLeft			= bmpCaskRoundLeft;
 					bmpRight		= bmpCaskRoundRight;
-					caskColor.color	= pastelGreenColor.color;
-					textColor.color	= darkGreenColor.color;
+					if (tlOverrideColors)
+					{
+						caskColor.color	= pastelGreenColor.color;
+						textColor.color	= darkGreenColor.color;
+					}
 					llAddParams		= true;
 					break;
 
@@ -2488,8 +2491,11 @@
 					*tnSkipChars	= 3;
 					bmpLeft			= bmpCaskSquareLeft;
 					bmpRight		= bmpCaskSquareRight;
-					caskColor.color	= pastelOrangeColor.color;
-					textColor.color	= darkOrangeColor.color;
+					if (tlOverrideColors)
+					{
+						caskColor.color	= pastelOrangeColor.color;
+						textColor.color	= darkOrangeColor.color;
+					}
 					llAddParams		= true;
 					break;
 
@@ -2498,8 +2504,11 @@
 					*tnSkipChars	= 3;
 					bmpLeft			= bmpCaskTriangleLeft;
 					bmpRight		= bmpCaskTriangleRight;
-					caskColor.color	= pastelYellowColor.color;
-					textColor.color	= blackColor.color;
+					if (tlOverrideColors)
+					{
+						caskColor.color	= pastelYellowColor.color;
+						textColor.color	= blackColor.color;
+					}
 					llAddParams		= true;
 					break;
 
@@ -2508,8 +2517,11 @@
 					*tnSkipChars	= 3;
 					bmpLeft			= bmpCaskTildeLeft;
 					bmpRight		= bmpCaskTildeRight;
-					caskColor.color	= pastelBlueColor.color;
-					textColor.color	= blackColor.color;
+					if (tlOverrideColors)
+					{
+						caskColor.color	= pastelBlueColor.color;
+						textColor.color	= blackColor.color;
+					}
 					llAddParams		= true;
 					break;
 				
@@ -2518,8 +2530,11 @@
 					*tnSkipChars	= 2;
 					bmpLeft			= bmpCaskRoundLeft;
 					bmpRight		= bmpCaskRoundRight;
-					caskColor.color	= pastelGreenColor.color;
-					textColor.color	= darkGreenColor.color;
+					if (tlOverrideColors)
+					{
+						caskColor.color	= pastelGreenColor.color;
+						textColor.color	= darkGreenColor.color;
+					}
 					break;
 
 				case _ICODE_CASK_SQUARE:
@@ -2527,8 +2542,11 @@
 					*tnSkipChars	= 2;
 					bmpLeft			= bmpCaskSquareLeft;
 					bmpRight		= bmpCaskSquareRight;
-					caskColor.color	= pastelOrangeColor.color;
-					textColor.color	= darkOrangeColor.color;
+					if (tlOverrideColors)
+					{
+						caskColor.color	= pastelOrangeColor.color;
+						textColor.color	= darkOrangeColor.color;
+					}
 					break;
 
 				case _ICODE_CASK_TRIANGLE:
@@ -2536,8 +2554,11 @@
 					*tnSkipChars	= 2;
 					bmpLeft			= bmpCaskTriangleLeft;
 					bmpRight		= bmpCaskTriangleRight;
-					caskColor.color	= pastelYellowColor.color;
-					textColor.color	= blackColor.color;
+					if (tlOverrideColors)
+					{
+						caskColor.color	= pastelYellowColor.color;
+						textColor.color	= blackColor.color;
+					}
 					break;
 
 				case _ICODE_CASK_TILDE:
@@ -2545,8 +2566,11 @@
 					*tnSkipChars	= 2;
 					bmpLeft			= bmpCaskTildeLeft;
 					bmpRight		= bmpCaskTildeRight;
-					caskColor.color	= pastelBlueColor.color;
-					textColor.color	= blackColor.color;
+					if (tlOverrideColors)
+					{
+						caskColor.color	= pastelBlueColor.color;
+						textColor.color	= blackColor.color;
+					}
 					break;
 			}
 

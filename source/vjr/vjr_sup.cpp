@@ -677,6 +677,9 @@
 		iBmp_delete(&bmpDebugIcon,					true, true);
 		iBmp_delete(&bmpOutputIcon,					true, true);
 		iBmp_delete(&bmpSourceLightIcon,			true, true);
+		iBmp_delete(&bmpCarouselIcon,				true, true);
+		iBmp_delete(&bmpTabsIcon,					true, true);
+		iBmp_delete(&bmpCarouselPad,				true, true);
 		iBmp_delete(&bmpNoImage,					true, true);
 		iBmp_delete(&bmpClose,						true, true);
 		iBmp_delete(&bmpMaximize,					true, true);
@@ -696,7 +699,7 @@
 		iBmp_delete(&bmpConditionalFalse,			true, true);
 		iBmp_delete(&bmpConditionalTrueCountdown,	true, true);
 		iBmp_delete(&bmpConditionalFalseCountdown,	true, true);
-		iBmp_delete(&bmpDapple1,						true, true);
+		iBmp_delete(&bmpDapple1,					true, true);
 		iBmp_delete(&bmpDapple2,					true, true);
 
 		// Casks

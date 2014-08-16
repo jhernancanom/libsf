@@ -83,6 +83,7 @@
 	bool					iLl_appendExistingNodeAtEnd					(SLL** root, SLL* node);
 	bool					iLl_appendExistingNodeAtBeginning			(SLL** root, SLL* node);
 	SLL*					iLl_deleteNode								(SLL* node, bool tlDeleteSelf);
+	SLL*					iLl_migrateNodeToOther						(SLL** nodeSourceRoot, SLL** nodeDestinationRoot, SLL* node, bool tlInsertAtEnd);
 	void					iLl_deleteNodesWithCallback					(SLLCallback* cb);
 	bool					iLl_insertNode								(SLL* node, SLL* nodeRef, bool tlAfter);
 	void					iLl_orphanizeNode							(SLL* node);
@@ -340,6 +341,70 @@
 
 		// Indicate our status
 		return(nodeNext);
+	}
+
+
+
+
+//////////
+//
+// Called to migrate the indicated node from one source to the other.  It is not validated that
+// the node exists in the first, but rather the only test performed is at least one node exists,
+// and if the first node in the source is the node, and if so then it updates the first node to
+// point to the one after node.
+//
+//////
+	SLL* iLl_migrateNodeToOther(SLL** nodeSourceRoot, SLL** nodeDestinationRoot, SLL* node, bool tlInsertAtEnd)
+	{
+		SLL* nodeRef;
+		SLL* nodeNext;
+
+
+		// Make sure our environment is sane
+		if (nodeSourceRoot && *nodeSourceRoot && nodeDestinationRoot && node)
+		{
+			//////////
+			// If the first node is our node, then the first node now becomes the one after our node
+			//////
+				nodeNext = node->next;
+				if (*nodeSourceRoot == node)
+					*nodeSourceRoot = nodeNext;
+
+
+			//////////
+			// Unhook the node from its current location
+			//////
+				iLl_orphanizeNode(node);
+
+
+			//////////
+			// Position the node into its new location
+			//////
+				if (!*nodeDestinationRoot)
+				{
+					// There are no other nodes. Introduce this one into its new node home as the "de facto leader," as it were...
+					*nodeDestinationRoot = node;
+
+				} else {
+					// There are others.  We must determine its location (without any hesitation, offered
+					// up by designation, as solid indication, the state of its vocation, made known by
+					// observation, and contextual revelation, for subsequent relocation)
+					if (tlInsertAtEnd)		nodeRef = iLl_getLastNode(*nodeDestinationRoot);
+					else					nodeRef = *nodeDestinationRoot;
+
+					// Insert it relative to its new home (full of relatives, well ... at least one relative that we know of)
+					iLl_insertNode(node, nodeRef, tlInsertAtEnd);
+				}
+
+			//////////
+			// Indicate the one after the one we migrated
+			//////
+				return(nodeNext);
+			
+		} else {
+			// Failure
+			return(NULL);
+		}
 	}
 
 
