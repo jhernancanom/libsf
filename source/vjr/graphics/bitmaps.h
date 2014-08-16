@@ -90,3 +90,6 @@
 
 #include "h\dapple.h"
 #include "h\dapple2.h"
+
+#include "h\carousel_carousel_icon.h"
+#include "h\carousel_tabs_icon.h"

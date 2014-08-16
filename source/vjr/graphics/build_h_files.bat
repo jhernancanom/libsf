@@ -51,3 +51,6 @@
 
 \libsf\vvm\bin\f2h raw\dapple.bmp dappleBmp h\dapple.h
 \libsf\vvm\bin\f2h raw\dapple2.bmp dapple2Bmp h\dapple2.h
+
+\libsf\vvm\bin\f2h raw\carousel_carousel_icon.bmp carouselCarouselBmp h\carousel_carousel_icon.h
+\libsf\vvm\bin\f2h raw\carousel_tabs_icon.bmp carouselTabsBmp h\carousel_tabs_icon.h
