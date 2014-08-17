@@ -3,7 +3,7 @@
 // /libsf/source/vjr/edit_chain_manager.cpp
 //
 //////
-// Version 0.51
+// Version 0.51.1
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -621,7 +621,7 @@ debug_break;
 //////
 	void iSEM_renumber(SEM* em, u32 tnStartingLineNumber)
 	{
-		SEdit* ec;
+		SEdit* line;
 
 
 		logfunc(__FUNCTION__);
@@ -629,13 +629,13 @@ debug_break;
 		if (em && em->ecFirst && em->ecLast)
 		{
 			// Begin at the beginning
-			ec = em->ecFirst;
-			while (ec)
+			line = em->ecFirst;
+			while (line)
 			{
 				//////////
 				// Set the line number
 				//////
-					ec->lineNumber = tnStartingLineNumber++;
+					line->lineNumber = tnStartingLineNumber++;
 
 
 				//////////
@@ -644,26 +644,32 @@ debug_break;
 					if (em->selectMode != _SEM_SELECT_MODE_NONE)
 					{
 						// Update origin
-						if (ec->uid == em->selectOrigin.uid)
-							em->selectOrigin.lineNumber = ec->lineNumber;
+						if (line->uid == em->selectOrigin.uid)
+						{
+							em->selectOrigin.lineNumber = line->lineNumber;
+							em->selectOrigin.line		= line;
+						}
 
 						// Update end
-						if (ec->uid == em->selectEnd.uid)
-							em->selectEnd.lineNumber = ec->lineNumber;
+						if (line->uid == em->selectEnd.uid)
+						{
+							em->selectEnd.lineNumber	= line->lineNumber;
+							em->selectOrigin.line		= line;
+						}
 					}
 
 
 				//////////
 				// Are we done
 				//////
-					if (ec == em->ecLast)
+					if (line == em->ecLast)
 						break;
 
 
 				//////////
 				// Move to next line
 				//////
-					ec = (SEdit*)ec->ll.next;
+					line = (SEdit*)line->ll.next;
 			}
 		}
 	}
@@ -704,8 +710,6 @@ debug_break;
 					em->ecCursorLine			= ec;
 					em->ecCursorLineLast		= ec;
 					em->ecTopLine				= ec;
-					em->ecSelectedLineStart		= NULL;
-					em->ecSelectedLineEnd		= NULL;
 				}
 			}
 
@@ -1153,6 +1157,7 @@ debug_break;
 //////
 	bool iSEM_onKeyDown(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tnAsciiChar, u16 tnVKey, bool tlIsCAS, bool tlIsAscii)
 	{
+		s32		lnDeltaX;
 		bool	llProcessed;
 		SEM*	em;
 
@@ -1172,7 +1177,14 @@ debug_break;
 				switch (tnVKey)
 				{
 					case VK_UP:
-						iSEM_selectStop(em);
+						if (iSEM_isSelecting(em))
+						{
+							// They want to navigate from the selection, so we go to the top
+							iSEM_navigateToSelectStart(em, obj, false);
+							iSEM_selectStop(em);
+						}
+
+						// Navigate up one
 						iSEM_navigate(em, obj, -1, 0);
 
 						// Indicate our key was processed
@@ -1180,7 +1192,14 @@ debug_break;
 						break;
 
 					case VK_DOWN:
-						iSEM_selectStop(em);
+						if (iSEM_isSelecting(em))
+						{
+							// They want to navigate from the selection, so we go to the top
+							iSEM_navigateToSelectEnd(em, obj, false);
+							iSEM_selectStop(em);
+						}
+
+						// Navigate down one
 						iSEM_navigate(em, obj, 1, 0);
 
 						// Indicate our key was processed
@@ -1226,7 +1245,14 @@ debug_break;
 						break;
 
 					case VK_LEFT:
-						iSEM_selectStop(em);
+						if (iSEM_isSelecting(em))
+						{
+							// They want to navigate from the selection, so we go to the top
+							iSEM_navigateToSelectStart(em, obj, false);
+							iSEM_selectStop(em);
+						}
+
+						// Navigate left one
 						iSEM_navigate(em, obj, 0, -1);
 
 						// Indicate our key was processed
@@ -1234,7 +1260,14 @@ debug_break;
 						break;
 
 					case VK_RIGHT:
-						iSEM_selectStop(em);
+						if (iSEM_isSelecting(em))
+						{
+							// They want to navigate from the selection, so we go to the top
+							iSEM_navigateToSelectEnd(em, obj, false);
+							iSEM_selectStop(em);
+						}
+
+						// Navigate right one
 						iSEM_navigate(em, obj, 0, 1);
 
 						// Indicate our key was processed
@@ -1242,15 +1275,60 @@ debug_break;
 						break;
 
 					case VK_HOME:
-						iSEM_selectStop(em);
-						iSEM_navigate(em, obj, 0, -(em->column));
+						if (iSEM_isSelecting(em))
+						{
+							// They want to navigate from the selection, so we go to the top
+							iSEM_navigateToSelectStart(em, obj, false);
+							iSEM_selectStop(em);
+						}
+
+						// Navigate to the start of the line
+						// If there are components, we will first try to navigate to the start of the first non-whitespace component
+						if (em->ecCursorLine && em->ecCursorLine->compilerInfo && em->ecCursorLine->compilerInfo->firstComp)
+						{
+							// Are we already on the first non-whitespace character?
+							if (em->column == em->ecCursorLine->compilerInfo->firstComp->start)
+							{
+								// Yes, so navigate to the start of the line
+								lnDeltaX = -(em->column);
+
+							} else {
+								// Navigate to the start of the line
+								if (em->column == 0)
+								{
+									// Navigate to the first non-whitespace component
+									lnDeltaX = em->ecCursorLine->compilerInfo->firstComp->start;
+
+								} else {
+									// Navigate from where we are to the position of the first non-whitespace component
+									lnDeltaX = em->column - em->ecCursorLine->compilerInfo->firstComp->start;
+									if (em->column >= em->ecCursorLine->compilerInfo->firstComp->start)
+										lnDeltaX *= -1;
+								}
+							}
+
+						} else {
+							// Navigate to the start of the line
+							lnDeltaX = -(em->column);
+						}
+
+						// Navigate
+						if (lnDeltaX != 0)
+							iSEM_navigate(em, obj, 0, lnDeltaX);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_END:
-						iSEM_selectStop(em);
+						if (iSEM_isSelecting(em))
+						{
+							// They want to navigate from the selection, so we go to the top
+							iSEM_navigateToSelectEnd(em, obj, false);
+							iSEM_selectStop(em);
+						}
+
+						// Navigate to the end of the line
 						if (em->column != em->ecCursorLine->sourceCodePopulated)
 							iSEM_navigate(em, obj, 0, em->ecCursorLine->sourceCodePopulated - em->column);
 
@@ -1706,7 +1784,7 @@ debug_break;
 	{
 		u32			lnPixelsRendered;
 		s32			lnI, lnTop, lnSkip, lnDeltaX, lnLevel;
-		bool		llIsValid;
+		bool		llIsValid, llOverrideCaskColors;
 		SFont*		font;
 		SEdit*		line;
 		SBitmap*	bmp;
@@ -1719,7 +1797,7 @@ debug_break;
 		SComp*		compPBBLeft;
 		SComp*		compPBBRight;
 		HGDIOBJ		hfontOld;
-		SBgra		foreColor, defaultForeColor, defaultBackColor, fillColor, backColorLast, foreColorLast, compColor;
+		SBgra		foreColor, defaultForeColor, defaultBackColor, fillColor, backColorLast, foreColorLast, compForeColor, compBackColor, compFillColor;
 		RECT		rc, lrc, lrc2, lrc3, lrcComp, lrcText, lrcCompCalcStart, lrcCompCalcDwell;
 		s8			bigBuffer[2048];
 
@@ -1963,30 +2041,45 @@ debug_break;
 									while (comp)
 									{
 										// Fore color
+										llOverrideCaskColors = true;
 										if (comp->overrideSelectionBackColor)
 										{
 											// Use the selection color
 											SetBkMode(bmp->hdc, OPAQUE);
 											SetBkColor(bmp->hdc, RGB(comp->overrideSelectionBackColor->red, comp->overrideSelectionBackColor->grn, comp->overrideSelectionBackColor->blu));
-											compColor.color = comp->overrideSelectionForeColor->color;
+											compBackColor.color	 = comp->overrideSelectionBackColor->color;
+											compFillColor.color		= comp->overrideSelectionBackColor->color;
+											llOverrideCaskColors	= false;
+
+											// Update our component color during selections
+											     if (comp->overrideSelectionForeColor)		compForeColor.color = comp->overrideSelectionForeColor->color;
+											else if (comp->color)							compForeColor.color = comp->color->color;
+											else											compForeColor.color = defaultForeColor.color;
 
 										} else if (comp->overrideMatchingForeColor) {
 											// Use the matching color
 											SetBkMode(bmp->hdc, OPAQUE);
 											SetBkColor(bmp->hdc, RGB(comp->overrideMatchingBackColor->red, comp->overrideMatchingBackColor->grn, comp->overrideMatchingBackColor->blu));
-											compColor.color	= comp->overrideMatchingForeColor->color;
+											compBackColor.color		= comp->overrideMatchingBackColor->color;
+											compFillColor.color		= comp->overrideMatchingBackColor->color;
+											compForeColor.color		= comp->overrideMatchingForeColor->color;
+											llOverrideCaskColors	= false;
 
 										} else if (comp->color) {
 											// Use the component override color
 											SetBkMode(bmp->hdc, TRANSPARENT);
 											SetBkColor(bmp->hdc, RGB(fillColor.red, fillColor.grn, fillColor.blu));
-											compColor.color = comp->color->color;
+											compBackColor.color	= fillColor.color;
+											compFillColor.color	= fillColor.color;
+											compForeColor.color	= comp->color->color;
 
 										} else {
 											// Use the standard display color
 											SetBkMode(bmp->hdc, TRANSPARENT);
 											SetBkColor(bmp->hdc, RGB(fillColor.red, fillColor.grn, fillColor.blu));
-											compColor.color = defaultForeColor.color;
+											compBackColor.color	= fillColor.color;
+											compFillColor.color	= fillColor.color;
+											compForeColor.color	= defaultForeColor.color;
 										}
 
 										// Find out where it starts
@@ -2011,8 +2104,17 @@ debug_break;
 										// Is it a cask or text?
 										if (comp->iCode >= _ICODE_CASK_MINIMUM && comp->iCode <= _ICODE_CASK_MAXIMUM)
 										{
+											// Is this a component that should be highlighted?
+											if (compHighlight && comp != compHighlight && comp->length == compHighlight->length && _memicmp(comp->line->sourceCode->data + comp->start, compHighlight->line->sourceCode->data + compHighlight->start, comp->length) == 0)
+											{
+												SetBkMode(bmp->hdc, OPAQUE);
+												SetBkColor(bmp->hdc, RGB(highlightSymbolBackColor.red, highlightSymbolBackColor.grn, highlightSymbolBackColor.blu));
+												compBackColor.color		= highlightSymbolBackColor.color;
+												llOverrideCaskColors	= false;
+											}
+
 											// Is there a cask cache from a previous screen render?
-											if (!comp->bc || !iBmp_isValidCache(&comp->bc, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, ((comp->overrideSelectionBackColor) ? comp->overrideSelectionBackColor->color : 0), 0))
+											if (!comp->bc || !iBmp_isValidCache(&comp->bc, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, compFillColor.color, compBackColor.color))
 											{
 												// The bitmap cache is no longer valid
 												iBmp_deleteCache(&obj->bc);
@@ -2023,22 +2125,22 @@ debug_break;
 																						lrcComp.bottom - lrcComp.top,
 																						&lnSkip,
 																						comp->length,
-																						((comp->overrideSelectionBackColor) ? *comp->overrideSelectionBackColor: defaultBackColor),
-																						((comp->overrideSelectionForeColor) ? *comp->overrideSelectionForeColor: defaultForeColor),
-																						((comp->overrideSelectionBackColor) ? *comp->overrideSelectionBackColor: fillColor),
-																						(comp->overrideSelectionBackColor == NULL));
+																						compBackColor,
+																						compForeColor,
+																						compFillColor,
+																						llOverrideCaskColors);
 
 												// If we decide to display it with an alpha, this also may need to be brought outside of the if block
 												// Overlay the text
 												SetBkMode(bmpCask->hdc, TRANSPARENT);
 												SelectObject(bmpCask->hdc, font->hfont);
-												SetTextColor(bmpCask->hdc, RGB(compColor.red, compColor.grn, compColor.blu));
+												SetTextColor(bmpCask->hdc, RGB(compForeColor.red, compForeColor.grn, compForeColor.blu));
 												SetRect(&lrcText, 0, -1, bmpCask->bi.biWidth, bmpCask->bi.biHeight);
 												DrawText(bmpCask->hdc, comp->line->sourceCode->data + comp->start + lnSkip, comp->length - (2 * lnSkip), &lrcText, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS);
 												SetBkMode(bmpCask->hdc, OPAQUE);
 
 												// Save the cache
-												iBmp_createCache(&comp->bc, bmpCask, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, ((comp->overrideSelectionBackColor) ? comp->overrideSelectionBackColor->color : 0), 0, false);
+												iBmp_createCache(&comp->bc, bmpCask, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, compFillColor.color, compBackColor.color, false);
 
 											} else {
 												// Use the bitmap cache
@@ -2048,24 +2150,24 @@ debug_break;
 											// Publish it
 											if (line == em->ecCursorLine && em->column >= comp->start && em->column <= comp->start + comp->length)
 											{
-	// For now, just render it in the standard color in case it's selected
+//////////
+// Aug.16.2014 -- I originally had the idea of drawing a partially translucent cask over the top of the text... but the text seems to draw it properly, so I removed it.
+// 												// The cursor is currently on this item, draw with a 15% transparency
+//												iBmp_bitBltAlpha(bmp, &lrcComp, bmpCask, 0.15f);
+//////
+												// For now, just render it in the standard color in case it's selected
 												goto renderAsText;
-	// 											// The cursor is currently on this item, draw with a 15% transparency
-	//											iBmp_bitBltAlpha(bmp, &lrcComp, bmpCask, 0.15f);
 
 											} else {
 												// Draw completely opaque
 												iBmp_bitBlt(bmp, &lrcComp, bmpCask);
 											}
 
-	// 										// Delete it
-	// 										iBmp_delete(&bmpCask, true, true);
-
 										} else {
-	renderAsText:
+renderAsText:
 											// Draw the text
 											// Set the color
-											SetTextColor(bmp->hdc, RGB(compColor.red, compColor.grn, compColor.blu));
+											SetTextColor(bmp->hdc, RGB(compForeColor.red, compForeColor.grn, compForeColor.blu));
 
 											// An explicit background color?
 											if (comp->overrideMatchingBackColor)
@@ -2086,8 +2188,8 @@ debug_break;
 												SetBkMode(bmp->hdc, TRANSPARENT);
 
 												// Adjust right one pixel, redraw
-	//											++lrcComp.left;
-	//	 										++lrcComp.right;
+//												++lrcComp.left;
+//	 											++lrcComp.right;
 												DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 
 												// Set back to opaque
@@ -2095,9 +2197,11 @@ debug_break;
 											}
 
 											// If it's a comp that we're highlighting, highlight it
-	// This is an optional way to highlight the component, one which is far too pronounced in my opinion. :-)
-	// 										if (compHighlight && comp != compHighlight && comp->length == compHighlight->length && _memicmp(comp->line->sourceCode->data + comp->start, compHighlight->line->sourceCode->data + compHighlight->start, comp->length) == 0)
-	// 											iBmp_colorizeHighlightGradient(bmp, &lrcComp, overrideMatchingBackColor, 0.5f, 0.25f);
+//////////
+// Aug.16.2014 -- This is an optional way to highlight the component.  It draws a gradient over the component to signal its being highlighted.  Far too overt in my opinion.
+//											if (compHighlight && comp != compHighlight && comp->length == compHighlight->length && _memicmp(comp->line->sourceCode->data + comp->start, compHighlight->line->sourceCode->data + compHighlight->start, comp->length) == 0)
+// 												iBmp_colorizeHighlightGradient(bmp, &lrcComp, overrideMatchingBackColor, 0.5f, 0.25f);
+//////
 										}
 
 
@@ -2493,7 +2597,11 @@ debug_break;
 					{
 						// Set the color
 						comp->overrideSelectionBackColor = &selectedBackColor;
-						comp->overrideSelectionForeColor = &selectedForeColor;
+//////////
+// Aug.16.2014 -- Removed.  I think I like having the syntax highlighting colors still visible when in selection mode
+//						comp->overrideSelectionForeColor = &selectedForeColor;
+//////
+						comp->overrideSelectionForeColor = NULL;
 						llSetSelectedColor = false;
 
 					} else {
@@ -2707,7 +2815,7 @@ debug_break;
 				if (!em->isOverwrite)
 				{
 					// We are inserting
-					if (em->ecSelectedLineStart != NULL)
+					if (em->selectMode != _SEM_SELECT_MODE_NONE)
 					{
 						// There is a selection, which means we are replacing everything that's selected with this new keystroke
 // TODO:  write this code
@@ -2719,7 +2827,7 @@ debug_break;
 
 				} else {
 					// We are overwriting
-					if (em->ecSelectedLineStart != NULL)
+					if (em->selectMode != _SEM_SELECT_MODE_NONE)
 					{
 						// There is a selection, which means we are replacing everything that's selected with this new keystroke
 // TODO:  write this code
@@ -2842,6 +2950,7 @@ debug_break;
 		SFont*		font;
 		SEdit*		line;
 		SEdit*		lineRunner;
+		SEdit*		lineTest;
 		RECT		lrc;
 
 
@@ -2933,11 +3042,30 @@ debug_break;
 						if (deltaX < 0)
 						{
 							// Moving left
-							em->column = max(em->column + deltaX, 0);
+							if (em->column == 0)
+							{
+								// Need to move to the end of the line above
+								lineTest = em->ecCursorLine;
+								iSEM_navigate(em, obj, -1, 0);
+								if (em->ecCursorLine != lineTest)
+									return(iSEM_navigate(em, obj, 0, em->ecCursorLine->sourceCodePopulated));
+
+							} else {
+								// Just moving over
+								em->column = max(em->column + deltaX, 0);
+							}
 
 						} else {
 							// Moving right
-							em->column += deltaX;
+							if (em->column < em->ecCursorLine->sourceCodePopulated || em->allowMoveBeyondEndOfLine)
+							{
+								// We allow them to move out as far right as they want
+								em->column += deltaX;
+
+							} else {
+								// Once they get to the end, move to the start of the next line
+								return(iSEM_navigate(em, obj, 1, -em->column));
+							}
 						}
 					}
 
@@ -3627,6 +3755,98 @@ debug_break;
 
 //////////
 //
+// Called to navigate to the start of the selected block
+//
+//////
+	bool iSEM_navigateToSelectStart(SEM* em, SObject* obj, bool tlMoveByOrigin)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Make sure we're valid
+		//////
+			if (em && iSEM_isSelecting(em))
+			{
+				//////////
+				// Move to the start
+				//////
+					if (tlMoveByOrigin)
+					{
+						// We are moving by the origin start
+						em->ecCursorLine = em->selectOrigin.line;
+
+					} else {
+						// We are moving by whatever's closest to the top of the file
+						if (em->selectOrigin.lineNumber < em->selectEnd.lineNumber)			em->ecCursorLine = em->selectOrigin.line;
+						else																em->ecCursorLine = em->selectEnd.line;
+					}
+
+
+				//////////
+				// Verify we're visible
+				//////
+					iSEM_verifyCursorIsVisible(em, obj);
+
+
+				// Indicate success
+				return(true);
+			}
+
+
+		// If we get here, indicate failure
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to navigate to the end of the selected block
+//
+//////
+	bool iSEM_navigateToSelectEnd(SEM* em, SObject* obj, bool tlMoveByOrigin)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Make sure we're valid
+		//////
+			if (em && iSEM_isSelecting(em))
+			{
+				//////////
+				// Move to the start
+				//////
+					if (tlMoveByOrigin)
+					{
+						// We are moving by the origin start
+						em->ecCursorLine = em->selectEnd.line;
+
+					} else {
+						// We are moving by whatever's closest to the end of the file
+						if (em->selectOrigin.lineNumber < em->selectEnd.lineNumber)			em->ecCursorLine = em->selectEnd.line;
+						else																em->ecCursorLine = em->selectOrigin.line;
+					}
+
+
+				//////////
+				// Verify we're visible
+				//////
+					iSEM_verifyCursorIsVisible(em, obj);
+
+
+				// Indicate success
+				return(true);
+			}
+
+
+		// If we get here, indicate failure
+		return(false);
+	}
+
+
+
+
+//////////
+//
 // Called to select from where we are up one line.
 // Note:  If we are not already selecting, then we assume an anchor mode select,
 //        which begins at an arbitrary column, and ends at an arbitrary column.
@@ -4178,7 +4398,7 @@ debug_break;
 		s32			lnI, lnRow, lnExtra, lnCandidateCol;
 		bool		llResult;
 		RECT		lrc;
-		SEdit*		edit;
+		SEdit*		line;
 		SFont*		font;
 
 
@@ -4214,20 +4434,26 @@ debug_break;
 					em->column = lnCandidateCol;
 
 
-
 			//////////
 			// Move to that location
 			//////`
-				edit = em->ecTopLine;
-				for (lnI = 0, edit = em->ecTopLine; edit && edit->ll.next && lnI < lnRow; lnI++)
-					edit = (SEdit*)edit->ll.next;
+				line = em->ecTopLine;
+				for (lnI = 0, line = em->ecTopLine; line && line->ll.next && lnI < lnRow; lnI++)
+					line = (SEdit*)line->ll.next;
+
+
+			//////////
+			// Validate that this column is allowable
+			//////
+				if (!em->allowMoveBeyondEndOfLine && em->column > line->sourceCodePopulated)
+					em->column = line->sourceCodePopulated;
 
 
 			///////////
 			// At this point, edit is what should be the cursor line
 			//////
 				em->ecCursorLineLast	= em->ecCursorLine;
-				em->ecCursorLine		= edit;
+				em->ecCursorLine		= line;
 
 
 			//////////
@@ -4302,12 +4528,26 @@ debug_break;
 					em->selectOrigin.lineNumber		= em->ecCursorLine->lineNumber;
 					em->selectOrigin.uid			= em->ecCursorLine->uid;
 					em->selectOrigin.column			= em->column;
+					em->selectOrigin.line			= em->ecCursorLine;
 
 					// Update the extents
 					iSEM_selectUpdateExtents(em);
 					break;
 			}
 		}
+	}
+
+
+
+
+//////////
+//
+// Are we selecting?
+//
+//////
+	bool iSEM_isSelecting(SEM* em)
+	{
+		return(em && em->selectMode != _SEM_SELECT_MODE_NONE);
 	}
 
 
@@ -4340,5 +4580,6 @@ debug_break;
 			em->selectEnd.lineNumber	= em->ecCursorLine->lineNumber;
 			em->selectEnd.uid			= em->ecCursorLine->uid;
 			em->selectEnd.column		= em->column;
+			em->selectEnd.line			= em->ecCursorLine;
 		}
 	}

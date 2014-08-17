@@ -3,7 +3,7 @@
 // /libsf/source/vjr/edit_chain_manager.h
 //
 //////
-// Version 0.51
+// Version 0.51.1
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -128,9 +128,10 @@
 
 	struct SEMPoint
 	{
-		u32				uid;
-		u32				lineNumber;
-		s32				column;
+		SEdit*			line;											// The actual line here
+		u32				uid;											// The UID of the line
+		u32				lineNumber;										// The line number
+		s32				column;											// The column on this line where the selection is currently
 	};
 
 
@@ -164,6 +165,7 @@
 			bool		showEndLine;									// Should we render the end line in a different color?
 			bool		isHeavyProcessing;								// When large amounts of processing will be conducted, the display can be disabled
 			bool		isSourceCode;									// Is this source code?
+			bool		allowMoveBeyondEndOfLine;						// Do we allow them to move beyond the end of the line?
 
 			s32			column;											// Column we're currently inputting
 			s32			leftColumn;										// The column we're displaying at the left-most position (of horizontally scrolled, this will be greater than 0)
@@ -171,13 +173,6 @@
 			bool		tabsEnforced;									// If tabs are enforced, then navigation across whitespaces lands on tab boundaries
 			SFont*		font;											// Optional, if not NULL then it overrides the object's font
 			u32			renderId;										// Each time it's rendered, the count is incremented.  This allows lines to be tested to see if they are actively rendered, or were previously rendered.
-
-
-		//////////
-		// Selected lines
-		//////
-			SEdit*		ecSelectedLineStart;							// First line that's selected
-			SEdit*		ecSelectedLineEnd;								// Last line that's selected
 
 		
 		//////////
@@ -277,6 +272,8 @@
 	bool					iSEM_navigateWordRight				(SEM* em, SObject* obj, bool tlVerifyCursorIsVisible);
 	bool					iSEM_navigateToTopLine				(SEM* em, SObject* obj);
 	bool					iSEM_navigateToEndLine				(SEM* em, SObject* obj);
+	bool					iSEM_navigateToSelectStart			(SEM* em, SObject* obj, bool tlMoveByOrigin);
+	bool					iSEM_navigateToSelectEnd			(SEM* em, SObject* obj, bool tlMoveByOrigin);
 	bool					iSEM_selectLineUp					(SEM* em, SObject* obj);
 	bool					iSEM_selectLineDown					(SEM* em, SObject* obj);
 	bool					iSEM_selectLeft						(SEM* em, SObject* obj);
@@ -297,5 +294,6 @@
 	bool					iSEM_navigateTo_pixelXY				(SEM* em, SObject* obj, s32 x, s32 y);
 	bool					iiSEM_isBreakingCharacter			(SEM* em, SEdit* line, s32 tnDeltaTest);
 	void					iSEM_selectStart					(SEM* em, u32 tnSelectMode);
+	bool					iSEM_isSelecting					(SEM* em);
 	void					iSEM_selectStop						(SEM* em);
 	void					iSEM_selectUpdateExtents			(SEM* em);
