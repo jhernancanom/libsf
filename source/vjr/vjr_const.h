@@ -203,14 +203,16 @@ typedef SEM**		SEMpp;
 	const u32			_OBJ_TYPE_EMPTY						= 0;						// Empty, used as a placeholder object that is not drawn
 	const u32			_OBJ_TYPE_FORM						= 1;						// Form class, the main outer window the OS sees
 	const u32			_OBJ_TYPE_SUBFORM					= 2;						// A new class which has its own drawing content and can be moved about using UI features
-	const u32			_OBJ_TYPE_LABEL						= 3;						// A label
-	const u32			_OBJ_TYPE_TEXTBOX					= 4;						// An input textbox
-	const u32			_OBJ_TYPE_BUTTON					= 5;						// A push button
-	const u32			_OBJ_TYPE_EDITBOX					= 6;						// An input multi-line editbox
-	const u32			_OBJ_TYPE_IMAGE						= 7;						// A graphical image
-	const u32			_OBJ_TYPE_CHECKBOX					= 8;						// A checkbox
-	const u32			_OBJ_TYPE_OPTION					= 9;						// A combination selection
-	const u32			_OBJ_TYPE_RADIO						= 10;						// A radio dial, which can also present as a slider or spinner
+	const u32			_OBJ_TYPE_CAROUSEL					= 3;						// A carousel is a holder for riders
+	const u32			_OBJ_TYPE_RIDER						= 4;						// A rider holds a form or subform and sizes it based on user interaction within its carousel
+	const u32			_OBJ_TYPE_LABEL						= 5;						// A label
+	const u32			_OBJ_TYPE_TEXTBOX					= 6;						// An input textbox
+	const u32			_OBJ_TYPE_BUTTON					= 7;						// A push button
+	const u32			_OBJ_TYPE_EDITBOX					= 8;						// An input multi-line editbox
+	const u32			_OBJ_TYPE_IMAGE						= 9;						// A graphical image
+	const u32			_OBJ_TYPE_CHECKBOX					= 10;						// A checkbox
+	const u32			_OBJ_TYPE_OPTION					= 11;						// A combination selection
+	const u32			_OBJ_TYPE_RADIO						= 12;						// A radio dial, which can also present as a slider or spinner
 
 //////////
 // A shortcut timesaver offered out of the goodness of my heart. :-)
@@ -221,6 +223,10 @@ typedef SEM**		SEMpp;
 // 		case _OBJ_TYPE_FORM:
 // 			break;
 // 		case _OBJ_TYPE_SUBFORM:
+// 			break;
+// 		case _OBJ_TYPE_CAROUSEL:
+// 			break;
+// 		case _OBJ_TYPE_RIDER:
 // 			break;
 // 		case _OBJ_TYPE_LABEL:
 // 			break;
@@ -414,6 +420,8 @@ typedef SEM**		SEMpp;
 	const s8			cgcName_empty[]						= "empty";
 	const s8			cgcName_form[]						= "form";
 	const s8			cgcName_subform[]					= "subform";
+	const s8			cgcName_carousel[]					= "carousel";
+	const s8			cgcName_rider[]						= "rider";
 	const s8			cgcName_label[]						= "label";
 	const s8			cgcName_textbox[]					= "textbox";
 	const s8			cgcName_button[]					= "button";

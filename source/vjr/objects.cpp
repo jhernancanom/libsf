@@ -64,6 +64,14 @@
 				return(iSubobj_createSubform(NULL, objParent));
 				break;
 
+			case _OBJ_TYPE_CAROUSEL:	// A new class which is its a holder for riders, allowing multiple classes to be docked and interacted with/upon as a group
+				return(iSubobj_createCarousel(NULL, objParent));
+				break;
+
+			case _OBJ_TYPE_RIDER:		// A new class which wraps around a form or subform allowing it to be presented inside a carousel
+				return(iSubobj_createRider(NULL, objParent));
+				break;
+
 			case _OBJ_TYPE_LABEL:		// A label
 				return(iSubobj_createLabel(NULL, objParent));
 				break;
@@ -260,6 +268,12 @@
 						break;
 					case _OBJ_TYPE_SUBFORM:
 						iSubobj_deleteSubform(obj, true);
+						break;
+					case _OBJ_TYPE_CAROUSEL:
+						iSubobj_deleteCarousel(obj, true, tlDeleteChildren, tlDeleteChildren);
+						break;
+					case _OBJ_TYPE_RIDER:
+						iSubobj_deleteRider(obj, true, false);
 						break;
 					case _OBJ_TYPE_LABEL:
 						iSubobj_deleteLabel(obj, true);
@@ -2418,6 +2432,122 @@ if (!llPublishChildren)
 
 //////////
 //
+// Creates the carousel object structure
+//
+//////
+	SObject* iSubobj_createCarousel(SObject* template_carousel, SObject* parent)
+	{
+		SObject* carouselNew;
+
+
+		logfunc(__FUNCTION__);
+		//////////
+		// Create the indicated item
+		//////
+			carouselNew = (SObject*)malloc(sizeof(SObject));
+
+
+		//////////
+		// If successful, initialize it
+		//////
+			if (carouselNew)
+			{
+				// Initialize
+				memset(carouselNew, 0, sizeof(SObject));
+
+				// Initially populate
+				carouselNew->objType		= _OBJ_TYPE_CAROUSEL;
+				carouselNew->parent			= parent;
+				carouselNew->p.isEnabled	= true;
+				carouselNew->isRendered		= true;
+				carouselNew->isPublished	= true;
+				iDatum_duplicate(&carouselNew->pa.name,			cgcName_carousel, -1);
+				iDatum_duplicate(&carouselNew->pa.className,	cgcName_carousel, -1);
+				iEvents_resetToDefault(&carouselNew->ev);
+				iObj_setSize(carouselNew, 0, 0, 320, 480);
+
+				// Initialize based on template
+				if (template_carousel)
+				{
+					// Copy from indicated template
+					iiSubobj_copyCarousel(carouselNew, template_carousel);
+
+				} else {
+					// Use VJr defaults
+					iiSubobj_resetToDefaultCarousel(carouselNew, true, true);
+				}
+			}
+
+
+		//////////
+		// Indicate our success or failure
+		//////
+			return(carouselNew);
+	}
+
+
+
+
+//////////
+//
+// Creates the rider object structure
+//
+//////
+	SObject* iSubobj_createRider(SObject* template_rider, SObject* parent)
+	{
+		SObject* riderNew;
+
+
+		logfunc(__FUNCTION__);
+		//////////
+		// Create the indicated item
+		//////
+			riderNew = (SObject*)malloc(sizeof(SObject));
+
+
+		//////////
+		// If successful, initialize it
+		//////
+			if (riderNew)
+			{
+				// Initialize
+				memset(riderNew, 0, sizeof(SObject));
+
+				// Initially populate
+				riderNew->objType		= _OBJ_TYPE_RIDER;
+				riderNew->parent		= parent;
+				riderNew->p.isEnabled	= true;
+				riderNew->isRendered	= true;
+				riderNew->isPublished	= true;
+				iDatum_duplicate(&riderNew->pa.name,		cgcName_rider, -1);
+				iDatum_duplicate(&riderNew->pa.className,	cgcName_rider, -1);
+				iEvents_resetToDefault(&riderNew->ev);
+				iObj_setSize(riderNew, 0, 0, 320, 480);
+
+				// Initialize based on template
+				if (template_rider)
+				{
+					// Copy from indicated template
+					iiSubobj_copyRider(riderNew, template_rider);
+
+				} else {
+					// Use VJr defaults
+					iiSubobj_resetToDefaultRider(riderNew, true, true);
+				}
+			}
+
+
+		//////////
+		// Indicate our success or failure
+		//////
+			return(riderNew);
+	}
+
+
+
+
+//////////
+//
 // Creates the label object structure
 //
 //////
@@ -2989,6 +3119,64 @@ if (!llPublishChildren)
 		// Duplicate all children for this object
 		//////
 			iObj_duplicateChildren(subformDst, subformSrc);
+	}
+
+
+
+
+//////////
+//
+// Called to copy the indicated carousel source to destination
+//
+//////
+	void iiSubobj_copyCarousel(SObject* carouselDst, SObject* carouselSrc)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&carouselDst->p, &carouselSrc->p, sizeof(carouselDst->p));
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&carouselDst->ev, &carouselSrc->ev, sizeof(carouselDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(carouselDst, carouselSrc);
+	}
+
+
+
+
+//////////
+//
+// Called to copy the indicated rider source to destination
+//
+//////
+	void iiSubobj_copyRider(SObject* riderDst, SObject* riderSrc)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&riderDst->p, &riderSrc->p, sizeof(riderDst->p));
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&riderDst->ev, &riderSrc->ev, sizeof(riderDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(riderDst, riderSrc);
 	}
 
 
@@ -3719,6 +3907,52 @@ if (!llPublishChildren)
 		}
 	}
 
+	void iiSubobj_resetToDefaultCarousel(SObject* carousel, bool tlResetProperties, bool tlResetMethods)
+	{
+		logfunc(__FUNCTION__);
+		if (carousel)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(carousel, true, true);
+
+
+			//////////
+			// Set default size and position
+			//////
+				SetRect(&carousel->rc, 0, 0, 320, 480);
+				SetRect(&carousel->rco, 0, 0, 320, 480);
+				SetRect(&carousel->rcp, 0, 0, 320, 480);
+
+				// Set the size
+				iObj_setSize(carousel, 0, 0, 320, 480);
+		}
+	}
+
+	void iiSubobj_resetToDefaultRider(SObject* rider, bool tlResetProperties, bool tlResetMethods)
+	{
+		logfunc(__FUNCTION__);
+		if (rider)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(rider, true, true);
+
+
+			//////////
+			// Set default size and position
+			//////
+				SetRect(&rider->rc, 0, 0, 320, 480);
+				SetRect(&rider->rco, 0, 0, 320, 480);
+				SetRect(&rider->rcp, 0, 0, 320, 480);
+
+				// Set the size
+				iObj_setSize(rider, 0, 0, 320, 480);
+		}
+	}
+
 	void iiSubobj_resetToDefaultLabel(SObject* label, bool tlResetProperties, bool tlResetMethods)
 	{
 		logfunc(__FUNCTION__);
@@ -4322,6 +4556,78 @@ if (!llPublishChildren)
 		//////
 			if (tlDeleteSelf)
 				free(subform);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the carousel
+//
+//////
+	void iSubobj_deleteCarousel(SObject* carousel, bool tlDeleteSelf, bool tlLeaveRiders, bool tlLeaveObjects)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(carousel);
+
+
+		//////////
+		// Act on riders
+		//////
+			if (tlLeaveRiders)
+			{
+				// We just need to orphanize each one
+// TODO:  Working here
+
+			} else {
+				// They are being deleted
+			}
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(carousel);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the rider
+//
+//////
+	void iSubobj_deleteRider(SObject* rider, bool tlDeleteSelf, bool tlLeaveObjects)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(rider);
+
+
+		//////////
+		// Act on objects
+		//////
+			if (!tlLeaveObjects)
+			{
+				// They are being deleted
+// TODO:  Working here
+				iObj_delete(&rider->firstChild, true, true, true);
+			}
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(rider);
 	}
 
 

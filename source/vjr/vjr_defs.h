@@ -107,6 +107,8 @@
 	SObject*				iSubobj_createEmpty						(SObject*	template_empty,		SObject* parent);
 	SObject*				iSubobj_createForm						(SObject*	template_form,		SObject* parent);
 	SObject*				iSubobj_createSubform					(SObject*	template_subform,	SObject* parent);
+	SObject*				iSubobj_createCarousel					(SObject*	template_carousel,	SObject* parent);
+	SObject*				iSubobj_createRider						(SObject*	template_rider,		SObject* parent);
 	SObject*				iSubobj_createLabel						(SObject*	template_label,		SObject* parent);
 	SObject*				iSubobj_createTextbox					(SObject*	template_textbox,	SObject* parent);
 	SObject*				iSubobj_createButton					(SObject*	template_button,	SObject* parent);
@@ -120,6 +122,8 @@
 	void					iiSubobj_copyEmpty						(SObject*	emptyDst,		SObject*	emptySrc);
 	void					iiSubobj_copyForm						(SObject*	formDst,		SObject*	formSrc);
 	void					iiSubobj_copySubform					(SObject*	subformDst,		SObject*	subformSrc);
+	void					iiSubobj_copyCarousel					(SObject*	carouselDst,	SObject*	carouselSrc);
+	void					iiSubobj_copyRider						(SObject*	riderDst,		SObject*	riderSrc);
 	void					iiSubobj_copyLabel						(SObject*	labelDst,		SObject*	labelSrc);
 	void					iiSubobj_copyTextbox					(SObject*	textboxDst,		SObject*	textboxSrc);
 	void					iiSubobj_copyButton						(SObject*	buttonDst,		SObject*	buttonSrc);
@@ -133,6 +137,8 @@
 	void					iiSubobj_resetToDefaultEmpty			(SObject*	empty,		bool tlResetProperties, bool tlResetMethods);
 	void					iiSubobj_resetToDefaultForm				(SObject*	form,		bool tlResetProperties, bool tlResetMethods);
 	void					iiSubobj_resetToDefaultSubform			(SObject*	subform,	bool tlResetProperties, bool tlResetMethods);
+	void					iiSubobj_resetToDefaultCarousel			(SObject*	carousel,	bool tlResetProperties, bool tlResetMethods);
+	void					iiSubobj_resetToDefaultRider			(SObject*	rider,		bool tlResetProperties, bool tlResetMethods);
 	void					iiSubobj_resetToDefaultLabel			(SObject*	label,		bool tlResetProperties, bool tlResetMethods);
 	void					iiSubobj_resetToDefaultTextbox			(SObject*	textbox,	bool tlResetProperties, bool tlResetMethods);
 	void					iiSubobj_resetToDefaultButton			(SObject*	button,		bool tlResetProperties, bool tlResetMethods);
@@ -147,6 +153,8 @@
 	void					iSubobj_deleteEmpty						(SObject*	empty,		bool tlDeleteSelf);
 	void					iSubobj_deleteForm						(SObject*	form,		bool tlDeleteSelf);
 	void					iSubobj_deleteSubform					(SObject*	subform,	bool tlDeleteSelf);
+	void					iSubobj_deleteCarousel					(SObject*	carousel,	bool tlDeleteSelf, bool tlLeaveRiders, bool tlLeaveObjects);
+	void					iSubobj_deleteRider						(SObject*	rider,		bool tlDeleteSelf, bool tlLeaveObjects);
 	void					iSubobj_deleteLabel						(SObject*	label,		bool tlDeleteSelf);
 	void					iSubobj_deleteTextbox					(SObject*	textbox,	bool tlDeleteSelf);
 	void					iSubobj_deleteButton					(SObject*	button,		bool tlDeleteSelf);
