@@ -202,15 +202,9 @@ struct SCompileNote;
 //              |_____|       |_____|
 //
 //////
-	struct SNode
+	// Processing ops
+	struct SNodeOps
 	{
-		SNode*			parent;											// Up to the higher node
-		SNode*			prev;											// Previous item in the horizontal chain
-		SNode*			next;											// Next item in the horizontal chain
-		SNode*			left;											// Left node
-		SNode*			right;											// Right node
-		u32				uid;											// Unique ID for this sub-instruction
-
 		// Operation layer/level and instruction at that level
 		s32				sub_level;										// The sub-instruction operation level related to the bigger picture
 		s32				sub_instr;										// The sub-instruction being executed, such as "+" in "2 + 4", see _SUB_INSTR_* constants
@@ -220,6 +214,40 @@ struct SCompileNote;
 		// When this happens, the left-most result is always the firstVariable, with each return result being then at x->next until the end
 		SVariable*		firstVariable;									// As results are computed or referenced, they are stored in scoped/temporary variables
 		u32				variable_count;									// The number of variables
+	};
+
+	// General nodes
+	struct SNode
+	{
+		u32				uid;											// Unique ID for this sub-instruction
+
+		// Directions from the central node
+		union {
+			SNode*		parent;											// Up to the higher node
+			SNode*		north;
+		};
+		union {
+			SNode*		prev;											// Previous item in the horizontal chain
+			SNode*		west;
+		};
+		union {
+			SNode*		next;											// Next item in the horizontal chain
+			SNode*		east;
+		};
+		union {
+			SNode*		left;											// Left node
+			SNode*		extra;											// Pointer to an extra direction for this node
+		};
+		union {
+			SNode*		right;											// Right node
+			SNode*		south;
+		};
+
+		// Node data
+		union {
+			void*		extraData;										// General purpose data
+			SNodeOps*	opData;											// When used as for processing ops
+		};
 	};
 
 	// A component structure

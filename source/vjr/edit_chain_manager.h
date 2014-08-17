@@ -274,6 +274,9 @@
 	bool					iSEM_navigateToEndLine				(SEM* em, SObject* obj);
 	bool					iSEM_navigateToSelectStart			(SEM* em, SObject* obj, bool tlMoveByOrigin);
 	bool					iSEM_navigateToSelectEnd			(SEM* em, SObject* obj, bool tlMoveByOrigin);
+	bool					iSEM_rollUp							(SEM* em, SObject* obj);
+	bool					iSEM_rollDown						(SEM* em, SObject* obj);
+	bool					iSEM_centerCursorLine				(SEM* em, SObject* obj);
 	bool					iSEM_selectLineUp					(SEM* em, SObject* obj);
 	bool					iSEM_selectLineDown					(SEM* em, SObject* obj);
 	bool					iSEM_selectLeft						(SEM* em, SObject* obj);

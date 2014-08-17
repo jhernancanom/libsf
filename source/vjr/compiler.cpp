@@ -665,7 +665,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 			//////////
 			// Are we in error?  If so, we stop compiling this line.
 			//////
-				if (nodeActive->op.op_type == _OP_TYPE_NULL)
+				if (nodeActive->opData->op.op_type == _OP_TYPE_NULL)
 				{
 					// We are in error
 					return(false);
@@ -714,8 +714,8 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 			//////////
 			// Update its operation to our parenthesis
 			//////
-				node->op.op_type	= _OP_TYPE_PARENTHESIS_LEFT;
-				node->op.comp		= comp;
+				node->opData->op.op_type	= _OP_TYPE_PARENTHESIS_LEFT;
+				node->opData->op.comp		= comp;
 
 
 			//////////
@@ -725,12 +725,12 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 				if (var)
 				{
 					// Append the temporary variable
-					iOp_setVariable_scoped(&node->op, var, true);
+					iOp_setVariable_scoped(&node->opData->op, var, true);
 
 				} else {
 					// Internal compile error
 					iComp_appendError(comp, _ERROR_OUT_OF_MEMORY, (s8*)cgcOutOfMemory);
-					iOp_setNull(&node->op);
+					iOp_setNull(&node->opData->op);
 				}
 		}
 
@@ -2554,7 +2554,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 			while (iiComps_xlatToSubInstr_findInmostExpression(&si, line))
 			{
 				// Was it a valid operation?
-				if (si.sub_instr >= 0)
+				if (si.opData->sub_instr >= 0)
 				{
 					// We found the operation
 					// Did we find appropriate components?
@@ -2610,8 +2610,8 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 		// Initially indicate that we did not find an inmost expression
 		//////
 			memset(si, 0, sizeof(SNode));
-			si->sub_instr	= -1;			// Indicate failure initially (until something is found)
-			si->sub_level	= -1;			// Unused during parsing
+			si->opData->sub_instr	= -1;			// Indicate failure initially (until something is found)
+			si->opData->sub_level	= -1;			// Unused during parsing
 
 
 		//////////
@@ -2627,28 +2627,28 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 					if (comp->iCode == _ICODE_EXPONENT)
 					{
 						// Exponent
-						si->sub_instr	= _SUB_INSTR_EXPONENT;
-						llFound			= true;
+						si->opData->sub_instr	= _SUB_INSTR_EXPONENT;
+						llFound					= true;
 
 					} else if (comp->iCode == _ICODE_SLASH) {
 						// Division
-						si->sub_instr	= _SUB_INSTR_DIVIDE;
-						llFound			= true;
+						si->opData->sub_instr	= _SUB_INSTR_DIVIDE;
+						llFound					= true;
 
 					} else if (comp->iCode == _ICODE_ASTERISK) {
 						// Multiplication
-						si->sub_instr	= _SUB_INSTR_MULTIPLY;
-						llFound			= true;
+						si->opData->sub_instr	= _SUB_INSTR_MULTIPLY;
+						llFound					= true;
 
 					} else if (comp->iCode == _ICODE_PLUS) {
 						// Addition
-						si->sub_instr	= _SUB_INSTR_ADD;
-						llFound			= true;
+						si->opData->sub_instr	= _SUB_INSTR_ADD;
+						llFound					= true;
 
 					} else if (comp->iCode == _ICODE_HYPHEN) {
 						// Subtraction
-						si->sub_instr	= _SUB_INSTR_SUBTRACT;
-						llFound			= true;
+						si->opData->sub_instr	= _SUB_INSTR_SUBTRACT;
+						llFound					= true;
 					}
 
 
@@ -4096,14 +4096,14 @@ debug_break;
 			//////////
 			// Delete the op if need be
 			//////
-				iOp_politelyDelete(&node->op, false);
+				iOp_politelyDelete(&node->opData->op, false);
 
 
 			//////////
 			// Delete the variable chain
 			//////
-				if (node->firstVariable)
-					iVariable_politelyDeleteChain(&node->firstVariable, true);
+				if (node->opData->firstVariable)
+					iVariable_politelyDeleteChain(&node->opData->firstVariable, true);
 
 
 			//////////

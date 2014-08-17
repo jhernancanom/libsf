@@ -57,13 +57,14 @@
 			memset(em, 0, sizeof(SEM));
 
 			// Store defaults
-			em->isSourceCode		= tlIsSourceCode;
+			em->isSourceCode				= tlIsSourceCode;
+			em->allowMoveBeyondEndOfLine	= true;
 			if (tlIsSourceCode)
-				em->showLineNumbers	= true;
+				em->showLineNumbers			= true;
 
 			// Default to 4-character tab width
-			em->tabWidth			= 4;
-			em->tabsEnforced		= true;
+			em->tabWidth					= 4;
+			em->tabsEnforced				= true;
 		}
 
 		// Indicate our status
@@ -1358,6 +1359,13 @@ debug_break;
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
+
+					case VK_CLEAR:
+						iSEM_centerCursorLine(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
+						break;
 				}
 
 			} else if (tlCtrl && !tlShift && !tlAlt) {
@@ -1414,6 +1422,20 @@ debug_break;
 					case 'Q':		// Quit
 						break;
 
+					case VK_UP:		// Up
+						iSEM_rollUp(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
+						break;
+
+					case VK_DOWN:	// Down
+						iSEM_rollDown(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
+						break;
+
 					case VK_LEFT:	// Word left
 						iSEM_navigateWordLeft(em, obj, true);
 
@@ -1461,20 +1483,6 @@ debug_break;
 				// SHIFT+
 				switch (tnVKey)
 				{
-					case VK_UP:		// Select line up
-						iSEM_selectLineUp(em, obj);
-
-						// Indicate our key was processed
-						llProcessed = true;
-						break;
-
-					case VK_DOWN:	// Select line down
-						iSEM_selectLineDown(em, obj);
-
-						// Indicate our key was processed
-						llProcessed = true;
-						break;
-
 					case VK_LEFT:	// Select left
 						iSEM_selectLeft(em, obj);
 
@@ -1484,6 +1492,20 @@ debug_break;
 
 					case VK_RIGHT:	// Select right
 						iSEM_selectRight(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
+						break;
+
+					case VK_UP:		// Select line up
+						iSEM_selectLineUp(em, obj);
+
+						// Indicate our key was processed
+						llProcessed = true;
+						break;
+
+					case VK_DOWN:	// Select line down
+						iSEM_selectLineDown(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
@@ -1563,14 +1585,16 @@ debug_break;
 						break;
 
 					case VK_UP:		// Select line up
-						iSEM_selectLineUp(em, obj);
+						iSEM_selectStart(em, _SEM_SELECT_MODE_ANCHOR);
+						iSEM_rollUp(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_DOWN:	// Select line down
-						iSEM_selectLineDown(em, obj);
+						iSEM_selectStart(em, _SEM_SELECT_MODE_ANCHOR);
+						iSEM_rollDown(em, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
@@ -1797,7 +1821,7 @@ debug_break;
 		SComp*		compPBBLeft;
 		SComp*		compPBBRight;
 		HGDIOBJ		hfontOld;
-		SBgra		foreColor, defaultForeColor, defaultBackColor, fillColor, backColorLast, foreColorLast, compForeColor, compBackColor, compFillColor;
+		SBgra		defaultForeColor, defaultBackColor, fillColor, backColorLast, foreColorLast, compForeColor, compBackColor, compFillColor;
 		RECT		rc, lrc, lrc2, lrc3, lrcComp, lrcText, lrcCompCalcStart, lrcCompCalcDwell;
 		s8			bigBuffer[2048];
 
@@ -1960,7 +1984,6 @@ debug_break;
 						SetBkColor(bmp->hdc, RGB(currentStatementBackColor.red, currentStatementBackColor.grn, currentStatementBackColor.blu));
 						SetTextColor(bmp->hdc, RGB(currentStatementForeColor.red, currentStatementForeColor.grn, currentStatementForeColor.blu));
 						fillColor.color	= currentStatementBackColor.color;
-						foreColor.color = currentStatementForeColor.color;
 
 					} else if (line->ll.next || ((!em->showCursorLine || !tlRenderCursorline) && !em->showEndLine)) {
 						// Display in normal background color
@@ -1968,7 +1991,6 @@ debug_break;
 						SetTextColor(bmp->hdc, RGB(defaultForeColor.red, defaultForeColor.grn, defaultForeColor.blu));
 						hfontOld		= SelectObject(bmp->hdc, font->hfont);
 						fillColor.color	= defaultBackColor.color;
-						foreColor.color = defaultForeColor.color;
 
 					} else {
 						// This is the last line, display in the last line color
@@ -1976,7 +1998,6 @@ debug_break;
 						SetTextColor(bmp->hdc, RGB(foreColorLast.red, foreColorLast.grn, foreColorLast.blu));
 						hfontOld		= SelectObject(bmp->hdc, font->hfont);
 						fillColor.color	= backColorLast.color;
-						foreColor.color = foreColorLast.color;
 					}
 
 
@@ -2668,6 +2689,13 @@ renderAsText:
 						// Adjust to 90% of extents
 						lnCols		= lnCols - (lnCols / 10);
 						lnRows		= lnRows - (lnRows / 10);
+
+
+					//////////
+					// Make sure we're not beyond the end of the line when we're not allowed to
+					//////
+						if (!em->allowMoveBeyondEndOfLine && em->column > em->ecCursorLine->sourceCodePopulated)
+							em->column = em->ecCursorLine->sourceCodePopulated;
 
 
 					//////////
@@ -3372,6 +3400,7 @@ renderAsText:
 	bool iSEM_selectAll(SEM* em, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
+
 		return(false);
 	}
 
@@ -3847,6 +3876,154 @@ renderAsText:
 
 //////////
 //
+// Called to roll the screen up one line
+//
+//////
+	bool iSEM_rollUp(SEM* em, SObject* obj)
+	{
+		bool llChanged;
+
+
+		logfunc(__FUNCTION__);
+		// Make sure our environment is sane
+		llChanged = false;
+		if (em)
+		{
+			// Move the top line up one
+			if (em->ecTopLine && em->ecTopLine->ll.prev)
+			{
+				llChanged		= true;
+				em->ecTopLine	= (SEdit*)em->ecTopLine->ll.prev;
+			}
+
+			// Move the cursor line up one
+			if (em->ecCursorLine && em->ecCursorLine->ll.prev)
+			{
+				llChanged			= true;
+				em->ecCursorLine	= (SEdit*)em->ecCursorLine->ll.prev;
+			}
+
+			// If we moved anything...
+			if (llChanged)
+				iSEM_verifyCursorIsVisible(em, obj);
+		}
+
+		// Indicate our status
+		return(llChanged);
+	}
+
+
+
+
+//////////
+//
+// Called to roll the screen down one line
+//
+//////
+	bool iSEM_rollDown(SEM* em, SObject* obj)
+	{
+		bool llChanged;
+
+
+		logfunc(__FUNCTION__);
+		// Make sure our environment is sane
+		llChanged = false;
+		if (em)
+		{
+			// Move the top line down one
+			if (em->ecTopLine && em->ecTopLine->ll.next)
+			{
+				llChanged		= true;
+				em->ecTopLine	= (SEdit*)em->ecTopLine->ll.next;
+			}
+
+			// Move the cursor line down
+			if (em->ecCursorLine && em->ecCursorLine->ll.next)
+			{
+				llChanged			= true;
+				em->ecCursorLine	= (SEdit*)em->ecCursorLine->ll.next;
+			}
+
+			// If we moved anything...
+			if (llChanged)
+				iSEM_verifyCursorIsVisible(em, obj);
+		}
+
+		// Indicate our status
+		return(llChanged);
+	}
+
+
+
+
+//////////
+//
+// Moves the cursor line to the middle of the visible screen
+//
+//////
+	bool iSEM_centerCursorLine(SEM* em, SObject* obj)
+	{
+		s32			lnI, lnRows;
+		SFont*		font;
+		SEdit*		line;
+		RECT		lrc;
+
+
+		logfunc(__FUNCTION__);
+		//////////
+		// Grab the rectangle we're working in
+		//////
+			font = iSEM_getRectAndFont(em, obj, &lrc);
+
+
+		//////////
+		// Make sure we're valid
+		//////
+			if (em && em->ecCursorLine)
+			{
+
+				//////////
+				// Determine how many rows there are on screen
+				//////
+					lnRows = ((lrc.bottom - lrc.top) / font->tm.tmHeight) / 2;
+
+
+				//////////
+				// Move to that location
+				//////`
+					line = em->ecCursorLine;
+					for (lnI = 0; line && line->ll.prev && lnI < lnRows; lnI++)
+						line = (SEdit*)line->ll.prev;
+
+
+				///////////
+				// At this point, edit is what should be the cursor line
+				//////
+					em->ecTopLine = line;
+
+
+				//////////
+				// Verify we're visible
+				//////
+					iSEM_verifyCursorIsVisible(em, obj);
+
+
+				//////////
+				// Indicate success
+				//////
+					return(true);
+
+			} else {
+				// Failure
+				return(false);
+			}
+	}
+
+
+
+
+//////////
+//
 // Called to select from where we are up one line.
 // Note:  If we are not already selecting, then we assume an anchor mode select,
 //        which begins at an arbitrary column, and ends at an arbitrary column.
@@ -4041,8 +4218,7 @@ renderAsText:
 	{
 		logfunc(__FUNCTION__);
 		iSEM_selectStart(em, _SEM_SELECT_MODE_ANCHOR);
-		if (em->column > 0)		return(iSEM_navigateWordLeft(em, obj, true));
-		else					return(true);
+		return(iSEM_navigateWordLeft(em, obj, true));
 	}
 
 
@@ -4060,8 +4236,7 @@ renderAsText:
 	{
 		logfunc(__FUNCTION__);
 		iSEM_selectStart(em, _SEM_SELECT_MODE_ANCHOR);
-		if (em->column > 0)		return(iSEM_navigateWordRight(em, obj, true));
-		else					return(true);
+		return(iSEM_navigateWordRight(em, obj, true));
 	}
 
 
@@ -4076,8 +4251,7 @@ renderAsText:
 	{
 		logfunc(__FUNCTION__);
 		iSEM_selectStart(em, _SEM_SELECT_MODE_ANCHOR);
-		if (em->column > 0)		return(iSEM_navigateToTopLine(em, obj));
-		else					return(true);
+		return(iSEM_navigateToTopLine(em, obj));
 	}
 
 
@@ -4092,8 +4266,7 @@ renderAsText:
 	{
 		logfunc(__FUNCTION__);
 		iSEM_selectStart(em, _SEM_SELECT_MODE_ANCHOR);
-		if (em->column > 0)		return(iSEM_navigateToEndLine(em, obj));
-		else					return(true);
+		return(iSEM_navigateToEndLine(em, obj));
 	}
 
 
@@ -4438,7 +4611,7 @@ renderAsText:
 			// Move to that location
 			//////`
 				line = em->ecTopLine;
-				for (lnI = 0, line = em->ecTopLine; line && line->ll.next && lnI < lnRow; lnI++)
+				for (lnI = 0; line && line->ll.next && lnI < lnRow; lnI++)
 					line = (SEdit*)line->ll.next;
 
 
