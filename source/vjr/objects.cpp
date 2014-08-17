@@ -4568,6 +4568,10 @@ if (!llPublishChildren)
 //////
 	void iSubobj_deleteCarousel(SObject* carousel, bool tlDeleteSelf, bool tlLeaveRiders, bool tlLeaveObjects)
 	{
+		SObject* rider;
+		SObject* riderNext;
+
+
 		logfunc(__FUNCTION__);
 		//////////
 		// Free common components
@@ -4581,10 +4585,28 @@ if (!llPublishChildren)
 			if (tlLeaveRiders)
 			{
 				// We just need to orphanize each one
-// TODO:  Working here
+				// Get the first
+				rider = carousel->firstChild;
+
+				// Mark the parent as now being free from children
+				carousel->firstChild = NULL;
+
+				// Iterate for every rider
+				while (rider)
+				{
+					// Determine the next rider
+					riderNext = (SObject*)rider->ll.next;
+
+					// Orphanize this rider
+					iLl_orphanizeNode((SLL*)rider);
+
+					// Move to next rider
+					rider = riderNext;
+				}
 
 			} else {
 				// They are being deleted
+				iObj_delete(&carousel->firstChild, true, true, true);
 			}
 
 
@@ -4616,11 +4638,7 @@ if (!llPublishChildren)
 		// Act on objects
 		//////
 			if (!tlLeaveObjects)
-			{
-				// They are being deleted
-// TODO:  Working here
-				iObj_delete(&rider->firstChild, true, true, true);
-			}
+				iObj_delete(&rider->firstChild, true, true, true);		// They are being deleted
 
 
 		//////////
@@ -5070,6 +5088,112 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 		}
 
 		// Indicate how many pixels were drawn
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the carousel.
+//
+//////
+	u32 iSubobj_renderCarousel(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			if (obj->isDirtyRender)
+			{
+				//////////
+				// Fill in the background
+				//////
+					SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+					iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the rider.
+//
+//////
+	u32 iSubobj_renderRider(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			if (obj->isDirtyRender)
+			{
+				//////////
+				// Fill in the background
+				//////
+					SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+					iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
 		return(lnPixelsRendered);
 	}
 
