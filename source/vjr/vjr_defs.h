@@ -76,12 +76,15 @@
 	bool					iObj_find_relativeRect					(SObject* objThis, SObject* objTarget, s32 x, s32 y, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings);
 	SObject*				iObj_find_thisForm						(SObject* obj);
 	SObject*				iObj_find_thisSubform					(SObject* obj);
+	SObject*				iObj_find_thisRider						(SObject* obj);
+	SObject*				iObj_findParentObject					(SObject* objStart, u32 objType, bool tlIncludeSelfInSearch);
 	bool					iObj_isCommandWindow					(SObject* obj);
 	void					iObj_setFocusHighlights					(SWindow* win, SObject* obj, s32 x, s32 y, bool tlProcessChildren, bool tlProcessSiblings);
 	void					iObj_findFocusControls					(SObject* obj, SBuilder* objFocusControls, bool tlProcessSiblings);
 	bool					iObj_setFocusObjectPrev					(SWindow* win, SObject* obj);
 	bool					iObj_setFocusObjectNext					(SWindow* win, SObject* obj);
 	bool					iObj_focus_descentCheck					(SObject* obj, bool tlCheckChildren, bool tlCheckSiblings);
+	SObject*				iObj_focus_descentCheckObj				(SObject* obj, bool tlCheckChildren, bool tlCheckSiblings);
 	void					iObj_setDirtyRender_ascent				(SObject* obj, bool tlMarkParents);
 	void					iObj_setDirtyRender_descent				(SObject* obj, bool tlProcessChildren, bool tlProcessSiblings);
 	void					iObj_setDirtyPublish_ascent				(SObject* obj, bool tlMarkParents);
@@ -179,6 +182,11 @@
 	u32						iSubobj_renderCheckbox					(SObject* checkbox);
 	u32						iSubobj_renderOption					(SObject* option);
 	u32						iSubobj_renderRadio						(SObject* radio);
+
+
+	// Default publish of carousels and riders
+	u32						iSubobj_publishCarousel					(SObject* carousel,	bool tlForcePublish);
+	u32						iSubobj_publishRider					(SObject* rider,	bool tlForcePublish);
 
 
 //////////

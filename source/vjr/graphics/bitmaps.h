@@ -94,3 +94,4 @@
 #include "h\carousel_carousel_icon.h"
 #include "h\carousel_tabs_icon.h"
 #include "h\carousel_pad.h"
+#include "h\carousel_icon.h"

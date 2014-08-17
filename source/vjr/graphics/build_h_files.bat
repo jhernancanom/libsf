@@ -55,3 +55,4 @@
 \libsf\vvm\bin\f2h raw\carousel_carousel_icon.bmp carouselCarouselBmp h\carousel_carousel_icon.h
 \libsf\vvm\bin\f2h raw\carousel_tabs_icon.bmp carouselTabsBmp h\carousel_tabs_icon.h
 \libsf\vvm\bin\f2h raw\carousel_pad.bmp carouselPadBmp h\carousel_pad.h
+\libsf\vvm\bin\f2h raw\carousel_icon.bmp carouselIconBmp h\carousel_icon.h

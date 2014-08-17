@@ -677,9 +677,10 @@
 		iBmp_delete(&bmpDebugIcon,					true, true);
 		iBmp_delete(&bmpOutputIcon,					true, true);
 		iBmp_delete(&bmpSourceLightIcon,			true, true);
-		iBmp_delete(&bmpCarouselIcon,				true, true);
-		iBmp_delete(&bmpTabsIcon,					true, true);
+		iBmp_delete(&bmpCarouselCarouselIcon,		true, true);
+		iBmp_delete(&bmpCarouselTabsIcon,			true, true);
 		iBmp_delete(&bmpCarouselPad,				true, true);
+		iBmp_delete(&bmpCarouselIcon,				true, true);
 		iBmp_delete(&bmpNoImage,					true, true);
 		iBmp_delete(&bmpClose,						true, true);
 		iBmp_delete(&bmpMaximize,					true, true);

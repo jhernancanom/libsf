@@ -553,16 +553,7 @@
 	SObject* iObj_find_thisForm(SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		if (obj->objType == _OBJ_TYPE_FORM)
-		{
-			// This is the subform
-			return(obj);
-
-		} else {
-			// If we can traverse higher, go higher, if not we're done
-			if (obj->parent)		return(iObj_find_thisForm(obj->parent));
-			else					return(NULL);
-		}
+		return(iObj_findParentObject(obj, _OBJ_TYPE_FORM, true));
 	}
 
 
@@ -576,15 +567,44 @@
 	SObject* iObj_find_thisSubform(SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		if (obj->objType == _OBJ_TYPE_SUBFORM)
+		return(iObj_findParentObject(obj, _OBJ_TYPE_SUBFORM, true));
+	}
+
+
+
+
+//////////
+//
+// Called to find the thisRider object
+//
+//////
+	SObject* iObj_find_thisRider(SObject* obj)
+	{
+		logfunc(__FUNCTION__);
+		return(iObj_findParentObject(obj, _OBJ_TYPE_RIDER, true));
+	}
+
+
+
+
+/////////
+//
+// Called to search for the indicated object
+//
+//////
+	SObject* iObj_findParentObject(SObject* objStart, u32 objType, bool tlIncludeSelfInSearch)
+	{
+		logfunc(__FUNCTION__);
+
+		if (objStart->objType == objType && tlIncludeSelfInSearch)
 		{
 			// This is the subform
-			return(obj);
+			return(objStart);
 
 		} else {
 			// If we can traverse higher, go higher, if not we're done
-			if (obj->parent)		return(iObj_find_thisSubform(obj->parent));
-			else					return(NULL);
+			if (objStart->parent)		return(iObj_findParentObject(objStart->parent, objType, true));
+			else						return(NULL);
 		}
 	}
 
@@ -823,21 +843,35 @@
 //////
 	bool iObj_focus_descentCheck(SObject* obj, bool tlCheckChildren, bool tlCheckSiblings)
 	{
+		return((iObj_focus_descentCheckObj(obj, tlCheckChildren, tlCheckSiblings) != NULL));
+	}
+
+
+
+
+//////////
+//
+// Called to return which control (if any) has focus
+//
+//////
+	SObject* iObj_focus_descentCheckObj(SObject* obj, bool tlCheckChildren, bool tlCheckSiblings)
+	{
 		SObject* objSib;
+		SObject* objFocus;
 
 
 		//////////
 		// If it has focus we're done (because we're only looking to see IF any have focus)
 		//////
 			if (obj->p.hasFocus)
-				return(true);
+				return(obj);
 
 
 		//////////
 		// Check the children
 		//////
-			if (tlCheckChildren && obj->firstChild && iObj_focus_descentCheck(obj->firstChild, true, true))
-				return(true);
+			if (tlCheckChildren && obj->firstChild && (objFocus = iObj_focus_descentCheckObj(obj->firstChild, true, true)))
+				return(objFocus);
 
 
 		//////////
@@ -850,8 +884,8 @@
 				while (objSib)
 				{
 					// See if this one has focus
-					if (iObj_focus_descentCheck(objSib, true, false))
-						return(true);
+					if ((objFocus = iObj_focus_descentCheckObj(objSib, true, false)))
+						return(objFocus);
 
 					// Move to next sibling
 					objSib = (SObject*)objSib->ll.next;
@@ -862,7 +896,7 @@
 		//////////
 		// If we get here, this object and its children do not have focus
 		//////
-			return(false);
+			return(NULL);
 	}
 
 
@@ -2437,7 +2471,10 @@ if (!llPublishChildren)
 //////
 	SObject* iSubobj_createCarousel(SObject* template_carousel, SObject* parent)
 	{
-		SObject* carouselNew;
+		SObject*	carouselNew;
+		SObject*	icon;
+		SObject*	caption;
+		SObject*	close;
 
 
 		logfunc(__FUNCTION__);
@@ -2473,8 +2510,26 @@ if (!llPublishChildren)
 					iiSubobj_copyCarousel(carouselNew, template_carousel);
 
 				} else {
+					//////////
+					// Create the default children for this object
+					//////
+						icon		= iObj_addChild(_OBJ_TYPE_IMAGE, carouselNew);
+						caption		= iObj_addChild(_OBJ_TYPE_LABEL, carouselNew);
+						close		= iObj_addChild(_OBJ_TYPE_IMAGE, carouselNew);
+
+
+					//////////
+					// Give them proper names
+					//////
+						iDatum_duplicate(&icon->pa.name,		cgcName_icon,		-1);
+						iDatum_duplicate(&caption->pa.name,		cgcCaption_icon,	-1);
+						iDatum_duplicate(&close->pa.name,		cgcName_iconClose,	-1);
+
+
+					//////////
 					// Use VJr defaults
-					iiSubobj_resetToDefaultCarousel(carouselNew, true, true);
+					//////
+						iiSubobj_resetToDefaultCarousel(carouselNew, true, true);
 				}
 			}
 
@@ -3909,6 +3964,10 @@ if (!llPublishChildren)
 
 	void iiSubobj_resetToDefaultCarousel(SObject* carousel, bool tlResetProperties, bool tlResetMethods)
 	{
+		RECT		lrc;
+		SObject*	objChild;
+
+
 		logfunc(__FUNCTION__);
 		if (carousel)
 		{
@@ -3927,6 +3986,73 @@ if (!llPublishChildren)
 
 				// Set the size
 				iObj_setSize(carousel, 0, 0, 320, 480);
+
+
+			//////////
+			// Default child settings
+			//////
+				SetRect(&lrc, 0, 0, bmpArrowUl->bi.biWidth, bmpArrowUl->bi.biHeight);
+				objChild = carousel->firstChild;
+				while (objChild)
+				{
+					// See which object this is
+					if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_icon, sizeof(cgcName_icon) - 1) == 0)
+					{
+						// Adjust the size
+						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpCarouselIcon->bi.biWidth, bmpCarouselIcon->bi.biHeight);
+
+						// Carousel icon
+						iBmp_delete(&objChild->pa.bmpPicture,		true, true);	// Delete the old
+						iBmp_delete(&objChild->pa.bmpPictureOver,	true, true);	// Delete the old
+						iBmp_delete(&objChild->pa.bmpPictureDown,	true, true);	// Delete the old
+						objChild->pa.bmpPicture		= iBmp_copy(bmpCarouselIcon);	// Set the default carousel icon
+						objChild->pa.bmpPictureOver	= iBmp_copy(bmpCarouselIcon);	// Set the default carousel icon
+						objChild->pa.bmpPictureDown	= iBmp_copy(bmpCarouselIcon);	// Set the default carousel icon
+
+						// Add highlighting for the over and down
+						iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
+						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
+
+						// Icon
+						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
+						objChild->pa.bmpIcon	= iBmp_copy(bmpCarouselIcon);		// Set the new
+						objChild->p.isVisible	= true;
+
+					} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
+						// Caption
+						iDatum_delete(&objChild->pa.caption, false);
+						iDatum_duplicate(&objChild->pa.caption, cgcName_formCaption, sizeof(cgcName_formCaption) - 1);
+						objChild->p.isOpaque = false;
+						iFont_delete(&objChild->pa.font, true);
+						objChild->pa.font		= iFont_create(cgcFontName_windowTitleBar, 12, FW_NORMAL, false, false);
+						objChild->p.isVisible	= true;
+
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0) {
+						// Adjust the size
+						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpCarouselIcon->bi.biWidth, bmpCarouselIcon->bi.biHeight);
+
+						// Close icon
+						iBmp_delete(&objChild->pa.bmpPicture,		true, true);	// Delete the old
+						iBmp_delete(&objChild->pa.bmpPictureOver,	true, true);	// Delete the old
+						iBmp_delete(&objChild->pa.bmpPictureDown,	true, true);	// Delete the old
+						objChild->pa.bmpPicture		= iBmp_copy(bmpClose);			// Set the new
+						objChild->pa.bmpPictureOver	= iBmp_copy(bmpClose);			// Set the new
+						objChild->pa.bmpPictureDown	= iBmp_copy(bmpClose);			// Set the new
+
+						// Add highlighting for the over and down
+						iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
+						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
+
+						// Icon
+						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
+						objChild->pa.bmpIcon	= iBmp_copy(bmpClose);				// Set the new
+						objChild->p.isVisible	= true;
+					}
+
+					// Move to next object
+					objChild = (SObject*)objChild->ll.next;
+				}
+
 		}
 	}
 
@@ -4585,6 +4711,12 @@ if (!llPublishChildren)
 			if (tlLeaveRiders)
 			{
 				// We just need to orphanize each one
+//////////
+// Note:  Orphanizing riders is a potentially precarious thing.  They must be known as they are
+//        not maintained in a buffer somewhere.  Typically this only occurs when migrating the
+//        last rider from one carousel to another.  But regardless, care must be taken to prevent
+//        the orphaned rider from hanging around unused and forgotten.
+//////
 				// Get the first
 				rider = carousel->firstChild;
 
@@ -5096,13 +5228,16 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 //////////
 //
-// Renders the carousel.
+// Renders the carousel.  Note that carousels are not normally displayed.  The only time
+// they'll be displayed by their rendered nature below is if they do not possess any riders.
 //
 //////
 	u32 iSubobj_renderCarousel(SObject* obj)
 	{
-		u32		lnPixelsRendered;
-		RECT	lrc;
+		u32			lnPixelsRendered;
+		bool		llIsFocusCarousel;
+		RECT		lrc;
+		SObject*	objFocus;
 
 
 		// Make sure our environment is sane
@@ -5110,34 +5245,63 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 		lnPixelsRendered = 0;
 		if (obj && obj->isRendered)
 		{
-			if (obj->isDirtyRender)
-			{
-				//////////
-				// Fill in the background
-				//////
-					SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
-					iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+			//////////
+			// If we need re-rendering, re-render
+			//////
+				// The entire bmp
+				SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+
+				// Re-render
+				if (obj->isDirtyRender)
+				{
+					//////////
+					// Frame it
+					//////
+						// Determine if a control on this subform has focus
+						objFocus			= iObj_focus_descentCheckObj(obj, true, false);
+						llIsFocusCarousel	= (objFocus != NULL);
+						if (!obj->bc || !iBmp_isValidCache(&obj->bc, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)llIsFocusCarousel))
+						{
+							// The bitmap cache is no longer valid
+							iBmp_deleteCache(&obj->bc);
+
+							// Draw the default background
+							if (llIsFocusCarousel)		iBmp_fillRect(obj->bmp, &lrc, NwFocusColor,  NeFocusColor,  SwFocusColor,  SeFocusColor,  true, NULL, false);
+							else						iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, NULL, false);
+
+							// Apply a dappling
+							iBmp_dapple(obj->bmp, bmpDapple2, 225.0f, 3);
+
+							// Save the cache
+							iBmp_createCache(&obj->bc, obj->bmp, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)llIsFocusCarousel, true);
+
+						} else {
+							// Copy everything over from the cache
+							memcpy(obj->bmp->bd, obj->bc->bmpCached->bd, obj->bc->bmpCached->bi.biSizeImage);
+						}
 
 
-				//////////
-				// Copy to prior rendered bitmap
-				//////
-					// Make sure our bmpPriorRendered exists
-					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+					//////////
+					// Copy to prior rendered bitmap
+					//////
+						// Make sure our bmpPriorRendered exists
+						obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
 
-					// Copy to the prior rendered version
-					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
-					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+						// Copy to the prior rendered version
+						memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+						// Right now, we can use the bmpPriorRendered for a fast copy rather than 
 
-			} else {
-				// Render from its prior rendered version
-				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
-			}
+				} else {
+					// Render from its prior rendered version
+					lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+				}
 
 
+			//////////
 			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
-			obj->isDirtyRender = false;
-			obj->isDirtyPublish	= true;
+			//////
+				obj->isDirtyRender = false;
+				obj->isDirtyPublish	= true;
 		}
 
 		// Indicate status
@@ -5859,4 +6023,32 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 		// Indicate status
 		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Called to publish the carousel.
+//
+//////
+	u32 iSubobj_publishCarousel(SObject* carousel, bool tlForcePublish)
+	{
+// TODO:  Working here
+		return(0);
+	}
+
+
+
+
+//////////
+//
+// Called to publish the rider within the carousel
+//
+//////
+	u32 iSubobj_publishRider(SObject* rider, bool tlForcePublish)
+	{
+// TODO:  Working here
+		return(0);
 	}

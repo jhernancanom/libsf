@@ -94,9 +94,10 @@
 	SBitmap*			bmpSourceLightIcon					= NULL;
 
 	// Carousel
-	SBitmap*			bmpCarouselIcon						= NULL;
-	SBitmap*			bmpTabsIcon							= NULL;
+	SBitmap*			bmpCarouselCarouselIcon				= NULL;
+	SBitmap*			bmpCarouselTabsIcon					= NULL;
 	SBitmap*			bmpCarouselPad						= NULL;
+	SBitmap*			bmpCarouselIcon						= NULL;
 
 	// When there is no image
 	SBitmap*			bmpNoImage							= NULL;
