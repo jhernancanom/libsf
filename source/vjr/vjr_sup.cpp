@@ -728,6 +728,7 @@
 		// Global variables
 		iVariable_delete(varGlobals,		true);
 		iVariable_delete(varConstant_space,	true);
+		iVariable_delete(varEmptyString,	true);
 
 		// Delete the splash objects and images
 		iObj_delete(&gobj_splashListing, true, true, true);
@@ -1658,7 +1659,7 @@
 //////
 	bool iWindow_isPointerValid(SWindow* win)
 	{
-		if (win && (u32)win >= (u32)gWindows->data && (u32)win <= ((u32)gWindows->data + gWindows->populatedLength))
+		if (gWindows && win && (u32)win >= (u32)gWindows->data && (u32)win <= ((u32)gWindows->data + gWindows->populatedLength))
 			return(true);	// Valid
 
 		// If we get here, invalid
@@ -3956,6 +3957,7 @@ debug_break;
 			// Initialize
 			memset(datumNew, 0, sizeof(SDatum));
 
+			// Copy over the content
 			if (data && dataLength)
 			{
 				// We may need to set the length

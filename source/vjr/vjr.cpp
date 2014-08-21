@@ -249,6 +249,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		varGlobals			= function_datetime(NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 		iDatum_duplicate(&varGlobals->name, cgcName_startupTime, -1);
 		varConstant_space	= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgc_spaceText, 1);
+		varEmptyString		= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, (s8*)NULL, 0);
 
 		// Attach them to physical windows
 		iVjr_appendSystemLog("Allocate OS Window for _jdebi");

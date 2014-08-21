@@ -480,7 +480,7 @@
 	const s32		_ICODE_CEILING                                  = 1072;
 	const s32		_ICODE_CHR                                      = 1073;
 	const s32		_ICODE_CHRSAW                                   = 1074;
-	const s32		_ICODE_CHRTRANC                                 = 1075;
+	const s32		_ICODE_CHRTRANC									= 1075;
 	const s32		_ICODE_CHRTRAN                                  = 1076;
 	const s32		_ICODE_CLEARRESULTSET                           = 1077;
 	const s32		_ICODE_CMONTH                                   = 1078;

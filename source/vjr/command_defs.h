@@ -79,6 +79,9 @@ struct SVariable;
 	SVariable*			function_atc								(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence);
 	SVariable*			iFunction_atOccursCommon					(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence, bool tlCaseSensitive, bool tlScanBackward, u32* tnFoundCount);
 	SVariable*			function_chr								(SVariable* p1);
+	SVariable*			function_chrtran							(SVariable* pOriginalString, SVariable* pSearch, SVariable* pReplace);
+	SVariable*			function_chrtranc							(SVariable* pOriginalString, SVariable* pSearch, SVariable* pReplace);
+	SVariable*			iFunction_chrtranCommon						(SVariable* pOriginalString, SVariable* pSearch, SVariable* pReplace, bool tlCaseSensitive);
 	SVariable*			function_createobject						(SVariable* p1);
 	SVariable*			function_datetime							(SVariable* pYear, SVariable* pMonth, SVariable* pDay, SVariable* pHour, SVariable* pMinute, SVariable* pSecond, SVariable* pMillisecond);
 	SVariable*			function_int								(SVariable* p1);
@@ -115,7 +118,6 @@ struct SVariable;
 	SVariable*			function_mul								(SVariable* p1, SVariable* p2);
 	SVariable*			function_div								(SVariable* p1, SVariable* p2);
 	// strtran
-	// chrtran
 	// transform (partial support, only converts to character, does not do any formatting ... yet)
 //////
 // STEP3: Copy the code above near one of the other functions in commands.cpp.
@@ -175,6 +177,8 @@ struct SVariable;
 		{	_ICODE_AT,				1,			(u32)&function_at,				2,				3	},
 		{	_ICODE_ATC,				1,			(u32)&function_atc,				2,				3	},
 		{	_ICODE_CHR,				1,			(u32)&function_chr,				1,				1	},
+		{	_ICODE_CHRTRAN,			1,			(u32)&function_chrtran,			2,				3	},
+		{	_ICODE_CHRTRANC,		1,			(u32)&function_chrtranc,		2,				3	},
 		{	_ICODE_CREATEOBJECT,	1,			(u32)&function_createobject,	1,				1	},
 		{	_ICODE_DATETIME,		1,			(u32)&function_datetime,		0,				7	},
 		{	_ICODE_INT,				1,			(u32)&function_int,				1,				1	},

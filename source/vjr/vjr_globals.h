@@ -76,6 +76,7 @@
 	// Global variables
 	SVariable*			varGlobals							= NULL;									// All global variables are stored
 	SVariable*			varConstant_space					= NULL;									// Holds a single space, and is a constant
+	SVariable*			varEmptyString						= NULL;
 
 	// Focus highlight windows, and tooltip window
 	SBuilder*			gFocusHighlights					= NULL;									// Holds SFocusHighlight structures

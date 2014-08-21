@@ -1044,18 +1044,26 @@ debug_break;
 
 					case VK_F6:
 					case VK_F8:
-					case VK_F10:
-					case VK_F11:
-						// Execute this line of code
+						// They want to execute the cursor line of code
 						if (em && em->ecCursorLine && em->ecCursorLine->sourceCodePopulated > 0)
 						{
+							// Execute the command
 							iEngine_executeStandaloneCommand(em->ecCursorLine);
 
-							// Move to next line and redraw
-							iSEM_navigate(em, obj, 1, 0);
-							iWindow_render(win, false);
+							// If we're still going, then update the screen
+							if (!glShuttingDown)
+							{
+								// Move to next line and redraw
+								iSEM_navigate(em, obj, 1, 0);
+								iWindow_render(win, false);
+							}
 							return(true);
 						}
+						break;
+
+					case VK_F10:
+					case VK_F11:
+						// They want to execute the next line where the debugger's stopped
 						break;
 
 					case VK_RETURN:

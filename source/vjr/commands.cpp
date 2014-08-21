@@ -853,6 +853,172 @@
 
 //////////
 //
+// Function: CHRTRAN()
+// Character transformation
+//
+//////
+// Version 0.51.1
+// Last update:
+//     Aug.21.2014
+//////
+// Change log:
+//     Aug.21.2014 - Initial creation
+//////
+// Parameters:
+//     pOriginalString		-- The string being updated
+//     pSearch				-- The search characters
+//     pReplace             -- The characters to replace when found
+//
+//////
+// Returns:
+//    A copy of the pOriginalString with everything converted.
+//
+//////
+	SVariable* function_chrtran(SVariable* pOriginalString, SVariable* pSearch, SVariable* pReplace)
+	{
+		return(iFunction_chrtranCommon(pOriginalString, pSearch, pReplace, false));
+	}
+
+	SVariable* function_chrtranc(SVariable* pOriginalString, SVariable* pSearch, SVariable* pReplace)
+	{
+		return(iFunction_chrtranCommon(pOriginalString, pSearch, pReplace, true));
+	}
+
+	SVariable* iFunction_chrtranCommon(SVariable* pOriginalString, SVariable* pSearch, SVariable* pReplace, bool tlCaseSensitive)
+	{
+		s8			c1, c2;
+		s32			lnSrc, lnDst, lnSearch;
+		bool		llFound;
+        SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be character
+		//////
+			if (!iVariable_isValid(pOriginalString) || !iVariable_isTypeCharacter(pOriginalString))
+			{
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pOriginalString->compRelated);
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 2 must be character
+		//////
+			if (!iVariable_isValid(pSearch) || !iVariable_isTypeCharacter(pSearch))
+			{
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, pSearch->compRelated);
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 3 is optional, but must be character if present
+		//////
+			if (!iVariable_isValid(pReplace))
+			{
+				// They didn't provide a 3rd parameter, so we'll use a pseudo placeholder which is an empty string
+				pReplace = varEmptyString;
+
+			} else if (!iVariable_isTypeCharacter(pReplace)) {
+				// It is invalid
+				iError_reportByNumber(_ERROR_P3_IS_INCORRECT, pReplace->compRelated);
+				return(NULL);
+			}
+		
+
+		//////////
+		// Allocate a copy of the original string
+		//////
+			result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, pOriginalString->value.data, pOriginalString->value.length);
+			
+			// If the original string is empty, or the characters to search for are empty, then we don't need to do anything
+			if (pOriginalString->value.length == 0 || pSearch->value.length == 0)
+				return(result);
+
+
+		//////////
+		// Iterate through the string and update as we go
+		//////
+			for (lnSrc = 0, lnDst = 0; lnSrc < result->value.length; lnSrc++)
+			{
+				// Grab this character
+				c1 = result->value.data[lnSrc];
+
+				// Adjust the case if need be
+				if (!tlCaseSensitive)
+				{
+					if (c1 >= 'A' && c1 <= 'Z')
+						c1 += 0x20;
+				}
+
+				// Search the conversion string
+				llFound = false;
+				for (lnSearch = 0; lnSearch < pSearch->value.length; lnSearch++)
+				{
+					// Grab this character
+					c2 = pSearch->value.data[lnSearch];
+
+					// Adjust the case if necessary
+					if (!tlCaseSensitive)
+					{
+						// Case insensitive, convert if need be
+						if (c2 >= 'A' && c2 <= 'Z')
+							c2 += 0x20;
+					}
+
+					// Is this character a match?
+					if (c1 == c2)
+					{
+						// Indicate we found it
+						llFound = true;
+
+						// We need to perform the replace
+						if (lnSearch < pReplace->value.length)
+						{
+							// We replace it with the character that's there
+							result->value.data[lnDst] = pReplace->value.data[lnSearch];
+
+						} else {
+							// There is no translation character, so we just delete this character
+							// To do that, we decrease our lnDst because it will be increased below
+							--lnDst;
+						}
+
+						// We're done with this one because we found its match
+						break;
+					}
+				}
+
+				// When we get here, we either found the character or not
+				if (!llFound && lnSrc != lnDst)
+				{
+					// We need to copy this character over
+					result->value.data[lnDst] = result->value.data[lnSrc];
+				}
+
+				// Move our destination forward
+				++lnDst;
+			}
+
+
+		//////////
+		// When we get here, lnDst indicates how long the output string is
+		//////
+			result->value.length = lnDst;
+
+
+		//////////
+		// Return our final string
+		/////
+			return(result);
+	}
+
+
+
+
+//////////
+//
 // Function: CREATEOBJECT()
 // Instantiates and instance of the indicated class.
 //

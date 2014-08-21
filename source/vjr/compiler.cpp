@@ -4407,17 +4407,20 @@ debug_break;
 		SVariable* var;
 
 
-		// Make sure the environment is sane
-		var = NULL;
-		if (tcData && tnDataLength > 0)
+		// Create the variable
+		var = iVariable_create(tnVarType, NULL);
+		if (var && tcData && tnDataLength > 0)
 		{
-			// Create the variable
-			var = iVariable_create(tnVarType, NULL);
-
 			// Populate it
 			if (var)
 			{
-				iDatum_duplicate(&var->value, tcData, tnDataLength);
+				// Allocate the SDatum
+				if (tcData && tnDataLength > 0)
+					iDatum_duplicate(&var->value, tcData, tnDataLength);
+
+// TODO:  We may need to add a validation here to indicate that for the specific types it should remain the length it must be for the type
+
+				// Indicate the content within this variable has been allocated
 				var->isValueAllocated = true;
 			}
 		}
