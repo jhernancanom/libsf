@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr.cpp
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -677,28 +677,31 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		// System log
 		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Forms working (future, James 4:15)",			"0.70", false, false, false, -2, 0);
-		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Compiler completed (future, James 4:15)",		"0.60", false, false, false, -2, 0);
-		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Running programs (future, James 4:15)",		"0.55", false, false, false, -2, 0);
-		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Syntax highlighting (future, James 4:15)",	"0.50", false, false, false, -2, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Compiler completed (future, James 4:15)",		"0.65", false, false, false, -2, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Running programs (future, James 4:15)",		"0.60", false, false, false, -2, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Bug fixes, memory leaks removed",			"0.51", false, false, false, 0, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "CHRTRAN() and STRTRAN()",					"0.52", false, false, false, 0, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Editor highlights word under cursor",		"0.50", false, false, false, -1, 0);
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "UI redesign geared toward debugger",			"0.50", false, false, false, -1, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Bug fixes, memory leaks removed",			"0.51", false, false, false, -2, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Editor development",							"0.49", false, false, false, -1, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Editor highlights word under cursor",		"0.50", false, false, false, -2, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "UI redesign geared toward debugger",			"0.50", false, false, false, -2, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Editor line numbers, breakpoints",			"0.48", false, false, false, -1, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Editor development",							"0.49", false, false, false, -2, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Editor resize CTRL+ and CTRL-",				"0.47", false, false, false, -1, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Editor line numbers, breakpoints",			"0.48", false, false, false, -2, 0);
+
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Editor resize CTRL+ and CTRL-",				"0.47", false, false, false, -2, 0);
 
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Casks",										"0.46", false, true, false, -2, 0);
 
+// Planned:
+//		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE,  "Syntax highlighting (future, James 4:15)",	"0.50", false, false, false, -2, 0);
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Syntax highlighting",						"0.45", false, true, false, -2, 0);
 
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Tabs expanded, mouse wheel",					"0.44", false, true, false, -2, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _AMBER, "TRANSFORM() partially supported",			"0.43", false, true, false, -2, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _AMBER, "TRANSFORM() partially supported",			"0.43", false, true, false, -1, 0);
 //		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "PADC(), PADL(), PADR()",						"0.43", false, true, false, -2, 0);
 // 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "OCCURS(), OCCURSC()",						"0.43", false, true, false, -2, 0);
 // 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "AT(), ATC(), RAT(), RATC()",					"0.43", false, true, false, -2, 0);
@@ -712,7 +715,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 // 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Sound support",								"0.40", false, true, false, -2, 0);
 
 //		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Focus highlight border",						"0.39", false, true, false, -2, 0);
- 		iiVjr_renderAccomplishment(bmp, &lrc, _AMBER, "Tooltips framed (hover framed)",				"0.39", false, true, false, -2, 0);
+ 		iiVjr_renderAccomplishment(bmp, &lrc, _AMBER, "Tooltips framed (hover framed)",				"0.39", false, true, false, -1, 0);
 // 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "_screen editable",							"0.39", false, true, false, -2, 0);
 
 //		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "MinGW GCC 4.8.1 and CodeLite",				"0.38", false, true, false, -2, 0);

@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_sup.cpp
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -1408,33 +1408,37 @@
 		SWindow*	win;
 
 
-		// Iterate through all known windows and see which one is which
-		for (lnI = 0; lnI < gWindows->populatedLength; lnI += sizeof(SWindow))
+		// Make sure our environment is sane
+		if (gWindows)
 		{
-			// Grab this one
-			win = (SWindow*)(gWindows->data + lnI);
-
-			// Lock it down
-			EnterCriticalSection(&win->cs);
-
-			// Validate validity
-			if (win->isValid)
+			// Iterate through all known windows and see which one is which
+			for (lnI = 0; lnI < gWindows->populatedLength; lnI += sizeof(SWindow))
 			{
-				// Grab the hwnd
-				lnHwnd = win->hwnd;
+				// Grab this one
+				win = (SWindow*)(gWindows->data + lnI);
 
-			} else {
-				lnHwnd = NULL;
-			}
+				// Lock it down
+				EnterCriticalSection(&win->cs);
 
-			// Unlock it
-			LeaveCriticalSection(&win->cs);
+				// Validate validity
+				if (win->isValid)
+				{
+					// Grab the hwnd
+					lnHwnd = win->hwnd;
 
-			// Is this our man?
-			if (lnHwnd && lnHwnd == hwnd)
-			{
-				// Indicate our find
-				return(win);
+				} else {
+					lnHwnd = NULL;
+				}
+
+				// Unlock it
+				LeaveCriticalSection(&win->cs);
+
+				// Is this our man?
+				if (lnHwnd && lnHwnd == hwnd)
+				{
+					// Indicate our find
+					return(win);
+				}
 			}
 		}
 		// If we get here, not found

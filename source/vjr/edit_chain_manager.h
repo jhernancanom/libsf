@@ -3,7 +3,7 @@
 // /libsf/source/vjr/edit_chain_manager.h
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:

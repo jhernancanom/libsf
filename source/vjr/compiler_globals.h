@@ -3,7 +3,7 @@
 // /libsf/source/vjr/compiler_globals.h
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -537,6 +537,7 @@
 		{ "strconv",                7,          false,      _ICODE_STRCONV,                         false,              _ICAT_FUNCTION,		&colorSynHi_function,		false },
 		{ "strextract",             10,         false,      _ICODE_STREXTRACT,                      false,              _ICAT_FUNCTION,		&colorSynHi_function,		false },
 		{ "strtofile",              9,          false,      _ICODE_STRTOFILE,                       false,              _ICAT_FUNCTION,		&colorSynHi_function,		false },
+		{ "strtranc",               8,          false,      _ICODE_STRTRANC,                        false,              _ICAT_FUNCTION,		&colorSynHi_function,		false },
 		{ "strtran",                7,          false,      _ICODE_STRTRAN,                         false,              _ICAT_FUNCTION,		&colorSynHi_function,		false },
 		{ "str",                    3,          false,      _ICODE_STR,                             false,              _ICAT_FUNCTION,		&colorSynHi_function,		false },
 		{ "stuffc",                 6,          false,      _ICODE_STUFFC,                          false,              _ICAT_FUNCTION,		&colorSynHi_function,		false },

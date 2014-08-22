@@ -3,7 +3,7 @@
 // /libsf/source/vjr/compiler_const.h
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -782,6 +782,7 @@
 	const s32		_ICODE_STRCONV                                  = 1373;
 	const s32		_ICODE_STREXTRACT                               = 1374;
 	const s32		_ICODE_STRTOFILE                                = 1375;
+	const s32		_ICODE_STRTRANC									= 1433;
 	const s32		_ICODE_STRTRAN                                  = 1376;
 	const s32		_ICODE_STR                                      = 1377;
 	const s32		_ICODE_STUFFC                                   = 1378;
@@ -839,6 +840,7 @@
 	const s32		_ICODE_YEAR                                     = 1430;
 	// occursc = 1431
 	// addobject = 1432
+	// strtranc = 1433
 
 // Temporarily added until the processing engine is coded
 	const s32		_ICODE_CONCATENATE								= 1900;

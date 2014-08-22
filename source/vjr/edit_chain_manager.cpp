@@ -3,7 +3,7 @@
 // /libsf/source/vjr/edit_chain_manager.cpp
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -1076,9 +1076,13 @@ debug_break;
 								// Execute the command
 								iEngine_executeStandaloneCommand(em->ecCursorLine);
 
-								// Draw it like normal
-								iSEM_returnKey(em, obj);
-								iWindow_render(win, false);
+								// If we're not shutting down, update the screen
+								if (!glShuttingDown)
+								{
+									// Draw it like normal
+									iSEM_returnKey(em, obj);
+									iWindow_render(win, false);
+								}
 								return(true);
 							}
 							// If we get here, we pass the return key through for editing

@@ -3,7 +3,7 @@
 // /libsf/source/vjr/commands.cpp
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -110,7 +110,7 @@
 // Trims spaces off the start and end of the string.
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Jul.12.2014
 //////
@@ -504,7 +504,7 @@
 // Takes a character input and converts it to its ASCII value.
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Jul.05.2014
 //////
@@ -584,7 +584,7 @@
 // times the search string is found, and optionally with regard to case (trailing "C").
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Aug.03.2014
 //////
@@ -772,7 +772,7 @@
 // Takes a numeric input in the range 0..255, and converts it to its ASCII character.
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Jul.05.2014
 //////
@@ -857,7 +857,7 @@
 // Character transformation
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Aug.21.2014
 //////
@@ -874,17 +874,17 @@
 //    A copy of the pOriginalString with everything converted.
 //
 //////
-	SVariable* function_chrtran(SVariable* pOriginalString, SVariable* pSearch, SVariable* pReplace)
+	SVariable* function_chrtran(SVariable* pString, SVariable* pSearch, SVariable* pReplace)
 	{
-		return(iFunction_chrtranCommon(pOriginalString, pSearch, pReplace, false));
+		return(iFunction_chrtranCommon(pString, pSearch, pReplace, true));
 	}
 
-	SVariable* function_chrtranc(SVariable* pOriginalString, SVariable* pSearch, SVariable* pReplace)
+	SVariable* function_chrtranc(SVariable* pString, SVariable* pSearch, SVariable* pReplace)
 	{
-		return(iFunction_chrtranCommon(pOriginalString, pSearch, pReplace, true));
+		return(iFunction_chrtranCommon(pString, pSearch, pReplace, false));
 	}
 
-	SVariable* iFunction_chrtranCommon(SVariable* pOriginalString, SVariable* pSearch, SVariable* pReplace, bool tlCaseSensitive)
+	SVariable* iFunction_chrtranCommon(SVariable* pString, SVariable* pSearch, SVariable* pReplace, bool tlCaseSensitive)
 	{
 		s8			c1, c2;
 		s32			lnSrc, lnDst, lnSearch;
@@ -895,9 +895,9 @@
 		//////////
         // Parameter 1 must be character
 		//////
-			if (!iVariable_isValid(pOriginalString) || !iVariable_isTypeCharacter(pOriginalString))
+			if (!iVariable_isValid(pString) || !iVariable_isTypeCharacter(pString))
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pOriginalString->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pString->compRelated);
 				return(NULL);
 			}
 
@@ -930,10 +930,10 @@
 		//////////
 		// Allocate a copy of the original string
 		//////
-			result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, pOriginalString->value.data, pOriginalString->value.length);
+			result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, pString->value.data, pString->value.length);
 			
 			// If the original string is empty, or the characters to search for are empty, then we don't need to do anything
-			if (pOriginalString->value.length == 0 || pSearch->value.length == 0)
+			if (pString->value.length == 0 || pSearch->value.length == 0)
 				return(result);
 
 
@@ -1023,7 +1023,7 @@
 // Instantiates and instance of the indicated class.
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Jul.12.2014
 //////
@@ -1112,7 +1112,7 @@
 // Returns the current local time, or uses the input variables to create the indicated datetime.
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Jul.10.2014
 //////
@@ -1330,7 +1330,7 @@
 // Takes a value and returns the INT(n) of that value.
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Jul.13.2014
 //////
@@ -1396,7 +1396,7 @@
 // Returns the left N characters of a string.
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Jul.12.2014
 //////
@@ -1483,7 +1483,7 @@
 // Returns the length of the string.
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Jul.12.2014
 //////
@@ -1544,7 +1544,7 @@
 // Converts every character in the string to lowercase.
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Jul.12.2014
 //////
@@ -1616,7 +1616,7 @@
 // Trims spaces off the start of the string.
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Jul.12.2014
 //////
@@ -1644,7 +1644,7 @@
 // Returns the maximum value of the two inputs.
 //
 //////
-// Version 0.51.1   (Determine the current version from the header in vjr.cpp)
+// Version 0.52   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.12.2014
 //////
@@ -1856,7 +1856,7 @@
 // Returns the minimum value of the two inputs.
 //
 //////
-// Version 0.51.1   (Determine the current version from the header in vjr.cpp)
+// Version 0.52   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.12.2014
 //////
@@ -2069,7 +2069,7 @@
 // optionally with regards to case.
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Aug.03.2014
 //////
@@ -2130,7 +2130,7 @@
 // and lowercases everything else.
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Aug.03.2014
 //////
@@ -2324,7 +2324,7 @@
 // and lowercases everything else.
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Jul.12.2014
 //////
@@ -2417,7 +2417,7 @@
 // Returns the indicated string replicated N times.
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Jul.12.2014
 //////
@@ -2505,7 +2505,7 @@
 // Returns the RGB() of the three input values.
 //
 //////
-// Version 0.51.1   (Determine the current version from the header in vjr.cpp)
+// Version 0.52   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -2651,7 +2651,7 @@
 // Returns the RGBA() of the four input values.
 //
 //////
-// Version 0.51.1   (Determine the current version from the header in vjr.cpp)
+// Version 0.52   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -2826,7 +2826,7 @@
 // Returns the right N characters of a string.
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Jul.12.2014
 //////
@@ -2921,7 +2921,7 @@
 // Trims spaces off the end of the string.
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Jul.12.2014
 //////
@@ -2949,7 +2949,7 @@
 // Creates a character variable initialized with spaces.
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Jul.12.2014
 //////
@@ -3021,11 +3021,241 @@
 
 //////////
 //
+// Function: STRTRAN()
+// Converts the matching portions of the string from one form to another.
+//
+//////
+// Version 0.52   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Aug.21.2014
+//////
+// Change log:
+//     Aug.21.2014 - Initial creation
+//////
+// Parameters:
+//     pString			-- Original string
+//     pSearch			-- Search string to replace
+//     pReplace			-- String to replace with
+//     pRecursiveCount	-- How many times should we recursively parse this string?
+//
+//////
+// Returns:
+//    Character		-- The original string with all components replaced
+//
+//////
+	SVariable* function_strtran(SVariable* pString, SVariable* pSearch, SVariable* pReplace, SVariable* pRecursiveCount)
+	{
+		return(iFunction_strtranCommon(pString, pSearch, pReplace, pRecursiveCount, true));
+	}
+
+	SVariable* function_strtranc(SVariable* pString, SVariable* pSearch, SVariable* pReplace, SVariable* pRecursiveCount)
+	{
+		return(iFunction_strtranCommon(pString, pSearch, pReplace, pRecursiveCount, false));
+	}
+
+	SVariable* iFunction_strtranCommon(SVariable* pString, SVariable* pSearch, SVariable* pReplace, SVariable* pRecursiveCount, bool tlCaseSensitive)
+	{
+		s32			lnI, lnIteration, lnSrc, lnDst, lnLength, lnRecursiveCount, lnFoundCount;
+		bool		error;
+		u32			errorNum;
+        SVariable*	result;
+		SVariable*	resultNew;
+
+
+		//////////
+        // Parameter 1 must be character
+		//////
+			if (!iVariable_isValid(pString) || !iVariable_isTypeCharacter(pString))
+			{
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pString->compRelated);
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 2 must be character
+		//////
+			if (!iVariable_isValid(pSearch) || !iVariable_isTypeCharacter(pSearch))
+			{
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, pSearch->compRelated);
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 3 is optional, but must be character if present
+		//////
+			if (!iVariable_isValid(pReplace))
+			{
+				// They didn't provide a 3rd parameter, so we'll use a pseudo placeholder which is an empty string
+				pReplace = varEmptyString;
+
+			} else if (!iVariable_isTypeCharacter(pReplace)) {
+				// It is invalid
+				iError_reportByNumber(_ERROR_P3_IS_INCORRECT, pReplace->compRelated);
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 4 is optional, but must be numeric if present
+		//////
+			if (!iVariable_isValid(pRecursiveCount))
+			{
+				// They didn't provide a 3rd parameter, so we'll use a pseudo placeholder which is an empty string
+				lnRecursiveCount = 1;
+
+			} else if (!iVariable_isTypeNumeric(pRecursiveCount)) {
+				// It is invalid
+				iError_reportByNumber(_ERROR_P4_IS_INCORRECT, pRecursiveCount->compRelated);
+				return(NULL);
+
+			} else {
+				// Grab the actual value
+				lnRecursiveCount = iiVariable_getAs_s32(pRecursiveCount, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, pRecursiveCount->compRelated);	return(NULL);	}
+				if (lnRecursiveCount < 0)
+				{
+					// It is invalid
+					iError_reportByNumber(_ERROR_P4_IS_INCORRECT, pRecursiveCount->compRelated);
+					return(NULL);
+				}
+			}
+
+
+		//////////
+		// If we aren't searching for anything, we don't need to go through the rigmarole
+		//////
+			// If the original string is empty, or the characters to search for are empty, then we don't need to do anything
+			if (pSearch->value.length == 0 || pSearch->value.length > pString->value.length)
+			{
+				// Allocate a full copy of the original string
+				result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, pString->value.data, pString->value.length);
+				return(result);
+			}
+
+
+		//////////
+		// Iterate through the string twice, the first to determine how long the destination will be, the second to copy
+		//////
+			for (lnIteration = 1, result = pString; lnRecursiveCount == 0 || lnIteration <= lnRecursiveCount; lnIteration++)
+			{
+				// Search for any matches, and determine the overall length
+				for (lnI = 0, lnFoundCount = 0; lnI < result->value.length - pSearch->value.length; )
+				{
+					// See if this matches the source string
+					if (tlCaseSensitive)
+					{
+						// Case-sensitive compare
+						if (memcmp(result->value.data + lnI, pSearch->value.data, pSearch->value.length) == 0)
+						{
+							// We found a match
+							++lnFoundCount;
+							lnI += pSearch->value.length;
+
+						} else {
+							// Skip to the next character
+							++lnI;
+						}
+
+					} else {
+						// Case-insensitive compare
+						if (_memicmp(result->value.data + lnI, pSearch->value.data, pSearch->value.length) == 0)
+						{
+							// We found a match
+							++lnFoundCount;
+							lnI += pSearch->value.length;
+
+						} else {
+							// Skip to the next character
+							++lnI;
+						}
+					}
+				}
+
+				// If we didn't find any, we're done
+				if (lnFoundCount == 0)
+				{
+					// If we haven't made an official copy yet, we need to do so now
+					if (result == pString)
+						result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, pString->value.data, pString->value.length);
+
+					// Return our result
+					return(result);
+				}
+
+				// When we get here, we have a new length for our copy
+				lnLength = result->value.length - (lnFoundCount * pSearch->value.length) + (lnFoundCount * pReplace->value.length);
+
+				// Allocate a new string of that length
+				resultNew = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+				iDatum_allocateSpace(&resultNew->value, lnLength);
+
+				// Copy the content
+				for (lnSrc = 0, lnDst = 0; lnSrc < result->value.length; )
+				{
+					// See if this matches the source string
+					if (tlCaseSensitive)
+					{
+						// Case-sensitive compare
+						if (memcmp(result->value.data + lnSrc, pSearch->value.data, pSearch->value.length) == 0)
+						{
+							// We found a match
+							memcpy(resultNew->value.data + lnDst, pReplace->value.data, pReplace->value.length);
+							lnSrc += pSearch->value.length;
+							lnDst += pReplace->value.length;
+
+						} else {
+							// Skip to the next character
+							resultNew->value.data[lnDst] = result->value.data[lnSrc];
+							++lnDst;
+							++lnSrc;
+						}
+
+					} else {
+						// Case-insensitive compare
+						if (_memicmp(result->value.data + lnSrc, pSearch->value.data, pSearch->value.length) == 0)
+						{
+							// We found a match
+							memcpy(resultNew->value.data + lnDst, pReplace->value.data, pReplace->value.length);
+							lnSrc += pSearch->value.length;
+							lnDst += pReplace->value.length;
+
+						} else {
+							// Skip to the next character
+							resultNew->value.data[lnDst] = result->value.data[lnSrc];
+							++lnDst;
+							++lnSrc;
+						}
+					}
+				}
+
+				// Delete our original (if it wasn't pointing to our source string)
+				if (result != pString)
+					iVariable_delete(result, true);
+
+				// Set the new to our result
+				result = resultNew;
+				// Continue on for the next iteration
+			}
+
+
+		//////////
+		// Return our final string
+		/////
+			return(result);
+	}
+
+
+
+
+//////////
+//
 // Function: STUFF()
 // Returns a string which has been modified, having optionally some characters optionally removed, some optionally inserted.
 //
 //////
-// Version 0.51.1   (Determine the current version from the header in vjr.cpp)
+// Version 0.52   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.12.2014
 //////
@@ -3184,7 +3414,7 @@
 // Based on the index, returns a wide array of information.
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Jul.13.2014
 //////
@@ -3404,7 +3634,7 @@
 // Converts any variable input to a character form, and applies formatting based on codes.
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Aug.03.2014
 //////
@@ -3475,7 +3705,7 @@
 // Converts every character in the string to uppercase.
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Jul.12.2014
 //////
@@ -3547,7 +3777,7 @@
 // Based on input, retrieves various version information.
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Last update:
 //     Jul.13.2014
 //////
@@ -3583,6 +3813,7 @@
 				// The parameter is not numeric
 				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pIndex->compRelated);
 				return(NULL);
+
 			} else {
 				// It must be in the range 1..5
 				index = iiVariable_getAs_s32(pIndex, false, &error, &errorNum);
@@ -3659,7 +3890,7 @@
 // Concatenates two strings together.
 //
 //////
-// Version 0.51.1   (Determine the current version from the header in vjr.cpp)
+// Version 0.52   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -3726,7 +3957,7 @@
 // Adds two values and returns the result.
 //
 //////
-// Version 0.51.1   (Determine the current version from the header in vjr.cpp)
+// Version 0.52   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -3850,7 +4081,7 @@
 // Subtracts two values and returns the result.
 //
 //////
-// Version 0.51.1   (Determine the current version from the header in vjr.cpp)
+// Version 0.52   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -3974,7 +4205,7 @@
 // Multiplies two values and returns the result.
 //
 //////
-// Version 0.51.1   (Determine the current version from the header in vjr.cpp)
+// Version 0.52   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -4098,7 +4329,7 @@
 // Divides two values and returns the result.
 //
 //////
-// Version 0.51.1   (Determine the current version from the header in vjr.cpp)
+// Version 0.52   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////

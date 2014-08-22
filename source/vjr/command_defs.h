@@ -3,7 +3,7 @@
 // /libsf/source/vjr/command_defs.h
 //
 //////
-// Version 0.51.1
+// Version 0.52
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -79,9 +79,9 @@ struct SVariable;
 	SVariable*			function_atc								(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence);
 	SVariable*			iFunction_atOccursCommon					(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence, bool tlCaseSensitive, bool tlScanBackward, u32* tnFoundCount);
 	SVariable*			function_chr								(SVariable* p1);
-	SVariable*			function_chrtran							(SVariable* pOriginalString, SVariable* pSearch, SVariable* pReplace);
-	SVariable*			function_chrtranc							(SVariable* pOriginalString, SVariable* pSearch, SVariable* pReplace);
-	SVariable*			iFunction_chrtranCommon						(SVariable* pOriginalString, SVariable* pSearch, SVariable* pReplace, bool tlCaseSensitive);
+	SVariable*			function_chrtran							(SVariable* pString, SVariable* pSearch, SVariable* pReplace);
+	SVariable*			function_chrtranc							(SVariable* pString, SVariable* pSearch, SVariable* pReplace);
+	SVariable*			iFunction_chrtranCommon						(SVariable* pString, SVariable* pSearch, SVariable* pReplace, bool tlCaseSensitive);
 	SVariable*			function_createobject						(SVariable* p1);
 	SVariable*			function_datetime							(SVariable* pYear, SVariable* pMonth, SVariable* pDay, SVariable* pHour, SVariable* pMinute, SVariable* pSecond, SVariable* pMillisecond);
 	SVariable*			function_int								(SVariable* p1);
@@ -106,6 +106,9 @@ struct SVariable;
 	SVariable*			function_right								(SVariable* pString, SVariable* pCount);
 	SVariable*			function_rtrim								(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2);
 	SVariable*			function_space								(SVariable* pCount);
+	SVariable*			function_strtran							(SVariable* pString, SVariable* pSearch, SVariable* pReplace, SVariable* pRecursiveCount);
+	SVariable*			function_strtranc							(SVariable* pString, SVariable* pSearch, SVariable* pReplace, SVariable* pRecursiveCount);
+	SVariable*			iFunction_strtranCommon						(SVariable* pString, SVariable* pSearch, SVariable* pReplace, SVariable* pRecursiveCount, bool tlCaseSensitive);
 	SVariable*			function_stuff								(SVariable* pOriginalString, SVariable* pStartPos, SVariable* pNumToRemove, SVariable* pStuffString);
 	SVariable*			function_sysmetric							(SVariable* pIndex);
 	SVariable*			function_transform							(SVariable* pVariable, SVariable* pFormat);
@@ -117,7 +120,6 @@ struct SVariable;
 	SVariable*			function_sub								(SVariable* p1, SVariable* p2);
 	SVariable*			function_mul								(SVariable* p1, SVariable* p2);
 	SVariable*			function_div								(SVariable* p1, SVariable* p2);
-	// strtran
 	// transform (partial support, only converts to character, does not do any formatting ... yet)
 //////
 // STEP3: Copy the code above near one of the other functions in commands.cpp.
@@ -202,6 +204,8 @@ struct SVariable;
 		{	_ICODE_RIGHT,			1,			(u32)&function_right,			2,				2	},
 		{	_ICODE_RTRIM,			1,			(u32)&function_rtrim,			1,				1	},
 		{	_ICODE_SPACE,			1,			(u32)&function_space,			1,				1	},
+		{	_ICODE_STRTRAN,			1,			(u32)&function_strtran,			2,				4	},
+		{	_ICODE_STRTRANC,		1,			(u32)&function_strtranc,		2,				4	},
 		{	_ICODE_STUFF,			1,			(u32)&function_stuff,			3,				4	},
 		{	_ICODE_SYSMETRIC,		1,			(u32)&function_sysmetric,		1,				1	},
 		{	_ICODE_TRANSFORM,		1,			(u32)&function_transform,		1,				2	},
