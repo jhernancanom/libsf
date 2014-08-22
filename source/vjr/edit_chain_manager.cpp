@@ -1835,7 +1835,7 @@ debug_break;
 		HGDIOBJ		hfontOld;
 		SBgra		defaultForeColor, defaultBackColor, fillColor, backColorLast, foreColorLast, compForeColor, compBackColor, compFillColor;
 		RECT		rc, lrc, lrc2, lrc3, lrcComp, lrcText, lrcCompCalcStart, lrcCompCalcDwell;
-		s8			bigBuffer[2048];
+		s8			buffer[32];
 
 
 		logfunc(__FUNCTION__);
@@ -1980,7 +1980,7 @@ debug_break;
 				// Determine the position
 				//////
 					SetRect(&lrc2, rc.left, rc.top + lnTop, rc.right, rc.top + lnTop + (font->tm.tmHeight * 2));
-					DrawText(bmp->hdc, bigBuffer, 1, &lrc2, DT_CALCRECT);
+					DrawText(bmp->hdc, var2000Spaces->value.data, 1, &lrc2, DT_CALCRECT);
 					SetRect(&lrc, rc.left, rc.top + lnTop, rc.right, rc.top + lnTop + (lrc2.bottom - lrc2.top));
 					if (lrc.bottom > rc.bottom)
 						lrc.bottom = rc.bottom;
@@ -2274,14 +2274,14 @@ renderAsText:
 						if (em->column != 0)
 						{
 							// It's somewhere on the line
-							DrawText(bmp->hdc, bigBuffer, em->column - em->leftColumn, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
+							DrawText(bmp->hdc, var2000Spaces->value.data, em->column - em->leftColumn, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
 							SetRect(&lrcCompCalcDwell, lrcCompCalcStart.right, 0, lrc.right, lrc.bottom);
-							DrawText(bmp->hdc, bigBuffer, 1, &lrcCompCalcDwell, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
+							DrawText(bmp->hdc, var2000Spaces->value.data, 1, &lrcCompCalcDwell, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
 							SetRect(&lrcComp, rc.left + lrcCompCalcDwell.left, lrc2.top, rc.left + lrcCompCalcDwell.right, lrc2.bottom);
 
 						} else {
 							// It's all the way to the left
-							DrawText(bmp->hdc, bigBuffer, 1, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
+							DrawText(bmp->hdc, var2000Spaces->value.data, 1, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
 							SetRect(&lrcComp, rc.left + ((em->isOverwrite) ? 0 : 1), lrc.top, rc.left + lrcCompCalcStart.right, lrc.bottom);
 						}
 
@@ -2300,13 +2300,13 @@ renderAsText:
 						iBmp_drawVerticalLine(bmp, lrc3.top, lrc3.bottom, lrc3.right - 1, lineNumberBackColor);
 
 						// Get our line number
-						sprintf(bigBuffer, "%u\0", line->lineNumber);
+						sprintf(buffer, "%u\0", line->lineNumber);
 
 						// Back off one character, and render the line number right-justified
 						lrc3.right -= (em->rcLineNumberLastRender.right - em->rcLineNumberLastRender.left) / 7;
 						SetBkMode(bmp->hdc, TRANSPARENT);
 						SetTextColor(bmp->hdc, RGB(lineNumberForeColor.red, lineNumberForeColor.grn, lineNumberForeColor.blu));
-						DrawText(bmp->hdc, bigBuffer, strlen(bigBuffer), &lrc3, DT_SINGLELINE | DT_RIGHT | DT_NOPREFIX);
+						DrawText(bmp->hdc, buffer, strlen(buffer), &lrc3, DT_SINGLELINE | DT_RIGHT | DT_NOPREFIX);
 
 
 						//////////
@@ -2388,7 +2388,7 @@ renderAsText:
 
 
 					//////////
-					// Show any breakcrumbs
+					// Show any breadcrumbs
 					//////
 // TODO:  Once the program execution engine is coded, breadcrumbs will need to overlay here
 					}
@@ -2449,8 +2449,8 @@ renderAsText:
 								iBmp_frameRect(bmp, &lrc3, tooltipForecolor, tooltipForecolor, tooltipForecolor, tooltipForecolor, false, NULL, false);
 
 								// Compute the line number
-								sprintf(bigBuffer, "%u\0", line->lineNumber);
-								DrawText(bmp->hdc, bigBuffer, strlen(bigBuffer), &lrc3, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
+								sprintf(buffer, "%u\0", line->lineNumber);
+								DrawText(bmp->hdc, buffer, strlen(buffer), &lrc3, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
 							}
 						}
 					}
@@ -2485,8 +2485,8 @@ renderAsText:
 								iBmp_frameRect(bmp, &lrc3, tooltipForecolor, tooltipForecolor, tooltipForecolor, tooltipForecolor, false, NULL, false);
 
 								// Compute the line number
-								sprintf(bigBuffer, "%u\0", line->lineNumber);
-								DrawText(bmp->hdc, bigBuffer, strlen(bigBuffer), &lrc3, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
+								sprintf(buffer, "%u\0", line->lineNumber);
+								DrawText(bmp->hdc, buffer, strlen(buffer), &lrc3, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
 							}
 						}
 					}

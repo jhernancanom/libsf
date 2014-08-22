@@ -103,6 +103,13 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		systemStartedTickCount	= GetTickCount();
 		systemStartedMs			= iTime_getLocalMs();
 
+		// Initialize primitive variables
+		varConstant_space	= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgc_spaceText, 1);
+		varEmptyString		= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, (s8*)NULL, 0);
+		var2000Spaces		= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+		iDatum_allocateSpace(&var2000Spaces->value, 2000);
+		memset(var2000Spaces->value.data, 32, 2000);
+
 		// Keyboard shortcuts
 		*hAccelTable = LoadAccelerators(ghInstance, MAKEINTRESOURCE(IDC_VJR));
 
@@ -248,8 +255,6 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iVjr_appendSystemLog("Create _startupTime");
 		varGlobals			= function_datetime(NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 		iDatum_duplicate(&varGlobals->name, cgcName_startupTime, -1);
-		varConstant_space	= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgc_spaceText, 1);
-		varEmptyString		= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, (s8*)NULL, 0);
 
 		// Attach them to physical windows
 		iVjr_appendSystemLog("Allocate OS Window for _jdebi");
