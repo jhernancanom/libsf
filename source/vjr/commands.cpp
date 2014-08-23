@@ -127,7 +127,7 @@
 //////
 	SVariable* function_alltrim(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2)
 	{
-		return(iFunction_trimCommon(pString, pCaseInsensitive, pTrimChars1, pTrimChars2, true, true));
+		return(ifunction_trimCommon(pString, pCaseInsensitive, pTrimChars1, pTrimChars2, true, true));
 	}
 
 
@@ -143,7 +143,7 @@
 //	    (2)  *TRIM(cString[, nCaseSensitive|lCaseSensitive[, cTrimChar1[, cTrimChar2]]]) 
 //
 //////
-	SVariable* iFunction_trimCommon(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2, bool trimTheStart, bool trimTheEnd)
+	SVariable* ifunction_trimCommon(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2, bool trimTheStart, bool trimTheEnd)
 	{
 		s32			lnI, lnClipStartPos, lnClipEndPos;
 		s8			lc;
@@ -602,25 +602,25 @@
 //////
 	SVariable* function_at(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence)
 	{
-		return(iFunction_atOccursCommon(pNeedle, pHaystack, pOccurrence, true, false, NULL));
+		return(ifunction_atOccursCommon(pNeedle, pHaystack, pOccurrence, true, false, NULL));
 	}
 
 	SVariable* function_atc(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence)
 	{
-		return(iFunction_atOccursCommon(pNeedle, pHaystack, pOccurrence, false, false, NULL));
+		return(ifunction_atOccursCommon(pNeedle, pHaystack, pOccurrence, false, false, NULL));
 	}
 
 	SVariable* function_rat(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence)
 	{
-		return(iFunction_atOccursCommon(pNeedle, pHaystack, pOccurrence, true, true, NULL));
+		return(ifunction_atOccursCommon(pNeedle, pHaystack, pOccurrence, true, true, NULL));
 	}
 
 	SVariable* function_ratc(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence)
 	{
-		return(iFunction_atOccursCommon(pNeedle, pHaystack, pOccurrence, false, true, NULL));
+		return(ifunction_atOccursCommon(pNeedle, pHaystack, pOccurrence, false, true, NULL));
 	}
 
-	SVariable* iFunction_atOccursCommon(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence, bool tlCaseSensitive, bool tlScanBackward, u32* tnFoundCount)
+	SVariable* ifunction_atOccursCommon(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence, bool tlCaseSensitive, bool tlScanBackward, u32* tnFoundCount)
 	{
 		u32			errorNum;
 		s32			lnI, lnStart, lnInc, lnStopper, lnFoundCount, lnOccurrence;
@@ -876,15 +876,15 @@
 //////
 	SVariable* function_chrtran(SVariable* pString, SVariable* pSearch, SVariable* pReplace)
 	{
-		return(iFunction_chrtranCommon(pString, pSearch, pReplace, true));
+		return(ifunction_chrtranCommon(pString, pSearch, pReplace, true));
 	}
 
 	SVariable* function_chrtranc(SVariable* pString, SVariable* pSearch, SVariable* pReplace)
 	{
-		return(iFunction_chrtranCommon(pString, pSearch, pReplace, false));
+		return(ifunction_chrtranCommon(pString, pSearch, pReplace, false));
 	}
 
-	SVariable* iFunction_chrtranCommon(SVariable* pString, SVariable* pSearch, SVariable* pReplace, bool tlCaseSensitive)
+	SVariable* ifunction_chrtranCommon(SVariable* pString, SVariable* pSearch, SVariable* pReplace, bool tlCaseSensitive)
 	{
 		s8			c1, c2;
 		s32			lnSrc, lnDst, lnSearch;
@@ -1632,7 +1632,7 @@
 //////
 	SVariable* function_ltrim(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2)
 	{
-		return(iFunction_trimCommon(pString, pCaseInsensitive, pTrimChars1, pTrimChars2, true, false));
+		return(ifunction_trimCommon(pString, pCaseInsensitive, pTrimChars1, pTrimChars2, true, false));
 	}
 
 
@@ -2091,7 +2091,7 @@
 
 
 		// Compute the found count
-		result = iFunction_atOccursCommon(pNeedle, pHaystack, NULL, true, false, &lnFoundCount);
+		result = ifunction_atOccursCommon(pNeedle, pHaystack, NULL, true, false, &lnFoundCount);
 		if (result)
 		{
 			// Update the return variable
@@ -2109,7 +2109,7 @@
 
 
 		// Compute the found count
-		result = iFunction_atOccursCommon(pNeedle, pHaystack, NULL, false, false, &lnFoundCount);
+		result = ifunction_atOccursCommon(pNeedle, pHaystack, NULL, false, false, &lnFoundCount);
 		if (result)
 		{
 			// Update the return variable
@@ -2150,20 +2150,20 @@
 //////
 	SVariable* function_padc(SVariable* pExpression, SVariable* pResultSize, SVariable* pPadCharacter)
 	{
-		return(iFunction_padCommon(pExpression, pResultSize, pPadCharacter, true, true));
+		return(ifunction_padCommon(pExpression, pResultSize, pPadCharacter, true, true));
 	}
 
 	SVariable* function_padl(SVariable* pExpression, SVariable* pResultSize, SVariable* pPadCharacter)
 	{
-		return(iFunction_padCommon(pExpression, pResultSize, pPadCharacter, true, false));
+		return(ifunction_padCommon(pExpression, pResultSize, pPadCharacter, true, false));
 	}
 
 	SVariable* function_padr(SVariable* pExpression, SVariable* pResultSize, SVariable* pPadCharacter)
 	{
-		return(iFunction_padCommon(pExpression, pResultSize, pPadCharacter, false, true));
+		return(ifunction_padCommon(pExpression, pResultSize, pPadCharacter, false, true));
 	}
 
-	SVariable* iFunction_padCommon(SVariable* pExpression, SVariable* pResultSize, SVariable* pPadCharacter, bool tlPadLeft, bool tlPadRight)
+	SVariable* ifunction_padCommon(SVariable* pExpression, SVariable* pResultSize, SVariable* pPadCharacter, bool tlPadLeft, bool tlPadRight)
 	{
 		u32			errorNum;
 		s32			lnI, lnResultSize, lnCopyStart, lnPadLeftStopper, lnPadRightStart, lnPadRightStopper;
@@ -2937,7 +2937,7 @@
 //////
 	SVariable* function_rtrim(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2)
 	{
-		return(iFunction_trimCommon(pString, pCaseInsensitive, pTrimChars1, pTrimChars2, false, true));
+		return(ifunction_trimCommon(pString, pCaseInsensitive, pTrimChars1, pTrimChars2, false, true));
 	}
 
 
@@ -3045,15 +3045,15 @@
 //////
 	SVariable* function_strtran(SVariable* pString, SVariable* pSearch, SVariable* pReplace, SVariable* pRecursiveCount)
 	{
-		return(iFunction_strtranCommon(pString, pSearch, pReplace, pRecursiveCount, true));
+		return(ifunction_strtranCommon(pString, pSearch, pReplace, pRecursiveCount, true));
 	}
 
 	SVariable* function_strtranc(SVariable* pString, SVariable* pSearch, SVariable* pReplace, SVariable* pRecursiveCount)
 	{
-		return(iFunction_strtranCommon(pString, pSearch, pReplace, pRecursiveCount, false));
+		return(ifunction_strtranCommon(pString, pSearch, pReplace, pRecursiveCount, false));
 	}
 
-	SVariable* iFunction_strtranCommon(SVariable* pString, SVariable* pSearch, SVariable* pReplace, SVariable* pRecursiveCount, bool tlCaseSensitive)
+	SVariable* ifunction_strtranCommon(SVariable* pString, SVariable* pSearch, SVariable* pReplace, SVariable* pRecursiveCount, bool tlCaseSensitive)
 	{
 		s32			lnI, lnIteration, lnSrc, lnDst, lnLength, lnRecursiveCount, lnFoundCount;
 		bool		error;
