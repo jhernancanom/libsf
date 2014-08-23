@@ -414,8 +414,8 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 				return;
 
 			// Set the icon and border
-			iObj_setIcon(gobj_splashListing, bmpOutputIcon);
-			gobj_splashListing->p.isBorder = true;
+			iObj_set_icon(gobj_splashListing, bmpOutputIcon);
+			iVariable_set_s32(gobj_splashListing->p.borderStyle, _BORDER_STYLE_FIXED);
 
 
 			//////////
@@ -444,7 +444,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			gobj_splashListingEditbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
 			gobj_splashListingEditbox->pa.em->font				= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
 			gobj_splashListingEditbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
-			gobj_splashListingEditbox->p.isVisible				= true;
+			gobj_splashListingEditbox->p.visible				= true;
 			systemLog											= gobj_splashListingEditbox->pa.em;
 			systemLog->showEndLine								= true;
 			systemLog->showCursorLine							= true;

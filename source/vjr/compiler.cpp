@@ -4539,7 +4539,7 @@ debug_break;
 // Called to replace the varDst with the varSrc.
 //
 //////
-	bool iVariable_copyVariable(SVariable* varDst, SVariable* varSrc)
+	bool iVariable_copy(SVariable* varDst, SVariable* varSrc)
 	{
 		bool llResult;
 

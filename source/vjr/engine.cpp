@@ -173,7 +173,7 @@
 							if (varExisting)
 							{
 								// We are updating the value
-								iVariable_copyVariable(varExisting, var);
+								iVariable_copy(varExisting, var);
 								iVariable_delete(var, true);
 
 							} else {

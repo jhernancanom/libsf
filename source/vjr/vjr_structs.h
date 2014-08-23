@@ -262,24 +262,6 @@ struct SEvents
 
 struct SProperties
 {
-	// Information about the object itself
-	s32			tabIndex;												// The tab order
-	bool		tabStop;												// Does this object stop for tabs?
-	s32			helpContextId;											// Help context
-	bool		hasWhatsThisButton;										// Does it have a what's this button?
-	bool		hasWhatsThisHelp;										// Does it have what's this help?
-	s32			whatsThisHelpId;										// The what's this help id
-
-	// Mouse information
-	s32			mousePointer;											// The mouse pointer to use
-
-	// Object flags
-	bool		isEnabled;												// If it is responding to events
-	bool		hasFocus;												// Does this object have focus?
-	bool		isMovable;												// Is this object movable?
-	bool		isVisible;												// If it's visible
-	bool		isReadOnly;												// If it's read-only
-
 	RECT		rcMax;													// The maximum rectangle for the form
 	RECT		rcMin;													// The minimum rectangle for the form
 
@@ -287,132 +269,463 @@ struct SProperties
 	SBgra		neRgba;													// Northeast back color for border
 	SBgra		swRgba;													// Southwest back color for border
 	SBgra		seRgba;													// Southeast back color for border
-	SBgra		backColor;												// Back color for the client content
-	SBgra		foreColor;												// Default text fore color
 	SBgra		captionColor;											// Color of the caption
 
-	// General flags and settings
-	bool		allowOutput;											// Allow output to the form?
-	bool		alwaysOnBottom;											// Is this form always on the bottom of the Z-order?
-	bool		alwaysOnTop;											// Is this form always on the top of the z-order?
-	bool		autoCenter;												// Should this form auto-center itself relative to its parent?
-	s32			borderStyle;											// 0=none, 1=fixed, 2=fixed standard presentation, 3=sizable presentation
-	bool		isClosable;											// Is the form closeable through user interaction?
-	bool		processKeyPreviewEvents;								// Do keystrokes for controls on the form go through the form's Key* events as well?
-	bool		hasControlBox;											// Does the form show its control box?
-	bool		hasMinButton;											// Is the minimize button shown?
-	bool		hasMaxButton;											// Is the maximize button shown?
-	bool		hasCloseButton;											// Is the close button shown?
-	s32			scaleMode;												// 0=foxels, 3=pixels (default)
-	bool		showInTaskBar;											// Is this form shown in a taskbar?  Only relates to top-level forms (no parent, or parent is _screen).
-	s32			windowState;											// 0=normal, 1=minimized, 2=maximized
+	SVariable*	activeColumn;	SVariable*	activeControl;
+	SVariable*	activeForm;
+	SVariable*	activePage;
+	SVariable*	activeRow;
+	SVariable*	addLineFeeds;
+	SVariable*	align;
+	SVariable*	alignment;
+	SVariable*	allowAddNew;
+	SVariable*	allowAutoColumnFit;
+	SVariable*	allowCellSelection;
+	SVariable*	allowHeaderSizing;
+	SVariable*	allowOutput;
+	SVariable*	allowRowSizing;
+	SVariable*	allowTabs;
+	SVariable*	alwaysOnBottom;
+	SVariable*	alwaysOnTop;
+	SVariable*	anchor;
+	SVariable*	application;
+	SVariable*	autoActivate;
+	SVariable*	autoCenter;
+	SVariable*	autoCompSource;
+	SVariable*	autoCompTable;
+	SVariable*	autoComplete;
+	SVariable*	autoHideScrollBar;
+	SVariable*	autoRelease;
+	SVariable*	autoSize;
+	SVariable*	autoVerbMenu;
+	SVariable*	backColor;
+	SVariable*	backStyle;
+	bool border;
+	SVariable*	baseClass;
+	SVariable*	bindControls;
+	SVariable*	borderColor;
+	SVariable*	borderStyle;
+	SVariable*	borderWidth;
+	SVariable*	bound;
+	SVariable*	boundColumn;
+	SVariable*	boundTo;
+	SVariable*	bufferMode;
+	SVariable*	buttonCount;
+	SVariable*	cancel;
+	SVariable*	caption;
+	SVariable*	centered;
+	SVariable*	century;
+	SVariable*	childOrder;
+	SVariable*	_class;
+	SVariable*	classLibrary;
+	SVariable*	clipControls;
+	SVariable*	closable;
+	SVariable*	colorScheme;
+	SVariable*	colorSource;
+	SVariable*	columnCount;
+	SVariable*	columnLines;
+	SVariable*	columnOrder;
+	SVariable*	columnWidths;
+	SVariable*	columns;
+	SVariable*	comment;
+	SVariable*	continuousScroll;
+	SVariable*	controlBox;
+	SVariable*	controlCount;
+	SVariable*	controlSource;
+	SVariable*	controls;
+	SVariable*	count;
+	SVariable*	currentControl;
+	SVariable*	currentX;
+	SVariable*	currentY;
+	SVariable*	curvature;
+	SVariable*	dEClass;
+	SVariable*	dEClassLibrary;
+	SVariable*	dataEnvironment;
+	SVariable*	dataSession;
+	SVariable*	dataSessionID;
+	SVariable*	dateFormat;
+	SVariable*	dateMark;
+	SVariable*	defOLELCID;
+	SVariable*	_default;
+	SVariable*	deleteMark;
+	SVariable*	desktop;
+	SVariable*	details;
+	SVariable*	disabledBackColor;
+	SVariable*	disabledForeColor;
+	SVariable*	disabledItemBackColor;
+	SVariable*	disabledItemForeColor;
+	SVariable*	disabledPicture;
+	SVariable*	displayCount;
+	SVariable*	displayValue;
+	SVariable*	doCreate;
+	SVariable*	dockPosition;
+	SVariable*	dockable;
+	SVariable*	docked;
+	SVariable*	documentFile;
+	SVariable*	downPicture;
+	SVariable*	dragIcon;
+	SVariable*	dragMode;
+	SVariable*	drawMode;
+	SVariable*	drawStyle;
+	SVariable*	drawWidth;
+	SVariable*	dynamicAlignment;
+	SVariable*	dynamicBackColor;
+	SVariable*	dynamicCurrentControl;
+	SVariable*	dynamicFontBold;
+	SVariable*	dynamicFontItalic;
+	SVariable*	dynamicFontName;
+	SVariable*	dynamicFontOutline;
+	SVariable*	dynamicFontShadow;
+	SVariable*	dynamicFontSize;
+	SVariable*	dynamicFontStrikeThru;
+	SVariable*	dynamicFontUnderline;
+	SVariable*	dynamicForeColor;
+	SVariable*	dynamicInputMask;
+	SVariable*	enableHyperlinks;
+	SVariable*	enabled;
+	SVariable*	errorNo;
+	SVariable*	fillColor;
+	SVariable*	fillStyle;
+	SVariable*	firstElement;
+	SVariable*	fontBold;
+	SVariable*	fontCharSet;
+	SVariable*	fontCondense;
+	SVariable*	fontExtend;
+	SVariable*	fontItalic;
+	SVariable*	fontName;
+	SVariable*	fontOutline;
+	SVariable*	fontShadow;
+	SVariable*	fontSize;
+	SVariable*	fontStrikeThru;
+	SVariable*	fontUnderLine;
+	SVariable*	fontUnderline;
+	SVariable*	foreColor;
+	SVariable*	formCount;
+	SVariable*	format;
+	SVariable*	forms;
+	SVariable*	gridLineColor;
+	SVariable*	gridLineWidth;
+	SVariable*	gridLines;
+	SVariable*	hScrollSmallChange;
+	SVariable*	hWnd;
+	SVariable*	halfHeightCaption;
+	SVariable*	headerClass;
+	SVariable*	headerClassLibrary;
+	SVariable*	headerHeight;
+	SVariable*	height;
+	SVariable*	helpContextID;
+	SVariable*	hideSelection;
+	SVariable*	highLight;
+	SVariable*	highLightRow;
+	SVariable*	highlightBackColor;
+	SVariable*	highlightForeColor;
+	SVariable*	highlightRowLineWidth;
+	SVariable*	highlightStyle;
+	SVariable*	hostName;
+	SVariable*	hours;
+	SVariable*	iMEMode;
+	SBitmap*	icon;
+	SVariable*	increment;
+	SVariable*	incrementalSearch;
+	SVariable*	inputMask;
+	SVariable*	integralHeight;
+	SVariable*	interval;
+	SVariable*	itemBackColor;
+	SVariable*	itemData;
+	SVariable*	itemForeColor;
+	SVariable*	itemIDData;
+	SVariable*	itemTips;
+	SVariable*	keyPreview;
+	SVariable*	keySort;
+	SVariable*	keyboardHighValue;
+	SVariable*	keyboardLowValue;
+	SVariable*	left;
+	SVariable*	leftColumn;
+	SVariable*	lineContents;
+	SVariable*	lineNo;
+	SVariable*	lineSlant;
+	SVariable*	linkMaster;
+	SVariable*	list;
+	SVariable*	listCount;
+	SVariable*	listIndex;
+	SVariable*	listItem;
+	SVariable*	listItemID;
+	SVariable*	lockColumns;
+	SVariable*	lockColumnsLeft;
+	SVariable*	lockScreen;
+	SVariable*	mDIForm;
+	SVariable*	macDesktop;
+	SVariable*	margin;
+	SVariable*	maxButton;
+	SVariable*	maxHeight;
+	SVariable*	maxLeft;
+	SVariable*	maxLength;
+	SVariable*	maxTop;
+	SVariable*	maxWidth;
+	SVariable*	memberClass;
+	SVariable*	memberClassLibrary;
+	SVariable*	memoWindow;
+	SVariable*	message;
+	SVariable*	minButton;
+	SVariable*	minHeight;
+	SVariable*	minWidth;
+	SVariable*	mouseIcon;
+	SVariable*	mousePointer;
+	SVariable*	movable;
+	SVariable*	moverBars;
+	SVariable*	multiSelect;
+	SVariable*	name;
+	SVariable*	newIndex;
+	SVariable*	newItemID;
+	SVariable*	nullDisplay;
+	SVariable*	numberOfElements;
+	SVariable*	oLEClass;
+	SVariable*	oLEDragMode;
+	SVariable*	oLEDragPicture;
+	SVariable*	oLEDropEffects;
+	SVariable*	oLEDropHasData;
+	SVariable*	oLEDropMode;
+	SVariable*	oLEDropTextInsertion;
+	SVariable*	oLELCID;
+	SVariable*	oLETypeAllowed;
+	SVariable*	object;
+	SVariable*	objects;
+	SVariable*	openWindow;
+	SVariable*	optimize;
+	SVariable*	pageCount;
+	SVariable*	pageHeight;
+	SVariable*	pageOrder;
+	SVariable*	pageWidth;
+	SVariable*	pages;
+	SVariable*	panel;
+	SVariable*	panelLink;
+	SVariable*	parent;
+	SVariable*	parentClass;
+	SVariable*	partition;
+	SVariable*	passwordChar;
+	SVariable*	picture;
+	SVariable*	pictureMargin;
+	SVariable*	picturePosition;
+	SVariable*	pictureSelectionDisplay;
+	SVariable*	pictureSpacing;
+	SVariable*	pictureVal;
+	SVariable*	polyPoints;
+	SVariable*	procedure;
+	SVariable*	readBackColor;
+	SVariable*	readCycle;
+	SVariable*	readForeColor;
+	SVariable*	readLock;
+	SVariable*	readMouse;
+	SVariable*	readOnly;
+	SVariable*	readSave;
+	SVariable*	readTimeOut;
+	SVariable*	recordMark;
+	SVariable*	recordSource;
+	SVariable*	recordSourceType;
+	SVariable*	relationalExpr;
+	SVariable*	relativeColumn;
+	SVariable*	relativeRow;
+	SVariable*	releaseType;
+	SVariable*	resizable;
+	SVariable*	rightToLeft;
+	SVariable*	rotateFlip;
+	SVariable*	rotation;
+	SVariable*	rowColChange;
+	SVariable*	rowHeight;
+	SVariable*	rowSource;
+	SVariable*	rowSourceType;
+	SVariable*	scaleMode;
+	SVariable*	scrollBars;
+	SVariable*	seconds;
+	SVariable*	selLength;
+	SVariable*	selStart;
+	SVariable*	selText;
+	SVariable*	selectOnEntry;
+	SVariable*	selected;
+	SVariable*	selectedBackColor;
+	SVariable*	selectedForeColor;
+	SVariable*	selectedID;
+	SVariable*	selectedItemBackColor;
+	SVariable*	selectedItemForeColor;
+	SVariable*	showInTaskbar;
+	SVariable*	showTips;
+	SVariable*	showWindow;
+	SVariable*	sizable;
+	SVariable*	sizeBox;
+	SVariable*	sorted;
+	SVariable*	sparse;
+	SVariable*	specialEffect;
+	SVariable*	spinnerHighValue;
+	SVariable*	spinnerLowValue;
+	SVariable*	splitBar;
+	SVariable*	stackLevel;
+	SVariable*	statusBarText;
+	SVariable*	stretch;
+	SVariable*	strictDateEntry;
+	SVariable*	style;
+	SVariable*	tabIndex;
+	SVariable*	tabOrientation;
+	SVariable*	tabStop;
+	SVariable*	tabStyle;
+	SVariable*	tabs;
+	SVariable*	tag;
+	SVariable*	terminateRead;
+	SVariable*	text;
+	SVariable*	themes;
+	SVariable*	titleBar;
+	SVariable*	toolTipText;
+	SVariable*	top;
+	SVariable*	topIndex;
+	SVariable*	topItemID;
+	SVariable*	userValue;
+	SVariable*	vScrollSmallChange;
+	SVariable*	value;
+	SVariable*	view;
+	SVariable*	viewPortHeight;
+	SVariable*	viewPortLeft;
+	SVariable*	viewPortTop;
+	SVariable*	viewPortWidth;
+	SVariable*	visible;
+	SVariable*	visualEffect;
+	SVariable*	whatsThisButton;
+	SVariable*	whatsThisHelp;
+	SVariable*	whatsThisHelpID;
+	SVariable*	width;
+	SVariable*	windowList;
+	SVariable*	windowState;
+	SVariable*	windowType;
+	SVariable*	wordWrap;
+	SVariable*	zoomBox;
+// 	// Information about the object itself
+// 	SBgra		backColor;												// Back color for the client content
+// 	SBgra		foreColor;												// Default text fore color
+// 	s32			tabIndex;												// The tab order
+// 	bool		tabStop;												// Does this object stop for tabs?
+// 	s32			helpContextId;											// Help context
+// 	bool		hasWhatsThisButton;										// Does it have a what's this button?
+// 	bool		hasWhatsThisHelp;										// Does it have what's this help?
+// 	s32			whatsThisHelpId;										// The what's this help id
+// 
+// 	// Mouse information
+// 	s32			mousePointer;											// The mouse pointer to use
+// 
+// 	// Object flags
+	bool		hasFocus;												// Does this object have focus?
 
-	// The following are ignored, maintained only for backward compatibility
-	bool		bindControls;											// Are controls bound to their source?
-	s32			bufferMode;												// 0=none, 1=pessimistic, 1=optimistic, VJr always uses optimistic. Developers can use the LOCK command if they want a record explicitly locked.
-	bool		clipControls;											// Ignored. VJr always re-renders the entire control.
-	s32			colorSource;											// Ignored. VJr always uses its themed controls.
-	bool		continuousScroll;										// Ignored.
-	s32			dataSessionId;											// Ignored, always set to -1.
-	s32			defolecid;												// Ignored, always uses system locale.
-	bool		desktop;												// Ignored, all VJr forms can be shown anywhere.  To keep inside a window, parent it to _screen or a form.
-	bool		isDockable;												// Ignored, always set to .F., docking is not supported in VJr.
-	bool		isDocked;												// Ignored, always set to .F..
-	s32			dockPosition;											// Ignored, always set to -1.
-	s32			drawmode;												// Ignored, drawing is not supported in VJr this way.  See the _graphics object.
-	s32			drawstyle;												// Ignored, always set to 13.
-	s32			drawwidth;												// Ignored, always set to 1.
-	SBgra		fillColor;												// Ignored, always set to RGB(255,255,255).
-	s32			fillStyle;												// Ignored, always set to 0.
-	bool		halfHeightCaption;										// Ignored, always set to .F..
-	s32			hScrollSmallChange;										// Ignored, always uses system defaults.
-	s32			vScrollSmallChange;										// Ignored, always uses system defaults.
-	bool		macDesktop;												// Ignored, always set to .F..
-	bool		mdiForm;												// Ignroed, always set to .F..
-	s32			oleDragMode;											// Ignored, always set to 0.
-	s32			oleDropEffects;											// Ignored, always set to 3.
-	s32			oleDropHasData;											// Ignored, always set to -1.
-	s32			oleDropMode;											// Ignored, always set to 0.
-	s32			releaseType;											// Ignored, always returns 0.
-	bool		rightToLeft;											// Ignored, always returns .F..
-	s32			scrollbars;												// Ignored, always returns 3 both, scrollbars are automatic in VJr.
-	s32			showTips;												// Ignored, always returns .T..
-	s32			showWindow;												// Ignored, always returns 2, all forms in VJr are top-level modeless forms. Min/max constraints can keep it in a fixed position it within a parent window.
-	bool		sizeBox;												// Ignored, always returns .F..
-	bool		themes;													// Ignored, always returns .T., VJr always uses its own themes for graphics.
-	s32			titleBar;												// Ignored, returns what is indicated by borderStyle.
-	s32			windowType;												// Ignored, always returns 0=modeless, all forms in VJr are modeless.
-	bool		zoomBox;												// Ignored, always returns .F.
-	s32			anchor;												// Method this item uses when its parent is resized
-
-	// Used only for labels in lists, like SObjectOption
-	bool		selected;												// Is this item selected?
-
-	// Flags for data
-	u32			style;													// See _TEXTBOX_STYLE_* constants (plain, 2D, 3D)
-	u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
-
-	// Flags for display and input
-	s32			cursor;													// Position of the flashing cursor, where input goes
-	s32			selectStart;											// Where does the selection begin?
-	s32			selectEnd;												// Where does the selection end?
-
-	// Flags for rendering
-	bool		isOpaque;												// Is the label opaque?
-	bool		isBorder;												// Is there a border?
-	SBgra		borderColor;											// Border color
-	SBgra		selectedBackColor;										// Selected background color
-	SBgra		selectedForeColor;										// Selected foreground color
-	SBgra		disabledBackColor;										// Disabled background color
-	SBgra		disabledForeColor;										// Disabled foreground color
-
-	u32			optionCount;											// How many options are there?
-	bool		multiSelect;											// Allow multiple items to be selected?
-
-	f64			roundTo;												// Round 10=tens place, 1=whole integers, 0.1=one decimal place, 0.01=two decimal places, and so on
+// 	// General flags and settings
+// 	bool		allowOutput;											// Allow output to the form?
+// 	bool		alwaysOnBottom;											// Is this form always on the bottom of the Z-order?
+// 	bool		alwaysOnTop;											// Is this form always on the top of the z-order?
+// 	bool		autoCenter;												// Should this form auto-center itself relative to its parent?
+// 	s32			borderStyle;											// 0=none, 1=fixed, 2=fixed standard presentation, 3=sizable presentation
+// 	bool		processKeyPreviewEvents;								// Do keystrokes for controls on the form go through the form's Key* events as well?
+// 	s32			scaleMode;												// 0=foxels, 3=pixels (default)
+// 	bool		showInTaskBar;											// Is this form shown in a taskbar?  Only relates to top-level forms (no parent, or parent is _screen).
+// 	s32			windowState;											// 0=normal, 1=minimized, 2=maximized
+// 
+// 	// The following are ignored, maintained only for backward compatibility
+// 	bool		bindControls;											// Are controls bound to their source?
+// 	s32			bufferMode;												// 0=none, 1=pessimistic, 1=optimistic, VJr always uses optimistic. Developers can use the LOCK command if they want a record explicitly locked.
+// 	bool		clipControls;											// Ignored. VJr always re-renders the entire control.
+// 	s32			colorSource;											// Ignored. VJr always uses its themed controls.
+// 	bool		continuousScroll;										// Ignored.
+// 	s32			dataSessionId;											// Ignored, always set to -1.
+// 	s32			defolecid;												// Ignored, always uses system locale.
+// 	bool		desktop;												// Ignored, all VJr forms can be shown anywhere.  To keep inside a window, parent it to _screen or a form.
+// 	bool		isDockable;												// Ignored, always set to .F., docking is not supported in VJr.
+// 	bool		isDocked;												// Ignored, always set to .F..
+// 	s32			dockPosition;											// Ignored, always set to -1.
+// 	s32			drawmode;												// Ignored, drawing is not supported in VJr this way.  See the _graphics object.
+// 	s32			drawstyle;												// Ignored, always set to 13.
+// 	s32			drawwidth;												// Ignored, always set to 1.
+// 	SBgra		fillColor;												// Ignored, always set to RGB(255,255,255).
+// 	s32			fillStyle;												// Ignored, always set to 0.
+// 	bool		halfHeightCaption;										// Ignored, always set to .F..
+// 	s32			hScrollSmallChange;										// Ignored, always uses system defaults.
+// 	s32			vScrollSmallChange;										// Ignored, always uses system defaults.
+// 	bool		macDesktop;												// Ignored, always set to .F..
+// 	bool		mdiForm;												// Ignroed, always set to .F..
+// 	s32			oleDragMode;											// Ignored, always set to 0.
+// 	s32			oleDropEffects;											// Ignored, always set to 3.
+// 	s32			oleDropHasData;											// Ignored, always set to -1.
+// 	s32			oleDropMode;											// Ignored, always set to 0.
+// 	s32			releaseType;											// Ignored, always returns 0.
+// 	bool		rightToLeft;											// Ignored, always returns .F..
+// 	s32			scrollbars;												// Ignored, always returns 3 both, scrollbars are automatic in VJr.
+// 	s32			showTips;												// Ignored, always returns .T..
+// 	s32			showWindow;												// Ignored, always returns 2, all forms in VJr are top-level modeless forms. Min/max constraints can keep it in a fixed position it within a parent window.
+// 	bool		sizeBox;												// Ignored, always returns .F..
+// 	bool		themes;													// Ignored, always returns .T., VJr always uses its own themes for graphics.
+// 	s32			titleBar;												// Ignored, returns what is indicated by borderStyle.
+// 	s32			windowType;												// Ignored, always returns 0=modeless, all forms in VJr are modeless.
+// 	bool		zoomBox;												// Ignored, always returns .F.
+// 	s32			anchor;												// Method this item uses when its parent is resized
+// 
+// 	// Used only for labels in lists, like SObjectOption
+// 	bool		selected;												// Is this item selected?
+// 
+// 	// Flags for data
+// 	u32			style;													// See _TEXTBOX_STYLE_* constants (plain, 2D, 3D)
+// 	u32			alignment;												// 0=left, 1=right, 2=center, always centered vertically
+// 
+// 	// Flags for display and input
+// 	s32			cursor;													// Position of the flashing cursor, where input goes
+// 	s32			selectStart;											// Where does the selection begin?
+// 	s32			selectEnd;												// Where does the selection end?
+// 
+// 	// Flags for rendering
+// 	SBgra		borderColor;											// Border color
+// 	SBgra		selectedBackColor;										// Selected background color
+// 	SBgra		selectedForeColor;										// Selected foreground color
+// 	SBgra		disabledBackColor;										// Disabled background color
+// 	SBgra		disabledForeColor;										// Disabled foreground color
+// 
+// 	u32			optionCount;											// How many options are there?
+// 	bool		multiSelect;											// Allow multiple items to be selected?
+// 
+// 	f64			roundTo;												// Round 10=tens place, 1=whole integers, 0.1=one decimal place, 0.01=two decimal places, and so on
 };
 
 struct SPropertiesA
 {
 	SFont*		font;													// Default font instance
 
-	SBitmap*	bmpIcon;											// Icon for the form
-	SBitmap*	mouseIcon;												// The mouse icon
-
-	SDatum		name;													// If a user object, this object's name
-	SDatum		caption;												// Caption
-	SDatum		className;												// The class
-	SDatum		classLibrary;											// The class location
-
-	SDatum		comment;
-	SDatum		tooltip;
-	SDatum		tag;
-
-	SVariable*	value;													// Value for the control
-	SVariable*	minValue;												// Minimum value for the control
-	SVariable*	maxValue;												// Maximum value for the control
-	SVariable*	picture;												// Picture for the control
-	SVariable*	mask;													// Input mask for the control
+// 	SBitmap*	mouseIcon;												// The mouse icon
+// 
+// 	SDatum		name;													// If a user object, this object's name
+// 	SDatum		caption;												// Caption
+// 	SDatum		className;												// The class
+// 	SDatum		classLibrary;											// The class location
+// 
+// 	SDatum		comment;
+// 	SDatum		tooltip;
+// 	SDatum		tag;
+// 
+// 	SVariable*	value;													// Value for the control
+// 	SVariable*	minValue;												// Minimum value for the control
+// 	SVariable*	maxValue;												// Maximum value for the control
+// 	SVariable*	picture;												// Picture for the control
+// 	SVariable*	mask;													// Input mask for the control
 
 	SEM*		em;														// The content being edited
 
-	SBitmap*	image;													// Image displayed when the mouse IS NOT over this control
-	SBitmap*	imageOver;												// Image displayed when the mouse IS over this control
-
-	SDatum		pictureName;											// The name of the file used for the picture
-	SBitmap*	bmpPicture;												// The image for the picture
-	SDatum		pictureOverName;										// The name of the file used for the picture when the mouse is over
-	SBitmap*	bmpPictureOver;											// The image for the picture when the mouse is over
-	SDatum		pictureDownName;										// The name of the file used for the picture when the mouse is pressed down on the item
-	SBitmap*	bmpPictureDown;											// The image for the picture when the mouse is pressed down on the item
-
-	SObject*	dataSession;											// Ignored, always set to .NULL..
-	SDatum		declass;												// Ignored, always empty.
-	SDatum		declasslibrary;											// Ignored, always empty.
-
-	SBitmap*	oleDragPicture;											// Ignored, always set to .NULL..
-
-	SObject*	firstOption;											// Each option has its own set of properties, and each is of _OBJECT_TYPE_LABEL
+// 	SBitmap*	image;													// Image displayed when the mouse IS NOT over this control
+// 	SBitmap*	imageOver;												// Image displayed when the mouse IS over this control
+// 
+// 	SDatum		pictureName;											// The name of the file used for the picture
+// 	SBitmap*	bmpPicture;												// The image for the picture
+// 	SDatum		pictureOverName;										// The name of the file used for the picture when the mouse is over
+// 	SBitmap*	bmpPictureOver;											// The image for the picture when the mouse is over
+// 	SDatum		pictureDownName;										// The name of the file used for the picture when the mouse is pressed down on the item
+// 	SBitmap*	bmpPictureDown;											// The image for the picture when the mouse is pressed down on the item
+// 
+// 	SObject*	dataSession;											// Ignored, always set to .NULL..
+// 	SDatum		declass;												// Ignored, always empty.
+// 	SDatum		declasslibrary;											// Ignored, always empty.
+// 
+// 	SBitmap*	oleDragPicture;											// Ignored, always set to .NULL..
+// 
+// 	SObject*	firstOption;											// Each option has its own set of properties, and each is of _OBJECT_TYPE_LABEL
 };
 
 struct SObject
@@ -435,8 +748,13 @@ struct SObject
 	SPropertiesA	pa;													// Common object properties allocated
 
 	// Related position in the member hierarchy
-	SVariable*	firstProperty;											// Runtime-added user-defined property
-	SEM*		firstMethod;											// Runtime-added user-defined methods
+	SVariable*	firstProperty;											// User-defined property (design time and runtime)
+	SEM*		firstMethod;											// User-defined methods (design time and runtime)
+
+	// Related access and assign methods
+	bool		lAssignMethods;
+	SEM*		firstAccess;											// User-defined property access methods (design time and runtime)
+	SEM*		firstAssign;											// User-defined property assignment methods (designt ime and runtime)
 
 	// Events
 	SEvents		ev;														// Events for this object

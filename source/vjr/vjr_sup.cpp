@@ -191,8 +191,8 @@
 				return;
 
 			// Set the app icon and enable the border
-			iObj_setIcon(_jdebi, bmpJDebiIcon);
-			_jdebi->p.isBorder = true;
+			iObj_set_icon(_jdebi, bmpJDebiIcon);
+			iVariable_set_s32(_jdebi->p.borderStyle, _BORDER_STYLE_FIXED);
 
 			// Give it a fixed point font
 			_jdebi->pa.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
@@ -229,24 +229,22 @@
 			_screen			= iObj_addChild(_OBJ_TYPE_SUBFORM, _jdebi);
 
 			// Set the icons
-			iObj_setIcon(sourceCode,	bmpSourceCodeIcon);
-			iObj_setIcon(locals,		bmpLocalsIcon);
-			iObj_setIcon(watch,			bmpWatchIcon);
-			iObj_setIcon(command,		bmpCommandIcon);
-			iObj_setIcon(debug,			bmpDebugIcon);
-			iObj_setIcon(output,		bmpOutputIcon);
-			iObj_setIcon(sourceLight,	bmpSourceLightIcon);
-			iObj_setIcon(_screen,		bmpVjrIcon);
+			iObj_set_icon(sourceCode,	bmpSourceCodeIcon);
+			iObj_set_icon(locals,		bmpLocalsIcon);
+			iObj_set_icon(watch,		bmpWatchIcon);
+			iObj_set_icon(command,		bmpCommandIcon);
+			iObj_set_icon(debug,		bmpDebugIcon);
+			iObj_set_icon(output,		bmpOutputIcon);
+			iObj_set_icon(sourceLight,	bmpSourceLightIcon);
+			iObj_set_icon(_screen,		bmpVjrIcon);
 
 			// Make them visible
-			sourceCode->p.isVisible		= true;
-			locals->p.isVisible			= true;
-			watch->p.isVisible			= true;
-			command->p.isVisible		= true;
-// 			debug->p.isVisible			= true;
-// 			output->p.isVisible			= true;
-			sourceLight->p.isVisible	= true;
-			_screen->p.isVisible		= true;
+			sourceCode->p.visible	= true;
+			locals->p.visible		= true;
+			watch->p.visible		= true;
+			command->p.visible		= true;
+			sourceLight->p.visible	= true;
+			_screen->p.visible		= true;
 
 
 		//////////
@@ -280,13 +278,13 @@
 		//////////
 		// Add the editbox controls to the subforms
 		//////
-			sourceCode_editbox->p.isVisible	= true;
-			locals_editbox->p.isVisible		= true;
-			watch_editbox->p.isVisible		= true;
-			command_editbox->p.isVisible	= true;
-			debug_editbox->p.isVisible		= true;
-			output_editbox->p.isVisible		= true;
-			screen_editbox->p.isVisible		= true;
+			sourceCode_editbox->p.visible	= true;
+			locals_editbox->p.visible		= true;
+			watch_editbox->p.visible		= true;
+			command_editbox->p.visible	= true;
+			debug_editbox->p.visible		= true;
+			output_editbox->p.visible		= true;
+			screen_editbox->p.visible		= true;
 
 
 		//////////
@@ -312,7 +310,7 @@
 		//////////
 		// SourceCode window caption and font
 		//////
-			sourceCode->p.isOpaque						= false;
+			sourceCode->p.opaque						= false;
 			iDatum_duplicate(&caption->value, cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
 			iObj_setCaption(sourceCode, caption);
 
@@ -321,12 +319,12 @@
 
 			sourceCode_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			sourceCode_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown_sourceCode;
-			sourceCode_editbox->p.isBorder				= true;
+			iVariable_set_s32(sourceCode_editbox->p.borderStyle, _BORDER_STYLE_FIXED);
 			sourceCode_editbox->p.borderColor.color		= lineNumberBackColor.color;
 			sourceCode_editbox->pa.em->showCursorLine	= true;
 			sourceCode_editbox->pa.em->isSourceCode		= true;
 			sourceCode_editbox->pa.em->showLineNumbers	= true;
-			iObj_setIcon(sourceCode, bmpSourceCodeIcon);
+			iObj_set_icon(sourceCode, bmpSourceCodeIcon);
 
 
 		//////////
@@ -336,7 +334,7 @@
 			iObj_setCaption(locals, caption);
 			locals_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			locals_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
-			iObj_setIcon(locals, bmpLocalsIcon);
+			iObj_set_icon(locals, bmpLocalsIcon);
 
 			// Adjust the caption width
 			((SObject*)locals->firstChild->ll.next)->rc.right = 65;
@@ -431,7 +429,7 @@
 			watch_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			watch_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			watch_editbox->pa.em->showCursorLine	= true;
-			iObj_setIcon(watch, bmpWatchIcon);
+			iObj_set_icon(watch, bmpWatchIcon);
 
 			// Adjust the caption width
 			((SObject*)watch->firstChild->ll.next)->rc.right = 65;
@@ -448,7 +446,7 @@
 			command_editbox->pa.em->showCursorLine		= true;
 			command_editbox->pa.em->isSourceCode		= true;
 			command_editbox->pa.em->showLineNumbers		= true;
-			iObj_setIcon(command, bmpCommandIcon);
+			iObj_set_icon(command, bmpCommandIcon);
 
 			// Adjust the caption width
 			((SObject*)command->firstChild->ll.next)->rc.right = 80;
@@ -462,7 +460,7 @@
 			debug_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			debug_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			debug_editbox->pa.em->showCursorLine	= true;
-			iObj_setIcon(debug, bmpDebugIcon);
+			iObj_set_icon(debug, bmpDebugIcon);
 
 			// Adjust the caption width
 			((SObject*)debug->firstChild->ll.next)->rc.right = 65;
@@ -476,7 +474,7 @@
 			output_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_MEDIUM, false, false);
 			output_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			output_editbox->pa.em->showCursorLine	= true;
-			iObj_setIcon(output, bmpOutputIcon);
+			iObj_set_icon(output, bmpOutputIcon);
 
 			// Adjust the caption width
 			((SObject*)output->firstChild->ll.next)->rc.right = 70;
@@ -488,8 +486,8 @@
 			iDatum_duplicate(&caption->value, cgcSourceLightTitle, sizeof(cgcSourceLightTitle) - 1);
 			iObj_setCaption(sourceLight, caption);
 			sourceLight->pa.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			sourceLight->p.isVisible	= true;
-			sourceLight->p.isOpaque		= true;
+			sourceLight->p.visible	= true;
+			sourceLight->p.opaque		= true;
 
 
 		//////////
@@ -508,7 +506,7 @@
 			screenData								= screen_editbox->pa.em;
 			screenData->showCursorLine				= true;
 			screenData->showEndLine					= true;
-			_screen->p.isVisible				= true;
+			_screen->p.visible				= true;
 
 
 		//////////
@@ -1298,7 +1296,7 @@
 						PostMessage(winNew->hwnd, WMVJR_FIRST_CREATION, 0, 0);
 
 						// If visible, show it
-						if (obj->p.isVisible)
+						if (obj->p.visible)
 							ShowWindow(winNew->hwnd, SW_SHOW);
 
 					// Unlock
@@ -1889,7 +1887,7 @@
 				lhdc = BeginPaint(hwnd, &ps);
 
 				// Paint it
-				if (focus->obj->p.isReadOnly)		FillRect(lhdc, &ps.rcPaint, focus->readOnlyBrush);
+				if (focus->obj->p.readOnly)		FillRect(lhdc, &ps.rcPaint, focus->readOnlyBrush);
 				else								FillRect(lhdc, &ps.rcPaint, focus->readWriteBrush);
 
 				// All done
@@ -3235,7 +3233,7 @@
 
 
 		// Make sure our environment is sane
-		if (obj && obj->p.isEnabled && obj->bmp)
+		if (obj && obj->p.enabled && obj->bmp)
 		{
 			// Get the rectangle we're in at this level
 			llInClientArea = iiMouse_processMouseEvents_getRectDescent(win, obj, rc, lrc, lrcClient);
@@ -3343,7 +3341,7 @@
 
 		// Make sure our environment is sane
 		llContinue = false;
-		if (obj && obj->p.isEnabled && obj->bmp)
+		if (obj && obj->p.enabled && obj->bmp)
 		{
 			// Get the rectangle we're in at this level
 			llContinue		= true;

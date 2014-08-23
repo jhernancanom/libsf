@@ -1333,14 +1333,14 @@
 if (!llPublishChildren)
 	debug_break;
 
-				if (llPublishChildren && obj->p.isVisible && tlPublishChildren && obj->firstChild)
+				if (llPublishChildren && obj->p.visible && tlPublishChildren && obj->firstChild)
 					lnPixelsRendered += iObj_publish(obj->firstChild, &lrcChild, obj->bmp, true, true, tlForcePublish, tnLevel + 1);
 
 
 			//////////
 			// Publish this item
 			//////
-				if (obj->p.isVisible)
+				if (obj->p.visible)
 				{
 					// The size of the bitmap should equal the size of the rectangle on the parent.
 					lnWidth		= obj->rc.right - obj->rc.left;
@@ -1367,7 +1367,7 @@ if (!llPublishChildren)
 						if (bmpDst && obj->isPublished && obj->isDirtyPublish)
 						{
 							// If it's not enabled, grayscale it
-							if (!obj->p.isEnabled)
+							if (!obj->p.enabled)
 							{
 								SetRect(&lrc2, 0, 0, obj->bmpScaled->bi.biWidth, obj->bmpScaled->bi.biHeight);
 								iBmp_grayscale(obj->bmpScaled, &lrc2);
@@ -1381,7 +1381,7 @@ if (!llPublishChildren)
 								{
 									case _OBJ_TYPE_IMAGE:
 									case _OBJ_TYPE_LABEL:
-										if (obj->p.isOpaque)		lnPixelsRendered += iBmp_bitBlt(bmpDst,		&lrc, obj->bmpScaled);
+										if (obj->p.opaque)		lnPixelsRendered += iBmp_bitBlt(bmpDst,		&lrc, obj->bmpScaled);
 										else						lnPixelsRendered += iBmp_bitBltMask(bmpDst,	&lrc, obj->bmpScaled);
 										break;
 
@@ -1396,7 +1396,7 @@ if (!llPublishChildren)
 						if (bmpDst && obj->isPublished && obj->isDirtyPublish && tnLevel != 0)
 						{
 							// If it's not enabled, grayscale it
-							if (!obj->p.isEnabled)
+							if (!obj->p.enabled)
 							{
 								SetRect(&lrc2, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
 								iBmp_grayscale(obj->bmp, &lrc2);
@@ -1409,13 +1409,13 @@ if (!llPublishChildren)
 								switch (obj->objType)
 								{
 									case _OBJ_TYPE_IMAGE:
-										if (obj->p.isOpaque)		lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
+										if (obj->p.opaque)		lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
 										else						lnPixelsRendered += iBmp_bitBltMask(bmpDst, &lrc, obj->bmp);
 										break;
 
 									case _OBJ_TYPE_LABEL:
 										// Non-opaque labels are rendered as black on white, with that grayscale being used to influence the forecolor
-										if (obj->p.isOpaque)		lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
+										if (obj->p.opaque)		lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
 										else						lnPixelsRendered += iBmp_bitBlt_byGraymask(bmpDst, &lrc, obj->bmp, obj->p.foreColor);
 										break;
 
@@ -1782,8 +1782,8 @@ if (!llPublishChildren)
 				break;
 
 			case _OBJ_TYPE_SUBFORM:
-				if (obj->p.isBorder)	SetRect(&obj->rcClient, 1, bmpArrowUl->bi.biHeight + 1, tnWidth - 8 - 1, tnHeight - 1);
-				else					SetRect(&obj->rcClient, 0, bmpArrowUl->bi.biHeight, tnWidth - 8, tnHeight);
+				if (obj->p.borderStyle != _BORDER_STYLE_NONE)		SetRect(&obj->rcClient, 1, bmpArrowUl->bi.biHeight + 1, tnWidth - 8 - 1, tnHeight - 1);
+				else												SetRect(&obj->rcClient, 0, bmpArrowUl->bi.biHeight, tnWidth - 8, tnHeight);
 
 				//////////
 				// Default child settings:
@@ -1974,8 +1974,8 @@ if (!llPublishChildren)
 		llOldVisible = false;
 		if (obj)
 		{
-			llOldVisible		= obj->p.isVisible;
-			obj->p.isVisible	= tlNewVisible;
+			llOldVisible		= obj->p.visible;
+			obj->p.visible	= tlNewVisible;
 		}
 
 		// Indicate prior visible
@@ -2134,10 +2134,10 @@ if (!llPublishChildren)
 		//////////
 		// Object flags
 		//////
-			obj->p.isEnabled				= true;
+			obj->p.enabled				= true;
 			obj->p.hasFocus					= false;
-			obj->p.isMovable				= true;
-			obj->p.isVisible				= false;
+			obj->p.movable				= true;
+			obj->p.visible				= false;
 			// Related to rendering
 			obj->isRendered					= true;
 			obj->isPublished				= true;
@@ -2270,7 +2270,7 @@ if (!llPublishChildren)
 				// Initially populate
 				emptyNew->objType		= _OBJ_TYPE_EMPTY;
 				emptyNew->parent		= parent;
-				emptyNew->p.isEnabled	= true;
+				emptyNew->p.enabled	= true;
 				emptyNew->isRendered	= true;
 				emptyNew->isPublished	= true;
 				iDatum_duplicate(&emptyNew->pa.name,		cgcName_empty, -1);
@@ -2334,7 +2334,7 @@ if (!llPublishChildren)
 				// Initially populate
 				formNew->objType		= _OBJ_TYPE_FORM;
 				formNew->parent			= parent;
-				formNew->p.isEnabled	= true;
+				formNew->p.enabled	= true;
 				formNew->isRendered		= true;
 				formNew->isPublished	= true;
 				iDatum_duplicate(&formNew->pa.name,			cgcName_form, -1);
@@ -2418,7 +2418,7 @@ if (!llPublishChildren)
 				// Initially populate
 				subformNew->objType		= _OBJ_TYPE_SUBFORM;
 				subformNew->parent		= parent;
-				subformNew->p.isEnabled	= true;
+				subformNew->p.enabled	= true;
 				subformNew->isRendered	= true;
 				subformNew->isPublished	= true;
 				iDatum_duplicate(&subformNew->pa.name,		cgcName_subform, -1);
@@ -2495,7 +2495,7 @@ if (!llPublishChildren)
 				// Initially populate
 				carouselNew->objType		= _OBJ_TYPE_CAROUSEL;
 				carouselNew->parent			= parent;
-				carouselNew->p.isEnabled	= true;
+				carouselNew->p.enabled	= true;
 				carouselNew->isRendered		= true;
 				carouselNew->isPublished	= true;
 				iDatum_duplicate(&carouselNew->pa.name,			cgcName_carousel, -1);
@@ -2571,7 +2571,7 @@ if (!llPublishChildren)
 				// Initially populate
 				riderNew->objType		= _OBJ_TYPE_RIDER;
 				riderNew->parent		= parent;
-				riderNew->p.isEnabled	= true;
+				riderNew->p.enabled	= true;
 				riderNew->isRendered	= true;
 				riderNew->isPublished	= true;
 				iDatum_duplicate(&riderNew->pa.name,		cgcName_rider, -1);
@@ -2629,7 +2629,7 @@ if (!llPublishChildren)
 				// Initially populate
 				labelNew->objType		= _OBJ_TYPE_LABEL;
 				labelNew->parent		= parent;
-				labelNew->p.isEnabled	= true;
+				labelNew->p.enabled	= true;
 				labelNew->isRendered	= true;
 				labelNew->isPublished	= true;
 				iDatum_duplicate(&labelNew->pa.name,		cgcName_label, -1);
@@ -2687,7 +2687,7 @@ if (!llPublishChildren)
 				// Initially populate
 				textboxNew->objType		= _OBJ_TYPE_TEXTBOX;
 				textboxNew->parent		= parent;
-				textboxNew->p.isEnabled	= true;
+				textboxNew->p.enabled	= true;
 				textboxNew->isRendered	= true;
 				textboxNew->isPublished	= true;
 				iDatum_duplicate(&textboxNew->pa.name,		cgcName_textbox, -1);
@@ -2745,7 +2745,7 @@ if (!llPublishChildren)
 				// Initially populate
 				buttonNew->objType		= _OBJ_TYPE_BUTTON;
 				buttonNew->parent		= parent;
-				buttonNew->p.isEnabled	= true;
+				buttonNew->p.enabled	= true;
 				buttonNew->isRendered	= true;
 				buttonNew->isPublished	= true;
 				iDatum_duplicate(&buttonNew->pa.name,		cgcName_button, -1);
@@ -2803,7 +2803,7 @@ if (!llPublishChildren)
 				// Initially populate
 				editboxNew->objType		= _OBJ_TYPE_EDITBOX;
 				editboxNew->parent		= parent;
-				editboxNew->p.isEnabled	= true;
+				editboxNew->p.enabled	= true;
 				editboxNew->isRendered	= true;
 				editboxNew->isPublished	= true;
 				iDatum_duplicate(&editboxNew->pa.name,		cgcName_editbox, -1);
@@ -2861,7 +2861,7 @@ if (!llPublishChildren)
 				// Initially populate
 				imageNew->objType		= _OBJ_TYPE_IMAGE;
 				imageNew->parent		= parent;
-				imageNew->p.isEnabled	= true;
+				imageNew->p.enabled	= true;
 				imageNew->isRendered	= true;
 				imageNew->isPublished	= true;
 				iDatum_duplicate(&imageNew->pa.name,		cgcName_image, -1);
@@ -2921,7 +2921,7 @@ if (!llPublishChildren)
 				// Initially populate
 				checkboxNew->objType		= _OBJ_TYPE_CHECKBOX;
 				checkboxNew->parent			= parent;
-				checkboxNew->p.isEnabled	= true;
+				checkboxNew->p.enabled	= true;
 				checkboxNew->isRendered		= true;
 				checkboxNew->isPublished	= true;
 				iDatum_duplicate(&checkboxNew->pa.name,			cgcName_checkbox, -1);
@@ -2995,7 +2995,7 @@ if (!llPublishChildren)
 				// Initially populate
 				optionNew->objType		= _OBJ_TYPE_OPTION;
 				optionNew->parent		= parent;
-				optionNew->p.isEnabled	= true;
+				optionNew->p.enabled	= true;
 				optionNew->isRendered	= true;
 				optionNew->isPublished	= true;
 				iDatum_duplicate(&optionNew->pa.name,		cgcName_option, -1);
@@ -3053,7 +3053,7 @@ if (!llPublishChildren)
 				// Initially populate
 				radioNew->objType		= _OBJ_TYPE_RADIO;
 				radioNew->parent		= parent;
-				radioNew->p.isEnabled	= true;
+				radioNew->p.enabled	= true;
 				radioNew->isRendered	= true;
 				radioNew->isPublished	= true;
 				iDatum_duplicate(&radioNew->pa.name,		cgcName_radio, -1);
@@ -3118,7 +3118,7 @@ if (!llPublishChildren)
 		// Copy the allocatables
 		//////
 			formDst->pa.font		= iFont_duplicate(formSrc->pa.font);
-			formDst->pa.bmpIcon		= iBmp_copy(formSrc->pa.bmpIcon);
+			formDst->p.icon		= iBmp_copy(formSrc->p.icon);
 			iDatum_duplicate(&formDst->pa.caption, &formSrc->pa.caption);
 
 
@@ -3155,7 +3155,7 @@ if (!llPublishChildren)
 		// Copy the allocatables
 		//////
 			subformDst->pa.font		= iFont_duplicate(subformSrc->pa.font);
-			subformDst->pa.bmpIcon	= iBmp_copy(subformSrc->pa.bmpIcon);
+			subformDst->p.icon	= iBmp_copy(subformSrc->p.icon);
 			iDatum_duplicate(&subformDst->pa.caption, &subformSrc->pa.caption);
 
 			// Picture
@@ -3293,7 +3293,7 @@ if (!llPublishChildren)
 		// Copy the allocatables
 		//////
 			textboxDst->pa.font		= iFont_duplicate(textboxSrc->pa.font);
-			textboxDst->pa.bmpIcon	= iBmp_copy(textboxSrc->pa.bmpIcon);
+			textboxDst->p.icon	= iBmp_copy(textboxSrc->p.icon);
 
 			// Caption
 			iDatum_duplicate(&textboxDst->pa.caption, &textboxSrc->pa.caption);
@@ -3302,9 +3302,9 @@ if (!llPublishChildren)
 			textboxDst->pa.value	= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 			textboxDst->pa.picture	= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 			textboxDst->pa.mask		= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
-			iVariable_copyVariable(textboxDst->pa.value,	textboxSrc->pa.value);
-			iVariable_copyVariable(textboxDst->pa.picture,	textboxSrc->pa.picture);
-			iVariable_copyVariable(textboxDst->pa.mask,		textboxSrc->pa.mask);
+			iVariable_copy(textboxDst->pa.value,	textboxSrc->pa.value);
+			iVariable_copy(textboxDst->pa.picture,	textboxSrc->pa.picture);
+			iVariable_copy(textboxDst->pa.mask,		textboxSrc->pa.mask);
 
 
 		//////////
@@ -3383,7 +3383,7 @@ if (!llPublishChildren)
 		// Copy the allocatables
 		//////
 			editboxDst->pa.font		= iFont_duplicate(editboxSrc->pa.font);
-			editboxDst->pa.bmpIcon	= iBmp_copy(editboxSrc->pa.bmpIcon);
+			editboxDst->p.icon	= iBmp_copy(editboxSrc->p.icon);
 
 			// Caption
 			iDatum_duplicate(&editboxDst->pa.caption, &editboxSrc->pa.caption);
@@ -3392,9 +3392,9 @@ if (!llPublishChildren)
 			editboxDst->pa.value	= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 			editboxDst->pa.picture	= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 			editboxDst->pa.mask		= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
-			iVariable_copyVariable(editboxDst->pa.value,	editboxSrc->pa.value);
-			iVariable_copyVariable(editboxDst->pa.picture,	editboxSrc->pa.picture);
-			iVariable_copyVariable(editboxDst->pa.mask,		editboxSrc->pa.mask);
+			iVariable_copy(editboxDst->pa.value,	editboxSrc->pa.value);
+			iVariable_copy(editboxDst->pa.picture,	editboxSrc->pa.picture);
+			iVariable_copy(editboxDst->pa.mask,		editboxSrc->pa.mask);
 
 
 		//////////
@@ -3625,8 +3625,8 @@ if (!llPublishChildren)
 			//////////
 			// Set the default form icon
 			//////
-				iBmp_delete(&form->pa.bmpIcon, true, true);
-				form->pa.bmpIcon			= iBmp_copy(bmpVjrIcon);
+				iBmp_delete(&form->p.icon, true, true);
+				form->p.icon			= iBmp_copy(bmpVjrIcon);
 
 
 			//////////
@@ -3663,12 +3663,12 @@ if (!llPublishChildren)
 				form->p.alwaysOnTop						= false;
 				form->p.autoCenter						= false;
 				form->p.borderStyle						= _BORDER_STYLE_SIZABLE;
-				form->p.isClosable						= true;
+				form->p.closable						= true;
 				form->p.processKeyPreviewEvents			= false;
-				form->p.hasControlBox					= true;
-				form->p.hasMinButton					= true;
-				form->p.hasMaxButton					= true;
-				form->p.hasCloseButton					= true;
+				form->p.controlBox					= true;
+				form->p.minButton					= true;
+				form->p.maxButton					= true;
+				form->p.closeButton					= true;
 				form->p.scaleMode						= _SCALE_MODE_PIXELS;
 				form->p.showInTaskBar					= true;
 				form->p.windowState						= _WINDOW_STATE_NORMAL;
@@ -3741,18 +3741,18 @@ if (!llPublishChildren)
 						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
-						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
-						objChild->pa.bmpIcon	= iBmp_copy(bmpVjrIcon);			// Set the new
-						objChild->p.isVisible	= true;
+						iBmp_delete(&objChild->p.icon, true, true);				// Delete the old
+						objChild->p.icon	= iBmp_copy(bmpVjrIcon);			// Set the new
+						objChild->p.visible	= true;
 
 					} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
 						// Caption
 						iDatum_delete(&objChild->pa.caption, false);
 						iDatum_duplicate(&objChild->pa.caption, cgcName_formCaption, sizeof(cgcName_formCaption) - 1);
-						objChild->p.isOpaque = false;
+						objChild->p.opaque = false;
 						iFont_delete(&objChild->pa.font, true);
 						objChild->pa.font		= iFont_create(cgcFontName_windowTitleBar, 12, FW_NORMAL, false, false);
-						objChild->p.isVisible	= true;
+						objChild->p.visible	= true;
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMove, sizeof(cgcName_iconMove) - 1) == 0) {
 						// Adjust the size
@@ -3771,9 +3771,9 @@ if (!llPublishChildren)
 						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
-						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
-						objChild->pa.bmpIcon	= iBmp_copy(bmpMove);				// Set the new
-						objChild->p.isVisible	= true;
+						iBmp_delete(&objChild->p.icon, true, true);				// Delete the old
+						objChild->p.icon	= iBmp_copy(bmpMove);				// Set the new
+						objChild->p.visible	= true;
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMinimize, sizeof(cgcName_iconMinimize) - 1) == 0) {
 						// Adjust the size
@@ -3792,9 +3792,9 @@ if (!llPublishChildren)
 						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
-						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
-						objChild->pa.bmpIcon	= iBmp_copy(bmpMinimize);			// Set the new
-						objChild->p.isVisible	= true;
+						iBmp_delete(&objChild->p.icon, true, true);				// Delete the old
+						objChild->p.icon	= iBmp_copy(bmpMinimize);			// Set the new
+						objChild->p.visible	= true;
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconMaximize, sizeof(cgcName_iconMaximize) - 1) == 0) {
 						// Adjust the size
@@ -3813,9 +3813,9 @@ if (!llPublishChildren)
 						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
-						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
-						objChild->pa.bmpIcon	= iBmp_copy(bmpMaximize);			// Set the new
-						objChild->p.isVisible	= true;
+						iBmp_delete(&objChild->p.icon, true, true);				// Delete the old
+						objChild->p.icon	= iBmp_copy(bmpMaximize);			// Set the new
+						objChild->p.visible	= true;
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0) {
 						// Adjust the size
@@ -3834,9 +3834,9 @@ if (!llPublishChildren)
 						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
-						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
-						objChild->pa.bmpIcon	= iBmp_copy(bmpClose);				// Set the new
-						objChild->p.isVisible	= true;
+						iBmp_delete(&objChild->p.icon, true, true);				// Delete the old
+						objChild->p.icon	= iBmp_copy(bmpClose);				// Set the new
+						objChild->p.visible	= true;
 					}
 
 					// Move to next object
@@ -3899,8 +3899,8 @@ if (!llPublishChildren)
 			//////////
 			// Set the default form icon
 			//////
-				iBmp_delete(&subform->pa.bmpIcon, true, true);
-				subform->pa.bmpIcon			= iBmp_copy(bmpVjrIcon);
+				iBmp_delete(&subform->p.icon, true, true);
+				subform->p.icon			= iBmp_copy(bmpVjrIcon);
 
 
 			//////////
@@ -3942,18 +3942,18 @@ if (!llPublishChildren)
 						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.5f);
 
 						// Icon
-						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
-						objChild->pa.bmpIcon	= iBmp_copy(bmpVjrIcon);			// Set the new
-						objChild->p.isVisible	= true;
+						iBmp_delete(&objChild->p.icon, true, true);				// Delete the old
+						objChild->p.icon	= iBmp_copy(bmpVjrIcon);			// Set the new
+						objChild->p.visible	= true;
 
 					} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
 						// Caption
 						iDatum_delete(&objChild->pa.caption, false);
 						iDatum_duplicate(&objChild->pa.caption, cgcName_formCaption, sizeof(cgcName_formCaption) - 1);
-						objChild->p.isOpaque = false;
+						objChild->p.opaque = false;
 						iFont_delete(&objChild->pa.font, true);
 						objChild->pa.font		= iFont_create(cgcFontName_windowTitleBar, 10, FW_NORMAL, false, false);
-						objChild->p.isVisible	= true;
+						objChild->p.visible	= true;
 					}
 
 					// Move to next object
@@ -4014,18 +4014,18 @@ if (!llPublishChildren)
 						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
-						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
-						objChild->pa.bmpIcon	= iBmp_copy(bmpCarouselIcon);		// Set the new
-						objChild->p.isVisible	= true;
+						iBmp_delete(&objChild->p.icon, true, true);				// Delete the old
+						objChild->p.icon	= iBmp_copy(bmpCarouselIcon);		// Set the new
+						objChild->p.visible	= true;
 
 					} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
 						// Caption
 						iDatum_delete(&objChild->pa.caption, false);
 						iDatum_duplicate(&objChild->pa.caption, cgcName_formCaption, sizeof(cgcName_formCaption) - 1);
-						objChild->p.isOpaque = false;
+						objChild->p.opaque = false;
 						iFont_delete(&objChild->pa.font, true);
 						objChild->pa.font		= iFont_create(cgcFontName_windowTitleBar, 12, FW_NORMAL, false, false);
-						objChild->p.isVisible	= true;
+						objChild->p.visible	= true;
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0) {
 						// Adjust the size
@@ -4044,9 +4044,9 @@ if (!llPublishChildren)
 						iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
-						iBmp_delete(&objChild->pa.bmpIcon, true, true);				// Delete the old
-						objChild->pa.bmpIcon	= iBmp_copy(bmpClose);				// Set the new
-						objChild->p.isVisible	= true;
+						iBmp_delete(&objChild->p.icon, true, true);				// Delete the old
+						objChild->p.icon	= iBmp_copy(bmpClose);				// Set the new
+						objChild->p.visible	= true;
 					}
 
 					// Move to next object
@@ -4126,8 +4126,8 @@ if (!llPublishChildren)
 			//////
 				label->p.alignment					= _ALIGNMENT_LEFT;
 				iDatum_duplicate(&label->pa.caption, cgcName_label, 5);
-				label->p.isOpaque					= false;
-				label->p.isBorder					= false;
+				label->p.opaque					= false;
+				iVariable_set_s32(label->p.borderStyle, _BORDER_STYLE_NONE);
 				label->p.borderColor.color			= blackColor.color;
 				label->p.disabledBackColor.color	= disabledBackColor.color;
 				label->p.disabledForeColor.color	= disabledForeColor.color;
@@ -4187,8 +4187,8 @@ if (!llPublishChildren)
 				textbox->p.selectStart				= -1;
 				textbox->p.selectEnd				= -1;
 
-				textbox->p.isOpaque					= true;
-				textbox->p.isBorder					= false;
+				textbox->p.opaque					= true;
+				iVariable_set_s32(textbox->p.borderStyle, _BORDER_STYLE_NONE);
 				textbox->p.borderColor.color		= blackColor.color;
 				textbox->p.selectedBackColor.color	= selectedBackColor.color;
 				textbox->p.selectedForeColor.color	= selectedForeColor.color;
@@ -4232,7 +4232,7 @@ if (!llPublishChildren)
 
 			button->p.style						= _STYLE_3D;
 			button->p.alignment					= _ALIGNMENT_CENTER;
-			button->p.isOpaque					= false;
+			button->p.opaque					= false;
 			iDatum_duplicate(&button->pa.caption, cgcName_button, sizeof(cgcName_button) - 1);
 
 			button->p.disabledBackColor.color	= disabledBackColor.color;
@@ -4276,8 +4276,8 @@ if (!llPublishChildren)
 			editbox->p.selectStart					= -1;
 			editbox->p.selectEnd					= -1;
 
-			editbox->p.isOpaque						= true;
-			editbox->p.isBorder						= false;
+			editbox->p.opaque						= true;
+			iVariable_set_s32(editbox->p.borderStyle, _BORDER_STYLE_NONE);
 			editbox->p.borderColor.color			= blackColor.color;
 			editbox->p.selectedBackColor.color		= selectedBackColor.color;
 			editbox->p.selectedForeColor.color		= selectedForeColor.color;
@@ -4366,8 +4366,8 @@ if (!llPublishChildren)
 			checkbox->p.style						= _STYLE_3D;
 			iDatum_duplicate(&checkbox->pa.caption, cgcName_checkbox, 8);
 
-			checkbox->p.isOpaque					= false;
-			checkbox->p.isBorder					= false;
+			checkbox->p.opaque					= false;
+			iVariable_set_s32(checkbox->p.borderStyle, _BORDER_STYLE_NONE);
 			checkbox->p.borderColor.color			= blackColor.color;
 			checkbox->p.disabledBackColor.color		= disabledBackColor.color;
 			checkbox->p.disabledForeColor.color		= disabledForeColor.color;
@@ -4425,7 +4425,7 @@ if (!llPublishChildren)
 						// Checkbox label
 						iDatum_delete(&objChild->pa.caption, false);
 						iDatum_duplicate(&objChild->pa.caption, cgcName_checkbox, sizeof(cgcName_checkbox) - 1);
-						objChild->p.isOpaque = false;
+						objChild->p.opaque = false;
 						iFont_delete(&objChild->pa.font, true);
 						objChild->pa.font		= iFont_duplicate(checkbox->pa.font);
 
@@ -4527,8 +4527,8 @@ if (!llPublishChildren)
 			*radio->pa.maxValue->value.data_f64	= 100.0;
 			radio->p.roundTo					= 1.0f;
 
-			radio->p.isOpaque					= true;
-			radio->p.isBorder					= false;
+			radio->p.opaque					= true;
+			iVariable_set_s32(radio->p.borderStyle, _BORDER_STYLE_NONE);
 			radio->p.borderColor.color			= blackColor.color;
 			radio->p.disabledBackColor.color	= disabledBackColor.color;
 			radio->p.disabledForeColor.color	= disabledForeColor.color;
@@ -4573,7 +4573,7 @@ if (!llPublishChildren)
 		//////
 			iFont_delete(&obj->pa.font,					false);
 
-			iBmp_delete(&obj->pa.bmpIcon,				true, true);
+			iBmp_delete(&obj->p.icon,				true, true);
 			iBmp_delete(&obj->pa.mouseIcon,				true, true);
 
 			iDatum_delete(&obj->pa.name,				false);
@@ -5034,7 +5034,7 @@ if (!llPublishChildren)
 							iBmp_deleteCache(&obj->bc);
 
 							// Draw the window border
-							if (obj->p.isOpaque)		iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, &obj->rcClient,	true);
+							if (obj->p.opaque)		iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, &obj->rcClient,	true);
 							else						iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, NULL,			false);
 
 							// Apply a dappling
@@ -5052,12 +5052,12 @@ if (!llPublishChildren)
 						iBmp_frameRect(obj->bmp, &lrc, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, false, NULL, false);
 
 						// Draw the client area
-						SetRect(&lrc2, 8, obj->pa.bmpIcon->bi.biHeight + 2, lrc.right - obj->pa.bmpIcon->bi.biHeight - 2, lrc.bottom - obj->pa.bmpIcon->bi.biHeight - 1);
-						if (obj->p.isOpaque)
+						SetRect(&lrc2, 8, obj->p.icon->bi.biHeight + 2, lrc.right - obj->p.icon->bi.biHeight - 2, lrc.bottom - obj->p.icon->bi.biHeight - 1);
+						if (obj->p.opaque)
 							iBmp_fillRect(obj->bmp, &lrc2, obj->p.backColor, obj->p.backColor, obj->p.backColor, obj->p.backColor, false, NULL, false);
 
 						// Put a border around the client area
-						if (obj->p.isBorder)
+						if (obj->p.borderStyle != _BORDER_STYLE_NONE)
 						{
 							InflateRect(&lrc2, 1, 1);
 							iBmp_frameRect(obj->bmp, &lrc2, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, false, NULL, false);
@@ -5157,7 +5157,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 							iBmp_deleteCache(&obj->bc);
 
 							// Draw the window border
-							if (obj->p.isOpaque)
+							if (obj->p.opaque)
 							{
 								// Render the subform and client area
 								if (llIsFocusSubform)		iBmp_fillRect(obj->bmp, &lrc, NwFocusColor,  NeFocusColor,  SwFocusColor,  SeFocusColor,  true, &obj->rcClient,	true);
@@ -5184,7 +5184,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 						}
 
 						// Frame the client area
-						if (obj->p.isBorder)
+						if (obj->p.borderStyle != _BORDER_STYLE_NONE)
 						{
 							CopyRect(&lrc2, &obj->rcClient);
 							InflateRect(&lrc2, 1, 1);
@@ -5192,7 +5192,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 						}
 
 						// Frame the entire object
-						if (obj->p.isBorder)
+						if (obj->p.borderStyle != _BORDER_STYLE_NONE)
 							iBmp_frameRect(obj->bmp, &lrc, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, false, NULL, false);
 
 
@@ -5383,7 +5383,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 		{
 			if (obj->isDirtyRender)
 			{
-				if (obj->p.isOpaque)
+				if (obj->p.opaque)
 				{
 					// Use the back color
 					SetBkColor(obj->bmp->hdc, RGB(obj->p.backColor.red, obj->p.backColor.grn, obj->p.backColor.blu));
@@ -5435,7 +5435,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 					lrc.left -= 4;
 
 				// Frame rectangle
-				if (obj->p.isBorder)
+				if (obj->p.borderStyle != _BORDER_STYLE_NONE)
 					iBmp_frameRect(obj->bmp, &lrc, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, false, NULL, false);
 
 				// For checkbox labels, we handle them differently
@@ -5458,7 +5458,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 					     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc2, colorMouseDown,	false, 0.0f);
 					else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc2, colorMouseOver,	false, 0.0f);
 
-				} else if (obj->p.isOpaque) {
+				} else if (obj->p.opaque) {
 					// Colorize the area
 					     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
 					else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
@@ -5525,7 +5525,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				InflateRect(&lrc2, -4, -4);
 
 				// If we're opaque, draw the text inset by a margin, otherwise just overlay
-				if (obj->p.isOpaque)
+				if (obj->p.opaque)
 				{
 					// Opaque
 					SetBkColor(obj->bmp->hdc, RGB(obj->p.backColor.red, obj->p.backColor.grn, obj->p.backColor.blu));
@@ -5562,7 +5562,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 					DrawText(obj->bmp->hdc, obj->pa.value->value.data, obj->pa.value->value.length, &lrc2, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
 
 				// Frame rectangle
-				if (obj->p.isBorder)
+				if (obj->p.borderStyle != _BORDER_STYLE_NONE)
 					iBmp_frameRect(obj->bmp, &lrc, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, false, NULL, false);
 
 
@@ -5626,7 +5626,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				InflateRect(&lrc2, -4, -4);
 
 				// If we're opaque, draw the text inset by a margin, otherwise just overlay
-				if (obj->p.isOpaque)
+				if (obj->p.opaque)
 				{
 					// Opaque
 					SetBkColor(obj->bmp->hdc, RGB(obj->p.backColor.red, obj->p.backColor.grn, obj->p.backColor.blu));
@@ -5662,7 +5662,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				DrawText(obj->bmp->hdc, obj->pa.caption.data, obj->pa.caption.length, &lrc2, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
 
 				// Frame rectangle
-				if (obj->p.isBorder)
+				if (obj->p.borderStyle != _BORDER_STYLE_NONE)
 					iBmp_frameRect(obj->bmp, &lrc, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, false, NULL, false);
 
 
@@ -5719,7 +5719,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				// Re-render
 				lnPixelsRendered = iSEM_render(obj->pa.em, obj, obj->p.hasFocus);
 
-				if (obj->p.isBorder)
+				if (obj->p.borderStyle != _BORDER_STYLE_NONE)
 					iBmp_frameRect(obj->bmp, &lrc, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, obj->p.borderColor, false, NULL, false);
 
 				//////////
