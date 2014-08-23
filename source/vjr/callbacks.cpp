@@ -122,12 +122,12 @@
 			if (tlCtrl)
 			{
 				// They are just moving the cursor line
-				iSEM_navigate(obj->pa.em, obj, tnUnits * ((tlShift) ? -1 : -3), 0);
+				iSEM_navigate(obj->p.em, obj, tnUnits * ((tlShift) ? -1 : -3), 0);
 
 			// MouseWheel is a scroll
 			} else {
 				// They want to scroll the entire window, including the cursor line
-				iSEM_scroll(obj->pa.em, obj, tnUnits * ((tlShift) ? -1 : -3), 0);
+				iSEM_scroll(obj->p.em, obj, tnUnits * ((tlShift) ? -1 : -3), 0);
 			}
 			iObj_setDirtyRender_ascent(obj, true);
 			iWindow_render(win, false);
@@ -154,7 +154,7 @@
 			if (lfPercent < 0.0)
 				lfPercent += 1.0;
 
-			*obj->pa.value->value.data_f64	= *obj->pa.minValue->value.data_f64 + (lfPercent * (*obj->pa.maxValue->value.data_f64 - *obj->pa.minValue->value.data_f64));
+			*obj->p.value->value.data_f64	= get_f64(obj->p.minValue) + (lfPercent * (get_f64(obj->p.maxValue) - get_f64(obj->p.minValue)));
 			iObj_setDirtyRender_ascent(obj, true);
 			iWindow_render(win, false);
 
@@ -164,10 +164,10 @@
 				// They are clicking and dragging
 
 				// Need to navigate to the indicated x,y coordinate
-				iSEM_navigateTo_pixelXY(obj->pa.em, obj, x, y);
+				iSEM_navigateTo_pixelXY(obj->p.em, obj, x, y);
 
 				// Mark the mouse activity
-				iSEM_selectStart(obj->pa.em, _SEM_SELECT_MODE_ANCHOR);
+				iSEM_selectStart(obj->p.em, _SEM_SELECT_MODE_ANCHOR);
 
 				// Redraw our changes
 				iObj_setDirtyRender_ascent(obj, true);
@@ -203,7 +203,7 @@
 		if (obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX)
 		{
 			// They're clicking on a checkbox, toggle the value and re-render
-			*obj->parent->pa.value->value.data_s32 = ((*obj->parent->pa.value->value.data_s32 != 0) ? 0 : 1);
+			*obj->parent->p.value->value.data_s32 = ((*obj->parent->p.value->value.data_s32 != 0) ? 0 : 1);
 
 			// Calling the size with its current size forces the refresh
 			iObj_setSize(obj->parent,
@@ -214,11 +214,11 @@
 
 		} else if (obj->objType == _OBJ_TYPE_EDITBOX) {
 			// Need to navigate to the indicated x,y coordinate
-			iSEM_navigateTo_pixelXY(obj->pa.em, obj, x, y);
+			iSEM_navigateTo_pixelXY(obj->p.em, obj, x, y);
 
 			// Mark the mouse activity
-			if (!tlShift)		iSEM_selectStop(obj->pa.em);
-			else				iSEM_selectStart(obj->pa.em, _SEM_SELECT_MODE_ANCHOR);
+			if (!tlShift)		iSEM_selectStop(obj->p.em);
+			else				iSEM_selectStart(obj->p.em, _SEM_SELECT_MODE_ANCHOR);
 
 		} else if (obj->objType == _OBJ_TYPE_RADIO) {
 			// The mouse indicates the position
@@ -230,31 +230,31 @@
 			lfPercent						= atan2(lfY, lfX) / (M_PI * 2.0);
 			if (lfPercent < 0.0)
 				lfPercent += 1.0;
-			*obj->pa.value->value.data_f64	= *obj->pa.minValue->value.data_f64 + (lfPercent * (*obj->pa.maxValue->value.data_f64 - *obj->pa.minValue->value.data_f64));
+			*obj->p.value->value.data_f64	= *obj->p.minValue->value.data_f64 + (lfPercent * (*obj->p.maxValue->value.data_f64 - *obj->p.minValue->value.data_f64));
 
 		} else {
 			// Assume we consumed the mouse down event, and that the parent doesn't need to receive it
 			switch (obj->objType)
 			{
 				case _OBJ_TYPE_IMAGE:
-					if (iDatum_compare(&obj->pa.name, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0) {
+					if (iDatum_compare(&obj->p.name->value, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0) {
 						// Close
 						iVjr_shutdown();	// They clicked quit
 						return(false);		// When we get here, the object no longer exists
 
-					} else if (iDatum_compare(&obj->pa.name, cgcName_iconMove, sizeof(cgcName_iconMove) - 1) == 0) {
+					} else if (iDatum_compare(&obj->p.name->value, cgcName_iconMove, sizeof(cgcName_iconMove) - 1) == 0) {
 						// Move
 						llMouseDown					= false;
 						obj->ev.mouse.isMouseOver	= false;
 						iWindow_move(win);
 
-					} else if (iDatum_compare(&obj->pa.name, cgcName_iconMinimize, sizeof(cgcName_iconMinimize) - 1) == 0) {
+					} else if (iDatum_compare(&obj->p.name->value, cgcName_iconMinimize, sizeof(cgcName_iconMinimize) - 1) == 0) {
 						// Minimize
 						llMouseDown					= false;
 						obj->ev.mouse.isMouseOver	= false;
 						iWindow_minimize(win);
 
-					} else if (iDatum_compare(&obj->pa.name, cgcName_iconMaximize, sizeof(cgcName_iconMaximize) - 1) == 0) {
+					} else if (iDatum_compare(&obj->p.name->value, cgcName_iconMaximize, sizeof(cgcName_iconMaximize) - 1) == 0) {
 						// Maximize
 						llMouseDown					= false;
 						obj->ev.mouse.isMouseOver	= false;
@@ -343,7 +343,7 @@
 				if (tnVKey == VK_SPACE || tnVKey == VK_RETURN)
 				{
 					// Toggle the value and redraw
-					*objCheckbox->pa.value->value.data_s32 = ((*objCheckbox->pa.value->value.data_s32 == 0) ? 1 : 0);
+					*objCheckbox->p.value->value.data_s32 = ((*objCheckbox->p.value->value.data_s32 == 0) ? 1 : 0);
 					llRender = true;
 					iObj_setDirtyRender_ascent(objCheckbox, false);
 					if (objRender2 != objCheckbox)
@@ -361,7 +361,7 @@
 					if ((u8)tcAscii == 't' || (u8)tcAscii == 'T' || (u8)tcAscii == 'y' || (u8)tcAscii == 'Y' || (u8)tcAscii == '1')
 					{
 						// Set it to on
-						*obj->parent->pa.value->value.data_s32 = 1;
+						*obj->parent->p.value->value.data_s32 = 1;
 						llRender = true;
 						iObj_setDirtyRender_ascent(objCheckbox, false);
 						if (objRender2 != objCheckbox)
@@ -369,7 +369,7 @@
 
 					} else if ((u8)tcAscii == 'f' || (u8)tcAscii == 'F' || (u8)tcAscii == 'n' || (u8)tcAscii == 'N' || (u8)tcAscii == '0') {
 						// Set it to off
-						*obj->parent->pa.value->value.data_s32 = 0;
+						*obj->parent->p.value->value.data_s32 = 0;
 						llRender = true;
 						iObj_setDirtyRender_ascent(objCheckbox, false);
 						if (objRender2 != objCheckbox)

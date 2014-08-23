@@ -298,12 +298,19 @@ typedef SEM**		SEMpp;
 
 
 //////////
-// Form border styles
+// Border styles
 //////
 	const u32			_BORDER_STYLE_NONE					= 0;						// No border, not sizable
 	const u32			_BORDER_STYLE_OUTLINE				= 1;						// Outline border, not sizable
 	const u32			_BORDER_STYLE_FIXED					= 2;						// Normal border, not sizable
 	const u32			_BORDER_STYLE_SIZABLE				= 3;						// Normal border, sizable
+
+
+//////////
+// Back styles
+//////
+	const u32			_BACK_STYLE_TRANSPARENT				= 0;						// Transparent styles
+	const u32			_BACK_STYLE_OPAQUE					= 1;						// Opaque styles
 
 
 //////////

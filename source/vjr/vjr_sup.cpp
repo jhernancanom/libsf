@@ -239,12 +239,12 @@
 			iObj_set_icon(_screen,		bmpVjrIcon);
 
 			// Make them visible
-			sourceCode->p.visible	= true;
-			locals->p.visible		= true;
-			watch->p.visible		= true;
-			command->p.visible		= true;
-			sourceLight->p.visible	= true;
-			_screen->p.visible		= true;
+			iVariable_set_bool(sourceCode->p.visible,	true);
+			iVariable_set_bool(locals->p.visible,		true);
+			iVariable_set_bool(watch->p.visible,		true);
+			iVariable_set_bool(command->p.visible,		true);
+			iVariable_set_bool(sourceLight->p.visible,	true);
+			iVariable_set_bool(_screen->p.visible,		true);
 
 
 		//////////
@@ -278,13 +278,13 @@
 		//////////
 		// Add the editbox controls to the subforms
 		//////
-			sourceCode_editbox->p.visible	= true;
-			locals_editbox->p.visible		= true;
-			watch_editbox->p.visible		= true;
-			command_editbox->p.visible	= true;
-			debug_editbox->p.visible		= true;
-			output_editbox->p.visible		= true;
-			screen_editbox->p.visible		= true;
+			iVariable_set_bool(sourceCode_editbox->p.visible,	true);
+			iVariable_set_bool(locals_editbox->p.visible,		true);
+			iVariable_set_bool(watch_editbox->p.visible,		true);
+			iVariable_set_bool(command_editbox->p.visible,		true);
+			iVariable_set_bool(debug_editbox->p.visible,		true);
+			iVariable_set_bool(output_editbox->p.visible,		true);
+			iVariable_set_bool(screen_editbox->p.visible,		true);
 
 
 		//////////
@@ -304,15 +304,15 @@
 		// Give it a caption
 		//////
 			caption = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgcJDebiTitle, sizeof(cgcJDebiTitle) - 1);
-			iObj_setCaption(_jdebi, caption);
+			iObj_set_caption(_jdebi, caption);
 
 
 		//////////
 		// SourceCode window caption and font
 		//////
-			sourceCode->p.opaque						= false;
+			iVariable_set_s32(sourceCode->p.backStyle, _BACK_STYLE_TRANSPARENT);
 			iDatum_duplicate(&caption->value, cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
-			iObj_setCaption(sourceCode, caption);
+			iObj_set_caption(sourceCode, caption);
 
 			// Adjust the caption width
 			((SObject*)sourceCode->firstChild->ll.next)->rc.right = 90;
@@ -320,10 +320,10 @@
 			sourceCode_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			sourceCode_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown_sourceCode;
 			iVariable_set_s32(sourceCode_editbox->p.borderStyle, _BORDER_STYLE_FIXED);
-			sourceCode_editbox->p.borderColor.color		= lineNumberBackColor.color;
-			sourceCode_editbox->pa.em->showCursorLine	= true;
-			sourceCode_editbox->pa.em->isSourceCode		= true;
-			sourceCode_editbox->pa.em->showLineNumbers	= true;
+			iVariable_set_s32(sourceCode_editbox->p.borderColor, lineNumberBackColor.color);
+			sourceCode_editbox->p.em->showCursorLine	= true;
+			sourceCode_editbox->p.em->isSourceCode		= true;
+			sourceCode_editbox->p.em->showLineNumbers	= true;
 			iObj_set_icon(sourceCode, bmpSourceCodeIcon);
 
 
@@ -331,7 +331,7 @@
 		// Locals window caption and font
 		//////
 			iDatum_duplicate(&caption->value, cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
-			iObj_setCaption(locals, caption);
+			iObj_set_caption(locals, caption);
 			locals_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			locals_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			iObj_set_icon(locals, bmpLocalsIcon);
@@ -425,10 +425,10 @@
 		// Watch window caption and font
 		//////
 			iDatum_duplicate(&caption->value, cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
-			iObj_setCaption(watch, caption);
+			iObj_set_caption(watch, caption);
 			watch_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			watch_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
-			watch_editbox->pa.em->showCursorLine	= true;
+			watch_editbox->p.em->showCursorLine	= true;
 			iObj_set_icon(watch, bmpWatchIcon);
 
 			// Adjust the caption width
@@ -439,13 +439,13 @@
 		// Command window caption and font
 		//////
 			iDatum_duplicate(&caption->value, cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
-			iObj_setCaption(command, caption);
+			iObj_set_caption(command, caption);
 			command_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			command_editbox->ev.keyboard._onKeyDown		= (u32)&iSEM_onKeyDown_sourceCode;
 			command_editbox->p.hasFocus					= true;
-			command_editbox->pa.em->showCursorLine		= true;
-			command_editbox->pa.em->isSourceCode		= true;
-			command_editbox->pa.em->showLineNumbers		= true;
+			command_editbox->p.em->showCursorLine		= true;
+			command_editbox->p.em->isSourceCode		= true;
+			command_editbox->p.em->showLineNumbers		= true;
 			iObj_set_icon(command, bmpCommandIcon);
 
 			// Adjust the caption width
@@ -456,10 +456,10 @@
 		// Debug window caption and font
 		//////
 			iDatum_duplicate(&caption->value, cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
-			iObj_setCaption(debug, caption);
+			iObj_set_caption(debug, caption);
 			debug_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			debug_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
-			debug_editbox->pa.em->showCursorLine	= true;
+			debug_editbox->p.em->showCursorLine	= true;
 			iObj_set_icon(debug, bmpDebugIcon);
 
 			// Adjust the caption width
@@ -470,10 +470,10 @@
 		// Output window caption and font
 		//////
 			iDatum_duplicate(&caption->value, cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
-			iObj_setCaption(output, caption);
+			iObj_set_caption(output, caption);
 			output_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_MEDIUM, false, false);
 			output_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
-			output_editbox->pa.em->showCursorLine	= true;
+			output_editbox->p.em->showCursorLine	= true;
 			iObj_set_icon(output, bmpOutputIcon);
 
 			// Adjust the caption width
@@ -484,17 +484,17 @@
 		// SourceLight a caption and font
 		//////
 			iDatum_duplicate(&caption->value, cgcSourceLightTitle, sizeof(cgcSourceLightTitle) - 1);
-			iObj_setCaption(sourceLight, caption);
+			iObj_set_caption(sourceLight, caption);
 			sourceLight->pa.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			sourceLight->p.visible	= true;
-			sourceLight->p.opaque		= true;
+			iVariable_set_bool(sourceLight->p.visible, true);
+			iVariable_set_s32(sourceLight->p.backStyle, _BACK_STYLE_OPAQUE);
 
 
 		//////////
 		// _screen a caption and font
 		//////
 			iDatum_duplicate(&caption->value, cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
-			iObj_setCaption(_screen, caption);
+			iObj_set_caption(_screen, caption);
 			_screen->pa.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 
 
@@ -503,10 +503,10 @@
 		//////
 			screen_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			screen_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
-			screenData								= screen_editbox->pa.em;
+			screenData								= screen_editbox->p.em;
 			screenData->showCursorLine				= true;
 			screenData->showEndLine					= true;
-			_screen->p.visible				= true;
+			iVariable_set_bool(_screen->p.visible, true);
 
 
 		//////////
@@ -818,7 +818,7 @@
 
 		// Save where we were
 		iSEM_saveToDisk(screenData,				(s8*)cgcScreenDataFilename);
-		iSEM_saveToDisk(command_editbox->pa.em,	(s8*)cgcCommandHistoryFilename);
+		iSEM_saveToDisk(command_editbox->p.em,	(s8*)cgcCommandHistoryFilename);
 
 		// Close the allocated memory blocks
 		iVjr_releaseMemory();
@@ -1278,8 +1278,7 @@
 					// Physically create the window
 					//////
 						// Window name
-						if (obj->pa.name.data)		memcpy(buffer, obj->pa.name.data,	min(obj->pa.name.length, sizeof(buffer) - 1));
-						else						memcpy(buffer, cgcScreenTitle,		sizeof(cgcScreenTitle));
+						memcpy(buffer, obj->p.name->value.data,	min(obj->p.name->value.length, sizeof(buffer) - 1));
 
 						// Build it
 						winNew->hwnd = CreateWindow(bufferClass, buffer, WS_POPUP, 

@@ -274,7 +274,7 @@
 
 				// Indicate success
 				sprintf(buffer, "Loaded: %s\0", tcPathname);
-				iSEM_appendLine(output_editbox->pa.em, buffer, strlen(buffer));
+				iSEM_appendLine(output_editbox->p.em, buffer, strlen(buffer));
 				return(true);
 
 			} else {
@@ -949,8 +949,8 @@ debug_break;
 		if (em && obj)
 		{
 			// What is the object?
-			backColor	= obj->p.backColor;
-			foreColor	= obj->p.foreColor;
+			backColor	= get_bgra(obj->p.backColor);
+			foreColor	= get_bgra(obj->p.foreColor);
 
 		} else {
 			// It's insane, so we set our colors to default
@@ -1019,7 +1019,7 @@ debug_break;
 		if (obj && obj->objType == _OBJ_TYPE_EDITBOX)
 		{
 			// Grab the EM for this
-			em = obj->pa.em;
+			em = obj->p.em;
 
 			// Send it its key
 			if (!tlCtrl && !tlShift && !tlAlt)
@@ -1178,10 +1178,10 @@ debug_break;
 		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
 		llProcessed = false;
-		if (obj && obj->objType == _OBJ_TYPE_EDITBOX && obj->pa.em)
+		if (obj && obj->objType == _OBJ_TYPE_EDITBOX && obj->p.em)
 		{
 			// Grab the EM for this
-			em = obj->pa.em;
+			em = obj->p.em;
 
 			// Send it its key
 			if (!tlCtrl && !tlShift && !tlAlt)
@@ -2494,7 +2494,7 @@ renderAsText:
 
 
 // s8 buffer[256];
-// if (obj->parent && obj->parent->objType == _OBJ_TYPE_SUBFORM && iDatum_compare(&obj->parent->pa.caption, cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1) == 0)
+// if (obj->parent && obj->parent->objType == _OBJ_TYPE_SUBFORM && iDatum_compare(&obj->parent->p.caption, cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1) == 0)
 // {
 // 	sprintf(buffer, "c:\\temp\\ems\\%u.bmp\0", (u32)em);
 // 	iBmp_saveToDisk(bmp, buffer);

@@ -293,28 +293,28 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		// Initially populate _jdebi
 		// Load in the history if it exists
-		if (!iSEM_loadFromDisk(command_editbox->pa.em, (s8*)cgcCommandHistoryFilename, true))
+		if (!iSEM_loadFromDisk(command_editbox->p.em, (s8*)cgcCommandHistoryFilename, true))
 		{
-			iSEM_appendLine(command_editbox->pa.em, (s8*)"*** Welcome to Visual FreePro, Junior! :-)", -1);
-			iSEM_appendLine(command_editbox->pa.em, (s8*)"*** For now, this can be thought of as a command window ... with a twist.", -1);
-			iSEM_appendLine(command_editbox->pa.em, (s8*)"*** It works like an editor window.  You can insert new lines, edit old ones, etc.", -1);
-			iSEM_appendLine(command_editbox->pa.em, (s8*)"*** To execute a command, press F6 or Enter if you're on the last line, or use F6 on any line.", -1);
-			iSEM_appendLine(command_editbox->pa.em, (s8*)"*** You can use clear, quit, ? 999, ? \"sample\" (literals), and ? _startupTime (global variable) in this daily build.", -1);
-			iSEM_appendLine(command_editbox->pa.em, (s8*)"*** Remember this always:  Love makes you smile. It keeps an inward peace unlike any other. :-)", -1);
+			iSEM_appendLine(command_editbox->p.em, (s8*)"*** Welcome to Visual FreePro, Junior! :-)", -1);
+			iSEM_appendLine(command_editbox->p.em, (s8*)"*** For now, this can be thought of as a command window ... with a twist.", -1);
+			iSEM_appendLine(command_editbox->p.em, (s8*)"*** It works like an editor window.  You can insert new lines, edit old ones, etc.", -1);
+			iSEM_appendLine(command_editbox->p.em, (s8*)"*** To execute a command, press F6 or Enter if you're on the last line, or use F6 on any line.", -1);
+			iSEM_appendLine(command_editbox->p.em, (s8*)"*** You can use clear, quit, ? 999, ? \"sample\" (literals), and ? _startupTime (global variable) in this daily build.", -1);
+			iSEM_appendLine(command_editbox->p.em, (s8*)"*** Remember this always:  Love makes you smile. It keeps an inward peace unlike any other. :-)", -1);
 		}
 
 		// Navigate to the last line
-		iSEM_navigateToEndLine(command_editbox->pa.em, command_editbox);
+		iSEM_navigateToEndLine(command_editbox->p.em, command_editbox);
 
 		// Make sure there's a blank line at the end
-		if (command_editbox->pa.em->ecCursorLine->sourceCodePopulated != 0)
+		if (command_editbox->p.em->ecCursorLine->sourceCodePopulated != 0)
 		{
-			iSEM_appendLine(command_editbox->pa.em, NULL, 0);
-			iSEM_navigateToEndLine(command_editbox->pa.em, command_editbox);
+			iSEM_appendLine(command_editbox->p.em, NULL, 0);
+			iSEM_navigateToEndLine(command_editbox->p.em, command_editbox);
 		}
 
 		// Load some source code
-		iSEM_loadFromDisk(sourceCode_editbox->pa.em, (s8*)cgcStartupPrgFilename, true);
+		iSEM_loadFromDisk(sourceCode_editbox->p.em, (s8*)cgcStartupPrgFilename, true);
 
 		// Redraw
 		iVjr_appendSystemLog("Final render _jdebi");
@@ -422,7 +422,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			// Give it a caption
 			//////
 				caption = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgcSystemLog, sizeof(cgcSystemLog) - 1);
-				iObj_setCaption(gobj_splashListing, caption);
+				iObj_set_caption(gobj_splashListing, caption);
 				iVariable_delete(caption, true);
 
 
@@ -442,10 +442,10 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			gobj_splashListingEditbox->bmp = iBmp_allocate();
 			iBmp_createBySize(gobj_splashListingEditbox->bmp, gobj_splashListing->rcClient.right - gobj_splashListing->rcClient.left, gobj_splashListing->rcClient.bottom - gobj_splashListing->rcClient.top, bmp->bi.biBitCount);
 			gobj_splashListingEditbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
-			gobj_splashListingEditbox->pa.em->font				= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
+			gobj_splashListingEditbox->p.em->font				= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
 			gobj_splashListingEditbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
-			gobj_splashListingEditbox->p.visible				= true;
-			systemLog											= gobj_splashListingEditbox->pa.em;
+			iVariable_set_bool(gobj_splashListingEditbox->p.visible, true);
+			systemLog											= gobj_splashListingEditbox->p.em;
 			systemLog->showEndLine								= true;
 			systemLog->showCursorLine							= true;
 
@@ -473,7 +473,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		if (gobj_splashListing && gobj_splashListingEditbox)
 		{
 			// Move to the end of the list
-			iSEM_navigateToEndLine(gobj_splashListingEditbox->pa.em, gobj_splashListing);
+			iSEM_navigateToEndLine(gobj_splashListingEditbox->p.em, gobj_splashListing);
 
 			if (trc && gobj_splashListing->bmp)
 			{

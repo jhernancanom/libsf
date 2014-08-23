@@ -46,310 +46,311 @@
 
 
 
-bool iObj_setLogical(SObject* obj, SVariable* var, bool* tlDest)
-{
-	// Make sure the environment is sane
-	if (obj && var && iVariable_isTypeLogical(var))
-	{
-		// Set the value
-		*tlDest = ((var->value.data[0] == _LOGICAL_FALSE) ? false : true);
+// bool iObj_setLogical(SObject* obj, SVariable* var, bool* tlDest)
+// {
+// 	// Make sure the environment is sane
+// 	if (obj && var && iVariable_isTypeLogical(var))
+// 	{
+// 		// Set the value
+// 		*tlDest = ((var->value.data[0] == _LOGICAL_FALSE) ? false : true);
+// 
+// 		// Indicate success
+// 		return(true);
+// 	}
+// 	// If we get here, failure
+// 	return(false);
+// }
+// 
+// 
+// 
+// 
+// 
+// //////////
+// // OBJECT Properties
+// //////
+// SVariable* iObj_getProperty_scrollX(SObject* obj)
+// {
+// 	SVariable* var;
+// 
+// 
+// 	// Make sure the environment is sane
+// 	if (obj)
+// 	{
+// 		// Create a new variable
+// 		var = iVariable_create(_VAR_TYPE_INTEGER, NULL);
+// 		*(s32*)var->value.data = obj->scrollOffsetX;
+// 		return(var);
+// 	}
+// 	// If we get here, failure
+// 	return(NULL);
+// }
+// 
+// bool iObj_setProperty_scrollY(SObject* obj, SVariable* var)
+// {
+// 	return(iObj_setInteger(obj, var, &obj->scrollOffsetY, 0, 0, false, 0));
+// }
+// 
+// SVariable* iObj_getProperty_scrollY(SObject* obj)
+// {
+// 	SVariable* var;
+// 
+// 
+// 	// Make sure the environment is sane
+// 	if (obj)
+// 	{
+// 		// Create a new variable
+// 		var = iVariable_create(_VAR_TYPE_INTEGER, NULL);
+// 		*(s32*)var->value.data = obj->scrollOffsetY;
+// 		return(var);
+// 	}
+// 	// If we get here, failure
+// 	return(NULL);
+// }
+// 
+// bool iObj_setProperty_scaleX(SObject* obj, SVariable* var)
+// {
+// 	s32		lnNewWidth;
+// 	f32		value;
+// 	bool	error;
+// 	u32		errorNum;
+// 
+// 
+// 	// Make sure the environment is sane
+// 	if (obj && var && iVariable_isTypeNumeric(var))
+// 	{
+// 		// Try to get the value
+// 		value = iiVariable_getAs_f32(var, false, &error, &errorNum);
+// 		if (error)
+// 		{
+// 			iError_reportByNumber(errorNum, var->compRelated);
+// 			return(false);
+// 		}
+// 		if (value <= 0.0f)
+// 		{
+// 			iError_reportByNumber(_ERROR_OUT_OF_RANGE, var->compRelated);
+// 			return(false);
+// 		}
+// 
+// 		// Set the value
+// 		// Note:  This is done by resizing the underlying bitmap.
+// 		lnNewWidth = (s32)((f32)(obj->rc.right - obj->rc.left) / value);
+// 		obj->bmp = iBmp_verifySizeOrResize(obj->bmp, lnNewWidth, obj->bmp->bi.biHeight, obj->bmp->bi.biBitCount);
+// 
+// 		// Indicate success
+// 		return(true);
+// 	}
+// 	// If we get here, failure
+// 	return(false);
+// }
+// 
+// SVariable* iObj_getProperty_scaleX(SObject* obj)
+// {
+// 	SVariable* var;
+// 
+// 
+// 	// Make sure the environment is sane
+// 	if (obj)
+// 	{
+// 		// Create a new variable
+// 		var = iVariable_create(_VAR_TYPE_F32, NULL);
+// 		if (!obj->isScaled || !obj->bmpScaled)
+// 		{
+// 			// Invalid
+// 			*(f32*)var->value.data = -1.0f;
+// 
+// 		} else {
+// 			// Compute the scale ratio
+// 			*(f32*)var->value.data = ((f32)(obj->rc.right - obj->rc.left) / (f32)obj->bmp->bi.biWidth);
+// 		}
+// 		return(var);
+// 	}
+// 	// If we get here, failure
+// 	return(NULL);
+// }
+// 
+// bool iObj_setProperty_scaleY(SObject* obj, SVariable* var)
+// {
+// 	s32		lnNewHeight;
+// 	f32		value;
+// 	bool	error;
+// 	u32		errorNum;
+// 
+// 
+// 	// Make sure the environment is sane
+// 	if (obj && var && iVariable_isTypeNumeric(var))
+// 	{
+// 		// Try to get the value
+// 		value = iiVariable_getAs_f32(var, false, &error, &errorNum);
+// 		if (error)
+// 		{
+// 			iError_reportByNumber(errorNum, var->compRelated);
+// 			return(false);
+// 		}
+// 		if (value <= 0.0f)
+// 		{
+// 			iError_reportByNumber(_ERROR_OUT_OF_RANGE, var->compRelated);
+// 			return(false);
+// 		}
+// 
+// 		// Set the value
+// 		// Note:  This is done by resizing the underlying bitmap.
+// 		lnNewHeight = (s32)((f32)(obj->rc.bottom - obj->rc.top) / value);
+// 		obj->bmp = iBmp_verifySizeOrResize(obj->bmp, obj->bmp->bi.biWidth, lnNewHeight, obj->bmp->bi.biBitCount);
+// 
+// 		// Indicate success
+// 		return(true);
+// 	}
+// 	// If we get here, failure
+// 	return(false);
+// }
+// 
+// SVariable* iObj_getProperty_scaleY(SObject* obj)
+// {
+// 	SVariable* var;
+// 
+// 
+// 	// Make sure the environment is sane
+// 	if (obj)
+// 	{
+// 		// Create a new variable
+// 		var = iVariable_create(_VAR_TYPE_F32, NULL);
+// 		if (!obj->isScaled || !obj->bmpScaled)
+// 		{
+// 			// Invalid
+// 			*(f32*)var->value.data = -1.0f;
+// 
+// 		} else {
+// 			// Compute the scale ratio
+// 			*(f32*)var->value.data = ((f32)(obj->rc.bottom - obj->rc.top) / (f32)obj->bmp->bi.biHeight);
+// 		}
+// 		return(var);
+// 	}
+// 	// If we get here, failure
+// 	return(NULL);
+// }
+// 
+// void iObj_setIcon(SObject* obj, SBitmap* bmp)
+// {
+// 	SObject*	objChild;
+// 	RECT		lrc;
+// 
+// 
+// 	// Make sure the environment is sane
+// 	if (obj && iBmp_validate(bmp))
+// 	{
+// 		// If it's a form, we also update the child icon
+// 		switch (obj->objType)
+// 		{
+// 			case _OBJ_TYPE_FORM:
+// 			case _OBJ_TYPE_SUBFORM:
+// 				//////////
+// 				// Create the icon at 24x24
+// 				//////
+// 					iBmp_delete(&obj->p.icon, true, true);		// Delete the old
+// 					obj->p.icon = iBmp_allocate();
+// 					iBmp_createBySize(obj->p.icon, bmpArrowUl->bi.biWidth, bmpArrowUl->bi.biHeight, 24);
+// 					iBmp_scale(obj->p.icon, bmp);				// Scale the indicated icon into our 24x24 size
+// 
+// 
+// 				//////////
+// 				// Forms have child-objects which hold their icons (so they can respond to user events, etc.)
+// 				//////
+// 					objChild = obj->firstChild;
+// 					while (objChild)
+// 					{
+// 						if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_icon, sizeof(cgcName_icon) - 1) == 0)
+// 						{
+// 							// Adjust the size
+// 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpArrowUl->bi.biWidth, bmpArrowUl->bi.biHeight);
+// 
+// 							// This is the one to update
+// 							iBmp_delete(&objChild->p.bmpPicture,		true, true);	// Delete the old
+// 							iBmp_delete(&objChild->p.bmpPictureOver,	true, true);	// Delete the old
+// 							iBmp_delete(&objChild->p.bmpPictureDown,	true, true);	// Delete the old
+// 							objChild->p.bmpPicture		= iBmp_copy(obj->p.icon);	// Set the new
+// 							objChild->p.bmpPictureOver	= iBmp_copy(obj->p.icon);	// Set the new
+// 							objChild->p.bmpPictureDown	= iBmp_copy(obj->p.icon);	// Set the new
+// 
+// 							// Add highlighting for the over and down
+// 							SetRect(&lrc, 0, 0, 24, 24);
+// 							iBmp_colorize(objChild->p.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
+// 							iBmp_colorize(objChild->p.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
+// 
+// 							// All done
+// 							break;
+// 						}
+// 
+// 						// Move to next object
+// 						objChild = (SObject*)objChild->ll.next;
+// 					}
+// 					break;
+// 		}
+// 	}
+// }
+// 
+// bool iObj_set_caption(SObject* obj, SVariable* var)
+// {
+// 	bool		llResult;
+// 	SObject*	objChild;
+// 
+// 
+// 	llResult = false;
+// 	if (obj)
+// 	{
+// 		// Set the main caption
+// 		obj->isDirtyRender = true;
+// 		if ((llResult = iObj_setCharacter(obj, var, &obj->p.caption, var->value.data, var->value.length)))
+// 		{
+// 			switch (obj->objType)
+// 			{
+// 				case _OBJ_TYPE_FORM:
+// 				case _OBJ_TYPE_SUBFORM:
+// 					objChild = obj->firstChild;
+// 					while (objChild)
+// 					{
+// 						// Is this one
+// 						if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0)
+// 						{
+// 							// Update this item
+// 							llResult				= iObj_setCharacter(objChild, var, &objChild->p.caption, var->value.data, var->value.length);
+// 							objChild->isDirtyRender	= true;
+// 
+// 							// All done
+// 							break;
+// 						}
+// 
+// 						// Move to next sibling
+// 						objChild = (SObject*)objChild->ll.next;
+// 					}
+// 					break;
+// 
+// 				case _OBJ_TYPE_CHECKBOX:
+// 					objChild = obj->firstChild;
+// 					while (objChild)
+// 					{
+// 						// Is this one
+// 						if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcName_checkboxLabel, sizeof(cgcName_checkboxLabel) - 1) == 0)
+// 						{
+// 							// Update this item
+// 							llResult				= iObj_setCharacter(objChild, var, &objChild->p.caption, var->value.data, var->value.length);
+// 							objChild->isDirtyRender	= true;
+// 
+// 							// All done
+// 							break;
+// 						}
+// 
+// 						// Move to next sibling
+// 						objChild = (SObject*)objChild->ll.next;
+// 					}
+// 					break;
+// 			}
+// 		}
+// 	}
+// 
+// 	// Indicate our status
+// 	return(llResult);
+// }
 
-		// Indicate success
-		return(true);
-	}
-	// If we get here, failure
-	return(false);
-}
-
-
-
-
-
-//////////
-// OBJECT Properties
-//////
-SVariable* iObj_getProperty_scrollX(SObject* obj)
-{
-	SVariable* var;
-
-
-	// Make sure the environment is sane
-	if (obj)
-	{
-		// Create a new variable
-		var = iVariable_create(_VAR_TYPE_INTEGER, NULL);
-		*(s32*)var->value.data = obj->scrollOffsetX;
-		return(var);
-	}
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iObj_setProperty_scrollY(SObject* obj, SVariable* var)
-{
-	return(iObj_setInteger(obj, var, &obj->scrollOffsetY, 0, 0, false, 0));
-}
-
-SVariable* iObj_getProperty_scrollY(SObject* obj)
-{
-	SVariable* var;
-
-
-	// Make sure the environment is sane
-	if (obj)
-	{
-		// Create a new variable
-		var = iVariable_create(_VAR_TYPE_INTEGER, NULL);
-		*(s32*)var->value.data = obj->scrollOffsetY;
-		return(var);
-	}
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iObj_setProperty_scaleX(SObject* obj, SVariable* var)
-{
-	s32		lnNewWidth;
-	f32		value;
-	bool	error;
-	u32		errorNum;
-
-
-	// Make sure the environment is sane
-	if (obj && var && iVariable_isTypeNumeric(var))
-	{
-		// Try to get the value
-		value = iiVariable_getAs_f32(var, false, &error, &errorNum);
-		if (error)
-		{
-			iError_reportByNumber(errorNum, var->compRelated);
-			return(false);
-		}
-		if (value <= 0.0f)
-		{
-			iError_reportByNumber(_ERROR_OUT_OF_RANGE, var->compRelated);
-			return(false);
-		}
-
-		// Set the value
-		// Note:  This is done by resizing the underlying bitmap.
-		lnNewWidth = (s32)((f32)(obj->rc.right - obj->rc.left) / value);
-		obj->bmp = iBmp_verifySizeOrResize(obj->bmp, lnNewWidth, obj->bmp->bi.biHeight, obj->bmp->bi.biBitCount);
-
-		// Indicate success
-		return(true);
-	}
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iObj_getProperty_scaleX(SObject* obj)
-{
-	SVariable* var;
-
-
-	// Make sure the environment is sane
-	if (obj)
-	{
-		// Create a new variable
-		var = iVariable_create(_VAR_TYPE_F32, NULL);
-		if (!obj->isScaled || !obj->bmpScaled)
-		{
-			// Invalid
-			*(f32*)var->value.data = -1.0f;
-
-		} else {
-			// Compute the scale ratio
-			*(f32*)var->value.data = ((f32)(obj->rc.right - obj->rc.left) / (f32)obj->bmp->bi.biWidth);
-		}
-		return(var);
-	}
-	// If we get here, failure
-	return(NULL);
-}
-
-bool iObj_setProperty_scaleY(SObject* obj, SVariable* var)
-{
-	s32		lnNewHeight;
-	f32		value;
-	bool	error;
-	u32		errorNum;
-
-
-	// Make sure the environment is sane
-	if (obj && var && iVariable_isTypeNumeric(var))
-	{
-		// Try to get the value
-		value = iiVariable_getAs_f32(var, false, &error, &errorNum);
-		if (error)
-		{
-			iError_reportByNumber(errorNum, var->compRelated);
-			return(false);
-		}
-		if (value <= 0.0f)
-		{
-			iError_reportByNumber(_ERROR_OUT_OF_RANGE, var->compRelated);
-			return(false);
-		}
-
-		// Set the value
-		// Note:  This is done by resizing the underlying bitmap.
-		lnNewHeight = (s32)((f32)(obj->rc.bottom - obj->rc.top) / value);
-		obj->bmp = iBmp_verifySizeOrResize(obj->bmp, obj->bmp->bi.biWidth, lnNewHeight, obj->bmp->bi.biBitCount);
-
-		// Indicate success
-		return(true);
-	}
-	// If we get here, failure
-	return(false);
-}
-
-SVariable* iObj_getProperty_scaleY(SObject* obj)
-{
-	SVariable* var;
-
-
-	// Make sure the environment is sane
-	if (obj)
-	{
-		// Create a new variable
-		var = iVariable_create(_VAR_TYPE_F32, NULL);
-		if (!obj->isScaled || !obj->bmpScaled)
-		{
-			// Invalid
-			*(f32*)var->value.data = -1.0f;
-
-		} else {
-			// Compute the scale ratio
-			*(f32*)var->value.data = ((f32)(obj->rc.bottom - obj->rc.top) / (f32)obj->bmp->bi.biHeight);
-		}
-		return(var);
-	}
-	// If we get here, failure
-	return(NULL);
-}
-
-void iObj_setIcon(SObject* obj, SBitmap* bmp)
-{
-	SObject*	objChild;
-	RECT		lrc;
-
-
-	// Make sure the environment is sane
-	if (obj && iBmp_validate(bmp))
-	{
-		// If it's a form, we also update the child icon
-		switch (obj->objType)
-		{
-			case _OBJ_TYPE_FORM:
-			case _OBJ_TYPE_SUBFORM:
-				//////////
-				// Create the icon at 24x24
-				//////
-					iBmp_delete(&obj->p.icon, true, true);		// Delete the old
-					obj->p.icon = iBmp_allocate();
-					iBmp_createBySize(obj->p.icon, bmpArrowUl->bi.biWidth, bmpArrowUl->bi.biHeight, 24);
-					iBmp_scale(obj->p.icon, bmp);				// Scale the indicated icon into our 24x24 size
-
-
-				//////////
-				// Forms have child-objects which hold their icons (so they can respond to user events, etc.)
-				//////
-					objChild = obj->firstChild;
-					while (objChild)
-					{
-						if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_icon, sizeof(cgcName_icon) - 1) == 0)
-						{
-							// Adjust the size
-							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpArrowUl->bi.biWidth, bmpArrowUl->bi.biHeight);
-
-							// This is the one to update
-							iBmp_delete(&objChild->pa.bmpPicture,		true, true);	// Delete the old
-							iBmp_delete(&objChild->pa.bmpPictureOver,	true, true);	// Delete the old
-							iBmp_delete(&objChild->pa.bmpPictureDown,	true, true);	// Delete the old
-							objChild->pa.bmpPicture		= iBmp_copy(obj->p.icon);	// Set the new
-							objChild->pa.bmpPictureOver	= iBmp_copy(obj->p.icon);	// Set the new
-							objChild->pa.bmpPictureDown	= iBmp_copy(obj->p.icon);	// Set the new
-
-							// Add highlighting for the over and down
-							SetRect(&lrc, 0, 0, 24, 24);
-							iBmp_colorize(objChild->pa.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
-							iBmp_colorize(objChild->pa.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
-
-							// All done
-							break;
-						}
-
-						// Move to next object
-						objChild = (SObject*)objChild->ll.next;
-					}
-					break;
-		}
-	}
-}
-
-bool iObj_setCaption(SObject* obj, SVariable* var)
-{
-	bool		llResult;
-	SObject*	objChild;
-
-
-	llResult = false;
-	if (obj)
-	{
-		// Set the main caption
-		obj->isDirtyRender = true;
-		if ((llResult = iObj_setCharacter(obj, var, &obj->pa.caption, var->value.data, var->value.length)))
-		{
-			switch (obj->objType)
-			{
-				case _OBJ_TYPE_FORM:
-				case _OBJ_TYPE_SUBFORM:
-					objChild = obj->firstChild;
-					while (objChild)
-					{
-						// Is this one
-						if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0)
-						{
-							// Update this item
-							llResult				= iObj_setCharacter(objChild, var, &objChild->pa.caption, var->value.data, var->value.length);
-							objChild->isDirtyRender	= true;
-
-							// All done
-							break;
-						}
-
-						// Move to next sibling
-						objChild = (SObject*)objChild->ll.next;
-					}
-					break;
-
-				case _OBJ_TYPE_CHECKBOX:
-					objChild = obj->firstChild;
-					while (objChild)
-					{
-						// Is this one
-						if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcName_checkboxLabel, sizeof(cgcName_checkboxLabel) - 1) == 0)
-						{
-							// Update this item
-							llResult				= iObj_setCharacter(objChild, var, &objChild->pa.caption, var->value.data, var->value.length);
-							objChild->isDirtyRender	= true;
-
-							// All done
-							break;
-						}
-
-						// Move to next sibling
-						objChild = (SObject*)objChild->ll.next;
-					}
-					break;
-			}
-		}
-	}
-
-	// Indicate our status
-	return(llResult);
-}
 
 bool iObj_set_activeColumn(SObject* obj, SVariable* var)
 {
@@ -360,7 +361,7 @@ bool iObj_set_activeColumn(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -405,7 +406,7 @@ bool iObj_set_activeColumn(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -432,7 +433,7 @@ bool iObj_set_activeControl(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -477,7 +478,7 @@ bool iObj_set_activeControl(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -504,7 +505,7 @@ bool iObj_set_activeForm(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -549,7 +550,7 @@ bool iObj_set_activeForm(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -576,7 +577,7 @@ bool iObj_set_activePage(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -621,7 +622,7 @@ bool iObj_set_activePage(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -648,7 +649,7 @@ bool iObj_set_activeRow(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -693,7 +694,7 @@ bool iObj_set_activeRow(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -720,7 +721,7 @@ bool iObj_set_addLineFeeds(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -765,7 +766,7 @@ bool iObj_set_addLineFeeds(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -792,7 +793,7 @@ bool iObj_set_align(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -837,7 +838,7 @@ bool iObj_set_align(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -864,7 +865,7 @@ bool iObj_set_alignment(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -909,7 +910,7 @@ bool iObj_set_alignment(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -936,7 +937,7 @@ bool iObj_set_allowAddNew(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -981,7 +982,7 @@ bool iObj_set_allowAddNew(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -1008,7 +1009,7 @@ bool iObj_set_allowAutoColumnFit(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -1053,7 +1054,7 @@ bool iObj_set_allowAutoColumnFit(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -1080,7 +1081,7 @@ bool iObj_set_allowCellSelection(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -1125,7 +1126,7 @@ bool iObj_set_allowCellSelection(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -1152,7 +1153,7 @@ bool iObj_set_allowHeaderSizing(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -1197,7 +1198,7 @@ bool iObj_set_allowHeaderSizing(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -1224,7 +1225,7 @@ bool iObj_set_allowOutput(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -1269,7 +1270,7 @@ bool iObj_set_allowOutput(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -1296,7 +1297,7 @@ bool iObj_set_allowRowSizing(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -1341,7 +1342,7 @@ bool iObj_set_allowRowSizing(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -1368,7 +1369,7 @@ bool iObj_set_allowTabs(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -1413,7 +1414,7 @@ bool iObj_set_allowTabs(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -1440,7 +1441,7 @@ bool iObj_set_alwaysOnBottom(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -1485,7 +1486,7 @@ bool iObj_set_alwaysOnBottom(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -1512,7 +1513,7 @@ bool iObj_set_alwaysOnTop(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -1557,7 +1558,7 @@ bool iObj_set_alwaysOnTop(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -1584,7 +1585,7 @@ bool iObj_set_anchor(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -1629,7 +1630,7 @@ bool iObj_set_anchor(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -1656,7 +1657,7 @@ bool iObj_set_application(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -1701,7 +1702,7 @@ bool iObj_set_application(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -1728,7 +1729,7 @@ bool iObj_set_autoActivate(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -1773,7 +1774,7 @@ bool iObj_set_autoActivate(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -1800,7 +1801,7 @@ bool iObj_set_autoCenter(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -1845,7 +1846,7 @@ bool iObj_set_autoCenter(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -1872,7 +1873,7 @@ bool iObj_set_autoCompSource(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -1917,7 +1918,7 @@ bool iObj_set_autoCompSource(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -1944,7 +1945,7 @@ bool iObj_set_autoCompTable(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -1989,7 +1990,7 @@ bool iObj_set_autoCompTable(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -2016,7 +2017,7 @@ bool iObj_set_autoComplete(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -2061,7 +2062,7 @@ bool iObj_set_autoComplete(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -2088,7 +2089,7 @@ bool iObj_set_autoHideScrollBar(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -2133,7 +2134,7 @@ bool iObj_set_autoHideScrollBar(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -2160,7 +2161,7 @@ bool iObj_set_autoRelease(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -2205,7 +2206,7 @@ bool iObj_set_autoRelease(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -2232,7 +2233,7 @@ bool iObj_set_autoSize(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -2277,7 +2278,7 @@ bool iObj_set_autoSize(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -2304,7 +2305,7 @@ bool iObj_set_autoVerbMenu(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -2349,7 +2350,7 @@ bool iObj_set_autoVerbMenu(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -2376,7 +2377,7 @@ bool iObj_set_backColor(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -2421,7 +2422,7 @@ bool iObj_set_backColor(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -2448,7 +2449,7 @@ bool iObj_set_backStyle(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -2493,7 +2494,7 @@ bool iObj_set_backStyle(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -2520,7 +2521,7 @@ bool iObj_set_baseClass(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -2565,7 +2566,7 @@ bool iObj_set_baseClass(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -2592,7 +2593,7 @@ bool iObj_set_bindControls(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -2637,7 +2638,7 @@ bool iObj_set_bindControls(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -2664,7 +2665,7 @@ bool iObj_set_borderColor(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -2709,7 +2710,7 @@ bool iObj_set_borderColor(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -2736,7 +2737,7 @@ bool iObj_set_borderStyle(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -2781,7 +2782,7 @@ bool iObj_set_borderStyle(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -2808,7 +2809,7 @@ bool iObj_set_borderWidth(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -2853,7 +2854,7 @@ bool iObj_set_borderWidth(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -2880,7 +2881,7 @@ bool iObj_set_bound(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -2925,7 +2926,7 @@ bool iObj_set_bound(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -2952,7 +2953,7 @@ bool iObj_set_boundColumn(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -2997,7 +2998,7 @@ bool iObj_set_boundColumn(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -3024,7 +3025,7 @@ bool iObj_set_boundTo(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -3069,7 +3070,7 @@ bool iObj_set_boundTo(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -3096,7 +3097,7 @@ bool iObj_set_bufferMode(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -3141,7 +3142,7 @@ bool iObj_set_bufferMode(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -3168,7 +3169,7 @@ bool iObj_set_buttonCount(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -3213,7 +3214,7 @@ bool iObj_set_buttonCount(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -3240,7 +3241,7 @@ bool iObj_set_cancel(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -3285,7 +3286,7 @@ bool iObj_set_cancel(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -3312,7 +3313,7 @@ bool iObj_set_caption(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -3357,7 +3358,7 @@ bool iObj_set_caption(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -3384,7 +3385,7 @@ bool iObj_set_centered(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -3429,7 +3430,7 @@ bool iObj_set_centered(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -3456,7 +3457,7 @@ bool iObj_set_century(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -3501,7 +3502,7 @@ bool iObj_set_century(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -3528,7 +3529,7 @@ bool iObj_set_childOrder(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -3573,7 +3574,7 @@ bool iObj_set_childOrder(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -3594,13 +3595,13 @@ bool iObj_set_childOrder(SObject* obj, SVariable* var)
 bool iObj_set_class(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.class, var))
+	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p._class, var))
 	{
 		SVariable* varUpdate;
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -3617,13 +3618,13 @@ bool iObj_set_class(SObject* obj, SVariable* var)
 			// LOBJECT to AS (txOldValue, txNewValue)
 			//
 			//////
-				iEngine_executeSetter(cgc_class, obj->p.class, varUpdate);
+				iEngine_executeSetter(cgc_class, obj->p._class, varUpdate);
 			
 			
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.class, varUpdate))
+				if (!iVariable_rightIsCompatibleWithLeft(obj->p._class, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -3639,13 +3640,13 @@ bool iObj_set_class(SObject* obj, SVariable* var)
 		//////////
 		// We can perform the set
 		//////
-			iVariable_set(obj->p.class, varUpdate);
+			iVariable_set(obj->p._class, varUpdate);
 		
 		
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -3672,7 +3673,7 @@ bool iObj_set_classLibrary(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -3717,7 +3718,7 @@ bool iObj_set_classLibrary(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -3744,7 +3745,7 @@ bool iObj_set_clipControls(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -3789,7 +3790,7 @@ bool iObj_set_clipControls(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -3816,7 +3817,7 @@ bool iObj_set_closable(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -3861,7 +3862,7 @@ bool iObj_set_closable(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -3888,7 +3889,7 @@ bool iObj_set_colorScheme(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -3933,7 +3934,7 @@ bool iObj_set_colorScheme(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -3960,7 +3961,7 @@ bool iObj_set_colorSource(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -4005,7 +4006,7 @@ bool iObj_set_colorSource(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -4032,7 +4033,7 @@ bool iObj_set_columnCount(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -4077,7 +4078,7 @@ bool iObj_set_columnCount(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -4104,7 +4105,7 @@ bool iObj_set_columnLines(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -4149,7 +4150,7 @@ bool iObj_set_columnLines(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -4176,7 +4177,7 @@ bool iObj_set_columnOrder(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -4221,7 +4222,7 @@ bool iObj_set_columnOrder(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -4248,7 +4249,7 @@ bool iObj_set_columnWidths(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -4293,7 +4294,7 @@ bool iObj_set_columnWidths(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -4320,7 +4321,7 @@ bool iObj_set_columns(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -4365,7 +4366,7 @@ bool iObj_set_columns(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -4392,7 +4393,7 @@ bool iObj_set_comment(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -4437,7 +4438,7 @@ bool iObj_set_comment(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -4464,7 +4465,7 @@ bool iObj_set_continuousScroll(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -4509,7 +4510,7 @@ bool iObj_set_continuousScroll(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -4536,7 +4537,7 @@ bool iObj_set_controlBox(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -4581,7 +4582,7 @@ bool iObj_set_controlBox(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -4608,7 +4609,7 @@ bool iObj_set_controlCount(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -4653,7 +4654,7 @@ bool iObj_set_controlCount(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -4680,7 +4681,7 @@ bool iObj_set_controlSource(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -4725,7 +4726,7 @@ bool iObj_set_controlSource(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -4752,7 +4753,7 @@ bool iObj_set_controls(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -4797,7 +4798,7 @@ bool iObj_set_controls(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -4824,7 +4825,7 @@ bool iObj_set_count(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -4869,7 +4870,7 @@ bool iObj_set_count(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -4896,7 +4897,7 @@ bool iObj_set_currentControl(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -4941,7 +4942,7 @@ bool iObj_set_currentControl(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -4968,7 +4969,7 @@ bool iObj_set_currentX(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -5013,7 +5014,7 @@ bool iObj_set_currentX(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -5040,7 +5041,7 @@ bool iObj_set_currentY(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -5085,7 +5086,7 @@ bool iObj_set_currentY(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -5112,7 +5113,7 @@ bool iObj_set_curvature(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -5157,7 +5158,7 @@ bool iObj_set_curvature(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -5184,7 +5185,7 @@ bool iObj_set_dEClass(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -5229,7 +5230,7 @@ bool iObj_set_dEClass(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -5256,7 +5257,7 @@ bool iObj_set_dEClassLibrary(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -5301,7 +5302,7 @@ bool iObj_set_dEClassLibrary(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -5328,7 +5329,7 @@ bool iObj_set_dataEnvironment(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -5373,7 +5374,7 @@ bool iObj_set_dataEnvironment(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -5400,7 +5401,7 @@ bool iObj_set_dataSession(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -5445,7 +5446,7 @@ bool iObj_set_dataSession(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -5472,7 +5473,7 @@ bool iObj_set_dataSessionID(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -5517,7 +5518,7 @@ bool iObj_set_dataSessionID(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -5544,7 +5545,7 @@ bool iObj_set_dateFormat(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -5589,7 +5590,7 @@ bool iObj_set_dateFormat(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -5616,7 +5617,7 @@ bool iObj_set_dateMark(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -5661,7 +5662,7 @@ bool iObj_set_dateMark(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -5688,7 +5689,7 @@ bool iObj_set_defOLELCID(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -5733,7 +5734,7 @@ bool iObj_set_defOLELCID(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -5754,13 +5755,13 @@ bool iObj_set_defOLELCID(SObject* obj, SVariable* var)
 bool iObj_set_default(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.default, var))
+	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p._default, var))
 	{
 		SVariable* varUpdate;
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -5777,13 +5778,13 @@ bool iObj_set_default(SObject* obj, SVariable* var)
 			// LOBJECT to AS (txOldValue, txNewValue)
 			//
 			//////
-				iEngine_executeSetter(cgc_default, obj->p.default, varUpdate);
+				iEngine_executeSetter(cgc_default, obj->p._default, varUpdate);
 			
 			
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.default, varUpdate))
+				if (!iVariable_rightIsCompatibleWithLeft(obj->p._default, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -5799,13 +5800,13 @@ bool iObj_set_default(SObject* obj, SVariable* var)
 		//////////
 		// We can perform the set
 		//////
-			iVariable_set(obj->p.default, varUpdate);
+			iVariable_set(obj->p._default, varUpdate);
 		
 		
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -5832,7 +5833,7 @@ bool iObj_set_deleteMark(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -5877,7 +5878,7 @@ bool iObj_set_deleteMark(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -5904,7 +5905,7 @@ bool iObj_set_desktop(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -5949,7 +5950,7 @@ bool iObj_set_desktop(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -5976,7 +5977,7 @@ bool iObj_set_details(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -6021,7 +6022,7 @@ bool iObj_set_details(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -6048,7 +6049,7 @@ bool iObj_set_disabledBackColor(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -6093,7 +6094,7 @@ bool iObj_set_disabledBackColor(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -6120,7 +6121,7 @@ bool iObj_set_disabledForeColor(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -6165,7 +6166,7 @@ bool iObj_set_disabledForeColor(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -6192,7 +6193,7 @@ bool iObj_set_disabledItemBackColor(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -6237,7 +6238,7 @@ bool iObj_set_disabledItemBackColor(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -6264,7 +6265,7 @@ bool iObj_set_disabledItemForeColor(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -6309,7 +6310,7 @@ bool iObj_set_disabledItemForeColor(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -6336,7 +6337,7 @@ bool iObj_set_disabledPicture(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -6381,7 +6382,7 @@ bool iObj_set_disabledPicture(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -6408,7 +6409,7 @@ bool iObj_set_displayCount(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -6453,7 +6454,7 @@ bool iObj_set_displayCount(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -6480,7 +6481,7 @@ bool iObj_set_displayValue(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -6525,7 +6526,7 @@ bool iObj_set_displayValue(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -6552,7 +6553,7 @@ bool iObj_set_doCreate(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -6597,7 +6598,7 @@ bool iObj_set_doCreate(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -6624,7 +6625,7 @@ bool iObj_set_dockPosition(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -6669,7 +6670,7 @@ bool iObj_set_dockPosition(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -6696,7 +6697,7 @@ bool iObj_set_dockable(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -6741,7 +6742,7 @@ bool iObj_set_dockable(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -6768,7 +6769,7 @@ bool iObj_set_docked(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -6813,7 +6814,7 @@ bool iObj_set_docked(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -6840,7 +6841,7 @@ bool iObj_set_documentFile(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -6885,7 +6886,7 @@ bool iObj_set_documentFile(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -6912,7 +6913,7 @@ bool iObj_set_downPicture(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -6957,7 +6958,7 @@ bool iObj_set_downPicture(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -6984,7 +6985,7 @@ bool iObj_set_dragIcon(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -7029,7 +7030,7 @@ bool iObj_set_dragIcon(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -7056,7 +7057,7 @@ bool iObj_set_dragMode(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -7101,7 +7102,7 @@ bool iObj_set_dragMode(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -7128,7 +7129,7 @@ bool iObj_set_drawMode(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -7173,7 +7174,7 @@ bool iObj_set_drawMode(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -7200,7 +7201,7 @@ bool iObj_set_drawStyle(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -7245,7 +7246,7 @@ bool iObj_set_drawStyle(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -7272,7 +7273,7 @@ bool iObj_set_drawWidth(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -7317,7 +7318,7 @@ bool iObj_set_drawWidth(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -7344,7 +7345,7 @@ bool iObj_set_dynamicAlignment(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -7389,7 +7390,7 @@ bool iObj_set_dynamicAlignment(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -7416,7 +7417,7 @@ bool iObj_set_dynamicBackColor(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -7461,7 +7462,7 @@ bool iObj_set_dynamicBackColor(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -7488,7 +7489,7 @@ bool iObj_set_dynamicCurrentControl(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -7533,7 +7534,7 @@ bool iObj_set_dynamicCurrentControl(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -7560,7 +7561,7 @@ bool iObj_set_dynamicFontBold(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -7605,7 +7606,7 @@ bool iObj_set_dynamicFontBold(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -7632,7 +7633,7 @@ bool iObj_set_dynamicFontItalic(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -7677,7 +7678,7 @@ bool iObj_set_dynamicFontItalic(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -7704,7 +7705,7 @@ bool iObj_set_dynamicFontName(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -7749,7 +7750,7 @@ bool iObj_set_dynamicFontName(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -7776,7 +7777,7 @@ bool iObj_set_dynamicFontOutline(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -7821,7 +7822,7 @@ bool iObj_set_dynamicFontOutline(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -7848,7 +7849,7 @@ bool iObj_set_dynamicFontShadow(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -7893,7 +7894,7 @@ bool iObj_set_dynamicFontShadow(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -7920,7 +7921,7 @@ bool iObj_set_dynamicFontSize(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -7965,7 +7966,7 @@ bool iObj_set_dynamicFontSize(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -7992,7 +7993,7 @@ bool iObj_set_dynamicFontStrikeThru(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -8037,7 +8038,7 @@ bool iObj_set_dynamicFontStrikeThru(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -8064,7 +8065,7 @@ bool iObj_set_dynamicFontUnderline(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -8109,7 +8110,7 @@ bool iObj_set_dynamicFontUnderline(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -8136,7 +8137,7 @@ bool iObj_set_dynamicForeColor(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -8181,7 +8182,7 @@ bool iObj_set_dynamicForeColor(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -8208,7 +8209,7 @@ bool iObj_set_dynamicInputMask(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -8253,7 +8254,7 @@ bool iObj_set_dynamicInputMask(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -8280,7 +8281,7 @@ bool iObj_set_enableHyperlinks(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -8325,7 +8326,7 @@ bool iObj_set_enableHyperlinks(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -8352,7 +8353,7 @@ bool iObj_set_enabled(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -8397,7 +8398,7 @@ bool iObj_set_enabled(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -8424,7 +8425,7 @@ bool iObj_set_errorNo(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -8469,7 +8470,7 @@ bool iObj_set_errorNo(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -8496,7 +8497,7 @@ bool iObj_set_fillColor(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -8541,7 +8542,7 @@ bool iObj_set_fillColor(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -8568,7 +8569,7 @@ bool iObj_set_fillStyle(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -8613,7 +8614,7 @@ bool iObj_set_fillStyle(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -8640,7 +8641,7 @@ bool iObj_set_firstElement(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -8685,7 +8686,7 @@ bool iObj_set_firstElement(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -8712,7 +8713,7 @@ bool iObj_set_fontBold(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -8757,7 +8758,7 @@ bool iObj_set_fontBold(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -8784,7 +8785,7 @@ bool iObj_set_fontCharSet(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -8829,7 +8830,7 @@ bool iObj_set_fontCharSet(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -8856,7 +8857,7 @@ bool iObj_set_fontCondense(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -8901,7 +8902,7 @@ bool iObj_set_fontCondense(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -8928,7 +8929,7 @@ bool iObj_set_fontExtend(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -8973,7 +8974,7 @@ bool iObj_set_fontExtend(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -9000,7 +9001,7 @@ bool iObj_set_fontItalic(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -9045,7 +9046,7 @@ bool iObj_set_fontItalic(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -9072,7 +9073,7 @@ bool iObj_set_fontName(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -9117,7 +9118,7 @@ bool iObj_set_fontName(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -9144,7 +9145,7 @@ bool iObj_set_fontOutline(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -9189,7 +9190,7 @@ bool iObj_set_fontOutline(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -9216,7 +9217,7 @@ bool iObj_set_fontShadow(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -9261,7 +9262,7 @@ bool iObj_set_fontShadow(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -9288,7 +9289,7 @@ bool iObj_set_fontSize(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -9333,7 +9334,7 @@ bool iObj_set_fontSize(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -9360,7 +9361,7 @@ bool iObj_set_fontStrikeThru(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -9405,7 +9406,7 @@ bool iObj_set_fontStrikeThru(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -9432,7 +9433,7 @@ bool iObj_set_fontUnderLine(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -9477,7 +9478,7 @@ bool iObj_set_fontUnderLine(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -9504,7 +9505,7 @@ bool iObj_set_fontUnderline(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -9549,7 +9550,7 @@ bool iObj_set_fontUnderline(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -9576,7 +9577,7 @@ bool iObj_set_foreColor(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -9621,7 +9622,7 @@ bool iObj_set_foreColor(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -9648,7 +9649,7 @@ bool iObj_set_formCount(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -9693,7 +9694,7 @@ bool iObj_set_formCount(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -9720,7 +9721,7 @@ bool iObj_set_format(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -9765,7 +9766,7 @@ bool iObj_set_format(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -9792,7 +9793,7 @@ bool iObj_set_forms(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -9837,7 +9838,7 @@ bool iObj_set_forms(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -9864,7 +9865,7 @@ bool iObj_set_gridLineColor(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -9909,7 +9910,7 @@ bool iObj_set_gridLineColor(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -9936,7 +9937,7 @@ bool iObj_set_gridLineWidth(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -9981,7 +9982,7 @@ bool iObj_set_gridLineWidth(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -10008,7 +10009,7 @@ bool iObj_set_gridLines(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -10053,7 +10054,7 @@ bool iObj_set_gridLines(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -10080,7 +10081,7 @@ bool iObj_set_hScrollSmallChange(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -10125,7 +10126,7 @@ bool iObj_set_hScrollSmallChange(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -10152,7 +10153,7 @@ bool iObj_set_hWnd(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -10197,7 +10198,7 @@ bool iObj_set_hWnd(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -10224,7 +10225,7 @@ bool iObj_set_halfHeightCaption(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -10269,7 +10270,7 @@ bool iObj_set_halfHeightCaption(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -10296,7 +10297,7 @@ bool iObj_set_headerClass(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -10341,7 +10342,7 @@ bool iObj_set_headerClass(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -10368,7 +10369,7 @@ bool iObj_set_headerClassLibrary(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -10413,7 +10414,7 @@ bool iObj_set_headerClassLibrary(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -10440,7 +10441,7 @@ bool iObj_set_headerHeight(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -10485,7 +10486,7 @@ bool iObj_set_headerHeight(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -10512,7 +10513,7 @@ bool iObj_set_height(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -10557,7 +10558,7 @@ bool iObj_set_height(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -10584,7 +10585,7 @@ bool iObj_set_helpContextID(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -10629,7 +10630,7 @@ bool iObj_set_helpContextID(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -10656,7 +10657,7 @@ bool iObj_set_hideSelection(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -10701,7 +10702,7 @@ bool iObj_set_hideSelection(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -10728,7 +10729,7 @@ bool iObj_set_highLight(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -10773,7 +10774,7 @@ bool iObj_set_highLight(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -10800,7 +10801,7 @@ bool iObj_set_highLightRow(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -10845,7 +10846,7 @@ bool iObj_set_highLightRow(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -10872,7 +10873,7 @@ bool iObj_set_highlightBackColor(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -10917,7 +10918,7 @@ bool iObj_set_highlightBackColor(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -10944,7 +10945,7 @@ bool iObj_set_highlightForeColor(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -10989,7 +10990,7 @@ bool iObj_set_highlightForeColor(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -11016,7 +11017,7 @@ bool iObj_set_highlightRowLineWidth(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -11061,7 +11062,7 @@ bool iObj_set_highlightRowLineWidth(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -11088,7 +11089,7 @@ bool iObj_set_highlightStyle(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -11133,7 +11134,7 @@ bool iObj_set_highlightStyle(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -11160,7 +11161,7 @@ bool iObj_set_hostName(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -11205,7 +11206,7 @@ bool iObj_set_hostName(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -11232,7 +11233,7 @@ bool iObj_set_hours(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -11277,7 +11278,7 @@ bool iObj_set_hours(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -11304,7 +11305,7 @@ bool iObj_set_iMEMode(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -11349,7 +11350,7 @@ bool iObj_set_iMEMode(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -11372,45 +11373,21 @@ bool iObj_set_icon(SObject* obj, SBitmap* bmp)
 	// Make sure the environment is sane
 	if (obj && bmp)
 	{
-		// If there are user setter functions
-		if (obj->lAssignMethods)
-		{
-			//////////
-			//
-			// Call the user assign method so it can be examined, or updated:
-			//		property_assign(xOldValue, @xNewValue)
-			//
-			// FUNCTION property_assign
-			// LOBJECT to AS (txOldValue, txNewValue)
-			//
-			//////
-				iEngine_executeSetter(cgc_icon, NULL, NULL);
-		}
+		// Call the user assign method so it can be examined, or updated:
+		if (obj->anyPropertyHasAccessOrAssignMethods)
+			iEngine_executeSetter(cgc_icon, NULL, NULL);
 		
-		
-		//////////
 		// We can perform the set
-		//////
-			iBmp_scale(obj->p.icon, bmp);
+		iBmp_scale(obj->p.icon, bmp);
 		
-		
-		//////////
-		// Release our copy if need be
-		//////
-			if (obj->lAssignMethods)
-				iVariable_delete(varUpdate, true);
-		
-		
-		//////////
 		// We're good
-		//////
-			return(true);
+		return(true);
 	
 	} else {
 		//////////
 		// We need to generate an error because they're trying to do something like this.name = .f.
 		//////
-			iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, var);
+			iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, NULL);
 			return(false);
 	}
 }
@@ -11424,7 +11401,7 @@ bool iObj_set_increment(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -11469,7 +11446,7 @@ bool iObj_set_increment(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -11496,7 +11473,7 @@ bool iObj_set_incrementalSearch(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -11541,7 +11518,7 @@ bool iObj_set_incrementalSearch(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -11568,7 +11545,7 @@ bool iObj_set_inputMask(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -11613,7 +11590,7 @@ bool iObj_set_inputMask(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -11640,7 +11617,7 @@ bool iObj_set_integralHeight(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -11685,7 +11662,7 @@ bool iObj_set_integralHeight(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -11712,7 +11689,7 @@ bool iObj_set_interval(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -11757,7 +11734,7 @@ bool iObj_set_interval(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -11784,7 +11761,7 @@ bool iObj_set_itemBackColor(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -11829,7 +11806,7 @@ bool iObj_set_itemBackColor(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -11856,7 +11833,7 @@ bool iObj_set_itemData(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -11901,7 +11878,7 @@ bool iObj_set_itemData(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -11928,7 +11905,7 @@ bool iObj_set_itemForeColor(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -11973,7 +11950,7 @@ bool iObj_set_itemForeColor(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -12000,7 +11977,7 @@ bool iObj_set_itemIDData(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -12045,7 +12022,7 @@ bool iObj_set_itemIDData(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -12072,7 +12049,7 @@ bool iObj_set_itemTips(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -12117,7 +12094,7 @@ bool iObj_set_itemTips(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -12144,7 +12121,7 @@ bool iObj_set_keyPreview(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -12189,7 +12166,7 @@ bool iObj_set_keyPreview(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -12216,7 +12193,7 @@ bool iObj_set_keySort(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -12261,7 +12238,7 @@ bool iObj_set_keySort(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -12288,7 +12265,7 @@ bool iObj_set_keyboardHighValue(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -12333,7 +12310,7 @@ bool iObj_set_keyboardHighValue(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -12360,7 +12337,7 @@ bool iObj_set_keyboardLowValue(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -12405,7 +12382,7 @@ bool iObj_set_keyboardLowValue(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -12432,7 +12409,7 @@ bool iObj_set_left(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -12477,7 +12454,7 @@ bool iObj_set_left(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -12504,7 +12481,7 @@ bool iObj_set_leftColumn(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -12549,7 +12526,7 @@ bool iObj_set_leftColumn(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -12576,7 +12553,7 @@ bool iObj_set_lineContents(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -12621,7 +12598,7 @@ bool iObj_set_lineContents(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -12648,7 +12625,7 @@ bool iObj_set_lineNo(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -12693,7 +12670,7 @@ bool iObj_set_lineNo(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -12720,7 +12697,7 @@ bool iObj_set_lineSlant(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -12765,7 +12742,7 @@ bool iObj_set_lineSlant(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -12792,7 +12769,7 @@ bool iObj_set_linkMaster(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -12837,7 +12814,7 @@ bool iObj_set_linkMaster(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -12864,7 +12841,7 @@ bool iObj_set_list(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -12909,7 +12886,7 @@ bool iObj_set_list(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -12936,7 +12913,7 @@ bool iObj_set_listCount(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -12981,7 +12958,7 @@ bool iObj_set_listCount(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -13008,7 +12985,7 @@ bool iObj_set_listIndex(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -13053,7 +13030,7 @@ bool iObj_set_listIndex(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -13080,7 +13057,7 @@ bool iObj_set_listItem(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -13125,7 +13102,7 @@ bool iObj_set_listItem(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -13152,7 +13129,7 @@ bool iObj_set_listItemID(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -13197,7 +13174,7 @@ bool iObj_set_listItemID(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -13224,7 +13201,7 @@ bool iObj_set_lockColumns(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -13269,7 +13246,7 @@ bool iObj_set_lockColumns(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -13296,7 +13273,7 @@ bool iObj_set_lockColumnsLeft(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -13341,7 +13318,7 @@ bool iObj_set_lockColumnsLeft(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -13368,7 +13345,7 @@ bool iObj_set_lockScreen(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -13413,7 +13390,7 @@ bool iObj_set_lockScreen(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -13440,7 +13417,7 @@ bool iObj_set_mDIForm(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -13485,7 +13462,7 @@ bool iObj_set_mDIForm(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -13512,7 +13489,7 @@ bool iObj_set_macDesktop(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -13557,7 +13534,7 @@ bool iObj_set_macDesktop(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -13584,7 +13561,7 @@ bool iObj_set_margin(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -13629,7 +13606,7 @@ bool iObj_set_margin(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -13656,7 +13633,7 @@ bool iObj_set_maxButton(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -13701,7 +13678,7 @@ bool iObj_set_maxButton(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -13728,7 +13705,7 @@ bool iObj_set_maxHeight(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -13773,7 +13750,7 @@ bool iObj_set_maxHeight(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -13800,7 +13777,7 @@ bool iObj_set_maxLeft(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -13845,7 +13822,7 @@ bool iObj_set_maxLeft(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -13872,7 +13849,7 @@ bool iObj_set_maxLength(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -13917,7 +13894,7 @@ bool iObj_set_maxLength(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -13944,7 +13921,7 @@ bool iObj_set_maxTop(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -13989,7 +13966,7 @@ bool iObj_set_maxTop(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -14016,7 +13993,7 @@ bool iObj_set_maxWidth(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -14061,7 +14038,7 @@ bool iObj_set_maxWidth(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -14088,7 +14065,7 @@ bool iObj_set_memberClass(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -14133,7 +14110,7 @@ bool iObj_set_memberClass(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -14160,7 +14137,7 @@ bool iObj_set_memberClassLibrary(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -14205,7 +14182,7 @@ bool iObj_set_memberClassLibrary(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -14232,7 +14209,7 @@ bool iObj_set_memoWindow(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -14277,7 +14254,7 @@ bool iObj_set_memoWindow(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -14304,7 +14281,7 @@ bool iObj_set_message(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -14349,7 +14326,7 @@ bool iObj_set_message(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -14376,7 +14353,7 @@ bool iObj_set_minButton(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -14421,7 +14398,7 @@ bool iObj_set_minButton(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -14448,7 +14425,7 @@ bool iObj_set_minHeight(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -14493,7 +14470,7 @@ bool iObj_set_minHeight(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -14520,7 +14497,7 @@ bool iObj_set_minWidth(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -14565,7 +14542,7 @@ bool iObj_set_minWidth(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -14583,74 +14560,25 @@ bool iObj_set_minWidth(SObject* obj, SVariable* var)
 	}
 }
 
-bool iObj_set_mouseIcon(SObject* obj, SVariable* var)
+bool iObj_set_mouseIcon(SObject* obj, SBitmap* bmp)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.mouseIcon, var))
+	if (obj && bmp)
 	{
-		SVariable* varUpdate;
-		
-		
-		// If there are user setter functions
-		if (obj->lAssignMethods)
-		{
-			//////////
-			// Create a copy of the variable so the user can alter it if they need
-			//////
-				varUpdate = iVariable_copy(var);
-			
-			
-			//////////
-			//
-			// Call the user assign method so it can be examined, or updated:
-			//		property_assign(xOldValue, @xNewValue)
-			//
-			// FUNCTION property_assign
-			// LOBJECT to AS (txOldValue, txNewValue)
-			//
-			//////
-				iEngine_executeSetter(cgc_mouseIcon, obj->p.mouseIcon, varUpdate);
-			
-			
-			//////////
-			// Make sure the variable type is still compatible after the user possibly updated its value
-			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.mouseIcon, varUpdate))
-				{
-					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
-					iVariable_delete(varUpdate, true);
-					return(false);
-				}
-		
-		} else {
-			// Use the passed value for the update
-			varUpdate = var;
-		}
-		
-		
-		//////////
+		// Call the user assign method so it can be examined, or updated:
+		iEngine_executeSetter(cgc_mouseIcon, NULL, NULL);
+
 		// We can perform the set
-		//////
-			iVariable_set(obj->p.mouseIcon, varUpdate);
-		
-		
-		//////////
-		// Release our copy if need be
-		//////
-			if (obj->lAssignMethods)
-				iVariable_delete(varUpdate, true);
-		
-		
-		//////////
+		iBmp_scale(obj->p.mouseIcon, bmp);
+
 		// We're good
-		//////
-			return(true);
+		return(true);
 	
 	} else {
 		//////////
 		// We need to generate an error because they're trying to do something like this.name = .f.
 		//////
-			iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, var);
+			iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, NULL);
 			return(false);
 	}
 }
@@ -14664,7 +14592,7 @@ bool iObj_set_mousePointer(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -14709,7 +14637,7 @@ bool iObj_set_mousePointer(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -14736,7 +14664,7 @@ bool iObj_set_movable(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -14781,7 +14709,7 @@ bool iObj_set_movable(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -14808,7 +14736,7 @@ bool iObj_set_moverBars(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -14853,7 +14781,7 @@ bool iObj_set_moverBars(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -14880,7 +14808,7 @@ bool iObj_set_multiSelect(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -14925,7 +14853,7 @@ bool iObj_set_multiSelect(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -14952,7 +14880,7 @@ bool iObj_set_name(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -14997,7 +14925,7 @@ bool iObj_set_name(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -15024,7 +14952,7 @@ bool iObj_set_newIndex(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -15069,7 +14997,7 @@ bool iObj_set_newIndex(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -15096,7 +15024,7 @@ bool iObj_set_newItemID(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -15141,7 +15069,7 @@ bool iObj_set_newItemID(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -15168,7 +15096,7 @@ bool iObj_set_nullDisplay(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -15213,7 +15141,7 @@ bool iObj_set_nullDisplay(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -15240,7 +15168,7 @@ bool iObj_set_numberOfElements(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -15285,7 +15213,7 @@ bool iObj_set_numberOfElements(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -15312,7 +15240,7 @@ bool iObj_set_oLEClass(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -15357,7 +15285,7 @@ bool iObj_set_oLEClass(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -15384,7 +15312,7 @@ bool iObj_set_oLEDragMode(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -15429,7 +15357,7 @@ bool iObj_set_oLEDragMode(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -15447,74 +15375,26 @@ bool iObj_set_oLEDragMode(SObject* obj, SVariable* var)
 	}
 }
 
-bool iObj_set_oLEDragPicture(SObject* obj, SVariable* var)
+bool iObj_set_oLEDragPicture(SObject* obj, SBitmap* bmp)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.oLEDragPicture, var))
+	if (obj && bmp)
 	{
-		SVariable* varUpdate;
-		
-		
-		// If there are user setter functions
-		if (obj->lAssignMethods)
-		{
-			//////////
-			// Create a copy of the variable so the user can alter it if they need
-			//////
-				varUpdate = iVariable_copy(var);
+		// Call the user assign method so it can be examined, or updated:
+		if (obj->anyPropertyHasAccessOrAssignMethods)
+			iEngine_executeSetter(cgc_oLEDragPicture, NULL, NULL);
 			
-			
-			//////////
-			//
-			// Call the user assign method so it can be examined, or updated:
-			//		property_assign(xOldValue, @xNewValue)
-			//
-			// FUNCTION property_assign
-			// LOBJECT to AS (txOldValue, txNewValue)
-			//
-			//////
-				iEngine_executeSetter(cgc_oLEDragPicture, obj->p.oLEDragPicture, varUpdate);
-			
-			
-			//////////
-			// Make sure the variable type is still compatible after the user possibly updated its value
-			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.oLEDragPicture, varUpdate))
-				{
-					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
-					iVariable_delete(varUpdate, true);
-					return(false);
-				}
-		
-		} else {
-			// Use the passed value for the update
-			varUpdate = var;
-		}
-		
-		
-		//////////
 		// We can perform the set
-		//////
-			iVariable_set(obj->p.oLEDragPicture, varUpdate);
-		
-		
-		//////////
-		// Release our copy if need be
-		//////
-			if (obj->lAssignMethods)
-				iVariable_delete(varUpdate, true);
-		
-		
-		//////////
+		iBmp_scale(obj->p.oLEDragPicture, bmp);
+
 		// We're good
-		//////
-			return(true);
+		return(true);
 	
 	} else {
 		//////////
 		// We need to generate an error because they're trying to do something like this.name = .f.
 		//////
-			iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, var);
+			iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, NULL);
 			return(false);
 	}
 }
@@ -15528,7 +15408,7 @@ bool iObj_set_oLEDropEffects(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -15573,7 +15453,7 @@ bool iObj_set_oLEDropEffects(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -15600,7 +15480,7 @@ bool iObj_set_oLEDropHasData(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -15645,7 +15525,7 @@ bool iObj_set_oLEDropHasData(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -15672,7 +15552,7 @@ bool iObj_set_oLEDropMode(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -15717,7 +15597,7 @@ bool iObj_set_oLEDropMode(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -15744,7 +15624,7 @@ bool iObj_set_oLEDropTextInsertion(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -15789,7 +15669,7 @@ bool iObj_set_oLEDropTextInsertion(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -15816,7 +15696,7 @@ bool iObj_set_oLELCID(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -15861,7 +15741,7 @@ bool iObj_set_oLELCID(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -15888,7 +15768,7 @@ bool iObj_set_oLETypeAllowed(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -15933,7 +15813,7 @@ bool iObj_set_oLETypeAllowed(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -15960,7 +15840,7 @@ bool iObj_set_object(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -16005,7 +15885,7 @@ bool iObj_set_object(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -16032,7 +15912,7 @@ bool iObj_set_objects(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -16077,7 +15957,7 @@ bool iObj_set_objects(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -16104,7 +15984,7 @@ bool iObj_set_openWindow(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -16149,7 +16029,7 @@ bool iObj_set_openWindow(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -16176,7 +16056,7 @@ bool iObj_set_optimize(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -16221,7 +16101,7 @@ bool iObj_set_optimize(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -16248,7 +16128,7 @@ bool iObj_set_pageCount(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -16293,7 +16173,7 @@ bool iObj_set_pageCount(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -16320,7 +16200,7 @@ bool iObj_set_pageHeight(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -16365,7 +16245,7 @@ bool iObj_set_pageHeight(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -16392,7 +16272,7 @@ bool iObj_set_pageOrder(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -16437,7 +16317,7 @@ bool iObj_set_pageOrder(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -16464,7 +16344,7 @@ bool iObj_set_pageWidth(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -16509,7 +16389,7 @@ bool iObj_set_pageWidth(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -16536,7 +16416,7 @@ bool iObj_set_pages(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -16581,7 +16461,7 @@ bool iObj_set_pages(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -16608,7 +16488,7 @@ bool iObj_set_panel(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -16653,7 +16533,7 @@ bool iObj_set_panel(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -16680,7 +16560,7 @@ bool iObj_set_panelLink(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -16725,7 +16605,7 @@ bool iObj_set_panelLink(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -16752,7 +16632,7 @@ bool iObj_set_parent(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -16797,7 +16677,7 @@ bool iObj_set_parent(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -16824,7 +16704,7 @@ bool iObj_set_parentClass(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -16869,7 +16749,7 @@ bool iObj_set_parentClass(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -16896,7 +16776,7 @@ bool iObj_set_partition(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -16941,7 +16821,7 @@ bool iObj_set_partition(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -16968,7 +16848,7 @@ bool iObj_set_passwordChar(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -17013,7 +16893,7 @@ bool iObj_set_passwordChar(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -17040,7 +16920,7 @@ bool iObj_set_picture(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -17085,7 +16965,7 @@ bool iObj_set_picture(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -17112,7 +16992,7 @@ bool iObj_set_pictureMargin(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -17157,7 +17037,7 @@ bool iObj_set_pictureMargin(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -17184,7 +17064,7 @@ bool iObj_set_picturePosition(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -17229,7 +17109,7 @@ bool iObj_set_picturePosition(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -17256,7 +17136,7 @@ bool iObj_set_pictureSelectionDisplay(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -17301,7 +17181,7 @@ bool iObj_set_pictureSelectionDisplay(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -17328,7 +17208,7 @@ bool iObj_set_pictureSpacing(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -17373,7 +17253,7 @@ bool iObj_set_pictureSpacing(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -17400,7 +17280,7 @@ bool iObj_set_pictureVal(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -17445,7 +17325,7 @@ bool iObj_set_pictureVal(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -17472,7 +17352,7 @@ bool iObj_set_polyPoints(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -17517,7 +17397,7 @@ bool iObj_set_polyPoints(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -17544,7 +17424,7 @@ bool iObj_set_procedure(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -17589,7 +17469,7 @@ bool iObj_set_procedure(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -17616,7 +17496,7 @@ bool iObj_set_readBackColor(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -17661,7 +17541,7 @@ bool iObj_set_readBackColor(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -17688,7 +17568,7 @@ bool iObj_set_readCycle(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -17733,7 +17613,7 @@ bool iObj_set_readCycle(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -17760,7 +17640,7 @@ bool iObj_set_readForeColor(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -17805,7 +17685,7 @@ bool iObj_set_readForeColor(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -17832,7 +17712,7 @@ bool iObj_set_readLock(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -17877,7 +17757,7 @@ bool iObj_set_readLock(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -17904,7 +17784,7 @@ bool iObj_set_readMouse(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -17949,7 +17829,7 @@ bool iObj_set_readMouse(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -17976,7 +17856,7 @@ bool iObj_set_readOnly(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -18021,7 +17901,7 @@ bool iObj_set_readOnly(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -18048,7 +17928,7 @@ bool iObj_set_readSave(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -18093,7 +17973,7 @@ bool iObj_set_readSave(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -18120,7 +18000,7 @@ bool iObj_set_readTimeOut(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -18165,7 +18045,7 @@ bool iObj_set_readTimeOut(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -18192,7 +18072,7 @@ bool iObj_set_recordMark(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -18237,7 +18117,7 @@ bool iObj_set_recordMark(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -18264,7 +18144,7 @@ bool iObj_set_recordSource(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -18309,7 +18189,7 @@ bool iObj_set_recordSource(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -18336,7 +18216,7 @@ bool iObj_set_recordSourceType(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -18381,7 +18261,7 @@ bool iObj_set_recordSourceType(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -18408,7 +18288,7 @@ bool iObj_set_relationalExpr(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -18453,7 +18333,7 @@ bool iObj_set_relationalExpr(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -18480,7 +18360,7 @@ bool iObj_set_relativeColumn(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -18525,7 +18405,7 @@ bool iObj_set_relativeColumn(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -18552,7 +18432,7 @@ bool iObj_set_relativeRow(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -18597,7 +18477,7 @@ bool iObj_set_relativeRow(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -18624,7 +18504,7 @@ bool iObj_set_releaseType(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -18669,7 +18549,7 @@ bool iObj_set_releaseType(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -18696,7 +18576,7 @@ bool iObj_set_resizable(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -18741,7 +18621,7 @@ bool iObj_set_resizable(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -18768,7 +18648,7 @@ bool iObj_set_rightToLeft(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -18813,7 +18693,7 @@ bool iObj_set_rightToLeft(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -18840,7 +18720,7 @@ bool iObj_set_rotateFlip(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -18885,7 +18765,7 @@ bool iObj_set_rotateFlip(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -18912,7 +18792,7 @@ bool iObj_set_rotation(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -18957,7 +18837,7 @@ bool iObj_set_rotation(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -18984,7 +18864,7 @@ bool iObj_set_rowColChange(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -19029,7 +18909,7 @@ bool iObj_set_rowColChange(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -19056,7 +18936,7 @@ bool iObj_set_rowHeight(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -19101,7 +18981,7 @@ bool iObj_set_rowHeight(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -19128,7 +19008,7 @@ bool iObj_set_rowSource(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -19173,7 +19053,7 @@ bool iObj_set_rowSource(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -19200,7 +19080,7 @@ bool iObj_set_rowSourceType(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -19245,7 +19125,7 @@ bool iObj_set_rowSourceType(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -19272,7 +19152,7 @@ bool iObj_set_scaleMode(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -19317,7 +19197,7 @@ bool iObj_set_scaleMode(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -19344,7 +19224,7 @@ bool iObj_set_scrollBars(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -19389,7 +19269,7 @@ bool iObj_set_scrollBars(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -19416,7 +19296,7 @@ bool iObj_set_seconds(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -19461,7 +19341,7 @@ bool iObj_set_seconds(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -19488,7 +19368,7 @@ bool iObj_set_selLength(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -19533,7 +19413,7 @@ bool iObj_set_selLength(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -19560,7 +19440,7 @@ bool iObj_set_selStart(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -19605,7 +19485,7 @@ bool iObj_set_selStart(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -19632,7 +19512,7 @@ bool iObj_set_selText(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -19677,7 +19557,7 @@ bool iObj_set_selText(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -19704,7 +19584,7 @@ bool iObj_set_selectOnEntry(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -19749,7 +19629,7 @@ bool iObj_set_selectOnEntry(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -19776,7 +19656,7 @@ bool iObj_set_selected(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -19821,7 +19701,7 @@ bool iObj_set_selected(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -19848,7 +19728,7 @@ bool iObj_set_selectedBackColor(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -19893,7 +19773,7 @@ bool iObj_set_selectedBackColor(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -19920,7 +19800,7 @@ bool iObj_set_selectedForeColor(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -19965,7 +19845,7 @@ bool iObj_set_selectedForeColor(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -19992,7 +19872,7 @@ bool iObj_set_selectedID(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -20037,7 +19917,7 @@ bool iObj_set_selectedID(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -20064,7 +19944,7 @@ bool iObj_set_selectedItemBackColor(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -20109,7 +19989,7 @@ bool iObj_set_selectedItemBackColor(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -20136,7 +20016,7 @@ bool iObj_set_selectedItemForeColor(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -20181,7 +20061,7 @@ bool iObj_set_selectedItemForeColor(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -20208,7 +20088,7 @@ bool iObj_set_showInTaskbar(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -20253,7 +20133,7 @@ bool iObj_set_showInTaskbar(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -20280,7 +20160,7 @@ bool iObj_set_showTips(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -20325,7 +20205,7 @@ bool iObj_set_showTips(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -20352,7 +20232,7 @@ bool iObj_set_showWindow(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -20397,7 +20277,7 @@ bool iObj_set_showWindow(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -20424,7 +20304,7 @@ bool iObj_set_sizable(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -20469,7 +20349,7 @@ bool iObj_set_sizable(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -20496,7 +20376,7 @@ bool iObj_set_sizeBox(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -20541,7 +20421,7 @@ bool iObj_set_sizeBox(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -20568,7 +20448,7 @@ bool iObj_set_sorted(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -20613,7 +20493,7 @@ bool iObj_set_sorted(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -20640,7 +20520,7 @@ bool iObj_set_sparse(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -20685,7 +20565,7 @@ bool iObj_set_sparse(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -20712,7 +20592,7 @@ bool iObj_set_specialEffect(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -20757,7 +20637,7 @@ bool iObj_set_specialEffect(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -20784,7 +20664,7 @@ bool iObj_set_spinnerHighValue(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -20829,7 +20709,7 @@ bool iObj_set_spinnerHighValue(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -20856,7 +20736,7 @@ bool iObj_set_spinnerLowValue(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -20901,7 +20781,7 @@ bool iObj_set_spinnerLowValue(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -20928,7 +20808,7 @@ bool iObj_set_splitBar(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -20973,7 +20853,7 @@ bool iObj_set_splitBar(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -21000,7 +20880,7 @@ bool iObj_set_stackLevel(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -21045,7 +20925,7 @@ bool iObj_set_stackLevel(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -21072,7 +20952,7 @@ bool iObj_set_statusBarText(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -21117,7 +20997,7 @@ bool iObj_set_statusBarText(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -21144,7 +21024,7 @@ bool iObj_set_stretch(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -21189,7 +21069,7 @@ bool iObj_set_stretch(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -21216,7 +21096,7 @@ bool iObj_set_strictDateEntry(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -21261,7 +21141,7 @@ bool iObj_set_strictDateEntry(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -21288,7 +21168,7 @@ bool iObj_set_style(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -21333,7 +21213,7 @@ bool iObj_set_style(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -21360,7 +21240,7 @@ bool iObj_set_tabIndex(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -21405,7 +21285,7 @@ bool iObj_set_tabIndex(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -21432,7 +21312,7 @@ bool iObj_set_tabOrientation(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -21477,7 +21357,7 @@ bool iObj_set_tabOrientation(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -21504,7 +21384,7 @@ bool iObj_set_tabStop(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -21549,7 +21429,7 @@ bool iObj_set_tabStop(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -21576,7 +21456,7 @@ bool iObj_set_tabStyle(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -21621,7 +21501,7 @@ bool iObj_set_tabStyle(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -21648,7 +21528,7 @@ bool iObj_set_tabs(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -21693,7 +21573,7 @@ bool iObj_set_tabs(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -21720,7 +21600,7 @@ bool iObj_set_tag(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -21765,7 +21645,7 @@ bool iObj_set_tag(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -21792,7 +21672,7 @@ bool iObj_set_terminateRead(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -21837,7 +21717,7 @@ bool iObj_set_terminateRead(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -21864,7 +21744,7 @@ bool iObj_set_text(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -21909,7 +21789,7 @@ bool iObj_set_text(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -21936,7 +21816,7 @@ bool iObj_set_themes(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -21981,7 +21861,7 @@ bool iObj_set_themes(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -22008,7 +21888,7 @@ bool iObj_set_titleBar(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -22053,7 +21933,7 @@ bool iObj_set_titleBar(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -22080,7 +21960,7 @@ bool iObj_set_toolTipText(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -22125,7 +22005,7 @@ bool iObj_set_toolTipText(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -22152,7 +22032,7 @@ bool iObj_set_top(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -22197,7 +22077,7 @@ bool iObj_set_top(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -22224,7 +22104,7 @@ bool iObj_set_topIndex(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -22269,7 +22149,7 @@ bool iObj_set_topIndex(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -22296,7 +22176,7 @@ bool iObj_set_topItemID(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -22341,7 +22221,7 @@ bool iObj_set_topItemID(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -22368,7 +22248,7 @@ bool iObj_set_userValue(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -22413,7 +22293,7 @@ bool iObj_set_userValue(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -22440,7 +22320,7 @@ bool iObj_set_vScrollSmallChange(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -22485,7 +22365,7 @@ bool iObj_set_vScrollSmallChange(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -22512,7 +22392,7 @@ bool iObj_set_value(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -22557,7 +22437,7 @@ bool iObj_set_value(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -22584,7 +22464,7 @@ bool iObj_set_view(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -22629,7 +22509,7 @@ bool iObj_set_view(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -22656,7 +22536,7 @@ bool iObj_set_viewPortHeight(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -22701,7 +22581,7 @@ bool iObj_set_viewPortHeight(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -22728,7 +22608,7 @@ bool iObj_set_viewPortLeft(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -22773,7 +22653,7 @@ bool iObj_set_viewPortLeft(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -22800,7 +22680,7 @@ bool iObj_set_viewPortTop(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -22845,7 +22725,7 @@ bool iObj_set_viewPortTop(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -22872,7 +22752,7 @@ bool iObj_set_viewPortWidth(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -22917,7 +22797,7 @@ bool iObj_set_viewPortWidth(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -22944,7 +22824,7 @@ bool iObj_set_visible(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -22989,7 +22869,7 @@ bool iObj_set_visible(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -23016,7 +22896,7 @@ bool iObj_set_visualEffect(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -23061,7 +22941,7 @@ bool iObj_set_visualEffect(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -23088,7 +22968,7 @@ bool iObj_set_whatsThisButton(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -23133,7 +23013,7 @@ bool iObj_set_whatsThisButton(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -23160,7 +23040,7 @@ bool iObj_set_whatsThisHelp(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -23205,7 +23085,7 @@ bool iObj_set_whatsThisHelp(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -23232,7 +23112,7 @@ bool iObj_set_whatsThisHelpID(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -23277,7 +23157,7 @@ bool iObj_set_whatsThisHelpID(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -23304,7 +23184,7 @@ bool iObj_set_width(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -23349,7 +23229,7 @@ bool iObj_set_width(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -23376,7 +23256,7 @@ bool iObj_set_windowList(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -23421,7 +23301,7 @@ bool iObj_set_windowList(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -23448,7 +23328,7 @@ bool iObj_set_windowState(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -23493,7 +23373,7 @@ bool iObj_set_windowState(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -23520,7 +23400,7 @@ bool iObj_set_windowType(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -23565,7 +23445,7 @@ bool iObj_set_windowType(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -23592,7 +23472,7 @@ bool iObj_set_wordWrap(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -23637,7 +23517,7 @@ bool iObj_set_wordWrap(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -23664,7 +23544,7 @@ bool iObj_set_zoomBox(SObject* obj, SVariable* var)
 		
 		
 		// If there are user setter functions
-		if (obj->lAssignMethods)
+		if (obj->anyPropertyHasAccessOrAssignMethods)
 		{
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
@@ -23709,7 +23589,7 @@ bool iObj_set_zoomBox(SObject* obj, SVariable* var)
 		//////////
 		// Release our copy if need be
 		//////
-			if (obj->lAssignMethods)
+			if (obj->anyPropertyHasAccessOrAssignMethods)
 				iVariable_delete(varUpdate, true);
 		
 		
@@ -24365,7 +24245,7 @@ SVariable* iObj_get_class(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.class));
+		return(iVariable_copy(obj->p._class));
 	
 	} else {
 		// Indicate failure
@@ -24785,7 +24665,7 @@ SVariable* iObj_get_default(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.default));
+		return(iVariable_copy(obj->p._default));
 	
 	} else {
 		// Indicate failure
@@ -25871,13 +25751,13 @@ SVariable* iObj_get_iMEMode(SObject* obj)
 	}
 }
 
-SVariable* iObj_get_icon(SObject* obj)
+SBitmap* iObj_get_icon(SObject* obj)
 {
 	// Make sure the environment is sane
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.icon));
+		return(iBmp_copy(obj->p.icon));
 	
 	} else {
 		// Indicate failure
@@ -26501,13 +26381,17 @@ SVariable* iObj_get_minWidth(SObject* obj)
 	}
 }
 
-SVariable* iObj_get_mouseIcon(SObject* obj)
+SBitmap* iObj_get_mouseIcon(SObject* obj)
 {
+	SBitmap* bmp;
+
+
 	// Make sure the environment is sane
 	if (obj)
 	{
-		// Return a copy of the variable
-		return(iVariable_copy(obj->p.mouseIcon));
+		// Return a copy of the bitmap
+		bmp = iBmp_copy(obj->p.mouseIcon);
+		return(bmp);
 	
 	} else {
 		// Indicate failure
@@ -26669,13 +26553,13 @@ SVariable* iObj_get_oLEDragMode(SObject* obj)
 	}
 }
 
-SVariable* iObj_get_oLEDragPicture(SObject* obj)
+SBitmap* iObj_get_oLEDragPicture(SObject* obj)
 {
 	// Make sure the environment is sane
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.oLEDragPicture));
+		return(iBmp_copy(obj->p.oLEDragPicture));
 	
 	} else {
 		// Indicate failure

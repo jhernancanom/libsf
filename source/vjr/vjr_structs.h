@@ -271,7 +271,8 @@ struct SProperties
 	SBgra		seRgba;													// Southeast back color for border
 	SBgra		captionColor;											// Color of the caption
 
-	SVariable*	activeColumn;	SVariable*	activeControl;
+	SVariable*	activeColumn;
+	SVariable*	activeControl;
 	SVariable*	activeForm;
 	SVariable*	activePage;
 	SVariable*	activeRow;
@@ -300,7 +301,6 @@ struct SProperties
 	SVariable*	autoVerbMenu;
 	SVariable*	backColor;
 	SVariable*	backStyle;
-	bool border;
 	SVariable*	baseClass;
 	SVariable*	bindControls;
 	SVariable*	borderColor;
@@ -469,7 +469,7 @@ struct SProperties
 	SVariable*	minButton;
 	SVariable*	minHeight;
 	SVariable*	minWidth;
-	SVariable*	mouseIcon;
+	SBitmap*	mouseIcon;
 	SVariable*	mousePointer;
 	SVariable*	movable;
 	SVariable*	moverBars;
@@ -481,7 +481,7 @@ struct SProperties
 	SVariable*	numberOfElements;
 	SVariable*	oLEClass;
 	SVariable*	oLEDragMode;
-	SVariable*	oLEDragPicture;
+	SBitmap*	oLEDragPicture;
 	SVariable*	oLEDropEffects;
 	SVariable*	oLEDropHasData;
 	SVariable*	oLEDropMode;
@@ -618,7 +618,7 @@ struct SProperties
 // 	bool		alwaysOnTop;											// Is this form always on the top of the z-order?
 // 	bool		autoCenter;												// Should this form auto-center itself relative to its parent?
 // 	s32			borderStyle;											// 0=none, 1=fixed, 2=fixed standard presentation, 3=sizable presentation
-// 	bool		processKeyPreviewEvents;								// Do keystrokes for controls on the form go through the form's Key* events as well?
+ 	bool		processKeyPreviewEvents;								// Do keystrokes for controls on the form go through the form's Key* events as well?
 // 	s32			scaleMode;												// 0=foxels, 3=pixels (default)
 // 	bool		showInTaskBar;											// Is this form shown in a taskbar?  Only relates to top-level forms (no parent, or parent is _screen).
 // 	s32			windowState;											// 0=normal, 1=minimized, 2=maximized
@@ -682,8 +682,21 @@ struct SProperties
 // 
 // 	u32			optionCount;											// How many options are there?
 // 	bool		multiSelect;											// Allow multiple items to be selected?
-// 
-// 	f64			roundTo;												// Round 10=tens place, 1=whole integers, 0.1=one decimal place, 0.01=two decimal places, and so on
+
+	f64			roundTo;												// Round 10=tens place, 1=whole integers, 0.1=one decimal place, 0.01=two decimal places, and so on
+
+	SVariable*	pictureName;											// The name of the file used for the picture
+	SBitmap*	bmpPicture;												// The image for the picture
+	SVariable*	pictureOverName;										// The name of the file used for the picture when the mouse is over
+	SBitmap*	bmpPictureOver;											// The image for the picture when the mouse is over
+	SVariable*	pictureDownName;										// The name of the file used for the picture when the mouse is pressed down on the item
+	SBitmap*	bmpPictureDown;											// The image for the picture when the mouse is pressed down on the item
+
+	SVariable*	minValue;												// Minimum value for the control
+	SVariable*	maxValue;												// Maximum value for the control
+	SVariable*	mask;													// Input mask for the control
+
+	SEM*		em;														// The content being edited
 };
 
 struct SPropertiesA
@@ -702,23 +715,9 @@ struct SPropertiesA
 // 	SDatum		tag;
 // 
 // 	SVariable*	value;													// Value for the control
-// 	SVariable*	minValue;												// Minimum value for the control
-// 	SVariable*	maxValue;												// Maximum value for the control
-// 	SVariable*	picture;												// Picture for the control
-// 	SVariable*	mask;													// Input mask for the control
-
-	SEM*		em;														// The content being edited
-
 // 	SBitmap*	image;													// Image displayed when the mouse IS NOT over this control
 // 	SBitmap*	imageOver;												// Image displayed when the mouse IS over this control
-// 
-// 	SDatum		pictureName;											// The name of the file used for the picture
-// 	SBitmap*	bmpPicture;												// The image for the picture
-// 	SDatum		pictureOverName;										// The name of the file used for the picture when the mouse is over
-// 	SBitmap*	bmpPictureOver;											// The image for the picture when the mouse is over
-// 	SDatum		pictureDownName;										// The name of the file used for the picture when the mouse is pressed down on the item
-// 	SBitmap*	bmpPictureDown;											// The image for the picture when the mouse is pressed down on the item
-// 
+//
 // 	SObject*	dataSession;											// Ignored, always set to .NULL..
 // 	SDatum		declass;												// Ignored, always empty.
 // 	SDatum		declasslibrary;											// Ignored, always empty.
@@ -752,7 +751,7 @@ struct SObject
 	SEM*		firstMethod;											// User-defined methods (design time and runtime)
 
 	// Related access and assign methods
-	bool		lAssignMethods;
+	bool		anyPropertyHasAccessOrAssignMethods;
 	SEM*		firstAccess;											// User-defined property access methods (design time and runtime)
 	SEM*		firstAssign;											// User-defined property assignment methods (designt ime and runtime)
 

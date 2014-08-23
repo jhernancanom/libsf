@@ -237,6 +237,9 @@ struct SDatum
 		s16*	data_s16;												// To access the data as s16
 		f32*	data_f32;												// To access the data as f32
 		f64*	data_f64;												// To access the data as f64
+		bool*	data_bool;												// to access the data as bool
+		SBgra*	data_bgra;												// to access the data as SBgra
+		SBgra*	data_bgr;												// to access the data as SBgr
 	};
 	s32			length;													// Content length
 };
@@ -305,8 +308,8 @@ struct SVariable
 	SComp*		compRelated;											// Can vary regularly, but when available at compile time and in immediate scope, relates to a component
 
 	// If assign or access
-	SFunction*	assign;													// Source code executed whenever this variable is assigned
-	SFunction*	access;													// Source code executed whenever this variable is accessed
+	SEM*		firstAccess;											// Source code executed whenever this variable is accessed
+	SEM*		firstAssign;											// Source code executed whenever this variable is assigned
 };
 
 struct SBaseclassList
