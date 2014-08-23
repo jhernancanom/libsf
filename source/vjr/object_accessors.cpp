@@ -355,7 +355,7 @@
 bool iObj_set_activeColumn(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.activeColumn, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.activeColumn, var))
 	{
 		SVariable* varUpdate;
 		
@@ -366,7 +366,7 @@ bool iObj_set_activeColumn(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -384,7 +384,7 @@ bool iObj_set_activeColumn(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.activeColumn, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.activeColumn, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -393,7 +393,7 @@ bool iObj_set_activeColumn(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -427,7 +427,7 @@ bool iObj_set_activeColumn(SObject* obj, SVariable* var)
 bool iObj_set_activeControl(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.activeControl, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.activeControl, var))
 	{
 		SVariable* varUpdate;
 		
@@ -438,7 +438,7 @@ bool iObj_set_activeControl(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -456,7 +456,7 @@ bool iObj_set_activeControl(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.activeControl, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.activeControl, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -465,7 +465,7 @@ bool iObj_set_activeControl(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -499,7 +499,7 @@ bool iObj_set_activeControl(SObject* obj, SVariable* var)
 bool iObj_set_activeForm(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.activeForm, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.activeForm, var))
 	{
 		SVariable* varUpdate;
 		
@@ -510,7 +510,7 @@ bool iObj_set_activeForm(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -528,7 +528,7 @@ bool iObj_set_activeForm(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.activeForm, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.activeForm, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -537,7 +537,7 @@ bool iObj_set_activeForm(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -571,7 +571,7 @@ bool iObj_set_activeForm(SObject* obj, SVariable* var)
 bool iObj_set_activePage(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.activePage, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.activePage, var))
 	{
 		SVariable* varUpdate;
 		
@@ -582,7 +582,7 @@ bool iObj_set_activePage(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -600,7 +600,7 @@ bool iObj_set_activePage(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.activePage, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.activePage, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -609,7 +609,7 @@ bool iObj_set_activePage(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -643,7 +643,7 @@ bool iObj_set_activePage(SObject* obj, SVariable* var)
 bool iObj_set_activeRow(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.activeRow, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.activeRow, var))
 	{
 		SVariable* varUpdate;
 		
@@ -654,7 +654,7 @@ bool iObj_set_activeRow(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -672,7 +672,7 @@ bool iObj_set_activeRow(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.activeRow, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.activeRow, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -681,7 +681,7 @@ bool iObj_set_activeRow(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -715,7 +715,7 @@ bool iObj_set_activeRow(SObject* obj, SVariable* var)
 bool iObj_set_addLineFeeds(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.addLineFeeds, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.addLineFeeds, var))
 	{
 		SVariable* varUpdate;
 		
@@ -726,7 +726,7 @@ bool iObj_set_addLineFeeds(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -744,7 +744,7 @@ bool iObj_set_addLineFeeds(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.addLineFeeds, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.addLineFeeds, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -753,7 +753,7 @@ bool iObj_set_addLineFeeds(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -787,7 +787,7 @@ bool iObj_set_addLineFeeds(SObject* obj, SVariable* var)
 bool iObj_set_align(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.align, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.align, var))
 	{
 		SVariable* varUpdate;
 		
@@ -798,7 +798,7 @@ bool iObj_set_align(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -816,7 +816,7 @@ bool iObj_set_align(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.align, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.align, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -825,7 +825,7 @@ bool iObj_set_align(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -859,7 +859,7 @@ bool iObj_set_align(SObject* obj, SVariable* var)
 bool iObj_set_alignment(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.alignment, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.alignment, var))
 	{
 		SVariable* varUpdate;
 		
@@ -870,7 +870,7 @@ bool iObj_set_alignment(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -888,7 +888,7 @@ bool iObj_set_alignment(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.alignment, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.alignment, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -897,7 +897,7 @@ bool iObj_set_alignment(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -931,7 +931,7 @@ bool iObj_set_alignment(SObject* obj, SVariable* var)
 bool iObj_set_allowAddNew(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.allowAddNew, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.allowAddNew, var))
 	{
 		SVariable* varUpdate;
 		
@@ -942,7 +942,7 @@ bool iObj_set_allowAddNew(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -960,7 +960,7 @@ bool iObj_set_allowAddNew(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.allowAddNew, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.allowAddNew, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -969,7 +969,7 @@ bool iObj_set_allowAddNew(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -1003,7 +1003,7 @@ bool iObj_set_allowAddNew(SObject* obj, SVariable* var)
 bool iObj_set_allowAutoColumnFit(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.allowAutoColumnFit, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.allowAutoColumnFit, var))
 	{
 		SVariable* varUpdate;
 		
@@ -1014,7 +1014,7 @@ bool iObj_set_allowAutoColumnFit(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -1032,7 +1032,7 @@ bool iObj_set_allowAutoColumnFit(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.allowAutoColumnFit, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.allowAutoColumnFit, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -1041,7 +1041,7 @@ bool iObj_set_allowAutoColumnFit(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -1075,7 +1075,7 @@ bool iObj_set_allowAutoColumnFit(SObject* obj, SVariable* var)
 bool iObj_set_allowCellSelection(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.allowCellSelection, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.allowCellSelection, var))
 	{
 		SVariable* varUpdate;
 		
@@ -1086,7 +1086,7 @@ bool iObj_set_allowCellSelection(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -1104,7 +1104,7 @@ bool iObj_set_allowCellSelection(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.allowCellSelection, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.allowCellSelection, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -1113,7 +1113,7 @@ bool iObj_set_allowCellSelection(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -1147,7 +1147,7 @@ bool iObj_set_allowCellSelection(SObject* obj, SVariable* var)
 bool iObj_set_allowHeaderSizing(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.allowHeaderSizing, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.allowHeaderSizing, var))
 	{
 		SVariable* varUpdate;
 		
@@ -1158,7 +1158,7 @@ bool iObj_set_allowHeaderSizing(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -1176,7 +1176,7 @@ bool iObj_set_allowHeaderSizing(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.allowHeaderSizing, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.allowHeaderSizing, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -1185,7 +1185,7 @@ bool iObj_set_allowHeaderSizing(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -1219,7 +1219,7 @@ bool iObj_set_allowHeaderSizing(SObject* obj, SVariable* var)
 bool iObj_set_allowOutput(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.allowOutput, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.allowOutput, var))
 	{
 		SVariable* varUpdate;
 		
@@ -1230,7 +1230,7 @@ bool iObj_set_allowOutput(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -1248,7 +1248,7 @@ bool iObj_set_allowOutput(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.allowOutput, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.allowOutput, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -1257,7 +1257,7 @@ bool iObj_set_allowOutput(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -1291,7 +1291,7 @@ bool iObj_set_allowOutput(SObject* obj, SVariable* var)
 bool iObj_set_allowRowSizing(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.allowRowSizing, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.allowRowSizing, var))
 	{
 		SVariable* varUpdate;
 		
@@ -1302,7 +1302,7 @@ bool iObj_set_allowRowSizing(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -1320,7 +1320,7 @@ bool iObj_set_allowRowSizing(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.allowRowSizing, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.allowRowSizing, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -1329,7 +1329,7 @@ bool iObj_set_allowRowSizing(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -1363,7 +1363,7 @@ bool iObj_set_allowRowSizing(SObject* obj, SVariable* var)
 bool iObj_set_allowTabs(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.allowTabs, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.allowTabs, var))
 	{
 		SVariable* varUpdate;
 		
@@ -1374,7 +1374,7 @@ bool iObj_set_allowTabs(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -1392,7 +1392,7 @@ bool iObj_set_allowTabs(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.allowTabs, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.allowTabs, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -1401,7 +1401,7 @@ bool iObj_set_allowTabs(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -1435,7 +1435,7 @@ bool iObj_set_allowTabs(SObject* obj, SVariable* var)
 bool iObj_set_alwaysOnBottom(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.alwaysOnBottom, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.alwaysOnBottom, var))
 	{
 		SVariable* varUpdate;
 		
@@ -1446,7 +1446,7 @@ bool iObj_set_alwaysOnBottom(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -1464,7 +1464,7 @@ bool iObj_set_alwaysOnBottom(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.alwaysOnBottom, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.alwaysOnBottom, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -1473,7 +1473,7 @@ bool iObj_set_alwaysOnBottom(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -1507,7 +1507,7 @@ bool iObj_set_alwaysOnBottom(SObject* obj, SVariable* var)
 bool iObj_set_alwaysOnTop(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.alwaysOnTop, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.alwaysOnTop, var))
 	{
 		SVariable* varUpdate;
 		
@@ -1518,7 +1518,7 @@ bool iObj_set_alwaysOnTop(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -1536,7 +1536,7 @@ bool iObj_set_alwaysOnTop(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.alwaysOnTop, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.alwaysOnTop, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -1545,7 +1545,7 @@ bool iObj_set_alwaysOnTop(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -1579,7 +1579,7 @@ bool iObj_set_alwaysOnTop(SObject* obj, SVariable* var)
 bool iObj_set_anchor(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.anchor, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.anchor, var))
 	{
 		SVariable* varUpdate;
 		
@@ -1590,7 +1590,7 @@ bool iObj_set_anchor(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -1608,7 +1608,7 @@ bool iObj_set_anchor(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.anchor, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.anchor, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -1617,7 +1617,7 @@ bool iObj_set_anchor(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -1651,7 +1651,7 @@ bool iObj_set_anchor(SObject* obj, SVariable* var)
 bool iObj_set_application(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.application, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.application, var))
 	{
 		SVariable* varUpdate;
 		
@@ -1662,7 +1662,7 @@ bool iObj_set_application(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -1680,7 +1680,7 @@ bool iObj_set_application(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.application, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.application, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -1689,7 +1689,7 @@ bool iObj_set_application(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -1723,7 +1723,7 @@ bool iObj_set_application(SObject* obj, SVariable* var)
 bool iObj_set_autoActivate(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.autoActivate, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.autoActivate, var))
 	{
 		SVariable* varUpdate;
 		
@@ -1734,7 +1734,7 @@ bool iObj_set_autoActivate(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -1752,7 +1752,7 @@ bool iObj_set_autoActivate(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.autoActivate, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.autoActivate, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -1761,7 +1761,7 @@ bool iObj_set_autoActivate(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -1795,7 +1795,7 @@ bool iObj_set_autoActivate(SObject* obj, SVariable* var)
 bool iObj_set_autoCenter(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.autoCenter, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.autoCenter, var))
 	{
 		SVariable* varUpdate;
 		
@@ -1806,7 +1806,7 @@ bool iObj_set_autoCenter(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -1824,7 +1824,7 @@ bool iObj_set_autoCenter(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.autoCenter, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.autoCenter, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -1833,7 +1833,7 @@ bool iObj_set_autoCenter(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -1867,7 +1867,7 @@ bool iObj_set_autoCenter(SObject* obj, SVariable* var)
 bool iObj_set_autoCompSource(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.autoCompSource, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.autoCompSource, var))
 	{
 		SVariable* varUpdate;
 		
@@ -1878,7 +1878,7 @@ bool iObj_set_autoCompSource(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -1896,7 +1896,7 @@ bool iObj_set_autoCompSource(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.autoCompSource, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.autoCompSource, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -1905,7 +1905,7 @@ bool iObj_set_autoCompSource(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -1939,7 +1939,7 @@ bool iObj_set_autoCompSource(SObject* obj, SVariable* var)
 bool iObj_set_autoCompTable(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.autoCompTable, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.autoCompTable, var))
 	{
 		SVariable* varUpdate;
 		
@@ -1950,7 +1950,7 @@ bool iObj_set_autoCompTable(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -1968,7 +1968,7 @@ bool iObj_set_autoCompTable(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.autoCompTable, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.autoCompTable, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -1977,7 +1977,7 @@ bool iObj_set_autoCompTable(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -2011,7 +2011,7 @@ bool iObj_set_autoCompTable(SObject* obj, SVariable* var)
 bool iObj_set_autoComplete(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.autoComplete, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.autoComplete, var))
 	{
 		SVariable* varUpdate;
 		
@@ -2022,7 +2022,7 @@ bool iObj_set_autoComplete(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -2040,7 +2040,7 @@ bool iObj_set_autoComplete(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.autoComplete, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.autoComplete, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -2049,7 +2049,7 @@ bool iObj_set_autoComplete(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -2083,7 +2083,7 @@ bool iObj_set_autoComplete(SObject* obj, SVariable* var)
 bool iObj_set_autoHideScrollBar(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.autoHideScrollBar, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.autoHideScrollBar, var))
 	{
 		SVariable* varUpdate;
 		
@@ -2094,7 +2094,7 @@ bool iObj_set_autoHideScrollBar(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -2112,7 +2112,7 @@ bool iObj_set_autoHideScrollBar(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.autoHideScrollBar, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.autoHideScrollBar, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -2121,7 +2121,7 @@ bool iObj_set_autoHideScrollBar(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -2155,7 +2155,7 @@ bool iObj_set_autoHideScrollBar(SObject* obj, SVariable* var)
 bool iObj_set_autoRelease(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.autoRelease, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.autoRelease, var))
 	{
 		SVariable* varUpdate;
 		
@@ -2166,7 +2166,7 @@ bool iObj_set_autoRelease(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -2184,7 +2184,7 @@ bool iObj_set_autoRelease(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.autoRelease, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.autoRelease, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -2193,7 +2193,7 @@ bool iObj_set_autoRelease(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -2227,7 +2227,7 @@ bool iObj_set_autoRelease(SObject* obj, SVariable* var)
 bool iObj_set_autoSize(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.autoSize, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.autoSize, var))
 	{
 		SVariable* varUpdate;
 		
@@ -2238,7 +2238,7 @@ bool iObj_set_autoSize(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -2256,7 +2256,7 @@ bool iObj_set_autoSize(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.autoSize, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.autoSize, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -2265,7 +2265,7 @@ bool iObj_set_autoSize(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -2299,7 +2299,7 @@ bool iObj_set_autoSize(SObject* obj, SVariable* var)
 bool iObj_set_autoVerbMenu(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.autoVerbMenu, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.autoVerbMenu, var))
 	{
 		SVariable* varUpdate;
 		
@@ -2310,7 +2310,7 @@ bool iObj_set_autoVerbMenu(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -2328,7 +2328,7 @@ bool iObj_set_autoVerbMenu(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.autoVerbMenu, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.autoVerbMenu, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -2337,7 +2337,7 @@ bool iObj_set_autoVerbMenu(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -2371,7 +2371,7 @@ bool iObj_set_autoVerbMenu(SObject* obj, SVariable* var)
 bool iObj_set_backColor(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.backColor, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.backColor, var))
 	{
 		SVariable* varUpdate;
 		
@@ -2382,7 +2382,7 @@ bool iObj_set_backColor(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -2400,7 +2400,7 @@ bool iObj_set_backColor(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.backColor, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.backColor, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -2409,7 +2409,7 @@ bool iObj_set_backColor(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -2443,7 +2443,7 @@ bool iObj_set_backColor(SObject* obj, SVariable* var)
 bool iObj_set_backStyle(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.backStyle, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.backStyle, var))
 	{
 		SVariable* varUpdate;
 		
@@ -2454,7 +2454,7 @@ bool iObj_set_backStyle(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -2472,7 +2472,7 @@ bool iObj_set_backStyle(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.backStyle, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.backStyle, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -2481,7 +2481,7 @@ bool iObj_set_backStyle(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -2515,7 +2515,7 @@ bool iObj_set_backStyle(SObject* obj, SVariable* var)
 bool iObj_set_baseClass(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.baseClass, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.baseClass, var))
 	{
 		SVariable* varUpdate;
 		
@@ -2526,7 +2526,7 @@ bool iObj_set_baseClass(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -2544,7 +2544,7 @@ bool iObj_set_baseClass(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.baseClass, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.baseClass, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -2553,7 +2553,7 @@ bool iObj_set_baseClass(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -2587,7 +2587,7 @@ bool iObj_set_baseClass(SObject* obj, SVariable* var)
 bool iObj_set_bindControls(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.bindControls, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.bindControls, var))
 	{
 		SVariable* varUpdate;
 		
@@ -2598,7 +2598,7 @@ bool iObj_set_bindControls(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -2616,7 +2616,7 @@ bool iObj_set_bindControls(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.bindControls, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.bindControls, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -2625,7 +2625,7 @@ bool iObj_set_bindControls(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -2659,7 +2659,7 @@ bool iObj_set_bindControls(SObject* obj, SVariable* var)
 bool iObj_set_borderColor(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.borderColor, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.borderColor, var))
 	{
 		SVariable* varUpdate;
 		
@@ -2670,7 +2670,7 @@ bool iObj_set_borderColor(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -2688,7 +2688,7 @@ bool iObj_set_borderColor(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.borderColor, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.borderColor, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -2697,7 +2697,7 @@ bool iObj_set_borderColor(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -2731,7 +2731,7 @@ bool iObj_set_borderColor(SObject* obj, SVariable* var)
 bool iObj_set_borderStyle(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.borderStyle, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.borderStyle, var))
 	{
 		SVariable* varUpdate;
 		
@@ -2742,7 +2742,7 @@ bool iObj_set_borderStyle(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -2760,7 +2760,7 @@ bool iObj_set_borderStyle(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.borderStyle, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.borderStyle, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -2769,7 +2769,7 @@ bool iObj_set_borderStyle(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -2803,7 +2803,7 @@ bool iObj_set_borderStyle(SObject* obj, SVariable* var)
 bool iObj_set_borderWidth(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.borderWidth, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.borderWidth, var))
 	{
 		SVariable* varUpdate;
 		
@@ -2814,7 +2814,7 @@ bool iObj_set_borderWidth(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -2832,7 +2832,7 @@ bool iObj_set_borderWidth(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.borderWidth, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.borderWidth, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -2841,7 +2841,7 @@ bool iObj_set_borderWidth(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -2875,7 +2875,7 @@ bool iObj_set_borderWidth(SObject* obj, SVariable* var)
 bool iObj_set_bound(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.bound, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.bound, var))
 	{
 		SVariable* varUpdate;
 		
@@ -2886,7 +2886,7 @@ bool iObj_set_bound(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -2904,7 +2904,7 @@ bool iObj_set_bound(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.bound, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.bound, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -2913,7 +2913,7 @@ bool iObj_set_bound(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -2947,7 +2947,7 @@ bool iObj_set_bound(SObject* obj, SVariable* var)
 bool iObj_set_boundColumn(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.boundColumn, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.boundColumn, var))
 	{
 		SVariable* varUpdate;
 		
@@ -2958,7 +2958,7 @@ bool iObj_set_boundColumn(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -2976,7 +2976,7 @@ bool iObj_set_boundColumn(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.boundColumn, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.boundColumn, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -2985,7 +2985,7 @@ bool iObj_set_boundColumn(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -3019,7 +3019,7 @@ bool iObj_set_boundColumn(SObject* obj, SVariable* var)
 bool iObj_set_boundTo(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.boundTo, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.boundTo, var))
 	{
 		SVariable* varUpdate;
 		
@@ -3030,7 +3030,7 @@ bool iObj_set_boundTo(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -3048,7 +3048,7 @@ bool iObj_set_boundTo(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.boundTo, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.boundTo, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -3057,7 +3057,7 @@ bool iObj_set_boundTo(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -3091,7 +3091,7 @@ bool iObj_set_boundTo(SObject* obj, SVariable* var)
 bool iObj_set_bufferMode(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.bufferMode, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.bufferMode, var))
 	{
 		SVariable* varUpdate;
 		
@@ -3102,7 +3102,7 @@ bool iObj_set_bufferMode(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -3120,7 +3120,7 @@ bool iObj_set_bufferMode(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.bufferMode, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.bufferMode, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -3129,7 +3129,7 @@ bool iObj_set_bufferMode(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -3163,7 +3163,7 @@ bool iObj_set_bufferMode(SObject* obj, SVariable* var)
 bool iObj_set_buttonCount(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.buttonCount, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.buttonCount, var))
 	{
 		SVariable* varUpdate;
 		
@@ -3174,7 +3174,7 @@ bool iObj_set_buttonCount(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -3192,7 +3192,7 @@ bool iObj_set_buttonCount(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.buttonCount, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.buttonCount, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -3201,7 +3201,7 @@ bool iObj_set_buttonCount(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -3235,7 +3235,7 @@ bool iObj_set_buttonCount(SObject* obj, SVariable* var)
 bool iObj_set_cancel(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.cancel, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.cancel, var))
 	{
 		SVariable* varUpdate;
 		
@@ -3246,7 +3246,7 @@ bool iObj_set_cancel(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -3264,7 +3264,7 @@ bool iObj_set_cancel(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.cancel, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.cancel, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -3273,7 +3273,7 @@ bool iObj_set_cancel(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -3307,7 +3307,7 @@ bool iObj_set_cancel(SObject* obj, SVariable* var)
 bool iObj_set_caption(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.caption, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.caption, var))
 	{
 		SVariable* varUpdate;
 		
@@ -3318,7 +3318,7 @@ bool iObj_set_caption(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -3336,7 +3336,7 @@ bool iObj_set_caption(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.caption, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.caption, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -3345,7 +3345,7 @@ bool iObj_set_caption(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -3379,7 +3379,7 @@ bool iObj_set_caption(SObject* obj, SVariable* var)
 bool iObj_set_centered(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.centered, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.centered, var))
 	{
 		SVariable* varUpdate;
 		
@@ -3390,7 +3390,7 @@ bool iObj_set_centered(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -3408,7 +3408,7 @@ bool iObj_set_centered(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.centered, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.centered, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -3417,7 +3417,7 @@ bool iObj_set_centered(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -3451,7 +3451,7 @@ bool iObj_set_centered(SObject* obj, SVariable* var)
 bool iObj_set_century(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.century, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.century, var))
 	{
 		SVariable* varUpdate;
 		
@@ -3462,7 +3462,7 @@ bool iObj_set_century(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -3480,7 +3480,7 @@ bool iObj_set_century(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.century, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.century, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -3489,7 +3489,7 @@ bool iObj_set_century(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -3523,7 +3523,7 @@ bool iObj_set_century(SObject* obj, SVariable* var)
 bool iObj_set_childOrder(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.childOrder, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.childOrder, var))
 	{
 		SVariable* varUpdate;
 		
@@ -3534,7 +3534,7 @@ bool iObj_set_childOrder(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -3552,7 +3552,7 @@ bool iObj_set_childOrder(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.childOrder, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.childOrder, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -3561,7 +3561,7 @@ bool iObj_set_childOrder(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -3595,7 +3595,7 @@ bool iObj_set_childOrder(SObject* obj, SVariable* var)
 bool iObj_set_class(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p._class, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p._class, var))
 	{
 		SVariable* varUpdate;
 		
@@ -3606,7 +3606,7 @@ bool iObj_set_class(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -3624,7 +3624,7 @@ bool iObj_set_class(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p._class, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p._class, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -3633,7 +3633,7 @@ bool iObj_set_class(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -3667,7 +3667,7 @@ bool iObj_set_class(SObject* obj, SVariable* var)
 bool iObj_set_classLibrary(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.classLibrary, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.classLibrary, var))
 	{
 		SVariable* varUpdate;
 		
@@ -3678,7 +3678,7 @@ bool iObj_set_classLibrary(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -3696,7 +3696,7 @@ bool iObj_set_classLibrary(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.classLibrary, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.classLibrary, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -3705,7 +3705,7 @@ bool iObj_set_classLibrary(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -3739,7 +3739,7 @@ bool iObj_set_classLibrary(SObject* obj, SVariable* var)
 bool iObj_set_clipControls(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.clipControls, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.clipControls, var))
 	{
 		SVariable* varUpdate;
 		
@@ -3750,7 +3750,7 @@ bool iObj_set_clipControls(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -3768,7 +3768,7 @@ bool iObj_set_clipControls(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.clipControls, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.clipControls, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -3777,7 +3777,7 @@ bool iObj_set_clipControls(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -3811,7 +3811,7 @@ bool iObj_set_clipControls(SObject* obj, SVariable* var)
 bool iObj_set_closable(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.closable, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.closable, var))
 	{
 		SVariable* varUpdate;
 		
@@ -3822,7 +3822,7 @@ bool iObj_set_closable(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -3840,7 +3840,7 @@ bool iObj_set_closable(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.closable, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.closable, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -3849,7 +3849,7 @@ bool iObj_set_closable(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -3883,7 +3883,7 @@ bool iObj_set_closable(SObject* obj, SVariable* var)
 bool iObj_set_colorScheme(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.colorScheme, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.colorScheme, var))
 	{
 		SVariable* varUpdate;
 		
@@ -3894,7 +3894,7 @@ bool iObj_set_colorScheme(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -3912,7 +3912,7 @@ bool iObj_set_colorScheme(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.colorScheme, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.colorScheme, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -3921,7 +3921,7 @@ bool iObj_set_colorScheme(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -3955,7 +3955,7 @@ bool iObj_set_colorScheme(SObject* obj, SVariable* var)
 bool iObj_set_colorSource(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.colorSource, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.colorSource, var))
 	{
 		SVariable* varUpdate;
 		
@@ -3966,7 +3966,7 @@ bool iObj_set_colorSource(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -3984,7 +3984,7 @@ bool iObj_set_colorSource(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.colorSource, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.colorSource, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -3993,7 +3993,7 @@ bool iObj_set_colorSource(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -4027,7 +4027,7 @@ bool iObj_set_colorSource(SObject* obj, SVariable* var)
 bool iObj_set_columnCount(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.columnCount, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.columnCount, var))
 	{
 		SVariable* varUpdate;
 		
@@ -4038,7 +4038,7 @@ bool iObj_set_columnCount(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -4056,7 +4056,7 @@ bool iObj_set_columnCount(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.columnCount, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.columnCount, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -4065,7 +4065,7 @@ bool iObj_set_columnCount(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -4099,7 +4099,7 @@ bool iObj_set_columnCount(SObject* obj, SVariable* var)
 bool iObj_set_columnLines(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.columnLines, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.columnLines, var))
 	{
 		SVariable* varUpdate;
 		
@@ -4110,7 +4110,7 @@ bool iObj_set_columnLines(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -4128,7 +4128,7 @@ bool iObj_set_columnLines(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.columnLines, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.columnLines, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -4137,7 +4137,7 @@ bool iObj_set_columnLines(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -4171,7 +4171,7 @@ bool iObj_set_columnLines(SObject* obj, SVariable* var)
 bool iObj_set_columnOrder(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.columnOrder, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.columnOrder, var))
 	{
 		SVariable* varUpdate;
 		
@@ -4182,7 +4182,7 @@ bool iObj_set_columnOrder(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -4200,7 +4200,7 @@ bool iObj_set_columnOrder(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.columnOrder, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.columnOrder, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -4209,7 +4209,7 @@ bool iObj_set_columnOrder(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -4243,7 +4243,7 @@ bool iObj_set_columnOrder(SObject* obj, SVariable* var)
 bool iObj_set_columnWidths(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.columnWidths, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.columnWidths, var))
 	{
 		SVariable* varUpdate;
 		
@@ -4254,7 +4254,7 @@ bool iObj_set_columnWidths(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -4272,7 +4272,7 @@ bool iObj_set_columnWidths(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.columnWidths, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.columnWidths, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -4281,7 +4281,7 @@ bool iObj_set_columnWidths(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -4315,7 +4315,7 @@ bool iObj_set_columnWidths(SObject* obj, SVariable* var)
 bool iObj_set_columns(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.columns, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.columns, var))
 	{
 		SVariable* varUpdate;
 		
@@ -4326,7 +4326,7 @@ bool iObj_set_columns(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -4344,7 +4344,7 @@ bool iObj_set_columns(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.columns, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.columns, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -4353,7 +4353,7 @@ bool iObj_set_columns(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -4387,7 +4387,7 @@ bool iObj_set_columns(SObject* obj, SVariable* var)
 bool iObj_set_comment(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.comment, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.comment, var))
 	{
 		SVariable* varUpdate;
 		
@@ -4398,7 +4398,7 @@ bool iObj_set_comment(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -4416,7 +4416,7 @@ bool iObj_set_comment(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.comment, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.comment, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -4425,7 +4425,7 @@ bool iObj_set_comment(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -4459,7 +4459,7 @@ bool iObj_set_comment(SObject* obj, SVariable* var)
 bool iObj_set_continuousScroll(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.continuousScroll, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.continuousScroll, var))
 	{
 		SVariable* varUpdate;
 		
@@ -4470,7 +4470,7 @@ bool iObj_set_continuousScroll(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -4488,7 +4488,7 @@ bool iObj_set_continuousScroll(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.continuousScroll, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.continuousScroll, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -4497,7 +4497,7 @@ bool iObj_set_continuousScroll(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -4531,7 +4531,7 @@ bool iObj_set_continuousScroll(SObject* obj, SVariable* var)
 bool iObj_set_controlBox(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.controlBox, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.controlBox, var))
 	{
 		SVariable* varUpdate;
 		
@@ -4542,7 +4542,7 @@ bool iObj_set_controlBox(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -4560,7 +4560,7 @@ bool iObj_set_controlBox(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.controlBox, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.controlBox, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -4569,7 +4569,7 @@ bool iObj_set_controlBox(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -4603,7 +4603,7 @@ bool iObj_set_controlBox(SObject* obj, SVariable* var)
 bool iObj_set_controlCount(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.controlCount, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.controlCount, var))
 	{
 		SVariable* varUpdate;
 		
@@ -4614,7 +4614,7 @@ bool iObj_set_controlCount(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -4632,7 +4632,7 @@ bool iObj_set_controlCount(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.controlCount, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.controlCount, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -4641,7 +4641,7 @@ bool iObj_set_controlCount(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -4675,7 +4675,7 @@ bool iObj_set_controlCount(SObject* obj, SVariable* var)
 bool iObj_set_controlSource(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.controlSource, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.controlSource, var))
 	{
 		SVariable* varUpdate;
 		
@@ -4686,7 +4686,7 @@ bool iObj_set_controlSource(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -4704,7 +4704,7 @@ bool iObj_set_controlSource(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.controlSource, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.controlSource, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -4713,7 +4713,7 @@ bool iObj_set_controlSource(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -4747,7 +4747,7 @@ bool iObj_set_controlSource(SObject* obj, SVariable* var)
 bool iObj_set_controls(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.controls, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.controls, var))
 	{
 		SVariable* varUpdate;
 		
@@ -4758,7 +4758,7 @@ bool iObj_set_controls(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -4776,7 +4776,7 @@ bool iObj_set_controls(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.controls, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.controls, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -4785,7 +4785,7 @@ bool iObj_set_controls(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -4819,7 +4819,7 @@ bool iObj_set_controls(SObject* obj, SVariable* var)
 bool iObj_set_count(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.count, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.count, var))
 	{
 		SVariable* varUpdate;
 		
@@ -4830,7 +4830,7 @@ bool iObj_set_count(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -4848,7 +4848,7 @@ bool iObj_set_count(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.count, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.count, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -4857,7 +4857,7 @@ bool iObj_set_count(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -4891,7 +4891,7 @@ bool iObj_set_count(SObject* obj, SVariable* var)
 bool iObj_set_currentControl(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.currentControl, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.currentControl, var))
 	{
 		SVariable* varUpdate;
 		
@@ -4902,7 +4902,7 @@ bool iObj_set_currentControl(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -4920,7 +4920,7 @@ bool iObj_set_currentControl(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.currentControl, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.currentControl, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -4929,7 +4929,7 @@ bool iObj_set_currentControl(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -4963,7 +4963,7 @@ bool iObj_set_currentControl(SObject* obj, SVariable* var)
 bool iObj_set_currentX(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.currentX, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.currentX, var))
 	{
 		SVariable* varUpdate;
 		
@@ -4974,7 +4974,7 @@ bool iObj_set_currentX(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -4992,7 +4992,7 @@ bool iObj_set_currentX(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.currentX, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.currentX, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -5001,7 +5001,7 @@ bool iObj_set_currentX(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -5035,7 +5035,7 @@ bool iObj_set_currentX(SObject* obj, SVariable* var)
 bool iObj_set_currentY(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.currentY, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.currentY, var))
 	{
 		SVariable* varUpdate;
 		
@@ -5046,7 +5046,7 @@ bool iObj_set_currentY(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -5064,7 +5064,7 @@ bool iObj_set_currentY(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.currentY, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.currentY, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -5073,7 +5073,7 @@ bool iObj_set_currentY(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -5107,7 +5107,7 @@ bool iObj_set_currentY(SObject* obj, SVariable* var)
 bool iObj_set_curvature(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.curvature, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.curvature, var))
 	{
 		SVariable* varUpdate;
 		
@@ -5118,7 +5118,7 @@ bool iObj_set_curvature(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -5136,7 +5136,7 @@ bool iObj_set_curvature(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.curvature, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.curvature, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -5145,7 +5145,7 @@ bool iObj_set_curvature(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -5179,7 +5179,7 @@ bool iObj_set_curvature(SObject* obj, SVariable* var)
 bool iObj_set_dEClass(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dEClass, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dEClass, var))
 	{
 		SVariable* varUpdate;
 		
@@ -5190,7 +5190,7 @@ bool iObj_set_dEClass(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -5208,7 +5208,7 @@ bool iObj_set_dEClass(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dEClass, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dEClass, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -5217,7 +5217,7 @@ bool iObj_set_dEClass(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -5251,7 +5251,7 @@ bool iObj_set_dEClass(SObject* obj, SVariable* var)
 bool iObj_set_dEClassLibrary(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dEClassLibrary, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dEClassLibrary, var))
 	{
 		SVariable* varUpdate;
 		
@@ -5262,7 +5262,7 @@ bool iObj_set_dEClassLibrary(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -5280,7 +5280,7 @@ bool iObj_set_dEClassLibrary(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dEClassLibrary, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dEClassLibrary, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -5289,7 +5289,7 @@ bool iObj_set_dEClassLibrary(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -5323,7 +5323,7 @@ bool iObj_set_dEClassLibrary(SObject* obj, SVariable* var)
 bool iObj_set_dataEnvironment(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dataEnvironment, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dataEnvironment, var))
 	{
 		SVariable* varUpdate;
 		
@@ -5334,7 +5334,7 @@ bool iObj_set_dataEnvironment(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -5352,7 +5352,7 @@ bool iObj_set_dataEnvironment(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dataEnvironment, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dataEnvironment, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -5361,7 +5361,7 @@ bool iObj_set_dataEnvironment(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -5395,7 +5395,7 @@ bool iObj_set_dataEnvironment(SObject* obj, SVariable* var)
 bool iObj_set_dataSession(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dataSession, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dataSession, var))
 	{
 		SVariable* varUpdate;
 		
@@ -5406,7 +5406,7 @@ bool iObj_set_dataSession(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -5424,7 +5424,7 @@ bool iObj_set_dataSession(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dataSession, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dataSession, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -5433,7 +5433,7 @@ bool iObj_set_dataSession(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -5467,7 +5467,7 @@ bool iObj_set_dataSession(SObject* obj, SVariable* var)
 bool iObj_set_dataSessionID(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dataSessionID, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dataSessionID, var))
 	{
 		SVariable* varUpdate;
 		
@@ -5478,7 +5478,7 @@ bool iObj_set_dataSessionID(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -5496,7 +5496,7 @@ bool iObj_set_dataSessionID(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dataSessionID, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dataSessionID, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -5505,7 +5505,7 @@ bool iObj_set_dataSessionID(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -5539,7 +5539,7 @@ bool iObj_set_dataSessionID(SObject* obj, SVariable* var)
 bool iObj_set_dateFormat(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dateFormat, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dateFormat, var))
 	{
 		SVariable* varUpdate;
 		
@@ -5550,7 +5550,7 @@ bool iObj_set_dateFormat(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -5568,7 +5568,7 @@ bool iObj_set_dateFormat(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dateFormat, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dateFormat, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -5577,7 +5577,7 @@ bool iObj_set_dateFormat(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -5611,7 +5611,7 @@ bool iObj_set_dateFormat(SObject* obj, SVariable* var)
 bool iObj_set_dateMark(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dateMark, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dateMark, var))
 	{
 		SVariable* varUpdate;
 		
@@ -5622,7 +5622,7 @@ bool iObj_set_dateMark(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -5640,7 +5640,7 @@ bool iObj_set_dateMark(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dateMark, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dateMark, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -5649,7 +5649,7 @@ bool iObj_set_dateMark(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -5683,7 +5683,7 @@ bool iObj_set_dateMark(SObject* obj, SVariable* var)
 bool iObj_set_defOLELCID(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.defOLELCID, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.defOLELCID, var))
 	{
 		SVariable* varUpdate;
 		
@@ -5694,7 +5694,7 @@ bool iObj_set_defOLELCID(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -5712,7 +5712,7 @@ bool iObj_set_defOLELCID(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.defOLELCID, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.defOLELCID, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -5721,7 +5721,7 @@ bool iObj_set_defOLELCID(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -5755,7 +5755,7 @@ bool iObj_set_defOLELCID(SObject* obj, SVariable* var)
 bool iObj_set_default(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p._default, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p._default, var))
 	{
 		SVariable* varUpdate;
 		
@@ -5766,7 +5766,7 @@ bool iObj_set_default(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -5784,7 +5784,7 @@ bool iObj_set_default(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p._default, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p._default, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -5793,7 +5793,7 @@ bool iObj_set_default(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -5827,7 +5827,7 @@ bool iObj_set_default(SObject* obj, SVariable* var)
 bool iObj_set_deleteMark(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.deleteMark, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.deleteMark, var))
 	{
 		SVariable* varUpdate;
 		
@@ -5838,7 +5838,7 @@ bool iObj_set_deleteMark(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -5856,7 +5856,7 @@ bool iObj_set_deleteMark(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.deleteMark, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.deleteMark, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -5865,7 +5865,7 @@ bool iObj_set_deleteMark(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -5899,7 +5899,7 @@ bool iObj_set_deleteMark(SObject* obj, SVariable* var)
 bool iObj_set_desktop(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.desktop, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.desktop, var))
 	{
 		SVariable* varUpdate;
 		
@@ -5910,7 +5910,7 @@ bool iObj_set_desktop(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -5928,7 +5928,7 @@ bool iObj_set_desktop(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.desktop, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.desktop, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -5937,7 +5937,7 @@ bool iObj_set_desktop(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -5971,7 +5971,7 @@ bool iObj_set_desktop(SObject* obj, SVariable* var)
 bool iObj_set_details(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.details, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.details, var))
 	{
 		SVariable* varUpdate;
 		
@@ -5982,7 +5982,7 @@ bool iObj_set_details(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -6000,7 +6000,7 @@ bool iObj_set_details(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.details, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.details, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -6009,7 +6009,7 @@ bool iObj_set_details(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -6043,7 +6043,7 @@ bool iObj_set_details(SObject* obj, SVariable* var)
 bool iObj_set_disabledBackColor(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.disabledBackColor, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.disabledBackColor, var))
 	{
 		SVariable* varUpdate;
 		
@@ -6054,7 +6054,7 @@ bool iObj_set_disabledBackColor(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -6072,7 +6072,7 @@ bool iObj_set_disabledBackColor(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.disabledBackColor, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.disabledBackColor, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -6081,7 +6081,7 @@ bool iObj_set_disabledBackColor(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -6115,7 +6115,7 @@ bool iObj_set_disabledBackColor(SObject* obj, SVariable* var)
 bool iObj_set_disabledForeColor(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.disabledForeColor, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.disabledForeColor, var))
 	{
 		SVariable* varUpdate;
 		
@@ -6126,7 +6126,7 @@ bool iObj_set_disabledForeColor(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -6144,7 +6144,7 @@ bool iObj_set_disabledForeColor(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.disabledForeColor, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.disabledForeColor, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -6153,7 +6153,7 @@ bool iObj_set_disabledForeColor(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -6187,7 +6187,7 @@ bool iObj_set_disabledForeColor(SObject* obj, SVariable* var)
 bool iObj_set_disabledItemBackColor(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.disabledItemBackColor, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.disabledItemBackColor, var))
 	{
 		SVariable* varUpdate;
 		
@@ -6198,7 +6198,7 @@ bool iObj_set_disabledItemBackColor(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -6216,7 +6216,7 @@ bool iObj_set_disabledItemBackColor(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.disabledItemBackColor, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.disabledItemBackColor, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -6225,7 +6225,7 @@ bool iObj_set_disabledItemBackColor(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -6259,7 +6259,7 @@ bool iObj_set_disabledItemBackColor(SObject* obj, SVariable* var)
 bool iObj_set_disabledItemForeColor(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.disabledItemForeColor, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.disabledItemForeColor, var))
 	{
 		SVariable* varUpdate;
 		
@@ -6270,7 +6270,7 @@ bool iObj_set_disabledItemForeColor(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -6288,7 +6288,7 @@ bool iObj_set_disabledItemForeColor(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.disabledItemForeColor, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.disabledItemForeColor, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -6297,7 +6297,7 @@ bool iObj_set_disabledItemForeColor(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -6331,7 +6331,7 @@ bool iObj_set_disabledItemForeColor(SObject* obj, SVariable* var)
 bool iObj_set_disabledPicture(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.disabledPicture, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.disabledPicture, var))
 	{
 		SVariable* varUpdate;
 		
@@ -6342,7 +6342,7 @@ bool iObj_set_disabledPicture(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -6360,7 +6360,7 @@ bool iObj_set_disabledPicture(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.disabledPicture, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.disabledPicture, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -6369,7 +6369,7 @@ bool iObj_set_disabledPicture(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -6403,7 +6403,7 @@ bool iObj_set_disabledPicture(SObject* obj, SVariable* var)
 bool iObj_set_displayCount(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.displayCount, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.displayCount, var))
 	{
 		SVariable* varUpdate;
 		
@@ -6414,7 +6414,7 @@ bool iObj_set_displayCount(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -6432,7 +6432,7 @@ bool iObj_set_displayCount(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.displayCount, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.displayCount, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -6441,7 +6441,7 @@ bool iObj_set_displayCount(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -6475,7 +6475,7 @@ bool iObj_set_displayCount(SObject* obj, SVariable* var)
 bool iObj_set_displayValue(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.displayValue, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.displayValue, var))
 	{
 		SVariable* varUpdate;
 		
@@ -6486,7 +6486,7 @@ bool iObj_set_displayValue(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -6504,7 +6504,7 @@ bool iObj_set_displayValue(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.displayValue, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.displayValue, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -6513,7 +6513,7 @@ bool iObj_set_displayValue(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -6547,7 +6547,7 @@ bool iObj_set_displayValue(SObject* obj, SVariable* var)
 bool iObj_set_doCreate(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.doCreate, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.doCreate, var))
 	{
 		SVariable* varUpdate;
 		
@@ -6558,7 +6558,7 @@ bool iObj_set_doCreate(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -6576,7 +6576,7 @@ bool iObj_set_doCreate(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.doCreate, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.doCreate, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -6585,7 +6585,7 @@ bool iObj_set_doCreate(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -6619,7 +6619,7 @@ bool iObj_set_doCreate(SObject* obj, SVariable* var)
 bool iObj_set_dockPosition(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dockPosition, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dockPosition, var))
 	{
 		SVariable* varUpdate;
 		
@@ -6630,7 +6630,7 @@ bool iObj_set_dockPosition(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -6648,7 +6648,7 @@ bool iObj_set_dockPosition(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dockPosition, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dockPosition, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -6657,7 +6657,7 @@ bool iObj_set_dockPosition(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -6691,7 +6691,7 @@ bool iObj_set_dockPosition(SObject* obj, SVariable* var)
 bool iObj_set_dockable(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dockable, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dockable, var))
 	{
 		SVariable* varUpdate;
 		
@@ -6702,7 +6702,7 @@ bool iObj_set_dockable(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -6720,7 +6720,7 @@ bool iObj_set_dockable(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dockable, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dockable, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -6729,7 +6729,7 @@ bool iObj_set_dockable(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -6763,7 +6763,7 @@ bool iObj_set_dockable(SObject* obj, SVariable* var)
 bool iObj_set_docked(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.docked, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.docked, var))
 	{
 		SVariable* varUpdate;
 		
@@ -6774,7 +6774,7 @@ bool iObj_set_docked(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -6792,7 +6792,7 @@ bool iObj_set_docked(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.docked, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.docked, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -6801,7 +6801,7 @@ bool iObj_set_docked(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -6835,7 +6835,7 @@ bool iObj_set_docked(SObject* obj, SVariable* var)
 bool iObj_set_documentFile(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.documentFile, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.documentFile, var))
 	{
 		SVariable* varUpdate;
 		
@@ -6846,7 +6846,7 @@ bool iObj_set_documentFile(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -6864,7 +6864,7 @@ bool iObj_set_documentFile(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.documentFile, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.documentFile, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -6873,7 +6873,7 @@ bool iObj_set_documentFile(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -6907,7 +6907,7 @@ bool iObj_set_documentFile(SObject* obj, SVariable* var)
 bool iObj_set_downPicture(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.downPicture, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.downPicture, var))
 	{
 		SVariable* varUpdate;
 		
@@ -6918,7 +6918,7 @@ bool iObj_set_downPicture(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -6936,7 +6936,7 @@ bool iObj_set_downPicture(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.downPicture, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.downPicture, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -6945,7 +6945,7 @@ bool iObj_set_downPicture(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -6979,7 +6979,7 @@ bool iObj_set_downPicture(SObject* obj, SVariable* var)
 bool iObj_set_dragIcon(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dragIcon, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dragIcon, var))
 	{
 		SVariable* varUpdate;
 		
@@ -6990,7 +6990,7 @@ bool iObj_set_dragIcon(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -7008,7 +7008,7 @@ bool iObj_set_dragIcon(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dragIcon, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dragIcon, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -7017,7 +7017,7 @@ bool iObj_set_dragIcon(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -7051,7 +7051,7 @@ bool iObj_set_dragIcon(SObject* obj, SVariable* var)
 bool iObj_set_dragMode(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dragMode, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dragMode, var))
 	{
 		SVariable* varUpdate;
 		
@@ -7062,7 +7062,7 @@ bool iObj_set_dragMode(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -7080,7 +7080,7 @@ bool iObj_set_dragMode(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dragMode, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dragMode, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -7089,7 +7089,7 @@ bool iObj_set_dragMode(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -7123,7 +7123,7 @@ bool iObj_set_dragMode(SObject* obj, SVariable* var)
 bool iObj_set_drawMode(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.drawMode, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.drawMode, var))
 	{
 		SVariable* varUpdate;
 		
@@ -7134,7 +7134,7 @@ bool iObj_set_drawMode(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -7152,7 +7152,7 @@ bool iObj_set_drawMode(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.drawMode, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.drawMode, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -7161,7 +7161,7 @@ bool iObj_set_drawMode(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -7195,7 +7195,7 @@ bool iObj_set_drawMode(SObject* obj, SVariable* var)
 bool iObj_set_drawStyle(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.drawStyle, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.drawStyle, var))
 	{
 		SVariable* varUpdate;
 		
@@ -7206,7 +7206,7 @@ bool iObj_set_drawStyle(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -7224,7 +7224,7 @@ bool iObj_set_drawStyle(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.drawStyle, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.drawStyle, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -7233,7 +7233,7 @@ bool iObj_set_drawStyle(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -7267,7 +7267,7 @@ bool iObj_set_drawStyle(SObject* obj, SVariable* var)
 bool iObj_set_drawWidth(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.drawWidth, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.drawWidth, var))
 	{
 		SVariable* varUpdate;
 		
@@ -7278,7 +7278,7 @@ bool iObj_set_drawWidth(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -7296,7 +7296,7 @@ bool iObj_set_drawWidth(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.drawWidth, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.drawWidth, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -7305,7 +7305,7 @@ bool iObj_set_drawWidth(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -7339,7 +7339,7 @@ bool iObj_set_drawWidth(SObject* obj, SVariable* var)
 bool iObj_set_dynamicAlignment(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dynamicAlignment, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dynamicAlignment, var))
 	{
 		SVariable* varUpdate;
 		
@@ -7350,7 +7350,7 @@ bool iObj_set_dynamicAlignment(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -7368,7 +7368,7 @@ bool iObj_set_dynamicAlignment(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dynamicAlignment, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dynamicAlignment, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -7377,7 +7377,7 @@ bool iObj_set_dynamicAlignment(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -7411,7 +7411,7 @@ bool iObj_set_dynamicAlignment(SObject* obj, SVariable* var)
 bool iObj_set_dynamicBackColor(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dynamicBackColor, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dynamicBackColor, var))
 	{
 		SVariable* varUpdate;
 		
@@ -7422,7 +7422,7 @@ bool iObj_set_dynamicBackColor(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -7440,7 +7440,7 @@ bool iObj_set_dynamicBackColor(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dynamicBackColor, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dynamicBackColor, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -7449,7 +7449,7 @@ bool iObj_set_dynamicBackColor(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -7483,7 +7483,7 @@ bool iObj_set_dynamicBackColor(SObject* obj, SVariable* var)
 bool iObj_set_dynamicCurrentControl(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dynamicCurrentControl, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dynamicCurrentControl, var))
 	{
 		SVariable* varUpdate;
 		
@@ -7494,7 +7494,7 @@ bool iObj_set_dynamicCurrentControl(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -7512,7 +7512,7 @@ bool iObj_set_dynamicCurrentControl(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dynamicCurrentControl, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dynamicCurrentControl, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -7521,7 +7521,7 @@ bool iObj_set_dynamicCurrentControl(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -7555,7 +7555,7 @@ bool iObj_set_dynamicCurrentControl(SObject* obj, SVariable* var)
 bool iObj_set_dynamicFontBold(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dynamicFontBold, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dynamicFontBold, var))
 	{
 		SVariable* varUpdate;
 		
@@ -7566,7 +7566,7 @@ bool iObj_set_dynamicFontBold(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -7584,7 +7584,7 @@ bool iObj_set_dynamicFontBold(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dynamicFontBold, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dynamicFontBold, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -7593,7 +7593,7 @@ bool iObj_set_dynamicFontBold(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -7627,7 +7627,7 @@ bool iObj_set_dynamicFontBold(SObject* obj, SVariable* var)
 bool iObj_set_dynamicFontItalic(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dynamicFontItalic, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dynamicFontItalic, var))
 	{
 		SVariable* varUpdate;
 		
@@ -7638,7 +7638,7 @@ bool iObj_set_dynamicFontItalic(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -7656,7 +7656,7 @@ bool iObj_set_dynamicFontItalic(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dynamicFontItalic, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dynamicFontItalic, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -7665,7 +7665,7 @@ bool iObj_set_dynamicFontItalic(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -7699,7 +7699,7 @@ bool iObj_set_dynamicFontItalic(SObject* obj, SVariable* var)
 bool iObj_set_dynamicFontName(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dynamicFontName, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dynamicFontName, var))
 	{
 		SVariable* varUpdate;
 		
@@ -7710,7 +7710,7 @@ bool iObj_set_dynamicFontName(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -7728,7 +7728,7 @@ bool iObj_set_dynamicFontName(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dynamicFontName, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dynamicFontName, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -7737,7 +7737,7 @@ bool iObj_set_dynamicFontName(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -7771,7 +7771,7 @@ bool iObj_set_dynamicFontName(SObject* obj, SVariable* var)
 bool iObj_set_dynamicFontOutline(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dynamicFontOutline, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dynamicFontOutline, var))
 	{
 		SVariable* varUpdate;
 		
@@ -7782,7 +7782,7 @@ bool iObj_set_dynamicFontOutline(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -7800,7 +7800,7 @@ bool iObj_set_dynamicFontOutline(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dynamicFontOutline, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dynamicFontOutline, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -7809,7 +7809,7 @@ bool iObj_set_dynamicFontOutline(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -7843,7 +7843,7 @@ bool iObj_set_dynamicFontOutline(SObject* obj, SVariable* var)
 bool iObj_set_dynamicFontShadow(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dynamicFontShadow, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dynamicFontShadow, var))
 	{
 		SVariable* varUpdate;
 		
@@ -7854,7 +7854,7 @@ bool iObj_set_dynamicFontShadow(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -7872,7 +7872,7 @@ bool iObj_set_dynamicFontShadow(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dynamicFontShadow, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dynamicFontShadow, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -7881,7 +7881,7 @@ bool iObj_set_dynamicFontShadow(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -7915,7 +7915,7 @@ bool iObj_set_dynamicFontShadow(SObject* obj, SVariable* var)
 bool iObj_set_dynamicFontSize(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dynamicFontSize, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dynamicFontSize, var))
 	{
 		SVariable* varUpdate;
 		
@@ -7926,7 +7926,7 @@ bool iObj_set_dynamicFontSize(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -7944,7 +7944,7 @@ bool iObj_set_dynamicFontSize(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dynamicFontSize, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dynamicFontSize, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -7953,7 +7953,7 @@ bool iObj_set_dynamicFontSize(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -7987,7 +7987,7 @@ bool iObj_set_dynamicFontSize(SObject* obj, SVariable* var)
 bool iObj_set_dynamicFontStrikeThru(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dynamicFontStrikeThru, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dynamicFontStrikeThru, var))
 	{
 		SVariable* varUpdate;
 		
@@ -7998,7 +7998,7 @@ bool iObj_set_dynamicFontStrikeThru(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -8016,7 +8016,7 @@ bool iObj_set_dynamicFontStrikeThru(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dynamicFontStrikeThru, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dynamicFontStrikeThru, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -8025,7 +8025,7 @@ bool iObj_set_dynamicFontStrikeThru(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -8059,7 +8059,7 @@ bool iObj_set_dynamicFontStrikeThru(SObject* obj, SVariable* var)
 bool iObj_set_dynamicFontUnderline(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dynamicFontUnderline, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dynamicFontUnderline, var))
 	{
 		SVariable* varUpdate;
 		
@@ -8070,7 +8070,7 @@ bool iObj_set_dynamicFontUnderline(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -8088,7 +8088,7 @@ bool iObj_set_dynamicFontUnderline(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dynamicFontUnderline, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dynamicFontUnderline, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -8097,7 +8097,7 @@ bool iObj_set_dynamicFontUnderline(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -8131,7 +8131,7 @@ bool iObj_set_dynamicFontUnderline(SObject* obj, SVariable* var)
 bool iObj_set_dynamicForeColor(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dynamicForeColor, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dynamicForeColor, var))
 	{
 		SVariable* varUpdate;
 		
@@ -8142,7 +8142,7 @@ bool iObj_set_dynamicForeColor(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -8160,7 +8160,7 @@ bool iObj_set_dynamicForeColor(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dynamicForeColor, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dynamicForeColor, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -8169,7 +8169,7 @@ bool iObj_set_dynamicForeColor(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -8203,7 +8203,7 @@ bool iObj_set_dynamicForeColor(SObject* obj, SVariable* var)
 bool iObj_set_dynamicInputMask(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.dynamicInputMask, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.dynamicInputMask, var))
 	{
 		SVariable* varUpdate;
 		
@@ -8214,7 +8214,7 @@ bool iObj_set_dynamicInputMask(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -8232,7 +8232,7 @@ bool iObj_set_dynamicInputMask(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.dynamicInputMask, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.dynamicInputMask, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -8241,7 +8241,7 @@ bool iObj_set_dynamicInputMask(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -8275,7 +8275,7 @@ bool iObj_set_dynamicInputMask(SObject* obj, SVariable* var)
 bool iObj_set_enableHyperlinks(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.enableHyperlinks, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.enableHyperlinks, var))
 	{
 		SVariable* varUpdate;
 		
@@ -8286,7 +8286,7 @@ bool iObj_set_enableHyperlinks(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -8304,7 +8304,7 @@ bool iObj_set_enableHyperlinks(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.enableHyperlinks, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.enableHyperlinks, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -8313,7 +8313,7 @@ bool iObj_set_enableHyperlinks(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -8347,7 +8347,7 @@ bool iObj_set_enableHyperlinks(SObject* obj, SVariable* var)
 bool iObj_set_enabled(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.enabled, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.enabled, var))
 	{
 		SVariable* varUpdate;
 		
@@ -8358,7 +8358,7 @@ bool iObj_set_enabled(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -8376,7 +8376,7 @@ bool iObj_set_enabled(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.enabled, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.enabled, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -8385,7 +8385,7 @@ bool iObj_set_enabled(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -8419,7 +8419,7 @@ bool iObj_set_enabled(SObject* obj, SVariable* var)
 bool iObj_set_errorNo(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.errorNo, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.errorNo, var))
 	{
 		SVariable* varUpdate;
 		
@@ -8430,7 +8430,7 @@ bool iObj_set_errorNo(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -8448,7 +8448,7 @@ bool iObj_set_errorNo(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.errorNo, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.errorNo, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -8457,7 +8457,7 @@ bool iObj_set_errorNo(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -8491,7 +8491,7 @@ bool iObj_set_errorNo(SObject* obj, SVariable* var)
 bool iObj_set_fillColor(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.fillColor, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.fillColor, var))
 	{
 		SVariable* varUpdate;
 		
@@ -8502,7 +8502,7 @@ bool iObj_set_fillColor(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -8520,7 +8520,7 @@ bool iObj_set_fillColor(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.fillColor, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.fillColor, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -8529,7 +8529,7 @@ bool iObj_set_fillColor(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -8563,7 +8563,7 @@ bool iObj_set_fillColor(SObject* obj, SVariable* var)
 bool iObj_set_fillStyle(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.fillStyle, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.fillStyle, var))
 	{
 		SVariable* varUpdate;
 		
@@ -8574,7 +8574,7 @@ bool iObj_set_fillStyle(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -8592,7 +8592,7 @@ bool iObj_set_fillStyle(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.fillStyle, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.fillStyle, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -8601,7 +8601,7 @@ bool iObj_set_fillStyle(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -8635,7 +8635,7 @@ bool iObj_set_fillStyle(SObject* obj, SVariable* var)
 bool iObj_set_firstElement(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.firstElement, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.firstElement, var))
 	{
 		SVariable* varUpdate;
 		
@@ -8646,7 +8646,7 @@ bool iObj_set_firstElement(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -8664,7 +8664,7 @@ bool iObj_set_firstElement(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.firstElement, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.firstElement, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -8673,7 +8673,7 @@ bool iObj_set_firstElement(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -8707,7 +8707,7 @@ bool iObj_set_firstElement(SObject* obj, SVariable* var)
 bool iObj_set_fontBold(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.fontBold, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.fontBold, var))
 	{
 		SVariable* varUpdate;
 		
@@ -8718,7 +8718,7 @@ bool iObj_set_fontBold(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -8736,7 +8736,7 @@ bool iObj_set_fontBold(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.fontBold, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.fontBold, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -8745,7 +8745,7 @@ bool iObj_set_fontBold(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -8779,7 +8779,7 @@ bool iObj_set_fontBold(SObject* obj, SVariable* var)
 bool iObj_set_fontCharSet(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.fontCharSet, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.fontCharSet, var))
 	{
 		SVariable* varUpdate;
 		
@@ -8790,7 +8790,7 @@ bool iObj_set_fontCharSet(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -8808,7 +8808,7 @@ bool iObj_set_fontCharSet(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.fontCharSet, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.fontCharSet, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -8817,7 +8817,7 @@ bool iObj_set_fontCharSet(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -8851,7 +8851,7 @@ bool iObj_set_fontCharSet(SObject* obj, SVariable* var)
 bool iObj_set_fontCondense(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.fontCondense, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.fontCondense, var))
 	{
 		SVariable* varUpdate;
 		
@@ -8862,7 +8862,7 @@ bool iObj_set_fontCondense(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -8880,7 +8880,7 @@ bool iObj_set_fontCondense(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.fontCondense, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.fontCondense, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -8889,7 +8889,7 @@ bool iObj_set_fontCondense(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -8923,7 +8923,7 @@ bool iObj_set_fontCondense(SObject* obj, SVariable* var)
 bool iObj_set_fontExtend(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.fontExtend, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.fontExtend, var))
 	{
 		SVariable* varUpdate;
 		
@@ -8934,7 +8934,7 @@ bool iObj_set_fontExtend(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -8952,7 +8952,7 @@ bool iObj_set_fontExtend(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.fontExtend, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.fontExtend, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -8961,7 +8961,7 @@ bool iObj_set_fontExtend(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -8995,7 +8995,7 @@ bool iObj_set_fontExtend(SObject* obj, SVariable* var)
 bool iObj_set_fontItalic(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.fontItalic, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.fontItalic, var))
 	{
 		SVariable* varUpdate;
 		
@@ -9006,7 +9006,7 @@ bool iObj_set_fontItalic(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -9024,7 +9024,7 @@ bool iObj_set_fontItalic(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.fontItalic, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.fontItalic, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -9033,7 +9033,7 @@ bool iObj_set_fontItalic(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -9067,7 +9067,7 @@ bool iObj_set_fontItalic(SObject* obj, SVariable* var)
 bool iObj_set_fontName(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.fontName, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.fontName, var))
 	{
 		SVariable* varUpdate;
 		
@@ -9078,7 +9078,7 @@ bool iObj_set_fontName(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -9096,7 +9096,7 @@ bool iObj_set_fontName(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.fontName, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.fontName, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -9105,7 +9105,7 @@ bool iObj_set_fontName(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -9139,7 +9139,7 @@ bool iObj_set_fontName(SObject* obj, SVariable* var)
 bool iObj_set_fontOutline(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.fontOutline, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.fontOutline, var))
 	{
 		SVariable* varUpdate;
 		
@@ -9150,7 +9150,7 @@ bool iObj_set_fontOutline(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -9168,7 +9168,7 @@ bool iObj_set_fontOutline(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.fontOutline, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.fontOutline, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -9177,7 +9177,7 @@ bool iObj_set_fontOutline(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -9211,7 +9211,7 @@ bool iObj_set_fontOutline(SObject* obj, SVariable* var)
 bool iObj_set_fontShadow(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.fontShadow, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.fontShadow, var))
 	{
 		SVariable* varUpdate;
 		
@@ -9222,7 +9222,7 @@ bool iObj_set_fontShadow(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -9240,7 +9240,7 @@ bool iObj_set_fontShadow(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.fontShadow, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.fontShadow, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -9249,7 +9249,7 @@ bool iObj_set_fontShadow(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -9283,7 +9283,7 @@ bool iObj_set_fontShadow(SObject* obj, SVariable* var)
 bool iObj_set_fontSize(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.fontSize, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.fontSize, var))
 	{
 		SVariable* varUpdate;
 		
@@ -9294,7 +9294,7 @@ bool iObj_set_fontSize(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -9312,7 +9312,7 @@ bool iObj_set_fontSize(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.fontSize, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.fontSize, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -9321,7 +9321,7 @@ bool iObj_set_fontSize(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -9355,7 +9355,7 @@ bool iObj_set_fontSize(SObject* obj, SVariable* var)
 bool iObj_set_fontStrikeThru(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.fontStrikeThru, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.fontStrikeThru, var))
 	{
 		SVariable* varUpdate;
 		
@@ -9366,7 +9366,7 @@ bool iObj_set_fontStrikeThru(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -9384,7 +9384,7 @@ bool iObj_set_fontStrikeThru(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.fontStrikeThru, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.fontStrikeThru, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -9393,7 +9393,7 @@ bool iObj_set_fontStrikeThru(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -9427,7 +9427,7 @@ bool iObj_set_fontStrikeThru(SObject* obj, SVariable* var)
 bool iObj_set_fontUnderLine(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.fontUnderLine, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.fontUnderLine, var))
 	{
 		SVariable* varUpdate;
 		
@@ -9438,7 +9438,7 @@ bool iObj_set_fontUnderLine(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -9456,7 +9456,7 @@ bool iObj_set_fontUnderLine(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.fontUnderLine, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.fontUnderLine, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -9465,7 +9465,7 @@ bool iObj_set_fontUnderLine(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -9499,7 +9499,7 @@ bool iObj_set_fontUnderLine(SObject* obj, SVariable* var)
 bool iObj_set_fontUnderline(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.fontUnderline, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.fontUnderline, var))
 	{
 		SVariable* varUpdate;
 		
@@ -9510,7 +9510,7 @@ bool iObj_set_fontUnderline(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -9528,7 +9528,7 @@ bool iObj_set_fontUnderline(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.fontUnderline, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.fontUnderline, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -9537,7 +9537,7 @@ bool iObj_set_fontUnderline(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -9571,7 +9571,7 @@ bool iObj_set_fontUnderline(SObject* obj, SVariable* var)
 bool iObj_set_foreColor(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.foreColor, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.foreColor, var))
 	{
 		SVariable* varUpdate;
 		
@@ -9582,7 +9582,7 @@ bool iObj_set_foreColor(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -9600,7 +9600,7 @@ bool iObj_set_foreColor(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.foreColor, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.foreColor, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -9609,7 +9609,7 @@ bool iObj_set_foreColor(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -9643,7 +9643,7 @@ bool iObj_set_foreColor(SObject* obj, SVariable* var)
 bool iObj_set_formCount(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.formCount, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.formCount, var))
 	{
 		SVariable* varUpdate;
 		
@@ -9654,7 +9654,7 @@ bool iObj_set_formCount(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -9672,7 +9672,7 @@ bool iObj_set_formCount(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.formCount, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.formCount, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -9681,7 +9681,7 @@ bool iObj_set_formCount(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -9715,7 +9715,7 @@ bool iObj_set_formCount(SObject* obj, SVariable* var)
 bool iObj_set_format(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.format, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.format, var))
 	{
 		SVariable* varUpdate;
 		
@@ -9726,7 +9726,7 @@ bool iObj_set_format(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -9744,7 +9744,7 @@ bool iObj_set_format(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.format, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.format, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -9753,7 +9753,7 @@ bool iObj_set_format(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -9787,7 +9787,7 @@ bool iObj_set_format(SObject* obj, SVariable* var)
 bool iObj_set_forms(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.forms, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.forms, var))
 	{
 		SVariable* varUpdate;
 		
@@ -9798,7 +9798,7 @@ bool iObj_set_forms(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -9816,7 +9816,7 @@ bool iObj_set_forms(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.forms, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.forms, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -9825,7 +9825,7 @@ bool iObj_set_forms(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -9859,7 +9859,7 @@ bool iObj_set_forms(SObject* obj, SVariable* var)
 bool iObj_set_gridLineColor(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.gridLineColor, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.gridLineColor, var))
 	{
 		SVariable* varUpdate;
 		
@@ -9870,7 +9870,7 @@ bool iObj_set_gridLineColor(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -9888,7 +9888,7 @@ bool iObj_set_gridLineColor(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.gridLineColor, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.gridLineColor, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -9897,7 +9897,7 @@ bool iObj_set_gridLineColor(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -9931,7 +9931,7 @@ bool iObj_set_gridLineColor(SObject* obj, SVariable* var)
 bool iObj_set_gridLineWidth(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.gridLineWidth, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.gridLineWidth, var))
 	{
 		SVariable* varUpdate;
 		
@@ -9942,7 +9942,7 @@ bool iObj_set_gridLineWidth(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -9960,7 +9960,7 @@ bool iObj_set_gridLineWidth(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.gridLineWidth, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.gridLineWidth, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -9969,7 +9969,7 @@ bool iObj_set_gridLineWidth(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -10003,7 +10003,7 @@ bool iObj_set_gridLineWidth(SObject* obj, SVariable* var)
 bool iObj_set_gridLines(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.gridLines, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.gridLines, var))
 	{
 		SVariable* varUpdate;
 		
@@ -10014,7 +10014,7 @@ bool iObj_set_gridLines(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -10032,7 +10032,7 @@ bool iObj_set_gridLines(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.gridLines, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.gridLines, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -10041,7 +10041,7 @@ bool iObj_set_gridLines(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -10075,7 +10075,7 @@ bool iObj_set_gridLines(SObject* obj, SVariable* var)
 bool iObj_set_hScrollSmallChange(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.hScrollSmallChange, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.hScrollSmallChange, var))
 	{
 		SVariable* varUpdate;
 		
@@ -10086,7 +10086,7 @@ bool iObj_set_hScrollSmallChange(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -10104,7 +10104,7 @@ bool iObj_set_hScrollSmallChange(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.hScrollSmallChange, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.hScrollSmallChange, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -10113,7 +10113,7 @@ bool iObj_set_hScrollSmallChange(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -10147,7 +10147,7 @@ bool iObj_set_hScrollSmallChange(SObject* obj, SVariable* var)
 bool iObj_set_hWnd(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.hWnd, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.hWnd, var))
 	{
 		SVariable* varUpdate;
 		
@@ -10158,7 +10158,7 @@ bool iObj_set_hWnd(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -10176,7 +10176,7 @@ bool iObj_set_hWnd(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.hWnd, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.hWnd, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -10185,7 +10185,7 @@ bool iObj_set_hWnd(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -10219,7 +10219,7 @@ bool iObj_set_hWnd(SObject* obj, SVariable* var)
 bool iObj_set_halfHeightCaption(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.halfHeightCaption, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.halfHeightCaption, var))
 	{
 		SVariable* varUpdate;
 		
@@ -10230,7 +10230,7 @@ bool iObj_set_halfHeightCaption(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -10248,7 +10248,7 @@ bool iObj_set_halfHeightCaption(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.halfHeightCaption, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.halfHeightCaption, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -10257,7 +10257,7 @@ bool iObj_set_halfHeightCaption(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -10291,7 +10291,7 @@ bool iObj_set_halfHeightCaption(SObject* obj, SVariable* var)
 bool iObj_set_headerClass(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.headerClass, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.headerClass, var))
 	{
 		SVariable* varUpdate;
 		
@@ -10302,7 +10302,7 @@ bool iObj_set_headerClass(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -10320,7 +10320,7 @@ bool iObj_set_headerClass(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.headerClass, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.headerClass, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -10329,7 +10329,7 @@ bool iObj_set_headerClass(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -10363,7 +10363,7 @@ bool iObj_set_headerClass(SObject* obj, SVariable* var)
 bool iObj_set_headerClassLibrary(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.headerClassLibrary, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.headerClassLibrary, var))
 	{
 		SVariable* varUpdate;
 		
@@ -10374,7 +10374,7 @@ bool iObj_set_headerClassLibrary(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -10392,7 +10392,7 @@ bool iObj_set_headerClassLibrary(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.headerClassLibrary, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.headerClassLibrary, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -10401,7 +10401,7 @@ bool iObj_set_headerClassLibrary(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -10435,7 +10435,7 @@ bool iObj_set_headerClassLibrary(SObject* obj, SVariable* var)
 bool iObj_set_headerHeight(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.headerHeight, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.headerHeight, var))
 	{
 		SVariable* varUpdate;
 		
@@ -10446,7 +10446,7 @@ bool iObj_set_headerHeight(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -10464,7 +10464,7 @@ bool iObj_set_headerHeight(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.headerHeight, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.headerHeight, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -10473,7 +10473,7 @@ bool iObj_set_headerHeight(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -10507,7 +10507,7 @@ bool iObj_set_headerHeight(SObject* obj, SVariable* var)
 bool iObj_set_height(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.height, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.height, var))
 	{
 		SVariable* varUpdate;
 		
@@ -10518,7 +10518,7 @@ bool iObj_set_height(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -10536,7 +10536,7 @@ bool iObj_set_height(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.height, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.height, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -10545,7 +10545,7 @@ bool iObj_set_height(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -10579,7 +10579,7 @@ bool iObj_set_height(SObject* obj, SVariable* var)
 bool iObj_set_helpContextID(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.helpContextID, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.helpContextID, var))
 	{
 		SVariable* varUpdate;
 		
@@ -10590,7 +10590,7 @@ bool iObj_set_helpContextID(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -10608,7 +10608,7 @@ bool iObj_set_helpContextID(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.helpContextID, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.helpContextID, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -10617,7 +10617,7 @@ bool iObj_set_helpContextID(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -10651,7 +10651,7 @@ bool iObj_set_helpContextID(SObject* obj, SVariable* var)
 bool iObj_set_hideSelection(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.hideSelection, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.hideSelection, var))
 	{
 		SVariable* varUpdate;
 		
@@ -10662,7 +10662,7 @@ bool iObj_set_hideSelection(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -10680,7 +10680,7 @@ bool iObj_set_hideSelection(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.hideSelection, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.hideSelection, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -10689,7 +10689,7 @@ bool iObj_set_hideSelection(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -10723,7 +10723,7 @@ bool iObj_set_hideSelection(SObject* obj, SVariable* var)
 bool iObj_set_highLight(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.highLight, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.highLight, var))
 	{
 		SVariable* varUpdate;
 		
@@ -10734,7 +10734,7 @@ bool iObj_set_highLight(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -10752,7 +10752,7 @@ bool iObj_set_highLight(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.highLight, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.highLight, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -10761,7 +10761,7 @@ bool iObj_set_highLight(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -10795,7 +10795,7 @@ bool iObj_set_highLight(SObject* obj, SVariable* var)
 bool iObj_set_highLightRow(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.highLightRow, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.highLightRow, var))
 	{
 		SVariable* varUpdate;
 		
@@ -10806,7 +10806,7 @@ bool iObj_set_highLightRow(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -10824,7 +10824,7 @@ bool iObj_set_highLightRow(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.highLightRow, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.highLightRow, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -10833,7 +10833,7 @@ bool iObj_set_highLightRow(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -10867,7 +10867,7 @@ bool iObj_set_highLightRow(SObject* obj, SVariable* var)
 bool iObj_set_highlightBackColor(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.highlightBackColor, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.highlightBackColor, var))
 	{
 		SVariable* varUpdate;
 		
@@ -10878,7 +10878,7 @@ bool iObj_set_highlightBackColor(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -10896,7 +10896,7 @@ bool iObj_set_highlightBackColor(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.highlightBackColor, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.highlightBackColor, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -10905,7 +10905,7 @@ bool iObj_set_highlightBackColor(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -10939,7 +10939,7 @@ bool iObj_set_highlightBackColor(SObject* obj, SVariable* var)
 bool iObj_set_highlightForeColor(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.highlightForeColor, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.highlightForeColor, var))
 	{
 		SVariable* varUpdate;
 		
@@ -10950,7 +10950,7 @@ bool iObj_set_highlightForeColor(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -10968,7 +10968,7 @@ bool iObj_set_highlightForeColor(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.highlightForeColor, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.highlightForeColor, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -10977,7 +10977,7 @@ bool iObj_set_highlightForeColor(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -11011,7 +11011,7 @@ bool iObj_set_highlightForeColor(SObject* obj, SVariable* var)
 bool iObj_set_highlightRowLineWidth(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.highlightRowLineWidth, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.highlightRowLineWidth, var))
 	{
 		SVariable* varUpdate;
 		
@@ -11022,7 +11022,7 @@ bool iObj_set_highlightRowLineWidth(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -11040,7 +11040,7 @@ bool iObj_set_highlightRowLineWidth(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.highlightRowLineWidth, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.highlightRowLineWidth, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -11049,7 +11049,7 @@ bool iObj_set_highlightRowLineWidth(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -11083,7 +11083,7 @@ bool iObj_set_highlightRowLineWidth(SObject* obj, SVariable* var)
 bool iObj_set_highlightStyle(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.highlightStyle, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.highlightStyle, var))
 	{
 		SVariable* varUpdate;
 		
@@ -11094,7 +11094,7 @@ bool iObj_set_highlightStyle(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -11112,7 +11112,7 @@ bool iObj_set_highlightStyle(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.highlightStyle, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.highlightStyle, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -11121,7 +11121,7 @@ bool iObj_set_highlightStyle(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -11155,7 +11155,7 @@ bool iObj_set_highlightStyle(SObject* obj, SVariable* var)
 bool iObj_set_hostName(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.hostName, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.hostName, var))
 	{
 		SVariable* varUpdate;
 		
@@ -11166,7 +11166,7 @@ bool iObj_set_hostName(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -11184,7 +11184,7 @@ bool iObj_set_hostName(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.hostName, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.hostName, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -11193,7 +11193,7 @@ bool iObj_set_hostName(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -11227,7 +11227,7 @@ bool iObj_set_hostName(SObject* obj, SVariable* var)
 bool iObj_set_hours(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.hours, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.hours, var))
 	{
 		SVariable* varUpdate;
 		
@@ -11238,7 +11238,7 @@ bool iObj_set_hours(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -11256,7 +11256,7 @@ bool iObj_set_hours(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.hours, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.hours, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -11265,7 +11265,7 @@ bool iObj_set_hours(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -11299,7 +11299,7 @@ bool iObj_set_hours(SObject* obj, SVariable* var)
 bool iObj_set_iMEMode(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.iMEMode, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.iMEMode, var))
 	{
 		SVariable* varUpdate;
 		
@@ -11310,7 +11310,7 @@ bool iObj_set_iMEMode(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -11328,7 +11328,7 @@ bool iObj_set_iMEMode(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.iMEMode, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.iMEMode, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -11337,7 +11337,7 @@ bool iObj_set_iMEMode(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -11395,7 +11395,7 @@ bool iObj_set_icon(SObject* obj, SBitmap* bmp)
 bool iObj_set_increment(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.increment, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.increment, var))
 	{
 		SVariable* varUpdate;
 		
@@ -11406,7 +11406,7 @@ bool iObj_set_increment(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -11424,7 +11424,7 @@ bool iObj_set_increment(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.increment, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.increment, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -11433,7 +11433,7 @@ bool iObj_set_increment(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -11467,7 +11467,7 @@ bool iObj_set_increment(SObject* obj, SVariable* var)
 bool iObj_set_incrementalSearch(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.incrementalSearch, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.incrementalSearch, var))
 	{
 		SVariable* varUpdate;
 		
@@ -11478,7 +11478,7 @@ bool iObj_set_incrementalSearch(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -11496,7 +11496,7 @@ bool iObj_set_incrementalSearch(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.incrementalSearch, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.incrementalSearch, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -11505,7 +11505,7 @@ bool iObj_set_incrementalSearch(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -11539,7 +11539,7 @@ bool iObj_set_incrementalSearch(SObject* obj, SVariable* var)
 bool iObj_set_inputMask(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.inputMask, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.inputMask, var))
 	{
 		SVariable* varUpdate;
 		
@@ -11550,7 +11550,7 @@ bool iObj_set_inputMask(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -11568,7 +11568,7 @@ bool iObj_set_inputMask(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.inputMask, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.inputMask, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -11577,7 +11577,7 @@ bool iObj_set_inputMask(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -11611,7 +11611,7 @@ bool iObj_set_inputMask(SObject* obj, SVariable* var)
 bool iObj_set_integralHeight(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.integralHeight, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.integralHeight, var))
 	{
 		SVariable* varUpdate;
 		
@@ -11622,7 +11622,7 @@ bool iObj_set_integralHeight(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -11640,7 +11640,7 @@ bool iObj_set_integralHeight(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.integralHeight, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.integralHeight, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -11649,7 +11649,7 @@ bool iObj_set_integralHeight(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -11683,7 +11683,7 @@ bool iObj_set_integralHeight(SObject* obj, SVariable* var)
 bool iObj_set_interval(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.interval, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.interval, var))
 	{
 		SVariable* varUpdate;
 		
@@ -11694,7 +11694,7 @@ bool iObj_set_interval(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -11712,7 +11712,7 @@ bool iObj_set_interval(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.interval, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.interval, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -11721,7 +11721,7 @@ bool iObj_set_interval(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -11755,7 +11755,7 @@ bool iObj_set_interval(SObject* obj, SVariable* var)
 bool iObj_set_itemBackColor(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.itemBackColor, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.itemBackColor, var))
 	{
 		SVariable* varUpdate;
 		
@@ -11766,7 +11766,7 @@ bool iObj_set_itemBackColor(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -11784,7 +11784,7 @@ bool iObj_set_itemBackColor(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.itemBackColor, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.itemBackColor, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -11793,7 +11793,7 @@ bool iObj_set_itemBackColor(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -11827,7 +11827,7 @@ bool iObj_set_itemBackColor(SObject* obj, SVariable* var)
 bool iObj_set_itemData(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.itemData, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.itemData, var))
 	{
 		SVariable* varUpdate;
 		
@@ -11838,7 +11838,7 @@ bool iObj_set_itemData(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -11856,7 +11856,7 @@ bool iObj_set_itemData(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.itemData, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.itemData, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -11865,7 +11865,7 @@ bool iObj_set_itemData(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -11899,7 +11899,7 @@ bool iObj_set_itemData(SObject* obj, SVariable* var)
 bool iObj_set_itemForeColor(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.itemForeColor, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.itemForeColor, var))
 	{
 		SVariable* varUpdate;
 		
@@ -11910,7 +11910,7 @@ bool iObj_set_itemForeColor(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -11928,7 +11928,7 @@ bool iObj_set_itemForeColor(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.itemForeColor, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.itemForeColor, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -11937,7 +11937,7 @@ bool iObj_set_itemForeColor(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -11971,7 +11971,7 @@ bool iObj_set_itemForeColor(SObject* obj, SVariable* var)
 bool iObj_set_itemIDData(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.itemIDData, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.itemIDData, var))
 	{
 		SVariable* varUpdate;
 		
@@ -11982,7 +11982,7 @@ bool iObj_set_itemIDData(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -12000,7 +12000,7 @@ bool iObj_set_itemIDData(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.itemIDData, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.itemIDData, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -12009,7 +12009,7 @@ bool iObj_set_itemIDData(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -12043,7 +12043,7 @@ bool iObj_set_itemIDData(SObject* obj, SVariable* var)
 bool iObj_set_itemTips(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.itemTips, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.itemTips, var))
 	{
 		SVariable* varUpdate;
 		
@@ -12054,7 +12054,7 @@ bool iObj_set_itemTips(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -12072,7 +12072,7 @@ bool iObj_set_itemTips(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.itemTips, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.itemTips, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -12081,7 +12081,7 @@ bool iObj_set_itemTips(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -12115,7 +12115,7 @@ bool iObj_set_itemTips(SObject* obj, SVariable* var)
 bool iObj_set_keyPreview(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.keyPreview, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.keyPreview, var))
 	{
 		SVariable* varUpdate;
 		
@@ -12126,7 +12126,7 @@ bool iObj_set_keyPreview(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -12144,7 +12144,7 @@ bool iObj_set_keyPreview(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.keyPreview, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.keyPreview, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -12153,7 +12153,7 @@ bool iObj_set_keyPreview(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -12187,7 +12187,7 @@ bool iObj_set_keyPreview(SObject* obj, SVariable* var)
 bool iObj_set_keySort(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.keySort, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.keySort, var))
 	{
 		SVariable* varUpdate;
 		
@@ -12198,7 +12198,7 @@ bool iObj_set_keySort(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -12216,7 +12216,7 @@ bool iObj_set_keySort(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.keySort, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.keySort, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -12225,7 +12225,7 @@ bool iObj_set_keySort(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -12259,7 +12259,7 @@ bool iObj_set_keySort(SObject* obj, SVariable* var)
 bool iObj_set_keyboardHighValue(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.keyboardHighValue, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.keyboardHighValue, var))
 	{
 		SVariable* varUpdate;
 		
@@ -12270,7 +12270,7 @@ bool iObj_set_keyboardHighValue(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -12288,7 +12288,7 @@ bool iObj_set_keyboardHighValue(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.keyboardHighValue, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.keyboardHighValue, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -12297,7 +12297,7 @@ bool iObj_set_keyboardHighValue(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -12331,7 +12331,7 @@ bool iObj_set_keyboardHighValue(SObject* obj, SVariable* var)
 bool iObj_set_keyboardLowValue(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.keyboardLowValue, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.keyboardLowValue, var))
 	{
 		SVariable* varUpdate;
 		
@@ -12342,7 +12342,7 @@ bool iObj_set_keyboardLowValue(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -12360,7 +12360,7 @@ bool iObj_set_keyboardLowValue(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.keyboardLowValue, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.keyboardLowValue, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -12369,7 +12369,7 @@ bool iObj_set_keyboardLowValue(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -12403,7 +12403,7 @@ bool iObj_set_keyboardLowValue(SObject* obj, SVariable* var)
 bool iObj_set_left(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.left, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.left, var))
 	{
 		SVariable* varUpdate;
 		
@@ -12414,7 +12414,7 @@ bool iObj_set_left(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -12432,7 +12432,7 @@ bool iObj_set_left(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.left, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.left, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -12441,7 +12441,7 @@ bool iObj_set_left(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -12475,7 +12475,7 @@ bool iObj_set_left(SObject* obj, SVariable* var)
 bool iObj_set_leftColumn(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.leftColumn, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.leftColumn, var))
 	{
 		SVariable* varUpdate;
 		
@@ -12486,7 +12486,7 @@ bool iObj_set_leftColumn(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -12504,7 +12504,7 @@ bool iObj_set_leftColumn(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.leftColumn, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.leftColumn, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -12513,7 +12513,7 @@ bool iObj_set_leftColumn(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -12547,7 +12547,7 @@ bool iObj_set_leftColumn(SObject* obj, SVariable* var)
 bool iObj_set_lineContents(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.lineContents, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.lineContents, var))
 	{
 		SVariable* varUpdate;
 		
@@ -12558,7 +12558,7 @@ bool iObj_set_lineContents(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -12576,7 +12576,7 @@ bool iObj_set_lineContents(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.lineContents, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.lineContents, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -12585,7 +12585,7 @@ bool iObj_set_lineContents(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -12619,7 +12619,7 @@ bool iObj_set_lineContents(SObject* obj, SVariable* var)
 bool iObj_set_lineNo(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.lineNo, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.lineNo, var))
 	{
 		SVariable* varUpdate;
 		
@@ -12630,7 +12630,7 @@ bool iObj_set_lineNo(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -12648,7 +12648,7 @@ bool iObj_set_lineNo(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.lineNo, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.lineNo, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -12657,7 +12657,7 @@ bool iObj_set_lineNo(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -12691,7 +12691,7 @@ bool iObj_set_lineNo(SObject* obj, SVariable* var)
 bool iObj_set_lineSlant(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.lineSlant, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.lineSlant, var))
 	{
 		SVariable* varUpdate;
 		
@@ -12702,7 +12702,7 @@ bool iObj_set_lineSlant(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -12720,7 +12720,7 @@ bool iObj_set_lineSlant(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.lineSlant, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.lineSlant, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -12729,7 +12729,7 @@ bool iObj_set_lineSlant(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -12763,7 +12763,7 @@ bool iObj_set_lineSlant(SObject* obj, SVariable* var)
 bool iObj_set_linkMaster(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.linkMaster, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.linkMaster, var))
 	{
 		SVariable* varUpdate;
 		
@@ -12774,7 +12774,7 @@ bool iObj_set_linkMaster(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -12792,7 +12792,7 @@ bool iObj_set_linkMaster(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.linkMaster, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.linkMaster, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -12801,7 +12801,7 @@ bool iObj_set_linkMaster(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -12835,7 +12835,7 @@ bool iObj_set_linkMaster(SObject* obj, SVariable* var)
 bool iObj_set_list(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.list, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.list, var))
 	{
 		SVariable* varUpdate;
 		
@@ -12846,7 +12846,7 @@ bool iObj_set_list(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -12864,7 +12864,7 @@ bool iObj_set_list(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.list, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.list, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -12873,7 +12873,7 @@ bool iObj_set_list(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -12907,7 +12907,7 @@ bool iObj_set_list(SObject* obj, SVariable* var)
 bool iObj_set_listCount(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.listCount, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.listCount, var))
 	{
 		SVariable* varUpdate;
 		
@@ -12918,7 +12918,7 @@ bool iObj_set_listCount(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -12936,7 +12936,7 @@ bool iObj_set_listCount(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.listCount, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.listCount, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -12945,7 +12945,7 @@ bool iObj_set_listCount(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -12979,7 +12979,7 @@ bool iObj_set_listCount(SObject* obj, SVariable* var)
 bool iObj_set_listIndex(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.listIndex, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.listIndex, var))
 	{
 		SVariable* varUpdate;
 		
@@ -12990,7 +12990,7 @@ bool iObj_set_listIndex(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -13008,7 +13008,7 @@ bool iObj_set_listIndex(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.listIndex, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.listIndex, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -13017,7 +13017,7 @@ bool iObj_set_listIndex(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -13051,7 +13051,7 @@ bool iObj_set_listIndex(SObject* obj, SVariable* var)
 bool iObj_set_listItem(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.listItem, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.listItem, var))
 	{
 		SVariable* varUpdate;
 		
@@ -13062,7 +13062,7 @@ bool iObj_set_listItem(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -13080,7 +13080,7 @@ bool iObj_set_listItem(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.listItem, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.listItem, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -13089,7 +13089,7 @@ bool iObj_set_listItem(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -13123,7 +13123,7 @@ bool iObj_set_listItem(SObject* obj, SVariable* var)
 bool iObj_set_listItemID(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.listItemID, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.listItemID, var))
 	{
 		SVariable* varUpdate;
 		
@@ -13134,7 +13134,7 @@ bool iObj_set_listItemID(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -13152,7 +13152,7 @@ bool iObj_set_listItemID(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.listItemID, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.listItemID, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -13161,7 +13161,7 @@ bool iObj_set_listItemID(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -13195,7 +13195,7 @@ bool iObj_set_listItemID(SObject* obj, SVariable* var)
 bool iObj_set_lockColumns(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.lockColumns, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.lockColumns, var))
 	{
 		SVariable* varUpdate;
 		
@@ -13206,7 +13206,7 @@ bool iObj_set_lockColumns(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -13224,7 +13224,7 @@ bool iObj_set_lockColumns(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.lockColumns, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.lockColumns, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -13233,7 +13233,7 @@ bool iObj_set_lockColumns(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -13267,7 +13267,7 @@ bool iObj_set_lockColumns(SObject* obj, SVariable* var)
 bool iObj_set_lockColumnsLeft(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.lockColumnsLeft, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.lockColumnsLeft, var))
 	{
 		SVariable* varUpdate;
 		
@@ -13278,7 +13278,7 @@ bool iObj_set_lockColumnsLeft(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -13296,7 +13296,7 @@ bool iObj_set_lockColumnsLeft(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.lockColumnsLeft, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.lockColumnsLeft, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -13305,7 +13305,7 @@ bool iObj_set_lockColumnsLeft(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -13339,7 +13339,7 @@ bool iObj_set_lockColumnsLeft(SObject* obj, SVariable* var)
 bool iObj_set_lockScreen(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.lockScreen, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.lockScreen, var))
 	{
 		SVariable* varUpdate;
 		
@@ -13350,7 +13350,7 @@ bool iObj_set_lockScreen(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -13368,7 +13368,7 @@ bool iObj_set_lockScreen(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.lockScreen, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.lockScreen, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -13377,7 +13377,7 @@ bool iObj_set_lockScreen(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -13411,7 +13411,7 @@ bool iObj_set_lockScreen(SObject* obj, SVariable* var)
 bool iObj_set_mDIForm(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.mDIForm, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.mDIForm, var))
 	{
 		SVariable* varUpdate;
 		
@@ -13422,7 +13422,7 @@ bool iObj_set_mDIForm(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -13440,7 +13440,7 @@ bool iObj_set_mDIForm(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.mDIForm, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.mDIForm, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -13449,7 +13449,7 @@ bool iObj_set_mDIForm(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -13483,7 +13483,7 @@ bool iObj_set_mDIForm(SObject* obj, SVariable* var)
 bool iObj_set_macDesktop(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.macDesktop, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.macDesktop, var))
 	{
 		SVariable* varUpdate;
 		
@@ -13494,7 +13494,7 @@ bool iObj_set_macDesktop(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -13512,7 +13512,7 @@ bool iObj_set_macDesktop(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.macDesktop, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.macDesktop, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -13521,7 +13521,7 @@ bool iObj_set_macDesktop(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -13555,7 +13555,7 @@ bool iObj_set_macDesktop(SObject* obj, SVariable* var)
 bool iObj_set_margin(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.margin, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.margin, var))
 	{
 		SVariable* varUpdate;
 		
@@ -13566,7 +13566,7 @@ bool iObj_set_margin(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -13584,7 +13584,7 @@ bool iObj_set_margin(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.margin, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.margin, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -13593,7 +13593,7 @@ bool iObj_set_margin(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -13627,7 +13627,7 @@ bool iObj_set_margin(SObject* obj, SVariable* var)
 bool iObj_set_maxButton(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.maxButton, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.maxButton, var))
 	{
 		SVariable* varUpdate;
 		
@@ -13638,7 +13638,7 @@ bool iObj_set_maxButton(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -13656,7 +13656,7 @@ bool iObj_set_maxButton(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.maxButton, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.maxButton, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -13665,7 +13665,7 @@ bool iObj_set_maxButton(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -13699,7 +13699,7 @@ bool iObj_set_maxButton(SObject* obj, SVariable* var)
 bool iObj_set_maxHeight(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.maxHeight, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.maxHeight, var))
 	{
 		SVariable* varUpdate;
 		
@@ -13710,7 +13710,7 @@ bool iObj_set_maxHeight(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -13728,7 +13728,7 @@ bool iObj_set_maxHeight(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.maxHeight, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.maxHeight, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -13737,7 +13737,7 @@ bool iObj_set_maxHeight(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -13771,7 +13771,7 @@ bool iObj_set_maxHeight(SObject* obj, SVariable* var)
 bool iObj_set_maxLeft(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.maxLeft, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.maxLeft, var))
 	{
 		SVariable* varUpdate;
 		
@@ -13782,7 +13782,7 @@ bool iObj_set_maxLeft(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -13800,7 +13800,7 @@ bool iObj_set_maxLeft(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.maxLeft, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.maxLeft, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -13809,7 +13809,7 @@ bool iObj_set_maxLeft(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -13843,7 +13843,7 @@ bool iObj_set_maxLeft(SObject* obj, SVariable* var)
 bool iObj_set_maxLength(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.maxLength, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.maxLength, var))
 	{
 		SVariable* varUpdate;
 		
@@ -13854,7 +13854,7 @@ bool iObj_set_maxLength(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -13872,7 +13872,7 @@ bool iObj_set_maxLength(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.maxLength, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.maxLength, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -13881,7 +13881,7 @@ bool iObj_set_maxLength(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -13915,7 +13915,7 @@ bool iObj_set_maxLength(SObject* obj, SVariable* var)
 bool iObj_set_maxTop(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.maxTop, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.maxTop, var))
 	{
 		SVariable* varUpdate;
 		
@@ -13926,7 +13926,7 @@ bool iObj_set_maxTop(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -13944,7 +13944,7 @@ bool iObj_set_maxTop(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.maxTop, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.maxTop, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -13953,7 +13953,7 @@ bool iObj_set_maxTop(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -13987,7 +13987,7 @@ bool iObj_set_maxTop(SObject* obj, SVariable* var)
 bool iObj_set_maxWidth(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.maxWidth, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.maxWidth, var))
 	{
 		SVariable* varUpdate;
 		
@@ -13998,7 +13998,7 @@ bool iObj_set_maxWidth(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -14016,7 +14016,7 @@ bool iObj_set_maxWidth(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.maxWidth, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.maxWidth, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -14025,7 +14025,7 @@ bool iObj_set_maxWidth(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -14059,7 +14059,7 @@ bool iObj_set_maxWidth(SObject* obj, SVariable* var)
 bool iObj_set_memberClass(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.memberClass, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.memberClass, var))
 	{
 		SVariable* varUpdate;
 		
@@ -14070,7 +14070,7 @@ bool iObj_set_memberClass(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -14088,7 +14088,7 @@ bool iObj_set_memberClass(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.memberClass, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.memberClass, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -14097,7 +14097,7 @@ bool iObj_set_memberClass(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -14131,7 +14131,7 @@ bool iObj_set_memberClass(SObject* obj, SVariable* var)
 bool iObj_set_memberClassLibrary(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.memberClassLibrary, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.memberClassLibrary, var))
 	{
 		SVariable* varUpdate;
 		
@@ -14142,7 +14142,7 @@ bool iObj_set_memberClassLibrary(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -14160,7 +14160,7 @@ bool iObj_set_memberClassLibrary(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.memberClassLibrary, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.memberClassLibrary, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -14169,7 +14169,7 @@ bool iObj_set_memberClassLibrary(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -14203,7 +14203,7 @@ bool iObj_set_memberClassLibrary(SObject* obj, SVariable* var)
 bool iObj_set_memoWindow(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.memoWindow, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.memoWindow, var))
 	{
 		SVariable* varUpdate;
 		
@@ -14214,7 +14214,7 @@ bool iObj_set_memoWindow(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -14232,7 +14232,7 @@ bool iObj_set_memoWindow(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.memoWindow, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.memoWindow, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -14241,7 +14241,7 @@ bool iObj_set_memoWindow(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -14275,7 +14275,7 @@ bool iObj_set_memoWindow(SObject* obj, SVariable* var)
 bool iObj_set_message(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.message, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.message, var))
 	{
 		SVariable* varUpdate;
 		
@@ -14286,7 +14286,7 @@ bool iObj_set_message(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -14304,7 +14304,7 @@ bool iObj_set_message(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.message, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.message, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -14313,7 +14313,7 @@ bool iObj_set_message(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -14347,7 +14347,7 @@ bool iObj_set_message(SObject* obj, SVariable* var)
 bool iObj_set_minButton(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.minButton, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.minButton, var))
 	{
 		SVariable* varUpdate;
 		
@@ -14358,7 +14358,7 @@ bool iObj_set_minButton(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -14376,7 +14376,7 @@ bool iObj_set_minButton(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.minButton, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.minButton, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -14385,7 +14385,7 @@ bool iObj_set_minButton(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -14419,7 +14419,7 @@ bool iObj_set_minButton(SObject* obj, SVariable* var)
 bool iObj_set_minHeight(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.minHeight, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.minHeight, var))
 	{
 		SVariable* varUpdate;
 		
@@ -14430,7 +14430,7 @@ bool iObj_set_minHeight(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -14448,7 +14448,7 @@ bool iObj_set_minHeight(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.minHeight, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.minHeight, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -14457,7 +14457,7 @@ bool iObj_set_minHeight(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -14491,7 +14491,7 @@ bool iObj_set_minHeight(SObject* obj, SVariable* var)
 bool iObj_set_minWidth(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.minWidth, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.minWidth, var))
 	{
 		SVariable* varUpdate;
 		
@@ -14502,7 +14502,7 @@ bool iObj_set_minWidth(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -14520,7 +14520,7 @@ bool iObj_set_minWidth(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.minWidth, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.minWidth, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -14529,7 +14529,7 @@ bool iObj_set_minWidth(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -14586,7 +14586,7 @@ bool iObj_set_mouseIcon(SObject* obj, SBitmap* bmp)
 bool iObj_set_mousePointer(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.mousePointer, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.mousePointer, var))
 	{
 		SVariable* varUpdate;
 		
@@ -14597,7 +14597,7 @@ bool iObj_set_mousePointer(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -14615,7 +14615,7 @@ bool iObj_set_mousePointer(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.mousePointer, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.mousePointer, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -14624,7 +14624,7 @@ bool iObj_set_mousePointer(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -14658,7 +14658,7 @@ bool iObj_set_mousePointer(SObject* obj, SVariable* var)
 bool iObj_set_movable(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.movable, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.movable, var))
 	{
 		SVariable* varUpdate;
 		
@@ -14669,7 +14669,7 @@ bool iObj_set_movable(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -14687,7 +14687,7 @@ bool iObj_set_movable(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.movable, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.movable, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -14696,7 +14696,7 @@ bool iObj_set_movable(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -14730,7 +14730,7 @@ bool iObj_set_movable(SObject* obj, SVariable* var)
 bool iObj_set_moverBars(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.moverBars, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.moverBars, var))
 	{
 		SVariable* varUpdate;
 		
@@ -14741,7 +14741,7 @@ bool iObj_set_moverBars(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -14759,7 +14759,7 @@ bool iObj_set_moverBars(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.moverBars, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.moverBars, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -14768,7 +14768,7 @@ bool iObj_set_moverBars(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -14802,7 +14802,7 @@ bool iObj_set_moverBars(SObject* obj, SVariable* var)
 bool iObj_set_multiSelect(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.multiSelect, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.multiSelect, var))
 	{
 		SVariable* varUpdate;
 		
@@ -14813,7 +14813,7 @@ bool iObj_set_multiSelect(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -14831,7 +14831,7 @@ bool iObj_set_multiSelect(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.multiSelect, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.multiSelect, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -14840,7 +14840,7 @@ bool iObj_set_multiSelect(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -14874,7 +14874,7 @@ bool iObj_set_multiSelect(SObject* obj, SVariable* var)
 bool iObj_set_name(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.name, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.name, var))
 	{
 		SVariable* varUpdate;
 		
@@ -14885,7 +14885,7 @@ bool iObj_set_name(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -14903,7 +14903,7 @@ bool iObj_set_name(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.name, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.name, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -14912,7 +14912,7 @@ bool iObj_set_name(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -14946,7 +14946,7 @@ bool iObj_set_name(SObject* obj, SVariable* var)
 bool iObj_set_newIndex(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.newIndex, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.newIndex, var))
 	{
 		SVariable* varUpdate;
 		
@@ -14957,7 +14957,7 @@ bool iObj_set_newIndex(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -14975,7 +14975,7 @@ bool iObj_set_newIndex(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.newIndex, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.newIndex, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -14984,7 +14984,7 @@ bool iObj_set_newIndex(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -15018,7 +15018,7 @@ bool iObj_set_newIndex(SObject* obj, SVariable* var)
 bool iObj_set_newItemID(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.newItemID, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.newItemID, var))
 	{
 		SVariable* varUpdate;
 		
@@ -15029,7 +15029,7 @@ bool iObj_set_newItemID(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -15047,7 +15047,7 @@ bool iObj_set_newItemID(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.newItemID, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.newItemID, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -15056,7 +15056,7 @@ bool iObj_set_newItemID(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -15090,7 +15090,7 @@ bool iObj_set_newItemID(SObject* obj, SVariable* var)
 bool iObj_set_nullDisplay(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.nullDisplay, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.nullDisplay, var))
 	{
 		SVariable* varUpdate;
 		
@@ -15101,7 +15101,7 @@ bool iObj_set_nullDisplay(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -15119,7 +15119,7 @@ bool iObj_set_nullDisplay(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.nullDisplay, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.nullDisplay, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -15128,7 +15128,7 @@ bool iObj_set_nullDisplay(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -15162,7 +15162,7 @@ bool iObj_set_nullDisplay(SObject* obj, SVariable* var)
 bool iObj_set_numberOfElements(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.numberOfElements, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.numberOfElements, var))
 	{
 		SVariable* varUpdate;
 		
@@ -15173,7 +15173,7 @@ bool iObj_set_numberOfElements(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -15191,7 +15191,7 @@ bool iObj_set_numberOfElements(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.numberOfElements, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.numberOfElements, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -15200,7 +15200,7 @@ bool iObj_set_numberOfElements(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -15234,7 +15234,7 @@ bool iObj_set_numberOfElements(SObject* obj, SVariable* var)
 bool iObj_set_oLEClass(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.oLEClass, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.oLEClass, var))
 	{
 		SVariable* varUpdate;
 		
@@ -15245,7 +15245,7 @@ bool iObj_set_oLEClass(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -15263,7 +15263,7 @@ bool iObj_set_oLEClass(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.oLEClass, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.oLEClass, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -15272,7 +15272,7 @@ bool iObj_set_oLEClass(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -15306,7 +15306,7 @@ bool iObj_set_oLEClass(SObject* obj, SVariable* var)
 bool iObj_set_oLEDragMode(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.oLEDragMode, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.oLEDragMode, var))
 	{
 		SVariable* varUpdate;
 		
@@ -15317,7 +15317,7 @@ bool iObj_set_oLEDragMode(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -15335,7 +15335,7 @@ bool iObj_set_oLEDragMode(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.oLEDragMode, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.oLEDragMode, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -15344,7 +15344,7 @@ bool iObj_set_oLEDragMode(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -15402,7 +15402,7 @@ bool iObj_set_oLEDragPicture(SObject* obj, SBitmap* bmp)
 bool iObj_set_oLEDropEffects(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.oLEDropEffects, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.oLEDropEffects, var))
 	{
 		SVariable* varUpdate;
 		
@@ -15413,7 +15413,7 @@ bool iObj_set_oLEDropEffects(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -15431,7 +15431,7 @@ bool iObj_set_oLEDropEffects(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.oLEDropEffects, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.oLEDropEffects, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -15440,7 +15440,7 @@ bool iObj_set_oLEDropEffects(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -15474,7 +15474,7 @@ bool iObj_set_oLEDropEffects(SObject* obj, SVariable* var)
 bool iObj_set_oLEDropHasData(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.oLEDropHasData, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.oLEDropHasData, var))
 	{
 		SVariable* varUpdate;
 		
@@ -15485,7 +15485,7 @@ bool iObj_set_oLEDropHasData(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -15503,7 +15503,7 @@ bool iObj_set_oLEDropHasData(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.oLEDropHasData, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.oLEDropHasData, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -15512,7 +15512,7 @@ bool iObj_set_oLEDropHasData(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -15546,7 +15546,7 @@ bool iObj_set_oLEDropHasData(SObject* obj, SVariable* var)
 bool iObj_set_oLEDropMode(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.oLEDropMode, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.oLEDropMode, var))
 	{
 		SVariable* varUpdate;
 		
@@ -15557,7 +15557,7 @@ bool iObj_set_oLEDropMode(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -15575,7 +15575,7 @@ bool iObj_set_oLEDropMode(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.oLEDropMode, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.oLEDropMode, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -15584,7 +15584,7 @@ bool iObj_set_oLEDropMode(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -15618,7 +15618,7 @@ bool iObj_set_oLEDropMode(SObject* obj, SVariable* var)
 bool iObj_set_oLEDropTextInsertion(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.oLEDropTextInsertion, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.oLEDropTextInsertion, var))
 	{
 		SVariable* varUpdate;
 		
@@ -15629,7 +15629,7 @@ bool iObj_set_oLEDropTextInsertion(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -15647,7 +15647,7 @@ bool iObj_set_oLEDropTextInsertion(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.oLEDropTextInsertion, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.oLEDropTextInsertion, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -15656,7 +15656,7 @@ bool iObj_set_oLEDropTextInsertion(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -15690,7 +15690,7 @@ bool iObj_set_oLEDropTextInsertion(SObject* obj, SVariable* var)
 bool iObj_set_oLELCID(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.oLELCID, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.oLELCID, var))
 	{
 		SVariable* varUpdate;
 		
@@ -15701,7 +15701,7 @@ bool iObj_set_oLELCID(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -15719,7 +15719,7 @@ bool iObj_set_oLELCID(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.oLELCID, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.oLELCID, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -15728,7 +15728,7 @@ bool iObj_set_oLELCID(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -15762,7 +15762,7 @@ bool iObj_set_oLELCID(SObject* obj, SVariable* var)
 bool iObj_set_oLETypeAllowed(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.oLETypeAllowed, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.oLETypeAllowed, var))
 	{
 		SVariable* varUpdate;
 		
@@ -15773,7 +15773,7 @@ bool iObj_set_oLETypeAllowed(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -15791,7 +15791,7 @@ bool iObj_set_oLETypeAllowed(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.oLETypeAllowed, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.oLETypeAllowed, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -15800,7 +15800,7 @@ bool iObj_set_oLETypeAllowed(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -15834,7 +15834,7 @@ bool iObj_set_oLETypeAllowed(SObject* obj, SVariable* var)
 bool iObj_set_object(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.object, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.object, var))
 	{
 		SVariable* varUpdate;
 		
@@ -15845,7 +15845,7 @@ bool iObj_set_object(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -15863,7 +15863,7 @@ bool iObj_set_object(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.object, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.object, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -15872,7 +15872,7 @@ bool iObj_set_object(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -15906,7 +15906,7 @@ bool iObj_set_object(SObject* obj, SVariable* var)
 bool iObj_set_objects(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.objects, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.objects, var))
 	{
 		SVariable* varUpdate;
 		
@@ -15917,7 +15917,7 @@ bool iObj_set_objects(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -15935,7 +15935,7 @@ bool iObj_set_objects(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.objects, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.objects, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -15944,7 +15944,7 @@ bool iObj_set_objects(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -15978,7 +15978,7 @@ bool iObj_set_objects(SObject* obj, SVariable* var)
 bool iObj_set_openWindow(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.openWindow, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.openWindow, var))
 	{
 		SVariable* varUpdate;
 		
@@ -15989,7 +15989,7 @@ bool iObj_set_openWindow(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -16007,7 +16007,7 @@ bool iObj_set_openWindow(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.openWindow, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.openWindow, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -16016,7 +16016,7 @@ bool iObj_set_openWindow(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -16050,7 +16050,7 @@ bool iObj_set_openWindow(SObject* obj, SVariable* var)
 bool iObj_set_optimize(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.optimize, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.optimize, var))
 	{
 		SVariable* varUpdate;
 		
@@ -16061,7 +16061,7 @@ bool iObj_set_optimize(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -16079,7 +16079,7 @@ bool iObj_set_optimize(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.optimize, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.optimize, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -16088,7 +16088,7 @@ bool iObj_set_optimize(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -16122,7 +16122,7 @@ bool iObj_set_optimize(SObject* obj, SVariable* var)
 bool iObj_set_pageCount(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.pageCount, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.pageCount, var))
 	{
 		SVariable* varUpdate;
 		
@@ -16133,7 +16133,7 @@ bool iObj_set_pageCount(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -16151,7 +16151,7 @@ bool iObj_set_pageCount(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.pageCount, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.pageCount, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -16160,7 +16160,7 @@ bool iObj_set_pageCount(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -16194,7 +16194,7 @@ bool iObj_set_pageCount(SObject* obj, SVariable* var)
 bool iObj_set_pageHeight(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.pageHeight, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.pageHeight, var))
 	{
 		SVariable* varUpdate;
 		
@@ -16205,7 +16205,7 @@ bool iObj_set_pageHeight(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -16223,7 +16223,7 @@ bool iObj_set_pageHeight(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.pageHeight, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.pageHeight, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -16232,7 +16232,7 @@ bool iObj_set_pageHeight(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -16266,7 +16266,7 @@ bool iObj_set_pageHeight(SObject* obj, SVariable* var)
 bool iObj_set_pageOrder(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.pageOrder, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.pageOrder, var))
 	{
 		SVariable* varUpdate;
 		
@@ -16277,7 +16277,7 @@ bool iObj_set_pageOrder(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -16295,7 +16295,7 @@ bool iObj_set_pageOrder(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.pageOrder, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.pageOrder, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -16304,7 +16304,7 @@ bool iObj_set_pageOrder(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -16338,7 +16338,7 @@ bool iObj_set_pageOrder(SObject* obj, SVariable* var)
 bool iObj_set_pageWidth(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.pageWidth, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.pageWidth, var))
 	{
 		SVariable* varUpdate;
 		
@@ -16349,7 +16349,7 @@ bool iObj_set_pageWidth(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -16367,7 +16367,7 @@ bool iObj_set_pageWidth(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.pageWidth, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.pageWidth, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -16376,7 +16376,7 @@ bool iObj_set_pageWidth(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -16410,7 +16410,7 @@ bool iObj_set_pageWidth(SObject* obj, SVariable* var)
 bool iObj_set_pages(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.pages, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.pages, var))
 	{
 		SVariable* varUpdate;
 		
@@ -16421,7 +16421,7 @@ bool iObj_set_pages(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -16439,7 +16439,7 @@ bool iObj_set_pages(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.pages, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.pages, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -16448,7 +16448,7 @@ bool iObj_set_pages(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -16482,7 +16482,7 @@ bool iObj_set_pages(SObject* obj, SVariable* var)
 bool iObj_set_panel(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.panel, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.panel, var))
 	{
 		SVariable* varUpdate;
 		
@@ -16493,7 +16493,7 @@ bool iObj_set_panel(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -16511,7 +16511,7 @@ bool iObj_set_panel(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.panel, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.panel, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -16520,7 +16520,7 @@ bool iObj_set_panel(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -16554,7 +16554,7 @@ bool iObj_set_panel(SObject* obj, SVariable* var)
 bool iObj_set_panelLink(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.panelLink, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.panelLink, var))
 	{
 		SVariable* varUpdate;
 		
@@ -16565,7 +16565,7 @@ bool iObj_set_panelLink(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -16583,7 +16583,7 @@ bool iObj_set_panelLink(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.panelLink, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.panelLink, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -16592,7 +16592,7 @@ bool iObj_set_panelLink(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -16626,7 +16626,7 @@ bool iObj_set_panelLink(SObject* obj, SVariable* var)
 bool iObj_set_parent(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.parent, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.parent, var))
 	{
 		SVariable* varUpdate;
 		
@@ -16637,7 +16637,7 @@ bool iObj_set_parent(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -16655,7 +16655,7 @@ bool iObj_set_parent(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.parent, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.parent, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -16664,7 +16664,7 @@ bool iObj_set_parent(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -16698,7 +16698,7 @@ bool iObj_set_parent(SObject* obj, SVariable* var)
 bool iObj_set_parentClass(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.parentClass, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.parentClass, var))
 	{
 		SVariable* varUpdate;
 		
@@ -16709,7 +16709,7 @@ bool iObj_set_parentClass(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -16727,7 +16727,7 @@ bool iObj_set_parentClass(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.parentClass, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.parentClass, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -16736,7 +16736,7 @@ bool iObj_set_parentClass(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -16770,7 +16770,7 @@ bool iObj_set_parentClass(SObject* obj, SVariable* var)
 bool iObj_set_partition(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.partition, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.partition, var))
 	{
 		SVariable* varUpdate;
 		
@@ -16781,7 +16781,7 @@ bool iObj_set_partition(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -16799,7 +16799,7 @@ bool iObj_set_partition(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.partition, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.partition, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -16808,7 +16808,7 @@ bool iObj_set_partition(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -16842,7 +16842,7 @@ bool iObj_set_partition(SObject* obj, SVariable* var)
 bool iObj_set_passwordChar(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.passwordChar, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.passwordChar, var))
 	{
 		SVariable* varUpdate;
 		
@@ -16853,7 +16853,7 @@ bool iObj_set_passwordChar(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -16871,7 +16871,7 @@ bool iObj_set_passwordChar(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.passwordChar, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.passwordChar, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -16880,7 +16880,7 @@ bool iObj_set_passwordChar(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -16914,7 +16914,7 @@ bool iObj_set_passwordChar(SObject* obj, SVariable* var)
 bool iObj_set_picture(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.picture, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.picture, var))
 	{
 		SVariable* varUpdate;
 		
@@ -16925,7 +16925,7 @@ bool iObj_set_picture(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -16943,7 +16943,7 @@ bool iObj_set_picture(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.picture, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.picture, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -16952,7 +16952,7 @@ bool iObj_set_picture(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -16986,7 +16986,7 @@ bool iObj_set_picture(SObject* obj, SVariable* var)
 bool iObj_set_pictureMargin(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.pictureMargin, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.pictureMargin, var))
 	{
 		SVariable* varUpdate;
 		
@@ -16997,7 +16997,7 @@ bool iObj_set_pictureMargin(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -17015,7 +17015,7 @@ bool iObj_set_pictureMargin(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.pictureMargin, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.pictureMargin, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -17024,7 +17024,7 @@ bool iObj_set_pictureMargin(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -17058,7 +17058,7 @@ bool iObj_set_pictureMargin(SObject* obj, SVariable* var)
 bool iObj_set_picturePosition(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.picturePosition, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.picturePosition, var))
 	{
 		SVariable* varUpdate;
 		
@@ -17069,7 +17069,7 @@ bool iObj_set_picturePosition(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -17087,7 +17087,7 @@ bool iObj_set_picturePosition(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.picturePosition, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.picturePosition, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -17096,7 +17096,7 @@ bool iObj_set_picturePosition(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -17130,7 +17130,7 @@ bool iObj_set_picturePosition(SObject* obj, SVariable* var)
 bool iObj_set_pictureSelectionDisplay(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.pictureSelectionDisplay, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.pictureSelectionDisplay, var))
 	{
 		SVariable* varUpdate;
 		
@@ -17141,7 +17141,7 @@ bool iObj_set_pictureSelectionDisplay(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -17159,7 +17159,7 @@ bool iObj_set_pictureSelectionDisplay(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.pictureSelectionDisplay, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.pictureSelectionDisplay, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -17168,7 +17168,7 @@ bool iObj_set_pictureSelectionDisplay(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -17202,7 +17202,7 @@ bool iObj_set_pictureSelectionDisplay(SObject* obj, SVariable* var)
 bool iObj_set_pictureSpacing(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.pictureSpacing, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.pictureSpacing, var))
 	{
 		SVariable* varUpdate;
 		
@@ -17213,7 +17213,7 @@ bool iObj_set_pictureSpacing(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -17231,7 +17231,7 @@ bool iObj_set_pictureSpacing(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.pictureSpacing, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.pictureSpacing, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -17240,7 +17240,7 @@ bool iObj_set_pictureSpacing(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -17274,7 +17274,7 @@ bool iObj_set_pictureSpacing(SObject* obj, SVariable* var)
 bool iObj_set_pictureVal(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.pictureVal, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.pictureVal, var))
 	{
 		SVariable* varUpdate;
 		
@@ -17285,7 +17285,7 @@ bool iObj_set_pictureVal(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -17303,7 +17303,7 @@ bool iObj_set_pictureVal(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.pictureVal, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.pictureVal, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -17312,7 +17312,7 @@ bool iObj_set_pictureVal(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -17346,7 +17346,7 @@ bool iObj_set_pictureVal(SObject* obj, SVariable* var)
 bool iObj_set_polyPoints(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.polyPoints, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.polyPoints, var))
 	{
 		SVariable* varUpdate;
 		
@@ -17357,7 +17357,7 @@ bool iObj_set_polyPoints(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -17375,7 +17375,7 @@ bool iObj_set_polyPoints(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.polyPoints, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.polyPoints, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -17384,7 +17384,7 @@ bool iObj_set_polyPoints(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -17418,7 +17418,7 @@ bool iObj_set_polyPoints(SObject* obj, SVariable* var)
 bool iObj_set_procedure(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.procedure, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.procedure, var))
 	{
 		SVariable* varUpdate;
 		
@@ -17429,7 +17429,7 @@ bool iObj_set_procedure(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -17447,7 +17447,7 @@ bool iObj_set_procedure(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.procedure, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.procedure, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -17456,7 +17456,7 @@ bool iObj_set_procedure(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -17490,7 +17490,7 @@ bool iObj_set_procedure(SObject* obj, SVariable* var)
 bool iObj_set_readBackColor(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.readBackColor, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.readBackColor, var))
 	{
 		SVariable* varUpdate;
 		
@@ -17501,7 +17501,7 @@ bool iObj_set_readBackColor(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -17519,7 +17519,7 @@ bool iObj_set_readBackColor(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.readBackColor, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.readBackColor, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -17528,7 +17528,7 @@ bool iObj_set_readBackColor(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -17562,7 +17562,7 @@ bool iObj_set_readBackColor(SObject* obj, SVariable* var)
 bool iObj_set_readCycle(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.readCycle, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.readCycle, var))
 	{
 		SVariable* varUpdate;
 		
@@ -17573,7 +17573,7 @@ bool iObj_set_readCycle(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -17591,7 +17591,7 @@ bool iObj_set_readCycle(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.readCycle, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.readCycle, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -17600,7 +17600,7 @@ bool iObj_set_readCycle(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -17634,7 +17634,7 @@ bool iObj_set_readCycle(SObject* obj, SVariable* var)
 bool iObj_set_readForeColor(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.readForeColor, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.readForeColor, var))
 	{
 		SVariable* varUpdate;
 		
@@ -17645,7 +17645,7 @@ bool iObj_set_readForeColor(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -17663,7 +17663,7 @@ bool iObj_set_readForeColor(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.readForeColor, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.readForeColor, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -17672,7 +17672,7 @@ bool iObj_set_readForeColor(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -17706,7 +17706,7 @@ bool iObj_set_readForeColor(SObject* obj, SVariable* var)
 bool iObj_set_readLock(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.readLock, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.readLock, var))
 	{
 		SVariable* varUpdate;
 		
@@ -17717,7 +17717,7 @@ bool iObj_set_readLock(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -17735,7 +17735,7 @@ bool iObj_set_readLock(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.readLock, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.readLock, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -17744,7 +17744,7 @@ bool iObj_set_readLock(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -17778,7 +17778,7 @@ bool iObj_set_readLock(SObject* obj, SVariable* var)
 bool iObj_set_readMouse(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.readMouse, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.readMouse, var))
 	{
 		SVariable* varUpdate;
 		
@@ -17789,7 +17789,7 @@ bool iObj_set_readMouse(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -17807,7 +17807,7 @@ bool iObj_set_readMouse(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.readMouse, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.readMouse, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -17816,7 +17816,7 @@ bool iObj_set_readMouse(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -17850,7 +17850,7 @@ bool iObj_set_readMouse(SObject* obj, SVariable* var)
 bool iObj_set_readOnly(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.readOnly, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.readOnly, var))
 	{
 		SVariable* varUpdate;
 		
@@ -17861,7 +17861,7 @@ bool iObj_set_readOnly(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -17879,7 +17879,7 @@ bool iObj_set_readOnly(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.readOnly, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.readOnly, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -17888,7 +17888,7 @@ bool iObj_set_readOnly(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -17922,7 +17922,7 @@ bool iObj_set_readOnly(SObject* obj, SVariable* var)
 bool iObj_set_readSave(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.readSave, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.readSave, var))
 	{
 		SVariable* varUpdate;
 		
@@ -17933,7 +17933,7 @@ bool iObj_set_readSave(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -17951,7 +17951,7 @@ bool iObj_set_readSave(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.readSave, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.readSave, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -17960,7 +17960,7 @@ bool iObj_set_readSave(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -17994,7 +17994,7 @@ bool iObj_set_readSave(SObject* obj, SVariable* var)
 bool iObj_set_readTimeOut(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.readTimeOut, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.readTimeOut, var))
 	{
 		SVariable* varUpdate;
 		
@@ -18005,7 +18005,7 @@ bool iObj_set_readTimeOut(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -18023,7 +18023,7 @@ bool iObj_set_readTimeOut(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.readTimeOut, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.readTimeOut, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -18032,7 +18032,7 @@ bool iObj_set_readTimeOut(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -18066,7 +18066,7 @@ bool iObj_set_readTimeOut(SObject* obj, SVariable* var)
 bool iObj_set_recordMark(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.recordMark, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.recordMark, var))
 	{
 		SVariable* varUpdate;
 		
@@ -18077,7 +18077,7 @@ bool iObj_set_recordMark(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -18095,7 +18095,7 @@ bool iObj_set_recordMark(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.recordMark, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.recordMark, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -18104,7 +18104,7 @@ bool iObj_set_recordMark(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -18138,7 +18138,7 @@ bool iObj_set_recordMark(SObject* obj, SVariable* var)
 bool iObj_set_recordSource(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.recordSource, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.recordSource, var))
 	{
 		SVariable* varUpdate;
 		
@@ -18149,7 +18149,7 @@ bool iObj_set_recordSource(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -18167,7 +18167,7 @@ bool iObj_set_recordSource(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.recordSource, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.recordSource, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -18176,7 +18176,7 @@ bool iObj_set_recordSource(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -18210,7 +18210,7 @@ bool iObj_set_recordSource(SObject* obj, SVariable* var)
 bool iObj_set_recordSourceType(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.recordSourceType, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.recordSourceType, var))
 	{
 		SVariable* varUpdate;
 		
@@ -18221,7 +18221,7 @@ bool iObj_set_recordSourceType(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -18239,7 +18239,7 @@ bool iObj_set_recordSourceType(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.recordSourceType, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.recordSourceType, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -18248,7 +18248,7 @@ bool iObj_set_recordSourceType(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -18282,7 +18282,7 @@ bool iObj_set_recordSourceType(SObject* obj, SVariable* var)
 bool iObj_set_relationalExpr(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.relationalExpr, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.relationalExpr, var))
 	{
 		SVariable* varUpdate;
 		
@@ -18293,7 +18293,7 @@ bool iObj_set_relationalExpr(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -18311,7 +18311,7 @@ bool iObj_set_relationalExpr(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.relationalExpr, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.relationalExpr, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -18320,7 +18320,7 @@ bool iObj_set_relationalExpr(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -18354,7 +18354,7 @@ bool iObj_set_relationalExpr(SObject* obj, SVariable* var)
 bool iObj_set_relativeColumn(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.relativeColumn, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.relativeColumn, var))
 	{
 		SVariable* varUpdate;
 		
@@ -18365,7 +18365,7 @@ bool iObj_set_relativeColumn(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -18383,7 +18383,7 @@ bool iObj_set_relativeColumn(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.relativeColumn, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.relativeColumn, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -18392,7 +18392,7 @@ bool iObj_set_relativeColumn(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -18426,7 +18426,7 @@ bool iObj_set_relativeColumn(SObject* obj, SVariable* var)
 bool iObj_set_relativeRow(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.relativeRow, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.relativeRow, var))
 	{
 		SVariable* varUpdate;
 		
@@ -18437,7 +18437,7 @@ bool iObj_set_relativeRow(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -18455,7 +18455,7 @@ bool iObj_set_relativeRow(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.relativeRow, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.relativeRow, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -18464,7 +18464,7 @@ bool iObj_set_relativeRow(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -18498,7 +18498,7 @@ bool iObj_set_relativeRow(SObject* obj, SVariable* var)
 bool iObj_set_releaseType(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.releaseType, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.releaseType, var))
 	{
 		SVariable* varUpdate;
 		
@@ -18509,7 +18509,7 @@ bool iObj_set_releaseType(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -18527,7 +18527,7 @@ bool iObj_set_releaseType(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.releaseType, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.releaseType, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -18536,7 +18536,7 @@ bool iObj_set_releaseType(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -18570,7 +18570,7 @@ bool iObj_set_releaseType(SObject* obj, SVariable* var)
 bool iObj_set_resizable(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.resizable, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.resizable, var))
 	{
 		SVariable* varUpdate;
 		
@@ -18581,7 +18581,7 @@ bool iObj_set_resizable(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -18599,7 +18599,7 @@ bool iObj_set_resizable(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.resizable, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.resizable, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -18608,7 +18608,7 @@ bool iObj_set_resizable(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -18642,7 +18642,7 @@ bool iObj_set_resizable(SObject* obj, SVariable* var)
 bool iObj_set_rightToLeft(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.rightToLeft, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.rightToLeft, var))
 	{
 		SVariable* varUpdate;
 		
@@ -18653,7 +18653,7 @@ bool iObj_set_rightToLeft(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -18671,7 +18671,7 @@ bool iObj_set_rightToLeft(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.rightToLeft, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.rightToLeft, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -18680,7 +18680,7 @@ bool iObj_set_rightToLeft(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -18714,7 +18714,7 @@ bool iObj_set_rightToLeft(SObject* obj, SVariable* var)
 bool iObj_set_rotateFlip(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.rotateFlip, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.rotateFlip, var))
 	{
 		SVariable* varUpdate;
 		
@@ -18725,7 +18725,7 @@ bool iObj_set_rotateFlip(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -18743,7 +18743,7 @@ bool iObj_set_rotateFlip(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.rotateFlip, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.rotateFlip, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -18752,7 +18752,7 @@ bool iObj_set_rotateFlip(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -18786,7 +18786,7 @@ bool iObj_set_rotateFlip(SObject* obj, SVariable* var)
 bool iObj_set_rotation(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.rotation, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.rotation, var))
 	{
 		SVariable* varUpdate;
 		
@@ -18797,7 +18797,7 @@ bool iObj_set_rotation(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -18815,7 +18815,7 @@ bool iObj_set_rotation(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.rotation, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.rotation, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -18824,7 +18824,7 @@ bool iObj_set_rotation(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -18858,7 +18858,7 @@ bool iObj_set_rotation(SObject* obj, SVariable* var)
 bool iObj_set_rowColChange(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.rowColChange, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.rowColChange, var))
 	{
 		SVariable* varUpdate;
 		
@@ -18869,7 +18869,7 @@ bool iObj_set_rowColChange(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -18887,7 +18887,7 @@ bool iObj_set_rowColChange(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.rowColChange, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.rowColChange, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -18896,7 +18896,7 @@ bool iObj_set_rowColChange(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -18930,7 +18930,7 @@ bool iObj_set_rowColChange(SObject* obj, SVariable* var)
 bool iObj_set_rowHeight(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.rowHeight, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.rowHeight, var))
 	{
 		SVariable* varUpdate;
 		
@@ -18941,7 +18941,7 @@ bool iObj_set_rowHeight(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -18959,7 +18959,7 @@ bool iObj_set_rowHeight(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.rowHeight, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.rowHeight, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -18968,7 +18968,7 @@ bool iObj_set_rowHeight(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -19002,7 +19002,7 @@ bool iObj_set_rowHeight(SObject* obj, SVariable* var)
 bool iObj_set_rowSource(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.rowSource, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.rowSource, var))
 	{
 		SVariable* varUpdate;
 		
@@ -19013,7 +19013,7 @@ bool iObj_set_rowSource(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -19031,7 +19031,7 @@ bool iObj_set_rowSource(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.rowSource, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.rowSource, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -19040,7 +19040,7 @@ bool iObj_set_rowSource(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -19074,7 +19074,7 @@ bool iObj_set_rowSource(SObject* obj, SVariable* var)
 bool iObj_set_rowSourceType(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.rowSourceType, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.rowSourceType, var))
 	{
 		SVariable* varUpdate;
 		
@@ -19085,7 +19085,7 @@ bool iObj_set_rowSourceType(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -19103,7 +19103,7 @@ bool iObj_set_rowSourceType(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.rowSourceType, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.rowSourceType, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -19112,7 +19112,7 @@ bool iObj_set_rowSourceType(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -19146,7 +19146,7 @@ bool iObj_set_rowSourceType(SObject* obj, SVariable* var)
 bool iObj_set_scaleMode(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.scaleMode, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.scaleMode, var))
 	{
 		SVariable* varUpdate;
 		
@@ -19157,7 +19157,7 @@ bool iObj_set_scaleMode(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -19175,7 +19175,7 @@ bool iObj_set_scaleMode(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.scaleMode, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.scaleMode, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -19184,7 +19184,7 @@ bool iObj_set_scaleMode(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -19218,7 +19218,7 @@ bool iObj_set_scaleMode(SObject* obj, SVariable* var)
 bool iObj_set_scrollBars(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.scrollBars, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.scrollBars, var))
 	{
 		SVariable* varUpdate;
 		
@@ -19229,7 +19229,7 @@ bool iObj_set_scrollBars(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -19247,7 +19247,7 @@ bool iObj_set_scrollBars(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.scrollBars, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.scrollBars, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -19256,7 +19256,7 @@ bool iObj_set_scrollBars(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -19290,7 +19290,7 @@ bool iObj_set_scrollBars(SObject* obj, SVariable* var)
 bool iObj_set_seconds(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.seconds, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.seconds, var))
 	{
 		SVariable* varUpdate;
 		
@@ -19301,7 +19301,7 @@ bool iObj_set_seconds(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -19319,7 +19319,7 @@ bool iObj_set_seconds(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.seconds, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.seconds, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -19328,7 +19328,7 @@ bool iObj_set_seconds(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -19362,7 +19362,7 @@ bool iObj_set_seconds(SObject* obj, SVariable* var)
 bool iObj_set_selLength(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.selLength, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.selLength, var))
 	{
 		SVariable* varUpdate;
 		
@@ -19373,7 +19373,7 @@ bool iObj_set_selLength(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -19391,7 +19391,7 @@ bool iObj_set_selLength(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.selLength, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.selLength, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -19400,7 +19400,7 @@ bool iObj_set_selLength(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -19434,7 +19434,7 @@ bool iObj_set_selLength(SObject* obj, SVariable* var)
 bool iObj_set_selStart(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.selStart, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.selStart, var))
 	{
 		SVariable* varUpdate;
 		
@@ -19445,7 +19445,7 @@ bool iObj_set_selStart(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -19463,7 +19463,7 @@ bool iObj_set_selStart(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.selStart, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.selStart, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -19472,7 +19472,7 @@ bool iObj_set_selStart(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -19506,7 +19506,7 @@ bool iObj_set_selStart(SObject* obj, SVariable* var)
 bool iObj_set_selText(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.selText, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.selText, var))
 	{
 		SVariable* varUpdate;
 		
@@ -19517,7 +19517,7 @@ bool iObj_set_selText(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -19535,7 +19535,7 @@ bool iObj_set_selText(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.selText, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.selText, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -19544,7 +19544,7 @@ bool iObj_set_selText(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -19578,7 +19578,7 @@ bool iObj_set_selText(SObject* obj, SVariable* var)
 bool iObj_set_selectOnEntry(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.selectOnEntry, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.selectOnEntry, var))
 	{
 		SVariable* varUpdate;
 		
@@ -19589,7 +19589,7 @@ bool iObj_set_selectOnEntry(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -19607,7 +19607,7 @@ bool iObj_set_selectOnEntry(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.selectOnEntry, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.selectOnEntry, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -19616,7 +19616,7 @@ bool iObj_set_selectOnEntry(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -19650,7 +19650,7 @@ bool iObj_set_selectOnEntry(SObject* obj, SVariable* var)
 bool iObj_set_selected(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.selected, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.selected, var))
 	{
 		SVariable* varUpdate;
 		
@@ -19661,7 +19661,7 @@ bool iObj_set_selected(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -19679,7 +19679,7 @@ bool iObj_set_selected(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.selected, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.selected, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -19688,7 +19688,7 @@ bool iObj_set_selected(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -19722,7 +19722,7 @@ bool iObj_set_selected(SObject* obj, SVariable* var)
 bool iObj_set_selectedBackColor(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.selectedBackColor, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.selectedBackColor, var))
 	{
 		SVariable* varUpdate;
 		
@@ -19733,7 +19733,7 @@ bool iObj_set_selectedBackColor(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -19751,7 +19751,7 @@ bool iObj_set_selectedBackColor(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.selectedBackColor, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.selectedBackColor, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -19760,7 +19760,7 @@ bool iObj_set_selectedBackColor(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -19794,7 +19794,7 @@ bool iObj_set_selectedBackColor(SObject* obj, SVariable* var)
 bool iObj_set_selectedForeColor(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.selectedForeColor, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.selectedForeColor, var))
 	{
 		SVariable* varUpdate;
 		
@@ -19805,7 +19805,7 @@ bool iObj_set_selectedForeColor(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -19823,7 +19823,7 @@ bool iObj_set_selectedForeColor(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.selectedForeColor, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.selectedForeColor, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -19832,7 +19832,7 @@ bool iObj_set_selectedForeColor(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -19866,7 +19866,7 @@ bool iObj_set_selectedForeColor(SObject* obj, SVariable* var)
 bool iObj_set_selectedID(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.selectedID, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.selectedID, var))
 	{
 		SVariable* varUpdate;
 		
@@ -19877,7 +19877,7 @@ bool iObj_set_selectedID(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -19895,7 +19895,7 @@ bool iObj_set_selectedID(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.selectedID, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.selectedID, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -19904,7 +19904,7 @@ bool iObj_set_selectedID(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -19938,7 +19938,7 @@ bool iObj_set_selectedID(SObject* obj, SVariable* var)
 bool iObj_set_selectedItemBackColor(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.selectedItemBackColor, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.selectedItemBackColor, var))
 	{
 		SVariable* varUpdate;
 		
@@ -19949,7 +19949,7 @@ bool iObj_set_selectedItemBackColor(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -19967,7 +19967,7 @@ bool iObj_set_selectedItemBackColor(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.selectedItemBackColor, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.selectedItemBackColor, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -19976,7 +19976,7 @@ bool iObj_set_selectedItemBackColor(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -20010,7 +20010,7 @@ bool iObj_set_selectedItemBackColor(SObject* obj, SVariable* var)
 bool iObj_set_selectedItemForeColor(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.selectedItemForeColor, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.selectedItemForeColor, var))
 	{
 		SVariable* varUpdate;
 		
@@ -20021,7 +20021,7 @@ bool iObj_set_selectedItemForeColor(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -20039,7 +20039,7 @@ bool iObj_set_selectedItemForeColor(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.selectedItemForeColor, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.selectedItemForeColor, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -20048,7 +20048,7 @@ bool iObj_set_selectedItemForeColor(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -20082,7 +20082,7 @@ bool iObj_set_selectedItemForeColor(SObject* obj, SVariable* var)
 bool iObj_set_showInTaskbar(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.showInTaskbar, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.showInTaskbar, var))
 	{
 		SVariable* varUpdate;
 		
@@ -20093,7 +20093,7 @@ bool iObj_set_showInTaskbar(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -20111,7 +20111,7 @@ bool iObj_set_showInTaskbar(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.showInTaskbar, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.showInTaskbar, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -20120,7 +20120,7 @@ bool iObj_set_showInTaskbar(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -20154,7 +20154,7 @@ bool iObj_set_showInTaskbar(SObject* obj, SVariable* var)
 bool iObj_set_showTips(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.showTips, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.showTips, var))
 	{
 		SVariable* varUpdate;
 		
@@ -20165,7 +20165,7 @@ bool iObj_set_showTips(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -20183,7 +20183,7 @@ bool iObj_set_showTips(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.showTips, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.showTips, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -20192,7 +20192,7 @@ bool iObj_set_showTips(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -20226,7 +20226,7 @@ bool iObj_set_showTips(SObject* obj, SVariable* var)
 bool iObj_set_showWindow(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.showWindow, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.showWindow, var))
 	{
 		SVariable* varUpdate;
 		
@@ -20237,7 +20237,7 @@ bool iObj_set_showWindow(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -20255,7 +20255,7 @@ bool iObj_set_showWindow(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.showWindow, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.showWindow, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -20264,7 +20264,7 @@ bool iObj_set_showWindow(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -20298,7 +20298,7 @@ bool iObj_set_showWindow(SObject* obj, SVariable* var)
 bool iObj_set_sizable(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.sizable, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.sizable, var))
 	{
 		SVariable* varUpdate;
 		
@@ -20309,7 +20309,7 @@ bool iObj_set_sizable(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -20327,7 +20327,7 @@ bool iObj_set_sizable(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.sizable, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.sizable, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -20336,7 +20336,7 @@ bool iObj_set_sizable(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -20370,7 +20370,7 @@ bool iObj_set_sizable(SObject* obj, SVariable* var)
 bool iObj_set_sizeBox(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.sizeBox, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.sizeBox, var))
 	{
 		SVariable* varUpdate;
 		
@@ -20381,7 +20381,7 @@ bool iObj_set_sizeBox(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -20399,7 +20399,7 @@ bool iObj_set_sizeBox(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.sizeBox, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.sizeBox, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -20408,7 +20408,7 @@ bool iObj_set_sizeBox(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -20442,7 +20442,7 @@ bool iObj_set_sizeBox(SObject* obj, SVariable* var)
 bool iObj_set_sorted(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.sorted, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.sorted, var))
 	{
 		SVariable* varUpdate;
 		
@@ -20453,7 +20453,7 @@ bool iObj_set_sorted(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -20471,7 +20471,7 @@ bool iObj_set_sorted(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.sorted, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.sorted, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -20480,7 +20480,7 @@ bool iObj_set_sorted(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -20514,7 +20514,7 @@ bool iObj_set_sorted(SObject* obj, SVariable* var)
 bool iObj_set_sparse(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.sparse, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.sparse, var))
 	{
 		SVariable* varUpdate;
 		
@@ -20525,7 +20525,7 @@ bool iObj_set_sparse(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -20543,7 +20543,7 @@ bool iObj_set_sparse(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.sparse, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.sparse, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -20552,7 +20552,7 @@ bool iObj_set_sparse(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -20586,7 +20586,7 @@ bool iObj_set_sparse(SObject* obj, SVariable* var)
 bool iObj_set_specialEffect(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.specialEffect, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.specialEffect, var))
 	{
 		SVariable* varUpdate;
 		
@@ -20597,7 +20597,7 @@ bool iObj_set_specialEffect(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -20615,7 +20615,7 @@ bool iObj_set_specialEffect(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.specialEffect, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.specialEffect, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -20624,7 +20624,7 @@ bool iObj_set_specialEffect(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -20658,7 +20658,7 @@ bool iObj_set_specialEffect(SObject* obj, SVariable* var)
 bool iObj_set_spinnerHighValue(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.spinnerHighValue, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.spinnerHighValue, var))
 	{
 		SVariable* varUpdate;
 		
@@ -20669,7 +20669,7 @@ bool iObj_set_spinnerHighValue(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -20687,7 +20687,7 @@ bool iObj_set_spinnerHighValue(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.spinnerHighValue, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.spinnerHighValue, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -20696,7 +20696,7 @@ bool iObj_set_spinnerHighValue(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -20730,7 +20730,7 @@ bool iObj_set_spinnerHighValue(SObject* obj, SVariable* var)
 bool iObj_set_spinnerLowValue(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.spinnerLowValue, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.spinnerLowValue, var))
 	{
 		SVariable* varUpdate;
 		
@@ -20741,7 +20741,7 @@ bool iObj_set_spinnerLowValue(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -20759,7 +20759,7 @@ bool iObj_set_spinnerLowValue(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.spinnerLowValue, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.spinnerLowValue, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -20768,7 +20768,7 @@ bool iObj_set_spinnerLowValue(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -20802,7 +20802,7 @@ bool iObj_set_spinnerLowValue(SObject* obj, SVariable* var)
 bool iObj_set_splitBar(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.splitBar, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.splitBar, var))
 	{
 		SVariable* varUpdate;
 		
@@ -20813,7 +20813,7 @@ bool iObj_set_splitBar(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -20831,7 +20831,7 @@ bool iObj_set_splitBar(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.splitBar, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.splitBar, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -20840,7 +20840,7 @@ bool iObj_set_splitBar(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -20874,7 +20874,7 @@ bool iObj_set_splitBar(SObject* obj, SVariable* var)
 bool iObj_set_stackLevel(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.stackLevel, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.stackLevel, var))
 	{
 		SVariable* varUpdate;
 		
@@ -20885,7 +20885,7 @@ bool iObj_set_stackLevel(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -20903,7 +20903,7 @@ bool iObj_set_stackLevel(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.stackLevel, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.stackLevel, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -20912,7 +20912,7 @@ bool iObj_set_stackLevel(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -20946,7 +20946,7 @@ bool iObj_set_stackLevel(SObject* obj, SVariable* var)
 bool iObj_set_statusBarText(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.statusBarText, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.statusBarText, var))
 	{
 		SVariable* varUpdate;
 		
@@ -20957,7 +20957,7 @@ bool iObj_set_statusBarText(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -20975,7 +20975,7 @@ bool iObj_set_statusBarText(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.statusBarText, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.statusBarText, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -20984,7 +20984,7 @@ bool iObj_set_statusBarText(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -21018,7 +21018,7 @@ bool iObj_set_statusBarText(SObject* obj, SVariable* var)
 bool iObj_set_stretch(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.stretch, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.stretch, var))
 	{
 		SVariable* varUpdate;
 		
@@ -21029,7 +21029,7 @@ bool iObj_set_stretch(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -21047,7 +21047,7 @@ bool iObj_set_stretch(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.stretch, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.stretch, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -21056,7 +21056,7 @@ bool iObj_set_stretch(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -21090,7 +21090,7 @@ bool iObj_set_stretch(SObject* obj, SVariable* var)
 bool iObj_set_strictDateEntry(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.strictDateEntry, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.strictDateEntry, var))
 	{
 		SVariable* varUpdate;
 		
@@ -21101,7 +21101,7 @@ bool iObj_set_strictDateEntry(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -21119,7 +21119,7 @@ bool iObj_set_strictDateEntry(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.strictDateEntry, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.strictDateEntry, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -21128,7 +21128,7 @@ bool iObj_set_strictDateEntry(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -21162,7 +21162,7 @@ bool iObj_set_strictDateEntry(SObject* obj, SVariable* var)
 bool iObj_set_style(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.style, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.style, var))
 	{
 		SVariable* varUpdate;
 		
@@ -21173,7 +21173,7 @@ bool iObj_set_style(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -21191,7 +21191,7 @@ bool iObj_set_style(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.style, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.style, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -21200,7 +21200,7 @@ bool iObj_set_style(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -21234,7 +21234,7 @@ bool iObj_set_style(SObject* obj, SVariable* var)
 bool iObj_set_tabIndex(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.tabIndex, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.tabIndex, var))
 	{
 		SVariable* varUpdate;
 		
@@ -21245,7 +21245,7 @@ bool iObj_set_tabIndex(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -21263,7 +21263,7 @@ bool iObj_set_tabIndex(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.tabIndex, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.tabIndex, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -21272,7 +21272,7 @@ bool iObj_set_tabIndex(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -21306,7 +21306,7 @@ bool iObj_set_tabIndex(SObject* obj, SVariable* var)
 bool iObj_set_tabOrientation(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.tabOrientation, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.tabOrientation, var))
 	{
 		SVariable* varUpdate;
 		
@@ -21317,7 +21317,7 @@ bool iObj_set_tabOrientation(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -21335,7 +21335,7 @@ bool iObj_set_tabOrientation(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.tabOrientation, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.tabOrientation, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -21344,7 +21344,7 @@ bool iObj_set_tabOrientation(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -21378,7 +21378,7 @@ bool iObj_set_tabOrientation(SObject* obj, SVariable* var)
 bool iObj_set_tabStop(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.tabStop, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.tabStop, var))
 	{
 		SVariable* varUpdate;
 		
@@ -21389,7 +21389,7 @@ bool iObj_set_tabStop(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -21407,7 +21407,7 @@ bool iObj_set_tabStop(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.tabStop, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.tabStop, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -21416,7 +21416,7 @@ bool iObj_set_tabStop(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -21450,7 +21450,7 @@ bool iObj_set_tabStop(SObject* obj, SVariable* var)
 bool iObj_set_tabStyle(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.tabStyle, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.tabStyle, var))
 	{
 		SVariable* varUpdate;
 		
@@ -21461,7 +21461,7 @@ bool iObj_set_tabStyle(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -21479,7 +21479,7 @@ bool iObj_set_tabStyle(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.tabStyle, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.tabStyle, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -21488,7 +21488,7 @@ bool iObj_set_tabStyle(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -21522,7 +21522,7 @@ bool iObj_set_tabStyle(SObject* obj, SVariable* var)
 bool iObj_set_tabs(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.tabs, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.tabs, var))
 	{
 		SVariable* varUpdate;
 		
@@ -21533,7 +21533,7 @@ bool iObj_set_tabs(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -21551,7 +21551,7 @@ bool iObj_set_tabs(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.tabs, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.tabs, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -21560,7 +21560,7 @@ bool iObj_set_tabs(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -21594,7 +21594,7 @@ bool iObj_set_tabs(SObject* obj, SVariable* var)
 bool iObj_set_tag(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.tag, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.tag, var))
 	{
 		SVariable* varUpdate;
 		
@@ -21605,7 +21605,7 @@ bool iObj_set_tag(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -21623,7 +21623,7 @@ bool iObj_set_tag(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.tag, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.tag, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -21632,7 +21632,7 @@ bool iObj_set_tag(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -21666,7 +21666,7 @@ bool iObj_set_tag(SObject* obj, SVariable* var)
 bool iObj_set_terminateRead(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.terminateRead, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.terminateRead, var))
 	{
 		SVariable* varUpdate;
 		
@@ -21677,7 +21677,7 @@ bool iObj_set_terminateRead(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -21695,7 +21695,7 @@ bool iObj_set_terminateRead(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.terminateRead, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.terminateRead, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -21704,7 +21704,7 @@ bool iObj_set_terminateRead(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -21738,7 +21738,7 @@ bool iObj_set_terminateRead(SObject* obj, SVariable* var)
 bool iObj_set_text(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.text, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.text, var))
 	{
 		SVariable* varUpdate;
 		
@@ -21749,7 +21749,7 @@ bool iObj_set_text(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -21767,7 +21767,7 @@ bool iObj_set_text(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.text, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.text, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -21776,7 +21776,7 @@ bool iObj_set_text(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -21810,7 +21810,7 @@ bool iObj_set_text(SObject* obj, SVariable* var)
 bool iObj_set_themes(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.themes, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.themes, var))
 	{
 		SVariable* varUpdate;
 		
@@ -21821,7 +21821,7 @@ bool iObj_set_themes(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -21839,7 +21839,7 @@ bool iObj_set_themes(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.themes, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.themes, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -21848,7 +21848,7 @@ bool iObj_set_themes(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -21882,7 +21882,7 @@ bool iObj_set_themes(SObject* obj, SVariable* var)
 bool iObj_set_titleBar(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.titleBar, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.titleBar, var))
 	{
 		SVariable* varUpdate;
 		
@@ -21893,7 +21893,7 @@ bool iObj_set_titleBar(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -21911,7 +21911,7 @@ bool iObj_set_titleBar(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.titleBar, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.titleBar, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -21920,7 +21920,7 @@ bool iObj_set_titleBar(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -21954,7 +21954,7 @@ bool iObj_set_titleBar(SObject* obj, SVariable* var)
 bool iObj_set_toolTipText(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.toolTipText, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.toolTipText, var))
 	{
 		SVariable* varUpdate;
 		
@@ -21965,7 +21965,7 @@ bool iObj_set_toolTipText(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -21983,7 +21983,7 @@ bool iObj_set_toolTipText(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.toolTipText, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.toolTipText, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -21992,7 +21992,7 @@ bool iObj_set_toolTipText(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -22026,7 +22026,7 @@ bool iObj_set_toolTipText(SObject* obj, SVariable* var)
 bool iObj_set_top(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.top, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.top, var))
 	{
 		SVariable* varUpdate;
 		
@@ -22037,7 +22037,7 @@ bool iObj_set_top(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -22055,7 +22055,7 @@ bool iObj_set_top(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.top, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.top, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -22064,7 +22064,7 @@ bool iObj_set_top(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -22098,7 +22098,7 @@ bool iObj_set_top(SObject* obj, SVariable* var)
 bool iObj_set_topIndex(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.topIndex, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.topIndex, var))
 	{
 		SVariable* varUpdate;
 		
@@ -22109,7 +22109,7 @@ bool iObj_set_topIndex(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -22127,7 +22127,7 @@ bool iObj_set_topIndex(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.topIndex, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.topIndex, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -22136,7 +22136,7 @@ bool iObj_set_topIndex(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -22170,7 +22170,7 @@ bool iObj_set_topIndex(SObject* obj, SVariable* var)
 bool iObj_set_topItemID(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.topItemID, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.topItemID, var))
 	{
 		SVariable* varUpdate;
 		
@@ -22181,7 +22181,7 @@ bool iObj_set_topItemID(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -22199,7 +22199,7 @@ bool iObj_set_topItemID(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.topItemID, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.topItemID, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -22208,7 +22208,7 @@ bool iObj_set_topItemID(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -22242,7 +22242,7 @@ bool iObj_set_topItemID(SObject* obj, SVariable* var)
 bool iObj_set_userValue(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.userValue, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.userValue, var))
 	{
 		SVariable* varUpdate;
 		
@@ -22253,7 +22253,7 @@ bool iObj_set_userValue(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -22271,7 +22271,7 @@ bool iObj_set_userValue(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.userValue, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.userValue, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -22280,7 +22280,7 @@ bool iObj_set_userValue(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -22314,7 +22314,7 @@ bool iObj_set_userValue(SObject* obj, SVariable* var)
 bool iObj_set_vScrollSmallChange(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.vScrollSmallChange, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.vScrollSmallChange, var))
 	{
 		SVariable* varUpdate;
 		
@@ -22325,7 +22325,7 @@ bool iObj_set_vScrollSmallChange(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -22343,7 +22343,7 @@ bool iObj_set_vScrollSmallChange(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.vScrollSmallChange, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.vScrollSmallChange, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -22352,7 +22352,7 @@ bool iObj_set_vScrollSmallChange(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -22386,7 +22386,7 @@ bool iObj_set_vScrollSmallChange(SObject* obj, SVariable* var)
 bool iObj_set_value(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.value, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.value, var))
 	{
 		SVariable* varUpdate;
 		
@@ -22397,7 +22397,7 @@ bool iObj_set_value(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -22415,7 +22415,7 @@ bool iObj_set_value(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.value, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.value, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -22424,7 +22424,7 @@ bool iObj_set_value(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -22458,7 +22458,7 @@ bool iObj_set_value(SObject* obj, SVariable* var)
 bool iObj_set_view(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.view, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.view, var))
 	{
 		SVariable* varUpdate;
 		
@@ -22469,7 +22469,7 @@ bool iObj_set_view(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -22487,7 +22487,7 @@ bool iObj_set_view(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.view, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.view, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -22496,7 +22496,7 @@ bool iObj_set_view(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -22530,7 +22530,7 @@ bool iObj_set_view(SObject* obj, SVariable* var)
 bool iObj_set_viewPortHeight(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.viewPortHeight, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.viewPortHeight, var))
 	{
 		SVariable* varUpdate;
 		
@@ -22541,7 +22541,7 @@ bool iObj_set_viewPortHeight(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -22559,7 +22559,7 @@ bool iObj_set_viewPortHeight(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.viewPortHeight, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.viewPortHeight, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -22568,7 +22568,7 @@ bool iObj_set_viewPortHeight(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -22602,7 +22602,7 @@ bool iObj_set_viewPortHeight(SObject* obj, SVariable* var)
 bool iObj_set_viewPortLeft(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.viewPortLeft, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.viewPortLeft, var))
 	{
 		SVariable* varUpdate;
 		
@@ -22613,7 +22613,7 @@ bool iObj_set_viewPortLeft(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -22631,7 +22631,7 @@ bool iObj_set_viewPortLeft(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.viewPortLeft, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.viewPortLeft, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -22640,7 +22640,7 @@ bool iObj_set_viewPortLeft(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -22674,7 +22674,7 @@ bool iObj_set_viewPortLeft(SObject* obj, SVariable* var)
 bool iObj_set_viewPortTop(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.viewPortTop, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.viewPortTop, var))
 	{
 		SVariable* varUpdate;
 		
@@ -22685,7 +22685,7 @@ bool iObj_set_viewPortTop(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -22703,7 +22703,7 @@ bool iObj_set_viewPortTop(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.viewPortTop, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.viewPortTop, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -22712,7 +22712,7 @@ bool iObj_set_viewPortTop(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -22746,7 +22746,7 @@ bool iObj_set_viewPortTop(SObject* obj, SVariable* var)
 bool iObj_set_viewPortWidth(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.viewPortWidth, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.viewPortWidth, var))
 	{
 		SVariable* varUpdate;
 		
@@ -22757,7 +22757,7 @@ bool iObj_set_viewPortWidth(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -22775,7 +22775,7 @@ bool iObj_set_viewPortWidth(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.viewPortWidth, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.viewPortWidth, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -22784,7 +22784,7 @@ bool iObj_set_viewPortWidth(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -22818,7 +22818,7 @@ bool iObj_set_viewPortWidth(SObject* obj, SVariable* var)
 bool iObj_set_visible(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.visible, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.visible, var))
 	{
 		SVariable* varUpdate;
 		
@@ -22829,7 +22829,7 @@ bool iObj_set_visible(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -22847,7 +22847,7 @@ bool iObj_set_visible(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.visible, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.visible, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -22856,7 +22856,7 @@ bool iObj_set_visible(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -22890,7 +22890,7 @@ bool iObj_set_visible(SObject* obj, SVariable* var)
 bool iObj_set_visualEffect(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.visualEffect, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.visualEffect, var))
 	{
 		SVariable* varUpdate;
 		
@@ -22901,7 +22901,7 @@ bool iObj_set_visualEffect(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -22919,7 +22919,7 @@ bool iObj_set_visualEffect(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.visualEffect, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.visualEffect, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -22928,7 +22928,7 @@ bool iObj_set_visualEffect(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -22962,7 +22962,7 @@ bool iObj_set_visualEffect(SObject* obj, SVariable* var)
 bool iObj_set_whatsThisButton(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.whatsThisButton, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.whatsThisButton, var))
 	{
 		SVariable* varUpdate;
 		
@@ -22973,7 +22973,7 @@ bool iObj_set_whatsThisButton(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -22991,7 +22991,7 @@ bool iObj_set_whatsThisButton(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.whatsThisButton, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.whatsThisButton, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -23000,7 +23000,7 @@ bool iObj_set_whatsThisButton(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -23034,7 +23034,7 @@ bool iObj_set_whatsThisButton(SObject* obj, SVariable* var)
 bool iObj_set_whatsThisHelp(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.whatsThisHelp, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.whatsThisHelp, var))
 	{
 		SVariable* varUpdate;
 		
@@ -23045,7 +23045,7 @@ bool iObj_set_whatsThisHelp(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -23063,7 +23063,7 @@ bool iObj_set_whatsThisHelp(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.whatsThisHelp, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.whatsThisHelp, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -23072,7 +23072,7 @@ bool iObj_set_whatsThisHelp(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -23106,7 +23106,7 @@ bool iObj_set_whatsThisHelp(SObject* obj, SVariable* var)
 bool iObj_set_whatsThisHelpID(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.whatsThisHelpID, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.whatsThisHelpID, var))
 	{
 		SVariable* varUpdate;
 		
@@ -23117,7 +23117,7 @@ bool iObj_set_whatsThisHelpID(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -23135,7 +23135,7 @@ bool iObj_set_whatsThisHelpID(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.whatsThisHelpID, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.whatsThisHelpID, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -23144,7 +23144,7 @@ bool iObj_set_whatsThisHelpID(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -23178,7 +23178,7 @@ bool iObj_set_whatsThisHelpID(SObject* obj, SVariable* var)
 bool iObj_set_width(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.width, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.width, var))
 	{
 		SVariable* varUpdate;
 		
@@ -23189,7 +23189,7 @@ bool iObj_set_width(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -23207,7 +23207,7 @@ bool iObj_set_width(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.width, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.width, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -23216,7 +23216,7 @@ bool iObj_set_width(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -23250,7 +23250,7 @@ bool iObj_set_width(SObject* obj, SVariable* var)
 bool iObj_set_windowList(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.windowList, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.windowList, var))
 	{
 		SVariable* varUpdate;
 		
@@ -23261,7 +23261,7 @@ bool iObj_set_windowList(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -23279,7 +23279,7 @@ bool iObj_set_windowList(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.windowList, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.windowList, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -23288,7 +23288,7 @@ bool iObj_set_windowList(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -23322,7 +23322,7 @@ bool iObj_set_windowList(SObject* obj, SVariable* var)
 bool iObj_set_windowState(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.windowState, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.windowState, var))
 	{
 		SVariable* varUpdate;
 		
@@ -23333,7 +23333,7 @@ bool iObj_set_windowState(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -23351,7 +23351,7 @@ bool iObj_set_windowState(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.windowState, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.windowState, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -23360,7 +23360,7 @@ bool iObj_set_windowState(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -23394,7 +23394,7 @@ bool iObj_set_windowState(SObject* obj, SVariable* var)
 bool iObj_set_windowType(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.windowType, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.windowType, var))
 	{
 		SVariable* varUpdate;
 		
@@ -23405,7 +23405,7 @@ bool iObj_set_windowType(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -23423,7 +23423,7 @@ bool iObj_set_windowType(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.windowType, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.windowType, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -23432,7 +23432,7 @@ bool iObj_set_windowType(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -23466,7 +23466,7 @@ bool iObj_set_windowType(SObject* obj, SVariable* var)
 bool iObj_set_wordWrap(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.wordWrap, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.wordWrap, var))
 	{
 		SVariable* varUpdate;
 		
@@ -23477,7 +23477,7 @@ bool iObj_set_wordWrap(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -23495,7 +23495,7 @@ bool iObj_set_wordWrap(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.wordWrap, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.wordWrap, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -23504,7 +23504,7 @@ bool iObj_set_wordWrap(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -23538,7 +23538,7 @@ bool iObj_set_wordWrap(SObject* obj, SVariable* var)
 bool iObj_set_zoomBox(SObject* obj, SVariable* var)
 {
 	// Make sure the environment is sane
-	if (obj && var && iVariable_rightIsCompatibleWithLeft(obj->p.zoomBox, var))
+	if (obj && var && iVariable_areTypesCompatible(obj->p.zoomBox, var))
 	{
 		SVariable* varUpdate;
 		
@@ -23549,7 +23549,7 @@ bool iObj_set_zoomBox(SObject* obj, SVariable* var)
 			//////////
 			// Create a copy of the variable so the user can alter it if they need
 			//////
-				varUpdate = iVariable_copy(var);
+				varUpdate = iVariable_copy(var, false);
 			
 			
 			//////////
@@ -23567,7 +23567,7 @@ bool iObj_set_zoomBox(SObject* obj, SVariable* var)
 			//////////
 			// Make sure the variable type is still compatible after the user possibly updated its value
 			//////
-				if (!iVariable_rightIsCompatibleWithLeft(obj->p.zoomBox, varUpdate))
+				if (!iVariable_areTypesCompatible(obj->p.zoomBox, varUpdate))
 				{
 					iEngine_error(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, varUpdate);
 					iVariable_delete(varUpdate, true);
@@ -23576,7 +23576,7 @@ bool iObj_set_zoomBox(SObject* obj, SVariable* var)
 		
 		} else {
 			// Use the passed value for the update
-			varUpdate = var;
+			varUpdate = iiVariable_terminateIndirect(var);
 		}
 		
 		
@@ -23615,7 +23615,7 @@ SVariable* iObj_get_activeColumn(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.activeColumn));
+		return(iVariable_copy(obj->p.activeColumn, false));
 	
 	} else {
 		// Indicate failure
@@ -23629,7 +23629,7 @@ SVariable* iObj_get_activeControl(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.activeControl));
+		return(iVariable_copy(obj->p.activeControl, false));
 	
 	} else {
 		// Indicate failure
@@ -23643,7 +23643,7 @@ SVariable* iObj_get_activeForm(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.activeForm));
+		return(iVariable_copy(obj->p.activeForm, false));
 	
 	} else {
 		// Indicate failure
@@ -23657,7 +23657,7 @@ SVariable* iObj_get_activePage(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.activePage));
+		return(iVariable_copy(obj->p.activePage, false));
 	
 	} else {
 		// Indicate failure
@@ -23671,7 +23671,7 @@ SVariable* iObj_get_activeRow(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.activeRow));
+		return(iVariable_copy(obj->p.activeRow, false));
 	
 	} else {
 		// Indicate failure
@@ -23685,7 +23685,7 @@ SVariable* iObj_get_addLineFeeds(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.addLineFeeds));
+		return(iVariable_copy(obj->p.addLineFeeds, false));
 	
 	} else {
 		// Indicate failure
@@ -23699,7 +23699,7 @@ SVariable* iObj_get_align(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.align));
+		return(iVariable_copy(obj->p.align, false));
 	
 	} else {
 		// Indicate failure
@@ -23713,7 +23713,7 @@ SVariable* iObj_get_alignment(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.alignment));
+		return(iVariable_copy(obj->p.alignment, false));
 	
 	} else {
 		// Indicate failure
@@ -23727,7 +23727,7 @@ SVariable* iObj_get_allowAddNew(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.allowAddNew));
+		return(iVariable_copy(obj->p.allowAddNew, false));
 	
 	} else {
 		// Indicate failure
@@ -23741,7 +23741,7 @@ SVariable* iObj_get_allowAutoColumnFit(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.allowAutoColumnFit));
+		return(iVariable_copy(obj->p.allowAutoColumnFit, false));
 	
 	} else {
 		// Indicate failure
@@ -23755,7 +23755,7 @@ SVariable* iObj_get_allowCellSelection(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.allowCellSelection));
+		return(iVariable_copy(obj->p.allowCellSelection, false));
 	
 	} else {
 		// Indicate failure
@@ -23769,7 +23769,7 @@ SVariable* iObj_get_allowHeaderSizing(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.allowHeaderSizing));
+		return(iVariable_copy(obj->p.allowHeaderSizing, false));
 	
 	} else {
 		// Indicate failure
@@ -23783,7 +23783,7 @@ SVariable* iObj_get_allowOutput(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.allowOutput));
+		return(iVariable_copy(obj->p.allowOutput, false));
 	
 	} else {
 		// Indicate failure
@@ -23797,7 +23797,7 @@ SVariable* iObj_get_allowRowSizing(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.allowRowSizing));
+		return(iVariable_copy(obj->p.allowRowSizing, false));
 	
 	} else {
 		// Indicate failure
@@ -23811,7 +23811,7 @@ SVariable* iObj_get_allowTabs(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.allowTabs));
+		return(iVariable_copy(obj->p.allowTabs, false));
 	
 	} else {
 		// Indicate failure
@@ -23825,7 +23825,7 @@ SVariable* iObj_get_alwaysOnBottom(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.alwaysOnBottom));
+		return(iVariable_copy(obj->p.alwaysOnBottom, false));
 	
 	} else {
 		// Indicate failure
@@ -23839,7 +23839,7 @@ SVariable* iObj_get_alwaysOnTop(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.alwaysOnTop));
+		return(iVariable_copy(obj->p.alwaysOnTop, false));
 	
 	} else {
 		// Indicate failure
@@ -23853,7 +23853,7 @@ SVariable* iObj_get_anchor(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.anchor));
+		return(iVariable_copy(obj->p.anchor, false));
 	
 	} else {
 		// Indicate failure
@@ -23867,7 +23867,7 @@ SVariable* iObj_get_application(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.application));
+		return(iVariable_copy(obj->p.application, false));
 	
 	} else {
 		// Indicate failure
@@ -23881,7 +23881,7 @@ SVariable* iObj_get_autoActivate(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.autoActivate));
+		return(iVariable_copy(obj->p.autoActivate, false));
 	
 	} else {
 		// Indicate failure
@@ -23895,7 +23895,7 @@ SVariable* iObj_get_autoCenter(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.autoCenter));
+		return(iVariable_copy(obj->p.autoCenter, false));
 	
 	} else {
 		// Indicate failure
@@ -23909,7 +23909,7 @@ SVariable* iObj_get_autoCompSource(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.autoCompSource));
+		return(iVariable_copy(obj->p.autoCompSource, false));
 	
 	} else {
 		// Indicate failure
@@ -23923,7 +23923,7 @@ SVariable* iObj_get_autoCompTable(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.autoCompTable));
+		return(iVariable_copy(obj->p.autoCompTable, false));
 	
 	} else {
 		// Indicate failure
@@ -23937,7 +23937,7 @@ SVariable* iObj_get_autoComplete(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.autoComplete));
+		return(iVariable_copy(obj->p.autoComplete, false));
 	
 	} else {
 		// Indicate failure
@@ -23951,7 +23951,7 @@ SVariable* iObj_get_autoHideScrollBar(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.autoHideScrollBar));
+		return(iVariable_copy(obj->p.autoHideScrollBar, false));
 	
 	} else {
 		// Indicate failure
@@ -23965,7 +23965,7 @@ SVariable* iObj_get_autoRelease(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.autoRelease));
+		return(iVariable_copy(obj->p.autoRelease, false));
 	
 	} else {
 		// Indicate failure
@@ -23979,7 +23979,7 @@ SVariable* iObj_get_autoSize(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.autoSize));
+		return(iVariable_copy(obj->p.autoSize, false));
 	
 	} else {
 		// Indicate failure
@@ -23993,7 +23993,7 @@ SVariable* iObj_get_autoVerbMenu(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.autoVerbMenu));
+		return(iVariable_copy(obj->p.autoVerbMenu, false));
 	
 	} else {
 		// Indicate failure
@@ -24007,7 +24007,7 @@ SVariable* iObj_get_backColor(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.backColor));
+		return(iVariable_copy(obj->p.backColor, false));
 	
 	} else {
 		// Indicate failure
@@ -24021,7 +24021,7 @@ SVariable* iObj_get_backStyle(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.backStyle));
+		return(iVariable_copy(obj->p.backStyle, false));
 	
 	} else {
 		// Indicate failure
@@ -24035,7 +24035,7 @@ SVariable* iObj_get_baseClass(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.baseClass));
+		return(iVariable_copy(obj->p.baseClass, false));
 	
 	} else {
 		// Indicate failure
@@ -24049,7 +24049,7 @@ SVariable* iObj_get_bindControls(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.bindControls));
+		return(iVariable_copy(obj->p.bindControls, false));
 	
 	} else {
 		// Indicate failure
@@ -24063,7 +24063,7 @@ SVariable* iObj_get_borderColor(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.borderColor));
+		return(iVariable_copy(obj->p.borderColor, false));
 	
 	} else {
 		// Indicate failure
@@ -24077,7 +24077,7 @@ SVariable* iObj_get_borderStyle(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.borderStyle));
+		return(iVariable_copy(obj->p.borderStyle, false));
 	
 	} else {
 		// Indicate failure
@@ -24091,7 +24091,7 @@ SVariable* iObj_get_borderWidth(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.borderWidth));
+		return(iVariable_copy(obj->p.borderWidth, false));
 	
 	} else {
 		// Indicate failure
@@ -24105,7 +24105,7 @@ SVariable* iObj_get_bound(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.bound));
+		return(iVariable_copy(obj->p.bound, false));
 	
 	} else {
 		// Indicate failure
@@ -24119,7 +24119,7 @@ SVariable* iObj_get_boundColumn(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.boundColumn));
+		return(iVariable_copy(obj->p.boundColumn, false));
 	
 	} else {
 		// Indicate failure
@@ -24133,7 +24133,7 @@ SVariable* iObj_get_boundTo(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.boundTo));
+		return(iVariable_copy(obj->p.boundTo, false));
 	
 	} else {
 		// Indicate failure
@@ -24147,7 +24147,7 @@ SVariable* iObj_get_bufferMode(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.bufferMode));
+		return(iVariable_copy(obj->p.bufferMode, false));
 	
 	} else {
 		// Indicate failure
@@ -24161,7 +24161,7 @@ SVariable* iObj_get_buttonCount(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.buttonCount));
+		return(iVariable_copy(obj->p.buttonCount, false));
 	
 	} else {
 		// Indicate failure
@@ -24175,7 +24175,7 @@ SVariable* iObj_get_cancel(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.cancel));
+		return(iVariable_copy(obj->p.cancel, false));
 	
 	} else {
 		// Indicate failure
@@ -24189,7 +24189,7 @@ SVariable* iObj_get_caption(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.caption));
+		return(iVariable_copy(obj->p.caption, false));
 	
 	} else {
 		// Indicate failure
@@ -24203,7 +24203,7 @@ SVariable* iObj_get_centered(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.centered));
+		return(iVariable_copy(obj->p.centered, false));
 	
 	} else {
 		// Indicate failure
@@ -24217,7 +24217,7 @@ SVariable* iObj_get_century(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.century));
+		return(iVariable_copy(obj->p.century, false));
 	
 	} else {
 		// Indicate failure
@@ -24231,7 +24231,7 @@ SVariable* iObj_get_childOrder(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.childOrder));
+		return(iVariable_copy(obj->p.childOrder, false));
 	
 	} else {
 		// Indicate failure
@@ -24245,7 +24245,7 @@ SVariable* iObj_get_class(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p._class));
+		return(iVariable_copy(obj->p._class, false));
 	
 	} else {
 		// Indicate failure
@@ -24259,7 +24259,7 @@ SVariable* iObj_get_classLibrary(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.classLibrary));
+		return(iVariable_copy(obj->p.classLibrary, false));
 	
 	} else {
 		// Indicate failure
@@ -24273,7 +24273,7 @@ SVariable* iObj_get_clipControls(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.clipControls));
+		return(iVariable_copy(obj->p.clipControls, false));
 	
 	} else {
 		// Indicate failure
@@ -24287,7 +24287,7 @@ SVariable* iObj_get_closable(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.closable));
+		return(iVariable_copy(obj->p.closable, false));
 	
 	} else {
 		// Indicate failure
@@ -24301,7 +24301,7 @@ SVariable* iObj_get_colorScheme(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.colorScheme));
+		return(iVariable_copy(obj->p.colorScheme, false));
 	
 	} else {
 		// Indicate failure
@@ -24315,7 +24315,7 @@ SVariable* iObj_get_colorSource(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.colorSource));
+		return(iVariable_copy(obj->p.colorSource, false));
 	
 	} else {
 		// Indicate failure
@@ -24329,7 +24329,7 @@ SVariable* iObj_get_columnCount(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.columnCount));
+		return(iVariable_copy(obj->p.columnCount, false));
 	
 	} else {
 		// Indicate failure
@@ -24343,7 +24343,7 @@ SVariable* iObj_get_columnLines(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.columnLines));
+		return(iVariable_copy(obj->p.columnLines, false));
 	
 	} else {
 		// Indicate failure
@@ -24357,7 +24357,7 @@ SVariable* iObj_get_columnOrder(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.columnOrder));
+		return(iVariable_copy(obj->p.columnOrder, false));
 	
 	} else {
 		// Indicate failure
@@ -24371,7 +24371,7 @@ SVariable* iObj_get_columnWidths(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.columnWidths));
+		return(iVariable_copy(obj->p.columnWidths, false));
 	
 	} else {
 		// Indicate failure
@@ -24385,7 +24385,7 @@ SVariable* iObj_get_columns(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.columns));
+		return(iVariable_copy(obj->p.columns, false));
 	
 	} else {
 		// Indicate failure
@@ -24399,7 +24399,7 @@ SVariable* iObj_get_comment(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.comment));
+		return(iVariable_copy(obj->p.comment, false));
 	
 	} else {
 		// Indicate failure
@@ -24413,7 +24413,7 @@ SVariable* iObj_get_continuousScroll(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.continuousScroll));
+		return(iVariable_copy(obj->p.continuousScroll, false));
 	
 	} else {
 		// Indicate failure
@@ -24427,7 +24427,7 @@ SVariable* iObj_get_controlBox(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.controlBox));
+		return(iVariable_copy(obj->p.controlBox, false));
 	
 	} else {
 		// Indicate failure
@@ -24441,7 +24441,7 @@ SVariable* iObj_get_controlCount(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.controlCount));
+		return(iVariable_copy(obj->p.controlCount, false));
 	
 	} else {
 		// Indicate failure
@@ -24455,7 +24455,7 @@ SVariable* iObj_get_controlSource(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.controlSource));
+		return(iVariable_copy(obj->p.controlSource, false));
 	
 	} else {
 		// Indicate failure
@@ -24469,7 +24469,7 @@ SVariable* iObj_get_controls(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.controls));
+		return(iVariable_copy(obj->p.controls, false));
 	
 	} else {
 		// Indicate failure
@@ -24483,7 +24483,7 @@ SVariable* iObj_get_count(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.count));
+		return(iVariable_copy(obj->p.count, false));
 	
 	} else {
 		// Indicate failure
@@ -24497,7 +24497,7 @@ SVariable* iObj_get_currentControl(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.currentControl));
+		return(iVariable_copy(obj->p.currentControl, false));
 	
 	} else {
 		// Indicate failure
@@ -24511,7 +24511,7 @@ SVariable* iObj_get_currentX(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.currentX));
+		return(iVariable_copy(obj->p.currentX, false));
 	
 	} else {
 		// Indicate failure
@@ -24525,7 +24525,7 @@ SVariable* iObj_get_currentY(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.currentY));
+		return(iVariable_copy(obj->p.currentY, false));
 	
 	} else {
 		// Indicate failure
@@ -24539,7 +24539,7 @@ SVariable* iObj_get_curvature(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.curvature));
+		return(iVariable_copy(obj->p.curvature, false));
 	
 	} else {
 		// Indicate failure
@@ -24553,7 +24553,7 @@ SVariable* iObj_get_dEClass(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dEClass));
+		return(iVariable_copy(obj->p.dEClass, false));
 	
 	} else {
 		// Indicate failure
@@ -24567,7 +24567,7 @@ SVariable* iObj_get_dEClassLibrary(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dEClassLibrary));
+		return(iVariable_copy(obj->p.dEClassLibrary, false));
 	
 	} else {
 		// Indicate failure
@@ -24581,7 +24581,7 @@ SVariable* iObj_get_dataEnvironment(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dataEnvironment));
+		return(iVariable_copy(obj->p.dataEnvironment, false));
 	
 	} else {
 		// Indicate failure
@@ -24595,7 +24595,7 @@ SVariable* iObj_get_dataSession(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dataSession));
+		return(iVariable_copy(obj->p.dataSession, false));
 	
 	} else {
 		// Indicate failure
@@ -24609,7 +24609,7 @@ SVariable* iObj_get_dataSessionID(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dataSessionID));
+		return(iVariable_copy(obj->p.dataSessionID, false));
 	
 	} else {
 		// Indicate failure
@@ -24623,7 +24623,7 @@ SVariable* iObj_get_dateFormat(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dateFormat));
+		return(iVariable_copy(obj->p.dateFormat, false));
 	
 	} else {
 		// Indicate failure
@@ -24637,7 +24637,7 @@ SVariable* iObj_get_dateMark(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dateMark));
+		return(iVariable_copy(obj->p.dateMark, false));
 	
 	} else {
 		// Indicate failure
@@ -24651,7 +24651,7 @@ SVariable* iObj_get_defOLELCID(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.defOLELCID));
+		return(iVariable_copy(obj->p.defOLELCID, false));
 	
 	} else {
 		// Indicate failure
@@ -24665,7 +24665,7 @@ SVariable* iObj_get_default(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p._default));
+		return(iVariable_copy(obj->p._default, false));
 	
 	} else {
 		// Indicate failure
@@ -24679,7 +24679,7 @@ SVariable* iObj_get_deleteMark(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.deleteMark));
+		return(iVariable_copy(obj->p.deleteMark, false));
 	
 	} else {
 		// Indicate failure
@@ -24693,7 +24693,7 @@ SVariable* iObj_get_desktop(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.desktop));
+		return(iVariable_copy(obj->p.desktop, false));
 	
 	} else {
 		// Indicate failure
@@ -24707,7 +24707,7 @@ SVariable* iObj_get_details(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.details));
+		return(iVariable_copy(obj->p.details, false));
 	
 	} else {
 		// Indicate failure
@@ -24721,7 +24721,7 @@ SVariable* iObj_get_disabledBackColor(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.disabledBackColor));
+		return(iVariable_copy(obj->p.disabledBackColor, false));
 	
 	} else {
 		// Indicate failure
@@ -24735,7 +24735,7 @@ SVariable* iObj_get_disabledForeColor(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.disabledForeColor));
+		return(iVariable_copy(obj->p.disabledForeColor, false));
 	
 	} else {
 		// Indicate failure
@@ -24749,7 +24749,7 @@ SVariable* iObj_get_disabledItemBackColor(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.disabledItemBackColor));
+		return(iVariable_copy(obj->p.disabledItemBackColor, false));
 	
 	} else {
 		// Indicate failure
@@ -24763,7 +24763,7 @@ SVariable* iObj_get_disabledItemForeColor(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.disabledItemForeColor));
+		return(iVariable_copy(obj->p.disabledItemForeColor, false));
 	
 	} else {
 		// Indicate failure
@@ -24777,7 +24777,7 @@ SVariable* iObj_get_disabledPicture(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.disabledPicture));
+		return(iVariable_copy(obj->p.disabledPicture, false));
 	
 	} else {
 		// Indicate failure
@@ -24791,7 +24791,7 @@ SVariable* iObj_get_displayCount(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.displayCount));
+		return(iVariable_copy(obj->p.displayCount, false));
 	
 	} else {
 		// Indicate failure
@@ -24805,7 +24805,7 @@ SVariable* iObj_get_displayValue(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.displayValue));
+		return(iVariable_copy(obj->p.displayValue, false));
 	
 	} else {
 		// Indicate failure
@@ -24819,7 +24819,7 @@ SVariable* iObj_get_doCreate(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.doCreate));
+		return(iVariable_copy(obj->p.doCreate, false));
 	
 	} else {
 		// Indicate failure
@@ -24833,7 +24833,7 @@ SVariable* iObj_get_dockPosition(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dockPosition));
+		return(iVariable_copy(obj->p.dockPosition, false));
 	
 	} else {
 		// Indicate failure
@@ -24847,7 +24847,7 @@ SVariable* iObj_get_dockable(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dockable));
+		return(iVariable_copy(obj->p.dockable, false));
 	
 	} else {
 		// Indicate failure
@@ -24861,7 +24861,7 @@ SVariable* iObj_get_docked(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.docked));
+		return(iVariable_copy(obj->p.docked, false));
 	
 	} else {
 		// Indicate failure
@@ -24875,7 +24875,7 @@ SVariable* iObj_get_documentFile(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.documentFile));
+		return(iVariable_copy(obj->p.documentFile, false));
 	
 	} else {
 		// Indicate failure
@@ -24889,7 +24889,7 @@ SVariable* iObj_get_downPicture(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.downPicture));
+		return(iVariable_copy(obj->p.downPicture, false));
 	
 	} else {
 		// Indicate failure
@@ -24903,7 +24903,7 @@ SVariable* iObj_get_dragIcon(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dragIcon));
+		return(iVariable_copy(obj->p.dragIcon, false));
 	
 	} else {
 		// Indicate failure
@@ -24917,7 +24917,7 @@ SVariable* iObj_get_dragMode(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dragMode));
+		return(iVariable_copy(obj->p.dragMode, false));
 	
 	} else {
 		// Indicate failure
@@ -24931,7 +24931,7 @@ SVariable* iObj_get_drawMode(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.drawMode));
+		return(iVariable_copy(obj->p.drawMode, false));
 	
 	} else {
 		// Indicate failure
@@ -24945,7 +24945,7 @@ SVariable* iObj_get_drawStyle(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.drawStyle));
+		return(iVariable_copy(obj->p.drawStyle, false));
 	
 	} else {
 		// Indicate failure
@@ -24959,7 +24959,7 @@ SVariable* iObj_get_drawWidth(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.drawWidth));
+		return(iVariable_copy(obj->p.drawWidth, false));
 	
 	} else {
 		// Indicate failure
@@ -24973,7 +24973,7 @@ SVariable* iObj_get_dynamicAlignment(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dynamicAlignment));
+		return(iVariable_copy(obj->p.dynamicAlignment, false));
 	
 	} else {
 		// Indicate failure
@@ -24987,7 +24987,7 @@ SVariable* iObj_get_dynamicBackColor(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dynamicBackColor));
+		return(iVariable_copy(obj->p.dynamicBackColor, false));
 	
 	} else {
 		// Indicate failure
@@ -25001,7 +25001,7 @@ SVariable* iObj_get_dynamicCurrentControl(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dynamicCurrentControl));
+		return(iVariable_copy(obj->p.dynamicCurrentControl, false));
 	
 	} else {
 		// Indicate failure
@@ -25015,7 +25015,7 @@ SVariable* iObj_get_dynamicFontBold(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dynamicFontBold));
+		return(iVariable_copy(obj->p.dynamicFontBold, false));
 	
 	} else {
 		// Indicate failure
@@ -25029,7 +25029,7 @@ SVariable* iObj_get_dynamicFontItalic(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dynamicFontItalic));
+		return(iVariable_copy(obj->p.dynamicFontItalic, false));
 	
 	} else {
 		// Indicate failure
@@ -25043,7 +25043,7 @@ SVariable* iObj_get_dynamicFontName(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dynamicFontName));
+		return(iVariable_copy(obj->p.dynamicFontName, false));
 	
 	} else {
 		// Indicate failure
@@ -25057,7 +25057,7 @@ SVariable* iObj_get_dynamicFontOutline(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dynamicFontOutline));
+		return(iVariable_copy(obj->p.dynamicFontOutline, false));
 	
 	} else {
 		// Indicate failure
@@ -25071,7 +25071,7 @@ SVariable* iObj_get_dynamicFontShadow(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dynamicFontShadow));
+		return(iVariable_copy(obj->p.dynamicFontShadow, false));
 	
 	} else {
 		// Indicate failure
@@ -25085,7 +25085,7 @@ SVariable* iObj_get_dynamicFontSize(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dynamicFontSize));
+		return(iVariable_copy(obj->p.dynamicFontSize, false));
 	
 	} else {
 		// Indicate failure
@@ -25099,7 +25099,7 @@ SVariable* iObj_get_dynamicFontStrikeThru(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dynamicFontStrikeThru));
+		return(iVariable_copy(obj->p.dynamicFontStrikeThru, false));
 	
 	} else {
 		// Indicate failure
@@ -25113,7 +25113,7 @@ SVariable* iObj_get_dynamicFontUnderline(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dynamicFontUnderline));
+		return(iVariable_copy(obj->p.dynamicFontUnderline, false));
 	
 	} else {
 		// Indicate failure
@@ -25127,7 +25127,7 @@ SVariable* iObj_get_dynamicForeColor(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dynamicForeColor));
+		return(iVariable_copy(obj->p.dynamicForeColor, false));
 	
 	} else {
 		// Indicate failure
@@ -25141,7 +25141,7 @@ SVariable* iObj_get_dynamicInputMask(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.dynamicInputMask));
+		return(iVariable_copy(obj->p.dynamicInputMask, false));
 	
 	} else {
 		// Indicate failure
@@ -25155,7 +25155,7 @@ SVariable* iObj_get_enableHyperlinks(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.enableHyperlinks));
+		return(iVariable_copy(obj->p.enableHyperlinks, false));
 	
 	} else {
 		// Indicate failure
@@ -25169,7 +25169,7 @@ SVariable* iObj_get_enabled(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.enabled));
+		return(iVariable_copy(obj->p.enabled, false));
 	
 	} else {
 		// Indicate failure
@@ -25183,7 +25183,7 @@ SVariable* iObj_get_errorNo(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.errorNo));
+		return(iVariable_copy(obj->p.errorNo, false));
 	
 	} else {
 		// Indicate failure
@@ -25197,7 +25197,7 @@ SVariable* iObj_get_fillColor(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.fillColor));
+		return(iVariable_copy(obj->p.fillColor, false));
 	
 	} else {
 		// Indicate failure
@@ -25211,7 +25211,7 @@ SVariable* iObj_get_fillStyle(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.fillStyle));
+		return(iVariable_copy(obj->p.fillStyle, false));
 	
 	} else {
 		// Indicate failure
@@ -25225,7 +25225,7 @@ SVariable* iObj_get_firstElement(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.firstElement));
+		return(iVariable_copy(obj->p.firstElement, false));
 	
 	} else {
 		// Indicate failure
@@ -25239,7 +25239,7 @@ SVariable* iObj_get_fontBold(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.fontBold));
+		return(iVariable_copy(obj->p.fontBold, false));
 	
 	} else {
 		// Indicate failure
@@ -25253,7 +25253,7 @@ SVariable* iObj_get_fontCharSet(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.fontCharSet));
+		return(iVariable_copy(obj->p.fontCharSet, false));
 	
 	} else {
 		// Indicate failure
@@ -25267,7 +25267,7 @@ SVariable* iObj_get_fontCondense(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.fontCondense));
+		return(iVariable_copy(obj->p.fontCondense, false));
 	
 	} else {
 		// Indicate failure
@@ -25281,7 +25281,7 @@ SVariable* iObj_get_fontExtend(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.fontExtend));
+		return(iVariable_copy(obj->p.fontExtend, false));
 	
 	} else {
 		// Indicate failure
@@ -25295,7 +25295,7 @@ SVariable* iObj_get_fontItalic(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.fontItalic));
+		return(iVariable_copy(obj->p.fontItalic, false));
 	
 	} else {
 		// Indicate failure
@@ -25309,7 +25309,7 @@ SVariable* iObj_get_fontName(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.fontName));
+		return(iVariable_copy(obj->p.fontName, false));
 	
 	} else {
 		// Indicate failure
@@ -25323,7 +25323,7 @@ SVariable* iObj_get_fontOutline(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.fontOutline));
+		return(iVariable_copy(obj->p.fontOutline, false));
 	
 	} else {
 		// Indicate failure
@@ -25337,7 +25337,7 @@ SVariable* iObj_get_fontShadow(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.fontShadow));
+		return(iVariable_copy(obj->p.fontShadow, false));
 	
 	} else {
 		// Indicate failure
@@ -25351,7 +25351,7 @@ SVariable* iObj_get_fontSize(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.fontSize));
+		return(iVariable_copy(obj->p.fontSize, false));
 	
 	} else {
 		// Indicate failure
@@ -25365,7 +25365,7 @@ SVariable* iObj_get_fontStrikeThru(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.fontStrikeThru));
+		return(iVariable_copy(obj->p.fontStrikeThru, false));
 	
 	} else {
 		// Indicate failure
@@ -25379,7 +25379,7 @@ SVariable* iObj_get_fontUnderLine(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.fontUnderLine));
+		return(iVariable_copy(obj->p.fontUnderLine, false));
 	
 	} else {
 		// Indicate failure
@@ -25393,7 +25393,7 @@ SVariable* iObj_get_fontUnderline(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.fontUnderline));
+		return(iVariable_copy(obj->p.fontUnderline, false));
 	
 	} else {
 		// Indicate failure
@@ -25407,7 +25407,7 @@ SVariable* iObj_get_foreColor(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.foreColor));
+		return(iVariable_copy(obj->p.foreColor, false));
 	
 	} else {
 		// Indicate failure
@@ -25421,7 +25421,7 @@ SVariable* iObj_get_formCount(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.formCount));
+		return(iVariable_copy(obj->p.formCount, false));
 	
 	} else {
 		// Indicate failure
@@ -25435,7 +25435,7 @@ SVariable* iObj_get_format(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.format));
+		return(iVariable_copy(obj->p.format, false));
 	
 	} else {
 		// Indicate failure
@@ -25449,7 +25449,7 @@ SVariable* iObj_get_forms(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.forms));
+		return(iVariable_copy(obj->p.forms, false));
 	
 	} else {
 		// Indicate failure
@@ -25463,7 +25463,7 @@ SVariable* iObj_get_gridLineColor(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.gridLineColor));
+		return(iVariable_copy(obj->p.gridLineColor, false));
 	
 	} else {
 		// Indicate failure
@@ -25477,7 +25477,7 @@ SVariable* iObj_get_gridLineWidth(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.gridLineWidth));
+		return(iVariable_copy(obj->p.gridLineWidth, false));
 	
 	} else {
 		// Indicate failure
@@ -25491,7 +25491,7 @@ SVariable* iObj_get_gridLines(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.gridLines));
+		return(iVariable_copy(obj->p.gridLines, false));
 	
 	} else {
 		// Indicate failure
@@ -25505,7 +25505,7 @@ SVariable* iObj_get_hScrollSmallChange(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.hScrollSmallChange));
+		return(iVariable_copy(obj->p.hScrollSmallChange, false));
 	
 	} else {
 		// Indicate failure
@@ -25519,7 +25519,7 @@ SVariable* iObj_get_hWnd(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.hWnd));
+		return(iVariable_copy(obj->p.hWnd, false));
 	
 	} else {
 		// Indicate failure
@@ -25533,7 +25533,7 @@ SVariable* iObj_get_halfHeightCaption(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.halfHeightCaption));
+		return(iVariable_copy(obj->p.halfHeightCaption, false));
 	
 	} else {
 		// Indicate failure
@@ -25547,7 +25547,7 @@ SVariable* iObj_get_headerClass(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.headerClass));
+		return(iVariable_copy(obj->p.headerClass, false));
 	
 	} else {
 		// Indicate failure
@@ -25561,7 +25561,7 @@ SVariable* iObj_get_headerClassLibrary(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.headerClassLibrary));
+		return(iVariable_copy(obj->p.headerClassLibrary, false));
 	
 	} else {
 		// Indicate failure
@@ -25575,7 +25575,7 @@ SVariable* iObj_get_headerHeight(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.headerHeight));
+		return(iVariable_copy(obj->p.headerHeight, false));
 	
 	} else {
 		// Indicate failure
@@ -25589,7 +25589,7 @@ SVariable* iObj_get_height(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.height));
+		return(iVariable_copy(obj->p.height, false));
 	
 	} else {
 		// Indicate failure
@@ -25603,7 +25603,7 @@ SVariable* iObj_get_helpContextID(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.helpContextID));
+		return(iVariable_copy(obj->p.helpContextID, false));
 	
 	} else {
 		// Indicate failure
@@ -25617,7 +25617,7 @@ SVariable* iObj_get_hideSelection(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.hideSelection));
+		return(iVariable_copy(obj->p.hideSelection, false));
 	
 	} else {
 		// Indicate failure
@@ -25631,7 +25631,7 @@ SVariable* iObj_get_highLight(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.highLight));
+		return(iVariable_copy(obj->p.highLight, false));
 	
 	} else {
 		// Indicate failure
@@ -25645,7 +25645,7 @@ SVariable* iObj_get_highLightRow(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.highLightRow));
+		return(iVariable_copy(obj->p.highLightRow, false));
 	
 	} else {
 		// Indicate failure
@@ -25659,7 +25659,7 @@ SVariable* iObj_get_highlightBackColor(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.highlightBackColor));
+		return(iVariable_copy(obj->p.highlightBackColor, false));
 	
 	} else {
 		// Indicate failure
@@ -25673,7 +25673,7 @@ SVariable* iObj_get_highlightForeColor(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.highlightForeColor));
+		return(iVariable_copy(obj->p.highlightForeColor, false));
 	
 	} else {
 		// Indicate failure
@@ -25687,7 +25687,7 @@ SVariable* iObj_get_highlightRowLineWidth(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.highlightRowLineWidth));
+		return(iVariable_copy(obj->p.highlightRowLineWidth, false));
 	
 	} else {
 		// Indicate failure
@@ -25701,7 +25701,7 @@ SVariable* iObj_get_highlightStyle(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.highlightStyle));
+		return(iVariable_copy(obj->p.highlightStyle, false));
 	
 	} else {
 		// Indicate failure
@@ -25715,7 +25715,7 @@ SVariable* iObj_get_hostName(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.hostName));
+		return(iVariable_copy(obj->p.hostName, false));
 	
 	} else {
 		// Indicate failure
@@ -25729,7 +25729,7 @@ SVariable* iObj_get_hours(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.hours));
+		return(iVariable_copy(obj->p.hours, false));
 	
 	} else {
 		// Indicate failure
@@ -25743,7 +25743,7 @@ SVariable* iObj_get_iMEMode(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.iMEMode));
+		return(iVariable_copy(obj->p.iMEMode, false));
 	
 	} else {
 		// Indicate failure
@@ -25771,7 +25771,7 @@ SVariable* iObj_get_increment(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.increment));
+		return(iVariable_copy(obj->p.increment, false));
 	
 	} else {
 		// Indicate failure
@@ -25785,7 +25785,7 @@ SVariable* iObj_get_incrementalSearch(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.incrementalSearch));
+		return(iVariable_copy(obj->p.incrementalSearch, false));
 	
 	} else {
 		// Indicate failure
@@ -25799,7 +25799,7 @@ SVariable* iObj_get_inputMask(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.inputMask));
+		return(iVariable_copy(obj->p.inputMask, false));
 	
 	} else {
 		// Indicate failure
@@ -25813,7 +25813,7 @@ SVariable* iObj_get_integralHeight(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.integralHeight));
+		return(iVariable_copy(obj->p.integralHeight, false));
 	
 	} else {
 		// Indicate failure
@@ -25827,7 +25827,7 @@ SVariable* iObj_get_interval(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.interval));
+		return(iVariable_copy(obj->p.interval, false));
 	
 	} else {
 		// Indicate failure
@@ -25841,7 +25841,7 @@ SVariable* iObj_get_itemBackColor(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.itemBackColor));
+		return(iVariable_copy(obj->p.itemBackColor, false));
 	
 	} else {
 		// Indicate failure
@@ -25855,7 +25855,7 @@ SVariable* iObj_get_itemData(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.itemData));
+		return(iVariable_copy(obj->p.itemData, false));
 	
 	} else {
 		// Indicate failure
@@ -25869,7 +25869,7 @@ SVariable* iObj_get_itemForeColor(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.itemForeColor));
+		return(iVariable_copy(obj->p.itemForeColor, false));
 	
 	} else {
 		// Indicate failure
@@ -25883,7 +25883,7 @@ SVariable* iObj_get_itemIDData(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.itemIDData));
+		return(iVariable_copy(obj->p.itemIDData, false));
 	
 	} else {
 		// Indicate failure
@@ -25897,7 +25897,7 @@ SVariable* iObj_get_itemTips(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.itemTips));
+		return(iVariable_copy(obj->p.itemTips, false));
 	
 	} else {
 		// Indicate failure
@@ -25911,7 +25911,7 @@ SVariable* iObj_get_keyPreview(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.keyPreview));
+		return(iVariable_copy(obj->p.keyPreview, false));
 	
 	} else {
 		// Indicate failure
@@ -25925,7 +25925,7 @@ SVariable* iObj_get_keySort(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.keySort));
+		return(iVariable_copy(obj->p.keySort, false));
 	
 	} else {
 		// Indicate failure
@@ -25939,7 +25939,7 @@ SVariable* iObj_get_keyboardHighValue(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.keyboardHighValue));
+		return(iVariable_copy(obj->p.keyboardHighValue, false));
 	
 	} else {
 		// Indicate failure
@@ -25953,7 +25953,7 @@ SVariable* iObj_get_keyboardLowValue(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.keyboardLowValue));
+		return(iVariable_copy(obj->p.keyboardLowValue, false));
 	
 	} else {
 		// Indicate failure
@@ -25967,7 +25967,7 @@ SVariable* iObj_get_left(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.left));
+		return(iVariable_copy(obj->p.left, false));
 	
 	} else {
 		// Indicate failure
@@ -25981,7 +25981,7 @@ SVariable* iObj_get_leftColumn(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.leftColumn));
+		return(iVariable_copy(obj->p.leftColumn, false));
 	
 	} else {
 		// Indicate failure
@@ -25995,7 +25995,7 @@ SVariable* iObj_get_lineContents(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.lineContents));
+		return(iVariable_copy(obj->p.lineContents, false));
 	
 	} else {
 		// Indicate failure
@@ -26009,7 +26009,7 @@ SVariable* iObj_get_lineNo(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.lineNo));
+		return(iVariable_copy(obj->p.lineNo, false));
 	
 	} else {
 		// Indicate failure
@@ -26023,7 +26023,7 @@ SVariable* iObj_get_lineSlant(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.lineSlant));
+		return(iVariable_copy(obj->p.lineSlant, false));
 	
 	} else {
 		// Indicate failure
@@ -26037,7 +26037,7 @@ SVariable* iObj_get_linkMaster(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.linkMaster));
+		return(iVariable_copy(obj->p.linkMaster, false));
 	
 	} else {
 		// Indicate failure
@@ -26051,7 +26051,7 @@ SVariable* iObj_get_list(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.list));
+		return(iVariable_copy(obj->p.list, false));
 	
 	} else {
 		// Indicate failure
@@ -26065,7 +26065,7 @@ SVariable* iObj_get_listCount(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.listCount));
+		return(iVariable_copy(obj->p.listCount, false));
 	
 	} else {
 		// Indicate failure
@@ -26079,7 +26079,7 @@ SVariable* iObj_get_listIndex(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.listIndex));
+		return(iVariable_copy(obj->p.listIndex, false));
 	
 	} else {
 		// Indicate failure
@@ -26093,7 +26093,7 @@ SVariable* iObj_get_listItem(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.listItem));
+		return(iVariable_copy(obj->p.listItem, false));
 	
 	} else {
 		// Indicate failure
@@ -26107,7 +26107,7 @@ SVariable* iObj_get_listItemID(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.listItemID));
+		return(iVariable_copy(obj->p.listItemID, false));
 	
 	} else {
 		// Indicate failure
@@ -26121,7 +26121,7 @@ SVariable* iObj_get_lockColumns(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.lockColumns));
+		return(iVariable_copy(obj->p.lockColumns, false));
 	
 	} else {
 		// Indicate failure
@@ -26135,7 +26135,7 @@ SVariable* iObj_get_lockColumnsLeft(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.lockColumnsLeft));
+		return(iVariable_copy(obj->p.lockColumnsLeft, false));
 	
 	} else {
 		// Indicate failure
@@ -26149,7 +26149,7 @@ SVariable* iObj_get_lockScreen(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.lockScreen));
+		return(iVariable_copy(obj->p.lockScreen, false));
 	
 	} else {
 		// Indicate failure
@@ -26163,7 +26163,7 @@ SVariable* iObj_get_mDIForm(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.mDIForm));
+		return(iVariable_copy(obj->p.mDIForm, false));
 	
 	} else {
 		// Indicate failure
@@ -26177,7 +26177,7 @@ SVariable* iObj_get_macDesktop(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.macDesktop));
+		return(iVariable_copy(obj->p.macDesktop, false));
 	
 	} else {
 		// Indicate failure
@@ -26191,7 +26191,7 @@ SVariable* iObj_get_margin(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.margin));
+		return(iVariable_copy(obj->p.margin, false));
 	
 	} else {
 		// Indicate failure
@@ -26205,7 +26205,7 @@ SVariable* iObj_get_maxButton(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.maxButton));
+		return(iVariable_copy(obj->p.maxButton, false));
 	
 	} else {
 		// Indicate failure
@@ -26219,7 +26219,7 @@ SVariable* iObj_get_maxHeight(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.maxHeight));
+		return(iVariable_copy(obj->p.maxHeight, false));
 	
 	} else {
 		// Indicate failure
@@ -26233,7 +26233,7 @@ SVariable* iObj_get_maxLeft(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.maxLeft));
+		return(iVariable_copy(obj->p.maxLeft, false));
 	
 	} else {
 		// Indicate failure
@@ -26247,7 +26247,7 @@ SVariable* iObj_get_maxLength(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.maxLength));
+		return(iVariable_copy(obj->p.maxLength, false));
 	
 	} else {
 		// Indicate failure
@@ -26261,7 +26261,7 @@ SVariable* iObj_get_maxTop(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.maxTop));
+		return(iVariable_copy(obj->p.maxTop, false));
 	
 	} else {
 		// Indicate failure
@@ -26275,7 +26275,7 @@ SVariable* iObj_get_maxWidth(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.maxWidth));
+		return(iVariable_copy(obj->p.maxWidth, false));
 	
 	} else {
 		// Indicate failure
@@ -26289,7 +26289,7 @@ SVariable* iObj_get_memberClass(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.memberClass));
+		return(iVariable_copy(obj->p.memberClass, false));
 	
 	} else {
 		// Indicate failure
@@ -26303,7 +26303,7 @@ SVariable* iObj_get_memberClassLibrary(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.memberClassLibrary));
+		return(iVariable_copy(obj->p.memberClassLibrary, false));
 	
 	} else {
 		// Indicate failure
@@ -26317,7 +26317,7 @@ SVariable* iObj_get_memoWindow(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.memoWindow));
+		return(iVariable_copy(obj->p.memoWindow, false));
 	
 	} else {
 		// Indicate failure
@@ -26331,7 +26331,7 @@ SVariable* iObj_get_message(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.message));
+		return(iVariable_copy(obj->p.message, false));
 	
 	} else {
 		// Indicate failure
@@ -26345,7 +26345,7 @@ SVariable* iObj_get_minButton(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.minButton));
+		return(iVariable_copy(obj->p.minButton, false));
 	
 	} else {
 		// Indicate failure
@@ -26359,7 +26359,7 @@ SVariable* iObj_get_minHeight(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.minHeight));
+		return(iVariable_copy(obj->p.minHeight, false));
 	
 	} else {
 		// Indicate failure
@@ -26373,7 +26373,7 @@ SVariable* iObj_get_minWidth(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.minWidth));
+		return(iVariable_copy(obj->p.minWidth, false));
 	
 	} else {
 		// Indicate failure
@@ -26383,15 +26383,11 @@ SVariable* iObj_get_minWidth(SObject* obj)
 
 SBitmap* iObj_get_mouseIcon(SObject* obj)
 {
-	SBitmap* bmp;
-
-
 	// Make sure the environment is sane
 	if (obj)
 	{
 		// Return a copy of the bitmap
-		bmp = iBmp_copy(obj->p.mouseIcon);
-		return(bmp);
+		return(iBmp_copy(obj->p.mouseIcon));
 	
 	} else {
 		// Indicate failure
@@ -26405,7 +26401,7 @@ SVariable* iObj_get_mousePointer(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.mousePointer));
+		return(iVariable_copy(obj->p.mousePointer, false));
 	
 	} else {
 		// Indicate failure
@@ -26419,7 +26415,7 @@ SVariable* iObj_get_movable(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.movable));
+		return(iVariable_copy(obj->p.movable, false));
 	
 	} else {
 		// Indicate failure
@@ -26433,7 +26429,7 @@ SVariable* iObj_get_moverBars(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.moverBars));
+		return(iVariable_copy(obj->p.moverBars, false));
 	
 	} else {
 		// Indicate failure
@@ -26447,7 +26443,7 @@ SVariable* iObj_get_multiSelect(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.multiSelect));
+		return(iVariable_copy(obj->p.multiSelect, false));
 	
 	} else {
 		// Indicate failure
@@ -26461,7 +26457,7 @@ SVariable* iObj_get_name(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.name));
+		return(iVariable_copy(obj->p.name, false));
 	
 	} else {
 		// Indicate failure
@@ -26475,7 +26471,7 @@ SVariable* iObj_get_newIndex(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.newIndex));
+		return(iVariable_copy(obj->p.newIndex, false));
 	
 	} else {
 		// Indicate failure
@@ -26489,7 +26485,7 @@ SVariable* iObj_get_newItemID(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.newItemID));
+		return(iVariable_copy(obj->p.newItemID, false));
 	
 	} else {
 		// Indicate failure
@@ -26503,7 +26499,7 @@ SVariable* iObj_get_nullDisplay(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.nullDisplay));
+		return(iVariable_copy(obj->p.nullDisplay, false));
 	
 	} else {
 		// Indicate failure
@@ -26517,7 +26513,7 @@ SVariable* iObj_get_numberOfElements(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.numberOfElements));
+		return(iVariable_copy(obj->p.numberOfElements, false));
 	
 	} else {
 		// Indicate failure
@@ -26531,7 +26527,7 @@ SVariable* iObj_get_oLEClass(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.oLEClass));
+		return(iVariable_copy(obj->p.oLEClass, false));
 	
 	} else {
 		// Indicate failure
@@ -26545,7 +26541,7 @@ SVariable* iObj_get_oLEDragMode(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.oLEDragMode));
+		return(iVariable_copy(obj->p.oLEDragMode, false));
 	
 	} else {
 		// Indicate failure
@@ -26573,7 +26569,7 @@ SVariable* iObj_get_oLEDropEffects(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.oLEDropEffects));
+		return(iVariable_copy(obj->p.oLEDropEffects, false));
 	
 	} else {
 		// Indicate failure
@@ -26587,7 +26583,7 @@ SVariable* iObj_get_oLEDropHasData(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.oLEDropHasData));
+		return(iVariable_copy(obj->p.oLEDropHasData, false));
 	
 	} else {
 		// Indicate failure
@@ -26601,7 +26597,7 @@ SVariable* iObj_get_oLEDropMode(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.oLEDropMode));
+		return(iVariable_copy(obj->p.oLEDropMode, false));
 	
 	} else {
 		// Indicate failure
@@ -26615,7 +26611,7 @@ SVariable* iObj_get_oLEDropTextInsertion(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.oLEDropTextInsertion));
+		return(iVariable_copy(obj->p.oLEDropTextInsertion, false));
 	
 	} else {
 		// Indicate failure
@@ -26629,7 +26625,7 @@ SVariable* iObj_get_oLELCID(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.oLELCID));
+		return(iVariable_copy(obj->p.oLELCID, false));
 	
 	} else {
 		// Indicate failure
@@ -26643,7 +26639,7 @@ SVariable* iObj_get_oLETypeAllowed(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.oLETypeAllowed));
+		return(iVariable_copy(obj->p.oLETypeAllowed, false));
 	
 	} else {
 		// Indicate failure
@@ -26657,7 +26653,7 @@ SVariable* iObj_get_object(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.object));
+		return(iVariable_copy(obj->p.object, false));
 	
 	} else {
 		// Indicate failure
@@ -26671,7 +26667,7 @@ SVariable* iObj_get_objects(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.objects));
+		return(iVariable_copy(obj->p.objects, false));
 	
 	} else {
 		// Indicate failure
@@ -26685,7 +26681,7 @@ SVariable* iObj_get_openWindow(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.openWindow));
+		return(iVariable_copy(obj->p.openWindow, false));
 	
 	} else {
 		// Indicate failure
@@ -26699,7 +26695,7 @@ SVariable* iObj_get_optimize(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.optimize));
+		return(iVariable_copy(obj->p.optimize, false));
 	
 	} else {
 		// Indicate failure
@@ -26713,7 +26709,7 @@ SVariable* iObj_get_pageCount(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.pageCount));
+		return(iVariable_copy(obj->p.pageCount, false));
 	
 	} else {
 		// Indicate failure
@@ -26727,7 +26723,7 @@ SVariable* iObj_get_pageHeight(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.pageHeight));
+		return(iVariable_copy(obj->p.pageHeight, false));
 	
 	} else {
 		// Indicate failure
@@ -26741,7 +26737,7 @@ SVariable* iObj_get_pageOrder(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.pageOrder));
+		return(iVariable_copy(obj->p.pageOrder, false));
 	
 	} else {
 		// Indicate failure
@@ -26755,7 +26751,7 @@ SVariable* iObj_get_pageWidth(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.pageWidth));
+		return(iVariable_copy(obj->p.pageWidth, false));
 	
 	} else {
 		// Indicate failure
@@ -26769,7 +26765,7 @@ SVariable* iObj_get_pages(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.pages));
+		return(iVariable_copy(obj->p.pages, false));
 	
 	} else {
 		// Indicate failure
@@ -26783,7 +26779,7 @@ SVariable* iObj_get_panel(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.panel));
+		return(iVariable_copy(obj->p.panel, false));
 	
 	} else {
 		// Indicate failure
@@ -26797,7 +26793,7 @@ SVariable* iObj_get_panelLink(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.panelLink));
+		return(iVariable_copy(obj->p.panelLink, false));
 	
 	} else {
 		// Indicate failure
@@ -26811,7 +26807,7 @@ SVariable* iObj_get_parent(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.parent));
+		return(iVariable_copy(obj->p.parent, false));
 	
 	} else {
 		// Indicate failure
@@ -26825,7 +26821,7 @@ SVariable* iObj_get_parentClass(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.parentClass));
+		return(iVariable_copy(obj->p.parentClass, false));
 	
 	} else {
 		// Indicate failure
@@ -26839,7 +26835,7 @@ SVariable* iObj_get_partition(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.partition));
+		return(iVariable_copy(obj->p.partition, false));
 	
 	} else {
 		// Indicate failure
@@ -26853,7 +26849,7 @@ SVariable* iObj_get_passwordChar(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.passwordChar));
+		return(iVariable_copy(obj->p.passwordChar, false));
 	
 	} else {
 		// Indicate failure
@@ -26867,7 +26863,7 @@ SVariable* iObj_get_picture(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.picture));
+		return(iVariable_copy(obj->p.picture, false));
 	
 	} else {
 		// Indicate failure
@@ -26881,7 +26877,7 @@ SVariable* iObj_get_pictureMargin(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.pictureMargin));
+		return(iVariable_copy(obj->p.pictureMargin, false));
 	
 	} else {
 		// Indicate failure
@@ -26895,7 +26891,7 @@ SVariable* iObj_get_picturePosition(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.picturePosition));
+		return(iVariable_copy(obj->p.picturePosition, false));
 	
 	} else {
 		// Indicate failure
@@ -26909,7 +26905,7 @@ SVariable* iObj_get_pictureSelectionDisplay(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.pictureSelectionDisplay));
+		return(iVariable_copy(obj->p.pictureSelectionDisplay, false));
 	
 	} else {
 		// Indicate failure
@@ -26923,7 +26919,7 @@ SVariable* iObj_get_pictureSpacing(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.pictureSpacing));
+		return(iVariable_copy(obj->p.pictureSpacing, false));
 	
 	} else {
 		// Indicate failure
@@ -26937,7 +26933,7 @@ SVariable* iObj_get_pictureVal(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.pictureVal));
+		return(iVariable_copy(obj->p.pictureVal, false));
 	
 	} else {
 		// Indicate failure
@@ -26951,7 +26947,7 @@ SVariable* iObj_get_polyPoints(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.polyPoints));
+		return(iVariable_copy(obj->p.polyPoints, false));
 	
 	} else {
 		// Indicate failure
@@ -26965,7 +26961,7 @@ SVariable* iObj_get_procedure(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.procedure));
+		return(iVariable_copy(obj->p.procedure, false));
 	
 	} else {
 		// Indicate failure
@@ -26979,7 +26975,7 @@ SVariable* iObj_get_readBackColor(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.readBackColor));
+		return(iVariable_copy(obj->p.readBackColor, false));
 	
 	} else {
 		// Indicate failure
@@ -26993,7 +26989,7 @@ SVariable* iObj_get_readCycle(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.readCycle));
+		return(iVariable_copy(obj->p.readCycle, false));
 	
 	} else {
 		// Indicate failure
@@ -27007,7 +27003,7 @@ SVariable* iObj_get_readForeColor(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.readForeColor));
+		return(iVariable_copy(obj->p.readForeColor, false));
 	
 	} else {
 		// Indicate failure
@@ -27021,7 +27017,7 @@ SVariable* iObj_get_readLock(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.readLock));
+		return(iVariable_copy(obj->p.readLock, false));
 	
 	} else {
 		// Indicate failure
@@ -27035,7 +27031,7 @@ SVariable* iObj_get_readMouse(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.readMouse));
+		return(iVariable_copy(obj->p.readMouse, false));
 	
 	} else {
 		// Indicate failure
@@ -27049,7 +27045,7 @@ SVariable* iObj_get_readOnly(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.readOnly));
+		return(iVariable_copy(obj->p.readOnly, false));
 	
 	} else {
 		// Indicate failure
@@ -27063,7 +27059,7 @@ SVariable* iObj_get_readSave(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.readSave));
+		return(iVariable_copy(obj->p.readSave, false));
 	
 	} else {
 		// Indicate failure
@@ -27077,7 +27073,7 @@ SVariable* iObj_get_readTimeOut(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.readTimeOut));
+		return(iVariable_copy(obj->p.readTimeOut, false));
 	
 	} else {
 		// Indicate failure
@@ -27091,7 +27087,7 @@ SVariable* iObj_get_recordMark(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.recordMark));
+		return(iVariable_copy(obj->p.recordMark, false));
 	
 	} else {
 		// Indicate failure
@@ -27105,7 +27101,7 @@ SVariable* iObj_get_recordSource(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.recordSource));
+		return(iVariable_copy(obj->p.recordSource, false));
 	
 	} else {
 		// Indicate failure
@@ -27119,7 +27115,7 @@ SVariable* iObj_get_recordSourceType(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.recordSourceType));
+		return(iVariable_copy(obj->p.recordSourceType, false));
 	
 	} else {
 		// Indicate failure
@@ -27133,7 +27129,7 @@ SVariable* iObj_get_relationalExpr(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.relationalExpr));
+		return(iVariable_copy(obj->p.relationalExpr, false));
 	
 	} else {
 		// Indicate failure
@@ -27147,7 +27143,7 @@ SVariable* iObj_get_relativeColumn(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.relativeColumn));
+		return(iVariable_copy(obj->p.relativeColumn, false));
 	
 	} else {
 		// Indicate failure
@@ -27161,7 +27157,7 @@ SVariable* iObj_get_relativeRow(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.relativeRow));
+		return(iVariable_copy(obj->p.relativeRow, false));
 	
 	} else {
 		// Indicate failure
@@ -27175,7 +27171,7 @@ SVariable* iObj_get_releaseType(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.releaseType));
+		return(iVariable_copy(obj->p.releaseType, false));
 	
 	} else {
 		// Indicate failure
@@ -27189,7 +27185,7 @@ SVariable* iObj_get_resizable(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.resizable));
+		return(iVariable_copy(obj->p.resizable, false));
 	
 	} else {
 		// Indicate failure
@@ -27203,7 +27199,7 @@ SVariable* iObj_get_rightToLeft(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.rightToLeft));
+		return(iVariable_copy(obj->p.rightToLeft, false));
 	
 	} else {
 		// Indicate failure
@@ -27217,7 +27213,7 @@ SVariable* iObj_get_rotateFlip(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.rotateFlip));
+		return(iVariable_copy(obj->p.rotateFlip, false));
 	
 	} else {
 		// Indicate failure
@@ -27231,7 +27227,7 @@ SVariable* iObj_get_rotation(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.rotation));
+		return(iVariable_copy(obj->p.rotation, false));
 	
 	} else {
 		// Indicate failure
@@ -27245,7 +27241,7 @@ SVariable* iObj_get_rowColChange(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.rowColChange));
+		return(iVariable_copy(obj->p.rowColChange, false));
 	
 	} else {
 		// Indicate failure
@@ -27259,7 +27255,7 @@ SVariable* iObj_get_rowHeight(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.rowHeight));
+		return(iVariable_copy(obj->p.rowHeight, false));
 	
 	} else {
 		// Indicate failure
@@ -27273,7 +27269,7 @@ SVariable* iObj_get_rowSource(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.rowSource));
+		return(iVariable_copy(obj->p.rowSource, false));
 	
 	} else {
 		// Indicate failure
@@ -27287,7 +27283,7 @@ SVariable* iObj_get_rowSourceType(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.rowSourceType));
+		return(iVariable_copy(obj->p.rowSourceType, false));
 	
 	} else {
 		// Indicate failure
@@ -27301,7 +27297,7 @@ SVariable* iObj_get_scaleMode(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.scaleMode));
+		return(iVariable_copy(obj->p.scaleMode, false));
 	
 	} else {
 		// Indicate failure
@@ -27315,7 +27311,7 @@ SVariable* iObj_get_scrollBars(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.scrollBars));
+		return(iVariable_copy(obj->p.scrollBars, false));
 	
 	} else {
 		// Indicate failure
@@ -27329,7 +27325,7 @@ SVariable* iObj_get_seconds(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.seconds));
+		return(iVariable_copy(obj->p.seconds, false));
 	
 	} else {
 		// Indicate failure
@@ -27343,7 +27339,7 @@ SVariable* iObj_get_selLength(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.selLength));
+		return(iVariable_copy(obj->p.selLength, false));
 	
 	} else {
 		// Indicate failure
@@ -27357,7 +27353,7 @@ SVariable* iObj_get_selStart(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.selStart));
+		return(iVariable_copy(obj->p.selStart, false));
 	
 	} else {
 		// Indicate failure
@@ -27371,7 +27367,7 @@ SVariable* iObj_get_selText(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.selText));
+		return(iVariable_copy(obj->p.selText, false));
 	
 	} else {
 		// Indicate failure
@@ -27385,7 +27381,7 @@ SVariable* iObj_get_selectOnEntry(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.selectOnEntry));
+		return(iVariable_copy(obj->p.selectOnEntry, false));
 	
 	} else {
 		// Indicate failure
@@ -27399,7 +27395,7 @@ SVariable* iObj_get_selected(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.selected));
+		return(iVariable_copy(obj->p.selected, false));
 	
 	} else {
 		// Indicate failure
@@ -27413,7 +27409,7 @@ SVariable* iObj_get_selectedBackColor(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.selectedBackColor));
+		return(iVariable_copy(obj->p.selectedBackColor, false));
 	
 	} else {
 		// Indicate failure
@@ -27427,7 +27423,7 @@ SVariable* iObj_get_selectedForeColor(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.selectedForeColor));
+		return(iVariable_copy(obj->p.selectedForeColor, false));
 	
 	} else {
 		// Indicate failure
@@ -27441,7 +27437,7 @@ SVariable* iObj_get_selectedID(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.selectedID));
+		return(iVariable_copy(obj->p.selectedID, false));
 	
 	} else {
 		// Indicate failure
@@ -27455,7 +27451,7 @@ SVariable* iObj_get_selectedItemBackColor(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.selectedItemBackColor));
+		return(iVariable_copy(obj->p.selectedItemBackColor, false));
 	
 	} else {
 		// Indicate failure
@@ -27469,7 +27465,7 @@ SVariable* iObj_get_selectedItemForeColor(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.selectedItemForeColor));
+		return(iVariable_copy(obj->p.selectedItemForeColor, false));
 	
 	} else {
 		// Indicate failure
@@ -27483,7 +27479,7 @@ SVariable* iObj_get_showInTaskbar(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.showInTaskbar));
+		return(iVariable_copy(obj->p.showInTaskbar, false));
 	
 	} else {
 		// Indicate failure
@@ -27497,7 +27493,7 @@ SVariable* iObj_get_showTips(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.showTips));
+		return(iVariable_copy(obj->p.showTips, false));
 	
 	} else {
 		// Indicate failure
@@ -27511,7 +27507,7 @@ SVariable* iObj_get_showWindow(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.showWindow));
+		return(iVariable_copy(obj->p.showWindow, false));
 	
 	} else {
 		// Indicate failure
@@ -27525,7 +27521,7 @@ SVariable* iObj_get_sizable(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.sizable));
+		return(iVariable_copy(obj->p.sizable, false));
 	
 	} else {
 		// Indicate failure
@@ -27539,7 +27535,7 @@ SVariable* iObj_get_sizeBox(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.sizeBox));
+		return(iVariable_copy(obj->p.sizeBox, false));
 	
 	} else {
 		// Indicate failure
@@ -27553,7 +27549,7 @@ SVariable* iObj_get_sorted(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.sorted));
+		return(iVariable_copy(obj->p.sorted, false));
 	
 	} else {
 		// Indicate failure
@@ -27567,7 +27563,7 @@ SVariable* iObj_get_sparse(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.sparse));
+		return(iVariable_copy(obj->p.sparse, false));
 	
 	} else {
 		// Indicate failure
@@ -27581,7 +27577,7 @@ SVariable* iObj_get_specialEffect(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.specialEffect));
+		return(iVariable_copy(obj->p.specialEffect, false));
 	
 	} else {
 		// Indicate failure
@@ -27595,7 +27591,7 @@ SVariable* iObj_get_spinnerHighValue(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.spinnerHighValue));
+		return(iVariable_copy(obj->p.spinnerHighValue, false));
 	
 	} else {
 		// Indicate failure
@@ -27609,7 +27605,7 @@ SVariable* iObj_get_spinnerLowValue(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.spinnerLowValue));
+		return(iVariable_copy(obj->p.spinnerLowValue, false));
 	
 	} else {
 		// Indicate failure
@@ -27623,7 +27619,7 @@ SVariable* iObj_get_splitBar(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.splitBar));
+		return(iVariable_copy(obj->p.splitBar, false));
 	
 	} else {
 		// Indicate failure
@@ -27637,7 +27633,7 @@ SVariable* iObj_get_stackLevel(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.stackLevel));
+		return(iVariable_copy(obj->p.stackLevel, false));
 	
 	} else {
 		// Indicate failure
@@ -27651,7 +27647,7 @@ SVariable* iObj_get_statusBarText(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.statusBarText));
+		return(iVariable_copy(obj->p.statusBarText, false));
 	
 	} else {
 		// Indicate failure
@@ -27665,7 +27661,7 @@ SVariable* iObj_get_stretch(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.stretch));
+		return(iVariable_copy(obj->p.stretch, false));
 	
 	} else {
 		// Indicate failure
@@ -27679,7 +27675,7 @@ SVariable* iObj_get_strictDateEntry(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.strictDateEntry));
+		return(iVariable_copy(obj->p.strictDateEntry, false));
 	
 	} else {
 		// Indicate failure
@@ -27693,7 +27689,7 @@ SVariable* iObj_get_style(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.style));
+		return(iVariable_copy(obj->p.style, false));
 	
 	} else {
 		// Indicate failure
@@ -27707,7 +27703,7 @@ SVariable* iObj_get_tabIndex(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.tabIndex));
+		return(iVariable_copy(obj->p.tabIndex, false));
 	
 	} else {
 		// Indicate failure
@@ -27721,7 +27717,7 @@ SVariable* iObj_get_tabOrientation(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.tabOrientation));
+		return(iVariable_copy(obj->p.tabOrientation, false));
 	
 	} else {
 		// Indicate failure
@@ -27735,7 +27731,7 @@ SVariable* iObj_get_tabStop(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.tabStop));
+		return(iVariable_copy(obj->p.tabStop, false));
 	
 	} else {
 		// Indicate failure
@@ -27749,7 +27745,7 @@ SVariable* iObj_get_tabStyle(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.tabStyle));
+		return(iVariable_copy(obj->p.tabStyle, false));
 	
 	} else {
 		// Indicate failure
@@ -27763,7 +27759,7 @@ SVariable* iObj_get_tabs(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.tabs));
+		return(iVariable_copy(obj->p.tabs, false));
 	
 	} else {
 		// Indicate failure
@@ -27777,7 +27773,7 @@ SVariable* iObj_get_tag(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.tag));
+		return(iVariable_copy(obj->p.tag, false));
 	
 	} else {
 		// Indicate failure
@@ -27791,7 +27787,7 @@ SVariable* iObj_get_terminateRead(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.terminateRead));
+		return(iVariable_copy(obj->p.terminateRead, false));
 	
 	} else {
 		// Indicate failure
@@ -27805,7 +27801,7 @@ SVariable* iObj_get_text(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.text));
+		return(iVariable_copy(obj->p.text, false));
 	
 	} else {
 		// Indicate failure
@@ -27819,7 +27815,7 @@ SVariable* iObj_get_themes(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.themes));
+		return(iVariable_copy(obj->p.themes, false));
 	
 	} else {
 		// Indicate failure
@@ -27833,7 +27829,7 @@ SVariable* iObj_get_titleBar(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.titleBar));
+		return(iVariable_copy(obj->p.titleBar, false));
 	
 	} else {
 		// Indicate failure
@@ -27847,7 +27843,7 @@ SVariable* iObj_get_toolTipText(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.toolTipText));
+		return(iVariable_copy(obj->p.toolTipText, false));
 	
 	} else {
 		// Indicate failure
@@ -27861,7 +27857,7 @@ SVariable* iObj_get_top(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.top));
+		return(iVariable_copy(obj->p.top, false));
 	
 	} else {
 		// Indicate failure
@@ -27875,7 +27871,7 @@ SVariable* iObj_get_topIndex(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.topIndex));
+		return(iVariable_copy(obj->p.topIndex, false));
 	
 	} else {
 		// Indicate failure
@@ -27889,7 +27885,7 @@ SVariable* iObj_get_topItemID(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.topItemID));
+		return(iVariable_copy(obj->p.topItemID, false));
 	
 	} else {
 		// Indicate failure
@@ -27903,7 +27899,7 @@ SVariable* iObj_get_userValue(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.userValue));
+		return(iVariable_copy(obj->p.userValue, false));
 	
 	} else {
 		// Indicate failure
@@ -27917,7 +27913,7 @@ SVariable* iObj_get_vScrollSmallChange(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.vScrollSmallChange));
+		return(iVariable_copy(obj->p.vScrollSmallChange, false));
 	
 	} else {
 		// Indicate failure
@@ -27931,7 +27927,7 @@ SVariable* iObj_get_value(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.value));
+		return(iVariable_copy(obj->p.value, false));
 	
 	} else {
 		// Indicate failure
@@ -27945,7 +27941,7 @@ SVariable* iObj_get_view(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.view));
+		return(iVariable_copy(obj->p.view, false));
 	
 	} else {
 		// Indicate failure
@@ -27959,7 +27955,7 @@ SVariable* iObj_get_viewPortHeight(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.viewPortHeight));
+		return(iVariable_copy(obj->p.viewPortHeight, false));
 	
 	} else {
 		// Indicate failure
@@ -27973,7 +27969,7 @@ SVariable* iObj_get_viewPortLeft(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.viewPortLeft));
+		return(iVariable_copy(obj->p.viewPortLeft, false));
 	
 	} else {
 		// Indicate failure
@@ -27987,7 +27983,7 @@ SVariable* iObj_get_viewPortTop(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.viewPortTop));
+		return(iVariable_copy(obj->p.viewPortTop, false));
 	
 	} else {
 		// Indicate failure
@@ -28001,7 +27997,7 @@ SVariable* iObj_get_viewPortWidth(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.viewPortWidth));
+		return(iVariable_copy(obj->p.viewPortWidth, false));
 	
 	} else {
 		// Indicate failure
@@ -28015,7 +28011,7 @@ SVariable* iObj_get_visible(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.visible));
+		return(iVariable_copy(obj->p.visible, false));
 	
 	} else {
 		// Indicate failure
@@ -28029,7 +28025,7 @@ SVariable* iObj_get_visualEffect(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.visualEffect));
+		return(iVariable_copy(obj->p.visualEffect, false));
 	
 	} else {
 		// Indicate failure
@@ -28043,7 +28039,7 @@ SVariable* iObj_get_whatsThisButton(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.whatsThisButton));
+		return(iVariable_copy(obj->p.whatsThisButton, false));
 	
 	} else {
 		// Indicate failure
@@ -28057,7 +28053,7 @@ SVariable* iObj_get_whatsThisHelp(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.whatsThisHelp));
+		return(iVariable_copy(obj->p.whatsThisHelp, false));
 	
 	} else {
 		// Indicate failure
@@ -28071,7 +28067,7 @@ SVariable* iObj_get_whatsThisHelpID(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.whatsThisHelpID));
+		return(iVariable_copy(obj->p.whatsThisHelpID, false));
 	
 	} else {
 		// Indicate failure
@@ -28085,7 +28081,7 @@ SVariable* iObj_get_width(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.width));
+		return(iVariable_copy(obj->p.width, false));
 	
 	} else {
 		// Indicate failure
@@ -28099,7 +28095,7 @@ SVariable* iObj_get_windowList(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.windowList));
+		return(iVariable_copy(obj->p.windowList, false));
 	
 	} else {
 		// Indicate failure
@@ -28113,7 +28109,7 @@ SVariable* iObj_get_windowState(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.windowState));
+		return(iVariable_copy(obj->p.windowState, false));
 	
 	} else {
 		// Indicate failure
@@ -28127,7 +28123,7 @@ SVariable* iObj_get_windowType(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.windowType));
+		return(iVariable_copy(obj->p.windowType, false));
 	
 	} else {
 		// Indicate failure
@@ -28141,7 +28137,7 @@ SVariable* iObj_get_wordWrap(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.wordWrap));
+		return(iVariable_copy(obj->p.wordWrap, false));
 	
 	} else {
 		// Indicate failure
@@ -28155,11 +28151,10 @@ SVariable* iObj_get_zoomBox(SObject* obj)
 	if (obj)
 	{
 		// Return a copy of the variable
-		return(iVariable_copy(obj->p.zoomBox));
+		return(iVariable_copy(obj->p.zoomBox, false));
 	
 	} else {
 		// Indicate failure
 		return(NULL);
 	}
 }
-

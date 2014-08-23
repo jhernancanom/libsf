@@ -4604,6 +4604,186 @@ debug_break;
 
 //////////
 //
+// Called to copy the variable to a new variable
+//
+//////
+	SVariable* iVariable_copy(SVariable* varSrc, bool tlMakeReference)
+	{
+		SVariable* varDst;
+
+
+		// Make sure our environment is sane
+		if (varSrc && varSrc->value.data && varSrc->varType != _VAR_TYPE_NULL)
+		{
+			// Make sure we're dealing with the actual variables
+			varSrc = iiVariable_terminateIndirect(varSrc);
+
+			// Should we create a real variable? Or a reference?
+			if (tlMakeReference)
+			{
+				// Just create a reference to the variable
+				varDst = iVariable_create(varSrc->varType, varSrc);
+
+			} else {
+				// Create a new real variable
+				varDst = iVariable_create(varSrc->varType, NULL);
+
+				// Copy the content
+				if (varDst)
+					iDatum_duplicate(&varDst->value, &varSrc->value);
+			}
+
+			// Success or failure ... it's in the allocation
+			return(varDst);
+
+		} else {
+			// Failure
+			iEngine_error(_ERROR_VARIABLE_NOT_FOUND, varSrc);
+			return(false);
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to set the variable to the value of the other variable
+//
+//////
+	bool iVariable_set(SVariable* varDst, SVariable* varSrc)
+	{
+// TODO:  Need to check the variable type before performing the varDst->value test
+		if (varDst && varSrc && varDst->value.data && varSrc->value.data && varDst->varType != _VAR_TYPE_NULL && varSrc->varType != _VAR_TYPE_NULL)
+		{
+			// See if they're the same type
+			if (varDst->varType == varSrc->varType && varDst->value.length == varSrc->value.length)
+			{
+				// Make sure we're dealing with the actual variables
+				varDst = iiVariable_terminateIndirect(varDst);
+				varSrc = iiVariable_terminateIndirect(varSrc);
+
+				// They are the same, so we can do a direct copy
+				switch (varDst->value.length)
+				{
+					case 1:		// Do a fast copy
+						*varDst->value.data_u8 = *varSrc->value.data_u8;
+						break;
+
+					case 2:		// Do a fast copy
+						*varDst->value.data_u16 = *varSrc->value.data_u16;
+						break;
+
+					case 4:		// Do a fast copy
+						*varDst->value.data_u32 = *varSrc->value.data_u32;
+						break;
+
+					default:	// Do a full copy
+						memcpy(varDst->value.data, varSrc->value.data, varDst->value.length);
+						break;
+				}
+
+			} else {
+				// Copy the content the long way
+				iVariable_copy(varDst, varSrc);
+			}
+
+			// Success
+			return(true);
+
+		} else {
+			// Failure
+			iEngine_error(_ERROR_VARIABLE_NOT_FOUND, ((varDst) ? varDst : varSrc));
+			return(false);
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to set the value to an s32 value
+//
+//////
+	bool iVariable_set_s32(SVariable* var, s32 value)
+	{
+		if (var && var->varType == _VAR_TYPE_S32 && var->value.data_s32)
+		{
+			// Make sure we're dealing with the actual variable
+			var = iiVariable_terminateIndirect(var);
+
+			// Set it
+			*var->value.data_s32 = value;
+
+			// Success
+			return(true);
+
+		} else {
+			// Failure
+			return(false);
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to set the value to a u32 value
+//
+//////
+	bool iVariable_set_u32(SVariable* var, u32 value)
+	{
+		if (var && var->varType == _VAR_TYPE_U32 && var->value.data_u32)
+		{
+			// Make sure we're dealing with the actual variable
+			var = iiVariable_terminateIndirect(var);
+
+			// Set it
+			*var->value.data_u32 = value;
+
+			// Success
+			return(true);
+
+		} else {
+			// Failure
+			return(false);
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to set the bool value
+//
+//////
+	bool iVariable_set_bool(SVariable* var, bool value)
+	{
+		if (var && var->varType == _VARIABLE_TYPE_LOGICAL && var->value.data_u8)
+		{
+			// Make sure we're dealing with the actual variable
+			var = iiVariable_terminateIndirect(var);
+
+			// Set it
+			*var->value.data_u8 = ((value) ? 1 : 0);
+
+			// Success
+			return(true);
+
+		} else {
+			// Failure
+			return(false);
+		}
+	}
+
+
+
+
+//////////
+//
 // Reset the variables to their default types
 //
 //////

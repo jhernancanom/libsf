@@ -558,6 +558,32 @@
 
 //////////
 //
+// Called to find the indicated setter, and execute it if found
+//
+//////
+	void iEngine_executeSetter(cs8* name, SVariable* varOld, SVariable* varNew)
+	{
+// TODO:  When the engine is developed and working, a found setter will suspend execution and branch to that location
+	}
+
+
+
+
+//////////
+//
+// Called to report the indicated error and relate it to the indicated variable (if any)
+//
+//////
+	void iEngine_error(u32 tnErrorNumber, SVariable* varRelated)
+	{
+// TODO:  Report the error and relate the variable
+	}
+
+
+
+
+//////////
+//
 // Called to obtain the parameters between the indicated parenthesis.
 //
 //////

@@ -96,11 +96,10 @@
 	SComp*					iEngine_parseSourceCodeLine				(SEdit* line);
 	SVariable*				iEngine_getVariableFromComponent		(SComp* comp, bool& tlManufactured);
 	SVariable*				iEngine_getFunctionResult				(SComp* comp, bool& tlManufactured);
-	bool					iiEngine_getParametersBetween			(SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable** p1, SVariable** p2, SVariable** p3, SVariable** p4, SVariable** p5, SVariable** p6, SVariable** p7);
-
 	void					iEngine_executeSetter					(cs8* name, SVariable* varOld, SVariable* varNew);
 	void					iEngine_executeSetter					(s8*  name, SVariable* varOld, SVariable* varNew);
 	void					iEngine_error							(u32 tnErrorNumber, SVariable* varRelated);
+	bool					iiEngine_getParametersBetween			(SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable** p1, SVariable** p2, SVariable** p3, SVariable** p4, SVariable** p5, SVariable** p6, SVariable** p7);
 
 	void					iBreakpoint_delete						(SBreakpoint** breakpoint);
 	SBreakpoint* 			iBreakpoint_add							(SBreakpoint** breakpoint, u32 tnType);

@@ -1974,7 +1974,7 @@ if (!llPublishChildren)
 		llOldVisible = false;
 		if (obj)
 		{
-			llOldVisible = get_bool(obj->p.visible);
+			llOldVisible = ((get_u8(obj->p.visible) == 0) ? false : true);
 			iVariable_set_bool(obj->p.visible, tlNewVisible);
 		}
 

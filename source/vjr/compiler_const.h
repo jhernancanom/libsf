@@ -174,6 +174,7 @@
 	const u32		_ERROR_P7_IS_INCORRECT							= 22;
 	const u32		_ERROR_INTERNAL_ERROR							= 23;
 	const u32		_ERROR_INVALID_ARGUMENT_TYPE_COUNT				= 24;
+	const u32		_ERROR_VARIABLE_NOT_FOUND						= 25;
 
 	// Messages
 	const s8		cgcComponentError[]								= "Error in component, column ";
@@ -200,6 +201,8 @@
 	const s8		cgcP6IsIncorrect[]								= "parameter 6 is incorrect";
 	const s8		cgcP7IsIncorrect[]								= "parameter 7 is incorrect";
 	const s8		cgcInternalError[]								= "internal error";
+	const s8		cgcInvalidArgumentTypeCountError[]				= "invalid argument, type, or count";
+	const s8		cgcVariableNotFoundError[]						= "variable nto found";
 	
 
 //////////

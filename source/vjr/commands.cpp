@@ -68,29 +68,31 @@
 	{
 		switch (tnErrorNum)
 		{
-			case _ERROR_OUT_OF_MEMORY:						{	iError_report((s8*)cgcOutOfMemory);					break;	}
-			case _ERROR_UNEXPECTED_COMMAND:					{	iError_report((s8*)cgcUnexpectedCommand);			break;	}
-			case _ERROR_CONTEXT_HAS_CHANGED:				{	iError_report((s8*)cgcContextHasChanged);			break;	}
-			case _ERROR_FULL_RECOMPILE_REQUIRED:			{	iError_report((s8*)cgcFullRecompileRequired);		break;	}
-			case _ERROR_NOT_A_VARIABLE:						{	iError_report((s8*)cgcNotAVariable);				break;	}
-			case _ERROR_NUMERIC_OVERFLOW:					{	iError_report((s8*)cgcNumericOverflow);				break;	}
-			case _ERROR_NOT_NUMERIC:						{	iError_report((s8*)cgcNotNumeric);					break;	}
-			case _ERROR_EMPTY_STRING:						{	iError_report((s8*)cgcEmptyString);					break;	}
-			case _ERROR_SYNTAX:								{	iError_report((s8*)cgcSyntaxError);					break;	}
-			case _ERROR_UNRECOGNIZED_PARAMETER:				{	iError_report((s8*)cgcUnrecognizedParameter);		break;	}
-			case _ERROR_OUT_OF_RANGE:						{	iError_report((s8*)cgcOutOfRange);					break;	}
-			case _ERROR_COMMA_EXPECTED:						{	iError_report((s8*)cgcCommaExpected);				break;	}
-			case _ERROR_TOO_MANY_PARAMETERS:				{	iError_report((s8*)cgcTooManyParameters);			break;	}
-			case _ERROR_DATA_TYPE_MISMATCH:					{	iError_report((s8*)cgcDataTypeMismatch);			break;	}
-			case _ERROR_FEATURE_NOT_AVAILABLE:				{	iError_report((s8*)cgcFeatureNotAvailable);			break;	}
-			case _ERROR_P1_IS_INCORRECT:					{	iError_report((s8*)cgcP1IsIncorrect);				break;	}
-			case _ERROR_P2_IS_INCORRECT:					{	iError_report((s8*)cgcP2IsIncorrect);				break;	}
-			case _ERROR_P3_IS_INCORRECT:					{	iError_report((s8*)cgcP3IsIncorrect);				break;	}
-			case _ERROR_P4_IS_INCORRECT:					{	iError_report((s8*)cgcP4IsIncorrect);				break;	}
-			case _ERROR_P5_IS_INCORRECT:					{	iError_report((s8*)cgcP5IsIncorrect);				break;	}
-			case _ERROR_P6_IS_INCORRECT:					{	iError_report((s8*)cgcP6IsIncorrect);				break;	}
-			case _ERROR_P7_IS_INCORRECT:					{	iError_report((s8*)cgcP7IsIncorrect);				break;	}
-			case _ERROR_INTERNAL_ERROR:						{	iError_report((s8*)cgcInternalError);				break;	}
+			case _ERROR_OUT_OF_MEMORY:						{	iError_report((s8*)cgcOutOfMemory);						break;	}
+			case _ERROR_UNEXPECTED_COMMAND:					{	iError_report((s8*)cgcUnexpectedCommand);				break;	}
+			case _ERROR_CONTEXT_HAS_CHANGED:				{	iError_report((s8*)cgcContextHasChanged);				break;	}
+			case _ERROR_FULL_RECOMPILE_REQUIRED:			{	iError_report((s8*)cgcFullRecompileRequired);			break;	}
+			case _ERROR_NOT_A_VARIABLE:						{	iError_report((s8*)cgcNotAVariable);					break;	}
+			case _ERROR_NUMERIC_OVERFLOW:					{	iError_report((s8*)cgcNumericOverflow);					break;	}
+			case _ERROR_NOT_NUMERIC:						{	iError_report((s8*)cgcNotNumeric);						break;	}
+			case _ERROR_EMPTY_STRING:						{	iError_report((s8*)cgcEmptyString);						break;	}
+			case _ERROR_SYNTAX:								{	iError_report((s8*)cgcSyntaxError);						break;	}
+			case _ERROR_UNRECOGNIZED_PARAMETER:				{	iError_report((s8*)cgcUnrecognizedParameter);			break;	}
+			case _ERROR_OUT_OF_RANGE:						{	iError_report((s8*)cgcOutOfRange);						break;	}
+			case _ERROR_COMMA_EXPECTED:						{	iError_report((s8*)cgcCommaExpected);					break;	}
+			case _ERROR_TOO_MANY_PARAMETERS:				{	iError_report((s8*)cgcTooManyParameters);				break;	}
+			case _ERROR_DATA_TYPE_MISMATCH:					{	iError_report((s8*)cgcDataTypeMismatch);				break;	}
+			case _ERROR_FEATURE_NOT_AVAILABLE:				{	iError_report((s8*)cgcFeatureNotAvailable);				break;	}
+			case _ERROR_P1_IS_INCORRECT:					{	iError_report((s8*)cgcP1IsIncorrect);					break;	}
+			case _ERROR_P2_IS_INCORRECT:					{	iError_report((s8*)cgcP2IsIncorrect);					break;	}
+			case _ERROR_P3_IS_INCORRECT:					{	iError_report((s8*)cgcP3IsIncorrect);					break;	}
+			case _ERROR_P4_IS_INCORRECT:					{	iError_report((s8*)cgcP4IsIncorrect);					break;	}
+			case _ERROR_P5_IS_INCORRECT:					{	iError_report((s8*)cgcP5IsIncorrect);					break;	}
+			case _ERROR_P6_IS_INCORRECT:					{	iError_report((s8*)cgcP6IsIncorrect);					break;	}
+			case _ERROR_P7_IS_INCORRECT:					{	iError_report((s8*)cgcP7IsIncorrect);					break;	}
+			case _ERROR_INTERNAL_ERROR:						{	iError_report((s8*)cgcInternalError);					break;	}
+			case _ERROR_INVALID_ARGUMENT_TYPE_COUNT:		{	iError_report((s8*)cgcInvalidArgumentTypeCountError);	break;	}
+			case _ERROR_VARIABLE_NOT_FOUND:					{	iError_report((s8*)cgcVariableNotFoundError);			break;	}
 		}
 
 		// Flag the component
@@ -544,7 +546,7 @@
 		//////////
 		// Extract the first character, and convert it to a number
 		//////
-			value = p1->value.udata[0];
+			value = p1->value.data_u8[0];
 
 
 		//////////
