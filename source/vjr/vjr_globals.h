@@ -301,8 +301,10 @@
 		SBgra			overrideMatchingForeColorMultiple	= { rgba(0, 0, 0, 255) };				// Black
 		SBgra			selectedBackColor					= { rgba(220, 235, 255, 255) };			// Pastel turquoise
 		SBgra			selectedForeColor					= { rgba(0, 0, 164, 255) };				// Darkish blue
-		SBgra			disabledBackColor					= { rgba(255, 255, 255, 255) };
-		SBgra			disabledForeColor					= { rgba(192, 192, 230, 255) };
+		SBgra			disabledBackColor					= { _disabledBackColor };
+		SBgra			disabledForeColor					= { _disabledForeColor };
+		SBgra			disabledItemBackColor				= { _disabledBackColor };
+		SBgra			disabledItemForeColor				= { _disabledForeColor };
 		SBgra			highlightSymbolBackColor			= { rgba(235, 220, 255, 255) };			// Very pastel purple
 		SBgra			colorTracking						= { rgba(0, 0, 255, 255) };				// Blue
 		f32				trackingRatio						= 0.025f;

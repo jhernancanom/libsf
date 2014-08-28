@@ -122,6 +122,7 @@
 	const u32		_VAR_TYPE_DATE									= 21;
 	const u32		_VAR_TYPE_DATETIME								= 22;
 	const u32		_VAR_TYPE_LOGICAL								= 23;			// Note:  This includes the logicalx types, but the value stored determines the logicalx setting.
+	const u32		_VAR_TYPE_BITMAP								= 24;
 
 
 //////////

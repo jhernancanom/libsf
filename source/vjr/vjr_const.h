@@ -148,7 +148,10 @@ typedef SEM**		SEMpp;
 	#define red(rgbaColor)					((rgbaColor >> 16) & 0xff)
 	#define grn(rgbaColor)					((rgbaColor >> 8)  & 0xff)
 	#define blu(rgbaColor)					( rgbaColor        & 0xff)
-	
+
+	#define _disabledBackColor				rgba(255, 255, 255, 255)
+	#define _disabledForeColor				rgba(192, 192, 230, 255)
+
 #if !defined(_MSC_VER)
 	// gcc
 	#define debug_break						asm("int $3")

@@ -227,21 +227,21 @@ struct SWindow
 struct SDatum
 {
 	union {
-		s8*		data;													// Content
-		s8*		data_s8;												// To access the data as s8
-		u8*		data_u8;												// To access the data as u8
-		u64*	data_u64;												// To access the data as u64
-		s64*	data_s64;												// To access the data as s64
-		u32*	data_u32;												// To access the data as u32
-		s32*	data_s32;												// To access the data as s32
-		u16*	data_u16;												// To access the data as u16
-		s16*	data_s16;												// To access the data as s16
-		f32*	data_f32;												// To access the data as f32
-		f64*	data_f64;												// To access the data as f64
-		SBgra*	data_bgra;												// to access the data as SBgra
-		SBgra*	data_bgr;												// to access the data as SBgr
+		s8*			data;												// Content
+		s8*			data_s8;											// To access the data as s8
+		u8*			data_u8;											// To access the data as u8
+		u64*		data_u64;											// To access the data as u64
+		s64*		data_s64;											// To access the data as s64
+		u32*		data_u32;											// To access the data as u32
+		s32*		data_s32;											// To access the data as s32
+		u16*		data_u16;											// To access the data as u16
+		s16*		data_s16;											// To access the data as s16
+		f32*		data_f32;											// To access the data as f32
+		f64*		data_f64;											// To access the data as f64
+		SBgra*		data_bgra;											// to access the data as SBgra
+		SBgra*		data_bgr;											// to access the data as SBgr
 	};
-	s32			length;													// Content length
+	s32				length;												// Content length
 };
 
 struct STranslate
@@ -289,7 +289,6 @@ struct SVariable
 	SLL			ll;
 	SVariable*	indirect;												// If non-NULL, and not an object or thisCode, this variable is an indirect reference to an underlying variable.
 	bool		isVarAllocated;											// If true, this variable structure was allocated, and needs to be released upon delete.
-	bool		isValueAllocated;										// If true, the data pointed to by this->value.data was allocated
 
 	// Variable data
 	SDatum		name;													// Name of this variable (alway allocated)
@@ -298,9 +297,11 @@ struct SVariable
 
 	// Variable content based on type
 	u32			varType;												// Variable type (see _VAR_TYPE_* constants)
+	bool		isValueAllocated;										// If true, the data pointed to by this->value.data, or this->obj, or this->bmp, or this->thisCode was allocated
 	union {
 		SObject*		obj;											// The object this item relates to.  If isValueAllocated is set, this variable owns the object.
 		SFunction*		thisCode;										// Pointer to the code block this relates to
+		SBitmap*		bmp;											// The bitmap this item points to
 		SDatum			value;											// The actual value
 	};
 

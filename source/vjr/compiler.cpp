@@ -4383,6 +4383,12 @@ debug_break;
 							varNew->isValueAllocated = true;
 							iDatum_allocateSpace(&varNew->value, 1);
 							break;
+
+						case _VAR_TYPE_BITMAP:
+							varNew->isValueAllocated = true;
+							iDatum_allocateSpace(&varNew->value, 4);
+							varNew->value.data_bmp = bmpNoImage;
+							break;
 					}
 				}
 			}
@@ -4578,17 +4584,33 @@ debug_break;
 						// Nothing is allocated
 						break;
 
-					case _VAR_TYPE_OBJECT:
 					case _VAR_TYPE_THISCODE:
 						// Indirect references only
 						varDst->indirect = varSrc;
+						iDatum_duplicate(&varDst->value, &varSrc->value);
 						break;
 
-
 					default:
-						// As big as it is
+						// Copy whatever content is there
 						varDst->isValueAllocated = true;
-						iDatum_duplicate(&varDst->value, &varSrc->value);
+
+						// If it's an object or bitmap, we need to make a real copy
+						switch (varSrc->varType)
+						{
+							case _VAR_TYPE_OBJECT:
+								// Copy the object
+								varDst->obj = iObj_copy(varSrc->obj);
+								break;
+
+							case _VAR_TYPE_BITMAP:
+								// Copy the bitmap
+								varDst->bmp = iBmp_copy(varSrc->bmp);
+								break;
+
+							default:
+								iDatum_duplicate(&varDst->value, &varSrc->value);
+								break;
+						}
 				}
 
 				// Indicate success
@@ -4626,11 +4648,7 @@ debug_break;
 
 			} else {
 				// Create a new real variable
-				varDst = iVariable_create(varSrc->varType, NULL);
-
-				// Copy the content
-				if (varDst)
-					iDatum_duplicate(&varDst->value, &varSrc->value);
+				iVariable_copy(varDst, varSrc);
 			}
 
 			// Success or failure ... it's in the allocation
