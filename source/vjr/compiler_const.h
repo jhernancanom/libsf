@@ -226,6 +226,10 @@
 	const s8		cgcCaskTildeOpen[]								= "~|";
 	const s8		cgcCaskTildeClose[]								= "|~";
 
+	const s8		cgcBackslash[]									= "\\";
+	const s8		cgcSlash[]										= "/";
+	const s8		cgcS[]											= "S";
+	const s8		cgcNullString[]									= "";
 	const s8		cgcPseudoFunctionName[]							= "__top_of_code_block";
 	const s8		cgcNullText[]									= ".NULL.";
 	const s8		cgcObjectText[]									= "(object)";
