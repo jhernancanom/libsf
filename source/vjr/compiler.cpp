@@ -4658,7 +4658,7 @@ debug_break;
 		} else {
 			// Failure
 			iEngine_error(_ERROR_VARIABLE_NOT_FOUND, varSrc);
-			return(false);
+			return(NULL);
 		}
 	}
 

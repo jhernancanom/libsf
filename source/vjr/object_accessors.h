@@ -1363,18 +1363,18 @@
 
 		// Default values
 		union {
-			u32		default_u32;
-			f64		default_f64;
-			f32		default_f32;
-			s64		default_s64;
-			s32		default_s32;
-			s16		default_s16;
-			s8		default_s8;
-			u64		default_u64;
-			u16		default_u16;
-			u8		default_u8;
-			s8*		default_data_s8;
-			u8*		default_data_u8;
+			u32		_u32;
+			f64		_f64;
+			f32		_f32;
+			s64		_s64;
+			s32		_s32;
+			s16		_s16;
+			s8		_s8;
+			u64		_u64;
+			u16		_u16;
+			u8		_u8;
+			s8*		_s8p;
+			u8*		_u8p;
 		};
 	};
 
@@ -1382,8 +1382,8 @@
 	SPropertyInits gsInitialization[] =
 	{
 		{	_INDEX_ACTIVECOLUMN,			cgc_activeColumn,				sizeof(cgc_activeColumn) - 1,				_VAR_TYPE_S32,			0		},
-		{	_INDEX_ACTIVECONTROL,			cgc_activeControl,				sizeof(cgc_activeControl) - 1,				_VAR_TYPE_OBJECT,		NULL	},
-		{	_INDEX_ACTIVEFORM,				cgc_activeForm,					sizeof(cgc_activeForm) - 1,					_VAR_TYPE_OBJECT,		NULL	},
+		{	_INDEX_ACTIVECONTROL,			cgc_activeControl,				sizeof(cgc_activeControl) - 1,				_VAR_TYPE_OBJECT,		0		},
+		{	_INDEX_ACTIVEFORM,				cgc_activeForm,					sizeof(cgc_activeForm) - 1,					_VAR_TYPE_OBJECT,		0		},
 		{	_INDEX_ACTIVEPAGE,				cgc_activePage,					sizeof(cgc_activePage) - 1,					_VAR_TYPE_S32,			0		},
 		{	_INDEX_ACTIVEROW,				cgc_activeRow,					sizeof(cgc_activeRow) - 1,					_VAR_TYPE_S32,			0		},
 		{	_INDEX_ADDLINEFEEDS,			cgc_addLineFeeds,				sizeof(cgc_addLineFeeds) - 1,				_VAR_TYPE_LOGICAL,		1		},					// .t.=yes (default), .f.=no
@@ -1399,7 +1399,7 @@
 		{	_INDEX_ALWAYSONBOTTOM,			cgc_alwaysOnBottom,				sizeof(cgc_alwaysOnBottom) - 1,				_VAR_TYPE_LOGICAL,		1		},					// .t.=yes, .f.=no (default)
 		{	_INDEX_ALWAYSONTOP,				cgc_alwaysOnTop,				sizeof(cgc_alwaysOnTop) - 1,				_VAR_TYPE_LOGICAL,		1		},					// .t.=yes, .f.=no (default)
 		{	_INDEX_ANCHOR,					cgc_anchor,						sizeof(cgc_anchor) - 1,						_VAR_TYPE_S32,			0		},					// 0=top left (default), 1=top absolute, 2=left absolute, 4=bottom absolute, 8=right absolute, 16=top relative, 32=left relative, 64=bottom relative, 128=right relative, 256=horizontal fixed, 512=vertical fixed
-		{	_INDEX_APPLICATION,				cgc_application,				sizeof(cgc_application) - 1,				_VAR_TYPE_OBJECT,		NULL	},					// A pseudo-interface to application objects and methods
+		{	_INDEX_APPLICATION,				cgc_application,				sizeof(cgc_application) - 1,				_VAR_TYPE_OBJECT,		0		},					// A pseudo-interface to application objects and methods
 		{	_INDEX_AUTOACTIVATE,			cgc_autoActivate,				sizeof(cgc_autoActivate) - 1,				_VAR_TYPE_S32,			0		},					// 0=manual, 1=got focus, 2=double click (default), 3=automatic
 		{	_INDEX_AUTOCENTER,				cgc_autoCenter,					sizeof(cgc_autoCenter) - 1,					_VAR_TYPE_LOGICAL,		0		},					// .t.=yes, .f.=no (default)
 		{	_INDEX_AUTOCOMPSOURCE,			cgc_autoCompSource,				sizeof(cgc_autoCompSource) - 1,				_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// Field to track for auto complete
@@ -1435,26 +1435,26 @@
 		{	_INDEX_COLUMNCOUNT,				cgc_columnCount,				sizeof(cgc_columnCount) - 1,				_VAR_TYPE_S32,			1  	    },					// The number of columns on the control, varies by control
 		{	_INDEX_COLUMNLINES,				cgc_columnLines,				sizeof(cgc_columnLines) - 1,				_VAR_TYPE_LOGICAL,		1  	    },					// .t.=visible (default), .f.=not visible
 		{	_INDEX_COLUMNORDER,				cgc_columnOrder,				sizeof(cgc_columnOrder) - 1,				_VAR_TYPE_S32,			0  	    },					// This column's order
-		{	_INDEX_COLUMNWIDTHS,			cgc_columnWidths,				sizeof(cgc_columnWidths) - 1,				_VAR_TYPE_CHARACTER,	NULL    },					// A comma-delimited string
-		{	_INDEX_COLUMNS,					cgc_columns,					sizeof(cgc_columns) - 1,					_VAR_TYPE_OBJECT,		NULL    },					// A pseudo-object to access columns within
+		{	_INDEX_COLUMNWIDTHS,			cgc_columnWidths,				sizeof(cgc_columnWidths) - 1,				_VAR_TYPE_CHARACTER,	0		},					// A comma-delimited string
+		{	_INDEX_COLUMNS,					cgc_columns,					sizeof(cgc_columns) - 1,					_VAR_TYPE_OBJECT,		0	    },					// A pseudo-object to access columns within
 		{	_INDEX_COMMENT,					cgc_comment,					sizeof(cgc_comment) - 1,					_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// Unspecified
 		{	_INDEX_CONTINUOUSSCROLL,		cgc_continuousScroll,			sizeof(cgc_continuousScroll) - 1,			_VAR_TYPE_LOGICAL,		1  	    },					// .t.=scrolls with mouse down (default), .f.=scrolls only when released
 		{	_INDEX_CONTROLBOX,				cgc_controlBox,					sizeof(cgc_controlBox) - 1,					_VAR_TYPE_LOGICAL,		1  	    },					// .t.=form and subform icon (default), .f.=no icon
 		{	_INDEX_CONTROLCOUNT,			cgc_controlCount,				sizeof(cgc_controlCount) - 1,				_VAR_TYPE_S32,			0  	    },					// Varies, based on number of direct child objects
 		{	_INDEX_CONTROLSOURCE,			cgc_controlSource,				sizeof(cgc_controlSource) - 1,				_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// The source for the object
-		{	_INDEX_CONTROLS,				cgc_controls,					sizeof(cgc_controls) - 1,					_VAR_TYPE_OBJECT,		NULL    },					// A psuedo-object to access controls within
+		{	_INDEX_CONTROLS,				cgc_controls,					sizeof(cgc_controls) - 1,					_VAR_TYPE_OBJECT,		0	    },					// A psuedo-object to access controls within
 		{	_INDEX_COUNT,					cgc_count,						sizeof(cgc_count) - 1,						_VAR_TYPE_S32,			0  	    },					// Number of items in the object
-		{	_INDEX_CURRENTCONTROL,			cgc_currentControl,				sizeof(cgc_currentControl) - 1,				_VAR_TYPE_OBJECT,		NULL    },					// Which control in a column is used for display
+		{	_INDEX_CURRENTCONTROL,			cgc_currentControl,				sizeof(cgc_currentControl) - 1,				_VAR_TYPE_OBJECT,		0	    },					// Which control in a column is used for display
 		{	_INDEX_CURRENTX,				cgc_currentX,					sizeof(cgc_currentX) - 1,					_VAR_TYPE_S32,			0  	    },					// The X coordinate for drawing (not used in Visual FreePro, Jr.)
 		{	_INDEX_CURRENTY,				cgc_currentY,					sizeof(cgc_currentY) - 1,					_VAR_TYPE_S32,			0  	    },					// The Y coordinate for drawing (not used in Visual FreePro, Jr.)
 		{	_INDEX_CURVATURE,				cgc_curvature,					sizeof(cgc_curvature) - 1,					_VAR_TYPE_S32,			0  	    },					// 0=none, 1..98=rounded, 99=full circle
 		{	_INDEX_DECLASS,					cgc_dEClass,					sizeof(cgc_dEClass) - 1,					_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// Varies
 		{	_INDEX_DECLASSLIBRARY,			cgc_dEClassLibrary,				sizeof(cgc_dEClassLibrary) - 1,				_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// Varies
-		{	_INDEX_DATAENVIRONMENT,			cgc_dataEnvironment,			sizeof(cgc_dataEnvironment) - 1,			_VAR_TYPE_OBJECT,		NULL    },					// Varies
+		{	_INDEX_DATAENVIRONMENT,			cgc_dataEnvironment,			sizeof(cgc_dataEnvironment) - 1,			_VAR_TYPE_OBJECT,		0		},					// Varies
 		{	_INDEX_DATASESSION,				cgc_dataSession,				sizeof(cgc_dataSession) - 1,				_VAR_TYPE_S32,			0  	    },					// 0=default, 1=private
 		{	_INDEX_DATASESSIONID,			cgc_dataSessionID,				sizeof(cgc_dataSessionID) - 1,				_VAR_TYPE_S32,			0  	    },					// Varies
 		{	_INDEX_DATEFORMAT,				cgc_dateFormat,					sizeof(cgc_dateFormat) - 1,					_VAR_TYPE_S32,			0  	    },					// 0=use SET DATE (default), 1=American mm/dd/yy, 2=ANSI yy.mm.dd, 3=British dd/mm/yy, 4=Italian dd-mm-yy, 5= French dd/mm/yy, 6=German dd.mm.yy, 7=Japan yy/mm/dd, 8= Taiwan yy/mm/dd, 9=USA mm-dd-yy, 10=MDY mm/dd/yy, 11=DMY dd/mm/yy, 12=YMD yy/mm/dd, 12=short per Windows' settings, 13=long per Windows' settings
-		{	_INDEX_DATEMARK,				cgc_dateMark,					sizeof(cgc_dateMark) - 1,					_VAR_TYPE_CHARACTER,	NULL    },					// If unspecified, uses SET MARK
+		{	_INDEX_DATEMARK,				cgc_dateMark,					sizeof(cgc_dateMark) - 1,					_VAR_TYPE_CHARACTER,	0 	    },					// If unspecified, uses SET MARK
 		{	_INDEX_DEFOLELCID,				cgc_defOLELCID,					sizeof(cgc_defOLELCID) - 1,					_VAR_TYPE_S32,			0  	    },					// Default locale ID
 		{	_INDEX_DEFAULT,					cgc_default,					sizeof(cgc_default) - 1,					_VAR_TYPE_LOGICAL,		0  	    },					// .t.=Control to trigger with enter key, .f.=do not trigger (default)
 		{	_INDEX_DELETEMARK,				cgc_deleteMark,					sizeof(cgc_deleteMark) - 1,					_VAR_TYPE_LOGICAL,		1  	    },					// .t.=show deleted() mark (default), .f.=do not show
@@ -1464,7 +1464,7 @@
 		{	_INDEX_DISABLEDFORECOLOR,		cgc_disabledForeColor,			sizeof(cgc_disabledForeColor) - 1,			_VAR_TYPE_S32,			_disabledForeColor },
 		{	_INDEX_DISABLEDITEMBACKCOLOR,	cgc_disabledItemBackColor,		sizeof(cgc_disabledItemBackColor) - 1,		_VAR_TYPE_S32,			_disabledBackColor },
 		{	_INDEX_DISABLEDITEMFORECOLOR,	cgc_disabledItemForeColor,		sizeof(cgc_disabledItemForeColor) - 1,		_VAR_TYPE_S32,			_disabledForeColor },
-		{	_INDEX_DISABLEDPICTURE,			cgc_disabledPicture,			sizeof(cgc_disabledPicture) - 1,			_VAR_TYPE_BITMAP,		NULL	},					// No picture by default
+		{	_INDEX_DISABLEDPICTURE,			cgc_disabledPicture,			sizeof(cgc_disabledPicture) - 1,			_VAR_TYPE_BITMAP,		0		},					// No picture by default
 		{	_INDEX_DISPLAYCOUNT,			cgc_displayCount,				sizeof(cgc_displayCount) - 1,				_VAR_TYPE_S32,			0  		},					// Default number of items to display in a combobox
 		{	_INDEX_DISPLAYVALUE,			cgc_displayValue,				sizeof(cgc_displayValue) - 1,				_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// The displayed value in a listbox or combobox
 		{	_INDEX_DOCREATE,				cgc_doCreate,					sizeof(cgc_doCreate) - 1,					_VAR_TYPE_LOGICAL,		1  		},					// A pseudo-property indicating if the form should actually be created
@@ -1511,7 +1511,7 @@
 		{	_INDEX_FORECOLOR,				cgc_foreColor,					sizeof(cgc_foreColor) - 1,					_VAR_TYPE_S32,			0  		},					// Black
 		{	_INDEX_FORMCOUNT,				cgc_formCount,					sizeof(cgc_formCount) - 1,					_VAR_TYPE_S32,			0  		},					// Number of forms in a form set
 		{	_INDEX_FORMAT,					cgc_format,						sizeof(cgc_format) - 1,						_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// The input format string
-		{	_INDEX_FORMS,					cgc_forms,						sizeof(cgc_forms) - 1,						_VAR_TYPE_OBJECT,		NULL	},					// A pseudo index object to access the forms of a form set
+		{	_INDEX_FORMS,					cgc_forms,						sizeof(cgc_forms) - 1,						_VAR_TYPE_OBJECT,		0		},					// A pseudo index object to access the forms of a form set
 		{	_INDEX_GRIDLINECOLOR,			cgc_gridLineColor,				sizeof(cgc_gridLineColor) - 1,				_VAR_TYPE_S32,			_blackColor },				// The default grid line color
 		{	_INDEX_GRIDLINEWIDTH,			cgc_gridLineWidth,				sizeof(cgc_gridLineWidth) - 1,				_VAR_TYPE_S32,			1  		},					// The default grid line width
 		{	_INDEX_GRIDLINES,				cgc_gridLines,					sizeof(cgc_gridLines) - 1,					_VAR_TYPE_S32,			_GRID_LINES_BOTH },			// 0=none, 1=horizontal only, 2=vertical online, 3=both (default)
@@ -1533,7 +1533,7 @@
 		{	_INDEX_HOSTNAME,				cgc_hostName,					sizeof(cgc_hostName) - 1,					_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// The name to display for OLE controls
 		{	_INDEX_HOURS,					cgc_hours,						sizeof(cgc_hours) - 1,						_VAR_TYPE_S32,			0  		},					// 0=use SET HOURS (default), 1=12 hour, 2=24-hour
 		{	_INDEX_IMEMODE,					cgc_iMEMode,					sizeof(cgc_iMEMode) - 1,					_VAR_TYPE_S32,			0  		},					// 0=use OS settings (default), 1=open on focus, 2=close on focus
-		{	_INDEX_INCREMENT,				cgc_increment,					sizeof(cgc_increment) - 1,					_VAR_TYPE_F64,			1.0		},					// The default increment for spinners
+		{	_INDEX_INCREMENT,				cgc_increment,					sizeof(cgc_increment) - 1,					_VAR_TYPE_F64,			1		},					// The default increment for spinners
 		{	_INDEX_INCREMENTALSEARCH,		cgc_incrementalSearch,			sizeof(cgc_incrementalSearch) - 1,			_VAR_TYPE_LOGICAL,		1  		},					// .t.=yes (default), .f.=no (should keyboard input perform a search on each character)
 		{	_INDEX_INPUTMASK,				cgc_inputMask,					sizeof(cgc_inputMask) - 1,					_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// The input mask
 		{	_INDEX_INTEGRALHEIGHT,			cgc_integralHeight,				sizeof(cgc_integralHeight) - 1,				_VAR_TYPE_LOGICAL,		0  		},					// .t.=yes, .f.=no (default) (should the height of a control be auto-adjusted so the last line is fully displayed)
@@ -1739,7 +1739,7 @@
 
 	SPropertyMap gcProps_empty[] =
 	{
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_subform[] =
@@ -1794,12 +1794,12 @@
 		{	_INDEX_VISIBLE,					(u32)&iObj_set_visible,				(u32)&iObj_get_visible					},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
 		{	_INDEX_ZOOMBOX,					(u32)&iObj_set_zoomBox,				(u32)&iObj_get_zoomBox					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_radio[] =
 	{
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_checkbox[] =
@@ -1870,7 +1870,7 @@
 		{	_INDEX_WHATSTHISHELPID,			(u32)&iObj_set_whatsThisHelpID,		(u32)&iObj_get_whatsThisHelpID			},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
 		{	_INDEX_WORDWRAP,				(u32)&iObj_set_wordWrap,			(u32)&iObj_get_wordWrap					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_button[] =
@@ -1941,7 +1941,7 @@
 		{	_INDEX_WHATSTHISHELPID,			(u32)&iObj_set_whatsThisHelpID,		(u32)&iObj_get_whatsThisHelpID			},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
 		{	_INDEX_WORDWRAP,				(u32)&iObj_set_wordWrap,			(u32)&iObj_get_wordWrap					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_cmdgroup[] =
@@ -1982,7 +1982,7 @@
 		{	_INDEX_VISIBLE,					(u32)&iObj_set_visible,				(u32)&iObj_get_visible					},
 		{	_INDEX_WHATSTHISHELPID,			(u32)&iObj_set_whatsThisHelpID,		(u32)&iObj_get_whatsThisHelpID			},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_label[] =
@@ -2043,7 +2043,7 @@
 		{	_INDEX_WHATSTHISHELPID,			(u32)&iObj_set_whatsThisHelpID,		(u32)&iObj_get_whatsThisHelpID			},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
 		{	_INDEX_WORDWRAP,				(u32)&iObj_set_wordWrap,			(u32)&iObj_get_wordWrap					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_option[] =
@@ -2107,7 +2107,7 @@
 		{	_INDEX_WHATSTHISHELPID,			(u32)&iObj_set_whatsThisHelpID,		(u32)&iObj_get_whatsThisHelpID			},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
 		{	_INDEX_WORDWRAP,				(u32)&iObj_set_wordWrap,			(u32)&iObj_get_wordWrap					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_optgroup[] =
@@ -2149,7 +2149,7 @@
 		{	_INDEX_VISIBLE,					(u32)&iObj_set_visible,				(u32)&iObj_get_visible					},
 		{	_INDEX_WHATSTHISHELPID,			(u32)&iObj_set_whatsThisHelpID,		(u32)&iObj_get_whatsThisHelpID			},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_textbox[] =
@@ -2326,7 +2326,7 @@
 		{	_INDEX_VISIBLE,					(u32)&iObj_set_visible,				(u32)&iObj_get_visible					},
 		{	_INDEX_WHATSTHISHELPID,			(u32)&iObj_set_whatsThisHelpID,		(u32)&iObj_get_whatsThisHelpID			},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_listbox[] =
@@ -2422,7 +2422,7 @@
 		{	_INDEX_VISIBLE,					(u32)&iObj_set_visible,				(u32)&iObj_get_visible					},
 		{	_INDEX_WHATSTHISHELPID,			(u32)&iObj_set_whatsThisHelpID,		(u32)&iObj_get_whatsThisHelpID			},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_combobox[] =
@@ -2536,7 +2536,7 @@
 		{	_INDEX_VISIBLE,					(u32)&iObj_set_visible,				(u32)&iObj_get_visible					},
 		{	_INDEX_WHATSTHISHELPID,			(u32)&iObj_set_whatsThisHelpID,		(u32)&iObj_get_whatsThisHelpID			},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_form[] =
@@ -2654,7 +2654,7 @@
 		{	_INDEX_WHATSTHISBUTTON,			(u32)&iObj_set_whatsThisButton,		(u32)&iObj_get_whatsThisButton			},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
 		{	_INDEX_ZOOMBOX,					(u32)&iObj_set_zoomBox,				(u32)&iObj_get_zoomBox					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_formset[] =
@@ -2687,7 +2687,7 @@
 		{	_INDEX_VISIBLE,					(u32)&iObj_set_visible,				(u32)&iObj_get_visible					},
 		{	_INDEX_WINDOWLIST,				(u32)&iObj_set_windowList,			(u32)&iObj_get_windowList				},
 		{	_INDEX_WINDOWTYPE,				(u32)&iObj_set_windowType,			(u32)&iObj_get_windowType				},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_toolbar[] =
@@ -2738,7 +2738,7 @@
 		{	_INDEX_VISIBLE,					(u32)&iObj_set_visible,				(u32)&iObj_get_visible					},
 		{	_INDEX_WHATSTHISHELPID,			(u32)&iObj_set_whatsThisHelpID,		(u32)&iObj_get_whatsThisHelpID			},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_separator[] =
@@ -2755,7 +2755,7 @@
 		{	_INDEX_STYLE,					(u32)&iObj_set_style,				(u32)&iObj_get_style					},
 		{	_INDEX_TAG,						(u32)&iObj_set_tag,					(u32)&iObj_get_tag						},
 		{	_INDEX_VISIBLE,					(u32)&iObj_set_visible,				(u32)&iObj_get_visible					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_line[] =
@@ -2796,7 +2796,7 @@
 		{	_INDEX_VISIBLE,					(u32)&iObj_set_visible,				(u32)&iObj_get_visible					},
 		{	_INDEX_WHATSTHISHELPID,			(u32)&iObj_set_whatsThisHelpID,		(u32)&iObj_get_whatsThisHelpID			},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_shape[] =
@@ -2843,7 +2843,7 @@
 		{	_INDEX_VISIBLE,					(u32)&iObj_set_visible,				(u32)&iObj_get_visible					},
 		{	_INDEX_WHATSTHISHELPID,			(u32)&iObj_set_whatsThisHelpID,		(u32)&iObj_get_whatsThisHelpID			},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_image[] =
@@ -2885,7 +2885,7 @@
 		{	_INDEX_VISIBLE,					(u32)&iObj_set_visible,				(u32)&iObj_get_visible					},
 		{	_INDEX_WHATSTHISHELPID,			(u32)&iObj_set_whatsThisHelpID,		(u32)&iObj_get_whatsThisHelpID			},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_container[] =
@@ -2933,7 +2933,7 @@
 		{	_INDEX_VISIBLE,					(u32)&iObj_set_visible,				(u32)&iObj_get_visible					},
 		{	_INDEX_WHATSTHISHELPID,			(u32)&iObj_set_whatsThisHelpID,		(u32)&iObj_get_whatsThisHelpID			},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_control[] =
@@ -2981,7 +2981,7 @@
 		{	_INDEX_VISIBLE,					(u32)&iObj_set_visible,				(u32)&iObj_get_visible					},
 		{	_INDEX_WHATSTHISHELPID,			(u32)&iObj_set_whatsThisHelpID,		(u32)&iObj_get_whatsThisHelpID			},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_grid[] =
@@ -3080,7 +3080,7 @@
 		{	_INDEX_VISIBLE,					(u32)&iObj_set_visible,				(u32)&iObj_get_visible					},
 		{	_INDEX_WHATSTHISHELPID,			(u32)&iObj_set_whatsThisHelpID,		(u32)&iObj_get_whatsThisHelpID			},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_column[] =
@@ -3144,7 +3144,7 @@
 		{	_INDEX_TOOLTIPTEXT,				(u32)&iObj_set_toolTipText,			(u32)&iObj_get_toolTipText				},
 		{	_INDEX_VISIBLE,					(u32)&iObj_set_visible,				(u32)&iObj_get_visible					},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_header[] =
@@ -3180,7 +3180,7 @@
 		{	_INDEX_TAG,						(u32)&iObj_set_tag,					(u32)&iObj_get_tag						},
 		{	_INDEX_TOOLTIPTEXT,				(u32)&iObj_set_toolTipText,			(u32)&iObj_get_toolTipText				},
 		{	_INDEX_WORDWRAP,				(u32)&iObj_set_wordWrap,			(u32)&iObj_get_wordWrap					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_olebound[] =
@@ -3222,7 +3222,7 @@
 		{	_INDEX_WHATSTHISHELPID,			(u32)&iObj_set_whatsThisHelpID,		(u32)&iObj_get_whatsThisHelpID			},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
 		{	_INDEX_WORDWRAP,				(u32)&iObj_set_wordWrap,			(u32)&iObj_get_wordWrap					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_olecontain[] =
@@ -3266,7 +3266,7 @@
 		{	_INDEX_VISIBLE,					(u32)&iObj_set_visible,				(u32)&iObj_get_visible					},
 		{	_INDEX_WHATSTHISHELPID,			(u32)&iObj_set_whatsThisHelpID,		(u32)&iObj_get_whatsThisHelpID			},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_spinner[] =
@@ -3347,7 +3347,7 @@
 		{	_INDEX_VISIBLE,					(u32)&iObj_set_visible,				(u32)&iObj_get_visible					},
 		{	_INDEX_WHATSTHISHELPID,			(u32)&iObj_set_whatsThisHelpID,		(u32)&iObj_get_whatsThisHelpID			},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_timer[] =
@@ -3367,7 +3367,7 @@
 		{	_INDEX_TAG,						(u32)&iObj_set_tag,					(u32)&iObj_get_tag						},
 		{	_INDEX_TOP,						(u32)&iObj_set_top,					(u32)&iObj_get_top						},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_hyperlink[] =
@@ -3381,7 +3381,7 @@
 		{	_INDEX_PARENT,					(u32)&iObj_set_parent,				(u32)&iObj_get_parent					},
 		{	_INDEX_PARENTCLASS,				(u32)&iObj_set_parentClass,			(u32)&iObj_get_parentClass				},
 		{	_INDEX_TAG,						(u32)&iObj_set_tag,					(u32)&iObj_get_tag						},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_collection[] =
@@ -3396,7 +3396,7 @@
 		{	_INDEX_PARENT,					(u32)&iObj_set_parent,				(u32)&iObj_get_parent					},
 		{	_INDEX_PARENTCLASS,				(u32)&iObj_set_parentClass,			(u32)&iObj_get_parentClass				},
 		{	_INDEX_TAG,						(u32)&iObj_set_tag,					(u32)&iObj_get_tag						},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_page[] =
@@ -3445,7 +3445,7 @@
 		{	_INDEX_TAG,						(u32)&iObj_set_tag,					(u32)&iObj_get_tag						},
 		{	_INDEX_TOOLTIPTEXT,				(u32)&iObj_set_toolTipText,			(u32)&iObj_get_toolTipText				},
 		{	_INDEX_WHATSTHISHELPID,			(u32)&iObj_set_whatsThisHelpID,		(u32)&iObj_get_whatsThisHelpID			},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_pageframe[] =
@@ -3498,7 +3498,7 @@
 		{	_INDEX_VISIBLE,					(u32)&iObj_set_visible,				(u32)&iObj_get_visible					},
 		{	_INDEX_WHATSTHISHELPID,			(u32)&iObj_set_whatsThisHelpID,		(u32)&iObj_get_whatsThisHelpID			},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_session[] =
@@ -3514,7 +3514,7 @@
 		{	_INDEX_PARENT,					(u32)&iObj_set_parent,				(u32)&iObj_get_parent					},
 		{	_INDEX_PARENTCLASS,				(u32)&iObj_set_parentClass,			(u32)&iObj_get_parentClass				},
 		{	_INDEX_TAG,						(u32)&iObj_set_tag,					(u32)&iObj_get_tag						},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_custom[] =
@@ -3538,7 +3538,7 @@
 		{	_INDEX_TOP,						(u32)&iObj_set_top,					(u32)&iObj_get_top						},
 		{	_INDEX_WHATSTHISHELPID,			(u32)&iObj_set_whatsThisHelpID,		(u32)&iObj_get_whatsThisHelpID			},
 		{	_INDEX_WIDTH,					(u32)&iObj_set_width,				(u32)&iObj_get_width					},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 	SPropertyMap gcProps_exception[] =
@@ -3559,7 +3559,7 @@
 		{	_INDEX_PARENT,					(u32)&iObj_set_parent,				(u32)&iObj_get_parent					},
 		{	_INDEX_PARENTCLASS,				(u32)&iObj_set_parentClass,			(u32)&iObj_get_parentClass				},
 		{	_INDEX_TAG,						(u32)&iObj_set_tag,					(u32)&iObj_get_tag						},
-		{	NULL,							0,									0										}
+		{	0,								0,									0										}
 	};
 
 
