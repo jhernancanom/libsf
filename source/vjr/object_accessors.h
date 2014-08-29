@@ -1464,83 +1464,83 @@
 		{	_INDEX_DISABLEDFORECOLOR,		cgc_disabledForeColor,			sizeof(cgc_disabledForeColor) - 1,			_VAR_TYPE_S32,			_disabledForeColor },
 		{	_INDEX_DISABLEDITEMBACKCOLOR,	cgc_disabledItemBackColor,		sizeof(cgc_disabledItemBackColor) - 1,		_VAR_TYPE_S32,			_disabledBackColor },
 		{	_INDEX_DISABLEDITEMFORECOLOR,	cgc_disabledItemForeColor,		sizeof(cgc_disabledItemForeColor) - 1,		_VAR_TYPE_S32,			_disabledForeColor },
-		{	_INDEX_DISABLEDPICTURE,			cgc_disabledPicture,			sizeof(cgc_disabledPicture) - 1,			_VAR_TYPE_BITMAP,		NULL	},					// No picture
-		{	_INDEX_DISPLAYCOUNT,			cgc_displayCount,				sizeof(cgc_displayCount) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DISPLAYVALUE,			cgc_displayValue,				sizeof(cgc_displayValue) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DOCREATE,				cgc_doCreate,					sizeof(cgc_doCreate) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DOCKPOSITION,			cgc_dockPosition,				sizeof(cgc_dockPosition) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DOCKABLE,				cgc_dockable,					sizeof(cgc_dockable) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DOCKED,					cgc_docked,						sizeof(cgc_docked) - 1,						_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DOCUMENTFILE,			cgc_documentFile,				sizeof(cgc_documentFile) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DOWNPICTURE,				cgc_downPicture,				sizeof(cgc_downPicture) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DRAGICON,				cgc_dragIcon,					sizeof(cgc_dragIcon) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DRAGMODE,				cgc_dragMode,					sizeof(cgc_dragMode) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DRAWMODE,				cgc_drawMode,					sizeof(cgc_drawMode) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DRAWSTYLE,				cgc_drawStyle,					sizeof(cgc_drawStyle) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DRAWWIDTH,				cgc_drawWidth,					sizeof(cgc_drawWidth) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DYNAMICALIGNMENT,		cgc_dynamicAlignment,			sizeof(cgc_dynamicAlignment) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DYNAMICBACKCOLOR,		cgc_dynamicBackColor,			sizeof(cgc_dynamicBackColor) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DYNAMICCURRENTCONTROL,	cgc_dynamicCurrentControl,		sizeof(cgc_dynamicCurrentControl) - 1,		_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DYNAMICFONTBOLD,			cgc_dynamicFontBold,			sizeof(cgc_dynamicFontBold) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DYNAMICFONTITALIC,		cgc_dynamicFontItalic,			sizeof(cgc_dynamicFontItalic) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DYNAMICFONTNAME,			cgc_dynamicFontName,			sizeof(cgc_dynamicFontName) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DYNAMICFONTOUTLINE,		cgc_dynamicFontOutline,			sizeof(cgc_dynamicFontOutline) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DYNAMICFONTSHADOW,		cgc_dynamicFontShadow,			sizeof(cgc_dynamicFontShadow) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DYNAMICFONTSIZE,			cgc_dynamicFontSize,			sizeof(cgc_dynamicFontSize) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DYNAMICFONTSTRIKETHRU,	cgc_dynamicFontStrikeThru,		sizeof(cgc_dynamicFontStrikeThru) - 1,		_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DYNAMICFONTUNDERLINE,	cgc_dynamicFontUnderline,		sizeof(cgc_dynamicFontUnderline) - 1,		_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DYNAMICFORECOLOR,		cgc_dynamicForeColor,			sizeof(cgc_dynamicForeColor) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_DYNAMICINPUTMASK,		cgc_dynamicInputMask,			sizeof(cgc_dynamicInputMask) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_ENABLEHYPERLINKS,		cgc_enableHyperlinks,			sizeof(cgc_enableHyperlinks) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_ENABLED,					cgc_enabled,					sizeof(cgc_enabled) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_ERRORNO,					cgc_errorNo,					sizeof(cgc_errorNo) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_FILLCOLOR,				cgc_fillColor,					sizeof(cgc_fillColor) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_FILLSTYLE,				cgc_fillStyle,					sizeof(cgc_fillStyle) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_FIRSTELEMENT,			cgc_firstElement,				sizeof(cgc_firstElement) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_FONTBOLD,				cgc_fontBold,					sizeof(cgc_fontBold) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_FONTCHARSET,				cgc_fontCharSet,				sizeof(cgc_fontCharSet) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_FONTCONDENSE,			cgc_fontCondense,				sizeof(cgc_fontCondense) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_FONTEXTEND,				cgc_fontExtend,					sizeof(cgc_fontExtend) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_FONTITALIC,				cgc_fontItalic,					sizeof(cgc_fontItalic) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_FONTNAME,				cgc_fontName,					sizeof(cgc_fontName) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_FONTOUTLINE,				cgc_fontOutline,				sizeof(cgc_fontOutline) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_FONTSHADOW,				cgc_fontShadow,					sizeof(cgc_fontShadow) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_FONTSIZE,				cgc_fontSize,					sizeof(cgc_fontSize) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_FONTSTRIKETHRU,			cgc_fontStrikeThru,				sizeof(cgc_fontStrikeThru) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_FONTUNDERLINE,			cgc_fontUnderLine,				sizeof(cgc_fontUnderLine) - 1,				_VAR_TYPE_S32,			0  		},
+		{	_INDEX_DISABLEDPICTURE,			cgc_disabledPicture,			sizeof(cgc_disabledPicture) - 1,			_VAR_TYPE_BITMAP,		NULL	},					// No picture by default
+		{	_INDEX_DISPLAYCOUNT,			cgc_displayCount,				sizeof(cgc_displayCount) - 1,				_VAR_TYPE_S32,			0  		},					// Default number of items to display in a combobox
+		{	_INDEX_DISPLAYVALUE,			cgc_displayValue,				sizeof(cgc_displayValue) - 1,				_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// The displayed value in a listbox or combobox
+		{	_INDEX_DOCREATE,				cgc_doCreate,					sizeof(cgc_doCreate) - 1,					_VAR_TYPE_LOGICAL,		1  		},					// A pseudo-property indicating if the form should actually be created
+		{	_INDEX_DOCKPOSITION,			cgc_dockPosition,				sizeof(cgc_dockPosition) - 1,				_VAR_TYPE_S32,			0  		},					// -1=not docked, 0=top, 1=left, 2=right, 3=bottom, 4=tabbed, 5=link-docked
+		{	_INDEX_DOCKABLE,				cgc_dockable,					sizeof(cgc_dockable) - 1,					_VAR_TYPE_LOGICAL,		0  		},					// .t.=yes, .f.=no (default)
+		{	_INDEX_DOCKED,					cgc_docked,						sizeof(cgc_docked) - 1,						_VAR_TYPE_LOGICAL,		0  		},					// .t.=yes, .f.=no (default)
+		{	_INDEX_DOCUMENTFILE,			cgc_documentFile,				sizeof(cgc_documentFile) - 1,				_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// Name of the OLE-bound document file (if any)
+		{	_INDEX_DOWNPICTURE,				cgc_downPicture,				sizeof(cgc_downPicture) - 1,				_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// Name of the graphic to display when the mouse is down
+		{	_INDEX_DRAGICON,				cgc_dragIcon,					sizeof(cgc_dragIcon) - 1,					_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// Name of the icon to display when the object is being dragged
+		{	_INDEX_DRAGMODE,				cgc_dragMode,					sizeof(cgc_dragMode) - 1,					_VAR_TYPE_S32,			0  		},					// 0=manual (default), 1=automatic
+		{	_INDEX_DRAWMODE,				cgc_drawMode,					sizeof(cgc_drawMode) - 1,					_VAR_TYPE_S32,			13  	},					// 1=black pen, 2=NOT Merge pen, 3=mask NOT pen, 4=NOT copy pen, 5=mask NOT pen, 6=invert, 7=xor, 8=NOT mask pen, 9=mask pen, 10=NOT xor, 11=NOP, 12=merge NOT pen, 13=copy, 14=merge pen NOT, 15=merge pen, 16=white pen
+		{	_INDEX_DRAWSTYLE,				cgc_drawStyle,					sizeof(cgc_drawStyle) - 1,					_VAR_TYPE_S32,			0  		},					// 0=solid, 1=dash, 2=dot, 3=dash-dot, 4=dash-dot-dot, 5=transparent, 6=inside solid
+		{	_INDEX_DRAWWIDTH,				cgc_drawWidth,					sizeof(cgc_drawWidth) - 1,					_VAR_TYPE_S32,			1  		},					// Pixel width for drawing
+		{	_INDEX_DYNAMICALIGNMENT,		cgc_dynamicAlignment,			sizeof(cgc_dynamicAlignment) - 1,			_VAR_TYPE_S32,			3  		},					// 0=middle left, 1=middle right, 2=middle center, 3=automatic (default), 4=top left, 5=top right, 6=top center, 7=bottom left, 8=bottom right, 9=bottom center
+		{	_INDEX_DYNAMICBACKCOLOR,		cgc_dynamicBackColor,			sizeof(cgc_dynamicBackColor) - 1,			_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// Character expression evaluated for the value
+		{	_INDEX_DYNAMICCURRENTCONTROL,	cgc_dynamicCurrentControl,		sizeof(cgc_dynamicCurrentControl) - 1,		_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// Character expression evaluated for the active control for that cell
+		{	_INDEX_DYNAMICFONTBOLD,			cgc_dynamicFontBold,			sizeof(cgc_dynamicFontBold) - 1,			_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// Character expression evaluated for the value
+		{	_INDEX_DYNAMICFONTITALIC,		cgc_dynamicFontItalic,			sizeof(cgc_dynamicFontItalic) - 1,			_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// Character expression evaluated for the value
+		{	_INDEX_DYNAMICFONTNAME,			cgc_dynamicFontName,			sizeof(cgc_dynamicFontName) - 1,			_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// Character expression evaluated for the value
+		{	_INDEX_DYNAMICFONTOUTLINE,		cgc_dynamicFontOutline,			sizeof(cgc_dynamicFontOutline) - 1,			_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// Character expression evaluated for the value
+		{	_INDEX_DYNAMICFONTSHADOW,		cgc_dynamicFontShadow,			sizeof(cgc_dynamicFontShadow) - 1,			_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// Character expression evaluated for the value
+		{	_INDEX_DYNAMICFONTSIZE,			cgc_dynamicFontSize,			sizeof(cgc_dynamicFontSize) - 1,			_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// Character expression evaluated for the value
+		{	_INDEX_DYNAMICFONTSTRIKETHRU,	cgc_dynamicFontStrikeThru,		sizeof(cgc_dynamicFontStrikeThru) - 1,		_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// Character expression evaluated for the value
+		{	_INDEX_DYNAMICFONTUNDERLINE,	cgc_dynamicFontUnderline,		sizeof(cgc_dynamicFontUnderline) - 1,		_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// Character expression evaluated for the value
+		{	_INDEX_DYNAMICFORECOLOR,		cgc_dynamicForeColor,			sizeof(cgc_dynamicForeColor) - 1,			_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// Character expression evaluated for the value
+		{	_INDEX_DYNAMICINPUTMASK,		cgc_dynamicInputMask,			sizeof(cgc_dynamicInputMask) - 1,			_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// Character expression evaluated for the value
+		{	_INDEX_ENABLEHYPERLINKS,		cgc_enableHyperlinks,			sizeof(cgc_enableHyperlinks) - 1,			_VAR_TYPE_LOGICAL,		1  		},					// .t.=yes, .f.=no (default) are hyperlinks enabled in an editbox or textbox
+		{	_INDEX_ENABLED,					cgc_enabled,					sizeof(cgc_enabled) - 1,					_VAR_TYPE_LOGICAL,		1  		},					// .t.=yes (default), .f.=no
+		{	_INDEX_ERRORNO,					cgc_errorNo,					sizeof(cgc_errorNo) - 1,					_VAR_TYPE_S32,			0  		},					// The error number on an exception
+		{	_INDEX_FILLCOLOR,				cgc_fillColor,					sizeof(cgc_fillColor) - 1,					_VAR_TYPE_S32,			_whiteColor },				// The default fill color
+		{	_INDEX_FILLSTYLE,				cgc_fillStyle,					sizeof(cgc_fillStyle) - 1,					_VAR_TYPE_S32,			_FILL_STYLE_TRANSPARENT },	// 0=solid, 1=transparent (default), 2=horizontal lines, 3=vertical line, 4=ul to lr diagonal, 5=ll to ur diagonal, 6=horizontal and vertical, 7=both diagonals
+		{	_INDEX_FIRSTELEMENT,			cgc_firstElement,				sizeof(cgc_firstElement) - 1,				_VAR_TYPE_S32,			1  		},					// The array element to display in listbox or combobox when rowSourcetype = 5 (array)
+		{	_INDEX_FONTBOLD,				cgc_fontBold,					sizeof(cgc_fontBold) - 1,					_VAR_TYPE_LOGICAL,		0  		},					// .t.=bold, .f.=not bold (default)
+		{	_INDEX_FONTCHARSET,				cgc_fontCharSet,				sizeof(cgc_fontCharSet) - 1,				_VAR_TYPE_S32,			1  		},					// The default font set
+		{	_INDEX_FONTCONDENSE,			cgc_fontCondense,				sizeof(cgc_fontCondense) - 1,				_VAR_TYPE_LOGICAL,		0  		},					// .t.=condense, .f.=not condense (default)
+		{	_INDEX_FONTEXTEND,				cgc_fontExtend,					sizeof(cgc_fontExtend) - 1,					_VAR_TYPE_LOGICAL,		0  		},					// .t.=extend, .f.=not extend (default)
+		{	_INDEX_FONTITALIC,				cgc_fontItalic,					sizeof(cgc_fontItalic) - 1,					_VAR_TYPE_LOGICAL,		0  		},					// .t.=italic, .f.=not italic (default)
+		{	_INDEX_FONTNAME,				cgc_fontName,					sizeof(cgc_fontName) - 1,					_VAR_TYPE_CHARACTER,	(u32)&cgcFontName_default[0] },	// Ubuntu fonts are used by Visual FreePro, Jr. by default
+		{	_INDEX_FONTOUTLINE,				cgc_fontOutline,				sizeof(cgc_fontOutline) - 1,				_VAR_TYPE_LOGICAL,		0  		},					// .t.=outline, .f.=not outline (default)
+		{	_INDEX_FONTSHADOW,				cgc_fontShadow,					sizeof(cgc_fontShadow) - 1,					_VAR_TYPE_LOGICAL,		0  		},					// .t.=shadow, .f.=not shadow (default)
+		{	_INDEX_FONTSIZE,				cgc_fontSize,					sizeof(cgc_fontSize) - 1,					_VAR_TYPE_S32,			10 		},					// Default font size is 10pt
+		{	_INDEX_FONTSTRIKETHRU,			cgc_fontStrikeThru,				sizeof(cgc_fontStrikeThru) - 1,				_VAR_TYPE_LOGICAL,		0  		},					// .t.=strikethru, .f.=not strikethru (default)
+		{	_INDEX_FONTUNDERLINE,			cgc_fontUnderLine,				sizeof(cgc_fontUnderLine) - 1,				_VAR_TYPE_LOGICAL,		0  		},					// .t.=underline, .f.=not underline (default)
 		{	_INDEX_FORECOLOR,				cgc_foreColor,					sizeof(cgc_foreColor) - 1,					_VAR_TYPE_S32,			0  		},					// Black
-		{	_INDEX_FORMCOUNT,				cgc_formCount,					sizeof(cgc_formCount) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_FORMAT,					cgc_format,						sizeof(cgc_format) - 1,						_VAR_TYPE_S32,			0  		},
-		{	_INDEX_FORMS,					cgc_forms,						sizeof(cgc_forms) - 1,						_VAR_TYPE_S32,			0  		},
-		{	_INDEX_GRIDLINECOLOR,			cgc_gridLineColor,				sizeof(cgc_gridLineColor) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_GRIDLINEWIDTH,			cgc_gridLineWidth,				sizeof(cgc_gridLineWidth) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_GRIDLINES,				cgc_gridLines,					sizeof(cgc_gridLines) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_HSCROLLSMALLCHANGE,		cgc_hScrollSmallChange,			sizeof(cgc_hScrollSmallChange) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_HWND,					cgc_hWnd,						sizeof(cgc_hWnd) - 1,						_VAR_TYPE_S32,			0  		},
-		{	_INDEX_HALFHEIGHTCAPTION,		cgc_halfHeightCaption,			sizeof(cgc_halfHeightCaption) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_HEADERCLASS,				cgc_headerClass,				sizeof(cgc_headerClass) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_HEADERCLASSLIBRARY,		cgc_headerClassLibrary,			sizeof(cgc_headerClassLibrary) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_HEADERHEIGHT,			cgc_headerHeight,				sizeof(cgc_headerHeight) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_HEIGHT,					cgc_height,						sizeof(cgc_height) - 1,						_VAR_TYPE_S32,			0  		},
-		{	_INDEX_HELPCONTEXTID,			cgc_helpContextID,				sizeof(cgc_helpContextID) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_HIDESELECTION,			cgc_hideSelection,				sizeof(cgc_hideSelection) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_HIGHLIGHT,				cgc_highLight,					sizeof(cgc_highLight) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_HIGHLIGHTROW,			cgc_highLightRow,				sizeof(cgc_highLightRow) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_HIGHLIGHTBACKCOLOR,		cgc_highlightBackColor,			sizeof(cgc_highlightBackColor) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_HIGHLIGHTFORECOLOR,		cgc_highlightForeColor,			sizeof(cgc_highlightForeColor) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_HIGHLIGHTROWLINEWIDTH,	cgc_highlightRowLineWidth,		sizeof(cgc_highlightRowLineWidth) - 1,		_VAR_TYPE_S32,			0  		},
-		{	_INDEX_HIGHLIGHTSTYLE,			cgc_highlightStyle,				sizeof(cgc_highlightStyle) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_HOSTNAME,				cgc_hostName,					sizeof(cgc_hostName) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_HOURS,					cgc_hours,						sizeof(cgc_hours) - 1,						_VAR_TYPE_S32,			0  		},
-		{	_INDEX_IMEMODE,					cgc_iMEMode,					sizeof(cgc_iMEMode) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_INCREMENT,				cgc_increment,					sizeof(cgc_increment) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_INCREMENTALSEARCH,		cgc_incrementalSearch,			sizeof(cgc_incrementalSearch) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_INPUTMASK,				cgc_inputMask,					sizeof(cgc_inputMask) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_INTEGRALHEIGHT,			cgc_integralHeight,				sizeof(cgc_integralHeight) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_INTERVAL,				cgc_interval,					sizeof(cgc_interval) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_ITEMBACKCOLOR,			cgc_itemBackColor,				sizeof(cgc_itemBackColor) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_ITEMDATA,				cgc_itemData,					sizeof(cgc_itemData) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_ITEMFORECOLOR,			cgc_itemForeColor,				sizeof(cgc_itemForeColor) - 1,				_VAR_TYPE_S32,			0  		},
+		{	_INDEX_FORMCOUNT,				cgc_formCount,					sizeof(cgc_formCount) - 1,					_VAR_TYPE_S32,			0  		},					// Number of forms in a form set
+		{	_INDEX_FORMAT,					cgc_format,						sizeof(cgc_format) - 1,						_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// The input format string
+		{	_INDEX_FORMS,					cgc_forms,						sizeof(cgc_forms) - 1,						_VAR_TYPE_OBJECT,		NULL	},					// A pseudo index object to access the forms of a form set
+		{	_INDEX_GRIDLINECOLOR,			cgc_gridLineColor,				sizeof(cgc_gridLineColor) - 1,				_VAR_TYPE_S32,			_blackColor },				// The default grid line color
+		{	_INDEX_GRIDLINEWIDTH,			cgc_gridLineWidth,				sizeof(cgc_gridLineWidth) - 1,				_VAR_TYPE_S32,			1  		},					// The default grid line width
+		{	_INDEX_GRIDLINES,				cgc_gridLines,					sizeof(cgc_gridLines) - 1,					_VAR_TYPE_S32,			_GRID_LINES_BOTH },			// 0=none, 1=horizontal only, 2=vertical online, 3=both (default)
+		{	_INDEX_HSCROLLSMALLCHANGE,		cgc_hScrollSmallChange,			sizeof(cgc_hScrollSmallChange) - 1,			_VAR_TYPE_S32,			10 		},					// When scalemode = 3, default is 10 pixels
+		{	_INDEX_HWND,					cgc_hWnd,						sizeof(cgc_hWnd) - 1,						_VAR_TYPE_S32,			0  		},					// A direct handle to the OS window
+		{	_INDEX_HALFHEIGHTCAPTION,		cgc_halfHeightCaption,			sizeof(cgc_halfHeightCaption) - 1,			_VAR_TYPE_LOGICAL,		0  		},					// .t.=half height, .f.=full height (default) visual FreePro, Jr. does not use this setting, but it remains for compatibility
+		{	_INDEX_HEADERCLASS,				cgc_headerClass,				sizeof(cgc_headerClass) - 1,				_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// The default header class for a grid
+		{	_INDEX_HEADERCLASSLIBRARY,		cgc_headerClassLibrary,			sizeof(cgc_headerClassLibrary) - 1,			_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// The default header class library for a grid
+		{	_INDEX_HEADERHEIGHT,			cgc_headerHeight,				sizeof(cgc_headerHeight) - 1,				_VAR_TYPE_S32,			0  		},					// The header height for a grid
+		{	_INDEX_HEIGHT,					cgc_height,						sizeof(cgc_height) - 1,						_VAR_TYPE_S32,			0  		},					// The height of the object
+		{	_INDEX_HELPCONTEXTID,			cgc_helpContextID,				sizeof(cgc_helpContextID) - 1,				_VAR_TYPE_S32,			0  		},					// The help context id
+		{	_INDEX_HIDESELECTION,			cgc_hideSelection,				sizeof(cgc_hideSelection) - 1,				_VAR_TYPE_LOGICAL,		0  		},					// .t.=yes (default), .f.=no (should the selected text be hidden (shown as regular text) when the control loses focus)
+		{	_INDEX_HIGHLIGHT,				cgc_highLight,					sizeof(cgc_highLight) - 1,					_VAR_TYPE_LOGICAL,		1  		},					// .t.=yes (default), .f.=no (should the grid cell be highlighted in navigation)
+		{	_INDEX_HIGHLIGHTROW,			cgc_highLightRow,				sizeof(cgc_highLightRow) - 1,				_VAR_TYPE_LOGICAL,		1  		},					// .t.=yes (default), .f.=no (should the entire  grid cell row be highlighted in navigation)
+		{	_INDEX_HIGHLIGHTBACKCOLOR,		cgc_highlightBackColor,			sizeof(cgc_highlightBackColor) - 1,			_VAR_TYPE_S32,			_selectedBackColor },		// The default highlight back color
+		{	_INDEX_HIGHLIGHTFORECOLOR,		cgc_highlightForeColor,			sizeof(cgc_highlightForeColor) - 1,			_VAR_TYPE_S32,			_selectedForeColor },		// The default highlight fore color
+		{	_INDEX_HIGHLIGHTROWLINEWIDTH,	cgc_highlightRowLineWidth,		sizeof(cgc_highlightRowLineWidth) - 1,		_VAR_TYPE_S32,			1  		},					// In pixels, the thickness of the border around the entire grid cell row
+		{	_INDEX_HIGHLIGHTSTYLE,			cgc_highlightStyle,				sizeof(cgc_highlightStyle) - 1,				_VAR_TYPE_S32,			0  		},					// 0=no color (default), 1=highlight current row only, 2=highlight all rows
+		{	_INDEX_HOSTNAME,				cgc_hostName,					sizeof(cgc_hostName) - 1,					_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// The name to display for OLE controls
+		{	_INDEX_HOURS,					cgc_hours,						sizeof(cgc_hours) - 1,						_VAR_TYPE_S32,			0  		},					// 0=use SET HOURS (default), 1=12 hour, 2=24-hour
+		{	_INDEX_IMEMODE,					cgc_iMEMode,					sizeof(cgc_iMEMode) - 1,					_VAR_TYPE_S32,			0  		},					// 0=use OS settings (default), 1=open on focus, 2=close on focus
+		{	_INDEX_INCREMENT,				cgc_increment,					sizeof(cgc_increment) - 1,					_VAR_TYPE_F64,			1.0		},					// The default increment for spinners
+		{	_INDEX_INCREMENTALSEARCH,		cgc_incrementalSearch,			sizeof(cgc_incrementalSearch) - 1,			_VAR_TYPE_LOGICAL,		1  		},					// .t.=yes (default), .f.=no (should keyboard input perform a search on each character)
+		{	_INDEX_INPUTMASK,				cgc_inputMask,					sizeof(cgc_inputMask) - 1,					_VAR_TYPE_CHARACTER,	(u32)&cgcEmptyString[0] },	// The input mask
+		{	_INDEX_INTEGRALHEIGHT,			cgc_integralHeight,				sizeof(cgc_integralHeight) - 1,				_VAR_TYPE_LOGICAL,		0  		},					// .t.=yes, .f.=no (default) (should the height of a control be auto-adjusted so the last line is fully displayed)
+		{	_INDEX_INTERVAL,				cgc_interval,					sizeof(cgc_interval) - 1,					_VAR_TYPE_S32,			0		},					// The default interval between timer fires
+		{	_INDEX_ITEMBACKCOLOR,			cgc_itemBackColor,				sizeof(cgc_itemBackColor) - 1,				_VAR_TYPE_S32,			_whiteColor },				// White
+		{	_INDEX_ITEMDATA,				cgc_itemData,					sizeof(cgc_itemData) - 1,					_VAR_TYPE_S32,			0  		},					// A pseudo-property used for indexed access to listbox or combobox data 
+		{	_INDEX_ITEMFORECOLOR,			cgc_itemForeColor,				sizeof(cgc_itemForeColor) - 1,				_VAR_TYPE_S32,			_blackColor },				// Black
 		{	_INDEX_ITEMIDDATA,				cgc_itemIDData,					sizeof(cgc_itemIDData) - 1,					_VAR_TYPE_S32,			0  		},
 		{	_INDEX_ITEMTIPS,				cgc_itemTips,					sizeof(cgc_itemTips) - 1,					_VAR_TYPE_S32,			0  		},
 		{	_INDEX_KEYPREVIEW,				cgc_keyPreview,					sizeof(cgc_keyPreview) - 1,					_VAR_TYPE_S32,			0  		},
@@ -1640,7 +1640,7 @@
 		{	_INDEX_ROWHEIGHT,				cgc_rowHeight,					sizeof(cgc_rowHeight) - 1,					_VAR_TYPE_S32,			0  		},
 		{	_INDEX_ROWSOURCE,				cgc_rowSource,					sizeof(cgc_rowSource) - 1,					_VAR_TYPE_S32,			0  		},
 		{	_INDEX_ROWSOURCETYPE,			cgc_rowSourceType,				sizeof(cgc_rowSourceType) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SCALEMODE,				cgc_scaleMode,					sizeof(cgc_scaleMode) - 1,					_VAR_TYPE_S32,			0  		},
+		{	_INDEX_SCALEMODE,				cgc_scaleMode,					sizeof(cgc_scaleMode) - 1,					_VAR_TYPE_S32,			3  		},					// 0=foxels, 1=pixels (default)
 		{	_INDEX_SCROLLBARS,				cgc_scrollBars,					sizeof(cgc_scrollBars) - 1,					_VAR_TYPE_S32,			0  		},
 		{	_INDEX_SECONDS,					cgc_seconds,					sizeof(cgc_seconds) - 1,					_VAR_TYPE_S32,			0  		},
 		{	_INDEX_SELLENGTH,				cgc_selLength,					sizeof(cgc_selLength) - 1,					_VAR_TYPE_S32,			0  		},

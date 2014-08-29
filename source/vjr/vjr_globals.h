@@ -261,7 +261,9 @@
 		SFont*			gsFontDefaultTooltip				= NULL;									// Ubuntu Condensed Bold 9 pt
 		SFont*			gsFontCask							= NULL;									// Cask font, Ubuntu Bold 30 pt
 		// Global colors
-		const SBgra		whiteColor							= { rgba(255, 255, 255, 255) };
+		const SBgra		whiteColor							= { _whiteColor };
+		const SBgra		grayColor							= { _grayColor };
+		const SBgra		blackColor							= { _blackColor };
 		const SBgra		yellowColor							= { rgba(255, 255, 0, 255) };
 		const SBgra		redColor							= { rgba(255, 0, 0, 255) };
 		const SBgra		greenColor							= { rgba(0, 255, 0, 255) };
@@ -278,8 +280,6 @@
 		const SBgra		pastelOrangeColor					= { rgba(255, 215, 164, 255) };
 		const SBgra		pastelGreenColor					= { rgba(192, 255, 192, 255) };
 		const SBgra		pastelBlueColor						= { rgba(210, 210, 255, 255) };
-		const SBgra		blackColor							= { rgba(0, 0, 0, 255) };
-		const SBgra		grayColor							= { rgba(192, 192, 192, 255) };
 		const SBgra		maskColor							= { rgba(222, 22, 222, 255) };			// Hideous fuscia (by design)
 		SBgra			tooltipNwBackColor					= { rgba(255, 254, 230, 255) };			// Pastel yellow
 		SBgra			tooltipNeBackColor					= { rgba(252, 242, 192, 25) };			// Less pastel yellow, somewhat pale
@@ -299,8 +299,8 @@
 		SBgra			overrideMatchingForeColor			= { rgba(0, 0, 0, 255) };				// Black
 		SBgra			overrideMatchingBackColorMultiple	= { rgba(0, 255, 0, 255) };				// Green
 		SBgra			overrideMatchingForeColorMultiple	= { rgba(0, 0, 0, 255) };				// Black
-		SBgra			selectedBackColor					= { rgba(220, 235, 255, 255) };			// Pastel turquoise
-		SBgra			selectedForeColor					= { rgba(0, 0, 164, 255) };				// Darkish blue
+		SBgra			selectedBackColor					= { _selectedBackColor };				// Pastel turquoise
+		SBgra			selectedForeColor					= { _selectedForeColor };				// Darkish blue
 		SBgra			disabledBackColor					= { _disabledBackColor };
 		SBgra			disabledForeColor					= { _disabledForeColor };
 		SBgra			disabledItemBackColor				= { _disabledBackColor };

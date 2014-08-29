@@ -4387,7 +4387,7 @@ debug_break;
 						case _VAR_TYPE_BITMAP:
 							varNew->isValueAllocated = true;
 							iDatum_allocateSpace(&varNew->value, 4);
-							varNew->value.data_bmp = bmpNoImage;
+							varNew->bmp = bmpNoImage;
 							break;
 					}
 				}
@@ -4599,7 +4599,7 @@ debug_break;
 						{
 							case _VAR_TYPE_OBJECT:
 								// Copy the object
-								varDst->obj = iObj_copy(varSrc->obj);
+								varDst->obj = iObj_copy(varSrc->obj, NULL, NULL, true, true);
 								break;
 
 							case _VAR_TYPE_BITMAP:
@@ -4647,7 +4647,8 @@ debug_break;
 				varDst = iVariable_create(varSrc->varType, varSrc);
 
 			} else {
-				// Create a new real variable
+				// Create a new real variable, a full copy of the original
+				varDst = iVariable_create(varSrc->varType, NULL);
 				iVariable_copy(varDst, varSrc);
 			}
 

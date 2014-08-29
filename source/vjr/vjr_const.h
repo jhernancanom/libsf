@@ -151,6 +151,11 @@ typedef SEM**		SEMpp;
 
 	#define _disabledBackColor				rgba(255, 255, 255, 255)
 	#define _disabledForeColor				rgba(192, 192, 230, 255)
+	#define _whiteColor						rgba(255, 255, 255, 255)
+	#define _grayColor						rgba(192, 192, 192, 255)
+	#define _blackColor						rgba(0, 0, 0, 255)
+	#define _selectedBackColor				rgba(220, 235, 255, 255)
+	#define _selectedForeColor				rgba(0, 0, 164, 255)
 
 #if !defined(_MSC_VER)
 	// gcc
@@ -322,6 +327,28 @@ typedef SEM**		SEMpp;
 	const u32			_SCALE_MODE_FOXELS					= 0;						// Foxels, based on sysmetrics() average font width and height
 	//const u32			_SCALE_MODE_INCHES					= 1;						// Inches, based on correlating inches to default dpi
 	const u32			_SCALE_MODE_PIXELS					= 3;						// Pixels, based on individual pixels
+
+
+//////////
+// Fill style
+//////
+	const u32			_FILL_STYLE_SOLID					= 0;						// Solid fill
+	const u32			_FILL_STYLE_TRANSPARENT				= 1;						// Transparent (no fill)
+	const u32			_FILL_STYLE_HORIZONTAL				= 2;						// Horizontal lines
+	const u32			_FILL_STYLE_VERTICAL				= 3;						// Vertical lines
+	const u32			_FILL_STYLE_UL2LR_DIAGONAL			= 4;						// Upper-left to lower-right diagonal
+	const u32			_FILL_STYLE_LL2UR_DIAGONAL			= 5;						// Lower-left to upper-right diagonal
+	const u32			_FILL_STYLE_HORIZONTAL_AND_VERTICAL	= 6;						// Squares, both horizontal and vertical lines
+	const u32			_FILL_STYLE_BOTH_DIAGONALS			= 7;						// Diamonds, both diagonal directions
+
+
+//////////
+// Grid lines
+//////
+	const u32			_GRID_LINES_NONE					= 0;						// No grid lines (leave the background fill color)
+	const u32			_GRID_LINES_HORIZONTAL				= 1;						// Horizontal lines only
+	const u32			_GRID_LINES_VERTICAL				= 2;						// Vertical lines only
+	const u32			_GRID_LINES_BOTH					= 3;						// Both horizontal and vertical
 
 
 //////////
