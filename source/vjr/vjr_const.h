@@ -384,6 +384,66 @@ typedef SEM**		SEMpp;
 
 
 //////////
+// Drag mode
+//////
+	const u32			_DRAG_MODE_MANUAL					= 0;
+	const u32			_DRAG_MODE_AUTOMATIC				= 1;
+
+
+//////////
+// OLE constants
+//////
+	const u32			_DROP_EFFECT_NONE					= 0;
+	const u32			_DROP_EFFECT_COPY					= 1;
+	const u32			_DROP_EFFECT_MOVE					= 2;
+	const u32			_DROP_EFFECT_LINK					= 4;
+
+	const u32			_DROP_HAS_DATA_AUTOMATIC			= -1;
+	const u32			_DROP_HAS_DATA_NO					= 0;
+	const u32			_DROP_HAS_DATA_YES					= 1;
+
+	const u32			_DROP_DISABLED						= 0;
+	const u32			_DROP_ENABLED						= 1;
+	const u32			_DROP_TO_CONTAINER					= 2;
+
+	const u32			_OLE_IS_ACTIVEX						= -2;
+	const u32			_OLE_IS_BOUND_EMPTY					= -1;
+	const u32			_OLE_IS_LINKED						= 0;
+	const u32			_OLE_IS_EMBEDDED					= 1;
+
+
+//////////
+// Grid panels
+//////
+	const u32			_PANEL_LEFT							= 0;
+	const u32			_PANEL_RIGHT						= 1;
+
+	const u32			_GRID_NO_PARTITION					= 0;
+	const u32			_GRID_PARTITION						= 1;
+;
+
+
+//////////
+// Picture constants
+//////
+	const u32			_PICTURE_LEFT_TOP					= 0;
+	const u32			_PICTURE_LEFT_CENTERED				= 1;
+	const u32			_PICTURE_LEFT_BOTTOM				= 2;
+	const u32			_PICTURE_RIGHT_TOP					= 3;
+	const u32			_PICTURE_RIGHT_CENTERED				= 4;
+	const u32			_PICTURE_RIGHT_BOTTOM				= 5;
+	const u32			_PICTURE_ABOVE_LEFT					= 6;
+	const u32			_PICTURE_ABOVE_CENTERED				= 7;
+	const u32			_PICTURE_ABOVE_RIGHT				= 8;
+	const u32			_PICTURE_BELOW_LEFT					= 9;
+	const u32			_PICTURE_BELOW_CENTERED				= 10;
+	const u32			_PICTURE_BELOW_RIGHT				= 11;
+	const u32			_PICTURE_CENTERED_TOP				= 12;
+	const u32			_PICTURE_CENTERED_RELATIVE			= 13;
+	const u32			_PICTURE_CENTERED_NO_TEXT3			= 14;
+
+
+//////////
 // Object clickEx click flags
 //////
 	const u32			_MOUSE_LEFT_BUTTON					= 1;

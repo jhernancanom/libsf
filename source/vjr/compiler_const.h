@@ -246,6 +246,7 @@
 	const s8		cgcZxText[]										= ".z.";		// Zat's all folks! :-)
 	const s8		cgcBigInteger[]									= "(BigInteger)";
 	const s8		cgcBigFloatingPoint[]							= "(BigFloatingPoint)";
+	const s8		cgcPasswordCharText[]							= "o";
 	const s8		cgcFeatureNotYetSupported[]						= "feature not yet supported";
 
 
