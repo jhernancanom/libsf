@@ -1604,7 +1604,7 @@
 		{	_INDEX_PAGEORDER,				cgc_pageOrder,					sizeof(cgc_pageOrder) - 1,					_VAR_TYPE_S32,			0  		},					// Page order in the display
 		{	_INDEX_PAGEWIDTH,				cgc_pageWidth,					sizeof(cgc_pageWidth) - 1,					_VAR_TYPE_S32,			0  		},					// Width of a page
 		{	_INDEX_PAGES,					cgc_pages,						sizeof(cgc_pages) - 1,						_VAR_TYPE_OBJECT,		NULL },						// A pseudo-object to access pages
-		{	_INDEX_PANEL,					cgc_panel,						sizeof(cgc_panel) - 1,						_VAR_TYPE_S32,			_PANEL_RIGHT },				// 0=left, 1=right (default)
+		{	_INDEX_PANEL,					cgc_panel,						sizeof(cgc_panel) - 1,						_VAR_TYPE_S32,			_GRID_PANEL_RIGHT },				// 0=left, 1=right (default)
 		{	_INDEX_PANELLINK,				cgc_panelLink,					sizeof(cgc_panelLink) - 1,					_VAR_TYPE_LOGICAL,		_LOGICAL_TRUE },			// .t.=linked (default), .f.=not linked
 		{	_INDEX_PARENT,					cgc_parent,						sizeof(cgc_parent) - 1,						_VAR_TYPE_OBJECT,		NULL },						// A pseudo-object which accesses the parent object (if any)
 		{	_INDEX_PARENTCLASS,				cgc_parentClass,				sizeof(cgc_parentClass) - 1,				_VAR_TYPE_CHARACTER,	(u32)&cgcNullString[0] },	// A pseudo-property which accesses the parent object's class (if any)
@@ -1613,30 +1613,30 @@
 		{	_INDEX_PICTURE,					cgc_picture,					sizeof(cgc_picture) - 1,					_VAR_TYPE_CHARACTER,	(u32)&cgcNullString[0] },	// A filename to use for the picture
 		{	_INDEX_PICTUREMARGIN,			cgc_pictureMargin,				sizeof(cgc_pictureMargin) - 1,				_VAR_TYPE_S32,			0  		},					// Pixels to place around the picture
 		{	_INDEX_PICTUREPOSITION,			cgc_picturePosition,			sizeof(cgc_picturePosition) - 1,			_VAR_TYPE_S32,			_PICTURE_CENTERED_RELATIVE },	// See _PICTURE_* constants
-		{	_INDEX_PICTURESELECTIONDISPLAY, cgc_pictureSelectionDisplay,	sizeof(cgc_pictureSelectionDisplay) - 1,	_VAR_TYPE_S32,			0  		},
-		{	_INDEX_PICTURESPACING,			cgc_pictureSpacing,				sizeof(cgc_pictureSpacing) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_PICTUREVAL,				cgc_pictureVal,					sizeof(cgc_pictureVal) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_POLYPOINTS,				cgc_polyPoints,					sizeof(cgc_polyPoints) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_PROCEDURE,				cgc_procedure,					sizeof(cgc_procedure) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_READBACKCOLOR,			cgc_readBackColor,				sizeof(cgc_readBackColor) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_READCYCLE,				cgc_readCycle,					sizeof(cgc_readCycle) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_READFORECOLOR,			cgc_readForeColor,				sizeof(cgc_readForeColor) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_READLOCK,				cgc_readLock,					sizeof(cgc_readLock) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_READMOUSE,				cgc_readMouse,					sizeof(cgc_readMouse) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_READONLY,				cgc_readOnly,					sizeof(cgc_readOnly) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_READSAVE,				cgc_readSave,					sizeof(cgc_readSave) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_READTIMEOUT,				cgc_readTimeOut,				sizeof(cgc_readTimeOut) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_RECORDMARK,				cgc_recordMark,					sizeof(cgc_recordMark) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_RECORDSOURCE,			cgc_recordSource,				sizeof(cgc_recordSource) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_RECORDSOURCETYPE,		cgc_recordSourceType,			sizeof(cgc_recordSourceType) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_RELATIONALEXPR,			cgc_relationalExpr,				sizeof(cgc_relationalExpr) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_RELATIVECOLUMN,			cgc_relativeColumn,				sizeof(cgc_relativeColumn) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_RELATIVEROW,				cgc_relativeRow,				sizeof(cgc_relativeRow) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_RELEASETYPE,				cgc_releaseType,				sizeof(cgc_releaseType) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_RESIZABLE,				cgc_resizable,					sizeof(cgc_resizable) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_RIGHTTOLEFT,				cgc_rightToLeft,				sizeof(cgc_rightToLeft) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_ROTATEFLIP,				cgc_rotateFlip,					sizeof(cgc_rotateFlip) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_ROTATION,				cgc_rotation,					sizeof(cgc_rotation) - 1,					_VAR_TYPE_S32,			0  		},
+		{	_INDEX_PICTURESELECTIONDISPLAY, cgc_pictureSelectionDisplay,	sizeof(cgc_pictureSelectionDisplay) - 1,	_VAR_TYPE_S32,			_PICTURE_NO_DISPLAY },		// 0=no display (default), 1=clip, 2=scale, 3=stretch
+		{	_INDEX_PICTURESPACING,			cgc_pictureSpacing,				sizeof(cgc_pictureSpacing) - 1,				_VAR_TYPE_S32,			0  		},					// Pixels between image and text
+		{	_INDEX_PICTUREVAL,				cgc_pictureVal,					sizeof(cgc_pictureVal) - 1,					_VAR_TYPE_CHARACTER,	(u32)&cgcNullString[0] },	// Raw image data for the picture
+		{	_INDEX_POLYPOINTS,				cgc_polyPoints,					sizeof(cgc_polyPoints) - 1,					_VAR_TYPE_CHARACTER,	(u32)&cgcNullString[0] },	// Name of the array to use for the bezier
+		{	_INDEX_PROCEDURE,				cgc_procedure,					sizeof(cgc_procedure) - 1,					_VAR_TYPE_CHARACTER,	(u32)&cgcNullString[0] },	// Name of the error procedure
+		{	_INDEX_READBACKCOLOR,			cgc_readBackColor,				sizeof(cgc_readBackColor) - 1,				_VAR_TYPE_S32,			_selectedBackColor },		// Back color of the control with READ focus
+		{	_INDEX_READCYCLE,				cgc_readCycle,					sizeof(cgc_readCycle) - 1,					_VAR_TYPE_LOGICAL,		_LOGICAL_TRUE },			// .t.=cycle (default), .f.=terminate read, should the READ continue on to the top when the end is reached?
+		{	_INDEX_READFORECOLOR,			cgc_readForeColor,				sizeof(cgc_readForeColor) - 1,				_VAR_TYPE_S32,			_selectedForeColor },		// Fore color of the control with READ focus
+		{	_INDEX_READLOCK,				cgc_readLock,					sizeof(cgc_readLock) - 1,					_VAR_TYPE_LOGICAL,		_LOGICAL_FALSE },			// .t.=pessimistic, .f.=optimistic (default), should the records associated with a READ be auto-locked during READ
+		{	_INDEX_READMOUSE,				cgc_readMouse,					sizeof(cgc_readMouse) - 1,					_VAR_TYPE_LOGICAL,		_LOGICAL_FALSE },			// .t.=mouse prohibited, .t.=mouse allowed (default), should the mouse be prohibited from selecting a field during READ?
+		{	_INDEX_READONLY,				cgc_readOnly,					sizeof(cgc_readOnly) - 1,					_VAR_TYPE_LOGICAL,		_LOGICAL_FALSE },			// .t.=read only, .f.=read-write (default), is the control read-only?
+		{	_INDEX_READSAVE,				cgc_readSave,					sizeof(cgc_readSave) - 1,					_VAR_TYPE_LOGICAL,		_LOGICAL_FALSE },			// .t.=maintain, .f.=recycle (default), should the objects associated with the READ be kept active (maintain) or discarded (recycle)?
+		{	_INDEX_READTIMEOUT,				cgc_readTimeOut,				sizeof(cgc_readTimeOut) - 1,				_VAR_TYPE_S32,			0  		},					// Default = 0. Seconds before READ automatically times out.
+		{	_INDEX_RECORDMARK,				cgc_recordMark,					sizeof(cgc_recordMark) - 1,					_VAR_TYPE_LOGICAL,		_LOGICAL_TRUE },			// .t.=show (default), .f.=hide, should the record selection mark be shown on a grid?
+		{	_INDEX_RECORDSOURCE,			cgc_recordSource,				sizeof(cgc_recordSource) - 1,				_VAR_TYPE_CHARACTER,	(u32)&cgcNullString[0] },	// Record source relating to recordSourceType
+		{	_INDEX_RECORDSOURCETYPE,		cgc_recordSourceType,			sizeof(cgc_recordSourceType) - 1,			_VAR_TYPE_S32,			_GRID_RECORD_SOURCE_ALIAS },// 0=table, 1=alias (default), 3=prompt, 4=query, 5=sql statement
+		{	_INDEX_RELATIONALEXPR,			cgc_relationalExpr,				sizeof(cgc_relationalExpr) - 1,				_VAR_TYPE_CHARACTER,	(u32)&cgcNullString[0] },	// The expression for the parent/child relationship
+		{	_INDEX_RELATIVECOLUMN,			cgc_relativeColumn,				sizeof(cgc_relativeColumn) - 1,				_VAR_TYPE_S32,			0  		},					// Active column in a grid
+		{	_INDEX_RELATIVEROW,				cgc_relativeRow,				sizeof(cgc_relativeRow) - 1,				_VAR_TYPE_S32,			0  		},					// Active row in a grid
+		{	_INDEX_RELEASETYPE,				cgc_releaseType,				sizeof(cgc_releaseType) - 1,				_VAR_TYPE_S32,			_RELEASE_TYPE_VARIABLE },	// How an object is released
+		{	_INDEX_RESIZABLE,				cgc_resizable,					sizeof(cgc_resizable) - 1,					_VAR_TYPE_LOGICAL,		_LOGICAL_FALSE },			// .t.=resizable, .f.=static (default), can a grid column be resized through UI action at runtime?
+		{	_INDEX_RIGHTTOLEFT,				cgc_rightToLeft,				sizeof(cgc_rightToLeft) - 1,				_VAR_TYPE_LOGICAL,		_LOGICAL_FALSE },			// .t.=right to left, .f.=left to right (default), is text displayed in right-to-left reading order?
+		{	_INDEX_ROTATEFLIP,				cgc_rotateFlip,					sizeof(cgc_rotateFlip) - 1,					_VAR_TYPE_S32,			_ROTATE_NONE },				// 0=none, 1=90, 2=180, 3=270, 4=flip, 5=90 flip, 6=180 flip, 7=270 flip
+		{	_INDEX_ROTATION,				cgc_rotation,					sizeof(cgc_rotation) - 1,					_VAR_TYPE_S32,			0  		},					// Rotation in degrees for a control
 		{	_INDEX_ROWCOLCHANGE,			cgc_rowColChange,				sizeof(cgc_rowColChange) - 1,				_VAR_TYPE_S32,			0  		},
 		{	_INDEX_ROWHEIGHT,				cgc_rowHeight,					sizeof(cgc_rowHeight) - 1,					_VAR_TYPE_S32,			0  		},
 		{	_INDEX_ROWSOURCE,				cgc_rowSource,					sizeof(cgc_rowSource) - 1,					_VAR_TYPE_S32,			0  		},

@@ -343,15 +343,6 @@ typedef SEM**		SEMpp;
 
 
 //////////
-// Grid lines
-//////
-	const u32			_GRID_LINES_NONE					= 0;						// No grid lines (leave the background fill color)
-	const u32			_GRID_LINES_HORIZONTAL				= 1;						// Horizontal lines only
-	const u32			_GRID_LINES_VERTICAL				= 2;						// Vertical lines only
-	const u32			_GRID_LINES_BOTH					= 3;						// Both horizontal and vertical
-
-
-//////////
 // Form window state
 //////
 	const u32			_WINDOW_STATE_NORMAL				= 0;						// Normal
@@ -413,15 +404,47 @@ typedef SEM**		SEMpp;
 
 
 //////////
-// Grid panels
+// Grid related
 //////
-	const u32			_PANEL_LEFT							= 0;
-	const u32			_PANEL_RIGHT						= 1;
+	const u32			_GRID_PANEL_LEFT					= 0;
+	const u32			_GRID_PANEL_RIGHT					= 1;
+
+	const u32			_GRID_LINES_NONE					= 0;						// No grid lines (leave the background fill color)
+	const u32			_GRID_LINES_HORIZONTAL				= 1;						// Horizontal lines only
+	const u32			_GRID_LINES_VERTICAL				= 2;						// Vertical lines only
+	const u32			_GRID_LINES_BOTH					= 3;						// Both horizontal and vertical
 
 	const u32			_GRID_NO_PARTITION					= 0;
 	const u32			_GRID_PARTITION						= 1;
+
+	const u32			_GRID_RECORD_SOURCE_TABLE			= 0;
+	const u32			_GRID_RECORD_SOURCE_ALIAS			= 1;
+	const u32			_GRID_RECORD_SOURCE_PROMPT			= 2;
+	const u32			_GRID_RECORD_SOURCE_QUERY			= 3;
+	const u32			_GRID_RECORD_SOURCE_SQL				= 4;
 ;
 
+
+//////////
+// Rotation for images
+//////
+	const u32			_ROTATE_NONE						= 0;
+	const u32			_ROTATE_90							= 1;
+	const u32			_ROTATE_180							= 2;
+	const u32			_ROTATE_270							= 3;
+	const u32			_ROTATE_NONE_FLIP					= 4;
+	const u32			_ROTATE_90_FLIP						= 5;
+	const u32			_ROTATE_180_FLIP					= 6;
+	const u32			_ROTATE_270_FLIP					= 7;
+
+
+//////////
+// Release type
+//////
+	const u32			_RELEASE_TYPE_VARIABLE				= 0;
+	const u32			_RELEASE_TYPE_CLOSE					= 1;
+	const u32			_RELEASE_TYPE_QUIT					= 2;
+ 
 
 //////////
 // Picture constants
@@ -441,6 +464,11 @@ typedef SEM**		SEMpp;
 	const u32			_PICTURE_CENTERED_TOP				= 12;
 	const u32			_PICTURE_CENTERED_RELATIVE			= 13;
 	const u32			_PICTURE_CENTERED_NO_TEXT3			= 14;
+
+	const u32			_PICTURE_NO_DISPLAY					= 0;
+	const u32			_PICTURE_CLIP						= 1;
+	const u32			_PICTURE_SCALE						= 2;
+	const u32			_PICTURE_STRETCH					= 3;
 
 
 //////////
