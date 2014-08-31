@@ -1681,43 +1681,28 @@
 		{	_INDEX_THEMES,					cgc_themes,						sizeof(cgc_themes) - 1,						_VAR_TYPE_LOGICAL,		_LOGICAL_TRUE },			// .t.=use themes (default), .f.=standard, are themes shown?
 		{	_INDEX_TITLEBAR,				cgc_titleBar,					sizeof(cgc_titleBar) - 1,					_VAR_TYPE_LOGICAL,		_LOGICAL_TRUE },			// .t.=has title bar (default), .f.=no title bar
 		{	_INDEX_TOOLTIPTEXT,				cgc_toolTipText,				sizeof(cgc_toolTipText) - 1,				_VAR_TYPE_CHARACTER,	(u32)&cgcNullString[0] },	// Tooltip text to display when hovering over the control
-		{	_INDEX_TOP,						cgc_top,						sizeof(cgc_top) - 1,						_VAR_TYPE_S32,			0  		},
-		{	_INDEX_TOPINDEX,				cgc_topIndex,					sizeof(cgc_topIndex) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_TOPITEMID,				cgc_topItemID,					sizeof(cgc_topItemID) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_USERVALUE,				cgc_userValue,					sizeof(cgc_userValue) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_VSCROLLSMALLCHANGE,		cgc_vScrollSmallChange,			sizeof(cgc_vScrollSmallChange) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_VALUE,					cgc_value,						sizeof(cgc_value) - 1,						_VAR_TYPE_S32,			0  		},
-		{	_INDEX_VIEW,					cgc_view,						sizeof(cgc_view) - 1,						_VAR_TYPE_S32,			0  		},
-		{	_INDEX_VIEWPORTHEIGHT,			cgc_viewPortHeight,				sizeof(cgc_viewPortHeight) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_VIEWPORTLEFT,			cgc_viewPortLeft,				sizeof(cgc_viewPortLeft) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_VIEWPORTTOP,				cgc_viewPortTop,				sizeof(cgc_viewPortTop) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_VIEWPORTWIDTH,			cgc_viewPortWidth,				sizeof(cgc_viewPortWidth) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_VISIBLE,					cgc_visible,					sizeof(cgc_visible) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_VISUALEFFECT,			cgc_visualEffect,				sizeof(cgc_visualEffect) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_WHATSTHISBUTTON,			cgc_whatsThisButton,			sizeof(cgc_whatsThisButton) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_WHATSTHISHELP,			cgc_whatsThisHelp,				sizeof(cgc_whatsThisHelp) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_WHATSTHISHELPID,			cgc_whatsThisHelpID,			sizeof(cgc_whatsThisHelpID) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_WIDTH,					cgc_width,						sizeof(cgc_width) - 1,						_VAR_TYPE_S32,			0  		},
-		{	_INDEX_WINDOWLIST,				cgc_windowList,					sizeof(cgc_windowList) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_WINDOWSTATE,				cgc_windowState,				sizeof(cgc_windowState) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_WINDOWTYPE,				cgc_windowType,					sizeof(cgc_windowType) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_WORDWRAP,				cgc_wordWrap,					sizeof(cgc_wordWrap) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_ZOOMBOX,					cgc_zoomBox,					sizeof(cgc_zoomBox) - 1,					_VAR_TYPE_S32,			0  		},
-
-// 	{	SBitmap*	icon,			false,	0	}
-// 	{	SBitmap*	mouseIcon,			false,	0	}
-// 	{	SBitmap*	oLEDragPicture,			false,	0	}
-
-// 	SVariable*	pictureName;
-// 	SBitmap*	bmpPicture;
-// 	SVariable*	pictureOverName;
-// 	SBitmap*	bmpPictureOver;
-// 	SVariable*	pictureDownName;
-// 	SBitmap*	bmpPictureDown;
-//
-// 	SVariable*	minValue;
-// 	SVariable*	maxValue;
-// 	SVariable*	mask;
+		{	_INDEX_TOP,						cgc_top,						sizeof(cgc_top) - 1,						_VAR_TYPE_S32,			0  		},					// The top coordinate for the object
+		{	_INDEX_TOPINDEX,				cgc_topIndex,					sizeof(cgc_topIndex) - 1,					_VAR_TYPE_S32,			0  		},					// The index of the item in the topmost visible position of a listbox or combobox
+		{	_INDEX_TOPITEMID,				cgc_topItemID,					sizeof(cgc_topItemID) - 1,					_VAR_TYPE_S32,			0  		},					// The uid of the item in the topmost visible position of a listbox or combobox
+		{	_INDEX_USERVALUE,				cgc_userValue,					sizeof(cgc_userValue) - 1,					_VAR_TYPE_S32,			0  		},					// The value in a THROW statement for a manual exception
+		{	_INDEX_VSCROLLSMALLCHANGE,		cgc_vScrollSmallChange,			sizeof(cgc_vScrollSmallChange) - 1,			_VAR_TYPE_S32,			10 		},					// When scalemode = 3, default is 10 pixels
+		{	_INDEX_VALUE,					cgc_value,						sizeof(cgc_value) - 1,						_VAR_TYPE_S32,			0  		},					// Varies by control, but the value of the control's contents
+		{	_INDEX_VIEW,					cgc_view,						sizeof(cgc_view) - 1,						_VAR_TYPE_S32,			_GRID_VIEW_CHANGE_BOTH },	// 0=browse, 1=change / change right, 2=change left, 3=change both (default)
+		{	_INDEX_VIEWPORTHEIGHT,			cgc_viewPortHeight,				sizeof(cgc_viewPortHeight) - 1,				_VAR_TYPE_S32,			0  		},					// A pseudo-property to read the viewport height
+		{	_INDEX_VIEWPORTLEFT,			cgc_viewPortLeft,				sizeof(cgc_viewPortLeft) - 1,				_VAR_TYPE_S32,			0  		},					// A pseudo-property to read the viewport left
+		{	_INDEX_VIEWPORTTOP,				cgc_viewPortTop,				sizeof(cgc_viewPortTop) - 1,				_VAR_TYPE_S32,			0  		},					// A pseudo-property to read the viewport top
+		{	_INDEX_VIEWPORTWIDTH,			cgc_viewPortWidth,				sizeof(cgc_viewPortWidth) - 1,				_VAR_TYPE_S32,			0  		},					// A pseudo-property to read the viewport width
+		{	_INDEX_VISIBLE,					cgc_visible,					sizeof(cgc_visible) - 1,					_VAR_TYPE_LOGICAL,		_LOGICAL_TRUE },			// .t.=visible, .f.=invisible, is the control visible?
+		{	_INDEX_VISUALEFFECT,			cgc_visualEffect,				sizeof(cgc_visualEffect) - 1,				_VAR_TYPE_S32,			_VISUAL_EFFECT_NONE },		// 0=none (default), 1=raised, 2=sunken, how a command button appears
+		{	_INDEX_WHATSTHISBUTTON,			cgc_whatsThisButton,			sizeof(cgc_whatsThisButton) - 1,			_VAR_TYPE_LOGICAL,		_LOGICAL_FALSE },			// .t.=has what's this, .f.=does not have what's this (default)
+		{	_INDEX_WHATSTHISHELP,			cgc_whatsThisHelp,				sizeof(cgc_whatsThisHelp) - 1,				_VAR_TYPE_LOGICAL,		_LOGICAL_TRUE },			// .t.=based on SET HELP, .f.=triggered by f1 (default), how is help triggered?
+		{	_INDEX_WHATSTHISHELPID,			cgc_whatsThisHelpID,			sizeof(cgc_whatsThisHelpID) - 1,			_VAR_TYPE_S32,			0  		},					// The help id to lookup in the help file
+		{	_INDEX_WIDTH,					cgc_width,						sizeof(cgc_width) - 1,						_VAR_TYPE_S32,			0  		},					// Width of the control
+		{	_INDEX_WINDOWLIST,				cgc_windowList,					sizeof(cgc_windowList) - 1,					_VAR_TYPE_S32,			0  		},					// Not used
+		{	_INDEX_WINDOWSTATE,				cgc_windowState,				sizeof(cgc_windowState) - 1,				_VAR_TYPE_S32,			_WINDOW_STATE_NORMAL },		// 0=normal (default), 1=minimized, 2=maximized, how a form is displayed?
+		{	_INDEX_WINDOWTYPE,				cgc_windowType,					sizeof(cgc_windowType) - 1,					_VAR_TYPE_S32,			_WINDOW_TYPE_MODELESS },	// 0=modeless (default), 1=modal, 2=read, 3=read modeless, how a window is presented
+		{	_INDEX_WORDWRAP,				cgc_wordWrap,					sizeof(cgc_wordWrap) - 1,					_VAR_TYPE_LOGICAL,		_LOGICAL_FALSE },			// .t.=wraps, .f.=single line (default), how text is presented
+		{	_INDEX_ZOOMBOX,					cgc_zoomBox,					sizeof(cgc_zoomBox) - 1,					_VAR_TYPE_LOGICAL,		_LOGICAL_FALSE },			// .t.=shows zoom box, .f.=does not show (default), for backward compatibility, not used
 	};
 
 

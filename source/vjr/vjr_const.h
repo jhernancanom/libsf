@@ -343,11 +343,16 @@ typedef SEM**		SEMpp;
 
 
 //////////
-// Form window state
+// Form windows
 //////
 	const u32			_WINDOW_STATE_NORMAL				= 0;						// Normal
 	const u32			_WINDOW_STATE_MINIMIZED				= 1;						// Minimized
 	const u32			_WINDOW_STATE_MAXIMIZED				= 2;						// Maximized
+
+	const u32			_WINDOW_TYPE_MODELESS				= 0;						// Works in cooperation with other forms
+	const u32			_WINDOW_TYPE_MODAL					= 1;						// The focus is limited to one form
+	const u32			_WINDOW_TYPE_READ					= 2;						// The input is a READ window
+	const u32			_WINDOW_TYPE_READ_MODAL				= 3;						// The input is a READ MODAL window
 
 
 //////////
@@ -426,7 +431,19 @@ typedef SEM**		SEMpp;
 	const u32			_GRID_ROW_COL_CHANGE_NONE			= 0;
 	const u32			_GRID_ROW_COL_CHANGE_ROW			= 1;
 	const u32			_GRID_ROW_COL_CHANGE_COL			= 2;
-;
+
+	const u32			_GRID_VIEW_BROWSE					= 0;
+	const u32			_GRID_VIEW_CHANGE					= 1;
+	const u32			_GRID_VIEW_CHANGE_LEFT				= 2;
+	const u32			_GRID_VIEW_CHANGE_BOTH				= 3;
+
+
+//////////
+// Visual effects
+//////
+	const u32			_VISUAL_EFFECT_NONE					= 0;
+	const u32			_VISUAL_EFFECT_RAISED				= 1;
+	const u32			_VISUAL_EFFECT_DEPRESSED			= 2;
 
 
 //////////
