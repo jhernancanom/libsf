@@ -1637,50 +1637,50 @@
 		{	_INDEX_RIGHTTOLEFT,				cgc_rightToLeft,				sizeof(cgc_rightToLeft) - 1,				_VAR_TYPE_LOGICAL,		_LOGICAL_FALSE },			// .t.=right to left, .f.=left to right (default), is text displayed in right-to-left reading order?
 		{	_INDEX_ROTATEFLIP,				cgc_rotateFlip,					sizeof(cgc_rotateFlip) - 1,					_VAR_TYPE_S32,			_ROTATE_NONE },				// 0=none, 1=90, 2=180, 3=270, 4=flip, 5=90 flip, 6=180 flip, 7=270 flip
 		{	_INDEX_ROTATION,				cgc_rotation,					sizeof(cgc_rotation) - 1,					_VAR_TYPE_S32,			0  		},					// Rotation in degrees for a control
-		{	_INDEX_ROWCOLCHANGE,			cgc_rowColChange,				sizeof(cgc_rowColChange) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_ROWHEIGHT,				cgc_rowHeight,					sizeof(cgc_rowHeight) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_ROWSOURCE,				cgc_rowSource,					sizeof(cgc_rowSource) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_ROWSOURCETYPE,			cgc_rowSourceType,				sizeof(cgc_rowSourceType) - 1,				_VAR_TYPE_S32,			0  		},
+		{	_INDEX_ROWCOLCHANGE,			cgc_rowColChange,				sizeof(cgc_rowColChange) - 1,				_VAR_TYPE_S32,			_GRID_ROW_COL_CHANGE_NONE },// 0=none, 1=row, 2=col, can be combined for 3=both
+		{	_INDEX_ROWHEIGHT,				cgc_rowHeight,					sizeof(cgc_rowHeight) - 1,					_VAR_TYPE_S32,			0  		},					// Height of a row in a grid
+		{	_INDEX_ROWSOURCE,				cgc_rowSource,					sizeof(cgc_rowSource) - 1,					_VAR_TYPE_CHARACTER,	(u32)&cgcNullString[0] },	// Related to rowSourceType
+		{	_INDEX_ROWSOURCETYPE,			cgc_rowSourceType,				sizeof(cgc_rowSourceType) - 1,				_VAR_TYPE_S32,			_ROW_SOURCE_TYPE_NONE },	// 0=none (default), see _ROW_SOURCE_TYPE_* constants
 		{	_INDEX_SCALEMODE,				cgc_scaleMode,					sizeof(cgc_scaleMode) - 1,					_VAR_TYPE_S32,			3  		},					// 0=foxels, 1=pixels (default)
-		{	_INDEX_SCROLLBARS,				cgc_scrollBars,					sizeof(cgc_scrollBars) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SECONDS,					cgc_seconds,					sizeof(cgc_seconds) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SELLENGTH,				cgc_selLength,					sizeof(cgc_selLength) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SELSTART,				cgc_selStart,					sizeof(cgc_selStart) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SELTEXT,					cgc_selText,					sizeof(cgc_selText) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SELECTONENTRY,			cgc_selectOnEntry,				sizeof(cgc_selectOnEntry) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SELECTED,				cgc_selected,					sizeof(cgc_selected) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SELECTEDBACKCOLOR,		cgc_selectedBackColor,			sizeof(cgc_selectedBackColor) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SELECTEDFORECOLOR,		cgc_selectedForeColor,			sizeof(cgc_selectedForeColor) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SELECTEDID,				cgc_selectedID,					sizeof(cgc_selectedID) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SELECTEDITEMBACKCOLOR,	cgc_selectedItemBackColor,		sizeof(cgc_selectedItemBackColor) - 1,		_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SELECTEDITEMFORECOLOR,	cgc_selectedItemForeColor,		sizeof(cgc_selectedItemForeColor) - 1,		_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SHOWINTASKBAR,			cgc_showInTaskbar,				sizeof(cgc_showInTaskbar) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SHOWTIPS,				cgc_showTips,					sizeof(cgc_showTips) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SHOWWINDOW,				cgc_showWindow,					sizeof(cgc_showWindow) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SIZABLE,					cgc_sizable,					sizeof(cgc_sizable) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SIZEBOX,					cgc_sizeBox,					sizeof(cgc_sizeBox) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SORTED,					cgc_sorted,						sizeof(cgc_sorted) - 1,						_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SPARSE,					cgc_sparse,						sizeof(cgc_sparse) - 1,						_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SPECIALEFFECT,			cgc_specialEffect,				sizeof(cgc_specialEffect) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SPINNERHIGHVALUE,		cgc_spinnerHighValue,			sizeof(cgc_spinnerHighValue) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SPINNERLOWVALUE,			cgc_spinnerLowValue,			sizeof(cgc_spinnerLowValue) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_SPLITBAR,				cgc_splitBar,					sizeof(cgc_splitBar) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_STACKLEVEL,				cgc_stackLevel,					sizeof(cgc_stackLevel) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_STATUSBARTEXT,			cgc_statusBarText,				sizeof(cgc_statusBarText) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_STRETCH,					cgc_stretch,					sizeof(cgc_stretch) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_STRICTDATEENTRY,			cgc_strictDateEntry,			sizeof(cgc_strictDateEntry) - 1,			_VAR_TYPE_S32,			0  		},
-		{	_INDEX_STYLE,					cgc_style,						sizeof(cgc_style) - 1,						_VAR_TYPE_S32,			0  		},
-		{	_INDEX_TABINDEX,				cgc_tabIndex,					sizeof(cgc_tabIndex) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_TABORIENTATION,			cgc_tabOrientation,				sizeof(cgc_tabOrientation) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_TABSTOP,					cgc_tabStop,					sizeof(cgc_tabStop) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_TABSTYLE,				cgc_tabStyle,					sizeof(cgc_tabStyle) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_TABS,					cgc_tabs,						sizeof(cgc_tabs) - 1,						_VAR_TYPE_S32,			0  		},
-		{	_INDEX_TAG,						cgc_tag,						sizeof(cgc_tag) - 1,						_VAR_TYPE_S32,			0  		},
-		{	_INDEX_TERMINATEREAD,			cgc_terminateRead,				sizeof(cgc_terminateRead) - 1,				_VAR_TYPE_S32,			0  		},
-		{	_INDEX_TEXT,					cgc_text,						sizeof(cgc_text) - 1,						_VAR_TYPE_S32,			0  		},
-		{	_INDEX_THEMES,					cgc_themes,						sizeof(cgc_themes) - 1,						_VAR_TYPE_S32,			0  		},
-		{	_INDEX_TITLEBAR,				cgc_titleBar,					sizeof(cgc_titleBar) - 1,					_VAR_TYPE_S32,			0  		},
-		{	_INDEX_TOOLTIPTEXT,				cgc_toolTipText,				sizeof(cgc_toolTipText) - 1,				_VAR_TYPE_S32,			0  		},
+		{	_INDEX_SCROLLBARS,				cgc_scrollBars,					sizeof(cgc_scrollBars) - 1,					_VAR_TYPE_S32,			_SCROLL_BARS_BOTH },		// 0=none, 1=horizontal, 2=vertical, can be combined for 3=both (default)
+		{	_INDEX_SECONDS,					cgc_seconds,					sizeof(cgc_seconds) - 1,					_VAR_TYPE_S32,			_SECONDS_SET },				// 0=off, 1=on, 2=use SET SECONDS (default)
+		{	_INDEX_SELLENGTH,				cgc_selLength,					sizeof(cgc_selLength) - 1,					_VAR_TYPE_S32,			0  		},					// Number of selected characters
+		{	_INDEX_SELSTART,				cgc_selStart,					sizeof(cgc_selStart) - 1,					_VAR_TYPE_S32,			0  		},					// Offset where the selection starts
+		{	_INDEX_SELTEXT,					cgc_selText,					sizeof(cgc_selText) - 1,					_VAR_TYPE_CHARACTER,	(u32)&cgcNullString[0] },	// A pseudo-interface to access the selected characters
+		{	_INDEX_SELECTONENTRY,			cgc_selectOnEntry,				sizeof(cgc_selectOnEntry) - 1,				_VAR_TYPE_LOGICAL,		_LOGICAL_FALSE },			// .t.=yes, .f.=no (default), should the contents be selected when the control receives focus?
+		{	_INDEX_SELECTED,				cgc_selected,					sizeof(cgc_selected) - 1,					_VAR_TYPE_LOGICAL,		_LOGICAL_FALSE },			// .t.=yes, .f.=no (default), if the item is selected in a listbox or combobox
+		{	_INDEX_SELECTEDBACKCOLOR,		cgc_selectedBackColor,			sizeof(cgc_selectedBackColor) - 1,			_VAR_TYPE_S32,			_selectedBackColor },		// Selected back color
+		{	_INDEX_SELECTEDFORECOLOR,		cgc_selectedForeColor,			sizeof(cgc_selectedForeColor) - 1,			_VAR_TYPE_S32,			_selectedForeColor },		// Selected fore color
+		{	_INDEX_SELECTEDID,				cgc_selectedID,					sizeof(cgc_selectedID) - 1,					_VAR_TYPE_OBJECT,		NULL },						// A pseudo-object for accessing the items within, and getting/setting their selected status
+		{	_INDEX_SELECTEDITEMBACKCOLOR,	cgc_selectedItemBackColor,		sizeof(cgc_selectedItemBackColor) - 1,		_VAR_TYPE_S32,			_selectedBackColor },		// Back color of selected items
+		{	_INDEX_SELECTEDITEMFORECOLOR,	cgc_selectedItemForeColor,		sizeof(cgc_selectedItemForeColor) - 1,		_VAR_TYPE_S32,			_selectedForeColor },		// Fore color of selected items
+		{	_INDEX_SHOWINTASKBAR,			cgc_showInTaskbar,				sizeof(cgc_showInTaskbar) - 1,				_VAR_TYPE_LOGICAL,		_LOGICAL_TRUE },			// .t.=show (default), .f.=don't show, should the window appear in the task bar?
+		{	_INDEX_SHOWTIPS,				cgc_showTips,					sizeof(cgc_showTips) - 1,					_VAR_TYPE_LOGICAL,		_LOGICAL_FALSE },			// .t.=show, .f.=don't show (default), should tooltips be shown?
+		{	_INDEX_SHOWWINDOW,				cgc_showWindow,					sizeof(cgc_showWindow) - 1,					_VAR_TYPE_S32,			_SHOW_WINDOW_IN_SCREEN },	// 0=in _screen, 1=inside parent form, 2=on the OS desktop
+		{	_INDEX_SIZABLE,					cgc_sizable,					sizeof(cgc_sizable) - 1,					_VAR_TYPE_LOGICAL,		_LOGICAL_TRUE },			// .t.=sizing allowed (default), .f.=not allowed, can the control be sized?
+		{	_INDEX_SIZEBOX,					cgc_sizeBox,					sizeof(cgc_sizeBox) - 1,					_VAR_TYPE_LOGICAL,		_LOGICAL_FALSE },			// .t.=has a sizebox, .f.=does not have a sizebox (default), not used
+		{	_INDEX_SORTED,					cgc_sorted,						sizeof(cgc_sorted) - 1,						_VAR_TYPE_LOGICAL,		_LOGICAL_FALSE },			// .t.=sorted, .f.=not sorted (default), are items in a listbox or combobox sorted?
+		{	_INDEX_SPARSE,					cgc_sparse,						sizeof(cgc_sparse) - 1,						_VAR_TYPE_LOGICAL,		_LOGICAL_TRUE },			// .t.=all use currentControl (default), .f.=only active cell uses currentControl, how is the column displayed in grids?
+		{	_INDEX_SPECIALEFFECT,			cgc_specialEffect,				sizeof(cgc_specialEffect) - 1,				_VAR_TYPE_S32,			0  		},					// Varies by control
+		{	_INDEX_SPINNERHIGHVALUE,		cgc_spinnerHighValue,			sizeof(cgc_spinnerHighValue) - 1,			_VAR_TYPE_S32,			0  		},					// Maximum value for spinner
+		{	_INDEX_SPINNERLOWVALUE,			cgc_spinnerLowValue,			sizeof(cgc_spinnerLowValue) - 1,			_VAR_TYPE_S32,			0  		},					// Minimum value for spinner
+		{	_INDEX_SPLITBAR,				cgc_splitBar,					sizeof(cgc_splitBar) - 1,					_VAR_TYPE_LOGICAL,		_LOGICAL_TRUE },			// .t.=show split bar (default), .f.=do not show, in grids when slip should the dividing bar be shown?
+		{	_INDEX_STACKLEVEL,				cgc_stackLevel,					sizeof(cgc_stackLevel) - 1,					_VAR_TYPE_S32,			0  		},					// On exception, how many levels deep it is
+		{	_INDEX_STATUSBARTEXT,			cgc_statusBarText,				sizeof(cgc_statusBarText) - 1,				_VAR_TYPE_CHARACTER,	(u32)&cgcNullString[0] },	// The text to display in the status bar when the control gains focus
+		{	_INDEX_STRETCH,					cgc_stretch,					sizeof(cgc_stretch) - 1,					_VAR_TYPE_S32,			_STRETCH_CLIP },			// 0=clip, 1=scale, 2=stretch
+		{	_INDEX_STRICTDATEENTRY,			cgc_strictDateEntry,			sizeof(cgc_strictDateEntry) - 1,			_VAR_TYPE_S32,			_STRICT_DATE_LOOSE },		// 0=loose (default), 1=strict, date input allowance
+		{	_INDEX_STYLE,					cgc_style,						sizeof(cgc_style) - 1,						_VAR_TYPE_S32,			0  		},					// Varies by control
+		{	_INDEX_TABINDEX,				cgc_tabIndex,					sizeof(cgc_tabIndex) - 1,					_VAR_TYPE_S32,			0  		},					// Set by control
+		{	_INDEX_TABORIENTATION,			cgc_tabOrientation,				sizeof(cgc_tabOrientation) - 1,				_VAR_TYPE_S32,			_TAB_ORIENTATION_TOP },		// 0=top (default), 1=bottom, 2=left, 3=right, where the tabs appear on a pageframe
+		{	_INDEX_TABSTOP,					cgc_tabStop,					sizeof(cgc_tabStop) - 1,					_VAR_TYPE_LOGICAL,		_LOGICAL_TRUE },			// Does this control receive a stop when tabbing?
+		{	_INDEX_TABSTYLE,				cgc_tabStyle,					sizeof(cgc_tabStyle) - 1,					_VAR_TYPE_S32,			_TAB_STYLE_JUSTIFIED },		// How does the text appear in a pageframe tab?
+		{	_INDEX_TABS,					cgc_tabs,						sizeof(cgc_tabs) - 1,						_VAR_TYPE_LOGICAL,		_LOGICAL_TRUE },			// .t.=show (default), .f.=hide, are tabs shown on a pageframe?
+		{	_INDEX_TAG,						cgc_tag,						sizeof(cgc_tag) - 1,						_VAR_TYPE_CHARACTER,	(u32)&cgcNullString[0] },	// Custom text per user needs
+		{	_INDEX_TERMINATEREAD,			cgc_terminateRead,				sizeof(cgc_terminateRead) - 1,				_VAR_TYPE_LOGICAL,		_LOGICAL_FALSE },			// When this control is activated, should the form's READ terminate?
+		{	_INDEX_TEXT,					cgc_text,						sizeof(cgc_text) - 1,						_VAR_TYPE_CHARACTER,	(u32)&cgcNullString[0] },	// The raw text form of the control's contents without pictures and auto-expansion (as with date fields)
+		{	_INDEX_THEMES,					cgc_themes,						sizeof(cgc_themes) - 1,						_VAR_TYPE_LOGICAL,		_LOGICAL_TRUE },			// .t.=use themes (default), .f.=standard, are themes shown?
+		{	_INDEX_TITLEBAR,				cgc_titleBar,					sizeof(cgc_titleBar) - 1,					_VAR_TYPE_LOGICAL,		_LOGICAL_TRUE },			// .t.=has title bar (default), .f.=no title bar
+		{	_INDEX_TOOLTIPTEXT,				cgc_toolTipText,				sizeof(cgc_toolTipText) - 1,				_VAR_TYPE_CHARACTER,	(u32)&cgcNullString[0] },	// Tooltip text to display when hovering over the control
 		{	_INDEX_TOP,						cgc_top,						sizeof(cgc_top) - 1,						_VAR_TYPE_S32,			0  		},
 		{	_INDEX_TOPINDEX,				cgc_topIndex,					sizeof(cgc_topIndex) - 1,					_VAR_TYPE_S32,			0  		},
 		{	_INDEX_TOPITEMID,				cgc_topItemID,					sizeof(cgc_topItemID) - 1,					_VAR_TYPE_S32,			0  		},

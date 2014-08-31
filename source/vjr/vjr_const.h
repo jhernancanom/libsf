@@ -422,7 +422,79 @@ typedef SEM**		SEMpp;
 	const u32			_GRID_RECORD_SOURCE_PROMPT			= 2;
 	const u32			_GRID_RECORD_SOURCE_QUERY			= 3;
 	const u32			_GRID_RECORD_SOURCE_SQL				= 4;
+
+	const u32			_GRID_ROW_COL_CHANGE_NONE			= 0;
+	const u32			_GRID_ROW_COL_CHANGE_ROW			= 1;
+	const u32			_GRID_ROW_COL_CHANGE_COL			= 2;
 ;
+
+
+//////////
+// Tabs on a pageframe
+//////
+	const u32			_TAB_ORIENTATION_TOP				= 0;
+	const u32			_TAB_ORIENTATION_BOTTOM				= 1;
+	const u32			_TAB_ORIENTATION_LEFT				= 2;
+	const u32			_TAB_ORIENTATION_RIGHT				= 3;
+
+	const u32			_TAB_STYLE_JUSTIFIED				= 0;
+	const u32			_TAB_STYLE_UNJUSTIFIED				= 1;
+
+
+//////////
+// Date entry settings
+//////
+	const u32			_STRICT_DATE_LOOSE					= 0;
+	const u32			_STRICT_DATE_STRICT					= 1;
+
+
+//////////
+// Stretch mode
+//////
+	const u32			_STRETCH_CLIP						= 0;
+	const u32			_STRETCH_ISOMETRIC					= 1;
+	const u32			_STRETCH_STRETCH					= 2;
+
+
+//////////
+// Show window constants
+//////
+	const u32			_SHOW_WINDOW_IN_SCREEN				= 0;
+	const u32			_SHOW_WINDOW_AS_CHILD				= 1;
+	const u32			_SHOW_WINDOW_IN_OS					= 2;
+
+
+//////////
+// Seconds settings
+//////
+	const u32			_SECONDS_OFF						= 0;
+	const u32			_SECONDS_ON							= 1;
+	const u32			_SECONDS_SET						= 2;
+
+
+//////////
+// Scroll bars setting
+//////
+	const u32			_SCROLL_BARS_NONE					= 0;
+	const u32			_SCROLL_BARS_HORIZONTAL				= 1;
+	const u32			_SCROLL_BARS_VERTICAL				= 2;
+	const u32			_SCROLL_BARS_BOTH					= 3;
+
+
+//////////
+// Row source types for listbox and combobox
+//////
+	const u32			_ROW_SOURCE_TYPE_NONE				= 0;
+	const u32			_ROW_SOURCE_TYPE_VALUE				= 1;
+	const u32			_ROW_SOURCE_TYPE_ALIAS				= 2;
+	const u32			_ROW_SOURCE_TYPE_SQL				= 3;
+	const u32			_ROW_SOURCE_TYPE_QUERY				= 4;
+	const u32			_ROW_SOURCE_TYPE_ARRAY				= 5;
+	const u32			_ROW_SOURCE_TYPE_FIELDS				= 6;
+	const u32			_ROW_SOURCE_TYPE_FILES				= 7;
+	const u32			_ROW_SOURCE_TYPE_STRUCTURE			= 8;
+	const u32			_ROW_SOURCE_TYPE_POPUP				= 9;
+	const u32			_ROW_SOURCE_TYPE_COLLECTION			= 10;
 
 
 //////////
