@@ -1,3 +1,13 @@
+Visual FreePro, Jr.:
+Sep.01.2014 - A combination for engine execution (James 4:15)
+              (1)  Debugger
+              (2)  Engine
+              (3)  Compiler
+			  (4)  Initialize each class to default properties
+			  (4)  Render each class properly
+
+
+Visual FreePro:
 Mar.31.2014 - Next big milestone will include (James 4:15):
               (1)  A functional assembler
 			  (2)  A functional virtual machine, and
