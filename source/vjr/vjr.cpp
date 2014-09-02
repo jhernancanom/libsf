@@ -104,7 +104,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		systemStartedMs			= iTime_getLocalMs();
 
 		// Default value for spinners
-		gsInitialization[_INDEX_INCREMENT]._f64 = 1.0;
+		gsProps_masterDefaultInitValues[_INDEX_INCREMENT]._f64 = 1.0;
 
 		// Initialize primitive variables
 		varConstant_space	= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgc_spaceText, 1);

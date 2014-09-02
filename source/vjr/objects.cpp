@@ -2104,41 +2104,48 @@ if (!llPublishChildren)
 // Resets common object properties to their defaults
 //
 //////
-	void iiObj_resetToDefaultCommon(SObject* obj, bool tlResetProperties, bool tlResetMethods)
+	void iiObj_resetToDefaultCommon(SObject* obj, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList)
 	{
+		s32 lnI, lnIndex, lnVarType;
+
+
 		logfunc(__FUNCTION__);
-		/////////
-		// Information about the object itself
+		//////////
+		// Set properties
 		//////
-			iVariable_set_s32(obj->p.tabIndex,			0);
-			iVariable_set_bool(obj->p.tabStop,			true);
-			iVariable_set_s32(obj->p.helpContextID,		-1);
-			iVariable_set_bool(obj->p.whatsThisButton,	false);
-			iVariable_set_bool(obj->p.whatsThisHelp,	false);
-			iVariable_set_s32(obj->p.whatsThisHelpID,	-1);
+			for (lnI = 0; propList[lnI].index != 0; lnI++)
+			{
+				// Grab the index of this entry in the master list
+				lnIndex = propList[lnI];
+
+				// Initialize based on type
+				lnVarType = gsProps_masterDefaultInitValues[lnIndex]->varType;
+				switch (lnVarType)
+				{
+					case _VAR_TYPE_NULL:
+						break;
+
+					case _VAR_TYPE_OBJECT:
+					case _VAR_TYPE_THISCODE:
+						break;
+
+					case _VAR_TYPE_BITMAP:
+						break;
+
+					default:
+						// Standard object creation
+						obj->props[lnI] = iVariable_create(lnVarType, NULL);
+				}
+
+				// Finalize the initialization
+// TODO:  Working here .. need to create the obj->props array as part of each class, and use the size of the relative propList(), and then remove all of the distinct getters and setters to work more generically with the variable types, with a few special ones for particular classes.
+				propList[lnI]->setterVar(obj, )
+			}
 
 
 		//////////
-		// Clear out the comment and tag
+		// Related to rendering
 		//////
-			iDatum_delete(&obj->p.tag->value, false);
-
-
-		//////////
-		// Clear out the mouse information
-		//////
-			iBmp_delete(&obj->p.mouseIcon, true, true);
-			obj->p.mousePointer = _MOUSE_POINTER_DEFAULT;
-
-
-		//////////
-		// Object flags
-		//////
-			iVariable_set_bool(obj->p.enabled,		true);
-			obj->p.hasFocus = false;
-			iVariable_set_bool(obj->p.movable,		true);
-			iVariable_set_bool(obj->p.visible,		false);
-			// Related to rendering
 			obj->isRendered		= true;
 			obj->isPublished	= true;
 			obj->isDirtyRender	= true;
@@ -2173,12 +2180,6 @@ if (!llPublishChildren)
 			obj->scrollOffsetX	= 0;
 			obj->scrollOffsetY	= 0;
 			obj->isScaled		= false;
-// 
-// 
-// 		//////////
-// 		// Reset the object's size
-// 		//////
-// 			iObj_setSize(obj, obj->rc.left, obj->rc.top, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top);
 	}
 
 
@@ -2450,7 +2451,7 @@ if (!llPublishChildren)
 					//////////
 					// Use VJr defaults
 					//////
-						iiSubobj_resetToDefaultSubform(subformNew, true, true);
+						iiSubobj_resetToDefaultSubform(subformNew, true, true, &gcProps_subform);
 				}
 			}
 
@@ -3557,7 +3558,7 @@ if (!llPublishChildren)
 // Called to reset the object to its hard defaults.
 //
 //////
-	void iiSubobj_resetToDefaultEmpty(SObject* empty, bool tlResetProperties, bool tlResetMethods)
+	void iiSubobj_resetToDefaultEmpty(SObject* empty, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList)
 	{
 		logfunc(__FUNCTION__);
 		if (empty)
@@ -3565,7 +3566,7 @@ if (!llPublishChildren)
 			//////////
 			// Reset the common settings
 			//////
-				iiObj_resetToDefaultCommon(empty, true, true);
+				iiObj_resetToDefaultCommon(empty, true, true, propList);
 		}
 
 		// No object-specific initialization because empty objects do nothing except exist as placeholders

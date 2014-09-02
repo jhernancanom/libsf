@@ -1359,7 +1359,7 @@
 		u32			index;								// Array index
 		cs8*		prop;								// Property
 		u32			length;								// Length of the property name
-		s32			objType;							// What is the object type if not a bitmap?
+		s32			varType;							// What is the object type if not a bitmap?
 
 		// Default values
 		union {
@@ -1379,7 +1379,7 @@
 	};
 
 	// Initialization parameters
-	SPropertyInits gsInitialization[] =
+	SPropertyInits gsProps_masterDefaultInitValues[] =
 	{
 		{	_INDEX_ACTIVECOLUMN,			cgc_activeColumn,				sizeof(cgc_activeColumn) - 1,				_VAR_TYPE_S32,			0		},
 		{	_INDEX_ACTIVECONTROL,			cgc_activeControl,				sizeof(cgc_activeControl) - 1,				_VAR_TYPE_OBJECT,		0		},
