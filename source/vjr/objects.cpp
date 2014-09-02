@@ -2286,7 +2286,7 @@ if (!llPublishChildren)
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultEmpty(emptyNew, true, true);
+					iiSubobj_resetToDefaultEmpty(emptyNew, true, true, &gsProps_empty, gnProps_emptySize);
 				}
 
 			}
@@ -2375,7 +2375,7 @@ if (!llPublishChildren)
 					//////////
 					// Use VJr defaults
 					//////
-						iiSubobj_resetToDefaultForm(formNew, true, true);
+						iiSubobj_resetToDefaultForm(formNew, true, true, &gsProps_form, gnProps_formSize);
 				}
 			}
 
@@ -2451,7 +2451,7 @@ if (!llPublishChildren)
 					//////////
 					// Use VJr defaults
 					//////
-						iiSubobj_resetToDefaultSubform(subformNew, true, true, &gcProps_subform);
+						iiSubobj_resetToDefaultSubform(subformNew, true, true, &gsProps_subform, gnProps_subformSize);
 				}
 			}
 
@@ -2530,7 +2530,7 @@ if (!llPublishChildren)
 					//////////
 					// Use VJr defaults
 					//////
-						iiSubobj_resetToDefaultCarousel(carouselNew, true, true);
+						iiSubobj_resetToDefaultCarousel(carouselNew, true, true, &gsProps_carousel, gnProps_carouselSize);
 				}
 			}
 
@@ -2588,7 +2588,7 @@ if (!llPublishChildren)
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultRider(riderNew, true, true);
+					iiSubobj_resetToDefaultRider(riderNew, true, true, &gsProps_rider, gnProps_riderSize);
 				}
 			}
 
@@ -2646,7 +2646,7 @@ if (!llPublishChildren)
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultLabel(labelNew, true, true);
+					iiSubobj_resetToDefaultLabel(labelNew, true, true, &gsProps_label, gnProps_labelSize);
 				}
 			}
 
@@ -2704,7 +2704,7 @@ if (!llPublishChildren)
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultTextbox(textboxNew, true, true);
+					iiSubobj_resetToDefaultTextbox(textboxNew, true, true, &gsProps_textbox, gnProps_textboxSize);
 				}
 			}
 
@@ -2762,7 +2762,7 @@ if (!llPublishChildren)
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultButton(buttonNew, true, true);
+					iiSubobj_resetToDefaultButton(buttonNew, true, true, &gsProps_button, gnProps_buttonSize);
 				}
 			}
 
@@ -2820,7 +2820,7 @@ if (!llPublishChildren)
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultEditbox(editboxNew, true, true);
+					iiSubobj_resetToDefaultEditbox(editboxNew, true, true, &gsProps_editbox, gnProps_editboxSize);
 				}
 			}
 
@@ -2878,7 +2878,7 @@ if (!llPublishChildren)
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultImage(imageNew, true, true);
+					iiSubobj_resetToDefaultImage(imageNew, true, true, &gsProps_image, gnProps_imageSize);
 				}
 			}
 
@@ -2954,7 +2954,7 @@ if (!llPublishChildren)
 					//////////
 					// Use VJr defaults
 					//////
-						iiSubobj_resetToDefaultCheckbox(checkboxNew, true, true);
+						iiSubobj_resetToDefaultCheckbox(checkboxNew, true, true, &gsProps_checkbox, gnProps_checkboxSize);
 				}
 			}
 
@@ -3012,7 +3012,7 @@ if (!llPublishChildren)
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultOption(optionNew, true, true);
+					iiSubobj_resetToDefaultOption(optionNew, true, true, &gsProps_option, gnProps_optionSize);
 				}
 			}
 
@@ -3070,7 +3070,7 @@ if (!llPublishChildren)
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultRadio(radioNew, true, true);
+					iiSubobj_resetToDefaultRadio(radioNew, true, true, &gsProps_radio, gnProps_radioSize);
 				}
 			}
 
@@ -3558,7 +3558,7 @@ if (!llPublishChildren)
 // Called to reset the object to its hard defaults.
 //
 //////
-	void iiSubobj_resetToDefaultEmpty(SObject* empty, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList)
+	void iiSubobj_resetToDefaultEmpty(SObject* empty, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
 	{
 		logfunc(__FUNCTION__);
 		if (empty)
@@ -3566,13 +3566,15 @@ if (!llPublishChildren)
 			//////////
 			// Reset the common settings
 			//////
+				if (empty->propsCount < tnPropsCount)
+
 				iiObj_resetToDefaultCommon(empty, true, true, propList);
 		}
 
 		// No object-specific initialization because empty objects do nothing except exist as placeholders
 	}
 
-	void iiSubobj_resetToDefaultForm(SObject* form, bool tlResetProperties, bool tlResetMethods)
+	void iiSubobj_resetToDefaultForm(SObject* form, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
 	{
 		SObject*	objChild;
 		RECT		lrc;
@@ -3845,7 +3847,7 @@ if (!llPublishChildren)
 		}
 	}
 
-	void iiSubobj_resetToDefaultSubform(SObject* subform, bool tlResetProperties, bool tlResetMethods)
+	void iiSubobj_resetToDefaultSubform(SObject* subform, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
 	{
 		SObject*	objChild;
 		RECT		lrc;
@@ -3961,7 +3963,7 @@ if (!llPublishChildren)
 		}
 	}
 
-	void iiSubobj_resetToDefaultCarousel(SObject* carousel, bool tlResetProperties, bool tlResetMethods)
+	void iiSubobj_resetToDefaultCarousel(SObject* carousel, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
 	{
 		RECT		lrc;
 		SObject*	objChild;
@@ -4054,7 +4056,7 @@ if (!llPublishChildren)
 		}
 	}
 
-	void iiSubobj_resetToDefaultRider(SObject* rider, bool tlResetProperties, bool tlResetMethods)
+	void iiSubobj_resetToDefaultRider(SObject* rider, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
 	{
 		logfunc(__FUNCTION__);
 		if (rider)
@@ -4077,7 +4079,7 @@ if (!llPublishChildren)
 		}
 	}
 
-	void iiSubobj_resetToDefaultLabel(SObject* label, bool tlResetProperties, bool tlResetMethods)
+	void iiSubobj_resetToDefaultLabel(SObject* label, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
 	{
 		logfunc(__FUNCTION__);
 		if (label)
@@ -4132,7 +4134,7 @@ if (!llPublishChildren)
 		}
 	}
 
-	void iiSubobj_resetToDefaultTextbox(SObject* textbox, bool tlResetProperties, bool tlResetMethods)
+	void iiSubobj_resetToDefaultTextbox(SObject* textbox, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
 	{
 		logfunc(__FUNCTION__);
 		if (textbox)
@@ -4198,7 +4200,7 @@ if (!llPublishChildren)
 		}
 	}
 
-	void iiSubobj_resetToDefaultButton(SObject* button, bool tlResetProperties, bool tlResetMethods)
+	void iiSubobj_resetToDefaultButton(SObject* button, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
 	{
 		logfunc(__FUNCTION__);
 		if (button)
@@ -4237,7 +4239,7 @@ if (!llPublishChildren)
 		}
 	}
 
-	void iiSubobj_resetToDefaultEditbox(SObject* editbox, bool tlResetProperties, bool tlResetMethods)
+	void iiSubobj_resetToDefaultEditbox(SObject* editbox, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
 	{
 		logfunc(__FUNCTION__);
 		if (editbox)
@@ -4282,7 +4284,7 @@ if (!llPublishChildren)
 		}
 	}
 
-	void iiSubobj_resetToDefaultImage(SObject* image, bool tlResetProperties, bool tlResetMethods)
+	void iiSubobj_resetToDefaultImage(SObject* image, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
 	{
 		logfunc(__FUNCTION__);
 		if (image)
@@ -4315,7 +4317,7 @@ if (!llPublishChildren)
 		}
 	}
 
-	void iiSubobj_resetToDefaultCheckbox(SObject* checkbox, bool tlResetProperties, bool tlResetMethods)
+	void iiSubobj_resetToDefaultCheckbox(SObject* checkbox, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
 	{
 		SObject*	objChild;
 		RECT		lrc;
@@ -4427,7 +4429,7 @@ if (!llPublishChildren)
 		}
 	}
 
-	void iiSubobj_resetToDefaultOption(SObject* option, bool tlResetProperties, bool tlResetMethods)
+	void iiSubobj_resetToDefaultOption(SObject* option, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
 	{
 		logfunc(__FUNCTION__);
 		if (option)
@@ -4466,7 +4468,7 @@ if (!llPublishChildren)
 		}
 	}
 
-	void iiSubobj_resetToDefaultRadio(SObject* radio, bool tlResetProperties, bool tlResetMethods)
+	void iiSubobj_resetToDefaultRadio(SObject* radio, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
 	{
 		logfunc(__FUNCTION__);
 		if (radio)
