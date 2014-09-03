@@ -1281,7 +1281,7 @@
 						PostMessage(winNew->hwnd, WMVJR_FIRST_CREATION, 0, 0);
 
 						// If visible, show it
-						if (obj->p.visible)
+						if (isVisible(obj))
 							ShowWindow(winNew->hwnd, SW_SHOW);
 
 					// Unlock
@@ -1882,7 +1882,6 @@
 					// Read-write coloring
 					FillRect(lhdc, &ps.rcPaint, focus->readWriteBrush);
 				}
-				iVariable_delete(var, true);
 
 				// All done
 				EndPaint(hwnd, &ps);
@@ -3227,7 +3226,7 @@
 
 
 		// Make sure our environment is sane
-		if (obj && obj->p.enabled && obj->bmp)
+		if (obj && isEnabled(obj) && obj->bmp)
 		{
 			// Get the rectangle we're in at this level
 			llInClientArea = iiMouse_processMouseEvents_getRectDescent(win, obj, rc, lrc, lrcClient);
@@ -3335,7 +3334,7 @@
 
 		// Make sure our environment is sane
 		llContinue = false;
-		if (obj && obj->p.enabled && obj->bmp)
+		if (obj && isEnabled(obj) && obj->bmp)
 		{
 			// Get the rectangle we're in at this level
 			llContinue		= true;

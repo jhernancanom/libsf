@@ -1335,7 +1335,7 @@ if (!llPublishChildren)
 
 				llIsVisible = isVisible(obj);
 				llIsEnabled = isEnabled(obj);
-				lnBackStyle	= backstyle(obj);
+				lnBackStyle	= backStyle(obj);
 				if (llPublishChildren && llIsVisible && tlPublishChildren && obj->firstChild)
 					lnPixelsRendered += iObj_publish(obj->firstChild, &lrcChild, obj->bmp, true, true, tlForcePublish, tnLevel + 1);
 
@@ -1419,7 +1419,7 @@ if (!llPublishChildren)
 									case _OBJ_TYPE_LABEL:
 										// Non-opaque labels are rendered as black on white, with that grayscale being used to influence the forecolor
 										if (lnBackStyle == _BACK_STYLE_OPAQUE)		lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
-										else										lnPixelsRendered += iBmp_bitBlt_byGraymask(bmpDst, &lrc, obj->bmp, get_bgra(obj->p.foreColor));
+										else										lnPixelsRendered += iBmp_bitBlt_byGraymask(bmpDst, &lrc, obj->bmp, iObj_get_sbgra_direct(obj, _INDEX_FORECOLOR));
 										break;
 
 									default:
@@ -1670,6 +1670,7 @@ if (!llPublishChildren)
 //////
 	void iObj_setSize(SObject* obj, s32 tnLeft, s32 tnTop, s32 tnWidth, s32 tnHeight)
 	{
+		s32			lnAlignment;
 		SObject*	objChild;
 		RECT		lrc;
 
@@ -1785,8 +1786,8 @@ if (!llPublishChildren)
 				break;
 
 			case _OBJ_TYPE_SUBFORM:
-				if (get_s32(obj->p.borderStyle) != _BORDER_STYLE_NONE)		SetRect(&obj->rcClient, 1, bmpArrowUl->bi.biHeight + 1, tnWidth - 8 - 1, tnHeight - 1);
-				else														SetRect(&obj->rcClient, 0, bmpArrowUl->bi.biHeight, tnWidth - 8, tnHeight);
+				if (borderStyle(obj) != _BORDER_STYLE_NONE)		SetRect(&obj->rcClient, 1, bmpArrowUl->bi.biHeight + 1, tnWidth - 8 - 1, tnHeight - 1);
+				else											SetRect(&obj->rcClient, 0, bmpArrowUl->bi.biHeight, tnWidth - 8, tnHeight);
 
 				//////////
 				// Default child settings:
@@ -1816,7 +1817,7 @@ if (!llPublishChildren)
 										1 + bmpArrowUl->bi.biWidth + 4,
 										2 - obj->rcClient.top,
 										tnWidth - 4,
-										2 - obj->rcClient.top + objChild->pa.font->tm.tmHeight + 2);
+										2 - obj->rcClient.top + objChild->p.font->tm.tmHeight + 2);
 
 							// Update the size
 							iObj_setSize(objChild,	objChild->rc.left,
@@ -1847,7 +1848,8 @@ if (!llPublishChildren)
 				// [check][label]
 				//////
 					SetRect(&lrc, 0, 0, tnHeight, tnHeight);
-					objChild = obj->firstChild;
+					lnAlignment	= alignment(obj);
+					objChild	= obj->firstChild;
 					while (objChild)
 					{
 						// See which object this is
@@ -1855,7 +1857,7 @@ if (!llPublishChildren)
 						{
 							// Adjust the size and position
 							logfunc("checkbox image");
-							switch (get_s32(obj->p.alignment))
+							switch (lnAlignment)
 							{
 								default:
 								case _ALIGNMENT_LEFT:
@@ -1875,10 +1877,10 @@ if (!llPublishChildren)
 							iBmp_createBySize(objChild->p.bmpPicture, tnHeight, tnHeight, 24);
 
 							// Based on type, populate the image
-							if (get_s32(obj->p.value) == 0)
+							if (iObj_get_s32_direct(obj, _INDEX_VALUE) == 0)
 							{
 								// Off
-								iBmp_scale(objChild->p.bmpPicture, bmpCheckboxOff);				// Set the new
+								iBmp_scale(objChild->p.bmpPicture, bmpCheckboxOff);					// Set the new
 
 							} else {
 								// On
@@ -1899,7 +1901,7 @@ if (!llPublishChildren)
 						} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->p.name->value, cgcName_checkboxLabel, sizeof(cgcName_checkboxLabel) - 1) == 0) {
 							// Adjust the size
 							logfunc("checkbox label");
-							switch (get_s32(obj->p.alignment))
+							switch (alignment(obj))
 							{
 								default:
 								case _ALIGNMENT_LEFT:
@@ -1977,8 +1979,8 @@ if (!llPublishChildren)
 		llOldVisible = false;
 		if (obj)
 		{
-			llOldVisible = ((get_u8(obj->p.visible) == 0) ? false : true);
-			iVariable_set_logical(obj->p.visible, tlNewVisible);
+			llOldVisible = isVisible(obj);
+			iObj_set_logical_direct(obj, _INDEX_VISIBLE, ((tlNewVisible) ? _LOGICAL_TRUE : _LOGICAL_FALSE));
 		}
 
 		// Indicate prior visible
@@ -2049,47 +2051,47 @@ if (!llPublishChildren)
 			switch (obj->objType)
 			{
 				case _OBJ_TYPE_EMPTY:		// Empty, used as a placeholder object that is not drawn
-					iiSubobj_resetToDefaultEmpty(obj, tlResetProperties, tlResetMethods);
+					iiSubobj_resetToDefaultEmpty(obj, tlResetProperties, tlResetMethods, &gsProps_empty[0], gnProps_emptySize);
 					break;
 
 				case _OBJ_TYPE_FORM:			// Form class, the main outer window the OS sees
-					iiSubobj_resetToDefaultForm(obj, tlResetProperties, tlResetMethods);
+					iiSubobj_resetToDefaultForm(obj, tlResetProperties, tlResetMethods, &gsProps_form[0], gnProps_formSize);
 					break;
 
 				case _OBJ_TYPE_SUBFORM:		// A new class which has its own drawing content and can be moved about using UI features
-					iiSubobj_resetToDefaultSubform(obj, tlResetProperties, tlResetMethods);
+					iiSubobj_resetToDefaultSubform(obj, tlResetProperties, tlResetMethods, &gsProps_subform[0], gnProps_subformSize);
 					break;
 
 				case _OBJ_TYPE_LABEL:		// A label
-					iiSubobj_resetToDefaultLabel(obj, tlResetProperties, tlResetMethods);
+					iiSubobj_resetToDefaultLabel(obj, tlResetProperties, tlResetMethods, &gsProps_label[0], gnProps_labelSize);
 					break;
 
 				case _OBJ_TYPE_TEXTBOX:		// An input textbox
-					iiSubobj_resetToDefaultTextbox(obj, tlResetProperties, tlResetMethods);
+					iiSubobj_resetToDefaultTextbox(obj, tlResetProperties, tlResetMethods, &gsProps_textbox[0], gnProps_textboxSize);
 					break;
 
 				case _OBJ_TYPE_BUTTON:		// A push button
-					iiSubobj_resetToDefaultButton(obj, tlResetProperties, tlResetMethods);
+					iiSubobj_resetToDefaultButton(obj, tlResetProperties, tlResetMethods, &gsProps_button[0], gnProps_buttonSize);
 					break;
 
 				case _OBJ_TYPE_EDITBOX:		// An input multi-line editbox
-					iiSubobj_resetToDefaultEditbox(obj, tlResetProperties, tlResetMethods);
+					iiSubobj_resetToDefaultEditbox(obj, tlResetProperties, tlResetMethods, &gsProps_editbox[0], gnProps_editboxSize);
 					break;
 
 				case _OBJ_TYPE_IMAGE:		// A graphical image
-					iiSubobj_resetToDefaultImage(obj, tlResetProperties, tlResetMethods);
+					iiSubobj_resetToDefaultImage(obj, tlResetProperties, tlResetMethods, &gsProps_image[0], gnProps_imageSize);
 					break;
 
 				case _OBJ_TYPE_CHECKBOX:		// A checkbox
-					iiSubobj_resetToDefaultCheckbox(obj, tlResetProperties, tlResetMethods);
+					iiSubobj_resetToDefaultCheckbox(obj, tlResetProperties, tlResetMethods, &gsProps_checkbox[0], gnProps_checkboxSize);
 					break;
 
 				case _OBJ_TYPE_OPTION:		// A combination selection
-					iiSubobj_resetToDefaultOption(obj, tlResetProperties, tlResetMethods);
+					iiSubobj_resetToDefaultOption(obj, tlResetProperties, tlResetMethods, &gsProps_option[0], gnProps_optionSize);
 					break;
 
 				case _OBJ_TYPE_RADIO:		// A radio dial, which can also present as a slider or spinner
-					iiSubobj_resetToDefaultRadio(obj, tlResetProperties, tlResetMethods);
+					iiSubobj_resetToDefaultRadio(obj, tlResetProperties, tlResetMethods, &gsProps_radio[0], gnProps_radioSize);
 					break;
 
 				default:
@@ -2119,10 +2121,10 @@ if (!llPublishChildren)
 			for (lnI = 0; propList[lnI].index != 0; lnI++)
 			{
 				// Grab the index of this entry in the master list
-				lnIndex = propList[lnI];
+				lnIndex = propList[lnI].index;
 
 				// Initialize based on type
-				lnVarType = gsProps_masterDefaultInitValues[lnIndex]->varType;
+				lnVarType = gsProps_masterDefaultInitValues[lnIndex].varType;
 				switch (lnVarType)
 				{
 					case _VAR_TYPE_NULL:
@@ -2142,7 +2144,7 @@ if (!llPublishChildren)
 
 				// Finalize the initialization
 // TODO:  Working here .. need to create the obj->props array as part of each class, and use the size of the relative propList(), and then remove all of the distinct getters and setters to work more generically with the variable types, with a few special ones for particular classes.
-				propList[lnI]->setterVar(obj, )
+				propList[lnI].setterVar(obj, )
 			}
 
 
@@ -2274,7 +2276,7 @@ if (!llPublishChildren)
 				// Initially populate
 				emptyNew->objType		= _OBJ_TYPE_EMPTY;
 				emptyNew->parent		= parent;
-				iVariable_set_logical(emptyNew->p.enabled, true);
+				iObj_set_logical_direct(emptyNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				emptyNew->isRendered	= true;
 				emptyNew->isPublished	= true;
 				iDatum_duplicate(&emptyNew->p.name->value,		cgcName_empty, -1);
@@ -2289,7 +2291,7 @@ if (!llPublishChildren)
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultEmpty(emptyNew, true, true, &gsProps_empty, gnProps_emptySize);
+					iiSubobj_resetToDefaultEmpty(emptyNew, true, true, &gsProps_empty[0], gnProps_emptySize);
 				}
 
 			}
@@ -2338,7 +2340,7 @@ if (!llPublishChildren)
 				// Initially populate
 				formNew->objType		= _OBJ_TYPE_FORM;
 				formNew->parent			= parent;
-				iVariable_set_logical(formNew->p.enabled, true);
+				iObj_set_logical_direct(formNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				formNew->isRendered		= true;
 				formNew->isPublished	= true;
 				iDatum_duplicate(&formNew->p.name->value,		cgcName_form, -1);
@@ -2378,7 +2380,7 @@ if (!llPublishChildren)
 					//////////
 					// Use VJr defaults
 					//////
-						iiSubobj_resetToDefaultForm(formNew, true, true, &gsProps_form, gnProps_formSize);
+						iiSubobj_resetToDefaultForm(formNew, true, true, &gsProps_form[0], gnProps_formSize);
 				}
 			}
 
@@ -2422,7 +2424,7 @@ if (!llPublishChildren)
 				// Initially populate
 				subformNew->objType		= _OBJ_TYPE_SUBFORM;
 				subformNew->parent		= parent;
-				iVariable_set_logical(subformNew->p.enabled, true);
+				iObj_set_logical_direct(subformNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				subformNew->isRendered	= true;
 				subformNew->isPublished	= true;
 				iDatum_duplicate(&subformNew->p.name->value,	cgcName_subform, -1);
@@ -2454,7 +2456,7 @@ if (!llPublishChildren)
 					//////////
 					// Use VJr defaults
 					//////
-						iiSubobj_resetToDefaultSubform(subformNew, true, true, &gsProps_subform, gnProps_subformSize);
+						iiSubobj_resetToDefaultSubform(subformNew, true, true, &gsProps_subform[0], gnProps_subformSize);
 				}
 			}
 
@@ -2499,7 +2501,7 @@ if (!llPublishChildren)
 				// Initially populate
 				carouselNew->objType		= _OBJ_TYPE_CAROUSEL;
 				carouselNew->parent			= parent;
-				iVariable_set_logical(carouselNew->p.enabled, true);
+				iObj_set_logical_direct(carouselNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				carouselNew->isRendered		= true;
 				carouselNew->isPublished	= true;
 				iDatum_duplicate(&carouselNew->p.name->value,		cgcName_carousel, -1);
@@ -2533,7 +2535,7 @@ if (!llPublishChildren)
 					//////////
 					// Use VJr defaults
 					//////
-						iiSubobj_resetToDefaultCarousel(carouselNew, true, true, &gsProps_carousel, gnProps_carouselSize);
+						iiSubobj_resetToDefaultCarousel(carouselNew, true, true, &gsProps_carousel[0], gnProps_carouselSize);
 				}
 			}
 
@@ -2591,7 +2593,7 @@ if (!llPublishChildren)
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultRider(riderNew, true, true, &gsProps_rider, gnProps_riderSize);
+					iiSubobj_resetToDefaultRider(riderNew, true, true, &gsProps_rider[0], gnProps_riderSize);
 				}
 			}
 
@@ -2649,7 +2651,7 @@ if (!llPublishChildren)
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultLabel(labelNew, true, true, &gsProps_label, gnProps_labelSize);
+					iiSubobj_resetToDefaultLabel(labelNew, true, true, &gsProps_label[0], gnProps_labelSize);
 				}
 			}
 
@@ -2707,7 +2709,7 @@ if (!llPublishChildren)
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultTextbox(textboxNew, true, true, &gsProps_textbox, gnProps_textboxSize);
+					iiSubobj_resetToDefaultTextbox(textboxNew, true, true, &gsProps_textbox[0], gnProps_textboxSize);
 				}
 			}
 
@@ -2765,7 +2767,7 @@ if (!llPublishChildren)
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultButton(buttonNew, true, true, &gsProps_button, gnProps_buttonSize);
+					iiSubobj_resetToDefaultButton(buttonNew, true, true, &gsProps_button[0], gnProps_buttonSize);
 				}
 			}
 
@@ -2823,7 +2825,7 @@ if (!llPublishChildren)
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultEditbox(editboxNew, true, true, &gsProps_editbox, gnProps_editboxSize);
+					iiSubobj_resetToDefaultEditbox(editboxNew, true, true, &gsProps_editbox[0], gnProps_editboxSize);
 				}
 			}
 
@@ -2881,7 +2883,7 @@ if (!llPublishChildren)
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultImage(imageNew, true, true, &gsProps_image, gnProps_imageSize);
+					iiSubobj_resetToDefaultImage(imageNew, true, true, &gsProps_image[0], gnProps_imageSize);
 				}
 			}
 
@@ -2957,7 +2959,7 @@ if (!llPublishChildren)
 					//////////
 					// Use VJr defaults
 					//////
-						iiSubobj_resetToDefaultCheckbox(checkboxNew, true, true, &gsProps_checkbox, gnProps_checkboxSize);
+						iiSubobj_resetToDefaultCheckbox(checkboxNew, true, true, &gsProps_checkbox[0], gnProps_checkboxSize);
 				}
 			}
 
@@ -3015,7 +3017,7 @@ if (!llPublishChildren)
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultOption(optionNew, true, true, &gsProps_option, gnProps_optionSize);
+					iiSubobj_resetToDefaultOption(optionNew, true, true, &gsProps_option[0], gnProps_optionSize);
 				}
 			}
 
@@ -3073,7 +3075,7 @@ if (!llPublishChildren)
 
 				} else {
 					// Use VJr defaults
-					iiSubobj_resetToDefaultRadio(radioNew, true, true, &gsProps_radio, gnProps_radioSize);
+					iiSubobj_resetToDefaultRadio(radioNew, true, true, &gsProps_radio[0], gnProps_radioSize);
 				}
 			}
 

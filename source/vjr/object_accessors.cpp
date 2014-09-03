@@ -706,3 +706,78 @@ _asm int 3;
 	{
 		return(NULL);
 	}
+
+
+
+
+//////////
+//
+// Called to get the s32 from the indicated object directly
+//
+//////
+	s32 iObj_get_s32_direct(SObject* obj, u32 tnIndex)
+	{
+		bool		error;
+		s32			lnResult;
+		u32			errorNum;
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObj_get_variable_byIndex(obj, tnIndex);
+			if (var)
+			{
+				// Try to get the value
+				lnResult = iiVariable_getAs_s32(var, false, &error, &errorNum);
+
+				// If we got it...
+				if (!error)
+					return(lnResult);	// ...return the value
+			}
+		}
+		// If we get here, failure
+		return(-1);
+	}
+
+
+
+
+//////////
+//
+// Called to obtain the s32 value as an SBgra color
+//
+//////
+	SBgra iObj_get_sbgra_direct (SObject* obj, u32 tnIndex)
+	{
+		union {
+			s32		_color;
+			SBgra	color;
+		};
+		bool		error;
+		s32			lnResult;
+		u32			errorNum;
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObj_get_variable_byIndex(obj, tnIndex);
+			if (var)
+			{
+				// Try to get the value
+				_color = iiVariable_getAs_s32(var, false, &error, &errorNum);
+
+				// If we got it...
+				if (!error)
+					return(color);		// ...return the value
+			}
+		}
+		// If we get here, failure
+		_color = -1;
+		return(color);
+	}

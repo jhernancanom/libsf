@@ -725,6 +725,8 @@
 	s32						iObj_get_logical_direct					(SObject* obj, u32 tnIndex);
 	SVariable*				iObj_get_object							(SObject* obj, u32 tnIndex);
 	SVariable*				iObj_get_s32							(SObject* obj, u32 tnIndex);
+	s32						iObj_get_s32_direct						(SObject* obj, u32 tnIndex);
+	SBgra					iObj_get_sbgra_direct					(SObject* obj, u32 tnIndex);
 
 
 	// For different types of properties
