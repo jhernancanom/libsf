@@ -1270,9 +1270,9 @@
 //////
 	u32 iObj_publish(SObject* obj, RECT* rc, SBitmap* bmpDst, bool tlPublishChildren, bool tlPublishSiblings, bool tlForcePublish, s32 tnLevel)
 	{
-		s32			lnWidth, lnHeight;
+		s32			lnWidth, lnHeight, lnBackStyle;
 		u32			lnPixelsRendered;
-		bool		llPublishChildren;
+		bool		llPublishChildren, llIsVisible, llIsEnabled;
 		RECT		lrc, lrcChild, lrc2;
 		SObject*	objSib;
 
@@ -1333,14 +1333,17 @@
 if (!llPublishChildren)
 	debug_break;
 
-				if (llPublishChildren && obj->p.visible && tlPublishChildren && obj->firstChild)
+				llIsVisible = isVisible(obj);
+				llIsEnabled = isEnabled(obj);
+				lnBackStyle	= backstyle(obj);
+				if (llPublishChildren && llIsVisible && tlPublishChildren && obj->firstChild)
 					lnPixelsRendered += iObj_publish(obj->firstChild, &lrcChild, obj->bmp, true, true, tlForcePublish, tnLevel + 1);
 
 
 			//////////
 			// Publish this item
 			//////
-				if (obj->p.visible)
+				if (llIsVisible)
 				{
 					// The size of the bitmap should equal the size of the rectangle on the parent.
 					lnWidth		= obj->rc.right - obj->rc.left;
@@ -1367,7 +1370,7 @@ if (!llPublishChildren)
 						if (bmpDst && obj->isPublished && obj->isDirtyPublish)
 						{
 							// If it's not enabled, grayscale it
-							if (!obj->p.enabled)
+							if (!llIsEnabled)
 							{
 								SetRect(&lrc2, 0, 0, obj->bmpScaled->bi.biWidth, obj->bmpScaled->bi.biHeight);
 								iBmp_grayscale(obj->bmpScaled, &lrc2);
@@ -1381,8 +1384,8 @@ if (!llPublishChildren)
 								{
 									case _OBJ_TYPE_IMAGE:
 									case _OBJ_TYPE_LABEL:
-										if (get_s32(obj->p.backStyle) == _BACK_STYLE_OPAQUE)	lnPixelsRendered += iBmp_bitBlt(bmpDst,		&lrc, obj->bmpScaled);
-										else													lnPixelsRendered += iBmp_bitBltMask(bmpDst,	&lrc, obj->bmpScaled);
+										if (lnBackStyle == _BACK_STYLE_OPAQUE)		lnPixelsRendered += iBmp_bitBlt(bmpDst,		&lrc, obj->bmpScaled);
+										else										lnPixelsRendered += iBmp_bitBltMask(bmpDst,	&lrc, obj->bmpScaled);
 										break;
 
 									default:
@@ -1396,7 +1399,7 @@ if (!llPublishChildren)
 						if (bmpDst && obj->isPublished && obj->isDirtyPublish && tnLevel != 0)
 						{
 							// If it's not enabled, grayscale it
-							if (!obj->p.enabled)
+							if (!llIsEnabled)
 							{
 								SetRect(&lrc2, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
 								iBmp_grayscale(obj->bmp, &lrc2);
@@ -1409,14 +1412,14 @@ if (!llPublishChildren)
 								switch (obj->objType)
 								{
 									case _OBJ_TYPE_IMAGE:
-										if (get_s32(obj->p.backStyle) == _BACK_STYLE_OPAQUE)	lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
-										else													lnPixelsRendered += iBmp_bitBltMask(bmpDst, &lrc, obj->bmp);
+										if (lnBackStyle == _BACK_STYLE_OPAQUE)		lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
+										else										lnPixelsRendered += iBmp_bitBltMask(bmpDst, &lrc, obj->bmp);
 										break;
 
 									case _OBJ_TYPE_LABEL:
 										// Non-opaque labels are rendered as black on white, with that grayscale being used to influence the forecolor
-										if (get_s32(obj->p.backStyle) == _BACK_STYLE_OPAQUE)	lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
-										else													lnPixelsRendered += iBmp_bitBlt_byGraymask(bmpDst, &lrc, obj->bmp, get_bgra(obj->p.foreColor));
+										if (lnBackStyle == _BACK_STYLE_OPAQUE)		lnPixelsRendered += iBmp_bitBlt(bmpDst, &lrc, obj->bmp);
+										else										lnPixelsRendered += iBmp_bitBlt_byGraymask(bmpDst, &lrc, obj->bmp, get_bgra(obj->p.foreColor));
 										break;
 
 									default:

@@ -4813,7 +4813,7 @@ debug_break;
 
 //////////
 //
-// Called to set the bitmap value for the indicated property
+// Called to set the bitmap value for the indicated variable
 //
 //////
 	bool iVariable_set_bitmap(SVariable* var, SBitmap* bmp)
@@ -4843,6 +4843,47 @@ _asm int 3;
 
 			// Copy the bitmap to the destination
 			var->bmp = iBmp_copy(bmp);
+		}
+
+		// If we get here, failure
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to set the character value for the indicated variable
+//
+//////
+	bool iVariable_set_character(SVariable* var, s8* tcData, u32 tnDataLength)
+	{
+		// Untested code ... breakpoint and examine
+_asm int 3;
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(var);
+
+		// Are we still valid?
+		if (var)
+		{
+			// Is the variable type already bitmap/
+			if (var->varType != _VAR_TYPE_CHARACTER)
+			{
+				// We need to refactor this variable into a character
+				// Delete the old contents
+				iVariable_delete(var, false);
+
+				// At this point, var->varType = _VAR_TYPE_NULL
+				var->varType = _VAR_TYPE_CHARACTER;
+
+			} else {
+				// Delete the old datum
+				iDatum_delete(&var->value, false);
+			}
+
+			// Set the new value
+			iDatum_duplicate(&var->value, tcData, tnDataLength);
 		}
 
 		// If we get here, failure

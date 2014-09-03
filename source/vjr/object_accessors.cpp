@@ -393,6 +393,36 @@
 
 
 //////////
+// 
+// Called to set the character variable to the indicated input
+//
+//////
+	bool iObj_set_character_direct (SObject* obj, u32 tnIndex, cs8* tcText, u32 tnTextLength)
+	{
+		return(iObj_set_character_direct(obj, tnIndex, (s8*)tcText, tnTextLength));
+	}
+
+	bool iObj_set_character_direct(SObject* obj, u32 tnIndex, s8* tcText, u32 tnTextLength)
+	{
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObj_get_variable_byIndex(obj, tnIndex);
+			if (var)
+				return(iVariable_set_character(var, tcText, tnTextLength));
+		}
+		// If we get here, failure
+		return(false);
+	}
+
+
+
+
+//////////
 //
 // Called to set the f64 variable to the indicated input
 //

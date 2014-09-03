@@ -120,6 +120,10 @@ typedef SEM**		SEMpp;
 	#define iVariable_isTypeBigInteger(var)			(var->varType == _VAR_TYPE_BI)
 	#define iVariable_isTypeBigFloatingPoint(var)	(var->varType == _VAR_TYPE_BFP)
 
+	#define isVisible(obj)							iObj_get_logical_direct(obj, _INDEX_VISIBLE)
+	#define isEnabled(obj)							iObj_get_logical_direct(obj, _INDEX_ENABLED)
+	#define backstyle(obj)							iObj_get_s32_direct(obj, _INDEX_BACKSTYLE)
+
 
 //////////
 // Red,Grn,Blu,Alp color maker

@@ -176,8 +176,6 @@
 //////
 	void iInit_create_jdebi(void)
 	{
-		SVariable*	caption;
-		SVariable*	fontSize;
 		s32			lnLeft, lnTop, lnWidth, lnHeight;
 		RECT		lrc;
 
@@ -303,16 +301,14 @@
 		//////////
 		// Give it a caption
 		//////
-			caption = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgcJDebiTitle, sizeof(cgcJDebiTitle) - 1);
-			iObj_set_caption(_jdebi, caption);
+			iObj_set_character_direct(_jdebi, _INDEX_CAPTION, cgcJDebiTitle, sizeof(cgcJDebiTitle) - 1);
 
 
 		//////////
 		// SourceCode window caption and font
 		//////
 			iObj_set_s32_direct(sourceCode, _INDEX_BACKSTYLE, _BACK_STYLE_TRANSPARENT);
-			iDatum_duplicate(&caption->value, cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
-			iObj_set_caption(sourceCode, caption);
+			iObj_set_character_direct(sourceCode, _INDEX_CAPTION, cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
 
 			// Adjust the caption width
 			((SObject*)sourceCode->firstChild->ll.next)->rc.right = 90;
@@ -331,7 +327,7 @@
 		// Locals window caption and font
 		//////
 // TODO:  Working here...
-			iObj_set_character_direct(locals, _INDEX_CAPTION, caption, cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
+			iObj_set_character_direct(locals, _INDEX_CAPTION, cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
 			locals_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			locals_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			iObj_set_bitmap(locals, _INDEX_ICON, bmpLocalsIcon);
@@ -344,11 +340,11 @@
 // 			locals_globals		= iObj_addChild(_OBJ_TYPE_CHECKBOX, locals);
 // 			locals_readwrite	= iObj_addChild(_OBJ_TYPE_CHECKBOX, locals);
 // 			locals_refactor		= iObj_addChild(_OBJ_TYPE_CHECKBOX, locals);
-			
-			// For the font size
-			fontSize = iVariable_create(_VAR_TYPE_U32, NULL);
-			*fontSize->value.data_s32 = 7;
-
+// 			
+// 			// For the font size
+// 			fontSize = iVariable_create(_VAR_TYPE_U32, NULL);
+// 			*fontSize->value.data_s32 = 7;
+// 
 // 			// Populate the names and position each one
 // 			iDatum_duplicate(&caption->value, "Autos", -1);
 // 			iObj_setCaption(locals_autos, caption);
@@ -424,8 +420,7 @@
 		//////////
 		// Watch window caption and font
 		//////
-			iDatum_duplicate(&caption->value, cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
-			iObj_set_caption(watch, caption);
+			iObj_set_character_direct(watch, _INDEX_CAPTION, cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
 			watch_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			watch_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			watch_editbox->p.em->showCursorLine	= true;
@@ -438,8 +433,7 @@
 		//////////
 		// Command window caption and font
 		//////
-			iDatum_duplicate(&caption->value, cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
-			iObj_set_caption(command, caption);
+			iObj_set_character_direct(command, _INDEX_CAPTION, cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
 			command_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			command_editbox->ev.keyboard._onKeyDown		= (u32)&iSEM_onKeyDown_sourceCode;
 			command_editbox->p.hasFocus					= true;
@@ -455,8 +449,7 @@
 		//////////
 		// Debug window caption and font
 		//////
-			iDatum_duplicate(&caption->value, cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
-			iObj_set_caption(debug, caption);
+			iObj_set_character_direct(debug, _INDEX_CAPTION, cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
 			debug_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			debug_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			debug_editbox->p.em->showCursorLine	= true;
@@ -469,8 +462,7 @@
 		//////////
 		// Output window caption and font
 		//////
-			iDatum_duplicate(&caption->value, cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
-			iObj_set_caption(output, caption);
+			iObj_set_character_direct(output, _INDEX_CAPTION, cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
 			output_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_MEDIUM, false, false);
 			output_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			output_editbox->p.em->showCursorLine	= true;
@@ -483,8 +475,7 @@
 		//////////
 		// SourceLight a caption and font
 		//////
-			iDatum_duplicate(&caption->value, cgcSourceLightTitle, sizeof(cgcSourceLightTitle) - 1);
-			iObj_set_caption(sourceLight, caption);
+			iObj_set_character_direct(sourceLight, _INDEX_CAPTION, cgcSourceLightTitle, sizeof(cgcSourceLightTitle) - 1);
 			sourceLight->p.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			iObj_set_logical_direct(sourceLight, _INDEX_VISIBLE, _LOGICAL_TRUE);
 			iObj_set_s32_direct(sourceLight, _INDEX_BACKSTYLE, _BACK_STYLE_OPAQUE);
@@ -493,8 +484,7 @@
 		//////////
 		// _screen a caption and font
 		//////
-			iDatum_duplicate(&caption->value, cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
-			iObj_set_caption(_screen, caption);
+			iObj_set_character_direct(_screen, _INDEX_CAPTION, cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
 			_screen->p.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 
 
@@ -510,16 +500,9 @@
 
 
 		//////////
-		// Clean house
-		//////
-			iVariable_delete(caption,	true);
-			iVariable_delete(fontSize,	true);
-
-
-		//////////
 		// Set it visible
 		//////
-			iObj_setVisible(_jdebi, true);
+			iObj_set_logical_direct(_jdebi, _INDEX_VISIBLE, true);
 	}
 
 

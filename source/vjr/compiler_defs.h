@@ -173,6 +173,7 @@ struct SVariable;
 	bool					iVariable_set_logical						(SVariable* var, bool tlValue);
 	bool					iVariable_set_logical						(SVariable* var, s32 value);
 	bool					iVariable_set_bitmap						(SVariable* var, SBitmap* bmp);
+	bool					iVariable_set_character						(SVariable* var, s8* tcData, u32 tnDataLength);
 	void					iVariable_reset								(SVariable* var);
 	SVariable*				iVariable_convertForDisplay					(SVariable* var);
 	void					iVariable_delete							(SVariable* var, bool tlDeleteSelf);

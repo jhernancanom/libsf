@@ -702,8 +702,12 @@
 
 
 	// Basic setters and getters
+	// Note:  The _direct()* function variations are used to bypass the normal setters
+	//         and getters, and should be used for internal use only.
 	bool					iObj_set_bitmap							(SObject* obj, u32 tnIndex, SBitmap* bmp);
 	bool					iObj_set_character						(SObject* obj, u32 tnIndex, SVariable* var);
+	bool					iObj_set_character_direct				(SObject* obj, u32 tnIndex, cs8* tcText, u32 tnTextLength);
+	bool					iObj_set_character_direct				(SObject* obj, u32 tnIndex,  s8* tcText, u32 tnTextLength);
 	bool					iObj_set_f64							(SObject* obj, u32 tnIndex, SVariable* var);
 	bool					iObj_set_logical						(SObject* obj, u32 tnIndex, SVariable* var);
 	bool					iObj_set_logical_direct					(SObject* obj, u32 tnIndex, s32 tnValue);
@@ -717,6 +721,7 @@
 	SVariable*				iObj_get_character						(SObject* obj, u32 tnIndex);
 	SVariable*				iObj_get_f64							(SObject* obj, u32 tnIndex);
 	SVariable*				iObj_get_logical						(SObject* obj, u32 tnIndex);
+	// Note:  The s32 value returned will be a _LOGICAL_* or _LOGICALX_* value.  To test for .T., use (x != _LOGICAL_FALSE).
 	s32						iObj_get_logical_direct					(SObject* obj, u32 tnIndex);
 	SVariable*				iObj_get_object							(SObject* obj, u32 tnIndex);
 	SVariable*				iObj_get_s32							(SObject* obj, u32 tnIndex);
