@@ -107,11 +107,20 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		gsProps_masterDefaultInitValues[_INDEX_INCREMENT]._f64 = 1.0;
 
 		// Initialize primitive variables
-		varConstant_space	= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgc_spaceText, 1);
-		varEmptyString		= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, (s8*)NULL, 0);
-		var2000Spaces		= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+		varConstant_space		= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgc_spaceText, 1);
+		varEmptyString			= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, (s8*)NULL, 0);
+		var2000Spaces			= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+		varTrue					= iVariable_createAndPopulate(_VAR_TYPE_LOGICAL, NULL, 0);
+		varFalse				= iVariable_createAndPopulate(_VAR_TYPE_LOGICAL, NULL, 0);
+
+		// 2000 blank spaces
 		iDatum_allocateSpace(&var2000Spaces->value, 2000);
 		memset(var2000Spaces->value.data, 32, 2000);
+
+		// Constant logical
+		varTrue->value.data_s8	= _LOGICAL_TRUE;
+		varFalse->value.data_s8	= _LOGICAL_TRUE;
+
 
 		// Keyboard shortcuts
 		*hAccelTable = LoadAccelerators(ghInstance, MAKEINTRESOURCE(IDC_VJR));
@@ -447,7 +456,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			gobj_splashListingEditbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
 			gobj_splashListingEditbox->p.em->font				= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
 			gobj_splashListingEditbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
-			iVariable_set_bool(gobj_splashListingEditbox->p.visible, true);
+			iVariable_set_logical(gobj_splashListingEditbox->p.visible, true);
 			systemLog											= gobj_splashListingEditbox->p.em;
 			systemLog->showEndLine								= true;
 			systemLog->showCursorLine							= true;

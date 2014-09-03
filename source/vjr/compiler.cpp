@@ -4634,12 +4634,12 @@ debug_break;
 		SVariable* varDst;
 
 
-		// Make sure our environment is sane
+		// De-reference the variable
+		varSrc = iiVariable_terminateIndirect(varSrc);
+
+		// Are we still valid?
 		if (varSrc && varSrc->value.data && varSrc->varType != _VAR_TYPE_NULL)
 		{
-			// Make sure we're dealing with the actual variables
-			varSrc = iiVariable_terminateIndirect(varSrc);
-
 			// Should we create a real variable? Or a reference?
 			if (tlMakeReference)
 			{
@@ -4672,16 +4672,17 @@ debug_break;
 //////
 	bool iVariable_set(SVariable* varDst, SVariable* varSrc)
 	{
+		// De-reference the variable
+		varDst = iiVariable_terminateIndirect(varDst);
+		varSrc = iiVariable_terminateIndirect(varSrc);
+
+		// Are we still valid?
 // TODO:  Need to check the variable type before performing the varDst->value test
 		if (varDst && varSrc && varDst->value.data && varSrc->value.data && varDst->varType != _VAR_TYPE_NULL && varSrc->varType != _VAR_TYPE_NULL)
 		{
 			// See if they're the same type
 			if (varDst->varType == varSrc->varType && varDst->value.length == varSrc->value.length)
 			{
-				// Make sure we're dealing with the actual variables
-				varDst = iiVariable_terminateIndirect(varDst);
-				varSrc = iiVariable_terminateIndirect(varSrc);
-
 				// They are the same, so we can do a direct copy
 				switch (varDst->value.length)
 				{
@@ -4727,11 +4728,12 @@ debug_break;
 //////
 	bool iVariable_set_s32(SVariable* var, s32 value)
 	{
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(var);
+
+		// Are we still valid?
 		if (var && var->varType == _VAR_TYPE_S32 && var->value.data_s32)
 		{
-			// Make sure we're dealing with the actual variable
-			var = iiVariable_terminateIndirect(var);
-
 			// Set it
 			*var->value.data_s32 = value;
 
@@ -4754,11 +4756,12 @@ debug_break;
 //////
 	bool iVariable_set_u32(SVariable* var, u32 value)
 	{
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(var);
+
+		// Are we still valid?
 		if (var && var->varType == _VAR_TYPE_U32 && var->value.data_u32)
 		{
-			// Make sure we're dealing with the actual variable
-			var = iiVariable_terminateIndirect(var);
-
 			// Set it
 			*var->value.data_u32 = value;
 
@@ -4779,23 +4782,71 @@ debug_break;
 // Called to set the bool value
 //
 //////
-	bool iVariable_set_bool(SVariable* var, bool value)
+	bool iVariable_set_logical(SVariable* var, bool tlValue)
 	{
-		if (var && var->varType == _VARIABLE_TYPE_LOGICAL && var->value.data_u8)
-		{
-			// Make sure we're dealing with the actual variable
-			var = iiVariable_terminateIndirect(var);
+		// Translate bool to logical true or false
+		return(iVariable_set_logical(var, ((tlValue) ? _LOGICAL_TRUE : _LOGICAL_FALSE)));
+	}
 
+	bool iVariable_set_logical(SVariable* var, s32 value)
+	{
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(var);
+
+		// Are we still valid?
+		if (var && var->varType == _VARIABLE_TYPE_LOGICAL && var->value.data_s8)
+		{
 			// Set it
-			*var->value.data_u8 = ((value) ? 1 : 0);
+			*var->value.data_s8 = (s8)value;
 
 			// Success
 			return(true);
 
-		} else {
-			// Failure
-			return(false);
 		}
+
+		// Failure
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to set the bitmap value for the indicated property
+//
+//////
+	bool iVariable_set_bitmap(SVariable* var, SBitmap* bmp)
+	{
+// Untested code ... breakpoint and examine
+_asm int 3;
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(var);
+
+		// Are we still valid?
+		if (var && bmp)
+		{
+			// Is the variable type already bitmap/
+			if (var->varType != _VAR_TYPE_BITMAP)
+			{
+				// We need to refactor this variable into a bitmap
+				// Delete the old contents
+				iVariable_delete(var, false);
+
+				// At this point, var->varType = _VAR_TYPE_NULL
+				var->varType = _VAR_TYPE_BITMAP;
+
+			} else {
+				// Delete the old bitmap (if any)
+				iBmp_delete(var->bmp, true, true);
+			}
+
+			// Copy the bitmap to the destination
+			var->bmp = iBmp_copy(bmp);
+		}
+
+		// If we get here, failure
+		return(false);
 	}
 
 
@@ -4808,6 +4859,10 @@ debug_break;
 //////
 	void iVariable_reset(SVariable* var)
 	{
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(var);
+
+		// Are we still valid?
 		if (var)
 		{
 			switch (var->varType)
@@ -4821,9 +4876,12 @@ debug_break;
 					break;
 
 				case _VARIABLE_TYPE_LOGICAL:
+					var->value.data_s8[0] = _LOGICAL_FALSE;
+					break;
+
 				case _VARIABLE_TYPE_S8:
 				case _VARIABLE_TYPE_U8:
-					var->value.data[0] = 0;
+					var->value.data_s8[0] = 0;
 					break;
 
 				case _VARIABLE_TYPE_S16:
@@ -5181,7 +5239,8 @@ debug_break;
 			//////////
 			// Delete the name (if populated)
 			//////
-				iDatum_delete(&var->name, false);
+				if (tlDeleteSelf)
+					iDatum_delete(&var->name, false);
 
 
 			//////////
@@ -5195,7 +5254,13 @@ debug_break;
 						case _VAR_TYPE_OBJECT:
 							// Delete the object
 							iObj_delete(&var->obj, true, true, true);
+							var->obj = NULL;
 							break;
+
+						case _VAR_TYPE_BITMAP:
+							// Delete the bitmap
+							iBmp_delete(&var->bmp, true, true);
+							var->bmp = NULL;
 
 						default:
 							// Delete the datum

@@ -170,7 +170,9 @@ struct SVariable;
 	bool					iVariable_set								(SVariable* varDst, SVariable* varSrc);
 	bool					iVariable_set_s32							(SVariable* var, s32 value);
 	bool					iVariable_set_u32							(SVariable* var, u32 value);
-	bool					iVariable_set_bool							(SVariable* var, bool value);
+	bool					iVariable_set_logical						(SVariable* var, bool tlValue);
+	bool					iVariable_set_logical						(SVariable* var, s32 value);
+	bool					iVariable_set_bitmap						(SVariable* var, SBitmap* bmp);
 	void					iVariable_reset								(SVariable* var);
 	SVariable*				iVariable_convertForDisplay					(SVariable* var);
 	void					iVariable_delete							(SVariable* var, bool tlDeleteSelf);
@@ -181,6 +183,7 @@ struct SVariable;
 	f32						iiVariable_getAs_f32						(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	f64						iiVariable_getAs_f64						(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	s64						iiVariable_getCompAs_s64					(SComp* comp);
+
 	// Support functions
 	s32						iiVariable_julianDayNumber_fromYyyyMmDd			(f32* tnJulianDayNumber, u32  year, u32  month, u32  day);
 	void					iiVariable_computeYyyyMmDd_fromJulianDayNumber	(u32  tnJulianDayNumber, u32* year, u32* month, u32* day);

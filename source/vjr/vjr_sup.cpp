@@ -191,11 +191,11 @@
 				return;
 
 			// Set the app icon and enable the border
-			iObj_set_icon(_jdebi, bmpJDebiIcon);
-			iVariable_set_s32(_jdebi->p.borderStyle, _BORDER_STYLE_FIXED);
+			iObj_set_bitmap(_jdebi, _INDEX_ICON, bmpJDebiIcon);
+			iObj_set_s32_direct(_jdebi, _INDEX_BORDERSTYLE, _BORDER_STYLE_FIXED);
 
 			// Give it a fixed point font
-			_jdebi->pa.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			_jdebi->p.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 
 
 		//////////
@@ -229,22 +229,22 @@
 			_screen			= iObj_addChild(_OBJ_TYPE_SUBFORM, _jdebi);
 
 			// Set the icons
-			iObj_set_icon(sourceCode,	bmpSourceCodeIcon);
-			iObj_set_icon(locals,		bmpLocalsIcon);
-			iObj_set_icon(watch,		bmpWatchIcon);
-			iObj_set_icon(command,		bmpCommandIcon);
-			iObj_set_icon(debug,		bmpDebugIcon);
-			iObj_set_icon(output,		bmpOutputIcon);
-			iObj_set_icon(sourceLight,	bmpSourceLightIcon);
-			iObj_set_icon(_screen,		bmpVjrIcon);
+			iObj_set_bitmap(sourceCode,		_INDEX_ICON,	bmpSourceCodeIcon);
+			iObj_set_bitmap(locals,			_INDEX_ICON,	bmpLocalsIcon);
+			iObj_set_bitmap(watch,			_INDEX_ICON,	bmpWatchIcon);
+			iObj_set_bitmap(command,		_INDEX_ICON,	bmpCommandIcon);
+			iObj_set_bitmap(debug,			_INDEX_ICON,	bmpDebugIcon);
+			iObj_set_bitmap(output,			_INDEX_ICON,	bmpOutputIcon);
+			iObj_set_bitmap(sourceLight,	_INDEX_ICON,	bmpSourceLightIcon);
+			iObj_set_bitmap(_screen,		_INDEX_ICON,	bmpVjrIcon);
 
 			// Make them visible
-			iVariable_set_bool(sourceCode->p.visible,	true);
-			iVariable_set_bool(locals->p.visible,		true);
-			iVariable_set_bool(watch->p.visible,		true);
-			iVariable_set_bool(command->p.visible,		true);
-			iVariable_set_bool(sourceLight->p.visible,	true);
-			iVariable_set_bool(_screen->p.visible,		true);
+			iObj_set_logical_direct(sourceCode,		_INDEX_VISIBLE,	_LOGICAL_TRUE);
+			iObj_set_logical_direct(locals,			_INDEX_VISIBLE,	_LOGICAL_TRUE);
+			iObj_set_logical_direct(watch,			_INDEX_VISIBLE,	_LOGICAL_TRUE);
+			iObj_set_logical_direct(command,		_INDEX_VISIBLE,	_LOGICAL_TRUE);
+			iObj_set_logical_direct(sourceLight,	_INDEX_VISIBLE,	_LOGICAL_TRUE);
+			iObj_set_logical_direct(_screen,		_INDEX_VISIBLE,	_LOGICAL_TRUE);
 
 
 		//////////
@@ -278,13 +278,13 @@
 		//////////
 		// Add the editbox controls to the subforms
 		//////
-			iVariable_set_bool(sourceCode_editbox->p.visible,	true);
-			iVariable_set_bool(locals_editbox->p.visible,		true);
-			iVariable_set_bool(watch_editbox->p.visible,		true);
-			iVariable_set_bool(command_editbox->p.visible,		true);
-			iVariable_set_bool(debug_editbox->p.visible,		true);
-			iVariable_set_bool(output_editbox->p.visible,		true);
-			iVariable_set_bool(screen_editbox->p.visible,		true);
+			iObj_set_logical_direct(sourceCode_editbox,	_INDEX_VISIBLE, _LOGICAL_TRUE);
+			iObj_set_logical_direct(locals_editbox,		_INDEX_VISIBLE, _LOGICAL_TRUE);
+			iObj_set_logical_direct(watch_editbox,		_INDEX_VISIBLE, _LOGICAL_TRUE);
+			iObj_set_logical_direct(command_editbox,	_INDEX_VISIBLE, _LOGICAL_TRUE);
+			iObj_set_logical_direct(debug_editbox,		_INDEX_VISIBLE, _LOGICAL_TRUE);
+			iObj_set_logical_direct(output_editbox,		_INDEX_VISIBLE, _LOGICAL_TRUE);
+			iObj_set_logical_direct(screen_editbox,		_INDEX_VISIBLE, _LOGICAL_TRUE);
 
 
 		//////////
@@ -310,31 +310,31 @@
 		//////////
 		// SourceCode window caption and font
 		//////
-			iVariable_set_s32(sourceCode->p.backStyle, _BACK_STYLE_TRANSPARENT);
+			iObj_set_s32_direct(sourceCode, _INDEX_BACKSTYLE, _BACK_STYLE_TRANSPARENT);
 			iDatum_duplicate(&caption->value, cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
 			iObj_set_caption(sourceCode, caption);
 
 			// Adjust the caption width
 			((SObject*)sourceCode->firstChild->ll.next)->rc.right = 90;
 
-			sourceCode_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			sourceCode_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			sourceCode_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown_sourceCode;
-			iVariable_set_s32(sourceCode_editbox->p.borderStyle, _BORDER_STYLE_FIXED);
-			iVariable_set_s32(sourceCode_editbox->p.borderColor, lineNumberBackColor.color);
+			iObj_set_s32_direct(sourceCode_editbox, _INDEX_BORDERSTYLE, _BORDER_STYLE_FIXED);
+			iObj_set_s32_direct(sourceCode_editbox, _INDEX_BORDERCOLOR, lineNumberBackColor.color);
 			sourceCode_editbox->p.em->showCursorLine	= true;
 			sourceCode_editbox->p.em->isSourceCode		= true;
 			sourceCode_editbox->p.em->showLineNumbers	= true;
-			iObj_set_icon(sourceCode, bmpSourceCodeIcon);
+			iObj_set_bitmap(sourceCode, _INDEX_ICON, bmpSourceCodeIcon);
 
 
 		//////////
 		// Locals window caption and font
 		//////
-			iDatum_duplicate(&caption->value, cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
-			iObj_set_caption(locals, caption);
-			locals_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+// TODO:  Working here...
+			iObj_set_character_direct(locals, _INDEX_CAPTION, caption, cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
+			locals_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			locals_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
-			iObj_set_icon(locals, bmpLocalsIcon);
+			iObj_set_bitmap(locals, _INDEX_ICON, bmpLocalsIcon);
 
 			// Adjust the caption width
 			((SObject*)locals->firstChild->ll.next)->rc.right = 65;
@@ -426,10 +426,10 @@
 		//////
 			iDatum_duplicate(&caption->value, cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
 			iObj_set_caption(watch, caption);
-			watch_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			watch_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			watch_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			watch_editbox->p.em->showCursorLine	= true;
-			iObj_set_icon(watch, bmpWatchIcon);
+			iObj_set_bitmap(watch, _INDEX_ICON, bmpWatchIcon);
 
 			// Adjust the caption width
 			((SObject*)watch->firstChild->ll.next)->rc.right = 65;
@@ -440,13 +440,13 @@
 		//////
 			iDatum_duplicate(&caption->value, cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
 			iObj_set_caption(command, caption);
-			command_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			command_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			command_editbox->ev.keyboard._onKeyDown		= (u32)&iSEM_onKeyDown_sourceCode;
 			command_editbox->p.hasFocus					= true;
 			command_editbox->p.em->showCursorLine		= true;
 			command_editbox->p.em->isSourceCode		= true;
 			command_editbox->p.em->showLineNumbers		= true;
-			iObj_set_icon(command, bmpCommandIcon);
+			iObj_set_bitmap(command, _INDEX_ICON, bmpCommandIcon);
 
 			// Adjust the caption width
 			((SObject*)command->firstChild->ll.next)->rc.right = 80;
@@ -457,10 +457,10 @@
 		//////
 			iDatum_duplicate(&caption->value, cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
 			iObj_set_caption(debug, caption);
-			debug_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			debug_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			debug_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			debug_editbox->p.em->showCursorLine	= true;
-			iObj_set_icon(debug, bmpDebugIcon);
+			iObj_set_bitmap(debug, _INDEX_ICON, bmpDebugIcon);
 
 			// Adjust the caption width
 			((SObject*)debug->firstChild->ll.next)->rc.right = 65;
@@ -471,10 +471,10 @@
 		//////
 			iDatum_duplicate(&caption->value, cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
 			iObj_set_caption(output, caption);
-			output_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_MEDIUM, false, false);
+			output_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_MEDIUM, false, false);
 			output_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			output_editbox->p.em->showCursorLine	= true;
-			iObj_set_icon(output, bmpOutputIcon);
+			iObj_set_bitmap(output, _INDEX_ICON, bmpOutputIcon);
 
 			// Adjust the caption width
 			((SObject*)output->firstChild->ll.next)->rc.right = 70;
@@ -485,9 +485,9 @@
 		//////
 			iDatum_duplicate(&caption->value, cgcSourceLightTitle, sizeof(cgcSourceLightTitle) - 1);
 			iObj_set_caption(sourceLight, caption);
-			sourceLight->pa.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			iVariable_set_bool(sourceLight->p.visible, true);
-			iVariable_set_s32(sourceLight->p.backStyle, _BACK_STYLE_OPAQUE);
+			sourceLight->p.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			iObj_set_logical_direct(sourceLight, _INDEX_VISIBLE, _LOGICAL_TRUE);
+			iObj_set_s32_direct(sourceLight, _INDEX_BACKSTYLE, _BACK_STYLE_OPAQUE);
 
 
 		//////////
@@ -495,18 +495,18 @@
 		//////
 			iDatum_duplicate(&caption->value, cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
 			iObj_set_caption(_screen, caption);
-			_screen->pa.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			_screen->p.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 
 
 		//////////
 		// Setup _screen's editbox
 		//////
-			screen_editbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			screen_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			screen_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			screenData								= screen_editbox->p.em;
 			screenData->showCursorLine				= true;
 			screenData->showEndLine					= true;
-			iVariable_set_bool(_screen->p.visible, true);
+			iObj_set_logical_direct(_screen, _INDEX_VISIBLE, _LOGICAL_TRUE);
 
 
 		//////////
@@ -727,6 +727,9 @@
 		iVariable_delete(varGlobals,		true);
 		iVariable_delete(varConstant_space,	true);
 		iVariable_delete(varEmptyString,	true);
+		iVariable_delete(var2000Spaces,		true);
+		iVariable_delete(varTrue,			true);
+		iVariable_delete(varFalse,			true);
 
 		// Delete the splash objects and images
 		iObj_delete(&gobj_splashListing, true, true, true);
@@ -1871,6 +1874,7 @@
 		SFocusHighlight*	focus;
 		HDC					lhdc;
 		PAINTSTRUCT			ps;
+		SVariable			var;
 
 
 		// Find the focus window
@@ -1886,8 +1890,16 @@
 				lhdc = BeginPaint(hwnd, &ps);
 
 				// Paint it
-				if (focus->obj->p.readOnly)		FillRect(lhdc, &ps.rcPaint, focus->readOnlyBrush);
-				else								FillRect(lhdc, &ps.rcPaint, focus->readWriteBrush);
+				if (iObj_get_logical_direct(focus->obj, _INDEX_READONLY) != _LOGICAL_FALSE)
+				{
+					// Read-only coloring
+					FillRect(lhdc, &ps.rcPaint, focus->readOnlyBrush);
+
+				} else {
+					// Read-write coloring
+					FillRect(lhdc, &ps.rcPaint, focus->readWriteBrush);
+				}
+				iVariable_delete(var, true);
 
 				// All done
 				EndPaint(hwnd, &ps);

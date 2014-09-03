@@ -128,13 +128,13 @@
 //////////
 // Logical and LogicalX definitions
 //////
-	const s8		_LOGICAL_FALSE									= 0;
-	const s8		_LOGICAL_TRUE									= -1;
-	const s8		_LOGICALX_OTHER									= 'O';
-	const s8		_LOGICALX_PARTIAL								= 'P';
-	const s8		_LOGICALX_EXTRA									= 'X';
-	const s8		_LOGICALX_YET_ANOTHER							= 'Y';
-	const s8		_LOGICALX_ZATS_ALL_FOLKS						= 'Z';
+	const s32		_LOGICAL_FALSE									= 0;
+	const s32		_LOGICAL_TRUE									= -1;
+	const s32		_LOGICALX_OTHER									= 'O';
+	const s32		_LOGICALX_PARTIAL								= 'P';
+	const s32		_LOGICALX_EXTRA									= 'X';
+	const s32		_LOGICALX_YET_ANOTHER							= 'Y';
+	const s32		_LOGICALX_ZATS_ALL_FOLKS						= 'Z';
 
 
 //////////

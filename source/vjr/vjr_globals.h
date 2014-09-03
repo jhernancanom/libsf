@@ -78,6 +78,8 @@
 	SVariable*			varConstant_space					= NULL;									// Holds a single space, and is a constant
 	SVariable*			varEmptyString						= NULL;
 	SVariable*			var2000Spaces						= NULL;
+	SVariable*			varTrue								= NULL;									// A constant .T.
+	SVariable*			varFalse							= NULL;									// A constant .F.
 
 	// Focus highlight windows, and tooltip window
 	SBuilder*			gFocusHighlights					= NULL;									// Holds SFocusHighlight structures

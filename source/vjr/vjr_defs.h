@@ -49,6 +49,11 @@
 
 
 
+struct SPropertyMap;
+
+
+
+
 //////////
 // vjr.cpp
 //////

@@ -1975,7 +1975,7 @@ if (!llPublishChildren)
 		if (obj)
 		{
 			llOldVisible = ((get_u8(obj->p.visible) == 0) ? false : true);
-			iVariable_set_bool(obj->p.visible, tlNewVisible);
+			iVariable_set_logical(obj->p.visible, tlNewVisible);
 		}
 
 		// Indicate prior visible
@@ -2271,7 +2271,7 @@ if (!llPublishChildren)
 				// Initially populate
 				emptyNew->objType		= _OBJ_TYPE_EMPTY;
 				emptyNew->parent		= parent;
-				iVariable_set_bool(emptyNew->p.enabled, true);
+				iVariable_set_logical(emptyNew->p.enabled, true);
 				emptyNew->isRendered	= true;
 				emptyNew->isPublished	= true;
 				iDatum_duplicate(&emptyNew->p.name->value,		cgcName_empty, -1);
@@ -2335,7 +2335,7 @@ if (!llPublishChildren)
 				// Initially populate
 				formNew->objType		= _OBJ_TYPE_FORM;
 				formNew->parent			= parent;
-				iVariable_set_bool(formNew->p.enabled, true);
+				iVariable_set_logical(formNew->p.enabled, true);
 				formNew->isRendered		= true;
 				formNew->isPublished	= true;
 				iDatum_duplicate(&formNew->p.name->value,		cgcName_form, -1);
@@ -2419,7 +2419,7 @@ if (!llPublishChildren)
 				// Initially populate
 				subformNew->objType		= _OBJ_TYPE_SUBFORM;
 				subformNew->parent		= parent;
-				iVariable_set_bool(subformNew->p.enabled, true);
+				iVariable_set_logical(subformNew->p.enabled, true);
 				subformNew->isRendered	= true;
 				subformNew->isPublished	= true;
 				iDatum_duplicate(&subformNew->p.name->value,	cgcName_subform, -1);
@@ -2496,7 +2496,7 @@ if (!llPublishChildren)
 				// Initially populate
 				carouselNew->objType		= _OBJ_TYPE_CAROUSEL;
 				carouselNew->parent			= parent;
-				iVariable_set_bool(carouselNew->p.enabled, true);
+				iVariable_set_logical(carouselNew->p.enabled, true);
 				carouselNew->isRendered		= true;
 				carouselNew->isPublished	= true;
 				iDatum_duplicate(&carouselNew->p.name->value,		cgcName_carousel, -1);
@@ -2572,7 +2572,7 @@ if (!llPublishChildren)
 				// Initially populate
 				riderNew->objType		= _OBJ_TYPE_RIDER;
 				riderNew->parent		= parent;
-				iVariable_set_bool(riderNew->p.enabled, true);
+				iVariable_set_logical(riderNew->p.enabled, true);
 				riderNew->isRendered	= true;
 				riderNew->isPublished	= true;
 				iDatum_duplicate(&riderNew->p.name->value,		cgcName_rider, -1);
@@ -2630,7 +2630,7 @@ if (!llPublishChildren)
 				// Initially populate
 				labelNew->objType		= _OBJ_TYPE_LABEL;
 				labelNew->parent		= parent;
-				iVariable_set_bool(labelNew->p.enabled, true);
+				iVariable_set_logical(labelNew->p.enabled, true);
 				labelNew->isRendered	= true;
 				labelNew->isPublished	= true;
 				iDatum_duplicate(&labelNew->p.name->value,		cgcName_label, -1);
@@ -2688,7 +2688,7 @@ if (!llPublishChildren)
 				// Initially populate
 				textboxNew->objType		= _OBJ_TYPE_TEXTBOX;
 				textboxNew->parent		= parent;
-				iVariable_set_bool(textboxNew->p.enabled, true);
+				iVariable_set_logical(textboxNew->p.enabled, true);
 				textboxNew->isRendered	= true;
 				textboxNew->isPublished	= true;
 				iDatum_duplicate(&textboxNew->p.name->value,		cgcName_textbox, -1);
@@ -2746,7 +2746,7 @@ if (!llPublishChildren)
 				// Initially populate
 				buttonNew->objType		= _OBJ_TYPE_BUTTON;
 				buttonNew->parent		= parent;
-				iVariable_set_bool(buttonNew->p.enabled, true);
+				iVariable_set_logical(buttonNew->p.enabled, true);
 				buttonNew->isRendered	= true;
 				buttonNew->isPublished	= true;
 				iDatum_duplicate(&buttonNew->p.name->value,		cgcName_button, -1);
@@ -2804,7 +2804,7 @@ if (!llPublishChildren)
 				// Initially populate
 				editboxNew->objType		= _OBJ_TYPE_EDITBOX;
 				editboxNew->parent		= parent;
-				iVariable_set_bool(editboxNew->p.enabled, true);
+				iVariable_set_logical(editboxNew->p.enabled, true);
 				editboxNew->isRendered	= true;
 				editboxNew->isPublished	= true;
 				iDatum_duplicate(&editboxNew->p.name->value,		cgcName_editbox, -1);
@@ -2862,7 +2862,7 @@ if (!llPublishChildren)
 				// Initially populate
 				imageNew->objType		= _OBJ_TYPE_IMAGE;
 				imageNew->parent		= parent;
-				iVariable_set_bool(imageNew->p.enabled, true);
+				iVariable_set_logical(imageNew->p.enabled, true);
 				imageNew->isRendered	= true;
 				imageNew->isPublished	= true;
 				iDatum_duplicate(&imageNew->p.name->value,		cgcName_image, -1);
@@ -2922,7 +2922,7 @@ if (!llPublishChildren)
 				// Initially populate
 				checkboxNew->objType		= _OBJ_TYPE_CHECKBOX;
 				checkboxNew->parent			= parent;
-				iVariable_set_bool(checkboxNew->p.enabled, true);
+				iVariable_set_logical(checkboxNew->p.enabled, true);
 				checkboxNew->isRendered		= true;
 				checkboxNew->isPublished	= true;
 				iDatum_duplicate(&checkboxNew->p.name->value,		cgcName_checkbox, -1);
@@ -2996,7 +2996,7 @@ if (!llPublishChildren)
 				// Initially populate
 				optionNew->objType		= _OBJ_TYPE_OPTION;
 				optionNew->parent		= parent;
-				iVariable_set_bool(optionNew->p.enabled, true);
+				iVariable_set_logical(optionNew->p.enabled, true);
 				optionNew->isRendered	= true;
 				optionNew->isPublished	= true;
 				iDatum_duplicate(&optionNew->p.name->value,		cgcName_option, -1);
@@ -3054,7 +3054,7 @@ if (!llPublishChildren)
 				// Initially populate
 				radioNew->objType		= _OBJ_TYPE_RADIO;
 				radioNew->parent		= parent;
-				iVariable_set_bool(radioNew->p.enabled, true);
+				iVariable_set_logical(radioNew->p.enabled, true);
 				radioNew->isRendered	= true;
 				radioNew->isPublished	= true;
 				iDatum_duplicate(&radioNew->p.name->value,		cgcName_radio, -1);
@@ -3661,61 +3661,61 @@ if (!llPublishChildren)
 			//////////
 			// General flags and settings
 			//////
-				iVariable_set_bool(form->p.allowOutput,			true);
-				iVariable_set_bool(form->p.alwaysOnBottom,		false);
-				iVariable_set_bool(form->p.alwaysOnTop,			false);
-				iVariable_set_bool(form->p.autoCenter,			false);
+				iVariable_set_logical(form->p.allowOutput,			true);
+				iVariable_set_logical(form->p.alwaysOnBottom,		false);
+				iVariable_set_logical(form->p.alwaysOnTop,			false);
+				iVariable_set_logical(form->p.autoCenter,			false);
 				iVariable_set_s32(form->p.borderStyle,			_BORDER_STYLE_SIZABLE);
-				iVariable_set_bool(form->p.closable,			true);
+				iVariable_set_logical(form->p.closable,			true);
 				form->p.processKeyPreviewEvents					= false;
-				iVariable_set_bool(form->p.controlBox,			true);
-				iVariable_set_bool(form->p.minButton,			true);
-				iVariable_set_bool(form->p.maxButton,			true);
-				iVariable_set_bool(form->p.closable,			true);
+				iVariable_set_logical(form->p.controlBox,			true);
+				iVariable_set_logical(form->p.minButton,			true);
+				iVariable_set_logical(form->p.maxButton,			true);
+				iVariable_set_logical(form->p.closable,			true);
 				iVariable_set_s32(form->p.scaleMode,			_SCALE_MODE_PIXELS);
-				iVariable_set_bool(form->p.showInTaskbar,		true);
+				iVariable_set_logical(form->p.showInTaskbar,		true);
 				iVariable_set_s32(form->p.windowState,			_WINDOW_STATE_NORMAL);
 
 				// The following are ignored, maintained only for backward compatibility
-				iVariable_set_bool(form->p.bindControls,		true);
+				iVariable_set_logical(form->p.bindControls,		true);
 				iVariable_set_s32(form->p.bufferMode,			2);
-				iVariable_set_bool(form->p.clipControls,		false);
+				iVariable_set_logical(form->p.clipControls,		false);
 				iVariable_set_s32(form->p.colorSource,			4);
-				iVariable_set_bool(form->p.continuousScroll,	true);
+				iVariable_set_logical(form->p.continuousScroll,	true);
 				iVariable_delete(form->p.dataSession,			false);
 				iVariable_set_s32(form->p.dataSessionID,		-1);
 				iVariable_delete(form->p.dEClass,				false);
 				iVariable_delete(form->p.dEClassLibrary,		false);
 				iVariable_set_s32(form->p.defOLELCID,			-1);
-				iVariable_set_bool(form->p.desktop,				false);
-				iVariable_set_bool(form->p.dockable,			false);
-				iVariable_set_bool(form->p.docked,				false);
+				iVariable_set_logical(form->p.desktop,				false);
+				iVariable_set_logical(form->p.dockable,			false);
+				iVariable_set_logical(form->p.docked,				false);
 				iVariable_set_s32(form->p.dockPosition,			-1);
 				iVariable_set_s32(form->p.drawMode,				-1);
 				iVariable_set_s32(form->p.drawStyle,			13);
 				iVariable_set_s32(form->p.drawWidth,			1);
 				iVariable_set_s32(form->p.fillColor,			rgba(255,255,255,255));
 				iVariable_set_s32(form->p.fillStyle,			0);
-				iVariable_set_bool(form->p.halfHeightCaption,	false);
+				iVariable_set_logical(form->p.halfHeightCaption,	false);
 				iVariable_set_s32(form->p.hScrollSmallChange,	10);
 				iVariable_set_s32(form->p.vScrollSmallChange,	10);
-				iVariable_set_bool(form->p.macDesktop,			false);
-				iVariable_set_bool(form->p.mDIForm,				false);
+				iVariable_set_logical(form->p.macDesktop,			false);
+				iVariable_set_logical(form->p.mDIForm,				false);
 				iVariable_set_s32(form->p.oLEDragMode,			0);
 				iBmp_delete(&form->p.oLEDragPicture, true, true);
 				iVariable_set_s32(form->p.oLEDropEffects,		3);
 				iVariable_set_s32(form->p.oLEDropHasData,		-1);
 				iVariable_set_s32(form->p.oLEDropMode,			0);
 				iVariable_set_s32(form->p.releaseType,			0);
-				iVariable_set_bool(form->p.rightToLeft,			false);
+				iVariable_set_logical(form->p.rightToLeft,			false);
 				iVariable_set_s32(form->p.scrollBars,			3);
-				iVariable_set_bool(form->p.showTips,			true);
+				iVariable_set_logical(form->p.showTips,			true);
 				iVariable_set_s32(form->p.showWindow,			2);
-				iVariable_set_bool(form->p.sizeBox,				false);
-				iVariable_set_bool(form->p.themes,				true);
+				iVariable_set_logical(form->p.sizeBox,				false);
+				iVariable_set_logical(form->p.themes,				true);
 				iVariable_set_s32(form->p.titleBar,				1);
 				iVariable_set_s32(form->p.windowType,			0);
-				iVariable_set_bool(form->p.zoomBox,				false);
+				iVariable_set_logical(form->p.zoomBox,				false);
 
 
 			//////////
@@ -3746,7 +3746,7 @@ if (!llPublishChildren)
 						// Icon
 						iBmp_delete(&objChild->p.icon, true, true);					// Delete the old
 						objChild->p.icon = iBmp_copy(bmpVjrIcon);					// Set the new
-						iVariable_set_bool(objChild->p.visible, true);
+						iVariable_set_logical(objChild->p.visible, true);
 
 					} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->p.name->value, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
 						// Caption
@@ -3754,7 +3754,7 @@ if (!llPublishChildren)
 						iVariable_set_s32(objChild->p.backStyle, _BACK_STYLE_TRANSPARENT);
 						iFont_delete(&objChild->pa.font, true);
 						objChild->pa.font		= iFont_create(cgcFontName_windowTitleBar, 12, FW_NORMAL, false, false);
-						iVariable_set_bool(objChild->p.visible, true);
+						iVariable_set_logical(objChild->p.visible, true);
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->p.name->value, cgcName_iconMove, sizeof(cgcName_iconMove) - 1) == 0) {
 						// Adjust the size
@@ -3775,7 +3775,7 @@ if (!llPublishChildren)
 						// Icon
 						iBmp_delete(&objChild->p.icon, true, true);				// Delete the old
 						objChild->p.icon	= iBmp_copy(bmpMove);				// Set the new
-						iVariable_set_bool(objChild->p.visible, true);
+						iVariable_set_logical(objChild->p.visible, true);
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->p.name->value, cgcName_iconMinimize, sizeof(cgcName_iconMinimize) - 1) == 0) {
 						// Adjust the size
@@ -3796,7 +3796,7 @@ if (!llPublishChildren)
 						// Icon
 						iBmp_delete(&objChild->p.icon, true, true);				// Delete the old
 						objChild->p.icon	= iBmp_copy(bmpMinimize);			// Set the new
-						iVariable_set_bool(objChild->p.visible, true);
+						iVariable_set_logical(objChild->p.visible, true);
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->p.name->value, cgcName_iconMaximize, sizeof(cgcName_iconMaximize) - 1) == 0) {
 						// Adjust the size
@@ -3817,7 +3817,7 @@ if (!llPublishChildren)
 						// Icon
 						iBmp_delete(&objChild->p.icon, true, true);				// Delete the old
 						objChild->p.icon = iBmp_copy(bmpMaximize);				// Set the new
-						iVariable_set_bool(objChild->p.visible, true);
+						iVariable_set_logical(objChild->p.visible, true);
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->p.name->value, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0) {
 						// Adjust the size
@@ -3838,7 +3838,7 @@ if (!llPublishChildren)
 						// Icon
 						iBmp_delete(&objChild->p.icon, true, true);				// Delete the old
 						objChild->p.icon = iBmp_copy(bmpClose);					// Set the new
-						iVariable_set_bool(objChild->p.visible, true);
+						iVariable_set_logical(objChild->p.visible, true);
 					}
 
 					// Move to next object
@@ -3946,7 +3946,7 @@ if (!llPublishChildren)
 						// Icon
 						iBmp_delete(&objChild->p.icon, true, true);				// Delete the old
 						objChild->p.icon = iBmp_copy(bmpVjrIcon);				// Set the new
-						iVariable_set_bool(objChild->p.visible, true);
+						iVariable_set_logical(objChild->p.visible, true);
 
 					} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->p.name->value, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
 						// Caption
@@ -3954,7 +3954,7 @@ if (!llPublishChildren)
 						iVariable_set_s32(objChild->p.backStyle, _BACK_STYLE_TRANSPARENT);
 						iFont_delete(&objChild->pa.font, true);
 						objChild->pa.font = iFont_create(cgcFontName_windowTitleBar, 10, FW_NORMAL, false, false);
-						iVariable_set_bool(objChild->p.visible, true);
+						iVariable_set_logical(objChild->p.visible, true);
 					}
 
 					// Move to next object
@@ -4017,7 +4017,7 @@ if (!llPublishChildren)
 						// Icon
 						iBmp_delete(&objChild->p.icon, true, true);				// Delete the old
 						objChild->p.icon = iBmp_copy(bmpCarouselIcon);			// Set the new
-						iVariable_set_bool(objChild->p.visible, true);
+						iVariable_set_logical(objChild->p.visible, true);
 
 					} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->p.name->value, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
 						// Caption
@@ -4025,7 +4025,7 @@ if (!llPublishChildren)
 						iVariable_set_s32(objChild->p.backStyle, _BACK_STYLE_TRANSPARENT);
 						iFont_delete(&objChild->pa.font, true);
 						objChild->pa.font = iFont_create(cgcFontName_windowTitleBar, 12, FW_NORMAL, false, false);
-						iVariable_set_bool(objChild->p.visible, true);
+						iVariable_set_logical(objChild->p.visible, true);
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->p.name->value, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0) {
 						// Adjust the size
@@ -4046,7 +4046,7 @@ if (!llPublishChildren)
 						// Icon
 						iBmp_delete(&objChild->p.icon, true, true);				// Delete the old
 						objChild->p.icon	= iBmp_copy(bmpClose);				// Set the new
-						iVariable_set_bool(objChild->p.visible, true);
+						iVariable_set_logical(objChild->p.visible, true);
 					}
 
 					// Move to next object
@@ -4458,7 +4458,7 @@ if (!llPublishChildren)
 			iVariable_set_s32(option->p.style,			_STYLE_3D);
 
 			iVariable_set_s32(option->p.count,			0);
-			iVariable_set_bool(option->p.multiSelect,	false);
+			iVariable_set_logical(option->p.multiSelect,	false);
 
 			// Copy the events
 			*(u32*)&option->ev.general.onSelect				= *(u32*)&iDefaultCallback_onSelect;
