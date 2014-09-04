@@ -2109,10 +2109,10 @@ if (!llPublishChildren)
 
 //////////
 //
-// Resets common object properties to their defaults
+// Resets common object properties to their defaults.
 //
 //////
-	void iiObj_resetToDefaultCommon(SObject* obj, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList)
+	void iiObj_resetToDefaultCommon(SObject* obj, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
 	{
 		s32 lnI, lnIndex, lnVarType;
 
@@ -2121,7 +2121,7 @@ if (!llPublishChildren)
 		//////////
 		// Set properties
 		//////
-			for (lnI = 0; propList[lnI].index != 0; lnI++)
+			for (lnI = 0; propList[lnI].index != 0 && lnI < tnPropCount; lnI++)
 			{
 				// Grab the index of this entry in the master list
 				lnIndex = propList[lnI].index;
@@ -3636,7 +3636,7 @@ if (!llPublishChildren)
 			//////////
 			// Reset the common settings
 			//////
-				iiObj_resetToDefaultCommon(form, true, true);
+				iiObj_resetToDefaultCommon(form, true, true, propList, tnPropCount);
 
 
 			//////////
@@ -3653,7 +3653,7 @@ if (!llPublishChildren)
 			//////////
 			// Set default anchor to fixed in all positions, no resize
 			//////
-				iVariable_set_s32(form->p.anchor, _ANCHOR_FIXED_NORESIZE);
+				iObj_set_s32_direct(form, _INDEX_ANCHOR, _ANCHOR_FIXED_NORESIZE);
 		
 
 			//////////
@@ -3671,15 +3671,15 @@ if (!llPublishChildren)
 				form->p.swRgba.color		= SwNonfocusColor.color;
 				form->p.seRgba.color		= SeNonfocusColor.color;
 				form->p.captionColor.color	= darkBlueColor.color;
-				iVariable_set_u32(form->p.backColor, whiteColor.color);
-				iVariable_set_u32(form->p.foreColor, blackColor.color);
+				iObj_set_u32_direct(form, _INDEX_BACKCOLOR, whiteColor.color);
+				iObj_set_u32_direct(form, _INDEX_FORECOLOR, blackColor.color);
 
 
 			//////////
 			// Set the default form icon
 			//////
-				iBmp_delete(&form->p.icon, true, true);
-				form->p.icon			= iBmp_copy(bmpVjrIcon);
+				iObj_delete_variable_byIndex(form, _INDEX_ICON);
+				iObj_set_bitmap(form, _INDEX_ICON, bmpVjrIcon);
 
 
 			//////////
@@ -3850,7 +3850,7 @@ if (!llPublishChildren)
 			//////////
 			// Reset the common settings
 			//////
-				iiObj_resetToDefaultCommon(subform, true, true);
+				iiObj_resetToDefaultCommon(subform, true, true, propList, tnPropCount);
 
 
 			//////////
@@ -3867,7 +3867,7 @@ if (!llPublishChildren)
 			//////////
 			// Set default anchor to fixed in all positions, no resize
 			//////
-				subform->p.anchor = _ANCHOR_FIXED_NORESIZE;
+				iObj_set_s32_direct(subform, _INDEX_ANCHOR, _ANCHOR_FIXED_NORESIZE);
 
 
 			//////////
@@ -3884,22 +3884,21 @@ if (!llPublishChildren)
 				subform->p.neRgba.color			= NeNonfocusColor.color;
 				subform->p.swRgba.color			= SwNonfocusColor.color;
 				subform->p.seRgba.color			= SeNonfocusColor.color;
-				iVariable_set_u32(subform->p.backColor, whiteColor.color);
-				iVariable_set_u32(subform->p.foreColor, blackColor.color);
+				iObj_set_sbgra_direct(subform, _INDEX_BACKCOLOR, whiteColor);
+				iObj_set_sbgra_direct(subform, _INDEX_FORECOLOR, blackColor);
 				subform->p.captionColor.color	= darkBlueColor.color;
 
 
 			//////////
 			// Set the default form icon
 			//////
-				iBmp_delete(&subform->p.icon, true, true);
-				subform->p.icon			= iBmp_copy(bmpVjrIcon);
+				iObj_set_bitmap(subform, _INDEX_ICON, bmpVjrIcon);
 
 
 			//////////
 			// Set the default caption
 			//////
-				iDatum_duplicate(&subform->p.caption->value, cgcName_subform, -1);
+				iObj_set_character_direct(subform, _INDEX_CAPTION, cgcName_subform, -1);
 
 
 			//////////
@@ -3936,16 +3935,19 @@ if (!llPublishChildren)
 						iBmp_colorize(objChild->p.bmpPictureDown, &lrc, colorMouseDown,	false, 0.5f);
 
 						// Icon
-						iBmp_delete(&objChild->p.icon, true, true);				// Delete the old
-						objChild->p.icon = iBmp_copy(bmpVjrIcon);				// Set the new
+						iObj_set_bitmap(objChild, _INDEX_ICON, bmpVjrIcon);
+
+						// Make it visible
 						iObj_set_logical_direct(objChild, _INDEX_VISIBLE, _LOGICAL_TRUE);
 
 					} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&var->value, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
 						// Caption
-						iDatum_duplicate(&objChild->p.caption->value, cgcName_formCaption, sizeof(cgcName_formCaption) - 1);
+						iObj_set_character_direct(objChild, _INDEX_CAPTION, cgcName_formCaption, -1);
 						iVariable_set_s32(objChild->p.backStyle, _BACK_STYLE_TRANSPARENT);
 						iFont_delete(&objChild->p.font, true);
 						objChild->p.font = iFont_create(cgcFontName_windowTitleBar, 10, FW_NORMAL, false, false);
+
+						// Make it visible
 						iObj_set_logical_direct(objChild, _INDEX_VISIBLE, _LOGICAL_TRUE);
 					}
 
@@ -3967,7 +3969,7 @@ if (!llPublishChildren)
 			//////////
 			// Reset the common settings
 			//////
-				iiObj_resetToDefaultCommon(carousel, true, true);
+				iiObj_resetToDefaultCommon(carousel, true, true, propList, tnPropCount);
 
 
 			//////////
@@ -4056,7 +4058,7 @@ if (!llPublishChildren)
 			//////////
 			// Reset the common settings
 			//////
-				iiObj_resetToDefaultCommon(rider, true, true);
+				iiObj_resetToDefaultCommon(rider, true, true, propList, tnPropCount);
 
 
 			//////////
@@ -4079,7 +4081,7 @@ if (!llPublishChildren)
 			//////////
 			// Reset the common settings
 			//////
-				iiObj_resetToDefaultCommon(label, true, true);
+				iiObj_resetToDefaultCommon(label, true, true, propList, tnPropCount);
 
 
 			//////////
@@ -4134,7 +4136,7 @@ if (!llPublishChildren)
 			//////////
 			// Reset the common settings
 			//////
-				iiObj_resetToDefaultCommon(textbox, true, true);
+				iiObj_resetToDefaultCommon(textbox, true, true, propList, tnPropCount);
 
 
 			//////////
@@ -4200,7 +4202,7 @@ if (!llPublishChildren)
 			//////////
 			// Reset the common settings
 			//////
-				iiObj_resetToDefaultCommon(button, true, true);
+				iiObj_resetToDefaultCommon(button, true, true, propList, tnPropCount);
 
 
 			//////////
@@ -4239,7 +4241,7 @@ if (!llPublishChildren)
 			//////////
 			// Reset the common settings
 			//////
-				iiObj_resetToDefaultCommon(editbox, true, true);
+				iiObj_resetToDefaultCommon(editbox, true, true, propList, tnPropCount);
 
 
 			//////////
@@ -4284,7 +4286,7 @@ if (!llPublishChildren)
 			//////////
 			// Reset the common settings
 			//////
-				iiObj_resetToDefaultCommon(image, true, true);
+				iiObj_resetToDefaultCommon(image, true, true, propList, tnPropCount);
 
 
 			//////////
@@ -4321,7 +4323,7 @@ if (!llPublishChildren)
 			//////////
 			// Reset the common settings
 			//////
-				iiObj_resetToDefaultCommon(checkbox, true, true);
+				iiObj_resetToDefaultCommon(checkbox, true, true, propList, tnPropCount);
 
 
 			//////////
@@ -4429,7 +4431,7 @@ if (!llPublishChildren)
 			//////////
 			// Reset the common settings
 			//////
-				iiObj_resetToDefaultCommon(option, true, true);
+				iiObj_resetToDefaultCommon(option, true, true, propList, tnPropCount);
 
 
 			//////////
@@ -4468,7 +4470,7 @@ if (!llPublishChildren)
 			//////////
 			// Reset the common settings
 			//////
-				iiObj_resetToDefaultCommon(radio, true, true);
+				iiObj_resetToDefaultCommon(radio, true, true, propList, tnPropCount);
 
 
 			//////////
@@ -4515,7 +4517,7 @@ if (!llPublishChildren)
 
 //////////
 //
-// Called to delete the common properties on obj->pa (properties allocated)
+// Called to delete the common properties
 //
 //////
 	void iObj_deleteCommon(SObject* obj)
@@ -4530,53 +4532,7 @@ if (!llPublishChildren)
 			if (win)
 				iWindow_disconnectObj(win, obj);
 
-
-		//////////
-		// Delete the bitmaps and bitmap caches
-		//////
-			iBmp_delete(&obj->bmp,						true, true);
-			iBmp_delete(&obj->bmpPriorRendered,			true, true);
-			iBmp_delete(&obj->bmpScaled,				true, true);
-			iBmp_deleteCache(&obj->bc);
-
-
-		//////////
-		// Delete any allocated properties
-		//////
-			iFont_delete(&obj->p.font,					false);
-
-			iBmp_delete(&obj->p.icon,					true, true);
-			iBmp_delete(&obj->p.mouseIcon,				true, true);
-
-			iVariable_delete(obj->p.name,				true);
-			iVariable_delete(obj->p.caption,			true);
-			iVariable_delete(obj->p._class,				true);
-			iVariable_delete(obj->p.classLibrary,		true);
-
-			iVariable_delete(obj->p.comment,			true);
-			iVariable_delete(obj->p.toolTipText,		true);
-			iVariable_delete(obj->p.tag,				true);
-
-			iVariable_delete(obj->p.value,				true);
-			iVariable_delete(obj->p.minValue,			true);
-			iVariable_delete(obj->p.maxValue,			true);
-			iVariable_delete(obj->p.picture,			true);
-			iVariable_delete(obj->p.mask,				true);
-
-			iSEM_delete(&obj->p.em,						true);
-
-			iVariable_delete(obj->p.pictureName,		true);
-			iVariable_delete(obj->p.pictureOverName,	true);
-			iVariable_delete(obj->p.pictureDownName,	true);
-			iBmp_delete(&obj->p.bmpPicture,				true, true);
-			iBmp_delete(&obj->p.bmpPictureOver,			true, true);
-			iBmp_delete(&obj->p.bmpPictureDown,			true, true);
-
-			iVariable_delete(obj->p.dataSession,		true);
-			iVariable_delete(obj->p.dEClass,			true);
-			iVariable_delete(obj->p.dEClassLibrary,		true);
-
-			iBmp_delete(&obj->p.oLEDragPicture,			true, true);
+// TODO:  iterate through obj->props and delete all
 	}
 
 

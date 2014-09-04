@@ -88,6 +88,10 @@
 	s32			_set_focus_highlight_pixels				= 4;
 	s32			_set_focus_highlight_border_pixels		= 0;
 
+	// Default variable type for uninitialized variables
+	s32			_set_initializeDefault					= _VAR_TYPE_LOGICAL;		// SET INITIALIZEDEFAULT TO
+	SVariable*	varInitializeDefault_value				= NULL;
+
 
 //////////
 // Forward declarations

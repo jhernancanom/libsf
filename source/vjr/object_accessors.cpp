@@ -537,6 +537,56 @@
 
 //////////
 //
+// Called to set the u32 variable directly by value
+//
+//////
+	bool iObj_set_u32_direct(SObject* obj, u32 tnIndex, u32 tnValue)
+	{
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObj_get_variable_byIndex(obj, tnIndex);
+			if (var)
+				return(iVariable_set_u32(var, tnValue));
+		}
+		// If we get here, failure
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to set the SBgra variable directly by value
+//
+//////
+	bool iObj_set_sbgra_direct(SObject* obj, u32 tnIndex, SBgra color)
+	{
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObj_get_variable_byIndex(obj, tnIndex);
+			if (var)
+				return(iVariable_set_u32(var, color.color));
+		}
+		// If we get here, failure
+		return(false);
+	}
+
+
+
+
+//////////
+//
 // Get the associated variable based upon the object type and property index.
 //
 // Note:  For performance, the value returned here is a pointer to the direct
@@ -780,4 +830,32 @@ _asm int 3;
 		// If we get here, failure
 		_color = -1;
 		return(color);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the variable associated with the index
+//
+//////
+	bool iObj_delete_variable_byIndex(SObject* obj, u32 tnIndex)
+	{
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObj_get_variable_byIndex(obj, tnIndex);
+			if (var && var->varType == _VAR_TYPE_BITMAP)
+			{
+				iVariable_delete(var, false);
+				return(true);
+			}
+		}
+		// If we get here, failure
+		return(false);
 	}

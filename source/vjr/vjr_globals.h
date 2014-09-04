@@ -81,6 +81,27 @@
 	SVariable*			varTrue								= NULL;									// A constant .T.
 	SVariable*			varFalse							= NULL;									// A constant .F.
 
+	// Default variable values used for references
+	SVariable*			varDefault_null						= NULL;									// NULL
+	SVariable*			varDefault_integer					= NULL;									// 0
+	SVariable*			varDefault_numeric					= NULL;									// "   0"
+	SVariable*			varDefault_s32						= NULL;									// 0
+	SVariable*			varDefault_u32						= NULL;									// 0
+	SVariable*			varDefault_f32						= NULL;									// +0.0
+	SVariable*			varDefault_s64						= NULL;									// 0
+	SVariable*			varDefault_u64						= NULL;									// 0
+	SVariable*			varDefault_f64						= NULL;									// +0.0
+	SVariable*			varDefault_date						= NULL;									// "  /  /    "
+	SVariable*			varDefault_datetime					= NULL;									// "  /  /       :  :     "
+	SVariable*			varDefault_currency					= NULL;									// 0.0000
+	SVariable*			varDefault_s16						= NULL;									// 0
+	SVariable*			varDefault_u16						= NULL;									// 0
+	SVariable*			varDefault_s8						= NULL;									// 0
+	SVariable*			varDefault_u8						= NULL;									// 0
+	SVariable*			varDefault_logical					= NULL;									// .F.
+	SVariable*			varDefault_bitmap					= NULL;									// 1x1 white pixel bitmap
+	SVariable*			varDefault_thiscode					= NULL;									// An empty function with no executable code, no parameters, no variables, and no parents
+
 	// Focus highlight windows, and tooltip window
 	SBuilder*			gFocusHighlights					= NULL;									// Holds SFocusHighlight structures
 	SSplash				gSplash;																	// For the active splash screen

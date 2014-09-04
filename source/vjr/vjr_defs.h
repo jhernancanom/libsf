@@ -107,7 +107,7 @@ struct SPropertyMap;
 	bool					iObj_setVisible							(SObject*  obj, bool tlNewVisible);
 	SVariable*				iObj_getPropertyAsVariable				(SObject*  obj, s8* tcPropertyName, u32 tnPropertyNameLength, SComp* comp);
 	void					iiObj_resetToDefault					(SObject*  obj, bool tlResetProperties, bool tlResetMethods);
-	void					iiObj_resetToDefaultCommon				(SObject*  obj, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList);
+	void					iiObj_resetToDefaultCommon				(SObject*  obj, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount);
 	s32						iiObj_getBaseclass_byName				(s8* tcTextname, s32 tnTextnameLength);
 	SBaseclassList*			iiObj_getBaseclass_byType				(s32 tnObjType);
 

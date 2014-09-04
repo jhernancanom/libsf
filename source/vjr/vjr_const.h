@@ -710,7 +710,7 @@ typedef SEM**		SEMpp;
 //////////
 // Default values for various types
 //////
-	const s8			cgc_defaultNumeric[]				= "0";
+	const s8			cgc_defaultNumeric[10]				= { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };	// Numeric values are internally stored as 80-bit BCDs, 18 significant digits with sign
 	const s8			cgc_defaultDate[]					= "        ";
 	const s8			cgc_spaceText[]						= " ";
 

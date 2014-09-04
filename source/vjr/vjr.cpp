@@ -112,6 +112,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		var2000Spaces			= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 		varTrue					= iVariable_createAndPopulate(_VAR_TYPE_LOGICAL, NULL, 0);
 		varFalse				= iVariable_createAndPopulate(_VAR_TYPE_LOGICAL, NULL, 0);
+		iVariable_setDefaultVariableValue(_LOGICAL_FALSE);
 
 		// 2000 blank spaces
 		iDatum_allocateSpace(&var2000Spaces->value, 2000);

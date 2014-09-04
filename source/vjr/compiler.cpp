@@ -4357,6 +4357,12 @@ debug_break;
 							iDatum_allocateSpace(&varNew->value, 4);
 							break;
 
+						case _VAR_TYPE_NUMERIC:
+							// Allocate 20 bytes
+							varNew->isValueAllocated = true;
+							iDatum_duplicate(&varNew->value, cgc_defaultNumeric, sizeof(cgc_defaultNumeric));	// Include the trailing NULL
+							break;
+
 						case _VAR_TYPE_S64:
 						case _VAR_TYPE_U64:
 						case _VAR_TYPE_F64:
@@ -4389,6 +4395,10 @@ debug_break;
 							iDatum_allocateSpace(&varNew->value, 4);
 							varNew->bmp = bmpNoImage;
 							break;
+
+						default:
+							// Unspecified.  Default to the system default.
+							varNew = iVariable_copy(varInitializeDefault_value, false);
 					}
 				}
 			}
@@ -4505,6 +4515,171 @@ debug_break;
 
 		// Indicate our status
 		return(var);
+	}
+
+
+
+
+//////////
+//
+// Called to 
+//
+//////
+	bool iVariable_setDefaultVariableValue(u32 tnVarType)
+	{
+		SVariable* varDefaultValue;
+
+
+		// Set the indicated type
+		if (iVariable_isVarTypeValid(tnVarType, &varDefaultValue))
+		{
+			if (_set_initializeDefault != tnVarType)
+			{
+				// Indicate our current default variable type
+				_set_initializeDefault = tnVarType;
+
+				// Set the new value
+				varInitializeDefault_value = iVariable_copy(varDefaultValue, false);
+			}
+
+			// Indicate success
+			return(true);
+		}
+
+		// Indicate failure
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to create all of the default variable values
+//
+//////
+	void iVariable_createDefaultValues(void)
+	{
+		varDefault_null			= iVariable_create(_VAR_TYPE_NULL,		NULL);
+		varDefault_integer		= iVariable_create(_VAR_TYPE_INTEGER,	NULL);
+		varDefault_numeric		= iVariable_create(_VAR_TYPE_NUMERIC,	NULL);
+		varDefault_s32			= iVariable_create(_VAR_TYPE_S32,		NULL);
+		varDefault_u32			= iVariable_create(_VAR_TYPE_U32,		NULL);
+		varDefault_f32			= iVariable_create(_VAR_TYPE_F32,		NULL);
+		varDefault_s64			= iVariable_create(_VAR_TYPE_S64,		NULL);
+		varDefault_u64			= iVariable_create(_VAR_TYPE_U64,		NULL);
+		varDefault_f64			= iVariable_create(_VAR_TYPE_F64,		NULL);
+		varDefault_date			= iVariable_create(_VAR_TYPE_DATE,		NULL);
+		varDefault_datetime		= iVariable_create(_VAR_TYPE_DATETIME,	NULL);
+		varDefault_currency		= iVariable_create(_VAR_TYPE_CURRENCY,	NULL);
+		varDefault_s16			= iVariable_create(_VAR_TYPE_S16,		NULL);
+		varDefault_u16			= iVariable_create(_VAR_TYPE_U16,		NULL);
+		varDefault_s8			= iVariable_create(_VAR_TYPE_S8,		NULL);
+		varDefault_u8			= iVariable_create(_VAR_TYPE_U8,		NULL);
+		varDefault_logical		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+		varDefault_bitmap		= iVariable_create(_VAR_TYPE_BITMAP,	NULL);
+		varDefault_thiscode		= iVariable_create(_VAR_TYPE_THISCODE,	NULL);
+	}
+
+
+
+
+//////////
+//
+// Called to see if the indicated variable type is valid, and to obtain the
+// associated default value for the variable type.
+//
+//////
+	bool iVariable_isVarTypeValid(u32 tnVarType, SVariable** varDefaultValue)
+	{
+		SVariable* holder;
+
+
+		// If they don't want the default value, just put it to a temporary holder
+		if (!varDefaultValue)
+			varDefaultValue = &holder;
+
+		// What is the variable type they're testing?
+		switch (tnVarType)
+		{
+			case _VAR_TYPE_NULL:
+				*varDefaultValue = varDefault_null;
+				break;
+
+			case _VAR_TYPE_INTEGER:
+				*varDefaultValue = varDefault_integer;
+				break;
+
+			case _VAR_TYPE_NUMERIC:
+				*varDefaultValue = varDefault_numeric;
+				break;
+
+			case _VAR_TYPE_S32:
+				*varDefaultValue = varDefault_s32;
+				break;
+
+			case _VAR_TYPE_U32:
+				*varDefaultValue = varDefault_u32;
+				break;
+
+			case _VAR_TYPE_F32:
+			case _VAR_TYPE_FLOAT:
+				*varDefaultValue = varDefault_f32;
+				break;
+
+			case _VAR_TYPE_S64:
+				*varDefaultValue = varDefault_s64;
+				break;
+
+			case _VAR_TYPE_U64:
+				*varDefaultValue = varDefault_u64;
+				break;
+
+			case _VAR_TYPE_F64:
+			case _VAR_TYPE_DOUBLE:
+				*varDefaultValue = varDefault_f64;
+				break;
+
+			case _VAR_TYPE_DATE:
+				*varDefaultValue = varDefault_date;
+				break;
+
+			case _VAR_TYPE_DATETIME:
+				*varDefaultValue = varDefault_datetime;
+				break;
+
+			case _VAR_TYPE_CURRENCY:
+				*varDefaultValue = varDefault_currency;
+				break;
+
+			case _VAR_TYPE_S16:
+				*varDefaultValue = varDefault_s16;
+				break;
+
+			case _VAR_TYPE_U16:
+				*varDefaultValue = varDefault_u16;
+				break;
+
+			case _VAR_TYPE_S8:
+				*varDefaultValue = varDefault_s8;
+				break;
+
+			case _VAR_TYPE_U8:
+				*varDefaultValue = varDefault_u8;
+				break;
+
+			case _VAR_TYPE_LOGICAL:
+				*varDefaultValue = varDefault_logical;
+				break;
+
+			case _VAR_TYPE_BITMAP:
+				*varDefaultValue = varDefault_bitmap;
+				break;
+
+			case _VAR_TYPE_THISCODE:
+				*varDefaultValue = varDefault_thiscode;
+				break;
+		}
 	}
 
 
@@ -4638,7 +4813,7 @@ debug_break;
 		varSrc = iiVariable_terminateIndirect(varSrc);
 
 		// Are we still valid?
-		if (varSrc && varSrc->value.data && varSrc->varType != _VAR_TYPE_NULL)
+		if (varSrc && varSrc->value.data)
 		{
 			// Should we create a real variable? Or a reference?
 			if (tlMakeReference)
@@ -4657,7 +4832,6 @@ debug_break;
 
 		} else {
 			// Failure
-			iEngine_error(_ERROR_VARIABLE_NOT_FOUND, varSrc);
 			return(NULL);
 		}
 	}
@@ -5272,7 +5446,7 @@ debug_break;
 // Called to delete the indicated variable
 //
 //////
-	void iVariable_delete(SVariable* var, bool tlDeleteSelf)
+	void iVariable_delete(SVariable* var, bool tlDeleteSelf, bool tlDeleteBackToIndirect)
 	{
 		// Make sure our environment is sane
 		if (var)
@@ -5314,6 +5488,10 @@ debug_break;
 					}
 					// Lower the value allocated flag
 					var->isValueAllocated = false;
+
+				} else if (tlDeleteBackToIndirect) {
+					// We are deleting every variable back to the root, which means everything becomes logical false
+
 				}
 
 

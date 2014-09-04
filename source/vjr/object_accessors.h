@@ -714,6 +714,8 @@
 	bool					iObj_set_object							(SObject* obj, u32 tnIndex, SVariable* var);
 	bool					iObj_set_s32							(SObject* obj, u32 tnIndex, SVariable* var);
 	bool					iObj_set_s32_direct						(SObject* obj, u32 tnIndex, s32 tnValue);
+	bool					iObj_set_u32_direct						(SObject* obj, u32 tnIndex, u32 tnValue);
+	bool					iObj_set_sbgra_direct					(SObject* obj, u32 tnIndex, SBgra color);
 
 	SVariable*				iObj_get_variable_byIndex				(SObject* obj, u32 tnIndex);
 	SVariable*				iObj_get_variable_byName				(SObject* obj, u32 tnIndex, s8* tcName, u32 tnNameLength, bool tlSearchBaseProps, bool tlSearchUserProps);
@@ -727,6 +729,8 @@
 	SVariable*				iObj_get_s32							(SObject* obj, u32 tnIndex);
 	s32						iObj_get_s32_direct						(SObject* obj, u32 tnIndex);
 	SBgra					iObj_get_sbgra_direct					(SObject* obj, u32 tnIndex);
+
+	bool					iObj_delete_variable_byIndex			(SObject* obj, u32 tnIndex);
 
 
 	// For different types of properties
