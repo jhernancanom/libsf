@@ -1673,6 +1673,7 @@ if (!llPublishChildren)
 		s32			lnAlignment;
 		SObject*	objChild;
 		RECT		lrc;
+		SVariable*	var;
 
 
 		// Resize if need be (32-bit bitmap for labels, 24-bit for everything else)
@@ -1706,7 +1707,8 @@ if (!llPublishChildren)
 					while (objChild)
 					{
 						// See which object this is
-						if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->p.name->value, cgcName_icon, sizeof(cgcName_icon) - 1) == 0)
+						var = iObj_get_variable_byIndex(obj, _INDEX_NAME);
+						if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&var->value, cgcName_icon, sizeof(cgcName_icon) - 1) == 0)
 						{
 							logfunc("form icon");
 							// Form icon
@@ -1719,7 +1721,7 @@ if (!llPublishChildren)
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->p.name->value, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
+						} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&var->value, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
 							// Caption
 							logfunc("form caption");
 							SetRect(&objChild->rc,
@@ -1731,7 +1733,7 @@ if (!llPublishChildren)
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->p.name->value, cgcName_iconMove, sizeof(cgcName_iconMove) - 1) == 0) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&var->value, cgcName_iconMove, sizeof(cgcName_iconMove) - 1) == 0) {
 							// Move icon
 							logfunc("form move icon");
 							SetRect(&objChild->rc,
@@ -1743,7 +1745,7 @@ if (!llPublishChildren)
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->p.name->value, cgcName_iconMinimize, sizeof(cgcName_iconMinimize) - 1) == 0) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&var->value, cgcName_iconMinimize, sizeof(cgcName_iconMinimize) - 1) == 0) {
 							// Minimize icon
 							logfunc("form minimize icon");
 							SetRect(&objChild->rc,
@@ -1755,7 +1757,7 @@ if (!llPublishChildren)
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->p.name->value, cgcName_iconMaximize, sizeof(cgcName_iconMaximize) - 1) == 0) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&var->value, cgcName_iconMaximize, sizeof(cgcName_iconMaximize) - 1) == 0) {
 							// Maximize icon
 							logfunc("form maximize icon");
 							SetRect(&objChild->rc,
@@ -1767,7 +1769,7 @@ if (!llPublishChildren)
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->p.name->value, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&var->value, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0) {
 							// Close icon
 							logfunc("form close icon");
 							SetRect(&objChild->rc,
@@ -1797,7 +1799,7 @@ if (!llPublishChildren)
 					while (objChild)
 					{
 						// See which object this is
-						if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->p.name->value, cgcName_icon, sizeof(cgcName_icon) - 1) == 0)
+						if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&var->value, cgcName_icon, sizeof(cgcName_icon) - 1) == 0)
 						{
 							// Subform icon
 							logfunc("subform icon");
@@ -1810,7 +1812,7 @@ if (!llPublishChildren)
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->p.name->value, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
+						} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&var->value, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
 							// Caption
 							logfunc("subform caption");
 							SetRect(&objChild->rc,
@@ -1853,7 +1855,8 @@ if (!llPublishChildren)
 					while (objChild)
 					{
 						// See which object this is
-						if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->p.name->value, cgcName_checkboxImage, sizeof(cgcName_checkboxImage) - 1) == 0)
+						var = iObj_get_variable_byIndex(obj, _INDEX_NAME);
+						if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&var->value, cgcName_checkboxImage, sizeof(cgcName_checkboxImage) - 1) == 0)
 						{
 							// Adjust the size and position
 							logfunc("checkbox image");
@@ -1898,7 +1901,7 @@ if (!llPublishChildren)
 							// Mark it for re-render
 							objChild->isDirtyRender = true;
 
-						} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->p.name->value, cgcName_checkboxLabel, sizeof(cgcName_checkboxLabel) - 1) == 0) {
+						} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&var->value, cgcName_checkboxLabel, sizeof(cgcName_checkboxLabel) - 1) == 0) {
 							// Adjust the size
 							logfunc("checkbox label");
 							switch (alignment(obj))
@@ -2144,7 +2147,7 @@ if (!llPublishChildren)
 
 				// Finalize the initialization
 // TODO:  Working here .. need to create the obj->props array as part of each class, and use the size of the relative propList(), and then remove all of the distinct getters and setters to work more generically with the variable types, with a few special ones for particular classes.
-				propList[lnI].setterVar(obj, )
+				propList[lnI].setterOverrideVar(obj, gsProps_masterDefaultInitValues[lnIndex].index, );
 			}
 
 
@@ -2255,7 +2258,8 @@ if (!llPublishChildren)
 //////
 	SObject* iSubobj_createEmpty(SObject* template_empty, SObject* parent)
 	{
-		SObject* emptyNew;
+		SObject*	emptyNew;
+		SVariable*	var;
 
 
 		logfunc(__FUNCTION__);
@@ -2279,8 +2283,13 @@ if (!llPublishChildren)
 				iObj_set_logical_direct(emptyNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				emptyNew->isRendered	= true;
 				emptyNew->isPublished	= true;
-				iDatum_duplicate(&emptyNew->p.name->value,		cgcName_empty, -1);
-				iDatum_duplicate(&emptyNew->p._class->value,	cgcName_empty, -1);
+				// Name
+				var						= iObj_get_variable_byIndex(emptyNew, _INDEX_NAME);
+				iDatum_duplicate(&var->value, cgcName_empty, -1);
+				// Class
+				var						= iObj_get_variable_byIndex(emptyNew, _INDEX_CLASS);
+				iDatum_duplicate(&var->value, cgcName_empty, -1);
+				// Events
 				iEvents_resetToDefault(&emptyNew->ev);
 
 				// Initialize based on template
@@ -2320,6 +2329,7 @@ if (!llPublishChildren)
 		SObject*	minimize;
 		SObject*	maximize;
 		SObject*	close;
+		SVariable*	var;
 
 
 		logfunc(__FUNCTION__);
@@ -2343,8 +2353,10 @@ if (!llPublishChildren)
 				iObj_set_logical_direct(formNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				formNew->isRendered		= true;
 				formNew->isPublished	= true;
-				iDatum_duplicate(&formNew->p.name->value,		cgcName_form, -1);
-				iDatum_duplicate(&formNew->p._class->value,		cgcName_form, -1);
+				var						= iObj_get_variable_byIndex(formNew, _INDEX_NAME);
+				iDatum_duplicate(&var->value, cgcName_form, -1);
+				var						= iObj_get_variable_byIndex(formNew, _INDEX_CLASS);
+				iDatum_duplicate(&var->value, cgcName_form, -1);
 				iEvents_resetToDefault(&formNew->ev);
 				iObj_setSize(formNew, 0, 0, 375, 250);
 
@@ -2369,12 +2381,12 @@ if (!llPublishChildren)
 					//////////
 					// Give them proper names
 					//////
-						iDatum_duplicate(&icon->p.name->value,		cgcName_icon,			-1);
-						iDatum_duplicate(&caption->p.name->value,	cgcCaption_icon,		-1);
-						iDatum_duplicate(&move->p.name->value,		cgcName_iconMove,		-1);
-						iDatum_duplicate(&minimize->p.name->value,	cgcName_iconMinimize,	-1);
-						iDatum_duplicate(&maximize->p.name->value,	cgcName_iconMaximize,	-1);
-						iDatum_duplicate(&close->p.name->value,		cgcName_iconClose,		-1);
+						var = iObj_get_variable_byIndex(icon,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_icon,			-1);
+						var = iObj_get_variable_byIndex(caption,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcCaption_icon,		-1);
+						var = iObj_get_variable_byIndex(move,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconMove,		-1);
+						var = iObj_get_variable_byIndex(minimize,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconMinimize,	-1);
+						var = iObj_get_variable_byIndex(maximize,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconMaximize,	-1);
+						var = iObj_get_variable_byIndex(close,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconClose,		-1);
 
 
 					//////////
@@ -2404,6 +2416,7 @@ if (!llPublishChildren)
 		SObject*	subformNew;
 		SObject*	icon;
 		SObject*	caption;
+		SVariable*	var;
 
 
 		logfunc(__FUNCTION__);
@@ -2427,8 +2440,10 @@ if (!llPublishChildren)
 				iObj_set_logical_direct(subformNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				subformNew->isRendered	= true;
 				subformNew->isPublished	= true;
-				iDatum_duplicate(&subformNew->p.name->value,	cgcName_subform, -1);
-				iDatum_duplicate(&subformNew->p._class->value,	cgcName_subform, -1);
+				var						= iObj_get_variable_byIndex(subformNew, _INDEX_NAME);
+				iDatum_duplicate(&var->value, cgcName_subform, -1);
+				var						= iObj_get_variable_byIndex(subformNew, _INDEX_CLASS);
+				iDatum_duplicate(&var->value, cgcName_subform, -1);
 				iEvents_resetToDefault(&subformNew->ev);
 				iObj_setSize(subformNew, 0, 0, 200, 100);
 
@@ -2449,8 +2464,8 @@ if (!llPublishChildren)
 					//////////
 					// Give them proper names
 					//////
-						iDatum_duplicate(&icon->p.name->value,		cgcName_icon,		-1);
-						iDatum_duplicate(&caption->p.name->value,	cgcCaption_icon,	-1);
+						var = iObj_get_variable_byIndex(icon,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_icon,		-1);
+						var = iObj_get_variable_byIndex(caption,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcCaption_icon,	-1);
 
 
 					//////////
@@ -2481,6 +2496,7 @@ if (!llPublishChildren)
 		SObject*	icon;
 		SObject*	caption;
 		SObject*	close;
+		SVariable*	var;
 
 
 		logfunc(__FUNCTION__);
@@ -2504,8 +2520,10 @@ if (!llPublishChildren)
 				iObj_set_logical_direct(carouselNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				carouselNew->isRendered		= true;
 				carouselNew->isPublished	= true;
-				iDatum_duplicate(&carouselNew->p.name->value,		cgcName_carousel, -1);
-				iDatum_duplicate(&carouselNew->p._class->value,		cgcName_carousel, -1);
+				var							= iObj_get_variable_byIndex(carouselNew, _INDEX_NAME);
+				iDatum_duplicate(&var->value, cgcName_carousel, -1);
+				var							= iObj_get_variable_byIndex(carouselNew, _INDEX_CLASS);
+				iDatum_duplicate(&var->value, cgcName_carousel, -1);
 				iEvents_resetToDefault(&carouselNew->ev);
 				iObj_setSize(carouselNew, 0, 0, 320, 480);
 
@@ -2527,9 +2545,9 @@ if (!llPublishChildren)
 					//////////
 					// Give them proper names
 					//////
-						iDatum_duplicate(&icon->p.name->value,		cgcName_icon,		-1);
-						iDatum_duplicate(&caption->p.name->value,	cgcCaption_icon,	-1);
-						iDatum_duplicate(&close->p.name->value,		cgcName_iconClose,	-1);
+						var = iObj_get_variable_byIndex(icon,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_icon,		-1);
+						var = iObj_get_variable_byIndex(caption,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcCaption_icon,	-1);
+						var = iObj_get_variable_byIndex(close,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconClose,	-1);
 
 
 					//////////
@@ -2556,7 +2574,8 @@ if (!llPublishChildren)
 //////
 	SObject* iSubobj_createRider(SObject* template_rider, SObject* parent)
 	{
-		SObject* riderNew;
+		SObject*	riderNew;
+		SVariable*	var;
 
 
 		logfunc(__FUNCTION__);
@@ -2577,11 +2596,13 @@ if (!llPublishChildren)
 				// Initially populate
 				riderNew->objType		= _OBJ_TYPE_RIDER;
 				riderNew->parent		= parent;
-				iVariable_set_logical(riderNew->p.enabled, true);
+				iObj_set_logical_direct(riderNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				riderNew->isRendered	= true;
 				riderNew->isPublished	= true;
-				iDatum_duplicate(&riderNew->p.name->value,		cgcName_rider, -1);
-				iDatum_duplicate(&riderNew->p._class->value,	cgcName_rider, -1);
+				var							= iObj_get_variable_byIndex(riderNew, _INDEX_NAME);
+				iDatum_duplicate(&var->value, cgcName_rider, -1);
+				var							= iObj_get_variable_byIndex(riderNew, _INDEX_CLASS);
+				iDatum_duplicate(&var->value, cgcName_rider, -1);
 				iEvents_resetToDefault(&riderNew->ev);
 				iObj_setSize(riderNew, 0, 0, 320, 480);
 
@@ -2614,7 +2635,8 @@ if (!llPublishChildren)
 //////
 	SObject* iSubobj_createLabel(SObject* template_label, SObject* parent)
 	{
-		SObject* labelNew;
+		SObject*	labelNew;
+		SVariable*	var;
 
 
 		logfunc(__FUNCTION__);
@@ -2635,11 +2657,13 @@ if (!llPublishChildren)
 				// Initially populate
 				labelNew->objType		= _OBJ_TYPE_LABEL;
 				labelNew->parent		= parent;
-				iVariable_set_logical(labelNew->p.enabled, true);
+				iObj_set_logical_direct(labelNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				labelNew->isRendered	= true;
 				labelNew->isPublished	= true;
-				iDatum_duplicate(&labelNew->p.name->value,		cgcName_label, -1);
-				iDatum_duplicate(&labelNew->p._class->value,	cgcName_label, -1);
+				var							= iObj_get_variable_byIndex(labelNew, _INDEX_NAME);
+				iDatum_duplicate(&var->value, cgcName_label, -1);
+				var							= iObj_get_variable_byIndex(labelNew, _INDEX_CLASS);
+				iDatum_duplicate(&var->value, cgcName_label, -1);
 				iEvents_resetToDefault(&labelNew->ev);
 				iObj_setSize(labelNew, 0, 0, 40, 17);
 
@@ -2672,7 +2696,8 @@ if (!llPublishChildren)
 //////
 	SObject* iSubobj_createTextbox(SObject* template_textbox, SObject* parent)
 	{
-		SObject* textboxNew;
+		SObject*	textboxNew;
+		SVariable*	var;
 
 
 		logfunc(__FUNCTION__);
@@ -2693,11 +2718,13 @@ if (!llPublishChildren)
 				// Initially populate
 				textboxNew->objType		= _OBJ_TYPE_TEXTBOX;
 				textboxNew->parent		= parent;
-				iVariable_set_logical(textboxNew->p.enabled, true);
+				iObj_set_logical_direct(textboxNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				textboxNew->isRendered	= true;
 				textboxNew->isPublished	= true;
-				iDatum_duplicate(&textboxNew->p.name->value,		cgcName_textbox, -1);
-				iDatum_duplicate(&textboxNew->p._class->value,		cgcName_textbox, -1);
+				var							= iObj_get_variable_byIndex(textboxNew, _INDEX_NAME);
+				iDatum_duplicate(&var->value, cgcName_textbox, -1);
+				var							= iObj_get_variable_byIndex(textboxNew, _INDEX_CLASS);
+				iDatum_duplicate(&var->value, cgcName_textbox, -1);
 				iEvents_resetToDefault(&textboxNew->ev);
 				iObj_setSize(textboxNew, 0, 0, 100, 23);
 
@@ -2730,7 +2757,8 @@ if (!llPublishChildren)
 //////
 	SObject* iSubobj_createButton(SObject* template_button, SObject* parent)
 	{
-		SObject* buttonNew;
+		SObject*	buttonNew;
+		SVariable*	var;
 
 
 		logfunc(__FUNCTION__);
@@ -2751,11 +2779,13 @@ if (!llPublishChildren)
 				// Initially populate
 				buttonNew->objType		= _OBJ_TYPE_BUTTON;
 				buttonNew->parent		= parent;
-				iVariable_set_logical(buttonNew->p.enabled, true);
+				iObj_set_logical_direct(buttonNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				buttonNew->isRendered	= true;
 				buttonNew->isPublished	= true;
-				iDatum_duplicate(&buttonNew->p.name->value,		cgcName_button, -1);
-				iDatum_duplicate(&buttonNew->p._class->value,	cgcName_button, -1);
+				var							= iObj_get_variable_byIndex(buttonNew, _INDEX_NAME);
+				iDatum_duplicate(&var->value, cgcName_button, -1);
+				var							= iObj_get_variable_byIndex(buttonNew, _INDEX_CLASS);
+				iDatum_duplicate(&var->value, cgcName_button, -1);
 				iEvents_resetToDefault(&buttonNew->ev);
 				iObj_setSize(buttonNew, 0, 0, 84, 27);
 
@@ -2788,7 +2818,8 @@ if (!llPublishChildren)
 //////
 	SObject* iSubobj_createEditbox(SObject* template_editbox, SObject* parent)
 	{
-		SObject* editboxNew;
+		SObject*	editboxNew;
+		SVariable*	var;
 
 
 		logfunc(__FUNCTION__);
@@ -2809,11 +2840,13 @@ if (!llPublishChildren)
 				// Initially populate
 				editboxNew->objType		= _OBJ_TYPE_EDITBOX;
 				editboxNew->parent		= parent;
-				iVariable_set_logical(editboxNew->p.enabled, true);
+				iObj_set_logical_direct(editboxNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				editboxNew->isRendered	= true;
 				editboxNew->isPublished	= true;
-				iDatum_duplicate(&editboxNew->p.name->value,		cgcName_editbox, -1);
-				iDatum_duplicate(&editboxNew->p._class->value,		cgcName_editbox, -1);
+				var							= iObj_get_variable_byIndex(editboxNew, _INDEX_NAME);
+				iDatum_duplicate(&var->value, cgcName_editbox, -1);
+				var							= iObj_get_variable_byIndex(editboxNew, _INDEX_CLASS);
+				iDatum_duplicate(&var->value, cgcName_editbox, -1);
 				iEvents_resetToDefault(&editboxNew->ev);
 				iObj_setSize(editboxNew, 0, 0, 100, 53);
 
@@ -2846,7 +2879,8 @@ if (!llPublishChildren)
 //////
 	SObject* iSubobj_createImage(SObject* template_image, SObject* parent)
 	{
-		SObject* imageNew;
+		SObject*	imageNew;
+		SVariable*	var;
 
 
 		logfunc(__FUNCTION__);
@@ -2867,11 +2901,13 @@ if (!llPublishChildren)
 				// Initially populate
 				imageNew->objType		= _OBJ_TYPE_IMAGE;
 				imageNew->parent		= parent;
-				iVariable_set_logical(imageNew->p.enabled, true);
+				iObj_set_logical_direct(imageNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				imageNew->isRendered	= true;
 				imageNew->isPublished	= true;
-				iDatum_duplicate(&imageNew->p.name->value,		cgcName_image, -1);
-				iDatum_duplicate(&imageNew->p._class->value,	cgcName_image, -1);
+				var							= iObj_get_variable_byIndex(imageNew, _INDEX_NAME);
+				iDatum_duplicate(&var->value, cgcName_image, -1);
+				var							= iObj_get_variable_byIndex(imageNew, _INDEX_CLASS);
+				iDatum_duplicate(&var->value, cgcName_image, -1);
 				iEvents_resetToDefault(&imageNew->ev);
 				iObj_setSize(imageNew, 0, 0, 100, 36);
 
@@ -2904,9 +2940,10 @@ if (!llPublishChildren)
 //////
 	SObject* iSubobj_createCheckbox(SObject* template_checkbox, SObject* parent)
 	{
-		SObject* checkboxNew;
-		SObject* image;
-		SObject* label;
+		SObject*	checkboxNew;
+		SObject*	image;
+		SObject*	label;
+		SVariable*	var;
 
 
 		logfunc(__FUNCTION__);
@@ -2927,11 +2964,13 @@ if (!llPublishChildren)
 				// Initially populate
 				checkboxNew->objType		= _OBJ_TYPE_CHECKBOX;
 				checkboxNew->parent			= parent;
-				iVariable_set_logical(checkboxNew->p.enabled, true);
+				iObj_set_logical_direct(checkboxNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				checkboxNew->isRendered		= true;
 				checkboxNew->isPublished	= true;
-				iDatum_duplicate(&checkboxNew->p.name->value,		cgcName_checkbox, -1);
-				iDatum_duplicate(&checkboxNew->p._class->value,		cgcName_checkbox, -1);
+				var							= iObj_get_variable_byIndex(checkboxNew, _INDEX_NAME);
+				iDatum_duplicate(&var->value, cgcName_checkbox, -1);
+				var							= iObj_get_variable_byIndex(checkboxNew, _INDEX_CLASS);
+				iDatum_duplicate(&var->value, cgcName_checkbox, -1);
 				iEvents_resetToDefault(&checkboxNew->ev);
 				iObj_setSize(checkboxNew, 0, 0, 60, 17);
 
@@ -2952,8 +2991,8 @@ if (!llPublishChildren)
 					//////////
 					// Give them proper names
 					//////
-						iDatum_duplicate(&image->p.name->value,		cgcName_checkboxImage,	-1);
-						iDatum_duplicate(&label->p.name->value,		cgcName_checkboxLabel,	-1);
+						var = iObj_get_variable_byIndex(image,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_checkboxImage,	-1);
+						var = iObj_get_variable_byIndex(label,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_checkboxLabel,	-1);
 
 
 					//////////
@@ -2980,7 +3019,8 @@ if (!llPublishChildren)
 //////
 	SObject* iSubobj_createOption(SObject* template_option, SObject* parent)
 	{
-		SObject* optionNew;
+		SObject*	optionNew;
+		SVariable*	var;
 
 
 		logfunc(__FUNCTION__);
@@ -3001,11 +3041,13 @@ if (!llPublishChildren)
 				// Initially populate
 				optionNew->objType		= _OBJ_TYPE_OPTION;
 				optionNew->parent		= parent;
-				iVariable_set_logical(optionNew->p.enabled, true);
+				iObj_set_logical_direct(optionNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				optionNew->isRendered	= true;
 				optionNew->isPublished	= true;
-				iDatum_duplicate(&optionNew->p.name->value,		cgcName_option, -1);
-				iDatum_duplicate(&optionNew->p._class->value,	cgcName_option, -1);
+				var							= iObj_get_variable_byIndex(optionNew, _INDEX_NAME);
+				iDatum_duplicate(&var->value, cgcName_option, -1);
+				var							= iObj_get_variable_byIndex(optionNew, _INDEX_NAME);
+				iDatum_duplicate(&var->value, cgcName_option, -1);
 				iEvents_resetToDefault(&optionNew->ev);
 				iObj_setSize(optionNew, 0, 0, 60, 40);
 
@@ -3038,7 +3080,8 @@ if (!llPublishChildren)
 //////
 	SObject* iSubobj_createRadio(SObject* template_radio, SObject* parent)
 	{
-		SObject* radioNew;
+		SObject*	radioNew;
+		SVariable*	var;
 
 
 		logfunc(__FUNCTION__);
@@ -3059,11 +3102,13 @@ if (!llPublishChildren)
 				// Initially populate
 				radioNew->objType		= _OBJ_TYPE_RADIO;
 				radioNew->parent		= parent;
-				iVariable_set_logical(radioNew->p.enabled, true);
+				iObj_set_logical_direct(radioNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				radioNew->isRendered	= true;
 				radioNew->isPublished	= true;
-				iDatum_duplicate(&radioNew->p.name->value,		cgcName_radio, -1);
-				iDatum_duplicate(&radioNew->p._class->value,	cgcName_radio, -1);
+				var							= iObj_get_variable_byIndex(radioNew, _INDEX_NAME);
+				iDatum_duplicate(&var->value, cgcName_radio, -1);
+				var							= iObj_get_variable_byIndex(radioNew, _INDEX_CLASS);
+				iDatum_duplicate(&var->value, cgcName_radio, -1);
 				iEvents_resetToDefault(&radioNew->ev);
 				iObj_setSize(radioNew, 0, 0, 100, 100);
 
@@ -3123,8 +3168,8 @@ if (!llPublishChildren)
 		//////////
 		// Copy the allocatables
 		//////
-			formDst->pa.font	= iFont_duplicate(formSrc->pa.font);
-			formDst->p.icon		= iBmp_copy(formSrc->p.icon);
+			formDst->p.font	= iFont_duplicate(formSrc->p.font);
+			formDst->p.icon	= iBmp_copy(formSrc->p.icon);
 			iDatum_duplicate(&formDst->p.caption->value, &formSrc->p.caption->value);
 
 
@@ -3160,7 +3205,7 @@ if (!llPublishChildren)
 		//////////
 		// Copy the allocatables
 		//////
-			subformDst->pa.font		= iFont_duplicate(subformSrc->pa.font);
+			subformDst->p.font	= iFont_duplicate(subformSrc->p.font);
 			subformDst->p.icon	= iBmp_copy(subformSrc->p.icon);
 			iDatum_duplicate(&subformDst->p.caption->value, &subformSrc->p.caption->value);
 
@@ -3260,7 +3305,7 @@ if (!llPublishChildren)
 		//////////
 		// Copy the allocatables
 		//////
-			labelDst->pa.font		= iFont_duplicate(labelSrc->pa.font);
+			labelDst->p.font = iFont_duplicate(labelSrc->p.font);
 
 			// Caption
 			iDatum_duplicate(&labelDst->p.caption->value, &labelSrc->p.caption->value);
@@ -3298,7 +3343,7 @@ if (!llPublishChildren)
 		//////////
 		// Copy the allocatables
 		//////
-			textboxDst->pa.font		= iFont_duplicate(textboxSrc->pa.font);
+			textboxDst->p.font		= iFont_duplicate(textboxSrc->p.font);
 			textboxDst->p.icon	= iBmp_copy(textboxSrc->p.icon);
 
 			// Caption
@@ -3345,7 +3390,7 @@ if (!llPublishChildren)
 		//////////
 		// Copy the allocatables
 		//////
-			buttonDst->pa.font		= iFont_duplicate(buttonSrc->pa.font);
+			buttonDst->p.font		= iFont_duplicate(buttonSrc->p.font);
 
 			// Caption
 			iDatum_duplicate(&buttonDst->p.caption->value, &buttonSrc->p.caption->value);
@@ -3388,7 +3433,7 @@ if (!llPublishChildren)
 		//////////
 		// Copy the allocatables
 		//////
-			editboxDst->pa.font		= iFont_duplicate(editboxSrc->pa.font);
+			editboxDst->p.font		= iFont_duplicate(editboxSrc->p.font);
 			editboxDst->p.icon	= iBmp_copy(editboxSrc->p.icon);
 
 			// Caption
@@ -3573,7 +3618,7 @@ if (!llPublishChildren)
 			//////
 				if (empty->propsCount < tnPropsCount)
 
-				iiObj_resetToDefaultCommon(empty, true, true, propList);
+				iiObj_resetToDefaultCommon(empty, true, true, propList, tnPropCount);
 		}
 
 		// No object-specific initialization because empty objects do nothing except exist as placeholders
@@ -3614,8 +3659,8 @@ if (!llPublishChildren)
 			//////////
 			// Set the default font
 			//////
-				iFont_delete(&form->pa.font, true);
-				form->pa.font = iFont_duplicate(gsFontDefault);
+				iFont_delete(&form->p.font, true);
+				form->p.font = iFont_duplicate(gsFontDefault);
 
 
 			//////////
@@ -3664,66 +3709,6 @@ if (!llPublishChildren)
 
 
 			//////////
-			// General flags and settings
-			//////
-				iVariable_set_logical(form->p.allowOutput,			true);
-				iVariable_set_logical(form->p.alwaysOnBottom,		false);
-				iVariable_set_logical(form->p.alwaysOnTop,			false);
-				iVariable_set_logical(form->p.autoCenter,			false);
-				iVariable_set_s32(form->p.borderStyle,			_BORDER_STYLE_SIZABLE);
-				iVariable_set_logical(form->p.closable,			true);
-				form->p.processKeyPreviewEvents					= false;
-				iVariable_set_logical(form->p.controlBox,			true);
-				iVariable_set_logical(form->p.minButton,			true);
-				iVariable_set_logical(form->p.maxButton,			true);
-				iVariable_set_logical(form->p.closable,			true);
-				iVariable_set_s32(form->p.scaleMode,			_SCALE_MODE_PIXELS);
-				iVariable_set_logical(form->p.showInTaskbar,		true);
-				iVariable_set_s32(form->p.windowState,			_WINDOW_STATE_NORMAL);
-
-				// The following are ignored, maintained only for backward compatibility
-				iVariable_set_logical(form->p.bindControls,		true);
-				iVariable_set_s32(form->p.bufferMode,			2);
-				iVariable_set_logical(form->p.clipControls,		false);
-				iVariable_set_s32(form->p.colorSource,			4);
-				iVariable_set_logical(form->p.continuousScroll,	true);
-				iVariable_delete(form->p.dataSession,			false);
-				iVariable_set_s32(form->p.dataSessionID,		-1);
-				iVariable_delete(form->p.dEClass,				false);
-				iVariable_delete(form->p.dEClassLibrary,		false);
-				iVariable_set_s32(form->p.defOLELCID,			-1);
-				iVariable_set_logical(form->p.desktop,				false);
-				iVariable_set_logical(form->p.dockable,			false);
-				iVariable_set_logical(form->p.docked,				false);
-				iVariable_set_s32(form->p.dockPosition,			-1);
-				iVariable_set_s32(form->p.drawMode,				-1);
-				iVariable_set_s32(form->p.drawStyle,			13);
-				iVariable_set_s32(form->p.drawWidth,			1);
-				iVariable_set_s32(form->p.fillColor,			rgba(255,255,255,255));
-				iVariable_set_s32(form->p.fillStyle,			0);
-				iVariable_set_logical(form->p.halfHeightCaption,	false);
-				iVariable_set_s32(form->p.hScrollSmallChange,	10);
-				iVariable_set_s32(form->p.vScrollSmallChange,	10);
-				iVariable_set_logical(form->p.macDesktop,			false);
-				iVariable_set_logical(form->p.mDIForm,				false);
-				iVariable_set_s32(form->p.oLEDragMode,			0);
-				iBmp_delete(&form->p.oLEDragPicture, true, true);
-				iVariable_set_s32(form->p.oLEDropEffects,		3);
-				iVariable_set_s32(form->p.oLEDropHasData,		-1);
-				iVariable_set_s32(form->p.oLEDropMode,			0);
-				iVariable_set_s32(form->p.releaseType,			0);
-				iVariable_set_logical(form->p.rightToLeft,			false);
-				iVariable_set_s32(form->p.scrollBars,			3);
-				iVariable_set_logical(form->p.showTips,			true);
-				iVariable_set_s32(form->p.showWindow,			2);
-				iVariable_set_logical(form->p.sizeBox,				false);
-				iVariable_set_logical(form->p.themes,				true);
-				iVariable_set_s32(form->p.titleBar,				1);
-				iVariable_set_s32(form->p.windowType,			0);
-				iVariable_set_logical(form->p.zoomBox,				false);
-
-
-			//////////
 			// Default child settings
 			//////
 				SetRect(&lrc, 0, 0, bmpArrowUl->bi.biWidth, bmpArrowUl->bi.biHeight);
@@ -3757,8 +3742,8 @@ if (!llPublishChildren)
 						// Caption
 						iDatum_duplicate(&objChild->p.caption->value, cgcName_formCaption, sizeof(cgcName_formCaption) - 1);
 						iVariable_set_s32(objChild->p.backStyle, _BACK_STYLE_TRANSPARENT);
-						iFont_delete(&objChild->pa.font, true);
-						objChild->pa.font		= iFont_create(cgcFontName_windowTitleBar, 12, FW_NORMAL, false, false);
+						iFont_delete(&objChild->p.font, true);
+						objChild->p.font		= iFont_create(cgcFontName_windowTitleBar, 12, FW_NORMAL, false, false);
 						iVariable_set_logical(objChild->p.visible, true);
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->p.name->value, cgcName_iconMove, sizeof(cgcName_iconMove) - 1) == 0) {
@@ -3856,6 +3841,7 @@ if (!llPublishChildren)
 	{
 		SObject*	objChild;
 		RECT		lrc;
+		SVariable*	var;
 
 
 		logfunc(__FUNCTION__);
@@ -3887,8 +3873,8 @@ if (!llPublishChildren)
 			//////////
 			// Set the default font
 			//////
-				iFont_delete(&subform->pa.font, true);
-				subform->pa.font				= iFont_duplicate(gsFontDefault);
+				iFont_delete(&subform->p.font, true);
+				subform->p.font				= iFont_duplicate(gsFontDefault);
 
 
 			//////////
@@ -3931,7 +3917,8 @@ if (!llPublishChildren)
 				while (objChild)
 				{
 					// See which object this is
-					if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->p.name->value, cgcName_icon, sizeof(cgcName_icon) - 1) == 0)
+					var = iObj_get_variable_byIndex(objChild, _INDEX_NAME);
+					if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&var->value, cgcName_icon, sizeof(cgcName_icon) - 1) == 0)
 					{
 						// Adjust the size
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
@@ -3951,15 +3938,15 @@ if (!llPublishChildren)
 						// Icon
 						iBmp_delete(&objChild->p.icon, true, true);				// Delete the old
 						objChild->p.icon = iBmp_copy(bmpVjrIcon);				// Set the new
-						iVariable_set_logical(objChild->p.visible, true);
+						iObj_set_logical_direct(objChild, _INDEX_VISIBLE, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->p.name->value, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
+					} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&var->value, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
 						// Caption
 						iDatum_duplicate(&objChild->p.caption->value, cgcName_formCaption, sizeof(cgcName_formCaption) - 1);
 						iVariable_set_s32(objChild->p.backStyle, _BACK_STYLE_TRANSPARENT);
-						iFont_delete(&objChild->pa.font, true);
-						objChild->pa.font = iFont_create(cgcFontName_windowTitleBar, 10, FW_NORMAL, false, false);
-						iVariable_set_logical(objChild->p.visible, true);
+						iFont_delete(&objChild->p.font, true);
+						objChild->p.font = iFont_create(cgcFontName_windowTitleBar, 10, FW_NORMAL, false, false);
+						iObj_set_logical_direct(objChild, _INDEX_VISIBLE, _LOGICAL_TRUE);
 					}
 
 					// Move to next object
@@ -4022,15 +4009,15 @@ if (!llPublishChildren)
 						// Icon
 						iBmp_delete(&objChild->p.icon, true, true);				// Delete the old
 						objChild->p.icon = iBmp_copy(bmpCarouselIcon);			// Set the new
-						iVariable_set_logical(objChild->p.visible, true);
+						iObj_set_logical_direct(objChild, _INDEX_VISIBLE, _LOGICAL_TRUE);
 
 					} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->p.name->value, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
 						// Caption
 						iDatum_duplicate(&objChild->p.caption->value, cgcName_formCaption, sizeof(cgcName_formCaption) - 1);
 						iVariable_set_s32(objChild->p.backStyle, _BACK_STYLE_TRANSPARENT);
-						iFont_delete(&objChild->pa.font, true);
-						objChild->pa.font = iFont_create(cgcFontName_windowTitleBar, 12, FW_NORMAL, false, false);
-						iVariable_set_logical(objChild->p.visible, true);
+						iFont_delete(&objChild->p.font, true);
+						objChild->p.font = iFont_create(cgcFontName_windowTitleBar, 12, FW_NORMAL, false, false);
+						iObj_set_logical_direct(objChild, _INDEX_VISIBLE, _LOGICAL_TRUE);
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->p.name->value, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0) {
 						// Adjust the size
@@ -4051,7 +4038,7 @@ if (!llPublishChildren)
 						// Icon
 						iBmp_delete(&objChild->p.icon, true, true);				// Delete the old
 						objChild->p.icon	= iBmp_copy(bmpClose);				// Set the new
-						iVariable_set_logical(objChild->p.visible, true);
+						iObj_set_logical_direct(objChild, _INDEX_VISIBLE, _LOGICAL_TRUE);
 					}
 
 					// Move to next object
@@ -4115,8 +4102,8 @@ if (!llPublishChildren)
 			//////////
 			// Set the default font
 			//////
-				iFont_delete(&label->pa.font, true);
-				label->pa.font						= iFont_duplicate(gsFontDefault);
+				iFont_delete(&label->p.font, true);
+				label->p.font						= iFont_duplicate(gsFontDefault);
 
 
 			//////////
@@ -4170,8 +4157,8 @@ if (!llPublishChildren)
 			//////////
 			// Set the default font
 			//////
-				iFont_delete(&textbox->pa.font, true);
-				textbox->pa.font					= iFont_duplicate(gsFontDefault);
+				iFont_delete(&textbox->p.font, true);
+				textbox->p.font					= iFont_duplicate(gsFontDefault);
 
 
 			//////////
@@ -4227,7 +4214,7 @@ if (!llPublishChildren)
 				iObj_setSize(button, 0, 0, 84, 27);
 
 
-			button->pa.font						= iFont_duplicate(gsFontDefault);
+			button->p.font						= iFont_duplicate(gsFontDefault);
 			iVariable_set_u32(button->p.backColor,	grayColor.color);
 			iVariable_set_u32(button->p.foreColor,	blackColor.color);
 
@@ -4266,7 +4253,7 @@ if (!llPublishChildren)
 				iObj_setSize(editbox, 0, 0, 100, 53);
 
 
-			editbox->pa.font = iFont_duplicate(gsFontDefault);
+			editbox->p.font = iFont_duplicate(gsFontDefault);
 			iVariable_set_u32(editbox->p.backColor,				whiteColor.color);
 			iVariable_set_u32(editbox->p.foreColor,				blackColor.color);
 
@@ -4354,7 +4341,7 @@ if (!llPublishChildren)
 				iObj_setSize(checkbox, 0, 0, 60, 17);
 
 
-			checkbox->pa.font = iFont_duplicate(gsFontDefault9);
+			checkbox->p.font = iFont_duplicate(gsFontDefault9);
 			iVariable_set_u32(checkbox->p.backColor,			 whiteColor.color);
 			iVariable_set_u32(checkbox->p.foreColor,			 blackColor.color);
 
@@ -4421,8 +4408,8 @@ if (!llPublishChildren)
 						// Checkbox label
 						iDatum_duplicate(&objChild->p.caption->value, cgcName_checkbox, sizeof(cgcName_checkbox) - 1);
 						iVariable_set_s32(objChild->p.backStyle, _BACK_STYLE_TRANSPARENT);
-						iFont_delete(&objChild->pa.font, true);
-						objChild->pa.font = iFont_duplicate(checkbox->pa.font);
+						iFont_delete(&objChild->p.font, true);
+						objChild->p.font = iFont_duplicate(checkbox->p.font);
 
 						// Mark it for re-rendering
 						objChild->isDirtyRender	= true;
@@ -4495,7 +4482,7 @@ if (!llPublishChildren)
 				iObj_setSize(radio, 0, 0, 72, 72);
 
 
-			radio->pa.font  = iFont_duplicate(gsFontDefault);
+			radio->p.font  = iFont_duplicate(gsFontDefault);
 			iVariable_set_u32(radio->p.backColor,			whiteColor.color);
 			iVariable_set_u32(radio->p.foreColor,			blackColor.color);
 
@@ -4556,7 +4543,7 @@ if (!llPublishChildren)
 		//////////
 		// Delete any allocated properties
 		//////
-			iFont_delete(&obj->pa.font,					false);
+			iFont_delete(&obj->p.font,					false);
 
 			iBmp_delete(&obj->p.icon,					true, true);
 			iBmp_delete(&obj->p.mouseIcon,				true, true);
@@ -5380,7 +5367,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 				// Set the text parameters
 				SetBkMode(obj->bmp->hdc, TRANSPARENT);
-				SelectObject(obj->bmp->hdc, obj->pa.font->hfont);
+				SelectObject(obj->bmp->hdc, obj->p.font->hfont);
 
 				// Determine our orientation
 				switch (get_s32(obj->p.alignment))
@@ -5517,7 +5504,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 				// Set the text parameters
 				SetTextColor(obj->bmp->hdc, RGB(get_bgra(obj->p.foreColor).red, get_bgra(obj->p.foreColor).grn, get_bgra(obj->p.foreColor).blu));
-				SelectObject(obj->bmp->hdc, obj->pa.font->hfont);
+				SelectObject(obj->bmp->hdc, obj->p.font->hfont);
 
 				// Determine our orientation
 				switch (get_s32(obj->p.alignment))
@@ -5618,7 +5605,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 				// Set the text parameters
 				SetTextColor(obj->bmp->hdc, RGB(get_bgra(obj->p.foreColor).red, get_bgra(obj->p.foreColor).grn, get_bgra(obj->p.foreColor).blu));
-				SelectObject(obj->bmp->hdc, obj->pa.font->hfont);
+				SelectObject(obj->bmp->hdc, obj->p.font->hfont);
 
 				// Determine our orientation
 				switch (get_s32(obj->p.alignment))
@@ -5964,7 +5951,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 					
 					SetTextColor(obj->bmp->hdc, RGB(get_bgra(obj->p.foreColor).red, get_bgra(obj->p.foreColor).grn, get_bgra(obj->p.foreColor).blu));
 					SetBkMode(obj->bmp->hdc, TRANSPARENT);
-					SelectObject(obj->bmp->hdc, ((obj->pa.font) ? obj->pa.font : gsFontDefault));
+					SelectObject(obj->bmp->hdc, ((obj->p.font) ? obj->p.font : gsFontDefault));
 					DrawText(obj->bmp->hdc, buffer + lnSkip, strlen(buffer + lnSkip), &lrc2, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 
 

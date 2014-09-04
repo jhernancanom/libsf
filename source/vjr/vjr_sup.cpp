@@ -1199,6 +1199,7 @@
 		s32				lnWidth, lnHeight;
 		SWindow*		winNew;
 		WNDCLASSEXA		classex;
+		SVariable*		var;
 		s8				buffer[128];
 		s8				bufferClass[256];
 
@@ -1264,7 +1265,16 @@
 					// Physically create the window
 					//////
 						// Window name
-						memcpy(buffer, obj->p.name->value.data,	min(obj->p.name->value.length, sizeof(buffer) - 1));
+						var = iObj_get_variable_byIndex(obj, _INDEX_NAME);
+						if (var->varType != _VAR_TYPE_CHARACTER)
+						{
+							// Use a default name
+							memcpy(buffer, cgcName_form, sizeof(cgcName_form));
+
+						} else {
+							// Use the indicated name
+							memcpy(buffer, var->value.data,	min(var->value.length, sizeof(buffer) - 1));
+						}
 
 						// Build it
 						winNew->hwnd = CreateWindow(bufferClass, buffer, WS_POPUP, 
@@ -1857,7 +1867,6 @@
 		SFocusHighlight*	focus;
 		HDC					lhdc;
 		PAINTSTRUCT			ps;
-		SVariable			var;
 
 
 		// Find the focus window
@@ -1873,7 +1882,7 @@
 				lhdc = BeginPaint(hwnd, &ps);
 
 				// Paint it
-				if (iObj_get_logical_direct(focus->obj, _INDEX_READONLY) != _LOGICAL_FALSE)
+				if (isReadonly(focus->obj))
 				{
 					// Read-only coloring
 					FillRect(lhdc, &ps.rcPaint, focus->readOnlyBrush);
