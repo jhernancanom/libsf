@@ -179,7 +179,7 @@ struct SVariable;
 	bool					iVariable_set_character						(SVariable* var, s8* tcData, u32 tnDataLength);
 	void					iVariable_reset								(SVariable* var);
 	SVariable*				iVariable_convertForDisplay					(SVariable* var);
-	void					iVariable_delete							(SVariable* var, bool tlDeleteSelf, bool tlDeleteBackToIndirect);
+	void					iVariable_delete							(SVariable* var, bool tlDeleteSelf);
 	void					iVariable_politelyDeleteChain				(SVariable** root, bool tlDeleteSelf);
 	void					iVariable_politelyDeleteChain_callback		(SLLCallback* cb);
 	s32						iiVariable_getAs_s32						(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);

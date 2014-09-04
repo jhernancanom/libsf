@@ -4358,7 +4358,7 @@ debug_break;
 							break;
 
 						case _VAR_TYPE_NUMERIC:
-							// Allocate 20 bytes
+							// Allocate 10 bytes for 18 digits plus sign in BCD
 							varNew->isValueAllocated = true;
 							iDatum_duplicate(&varNew->value, cgc_defaultNumeric, sizeof(cgc_defaultNumeric));	// Include the trailing NULL
 							break;
@@ -4679,7 +4679,12 @@ debug_break;
 			case _VAR_TYPE_THISCODE:
 				*varDefaultValue = varDefault_thiscode;
 				break;
+
+			default:
+				return(false);;
 		}
+		// Indicate success
+		return(true);
 	}
 
 
@@ -5446,7 +5451,7 @@ debug_break;
 // Called to delete the indicated variable
 //
 //////
-	void iVariable_delete(SVariable* var, bool tlDeleteSelf, bool tlDeleteBackToIndirect)
+	void iVariable_delete(SVariable* var, bool tlDeleteSelf)
 	{
 		// Make sure our environment is sane
 		if (var)
@@ -5488,10 +5493,6 @@ debug_break;
 					}
 					// Lower the value allocated flag
 					var->isValueAllocated = false;
-
-				} else if (tlDeleteBackToIndirect) {
-					// We are deleting every variable back to the root, which means everything becomes logical false
-
 				}
 
 
