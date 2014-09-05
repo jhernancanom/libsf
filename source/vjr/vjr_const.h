@@ -225,22 +225,22 @@ typedef SEM**		SEMpp;
 //////////
 // Object types
 //////
-	const u32			_OBJ_TYPE_EMPTY						= 0;						// Empty, used as a placeholder object that is not drawn
-	const u32			_OBJ_TYPE_FORM						= 1;						// Form class, the main outer window the OS sees
-	const u32			_OBJ_TYPE_SUBFORM					= 2;						// A new class which has its own drawing content and can be moved about using UI features
-	const u32			_OBJ_TYPE_CAROUSEL					= 3;						// A carousel is a holder for riders
-	const u32			_OBJ_TYPE_RIDER						= 4;						// A rider holds a form or subform and sizes it based on user interaction within its carousel
-	const u32			_OBJ_TYPE_LABEL						= 5;						// A label
-	const u32			_OBJ_TYPE_TEXTBOX					= 6;						// An input textbox
-	const u32			_OBJ_TYPE_BUTTON					= 7;						// A push button
-	const u32			_OBJ_TYPE_EDITBOX					= 8;						// An input multi-line editbox
-	const u32			_OBJ_TYPE_IMAGE						= 9;						// A graphical image
-	const u32			_OBJ_TYPE_CHECKBOX					= 10;						// A checkbox
-	const u32			_OBJ_TYPE_OPTION					= 11;						// A combination selection
-	const u32			_OBJ_TYPE_RADIO						= 12;						// A radio dial, which can also present as a slider or spinner
-	const u32			_OBJ_TYPE_CMDGROUP					= 13;
-	const u32			_OBJ_TYPE_OPTGROUP					= 14;
-	const u32			_OBJ_TYPE__EDITBOX					= 15;
+	// Note:  This starting value of 1 is important.  It is used in at least iiObj_getBaseclass_byType() and related functions.
+	const u32			_OBJ_TYPE_EMPTY						= 1;						// Empty, used as a placeholder object that is not drawn
+	const u32			_OBJ_TYPE_FORM						= 2;						// Form class, the main outer window the OS sees
+	const u32			_OBJ_TYPE_SUBFORM					= 3;						// A new class which has its own drawing content and can be moved about using UI features
+	const u32			_OBJ_TYPE_CAROUSEL					= 4;						// A carousel is a holder for riders
+	const u32			_OBJ_TYPE_RIDER						= 5;						// A rider holds a form or subform and sizes it based on user interaction within its carousel
+	const u32			_OBJ_TYPE_LABEL						= 6;						// A label
+	const u32			_OBJ_TYPE_TEXTBOX					= 7;						// An input textbox
+	const u32			_OBJ_TYPE_BUTTON					= 8;						// A push button
+	const u32			_OBJ_TYPE_EDITBOX					= 9;						// An input multi-line editbox
+	const u32			_OBJ_TYPE_IMAGE						= 10;						// A graphical image
+	const u32			_OBJ_TYPE_CHECKBOX					= 11;						// A checkbox
+	const u32			_OBJ_TYPE_OPTION					= 12;						// A combination selection
+	const u32			_OBJ_TYPE_RADIO						= 13;						// A radio dial, which can also present as a slider or spinner
+	const u32			_OBJ_TYPE_CMDGROUP					= 14;
+	const u32			_OBJ_TYPE_OPTGROUP					= 15;
 	const u32			_OBJ_TYPE_LISTBOX					= 16;
 	const u32			_OBJ_TYPE_COMBOBOX					= 17;
 	const u32			_OBJ_TYPE_FORMSET					= 18;

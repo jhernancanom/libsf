@@ -774,6 +774,8 @@
 			}
 		}
 
+// This should never happen
+_asm int 3;
 		// Invalid
 		return(NULL);
 	}

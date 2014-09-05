@@ -70,8 +70,8 @@ struct SPropertyMap;
 // objects.cpp
 // Note:  Property accessors are in the object_accessors.h and object_accessors.cpp source files
 //////
-	SObject*				iObj_create								(u32 objType, SObject* objParent);
-	SObject*				iObj_addChild							(u32 objType, SObject* objParent);
+	SObject*				iObj_create								(s32 objType, SObject* objParent);
+	SObject*				iObj_addChild							(s32 objType, SObject* objParent);
 	SObject*				iObj_copy								(SObject* template_obj, SObject* next, SObject* parent, bool tlCopyChildren, bool tlCreateSeparateBitmapBuffers);
 	void					iObj_delete								(SObject** obj, bool tlDeleteSelf, bool tlDeleteChildren, bool tlDeleteSiblings);
 	bool					iObj_setFocus							(SWindow* win, SObject* obj, bool tlClearOtherControlsWithFocus);
@@ -108,7 +108,8 @@ struct SPropertyMap;
 	SVariable*				iObj_getPropertyAsVariable				(SObject*  obj, s8* tcPropertyName, u32 tnPropertyNameLength, SComp* comp);
 	void					iiObj_resetToDefault					(SObject*  obj, bool tlResetProperties, bool tlResetMethods);
 	void					iiObj_resetToDefaultCommon				(SObject*  obj, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, s32 tnPropCount);
-	s32						iiObj_getBaseclass_byName				(s8* tcTextname, s32 tnTextnameLength);
+	s32						iiObj_getBaseclassType_byName			(s8* tcTextname, s32 tnTextnameLength);
+	SBaseclassList*			iiObj_getBaseclass_byName				(s8* tcTextname, s32 tnTextnameLength);
 	SBaseclassList*			iiObj_getBaseclass_byType				(s32 tnObjType);
 
 	// Creation of individual sub-objects

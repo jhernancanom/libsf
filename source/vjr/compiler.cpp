@@ -4397,6 +4397,11 @@ debug_break;
 							varNew->bmp = bmpNoImage;
 							break;
 
+						case _VAR_TYPE_CHARACTER:
+							// We do not initially allocate anything, but rather this variable can be populated later.
+							// Right now it will be a .NULL. variable.
+							break;
+
 						default:
 							// Unspecified.  Default to the system default.
 							if (varInitializeDefault_value)			varNew = iVariable_copy(varInitializeDefault_value, false);
@@ -4581,6 +4586,89 @@ debug_break;
 		varDefault_logical		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
 		varDefault_bitmap		= iVariable_create(_VAR_TYPE_BITMAP,	NULL);
 		varDefault_thiscode		= iVariable_create(_VAR_TYPE_THISCODE,	NULL);
+	}
+
+
+
+
+//////////
+//
+// Called to initialize all of the gsProps_master[] variables
+//
+//////
+	void iVariable_createPropsMaster(void)
+	{
+		s32 lnI;
+
+
+		for (lnI = 0; lnI < gsProps_masterSize; lnI++)
+		{
+			// Create the variable
+			gsProps_master[lnI].varInit = iVariable_create(gsProps_master[lnI].varType, NULL);
+
+			// If a valid variale was created, initialize it to the static baseclass values
+			if (gsProps_master[lnI].varInit)
+			{
+				// Populate it
+				switch (gsProps_master[lnI].varType)
+				{
+					case _VAR_TYPE_S8:
+						*gsProps_master[lnI].varInit->value.data_s8 = gsProps_master[lnI]._s8;
+						break;
+					case _VAR_TYPE_S16:
+						*gsProps_master[lnI].varInit->value.data_s16 = gsProps_master[lnI]._s16;
+						break;
+					case _VAR_TYPE_S32:
+						*gsProps_master[lnI].varInit->value.data_s32 = gsProps_master[lnI]._s32;
+						break;
+					case _VAR_TYPE_S64:
+						*gsProps_master[lnI].varInit->value.data_s64 = gsProps_master[lnI]._s64;
+						break;
+					case _VAR_TYPE_U8:
+						*gsProps_master[lnI].varInit->value.data_u8 = gsProps_master[lnI]._u8;
+						break;
+					case _VAR_TYPE_U16:
+						*gsProps_master[lnI].varInit->value.data_u16 = gsProps_master[lnI]._u16;
+						break;
+					case _VAR_TYPE_U32:
+						*gsProps_master[lnI].varInit->value.data_u32 = gsProps_master[lnI]._u32;
+						break;
+					case _VAR_TYPE_U64:
+						*gsProps_master[lnI].varInit->value.data_u64 = gsProps_master[lnI]._u64;
+						break;
+					case _VAR_TYPE_F32:
+						*gsProps_master[lnI].varInit->value.data_f32 = gsProps_master[lnI]._f32;
+						break;
+					case _VAR_TYPE_F64:
+						*gsProps_master[lnI].varInit->value.data_f64 = gsProps_master[lnI]._f64;
+						break;
+
+					case _VAR_TYPE_NULL:
+						// NULL variables are not populated, but simply created
+						break;
+
+					case _VAR_TYPE_CHARACTER:
+						iVariable_set_character(gsProps_master[lnI].varInit, gsProps_master[lnI]._s8p, -1);
+						break;
+
+					case _VAR_TYPE_BITMAP:
+						iVariable_set_bitmap(gsProps_master[lnI].varInit, gsProps_master[lnI]._bmp);
+						break;
+
+					case _VAR_TYPE_LOGICAL:
+						*gsProps_master[lnI].varInit->value.data_s8 = gsProps_master[lnI]._s8;
+						break;
+
+					case _VAR_TYPE_OBJECT:
+						// Objects are not initialized at this time, but an object placeholder is created for later population
+						break;
+
+					default:
+// TODO: Whatever type is added that's not defined above needs added
+						_asm int 3;
+				}
+			}
+		}
 	}
 
 
@@ -5049,31 +5137,33 @@ debug_break;
 //////
 	bool iVariable_set_bitmap(SVariable* var, SBitmap* bmp)
 	{
-// Untested code ... breakpoint and examine
-_asm int 3;
-		// De-reference the variable
-		var = iiVariable_terminateIndirect(var);
-
-		// Are we still valid?
+		// Make sure the environment is sane
 		if (var && bmp)
 		{
-			// Is the variable type already bitmap/
-			if (var->varType != _VAR_TYPE_BITMAP)
+			// De-reference the variable
+			var = iiVariable_terminateIndirect(var);
+
+			// Are we still valid?
+			if (var)
 			{
-				// We need to refactor this variable into a bitmap
-				// Delete the old contents
-				iVariable_delete(var, false);
+				// Is the variable type already bitmap/
+				if (var->varType != _VAR_TYPE_BITMAP)
+				{
+					// We need to refactor this variable into a bitmap
+					// Delete the old contents
+					iVariable_delete(var, false);
 
-				// At this point, var->varType = _VAR_TYPE_NULL
-				var->varType = _VAR_TYPE_BITMAP;
+					// At this point, var->varType = _VAR_TYPE_NULL
+					var->varType = _VAR_TYPE_BITMAP;
 
-			} else {
-				// Delete the old bitmap (if any)
-				iBmp_delete(&var->bmp, true, true);
+				} else {
+					// Delete the old bitmap (if any)
+					iBmp_delete(&var->bmp, true, true);
+				}
+
+				// Copy the bitmap to the destination
+				var->bmp = iBmp_copy(bmp);
 			}
-
-			// Copy the bitmap to the destination
-			var->bmp = iBmp_copy(bmp);
 		}
 
 		// If we get here, failure
@@ -5090,31 +5180,33 @@ _asm int 3;
 //////
 	bool iVariable_set_character(SVariable* var, s8* tcData, u32 tnDataLength)
 	{
-		// Untested code ... breakpoint and examine
-_asm int 3;
-		// De-reference the variable
-		var = iiVariable_terminateIndirect(var);
-
-		// Are we still valid?
-		if (var)
+		// Make sure our environment is sane
+		if (var && tcData && tnDataLength != 0)
 		{
-			// Is the variable type already bitmap/
-			if (var->varType != _VAR_TYPE_CHARACTER)
+			// De-reference the variable
+			var = iiVariable_terminateIndirect(var);
+
+			// Are we still valid?
+			if (var)
 			{
-				// We need to refactor this variable into a character
-				// Delete the old contents
-				iVariable_delete(var, false);
+				// Is the variable type already character
+				if (var->varType != _VAR_TYPE_CHARACTER)
+				{
+					// We need to refactor this variable into a character
+					// Delete the old contents
+					iVariable_delete(var, false);
 
-				// At this point, var->varType = _VAR_TYPE_NULL
-				var->varType = _VAR_TYPE_CHARACTER;
+					// At this point, var->varType = _VAR_TYPE_NULL
+					var->varType = _VAR_TYPE_CHARACTER;
 
-			} else {
-				// Delete the old datum
-				iDatum_delete(&var->value, false);
+				} else {
+					// Delete the old datum
+					iDatum_delete(&var->value, false);
+				}
+
+				// Set the new value
+				iDatum_duplicate(&var->value, tcData, tnDataLength);
 			}
-
-			// Set the new value
-			iDatum_duplicate(&var->value, tcData, tnDataLength);
 		}
 
 		// If we get here, failure
@@ -5123,31 +5215,34 @@ _asm int 3;
 
 	bool iVariable_set_character(SVariable* var, SDatum* datum)
 	{
-		// Untested code ... breakpoint and examine
-_asm int 3;
-		// De-reference the variable
-		var = iiVariable_terminateIndirect(var);
-
-		// Are we still valid?
-		if (var)
+		// Make sure our environment is sane
+		if (var && datum)
 		{
-			// Is the variable type already bitmap/
-			if (var->varType != _VAR_TYPE_CHARACTER)
+_asm int 3;
+			// De-reference the variable
+			var = iiVariable_terminateIndirect(var);
+
+			// Are we still valid?
+			if (var)
 			{
-				// We need to refactor this variable into a character
-				// Delete the old contents
-				iVariable_delete(var, false);
+				// Is the variable type already character
+				if (var->varType != _VAR_TYPE_CHARACTER)
+				{
+					// We need to refactor this variable into a character
+					// Delete the old contents
+					iVariable_delete(var, false);
 
-				// At this point, var->varType = _VAR_TYPE_NULL
-				var->varType = _VAR_TYPE_CHARACTER;
+					// At this point, var->varType = _VAR_TYPE_NULL
+					var->varType = _VAR_TYPE_CHARACTER;
 
-			} else {
-				// Delete the old datum
-				iDatum_delete(&var->value, false);
+				} else {
+					// Delete the old datum
+					iDatum_delete(&var->value, false);
+				}
+
+				// Set the new value
+				iDatum_duplicate(&var->value, datum);
 			}
-
-			// Set the new value
-			iDatum_duplicate(&var->value, datum);
 		}
 
 		// If we get here, failure

@@ -304,7 +304,7 @@ struct SObject
 	bool		isDirtyPublish;											// Is set if this or any child object needs re-published
 
 	// Defined class, class information
-	u32			objType;												// Object base type/class (see _OBJECT_TYPE_* constants)
+	s32			objType;												// Object base type/class (see _OBJECT_TYPE_* constants)
 
 	// Common properties that are literal(p) and allocated(pa) values
 	SProperties		p;													// Common object properties

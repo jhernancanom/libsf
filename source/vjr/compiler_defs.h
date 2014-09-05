@@ -166,6 +166,7 @@ struct SVariable;
 	SVariable*				iVariable_searchForName						(SVariable* varRoot, s8* tcVarName, u32 tnVarNameLength, SComp* comp);
 	bool					iVariable_setDefaultVariableValue			(u32 tnVarType);
 	void					iVariable_createDefaultValues				(void);
+	void					iVariable_createPropsMaster					(void);
 	bool					iVariable_isVarTypeValid					(u32 tnVarType, SVariable** varDefaultValue);
 	bool					iVariable_areTypesCompatible				(SVariable* var1, SVariable* var2);
 	bool					iVariable_copy								(SVariable* varDst, SVariable* varSrc);

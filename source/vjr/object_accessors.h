@@ -781,18 +781,18 @@
 
 		// An amalgam of default values
 		union {
-			u32		_u32;
-			f64		_f64;
-			f32		_f32;
-			s64		_s64;
-			s32		_s32;
-			s16		_s16;
-			s8		_s8;
-			u64		_u64;
-			u16		_u16;
-			u8		_u8;
-			s8*		_s8p;
-			u8*		_u8p;
+			u32			_u32;
+			f64			_f64;
+			f32			_f32;
+			s64			_s64;
+			s32			_s32;
+			s16			_s16;
+			s8			_s8;
+			u64			_u64;
+			u16			_u16;
+			u8			_u8;
+			s8*			_s8p;
+			SBitmap*	_bmp;
 		};
 
 		// A constructed SVariable containing the initialization value
@@ -827,7 +827,7 @@
 		{	_INDEX_AUTOCOMPTABLE,			cgc_autoCompTable,				sizeof(cgc_autoCompTable) - 1,				_VAR_TYPE_CHARACTER,	     NULL,	(u32)&iObjProp_set_character, 		(u32)&iObjProp_get_character,		(u32)&cgcNullString[0] 			,NULL	},	// Table to for auto complete
 		{	_INDEX_AUTOCOMPLETE,			cgc_autoComplete,				sizeof(cgc_autoComplete) - 1,				_VAR_TYPE_S32,			     NULL,	(u32)&iObjProp_set_s32, 			(u32)&iObjProp_get_s32,				0								,NULL	},	// 0=no display, 1=alphabetical, 2=most frequent, 3=most recent, 4=custom weighting
 		{	_INDEX_AUTOHIDESCROLLBAR,		cgc_autoHideScrollBar,			sizeof(cgc_autoHideScrollBar) - 1,			_VAR_TYPE_S32,			     NULL,	(u32)&iObjProp_set_s32, 			(u32)&iObjProp_get_s32,				0								,NULL	},	// 0=no (default), 1=yes
-		{	_INDEX_AUTORELEASE,				cgc_autoRelease,				sizeof(cgc_autoRelease) - 1,				_VAR_TYPE_CHARACTER,	     NULL,	(u32)&iObjProp_set_character, 		(u32)&iObjProp_get_character,		1								,NULL	},	// .t.=released when last form is released, .f.=persists even after last form is released (in formsets)
+		{	_INDEX_AUTORELEASE,				cgc_autoRelease,				sizeof(cgc_autoRelease) - 1,				_VAR_TYPE_LOGICAL,		     NULL,	(u32)&iObjProp_set_logical, 		(u32)&iObjProp_get_logical,			_LOGICAL_TRUE					,NULL	},	// .t.=released when last form is released, .f.=persists even after last form is released (in formsets)
 		{	_INDEX_AUTOSIZE,				cgc_autoSize,					sizeof(cgc_autoSize) - 1,					_VAR_TYPE_LOGICAL,		     NULL,	(u32)&iObjProp_set_logical, 		(u32)&iObjProp_get_logical,			_LOGICAL_FALSE 					,NULL	},	// .t.=auto resize, .f.=no auto resize (default)
 		{	_INDEX_AUTOVERBMENU,			cgc_autoVerbMenu,				sizeof(cgc_autoVerbMenu) - 1,				_VAR_TYPE_LOGICAL,		     NULL,	(u32)&iObjProp_set_logical, 		(u32)&iObjProp_get_logical,			_LOGICAL_TRUE 					,NULL	},	// .t.=shows ole menu on right-click (default), .f.=ignore
 		{	_INDEX_BACKCOLOR,				cgc_backColor,					sizeof(cgc_backColor) - 1,					_VAR_TYPE_S32,			     NULL,	(u32)&iObjProp_set_s32, 			(u32)&iObjProp_get_s32,				rgba(255,255,255,255)			,NULL	},	// White
@@ -953,6 +953,7 @@
 		{	_INDEX_HIGHLIGHTSTYLE,			cgc_highlightStyle,				sizeof(cgc_highlightStyle) - 1,				_VAR_TYPE_S32,			     NULL,	(u32)&iObjProp_set_s32, 			(u32)&iObjProp_get_s32,				0  								,NULL	},	// 0=no color (default), 1=highlight current row only, 2=highlight all rows
 		{	_INDEX_HOSTNAME,				cgc_hostName,					sizeof(cgc_hostName) - 1,					_VAR_TYPE_CHARACTER,	     NULL,	(u32)&iObjProp_set_character, 		(u32)&iObjProp_get_character,		(u32)&cgcNullString[0] 			,NULL	},	// The name to display for OLE controls
 		{	_INDEX_HOURS,					cgc_hours,						sizeof(cgc_hours) - 1,						_VAR_TYPE_S32,			     NULL,	(u32)&iObjProp_set_s32, 			(u32)&iObjProp_get_s32,				0  								,NULL	},	// 0=use SET HOURS (default), 1=12 hour, 2=24-hour
+		{	_INDEX_ICON,					cgc_icon,						sizeof(cgc_icon) - 1,						_VAR_TYPE_BITMAP,		     NULL,	(u32)&iObjProp_set_bitmap, 			(u32)&iObjProp_get_bitmap,			(u32)&bmpVjrIcon				,NULL	},	// Use VJr's app icon by default
 		{	_INDEX_IMEMODE,					cgc_iMEMode,					sizeof(cgc_iMEMode) - 1,					_VAR_TYPE_S32,			     NULL,	(u32)&iObjProp_set_s32, 			(u32)&iObjProp_get_s32,				0  								,NULL	},	// 0=use OS settings (default), 1=open on focus, 2=close on focus
 		// Note:  The increment is updated in the iVjr_init() code because MSVC does not allow anonymous union member declarations.
 		{	_INDEX_INCREMENT,				cgc_increment,					sizeof(cgc_increment) - 1,					_VAR_TYPE_F64,			     NULL,	(u32)&iObjProp_set_f64, 			(u32)&iObjProp_get_f64,				0								,NULL	},	// The default increment for spinners
@@ -1000,6 +1001,7 @@
 		{	_INDEX_MINBUTTON,				cgc_minButton,					sizeof(cgc_minButton) - 1,					_VAR_TYPE_LOGICAL,		     NULL,	(u32)&iObjProp_set_logical, 		(u32)&iObjProp_get_logical,			_LOGICAL_TRUE 					,NULL	},	// .t.=yes (default), .f.=no, does the form have a min button?
 		{	_INDEX_MINHEIGHT,				cgc_minHeight,					sizeof(cgc_minHeight) - 1,					_VAR_TYPE_S32,			     NULL,	(u32)&iObjProp_set_s32, 			(u32)&iObjProp_get_s32,				0 								,NULL	},	// Minimum height for the form
 		{	_INDEX_MINWIDTH,				cgc_minWidth,					sizeof(cgc_minWidth) - 1,					_VAR_TYPE_S32,			     NULL,	(u32)&iObjProp_set_s32, 			(u32)&iObjProp_get_s32,				0  								,NULL	},	// Minimum width for the form
+		{	_INDEX_MOUSEICON,				cgc_mouseIcon,					sizeof(cgc_mouseIcon) - 1,					_VAR_TYPE_BITMAP,		     NULL,	(u32)&iObjProp_set_bitmap, 			(u32)&iObjProp_get_bitmap,			NULL							,NULL	},	// No overriding mouse pointer by default
 		{	_INDEX_MOUSEPOINTER,			cgc_mousePointer,				sizeof(cgc_mousePointer) - 1,				_VAR_TYPE_S32,			     NULL,	(u32)&iObjProp_set_s32, 			(u32)&iObjProp_get_s32,				_MOUSE_POINTER_DEFAULT 			,NULL	},	// 0=default, 1=arrow, 2=crosshair, 3=i-beam, 4=icon, 5=sizer, 6=ne2sw sizer, 7=ns sizer, 8=nw2se sizer, 9=ew sizer, 10=up arrow, 11=hourglass, 12=do not drop, 13=invisible, 14=arrow, 15=hand, 16=down arrow, 99=uses mouseIcon
 		{	_INDEX_MOVABLE,					cgc_movable,					sizeof(cgc_movable) - 1,					_VAR_TYPE_LOGICAL,		     NULL,	(u32)&iObjProp_set_logical, 		(u32)&iObjProp_get_logical,			_LOGICAL_TRUE 					,NULL	},	// .t.=yes (default), .f.=no, is the form movable?
 		{	_INDEX_MOVERBARS,				cgc_moverBars,					sizeof(cgc_moverBars) - 1,					_VAR_TYPE_LOGICAL,		     NULL,	(u32)&iObjProp_set_logical, 		(u32)&iObjProp_get_logical,			_LOGICAL_FALSE 					,NULL	},	// .t.=show, .f.=hide (default), are mover bars shown on listboxes?
@@ -1011,6 +1013,7 @@
 		{	_INDEX_NUMBEROFELEMENTS,		cgc_numberOfElements,			sizeof(cgc_numberOfElements) - 1,			_VAR_TYPE_S32,			     NULL,	(u32)&iObjProp_set_s32, 			(u32)&iObjProp_get_s32,				0  								,NULL	},	// How many items in an array are used to populate items in a listbox or combobox
 		{	_INDEX_OLECLASS,				cgc_oLEClass,					sizeof(cgc_oLEClass) - 1,					_VAR_TYPE_CHARACTER,	     NULL,	(u32)&iObjProp_set_character, 		(u32)&iObjProp_get_character,		(u32)&cgcNullString[0] 			,NULL	},	// Name of the class ID for an OLE object
 		{	_INDEX_OLEDRAGMODE,				cgc_oLEDragMode,				sizeof(cgc_oLEDragMode) - 1,				_VAR_TYPE_S32,			     NULL,	(u32)&iObjProp_set_s32, 			(u32)&iObjProp_get_s32,				_DRAG_MODE_MANUAL 				,NULL	},	// 0=manual (default), 1=automatic
+		{	_INDEX_OLEDRAGPICTURE,			cgc_oLEDragPicture,				sizeof(cgc_oLEDragPicture) - 1,				_VAR_TYPE_BITMAP,		     NULL,	(u32)&iObjProp_set_bitmap, 			(u32)&iObjProp_get_bitmap,			NULL							,NULL	},	// No overriding picture by default
 		{	_INDEX_OLEDROPEFFECTS,			cgc_oLEDropEffects,				sizeof(cgc_oLEDropEffects) - 1,				_VAR_TYPE_S32,			     NULL,	(u32)&iObjProp_set_s32, 			(u32)&iObjProp_get_s32,				_DROP_EFFECT_NONE 				,NULL	},	// 0=none (default), 1=copy, 2=move, 4=link, values can be combined
 		{	_INDEX_OLEDROPHASDATA,			cgc_oLEDropHasData,				sizeof(cgc_oLEDropHasData) - 1,				_VAR_TYPE_S32,			     NULL,	(u32)&iObjProp_set_s32, 			(u32)&iObjProp_get_s32,				_DROP_HAS_DATA_AUTOMATIC 		,NULL	},	// 0=automatic (default), 1=no, 2=yes
 		{	_INDEX_OLEDROPMODE,				cgc_oLEDropMode,				sizeof(cgc_oLEDropMode) - 1,				_VAR_TYPE_S32,			     NULL,	(u32)&iObjProp_set_s32, 			(u32)&iObjProp_get_s32,				_DROP_DISABLED 					,NULL	},	// 0=disabled (default), 1=enabled, 2=container
@@ -1129,6 +1132,7 @@
 		{	_INDEX_WORDWRAP,				cgc_wordWrap,					sizeof(cgc_wordWrap) - 1,					_VAR_TYPE_LOGICAL,		     NULL,	(u32)&iObjProp_set_logical, 		(u32)&iObjProp_get_logical,			_LOGICAL_FALSE 					,NULL	},	// .t.=wraps, .f.=single line (default), how text is presented
 		{	_INDEX_ZOOMBOX,					cgc_zoomBox,					sizeof(cgc_zoomBox) - 1,					_VAR_TYPE_LOGICAL,		     NULL,	(u32)&iObjProp_set_logical, 		(u32)&iObjProp_get_logical,			_LOGICAL_FALSE 					,NULL	},	// .t.=shows zoom box, .f.=does not show (default), for backward compatibility, not used
 	};
+	const u32 gsProps_masterSize = sizeof(gsProps_master) / sizeof(SPropertyInits) - 1;
 
 
 
@@ -1175,6 +1179,7 @@
 	{
 		{	_INDEX_ACTIVECONTROL,			0, 0, 0 },
 		{	_INDEX_ALLOWOUTPUT,				0, 0, 0 },
+		{	_INDEX_ANCHOR,					0, 0, 0 },
 		{	_INDEX_FILLCOLOR,				0, 0, 0 },
 		{	_INDEX_FILLSTYLE,				0, 0, 0 },
 		{	_INDEX_MAXHEIGHT,				0, 0, 0 },
@@ -3037,24 +3042,27 @@
 		//	objType					Text name				Length of name						Base object property list
 		//	------------------		-----------------		-------------------------------		-------------------------------
 		{	_OBJ_TYPE_EMPTY,		cgcName_empty,			sizeof(cgcName_empty)		- 1,	(u32)&gsProps_empty[0]			},
+		{	_OBJ_TYPE_FORM,			cgcName_form,			sizeof(cgcName_form)		- 1,	(u32)&gsProps_form[0]			},
 		{	_OBJ_TYPE_SUBFORM,		cgcName_subform,		sizeof(cgcName_subform)		- 1,	(u32)&gsProps_subform[0]		},
-		{	_OBJ_TYPE_BUTTON,		cgcName_button,			sizeof(cgcName_button)		- 1,	(u32)&gsProps_button[0]			},
-		{	_OBJ_TYPE_RADIO,		cgcName_radio,			sizeof(cgcName_radio)		- 1,	(u32)&gsProps_radio[0]			},
-		{	_OBJ_TYPE_CHECKBOX,		cgcName_checkbox,		sizeof(cgcName_checkbox)	- 1,	(u32)&gsProps_checkbox[0]		},
-		{	_OBJ_TYPE_CMDGROUP,		cgcName_cmdgroup,		sizeof(cgcName_cmdgroup)	- 1,	(u32)&gsProps_cmdgroup[0]		},
+		{	_OBJ_TYPE_CAROUSEL,		cgcName_carousel,		sizeof(cgcName_carousel)	- 1,	(u32)&gsProps_carousel[0]		},
+		{	_OBJ_TYPE_RIDER,		cgcName_rider,			sizeof(cgcName_rider)		- 1,	(u32)&gsProps_rider[0]			},
 		{	_OBJ_TYPE_LABEL,		cgcName_label,			sizeof(cgcName_label)		- 1,	(u32)&gsProps_label[0]			},
-		{	_OBJ_TYPE_OPTION,		cgcName_option,			sizeof(cgcName_option)		- 1,	(u32)&gsProps_option[0]			},
-		{	_OBJ_TYPE_OPTGROUP,		cgcName_optgroup,		sizeof(cgcName_optgroup)	- 1,	(u32)&gsProps_optgroup[0]		},
 		{	_OBJ_TYPE_TEXTBOX,		cgcName_textbox,		sizeof(cgcName_textbox)		- 1,	(u32)&gsProps_textbox[0]		},
+		{	_OBJ_TYPE_BUTTON,		cgcName_button,			sizeof(cgcName_button)		- 1,	(u32)&gsProps_button[0]			},
+		{	_OBJ_TYPE_EDITBOX,		cgcName_editbox,		sizeof(cgcName_editbox)		- 1,	(u32)&gsProps_editbox[0]		},
+		{	_OBJ_TYPE_IMAGE,		cgcName_image,			sizeof(cgcName_image)		- 1,	(u32)&gsProps_image[0]			},
+		{	_OBJ_TYPE_CHECKBOX,		cgcName_checkbox,		sizeof(cgcName_checkbox)	- 1,	(u32)&gsProps_checkbox[0]		},
+		{	_OBJ_TYPE_OPTION,		cgcName_option,			sizeof(cgcName_option)		- 1,	(u32)&gsProps_option[0]			},
+		{	_OBJ_TYPE_RADIO,		cgcName_radio,			sizeof(cgcName_radio)		- 1,	(u32)&gsProps_radio[0]			},
+		{	_OBJ_TYPE_CMDGROUP,		cgcName_cmdgroup,		sizeof(cgcName_cmdgroup)	- 1,	(u32)&gsProps_cmdgroup[0]		},
+		{	_OBJ_TYPE_OPTGROUP,		cgcName_optgroup,		sizeof(cgcName_optgroup)	- 1,	(u32)&gsProps_optgroup[0]		},
 		{	_OBJ_TYPE_LISTBOX,		cgcName_listbox,		sizeof(cgcName_listbox)		- 1,	(u32)&gsProps_listbox[0]		},
 		{	_OBJ_TYPE_COMBOBOX,		cgcName_combobox,		sizeof(cgcName_combobox)	- 1,	(u32)&gsProps_combobox[0]		},
-		{	_OBJ_TYPE_FORM,			cgcName_form,			sizeof(cgcName_form)		- 1,	(u32)&gsProps_form[0]			},
 		{	_OBJ_TYPE_FORMSET,		cgcName_formset,		sizeof(cgcName_formset)		- 1,	(u32)&gsProps_formset[0]		},
 		{	_OBJ_TYPE_TOOLBAR,		cgcName_toolbar,		sizeof(cgcName_toolbar)		- 1,	(u32)&gsProps_toolbar[0]		},
 		{	_OBJ_TYPE_SEPARATOR,	cgcName_separator,		sizeof(cgcName_separator)	- 1,	(u32)&gsProps_separator[0]		},
 		{	_OBJ_TYPE_LINE,			cgcName_line,			sizeof(cgcName_line)		- 1,	(u32)&gsProps_line[0]			},
 		{	_OBJ_TYPE_SHAPE,		cgcName_shape,			sizeof(cgcName_shape)		- 1,	(u32)&gsProps_shape[0]			},
-		{	_OBJ_TYPE_IMAGE,		cgcName_image,			sizeof(cgcName_image)		- 1,	(u32)&gsProps_image[0]			},
 		{	_OBJ_TYPE_CONTAINER,	cgcName_container,		sizeof(cgcName_container)	- 1,	(u32)&gsProps_container[0]		},
 		{	_OBJ_TYPE_CONTROL,		cgcName_control,		sizeof(cgcName_control)		- 1,	(u32)&gsProps_control[0]		},
 		{	_OBJ_TYPE_GRID,			cgcName_grid,			sizeof(cgcName_grid)		- 1,	(u32)&gsProps_grid[0]			},

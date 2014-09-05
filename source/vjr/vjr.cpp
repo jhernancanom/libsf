@@ -109,6 +109,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		// Initialize primitive variables
 		iVariable_createDefaultValues();
+		iVariable_createPropsMaster();
 		iVariable_setDefaultVariableValue(_VAR_TYPE_LOGICAL);
 		varConstant_space		= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgc_spaceText, 1);
 		varEmptyString			= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, (s8*)NULL, 0);
@@ -122,7 +123,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		// Constant logical
 		*varTrue->value.data_s8		= (s8)_LOGICAL_TRUE;
-		*varFalse->value.data_s8	= (s8)_LOGICAL_TRUE;
+		*varFalse->value.data_s8	= (s8)_LOGICAL_FALSE;
 
 
 		// Keyboard shortcuts

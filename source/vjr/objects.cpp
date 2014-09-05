@@ -46,7 +46,7 @@
 // Creates the object structure
 //
 //////
-	SObject* iObj_create(u32 objType, SObject* objParent)
+	SObject* iObj_create(s32 objType, SObject* objParent)
 	{
 		// We need to create it
 		logfunc(__FUNCTION__);
@@ -120,7 +120,7 @@
 //		sub_obj_output	-- Populated with the pointer of the sub-object
 //
 //////
-	SObject* iObj_addChild(u32 objType, SObject* objParent)
+	SObject* iObj_addChild(s32 objType, SObject* objParent)
 	{
 		SObject* objNew;
 
@@ -2116,6 +2116,13 @@ if (!llPublishChildren)
 
 		logfunc(__FUNCTION__);
 		//////////
+		// Make sure the properties are allocated
+		//////
+			if (!obj->props)
+				obj->props = (SVariable**)malloc(tnPropCount * sizeof(SVariable*));
+
+
+		//////////
 		// Set properties
 		//////
 			for (lnI = 0; propMap[lnI].index != 0 && lnI < tnPropCount; lnI++)
@@ -2194,26 +2201,48 @@ if (!llPublishChildren)
 // Called to translate the text-based class name to its internal object type.
 //
 //////
-	s32 iiObj_getBaseclass_byName(s8* tcTextname, s32 tnTextnameLength)
+	s32 iiObj_getBaseclassType_byName(s8* tcTextname, s32 tnTextnameLength)
 	{
-		SBaseclassList* lbcl;
+		s32 lnI;
 		
 		
 		// Iterate through each function for matches
 		logfunc(__FUNCTION__);
-		lbcl = &gsKnownBaseclasses[0];
-		while (lbcl && lbcl->baseclassName != NULL)
+		for (lnI = 0; gsKnownBaseclasses[lnI].objType != 0; lnI++)
 		{
 			// Is this the named function?
-			if (lbcl->baseclassNameLength == tnTextnameLength && _memicmp(tcTextname, (s8*)lbcl->baseclassName, tnTextnameLength) == 0)
-				return(lbcl->objType);
-
-			// Move to next function
-			++lbcl;
+			if (gsKnownBaseclasses[lnI].baseclassNameLength == tnTextnameLength && _memicmp(tcTextname, (s8*)gsKnownBaseclasses[lnI].baseclassName, tnTextnameLength) == 0)
+				return(gsKnownBaseclasses[lnI].objType);
 		}
 		// If we get here, not found
-		return(-1);
+		return(0);
 	}
+
+
+
+
+//////////
+//
+// Called to translate the text-based class name to its internal object reference
+//
+//////
+	SBaseclassList* iiObj_getBaseclass_byName(s8* tcTextname, s32 tnTextnameLength)
+	{
+		s32 lnI;
+		
+		
+		// Iterate through each function for matches
+		logfunc(__FUNCTION__);
+		for (lnI = 0; gsKnownBaseclasses[lnI].objType != 0; lnI++)
+		{
+			// Is this the named function?
+			if (gsKnownBaseclasses[lnI].baseclassNameLength == tnTextnameLength && _memicmp(tcTextname, (s8*)gsKnownBaseclasses[lnI].baseclassName, tnTextnameLength) == 0)
+				return(&gsKnownBaseclasses[lnI]);
+		}
+		// If we get here, not found
+		return(NULL);
+	}
+
 
 
 
@@ -2225,22 +2254,12 @@ if (!llPublishChildren)
 //////
 	SBaseclassList* iiObj_getBaseclass_byType(s32 tnObjType)
 	{
-		SBaseclassList* lbcl;
-		
-		
 		// Iterate through each function for matches
 		logfunc(__FUNCTION__);
-		lbcl = &gsKnownBaseclasses[0];
-		while (lbcl && lbcl->baseclassName != NULL)
-		{
-			// Is this the named function?
-			if (lbcl->objType == tnObjType)
-				return(lbcl);
+		if (tnObjType < gnKnownBaseclasses_size)
+			return(&gsKnownBaseclasses[tnObjType - 1]);
 
-			// Move to next function
-			++lbcl;
-		}
-		// If we get here, not found
+		// If we get here, invalid
 		return(NULL);
 	}
 
@@ -2273,9 +2292,12 @@ if (!llPublishChildren)
 				// Initialize
 				memset(emptyNew, 0, sizeof(SObject));
 
-				// Initially populate
+				// Initialize properties to VJr defaults
 				emptyNew->objType		= _OBJ_TYPE_EMPTY;
 				emptyNew->parent		= parent;
+				iiSubobj_resetToDefaultEmpty(emptyNew, true, true, &gsProps_empty[0], gnProps_emptySize);
+
+				// Initially populate
 				iObjProp_set_logical_direct(emptyNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				emptyNew->isRendered	= true;
 				emptyNew->isPublished	= true;
@@ -2293,10 +2315,6 @@ if (!llPublishChildren)
 				{
 					// Copy from indicated template
 					iiSubobj_copyEmpty(emptyNew, template_empty);
-
-				} else {
-					// Use VJr defaults
-					iiSubobj_resetToDefaultEmpty(emptyNew, true, true, &gsProps_empty[0], gnProps_emptySize);
 				}
 
 			}
@@ -2343,9 +2361,12 @@ if (!llPublishChildren)
 				// Initialize
 				memset(formNew, 0, sizeof(SObject));
 
-				// Initially populate
+				// Initialize properties to VJr defaults
 				formNew->objType		= _OBJ_TYPE_FORM;
 				formNew->parent			= parent;
+				iiSubobj_resetToDefaultForm(formNew, true, true, &gsProps_form[0], gnProps_formSize);
+
+				// Initially populate
 				iObjProp_set_logical_direct(formNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				formNew->isRendered		= true;
 				formNew->isPublished	= true;
@@ -2383,12 +2404,6 @@ if (!llPublishChildren)
 						var = iObjProp_get_variable_byIndex(minimize,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconMinimize,	-1);
 						var = iObjProp_get_variable_byIndex(maximize,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconMaximize,	-1);
 						var = iObjProp_get_variable_byIndex(close,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconClose,		-1);
-
-
-					//////////
-					// Use VJr defaults
-					//////
-						iiSubobj_resetToDefaultForm(formNew, true, true, &gsProps_form[0], gnProps_formSize);
 				}
 			}
 
@@ -2430,9 +2445,12 @@ if (!llPublishChildren)
 				// Initialize
 				memset(subformNew, 0, sizeof(SObject));
 
-				// Initially populate
+				// Initialize properties to VJr defaults
 				subformNew->objType		= _OBJ_TYPE_SUBFORM;
 				subformNew->parent		= parent;
+				iiSubobj_resetToDefaultSubform(subformNew, true, true, &gsProps_subform[0], gnProps_subformSize);
+
+				// Initially populate
 				iObjProp_set_logical_direct(subformNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				subformNew->isRendered	= true;
 				subformNew->isPublished	= true;
@@ -2462,12 +2480,6 @@ if (!llPublishChildren)
 					//////
 						var = iObjProp_get_variable_byIndex(icon,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_icon,		-1);
 						var = iObjProp_get_variable_byIndex(caption,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcCaption_icon,	-1);
-
-
-					//////////
-					// Use VJr defaults
-					//////
-						iiSubobj_resetToDefaultSubform(subformNew, true, true, &gsProps_subform[0], gnProps_subformSize);
 				}
 			}
 
@@ -2510,9 +2522,12 @@ if (!llPublishChildren)
 				// Initialize
 				memset(carouselNew, 0, sizeof(SObject));
 
-				// Initially populate
+				// Initialize properties to VJr defaults
 				carouselNew->objType		= _OBJ_TYPE_CAROUSEL;
 				carouselNew->parent			= parent;
+				iiSubobj_resetToDefaultCarousel(carouselNew, true, true, &gsProps_carousel[0], gnProps_carouselSize);
+
+				// Initially populate
 				iObjProp_set_logical_direct(carouselNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				carouselNew->isRendered		= true;
 				carouselNew->isPublished	= true;
@@ -2544,12 +2559,6 @@ if (!llPublishChildren)
 						var = iObjProp_get_variable_byIndex(icon,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_icon,		-1);
 						var = iObjProp_get_variable_byIndex(caption,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcCaption_icon,	-1);
 						var = iObjProp_get_variable_byIndex(close,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconClose,	-1);
-
-
-					//////////
-					// Use VJr defaults
-					//////
-						iiSubobj_resetToDefaultCarousel(carouselNew, true, true, &gsProps_carousel[0], gnProps_carouselSize);
 				}
 			}
 
@@ -2589,9 +2598,12 @@ if (!llPublishChildren)
 				// Initialize
 				memset(riderNew, 0, sizeof(SObject));
 
-				// Initially populate
+				// Initialize properties to VJr defaults
 				riderNew->objType		= _OBJ_TYPE_RIDER;
 				riderNew->parent		= parent;
+				iiSubobj_resetToDefaultRider(riderNew, true, true, &gsProps_rider[0], gnProps_riderSize);
+
+				// Initially populate
 				iObjProp_set_logical_direct(riderNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				riderNew->isRendered	= true;
 				riderNew->isPublished	= true;
@@ -2607,10 +2619,6 @@ if (!llPublishChildren)
 				{
 					// Copy from indicated template
 					iiSubobj_copyRider(riderNew, template_rider);
-
-				} else {
-					// Use VJr defaults
-					iiSubobj_resetToDefaultRider(riderNew, true, true, &gsProps_rider[0], gnProps_riderSize);
 				}
 			}
 
@@ -2650,9 +2658,12 @@ if (!llPublishChildren)
 				// Initialize
 				memset(labelNew, 0, sizeof(SObject));
 
-				// Initially populate
+				// Initialize properties to VJr defaults
 				labelNew->objType		= _OBJ_TYPE_LABEL;
 				labelNew->parent		= parent;
+				iiSubobj_resetToDefaultLabel(labelNew, true, true, &gsProps_label[0], gnProps_labelSize);
+
+				// Initially populate
 				iObjProp_set_logical_direct(labelNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				labelNew->isRendered	= true;
 				labelNew->isPublished	= true;
@@ -2668,10 +2679,6 @@ if (!llPublishChildren)
 				{
 					// Copy from indicated template
 					iiSubobj_copyLabel(labelNew, template_label);
-
-				} else {
-					// Use VJr defaults
-					iiSubobj_resetToDefaultLabel(labelNew, true, true, &gsProps_label[0], gnProps_labelSize);
 				}
 			}
 
@@ -2711,9 +2718,12 @@ if (!llPublishChildren)
 				// Initialize
 				memset(textboxNew, 0, sizeof(SObject));
 
-				// Initially populate
+				// Initialize properties to VJr defaults
 				textboxNew->objType		= _OBJ_TYPE_TEXTBOX;
 				textboxNew->parent		= parent;
+				iiSubobj_resetToDefaultTextbox(textboxNew, true, true, &gsProps_textbox[0], gnProps_textboxSize);
+
+				// Initially populate
 				iObjProp_set_logical_direct(textboxNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				textboxNew->isRendered	= true;
 				textboxNew->isPublished	= true;
@@ -2729,10 +2739,6 @@ if (!llPublishChildren)
 				{
 					// Copy from indicated template
 					iiSubobj_copyTextbox(textboxNew, template_textbox);
-
-				} else {
-					// Use VJr defaults
-					iiSubobj_resetToDefaultTextbox(textboxNew, true, true, &gsProps_textbox[0], gnProps_textboxSize);
 				}
 			}
 
@@ -2772,9 +2778,12 @@ if (!llPublishChildren)
 				// Initialize
 				memset(buttonNew, 0, sizeof(SObject));
 
-				// Initially populate
+				// Initialize properties to VJr defaults
 				buttonNew->objType		= _OBJ_TYPE_BUTTON;
 				buttonNew->parent		= parent;
+				iiSubobj_resetToDefaultButton(buttonNew, true, true, &gsProps_button[0], gnProps_buttonSize);
+
+				// Initially populate
 				iObjProp_set_logical_direct(buttonNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				buttonNew->isRendered	= true;
 				buttonNew->isPublished	= true;
@@ -2790,10 +2799,6 @@ if (!llPublishChildren)
 				{
 					// Copy from indicated template
 					iiSubobj_copyButton(buttonNew, template_button);
-
-				} else {
-					// Use VJr defaults
-					iiSubobj_resetToDefaultButton(buttonNew, true, true, &gsProps_button[0], gnProps_buttonSize);
 				}
 			}
 
@@ -2833,9 +2838,12 @@ if (!llPublishChildren)
 				// Initialize
 				memset(editboxNew, 0, sizeof(SObject));
 
-				// Initially populate
+				// Initialize properties to VJr defaults
 				editboxNew->objType		= _OBJ_TYPE_EDITBOX;
 				editboxNew->parent		= parent;
+				iiSubobj_resetToDefaultEditbox(editboxNew, true, true, &gsProps_editbox[0], gnProps_editboxSize);
+
+				// Initially populate
 				iObjProp_set_logical_direct(editboxNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				editboxNew->isRendered	= true;
 				editboxNew->isPublished	= true;
@@ -2851,10 +2859,6 @@ if (!llPublishChildren)
 				{
 					// Copy from indicated template
 					iiSubobj_copyEditbox(editboxNew, template_editbox);
-
-				} else {
-					// Use VJr defaults
-					iiSubobj_resetToDefaultEditbox(editboxNew, true, true, &gsProps_editbox[0], gnProps_editboxSize);
 				}
 			}
 
@@ -2894,9 +2898,12 @@ if (!llPublishChildren)
 				// Initialize
 				memset(imageNew, 0, sizeof(SObject));
 
-				// Initially populate
+				// Initialize properties to VJr defaults
 				imageNew->objType		= _OBJ_TYPE_IMAGE;
 				imageNew->parent		= parent;
+				iiSubobj_resetToDefaultImage(imageNew, true, true, &gsProps_image[0], gnProps_imageSize);
+
+				// Initially populate
 				iObjProp_set_logical_direct(imageNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				imageNew->isRendered	= true;
 				imageNew->isPublished	= true;
@@ -2912,10 +2919,6 @@ if (!llPublishChildren)
 				{
 					// Copy from indicated template
 					iiSubobj_copyImage(imageNew, template_image);
-
-				} else {
-					// Use VJr defaults
-					iiSubobj_resetToDefaultImage(imageNew, true, true, &gsProps_image[0], gnProps_imageSize);
 				}
 			}
 
@@ -2957,9 +2960,12 @@ if (!llPublishChildren)
 				// Initialize
 				memset(checkboxNew, 0, sizeof(SObject));
 
-				// Initially populate
+				// Initialize properties to VJr defaults
 				checkboxNew->objType		= _OBJ_TYPE_CHECKBOX;
 				checkboxNew->parent			= parent;
+				iiSubobj_resetToDefaultCheckbox(checkboxNew, true, true, &gsProps_checkbox[0], gnProps_checkboxSize);
+
+				// Initially populate
 				iObjProp_set_logical_direct(checkboxNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				checkboxNew->isRendered		= true;
 				checkboxNew->isPublished	= true;
@@ -2989,12 +2995,6 @@ if (!llPublishChildren)
 					//////
 						var = iObjProp_get_variable_byIndex(image,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_checkboxImage,	-1);
 						var = iObjProp_get_variable_byIndex(label,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_checkboxLabel,	-1);
-
-
-					//////////
-					// Use VJr defaults
-					//////
-						iiSubobj_resetToDefaultCheckbox(checkboxNew, true, true, &gsProps_checkbox[0], gnProps_checkboxSize);
 				}
 			}
 
@@ -3034,9 +3034,12 @@ if (!llPublishChildren)
 				// Initialize
 				memset(optionNew, 0, sizeof(SObject));
 
-				// Initially populate
+				// Initialize properties to VJr defaults
 				optionNew->objType		= _OBJ_TYPE_OPTION;
 				optionNew->parent		= parent;
+				iiSubobj_resetToDefaultOption(optionNew, true, true, &gsProps_option[0], gnProps_optionSize);
+
+				// Initially populate
 				iObjProp_set_logical_direct(optionNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				optionNew->isRendered	= true;
 				optionNew->isPublished	= true;
@@ -3052,10 +3055,6 @@ if (!llPublishChildren)
 				{
 					// Copy from indicated template
 					iiSubobj_copyOption(optionNew, template_option);
-
-				} else {
-					// Use VJr defaults
-					iiSubobj_resetToDefaultOption(optionNew, true, true, &gsProps_option[0], gnProps_optionSize);
 				}
 			}
 
@@ -3095,9 +3094,12 @@ if (!llPublishChildren)
 				// Initialize
 				memset(radioNew, 0, sizeof(SObject));
 
-				// Initially populate
+				// Initialize properties to VJr defaults
 				radioNew->objType		= _OBJ_TYPE_RADIO;
 				radioNew->parent		= parent;
+				iiSubobj_resetToDefaultRadio(radioNew, true, true, &gsProps_radio[0], gnProps_radioSize);
+
+				// Initially populate
 				iObjProp_set_logical_direct(radioNew, _INDEX_ENABLED, _LOGICAL_TRUE);
 				radioNew->isRendered	= true;
 				radioNew->isPublished	= true;
@@ -3113,10 +3115,6 @@ if (!llPublishChildren)
 				{
 					// Copy from indicated template
 					iiSubobj_copyRadio(radioNew, template_radio);
-
-				} else {
-					// Use VJr defaults
-					iiSubobj_resetToDefaultRadio(radioNew, true, true, &gsProps_radio[0], gnProps_radioSize);
 				}
 			}
 

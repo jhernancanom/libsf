@@ -1043,7 +1043,7 @@
 //////
 	SVariable* function_createobject(SVariable* p1)
 	{
-		u32			lnObjType;
+		s32			lnObjType;
 		SObject*	obj;
         SVariable*	result;
 
@@ -1068,7 +1068,7 @@
 		//////////
 		// See if we know the class
 		//////
-			lnObjType = iiObj_getBaseclass_byName(p1->value.data, p1->value.length);
+			lnObjType = iiObj_getBaseclassType_byName(p1->value.data, p1->value.length);
 			if (lnObjType <= 0)
 			{
 				iError_report("Unknown class");
