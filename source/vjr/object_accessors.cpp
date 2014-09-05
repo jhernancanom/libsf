@@ -384,8 +384,20 @@
 // Called to set the character variable to the indicated input
 //
 //////
-	bool iObjProp_set_character(SObject* obj, u32 tnIndex, SVariable* var)
+	bool iObjProp_set_character(SObject* obj, u32 tnIndex, SVariable* varNewValue)
 	{
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			if (var)
+				return(iVariable_copy(var, varNewValue));
+		}
+		// If we get here, failure
 		return(false);
 	}
 
@@ -444,8 +456,20 @@
 // Called to set the f64 variable to the indicated input
 //
 //////
-	bool iObjProp_set_f64(SObject* obj, u32 tnIndex, SVariable* var)
+	bool iObjProp_set_f64(SObject* obj, u32 tnIndex, SVariable* varNewValue)
 	{
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			if (var)
+				return(iVariable_copy(var, varNewValue));
+		}
+		// If we get here, failure
 		return(false);
 	}
 
@@ -457,8 +481,20 @@
 // Called to set the logical variable to the indicated input
 //
 //////
-	bool iObjProp_set_logical(SObject* obj, u32 tnIndex, SVariable* var)
+	bool iObjProp_set_logical(SObject* obj, u32 tnIndex, SVariable* varNewValue)
 	{
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			if (var)
+				return(iVariable_copy(var, varNewValue));
+		}
+		// If we get here, failure
 		return(false);
 	}
 
@@ -506,8 +542,20 @@
 // Called to set the object variable to the indicated input
 //
 //////
-	bool iObjProp_set_object(SObject* obj, u32 tnIndex, SVariable* var)
+	bool iObjProp_set_object(SObject* obj, u32 tnIndex, SVariable* varNewValue)
 	{
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			if (var)
+				return(iVariable_copy(var, varNewValue));
+		}
+		// If we get here, failure
 		return(false);
 	}
 
@@ -519,8 +567,20 @@
 // Called to set the s32 variable to the indicated input
 //
 //////
-	bool iObjProp_set_s32(SObject* obj, u32 tnIndex, SVariable* var)
+	bool iObjProp_set_s32(SObject* obj, u32 tnIndex, SVariable* varNewValue)
 	{
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			if (var)
+				return(iVariable_copy(var, varNewValue));
+		}
+		// If we get here, failure
 		return(false);
 	}
 
@@ -690,7 +750,7 @@
 	SVariable* iObjProp_get_variable_byIndex(SObject* obj, u32 tnIndex)
 	{
 		s32					lnI, lnJ;
-		SBaseclassList*		classes;
+		SBaseclassList*		lbcl;
 		SPropertyMap*		props;
 
 
@@ -698,25 +758,20 @@
 		if (obj)
 		{
 			// Locate the base class
-			for (lnI = 0; lnI < gnKnownBaseclasses_size; lnI++)
+// TODO:  We could add a speedup here by storing the lbcl location in the object itself at the time of creation
+			lbcl = iiObj_getBaseclass_byType(obj->objType);
+			if (lbcl)
 			{
-				// Is this it?
-				if (gsKnownBaseclasses[lnI].objType == obj->objType)
+				// Locate the property within the object's properties
+				props = lbcl->objProps;
+				for (lnJ = 0; lnJ < props[lnJ].index != 0; lnJ++)
 				{
-					// Locate the property within the object's properties
-					props = gsKnownBaseclasses[lnI].objProps;
-					for (lnJ = 0; lnJ < props[lnJ].index != 0; lnJ++)
-					{
-						// Is this it?
-						if (props[lnJ].index == tnIndex)
-							return(obj->props[lnJ]);	// Return the variable associated with this position
-					}
-					// If we get here, not found
-					break;
+					// Is this it?
+					if (props[lnJ].index == tnIndex)
+						return(obj->props[lnJ]);	// Return the variable associated with this position
 				}
-				// If we get here, still searching
+				// If we get here, not found
 			}
-			// If we get here, not found
 		}
 
 		// Invalid
@@ -732,10 +787,46 @@
 // or (2) an add-on user property
 //
 //////
-	SVariable* iObjProp_get_variable_byName(SObject* obj, u32 tnIndex, s8* tcName, u32 tnNameLength, bool tlSearchBaseProps, bool tlSearchUserProps)
+	SVariable* iObjProp_get_variable_byName(SObject* obj, s8* tcName, u32 tnNameLength, bool tlSearchBaseProps, bool tlSearchClassProps, u32* tnIndex)
 	{
-_asm int 3;
-// TODO:  guess :-)
+		s32					lnI, lnIndex;
+		SBaseclassList*		lbcl;
+		SPropertyMap*		objProps;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Search base class properties
+			if (tlSearchBaseProps)
+			{
+				// Locate the base class
+// TODO:  We could add a speedup here by storing the lbcl location in the object itself at the time of creation
+				lbcl = iiObj_getBaseclass_byType(obj->objType);
+				if (lbcl)
+				{
+					// Locate the property within the object's properties
+					objProps = lbcl->objProps;
+					for (lnI = 0; lnI < objProps[lnI].index != 0; lnI++)
+					{
+						// Grab this property's index
+						lnIndex = objProps[lnI].index;
+
+						// Search the name associated with that property
+						if (iTestExactlyEqual(tcName, tnNameLength, gsProps_master[lnIndex].prop, gsProps_master[lnIndex].length))
+							return(obj->props[lnI]);	// Return the variable associated with this position
+					}
+					// If we get here, not found
+				}
+			}
+
+			// Locate the user property
+			if (tlSearchClassProps)
+			{
+			}
+		}
+
+		// Invalid
 		return(NULL);
 	}
 
@@ -749,6 +840,18 @@ _asm int 3;
 //////
 	SBitmap* iObjProp_get_bitmap(SObject* obj, u32 tnIndex)
 	{
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			if (var && var->varType == _VAR_TYPE_BITMAP)
+				return(var->bmp);
+		}
+		// If we get here, failure
 		return(NULL);
 	}
 
@@ -762,6 +865,18 @@ _asm int 3;
 //////
 	SVariable* iObjProp_get_character(SObject* obj, u32 tnIndex)
 	{
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			if (var && var->varType == _VAR_TYPE_CHARACTER)
+				return(var);
+		}
+		// If we get here, failure
 		return(NULL);
 	}
 
@@ -775,16 +890,17 @@ _asm int 3;
 //////
 	SVariable* iObjProp_get_f32(SObject* obj, u32 tnIndex)
 	{
-		bool		error;
-		s32			lnResult;
-		u32			errorNum;
 		SVariable* var;
 
 
 		// Make sure the environment is sane
 		if (obj)
-			return(iObjProp_get_variable_byIndex(obj, tnIndex));	// Grab the variable associated with this object's property
-		
+		{
+			// Grab the variable associated with this object's property
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			if (var && (var->varType == _VAR_TYPE_F32 || var->varType == _VAR_TYPE_FLOAT))
+				return(var);
+		}
 		// If we get here, failure
 		return(NULL);
 	}
@@ -794,7 +910,7 @@ _asm int 3;
 
 //////////
 //
-// Called to get the f32 from the indicaed object
+// Called to get the f32 from the indicated object
 //
 //////
 	f64 iObjProp_get_f32_direct(SObject* obj, u32 tnIndex)
@@ -811,7 +927,7 @@ _asm int 3;
 		{
 			// Grab the variable associated with this object's property
 			var = iObjProp_get_variable_byIndex(obj, tnIndex);
-			if (var)
+			if (var && (var->varType == _VAR_TYPE_F32 || var->varType == _VAR_TYPE_FLOAT))
 			{
 				// Try to get the value
 				return(iiVariable_getAs_f32(var, false, &error, &errorNum));
@@ -838,16 +954,17 @@ _asm int 3;
 //////
 	SVariable* iObjProp_get_f64(SObject* obj, u32 tnIndex)
 	{
-		bool		error;
-		s32			lnResult;
-		u32			errorNum;
 		SVariable* var;
 
 
 		// Make sure the environment is sane
 		if (obj)
-			return(iObjProp_get_variable_byIndex(obj, tnIndex));	// Grab the variable associated with this object's property
-		
+		{
+			// Grab the variable associated with this object's property
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			if (var && (var->varType == _VAR_TYPE_F64 || var->varType == _VAR_TYPE_DOUBLE))
+				return(var);
+		}
 		// If we get here, failure
 		return(NULL);
 	}
@@ -901,6 +1018,18 @@ _asm int 3;
 //////
 	SVariable* iObjProp_get_logical(SObject* obj, u32 tnIndex)
 	{
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			if (var && var->varType == _VAR_TYPE_LOGICAL)
+				return(var);
+		}
+		// If we get here, failure
 		return(NULL);
 	}
 
@@ -949,6 +1078,18 @@ _asm int 3;
 //////
 	SVariable* iObjProp_get_object(SObject* obj, u32 tnIndex)
 	{
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			if (var && var->varType == _VAR_TYPE_OBJECT)
+				return(var);
+		}
+		// If we get here, failure
 		return(NULL);
 	}
 
@@ -962,6 +1103,19 @@ _asm int 3;
 //////
 	SVariable* iObjProp_get_s32(SObject* obj, u32 tnIndex)
 	{
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			if (var && var->varType == _VAR_TYPE_S32)
+				return(var);
+// TODO:  We could translate other types here, such as an s64 value if it's within range, u16/s16, and u8/s8, even u64 and u32 if it's in range
+		}
+		// If we get here, failure
 		return(NULL);
 	}
 

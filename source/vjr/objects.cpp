@@ -2014,10 +2014,10 @@ if (!llPublishChildren)
 			{
 				// Search through the properties
 				lpm = lbcl->objProps;
-				while (lpm && gsProps_masterDefaultInitValues[lpm->index].prop)
+				while (lpm && gsProps_master[lpm->index].prop)
 				{
 					// Is this the name?
-					if (gsProps_masterDefaultInitValues[lpm->index].length == tnPropertyNameLength && _memicmp(tcPropertyName, gsProps_masterDefaultInitValues[lpm->index].prop, tnPropertyNameLength) == 0)
+					if (gsProps_master[lpm->index].length == tnPropertyNameLength && _memicmp(tcPropertyName, gsProps_master[lpm->index].prop, tnPropertyNameLength) == 0)
 						return(obj->props[lpm->index]);		// This is the property, retrieve its value
 
 					// Move to next property
@@ -2111,7 +2111,7 @@ if (!llPublishChildren)
 //////
 	void iiObj_resetToDefaultCommon(SObject* obj, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propMap, s32 tnPropCount)
 	{
-		s32 lnI, lnIndex, lnVarType;
+		s32 lnI, lnIndex;
 
 
 		logfunc(__FUNCTION__);
@@ -2120,31 +2120,30 @@ if (!llPublishChildren)
 		//////
 			for (lnI = 0; propMap[lnI].index != 0 && lnI < tnPropCount; lnI++)
 			{
+				//////////
 				// Grab the index of this entry in the master list
-				lnIndex = propMap[lnI].index;
+				//////
+					lnIndex = propMap[lnI].index;
 
-				// Initialize based on type
-				lnVarType = gsProps_masterDefaultInitValues[lnIndex].varType;
-				switch (lnVarType)
-				{
-					case _VAR_TYPE_NULL:
-						break;
 
-					case _VAR_TYPE_OBJECT:
-					case _VAR_TYPE_THISCODE:
-						break;
+				//////////
+				// Create the base variable based on the master init variable created at startup
+				//////
+					obj->props[lnI] = iVariable_copy(gsProps_master[lnIndex].varInit, false);
 
-					case _VAR_TYPE_BITMAP:
-						break;
 
-					default:
-						// Standard object creation
-						obj->props[lnI] = iVariable_create(lnVarType, NULL);
-				}
+				//////////
+				// Perform any base class initialization
+				//////
+					if (gsProps_master[lnIndex]._initterBase)
+						gsProps_master[lnIndex].initterBase(obj, lnIndex);
 
-				// Finalize the initialization
-// TODO:  Working here .. need to create the obj->props array as part of each class, and use the size of the relative propList(), and then remove all of the distinct getters and setters to work more generically with the variable types, with a few special ones for particular classes.
-				propMap[lnI].setterOverrideVar(obj, gsProps_masterDefaultInitValues[lnIndex].index, );
+
+				//////////
+				// Finalize the initialization with any additional steps specific to the object
+				//////
+					if (propMap[lnI]._initterObject)
+						propMap[lnI].initterObject(obj, lnIndex);
 			}
 
 
@@ -3155,9 +3154,6 @@ if (!llPublishChildren)
 //////
 	void iiSubobj_copyForm(SObject* formDst, SObject* formSrc)
 	{
-		SVariable* var;
-
-
 		logfunc(__FUNCTION__);
 		//////////
 		// Copy all standard properties
@@ -3195,9 +3191,6 @@ if (!llPublishChildren)
 //////
 	void iiSubobj_copySubform(SObject* subformDst, SObject* subformSrc)
 	{
-		SVariable* var;
-
-
 		logfunc(__FUNCTION__);
 		//////////
 		// Copy all standard properties
@@ -3298,9 +3291,6 @@ if (!llPublishChildren)
 //////
 	void iiSubobj_copyLabel(SObject* labelDst, SObject* labelSrc)
 	{
-		SVariable* var;
-
-
 		logfunc(__FUNCTION__);
 		//////////
 		// Copy all standard properties
@@ -3339,9 +3329,6 @@ if (!llPublishChildren)
 //////
 	void iiSubobj_copyTextbox(SObject* textboxDst, SObject* textboxSrc)
 	{
-		SVariable* var;
-
-
 		logfunc(__FUNCTION__);
 		//////////
 		// Copy all standard properties

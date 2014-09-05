@@ -2262,6 +2262,36 @@
 		return(iTime_computeMilliseconds(&time));
 	}
 
+	bool iTestExactlyEqual(s8* left, u32 leftLength, cs8* right, u32 rightLength)
+	{
+		return(iTestExactlyEqual(left, leftLength, (s8*)right, rightLength));
+	}
+
+	bool iTestExactlyEqual(s8* left, u32 leftLength, s8* right, u32 rightLength)
+	{
+		// Everything must be established
+		if (left && right && leftLength == rightLength)
+			return(_memicmp(left, right, leftLength) == 0);	// Test equality without regards to case
+		
+		// If we get here, no match
+		return(false);
+	}
+
+	bool iTestExactlyEqual_case(s8* left, u32 leftLength, cs8* right, u32 rightLength)
+	{
+		return(iTestExactlyEqual_case(left, leftLength, (s8*)right, rightLength));
+	}
+
+	bool iTestExactlyEqual_case(s8* left, u32 leftLength, s8* right, u32 rightLength)
+	{
+		// Everything must be established
+		if (left && right && leftLength == rightLength)
+			return(memcmp(left, right, leftLength) == 0);	// Test equality
+
+		// If we get here, no match
+		return(false);
+	}
+
 	bool iIsNeedleInHaystack(s8* haystack, s32 haystackLength, s8* needle, s32 needleLength)
 	{
 		return(iIsNeedleInHaystack(haystack, haystackLength, needle, needleLength, NULL));

@@ -305,6 +305,10 @@ struct SPropertyMap;
 	s8						iLowerCase								(s8 c);
 	s8						iUpperCase								(s8 c);
 	
+	bool					iTestExactlyEqual						(s8* left, u32 leftLength, cs8* right, u32 rightLength);
+	bool					iTestExactlyEqual						(s8* left, u32 leftLength,  s8* right, u32 rightLength);
+	bool					iTestExactlyEqual_case					(s8* left, u32 leftLength, cs8* right, u32 rightLength);
+	bool					iTestExactlyEqual_case					(s8* left, u32 leftLength,  s8* right, u32 rightLength);
 	bool					iIsNeedleInHaystack						(s8* haystack, s32 haystackLength, s8* needle, s32 needleLength);
 	bool					iIsNeedleInHaystackCase					(s8* haystack, s32 haystackLength, s8* needle, s32 needleLength);
 	bool					iIsNeedleInHaystack						(s8* haystack, s32 haystackLength, s8* needle, s32 needleLength, u32* tnStart);
