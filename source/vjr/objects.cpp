@@ -1721,7 +1721,7 @@ if (!llPublishChildren)
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(obj, cgcCaption_icon)) {
+						} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(obj, cgcName_caption)) {
 							// Caption
 							logfunc("form caption");
 							SetRect(&objChild->rc,
@@ -1812,7 +1812,7 @@ if (!llPublishChildren)
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(obj, cgcCaption_icon)) {
+						} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(obj, cgcName_caption)) {
 							// Caption
 							logfunc("subform caption");
 							SetRect(&objChild->rc,
@@ -2001,7 +2001,7 @@ if (!llPublishChildren)
 	SVariable* iObj_getPropertyAsVariable(SObject* obj, s8* tcPropertyName, u32 tnPropertyNameLength, SComp* comp)
 	{
 		SBaseclassList* lbcl;
-		SPropertyMap*	lpm;
+		SObjPropertyMap*	lpm;
 
 
 		// Make sure our environment is sane
@@ -2109,9 +2109,9 @@ if (!llPublishChildren)
 // Resets common object properties to their defaults.
 //
 //////
-	void iiObj_resetToDefaultCommon(SObject* obj, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propMap, s32 tnPropCount)
+	void iiObj_resetToDefaultCommon(SObject* obj, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propMap, s32 tnPropCount)
 	{
-		s32 lnI, lnIndex;
+		s32 lnI, lnIndex, lnAllocationSize;
 
 
 		logfunc(__FUNCTION__);
@@ -2119,13 +2119,17 @@ if (!llPublishChildren)
 		// Make sure the properties are allocated
 		//////
 			if (!obj->props)
-				obj->props = (SVariable**)malloc(tnPropCount * sizeof(SVariable*));
+			{
+				lnAllocationSize	= tnPropCount * sizeof(SVariable*);
+				obj->props			= (SVariable**)malloc(lnAllocationSize);
+				memset(obj->props, 0, lnAllocationSize);
+			}
 
 
 		//////////
 		// Set properties
 		//////
-			for (lnI = 0; propMap[lnI].index != 0 && lnI < tnPropCount; lnI++)
+			for (lnI = 0; lnI < tnPropCount; lnI++)
 			{
 				//////////
 				// Grab the index of this entry in the master list
@@ -2134,10 +2138,23 @@ if (!llPublishChildren)
 
 
 				//////////
+				// Delete the old variable
+				//////
+					if (obj->props[lnI])
+					{
+						iVariable_delete(obj->props[lnI], true);
+						obj->props[lnI] = NULL;
+					}
+
+
+				//////////
 				// Create the base variable based on the master init variable created at startup
 				//////
 					obj->props[lnI] = iVariable_copy(gsProps_master[lnIndex].varInit, false);
 
+// Should never happen
+if (!obj->props[lnI])
+	debug_break;
 
 				//////////
 				// Perform any base class initialization
@@ -2399,7 +2416,7 @@ if (!llPublishChildren)
 					// Give them proper names
 					//////
 						var = iObjProp_get_variable_byIndex(icon,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_icon,			-1);
-						var = iObjProp_get_variable_byIndex(caption,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcCaption_icon,		-1);
+						var = iObjProp_get_variable_byIndex(caption,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_caption,		-1);
 						var = iObjProp_get_variable_byIndex(move,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconMove,		-1);
 						var = iObjProp_get_variable_byIndex(minimize,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconMinimize,	-1);
 						var = iObjProp_get_variable_byIndex(maximize,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconMaximize,	-1);
@@ -2479,7 +2496,7 @@ if (!llPublishChildren)
 					// Give them proper names
 					//////
 						var = iObjProp_get_variable_byIndex(icon,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_icon,		-1);
-						var = iObjProp_get_variable_byIndex(caption,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcCaption_icon,	-1);
+						var = iObjProp_get_variable_byIndex(caption,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_caption,	-1);
 				}
 			}
 
@@ -2557,7 +2574,7 @@ if (!llPublishChildren)
 					// Give them proper names
 					//////
 						var = iObjProp_get_variable_byIndex(icon,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_icon,		-1);
-						var = iObjProp_get_variable_byIndex(caption,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcCaption_icon,	-1);
+						var = iObjProp_get_variable_byIndex(caption,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_caption,	-1);
 						var = iObjProp_get_variable_byIndex(close,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconClose,	-1);
 				}
 			}
@@ -3163,7 +3180,7 @@ if (!llPublishChildren)
 		// Copy the allocatables
 		//////
 			formDst->p.font	= iFont_duplicate(formSrc->p.font);
-			iObjProp_set_bitmap(formDst, _INDEX_ICON, iObjProp_get_bitmap(formSrc, _INDEX_ICON));
+			iObjProp_set_bitmap_direct(formDst, _INDEX_ICON, iObjProp_get_bitmap(formSrc, _INDEX_ICON));
 			iObjProp_copy_byIndex(formDst, _INDEX_CAPTION, formSrc, _INDEX_CAPTION);
 
 
@@ -3200,13 +3217,13 @@ if (!llPublishChildren)
 		// Copy the allocatables
 		//////
 			subformDst->p.font	= iFont_duplicate(subformSrc->p.font);
-			iObjProp_set_bitmap(subformDst, _INDEX_ICON, iObjProp_get_bitmap(subformSrc, _INDEX_ICON));
+			iObjProp_set_bitmap_direct(subformDst, _INDEX_ICON, iObjProp_get_bitmap(subformSrc, _INDEX_ICON));
 			iObjProp_copy_byIndex(subformDst, _INDEX_CAPTION, subformSrc, _INDEX_CAPTION);
 
 			// Picture
 			iBmp_delete(&subformDst->p.bmpPicture, true, true);
 			subformDst->p.bmpPicture = iBmp_copy(subformSrc->p.bmpPicture);
-			iDatum_duplicate(&subformDst->p.pictureName->value, &subformSrc->p.pictureName->value);
+			iObjProp_copy_byIndex(subformDst, _INDEX_PICTURE, subformSrc, _INDEX_PICTURE);
 
 
 		//////////
@@ -3338,7 +3355,7 @@ if (!llPublishChildren)
 		// Copy the allocatables
 		//////
 			textboxDst->p.font		= iFont_duplicate(textboxSrc->p.font);
-			iObjProp_set_bitmap(textboxDst, _INDEX_ICON, iObjProp_get_bitmap(textboxSrc, _INDEX_ICON));
+			iObjProp_set_bitmap_direct(textboxDst, _INDEX_ICON, iObjProp_get_bitmap(textboxSrc, _INDEX_ICON));
 
 			// Caption
 			iObjProp_copy_byIndex(textboxDst, _INDEX_CAPTION, textboxSrc, _INDEX_CAPTION);
@@ -3389,7 +3406,7 @@ if (!llPublishChildren)
 			// Picture
 			iBmp_delete(&buttonDst->p.bmpPicture, true, true);
 			buttonDst->p.bmpPicture = iBmp_copy(buttonSrc->p.bmpPicture);
-			iDatum_duplicate(&buttonDst->p.pictureName->value, &buttonSrc->p.pictureName->value);
+			iObjProp_copy_byIndex(buttonDst, _INDEX_PICTURE, buttonSrc, _INDEX_PICTURE);
 
 
 		//////////
@@ -3596,7 +3613,7 @@ if (!llPublishChildren)
 // Called to reset the object to its hard defaults.
 //
 //////
-	void iiSubobj_resetToDefaultEmpty(SObject* empty, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
+	void iiSubobj_resetToDefaultEmpty(SObject* empty, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
 		logfunc(__FUNCTION__);
 		if (empty)
@@ -3610,7 +3627,7 @@ if (!llPublishChildren)
 		// No object-specific initialization because empty objects do nothing except exist as placeholders
 	}
 
-	void iiSubobj_resetToDefaultForm(SObject* form, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
+	void iiSubobj_resetToDefaultForm(SObject* form, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
 		SObject*	objChild;
 		RECT		lrc;
@@ -3665,7 +3682,7 @@ if (!llPublishChildren)
 			// Set the default form icon
 			//////
 				iObjProp_delete_variable_byIndex(form, _INDEX_ICON);
-				iObjProp_set_bitmap(form, _INDEX_ICON, bmpVjrIcon);
+				iObjProp_set_bitmap_direct(form, _INDEX_ICON, bmpVjrIcon);
 
 
 			//////////
@@ -3720,10 +3737,10 @@ if (!llPublishChildren)
 						iBmp_colorize(objChild->p.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
-						iObjProp_set_bitmap(objChild, _INDEX_ICON, bmpVjrIcon);		// Set the new
+						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpVjrIcon);		// Set the new
 						setVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcCaption_icon) == 0) {
+					} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_caption) == 0) {
 						// Caption
 						setCaption(objChild, cgcName_formCaption);
 						iObjProp_set_s32_direct(objChild, _INDEX_BACKSTYLE, _BACK_STYLE_TRANSPARENT);
@@ -3748,7 +3765,7 @@ if (!llPublishChildren)
 						iBmp_colorize(objChild->p.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
-						iObjProp_set_bitmap(objChild, _INDEX_ICON, bmpMove);		// Set the new
+						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpMove);		// Set the new
 						setVisible(objChild, _LOGICAL_TRUE);
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconMinimize) == 0) {
@@ -3768,7 +3785,7 @@ if (!llPublishChildren)
 						iBmp_colorize(objChild->p.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
-						iObjProp_set_bitmap(objChild, _INDEX_ICON, bmpMinimize);	// Set the new
+						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpMinimize);	// Set the new
 						setVisible(objChild, _LOGICAL_TRUE);
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconMaximize) == 0) {
@@ -3788,7 +3805,7 @@ if (!llPublishChildren)
 						iBmp_colorize(objChild->p.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
-						iObjProp_set_bitmap(objChild, _INDEX_ICON, bmpMaximize);	// Set the new
+						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpMaximize);	// Set the new
 						setVisible(objChild, _LOGICAL_TRUE);
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconClose) == 0) {
@@ -3808,7 +3825,7 @@ if (!llPublishChildren)
 						iBmp_colorize(objChild->p.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
-						iObjProp_set_bitmap(objChild, _INDEX_ICON, bmpClose);		// Set the new
+						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpClose);		// Set the new
 						setVisible(objChild, _LOGICAL_TRUE);
 					}
 
@@ -3818,7 +3835,7 @@ if (!llPublishChildren)
 		}
 	}
 
-	void iiSubobj_resetToDefaultSubform(SObject* subform, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
+	void iiSubobj_resetToDefaultSubform(SObject* subform, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
 		SObject*	objChild;
 		RECT		lrc;
@@ -3873,7 +3890,7 @@ if (!llPublishChildren)
 			//////////
 			// Set the default form icon
 			//////
-				iObjProp_set_bitmap(subform, _INDEX_ICON, bmpVjrIcon);
+				iObjProp_set_bitmap_direct(subform, _INDEX_ICON, bmpVjrIcon);
 
 
 			//////////
@@ -3916,12 +3933,12 @@ if (!llPublishChildren)
 						iBmp_colorize(objChild->p.bmpPictureDown, &lrc, colorMouseDown,	false, 0.5f);
 
 						// Icon
-						iObjProp_set_bitmap(objChild, _INDEX_ICON, bmpVjrIcon);
+						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpVjrIcon);
 
 						// Make it visible
 						iObjProp_set_logical_direct(objChild, _INDEX_VISIBLE, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcCaption_icon) == 0) {
+					} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_caption) == 0) {
 						// Caption
 						iObjProp_set_character_direct(objChild, _INDEX_CAPTION, cgcName_formCaption, -1);
 						iObjProp_set_s32_direct(objChild, _INDEX_BACKSTYLE, _BACK_STYLE_TRANSPARENT);
@@ -3938,7 +3955,7 @@ if (!llPublishChildren)
 		}
 	}
 
-	void iiSubobj_resetToDefaultCarousel(SObject* carousel, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
+	void iiSubobj_resetToDefaultCarousel(SObject* carousel, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
 		RECT		lrc;
 		SObject*	objChild;
@@ -3990,10 +4007,10 @@ if (!llPublishChildren)
 						iBmp_colorize(objChild->p.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
-						iObjProp_set_bitmap(objChild, _INDEX_ICON, bmpCarouselIcon);	// Set the new
+						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpCarouselIcon);	// Set the new
 						iObjProp_set_logical_direct(objChild, _INDEX_VISIBLE, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcCaption_icon) == 0) {
+					} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_caption) == 0) {
 						// Caption
 						setCaption(objChild, cgcName_formCaption);
 						iObjProp_set_s32_direct(objChild, _INDEX_BACKSTYLE, _BACK_STYLE_TRANSPARENT);
@@ -4018,7 +4035,7 @@ if (!llPublishChildren)
 						iBmp_colorize(objChild->p.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
 
 						// Icon
-						iObjProp_set_bitmap(objChild, _INDEX_ICON, bmpClose);	// Set the new
+						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpClose);	// Set the new
 						iObjProp_set_logical_direct(objChild, _INDEX_VISIBLE, _LOGICAL_TRUE);
 					}
 
@@ -4029,7 +4046,7 @@ if (!llPublishChildren)
 		}
 	}
 
-	void iiSubobj_resetToDefaultRider(SObject* rider, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
+	void iiSubobj_resetToDefaultRider(SObject* rider, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
 		logfunc(__FUNCTION__);
 		if (rider)
@@ -4052,7 +4069,7 @@ if (!llPublishChildren)
 		}
 	}
 
-	void iiSubobj_resetToDefaultLabel(SObject* label, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
+	void iiSubobj_resetToDefaultLabel(SObject* label, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
 		logfunc(__FUNCTION__);
 		if (label)
@@ -4107,7 +4124,7 @@ if (!llPublishChildren)
 		}
 	}
 
-	void iiSubobj_resetToDefaultTextbox(SObject* textbox, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
+	void iiSubobj_resetToDefaultTextbox(SObject* textbox, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
 		logfunc(__FUNCTION__);
 		if (textbox)
@@ -4172,7 +4189,7 @@ if (!llPublishChildren)
 		}
 	}
 
-	void iiSubobj_resetToDefaultButton(SObject* button, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
+	void iiSubobj_resetToDefaultButton(SObject* button, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
 		logfunc(__FUNCTION__);
 		if (button)
@@ -4212,7 +4229,7 @@ if (!llPublishChildren)
 		}
 	}
 
-	void iiSubobj_resetToDefaultEditbox(SObject* editbox, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
+	void iiSubobj_resetToDefaultEditbox(SObject* editbox, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
 		logfunc(__FUNCTION__);
 		if (editbox)
@@ -4258,7 +4275,7 @@ if (!llPublishChildren)
 		}
 	}
 
-	void iiSubobj_resetToDefaultImage(SObject* image, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
+	void iiSubobj_resetToDefaultImage(SObject* image, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
 		logfunc(__FUNCTION__);
 		if (image)
@@ -4283,13 +4300,13 @@ if (!llPublishChildren)
 			iObjProp_set_s32_direct(image, _INDEX_STYLE, _IMAGE_STYLE_OPAQUE);
 
 			iBmp_delete(&image->p.bmpPicture, true, true);
-			iObjProp_set_bitmap(image, _INDEX_PICTURE, bmpNoImage);
+			iObjProp_set_bitmap_direct(image, _INDEX_PICTURE, bmpNoImage);
 
 			*(u32*)&image->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
-	void iiSubobj_resetToDefaultCheckbox(SObject* checkbox, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
+	void iiSubobj_resetToDefaultCheckbox(SObject* checkbox, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
 		SObject*	objChild;
 		RECT		lrc;
@@ -4403,7 +4420,7 @@ if (!llPublishChildren)
 		}
 	}
 
-	void iiSubobj_resetToDefaultOption(SObject* option, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
+	void iiSubobj_resetToDefaultOption(SObject* option, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
 		logfunc(__FUNCTION__);
 		if (option)
@@ -4443,7 +4460,7 @@ if (!llPublishChildren)
 		}
 	}
 
-	void iiSubobj_resetToDefaultRadio(SObject* radio, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
+	void iiSubobj_resetToDefaultRadio(SObject* radio, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
 		logfunc(__FUNCTION__);
 		if (radio)

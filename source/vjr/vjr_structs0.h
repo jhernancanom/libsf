@@ -44,7 +44,7 @@ struct SEdit;
 struct SComp;
 struct SCompiler;
 struct SFunction;
-struct SPropertyMap;
+struct SObjPropertyMap;
 
 
 
@@ -323,6 +323,6 @@ struct SBaseclassList
 
 	union {
 		u32				_objProps;
-		SPropertyMap*	objProps;										// Root property map for this object
+		SObjPropertyMap*	objProps;										// Root property map for this object
 	};
 };

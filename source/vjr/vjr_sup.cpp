@@ -189,7 +189,7 @@
 				return;
 
 			// Set the app icon and enable the border
-			iObjProp_set_bitmap(_jdebi, _INDEX_ICON, bmpJDebiIcon);
+			iObjProp_set_bitmap_direct(_jdebi, _INDEX_ICON, bmpJDebiIcon);
 			iObjProp_set_s32_direct(_jdebi, _INDEX_BORDERSTYLE, _BORDER_STYLE_FIXED);
 
 			// Give it a fixed point font
@@ -227,14 +227,14 @@
 			_screen			= iObj_addChild(_OBJ_TYPE_SUBFORM, _jdebi);
 
 			// Set the icons
-			iObjProp_set_bitmap(sourceCode,		_INDEX_ICON,	bmpSourceCodeIcon);
-			iObjProp_set_bitmap(locals,			_INDEX_ICON,	bmpLocalsIcon);
-			iObjProp_set_bitmap(watch,			_INDEX_ICON,	bmpWatchIcon);
-			iObjProp_set_bitmap(command,		_INDEX_ICON,	bmpCommandIcon);
-			iObjProp_set_bitmap(debug,			_INDEX_ICON,	bmpDebugIcon);
-			iObjProp_set_bitmap(output,			_INDEX_ICON,	bmpOutputIcon);
-			iObjProp_set_bitmap(sourceLight,	_INDEX_ICON,	bmpSourceLightIcon);
-			iObjProp_set_bitmap(_screen,		_INDEX_ICON,	bmpVjrIcon);
+			iObjProp_set_bitmap_direct(sourceCode,		_INDEX_ICON,	bmpSourceCodeIcon);
+			iObjProp_set_bitmap_direct(locals,			_INDEX_ICON,	bmpLocalsIcon);
+			iObjProp_set_bitmap_direct(watch,			_INDEX_ICON,	bmpWatchIcon);
+			iObjProp_set_bitmap_direct(command,		_INDEX_ICON,	bmpCommandIcon);
+			iObjProp_set_bitmap_direct(debug,			_INDEX_ICON,	bmpDebugIcon);
+			iObjProp_set_bitmap_direct(output,			_INDEX_ICON,	bmpOutputIcon);
+			iObjProp_set_bitmap_direct(sourceLight,	_INDEX_ICON,	bmpSourceLightIcon);
+			iObjProp_set_bitmap_direct(_screen,		_INDEX_ICON,	bmpVjrIcon);
 
 			// Make them visible
 			iObjProp_set_logical_direct(sourceCode,		_INDEX_VISIBLE,	_LOGICAL_TRUE);
@@ -320,7 +320,7 @@
 			sourceCode_editbox->p.em->showCursorLine	= true;
 			sourceCode_editbox->p.em->isSourceCode		= true;
 			sourceCode_editbox->p.em->showLineNumbers	= true;
-			iObjProp_set_bitmap(sourceCode, _INDEX_ICON, bmpSourceCodeIcon);
+			iObjProp_set_bitmap_direct(sourceCode, _INDEX_ICON, bmpSourceCodeIcon);
 
 
 		//////////
@@ -330,7 +330,7 @@
 			iObjProp_set_character_direct(locals, _INDEX_CAPTION, cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
 			locals_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			locals_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
-			iObjProp_set_bitmap(locals, _INDEX_ICON, bmpLocalsIcon);
+			iObjProp_set_bitmap_direct(locals, _INDEX_ICON, bmpLocalsIcon);
 
 			// Adjust the caption width
 			((SObject*)locals->firstChild->ll.next)->rc.right = 65;
@@ -424,7 +424,7 @@
 			watch_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			watch_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			watch_editbox->p.em->showCursorLine	= true;
-			iObjProp_set_bitmap(watch, _INDEX_ICON, bmpWatchIcon);
+			iObjProp_set_bitmap_direct(watch, _INDEX_ICON, bmpWatchIcon);
 
 			// Adjust the caption width
 			((SObject*)watch->firstChild->ll.next)->rc.right = 65;
@@ -440,7 +440,7 @@
 			command_editbox->p.em->showCursorLine		= true;
 			command_editbox->p.em->isSourceCode		= true;
 			command_editbox->p.em->showLineNumbers		= true;
-			iObjProp_set_bitmap(command, _INDEX_ICON, bmpCommandIcon);
+			iObjProp_set_bitmap_direct(command, _INDEX_ICON, bmpCommandIcon);
 
 			// Adjust the caption width
 			((SObject*)command->firstChild->ll.next)->rc.right = 80;
@@ -453,7 +453,7 @@
 			debug_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			debug_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			debug_editbox->p.em->showCursorLine	= true;
-			iObjProp_set_bitmap(debug, _INDEX_ICON, bmpDebugIcon);
+			iObjProp_set_bitmap_direct(debug, _INDEX_ICON, bmpDebugIcon);
 
 			// Adjust the caption width
 			((SObject*)debug->firstChild->ll.next)->rc.right = 65;
@@ -466,7 +466,7 @@
 			output_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_MEDIUM, false, false);
 			output_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			output_editbox->p.em->showCursorLine	= true;
-			iObjProp_set_bitmap(output, _INDEX_ICON, bmpOutputIcon);
+			iObjProp_set_bitmap_direct(output, _INDEX_ICON, bmpOutputIcon);
 
 			// Adjust the caption width
 			((SObject*)output->firstChild->ll.next)->rc.right = 70;

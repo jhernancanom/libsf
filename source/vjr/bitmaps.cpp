@@ -83,7 +83,10 @@
 				
 				// Copy the bitmap over
 				SetRect(&lrc, 0, 0, bmpSrc->bi.biWidth, bmpSrc->bi.biHeight);
-				iBmp_bitBlt(bmp, &lrc, bmpSrc);
+
+				// Optimization, copy directly all allocated data rather than bit by bit
+				memcpy(bmp->bd, bmpSrc->bd, bmpSrc->bi.biSizeImage);
+				//iBmp_bitBlt(bmp, &lrc, bmpSrc);
 			}
 		}
 

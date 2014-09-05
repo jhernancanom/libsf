@@ -4606,7 +4606,7 @@ debug_break;
 			// Create the variable
 			gsProps_master[lnI].varInit = iVariable_create(gsProps_master[lnI].varType, NULL);
 
-			// If a valid variale was created, initialize it to the static baseclass values
+			// If a valid variable was created, initialize it to the static baseclass values
 			if (gsProps_master[lnI].varInit)
 			{
 				// Populate it
@@ -4665,8 +4665,12 @@ debug_break;
 
 					default:
 // TODO: Whatever type is added that's not defined above needs added
-						_asm int 3;
+						debug_break;
 				}
+
+// Should never happen
+if (!gsProps_master[lnI].varInit)
+	debug_break;
 			}
 		}
 	}
@@ -4819,17 +4823,17 @@ debug_break;
 		if (varDst && varSrc)
 		{
 			//////////
-			// Are they being goofballs?
-			//////
-				if (varDst == varSrc)
-					return(true);	// Yes
-
-
-			//////////
 			// Make sure we're dealing with the actual variable
 			//////
 				varDst = iiVariable_terminateIndirect(varDst);
 				varSrc = iiVariable_terminateIndirect(varSrc);
+
+
+			//////////
+			// Are they being goofballs?
+			//////
+				if (varDst == varSrc)
+					return(true);	// Yes
 
 
 			//////////
@@ -4902,7 +4906,7 @@ debug_break;
 		varSrc = iiVariable_terminateIndirect(varSrc);
 
 		// Are we still valid?
-		if (varSrc && varSrc->value.data)
+		if (varSrc)
 		{
 			// Should we create a real variable? Or a reference?
 			if (tlMakeReference)
@@ -5163,6 +5167,9 @@ debug_break;
 
 				// Copy the bitmap to the destination
 				var->bmp = iBmp_copy(bmp);
+				
+				// Indicate success
+				return(true);
 			}
 		}
 
@@ -5218,7 +5225,7 @@ debug_break;
 		// Make sure our environment is sane
 		if (var && datum)
 		{
-_asm int 3;
+debug_break;
 			// De-reference the variable
 			var = iiVariable_terminateIndirect(var);
 

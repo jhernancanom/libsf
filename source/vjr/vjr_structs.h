@@ -276,11 +276,8 @@ struct SProperties
 
 	f64			roundTo;												// Round 10=tens place, 1=whole integers, 0.1=one decimal place, 0.01=two decimal places, and so on
 
-	SVariable*	pictureName;											// The name of the file used for the picture
 	SBitmap*	bmpPicture;												// The image for the picture
-	SVariable*	pictureOverName;										// The name of the file used for the picture when the mouse is over
 	SBitmap*	bmpPictureOver;											// The image for the picture when the mouse is over
-	SVariable*	pictureDownName;										// The name of the file used for the picture when the mouse is pressed down on the item
 	SBitmap*	bmpPictureDown;											// The image for the picture when the mouse is pressed down on the item
 
 	SVariable*	minValue;												// Minimum value for the control

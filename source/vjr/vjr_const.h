@@ -731,7 +731,7 @@ typedef SEM**		SEMpp;
 // Auto-added child object names
 //////
 	const s8			cgcName_icon[]						= "_icon";								// Forms automatically get an app icon
-	const s8			cgcCaption_icon[]					= "_caption";							// Forms, subforms automatically get a caption
+	const s8			cgcName_caption[]					= "_caption";							// Forms, subforms automatically get a caption
 	const s8			cgcName_iconMove[]					= "_move";								// Forms automatically get a move button (to move any subforms within using bars)
 	const s8			cgcName_iconMinimize[]				= "_minimize";							// Forms automatically get a minimize button
 	const s8			cgcName_iconMaximize[]				= "_maximize";							// Forms automatically get a maximize button

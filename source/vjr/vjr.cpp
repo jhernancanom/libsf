@@ -427,7 +427,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 				return;
 
 			// Set the icon and border
-			iObjProp_set_bitmap(gobj_splashListing, _INDEX_ICON, bmpOutputIcon);
+			iObjProp_set_bitmap_direct(gobj_splashListing, _INDEX_ICON, bmpOutputIcon);
 			iObjProp_set_s32_direct(gobj_splashListing, _INDEX_BORDERSTYLE, _BORDER_STYLE_FIXED);
 
 

@@ -49,7 +49,7 @@
 
 
 
-struct SPropertyMap;
+struct SObjPropertyMap;
 
 
 
@@ -107,7 +107,7 @@ struct SPropertyMap;
 	bool					iObj_setVisible							(SObject*  obj, bool tlNewVisible);
 	SVariable*				iObj_getPropertyAsVariable				(SObject*  obj, s8* tcPropertyName, u32 tnPropertyNameLength, SComp* comp);
 	void					iiObj_resetToDefault					(SObject*  obj, bool tlResetProperties, bool tlResetMethods);
-	void					iiObj_resetToDefaultCommon				(SObject*  obj, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, s32 tnPropCount);
+	void					iiObj_resetToDefaultCommon				(SObject*  obj, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, s32 tnPropCount);
 	s32						iiObj_getBaseclassType_byName			(s8* tcTextname, s32 tnTextnameLength);
 	SBaseclassList*			iiObj_getBaseclass_byName				(s8* tcTextname, s32 tnTextnameLength);
 	SBaseclassList*			iiObj_getBaseclass_byType				(s32 tnObjType);
@@ -143,19 +143,19 @@ struct SPropertyMap;
 	void					iiSubobj_copyRadio						(SObject*	radioDst,		SObject*	radioSrc);
 
 	// For initialization
-	void					iiSubobj_resetToDefaultEmpty			(SObject*	empty,		bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultForm				(SObject*	form,		bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultSubform			(SObject*	subform,	bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultCarousel			(SObject*	carousel,	bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultRider			(SObject*	rider,		bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultLabel			(SObject*	label,		bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultTextbox			(SObject*	textbox,	bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultButton			(SObject*	button,		bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultEditbox			(SObject*	editbox,	bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultImage			(SObject*	image,		bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultCheckbox			(SObject*	checkbox,	bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultOption			(SObject*	option,		bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultRadio			(SObject*	radio,		bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultEmpty			(SObject*	empty,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultForm				(SObject*	form,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultSubform			(SObject*	subform,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultCarousel			(SObject*	carousel,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultRider			(SObject*	rider,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultLabel			(SObject*	label,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultTextbox			(SObject*	textbox,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultButton			(SObject*	button,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultEditbox			(SObject*	editbox,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultImage			(SObject*	image,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultCheckbox			(SObject*	checkbox,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultOption			(SObject*	option,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultRadio			(SObject*	radio,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
 
 	// Delete individual sub-objects
 	void					iObj_deleteCommon						(SObject*	obj);
