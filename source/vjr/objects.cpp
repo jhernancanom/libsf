@@ -2001,7 +2001,7 @@ if (!llPublishChildren)
 	SVariable* iObj_getPropertyAsVariable(SObject* obj, s8* tcPropertyName, u32 tnPropertyNameLength, SComp* comp)
 	{
 		SBaseclassList* lbcl;
-		SPropertyList*	lpl;
+		SPropertyMap*	lpm;
 
 
 		// Make sure our environment is sane
@@ -2013,18 +2013,15 @@ if (!llPublishChildren)
 			if (lbcl)
 			{
 				// Search through the properties
-				lpl = lbcl->objProps;
-				while (lpl && lpl->textName)
+				lpm = lbcl->objProps;
+				while (lpm && gsProps_masterDefaultInitValues[lpm->index].prop)
 				{
 					// Is this the name?
-					if (lpl->textNameLength == tnPropertyNameLength && _memicmp(tcPropertyName, lpl->textName, tnPropertyNameLength) == 0)
-					{
-						// This is the property, retrieve its value
-						return(lpl->get(obj));
-					}
+					if (gsProps_masterDefaultInitValues[lpm->index].length == tnPropertyNameLength && _memicmp(tcPropertyName, gsProps_masterDefaultInitValues[lpm->index].prop, tnPropertyNameLength) == 0)
+						return(obj->props[lpm->index]);		// This is the property, retrieve its value
 
 					// Move to next property
-					++lpl;
+					++lpm;
 				}
 				// If we get here, we didn't find it on the object
 			}
@@ -2112,7 +2109,7 @@ if (!llPublishChildren)
 // Resets common object properties to their defaults.
 //
 //////
-	void iiObj_resetToDefaultCommon(SObject* obj, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propList, u32 tnPropCount)
+	void iiObj_resetToDefaultCommon(SObject* obj, bool tlResetProperties, bool tlResetMethods, SPropertyMap* propMap, s32 tnPropCount)
 	{
 		s32 lnI, lnIndex, lnVarType;
 
@@ -2121,10 +2118,10 @@ if (!llPublishChildren)
 		//////////
 		// Set properties
 		//////
-			for (lnI = 0; propList[lnI].index != 0 && lnI < tnPropCount; lnI++)
+			for (lnI = 0; propMap[lnI].index != 0 && lnI < tnPropCount; lnI++)
 			{
 				// Grab the index of this entry in the master list
-				lnIndex = propList[lnI].index;
+				lnIndex = propMap[lnI].index;
 
 				// Initialize based on type
 				lnVarType = gsProps_masterDefaultInitValues[lnIndex].varType;
@@ -2147,7 +2144,7 @@ if (!llPublishChildren)
 
 				// Finalize the initialization
 // TODO:  Working here .. need to create the obj->props array as part of each class, and use the size of the relative propList(), and then remove all of the distinct getters and setters to work more generically with the variable types, with a few special ones for particular classes.
-				propList[lnI].setterOverrideVar(obj, gsProps_masterDefaultInitValues[lnIndex].index, );
+				propMap[lnI].setterOverrideVar(obj, gsProps_masterDefaultInitValues[lnIndex].index, );
 			}
 
 
@@ -5460,19 +5457,19 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				borderColor	= borderColor(obj);
 
 				// Colorize
-				     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,				false, 0.0f);
-				else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,				false, 0.0f);
-				else									iBmp_colorize(obj->bmp, &lrc, get_bgra(obj->p.backColor),	false, 0.0f);
+				     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
+				else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
+				else									iBmp_colorize(obj->bmp, &lrc, backColor(obj),	false, 0.0f);
 
 				// Inset slightly for the text part
 				CopyRect(&lrc2, &lrc);
 				InflateRect(&lrc2, -4, -4);
 
 				// If we're opaque, draw the text inset by a margin, otherwise just overlay
-				if (get_s32(obj->p.backStyle) == _BACK_STYLE_OPAQUE)
+				if (backStyle(obj) == _BACK_STYLE_OPAQUE)
 				{
 					// Opaque
-					SetBkColor(obj->bmp->hdc, backColor.red, backColor.grn, backColor.blu);
+					SetBkColor(obj->bmp->hdc, RGB(backColor.red, backColor.grn, backColor.blu));
 					SetBkMode(obj->bmp->hdc, OPAQUE);
 
 				} else {
@@ -5485,7 +5482,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				SelectObject(obj->bmp->hdc, obj->p.font->hfont);
 
 				// Determine our orientation
-				switch (get_s32(obj->p.alignment))
+				switch (alignment(obj))
 				{
 					default:
 					case _ALIGNMENT_LEFT:
@@ -5506,7 +5503,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				DrawText(obj->bmp->hdc, value->value.data, value->value.length, &lrc2, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
 
 				// Frame rectangle
-				if (obj->p.borderStyle != _BORDER_STYLE_NONE)
+				if (borderStyle(obj) != _BORDER_STYLE_NONE)
 					iBmp_frameRect(obj->bmp, &lrc, borderColor, borderColor, borderColor, borderColor, false, NULL, false);
 
 
@@ -5568,16 +5565,16 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				borderColor	= borderColor(obj);
 
 				// Colorize
-				     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,				false, 0.0f);
-				else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,				false, 0.0f);
-				else									iBmp_colorize(obj->bmp, &lrc, get_bgra(obj->p.backColor),	false, 0.0f);
+				     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
+				else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
+				else									iBmp_colorize(obj->bmp, &lrc, backColor(obj),	false, 0.0f);
 
 				// Inset slightly for the text part
 				CopyRect(&lrc2, &lrc);
 				InflateRect(&lrc2, -4, -4);
 
 				// If we're opaque, draw the text inset by a margin, otherwise just overlay
-				if (get_s32(obj->p.backStyle) == _BACK_STYLE_OPAQUE)
+				if (backStyle(obj) == _BACK_STYLE_OPAQUE)
 				{
 					// Opaque
 					SetBkColor(obj->bmp->hdc, RGB(backColor.red, backColor.grn, backColor.blu));
@@ -5593,7 +5590,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				SelectObject(obj->bmp->hdc, obj->p.font->hfont);
 
 				// Determine our orientation
-				switch (get_s32(obj->p.alignment))
+				switch (alignment(obj))
 				{
 					default:
 					case _ALIGNMENT_LEFT:
@@ -5614,7 +5611,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				DrawText(obj->bmp->hdc, caption->value.data, caption->value.length, &lrc2, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
 
 				// Frame rectangle
-				if (obj->p.borderStyle != _BORDER_STYLE_NONE)
+				if (borderStyle(obj) != _BORDER_STYLE_NONE)
 					iBmp_frameRect(obj->bmp, &lrc, borderColor, borderColor, borderColor, borderColor, false, NULL, false);
 
 
@@ -5860,6 +5857,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 		f32			lfTheta, lfRadius;
 		f64			lfValue, lfMin, lfMax;
 		SBitmap*	bmpRadioScale;
+		SBgra		foreColor;
 		RECT		lrc, lrc2;
 		s8*			lcSprintfFormat;
 		s8			buffer[64];
@@ -5878,9 +5876,9 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				//////////
 				// Get the values
 				//////
-					lfValue	= get_f64(obj->p.value);
-					lfMin	= get_f64(obj->p.minValue);
-					lfMax	= get_f64(obj->p.maxValue);
+					lfValue	= iObjProp_get_f64_direct(obj, _INDEX_VALUE);
+					lfMin	= iObjProp_get_f64_direct(obj, _INDEX_VALUE_MINIMUM);
+					lfMax	= iObjProp_get_f64_direct(obj, _INDEX_VALUE_MAXIMUM);
 
 					// Make sure max is greater than or equal to min, and value is in range
 					lfMax	= max(lfMin, lfMax);
@@ -5888,6 +5886,9 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 
 					// Determine the percentage
 					lfTheta	= (f32)((lfValue - lfMin) / (lfMax - lfMin)) * (f32)(M_PI * 2.0);
+
+					// Color
+					foreColor = foreColor(obj);
 
 
 				//////////
@@ -5939,16 +5940,16 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 									obj->bmp->bi.biWidth * 6 / 7,
 									(obj->bmp->bi.biHeight / 2) + (obj->bmp->bi.biHeight / 7));
 					
-					SetTextColor(obj->bmp->hdc, RGB(get_bgra(obj->p.foreColor).red, get_bgra(obj->p.foreColor).grn, get_bgra(obj->p.foreColor).blu));
+					SetTextColor(obj->bmp->hdc, RGB(foreColor.red, foreColor.grn, foreColor.blu));
 					SetBkMode(obj->bmp->hdc, TRANSPARENT);
 					SelectObject(obj->bmp->hdc, ((obj->p.font) ? obj->p.font : gsFontDefault));
 					DrawText(obj->bmp->hdc, buffer + lnSkip, strlen(buffer + lnSkip), &lrc2, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 
 
 				// Colorize
-				     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,				false, 0.0f);
-				else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,				false, 0.0f);
-				else									iBmp_colorize(obj->bmp, &lrc, get_bgra(obj->p.backColor),	false, 0.0f);
+				     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
+				else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
+				else									iBmp_colorize(obj->bmp, &lrc, backColor(obj),	false, 0.0f);
 
 
 				//////////

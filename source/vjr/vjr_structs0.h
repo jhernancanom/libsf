@@ -44,7 +44,7 @@ struct SEdit;
 struct SComp;
 struct SCompiler;
 struct SFunction;
-struct SPropertyList;
+struct SPropertyMap;
 
 
 
@@ -323,27 +323,6 @@ struct SBaseclassList
 
 	union {
 		u32				_objProps;
-		SPropertyList*	objProps;										// Root property list for this object
-	};
-};
-
-struct SPropertyList
-{
-	// Property name
-	cs8*	textName;
-	u32		textNameLength;
-
-	// Valid base class flags
-	u32		valid;
-
-	// Accessors
-	union {
-		u32			_set;
-		bool		(*set)		(SObject* obj, SVariable* var);
-	};
-
-	union {
-		u32			_get;
-		SVariable*	(*get)		(SObject* obj);
+		SPropertyMap*	objProps;										// Root property map for this object
 	};
 };

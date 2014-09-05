@@ -104,7 +104,8 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		systemStartedMs			= iTime_getLocalMs();
 
 		// Default value for spinners
-		gsProps_masterDefaultInitValues[_INDEX_INCREMENT]._f64 = 1.0;
+		gsProps_masterDefaultInitValues[_INDEX_INCREMENT]._f64	= 1.0;		// Default to 1.0 for incrementing
+		gsProps_masterDefaultInitValues[_INDEX_ROUND_TO]._f64	= 0.01;		// Default to 2 decimal places
 
 		// Initialize primitive variables
 		varConstant_space		= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgc_spaceText, 1);
@@ -119,8 +120,8 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		memset(var2000Spaces->value.data, 32, 2000);
 
 		// Constant logical
-		varTrue->value.data_s8	= (s8)_LOGICAL_TRUE;
-		varFalse->value.data_s8	= (s8)_LOGICAL_TRUE;
+		*varTrue->value.data_s8		= (s8)_LOGICAL_TRUE;
+		*varFalse->value.data_s8	= (s8)_LOGICAL_TRUE;
 
 
 		// Keyboard shortcuts
@@ -415,9 +416,6 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 //////
 	void iVjr_createOverlayListing(SBitmap* bmp, RECT* trc)
 	{
-		SVariable* caption;
-
-
 		//////////
 		// Create the object
 		//////
@@ -427,16 +425,14 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 				return;
 
 			// Set the icon and border
-			iObj_set_icon(gobj_splashListing, bmpOutputIcon);
-			iVariable_set_s32(gobj_splashListing->p.borderStyle, _BORDER_STYLE_FIXED);
+			iObjProp_set_bitmap(gobj_splashListing, _INDEX_ICON, bmpOutputIcon);
+			iObjProp_set_s32_direct(gobj_splashListing, _INDEX_BORDERSTYLE, _BORDER_STYLE_FIXED);
 
 
-			//////////
-			// Give it a caption
-			//////
-				caption = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgcSystemLog, sizeof(cgcSystemLog) - 1);
-				iObj_set_caption(gobj_splashListing, caption);
-				iVariable_delete(caption, true);
+		//////////
+		// Give it a caption
+		//////
+			setCaption(gobj_splashListing, cgcSystemLog);
 
 
 		//////////
@@ -454,10 +450,10 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			iObj_setSize(gobj_splashListingEditbox, 0, 0, gobj_splashListing->rcClient.right - gobj_splashListing->rcClient.left, gobj_splashListing->rcClient.bottom - gobj_splashListing->rcClient.top);
 			gobj_splashListingEditbox->bmp = iBmp_allocate();
 			iBmp_createBySize(gobj_splashListingEditbox->bmp, gobj_splashListing->rcClient.right - gobj_splashListing->rcClient.left, gobj_splashListing->rcClient.bottom - gobj_splashListing->rcClient.top, bmp->bi.biBitCount);
-			gobj_splashListingEditbox->pa.font					= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
+			gobj_splashListingEditbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
 			gobj_splashListingEditbox->p.em->font				= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
 			gobj_splashListingEditbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
-			iVariable_set_logical(gobj_splashListingEditbox->p.visible, true);
+			iObjProp_set_logical_direct(gobj_splashListingEditbox, _INDEX_VISIBLE, _LOGICAL_TRUE);
 			systemLog											= gobj_splashListingEditbox->p.em;
 			systemLog->showEndLine								= true;
 			systemLog->showCursorLine							= true;

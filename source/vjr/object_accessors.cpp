@@ -689,26 +689,27 @@
 //////
 	SVariable* iObjProp_get_variable_byIndex(SObject* obj, u32 tnIndex)
 	{
-		s32				lnI;
-		SPropertyMap*	props;
+		s32					lnI, lnJ;
+		SBaseclassList*		classes;
+		SPropertyMap*		props;
 
 
 		// Make sure the environment is sane
 		if (obj)
 		{
 			// Locate the base class
-			for (lnI = 0; gsKnownBaseclasses[lnI].objType != 0; lnI++)
+			for (lnI = 0; lnI < gnKnownBaseclasses_size; lnI++)
 			{
 				// Is this it?
 				if (gsKnownBaseclasses[lnI].objType == obj->objType)
 				{
 					// Locate the property within the object's properties
-					props = gsKnownBaseclasses[lnI];
-					for (lnI = 0; props[lnI].index != 0; lnI++)
+					props = gsKnownBaseclasses[lnI].objProps;
+					for (lnJ = 0; lnJ < props[lnJ].index != 0; lnJ++)
 					{
 						// Is this it?
-						if (props[lnI].index == tnIndex)
-							return(obj->props[lnI]);	// Return the variable associated with this position
+						if (props[lnJ].index == tnIndex)
+							return(obj->props[lnJ]);	// Return the variable associated with this position
 					}
 					// If we get here, not found
 					break;
@@ -769,12 +770,125 @@ _asm int 3;
 
 //////////
 //
-// Called to get the f64 from the indicated object
+// Called to get the f32 variable from the indicated object
+//
+//////
+	SVariable* iObjProp_get_f32(SObject* obj, u32 tnIndex)
+	{
+		bool		error;
+		s32			lnResult;
+		u32			errorNum;
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+			return(iObjProp_get_variable_byIndex(obj, tnIndex));	// Grab the variable associated with this object's property
+		
+		// If we get here, failure
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Called to get the f32 from the indicaed object
+//
+//////
+	f64 iObjProp_get_f32_direct(SObject* obj, u32 tnIndex)
+	{
+		bool		error;
+		f32			lfResult;
+		u32			errorNum;
+		SVariable*	var;
+
+
+		// Make sure the environment is sane
+		lfResult = _f32_min;
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			if (var)
+			{
+				// Try to get the value
+				return(iiVariable_getAs_f32(var, false, &error, &errorNum));
+
+				// If we got it...
+				if (!error)
+					return(lfResult);	// ...return the value
+
+				// Reset the value to the minimum value
+				lfResult = _f32_min;
+			}
+		}
+		// If we get here, failure
+		return(lfResult);
+	}
+
+
+
+
+//////////
+//
+// Called to get the f64 variable from the indicated object
 //
 //////
 	SVariable* iObjProp_get_f64(SObject* obj, u32 tnIndex)
 	{
+		bool		error;
+		s32			lnResult;
+		u32			errorNum;
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+			return(iObjProp_get_variable_byIndex(obj, tnIndex));	// Grab the variable associated with this object's property
+		
+		// If we get here, failure
 		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Called to get the f64 from the indicaed object
+//
+//////
+	f64 iObjProp_get_f64_direct(SObject* obj, u32 tnIndex)
+	{
+		bool		error;
+		f64			lfResult;
+		u32			errorNum;
+		SVariable*	var;
+
+
+		// Make sure the environment is sane
+		lfResult = _f64_min;
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			if (var)
+			{
+				// Try to get the value
+				return(iiVariable_getAs_f64(var, false, &error, &errorNum));
+
+				// If we got it...
+				if (!error)
+					return(lfResult);	// ...return the value
+
+				// Reset the value to the minimum value
+				lfResult = _f64_min;
+			}
+		}
+		// If we get here, failure
+		return(lfResult);
 	}
 
 

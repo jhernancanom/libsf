@@ -5073,7 +5073,7 @@ _asm int 3;
 
 			} else {
 				// Delete the old bitmap (if any)
-				iBmp_delete(var->bmp, true, true);
+				iBmp_delete(&var->bmp, true, true);
 			}
 
 			// Copy the bitmap to the destination

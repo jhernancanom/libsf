@@ -137,7 +137,8 @@
 
 	bool iDefaultCallback_onMouseMove(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick)
 	{
-		f64 lfPercent, lfX, lfY, lfWidth, lfHeight;
+		f64			lfPercent, lfX, lfY, lfWidth, lfHeight;
+		SVariable*	valueMin;
 
 
 		// If we're clicking on a radio button, adjust the dial
@@ -154,7 +155,8 @@
 			if (lfPercent < 0.0)
 				lfPercent += 1.0;
 
-			*obj->p.value->value.data_f64	= get_f64(obj->p.minValue) + (lfPercent * (get_f64(obj->p.maxValue) - get_f64(obj->p.minValue)));
+			valueMin = iObjProp_get_variable_byIndex(obj, _INDEX_VALUE_MINIMUM);
+			iObjProp_set_f64_direct(obj, _INDEX_VALUE, get_f64(valueMin) + (lfPercent * (iObjProp_get_f64_direct(obj, _INDEX_VALUE_MAXIMUM) - get_f64(valueMin))));
 			iObj_setDirtyRender_ascent(obj, true);
 			iWindow_render(win, false);
 
@@ -181,7 +183,8 @@
 	bool iDefaultCallback_onMouseDown(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick)
 	{
 		bool		llMouseDown;
-		f64			lfPercent, lfX, lfY, lfWidth, lfHeight;
+		f64			lfPercent, lfX, lfY, lfWidth, lfHeight, lfValue;
+		SVariable*	valueMin;
 		SObject*	objRoot;
 
 
@@ -203,7 +206,7 @@
 		if (obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX)
 		{
 			// They're clicking on a checkbox, toggle the value and re-render
-			*obj->parent->p.value->value.data_s32 = ((*obj->parent->p.value->value.data_s32 != 0) ? 0 : 1);
+			iObjProp_set_s32_direct(obj, _INDEX_VALUE, ((iObjProp_get_s32_direct(obj, _INDEX_VALUE) != 0) ? 0 : 1));
 
 			// Calling the size with its current size forces the refresh
 			iObj_setSize(obj->parent,
@@ -230,31 +233,34 @@
 			lfPercent						= atan2(lfY, lfX) / (M_PI * 2.0);
 			if (lfPercent < 0.0)
 				lfPercent += 1.0;
-			*obj->p.value->value.data_f64	= *obj->p.minValue->value.data_f64 + (lfPercent * (*obj->p.maxValue->value.data_f64 - *obj->p.minValue->value.data_f64));
+
+			valueMin	= iObjProp_get_variable_byIndex(obj, _INDEX_VALUE_MINIMUM);
+			lfValue		= get_f64(valueMin) + (lfPercent * (iObjProp_get_f64_direct(obj, _INDEX_VALUE_MAXIMUM) - get_f64(valueMin)));
+			iObjProp_set_f64_direct(obj, _INDEX_VALUE, lfValue);
 
 		} else {
 			// Assume we consumed the mouse down event, and that the parent doesn't need to receive it
 			switch (obj->objType)
 			{
 				case _OBJ_TYPE_IMAGE:
-					if (iDatum_compare(&obj->p.name->value, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0) {
+					if (isName(obj, cgcName_iconClose) == 0) {
 						// Close
 						iVjr_shutdown();	// They clicked quit
 						return(false);		// When we get here, the object no longer exists
 
-					} else if (iDatum_compare(&obj->p.name->value, cgcName_iconMove, sizeof(cgcName_iconMove) - 1) == 0) {
+					} else if (isName(obj, cgcName_iconMove) == 0) {
 						// Move
 						llMouseDown					= false;
 						obj->ev.mouse.isMouseOver	= false;
 						iWindow_move(win);
 
-					} else if (iDatum_compare(&obj->p.name->value, cgcName_iconMinimize, sizeof(cgcName_iconMinimize) - 1) == 0) {
+					} else if (isName(obj, cgcName_iconMinimize) == 0) {
 						// Minimize
 						llMouseDown					= false;
 						obj->ev.mouse.isMouseOver	= false;
 						iWindow_minimize(win);
 
-					} else if (iDatum_compare(&obj->p.name->value, cgcName_iconMaximize, sizeof(cgcName_iconMaximize) - 1) == 0) {
+					} else if (isName(obj, cgcName_iconMaximize) == 0) {
 						// Maximize
 						llMouseDown					= false;
 						obj->ev.mouse.isMouseOver	= false;
@@ -343,8 +349,8 @@
 				if (tnVKey == VK_SPACE || tnVKey == VK_RETURN)
 				{
 					// Toggle the value and redraw
-					*objCheckbox->p.value->value.data_s32 = ((*objCheckbox->p.value->value.data_s32 == 0) ? 1 : 0);
 					llRender = true;
+					iObjProp_set_s32_direct(objCheckbox, _INDEX_VALUE, ((iObjProp_get_s32_direct(objCheckbox, _INDEX_VALUE) == 0) ? 1 : 0));
 					iObj_setDirtyRender_ascent(objCheckbox, false);
 					if (objRender2 != objCheckbox)
 						iObj_setDirtyRender_ascent(objRender2, false);
@@ -361,16 +367,16 @@
 					if ((u8)tcAscii == 't' || (u8)tcAscii == 'T' || (u8)tcAscii == 'y' || (u8)tcAscii == 'Y' || (u8)tcAscii == '1')
 					{
 						// Set it to on
-						*obj->parent->p.value->value.data_s32 = 1;
 						llRender = true;
+						iObjProp_set_s32_direct(obj, _INDEX_VALUE, 1);
 						iObj_setDirtyRender_ascent(objCheckbox, false);
 						if (objRender2 != objCheckbox)
 							iObj_setDirtyRender_ascent(objRender2, false);
 
 					} else if ((u8)tcAscii == 'f' || (u8)tcAscii == 'F' || (u8)tcAscii == 'n' || (u8)tcAscii == 'N' || (u8)tcAscii == '0') {
 						// Set it to off
-						*obj->parent->p.value->value.data_s32 = 0;
 						llRender = true;
+						iObjProp_set_s32_direct(obj, _INDEX_VALUE, 0);
 						iObj_setDirtyRender_ascent(objCheckbox, false);
 						if (objRender2 != objCheckbox)
 							iObj_setDirtyRender_ascent(objRender2, false);

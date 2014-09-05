@@ -949,8 +949,8 @@ debug_break;
 		if (em && obj)
 		{
 			// What is the object?
-			backColor	= get_bgra(obj->p.backColor);
-			foreColor	= get_bgra(obj->p.foreColor);
+			backColor	= iObjProp_get_sbgra_direct(obj, _INDEX_BACKCOLOR);
+			foreColor	= iObjProp_get_sbgra_direct(obj, _INDEX_FORECOLOR);
 
 		} else {
 			// It's insane, so we set our colors to default
@@ -982,7 +982,7 @@ debug_break;
 			// Get the client rect
 			SetRect(rc, 0, 0, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top);
 			if (em->font)		font = em->font;
-			else				font = obj->pa.font;
+			else				font = obj->p.font;
 
 		} else {
 			// It's insane, so we set our rc to something that will prevent processing
@@ -1386,7 +1386,7 @@ debug_break;
 				{
 					case VK_ADD:
 						if (em->font)			em->font = iFont_bigger(em->font,		true);
-						else					em->font = iFont_bigger(obj->pa.font,	false);
+						else					em->font = iFont_bigger(obj->p.font,	false);
 						iSEM_verifyCursorIsVisible(em, obj);
 						iObj_setDirtyRender_ascent(obj, true);
 						llProcessed = true;
@@ -1394,7 +1394,7 @@ debug_break;
 
 					case VK_SUBTRACT:
 						if (em->font)			em->font = iFont_smaller(em->font,		true);
-						else					em->font = iFont_smaller(obj->pa.font,	false);
+						else					em->font = iFont_smaller(obj->p.font,	false);
 						iSEM_verifyCursorIsVisible(em, obj);
 						iObj_setDirtyRender_ascent(obj, true);
 						llProcessed = true;

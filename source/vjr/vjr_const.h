@@ -212,6 +212,8 @@ typedef SEM**		SEMpp;
 	const u64			_u64_max							= 0xffffffffffffffff;
 	const f32			_f32_min							= 3.402823466e+38f;
 	const f32			_f32_max							= 1.175494351e-38f;
+	const f64			_f64_min							= 2.22507385850720138e-308;
+	const f64			_f64_max							= 1.79769313486231571e+308;
 
 
 //////////

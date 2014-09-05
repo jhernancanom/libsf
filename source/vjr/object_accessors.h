@@ -734,6 +734,7 @@
 	SBitmap*				iObjProp_get_bitmap						(SObject* obj, u32 tnIndex);
 	SVariable*				iObjProp_get_character					(SObject* obj, u32 tnIndex);
 	SVariable*				iObjProp_get_f64						(SObject* obj, u32 tnIndex);
+	f64						iObjProp_get_f64_direct					(SObject* obj, u32 tnIndex);
 	SVariable*				iObjProp_get_logical					(SObject* obj, u32 tnIndex);
 	// Note:  The s32 value returned will be a _LOGICAL_* or _LOGICALX_* value.  To test for .T., use (x != _LOGICAL_FALSE).
 	s32						iObjProp_get_logical_direct				(SObject* obj, u32 tnIndex);
@@ -1054,7 +1055,7 @@
 		{	_INDEX_RIGHTTOLEFT,				cgc_rightToLeft,				sizeof(cgc_rightToLeft) - 1,				_VAR_TYPE_LOGICAL,		     (u32)&iObjProp_set_logical, 		(u32)&iObjProp_get_logical,			_LOGICAL_FALSE 					,NULL	},	// .t.=right to left, .f.=left to right (default), is text displayed in right-to-left reading order?
 		{	_INDEX_ROTATEFLIP,				cgc_rotateFlip,					sizeof(cgc_rotateFlip) - 1,					_VAR_TYPE_S32,			     (u32)&iObjProp_set_s32, 			(u32)&iObjProp_get_s32,				_ROTATE_NONE 					,NULL	},	// 0=none, 1=90, 2=180, 3=270, 4=flip, 5=90 flip, 6=180 flip, 7=270 flip
 		{	_INDEX_ROTATION,				cgc_rotation,					sizeof(cgc_rotation) - 1,					_VAR_TYPE_S32,			     (u32)&iObjProp_set_s32, 			(u32)&iObjProp_get_s32,				0  								,NULL	},	// Rotation in degrees for a control
-		{	_INDEX_ROUND_TO,				cgc_roundTo,					sizeof(cgc_roundTo) -1,						_VAR_TYPE_F64,			     (u32)&iObjProp_set_f64,			(u32)&iObjProp_get_f64,				0.01							,NULL	},	// Round to 2 decimal places by default
+		{	_INDEX_ROUND_TO,				cgc_roundTo,					sizeof(cgc_roundTo) -1,						_VAR_TYPE_F64,			     (u32)&iObjProp_set_f64,			(u32)&iObjProp_get_f64,				0								,NULL	},	// Round to 2 decimal places by default
 		{	_INDEX_ROWCOLCHANGE,			cgc_rowColChange,				sizeof(cgc_rowColChange) - 1,				_VAR_TYPE_S32,			     (u32)&iObjProp_set_s32, 			(u32)&iObjProp_get_s32,				_GRID_ROW_COL_CHANGE_NONE 		,NULL	},	// 0=none, 1=row, 2=col, can be combined for 3=both
 		{	_INDEX_ROWHEIGHT,				cgc_rowHeight,					sizeof(cgc_rowHeight) - 1,					_VAR_TYPE_S32,			     (u32)&iObjProp_set_s32, 			(u32)&iObjProp_get_s32,				0  								,NULL	},	// Height of a row in a grid
 		{	_INDEX_ROWSOURCE,				cgc_rowSource,					sizeof(cgc_rowSource) - 1,					_VAR_TYPE_CHARACTER,	     (u32)&iObjProp_set_character, 		(u32)&iObjProp_get_character,		(u32)&cgcNullString[0] 			,NULL	},	// Related to rowSourceType
@@ -1129,7 +1130,7 @@
 
 	struct SPropertyMap
 	{
-		u32			index;
+		s32			index;
 
 		union {
 			u32			_setter;
@@ -3066,4 +3067,4 @@
 		// Note:  Do not delete this line, it is used to terminate the search list
 		{	0,						NULL,					0,									0	}
 	};
-
+	const u32 gnKnownBaseclasses_size = sizeof(gsKnownBaseclasses) / sizeof(SBaseclassList) - 1;
