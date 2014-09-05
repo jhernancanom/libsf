@@ -749,7 +749,7 @@
 //////
 	SVariable* iObjProp_get_variable_byIndex(SObject* obj, u32 tnIndex)
 	{
-		s32					lnI, lnJ;
+		s32					lnI;
 		SBaseclassList*		lbcl;
 		SPropertyMap*		props;
 
@@ -764,11 +764,11 @@
 			{
 				// Locate the property within the object's properties
 				props = lbcl->objProps;
-				for (lnJ = 0; lnJ < props[lnJ].index != 0; lnJ++)
+				for (lnI = 0; lnI < props[lnI].index != 0; lnI++)
 				{
 					// Is this it?
-					if (props[lnJ].index == tnIndex)
-						return(obj->props[lnJ]);	// Return the variable associated with this position
+					if (props[lnI].index == tnIndex)
+						return(obj->props[lnI]);	// Return the variable associated with this position
 				}
 				// If we get here, not found
 			}
@@ -898,7 +898,7 @@
 		{
 			// Grab the variable associated with this object's property
 			var = iObjProp_get_variable_byIndex(obj, tnIndex);
-			if (var && (var->varType == _VAR_TYPE_F32 || var->varType == _VAR_TYPE_FLOAT))
+			if (var && var->varType == _VAR_TYPE_F32)
 				return(var);
 		}
 		// If we get here, failure
@@ -927,7 +927,7 @@
 		{
 			// Grab the variable associated with this object's property
 			var = iObjProp_get_variable_byIndex(obj, tnIndex);
-			if (var && (var->varType == _VAR_TYPE_F32 || var->varType == _VAR_TYPE_FLOAT))
+			if (var && var->varType == _VAR_TYPE_F32)
 			{
 				// Try to get the value
 				return(iiVariable_getAs_f32(var, false, &error, &errorNum));
@@ -962,7 +962,7 @@
 		{
 			// Grab the variable associated with this object's property
 			var = iObjProp_get_variable_byIndex(obj, tnIndex);
-			if (var && (var->varType == _VAR_TYPE_F64 || var->varType == _VAR_TYPE_DOUBLE))
+			if (var && var->varType == _VAR_TYPE_F64)
 				return(var);
 		}
 		// If we get here, failure
@@ -1162,14 +1162,13 @@
 // Called to obtain the s32 value as an SBgra color
 //
 //////
-	SBgra iObjProp_get_sbgra_direct (SObject* obj, u32 tnIndex)
+	SBgra iObjProp_get_sbgra_direct(SObject* obj, u32 tnIndex)
 	{
 		union {
 			s32		_color;
 			SBgra	color;
 		};
 		bool		error;
-		s32			lnResult;
 		u32			errorNum;
 		SVariable* var;
 

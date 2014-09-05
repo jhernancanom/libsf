@@ -59,7 +59,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 	//////////
 	// Read events
 	//////
-		iVjr_appendSystemLog("Engage main  loop");
+		iVjr_appendSystemLog("Engage main loop");
 		while (GetMessage(&msg, NULL, 0, 0))
 		{
 			if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
@@ -108,12 +108,13 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		gsProps_master[_INDEX_ROUND_TO]._f64	= 0.01;		// Default to 2 decimal places
 
 		// Initialize primitive variables
+		iVariable_createDefaultValues();
+		iVariable_setDefaultVariableValue(_VAR_TYPE_LOGICAL);
 		varConstant_space		= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgc_spaceText, 1);
 		varEmptyString			= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, (s8*)NULL, 0);
 		var2000Spaces			= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 		varTrue					= iVariable_createAndPopulate(_VAR_TYPE_LOGICAL, (s8*)NULL, 0);
 		varFalse				= iVariable_createAndPopulate(_VAR_TYPE_LOGICAL, (s8*)NULL, 0);
-		iVariable_setDefaultVariableValue(_LOGICAL_FALSE);
 
 		// 2000 blank spaces
 		iDatum_allocateSpace(&var2000Spaces->value, 2000);

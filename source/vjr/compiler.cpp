@@ -4301,7 +4301,7 @@ debug_break;
 	SVariable* iiVariable_terminateIndirect(SVariable* var)
 	{
 		// Is there an indirect reference?
-		if (var->indirect)
+		if (var && var->indirect)
 			return(iiVariable_terminateIndirect(var->indirect));
 
 		// We're done
@@ -4347,11 +4347,13 @@ debug_break;
 					// Initially allocate for certain fixed variable types
 					switch (tnVarType)
 					{
-						case _VAR_TYPE_INTEGER:
+						case _VAR_TYPE_NULL:
+							// NULL variables do not get any allocation, but are something like temporary placeholders to be later changed into some valid form
+							break;
+
 						case _VAR_TYPE_S32:
 						case _VAR_TYPE_U32:
 						case _VAR_TYPE_F32:
-						case _VAR_TYPE_FLOAT:
 							// Allocate 4 bytes
 							varNew->isValueAllocated = true;
 							iDatum_allocateSpace(&varNew->value, 4);
@@ -4366,7 +4368,6 @@ debug_break;
 						case _VAR_TYPE_S64:
 						case _VAR_TYPE_U64:
 						case _VAR_TYPE_F64:
-						case _VAR_TYPE_DOUBLE:
 						case _VAR_TYPE_DATE:
 						case _VAR_TYPE_DATETIME:
 						case _VAR_TYPE_CURRENCY:
@@ -4398,7 +4399,8 @@ debug_break;
 
 						default:
 							// Unspecified.  Default to the system default.
-							varNew = iVariable_copy(varInitializeDefault_value, false);
+							if (varInitializeDefault_value)			varNew = iVariable_copy(varInitializeDefault_value, false);
+							else									varNew = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
 					}
 				}
 			}
@@ -4539,7 +4541,8 @@ debug_break;
 				_set_initializeDefault = tnVarType;
 
 				// Set the new value
-				varInitializeDefault_value = iVariable_copy(varDefaultValue, false);
+				if (varDefaultValue)		varInitializeDefault_value = iVariable_copy(varDefaultValue, false);
+				else						varInitializeDefault_value = iVariable_create(tnVarType, NULL);
 			}
 
 			// Indicate success
@@ -4561,7 +4564,6 @@ debug_break;
 	void iVariable_createDefaultValues(void)
 	{
 		varDefault_null			= iVariable_create(_VAR_TYPE_NULL,		NULL);
-		varDefault_integer		= iVariable_create(_VAR_TYPE_INTEGER,	NULL);
 		varDefault_numeric		= iVariable_create(_VAR_TYPE_NUMERIC,	NULL);
 		varDefault_s32			= iVariable_create(_VAR_TYPE_S32,		NULL);
 		varDefault_u32			= iVariable_create(_VAR_TYPE_U32,		NULL);
@@ -4606,10 +4608,6 @@ debug_break;
 				*varDefaultValue = varDefault_null;
 				break;
 
-			case _VAR_TYPE_INTEGER:
-				*varDefaultValue = varDefault_integer;
-				break;
-
 			case _VAR_TYPE_NUMERIC:
 				*varDefaultValue = varDefault_numeric;
 				break;
@@ -4623,7 +4621,6 @@ debug_break;
 				break;
 
 			case _VAR_TYPE_F32:
-			case _VAR_TYPE_FLOAT:
 				*varDefaultValue = varDefault_f32;
 				break;
 
@@ -4636,7 +4633,6 @@ debug_break;
 				break;
 
 			case _VAR_TYPE_F64:
-			case _VAR_TYPE_DOUBLE:
 				*varDefaultValue = varDefault_f64;
 				break;
 
@@ -5279,7 +5275,6 @@ debug_break;
 					break;
 
 				case _VAR_TYPE_S32:
-				case _VAR_TYPE_INTEGER:
 					// Convert to integer form, then store text
 					sprintf(buffer, "%d\0", *(s32*)var->value.data);
 					varDisp->isValueAllocated = true;
@@ -5335,7 +5330,6 @@ debug_break;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
-				case _VAR_TYPE_FLOAT:
 				case _VAR_TYPE_F32:
 					// Convert to floating point form, then store text after leading zeros
 					sprintf(formatter, "%%020.%df\0", _set_decimals);
@@ -5350,7 +5344,6 @@ debug_break;
 					iDatum_duplicate(&varDisp->value, buffer + lnI, -1);
 					break;
 
-				case _VAR_TYPE_DOUBLE:
 				case _VAR_TYPE_F64:
 					// Convert to floating point form, then store text after leading zeros
 					sprintf(formatter, "%%020.%dlf\0", _set_decimals);
@@ -5705,7 +5698,6 @@ debug_break;
 
 
 			case _VAR_TYPE_S32:
-			case _VAR_TYPE_INTEGER:
 				//////////
 				// We can directly return the value
 				//////
@@ -5791,7 +5783,6 @@ debug_break;
 					return((s32)*(u8*)var->value.data);
 
 
-			case _VAR_TYPE_FLOAT:
 			case _VAR_TYPE_F32:
 				//////////
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
@@ -5809,7 +5800,6 @@ debug_break;
 					return(0);
 
 
-			case _VAR_TYPE_DOUBLE:
 			case _VAR_TYPE_F64:
 				//////////
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
@@ -5975,7 +5965,6 @@ debug_break;
 
 
 			case _VAR_TYPE_S32:
-			case _VAR_TYPE_INTEGER:
 				//////////
 				// We can directly return the value
 				//////
@@ -6041,7 +6030,6 @@ debug_break;
 					return((s64)*(u8*)var->value.data);
 
 
-			case _VAR_TYPE_FLOAT:
 			case _VAR_TYPE_F32:
 				//////////
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
@@ -6059,7 +6047,6 @@ debug_break;
 					return(0);
 
 
-			case _VAR_TYPE_DOUBLE:
 			case _VAR_TYPE_F64:
 				//////////
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
@@ -6194,7 +6181,6 @@ debug_break;
 
 
 			case _VAR_TYPE_S32:
-			case _VAR_TYPE_INTEGER:
 				//////////
 				// We can directly return the value
 				//////
@@ -6250,7 +6236,6 @@ debug_break;
 					return((f32)*(u8*)var->value.data);
 
 
-			case _VAR_TYPE_FLOAT:
 			case _VAR_TYPE_F32:
 				//////////
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
@@ -6258,7 +6243,6 @@ debug_break;
 					return(*(f32*)var->value.data);
 
 
-			case _VAR_TYPE_DOUBLE:
 			case _VAR_TYPE_F64:
 				//////////
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
@@ -6393,7 +6377,6 @@ debug_break;
 
 
 			case _VAR_TYPE_S32:
-			case _VAR_TYPE_INTEGER:
 				//////////
 				// We can directly return the value
 				//////
@@ -6449,7 +6432,6 @@ debug_break;
 					return((f64)*(u8*)var->value.data);
 
 
-			case _VAR_TYPE_FLOAT:
 			case _VAR_TYPE_F32:
 				//////////
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
@@ -6457,7 +6439,6 @@ debug_break;
 					return((f64)*(f32*)var->value.data);
 
 
-			case _VAR_TYPE_DOUBLE:
 			case _VAR_TYPE_F64:
 				//////////
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer

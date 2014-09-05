@@ -83,7 +83,6 @@
 
 	// Default variable values used for references
 	SVariable*			varDefault_null						= NULL;									// NULL
-	SVariable*			varDefault_integer					= NULL;									// 0
 	SVariable*			varDefault_numeric					= NULL;									// "   0"
 	SVariable*			varDefault_s32						= NULL;									// 0
 	SVariable*			varDefault_u32						= NULL;									// 0

@@ -548,7 +548,7 @@ debug_break;
 	void iSEM_deleteChain(SEM** root, bool tlDeleteSelf)
 	{
 		logfunc(__FUNCTION__);
-		// Delete with no callback
+		// Delete, but with no callback
 		iSEM_deleteChainWithCallback(root, tlDeleteSelf, NULL);
 	}
 

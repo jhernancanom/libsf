@@ -552,7 +552,7 @@
 		//////////
         // Create our return result
 		//////
-	        result = iVariable_create(_VAR_TYPE_INTEGER, NULL);
+	        result = iVariable_create(_VAR_TYPE_S32, NULL);
 			if (!result)
 			{
 				iError_report("Internal error.");
@@ -563,7 +563,7 @@
 		//////////
         // Populate the result as an ASCII character
 		//////
-	        *(s32*)result->value.data = value;
+	        *result->value.data_s32 = (s32)value;
 
 
 		//////////

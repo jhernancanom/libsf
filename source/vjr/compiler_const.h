@@ -101,10 +101,10 @@
 	const u32		_VAR_TYPE_THISCODE								= 2;			// Code reference
 	const u32		_VAR_TYPE_CHARACTER								= 3;
 	const u32								_VAR_TYPE_NUMERIC_START	= 4;
-	const u32		_VAR_TYPE_INTEGER								= 4;			// Stored as an s32, a 4-byte signed integer
+//	const u32		_VAR_TYPE_INTEGER								= 4;			// Stored as an s32, a 4-byte signed integer
 	const u32		_VAR_TYPE_NUMERIC								= 5;			// Stored as a character (like "200.50"), but converted to numeric at each reference.
-	const u32		_VAR_TYPE_FLOAT									= 6;			// Stored as an f32
-	const u32		_VAR_TYPE_DOUBLE								= 7;			// Stored as an f64
+//	const u32		_VAR_TYPE_FLOAT									= 6;			// Stored as an f32
+//	const u32		_VAR_TYPE_DOUBLE								= 7;			// Stored as an f64
 	const u32		_VAR_TYPE_CURRENCY								= 8;			// Stored as an s64 with an implied 4-decimals (divide by 10,000 to get the actual floating point value)
 	const u32		_VAR_TYPE_S32									= 9;
 	const u32		_VAR_TYPE_S64									= 10;

@@ -1708,7 +1708,7 @@ if (!llPublishChildren)
 					{
 						// See which object this is
 						var = iObjProp_get_variable_byIndex(obj, _INDEX_NAME);
-						if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&var->value, cgcName_icon, sizeof(cgcName_icon) - 1) == 0)
+						if (objChild->objType == _OBJ_TYPE_IMAGE && isName(obj, cgcName_icon))
 						{
 							logfunc("form icon");
 							// Form icon
@@ -1721,7 +1721,7 @@ if (!llPublishChildren)
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&var->value, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
+						} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(obj, cgcCaption_icon)) {
 							// Caption
 							logfunc("form caption");
 							SetRect(&objChild->rc,
@@ -1733,7 +1733,7 @@ if (!llPublishChildren)
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&var->value, cgcName_iconMove, sizeof(cgcName_iconMove) - 1) == 0) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(obj, cgcName_iconMove)) {
 							// Move icon
 							logfunc("form move icon");
 							SetRect(&objChild->rc,
@@ -1745,7 +1745,7 @@ if (!llPublishChildren)
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&var->value, cgcName_iconMinimize, sizeof(cgcName_iconMinimize) - 1) == 0) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(obj, cgcName_iconMinimize)) {
 							// Minimize icon
 							logfunc("form minimize icon");
 							SetRect(&objChild->rc,
@@ -1757,7 +1757,7 @@ if (!llPublishChildren)
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&var->value, cgcName_iconMaximize, sizeof(cgcName_iconMaximize) - 1) == 0) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(obj, cgcName_iconMaximize)) {
 							// Maximize icon
 							logfunc("form maximize icon");
 							SetRect(&objChild->rc,
@@ -1769,7 +1769,7 @@ if (!llPublishChildren)
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&var->value, cgcName_iconClose, sizeof(cgcName_iconClose) - 1) == 0) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(obj, cgcName_iconClose)) {
 							// Close icon
 							logfunc("form close icon");
 							SetRect(&objChild->rc,
@@ -1799,7 +1799,7 @@ if (!llPublishChildren)
 					while (objChild)
 					{
 						// See which object this is
-						if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&var->value, cgcName_icon, sizeof(cgcName_icon) - 1) == 0)
+						if (objChild->objType == _OBJ_TYPE_IMAGE && isName(obj, cgcName_icon))
 						{
 							// Subform icon
 							logfunc("subform icon");
@@ -1812,7 +1812,7 @@ if (!llPublishChildren)
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&var->value, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0) {
+						} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(obj, cgcCaption_icon)) {
 							// Caption
 							logfunc("subform caption");
 							SetRect(&objChild->rc,
@@ -1856,7 +1856,7 @@ if (!llPublishChildren)
 					{
 						// See which object this is
 						var = iObjProp_get_variable_byIndex(obj, _INDEX_NAME);
-						if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&var->value, cgcName_checkboxImage, sizeof(cgcName_checkboxImage) - 1) == 0)
+						if (objChild->objType == _OBJ_TYPE_IMAGE && isName(obj, cgcName_checkboxImage))
 						{
 							// Adjust the size and position
 							logfunc("checkbox image");
@@ -1901,7 +1901,7 @@ if (!llPublishChildren)
 							// Mark it for re-render
 							objChild->isDirtyRender = true;
 
-						} else if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&var->value, cgcName_checkboxLabel, sizeof(cgcName_checkboxLabel) - 1) == 0) {
+						} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(obj, cgcName_checkboxLabel)) {
 							// Adjust the size
 							logfunc("checkbox label");
 							switch (alignment(obj))
@@ -3606,8 +3606,6 @@ if (!llPublishChildren)
 			//////////
 			// Reset the common settings
 			//////
-				if (empty->propsCount < tnPropsCount)
-
 				iiObj_resetToDefaultCommon(empty, true, true, propList, tnPropCount);
 		}
 
@@ -3618,7 +3616,6 @@ if (!llPublishChildren)
 	{
 		SObject*	objChild;
 		RECT		lrc;
-		SVariable*	var;
 
 
 		logfunc(__FUNCTION__);
