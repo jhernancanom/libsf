@@ -4958,6 +4958,62 @@ debug_break;
 
 //////////
 //
+// Called to set the value to a f32 value
+//
+//////
+	bool iVariable_set_f32(SVariable* var, f32 value)
+	{
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(var);
+
+		// Are we still valid?
+		if (var && var->varType == _VAR_TYPE_F32 && var->value.data_f32)
+		{
+			// Set it
+			*var->value.data_f32 = value;
+
+			// Success
+			return(true);
+
+		} else {
+			// Failure
+			return(false);
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to set the value to a f64 value
+//
+//////
+	bool iVariable_set_f64(SVariable* var, f64 value)
+	{
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(var);
+
+		// Are we still valid?
+		if (var && var->varType == _VAR_TYPE_F64 && var->value.data_f64)
+		{
+			// Set it
+			*var->value.data_f64 = value;
+
+			// Success
+			return(true);
+
+		} else {
+			// Failure
+			return(false);
+		}
+	}
+
+
+
+
+//////////
+//
 // Called to set the bool value
 //
 //////
@@ -5063,6 +5119,39 @@ _asm int 3;
 
 			// Set the new value
 			iDatum_duplicate(&var->value, tcData, tnDataLength);
+		}
+
+		// If we get here, failure
+		return(false);
+	}
+
+	bool iVariable_set_character(SVariable* var, SDatum* datum)
+	{
+		// Untested code ... breakpoint and examine
+_asm int 3;
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(var);
+
+		// Are we still valid?
+		if (var)
+		{
+			// Is the variable type already bitmap/
+			if (var->varType != _VAR_TYPE_CHARACTER)
+			{
+				// We need to refactor this variable into a character
+				// Delete the old contents
+				iVariable_delete(var, false);
+
+				// At this point, var->varType = _VAR_TYPE_NULL
+				var->varType = _VAR_TYPE_CHARACTER;
+
+			} else {
+				// Delete the old datum
+				iDatum_delete(&var->value, false);
+			}
+
+			// Set the new value
+			iDatum_duplicate(&var->value, datum);
 		}
 
 		// If we get here, failure

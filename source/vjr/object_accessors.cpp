@@ -359,7 +359,7 @@
 // Called to set the bitmap to the indicated bitmap
 //
 //////
-	bool iObj_set_bitmap(SObject* obj, u32 tnIndex, SBitmap* bmp)
+	bool iObjProp_set_bitmap(SObject* obj, u32 tnIndex, SBitmap* bmp)
 	{
 		SVariable* var;
 
@@ -368,7 +368,7 @@
 		if (obj)
 		{
 			// Grab the variable associated with this object's property
-			var = iObj_get_variable_byIndex(obj, tnIndex);
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
 			if (var)
 				return(iVariable_set_bitmap(var, bmp));
 		}
@@ -384,7 +384,7 @@
 // Called to set the character variable to the indicated input
 //
 //////
-	bool iObj_set_character(SObject* obj, u32 tnIndex, SVariable* var)
+	bool iObjProp_set_character(SObject* obj, u32 tnIndex, SVariable* var)
 	{
 		return(false);
 	}
@@ -397,12 +397,12 @@
 // Called to set the character variable to the indicated input
 //
 //////
-	bool iObj_set_character_direct (SObject* obj, u32 tnIndex, cs8* tcText, u32 tnTextLength)
+	bool iObjProp_set_character_direct (SObject* obj, u32 tnIndex, cs8* tcText, u32 tnTextLength)
 	{
-		return(iObj_set_character_direct(obj, tnIndex, (s8*)tcText, tnTextLength));
+		return(iObjProp_set_character_direct(obj, tnIndex, (s8*)tcText, tnTextLength));
 	}
 
-	bool iObj_set_character_direct(SObject* obj, u32 tnIndex, s8* tcText, u32 tnTextLength)
+	bool iObjProp_set_character_direct(SObject* obj, u32 tnIndex, s8* tcText, u32 tnTextLength)
 	{
 		SVariable* var;
 
@@ -411,9 +411,26 @@
 		if (obj)
 		{
 			// Grab the variable associated with this object's property
-			var = iObj_get_variable_byIndex(obj, tnIndex);
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
 			if (var)
 				return(iVariable_set_character(var, tcText, tnTextLength));
+		}
+		// If we get here, failure
+		return(false);
+	}
+
+	bool iObjProp_set_character_direct(SObject* obj, u32 tnIndex, SDatum* datum)
+	{
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			if (var)
+				return(iVariable_set_character(var, datum));
 		}
 		// If we get here, failure
 		return(false);
@@ -427,7 +444,7 @@
 // Called to set the f64 variable to the indicated input
 //
 //////
-	bool iObj_set_f64(SObject* obj, u32 tnIndex, SVariable* var)
+	bool iObjProp_set_f64(SObject* obj, u32 tnIndex, SVariable* var)
 	{
 		return(false);
 	}
@@ -440,7 +457,7 @@
 // Called to set the logical variable to the indicated input
 //
 //////
-	bool iObj_set_logical(SObject* obj, u32 tnIndex, SVariable* var)
+	bool iObjProp_set_logical(SObject* obj, u32 tnIndex, SVariable* var)
 	{
 		return(false);
 	}
@@ -453,7 +470,7 @@
 // Called to set the s32 variable directly by value
 //
 //////
-	bool iObj_set_logical_direct(SObject* obj, u32 tnIndex, s32 tnValue)
+	bool iObjProp_set_logical_direct(SObject* obj, u32 tnIndex, s32 tnValue)
 	{
 		SVariable* var;
 
@@ -471,7 +488,7 @@
 				case _LOGICALX_YET_ANOTHER:
 				case _LOGICALX_ZATS_ALL_FOLKS:
 					// Grab the variable associated with this object's property
-					var = iObj_get_variable_byIndex(obj, tnIndex);
+					var = iObjProp_get_variable_byIndex(obj, tnIndex);
 					if (var)
 						return(iVariable_set_logical(var, tnValue));
 					break;
@@ -489,7 +506,7 @@
 // Called to set the object variable to the indicated input
 //
 //////
-	bool iObj_set_object(SObject* obj, u32 tnIndex, SVariable* var)
+	bool iObjProp_set_object(SObject* obj, u32 tnIndex, SVariable* var)
 	{
 		return(false);
 	}
@@ -502,7 +519,7 @@
 // Called to set the s32 variable to the indicated input
 //
 //////
-	bool iObj_set_s32(SObject* obj, u32 tnIndex, SVariable* var)
+	bool iObjProp_set_s32(SObject* obj, u32 tnIndex, SVariable* var)
 	{
 		return(false);
 	}
@@ -515,7 +532,7 @@
 // Called to set the s32 variable directly by value
 //
 //////
-	bool iObj_set_s32_direct(SObject* obj, u32 tnIndex, s32 tnValue)
+	bool iObjProp_set_s32_direct(SObject* obj, u32 tnIndex, s32 tnValue)
 	{
 		SVariable* var;
 
@@ -524,7 +541,7 @@
 		if (obj)
 		{
 			// Grab the variable associated with this object's property
-			var = iObj_get_variable_byIndex(obj, tnIndex);
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
 			if (var)
 				return(iVariable_set_s32(var, tnValue));
 		}
@@ -540,7 +557,7 @@
 // Called to set the u32 variable directly by value
 //
 //////
-	bool iObj_set_u32_direct(SObject* obj, u32 tnIndex, u32 tnValue)
+	bool iObjProp_set_u32_direct(SObject* obj, u32 tnIndex, u32 tnValue)
 	{
 		SVariable* var;
 
@@ -549,9 +566,59 @@
 		if (obj)
 		{
 			// Grab the variable associated with this object's property
-			var = iObj_get_variable_byIndex(obj, tnIndex);
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
 			if (var)
 				return(iVariable_set_u32(var, tnValue));
+		}
+		// If we get here, failure
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to set the f32 value directly by value
+//
+//////
+	bool iObjProp_set_f32_direct(SObject* obj, u32 tnIndex, f32 tfValue)
+	{
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			if (var)
+				return(iVariable_set_f32(var, tfValue));
+		}
+		// If we get here, failure
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to set the f64 value directly by value
+//
+//////
+	bool iObjProp_set_f64_direct(SObject* obj, u32 tnIndex, f64 tfValue)
+	{
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			if (var)
+				return(iVariable_set_f64(var, tfValue));
 		}
 		// If we get here, failure
 		return(false);
@@ -565,7 +632,7 @@
 // Called to set the SBgra variable directly by value
 //
 //////
-	bool iObj_set_sbgra_direct(SObject* obj, u32 tnIndex, SBgra color)
+	bool iObjProp_set_sbgra_direct(SObject* obj, u32 tnIndex, SBgra color)
 	{
 		SVariable* var;
 
@@ -574,9 +641,36 @@
 		if (obj)
 		{
 			// Grab the variable associated with this object's property
-			var = iObj_get_variable_byIndex(obj, tnIndex);
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
 			if (var)
 				return(iVariable_set_u32(var, color.color));
+		}
+		// If we get here, failure
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to copy the indicated variable
+//
+//////
+	bool iObjProp_copy_byIndex(SObject* objDst, u32 tnIndexDst, SObject* objSrc, u32 tnIndexSrc)
+	{
+		SVariable* varDst;
+		SVariable* varSrc;
+
+
+		// Make sure the environment is sane
+		if (objDst && objSrc)
+		{
+			// Grab the variable associated with this object's property
+			varDst = iObjProp_get_variable_byIndex(objDst, tnIndexDst);
+			varSrc = iObjProp_get_variable_byIndex(objSrc, tnIndexDst);
+			if (varDst && varSrc)
+				return(iVariable_copy(varDst, varSrc));
 		}
 		// If we get here, failure
 		return(false);
@@ -593,7 +687,7 @@
 //        variable, not a copy.
 //
 //////
-	SVariable* iObj_get_variable_byIndex(SObject* obj, u32 tnIndex)
+	SVariable* iObjProp_get_variable_byIndex(SObject* obj, u32 tnIndex)
 	{
 		s32				lnI;
 		SPropertyMap*	props;
@@ -637,7 +731,7 @@
 // or (2) an add-on user property
 //
 //////
-	SVariable* iObj_get_variable_byName(SObject* obj, u32 tnIndex, s8* tcName, u32 tnNameLength, bool tlSearchBaseProps, bool tlSearchUserProps)
+	SVariable* iObjProp_get_variable_byName(SObject* obj, u32 tnIndex, s8* tcName, u32 tnNameLength, bool tlSearchBaseProps, bool tlSearchUserProps)
 	{
 _asm int 3;
 // TODO:  guess :-)
@@ -652,7 +746,7 @@ _asm int 3;
 // Called to get the bitmap from the indicated object
 //
 //////
-	SBitmap* iObj_get_bitmap(SObject* obj, u32 tnIndex)
+	SBitmap* iObjProp_get_bitmap(SObject* obj, u32 tnIndex)
 	{
 		return(NULL);
 	}
@@ -665,7 +759,7 @@ _asm int 3;
 // Called to get the character from the indicated object
 //
 //////
-	SVariable* iObj_get_character(SObject* obj, u32 tnIndex)
+	SVariable* iObjProp_get_character(SObject* obj, u32 tnIndex)
 	{
 		return(NULL);
 	}
@@ -678,7 +772,7 @@ _asm int 3;
 // Called to get the f64 from the indicated object
 //
 //////
-	SVariable* iObj_get_f64(SObject* obj, u32 tnIndex)
+	SVariable* iObjProp_get_f64(SObject* obj, u32 tnIndex)
 	{
 		return(NULL);
 	}
@@ -691,7 +785,7 @@ _asm int 3;
 // Called to get the logical from the indicated object
 //
 //////
-	SVariable* iObj_get_logical(SObject* obj, u32 tnIndex)
+	SVariable* iObjProp_get_logical(SObject* obj, u32 tnIndex)
 	{
 		return(NULL);
 	}
@@ -704,7 +798,7 @@ _asm int 3;
 // Called to obtain the property's direct value
 //
 //////
-	s32 iObj_get_logical_direct(SObject* obj, u32 tnIndex)
+	s32 iObjProp_get_logical_direct(SObject* obj, u32 tnIndex)
 	{
 		bool		error;
 		s32			lnResult;
@@ -716,7 +810,7 @@ _asm int 3;
 		if (obj)
 		{
 			// Grab the variable associated with this object's property
-			var = iObj_get_variable_byIndex(obj, tnIndex);
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
 			if (var)
 			{
 				// Try to get the value
@@ -739,7 +833,7 @@ _asm int 3;
 // Called to get the object from the indicated object
 //
 //////
-	SVariable* iObj_get_object(SObject* obj, u32 tnIndex)
+	SVariable* iObjProp_get_object(SObject* obj, u32 tnIndex)
 	{
 		return(NULL);
 	}
@@ -752,7 +846,7 @@ _asm int 3;
 // Called to get the s32 from the indicated object
 //
 //////
-	SVariable* iObj_get_s32(SObject* obj, u32 tnIndex)
+	SVariable* iObjProp_get_s32(SObject* obj, u32 tnIndex)
 	{
 		return(NULL);
 	}
@@ -765,7 +859,7 @@ _asm int 3;
 // Called to get the s32 from the indicated object directly
 //
 //////
-	s32 iObj_get_s32_direct(SObject* obj, u32 tnIndex)
+	s32 iObjProp_get_s32_direct(SObject* obj, u32 tnIndex)
 	{
 		bool		error;
 		s32			lnResult;
@@ -777,7 +871,7 @@ _asm int 3;
 		if (obj)
 		{
 			// Grab the variable associated with this object's property
-			var = iObj_get_variable_byIndex(obj, tnIndex);
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
 			if (var)
 			{
 				// Try to get the value
@@ -800,7 +894,7 @@ _asm int 3;
 // Called to obtain the s32 value as an SBgra color
 //
 //////
-	SBgra iObj_get_sbgra_direct (SObject* obj, u32 tnIndex)
+	SBgra iObjProp_get_sbgra_direct (SObject* obj, u32 tnIndex)
 	{
 		union {
 			s32		_color;
@@ -816,7 +910,7 @@ _asm int 3;
 		if (obj)
 		{
 			// Grab the variable associated with this object's property
-			var = iObj_get_variable_byIndex(obj, tnIndex);
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
 			if (var)
 			{
 				// Try to get the value
@@ -840,7 +934,7 @@ _asm int 3;
 // Called to delete the variable associated with the index
 //
 //////
-	bool iObj_delete_variable_byIndex(SObject* obj, u32 tnIndex)
+	bool iObjProp_delete_variable_byIndex(SObject* obj, u32 tnIndex)
 	{
 		SVariable* var;
 
@@ -849,7 +943,7 @@ _asm int 3;
 		if (obj)
 		{
 			// Grab the variable associated with this object's property
-			var = iObj_get_variable_byIndex(obj, tnIndex);
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
 			if (var && var->varType == _VAR_TYPE_BITMAP)
 			{
 				iVariable_delete(var, false);
@@ -858,4 +952,29 @@ _asm int 3;
 		}
 		// If we get here, failure
 		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to compare the indicated character variable with the indicated text
+//
+//////
+	s32 iObjProp_compare_character(SObject* obj, u32 tnIndex, s8* tcText, u32 tnTextLength)
+	{
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			if (var && var->varType == _VAR_TYPE_CHARACTER)
+				return(iDatum_compare(&var->value, tcText, tnTextLength));	// Do the compare normally
+		}
+		// If we get here, does not match
+		return(-2);
 	}

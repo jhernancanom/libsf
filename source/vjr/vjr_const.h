@@ -120,12 +120,20 @@ typedef SEM**		SEMpp;
 	#define iVariable_isTypeBigInteger(var)			(var->varType == _VAR_TYPE_BI)
 	#define iVariable_isTypeBigFloatingPoint(var)	(var->varType == _VAR_TYPE_BFP)
 
-	#define isVisible(obj)							(iObj_get_logical_direct(obj, _INDEX_VISIBLE)  != _LOGICAL_FALSE)
-	#define isEnabled(obj)							(iObj_get_logical_direct(obj, _INDEX_ENABLED)  != _LOGICAL_FALSE)
-	#define isReadonly(obj)							(iObj_get_logical_direct(obj, _INDEX_READONLY) != _LOGICAL_FALSE)
-	#define backStyle(obj)							iObj_get_s32_direct(obj, _INDEX_BACKSTYLE)
-	#define borderStyle(obj)						iObj_get_s32_direct(obj, _INDEX_BORDERSTYLE)
-	#define alignment(obj)							iObj_get_s32_direct(obj, _INDEX_ALIGNMENT)
+	#define isVisible(obj)							(iObjProp_get_logical_direct(obj, _INDEX_VISIBLE)  != _LOGICAL_FALSE)
+	#define isEnabled(obj)							(iObjProp_get_logical_direct(obj, _INDEX_ENABLED)  != _LOGICAL_FALSE)
+	#define isReadonly(obj)							(iObjProp_get_logical_direct(obj, _INDEX_READONLY) != _LOGICAL_FALSE)
+	#define backStyle(obj)							iObjProp_get_s32_direct(obj, _INDEX_BACKSTYLE)
+	#define borderStyle(obj)						iObjProp_get_s32_direct(obj, _INDEX_BORDERSTYLE)
+	#define borderColor(obj)						iObjProp_get_sbgra_direct(obj, _INDEX_BORDERCOLOR)
+	#define foreColor(obj)							iObjProp_get_sbgra_direct(obj, _INDEX_FORECOLOR)
+	#define backColor(obj)							iObjProp_get_sbgra_direct(obj, _INDEX_BACKCOLOR)
+
+	#define alignment(obj)							iObjProp_get_s32_direct(obj, _INDEX_ALIGNMENT)
+	#define isName(obj, text)						iObjProp_compare_character(obj, _INDEX_NAME, (s8*)text, sizeof(text) - 1)
+
+	#define setVisible(obj , value)					iObjProp_set_logical_direct(obj, _INDEX_VISIBLE, value)
+	#define setCaption(obj, value)					iObjProp_set_character_direct(obj, _INDEX_CAPTION, (s8*)value, sizeof(value) - 1)
 
 
 //////////
@@ -710,7 +718,7 @@ typedef SEM**		SEMpp;
 //////////
 // Default values for various types
 //////
-	const s8			cgc_defaultNumeric[10]				= { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };	// Numeric values are internally stored as 80-bit BCDs, 18 significant digits with sign
+	const s8			cgc_defaultNumeric[10]				= { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };	// Numeric values are internally stored as 80-bit BCDs, 18 significant digits with sign
 	const s8			cgc_defaultDate[]					= "        ";
 	const s8			cgc_spaceText[]						= " ";
 

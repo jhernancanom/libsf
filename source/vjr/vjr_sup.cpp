@@ -189,8 +189,8 @@
 				return;
 
 			// Set the app icon and enable the border
-			iObj_set_bitmap(_jdebi, _INDEX_ICON, bmpJDebiIcon);
-			iObj_set_s32_direct(_jdebi, _INDEX_BORDERSTYLE, _BORDER_STYLE_FIXED);
+			iObjProp_set_bitmap(_jdebi, _INDEX_ICON, bmpJDebiIcon);
+			iObjProp_set_s32_direct(_jdebi, _INDEX_BORDERSTYLE, _BORDER_STYLE_FIXED);
 
 			// Give it a fixed point font
 			_jdebi->p.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
@@ -227,22 +227,22 @@
 			_screen			= iObj_addChild(_OBJ_TYPE_SUBFORM, _jdebi);
 
 			// Set the icons
-			iObj_set_bitmap(sourceCode,		_INDEX_ICON,	bmpSourceCodeIcon);
-			iObj_set_bitmap(locals,			_INDEX_ICON,	bmpLocalsIcon);
-			iObj_set_bitmap(watch,			_INDEX_ICON,	bmpWatchIcon);
-			iObj_set_bitmap(command,		_INDEX_ICON,	bmpCommandIcon);
-			iObj_set_bitmap(debug,			_INDEX_ICON,	bmpDebugIcon);
-			iObj_set_bitmap(output,			_INDEX_ICON,	bmpOutputIcon);
-			iObj_set_bitmap(sourceLight,	_INDEX_ICON,	bmpSourceLightIcon);
-			iObj_set_bitmap(_screen,		_INDEX_ICON,	bmpVjrIcon);
+			iObjProp_set_bitmap(sourceCode,		_INDEX_ICON,	bmpSourceCodeIcon);
+			iObjProp_set_bitmap(locals,			_INDEX_ICON,	bmpLocalsIcon);
+			iObjProp_set_bitmap(watch,			_INDEX_ICON,	bmpWatchIcon);
+			iObjProp_set_bitmap(command,		_INDEX_ICON,	bmpCommandIcon);
+			iObjProp_set_bitmap(debug,			_INDEX_ICON,	bmpDebugIcon);
+			iObjProp_set_bitmap(output,			_INDEX_ICON,	bmpOutputIcon);
+			iObjProp_set_bitmap(sourceLight,	_INDEX_ICON,	bmpSourceLightIcon);
+			iObjProp_set_bitmap(_screen,		_INDEX_ICON,	bmpVjrIcon);
 
 			// Make them visible
-			iObj_set_logical_direct(sourceCode,		_INDEX_VISIBLE,	_LOGICAL_TRUE);
-			iObj_set_logical_direct(locals,			_INDEX_VISIBLE,	_LOGICAL_TRUE);
-			iObj_set_logical_direct(watch,			_INDEX_VISIBLE,	_LOGICAL_TRUE);
-			iObj_set_logical_direct(command,		_INDEX_VISIBLE,	_LOGICAL_TRUE);
-			iObj_set_logical_direct(sourceLight,	_INDEX_VISIBLE,	_LOGICAL_TRUE);
-			iObj_set_logical_direct(_screen,		_INDEX_VISIBLE,	_LOGICAL_TRUE);
+			iObjProp_set_logical_direct(sourceCode,		_INDEX_VISIBLE,	_LOGICAL_TRUE);
+			iObjProp_set_logical_direct(locals,			_INDEX_VISIBLE,	_LOGICAL_TRUE);
+			iObjProp_set_logical_direct(watch,			_INDEX_VISIBLE,	_LOGICAL_TRUE);
+			iObjProp_set_logical_direct(command,		_INDEX_VISIBLE,	_LOGICAL_TRUE);
+			iObjProp_set_logical_direct(sourceLight,	_INDEX_VISIBLE,	_LOGICAL_TRUE);
+			iObjProp_set_logical_direct(_screen,		_INDEX_VISIBLE,	_LOGICAL_TRUE);
 
 
 		//////////
@@ -276,13 +276,13 @@
 		//////////
 		// Add the editbox controls to the subforms
 		//////
-			iObj_set_logical_direct(sourceCode_editbox,	_INDEX_VISIBLE, _LOGICAL_TRUE);
-			iObj_set_logical_direct(locals_editbox,		_INDEX_VISIBLE, _LOGICAL_TRUE);
-			iObj_set_logical_direct(watch_editbox,		_INDEX_VISIBLE, _LOGICAL_TRUE);
-			iObj_set_logical_direct(command_editbox,	_INDEX_VISIBLE, _LOGICAL_TRUE);
-			iObj_set_logical_direct(debug_editbox,		_INDEX_VISIBLE, _LOGICAL_TRUE);
-			iObj_set_logical_direct(output_editbox,		_INDEX_VISIBLE, _LOGICAL_TRUE);
-			iObj_set_logical_direct(screen_editbox,		_INDEX_VISIBLE, _LOGICAL_TRUE);
+			iObjProp_set_logical_direct(sourceCode_editbox,	_INDEX_VISIBLE, _LOGICAL_TRUE);
+			iObjProp_set_logical_direct(locals_editbox,		_INDEX_VISIBLE, _LOGICAL_TRUE);
+			iObjProp_set_logical_direct(watch_editbox,		_INDEX_VISIBLE, _LOGICAL_TRUE);
+			iObjProp_set_logical_direct(command_editbox,	_INDEX_VISIBLE, _LOGICAL_TRUE);
+			iObjProp_set_logical_direct(debug_editbox,		_INDEX_VISIBLE, _LOGICAL_TRUE);
+			iObjProp_set_logical_direct(output_editbox,		_INDEX_VISIBLE, _LOGICAL_TRUE);
+			iObjProp_set_logical_direct(screen_editbox,		_INDEX_VISIBLE, _LOGICAL_TRUE);
 
 
 		//////////
@@ -301,36 +301,36 @@
 		//////////
 		// Give it a caption
 		//////
-			iObj_set_character_direct(_jdebi, _INDEX_CAPTION, cgcJDebiTitle, sizeof(cgcJDebiTitle) - 1);
+			iObjProp_set_character_direct(_jdebi, _INDEX_CAPTION, cgcJDebiTitle, sizeof(cgcJDebiTitle) - 1);
 
 
 		//////////
 		// SourceCode window caption and font
 		//////
-			iObj_set_s32_direct(sourceCode, _INDEX_BACKSTYLE, _BACK_STYLE_TRANSPARENT);
-			iObj_set_character_direct(sourceCode, _INDEX_CAPTION, cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
+			iObjProp_set_s32_direct(sourceCode, _INDEX_BACKSTYLE, _BACK_STYLE_TRANSPARENT);
+			iObjProp_set_character_direct(sourceCode, _INDEX_CAPTION, cgcSourceCodeTitle, sizeof(cgcSourceCodeTitle) - 1);
 
 			// Adjust the caption width
 			((SObject*)sourceCode->firstChild->ll.next)->rc.right = 90;
 
 			sourceCode_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			sourceCode_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown_sourceCode;
-			iObj_set_s32_direct(sourceCode_editbox, _INDEX_BORDERSTYLE, _BORDER_STYLE_FIXED);
-			iObj_set_s32_direct(sourceCode_editbox, _INDEX_BORDERCOLOR, lineNumberBackColor.color);
+			iObjProp_set_s32_direct(sourceCode_editbox, _INDEX_BORDERSTYLE, _BORDER_STYLE_FIXED);
+			iObjProp_set_s32_direct(sourceCode_editbox, _INDEX_BORDERCOLOR, lineNumberBackColor.color);
 			sourceCode_editbox->p.em->showCursorLine	= true;
 			sourceCode_editbox->p.em->isSourceCode		= true;
 			sourceCode_editbox->p.em->showLineNumbers	= true;
-			iObj_set_bitmap(sourceCode, _INDEX_ICON, bmpSourceCodeIcon);
+			iObjProp_set_bitmap(sourceCode, _INDEX_ICON, bmpSourceCodeIcon);
 
 
 		//////////
 		// Locals window caption and font
 		//////
 // TODO:  Working here...
-			iObj_set_character_direct(locals, _INDEX_CAPTION, cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
+			iObjProp_set_character_direct(locals, _INDEX_CAPTION, cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
 			locals_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			locals_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
-			iObj_set_bitmap(locals, _INDEX_ICON, bmpLocalsIcon);
+			iObjProp_set_bitmap(locals, _INDEX_ICON, bmpLocalsIcon);
 
 			// Adjust the caption width
 			((SObject*)locals->firstChild->ll.next)->rc.right = 65;
@@ -420,11 +420,11 @@
 		//////////
 		// Watch window caption and font
 		//////
-			iObj_set_character_direct(watch, _INDEX_CAPTION, cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
+			iObjProp_set_character_direct(watch, _INDEX_CAPTION, cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
 			watch_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			watch_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			watch_editbox->p.em->showCursorLine	= true;
-			iObj_set_bitmap(watch, _INDEX_ICON, bmpWatchIcon);
+			iObjProp_set_bitmap(watch, _INDEX_ICON, bmpWatchIcon);
 
 			// Adjust the caption width
 			((SObject*)watch->firstChild->ll.next)->rc.right = 65;
@@ -433,14 +433,14 @@
 		//////////
 		// Command window caption and font
 		//////
-			iObj_set_character_direct(command, _INDEX_CAPTION, cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
+			iObjProp_set_character_direct(command, _INDEX_CAPTION, cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
 			command_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			command_editbox->ev.keyboard._onKeyDown		= (u32)&iSEM_onKeyDown_sourceCode;
 			command_editbox->p.hasFocus					= true;
 			command_editbox->p.em->showCursorLine		= true;
 			command_editbox->p.em->isSourceCode		= true;
 			command_editbox->p.em->showLineNumbers		= true;
-			iObj_set_bitmap(command, _INDEX_ICON, bmpCommandIcon);
+			iObjProp_set_bitmap(command, _INDEX_ICON, bmpCommandIcon);
 
 			// Adjust the caption width
 			((SObject*)command->firstChild->ll.next)->rc.right = 80;
@@ -449,11 +449,11 @@
 		//////////
 		// Debug window caption and font
 		//////
-			iObj_set_character_direct(debug, _INDEX_CAPTION, cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
+			iObjProp_set_character_direct(debug, _INDEX_CAPTION, cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
 			debug_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			debug_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			debug_editbox->p.em->showCursorLine	= true;
-			iObj_set_bitmap(debug, _INDEX_ICON, bmpDebugIcon);
+			iObjProp_set_bitmap(debug, _INDEX_ICON, bmpDebugIcon);
 
 			// Adjust the caption width
 			((SObject*)debug->firstChild->ll.next)->rc.right = 65;
@@ -462,11 +462,11 @@
 		//////////
 		// Output window caption and font
 		//////
-			iObj_set_character_direct(output, _INDEX_CAPTION, cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
+			iObjProp_set_character_direct(output, _INDEX_CAPTION, cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
 			output_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_MEDIUM, false, false);
 			output_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
 			output_editbox->p.em->showCursorLine	= true;
-			iObj_set_bitmap(output, _INDEX_ICON, bmpOutputIcon);
+			iObjProp_set_bitmap(output, _INDEX_ICON, bmpOutputIcon);
 
 			// Adjust the caption width
 			((SObject*)output->firstChild->ll.next)->rc.right = 70;
@@ -475,16 +475,16 @@
 		//////////
 		// SourceLight a caption and font
 		//////
-			iObj_set_character_direct(sourceLight, _INDEX_CAPTION, cgcSourceLightTitle, sizeof(cgcSourceLightTitle) - 1);
+			iObjProp_set_character_direct(sourceLight, _INDEX_CAPTION, cgcSourceLightTitle, sizeof(cgcSourceLightTitle) - 1);
 			sourceLight->p.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			iObj_set_logical_direct(sourceLight, _INDEX_VISIBLE, _LOGICAL_TRUE);
-			iObj_set_s32_direct(sourceLight, _INDEX_BACKSTYLE, _BACK_STYLE_OPAQUE);
+			iObjProp_set_logical_direct(sourceLight, _INDEX_VISIBLE, _LOGICAL_TRUE);
+			iObjProp_set_s32_direct(sourceLight, _INDEX_BACKSTYLE, _BACK_STYLE_OPAQUE);
 
 
 		//////////
 		// _screen a caption and font
 		//////
-			iObj_set_character_direct(_screen, _INDEX_CAPTION, cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
+			iObjProp_set_character_direct(_screen, _INDEX_CAPTION, cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
 			_screen->p.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 
 
@@ -496,13 +496,13 @@
 			screenData								= screen_editbox->p.em;
 			screenData->showCursorLine				= true;
 			screenData->showEndLine					= true;
-			iObj_set_logical_direct(_screen, _INDEX_VISIBLE, _LOGICAL_TRUE);
+			iObjProp_set_logical_direct(_screen, _INDEX_VISIBLE, _LOGICAL_TRUE);
 
 
 		//////////
 		// Set it visible
 		//////
-			iObj_set_logical_direct(_jdebi, _INDEX_VISIBLE, true);
+			iObjProp_set_logical_direct(_jdebi, _INDEX_VISIBLE, true);
 	}
 
 
@@ -1265,7 +1265,7 @@
 					// Physically create the window
 					//////
 						// Window name
-						var = iObj_get_variable_byIndex(obj, _INDEX_NAME);
+						var = iObjProp_get_variable_byIndex(obj, _INDEX_NAME);
 						if (var->varType != _VAR_TYPE_CHARACTER)
 						{
 							// Use a default name

@@ -110,8 +110,8 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		varConstant_space		= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgc_spaceText, 1);
 		varEmptyString			= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, (s8*)NULL, 0);
 		var2000Spaces			= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
-		varTrue					= iVariable_createAndPopulate(_VAR_TYPE_LOGICAL, NULL, 0);
-		varFalse				= iVariable_createAndPopulate(_VAR_TYPE_LOGICAL, NULL, 0);
+		varTrue					= iVariable_createAndPopulate(_VAR_TYPE_LOGICAL, (s8*)NULL, 0);
+		varFalse				= iVariable_createAndPopulate(_VAR_TYPE_LOGICAL, (s8*)NULL, 0);
 		iVariable_setDefaultVariableValue(_LOGICAL_FALSE);
 
 		// 2000 blank spaces
@@ -119,8 +119,8 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		memset(var2000Spaces->value.data, 32, 2000);
 
 		// Constant logical
-		varTrue->value.data_s8	= _LOGICAL_TRUE;
-		varFalse->value.data_s8	= _LOGICAL_TRUE;
+		varTrue->value.data_s8	= (s8)_LOGICAL_TRUE;
+		varFalse->value.data_s8	= (s8)_LOGICAL_TRUE;
 
 
 		// Keyboard shortcuts
