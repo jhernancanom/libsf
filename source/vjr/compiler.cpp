@@ -4317,7 +4317,7 @@ debug_break;
 // no identity.
 //
 //////
-	SVariable* iVariable_create(u32 tnVarType, SVariable* varIndirect)
+	SVariable* iVariable_create(s32 tnVarType, SVariable* varIndirect)
 	{
 		SVariable* varNew;
 
@@ -4392,9 +4392,7 @@ debug_break;
 							break;
 
 						case _VAR_TYPE_BITMAP:
-							varNew->isValueAllocated = true;
-							iDatum_allocateSpace(&varNew->value, 4);
-							varNew->bmp = bmpNoImage;
+							varNew->bmp = iBmp_copy(bmpNoImage);
 							break;
 
 						case _VAR_TYPE_CHARACTER:
@@ -4425,13 +4423,13 @@ debug_break;
 // Called to create and populate a new variable in one go
 //
 //////
-	SVariable* iVariable_createAndPopulate(u32 tnVarType, SDatum* datum)
+	SVariable* iVariable_createAndPopulate(s32 tnVarType, SDatum* datum)
 	{
 		if (datum)		return(iVariable_createAndPopulate(tnVarType, datum->data_s8, datum->length));
 		else			return(NULL);
 	}
 
-	SVariable* iVariable_createAndPopulate(u32 tnVarType, s8* tcData, u32 tnDataLength)
+	SVariable* iVariable_createAndPopulate(s32 tnVarType, s8* tcData, u32 tnDataLength)
 	{
 		SVariable* var;
 
@@ -4458,7 +4456,7 @@ debug_break;
 		return(var);
 	}
 
-	SVariable* iVariable_createAndPopulate(u32 tnVarType, cs8* tcData, u32 tnDataLength)
+	SVariable* iVariable_createAndPopulate(s32 tnVarType, cs8* tcData, u32 tnDataLength)
 	{
 		return(iVariable_createAndPopulate(tnVarType, (s8*)tcData, tnDataLength));
 	}
@@ -4538,7 +4536,7 @@ debug_break;
 // Called to 
 //
 //////
-	bool iVariable_setDefaultVariableValue(u32 tnVarType)
+	bool iVariable_setDefaultVariableValue(s32 tnVarType)
 	{
 		SVariable* varDefaultValue;
 
@@ -4610,6 +4608,8 @@ debug_break;
 		for (lnI = 0; lnI < gsProps_masterSize; lnI++)
 		{
 			// Create the variable
+// if (gsProps_master[lnI].varType == _VAR_TYPE_BITMAP)
+// 	debug_break;
 			gsProps_master[lnI].varInit = iVariable_create(gsProps_master[lnI].varType, NULL);
 
 			// If a valid variable was created, initialize it to the static baseclass values
@@ -4658,7 +4658,8 @@ debug_break;
 						break;
 
 					case _VAR_TYPE_BITMAP:
-						iVariable_set_bitmap(gsProps_master[lnI].varInit, gsProps_master[lnI]._bmp);
+						if (gsProps_master[lnI]._bmp)		iVariable_set_bitmap(gsProps_master[lnI].varInit, gsProps_master[lnI]._bmp);
+						else								iVariable_set_bitmap(gsProps_master[lnI].varInit, bmpNoImage);
 						break;
 
 					case _VAR_TYPE_LOGICAL:
@@ -4690,7 +4691,7 @@ if (!gsProps_master[lnI].varInit)
 // associated default value for the variable type.
 //
 //////
-	bool iVariable_isVarTypeValid(u32 tnVarType, SVariable** varDefaultValue)
+	bool iVariable_isVarTypeValid(s32 tnVarType, SVariable** varDefaultValue)
 	{
 		SVariable* holder;
 

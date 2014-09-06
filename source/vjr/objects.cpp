@@ -592,7 +592,7 @@
 // Called to search for the indicated object
 //
 //////
-	SObject* iObj_findParentObject(SObject* objStart, u32 objType, bool tlIncludeSelfInSearch)
+	SObject* iObj_findParentObject(SObject* objStart, s32 objType, bool tlIncludeSelfInSearch)
 	{
 		logfunc(__FUNCTION__);
 
@@ -1674,7 +1674,6 @@ if (!llPublishChildren)
 		SObject*	objChild;
 		SBitmap*	bmp;
 		RECT		lrc;
-		SVariable*	var;
 
 
 		// Resize if need be (32-bit bitmap for labels, 24-bit for everything else)
@@ -1708,7 +1707,6 @@ if (!llPublishChildren)
 					while (objChild)
 					{
 						// See which object this is
-						var = iObjProp_get_variable_byIndex(obj, _INDEX_NAME);
 						if (objChild->objType == _OBJ_TYPE_IMAGE && isName(obj, cgcName_icon))
 						{
 							logfunc("form icon");
@@ -1856,7 +1854,6 @@ if (!llPublishChildren)
 					while (objChild)
 					{
 						// See which object this is
-						var = iObjProp_get_variable_byIndex(obj, _INDEX_NAME);
 						if (objChild->objType == _OBJ_TYPE_IMAGE && isName(obj, cgcName_checkboxImage))
 						{
 							// Adjust the size and position
@@ -2004,7 +2001,7 @@ if (!llPublishChildren)
 //////
 	SVariable* iObj_getPropertyAsVariable(SObject* obj, s8* tcPropertyName, u32 tnPropertyNameLength, SComp* comp)
 	{
-		SBaseclassList* lbcl;
+		SBaseclassList*		lbcl;
 		SObjPropertyMap*	lpm;
 
 
@@ -2154,6 +2151,8 @@ if (!llPublishChildren)
 				//////////
 				// Create the base variable based on the master init variable created at startup
 				//////
+// if (lnIndex == 235 || lnIndex == 234 || lnIndex == 233)
+// 	debug_break;
 					obj->props[lnI] = iVariable_copy(gsProps_master[lnIndex].varInit, false);
 
 // Should never happen
@@ -3689,7 +3688,6 @@ if (!obj->props[lnI])
 			//////////
 			// Set the default form icon
 			//////
-				iObjProp_delete_variable_byIndex(form, _INDEX_ICON);
 				iObjProp_set_bitmap_direct(form, _INDEX_ICON, bmpVjrIcon);
 
 
@@ -3843,7 +3841,6 @@ if (!obj->props[lnI])
 		SObject*	objChild;
 		SBitmap*	bmp;
 		RECT		lrc;
-		SVariable*	var;
 
 
 		logfunc(__FUNCTION__);
@@ -3876,7 +3873,7 @@ if (!obj->props[lnI])
 			// Set the default font
 			//////
 				iFont_delete(&subform->p.font, true);
-				subform->p.font				= iFont_duplicate(gsFontDefault);
+				subform->p.font = iFont_duplicate(gsFontDefault);
 
 
 			//////////
@@ -3913,7 +3910,6 @@ if (!obj->props[lnI])
 				while (objChild)
 				{
 					// See which object this is
-					var = iObjProp_get_variable_byIndex(objChild, _INDEX_NAME);
 					if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_icon) == 0)
 					{
 						// Adjust the size

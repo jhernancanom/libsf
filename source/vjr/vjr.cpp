@@ -107,6 +107,10 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		gsProps_master[_INDEX_INCREMENT]._f64	= 1.0;		// Default to 1.0 for incrementing
 		gsProps_master[_INDEX_ROUND_TO]._f64	= 0.01;		// Default to 2 decimal places
 
+		// Create a 1x1 no image bitmap placeholder
+		bmpNoImage = iBmp_allocate();
+		iBmp_createBySize(bmpNoImage, 1, 1, 24);
+
 		// Initialize primitive variables
 		iVariable_createDefaultValues();
 		iVariable_createPropsMaster();
@@ -187,10 +191,6 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			bmpCarouselTabsIcon		= iBmp_rawLoad(cgc_carouselTabsBmp);
 			bmpCarouselPad			= iBmp_rawLoad(cgc_carouselPadBmp);
 			bmpCarouselIcon			= iBmp_rawLoad(cgc_carouselIconBmp);
-
-			// Create a 1x1 no image bitmap placeholder
-			bmpNoImage			= iBmp_allocate();
-			iBmp_createBySize(bmpNoImage, 1, 1, 32);
 
 			bmpClose			= iBmp_rawLoad(cgc_closeBmp);
 			bmpMaximize			= iBmp_rawLoad(cgc_maximizeBmp);

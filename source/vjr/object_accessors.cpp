@@ -359,7 +359,7 @@
 // Called to set the f64 variable to the indicated input
 //
 //////
-	bool iObjProp_set(SObject* obj, u32 tnIndex, SVariable* varNewValue)
+	bool iObjProp_set(SObject* obj, s32 tnIndex, SVariable* varNewValue)
 	{
 		bool				llResult;
 		SBasePropertyInit*	baseProp;
@@ -395,7 +395,7 @@
 // Called to set the bitmap to the indicated bitmap
 //
 //////
-	bool iObjProp_set_bitmap_direct(SObject* obj, u32 tnIndex, SBitmap* bmp)
+	bool iObjProp_set_bitmap_direct(SObject* obj, s32 tnIndex, SBitmap* bmp)
 	{
 		SVariable* var;
 
@@ -420,12 +420,12 @@
 // Called to set the character variable to the indicated input
 //
 //////
-	bool iObjProp_set_character_direct (SObject* obj, u32 tnIndex, cs8* tcText, u32 tnTextLength)
+	bool iObjProp_set_character_direct (SObject* obj, s32 tnIndex, cs8* tcText, u32 tnTextLength)
 	{
 		return(iObjProp_set_character_direct(obj, tnIndex, (s8*)tcText, tnTextLength));
 	}
 
-	bool iObjProp_set_character_direct(SObject* obj, u32 tnIndex, s8* tcText, u32 tnTextLength)
+	bool iObjProp_set_character_direct(SObject* obj, s32 tnIndex, s8* tcText, u32 tnTextLength)
 	{
 		bool				llResult;
 		SBasePropertyInit*	baseProp;
@@ -460,7 +460,7 @@
 		return(false);
 	}
 
-	bool iObjProp_set_character_direct(SObject* obj, u32 tnIndex, SDatum* datum)
+	bool iObjProp_set_character_direct(SObject* obj, s32 tnIndex, SDatum* datum)
 	{
 		bool				llResult;
 		SBasePropertyInit*	baseProp;
@@ -503,7 +503,7 @@
 // Called to set the s32 variable directly by value
 //
 //////
-	bool iObjProp_set_logical_direct(SObject* obj, u32 tnIndex, s32 tnValue)
+	bool iObjProp_set_logical_direct(SObject* obj, s32 tnIndex, s32 tnValue)
 	{
 		bool				llResult;
 		SBasePropertyInit*	baseProp;
@@ -568,7 +568,7 @@
 // Called to set the s32 variable directly by value
 //
 //////
-	bool iObjProp_set_s32_direct(SObject* obj, u32 tnIndex, s32 tnValue)
+	bool iObjProp_set_s32_direct(SObject* obj, s32 tnIndex, s32 tnValue)
 	{
 		bool				llResult;
 		SBasePropertyInit*	baseProp;
@@ -617,7 +617,7 @@
 // Called to set the u32 variable directly by value
 //
 //////
-	bool iObjProp_set_u32_direct(SObject* obj, u32 tnIndex, u32 tnValue)
+	bool iObjProp_set_u32_direct(SObject* obj, s32 tnIndex, u32 tnValue)
 	{
 		bool				llResult;
 		SBasePropertyInit*	baseProp;
@@ -666,7 +666,7 @@
 // Called to set the f32 value directly by value
 //
 //////
-	bool iObjProp_set_f32_direct(SObject* obj, u32 tnIndex, f32 tfValue)
+	bool iObjProp_set_f32_direct(SObject* obj, s32 tnIndex, f32 tfValue)
 	{
 		bool				llResult;
 		SBasePropertyInit*	baseProp;
@@ -715,7 +715,7 @@
 // Called to set the f64 value directly by value
 //
 //////
-	bool iObjProp_set_f64_direct(SObject* obj, u32 tnIndex, f64 tfValue)
+	bool iObjProp_set_f64_direct(SObject* obj, s32 tnIndex, f64 tfValue)
 	{
 		bool				llResult;
 		SBasePropertyInit*	baseProp;
@@ -764,7 +764,7 @@
 // Called to set the SBgra variable directly by value
 //
 //////
-	bool iObjProp_set_sbgra_direct(SObject* obj, u32 tnIndex, SBgra color)
+	bool iObjProp_set_sbgra_direct(SObject* obj, s32 tnIndex, SBgra color)
 	{
 		bool				llResult;
 		SBasePropertyInit*	baseProp;
@@ -813,7 +813,7 @@
 // Called to copy the indicated variable
 //
 //////
-	bool iObjProp_copy_byIndex(SObject* objDst, u32 tnIndexDst, SObject* objSrc, u32 tnIndexSrc)
+	bool iObjProp_copy_byIndex(SObject* objDst, s32 tnIndexDst, SObject* objSrc, s32 tnIndexSrc)
 	{
 		SVariable* varDst;
 		SVariable* varSrc;
@@ -840,7 +840,7 @@
 // Called to get the f64 variable from the indicated object
 //
 //////
-	SVariable* iObjProp_get(SObject* obj, u32 tnIndex)
+	SVariable* iObjProp_get(SObject* obj, s32 tnIndex)
 	{
 		// Make sure the environment is sane
 		if (obj)
@@ -861,7 +861,7 @@
 //        variable, not a copy.
 //
 //////
-	SVariable* iObjProp_get_variable_byIndex(SObject* obj, u32 tnIndex, SBasePropertyInit** baseProp, SObjPropertyMap** objProp)
+	SVariable* iObjProp_get_variable_byIndex(SObject* obj, s32 tnIndex, SBasePropertyInit** baseProp, SObjPropertyMap** objProp)
 	{
 		s32					lnI;
 		SBaseclassList*		baseclassList;
@@ -878,7 +878,7 @@
 			{
 				// Locate the property within the object's properties
 				thisObjProp = baseclassList->objProps;
-				for (lnI = 0; lnI < thisObjProp[lnI].index != 0; lnI++)
+				for (lnI = 0; lnI < thisObjProp[lnI].index; lnI++)
 				{
 					// Is this it?
 					if (thisObjProp[lnI].index == tnIndex)
@@ -895,7 +895,9 @@
 			}
 		}
 
-// This should never happen
+// This should never happen.
+// If it does it's a design-time error.  Search the call stack to determine which _INDEX_* variable was referenced.
+// That variable needs to be added to the gsProps_* related to this object (such as gsProps_empty for objType = _OBJ_TYPE_EMPTY).
 debug_break;
 		// Invalid
 		return(NULL);
@@ -910,11 +912,11 @@ debug_break;
 // or (2) an add-on user property
 //
 //////
-	SVariable* iObjProp_get_variable_byName(SObject* obj, s8* tcName, u32 tnNameLength, bool tlSearchBaseProps, bool tlSearchClassProps, u32* tnIndex)
+	SVariable* iObjProp_get_variable_byName(SObject* obj, s8* tcName, u32 tnNameLength, bool tlSearchBaseProps, bool tlSearchClassProps, s32* tnIndex)
 	{
 		s32					lnI, lnIndex;
 		SBaseclassList*		lbcl;
-		SObjPropertyMap*		objProps;
+		SObjPropertyMap*	objProps;
 
 
 		// Make sure the environment is sane
@@ -930,7 +932,7 @@ debug_break;
 				{
 					// Locate the property within the object's properties
 					objProps = lbcl->objProps;
-					for (lnI = 0; lnI < objProps[lnI].index != 0; lnI++)
+					for (lnI = 0; lnI < objProps[lnI].index; lnI++)
 					{
 						// Grab this property's index
 						lnIndex = objProps[lnI].index;
@@ -961,7 +963,7 @@ debug_break;
 // Called to get the bitmap from the indicated object
 //
 //////
-	SBitmap* iObjProp_get_bitmap(SObject* obj, u32 tnIndex)
+	SBitmap* iObjProp_get_bitmap(SObject* obj, s32 tnIndex)
 	{
 		SVariable* var;
 
@@ -986,7 +988,7 @@ debug_break;
 // Called to get the character from the indicated object
 //
 //////
-	SVariable* iObjProp_get_character(SObject* obj, u32 tnIndex)
+	SVariable* iObjProp_get_character(SObject* obj, s32 tnIndex)
 	{
 		SVariable* var;
 
@@ -1011,7 +1013,7 @@ debug_break;
 // Called to get the f32 variable from the indicated object
 //
 //////
-	SVariable* iObjProp_get_f32(SObject* obj, u32 tnIndex)
+	SVariable* iObjProp_get_f32(SObject* obj, s32 tnIndex)
 	{
 		SVariable* var;
 
@@ -1036,7 +1038,7 @@ debug_break;
 // Called to get the f32 from the indicated object
 //
 //////
-	f64 iObjProp_get_f32_direct(SObject* obj, u32 tnIndex)
+	f64 iObjProp_get_f32_direct(SObject* obj, s32 tnIndex)
 	{
 		bool		error;
 		f32			lfResult;
@@ -1075,7 +1077,7 @@ debug_break;
 // Called to get the f64 from the indicated object
 //
 //////
-	f64 iObjProp_get_f64_direct(SObject* obj, u32 tnIndex)
+	f64 iObjProp_get_f64_direct(SObject* obj, s32 tnIndex)
 	{
 		bool		error;
 		f64			lfResult;
@@ -1114,7 +1116,7 @@ debug_break;
 // Called to get the logical from the indicated object
 //
 //////
-	SVariable* iObjProp_get_logical(SObject* obj, u32 tnIndex)
+	SVariable* iObjProp_get_logical(SObject* obj, s32 tnIndex)
 	{
 		SVariable* var;
 
@@ -1139,7 +1141,7 @@ debug_break;
 // Called to obtain the property's direct value
 //
 //////
-	s32 iObjProp_get_logical_direct(SObject* obj, u32 tnIndex)
+	s32 iObjProp_get_logical_direct(SObject* obj, s32 tnIndex)
 	{
 		bool		error;
 		s32			lnResult;
@@ -1174,7 +1176,7 @@ debug_break;
 // Called to get the object from the indicated object
 //
 //////
-	SVariable* iObjProp_get_object(SObject* obj, u32 tnIndex)
+	SVariable* iObjProp_get_object(SObject* obj, s32 tnIndex)
 	{
 		SVariable* var;
 
@@ -1199,7 +1201,7 @@ debug_break;
 // Called to get the s32 from the indicated object directly
 //
 //////
-	s32 iObjProp_get_s32_direct(SObject* obj, u32 tnIndex)
+	s32 iObjProp_get_s32_direct(SObject* obj, s32 tnIndex)
 	{
 		bool		error;
 		s32			lnResult;
@@ -1234,7 +1236,7 @@ debug_break;
 // Called to obtain the s32 value as an SBgra color
 //
 //////
-	SBgra iObjProp_get_sbgra_direct(SObject* obj, u32 tnIndex)
+	SBgra iObjProp_get_sbgra_direct(SObject* obj, s32 tnIndex)
 	{
 		union {
 			s32		_color;
@@ -1273,7 +1275,7 @@ debug_break;
 // Called to delete the variable associated with the index
 //
 //////
-	bool iObjProp_delete_variable_byIndex(SObject* obj, u32 tnIndex)
+	bool iObjProp_delete_variable_byIndex(SObject* obj, s32 tnIndex)
 	{
 		SVariable* var;
 
@@ -1301,7 +1303,7 @@ debug_break;
 // Called to compare the indicated character variable with the indicated text
 //
 //////
-	s32 iObjProp_compare_character(SObject* obj, u32 tnIndex, s8* tcText, u32 tnTextLength)
+	s32 iObjProp_compare_character(SObject* obj, s32 tnIndex, s8* tcText, u32 tnTextLength)
 	{
 		SVariable* var;
 
@@ -1328,7 +1330,7 @@ debug_break;
 // has its own properties, and these are used for rendering.
 //
 //////
-	bool iObjProp_setter_captionOnChild(SObject* obj, u32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp)
+	bool iObjProp_setter_captionOnChild(SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp)
 	{
 		SObject*	objChild;
 		SVariable*	varChild;

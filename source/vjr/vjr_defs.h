@@ -82,7 +82,7 @@ struct SObjPropertyMap;
 	SObject*				iObj_find_thisForm						(SObject* obj);
 	SObject*				iObj_find_thisSubform					(SObject* obj);
 	SObject*				iObj_find_thisRider						(SObject* obj);
-	SObject*				iObj_findParentObject					(SObject* objStart, u32 objType, bool tlIncludeSelfInSearch);
+	SObject*				iObj_findParentObject					(SObject* objStart, s32 objType, bool tlIncludeSelfInSearch);
 	bool					iObj_isCommandWindow					(SObject* obj);
 	void					iObj_setFocusHighlights					(SWindow* win, SObject* obj, s32 x, s32 y, bool tlProcessChildren, bool tlProcessSiblings);
 	void					iObj_findFocusControls					(SObject* obj, SBuilder* objFocusControls, bool tlProcessSiblings);

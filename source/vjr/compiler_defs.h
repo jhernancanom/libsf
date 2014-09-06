@@ -160,15 +160,15 @@ struct SVariable;
 
 	// Variable functions
 	SVariable*				iiVariable_terminateIndirect				(SVariable* var);
-	SVariable*				iVariable_create							(u32 tnVarType, SVariable* varIndirect);
-	SVariable*				iVariable_createAndPopulate					(u32 tnVarType, SDatum* datum);
-	SVariable*				iVariable_createAndPopulate					(u32 tnVarType, s8*  tcData, u32 tnDataLength);
-	SVariable*				iVariable_createAndPopulate					(u32 tnVarType, cs8* tcData, u32 tnDataLength);
+	SVariable*				iVariable_create							(s32 tnVarType, SVariable* varIndirect);
+	SVariable*				iVariable_createAndPopulate					(s32 tnVarType, SDatum* datum);
+	SVariable*				iVariable_createAndPopulate					(s32 tnVarType, s8*  tcData, u32 tnDataLength);
+	SVariable*				iVariable_createAndPopulate					(s32 tnVarType, cs8* tcData, u32 tnDataLength);
 	SVariable*				iVariable_searchForName						(SVariable* varRoot, s8* tcVarName, u32 tnVarNameLength, SComp* comp);
-	bool					iVariable_setDefaultVariableValue			(u32 tnVarType);
+	bool					iVariable_setDefaultVariableValue			(s32 tnVarType);
 	void					iVariable_createDefaultValues				(void);
 	void					iVariable_createPropsMaster					(void);
-	bool					iVariable_isVarTypeValid					(u32 tnVarType, SVariable** varDefaultValue);
+	bool					iVariable_isVarTypeValid					(s32 tnVarType, SVariable** varDefaultValue);
 	bool					iVariable_areTypesCompatible				(SVariable* var1, SVariable* var2);
 	bool					iVariable_copy								(SVariable* varDst, SVariable* varSrc);
 	SVariable*				iVariable_copy								(SVariable* varSrc, bool tlMakeReference);
