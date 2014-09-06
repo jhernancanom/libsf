@@ -931,8 +931,9 @@ debug_break;
 //////
 	SBgra iObjProp_get_sbgra_direct(SObject* obj, s32 tnIndex)
 	{
+		s64			_color64;
 		union {
-			s32		_color;
+			u32		_color;
 			SBgra	color;
 		};
 		bool		error;
@@ -948,7 +949,8 @@ debug_break;
 			if (var)
 			{
 				// Try to get the value
-				_color = iiVariable_getAs_s32(var, false, &error, &errorNum);
+				_color64 = iiVariable_getAs_s64(var, false, &error, &errorNum);
+				_color	= (u32)_color64;
 
 				// If we got it...
 				if (!error)
