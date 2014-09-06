@@ -104,7 +104,6 @@ struct SObjPropertyMap;
 	void					iObj_duplicateChildren					(SObject*  objDst, SObject* objSrc);
 	void					iObj_setSize							(SObject*  obj, s32 tnLeft, s32 tnTop, s32 tnWidth, s32 tnHeight);
 	SWindow* 				iObj_createWindowForForm				(SObject*  form, SWindow* win, s32 icon);
-	bool					iObj_setVisible							(SObject*  obj, bool tlNewVisible);
 	SVariable*				iObj_getPropertyAsVariable				(SObject*  obj, s8* tcPropertyName, u32 tnPropertyNameLength, SComp* comp);
 	void					iiObj_resetToDefault					(SObject*  obj, bool tlResetProperties, bool tlResetMethods);
 	void					iiObj_resetToDefaultCommon				(SObject*  obj, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, s32 tnPropCount);

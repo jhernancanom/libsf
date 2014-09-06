@@ -5124,7 +5124,7 @@ if (!gsProps_master[lnI].varInit)
 		var = iiVariable_terminateIndirect(var);
 
 		// Are we still valid?
-		if (var && var->varType == _VARIABLE_TYPE_LOGICAL && var->value.data_s8)
+		if (var && var->varType == _VAR_TYPE_LOGICAL && var->value.data_s8)
 		{
 			// Set it
 			*var->value.data_s8 = (s8)value;
@@ -5281,65 +5281,63 @@ debug_break;
 		{
 			switch (var->varType)
 			{
-				case _VARIABLE_TYPE_NUMERIC:
+				case _VAR_TYPE_NUMERIC:
 					iDatum_duplicate(&var->value, cgc_defaultNumeric, sizeof(cgc_defaultNumeric) - 1);
 					break;
 
-				case _VARIABLE_TYPE_CHARACTER:
+				case _VAR_TYPE_CHARACTER:
 					iDatum_delete(&var->value, false);
 					break;
 
-				case _VARIABLE_TYPE_LOGICAL:
+				case _VAR_TYPE_LOGICAL:
 					var->value.data_s8[0] = _LOGICAL_FALSE;
 					break;
 
-				case _VARIABLE_TYPE_S8:
-				case _VARIABLE_TYPE_U8:
+				case _VAR_TYPE_S8:
+				case _VAR_TYPE_U8:
 					var->value.data_s8[0] = 0;
 					break;
 
-				case _VARIABLE_TYPE_S16:
-				case _VARIABLE_TYPE_U16:
+				case _VAR_TYPE_S16:
+				case _VAR_TYPE_U16:
 					*(u16*)var->value.data = 0;
 					break;
 
-				case _VARIABLE_TYPE_F32:
-				case _VARIABLE_TYPE_S32:
-				case _VARIABLE_TYPE_U32:
-				case _VARIABLE_TYPE_COLOR:
-				case _VARIABLE_TYPE_COLORA:
-				case _VARIABLE_TYPE_OBJECT:
-				case _VARIABLE_TYPE_THISCODE:
+				case _VAR_TYPE_F32:
+				case _VAR_TYPE_S32:
+				case _VAR_TYPE_U32:
+				case _VAR_TYPE_OBJECT:
+				case _VAR_TYPE_THISCODE:
 					*(u32*)var->value.data = (u32)0;
 					break;
 
-				case _VARIABLE_TYPE_F64:
-				case _VARIABLE_TYPE_S64:
-				case _VARIABLE_TYPE_U64:
-				case _VARIABLE_TYPE_CURRENCY:
+				case _VAR_TYPE_F64:
+				case _VAR_TYPE_S64:
+				case _VAR_TYPE_U64:
+				case _VAR_TYPE_CURRENCY:
 					*(u64*)var->value.data = (u64)0;
 					break;
 
-				case _VARIABLE_TYPE_DATE:
+				case _VAR_TYPE_DATE:
 					iDatum_duplicate(&var->value, cgc_defaultDate, sizeof(cgc_defaultDate) - 1);
 					break;
 
-				case _VARIABLE_TYPE_DATETIME:
-				case _VARIABLE_TYPE_DATETIMEX:
+				case _VAR_TYPE_DATETIME:
+				case _VAR_TYPE_DATETIMEX:
 // Not yet supported
 debug_break;
 					break;
 
-				case _VARIABLE_TYPE_BI:
-				case _VARIABLE_TYPE_BFP:
+				case _VAR_TYPE_BI:
+				case _VAR_TYPE_BFP:
 // Not yet supported
 debug_break;
 					break;
 
-				case _VARIABLE_TYPE_ARRAY:
-				case _VARIABLE_TYPE_GUID8:
-				case _VARIABLE_TYPE_GUID16:
-				case _VARIABLE_TYPE_FIELD:
+				case _VAR_TYPE_ARRAY:
+				case _VAR_TYPE_GUID8:
+				case _VAR_TYPE_GUID16:
+				case _VAR_TYPE_FIELD:
 // Not yet supported
 debug_break;
 					break;
@@ -5972,15 +5970,11 @@ debug_break;
 
 
 			case _VAR_TYPE_LOGICAL:
-				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || _set_autoConvert)
-				{
-					//////////
-					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
-					//////
-						if (var->value.data[0] == 0)	return(0);
-						else							return(1);
-				}
+				//////////
+				// Convert this from its logiacl form into numeric
+				//////
+					if (var->value.data[0] == _LOGICAL_FALSE)	return(_LOGICAL_FALSE);
+					else										return(_LOGICAL_TRUE);
 				// If we get here, an invalid variable type was encountered
 
 

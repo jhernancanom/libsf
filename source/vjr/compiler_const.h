@@ -123,6 +123,12 @@
 	const u32		_VAR_TYPE_DATETIME								= 22;
 	const u32		_VAR_TYPE_LOGICAL								= 23;			// Note:  This includes the logicalx types, but the value stored determines the logicalx setting.
 	const u32		_VAR_TYPE_BITMAP								= 24;
+// TODO:  Not yet implemented
+	const u32		_VAR_TYPE_DATETIMEX								= 25;
+	const u32		_VAR_TYPE_ARRAY									= 26;
+	const u32		_VAR_TYPE_GUID8									= 27;
+	const u32		_VAR_TYPE_GUID16								= 28;
+	const u32		_VAR_TYPE_FIELD									= 29;
 
 
 //////////

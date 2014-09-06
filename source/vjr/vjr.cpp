@@ -129,7 +129,6 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		*varTrue->value.data_s8		= (s8)_LOGICAL_TRUE;
 		*varFalse->value.data_s8	= (s8)_LOGICAL_FALSE;
 
-
 		// Keyboard shortcuts
 		*hAccelTable = LoadAccelerators(ghInstance, MAKEINTRESOURCE(IDC_VJR));
 
@@ -176,37 +175,37 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		//////////
 		// Load our icons and images
 		//////
-			bmpVjrIcon			= iBmp_rawLoad(cgc_appIconBmp);
-			bmpJDebiIcon		= iBmp_rawLoad(cgc_jdebiAppIconBmp);
-			bmpSourceCodeIcon	= iBmp_rawLoad(cgc_sourcecodeIconBmp);
-			bmpLocalsIcon		= iBmp_rawLoad(cgc_localsIconBmp);
-			bmpWatchIcon		= iBmp_rawLoad(cgc_watchIconBmp);
-			bmpCommandIcon		= iBmp_rawLoad(cgc_commandIconBmp);
-			bmpDebugIcon		= iBmp_rawLoad(cgc_debugIconBmp);
-			bmpOutputIcon		= iBmp_rawLoad(cgc_outputIconBmp);
-			bmpSourceLightIcon	= iBmp_rawLoad(cgc_sourcelightIconBmp);
+			bmpVjrIcon						= iBmp_rawLoad(cgc_appIconBmp);
+			bmpJDebiIcon					= iBmp_rawLoad(cgc_jdebiAppIconBmp);
+			bmpSourceCodeIcon				= iBmp_rawLoad(cgc_sourcecodeIconBmp);
+			bmpLocalsIcon					= iBmp_rawLoad(cgc_localsIconBmp);
+			bmpWatchIcon					= iBmp_rawLoad(cgc_watchIconBmp);
+			bmpCommandIcon					= iBmp_rawLoad(cgc_commandIconBmp);
+			bmpDebugIcon					= iBmp_rawLoad(cgc_debugIconBmp);
+			bmpOutputIcon					= iBmp_rawLoad(cgc_outputIconBmp);
+			bmpSourceLightIcon				= iBmp_rawLoad(cgc_sourcelightIconBmp);
 
 			// Carousels
-			bmpCarouselCarouselIcon	= iBmp_rawLoad(cgc_carouselCarouselBmp);
-			bmpCarouselTabsIcon		= iBmp_rawLoad(cgc_carouselTabsBmp);
-			bmpCarouselPad			= iBmp_rawLoad(cgc_carouselPadBmp);
-			bmpCarouselIcon			= iBmp_rawLoad(cgc_carouselIconBmp);
+			bmpCarouselCarouselIcon			= iBmp_rawLoad(cgc_carouselCarouselBmp);
+			bmpCarouselTabsIcon				= iBmp_rawLoad(cgc_carouselTabsBmp);
+			bmpCarouselPad					= iBmp_rawLoad(cgc_carouselPadBmp);
+			bmpCarouselIcon					= iBmp_rawLoad(cgc_carouselIconBmp);
 
-			bmpClose			= iBmp_rawLoad(cgc_closeBmp);
-			bmpMaximize			= iBmp_rawLoad(cgc_maximizeBmp);
-			bmpMinimize			= iBmp_rawLoad(cgc_minimizeBmp);
-			bmpMove				= iBmp_rawLoad(cgc_moveBmp);
+			bmpClose						= iBmp_rawLoad(cgc_closeBmp);
+			bmpMaximize						= iBmp_rawLoad(cgc_maximizeBmp);
+			bmpMinimize						= iBmp_rawLoad(cgc_minimizeBmp);
+			bmpMove							= iBmp_rawLoad(cgc_moveBmp);
 
-			bmpCheckboxOn		= iBmp_rawLoad(cgc_checkboxOnBmp);
-			bmpCheckboxOff		= iBmp_rawLoad(cgc_checkboxOffBmp);
+			bmpCheckboxOn					= iBmp_rawLoad(cgc_checkboxOnBmp);
+			bmpCheckboxOff					= iBmp_rawLoad(cgc_checkboxOffBmp);
 
-			bmpButton			= iBmp_rawLoad(cgc_buttonBmp);
-			bmpTextbox			= iBmp_rawLoad(cgc_textboxBmp);
+			bmpButton						= iBmp_rawLoad(cgc_buttonBmp);
+			bmpTextbox						= iBmp_rawLoad(cgc_textboxBmp);
 
-			bmpStoplightRed		= iBmp_rawLoad(cgc_stoplightRedBmp);
-			bmpStoplightAmber	= iBmp_rawLoad(cgc_stoplightAmberBmp);
-			bmpStoplightGreen	= iBmp_rawLoad(cgc_stoplightGreenBmp);
-			bmpStoplightBlue	= iBmp_rawLoad(cgc_stoplightBlueBmp);
+			bmpStoplightRed					= iBmp_rawLoad(cgc_stoplightRedBmp);
+			bmpStoplightAmber				= iBmp_rawLoad(cgc_stoplightAmberBmp);
+			bmpStoplightGreen				= iBmp_rawLoad(cgc_stoplightGreenBmp);
+			bmpStoplightBlue				= iBmp_rawLoad(cgc_stoplightBlueBmp);
 
 			bmpBreakpointAlways				= iBmp_rawLoad(cgc_breakpointAlways);
 			bmpBreakpointAlwaysCountdown	= iBmp_rawLoad(cgc_breakpointAlwaysCountdown);
@@ -215,8 +214,8 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			bmpConditionalTrueCountdown		= iBmp_rawLoad(cgc_breakpointConditionalTrueCountdown);
 			bmpConditionalFalseCountdown	= iBmp_rawLoad(cgc_breakpointConditionalFalseCountdown);
 
-			bmpDapple1			= iBmp_rawLoad(cgc_dappleBmp);
-			bmpDapple2			= iBmp_rawLoad(cgc_dapple2Bmp);
+			bmpDapple1						= iBmp_rawLoad(cgc_dappleBmp);
+			bmpDapple2						= iBmp_rawLoad(cgc_dapple2Bmp);
 
 			//////////
 			// Casks
@@ -255,6 +254,11 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iVjr_appendSystemLog("Create message window");
 		iInit_createMessageWindow();
 
+		// Create our global variables
+		iVjr_appendSystemLog("Create global variables");
+		varGlobals = function_datetime(NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+		iDatum_duplicate(&varGlobals->name, cgcName_startupTime, -1);
+
 		// Create our default objects
 		iVjr_appendSystemLog("Create default objects");
 		iInit_createDefaultObjects();
@@ -265,17 +269,12 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		// Initially render each one
 		iVjr_appendSystemLog("Render _jdebi");
-		iObj_render(_jdebi,		true);
-
-		// Create our global variables
-		iVjr_appendSystemLog("Create _startupTime");
-		varGlobals			= function_datetime(NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-		iDatum_duplicate(&varGlobals->name, cgcName_startupTime, -1);
+		iObj_render(_jdebi, true);
 
 		// Attach them to physical windows
 		iVjr_appendSystemLog("Allocate OS Window for _jdebi");
 		gWinJDebi = iWindow_allocate();
-		iObj_createWindowForForm(_jdebi,	gWinJDebi,	IDI_JDEBI);
+		iObj_createWindowForForm(_jdebi, gWinJDebi, IDI_JDEBI);
 
 		// Initially populate _screen
 		// Load in the history if it exists
@@ -464,7 +463,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		//////////
 		// Set it visible
 		//////
-			iObj_setVisible(gobj_splashListing, true);
+			iObjProp_set_logical_direct(gobj_splashListing, _INDEX_VISIBLE, _LOGICAL_TRUE);
 	}
 
 

@@ -502,7 +502,7 @@
 		//////////
 		// Set it visible
 		//////
-			iObjProp_set_logical_direct(_jdebi, _INDEX_VISIBLE, true);
+			iObjProp_set_logical_direct(_jdebi, _INDEX_VISIBLE, _LOGICAL_TRUE);
 	}
 
 

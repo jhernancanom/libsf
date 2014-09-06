@@ -72,18 +72,18 @@
 	const u32		_VVM_ALIGN_CENTER								= 3;
 
 	// Variable types
-	const u32		_VVM_VARIABLE_TYPE_UNUSED						= 1;
-	const u32		_VVM_VARIABLE_TYPE_U32							= 2;
-	const u32		_VVM_VARIABLE_TYPE_U64							= 3;
-	const u32		_VVM_VARIABLE_TYPE_S32							= 4;
-	const u32		_VVM_VARIABLE_TYPE_S64							= 5;
-	const u32		_VVM_VARIABLE_TYPE_F32							= 6;
-	const u32		_VVM_VARIABLE_TYPE_F64							= 7;
-	const u32		_VVM_VARIABLE_TYPE_ASCII						= 8;
-	const u32		_VVM_VARIABLE_TYPE_UNICODE						= 9;
+	const u32		_VVM_VAR_TYPE_UNUSED						= 1;
+	const u32		_VVM_VAR_TYPE_U32							= 2;
+	const u32		_VVM_VAR_TYPE_U64							= 3;
+	const u32		_VVM_VAR_TYPE_S32							= 4;
+	const u32		_VVM_VAR_TYPE_S64							= 5;
+	const u32		_VVM_VAR_TYPE_F32							= 6;
+	const u32		_VVM_VAR_TYPE_F64							= 7;
+	const u32		_VVM_VAR_TYPE_ASCII						= 8;
+	const u32		_VVM_VAR_TYPE_UNICODE						= 9;
 	// Extended format variables
-	const u32		_VVM_VARIABLE_TYPE_BI							= 100;			// Big integer
-	const u32		_VVM_VARIABLE_TYPE_BFP							= 101;			// Big floating point
+	const u32		_VVM_VAR_TYPE_BI							= 100;			// Big integer
+	const u32		_VVM_VAR_TYPE_BFP							= 101;			// Big floating point
 	// Other variable types will be defined
 
 	// Snippet types (see vvm_structs.h)

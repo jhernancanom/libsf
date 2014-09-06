@@ -46,314 +46,6 @@
 
 
 
-// bool iObj_setLogical(SObject* obj, SVariable* var, bool* tlDest)
-// {
-// 	// Make sure the environment is sane
-// 	if (obj && var && iVariable_isTypeLogical(var))
-// 	{
-// 		// Set the value
-// 		*tlDest = ((var->value.data[0] == _LOGICAL_FALSE) ? false : true);
-// 
-// 		// Indicate success
-// 		return(true);
-// 	}
-// 	// If we get here, failure
-// 	return(false);
-// }
-// 
-// 
-// 
-// 
-// 
-// //////////
-// // OBJECT Properties
-// //////
-// SVariable* iObj_getProperty_scrollX(SObject* obj)
-// {
-// 	SVariable* var;
-// 
-// 
-// 	// Make sure the environment is sane
-// 	if (obj)
-// 	{
-// 		// Create a new variable
-// 		var = iVariable_create(_VAR_TYPE_INTEGER, NULL);
-// 		*(s32*)var->value.data = obj->scrollOffsetX;
-// 		return(var);
-// 	}
-// 	// If we get here, failure
-// 	return(NULL);
-// }
-// 
-// bool iObj_setProperty_scrollY(SObject* obj, SVariable* var)
-// {
-// 	return(iObj_setInteger(obj, var, &obj->scrollOffsetY, 0, 0, false, 0));
-// }
-// 
-// SVariable* iObj_getProperty_scrollY(SObject* obj)
-// {
-// 	SVariable* var;
-// 
-// 
-// 	// Make sure the environment is sane
-// 	if (obj)
-// 	{
-// 		// Create a new variable
-// 		var = iVariable_create(_VAR_TYPE_INTEGER, NULL);
-// 		*(s32*)var->value.data = obj->scrollOffsetY;
-// 		return(var);
-// 	}
-// 	// If we get here, failure
-// 	return(NULL);
-// }
-// 
-// bool iObj_setProperty_scaleX(SObject* obj, SVariable* var)
-// {
-// 	s32		lnNewWidth;
-// 	f32		value;
-// 	bool	error;
-// 	u32		errorNum;
-// 
-// 
-// 	// Make sure the environment is sane
-// 	if (obj && var && iVariable_isTypeNumeric(var))
-// 	{
-// 		// Try to get the value
-// 		value = iiVariable_getAs_f32(var, false, &error, &errorNum);
-// 		if (error)
-// 		{
-// 			iError_reportByNumber(errorNum, var->compRelated);
-// 			return(false);
-// 		}
-// 		if (value <= 0.0f)
-// 		{
-// 			iError_reportByNumber(_ERROR_OUT_OF_RANGE, var->compRelated);
-// 			return(false);
-// 		}
-// 
-// 		// Set the value
-// 		// Note:  This is done by resizing the underlying bitmap.
-// 		lnNewWidth = (s32)((f32)(obj->rc.right - obj->rc.left) / value);
-// 		obj->bmp = iBmp_verifySizeOrResize(obj->bmp, lnNewWidth, obj->bmp->bi.biHeight, obj->bmp->bi.biBitCount);
-// 
-// 		// Indicate success
-// 		return(true);
-// 	}
-// 	// If we get here, failure
-// 	return(false);
-// }
-// 
-// SVariable* iObj_getProperty_scaleX(SObject* obj)
-// {
-// 	SVariable* var;
-// 
-// 
-// 	// Make sure the environment is sane
-// 	if (obj)
-// 	{
-// 		// Create a new variable
-// 		var = iVariable_create(_VAR_TYPE_F32, NULL);
-// 		if (!obj->isScaled || !obj->bmpScaled)
-// 		{
-// 			// Invalid
-// 			*(f32*)var->value.data = -1.0f;
-// 
-// 		} else {
-// 			// Compute the scale ratio
-// 			*(f32*)var->value.data = ((f32)(obj->rc.right - obj->rc.left) / (f32)obj->bmp->bi.biWidth);
-// 		}
-// 		return(var);
-// 	}
-// 	// If we get here, failure
-// 	return(NULL);
-// }
-// 
-// bool iObj_setProperty_scaleY(SObject* obj, SVariable* var)
-// {
-// 	s32		lnNewHeight;
-// 	f32		value;
-// 	bool	error;
-// 	u32		errorNum;
-// 
-// 
-// 	// Make sure the environment is sane
-// 	if (obj && var && iVariable_isTypeNumeric(var))
-// 	{
-// 		// Try to get the value
-// 		value = iiVariable_getAs_f32(var, false, &error, &errorNum);
-// 		if (error)
-// 		{
-// 			iError_reportByNumber(errorNum, var->compRelated);
-// 			return(false);
-// 		}
-// 		if (value <= 0.0f)
-// 		{
-// 			iError_reportByNumber(_ERROR_OUT_OF_RANGE, var->compRelated);
-// 			return(false);
-// 		}
-// 
-// 		// Set the value
-// 		// Note:  This is done by resizing the underlying bitmap.
-// 		lnNewHeight = (s32)((f32)(obj->rc.bottom - obj->rc.top) / value);
-// 		obj->bmp = iBmp_verifySizeOrResize(obj->bmp, obj->bmp->bi.biWidth, lnNewHeight, obj->bmp->bi.biBitCount);
-// 
-// 		// Indicate success
-// 		return(true);
-// 	}
-// 	// If we get here, failure
-// 	return(false);
-// }
-// 
-// SVariable* iObj_getProperty_scaleY(SObject* obj)
-// {
-// 	SVariable* var;
-// 
-// 
-// 	// Make sure the environment is sane
-// 	if (obj)
-// 	{
-// 		// Create a new variable
-// 		var = iVariable_create(_VAR_TYPE_F32, NULL);
-// 		if (!obj->isScaled || !obj->bmpScaled)
-// 		{
-// 			// Invalid
-// 			*(f32*)var->value.data = -1.0f;
-// 
-// 		} else {
-// 			// Compute the scale ratio
-// 			*(f32*)var->value.data = ((f32)(obj->rc.bottom - obj->rc.top) / (f32)obj->bmp->bi.biHeight);
-// 		}
-// 		return(var);
-// 	}
-// 	// If we get here, failure
-// 	return(NULL);
-// }
-// 
-// void iObj_setIcon(SObject* obj, SBitmap* bmp)
-// {
-// 	SObject*	objChild;
-// 	RECT		lrc;
-// 
-// 
-// 	// Make sure the environment is sane
-// 	if (obj && iBmp_validate(bmp))
-// 	{
-// 		// If it's a form, we also update the child icon
-// 		switch (obj->objType)
-// 		{
-// 			case _OBJ_TYPE_FORM:
-// 			case _OBJ_TYPE_SUBFORM:
-// 				//////////
-// 				// Create the icon at 24x24
-// 				//////
-// 					iBmp_delete(&obj->p.icon, true, true);		// Delete the old
-// 					obj->p.icon = iBmp_allocate();
-// 					iBmp_createBySize(obj->p.icon, bmpArrowUl->bi.biWidth, bmpArrowUl->bi.biHeight, 24);
-// 					iBmp_scale(obj->p.icon, bmp);				// Scale the indicated icon into our 24x24 size
-// 
-// 
-// 				//////////
-// 				// Forms have child-objects which hold their icons (so they can respond to user events, etc.)
-// 				//////
-// 					objChild = obj->firstChild;
-// 					while (objChild)
-// 					{
-// 						if (objChild->objType == _OBJ_TYPE_IMAGE && iDatum_compare(&objChild->pa.name, cgcName_icon, sizeof(cgcName_icon) - 1) == 0)
-// 						{
-// 							// Adjust the size
-// 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpArrowUl->bi.biWidth, bmpArrowUl->bi.biHeight);
-// 
-// 							// This is the one to update
-// 							iBmp_delete(&objChild->p.bmpPicture,		true, true);	// Delete the old
-// 							iBmp_delete(&objChild->p.bmpPictureOver,	true, true);	// Delete the old
-// 							iBmp_delete(&objChild->p.bmpPictureDown,	true, true);	// Delete the old
-// 							objChild->p.bmpPicture		= iBmp_copy(obj->p.icon);	// Set the new
-// 							objChild->p.bmpPictureOver	= iBmp_copy(obj->p.icon);	// Set the new
-// 							objChild->p.bmpPictureDown	= iBmp_copy(obj->p.icon);	// Set the new
-// 
-// 							// Add highlighting for the over and down
-// 							SetRect(&lrc, 0, 0, 24, 24);
-// 							iBmp_colorize(objChild->p.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
-// 							iBmp_colorize(objChild->p.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
-// 
-// 							// All done
-// 							break;
-// 						}
-// 
-// 						// Move to next object
-// 						objChild = (SObject*)objChild->ll.next;
-// 					}
-// 					break;
-// 		}
-// 	}
-// }
-// 
-// bool iObj_set_caption(SObject* obj, SVariable* var)
-// {
-// 	bool		llResult;
-// 	SObject*	objChild;
-// 
-// 
-// 	llResult = false;
-// 	if (obj)
-// 	{
-// 		// Set the main caption
-// 		obj->isDirtyRender = true;
-// 		if ((llResult = iObj_setCharacter(obj, var, &obj->p.caption, var->value.data, var->value.length)))
-// 		{
-// 			switch (obj->objType)
-// 			{
-// 				case _OBJ_TYPE_FORM:
-// 				case _OBJ_TYPE_SUBFORM:
-// 					objChild = obj->firstChild;
-// 					while (objChild)
-// 					{
-// 						// Is this one
-// 						if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcCaption_icon, sizeof(cgcCaption_icon) - 1) == 0)
-// 						{
-// 							// Update this item
-// 							llResult				= iObj_setCharacter(objChild, var, &objChild->p.caption, var->value.data, var->value.length);
-// 							objChild->isDirtyRender	= true;
-// 
-// 							// All done
-// 							break;
-// 						}
-// 
-// 						// Move to next sibling
-// 						objChild = (SObject*)objChild->ll.next;
-// 					}
-// 					break;
-// 
-// 				case _OBJ_TYPE_CHECKBOX:
-// 					objChild = obj->firstChild;
-// 					while (objChild)
-// 					{
-// 						// Is this one
-// 						if (objChild->objType == _OBJ_TYPE_LABEL && iDatum_compare(&objChild->pa.name, cgcName_checkboxLabel, sizeof(cgcName_checkboxLabel) - 1) == 0)
-// 						{
-// 							// Update this item
-// 							llResult				= iObj_setCharacter(objChild, var, &objChild->p.caption, var->value.data, var->value.length);
-// 							objChild->isDirtyRender	= true;
-// 
-// 							// All done
-// 							break;
-// 						}
-// 
-// 						// Move to next sibling
-// 						objChild = (SObject*)objChild->ll.next;
-// 					}
-// 					break;
-// 			}
-// 		}
-// 	}
-// 
-// 	// Indicate our status
-// 	return(llResult);
-// }
-
-
-
-
 //////////
 //
 // Called to set the f64 variable to the indicated input
@@ -878,6 +570,7 @@
 			{
 				// Locate the property within the object's properties
 				thisObjProp = baseclassList->objProps;
+// TODO:  We could add a speedup by sorting at startup each baseclassList->objProps, and then use a binary search
 				for (lnI = 0; lnI < thisObjProp[lnI].index; lnI++)
 				{
 					// Is this it?
@@ -885,7 +578,7 @@
 					{
 						// Store the raw property entries (if requested)
 						if (baseProp)		*baseProp	= &gsProps_master[tnIndex];
-						if (objProp)		*objProp	= thisObjProp;
+						if (objProp)		*objProp	= &thisObjProp[lnI];
 
 						// Return the variable associated with this position
 						return(obj->props[lnI]);
@@ -1326,11 +1019,58 @@ debug_break;
 //////////
 //
 // Called to set the caption on items which have captions.  The caption is not merely on
-// the the parent, but subforms also contain a default child object called caption which
+// the parent, but subforms also contain a default child object called _caption which
 // has its own properties, and these are used for rendering.
 //
 //////
 	bool iObjProp_setter_captionOnChild(SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp)
+	{
+		SObject*	objChild;
+		SVariable*	varChild;
+
+
+		// Make sure our environment is sane
+		if (obj && (obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) && var && varNewValue)
+		{
+			// Set the caption
+			iVariable_copy(var, varNewValue);
+
+			// For the items with captions, we set the caption on the parent as well as the child
+			objChild = obj->firstChild;
+			while (objChild)
+			{
+				// Is this the one
+				if (isName(objChild, cgcName_caption))
+				{
+					// Set the caption here
+					varChild = iObjProp_get_variable_byIndex(objChild, _INDEX_CAPTION);
+					if (varChild)
+						return(iVariable_copy(varChild, varNewValue));
+
+					// If we get here, we could not update it
+					break;
+				}
+
+				// Move to next sibling
+				objChild = (SObject*)objChild->ll.next;
+			}
+		}
+
+		// If we get here, failure
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to set the icon on items which have captions.  The icon is not merely on the
+// parent, but forms and subforms also contain a default child object called _icon which
+// has its own properties, and these are used for rendering.
+//
+//////
+	bool iObjProp_setter_iconOnChild(SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp)
 	{
 		SObject*	objChild;
 		SVariable*	varChild;
@@ -1347,10 +1087,10 @@ debug_break;
 			while (objChild)
 			{
 				// Is this the one
-				if (isName(objChild, cgcName_caption))
+				if (isName(objChild, cgcName_icon))
 				{
 					// Set the caption here
-					varChild = iObjProp_get_variable_byIndex(objChild, _INDEX_CAPTION);
+					varChild = iObjProp_get_variable_byIndex(objChild, _INDEX_ICON);
 					if (varChild)
 						return(iVariable_copy(varChild, varNewValue));
 

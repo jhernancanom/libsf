@@ -1969,33 +1969,6 @@ if (!llPublishChildren)
 
 //////////
 //
-// Called to set the visible status of the indicated object.
-// Returns the previous visible status.
-//
-//////
-	bool iObj_setVisible(SObject* obj, bool tlNewVisible)
-	{
-		bool llOldVisible;
-
-
-		// Make sure our environment is sane
-		logfunc(__FUNCTION__);
-		llOldVisible = false;
-		if (obj)
-		{
-			llOldVisible = isVisible(obj);
-			iObjProp_set_logical_direct(obj, _INDEX_VISIBLE, ((tlNewVisible) ? _LOGICAL_TRUE : _LOGICAL_FALSE));
-		}
-
-		// Indicate prior visible
-		return(llOldVisible);
-	}
-
-
-
-
-//////////
-//
 // Searches the indicated object for the indicated property
 //
 //////
