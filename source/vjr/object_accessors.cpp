@@ -477,7 +477,7 @@
 				if (varNewValue)
 				{
 					// Populate the variable the indicated value
-					iVariable_set_s32(varNewValue, color.color);
+					iVariable_set_u32(varNewValue, color.color);
 
 					// Perform the set
 						 if (objProp->_setterObject)	llResult = objProp->setterObject(obj, tnIndex, var, varNewValue, baseProp, objProp);
@@ -1105,4 +1105,270 @@ debug_break;
 
 		// If we get here, failure
 		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to mirror the color setting into the parent object into the nested child object
+//
+//////
+	bool iObjProp_setter_editboxMirror(SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp)
+	{
+		// Make sure our environment is sane
+		if (obj && obj->objType == _OBJ_TYPE_EDITBOX && var && varNewValue)
+		{
+			// Copy it to the SEM
+			switch (tnIndex)
+			{
+				case _INDEX_READONLY:
+					obj->p.em->isReadOnly				= (varNewValue->value.data_s8[0] != _LOGICAL_FALSE);
+					break;
+
+				case _INDEX_EDITBOX_OVERWRITE:
+					obj->p.em->isOverwrite				= (varNewValue->value.data_s8[0] != _LOGICAL_FALSE);
+					break;
+
+				case _INDEX_EDITBOX_SHOW_LINE_NUMBERS:
+					obj->p.em->showLineNumbers			= (varNewValue->value.data_s8[0] != _LOGICAL_FALSE);
+					break;
+
+				case _INDEX_EDITBOX_SHOW_CURSOR_LINE:
+					obj->p.em->showCursorLine			= (varNewValue->value.data_s8[0] != _LOGICAL_FALSE);
+					break;
+
+				case _INDEX_EDITBOX_SHOW_END_LINE:
+					obj->p.em->showEndLine				= (varNewValue->value.data_s8[0] != _LOGICAL_FALSE);
+					break;
+
+				case _INDEX_EDITBOX_IS_HEAVY_PROCESSING:
+					obj->p.em->isHeavyProcessing		= (varNewValue->value.data_s8[0] != _LOGICAL_FALSE);
+					break;
+
+				case _INDEX_EDITBOX_IS_SOURCE_CODE:
+					obj->p.em->isSourceCode				= (varNewValue->value.data_s8[0] != _LOGICAL_FALSE);
+					break;
+
+				case _INDEX_EDITBOX_ALLOW_MOVE_BEYOND_END_OF_LINE:
+					obj->p.em->allowMoveBeyondEndOfLine	= (varNewValue->value.data_s8[0] != _LOGICAL_FALSE);
+					break;
+
+				case _INDEX_EDITBOX_COLUMN:
+					obj->p.em->column					= *varNewValue->value.data_s32;
+					break;
+
+				case _INDEX_EDITBOX_LEFT_COLUMN:
+					obj->p.em->leftColumn				= *varNewValue->value.data_s32;
+					break;
+
+				case _INDEX_EDITBOX_TAB_WIDTH:
+					obj->p.em->tabWidth					= *varNewValue->value.data_s32;
+					break;
+
+				case _INDEX_EDITBOX_TABS_ENFORCED:
+					obj->p.em->tabsEnforced				= (varNewValue->value.data_s8[0] != _LOGICAL_FALSE);
+					break;
+
+				case _INDEX_FONTBOLD:
+					if (obj->p.em->font)
+					{
+						obj->p.em->font->isBold = obj->p.font->isBold;
+						iiFont_refresh(obj->p.em->font);
+					}
+					break;
+
+				case _INDEX_FONTCHARSET:
+					if (obj->p.em->font)
+					{
+						obj->p.em->font->charset = obj->p.font->charset;
+						iiFont_refresh(obj->p.em->font);
+					}
+					break;
+
+				case _INDEX_FONTCONDENSE:
+					if (obj->p.em->font)
+					{
+						obj->p.em->font->isCondensed = obj->p.font->isCondensed;
+						iiFont_refresh(obj->p.em->font);
+					}
+					break;
+
+				case _INDEX_FONTEXTEND:
+					if (obj->p.em->font)
+					{
+						obj->p.em->font->isExtended = obj->p.font->isExtended;
+						iiFont_refresh(obj->p.em->font);
+					}
+					break;
+
+				case _INDEX_FONTITALIC:
+					if (obj->p.em->font)
+					{
+						obj->p.em->font->isItalic = obj->p.font->isItalic;
+						iiFont_refresh(obj->p.em->font);
+					}
+					break;
+
+				case _INDEX_FONTNAME:
+					if (obj->p.em->font)
+					{
+						iDatum_duplicate(&obj->p.em->font->name, &obj->p.font->name);
+						iiFont_refresh(obj->p.em->font);
+					}
+					break;
+
+				case _INDEX_FONTOUTLINE:
+					if (obj->p.em->font)
+					{
+						obj->p.em->font->isOutline = obj->p.font->isOutline;
+						iiFont_refresh(obj->p.em->font);
+					}
+					break;
+
+				case _INDEX_FONTSHADOW:
+					if (obj->p.em->font)
+					{
+						obj->p.em->font->isShadow = obj->p.font->isShadow;
+						iiFont_refresh(obj->p.em->font);
+					}
+					break;
+
+				case _INDEX_FONTSIZE:
+					if (obj->p.em->font)
+					{
+						obj->p.em->font->_size = obj->p.font->_size;
+						iiFont_refresh(obj->p.em->font);
+					}
+					break;
+
+				case _INDEX_FONTSTRIKETHRU:
+					if (obj->p.em->font)
+					{
+						obj->p.em->font->isStrikethrough = obj->p.font->isStrikethrough;
+						iiFont_refresh(obj->p.em->font);
+					}
+					break;
+
+				case _INDEX_FONTUNDERLINE:
+					if (obj->p.em->font)
+					{
+						obj->p.em->font->isUnderline = obj->p.font->isUnderline;
+						iiFont_refresh(obj->p.em->font);
+					}
+					break;
+
+				default:
+					// Set the property to whatever is indicated, even though there is no mirror value in the SEM
+					iVariable_copy(var, varNewValue);
+			}
+
+			// Success
+			return(true);
+		}
+
+		// If we get here, failure
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to set the font object members associated with the object's font property settings.
+//
+//////
+	bool iObjProp_setter_fontProperty(SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp)
+	{
+		bool llResult;
+
+
+		//////////
+		// Perform the actual set on the property
+		//////
+			llResult = iVariable_copy(var, varNewValue);
+			if (llResult)
+			{
+				//////////
+				// Using the property, update and reset the font object
+				/////
+					switch (tnIndex)
+					{
+						case _INDEX_FONTBOLD:
+							obj->p.font->isBold = (varNewValue->value.data_s8[0] != _LOGICAL_FALSE);
+							break;
+
+						case _INDEX_FONTCHARSET:
+							obj->p.font->charset = *varNewValue->value.data_s32;
+							break;
+
+						case _INDEX_FONTCONDENSE:
+							obj->p.font->isCondensed = (varNewValue->value.data_s8[0] != _LOGICAL_FALSE);
+							break;
+
+						case _INDEX_FONTEXTEND:
+							obj->p.font->isExtended = (varNewValue->value.data_s8[0] != _LOGICAL_FALSE);
+							break;
+
+						case _INDEX_FONTITALIC:
+							obj->p.font->isItalic = (varNewValue->value.data_s8[0] != _LOGICAL_FALSE);
+							break;
+
+						case _INDEX_FONTNAME:
+							iDatum_duplicate(&obj->p.em->font->name, &obj->p.font->name);
+							break;
+
+						case _INDEX_FONTOUTLINE:
+							obj->p.font->isOutline = (varNewValue->value.data_s8[0] != _LOGICAL_FALSE);
+							break;
+
+						case _INDEX_FONTSHADOW:
+							obj->p.font->isShadow = (varNewValue->value.data_s8[0] != _LOGICAL_FALSE);
+							break;
+
+						case _INDEX_FONTSIZE:
+							obj->p.font->_size = *varNewValue->value.data_s32;
+							break;
+
+						case _INDEX_FONTSTRIKETHRU:
+							obj->p.font->isStrikethrough = (varNewValue->value.data_s8[0] != _LOGICAL_FALSE);
+							break;
+
+						case _INDEX_FONTUNDERLINE:
+							obj->p.font->isUnderline = (varNewValue->value.data_s8[0] != _LOGICAL_FALSE);
+							break;
+
+						default:
+							// This should never happen.  It's the result of a developer error at compile-time
+							debug_break;
+							break;
+					}
+
+
+				//////////
+				// Refresh the font for this item
+				//////
+					iiFont_refresh(obj->p.font);
+
+
+				//////////
+				// Signal that this object needs redrawn
+				//////
+					iObj_setDirtyRender_ascent(obj, true);
+			}
+
+
+		//////////
+		// For editboxes, we need to mirror the font settings through to the SEM
+		//////
+			if (obj->objType == _OBJ_TYPE_EDITBOX)
+				iObjProp_setter_editboxMirror(obj, tnIndex, var, varNewValue, baseProp, objProp);
+
+
+		//////////
+		// Indicate our status
+		//////
+			return(llResult);
 	}
