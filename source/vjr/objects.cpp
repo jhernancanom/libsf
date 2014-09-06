@@ -1707,7 +1707,7 @@ if (!llPublishChildren)
 					while (objChild)
 					{
 						// See which object this is
-						if (objChild->objType == _OBJ_TYPE_IMAGE && isName(obj, cgcName_icon))
+						if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_icon))
 						{
 							logfunc("form icon");
 							// Form icon
@@ -1720,7 +1720,7 @@ if (!llPublishChildren)
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(obj, cgcName_caption)) {
+						} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_caption)) {
 							// Caption
 							logfunc("form caption");
 							SetRect(&objChild->rc,
@@ -1732,7 +1732,7 @@ if (!llPublishChildren)
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(obj, cgcName_iconMove)) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconMove)) {
 							// Move icon
 							logfunc("form move icon");
 							SetRect(&objChild->rc,
@@ -1744,7 +1744,7 @@ if (!llPublishChildren)
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(obj, cgcName_iconMinimize)) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconMinimize)) {
 							// Minimize icon
 							logfunc("form minimize icon");
 							SetRect(&objChild->rc,
@@ -1756,7 +1756,7 @@ if (!llPublishChildren)
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(obj, cgcName_iconMaximize)) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconMaximize)) {
 							// Maximize icon
 							logfunc("form maximize icon");
 							SetRect(&objChild->rc,
@@ -1768,7 +1768,7 @@ if (!llPublishChildren)
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(obj, cgcName_iconClose)) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconClose)) {
 							// Close icon
 							logfunc("form close icon");
 							SetRect(&objChild->rc,
@@ -1798,7 +1798,7 @@ if (!llPublishChildren)
 					while (objChild)
 					{
 						// See which object this is
-						if (objChild->objType == _OBJ_TYPE_IMAGE && isName(obj, cgcName_icon))
+						if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_icon))
 						{
 							// Subform icon
 							logfunc("subform icon");
@@ -1811,7 +1811,7 @@ if (!llPublishChildren)
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(obj, cgcName_caption)) {
+						} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_caption)) {
 							// Caption
 							logfunc("subform caption");
 							SetRect(&objChild->rc,
@@ -1854,7 +1854,7 @@ if (!llPublishChildren)
 					while (objChild)
 					{
 						// See which object this is
-						if (objChild->objType == _OBJ_TYPE_IMAGE && isName(obj, cgcName_checkboxImage))
+						if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_checkboxImage))
 						{
 							// Adjust the size and position
 							logfunc("checkbox image");
@@ -1894,15 +1894,13 @@ if (!llPublishChildren)
 							iBmp_delete(&bmp, true, true);
 
 							// Add highlighting for the over and down
-							bmp = iObjProp_get_bitmap(obj, _INDEX_PICTUREBMP_OVER);
-							iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.5f);
-							bmp = iObjProp_get_bitmap(obj, _INDEX_PICTUREBMP_DOWN);
-							iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.5f);
+							bmp = iObjProp_get_bitmap(obj, _INDEX_PICTUREBMP_OVER);				iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.5f);
+							bmp = iObjProp_get_bitmap(obj, _INDEX_PICTUREBMP_DOWN);				iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.5f);
 
 							// Mark it for re-render
 							objChild->isDirtyRender = true;
 
-						} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(obj, cgcName_checkboxLabel)) {
+						} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_checkboxLabel)) {
 							// Adjust the size
 							logfunc("checkbox label");
 							switch (alignment(obj))
@@ -1988,10 +1986,10 @@ if (!llPublishChildren)
 			{
 				// Search through the properties
 				lpm = lbcl->objProps;
-				while (lpm && gsProps_master[lpm->index].prop)
+				while (lpm && gsProps_master[lpm->index].propName)
 				{
 					// Is this the name?
-					if (gsProps_master[lpm->index].length == tnPropertyNameLength && _memicmp(tcPropertyName, gsProps_master[lpm->index].prop, tnPropertyNameLength) == 0)
+					if (gsProps_master[lpm->index].propLength == tnPropertyNameLength && _memicmp(tcPropertyName, gsProps_master[lpm->index].propName, tnPropertyNameLength) == 0)
 						return(obj->props[lpm->index]);		// This is the property, retrieve its value
 
 					// Move to next property
@@ -3703,15 +3701,14 @@ if (!obj->props[lnI])
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
 						// Form icon
-						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP,			bmpVjrIcon);
-						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_DOWN,	bmpVjrIcon);
-						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_OVER,	bmpVjrIcon);
+						setPictureBmp(objChild, bmpVjrIcon);
+						setPictureBmpDown(objChild, bmpVjrIcon);
+						setPictureBmpOver(objChild, bmpVjrIcon);
 
 						// Add highlighting for the over and down
-						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);
-						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
-						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
-						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
+						setBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
 						setVisible(objChild, _LOGICAL_TRUE);
 
 					} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_caption)) {
@@ -3727,15 +3724,14 @@ if (!obj->props[lnI])
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
 						// Move icon
-						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP,			bmpMove);
-						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_DOWN,	bmpMove);
-						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_OVER,	bmpMove);
+						setPictureBmp(objChild, bmpMove);
+						setPictureBmpDown(objChild, bmpMove);
+						setPictureBmpOver(objChild, bmpMove);
 
 						// Add highlighting for the over and down
-						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);
-						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
-						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
-						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
+						setBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
 						setVisible(objChild, _LOGICAL_TRUE);
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconMinimize)) {
@@ -3743,15 +3739,16 @@ if (!obj->props[lnI])
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
 						// Minimize icon
-						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP,			bmpMinimize);
-						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_DOWN,	bmpMinimize);
-						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_OVER,	bmpMinimize);
+						setPictureBmp(objChild, bmpMinimize);
+						setPictureBmpDown(objChild, bmpMinimize);
+						setPictureBmpOver(objChild, bmpMinimize);
 
 						// Add highlighting for the over and down
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);
 						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
 						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
+						setBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
 						setVisible(objChild, _LOGICAL_TRUE);
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconMaximize)) {
@@ -3759,15 +3756,14 @@ if (!obj->props[lnI])
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
 						// Maximize icon
-						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP,			bmpMaximize);
-						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_DOWN,	bmpMaximize);
-						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_OVER,	bmpMaximize);
+						setPictureBmp(objChild, bmpMaximize);
+						setPictureBmpDown(objChild, bmpMaximize);
+						setPictureBmpOver(objChild, bmpMaximize);
 
 						// Add highlighting for the over and down
-						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);
-						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
-						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
-						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
+						setBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
 						setVisible(objChild, _LOGICAL_TRUE);
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconClose)) {
@@ -3775,15 +3771,14 @@ if (!obj->props[lnI])
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
 						// Close icon
-						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP,			bmpClose);
-						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_DOWN,	bmpClose);
-						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_OVER,	bmpClose);
+						setPictureBmp(objChild, bmpClose);
+						setPictureBmpDown(objChild, bmpClose);
+						setPictureBmpOver(objChild, bmpClose);
 
 						// Add highlighting for the over and down
-						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);
-						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
-						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
-						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
+						setBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
 						setVisible(objChild, _LOGICAL_TRUE);
 					}
 
@@ -3829,6 +3824,7 @@ if (!obj->props[lnI])
 			//////
 				setAnchor(subform, _ANCHOR_FIXED_NORESIZE);
 				setBackColor(subform, whiteColor);
+				setBackStyle(subform, _BACK_STYLE_TRANSPARENT);
 				setForeColor(subform, blackColor);
 				setIcon(subform, bmpVjrIcon);
 				setCaption(subform, cgcName_subform);
@@ -3855,15 +3851,14 @@ if (!obj->props[lnI])
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
 						// Form icon
-						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP,			bmpVjrIcon);
-						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_DOWN,	bmpVjrIcon);
-						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_OVER,	bmpVjrIcon);
+						setPictureBmp(objChild, bmpVjrIcon);
+						setPictureBmpDown(objChild, bmpVjrIcon);
+						setPictureBmpOver(objChild, bmpVjrIcon);
 
 						// Add highlighting for the over and down
-						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);
-						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.5f);
-						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
-						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.5f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.5f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.5f);
+						setBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
 						setVisible(objChild, _LOGICAL_TRUE);
 
 					} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_caption)) {
@@ -3927,10 +3922,8 @@ if (!obj->props[lnI])
 						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_OVER,	bmpCarouselIcon);
 
 						// Add highlighting for the over and down
-						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);
-						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
-						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
-						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
 						setVisible(objChild, _LOGICAL_TRUE);
 
 					} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_caption)) {
@@ -3951,10 +3944,8 @@ if (!obj->props[lnI])
 						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_OVER,	bmpClose);
 
 						// Add highlighting for the over and down
-						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);
-						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
-						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
-						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
 						setVisible(objChild, _LOGICAL_TRUE);
 					}
 
@@ -4310,10 +4301,8 @@ if (!obj->props[lnI])
 						iBmp_delete(&bmp, true, true);
 
 						// Add highlighting for the over and down
-						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);
-						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.5f);
-						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
-						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.5f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.5f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.5f);
 
 						// Mark it for re-rendering
 						objChild->isDirtyRender	= true;
@@ -4912,7 +4901,7 @@ if (!obj->props[lnI])
 						iBmp_frameRect(obj->bmp, &lrc, borderColor, borderColor, borderColor, borderColor, false, NULL, false);
 
 						// Draw the client area
-						bmp = iObjProp_get_bitmap(obj, _INDEX_ICON);
+						bmp = bmpVjrIcon;
 						SetRect(&lrc2, 8, bmp->bi.biHeight + 2, lrc.right - bmp->bi.biHeight - 2, lrc.bottom - bmp->bi.biHeight - 1);
 						if (backStyle(obj) == _BACK_STYLE_OPAQUE)
 							iBmp_fillRect(obj->bmp, &lrc2, backColor, backColor, backColor, backColor, false, NULL, false);

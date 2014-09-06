@@ -89,16 +89,69 @@
 //////
 	bool iObjProp_set_bitmap_direct(SObject* obj, s32 tnIndex, SBitmap* bmp)
 	{
-		SVariable* var;
+		bool				llResult;
+		SBasePropertyInit*	baseProp;
+		SObjPropertyMap*	objProp;
+		SVariable*			varNewValue;
+		SVariable*			var;
+		SObject*			objChild;
+		RECT				lrc;
 
 
 		// Make sure the environment is sane
 		if (obj)
 		{
 			// Grab the variable associated with this object's property
-			var = iObjProp_get_variable_byIndex(obj, tnIndex, NULL, NULL);
+			var = iObjProp_get_variable_byIndex(obj, tnIndex, &baseProp, &objProp);
 			if (var)
-				return(iVariable_set_bitmap(var, bmp));
+			{
+				// Create a temporary variable
+				varNewValue = iVariable_create(_VAR_TYPE_NULL, NULL);
+				varNewValue->bmp = bmp;
+
+				// Perform the set
+				     if (objProp->_setterObject)	llResult = objProp->setterObject(obj, tnIndex, var, varNewValue, baseProp, objProp);
+				else if (baseProp->_setterBase)		llResult = baseProp->setterBase	(obj, tnIndex, var, varNewValue, baseProp, objProp);
+				else								llResult = iVariable_set_bitmap(var, bmp);
+
+				// If they just set the picture on an image or checkbox, then we need to propagate through to the down and over
+				if ((obj->objType == _OBJ_TYPE_IMAGE || obj->objType == _OBJ_TYPE_CHECKBOX) && tnIndex == _INDEX_PICTUREBMP)
+				{
+					// Set the two
+					iObjProp_set_bitmap_direct(obj, _INDEX_PICTUREBMP_DOWN, bmp);
+					iObjProp_set_bitmap_direct(obj, _INDEX_PICTUREBMP_OVER, bmp);
+					
+					// Colorize
+					SetRect(&lrc, 0, 0, bmp->bi.biWidth, bmp->bi.biHeight);
+					bmp = iObjProp_get_bitmap(obj, _INDEX_PICTUREBMP_OVER);		iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f + ((obj->objType == _OBJ_TYPE_CHECKBOX) ? 0.25f : 0.0f));
+					bmp = iObjProp_get_bitmap(obj, _INDEX_PICTUREBMP_DOWN);		iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f + ((obj->objType == _OBJ_TYPE_CHECKBOX) ? 0.25f : 0.0f));
+
+				} else if ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) && tnIndex == _INDEX_ICON) {
+					// Icons propagate through to the child's _icon member as their picturebmp
+					objChild = obj->firstChild;
+					while (objChild)
+					{
+						if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_icon))
+						{
+							// Sets the three by setting the one (see how it handles _INDEX_PICTUREBMP above)
+							iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP, bmp);
+
+							// All done
+							break;
+						}
+
+						// Move to the next sibling
+						objChild = (SObject*)objChild->ll.next;
+
+					}
+				}
+
+				// Delete our temporary variable
+				iVariable_delete(varNewValue, true);
+
+				// Indicate our status
+				return(llResult);
+			}
 		}
 		// If we get here, failure
 		return(false);
@@ -631,7 +684,7 @@ debug_break;
 						lnIndex = objProps[lnI].index;
 
 						// Search the name associated with that property
-						if (iTestExactlyEqual(tcName, tnNameLength, gsProps_master[lnIndex].prop, gsProps_master[lnIndex].length))
+						if (iTestExactlyEqual(tcName, tnNameLength, gsProps_master[lnIndex].propName, gsProps_master[lnIndex].propLength))
 							return(obj->props[lnI]);	// Return the variable associated with this position
 					}
 					// If we get here, not found

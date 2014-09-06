@@ -752,7 +752,6 @@ struct SBasePropertyInit;
 	//         and getters, and should be used for internal use only.
 	bool					iObjProp_set							(SObject* obj, s32 tnIndex, SVariable* varNewValue);
 	bool					iObjProp_set_bitmap_direct				(SObject* obj, s32 tnIndex, SBitmap* bmp);
-	bool					iObjProp_set_bitmap						(SObject* obj, s32 tnIndex, SVariable* varNewValue);
 	bool					iObjProp_set_character					(SObject* obj, s32 tnIndex, SVariable* varNewValue);
 	bool					iObjProp_set_character_direct			(SObject* obj, s32 tnIndex, cs8* tcText, u32 tnTextLength);
 	bool					iObjProp_set_character_direct			(SObject* obj, s32 tnIndex,  s8* tcText, u32 tnTextLength);
@@ -801,8 +800,8 @@ struct SBasePropertyInit;
 		s32			index;
 
 		// Property name
-		cs8*		prop;								// Property
-		u32			length;								// Length of the property name
+		cs8*		propName;								// Property
+		u32			propLength;								// Length of the property name
 
 		// Default variable type
 		s32			varType;
@@ -2479,6 +2478,7 @@ struct SBasePropertyInit;
 		{	_INDEX_ENABLED,					0, 0, 0 },
 		{	_INDEX_HEIGHT,					0, 0, 0 },
 		{	_INDEX_HELPCONTEXTID,			0, 0, 0 },
+		{	_INDEX_ICON,					0, (u32)&iObjProp_setter_iconOnChild, 0 },
 		{	_INDEX_LEFT,					0, 0, 0 },
 		{	_INDEX_MOUSEPOINTER,			0, 0, 0 },
 		{	_INDEX_NAME,					0, 0, 0 },

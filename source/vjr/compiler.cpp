@@ -4615,6 +4615,9 @@ debug_break;
 			// If a valid variable was created, initialize it to the static baseclass values
 			if (gsProps_master[lnI].varInit)
 			{
+				// Give it its name
+				iDatum_duplicate(&gsProps_master[lnI].varInit->name, gsProps_master[lnI].propName, gsProps_master[lnI].propLength);
+
 				// Populate it
 				switch (gsProps_master[lnI].varType)
 				{

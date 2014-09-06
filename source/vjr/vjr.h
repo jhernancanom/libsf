@@ -82,9 +82,9 @@
 //////////
 // For debugging, the splash screen gets in the way if you're doing debugging
 // on a single monitor machine (like a notebook) during the initial startup.
-// You can undefine this property to prevent the splash screen from appearing.
+// You can set this property to false and prevent the splash screen from appearing.
 //////
-//	#define _SHOW_SPLASH
+	bool glShowSplash = false;
 
 
 #define _USE_MATH_DEFINES

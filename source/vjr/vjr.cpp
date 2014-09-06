@@ -96,9 +96,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 	{
 		RECT		lrc;
 		s8			buffer[256];
-#ifdef _SHOW_SPLASH
 		SBitmap*	bmp;
-#endif
 
 
 		// Get startup time
@@ -234,19 +232,19 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 				iBmp_fillRect(bmpRadio, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);		// And cover it up with white
 
 
-#ifdef _SHOW_SPLASH
-		// Load the splash screen
-		bmpVjrSplash = iBmp_rawLoad(cgc_splashBmp);
-		bmp = iiVjr_buildSplashScreen(bmpVjrSplash);
-		CreateThread(0, 0, &iSplash_show, bmp, 0, 0);
-#endif
+		if (glShowSplash)
+		{
+			// Load the splash screen
+			bmpVjrSplash = iBmp_rawLoad(cgc_splashBmp);
+			bmp = iiVjr_buildSplashScreen(bmpVjrSplash);
+			CreateThread(0, 0, &iSplash_show, bmp, 0, 0);
+		}
 
 		// Play the startup music if any
 		sprintf(buffer, "VJr launched %u milliseconds after system boot\0", systemStartedTickCount);
 		iVjr_appendSystemLog(buffer);
-#ifdef _SHOW_SPLASH
-		CreateThread(0, 0, &iPlay_ariaSplash, (LPVOID)cgcSoundStartupWav, 0, 0);
-#endif
+		if (glShowSplash)
+			CreateThread(0, 0, &iPlay_ariaSplash, (LPVOID)cgcSoundStartupWav, 0, 0);
 
 		// Focus window accumulator
 		iVjr_appendSystemLog("Create focus highlight buffer");

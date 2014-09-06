@@ -161,6 +161,8 @@ typedef SEM**		SEMpp;
 	#define setCount(obj, value)					iObjProp_set_s32_direct(obj, _INDEX_COUNT, value)
 	#define setMultiSelect(obj, value)				iObjProp_set_logical_direct(obj, _INDEX_MULTISELECT, value)
 	#define setPictureBmp(obj, bmp)					iObjProp_set_bitmap_direct(obj, _INDEX_PICTUREBMP, bmp)
+	#define setPictureBmpDown(obj, bmp)				iObjProp_set_bitmap_direct(obj, _INDEX_PICTUREBMP_DOWN, bmp)
+	#define setPictureBmpOver(obj, bmp)				iObjProp_set_bitmap_direct(obj, _INDEX_PICTUREBMP_OVER, bmp)
 
 
 //////////
