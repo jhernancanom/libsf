@@ -1182,7 +1182,7 @@ struct SBasePropertyInit;
 		{	_INDEX_VIEWPORTLEFT,					cgc_viewPortLeft,				sizeof(cgc_viewPortLeft) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// A pseudo-property to read the viewport left
 		{	_INDEX_VIEWPORTTOP,						cgc_viewPortTop,				sizeof(cgc_viewPortTop) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// A pseudo-property to read the viewport top
 		{	_INDEX_VIEWPORTWIDTH,					cgc_viewPortWidth,				sizeof(cgc_viewPortWidth) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// A pseudo-property to read the viewport width
-		{	_INDEX_VISIBLE,							cgc_visible,					sizeof(cgc_visible) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=visible, .f.=invisible, is the control visible?
+		{	_INDEX_VISIBLE,							cgc_visible,					sizeof(cgc_visible) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=visible, .f.=invisible (default), is the control initially visible?
 		{	_INDEX_VISUALEFFECT,					cgc_visualEffect,				sizeof(cgc_visualEffect) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		_VISUAL_EFFECT_NONE				,NULL	},	// 0=none (default), 1=raised, 2=sunken, how a command button appears
 		{	_INDEX_VSCROLLSMALLCHANGE,				cgc_vScrollSmallChange,			sizeof(cgc_vScrollSmallChange) - 1,			_VAR_TYPE_S32,				 0, 0, 0,		10								,NULL	},	// When scalemode = 3, default is 10 pixels
 		{	_INDEX_WHATSTHISBUTTON,					cgc_whatsThisButton,			sizeof(cgc_whatsThisButton) - 1,			_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=has what's this, .f.=does not have what's this (default)

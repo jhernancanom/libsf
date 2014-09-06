@@ -2357,7 +2357,34 @@ if (!obj->props[lnI])
 				// Initialize properties to VJr defaults
 				formNew->objType		= _OBJ_TYPE_FORM;
 				formNew->parent			= parent;
-				iiSubobj_resetToDefaultForm(formNew, true, true, &gsProps_form[0], gnProps_formSize);
+
+				//////////
+				// Create the default children for this object
+				//////
+					icon		= iObj_addChild(_OBJ_TYPE_IMAGE, formNew);
+					caption		= iObj_addChild(_OBJ_TYPE_LABEL, formNew);
+					move		= iObj_addChild(_OBJ_TYPE_IMAGE, formNew);
+					minimize	= iObj_addChild(_OBJ_TYPE_IMAGE, formNew);
+					maximize	= iObj_addChild(_OBJ_TYPE_IMAGE, formNew);
+					close		= iObj_addChild(_OBJ_TYPE_IMAGE, formNew);
+
+
+				//////////
+				// Give them proper names
+				//////
+					var = iObjProp_get_variable_byIndex(icon,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_icon,			-1);
+					var = iObjProp_get_variable_byIndex(caption,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_caption,		-1);
+					var = iObjProp_get_variable_byIndex(move,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconMove,		-1);
+					var = iObjProp_get_variable_byIndex(minimize,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconMinimize,	-1);
+					var = iObjProp_get_variable_byIndex(maximize,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconMaximize,	-1);
+					var = iObjProp_get_variable_byIndex(close,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconClose,		-1);
+
+
+				//////////
+				// Default initialization
+				//////
+					iiSubobj_resetToDefaultForm(formNew, true, true, &gsProps_form[0], gnProps_formSize);
+
 
 				// Initially populate
 				iObjProp_set_logical_direct(formNew, _INDEX_ENABLED, _LOGICAL_TRUE);
@@ -2375,28 +2402,6 @@ if (!obj->props[lnI])
 				{
 					// Copy from indicated template
 					iiSubobj_copyForm(formNew, template_form);
-
-				} else {
-					//////////
-					// Create the default children for this object
-					//////
-						icon		= iObj_addChild(_OBJ_TYPE_IMAGE, formNew);
-						caption		= iObj_addChild(_OBJ_TYPE_LABEL, formNew);
-						move		= iObj_addChild(_OBJ_TYPE_IMAGE, formNew);
-						minimize	= iObj_addChild(_OBJ_TYPE_IMAGE, formNew);
-						maximize	= iObj_addChild(_OBJ_TYPE_IMAGE, formNew);
-						close		= iObj_addChild(_OBJ_TYPE_IMAGE, formNew);
-
-
-					//////////
-					// Give them proper names
-					//////
-						var = iObjProp_get_variable_byIndex(icon,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_icon,			-1);
-						var = iObjProp_get_variable_byIndex(caption,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_caption,		-1);
-						var = iObjProp_get_variable_byIndex(move,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconMove,		-1);
-						var = iObjProp_get_variable_byIndex(minimize,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconMinimize,	-1);
-						var = iObjProp_get_variable_byIndex(maximize,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconMaximize,	-1);
-						var = iObjProp_get_variable_byIndex(close,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconClose,		-1);
 				}
 			}
 
@@ -2441,7 +2446,26 @@ if (!obj->props[lnI])
 				// Initialize properties to VJr defaults
 				subformNew->objType		= _OBJ_TYPE_SUBFORM;
 				subformNew->parent		= parent;
-				iiSubobj_resetToDefaultSubform(subformNew, true, true, &gsProps_subform[0], gnProps_subformSize);
+
+
+				//////////
+				// Create the default children for this object
+				//////
+					icon		= iObj_addChild(_OBJ_TYPE_IMAGE, subformNew);
+					caption		= iObj_addChild(_OBJ_TYPE_LABEL, subformNew);
+
+
+				//////////
+				// Give them proper names
+				//////
+					var = iObjProp_get_variable_byIndex(icon,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_icon,		-1);
+					var = iObjProp_get_variable_byIndex(caption,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_caption,	-1);
+
+
+				//////////
+				// Default initialization
+				//////
+					iiSubobj_resetToDefaultSubform(subformNew, true, true, &gsProps_subform[0], gnProps_subformSize);
 
 				// Initially populate
 				iObjProp_set_logical_direct(subformNew, _INDEX_ENABLED, _LOGICAL_TRUE);
@@ -2459,20 +2483,6 @@ if (!obj->props[lnI])
 				{
 					// Copy from indicated template
 					iiSubobj_copySubform(subformNew, template_subform);
-
-				} else {
-					//////////
-					// Create the default children for this object
-					//////
-						icon		= iObj_addChild(_OBJ_TYPE_IMAGE, subformNew);
-						caption		= iObj_addChild(_OBJ_TYPE_LABEL, subformNew);
-
-
-					//////////
-					// Give them proper names
-					//////
-						var = iObjProp_get_variable_byIndex(icon,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_icon,		-1);
-						var = iObjProp_get_variable_byIndex(caption,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_caption,	-1);
 				}
 			}
 
@@ -2518,7 +2528,29 @@ if (!obj->props[lnI])
 				// Initialize properties to VJr defaults
 				carouselNew->objType		= _OBJ_TYPE_CAROUSEL;
 				carouselNew->parent			= parent;
-				iiSubobj_resetToDefaultCarousel(carouselNew, true, true, &gsProps_carousel[0], gnProps_carouselSize);
+
+
+				//////////
+				// Create the default children for this object
+				//////
+					icon		= iObj_addChild(_OBJ_TYPE_IMAGE, carouselNew);
+					caption		= iObj_addChild(_OBJ_TYPE_LABEL, carouselNew);
+					close		= iObj_addChild(_OBJ_TYPE_IMAGE, carouselNew);
+
+
+				//////////
+				// Give them proper names
+				//////
+					var = iObjProp_get_variable_byIndex(icon,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_icon,		-1);
+					var = iObjProp_get_variable_byIndex(caption,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_caption,	-1);
+					var = iObjProp_get_variable_byIndex(close,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconClose,	-1);
+
+
+				//////////
+				// Default initialization
+				//////
+					iiSubobj_resetToDefaultCarousel(carouselNew, true, true, &gsProps_carousel[0], gnProps_carouselSize);
+
 
 				// Initially populate
 				iObjProp_set_logical_direct(carouselNew, _INDEX_ENABLED, _LOGICAL_TRUE);
@@ -2536,22 +2568,6 @@ if (!obj->props[lnI])
 				{
 					// Copy from indicated template
 					iiSubobj_copyCarousel(carouselNew, template_carousel);
-
-				} else {
-					//////////
-					// Create the default children for this object
-					//////
-						icon		= iObj_addChild(_OBJ_TYPE_IMAGE, carouselNew);
-						caption		= iObj_addChild(_OBJ_TYPE_LABEL, carouselNew);
-						close		= iObj_addChild(_OBJ_TYPE_IMAGE, carouselNew);
-
-
-					//////////
-					// Give them proper names
-					//////
-						var = iObjProp_get_variable_byIndex(icon,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_icon,		-1);
-						var = iObjProp_get_variable_byIndex(caption,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_caption,	-1);
-						var = iObjProp_get_variable_byIndex(close,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconClose,	-1);
 				}
 			}
 
@@ -2956,7 +2972,27 @@ if (!obj->props[lnI])
 				// Initialize properties to VJr defaults
 				checkboxNew->objType		= _OBJ_TYPE_CHECKBOX;
 				checkboxNew->parent			= parent;
-				iiSubobj_resetToDefaultCheckbox(checkboxNew, true, true, &gsProps_checkbox[0], gnProps_checkboxSize);
+
+
+				//////////
+				// Create the default children for this object
+				//////
+					image	= iObj_addChild(_OBJ_TYPE_IMAGE, checkboxNew);
+					label	= iObj_addChild(_OBJ_TYPE_LABEL, checkboxNew);
+
+
+				//////////
+				// Give them proper names
+				//////
+					var = iObjProp_get_variable_byIndex(image,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_checkboxImage,	-1);
+					var = iObjProp_get_variable_byIndex(label,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_checkboxLabel,	-1);
+
+
+				//////////
+				// Default initialization
+				//////
+					iiSubobj_resetToDefaultCheckbox(checkboxNew, true, true, &gsProps_checkbox[0], gnProps_checkboxSize);
+
 
 				// Initially populate
 				iObjProp_set_logical_direct(checkboxNew, _INDEX_ENABLED, _LOGICAL_TRUE);
@@ -2974,20 +3010,6 @@ if (!obj->props[lnI])
 				{
 					// Copy from indicated template
 					iiSubobj_copyCheckbox(checkboxNew, template_checkbox);
-
-				} else {
-					//////////
-					// Create the default children for this object
-					//////
-						image	= iObj_addChild(_OBJ_TYPE_IMAGE, checkboxNew);
-						label	= iObj_addChild(_OBJ_TYPE_LABEL, checkboxNew);
-
-
-					//////////
-					// Give them proper names
-					//////
-						var = iObjProp_get_variable_byIndex(image,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_checkboxImage,	-1);
-						var = iObjProp_get_variable_byIndex(label,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_checkboxLabel,	-1);
 				}
 			}
 
@@ -3637,41 +3659,24 @@ if (!obj->props[lnI])
 				// Set the size of the child components
 				iObj_setSize(form, 0, 0, 375, 250);
 
-
-			//////////
-			// Set default anchor to fixed in all positions, no resize
-			//////
-				iObjProp_set_s32_direct(form, _INDEX_ANCHOR, _ANCHOR_FIXED_NORESIZE);
-		
-
-			//////////
-			// Set the default font
-			//////
+				// Font
 				iFont_delete(&form->p.font, true);
 				form->p.font = iFont_duplicate(gsFontDefault);
 
 
 			//////////
-			// Set the default colors
+			// Set default anchor to fixed in all positions, no resize
 			//////
-				iObjProp_set_sbgra_direct(form, _INDEX_BACKCOLOR, whiteColor);
-				iObjProp_set_sbgra_direct(form, _INDEX_FORECOLOR, blackColor);
+				setAnchor(form, _ANCHOR_FIXED_NORESIZE);
+				setBackColor(form, whiteColor);
+				setForeColor(form, blackColor);
+				setIcon(form, bmpVjrIcon);
+				setCaption(form, cgcName_form);
+				setPictureBmp(form, bmpNoImage);
 
 
 			//////////
-			// Set the default form icon
-			//////
-				iObjProp_set_bitmap_direct(form, _INDEX_ICON, bmpVjrIcon);
-
-
-			//////////
-			// Set the default caption
-			//////
-				iObjProp_set_character_direct(form, _INDEX_CAPTION, cgcName_form, -1);
-
-
-			//////////
-			// Set the default form-specific events
+			// Events
 			//////
 				*(u32*)&form->ev.general.activate		= (u32)&iDefaultCallback_onActivate;
 				*(u32*)&form->ev.general.deactivate		= (u32)&iDefaultCallback_onDeactivate;
@@ -3685,12 +3690,6 @@ if (!obj->props[lnI])
 
 
 			//////////
-			// Clear the picture
-			//////
-				iObjProp_set_bitmap_direct(form, _INDEX_PICTUREBMP, bmpNoImage);
-
-
-			//////////
 			// Default child settings
 			//////
 				SetRect(&lrc, 0, 0, bmpArrowUl->bi.biWidth, bmpArrowUl->bi.biHeight);
@@ -3698,7 +3697,7 @@ if (!obj->props[lnI])
 				while (objChild)
 				{
 					// See which object this is
-					if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_icon) == 0)
+					if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_icon))
 					{
 						// Adjust the size
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
@@ -3713,12 +3712,9 @@ if (!obj->props[lnI])
 						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
 						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
-
-						// Icon
-						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpVjrIcon);		// Set the new
 						setVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_caption) == 0) {
+					} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_caption)) {
 						// Caption
 						setCaption(objChild, cgcName_formCaption);
 						iObjProp_set_s32_direct(objChild, _INDEX_BACKSTYLE, _BACK_STYLE_TRANSPARENT);
@@ -3726,7 +3722,7 @@ if (!obj->props[lnI])
 						objChild->p.font		= iFont_create(cgcFontName_windowTitleBar, 12, FW_NORMAL, false, false);
 						setVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconMove) == 0) {
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconMove)) {
 						// Adjust the size
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
@@ -3740,12 +3736,9 @@ if (!obj->props[lnI])
 						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
 						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
-
-						// Icon
-						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpMove);		// Set the new
 						setVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconMinimize) == 0) {
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconMinimize)) {
 						// Adjust the size
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
@@ -3759,12 +3752,9 @@ if (!obj->props[lnI])
 						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
 						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
-
-						// Icon
-						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpMinimize);	// Set the new
 						setVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconMaximize) == 0) {
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconMaximize)) {
 						// Adjust the size
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
@@ -3778,12 +3768,9 @@ if (!obj->props[lnI])
 						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
 						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
-
-						// Icon
-						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpMaximize);	// Set the new
 						setVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconClose) == 0) {
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconClose)) {
 						// Adjust the size
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
@@ -3797,9 +3784,6 @@ if (!obj->props[lnI])
 						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
 						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
-
-						// Icon
-						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpClose);		// Set the new
 						setVisible(objChild, _LOGICAL_TRUE);
 					}
 
@@ -3835,41 +3819,23 @@ if (!obj->props[lnI])
 				// Set the size of the child components
 				iObj_setSize(subform, 0, 0, 200, 100);
 
-
-			//////////
-			// Set default anchor to fixed in all positions, no resize
-			//////
-				iObjProp_set_s32_direct(subform, _INDEX_ANCHOR, _ANCHOR_FIXED_NORESIZE);
-
-
-			//////////
-			// Set the default font
-			//////
+				// Font
 				iFont_delete(&subform->p.font, true);
 				subform->p.font = iFont_duplicate(gsFontDefault);
 
 
 			//////////
-			// Set the default colors
+			// Set the defaults
 			//////
-				iObjProp_set_sbgra_direct(subform, _INDEX_BACKCOLOR, whiteColor);
-				iObjProp_set_sbgra_direct(subform, _INDEX_FORECOLOR, blackColor);
+				setAnchor(subform, _ANCHOR_FIXED_NORESIZE);
+				setBackColor(subform, whiteColor);
+				setForeColor(subform, blackColor);
+				setIcon(subform, bmpVjrIcon);
+				setCaption(subform, cgcName_subform);
 
 
 			//////////
-			// Set the default form icon
-			//////
-				iObjProp_set_bitmap_direct(subform, _INDEX_ICON, bmpVjrIcon);
-
-
-			//////////
-			// Set the default caption
-			//////
-				iObjProp_set_character_direct(subform, _INDEX_CAPTION, cgcName_subform, -1);
-
-
-			//////////
-			// Set the default form-specific events
+			// Events
 			//////
 				*(u32*)&subform->ev.general.activate		= (u32)&iDefaultCallback_onActivate;
 				*(u32*)&subform->ev.general.deactivate		= (u32)&iDefaultCallback_onDeactivate;
@@ -3883,7 +3849,7 @@ if (!obj->props[lnI])
 				while (objChild)
 				{
 					// See which object this is
-					if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_icon) == 0)
+					if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_icon))
 					{
 						// Adjust the size
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
@@ -3898,22 +3864,15 @@ if (!obj->props[lnI])
 						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.5f);
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
 						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.5f);
+						setVisible(objChild, _LOGICAL_TRUE);
 
-						// Icon
-						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpVjrIcon);
-
-						// Make it visible
-						iObjProp_set_logical_direct(objChild, _INDEX_VISIBLE, _LOGICAL_TRUE);
-
-					} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_caption) == 0) {
+					} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_caption)) {
 						// Caption
 						iObjProp_set_character_direct(objChild, _INDEX_CAPTION, cgcName_formCaption, -1);
 						iObjProp_set_s32_direct(objChild, _INDEX_BACKSTYLE, _BACK_STYLE_TRANSPARENT);
 						iFont_delete(&objChild->p.font, true);
 						objChild->p.font = iFont_create(cgcFontName_windowTitleBar, 10, FW_NORMAL, false, false);
-
-						// Make it visible
-						iObjProp_set_logical_direct(objChild, _INDEX_VISIBLE, _LOGICAL_TRUE);
+						setVisible(objChild, _LOGICAL_TRUE);
 					}
 
 					// Move to next object
@@ -3957,7 +3916,7 @@ if (!obj->props[lnI])
 				while (objChild)
 				{
 					// See which object this is
-					if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_icon) == 0)
+					if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_icon))
 					{
 						// Adjust the size
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpCarouselIcon->bi.biWidth, bmpCarouselIcon->bi.biHeight);
@@ -3972,20 +3931,17 @@ if (!obj->props[lnI])
 						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
 						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
+						setVisible(objChild, _LOGICAL_TRUE);
 
-						// Icon
-						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpCarouselIcon);	// Set the new
-						iObjProp_set_logical_direct(objChild, _INDEX_VISIBLE, _LOGICAL_TRUE);
-
-					} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_caption) == 0) {
+					} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_caption)) {
 						// Caption
 						setCaption(objChild, cgcName_formCaption);
 						iObjProp_set_s32_direct(objChild, _INDEX_BACKSTYLE, _BACK_STYLE_TRANSPARENT);
 						iFont_delete(&objChild->p.font, true);
 						objChild->p.font = iFont_create(cgcFontName_windowTitleBar, 12, FW_NORMAL, false, false);
-						iObjProp_set_logical_direct(objChild, _INDEX_VISIBLE, _LOGICAL_TRUE);
+						setVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconClose) == 0) {
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconClose)) {
 						// Adjust the size
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpCarouselIcon->bi.biWidth, bmpCarouselIcon->bi.biHeight);
 
@@ -3999,10 +3955,7 @@ if (!obj->props[lnI])
 						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
 						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
-
-						// Icon
-						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpClose);	// Set the new
-						iObjProp_set_logical_direct(objChild, _INDEX_VISIBLE, _LOGICAL_TRUE);
+						setVisible(objChild, _LOGICAL_TRUE);
 					}
 
 					// Move to next object
@@ -4056,16 +4009,7 @@ if (!obj->props[lnI])
 				// Set the size
 				iObj_setSize(label, 0, 0, 40, 17);
 
-
-			//////////
-			// Set default anchor to fixed in all positions, no resize
-			//////
-				iObjProp_set_s32_direct(label, _INDEX_ANCHOR, _ANCHOR_FIXED_NORESIZE);
-
-
-			//////////
-			// Set the default font
-			//////
+				// Font
 				iFont_delete(&label->p.font, true);
 				label->p.font = iFont_duplicate(gsFontDefault);
 
@@ -4073,20 +4017,20 @@ if (!obj->props[lnI])
 			//////////
 			// Set the default colors
 			//////
-				iObjProp_set_sbgra_direct(label, _INDEX_BACKCOLOR, whiteColor);
-				iObjProp_set_sbgra_direct(label, _INDEX_FORECOLOR, blackColor);
+				setBackColor(label, whiteColor);
+				setForeColor(label, blackColor);
 
 
 			//////////
 			// Set the characteristics
 			//////
-				iObjProp_set_s32_direct(label, _INDEX_ALIGNMENT, _ALIGNMENT_LEFT);
+				setAlignment(label, _ALIGNMENT_LEFT);
 				setCaption(label, cgcName_label);
-				iObjProp_set_s32_direct(label, _INDEX_BACKSTYLE,			_BACK_STYLE_TRANSPARENT);
-				iObjProp_set_s32_direct(label, _INDEX_BORDERSTYLE,			_BORDER_STYLE_NONE);
-				iObjProp_set_sbgra_direct(label, _INDEX_BORDERCOLOR,		blackColor);
-				iObjProp_set_sbgra_direct(label, _INDEX_DISABLEDBACKCOLOR,	disabledBackColor);
-				iObjProp_set_sbgra_direct(label, _INDEX_DISABLEDFORECOLOR,	disabledForeColor);
+				setBackStyle(label, _BACK_STYLE_TRANSPARENT);
+				setBorderStyle(label, _BORDER_STYLE_NONE);
+				setBorderColor(label, blackColor);
+				setDisabledBackColor(label, disabledBackColor);
+				setDisabledForeColor(label, disabledForeColor);
 		}
 	}
 
@@ -4111,40 +4055,26 @@ if (!obj->props[lnI])
 				// Set the size
 				iObj_setSize(textbox, 0, 0, 100, 23);
 
-
-			//////////
-			// Set default anchor to fixed in all positions, no resize
-			//////
-				iObjProp_set_s32_direct(textbox, _INDEX_ANCHOR, _ANCHOR_FIXED_NORESIZE);
-
-
-			//////////
-			// Set the default font
-			//////
+				// Font
 				iFont_delete(&textbox->p.font, true);
 				textbox->p.font = iFont_duplicate(gsFontDefault);
 
 
 			//////////
-			// Set the default colors
+			// Set the defaults
 			//////
-				iObjProp_set_sbgra_direct(textbox, _INDEX_BACKCOLOR, whiteColor);
-				iObjProp_set_sbgra_direct(textbox, _INDEX_FORECOLOR, blackColor);
-
-
-			//////////
-			// Set the characteristics
-			//////
-				iObjProp_set_s32_direct(textbox, _INDEX_STYLE, _STYLE_3D);
-				iObjProp_set_s32_direct(textbox, _INDEX_ALIGNMENT, _ALIGNMENT_LEFT);
-
-				iObjProp_set_s32_direct(textbox, _INDEX_BACKSTYLE,		_BACK_STYLE_OPAQUE);
-				iObjProp_set_s32_direct(textbox, _INDEX_BORDERSTYLE,	_BORDER_STYLE_NONE);
-				iObjProp_set_s32_direct(textbox, _INDEX_BORDERCOLOR,	blackColor.color);
-				iObjProp_set_sbgra_direct(textbox, _INDEX_SELECTEDBACKCOLOR, selectedBackColor);
-				iObjProp_set_sbgra_direct(textbox, _INDEX_SELECTEDFORECOLOR, selectedForeColor);
-				iObjProp_set_sbgra_direct(textbox, _INDEX_DISABLEDBACKCOLOR, disabledBackColor);
-				iObjProp_set_sbgra_direct(textbox, _INDEX_DISABLEDFORECOLOR, disabledForeColor);
+				setAnchor(textbox, _ANCHOR_FIXED_NORESIZE);
+				setBackColor(textbox, whiteColor);
+				setForeColor(textbox, blackColor);
+				setStyle(textbox, _STYLE_3D);
+				setAlignment(textbox, _ALIGNMENT_LEFT);
+				setBackStyle(textbox, _BACK_STYLE_OPAQUE);
+				setBorderStyle(textbox, _BORDER_STYLE_NONE);
+				setBorderColor(textbox, blackColor);
+				setSelectedBackColor(textbox, selectedBackColor);
+				setSelectedForeColor(textbox, selectedForeColor);
+				setDisabledBackColor(textbox, disabledBackColor);
+				setDisabledForeColor(textbox, disabledForeColor);
 
 
 			//////////
@@ -4176,22 +4106,28 @@ if (!obj->props[lnI])
 				// Set the size
 				iObj_setSize(button, 0, 0, 84, 27);
 
+				// Font
+				button->p.font = iFont_duplicate(gsFontDefault);
 
-			button->p.font = iFont_duplicate(gsFontDefault);
-			iObjProp_set_sbgra_direct(button, _INDEX_BACKCOLOR, grayColor);
-			iObjProp_set_sbgra_direct(button, _INDEX_FORECOLOR, blackColor);
 
-			iObjProp_set_s32_direct(button, _INDEX_STYLE,		_STYLE_3D);
-			iObjProp_set_s32_direct(button, _INDEX_ALIGNMENT,	_ALIGNMENT_CENTER);
-			iObjProp_set_s32_direct(button, _INDEX_BACKSTYLE,	_BACK_STYLE_TRANSPARENT);
+			//////////
+			// Set the default properties
+			//////
+				setBackColor(button, grayColor);
+				setForeColor(button, blackColor);
+				setStyle(button, _STYLE_3D);
+				setAlignment(button, _ALIGNMENT_CENTER);
+				setBackStyle(button, _BACK_STYLE_TRANSPARENT);
+				setCaption(button, cgcName_button);
+				setDisabledBackColor(button, disabledBackColor);
+				setDisabledForeColor(button, disabledForeColor);
 
-			setCaption(button, cgcName_button);
 
-			iObjProp_set_sbgra_direct(button, _INDEX_DISABLEDBACKCOLOR, disabledBackColor);
-			iObjProp_set_sbgra_direct(button, _INDEX_DISABLEDFORECOLOR, disabledForeColor);
-
-			*(u32*)&button->ev.general.onInteractiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
-			*(u32*)&button->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
+			//////////
+			// Events
+			//////
+				*(u32*)&button->ev.general.onInteractiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
+				*(u32*)&button->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
@@ -4216,28 +4152,34 @@ if (!obj->props[lnI])
 				// Set the size
 				iObj_setSize(editbox, 0, 0, 100, 53);
 
+				// Font
+				editbox->p.font = iFont_duplicate(gsFontDefault);
 
-			editbox->p.font = iFont_duplicate(gsFontDefault);
-			iObjProp_set_sbgra_direct(editbox, _INDEX_BACKCOLOR,	whiteColor);
-			iObjProp_set_sbgra_direct(editbox, _INDEX_FORECOLOR,	blackColor);
 
-			iObjProp_set_s32_direct(editbox, _INDEX_STYLE,			_STYLE_3D);
-			iObjProp_set_s32_direct(editbox, _INDEX_ALIGNMENT,		_ALIGNMENT_LEFT);
+			//////////
+			// Set the defaults
+			//////
+				setBackColor(editbox, whiteColor);
+				setForeColor(editbox, blackColor);
+				setStyle(editbox, _STYLE_3D);
+				setAlignment(editbox, _ALIGNMENT_LEFT);
+				setBackStyle(editbox, _BACK_STYLE_OPAQUE);
+				setBorderStyle(editbox, _BORDER_STYLE_NONE);
+				setBorderColor(editbox, blackColor);
+				setSelectedBackColor(editbox, selectedBackColor);
+				setSelectedBackColor(editbox, selectedForeColor);
+				setDisabledBackColor(editbox, disabledBackColor);
+				setDisabledForeColor(editbox, disabledForeColor);
 
-			iObjProp_set_s32_direct(editbox, _INDEX_BACKSTYLE,		_BACK_STYLE_OPAQUE);
-			iObjProp_set_s32_direct(editbox, _INDEX_BORDERSTYLE,	_BORDER_STYLE_NONE);
+				iSEM_deleteChain(&editbox->p.em, true);
+				editbox->p.em = iSEM_allocate(false);
 
-			iObjProp_set_sbgra_direct(editbox, _INDEX_BORDERCOLOR,			blackColor);
-			iObjProp_set_sbgra_direct(editbox, _INDEX_SELECTEDBACKCOLOR,	selectedBackColor);
-			iObjProp_set_sbgra_direct(editbox, _INDEX_SELECTEDFORECOLOR,	selectedForeColor);
-			iObjProp_set_sbgra_direct(editbox, _INDEX_DISABLEDBACKCOLOR,	disabledBackColor);
-			iObjProp_set_sbgra_direct(editbox, _INDEX_DISABLEDFORECOLOR,	disabledForeColor);
 
-			iSEM_deleteChain(&editbox->p.em, true);
-			editbox->p.em = iSEM_allocate(false);
-
-			*(u32*)&editbox->ev.general.onInteractiveChange		= *(u32*)&iDefaultCallback_onInteractiveChange;
-			*(u32*)&editbox->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
+			//////////
+			// Events
+			//////
+				*(u32*)&editbox->ev.general.onInteractiveChange		= *(u32*)&iDefaultCallback_onInteractiveChange;
+				*(u32*)&editbox->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
@@ -4263,10 +4205,17 @@ if (!obj->props[lnI])
 				iObj_setSize(image, 0, 0, 100, 36);
 
 
-			iObjProp_set_s32_direct(image, _INDEX_STYLE, _IMAGE_STYLE_OPAQUE);
-			iObjProp_set_bitmap_direct(image, _INDEX_PICTUREBMP, bmpNoImage);
+			//////////
+			// Set the default values
+			//////
+				setStyle(image, _IMAGE_STYLE_OPAQUE);
+				setPictureBmp(image, bmpNoImage);
 
-			*(u32*)&image->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
+
+			//////////
+			// Events
+			//////
+				*(u32*)&image->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
@@ -4287,13 +4236,7 @@ if (!obj->props[lnI])
 
 
 			//////////
-			// Set the default value
-			//////
-				iObjProp_set_s32_direct(checkbox, _INDEX_VALUE, 0);
-
-
-			//////////
-			// Set default size and position
+			// Set default size, position, font
 			//////
 				SetRect(&checkbox->rc, 0, 0, 60, 17);
 				SetRect(&checkbox->rco, 0, 0, 60, 17);
@@ -4302,25 +4245,32 @@ if (!obj->props[lnI])
 				// Set the size
 				iObj_setSize(checkbox, 0, 0, 60, 17);
 
+				// Font
+				checkbox->p.font = iFont_duplicate(gsFontDefault9);
 
-			checkbox->p.font = iFont_duplicate(gsFontDefault9);
-			iObjProp_set_sbgra_direct(checkbox, _INDEX_BACKCOLOR,	 whiteColor);
-			iObjProp_set_sbgra_direct(checkbox, _INDEX_FORECOLOR,	 blackColor);
 
-			iObjProp_set_s32_direct(checkbox, _INDEX_ALIGNMENT,		_ALIGNMENT_LEFT);
-			iObjProp_set_s32_direct(checkbox, _INDEX_STYLE,			_STYLE_3D);
+			//////////
+			// Set the default values
+			//////
+				setValue_s32(checkbox, 0);
 
-			setCaption(checkbox, cgcName_checkbox);
+				setBackColor(checkbox, whiteColor);
+				setForeColor(checkbox, blackColor);
+				setAlignment(checkbox, _ALIGNMENT_LEFT);
+				setStyle(checkbox, _STYLE_3D);
+				setCaption(checkbox, cgcName_checkbox);
+				setBackStyle(checkbox, _BACK_STYLE_TRANSPARENT);
+				setBorderStyle(checkbox, _BORDER_STYLE_NONE);
+				setBorderColor(checkbox, blackColor);
+				setDisabledBackColor(checkbox, disabledBackColor);
+				setDisabledForeColor(checkbox, disabledForeColor);
 
-			iObjProp_set_s32_direct(checkbox, _INDEX_BACKSTYLE,		_BACK_STYLE_TRANSPARENT);
-			iObjProp_set_s32_direct(checkbox, _INDEX_BORDERSTYLE,	_BORDER_STYLE_NONE);
 
-			iObjProp_set_sbgra_direct(checkbox, _INDEX_BORDERCOLOR,			blackColor);
-			iObjProp_set_sbgra_direct(checkbox, _INDEX_DISABLEDBACKCOLOR,	disabledBackColor);
-			iObjProp_set_sbgra_direct(checkbox, _INDEX_DISABLEDFORECOLOR,	disabledForeColor);
-
-			*(u32*)&checkbox->ev.general.onInteractiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
-			*(u32*)&checkbox->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
+			//////////
+			// Events
+			//////
+				*(u32*)&checkbox->ev.general.onInteractiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
+				*(u32*)&checkbox->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 
 
 			//////////
@@ -4331,7 +4281,7 @@ if (!obj->props[lnI])
 				while (objChild)
 				{
 					// See which object this is
-					if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_checkboxImage) == 0)
+					if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_checkboxImage))
 					{
 						// Adjust the size
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, 17, objChild->rc.bottom);
@@ -4367,19 +4317,21 @@ if (!obj->props[lnI])
 
 						// Mark it for re-rendering
 						objChild->isDirtyRender	= true;
+						setVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_checkboxLabel) == 0) {
+					} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_checkboxLabel)) {
 						// Adjust the size
 						iObj_setSize(objChild, 17, 0, 60, objChild->rc.bottom);
 
 						// Checkbox label
 						setCaption(objChild, cgcName_checkbox);
-						iObjProp_set_s32_direct(objChild, _INDEX_BACKSTYLE, _BACK_STYLE_TRANSPARENT);
+						setBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
 						iFont_delete(&objChild->p.font, true);
 						objChild->p.font = iFont_duplicate(checkbox->p.font);
 
 						// Mark it for re-rendering
 						objChild->isDirtyRender	= true;
+						setVisible(objChild, _LOGICAL_TRUE);
 					}
 
 					// Move to next object
@@ -4409,22 +4361,28 @@ if (!obj->props[lnI])
 				// Set the size
 				iObj_setSize(option, 0, 0, 60, 40);
 
+				// Font
+				option->p.font = iFont_duplicate(gsFontDefault9);
 
-			iObjProp_set_sbgra_direct(option, _INDEX_BACKCOLOR,	whiteColor);
-			iObjProp_set_sbgra_direct(option, _INDEX_FORECOLOR,	blackColor);
 
-			iObjProp_set_s32_direct(option, _INDEX_ALIGNMENT,	_ALIGNMENT_LEFT);
-			iObjProp_set_s32_direct(option, _INDEX_STYLE,		_STYLE_3D);
+			//////////
+			// Set the default values
+			//////
+				setBackColor(option, whiteColor);
+				setForeColor(option, blackColor);
+				setAlignment(option, _ALIGNMENT_LEFT);
+				setStyle(option, _STYLE_3D);
+				setCount(option, 0);
+				setMultiSelect(option, _LOGICAL_FALSE);
 
-			iObjProp_set_s32_direct(option, _INDEX_COUNT,		0);
 
-			iObjProp_set_logical_direct(option, _INDEX_MULTISELECT, _LOGICAL_FALSE);
-
-			// Copy the events
-			*(u32*)&option->ev.general.onSelect				= *(u32*)&iDefaultCallback_onSelect;
-			*(u32*)&option->ev.general.onDeselect			= *(u32*)&iDefaultCallback_onDeselect;
-			*(u32*)&option->ev.general.onInteractiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
-			*(u32*)&option->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
+			//////////
+			// Events
+			//////
+				*(u32*)&option->ev.general.onSelect				= *(u32*)&iDefaultCallback_onSelect;
+				*(u32*)&option->ev.general.onDeselect			= *(u32*)&iDefaultCallback_onDeselect;
+				*(u32*)&option->ev.general.onInteractiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
+				*(u32*)&option->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
@@ -4449,28 +4407,35 @@ if (!obj->props[lnI])
 				// Set the size
 				iObj_setSize(radio, 0, 0, 72, 72);
 
+				// Font
+				radio->p.font  = iFont_duplicate(gsFontDefault);
 
-			radio->p.font  = iFont_duplicate(gsFontDefault);
-			iObjProp_set_sbgra_direct(radio, _INDEX_BACKCOLOR,	whiteColor);
-			iObjProp_set_sbgra_direct(radio, _INDEX_FORECOLOR,	blackColor);
 
-			iObjProp_set_s32_direct(radio, _INDEX_ALIGNMENT,	_ALIGNMENT_LEFT);
-			iObjProp_set_s32_direct(radio, _INDEX_STYLE,		_STYLE_3D);
+			//////////
+			// Set the default properties
+			//////
+				setBackColor(radio, whiteColor);
+				setForeColor(radio, blackColor);
+				setAlignment(radio, _ALIGNMENT_LEFT);
+				setStyle(radio, _STYLE_3D);
 
-			iObjProp_set_f64_direct(radio, _INDEX_VALUE,			1.0);
-			iObjProp_set_f64_direct(radio, _INDEX_VALUE_MINIMUM,	1.0);
-			iObjProp_set_f64_direct(radio, _INDEX_VALUE_MAXIMUM,	100.0);
-			iObjProp_set_f64_direct(radio, _INDEX_ROUND_TO,			1.0f);
+				setValue_f64(radio, 1.0);
+				setValueMinimum(radio, 1.0);
+				setValueMaximum(radio, 100.0);
+				setValueRoundTo(radio, 1.0f);
 
-			iObjProp_set_s32_direct(radio, _INDEX_BACKSTYLE,	_BACK_STYLE_OPAQUE);
-			iObjProp_set_s32_direct(radio, _INDEX_BORDERSTYLE,	_BORDER_STYLE_NONE);
+				setBackStyle(radio, _BACK_STYLE_OPAQUE);
+				setBorderStyle(radio, _BORDER_STYLE_NONE);
+				setBorderColor(radio, blackColor);
+				setDisabledBackColor(radio, disabledBackColor);
+				setDisabledForeColor(radio, disabledForeColor);
 
-			iObjProp_set_sbgra_direct(radio, _INDEX_BORDERCOLOR,		blackColor);
-			iObjProp_set_sbgra_direct(radio, _INDEX_DISABLEDBACKCOLOR,	disabledBackColor);
-			iObjProp_set_sbgra_direct(radio, _INDEX_DISABLEDFORECOLOR,	disabledForeColor);
 
-			*(u32*)&radio->ev.general.onInteractiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
-			*(u32*)&radio->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
+			//////////
+			// Events
+			//////
+				*(u32*)&radio->ev.general.onInteractiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
+				*(u32*)&radio->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 

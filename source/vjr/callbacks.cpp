@@ -243,24 +243,24 @@
 			switch (obj->objType)
 			{
 				case _OBJ_TYPE_IMAGE:
-					if (isName(obj, cgcName_iconClose) == 0) {
+					if (isName(obj, cgcName_iconClose)) {
 						// Close
 						iVjr_shutdown();	// They clicked quit
 						return(false);		// When we get here, the object no longer exists
 
-					} else if (isName(obj, cgcName_iconMove) == 0) {
+					} else if (isName(obj, cgcName_iconMove)) {
 						// Move
 						llMouseDown					= false;
 						obj->ev.mouse.isMouseOver	= false;
 						iWindow_move(win);
 
-					} else if (isName(obj, cgcName_iconMinimize) == 0) {
+					} else if (isName(obj, cgcName_iconMinimize)) {
 						// Minimize
 						llMouseDown					= false;
 						obj->ev.mouse.isMouseOver	= false;
 						iWindow_minimize(win);
 
-					} else if (isName(obj, cgcName_iconMaximize) == 0) {
+					} else if (isName(obj, cgcName_iconMaximize)) {
 						// Maximize
 						llMouseDown					= false;
 						obj->ev.mouse.isMouseOver	= false;

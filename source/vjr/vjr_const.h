@@ -123,6 +123,8 @@ typedef SEM**		SEMpp;
 	#define isVisible(obj)							(iObjProp_get_logical_direct(obj, _INDEX_VISIBLE)  != _LOGICAL_FALSE)
 	#define isEnabled(obj)							(iObjProp_get_logical_direct(obj, _INDEX_ENABLED)  != _LOGICAL_FALSE)
 	#define isReadonly(obj)							(iObjProp_get_logical_direct(obj, _INDEX_READONLY) != _LOGICAL_FALSE)
+	#define isName(obj, text)						(iObjProp_compare_character(obj, _INDEX_NAME, (s8*)text, sizeof(text) - 1) == 0)
+
 	#define backStyle(obj)							iObjProp_get_s32_direct(obj, _INDEX_BACKSTYLE)
 	#define borderStyle(obj)						iObjProp_get_s32_direct(obj, _INDEX_BORDERSTYLE)
 	#define borderColor(obj)						iObjProp_get_sbgra_direct(obj, _INDEX_BORDERCOLOR)
@@ -132,12 +134,33 @@ typedef SEM**		SEMpp;
 	#define neRgba(obj)								iObjProp_get_sbgra_direct(obj, _INDEX_NECOLOR)
 	#define swRgba(obj)								iObjProp_get_sbgra_direct(obj, _INDEX_SWCOLOR)
 	#define seRgba(obj)								iObjProp_get_sbgra_direct(obj, _INDEX_SECOLOR)
-
 	#define alignment(obj)							iObjProp_get_s32_direct(obj, _INDEX_ALIGNMENT)
-	#define isName(obj, text)						(iObjProp_compare_character(obj, _INDEX_NAME, (s8*)text, sizeof(text) - 1) == 0)
 
-	#define setVisible(obj , value)					iObjProp_set_logical_direct(obj, _INDEX_VISIBLE, value)
+	#define setValue_s32(obj, value)				iObjProp_set_s32_direct(obj, _INDEX_VALUE, value)
+	#define setValue_f64(obj, value)				iObjProp_set_f64_direct(obj, _INDEX_VALUE, value)
+	#define setValueMinimum(obj, value)				iObjProp_set_f64_direct(obj, _INDEX_VALUE_MINIMUM, value)
+	#define setValueMaximum(obj, value)				iObjProp_set_f64_direct(obj, _INDEX_VALUE_MAXIMUM, value)
+	#define setValueRoundTo(obj, value)				iObjProp_set_f64_direct(obj, _INDEX_ROUND_TO, value)
+
+	#define setBackColor(obj, color)				iObjProp_set_sbgra_direct(obj, _INDEX_BACKCOLOR, color)
+	#define setForeColor(obj, color)				iObjProp_set_sbgra_direct(obj, _INDEX_FORECOLOR, color)
+	#define setBorderColor(obj, color)				iObjProp_set_sbgra_direct(obj, _INDEX_BORDERCOLOR, color)
+	#define setDisabledBackColor(obj, color)		iObjProp_set_sbgra_direct(obj, _INDEX_DISABLEDBACKCOLOR, color)
+	#define setDisabledForeColor(obj, color)		iObjProp_set_sbgra_direct(obj, _INDEX_DISABLEDFORECOLOR, color)
+	#define setSelectedBackColor(obj, color)		iObjProp_set_sbgra_direct(obj, _INDEX_SELECTEDBACKCOLOR, color);
+	#define setSelectedForeColor(obj, color)		iObjProp_set_sbgra_direct(obj, _INDEX_SELECTEDFORECOLOR, color);
+
+	#define setAnchor(obj, value)					iObjProp_set_s32_direct(obj, _INDEX_ANCHOR, value)
+	#define setIcon(obj, bmp)						iObjProp_set_bitmap_direct(obj, _INDEX_ICON, bmp)
+	#define setVisible(obj, value)					iObjProp_set_logical_direct(obj, _INDEX_VISIBLE, value)
+	#define setAlignment(obj, value)				iObjProp_set_s32_direct(obj, _INDEX_ALIGNMENT, value)
+	#define setStyle(obj, value)					iObjProp_set_s32_direct(obj, _INDEX_STYLE, value)
+	#define setBackStyle(obj, value)				iObjProp_set_s32_direct(obj, _INDEX_BACKSTYLE, value)
+	#define setBorderStyle(obj, value)				iObjProp_set_s32_direct(obj, _INDEX_BORDERSTYLE, value)
 	#define setCaption(obj, value)					iObjProp_set_character_direct(obj, _INDEX_CAPTION, (s8*)value, sizeof(value) - 1)
+	#define setCount(obj, value)					iObjProp_set_s32_direct(obj, _INDEX_COUNT, value)
+	#define setMultiSelect(obj, value)				iObjProp_set_logical_direct(obj, _INDEX_MULTISELECT, value)
+	#define setPictureBmp(obj, bmp)					iObjProp_set_bitmap_direct(obj, _INDEX_PICTUREBMP, bmp)
 
 
 //////////
