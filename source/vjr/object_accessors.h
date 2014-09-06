@@ -284,6 +284,9 @@ struct SBasePropertyInit;
 	const s8		cgc_partition[]											= "partition";
 	const s8		cgc_passwordChar[]										= "passwordChar";
 	const s8		cgc_picture[]											= "picture";
+	const s8		cgc_pictureBmp[]										= "picturebmp";
+	const s8		cgc_pictureBmpDown[]									= "picturebmpdown";
+	const s8		cgc_pictureBmpOver[]									= "picturebmpover";
 	const s8		cgc_pictureMargin[]										= "pictureMargin";
 	const s8		cgc_picturePosition[]									= "picturePosition";
 	const s8		cgc_pictureSelectionDisplay[]							= "pictureSelectionDisplay";
@@ -379,6 +382,10 @@ struct SBasePropertyInit;
 	const s8		cgc_windowType[]										= "windowType";
 	const s8		cgc_wordWrap[]											= "wordWrap";
 	const s8		cgc_zoomBox[]											= "zoomBox";
+	const s8		cgc_nwColor[]											= "nwColor";
+	const s8		cgc_neColor[]											= "neColor";
+	const s8		cgc_swColor[]											= "swColor";
+	const s8		cgc_seColor[]											= "seColor";
 
 	const u32		_INDEX_ACTIVECOLUMN										= 0;
 	const u32		_INDEX_ACTIVECONTROL									= 1;
@@ -613,101 +620,109 @@ struct SBasePropertyInit;
 	const u32		_INDEX_PARTITION										= 230;
 	const u32		_INDEX_PASSWORDCHAR										= 231;
 	const u32		_INDEX_PICTURE											= 232;
-	const u32		_INDEX_PICTUREMARGIN									= 233;
-	const u32		_INDEX_PICTUREPOSITION									= 234;
-	const u32		_INDEX_PICTURESELECTIONDISPLAY							= 235;
-	const u32		_INDEX_PICTURESPACING									= 236;
-	const u32		_INDEX_PICTUREVAL										= 237;
-	const u32		_INDEX_POLYPOINTS										= 238;
-	const u32		_INDEX_PROCEDURE										= 239;
-	const u32		_INDEX_READBACKCOLOR									= 240;
-	const u32		_INDEX_READCYCLE										= 241;
-	const u32		_INDEX_READFORECOLOR									= 242;
-	const u32		_INDEX_READLOCK											= 243;
-	const u32		_INDEX_READMOUSE										= 244;
-	const u32		_INDEX_READONLY											= 245;
-	const u32		_INDEX_READSAVE											= 246;
-	const u32		_INDEX_READTIMEOUT										= 247;
-	const u32		_INDEX_RECORDMARK										= 248;
-	const u32		_INDEX_RECORDSOURCE										= 249;
-	const u32		_INDEX_RECORDSOURCETYPE									= 250;
-	const u32		_INDEX_RELATIONALEXPR									= 251;
-	const u32		_INDEX_RELATIVECOLUMN									= 252;
-	const u32		_INDEX_RELATIVEROW										= 253;
-	const u32		_INDEX_RELEASETYPE										= 254;
-	const u32		_INDEX_RESIZABLE										= 255;
-	const u32		_INDEX_RIGHTTOLEFT										= 256;
-	const u32		_INDEX_ROTATEFLIP										= 257;
-	const u32		_INDEX_ROTATION											= 258;
-	const u32		_INDEX_ROUND_TO											= 259;
-	const u32		_INDEX_ROWCOLCHANGE										= 260;
-	const u32		_INDEX_ROWHEIGHT										= 261;
-	const u32		_INDEX_ROWSOURCE										= 262;
-	const u32		_INDEX_ROWSOURCETYPE									= 263;
-	const u32		_INDEX_SCALEMODE										= 264;
-	const u32		_INDEX_SCROLLBARS										= 265;
-	const u32		_INDEX_SECONDS											= 266;
-	const u32		_INDEX_SELLENGTH										= 267;
-	const u32		_INDEX_SELSTART											= 268;
-	const u32		_INDEX_SELTEXT											= 269;
-	const u32		_INDEX_SELECTONENTRY									= 270;
-	const u32		_INDEX_SELECTED											= 271;
-	const u32		_INDEX_SELECTEDBACKCOLOR								= 272;
-	const u32		_INDEX_SELECTEDFORECOLOR								= 273;
-	const u32		_INDEX_SELECTEDID										= 274;
-	const u32		_INDEX_SELECTEDITEMBACKCOLOR							= 275;
-	const u32		_INDEX_SELECTEDITEMFORECOLOR							= 276;
-	const u32		_INDEX_SHOWINTASKBAR									= 277;
-	const u32		_INDEX_SHOWTIPS											= 278;
-	const u32		_INDEX_SHOWWINDOW										= 279;
-	const u32		_INDEX_SIZABLE											= 280;
-	const u32		_INDEX_SIZEBOX											= 281;
-	const u32		_INDEX_SORTED											= 282;
-	const u32		_INDEX_SPARSE											= 283;
-	const u32		_INDEX_SPECIALEFFECT									= 284;
-	const u32		_INDEX_SPINNERHIGHVALUE									= 285;
-	const u32		_INDEX_SPINNERLOWVALUE									= 286;
-	const u32		_INDEX_SPLITBAR											= 287;
-	const u32		_INDEX_STACKLEVEL										= 288;
-	const u32		_INDEX_STATUSBARTEXT									= 289;
-	const u32		_INDEX_STRETCH											= 290;
-	const u32		_INDEX_STRICTDATEENTRY									= 291;
-	const u32		_INDEX_STYLE											= 292;
-	const u32		_INDEX_TABINDEX											= 293;
-	const u32		_INDEX_TABORIENTATION									= 294;
-	const u32		_INDEX_TABSTOP											= 295;
-	const u32		_INDEX_TABSTYLE											= 296;
-	const u32		_INDEX_TABS												= 297;
-	const u32		_INDEX_TAG												= 298;
-	const u32		_INDEX_TERMINATEREAD									= 299;
-	const u32		_INDEX_TEXT												= 300;
-	const u32		_INDEX_THEMES											= 301;
-	const u32		_INDEX_TITLEBAR											= 302;
-	const u32		_INDEX_TOOLTIPTEXT										= 303;
-	const u32		_INDEX_TOP												= 304;
-	const u32		_INDEX_TOPINDEX											= 305;
-	const u32		_INDEX_TOPITEMID										= 306;
-	const u32		_INDEX_USERVALUE										= 307;
-	const u32		_INDEX_VSCROLLSMALLCHANGE								= 308;
-	const u32		_INDEX_VALUE											= 309;
-	const u32		_INDEX_VALUE_MINIMUM									= 310;
-	const u32		_INDEX_VALUE_MAXIMUM									= 311;
-	const u32		_INDEX_VIEW												= 312;
-	const u32		_INDEX_VIEWPORTHEIGHT									= 313;
-	const u32		_INDEX_VIEWPORTLEFT										= 314;
-	const u32		_INDEX_VIEWPORTTOP										= 315;
-	const u32		_INDEX_VIEWPORTWIDTH									= 316;
-	const u32		_INDEX_VISIBLE											= 317;
-	const u32		_INDEX_VISUALEFFECT										= 318;
-	const u32		_INDEX_WHATSTHISBUTTON									= 319;
-	const u32		_INDEX_WHATSTHISHELP									= 320;
-	const u32		_INDEX_WHATSTHISHELPID									= 321;
-	const u32		_INDEX_WIDTH											= 322;
-	const u32		_INDEX_WINDOWLIST										= 323;
-	const u32		_INDEX_WINDOWSTATE										= 324;
-	const u32		_INDEX_WINDOWTYPE										= 325;
-	const u32		_INDEX_WORDWRAP											= 326;
-	const u32		_INDEX_ZOOMBOX											= 327;
+	const u32		_INDEX_PICTUREBMP										= 233;
+	const u32		_INDEX_PICTUREBMP_DOWN									= 234;
+	const u32		_INDEX_PICTUREBMP_OVER									= 235;
+	const u32		_INDEX_PICTUREMARGIN									= 236;
+	const u32		_INDEX_PICTUREPOSITION									= 237;
+	const u32		_INDEX_PICTURESELECTIONDISPLAY							= 238;
+	const u32		_INDEX_PICTURESPACING									= 239;
+	const u32		_INDEX_PICTUREVAL										= 240;
+	const u32		_INDEX_POLYPOINTS										= 241;
+	const u32		_INDEX_PROCEDURE										= 242;
+	const u32		_INDEX_READBACKCOLOR									= 243;
+	const u32		_INDEX_READCYCLE										= 244;
+	const u32		_INDEX_READFORECOLOR									= 245;
+	const u32		_INDEX_READLOCK											= 246;
+	const u32		_INDEX_READMOUSE										= 247;
+	const u32		_INDEX_READONLY											= 248;
+	const u32		_INDEX_READSAVE											= 249;
+	const u32		_INDEX_READTIMEOUT										= 250;
+	const u32		_INDEX_RECORDMARK										= 251;
+	const u32		_INDEX_RECORDSOURCE										= 252;
+	const u32		_INDEX_RECORDSOURCETYPE									= 253;
+	const u32		_INDEX_RELATIONALEXPR									= 254;
+	const u32		_INDEX_RELATIVECOLUMN									= 255;
+	const u32		_INDEX_RELATIVEROW										= 256;
+	const u32		_INDEX_RELEASETYPE										= 257;
+	const u32		_INDEX_RESIZABLE										= 258;
+	const u32		_INDEX_RIGHTTOLEFT										= 259;
+	const u32		_INDEX_ROTATEFLIP										= 260;
+	const u32		_INDEX_ROTATION											= 261;
+	const u32		_INDEX_ROUND_TO											= 262;
+	const u32		_INDEX_ROWCOLCHANGE										= 263;
+	const u32		_INDEX_ROWHEIGHT										= 264;
+	const u32		_INDEX_ROWSOURCE										= 265;
+	const u32		_INDEX_ROWSOURCETYPE									= 266;
+	const u32		_INDEX_SCALEMODE										= 267;
+	const u32		_INDEX_SCROLLBARS										= 268;
+	const u32		_INDEX_SECONDS											= 269;
+	const u32		_INDEX_SELLENGTH										= 270;
+	const u32		_INDEX_SELSTART											= 271;
+	const u32		_INDEX_SELTEXT											= 272;
+	const u32		_INDEX_SELECTONENTRY									= 273;
+	const u32		_INDEX_SELECTED											= 274;
+	const u32		_INDEX_SELECTEDBACKCOLOR								= 275;
+	const u32		_INDEX_SELECTEDFORECOLOR								= 276;
+	const u32		_INDEX_SELECTEDID										= 277;
+	const u32		_INDEX_SELECTEDITEMBACKCOLOR							= 278;
+	const u32		_INDEX_SELECTEDITEMFORECOLOR							= 279;
+	const u32		_INDEX_SHOWINTASKBAR									= 280;
+	const u32		_INDEX_SHOWTIPS											= 281;
+	const u32		_INDEX_SHOWWINDOW										= 282;
+	const u32		_INDEX_SIZABLE											= 283;
+	const u32		_INDEX_SIZEBOX											= 284;
+	const u32		_INDEX_SORTED											= 285;
+	const u32		_INDEX_SPARSE											= 286;
+	const u32		_INDEX_SPECIALEFFECT									= 287;
+	const u32		_INDEX_SPINNERHIGHVALUE									= 288;
+	const u32		_INDEX_SPINNERLOWVALUE									= 289;
+	const u32		_INDEX_SPLITBAR											= 290;
+	const u32		_INDEX_STACKLEVEL										= 291;
+	const u32		_INDEX_STATUSBARTEXT									= 292;
+	const u32		_INDEX_STRETCH											= 293;
+	const u32		_INDEX_STRICTDATEENTRY									= 294;
+	const u32		_INDEX_STYLE											= 295;
+	const u32		_INDEX_TABINDEX											= 296;
+	const u32		_INDEX_TABORIENTATION									= 297;
+	const u32		_INDEX_TABSTOP											= 298;
+	const u32		_INDEX_TABSTYLE											= 299;
+	const u32		_INDEX_TABS												= 300;
+	const u32		_INDEX_TAG												= 301;
+	const u32		_INDEX_TERMINATEREAD									= 302;
+	const u32		_INDEX_TEXT												= 303;
+	const u32		_INDEX_THEMES											= 304;
+	const u32		_INDEX_TITLEBAR											= 305;
+	const u32		_INDEX_TOOLTIPTEXT										= 306;
+	const u32		_INDEX_TOP												= 307;
+	const u32		_INDEX_TOPINDEX											= 308;
+	const u32		_INDEX_TOPITEMID										= 309;
+	const u32		_INDEX_USERVALUE										= 310;
+	const u32		_INDEX_VSCROLLSMALLCHANGE								= 311;
+	const u32		_INDEX_VALUE											= 312;
+	const u32		_INDEX_VALUE_MINIMUM									= 313;
+	const u32		_INDEX_VALUE_MAXIMUM									= 314;
+	const u32		_INDEX_VIEW												= 315;
+	const u32		_INDEX_VIEWPORTHEIGHT									= 316;
+	const u32		_INDEX_VIEWPORTLEFT										= 317;
+	const u32		_INDEX_VIEWPORTTOP										= 318;
+	const u32		_INDEX_VIEWPORTWIDTH									= 319;
+	const u32		_INDEX_VISIBLE											= 320;
+	const u32		_INDEX_VISUALEFFECT										= 321;
+	const u32		_INDEX_WHATSTHISBUTTON									= 322;
+	const u32		_INDEX_WHATSTHISHELP									= 323;
+	const u32		_INDEX_WHATSTHISHELPID									= 324;
+	const u32		_INDEX_WIDTH											= 325;
+	const u32		_INDEX_WINDOWLIST										= 326;
+	const u32		_INDEX_WINDOWSTATE										= 327;
+	const u32		_INDEX_WINDOWTYPE										= 328;
+	const u32		_INDEX_WORDWRAP											= 329;
+	const u32		_INDEX_ZOOMBOX											= 330;
+	const u32		_INDEX_NWCOLOR											= 331;
+	const u32		_INDEX_NECOLOR											= 332;
+	const u32		_INDEX_SWCOLOR											= 333;
+	const u32		_INDEX_SECOLOR											= 334;
+
 
 
 	// Basic setters and getters
@@ -1041,6 +1056,9 @@ struct SBasePropertyInit;
 		{	_INDEX_PARTITION,				cgc_partition,					sizeof(cgc_partition) - 1,					_VAR_TYPE_S32,				 NULL, NULL, NULL,		_GRID_NO_PARTITION				,NULL	},	// 0=not split (default), others=split
 		{	_INDEX_PASSWORDCHAR,			cgc_passwordChar,				sizeof(cgc_passwordChar) - 1,				_VAR_TYPE_CHARACTER,		 NULL, NULL, NULL,		(u32)&cgcPasswordCharText[0]	,NULL	},	// A character placeholder for input characters on password fields
 		{	_INDEX_PICTURE,					cgc_picture,					sizeof(cgc_picture) - 1,					_VAR_TYPE_CHARACTER,		 NULL, NULL, NULL,		(u32)&cgcNullString[0]			,NULL	},	// A filename to use for the picture
+		{	_INDEX_PICTUREBMP,				cgc_pictureBmp,					sizeof(cgc_pictureBmp) - 1,					_VAR_TYPE_BITMAP,			 NULL, NULL, NULL,		NULL							,NULL	},	// The raw bitmap data
+		{	_INDEX_PICTUREBMP_DOWN,			cgc_pictureBmpDown,				sizeof(cgc_pictureBmpDown) - 1,				_VAR_TYPE_BITMAP,			 NULL, NULL, NULL,		NULL							,NULL	},	// The raw bitmap data
+		{	_INDEX_PICTUREBMP_OVER,			cgc_pictureBmpOver,				sizeof(cgc_pictureBmpOver) - 1,				_VAR_TYPE_BITMAP,			 NULL, NULL, NULL,		NULL							,NULL	},	// The raw bitmap data
 		{	_INDEX_PICTUREMARGIN,			cgc_pictureMargin,				sizeof(cgc_pictureMargin) - 1,				_VAR_TYPE_S32,				 NULL, NULL, NULL,		0								,NULL	},	// Pixels to place around the picture
 		{	_INDEX_PICTUREPOSITION,			cgc_picturePosition,			sizeof(cgc_picturePosition) - 1,			_VAR_TYPE_S32,				 NULL, NULL, NULL,		_PICTURE_CENTERED_RELATIVE		,NULL	},	// See _PICTURE_* constants
 		{	_INDEX_PICTURESELECTIONDISPLAY, cgc_pictureSelectionDisplay,	sizeof(cgc_pictureSelectionDisplay) - 1,	_VAR_TYPE_S32,				 NULL, NULL, NULL,		_PICTURE_NO_DISPLAY				,NULL	},	// 0=no display (default), 1=clip, 2=scale, 3=stretch
@@ -1136,6 +1154,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WINDOWTYPE,				cgc_windowType,					sizeof(cgc_windowType) - 1,					_VAR_TYPE_S32,				 NULL, NULL, NULL,		_WINDOW_TYPE_MODELESS			,NULL	},	// 0=modeless (default), 1=modal, 2=read, 3=read modeless, how a window is presented
 		{	_INDEX_WORDWRAP,				cgc_wordWrap,					sizeof(cgc_wordWrap) - 1,					_VAR_TYPE_LOGICAL,			 NULL, NULL, NULL,		_LOGICAL_FALSE					,NULL	},	// .t.=wraps, .f.=single line (default), how text is presented
 		{	_INDEX_ZOOMBOX,					cgc_zoomBox,					sizeof(cgc_zoomBox) - 1,					_VAR_TYPE_LOGICAL,			 NULL, NULL, NULL,		_LOGICAL_FALSE					,NULL	},	// .t.=shows zoom box, .f.=does not show (default), for backward compatibility, not used
+		{	_INDEX_NWCOLOR,					cgc_nwColor,					sizeof(cgc_nwColor) - 1,					_VAR_TYPE_S32,				 NULL, NULL, NULL,		_nwColor						,NULL	},	// Northwest color
+		{	_INDEX_NECOLOR,					cgc_neColor,					sizeof(cgc_neColor) - 1,					_VAR_TYPE_S32,				 NULL, NULL, NULL,		_neColor						,NULL	},	// Northeast color
+		{	_INDEX_SWCOLOR,					cgc_swColor,					sizeof(cgc_swColor) - 1,					_VAR_TYPE_S32,				 NULL, NULL, NULL,		_swColor						,NULL	},	// Southwest color
+		{	_INDEX_SECOLOR,					cgc_seColor,					sizeof(cgc_seColor) - 1,					_VAR_TYPE_S32,				 NULL, NULL, NULL,		_seColor						,NULL	},	// Southeast color
 		{	0,								NULL,							0,											0,						     NULL, NULL, NULL,		0								,NULL	}
 	};
 	const u32 gsProps_masterSize = sizeof(gsProps_master) / sizeof(SBasePropertyInit) - 1;
@@ -1229,6 +1251,9 @@ struct SBasePropertyInit;
 		{	_INDEX_PARENTCLASS,				0, 0, 0 },
 		{	_INDEX_ICON,					0, 0, 0 },
 		{	_INDEX_PICTURE,					0, 0, 0 },
+		{	_INDEX_PICTUREBMP,				0, 0, 0 },
+		{	_INDEX_PICTUREBMP_DOWN,			0, 0, 0 },
+		{	_INDEX_PICTUREBMP_OVER,			0, 0, 0 },
 		{	_INDEX_TAG,						0, 0, 0 },
 		{	_INDEX_TOP,						0, 0, 0 },
 		{	_INDEX_VISIBLE,					0, 0, 0 },
@@ -1291,6 +1316,9 @@ struct SBasePropertyInit;
 		{	_INDEX_PARENT,					0, 0, 0 },
 		{	_INDEX_PARENTCLASS,				0, 0, 0 },
 		{	_INDEX_PICTURE,					0, 0, 0 },
+		{	_INDEX_PICTUREBMP,				0, 0, 0 },
+		{	_INDEX_PICTUREBMP_DOWN,			0, 0, 0 },
+		{	_INDEX_PICTUREBMP_OVER,			0, 0, 0 },
 		{	_INDEX_PICTUREMARGIN,			0, 0, 0 },
 		{	_INDEX_PICTUREPOSITION,			0, 0, 0 },
 		{	_INDEX_PICTURESPACING,			0, 0, 0 },
@@ -1364,6 +1392,9 @@ struct SBasePropertyInit;
 		{	_INDEX_PARENT,					0, 0, 0 },
 		{	_INDEX_PARENTCLASS,				0, 0, 0 },
 		{	_INDEX_PICTURE,					0, 0, 0 },
+		{	_INDEX_PICTUREBMP,				0, 0, 0 },
+		{	_INDEX_PICTUREBMP_DOWN,			0, 0, 0 },
+		{	_INDEX_PICTUREBMP_OVER,			0, 0, 0 },
 		{	_INDEX_PICTUREMARGIN,			0, 0, 0 },
 		{	_INDEX_PICTUREPOSITION,			0, 0, 0 },
 		{	_INDEX_PICTURESPACING,			0, 0, 0 },
@@ -1534,6 +1565,9 @@ struct SBasePropertyInit;
 		{	_INDEX_OLEDROPEFFECTS,			0, 0, 0 },
 		{	_INDEX_OLEDROPMODE,				0, 0, 0 },
 		{	_INDEX_PICTURE,					0, 0, 0 },
+		{	_INDEX_PICTUREBMP,				0, 0, 0 },
+		{	_INDEX_PICTUREBMP_DOWN,			0, 0, 0 },
+		{	_INDEX_PICTUREBMP_OVER,			0, 0, 0 },
 		{	_INDEX_PICTUREMARGIN,			0, 0, 0 },
 		{	_INDEX_PICTUREPOSITION,			0, 0, 0 },
 		{	_INDEX_PICTURESPACING,			0, 0, 0 },
@@ -1854,6 +1888,9 @@ struct SBasePropertyInit;
 		{	_INDEX_PARENT,					0, 0, 0 },
 		{	_INDEX_PARENTCLASS,				0, 0, 0 },
 		{	_INDEX_PICTURE,					0, 0, 0 },
+		{	_INDEX_PICTUREBMP,				0, 0, 0 },
+		{	_INDEX_PICTUREBMP_DOWN,			0, 0, 0 },
+		{	_INDEX_PICTUREBMP_OVER,			0, 0, 0 },
 		{	_INDEX_RIGHTTOLEFT,				0, 0, 0 },
 		{	_INDEX_SELECTED,				0, 0, 0 },
 		{	_INDEX_SELECTEDID,				0, 0, 0 },
@@ -1959,6 +1996,9 @@ struct SBasePropertyInit;
 		{	_INDEX_PARENT,					0, 0, 0 },
 		{	_INDEX_PARENTCLASS,				0, 0, 0 },
 		{	_INDEX_PICTURE,					0, 0, 0 },
+		{	_INDEX_PICTUREBMP,				0, 0, 0 },
+		{	_INDEX_PICTUREBMP_DOWN,			0, 0, 0 },
+		{	_INDEX_PICTUREBMP_OVER,			0, 0, 0 },
 		{	_INDEX_PICTURESELECTIONDISPLAY,	0, 0, 0 },
 		{	_INDEX_READONLY,				0, 0, 0 },
 		{	_INDEX_RIGHTTOLEFT,				0, 0, 0 },
@@ -2090,6 +2130,9 @@ struct SBasePropertyInit;
 		{	_INDEX_PARENTCLASS,				0, 0, 0 },
 		{	_INDEX_ICON,					0, 0, 0 },
 		{	_INDEX_PICTURE,					0, 0, 0 },
+		{	_INDEX_PICTUREBMP,				0, 0, 0 },
+		{	_INDEX_PICTUREBMP_DOWN,			0, 0, 0 },
+		{	_INDEX_PICTUREBMP_OVER,			0, 0, 0 },
 		{	_INDEX_RELEASETYPE,				0, 0, 0 },
 		{	_INDEX_RIGHTTOLEFT,				0, 0, 0 },
 		{	_INDEX_SCROLLBARS,				0, 0, 0 },
@@ -2335,6 +2378,9 @@ struct SBasePropertyInit;
 		{	_INDEX_PARENT,					0, 0, 0 },
 		{	_INDEX_PARENTCLASS,				0, 0, 0 },
 		{	_INDEX_PICTURE,					0, 0, 0 },
+		{	_INDEX_PICTUREBMP,				0, 0, 0 },
+		{	_INDEX_PICTUREBMP_DOWN,			0, 0, 0 },
+		{	_INDEX_PICTUREBMP_OVER,			0, 0, 0 },
 		{	_INDEX_PICTUREVAL,				0, 0, 0 },
 		{	_INDEX_ROTATEFLIP,				0, 0, 0 },
 		{	_INDEX_STRETCH,					0, 0, 0 },
@@ -2386,6 +2432,9 @@ struct SBasePropertyInit;
 		{	_INDEX_PARENT,					0, 0, 0 },
 		{	_INDEX_PARENTCLASS,				0, 0, 0 },
 		{	_INDEX_PICTURE,					0, 0, 0 },
+		{	_INDEX_PICTUREBMP,				0, 0, 0 },
+		{	_INDEX_PICTUREBMP_DOWN,			0, 0, 0 },
+		{	_INDEX_PICTUREBMP_OVER,			0, 0, 0 },
 		{	_INDEX_SPECIALEFFECT,			0, 0, 0 },
 		{	_INDEX_STATUSBARTEXT,			0, 0, 0 },
 		{	_INDEX_TABINDEX,				0, 0, 0 },
@@ -2435,6 +2484,9 @@ struct SBasePropertyInit;
 		{	_INDEX_PARENT,					0, 0, 0 },
 		{	_INDEX_PARENTCLASS,				0, 0, 0 },
 		{	_INDEX_PICTURE,					0, 0, 0 },
+		{	_INDEX_PICTUREBMP,				0, 0, 0 },
+		{	_INDEX_PICTUREBMP_DOWN,			0, 0, 0 },
+		{	_INDEX_PICTUREBMP_OVER,			0, 0, 0 },
 		{	_INDEX_SPECIALEFFECT,			0, 0, 0 },
 		{	_INDEX_STATUSBARTEXT,			0, 0, 0 },
 		{	_INDEX_TABINDEX,				0, 0, 0 },
@@ -2643,6 +2695,9 @@ struct SBasePropertyInit;
 		{	_INDEX_PARENT,					0, 0, 0 },
 		{	_INDEX_PARENTCLASS,				0, 0, 0 },
 		{	_INDEX_PICTURE,					0, 0, 0 },
+		{	_INDEX_PICTUREBMP,				0, 0, 0 },
+		{	_INDEX_PICTUREBMP_DOWN,			0, 0, 0 },
+		{	_INDEX_PICTUREBMP_OVER,			0, 0, 0 },
 		{	_INDEX_STATUSBARTEXT,			0, 0, 0 },
 		{	_INDEX_TAG,						0, 0, 0 },
 		{	_INDEX_TOOLTIPTEXT,				0, 0, 0 },
@@ -2916,6 +2971,9 @@ struct SBasePropertyInit;
 		{	_INDEX_PARENT,					0, 0, 0 },
 		{	_INDEX_PARENTCLASS,				0, 0, 0 },
 		{	_INDEX_PICTURE,					0, 0, 0 },
+		{	_INDEX_PICTUREBMP,				0, 0, 0 },
+		{	_INDEX_PICTUREBMP_DOWN,			0, 0, 0 },
+		{	_INDEX_PICTUREBMP_OVER,			0, 0, 0 },
 		{	_INDEX_TAG,						0, 0, 0 },
 		{	_INDEX_TOOLTIPTEXT,				0, 0, 0 },
 		{	_INDEX_WHATSTHISHELPID,			0, 0, 0 },
@@ -3011,6 +3069,9 @@ struct SBasePropertyInit;
 		{	_INDEX_PARENT,					0, 0, 0 },
 		{	_INDEX_PARENTCLASS,				0, 0, 0 },
 		{	_INDEX_PICTURE,					0, 0, 0 },
+		{	_INDEX_PICTUREBMP,				0, 0, 0 },
+		{	_INDEX_PICTUREBMP_DOWN,			0, 0, 0 },
+		{	_INDEX_PICTUREBMP_OVER,			0, 0, 0 },
 		{	_INDEX_TAG,						0, 0, 0 },
 		{	_INDEX_TOP,						0, 0, 0 },
 		{	_INDEX_WHATSTHISHELPID,			0, 0, 0 },

@@ -128,6 +128,10 @@ typedef SEM**		SEMpp;
 	#define borderColor(obj)						iObjProp_get_sbgra_direct(obj, _INDEX_BORDERCOLOR)
 	#define foreColor(obj)							iObjProp_get_sbgra_direct(obj, _INDEX_FORECOLOR)
 	#define backColor(obj)							iObjProp_get_sbgra_direct(obj, _INDEX_BACKCOLOR)
+	#define nwRgba(obj)								iObjProp_get_sbgra_direct(obj, _INDEX_NWCOLOR)
+	#define neRgba(obj)								iObjProp_get_sbgra_direct(obj, _INDEX_NECOLOR)
+	#define swRgba(obj)								iObjProp_get_sbgra_direct(obj, _INDEX_SWCOLOR)
+	#define seRgba(obj)								iObjProp_get_sbgra_direct(obj, _INDEX_SECOLOR)
 
 	#define alignment(obj)							iObjProp_get_s32_direct(obj, _INDEX_ALIGNMENT)
 	#define isName(obj, text)						iObjProp_compare_character(obj, _INDEX_NAME, (s8*)text, sizeof(text) - 1)
@@ -171,6 +175,10 @@ typedef SEM**		SEMpp;
 	#define _blackColor						rgba(0, 0, 0, 255)
 	#define _selectedBackColor				rgba(220, 235, 255, 255)
 	#define _selectedForeColor				rgba(0, 0, 164, 255)
+	#define _nwColor						rgba(230, 230, 255, 255)
+	#define _neColor						rgba(192, 212, 255, 255)
+	#define _swColor						rgba(212, 212, 255, 255)
+	#define _seColor						rgba(172, 192, 235, 255)
 
 #if !defined(_MSC_VER)
 	// gcc

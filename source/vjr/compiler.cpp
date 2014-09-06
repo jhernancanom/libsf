@@ -4425,6 +4425,12 @@ debug_break;
 // Called to create and populate a new variable in one go
 //
 //////
+	SVariable* iVariable_createAndPopulate(u32 tnVarType, SDatum* datum)
+	{
+		if (datum)		return(iVariable_createAndPopulate(tnVarType, datum->data_s8, datum->length));
+		else			return(NULL);
+	}
+
 	SVariable* iVariable_createAndPopulate(u32 tnVarType, s8* tcData, u32 tnDataLength)
 	{
 		SVariable* var;

@@ -352,10 +352,10 @@
 // 		SBgra			SwColor2							= { rgba(249, 222, 133, 255) };			// Orange/golden yellow
 // 		SBgra			SeColor2							= { rgba(247, 210, 96, 255) };			// More orange/golden yellow
 // Blue theme:
-		const SBgra		NwNonfocusColor						= { rgba(230, 230, 255, 255) };
-		const SBgra		NeNonfocusColor						= { rgba(192, 212, 255, 255) };
-		const SBgra		SwNonfocusColor						= { rgba(212, 212, 255, 255) };
-		const SBgra		SeNonfocusColor						= { rgba(172, 192, 235, 255) };
+		const SBgra		NwNonfocusColor						= { _nwColor };
+		const SBgra		NeNonfocusColor						= { _neColor };
+		const SBgra		SwNonfocusColor						= { _swColor };
+		const SBgra		SeNonfocusColor						= { _seColor };
 // Orange theme:
 // 		const SBgra		NwColor2							= { rgba(255, 222, 156, 255) };
 // 		const SBgra		NeColor2							= { rgba(255, 200, 92, 255) };

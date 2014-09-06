@@ -1672,6 +1672,7 @@ if (!llPublishChildren)
 	{
 		s32			lnAlignment;
 		SObject*	objChild;
+		SBitmap*	bmp;
 		RECT		lrc;
 		SVariable*	var;
 
@@ -1873,30 +1874,33 @@ if (!llPublishChildren)
 							}
 
 							// Checkbox image
-							iBmp_delete(&objChild->p.bmpPicture,		true, true);		// Delete the old
-							iBmp_delete(&objChild->p.bmpPictureOver,	true, true);		// Delete the old
-							iBmp_delete(&objChild->p.bmpPictureDown,	true, true);		// Delete the old
-							objChild->p.bmpPicture		= iBmp_allocate();
-							iBmp_createBySize(objChild->p.bmpPicture, tnHeight, tnHeight, 24);
+							bmp = iBmp_allocate();
+							iBmp_createBySize(bmp, tnHeight, tnHeight, 24);
 
 							// Based on type, populate the image
 							if (iObjProp_get_s32_direct(obj, _INDEX_VALUE) == 0)
 							{
 								// Off
-								iBmp_scale(objChild->p.bmpPicture, bmpCheckboxOff);					// Set the new
+								iBmp_scale(bmp, bmpCheckboxOff);		// Set the new
 
 							} else {
 								// On
-								iBmp_scale(objChild->p.bmpPicture, bmpCheckboxOn);					// Set the new
+								iBmp_scale(bmp, bmpCheckboxOn);			// Set the new
 							}
 
-							// Replicate that image for the over and down images
-							objChild->p.bmpPictureOver	= iBmp_copy(objChild->p.bmpPicture);	// Set the new
-							objChild->p.bmpPictureDown	= iBmp_copy(objChild->p.bmpPicture);	// Set the new
+							// Populate the standard image
+							iObjProp_set_bitmap_direct(obj, _INDEX_PICTUREBMP,		bmp);
+							iObjProp_set_bitmap_direct(obj, _INDEX_PICTUREBMP_DOWN,	bmp);
+							iObjProp_set_bitmap_direct(obj, _INDEX_PICTUREBMP_OVER,	bmp);
+
+							// Delete our template
+							iBmp_delete(&bmp, true, true);
 
 							// Add highlighting for the over and down
-							iBmp_colorize(objChild->p.bmpPictureOver, &lrc, colorMouseOver,	false, 0.5f);
-							iBmp_colorize(objChild->p.bmpPictureDown, &lrc, colorMouseDown,	false, 0.5f);
+							bmp = iObjProp_get_bitmap(obj, _INDEX_PICTUREBMP_OVER);
+							iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.5f);
+							bmp = iObjProp_get_bitmap(obj, _INDEX_PICTUREBMP_DOWN);
+							iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.5f);
 
 							// Mark it for re-render
 							objChild->isDirtyRender = true;
@@ -3221,9 +3225,10 @@ if (!obj->props[lnI])
 			iObjProp_copy_byIndex(subformDst, _INDEX_CAPTION, subformSrc, _INDEX_CAPTION);
 
 			// Picture
-			iBmp_delete(&subformDst->p.bmpPicture, true, true);
-			subformDst->p.bmpPicture = iBmp_copy(subformSrc->p.bmpPicture);
-			iObjProp_copy_byIndex(subformDst, _INDEX_PICTURE, subformSrc, _INDEX_PICTURE);
+			iObjProp_copy_byIndex(subformDst, _INDEX_PICTURE,			subformSrc, _INDEX_PICTURE);
+			iObjProp_copy_byIndex(subformDst, _INDEX_PICTUREBMP,		subformSrc, _INDEX_PICTUREBMP);
+			iObjProp_copy_byIndex(subformDst, _INDEX_PICTUREBMP_DOWN,	subformSrc, _INDEX_PICTUREBMP_DOWN);
+			iObjProp_copy_byIndex(subformDst, _INDEX_PICTUREBMP_OVER,	subformSrc, _INDEX_PICTUREBMP_OVER);
 
 
 		//////////
@@ -3358,13 +3363,16 @@ if (!obj->props[lnI])
 			iObjProp_set_bitmap_direct(textboxDst, _INDEX_ICON, iObjProp_get_bitmap(textboxSrc, _INDEX_ICON));
 
 			// Caption
-			iObjProp_copy_byIndex(textboxDst, _INDEX_CAPTION, textboxSrc, _INDEX_CAPTION);
+			iObjProp_copy_byIndex(textboxDst, _INDEX_CAPTION,			textboxSrc, _INDEX_CAPTION);
 
 			// Value
-			iObjProp_copy_byIndex(textboxDst, _INDEX_VALUE,		textboxSrc, _INDEX_VALUE);
-			iObjProp_copy_byIndex(textboxDst, _INDEX_PICTURE,	textboxSrc, _INDEX_PICTURE);
-			iObjProp_copy_byIndex(textboxDst, _INDEX_MASK,		textboxSrc, _INDEX_MASK);
-
+			iObjProp_copy_byIndex(textboxDst, _INDEX_VALUE,				textboxSrc, _INDEX_VALUE);
+			iObjProp_copy_byIndex(textboxDst, _INDEX_PICTURE,			textboxSrc, _INDEX_PICTURE);
+			iObjProp_copy_byIndex(textboxDst, _INDEX_PICTUREBMP,		textboxSrc, _INDEX_PICTUREBMP);
+			iObjProp_copy_byIndex(textboxDst, _INDEX_PICTUREBMP_DOWN,	textboxSrc, _INDEX_PICTUREBMP_DOWN);
+			iObjProp_copy_byIndex(textboxDst, _INDEX_PICTUREBMP_OVER,	textboxSrc, _INDEX_PICTUREBMP_OVER);
+			iObjProp_copy_byIndex(textboxDst, _INDEX_MASK,				textboxSrc, _INDEX_MASK);
+	
 
 		//////////
 		// Copy the form-specific event handlers
@@ -3401,12 +3409,13 @@ if (!obj->props[lnI])
 			buttonDst->p.font		= iFont_duplicate(buttonSrc->p.font);
 
 			// Caption
-			iObjProp_copy_byIndex(buttonDst, _INDEX_CAPTION, buttonSrc, _INDEX_CAPTION);
+			iObjProp_copy_byIndex(buttonDst, _INDEX_CAPTION,			buttonSrc, _INDEX_CAPTION);
 
 			// Picture
-			iBmp_delete(&buttonDst->p.bmpPicture, true, true);
-			buttonDst->p.bmpPicture = iBmp_copy(buttonSrc->p.bmpPicture);
-			iObjProp_copy_byIndex(buttonDst, _INDEX_PICTURE, buttonSrc, _INDEX_PICTURE);
+			iObjProp_copy_byIndex(buttonDst, _INDEX_PICTURE,			buttonSrc, _INDEX_PICTURE);
+			iObjProp_copy_byIndex(buttonDst, _INDEX_PICTUREBMP,			buttonSrc, _INDEX_PICTUREBMP);
+			iObjProp_copy_byIndex(buttonDst, _INDEX_PICTUREBMP_DOWN,	buttonSrc, _INDEX_PICTUREBMP_DOWN);
+			iObjProp_copy_byIndex(buttonDst, _INDEX_PICTUREBMP_OVER,	buttonSrc, _INDEX_PICTUREBMP_OVER);
 
 
 		//////////
@@ -3442,15 +3451,18 @@ if (!obj->props[lnI])
 		// Copy the allocatables
 		//////
 			editboxDst->p.font	= iFont_duplicate(editboxSrc->p.font);
-			iObjProp_copy_byIndex(editboxDst, _INDEX_ICON,		editboxSrc, _INDEX_ICON);
+			iObjProp_copy_byIndex(editboxDst, _INDEX_ICON,				editboxSrc, _INDEX_ICON);
 
 			// Caption
-			iObjProp_copy_byIndex(editboxDst, _INDEX_CAPTION, editboxSrc, _INDEX_CAPTION);
+			iObjProp_copy_byIndex(editboxDst, _INDEX_CAPTION,			editboxSrc, _INDEX_CAPTION);
 
 			// Value
-			iObjProp_copy_byIndex(editboxDst, _INDEX_VALUE,		editboxSrc, _INDEX_VALUE);
-			iObjProp_copy_byIndex(editboxDst, _INDEX_PICTURE,	editboxSrc, _INDEX_PICTURE);
-			iObjProp_copy_byIndex(editboxDst, _INDEX_MASK,		editboxSrc, _INDEX_MASK);
+			iObjProp_copy_byIndex(editboxDst, _INDEX_VALUE,				editboxSrc, _INDEX_VALUE);
+			iObjProp_copy_byIndex(editboxDst, _INDEX_PICTURE,			editboxSrc, _INDEX_PICTURE);
+			iObjProp_copy_byIndex(editboxDst, _INDEX_PICTUREBMP,		editboxSrc, _INDEX_PICTUREBMP);
+			iObjProp_copy_byIndex(editboxDst, _INDEX_PICTUREBMP_DOWN,	editboxSrc, _INDEX_PICTUREBMP_DOWN);
+			iObjProp_copy_byIndex(editboxDst, _INDEX_PICTUREBMP_OVER,	editboxSrc, _INDEX_PICTUREBMP_OVER);
+			iObjProp_copy_byIndex(editboxDst, _INDEX_MASK,				editboxSrc, _INDEX_MASK);
 
 
 		//////////
@@ -3630,6 +3642,7 @@ if (!obj->props[lnI])
 	void iiSubobj_resetToDefaultForm(SObject* form, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
 		SObject*	objChild;
+		SBitmap*	bmp;
 		RECT		lrc;
 
 
@@ -3669,13 +3682,8 @@ if (!obj->props[lnI])
 			//////////
 			// Set the default colors
 			//////
-				form->p.nwRgba.color		= NwNonfocusColor.color;
-				form->p.neRgba.color		= NeNonfocusColor.color;
-				form->p.swRgba.color		= SwNonfocusColor.color;
-				form->p.seRgba.color		= SeNonfocusColor.color;
-				form->p.captionColor.color	= darkBlueColor.color;
-				iObjProp_set_u32_direct(form, _INDEX_BACKCOLOR, whiteColor.color);
-				iObjProp_set_u32_direct(form, _INDEX_FORECOLOR, blackColor.color);
+				iObjProp_set_sbgra_direct(form, _INDEX_BACKCOLOR, whiteColor);
+				iObjProp_set_sbgra_direct(form, _INDEX_FORECOLOR, blackColor);
 
 
 			//////////
@@ -3708,7 +3716,7 @@ if (!obj->props[lnI])
 			//////////
 			// Clear the picture
 			//////
-				iBmp_delete(&form->p.bmpPicture, true, true);
+				iObjProp_set_bitmap_direct(form, _INDEX_PICTUREBMP, bmpNoImage);
 
 
 			//////////
@@ -3725,16 +3733,15 @@ if (!obj->props[lnI])
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
 						// Form icon
-						iBmp_delete(&objChild->p.bmpPicture,		true, true);	// Delete the old
-						iBmp_delete(&objChild->p.bmpPictureOver,	true, true);	// Delete the old
-						iBmp_delete(&objChild->p.bmpPictureDown,	true, true);	// Delete the old
-						objChild->p.bmpPicture		= iBmp_copy(bmpVjrIcon);		// Set the new
-						objChild->p.bmpPictureOver	= iBmp_copy(bmpVjrIcon);		// Set the new
-						objChild->p.bmpPictureDown	= iBmp_copy(bmpVjrIcon);		// Set the new
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP,			bmpVjrIcon);
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_DOWN,	bmpVjrIcon);
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_OVER,	bmpVjrIcon);
 
 						// Add highlighting for the over and down
-						iBmp_colorize(objChild->p.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
-						iBmp_colorize(objChild->p.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);
+						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
+						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
 
 						// Icon
 						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpVjrIcon);		// Set the new
@@ -3753,16 +3760,15 @@ if (!obj->props[lnI])
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
 						// Move icon
-						iBmp_delete(&objChild->p.bmpPicture,		true, true);	// Delete the old
-						iBmp_delete(&objChild->p.bmpPictureOver,	true, true);	// Delete the old
-						iBmp_delete(&objChild->p.bmpPictureDown,	true, true);	// Delete the old
-						objChild->p.bmpPicture		= iBmp_copy(bmpMove);			// Set the new
-						objChild->p.bmpPictureOver	= iBmp_copy(bmpMove);			// Set the new
-						objChild->p.bmpPictureDown	= iBmp_copy(bmpMove);			// Set the new
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP,			bmpMove);
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_DOWN,	bmpMove);
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_OVER,	bmpMove);
 
 						// Add highlighting for the over and down
-						iBmp_colorize(objChild->p.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
-						iBmp_colorize(objChild->p.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);
+						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
+						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
 
 						// Icon
 						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpMove);		// Set the new
@@ -3773,16 +3779,15 @@ if (!obj->props[lnI])
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
 						// Minimize icon
-						iBmp_delete(&objChild->p.bmpPicture,		true, true);	// Delete the old
-						iBmp_delete(&objChild->p.bmpPictureOver,	true, true);	// Delete the old
-						iBmp_delete(&objChild->p.bmpPictureDown,	true, true);	// Delete the old
-						objChild->p.bmpPicture		= iBmp_copy(bmpMinimize);		// Set the new
-						objChild->p.bmpPictureOver	= iBmp_copy(bmpMinimize);		// Set the new
-						objChild->p.bmpPictureDown	= iBmp_copy(bmpMinimize);		// Set the new
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP,			bmpMinimize);
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_DOWN,	bmpMinimize);
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_OVER,	bmpMinimize);
 
 						// Add highlighting for the over and down
-						iBmp_colorize(objChild->p.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
-						iBmp_colorize(objChild->p.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);
+						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
+						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
 
 						// Icon
 						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpMinimize);	// Set the new
@@ -3793,16 +3798,15 @@ if (!obj->props[lnI])
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
 						// Maximize icon
-						iBmp_delete(&objChild->p.bmpPicture,		true, true);	// Delete the old
-						iBmp_delete(&objChild->p.bmpPictureOver,	true, true);	// Delete the old
-						iBmp_delete(&objChild->p.bmpPictureDown,	true, true);	// Delete the old
-						objChild->p.bmpPicture		= iBmp_copy(bmpMaximize);		// Set the new
-						objChild->p.bmpPictureOver	= iBmp_copy(bmpMaximize);		// Set the new
-						objChild->p.bmpPictureDown	= iBmp_copy(bmpMaximize);		// Set the new
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP,			bmpMaximize);
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_DOWN,	bmpMaximize);
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_OVER,	bmpMaximize);
 
 						// Add highlighting for the over and down
-						iBmp_colorize(objChild->p.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
-						iBmp_colorize(objChild->p.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);
+						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
+						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
 
 						// Icon
 						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpMaximize);	// Set the new
@@ -3813,16 +3817,15 @@ if (!obj->props[lnI])
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
 						// Close icon
-						iBmp_delete(&objChild->p.bmpPicture,		true, true);	// Delete the old
-						iBmp_delete(&objChild->p.bmpPictureOver,	true, true);	// Delete the old
-						iBmp_delete(&objChild->p.bmpPictureDown,	true, true);	// Delete the old
-						objChild->p.bmpPicture		= iBmp_copy(bmpClose);			// Set the new
-						objChild->p.bmpPictureOver	= iBmp_copy(bmpClose);			// Set the new
-						objChild->p.bmpPictureDown	= iBmp_copy(bmpClose);			// Set the new
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP,			bmpClose);
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_DOWN,	bmpClose);
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_OVER,	bmpClose);
 
 						// Add highlighting for the over and down
-						iBmp_colorize(objChild->p.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
-						iBmp_colorize(objChild->p.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);
+						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
+						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
 
 						// Icon
 						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpClose);		// Set the new
@@ -3838,6 +3841,7 @@ if (!obj->props[lnI])
 	void iiSubobj_resetToDefaultSubform(SObject* subform, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
 		SObject*	objChild;
+		SBitmap*	bmp;
 		RECT		lrc;
 		SVariable*	var;
 
@@ -3878,13 +3882,8 @@ if (!obj->props[lnI])
 			//////////
 			// Set the default colors
 			//////
-				subform->p.nwRgba.color			= NwNonfocusColor.color;
-				subform->p.neRgba.color			= NeNonfocusColor.color;
-				subform->p.swRgba.color			= SwNonfocusColor.color;
-				subform->p.seRgba.color			= SeNonfocusColor.color;
 				iObjProp_set_sbgra_direct(subform, _INDEX_BACKCOLOR, whiteColor);
 				iObjProp_set_sbgra_direct(subform, _INDEX_FORECOLOR, blackColor);
-				subform->p.captionColor.color	= darkBlueColor.color;
 
 
 			//////////
@@ -3921,16 +3920,15 @@ if (!obj->props[lnI])
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
 						// Form icon
-						iBmp_delete(&objChild->p.bmpPicture,		true, true);	// Delete the old
-						iBmp_delete(&objChild->p.bmpPictureOver,	true, true);	// Delete the old
-						iBmp_delete(&objChild->p.bmpPictureDown,	true, true);	// Delete the old
-						objChild->p.bmpPicture		= iBmp_copy(bmpVjrIcon);		// Set the new
-						objChild->p.bmpPictureOver	= iBmp_copy(bmpVjrIcon);		// Set the new
-						objChild->p.bmpPictureDown	= iBmp_copy(bmpVjrIcon);		// Set the new
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP,			bmpVjrIcon);
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_DOWN,	bmpVjrIcon);
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_OVER,	bmpVjrIcon);
 
 						// Add highlighting for the over and down
-						iBmp_colorize(objChild->p.bmpPictureOver, &lrc, colorMouseOver,	false, 0.5f);
-						iBmp_colorize(objChild->p.bmpPictureDown, &lrc, colorMouseDown,	false, 0.5f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);
+						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.5f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
+						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.5f);
 
 						// Icon
 						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpVjrIcon);
@@ -3958,6 +3956,7 @@ if (!obj->props[lnI])
 	void iiSubobj_resetToDefaultCarousel(SObject* carousel, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
 		RECT		lrc;
+		SBitmap*	bmp;
 		SObject*	objChild;
 
 
@@ -3995,16 +3994,15 @@ if (!obj->props[lnI])
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpCarouselIcon->bi.biWidth, bmpCarouselIcon->bi.biHeight);
 
 						// Carousel icon
-						iBmp_delete(&objChild->p.bmpPicture,		true, true);	// Delete the old
-						iBmp_delete(&objChild->p.bmpPictureOver,	true, true);	// Delete the old
-						iBmp_delete(&objChild->p.bmpPictureDown,	true, true);	// Delete the old
-						objChild->p.bmpPicture		= iBmp_copy(bmpCarouselIcon);	// Set the default carousel icon
-						objChild->p.bmpPictureOver	= iBmp_copy(bmpCarouselIcon);	// Set the default carousel icon
-						objChild->p.bmpPictureDown	= iBmp_copy(bmpCarouselIcon);	// Set the default carousel icon
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP,			bmpCarouselIcon);
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_DOWN,	bmpCarouselIcon);
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_OVER,	bmpCarouselIcon);
 
 						// Add highlighting for the over and down
-						iBmp_colorize(objChild->p.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
-						iBmp_colorize(objChild->p.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);
+						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
+						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
 
 						// Icon
 						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpCarouselIcon);	// Set the new
@@ -4023,16 +4021,15 @@ if (!obj->props[lnI])
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpCarouselIcon->bi.biWidth, bmpCarouselIcon->bi.biHeight);
 
 						// Close icon
-						iBmp_delete(&objChild->p.bmpPicture,		true, true);	// Delete the old
-						iBmp_delete(&objChild->p.bmpPictureOver,	true, true);	// Delete the old
-						iBmp_delete(&objChild->p.bmpPictureDown,	true, true);	// Delete the old
-						objChild->p.bmpPicture		= iBmp_copy(bmpClose);			// Set the new
-						objChild->p.bmpPictureOver	= iBmp_copy(bmpClose);			// Set the new
-						objChild->p.bmpPictureDown	= iBmp_copy(bmpClose);			// Set the new
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP,			bmpClose);
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_DOWN,	bmpClose);
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_OVER,	bmpClose);
 
 						// Add highlighting for the over and down
-						iBmp_colorize(objChild->p.bmpPictureOver, &lrc, colorMouseOver,	false, 0.25f);
-						iBmp_colorize(objChild->p.bmpPictureDown, &lrc, colorMouseDown,	false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);
+						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
+						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
 
 						// Icon
 						iObjProp_set_bitmap_direct(objChild, _INDEX_ICON, bmpClose);	// Set the new
@@ -4298,9 +4295,7 @@ if (!obj->props[lnI])
 
 
 			iObjProp_set_s32_direct(image, _INDEX_STYLE, _IMAGE_STYLE_OPAQUE);
-
-			iBmp_delete(&image->p.bmpPicture, true, true);
-			iObjProp_set_bitmap_direct(image, _INDEX_PICTURE, bmpNoImage);
+			iObjProp_set_bitmap_direct(image, _INDEX_PICTUREBMP, bmpNoImage);
 
 			*(u32*)&image->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
@@ -4309,6 +4304,7 @@ if (!obj->props[lnI])
 	void iiSubobj_resetToDefaultCheckbox(SObject* checkbox, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
 		SObject*	objChild;
+		SBitmap*	bmp;
 		RECT		lrc;
 
 
@@ -4372,30 +4368,33 @@ if (!obj->props[lnI])
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, 17, objChild->rc.bottom);
 
 						// Checkbox image
-						iBmp_delete(&objChild->p.bmpPicture,		true, true);		// Delete the old
-						iBmp_delete(&objChild->p.bmpPictureOver,	true, true);		// Delete the old
-						iBmp_delete(&objChild->p.bmpPictureDown,	true, true);		// Delete the old
-						objChild->p.bmpPicture = iBmp_allocate();
-						iBmp_createBySize(objChild->p.bmpPicture, 17, 17, 24);
+						bmp = iBmp_allocate();
+						iBmp_createBySize(bmp, 17, 17, 24);
 
 						// Based on type, populate the image
 						if (iObjProp_get_s32_direct(checkbox, _INDEX_VALUE) == 0)
 						{
 							// Off
-							iBmp_scale(objChild->p.bmpPicture, bmpCheckboxOff);				// Set the new
+							iBmp_scale(bmp, bmpCheckboxOff);	// Set the new
 
 						} else {
 							// On
-							iBmp_scale(objChild->p.bmpPicture, bmpCheckboxOn);				// Set the new
+							iBmp_scale(bmp, bmpCheckboxOn);		// Set the new
 						}
 
 						// Replicate that image for the over and down images
-						objChild->p.bmpPictureOver	= iBmp_copy(objChild->p.bmpPicture);	// Set the new
-						objChild->p.bmpPictureDown	= iBmp_copy(objChild->p.bmpPicture);	// Set the new
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP,			bmp);
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_DOWN,	bmp);
+						iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP_OVER,	bmp);
+
+						// Delete the temporary image
+						iBmp_delete(&bmp, true, true);
 
 						// Add highlighting for the over and down
-						iBmp_colorize(objChild->p.bmpPictureOver, &lrc, colorMouseOver,	false, 0.5f);
-						iBmp_colorize(objChild->p.bmpPictureDown, &lrc, colorMouseDown,	false, 0.5f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);
+						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.5f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
+						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.5f);
 
 						// Mark it for re-rendering
 						objChild->isDirtyRender	= true;
@@ -4926,7 +4925,7 @@ if (!obj->props[lnI])
 	{
 		u32			lnPixelsRendered;
 		RECT		lrc, lrc2;
-		SBgra		backColor, borderColor;
+		SBgra		backColor, borderColor, nwRgba, neRgba, swRgba, seRgba;
 		SBitmap*	bmp;
 
 
@@ -4944,23 +4943,31 @@ if (!obj->props[lnI])
 				// Do we need to redraw?  Or can we just copy?
 				if (obj->isDirtyRender)
 				{
+					// Grab the colors
+					borderColor = borderColor(obj);
+					backColor	= backColor(obj);
+					nwRgba		= nwRgba(obj);
+					neRgba		= neRgba(obj);
+					swRgba		= swRgba(obj);
+					seRgba		= seRgba(obj);
+
 					//////////
 					// Frame it
 					//////
-						if (!obj->bc || !iBmp_isValidCache(&obj->bc, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, 0))
+						if (!obj->bc || !iBmp_isValidCache(&obj->bc, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, 0))
 						{
 							// The bitmap cache is no longer valid
 							iBmp_deleteCache(&obj->bc);
 
 							// Draw the window border
-							if (borderStyle(obj) != _BORDER_STYLE_NONE)		iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, &obj->rcClient,	true);
-							else											iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, NULL,			false);
+							if (borderStyle(obj) != _BORDER_STYLE_NONE)		iBmp_fillRect(obj->bmp, &lrc, nwRgba, neRgba, swRgba, seRgba, true, &obj->rcClient,	true);
+							else											iBmp_fillRect(obj->bmp, &lrc, nwRgba, neRgba, swRgba, seRgba, true, NULL,			false);
 
 							// Apply a dappling
 							iBmp_dapple(obj->bmp, bmpDapple1, 215.0f, 3);
 
 							// Save the cache
-							iBmp_createCache(&obj->bc, obj->bmp, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, 0, true);
+							iBmp_createCache(&obj->bc, obj->bmp, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, 0, true);
 
 						} else {
 							// Copy everything over from the cache
@@ -4968,8 +4975,6 @@ if (!obj->props[lnI])
 						}
 
 						// Frame it
-						borderColor = borderColor(obj);
-						backColor	= backColor(obj);
 						iBmp_frameRect(obj->bmp, &lrc, borderColor, borderColor, borderColor, borderColor, false, NULL, false);
 
 						// Draw the client area
@@ -5051,7 +5056,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 	{
 		u32		lnPixelsRendered;
 		bool	llIsFocusSubform;
-		SBgra	backColor, borderColor;
+		SBgra	backColor, borderColor, nwRgba, neRgba, swRgba, seRgba;
 		RECT	lrc, lrc2;
 
 
@@ -5060,6 +5065,14 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 		lnPixelsRendered = 0;
 		if (obj && obj->isRendered && obj->rc.right > 0 && obj->rc.bottom > 0 && obj->rc.right >= obj->rc.left && obj->rc.bottom >= obj->rc.bottom && obj->rc.right - obj->rc.left < 4400 && obj->rc.bottom - obj->rc.top < 4400)
 		{
+			// Grab our colors
+			backColor	= backColor(obj);
+			borderColor	= borderColor(obj);
+			nwRgba		= nwRgba(obj);
+			neRgba		= neRgba(obj);
+			swRgba		= swRgba(obj);
+			seRgba		= seRgba(obj);
+
 			//////////
 			// If we need re-rendering, re-render
 			//////
@@ -5074,21 +5087,17 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 					//////
 						// Determine if a control on this subform has focus
 						llIsFocusSubform = iObj_focus_descentCheck(obj, true, false);
-						if (!obj->bc || !iBmp_isValidCache(&obj->bc, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)llIsFocusSubform))
+						if (!obj->bc || !iBmp_isValidCache(&obj->bc, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)llIsFocusSubform))
 						{
 							// The bitmap cache is no longer valid
 							iBmp_deleteCache(&obj->bc);
-
-							// Grab colors
-							backColor	= backColor(obj);
-							borderColor	= borderColor(obj);
 
 							// Draw the window border
 							if (backStyle(obj) == _BACK_STYLE_OPAQUE)
 							{
 								// Render the subform and client area
-								if (llIsFocusSubform)		iBmp_fillRect(obj->bmp, &lrc, NwFocusColor,  NeFocusColor,  SwFocusColor,  SeFocusColor,  true, &obj->rcClient,	true);
-								else						iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, &obj->rcClient,	true);
+								if (llIsFocusSubform)		iBmp_fillRect(obj->bmp, &lrc, NwFocusColor,		NeFocusColor,	SwFocusColor,	SeFocusColor,	true, &obj->rcClient,	true);
+								else						iBmp_fillRect(obj->bmp, &lrc, nwRgba,			neRgba,			swRgba,			seRgba,			true, &obj->rcClient,	true);
 
 								// Make the client area white
 								iBmp_fillRect(obj->bmp, &obj->rcClient, backColor, backColor, backColor, backColor, false, NULL, false);
@@ -5096,14 +5105,14 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 							} else {
 								// Render the subform
 								if (llIsFocusSubform)		iBmp_fillRect(obj->bmp, &lrc, NwFocusColor,		NeFocusColor,	SwFocusColor,	SeFocusColor,	true, NULL, false);
-								else						iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba,	obj->p.neRgba,	obj->p.swRgba,	obj->p.seRgba,	true, NULL, false);
+								else						iBmp_fillRect(obj->bmp, &lrc, nwRgba,			neRgba,			swRgba,			seRgba,			true, NULL, false);
 							}
 
 							// Apply a dappling
 							iBmp_dapple(obj->bmp, bmpDapple2, 225.0f, 3);
 
 							// Save the cache
-							iBmp_createCache(&obj->bc, obj->bmp, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)llIsFocusSubform, true);
+							iBmp_createCache(&obj->bc, obj->bmp, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)llIsFocusSubform, true);
 
 						} else {
 							// Copy everything over from the cache
@@ -5160,6 +5169,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 	{
 		u32			lnPixelsRendered;
 		bool		llIsFocusCarousel;
+		SBgra		nwRgba, neRgba, swRgba, seRgba;
 		RECT		lrc;
 		SObject*	objFocus;
 
@@ -5178,26 +5188,33 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				// Re-render
 				if (obj->isDirtyRender)
 				{
+					// Grab colors
+					nwRgba = nwRgba(obj);
+					neRgba = neRgba(obj);
+					swRgba = swRgba(obj);
+					seRgba = seRgba(obj);
+
+
 					//////////
 					// Frame it
 					//////
 						// Determine if a control on this subform has focus
 						objFocus			= iObj_focus_descentCheckObj(obj, true, false);
 						llIsFocusCarousel	= (objFocus != NULL);
-						if (!obj->bc || !iBmp_isValidCache(&obj->bc, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)llIsFocusCarousel))
+						if (!obj->bc || !iBmp_isValidCache(&obj->bc, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)llIsFocusCarousel))
 						{
 							// The bitmap cache is no longer valid
 							iBmp_deleteCache(&obj->bc);
 
 							// Draw the default background
-							if (llIsFocusCarousel)		iBmp_fillRect(obj->bmp, &lrc, NwFocusColor,  NeFocusColor,  SwFocusColor,  SeFocusColor,  true, NULL, false);
-							else						iBmp_fillRect(obj->bmp, &lrc, obj->p.nwRgba, obj->p.neRgba, obj->p.swRgba, obj->p.seRgba, true, NULL, false);
+							if (llIsFocusCarousel)		iBmp_fillRect(obj->bmp, &lrc, NwFocusColor,		NeFocusColor,	SwFocusColor,	SeFocusColor,	true, NULL, false);
+							else						iBmp_fillRect(obj->bmp, &lrc, nwRgba,			neRgba,			swRgba,			seRgba,			true, NULL, false);
 
 							// Apply a dappling
 							iBmp_dapple(obj->bmp, bmpDapple2, 225.0f, 3);
 
 							// Save the cache
-							iBmp_createCache(&obj->bc, obj->bmp, obj->p.nwRgba.color, obj->p.neRgba.color, obj->p.swRgba.color, obj->p.seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)llIsFocusCarousel, true);
+							iBmp_createCache(&obj->bc, obj->bmp, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)llIsFocusCarousel, true);
 
 						} else {
 							// Copy everything over from the cache
@@ -5709,8 +5726,9 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 //////
 	u32 iSubobj_renderImage(SObject* obj)
 	{
-		u32		lnPixelsRendered;
-		RECT	lrc;
+		u32			lnPixelsRendered;
+		SBitmap*	bmp;
+		RECT		lrc;
 
 
 		// Make sure our environment is sane
@@ -5726,17 +5744,20 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				// Based on the current conditions, render the appropriate image
 				if (obj->ev.mouse.isMouseDown)
 				{
-					// Mouse is over this item
-					lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->p.bmpPictureDown);
+					// Mouse is down on this item
+					bmp = iObjProp_get_bitmap(obj, _INDEX_PICTUREBMP_DOWN);
 
 				} else if (obj->ev.mouse.isMouseOver) {
 					// Mouse is over this item
-					lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->p.bmpPictureOver);
+					bmp = iObjProp_get_bitmap(obj, _INDEX_PICTUREBMP_OVER);
 
 				} else {
 					// Render normally
-					lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->p.bmpPicture);
+					bmp = iObjProp_get_bitmap(obj, _INDEX_PICTUREBMP);
 				}
+
+				// Render it
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, bmp);
 
 				// For checkbox images, we colorize them differently
 				if (obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX)
@@ -5926,7 +5947,7 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 				//////////
 				// Draw the text of the value into the center
 				//////
-					lcSprintfFormat = iMath_roundTo(&lfValue, obj->p.roundTo);
+					lcSprintfFormat = iMath_roundTo(&lfValue, iObjProp_get_f64_direct(obj, _INDEX_ROUND_TO));
 					sprintf(buffer, lcSprintfFormat, lfValue);
 
 					if (buffer[strlen(buffer)] == '.')

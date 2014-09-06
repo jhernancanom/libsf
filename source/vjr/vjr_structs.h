@@ -265,24 +265,8 @@ struct SProperties
 	RECT		rcMax;													// The maximum rectangle for the form
 	RECT		rcMin;													// The minimum rectangle for the form
 
-	SBgra		nwRgba;													// Northwest back color for border
-	SBgra		neRgba;													// Northeast back color for border
-	SBgra		swRgba;													// Southwest back color for border
-	SBgra		seRgba;													// Southeast back color for border
-	SBgra		captionColor;											// Color of the caption
-
 	bool		hasFocus;												// Does this object have focus?
  	bool		processKeyPreviewEvents;								// Do keystrokes for controls on the form go through the form's Key* events as well?
-
-	f64			roundTo;												// Round 10=tens place, 1=whole integers, 0.1=one decimal place, 0.01=two decimal places, and so on
-
-	SBitmap*	bmpPicture;												// The image for the picture
-	SBitmap*	bmpPictureOver;											// The image for the picture when the mouse is over
-	SBitmap*	bmpPictureDown;											// The image for the picture when the mouse is pressed down on the item
-
-	SVariable*	minValue;												// Minimum value for the control
-	SVariable*	maxValue;												// Maximum value for the control
-	SVariable*	mask;													// Input mask for the control
 
 	SEM*		em;														// The content being edited
 	SFont*		font;													// Default font instance

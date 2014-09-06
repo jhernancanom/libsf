@@ -161,6 +161,7 @@ struct SVariable;
 	// Variable functions
 	SVariable*				iiVariable_terminateIndirect				(SVariable* var);
 	SVariable*				iVariable_create							(u32 tnVarType, SVariable* varIndirect);
+	SVariable*				iVariable_createAndPopulate					(u32 tnVarType, SDatum* datum);
 	SVariable*				iVariable_createAndPopulate					(u32 tnVarType, s8*  tcData, u32 tnDataLength);
 	SVariable*				iVariable_createAndPopulate					(u32 tnVarType, cs8* tcData, u32 tnDataLength);
 	SVariable*				iVariable_searchForName						(SVariable* varRoot, s8* tcVarName, u32 tnVarNameLength, SComp* comp);

@@ -427,16 +427,34 @@
 
 	bool iObjProp_set_character_direct(SObject* obj, u32 tnIndex, s8* tcText, u32 tnTextLength)
 	{
-		SVariable* var;
+		bool				llResult;
+		SBasePropertyInit*	baseProp;
+		SObjPropertyMap*	objProp;
+		SVariable*			varNewValue;
+		SVariable*			var;
 
 
 		// Make sure the environment is sane
 		if (obj)
 		{
 			// Grab the variable associated with this object's property
-			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			var = iObjProp_get_variable_byIndex(obj, tnIndex, &baseProp, &objProp);
 			if (var)
-				return(iVariable_set_character(var, tcText, tnTextLength));
+			{
+				// Create a temporary variable
+				varNewValue = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, tcText, tnTextLength);
+
+				// Perform the set
+				     if (objProp->_setterObject)	llResult = objProp->setterObject(obj, tnIndex, var, varNewValue, baseProp, objProp);
+				else if (baseProp->_setterBase)		llResult = baseProp->setterBase	(obj, tnIndex, var, varNewValue, baseProp, objProp);
+				else								llResult = iVariable_copy(var, varNewValue);
+
+				// Delete our temporary variable
+				iVariable_delete(varNewValue, true);
+
+				// Indicate our status
+				return(llResult);
+			}
 		}
 		// If we get here, failure
 		return(false);
@@ -444,16 +462,34 @@
 
 	bool iObjProp_set_character_direct(SObject* obj, u32 tnIndex, SDatum* datum)
 	{
-		SVariable* var;
+		bool				llResult;
+		SBasePropertyInit*	baseProp;
+		SObjPropertyMap*	objProp;
+		SVariable*			varNewValue;
+		SVariable*			var;
 
 
 		// Make sure the environment is sane
 		if (obj)
 		{
 			// Grab the variable associated with this object's property
-			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			var = iObjProp_get_variable_byIndex(obj, tnIndex, &baseProp, &objProp);
 			if (var)
-				return(iVariable_set_character(var, datum));
+			{
+				// Create a temporary variable
+				varNewValue = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, datum);
+
+				// Perform the set
+				     if (objProp->_setterObject)	llResult = objProp->setterObject(obj, tnIndex, var, varNewValue, baseProp, objProp);
+				else if (baseProp->_setterBase)		llResult = baseProp->setterBase	(obj, tnIndex, var, varNewValue, baseProp, objProp);
+				else								llResult = iVariable_copy(var, varNewValue);
+
+				// Delete our temporary variable
+				iVariable_delete(varNewValue, true);
+
+				// Indicate our status
+				return(llResult);
+			}
 		}
 		// If we get here, failure
 		return(false);
@@ -469,7 +505,11 @@
 //////
 	bool iObjProp_set_logical_direct(SObject* obj, u32 tnIndex, s32 tnValue)
 	{
-		SVariable* var;
+		bool				llResult;
+		SBasePropertyInit*	baseProp;
+		SObjPropertyMap*	objProp;
+		SVariable*			varNewValue;
+		SVariable*			var;
 
 
 		// Make sure the environment is sane
@@ -484,13 +524,38 @@
 				case _LOGICALX_EXTRA:
 				case _LOGICALX_YET_ANOTHER:
 				case _LOGICALX_ZATS_ALL_FOLKS:
-					// Grab the variable associated with this object's property
-					var = iObjProp_get_variable_byIndex(obj, tnIndex);
-					if (var)
-						return(iVariable_set_logical(var, tnValue));
+					break;
+
+				default:
+					tnValue = _LOGICAL_FALSE;
 					break;
 			}
+
+			// Grab the variable associated with this object's property
+			var = iObjProp_get_variable_byIndex(obj, tnIndex, &baseProp, &objProp);
+			if (var)
+			{
+				// Create a temporary variable
+				varNewValue = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+				if (varNewValue)
+				{
+					// Populate the variable the indicated value
+					iVariable_set_logical(varNewValue, tnValue);
+
+					// Perform the set
+						 if (objProp->_setterObject)	llResult = objProp->setterObject(obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else if (baseProp->_setterBase)		llResult = baseProp->setterBase	(obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else								llResult = iVariable_copy(var, varNewValue);
+
+					// Delete our temporary variable
+					iVariable_delete(varNewValue, true);
+
+					// Indicate our status
+					return(llResult);
+				}
+			}
 		}
+
 		// If we get here, failure
 		return(false);
 	}
@@ -505,17 +570,41 @@
 //////
 	bool iObjProp_set_s32_direct(SObject* obj, u32 tnIndex, s32 tnValue)
 	{
-		SVariable* var;
+		bool				llResult;
+		SBasePropertyInit*	baseProp;
+		SObjPropertyMap*	objProp;
+		SVariable*			varNewValue;
+		SVariable*			var;
 
 
 		// Make sure the environment is sane
 		if (obj)
 		{
 			// Grab the variable associated with this object's property
-			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			var = iObjProp_get_variable_byIndex(obj, tnIndex, &baseProp, &objProp);
 			if (var)
-				return(iVariable_set_s32(var, tnValue));
+			{
+				// Create a temporary variable
+				varNewValue = iVariable_create(_VAR_TYPE_S32, NULL);
+				if (varNewValue)
+				{
+					// Populate the variable the indicated value
+					iVariable_set_s32(varNewValue, tnValue);
+
+					// Perform the set
+						 if (objProp->_setterObject)	llResult = objProp->setterObject(obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else if (baseProp->_setterBase)		llResult = baseProp->setterBase	(obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else								llResult = iVariable_copy(var, varNewValue);
+
+					// Delete our temporary variable
+					iVariable_delete(varNewValue, true);
+
+					// Indicate our status
+					return(llResult);
+				}
+			}
 		}
+
 		// If we get here, failure
 		return(false);
 	}
@@ -530,17 +619,41 @@
 //////
 	bool iObjProp_set_u32_direct(SObject* obj, u32 tnIndex, u32 tnValue)
 	{
-		SVariable* var;
+		bool				llResult;
+		SBasePropertyInit*	baseProp;
+		SObjPropertyMap*	objProp;
+		SVariable*			varNewValue;
+		SVariable*			var;
 
 
 		// Make sure the environment is sane
 		if (obj)
 		{
 			// Grab the variable associated with this object's property
-			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			var = iObjProp_get_variable_byIndex(obj, tnIndex, &baseProp, &objProp);
 			if (var)
-				return(iVariable_set_u32(var, tnValue));
+			{
+				// Create a temporary variable
+				varNewValue = iVariable_create(_VAR_TYPE_U32, NULL);
+				if (varNewValue)
+				{
+					// Populate the variable the indicated value
+					iVariable_set_u32(varNewValue, tnValue);
+
+					// Perform the set
+						 if (objProp->_setterObject)	llResult = objProp->setterObject(obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else if (baseProp->_setterBase)		llResult = baseProp->setterBase	(obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else								llResult = iVariable_copy(var, varNewValue);
+
+					// Delete our temporary variable
+					iVariable_delete(varNewValue, true);
+
+					// Indicate our status
+					return(llResult);
+				}
+			}
 		}
+
 		// If we get here, failure
 		return(false);
 	}
@@ -555,17 +668,41 @@
 //////
 	bool iObjProp_set_f32_direct(SObject* obj, u32 tnIndex, f32 tfValue)
 	{
-		SVariable* var;
+		bool				llResult;
+		SBasePropertyInit*	baseProp;
+		SObjPropertyMap*	objProp;
+		SVariable*			varNewValue;
+		SVariable*			var;
 
 
 		// Make sure the environment is sane
 		if (obj)
 		{
 			// Grab the variable associated with this object's property
-			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			var = iObjProp_get_variable_byIndex(obj, tnIndex, &baseProp, &objProp);
 			if (var)
-				return(iVariable_set_f32(var, tfValue));
+			{
+				// Create a temporary variable
+				varNewValue = iVariable_create(_VAR_TYPE_F32, NULL);
+				if (varNewValue)
+				{
+					// Populate the variable the indicated value
+					iVariable_set_f32(varNewValue, tfValue);
+
+					// Perform the set
+						 if (objProp->_setterObject)	llResult = objProp->setterObject(obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else if (baseProp->_setterBase)		llResult = baseProp->setterBase	(obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else								llResult = iVariable_copy(var, varNewValue);
+
+					// Delete our temporary variable
+					iVariable_delete(varNewValue, true);
+
+					// Indicate our status
+					return(llResult);
+				}
+			}
 		}
+
 		// If we get here, failure
 		return(false);
 	}
@@ -580,17 +717,41 @@
 //////
 	bool iObjProp_set_f64_direct(SObject* obj, u32 tnIndex, f64 tfValue)
 	{
-		SVariable* var;
+		bool				llResult;
+		SBasePropertyInit*	baseProp;
+		SObjPropertyMap*	objProp;
+		SVariable*			varNewValue;
+		SVariable*			var;
 
 
 		// Make sure the environment is sane
 		if (obj)
 		{
 			// Grab the variable associated with this object's property
-			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			var = iObjProp_get_variable_byIndex(obj, tnIndex, &baseProp, &objProp);
 			if (var)
-				return(iVariable_set_f64(var, tfValue));
+			{
+				// Create a temporary variable
+				varNewValue = iVariable_create(_VAR_TYPE_F64, NULL);
+				if (varNewValue)
+				{
+					// Populate the variable the indicated value
+					iVariable_set_f64(varNewValue, tfValue);
+
+					// Perform the set
+						 if (objProp->_setterObject)	llResult = objProp->setterObject(obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else if (baseProp->_setterBase)		llResult = baseProp->setterBase	(obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else								llResult = iVariable_copy(var, varNewValue);
+
+					// Delete our temporary variable
+					iVariable_delete(varNewValue, true);
+
+					// Indicate our status
+					return(llResult);
+				}
+			}
 		}
+
 		// If we get here, failure
 		return(false);
 	}
@@ -605,17 +766,41 @@
 //////
 	bool iObjProp_set_sbgra_direct(SObject* obj, u32 tnIndex, SBgra color)
 	{
-		SVariable* var;
+		bool				llResult;
+		SBasePropertyInit*	baseProp;
+		SObjPropertyMap*	objProp;
+		SVariable*			varNewValue;
+		SVariable*			var;
 
 
 		// Make sure the environment is sane
 		if (obj)
 		{
 			// Grab the variable associated with this object's property
-			var = iObjProp_get_variable_byIndex(obj, tnIndex);
+			var = iObjProp_get_variable_byIndex(obj, tnIndex, &baseProp, &objProp);
 			if (var)
-				return(iVariable_set_u32(var, color.color));
+			{
+				// Create a temporary variable
+				varNewValue = iVariable_create(_VAR_TYPE_U32, NULL);
+				if (varNewValue)
+				{
+					// Populate the variable the indicated value
+					iVariable_set_s32(varNewValue, color.color);
+
+					// Perform the set
+						 if (objProp->_setterObject)	llResult = objProp->setterObject(obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else if (baseProp->_setterBase)		llResult = baseProp->setterBase	(obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else								llResult = iVariable_copy(var, varNewValue);
+
+					// Delete our temporary variable
+					iVariable_delete(varNewValue, true);
+
+					// Indicate our status
+					return(llResult);
+				}
+			}
 		}
+
 		// If we get here, failure
 		return(false);
 	}
