@@ -153,6 +153,7 @@ typedef SEM**		SEMpp;
 	#define setAnchor(obj, value)					iObjProp_set_s32_direct(obj, _INDEX_ANCHOR, value)
 	#define setIcon(obj, bmp)						iObjProp_set_bitmap_direct(obj, _INDEX_ICON, bmp)
 	#define setVisible(obj, value)					iObjProp_set_logical_direct(obj, _INDEX_VISIBLE, value)
+	#define setEnabled(obj, value)					iObjProp_set_logical_direct(obj, _INDEX_ENABLED, value);
 	#define setAlignment(obj, value)				iObjProp_set_s32_direct(obj, _INDEX_ALIGNMENT, value)
 	#define setStyle(obj, value)					iObjProp_set_s32_direct(obj, _INDEX_STYLE, value)
 	#define setBackStyle(obj, value)				iObjProp_set_s32_direct(obj, _INDEX_BACKSTYLE, value)
@@ -272,31 +273,31 @@ typedef SEM**		SEMpp;
 	const u32			_OBJ_TYPE_CHECKBOX					= 11;						// A checkbox
 	const u32			_OBJ_TYPE_OPTION					= 12;						// A combination selection
 	const u32			_OBJ_TYPE_RADIO						= 13;						// A radio dial, which can also present as a slider or spinner
-	const u32			_OBJ_TYPE_CMDGROUP					= 14;
-	const u32			_OBJ_TYPE_OPTGROUP					= 15;
-	const u32			_OBJ_TYPE_LISTBOX					= 16;
-	const u32			_OBJ_TYPE_COMBOBOX					= 17;
-	const u32			_OBJ_TYPE_FORMSET					= 18;
-	const u32			_OBJ_TYPE_TOOLBAR					= 19;
-	const u32			_OBJ_TYPE_SEPARATOR					= 20;
-	const u32			_OBJ_TYPE_LINE						= 21;
-	const u32			_OBJ_TYPE_SHAPE						= 22;
-	const u32			_OBJ_TYPE_CONTAINER					= 23;
-	const u32			_OBJ_TYPE_CONTROL					= 24;
-	const u32			_OBJ_TYPE_GRID						= 25;
-	const u32			_OBJ_TYPE_COLUMN					= 26;
-	const u32			_OBJ_TYPE_HEADER					= 27;
-	const u32			_OBJ_TYPE_OLEBOUND					= 28;
-	const u32			_OBJ_TYPE_OLECONTAIN				= 29;
-	const u32			_OBJ_TYPE_SPINNER					= 30;
-	const u32			_OBJ_TYPE_TIMER						= 31;
-	const u32			_OBJ_TYPE_HYPERLINK					= 32;
-	const u32			_OBJ_TYPE_COLLECTION				= 33;
-	const u32			_OBJ_TYPE_PAGE						= 34;
-	const u32			_OBJ_TYPE_PAGEFRAME					= 35;
-	const u32			_OBJ_TYPE_SESSION					= 36;
-	const u32			_OBJ_TYPE_CUSTOM					= 37;
-	const u32			_OBJ_TYPE_EXCEPTION					= 38;
+	const u32			_OBJ_TYPE_CMDGROUP					= 14;						// A command button group
+	const u32			_OBJ_TYPE_OPTGROUP					= 15;						// An option group
+	const u32			_OBJ_TYPE_LISTBOX					= 16;						// A listbox
+	const u32			_OBJ_TYPE_COMBOBOX					= 17;						// A combobox
+	const u32			_OBJ_TYPE_FORMSET					= 18;						// A formset
+	const u32			_OBJ_TYPE_TOOLBAR					= 19;						// A toolbar
+	const u32			_OBJ_TYPE_SEPARATOR					= 20;						// A separator
+	const u32			_OBJ_TYPE_LINE						= 21;						// A line
+	const u32			_OBJ_TYPE_SHAPE						= 22;						// A shape
+	const u32			_OBJ_TYPE_CONTAINER					= 23;						// A container
+	const u32			_OBJ_TYPE_CONTROL					= 24;						// A blocking container
+	const u32			_OBJ_TYPE_GRID						= 25;						// A grid
+	const u32			_OBJ_TYPE_COLUMN					= 26;						// A grid's column object
+	const u32			_OBJ_TYPE_HEADER					= 27;						// A grid's header object
+	const u32			_OBJ_TYPE_OLEBOUND					= 28;						// A bound OLE object
+	const u32			_OBJ_TYPE_OLECONTAIN				= 29;						// An OLE container control object
+	const u32			_OBJ_TYPE_SPINNER					= 30;						// A spinner
+	const u32			_OBJ_TYPE_TIMER						= 31;						// A timer
+	const u32			_OBJ_TYPE_HYPERLINK					= 32;						// A hyperlink
+	const u32			_OBJ_TYPE_COLLECTION				= 33;						// A collection
+	const u32			_OBJ_TYPE_PAGE						= 34;						// A page within a pageframe
+	const u32			_OBJ_TYPE_PAGEFRAME					= 35;						// A pageframe
+	const u32			_OBJ_TYPE_SESSION					= 36;						// A session
+	const u32			_OBJ_TYPE_CUSTOM					= 37;						// A custom class
+	const u32			_OBJ_TYPE_EXCEPTION					= 38;						// An exception
 
 //////////
 // A shortcut timesaver offered out of the goodness of my heart. :-)
