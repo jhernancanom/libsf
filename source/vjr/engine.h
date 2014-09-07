@@ -3,7 +3,7 @@
 // /libsf/source/vjr/engine.h
 //
 //////
-// Version 0.52
+// Version 0.53
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -68,29 +68,38 @@
 // SET settings. :-)
 // http://www.visual-freepro.org/wiki/index.php/VFrP_changes#SET_Options
 //////
-	bool		_set_indexMetaData						= false;
-	bool		_set_honorBarriers						= true;
-	bool		_set_variablesFirst						= false;
-	bool		_set_autoConvert						= false;
-	bool		_set_caseSensitiveNames					= false;
-	bool		_set_caseSensitiveCompares				= true;
-	bool		_set_namingConventions					= false;
-	s32			_set_logical							= _LOGICAL_TF;
-	bool		_set_implicitParams						= false;
-	bool		_set_stickyParameters					= true;
-	bool		_set_tableEqualAssignments				= false;
-	bool		_set_tableObjects						= false;
-	bool		_set_sloppyPrinting						= false;
-	SDatum		_set_languageTo							= { "en", 2 };
-	s32			_set_decimals							= 2;
-	s32			_set_date								= _SET_DATE_AMERICAN;		// See _SET_DATE_* constants above
-	bool		_set_century							= true;
-	s32			_set_focus_highlight_pixels				= 4;
-	s32			_set_focus_highlight_border_pixels		= 0;
+	struct SSettings
+	{
+		SLL			ll;
 
-	// Default variable type for uninitialized variables
-	s32			_set_initializeDefault					= _VAR_TYPE_LOGICAL;		// SET INITIALIZEDEFAULT TO
-	SVariable*	varInitializeDefault_value				= NULL;
+		// Settings at this level
+		bool		_set_indexMetaData;
+		bool		_set_honorBarriers;
+		bool		_set_variablesFirst;
+		bool		_set_autoConvert;
+		bool		_set_caseSensitiveNames;
+		bool		_set_caseSensitiveCompares;
+		bool		_set_namingConventions;
+		s32			_set_logical;
+		bool		_set_implicitParams;
+		bool		_set_stickyParameters;
+		bool		_set_tableEqualAssignments;
+		bool		_set_tableObjects;
+		bool		_set_sloppyPrinting;
+		SDatum		_set_languageTo;
+		s32			_set_decimals;
+		s32			_set_date;
+		bool		_set_century;
+		s32			_set_focus_highlight_pixels;
+		s32			_set_focus_highlight_border_pixels;
+
+		// Default variable type for uninitialized variables
+		s32			_set_initializeDefault;
+		SVariable*	varInitializeDefault_value;
+	};
+	// First entry
+	SSettings* gsFirstSettings								= NULL;
+	SSettings* gsCurrentSetting								= NULL;
 
 
 //////////
@@ -104,6 +113,9 @@
 	void					iEngine_executeSetter					(s8*  name, SVariable* varOld, SVariable* varNew);
 	void					iEngine_error							(u32 tnErrorNumber, SVariable* varRelated);
 	bool					iiEngine_getParametersBetween			(SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable** p1, SVariable** p2, SVariable** p3, SVariable** p4, SVariable** p5, SVariable** p6, SVariable** p7);
+
+	SSettings*				iSettings_push							(void);
+	SSettings*				iSettings_pop							(void);
 
 	void					iBreakpoint_delete						(SBreakpoint** breakpoint);
 	SBreakpoint* 			iBreakpoint_add							(SBreakpoint** breakpoint, u32 tnType);

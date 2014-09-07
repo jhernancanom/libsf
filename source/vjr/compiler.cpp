@@ -3,7 +3,7 @@
 // /libsf/source/vjr/compiler.cpp
 //
 //////
-// Version 0.52
+// Version 0.53
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -4402,8 +4402,8 @@ debug_break;
 
 						default:
 							// Unspecified.  Default to the system default.
-							if (varInitializeDefault_value)			varNew = iVariable_copy(varInitializeDefault_value, false);
-							else									varNew = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+							if (gsCurrentSetting->varInitializeDefault_value)		varNew = iVariable_copy(gsCurrentSetting->varInitializeDefault_value, false);
+							else													varNew = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
 					}
 				}
 			}
@@ -4544,14 +4544,14 @@ debug_break;
 		// Set the indicated type
 		if (iVariable_isVarTypeValid(tnVarType, &varDefaultValue))
 		{
-			if (_set_initializeDefault != tnVarType)
+			if (gsCurrentSetting->_set_initializeDefault != tnVarType)
 			{
 				// Indicate our current default variable type
-				_set_initializeDefault = tnVarType;
+				gsCurrentSetting->_set_initializeDefault = tnVarType;
 
 				// Set the new value
-				if (varDefaultValue)		varInitializeDefault_value = iVariable_copy(varDefaultValue, false);
-				else						varInitializeDefault_value = iVariable_create(tnVarType, NULL);
+				if (varDefaultValue)		gsCurrentSetting->varInitializeDefault_value = iVariable_copy(varDefaultValue, false);
+				else						gsCurrentSetting->varInitializeDefault_value = iVariable_create(tnVarType, NULL);
 			}
 
 			// Indicate success
@@ -5442,7 +5442,7 @@ debug_break;
 
 				case _VAR_TYPE_F32:
 					// Convert to floating point form, then store text after leading zeros
-					sprintf(formatter, "%%020.%df\0", _set_decimals);
+					sprintf(formatter, "%%020.%df\0", gsCurrentSetting->_set_decimals);
 					sprintf(buffer, formatter, *(f32*)var->value.data);
 
 					// Skip past leading zeros
@@ -5456,7 +5456,7 @@ debug_break;
 
 				case _VAR_TYPE_F64:
 					// Convert to floating point form, then store text after leading zeros
-					sprintf(formatter, "%%020.%dlf\0", _set_decimals);
+					sprintf(formatter, "%%020.%dlf\0", gsCurrentSetting->_set_decimals);
 					sprintf(buffer, formatter, *(f64*)var->value.data);
 
 					// Skip past leading zeros
@@ -5484,11 +5484,11 @@ debug_break;
 					// We can convert this from its text form into numeric if we're auto-converting
 // TODO:  This needs to go into a DTOC() function
 					// Prepare for our year
-					if (_set_century)		lnYearOffset = 0;
-					else					lnYearOffset = 2;
+					if (gsCurrentSetting->_set_century)		lnYearOffset = 0;
+					else									lnYearOffset = 2;
 
 					// Based on type, convert
-					switch (_set_date)
+					switch (gsCurrentSetting->_set_date)
 					{
 						case _SET_DATE_MDY:
 						case _SET_DATE_AMERICAN:		// mm/dd/yy
@@ -5573,14 +5573,14 @@ debug_break;
 
 				case _VAR_TYPE_LOGICAL:
 					// Based on setting, display as indicated
-					if (_set_logical == _LOGICAL_TF)
+					if (gsCurrentSetting->_set_logical == _LOGICAL_TF)
 					{
 						// True/False
 						varDisp->isValueAllocated = true;
 						if (var->value.data[0] == 0)		iDatum_duplicate(&varDisp->value, cgcFText, -1);
 						else								iDatum_duplicate(&varDisp->value, cgcTText, -1);
 
-					} else if (_set_logical == _LOGICAL_YN) {
+					} else if (gsCurrentSetting->_set_logical == _LOGICAL_YN) {
 						// Yes/No
 						varDisp->isValueAllocated = true;
 						if (var->value.data[0] == 0)		iDatum_duplicate(&varDisp->value, cgcNText, -1);
@@ -5937,7 +5937,7 @@ debug_break;
 
 			case _VAR_TYPE_CHARACTER:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || _set_autoConvert)
+				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
 				{
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
@@ -5959,7 +5959,7 @@ debug_break;
 
 			case _VAR_TYPE_DATE:
 				// We can convert this from its text form into numeric if we're auto-converting
-				if (tlForceConvert || _set_autoConvert)
+				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
 				{
 					//////////
 					// Dates are stored internally in text form as YYYYMMDD.
@@ -5983,7 +5983,7 @@ debug_break;
 
 			case _VAR_TYPE_DATETIME:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || _set_autoConvert)
+				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
 				{
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
@@ -6004,7 +6004,7 @@ debug_break;
 
 			case _VAR_TYPE_CURRENCY:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || _set_autoConvert)
+				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
 				{
 					//////////
 					// We can return the value after verifying it is not out of range for a 32-bit signed integer
@@ -6180,7 +6180,7 @@ debug_break;
 
 			case _VAR_TYPE_CHARACTER:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || _set_autoConvert)
+				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
 				{
 					//////////
 					// We can convert this from its text form into numeric
@@ -6192,7 +6192,7 @@ debug_break;
 
 			case _VAR_TYPE_DATE:
 				// We can convert this from its text form into numeric if we're auto-converting
-				if (tlForceConvert || _set_autoConvert)
+				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
 				{
 					//////////
 					// Dates are stored internally in text form as YYYYMMDD.
@@ -6206,7 +6206,7 @@ debug_break;
 
 			case _VAR_TYPE_LOGICAL:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || _set_autoConvert)
+				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
 				{
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
@@ -6219,7 +6219,7 @@ debug_break;
 
 			case _VAR_TYPE_DATETIME:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || _set_autoConvert)
+				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
 				{
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
@@ -6230,7 +6230,7 @@ debug_break;
 
 			case _VAR_TYPE_CURRENCY:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || _set_autoConvert)
+				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
 				{
 					//////////
 					// We can return the value after verifying it is not out of range for a 32-bit signed integer
@@ -6376,7 +6376,7 @@ debug_break;
 
 			case _VAR_TYPE_CHARACTER:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || _set_autoConvert)
+				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
 				{
 					//////////
 					// We can convert this from its text form into numeric
@@ -6388,7 +6388,7 @@ debug_break;
 
 			case _VAR_TYPE_DATE:
 				// We can convert this from its text form into numeric if we're auto-converting
-				if (tlForceConvert || _set_autoConvert)
+				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
 				{
 					//////////
 					// Dates are stored internally in text form as YYYYMMDD.
@@ -6402,7 +6402,7 @@ debug_break;
 
 			case _VAR_TYPE_LOGICAL:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || _set_autoConvert)
+				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
 				{
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
@@ -6415,7 +6415,7 @@ debug_break;
 
 			case _VAR_TYPE_DATETIME:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || _set_autoConvert)
+				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
 				{
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
@@ -6426,7 +6426,7 @@ debug_break;
 
 			case _VAR_TYPE_CURRENCY:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || _set_autoConvert)
+				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
 				{
 					//////////
 					// We can return the value after verifying it is not out of range for a 32-bit signed integer
@@ -6562,7 +6562,7 @@ debug_break;
 
 			case _VAR_TYPE_CHARACTER:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || _set_autoConvert)
+				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
 				{
 					//////////
 					// We can convert this from its text form into numeric
@@ -6574,7 +6574,7 @@ debug_break;
 
 			case _VAR_TYPE_DATE:
 				// We can convert this from its text form into numeric if we're auto-converting
-				if (tlForceConvert || _set_autoConvert)
+				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
 				{
 					//////////
 					// Dates are stored internally in text form as YYYYMMDD.
@@ -6588,7 +6588,7 @@ debug_break;
 
 			case _VAR_TYPE_LOGICAL:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || _set_autoConvert)
+				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
 				{
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
@@ -6601,7 +6601,7 @@ debug_break;
 
 			case _VAR_TYPE_DATETIME:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || _set_autoConvert)
+				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
 				{
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
@@ -6612,7 +6612,7 @@ debug_break;
 
 			case _VAR_TYPE_CURRENCY:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || _set_autoConvert)
+				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
 				{
 					//////////
 					// We can return the value after verifying it is not out of range for a 32-bit signed integer

@@ -3,7 +3,7 @@
 // /libsf/source/vjr/objects.cpp
 //
 //////
-// Version 0.52
+// Version 0.53
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -713,10 +713,10 @@
 							// Populate the new entry
 							focus->obj	= obj;
 							focus->win	= win;
-							SetRect(&lrc,	lnX - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.left : 0) - _set_focus_highlight_pixels - _set_focus_highlight_border_pixels,
-											lnY - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.top  : 0) - _set_focus_highlight_pixels - _set_focus_highlight_border_pixels,
-											lnX - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.left : 0) + _set_focus_highlight_pixels + _set_focus_highlight_border_pixels + obj->rc.right  - obj->rc.left,
-											lnY - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.top  : 0) + _set_focus_highlight_pixels + _set_focus_highlight_border_pixels + obj->rc.bottom - obj->rc.top);
+							SetRect(&lrc,	lnX - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.left : 0) - gsCurrentSetting->_set_focus_highlight_pixels - gsCurrentSetting->_set_focus_highlight_border_pixels,
+											lnY - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.top  : 0) - gsCurrentSetting->_set_focus_highlight_pixels - gsCurrentSetting->_set_focus_highlight_border_pixels,
+											lnX - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.left : 0) + gsCurrentSetting->_set_focus_highlight_pixels + gsCurrentSetting->_set_focus_highlight_border_pixels + obj->rc.right  - obj->rc.left,
+											lnY - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.top  : 0) + gsCurrentSetting->_set_focus_highlight_pixels + gsCurrentSetting->_set_focus_highlight_border_pixels + obj->rc.bottom - obj->rc.top);
 
 							// Physically create the window
 							iFocusHighlight_create(focus, &lrc);

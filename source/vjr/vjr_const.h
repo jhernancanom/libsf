@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr_const.h
 //
 //////
-// Version 0.52
+// Version 0.53
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -742,6 +742,12 @@ typedef SEM**		SEMpp;
 
 
 //////////
+// Supported languages
+//////
+	const s8			cgcEnglish[]						= "en";									// English
+
+
+//////////
 // Constant strings
 //////
 	const s8			cgcMessageWindowClass[]				= "VJr.MessageWindow";
@@ -758,14 +764,14 @@ typedef SEM**		SEMpp;
 	const s8			cgcSourceLightTitle[]				= "SourceLight";
 	const s8			cgcSystemLog[]						= "System Log";
 	const s8			cgc_noMateFound[]					= "Mate not found";
-	const s8			cgcVersionShort[]					= "Version 0.52";
-	const s8			cgcScreenTitle[]					= "Visual FreePro, Jr. 0.52 -- Aug.21.2014";
-	const s8			cgcJDebiTitle[]						= "JDebi Debugger 0.52 -- Aug.21.2014";
-	const s8			cgcVersionText[]					= "Visual FreePro, Jr. 00.52.0001.9999 for Windows";
+	const s8			cgcVersionShort[]					= "Version 0.53";
+	const s8			cgcScreenTitle[]					= "Visual FreePro, Jr. 0.53 -- Sep.06.2014";
+	const s8			cgcJDebiTitle[]						= "JDebi Debugger 0.53 -- Sep.06.2014";
+	const s8			cgcVersionText[]					= "Visual FreePro, Jr. 00.53.0001.9999 for Windows";
 // VERSION() support
-	const s8			cgcVersion1Text[]					= "Visual FreePro, Jr. 00.52.0001.9999 for Windows [Aug.21.2014 00:00:00] Product ID 31415-926-5358979-32384";
-	const s8			cgcVersion4Text[]					= "00.52.0001.9999";
-	const s32			gnVersion5							= 52;	// 0.51
+	const s8			cgcVersion1Text[]					= "Visual FreePro, Jr. 00.53.0001.9999 for Windows [Sep.06.2014 00:00:00] Product ID 31415-926-5358979-32384";
+	const s8			cgcVersion4Text[]					= "00.53.0001.9999";
+	const s32			gnVersion5							= 53;	// 0.53
 	const s32			gnVersion2							= 2;	// Professional
 	const s32			gnVersion3							= 0;	// English
 	const s8			cgcFontName_default[]				= "Ubuntu";

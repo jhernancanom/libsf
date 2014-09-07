@@ -3,7 +3,7 @@
 // /libsf/source/vjr/commands.cpp
 //
 //////
-// Version 0.52
+// Version 0.53
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -112,7 +112,7 @@
 // Trims spaces off the start and end of the string.
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Jul.12.2014
 //////
@@ -506,7 +506,7 @@
 // Takes a character input and converts it to its ASCII value.
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Jul.05.2014
 //////
@@ -586,7 +586,7 @@
 // times the search string is found, and optionally with regard to case (trailing "C").
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Aug.03.2014
 //////
@@ -774,7 +774,7 @@
 // Takes a numeric input in the range 0..255, and converts it to its ASCII character.
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Jul.05.2014
 //////
@@ -859,7 +859,7 @@
 // Character transformation
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Aug.21.2014
 //////
@@ -1025,7 +1025,7 @@
 // Instantiates and instance of the indicated class.
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Jul.12.2014
 //////
@@ -1114,7 +1114,7 @@
 // Returns the current local time, or uses the input variables to create the indicated datetime.
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Jul.10.2014
 //////
@@ -1332,7 +1332,7 @@
 // Takes a value and returns the INT(n) of that value.
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Jul.13.2014
 //////
@@ -1398,7 +1398,7 @@
 // Returns the left N characters of a string.
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Jul.12.2014
 //////
@@ -1485,7 +1485,7 @@
 // Returns the length of the string.
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Jul.12.2014
 //////
@@ -1546,7 +1546,7 @@
 // Converts every character in the string to lowercase.
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Jul.12.2014
 //////
@@ -1618,7 +1618,7 @@
 // Trims spaces off the start of the string.
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Jul.12.2014
 //////
@@ -1646,7 +1646,7 @@
 // Returns the maximum value of the two inputs.
 //
 //////
-// Version 0.52   (Determine the current version from the header in vjr.cpp)
+// Version 0.53   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.12.2014
 //////
@@ -1858,7 +1858,7 @@
 // Returns the minimum value of the two inputs.
 //
 //////
-// Version 0.52   (Determine the current version from the header in vjr.cpp)
+// Version 0.53   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.12.2014
 //////
@@ -2071,7 +2071,7 @@
 // optionally with regards to case.
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Aug.03.2014
 //////
@@ -2132,7 +2132,7 @@
 // and lowercases everything else.
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Aug.03.2014
 //////
@@ -2326,7 +2326,7 @@
 // and lowercases everything else.
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Jul.12.2014
 //////
@@ -2419,7 +2419,7 @@
 // Returns the indicated string replicated N times.
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Jul.12.2014
 //////
@@ -2507,7 +2507,7 @@
 // Returns the RGB() of the three input values.
 //
 //////
-// Version 0.52   (Determine the current version from the header in vjr.cpp)
+// Version 0.53   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -2653,7 +2653,7 @@
 // Returns the RGBA() of the four input values.
 //
 //////
-// Version 0.52   (Determine the current version from the header in vjr.cpp)
+// Version 0.53   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -2828,7 +2828,7 @@
 // Returns the right N characters of a string.
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Jul.12.2014
 //////
@@ -2923,7 +2923,7 @@
 // Trims spaces off the end of the string.
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Jul.12.2014
 //////
@@ -2951,7 +2951,7 @@
 // Creates a character variable initialized with spaces.
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Jul.12.2014
 //////
@@ -3027,7 +3027,7 @@
 // Converts the matching portions of the string from one form to another.
 //
 //////
-// Version 0.52   (Determine the current version from the header in vjr.cpp)
+// Version 0.53   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Aug.21.2014
 //////
@@ -3257,7 +3257,7 @@
 // Returns a string which has been modified, having optionally some characters optionally removed, some optionally inserted.
 //
 //////
-// Version 0.52   (Determine the current version from the header in vjr.cpp)
+// Version 0.53   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.12.2014
 //////
@@ -3416,7 +3416,7 @@
 // Based on the index, returns a wide array of information.
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Jul.13.2014
 //////
@@ -3636,7 +3636,7 @@
 // Converts any variable input to a character form, and applies formatting based on codes.
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Aug.03.2014
 //////
@@ -3687,9 +3687,31 @@
 
 
 		//////////
-		// Apply the formatting
+		// Formatters:
+		//		@D		date,		convert using SET DATE
+		//		@E		date,		convert using BRITISH
+		//		@YL		date,		convert using LONG
+		//		@YS		date,		convert using SHORT
+		//		Y		logical,	use Y and N
+		//		@T		character,	ALLTRIM() input before conversion
+		//		@!		character,	UPPER() input
+		//		!		character,	UPPER() on the character in this position
+		//		.		Use decimal point
+		//		,		Use 1000s separator
+		//		X		Specifies output width by character count
+		//
+		// Output formats:
+		//		@B		numeric,	left-justify
+		//		@$		numeric,	append based on SET CURRENCY symbol
+		//		@C		numeric,	append "CR" after if zero or positive
+		//		@X		numeric,	appends "DB" after if negative
+		//		@L		numeric,	prefix with leading 0s
+		//		@Z		numeric,	if zero display CHR(32) instead of "0"
+		//		@(		numeric,	surround with () if negative
+		//		@^		numeric,	scientific notation
+		//		@0		numeric,	convert to hexadecimal equivalent
+		//		@R		format around other characters encountered using 9,#,! for source data
 		//////
-// TODO:  apply the formatting
 
 
 		//////////
@@ -3707,7 +3729,7 @@
 // Converts every character in the string to uppercase.
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Jul.12.2014
 //////
@@ -3779,7 +3801,7 @@
 // Based on input, retrieves various version information.
 //
 //////
-// Version 0.52
+// Version 0.53
 // Last update:
 //     Jul.13.2014
 //////
@@ -3892,7 +3914,7 @@
 // Concatenates two strings together.
 //
 //////
-// Version 0.52   (Determine the current version from the header in vjr.cpp)
+// Version 0.53   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -3959,7 +3981,7 @@
 // Adds two values and returns the result.
 //
 //////
-// Version 0.52   (Determine the current version from the header in vjr.cpp)
+// Version 0.53   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -4083,7 +4105,7 @@
 // Subtracts two values and returns the result.
 //
 //////
-// Version 0.52   (Determine the current version from the header in vjr.cpp)
+// Version 0.53   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -4207,7 +4229,7 @@
 // Multiplies two values and returns the result.
 //
 //////
-// Version 0.52   (Determine the current version from the header in vjr.cpp)
+// Version 0.53   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -4331,7 +4353,7 @@
 // Divides two values and returns the result.
 //
 //////
-// Version 0.52   (Determine the current version from the header in vjr.cpp)
+// Version 0.53   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////

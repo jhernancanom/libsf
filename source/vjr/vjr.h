@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr.h
 //
 //////
-// Version 0.52
+// Version 0.53
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -84,7 +84,7 @@
 // on a single monitor machine (like a notebook) during the initial startup.
 // You can set this property to false and prevent the splash screen from appearing.
 //////
-	bool glShowSplash = false;
+	bool glShowSplash = true;
 
 
 #define _USE_MATH_DEFINES

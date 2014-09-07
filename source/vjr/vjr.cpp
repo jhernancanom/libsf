@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr.cpp
 //
 //////
-// Version 0.52
+// Version 0.53
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -112,9 +112,9 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iBmp_createBySize(bmpNoImage, 1, 1, 24);
 
 		// Initialize primitive variables
+		iSettings_push();
 		iVariable_createDefaultValues();
 		iVariable_createPropsMaster();
-		iVariable_setDefaultVariableValue(_VAR_TYPE_LOGICAL);
 		varConstant_space		= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgc_spaceText, 1);
 		varEmptyString			= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, (s8*)NULL, 0);
 		var2000Spaces			= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
@@ -699,7 +699,9 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Compiler completed (future, James 4:15)",		"0.65", false, false, false, -2, 0);
 		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Running programs (future, James 4:15)",		"0.60", false, false, false, -2, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "CHRTRAN() and STRTRAN()",					"0.52", false, false, false, 0, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Internal Property refactoring",				"0.53", false, false, false, 0, 0);
+
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "CHRTRAN() and STRTRAN()",					"0.52", false, false, false, -2, 0);
 
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Bug fixes, memory leaks removed",			"0.51", false, false, false, -2, 0);
 
@@ -718,7 +720,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 //		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE,  "Syntax highlighting (future, James 4:15)",	"0.50", false, false, false, -2, 0);
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Syntax highlighting",						"0.45", false, true, false, -2, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Tabs expanded, mouse wheel",					"0.44", false, true, false, -2, 0);
+// 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Tabs expanded, mouse wheel",					"0.44", false, true, false, -2, 0);
 
 		iiVjr_renderAccomplishment(bmp, &lrc, _AMBER, "TRANSFORM() partially supported",			"0.43", false, true, false, -1, 0);
 //		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "PADC(), PADL(), PADR()",						"0.43", false, true, false, -2, 0);
