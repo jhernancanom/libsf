@@ -4987,104 +4987,876 @@ if (!obj->props[lnI])
 
 
 
+//////////
+//
+// Called to copy the indicated cmdGroup from source to destination
+//
+//////
 	void iiSubobj_copyCmdGroup(SObject* cmdGroupDst, SObject* cmdGroupSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&cmdGroupDst->p, &cmdGroupSrc->p, sizeof(cmdGroupDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&cmdGroupDst->ev, &cmdGroupSrc->ev, sizeof(cmdGroupDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(cmdGroupDst, cmdGroupSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated optGroup from source to destination
+//
+//////
 	void iiSubobj_copyOptGroup(SObject* optGroupDst, SObject* optGroupSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&optGroupDst->p, &optGroupSrc->p, sizeof(optGroupDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&optGroupDst->ev, &optGroupSrc->ev, sizeof(optGroupDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(optGroupDst, optGroupSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated listbox from source to destination
+//
+//////
 	void iiSubobj_copyListbox(SObject* listboxDst, SObject* listboxSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&listboxDst->p, &listboxSrc->p, sizeof(listboxDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&listboxDst->ev, &listboxSrc->ev, sizeof(listboxDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(listboxDst, listboxSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated combobox from source to destination
+//
+//////
 	void iiSubobj_copyCombobox(SObject* comboboxDst, SObject* comboboxSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&comboboxDst->p, &comboboxSrc->p, sizeof(comboboxDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&comboboxDst->ev, &comboboxSrc->ev, sizeof(comboboxDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(comboboxDst, comboboxSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated formset from source to destination
+//
+//////
 	void iiSubobj_copyFormset(SObject* formsetDst, SObject* formsetSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&formsetDst->p, &formsetSrc->p, sizeof(formsetDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&formsetDst->ev, &formsetSrc->ev, sizeof(formsetDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(formsetDst, formsetSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated toolbar from source to destination
+//
+//////
 	void iiSubobj_copyToolbar(SObject* toolbarDst, SObject* toolbarSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&toolbarDst->p, &toolbarSrc->p, sizeof(toolbarDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&toolbarDst->ev, &toolbarSrc->ev, sizeof(toolbarDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(toolbarDst, toolbarSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated separator from source to destination
+//
+//////
 	void iiSubobj_copySeparator(SObject* separatorDst, SObject* separatorSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&separatorDst->p, &separatorSrc->p, sizeof(separatorDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&separatorDst->ev, &separatorSrc->ev, sizeof(separatorDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(separatorDst, separatorSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated line from source to destination
+//
+//////
 	void iiSubobj_copyLine(SObject* lineDst, SObject* lineSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&lineDst->p, &lineSrc->p, sizeof(lineDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&lineDst->ev, &lineSrc->ev, sizeof(lineDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(lineDst, lineSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated shape from source to destination
+//
+//////
 	void iiSubobj_copyShape(SObject* shapeDst, SObject* shapeSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&shapeDst->p, &shapeSrc->p, sizeof(shapeDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&shapeDst->ev, &shapeSrc->ev, sizeof(shapeDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(shapeDst, shapeSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated container from source to destination
+//
+//////
 	void iiSubobj_copyContainer(SObject* containerDst, SObject* containerSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&containerDst->p, &containerSrc->p, sizeof(containerDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&containerDst->ev, &containerSrc->ev, sizeof(containerDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(containerDst, containerSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated control from source to destination
+//
+//////
 	void iiSubobj_copyControl(SObject* controlDst, SObject* controlSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&controlDst->p, &controlSrc->p, sizeof(controlDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&controlDst->ev, &controlSrc->ev, sizeof(controlDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(controlDst, controlSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated grid from source to destination
+//
+//////
 	void iiSubobj_copyGrid(SObject* gridDst, SObject* gridSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&gridDst->p, &gridSrc->p, sizeof(gridDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&gridDst->ev, &gridSrc->ev, sizeof(gridDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(gridDst, gridSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated column from source to destination
+//
+//////
 	void iiSubobj_copyColumn(SObject* columnDst, SObject* columnSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&columnDst->p, &columnSrc->p, sizeof(columnDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&columnDst->ev, &columnSrc->ev, sizeof(columnDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(columnDst, columnSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated header from source to destination
+//
+//////
 	void iiSubobj_copyHeader(SObject* headerDst, SObject* headerSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&headerDst->p, &headerSrc->p, sizeof(headerDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&headerDst->ev, &headerSrc->ev, sizeof(headerDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(headerDst, headerSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated oleBound from source to destination
+//
+//////
 	void iiSubobj_copyOleBound(SObject* oleBoundDst, SObject* oleBoundSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&oleBoundDst->p, &oleBoundSrc->p, sizeof(oleBoundDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&oleBoundDst->ev, &oleBoundSrc->ev, sizeof(oleBoundDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(oleBoundDst, oleBoundSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated oleContain from source to destination
+//
+//////
 	void iiSubobj_copyOleContain(SObject* oleContainDst, SObject* oleContainSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&oleContainDst->p, &oleContainSrc->p, sizeof(oleContainDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&oleContainDst->ev, &oleContainSrc->ev, sizeof(oleContainDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(oleContainDst, oleContainSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated spinner from source to destination
+//
+//////
 	void iiSubobj_copySpinner(SObject* spinnerDst, SObject* spinnerSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&spinnerDst->p, &spinnerSrc->p, sizeof(spinnerDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&spinnerDst->ev, &spinnerSrc->ev, sizeof(spinnerDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(spinnerDst, spinnerSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated timer from source to destination
+//
+//////
 	void iiSubobj_copyTimer(SObject* timerDst, SObject* timerSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&timerDst->p, &timerSrc->p, sizeof(timerDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&timerDst->ev, &timerSrc->ev, sizeof(timerDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(timerDst, timerSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated hyperlink from source to destination
+//
+//////
 	void iiSubobj_copyHyperlink(SObject* hyperlinkDst, SObject* hyperlinkSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&hyperlinkDst->p, &hyperlinkSrc->p, sizeof(hyperlinkDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&hyperlinkDst->ev, &hyperlinkSrc->ev, sizeof(hyperlinkDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(hyperlinkDst, hyperlinkSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated collection from source to destination
+//
+//////
 	void iiSubobj_copyCollection(SObject* collectionDst, SObject* collectionSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&collectionDst->p, &collectionSrc->p, sizeof(collectionDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&collectionDst->ev, &collectionSrc->ev, sizeof(collectionDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(collectionDst, collectionSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated page from source to destination
+//
+//////
 	void iiSubobj_copyPage(SObject* pageDst, SObject* pageSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&pageDst->p, &pageSrc->p, sizeof(pageDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&pageDst->ev, &pageSrc->ev, sizeof(pageDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(pageDst, pageSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated pageframe from source to destination
+//
+//////
 	void iiSubobj_copyPageframe(SObject* pageframeDst, SObject* pageframeSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&pageframeDst->p, &pageframeSrc->p, sizeof(pageframeDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&pageframeDst->ev, &pageframeSrc->ev, sizeof(pageframeDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(pageframeDst, pageframeSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated session from source to destination
+//
+//////
 	void iiSubobj_copySession(SObject* sessionDst, SObject* sessionSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&sessionDst->p, &sessionSrc->p, sizeof(sessionDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&sessionDst->ev, &sessionSrc->ev, sizeof(sessionDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(sessionDst, sessionSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated custom from source to destination
+//
+//////
 	void iiSubobj_copyCustom(SObject* customDst, SObject* customSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&customDst->p, &customSrc->p, sizeof(customDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&customDst->ev, &customSrc->ev, sizeof(customDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(customDst, customSrc);
 	}
 
+
+
+
+//////////
+//
+// Called to copy the indicated exception from source to destination
+//
+//////
 	void iiSubobj_copyException(SObject* exceptionDst, SObject* exceptionSrc)
 	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Copy all standard properties
+		//////
+			memcpy(&exceptionDst->p, &exceptionSrc->p, sizeof(exceptionDst->p));
+
+
+		//////////
+		// Copy the allocatables
+		//////
+			// remember
+
+
+		//////////
+		// Copy the form-specific event handlers
+		//////
+			memcpy(&exceptionDst->ev, &exceptionSrc->ev, sizeof(exceptionDst->ev));
+
+
+		//////////
+		// Duplicate all children for this object
+		//////
+			iObj_duplicateChildren(exceptionDst, exceptionSrc);
 	}
 
 
