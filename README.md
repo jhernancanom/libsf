@@ -1,3 +1,28 @@
+--------------
+
+        -- You are not alone in your Visual FreePro interest! --
+
+        www.visual-freepro.org site-wide web statistics
+        May.13.2013 through Sep.07.2014 (482 days)
+        * 24,856 unique IP address hits.
+        * Of those visiting on more than 10 separate days, each IP address visits on an average of 30 separate days.
+        * 678 have visited on 10 days or more, 152 on 30 separate days, 81 on 50 separate days.
+        * Excluding Rick C. Hodgin and bots, 20 users have visited the site on more than 100 separate days.
+        * 706 separate IP addresses have downloaded at least one video.
+        * 12,607 video downloads initiated (includes pauses, restarts, rewinds, fast forwards, and jump to hh:mm).
+
+--------------
+
+        Visual FreePro, Jr. specific
+        Jun.01.2014 through Sep.07.2014 (98 days)
+        * 3,423 unique IP address hits.
+        * 89 of those have visited the site on more than 10 separate days. 18 on at least 25 separate days.
+        * 72 separate IP addresses have downloaded at least one video.
+        * 672 video downloads initiated (includes pauses, restarts, rewinds, fast forwards, and jump to hh:mm).
+        * The Jul.12.2014 video Adding a function to VJr has been initiated 349 times by 51 IP addresses.
+
+--------------
+		
         Mar.31.2014 - RCH - All development has been moved to local LibSF servers until
         the next milestone is achieved.  Please check back periodically.  Thank you.
 
