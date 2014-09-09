@@ -105,6 +105,11 @@
 	SBuilder*			gFocusHighlights					= NULL;									// Holds SFocusHighlight structures
 	SSplash				gSplash;																	// For the active splash screen
 
+	// Global sourceLight accumulator window
+	SBitmap*			bmpSourceLight						= NULL;									// SourceLight is always contextual.  This bitmap is constantly created and destroyed.
+	s32					gnSourceLightX						= _SOURCELIGHT_MARGIN;
+	s32					gnSourceLightY						= _SOURCELIGHT_MARGIN;
+
 	// App icons
 	SBitmap*			bmpVjrIcon							= NULL;
 	SBitmap*			bmpVjrSplash						= NULL;
@@ -242,12 +247,9 @@
 	SObject*			debug								= NULL;
 	SObject*			output								= NULL;
 	SObject*			sourceLight							= NULL;
+	SObject*			sourceLight_empty					= NULL;
 	SObject*			sourceCode_editbox					= NULL;
 	SObject*			locals_editbox						= NULL;
-// 	SObject*			locals_autos						= NULL;
-// 	SObject*			locals_globals						= NULL;
-// 	SObject*			locals_readwrite					= NULL;
-// 	SObject*			locals_refactor						= NULL;
 	SObject*			watch_editbox						= NULL;
 	SObject*			command_editbox						= NULL;
 	SObject*			debug_editbox						= NULL;

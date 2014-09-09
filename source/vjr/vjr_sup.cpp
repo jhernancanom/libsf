@@ -272,6 +272,7 @@
 			debug_editbox		= iObj_addChild(_OBJ_TYPE_EDITBOX,	debug);
 			output_editbox		= iObj_addChild(_OBJ_TYPE_EDITBOX,	output);
 			screen_editbox		= iObj_addChild(_OBJ_TYPE_EDITBOX,	_screen);
+			sourceLight_empty	= iObj_addChild(_OBJ_TYPE_EMPTY,	sourceLight);
 
 
 		//////////
@@ -284,19 +285,21 @@
 			setVisible(debug_editbox,		_LOGICAL_TRUE);
 			setVisible(output_editbox,		_LOGICAL_TRUE);
 			setVisible(screen_editbox,		_LOGICAL_TRUE);
+			setVisible(sourceLight_empty,	_LOGICAL_TRUE);
 
 
 		//////////
 		// Position and size each control
 		//////
 			lnHeight = (_jdebi->rcClient.bottom - _jdebi->rcClient.top) / 8;
-			iObj_setSize(sourceCode_editbox,	48,	24,		sourceCode->rcClient.right	- sourceCode->rcClient.left - 48,	sourceCode->rcClient.bottom	- sourceCode->rcClient.top - 24);
-			iObj_setSize(locals_editbox,		8,	0,		locals->rcClient.right		- locals->rcClient.left - 8,		locals->rcClient.bottom		- locals->rcClient.top);
-			iObj_setSize(watch_editbox,			8,	0,		watch->rcClient.right		- watch->rcClient.left - 8,			watch->rcClient.bottom		- watch->rcClient.top);
-			iObj_setSize(command_editbox,		8,	0,		command->rcClient.right		- command->rcClient.left - 8,		command->rcClient.bottom	- command->rcClient.top);
-			iObj_setSize(debug_editbox,			8,	0,		debug->rcClient.right		- debug->rcClient.left - 8,			debug->rcClient.bottom		- debug->rcClient.top);
-			iObj_setSize(output_editbox,		8,	0,		output->rcClient.right		- output->rcClient.left - 8,		output->rcClient.bottom		- output->rcClient.top);
-			iObj_setSize(screen_editbox,		8,	0,		_screen->rcClient.right		- _screen->rcClient.left - 8,		_screen->rcClient.bottom	- _screen->rcClient.top);
+			iObj_setSize(sourceCode_editbox,	48,	24,		sourceCode->rcClient.right	- sourceCode->rcClient.left - 48,	sourceCode->rcClient.bottom		- sourceCode->rcClient.top - 24);
+			iObj_setSize(locals_editbox,		8,	0,		locals->rcClient.right		- locals->rcClient.left - 8,		locals->rcClient.bottom			- locals->rcClient.top);
+			iObj_setSize(watch_editbox,			8,	0,		watch->rcClient.right		- watch->rcClient.left - 8,			watch->rcClient.bottom			- watch->rcClient.top);
+			iObj_setSize(command_editbox,		8,	0,		command->rcClient.right		- command->rcClient.left - 8,		command->rcClient.bottom		- command->rcClient.top);
+			iObj_setSize(debug_editbox,			8,	0,		debug->rcClient.right		- debug->rcClient.left - 8,			debug->rcClient.bottom			- debug->rcClient.top);
+			iObj_setSize(output_editbox,		8,	0,		output->rcClient.right		- output->rcClient.left - 8,		output->rcClient.bottom			- output->rcClient.top);
+			iObj_setSize(screen_editbox,		8,	0,		_screen->rcClient.right		- _screen->rcClient.left - 8,		_screen->rcClient.bottom		- _screen->rcClient.top);
+			iObj_setSize(sourceLight_empty,		0,	0,		sourceLight->rcClient.right	- sourceLight->rcClient.left,		sourceLight->rcClient.bottom	- sourceLight->rcClient.top);
 
 
 		//////////
@@ -393,6 +396,7 @@
 			sourceLight->p.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			setVisible(sourceLight, _LOGICAL_TRUE);
 			setBackStyle(sourceLight, _BACK_STYLE_OPAQUE);
+			sourceLight_empty->ev.general._onRender = (u32)&iSourceLight_copy;
 
 
 		//////////
@@ -2026,6 +2030,87 @@
 
 		// Default handler
 		return(DefWindowProc(hwnd, m, w, l));
+	}
+
+
+
+
+//////////
+//
+// Called to reset the sourceLight to an empty state
+//
+//////
+	void iSourceLight_reset(void)
+	{
+		RECT lrc;
+
+
+		// If we have a sourceLight bitmap...
+		if (bmpSourceLight)
+		{
+			// Make it all white
+			SetRect(&lrc, 0, 0, bmpSourceLight->bi.biWidth, bmpSourceLight->bi.biHeight);
+			iBmp_fillRect(bmpSourceLight, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+			// Reset the coordinates to the top
+			gnSourceLightX	= _SOURCELIGHT_MARGIN;
+			gnSourceLightY	= _SOURCELIGHT_MARGIN;
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to copy the sourceLight contents to the indicated object's bitmap
+//
+///////
+	bool iSourceLight_copy(SWindow* win, SObject* obj)
+	{
+		s32		scrollX, scrollY;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		if (obj && obj->bmp && bmpSourceLight)
+		{
+			//////////
+			// Grab our scroll offsets
+			//////
+				scrollX = iObjProp_get_s32_direct(obj, _INDEX_SCROLLX);
+				scrollY = iObjProp_get_s32_direct(obj, _INDEX_SCROLLX);
+
+
+			//////////
+			// Copy over the part that will fit
+			//////
+				iiBmp_bitBltPortion(obj->bmp, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, bmpSourceLight, scrollX, scrollY);
+
+
+			//////////
+			// Fill in any rectangles beyond the scroll
+			//////
+// TODO:  An optimization here would be to not overlay any portion in the lower-right both horizontally and vertically
+				// Portion at the right
+				if (bmpSourceLight->bi.biWidth - scrollX < obj->bmp->bi.biWidth)
+				{
+					// From the edge of the sourceLight content to the extent of the bitmap horizontally
+					SetRect(&lrc, bmpSourceLight->bi.biWidth - scrollX, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+					iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+				}
+
+				// Portion at the bottom
+				if (bmpSourceLight->bi.biHeight - scrollY < obj->bmp->bi.biHeight)
+				{
+					// From the edge of the sourceLight content to the extent of the bitmap horizontally
+					SetRect(&lrc, 0, bmpSourceLight->bi.biHeight - scrollY, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+					iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+				}
+		}
+
+		// Indicate that the processing should continue
+		return(true);
 	}
 
 

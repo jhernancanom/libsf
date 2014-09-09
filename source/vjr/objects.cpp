@@ -1118,8 +1118,9 @@
 //////
 	u32 iObj_render(SObject* obj, bool tlForceRender)
 	{
-		u32		lnPixelsRendered;
-// 		bool	llRenderChildren;
+		u32			lnPixelsRendered;
+		SObject*	objRoot;
+		SWindow*	win;
 
 
 		// Make sure our environment is sane
@@ -1155,11 +1156,19 @@
 
 
 			//////////
-			// Check to see if anything below this level needs rendered
+			// See if there is any onRender() algorithm associated with this object
 			//////
-// 				llRenderChildren = obj->isDirtyRender;
-// 				if (!obj->isDirtyRender)
-// 					llRenderChildren |= iObj_render_descentCheck(obj, true, true);
+				if (obj->ev.general._onRender)
+				{
+					// Find the root object
+					objRoot = iObj_find_rootmostObject(obj);
+					if (objRoot)
+					{
+						// Locate the associated window (if any)
+						win = iWindow_findByObj(objRoot);
+						obj->ev.general.onRender(win, obj);
+					}
+				}
 
 
 			//////////
@@ -1341,6 +1350,8 @@
 		u32			lnPixelsRendered;
 		bool		llPublishChildren, llIsVisible, llIsEnabled;
 		RECT		lrc, lrcChild, lrc2;
+		SWindow*	win;
+		SObject*	objRoot;
 		SObject*	objSib;
 
 
@@ -1412,6 +1423,22 @@ if (!llPublishChildren)
 			//////
 				if (llIsVisible)
 				{
+					//////////
+					// See if there is any onPublish() algorithm associated with this object
+					//////
+						if (obj->ev.general._onPublish)
+						{
+							// Find the root object
+							objRoot = iObj_find_rootmostObject(obj);
+							if (objRoot)
+							{
+								// Locate the associated window (if any)
+								win = iWindow_findByObj(objRoot);
+								obj->ev.general.onPublish(win, obj);
+							}
+						}
+
+
 					// The size of the bitmap should equal the size of the rectangle on the parent.
 					lnWidth		= obj->rc.right - obj->rc.left;
 					lnHeight	= obj->rc.bottom - obj->rc.top;
@@ -7175,11 +7202,16 @@ if (!obj->props[lnI])
 //////
 	u32 iSubobj_renderEmpty(SObject* empty)
 	{
+		SWindow*	win;
+		SObject*	objRoot;
+
+
 		logfunc(__FUNCTION__);
 		//////////
-		// Success!
+		// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
 		//////
-			empty->isDirtyRender = false;
+			empty->isDirtyRender	= false;
+			empty->isDirtyPublish	= true;
 			return(0);		// Indicate that nothing was rendered which will affect the screen
 	}
 

@@ -120,8 +120,10 @@
 //     Jul.12.2014 - Initial creation
 //////
 // Parameters:
-//     pString		-- Character, the string to trim
-//     pLookChar	-- (Optional) Character, the character to scan for
+//     pString			-- Character, the string to trim
+//     pCaseInsensitive	-- (Optional) Logical,		are the trim characters case insensitive?  Default = .T.
+//     pTrimChars1		-- (Optional) Character,	characters to trim
+//     pTrimChars2		-- (Optional) Character,	characters to trim
 //
 //////
 // Returns:

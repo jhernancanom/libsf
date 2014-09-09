@@ -466,7 +466,7 @@
 	SVariable* iEngine_getFunctionResult(SComp* comp, bool& tlManufactured)
 	{
 		u32				lnParamsFound;
-		SFunctionList*	lfl;
+		SFunctionData*	lfl;
 		SVariable*		p1;
 		SVariable*		p2;
 		SVariable*		p3;

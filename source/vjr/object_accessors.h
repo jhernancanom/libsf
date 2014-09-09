@@ -333,6 +333,8 @@ struct SBasePropertyInit;
 	const s8		cgc_rowSource[]											= "rowSource";
 	const s8		cgc_scaleMode[]											= "scaleMode";
 	const s8		cgc_scrollBars[]										= "scrollBars";
+	const s8		cgc_scrollX[]											= "scrollX";
+	const s8		cgc_scrollY[]											= "scrollY";
 	const s8		cgc_seColor[]											= "seColor";
 	const s8		cgc_seconds[]											= "seconds";
 	const s8		cgc_selLength[]											= "selLength";
@@ -681,70 +683,73 @@ struct SBasePropertyInit;
 	const u32		_INDEX_ROWSOURCETYPE									= 279;
 	const u32		_INDEX_SCALEMODE										= 280;
 	const u32		_INDEX_SCROLLBARS										= 281;
-	const u32		_INDEX_SECOLOR											= 282;
-	const u32		_INDEX_SECONDS											= 283;
-	const u32		_INDEX_SELECTED											= 284;
-	const u32		_INDEX_SELECTEDBACKCOLOR								= 285;
-	const u32		_INDEX_SELECTEDFORECOLOR								= 286;
-	const u32		_INDEX_SELECTEDID										= 287;
-	const u32		_INDEX_SELECTEDITEMBACKCOLOR							= 288;
-	const u32		_INDEX_SELECTEDITEMFORECOLOR							= 289;
-	const u32		_INDEX_SELECTONENTRY									= 290;
-	const u32		_INDEX_SELLENGTH										= 291;
-	const u32		_INDEX_SELSTART											= 292;
-	const u32		_INDEX_SELTEXT											= 293;
-	const u32		_INDEX_SHOWINTASKBAR									= 294;
-	const u32		_INDEX_SHOWTIPS											= 295;
-	const u32		_INDEX_SHOWWINDOW										= 296;
-	const u32		_INDEX_SIZABLE											= 297;
-	const u32		_INDEX_SIZEBOX											= 298;
-	const u32		_INDEX_SORTED											= 299;
-	const u32		_INDEX_SPARSE											= 300;
-	const u32		_INDEX_SPECIALEFFECT									= 301;
-	const u32		_INDEX_SPINNERHIGHVALUE									= 302;
-	const u32		_INDEX_SPINNERLOWVALUE									= 303;
-	const u32		_INDEX_SPLITBAR											= 304;
-	const u32		_INDEX_STACKLEVEL										= 305;
-	const u32		_INDEX_STATUSBARTEXT									= 306;
-	const u32		_INDEX_STRETCH											= 307;
-	const u32		_INDEX_STRICTDATEENTRY									= 308;
-	const u32		_INDEX_STYLE											= 309;
-	const u32		_INDEX_SWCOLOR											= 310;
-	const u32		_INDEX_TABINDEX											= 311;
-	const u32		_INDEX_TABORIENTATION									= 312;
-	const u32		_INDEX_TABS												= 313;
-	const u32		_INDEX_TABSTOP											= 314;
-	const u32		_INDEX_TABSTYLE											= 315;
-	const u32		_INDEX_TAG												= 316;
-	const u32		_INDEX_TERMINATEREAD									= 317;
-	const u32		_INDEX_TEXT												= 318;
-	const u32		_INDEX_THEMES											= 319;
-	const u32		_INDEX_TITLEBAR											= 320;
-	const u32		_INDEX_TOOLTIPTEXT										= 321;
-	const u32		_INDEX_TOP												= 322;
-	const u32		_INDEX_TOPINDEX											= 323;
-	const u32		_INDEX_TOPITEMID										= 324;
-	const u32		_INDEX_USERVALUE										= 325;
-	const u32		_INDEX_VALUE											= 326;
-	const u32		_INDEX_VALUE_MAXIMUM									= 327;
-	const u32		_INDEX_VALUE_MINIMUM									= 328;
-	const u32		_INDEX_VIEW												= 329;
-	const u32		_INDEX_VIEWPORTHEIGHT									= 330;
-	const u32		_INDEX_VIEWPORTLEFT										= 331;
-	const u32		_INDEX_VIEWPORTTOP										= 332;
-	const u32		_INDEX_VIEWPORTWIDTH									= 333;
-	const u32		_INDEX_VISIBLE											= 334;
-	const u32		_INDEX_VISUALEFFECT										= 335;
-	const u32		_INDEX_VSCROLLSMALLCHANGE								= 336;
-	const u32		_INDEX_WHATSTHISBUTTON									= 337;
-	const u32		_INDEX_WHATSTHISHELP									= 338;
-	const u32		_INDEX_WHATSTHISHELPID									= 339;
-	const u32		_INDEX_WIDTH											= 340;
-	const u32		_INDEX_WINDOWLIST										= 341;
-	const u32		_INDEX_WINDOWSTATE										= 342;
-	const u32		_INDEX_WINDOWTYPE										= 343;
-	const u32		_INDEX_WORDWRAP											= 344;
-	const u32		_INDEX_ZOOMBOX											= 345;
+	const u32		_INDEX_SCROLLX											= 282;
+	const u32		_INDEX_SCROLLY											= 283;
+	const u32		_INDEX_SECOLOR											= 284;
+	const u32		_INDEX_SECONDS											= 285;
+	const u32		_INDEX_SELECTED											= 286;
+	const u32		_INDEX_SELECTEDBACKCOLOR								= 287;
+	const u32		_INDEX_SELECTEDFORECOLOR								= 288;
+	const u32		_INDEX_SELECTEDID										= 289;
+	const u32		_INDEX_SELECTEDITEMBACKCOLOR							= 290;
+	const u32		_INDEX_SELECTEDITEMFORECOLOR							= 291;
+	const u32		_INDEX_SELECTONENTRY									= 292;
+	const u32		_INDEX_SELLENGTH										= 293;
+	const u32		_INDEX_SELSTART											= 294;
+	const u32		_INDEX_SELTEXT											= 295;
+	const u32		_INDEX_SHOWINTASKBAR									= 296;
+	const u32		_INDEX_SHOWTIPS											= 297;
+	const u32		_INDEX_SHOWWINDOW										= 298;
+	const u32		_INDEX_SIZABLE											= 299;
+	const u32		_INDEX_SIZEBOX											= 300;
+	const u32		_INDEX_SORTED											= 301;
+	const u32		_INDEX_SPARSE											= 302;
+	const u32		_INDEX_SPECIALEFFECT									= 303;
+	const u32		_INDEX_SPINNERHIGHVALUE									= 304;
+	const u32		_INDEX_SPINNERLOWVALUE									= 305;
+	const u32		_INDEX_SPLITBAR											= 306;
+	const u32		_INDEX_STACKLEVEL										= 307;
+	const u32		_INDEX_STATUSBARTEXT									= 308;
+	const u32		_INDEX_STRETCH											= 309;
+	const u32		_INDEX_STRICTDATEENTRY									= 310;
+	const u32		_INDEX_STYLE											= 311;
+	const u32		_INDEX_SWCOLOR											= 312;
+	const u32		_INDEX_TABINDEX											= 313;
+	const u32		_INDEX_TABORIENTATION									= 314;
+	const u32		_INDEX_TABS												= 315;
+	const u32		_INDEX_TABSTOP											= 316;
+	const u32		_INDEX_TABSTYLE											= 317;
+	const u32		_INDEX_TAG												= 318;
+	const u32		_INDEX_TERMINATEREAD									= 319;
+	const u32		_INDEX_TEXT												= 320;
+	const u32		_INDEX_THEMES											= 321;
+	const u32		_INDEX_TITLEBAR											= 322;
+	const u32		_INDEX_TOOLTIPTEXT										= 323;
+	const u32		_INDEX_TOP												= 324;
+	const u32		_INDEX_TOPINDEX											= 325;
+	const u32		_INDEX_TOPITEMID										= 326;
+	const u32		_INDEX_USERVALUE										= 327;
+	const u32		_INDEX_VALUE											= 328;
+	const u32		_INDEX_VALUE_MAXIMUM									= 329;
+	const u32		_INDEX_VALUE_MINIMUM									= 330;
+	const u32		_INDEX_VIEW												= 331;
+	const u32		_INDEX_VIEWPORTHEIGHT									= 332;
+	const u32		_INDEX_VIEWPORTLEFT										= 333;
+	const u32		_INDEX_VIEWPORTTOP										= 334;
+	const u32		_INDEX_VIEWPORTWIDTH									= 335;
+	const u32		_INDEX_VISIBLE											= 336;
+	const u32		_INDEX_VISUALEFFECT										= 337;
+	const u32		_INDEX_VSCROLLSMALLCHANGE								= 338;
+	const u32		_INDEX_WHATSTHISBUTTON									= 339;
+	const u32		_INDEX_WHATSTHISHELP									= 340;
+	const u32		_INDEX_WHATSTHISHELPID									= 341;
+	const u32		_INDEX_WIDTH											= 342;
+	const u32		_INDEX_WINDOWLIST										= 343;
+	const u32		_INDEX_WINDOWSTATE										= 344;
+	const u32		_INDEX_WINDOWTYPE										= 345;
+	const u32		_INDEX_WORDWRAP											= 346;
+	const u32		_INDEX_ZOOMBOX											= 347;
+
 
 
 	// Basic setters and getters
@@ -1129,6 +1134,8 @@ struct SBasePropertyInit;
 		{	_INDEX_ROWSOURCETYPE,					cgc_rowSourceType,				sizeof(cgc_rowSourceType) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		_ROW_SOURCE_TYPE_NONE			,NULL	},	// 0=none (default), see _ROW_SOURCE_TYPE_* constants
 		{	_INDEX_SCALEMODE,						cgc_scaleMode,					sizeof(cgc_scaleMode) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		3								,NULL	},	// 0=foxels, 1=pixels (default)
 		{	_INDEX_SCROLLBARS,						cgc_scrollBars,					sizeof(cgc_scrollBars) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		_SCROLL_BARS_BOTH				,NULL	},	// 0=none, 1=horizontal, 2=vertical, can be combined for 3=both (default)
+		{	_INDEX_SCROLLX,							cgc_scrollX,					sizeof(cgc_scrollX) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Deafult to not scrolling
+		{	_INDEX_SCROLLY,							cgc_scrollY,					sizeof(cgc_scrollY) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Deafult to not scrolling
 		{	_INDEX_SECOLOR,							cgc_seColor,					sizeof(cgc_seColor) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		_seColor						,NULL	},	// Southeast color
 		{	_INDEX_SECONDS,							cgc_seconds,					sizeof(cgc_seconds) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		_SECONDS_SET					,NULL	},	// 0=off, 1=on, 2=use SET SECONDS (default)
 		{	_INDEX_SELECTED,						cgc_selected,					sizeof(cgc_selected) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=yes, .f.=no (default), if the item is selected in a listbox or combobox
@@ -1222,9 +1229,15 @@ struct SBasePropertyInit;
 	{
 		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_ENABLED,					0, 0, 0 },
+		{	_INDEX_HEIGHT,					0, 0, 0 },
+		{	_INDEX_LEFT,					0, 0, 0 },
 		{	_INDEX_NAME,					0, 0, 0 },
 		{	_INDEX_READONLY,				0, 0, 0 },
-		{	_INDEX_VISIBLE,					0, 0, 0 },
+		{	_INDEX_SCROLLX,					0, 0, 0 },
+		{	_INDEX_SCROLLY,					0, 0, 0 },
+		{	_INDEX_TOP,						0, 0, 0 },
+		{	_INDEX_VISIBLE,					0, 0, 0 },			// The empty class contains a canvas, but it not rendered by Visual FreePro. Use the graphics class object to render onto its canvas.
+		{	_INDEX_WIDTH,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
 	const s32 gnProps_emptySize = sizeof(gsProps_empty) / sizeof(SObjPropertyMap) - 1;

@@ -134,10 +134,279 @@ struct SVariable;
 
 
 
+	struct SSourceLightData
+	{
+		u32			key;									// Refer to _SOURCELIGHT_* constants
+
+		// Data, varies based on _SOURCELIGHT_* constants
+		u32			data1;
+		u32			data2;
+		u32			data3;
+		u32			data4;
+		u32			data5;
+	};
+
+	const u32	_SOURCELIGHT_P1								= 1;
+	const u32	_SOURCELIGHT_P2								= 2;
+	const u32	_SOURCELIGHT_P3								= 3;
+	const u32	_SOURCELIGHT_P4								= 4;
+	const u32	_SOURCELIGHT_P5								= 5;
+	const u32	_SOURCELIGHT_P6								= 6;
+	const u32	_SOURCELIGHT_P7								= 7;
+	const u32	_SOURCELIGHT_R1								= 51;
+	const u32	_SOURCELIGHT_R2								= 52;
+	const u32	_SOURCELIGHT_R3								= 53;
+	const u32	_SOURCELIGHT_R4								= 54;
+	const u32	_SOURCELIGHT_R5								= 55;
+	const u32	_SOURCELIGHT_R6								= 56;
+	const u32	_SOURCELIGHT_R7								= 57;
+	const u32	_SOURCELIGHT_FUNCTION_NAME					= 100;
+	const u32	_SOURCELIGHT_FUNCTION_DESCRIPTION			= 101;
+
+	const s8	cgc_date[]									= "Date";
+	const s8	cgc_datetime[]								= "DateTime";
+	const s8	cgc_numeric[]								= "Numeric";
+	const s8	cgc_logical[]								= "Logical";
+	const s8	cgc_character[]								= "Character";
+	const s8	cgc_cString[]								= "cString";
+
+	SSourceLightData gsSourceLight_alltrim[] =
+	{
+		// lcResult = ALLTRIM(cString, lIgnoreCase|nIgnoreCase, cTrimChars1, cTrimChars2)
+		{	_SOURCELIGHT_FUNCTION_NAME,				0,	0,	0,	0,	0	},
+		{	_SOURCELIGHT_FUNCTION_DESCRIPTION,		(u32)"Four parameter variation. Converts the input string to a form where the cTrimChars are removed off the left and right sides.",	0,	0,	0,	0	},
+		{	_SOURCELIGHT_P1,						(u32)&cgc_cString,			(u32)&cgc_character,	(u32)&"Input string",	0,	0	},
+		{	_SOURCELIGHT_P2,						(u32)&"lIgnoreCase",		(u32)&cgc_logical,		(u32)&"Default = .T.. Should the cTrimChar variables ignore case?",	0,	0	},
+		{	_SOURCELIGHT_P2,						(u32)&"nIgnoreCase",		(u32)&cgc_numeric,		(u32)&"Default = 1. Should the cTrimChar variables ignore case? 0=no, others=yes.",	0,	0	},
+		{	_SOURCELIGHT_P3,						(u32)&"cTrimChars1",		(u32)&cgc_character,	(u32)&"String 1 containing characters to trim",	0,	0	},
+		{	_SOURCELIGHT_P4,						(u32)&"cTrimChars2",		(u32)&cgc_character,	(u32)&"String 2 containing characters to trim",	0,	0	},
+		{	_SOURCELIGHT_R1,						0,							(u32)&cgc_character,	(u32)&"Input string trimmed",	0,	0	},
+		// lcResult = ALLTRIM(cString, cTrimChars)
+		{	_SOURCELIGHT_FUNCTION_NAME,				0,	0,	0,	0,	0	},
+		{	_SOURCELIGHT_FUNCTION_DESCRIPTION,		(u32)"Two parameter variation. Converts the input string to a form where the cTrimChars are removed off the left and right sides.",	0,	0,	0,	0	},
+		{	_SOURCELIGHT_P1,						(u32)&cgc_cString,			(u32)&cgc_character,	(u32)&"Input string",	0,	0	},
+		{	_SOURCELIGHT_P2,						(u32)&"cTrimChars",			(u32)&cgc_character,	(u32)&"String containing characters to trim",	0,	0	},
+		{	_SOURCELIGHT_R1,						0,							(u32)&cgc_character,	(u32)&"Input string trimmed",	0,	0	},
+		{	0,										0,	0,	0,	0,	0	},
+	};
+
+	SSourceLightData gsSourceLight_asc[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_at[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_atc[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_chr[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_chrtran[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_chrtranc[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_createobject[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_datetime[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_int[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_left[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_len[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_lower[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_ltrim[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_max[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_min[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_occurs[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_occursc[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_padc[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_padl[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_padr[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_proper[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_rat[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_ratc[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_replicate[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_rgb[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_rgba[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_right[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_rtrim[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_space[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_strtran[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_strtranc[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_stuff[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_sysmetric[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_transform[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_trim[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_upper[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_version[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_concatenate[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_add[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_sub[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_mul[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_div[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+
+
+
 //////////
 // Translation between iCodes and function definitions.
 //////
-	struct SFunctionList
+	struct SFunctionData
 	{
 		//////////
 		// The iCode relates to the known commands.
@@ -173,60 +442,66 @@ struct SVariable;
 		//////
 			s32		requiredCount;
 			s32		parameterCount;
+
+
+		//////////
+		// SourceLight information
+		//////
+			SSourceLightData*	data;
 	};
 
-	SFunctionList gsKnownFunctions[] = {
+	SFunctionData gsKnownFunctions[] = {
 		//							Return										Parameters		Parameter
-		//	iCode					Count		Function						Required		Maximum Count
-		//  ------------------		------		--------------------------		----------		-------------
-		{	_ICODE_ALLTRIM,			1,			(u32)&function_alltrim,			1,				4	},
-		{	_ICODE_ASC,				1,			(u32)&function_asc,				1,				1	},
-		{	_ICODE_AT,				1,			(u32)&function_at,				2,				3	},
-		{	_ICODE_ATC,				1,			(u32)&function_atc,				2,				3	},
-		{	_ICODE_CHR,				1,			(u32)&function_chr,				1,				1	},
-		{	_ICODE_CHRTRAN,			1,			(u32)&function_chrtran,			2,				3	},
-		{	_ICODE_CHRTRANC,		1,			(u32)&function_chrtranc,		2,				3	},
-		{	_ICODE_CREATEOBJECT,	1,			(u32)&function_createobject,	1,				1	},
-		{	_ICODE_DATETIME,		1,			(u32)&function_datetime,		0,				7	},
-		{	_ICODE_INT,				1,			(u32)&function_int,				1,				1	},
-		{	_ICODE_LEFT,			1,			(u32)&function_left,			2,				2	},
-		{	_ICODE_LEN,				1,			(u32)&function_len,				1,				1	},
-		{	_ICODE_LOWER,			1,			(u32)&function_lower,			1,				1	},
-		{	_ICODE_LTRIM,			1,			(u32)&function_ltrim,			1,				1	},
-		{	_ICODE_MAX,				1,			(u32)&function_max,				2,				2	},
-		{	_ICODE_MIN,				1,			(u32)&function_min,				2,				2	},
-		{	_ICODE_OCCURS,			1,			(u32)&function_occurs,			2,				2	},
-		{	_ICODE_OCCURSC,			1,			(u32)&function_occursc,			2,				2	},
-		{	_ICODE_PADC,			1,			(u32)&function_padc,			2,				3	},
-		{	_ICODE_PADL,			1,			(u32)&function_padl,			2,				3	},
-		{	_ICODE_PADR,			1,			(u32)&function_padr,			2,				3	},
-		{	_ICODE_PROPER,			1,			(u32)&function_proper,			1,				1	},
-		{	_ICODE_RAT,				1,			(u32)&function_rat,				2,				3	},
-		{	_ICODE_RATC,			1,			(u32)&function_ratc,			2,				3	},
-		{	_ICODE_REPLICATE,		1,			(u32)&function_replicate,		2,				2	},
-		{	_ICODE_RGB,				1,			(u32)&function_rgb,				3,				3	},
-		{	_ICODE_RGBA,			1,			(u32)&function_rgba,			4,				4	},
-		{	_ICODE_RIGHT,			1,			(u32)&function_right,			2,				2	},
-		{	_ICODE_RTRIM,			1,			(u32)&function_rtrim,			1,				1	},
-		{	_ICODE_SPACE,			1,			(u32)&function_space,			1,				1	},
-		{	_ICODE_STRTRAN,			1,			(u32)&function_strtran,			2,				4	},
-		{	_ICODE_STRTRANC,		1,			(u32)&function_strtranc,		2,				4	},
-		{	_ICODE_STUFF,			1,			(u32)&function_stuff,			3,				4	},
-		{	_ICODE_SYSMETRIC,		1,			(u32)&function_sysmetric,		1,				1	},
-		{	_ICODE_TRANSFORM,		1,			(u32)&function_transform,		1,				2	},
-		{	_ICODE_TRIM,			1,			(u32)&function_rtrim,			1,				1	},
-		{	_ICODE_UPPER,			1,			(u32)&function_upper,			1,				1	},
-		{	_ICODE_VERSION,			1,			(u32)&function_version,			0,				1	},
+		//	iCode					Count		Function						Required		Maximum Count	SourceLight data
+		//  ------------------		------		--------------------------		----------		-------------	-----------------------------
+		{	_ICODE_ALLTRIM,			1,			(u32)&function_alltrim,			1,				4,				&gsSourceLight_alltrim[0]		},
+		{	_ICODE_ASC,				1,			(u32)&function_asc,				1,				1,				&gsSourceLight_asc[0]			},
+		{	_ICODE_AT,				1,			(u32)&function_at,				2,				3,				&gsSourceLight_at[0]			},
+		{	_ICODE_ATC,				1,			(u32)&function_atc,				2,				3,				&gsSourceLight_atc[0]			},
+		{	_ICODE_CHR,				1,			(u32)&function_chr,				1,				1,				&gsSourceLight_chr[0]			},
+		{	_ICODE_CHRTRAN,			1,			(u32)&function_chrtran,			2,				3,				&gsSourceLight_chrtran[0]		},
+		{	_ICODE_CHRTRANC,		1,			(u32)&function_chrtranc,		2,				3,				&gsSourceLight_chrtranc[0]		},
+		{	_ICODE_CREATEOBJECT,	1,			(u32)&function_createobject,	1,				1,				&gsSourceLight_createobject[0]	},
+		{	_ICODE_DATETIME,		1,			(u32)&function_datetime,		0,				7,				&gsSourceLight_datetime[0]		},
+		{	_ICODE_INT,				1,			(u32)&function_int,				1,				1,				&gsSourceLight_int[0]			},
+		{	_ICODE_LEFT,			1,			(u32)&function_left,			2,				2,				&gsSourceLight_left[0]			},
+		{	_ICODE_LEN,				1,			(u32)&function_len,				1,				1,				&gsSourceLight_len[0]			},
+		{	_ICODE_LOWER,			1,			(u32)&function_lower,			1,				1,				&gsSourceLight_lower[0]			},
+		{	_ICODE_LTRIM,			1,			(u32)&function_ltrim,			1,				1,				&gsSourceLight_ltrim[0]			},
+		{	_ICODE_MAX,				1,			(u32)&function_max,				2,				2,				&gsSourceLight_max[0]			},
+		{	_ICODE_MIN,				1,			(u32)&function_min,				2,				2,				&gsSourceLight_min[0]			},
+		{	_ICODE_OCCURS,			1,			(u32)&function_occurs,			2,				2,				&gsSourceLight_occurs[0]		},
+		{	_ICODE_OCCURSC,			1,			(u32)&function_occursc,			2,				2,				&gsSourceLight_occursc[0]		},
+		{	_ICODE_PADC,			1,			(u32)&function_padc,			2,				3,				&gsSourceLight_padc[0]			},
+		{	_ICODE_PADL,			1,			(u32)&function_padl,			2,				3,				&gsSourceLight_padl[0]			},
+		{	_ICODE_PADR,			1,			(u32)&function_padr,			2,				3,				&gsSourceLight_padr[0]			},
+		{	_ICODE_PROPER,			1,			(u32)&function_proper,			1,				1,				&gsSourceLight_proper[0]		},
+		{	_ICODE_RAT,				1,			(u32)&function_rat,				2,				3,				&gsSourceLight_rat[0]			},
+		{	_ICODE_RATC,			1,			(u32)&function_ratc,			2,				3,				&gsSourceLight_ratc[0]			},
+		{	_ICODE_REPLICATE,		1,			(u32)&function_replicate,		2,				2,				&gsSourceLight_replicate[0]		},
+		{	_ICODE_RGB,				1,			(u32)&function_rgb,				3,				3,				&gsSourceLight_rgb[0]			},
+		{	_ICODE_RGBA,			1,			(u32)&function_rgba,			4,				4,				&gsSourceLight_rgba[0]			},
+		{	_ICODE_RIGHT,			1,			(u32)&function_right,			2,				2,				&gsSourceLight_right[0]			},
+		{	_ICODE_RTRIM,			1,			(u32)&function_rtrim,			1,				1,				&gsSourceLight_rtrim[0]			},
+		{	_ICODE_SPACE,			1,			(u32)&function_space,			1,				1,				&gsSourceLight_space[0]			},
+		{	_ICODE_STRTRAN,			1,			(u32)&function_strtran,			2,				4,				&gsSourceLight_strtran[0]		},
+		{	_ICODE_STRTRANC,		1,			(u32)&function_strtranc,		2,				4,				&gsSourceLight_strtranc[0]		},
+		{	_ICODE_STUFF,			1,			(u32)&function_stuff,			3,				4,				&gsSourceLight_stuff[0]			},
+		{	_ICODE_SYSMETRIC,		1,			(u32)&function_sysmetric,		1,				1,				&gsSourceLight_sysmetric[0]		},
+		{	_ICODE_TRANSFORM,		1,			(u32)&function_transform,		1,				2,				&gsSourceLight_transform[0]		},
+		{	_ICODE_TRIM,			1,			(u32)&function_rtrim,			1,				1,				&gsSourceLight_rtrim[0]			},
+		{	_ICODE_UPPER,			1,			(u32)&function_upper,			1,				1,				&gsSourceLight_upper[0]			},
+		{	_ICODE_VERSION,			1,			(u32)&function_version,			0,				1,				&gsSourceLight_version[0]		},
 // Added temporarily until the processing engine is coded
-		{	_ICODE_CONCATENATE,		1,			(u32)&function_concatenate,		2,				2	},
-		{	_ICODE_ADD,				1,			(u32)&function_add,				2,				2	},
-		{	_ICODE_SUB,				1,			(u32)&function_sub,				2,				2	},
-		{	_ICODE_MUL,				1,			(u32)&function_mul,				2,				2	},
-		{	_ICODE_DIV,				1,			(u32)&function_div,				2,				2	},
+		{	_ICODE_CONCATENATE,		1,			(u32)&function_concatenate,		2,				2,				&gsSourceLight_concatenate[0]	},
+		{	_ICODE_ADD,				1,			(u32)&function_add,				2,				2,				&gsSourceLight_add[0]			},
+		{	_ICODE_SUB,				1,			(u32)&function_sub,				2,				2,				&gsSourceLight_sub[0]			},
+		{	_ICODE_MUL,				1,			(u32)&function_mul,				2,				2,				&gsSourceLight_mul[0]			},
+		{	_ICODE_DIV,				1,			(u32)&function_div,				2,				2,				&gsSourceLight_div[0]			},
 	//////
 	// Insert above this step somewhere in the list of functions.
 	// STEP2:
 	//////////
 		// Note:  Do not delete this line, it is used to terminate the search list
-		{	0,						0,					0,						0,				0	}
+		{	0,						0,					0,						0,				0,				NULL	}
 	};

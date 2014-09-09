@@ -173,6 +173,14 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 
 		//////////
+		// Allocate a sourceLight area
+		//////
+			bmpSourceLight = iBmp_allocate();
+			iBmp_createBySize(bmpSourceLight, 800, 1024, 24);
+			iSourceLight_reset();
+
+
+		//////////
 		// Load our icons and images
 		//////
 			bmpVjrIcon						= iBmp_rawLoad(cgc_appIconBmp);

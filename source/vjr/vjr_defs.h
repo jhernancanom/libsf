@@ -372,6 +372,9 @@ struct SObjPropertyMap;
 	void					iTooltip_delete							(STooltip* tooltip);
 	LRESULT CALLBACK		iTooltip_wndProc						(HWND hwnd, UINT m, WPARAM w, LPARAM l);
 
+	void					iSourceLight_reset						(void);
+	bool					iSourceLight_copy						(SWindow* win, SObject* obj);
+
 	bool					iFile_readContents						(s8* tcFilename, FILE** tfh, s8** data, u32* dataLength);
 
 	void					iMisc_adjustColorBrightness				(SBgra& color, f32 tfPercent);
