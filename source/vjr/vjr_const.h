@@ -216,9 +216,11 @@ typedef SEM**		SEMpp;
 
 
 // Definitions missing in MinGW
-#if !defined(_MSC_VER)
-	// gcc
+#if !defined(WM_MOUSEHWHEEL)
 	#define WM_MOUSEHWHEEL                  0x020E
+#endif
+// Missing in MinGW and VC98
+#if !defined(CLEARTYPE_NATURAL_QUALITY)
 	#define CLEARTYPE_NATURAL_QUALITY       6
 #endif
 

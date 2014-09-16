@@ -1950,6 +1950,9 @@
 
 			// All done
 			ExitThread(0);
+
+			// The following return(0) line is required for VC98, but will never be used
+			return(0);
 	}
 
 

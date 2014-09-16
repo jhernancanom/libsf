@@ -347,25 +347,25 @@
 					//////
 						if (lfAccum1)
 						{
-							lfTone		+= cos(*lfAccum1 * gfFrequencyMultiplier);
+							lfTone		+= (f32)cos(*lfAccum1 * gfFrequencyMultiplier);
 							*lfAccum1	+= lfHertz1;
 						}
 
 						if (lfAccum2)
 						{
-							lfTone		+= cos(*lfAccum2 * gfFrequencyMultiplier);
+							lfTone		+= (f32)cos(*lfAccum2 * gfFrequencyMultiplier);
 							*lfAccum2	+= lfHertz2;
 						}
 
 						if (lfAccum3)
 						{
-							lfTone		+= cos(*lfAccum3 * gfFrequencyMultiplier);
+							lfTone		+= (f32)cos(*lfAccum3 * gfFrequencyMultiplier);
 							*lfAccum3	+= lfHertz3;
 						}
 
 						if (lfAccum4)
 						{
-							lfTone		+= cos(*lfAccum4 * gfFrequencyMultiplier);
+							lfTone		+= (f32)cos(*lfAccum4 * gfFrequencyMultiplier);
 							*lfAccum4	+= lfHertz4;
 						}
 

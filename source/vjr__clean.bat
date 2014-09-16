@@ -4,16 +4,20 @@ REM move to starting directory
 cd \libsf\source\vjr\
 
 REM remove common files
-del command.vjr
-del screen.vjr
-del system.log
+del /s command.vjr
+del /s screen.vjr
+del /s system.log
 
 REM remove vs 2003 files
 del vjr_vs2003.exe
 del vjr_vs2003.ilk
 del vjr_vs2003.pdb
 
-REM remove gcc files
+REM remove vs 98 files
+del vjr_vs98\vjr_vs98.plg
+del vjr.ilk
+
+REM remove the gcc and vs98 executable
 del vjr.exe
 
 REM remove all the compiler subdirs

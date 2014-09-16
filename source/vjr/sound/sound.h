@@ -126,6 +126,9 @@
 //////////
 // Global variables and constants
 //////
+#ifndef M_PI
+	#define M_PI 3.14159265358979323846
+#endif
 	const f32		_2PI						= (f32)M_PI * 2.0f;	// 2 * pi
 	bool			glSDL_Initialized			= false;			// A global flag indicating if the SDL initialized properly
 	SStartEnd		gseRootSounds;									// List of all sound objects currently known about

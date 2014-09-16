@@ -7202,8 +7202,8 @@ if (!obj->props[lnI])
 //////
 	u32 iSubobj_renderEmpty(SObject* empty)
 	{
-		SWindow*	win;
-		SObject*	objRoot;
+// 		SWindow*	win;
+// 		SObject*	objRoot;
 
 
 		logfunc(__FUNCTION__);

@@ -1228,6 +1228,7 @@ struct SBasePropertyInit;
 	SObjPropertyMap gsProps_empty[] =
 	{
 		{	_INDEX_CLASS,					0, 0, 0 },
+		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_ENABLED,					0, 0, 0 },
 		{	_INDEX_HEIGHT,					0, 0, 0 },
 		{	_INDEX_LEFT,					0, 0, 0 },

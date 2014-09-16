@@ -6290,63 +6290,71 @@ debug_break;
 				//////////
 				// We can directly return the value
 				//////
-					return((f32)*(u32*)var->value.data);
+					return((f32)*var->value.data_s32);
 
 
 			case _VAR_TYPE_U32:
 				//////////
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
 				//////
-					return((f32)*(u32*)var->value.data);
+					return((f32)*var->value.data_u32);
 
 
 			case _VAR_TYPE_U64:
 				//////////
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
 				//////
-					return((f32)*(u64*)var->value.data);
+					if (*var->value.data_u64 <= _s64_max)
+						return((f32)*var->value.data_s64);
+					
+				//////////
+				// If we get here, it's not in range
+				//////
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
 
 
 			case _VAR_TYPE_S64:
 				//////////
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
 				//////
-					return((f32)*(s64*)var->value.data);
+					return((f32)*var->value.data_s64);
 
 
 			case _VAR_TYPE_S16:
 				//////////
 				// We can directly return the value after upsizing to 32-bits
 				//////
-					return((f32)*(s16*)var->value.data);
+					return((f32)*var->value.data_s16);
 
 
 			case _VAR_TYPE_S8:
 				//////////
 				// We can directly return the value after upsizing to 32-bits
 				//////
-					return((f32)*(s8*)var->value.data);
+					return((f32)*var->value.data_s8);
 
 
 			case _VAR_TYPE_U16:
 				//////////
 				// We can directly return the value after upsizing to 32-bits
 				//////
-					return((f32)*(u16*)var->value.data);
+					return((f32)*var->value.data_u16);
 
 
 			case _VAR_TYPE_U8:
 				//////////
 				// We can directly return the value after upsizing to 32-bits
 				//////
-					return((f32)*(u8*)var->value.data);
+					return((f32)*var->value.data_u8);
 
 
 			case _VAR_TYPE_F32:
 				//////////
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
 				//////
-					return(*(f32*)var->value.data);
+					return(*var->value.data_f32);
 
 
 			case _VAR_TYPE_F64:
@@ -6486,70 +6494,79 @@ debug_break;
 				//////////
 				// We can directly return the value
 				//////
-					return((f64)*(u32*)var->value.data);
+					return((f64)*var->value.data_s32);
 
 
 			case _VAR_TYPE_U32:
 				//////////
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
 				//////
-					return((f64)*(u32*)var->value.data);
+					return((f64)*var->value.data_u32);
 
 
 			case _VAR_TYPE_U64:
 				//////////
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
 				//////
-					return((f64)*(u64*)var->value.data);
+					if (*var->value.data_u64 < _s64_max)
+						return((f64)*var->value.data_s64);
+
+
+				//////////
+				// If we get here, we could not convert it
+				//////
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NOT_NUMERIC;
+					return(0);
 
 
 			case _VAR_TYPE_S64:
 				//////////
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
 				//////
-					return((f64)*(s64*)var->value.data);
+					return((f64)*var->value.data_s64);
 
 
 			case _VAR_TYPE_S16:
 				//////////
 				// We can directly return the value after upsizing to 32-bits
 				//////
-					return((f64)*(s16*)var->value.data);
+					return((f64)*var->value.data_s16);
 
 
 			case _VAR_TYPE_S8:
 				//////////
 				// We can directly return the value after upsizing to 32-bits
 				//////
-					return((f64)*(s8*)var->value.data);
+					return((f64)*var->value.data_s8);
 
 
 			case _VAR_TYPE_U16:
 				//////////
 				// We can directly return the value after upsizing to 32-bits
 				//////
-					return((f64)*(u16*)var->value.data);
+					return((f64)*var->value.data_u16);
 
 
 			case _VAR_TYPE_U8:
 				//////////
 				// We can directly return the value after upsizing to 32-bits
 				//////
-					return((f64)*(u8*)var->value.data);
+					return((f64)*var->value.data_u8);
 
 
 			case _VAR_TYPE_F32:
 				//////////
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
 				//////
-					return((f64)*(f32*)var->value.data);
+					return((f64)*var->value.data_f32);
 
 
 			case _VAR_TYPE_F64:
 				//////////
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
 				//////
-					return((f64)*(f64*)var->value.data);
+					return(*var->value.data_f64);
 
 
 			case _VAR_TYPE_BI:
