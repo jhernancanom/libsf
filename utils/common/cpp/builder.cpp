@@ -68,22 +68,6 @@
 
 
 //////////
-// Some constant declarations used for appending
-//////
-	#ifndef cgcCr
-		const s8 cgcCr[2]	= { 13, 0 };
-	#endif
-	#ifndef cgcLf
-		const s8 cgcLf[2]	= { 10, 0 };
-	#endif
-	#ifndef cgcCrLf
-		const s8 cgcCrLf[]	= "\n";
-	#endif
-
-
-
-
-//////////
 //
 // Called to ensure the indicated number of bytes can be appended onto the buffer without
 // issue.  If not, reallocates the buffer.
@@ -98,17 +82,20 @@
 			while (buffRoot->data)
 			{
 				// Are we there yet?
-				if (buffRoot->populatedLength + tnDataLength < buffRoot->allocatedLength)
+				if (buffRoot->populatedLength + tnDataLength <= buffRoot->allocatedLength)
 				{
 					// We're good, update our populated size
 					buffRoot->populatedLength += tnDataLength;
 					return;
 				}
 				// If we get here, we need to allocate more space
-
 				// Reallocate and continue
 				buffRoot->data				= (s8*)realloc(buffRoot->data, buffRoot->allocatedLength + buffRoot->allocateBlockSize);
 				buffRoot->allocatedLength	+= buffRoot->allocateBlockSize;
+
+				// Initialize the added block
+				if (buffRoot->data)
+					memset(buffRoot->data + buffRoot->allocatedLength - buffRoot->allocateBlockSize, 0, buffRoot->allocateBlockSize);
 			}
 		}
 		// If we get here, there's been an error
@@ -237,25 +224,12 @@
 
 //////////
 //
-// Called to append a CR to the builder
-//
-//////
-	s8* iBuilder_appendCr(SBuilder* buffRoot)
-	{
-		return(iBuilder_appendData(buffRoot, (s8*)cgcCr, sizeof(cgcCr) - 1));
-	}
-
-
-
-
-//////////
-//
 // Called to append a CR+LF to the builder
 //
 //////
 	s8* iBuilder_appendCrLf(SBuilder* buffRoot)
 	{
-		return(iBuilder_appendData(buffRoot, (s8*)cgcCrLf, sizeof(cgcCrLf) - 1));
+		return(iBuilder_appendData(buffRoot, "\r\n", 2));
 	}
 
 
@@ -513,7 +487,7 @@
 		u32 lnI, lnCopyTo;
 		union
 		{
-			// This 
+			// This callback is used to execute a test determining if each entry can be compacted
 			u32		_compactCallbackFunction;
 			bool	(*compactCallbackFunction)	(void* ptr);
 		};
