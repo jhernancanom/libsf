@@ -83,11 +83,8 @@
 			{
 				// Are we there yet?
 				if (buffRoot->populatedLength + tnDataLength <= buffRoot->allocatedLength)
-				{
-					// We're good, update our populated size
-					buffRoot->populatedLength += tnDataLength;
-					return;
-				}
+					return;		// We're good
+				
 				// If we get here, we need to allocate more space
 				// Reallocate and continue
 				buffRoot->data				= (s8*)realloc(buffRoot->data, buffRoot->allocatedLength + buffRoot->allocateBlockSize);
@@ -183,7 +180,10 @@
 
 				// If we're still valid, proceed with the copy
 				if (buffRoot->data && tcData)
-					memcpy(buffRoot->data + buffRoot->populatedLength - tnDataLength, tcData, tnDataLength);
+				{
+					memcpy(buffRoot->data + buffRoot->populatedLength, tcData, tnDataLength);
+					buffRoot->populatedLength += tnDataLength;
+				}
 			}
 			// Indicate where the start of that buffer is
 			return(buffRoot->data + buffRoot->populatedLength - tnDataLength);
@@ -210,7 +210,10 @@
 
 			// Copy the data
 			if (buffRoot->data)
-				*(u32*)(buffRoot->data + buffRoot->populatedLength - 4) = tnValue;
+			{
+				*(u32*)(buffRoot->data + buffRoot->populatedLength) = tnValue;
+				buffRoot->populatedLength += 4;
+			}
 			
 			// Indicate where the start of that buffer is
 			return(buffRoot->data + buffRoot->populatedLength - 4);
@@ -247,7 +250,10 @@
 		{
 			// Make sure this much data will fit there in the buffer
 			if (tnDataLength != 0)
+			{
 				iBuilder_verifySizeForNewBytes(buffRoot, tnDataLength);
+				buffRoot->populatedLength += tnDataLength;
+			}
 			
 			// Indicate where the start of that buffer is
 			return(buffRoot->data + buffRoot->populatedLength - tnDataLength);
@@ -410,7 +416,7 @@
 //////
 	bool iBuilder_asciiReadFromFile(SBuilder** buffRoot, s8* tcPathname)
 	{
-		u32		lnSize, lnNumread, lnStart;
+		u32		lnSize, lnNumread;
 		FILE*	lfh;
 
 
@@ -439,15 +445,14 @@
 				//////////
 				// Allocate that buffer
 				//////
-					lnStart = (*buffRoot)->populatedLength;
 					iBuilder_verifySizeForNewBytes(*buffRoot, lnSize);
 
 
 				//////////
 				// Read in the content
 				//////
-					lnNumread						= fread((*buffRoot)->data + lnStart, 1, lnSize, lfh);
-					(*buffRoot)->populatedLength	= lnStart + min(lnNumread, lnSize);
+					lnNumread						= fread((*buffRoot)->data + (*buffRoot)->populatedLength, 1, lnSize, lfh);
+					(*buffRoot)->populatedLength	+= min(lnNumread, lnSize);
 
 
 				//////////
@@ -460,10 +465,7 @@
 				// Were we successful?
 				//////
 					if (lnNumread == lnSize)
-					{
-						// We're good
-						return(true);
-					}
+						return(true);	// We're good
 
 			} else {
 				// We could not open the file

@@ -129,9 +129,9 @@
 // Returns:
 //    Character		-- The string with any leading and trailing spaces removed
 //////
-	SVariable* function_alltrim(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2)
+	SVariable* function_alltrim(SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2)
 	{
-		return(ifunction_trimCommon(pString, pCaseInsensitive, pTrimChars1, pTrimChars2, true, true));
+		return(ifunction_trimCommon(varString, varCaseInsensitive, varTrimChars1, varTrimChars2, true, true));
 	}
 
 
@@ -147,7 +147,7 @@
 //	    (2)  *TRIM(cString[, nCaseSensitive|lCaseSensitive[, cTrimChar1[, cTrimChar2]]]) 
 //
 //////
-	SVariable* ifunction_trimCommon(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2, bool trimTheStart, bool trimTheEnd)
+	SVariable* ifunction_trimCommon(SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2, bool tlTrimTheStart, bool tlTrimTheEnd)
 	{
 		s32			lnI, lnClipStartPos, lnClipEndPos;
 		s8			lc;
@@ -163,9 +163,9 @@
 		//////////
         // Parameter 1 must be character
 		//////
-			if (!iVariable_isValid(pString) || !iVariable_isTypeCharacter(pString))
+			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pString->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varString->compRelated);
 				return(NULL);
 			}
 
@@ -184,36 +184,36 @@
 		//////////
         // If pCaseInsensitive is present, indicates case-insensitive
 		//////
-			if (pCaseInsensitive)
+			if (varCaseInsensitive)
 			{
 				// See what the parameter is
-				if (!iVariable_isValid(pCaseInsensitive))
+				if (!iVariable_isValid(varCaseInsensitive))
 				{
-					iError_reportByNumber(_ERROR_P2_IS_INCORRECT, pCaseInsensitive->compRelated);
+					iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varCaseInsensitive->compRelated);
 					return(NULL);
 
-				} else if (iVariable_isTypeNumeric(pCaseInsensitive)) {
+				} else if (iVariable_isTypeNumeric(varCaseInsensitive)) {
 					// They are indicating case sensitivity by an integer, should be 1 for case-insensitive, otherwise case-sensitive
 					// If 1, case-insensitive
-					if (*(s32*)pCaseInsensitive->value.data == 1)
+					if (*(s32*)varCaseInsensitive->value.data == 1)
 						llCaseInsensitive = true;
 
-				} else if (iVariable_isTypeLogical(pCaseInsensitive)) {
+				} else if (iVariable_isTypeLogical(varCaseInsensitive)) {
 					// They are indicating case sensitivity by a logical flag, should be .t. for case-insensitive, otherwise case-sensitive
-					if (pCaseInsensitive->value.data[0] != 0)
+					if (varCaseInsensitive->value.data[0] != 0)
 						llCaseInsensitive = true;
 
-				} else if (iVariable_isTypeCharacter(pCaseInsensitive)) {
+				} else if (iVariable_isTypeCharacter(varCaseInsensitive)) {
 					// They're using the syntax form:
 					//		ALLTRIM(cString[, cTrimString])
-					trim1ptr		= pCaseInsensitive->value.data;
-					trim1Length		= pCaseInsensitive->value.length;
+					trim1ptr		= varCaseInsensitive->value.data;
+					trim1Length		= varCaseInsensitive->value.length;
 					trim2ptr		= NULL;
 					trim2Length		= 0;
 					llSyntaxForm1	= true;
 
 				} else {
-					iError_reportByNumber(_ERROR_P2_IS_INCORRECT, pCaseInsensitive->compRelated);
+					iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varCaseInsensitive->compRelated);
 					return(NULL);
 				}
 			}
@@ -222,21 +222,21 @@
 		//////////
 		// If they specified trimCharss
 		//////
-			if (pTrimChars1)
+			if (varTrimChars1)
 			{
 				// If they're using syntax form1, then the presence of this parameter is a syntax error
 				if (llSyntaxForm1)
 				{
-					iError_reportByNumber(_ERROR_TOO_MANY_PARAMETERS, pTrimChars1->compRelated);
+					iError_reportByNumber(_ERROR_TOO_MANY_PARAMETERS, varTrimChars1->compRelated);
 					return(NULL);
 
-				} else if (iVariable_isTypeCharacter(pTrimChars1)) {
+				} else if (iVariable_isTypeCharacter(varTrimChars1)) {
 					// They specified characters to scan
-					trim1ptr	= pTrimChars1->value.data;
-					trim1Length	= pTrimChars1->value.length;
+					trim1ptr	= varTrimChars1->value.data;
+					trim1Length	= varTrimChars1->value.length;
 
 				} else {
-					iError_reportByNumber(_ERROR_P3_IS_INCORRECT, pTrimChars1->compRelated);
+					iError_reportByNumber(_ERROR_P3_IS_INCORRECT, varTrimChars1->compRelated);
 					return(NULL);
 				}
 			}
@@ -245,13 +245,13 @@
 		//////////
 		// If they specified trimCharss
 		//////
-			if (pTrimChars2)
+			if (varTrimChars2)
 			{
-				if (iVariable_isTypeCharacter(pTrimChars2))
+				if (iVariable_isTypeCharacter(varTrimChars2))
 				{
 					// They specified characters to scan
-					trim2ptr	= pTrimChars2->value.data;
-					trim2Length	= pTrimChars2->value.length;
+					trim2ptr	= varTrimChars2->value.data;
+					trim2Length	= varTrimChars2->value.length;
 					if (trim1ptr == (s8*)cgc_spaceText)
 					{
 						// They gave us the second trim characters, so we'll use it
@@ -260,7 +260,7 @@
 					}
 
 				} else {
-					iError_reportByNumber(_ERROR_P4_IS_INCORRECT, pTrimChars2->compRelated);
+					iError_reportByNumber(_ERROR_P4_IS_INCORRECT, varTrimChars2->compRelated);
 					return(NULL);
 				}
 			}
@@ -280,22 +280,22 @@
 		//////////
         // It must be at least one character long to be adjusted
 		//////
-			if (pString->value.length >= 1)
+			if (varString->value.length >= 1)
 			{
 				//////////
 				// START
 				//////
 					lnClipStartPos = 0;
-					if (trimTheStart)
+					if (tlTrimTheStart)
 					{
 						// Based on the comparison, we either compare character-by-character, or convert case and compare character-by-character
 						if (llCaseInsensitive)
 						{
 							// Compare character by character exactly as they are
-							for ( ; lnClipStartPos < pString->value.length; ++lnClipStartPos)
+							for ( ; lnClipStartPos < varString->value.length; ++lnClipStartPos)
 							{
 								// Grab the character
-								lc = pString->value.data[lnClipStartPos];
+								lc = varString->value.data[lnClipStartPos];
 
 								// Scan the trim1 characters
 								// If we're not on a character that we know, we're done
@@ -337,10 +337,10 @@
 						} else {
 							// Compare character by character accounting for case
 							// Compare character by character exactly as they are
-							for ( ; lnClipStartPos < pString->value.length; ++lnClipStartPos)
+							for ( ; lnClipStartPos < varString->value.length; ++lnClipStartPos)
 							{
 								// Grab the character
-								lc = iLowerCase(pString->value.data[lnClipStartPos]);
+								lc = iLowerCase(varString->value.data[lnClipStartPos]);
 
 								// Scan the trim1 characters
 								// If we're not on a character that we know, we're done
@@ -381,7 +381,7 @@
 						}
 
 						// When we get here, we have determined the number of characters on the left
-						if (lnClipStartPos >= pString->value.length)
+						if (lnClipStartPos >= varString->value.length)
 							return(result);		// The entire character string is empty, so we just return the blank string
 					}
 
@@ -389,8 +389,8 @@
 				//////////
 				// END
 				//////
-					lnClipEndPos = pString->value.length - 1;
-					if (trimTheEnd)
+					lnClipEndPos = varString->value.length - 1;
+					if (tlTrimTheEnd)
 					{
 						// Based on the comparison, we either compare character-by-character, or convert case and compare character-by-character
 						if (llCaseInsensitive)
@@ -399,7 +399,7 @@
 							for ( ; lnClipEndPos > 0; lnClipEndPos--)
 							{
 								// Grab the character
-								lc = pString->value.data[lnClipEndPos];
+								lc = varString->value.data[lnClipEndPos];
 
 								// Scan the trim1 characters
 								// If we're not on a character that we know, we're done
@@ -444,7 +444,7 @@
 							for ( ; lnClipEndPos > 0; lnClipEndPos--)
 							{
 								// Grab the character
-								lc = iLowerCase(pString->value.data[lnClipEndPos]);
+								lc = iLowerCase(varString->value.data[lnClipEndPos]);
 
 								// Scan the trim1 characters
 								// If we're not on a character that we know, we're done
@@ -489,7 +489,7 @@
 				//////////
 				// Copy the portion of the string
 				//////
-					iDatum_duplicate(&result->value, pString->value.data + lnClipStartPos, lnClipEndPos - lnClipStartPos + 1);
+					iDatum_duplicate(&result->value, varString->value.data + lnClipStartPos, lnClipEndPos - lnClipStartPos + 1);
 			}
 
 
@@ -522,7 +522,7 @@
 // Returns:
 //    Numeric	-- Input number converted to ASCII value number
 //////
-    SVariable* function_asc(SVariable* p1)
+    SVariable* function_asc(SVariable* varString)
     {
         u8 			value;
         SVariable*	result;
@@ -531,9 +531,9 @@
 		//////////
         // Parameter 1 must be character
 		//////
-			if (!iVariable_isValid(p1) || !iVariable_isTypeCharacter(p1))
+			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, p1->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varString->compRelated);
 				return(NULL);
 			}
 
@@ -541,14 +541,14 @@
 		//////////
         // It must be at least one character long
 		//////
-			if (p1->value.length == 0)
-				iError_reportByNumber(_ERROR_EMPTY_STRING, p1->compRelated);
+			if (varString->value.length == 0)
+				iError_reportByNumber(_ERROR_EMPTY_STRING, varString->compRelated);
 
 
 		//////////
 		// Extract the first character, and convert it to a number
 		//////
-			value = p1->value.data_u8[0];
+			value = varString->value.data_u8[0];
 
 
 		//////////
@@ -604,27 +604,27 @@
 // Returns:
 //    u32			-- Location of the find, or 0 if not found
 //////
-	SVariable* function_at(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence)
+	SVariable* function_at(SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence)
 	{
-		return(ifunction_atOccursCommon(pNeedle, pHaystack, pOccurrence, true, false, NULL));
+		return(ifunction_atOccursCommon(varNeedle, varHaystack, varOccurrence, true, false, NULL));
 	}
 
-	SVariable* function_atc(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence)
+	SVariable* function_atc(SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence)
 	{
-		return(ifunction_atOccursCommon(pNeedle, pHaystack, pOccurrence, false, false, NULL));
+		return(ifunction_atOccursCommon(varNeedle, varHaystack, varOccurrence, false, false, NULL));
 	}
 
-	SVariable* function_rat(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence)
+	SVariable* function_rat(SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence)
 	{
-		return(ifunction_atOccursCommon(pNeedle, pHaystack, pOccurrence, true, true, NULL));
+		return(ifunction_atOccursCommon(varNeedle, varHaystack, varOccurrence, true, true, NULL));
 	}
 
-	SVariable* function_ratc(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence)
+	SVariable* function_ratc(SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence)
 	{
-		return(ifunction_atOccursCommon(pNeedle, pHaystack, pOccurrence, false, true, NULL));
+		return(ifunction_atOccursCommon(varNeedle, varHaystack, varOccurrence, false, true, NULL));
 	}
 
-	SVariable* ifunction_atOccursCommon(SVariable* pNeedle, SVariable* pHaystack, SVariable* pOccurrence, bool tlCaseSensitive, bool tlScanBackward, u32* tnFoundCount)
+	SVariable* ifunction_atOccursCommon(SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence, bool tlCaseSensitive, bool tlScanBackward, u32* tnFoundCount)
 	{
 		u32			errorNum;
 		s32			lnI, lnStart, lnInc, lnStopper, lnFoundCount, lnOccurrence;
@@ -635,9 +635,9 @@
 		//////////
         // Parameter 1 must be character
 		//////
-			if (!iVariable_isValid(pNeedle) || !iVariable_isTypeCharacter(pNeedle))
+			if (!iVariable_isValid(varNeedle) || !iVariable_isTypeCharacter(varNeedle))
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pNeedle->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varNeedle->compRelated);
 				return(NULL);
 			}
 
@@ -645,9 +645,9 @@
 		//////////
         // Parameter 2 must be character
 		//////
-			if (!iVariable_isValid(pHaystack) || !iVariable_isTypeCharacter(pHaystack))
+			if (!iVariable_isValid(varHaystack) || !iVariable_isTypeCharacter(varHaystack))
 			{
-				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, pHaystack->compRelated);
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varHaystack->compRelated);
 				return(NULL);
 			}
 
@@ -655,18 +655,18 @@
 		//////////
         // Parameter 3 is optional, but if present...
 		//////
-			if (iVariable_isValid(pOccurrence))
+			if (iVariable_isValid(varOccurrence))
 			{
 				// ...it must be numeric
-				if (!iVariable_isTypeNumeric(pOccurrence))
+				if (!iVariable_isTypeNumeric(varOccurrence))
 				{
-					iError_reportByNumber(_ERROR_P3_IS_INCORRECT, pOccurrence->compRelated);
+					iError_reportByNumber(_ERROR_P3_IS_INCORRECT, varOccurrence->compRelated);
 					return(NULL);
 				}
 
 				// Grab the occurrence
-				lnOccurrence = iiVariable_getAs_s32(pOccurrence, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, pOccurrence->compRelated);	return(NULL);	}
+				lnOccurrence = iiVariable_getAs_s32(varOccurrence, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varOccurrence->compRelated);	return(NULL);	}
 
 				// Validate that the occurrence is
 				if (lnOccurrence <= 0)
@@ -690,7 +690,7 @@
 		//////////
 		// If either string has a zero length, or the needle is bigger than the haystack, we cannot find it
 		//////
-			if (pNeedle->value.length == 0 || pHaystack->value.length == 0 || pNeedle->value.length > pHaystack->value.length)
+			if (varNeedle->value.length == 0 || varHaystack->value.length == 0 || varNeedle->value.length > varHaystack->value.length)
 				return(result);
 
 
@@ -702,12 +702,12 @@
 				// They want to find all of the occurrences
 				lnStart			= 0;
 				lnInc			= 1;
-				lnStopper		= pHaystack->value.length - pNeedle->value.length + 1;
-				lnOccurrence	= pHaystack->value.length;
+				lnStopper		= varHaystack->value.length - varNeedle->value.length + 1;
+				lnOccurrence	= varHaystack->value.length;
 
 			} else if (tlScanBackward) {
 				// Scan from the back of the string to the start
-				lnStart		= pHaystack->value.length - pNeedle->value.length;
+				lnStart		= varHaystack->value.length - varNeedle->value.length;
 				lnInc		= -1;
 				lnStopper	= -1;
 
@@ -715,7 +715,7 @@
 				// Scan from the front of the string to the end
 				lnStart		= 0;
 				lnInc		= 1;
-				lnStopper	= pHaystack->value.length - pNeedle->value.length + 1;
+				lnStopper	= varHaystack->value.length - varNeedle->value.length + 1;
 			}
 
 
@@ -730,12 +730,12 @@
 					if (tlCaseSensitive)
 					{
 						// Case-sensitive
-						if (memcmp(pNeedle->value.data, pHaystack->value.data + lnI, pNeedle->value.length) == 0)
+						if (memcmp(varNeedle->value.data, varHaystack->value.data + lnI, varNeedle->value.length) == 0)
 							++lnFoundCount;		// Here's a match
 
 					} else {
 						// Case-insensitive
-						if (_memicmp(pNeedle->value.data, pHaystack->value.data + lnI, pNeedle->value.length) == 0)
+						if (_memicmp(varNeedle->value.data, varHaystack->value.data + lnI, varNeedle->value.length) == 0)
 							++lnFoundCount;		// Here's a match
 					}
 
@@ -790,7 +790,7 @@
 // Returns:
 //    Character		-- Input number converted to character
 //////
-    SVariable* function_chr(SVariable* p1)
+    SVariable* function_chr(SVariable* varNumer)
     {
         s32			value;
 		u32			errorNum;
@@ -802,9 +802,9 @@
 		//////////
         // Parameter 1 must be numeric
 		//////
-			if (!iVariable_isValid(p1) || !iVariable_isTypeNumeric(p1))
+			if (!iVariable_isValid(varNumer) || !iVariable_isTypeNumeric(varNumer))
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, p1->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varNumer->compRelated);
 				return(NULL);
 			}
 
@@ -812,12 +812,12 @@
 		//////////
         // It must be in the range 0..255
 		//////
-			value = iiVariable_getAs_s32(p1, false, &error, &errorNum);
+			value = iiVariable_getAs_s32(varNumer, false, &error, &errorNum);
 			if (error)
 			{
 				// The iVariable_getAs_s32() function reported an error.
 				// This means the user is trying to obtain an integer value from a logical, or something similar.
-				iError_reportByNumber(errorNum, p1->compRelated);
+				iError_reportByNumber(errorNum, varNumer->compRelated);
 				return(NULL);
 
 			} else if (value > 255 || value < 0) {
@@ -878,17 +878,17 @@
 //    A copy of the pOriginalString with everything converted.
 //
 //////
-	SVariable* function_chrtran(SVariable* pString, SVariable* pSearch, SVariable* pReplace)
+	SVariable* function_chrtran(SVariable* varString, SVariable* varSearch, SVariable* varReplace)
 	{
-		return(ifunction_chrtranCommon(pString, pSearch, pReplace, true));
+		return(ifunction_chrtranCommon(varString, varSearch, varReplace, true));
 	}
 
-	SVariable* function_chrtranc(SVariable* pString, SVariable* pSearch, SVariable* pReplace)
+	SVariable* function_chrtranc(SVariable* varString, SVariable* varSearch, SVariable* varReplace)
 	{
-		return(ifunction_chrtranCommon(pString, pSearch, pReplace, false));
+		return(ifunction_chrtranCommon(varString, varSearch, varReplace, false));
 	}
 
-	SVariable* ifunction_chrtranCommon(SVariable* pString, SVariable* pSearch, SVariable* pReplace, bool tlCaseSensitive)
+	SVariable* ifunction_chrtranCommon(SVariable* varString, SVariable* varSearch, SVariable* varReplace, bool tlCaseSensitive)
 	{
 		s8			c1, c2;
 		s32			lnSrc, lnDst, lnSearch;
@@ -899,9 +899,9 @@
 		//////////
         // Parameter 1 must be character
 		//////
-			if (!iVariable_isValid(pString) || !iVariable_isTypeCharacter(pString))
+			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pString->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varString->compRelated);
 				return(NULL);
 			}
 
@@ -909,9 +909,9 @@
 		//////////
         // Parameter 2 must be character
 		//////
-			if (!iVariable_isValid(pSearch) || !iVariable_isTypeCharacter(pSearch))
+			if (!iVariable_isValid(varSearch) || !iVariable_isTypeCharacter(varSearch))
 			{
-				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, pSearch->compRelated);
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varSearch->compRelated);
 				return(NULL);
 			}
 
@@ -919,14 +919,14 @@
 		//////////
         // Parameter 3 is optional, but must be character if present
 		//////
-			if (!iVariable_isValid(pReplace))
+			if (!iVariable_isValid(varReplace))
 			{
 				// They didn't provide a 3rd parameter, so we'll use a pseudo placeholder which is an empty string
-				pReplace = varEmptyString;
+				varReplace = varEmptyString;
 
-			} else if (!iVariable_isTypeCharacter(pReplace)) {
+			} else if (!iVariable_isTypeCharacter(varReplace)) {
 				// It is invalid
-				iError_reportByNumber(_ERROR_P3_IS_INCORRECT, pReplace->compRelated);
+				iError_reportByNumber(_ERROR_P3_IS_INCORRECT, varReplace->compRelated);
 				return(NULL);
 			}
 		
@@ -934,10 +934,10 @@
 		//////////
 		// Allocate a copy of the original string
 		//////
-			result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, pString->value.data, pString->value.length);
+			result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, varString->value.data, varString->value.length);
 			
 			// If the original string is empty, or the characters to search for are empty, then we don't need to do anything
-			if (pString->value.length == 0 || pSearch->value.length == 0)
+			if (varString->value.length == 0 || varSearch->value.length == 0)
 				return(result);
 
 
@@ -958,10 +958,10 @@
 
 				// Search the conversion string
 				llFound = false;
-				for (lnSearch = 0; lnSearch < pSearch->value.length; lnSearch++)
+				for (lnSearch = 0; lnSearch < varSearch->value.length; lnSearch++)
 				{
 					// Grab this character
-					c2 = pSearch->value.data[lnSearch];
+					c2 = varSearch->value.data[lnSearch];
 
 					// Adjust the case if necessary
 					if (!tlCaseSensitive)
@@ -978,10 +978,10 @@
 						llFound = true;
 
 						// We need to perform the replace
-						if (lnSearch < pReplace->value.length)
+						if (lnSearch < varReplace->value.length)
 						{
 							// We replace it with the character that's there
-							result->value.data[lnDst] = pReplace->value.data[lnSearch];
+							result->value.data[lnDst] = varReplace->value.data[lnSearch];
 
 						} else {
 							// There is no translation character, so we just delete this character
@@ -1043,7 +1043,7 @@
 //    Object		-- The class instance object is returned
 //
 //////
-	SVariable* function_createobject(SVariable* p1)
+	SVariable* function_createobject(SVariable* varClass)
 	{
 		s32			lnObjType;
 		SObject*	obj;
@@ -1053,9 +1053,9 @@
 		//////////
         // Parameter 1 must be character
 		//////
-			if (!iVariable_isValid(p1) || !iVariable_isTypeCharacter(p1))
+			if (!iVariable_isValid(varClass) || !iVariable_isTypeCharacter(varClass))
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, p1->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varClass->compRelated);
 				return(NULL);
 			}
 
@@ -1063,14 +1063,14 @@
 		//////////
         // It must be at least one character long
 		//////
-			if (p1->value.length == 0)
-				iError_reportByNumber(_ERROR_EMPTY_STRING, p1->compRelated);
+			if (varClass->value.length == 0)
+				iError_reportByNumber(_ERROR_EMPTY_STRING, varClass->compRelated);
 
 
 		//////////
 		// See if we know the class
 		//////
-			lnObjType = iiObj_getBaseclassType_byName(p1->value.data, p1->value.length);
+			lnObjType = iiObj_getBaseclassType_byName(varClass->value.data, varClass->value.length);
 			if (lnObjType <= 0)
 			{
 				iError_report("Unknown class");
@@ -1137,7 +1137,7 @@
 //    Datetime		-- Current datetime(), or input converted to datetime
 //
 //////
-	SVariable* function_datetime(SVariable* pYear, SVariable* pMonth, SVariable* pDay, SVariable* pHour, SVariable* pMinute, SVariable* pSecond, SVariable* pMillisecond)
+	SVariable* function_datetime(SVariable* varYear, SVariable* varMonth, SVariable* varDay, SVariable* varHour, SVariable* varMinute, SVariable* varSecond, SVariable* varMillisecond)
 	{
 		SVariable*	result;
 		SDateTime*	dt;
@@ -1148,7 +1148,7 @@
 
 
 		// Have they provided us with data?
-		if (!pYear)
+		if (!varYear)
 		{
 			// Nope, we are creating the current system time
 			GetLocalTime(&lst);
@@ -1168,18 +1168,18 @@
 			//////////
 			// pYear must be numeric, and in the range of 1600..2400
 			//////
-				if (iVariable_isValid(pYear))
+				if (iVariable_isValid(varYear))
 				{
 					// They gave us a pYear
-					if (!iVariable_isTypeNumeric(pYear))
+					if (!iVariable_isTypeNumeric(varYear))
 					{
 						iError_report("Year must be numeric");
 						return(NULL);
 					}
-					lst.wYear = (u16)iiVariable_getAs_s32(pYear, false, &error, &errorNum);
+					lst.wYear = (u16)iiVariable_getAs_s32(varYear, false, &error, &errorNum);
 					if (!error && (lst.wYear < 1600 || lst.wYear > 2400))
 					{
-						iError_reportByNumber(_ERROR_OUT_OF_RANGE, pYear->compRelated);
+						iError_reportByNumber(_ERROR_OUT_OF_RANGE, varYear->compRelated);
 						return(NULL);
 					}
 				}
@@ -1188,18 +1188,18 @@
 			//////////
 			// pMonth must be numeric, and in the range of 1..12
 			//////
-				if (iVariable_isValid(pMonth))
+				if (iVariable_isValid(varMonth))
 				{
 					// They gave us a pMonth
-					if (!iVariable_isTypeNumeric(pMonth))
+					if (!iVariable_isTypeNumeric(varMonth))
 					{
 						iError_report("Month must be numeric");
 						return(NULL);
 					}
-					lst.wMonth = (u16)iiVariable_getAs_s32(pMonth, false, &error, &errorNum);
+					lst.wMonth = (u16)iiVariable_getAs_s32(varMonth, false, &error, &errorNum);
 					if (!error && (lst.wMonth < 1 || lst.wMonth > 12))
 					{
-						iError_reportByNumber(_ERROR_OUT_OF_RANGE, pMonth->compRelated);
+						iError_reportByNumber(_ERROR_OUT_OF_RANGE, varMonth->compRelated);
 						return(NULL);
 					}
 				}
@@ -1208,18 +1208,18 @@
 			//////////
 			// pDay must be numeric, and in a valid range for the year and month
 			//////
-				if (iVariable_isValid(pDay))
+				if (iVariable_isValid(varDay))
 				{
 					// They gave us a pDay
-					if (!iVariable_isTypeNumeric(pDay))
+					if (!iVariable_isTypeNumeric(varDay))
 					{
 						iError_report("Day must be numeric");
 						return(NULL);
 					}
-					lst.wDay = (u16)iiVariable_getAs_s32(pDay, false, &error, &errorNum);
+					lst.wDay = (u16)iiVariable_getAs_s32(varDay, false, &error, &errorNum);
 					if (!error && !iVariable_isDayValidForDate(lst.wYear, lst.wMonth, lst.wDay))
 					{
-						iError_reportByNumber(_ERROR_OUT_OF_RANGE, pDay->compRelated);
+						iError_reportByNumber(_ERROR_OUT_OF_RANGE, varDay->compRelated);
 						return(NULL);
 					}
 				}
@@ -1228,18 +1228,18 @@
 			//////////
 			// pHour must be numeric, and in the range of 0..23
 			//////
-				if (iVariable_isValid(pHour))
+				if (iVariable_isValid(varHour))
 				{
 					// They gave us a pHour
-					if (!iVariable_isTypeNumeric(pHour))
+					if (!iVariable_isTypeNumeric(varHour))
 					{
 						iError_report("Hours must be numeric");
 						return(NULL);
 					}
-					lst.wHour = (u16)iiVariable_getAs_s32(pHour, false, &error, &errorNum);
+					lst.wHour = (u16)iiVariable_getAs_s32(varHour, false, &error, &errorNum);
 					if (!error && (lst.wHour < 0 || lst.wHour > 23))
 					{
-						iError_reportByNumber(_ERROR_OUT_OF_RANGE, pHour->compRelated);
+						iError_reportByNumber(_ERROR_OUT_OF_RANGE, varHour->compRelated);
 						return(NULL);
 					}
 				}
@@ -1248,18 +1248,18 @@
 			//////////
 			// pMinute must be numeric, and in the range of 0..59
 			//////
-				if (iVariable_isValid(pMinute))
+				if (iVariable_isValid(varMinute))
 				{
 					// They gave us a pMinute
-					if (!iVariable_isTypeNumeric(pMinute))
+					if (!iVariable_isTypeNumeric(varMinute))
 					{
 						iError_report("Minutes must be numeric");
 						return(NULL);
 					}
-					lst.wMinute = (u16)iiVariable_getAs_s32(pMinute, false, &error, &errorNum);
+					lst.wMinute = (u16)iiVariable_getAs_s32(varMinute, false, &error, &errorNum);
 					if (!error && (lst.wMinute < 0 || lst.wMinute > 59))
 					{
-						iError_reportByNumber(_ERROR_OUT_OF_RANGE, pMinute->compRelated);
+						iError_reportByNumber(_ERROR_OUT_OF_RANGE, varMinute->compRelated);
 						return(NULL);
 					}
 				}
@@ -1268,18 +1268,18 @@
 			//////////
 			// pSecond must be numeric, and in the range of 0..59
 			//////
-				if (iVariable_isValid(pSecond))
+				if (iVariable_isValid(varSecond))
 				{
 					// They gave us a pSecond
-					if (!iVariable_isTypeNumeric(pSecond))
+					if (!iVariable_isTypeNumeric(varSecond))
 					{
 						iError_report("Seconds must be numeric");
 						return(NULL);
 					}
-					lst.wSecond = (u16)iiVariable_getAs_s32(pSecond, false, &error, &errorNum);
+					lst.wSecond = (u16)iiVariable_getAs_s32(varSecond, false, &error, &errorNum);
 					if (!error && (lst.wSecond < 0 || lst.wSecond > 59))
 					{
-						iError_reportByNumber(_ERROR_OUT_OF_RANGE, pSecond->compRelated);
+						iError_reportByNumber(_ERROR_OUT_OF_RANGE, varSecond->compRelated);
 						return(NULL);
 					}
 				}
@@ -1288,18 +1288,18 @@
 			//////////
 			// pMillisecond must be numeric, and in the range of 0..999
 			//////
-				if (iVariable_isValid(pMillisecond))
+				if (iVariable_isValid(varMillisecond))
 				{
 					// They gave us a pMillisecond
-					if (!iVariable_isTypeNumeric(pMillisecond))
+					if (!iVariable_isTypeNumeric(varMillisecond))
 					{
 						iError_report("Milliseconds must be numeric");
 						return(NULL);
 					}
-					lst.wMilliseconds = (u16)iiVariable_getAs_s32(pMillisecond, false, &error, &errorNum);
+					lst.wMilliseconds = (u16)iiVariable_getAs_s32(varMillisecond, false, &error, &errorNum);
 					if (!error && (lst.wMilliseconds < 0 || lst.wMilliseconds > 999))
 					{
-						iError_reportByNumber(_ERROR_OUT_OF_RANGE, pMillisecond->compRelated);
+						iError_reportByNumber(_ERROR_OUT_OF_RANGE, varMillisecond->compRelated);
 						return(NULL);
 					}
 				}
@@ -1348,7 +1348,7 @@
 // Returns:
 //    INT(n) of the value in p1
 //////
-    SVariable* function_int(SVariable* p1)
+    SVariable* function_int(SVariable* varNumber)
     {
 		f64			fValue;
 		u32			errorNum;
@@ -1359,9 +1359,9 @@
 		//////////
         // Parameter 1 must be numeric
 		//////
-			if (!iVariable_isValid(p1) || !iVariable_isTypeNumeric(p1))
+			if (!iVariable_isValid(varNumber) || !iVariable_isTypeNumeric(varNumber))
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, p1->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varNumber->compRelated);
 				return(NULL);
 			}
 
@@ -1369,10 +1369,10 @@
 		//////////
         // Based on its type, process it accordingly
 		//////
-			if (iVariable_isTypeFloatingPoint(p1))
+			if (iVariable_isTypeFloatingPoint(varNumber))
 			{
-				fValue = iiVariable_getAs_f64(p1, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, p1->compRelated);	return(NULL);	}
+				fValue = iiVariable_getAs_f64(varNumber, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varNumber->compRelated);	return(NULL);	}
 
 				// Convert to S64
 				result = iVariable_create(_VAR_TYPE_S64, NULL);
@@ -1380,8 +1380,8 @@
 
 			} else {
 				// Copy whatever it already is
-				result = iVariable_create(p1->varType, NULL);
-				iDatum_duplicate(&result->value, &p1->value);
+				result = iVariable_create(varNumber->varType, NULL);
+				iDatum_duplicate(&result->value, &varNumber->value);
 			}
 
 
@@ -1415,7 +1415,7 @@
 // Returns:
 //    Character		-- The string of the left N characters
 //////
-	SVariable* function_left(SVariable* pString, SVariable* pCount)
+	SVariable* function_left(SVariable* varString, SVariable* varCount)
 	{
 		s32			lnLength;
 		u32			errorNum;
@@ -1426,9 +1426,9 @@
 		//////////
         // Parameter 1 must be character
 		//////
-			if (!iVariable_isValid(pString) || iVariable_getType(pString) != _VAR_TYPE_CHARACTER)
+			if (!iVariable_isValid(varString) || iVariable_getType(varString) != _VAR_TYPE_CHARACTER)
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pString->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varString->compRelated);
 				return(NULL);
 			}
 
@@ -1436,9 +1436,9 @@
 		//////////
         // Parameter 2 must be nmumeric
 		//////
-			if (!iVariable_isValid(pCount) || !iVariable_isTypeNumeric(pCount))
+			if (!iVariable_isValid(varCount) || !iVariable_isTypeNumeric(varCount))
 			{
-				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, pCount->compRelated);
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varCount->compRelated);
 				return(NULL);
 			}
 
@@ -1446,10 +1446,10 @@
 		//////////
         // Find out how long they want our string to be
 		//////
-			lnLength = iiVariable_getAs_s32(pCount, false, &error, &errorNum);
+			lnLength = iiVariable_getAs_s32(varCount, false, &error, &errorNum);
 			if (error)
 			{
-				iError_reportByNumber(errorNum, pCount->compRelated);
+				iError_reportByNumber(errorNum, varCount->compRelated);
 				return(NULL);
 			}
 
@@ -1469,7 +1469,7 @@
         // Copy as much of the source string as will fit
 		//////
 			if (lnLength > 0)
-				iDatum_duplicate(&result->value, pString->value.data, min(pString->value.length, lnLength));
+				iDatum_duplicate(&result->value, varString->value.data, min(varString->value.length, lnLength));
 
 
 		//////////
@@ -1501,7 +1501,7 @@
 // Returns:
 //    Numeric		-- The length of the string
 //////
-	SVariable* function_len(SVariable* pString)
+	SVariable* function_len(SVariable* varString)
 	{
         SVariable* result;
 
@@ -1509,9 +1509,9 @@
 		//////////
         // Parameter 1 must be character
 		//////
-			if (!iVariable_isValid(pString) || iVariable_getType(pString) != _VAR_TYPE_CHARACTER)
+			if (!iVariable_isValid(varString) || iVariable_getType(varString) != _VAR_TYPE_CHARACTER)
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pString->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varString->compRelated);
 				return(NULL);
 			}
 
@@ -1530,7 +1530,7 @@
 		//////////
 		// Populate based on the length
 		//////
-			*(s32*)result->value.data = pString->value.length;
+			*(s32*)result->value.data = varString->value.length;
 
 
 		//////////
@@ -1562,7 +1562,7 @@
 // Returns:
 //    Character		-- The string with all lowercase characters converted to lowercase
 //////
-	SVariable* function_lower(SVariable* pString)
+	SVariable* function_lower(SVariable* varString)
 	{
 		s32			lnI;
         SVariable*	result;
@@ -1571,9 +1571,9 @@
 		//////////
         // Parameter 1 must be character
 		//////
-			if (!iVariable_isValid(pString) || iVariable_getType(pString) != _VAR_TYPE_CHARACTER)
+			if (!iVariable_isValid(varString) || iVariable_getType(varString) != _VAR_TYPE_CHARACTER)
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pString->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varString->compRelated);
 				return(NULL);
 			}
 
@@ -1592,7 +1592,7 @@
 		//////////
         // Copy the source string
 		//////
-	        iDatum_duplicate(&result->value, &pString->value);
+	        iDatum_duplicate(&result->value, &varString->value);
 
 
 		//////////
@@ -1634,9 +1634,9 @@
 // Returns:
 //    Character		-- The string with any leading spaces removed
 //////
-	SVariable* function_ltrim(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2)
+	SVariable* function_ltrim(SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2)
 	{
-		return(ifunction_trimCommon(pString, pCaseInsensitive, pTrimChars1, pTrimChars2, true, false));
+		return(ifunction_trimCommon(varString, varCaseInsensitive, varTrimChars1, varTrimChars2, true, false));
 	}
 
 
@@ -1665,7 +1665,7 @@
 //    If they're equal, a copy of pLeft is returned.
 //
 //////
-	SVariable* function_max(SVariable* pLeft, SVariable* pRight)
+	SVariable* function_max(SVariable* varLeft, SVariable* varRight)
 	{
 		bool		llLeft;
 		s32			lnLeft32, lnRight32;
@@ -1682,9 +1682,9 @@
 		//////////
         // Parameter 1 must be numeric
 		//////
-			if (!iVariable_isValid(pLeft))
+			if (!iVariable_isValid(varLeft))
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pLeft->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varLeft->compRelated);
 				return(NULL);
 			}
 
@@ -1692,9 +1692,9 @@
 		//////////
         // Parameter 2 must be numeric
 		//////
-			if (!iVariable_isValid(pRight))
+			if (!iVariable_isValid(varRight))
 			{
-				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, pRight->compRelated);
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varRight->compRelated);
 				return(NULL);
 			}
 
@@ -1702,10 +1702,10 @@
 		//////////
 		// They must be the same type
 		//////
-			if (pLeft->varType != pRight->varType)
+			if (varLeft->varType != varRight->varType)
 			{
 				// Operand mismatch
-				iError_reportByNumber(_ERROR_DATA_TYPE_MISMATCH, pRight->compRelated);
+				iError_reportByNumber(_ERROR_DATA_TYPE_MISMATCH, varRight->compRelated);
 				return(NULL);
 			}
 
@@ -1714,18 +1714,18 @@
 		// Determine what we're comparing
 		//////
 			llLeft = false;
-			switch (pLeft->varType)
+			switch (varLeft->varType)
 			{
 				case _VAR_TYPE_DATE:			// Note:  Dates are stored internally as YYYYMMDD, so they can be directly compared
 				case _VAR_TYPE_CHARACTER:
-					if (pLeft->value.length == 0 || pRight->value.length == 0)
+					if (varLeft->value.length == 0 || varRight->value.length == 0)
 					{
 						// At least one of them is null, return the left
 						llLeft = true;
 
 					} else {
 						// They both have a non-zero length
-						switch (_memicmp(pLeft->value.data, pRight->value.data, min(pLeft->value.length, pRight->value.length)))
+						switch (_memicmp(varLeft->value.data, varRight->value.data, min(varLeft->value.length, varRight->value.length)))
 						{
 							case -1:
 							case 0:
@@ -1741,8 +1741,8 @@
 					break;
 
 				case _VAR_TYPE_DATETIME:
-					dtLeft	= (SDateTime*)pLeft->value.data;
-					dtRight	= (SDateTime*)pRight->value.data;
+					dtLeft	= (SDateTime*)varLeft->value.data;
+					dtRight	= (SDateTime*)varRight->value.data;
 					if (dtLeft->julian < dtRight->julian)
 					{
 						// Left is less
@@ -1765,19 +1765,19 @@
 					break;
 
 				default:
-					if (iVariable_isTypeBig(pLeft))
+					if (iVariable_isTypeBig(varLeft))
 					{
 						// It's a character compared to a character
 						iError_reportByNumber(_ERROR_FEATURE_NOT_AVAILABLE, NULL);
 						return(NULL);
 
-					} else if (iVariable_isTypeFloatingPoint(pLeft)) {
+					} else if (iVariable_isTypeFloatingPoint(varLeft)) {
 						// Comparing floating point values
-						lfLeft64	= iiVariable_getAs_f64(pLeft, false, &error, &errorNum);
-						if (error)	{	iError_reportByNumber(errorNum, pLeft->compRelated);	return(NULL);	}
+						lfLeft64	= iiVariable_getAs_f64(varLeft, false, &error, &errorNum);
+						if (error)	{	iError_reportByNumber(errorNum, varLeft->compRelated);	return(NULL);	}
 
-						lfRight64	= iiVariable_getAs_f64(pRight, false, &error, &errorNum);
-						if (error)	{	iError_reportByNumber(errorNum, pRight->compRelated);	return(NULL);	}
+						lfRight64	= iiVariable_getAs_f64(varRight, false, &error, &errorNum);
+						if (error)	{	iError_reportByNumber(errorNum, varRight->compRelated);	return(NULL);	}
 
 						// Perform the test
 						if (lfLeft64 <= lfRight64)
@@ -1789,16 +1789,16 @@
 							// Right is less
 						}
 
-					} else if (iVariable_isTypeNumeric(pLeft)) {
+					} else if (iVariable_isTypeNumeric(varLeft)) {
 						// Comparing numerics
-						if (iVariable_isNumeric64Bit(pLeft) || iVariable_isNumeric64Bit(pRight))
+						if (iVariable_isNumeric64Bit(varLeft) || iVariable_isNumeric64Bit(varRight))
 						{
 							// It requires a 64-bit signed compare
-							lnLeft64	= iiVariable_getAs_s64(pLeft, false, &error, &errorNum);
-							if (error)	{	iError_reportByNumber(errorNum, pLeft->compRelated);	return(NULL);	}
+							lnLeft64	= iiVariable_getAs_s64(varLeft, false, &error, &errorNum);
+							if (error)	{	iError_reportByNumber(errorNum, varLeft->compRelated);	return(NULL);	}
 
-							lnRight64	= iiVariable_getAs_s64(pRight, false, &error, &errorNum);
-							if (error)	{	iError_reportByNumber(errorNum, pRight->compRelated);	return(NULL);	}
+							lnRight64	= iiVariable_getAs_s64(varRight, false, &error, &errorNum);
+							if (error)	{	iError_reportByNumber(errorNum, varRight->compRelated);	return(NULL);	}
 
 							// Perform the test
 							if (lnLeft64 <= lnRight64)
@@ -1812,11 +1812,11 @@
 
 						} else {
 							// It can be done in a 32-bit signed compare
-							lnLeft32	= iiVariable_getAs_s32(pLeft, false, &error, &errorNum);
-							if (error)	{	iError_reportByNumber(errorNum, pLeft->compRelated);	return(NULL);	}
+							lnLeft32	= iiVariable_getAs_s32(varLeft, false, &error, &errorNum);
+							if (error)	{	iError_reportByNumber(errorNum, varLeft->compRelated);	return(NULL);	}
 
-							lnRight32	= iiVariable_getAs_s32(pRight, false, &error, &errorNum);
-							if (error)	{	iError_reportByNumber(errorNum, pRight->compRelated);	return(NULL);	}
+							lnRight32	= iiVariable_getAs_s32(varRight, false, &error, &errorNum);
+							if (error)	{	iError_reportByNumber(errorNum, varRight->compRelated);	return(NULL);	}
 
 							// Perform the test
 							if (lnLeft32 <= lnRight32)
@@ -1831,20 +1831,20 @@
 
 					} else {
 						// We cannot compare these types
-						iError_reportByNumber(_ERROR_FEATURE_NOT_AVAILABLE, pLeft->compRelated);
+						iError_reportByNumber(_ERROR_FEATURE_NOT_AVAILABLE, varLeft->compRelated);
 						return(NULL);
 					}
 			}
 			// When we get here, llLeft is populated with our intent
-			result = iVariable_create(pLeft->varType, NULL);
+			result = iVariable_create(varLeft->varType, NULL);
 			if (llLeft)
 			{
 				// Left is less, so duplicate right
-				iDatum_duplicate(&result->value, &pRight->value);
+				iDatum_duplicate(&result->value, &varRight->value);
 
 			} else {
 				// Right is less, so duplicate left
-				iDatum_duplicate(&result->value, &pLeft->value);
+				iDatum_duplicate(&result->value, &varLeft->value);
 			}
 
 			// Indicate our result
@@ -1877,7 +1877,7 @@
 //    If they're equal, a copy of pLeft is returned.
 //
 //////
-	SVariable* function_min(SVariable* pLeft, SVariable* pRight)
+	SVariable* function_min(SVariable* varLeft, SVariable* varRight)
 	{
 		bool		llLeft;
 		s32			lnLeft32, lnRight32;
@@ -1894,9 +1894,9 @@
 		//////////
         // Parameter 1 must be numeric
 		//////
-			if (!iVariable_isValid(pLeft))
+			if (!iVariable_isValid(varLeft))
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pLeft->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varLeft->compRelated);
 				return(NULL);
 			}
 
@@ -1904,9 +1904,9 @@
 		//////////
         // Parameter 2 must be numeric
 		//////
-			if (!iVariable_isValid(pRight))
+			if (!iVariable_isValid(varRight))
 			{
-				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, pRight->compRelated);
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varRight->compRelated);
 				return(NULL);
 			}
 
@@ -1914,10 +1914,10 @@
 		//////////
 		// They must be the same type
 		//////
-			if (pLeft->varType != pRight->varType)
+			if (varLeft->varType != varRight->varType)
 			{
 				// Operand mismatch
-				iError_reportByNumber(_ERROR_DATA_TYPE_MISMATCH, pRight->compRelated);
+				iError_reportByNumber(_ERROR_DATA_TYPE_MISMATCH, varRight->compRelated);
 				return(NULL);
 			}
 
@@ -1926,18 +1926,18 @@
 		// Determine what we're comparing
 		//////
 			llLeft = false;
-			switch (pLeft->varType)
+			switch (varLeft->varType)
 			{
 				case _VAR_TYPE_DATE:			// Note:  Dates are stored internally as YYYYMMDD, so they can be directly compared
 				case _VAR_TYPE_CHARACTER:
-					if (pLeft->value.length == 0 || pRight->value.length == 0)
+					if (varLeft->value.length == 0 || varRight->value.length == 0)
 					{
 						// At least one of them is null, return the left
 						llLeft = true;
 
 					} else {
 						// They both have a non-zero length
-						switch (_memicmp(pLeft->value.data, pRight->value.data, min(pLeft->value.length, pRight->value.length)))
+						switch (_memicmp(varLeft->value.data, varRight->value.data, min(varLeft->value.length, varRight->value.length)))
 						{
 							case -1:
 							case 0:
@@ -1953,8 +1953,8 @@
 					break;
 
 				case _VAR_TYPE_DATETIME:
-					dtLeft	= (SDateTime*)pLeft->value.data;
-					dtRight	= (SDateTime*)pRight->value.data;
+					dtLeft	= (SDateTime*)varLeft->value.data;
+					dtRight	= (SDateTime*)varRight->value.data;
 					if (dtLeft->julian < dtRight->julian)
 					{
 						// Left is less
@@ -1977,19 +1977,19 @@
 					break;
 
 				default:
-					if (iVariable_isTypeBig(pLeft))
+					if (iVariable_isTypeBig(varLeft))
 					{
 						// It's a character compared to a character
 						iError_reportByNumber(_ERROR_FEATURE_NOT_AVAILABLE, NULL);
 						return(NULL);
 
-					} else if (iVariable_isTypeFloatingPoint(pLeft)) {
+					} else if (iVariable_isTypeFloatingPoint(varLeft)) {
 						// Comparing floating point values
-						lfLeft64	= iiVariable_getAs_f64(pLeft, false, &error, &errorNum);
-						if (error)	{	iError_reportByNumber(errorNum, pLeft->compRelated);	return(NULL);	}
+						lfLeft64	= iiVariable_getAs_f64(varLeft, false, &error, &errorNum);
+						if (error)	{	iError_reportByNumber(errorNum, varLeft->compRelated);	return(NULL);	}
 
-						lfRight64	= iiVariable_getAs_f64(pRight, false, &error, &errorNum);
-						if (error)	{	iError_reportByNumber(errorNum, pRight->compRelated);	return(NULL);	}
+						lfRight64	= iiVariable_getAs_f64(varRight, false, &error, &errorNum);
+						if (error)	{	iError_reportByNumber(errorNum, varRight->compRelated);	return(NULL);	}
 
 						// Perform the test
 						if (lfLeft64 <= lfRight64)
@@ -2001,16 +2001,16 @@
 							// Right is less
 						}
 
-					} else if (iVariable_isTypeNumeric(pLeft)) {
+					} else if (iVariable_isTypeNumeric(varLeft)) {
 						// Comparing numerics
-						if (iVariable_isNumeric64Bit(pLeft) || iVariable_isNumeric64Bit(pRight))
+						if (iVariable_isNumeric64Bit(varLeft) || iVariable_isNumeric64Bit(varRight))
 						{
 							// It requires a 64-bit signed compare
-							lnLeft64	= iiVariable_getAs_s64(pLeft, false, &error, &errorNum);
-							if (error)	{	iError_reportByNumber(errorNum, pLeft->compRelated);	return(NULL);	}
+							lnLeft64	= iiVariable_getAs_s64(varLeft, false, &error, &errorNum);
+							if (error)	{	iError_reportByNumber(errorNum, varLeft->compRelated);	return(NULL);	}
 
-							lnRight64	= iiVariable_getAs_s64(pRight, false, &error, &errorNum);
-							if (error)	{	iError_reportByNumber(errorNum, pRight->compRelated);	return(NULL);	}
+							lnRight64	= iiVariable_getAs_s64(varRight, false, &error, &errorNum);
+							if (error)	{	iError_reportByNumber(errorNum, varRight->compRelated);	return(NULL);	}
 
 							// Perform the test
 							if (lnLeft64 <= lnRight64)
@@ -2024,11 +2024,11 @@
 
 						} else {
 							// It can be done in a 32-bit signed compare
-							lnLeft32	= iiVariable_getAs_s32(pLeft, false, &error, &errorNum);
-							if (error)	{	iError_reportByNumber(errorNum, pLeft->compRelated);	return(NULL);	}
+							lnLeft32	= iiVariable_getAs_s32(varLeft, false, &error, &errorNum);
+							if (error)	{	iError_reportByNumber(errorNum, varLeft->compRelated);	return(NULL);	}
 
-							lnRight32	= iiVariable_getAs_s32(pRight, false, &error, &errorNum);
-							if (error)	{	iError_reportByNumber(errorNum, pRight->compRelated);	return(NULL);	}
+							lnRight32	= iiVariable_getAs_s32(varRight, false, &error, &errorNum);
+							if (error)	{	iError_reportByNumber(errorNum, varRight->compRelated);	return(NULL);	}
 
 							// Perform the test
 							if (lnLeft32 <= lnRight32)
@@ -2043,20 +2043,20 @@
 
 					} else {
 						// We cannot compare these types
-						iError_reportByNumber(_ERROR_FEATURE_NOT_AVAILABLE, pLeft->compRelated);
+						iError_reportByNumber(_ERROR_FEATURE_NOT_AVAILABLE, varLeft->compRelated);
 						return(NULL);
 					}
 			}
 			// When we get here, llLeft is populated with our intent
-			result = iVariable_create(pLeft->varType, NULL);
+			result = iVariable_create(varLeft->varType, NULL);
 			if (llLeft)
 			{
 				// Left is less
-				iDatum_duplicate(&result->value, &pLeft->value);
+				iDatum_duplicate(&result->value, &varLeft->value);
 
 			} else {
 				// Right is less
-				iDatum_duplicate(&result->value, &pRight->value);
+				iDatum_duplicate(&result->value, &varRight->value);
 			}
 
 			// Indicate our result
@@ -2088,14 +2088,14 @@
 // Returns:
 //    s32			-- The number of times
 //////
-	SVariable* function_occurs(SVariable* pNeedle, SVariable* pHaystack)
+	SVariable* function_occurs(SVariable* varNeedle, SVariable* varHaystack)
 	{
 		u32			lnFoundCount;
 		SVariable*	result;
 
 
 		// Compute the found count
-		result = ifunction_atOccursCommon(pNeedle, pHaystack, NULL, true, false, &lnFoundCount);
+		result = ifunction_atOccursCommon(varNeedle, varHaystack, NULL, true, false, &lnFoundCount);
 		if (result)
 		{
 			// Update the return variable
@@ -2106,14 +2106,14 @@
 		return(result);
 	}
 
-	SVariable* function_occursc(SVariable* pNeedle, SVariable* pHaystack)
+	SVariable* function_occursc(SVariable* varNeedle, SVariable* varHaystack)
 	{
 		u32			lnFoundCount;
 		SVariable*	result;
 
 
 		// Compute the found count
-		result = ifunction_atOccursCommon(pNeedle, pHaystack, NULL, false, false, &lnFoundCount);
+		result = ifunction_atOccursCommon(varNeedle, varHaystack, NULL, false, false, &lnFoundCount);
 		if (result)
 		{
 			// Update the return variable
@@ -2152,22 +2152,22 @@
 //                         then padded to its destination size. If the string is larger than
 //                         the destination, then it remains as it is.
 //////
-	SVariable* function_padc(SVariable* pExpression, SVariable* pResultSize, SVariable* pPadCharacter)
+	SVariable* function_padc(SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter)
 	{
-		return(ifunction_padCommon(pExpression, pResultSize, pPadCharacter, true, true));
+		return(ifunction_padCommon(varExpression, varResultSize, varPadCharacter, true, true));
 	}
 
-	SVariable* function_padl(SVariable* pExpression, SVariable* pResultSize, SVariable* pPadCharacter)
+	SVariable* function_padl(SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter)
 	{
-		return(ifunction_padCommon(pExpression, pResultSize, pPadCharacter, true, false));
+		return(ifunction_padCommon(varExpression, varResultSize, varPadCharacter, true, false));
 	}
 
-	SVariable* function_padr(SVariable* pExpression, SVariable* pResultSize, SVariable* pPadCharacter)
+	SVariable* function_padr(SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter)
 	{
-		return(ifunction_padCommon(pExpression, pResultSize, pPadCharacter, false, true));
+		return(ifunction_padCommon(varExpression, varResultSize, varPadCharacter, false, true));
 	}
 
-	SVariable* ifunction_padCommon(SVariable* pExpression, SVariable* pResultSize, SVariable* pPadCharacter, bool tlPadLeft, bool tlPadRight)
+	SVariable* ifunction_padCommon(SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter, bool tlPadLeft, bool tlPadRight)
 	{
 		u32			errorNum;
 		s32			lnI, lnResultSize, lnCopyStart, lnPadLeftStopper, lnPadRightStart, lnPadRightStopper;
@@ -2189,7 +2189,7 @@
 		//////////
         // Parameter 1 must be valid
 		//////
-			if (!iVariable_isValid(pExpression))
+			if (!iVariable_isValid(varExpression))
 			{
 				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, NULL);
 				return(NULL);
@@ -2199,29 +2199,29 @@
 		//////////
         // Parameter 2 must be numeric
 		//////
-			if (!iVariable_isValid(pResultSize) || !iVariable_isTypeNumeric(pResultSize))
+			if (!iVariable_isValid(varResultSize) || !iVariable_isTypeNumeric(varResultSize))
 			{
-				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, pResultSize->compRelated);
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varResultSize->compRelated);
 				return(NULL);
 			}
-			lnResultSize = iiVariable_getAs_s32(pResultSize, false, &error, &errorNum);
-			if (error)	{	iError_reportByNumber(errorNum, pResultSize->compRelated);	return(NULL);	}
+			lnResultSize = iiVariable_getAs_s32(varResultSize, false, &error, &errorNum);
+			if (error)	{	iError_reportByNumber(errorNum, varResultSize->compRelated);	return(NULL);	}
 
 
 		//////////
         // Parameter 3 is optional, but if present...
 		//////
-			if (iVariable_isValid(pPadCharacter))
+			if (iVariable_isValid(varPadCharacter))
 			{
 				// ...it must be character
-				if (!iVariable_isTypeCharacter(pPadCharacter))
+				if (!iVariable_isTypeCharacter(varPadCharacter))
 				{
-					iError_reportByNumber(_ERROR_P3_IS_INCORRECT, pPadCharacter->compRelated);
+					iError_reportByNumber(_ERROR_P3_IS_INCORRECT, varPadCharacter->compRelated);
 					return(NULL);
 				}
 
 				// Validate the pad character is at least one character long
-				if (pPadCharacter->value.length == 0)
+				if (varPadCharacter->value.length == 0)
 				{
 					iError_report("Parameter 3 must be at least one character");
 					return(NULL);
@@ -2229,14 +2229,14 @@
 
 			} else {
 				// The first occurrence is what we're after
-				pPadCharacter = varConstant_space;
+				varPadCharacter = varConstant_space;
 			}
 
 
 		//////////
 		// Create the return variable
 		//////
-			tempVar = iVariable_convertForDisplay(pExpression);
+			tempVar = iVariable_convertForDisplay(varExpression);
 
 			// If it wasn't created, or it's already as long or longer than its target, return it
 			if (!tempVar || tempVar->value.length >= lnResultSize)
@@ -2280,10 +2280,10 @@
 			if (lnPadLeftStopper >= 1)
 			{
 				// Iterate through every cycle required to populate the left side
-				for (lnI = 0; lnI < lnPadLeftStopper; lnI += pPadCharacter->value.length)
+				for (lnI = 0; lnI < lnPadLeftStopper; lnI += varPadCharacter->value.length)
 				{
 					// Copy this string, or as much of it will fit
-					memcpy(result->value.data + lnI, pPadCharacter->value.data, min(lnPadLeftStopper - lnI, pPadCharacter->value.length));
+					memcpy(result->value.data + lnI, varPadCharacter->value.data, min(lnPadLeftStopper - lnI, varPadCharacter->value.length));
 				}
 			}
 
@@ -2294,10 +2294,10 @@
 			if (lnPadRightStopper >= 1)
 			{
 				// Iterate through every cycle required to populate the right side
-				for (lnI = lnPadRightStart; lnI < lnPadRightStopper; lnI += pPadCharacter->value.length)
+				for (lnI = lnPadRightStart; lnI < lnPadRightStopper; lnI += varPadCharacter->value.length)
 				{
 					// Copy this string, or as much of it will fit
-					memcpy(result->value.data + lnI, pPadCharacter->value.data, min(lnPadRightStopper - lnI, pPadCharacter->value.length));
+					memcpy(result->value.data + lnI, varPadCharacter->value.data, min(lnPadRightStopper - lnI, varPadCharacter->value.length));
 				}
 			}
 
@@ -2342,7 +2342,7 @@
 // Returns:
 //    Character		-- The string with all words proper'd (if I can use that as a verb)
 //////
-	SVariable* function_proper(SVariable* pString)
+	SVariable* function_proper(SVariable* varString)
 	{
 		s32			lnI;
 		bool		llUpperNext;
@@ -2352,9 +2352,9 @@
 		//////////
         // Parameter 1 must be character
 		//////
-			if (!iVariable_isValid(pString) || iVariable_getType(pString) != _VAR_TYPE_CHARACTER)
+			if (!iVariable_isValid(varString) || iVariable_getType(varString) != _VAR_TYPE_CHARACTER)
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pString->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varString->compRelated);
 				return(NULL);
 			}
 
@@ -2373,7 +2373,7 @@
 		//////////
         // Copy the source string
 		//////
-	        iDatum_duplicate(&result->value, &pString->value);
+	        iDatum_duplicate(&result->value, &varString->value);
 
 
 		//////////
@@ -2436,7 +2436,7 @@
 // Returns:
 //    Character		-- The string of the input replicated N times
 //////
-	SVariable* function_replicate(SVariable* pString, SVariable* pCount)
+	SVariable* function_replicate(SVariable* varString, SVariable* varCount)
 	{
 		s32			lnI, lnCopies;
 		u32			errorNum;
@@ -2447,9 +2447,9 @@
 		//////////
         // Parameter 1 must be character
 		//////
-			if (!iVariable_isValid(pString) || iVariable_getType(pString) != _VAR_TYPE_CHARACTER)
+			if (!iVariable_isValid(varString) || iVariable_getType(varString) != _VAR_TYPE_CHARACTER)
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pString->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varString->compRelated);
 				return(NULL);
 			}
 
@@ -2457,9 +2457,9 @@
 		//////////
         // Parameter 2 must be nmumeric
 		//////
-			if (!iVariable_isValid(pCount) || !iVariable_isTypeNumeric(pCount))
+			if (!iVariable_isValid(varCount) || !iVariable_isTypeNumeric(varCount))
 			{
-				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, pCount->compRelated);
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varCount->compRelated);
 				return(NULL);
 			}
 
@@ -2467,10 +2467,10 @@
 		//////////
         // Find out how long they want our string to be
 		//////
-			lnCopies = iiVariable_getAs_s32(pCount, false, &error, &errorNum);
+			lnCopies = iiVariable_getAs_s32(varCount, false, &error, &errorNum);
 			if (error)
 			{
-				iError_reportByNumber(errorNum, pCount->compRelated);
+				iError_reportByNumber(errorNum, varCount->compRelated);
 				return(NULL);
 			}
 
@@ -2485,12 +2485,12 @@
 				return(NULL);
 			}
 		
-			if (lnCopies > 0 && pString->value.length > 0)
+			if (lnCopies > 0 && varString->value.length > 0)
 			{
 				// Repeat the string as many as are indicated
-				iDatum_allocateSpace(&result->value, lnCopies * pString->value.length);
+				iDatum_allocateSpace(&result->value, lnCopies * varString->value.length);
 				for (lnI = 0; lnI < lnCopies; lnI++)
-					memcpy(result->value.data + (lnI * pString->value.length), pString->value.data, pString->value.length);
+					memcpy(result->value.data + (lnI * varString->value.length), varString->value.data, varString->value.length);
 			}
 		
 
@@ -2526,7 +2526,7 @@
 //    Numeric		-- Constructed RGB() integer
 //
 //////
-	SVariable* function_rgb(SVariable* pRed, SVariable* pGrn, SVariable* pBlu)
+	SVariable* function_rgb(SVariable* varRed, SVariable* varGrn, SVariable* varBlu)
 	{
 		f32			lfRed, lfGrn, lfBlu;
 		s32			lnRed, lnGrn, lnBlu;
@@ -2538,9 +2538,9 @@
 		//////////
         // Parameter 1 must be numeric
 		//////
-			if (!iVariable_isValid(pRed) || !iVariable_isTypeNumeric(pRed))
+			if (!iVariable_isValid(varRed) || !iVariable_isTypeNumeric(varRed))
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pRed->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varRed->compRelated);
 				return(NULL);
 			}
 
@@ -2548,9 +2548,9 @@
 		//////////
         // Parameter 2 must be numeric
 		//////
-			if (!iVariable_isValid(pGrn) || !iVariable_isTypeNumeric(pGrn))
+			if (!iVariable_isValid(varGrn) || !iVariable_isTypeNumeric(varGrn))
 			{
-				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, pGrn->compRelated);
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varGrn->compRelated);
 				return(NULL);
 			}
 
@@ -2558,9 +2558,9 @@
 		//////////
         // Parameter 3 must be numeric
 		//////
-			if (!iVariable_isValid(pBlu) || !iVariable_isTypeNumeric(pBlu))
+			if (!iVariable_isValid(varBlu) || !iVariable_isTypeNumeric(varBlu))
 			{
-				iError_reportByNumber(_ERROR_P3_IS_INCORRECT, pBlu->compRelated);
+				iError_reportByNumber(_ERROR_P3_IS_INCORRECT, varBlu->compRelated);
 				return(NULL);
 			}
 
@@ -2568,57 +2568,57 @@
 		//////////
 		// Grab the parameters as usable values
 		//////
-			if (iVariable_isTypeFloatingPoint(pRed))
+			if (iVariable_isTypeFloatingPoint(varRed))
 			{
 				// It is a floating point, which means it must be in the range 0..1
-				lfRed = iiVariable_getAs_f32(pRed, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, pRed->compRelated);	return(NULL);	}
+				lfRed = iiVariable_getAs_f32(varRed, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varRed->compRelated);	return(NULL);	}
 				lnRed = (s32)(255.0f * min(max(lfRed, 0.0f), 1.0f));
 				
 			} else {
 				// It is an integer, which means it must be in the range 0..255
-				lnRed = iiVariable_getAs_s32(pRed, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, pRed->compRelated);	return(NULL);	}
+				lnRed = iiVariable_getAs_s32(varRed, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varRed->compRelated);	return(NULL);	}
 			}
 			if (lnRed < 0 || lnRed > 255)
 			{
-				iError_reportByNumber(_ERROR_OUT_OF_RANGE, pRed->compRelated);
+				iError_reportByNumber(_ERROR_OUT_OF_RANGE, varRed->compRelated);
 				return(NULL);
 			}
 
-			if (iVariable_isTypeFloatingPoint(pGrn))
+			if (iVariable_isTypeFloatingPoint(varGrn))
 			{
 				// It is a floating point, which means it must be in the range 0..1
-				lfGrn = iiVariable_getAs_f32(pGrn, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, pGrn->compRelated);	return(NULL);	}
+				lfGrn = iiVariable_getAs_f32(varGrn, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varGrn->compRelated);	return(NULL);	}
 				lnGrn = (s32)(255.0f * min(max(lfGrn, 0.0f), 1.0f));
 
 			} else {
 				// It is an integer, which means it must be in the range 0..255
-				lnGrn = iiVariable_getAs_s32(pGrn, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, pGrn->compRelated);	return(NULL);	}
+				lnGrn = iiVariable_getAs_s32(varGrn, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varGrn->compRelated);	return(NULL);	}
 			}
 			if (lnGrn < 0 || lnGrn > 255)
 			{
-				iError_reportByNumber(_ERROR_OUT_OF_RANGE, pGrn->compRelated);
+				iError_reportByNumber(_ERROR_OUT_OF_RANGE, varGrn->compRelated);
 				return(NULL);
 			}
 
-			if (iVariable_isTypeFloatingPoint(pBlu))
+			if (iVariable_isTypeFloatingPoint(varBlu))
 			{
 				// It is a floating point, which means it must be in the range 0..1
-				lfBlu = iiVariable_getAs_f32(pBlu, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, pBlu->compRelated);	return(NULL);	}
+				lfBlu = iiVariable_getAs_f32(varBlu, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varBlu->compRelated);	return(NULL);	}
 				lnBlu = (s32)(255.0f * min(max(lfBlu, 0.0f), 1.0f));
 
 			} else {
 				// It is an integer, which means it must be in the range 0..255
-				lnBlu	= iiVariable_getAs_s32(pBlu, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, pBlu->compRelated);	return(NULL);	}
+				lnBlu	= iiVariable_getAs_s32(varBlu, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varBlu->compRelated);	return(NULL);	}
 			}
 			if (lnBlu < 0 || lnBlu > 255)
 			{
-				iError_reportByNumber(_ERROR_OUT_OF_RANGE, pBlu->compRelated);
+				iError_reportByNumber(_ERROR_OUT_OF_RANGE, varBlu->compRelated);
 				return(NULL);
 			}
 
@@ -2673,7 +2673,7 @@
 //    Numeric		-- Constructed RGBA() integer
 //
 //////
-	SVariable* function_rgba(SVariable* pRed, SVariable* pGrn, SVariable* pBlu, SVariable* pAlp)
+	SVariable* function_rgba(SVariable* varRed, SVariable* varGrn, SVariable* varBlu, SVariable* varAlp)
 	{
 		f32			lfRed, lfGrn, lfBlu, lfAlp;
 		s32			lnRed, lnGrn, lnBlu, lnAlp;
@@ -2685,9 +2685,9 @@
 		//////////
         // Parameter 1 must be numeric
 		//////
-			if (!iVariable_isValid(pRed) || !iVariable_isTypeNumeric(pRed))
+			if (!iVariable_isValid(varRed) || !iVariable_isTypeNumeric(varRed))
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pRed->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varRed->compRelated);
 				return(NULL);
 			}
 
@@ -2695,9 +2695,9 @@
 		//////////
         // Parameter 2 must be numeric
 		//////
-			if (!iVariable_isValid(pGrn) || !iVariable_isTypeNumeric(pGrn))
+			if (!iVariable_isValid(varGrn) || !iVariable_isTypeNumeric(varGrn))
 			{
-				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, pGrn->compRelated);
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varGrn->compRelated);
 				return(NULL);
 			}
 
@@ -2705,9 +2705,9 @@
 		//////////
         // Parameter 3 must be numeric
 		//////
-			if (!iVariable_isValid(pBlu) || !iVariable_isTypeNumeric(pBlu))
+			if (!iVariable_isValid(varBlu) || !iVariable_isTypeNumeric(varBlu))
 			{
-				iError_reportByNumber(_ERROR_P3_IS_INCORRECT, pBlu->compRelated);
+				iError_reportByNumber(_ERROR_P3_IS_INCORRECT, varBlu->compRelated);
 				return(NULL);
 			}
 
@@ -2715,9 +2715,9 @@
 		//////////
         // Parameter 4 must be numeric
 		//////
-			if (!iVariable_isValid(pAlp) || !iVariable_isTypeNumeric(pAlp))
+			if (!iVariable_isValid(varAlp) || !iVariable_isTypeNumeric(varAlp))
 			{
-				iError_reportByNumber(_ERROR_P3_IS_INCORRECT, pAlp->compRelated);
+				iError_reportByNumber(_ERROR_P3_IS_INCORRECT, varAlp->compRelated);
 				return(NULL);
 			}
 
@@ -2725,75 +2725,75 @@
 		//////////
 		// Grab the parameters as usable values
 		//////
-			if (iVariable_isTypeFloatingPoint(pRed))
+			if (iVariable_isTypeFloatingPoint(varRed))
 			{
 				// It is a floating point, which means it must be in the range 0..1
-				lfRed = iiVariable_getAs_f32(pRed, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, pRed->compRelated);	return(NULL);	}
+				lfRed = iiVariable_getAs_f32(varRed, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varRed->compRelated);	return(NULL);	}
 				lnRed = (s32)(255.0f * min(max(lfRed, 0.0f), 1.0f));
 				
 			} else {
 				// It is an integer, which means it must be in the range 0..255
-				lnRed = iiVariable_getAs_s32(pRed, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, pRed->compRelated);	return(NULL);	}
+				lnRed = iiVariable_getAs_s32(varRed, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varRed->compRelated);	return(NULL);	}
 			}
 			if (lnRed < 0 || lnRed > 255)
 			{
-				iError_reportByNumber(_ERROR_OUT_OF_RANGE, pRed->compRelated);
+				iError_reportByNumber(_ERROR_OUT_OF_RANGE, varRed->compRelated);
 				return(NULL);
 			}
 
-			if (iVariable_isTypeFloatingPoint(pGrn))
+			if (iVariable_isTypeFloatingPoint(varGrn))
 			{
 				// It is a floating point, which means it must be in the range 0..1
-				lfGrn = iiVariable_getAs_f32(pGrn, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, pGrn->compRelated);	return(NULL);	}
+				lfGrn = iiVariable_getAs_f32(varGrn, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varGrn->compRelated);	return(NULL);	}
 				lnGrn = (s32)(255.0f * min(max(lfGrn, 0.0f), 1.0f));
 
 			} else {
 				// It is an integer, which means it must be in the range 0..255
-				lnGrn = iiVariable_getAs_s32(pGrn, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, pGrn->compRelated);	return(NULL);	}
+				lnGrn = iiVariable_getAs_s32(varGrn, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varGrn->compRelated);	return(NULL);	}
 			}
 			if (lnGrn < 0 || lnGrn > 255)
 			{
-				iError_reportByNumber(_ERROR_OUT_OF_RANGE, pGrn->compRelated);
+				iError_reportByNumber(_ERROR_OUT_OF_RANGE, varGrn->compRelated);
 				return(NULL);
 			}
 
-			if (iVariable_isTypeFloatingPoint(pBlu))
+			if (iVariable_isTypeFloatingPoint(varBlu))
 			{
 				// It is a floating point, which means it must be in the range 0..1
-				lfBlu = iiVariable_getAs_f32(pBlu, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, pBlu->compRelated);	return(NULL);	}
+				lfBlu = iiVariable_getAs_f32(varBlu, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varBlu->compRelated);	return(NULL);	}
 				lnBlu = (s32)(255.0f * min(max(lfBlu, 0.0f), 1.0f));
 
 			} else {
 				// It is an integer, which means it must be in the range 0..255
-				lnBlu	= iiVariable_getAs_s32(pBlu, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, pBlu->compRelated);	return(NULL);	}
+				lnBlu	= iiVariable_getAs_s32(varBlu, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varBlu->compRelated);	return(NULL);	}
 			}
 			if (lnBlu < 0 || lnBlu > 255)
 			{
-				iError_reportByNumber(_ERROR_OUT_OF_RANGE, pBlu->compRelated);
+				iError_reportByNumber(_ERROR_OUT_OF_RANGE, varBlu->compRelated);
 				return(NULL);
 			}
 
-			if (iVariable_isTypeFloatingPoint(pAlp))
+			if (iVariable_isTypeFloatingPoint(varAlp))
 			{
 				// It is a floating point, which means it must be in the range 0..1
-				lfAlp = iiVariable_getAs_f32(pAlp, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, pAlp->compRelated);	return(NULL);	}
+				lfAlp = iiVariable_getAs_f32(varAlp, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varAlp->compRelated);	return(NULL);	}
 				lnAlp = (s32)(255.0f * min(max(lfAlp, 0.0f), 1.0f));
 
 			} else {
 				// It is an integer, which means it must be in the range 0..255
-				lnAlp	= iiVariable_getAs_s32(pAlp, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, pAlp->compRelated);	return(NULL);	}
+				lnAlp	= iiVariable_getAs_s32(varAlp, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varAlp->compRelated);	return(NULL);	}
 			}
 			if (lnAlp < 0 || lnAlp > 255)
 			{
-				iError_reportByNumber(_ERROR_OUT_OF_RANGE, pAlp->compRelated);
+				iError_reportByNumber(_ERROR_OUT_OF_RANGE, varAlp->compRelated);
 				return(NULL);
 			}
 
@@ -2845,7 +2845,7 @@
 // Returns:
 //    Character		-- The string of the right N characters
 //////
-	SVariable* function_right(SVariable* pString, SVariable* pCount)
+	SVariable* function_right(SVariable* varString, SVariable* varCount)
 	{
 		s32			lnStart, lnLength;
 		u32			errorNum;
@@ -2856,9 +2856,9 @@
 		//////////
         // Parameter 1 must be character
 		//////
-			if (!iVariable_isValid(pString) || iVariable_getType(pString) != _VAR_TYPE_CHARACTER)
+			if (!iVariable_isValid(varString) || iVariable_getType(varString) != _VAR_TYPE_CHARACTER)
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pString->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varString->compRelated);
 				return(NULL);
 			}
 
@@ -2866,9 +2866,9 @@
 		//////////
         // Parameter 2 must be nmumeric
 		//////
-			if (!iVariable_isValid(pCount) || !iVariable_isTypeNumeric(pCount))
+			if (!iVariable_isValid(varCount) || !iVariable_isTypeNumeric(varCount))
 			{
-				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, pCount->compRelated);
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varCount->compRelated);
 				return(NULL);
 			}
 
@@ -2876,10 +2876,10 @@
 		//////////
         // Find out how long they want our string to be
 		//////
-			lnLength = iiVariable_getAs_s32(pCount, false, &error, &errorNum);
+			lnLength = iiVariable_getAs_s32(varCount, false, &error, &errorNum);
 			if (error)
 			{
-				iError_reportByNumber(errorNum, pCount->compRelated);
+				iError_reportByNumber(errorNum, varCount->compRelated);
 				return(NULL);
 			}
 
@@ -2898,15 +2898,15 @@
 		//////////
         // Copy as much of the source string as will fit
 		//////
-			if (lnLength >= pString->value.length)
+			if (lnLength >= varString->value.length)
 			{
 				// Copy only the length of the current string
-				iDatum_duplicate(&result->value, &pString->value);
+				iDatum_duplicate(&result->value, &varString->value);
 
 			} else if (lnLength > 0) {
 				// We can do an extraction
-				lnStart = pString->value.length - lnLength;
-				iDatum_duplicate(&result->value, pString->value.data + lnStart, lnLength);
+				lnStart = varString->value.length - lnLength;
+				iDatum_duplicate(&result->value, varString->value.data + lnStart, lnLength);
 			}
 
 
@@ -2939,9 +2939,9 @@
 // Returns:
 //    Character		-- The string with any trailing spaces removed
 //////
-	SVariable* function_rtrim(SVariable* pString, SVariable* pCaseInsensitive, SVariable* pTrimChars1, SVariable* pTrimChars2)
+	SVariable* function_rtrim(SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2)
 	{
-		return(ifunction_trimCommon(pString, pCaseInsensitive, pTrimChars1, pTrimChars2, false, true));
+		return(ifunction_trimCommon(varString, varCaseInsensitive, varTrimChars1, varTrimChars2, false, true));
 	}
 
 
@@ -2967,7 +2967,7 @@
 // Returns:
 //    Character		-- The string with any leading and trailing spaces removed
 //////
-	SVariable* function_space(SVariable* pCount)
+	SVariable* function_space(SVariable* varCount)
 	{
 		s32			lnLength;
 		u32			errorNum;
@@ -2978,9 +2978,9 @@
 		//////////
         // Parameter 1 must be numeric
 		//////
-			if (!iVariable_isValid(pCount) || !iVariable_isTypeNumeric(pCount))
+			if (!iVariable_isValid(varCount) || !iVariable_isTypeNumeric(varCount))
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pCount->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varCount->compRelated);
 				return(NULL);
 			}
 
@@ -2988,10 +2988,10 @@
 		//////////
         // Find out how long they want our string to be
 		//////
-			lnLength = iiVariable_getAs_s32(pCount, false, &error, &errorNum);
+			lnLength = iiVariable_getAs_s32(varCount, false, &error, &errorNum);
 			if (error)
 			{
-				iError_reportByNumber(errorNum, pCount->compRelated);
+				iError_reportByNumber(errorNum, varCount->compRelated);
 				return(NULL);
 			}
 
@@ -3047,17 +3047,17 @@
 //    Character		-- The original string with all components replaced
 //
 //////
-	SVariable* function_strtran(SVariable* pString, SVariable* pSearch, SVariable* pReplace, SVariable* pRecursiveCount)
+	SVariable* function_strtran(SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount)
 	{
-		return(ifunction_strtranCommon(pString, pSearch, pReplace, pRecursiveCount, true));
+		return(ifunction_strtranCommon(varString, varSearch, varReplace, varRecursiveCount, true));
 	}
 
-	SVariable* function_strtranc(SVariable* pString, SVariable* pSearch, SVariable* pReplace, SVariable* pRecursiveCount)
+	SVariable* function_strtranc(SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount)
 	{
-		return(ifunction_strtranCommon(pString, pSearch, pReplace, pRecursiveCount, false));
+		return(ifunction_strtranCommon(varString, varSearch, varReplace, varRecursiveCount, false));
 	}
 
-	SVariable* ifunction_strtranCommon(SVariable* pString, SVariable* pSearch, SVariable* pReplace, SVariable* pRecursiveCount, bool tlCaseSensitive)
+	SVariable* ifunction_strtranCommon(SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount, bool tlCaseSensitive)
 	{
 		s32			lnI, lnIteration, lnSrc, lnDst, lnLength, lnRecursiveCount, lnFoundCount;
 		bool		error;
@@ -3069,9 +3069,9 @@
 		//////////
         // Parameter 1 must be character
 		//////
-			if (!iVariable_isValid(pString) || !iVariable_isTypeCharacter(pString))
+			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pString->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varString->compRelated);
 				return(NULL);
 			}
 
@@ -3079,9 +3079,9 @@
 		//////////
         // Parameter 2 must be character
 		//////
-			if (!iVariable_isValid(pSearch) || !iVariable_isTypeCharacter(pSearch))
+			if (!iVariable_isValid(varSearch) || !iVariable_isTypeCharacter(varSearch))
 			{
-				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, pSearch->compRelated);
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varSearch->compRelated);
 				return(NULL);
 			}
 
@@ -3089,14 +3089,14 @@
 		//////////
         // Parameter 3 is optional, but must be character if present
 		//////
-			if (!iVariable_isValid(pReplace))
+			if (!iVariable_isValid(varReplace))
 			{
 				// They didn't provide a 3rd parameter, so we'll use a pseudo placeholder which is an empty string
-				pReplace = varEmptyString;
+				varReplace = varEmptyString;
 
-			} else if (!iVariable_isTypeCharacter(pReplace)) {
+			} else if (!iVariable_isTypeCharacter(varReplace)) {
 				// It is invalid
-				iError_reportByNumber(_ERROR_P3_IS_INCORRECT, pReplace->compRelated);
+				iError_reportByNumber(_ERROR_P3_IS_INCORRECT, varReplace->compRelated);
 				return(NULL);
 			}
 
@@ -3104,24 +3104,24 @@
 		//////////
         // Parameter 4 is optional, but must be numeric if present
 		//////
-			if (!iVariable_isValid(pRecursiveCount))
+			if (!iVariable_isValid(varRecursiveCount))
 			{
 				// They didn't provide a 3rd parameter, so we'll use a pseudo placeholder which is an empty string
 				lnRecursiveCount = 1;
 
-			} else if (!iVariable_isTypeNumeric(pRecursiveCount)) {
+			} else if (!iVariable_isTypeNumeric(varRecursiveCount)) {
 				// It is invalid
-				iError_reportByNumber(_ERROR_P4_IS_INCORRECT, pRecursiveCount->compRelated);
+				iError_reportByNumber(_ERROR_P4_IS_INCORRECT, varRecursiveCount->compRelated);
 				return(NULL);
 
 			} else {
 				// Grab the actual value
-				lnRecursiveCount = iiVariable_getAs_s32(pRecursiveCount, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, pRecursiveCount->compRelated);	return(NULL);	}
+				lnRecursiveCount = iiVariable_getAs_s32(varRecursiveCount, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varRecursiveCount->compRelated);	return(NULL);	}
 				if (lnRecursiveCount < 0)
 				{
 					// It is invalid
-					iError_reportByNumber(_ERROR_P4_IS_INCORRECT, pRecursiveCount->compRelated);
+					iError_reportByNumber(_ERROR_P4_IS_INCORRECT, varRecursiveCount->compRelated);
 					return(NULL);
 				}
 			}
@@ -3131,10 +3131,10 @@
 		// If we aren't searching for anything, we don't need to go through the rigmarole
 		//////
 			// If the original string is empty, or the characters to search for are empty, then we don't need to do anything
-			if (pSearch->value.length == 0 || pSearch->value.length > pString->value.length)
+			if (varSearch->value.length == 0 || varSearch->value.length > varString->value.length)
 			{
 				// Allocate a full copy of the original string
-				result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, pString->value.data, pString->value.length);
+				result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, varString->value.data, varString->value.length);
 				return(result);
 			}
 
@@ -3142,20 +3142,20 @@
 		//////////
 		// Iterate through the string twice, the first to determine how long the destination will be, the second to copy
 		//////
-			for (lnIteration = 1, result = pString; lnRecursiveCount == 0 || lnIteration <= lnRecursiveCount; lnIteration++)
+			for (lnIteration = 1, result = varString; lnRecursiveCount == 0 || lnIteration <= lnRecursiveCount; lnIteration++)
 			{
 				// Search for any matches, and determine the overall length
-				for (lnI = 0, lnFoundCount = 0; lnI < result->value.length - pSearch->value.length; )
+				for (lnI = 0, lnFoundCount = 0; lnI < result->value.length - varSearch->value.length; )
 				{
 					// See if this matches the source string
 					if (tlCaseSensitive)
 					{
 						// Case-sensitive compare
-						if (memcmp(result->value.data + lnI, pSearch->value.data, pSearch->value.length) == 0)
+						if (memcmp(result->value.data + lnI, varSearch->value.data, varSearch->value.length) == 0)
 						{
 							// We found a match
 							++lnFoundCount;
-							lnI += pSearch->value.length;
+							lnI += varSearch->value.length;
 
 						} else {
 							// Skip to the next character
@@ -3164,11 +3164,11 @@
 
 					} else {
 						// Case-insensitive compare
-						if (_memicmp(result->value.data + lnI, pSearch->value.data, pSearch->value.length) == 0)
+						if (_memicmp(result->value.data + lnI, varSearch->value.data, varSearch->value.length) == 0)
 						{
 							// We found a match
 							++lnFoundCount;
-							lnI += pSearch->value.length;
+							lnI += varSearch->value.length;
 
 						} else {
 							// Skip to the next character
@@ -3181,15 +3181,15 @@
 				if (lnFoundCount == 0)
 				{
 					// If we haven't made an official copy yet, we need to do so now
-					if (result == pString)
-						result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, pString->value.data, pString->value.length);
+					if (result == varString)
+						result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, varString->value.data, varString->value.length);
 
 					// Return our result
 					return(result);
 				}
 
 				// When we get here, we have a new length for our copy
-				lnLength = result->value.length - (lnFoundCount * pSearch->value.length) + (lnFoundCount * pReplace->value.length);
+				lnLength = result->value.length - (lnFoundCount * varSearch->value.length) + (lnFoundCount * varReplace->value.length);
 
 				// Allocate a new string of that length
 				resultNew = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
@@ -3202,12 +3202,12 @@
 					if (tlCaseSensitive)
 					{
 						// Case-sensitive compare
-						if (memcmp(result->value.data + lnSrc, pSearch->value.data, pSearch->value.length) == 0)
+						if (memcmp(result->value.data + lnSrc, varSearch->value.data, varSearch->value.length) == 0)
 						{
 							// We found a match
-							memcpy(resultNew->value.data + lnDst, pReplace->value.data, pReplace->value.length);
-							lnSrc += pSearch->value.length;
-							lnDst += pReplace->value.length;
+							memcpy(resultNew->value.data + lnDst, varReplace->value.data, varReplace->value.length);
+							lnSrc += varSearch->value.length;
+							lnDst += varReplace->value.length;
 
 						} else {
 							// Skip to the next character
@@ -3218,12 +3218,12 @@
 
 					} else {
 						// Case-insensitive compare
-						if (_memicmp(result->value.data + lnSrc, pSearch->value.data, pSearch->value.length) == 0)
+						if (_memicmp(result->value.data + lnSrc, varSearch->value.data, varSearch->value.length) == 0)
 						{
 							// We found a match
-							memcpy(resultNew->value.data + lnDst, pReplace->value.data, pReplace->value.length);
-							lnSrc += pSearch->value.length;
-							lnDst += pReplace->value.length;
+							memcpy(resultNew->value.data + lnDst, varReplace->value.data, varReplace->value.length);
+							lnSrc += varSearch->value.length;
+							lnDst += varReplace->value.length;
 
 						} else {
 							// Skip to the next character
@@ -3235,7 +3235,7 @@
 				}
 
 				// Delete our original (if it wasn't pointing to our source string)
-				if (result != pString)
+				if (result != varString)
 					iVariable_delete(result, true);
 
 				// Set the new to our result
@@ -3277,7 +3277,7 @@
 //    Character		-- String has been modified as per the STUFF() function.
 //
 //////
-	SVariable* function_stuff(SVariable* pOriginalString, SVariable* pStartPos, SVariable* pNumToRemove, SVariable* pStuffString)
+	SVariable* function_stuff(SVariable* varOriginalString, SVariable* varStartPos, SVariable* varNumToRemove, SVariable* varStuffString)
 	{
 		s32			lnStartPosition, lnRemoveCount, lnBufferLength;
 		bool		error;
@@ -3289,9 +3289,9 @@
 		//////////
         // Parameter 1 must be character
 		//////
-			if (!iVariable_isValid(pOriginalString) || !iVariable_isTypeCharacter(pOriginalString))
+			if (!iVariable_isValid(varOriginalString) || !iVariable_isTypeCharacter(varOriginalString))
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pOriginalString->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varOriginalString->compRelated);
 				return(NULL);
 			}
 
@@ -3299,9 +3299,9 @@
 		//////////
         // Parameter 2 must be numeric
 		//////
-			if (!iVariable_isValid(pStartPos) || !iVariable_isTypeNumeric(pStartPos))
+			if (!iVariable_isValid(varStartPos) || !iVariable_isTypeNumeric(varStartPos))
 			{
-				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, pStartPos->compRelated);
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varStartPos->compRelated);
 				return(NULL);
 			}
 
@@ -3309,9 +3309,9 @@
 		//////////
         // Parameter 3 must be numeric
 		//////
-			if (!iVariable_isValid(pNumToRemove) || !iVariable_isTypeNumeric(pNumToRemove))
+			if (!iVariable_isValid(varNumToRemove) || !iVariable_isTypeNumeric(varNumToRemove))
 			{
-				iError_reportByNumber(_ERROR_P3_IS_INCORRECT, pNumToRemove->compRelated);
+				iError_reportByNumber(_ERROR_P3_IS_INCORRECT, varNumToRemove->compRelated);
 				return(NULL);
 			}
 
@@ -3319,9 +3319,9 @@
 		//////////
         // Parameter 4 must be character
 		//////
-			if (!iVariable_isValid(pStuffString) || !iVariable_isTypeCharacter(pStuffString))
+			if (!iVariable_isValid(varStuffString) || !iVariable_isTypeCharacter(varStuffString))
 			{
-				iError_reportByNumber(_ERROR_P4_IS_INCORRECT, pStuffString->compRelated);
+				iError_reportByNumber(_ERROR_P4_IS_INCORRECT, varStuffString->compRelated);
 				return(NULL);
 			}
 
@@ -3330,8 +3330,8 @@
 		// Grab the parameters as usable values
 		//////
 			// Your algorithm code goes here
-			lnStartPosition	= iiVariable_getAs_s32(pStartPos, false, &error, &errorNum);
-			lnRemoveCount	= iiVariable_getAs_s32(pNumToRemove, false, &error, &errorNum);
+			lnStartPosition	= iiVariable_getAs_s32(varStartPos, false, &error, &errorNum);
+			lnRemoveCount	= iiVariable_getAs_s32(varNumToRemove, false, &error, &errorNum);
 
 
 		//////////
@@ -3345,18 +3345,18 @@
 		// Adjust them based on real-world observations from the string
 		//////
 			// Are they trying to start beyond the end of the string?  If so, reduce to the end.
-			if (lnStartPosition > pOriginalString->value.length)
-				lnStartPosition = pOriginalString->value.length + 1;
+			if (lnStartPosition > varOriginalString->value.length)
+				lnStartPosition = varOriginalString->value.length + 1;
 
 			// Are they trying to remove more than can be extracted?
-			if (lnStartPosition - 1 + lnRemoveCount > pOriginalString->value.length)
-				lnRemoveCount = pOriginalString->value.length - lnStartPosition + 1;
+			if (lnStartPosition - 1 + lnRemoveCount > varOriginalString->value.length)
+				lnRemoveCount = varOriginalString->value.length - lnStartPosition + 1;
 
 
 		//////////
 		// Construct our destination
 		//////
-			lnBufferLength	= pOriginalString->value.length - lnRemoveCount + pStuffString->value.length;
+			lnBufferLength	= varOriginalString->value.length - lnRemoveCount + varStuffString->value.length;
 			lcBuffer = (s8*)malloc(lnBufferLength);
 			if (!lcBuffer)
 			{
@@ -3369,15 +3369,15 @@
 
 			// We only copy the first part if there is something to copy
 			if (lnStartPosition > 0)
-				memcpy(lcBuffer, pOriginalString->value.data, lnStartPosition);
+				memcpy(lcBuffer, varOriginalString->value.data, lnStartPosition);
 
 			// We only insert our stuff string if there is something to put there
-			if (pStuffString->value.length > 0)
-				memcpy(lcBuffer + lnStartPosition, pStuffString->value.data, pStuffString->value.length);
+			if (varStuffString->value.length > 0)
+				memcpy(lcBuffer + lnStartPosition, varStuffString->value.data, varStuffString->value.length);
 
 			// We only copy over the last part if there's something there
-			if (pOriginalString->value.length - lnStartPosition - lnRemoveCount > 0)
-				memcpy(lcBuffer + lnStartPosition + pStuffString->value.length, pOriginalString->value.data + lnStartPosition + lnRemoveCount, pOriginalString->value.length - lnStartPosition - lnRemoveCount);
+			if (varOriginalString->value.length - lnStartPosition - lnRemoveCount > 0)
+				memcpy(lcBuffer + lnStartPosition + varStuffString->value.length, varOriginalString->value.data + lnStartPosition + lnRemoveCount, varOriginalString->value.length - lnStartPosition - lnRemoveCount);
 
 
 		//////////
@@ -3432,7 +3432,7 @@
 // Returns:
 //    Numeric		-- Depending on index, various value ranges are returned
 //////
-    SVariable* function_sysmetric(SVariable* pIndex)
+    SVariable* function_sysmetric(SVariable* varIndex)
     {
         s32			index;
 		RECT		lrc;
@@ -3444,9 +3444,9 @@
 		//////////
         // Parameter 1 must be numeric
 		//////
-			if (!iVariable_isValid(pIndex) || !iVariable_isTypeNumeric(pIndex))
+			if (!iVariable_isValid(varIndex) || !iVariable_isTypeNumeric(varIndex))
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pIndex->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varIndex->compRelated);
 				return(NULL);
 			}
 
@@ -3454,10 +3454,10 @@
 		//////////
         // It must be in the range 1..34
 		//////
-			index = iiVariable_getAs_s32(pIndex, false, &error, &errorNum);
+			index = iiVariable_getAs_s32(varIndex, false, &error, &errorNum);
 			if (error)
 			{
-				iError_reportByNumber(errorNum, pIndex->compRelated);
+				iError_reportByNumber(errorNum, varIndex->compRelated);
 				return(NULL);
 
 			} else if (index > 34 || index < 1) {
@@ -3653,7 +3653,7 @@
 // Returns:
 //    Character		-- The string after the variable was converted and formatted
 //////
-	SVariable* function_transform(SVariable* pVariable, SVariable* pFormat)
+	SVariable* function_transform(SVariable* varVariable, SVariable* varFormat)
 	{
 		SVariable* result;
 
@@ -3661,9 +3661,9 @@
 		//////////
         // Parameter 1 must be valid
 		//////
-			if (!iVariable_isValid(pVariable))
+			if (!iVariable_isValid(varVariable))
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pVariable->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varVariable->compRelated);
 				return(NULL);
 			}
 
@@ -3671,12 +3671,12 @@
 		//////////
         // Parameter 2 is optional, but if present...
 		//////
-			if (iVariable_isValid(pFormat))
+			if (iVariable_isValid(varFormat))
 			{
 				// ...it must be character
-				if (!iVariable_isTypeCharacter(pFormat))
+				if (!iVariable_isTypeCharacter(varFormat))
 				{
-					iError_reportByNumber(_ERROR_P2_IS_INCORRECT, pFormat->compRelated);
+					iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varFormat->compRelated);
 					return(NULL);
 				}
 			}
@@ -3685,7 +3685,7 @@
 		//////////
 		// Create the return variable
 		//////
-			result = iVariable_convertForDisplay(pVariable);
+			result = iVariable_convertForDisplay(varVariable);
 
 
 		//////////
@@ -3745,7 +3745,7 @@
 // Returns:
 //    Character		-- The string with all lowercase characters converted to uppercase
 //////
-	SVariable* function_upper(SVariable* pString)
+	SVariable* function_upper(SVariable* varString)
 	{
 		s32			lnI;
         SVariable*	result;
@@ -3754,9 +3754,9 @@
 		//////////
         // Parameter 1 must be character
 		//////
-			if (!iVariable_isValid(pString) || iVariable_getType(pString) != _VAR_TYPE_CHARACTER)
+			if (!iVariable_isValid(varString) || iVariable_getType(varString) != _VAR_TYPE_CHARACTER)
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pString->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varString->compRelated);
 				return(NULL);
 			}
 
@@ -3775,7 +3775,7 @@
 		//////////
         // Copy the source string
 		//////
-	        iDatum_duplicate(&result->value, &pString->value);
+	        iDatum_duplicate(&result->value, &varString->value);
 
 
 		//////////
@@ -3817,7 +3817,7 @@
 // Returns:
 //    Numeric or Character	-- Depending on index, various values are returned
 //////
-    SVariable* function_version(SVariable* pIndex)
+    SVariable* function_version(SVariable* varIndex)
     {
         s32			index;
 		u32			errorNum;
@@ -3830,22 +3830,22 @@
         // Parameter 1 must be numeric
 		//////
 			lptr = NULL;
-			if (!iVariable_isValid(pIndex))
+			if (!iVariable_isValid(varIndex))
 			{
 				// They are requesting the default information
 				lptr = (s8*)cgcVersionText;
 
-			} else if (!iVariable_isTypeNumeric(pIndex)) {
+			} else if (!iVariable_isTypeNumeric(varIndex)) {
 				// The parameter is not numeric
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, pIndex->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varIndex->compRelated);
 				return(NULL);
 
 			} else {
 				// It must be in the range 1..5
-				index = iiVariable_getAs_s32(pIndex, false, &error, &errorNum);
+				index = iiVariable_getAs_s32(varIndex, false, &error, &errorNum);
 				if (error)
 				{
-					iError_reportByNumber(errorNum, pIndex->compRelated);
+					iError_reportByNumber(errorNum, varIndex->compRelated);
 					return(NULL);
 
 				} else if (index < 1 || index > 5) {
@@ -3932,7 +3932,7 @@
 //    The sum of p1 + p2
 //
 //////
-	SVariable* function_concatenate(SVariable* p1, SVariable* p2)
+	SVariable* function_concatenate(SVariable* varString1, SVariable* varString2)
 	{
 		SVariable*	result;
 
@@ -3940,9 +3940,9 @@
 		//////////
         // Parameter 1 must be character
 		//////
-			if (!iVariable_isValid(p1) || !iVariable_isTypeCharacter(p1))
+			if (!iVariable_isValid(varString1) || !iVariable_isTypeCharacter(varString1))
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, p1->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varString1->compRelated);
 				return(NULL);
 			}
 
@@ -3950,9 +3950,9 @@
 		//////////
         // Parameter 2 must be character
 		//////
-			if (!iVariable_isValid(p2) || !iVariable_isTypeCharacter(p2))
+			if (!iVariable_isValid(varString2) || !iVariable_isTypeCharacter(varString2))
 			{
-				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, p2->compRelated);
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varString2->compRelated);
 				return(NULL);
 			}
 
@@ -3961,10 +3961,10 @@
 		// Allocate enough space for the assemblage
 		//////
 			result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
-			iDatum_allocateSpace(&result->value, p1->value.length + p2->value.length);
+			iDatum_allocateSpace(&result->value, varString1->value.length + varString2->value.length);
 			// Create the concatenated string
-			memcpy(result->value.data,						p1->value.data,		p1->value.length);
-			memcpy(result->value.data + p1->value.length,	p2->value.data,		p2->value.length);
+			memcpy(result->value.data,						varString1->value.data,		varString1->value.length);
+			memcpy(result->value.data + varString1->value.length,	varString2->value.data,		varString2->value.length);
 
 
 		//////////
@@ -3999,7 +3999,7 @@
 //    The sum of p1 + p2
 //
 //////
-	SVariable* function_add(SVariable* p1, SVariable* p2)
+	SVariable* function_add(SVariable* varNum1, SVariable* varNum2)
 	{
 		s64			lnValue1, lnValue2;
 		f64			lfValue1, lfValue2;
@@ -4011,9 +4011,9 @@
 		//////////
         // Parameter 1 must be numeric
 		//////
-			if (!iVariable_isValid(p1) || !iVariable_isTypeNumeric(p1))
+			if (!iVariable_isValid(varNum1) || !iVariable_isTypeNumeric(varNum1))
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, p1->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varNum1->compRelated);
 				return(NULL);
 			}
 
@@ -4021,9 +4021,9 @@
 		//////////
         // Parameter 2 must be numeric
 		//////
-			if (!iVariable_isValid(p2) || !iVariable_isTypeNumeric(p2))
+			if (!iVariable_isValid(varNum2) || !iVariable_isTypeNumeric(varNum2))
 			{
-				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, p2->compRelated);
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varNum2->compRelated);
 				return(NULL);
 			}
 
@@ -4031,29 +4031,29 @@
 		//////////
 		// Determine what we're comparing
 		//////
-			if (iVariable_isTypeFloatingPoint(p1))
+			if (iVariable_isTypeFloatingPoint(varNum1))
 			{
 				// p1 is floating point, meaning the result will be too
-				lfValue1 = iiVariable_getAs_f64(p1, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, p1->compRelated);	return(NULL);	}
+				lfValue1 = iiVariable_getAs_f64(varNum1, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varNum1->compRelated);	return(NULL);	}
 
 				// Create our floating point result
 				result = iVariable_create(_VAR_TYPE_F64, NULL);
 
 				// Grab p2
-				if (iVariable_isTypeFloatingPoint(p2))
+				if (iVariable_isTypeFloatingPoint(varNum2))
 				{
 					// p2 is floating point
-					lfValue2 = iiVariable_getAs_f64(p2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(errorNum, p2->compRelated);	return(NULL);	}
+					lfValue2 = iiVariable_getAs_f64(varNum2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, varNum2->compRelated);	return(NULL);	}
 
 					// Store the result
 					*(f64*)result->value.data = lfValue1 + lfValue2;
 
 				} else  {
 					// p2 is not floating point, so we'll get it as an integer
-					lnValue2 = iiVariable_getAs_s64(p2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(errorNum, p2->compRelated);	return(NULL);	}
+					lnValue2 = iiVariable_getAs_s64(varNum2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, varNum2->compRelated);	return(NULL);	}
 
 					// Store the result
 					*(f64*)result->value.data = lfValue1 + (f64)lnValue2;
@@ -4061,15 +4061,15 @@
 
 			} else {
 				// p1 is integer, result is determined by what p2 is, either integer or floating point
-				lnValue1 = iiVariable_getAs_s64(p1, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, p1->compRelated);	return(NULL);	}
+				lnValue1 = iiVariable_getAs_s64(varNum1, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varNum1->compRelated);	return(NULL);	}
 
 				// Grab p2
-				if (iVariable_isTypeFloatingPoint(p2))
+				if (iVariable_isTypeFloatingPoint(varNum2))
 				{
 					// p2 is floating point
-					lfValue2 = iiVariable_getAs_f64(p2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(errorNum, p2->compRelated);	return(NULL);	}
+					lfValue2 = iiVariable_getAs_f64(varNum2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, varNum2->compRelated);	return(NULL);	}
 
 					// Create our floating point result
 					result = iVariable_create(_VAR_TYPE_F64, NULL);
@@ -4079,8 +4079,8 @@
 
 				} else  {
 					// p2 is not floating point, so we'll get it as an integer
-					lnValue2 = iiVariable_getAs_s64(p2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(errorNum, p2->compRelated);	return(NULL);	}
+					lnValue2 = iiVariable_getAs_s64(varNum2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, varNum2->compRelated);	return(NULL);	}
 
 					// Create our floating point result
 					result = iVariable_create(_VAR_TYPE_S64, NULL);
@@ -4123,7 +4123,7 @@
 //    The sum of p1 - p2
 //
 //////
-	SVariable* function_sub(SVariable* p1, SVariable* p2)
+	SVariable* function_sub(SVariable* varSub1, SVariable* varSub2)
 	{
 		s64			lnValue1, lnValue2;
 		f64			lfValue1, lfValue2;
@@ -4135,9 +4135,9 @@
 		//////////
         // Parameter 1 must be numeric
 		//////
-			if (!iVariable_isValid(p1) || !iVariable_isTypeNumeric(p1))
+			if (!iVariable_isValid(varSub1) || !iVariable_isTypeNumeric(varSub1))
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, p1->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varSub1->compRelated);
 				return(NULL);
 			}
 
@@ -4145,9 +4145,9 @@
 		//////////
         // Parameter 2 must be numeric
 		//////
-			if (!iVariable_isValid(p2) || !iVariable_isTypeNumeric(p2))
+			if (!iVariable_isValid(varSub2) || !iVariable_isTypeNumeric(varSub2))
 			{
-				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, p2->compRelated);
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varSub2->compRelated);
 				return(NULL);
 			}
 
@@ -4155,29 +4155,29 @@
 		//////////
 		// Determine what we're comparing
 		//////
-			if (iVariable_isTypeFloatingPoint(p1))
+			if (iVariable_isTypeFloatingPoint(varSub1))
 			{
 				// p1 is floating point, meaning the result will be too
-				lfValue1 = iiVariable_getAs_f64(p1, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, p1->compRelated);	return(NULL);	}
+				lfValue1 = iiVariable_getAs_f64(varSub1, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varSub1->compRelated);	return(NULL);	}
 
 				// Create our floating point result
 				result = iVariable_create(_VAR_TYPE_F64, NULL);
 
 				// Grab p2
-				if (iVariable_isTypeFloatingPoint(p2))
+				if (iVariable_isTypeFloatingPoint(varSub2))
 				{
 					// p2 is floating point
-					lfValue2 = iiVariable_getAs_f64(p2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(errorNum, p2->compRelated);	return(NULL);	}
+					lfValue2 = iiVariable_getAs_f64(varSub2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, varSub2->compRelated);	return(NULL);	}
 
 					// Store the result
 					*(f64*)result->value.data = lfValue1 - lfValue2;
 
 				} else  {
 					// p2 is not floating point, so we'll get it as an integer
-					lnValue2 = iiVariable_getAs_s64(p2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(errorNum, p2->compRelated);	return(NULL);	}
+					lnValue2 = iiVariable_getAs_s64(varSub2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, varSub2->compRelated);	return(NULL);	}
 
 					// Store the result
 					*(f64*)result->value.data = lfValue1 - (f64)lnValue2;
@@ -4185,15 +4185,15 @@
 
 			} else {
 				// p1 is integer, result is determined by what p2 is, either integer or floating point
-				lnValue1 = iiVariable_getAs_s64(p1, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, p1->compRelated);	return(NULL);	}
+				lnValue1 = iiVariable_getAs_s64(varSub1, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varSub1->compRelated);	return(NULL);	}
 
 				// Grab p2
-				if (iVariable_isTypeFloatingPoint(p2))
+				if (iVariable_isTypeFloatingPoint(varSub2))
 				{
 					// p2 is floating point
-					lfValue2 = iiVariable_getAs_f64(p2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(errorNum, p2->compRelated);	return(NULL);	}
+					lfValue2 = iiVariable_getAs_f64(varSub2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, varSub2->compRelated);	return(NULL);	}
 
 					// Create our floating point result
 					result = iVariable_create(_VAR_TYPE_F64, NULL);
@@ -4203,8 +4203,8 @@
 
 				} else  {
 					// p2 is not floating point, so we'll get it as an integer
-					lnValue2 = iiVariable_getAs_s64(p2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(errorNum, p2->compRelated);	return(NULL);	}
+					lnValue2 = iiVariable_getAs_s64(varSub2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, varSub2->compRelated);	return(NULL);	}
 
 					// Create our floating point result
 					result = iVariable_create(_VAR_TYPE_S64, NULL);
@@ -4247,7 +4247,7 @@
 //    The sum of p1 * p2
 //
 //////
-	SVariable* function_mul(SVariable* p1, SVariable* p2)
+	SVariable* function_mul(SVariable* varNum1, SVariable* varNum2)
 	{
 		s64			lnValue1, lnValue2;
 		f64			lfValue1, lfValue2;
@@ -4259,9 +4259,9 @@
 		//////////
         // Parameter 1 must be numeric
 		//////
-			if (!iVariable_isValid(p1) || !iVariable_isTypeNumeric(p1))
+			if (!iVariable_isValid(varNum1) || !iVariable_isTypeNumeric(varNum1))
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, p1->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varNum1->compRelated);
 				return(NULL);
 			}
 
@@ -4269,9 +4269,9 @@
 		//////////
         // Parameter 2 must be numeric
 		//////
-			if (!iVariable_isValid(p2) || !iVariable_isTypeNumeric(p2))
+			if (!iVariable_isValid(varNum2) || !iVariable_isTypeNumeric(varNum2))
 			{
-				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, p2->compRelated);
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varNum2->compRelated);
 				return(NULL);
 			}
 
@@ -4279,29 +4279,29 @@
 		//////////
 		// Determine what we're comparing
 		//////
-			if (iVariable_isTypeFloatingPoint(p1))
+			if (iVariable_isTypeFloatingPoint(varNum1))
 			{
 				// p1 is floating point, meaning the result will be too
-				lfValue1 = iiVariable_getAs_f64(p1, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, p1->compRelated);	return(NULL);	}
+				lfValue1 = iiVariable_getAs_f64(varNum1, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varNum1->compRelated);	return(NULL);	}
 
 				// Create our floating point result
 				result = iVariable_create(_VAR_TYPE_F64, NULL);
 
 				// Grab p2
-				if (iVariable_isTypeFloatingPoint(p2))
+				if (iVariable_isTypeFloatingPoint(varNum2))
 				{
 					// p2 is floating point
-					lfValue2 = iiVariable_getAs_f64(p2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(errorNum, p2->compRelated);	return(NULL);	}
+					lfValue2 = iiVariable_getAs_f64(varNum2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, varNum2->compRelated);	return(NULL);	}
 
 					// Store the result
 					*(f64*)result->value.data = lfValue1 * lfValue2;
 
 				} else  {
 					// p2 is not floating point, so we'll get it as an integer
-					lnValue2 = iiVariable_getAs_s64(p2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(errorNum, p2->compRelated);	return(NULL);	}
+					lnValue2 = iiVariable_getAs_s64(varNum2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, varNum2->compRelated);	return(NULL);	}
 
 					// Store the result
 					*(f64*)result->value.data = lfValue1 * (f64)lnValue2;
@@ -4309,15 +4309,15 @@
 
 			} else {
 				// p1 is integer, result is determined by what p2 is, either integer or floating point
-				lnValue1 = iiVariable_getAs_s64(p1, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, p1->compRelated);	return(NULL);	}
+				lnValue1 = iiVariable_getAs_s64(varNum1, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varNum1->compRelated);	return(NULL);	}
 
 				// Grab p2
-				if (iVariable_isTypeFloatingPoint(p2))
+				if (iVariable_isTypeFloatingPoint(varNum2))
 				{
 					// p2 is floating point
-					lfValue2 = iiVariable_getAs_f64(p2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(errorNum, p2->compRelated);	return(NULL);	}
+					lfValue2 = iiVariable_getAs_f64(varNum2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, varNum2->compRelated);	return(NULL);	}
 
 					// Create our floating point result
 					result = iVariable_create(_VAR_TYPE_F64, NULL);
@@ -4327,8 +4327,8 @@
 
 				} else  {
 					// p2 is not floating point, so we'll get it as an integer
-					lnValue2 = iiVariable_getAs_s64(p2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(errorNum, p2->compRelated);	return(NULL);	}
+					lnValue2 = iiVariable_getAs_s64(varNum2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, varNum2->compRelated);	return(NULL);	}
 
 					// Create our floating point result
 					result = iVariable_create(_VAR_TYPE_S64, NULL);
@@ -4371,7 +4371,7 @@
 //    The sum of p1 / p2
 //
 //////
-	SVariable* function_div(SVariable* p1, SVariable* p2)
+	SVariable* function_div(SVariable* varNum1, SVariable* varNum2)
 	{
 		s64			lnValue1, lnValue2;
 		f64			lfValue1, lfValue2;
@@ -4383,9 +4383,9 @@
 		//////////
         // Parameter 1 must be numeric
 		//////
-			if (!iVariable_isValid(p1) || !iVariable_isTypeNumeric(p1))
+			if (!iVariable_isValid(varNum1) || !iVariable_isTypeNumeric(varNum1))
 			{
-				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, p1->compRelated);
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varNum1->compRelated);
 				return(NULL);
 			}
 
@@ -4393,9 +4393,9 @@
 		//////////
         // Parameter 2 must be numeric
 		//////
-			if (!iVariable_isValid(p2) || !iVariable_isTypeNumeric(p2))
+			if (!iVariable_isValid(varNum2) || !iVariable_isTypeNumeric(varNum2))
 			{
-				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, p2->compRelated);
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varNum2->compRelated);
 				return(NULL);
 			}
 
@@ -4403,29 +4403,29 @@
 		//////////
 		// Determine what we're comparing
 		//////
-			if (iVariable_isTypeFloatingPoint(p1))
+			if (iVariable_isTypeFloatingPoint(varNum1))
 			{
 				// p1 is floating point, meaning the result will be too
-				lfValue1 = iiVariable_getAs_f64(p1, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, p1->compRelated);	return(NULL);	}
+				lfValue1 = iiVariable_getAs_f64(varNum1, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varNum1->compRelated);	return(NULL);	}
 
 				// Create our floating point result
 				result = iVariable_create(_VAR_TYPE_F64, NULL);
 
 				// Grab p2
-				if (iVariable_isTypeFloatingPoint(p2))
+				if (iVariable_isTypeFloatingPoint(varNum2))
 				{
 					// p2 is floating point
-					lfValue2 = iiVariable_getAs_f64(p2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(errorNum, p2->compRelated);	return(NULL);	}
+					lfValue2 = iiVariable_getAs_f64(varNum2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, varNum2->compRelated);	return(NULL);	}
 
 					// Store the result
 					*(f64*)result->value.data = lfValue1 / lfValue2;
 
 				} else  {
 					// p2 is not floating point, so we'll get it as an integer
-					lnValue2 = iiVariable_getAs_s64(p2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(errorNum, p2->compRelated);	return(NULL);	}
+					lnValue2 = iiVariable_getAs_s64(varNum2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, varNum2->compRelated);	return(NULL);	}
 
 					// Store the result
 					*(f64*)result->value.data = lfValue1 / (f64)lnValue2;
@@ -4433,26 +4433,26 @@
 
 			} else {
 				// p1 is integer, result is determined by what p2 is, either integer or floating point
-				lnValue1 = iiVariable_getAs_s64(p1, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, p1->compRelated);	return(NULL);	}
+				lnValue1 = iiVariable_getAs_s64(varNum1, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varNum1->compRelated);	return(NULL);	}
 
 				// Create our floating point result
 				result = iVariable_create(_VAR_TYPE_F64, NULL);
 
 				// Grab p2
-				if (iVariable_isTypeFloatingPoint(p2))
+				if (iVariable_isTypeFloatingPoint(varNum2))
 				{
 					// p2 is floating point
-					lfValue2 = iiVariable_getAs_f64(p2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(errorNum, p2->compRelated);	return(NULL);	}
+					lfValue2 = iiVariable_getAs_f64(varNum2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, varNum2->compRelated);	return(NULL);	}
 
 					// Store the result
 					*(f64*)result->value.data = (f64)lnValue1 / lfValue2;
 
 				} else  {
 					// p2 is not floating point, so we'll get it as an integer
-					lnValue2 = iiVariable_getAs_s64(p2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(errorNum, p2->compRelated);	return(NULL);	}
+					lnValue2 = iiVariable_getAs_s64(varNum2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, varNum2->compRelated);	return(NULL);	}
 
 					// Store the result
 					*(f64*)result->value.data = (f64)lnValue1 / (f64)lnValue2;
