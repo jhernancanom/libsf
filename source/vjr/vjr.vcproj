@@ -288,6 +288,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\command_sourcelight.h"
+					>
+				</File>
+				<File
 					RelativePath=".\commands.cpp"
 					>
 					<FileConfiguration
