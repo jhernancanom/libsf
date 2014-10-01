@@ -1,0 +1,35 @@
+**********
+* Scope, first letter
+*****
+    g_Name -- Global
+    l_Name -- Local
+    t_Name -- Parameter
+    r_Name -- Return value
+    s_Name -- Scoped
+
+
+**********
+* Type, second letter
+*****
+    _o  -- Object
+    _c  -- Character
+    _n  -- Numeric, used for numbers that are defined n(length,decimals)
+    _i  -- Integer, specifically used for iid, or to indicate 4-byte integers
+    _j  -- Big integer
+    _y  -- Currency
+    _b  -- Double
+    _f  -- Float
+    _g  -- Big floating point
+    _l  -- Logical
+    _m  -- Logicalx
+    _d  -- Date
+    _t  -- Datetime
+    _v  -- Datetimex
+    _z  -- GUID8 or GUID16, typically ended as zName8 or zName16
+       
+    _q  -- Signed 32-bit or 64-bit (s32 or s64), use Nn at the end to indicate the size (if it's important)
+    _p  -- Unsigned 32-bit or 64-bit (u32 or u64), use Nn at the end to indicate the size (if it's important)
+       
+    _a  -- Array, each element can be its own type
+    _u  -- Unicode (only supported in VXB++)
+    _x  -- Varies
