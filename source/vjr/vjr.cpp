@@ -295,7 +295,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			iVjr_appendSystemLog("Populate _screen with default data");
 			iSEM_appendLine(screenData, (s8*)cgcScreenTitle, -1);
 			iSEM_appendLine(screenData, NULL, 0);
-			iSEM_appendLine(screenData, (s8*)"Please report any bugs:  http://www.visual-freepro.org/forum", -1);
+			iSEM_appendLine(screenData, (s8*)"Please report any bugs:  http://www.visual-freepro.org/vjr", -1);
 			iSEM_appendLine(screenData, (s8*)"Thank you, and may the Lord Jesus Christ bless you richly. :-)", -1);
 			iSEM_appendLine(screenData, NULL, 0);
 			iSEM_appendLine(screenData, (s8*)"              _____", -1);
