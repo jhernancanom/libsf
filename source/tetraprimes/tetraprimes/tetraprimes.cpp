@@ -208,45 +208,17 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 
 //////////
 //
-// Called to obtain the next prime number by brute force.
+// Called to obtain the next prime root by brute force.
 //
 //////
-	int getNextPrime(int tnStart)
+	int getNextPrimeRoot(int tnCandidate)
 	{
-		int		lnCandidate, lnI;
-		bool	llPrime;
-
-		
-		// Handle special cases
-		if (tnStart == 2 || tnStart == 5)
-			return(tnStart);
-
-		if (tnStart == 4)
-			return(5);
-
-		// Iterate upward until we find the next prime
-		for (lnCandidate = tnStart; ; lnCandidate++)
+		// Iterate upward until we find the next prime root
+		for ( ; ; tnCandidate++)
 		{
 			// If it's not even, or divisible by 5, then try it
-			if (lnCandidate % 2 != 0 && lnCandidate % 5 != 0)
-			{
-				// Try to see if it can be broken
-				llPrime = true;
-				for (lnI = 3; lnI < lnCandidate; lnI += 2)
-				{
-					// Is it evenly divisible by this value?
-					if (lnI % 5 != 0 && lnCandidate % lnI == 0)
-					{
-						// Yes, not prime
-						llPrime = false;
-						break;
-					}
-				}
-
-				// Is it prime?
-				if (llPrime)
-					return(lnCandidate);		// Yes
-			}
+			if (tnCandidate % 2 != 0 && tnCandidate % 3 != 0 && tnCandidate % 5 != 0)
+				return(tnCandidate);		// Yes
 		}
 	}
 
@@ -255,20 +227,20 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 		int lnCol;
 
 
-		// Grab the first prime
-		*tnPrime				= getNextPrime(*tnPrime);
-		primeBlocks[tnRow][0]	= *tnPrime;
-
-		// Skip the next three
-		*tnPrime = getNextPrime(*tnPrime + 1);		// Remove the 2s prime place
-		*tnPrime = getNextPrime(*tnPrime + 1);		// Remove the 3s prime place
-		*tnPrime = getNextPrime(*tnPrime + 1);		// Remove the 5s prime place
+// 		// Grab the first prime
+// 		*tnPrime				= getNextPrimeRoot(*tnPrime);
+// 		primeBlocks[tnRow][0]	= *tnPrime;
+// 
+// 		// Skip the next three
+// 		*tnPrime = getNextPrimeRoot(*tnPrime + 1);		// Remove the 2s prime place
+// 		*tnPrime = getNextPrimeRoot(*tnPrime + 1);		// Remove the 3s prime place
+// 		*tnPrime = getNextPrimeRoot(*tnPrime + 1);		// Remove the 5s prime place
 
 		// Iterate for the next 23 primes
-		for (lnCol = 1; lnCol < 24; lnCol++)
+		for (lnCol = 0; lnCol < 24; lnCol++)
 		{
 			// Grab the next prime
-			*tnPrime = getNextPrime(*tnPrime + 1);
+			*tnPrime = getNextPrimeRoot(*tnPrime + 1);
 
 			// Populate our master table with it
 			primeBlocks[tnRow][lnCol] = *tnPrime;
@@ -332,13 +304,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 
 		// Populate all rows
 		memset(primeBlockFounds, 0, sizeof(primeBlockFounds));
-		for (lnRow = 0, lnPrime = 1, lnSkipped = 0, lnAttempt = 0; lnRow < _MAX_PRIME_BLOCKS; lnRow += lnIsOkay, ++lnAttempt)
+		for (lnRow = 0, lnPrime = 0, lnSkipped = 0, lnAttempt = 0; lnRow < _MAX_PRIME_BLOCKS; lnRow += lnIsOkay, ++lnAttempt)
 		{
 			// Grab this row
 			storeNextMasterPrimeRow(&lnPrime, lnRow);
-
-			// Skip past the last prime computed
-			++lnPrime;
 
 			// Validate this row in base-4
 			// If it's good, keep it, if not, then do it again
