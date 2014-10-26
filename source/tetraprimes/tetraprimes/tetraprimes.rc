@@ -52,6 +52,7 @@ BEGIN
         MENUITEM "Toggle Digital Root / Persistence", ID_VIEW_TOGGLEDIGITALROOT
         MENUITEM "Toggle &Colors",              ID_SETTINGS_TOGGLECOLORS
         MENUITEM "Toggle &Dividers",            ID_SETTINGS_TOGGLEDIVIDERS
+        MENUITEM "Toggle &View (Digital Root - Persistence)", ID_VIEW_TOGGLEVIEW
     END
     POPUP "&Base"
     BEGIN
