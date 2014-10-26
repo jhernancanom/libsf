@@ -14,6 +14,8 @@
 
 #define _MAX_LOADSTRING		100
 #define _MAX_PRIME_BLOCKS	24
+#define _MAX_BASE			36
+#define _PI					3.1415926535897930f
 
 
 
@@ -43,14 +45,15 @@
 	bool					glShowDifference					= false;					// Shows digital root minus persistence
 	bool					glShowCharacters					= true;						// Show the individual digits?
 
-	int						gnBase								= 4;						// Begin at this base
+	int						gnBase								= 10;						// Begin at this base
 	int						gnBlock								= 0;						// Which modulo 90 block are we on?
+	int						gnColorShift						= 0;						// Amount to offset starting colors
 	int						gnFontBigHeight						= 20;						// Height for ghFontBig
 	int						gnFontBigWidth						= 16;						// Width for ghFontBig
 	int						gnFontSmallHeight					= 20;						// Height for ghFontSmall
 	int						gnFontSmallWidth					= 16;						// Width for ghFontSmall
 
-	const char				cgcLegend[]							= "Toggles:  [R] Digital Root/Persistence   [C] Color  [D] Divider  [T] DR-P  [X] Characters       [+] Base    [-] Base       [Ctrl++] Block    [Ctrl+-] Block";
+	const char				cgcLegend[]							= "Toggle:  [R] Digital Root/Persistence   [C] Color  [D] Divider  [T] DR-P  [X] Characters       [+] Base    [-] Base       [Ctrl++] Block    [Ctrl+-] Block       [Ctrl+Alt+] Palette    [Ctrl+Alt-] Palette";
 	char					primeBlockFounds[8192];											// Space to store our list of 24 found prime starting blocks
 	char					szTitle[_MAX_LOADSTRING];										// The title bar text
 	char					szWindowClass[_MAX_LOADSTRING];									// the main window class name
@@ -121,6 +124,19 @@
 
 	// These are re-computed / populated each time the display is re-drawn
 	char masterDigitalRoots[24][24];
+
+	// For the 8-dimension spiral
+	float masterAngles[8] =
+	{
+		(_PI *  12.0f / 180.0f) + (_PI / 2),
+		(_PI *  84.0f / 180.0f) + (_PI / 2),
+		(_PI * 132.0f / 180.0f) + (_PI / 2),
+		(_PI * 156.0f / 180.0f) + (_PI / 2),
+		(_PI * 204.0f / 180.0f) + (_PI / 2),
+		(_PI * 228.0f / 180.0f) + (_PI / 2),
+		(_PI * 276.0f / 180.0f) + (_PI / 2),
+		(_PI * 348.0f / 180.0f) + (_PI / 2)
+	};
 
 
 
@@ -208,6 +224,39 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 
 //////////
 //
+// Called to check if the number is prime
+//
+//////
+	bool isPrime(int tnValue)
+	{
+		int lnI, lnTarget;
+
+		// Handle constants
+		if (tnValue == 1 || tnValue == 2 || tnValue == 3 || tnValue == 5 || tnValue == 7)
+			return(true);
+
+		// Perform simple tests
+		if (tnValue % 2 == 0 || tnValue % 5 == 0)
+			return(false);
+
+		// Iterate up to sqrt(tnValue)
+		lnTarget = (int)(sqrt((double)tnValue));
+		for (lnI = 3; lnI <= lnTarget; lnI += 2)
+		{
+			// Does it divide by this?
+			if (tnValue % lnI == 0)
+				return(false);
+		}
+
+		// If we get here, it's prime
+		return(true);
+	}
+
+
+
+
+//////////
+//
 // Called to obtain the next prime root by brute force.
 //
 //////
@@ -226,15 +275,6 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 	{
 		int lnCol;
 
-
-// 		// Grab the first prime
-// 		*tnPrime				= getNextPrimeRoot(*tnPrime);
-// 		primeBlocks[tnRow][0]	= *tnPrime;
-// 
-// 		// Skip the next three
-// 		*tnPrime = getNextPrimeRoot(*tnPrime + 1);		// Remove the 2s prime place
-// 		*tnPrime = getNextPrimeRoot(*tnPrime + 1);		// Remove the 3s prime place
-// 		*tnPrime = getNextPrimeRoot(*tnPrime + 1);		// Remove the 5s prime place
 
 		// Iterate for the next 23 primes
 		for (lnCol = 0; lnCol < 24; lnCol++)
@@ -393,8 +433,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 		// Compute font peculiarities
 		//////
 			// Create fonts
-			ghFontBig	= CreateFont(-MulDiv(10, GetDeviceCaps(GetDC(GetDesktopWindow()), LOGPIXELSY), 72), 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, FF_MODERN, "Arial");
-			ghFontSmall	= CreateFont(-MulDiv(7,  GetDeviceCaps(GetDC(GetDesktopWindow()), LOGPIXELSY), 72), 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, FF_MODERN, "Arial");
+			ghFontBig	= CreateFont(-MulDiv(8, GetDeviceCaps(GetDC(GetDesktopWindow()), LOGPIXELSY), 72), 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, FF_MODERN, "Arial");
+			ghFontSmall	= CreateFont(-MulDiv(6, GetDeviceCaps(GetDC(GetDesktopWindow()), LOGPIXELSY), 72), 0, 0, 0, FW_NORMAL, 0, 0, 0, ANSI_CHARSET, OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, FF_MODERN, "Arial");
 
 			// Create temporary DC
 			hdc = CreateCompatibleDC(GetDC(GetDesktopWindow()));
@@ -402,14 +442,14 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 			// Font big
 			SelectObject(hdc, ghFontBig);
 			DrawText(hdc, "W", 1, &lrc, DT_CALCRECT);
-			gnFontBigWidth		= ((lrc.right - lrc.left) * 2) + 4;
-			gnFontBigHeight		= ((lrc.bottom - lrc.top) * 1) + 6;
+			gnFontBigWidth		= ((lrc.right - lrc.left) * 2) + 0;
+			gnFontBigHeight		= ((lrc.bottom - lrc.top) * 1) + 2;
 
 			// Font small
 			SelectObject(hdc, ghFontSmall);
 			DrawText(hdc, "W", 1, &lrc, DT_CALCRECT);
-			gnFontSmallWidth	= ((lrc.right - lrc.left) * 2) + 4;
-			gnFontSmallHeight	= ((lrc.bottom - lrc.top) * 1) + 6;
+			gnFontSmallWidth	= ((lrc.right - lrc.left) * 2) + 0;
+			gnFontSmallHeight	= ((lrc.bottom - lrc.top) * 1) + 2;
 
 			// Delete the DC
 			DeleteDC(hdc);
@@ -427,7 +467,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 			ghbrYellow	= CreateSolidBrush(yellow);
 			ghbrGreen	= CreateSolidBrush(green);
 			ghbrBlue	= CreateSolidBrush(RGB(190,220,231));
-			ghWnd		= CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, gnFontBigWidth * 34, gnFontBigHeight * 31, NULL, NULL, ghInst, NULL);
+			ghWnd		= CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, gnFontBigWidth * 60, gnFontBigHeight * 32, NULL, NULL, ghInst, NULL);
 			if (!ghWnd)
 			  return FALSE;
 
@@ -475,7 +515,12 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 				// Add up the digits
 				//////
 					for (lnI = 0, value = 0; buffer[lnI] != 0; lnI++)
-						value += (int)(buffer[lnI] - '0');
+					{
+						if (buffer[lnI] >= '0' && buffer[lnI] <= '9')
+							value += (int)(buffer[lnI] - '0');
+						else
+							value += (int)(buffer[lnI] - 'a' + 10);
+					}
 
 			} while (value >= gnBase);
 
@@ -497,9 +542,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 //////
 	LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l)
 	{
-		int				wmId, wmEvent, lnCol, lnRow, lnDigitalRoot, lnPersistence, lnSum1, lnSum2;
+		int				wmId, wmEvent, lnCol, lnRow, lnDigitalRoot, lnPersistence, lnSum1, lnSum2, lnIterate, lnDeltaX, lnDeltaY, lnPrimeRoot;
+		float			lfRadius, lfRadiusStep;
 		PAINTSTRUCT		ps;
-		RECT			lrc, lrc2, lrcClient;
+		RECT			lrc, lrc2, lrcClient, lrcCenter;
 		HBRUSH			lhBrush;
 		HDC				hdc;
 		char			buffer[256];
@@ -614,7 +660,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 							sprintf(buffer, "%u\0", masterPrimeTable[lnRow][0]);
 							FillRect(hdc, &lrc, ghbrBlue);
 							FrameRect(hdc, &lrc, (HBRUSH)GetStockObject(BLACK_BRUSH));
-							DrawText(hdc, buffer, strlen(buffer), &lrc, DT_VCENTER | DT_CENTER);
+							DrawText(hdc, buffer, strlen(buffer), &lrc, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
 
 
 						//////////
@@ -637,7 +683,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 							sprintf(buffer, "%u\0", masterPrimeTable[0][lnCol]);
 							FillRect(hdc, &lrc, ghbrBlue);
 							FrameRect(hdc, &lrc, (HBRUSH)GetStockObject(BLACK_BRUSH));
-							DrawText(hdc, buffer, strlen(buffer), &lrc, DT_VCENTER | DT_CENTER);
+							DrawText(hdc, buffer, strlen(buffer), &lrc, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
 
 
 						//////////
@@ -683,13 +729,13 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 										if (glShowDigitalRoot)
 										{
 											// Show the digital root
-											lhBrush = masterBrushes[9 - lnDigitalRoot];
-											SetBkColor(hdc, masterColors[9 - lnDigitalRoot]);
+											lhBrush = masterBrushes[abs((9 - lnDigitalRoot) + gnColorShift) % 10];
+											SetBkColor(hdc, masterColors[abs((9 - lnDigitalRoot) + gnColorShift) % 10]);
 
 										} else {
 											// Show the persistence counts
-											lhBrush = masterBrushes[lnPersistence];
-											SetBkColor(hdc, masterColors[lnPersistence]);
+											lhBrush = masterBrushes[abs(lnPersistence + gnColorShift) % 10];
+											SetBkColor(hdc, masterColors[abs(lnPersistence + gnColorShift) % 10]);
 										}
 
 									} else {
@@ -702,7 +748,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 							//////////
 							// Draw the digital root and persistence
 							//////
-								sprintf(buffer, "%u:%u", lnDigitalRoot, lnPersistence);
+								sprintf(buffer, " : ", lnDigitalRoot, lnPersistence);
+								_ultoa(lnDigitalRoot, buffer + 0, gnBase);
+								_ultoa(lnDigitalRoot, buffer + 2, gnBase);
 								FillRect(hdc, &lrc, lhBrush);
 								FrameRect(hdc, &lrc, (HBRUSH)GetStockObject(BLACK_BRUSH));
 								if (glShowDigitalRoot)
@@ -710,13 +758,13 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 									// Showing digital roots
 									masterDigitalRoots[lnRow][lnCol] = buffer[0];
 									if (glShowCharacters && buffer[0] != '0')
-										DrawText(hdc, buffer + 0, 1, &lrc, DT_VCENTER | DT_CENTER);
+										DrawText(hdc, buffer + 0, 1, &lrc, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
 
 								} else {
 									// Showing persistence
 									masterDigitalRoots[lnRow][lnCol] = buffer[2];
 									if (glShowCharacters && buffer[2] != '0')
-										DrawText(hdc, buffer + 2, 1, &lrc, DT_VCENTER | DT_CENTER);
+										DrawText(hdc, buffer + 2, 1, &lrc, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
 								}
 
 
@@ -749,7 +797,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 							sprintf(buffer, "%u\0", lnSum1);
 							FillRect(hdc, &lrc, ghbrWhite);
 							lrc.top += 3;
-							DrawText(hdc, buffer, strlen(buffer), &lrc, DT_VCENTER | DT_LEFT);
+							DrawText(hdc, buffer, strlen(buffer), &lrc, DT_VCENTER | DT_LEFT | DT_SINGLELINE);
 							lrc.top -= 3;
 
 
@@ -779,7 +827,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 						//////
 							sprintf(buffer, "%u\0", lnSum1);
 							FillRect(hdc, &lrc, ghbrWhite);
-							DrawText(hdc, buffer, strlen(buffer), &lrc, DT_VCENTER | DT_CENTER);
+							DrawText(hdc, buffer, strlen(buffer), &lrc, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
 
 
 						//////////
@@ -813,9 +861,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 					CopyRect(&lrc2, &lrc);
 					sprintf(buffer, "=%u\0", lnSum1);
 					FillRect(hdc, &lrc2, ghbrWhite);
-					DrawText(hdc, buffer, strlen(buffer), &lrc2, DT_VCENTER | DT_CENTER);
+					DrawText(hdc, buffer, strlen(buffer), &lrc2, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
 					OffsetRect(&lrc2, 1, 0);
-					DrawText(hdc, buffer, strlen(buffer), &lrc2, DT_VCENTER | DT_CENTER);
+					DrawText(hdc, buffer, strlen(buffer), &lrc2, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
 
 
 				//////////
@@ -824,17 +872,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 					SetRect(&lrc2, lrc.left, (gnFontBigHeight * 1), lrc.right, (gnFontBigHeight * 2));
 					sprintf(buffer, "=%u\0", lnSum2);
 					FillRect(hdc, &lrc2, ghbrWhite);
-					DrawText(hdc, buffer, strlen(buffer), &lrc2, DT_VCENTER | DT_CENTER);
+					DrawText(hdc, buffer, strlen(buffer), &lrc2, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
 					OffsetRect(&lrc2, 1, 0);
-					DrawText(hdc, buffer, strlen(buffer), &lrc2, DT_VCENTER | DT_CENTER);
-
-
-				//////////
-				// Display the list of found prime blocks in base-4
-				//////
-					SelectObject(hdc, ghFontBig);
-					SetRect(&lrc2, lrcClient.right - gnFontSmallWidth * 8, (gnFontBigHeight * 2), lrcClient.right, lrcClient.bottom);
-					DrawText(hdc, primeBlockFounds, strlen(primeBlockFounds), &lrc2, DT_LEFT);
+					DrawText(hdc, buffer, strlen(buffer), &lrc2, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
 
 
 				//////////
@@ -849,6 +889,50 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 					DrawText(hdc, cgcLegend, sizeof(cgcLegend) - 1, &lrc2, DT_BOTTOM | DT_CENTER);
 
 
+				//////////
+				// Draw the 8-part spiral
+				//////
+					// Iterate at every prime going around clockwise
+					SetRect(&lrcCenter, lrcClient.right * 3 / 4, lrcClient.bottom / 2, 0, 0);
+					lfRadiusStep = (float)(sqrt((double)((gnFontSmallHeight*gnFontSmallHeight) + (gnFontSmallWidth*gnFontSmallWidth))) / 16.0);
+					for (lnRow = 0, lfRadius = lfRadiusStep * 8.0f, lnIterate = 0, lnPrimeRoot = 0; lnRow < 24; lnRow++)
+					{
+						for (lnCol = 0; lnCol < 24; lnCol++, lfRadius += lfRadiusStep, lnIterate = (++lnIterate % 8))
+						{
+							// Grab the offset for the delta
+							lnDeltaY = (int)(sin(masterAngles[lnIterate]) * lfRadius);
+							lnDeltaX = (int)(cos(masterAngles[lnIterate]) * lfRadius);
+
+							// Compute this value
+							lnPrimeRoot = getNextPrimeRoot(lnPrimeRoot + 1);
+							sprintf(buffer, "%u\0", lnPrimeRoot);
+
+							// Based on its primality, display in white, or in green
+							if (isPrime(lnPrimeRoot))
+							{
+								// Prime
+								SetBkColor(hdc, white);
+
+							} else {
+								// Not prime
+								SetBkColor(hdc, green);
+							}
+
+							// Find out how big it will draw
+							DrawText(hdc, buffer, strlen(buffer), &lrc2, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_CALCRECT);
+
+							// Center it around the location
+							SetRect(&lrc2,	lrcCenter.left	- lnDeltaX - ((lrc2.right - lrc2.left) / 2),
+											lrcCenter.top	- lnDeltaY - ((lrc2.bottom - lrc2.top) / 2),
+											lrcCenter.left	- lnDeltaX + ((lrc2.right - lrc2.left) / 2),
+											lrcCenter.top	- lnDeltaY + ((lrc2.bottom - lrc2.top) / 2));
+
+							// Draw it
+							DrawText(hdc, buffer, strlen(buffer), &lrc2, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
+						}
+					}
+
+
 				// All done painting
 				EndPaint(h, &ps);
 				break;
@@ -860,9 +944,17 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 						if (GetAsyncKeyState(VK_CONTROL))
 						{
 							// Control key is down
-							++gnBlock;
-							gnBlock = min(gnBlock, _MAX_PRIME_BLOCKS - 1);
-							setPrimeBlock(gnBlock);
+							if (GetAsyncKeyState(VK_MENU))
+							{
+								// Alt key is down too
+								++gnColorShift;
+
+							} else {
+								// Just control
+								++gnBlock;
+								gnBlock = min(gnBlock, _MAX_PRIME_BLOCKS - 1);
+								setPrimeBlock(gnBlock);
+							}
 
 						} else {
 							// Normal plus key
@@ -874,9 +966,17 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 						if (GetAsyncKeyState(VK_CONTROL))
 						{
 							// Control key is down
-							--gnBlock;
-							gnBlock = max(gnBlock, 0);
-							setPrimeBlock(gnBlock);
+							if (GetAsyncKeyState(VK_MENU))
+							{
+								// Alt key is down too
+								--gnColorShift;
+
+							} else {
+								// Just control
+								--gnBlock;
+								gnBlock = max(gnBlock, 0);
+								setPrimeBlock(gnBlock);
+							}
 
 						} else {
 							// Normal minus key
@@ -956,7 +1056,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 				}
 				// Force the base into the range 2..10
 				InvalidateRect(h, NULL, false);
-				gnBase = max(min(gnBase, 10), 2);
+				gnBase = max(min(gnBase, _MAX_BASE), 2);
 				break;
 
 			case WM_DESTROY:
