@@ -48,12 +48,15 @@
 	int						gnBase								= 10;						// Begin at this base
 	int						gnBlock								= 0;						// Which modulo 90 block are we on?
 	int						gnColorShift						= 0;						// Amount to offset starting colors
+	int						gnAngleShift						= 0;						// Amount to offset the angle displays
+	bool					glAngleShiftChanged					= false;					// The angle shift orients the display differently so it's at more readable angles
+
 	int						gnFontBigHeight						= 20;						// Height for ghFontBig
 	int						gnFontBigWidth						= 16;						// Width for ghFontBig
 	int						gnFontSmallHeight					= 20;						// Height for ghFontSmall
 	int						gnFontSmallWidth					= 16;						// Width for ghFontSmall
 
-	const char				cgcLegend[]							= "Toggle:  [R] Digital Root/Persistence   [C] Color  [D] Divider  [T] DR-P  [X] Characters       [+] Base    [-] Base       [Ctrl++] Block    [Ctrl+-] Block       [Ctrl+Alt+] Palette    [Ctrl+Alt-] Palette";
+	const char				cgcLegend[]							= "Toggle:  [R] Digital Root/Persistence   [C] Color  [D] Divider  [T] DR-P  [X] Characters       [+] Base    [-] Base       [Ctrl++] Block    [Ctrl+-] Block       [Ctrl+Alt+] Palette    [Ctrl+Alt-] Palette       [Ctrl+Shift+] Angles";
 	char					primeBlockFounds[8192];											// Space to store our list of 24 found prime starting blocks
 	char					szTitle[_MAX_LOADSTRING];										// The title bar text
 	char					szWindowClass[_MAX_LOADSTRING];									// the main window class name
@@ -126,7 +129,7 @@
 	char masterDigitalRoots[24][24];
 
 	// For the 8-dimension spiral
-	float masterAngles[8] =
+	float masterAngles[16] =
 	{
 		(_PI *  12.0f / 180.0f) + (_PI / 2),
 		(_PI *  84.0f / 180.0f) + (_PI / 2),
@@ -135,7 +138,17 @@
 		(_PI * 204.0f / 180.0f) + (_PI / 2),
 		(_PI * 228.0f / 180.0f) + (_PI / 2),
 		(_PI * 276.0f / 180.0f) + (_PI / 2),
-		(_PI * 348.0f / 180.0f) + (_PI / 2)
+		(_PI * 348.0f / 180.0f) + (_PI / 2),
+
+		// More normalized angles
+		(_PI *  20.0f / 180.0f) + (_PI / 2),
+		(_PI *  60.0f / 180.0f) + (_PI / 2),
+		(_PI * 120.0f / 180.0f) + (_PI / 2),
+		(_PI * 160.0f / 180.0f) + (_PI / 2),
+		(_PI * 200.0f / 180.0f) + (_PI / 2),
+		(_PI * 240.0f / 180.0f) + (_PI / 2),
+		(_PI * 300.0f / 180.0f) + (_PI / 2),
+		(_PI * 340.0f / 180.0f) + (_PI / 2)
 	};
 
 
@@ -467,7 +480,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 			ghbrYellow	= CreateSolidBrush(yellow);
 			ghbrGreen	= CreateSolidBrush(green);
 			ghbrBlue	= CreateSolidBrush(RGB(190,220,231));
-			ghWnd		= CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, gnFontBigWidth * 60, gnFontBigHeight * 32, NULL, NULL, ghInst, NULL);
+			ghWnd		= CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, gnFontBigWidth * 50, gnFontBigHeight * 32, NULL, NULL, ghInst, NULL);
 			if (!ghWnd)
 			  return FALSE;
 
@@ -542,12 +555,13 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 //////
 	LRESULT CALLBACK WndProc(HWND h, UINT m, WPARAM w, LPARAM l)
 	{
-		int				wmId, wmEvent, lnCol, lnRow, lnDigitalRoot, lnPersistence, lnSum1, lnSum2, lnIterate, lnDeltaX, lnDeltaY, lnPrimeRoot;
+		int				wmId, wmEvent, lnI, lnCol, lnRow, lnDigitalRoot, lnPersistence, lnSum1, lnSum2, lnIterate, lnDeltaX, lnDeltaY, lnPrimeRoot, lnX1, lnY1, lnX2, lnY2;
 		float			lfRadius, lfRadiusStep;
+		POINT			pt;
 		PAINTSTRUCT		ps;
-		RECT			lrc, lrc2, lrcClient, lrcCenter;
+		RECT			lrc, lrc2, lrc3, lrcClient, lrcCenter;
 		HBRUSH			lhBrush;
-		HDC				hdc;
+		HDC				hdc, hdcDest;
 		char			buffer[256];
 
 
@@ -893,42 +907,96 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 				// Draw the 8-part spiral
 				//////
 					// Iterate at every prime going around clockwise
-					SetRect(&lrcCenter, lrcClient.right * 3 / 4, lrcClient.bottom / 2, 0, 0);
-					lfRadiusStep = (float)(sqrt((double)((gnFontSmallHeight*gnFontSmallHeight) + (gnFontSmallWidth*gnFontSmallWidth))) / 16.0);
-					for (lnRow = 0, lfRadius = lfRadiusStep * 8.0f, lnIterate = 0, lnPrimeRoot = 0; lnRow < 24; lnRow++)
+					SelectObject(hdc, ghFontBig);
+					SetRect(&lrcCenter, (lrc.right + lrcClient.right) / 2, lrcClient.bottom / 2, 0, 0);
+
+					// Clear the portion if the angle shift has changed
+					if (glAngleShiftChanged)
 					{
-						for (lnCol = 0; lnCol < 24; lnCol++, lfRadius += lfRadiusStep, lnIterate = (++lnIterate % 8))
+						SetRect(&lrc3, lrc.right, 0, lrcClient.right, lrcClient.bottom);
+						lrc3.bottom -= gnFontBigHeight;
+						FillRect(hdc, &lrc3, ghbrWhite);
+					}
+					glAngleShiftChanged = false;
+
+					// Iterate through twice, the first time to draw the background, the second to position the points
+					lfRadiusStep = (float)(sqrt((double)((gnFontBigHeight*gnFontBigHeight) + (gnFontBigWidth*gnFontBigWidth))) / 6.5);
+					for (lnI = 0; lnI < 2; lnI++)
+					{
+						for (lnRow = gnBlock, lfRadius = lfRadiusStep * 8.0f, lnIterate = 0, lnPrimeRoot = masterPrimeTable[0][0] - 1; lnRow < gnBlock + 2; lnRow++)
 						{
-							// Grab the offset for the delta
-							lnDeltaY = (int)(sin(masterAngles[lnIterate]) * lfRadius);
-							lnDeltaX = (int)(cos(masterAngles[lnIterate]) * lfRadius);
-
-							// Compute this value
-							lnPrimeRoot = getNextPrimeRoot(lnPrimeRoot + 1);
-							sprintf(buffer, "%u\0", lnPrimeRoot);
-
-							// Based on its primality, display in white, or in green
-							if (isPrime(lnPrimeRoot))
+							for (lnCol = 0; lnCol < 24; lnCol++, lfRadius += lfRadiusStep, lnIterate++)
 							{
-								// Prime
-								SetBkColor(hdc, white);
+								// Grab the offset for the delta
+								lnDeltaY = (int)(sin(masterAngles[(lnIterate % 8) + ((gnAngleShift % 2) * 8)]) * lfRadius);
+								lnDeltaX = (int)(cos(masterAngles[(lnIterate % 8) + ((gnAngleShift % 2) * 8)]) * lfRadius);
 
-							} else {
-								// Not prime
-								SetBkColor(hdc, green);
+								// On the first pass, draw the connections
+								if (lnI == 0)
+								{
+									// Draw the basic frame
+									if (lnRow == gnBlock && lnIterate < 8)
+									{
+										// Get the range
+										lnY1 = (int)(sin(masterAngles[(lnIterate % 8) + ((gnAngleShift % 2) * 8)]) * lfRadius);
+										lnX1 = (int)(cos(masterAngles[(lnIterate % 8) + ((gnAngleShift % 2) * 8)]) * lfRadius);
+										lnY2 = (int)(sin(masterAngles[(lnIterate % 8) + ((gnAngleShift % 2) * 8)]) * (lfRadius + lfRadiusStep * 8.0f * 3.0f));
+										lnX2 = (int)(cos(masterAngles[(lnIterate % 8) + ((gnAngleShift % 2) * 8)]) * (lfRadius + lfRadiusStep * 8.0f * 3.0f));
+										MoveToEx(hdc, lrcCenter.left - lnX1, lrcCenter.top - lnY1, NULL);
+										LineTo(hdc,   lrcCenter.left - lnX2, lrcCenter.top - lnY2);
+									}
+
+									// Draw the line connecting from where it was to where we are
+									if (lnIterate != 0)
+									{
+										// Draw a line connecting where we were to where we are
+										MoveToEx(hdc, pt.x, pt.y, NULL);
+										LineTo(hdc, lrcCenter.left - lnDeltaX, lrcCenter.top - lnDeltaY);
+									}
+									pt.x = lrcCenter.left - lnDeltaX;
+									pt.y = lrcCenter.top  - lnDeltaY;
+
+								} else {
+									// On the second pass, draw the thing
+
+									// Compute this value
+									lnPrimeRoot = getNextPrimeRoot(lnPrimeRoot + 1);
+									sprintf(buffer, "%u\0", lnPrimeRoot);
+
+									// Based on its primality, display in white, or in green
+									if (isPrime(lnPrimeRoot))
+									{
+										// Prime
+										SetBkColor(hdc, white);
+										lhBrush = ghbrWhite;
+
+									} else {
+										// Not prime
+										SetBkColor(hdc, yellow);
+										lhBrush = ghbrYellow;
+									}
+
+									// Find out how big it will draw
+									DrawText(hdc, buffer, strlen(buffer), &lrc2, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_CALCRECT);
+
+									// Center it around the location
+									SetRect(&lrc2,	lrcCenter.left	- lnDeltaX - ((lrc2.right - lrc2.left) / 2),
+													lrcCenter.top	- lnDeltaY - ((lrc2.bottom - lrc2.top) / 2),
+													lrcCenter.left	- lnDeltaX + ((lrc2.right - lrc2.left) / 2),
+													lrcCenter.top	- lnDeltaY + ((lrc2.bottom - lrc2.top) / 2));
+
+									// Remove the portion that was there before
+									CopyRect(&lrc3, &lrc2);
+									InflateRect(&lrc3, 4, 2);
+									FillRect(hdc, &lrc3, ghbrWhite);
+// 									InflateRect(&lrc, -4, -2);
+// 									FillRect(hdc, &lrc3, lhBrush);
+// 									FrameRect(hdc, &lrc3, (HBRUSH)GetStockObject(BLACK_BRUSH));
+
+									// Draw it
+									DrawText(hdc, buffer, strlen(buffer), &lrc2, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
+								}
 							}
-
-							// Find out how big it will draw
-							DrawText(hdc, buffer, strlen(buffer), &lrc2, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_CALCRECT);
-
-							// Center it around the location
-							SetRect(&lrc2,	lrcCenter.left	- lnDeltaX - ((lrc2.right - lrc2.left) / 2),
-											lrcCenter.top	- lnDeltaY - ((lrc2.bottom - lrc2.top) / 2),
-											lrcCenter.left	- lnDeltaX + ((lrc2.right - lrc2.left) / 2),
-											lrcCenter.top	- lnDeltaY + ((lrc2.bottom - lrc2.top) / 2));
-
-							// Draw it
-							DrawText(hdc, buffer, strlen(buffer), &lrc2, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
 						}
 					}
 
@@ -948,6 +1016,11 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 							{
 								// Alt key is down too
 								++gnColorShift;
+
+							} else if (GetAsyncKeyState(VK_SHIFT)) {
+								// Shift key is down too
+								++gnAngleShift;
+								glAngleShiftChanged = true;
 
 							} else {
 								// Just control
@@ -970,6 +1043,11 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdL
 							{
 								// Alt key is down too
 								--gnColorShift;
+
+							} else if (GetAsyncKeyState(VK_SHIFT)) {
+								// Shift key is down too
+								--gnAngleShift;
+								glAngleShiftChanged = true;
 
 							} else {
 								// Just control
