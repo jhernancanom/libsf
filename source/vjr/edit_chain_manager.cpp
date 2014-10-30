@@ -1557,6 +1557,11 @@ debug_break;
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
+
+					case VK_SPACE:		// Shift+space is a way to input a space into a token name
+						tnAsciiChar	= 255;
+						tlIsAscii	= true;
+						break;
 				}
 
 			} else if (!tlCtrl && !tlShift && tlAlt) {
@@ -2895,7 +2900,7 @@ renderAsText:
 		// Indicate our status
 		return(llChanged);
 	}
-;
+
 
 
 

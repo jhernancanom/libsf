@@ -956,6 +956,13 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 
 
 							//////////
+							// Execute
+							//////
+								if (lacs->_onFind)
+									lacs->onFind(lacs, comp);
+
+
+							//////////
 							// Move beyond this entry, and continue on search again afterward
 							//////
 								lnI += lnLength;
@@ -3099,10 +3106,13 @@ debug_break;
 // Search the haystack for the needle, the haystack can be tupels, as in "_az" meaning
 // (is it between "a" and "z" inclusive?)  To set this condition, use a length of 1,
 // a leading "_" in tcHaystack, and two characters (one of which must NOT be NULL) after.
+//
 // Examples:
-//		_az		= lower-case a to z inclusive
-//		_AZ		= upper-case a to z inclusive
-//		_09		= numeric 0 to 9 inclusive
+//		_az			= lower-case a to z inclusive
+//		_AZ			= upper-case a to z inclusive
+//		_09			= numeric 0 to 9 inclusive
+//		_azAZ09		= any of the above in a single succession
+//		_azAZ09__	= any of the above plus an underscore character (it must be done twice because of the from/to pattern
 //
 // Returns:
 //		0		= matches
@@ -3112,7 +3122,7 @@ debug_break;
 	s32 iTranslateToCompsTest(s8* tcHaystack, s8* tcNeedle, s32 tnLength)
 	{
 		u32		lnI;
-		bool	llSigned;
+		bool	llCase;
 
 
 		// Make sure our environment is sane
@@ -3121,13 +3131,13 @@ debug_break;
 			// See if we're a signed or unsigned compare
 			if (tnLength < 0)
 			{
-				// Case sensitive compare
+				// Case-sensitive compare
 				tnLength	= -tnLength;
-				llSigned	= true;
+				llCase		= true;
 
 			} else {
-				// Case insensitive compare
-				llSigned = false;
+				// Case-insensitive compare
+				llCase		= false;
 			}
 
 			// See if we're looking for a tuple, or a regular compare
@@ -3144,7 +3154,7 @@ debug_break;
 
 			} else {
 				// Just a regular compare
-				if (llSigned)	return(  memcmp(tcHaystack, tcNeedle, tnLength));
+				if (llCase)		return(  memcmp(tcHaystack, tcNeedle, tnLength));
 				else			return(_memicmp(tcHaystack, tcNeedle, tnLength));
 			}
 		}
@@ -3702,6 +3712,26 @@ debug_break;
 		}
 		// If we get here, invalid environment
 		return(NULL);
+	}
+
+	// This was added to identify any tokens which have at last one non-breaking-space character (so they are rendered properly in the editor)
+	void iiOnAlphaFind(SAsciiCompSearcher* tacs, SComp* comp)
+	{
+		s32 lnI;
+
+
+		//////////
+		// Iterate through every character until we find the first one
+		//////
+			for (lnI = 0; lnI < comp->length; lnI++)
+			{
+				if (comp->line->sourceCode->data_u8[lnI] == 255)
+				{
+					// Flag it
+					comp->hasNbsp = true;
+					return;
+				}
+			}
 	}
 
 	SMasterList* iSEChain_migrateByNum(SStartEnd* ptrSEDst, SStartEnd* ptrSESrc, u32 lnSrcNum, u32 tnHint, u32 tnBlockSize)

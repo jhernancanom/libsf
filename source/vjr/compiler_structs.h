@@ -96,6 +96,12 @@ struct SCompileNote;
 		// For syntax highlighting
 		SBgra*			syntaxHighlightColor;							// Color to display this component in
 		bool			useBoldFont;									// Should this be bolded?
+
+		// An optional extra callback to parse on finds
+		union {
+			u32			_onFind;
+			void		(*onFind)(SAsciiCompSearcher* tacs, SComp* comp);
+		};
 	};
 
 	struct SFunction
@@ -263,6 +269,7 @@ struct SCompileNote;
 		bool			useBoldFont;									// Syntax highlight font should be bold?
 		s32				start;											// Start into the indicates line's source code
 		s32				length;											// Length of the component
+		bool			hasNbsp;										// Does this component have a non-breaking-space?
 
 		// For each compilation pass, components can be marked in error or warning or both
 		bool			isError;										// Is this component part of an error?
