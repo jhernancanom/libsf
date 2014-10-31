@@ -238,6 +238,8 @@ struct SDatum
 		s16*		data_s16;											// To access the data as s16
 		f32*		data_f32;											// To access the data as f32
 		f64*		data_f64;											// To access the data as f64
+		s8*			data_cs8;											// To access the data as cs8
+		s8*			data_cu8;											// To access the data as cu8
 		SBgra*		data_bgra;											// to access the data as SBgra
 		SBgra*		data_bgr;											// to access the data as SBgr
 	};

@@ -724,7 +724,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Editor resize CTRL+ and CTRL-",				"0.47", false, false, false, -2, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Casks",										"0.46", false, true, false, -2, 0);
+//		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Casks",										"0.46", false, true, false, -2, 0);
 
 // Planned:
 //		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE,  "Syntax highlighting (future, James 4:15)",	"0.50", false, false, false, -2, 0);

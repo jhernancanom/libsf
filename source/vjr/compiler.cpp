@@ -3725,12 +3725,9 @@ debug_break;
 		//////
 			for (lnI = 0; lnI < comp->length; lnI++)
 			{
+				// If it's a nbsp, increase the count
 				if (comp->line->sourceCode->data_u8[lnI] == 255)
-				{
-					// Flag it
-					comp->hasNbsp = true;
-					return;
-				}
+					++comp->nbspCount;
 			}
 	}
 

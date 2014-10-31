@@ -269,7 +269,7 @@ struct SCompileNote;
 		bool			useBoldFont;									// Syntax highlight font should be bold?
 		s32				start;											// Start into the indicates line's source code
 		s32				length;											// Length of the component
-		bool			hasNbsp;										// Does this component have a non-breaking-space?
+		s32				nbspCount;										// Number of non-breaking-spaces in this component
 
 		// For each compilation pass, components can be marked in error or warning or both
 		bool			isError;										// Is this component part of an error?

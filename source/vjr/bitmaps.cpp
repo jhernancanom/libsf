@@ -2700,6 +2700,107 @@
 
 //////////
 //
+// Called to render a non-breaking-space component, replacing each nbsp with a half-space, and presenting the
+// name centered in the middle of the pixel area with the left and right sides containing a visible cue color
+// so as to indicate the scope of the nbsp name.
+//
+//////
+	SBitmap* iBmp_nbsp_createAndPopulate(SComp* comp, SFont* font, s32 tnWidth, s32 tnHeight, SBgra backColor, SBgra textColor, SBgra backgroundColor)
+	{
+		s32			lnI, lnCount;
+		RECT		lrc;
+		SFont*		fontTemp;
+		SBgra		tempColor;
+		SBitmap*	bmpNbsp;
+
+
+		//////////
+		// Create our cask at its standard size, and big enough for the sides and text
+		//////
+			bmpNbsp	= iBmp_allocate();
+			iBmp_createBySize(bmpNbsp, tnWidth, tnHeight, 24);
+
+
+		//////////
+		// Create a font one pixel size smaller
+		//////
+			fontTemp = iFont_create(font->name.data_cs8, font->_size - 1, font->_weight, font->_italics, font->_underline);
+
+
+		//////////
+		// Fill everything with our background color
+		//////
+			SetRect(&lrc, 0, 0, bmpNbsp->bi.biWidth, bmpNbsp->bi.biHeight);
+			iBmp_fillRect(bmpNbsp, &lrc, backgroundColor, backgroundColor, backgroundColor, backgroundColor, false, NULL, false);
+
+
+		/////////
+		// Left side gradient
+		//////
+			SetRect(&lrc, 0, 0, tnWidth / 3, tnHeight);
+			tempColor = iBmp_colorCombine(blueColor, whiteColor, 0.15f);
+			iBmp_fillRect(bmpNbsp, &lrc, tempColor, backgroundColor, tempColor, backgroundColor, true, NULL, false);
+
+
+		//////////
+		// Right side gradient
+		//////
+			SetRect(&lrc, 2 * tnWidth / 3, 0, tnWidth, tnHeight);
+			iBmp_fillRect(bmpNbsp, &lrc, backgroundColor, tempColor, backgroundColor, tempColor, true, NULL, false);
+
+
+		//////////
+		// Render our text portions over the top
+		//////
+			SelectObject(bmpNbsp->hdc, fontTemp->hfont);
+			SetBkMode(bmpNbsp->hdc, TRANSPARENT);
+			SetTextColor(bmpNbsp->hdc, textColor.color);
+			SetRect(&lrc, ((comp->nbspCount * font->tm.tmAveCharWidth) / 2) + ((comp->nbspCount * fontTemp->tm.tmAveCharWidth) / 2), 0, 0, tnHeight);
+			for (lnI = 0, lnCount = 0; lnI < comp->length; lnI++)
+			{
+				// Have we reached the non-breaking-space yet?
+				if (comp->line->sourceCode->data_u8[comp->start + lnI] == 255 || (lnI + 1) == comp->length)
+				{
+					// Adjust the right-side of our rect
+					lrc.right = lrc.left + (lnCount * font->tm.tmAveCharWidth);
+
+					// This is a non-breaking-space character, we need to draw what we have, and move over a half space
+					if (lnCount != 0)
+						DrawText(bmpNbsp->hdc, comp->line->sourceCode->data + comp->start + lnI - lnCount, lnCount + (((lnI + 1) == comp->length) ? 1 : 0), &lrc, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+
+					// Update our rectangle
+					lrc.left += (lnCount * font->tm.tmAveCharWidth) + (font->tm.tmAveCharWidth / 2);
+
+					// Reset our count
+					lnCount = 0;
+
+				} else {
+					// Just increasing our count
+					++lnCount;
+				}
+			}
+
+
+		//////////
+		// Delete our temporary font
+		//////
+			iFont_delete(&fontTemp, true);
+
+
+		//////////
+		// Mask off the corners
+		//////
+// TODO:  mask off the corners to make it rounder
+
+		// Indicate our status
+		return(bmpNbsp);
+	}
+
+
+
+
+//////////
+//
 // Called to build a common tooltip background
 //
 //////

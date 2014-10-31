@@ -1824,12 +1824,13 @@ debug_break;
 	u32 iSEM_render(SEM* em, SObject* obj, bool tlRenderCursorline)
 	{
 		u32			lnPixelsRendered;
-		s32			lnI, lnTop, lnSkip, lnDeltaX, lnLevel;
+		s32			lnI, lnJ, lnTop, lnSkip, lnDeltaX, lnLevel, lnBufferLength;
 		bool		llIsValid, llOverrideCaskColors;
 		SFont*		font;
 		SEdit*		line;
 		SBitmap*	bmp;
 		SBitmap*	bmpCask;
+		SBitmap*	bmpNbsp;
 		SBitmap*	bmpBreakpoint;
 		SBitmap*	bmpBreakpointScaled;
 		SComp*		comp;
@@ -1840,7 +1841,8 @@ debug_break;
 		HGDIOBJ		hfontOld;
 		SBgra		defaultForeColor, defaultBackColor, fillColor, backColorLast, foreColorLast, compForeColor, compBackColor, compFillColor;
 		RECT		rc, lrc, lrc2, lrc3, lrcComp, lrcText, lrcCompCalcStart, lrcCompCalcDwell;
-		s8			buffer[32];
+		s8*			textptr;
+		s8			buffer[1024];
 
 
 		logfunc(__FUNCTION__);
@@ -2139,18 +2141,18 @@ debug_break;
 											lrcComp.right	-= lnDeltaX;
 										}
 
+										// Is this a component that should be highlighted?
+										if (compHighlight && comp != compHighlight && comp->length == compHighlight->length && _memicmp(comp->line->sourceCode->data + comp->start, compHighlight->line->sourceCode->data + compHighlight->start, comp->length) == 0)
+										{
+											SetBkMode(bmp->hdc, OPAQUE);
+											SetBkColor(bmp->hdc, RGB(highlightSymbolBackColor.red, highlightSymbolBackColor.grn, highlightSymbolBackColor.blu));
+											compBackColor.color		= highlightSymbolBackColor.color;
+											llOverrideCaskColors	= false;
+										}
+
 										// Is it a cask or text?
 										if (comp->iCode >= _ICODE_CASK_MINIMUM && comp->iCode <= _ICODE_CASK_MAXIMUM)
 										{
-											// Is this a component that should be highlighted?
-											if (compHighlight && comp != compHighlight && comp->length == compHighlight->length && _memicmp(comp->line->sourceCode->data + comp->start, compHighlight->line->sourceCode->data + compHighlight->start, comp->length) == 0)
-											{
-												SetBkMode(bmp->hdc, OPAQUE);
-												SetBkColor(bmp->hdc, RGB(highlightSymbolBackColor.red, highlightSymbolBackColor.grn, highlightSymbolBackColor.blu));
-												compBackColor.color		= highlightSymbolBackColor.color;
-												llOverrideCaskColors	= false;
-											}
-
 											// Is there a cask cache from a previous screen render?
 											if (!comp->bc || !iBmp_isValidCache(&comp->bc, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, compFillColor.color, compBackColor.color))
 											{
@@ -2204,15 +2206,44 @@ debug_break;
 										} else {
 renderAsText:
 											// We either draw it directly as text as it is, or if it has a non-breaking-space, we need to alter its appearance for the purposes of allowing spaces in variable names.
-											if (comp->hasNbsp)
+											if (comp->nbspCount)
 											{
 												// It's a name with a non-breaking-space, so we need to render it as a special graphic.
 												// For these we will take a name like "my variable" and render a half-space between "my" and "variable", and take the pixels which were removed and prefix and postfix the name with it.
 												// This will be drawn on a background that is a slightly altered background for its current color so it visually stands out, but the background will fade away from the edges sort of like the way the splash screen does along the left-side list.
-// TODO:  Working here, need to copy the pattern of the cask code above, and alter it to render the non-breaking-spaces
+
+												// Is there a cask cache from a previous screen render?
+												if (!comp->bc || !iBmp_isValidCache(&comp->bc, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, compFillColor.color, compBackColor.color))
+												{
+													// The bitmap cache is no longer valid
+													iBmp_deleteCache(&obj->bc);
+
+													// Build it
+													bmpNbsp = iBmp_nbsp_createAndPopulate(	comp, font,
+																							lrcComp.right  - lrcComp.left,
+																							lrcComp.bottom - lrcComp.top,
+																							compBackColor,
+																							compForeColor,
+																							compFillColor);
+
+													// Save the cache
+													iBmp_createCache(&comp->bc, bmpNbsp, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, compFillColor.color, compBackColor.color, false);
+
+												} else {
+													// Use the bitmap cache
+													bmpNbsp = comp->bc->bmpCached;
+												}
+
+												// If the cursor's on the thing, then render it normally
+												if (line == em->ecCursorLine && em->column >= comp->start && em->column <= comp->start + comp->length)
+													goto renderAsOnlyText;
+
+												// Draw completely opaque
+												iBmp_bitBlt(bmp, &lrcComp, bmpNbsp);
 
 											} else {
 												// Draw the text
+renderAsOnlyText:
 												// Set the color
 												SetTextColor(bmp->hdc, RGB(compForeColor.red, compForeColor.grn, compForeColor.blu));
 
@@ -2224,22 +2255,38 @@ renderAsText:
 												if (compHighlight && comp != compHighlight && comp->length == compHighlight->length && _memicmp(comp->line->sourceCode->data + comp->start, compHighlight->line->sourceCode->data + compHighlight->start, comp->length) == 0)
 													SetBkColor(bmp->hdc, RGB(highlightSymbolBackColor.red, highlightSymbolBackColor.grn, highlightSymbolBackColor.blu));
 
+												// Remove any nbsp characters
+												if (comp->nbspCount != 0)
+												{
+													// Copy to a temporary buffer
+													lnBufferLength = min(comp->length, sizeof(buffer));
+													memcpy(buffer, comp->line->sourceCode->data + comp->start, lnBufferLength);
+
+													// Remove nbsp characters
+													for (lnJ = 0; lnJ < lnBufferLength; lnJ++)
+													{
+														// If it's a nbsp, replace with a normal space for rendering
+														if ((u8)buffer[lnJ] == 255)
+															buffer[lnJ] = 32;
+													}
+
+													// Setup the pointer
+													textptr = (s8*)&buffer[0];
+
+												} else {
+													textptr = comp->line->sourceCode->data + comp->start;
+												}
+
 												// Draw this component
 												SetBkMode(bmp->hdc, OPAQUE);
-												DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+												DrawText(bmp->hdc, textptr, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 
 												// If we should bold, bold it
 												if (comp->useBoldFont)
 												{
-													// Set transparent mode
+													// Set transparent mode, render, then back to opaque
 													SetBkMode(bmp->hdc, TRANSPARENT);
-
-													// Adjust right one pixel, redraw
-	//												++lrcComp.left;
-	//	 											++lrcComp.right;
-													DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
-
-													// Set back to opaque
+													DrawText(bmp->hdc, textptr, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 													SetBkMode(bmp->hdc, OPAQUE);
 												}
 
