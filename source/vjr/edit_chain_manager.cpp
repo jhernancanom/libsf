@@ -2203,43 +2203,53 @@ debug_break;
 
 										} else {
 renderAsText:
-											// Draw the text
-											// Set the color
-											SetTextColor(bmp->hdc, RGB(compForeColor.red, compForeColor.grn, compForeColor.blu));
-
-											// An explicit background color?
-											if (comp->overrideMatchingBackColor)
-												SetBkColor(bmp->hdc, RGB(comp->overrideMatchingBackColor->red, comp->overrideMatchingBackColor->grn, comp->overrideMatchingBackColor->blu));
-
-											// Is this a component that should be highlighted?
-											if (compHighlight && comp != compHighlight && comp->length == compHighlight->length && _memicmp(comp->line->sourceCode->data + comp->start, compHighlight->line->sourceCode->data + compHighlight->start, comp->length) == 0)
-												SetBkColor(bmp->hdc, RGB(highlightSymbolBackColor.red, highlightSymbolBackColor.grn, highlightSymbolBackColor.blu));
-
-											// Draw this component
-											SetBkMode(bmp->hdc, OPAQUE);
-											DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
-
-											// If we should bold, bold it
-											if (comp->useBoldFont)
+											// We either draw it directly as text as it is, or if it has a non-breaking-space, we need to alter its appearance for the purposes of allowing spaces in variable names.
+											if (comp->hasNbsp)
 											{
-												// Set transparent mode
-												SetBkMode(bmp->hdc, TRANSPARENT);
+												// It's a name with a non-breaking-space, so we need to render it as a special graphic.
+												// For these we will take a name like "my variable" and render a half-space between "my" and "variable", and take the pixels which were removed and prefix and postfix the name with it.
+												// This will be drawn on a background that is a slightly altered background for its current color so it visually stands out, but the background will fade away from the edges sort of like the way the splash screen does along the left-side list.
+// TODO:  Working here, need to copy the pattern of the cask code above, and alter it to render the non-breaking-spaces
 
-												// Adjust right one pixel, redraw
-//												++lrcComp.left;
-//	 											++lrcComp.right;
+											} else {
+												// Draw the text
+												// Set the color
+												SetTextColor(bmp->hdc, RGB(compForeColor.red, compForeColor.grn, compForeColor.blu));
+
+												// An explicit background color?
+												if (comp->overrideMatchingBackColor)
+													SetBkColor(bmp->hdc, RGB(comp->overrideMatchingBackColor->red, comp->overrideMatchingBackColor->grn, comp->overrideMatchingBackColor->blu));
+
+												// Is this a component that should be highlighted?
+												if (compHighlight && comp != compHighlight && comp->length == compHighlight->length && _memicmp(comp->line->sourceCode->data + comp->start, compHighlight->line->sourceCode->data + compHighlight->start, comp->length) == 0)
+													SetBkColor(bmp->hdc, RGB(highlightSymbolBackColor.red, highlightSymbolBackColor.grn, highlightSymbolBackColor.blu));
+
+												// Draw this component
+												SetBkMode(bmp->hdc, OPAQUE);
 												DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 
-												// Set back to opaque
-												SetBkMode(bmp->hdc, OPAQUE);
-											}
+												// If we should bold, bold it
+												if (comp->useBoldFont)
+												{
+													// Set transparent mode
+													SetBkMode(bmp->hdc, TRANSPARENT);
 
-											// If it's a comp that we're highlighting, highlight it
+													// Adjust right one pixel, redraw
+	//												++lrcComp.left;
+	//	 											++lrcComp.right;
+													DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+
+													// Set back to opaque
+													SetBkMode(bmp->hdc, OPAQUE);
+												}
+
+												// If it's a comp that we're highlighting, highlight it
 //////////
 // Aug.16.2014 -- This is an optional way to highlight the component.  It draws a gradient over the component to signal its being highlighted.  Far too overt in my opinion.
-//											if (compHighlight && comp != compHighlight && comp->length == compHighlight->length && _memicmp(comp->line->sourceCode->data + comp->start, compHighlight->line->sourceCode->data + compHighlight->start, comp->length) == 0)
-// 												iBmp_colorizeHighlightGradient(bmp, &lrcComp, overrideMatchingBackColor, 0.5f, 0.25f);
+//												if (compHighlight && comp != compHighlight && comp->length == compHighlight->length && _memicmp(comp->line->sourceCode->data + comp->start, compHighlight->line->sourceCode->data + compHighlight->start, comp->length) == 0)
+// 													iBmp_colorizeHighlightGradient(bmp, &lrcComp, overrideMatchingBackColor, 0.5f, 0.25f);
 //////
+											}
 										}
 
 

@@ -707,6 +707,8 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Compiler completed (future, James 4:15)",		"0.65", false, false, false, -2, 0);
 		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Running programs (future, James 4:15)",		"0.60", false, false, false, -2, 0);
 
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Support for Shift+Spaces in names",			"0.54", false, false, false, 0, 0);
+
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Internal Property refactoring",				"0.53", false, false, false, 0, 0);
 
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "CHRTRAN() and STRTRAN()",					"0.52", false, false, false, -2, 0);
