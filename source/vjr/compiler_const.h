@@ -424,8 +424,8 @@
 	const s32		_ICODE_ACLASS                                   = 1001;
 	const s32		_ICODE_ACOPY                                    = 1002;
 	const s32		_ICODE_ACOS                                     = 1003;
-	const s32		_ICODEADATABASES_                               = 1004;
-	const s32		_ICODEADBOBJECTS_                               = 1005;
+	const s32		_ICODE_ADATABASES                               = 1004;
+	const s32		_ICODE_ADBOBJECTS                               = 1005;
 	const s32		_ICODE_ADDBS                                    = 1006;
 	const s32		_ICODE_ADDOBJECT								= 1432;
 	const s32		_ICODE_ADDPROPERTY                              = 1007;

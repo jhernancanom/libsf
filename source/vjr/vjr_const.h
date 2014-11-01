@@ -42,7 +42,7 @@ struct SEM;
 
 
 // Unsigned
-#if !defined(_MSC_VER)
+#ifdef __GNUC__
 	// gcc
 	typedef unsigned long long	u64;
 	typedef unsigned			u32;
@@ -86,6 +86,9 @@ typedef		const u64			cu64;
 // Constant floating point
 typedef		const f64			cf64;
 typedef		const f64			cf64;
+
+// For a null that is not considered a pointer
+const u32 null = 0;
 
 
 // Used for passing complex parameters as references, such as SObjectpp&, or SEMpp&

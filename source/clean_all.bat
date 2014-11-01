@@ -1,8 +1,5 @@
 @echo off
 
-REM move to starting directory
-cd \libsf\source\vjr\
-
 REM remove common files
 del /s command.vjr
 del /s screen.vjr

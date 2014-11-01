@@ -1,61 +1,88 @@
 ##
-## Auto Generated makefile, please do not edit
+## Auto Generated makefile by CodeLite IDE
+## any manual changes will be erased      
 ##
-ProjectName:=Debi
-
 ## Debug
+ProjectName            :=Debi
 ConfigurationName      :=Debug
+WorkspacePath          := "C:\libsf\source\unsorted\DebiX86Disassembler"
+ProjectPath            := "C:\libsf\source\unsorted\DebiX86Disassembler\Debi"
 IntermediateDirectory  :=./Debug
 OutDir                 := $(IntermediateDirectory)
-WorkspacePath          := "/home/rick/.codelite/Debi"
-ProjectPath            := "/home/rick/.codelite/Debi/Debi"
 CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
-User                   :=rick
-Date                   :=02/01/2010
-CodeLitePath           :="/home/rick/.codelite"
-LinkerName             :=g++
-ArchiveTool            :=ar rcus
-SharedObjectLinkerName :=g++ -shared -fPIC
+User                   :=Administrator
+Date                   :=11/01/14
+CodeLitePath           :="C:\Program Files\CodeLite"
+LinkerName             :=C:\MinGW-4.8.1\bin\g++.exe 
+SharedObjectLinkerName :=C:\MinGW-4.8.1\bin\g++.exe -shared -fPIC
 ObjectSuffix           :=.o
 DependSuffix           :=.o.d
-PreprocessSuffix       :=
-DebugSwitch            :=-gstab
+PreprocessSuffix       :=.i
+DebugSwitch            :=-g 
 IncludeSwitch          :=-I
 LibrarySwitch          :=-l
 OutputSwitch           :=-o 
 LibraryPathSwitch      :=-L
 PreprocessorSwitch     :=-D
 SourceSwitch           :=-c 
-CompilerName           :=g++
-C_CompilerName         :=g++
 OutputFile             :=$(IntermediateDirectory)/$(ProjectName)
 Preprocessors          :=
 ObjectSwitch           :=-o 
 ArchiveOutputSwitch    := 
-PreprocessOnlySwitch   :=
-CmpOptions             := -g $(Preprocessors)
+PreprocessOnlySwitch   :=-E
+ObjectsFileList        :="Debi.txt"
+PCHCompileFlags        :=
+MakeDirCommand         :=makedir
+RcCmpOptions           := 
+RcCompilerName         :=C:\MinGW-4.8.1\bin\windres.exe 
 LinkOptions            :=  
-IncludePath            :=  "$(IncludeSwitch)." "$(IncludeSwitch)." 
-RcIncludePath          :=
-Libs                   :=
-LibPath                := "$(LibraryPathSwitch)." 
+IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). 
+IncludePCH             := 
+RcIncludePath          := 
+Libs                   := 
+ArLibs                 :=  
+LibPath                := $(LibraryPathSwitch). 
+
+##
+## Common variables
+## AR, CXX, CC, AS, CXXFLAGS and CFLAGS can be overriden using an environment variables
+##
+AR       := C:\MinGW-4.8.1\bin\ar.exe rcu
+CXX      := C:\MinGW-4.8.1\bin\g++.exe 
+CC       := C:\MinGW-4.8.1\bin\gcc.exe 
+CXXFLAGS :=  -g $(Preprocessors)
+CFLAGS   :=  -g $(Preprocessors)
+ASFLAGS  := 
+AS       := C:\MinGW-4.8.1\bin\as.exe 
 
 
-Objects=$(IntermediateDirectory)/main$(ObjectSuffix) $(IntermediateDirectory)/disasm$(ObjectSuffix) 
+##
+## User defined environment variables
+##
+CodeLiteDir:=C:\Program Files\CodeLite
+UNIT_TEST_PP_SRC_DIR:=C:\UnitTest++-1.3
+Objects0=$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IntermediateDirectory)/disasm.cpp$(ObjectSuffix) 
+
+
+
+Objects=$(Objects0) 
 
 ##
 ## Main Build Targets 
 ##
+.PHONY: all clean PreBuild PrePreBuild PostBuild
 all: $(OutputFile)
 
-$(OutputFile): makeDirStep $(Objects)
-	@mkdir -p $(@D)
-	$(LinkerName) $(OutputSwitch)$(OutputFile) $(Objects) $(LibPath) $(Libs) $(LinkOptions)
+$(OutputFile): $(IntermediateDirectory)/.d $(Objects) 
+	@$(MakeDirCommand) $(@D)
+	@echo "" > $(IntermediateDirectory)/.d
+	@echo $(Objects0)  > $(ObjectsFileList)
+	$(LinkerName) $(OutputSwitch)$(OutputFile) @$(ObjectsFileList) $(LibPath) $(Libs) $(LinkOptions)
 
-makeDirStep:
-	@test -d ./Debug || mkdir -p ./Debug
+$(IntermediateDirectory)/.d:
+	@$(MakeDirCommand) "./Debug"
 
 PreBuild:
 
@@ -63,19 +90,21 @@ PreBuild:
 ##
 ## Objects
 ##
-$(IntermediateDirectory)/main$(ObjectSuffix): main.cpp $(IntermediateDirectory)/main$(DependSuffix)
-	@test -d ./Debug || mkdir -p ./Debug
-	$(CompilerName) $(SourceSwitch) "/home/rick/.codelite/Debi/Debi/main.cpp" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/main$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/main$(DependSuffix): main.cpp
-	@test -d ./Debug || mkdir -p ./Debug
-	@$(CompilerName) $(CmpOptions) $(IncludePath) -MT$(IntermediateDirectory)/main$(ObjectSuffix) -MF$(IntermediateDirectory)/main$(DependSuffix) -MM "/home/rick/.codelite/Debi/Debi/main.cpp"
+$(IntermediateDirectory)/main.cpp$(ObjectSuffix): main.cpp $(IntermediateDirectory)/main.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/libsf/source/unsorted/DebiX86Disassembler/Debi/main.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/main.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/main.cpp$(DependSuffix): main.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/main.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/main.cpp$(DependSuffix) -MM "main.cpp"
 
-$(IntermediateDirectory)/disasm$(ObjectSuffix): disasm.cpp $(IntermediateDirectory)/disasm$(DependSuffix)
-	@test -d ./Debug || mkdir -p ./Debug
-	$(CompilerName) $(SourceSwitch) "/home/rick/.codelite/Debi/Debi/disasm.cpp" $(CmpOptions) $(ObjectSwitch)$(IntermediateDirectory)/disasm$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/disasm$(DependSuffix): disasm.cpp
-	@test -d ./Debug || mkdir -p ./Debug
-	@$(CompilerName) $(CmpOptions) $(IncludePath) -MT$(IntermediateDirectory)/disasm$(ObjectSuffix) -MF$(IntermediateDirectory)/disasm$(DependSuffix) -MM "/home/rick/.codelite/Debi/Debi/disasm.cpp"
+$(IntermediateDirectory)/main.cpp$(PreprocessSuffix): main.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/main.cpp$(PreprocessSuffix) "main.cpp"
+
+$(IntermediateDirectory)/disasm.cpp$(ObjectSuffix): disasm.cpp $(IntermediateDirectory)/disasm.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "C:/libsf/source/unsorted/DebiX86Disassembler/Debi/disasm.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/disasm.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/disasm.cpp$(DependSuffix): disasm.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/disasm.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/disasm.cpp$(DependSuffix) -MM "disasm.cpp"
+
+$(IntermediateDirectory)/disasm.cpp$(PreprocessSuffix): disasm.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/disasm.cpp$(PreprocessSuffix) "disasm.cpp"
 
 
 -include $(IntermediateDirectory)/*$(DependSuffix)
@@ -83,12 +112,14 @@ $(IntermediateDirectory)/disasm$(DependSuffix): disasm.cpp
 ## Clean
 ##
 clean:
-	$(RM) $(IntermediateDirectory)/main$(ObjectSuffix)
-	$(RM) $(IntermediateDirectory)/main$(DependSuffix)
-	$(RM) $(IntermediateDirectory)/main$(PreprocessSuffix)
-	$(RM) $(IntermediateDirectory)/disasm$(ObjectSuffix)
-	$(RM) $(IntermediateDirectory)/disasm$(DependSuffix)
-	$(RM) $(IntermediateDirectory)/disasm$(PreprocessSuffix)
+	$(RM) $(IntermediateDirectory)/main.cpp$(ObjectSuffix)
+	$(RM) $(IntermediateDirectory)/main.cpp$(DependSuffix)
+	$(RM) $(IntermediateDirectory)/main.cpp$(PreprocessSuffix)
+	$(RM) $(IntermediateDirectory)/disasm.cpp$(ObjectSuffix)
+	$(RM) $(IntermediateDirectory)/disasm.cpp$(DependSuffix)
+	$(RM) $(IntermediateDirectory)/disasm.cpp$(PreprocessSuffix)
 	$(RM) $(OutputFile)
+	$(RM) $(OutputFile).exe
+	$(RM) "../.build-debug/Debi"
 
 
