@@ -293,27 +293,27 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		if (!iSEM_loadFromDisk(screenData, (s8*)cgcScreenDataFilename, false))
 		{
 			iVjr_appendSystemLog("Populate _screen with default data");
-			iSEM_appendLine(screenData, (s8*)cgcScreenTitle, -1);
-			iSEM_appendLine(screenData, NULL, 0);
-			iSEM_appendLine(screenData, (s8*)"Please report any bugs:  http://www.visual-freepro.org/vjr", -1);
-			iSEM_appendLine(screenData, (s8*)"Thank you, and may the Lord Jesus Christ bless you richly. :-)", -1);
-			iSEM_appendLine(screenData, NULL, 0);
-			iSEM_appendLine(screenData, (s8*)"              _____", -1);
-			iSEM_appendLine(screenData, (s8*)"             |     |", -1);
-			iSEM_appendLine(screenData, (s8*)"             |     |", -1);
-			iSEM_appendLine(screenData, (s8*)"     ________|     |________     In God's sight we've come together.", -1);
-			iSEM_appendLine(screenData, (s8*)"    |                       |    We've come together to help each other.", -1);
-			iSEM_appendLine(screenData, (s8*)"    |________       ________|    Let's grow this project up ... together!", -1);
-			iSEM_appendLine(screenData, (s8*)"             |     |             In service and love to The Lord, forever!", -1);
-			iSEM_appendLine(screenData, (s8*)"             |     |", -1);
-			iSEM_appendLine(screenData, (s8*)"             |     |             Sponsored by:", -1);
-			iSEM_appendLine(screenData, (s8*)"             |     |                LibSF -- Liberty Software Foundation", -1);
-			iSEM_appendLine(screenData, (s8*)"             |     |", -1);
-			iSEM_appendLine(screenData, (s8*)"             |     |             We need more coders. Please consider helping out.", -1);
-			iSEM_appendLine(screenData, (s8*)"             |     |             Your contribution would make a difference.", -1);
-			iSEM_appendLine(screenData, (s8*)"             |     |", -1);
-			iSEM_appendLine(screenData, (s8*)"             |_____|", -1);
-			iSEM_appendLine(screenData, NULL, 0);
+			iSEM_appendLine(screenData, (s8*)cgcScreenTitle, -1, false);
+			iSEM_appendLine(screenData, NULL, 0, false);
+			iSEM_appendLine(screenData, (s8*)"Please report any bugs:  http://www.visual-freepro.org/vjr", -1, false);
+			iSEM_appendLine(screenData, (s8*)"Thank you, and may the Lord Jesus Christ bless you richly. :-)", -1, false);
+			iSEM_appendLine(screenData, NULL, 0, false);
+			iSEM_appendLine(screenData, (s8*)"              _____", -1, false);
+			iSEM_appendLine(screenData, (s8*)"             |     |", -1, false);
+			iSEM_appendLine(screenData, (s8*)"             |     |", -1, false);
+			iSEM_appendLine(screenData, (s8*)"     ________|     |________     In God's sight we've come together.", -1, false);
+			iSEM_appendLine(screenData, (s8*)"    |                       |    We've come together to help each other.", -1, false);
+			iSEM_appendLine(screenData, (s8*)"    |________       ________|    Let's grow this project up ... together!", -1, false);
+			iSEM_appendLine(screenData, (s8*)"             |     |             In service and love to The Lord, forever!", -1, false);
+			iSEM_appendLine(screenData, (s8*)"             |     |", -1, false);
+			iSEM_appendLine(screenData, (s8*)"             |     |             Sponsored by:", -1, false);
+			iSEM_appendLine(screenData, (s8*)"             |     |                LibSF -- Liberty Software Foundation", -1, false);
+			iSEM_appendLine(screenData, (s8*)"             |     |", -1, false);
+			iSEM_appendLine(screenData, (s8*)"             |     |             We need more coders. Please consider helping out.", -1, false);
+			iSEM_appendLine(screenData, (s8*)"             |     |             Your contribution would make a difference.", -1, false);
+			iSEM_appendLine(screenData, (s8*)"             |     |", -1, false);
+			iSEM_appendLine(screenData, (s8*)"             |_____|", -1, false);
+			iSEM_appendLine(screenData, NULL, 0, false);
 		}
 		// Navigate to the end of the content
 		iSEM_navigateToEndLine(screenData, _screen);
@@ -322,12 +322,12 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		// Load in the history if it exists
 		if (!iSEM_loadFromDisk(command_editbox->p.em, (s8*)cgcCommandHistoryFilename, true))
 		{
-			iSEM_appendLine(command_editbox->p.em, (s8*)"*** Welcome to Visual FreePro, Junior! :-)", -1);
-			iSEM_appendLine(command_editbox->p.em, (s8*)"*** For now, this can be thought of as a command window ... with a twist.", -1);
-			iSEM_appendLine(command_editbox->p.em, (s8*)"*** It works like an editor window.  You can insert new lines, edit old ones, etc.", -1);
-			iSEM_appendLine(command_editbox->p.em, (s8*)"*** To execute a command, press F6 or Enter if you're on the last line, or use F6 on any line.", -1);
-			iSEM_appendLine(command_editbox->p.em, (s8*)"*** You can use clear, quit, ? 999, ? \"sample\" (literals), and ? _startupTime (global variable) in this daily build.", -1);
-			iSEM_appendLine(command_editbox->p.em, (s8*)"*** Remember this always:  Love makes you smile. It keeps an inward peace unlike any other. :-)", -1);
+			iSEM_appendLine(command_editbox->p.em, (s8*)"*** Welcome to Visual FreePro, Junior! :-)", -1, false);
+			iSEM_appendLine(command_editbox->p.em, (s8*)"*** For now, this can be thought of as a command window ... with a twist.", -1, false);
+			iSEM_appendLine(command_editbox->p.em, (s8*)"*** It works like an editor window.  You can insert new lines, edit old ones, etc.", -1, false);
+			iSEM_appendLine(command_editbox->p.em, (s8*)"*** To execute a command, press F6 or Enter if you're on the last line, or use F6 on any line.", -1, false);
+			iSEM_appendLine(command_editbox->p.em, (s8*)"*** You can use clear, quit, ? 999, ? \"sample\" (literals), and ? _startupTime (global variable) in this daily build.", -1, false);
+			iSEM_appendLine(command_editbox->p.em, (s8*)"*** Remember this always:  Love makes you smile. It keeps an inward peace unlike any other. :-)", -1, false);
 		}
 
 		// Navigate to the last line
@@ -336,7 +336,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		// Make sure there's a blank line at the end
 		if (command_editbox->p.em->ecCursorLine->sourceCodePopulated != 0)
 		{
-			iSEM_appendLine(command_editbox->p.em, NULL, 0);
+			iSEM_appendLine(command_editbox->p.em, NULL, 0, false);
 			iSEM_navigateToEndLine(command_editbox->p.em, command_editbox);
 		}
 

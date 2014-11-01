@@ -334,6 +334,9 @@
 		f32				trackingRatio						= 0.025f;
 		SBgra			colorMouseOver						= { rgba(255, 255, 0, 255) };			// Yellow
 		SBgra			colorMouseDown						= { rgba(0, 255, 0, 255) };				// Green
+		SBgra			editNewColor						= { rgba(64, 200, 64, 255) };			// Greenish
+		SBgra			editChangedColor					= { rgba(255, 200, 64, 255) };			// Amberish
+
 
 		// Forms four-corner window color schemes (eventually these will be loaded from themes.dbf)
 // Orange theme:

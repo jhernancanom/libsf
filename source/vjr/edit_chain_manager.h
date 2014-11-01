@@ -115,8 +115,12 @@
 
 		u32				lineNumber;										// This line's number
 		SBreakpoint*	breakpoint;										// If there's a breakpoint here, what kind?
-		SDatum*			sourceCode;										// The text on this line is LEFT(d.data, dPopulated)
-		s32				sourceCodePopulated;							// The actual populated length of d (d is allocated in blocks to allow for minor edits without constantly reallocating)
+		SDatum*			sourceCode;										// The text on this line is LEFT(sourceCode.data, sourceCodePopulated)
+		s32				sourceCodePopulated;							// The actual populated length sourceCode
+
+		// New line flag, original value as of original load, or last save
+		bool			isNewLine;										// If the line's been added during normal editing
+		SDatum*			sourceCodeOriginal;								// The original sourceCode when the line was first created, or last saved.  Note:  The length here is the total length as this value does not change
 
 		// Compiler information (see compiler.cpp)
 		bool			forceRecompile;									// A flag that if set forces a recompile of this line
@@ -167,6 +171,11 @@
 			bool		isHeavyProcessing;								// When large amounts of processing will be conducted, the display can be disabled
 			bool		isSourceCode;									// Is this source code?
 			bool		allowMoveBeyondEndOfLine;						// Do we allow them to move beyond the end of the line?
+
+			// Editing cues
+			bool		hideEditCues;									// If true, will not show the changedColor or newColor
+			SBgra		changedColor;									// The color when data has changed
+			SBgra		newColor;										// The color when data is new
 
 			f32			minNbspColorInfluence;							// How much minimum influence should the Nbsp color have for highlighting
 			f32			maxNbspColorInfluence;							// How much maximum?
@@ -242,8 +251,8 @@
 	void					iSEM_deleteChain					(SEM** root, bool tlDeleteSelf);
 	void					iSEM_deleteChainWithCallback		(SEM** root, bool tlDeleteSelf, SEM_callback* ecb);
 	void					iSEM_renumber						(SEM* em, u32 tnStartingLineNumber);
-	SEdit*					iSEM_appendLine						(SEM* em, s8* tcText, s32 tnTextLength);
-	SEdit*					iSEM_insertLine						(SEM* em, s8* tcText, s32 tnTextLength, SEdit* line, bool tlInsertAfter);
+	SEdit*					iSEM_appendLine						(SEM* em, s8* tcText, s32 tnTextLength, bool tlSetNewLineFlag);
+	SEdit*					iSEM_insertLine						(SEM* em, s8* tcText, s32 tnTextLength, SEdit* line, bool tlInsertAfter, bool tlSetNewLineFlag);
 	void					iSEM_deleteLine						(SEM* em);
 	SFont*					iSEM_getRectAndFont					(SEM* em, SObject* obj, RECT* rc);
 	void					iSEM_getColors						(SEM* em, SObject* obj, SBgra& backColor, SBgra& foreColor);

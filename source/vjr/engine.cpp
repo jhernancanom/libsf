@@ -88,7 +88,7 @@
 						if (!compNext)
 						{
 							// Syntax error, expected "? something" got only "?"
-							iSEM_appendLine(screenData, (s8*)cgcSyntaxError, -1);
+							iSEM_appendLine(screenData, (s8*)cgcSyntaxError, -1, false);
 							iSEM_navigateToEndLine(screenData, _screen);
 							screen_editbox->isDirtyRender = true;
 							iWindow_render(gWinJDebi, false);
@@ -125,7 +125,7 @@
 							varText = iVariable_convertForDisplay(var);
 
 							// Add its contents to _screen
-							iSEM_appendLine(screenData, varText->value.data, varText->value.length);
+							iSEM_appendLine(screenData, varText->value.data, varText->value.length, false);
 							iSEM_navigateToEndLine(screenData, _screen);
 							screen_editbox->isDirtyRender = true;
 							iWindow_render(gWinJDebi, false);

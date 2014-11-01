@@ -69,6 +69,10 @@
 			// Default to 5% and 15% nbsp color influences
 			em->minNbspColorInfluence		= 0.05f;
 			em->maxNbspColorInfluence		= 0.15f;
+
+			// Default colors for changed and new
+			em->newColor.color				= editNewColor.color;
+			em->changedColor.color			= editChangedColor.color;
 		}
 
 		// Indicate our status
@@ -232,11 +236,11 @@
 						if (!llOtherCharacters)
 						{
 							// We only had CR+LF characters, no data
-							end = iSEM_appendLine(em, content->data + lnLast, 0);
+							end = iSEM_appendLine(em, content->data + lnLast, 0, false);
 
 						} else {
 							// We had at least some data
-							end = iSEM_appendLine(em, content->data + lnLast, lnI - lnJ - lnLast);
+							end = iSEM_appendLine(em, content->data + lnLast, lnI - lnJ - lnLast, false);
 						}
 						if (!start)
 							start = end;
@@ -278,7 +282,7 @@
 
 				// Indicate success
 				sprintf(buffer, "Loaded: %s\0", tcPathname);
-				iSEM_appendLine(output_editbox->p.em, buffer, strlen(buffer));
+				iSEM_appendLine(output_editbox->p.em, buffer, strlen(buffer), false);
 				return(true);
 
 			} else {
@@ -687,7 +691,7 @@ debug_break;
 // Called to append a line of text to the indicated ECM.
 //
 //////
-	SEdit* iSEM_appendLine(SEM* em, s8* tcText, s32 tnTextLength)
+	SEdit* iSEM_appendLine(SEM* em, s8* tcText, s32 tnTextLength, bool tlSetNewLineFlag)
 	{
 		s32		lnI, lnJ, lnPass, lnTextLength, lnCount;
 		SEdit*	ec;
@@ -782,9 +786,20 @@ debug_break;
 					}
 				}
 
+
+				//////////
+				// Copy the content to the original content
+				//////
+					ec->isNewLine	= tlSetNewLineFlag;
+					ec->sourceCodeOriginal = iDatum_allocate(ec->sourceCode->data, ec->sourceCodePopulated);
+
+
+				//////////
 				// Renumber if need be
-				if (em->showLineNumbers)
-					iSEM_renumber(em, 1);
+				//////
+// TODO:  We could do a speedup here if we are appending to the end, we only need to add one to the previous line
+					if (em->showLineNumbers)
+						iSEM_renumber(em, 1);
 			}
 		}
 
@@ -800,87 +815,90 @@ debug_break;
 // Called to insert a line before or after the indicated line
 //
 //////
-	SEdit* iSEM_insertLine(SEM* em, s8* tcText, s32 tnTextLength, SEdit* line, bool tlInsertAfter)
+	SEdit* iSEM_insertLine(SEM* em, s8* tcText, s32 tnTextLength, SEdit* line, bool tlInsertAfter, bool tlSetNewLineFlag)
 	{
-		SEdit* lineNew;
+		SEdit* ec;
 
 
 		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
 		// Note:  We do not test for tcText and tnTextLength because we can add blank lines
-		lineNew = NULL;
+		ec = NULL;
 		if (em && line)
 		{
 			// Create a new entry
-			lineNew = (SEdit*)malloc(sizeof(SEdit));
-			if (lineNew)
+			ec = (SEdit*)malloc(sizeof(SEdit));
+			if (ec)
 			{
 				// Initialize
-				memset(lineNew, 0, sizeof(SEdit));
+				memset(ec, 0, sizeof(SEdit));
 
 				// Append a blank line
-				lineNew->sourceCode = iDatum_allocate(tcText, tnTextLength);
+				ec->sourceCode = iDatum_allocate(tcText, tnTextLength);
 
 				// Insert before or after the indicated line
 				if (tlInsertAfter)
 				{
 					// Have we added one at the end?
 					if (em->ecLast == line)
-						em->ecLast = lineNew;
+						em->ecLast = ec;
 
 					//////////
 					// [line->] [<-after]
 					// becomes:
 					// [line->] [<-lineNew->] [<after]
 					//////
-						lineNew->ll.next	= line->ll.next;
-						lineNew->ll.prev	= (SLL*)line;
-						line->ll.next		= (SLL*)lineNew;
+						ec->ll.next	= line->ll.next;
+						ec->ll.prev	= (SLL*)line;
+						line->ll.next		= (SLL*)ec;
 
 
 					//////////
 					// If there's one after this, have it point back
 					//////
-						if (lineNew->ll.next)
+						if (ec->ll.next)
 						{
 							// Insert it after
-							lineNew->ll.prev		= lineNew->ll.next->prev;
-							lineNew->ll.next->prev	= (SLL*)lineNew;
+							ec->ll.prev		= ec->ll.next->prev;
+							ec->ll.next->prev	= (SLL*)ec;
 
 						} else {
 							// None after, so we update ecLast
-							em->ecLast = lineNew;
+							em->ecLast = ec;
 						}
 
 				} else {
 					// Have we added one before the beginning?
 					if (em->ecFirst == line)
-						em->ecFirst = lineNew;
+						em->ecFirst = ec;
 
 					//////////
 					// [before->] [<-line]
 					// becomes:
 					// [before->] [<-lineNew->] [<-line]
 					//////
-						lineNew->ll.prev	= line->ll.prev;
-						lineNew->ll.next	= (SLL*)line;
-						line->ll.prev		= (SLL*)lineNew;
+						ec->ll.prev		= line->ll.prev;
+						ec->ll.next		= (SLL*)line;
+						line->ll.prev	= (SLL*)ec;
 
 
 					//////////
 					// If there's one before this, have it point forward
 					//////
-						if (lineNew->ll.next)
+						if (ec->ll.next)
 						{
 							// Insert it before
-							lineNew->ll.next		= lineNew->ll.prev->next;
-							lineNew->ll.prev->next	= (SLL*)lineNew;
+							ec->ll.next			= ec->ll.prev->next;
+							ec->ll.prev->next	= (SLL*)ec;
 
 						} else {
 							// None after, so we update ecLast
-							em->ecFirst = lineNew;
+							em->ecFirst = ec;
 						}
 				}
+
+				// Set the new line flag
+				ec->isNewLine = tlSetNewLineFlag;
 
 				// Renumber if need be
 				if (em->showLineNumbers)
@@ -889,7 +907,7 @@ debug_break;
 		}
 
 		// Indicate our status
-		return(lineNew);
+		return(ec);
 	}
 
 
@@ -2487,6 +2505,24 @@ renderAsOnlyText:
 
 
 					//////////
+					// Overlay an indicator if the line has changed, or is a new line (since last save)
+					//////
+						SetRect(&lrc3, em->rcLineNumberLastRender.right - 4, lrc2.top, em->rcLineNumberLastRender.right - 1, lrc2.bottom);
+						if (!em->hideEditCues)
+						{
+							if (iEditChain_hasChanged(line))
+							{
+								// The content has changed
+								iBmp_fillRect(bmp, &lrc3, em->changedColor, em->changedColor, em->changedColor, em->changedColor, false, NULL, false);
+
+							} else if (line->isNewLine) {
+								// The line is new
+								iBmp_fillRect(bmp, &lrc3, em->newColor, em->newColor, em->newColor, em->newColor, false, NULL, false);
+							}
+						}
+
+
+					//////////
 					// Show any breadcrumbs
 					//////
 // TODO:  Once the program execution engine is coded, breadcrumbs will need to overlay here
@@ -2938,7 +2974,7 @@ renderAsOnlyText:
 			// Are we on a line?
 			//////
 				if (!em->ecFirst)
-					iSEM_appendLine(em, NULL, 0);		// Append a blank line to receive this keystroke
+					iSEM_appendLine(em, NULL, 0, true);		// Append a blank line to receive this keystroke
 
 
 			//////////
@@ -3480,12 +3516,12 @@ renderAsOnlyText:
 			if (!em->isOverwrite)
 			{
 				// Insert mode
-				iSEM_insertLine(em, NULL, 0, em->ecCursorLine, true);	// Append a new line after the cursor line
+				iSEM_insertLine(em, NULL, 0, em->ecCursorLine, true, true);	// Append a new line after the cursor line
 
 			} else {
 				// Overwrite mode
 				if (!em->ecCursorLine->ll.next)
-					iSEM_appendLine(em, NULL, 0);		// Append a new line at the end
+					iSEM_appendLine(em, NULL, 0, true);		// Append a new line at the end
 			}
 
 			// Move to the new line, and to the start of that line

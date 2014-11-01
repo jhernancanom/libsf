@@ -526,7 +526,7 @@
 
 		// Append to it
 		sprintf(buffer, "[%u] %s\0", (u32)((s64)GetTickCount() - systemStartedTickCount), tcLogText);
-		iSEM_appendLine(systemLog, buffer, -1);
+		iSEM_appendLine(systemLog, buffer, -1, false);
 
 		// Release it
 		LeaveCriticalSection(&cs_logData);

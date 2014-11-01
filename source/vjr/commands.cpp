@@ -52,7 +52,7 @@
 	void iError_report(s8* errorText)
 	{
 		// Append the error to the EM
-		iSEM_appendLine(screenData, errorText, -1);
+		iSEM_appendLine(screenData, errorText, -1, false);
 		screen_editbox->isDirtyRender = true;
 	}
 

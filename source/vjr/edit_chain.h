@@ -47,3 +47,6 @@
 	bool					iEditChain_characterOverwrite			(SEM* em, u8 asciiChar);
 	bool					iEditChain_characterDelete				(SEM* em);
 	SBreakpoint*			iEditChain_toggleBreakpoint				(SEM* em);
+
+	// For reporting on a line's state
+	bool					iEditChain_hasChanged					(SEdit* ec);

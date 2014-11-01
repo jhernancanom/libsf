@@ -324,3 +324,28 @@
 		// If we get here, invalid
 		return(NULL);
 	}
+
+
+
+
+//////////
+//
+// Called to see if a line has changed
+//
+//////
+	bool iEditChain_hasChanged(SEdit* ec)
+	{
+		// Make sure our environment is sane
+		if (ec && ec->sourceCode && ec->sourceCodeOriginal)
+		{
+			// Test lengths
+			if (ec->sourceCodePopulated != ec->sourceCodeOriginal->length)
+				return(true);		// They are different lengths
+
+			// Test content
+			if (memcmp(ec->sourceCode->data, ec->sourceCodeOriginal->data, ec->sourceCodePopulated) != 0)
+				return(true);		// The content is different
+		}
+		// If we get here, not changed
+		return(false);
+	}
