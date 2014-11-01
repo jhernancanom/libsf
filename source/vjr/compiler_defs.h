@@ -3,7 +3,7 @@
 // /libsf/source/vjr/compiler.h
 //
 //////
-// Version 0.53
+// Version 0.54
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -80,7 +80,7 @@ struct SVariable;
  	SComp*					iComps_translateSourceLineTo				(SAsciiCompSearcher* tsComps, SEdit* line);
  	bool					iComps_translateToOthers					(SAsciiCompSearcher* tsComps, SEdit* line);
 	bool					iComps_areAllPrecedingCompsWhitespaces		(SComp* comp);
-	s32						iComps_translateToOthers_test				(s8* tcHaystack, s8* tcNeedle, s32 tnLength);
+	s32						iComps_translateToOthers_testIfMatch		(s8* tcHaystack, s8* tcNeedle, s32 tnLength);
 	SComp*					iComps_findNextBy_iCode						(SComp* comp, s32 tniCode, SComp** compLastScanned);
 	SComp*					iComps_activeComp_inSEM						(SEM* em);
 	bool					iComps_getMateDirection						(SComp* comp, s32* tnMateDirection);
@@ -147,7 +147,7 @@ struct SVariable;
 	SMasterList*			iSEChain_migrateByNum						(SStartEnd* ptrSEDst, SStartEnd* ptrSESrc, u32 lnSrcNum, u32 tnHint, u32 tnBlockSize);
 
 	// Callbacks on SComp finds
-	void					iiOnAlphaFind								(SAsciiCompSearcher* tacs, SComp* comp);
+	void					ii_onFind_countNbsp							(SAsciiCompSearcher* tacs, SComp* comp);
 
 	// Node functions
 	SNode*					iNode_create								(SNode** root, SNode* hint, u32 tnDirection, SNode* parent, SNode* prev, SNode* next, SNode* left, SNode* right);

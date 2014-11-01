@@ -3,7 +3,7 @@
 // /libsf/source/vjr/compiler_const.h
 //
 //////
-// Version 0.53
+// Version 0.54
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:

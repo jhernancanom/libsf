@@ -3,7 +3,7 @@
 // /libsf/source/vjr/compiler.cpp
 //
 //////
-// Version 0.53
+// Version 0.54
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -1022,7 +1022,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 						if (!tacs->firstOnLine || !comp->ll.prev || iComps_areAllPrecedingCompsWhitespaces(comp))
 						{
 							// Physically conduct the exact comparison
-							if (iComps_translateToOthers_test((s8*)tacs->keyword, comp->line->sourceCode->data + comp->start, tacs->length) == 0)
+							if (iComps_translateToOthers_testIfMatch((s8*)tacs->keyword, comp->line->sourceCode->data + comp->start, tacs->length) == 0)
 							{
 								// This is a match
 								llResult			= true;
@@ -1032,6 +1032,14 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 								comp->iCat			= tacs->iCat;
 								comp->color			= tacs->syntaxHighlightColor;
 								comp->useBoldFont	= tacs->useBoldFont;
+
+
+								//////////
+								// Execute
+								//////
+									if (tacs->_onFind)
+										tacs->onFind(tacs, comp);
+
 								
 								// All done with this component
 								break;
@@ -1091,7 +1099,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 //		!0		= does not tmach
 //
 //////
-	s32 iComps_translateToOthers_test(s8* tcHaystack, s8* tcNeedle, s32 tnLength)
+	s32 iComps_translateToOthers_testIfMatch(s8* tcHaystack, s8* tcNeedle, s32 tnLength)
 	{
 		u32		lnI;
 		bool	llSigned;
@@ -1664,7 +1672,8 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 					if (compNext)
 					{
 						// Add in the length of the next component, plus any spaces between them
-						comp->length += (compNext->length + iiComps_charactersBetween(comp, compNext));
+						comp->length	+= (compNext->length + iiComps_charactersBetween(comp, compNext));
+						comp->nbspCount	+= compNext->nbspCount;
 
 						// Delete the next component
 						iLl_deleteNode((SLL*)compNext, true);
@@ -2005,6 +2014,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 							comp->length	= (compSearcher->start + compSearcher->length) - comp->start;
 							comp->iCode		= tniCodeCombined;
 							comp->color		= syntaxHighlightColor;
+							comp->nbspCount	+= compSearcher->nbspCount;
 
 							// Iterate and merge in
 							while (compNext)
@@ -2092,6 +2102,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 							comp->iCat			= tniCat;
 							comp->color			= syntaxHighlightColor;
 							comp->useBoldFont	= tlUseBoldFont;
+							comp->nbspCount		+= compSearcher->nbspCount;
 
 							// Iterate and merge in
 							while (compNext)
@@ -3715,18 +3726,18 @@ debug_break;
 	}
 
 	// This was added to identify any tokens which have at last one non-breaking-space character (so they are rendered properly in the editor)
-	void iiOnAlphaFind(SAsciiCompSearcher* tacs, SComp* comp)
+	void ii_onFind_countNbsp(SAsciiCompSearcher* tacs, SComp* comp)
 	{
 		s32 lnI;
 
 
 		//////////
-		// Iterate through every character until we find the first one
+		// Iterate through every character counting the nbsp
 		//////
 			for (lnI = 0; lnI < comp->length; lnI++)
 			{
 				// If it's a nbsp, increase the count
-				if (comp->line->sourceCode->data_u8[lnI] == 255)
+				if (comp->line->sourceCode->data_u8[comp->start + lnI] == 255)
 					++comp->nbspCount;
 			}
 	}

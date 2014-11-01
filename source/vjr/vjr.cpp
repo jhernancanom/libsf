@@ -3,7 +3,7 @@
 // /libsf/source/vjr/vjr.cpp
 //
 //////
-// Version 0.53
+// Version 0.54
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -709,7 +709,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Support for Shift+Spaces in names",			"0.54", false, false, false, 0, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Internal Property refactoring",				"0.53", false, false, false, 0, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Internal Property refactoring",				"0.54", false, false, false, 0, 0);
 
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "CHRTRAN() and STRTRAN()",					"0.52", false, false, false, -2, 0);
 

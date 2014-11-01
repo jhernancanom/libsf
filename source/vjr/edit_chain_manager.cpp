@@ -3,7 +3,7 @@
 // /libsf/source/vjr/edit_chain_manager.cpp
 //
 //////
-// Version 0.53
+// Version 0.54
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -1839,7 +1839,7 @@ debug_break;
 		SComp*		compPBBLeft;
 		SComp*		compPBBRight;
 		HGDIOBJ		hfontOld;
-		SBgra		defaultForeColor, defaultBackColor, fillColor, backColorLast, foreColorLast, compForeColor, compBackColor, compFillColor;
+		SBgra		defaultForeColor, defaultBackColor, fillColor, backColorLast, foreColorLast, compForeColor, compBackColor, compFillColor, nbspBackColor;
 		RECT		rc, lrc, lrc2, lrc3, lrcComp, lrcText, lrcCompCalcStart, lrcCompCalcDwell;
 		s8*			textptr;
 		s8			buffer[1024];
@@ -2218,13 +2218,22 @@ renderAsText:
 													// The bitmap cache is no longer valid
 													iBmp_deleteCache(&obj->bc);
 
+													// An explicit background color?
+													nbspBackColor = compBackColor;
+													if (comp->overrideMatchingBackColor)
+														nbspBackColor = *comp->overrideMatchingBackColor;
+
+													// Is this a component that should be highlighted?
+													if (compHighlight && comp != compHighlight && comp->length == compHighlight->length && _memicmp(comp->line->sourceCode->data + comp->start, compHighlight->line->sourceCode->data + compHighlight->start, comp->length) == 0)
+														nbspBackColor = highlightSymbolBackColor;
+
 													// Build it
 													bmpNbsp = iBmp_nbsp_createAndPopulate(	comp, font,
 																							lrcComp.right  - lrcComp.left,
 																							lrcComp.bottom - lrcComp.top,
-																							compBackColor,
+																							nbspBackColor,
 																							compForeColor,
-																							compFillColor);
+																							nbspBackColor);
 
 													// Save the cache
 													iBmp_createCache(&comp->bc, bmpNbsp, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, compFillColor.color, compBackColor.color, false);

@@ -3,7 +3,7 @@
 // /libsf/source/vjr/bitmaps.cpp
 //
 //////
-// Version 0.53
+// Version 0.54
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -2161,6 +2161,103 @@
 
 //////////
 //
+// Called to round the corners off the indicated bitmap.
+//
+//////
+	u32 iBmp_roundCorners(SBitmap* bmp, s32 tnType, SBgra color)
+	{
+		u32	lnPixelsRendered;
+		s32	lnI, lnMax;
+
+
+		// Make sure our environment is sane
+		lnPixelsRendered = 0;
+		if (bmp)
+		{
+			// How are we rounding?
+			switch (tnType)
+			{
+				case 1:
+					// Single pixels off the corners
+					iiBmp_setPixel(bmp, 0,						0,						color);
+					iiBmp_setPixel(bmp, bmp->bi.biWidth - 1,	0,						color);
+					iiBmp_setPixel(bmp, 0,						bmp->bi.biHeight - 1,	color);
+					iiBmp_setPixel(bmp, bmp->bi.biWidth - 1,	bmp->bi.biHeight - 1,	color);
+					break;
+
+				case 2:
+					// Two pixels off each corner in each direction (three pixels total)
+					if (bmp->bi.biWidth >= 2 && bmp->bi.biHeight >= 2)
+					{
+						lnMax = min(2, bmp->bi.biWidth);
+						for (lnI = 0; lnI < 2; lnI++)
+						{
+							// Upper-left
+							iiBmp_setPixel(bmp, 0,		0,		color);
+							iiBmp_setPixel(bmp, lnI,	lnI,	color);
+
+							// Upper-right
+							iiBmp_setPixel(bmp, bmp->bi.biWidth - 1 - lnI,	0,		color);
+							iiBmp_setPixel(bmp, bmp->bi.biWidth - 1,		lnI,	color);
+
+							// Lower-left
+							iiBmp_setPixel(bmp, lnI,	bmp->bi.biHeight - 1,			color);
+							iiBmp_setPixel(bmp, 0,		bmp->bi.biHeight - 1 - lnI,		color);
+
+							// Lower-right
+							iiBmp_setPixel(bmp, bmp->bi.biWidth - 1,			bmp->bi.biHeight - 1 - lnI,		color);
+							iiBmp_setPixel(bmp, bmp->bi.biWidth - 1 - lnI,		bmp->bi.biHeight - 1,			color);
+						}
+					}
+					break;
+
+				case 3:
+					// Three pixels off each corner in each direction (five pixels total), plus two diagonally from each corner (add one, for six pixels total)
+					if (bmp->bi.biWidth >= 3 && bmp->bi.biHeight >= 3)
+					{
+						lnMax = min(3, bmp->bi.biWidth);
+						for (lnI = 0; lnI < lnMax; lnI++)
+						{
+							// Upper-left
+							iiBmp_setPixel(bmp, lnI,	0,		color);
+							iiBmp_setPixel(bmp, 0,		lnI,	color);
+
+							// Upper-right
+							iiBmp_setPixel(bmp, bmp->bi.biWidth - 1 - lnI,	0,		color);
+							iiBmp_setPixel(bmp, bmp->bi.biWidth - 1,		lnI,	color);
+
+							// Lower-left
+							iiBmp_setPixel(bmp, lnI,	bmp->bi.biHeight - 1,			color);
+							iiBmp_setPixel(bmp, 0,		bmp->bi.biHeight - 1 - lnI,		color);
+
+							// Lower-right
+							iiBmp_setPixel(bmp, bmp->bi.biWidth - 1,			bmp->bi.biHeight - 1 - lnI,		color);
+							iiBmp_setPixel(bmp, bmp->bi.biWidth - 1 - lnI,		bmp->bi.biHeight - 1,			color);
+
+// 							// Inset pixels
+// 							if (lnI == 0)
+// 							{
+// 								// Draw pixels
+// 								iiBmp_setPixel(bmp, 1,						1,						color);
+// 								iiBmp_setPixel(bmp, bmp->bi.biWidth - 2,	1,						color);
+// 								iiBmp_setPixel(bmp, 1,						bmp->bi.biHeight - 2,	color);
+// 								iiBmp_setPixel(bmp, bmp->bi.biWidth - 2,	bmp->bi.biHeight - 2,	color);
+// 							}
+						}
+					}
+					break;
+			}
+		}
+
+		// Indicate our status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
 // Extracts the color at the indicated point
 //
 //////
@@ -2707,10 +2804,9 @@
 //////
 	SBitmap* iBmp_nbsp_createAndPopulate(SComp* comp, SFont* font, s32 tnWidth, s32 tnHeight, SBgra backColor, SBgra textColor, SBgra backgroundColor)
 	{
-		s32			lnI, lnCount;
+		s32			lnI, lnCount, lnDrawCount;
 		RECT		lrc;
-		SFont*		fontTemp;
-		SBgra		tempColor;
+		SBgra		tempColor1, tempColor2;
 		SBitmap*	bmpNbsp;
 
 
@@ -2722,12 +2818,6 @@
 
 
 		//////////
-		// Create a font one pixel size smaller
-		//////
-			fontTemp = iFont_create(font->name.data_cs8, font->_size - 1, font->_weight, font->_italics, font->_underline);
-
-
-		//////////
 		// Fill everything with our background color
 		//////
 			SetRect(&lrc, 0, 0, bmpNbsp->bi.biWidth, bmpNbsp->bi.biHeight);
@@ -2735,41 +2825,38 @@
 
 
 		/////////
-		// Left side gradient
+		// Bottom gradient
 		//////
-			SetRect(&lrc, 0, 0, tnWidth / 3, tnHeight);
-			tempColor = iBmp_colorCombine(blueColor, whiteColor, 0.15f);
-			iBmp_fillRect(bmpNbsp, &lrc, tempColor, backgroundColor, tempColor, backgroundColor, true, NULL, false);
-
-
-		//////////
-		// Right side gradient
-		//////
-			SetRect(&lrc, 2 * tnWidth / 3, 0, tnWidth, tnHeight);
-			iBmp_fillRect(bmpNbsp, &lrc, backgroundColor, tempColor, backgroundColor, tempColor, true, NULL, false);
+			SetRect(&lrc, 0, tnHeight * 3 / 4, tnWidth, tnHeight);
+			tempColor1 = iBmp_colorCombine(blueColor, whiteColor, 0.05f);
+			tempColor2 = iBmp_colorCombine(blueColor, whiteColor, 0.15f);
+			iBmp_fillRect(bmpNbsp, &lrc, tempColor1, tempColor1, tempColor2, tempColor2, true, NULL, false);
 
 
 		//////////
 		// Render our text portions over the top
 		//////
-			SelectObject(bmpNbsp->hdc, fontTemp->hfont);
+			SelectObject(bmpNbsp->hdc, font->hfont);
 			SetBkMode(bmpNbsp->hdc, TRANSPARENT);
 			SetTextColor(bmpNbsp->hdc, textColor.color);
-			SetRect(&lrc, ((comp->nbspCount * font->tm.tmAveCharWidth) / 2) + ((comp->nbspCount * fontTemp->tm.tmAveCharWidth) / 2), 0, 0, tnHeight);
+			SetRect(&lrc, 0, 0, 0, tnHeight);
 			for (lnI = 0, lnCount = 0; lnI < comp->length; lnI++)
 			{
 				// Have we reached the non-breaking-space yet?
 				if (comp->line->sourceCode->data_u8[comp->start + lnI] == 255 || (lnI + 1) == comp->length)
 				{
+					// Adjust if we're the last character
+					lnDrawCount = lnCount + (((lnI + 1) == comp->length) ? 1 : 0);
+
 					// Adjust the right-side of our rect
-					lrc.right = lrc.left + (lnCount * font->tm.tmAveCharWidth);
+					lrc.right = lrc.left + (lnDrawCount * font->tm.tmAveCharWidth);
 
 					// This is a non-breaking-space character, we need to draw what we have, and move over a half space
 					if (lnCount != 0)
-						DrawText(bmpNbsp->hdc, comp->line->sourceCode->data + comp->start + lnI - lnCount, lnCount + (((lnI + 1) == comp->length) ? 1 : 0), &lrc, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+						DrawText(bmpNbsp->hdc, comp->line->sourceCode->data + comp->start + lnI - lnCount, lnDrawCount, &lrc, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 
 					// Update our rectangle
-					lrc.left += (lnCount * font->tm.tmAveCharWidth) + (font->tm.tmAveCharWidth / 2);
+					lrc.left += (lnCount + 1) * font->tm.tmAveCharWidth;
 
 					// Reset our count
 					lnCount = 0;
@@ -2782,15 +2869,10 @@
 
 
 		//////////
-		// Delete our temporary font
+		// Round off the corners
 		//////
-			iFont_delete(&fontTemp, true);
+			iBmp_roundCorners(bmpNbsp, 1, whiteColor);
 
-
-		//////////
-		// Mask off the corners
-		//////
-// TODO:  mask off the corners to make it rounder
 
 		// Indicate our status
 		return(bmpNbsp);
@@ -3568,17 +3650,73 @@
 		}
 	}
 
-	// minimumRatio is in the range 0..1
+
+
+
+//////////
+//
+// minimumRatio is in the range 0..1
+//
+//////
 	f32 iiBmp_squeezeColorChannel(f32 colorChannel, f32 minimumRatio)
 	{
 		f32 newRatio, colorBase;
 
 
-//		currentRatio	= colorChannel / 255.0f;
 		newRatio		= 1.0f - minimumRatio;
 		colorBase		= minimumRatio * 255.0f;
 
 		return(colorBase + (newRatio * colorChannel));
+	}
+
+
+
+
+//////////
+//
+// Called to set the indicated pixel to the indicated color
+//
+//////
+	u32 iiBmp_setPixel(SBitmap* bmp, s32 tnX, s32 tnY, SBgra color)
+	{
+		u32		lnPixelsRendered;
+		SBgr*	lbgr;
+		SBgra*	lbgra;
+
+
+		// Make sure the pixel will fit
+		lnPixelsRendered = 0;
+		if (tnX >= 0 && tnY >= 0 && tnX < bmp->bi.biWidth && tnY < bmp->bi.biHeight)
+		{
+			if (bmp->bi.biBitCount == 24)
+			{
+				// Get our offset
+				lbgr = (SBgr*)(bmp->bd + ((bmp->bi.biHeight - tnY - 1) * bmp->rowWidth) + (tnX * 3));
+
+				// Draw it
+				lbgr->red = color.red;
+				lbgr->grn = color.grn;
+				lbgr->blu = color.blu;
+
+				// Indicate our pixel count
+				++lnPixelsRendered;
+
+			} else if (bmp->bi.biBitCount == 32) {
+				// Get our offset
+				lbgra = (SBgra*)(bmp->bd + ((bmp->bi.biHeight - tnY - 1) * bmp->rowWidth) + (tnX * 4));
+
+				// Draw it
+				lbgra->red = color.red;
+				lbgra->grn = color.grn;
+				lbgra->blu = color.blu;
+
+				// Indicate our pixel count
+				++lnPixelsRendered;
+			}
+		}
+
+		// Indicate our draw count
+		return(lnPixelsRendered);
 	}
 
 
