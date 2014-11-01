@@ -146,6 +146,7 @@
 			SEdit*		ecFirst;										// First in the chain (first->prev is NULL)
 			SEdit*		ecLast;											// Last in the chain (last->next is NULL)
 			bool		isReadOnly;										// If read-only no changes are allowed, only navigation
+			bool		isBreakOnNbsp;									// Do ctrl+left/right operations stop at every part of nbsp names (by default, no)?
 
 			// If populated, this ECM is only a placeholder for this instance, and the this->reference points to the real ECM we should use
 			SEM*		indirect;										// If not NULL, this ECM points to another ECM which is the real code block
@@ -166,6 +167,9 @@
 			bool		isHeavyProcessing;								// When large amounts of processing will be conducted, the display can be disabled
 			bool		isSourceCode;									// Is this source code?
 			bool		allowMoveBeyondEndOfLine;						// Do we allow them to move beyond the end of the line?
+
+			f32			minNbspColorInfluence;							// How much minimum influence should the Nbsp color have for highlighting
+			f32			maxNbspColorInfluence;							// How much maximum?
 
 			s32			column;											// Column we're currently inputting
 			s32			leftColumn;										// The column we're displaying at the left-most position (of horizontally scrolled, this will be greater than 0)

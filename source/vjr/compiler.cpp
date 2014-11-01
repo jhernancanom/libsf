@@ -2102,13 +2102,15 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 							comp->iCat			= tniCat;
 							comp->color			= syntaxHighlightColor;
 							comp->useBoldFont	= tlUseBoldFont;
-							comp->nbspCount		+= compSearcher->nbspCount;
 
 							// Iterate and merge in
 							while (compNext)
 							{
 								// Increase our count
 								++lnCount;
+
+								// Add in our count
+								comp->nbspCount += compNext->nbspCount;
 
 								// Delete this one (as it was technically merged above with the comp->length = line)
 								iLl_deleteNode((SLL*)compNext, true);

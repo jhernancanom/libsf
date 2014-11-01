@@ -65,6 +65,10 @@
 			// Default to 4-character tab width
 			em->tabWidth					= 4;
 			em->tabsEnforced				= true;
+
+			// Default to 5% and 15% nbsp color influences
+			em->minNbspColorInfluence		= 0.05f;
+			em->maxNbspColorInfluence		= 0.15f;
 		}
 
 		// Indicate our status
@@ -1839,8 +1843,8 @@ debug_break;
 		SComp*		compPBBLeft;
 		SComp*		compPBBRight;
 		HGDIOBJ		hfontOld;
-		SBgra		defaultForeColor, defaultBackColor, fillColor, backColorLast, foreColorLast, compForeColor, compBackColor, compFillColor, nbspBackColor;
-		RECT		rc, lrc, lrc2, lrc3, lrcComp, lrcText, lrcCompCalcStart, lrcCompCalcDwell;
+		SBgra		defaultForeColor, defaultBackColor, fillColor, backColorLast, foreColorLast, compForeColor, compBackColor, compFillColor, nbspBackColor, tempColor1, tempColor2;
+		RECT		rc, lrc, lrc2, lrc3, lrcComp, lrcText, lrcText2, lrcCompCalcStart, lrcCompCalcDwell;
 		s8*			textptr;
 		s8			buffer[1024];
 
@@ -2080,6 +2084,31 @@ debug_break;
 									// For all of these, render them one by one
 									while (comp)
 									{
+										//////////
+										// Remove any nbsp characters
+										//////
+											if (comp->nbspCount != 0)
+											{
+												// Copy to a temporary buffer
+												lnBufferLength = min(comp->length, sizeof(buffer));
+												memcpy(buffer, comp->line->sourceCode->data + comp->start, lnBufferLength);
+
+												// Remove nbsp characters
+												for (lnJ = 0; lnJ < lnBufferLength; lnJ++)
+												{
+													// If it's a nbsp, replace with a normal space for rendering
+													if ((u8)buffer[lnJ] == 255)
+														buffer[lnJ] = 32;
+												}
+
+												// Setup the pointer
+												textptr = (s8*)&buffer[0];
+
+											} else {
+												// No nbsp characters, so just draw whatever's there
+												textptr = comp->line->sourceCode->data + comp->start;
+											}
+
 										// Fore color
 										llOverrideCaskColors = true;
 										if (comp->overrideSelectionBackColor)
@@ -2124,12 +2153,12 @@ debug_break;
 
 										// Find out where it starts
 										SetRect(&lrcCompCalcStart, 0, 0, 200000, lrc.bottom);
-										if (comp->start != 0)		DrawText(bmp->hdc, comp->line->sourceCode->data, comp->start, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
+										if (comp->start != 0)		DrawText(bmp->hdc, textptr, comp->start, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
 										else						SetRect(&lrcCompCalcStart, 0, 0, 0, lrc.bottom);
 
 										// Find out how long it dwells
 										SetRect(&lrcCompCalcDwell, lrcCompCalcStart.right, 0, 200000, lrc.bottom);
-										DrawText(bmp->hdc, comp->line->sourceCode->data + comp->start, comp->length, &lrcCompCalcDwell, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
+										DrawText(bmp->hdc, textptr, comp->length, &lrcCompCalcDwell, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
 										SetRect(&lrcComp, rc.left + lrcCompCalcDwell.left, lrc2.top, rc.left + lrcCompCalcDwell.right, lrc2.bottom);
 
 										// Do we need to adjust it back for scrolling?
@@ -2165,7 +2194,7 @@ debug_break;
 																						lrcComp.bottom - lrcComp.top,
 																						&lnSkip,
 																						comp->length,
-																						compBackColor,
+																						&compBackColor,
 																						compForeColor,
 																						compFillColor,
 																						llOverrideCaskColors);
@@ -2176,8 +2205,20 @@ debug_break;
 												SelectObject(bmpCask->hdc, font->hfont);
 												SetTextColor(bmpCask->hdc, RGB(compForeColor.red, compForeColor.grn, compForeColor.blu));
 												SetRect(&lrcText, 0, -1, bmpCask->bi.biWidth, bmpCask->bi.biHeight);
-												DrawText(bmpCask->hdc, comp->line->sourceCode->data + comp->start + lnSkip, comp->length - (2 * lnSkip), &lrcText, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS);
+												DrawText(bmpCask->hdc, textptr + lnSkip, comp->length - (2 * lnSkip), &lrcText, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX | DT_END_ELLIPSIS);
 												SetBkMode(bmpCask->hdc, OPAQUE);
+
+												// Add the visual cue if need be
+												if (comp->nbspCount != 0)
+												{
+													// Add in the underline for where it should be
+													tempColor1 = iBmp_colorCombine(blueColor, compBackColor, em->minNbspColorInfluence + 0.1f);
+													tempColor2 = iBmp_colorCombine(blueColor, compBackColor, em->maxNbspColorInfluence + 0.1f);
+													CopyRect(&lrcText2, &lrcText);
+													InflateRect(&lrcText2, -(lnSkip * font->tm.tmAveCharWidth), 0);
+													lrcText2.top = lrcText2.top + ((lrcText2.bottom - lrcText2.top) * 3 / 4);
+													iBmp_colorizeRect(bmpCask, &lrcText2, tempColor1, tempColor1, tempColor2, tempColor2, true, NULL, false, 1.0f);
+												}
 
 												// Save the cache
 												iBmp_createCache(&comp->bc, bmpCask, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, compFillColor.color, compBackColor.color, false);
@@ -2228,12 +2269,11 @@ renderAsText:
 														nbspBackColor = highlightSymbolBackColor;
 
 													// Build it
-													bmpNbsp = iBmp_nbsp_createAndPopulate(	comp, font,
+													bmpNbsp = iBmp_nbsp_createAndPopulate(	comp, font, em->minNbspColorInfluence, em->maxNbspColorInfluence,
 																							lrcComp.right  - lrcComp.left,
 																							lrcComp.bottom - lrcComp.top,
 																							nbspBackColor,
-																							compForeColor,
-																							nbspBackColor);
+																							compForeColor);
 
 													// Save the cache
 													iBmp_createCache(&comp->bc, bmpNbsp, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, compFillColor.color, compBackColor.color, false);
@@ -2264,28 +2304,6 @@ renderAsOnlyText:
 												if (compHighlight && comp != compHighlight && comp->length == compHighlight->length && _memicmp(comp->line->sourceCode->data + comp->start, compHighlight->line->sourceCode->data + compHighlight->start, comp->length) == 0)
 													SetBkColor(bmp->hdc, RGB(highlightSymbolBackColor.red, highlightSymbolBackColor.grn, highlightSymbolBackColor.blu));
 
-												// Remove any nbsp characters
-												if (comp->nbspCount != 0)
-												{
-													// Copy to a temporary buffer
-													lnBufferLength = min(comp->length, sizeof(buffer));
-													memcpy(buffer, comp->line->sourceCode->data + comp->start, lnBufferLength);
-
-													// Remove nbsp characters
-													for (lnJ = 0; lnJ < lnBufferLength; lnJ++)
-													{
-														// If it's a nbsp, replace with a normal space for rendering
-														if ((u8)buffer[lnJ] == 255)
-															buffer[lnJ] = 32;
-													}
-
-													// Setup the pointer
-													textptr = (s8*)&buffer[0];
-
-												} else {
-													textptr = comp->line->sourceCode->data + comp->start;
-												}
-
 												// Draw this component
 												SetBkMode(bmp->hdc, OPAQUE);
 												DrawText(bmp->hdc, textptr, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
@@ -2297,6 +2315,16 @@ renderAsOnlyText:
 													SetBkMode(bmp->hdc, TRANSPARENT);
 													DrawText(bmp->hdc, textptr, comp->length, &lrcComp, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
 													SetBkMode(bmp->hdc, OPAQUE);
+												}
+
+												// Any nbps?  If so, colorize the underlined portion
+												if (comp->nbspCount)
+												{
+													tempColor1 = iBmp_colorCombine(blueColor, compBackColor, em->minNbspColorInfluence);
+													tempColor2 = iBmp_colorCombine(blueColor, compBackColor, em->maxNbspColorInfluence);
+													CopyRect(&lrcText2, &lrcComp);
+													lrcText2.top = lrcText2.top + ((lrcText2.bottom - lrcText2.top) * 3 / 4);
+													iBmp_colorizeRect(bmp, &lrcText2, tempColor1, tempColor1, tempColor2, tempColor2, true, NULL, false, 1.0f);
 												}
 
 												// If it's a comp that we're highlighting, highlight it
@@ -4736,14 +4764,21 @@ renderAsOnlyText:
 //////
 	bool iiSEM_isBreakingCharacter(SEM* em, SEdit* line, s32 tnDeltaTest)
 	{
+		u8 c;
+
+
+		// Testing if we have data
 		if (line->sourceCode && line->sourceCode->data)
 		{
+// TODO:  Need to add code here to test a new member em->isBreakOnCamelCase, and a new parameter indicating movement direction
+
 			// If we're at the beginning of the line, or beyond the end, we're at a breaking character
 			if (em->column + tnDeltaTest <= 0 || em->column + tnDeltaTest >= line->sourceCodePopulated)
 				return(true);
 
 			// If this is a breaking character, return true
-			switch (line->sourceCode->data[em->column + tnDeltaTest])
+			c = line->sourceCode->data_u8[em->column + tnDeltaTest];
+			switch (c)
 			{
 				case 32:	// Space
 				case 9:		// Tab
@@ -4752,6 +4787,10 @@ renderAsOnlyText:
 				case ')':
 				case ',':
 					return(true);
+				
+				default:
+					if (em->isBreakOnNbsp && c == 255)
+						return(true);
 			}
 		}
 

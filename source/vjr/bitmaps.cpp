@@ -2555,7 +2555,7 @@
 // Called to create a cask bitmap scaled to the indicated width and height
 //
 //////
-	SBitmap* iBmp_cask_createAndPopulate(s32 iCode, s32 tnWidth, s32 tnHeight, s32* tnSkipChars, u32 tnTextLength, SBgra caskColor, SBgra textColor, SBgra backgroundColor, bool tlOverrideColors)
+	SBitmap* iBmp_cask_createAndPopulate(s32 iCode, s32 tnWidth, s32 tnHeight, s32* tnSkipChars, u32 tnTextLength, SBgra* caskColor, SBgra textColor, SBgra backgroundColor, bool tlOverrideColors)
 	{
 		s32			lnI, lnWidth, lnStop, lnLeft;
 		bool		llAddParams;
@@ -2580,8 +2580,8 @@
 					bmpRight		= bmpCaskRoundRight;
 					if (tlOverrideColors)
 					{
-						caskColor.color	= pastelGreenColor.color;
-						textColor.color	= darkGreenColor.color;
+						caskColor->color	= pastelGreenColor.color;
+						textColor.color		= darkGreenColor.color;
 					}
 					llAddParams		= true;
 					break;
@@ -2593,8 +2593,8 @@
 					bmpRight		= bmpCaskSquareRight;
 					if (tlOverrideColors)
 					{
-						caskColor.color	= pastelOrangeColor.color;
-						textColor.color	= darkOrangeColor.color;
+						caskColor->color	= pastelOrangeColor.color;
+						textColor.color		= darkOrangeColor.color;
 					}
 					llAddParams		= true;
 					break;
@@ -2606,8 +2606,8 @@
 					bmpRight		= bmpCaskTriangleRight;
 					if (tlOverrideColors)
 					{
-						caskColor.color	= pastelYellowColor.color;
-						textColor.color	= blackColor.color;
+						caskColor->color	= pastelYellowColor.color;
+						textColor.color		= blackColor.color;
 					}
 					llAddParams		= true;
 					break;
@@ -2619,8 +2619,8 @@
 					bmpRight		= bmpCaskTildeRight;
 					if (tlOverrideColors)
 					{
-						caskColor.color	= pastelBlueColor.color;
-						textColor.color	= blackColor.color;
+						caskColor->color	= pastelBlueColor.color;
+						textColor.color		= blackColor.color;
 					}
 					llAddParams		= true;
 					break;
@@ -2632,8 +2632,8 @@
 					bmpRight		= bmpCaskRoundRight;
 					if (tlOverrideColors)
 					{
-						caskColor.color	= pastelGreenColor.color;
-						textColor.color	= darkGreenColor.color;
+						caskColor->color	= pastelGreenColor.color;
+						textColor.color		= darkGreenColor.color;
 					}
 					break;
 
@@ -2644,8 +2644,8 @@
 					bmpRight		= bmpCaskSquareRight;
 					if (tlOverrideColors)
 					{
-						caskColor.color	= pastelOrangeColor.color;
-						textColor.color	= darkOrangeColor.color;
+						caskColor->color	= pastelOrangeColor.color;
+						textColor.color		= darkOrangeColor.color;
 					}
 					break;
 
@@ -2656,8 +2656,8 @@
 					bmpRight		= bmpCaskTriangleRight;
 					if (tlOverrideColors)
 					{
-						caskColor.color	= pastelYellowColor.color;
-						textColor.color	= blackColor.color;
+						caskColor->color	= pastelYellowColor.color;
+						textColor.color		= blackColor.color;
 					}
 					break;
 
@@ -2668,8 +2668,8 @@
 					bmpRight		= bmpCaskTildeRight;
 					if (tlOverrideColors)
 					{
-						caskColor.color	= pastelBlueColor.color;
-						textColor.color	= blackColor.color;
+						caskColor->color	= pastelBlueColor.color;
+						textColor.color		= blackColor.color;
 					}
 					break;
 			}
@@ -2755,7 +2755,7 @@
 			// Colorize the cask to the caskColor
 			//////
 				SetRect(&lrc, 0, 0, bmpCask->bi.biWidth, bmpCask->bi.biHeight);
-				iBmp_colorizeMask(bmpCask, &lrc, caskColor, false, 0.0f);
+				iBmp_colorizeMask(bmpCask, &lrc, *caskColor, false, 0.0f);
 
 
 			//////////
@@ -2802,7 +2802,7 @@
 // so as to indicate the scope of the nbsp name.
 //
 //////
-	SBitmap* iBmp_nbsp_createAndPopulate(SComp* comp, SFont* font, s32 tnWidth, s32 tnHeight, SBgra backColor, SBgra textColor, SBgra backgroundColor)
+	SBitmap* iBmp_nbsp_createAndPopulate(SComp* comp, SFont* font, f32 tfMinColor, f32 tfMaxColor, s32 tnWidth, s32 tnHeight, SBgra backgroundColor, SBgra textColor)
 	{
 		s32			lnI, lnCount, lnDrawCount;
 		RECT		lrc;
@@ -2828,8 +2828,8 @@
 		// Bottom gradient
 		//////
 			SetRect(&lrc, 0, tnHeight * 3 / 4, tnWidth, tnHeight);
-			tempColor1 = iBmp_colorCombine(blueColor, whiteColor, 0.05f);
-			tempColor2 = iBmp_colorCombine(blueColor, whiteColor, 0.15f);
+			tempColor1 = iBmp_colorCombine(blueColor, whiteColor, tfMinColor);
+			tempColor2 = iBmp_colorCombine(blueColor, whiteColor, tfMaxColor);
 			iBmp_fillRect(bmpNbsp, &lrc, tempColor1, tempColor1, tempColor2, tempColor2, true, NULL, false);
 
 
@@ -2838,7 +2838,7 @@
 		//////
 			SelectObject(bmpNbsp->hdc, font->hfont);
 			SetBkMode(bmpNbsp->hdc, TRANSPARENT);
-			SetTextColor(bmpNbsp->hdc, textColor.color);
+			SetTextColor(bmpNbsp->hdc, RGB(textColor.red, textColor.grn, textColor.blu));
 			SetRect(&lrc, 0, 0, 0, tnHeight);
 			for (lnI = 0, lnCount = 0; lnI < comp->length; lnI++)
 			{
@@ -3292,6 +3292,62 @@
 		}
 	}
 
+	// Like iBmp_fillRect(), except only colorizes
+	void iBmp_colorizeRect(SBitmap* bmp, RECT* rc, SBgra colorNW, SBgra colorNE, SBgra colorSW, SBgra colorSE, bool tlUseGradient, RECT* rcClip, bool tluseClip, f32 alpha)
+	{
+		s32		lnY;
+		f32		lfRed, lfGrn, lfBlu, lfRedTo, lfGrnTo, lfBluTo, lfRedInc, lfGrnInc, lfBluInc, lfPercent, lfPercentInc, lfHeight, lfWidth;
+
+
+		if (bmp && rc)
+		{
+		//////////
+		// Fill every row
+		//////
+			lfWidth			= (f32)(rc->right  - 1 - rc->left);
+			lfHeight		= (f32)(rc->bottom - 1 - rc->top);
+			lfPercentInc	= 1.0f / lfHeight;
+			for (lfPercent = 0.0, lnY = rc->top; lnY < rc->bottom; lnY++, lfPercent += lfPercentInc)
+			{
+				if (tlUseGradient)
+				{
+					//////////
+					// Compute FROM colors
+					//////
+						lfRed		= (f32)colorNW.red + (((f32)colorSW.red - (f32)colorNW.red) * lfPercent);
+						lfGrn		= (f32)colorNW.grn + (((f32)colorSW.grn - (f32)colorNW.grn) * lfPercent);
+						lfBlu		= (f32)colorNW.blu + (((f32)colorSW.blu - (f32)colorNW.blu) * lfPercent);
+
+
+					//////////
+					// Compute TO colors
+					//////
+						lfRedTo		= (f32)colorNE.red + (((f32)colorSE.red - (f32)colorNE.red) * lfPercent);
+						lfGrnTo		= (f32)colorNE.grn + (((f32)colorSE.grn - (f32)colorNE.grn) * lfPercent);
+						lfBluTo		= (f32)colorNE.blu + (((f32)colorSE.blu - (f32)colorNE.blu) * lfPercent);
+
+
+					//////////
+					// Compute increment
+					//////
+						lfRedInc	= (lfRedTo - lfRed) / lfWidth;
+						lfGrnInc	= (lfGrnTo - lfGrn) / lfWidth;
+						lfBluInc	= (lfBluTo - lfBlu) / lfWidth;
+
+
+					//////////
+					// Draw this line with its gradient
+					//////
+						iBmp_colorizeHorizontalLineGradient(bmp, rc->left, rc->right - 1, lnY, lfRed, lfGrn, lfBlu, lfRedInc, lfGrnInc, lfBluInc, rcClip, tluseClip, alpha);
+
+				} else {
+					// Draw this line with the NW color
+					iBmp_colorizeHorizontalLine(bmp, rc->left, rc->right - 1, lnY, colorNW, alpha);
+				}
+			}
+		}
+	}
+
 
 
 
@@ -3642,6 +3698,259 @@
 						lbgra->red	= (u8)tfRed;
 						lbgra->grn	= (u8)tfGrn;
 						lbgra->blu	= (u8)tfBlu;
+					}
+					// Move to next row
+					lbgra = (SBgra*)((s8*)lbgra - bmp->rowWidth);
+				}
+			}
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to colorize a horizontal line
+//
+//////
+	void iBmp_colorizeHorizontalLine(SBitmap* bmp, s32 tnX1, s32 tnX2, s32 tnY, SBgra color, f32 alpha)
+	{
+		s32		lnX;
+		f32		lfMalp;
+		SBgr*	lbgr;
+		SBgra*	lbgra;
+
+
+		if (bmp)
+		{
+			if (tnY >= 0 && tnY < bmp->bi.biHeight)
+			{
+				// Compute alpha
+				lfMalp = 1.0f - alpha;
+
+				// Get our starting point
+				lbgr	= (SBgr*)(bmp->bd  + ((bmp->bi.biHeight - tnY - 1) * bmp->rowWidth) + (tnX1 * (bmp->bi.biBitCount / 8)));
+				lbgra	= (SBgra*)(bmp->bd + ((bmp->bi.biHeight - tnY - 1) * bmp->rowWidth) + (tnX1 * (bmp->bi.biBitCount / 8)));
+
+				if (bmp->bi.biBitCount == 24)
+				{
+					// Iterate for each column
+					for (lnX = tnX1; lnX <= tnX2; lnX++)
+					{
+						// Are we on the bitmap?
+						if (lnX >= 0 && lnX < bmp->bi.biWidth)
+						{
+							// Colorize the pixel
+							lbgr->red	= (u8)max(min((alpha * (f32)color.red) + (lfMalp * (f32)lbgr->red), 255.0f), 0.0f);
+							lbgr->grn	= (u8)max(min((alpha * (f32)color.grn) + (lfMalp * (f32)lbgr->grn), 255.0f), 0.0f);
+							lbgr->blu	= (u8)max(min((alpha * (f32)color.blu) + (lfMalp * (f32)lbgr->blu), 255.0f), 0.0f);
+						}
+						// Move to next column
+						++lbgr;
+					}
+
+				} else if (bmp->bi.biBitCount == 32) {
+					// Iterate for each column
+					for (lnX = tnX1; lnX <= tnX2; lnX++)
+					{
+						// Are we on the bitmap?
+						if (lnX >= 0 && lnX < bmp->bi.biWidth)
+						{
+							// Colorize the pixel
+							lbgra->red	= (u8)max(min((alpha * (f32)color.red) + (lfMalp * (f32)lbgra->red), 255.0f), 0.0f);
+							lbgra->grn	= (u8)max(min((alpha * (f32)color.grn) + (lfMalp * (f32)lbgra->grn), 255.0f), 0.0f);
+							lbgra->blu	= (u8)max(min((alpha * (f32)color.blu) + (lfMalp * (f32)lbgra->blu), 255.0f), 0.0f);
+						}
+						// Move to next column
+						++lbgra;
+					}
+				}
+			}
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to colorize a vertical line
+//
+//////
+	void iBmp_colorizeVerticalLine(SBitmap* bmp, s32 tnY1, s32 tnY2, s32 tnX, SBgra color, f32 alpha)
+	{
+		s32		lnY;
+		f32		lfMalp;
+		SBgr*	lbgr;
+		SBgra*	lbgra;
+
+
+		if (bmp)
+		{
+			if (tnX >= 0 && tnX < bmp->bi.biWidth)
+			{
+				// Compute alpha
+				lfMalp = 1.0f - alpha;
+
+				// Get our starting point
+				lbgr	= (SBgr*)(bmp->bd  + ((bmp->bi.biHeight - tnY1 - 1) * bmp->rowWidth) + (tnX * (bmp->bi.biBitCount / 8)));
+				lbgra	= (SBgra*)(bmp->bd + ((bmp->bi.biHeight - tnY1 - 1) * bmp->rowWidth) + (tnX * (bmp->bi.biBitCount / 8)));
+
+				if (bmp->bi.biBitCount == 24)
+				{
+					// Iterate for each column
+					for (lnY = tnY1; lnY <= tnY2; lnY++)
+					{
+						// Are we on the bitmap?
+						if (lnY >= 0 && lnY < bmp->bi.biHeight)
+						{
+							// Colorize the pixel
+							lbgr->red	= (u8)max(min((alpha * (f32)color.red) + (lfMalp * (f32)lbgr->red), 255.0f), 0.0f);
+							lbgr->grn	= (u8)max(min((alpha * (f32)color.grn) + (lfMalp * (f32)lbgr->grn), 255.0f), 0.0f);
+							lbgr->blu	= (u8)max(min((alpha * (f32)color.blu) + (lfMalp * (f32)lbgr->blu), 255.0f), 0.0f);
+						}
+						// Move to next row
+						lbgr = (SBgr*)((s8*)lbgr - bmp->rowWidth);
+					}
+
+				} else if (bmp->bi.biBitCount == 32) {
+					// Iterate for each column
+					for (lnY = tnY1; lnY <= tnY2; lnY++)
+					{
+						// Are we on the bitmap?
+						if (lnY >= 0 && lnY < bmp->bi.biHeight)
+						{
+							// Colorize the pixel
+							lbgra->red	= (u8)max(min((alpha * (f32)color.red) + (lfMalp * (f32)lbgra->red), 255.0f), 0.0f);
+							lbgra->grn	= (u8)max(min((alpha * (f32)color.grn) + (lfMalp * (f32)lbgra->grn), 255.0f), 0.0f);
+							lbgra->blu	= (u8)max(min((alpha * (f32)color.blu) + (lfMalp * (f32)lbgra->blu), 255.0f), 0.0f);
+						}
+						// Move to next row
+						lbgra = (SBgra*)((s8*)lbgra - bmp->rowWidth);
+					}
+				}
+			}
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to colorize a horizontal line on a gradient
+//
+//////
+	void iBmp_colorizeHorizontalLineGradient(SBitmap* bmp, s32 tnX1, s32 tnX2, s32 tnY, f32 tfRed, f32 tfGrn, f32 tfBlu, f32 tfRedInc, f32 tfGrnInc, f32 tfBluInc, RECT* rcClip, bool tluseClip, f32 alpha)
+	{
+		s32		lnX;
+		f32		lfMalp, lfGray;
+		SBgr*	lbgr;
+		SBgra*	lbgra;
+
+
+		if (bmp && tnY >= 0 && tnY < bmp->bi.biHeight)
+		{
+			// Get our starting point
+			lbgr	= (SBgr*)(bmp->bd  + ((bmp->bi.biHeight - tnY - 1) * bmp->rowWidth) + (tnX1 * (bmp->bi.biBitCount / 8)));
+			lbgra	= (SBgra*)(bmp->bd + ((bmp->bi.biHeight - tnY - 1) * bmp->rowWidth) + (tnX1 * (bmp->bi.biBitCount / 8)));
+
+			if (bmp->bi.biBitCount == 24)
+			{
+				// Iterate for each column
+				for (lnX = tnX1; lnX <= tnX2; lnX++, tfRed += tfRedInc, tfGrn += tfGrnInc, tfBlu += tfBluInc)
+				{
+					// Are we on the bitmap?
+					if ((!tluseClip || !(tnY >= rcClip->top && tnY <= rcClip->bottom && lnX >= rcClip->left && lnX <= rcClip->right)) && lnX >= 0 && lnX < bmp->bi.biWidth)
+					{
+						// Colorize the pixel
+						lfGray		= ((0.35f * (f32)lbgr->red) + (0.54f * (f32)lbgr->grn) + (0.11f * (f32)lbgr->blu)) / 255.0f;
+						lfMalp		= 1.0f - lfGray;
+						lbgr->red	= (u8)max(min((lfGray * tfRed) + (lfMalp * (f32)lbgr->red), 255.0f), 0.0f);
+						lbgr->grn	= (u8)max(min((lfGray * tfGrn) + (lfMalp * (f32)lbgr->grn), 255.0f), 0.0f);
+						lbgr->blu	= (u8)max(min((lfGray * tfBlu) + (lfMalp * (f32)lbgr->blu), 255.0f), 0.0f);
+					}
+					// Move to next column
+					++lbgr;
+				}
+
+			} else if (bmp->bi.biBitCount == 32) {
+				// Iterate for each column
+				for (lnX = tnX1; lnX <= tnX2; lnX++, tfRed += tfRedInc, tfGrn += tfGrnInc, tfBlu += tfBluInc)
+				{
+					// Are we on the bitmap?
+					if ((!tluseClip || !(tnY >= rcClip->top && tnY <= rcClip->bottom && lnX >= rcClip->left && lnX <= rcClip->right)) && lnX >= 0 && lnX < bmp->bi.biWidth)
+					{
+						// Colorize the pixel
+						lfGray		= alpha * ((0.35f * (f32)lbgra->red) + (0.54f * (f32)lbgra->grn) + (0.11f * (f32)lbgra->blu)) / 255.0f;
+						lfMalp		= 1.0f - lfGray;
+						lbgra->red	= (u8)max(min((lfGray * tfRed) + (lfMalp * (f32)lbgra->red), 255.0f), 0.0f);
+						lbgra->grn	= (u8)max(min((lfGray * tfGrn) + (lfMalp * (f32)lbgra->grn), 255.0f), 0.0f);
+						lbgra->blu	= (u8)max(min((lfGray * tfBlu) + (lfMalp * (f32)lbgra->blu), 255.0f), 0.0f);
+					}
+					// Move to next column
+					++lbgra;
+				}
+			}
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to colorize a vertical line on a gradient
+//
+//////
+	void iBmp_colorizeVerticalLineGradient(SBitmap* bmp, s32 tnY1, s32 tnY2, s32 tnX, f32 tfRed, f32 tfGrn, f32 tfBlu, f32 tfRedInc, f32 tfGrnInc, f32 tfBluInc, RECT* rcClip, bool tluseClip, f32 alpha)
+	{
+		s32		lnY;
+		f32		lfMalp, lfGray;
+		SBgr*	lbgr;
+		SBgra*	lbgra;
+
+
+		if (bmp && tnX >= 0 && tnX < bmp->bi.biWidth)
+		{
+			// Compute alpha
+			lfMalp	= 1.0f - alpha;
+
+			// Get our starting point
+			lbgr	= (SBgr*)(bmp->bd  + ((bmp->bi.biHeight - tnY1 - 1) * bmp->rowWidth) + (tnX * (bmp->bi.biBitCount / 8)));
+			lbgra	= (SBgra*)(bmp->bd + ((bmp->bi.biHeight - tnY1 - 1) * bmp->rowWidth) + (tnX * (bmp->bi.biBitCount / 8)));
+
+			if (bmp->bi.biBitCount == 24)
+			{
+				// Iterate for each column
+				for (lnY = tnY1; lnY <= tnY2; lnY++, tfRed += tfRedInc, tfGrn += tfGrnInc, tfBlu += tfBluInc)
+				{
+					// Are we on the bitmap?
+					if (!(lnY >= rcClip->top && lnY <= rcClip->bottom && tnX >= rcClip->left && tnX <= rcClip->right) && lnY >= 0 && lnY < bmp->bi.biHeight)
+					{
+						// Colorize the pixel
+						lfGray		= alpha * ((0.35f * (f32)lbgr->red) + (0.54f * (f32)lbgr->grn) + (0.11f * (f32)lbgr->blu)) / 255.0f;
+						lbgr->red	= (u8)max(min((lfGray * tfRed) + (lfMalp * (f32)lbgr->red), 255.0f), 0.0f);
+						lbgr->grn	= (u8)max(min((lfGray * tfGrn) + (lfMalp * (f32)lbgr->grn), 255.0f), 0.0f);
+						lbgr->blu	= (u8)max(min((lfGray * tfBlu) + (lfMalp * (f32)lbgr->blu), 255.0f), 0.0f);
+					}
+					// Move to next row
+					lbgr = (SBgr*)((s8*)lbgr - bmp->rowWidth);
+				}
+
+			} else if (bmp->bi.biBitCount == 32) {
+				// Iterate for each column
+				for (lnY = tnY1; lnY <= tnY2; lnY++, tfRed += tfRedInc, tfGrn += tfGrnInc, tfBlu += tfBluInc)
+				{
+					// Are we on the bitmap?
+					if (!(lnY >= rcClip->top && lnY <= rcClip->bottom && tnX >= rcClip->left && tnX <= rcClip->right) && lnY >= 0 && lnY < bmp->bi.biHeight)
+					{
+						// Colorize the pixel
+						lfGray		= alpha * ((0.35f * (f32)lbgra->red) + (0.54f * (f32)lbgra->grn) + (0.11f * (f32)lbgra->blu)) / 255.0f;
+						lbgra->red	= (u8)max(min((lfGray * tfRed) + (lfMalp * (f32)lbgra->red), 255.0f), 0.0f);
+						lbgra->grn	= (u8)max(min((lfGray * tfGrn) + (lfMalp * (f32)lbgra->grn), 255.0f), 0.0f);
+						lbgra->blu	= (u8)max(min((lfGray * tfBlu) + (lfMalp * (f32)lbgra->blu), 255.0f), 0.0f);
 					}
 					// Move to next row
 					lbgra = (SBgra*)((s8*)lbgra - bmp->rowWidth);
