@@ -181,6 +181,8 @@
 	const u32		_ERROR_INTERNAL_ERROR							= 23;
 	const u32		_ERROR_INVALID_ARGUMENT_TYPE_COUNT				= 24;
 	const u32		_ERROR_VARIABLE_NOT_FOUND						= 25;
+	const u32		_ERROR_ALIAS_NOT_FOUND							= 26;
+	const u32		_ERROR_INVALID_WORK_AREA						= 27;
 
 	// Messages
 	const s8		cgcComponentError[]								= "Error in component, column ";
@@ -208,7 +210,9 @@
 	const s8		cgcP7IsIncorrect[]								= "parameter 7 is incorrect";
 	const s8		cgcInternalError[]								= "internal error";
 	const s8		cgcInvalidArgumentTypeCountError[]				= "invalid argument, type, or count";
-	const s8		cgcVariableNotFoundError[]						= "variable nto found";
+	const s8		cgcVariableNotFoundError[]						= "variable not found";
+	const s8		cgcAliasNotFoundError[]							= "alias not found";
+	const s8		cgcInvalidWorkArea[]							= "invalid work area";
 	
 
 //////////

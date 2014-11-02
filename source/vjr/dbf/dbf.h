@@ -524,3 +524,4 @@
 
 	// Table and cursor work areas
     SWorkArea	gsArea[_MAX_DBF_SLOTS];
+	s32			gnDbf_currentWorkArea		= 0;

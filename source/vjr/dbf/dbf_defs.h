@@ -103,35 +103,41 @@ struct SFieldRecord2;
 
 	// DBF functions
 	u32 				iDbf_open										(s8* table, s8* alias);
-	u32 				iDbf_cacheAllRowData							(u32 dbfHandle);
-	u32 				iDbf_close										(u32 dbfHandle);
-	u32 				iDbf_hasCdx										(u32 dbfHandle);
+	u32 				iDbf_cacheAllRowData							(u32 tnWorkArea);
+	u32 				iDbf_close										(u32 tnWorkArea);
+	u32 				iDbf_hasCdx										(u32 tnWorkArea);
+	s32					iDbf_isWorkAreaUsed								(u32 tnWorkArea, bool& tlIsDbc);
+	s32					iDbf_getWorkArea_current						(void);
+	s32					iDbf_getWorkArea_lowestFree						(void);
+	s32					iDbf_getWorkArea_highestFree					(void);
+	s32					iDbf_getWorkArea_byAlias						(s8* alias, u32 aliasLength);
+	SVariable*			iDbf_getAlias_fromPathname						(s8* tcTablePathname, u32 tnTablePathnameLenth);
 
-	s32 				iDbf_gotoRecord									(u32 dbfHandle, s32 recordNumber);
-	u32					iDbf_writeChanges								(u32 dbfHandle);
+	s32 				iDbf_gotoRecord									(u32 tnWorkArea, s32 recordNumber);
+	u32					iDbf_writeChanges								(u32 tnWorkArea);
 
-	u32					iDbf_getFieldCount								(u32 dbfHandle);
-	u32					iDbf_getReccount								(u32 dbfHandle);
-	u32					iDbf_getField_number1							(u32 dbfHandle, s8* fieldName);
-	u32					iDbf_getField_name								(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iDbf_getField_type								(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iDbf_getField_type_verbose						(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iDbf_getField_type_extended						(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iDbf_getField_length							(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iDbf_getIndex_length							(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iDbf_getField_decimals							(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iDbf_getField_isBinary							(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iDbf_getField_allowNulls						(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iDbf_getNull_flag								(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength);
-	bool				iDbf_getNull_offsetAndMask						(u32 dbfHandle, u32 fieldNumber, u32* nullOffset, u8* nullMask);
-	u32					iDbf_getField_autoinc_next						(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iDbf_getField_autoinc_step						(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iDbf_getField_data								(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength);
+	u32					iDbf_getFieldCount								(u32 tnWorkArea);
+	u32					iDbf_getReccount								(u32 tnWorkArea);
+	u32					iDbf_getField_number1							(u32 tnWorkArea, s8* fieldName);
+	u32					iDbf_getField_name								(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	u32					iDbf_getField_type								(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	u32					iDbf_getField_type_verbose						(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	u32					iDbf_getField_type_extended						(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	u32					iDbf_getField_length							(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	u32					iDbf_getIndex_length							(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	u32					iDbf_getField_decimals							(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	u32					iDbf_getField_isBinary							(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	u32					iDbf_getField_allowNulls						(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	u32					iDbf_getNull_flag								(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	bool				iDbf_getNull_offsetAndMask						(u32 tnWorkArea, u32 fieldNumber, u32* nullOffset, u8* nullMask);
+	u32					iDbf_getField_autoinc_next						(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	u32					iDbf_getField_autoinc_step						(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	u32					iDbf_getField_data								(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
 	u32					iiDbf_getField_data2							(SWorkArea* wa, u32 fieldNumber, s8* dest, u32 destLength, bool tlRetrieveAsIndexKey);
-	u32					iDbf_getField_dataOffset						(u32 dbfHandle, u32 fieldNumber);
-	u32					iDbf_getIndexFixupOp							(u32 dbfHandle, u32 fieldNumber);
-	u32 				iDbf_setField_data								(u32 dbfHandle, s32 fieldNumber, s8* dest, u32 destLength);
-	u32 				iDbf_getField_validateContents					(u32 dbfHandle, u32 fieldNumber, s8* src, u32 srcLength);
+	u32					iDbf_getField_dataOffset						(u32 tnWorkArea, u32 fieldNumber);
+	u32					iDbf_getIndexFixupOp							(u32 tnWorkArea, u32 fieldNumber);
+	u32 				iDbf_setField_data								(u32 tnWorkArea, s32 fieldNumber, s8* dest, u32 destLength);
+	u32 				iDbf_getField_validateContents					(u32 tnWorkArea, u32 fieldNumber, s8* src, u32 srcLength);
 
 	SFieldRecord1*		iDbf_getField_number1							(SWorkArea* wa, u32 fieldNumber);
 	SFieldRecord2*		iDbf_getField_number2							(SWorkArea* wa, u32 fieldNumber);
@@ -157,9 +163,9 @@ struct SFieldRecord2;
 // CDX related
 //
 //////
-	u32					cdx_open										(u32 tnDbfHandle, s8* tcCdxFilename, u32 tnCdxFilenameLength);
-	u32					cdx_close										(u32 tnDbfHandle);
-	u32					cdx_get_tag										(u32 tnDbfHandle,		u32 tnTagIndex,
+	u32					cdx_open										(u32 tntnWorkArea, s8* tcCdxFilename, u32 tnCdxFilenameLength);
+	u32					cdx_close										(u32 tntnWorkArea);
+	u32					cdx_get_tag										(u32 tntnWorkArea,		u32 tnTagIndex,
 																			s8* tcTagName,		u32 tnTagNameLength,
 																			s8* tcExpression,	u32 tnExpressionLength,
 																			s8* tcForClause,	u32 tnForClauseLength,
@@ -169,20 +175,20 @@ struct SFieldRecord2;
 																			s8* tcCompound1,
 																			s8* tcOrder1);
 
-	u32					cdx_find_key									(u32 tnDbfHandle, s32 tnTagIndex);
-	u32					cdx_skip_n										(u32 tnDbfHandle, s32 tnTagIndex, s32 tnDelta);
-	u32					cdx_top											(u32 tnDbfHandle, s32 tnTagIndex);
-	u32					cdx_bottom										(u32 tnDbfHandle, s32 tnTagIndex);
+	u32					cdx_find_key									(u32 tntnWorkArea, s32 tnTagIndex);
+	u32					cdx_skip_n										(u32 tntnWorkArea, s32 tnTagIndex, s32 tnDelta);
+	u32					cdx_top											(u32 tntnWorkArea, s32 tnTagIndex);
+	u32					cdx_bottom										(u32 tntnWorkArea, s32 tnTagIndex);
 
-	u32					cdx_validate_tag								(u32 tnDbfHandle,		s32 tnTagIndex,
+	u32					cdx_validate_tag								(u32 tntnWorkArea,		s32 tnTagIndex,
 																			s8* tcMetaData,		u32 tnMetaDataLength,
 																			s8* tcErrorsFound,	u32 tnErrorsFoundLength);
 
-	u32					cdx_validate_keys								(u32 tnDbfHandle,			s32 tnTagIndex,
+	u32					cdx_validate_keys								(u32 tntnWorkArea,			s32 tnTagIndex,
 																			s8* tcMetaData,			u32 tnMetaDataLength,
 																			s8* tcErrorsFound,		u32 tnErrorsFoundLength);
 
-	u32					cdx_get_all_keys								(u32 tnDbfHandle,		s32 tnTagIndex,
+	u32					cdx_get_all_keys								(u32 tntnWorkArea,		s32 tnTagIndex,
 																			s8* tcKeySpace,		u32 tnKeySpaceLength,
 																			s8* tcDecodeExpression255,
 																			s8* tcKeyLength4);
@@ -191,7 +197,7 @@ struct SFieldRecord2;
 	bool				iCdx_validateIdx_compact						(SWorkArea* wa, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
 	bool				iCdx_validateIdx_standard						(SWorkArea* wa, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
 	s32					iCdx_validateCdx								(SWorkArea* wa, s32 tnTagIndex, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
-	s32					iCdx_validateCdxKeys							(SWorkArea* wa, u32 tnDbfHandle, s32 tnTagIndex, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
+	s32					iCdx_validateCdxKeys							(SWorkArea* wa, u32 tntnWorkArea, s32 tnTagIndex, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
 	int					iKeys_sortDescending							(const void* l, const void* r);
 	int					iKeys_sortAscending								(const void* l, const void* r);
 	s32					iCdx_validateIdxKeys							(SWorkArea* wa,                                  s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);

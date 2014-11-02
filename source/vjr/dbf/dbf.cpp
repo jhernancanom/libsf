@@ -149,7 +149,8 @@
 			if (gsArea[lnI].isUsed == _NO)
 			{
 				// We found a slot
-				gsArea[lnI].thisWorkArea = lnI;
+				gsArea[lnI].thisWorkArea	= lnI;
+				gnDbf_currentWorkArea		= lnI;
 
 				// Reset the names
 				memset(gsArea[lnI].tablePathname,	0, sizeof(gsArea[lnI].tablePathname));
@@ -458,50 +459,50 @@
 // Note:  If the row has changed content, it will be lost in this operation.  Must flush first.
 //
 //////
-	u32 iDbf_cacheAllRowData(u32 dbfHandle)
+	u32 iDbf_cacheAllRowData(u32 tnWorkArea)
 	{
 		u32 lnCacheSize, lnOriginalFilePosition, lnNumread;
 
 
 		// See if it has any memo fields
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);	// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-2);	// Invalid slot
-		if (gsArea[dbfHandle].isCached)
+		if (gsArea[tnWorkArea].isCached)
 			return(-3);		// Already cached
 
 
 		// Find out how big the file is
-		lnOriginalFilePosition = ftell(gsArea[dbfHandle].fhDbf);
-		fseek(gsArea[dbfHandle].fhDbf, 0, SEEK_END);
-		lnCacheSize = ftell(gsArea[dbfHandle].fhDbf) - (u32)gsArea[dbfHandle].header.firstRecord;
-		fseek(gsArea[dbfHandle].fhDbf, gsArea[dbfHandle].header.firstRecord, SEEK_SET);
+		lnOriginalFilePosition = ftell(gsArea[tnWorkArea].fhDbf);
+		fseek(gsArea[tnWorkArea].fhDbf, 0, SEEK_END);
+		lnCacheSize = ftell(gsArea[tnWorkArea].fhDbf) - (u32)gsArea[tnWorkArea].header.firstRecord;
+		fseek(gsArea[tnWorkArea].fhDbf, gsArea[tnWorkArea].header.firstRecord, SEEK_SET);
 
 		// If we're smaller than 200 MB we'll go ahead and cache, otherwise ... not so much
 		if (lnCacheSize > 200 * 1024 * 1000)
 			return(-5);		// Too big to cache
 
 		// Allocate that much space
-		gsArea[dbfHandle].cachedTable = (s8*)malloc(lnCacheSize);
-		if (gsArea[dbfHandle].cachedTable)
+		gsArea[tnWorkArea].cachedTable = (s8*)malloc(lnCacheSize);
+		if (gsArea[tnWorkArea].cachedTable)
 		{
 			// Read in the table
-			lnNumread = fread(gsArea[dbfHandle].cachedTable, 1, lnCacheSize, gsArea[dbfHandle].fhDbf);
+			lnNumread = fread(gsArea[tnWorkArea].cachedTable, 1, lnCacheSize, gsArea[tnWorkArea].fhDbf);
 			if (lnNumread != lnCacheSize)
 				return(-1);
 
 			// Raise the flag
-			gsArea[dbfHandle].isCached = true;
+			gsArea[tnWorkArea].isCached = true;
 
 			// Free data
-			iiFreeAndSetToNull((void **)&gsArea[dbfHandle].data);
+			iiFreeAndSetToNull((void **)&gsArea[tnWorkArea].data);
 
 			// Reset the file pointer to where it was
-			fseek(gsArea[dbfHandle].fhDbf, lnOriginalFilePosition, SEEK_SET);
+			fseek(gsArea[tnWorkArea].fhDbf, lnOriginalFilePosition, SEEK_SET);
 
 			// Set data to where it should be in the cache
-			iDbf_gotoRecord(dbfHandle, gsArea[dbfHandle].currentRecord);
+			iDbf_gotoRecord(tnWorkArea, gsArea[tnWorkArea].currentRecord);
 
 			// Indicate success
 			return(lnCacheSize);
@@ -524,36 +525,36 @@
 //	slot number used to access the entry they created, or -1 if error
 //
 /////
-	u32 iDbf_close(u32 dbfHandle)
+	u32 iDbf_close(u32 tnWorkArea)
 	{
 		u32		lnI;
 		bool	llFoundReference;
 
 
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
 
 		// Close the file handle
-		fclose(gsArea[dbfHandle].fhDbf);				// Note:  No non-null checking here because: a) It should never be non-null and b) if it is, we don't care because we're making it that way anyway
-		gsArea[dbfHandle].fhDbf = (FILE*)NULL;
+		fclose(gsArea[tnWorkArea].fhDbf);				// Note:  No non-null checking here because: a) It should never be non-null and b) if it is, we don't care because we're making it that way anyway
+		gsArea[tnWorkArea].fhDbf = (FILE*)NULL;
 
 
 		// If we were connected to a DBC, go ahead and close our reference to it if no other open DBFs are referencing it
-		if (gsArea[dbfHandle].dbc != 0)
+		if (gsArea[tnWorkArea].dbc != 0)
 		{
 			// See if any other open DBFs are referencing it
 			llFoundReference = false;
 			for (lnI = 1; lnI < _MAX_DBF_SLOTS; lnI++)
 			{
 				// Checking everything except ourselves
-				if (lnI != dbfHandle && gsArea[lnI].isUsed == _YES && gsArea[lnI].dbc != NULL && !gsArea[lnI].isDbc)
+				if (lnI != tnWorkArea && gsArea[lnI].isUsed == _YES && gsArea[lnI].dbc != NULL && !gsArea[lnI].isDbc)
 				{
 					// If we're pointing to the same one, then there's a reference
-					if (&gsArea[lnI] == gsArea[dbfHandle].dbc)
+					if (&gsArea[lnI] == gsArea[tnWorkArea].dbc)
 					{
 						llFoundReference = true;
 						break;
@@ -565,37 +566,37 @@
 			if (!llFoundReference)
 			{
 				// We are/were the only one
-				iDbf_close(gsArea[dbfHandle].dbc->thisWorkArea);
-				gsArea[dbfHandle].dbc = NULL;
+				iDbf_close(gsArea[tnWorkArea].dbc->thisWorkArea);
+				gsArea[tnWorkArea].dbc = NULL;
 			}
 		}
 
 
 		// Release the memory
-		iiFreeAndSetToNull((void **)&gsArea[dbfHandle].fieldPtr1);
+		iiFreeAndSetToNull((void **)&gsArea[tnWorkArea].fieldPtr1);
 
 		// For data we either use it as a pointer into the cache, or as a real holder of line data
-		if (gsArea[dbfHandle].isCached)
+		if (gsArea[tnWorkArea].isCached)
 		{
 			// Free cacheData
-			iiFreeAndSetToNull((void **)&gsArea[dbfHandle].cachedTable);
+			iiFreeAndSetToNull((void **)&gsArea[tnWorkArea].cachedTable);
 
 		} else {
 			// Free data
-			iiFreeAndSetToNull((void **)&gsArea[dbfHandle].data);
+			iiFreeAndSetToNull((void **)&gsArea[tnWorkArea].data);
 		}
 
 		// Release our original record buffer
-		if (gsArea[dbfHandle].odata != NULL && gsArea[dbfHandle].odata != (s8*)-1)
-			iiFreeAndSetToNull((void **)&gsArea[dbfHandle].odata);
+		if (gsArea[tnWorkArea].odata != NULL && gsArea[tnWorkArea].odata != (s8*)-1)
+			iiFreeAndSetToNull((void **)&gsArea[tnWorkArea].odata);
 
 		// Release our buffer for building index keys
-		if (gsArea[dbfHandle].idata != NULL && gsArea[dbfHandle].idata != (s8*)-1)
-			iiFreeAndSetToNull((void **)&gsArea[dbfHandle].idata);
+		if (gsArea[tnWorkArea].idata != NULL && gsArea[tnWorkArea].idata != (s8*)-1)
+			iiFreeAndSetToNull((void **)&gsArea[tnWorkArea].idata);
 
 
 		// Close the slot
-		gsArea[dbfHandle].isUsed = _NO;
+		gsArea[tnWorkArea].isUsed = _NO;
 		return(0);
 	}
 
@@ -610,7 +611,7 @@
 // a sanity check to see if the CDX is actually valid or not.
 //
 //////
-	u32 iDbf_hasCdx(u32 dbfHandle)
+	u32 iDbf_hasCdx(u32 tnWorkArea)
 	{
 		SWorkArea*			wa;
 		WIN32_FIND_DATA		ffd;
@@ -621,16 +622,16 @@
 		//////////
 		// Check for errors
 		//////
-			if (dbfHandle >= _MAX_DBF_SLOTS)
+			if (tnWorkArea >= _MAX_DBF_SLOTS)
 				return(-1);		// Invalid slot number
-			if (gsArea[dbfHandle].isUsed != _YES)
+			if (gsArea[tnWorkArea].isUsed != _YES)
 				return(-1);		// Invalid slot
 
 
 		//////////
 		// Get the CDX filename
 		//////
-			wa = &gsArea[dbfHandle];
+			wa = &gsArea[tnWorkArea];
 			memset(cdxName, 0, sizeof(cdxName));
 			memcpy(cdxName, wa->tablePathname, wa->tablePathnameLength);
 			memcpy(cdxName + wa->tablePathnameLength - 4, ".cdx", 4);
@@ -649,51 +650,151 @@
 
 //////////
 //
+// Called to see if the work area is used
+//
+//////
+	s32 iDbf_isWorkAreaUsed(u32 tnWorkArea, bool& tlIsDbc)
+	{
+
+
+		//////////
+		// Check for errors
+		//////
+			if (tnWorkArea >= _MAX_DBF_SLOTS)
+				return(-1);		// Invalid slot number
+
+
+		//////////
+		// Report status
+		//////
+			tlIsDbc = (gsArea[tnWorkArea].isDbc == _YES);
+			return(gsArea[tnWorkArea].isUsed);
+	}
+
+
+
+
+//////////
+//
+// Called to obtain a work area.
+//
+//////
+	s32 iDbf_getWorkArea_current(void)
+	{
+		return(gnDbf_currentWorkArea);
+	}
+
+	s32 iDbf_getWorkArea_lowestFree(void)
+	{
+		s32 lnI;
+
+
+		// Iterate through every work area finding the lowest number
+		for (lnI = 0; lnI < _MAX_DBF_SLOTS; lnI++)
+		{
+			// If it's free, return it
+			if (gsArea[lnI].isUsed == _NO)
+				return(lnI);
+		}
+
+		// If we get here, they're all used
+		return(-1);
+	}
+
+	s32 iDbf_getWorkArea_highestFree(void)
+	{
+		s32 lnI;
+
+
+		// Iterate backward through every work area finding the highest number
+		for (lnI = _MAX_DBF_SLOTS - 1; lnI >= 0; lnI--)
+		{
+			// If it's free, return it
+			if (gsArea[lnI].isUsed == _NO)
+				break;
+		}
+
+		// Indicate the slot
+		return(lnI);
+	}
+
+	s32 iDbf_getWorkArea_byAlias(s8* alias, u32 aliasLength)
+	{
+		s32 lnI;
+
+
+		// Iterate through every work area searching tables
+		for (lnI = 0; lnI < _MAX_DBF_SLOTS; lnI++)
+		{
+			// If it's a table, and the alias name is the same length, continue checking the name
+			if (gsArea[lnI].isUsed == _YES && gsArea[lnI].isDbc == _NO && gsArea[lnI].aliasLength == aliasLength)
+			{
+				// Check the name
+				if (_memicmp(alias, gsArea[lnI].alias, aliasLength) == 0)
+					return(lnI);	// It is a match
+			}
+		}
+
+		// If we get here, not found
+		return(-1);
+	}
+
+	SVariable* iDbf_getAlias_fromPathname(s8* tcTablePathname, u32 tnTablePathnameLenth)
+	{
+// TODO:  Working here
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
 // Called to goto a record and read in the contents.
 //
 //////
-	s32 iDbf_gotoRecord(u32 dbfHandle, s32 recordNumber)
+	s32 iDbf_gotoRecord(u32 tnWorkArea, s32 recordNumber)
 	{
 		u32 lnNumread;
 
 
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
 
 		//////////
 		// Make sure the record they want to go to exists
 		//////
-			if (recordNumber <= (s32)gsArea[dbfHandle].header.records)
+			if (recordNumber <= (s32)gsArea[tnWorkArea].header.records)
 			{
-				if (gsArea[dbfHandle].isCached)
+				if (gsArea[tnWorkArea].isCached)
 				{
 					// We have it cached, so just change .data to point to the right place
-					gsArea[dbfHandle].data = gsArea[dbfHandle].cachedTable + ((recordNumber - 1) * gsArea[dbfHandle].header.recordLength);
+					gsArea[tnWorkArea].data = gsArea[tnWorkArea].cachedTable + ((recordNumber - 1) * gsArea[tnWorkArea].header.recordLength);
 
 				} else {
 					// Manual seek in the table, and a manual read
 					// Seek to the indicated offset, and read in the record
-					fseek(gsArea[dbfHandle].fhDbf, gsArea[dbfHandle].header.firstRecord + ((recordNumber - 1) * gsArea[dbfHandle].header.recordLength), SEEK_SET);
+					fseek(gsArea[tnWorkArea].fhDbf, gsArea[tnWorkArea].header.firstRecord + ((recordNumber - 1) * gsArea[tnWorkArea].header.recordLength), SEEK_SET);
 
 					// Read in the record
-					lnNumread = fread(gsArea[dbfHandle].data, 1, gsArea[dbfHandle].header.recordLength, gsArea[dbfHandle].fhDbf);
-					if (lnNumread != gsArea[dbfHandle].header.recordLength)
+					lnNumread = fread(gsArea[tnWorkArea].data, 1, gsArea[tnWorkArea].header.recordLength, gsArea[tnWorkArea].fhDbf);
+					if (lnNumread != gsArea[tnWorkArea].header.recordLength)
 						return(-1);
 				}
 
 				// Set the current record, and lower the dirty flag
-				gsArea[dbfHandle].currentRecord	= recordNumber;
-				gsArea[dbfHandle].dirty				= 0;
+				gsArea[tnWorkArea].currentRecord	= recordNumber;
+				gsArea[tnWorkArea].dirty				= 0;
 
 				// Copy to the original record
-				memcpy(gsArea[dbfHandle].odata, gsArea[dbfHandle].data, gsArea[dbfHandle].header.recordLength);
+				memcpy(gsArea[tnWorkArea].odata, gsArea[tnWorkArea].data, gsArea[tnWorkArea].header.recordLength);
 			}
 			// Indicate where we are
-			return(gsArea[dbfHandle].currentRecord);
+			return(gsArea[tnWorkArea].currentRecord);
 	}
 
 
@@ -704,37 +805,37 @@
 // Called to write any changes to the fields to disk
 //
 //////
-	u32 iDbf_writeChanges(u32 dbfHandle)
+	u32 iDbf_writeChanges(u32 tnWorkArea)
 	{
 		u32 lnNumread;
 
 
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
 
 		//////////
 		// Make sure the record they want to go to exists
 		//////
-			if (gsArea[dbfHandle].currentRecord <= gsArea[dbfHandle].header.records && gsArea[dbfHandle].dirty != 0)
+			if (gsArea[tnWorkArea].currentRecord <= gsArea[tnWorkArea].header.records && gsArea[tnWorkArea].dirty != 0)
 			{
 				// Write the record
 				// Seek to the indicated offset, and read in the record
-				fseek(gsArea[dbfHandle].fhDbf, gsArea[dbfHandle].header.firstRecord + ((gsArea[dbfHandle].currentRecord - 1) * gsArea[dbfHandle].header.recordLength), SEEK_SET);
+				fseek(gsArea[tnWorkArea].fhDbf, gsArea[tnWorkArea].header.firstRecord + ((gsArea[tnWorkArea].currentRecord - 1) * gsArea[tnWorkArea].header.recordLength), SEEK_SET);
 
 				// Write the record
-				lnNumread = fwrite(gsArea[dbfHandle].data, 1, gsArea[dbfHandle].header.recordLength, gsArea[dbfHandle].fhDbf);
-				if (lnNumread != gsArea[dbfHandle].header.recordLength)
+				lnNumread = fwrite(gsArea[tnWorkArea].data, 1, gsArea[tnWorkArea].header.recordLength, gsArea[tnWorkArea].fhDbf);
+				if (lnNumread != gsArea[tnWorkArea].header.recordLength)
 					return(-1);
 
 				// Set the current record, and lower the dirty flag
-				gsArea[dbfHandle].dirty = 0;
+				gsArea[tnWorkArea].dirty = 0;
 
 				// Copy what is now the disk record to the original record
-				memcpy(gsArea[dbfHandle].odata, gsArea[dbfHandle].data, gsArea[dbfHandle].header.recordLength);
+				memcpy(gsArea[tnWorkArea].odata, gsArea[tnWorkArea].data, gsArea[tnWorkArea].header.recordLength);
 			}
 			// If we get here, nothing to do
 			return(0);
@@ -759,49 +860,49 @@
 //				N = length of name
 //
 //////
-	u32 iDbf_getFieldCount(u32 dbfHandle)
+	u32 iDbf_getFieldCount(u32 tnWorkArea)
 	{
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
 		// Iterate through the fields until we find the one they want
-		return(gsArea[dbfHandle].fieldCount);
+		return(gsArea[tnWorkArea].fieldCount);
 	}
 
-	u32 iDbf_getReccount(u32 dbfHandle)
+	u32 iDbf_getReccount(u32 tnWorkArea)
 	{
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
 		// Iterate through the fields until we find the one they want
-		return(gsArea[dbfHandle].header.records);
+		return(gsArea[tnWorkArea].header.records);
 	}
 
 	// Returns the field number by field name
-	u32 iDbf_getField_number1(u32 dbfHandle, s8* fieldName)
+	u32 iDbf_getField_number1(u32 tnWorkArea, s8* fieldName)
 	{
 		s32				lnI, lnLength;
 		SFieldRecord2*	lfr2Ptr;
 
 
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
-		lfr2Ptr = iDbf_getField_number2(&gsArea[dbfHandle], 1);
+		lfr2Ptr = iDbf_getField_number2(&gsArea[tnWorkArea], 1);
 		if (lfr2Ptr)
 		{
 			// Store the name
 			lnLength = strlen(fieldName);
-			for (lnI = 1; lnI <= (s32)gsArea[dbfHandle].fieldCount; lnI++, lfr2Ptr++)
+			for (lnI = 1; lnI <= (s32)gsArea[tnWorkArea].fieldCount; lnI++, lfr2Ptr++)
 			{
 				// Length must match, and the field name must match
 				if (lnLength == lfr2Ptr->fieldName_length && _memicmp(fieldName, lfr2Ptr->name2, lnLength) == 0)
@@ -813,19 +914,19 @@
 	}
 
 	// Returns 10-digit field name
-	u32 iDbf_getField_name(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength)
+	u32 iDbf_getField_name(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		u32				lnI;
 		SFieldRecord2*	lfr2Ptr;
 
 
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
-		lfr2Ptr = iDbf_getField_number2(&gsArea[dbfHandle], fieldNumber);
+		lfr2Ptr = iDbf_getField_number2(&gsArea[tnWorkArea], fieldNumber);
 		if (lfr2Ptr)
 		{
 			// Store the name
@@ -851,15 +952,15 @@
 	//		BDouble		FFloat		GGeneral	IInteger
 	//		LLogical		MMemo		NNumeric	PPicture
 	//		Q-Varbinary		V-Varchar (binary)
-	u32 iDbf_getField_type(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength)
+	u32 iDbf_getField_type(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
-		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[dbfHandle], fieldNumber);
+		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[tnWorkArea], fieldNumber);
 		if (lfrp)
 		{	// Store the type
 			if (dest)
@@ -876,7 +977,7 @@
 		return(-1);
 	}
 
-	u32 iDbf_getField_type_verbose(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength)
+	u32 iDbf_getField_type_verbose(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		s8* name;
 		u32 length;
@@ -884,12 +985,12 @@
 
 
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
-		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[dbfHandle], fieldNumber);
+		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[tnWorkArea], fieldNumber);
 		if (lfrp)
 		{	// Store the type's related name
 			switch (lfrp->type)
@@ -952,19 +1053,19 @@
 	// Returns extended field type, such as:
 	//		C(5)
 	//		N(10,2)
-	u32 iDbf_getField_type_extended(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength)
+	u32 iDbf_getField_type_extended(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		u32 length;
 		s8 buffer[32];
 
 
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
-		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[dbfHandle], fieldNumber);
+		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[tnWorkArea], fieldNumber);
 		if (lfrp)
 		{	// Store the type
 			if (lfrp->type == 'N' ||
@@ -1003,19 +1104,19 @@
 	}
 
 	// Returns field length, "10" as in "N(10,2)"
-	u32 iDbf_getField_length(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength)
+	u32 iDbf_getField_length(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		u32 length;
 		s8 buffer[32];
 
 
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
-		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[dbfHandle], fieldNumber);
+		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[tnWorkArea], fieldNumber);
 		if (lfrp)
 		{
 			// Store the length
@@ -1038,19 +1139,19 @@
 	}
 
 	// Returns the index override length
-	u32 iDbf_getIndex_length(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength)
+	u32 iDbf_getIndex_length(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		u32 length;
 		s8 buffer[32];
 
 
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
-		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[dbfHandle], fieldNumber);
+		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[tnWorkArea], fieldNumber);
 		if (lfrp)
 		{
 			// Store the length
@@ -1075,19 +1176,19 @@
 	}
 
 	// Returns decimals, "2" as in "N(10,2)"
-	u32 iDbf_getField_decimals(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength)
+	u32 iDbf_getField_decimals(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		u32 length;
 		s8 buffer[32];
 
 
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
-		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[dbfHandle], fieldNumber);
+		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[tnWorkArea], fieldNumber);
 		if (lfrp)
 		{
 			// Store the decimals
@@ -1110,15 +1211,15 @@
 	}
 
 	// Returns "Y" or "N" indicating whether or not the field is binary
-	u32 iDbf_getField_isBinary(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength)
+	u32 iDbf_getField_isBinary(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
-		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[dbfHandle], fieldNumber);
+		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[tnWorkArea], fieldNumber);
 		if (lfrp)
 		{	// Store the type
 			*dest = (lfrp->flags & _DBF_FIELD_BINARY) ? 'Y' : 'N';
@@ -1129,15 +1230,15 @@
 	}
 
 	// Returns "Y" or "N" indicating whether or not the field can store NULLs
-	u32 iDbf_getField_allowNulls(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength)
+	u32 iDbf_getField_allowNulls(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
-		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[dbfHandle], fieldNumber);
+		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[tnWorkArea], fieldNumber);
 		if (lfrp)
 		{	// Store the type
 			if (dest)
@@ -1150,7 +1251,7 @@
 	}
 
 	// Returns "Y", "N", or "X" (if invalid) indicating whether or not the field is NULL
-	u32 iDbf_getNull_flag(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength)
+	u32 iDbf_getNull_flag(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		u32				lnNull, lnOffset;
 		u8				lnBitMask;
@@ -1158,12 +1259,12 @@
 
 
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
-		lfrp = iDbf_getField_number1(&gsArea[dbfHandle], fieldNumber);
+		lfrp = iDbf_getField_number1(&gsArea[tnWorkArea], fieldNumber);
 		if (lfrp)
 		{
 			// Store the type
@@ -1180,10 +1281,10 @@
 					*dest = ((lfrp->flags & _DBF_FIELD_NULLS) ? 'Y' : 'N');
 
 				// Get the offset and bitmask into the row
-				if (iDbf_getNull_offsetAndMask(dbfHandle, fieldNumber, &lnOffset, &lnBitMask))
+				if (iDbf_getNull_offsetAndMask(tnWorkArea, fieldNumber, &lnOffset, &lnBitMask))
 				{
 					// See if this field is actually null
-					if ((gsArea[dbfHandle].data[lnOffset] & lnBitMask) != 0)
+					if ((gsArea[tnWorkArea].data[lnOffset] & lnBitMask) != 0)
 					{
 						// It's .NULL.
 						lnNull = 1;
@@ -1213,23 +1314,23 @@
 	}
 
 	// Gets the NULL offset into the row, and the byte mask
-	bool iDbf_getNull_offsetAndMask(u32 dbfHandle, u32 fieldNumber, u32* nullOffset, u8* nullMask)
+	bool iDbf_getNull_offsetAndMask(u32 tnWorkArea, u32 fieldNumber, u32* nullOffset, u8* nullMask)
 	{
 		s32				lnI, lnNullFieldNum;
 		SFieldRecord1*	lfrpNull;
 
 
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(false);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(false);		// Invalid slot
 
 
 		//////////
 		// It's based on the NULL field within the line
 		//////
-			for (lnI = 0, lnNullFieldNum = 0, lfrpNull = gsArea[dbfHandle].fieldPtr1; lnI <= (s32)gsArea[dbfHandle].fieldCount; lnI++, lfrpNull++)
+			for (lnI = 0, lnNullFieldNum = 0, lfrpNull = gsArea[tnWorkArea].fieldPtr1; lnI <= (s32)gsArea[tnWorkArea].fieldCount; lnI++, lfrpNull++)
 			{
 				// If this is a NULL field, increase its number up until we find our own field
 				if ((lfrpNull->flags & _DBF_FIELD_NULLS) && lnI < (s32)fieldNumber)
@@ -1260,19 +1361,19 @@
 	}
 
 	// Returns a value if the field is auto-incrementing, blank otherwise
-	u32 iDbf_getField_autoinc_next(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength)
+	u32 iDbf_getField_autoinc_next(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		u32 length;
 		s8 buffer[32];
 
 
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
-		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[dbfHandle], fieldNumber);
+		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[tnWorkArea], fieldNumber);
 		if (lfrp)
 		{	// Store the auto-incrementing next value
 			if (lfrp->flags & _DBF_FIELD_AUTO_INC)
@@ -1293,19 +1394,19 @@
 	}
 
 	// Returns a value if the field is auto-incrementing, blank otherwise
-	u32 iDbf_getField_autoinc_step(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength)
+	u32 iDbf_getField_autoinc_step(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		u32 length;
 		s8 buffer[32];
 
 
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
-		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[dbfHandle], fieldNumber);
+		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[tnWorkArea], fieldNumber);
 		if (lfrp)
 		{	// Store the auto-incrementing next value
 			if (lfrp->flags & _DBF_FIELD_AUTO_INC)
@@ -1325,29 +1426,29 @@
 		return(-1);
 	}
 
-	u32 iDbf_getField_data(u32 dbfHandle, u32 fieldNumber, s8* dest, u32 destLength)
+	u32 iDbf_getField_data(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
-		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[dbfHandle], fieldNumber);
+		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[tnWorkArea], fieldNumber);
 		if (lfrp)
 		{
 			// Store the reserved bytes
 			if (dest)
 			{
 				// Copy the data
-				memcpy(dest, gsArea[dbfHandle].data + lfrp->offset, min(lfrp->length, destLength));
+				memcpy(dest, gsArea[tnWorkArea].data + lfrp->offset, min(lfrp->length, destLength));
 
 				// Return the length
 				return(min(lfrp->length, destLength));
 
 			} else {
 				// Return the offset to the actual data
-				return((u32)gsArea[dbfHandle].data + lfrp->offset);
+				return((u32)gsArea[tnWorkArea].data + lfrp->offset);
 			}
 		}
 		// If we get here, failure
@@ -1513,15 +1614,15 @@
 		return(-1);
 	}
 
-	u32 iDbf_getField_dataOffset(u32 dbfHandle, u32 fieldNumber)
+	u32 iDbf_getField_dataOffset(u32 tnWorkArea, u32 fieldNumber)
 	{
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
-		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[dbfHandle], fieldNumber);
+		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[tnWorkArea], fieldNumber);
 		if (lfrp)
 		{
 			// Return the offset to the actual data
@@ -1531,15 +1632,15 @@
 		return(-1);
 	}
 
-	u32 iDbf_getIndexFixupOp(u32 dbfHandle, u32 fieldNumber)
+	u32 iDbf_getIndexFixupOp(u32 tnWorkArea, u32 fieldNumber)
 	{
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
-		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[dbfHandle], fieldNumber);
+		SFieldRecord1* lfrp = iDbf_getField_number1(&gsArea[tnWorkArea], fieldNumber);
 		if (lfrp)
 		{
 			// Return the offset to the actual data
@@ -1557,19 +1658,19 @@
 // Updates data in the table
 //
 //////
-	u32 iDbf_setField_data(u32 dbfHandle, s32 fieldNumber, s8* src, u32 srcLength)
+	u32 iDbf_setField_data(u32 tnWorkArea, s32 fieldNumber, s8* src, u32 srcLength)
 	{
 		SFieldRecord1* lfrp;
 
 
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
 		// Obtain the offset for the field
-		lfrp = iDbf_getField_number1(&gsArea[dbfHandle], ((fieldNumber < 0) ? -fieldNumber : fieldNumber));
+		lfrp = iDbf_getField_number1(&gsArea[tnWorkArea], ((fieldNumber < 0) ? -fieldNumber : fieldNumber));
 		if (lfrp)
 		{
 			// Store the reserved bytes
@@ -1580,24 +1681,24 @@
 				{
 					// They're updating the idata (index data) field
 					if (lfrp->length > srcLength)
-						memset(gsArea[dbfHandle].idata + lfrp->offset, lfrp->fillChar, lfrp->length);
+						memset(gsArea[tnWorkArea].idata + lfrp->offset, lfrp->fillChar, lfrp->length);
 
 					// Update the portion
-					memcpy(gsArea[dbfHandle].idata + lfrp->offset, src, min(lfrp->length, srcLength));
+					memcpy(gsArea[tnWorkArea].idata + lfrp->offset, src, min(lfrp->length, srcLength));
 
 				} else {
 					// They're updating the real data
 					if (lfrp->length > srcLength)
-						memset(gsArea[dbfHandle].data + lfrp->offset, lfrp->fillChar, lfrp->length);
+						memset(gsArea[tnWorkArea].data + lfrp->offset, lfrp->fillChar, lfrp->length);
 
 					// Update the portion
-					memcpy(gsArea[dbfHandle].data + lfrp->offset, src, min(lfrp->length, srcLength));
+					memcpy(gsArea[tnWorkArea].data + lfrp->offset, src, min(lfrp->length, srcLength));
 
 					// Indicate the record is dirty
-					gsArea[dbfHandle].dirty = _YES;
+					gsArea[tnWorkArea].dirty = _YES;
 
 					// Flush the row to disk
-					iDbf_writeChanges(dbfHandle);
+					iDbf_writeChanges(tnWorkArea);
 				}
 
 				// Return the number of bytes written/updated.
@@ -1620,7 +1721,7 @@
 // Makes sure the field contents contain only what they should.
 //
 //////
-	u32 iDbf_getField_validateContents(u32 dbfHandle, u32 fieldNumber, s8* src, u32 srcLength)
+	u32 iDbf_getField_validateContents(u32 tnWorkArea, u32 fieldNumber, s8* src, u32 srcLength)
 	{
 		u32				lnI, lnErrors;
 		bool			llAllowAllStd;
@@ -1629,17 +1730,17 @@
 
 
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 			return(-1);		// Invalid slot number
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 			return(-1);		// Invalid slot
 
 		// Is there anything to do?
-		if (gsArea[dbfHandle].header.records == 0 || gsArea[dbfHandle].currentRecord > gsArea[dbfHandle].header.records)
+		if (gsArea[tnWorkArea].header.records == 0 || gsArea[tnWorkArea].currentRecord > gsArea[tnWorkArea].header.records)
 			return(0);	// No data, so everything's correct. :-)
 
 		// Get the field
-		lfrp = iDbf_getField_number1(&gsArea[dbfHandle], fieldNumber);
+		lfrp = iDbf_getField_number1(&gsArea[tnWorkArea], fieldNumber);
 		if (lfrp)
 		{
 			//////////
@@ -1694,7 +1795,7 @@
 				for (lnErrors = 0, lnI = lfrp->offset; lnI < lfrp->offset + lfrp->length; lnI++)
 				{
 					// Grab the character
-					c = gsArea[dbfHandle].data[lnI];
+					c = gsArea[tnWorkArea].data[lnI];
 
 					// Are all ASCII characters allowed
 					if (llAllowAllStd)
@@ -2750,26 +2851,26 @@
 //		others		- Size, in bytes, of the header
 //
 /////
-	u32 dbf_get_header(u32 dbfHandle, s8 *dest, u32 dest_length)
+	u32 dbf_get_header(u32 tnWorkArea, s8 *dest, u32 dest_length)
 	{
 		u32 lTotal_size;
 
 
 		// Check for errors
-		if (dbfHandle >= _MAX_DBF_SLOTS)
+		if (tnWorkArea >= _MAX_DBF_SLOTS)
 		{
 			// Invalid slot number
 			return(-1);
 		}
 
-		if (gsArea[dbfHandle].isUsed != _YES)
+		if (gsArea[tnWorkArea].isUsed != _YES)
 		{
 			// Invalid slot
 			return(-1);
 		}
 
 		// Return the record count
-		lTotal_size = sizeof(STableHeader) + (gsArea[dbfHandle].fieldCount * sizeof(SFieldRecord1));
+		lTotal_size = sizeof(STableHeader) + (gsArea[tnWorkArea].fieldCount * sizeof(SFieldRecord1));
 		if (dest_length < lTotal_size)
 		{
 			// Not enough space for the copy
@@ -2786,8 +2887,8 @@
 
 
 		// Copy the actual data
-		memcpy(dest, (s8*)&gsArea[dbfHandle].header, sizeof(STableHeader));
-		memcpy(dest + sizeof(STableHeader), (s8*)gsArea[dbfHandle].fieldPtr1, gsArea[dbfHandle].fieldCount * sizeof(SFieldRecord1));
+		memcpy(dest, (s8*)&gsArea[tnWorkArea].header, sizeof(STableHeader));
+		memcpy(dest + sizeof(STableHeader), (s8*)gsArea[tnWorkArea].fieldPtr1, gsArea[tnWorkArea].fieldCount * sizeof(SFieldRecord1));
 
 
 		// All done!

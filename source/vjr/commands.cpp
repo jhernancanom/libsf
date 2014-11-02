@@ -92,6 +92,8 @@
 			case _ERROR_INTERNAL_ERROR:						{	iError_report((s8*)cgcInternalError);					break;	}
 			case _ERROR_INVALID_ARGUMENT_TYPE_COUNT:		{	iError_report((s8*)cgcInvalidArgumentTypeCountError);	break;	}
 			case _ERROR_VARIABLE_NOT_FOUND:					{	iError_report((s8*)cgcVariableNotFoundError);			break;	}
+			case _ERROR_ALIAS_NOT_FOUND:					{	iError_report((s8*)cgcAliasNotFoundError);				break;	}
+			case _ERROR_INVALID_WORK_AREA:					{	iError_report((s8*)cgcInvalidWorkArea);					break;	}
 		}
 
 		// Flag the component
@@ -4489,25 +4491,213 @@
 //    The sum of p1 / p2
 //
 //////
-	void command_use(SComp* comp)
+	void command_use(SComp* compUse)
 	{
+		u32			errorNum;
+		s32			lnWorkArea, lnResult;
+		bool		llManufacturedInXyz, llManufacturedTableName, llManufacturedAliasName, llIsDbc, error;
+		SVariable*	varInXyz;
+		SVariable*	varTableName;
+		SVariable*	varAliasName;
+
+
 		// Access the options which are available for this command
-		SComp*	compAgain				= iComps_findNextBy_iCode(comp, _ICODE_AGAIN,				NULL);
-		SComp*	compNoRequery			= iComps_findNextBy_iCode(comp, _ICODE_NOREQUERY,			NULL);
-		SComp*	compNoData				= iComps_findNextBy_iCode(comp, _ICODE_NODATA,				NULL);
-		SComp*	compNoUpdate			= iComps_findNextBy_iCode(comp, _ICODE_NOUPDATE,			NULL);
-		SComp*	compExclamationPoint	= iComps_findNextBy_iCode(comp, _ICODE_EXCLAMATION_POINT,	NULL);
-		SComp*	compIn					= iComps_findNextBy_iCode(comp, _ICODE_IN,					NULL);
-		SComp*	compIndex				= iComps_findNextBy_iCode(comp, _ICODE_INDEX,				NULL);
-		SComp*	compOrder				= iComps_findNextBy_iCode(comp, _ICODE_ORDER,				NULL);
-		SComp*	compTag					= iComps_findNextBy_iCode(comp, _ICODE_TAG,					NULL);
-		SComp*	compAscending			= iComps_findNextBy_iCode(comp, _ICODE_ASCENDING,			NULL);
-		SComp*	compDescending			= iComps_findNextBy_iCode(comp, _ICODE_DESCENDING,			NULL);
-		SComp*	compAlias				= iComps_findNextBy_iCode(comp, _ICODE_ALIAS,				NULL);
-		SComp*	compExclusive			= iComps_findNextBy_iCode(comp, _ICODE_EXCLUSIVE,			NULL);
-		SComp*	compShared				= iComps_findNextBy_iCode(comp, _ICODE_SHARED,				NULL);
-		SComp*	compConnString			= iComps_findNextBy_iCode(comp, _ICODE_CONNSTRING,			NULL);
+		SComp*	compAgain				= iComps_findNextBy_iCode(compUse, _ICODE_AGAIN,				NULL);
+		SComp*	compNoRequery			= iComps_findNextBy_iCode(compUse, _ICODE_NOREQUERY,			NULL);
+		SComp*	compNoData				= iComps_findNextBy_iCode(compUse, _ICODE_NODATA,				NULL);
+		SComp*	compNoUpdate			= iComps_findNextBy_iCode(compUse, _ICODE_NOUPDATE,				NULL);
+		SComp*	compExclamationPoint	= iComps_findNextBy_iCode(compUse, _ICODE_EXCLAMATION_POINT,	NULL);
+		SComp*	compIn					= iComps_findNextBy_iCode(compUse, _ICODE_IN,					NULL);
+		SComp*	compIndex				= iComps_findNextBy_iCode(compUse, _ICODE_INDEX,				NULL);
+		SComp*	compOrder				= iComps_findNextBy_iCode(compUse, _ICODE_ORDER,				NULL);
+		SComp*	compTag					= iComps_findNextBy_iCode(compUse, _ICODE_TAG,					NULL);
+		SComp*	compAscending			= iComps_findNextBy_iCode(compUse, _ICODE_ASCENDING,			NULL);
+		SComp*	compDescending			= iComps_findNextBy_iCode(compUse, _ICODE_DESCENDING,			NULL);
+		SComp*	compAlias				= iComps_findNextBy_iCode(compUse, _ICODE_ALIAS,				NULL);
+		SComp*	compExclusive			= iComps_findNextBy_iCode(compUse, _ICODE_EXCLUSIVE,			NULL);
+		SComp*	compShared				= iComps_findNextBy_iCode(compUse, _ICODE_SHARED,				NULL);
+		SComp*	compConnString			= iComps_findNextBy_iCode(compUse, _ICODE_CONNSTRING,			NULL);
 		// Search for the optional components which may or may not be present
+
+
+		//////////
+		// Report conflicts
+		//////
+			//////////
+			// Cannot have both ASCENDING and DESCENDING
+			//////
+				if (compAscending && compDescending)
+				{
+					iError_reportByNumber(_ERROR_TOO_MANY_PARAMETERS, ((compAscending->ll.uniqueId < compDescending->ll.uniqueId) ? compDescending : compAscending));
+					return;
+				}
+
+
+			//////////
+			// Cannot have both SHARED and EXCLUSIVE
+			//////
+				if (compShared && compExclusive)
+				{
+					iError_reportByNumber(_ERROR_TOO_MANY_PARAMETERS, ((compShared->ll.uniqueId < compExclusive->ll.uniqueId) ? compExclusive : compShared));
+					return;
+				}
+
+
+			//////////
+			// If they specify IN, they must specify something after it
+			//////
+				if (compIn && !compIn->ll.next)
+				{
+					iError_reportByNumber(_ERROR_SYNTAX, compIn);
+					return;
+				}
+				// Go ahead and point after it
+				if (compIn)
+					compIn = (SComp*)compIn->ll.next;
+
+			
+			//////////
+			// If they specified an alias, they must specify something after it
+			//////
+				if (compAlias && !compAlias->ll.next)
+				{
+					iError_reportByNumber(_ERROR_SYNTAX, compIn);
+					return;
+				}
+				// Go ahead and point after it
+				if (compAlias)
+					compAlias = (SComp*)compAlias->ll.next;
+
+
+			//////////
+			// What type of USE are we pursuing?
+			//////
+				if (compUse && !compUse->ll.next)
+				{
+					// They have specified USE by itself, closing the current work area
+					iDbf_close(iDbf_getWorkArea_current());
+					return;
+
+				} else if (compIn && compUse->ll.next == compIn->ll.prev) {
+					// They have specified USE IN something
+					if (compIn->iCode == _ICODE_SELECT)
+					{
+						// They've specified USE IN SELECT something
+						if (!compIn->ll.next)
+						{
+							iError_reportByNumber(_ERROR_SYNTAX, compIn);
+							return;
+
+						} else if (((SComp*)compIn->ll.next)->iCode != _ICODE_PARENTHESIS_LEFT) {
+							// Syntax error
+							iError_reportByNumber(_ERROR_SYNTAX, compIn);
+							return;
+						}
+						// They've specified USE IN SELECT(something)
+						varAliasName = iEngine_getVariableFromComponent(compIn, llManufacturedAliasName);
+
+					} else {
+						// They must've specified an alias name
+						varAliasName = iEngine_getVariableFromComponent(compIn, llManufacturedAliasName);
+					}
+
+				}
+				// Go ahead and point after it
+				compUse = (SComp*)compUse->ll.next;
+
+
+		//////////
+		// See if there's an IN clause
+		//////
+			if (compIn)
+			{
+				//////////
+				// Grab the value into a variable
+				//////
+					llManufacturedInXyz = false;
+					varInXyz = iEngine_getVariableFromComponent(compIn, llManufacturedInXyz);
+					if (!varInXyz)	{ iError_reportByNumber(_ERROR_UNRECOGNIZED_PARAMETER, compIn);	return; }
+
+
+				//////////
+				// See what they specified
+				//////
+					if (iVariable_isTypeNumeric(varInXyz))
+					{
+						// They're are specifying a number
+						lnWorkArea = iiVariable_getAs_s32(varInXyz, false, &error, &errorNum);
+						if (error)		{ iError_reportByNumber(errorNum, compIn); return; }
+
+					} else if (iVariable_isTypeCharacter(varInXyz)) {
+						// They specified an alias name
+						lnWorkArea = iDbf_getWorkArea_byAlias(varInXyz->value.data_s8, varInXyz->value.length);
+						if (lnWorkArea < 0)		{ iError_reportByNumber(_ERROR_ALIAS_NOT_FOUND, compIn); return; }
+
+					} else {
+						// Unrecognized syntax
+						iError_reportByNumber(_ERROR_SYNTAX, compIn);
+						return;
+					}
+
+			} else {
+				// Grab the current work area
+				lnWorkArea = iDbf_getWorkArea_current();
+			}
+
+		
+		//////////
+		// See if the current work area already has a table open
+		//////
+			lnResult = iDbf_isWorkAreaUsed(lnWorkArea, llIsDbc);
+
+			// If it's invalid, or is related to a DBC, find another one automatically
+			if (lnResult < 0 || llIsDbc)
+			{
+				// Find the lowest free work area
+				lnWorkArea	= iDbf_getWorkArea_lowestFree();
+				if (lnWorkArea < 0)		{ iError_reportByNumber(_ERROR_INVALID_WORK_AREA, compIn); goto clean_exit; }
+
+				// Force lower the flag indicating it's not used
+				lnResult = 0;
+			}
+
+			// Close it if it's open
+			if (lnResult == 1)
+				iDbf_close(lnWorkArea);
+
+
+		//////////
+		// Get the table name
+		//////
+			varTableName = iEngine_getVariableFromComponent(compUse, llManufacturedTableName);
+			if (!varTableName)	{ iError_reportByNumber(_ERROR_UNRECOGNIZED_PARAMETER, compUse); goto clean_exit; }
+
+
+		//////////
+		// Get the alias name, making sure it's unique amongst the other alias name
+		//////
+			if (compAlias)
+			{
+				// They've specified an alias
+				varAliasName = iEngine_getVariableFromComponent((SComp*)compAlias->ll.next, llManufacturedTableName);
+
+			} else {
+				// We need to construct the alias
+				varAliasName = iDbf_getAlias_fromPathname(varTableName->value.data_s8, varTableName->value.length);
+			}
+			if (!varAliasName)	{ iError_reportByNumber(_ERROR_INTERNAL_ERROR, compUse); goto clean_exit; }
+
+
+		//////////
+		// Get the alias
+		//////
+			iDbf_open(varTableName->value.data_s8, varAliasName->value.data_s8);
+
+clean_exit:
+			// Release variables
+			if (varInXyz)			iVariable_delete(varInXyz,		true);
+			if (varTableName)		iVariable_delete(varTableName,	true);
+			if (varAliasName)		iVariable_delete(varAliasName,	true);
 	}
 // USE [[DatabaseName!] TableName | SQLViewName | ?]
 // 
