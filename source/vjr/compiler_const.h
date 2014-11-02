@@ -305,7 +305,7 @@
 	const s32		_ICODE_UNDERSCORE								= 16;
 	const s32		_ICODE_AT_SIGN									= 17;
 	const s32		_ICODE_QUESTION_MARK							= 18;
-	const s32		_ICODE_EXCLAMATION_MARK							= 19;
+	const s32		_ICODE_EXCLAMATION_POINT							= 19;
 	const s32		_ICODE_POUND_SIGN								= 20;
 	const s32		_ICODE_PERCENT_SIGN								= 21;
 	const s32		_ICODE_EXPONENT									= 22;
@@ -437,6 +437,7 @@
 	const s32		_ICODE_AEVENTS                                  = 1014;
 	const s32		_ICODE_AFIELDS                                  = 1015;
 	const s32		_ICODE_AFONT                                    = 1016;
+	const s32		_ICODE_AGAIN									= 1439;
 	const s32		_ICODE_AGETCLASS                                = 1017;
 	const s32		_ICODE_AGETFILEVERSION                          = 1018;
 	const s32		_ICODE_AINSTANCE                                = 1019;
@@ -453,6 +454,7 @@
 	const s32		_ICODE_APROCINFO                                = 1030;
 	const s32		_ICODE_ASCAN                                    = 1031;
 	const s32		_ICODE_ASC                                      = 1032;
+	const s32		_ICODE_ASCENDING								= 1434;
 	const s32		_ICODE_ASELOBJ                                  = 1033;
 	const s32		_ICODE_ASESSIONS                                = 1034;
 	const s32		_ICODE_ASIN                                     = 1035;
@@ -509,6 +511,7 @@
 	const s32		_ICODE_COMPROP                                  = 1086;
 	const s32		_ICODE_COMRETURNERROR                           = 1087;
 	const s32		_ICODE_COMS                                     = 1088;
+	const s32		_ICODE_CONNSTRING								= 1441;
 	const s32		_ICODE_COS                                      = 1089;
 	const s32		_ICODE_CPCONVERT                                = 1090;
 	const s32		_ICODE_CPCURRENT                                = 1091;
@@ -631,6 +634,7 @@
 	const s32		_ICODE_IDXCOLLATE                               = 1208;
 	const s32		_ICODE_IIF                                      = 1209;
 	const s32		_ICODE_IMESTATUS                                = 1210;
+	const s32		_ICODE_IN										= 1435;
 	const s32		_ICODE_INDBC                                    = 1211;
 	const s32		_ICODE_INDEXSEEK                                = 1212;
 	const s32		_ICODE_INKEY                                    = 1213;
@@ -701,7 +705,10 @@
 	const s32		_ICODE_MWINDOW                                  = 1278;
 	const s32		_ICODE_NDX                                      = 1279;
 	const s32		_ICODE_NEWOBJECT                                = 1280;
+	const s32		_ICODE_NODATA									= 1437;
+	const s32		_ICODE_NOREQUERY								= 1438;
 	const s32		_ICODE_NORMALIZE                                = 1281;
+	const s32		_ICODE_NOUPDATE									= 1436;
 	const s32		_ICODE_NTOM                                     = 1282;
 	const s32		_ICODE_NUMLOCK                                  = 1283;
 	const s32		_ICODE_NVL                                      = 1284;
@@ -772,6 +779,7 @@
 	const s32		_ICODE_SET                                      = 1348;
 	const s32		_ICODE_SETFLDSTATE                              = 1349;
 	const s32		_ICODE_SETRESULTSET                             = 1350;
+	const s32		_ICODE_SHARED									= 1440;
 	const s32		_ICODE_SIGN                                     = 1351;
 	const s32		_ICODE_SIN                                      = 1352;
 	const s32		_ICODE_SKPBAR                                   = 1353;
@@ -853,9 +861,12 @@
 	const s32		_ICODE_XMLTOCURSOR                              = 1428;
 	const s32		_ICODE_XMLUPDATEGRAM                            = 1429;
 	const s32		_ICODE_YEAR                                     = 1430;
-	// occursc = 1431
-	// addobject = 1432
-	// strtranc = 1433
+	// occursc		= 1431			addobject	= 1432
+	// strtranc		= 1433			ascending	= 1434
+	// in			= 1435			noupdate	= 1436
+	// nodata		= 1437			norequery	= 1438
+	// again		= 1439			shared		= 1440
+	// connstring	= 1441
 
 // Temporarily added until the processing engine is coded
 	const s32		_ICODE_CONCATENATE								= 1900;
@@ -1166,4 +1177,6 @@
 	const s32		_ICAT_FLOW										= 4;
 	const s32		_ICAT_OPERATOR									= 5;
 	const s32		_ICAT_CASK										= 6;
-	const s32		_ICAT_DOT_VARIABLE								= 7;
+	const s32		_ICAT_DOT_VARIABLE								= 7;	// The . in thisForm.xyz
+	const s32		_ICAT_EXCLAMATION_POINT_VARIABLE				= 8;	// The ! in thisForm!xyz
+	const s32		_ICAT_OPTION									= 9;	// An option like AGAIN on USE xyz AGAIN

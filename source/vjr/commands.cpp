@@ -4464,3 +4464,62 @@
 		//////
 			return(result);
 	}
+
+
+
+
+//////////
+//
+// Command: USE
+// Multiple forms.  Opens or close a table or view in the current or another area.
+//
+//////
+// Version 0.54   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Nov.02.2014
+//////
+// Change log:
+//     Nov.02.2014 - Initial creation
+//////
+// Parameters:
+//     comp		-- The [USE] component
+//
+//////
+// Returns:
+//    The sum of p1 / p2
+//
+//////
+	void command_use(SComp* comp)
+	{
+		// Access the options which are available for this command
+		SComp*	compAgain				= iComps_findNextBy_iCode(comp, _ICODE_AGAIN,				NULL);
+		SComp*	compNoRequery			= iComps_findNextBy_iCode(comp, _ICODE_NOREQUERY,			NULL);
+		SComp*	compNoData				= iComps_findNextBy_iCode(comp, _ICODE_NODATA,				NULL);
+		SComp*	compNoUpdate			= iComps_findNextBy_iCode(comp, _ICODE_NOUPDATE,			NULL);
+		SComp*	compExclamationPoint	= iComps_findNextBy_iCode(comp, _ICODE_EXCLAMATION_POINT,	NULL);
+		SComp*	compIn					= iComps_findNextBy_iCode(comp, _ICODE_IN,					NULL);
+		SComp*	compIndex				= iComps_findNextBy_iCode(comp, _ICODE_INDEX,				NULL);
+		SComp*	compOrder				= iComps_findNextBy_iCode(comp, _ICODE_ORDER,				NULL);
+		SComp*	compTag					= iComps_findNextBy_iCode(comp, _ICODE_TAG,					NULL);
+		SComp*	compAscending			= iComps_findNextBy_iCode(comp, _ICODE_ASCENDING,			NULL);
+		SComp*	compDescending			= iComps_findNextBy_iCode(comp, _ICODE_DESCENDING,			NULL);
+		SComp*	compAlias				= iComps_findNextBy_iCode(comp, _ICODE_ALIAS,				NULL);
+		SComp*	compExclusive			= iComps_findNextBy_iCode(comp, _ICODE_EXCLUSIVE,			NULL);
+		SComp*	compShared				= iComps_findNextBy_iCode(comp, _ICODE_SHARED,				NULL);
+		SComp*	compConnString			= iComps_findNextBy_iCode(comp, _ICODE_CONNSTRING,			NULL);
+		// Search for the optional components which may or may not be present
+	}
+// USE [[DatabaseName!] TableName | SQLViewName | ?]
+// 
+//    [IN nWorkArea | cTableAlias] [ONLINE] [ADMIN] [AGAIN]
+// 
+//    [NOREQUERY [nDataSessionNumber]] [NODATA] 
+// 
+//    [INDEX IndexFileList | ? [ORDER [nIndexNumber | IDXFileName 
+// 
+//    | [TAG] TagName [OF CDXFileName] [ASCENDING | DESCENDING]]]]
+// 
+//    [ALIAS cTableAlias] [EXCLUSIVE] [SHARED] [NOUPDATE] 
+// 
+//    [CONNSTRING cConnectionString | nStatementHandle ]
+//  

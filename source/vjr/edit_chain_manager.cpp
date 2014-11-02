@@ -2579,7 +2579,7 @@ renderAsOnlyText:
 									memcpy(buffer, line->sourceCode->data + em->leftColumn, lnBufferLength);
 
 									// Remove nbsp characters
-									for (lnJ = 0; lnJ < lnBufferLength; lnJ++)
+									for (lnJ = 0; lnJ <= lnBufferLength; lnJ++)
 									{
 										// If it's a nbsp, replace with a normal space for rendering
 										if ((u8)buffer[lnJ] == 255)

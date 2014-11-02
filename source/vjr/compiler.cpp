@@ -607,7 +607,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 
 					// NOT or !
 					case _ICODE_NOT:
-					case _ICODE_EXCLAMATION_MARK:
+					case _ICODE_EXCLAMATION_POINT:
 						break;
 
 					// AND
@@ -1950,6 +1950,10 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 					{
 						// It's a dot variable of some kind
 						iComps_combineNextN(compFirst, 2, _ICODE_DOT_VARIABLE, _ICAT_DOT_VARIABLE, &colorSynHi_dotVariable);
+
+					} else if (!llProcessed && (compSecond = (SComp*)compFirst->ll.next) && iiComps_charactersBetween(compFirst, compSecond) == 0 && (compSecond->iCode == _ICODE_ALPHA || compSecond->iCode == _ICODE_ALPHANUMERIC)) {
+						// It's an exclamation point variable of some kind
+						iComps_combineNextN(compFirst, 2, _ICODE_EXCLAMATION_POINT, _ICAT_EXCLAMATION_POINT_VARIABLE, &colorSynHi_ExclamationMarkVariable);
 					}
 				}
 
@@ -2726,7 +2730,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 				//////////
 				// Is the component before this one still immediately adjacent?
 				//////
-					if (comp->iCode != _ICODE_DOT && comp->iCode != _ICODE_EXCLAMATION_MARK)
+					if (comp->iCode != _ICODE_DOT && comp->iCode != _ICODE_EXCLAMATION_POINT)
 						break;		// We've reached the end, the previous component is not a continuation
 
 
@@ -2775,7 +2779,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 				//////////
 				// Is the component before this one still immediately adjacent?
 				//////
-					if (comp->iCode != _ICODE_DOT && comp->iCode != _ICODE_EXCLAMATION_MARK)
+					if (comp->iCode != _ICODE_DOT && comp->iCode != _ICODE_EXCLAMATION_POINT)
 						break;	// We've reached the end, the next component is not a continuation
 
 

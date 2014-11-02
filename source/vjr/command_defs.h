@@ -32,7 +32,8 @@
 //
 //////
 // Steps to add a new function:
-//		(1)  STEP1:  Add the function definition to the "Functions" section below (search for "STEP1:").
+//		(1a) STEP1A:  Add the function definition to the "Functions" section below (search for "STEP1A:").
+//		(1b) STEP1B:  Add the command definition to the "Commands" section below (search for "STEP1B:").
 //		(2)  STEP2:  Add the function information to the "Translation" gsKnownFunctions data by inserting it where it should go (search for "STEP2:").
 //		(3)  STEP3:  Add the function to commands.cpp (search for "STEP3").
 //		(4)  Code, debug, and test the function thoroughly.
@@ -61,6 +62,8 @@ struct SVariable;
 #define get_bgr(a)		(*a->value.data_bgr)
 
 
+
+
 //////////
 // commands.cpp
 // Note:  This source file contains both commands and functions.  Each will be
@@ -72,9 +75,35 @@ struct SVariable;
 	void				iError_reportByNumber						(u32 tnErrorNum, SComp* comp);
 
 
+
+
 //////////
+//
+// SourceLight
+//
+//////
+	struct SSourceLightData
+	{
+		u32			key;									// Refer to _SOURCELIGHT_* constants
+
+		// Data, varies based on _SOURCELIGHT_* constants
+		u32			data1;
+		u32			data2;
+		u32			data3;
+		u32			data4;
+		u32			data5;
+	};
+
+	#include "command_sourcelight.h"
+
+
+
+
+//////////
+//
 // Functions
-// STEP1: Define your function
+// STEP1A: Define your function
+//
 //////
 	SVariable*			function_alltrim							(SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2);
 	SVariable*			ifunction_trimCommon						(SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2, bool trimStart, bool trimEnd);
@@ -133,19 +162,13 @@ struct SVariable;
 
 
 
-	struct SSourceLightData
-	{
-		u32			key;									// Refer to _SOURCELIGHT_* constants
-
-		// Data, varies based on _SOURCELIGHT_* constants
-		u32			data1;
-		u32			data2;
-		u32			data3;
-		u32			data4;
-		u32			data5;
-	};
-
-	#include "command_sourcelight.h"
+//////////
+//
+// Commands
+// STEP1B: Define your command
+//
+//////
+	void				command_use									(SComp* comp);
 
 
 
@@ -156,7 +179,7 @@ struct SVariable;
 	struct SFunctionData
 	{
 		//////////
-		// The iCode relates to the known commands.
+		// The iCode relates to the known functions.
 		// See cgcFundamentalSymbols and cgcKeywordKeywords in compiler_globals.h
 		//////
 			s32		iCode;
@@ -169,7 +192,7 @@ struct SVariable;
 
 
 		//////////
-		// Function prototype to call internally
+		// Function prototypes to call internally
 		//////
 			union {
 				u32			_func;
@@ -199,7 +222,7 @@ struct SVariable;
 
 	SFunctionData gsKnownFunctions[] = {
 		//							Return										Parameters		Parameter
-		//	iCode					Count		Function						Required		Maximum Count	SourceLight data
+		//	iCode					Count		Function Algorithm				Required		Maximum Count	SourceLight data
 		//  ------------------		------		--------------------------		----------		-------------	-----------------------------
 		{	_ICODE_ALLTRIM,			1,			(u32)&function_alltrim,			1,				4,				&gsSourceLight_alltrim[0]		},
 		{	_ICODE_ASC,				1,			(u32)&function_asc,				1,				1,				&gsSourceLight_asc[0]			},
@@ -251,4 +274,40 @@ struct SVariable;
 	//////////
 		// Note:  Do not delete this line, it is used to terminate the search list
 		{	0,						0,					0,						0,				0,				NULL	}
+	};
+
+
+
+
+//////////
+// Translation between iCodes and Command definitions.
+//////
+	struct SCommandData
+	{
+		//////////
+		// The iCode relates to the known commands.
+		// See cgcFundamentalSymbols and cgcKeywordKeywords in compiler_globals.h
+		//////
+			s32		iCode;
+
+
+		//////////
+		// Command prototype to call internally
+		//////
+			union {
+				u32			_command;
+				void		(*command)		(SComp* comp);
+			};
+
+
+		//////////
+		// SourceLight information
+		//////
+			SSourceLightData*	data;
+	};
+
+	SCommandData gsKnownCommands[] = {
+		//	iCode					Command Algorithm
+		//  ------------------		--------------------------
+		{	_ICODE_USE,				(u32)&command_use			}
 	};

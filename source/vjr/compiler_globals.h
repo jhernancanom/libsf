@@ -50,7 +50,9 @@
 	SBgra			colorSynHi_pragmas					= { rgba(192, 192, 192, 255) };			// Gray
 	SBgra			colorSynHi_variable					= { rgba(255, 128, 0, 255) };			// Orange
 	SBgra			colorSynHi_dotVariable				= { rgba(0, 128, 192, 255) };			// Cyanish
+	SBgra			colorSynHi_ExclamationMarkVariable	= { rgba(0, 128, 192, 255) };			// Cyanish
 	SBgra			colorSynHi_quotedText				= { rgba(235, 128, 128, 255) };			// Reddish
+	SBgra			colorSynHi_flag						= { rgba(164, 128, 0, 255) };			// Golden
 
 
 
@@ -121,7 +123,7 @@
 		{ "?",						1,			false,		_ICODE_QUESTION_MARK,					false,				_ICAT_GENERIC,		NULL,						false,						null	},
 		{ "!$",						2,			false,		_ICODE_NOT_FOUND_IN,					false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
 		{ "!=",                     2,          false,      _ICODE_NOT_EQUAL,                       false,              _ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
-		{ "!",						1,			false,		_ICODE_EXCLAMATION_MARK,				false,				_ICAT_GENERIC,		&colorSynHi_logical,		true,						null	},
+		{ "!",						1,			false,		_ICODE_EXCLAMATION_POINT,				false,				_ICAT_GENERIC,		&colorSynHi_logical,		true,						null	},
 		{ "#define",				7,			false,		_ICODE_DEFINE,							true,				_ICAT_GENERIC,		&colorSynHi_pragmas,		false,						null	},
 		{ "#",						1,			false,		_ICODE_POUND_SIGN,						false,				_ICAT_GENERIC,		&colorSynHi_operator,		false,						null	},
 		{ "$",						1,			false,		_ICODE_FOUND_IN,						false,				_ICAT_GENERIC,		&colorSynHi_operator,		false,						null	},
@@ -177,6 +179,7 @@
 		{ "aevents",                7,          false,      _ICODE_AEVENTS,                         false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "afields",                7,          false,      _ICODE_AFIELDS,                         false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "afont",                  5,          false,      _ICODE_AFONT,                           false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
+		{ "again",					5,			false,		_ICODE_AGAIN,							false,				_ICAT_OPTION,		&colorSynHi_flag,			false,						null },
 		{ "agetclass",              9,          false,      _ICODE_AGETCLASS,                       false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "agetfileversion",        15,         false,      _ICODE_AGETFILEVERSION,                 false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "ainstance",              9,          false,      _ICODE_AINSTANCE,                       false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
@@ -193,6 +196,7 @@
 		{ "aprocinfo",              9,          false,      _ICODE_APROCINFO,                       false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "ascan",                  5,          false,      _ICODE_ASCAN,                           false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "asc",                    3,          false,      _ICODE_ASC,                             false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
+		{ "ascending",              9,          false,      _ICODE_ASCENDING,                       false,              _ICAT_OPTION,		&colorSynHi_flag,			false,						null },
 		{ "aselobj",                7,          false,      _ICODE_ASELOBJ,                         false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "asessions",              9,          false,      _ICODE_ASESSIONS,                       false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "asin",                   4,          false,      _ICODE_ASIN,                            false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
@@ -249,6 +253,7 @@
 		{ "comprop",                7,          false,      _ICODE_COMPROP,                         false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "comreturnerror",         14,         false,      _ICODE_COMRETURNERROR,                  false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "coms",                   4,          false,      _ICODE_COMS,                            false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
+		{ "connstring",				10,			false,		_ICODE_CONNSTRING,						false,				_ICAT_OPTION,		&colorSynHi_command,		false,						null },
 		{ "cos",                    3,          false,      _ICODE_COS,                             false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "cpconvert",              9,          false,      _ICODE_CPCONVERT,                       false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "cpcurrent",              9,          false,      _ICODE_CPCURRENT,                       false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
@@ -371,6 +376,7 @@
 		{ "idxcollate",             10,         false,      _ICODE_IDXCOLLATE,                      false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "iif",                    3,          false,      _ICODE_IIF,                             false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "imestatus",              9,          false,      _ICODE_IMESTATUS,                       false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
+		{ "in",						2,			false,		_ICODE_IN,								false,				_ICAT_OPTION,		&colorSynHi_flag,			false,						null },
 		{ "indbc",                  5,          false,      _ICODE_INDBC,                           false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "indexseek",              9,          false,      _ICODE_INDEXSEEK,                       false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "inkey",                  5,          false,      _ICODE_INKEY,                           false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
@@ -441,7 +447,10 @@
 		{ "mwindow",                7,          false,      _ICODE_MWINDOW,                         false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "ndx",                    3,          false,      _ICODE_NDX,                             false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "newobject",              9,          false,      _ICODE_NEWOBJECT,                       false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
+		{ "nodata",					6,			false,		_ICODE_NODATA,							false,				_ICAT_OPTION,		&colorSynHi_flag,			false,						null },
+		{ "norequery",				9,			false,		_ICODE_NOREQUERY,						false,				_ICAT_OPTION,		&colorSynHi_flag,			false,						null },
 		{ "normalize",              9,          false,      _ICODE_NORMALIZE,                       false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
+		{ "noupdate",				8,			false,		_ICODE_NOUPDATE,						false,				_ICAT_OPTION,		&colorSynHi_flag,			false,						null },
 		{ "ntom",                   4,          false,      _ICODE_NTOM,                            false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "numlock",                7,          false,      _ICODE_NUMLOCK,                         false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "nvl",                    3,          false,      _ICODE_NVL,                             false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
@@ -512,6 +521,7 @@
 		{ "set",                    3,          false,      _ICODE_SET,                             false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "setfldstate",            11,         false,      _ICODE_SETFLDSTATE,                     false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "setresultset",           12,         false,      _ICODE_SETRESULTSET,                    false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
+		{ "shared",					6,			false,		_ICODE_SHARED,							false,				_ICAT_OPTION,		&colorSynHi_flag,			false,						null },
 		{ "sign",                   4,          false,      _ICODE_SIGN,                            false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "sin",                    3,          false,      _ICODE_SIN,                             false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "skpbar",                 6,          false,      _ICODE_SKPBAR,                          false,              _ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
