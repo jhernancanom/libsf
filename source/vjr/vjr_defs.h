@@ -443,7 +443,7 @@ struct SObjPropertyMap;
 	void*					iTranslate_p2_to_p1						(SBuilder* root, void* ptr);
 
 	// ExtraInfo
-	void					iExtraInfo_free							(SEM* em, SEdit* ec, SExtraInfo** root, bool tlDeleteSelf);
+	void					iExtraInfo_free							(SEM* sem, SLine* ec, SExtraInfo** root, bool tlDeleteSelf);
 
 	// Datum
 	void					iDatum_allocateSpace					(SDatum* datum,            s32 dataLength);

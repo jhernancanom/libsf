@@ -38,14 +38,14 @@
 //////////
 // Forward declarations
 //////
-	void					iEditChain_free							(SEdit** root, bool tlDeleteSelf);
-	void					iEditChain_ensureLineLength				(SEdit* em, s32 newLineLength);
+	void					iEditChain_free							(SLine** root, bool tlDeleteSelf);
+	void					iEditChain_ensureLineLength				(SLine* em, s32 newLineLength);
 
 	// For editing
-	bool					iEditChain_characterInsert				(SEM* em, u8 asciiChar);
-	bool					iEditChain_characterOverwrite			(SEM* em, u8 asciiChar);
-	bool					iEditChain_characterDelete				(SEM* em);
-	SBreakpoint*			iEditChain_toggleBreakpoint				(SEM* em);
+	bool					iEditChain_characterInsert				(SEM* sem, u8 asciiChar);
+	bool					iEditChain_characterOverwrite			(SEM* sem, u8 asciiChar);
+	bool					iEditChain_characterDelete				(SEM* sem);
+	SBreakpoint*			iEditChain_toggleBreakpoint				(SEM* sem);
 
 	// For reporting on a line's state
-	bool					iEditChain_hasChanged					(SEdit* ec);
+	bool					iEditChain_hasChanged					(SLine* ec);

@@ -67,14 +67,14 @@
 		u32			uidBefore;												// The item before
 		u32			uidAfter;												// The item after
 
-		SEdit*	first;													// The first SEditChain that would've gone between them
+		SLine*	first;													// The first SEditChain that would've gone between them
 		// If multiple lines were deleted, the chain is moved here.
 		// If the line was changed, the old value is here
 	};
 
 	struct SSourceCode
 	{
-		SFunction*	firstFunction;												// First function in the program
+		SFunction*		firstFunction;									// First function in the program
 
 		SVariable*		params;											// The first parameter in the function
 		SVariable*		globals;										// The first global variable declared
@@ -88,12 +88,12 @@
 	struct SBreakpoint
 	{
 		// See _BREAKPOINT_* constants
-		u32			type;
-		bool		isUsed;												// Allocated in gBreakpoints as a bulk structure
+		u32				type;
+		bool			isUsed;											// Allocated in gBreakpoints as a bulk structure
 
 		// If there's a countdown
-		u32			countdownResetValue;								// The value the countdown will reset to once it fires, if 0 always fires
-		u32			countdown;											// Countdown to 0 when it fires
+		u32				countdownResetValue;							// The value the countdown will reset to once it fires, if 0 always fires
+		u32				countdown;										// Countdown to 0 when it fires
 
 		// A test condition
 		SSourceCode*	conditionalCode;								// What is the conditional test expression for this breakpoint firing?
@@ -103,12 +103,12 @@
 																		// Explicitly:  breakpoint_always(), breakpoint_true(), breakpoint_false()
 	};
 
-	struct SEdit
+	struct SLine
 	{
 		SLL				ll;												// Link list throughout
 		u32				uid;											// Unique id for this line, used for undos and identifying individual lines which may move about
 
-		// Each render, these are udpated
+		// Each render, these are updated
 		u32				renderId;										// Each time it's rendered, this value is set
 		RECT			rcLastRender;									// The rectangle within the parent of the last render
 
@@ -124,6 +124,7 @@
 		// Compiler information (see compiler.cpp)
 		bool			forceRecompile;									// A flag that if set forces a recompile of this line
 		SCompiler*		compilerInfo;									// Information about the last time this line was compiled
+		SCompiler*		compilerInfoLast;								// Used during edit-and-continue compilation
 
 		// General purpose extra data
 		SExtraInfo*		extra_info;										// Extra information about this item in the chain
@@ -131,7 +132,7 @@
 
 	struct SEMPoint
 	{
-		SEdit*			line;											// The actual line here
+		SLine*			line;											// The actual line here
 		u32				uid;											// The UID of the line
 		u32				lineNumber;										// The line number
 		s32				column;											// The column on this line where the selection is currently
@@ -146,43 +147,44 @@
 	//////
 		struct SEM
 		{
-			SEdit*		ecFirst;										// First in the chain (first->prev is NULL)
-			SEdit*		ecLast;											// Last in the chain (last->next is NULL)
+			SLine*		firstLine;										// First in the chain (first->prev is NULL)
+			SLine*		lastLine;										// Last in the chain (last->next is NULL)
 			bool		isReadOnly;										// If read-only no changes are allowed, only navigation
-			bool		isBreakOnNbsp;									// Do ctrl+left/right operations stop at every part of nbsp names (by default, no)?
+			bool		stopNavigationOnNbsp;							// Do ctrl+left/right operations stop at every part of nbsp names (by default, no)?
 
-			// If populated, this ECM is only a placeholder for this instance, and the this->reference points to the real ECM we should use
-			SEM*		indirect;										// If not NULL, this ECM points to another ECM which is the real code block
+			// If populated, this SEM is only a placeholder for this instance, and the this->reference points to the real SEM we should use
+			SEM*		indirect;										// If not NULL, this SEM points to another SEM which is the real code block
 			// NOTE:  Everything below is used ONLY IF INDIRECT IS NULL
 
 
 		//////////
 		// For display
 		//////
-			SEdit*		ecTopLine;										// Top item in the current view
-			SEdit*		ecCursorLine;									// Line where the cursor is
-			SEdit*		ecCursorLineLast;								// The last location before movement was made
+			SLine*		line_top;										// Top item in the current view
+			SLine*		line_cursor;									// Line where the cursor is
+			SLine*		line_cursorLast;								// The last location before movement was made
 			bool		isOverwrite;									// Are we in overwrite mode?
 			bool		showLineNumbers;								// Should we render line numbers?
-			RECT		rcLineNumberLastRender;							// Used for mouse clicking, to determine how much we adjust
 			bool		showCursorLine;									// Should we render the cursor line?
 			bool		showEndLine;									// Should we render the end line in a different color?
 			bool		isHeavyProcessing;								// When large amounts of processing will be conducted, the display can be disabled
 			bool		isSourceCode;									// Is this source code?
 			bool		allowMoveBeyondEndOfLine;						// Do we allow them to move beyond the end of the line?
+			RECT		rcLineNumberLastRender;							// Used for mouse clicking, to determine how much we adjust
 
 			// Editing cues
 			bool		hideEditCues;									// If true, will not show the changedColor or newColor
 			SBgra		changedColor;									// The color when data has changed
 			SBgra		newColor;										// The color when data is new
 
+			// Percentages (values are typically 0.05f and 0.15f for 5% to 15%)
 			f32			minNbspColorInfluence;							// How much minimum influence should the Nbsp color have for highlighting
 			f32			maxNbspColorInfluence;							// How much maximum?
 
-			s32			column;											// Column we're currently inputting
-			s32			leftColumn;										// The column we're displaying at the left-most position (of horizontally scrolled, this will be greater than 0)
+			s32			columnEdit;										// Column we're currently inputting
+			s32			columnLeft;										// The column we're displaying at the left-most position (of horizontally scrolled, this will be greater than 0)
 			s32			tabWidth;										// How many characters does a tab expand to?
-			bool		tabsEnforced;									// If tabs are enforced, then navigation across whitespaces lands on tab boundaries
+			bool		areTabsEnforced;								// If tabs are enforced, then navigation across whitespaces lands on tab boundaries
 			SFont*		font;											// Optional, if not NULL then it overrides the object's font
 			u32			renderId;										// Each time it's rendered, the count is incremented.  This allows lines to be tested to see if they are actively rendered, or were previously rendered.
 
@@ -190,8 +192,8 @@
 		//////////
 		// Overlay highlight information to display near the cursor line
 		//////
-			SEdit*		highlightLineBefore;							// Something to highlight before the cursor line
-			SEdit*		highlightLineAfter;								// Something to highlight after the cursor line
+			SLine*		line_highlightBefore;							// Something to highlight before the cursor line
+			SLine*		line_highlightAfter;							// Something to highlight after the cursor line
 
 
 		//////////
@@ -226,8 +228,8 @@
 
 	struct SEM_callback
 	{
-		SEM*		em;												// The manager
-		SEdit*		ec;												// This line
+		SEM*		sem;											// The manager
+		SLine*		line;											// This line
 
 		// Functions to use to access this extra info block
 		union {
@@ -242,73 +244,73 @@
 // Forward declarations
 //////
 	SEM*					iSEM_allocate						(bool tlIsSourceCode);
-	SBuilder*				iSEM_accumulateBuilder				(SEM* em, SEdit* ecHintStart, SEdit* ecHintEnd);
-	bool					iSEM_saveToDisk						(SEM* em, s8* tcPathname);
-	bool					iSEM_loadFromDisk					(SEM* em, s8* tcPathname, bool isSourceCode);
+	SBuilder*				iSEM_accumulateBuilder				(SEM* sem, SLine* ecHintStart, SLine* ecHintEnd);
+	bool					iSEM_saveToDisk						(SEM* sem, s8* tcPathname);
+	bool					iSEM_loadFromDisk					(SEM* sem, s8* tcPathname, bool isSourceCode);
 	bool					iSEM_duplicate						(SEM** root, SEM* chain, bool tlIncludeUndoHistory);
 	void					iSEM_delete							(SEM** root, bool tlDeleteSelf);
 	void					iSEM_deleteChain					(SEM** root, bool tlDeleteSelf);
 	void					iSEM_deleteChainWithCallback		(SEM** root, bool tlDeleteSelf, SEM_callback* ecb);
-	void					iSEM_renumber						(SEM* em, u32 tnStartingLineNumber);
-	SEdit*					iSEM_appendLine						(SEM* em, s8* tcText, s32 tnTextLength, bool tlSetNewLineFlag);
-	SEdit*					iSEM_insertLine						(SEM* em, s8* tcText, s32 tnTextLength, SEdit* line, bool tlInsertAfter, bool tlSetNewLineFlag);
-	void					iSEM_deleteLine						(SEM* em);
-	SFont*					iSEM_getRectAndFont					(SEM* em, SObject* obj, RECT* rc);
-	void					iSEM_getColors						(SEM* em, SObject* obj, SBgra& backColor, SBgra& foreColor);
-	u32						iSEM_render							(SEM* em, SObject* obj, bool tlRenderCursorline);
-	void					iSEM_render_highlightSelectedComps	(SEM* em, SComp* firstComp);
-	bool					iSEM_verifyCursorIsVisible			(SEM* em, SObject* obj);
+	void					iSEM_renumber						(SEM* sem, u32 tnStartingLineNumber);
+	SLine*					iSEM_appendLine						(SEM* sem, s8* tcText, s32 tnTextLength, bool tlSetNewLineFlag);
+	SLine*					iSEM_insertLine						(SEM* sem, s8* tcText, s32 tnTextLength, SLine* line, bool tlInsertAfter, bool tlSetNewLineFlag);
+	void					iSEM_deleteLine						(SEM* sem);
+	SFont*					iSEM_getRectAndFont					(SEM* sem, SObject* obj, RECT* rc);
+	void					iSEM_getColors						(SEM* sem, SObject* obj, SBgra& backColor, SBgra& foreColor);
+	u32						iSEM_render							(SEM* sem, SObject* obj, bool tlRenderCursorline);
+	void					iSEM_render_highlightSelectedComps	(SEM* sem, SComp* firstComp);
+	bool					iSEM_verifyCursorIsVisible			(SEM* sem, SObject* obj);
 	bool					iSEM_onKeyDown_sourceCode			(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
 	bool					iSEM_onKeyDown						(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
-	void*					iSEM_findMate						(SEM* em, SEdit* lineStart, SComp* comp);
-	void					iSEM_addTooltipHighlight			(SEM* em, SEdit* line, SObject* obj, s8* tcText, s32 tnTextLength, bool tlShowAbove);
+	void*					iSEM_findMate						(SEM* sem, SLine* lineStart, SComp* comp);
+	void					iSEM_addTooltipHighlight			(SEM* sem, SLine* line, SObject* obj, s8* tcText, s32 tnTextLength, bool tlShowAbove);
 
 
 	// Editor movements
-	bool					iSEM_keystroke						(SEM* em, SObject* obj, u8 asciiChar);
-	bool					iSEM_scroll							(SEM* em, SObject* obj, s32 deltaY, s32 deltaX);
-	bool					iSEM_navigate						(SEM* em, SObject* obj, s32 deltaY, s32 deltaX);
-	bool					iSEM_navigatePages					(SEM* em, SObject* obj, s32 deltaY);
-	bool					iSEM_clearLine						(SEM* em, SObject* obj);
-	bool					iSEM_clearToEndOfLine				(SEM* em, SObject* obj);
-	bool					iSEM_clearToBeginningOfLine			(SEM* em, SObject* obj);
-	bool					iSEM_toggleInsert					(SEM* em, SObject* obj);
-	bool					iSEM_tabIn							(SEM* em, SObject* obj);
-	bool					iSEM_tabOut							(SEM* em, SObject* obj);
-	bool					iSEM_returnKey						(SEM* em, SObject* obj);
-	bool					iSEM_selectAll						(SEM* em, SObject* obj);
-	bool					iSEM_cut							(SEM* em, SObject* obj);
-	bool					iSEM_copy							(SEM* em, SObject* obj);
-	bool					iSEM_paste							(SEM* em, SObject* obj);
-	bool					iSEM_navigateWordLeft				(SEM* em, SObject* obj, bool tlVerifyCursorIsVisible);
-	bool					iSEM_navigateWordRight				(SEM* em, SObject* obj, bool tlVerifyCursorIsVisible);
-	bool					iSEM_navigateToTopLine				(SEM* em, SObject* obj);
-	bool					iSEM_navigateToEndLine				(SEM* em, SObject* obj);
-	bool					iSEM_navigateToSelectStart			(SEM* em, SObject* obj, bool tlMoveByOrigin);
-	bool					iSEM_navigateToSelectEnd			(SEM* em, SObject* obj, bool tlMoveByOrigin);
-	bool					iSEM_rollUp							(SEM* em, SObject* obj);
-	bool					iSEM_rollDown						(SEM* em, SObject* obj);
-	bool					iSEM_centerCursorLine				(SEM* em, SObject* obj);
-	bool					iSEM_selectLineUp					(SEM* em, SObject* obj);
-	bool					iSEM_selectLineDown					(SEM* em, SObject* obj);
-	bool					iSEM_selectLeft						(SEM* em, SObject* obj);
-	bool					iSEM_selectRight					(SEM* em, SObject* obj);
-	bool					iSEM_selectToEndOfLine				(SEM* em, SObject* obj);
-	bool					iSEM_selectToBeginOfLine			(SEM* em, SObject* obj);
-	bool					iSEM_selectColumnToggle				(SEM* em, SObject* obj);
-	bool					iSEM_selectLineToggle				(SEM* em, SObject* obj);
-	bool					iSEM_selectAnchorToggle				(SEM* em, SObject* obj);
-	bool					iSEM_selectWordLeft					(SEM* em, SObject* obj);
-	bool					iSEM_selectWordRight				(SEM* em, SObject* obj);
-	bool					iSEM_selectToTopLine				(SEM* em, SObject* obj);
-	bool					iSEM_selectToEndLine				(SEM* em, SObject* obj);
-	bool					iSEM_deleteLeft						(SEM* em, SObject* obj);
-	bool					iSEM_deleteRight					(SEM* em, SObject* obj);
-	bool					iSEM_deleteWordLeft					(SEM* em, SObject* obj);
-	bool					iSEM_deleteWordRight				(SEM* em, SObject* obj);
-	bool					iSEM_navigateTo_pixelXY				(SEM* em, SObject* obj, s32 x, s32 y);
-	bool					iiSEM_isBreakingCharacter			(SEM* em, SEdit* line, s32 tnDeltaTest);
-	void					iSEM_selectStart					(SEM* em, u32 tnSelectMode);
-	bool					iSEM_isSelecting					(SEM* em);
-	void					iSEM_selectStop						(SEM* em);
-	void					iSEM_selectUpdateExtents			(SEM* em);
+	bool					iSEM_keystroke						(SEM* sem, SObject* obj, u8 asciiChar);
+	bool					iSEM_scroll							(SEM* sem, SObject* obj, s32 deltaY, s32 deltaX);
+	bool					iSEM_navigate						(SEM* sem, SObject* obj, s32 deltaY, s32 deltaX);
+	bool					iSEM_navigatePages					(SEM* sem, SObject* obj, s32 deltaY);
+	bool					iSEM_clearLine						(SEM* sem, SObject* obj);
+	bool					iSEM_clearToEndOfLine				(SEM* sem, SObject* obj);
+	bool					iSEM_clearToBeginningOfLine			(SEM* sem, SObject* obj);
+	bool					iSEM_toggleInsert					(SEM* sem, SObject* obj);
+	bool					iSEM_tabIn							(SEM* sem, SObject* obj);
+	bool					iSEM_tabOut							(SEM* sem, SObject* obj);
+	bool					iSEM_returnKey						(SEM* sem, SObject* obj);
+	bool					iSEM_selectAll						(SEM* sem, SObject* obj);
+	bool					iSEM_cut							(SEM* sem, SObject* obj);
+	bool					iSEM_copy							(SEM* sem, SObject* obj);
+	bool					iSEM_paste							(SEM* sem, SObject* obj);
+	bool					iSEM_navigateWordLeft				(SEM* sem, SObject* obj, bool tlVerifyCursorIsVisible);
+	bool					iSEM_navigateWordRight				(SEM* sem, SObject* obj, bool tlVerifyCursorIsVisible);
+	bool					iSEM_navigateToTopLine				(SEM* sem, SObject* obj);
+	bool					iSEM_navigateToEndLine				(SEM* sem, SObject* obj);
+	bool					iSEM_navigateToSelectStart			(SEM* sem, SObject* obj, bool tlMoveByOrigin);
+	bool					iSEM_navigateToSelectEnd			(SEM* sem, SObject* obj, bool tlMoveByOrigin);
+	bool					iSEM_rollUp							(SEM* sem, SObject* obj);
+	bool					iSEM_rollDown						(SEM* sem, SObject* obj);
+	bool					iSEM_centerCursorLine				(SEM* sem, SObject* obj);
+	bool					iSEM_selectLineUp					(SEM* sem, SObject* obj);
+	bool					iSEM_selectLineDown					(SEM* sem, SObject* obj);
+	bool					iSEM_selectLeft						(SEM* sem, SObject* obj);
+	bool					iSEM_selectRight					(SEM* sem, SObject* obj);
+	bool					iSEM_selectToEndOfLine				(SEM* sem, SObject* obj);
+	bool					iSEM_selectToBeginOfLine			(SEM* sem, SObject* obj);
+	bool					iSEM_selectColumnToggle				(SEM* sem, SObject* obj);
+	bool					iSEM_selectLineToggle				(SEM* sem, SObject* obj);
+	bool					iSEM_selectAnchorToggle				(SEM* sem, SObject* obj);
+	bool					iSEM_selectWordLeft					(SEM* sem, SObject* obj);
+	bool					iSEM_selectWordRight				(SEM* sem, SObject* obj);
+	bool					iSEM_selectToTopLine				(SEM* sem, SObject* obj);
+	bool					iSEM_selectToEndLine				(SEM* sem, SObject* obj);
+	bool					iSEM_deleteLeft						(SEM* sem, SObject* obj);
+	bool					iSEM_deleteRight					(SEM* sem, SObject* obj);
+	bool					iSEM_deleteWordLeft					(SEM* sem, SObject* obj);
+	bool					iSEM_deleteWordRight				(SEM* sem, SObject* obj);
+	bool					iSEM_navigateTo_pixelXY				(SEM* sem, SObject* obj, s32 x, s32 y);
+	bool					iiSEM_isBreakingCharacter			(SEM* sem, SLine* line, s32 tnDeltaTest);
+	void					iSEM_selectStart					(SEM* sem, u32 tnSelectMode);
+	bool					iSEM_isSelecting					(SEM* sem);
+	void					iSEM_selectStop						(SEM* sem);
+	void					iSEM_selectUpdateExtents			(SEM* sem);

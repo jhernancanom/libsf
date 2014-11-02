@@ -121,12 +121,12 @@
 			if (tlCtrl)
 			{
 				// They are just moving the cursor line
-				iSEM_navigate(obj->p.em, obj, tnUnits * ((tlShift) ? -1 : -3), 0);
+				iSEM_navigate(obj->p.sem, obj, tnUnits * ((tlShift) ? -1 : -3), 0);
 
 			// MouseWheel is a scroll
 			} else {
 				// They want to scroll the entire window, including the cursor line
-				iSEM_scroll(obj->p.em, obj, tnUnits * ((tlShift) ? -1 : -3), 0);
+				iSEM_scroll(obj->p.sem, obj, tnUnits * ((tlShift) ? -1 : -3), 0);
 			}
 			iObj_setDirtyRender_ascent(obj, true);
 			iWindow_render(win, false);
@@ -165,10 +165,10 @@
 				// They are clicking and dragging
 
 				// Need to navigate to the indicated x,y coordinate
-				iSEM_navigateTo_pixelXY(obj->p.em, obj, x, y);
+				iSEM_navigateTo_pixelXY(obj->p.sem, obj, x, y);
 
 				// Mark the mouse activity
-				iSEM_selectStart(obj->p.em, _SEM_SELECT_MODE_ANCHOR);
+				iSEM_selectStart(obj->p.sem, _SEM_SELECT_MODE_ANCHOR);
 
 				// Redraw our changes
 				iObj_setDirtyRender_ascent(obj, true);
@@ -216,11 +216,11 @@
 
 		} else if (obj->objType == _OBJ_TYPE_EDITBOX) {
 			// Need to navigate to the indicated x,y coordinate
-			iSEM_navigateTo_pixelXY(obj->p.em, obj, x, y);
+			iSEM_navigateTo_pixelXY(obj->p.sem, obj, x, y);
 
 			// Mark the mouse activity
-			if (!tlShift)		iSEM_selectStop(obj->p.em);
-			else				iSEM_selectStart(obj->p.em, _SEM_SELECT_MODE_ANCHOR);
+			if (!tlShift)		iSEM_selectStop(obj->p.sem);
+			else				iSEM_selectStart(obj->p.sem, _SEM_SELECT_MODE_ANCHOR);
 
 		} else if (obj->objType == _OBJ_TYPE_RADIO) {
 			// The mouse indicates the position

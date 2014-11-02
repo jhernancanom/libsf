@@ -40,7 +40,7 @@
 // Called to execute a stand-alone command, such as from the command window.
 //
 //////
-	bool iEngine_executeStandaloneCommand(SEdit* line)
+	bool iEngine_executeStandaloneCommand(SLine* line)
 	{
 		bool		llManufactured;
 		SComp*		comp;
@@ -204,7 +204,7 @@
 // This process does not process variables, table names, fields, etc.
 //
 //////
-	SComp* iEngine_parseSourceCodeLine(SEdit* line)
+	SComp* iEngine_parseSourceCodeLine(SLine* line)
 	{
 		//////////
 		// If we have existing compiler data, get rid of it

@@ -37,20 +37,20 @@
 
 //////////
 //
-// Called to make sure enough information is populated currently in the em->ecCursorLine->sourceCode
+// Called to make sure enough information is populated currently in the sem->ecCursorLine->sourceCode
 // buffer for the new indicated line length.
 //
 //////
-	bool iEditChain_ensureLineLength(SEM* em, s32 newLineLength)
+	bool iEditChain_ensureLineLength(SEM* sem, s32 newLineLength)
 	{
-		SEdit* line;
+		SLine* line;
 
 
 		// Make sure the environment is sane
-		if (em && em->ecCursorLine)
+		if (sem && sem->line_cursor)
 		{
 			// Has this line had its data allocated?
-			line = em->ecCursorLine;
+			line = sem->line_cursor;
 			if (!line->sourceCode)
 			{
 				// We need to allocate the initial data block
@@ -77,10 +77,10 @@
 // Free the edit chain
 //
 //////
-	void iEditChain_free(SEdit** root, bool tlDeleteSelf)
+	void iEditChain_free(SLine** root, bool tlDeleteSelf)
 	{
-		SEdit*		line;
-		SEdit*		lineNext;
+		SLine*		line;
+		SLine*		lineNext;
 
 
 		// Make sure our environment is sane
@@ -95,7 +95,7 @@
 					//////////
 					// Note next item in chain
 					//////
-						lineNext = (SEdit*)line->ll.next;
+						lineNext = (SLine*)line->ll.next;
 
 
 					//////////
@@ -141,43 +141,43 @@
 // Called to insert a character
 //
 //////
-	bool iEditChain_characterInsert(SEM* em, u8 asciiChar)
+	bool iEditChain_characterInsert(SEM* sem, u8 asciiChar)
 	{
-		s32				lnI;
-		SEdit*		line;
+		s32			lnI;
+		SLine*		line;
 
 
 		// Make sure our environment is sane
-		if (em && !em->isReadOnly && em->ecCursorLine && em->ecCursorLine->sourceCode)
+		if (sem && !sem->isReadOnly && sem->line_cursor && sem->line_cursor->sourceCode)
 		{
 			// Make sure there's room enough for the keystroke
-			line = em->ecCursorLine;
-			if (iEditChain_ensureLineLength(em, em->ecCursorLine->sourceCodePopulated + 1))
+			line = sem->line_cursor;
+			if (iEditChain_ensureLineLength(sem, sem->line_cursor->sourceCodePopulated + 1))
 			{
 				// They could've been beyond the end of line, and if so then we need to insert spaces between the end and here
-				if (em->column > line->sourceCodePopulated)
+				if (sem->columnEdit > line->sourceCodePopulated)
 				{
 					// Fill with spaces
-					for (lnI = line->sourceCodePopulated; lnI < em->column; lnI++)
+					for (lnI = line->sourceCodePopulated; lnI < sem->columnEdit; lnI++)
 						line->sourceCode->data[lnI] = ' ';
 				}
 
 				// Move everything from the end of the line to where we are right one character
-				for (lnI = line->sourceCodePopulated + 1; lnI > em->column && lnI > 0; lnI--)
+				for (lnI = line->sourceCodePopulated + 1; lnI > sem->columnEdit && lnI > 0; lnI--)
 					line->sourceCode->data[lnI] = line->sourceCode->data[lnI - 1];
 
 				// Insert the character
-				line->sourceCode->data[em->column] = asciiChar;
+				line->sourceCode->data[sem->columnEdit] = asciiChar;
 
 				// Move to the next column
-				++em->column;
+				++sem->columnEdit;
 
 				// Increase the populated length
 				++line->sourceCodePopulated;
 
 				// If we're past the end, we need to indicate our populated line length
-				if (em->column > line->sourceCodePopulated)
-					line->sourceCodePopulated = em->column;
+				if (sem->columnEdit > line->sourceCodePopulated)
+					line->sourceCodePopulated = sem->columnEdit;
 
 				// Indicate success
 				return(true);
@@ -196,44 +196,44 @@
 // Called to overwrite the existing character wherever we are
 //
 //////
-	bool iEditChain_characterOverwrite(SEM* em, u8 asciiChar)
+	bool iEditChain_characterOverwrite(SEM* sem, u8 asciiChar)
 	{
-		s32				lnI;
-		SEdit*		line;
+		s32			lnI;
+		SLine*		line;
 
 
 		// Make sure our environment is sane
-		if (em && !em->isReadOnly && em->ecCursorLine && em->ecCursorLine->sourceCode)
+		if (sem && !sem->isReadOnly && sem->line_cursor && sem->line_cursor->sourceCode)
 		{
 			// Is there room to inject it?
-			line = em->ecCursorLine;
-			if (iEditChain_ensureLineLength(em, em->ecCursorLine->sourceCodePopulated + 1))
+			line = sem->line_cursor;
+			if (iEditChain_ensureLineLength(sem, sem->line_cursor->sourceCodePopulated + 1))
 			{
-				if (em->column > line->sourceCodePopulated)
+				if (sem->columnEdit > line->sourceCodePopulated)
 				{
 					// We need to insert it because we're at the end of the populated length
-					return(iEditChain_characterInsert(em, asciiChar));
+					return(iEditChain_characterInsert(sem, asciiChar));
 
 				} else {
 					// We can overwrite it
 
 					// They could've been beyond the end of line, and if so then we need to insert spaces between the end and here
-					if (em->column > line->sourceCodePopulated)
+					if (sem->columnEdit > line->sourceCodePopulated)
 					{
 						// Fill with spaces
-						for (lnI = line->sourceCodePopulated; lnI < em->column; lnI++)
+						for (lnI = line->sourceCodePopulated; lnI < sem->columnEdit; lnI++)
 							line->sourceCode->data[lnI] = ' ';
 					}
 
 					// Overwrite the character
-					line->sourceCode->data[em->column] = asciiChar;
+					line->sourceCode->data[sem->columnEdit] = asciiChar;
 
 					// Move to the next column
-					++em->column;
+					++sem->columnEdit;
 
 					// If we're past the end, we need to indicate our populated line length
-					if (em->column > line->sourceCodePopulated)
-						line->sourceCodePopulated = em->column;
+					if (sem->columnEdit > line->sourceCodePopulated)
+						line->sourceCodePopulated = sem->columnEdit;
 
 					// Indicate success
 					return(true);
@@ -254,23 +254,23 @@
 // will affect the line in different ways.
 //
 //////
-	bool iEditChain_characterDelete(SEM* em)
+	bool iEditChain_characterDelete(SEM* sem)
 	{
 		s32		lnI;
-		SEdit*	line;
+		SLine*	line;
 
 
 		// Make sure our environment is sane
-		if (em && !em->isReadOnly && em->ecCursorLine && em->ecCursorLine->sourceCode)
+		if (sem && !sem->isReadOnly && sem->line_cursor && sem->line_cursor->sourceCode)
 		{
 			// Grab the line
-			line = em->ecCursorLine;
+			line = sem->line_cursor;
 
 			// If we're in the populated area
-			if (em->column < line->sourceCodePopulated)
+			if (sem->columnEdit < line->sourceCodePopulated)
 			{
 				// Move everything left one character
-				for (lnI = em->column; lnI < line->sourceCodePopulated; lnI++)
+				for (lnI = sem->columnEdit; lnI < line->sourceCodePopulated; lnI++)
 					line->sourceCode->data[lnI] = line->sourceCode->data[lnI + 1];
 
 				// Reduce the length of the populated portion of the line by one
@@ -296,24 +296,24 @@
 // Called to toggle the breakpoint on the current line
 //
 //////
-	SBreakpoint* iEditChain_toggleBreakpoint(SEM* em)
+	SBreakpoint* iEditChain_toggleBreakpoint(SEM* sem)
 	{
 		SBreakpoint* bp;
 
 
 		// Make sure our environment is sane
-		if (em && em->ecCursorLine)
+		if (sem && sem->line_cursor)
 		{
 			// Grab the line
-			if (em->ecCursorLine->breakpoint)
+			if (sem->line_cursor->breakpoint)
 			{
 				// Delete the existing breakpoint
-				iBreakpoint_delete(&em->ecCursorLine->breakpoint);
+				iBreakpoint_delete(&sem->line_cursor->breakpoint);
 				bp = NULL;
 
 			} else {
 				// Adding a new always-stop breakpoint
-				bp = iBreakpoint_add(&em->ecCursorLine->breakpoint, _BREAKPOINT_ALWAYS);
+				bp = iBreakpoint_add(&sem->line_cursor->breakpoint, _BREAKPOINT_ALWAYS);
 			}
 
 			// Indicate our statuts
@@ -332,7 +332,7 @@
 // Called to see if a line has changed
 //
 //////
-	bool iEditChain_hasChanged(SEdit* ec)
+	bool iEditChain_hasChanged(SLine* ec)
 	{
 		// Make sure our environment is sane
 		if (ec && ec->sourceCode && ec->sourceCodeOriginal)

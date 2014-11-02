@@ -39,7 +39,7 @@
 struct SObject;
 struct SVariable;
 struct SEM;
-struct SEdit;
+struct SLine;
 struct SComp;
 struct SCompiler;
 struct SFunction;

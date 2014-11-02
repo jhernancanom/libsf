@@ -46,7 +46,7 @@ struct SStartEndCallback;
 struct SLL;
 struct SLLCallback;
 struct SVariable;
-struct SCompileContext;
+struct SCompileStats;
 struct SCompileNote;
 
 
@@ -113,57 +113,67 @@ struct SCompileNote;
 		SVariable*		locals;											// The first local variable declared
 		SVariable*		returns;										// The first return variable declared
 		SVariable*		scoped;											// The first scoped/temporary variable needed by the function
+
+		// Embedded functions within this function
 		SFunction*		firstAdhoc;										// First ADHOC function contained within this function
+		SFunction*		firstFlowof;									// First FLOWOF function related to this function
 
 		// Where the function began in source code as of last compile
-		SEdit*		firstLine;											// First line of the function
-		SEdit*		lastLine;											// Last line of the function
+		SLine*			firstLine;										// First line of the function
+		SLine*			lastLine;										// Last line of the function
 	};
 
-	struct SCompileContext
+	struct SCompileStats
 	{
 		// Counters
-		u32			sourceLines;
-		u32			blankLines;
-		u32			commentLines;
+		u32				sourceLineCount;								// Raw source lines, blank, comment, or otherwise
+		u32				blankLineCount;									// Only blank lines, or lines that only have whitespaces
+		u32				commentLineCount;								// Lines with comments
 
-		u32			functions;
-		u32			params;
-		u32			locals;
-		u32			scoped;
-		u32			returns;
+		u32				functionCount;									// Hard function or procedure definitions
+		u32				methodCount;									// Methods in class code (in any form, ?CX or source code)
+		u32				paramsCount;									// Number of declared parameters
+		u32				localsCount;									// Number of declared local variables
+		u32				scopedCount;									// Number of scoped variables in use
+		u32				returnsCount;									// Number of return variables
+		u32				adhocsCount;									// Number of adhoc functions
+		u32				flowofsCount;									// Number of flowof functions
 
-		u32			errors;
-		u32			warnings;
+		u32				errorCount;										// Number of errors
+		u32				warningCount;									// Number of warnings
 	};
 
-	// Used in the compile_Vxbmm() functions so one parameter is passed rather than multiple
-	struct SCompileVxbmmContext
+	// Used during the the compile_Vxb() functions (so one parameter is passed rather than multiple)
+	struct SCompileVxbContext
 	{
-		// Parameters
-		SEM*	codeBlock;
-		SCompileContext*	ccData;
-		bool				editAndContinue;
+		// These are parameters passed at various places in compile_vxb()
+		SEM*			codeBlock;										// The code block being compiled
+		SCompileStats*	stats;											// Statistics about the compilee
+		SCompileStats	statsLocal;										// A dummy stats block we use if the compile requester did not send their own stats in
+		bool			processThisLine;								// Should this line be processed?
 
-		bool				llProcessThisLine;
-		SCompileContext		ccDataLocal;
-		SEdit*			line;
-		SFunction*			func;
-		SFunction*			currentFunction;
-		SFunction*			adhoc;
-		SFunction*			currentAdhoc;
-		SComp*				comp;
+		// While processing
+		SLine*			line;											// Current line
+		SComp*			comp;											// Current component on the current line
+
+		SFunction*		func;											// First function in the codeBlock
+		SFunction*		currentFunction;								// Current unction in the codeBlock
+
+		SFunction*		adhoc;											// First adhoc in the codeBlock
+		SFunction*		currentAdhoc;									// Current adhoc in the current function
+
+		SFunction*		flowof;											// First flowof in the codeBlock
+		SFunction*		currentFlowof;									// Current flowof in the codeBlock
 	};
 
 	struct SOp
 	{
-		u32				op_type;										// The type of operand, see _OP_TYPE_* constants
+		u32				opType;											// The type of operand, see _OP_TYPE_* constants
 
-		// Pointer to first (if there is a succession)
+		// Pointer to item, or first item if they are in succession (such as pointing to the left-parenthesis of a complex expression)
 		bool			isOpDataAllocated;								// Is the op below allocated?  If false, then it points to one allocated elsewhere
 		union {
-			// Used as a general test to see if something exists (if (op_data != 0))
-			u32			op_data;
+			u32			_opData;										// Used as a general test to see if something exists (if (op_data != 0))
 
 			// Actual data items based on op_type
 			SComp*		comp;											// The first component
@@ -175,8 +185,11 @@ struct SCompileNote;
 			SVariable*	other;											// Unknown item which must be looked up in the context of the runtime environment
 			SObject*	obj;											// An object reference
 			SFunction*	func;											// A function reference
+			SFunction*	adhoc;											// An adhoc reference
+			SFunction*	flowof;											// A flowof reference
 		};
-		// Number thereafter
+
+		// Number of components found (such as between parenthesis)
 		s32				count;											// The number of components (in comp or other) as input
 	};
 
@@ -208,11 +221,11 @@ struct SCompileNote;
 //
 //////
 	// Processing ops
-	struct SNodeOps
+	struct SSubInstr
 	{
 		// Operation layer/level and instruction at that level
-		s32				sub_level;										// The sub-instruction operation level related to the bigger picture
-		s32				sub_instr;										// The sub-instruction being executed, such as "+" in "2 + 4", see _SUB_INSTR_* constants
+		s32				subLevel;										// The sub-instruction operation level related to the bigger picture
+		s32				subInstr;										// See _SUB_INSTR_* constants, the sub-instruction being executed, such as "+" in "2 + 4"
 		SOp				op;												// Any operand data for this node (if it is a terminating node)
 
 		// Note that in some cases there can be multiple return variables.
@@ -251,7 +264,7 @@ struct SCompileNote;
 		// Node data
 		union {
 			void*		extraData;										// General purpose data
-			SNodeOps*	opData;											// When used as for processing ops
+			SSubInstr*	opData;											// When used as for processing ops
 		};
 	};
 
@@ -261,7 +274,7 @@ struct SCompileNote;
 		SLL				ll;												// 2-way link list
 
 		// Information about the component
-		SEdit*			line;											// The line this component relates to
+		SLine*			line;											// The line this component relates to
 		s32				iCode;											// Refer to _ICODE_* constants
 		s32				iCat;											// Refer to _ICAT_* constants
 		SBgra*			color;											// Syntax highlight color
@@ -302,19 +315,19 @@ struct SCompileNote;
 		};
 		union {
 			u32			_insertCompByParams;
-			void		(*insertCompByParams)	(SComp* compRef, SEdit* line, u32 tniCode, u32 tnStart, s32 tnLength, bool tlInsertAfter);
+			void		(*insertCompByParams)	(SComp* compRef, SLine* line, u32 tniCode, u32 tnStart, s32 tnLength, bool tlInsertAfter);
 		};
 		union {
 			u32			_deleteComps;
-			void		(*deleteComps)			(SComp* comp, SEdit* line);
+			void		(*deleteComps)			(SComp* comp, SLine* line);
 		};
 		union {
 			u32			_cloneComps;
-			SComp*		(*cloneComps)			(SComp* comp, SEdit* line);
+			SComp*		(*cloneComps)			(SComp* comp, SLine* line);
 		};
 		union {
 			u32			_mergeComps;
-			SComp*		(*mergeComps)			(SComp* comp, SEdit* line, u32 tnCount, u32 tniCodeNew);
+			SComp*		(*mergeComps)			(SComp* comp, SLine* line, u32 tnCount, u32 tniCodeNew);
 		};
 	};
 
@@ -376,10 +389,11 @@ struct SCompileNote;
 	struct SCompiler
 	{
 		// EC was designed with source code in mind, and that means a tight compiler relationship
-		SEdit*			parent;											// The EC this belongs to (parent->parent points back to EM)
+		SLine*			parent;											// The EC this belongs to (parent->parent points back to EM)
 
 		// The last source code line
 		SDatum*			sourceCode;										// Copy at last compile of LEFT(parent->sourceCode.data, parent->sourceCodePopulated)
+		// Note:  If the source code line ended in a semicolon, the following sourceCode line(s) will be appended here on top of the semicolon until there are no more semicolon lines
 
 		// Components compiled in prior compiler passes
 		SComp*			firstComp;										// Pointer to the first component identified on this line
@@ -390,7 +404,7 @@ struct SCompileNote;
 		u32				nodeArrayCount;									// How many sub-instructions there are
 
 		// Results of compilation
-		SCompileNote*	errors;											// Noted error
-		SCompileNote*	warnings;										// Noted warning
-		SCompileNote*	notes;											// Noted notes (LOL)
+		SCompileNote*	firstError;										// Noted error(s) on this source code line
+		SCompileNote*	firstWarning;									// Noted warning(s) on this source code line
+		SCompileNote*	firstNote;										// Noted note(s) on this source code line
 	};

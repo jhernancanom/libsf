@@ -50,42 +50,61 @@
 // start over.
 //
 //////
-	u32 compile_Vxbmm(SEM* codeBlock_, SCompileContext* ccData_, bool tlEditAndContinue_)
+	u32 compile_vxb(SEM* codeBlock, SCompileVxbContext* vxbParam, SCompileStats* stats)
 	{
-		SCompileVxbmmContext	cvc;
+		SCompileVxbContext*	vxb;
+		SCompileVxbContext	vxbLocal;
 
 
 		//////////
-		// Initialize our compile context to 0s
+		// Use their, or our, compile context
 		//////
-			memset(&cvc, 0, sizeof(SCompileVxbmmContext));
-			cvc.codeBlock		= codeBlock_;
-			cvc.ccData			= ccData_;
-			cvc.editAndContinue	= tlEditAndContinue_;
+			if (vxbParam)
+			{
+				// Theirs
+				vxb = vxbParam;
 
-			if (!cvc.ccData)
-				cvc.ccData = &cvc.ccDataLocal;
+			} else {
+				// Ours
+				vxb = &vxbLocal;
+			}
 
-			memset(cvc.ccData, 0, sizeof(SCompileContext));
+
+		//////////
+		// Initialize our compile context
+		//////
+			memset(vxb, 0, sizeof(SCompileVxbContext));
+			vxb->codeBlock	= codeBlock;
+			vxb->stats		= stats;
+
+			// If they provided stats, then we'll use those
+			if (!vxb->stats)
+				vxb->stats = &vxb->statsLocal;
+
+			// Reset all our stats
+			memset(vxb->stats, 0, sizeof(SCompileStats));
 
 
 		//////////
 		// Make sure our environment is sane
 		//////
-			if (cvc.codeBlock && cvc.codeBlock->ecFirst)
+			if (vxb->codeBlock && vxb->codeBlock->firstLine)
 			{
 				// Before compilation, we need to remove any dependencies on things that have changed
-				iiCompile_Vxbmm_precompile(&cvc);
+				iiCompile_vxb_precompile(vxb);
 
 				// Physically compile
-				iiCompile_Vxbmm_compile(&cvc);
+				iiCompile_vxb_compile(vxb);		// Note:  Compilation compiles source code, and generates executable ops
+
+				// After compilation, clean up anything that's dead
+				iiCompile_vxb_postcompile(vxb);
 			}
 
 
 		//////////
 		// Indicate our result
 		//////
-			return(cvc.ccData->sourceLines);
+			return(vxb->stats->sourceLineCount);
 	}
 
 
@@ -103,15 +122,10 @@
 // references what will become the new function, new adhoc, or new variable.
 //
 //////
-	void iiCompile_Vxbmm_precompile(SCompileVxbmmContext* cvc)
+	void iiCompile_vxb_precompile(SCompileVxbContext* vxb)
 	{
-		if (cvc->editAndContinue)
-		{
-			// Determine what will now be stale in this code block, and needs recompiling.
-
-		} else {
-			// Everything is stale.
-		}
+		// For edit-and-continue we have to compare the before-and-after so we can apply changes to live data
+		// Make a full copy of the current codeBlock
 	}
 
 
@@ -122,136 +136,130 @@
 // Called to physically compile each line of source code.
 //
 //////
-	void iiCompile_Vxbmm_compile(SCompileVxbmmContext* cvc)
+	void iiCompile_vxb_compile(SCompileVxbContext* vxb)
 	{
 		// Begin compiling
-		cvc->currentFunction	= &cvc->codeBlock->firstFunction;
-		cvc->currentAdhoc		= NULL;
-		cvc->line				= cvc->codeBlock->ecFirst;
-		while (cvc->line)
+		vxb->currentFunction	= NULL;
+		vxb->currentAdhoc		= NULL;
+		vxb->currentFlowof		= NULL;
+
+		// Iterate through every line in this codeBlock
+		vxb->line = vxb->codeBlock->firstLine;
+		while (vxb->line)
 		{
 			// Increase our line count
-			++cvc->ccData->sourceLines;
+			++vxb->stats->sourceLineCount;
 
 			// Make sure we have a compilerInfo object
-			if (!cvc->line->compilerInfo)
-				cvc->line->compilerInfo = iCompiler_allocate(cvc->line);
+			if (!vxb->line->compilerInfo)
+				vxb->line->compilerInfo = iCompiler_allocate(vxb->line);
 
 			// Is there anything to parse on this line?
-			if (cvc->line->sourceCode && cvc->line->sourceCodePopulated > 0)
+			if (vxb->line->sourceCode && vxb->line->sourceCodePopulated > 0)
 			{
 				//////////
 				// Determine if this line needs compiled
 				//////
-					if (cvc->editAndContinue)
+					// We are in edit-and-continue mode, which means we only process this line
+					// if its contents have changed.  Otherwise, we use what was already compiled.
+					if (!vxb->line->compilerInfo->sourceCode || vxb->line->forceRecompile || !vxb->line->compilerInfo->firstComp)
 					{
-						// We are in edit-and-continue mode, which means we only process this line
-						// if its contents have changed.  Otherwise, we use what was already compiled.
-						if (!cvc->line->compilerInfo->sourceCode || cvc->line->forceRecompile || !cvc->line->compilerInfo->firstComp)
-						{
-							// This line has not yet been compiled.
-							// This line needs to be compiled.
-							cvc->llProcessThisLine = true;
+						// This line has not yet been compiled.
+						// This line needs to be compiled.
+						vxb->processThisLine = true;
 
-						} else if (cvc->line->sourceCode->length != cvc->line->compilerInfo->sourceCode->length) {
-							// The lines are no longer the same length.  Something has changed.
-							// This line needs to be compiled.
-							cvc->llProcessThisLine = true;
+					} else if (vxb->line->sourceCode->length != vxb->line->compilerInfo->sourceCode->length) {
+						// The lines are no longer the same length.  Something has changed.
+						// This line needs to be compiled.
+						vxb->processThisLine = true;
 
-						} else if (iDatum_compare(cvc->line->sourceCode, cvc->line->compilerInfo->sourceCode) != 0) {
-							// The source code contents have changed.
-							// This line needs to be compiled.
-							cvc->llProcessThisLine = true;
+					} else if (iDatum_compare(vxb->line->sourceCode, vxb->line->compilerInfo->sourceCode) != 0) {
+						// The source code contents have changed.
+						// This line needs to be compiled.
+						vxb->processThisLine = true;
 
-						} else if (cvc->line->compilerInfo->warnings || cvc->line->compilerInfo->errors) {
-							// The source code line has warnings or errors, it needs recompiled
-							cvc->llProcessThisLine = true;
-
-						} else {
-							// The lines are identical.  Does not need re-compiled.
-							cvc->llProcessThisLine = false;
-						}
+					} else if (vxb->line->compilerInfo->firstWarning || vxb->line->compilerInfo->firstError) {
+						// The source code line has warnings or errors, it needs recompiled
+						vxb->processThisLine = true;
 
 					} else {
-						cvc->llProcessThisLine = true;
+						// The lines are identical.  Does not need re-compiled.
+						vxb->processThisLine = false;
 					}
 
 
 				//////////
 				// Should we process this line?
 				//////
-					if (!cvc->llProcessThisLine)
+					if (!vxb->processThisLine)
 					{
-						if (cvc->editAndContinue)
+						// In an edit-and-continue environment, we have to track functions so we maintain the
+						// current function we are in, even if the source code for those functions didn't change.
+						if (vxb->line->compilerInfo->firstComp)
 						{
-							// In an edit-and-continue environment, we have to track functions so we maintain the
-							// current function we are in, even if the source code for those functions didn't change.
-							if (cvc->line->compilerInfo->firstComp)
-							{
-								// We need to track certain things through on non-compiled lines
+							// We need to track certain things through on non-compiled lines
 
 							//////////
 							// FUNCTION
 							//////
-								if (cvc->line->compilerInfo->firstComp->iCode == _ICODE_FUNCTION)
+								if (vxb->line->compilerInfo->firstComp->iCode == _ICODE_FUNCTION)
 								{
 									// We've moved into another function
-									cvc->currentFunction = NULL;
-									cvc->func = &cvc->codeBlock->firstFunction;
-									while (cvc->func)
+									vxb->currentFunction = NULL;
+									vxb->func = &vxb->codeBlock->firstFunction;
+									while (vxb->func)
 									{
 										// Is this the function relating to this source code line?
-										if (cvc->func->firstLine == cvc->line)
+										if (vxb->func->firstLine == vxb->line)
 										{
-											cvc->currentFunction = cvc->func;		// We found our match
+											vxb->currentFunction = vxb->func;		// We found our match
 											break;
 										}
 
 										// Move to next 
-										cvc->func = cvc->func->next;
+										vxb->func = vxb->func->next;
 									}
-									if (!cvc->currentFunction)
+									if (!vxb->currentFunction)
 									{
 										// We didn't find a match for the indicated function.  Something has changed.
 										// We need a full recompile to sort it out at this point.
-										iLine_appendError(cvc->line, _ERROR_CONTEXT_HAS_CHANGED,		(s8*)cgcContextHasChanged,		cvc->line->compilerInfo->firstComp->start, cvc->line->compilerInfo->firstComp->length);
-										iLine_appendError(cvc->line, _ERROR_FULL_RECOMPILE_REQUIRED,	(s8*)cgcFullRecompileRequired,	cvc->line->compilerInfo->firstComp->start, cvc->line->compilerInfo->firstComp->length);
+										iLine_appendError(vxb->line, _ERROR_CONTEXT_HAS_CHANGED,		(s8*)cgcContextHasChanged,		vxb->line->compilerInfo->firstComp->start, vxb->line->compilerInfo->firstComp->length);
+										iLine_appendError(vxb->line, _ERROR_FULL_RECOMPILE_REQUIRED,	(s8*)cgcFullRecompileRequired,	vxb->line->compilerInfo->firstComp->start, vxb->line->compilerInfo->firstComp->length);
 									}
 
 							//////////
 							// ADHOC
 							//////
-								} else if (cvc->line->compilerInfo->firstComp->iCode == _ICODE_ADHOC) {
+								} else if (vxb->line->compilerInfo->firstComp->iCode == _ICODE_ADHOC) {
 									// We've moved into an adhoc
-									if (cvc->currentFunction)
+									if (vxb->currentFunction)
 									{
 										// Iterate to see where this adhoc is
-										cvc->adhoc = cvc->currentFunction->firstAdhoc;
-										while (cvc->adhoc)
+										vxb->adhoc = vxb->currentFunction->firstAdhoc;
+										while (vxb->adhoc)
 										{
 											// Is this the function relating to this source code line?
-											if (cvc->adhoc->firstLine == cvc->line)
+											if (vxb->adhoc->firstLine == vxb->line)
 											{
 												// We found our match
-												cvc->currentAdhoc = cvc->adhoc;
+												vxb->currentAdhoc = vxb->adhoc;
 												break;
 											}
 
 											// Move to next 
-											cvc->adhoc = cvc->adhoc->next;
+											vxb->adhoc = vxb->adhoc->next;
 										}
 
 									} else {
 										// We're not in a function and they're adding an ADHOC.
 										// Unexpected command
-										iLine_appendError(cvc->line, _ERROR_UNEXPECTED_COMMAND, (s8*)cgcUnexpectedCommand, cvc->line->compilerInfo->firstComp->start, cvc->line->compilerInfo->firstComp->length);
+										iLine_appendError(vxb->line, _ERROR_UNEXPECTED_COMMAND, (s8*)cgcUnexpectedCommand, vxb->line->compilerInfo->firstComp->start, vxb->line->compilerInfo->firstComp->length);
 									}
 
-								} else if (cvc->line->compilerInfo->firstComp->iCode == _ICODE_ENDADHOC) {
+								} else if (vxb->line->compilerInfo->firstComp->iCode == _ICODE_ENDADHOC) {
 									// We've moved out of the adhoc
-									cvc->currentAdhoc = NULL;
+									vxb->currentAdhoc = NULL;
 								}
-							}
 						}
 
 					} else {
@@ -262,28 +270,28 @@
 							//////////
 							// We need to clear out anything from any prior compile
 							//////
-								iComps_deleteAll_byLine(cvc->line);
-								iCompiler_delete(&cvc->line->compilerInfo, false);
+								iComps_deleteAll_byLine(vxb->line);
+								iCompiler_delete(&vxb->line->compilerInfo, false);
 
 
 							//////////
 							// Convert raw source code to known character sequences
 							//////
-								iComps_translateSourceLineTo(&cgcFundamentalSymbols[0], cvc->line);
-								if (!cvc->line->compilerInfo->firstComp)
+								iComps_translateSourceLineTo(&cgcFundamentalSymbols[0], vxb->line);
+								if (!vxb->line->compilerInfo->firstComp)
 								{
-									++cvc->ccData->blankLines;
+									++vxb->stats->blankLineCount;
 									break;		// Nothing to compile on this line
 								}
-								cvc->comp = cvc->line->compilerInfo->firstComp;
+								vxb->comp = vxb->line->compilerInfo->firstComp;
 
 
 							//////////
 							// If it's a line comment, we don't need to process it
 							//////
-								if (cvc->line->compilerInfo->firstComp->iCode == _ICODE_COMMENT || cvc->line->compilerInfo->firstComp->iCode == _ICODE_LINE_COMMENT)
+								if (vxb->line->compilerInfo->firstComp->iCode == _ICODE_COMMENT || vxb->line->compilerInfo->firstComp->iCode == _ICODE_LINE_COMMENT)
 								{
-									++cvc->ccData->commentLines;
+									++vxb->stats->commentLineCount;
 									break;
 								}
 
@@ -291,62 +299,62 @@
 							//////////
 							// Perform fixups
 							//////
-								iComps_removeStartEndComments(cvc->line);			// Remove /* comments */
-								iComps_fixupNaturalGroupings(cvc->line);			// Fixup natural groupings [_][aaa][999] becomes [_aaa999], [999][.][99] becomes [999.99], etc.
-								iComps_removeWhitespaces(cvc->line);				// Remove whitespaces [use][whitespace][foo] becomes [use][foo]
+								iComps_removeStartEndComments(vxb->line);			// Remove /* comments */
+								iComps_fixupNaturalGroupings(vxb->line);			// Fixup natural groupings [_][aaa][999] becomes [_aaa999], [999][.][99] becomes [999.99], etc.
+								iComps_removeWhitespaces(vxb->line);				// Remove whitespaces [use][whitespace][foo] becomes [use][foo]
 
 
 							//////////
 							// Translate sequences to known keywords
 							//////
-								iComps_translateToOthers(&cgcKeywordKeywords[0], cvc->line);
+								iComps_translateToOthers(&cgcKeywordKeywords[0], vxb->line);
 
 
 							//////////
 							// Process this line based upon what it is
 							//////
-								if (cvc->comp->iCode == _ICODE_FUNCTION)
+								if (vxb->comp->iCode == _ICODE_FUNCTION)
 								{
 									// They are adding another function
-									cvc->currentFunction = iiComps_decodeSyntax_function(cvc);
+									vxb->currentFunction = iiComps_decodeSyntax_function(vxb);
 
 
-								} else if (cvc->comp->iCode == _ICODE_ADHOC) {
+								} else if (vxb->comp->iCode == _ICODE_ADHOC) {
 									// They are adding an adhoc function
-									iiComps_decodeSyntax_adhoc(cvc);
+									iiComps_decodeSyntax_adhoc(vxb);
 
 
-								} else if (cvc->comp->iCode == _ICODE_PARAMS) {
+								} else if (vxb->comp->iCode == _ICODE_PARAMS) {
 									// They are adding parameters
 									// Process the PARAMS line
 // TODO:  working here
-									iiComps_decodeSyntax_params(cvc);
+									iiComps_decodeSyntax_params(vxb);
 
 
-								} else if (cvc->comp->iCode == _ICODE_LOBJECT) {
+								} else if (vxb->comp->iCode == _ICODE_LOBJECT) {
 									// They are adding parameters via an object
 									// Process the LOBJECT line
 // TODO:  working here
-									iiComps_decodeSyntax_lobject(cvc);
+									iiComps_decodeSyntax_lobject(vxb);
 
 
-								} else if (cvc->comp->iCode == _ICODE_LPARAMETERS) {
+								} else if (vxb->comp->iCode == _ICODE_LPARAMETERS) {
 									// They are adding lparameters
 									// Process the LPARAMETERS line
 // TODO:  working here
-									iiComps_decodeSyntax_lparameters(cvc);
+									iiComps_decodeSyntax_lparameters(vxb);
 
 
-								} else if (cvc->comp->iCode == _ICODE_RETURNS) {
+								} else if (vxb->comp->iCode == _ICODE_RETURNS) {
 									// They are specifying returns
 									// Process the RETURNS line
 // TODO:  working here
-									iiComps_decodeSyntax_returns(cvc);
+									iiComps_decodeSyntax_returns(vxb);
 
 
 								} else {
 									// Translate into operations
-									iiComps_xlatToNodes(cvc->line, cvc->line->compilerInfo);
+									iiComps_xlatToNodes(vxb->line, vxb->line->compilerInfo);
 									// Note:  Right now, line->errors and line->warnings have notes attached to them about the compilation of this line
 								}
 
@@ -361,7 +369,7 @@
 			//////////
 			// Move to the next line
 			//////
-				cvc->line = (SEdit*)cvc->line->ll.next;
+				vxb->line = (SLine*)vxb->line->ll.next;
 		}
 	}
 
@@ -373,7 +381,7 @@
 // Called to post-compile, primarily to flag variables that are not referenced
 // 
 //////
-	void iiCompile_Vxbmm_postcompile(SEM* codeBlock, SCompileContext* ccData, bool tlEditAndContinue)
+	void iiCompile_vxb_postcompile(SCompileVxbContext* vxb)
 	{
 	}
 
@@ -387,7 +395,7 @@
 // Syntax:	FUNCTION cFunctionName
 //
 //////
-	SFunction* iiComps_decodeSyntax_function(SCompileVxbmmContext* cvc)
+	SFunction* iiComps_decodeSyntax_function(SCompileVxbContext* vxb)
 	{
 		SComp*		comp;
 		SComp*		compName;
@@ -396,10 +404,10 @@
 
 		// Make sure our environment is sane
 		func = NULL;
-		if (cvc->codeBlock && cvc->line && cvc->line->compilerInfo)
+		if (vxb->codeBlock && vxb->line && vxb->line->compilerInfo)
 		{
 			// The syntax must be [FUNCTION][cFunctionName]
-			if ((comp = cvc->line->compilerInfo->firstComp) && comp->iCode == _ICODE_FUNCTION)
+			if ((comp = vxb->line->compilerInfo->firstComp) && comp->iCode == _ICODE_FUNCTION)
 			{
 				// [FUNCTION]
 				if (comp->ll.next)
@@ -414,8 +422,8 @@
 						func = iFunction_allocate(compName);
 
 						// Indicate information about this function
-						func->firstLine	= cvc->line;
-						func->lastLine	= cvc->line;
+						func->firstLine	= vxb->line;
+						func->lastLine	= vxb->line;
 
 // TODO:  Needs added to the current function chain
 
@@ -440,7 +448,7 @@
 // Syntax:	ADHOC cAdhocName
 //
 //////
-	SFunction* iiComps_decodeSyntax_adhoc(SCompileVxbmmContext* cvc)
+	SFunction* iiComps_decodeSyntax_adhoc(SCompileVxbContext* vxb)
 	{
 		SComp*		comp;
 		SComp*		compName;
@@ -449,10 +457,10 @@
 
 		// Make sure our environment is sane
 		adhoc = NULL;
-		if (cvc->codeBlock && cvc->line && cvc->line->compilerInfo)
+		if (vxb->codeBlock && vxb->line && vxb->line->compilerInfo)
 		{
 			// The syntax must be [ADHOC][cAdhocName]
-			if ((comp = cvc->line->compilerInfo->firstComp) && comp->iCode == _ICODE_ADHOC)
+			if ((comp = vxb->line->compilerInfo->firstComp) && comp->iCode == _ICODE_ADHOC)
 			{
 				// [ADHOC]
 				if (comp->ll.next)
@@ -467,8 +475,8 @@
 						adhoc = iFunction_allocate(compName);
 
 						// Indicate information about this adhoc
-						adhoc->firstLine	= cvc->line;
-						adhoc->lastLine		= cvc->line;
+						adhoc->firstLine	= vxb->line;
+						adhoc->lastLine		= vxb->line;
 
 // TODO:  Needs added to the current function
 
@@ -486,22 +494,22 @@
 
 
 
-void iiComps_decodeSyntax_params(SCompileVxbmmContext* cvc)
+void iiComps_decodeSyntax_params(SCompileVxbContext* vxb)
 {
 // TODO:  write this function
 }
 
-void iiComps_decodeSyntax_lobject(SCompileVxbmmContext* cvc)
+void iiComps_decodeSyntax_lobject(SCompileVxbContext* vxb)
 {
 // TODO:  write this function
 }
 
-void iiComps_decodeSyntax_lparameters(SCompileVxbmmContext* cvc)
+void iiComps_decodeSyntax_lparameters(SCompileVxbContext* vxb)
 {
 // TODO:  write this function
 }
 
-void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
+void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 {
 // TODO:  write this function
 }
@@ -514,7 +522,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Translates components into a sequence of sub-instruction operations.
 //
 /////
-	bool iiComps_xlatToNodes(SEdit* line, SCompiler* compiler)
+	bool iiComps_xlatToNodes(SLine* line, SCompiler* compiler)
 	{
 		SComp*		comp;
 		SNode*		nodeActive;			// Current active node
@@ -664,7 +672,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 			//////////
 			// Are we in error?  If so, we stop compiling this line.
 			//////
-				if (nodeActive->opData->op.op_type == _OP_TYPE_NULL)
+				if (nodeActive->opData->op.opType == _OP_TYPE_NULL)
 				{
 					// We are in error
 					return(false);
@@ -713,7 +721,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 			//////////
 			// Update its operation to our parenthesis
 			//////
-				node->opData->op.op_type	= _OP_TYPE_PARENTHESIS_LEFT;
+				node->opData->op.opType	= _OP_TYPE_PARENTHESIS_LEFT;
 				node->opData->op.comp		= comp;
 
 
@@ -759,7 +767,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Called to remove all components for this line
 //
 //////
-	void iComps_deleteAll_byLine(SEdit* line)
+	void iComps_deleteAll_byLine(SLine* line)
 	{
 		SComp*	comp;
 		SComp*	compNext;
@@ -856,7 +864,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 //		The first component created (if any)
 //
 //////
-	SComp* iComps_translateSourceLineTo(SAsciiCompSearcher* tsComps, SEdit* line)
+	SComp* iComps_translateSourceLineTo(SAsciiCompSearcher* tsComps, SLine* line)
 	{
 		s32						lnI, lnMaxLength, lnStart, lnLength, lnLacsLength;
 		SComp*					compFirst;
@@ -990,7 +998,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // alpha/alphanumeric/numeric forms to other forms.
 //
 //////
-	bool iComps_translateToOthers(SAsciiCompSearcher* tacsRoot, SEdit* line)
+	bool iComps_translateToOthers(SAsciiCompSearcher* tacsRoot, SLine* line)
 	{
 		bool					llResult;
 		s32						lnTacsLength;
@@ -1226,20 +1234,20 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Returns which component the cursor is currently on
 //
 //////
-	SComp* iComps_activeComp_inSEM(SEM* em)
+	SComp* iComps_activeComp_inSEM(SEM* sem)
 	{
 		SComp* comp;
 
 
 		// Make sure our environment is sane
-		if (em && em->isSourceCode && em->ecCursorLine && em->ecCursorLine->compilerInfo && em->ecCursorLine->compilerInfo->firstComp)
+		if (sem && sem->isSourceCode && sem->line_cursor && sem->line_cursor->compilerInfo && sem->line_cursor->compilerInfo->firstComp)
 		{
 			// Begin at the beginning
-			comp = em->ecCursorLine->compilerInfo->firstComp;
+			comp = sem->line_cursor->compilerInfo->firstComp;
 			while (comp)
 			{
 				// Is this the active component?
-				if (em->column >= comp->start && em->column <= comp->start + comp->length)
+				if (sem->columnEdit >= comp->start && sem->columnEdit <= comp->start + comp->length)
 					return(comp);
 
 				// Move to next component
@@ -1716,7 +1724,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // branded as alphanumeric.
 //
 //////
-	u32 iComps_combineAdjacentAlphanumeric(SEdit* line)
+	u32 iComps_combineAdjacentAlphanumeric(SLine* line)
 	{
 		u32		lnCombined;
 		SComp*	comp;
@@ -1775,7 +1783,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // adjacent, it is included as well.
 //
 //////
-	u32 iComps_combineAdjacentNumeric(SEdit* line)
+	u32 iComps_combineAdjacentNumeric(SLine* line)
 	{
 		u32		lnCombined;
 		SComp*	comp;
@@ -1858,7 +1866,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Called to combine things like [.][t][.] into [.t.]
 //
 //////
-	u32 iComps_combineAdjacentDotForms(SEdit* line)
+	u32 iComps_combineAdjacentDotForms(SLine* line)
 	{
 		u32		lnCombined;
 		u8		c;
@@ -1979,7 +1987,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // After:		[u8][whitespace][name][left bracket][right bracket][whitespace][equal][whitespace][double quote text]
 //
 //////
-	u32 iComps_combineAllBetween(SEdit* line, s32 tniCodeNeedle, s32 tniCodeCombined, SBgra* syntaxHighlightColor)
+	u32 iComps_combineAllBetween(SLine* line, s32 tniCodeNeedle, s32 tniCodeCombined, SBgra* syntaxHighlightColor)
 	{
 		u32		lnCount;
 		SComp*	compNext;
@@ -2065,7 +2073,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Called to search for unmatched codes, a left and right, and combines everything between
 //
 //////
-	u32 iComps_combineAllBetween2(SEdit* line, s32 tniCodeNeedleLeft, s32 tniCodeNeedleRight, s32 tniCodeCombined, s32 tniCat, SBgra* syntaxHighlightColor, bool tlUseBoldFont)
+	u32 iComps_combineAllBetween2(SLine* line, s32 tniCodeNeedleLeft, s32 tniCodeNeedleRight, s32 tniCodeCombined, s32 tniCat, SBgra* syntaxHighlightColor, bool tlUseBoldFont)
 	{
 		u32		lnCount;
 		SComp*	compNext;
@@ -2155,7 +2163,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Called to combine everything after the indicated component into that one component.
 //
 //////
-	u32 iComps_combineAllAfter(SEdit* line, s32 tniCodeNeedle)
+	u32 iComps_combineAllAfter(SLine* line, s32 tniCodeNeedle)
 	{
 		u32		lnCombined;
 		SComp*	comp;
@@ -2202,7 +2210,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Called to delete everything after the indicated component
 //
 //////
-	u32 iComps_deleteAllAfter(SEdit* line, s32 tniCodeNeedle)
+	u32 iComps_deleteAllAfter(SLine* line, s32 tniCodeNeedle)
 	{
 		u32		lnDeleted;
 		SComp*	comp;
@@ -2257,7 +2265,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Note:  This function can be called at any time.
 //
 //////
-	u32 iComps_removeLeadingWhitespaces(SEdit* line)
+	u32 iComps_removeLeadingWhitespaces(SLine* line)
 	{
 		u32		lnRemoved;
 		SComp*	comp;
@@ -2294,7 +2302,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 //        processed, such that all quoted text items are already combined into a single icode.
 //
 //////
-	u32 iComps_removeWhitespaces(SEdit* line)
+	u32 iComps_removeWhitespaces(SLine* line)
 	{
 		u32		lnRemoved;
 		SComp*	comp;
@@ -2345,7 +2353,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Called to remove any /* comments */ from the current chain of comps.
 //
 //////
-	void iComps_removeStartEndComments(SEdit* line)
+	void iComps_removeStartEndComments(SLine* line)
 	{
 		SComp*	comp;
 		SComp*	compNext;
@@ -2390,7 +2398,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Called to combine casks
 //
 //////
-	void iComps_combineCasks(SEdit* line)
+	void iComps_combineCasks(SLine* line)
 	{
 		SComp* comp;
 
@@ -2435,7 +2443,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Fixes up common things found in VXB source code.
 //
 //////
-	void iComps_fixupNaturalGroupings(SEdit* line)
+	void iComps_fixupNaturalGroupings(SLine* line)
 	{
 		if (line && line->compilerInfo && line->compilerInfo->firstComp)
 		{
@@ -2560,7 +2568,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 // Called to translate the indicated keywords into their corresponding operation.
 //
 //////
-	void iiComps_xlatToSubInstr(SEdit* line)
+	void iiComps_xlatToSubInstr(SLine* line)
 	{
 		SNode	si;
 
@@ -2577,7 +2585,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 			while (iiComps_xlatToSubInstr_findInmostExpression(&si, line))
 			{
 				// Was it a valid operation?
-				if (si.opData->sub_instr >= 0)
+				if (si.opData->subInstr >= 0)
 				{
 					// We found the operation
 					// Did we find appropriate components?
@@ -2623,7 +2631,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 //		(6)		
 //
 //////
-	SComp* iiComps_xlatToSubInstr_findInmostExpression(SNode* si, SEdit* line)
+	SComp* iiComps_xlatToSubInstr_findInmostExpression(SNode* si, SLine* line)
 	{
 		bool	llFound;
 		SComp*	comp;
@@ -2633,8 +2641,8 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 		// Initially indicate that we did not find an inmost expression
 		//////
 			memset(si, 0, sizeof(SNode));
-			si->opData->sub_instr	= -1;			// Indicate failure initially (until something is found)
-			si->opData->sub_level	= -1;			// Unused during parsing
+			si->opData->subInstr	= -1;			// Indicate failure initially (until something is found)
+			si->opData->subLevel	= -1;			// Unused during parsing
 
 
 		//////////
@@ -2650,27 +2658,27 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 					if (comp->iCode == _ICODE_EXPONENT)
 					{
 						// Exponent
-						si->opData->sub_instr	= _SUB_INSTR_EXPONENT;
+						si->opData->subInstr	= _SUB_INSTR_EXPONENT;
 						llFound					= true;
 
 					} else if (comp->iCode == _ICODE_SLASH) {
 						// Division
-						si->opData->sub_instr	= _SUB_INSTR_DIVIDE;
+						si->opData->subInstr	= _SUB_INSTR_DIVIDE;
 						llFound					= true;
 
 					} else if (comp->iCode == _ICODE_ASTERISK) {
 						// Multiplication
-						si->opData->sub_instr	= _SUB_INSTR_MULTIPLY;
+						si->opData->subInstr	= _SUB_INSTR_MULTIPLY;
 						llFound					= true;
 
 					} else if (comp->iCode == _ICODE_PLUS) {
 						// Addition
-						si->opData->sub_instr	= _SUB_INSTR_ADD;
+						si->opData->subInstr	= _SUB_INSTR_ADD;
 						llFound					= true;
 
 					} else if (comp->iCode == _ICODE_HYPHEN) {
 						// Subtraction
-						si->opData->sub_instr	= _SUB_INSTR_SUBTRACT;
+						si->opData->subInstr	= _SUB_INSTR_SUBTRACT;
 						llFound					= true;
 					}
 
@@ -2806,7 +2814,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbmmContext* cvc)
 //		x = y
 //
 //////
-	bool iiComps_xlatToSubInstr_isEqualAssignment(SEdit* line)
+	bool iiComps_xlatToSubInstr_isEqualAssignment(SLine* line)
 	{
 // TODO:  Write this function :-)
 		return(false);
@@ -3391,7 +3399,7 @@ debug_break;
 // Called as a callback from the custom handler callback function, to do some manual insertion.
 //
 //////
-	void iiComps_xlatToOthersCallback__insertCompByParamsCallback(SComp* compRef, SEdit* line, u32 tniCode, u32 tnStart, s32 tnLength, bool tlInsertAfter)
+	void iiComps_xlatToOthersCallback__insertCompByParamsCallback(SComp* compRef, SLine* line, u32 tniCode, u32 tnStart, s32 tnLength, bool tlInsertAfter)
 	{
 		SComp* compNew;
 
@@ -3429,7 +3437,7 @@ debug_break;
 // indicated component.
 //
 //////
-	void iiComps_xlatToOthersCallback__deleteCompsCallback(SComp* comp, SEdit* line)
+	void iiComps_xlatToOthersCallback__deleteCompsCallback(SComp* comp, SLine* line)
 	{
 // TODO:  untested code, breakpoint and examine
 debug_break;
@@ -3469,7 +3477,7 @@ debug_break;
 // component.  If line is not NULL, the component is automatically added to line->comps;
 //
 //////
-	SComp* iiComps_xlatToOthersCallback__cloneCompsCallback(SComp* comp, SEdit* line)
+	SComp* iiComps_xlatToOthersCallback__cloneCompsCallback(SComp* comp, SLine* line)
 	{
 		SComp* compNew;
 
@@ -3525,7 +3533,7 @@ debug_break;
 //        handle that condition.
 //
 //////
-	SComp* iiComps_xlatToOthersCallback__mergeCompsCallback(SComp* comp, SEdit* line, u32 tnCount, u32 tniCodeNew)
+	SComp* iiComps_xlatToOthersCallback__mergeCompsCallback(SComp* comp, SLine* line, u32 tnCount, u32 tniCodeNew)
 	{
 		u32			lnI;
 		SComp*	compThis;
@@ -4258,8 +4266,8 @@ debug_break;
 //////
 	void iFunction_politelyDeleteCompiledInfo(SFunction* func, bool tlDeleteSelf)
 	{
-		SEdit* line;
-		SEdit* lineLast;
+		SLine* line;
+		SLine* lineLast;
 
 
 		// Make sure our environment is sane
@@ -4283,7 +4291,7 @@ debug_break;
 
 				// Move to next line
 				lineLast	= line;
-				line		= (SEdit*)line->ll.next;
+				line		= (SLine*)line->ll.next;
 
 			} while (lineLast != func->lastLine && line);
 
@@ -6936,7 +6944,7 @@ debug_break;
 	{
 		if (op)
 		{
-			op->op_type = _OP_TYPE_NULL;
+			op->opType = _OP_TYPE_NULL;
 			return(true);
 		}
 
@@ -6949,7 +6957,7 @@ debug_break;
 		if (op)
 		{
 			op->variable		= var;
-			op->op_type			= _OP_TYPE_PARAM;
+			op->opType			= _OP_TYPE_PARAM;
 			op->isOpDataAllocated	= isOpAllocated;
 			return(true);
 		}
@@ -6963,7 +6971,7 @@ debug_break;
 		if (op)
 		{
 			op->variable		= var;
-			op->op_type			= _OP_TYPE_LOCAL;
+			op->opType			= _OP_TYPE_LOCAL;
 			op->isOpDataAllocated	= isOpAllocated;
 			return(true);
 		}
@@ -6977,7 +6985,7 @@ debug_break;
 		if (op)
 		{
 			op->variable		= var;
-			op->op_type			= _OP_TYPE_SCOPED;
+			op->opType			= _OP_TYPE_SCOPED;
 			op->isOpDataAllocated	= isOpAllocated;
 			return(true);
 		}
@@ -6991,7 +6999,7 @@ debug_break;
 		if (op)
 		{
 			op->variable		= var;
-			op->op_type			= _OP_TYPE_RETURNS;
+			op->opType			= _OP_TYPE_RETURNS;
 			op->isOpDataAllocated	= isOpAllocated;
 			return(true);
 		}
@@ -7016,10 +7024,10 @@ debug_break;
 			//////////
 			// Is it something to delete?
 			//////
-				if (op->op_data != 0 && op->isOpDataAllocated)
+				if (op->_opData != 0 && op->isOpDataAllocated)
 				{
 					// Based on the type, delete it appropriately
-					switch (op->op_type)
+					switch (op->opType)
 					{
 						case _OP_TYPE_PARAM:
 							iVariable_delete(op->param, true);
@@ -7114,11 +7122,11 @@ debug_break;
 // Called to append an error the indicated source code line
 //
 //////
-	void iLine_appendError(SEdit* line, u32 tnErrorNum, s8* tcMessage, u32 tnStartColumn, u32 tnLength)
+	void iLine_appendError(SLine* line, u32 tnErrorNum, s8* tcMessage, u32 tnStartColumn, u32 tnLength)
 	{
 		if (line && line->compilerInfo)
 		{
-			iCompileNote_appendMessage(&line->compilerInfo->errors, tnStartColumn, tnStartColumn + tnLength, tnErrorNum, tcMessage);
+			iCompileNote_appendMessage(&line->compilerInfo->firstError, tnStartColumn, tnStartColumn + tnLength, tnErrorNum, tcMessage);
 		}
 	}
 
@@ -7130,11 +7138,11 @@ debug_break;
 // Called to append a warning to the indicated source code line
 //
 //////
-	void iLine_appendWarning(SEdit* line, u32 tnWarningNum, s8* tcMessage, u32 tnStartColumn, u32 tnLength)
+	void iLine_appendWarning(SLine* line, u32 tnWarningNum, s8* tcMessage, u32 tnStartColumn, u32 tnLength)
 	{
 		if (line && line->compilerInfo)
 		{
-			iCompileNote_appendMessage(&line->compilerInfo->errors, tnStartColumn, tnStartColumn + tnLength, tnWarningNum, tcMessage);
+			iCompileNote_appendMessage(&line->compilerInfo->firstError, tnStartColumn, tnStartColumn + tnLength, tnWarningNum, tcMessage);
 		}
 	}
 
@@ -7146,7 +7154,7 @@ debug_break;
 // Allocates an SCompiler structure.  Initializes it to all NULLs.
 //
 //////
-	SCompiler* iCompiler_allocate(SEdit* parent)
+	SCompiler* iCompiler_allocate(SLine* parent)
 	{
 		SCompiler* compilerNew;
 
@@ -7196,8 +7204,8 @@ debug_break;
 			compilerInfo = *root;
 
 			// Delete the items here
-			iCompileNote_removeAll(&compilerInfo->warnings);
-			iCompileNote_removeAll(&compilerInfo->errors);
+			iCompileNote_removeAll(&compilerInfo->firstWarning);
+			iCompileNote_removeAll(&compilerInfo->firstError);
 
 			// Delete from regular components, and whitespaces
 			iComps_deleteAll_byFirstComp(&compilerInfo->firstComp);

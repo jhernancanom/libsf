@@ -43,14 +43,14 @@ struct SExtraInfo
 	SDatum		info;													// The extra info
 
 	// Functions to use to access this extra info block
-	void		(*onAccess)					(SEM* chainMgr, SEdit* chain, SExtraInfo* extra_info);	// When the parent chain is accessed
-	void		(*onArrival)				(SEM* chainMgr, SEdit* chain, SExtraInfo* extra_info);	// When the target implementation is sitting on the chain record
-	void		(*onUpdate)					(SEM* chainMgr, SEdit* chain, SExtraInfo* extra_info);	// When the parent chain is updated
+	void		(*onAccess)					(SEM* chainMgr, SLine* chain, SExtraInfo* extra_info);	// When the parent chain is accessed
+	void		(*onArrival)				(SEM* chainMgr, SLine* chain, SExtraInfo* extra_info);	// When the target implementation is sitting on the chain record
+	void		(*onUpdate)					(SEM* chainMgr, SLine* chain, SExtraInfo* extra_info);	// When the parent chain is updated
 
 	// Functions called before freeing, and after allocating, the this.info datum
-	SExtraInfo*	(*extra_info_allocate)		(SEM* chainMgr, SEdit* chain, SExtraInfo* extra_info);	// Called to allocate this.info per needs
-	SExtraInfo*	(*extra_info_duplicate)		(SEM* chainMgr, SEdit* chain, SExtraInfo* extra_info);	// Called when a chain is duplicated, determines what if any of the source's data needs to be duplicated as well
-	SExtraInfo*	(*extra_info_free)			(SEM* chainMgr, SEdit* chain, SExtraInfo* extra_info);	// Called to free any data in this.info
+	SExtraInfo*	(*extra_info_allocate)		(SEM* chainMgr, SLine* chain, SExtraInfo* extra_info);	// Called to allocate this.info per needs
+	SExtraInfo*	(*extra_info_duplicate)		(SEM* chainMgr, SLine* chain, SExtraInfo* extra_info);	// Called when a chain is duplicated, determines what if any of the source's data needs to be duplicated as well
+	SExtraInfo*	(*extra_info_free)			(SEM* chainMgr, SLine* chain, SExtraInfo* extra_info);	// Called to free any data in this.info
 };
 
 struct SDateTime
@@ -267,7 +267,7 @@ struct SProperties
 	bool		hasFocus;												// Does this object have focus?
  	bool		processKeyPreviewEvents;								// Do keystrokes for controls on the form go through the form's Key* events as well?
 
-	SEM*		em;														// The content being edited
+	SEM*		sem;													// The content being edited
 	SFont*		font;													// Default font instance
 };
 

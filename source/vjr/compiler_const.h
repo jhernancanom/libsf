@@ -309,7 +309,7 @@
 	const s32		_ICODE_UNDERSCORE								= 16;
 	const s32		_ICODE_AT_SIGN									= 17;
 	const s32		_ICODE_QUESTION_MARK							= 18;
-	const s32		_ICODE_EXCLAMATION_POINT							= 19;
+	const s32		_ICODE_EXCLAMATION_POINT						= 19;
 	const s32		_ICODE_POUND_SIGN								= 20;
 	const s32		_ICODE_PERCENT_SIGN								= 21;
 	const s32		_ICODE_EXPONENT									= 22;
@@ -375,30 +375,31 @@
 	const s32		_ICODE_SUBFLOW									= 216;
 	const s32		_ICODE_FLOWTO									= 217;
 	const s32		_ICODE_FLOWOUT									= 218;
-	const s32		_ICODE_RGBA										= 219;
-    const s32       _ICODE_LOBJECT								    = 220;
-	const s32		_ICODE_PARAMS									= 221;
-	const s32		_ICODE_RETURNS									= 222;
-	const s32		_ICODE_AS										= 223;
-	const s32		_ICODE_CHARACTER								= 224;
-	const s32		_ICODE_INTEGER									= 225;
-	const s32		_ICODE_FLOAT									= 226;
-	const s32		_ICODE_DOUBLE									= 227;
-	const s32		_ICODE_LOGICAL									= 228;
-	const s32		_ICODE_S32										= 229;
-	const s32		_ICODE_S64										= 230;
-	const s32		_ICODE_U32										= 231;
-	const s32		_ICODE_U64										= 232;
-	const s32		_ICODE_F32										= 233;
-	const s32		_ICODE_F64										= 234;
-	const s32		_ICODE_BI										= 235;
-	const s32		_ICODE_BFP										= 236;
-	const s32		_ICODE_S16										= 237;
-	const s32		_ICODE_S8										= 238;
-	const s32		_ICODE_U16										= 239;
-	const s32		_ICODE_U8										= 240;
-	const s32		_ICODE_ADHOC									= 241;
-	const s32		_ICODE_ENDADHOC									= 242;
+	const s32		_ICODE_FLOWOF									= 219;
+	const s32		_ICODE_RGBA										= 220;
+	const s32       _ICODE_LOBJECT								    = 221;
+	const s32		_ICODE_PARAMS									= 222;
+	const s32		_ICODE_RETURNS									= 223;
+	const s32		_ICODE_AS										= 224;
+	const s32		_ICODE_CHARACTER								= 225;
+	const s32		_ICODE_INTEGER									= 226;
+	const s32		_ICODE_FLOAT									= 227;
+	const s32		_ICODE_DOUBLE									= 228;
+	const s32		_ICODE_LOGICAL									= 229;
+	const s32		_ICODE_S32										= 230;
+	const s32		_ICODE_S64										= 231;
+	const s32		_ICODE_U32										= 232;
+	const s32		_ICODE_U64										= 233;
+	const s32		_ICODE_F32										= 234;
+	const s32		_ICODE_F64										= 235;
+	const s32		_ICODE_BI										= 236;
+	const s32		_ICODE_BFP										= 237;
+	const s32		_ICODE_S16										= 238;
+	const s32		_ICODE_S8										= 239;
+	const s32		_ICODE_U16										= 240;
+	const s32		_ICODE_U8										= 241;
+	const s32		_ICODE_ADHOC									= 242;
+	const s32		_ICODE_ENDADHOC									= 243;
 
 
 	// Logical operators
@@ -406,21 +407,27 @@
 	const s32		_ICODE_AND										= 501;
 	const s32		_ICODE_OR										= 502;
 
+	// Relatives
+	const s32		_ICODE_THISCODE									= 600;
+	const s32		_ICODE_THISCLASS								= 601;
+	const s32		_ICODE_THISFORM									= 602;
+	const s32		_ICODE_PARENT									= 603;
+
 	// Stand-alones
-	const s32	    _ICODE_TRUE										= 600;
-	const s32	    _ICODE_FALSE									= 601;
-	const s32	    _ICODE_YES										= 602;
-	const s32	    _ICODE_NO										= 603;
-	const s32	    _ICODE_UP										= 604;
-	const s32	    _ICODE_DOWN										= 605;
-	const s32	    _ICODE_OTHER									= 606;
-	const s32	    _ICODE_PARTIAL									= 607;
-	const s32		_ICODE_EXTRA									= 608;
-	const s32	    _ICODE_YET_ANOTHER								= 609;
-	const s32	    _ICODE_ZATS_ALL_FOLKS							= 610;
+	const s32	    _ICODE_TRUE										= 700;
+	const s32	    _ICODE_FALSE									= 701;
+	const s32	    _ICODE_YES										= 702;
+	const s32	    _ICODE_NO										= 703;
+	const s32	    _ICODE_UP										= 704;
+	const s32	    _ICODE_DOWN										= 705;
+	const s32	    _ICODE_OTHER									= 706;
+	const s32	    _ICODE_PARTIAL									= 707;
+	const s32		_ICODE_EXTRA									= 708;
+	const s32	    _ICODE_YET_ANOTHER								= 709;
+	const s32	    _ICODE_ZATS_ALL_FOLKS							= 710;
 
 	// Conversions
-	const s32		_ICODE_DOT_VARIABLE								= 700;
+	const s32		_ICODE_DOT_VARIABLE								= 800;
 
 	// Functions
 	const s32		_ICODE_ABS										= 1000;

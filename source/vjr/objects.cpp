@@ -6438,8 +6438,8 @@ if (!obj->props[lnI])
 				setDisabledBackColor(editbox, disabledBackColor);
 				setDisabledForeColor(editbox, disabledForeColor);
 
-				iSEM_deleteChain(&editbox->p.em, true);
-				editbox->p.em = iSEM_allocate(false);
+				iSEM_deleteChain(&editbox->p.sem, true);
+				editbox->p.sem = iSEM_allocate(false);
 
 
 			//////////
@@ -7984,13 +7984,13 @@ CopyRect(&obj->rcArrowLr, &lrc2);
 		if (obj && obj->isRendered)
 		{
 			// Grab the rectangle
-			iSEM_getRectAndFont(obj->p.em, obj, &lrc);
+			iSEM_getRectAndFont(obj->p.sem, obj, &lrc);
 
 			// Are we rendering?
 			if (obj->isDirtyRender)
 			{
 				// Re-render
-				lnPixelsRendered = iSEM_render(obj->p.em, obj, obj->p.hasFocus);
+				lnPixelsRendered = iSEM_render(obj->p.sem, obj, obj->p.hasFocus);
 
 				// Get colors
 				borderColor = borderColor(obj);

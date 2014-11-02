@@ -320,9 +320,9 @@
 			sourceCode_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown_sourceCode;
 			setBorderStyle(sourceCode_editbox, _BORDER_STYLE_FIXED);
 			setBorderColor(sourceCode_editbox, lineNumberBackColor);
-			sourceCode_editbox->p.em->showCursorLine	= true;
-			sourceCode_editbox->p.em->isSourceCode		= true;
-			sourceCode_editbox->p.em->showLineNumbers	= true;
+			sourceCode_editbox->p.sem->showCursorLine	= true;
+			sourceCode_editbox->p.sem->isSourceCode		= true;
+			sourceCode_editbox->p.sem->showLineNumbers	= true;
 
 
 		//////////
@@ -343,7 +343,7 @@
 			iObjProp_set_character_direct(watch, _INDEX_CAPTION, cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
 			watch_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			watch_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
-			watch_editbox->p.em->showCursorLine		= true;
+			watch_editbox->p.sem->showCursorLine		= true;
 
 			// Adjust the caption width
 			((SObject*)watch->firstChild->ll.next)->rc.right = 65;
@@ -356,9 +356,9 @@
 			command_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			command_editbox->ev.keyboard._onKeyDown		= (u32)&iSEM_onKeyDown_sourceCode;
 			command_editbox->p.hasFocus					= true;
-			command_editbox->p.em->showCursorLine		= true;
-			command_editbox->p.em->isSourceCode			= true;
-			command_editbox->p.em->showLineNumbers		= true;
+			command_editbox->p.sem->showCursorLine		= true;
+			command_editbox->p.sem->isSourceCode			= true;
+			command_editbox->p.sem->showLineNumbers		= true;
 
 			// Adjust the caption width
 			((SObject*)command->firstChild->ll.next)->rc.right = 80;
@@ -370,7 +370,7 @@
 			iObjProp_set_character_direct(debug, _INDEX_CAPTION, cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
 			debug_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			debug_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
-			debug_editbox->p.em->showCursorLine		= true;
+			debug_editbox->p.sem->showCursorLine		= true;
 
 			// Adjust the caption width
 			((SObject*)debug->firstChild->ll.next)->rc.right = 65;
@@ -382,7 +382,7 @@
 			iObjProp_set_character_direct(output, _INDEX_CAPTION, cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
 			output_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_MEDIUM, false, false);
 			output_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
-			output_editbox->p.em->showCursorLine	= true;
+			output_editbox->p.sem->showCursorLine	= true;
 
 			// Adjust the caption width
 			((SObject*)output->firstChild->ll.next)->rc.right = 70;
@@ -410,7 +410,7 @@
 		//////
 			screen_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			screen_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
-			screenData								= screen_editbox->p.em;
+			screenData								= screen_editbox->p.sem;
 			screenData->showCursorLine				= true;
 			screenData->showEndLine					= true;
 			setVisible(_screen, _LOGICAL_TRUE);
@@ -721,7 +721,7 @@
 
 		// Save where we were
 		iSEM_saveToDisk(screenData,				(s8*)cgcScreenDataFilename);
-		iSEM_saveToDisk(command_editbox->p.em,	(s8*)cgcCommandHistoryFilename);
+		iSEM_saveToDisk(command_editbox->p.sem,	(s8*)cgcCommandHistoryFilename);
 
 		// Close the allocated memory blocks
 		iVjr_releaseMemory();
@@ -3897,7 +3897,7 @@ debug_break;
 // Called to free the extra info associated with this entry
 //
 //////
-	void iExtraInfo_free(SEM* em, SEdit* ec, SExtraInfo** root, bool tlDeleteSelf)
+	void iExtraInfo_free(SEM* sem, SLine* ec, SExtraInfo** root, bool tlDeleteSelf)
 	{
 		SExtraInfo*		ei;
 		SExtraInfo*		eiNext;

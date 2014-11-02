@@ -104,8 +104,8 @@
 //////////
 // Forward declarations
 //////
-	bool					iEngine_executeStandaloneCommand		(SEdit* line);
-	SComp*					iEngine_parseSourceCodeLine				(SEdit* line);
+	bool					iEngine_executeStandaloneCommand		(SLine* line);
+	SComp*					iEngine_parseSourceCodeLine				(SLine* line);
 	SVariable*				iEngine_getVariableFromComponent		(SComp* comp, bool& tlManufactured);
 	SVariable*				iEngine_getFunctionResult				(SComp* comp, bool& tlManufactured);
 	void					iEngine_executeSetter					(cs8* name, SVariable* varOld, SVariable* varNew);
