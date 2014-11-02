@@ -1,1 +1,1 @@
-./Release/vjr_vjr.cpp.o   
+./Debug/vjr_vjr.cpp.o   

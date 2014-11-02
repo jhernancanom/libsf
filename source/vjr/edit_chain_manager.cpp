@@ -26,7 +26,6 @@
 //     http://www.libsf.org/licenses/
 //     http://www.visual-freepro.org/vjr/indexmain.html
 //     http://www.visual-freepro.org/wiki/index.php/PBL
-//     http://www.visual-freepro.org/wiki/index.php/Repeat_License
 //
 // Thank you.  And may The Lord bless you richly as you lift up your life, your
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
@@ -2570,23 +2569,56 @@ renderAsOnlyText:
 						// Overlay the text
 						if (line->sourceCode->data && line->sourceCodePopulated != 0 && line->sourceCodePopulated >= em->leftColumn)
 						{
-							SetTextColor(bmp->hdc, RGB(tooltipForecolor.red, tooltipForecolor.grn, tooltipForecolor.blu));
-							DrawText(bmp->hdc, line->sourceCode->data + em->leftColumn, line->sourceCodePopulated - em->leftColumn, &lrc3, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+							//////////
+							// Remove any nbsp characters
+							//////
+								if (iIsCharacterInHaystack(line->sourceCode->data, line->sourceCodePopulated, -1, NULL))
+								{
+									// Copy to a temporary buffer
+									lnBufferLength = min(line->sourceCodePopulated - em->leftColumn, sizeof(buffer));
+									memcpy(buffer, line->sourceCode->data + em->leftColumn, lnBufferLength);
 
+									// Remove nbsp characters
+									for (lnJ = 0; lnJ < lnBufferLength; lnJ++)
+									{
+										// If it's a nbsp, replace with a normal space for rendering
+										if ((u8)buffer[lnJ] == 255)
+											buffer[lnJ] = 32;
+									}
+
+									// Setup the pointer
+									textptr = (s8*)&buffer[0];
+
+								} else {
+									// No nbsp characters, so just draw whatever's there
+									textptr			= line->sourceCode->data + em->leftColumn;
+									lnBufferLength	= line->sourceCodePopulated - em->leftColumn;
+								}
+
+
+							//////////
+							// Draw the line
+							//////
+								SetTextColor(bmp->hdc, RGB(tooltipForecolor.red, tooltipForecolor.grn, tooltipForecolor.blu));
+								DrawText(bmp->hdc, textptr, lnBufferLength, &lrc3, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX);
+
+
+							//////////
 							// Add in the line numbers
-							if (em->showLineNumbers)
-							{
-								// Adjust for the line number area
-								SetRect(&lrc3, 0, lrc3.top, lrc3.left, lrc3.bottom);
+							//////
+								if (em->showLineNumbers)
+								{
+									// Adjust for the line number area
+									SetRect(&lrc3, 0, lrc3.top, lrc3.left, lrc3.bottom);
 
-								// Colorize that entire section
-								iBmp_fillRect(bmp, &lrc3, tooltipNwBackColor, tooltipNeBackColor, tooltipSwBackColor, tooltipSeBackColor, true, NULL, false);
-								iBmp_frameRect(bmp, &lrc3, tooltipForecolor, tooltipForecolor, tooltipForecolor, tooltipForecolor, false, NULL, false);
+									// Colorize that entire section
+									iBmp_fillRect(bmp, &lrc3, tooltipNwBackColor, tooltipNeBackColor, tooltipSwBackColor, tooltipSeBackColor, true, NULL, false);
+									iBmp_frameRect(bmp, &lrc3, tooltipForecolor, tooltipForecolor, tooltipForecolor, tooltipForecolor, false, NULL, false);
 
-								// Compute the line number
-								sprintf(buffer, "%u\0", line->lineNumber);
-								DrawText(bmp->hdc, buffer, strlen(buffer), &lrc3, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
-							}
+									// Compute the line number
+									sprintf(buffer, "%u\0", line->lineNumber);
+									DrawText(bmp->hdc, buffer, strlen(buffer), &lrc3, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
+								}
 						}
 					}
 

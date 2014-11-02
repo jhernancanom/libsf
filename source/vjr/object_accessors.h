@@ -26,7 +26,6 @@
 //	   http://www.libsf.org/licenses/
 //	   http://www.visual-freepro.org/vjr/indexmain.html
 //	   http://www.visual-freepro.org/wiki/index.php/PBL
-//	   http://www.visual-freepro.org/wiki/index.php/Repeat_License
 //
 // Thank you.  And may The Lord bless you richly as you lift up your life, your
 // talents, your gifts, your praise, unto Him.	In Jesus' name I pray.	Amen.

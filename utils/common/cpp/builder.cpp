@@ -57,11 +57,15 @@
 	{
 		union {
 			s8*		data;												// Pointer to a buffer allocated in blocks
+			s8*		buffer;
 			u32		_data;
 		};
 		u32			allocatedLength;									// How much of space has been allocated for the buffer
 		u32			populatedLength;									// How much of the allocated buffer is actually populated with data
-		u32			allocateBlockSize;									// Typically 16KB, the larger the size the fewer reallocs() are required
+		union {
+			u32		allocateBlockSize;									// Typically 16KB, the larger the size the fewer reallocs() are required
+			u32		totSize;
+		};
 	};
 
 
@@ -240,6 +244,23 @@
 
 //////////
 //
+// Called to reset the buffer to 0 bytes
+//
+//////
+	void iBuilder_reset(SBuilder* dst)
+	{
+		if (dst && dst->populatedLength != 0)
+		{
+			memset(dst->buffer, 0, dst->totSize);
+			dst->populatedLength = 0;
+		}
+	}
+
+
+
+
+//////////
+//
 // Called to allocate bytes in the builder, but not yet populate them with anything
 //
 //////
@@ -260,6 +281,31 @@
 		}
 		// If we get here, things are bad
 		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Called to back off and remove any trailing spaces from the builder, so
+// that the last data is not a whitespace.
+//
+//////
+	void iBuilder_backoffTrailingWhitespaces(SBuilder* dst)
+	{
+		if (dst && dst->data)
+		{
+			// Back off so long as there are whitespaces
+			while ((s32)dst->populatedLength > 0 && (dst->data[dst->populatedLength - 1] == 32 || dst->data[dst->populatedLength - 1] == 9))
+			{
+				// Reset the data there to the expected NULLs
+				dst->data[dst->populatedLength - 1] = 0;
+
+				// Backup one
+				--dst->populatedLength;
+			}
+		}
 	}
 
 
