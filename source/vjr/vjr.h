@@ -103,10 +103,22 @@
 #include "\libsf\utils\common\cpp\ll.cpp"
 #include "vjr_structs0.h"
 
-#include "compiler_const.h"
-#include "compiler_structs.h"
-#include "compiler_defs.h"
-#include "compiler_globals.h"
+#include "compiler\common\compiler_common.h"
+
+#include "compiler\vxb\const.h"
+#include "compiler\vxb\structs.h"
+#include "compiler\vxb\defs.h"
+#include "compiler\vxb\globals.h"
+
+#include "compiler\rdc\const.h"
+#include "compiler\rdc\structs.h"
+#include "compiler\rdc\defs.h"
+#include "compiler\rdc\globals.h"
+
+#include "compiler\asm\const.h"
+#include "compiler\asm\structs.h"
+#include "compiler\asm\defs.h"
+#include "compiler\asm\globals.h"
 
 #include "dbf\dbf.h"
 #include "dbf\dbf_defs.h"
@@ -129,7 +141,9 @@
 #include "callbacks.cpp"
 #include "events.cpp"
 #include "bitmaps.cpp"
-#include "compiler.cpp"
+#include "compiler\vxb\vxb_compiler.cpp"
+#include "compiler\rdc\rdc_compiler.cpp"
+#include "compiler\asm\asm_compiler.cpp"
 #include "commands.cpp"
 #include "engine.cpp"
 #include "edit_chain_manager.cpp"

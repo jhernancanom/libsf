@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/compiler.h
+// /libsf/source/vjr/compiler/vxb/defs.h
 //
 //////
 // Version 0.54
@@ -58,9 +58,9 @@ struct SVariable;
 // compiler.cpp
 //////////
 	u32						compile_vxb									(SEM* codeBlock, SCompileVxbContext* vxbParam, SCompileStats* stats);
-	void					iiCompile_vxb_precompile					(SCompileVxbContext* vxb);
-	void					iiCompile_vxb_compile						(SCompileVxbContext* vxb);
-	void					iiCompile_vxb_postcompile					(SCompileVxbContext* vxb);
+	void					iiCompile_vxb_precompile_forEditAndContinue	(SCompileVxbContext* vxb);
+	void					iiCompile_vxb_compile_forEditAndContinue	(SCompileVxbContext* vxb);
+	void					iiCompile_vxb_postcompile_forEditAndContinue(SCompileVxbContext* vxb);
 
 	SFunction*				iiComps_decodeSyntax_function				(SCompileVxbContext* vxb);
 	SFunction*				iiComps_decodeSyntax_adhoc					(SCompileVxbContext* vxb);
@@ -144,9 +144,6 @@ struct SVariable;
 	SLL*					iSEChain_completelyMigrateSLLByPtr			(SStartEnd* ptrSEDst, SStartEnd* ptrSESrc, SLL* ptr, u32 tnHint, u32 tnBlockSize);
 	SLL*					iSEChain_completelyMigrateSLLByNum			(SStartEnd* ptrSEDst, SStartEnd* ptrSESrc, u32 lnSrcNum, u32 tnHint, u32 tnBlockSize);
 	SMasterList*			iSEChain_migrateByNum						(SStartEnd* ptrSEDst, SStartEnd* ptrSESrc, u32 lnSrcNum, u32 tnHint, u32 tnBlockSize);
-
-	// Callbacks on SComp finds
-	void					ii_onFind_countNbsp							(SAsciiCompSearcher* tacs, SComp* comp);
 
 	// Node functions
 	SNode*					iNode_create								(SNode** root, SNode* hint, u32 tnDirection, SNode* parent, SNode* prev, SNode* next, SNode* left, SNode* right);

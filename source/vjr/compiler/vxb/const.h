@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/compiler_const.h
+// /libsf/source/vjr/compiler/vxb/const.h
 //
 //////
 // Version 0.54
@@ -33,16 +33,6 @@
 //
 
 
-
-
-//////////
-// Constant integers
-//////
-	cu32			_COMMON_START_END_BLOCK_SIZE					= 32;			// Allocate 32 entries/slots at a time (Start/end)
-	cu32			_COMMON_START_END_SMALL_BLOCK_SIZE				= 4;			// Allocate 4 entries/slots at a time (Start/end)
-	cu32			_COMMON_START_END_BIG_BLOCK_SIZE				= 256;			// Allocate 256 entries/slots at a time (Start/end)
-	cu32			_COMMON_BUILDER_BLOCK_SIZE						= 16384;		// Allocate 16KB at a time
-	cu32			_COMMON_BUILDER_BLOCK_SIZE_BIG					= 10240000;		// Allocate 1MB at a time
 
 
 //////////
@@ -216,25 +206,8 @@
 	
 
 //////////
-// Casks
+// Symbols in token parsing
 //////
-	const s8		cgcCaskRoundOpenParams[]						= "(||";
-	const s8		cgcCaskRoundCloseParams[]						= "||)";
-	const s8		cgcCaskSquareOpenParams[]						= "[||";
-	const s8		cgcCaskSquareCloseParams[]						= "||]";
-	const s8		cgcCaskTriangleOpenParams[]						= "<||";
-	const s8		cgcCaskTriangleCloseParams[]					= "||>";
-	const s8		cgcCaskTildeOpenParams[]						= "~||";
-	const s8		cgcCaskTildeCloseParams[]						= "||~";
-	const s8		cgcCaskRoundOpen[]								= "(|";
-	const s8		cgcCaskRoundClose[]								= "|)";
-	const s8		cgcCaskSquareOpen[]								= "[|";
-	const s8		cgcCaskSquareClose[]							= "|]";
-	const s8		cgcCaskTriangleOpen[]							= "<|";
-	const s8		cgcCaskTriangleClose[]							= "|>";
-	const s8		cgcCaskTildeOpen[]								= "~|";
-	const s8		cgcCaskTildeClose[]								= "|~";
-
 	const s8		cgcBackslash[]									= "\\";
 	const s8		cgcSlash[]										= "/";
 	const s8		cgcS[]											= "S";
@@ -259,101 +232,9 @@
 	const s8		cgcFeatureNotYetSupported[]						= "feature not yet supported";
 
 
-	const s32		_ICODE_CASK_SIDE_MINIMUM						= 1000001;
-	const s32		_ICODE_CASK_ROUND_OPEN_PARAMS					= 1000001;
-	const s32		_ICODE_CASK_ROUND_CLOSE_PARAMS					= 1000002;
-	const s32		_ICODE_CASK_SQUARE_OPEN_PARAMS					= 1000003;
-	const s32		_ICODE_CASK_SQUARE_CLOSE_PARAMS					= 1000004;
-	const s32		_ICODE_CASK_TRIANGLE_OPEN_PARAMS				= 1000005;
-	const s32		_ICODE_CASK_TRIANGLE_CLOSE_PARAMS				= 1000006;
-	const s32		_ICODE_CASK_TILDE_OPEN_PARAMS					= 1000007;
-	const s32		_ICODE_CASK_TILDE_CLOSE_PARAMS					= 1000008;
-	const s32		_ICODE_CASK_ROUND_OPEN							= 1000009;
-	const s32		_ICODE_CASK_ROUND_CLOSE							= 1000010;
-	const s32		_ICODE_CASK_SQUARE_OPEN							= 1000011;
-	const s32		_ICODE_CASK_SQUARE_CLOSE						= 1000012;
-	const s32		_ICODE_CASK_TRIANGLE_OPEN						= 1000013;
-	const s32		_ICODE_CASK_TRIANGLE_CLOSE						= 1000014;
-	const s32		_ICODE_CASK_TILDE_OPEN							= 1000015;
-	const s32		_ICODE_CASK_TILDE_CLOSE							= 1000016;
-	const s32		_ICODE_CASK_SIDE_MAXIMUM						= 1000016;
-
-	const s32		_ICODE_CASK_MINIMUM								= 1000101;
-	const s32		_ICODE_CASK_ROUND_PARAMS						= 1000101;
-	const s32		_ICODE_CASK_SQUARE_PARAMS						= 1000102;
-	const s32		_ICODE_CASK_TRIANGLE_PARAMS						= 1000103;
-	const s32		_ICODE_CASK_TILDE_PARAMS						= 1000104;
-	const s32		_ICODE_CASK_ROUND								= 1000105;
-	const s32		_ICODE_CASK_SQUARE								= 1000106;
-	const s32		_ICODE_CASK_TRIANGLE							= 1000107;
-	const s32		_ICODE_CASK_TILDE								= 1000108;
-	const s32		_ICODE_CASK_MAXIMUM								= 1000108;
-
-	// Standard types
-	const s32		_ICODE_UNKNOWN									= -1;
-	const s32		_ICODE_ALPHA									= 1;
-	const s32		_ICODE_NUMERIC									= 2;
-	const s32		_ICODE_ALPHANUMERIC								= 3;
-	const s32		_ICODE_OPERATOR									= 4;
-	const s32		_ICODE_WHITESPACE								= 5;
-	const s32		_ICODE_PLUS										= 6;
-	const s32		_ICODE_HYPHEN									= 7;
-	const s32		_ICODE_ASTERISK									= 8;
-	const s32		_ICODE_BACKSLASH								= 9;
-	const s32		_ICODE_DOUBLE_QUOTE								= 10;
-	const s32		_ICODE_SINGLE_QUOTE								= 11;
-	const s32		_ICODE_TILDE									= 12;
-	const s32		_ICODE_DOT										= 13;
-	const s32		_ICODE_COLON									= 14;
-	const s32		_ICODE_COMMA									= 15;
-	const s32		_ICODE_UNDERSCORE								= 16;
-	const s32		_ICODE_AT_SIGN									= 17;
-	const s32		_ICODE_QUESTION_MARK							= 18;
-	const s32		_ICODE_EXCLAMATION_POINT						= 19;
-	const s32		_ICODE_POUND_SIGN								= 20;
-	const s32		_ICODE_PERCENT_SIGN								= 21;
-	const s32		_ICODE_EXPONENT									= 22;
-	const s32		_ICODE_AMPERSAND								= 23;
-	const s32		_ICODE_EQUAL_SIGN								= 24;
-	const s32		_ICODE_PIPE_SIGN								= 25;
-	const s32		_ICODE_REVERSE_QUOTE							= 26;
-	const s32		_ICODE_SEMICOLON								= 27;
-	const s32		_ICODE_GREATER_THAN								= 28;
-	const s32		_ICODE_LESS_THAN								= 30;
-	const s32		_ICODE_PARENTHESIS_LEFT							= 31;
-	const s32		_ICODE_PARENTHESIS_RIGHT						= 32;
-	const s32		_ICODE_BRACKET_LEFT								= 33;
-	const s32		_ICODE_BRACKET_RIGHT							= 34;
-	const s32		_ICODE_BRACE_LEFT								= 35;
-	const s32		_ICODE_BRACE_RIGHT								= 36;
-	const s32		_ICODE_SLASH									= 37;
-	const s32		_ICODE_FOUND_IN									= 38;
-	const s32		_ICODE_PLUS_PLUS								= 39;
-	const s32		_ICODE_MINUS_MINUS								= 40;
-	const s32		_ICODE_NOT_EQUAL								= 41;
-	const s32		_ICODE_LESS_THAN_OR_EQUAL_TO					= 42;
-	const s32		_ICODE_GREATER_THAN_OR_EQUAL_TO					= 43;
-	const s32		_ICODE_EXACTLY_EQUAL_TO							= 44;
-	const s32		_ICODE_NOT_FOUND_IN								= 45;
-	const s32		_ICODE_SHIFT_LEFT								= 46;
-	const s32		_ICODE_SHIFT_RIGHT								= 47;
-	const s32		_ICODE_SHIFT_LEFT_ASSIGNMENT					= 48;
-	const s32		_ICODE_SHIFT_RIGHT_ASSIGNMENT					= 49;
-	const s32		_ICODE_RANGE									= 50;
-
 	// Combined items
 	const s32		_ICODE_SINGLE_QUOTED_TEXT						= 90;
 	const s32		_ICODE_DOUBLE_QUOTED_TEXT						= 91;
-
-	// Preprocessor
-	const s32		_ICODE_INCLUDE									= 101;
-	const s32		_ICODE_DEFINE									= 102;
-
-	// Miscellaneous
-	const s32		_ICODE_COMMENT									= 103;
-	const s32		_ICODE_LINE_COMMENT								= 104;
-	const s32		_ICODE_COMMENT_START							= 105;
-	const s32		_ICODE_COMMENT_END								= 106;
 
 	// VJr-specific Keywords
 	const s32		_ICODE_VJR										= 200;
@@ -400,12 +281,6 @@
 	const s32		_ICODE_U8										= 241;
 	const s32		_ICODE_ADHOC									= 242;
 	const s32		_ICODE_ENDADHOC									= 243;
-
-
-	// Logical operators
-	const s32		_ICODE_NOT										= 500;
-	const s32		_ICODE_AND										= 501;
-	const s32		_ICODE_OR										= 502;
 
 	// Relatives
 	const s32		_ICODE_THISCODE									= 600;
@@ -1179,15 +1054,9 @@
 	// _ICODE_ELSE													= 2280;
 
 
+
 //////////
-// Category codes
+// VXB iCat codes
 //////
-	const s32		_ICAT_GENERIC									= 1;
-	const s32		_ICAT_COMMAND									= 2;
-	const s32		_ICAT_FUNCTION									= 3;
-	const s32		_ICAT_FLOW										= 4;
-	const s32		_ICAT_OPERATOR									= 5;
-	const s32		_ICAT_CASK										= 6;
-	const s32		_ICAT_DOT_VARIABLE								= 7;	// The . in thisForm.xyz
-	const s32		_ICAT_EXCLAMATION_POINT_VARIABLE				= 8;	// The ! in thisForm!xyz
-	const s32		_ICAT_OPTION									= 9;	// An option like AGAIN on USE xyz AGAIN
+	const s32		_ICAT_DOT_VARIABLE								= 100;	// The . in thisForm.xyz
+	const s32		_ICAT_EXCLAMATION_POINT_VARIABLE				= 101;	// The ! in thisForm!xyz

@@ -103,33 +103,6 @@
 																		// Explicitly:  breakpoint_always(), breakpoint_true(), breakpoint_false()
 	};
 
-	struct SLine
-	{
-		SLL				ll;												// Link list throughout
-		u32				uid;											// Unique id for this line, used for undos and identifying individual lines which may move about
-
-		// Each render, these are updated
-		u32				renderId;										// Each time it's rendered, this value is set
-		RECT			rcLastRender;									// The rectangle within the parent of the last render
-
-		u32				lineNumber;										// This line's number
-		SBreakpoint*	breakpoint;										// If there's a breakpoint here, what kind?
-		SDatum*			sourceCode;										// The text on this line is LEFT(sourceCode.data, sourceCodePopulated)
-		s32				sourceCodePopulated;							// The actual populated length sourceCode
-
-		// New line flag, original value as of original load, or last save
-		bool			isNewLine;										// If the line's been added during normal editing
-		SDatum*			sourceCodeOriginal;								// The original sourceCode when the line was first created, or last saved.  Note:  The length here is the total length as this value does not change
-
-		// Compiler information (see compiler.cpp)
-		bool			forceRecompile;									// A flag that if set forces a recompile of this line
-		SCompiler*		compilerInfo;									// Information about the last time this line was compiled
-		SCompiler*		compilerInfoLast;								// Used during edit-and-continue compilation
-
-		// General purpose extra data
-		SExtraInfo*		extra_info;										// Extra information about this item in the chain
-	};
-
 	struct SEMPoint
 	{
 		SLine*			line;											// The actual line here

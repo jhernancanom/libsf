@@ -52,7 +52,7 @@
 
 
 		// Make sure our environment is sane
-		if (line && line->sourceCode && line->sourceCode->data && line->sourceCodePopulated > 0)
+		if (line && line->sourceCode && line->sourceCode->data && line->sourceCode_populatedLength > 0)
 		{
 			// Parse it
 			comp = iEngine_parseSourceCodeLine(line);

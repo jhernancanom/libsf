@@ -55,7 +55,7 @@
 			{
 				// We need to allocate the initial data block
 				iDatum_allocateSpace(line->sourceCode, max(_ECM_MINIMUM_LINE_ALLOCATION_LENGTH, newLineLength));
-				line->sourceCodePopulated	= 0;
+				line->sourceCode_populatedLength	= 0;
 			}
 
 			// Is there room from where we are to the new line length?
@@ -152,18 +152,18 @@
 		{
 			// Make sure there's room enough for the keystroke
 			line = sem->line_cursor;
-			if (iEditChain_ensureLineLength(sem, sem->line_cursor->sourceCodePopulated + 1))
+			if (iEditChain_ensureLineLength(sem, sem->line_cursor->sourceCode_populatedLength + 1))
 			{
 				// They could've been beyond the end of line, and if so then we need to insert spaces between the end and here
-				if (sem->columnEdit > line->sourceCodePopulated)
+				if (sem->columnEdit > line->sourceCode_populatedLength)
 				{
 					// Fill with spaces
-					for (lnI = line->sourceCodePopulated; lnI < sem->columnEdit; lnI++)
+					for (lnI = line->sourceCode_populatedLength; lnI < sem->columnEdit; lnI++)
 						line->sourceCode->data[lnI] = ' ';
 				}
 
 				// Move everything from the end of the line to where we are right one character
-				for (lnI = line->sourceCodePopulated + 1; lnI > sem->columnEdit && lnI > 0; lnI--)
+				for (lnI = line->sourceCode_populatedLength + 1; lnI > sem->columnEdit && lnI > 0; lnI--)
 					line->sourceCode->data[lnI] = line->sourceCode->data[lnI - 1];
 
 				// Insert the character
@@ -173,11 +173,11 @@
 				++sem->columnEdit;
 
 				// Increase the populated length
-				++line->sourceCodePopulated;
+				++line->sourceCode_populatedLength;
 
 				// If we're past the end, we need to indicate our populated line length
-				if (sem->columnEdit > line->sourceCodePopulated)
-					line->sourceCodePopulated = sem->columnEdit;
+				if (sem->columnEdit > line->sourceCode_populatedLength)
+					line->sourceCode_populatedLength = sem->columnEdit;
 
 				// Indicate success
 				return(true);
@@ -207,9 +207,9 @@
 		{
 			// Is there room to inject it?
 			line = sem->line_cursor;
-			if (iEditChain_ensureLineLength(sem, sem->line_cursor->sourceCodePopulated + 1))
+			if (iEditChain_ensureLineLength(sem, sem->line_cursor->sourceCode_populatedLength + 1))
 			{
-				if (sem->columnEdit > line->sourceCodePopulated)
+				if (sem->columnEdit > line->sourceCode_populatedLength)
 				{
 					// We need to insert it because we're at the end of the populated length
 					return(iEditChain_characterInsert(sem, asciiChar));
@@ -218,10 +218,10 @@
 					// We can overwrite it
 
 					// They could've been beyond the end of line, and if so then we need to insert spaces between the end and here
-					if (sem->columnEdit > line->sourceCodePopulated)
+					if (sem->columnEdit > line->sourceCode_populatedLength)
 					{
 						// Fill with spaces
-						for (lnI = line->sourceCodePopulated; lnI < sem->columnEdit; lnI++)
+						for (lnI = line->sourceCode_populatedLength; lnI < sem->columnEdit; lnI++)
 							line->sourceCode->data[lnI] = ' ';
 					}
 
@@ -232,8 +232,8 @@
 					++sem->columnEdit;
 
 					// If we're past the end, we need to indicate our populated line length
-					if (sem->columnEdit > line->sourceCodePopulated)
-						line->sourceCodePopulated = sem->columnEdit;
+					if (sem->columnEdit > line->sourceCode_populatedLength)
+						line->sourceCode_populatedLength = sem->columnEdit;
 
 					// Indicate success
 					return(true);
@@ -267,17 +267,17 @@
 			line = sem->line_cursor;
 
 			// If we're in the populated area
-			if (sem->columnEdit < line->sourceCodePopulated)
+			if (sem->columnEdit < line->sourceCode_populatedLength)
 			{
 				// Move everything left one character
-				for (lnI = sem->columnEdit; lnI < line->sourceCodePopulated; lnI++)
+				for (lnI = sem->columnEdit; lnI < line->sourceCode_populatedLength; lnI++)
 					line->sourceCode->data[lnI] = line->sourceCode->data[lnI + 1];
 
 				// Reduce the length of the populated portion of the line by one
-				--line->sourceCodePopulated;
+				--line->sourceCode_populatedLength;
 
 				// Put a space there
-				line->sourceCode->data[line->sourceCodePopulated] = 32;
+				line->sourceCode->data[line->sourceCode_populatedLength] = 32;
 
 				// Indicate success
 				return(true);
@@ -338,11 +338,11 @@
 		if (ec && ec->sourceCode && ec->sourceCodeOriginal)
 		{
 			// Test lengths
-			if (ec->sourceCodePopulated != ec->sourceCodeOriginal->length)
+			if (ec->sourceCode_populatedLength != ec->sourceCodeOriginal->length)
 				return(true);		// They are different lengths
 
 			// Test content
-			if (memcmp(ec->sourceCode->data, ec->sourceCodeOriginal->data, ec->sourceCodePopulated) != 0)
+			if (memcmp(ec->sourceCode->data, ec->sourceCodeOriginal->data, ec->sourceCode_populatedLength) != 0)
 				return(true);		// The content is different
 		}
 		// If we get here, not changed

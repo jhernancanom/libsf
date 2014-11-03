@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/compiler_structs.h
+// /libsf/source/vjr/compiler/vxb/structs.h
 //
 //////
 // Version 0.54
@@ -82,27 +82,6 @@ struct SCompileNote;
 		void*			extra;					// For future expansion
 	};
 
-	// Structure to search for things
-	struct SAsciiCompSearcher
-	{
-		const s8*		keyword;										// Text keyword being searched
-		s32				length;											// Length of the keyword (negative for case sensitive, positive case insensitive, 0 for termination entry)
-		bool			repeats;										// Can this item repeat?  Or is this a one-shot keyword?
-		s32				iCode;											// An associated code to store when this entry is found
-		bool			firstOnLine;									// Should this item ONLY be the first on line?
-		s32				iCat;											// This entry's general category (function, operator, keyword, flow)
-
-		// For syntax highlighting
-		SBgra*			syntaxHighlightColor;							// Color to display this component in
-		bool			useBoldFont;									// Should this be bolded?
-
-		// An optional extra callback to parse on finds
-		union {
-			u32			_onFind;
-			void		(*onFind)(SAsciiCompSearcher* tacs, SComp* comp);
-		};
-	};
-
 	struct SFunction
 	{
 		SFunction*		next;											// Next function in the chain
@@ -129,7 +108,6 @@ struct SCompileNote;
 		u32				sourceLineCount;								// Raw source lines, blank, comment, or otherwise
 		u32				blankLineCount;									// Only blank lines, or lines that only have whitespaces
 		u32				commentLineCount;								// Lines with comments
-
 		u32				functionCount;									// Hard function or procedure definitions
 		u32				methodCount;									// Methods in class code (in any form, ?CX or source code)
 		u32				paramsCount;									// Number of declared parameters
@@ -138,9 +116,13 @@ struct SCompileNote;
 		u32				returnsCount;									// Number of return variables
 		u32				adhocsCount;									// Number of adhoc functions
 		u32				flowofsCount;									// Number of flowof functions
-
 		u32				errorCount;										// Number of errors
 		u32				warningCount;									// Number of warnings
+
+		// Pointers
+		SFunction*		firstFunction;									// First stand-alone function
+		SFunction*		firstAdhoc;										// First stand-alone adhoc
+		SFunction*		firstFlowof;									// First flowof function
 	};
 
 	// Used during the the compile_Vxb() functions (so one parameter is passed rather than multiple)
@@ -152,7 +134,7 @@ struct SCompileNote;
 		SCompileStats	statsLocal;										// A dummy stats block we use if the compile requester did not send their own stats in
 		bool			processThisLine;								// Should this line be processed?
 
-		// While processing
+		// Parameters used while processing, calling sub-functions, etc.
 		SLine*			line;											// Current line
 		SComp*			comp;											// Current component on the current line
 
@@ -266,37 +248,6 @@ struct SCompileNote;
 			void*		extraData;										// General purpose data
 			SSubInstr*	opData;											// When used as for processing ops
 		};
-	};
-
-	// A component structure
-	struct SComp
-	{
-		SLL				ll;												// 2-way link list
-
-		// Information about the component
-		SLine*			line;											// The line this component relates to
-		s32				iCode;											// Refer to _ICODE_* constants
-		s32				iCat;											// Refer to _ICAT_* constants
-		SBgra*			color;											// Syntax highlight color
-		bool			useBoldFont;									// Syntax highlight font should be bold?
-		s32				start;											// Start into the indicates line's source code
-		s32				length;											// Length of the component
-		s32				nbspCount;										// Number of non-breaking-spaces in this component
-
-		// For each compilation pass, components can be marked in error or warning or both
-		bool			isError;										// Is this component part of an error?
-		bool			isWarning;										// Is this component part of a warning?
-
-		// For selected components
-		SBgra*			overrideSelectionBackColor;
-		SBgra*			overrideSelectionForeColor;
-
-		// If this is a character that matches something (the closest parenthesis, bracket, or brace) then this color will be populated
-		SBgra*			overrideMatchingForeColor;
-		SBgra*			overrideMatchingBackColor;
-
-		// For faster rendering in source code windows
-		SBmpCache*		bc;												// Holds drawn things (casks for example)
 	};
 
 	struct SCompCallback

@@ -97,7 +97,7 @@
 		}
 
 		// Flag the component
-		if (comp && comp->line && comp->line->sourceCode && comp->line->sourceCode->data && comp->line->sourceCodePopulated != 0)
+		if (comp && comp->line && comp->line->sourceCode && comp->line->sourceCode->data && comp->line->sourceCode_populatedLength != 0)
 		{
 			// Flag it for error
 			comp->isError = true;

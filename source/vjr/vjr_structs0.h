@@ -324,6 +324,87 @@ struct SBaseclassList
 
 	union {
 		u32				_objProps;
-		SObjPropertyMap*	objProps;										// Root property map for this object
+		SObjPropertyMap*	objProps;									// Root property map for this object
 	};
+};
+
+struct SAsciiCompSearcher
+{
+	cs8*		keyword;												// Text keyword being searched
+	s32			length;													// Length of the keyword (negative for case sensitive, positive case insensitive, 0 for termination entry)
+	bool		repeats;												// Can this item repeat?  Or is this a one-shot keyword?
+	s32			iCode;													// An associated code to store when this entry is found
+	bool		firstOnLine;											// Should this item ONLY be the first on line?
+	s32			iCat;													// This entry's general category (function, operator, keyword, flow)
+
+	// For syntax highlighting
+	SBgra*		syntaxHighlightColor;									// Color to display this component in
+	bool		useBoldFont;											// Should this be bolded?
+
+	// An optional extra callback to parse on finds
+	union {
+		u32		_onFind;
+		void	(*onFind)(SAsciiCompSearcher* tacs, SComp* comp);
+	};
+};
+
+struct SCompiler;
+struct SBreakpoint;
+struct SExtraInfo;
+
+struct SLine
+{
+	SLL				ll;												// Link list throughout
+	u32				uid;											// Unique id for this line, used for undos and identifying individual lines which may move about (note this value must be isolated and separate from ll.uniqueId)
+
+	// Line information
+	u32				lineNumber;										// This line's number
+	bool			isNewLine;										// If the line's been added during normal editing
+	SDatum*			sourceCodeOriginal;								// The original sourceCode when the line was first created, or last saved (note the length here is the total length as this value does not change, but is setup exactly when it is updated)
+	SDatum*			sourceCode;										// The text on this line is LEFT(sourceCode.data, sourceCodePopulated)
+	s32				sourceCode_populatedLength;						// The actual populated length of sourceCode, which may differ from sourceCode.length (which is the allocated length fo sourceCode.data)
+
+	// Each render, these are updated
+	u32				renderId;										// Each time it's rendered, this value is set
+	RECT			rcLastRender;									// The rectangle within the parent of the last render
+
+	// Compiler information (see compiler.cpp)
+	bool			forceRecompile;									// A flag that if set forces a recompile of this line
+	SCompiler*		compilerInfo;									// Information about the last time this line was compiled
+	SCompiler*		compilerInfoLast;								// Used during edit-and-continue compilation
+
+	// General purpose extra data
+	SBreakpoint*	breakpoint;										// If there's a breakpoint here, what kind?
+	SExtraInfo*		extra_info;										// Extra information about this item in the chain
+};
+
+// Structure of parsed components on a line, tokens by another name
+struct SComp
+{
+	SLL				ll;												// 2-way link list
+
+	// Information about the component
+	SLine*			line;											// The line this component relates to
+	s32				iCode;											// Refer to _ICODE_* constants
+	s32				iCat;											// Refer to _ICAT_* constants
+	SBgra*			color;											// Syntax highlight color
+	bool			useBoldFont;									// Syntax highlight font should be bold?
+	s32				start;											// Start into the indicates line's source code
+	s32				length;											// Length of the component
+	s32				nbspCount;										// Number of non-breaking-spaces in this component
+
+	// For each compilation pass, components can be marked in error or warning or both
+	bool			isError;										// Is this component part of an error?
+	bool			isWarning;										// Is this component part of a warning?
+
+	// For selected components
+	SBgra*			overrideSelectionBackColor;
+	SBgra*			overrideSelectionForeColor;
+
+	// If this is a character that matches something (the closest parenthesis, bracket, or brace) then this color will be populated
+	SBgra*			overrideMatchingForeColor;
+	SBgra*			overrideMatchingBackColor;
+
+	// For faster rendering in source code windows
+	SBmpCache*		bc;												// Holds drawn things (casks for example)
 };

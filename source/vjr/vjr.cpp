@@ -333,7 +333,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iSEM_navigateToEndLine(command_editbox->p.sem, command_editbox);
 
 		// Make sure there's a blank line at the end
-		if (command_editbox->p.sem->line_cursor->sourceCodePopulated != 0)
+		if (command_editbox->p.sem->line_cursor->sourceCode_populatedLength != 0)
 		{
 			iSEM_appendLine(command_editbox->p.sem, NULL, 0, false);
 			iSEM_navigateToEndLine(command_editbox->p.sem, command_editbox);

@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/compiler_globals.h
+// /libsf/source/vjr/compiler/vxb/globals.h
 //
 //////
 // Version 0.54
@@ -36,122 +36,13 @@
 
 
 //////////
-// Syntax highlight colors
+// Syntax highlight colors for VXB
 //////
-	SBgra			colorSynHi_comment1					= { rgba(0, 148, 0, 255) };				// Green
-	SBgra			colorSynHi_comment2					= { rgba(148, 64, 148, 255) };			// Green+Cyan
-	SBgra			colorSynHi_comment3					= { rgba(148, 64, 148, 255) };			// Dark purple
-	SBgra			colorSynHi_function					= { rgba(164, 128, 0, 255) };			// Golden
-	SBgra			colorSynHi_command					= { rgba(64, 128, 245, 255) };			// Pastel cyan-blue
-	SBgra			colorSynHi_logical					= { rgba(200, 148, 0, 255) };			// Orange
-	SBgra			colorSynHi_numeric					= { rgba(0, 128, 255, 255) };			// Cyan-blue
-	SBgra			colorSynHi_operator					= { rgba(128, 0, 164, 255) };			// Purplish
-	SBgra			colorSynHi_bracket					= { rgba(128, 0, 0, 255) };				// Red
-	SBgra			colorSynHi_pragmas					= { rgba(192, 192, 192, 255) };			// Gray
-	SBgra			colorSynHi_variable					= { rgba(255, 128, 0, 255) };			// Orange
 	SBgra			colorSynHi_dotVariable				= { rgba(0, 128, 192, 255) };			// Cyanish
-	SBgra			colorSynHi_ExclamationMarkVariable	= { rgba(0, 128, 192, 255) };			// Cyanish
-	SBgra			colorSynHi_quotedText				= { rgba(235, 128, 128, 255) };			// Reddish
+	SBgra			colorSynHi_exclamationMarkVariable	= { rgba(0, 128, 192, 255) };			// Cyanish
 	SBgra			colorSynHi_flag						= { rgba(164, 128, 0, 255) };			// Golden
 
 
-
-
-//////////
-// Basic symbols known to VXB
-/////
-	SAsciiCompSearcher	cgcFundamentalSymbols[] =
-	{
-		// keyword					length		repeats?	extra (type)							first on line?		category			syntax highlight color		syntax highlight bold		onFind()
-		// (||round params||)
-		{ cgcCaskRoundOpenParams,	3,			false,		_ICODE_CASK_ROUND_OPEN_PARAMS,			false,				_ICAT_CASK,			NULL,						false,						null	},
-		{ cgcCaskRoundCloseParams,	3,			false,		_ICODE_CASK_ROUND_CLOSE_PARAMS,			false,				_ICAT_CASK,			NULL,						false,						null	},
-		// [||square params||]null
-		{ cgcCaskSquareOpenParams,	3,			false,		_ICODE_CASK_SQUARE_OPEN_PARAMS,			false,				_ICAT_CASK,			NULL,						false,						null	},
-		{ cgcCaskSquareCloseParams,	3,			false,		_ICODE_CASK_SQUARE_CLOSE_PARAMS,		false,				_ICAT_CASK,			NULL,						false,						null	},
-		// <||triangle params||>null
-		{ cgcCaskTriangleOpenParams,3,			false,		_ICODE_CASK_TRIANGLE_OPEN_PARAMS,		false,				_ICAT_CASK,			NULL,						false,						null	},
-		{ cgcCaskTriangleCloseParams,3,			false,		_ICODE_CASK_TRIANGLE_CLOSE_PARAMS,		false,				_ICAT_CASK,			NULL,						false,						null	},
-		// ~||tilde params||~null
-		{ cgcCaskTildeOpenParams,	3,			false,		_ICODE_CASK_TILDE_OPEN_PARAMS,			false,				_ICAT_CASK,			NULL,						false,						null	},
-		{ cgcCaskTildeCloseParams,	3,			false,		_ICODE_CASK_TILDE_CLOSE_PARAMS,			false,				_ICAT_CASK,			NULL,						false,						null	},
-		// (|round|)null
-		{ cgcCaskRoundOpen,			2,			false,		_ICODE_CASK_ROUND_OPEN,					false,				_ICAT_CASK,			NULL,						false,						null	},
-		{ cgcCaskRoundClose,		2,			false,		_ICODE_CASK_ROUND_CLOSE,				false,				_ICAT_CASK,			NULL,						false,						null	},
-		// [|square|]null
-		{ cgcCaskSquareOpen,		2,			false,		_ICODE_CASK_SQUARE_OPEN,				false,				_ICAT_CASK,			NULL,						false,						null	},
-		{ cgcCaskSquareClose,		2,			false,		_ICODE_CASK_SQUARE_CLOSE,				false,				_ICAT_CASK,			NULL,						false,						null	},
-		// <|triangle|>null
-		{ cgcCaskTriangleOpen,		2,			false,		_ICODE_CASK_TRIANGLE_OPEN,				false,				_ICAT_CASK,			NULL,						false,						null	},
-		{ cgcCaskTriangleClose,		2,			false,		_ICODE_CASK_TRIANGLE_CLOSE,				false,				_ICAT_CASK,			NULL,						false,						null	},
-		// ~|tilde|~null
-		{ cgcCaskTildeOpen,			2,			false,		_ICODE_CASK_TILDE_OPEN,					false,				_ICAT_GENERIC,		NULL,						false,						null	},
-		{ cgcCaskTildeClose,		2,			false,		_ICODE_CASK_TILDE_CLOSE,				false,				_ICAT_GENERIC,		NULL,						false,						null	},
-		// Native characters and symbolsnull
-		// Note:  If it begins with an underscore, it then uses pairs of characters for a range until it reaches trailing nullsnull
-		{ "_azAZ\377\377__\000\000",1,			true,		_ICODE_ALPHA,							false,				_ICAT_GENERIC,		NULL,						false,						(u32)&ii_onFind_countNbsp	},
-		{ "_09\000\000",			1,			true,		_ICODE_NUMERIC,							false,				_ICAT_GENERIC,		&colorSynHi_numeric,		false,						(u32)&ii_onFind_countNbsp	},
-		{ " ",						1,			true,		_ICODE_WHITESPACE,						false,				_ICAT_GENERIC,		&colorSynHi_comment1,		false,						null	},
-		{ "\t",						1,			true,		_ICODE_WHITESPACE,						false,				_ICAT_GENERIC,		&colorSynHi_comment1,		false,						null	},
-		{ "___",					1,			false,		_ICODE_UNDERSCORE,						false,				_ICAT_GENERIC,		NULL,						false,						null	},
-		{ "(",						1,			false,		_ICODE_PARENTHESIS_LEFT,				false,				_ICAT_GENERIC,		&colorSynHi_bracket,		true,						null	},
-		{ ")",						1,			false,		_ICODE_PARENTHESIS_RIGHT,				false,				_ICAT_GENERIC,		&colorSynHi_bracket,		true,						null	},
-		{ "[",						1,			false,		_ICODE_BRACKET_LEFT,					false,				_ICAT_GENERIC,		&colorSynHi_bracket,		true,						null	},
-		{ "]",						1,			false,		_ICODE_BRACKET_RIGHT,					false,				_ICAT_GENERIC,		&colorSynHi_bracket,		true,						null	},
-		{ "{",						1,			false,		_ICODE_BRACE_LEFT,						false,				_ICAT_GENERIC,		&colorSynHi_bracket,		true,						null	},
-		{ "}",						1,			false,		_ICODE_BRACE_RIGHT,						false,				_ICAT_GENERIC,		&colorSynHi_bracket,		true,						null	},
-		{ "+",						1,			false,		_ICODE_PLUS,							false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
-		{ "-",						1,			false,		_ICODE_HYPHEN,							false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
-		{ "^",						1,			false,		_ICODE_EXPONENT,						false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
-		{ "/*",						2,			true,		_ICODE_COMMENT_START,					false,				_ICAT_GENERIC,		&colorSynHi_comment3,		false,						null	},
-		{ "*/",						2,			true,		_ICODE_COMMENT_END,						false,				_ICAT_GENERIC,		&colorSynHi_comment3,		false,						null	},
-		{ "*",						1,			true,		_ICODE_COMMENT,							true,				_ICAT_GENERIC,		&colorSynHi_comment1,		false,						null	},
-		{ "&&",						2,			false,		_ICODE_LINE_COMMENT,					false,				_ICAT_GENERIC,		&colorSynHi_comment2,		false,						null	},
-		{ "*",						1,			true,		_ICODE_ASTERISK,						false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
-		{ "\\",						1,			true,		_ICODE_SLASH,							false,				_ICAT_GENERIC,		NULL,						false,						null	},
-		{ "**",						2,			false,		_ICODE_EXPONENT,						false,				_ICAT_GENERIC,		NULL,						false,						null	},
-		{ "/",						1,			true,		_ICODE_BACKSLASH,						false,				_ICAT_GENERIC,		NULL,						false,						null	},
-		{ "\"",						1,			false,		_ICODE_DOUBLE_QUOTE,					false,				_ICAT_GENERIC,		NULL,						false,						null	},
-		{ "'",						1,			false,		_ICODE_SINGLE_QUOTE,					false,				_ICAT_GENERIC,		NULL,						false,						null	},
-		{ "..",						2,			false,		_ICODE_RANGE,							false,				_ICAT_GENERIC,		NULL,						false,						null	},
-		{ ".",						1,			false,		_ICODE_DOT,								false,				_ICAT_GENERIC,		NULL,						false,						null	},
-		{ ",",						1,			false,		_ICODE_COMMA,							false,				_ICAT_GENERIC,		&colorSynHi_bracket,		true,						null	},
-		{ ":",						1,			false,		_ICODE_COLON,							false,				_ICAT_GENERIC,		NULL,						false,						null	},
-		{ "_",						1,			false,		_ICODE_UNDERSCORE,						false,				_ICAT_GENERIC,		NULL,						false,						null	},
-		{ "~",						1,			false,		_ICODE_TILDE,							false,				_ICAT_GENERIC,		NULL,						false,						null	},
-		{ "@",						1,			false,		_ICODE_AT_SIGN,							false,				_ICAT_GENERIC,		NULL,						false,						null	},
-		{ "?",						1,			false,		_ICODE_QUESTION_MARK,					false,				_ICAT_GENERIC,		NULL,						false,						null	},
-		{ "!$",						2,			false,		_ICODE_NOT_FOUND_IN,					false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
-		{ "!=",						2,			false,		_ICODE_NOT_EQUAL,						false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
-		{ "!",						1,			false,		_ICODE_EXCLAMATION_POINT,				false,				_ICAT_GENERIC,		&colorSynHi_logical,		true,						null	},
-		{ "#define",				7,			false,		_ICODE_DEFINE,							true,				_ICAT_GENERIC,		&colorSynHi_pragmas,		false,						null	},
-		{ "#",						1,			false,		_ICODE_POUND_SIGN,						false,				_ICAT_GENERIC,		&colorSynHi_operator,		false,						null	},
-		{ "$",						1,			false,		_ICODE_FOUND_IN,						false,				_ICAT_GENERIC,		&colorSynHi_operator,		false,						null	},
-		{ "%",						1,			false,		_ICODE_PERCENT_SIGN,					false,				_ICAT_GENERIC,		&colorSynHi_operator,		false,						null	},
-		{ "&",						1,			false,		_ICODE_AMPERSAND,						false,				_ICAT_GENERIC,		&colorSynHi_operator,		false,						null	},
-		{ "=<",						2,			false,		_ICODE_LESS_THAN_OR_EQUAL_TO,			false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
-		{ "=>",						2,			false,		_ICODE_GREATER_THAN_OR_EQUAL_TO,		false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
-		{ "==",						2,			false,		_ICODE_EXACTLY_EQUAL_TO,				false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
-		{ "=",						1,			false,		_ICODE_EQUAL_SIGN,						false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
-		{ "|",						1,			false,		_ICODE_PIPE_SIGN,						false,				_ICAT_GENERIC,		&colorSynHi_operator,		false,						null	},
-		{ "`",						1,			false,		_ICODE_REVERSE_QUOTE,					false,				_ICAT_GENERIC,		NULL,						false,						null	},
-		{ ";",						1,			false,		_ICODE_SEMICOLON,						false,				_ICAT_GENERIC,		NULL,						false,						null	},
-		{ "<<=",					3,			false,		_ICODE_SHIFT_LEFT_ASSIGNMENT,			false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
-		{ "<<",						2,			false,		_ICODE_SHIFT_LEFT,						false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
-		{ ">>=",					3,			false,		_ICODE_SHIFT_RIGHT_ASSIGNMENT,			false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
-		{ ">>",						2,			false,		_ICODE_SHIFT_RIGHT,						false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
-		{ "<=",						2,			false,		_ICODE_LESS_THAN_OR_EQUAL_TO,			false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
-		{ ">=",						2,			false,		_ICODE_GREATER_THAN_OR_EQUAL_TO,		false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
-		{ "<>",						2,			false,		_ICODE_NOT_EQUAL,						false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
-		{ ">",						1,			false,		_ICODE_GREATER_THAN,					false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
-		{ "<",						1,			false,		_ICODE_LESS_THAN,						false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
-		{ "++",						2,			false,		_ICODE_PLUS_PLUS,						false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
-		{ "--",						2,			false,		_ICODE_MINUS_MINUS,						false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
-
-		/* As a last-case condition, we tag every character that we didn't previously identify with the unknown tag */
-		{ "_\000\377\000\000",		1,			true,		_ICODE_UNKNOWN,							false,				_ICAT_GENERIC,		NULL,						false,						null	 },
-		{ 0,						0,			0,			0,										0,					0,					0,							0,							null	 }
-	};
 
 
 //////////
@@ -160,6 +51,13 @@
 	SAsciiCompSearcher	cgcKeywordKeywords[] =
 	{
 		// keyword					length		repeats?	extra (type)							first on line?		category			syntax highlight color		syntax highlight bold
+		// Reinterpet previously parsed forms to others
+		{ "*",						1,			true,		_ICODE_COMMENT,							true,				_ICAT_GENERIC,		&colorSynHi_comment1,		false,						null	},
+		{ "&&",						2,			false,		_ICODE_LINE_COMMENT,					false,				_ICAT_GENERIC,		&colorSynHi_comment2,		false,						null	},
+		{ "$",						1,			false,		_ICODE_FOUND_IN,						false,				_ICAT_GENERIC,		&colorSynHi_operator,		false,						null	},
+		{ "!$",						2,			false,		_ICODE_NOT_FOUND_IN,					false,				_ICAT_GENERIC,		&colorSynHi_operator,		true,						null	},
+		{ "#",						1,			false,		_ICODE_NOT_EQUAL,						false,				_ICAT_GENERIC,		&colorSynHi_operator,		false,						null	},
+
 		// Functions
 		{ "abs",					3,			false,		_ICODE_ABS,								false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
 		{ "aclass",					6,			false,		_ICODE_ACLASS,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null },
@@ -680,7 +578,7 @@
 		{ "decimals",				8,			false,		_ICODE_DECIMALS,						false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null },
 		{ "declare",				7,			false,		_ICODE_DECLARE,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null },
 		{ "default",				7,			false,		_ICODE_DEFAULT,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null },
-		{ "define",					6,			false,		_ICODE_DEFINE,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null },
+		{ "define",					6,			false,		_ICODE_DEFINE_PRAGMA,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null },
 		{ "delete",					6,			false,		_ICODE_DELETE,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null },
 		{ "deleted",				7,			false,		_ICODE_DELETED,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null },
 		{ "delimiters",				10,			false,		_ICODE_DELIMITERS,						false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null },
