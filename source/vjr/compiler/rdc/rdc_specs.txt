@@ -1,0 +1,497 @@
+Nov.03.2014 -- Early draft.  Incomplete.  Inconsistent.
+
+RDC Specifications Document
+---------------------------
+
+1.0 - Reserved Keywords
+-----------------------
+
+	void		-- An unspecified type
+	bool		-- 8-bit boolean quantity which explicitly tests 0 for false, all others true
+	char		-- 8-bit signed quantity
+	short		-- 16-bit signed quantity
+	int			-- 32-bit signed quantity
+	long		-- 64-bit signed quantity
+	float		-- 32-bit floating point
+	double		-- 64-bit floating point
+
+	const,ro	-- Augments a type to indicate it is read-only
+	rw			-- Augments a type to explicitly indicate it is read-write
+	volatile	-- Augments a type to indicate it is to be coded as conveyed
+	unsigned	-- Augments char, short, int, long to make it unsigned
+	static		-- Augments a definition to make it a singleton
+	extern		-- Augments a type to indicate its body is populated elsewhere
+	sizeof		-- Returns the size of a type
+	offsetof	-- Returns the offset of a type
+
+	s8,u8		-- Signed and unsigned 8-bit quantities
+	s16,u16		-- Signed and unsigned 16-bit quantities
+	s32,u32		-- Signed and unsigned 32-bit quantities
+	s64,u64		-- Signed and unsigned 64-bit quantities
+	f32,f64		-- 32-bit and 64-bit floating points
+
+	bi			-- Arbitrary precision big integer, defaults to 128 bits
+	bfp			-- Arbitrary precision floating point, defaults to 256 bits
+	datum		-- An explicitly allocated piece of data with a pointer and length
+	date		-- A date with year, month, day
+	datetime	-- A datetime with year, month, day, hour, minute, second, millisecond
+	thread		-- A thread variable
+
+	NULL		-- A constant pointer to 0
+	null		-- A constant integer value of 0
+	true		-- Sets a bool to 0xff
+	false		-- Sets a bool to 0x00
+
+	and			-- A verbose form of &&
+	or			-- A verbose form of ||
+	not			-- A verbose form of !
+
+	#define		-- Pragma definition of a token or macro
+	#undefine	-- Pragma un-definition of a token
+	#if			-- Pragma logic test for conditionally compiled code
+	#ifdef		-- Pragma logic test for the existence of a token
+	#ifndef		-- Pragma logic test for the non-existence of a token
+	#else		-- Pragma logic test for conditionally compiled code
+	#elseif		-- Pragma logic test for conditionally compiled code
+	#endif		-- Pragma termination of a conditional test block
+	#align		-- An alignment directive
+	#push		-- Pushes a token value onto the stack
+	#pop		-- Pops a token value from the stack
+	typedef		-- Typedefs one type to another name
+
+	struct		-- A structure definition
+	class		-- A class definition
+	operator	-- An operator override definition
+	extends		-- A class extends another class (can extend multiple simultaneously)
+	parent		-- A reference to the immediate parent in an inheritance chain
+	child		-- A reference to the immediate child in an inheritance chain
+	union		-- A merging of two or more types
+	enum		-- An enumeration of items
+	new			-- Creates an instance of a class
+	delete		-- Deltes an instance of a class
+
+	adhoc		-- Declares an adhoc
+	function	-- Declares a function
+	params		-- Declares input paramaters
+	returns		-- Declares return values
+	inline		-- Provides an optimization hint
+	optimize	-- Provides an optimization level hint (0=none)
+	nodebug		-- Declares that a function should not be entered on single-step debugging
+	breakpoint	-- Code execution will trap to the debugger if connected, ignored otherwise
+
+	do			-- Loop which always enters once, requires trailing while test
+	while		-- Conditionally tests loop logic and continues in the loop if true
+	until		-- Conditionally tests loop logic and continues in the loop if false
+	iterate		-- Repeat a task a specified number of times
+	for			-- A for loop
+	unless		-- A conditional test on false
+	if			-- A conditional test on true
+	else		-- An else clause on an if or unless
+	elseif		-- An elseif clause on an if or unless
+	switch		-- A switch statement
+	case		-- A member test of a switch statement
+	mefa,meta	-- Called on logic test results, mefa=false, meta=true
+	exit		-- Exits the application explicitly
+
+	in			-- Create a new thread
+	andin		-- Create an additional new thread
+	out			-- Leave a thread
+	join		-- Joins the current thread to one or more other threads before continuing
+	timeout		-- Called for each join-attempted thread that did not out before timeout
+	okay		-- Called if threads join successfully before the timeout
+
+	engage		-- Launches another process
+	unengage	-- Explicitly ends a running process launched with engage
+
+	default		-- In a switch statement, specifies the unspecified operation
+	break		-- Breaks the current loop
+	breakto		-- Breaks to the indicated level
+	continue	-- Continues to the current level
+	continueto	-- Continues to the indicated level
+	exit		-- A pseudonym for break
+	exitto		-- A pseudonym for breakto
+	loop		-- A pseudonym for continue
+	loopto		-- A pseudonym for continueto
+	goto		-- Goes to the indicated label or named block
+	return		-- Returns from a called function and optionally explicitly returns
+				   one or more of the following:  a value or values, a meia, and mema.
+
+	flow		-- A structured flow control block
+	flowout		-- Exit a structured flow control block 
+	flowoutto	-- Exit a structured flow control block to an indicated level
+	flowto		-- Flow to a member of a structured flow control block
+	subflow		-- Defines a subflow member of a strutured flow control block
+	meia		-- Called on an inquiry
+	mema		-- Called on receipt of a particular message
+
+	flowof		-- Defines a function to be a flow of another function
+	super		-- Executes commands from the parent's point of view (as in "super return;")
+
+2.0 - Program Execution
+-----------------------
+
+	main() is the top level function for creating a console-based application.
+	main() is defined as int main(int argc, char* argv[]);.
+
+	dllmain() is the top level function for creating a DLL.
+	dllmain() is defined as bool dllmain(u32 instance, u32 callType);
+
+	For backward compatibility other definitions of dllmain() may also exist.
+
+	At startup, an application compiled with RDC will go through these stages:
+		(1) Self-initialization of global/static memory variables/enums to default values.
+		(2) Link to all required DLLs.
+		(3) Call dllmain() in sequence for each loaded DLL.
+		(3) Call main().
+	
+
+3.0 - Assignment Operations
+---------------------------
+
+	All values descending in size are sign-saturated to the lesser size.
+	All values ascending in size are sign-extended to the greater size.
+	All global variables are initialized to their explicit value, or 0s, before main() is called.
+	All signed and unsigned values becoming a float or double will convert as closely as possible.
+	All float or double values becoming a signed or unsigned value will round.
+	All assignments will be done with = or :=.
+
+4.0 - Comparison Operations
+---------------------------
+
+	All signed compares of equal size will be compared as signed values.
+	All unsigned compares of equal size will be compared as unsigned values.
+
+	All signed/unsigned compares will be compared thusly:
+		(1) Signed is bigger, unsigned is upsized to signed's size, and compared.
+		(2) Unsigned is bigger, unsigned and signed are both upsized to unsigned's
+		    larger, and compared.
+
+	All float and signed or unsigned compares will be converted to float and compared.
+	All double and signed or unsigned compares will be converted to double and compared.
+	All non-bool values used for logic will be compared explicitly against 0 for false.
+
+	Comparison operators:
+		(1) ==, tests for equal
+		(2) >=, tests for greater than or equal to
+		(3) <=, tests for less than or equal to
+		(4) >, tests for greater than
+		(5) <, tests for less than
+		(6) !=, tests for not equal
+		(7) !>=, tests for not greater than or equal to
+		(8) !<=, tests for not less than or equal to
+		(9) !>, tests for not greater than
+		(10) !<, tests for not less than
+		(11) $, found in (comparing one datum to another)
+		(12) !$, not found in (comparing one datum to another)
+
+5.0 - Thread Operations
+-----------------------
+
+	RDC will use OS services to create threads using the in {...} andin {...} syntax.
+	Example:
+
+		s64 lnMilliseconds;
+		s32 sum1, sum2, sum3;
+		thread t1, t2, t3;
+
+
+		//////////
+		// Launch three threads running sumPiDigits()
+		//////
+			in t1 {
+				sum1 = sumPiDigits();
+
+			} andin t2 {
+				sum2 = sumPiDigits();
+
+			} andin t3 {
+				sum3 = sumPiDigits();
+
+			} meia(thread* t) {
+				// Called on inquiry if t1, t2, or t3 are already engaged
+			}
+			printf("Threads launched:\nT1: %u\nT2: %u\nT3: %u\n", t1.id, t2.id, t3.id);
+
+
+		//////////
+		// Create two adhoc functions for our join results
+		//////
+			adhoc myTimeout
+			| params thread* t, void* data;
+			{
+				allThreadsCompleted = true;
+				printf("Thread %u timed out!\n", t->id);
+			}
+
+			adhoc allGood
+			| params void;
+			{
+				printf("All threads completed okay.\n")
+			}
+
+
+		//////////
+		// Join with those threads before continuing
+		//////
+			lnMilliseconds = join(t1, t2, t3)::okay(allGood)::timeout(10, myTimeout, NULL);
+
+
+	Each thread will execute the code within, which can call other functions, etc.
+	Thread execution will automatically end when its closing brace is reached.
+	To explicitly exit a thread at any point, use the out keyword.
+
+6.0 - Unions and Anonymous Unions
+---------------------------------
+
+	Unions and anonymous unions can be declared at any point a variable is declared in RDC.
+	This includes function parameter declarations.  The keyword union is not required.
+
+		function printEncoding
+		| returns u32 r1;
+		| params union {u32 iValue, f32 fValue}, bool* equal;
+		{
+			printf("The value %f in hex %x\n", fValue, iValue);
+			*equal = ((int)fValue == iValue);
+			return(iValue);
+		}
+
+		// The above would be the same as without the union keyword:
+
+		function printEncoding
+		| returns u32 r1;
+		| params {u32 iValue, f32 fValue}, bool* equal;
+		{
+			printf("The value %f in hex %x\n", fValue, iValue);
+			*equal = ((int)fValue == iValue);
+			r1 = iValue;
+		}
+
+7.0 - Multiple Return Parameters
+--------------------------------
+
+	Functions can return multiple parameters.  As with input parameters being
+	comma-delimited, so are return parameters.
+
+		int r1, r2;
+
+		r1, r2 = myFunction(int a, int b);
+
+		function myFunction
+		| returns int r1, int r2;
+		| params int a, int b;
+		{
+			// Code for the function goes here
+		}
+
+8.0 - Flow Blocks
+-----------------
+
+	Flow blocks allow program logic to be removed from its deeply nested location, and
+	moved to a documented location, allowing the mechanics of the underlying logic to be
+	hidden from the overall big-picture view of the algorithm.  This is useful in
+	maintenance and debugging.
+
+	Flow blocks also allow for structured programming to exist in logic cases where
+	spaghetti code would otherwise only be possible without complexity in navigating
+	through the various levels.
+
+		flow name
+		| int ret1;
+		{
+			// Code for the normal operation goes here
+			flowto sampleCallAndExit;
+			ret1 = sampleCallAndReturnValue(1,2);
+
+			// To explicitly flow out of the flow block at any time:
+			flowout;
+
+
+		} always before {
+			// Code to execute always before the flow
+
+
+		} always after {
+			// Code to execute always after the flow
+
+
+		} subflow sampleCallAndReturnValue
+			| returns int r;
+			| params int a, int b;
+			{
+				// Code for the subflow goes here
+				// Control will automatically return when it reaches the closing brace
+				// To explicitly return:
+				return;
+
+				// To explicitly return completely out of the flow block:
+				super return;
+
+				// To explicitly flow out of the flow block:
+				flowout;
+
+
+		} subflow sampleCallAndExit {
+			// Code for the subflow goes here
+			// Control will automatically exit when it reaches the closing brace
+
+
+		} meia name {
+			// Code for meia goes here (inquiry, a type of exception)
+
+
+		} mema name {
+			// Code for mema goes here
+		}
+
+9.0 - Flowof Functions
+----------------------
+
+	Flowof functions are functions which take code from another function and move it
+	into a new location, but one which completely inherits the parameter, local, and
+	variable environment of its parent.
+
+	Like flow blocks, flowof functions are designed to remove complex logic from an
+	otherwise nested flow, and place it in a manageable location leaving only a useful
+	name "stub" at its previous location, yet without changing the environment of its
+	symbols and defined parameters and variables.
+
+		function xyz
+		| returns int r1, int r2;
+		| params int x, int y;
+		{
+			int a, b;
+
+			abc();
+			def();
+
+			printf("a=%d, b=%d\n", a, b);
+			// Implicit return, but abc() have already set r1, r2
+		}
+
+		function abc flowof xyz
+		{
+			// Declare our own local variables
+			int a, j;	// a's definition here hides a above
+
+			// Able to access the variables from xyz
+			a       = 5 * x;  // Local assignment
+			super.a = a;      // Parent's a is still accessible as super.a
+
+            j       = a * 4;
+			b       = 9 * y;
+			r1      = 3 * j;
+			r2      = 14 * j;
+		}
+
+		function def flowof xyz
+		{
+			int t;		// Declare our own local variables
+
+			t = a;		// Store a to t temporarily
+			a = b;		// Set a to b from above
+			b = t;		// Set b to t
+		}
+
+10.0 - Casks
+------------
+
+	Casks allow injection of code at locations which are otherwise syntactically correct.
+	Casks can also define things, and act conditionally based upon logic tests.  In their
+	text-based form they are somewhat difficult to wield.  When presented within an RDC
+	graphical editor, however they become a graphical construct conveying additional
+	meaning and isolation unto to the eye.
+
+		(|reference|)			-- Refers to something which already exists
+		[|definition|]			-- Defines a new thing
+		<|logic|>				-- Acts based on a logic test
+		~|utility|~				-- Injects arbitary code
+
+	Casks can also have return and input parameters.
+
+		(||return|cask|)		-- An example of where return parameters go
+		(|cask|input||)			-- An example of where input parameters go
+		(||return|cask|input||)	-- An example with both return and input parameters
+
+	Definition casks define their thing in cask form:
+
+		[||int r1, int r2|function xyz|int a, int b||]
+		{
+			// Code goes here
+		}
+
+		same as:
+		function xzy
+		| returns int r1, int r2;
+		| params int a, int b;
+		{
+			// Code goes here
+		}
+
+	Logic test casks perform tests for execution:
+		<||test|if true|if false||>		&& Equivalent to ((test) ? if true : if false);
+
+	Utility casks allow arbitary code injection:
+		~|code goes here|~
+
+	Executing multiple bits of code:
+		~|code goes here; more code; more code;|~
+
+	Executing intermixed code and called functions:
+		~|code here; someFunction(); more code; etc...|~
+
+11.0 - The Class
+----------------
+
+	RDC defines the class with multiple-inheritance, constructors, destructors,
+	operator overrides, and member overloading.  All members are public, and the
+	keywords new and delete are used to create a class instance, and delete the
+	same.
+
+		class name extends class1, class2, class3, ... classN
+		{
+		}
+
+	Parent or inherited class member functions which are overridden by child members
+	can be referenced from within member class functions using the syntax:
+
+		class1->member();		// Accesses explicitly named member function
+		super->member();		// Accesses immediate parent member function
+
+	The order in the above example will be name, class1, class2, class3, ... classN.
+
+12.0 - Function Overloading and Name Attributifying
+---------------------------------------------------
+
+	RDC allows for function overloading and wil not use mangled names, but instead will
+	attach attributes of the function form to the name as a postfix adjustment to the
+	normal function or adhoc name.
+
+	The format will be the types in order from left-most return to right-most parameter,
+	with pointers appending the suffix p and pointer-to-pointers appending the suffix pp:
+
+		function name
+		| returns int r1, float r2
+		| params char p1, int* p2, double** p3
+		{
+			// Code goes here
+		}
+
+	The attributified name would be name__int_float_char_intp_doublepp().  If custom
+	structs or classes are referenced, they are included by name as well.  If a typedef
+	is in effect, the typdef name is included as is.
+
+		function name
+		| returns CAbc* abc
+		| params SMyStruct* ms, SBgra bgra
+		{
+			// Code goes here
+		}
+
+	The attributified name would be name__cabsp_smystructp_sbgra().  In this way,
+	external applications can link directly to the function knowing exactly the input
+	types, and there is never any ambiguity as to the expected input parameters.
+
+13.0 - Edit-and-continue ABI
+----------------------------
+
+	
