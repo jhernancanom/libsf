@@ -250,7 +250,7 @@
 		//////////
 		// Translate sequences to known keywords
 		//////
-			iComps_translateToOthers((SAsciiCompSearcher*)&cgcKeywordKeywords[0], line);
+			iComps_translateToOthers((SAsciiCompSearcher*)&cgcKeywordsVxb[0], line);
 
 
 		//////////

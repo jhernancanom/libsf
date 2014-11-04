@@ -268,7 +268,7 @@
 						//////////
 						// Translate sequences to known keywords
 						//////
-							iComps_translateToOthers(&cgcKeywordKeywords[0], vxb->line);
+							iComps_translateToOthers(&cgcKeywordsVxb[0], vxb->line);
 
 
 						//////////
@@ -1050,10 +1050,13 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Search the haystack for the needle, the haystack can be tupels, as in "_az" meaning
 // (is it between "a" and "z" inclusive?)  To set this condition, use a length of 1,
 // a leading "_" in tcHaystack, and two characters (one of which must NOT be NULL) after.
+//
 // Examples:
 //		_az		= lower-case a to z inclusive
 //		_AZ		= upper-case a to z inclusive
 //		_09		= numeric 0 to 9 inclusive
+//
+// Note:  If length is negative, it is a signed compare.
 //
 // Returns:
 //		0		= matches

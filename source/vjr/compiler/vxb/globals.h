@@ -48,10 +48,10 @@
 //////////
 // Keywords for VXB
 //////
-	SAsciiCompSearcher	cgcKeywordKeywords[] =
+	SAsciiCompSearcher	cgcKeywordsVxb[] =
 	{
 		// keyword					length		repeats?	extra (type)							first on line?		category			syntax highlight color		syntax highlight bold
-		// Reinterpet previously parsed forms to others
+		// Reinterpret previously parsed forms to others
 		{ "*",						1,			true,		_ICODE_COMMENT,							true,				_ICAT_GENERIC,		&colorSynHi_comment1,		false,						null	},
 		{ "&&",						2,			false,		_ICODE_LINE_COMMENT,					false,				_ICAT_GENERIC,		&colorSynHi_comment2,		false,						null	},
 		{ "$",						1,			false,		_ICODE_FOUND_IN,						false,				_ICAT_GENERIC,		&colorSynHi_operator,		false,						null	},
