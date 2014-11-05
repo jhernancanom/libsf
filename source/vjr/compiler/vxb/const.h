@@ -876,7 +876,9 @@
 	const s32       _ICODE_EXTENDED                                 = 2104;
 	const s32       _ICODE_EXTERNAL                                 = 2105;
 	const s32       _ICODE_FDOW                                     = 2106;
+	const s32		_ICODE_FELSEIF									= 2283;
 	const s32       _ICODE_FIELDS                                   = 2107;
+	const s32		_ICODE_FIF										= 2284;
 	const s32       _ICODE_FILES                                    = 2108;
 	const s32       _ICODE_FILL                                     = 2109;
 	const s32       _ICODE_FINALLY                                  = 2110;
@@ -1055,6 +1057,8 @@
 	// _ICODE_ELSE													= 2280;
 	// _ICODE_LESLE													= 2281;
 	// _ICODE_LESLEIF												= 2282;
+	// _ICODE_FELSEIF												= 2283;
+	// _ICODE_FIF													= 2284;
 
 
 //////////

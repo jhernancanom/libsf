@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/edit_chain.cpp
+// /libsf/source/vjr/sem_line.cpp
 //
 //////
 // Version 0.54

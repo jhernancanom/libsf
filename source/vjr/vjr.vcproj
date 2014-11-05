@@ -344,7 +344,7 @@
 				Name="editor"
 				>
 				<File
-					RelativePath=".\edit_chain.cpp"
+					RelativePath=".\sem.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -364,11 +364,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\edit_chain.h"
+					RelativePath=".\sem.h"
 					>
 				</File>
 				<File
-					RelativePath=".\edit_chain_manager.cpp"
+					RelativePath=".\sem_line.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -388,7 +388,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\edit_chain_manager.h"
+					RelativePath=".\sem_line.h"
 					>
 				</File>
 			</Filter>

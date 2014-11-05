@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/edit_chain_manager.h
+// /libsf/source/vjr/sem.h
 //
 //////
 // Version 0.54

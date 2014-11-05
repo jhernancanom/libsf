@@ -88,9 +88,10 @@ RDC Specifications Document
 	if			-- A conditional test on true
 	else		-- An else clause on an if or unless
 	elseif		-- An elseif clause on an
-	lif			-- A conditional test on true
-	lelse		-- An else clause on an if or unless
-	lelseif		-- An elseif clause on an if or unless
+	lif			-- A line conditional test on true which
+	lelseif		-- A line elseif clause on an if or unless
+	fif			-- A full conditional test on true which executes one line, no braces
+	felseif		-- A full elseif clause on an if or unless
 	switch		-- A switch statement
 	case		-- A member test of a switch statement
 	mefa,meta	-- Called on logic test results, mefa=false, meta=true

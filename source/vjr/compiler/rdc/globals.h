@@ -204,6 +204,8 @@
 		{ "lif",					3,			false,		_ICODE_LIF,								false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
 		{ "lelse",					5,			false,		_ICODE_LELSE,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
 		{ "lelseif",				7,			false,		_ICODE_LELSEIF,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
+		{ "fif",					3,			false,		_ICODE_FIF,								false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
+		{ "felseif",				7,			false,		_ICODE_FELSEIF,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
 		{ "switch",					6,			false,		_ICODE_SWITCH,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
 		{ "case",					4,			false,		_ICODE_CASE,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
 		{ "meta",					4,			false,		_ICODE_META,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
