@@ -89,7 +89,7 @@
 	cs32		_ICODE_ANDIN				= 200040;
 	cs32		_ICODE_OUT					= 200041;
 	cs32		_ICODE_TIMEOUT				= 200042;
-	cs32		_ICODE_OKAY					= 200043;
+	cs32		_ICODE_SUCCESS				= 200043;
 	cs32		_ICODE_ENGAGE				= 200044;
 	cs32		_ICODE_UNENGAGE				= 200045;
 	cs32		_ICODE_BREAK				= 200046;
@@ -199,6 +199,9 @@
 		{ "if",						2,			false,		_ICODE_IF,								false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
 		{ "else",					4,			false,		_ICODE_ELSE,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
 		{ "elseif",					6,			false,		_ICODE_ELSEIF,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
+		{ "lif",					3,			false,		_ICODE_LIF,								false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
+		{ "lelse",					5,			false,		_ICODE_LELSE,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
+		{ "lelseif",				7,			false,		_ICODE_LELSEIF,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
 		{ "switch",					6,			false,		_ICODE_SWITCH,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
 		{ "case",					4,			false,		_ICODE_CASE,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
 		{ "meta",					4,			false,		_ICODE_META,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
@@ -210,7 +213,7 @@
 		{ "out",					3,			false,		_ICODE_OUT,								false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
 		{ "join",					4,			false,		_ICODE_JOIN,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
 		{ "timeout",				7,			false,		_ICODE_TIMEOUT,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
-		{ "okay",					4,			false,		_ICODE_OKAY,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
+		{ "success",				7,			false,		_ICODE_SUCCESS,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
 
 		{ "engage",					6,			false,		_ICODE_ENGAGE,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },
 		{ "unengage",				8,			false,		_ICODE_UNENGAGE,						false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null },

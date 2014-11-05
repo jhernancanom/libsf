@@ -87,18 +87,21 @@ RDC Specifications Document
 	unless		-- A conditional test on false
 	if			-- A conditional test on true
 	else		-- An else clause on an if or unless
-	elseif		-- An elseif clause on an if or unless
+	elseif		-- An elseif clause on an
+	lif			-- A conditional test on true
+	lelse		-- An else clause on an if or unless
+	lelseif		-- An elseif clause on an if or unless
 	switch		-- A switch statement
 	case		-- A member test of a switch statement
 	mefa,meta	-- Called on logic test results, mefa=false, meta=true
-	exit		-- Exits the application explicitly
+	quit		-- Quits the application explicitly (calls OS's endProcess() function)
 
 	in			-- Create a new thread
 	andin		-- Create an additional new thread
 	out			-- Leave a thread
 	join		-- Joins the current thread to one or more other threads before continuing
 	timeout		-- Called for each join-attempted thread that did not out before timeout
-	okay		-- Called if threads join successfully before the timeout
+	success		-- Called if threads join successfully before the timeout
 
 	engage		-- Launches another process
 	unengage	-- Explicitly ends a running process launched with engage
@@ -143,8 +146,142 @@ RDC Specifications Document
 		(2) Link to all required DLLs.
 		(3) Call dllmain() in sequence for each loaded DLL.
 		(3) Call main().
-	
 
+2.1 - Function and Adhoc Definitions
+------------------------------------
+
+	RDC provides for functions, adhocs, and flowof functions (which are a special type of
+	function designed to abstract logic from a parent function).  In addition, RDC allows
+	for multiple return parameters.
+	
+	The general C/C++ syntax form is allowable.  RDC adds an additional syntax form
+	allowance:
+	
+		function nameOfFunction
+		| returns int x, int y, int z;
+		| params int a, int b, int c;
+		{
+			// Code goes here
+			
+			// Instead of issuing return(1,2,3), you can use:
+			x = 1;
+			y = 2;
+			z = 3;
+			
+			// An implicit return here will not result in an error
+		}
+	
+	Adhocs are special functions which can be declared near to some location which needs
+	to have its logic extracted.  They reference the local variable environment of where
+	they are defined, and also prvide for their own discreet additions.  As with flow {...}
+	blocks, issuing super return; will exit out of the parent function, and not out of
+	itself.  The general C/C++ syntax form is allowable here as well.  RDC adds an
+	additional syntax form allowance:
+	
+		function nameOfFunction
+		| returns int x;
+		| params int a, int b, int c;
+		{
+			// Some code can go here
+		
+			// Normal flow does not enter an adhoc
+			adhoc myAdhoc
+			| returns int x;	// x here hides nameofFunction's x return parameter
+			| params int a;		// a here hides nameOfFunction's a parameter
+			{
+				int b, c;		// b here hides nameOfFunction's b parameter
+								// c remains accessible
+				
+				b = (super.b + a + super.a) * c;
+				x = b * b;
+			}
+			
+			// An implicit return here will not result in an error
+			x = myAdhoc(a + b + c);
+		}
+
+2.2 - Flow Control
+------------------
+
+	RDC provides standard flow control mechanisms:
+	
+		do {
+				// Code always enters this loop at least once
+			} while (condition};	// Repeats while true
+			
+		do {
+				// Code here
+			} until (condition);	// Repeats while false
+			
+		while (condition) {
+				// Code only enters the loop if condition is initially true
+			}
+			
+		until (condition) {
+				// Code only enters the loop if condition is initially false
+			}
+			
+		int n = 10;
+		iterate (n) {
+				// Repeats the indicated number of times
+			}
+			
+		for (init; condition; incrementer) {
+				// Repeats until condition is false
+			}
+			
+		// If and unless can operate together
+		if (condition) {
+				// Flows here if condition is true
+			} else if (condition2) {
+				// Flows here if condition2 is true
+			} elseif (condition3) {
+				// Flows here if condition3 is true
+			} else unless (condition4) {
+				// Flows here if  condition4 is false
+			} else {
+				// If condition and condition2 were false, flows here
+			}
+			
+		unless (condition) {
+				// Flows here if condition is false
+			} else unless (condition2) {
+				// Flows here if condition2 is false
+			} else if (condition3) {
+				// Flows here if condition3 is true
+			} elseif (condition4) {
+				// Flows here if condition4 is true
+			} else  {
+				// Flows here otherwise
+			}
+			
+			// A line-if, does not require braces, executes each item on line
+				lif (condition)			command1; command2; command3;
+			lelseif (condition2)		command4; command5;
+			lelse						command6; command7; command8;
+			
+		switch (variable) {
+				case constant_test:
+					break;
+				case constant_test2:
+					break;
+				case constant..range:
+					break;
+				default:
+					// If nothing above matched, flows here
+					break;
+			}
+			
+		// A switch form based on logic tests
+		switch {
+				case condition:		// Perform a non-constant test
+					break;
+				case condition2:	// Perform a logic test
+					break;
+				default:
+					break;
+			}
+	
 3.0 - Assignment Operations
 ---------------------------
 
@@ -168,7 +305,7 @@ RDC Specifications Document
 
 	All float and signed or unsigned compares will be converted to float and compared.
 	All double and signed or unsigned compares will be converted to double and compared.
-	All non-bool values used for logic will be compared explicitly against 0 for false.
+	All non-bool values used for logic tests will be explicitly compared to 0 for false.
 
 	Comparison operators:
 		(1) ==, tests for equal
@@ -233,7 +370,7 @@ RDC Specifications Document
 		//////////
 		// Join with those threads before continuing
 		//////
-			lnMilliseconds = join(t1, t2, t3)::okay(allGood)::timeout(10, myTimeout, NULL);
+			lnMilliseconds = join(t1, t2, t3)::success(allGood)::timeout(10, myTimeout, NULL);
 
 
 	Each thread will execute the code within, which can call other functions, etc.
@@ -494,4 +631,16 @@ RDC Specifications Document
 13.0 - Edit-and-continue ABI
 ----------------------------
 
+	RDC employs a new ABI that's designed around two central concepts:
 	
+		(1)  Every compilation is for a target machine architecture, not an OS flavor.
+		(2)  Every compilation is targeted for edit-and-continue support.
+	
+	The code generated operates on a particular instruction set.  To provide OS
+	facilities, a thin OS-specific wrapper is required to launch the ABI.  This
+	will allow direct hookup to any required facilities, provide translation between
+	RDC requirements and those services natively available on the OS.  However, a
+	single generated output file can be run on any machine that is for the targeted
+	architecture, and has a wrapper to support it.
+
+14.0 - 

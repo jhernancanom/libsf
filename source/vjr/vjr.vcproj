@@ -655,6 +655,10 @@
 						</FileConfiguration>
 					</File>
 					<File
+						RelativePath=".\compiler\rdc\rdc_specs.txt"
+						>
+					</File>
+					<File
 						RelativePath=".\compiler\rdc\structs.h"
 						>
 					</File>

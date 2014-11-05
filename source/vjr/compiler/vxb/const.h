@@ -912,7 +912,8 @@
 	const s32       _ICODE_KEYBOARD                                 = 2140;
 	const s32       _ICODE_KEYCOMP                                  = 2141;
 	const s32       _ICODE_LABEL                                    = 2142;
-	const s32		_ICODE_LELSE									= 2278;
+	const s32		_ICODE_LELSE									= 2281;
+	const s32		_ICODE_LELSEIF									= 2282;
 	const s32       _ICODE_LIBRARY                                  = 2143;
 	const s32		_ICODE_LIF										= 2279;
 	const s32       _ICODE_LISTS                                    = 2144;
@@ -1052,7 +1053,8 @@
 	// _ICODE_LELSE													= 2278;
 	// _ICODE_LIF													= 2279;
 	// _ICODE_ELSE													= 2280;
-
+	// _ICODE_LESLE													= 2281;
+	// _ICODE_LESLEIF												= 2282;
 
 
 //////////
