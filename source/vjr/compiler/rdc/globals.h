@@ -52,7 +52,7 @@
 	cs32		_ICODE_DATUM				= 200003;
 	cs32		_ICODE_THREAD				= 200004;
 	cs32		_ICODE_PROCESS				= 200005;
-	cs32		_ICODE_READONLY				= 200006;
+	cs32		_ICODE_CONST				= 200006;
 	cs32		_ICODE_READONLY				= 200007;
 	cs32		_ICODE_READWRITE			= 200008;
 	cs32		_ICODE_VOLATILE				= 200009;
@@ -100,6 +100,8 @@
 	cs32		_ICODE_FLOWOUT_TO			= 200051;
 	cs32		_ICODE_DLLMAIN				= 200052;
 
+	cs32		_ICAT_TYPE					= 200000;
+
 
 
 
@@ -136,7 +138,7 @@
 		{ "thread",					6,			false,		_ICODE_THREAD,							false,				_ICAT_TYPE,			&colorSynHi_type,			false,						null },
 		{ "process",				7,			false,		_ICODE_PROCESS,							false,				_ICAT_TYPE,			&colorSynHi_type,			false,						null },
 
-		{ "const",					5,			false,		_ICODE_READONLY,						false,				_ICAT_TYPE,			&colorSynHi_type,			false,						null },
+		{ "const",					5,			false,		_ICODE_CONST,							false,				_ICAT_TYPE,			&colorSynHi_type,			false,						null },
 		{ "ro",						2,			false,		_ICODE_READONLY,						false,				_ICAT_TYPE,			&colorSynHi_type,			false,						null },
 		{ "rw",						2,			false,		_ICODE_READWRITE,						false,				_ICAT_TYPE,			&colorSynHi_type,			false,						null },
 		{ "volatile",				8,			false,		_ICODE_VOLATILE,						false,				_ICAT_TYPE,			&colorSynHi_type,			false,						null },
