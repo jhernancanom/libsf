@@ -44,16 +44,17 @@
 				FavorSizeOrSpeed="0"
 				AdditionalIncludeDirectories="&quot;C:\Program Files\Visual Leak Detector\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
-				MinimalRebuild="false"
-				ExceptionHandling="0"
+				MinimalRebuild="true"
+				ExceptionHandling="1"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
+				RuntimeLibrary="3"
 				StructMemberAlignment="1"
-				EnableFunctionLevelLinking="true"
+				EnableFunctionLevelLinking="false"
 				EnableEnhancedInstructionSet="0"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
+				CallingConvention="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -66,12 +67,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sound\SDL-1.2.15\lib\x86\SDL.lib &quot;C:\Program Files\Visual Leak Detector\lib\Win32\vld.lib&quot;"
+				AdditionalDependencies="glew32.lib glew32s.lib freeglut.lib glu32.lib sound\SDL-1.2.15\lib\x86\SDL.lib &quot;C:\Program Files\Visual Leak Detector\lib\Win32\vld.lib&quot;"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
-				RandomizedBaseAddress="0"
-				DataExecutionPrevention="0"
+				RandomizedBaseAddress="2"
+				DataExecutionPrevention="2"
 				ImportLibrary="\libsf\source\vjr\icons.lib"
 				TargetMachine="1"
 			/>
@@ -136,6 +137,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				CallingConvention="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -148,7 +150,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sound\SDL-1.2.15\lib\x86\SDL.lib"
+				AdditionalDependencies="sound\SDL-1.2.15\lib\x86\SDL.lib  \libsf\source\vjr\freeglut.lib  \libsf\source\vjr\opengl32.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -189,6 +191,26 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\grace.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\vjr.cpp"
 				>
 			</File>
@@ -223,6 +245,10 @@
 				</File>
 				<File
 					RelativePath=".\resource.h"
+					>
+				</File>
+				<File
+					RelativePath=".\settings.h"
 					>
 				</File>
 				<File

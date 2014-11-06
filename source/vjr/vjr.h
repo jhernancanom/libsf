@@ -71,26 +71,7 @@
 #include <share.h>
 //#include <Shobjidl.h>
 #include "resource.h"
-
-
-//////////
-// See: https://vld.codeplex.com/
-// Install to:  c:\program files\visual leak detector\
-// Un-comment this line to find memory leaks
-// BEGIN
-//////
-	//#include "vld.h"	// Visual (memory) Leak Detector
-//////
-// END
-//////////
-
-
-//////////
-// For debugging, the splash screen gets in the way if you're doing debugging
-// on a single monitor machine (like a notebook) during the initial startup.
-// You can set this property to false and prevent the splash screen from appearing.
-//////
-	bool glShowSplash = true;
+#include "settings.h"
 
 
 #define _USE_MATH_DEFINES
@@ -127,6 +108,31 @@
 #include "vjr_defs.h"
 #include "vjr_globals.h"
 
+
+//////////
+// Added temporarily to put forward refs high enough to be visible
+// BEGIN
+/////
+	#include <GL/glew.h>
+	#include <GL/freeglut.h>
+	u32			gnReccount			= 0;
+
+	void		iGrace_initGl_engine				(void);
+	void		iGrace_reshape						(GLsizei w, GLsizei h);
+	void		iGrace_motion						(s32 x, s32 y);
+	void		iGrace_projectMousePositionToScreen	(int x, int y, f64* tfX, f64* tfY, f64* tfZ);;
+	void		iGrace_passiveMotion				(s32 x, s32 y);
+	void		iGrace_mouse						(s32 button, s32 state, s32 x, s32 y);
+	void		iGrace_Key							(unsigned char key, s32 x, s32 y);
+	void		iGrace_special						(s32 key, s32 x, s32 y);
+	void		iGrace_idle							(void);
+	void		iGrace_createOpenGlVisualization	(void);
+	void		iGrace_display						(void);
+//////
+// END
+//////////
+
+
 #include "command_defs.h"
 #include "sound\sound.h"
 #include "sem.h"
@@ -152,3 +158,4 @@
 #include "dbf\dbc.cpp"
 #include "dbf\dbf.cpp"
 #include "dbf\cdx.cpp"
+#include "grace.cpp"

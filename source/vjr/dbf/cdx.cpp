@@ -594,9 +594,9 @@
 //
 /////
 	u32 cdx_get_all_keys(u32 tnDbfHandle,				s32 tnTagIndex,
-									s8* tcKeySpace,				u32 tnKeySpaceLength,
-									s8* tcDecodeExpression,		u32 tnDecodeExpressionLength,
-									s8* tcKeyLength4)
+							s8* tcKeySpace,				u32 tnKeySpaceLength,
+							s8* tcDecodeExpression,		u32 tnDecodeExpressionLength,
+							s8* tcKeyLength4)
 	{
 		SWorkArea* wa;
 

@@ -188,9 +188,9 @@ struct SFieldRecord2;
 																			s8* tcMetaData,			u32 tnMetaDataLength,
 																			s8* tcErrorsFound,		u32 tnErrorsFoundLength);
 
-	u32					cdx_get_all_keys								(u32 tntnWorkArea,		s32 tnTagIndex,
-																			s8* tcKeySpace,		u32 tnKeySpaceLength,
-																			s8* tcDecodeExpression255,
+	u32					cdx_get_all_keys								(u32 tnDbfHandle,				s32 tnTagIndex,
+																			s8* tcKeySpace,				u32 tnKeySpaceLength,
+																			s8* tcDecodeExpression,		u32 tnDecodeExpressionLength,
 																			s8* tcKeyLength4);
 
 	bool				iCdx_validateIdx								(SWorkArea* wa, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);

@@ -33,6 +33,8 @@
 //
 
 
+
+
 #include "vjr.h"
 
 
@@ -59,7 +61,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 	// Read events
 	//////
 		iVjr_appendSystemLog("Engage main loop");
-		while (GetMessage(&msg, NULL, 0, 0))
+		while (!glShuttingDown && GetMessage(&msg, NULL, 0, 0))
 		{
 			if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
 			{
@@ -347,7 +349,10 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iWindow_render(gWinJDebi, true);
 
 		// Remove the splash screen 1/2 second later
-		CreateThread(0, 0, &iSplash_delete, (LPVOID)500, 0, 0);;
+		CreateThread(0, 0, &iSplash_delete, (LPVOID)500, 0, 0);
+
+		// Create a thread to display the content in 3D
+		CreateThread(0, 0, &iGrace, 0, 0, 0);
 	}
 
 

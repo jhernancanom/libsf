@@ -61,7 +61,7 @@ struct SEM;
 
 	// Signed
 	typedef	__int64				s64;
-	typedef	long				s32;
+	typedef	int					s32;
 	typedef	short				s16;
 	typedef	char				s8;
 #endif
