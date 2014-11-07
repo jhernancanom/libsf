@@ -351,8 +351,8 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		// Remove the splash screen 1/2 second later
 		CreateThread(0, 0, &iSplash_delete, (LPVOID)500, 0, 0);
 
-		// Create a thread to display the content in 3D
-		CreateThread(0, 0, &iGrace, 0, 0, 0);
+// 		// Create a thread to display the content in 3D
+// 		CreateThread(0, 0, &iGrace, 0, 0, 0);
 	}
 
 

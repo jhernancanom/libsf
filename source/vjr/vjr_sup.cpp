@@ -1489,6 +1489,45 @@
 	}
 
 
+void iTest_nodeLine(SBitmap* bmp, f32 lfFactorX, f32 lfFactorY)
+{
+	s32 lnI, lnWidth;
+	SXYF32* points1;
+	SXYF32* points2;
+	SXYF32 p1, p2, p3, p4, p5;
+	f32 lfWidth, lfHeight;
+
+	lfWidth  = bmp->bi.biWidth  * lfFactorX / 8.0f;
+	lfHeight = bmp->bi.biHeight * lfFactorY / 8.0f;
+
+	p1.x = ((f32)bmp->bi.biWidth  / 2.0f) - (lfWidth / 2.0f);
+	p1.y = ((f32)bmp->bi.biHeight / 2.0f) - (lfHeight / 2.0f);
+
+	p2.x = ((f32)bmp->bi.biWidth  / 2.0f) - (lfWidth / 4.0f);
+	p2.y = ((f32)bmp->bi.biHeight / 2.0f) - (lfHeight / 2.0f);
+
+	p3.x = ((f32)bmp->bi.biWidth  / 2.0f);
+	p3.y = ((f32)bmp->bi.biHeight / 2.0f);
+	points1 = iivvm_canvasBezier3(20, &p1, &p2, &p3);
+
+	p4.x = ((f32)bmp->bi.biWidth  / 2.0f) + (lfWidth / 4.0f);
+	p4.y = ((f32)bmp->bi.biHeight / 2.0f) + (lfHeight / 2.0f);
+
+	p5.x = ((f32)bmp->bi.biWidth  / 2.0f) + (lfWidth / 2.0f);
+	p5.y = ((f32)bmp->bi.biHeight / 2.0f) + (lfHeight / 2.0f);
+	points2 = iivvm_canvasBezier3(20, &p5, &p4, &p3);
+
+	lnWidth = 5;
+	for (lnI = 0; lnI < 20 - 1; lnI++)
+	{
+		iBmp_drawArbitraryQuad(bmp, (s32)points1[lnI].x, (s32)points1[lnI].y, (s32)points1[lnI+1].x, (s32)points1[lnI+1].y, lnWidth, true, blackColor);
+		iBmp_drawArbitraryQuad(bmp, (s32)points2[lnI].x, (s32)points2[lnI].y, (s32)points2[lnI+1].x, (s32)points2[lnI+1].y, lnWidth, true, blackColor);
+	}
+	--lnI;
+	iBmp_drawArbitraryQuad(bmp, (s32)points1[lnI].x, (s32)points1[lnI].y, (s32)points2[lnI].x, (s32)points2[lnI].y, lnWidth, true, blackColor);
+	free(points1);
+	free(points2);
+}
 
 
 //////////
@@ -1512,6 +1551,14 @@
 
 				// Publish anything needing publishing
 				iObj_publish(win->obj, &win->rc, win->bmp, true, true, tlForce, 0);
+
+iTest_nodeLine(win->obj->bmp, 1.0f, 1.0f);
+iTest_nodeLine(win->obj->bmp, 5.0f, 1.75f);
+iTest_nodeLine(win->obj->bmp, 7.0f, 1.50f);
+iTest_nodeLine(win->obj->bmp, 7.0f, 7.0f);
+iTest_nodeLine(win->obj->bmp, 5.0f, 7.0f);
+iTest_nodeLine(win->obj->bmp, 3.0f, 7.0f);
+iTest_nodeLine(win->obj->bmp, 1.0f, 7.0f);
 
 				// Determine the focus highlights
 				iObj_setFocusHighlights(win, win->obj, 0, 0, true, true);

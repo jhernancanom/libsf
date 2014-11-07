@@ -3491,6 +3491,65 @@
 		}
 	}
 
+	void iBmp_drawArbitraryLine(SBitmap* bmp, s32 tnX1, s32 tnY1, s32 tnX2, s32 tnY2, SBgra color)
+	{
+		f32 lfX, lfY, lfXStep, lfYStep, lfRadius, lfDeltaX, lfDeltaY;
+
+
+		// Compute the distance
+		lfDeltaX	= (f32)(tnX2 - tnX1);
+		lfDeltaY	= (f32)(tnY2 - tnY1);
+		lfRadius	= sqrt((lfDeltaX*lfDeltaX) + (lfDeltaY*lfDeltaY));
+		if (lfRadius < 1.0f)
+			return;
+
+		// Compute our steps per pixel
+		lfXStep		= lfDeltaX / lfRadius;
+		lfYStep		= lfDeltaY / lfRadius;
+
+		// Iterate for each point
+		for (lfX = (f32)tnX1, lfY = (f32)tnY1; lfRadius > 0.0f; lfRadius--, lfX += lfXStep, lfY += lfYStep)
+			iBmp_drawPoint(bmp, (s32)lfX, (s32)lfY, color);
+	}
+
+#define _PI2 1.570796327
+	void iBmp_drawArbitraryQuad(SBitmap* bmp, s32 tnX1, s32 tnY1, s32 tnX2, s32 tnY2, s32 tnWidth, bool tlDrawEnds, SBgra color)
+	{
+		f32			lfX1, lfY1, lfX2, lfY2, lfX3, lfY3, lfX4, lfY4;
+		SLineF32	line;
+
+
+		//////////
+		// Compute the line
+		/////
+			line.p1.x = (f32)tnX1;
+			line.p1.y = (f32)tnY1;
+			line.p2.x = (f32)tnX2;
+			line.p2.y = (f32)tnY2;
+			iivvm_math_computeLine(&line);
+
+
+		//////////
+		// Draw the line
+		//////
+			lfX1 = line.p1.x + ((f32)cos(line.theta + _PI2) * ((f32)tnWidth / 2.0f));
+			lfY1 = line.p1.y + ((f32)sin(line.theta + _PI2) * ((f32)tnWidth / 2.0f));
+			lfX2 = line.p1.x + ((f32)cos(line.theta - _PI2) * ((f32)tnWidth / 2.0f));
+			lfY2 = line.p1.y + ((f32)sin(line.theta - _PI2) * ((f32)tnWidth / 2.0f));
+			if (tlDrawEnds)
+				iBmp_drawArbitraryLine(bmp, (s32)lfX1, (s32)lfY1, (s32)lfX2, (s32)lfY2, color);
+
+			lfX3 = line.p2.x + ((f32)cos(line.theta + _PI2) * ((f32)tnWidth / 2.0f));
+			lfY3 = line.p2.y + ((f32)sin(line.theta + _PI2) * ((f32)tnWidth / 2.0f));
+			lfX4 = line.p2.x + ((f32)cos(line.theta - _PI2) * ((f32)tnWidth / 2.0f));
+			lfY4 = line.p2.y + ((f32)sin(line.theta - _PI2) * ((f32)tnWidth / 2.0f));
+			if (tlDrawEnds)
+				iBmp_drawArbitraryLine(bmp, (s32)lfX3, (s32)lfY3, (s32)lfX4, (s32)lfY4, color);
+
+			iBmp_drawArbitraryLine(bmp, (s32)lfX1, (s32)lfY1, (s32)lfX3, (s32)lfY3, color);
+			iBmp_drawArbitraryLine(bmp, (s32)lfX2, (s32)lfY2, (s32)lfX4, (s32)lfY4, color);
+	}
+
 	void iBmp_drawHorizontalLine(SBitmap* bmp, s32 tnX1, s32 tnX2, s32 tnY, SBgra color)
 	{
 		s32		lnX;
