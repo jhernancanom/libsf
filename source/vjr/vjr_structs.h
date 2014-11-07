@@ -283,6 +283,9 @@ struct SObject
 	bool		isDirtyRender;											// Is set if this or any child object needs re-rendered
 	bool		isDirtyPublish;											// Is set if this or any child object needs re-published
 
+	// OpenGL visualization
+	SGraceOgl	ogl;													// Open GL coordinates
+
 	// Defined class, class information
 	s32			objType;												// Object base type/class (see _OBJECT_TYPE_* constants)
 

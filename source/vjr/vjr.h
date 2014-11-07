@@ -104,34 +104,11 @@
 #include "dbf\dbf.h"
 #include "dbf\dbf_defs.h"
 
+#include "grace.h"
+
 #include "vjr_structs.h"
 #include "vjr_defs.h"
 #include "vjr_globals.h"
-
-
-//////////
-// Added temporarily to put forward refs high enough to be visible
-// BEGIN
-/////
-	#include <GL/glew.h>
-	#include <GL/freeglut.h>
-	u32			gnReccount			= 0;
-
-	void		iGrace_initGl_engine				(void);
-	void		iGrace_reshape						(GLsizei w, GLsizei h);
-	void		iGrace_motion						(s32 x, s32 y);
-	void		iGrace_projectMousePositionToScreen	(int x, int y, f64* tfX, f64* tfY, f64* tfZ);;
-	void		iGrace_passiveMotion				(s32 x, s32 y);
-	void		iGrace_mouse						(s32 button, s32 state, s32 x, s32 y);
-	void		iGrace_Key							(unsigned char key, s32 x, s32 y);
-	void		iGrace_special						(s32 key, s32 x, s32 y);
-	void		iGrace_idle							(void);
-	void		iGrace_createOpenGlVisualization	(void);
-	void		iGrace_display						(void);
-//////
-// END
-//////////
-
 
 #include "command_defs.h"
 #include "sound\sound.h"

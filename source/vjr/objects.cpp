@@ -1407,9 +1407,6 @@
 			//////////
 			// Publish any children
 			//////
-if (!llPublishChildren)
-	debug_break;
-
 				llIsVisible = isVisible(obj);
 				llIsEnabled = isEnabled(obj);
 				lnBackStyle	= backStyle(obj);

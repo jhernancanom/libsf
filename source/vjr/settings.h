@@ -7,10 +7,10 @@
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
-//     Feb.12.2014
+//     Nov.05.2014
 //////
 // Change log:
-//     Feb.12.2014 - Initial creation
+//     Nov.05.2014 - Initial creation
 //////
 //
 // This software is released as Liberty Software under a Repeat License, as governed

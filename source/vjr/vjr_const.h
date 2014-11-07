@@ -55,7 +55,7 @@ struct SEM;
 
 #else
 	typedef	unsigned __int64	u64;
-	typedef	unsigned long		u32;
+	typedef	unsigned int		u32;
 	typedef	unsigned short		u16;
 	typedef	unsigned char		u8;
 

@@ -36,103 +36,6 @@
 
 
 //////////
-// Missing from freeglut.h for some reason
-//////
-	#define GL_BGR			0x80E0
-	#define GL_BGRA			0x80E1
-	#define GLUT_WHEEL_UP	3
-	#define GLUT_WHEEL_DOWN	4
-
-
-
-
-//////////
-// Constants to access data in vectors
-//////
-	// x, y, z
-	#define XVEC	0
-	#define YVEC	1
-	#define ZVEC	2
-
-	// Red, green, blue, alpha
-	#define RVEC	0
-	#define GVEC	1
-	#define BVEC	2
-	#define AVEC	3
-	#define CTOTAL	16
-
-	// Offset to reach the vectors stored successively inside the array
-	#define T1		0		// 0th position (t1x=0  t1y=1)
-	#define T2		2		// 2nd position (t1x=2  t1y=3)
-	#define T3		4		// 4th position (t1x=4  t1y=5)
-	#define T4		6		// 6th position (t1x=6  t1y=7)
-	#define THANDLE	8		// 8th position (holds the handle (memory pointer) to STexData structure
-	#define TTOTAL	9
-	#define TSTEP	2
-
-	#define V1		0		// 0th position (v1x=0   v1x=1   v1z=2)
-	#define V2		3		// 3rd position (v2x=3   v2y=4   v2z=5)
-	#define V3		6		// 6th position (v3x=6   v3y=7   v3z=8)
-	#define V4		9		// 9th position (v4x=9   v4y=10  v4z=11)
-	#define VTOTAL	12
-	#define VSTEP	3
-
-	#define N1		0		// 0th position (n1x=0   n1x=1   n1z=2)
-	#define N2		3		// 3rd position (n2x=3   n2y=4   n2z=5)
-	#define N3		6		// 6th position (n3x=6   n3y=7   n3z=8)
-	#define N4		9		// 9th position (n4x=9   n4y=10  n4z=11)
-	#define NTOTAL	12
-	#define NSTEP	3
-
-
-
-
-//////////
-// Variables used by Grace
-//////
-	s32			gnMouseX						= 400;
-	s32			gnMouseY						= 400;
-	bool		glMouse_leftButtonDown			= false;
-	bool		glMouse_middleButtonDown		= false;
-	bool		glMouse_rightButtonDown			= false;
-	
-	f32			gfLightViewX					= 0.0;
-	f32			gfLightViewY					= 0.0;
-	f32			gfLightViewZ					= 0.0;
-	bool		glLighting						= false;
-	GLfloat		gfv4LightFixture[]				= {  0.0, 0.0, 50.0, 1.0 };
-
-	// Used for event tracking on when to redraw a glut loop
-	s64			gnGraceEventCount				= -1;
-	s64			gnFpsMilliseconds				= 1000 / 33;		// 33 fps
-
-	// Camera position and origin
-	f32			gfX								= 0.0f;
-	f32			gfY								= 0.0f;
-	f32			gfZ								= 15.0f;
-	f32			gfZBase							= 15.0f;
-	f32			gfZBase_over_2					= 7.50;
-
-	// Used during load, indicating
-	u32			texture							= 0;
-	s32			gnWidth							= 800;
-	s32			gnHeight						= 800;
-	f32			gfPerspective					= 1.0f;
-
-
-////////
-// Pointer for vector arrays
-//////
-	GLfloat*	c								= NULL;		// color
-	GLfloat*	t								= NULL;		// texture
-	GLfloat*	n								= NULL;		// normals
-	GLfloat*	v								= NULL;		// vector
-	GLfloat*	vo								= NULL;		// vector original
-
-
-
-
-//////////
 // Added to create and debug a basic 3D rendering screen
 //////
 	DWORD WINAPI iGrace(LPVOID param)
@@ -174,7 +77,6 @@
 
 		// See if we can load the file they've specified
 		Sleep(100);
-		iGrace_createOpenGlVisualization();
 
 
 		//////////
@@ -529,273 +431,266 @@
 
 
 
-	void iGrace_createOpenGlVisualization(void)
+	void iGrace_assignCoordinates(SObject* obj, RECT* rc, f32 tfZ)
 	{
-		s32		lnBitDepth, lnWidth, lnHeight;
-		u32		lnRecno, lcBase, lvBase, ltBase;
-		RECT	lrc;
-
-
-		// Get the desktop size
-		GetWindowRect(GetDesktopWindow(), &lrc);
-		lnWidth		= lrc.right - lrc.left;
-		lnHeight	= lrc.bottom - lrc.top;
-
-		// c  = colors
-		// t  = texture coordinates
-		// n  = normals
-		// v  = vector coordinates
-		// vo = vector coordinates original (before animation)
-		gnReccount = 2;
-		if (c == NULL)
-		{
-			c	= (GLfloat*)malloc(gnReccount * sizeof(GLfloat*) * CTOTAL);
-			t	= (GLfloat*)malloc(gnReccount * sizeof(GLfloat*) * TTOTAL);
-			n	= (GLfloat*)malloc(gnReccount * sizeof(GLfloat*) * NTOTAL);
-			v	= (GLfloat*)malloc(gnReccount * sizeof(GLfloat*) * VTOTAL);
-			vo	= (GLfloat*)malloc(gnReccount * sizeof(GLfloat*) * VTOTAL);
-
-			memset(c,  0, gnReccount * sizeof(GLfloat*) * CTOTAL);
-			memset(t,  0, gnReccount * sizeof(GLfloat*) * TTOTAL);
-			memset(n,  0, gnReccount * sizeof(GLfloat*) * NTOTAL);
-			memset(v,  0, gnReccount * sizeof(GLfloat*) * VTOTAL);
-			memset(vo, 0, gnReccount * sizeof(GLfloat*) * VTOTAL);
-		}
+		s32		lnI, lnWidth, lnHeight;
+		RECT	lrcDesktop;
 
 
 		//////////
-		// Drop a large background for the virtual desktop
+		// Get the desktop size
 		//////
-			//////////
-			// Create offsets for base of each group
-			//////
-				lvBase = 0;
-				lcBase = 0;
-				ltBase = 0;
+			GetWindowRect(GetDesktopWindow(), &lrcDesktop);
+			lnWidth		= lrcDesktop.right - lrcDesktop.left;
+			lnHeight	= lrcDesktop.bottom - lrcDesktop.top;
 
 
-			//////////
-			// Vectors
-			//////
-				v[lvBase + V1 + XVEC]	= gfZBase * -100.0f * gfPerspective;
-				v[lvBase + V1 + YVEC]	= gfZBase * -100.0f;
-				v[lvBase + V1 + ZVEC]	= -0.01f;
+		//////////
+		// Vectors
+		//////
+			// Upper-left
+			obj->ogl.quad.v[V1].x	= (gfZBase_over_2) * ((f32)rc->left	/ lnWidth) * gfPerspective;
+			obj->ogl.quad.v[V1].y	= (-gfZBase_over_2) * ((f32)rc->top		/ lnHeight);
+			obj->ogl.quad.v[V1].z	= tfZ;
 
-				v[lvBase + V2 + XVEC]	= gfZBase * 100.0f * gfPerspective;
-				v[lvBase + V2 + YVEC]	= gfZBase * -100.0f;
-				v[lvBase + V2 + ZVEC]	= -0.01f;
+			obj->ogl.quad.v[V2].x	= (gfZBase_over_2) * ((f32)rc->right	/ lnWidth) * gfPerspective;
+			obj->ogl.quad.v[V2].y	= obj->ogl.quad.v[V1].y;
+			obj->ogl.quad.v[V2].z	= tfZ;
 
-				v[lvBase + V3 + XVEC]	= gfZBase * 100.0f * gfPerspective;
-				v[lvBase + V3 + YVEC]	= gfZBase * 100.0f;
-				v[lvBase + V3 + ZVEC]	= -0.01f;
+			obj->ogl.quad.v[V3].x	= obj->ogl.quad.v[V2].x;
+			obj->ogl.quad.v[V3].y	= (-gfZBase_over_2) * ((f32)rc->bottom	/ lnHeight);
+			obj->ogl.quad.v[V3].z	= tfZ;
 
-				v[lvBase + V4 + XVEC]	= gfZBase * -100.0f * gfPerspective;
-				v[lvBase + V4 + YVEC]	= gfZBase * 100.0f;
-				v[lvBase + V4 + ZVEC]	= -0.01f;
-
-
-			//////////
-			// Vector original values
-			//////
-				vo[lvBase + V1 + XVEC]	= v[lvBase + V1 + XVEC];			// Original vector 1
-				vo[lvBase + V1 + YVEC]	= v[lvBase + V1 + YVEC];
-				vo[lvBase + V1 + ZVEC]	= v[lvBase + V1 + ZVEC];
-
-				vo[lvBase + V2 + XVEC]	= v[lvBase + V2 + XVEC];			// Original vector 2
-				vo[lvBase + V2 + YVEC]	= v[lvBase + V2 + YVEC];
-				vo[lvBase + V2 + ZVEC]	= v[lvBase + V2 + ZVEC];
-
-				vo[lvBase + V3 + XVEC]	= v[lvBase + V3 + XVEC];			// Original vector 3
-				vo[lvBase + V3 + YVEC]	= v[lvBase + V3 + YVEC];
-				vo[lvBase + V3 + ZVEC]	= v[lvBase + V3 + ZVEC];
-
-				vo[lvBase + V4 + XVEC]	= v[lvBase + V4 + XVEC];			// Original vector 4
-				vo[lvBase + V4 + YVEC]	= v[lvBase + V4 + YVEC];
-				vo[lvBase + V4 + ZVEC]	= v[lvBase + V4 + ZVEC];
+			obj->ogl.quad.v[V4].x	= obj->ogl.quad.v[V1].x;
+			obj->ogl.quad.v[V4].y	= obj->ogl.quad.v[V3].y;
+			obj->ogl.quad.v[V4].z	= tfZ;
 
 
-			//////////
-			// Colors
-			//////
-				c[lcBase + RVEC]		= 1.0f;
-				c[lcBase + GVEC]		= 1.0f;
-				c[lcBase + BVEC]		= 1.0f;
-				c[lcBase + AVEC]		= 1.0f;
+		//////////
+		// Copy vectors to original values
+		//////
+			memcpy(&obj->ogl.quad.vo, obj->ogl.quad.v, sizeof(obj->ogl.quad.v));
 
 
-		// Iterate through the records, loading the vector data into the arrays
-		for (lnRecno = 2; lnRecno <= gnReccount; lnRecno++, gnGraceEventCount++)
-		{
-			//////////
-			// Create offsets for base of each group
-			//////
-				lvBase = (lnRecno - 1) * VTOTAL;
-				lcBase = (lnRecno - 1) * CTOTAL;
-				ltBase = (lnRecno - 1) * TTOTAL;
+		//////////
+		// Colors
+		//////
+			for (lnI = 0; lnI <= V4; lnI++)
+			{
+				obj->ogl.quad.c[lnI].r = 0.98f;	// Red
+				obj->ogl.quad.c[lnI].g = 0.98f;	// Grn
+				obj->ogl.quad.c[lnI].b = 0.98f;	// Blu
+				obj->ogl.quad.c[lnI].a = 1.0f;	// Alp
+			}
 
 
-			//////////
-			// Vectors
-			//////
-				v[lvBase + V1 + XVEC]	= (-gfZBase_over_2) * ((f32)_jdebi->bmp->bi.biWidth  / lnWidth) * gfPerspective;
-				v[lvBase + V1 + YVEC]	= (-gfZBase_over_2) * ((f32)_jdebi->bmp->bi.biHeight / lnHeight);// * gfPerspective;
-				v[lvBase + V1 + ZVEC]	= 0.0f;
+		//////////
+		// Do texture coordinates (regardless of whether or not there is texture information
+		//////
+			// Upper-left
+			obj->ogl.quad.t[V1].s	= 0.0f;
+			obj->ogl.quad.t[V1].t	= 1.0f;
 
-				v[lvBase + V2 + XVEC]	= (+gfZBase_over_2) * ((f32)_jdebi->bmp->bi.biWidth / lnWidth) * gfPerspective;
-				v[lvBase + V2 + YVEC]	= v[lvBase + V1 + YVEC];
-				v[lvBase + V2 + ZVEC]	= 0.0f;
+			// Upper-right
+			obj->ogl.quad.t[V2].s	= 1.0f;
+			obj->ogl.quad.t[V2].t	= 1.0f;
 
-				v[lvBase + V3 + XVEC]	= v[lvBase + V2 + XVEC];
-				v[lvBase + V3 + YVEC]	= (+gfZBase_over_2) * ((f32)_jdebi->bmp->bi.biHeight / lnHeight);// * gfPerspective;
-				v[lvBase + V3 + ZVEC]	= 0.0f;
+			// Lower-right
+			obj->ogl.quad.t[V3].s	= 1.0f;
+			obj->ogl.quad.t[V3].t	= 0.0f;
 
-				v[lvBase + V4 + XVEC]	= v[lvBase + V1 + XVEC];
-				v[lvBase + V4 + YVEC]	= v[lvBase + V3	+ YVEC];
-				v[lvBase + V4 + ZVEC]	= 0.0f;
-
-
-			//////////
-			// Vector original values
-			//////
-				vo[lvBase + V1 + XVEC]	= v[lvBase + V1 + XVEC];			// Original vector 1
-				vo[lvBase + V1 + YVEC]	= v[lvBase + V1 + YVEC];
-				vo[lvBase + V1 + ZVEC]	= v[lvBase + V1 + ZVEC];
-
-				vo[lvBase + V2 + XVEC]	= v[lvBase + V2 + XVEC];			// Original vector 2
-				vo[lvBase + V2 + YVEC]	= v[lvBase + V2 + YVEC];
-				vo[lvBase + V2 + ZVEC]	= v[lvBase + V2 + ZVEC];
-
-				vo[lvBase + V3 + XVEC]	= v[lvBase + V3 + XVEC];			// Original vector 3
-				vo[lvBase + V3 + YVEC]	= v[lvBase + V3 + YVEC];
-				vo[lvBase + V3 + ZVEC]	= v[lvBase + V3 + ZVEC];
-
-				vo[lvBase + V4 + XVEC]	= v[lvBase + V4 + XVEC];			// Original vector 4
-				vo[lvBase + V4 + YVEC]	= v[lvBase + V4 + YVEC];
-				vo[lvBase + V4 + ZVEC]	= v[lvBase + V4 + ZVEC];
+			// Lower-left
+			obj->ogl.quad.t[V4].s	= 0.0f;
+			obj->ogl.quad.t[V4].t	= 0.0f;
 
 
-			//////////
-			// Colors
-			//////
-				c[lcBase + RVEC]		= 0.98f;
-				c[lcBase + GVEC]		= 0.98f;
-				c[lcBase + BVEC]		= 0.98f;
-				c[lcBase + AVEC]		= 1.0f;
-
-
-			//////////
-			// Do texture coordinates (regardless of whether or not there is texture information
-			//////
-				// Upper-left
-				t[ltBase + T1 + XVEC]	= 0.0f;
-				t[ltBase + T1 + YVEC]	= 0.0f;
-
-				// Upper-right
-				t[ltBase + T2 + XVEC]	= 1.0f;
-				t[ltBase + T2 + YVEC]	= 0.0f;
-
-				// Lower-right
-				t[ltBase + T3 + XVEC]	= 1.0f;
-				t[ltBase + T3 + YVEC]	= 1.0f;
-
-				// Lower-left
-				t[ltBase + T4 + XVEC]	= 0.0f;
-				t[ltBase + T4 + YVEC]	= 1.0f;
-
-
-			//////////
-			// Create the texture
-			//////
+		//////////
+		// Texture ops
+		//////
+			if (obj->bmp && obj->bmp->bd && obj->ogl.quad.mipmap == 0)
+			{
 				// Delete any previous texture
-				if (*(GLuint*)&t[ltBase + THANDLE] != -1)
-					glDeleteTextures(1, (GLuint*)&t[ltBase + THANDLE]);
+				glDeleteTextures(1, &obj->ogl.quad.mipmap);
 
 				// Generate a new texture
-				glGenTextures(1, (GLuint*)&texture);
+				glGenTextures(1, &obj->ogl.quad.mipmap);
 
 				// Mipmap the image
-				glBindTexture(GL_TEXTURE_2D, texture);
-				lnBitDepth = ((_jdebi->bmp->bi.biBitCount == 24) ? GL_BGR : GL_BGRA);
-				gluBuild2DMipmaps(GL_TEXTURE_2D, 3, _jdebi->bmp->bi.biWidth, _jdebi->bmp->bi.biHeight, lnBitDepth, GL_UNSIGNED_BYTE, _jdebi->bmp->bd);
-				*(GLuint*)&t[ltBase + THANDLE] = texture;
-		}
+				glBindTexture(GL_TEXTURE_2D, obj->ogl.quad.mipmap);
+				gluBuild2DMipmaps(GL_TEXTURE_2D, 3, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, ((obj->bmp->bi.biBitCount == 24) ? GL_BGR : GL_BGRA), GL_UNSIGNED_BYTE, obj->bmp->bd);
+			}
 	}
+
+
 
 
 	void iGrace_display(void)
 	{
-		u32 lnRecno;
-		u32 lncBase, lntBase, lnvBase, lnnBase;
+		RECT lrc;
 
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glPushMatrix();
-
-		// Always looking straight forward at the x,y coordinate from the zoomed in z location
-		gluLookAt(gfX, gfY, gfZ,
-				  gfX, gfY, 0.0, 
-				  0.0, 1.0, 0.0);
-
-		if (glLighting)
+		// Render if we have something to render
+		if (gWinJDebi && gWinJDebi->obj)
 		{
-			// Indicate where the light is
-			gfv4LightFixture[XVEC] = gfLightViewX;
-			gfv4LightFixture[YVEC] = gfLightViewY;
-			gfv4LightFixture[ZVEC] = (gfLightViewX + gfLightViewY) / (f32)2.0;
-			glLightfv(GL_LIGHT0, GL_POSITION, gfv4LightFixture);
+			// We will be building centered around the origin
+			SetRect(&lrc, -(gWinJDebi->rc.right - gWinJDebi->rc.left) / 2, -(gWinJDebi->rc.bottom - gWinJDebi->rc.top) / 2, 0, 0);
+			SetRect(&lrc, lrc.left, lrc.top, lrc.left + (gWinJDebi->rc.right - gWinJDebi->rc.left), lrc.top + (gWinJDebi->rc.bottom - gWinJDebi->rc.top));
 
-			glPushMatrix(); 
-			glTranslatef	(gfv4LightFixture[XVEC], gfv4LightFixture[YVEC], gfv4LightFixture[ZVEC]);
-			glDisable(GL_LIGHTING);
-			glColor3f		(1.0, 1.0, 0.0);
-			glutWireCube	(1.0);
-			glEnable(GL_LIGHTING);
-			glPopMatrix();
+			// Render
+			iGrace_renderChildrenAndSiblings(gWinJDebi->obj, &lrc, true, true, true, true, 0.0f);
 		}
+	}
 
-		// Only draw if there are things to draw
-		if (t && v && n)
-		{
-			for (lnRecno = 1; lnRecno <= gnReccount; ++lnRecno)
+
+
+
+	void iGrace_renderChildrenAndSiblings(SObject* obj, RECT* rc, bool tlRootRender, bool tlRenderChildren, bool tlRenderSiblings, bool tlForceRender, f32 tfZ)
+	{
+		RECT		lrc, lrcClient;
+		SObject*	objSib;
+
+
+		logfunc(__FUNCTION__);
+		//////////
+		// Make sure there is render data
+		//////
+			if (!obj || !isVisible(obj) && !isEnabled(obj))
+				return;
+
+
+		//////////
+		// Render begin
+		//////
+			if (tlRootRender)
 			{
-				// Create the base offsets into the arrays
-				lncBase = (lnRecno - 1) * CTOTAL;
-				lntBase = (lnRecno - 1) * TTOTAL;
-				lnvBase = (lnRecno - 1) * VTOTAL;
-				lnnBase = (lnRecno - 1) * NTOTAL;
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				glPushMatrix();
 
-				// Set the color
- 				glColor4f(c[lncBase + RVEC], c[lncBase + GVEC], c[lncBase + BVEC], c[lncBase + AVEC]);
+				// Always looking straight forward at the x,y coordinate from the zoomed in z location
+				gluLookAt(gfX, gfY, gfZ,
+						  gfX, gfY, 0.0, 
+						  0.0, 1.0, 0.0);
 
-// 				// Provide any animation for this object
-// 				iGrace_animateObject(lnvBase);
+				if (glLighting)
+				{
+					// Indicate where the light is
+					gfv4LightFixture[XVEC] = gfLightViewX;
+					gfv4LightFixture[YVEC] = gfLightViewY;
+					gfv4LightFixture[ZVEC] = (gfLightViewX + gfLightViewY) / (f32)2.0;
+					glLightfv(GL_LIGHT0, GL_POSITION, gfv4LightFixture);
 
-				// Bind the texture for this quad
-				glBindTexture(GL_TEXTURE_2D, *(GLuint*)&t[lntBase + THANDLE]);
+					glPushMatrix(); 
+					glTranslatef	(gfv4LightFixture[XVEC], gfv4LightFixture[YVEC], gfv4LightFixture[ZVEC]);
+					glDisable(GL_LIGHTING);
+					glColor3f		(1.0, 1.0, 0.0);
+					glutWireCube	(1.0);
+					glEnable(GL_LIGHTING);
+					glPopMatrix();
+				}
 
-				// Based on whether or not there's texture information, do the texture coords
+				// Render the white background
 				glBegin(GL_QUADS);
 
-					glTexCoord2d(t[lntBase + T1 + XVEC], t[lntBase + T1 + YVEC]);
-					glNormal3f	(n[lnnBase + N1 + XVEC], n[lnnBase + N1 + YVEC], n[lnnBase + N1 + ZVEC]);
-					glVertex3f  (v[lnvBase + V1 + XVEC], v[lnvBase + V1 + YVEC], v[lnvBase + V1 + ZVEC]);
-
-					glTexCoord2d(t[lntBase + T2 + XVEC], t[lntBase + T2 + YVEC]);
-					glNormal3f	(n[lnnBase + N2 + XVEC], n[lnnBase + N2 + YVEC], n[lnnBase + N2 + ZVEC]);
-					glVertex3f  (v[lnvBase + V2 + XVEC], v[lnvBase + V2 + YVEC], v[lnvBase + V2 + ZVEC]);
-
-					glTexCoord2d(t[lntBase + T3 + XVEC], t[lntBase + T3 + YVEC]);
-					glNormal3f	(n[lnnBase + N3 + XVEC], n[lnnBase + N3 + YVEC], n[lnnBase + N3 + ZVEC]);
-					glVertex3f  (v[lnvBase + V3 + XVEC], v[lnvBase + V3 + YVEC], v[lnvBase + V3 + ZVEC]);
-
-					glTexCoord2d(t[lntBase + T4 + XVEC], t[lntBase + T4 + YVEC]);
-					glNormal3f	(n[lnnBase + N4 + XVEC], n[lnnBase + N4 + YVEC], n[lnnBase + N4 + ZVEC]);
-					glVertex3f  (v[lnvBase + V4 + XVEC], v[lnvBase + V4 + YVEC], v[lnvBase + V4 + ZVEC]);
+					glColor4f	(1.0f, 1.0f, 1.0f, 1.0f);
+					glVertex3f	(-1000.0f, -1000.0f, tfZ - 0.01f);
+					glVertex3f	(1000.0f, -1000.0f, tfZ - 0.01f);
+					glVertex3f	(1000.0f, 1000.0f, tfZ - 0.01f);
+					glVertex3f	(-1000.0f, 1000.0f, tfZ - 0.01f);
 
 				glEnd();
-			}
-		}
 
-		glPopMatrix();
-		glutSwapBuffers();
+			}
+
+		
+		//////////
+		// Adjust the coordinates for this item
+		//////
+			SetRect(&lrc,		rc->left	+ obj->rc.left,
+								rc->top		+ obj->rc.top,
+								rc->left	+ obj->rc.left			+ obj->bmp->bi.biWidth,
+								rc->top		+ obj->rc.top			+ obj->bmp->bi.biHeight);
+
+			SetRect(&lrcClient,	rc->left	+ obj->rcClient.left,
+								rc->top		+ obj->rcClient.top,
+								rc->left	+ obj->rcClient.left	+ obj->bmp->bi.biWidth,
+								rc->top		+ obj->rcClient.top		+ obj->bmp->bi.biHeight);
+
+
+		//////////
+		// Render any children
+		//////
+			if (tlRenderChildren && obj->firstChild)
+				iGrace_renderChildrenAndSiblings(obj->firstChild, &lrcClient, false, true, true, tlForceRender, tfZ + 0.01f);
+
+
+		//////////
+		// Render self
+		//////
+			obj->isDirtyRender |= tlForceRender;
+			iGrace_assignCoordinates(obj, &lrc, tfZ);
+			iGrace_render(obj, tlForceRender);
+
+
+		//////////
+		// Render any siblings
+		//////
+			if (tlRenderSiblings && obj->ll.next)
+			{
+				objSib = (SObject*)obj->ll.next;
+				while (objSib)
+				{
+					// Render this sibling
+					iGrace_renderChildrenAndSiblings(objSib, rc, false, true, false, tlForceRender, tfZ);
+
+					// Move to next sibling
+					objSib = (SObject*)objSib->ll.next;
+				}
+			}
+
+
+		//////////
+		// Render finish
+		//////
+			if (tlRootRender)
+			{
+				glPopMatrix();
+				glutSwapBuffers();
+			}
+	}
+
+
+
+
+	void iGrace_render(SObject* obj, bool tlForceRender)
+	{
+//		// Provide any animation for this object
+//		iGrace_animateObject(lnvBase);
+
+		// Bind the texture for this quad
+		glBindTexture(GL_TEXTURE_2D, obj->ogl.quad.mipmap);
+
+		// Based on whether or not there's texture information, do the texture coords
+		glBegin(GL_QUADS);
+
+			glColor4f		(obj->ogl.quad.c[V1].r, obj->ogl.quad.c[V1].g, obj->ogl.quad.c[V1].b, obj->ogl.quad.c[V1].a);
+			glTexCoord2d	(obj->ogl.quad.t[V1].s, obj->ogl.quad.t[V1].t);
+			glNormal3f		(obj->ogl.quad.n[V1].x, obj->ogl.quad.n[V1].y, obj->ogl.quad.n[V1].z);
+			glVertex3f		(obj->ogl.quad.v[V1].x, obj->ogl.quad.v[V1].y, obj->ogl.quad.v[V1].z);
+
+			glColor4f		(obj->ogl.quad.c[V2].r, obj->ogl.quad.c[V2].g, obj->ogl.quad.c[V2].b, obj->ogl.quad.c[V2].a);
+			glTexCoord2d	(obj->ogl.quad.t[V2].s, obj->ogl.quad.t[V2].t);
+			glNormal3f		(obj->ogl.quad.n[V2].x, obj->ogl.quad.n[V2].y, obj->ogl.quad.n[V2].z);
+			glVertex3f		(obj->ogl.quad.v[V2].x, obj->ogl.quad.v[V2].y, obj->ogl.quad.v[V2].z);
+
+			glColor4f		(obj->ogl.quad.c[V3].r, obj->ogl.quad.c[V3].g, obj->ogl.quad.c[V3].b, obj->ogl.quad.c[V3].a);
+			glTexCoord2d	(obj->ogl.quad.t[V3].s, obj->ogl.quad.t[V3].t);
+			glNormal3f		(obj->ogl.quad.n[V3].x, obj->ogl.quad.n[V3].y, obj->ogl.quad.n[V3].z);
+			glVertex3f		(obj->ogl.quad.v[V3].x, obj->ogl.quad.v[V3].y, obj->ogl.quad.v[V3].z);
+
+			glColor4f		(obj->ogl.quad.c[V4].r, obj->ogl.quad.c[V4].g, obj->ogl.quad.c[V4].b, obj->ogl.quad.c[V4].a);
+			glTexCoord2d	(obj->ogl.quad.t[V4].s, obj->ogl.quad.t[V4].t);
+			glNormal3f		(obj->ogl.quad.n[V4].x, obj->ogl.quad.n[V4].y, obj->ogl.quad.n[V4].z);
+			glVertex3f		(obj->ogl.quad.v[V4].x, obj->ogl.quad.v[V4].y, obj->ogl.quad.v[V4].z);
+
+		glEnd();
 	}
