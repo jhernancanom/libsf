@@ -53,7 +53,7 @@
 		// Indicate our success or failure
 		return(bmp);
 	}
-;
+
 
 
 
@@ -630,7 +630,7 @@
 
 //////////
 //
-// Called to create an empty 24-bit bitmap
+// Called to create an empty 24-bit or 32-bit bitmap
 //
 //////
 	void iBmp_populateBitmapStructure(SBitmap* bmp, u32 tnWidth, u32 tnHeight, u32 tnBitCount)
@@ -3499,7 +3499,7 @@
 		// Compute the distance
 		lfDeltaX	= (f32)(tnX2 - tnX1);
 		lfDeltaY	= (f32)(tnY2 - tnY1);
-		lfRadius	= sqrt((lfDeltaX*lfDeltaX) + (lfDeltaY*lfDeltaY));
+		lfRadius	= (f32)sqrt((lfDeltaX*lfDeltaX) + (lfDeltaY*lfDeltaY));
 		if (lfRadius < 1.0f)
 			return;
 

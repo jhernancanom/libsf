@@ -81,8 +81,10 @@
     <Configuration Name="Debug" CompilerType="MinGW ( CodeLite-4.8.1 )" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="-g;-O0;-Wall;-Wno-comment;-Wno-multichar;-Wno-narrowing;-Wno-write-strings;-Wno-format-contains-nul" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
+        <IncludePath Value="C:/libsf/source/vjr/vjr_mingw_gcc_codelite/include/"/>
       </Compiler>
       <Linker Options="-g" Required="yes">
+        <LibraryPath Value="C:/libsf/source/vjr/vjr_mingw_gcc_codelite/lib"/>
         <Library Value="kernel32"/>
         <Library Value="user32"/>
         <Library Value="gdi32"/>
@@ -96,6 +98,12 @@
         <Library Value="odbc32"/>
         <Library Value="odbccp32"/>
         <Library Value="SDL"/>
+        <Library Value="glew32"/>
+        <Library Value="glew32s"/>
+        <Library Value="freeglut"/>
+        <Library Value="freeglut_static"/>
+        <Library Value="glu32"/>
+        <Library Value="opengl32"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="../vjr.exe" IntermediateDirectory="./Debug" Command="vjr.exe" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="../" PauseExecWhenProcTerminates="yes" IsGUIProgram="yes" IsEnabled="yes"/>

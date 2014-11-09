@@ -19,6 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="c:\libsf\source\vjr\include\"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				MinimalRebuild="FALSE"
 				BasicRuntimeChecks="3"
@@ -32,9 +33,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="..\sound\SDL-1.2.15\lib\x86\SDL.lib"
+				AdditionalDependencies="glew32.lib glew32s.lib freeglut.lib ..\sound\SDL-1.2.15\lib\x86\SDL.lib"
 				OutputFile="$(OutDir)/vjr_vs2003.exe"
 				LinkIncremental="2"
+				AdditionalLibraryDirectories="c:\libsf\source\vjr\lib\"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="$(OutDir)/vjr_vs2003.pdb"
 				SubSystem="2"
@@ -68,6 +70,8 @@
 			CharacterSet="0">
 			<Tool
 				Name="VCCLCompilerTool"
+				ImproveFloatingPointConsistency="TRUE"
+				AdditionalIncludeDirectories="c:\libsf\source\vjr\include\"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="4"
 				StructMemberAlignment="1"
@@ -79,9 +83,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="..\sound\SDL-1.2.15\lib\x86\SDL.lib"
+				AdditionalDependencies="glew32.lib glew32s.lib freeglut.lib ..\sound\SDL-1.2.15\lib\x86\SDL.lib"
 				OutputFile="$(OutDir)/vjr_vs2003.exe"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="c:\libsf\source\vjr\lib\"
 				GenerateDebugInformation="TRUE"
 				SubSystem="2"
 				OptimizeReferences="2"

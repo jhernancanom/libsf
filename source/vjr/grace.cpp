@@ -171,7 +171,6 @@
 	// Mouse motion with buttons down in the window
 	void iGrace_motion(s32 tnMouseX, s32 tnMouseY)
 	{
-		f32		lfPixelsX, lfPixelsY;
 		f64		lfX_new, lfY_new, lfZ_new, lfX_old, lfY_old, lfZ_old;
 		bool	llRedisplay;
 
@@ -179,8 +178,6 @@
 		//////////
 		// Initialize
 		//////
-			lfPixelsX	= (f32)(gnMouseX - tnMouseX) / 50.0f;
-			lfPixelsY	= (f32)(gnMouseY - tnMouseY) / 50.0f;
 			llRedisplay	= false;
 
 
@@ -256,9 +253,9 @@
 			glGetDoublev(GL_PROJECTION_MATRIX,	projection);
 			glGetIntegerv(GL_VIEWPORT,			viewport);
 
-			winX = (float)x;
-			winY = (float)gnHeight - (float)y; //(float)viewport[3] - (float)mouse.y;
-			winZ;
+			winX = (f32)x;
+			winY = (f32)gnHeight - (f32)y; //(float)viewport[3] - (float)mouse.y;
+			winZ = 0.0f;
 
 			glReadPixels((int)winX, int(winY), 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ);
 			if (winZ == 1.0)
@@ -554,7 +551,7 @@
 		//////////
 		// Make sure there is render data
 		//////
-			if (!obj || !isVisible(obj) && !isEnabled(obj))
+			if (!obj || !isVisible(obj) || !isEnabled(obj))
 				return;
 
 

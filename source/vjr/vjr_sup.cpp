@@ -1491,11 +1491,12 @@
 
 void iTest_nodeLine(SBitmap* bmp, f32 lfFactorX, f32 lfFactorY)
 {
-	s32 lnI, lnWidth;
-	SXYF32* points1;
-	SXYF32* points2;
-	SXYF32 p1, p2, p3, p4, p5;
-	f32 lfWidth, lfHeight;
+	s32		lnI, lnWidth;
+	SXYF32*	points1;
+	SXYF32*	points2;
+	SXYF32	p1, p2, p3, p4, p5;
+	f32		lfWidth, lfHeight;
+
 
 	lfWidth  = bmp->bi.biWidth  * lfFactorX / 8.0f;
 	lfHeight = bmp->bi.biHeight * lfFactorY / 8.0f;

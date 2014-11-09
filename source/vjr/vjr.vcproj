@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				FavorSizeOrSpeed="0"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\Visual Leak Detector\include&quot;"
+				AdditionalIncludeDirectories="&quot;C:\Program Files\Visual Leak Detector\include&quot;; c:\libsf\source\vjr\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -67,7 +67,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="glew32.lib glew32s.lib freeglut.lib glu32.lib sound\SDL-1.2.15\lib\x86\SDL.lib &quot;C:\Program Files\Visual Leak Detector\lib\Win32\vld.lib&quot;"
+				AdditionalDependencies="lib\glew32.lib lib\glew32s.lib lib\freeglut.lib sound\SDL-1.2.15\lib\x86\SDL.lib &quot;C:\Program Files\Visual Leak Detector\lib\Win32\vld.lib&quot;"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -123,10 +123,11 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="2"
+				Optimization="3"
 				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="1"
+				FavorSizeOrSpeed="0"
 				OmitFramePointers="false"
+				AdditionalIncludeDirectories="c:\libsf\source\vjr\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="0"
@@ -150,7 +151,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="sound\SDL-1.2.15\lib\x86\SDL.lib  \libsf\source\vjr\freeglut.lib  \libsf\source\vjr\opengl32.lib"
+				AdditionalDependencies="lib\glew32.lib lib\glew32s.lib lib\freeglut.lib sound\SDL-1.2.15\lib\x86\SDL.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"

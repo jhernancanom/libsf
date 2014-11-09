@@ -194,7 +194,7 @@
 		return(tfTheta);
 	}
 
-	s32 iivvm_math_computeQuad(SXYF32* p)
+	s32 iivvm_math_computeQuadrant(SXYF32* p)
 	{
 		if (p->x >= 0.0)
 		{
@@ -216,24 +216,24 @@
 		line->mid.y		= (line->p1.y + line->p2.y) / 2.0f;
 
 		// Compute our deltas
-		line->delta.x		= line->p2.x - line->p1.x;
-		line->delta.y		= line->p2.y - line->p1.y;
+		line->delta.x	= line->p2.x - line->p1.x;
+		line->delta.y	= line->p2.y - line->p1.y;
 
 		// Length
-		line->length		= sqrt(line->delta.x*line->delta.x + line->delta.y*line->delta.y);
+		line->length	= (f32)sqrt(line->delta.x*line->delta.x + line->delta.y*line->delta.y);
 
 		// Slope = rise over run
-		line->m				= line->delta.y / ((line->delta.x == 0.0f) ? 0.000001f : line->delta.x);
+		line->m			= line->delta.y / ((line->delta.x == 0.0f) ? 0.000001f : line->delta.x);
 
 		// Perpendicular slope = -1/m
-		line->mp			= -1.0f / ((line->m == 0.0) ? 0.000001f : line->m);
+		line->mp		= -1.0f / ((line->m == 0.0) ? 0.000001f : line->m);
 
 
 		//////////
 		// Compute theta if need be (radius is same as length)
 		/////
 			if (line->trig)
-				line->theta		= iivvm_math_adjustTheta(atan2(line->delta.y, line->delta.x));
+				line->theta		= iivvm_math_adjustTheta((f32)atan2(line->delta.y, line->delta.x));
 
 
 		//////////
@@ -256,8 +256,8 @@
 			if (line->quads)
 			{
 				// Quads 1..4
-				line->p1_quad	= iivvm_math_computeQuad(&line->p1);
-				line->p2_quad	= iivvm_math_computeQuad(&line->p2);
+				line->p1_quad	= iivvm_math_computeQuadrant(&line->p1);
+				line->p2_quad	= iivvm_math_computeQuadrant(&line->p2);
 			}
 	}
 
@@ -306,11 +306,11 @@
 		// Compute our thetas for rapid use
 		//////
 			// L1
-			lfCosTheta1		= cos(l1.theta);
-			lfSinTheta1		= sin(l1.theta);
+			lfCosTheta1		= (f32)cos(l1.theta);
+			lfSinTheta1		= (f32)sin(l1.theta);
 			// L2
-			lfCosTheta2		= cos(l2.theta);
-			lfSinTheta2		= sin(l2.theta);
+			lfCosTheta2		= (f32)cos(l2.theta);
+			lfSinTheta2		= (f32)sin(l2.theta);
 
 
 		//////////
@@ -345,8 +345,8 @@
 				// Derive the position of this bezier point
 				//////
 					// PBEZ
-					pbez.x = lmid.p1.x + (lfPercent * lmid.radius * cos(lmid.theta));
-					pbez.y = lmid.p1.y + (lfPercent * lmid.radius * sin(lmid.theta));
+					pbez.x = lmid.p1.x + (lfPercent * lmid.radius * (f32)cos(lmid.theta));
+					pbez.y = lmid.p1.y + (lfPercent * lmid.radius * (f32)sin(lmid.theta));
 
 
 				//////////
