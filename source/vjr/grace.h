@@ -42,6 +42,12 @@ struct SObjNode;
 struct SGraceVec;
 struct SGraceRect;
 struct SGraceVecLine;
+struct SGraceXy;
+struct SGraceLine;
+
+#ifndef _PI2
+	#define _PI2 1.570796327
+#endif
 
 
 //////////

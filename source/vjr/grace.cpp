@@ -787,8 +787,10 @@
 	// Note:  This algorithm ignores Z for the bezier calculation, but rather uses a linear tsGv1->z to tsGv2->z for its orientation
 	SGraceRect* iiGrace_computeNodeLine(SGraceVec* tsV1, SGraceVec* tsV2, f32 tfNodeWidth, bool tlIsP1East, bool tlIsP2West, s32* tnReturnVecCount)
 	{
-		s32				lnI, lnV;
+		s32				lnI, lnMaxVecs, lnMaxRecs;
 		f32				lfNodeWidth2;
+		f32				lfThetaMinusCosP2, lfThetaMinusSinP2;
+		f32				lfThetaPlusCosP2, lfThetaPlusSinP2;
 		SGraceXy		p1, p2;
 		SGraceLine		line;
 		SGraceVec*		vecsFrom;
@@ -806,47 +808,97 @@
 		//////////
 		// Compute our points
 		//////
-			vecsFrom			= iiGrace_computeVecBezier3(20, &v1, &v2, &v3);
-			vecsTo				= iiGrace_computeVecBezier3(20, &v5, &v4, &v3);
-			recs				= (SGraceRect*)malloc(39 * sizeof(SGraceRect));
-			*tnReturnVecCount	= 39;
+			lnMaxVecs			= 20;
+			vecsFrom			= iiGrace_computeVecBezier3(lnMaxVecs, &v1, &v2, &v3);
+			vecsTo				= iiGrace_computeVecBezier3(lnMaxVecs, &v5, &v4, &v3);
+			lnMaxRecs			= (2 * lnMaxVecs) - 1;
+			recs				= (SGraceRect*)malloc(lnMaxRecs * sizeof(SGraceRect));
+			*tnReturnVecCount	= lnMaxRecs;
 
 
 		//////////
 		// Combine them into a single SGraceRect array with color data
 		//////
-			lfNodeWidth2		= tfNodeWidth / 2.0;
-			for (lnI = 0; lnI < 20 - 1; lnI++)
+			lfNodeWidth2 = tfNodeWidth / 2.0f;
+			for (lnI = 0; lnI < lnMaxVecs; lnI++)
 			{
 				//////////
 				// From points, proceed clockwise from NW corner of rectangle
 				//////
 					p1.x = vecsFrom[lnI].x;
 					p1.y = vecsFrom[lnI].y;
+					v1.z = vecsFrom[lnI].z;
 					p2.x = vecsFrom[lnI+1].x;
-					p2.y = vecsFrom[lnI+2].x;
+					p2.y = vecsFrom[lnI+1].y;
+					v2.z = vecsFrom[lnI+1].z;
 					iiGrace_copyAndComputeLine(&line, &p1, &p2);
 
+					// Common computations
+					lfThetaMinusCosP2	= lfNodeWidth2 * (f32)cos(line.theta - _PI2);
+					lfThetaMinusSinP2	= lfNodeWidth2 * (f32)sin(line.theta - _PI2);
+					lfThetaPlusCosP2	= lfNodeWidth2 * (f32)cos(line.theta + _PI2);
+					lfThetaPlusSinP2	= lfNodeWidth2 * (f32)sin(line.theta + _PI2);
+
 					// Northwest
-					recs[lnI].v[V1].x = vecsFrom[lnI].x + (lfNodeWidth2 * cos(line->theta - _PI2));
-					recs[lnI].v[V1].y = vecsFrom[lnI].y + (lfNodeWidth2 * sin(line->theta - _PI2));
-					recs[lnI].v[V1].z = vecsFrom[lnI].z;
+					recs[lnI].v[V1].x = p1.x + lfThetaMinusCosP2;
+					recs[lnI].v[V1].y = p1.y + lfThetaMinusSinP2;
+					recs[lnI].v[V1].z = v1.z;
 
 					// Northeast
+					recs[lnI].v[V2].x = p2.x + lfThetaMinusCosP2;
+					recs[lnI].v[V2].y = p2.y + lfThetaMinusSinP2;
+					recs[lnI].v[V2].z = v2.z;
 
 					// Southeast
+					recs[lnI].v[V3].x = p2.x + lfThetaPlusCosP2;
+					recs[lnI].v[V3].y = p2.y + lfThetaPlusSinP2;
+					recs[lnI].v[V3].z = v2.z;
 
 					// Southwest
-					vecsFrom[lnI+1].x;
-					vecsFrom[lnI+1].y;
-					vecsFrom[lnI+1].z;
+					recs[lnI].v[V4].x = p1.x + lfThetaPlusCosP2;
+					recs[lnI].v[V4].y = p1.y + lfThetaPlusSinP2;
+					recs[lnI].v[V4].z = v1.z;
 
-					// ...to node
-					iBmp_drawArbitraryQuad(bmp, (s32)vecsTo[lnI].x, (s32)vecsTo[lnI].y, (s32)vecsTo[lnI+1].x, (s32)vecsTo[lnI+1].y, lnWidth, true, blackColor);
-				}
+
+				//////////
+				// To points, proceed clockwise from NW corner of rectangle
+				//////
+					p1.x = vecsTo[lnI].x;
+					p1.y = vecsTo[lnI].y;
+					v1.z = vecsTo[lnI].z;
+					p2.x = vecsTo[lnI+1].x;
+					p2.y = vecsTo[lnI+1].y;
+					v2.z = vecsTo[lnI+1].z;
+					iiGrace_copyAndComputeLine(&line, &p1, &p2);
+
+					// Common computations
+					lfThetaMinusCosP2	= lfNodeWidth2 * (f32)cos(line.theta - _PI2);
+					lfThetaMinusSinP2	= lfNodeWidth2 * (f32)sin(line.theta - _PI2);
+					lfThetaPlusCosP2	= lfNodeWidth2 * (f32)cos(line.theta + _PI2);
+					lfThetaPlusSinP2	= lfNodeWidth2 * (f32)sin(line.theta + _PI2);
+
+					// Northwest
+					recs[lnMaxVecs + lnI - 1].v[V1].x = p1.x + lfThetaMinusCosP2;
+					recs[lnMaxVecs + lnI - 1].v[V1].y = p1.y + lfThetaMinusSinP2;
+					recs[lnMaxVecs + lnI - 1].v[V1].z = v1.z;
+
+					// Northeast
+					recs[lnMaxVecs + lnI - 1].v[V2].x = p2.x + lfThetaMinusCosP2;
+					recs[lnMaxVecs + lnI - 1].v[V2].y = p2.y + lfThetaMinusSinP2;
+					recs[lnMaxVecs + lnI - 1].v[V2].z = v2.z;
+
+					// Southeast
+					recs[lnMaxVecs + lnI - 1].v[V3].x = p2.x + lfThetaPlusCosP2;
+					recs[lnMaxVecs + lnI - 1].v[V3].y = p2.y + lfThetaPlusSinP2;
+					recs[lnMaxVecs + lnI - 1].v[V3].z = v2.z;
+
+					// Southwest
+					recs[lnMaxVecs + lnI - 1].v[V4].x = p1.x + lfThetaPlusCosP2;
+					recs[lnMaxVecs + lnI - 1].v[V4].y = p1.y + lfThetaPlusSinP2;
+					recs[lnMaxVecs + lnI - 1].v[V4].z = v1.z;
 			}
 			--lnI;
-			iBmp_drawArbitraryQuad(bmp, (s32)vecsFrom[lnI].x, (s32)vecsFrom[lnI].y, (s32)vecsTo[lnI].x, (s32)vecsTo[lnI].y, lnWidth, true, blackColor);
+//			iBmp_drawArbitraryQuad(bmp, (s32)vecsFrom[lnI].x, (s32)vecsFrom[lnI].y, (s32)vecsTo[lnI].x, (s32)vecsTo[lnI].y, lnWidth, true, blackColor);
 
 
 		//////////
