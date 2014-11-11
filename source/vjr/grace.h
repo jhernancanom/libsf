@@ -65,7 +65,7 @@ struct SGraceVecLine;
 	void			iGrace_animate_childrenAndSiblings		(SObject* obj, RECT* rc, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ, s64 tnMs);
 	void			iiGrace_animate							(SObject* obj, s64 tnMs);
 	void			iGrace_renderNode_childrenAndSiblings	(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ);
-	SGraceRect*		iiGrace_computeNodeLine					(SGraceVec* tsV1, SGraceVec* tsV2, bool tlIsP1East, bool tlIsP2West, s32* tnReturnVecCount);
+	SGraceRect*		iiGrace_computeNodeLine					(SGraceVec* tsV1, SGraceVec* tsV2, f32 tfNodeWidth, bool tlIsP1East, bool tlIsP2West, s32* tnReturnVecCount);
 	void			iiGrace_computeNodeLine_fivePoints		(SGraceVec* tsV1, SGraceVec* tsV2, SGraceVec* v1, SGraceVec* v2, SGraceVec* v3, SGraceVec* v4, SGraceVec* v5, bool tlIsP1East, bool tlIsP2West);
 	void			iiGrace_renderNode						(SObject* obj, SObjNode* objNodeFrom);
 	void			iGrace_renderObj_childrenAndSiblings	(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ);
@@ -74,7 +74,8 @@ struct SGraceVecLine;
 	// Helper functions
 	void			iiGrace_computeVecLine					(SGraceVecLine* line);
 	void			iiGrace_copyAndComputeVecLine			(SGraceVecLine* line, SGraceVec* p1, SGraceVec* p2);
-	SGraceVec*		iiGrace_computeVecBezier3					(s32 tnSegmentCount, SGraceVec* tsV1, SGraceVec* tsV2, SGraceVec* tsV3);
+	SGraceVec*		iiGrace_computeVecBezier3				(s32 tnSegmentCount, SGraceVec* tsV1, SGraceVec* tsV2, SGraceVec* tsV3);
+	void			iiGrace_copyAndComputeLine				(SGraceLine* line, SGraceXy* p1, SGraceXy* p2);
 
 
 
@@ -108,6 +109,26 @@ struct SGraceVecLine;
 //////////
 // Structures
 //////
+	struct SGraceXy
+	{
+		f32		x;
+		f32		y;
+	};
+
+	struct SGraceLine
+	{
+		SGraceXy	p1;							// Point 1
+		SGraceXy	p2;							// Point 2
+
+		SGraceXy	delta;						// Delta between start and end
+		SGraceXy	mid;						// Midpoint
+
+		f32			length;						// Length
+		f32			m;							// Slope
+		f32			mp;							// Perpendicular slope
+		f32			theta;						// Theta
+	};
+
 	struct SGraceVec
 	{
 		f32		x;

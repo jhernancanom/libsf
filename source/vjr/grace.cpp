@@ -785,11 +785,14 @@
 
 
 	// Note:  This algorithm ignores Z for the bezier calculation, but rather uses a linear tsGv1->z to tsGv2->z for its orientation
-	SGraceRect* iiGrace_computeNodeLine(SGraceVec* tsV1, SGraceVec* tsV2, bool tlIsP1East, bool tlIsP2West, s32* tnReturnVecCount)
+	SGraceRect* iiGrace_computeNodeLine(SGraceVec* tsV1, SGraceVec* tsV2, f32 tfNodeWidth, bool tlIsP1East, bool tlIsP2West, s32* tnReturnVecCount)
 	{
-		s32				lnI, lnWidth;
-		SGraceVec*		vecs1;
-		SGraceVec*		vecs2;
+		s32				lnI, lnV;
+		f32				lfNodeWidth2;
+		SGraceXy		p1, p2;
+		SGraceLine		line;
+		SGraceVec*		vecsFrom;
+		SGraceVec*		vecsTo;
 		SGraceVec		v1, v2, v3, v4, v5;
 		SGraceRect*		recs;
 
@@ -803,31 +806,54 @@
 		//////////
 		// Compute our points
 		//////
-			vecs1				= iiGrace_computeVecBezier3(20, &v1, &v2, &v3);
-			vecs2				= iiGrace_computeVecBezier3(20, &v5, &v4, &v3);
-			recs				= (SGraceRect*)malloc(41 * sizeof(SGraceRect));
-			*tnReturnVecCount	= 41;
+			vecsFrom			= iiGrace_computeVecBezier3(20, &v1, &v2, &v3);
+			vecsTo				= iiGrace_computeVecBezier3(20, &v5, &v4, &v3);
+			recs				= (SGraceRect*)malloc(39 * sizeof(SGraceRect));
+			*tnReturnVecCount	= 39;
 
 
 		//////////
 		// Combine them into a single SGraceRect array with color data
 		//////
-			lnWidth = 5;
+			lfNodeWidth2		= tfNodeWidth / 2.0;
 			for (lnI = 0; lnI < 20 - 1; lnI++)
 			{
+				//////////
+				// From points, proceed clockwise from NW corner of rectangle
+				//////
+					p1.x = vecsFrom[lnI].x;
+					p1.y = vecsFrom[lnI].y;
+					p2.x = vecsFrom[lnI+1].x;
+					p2.y = vecsFrom[lnI+2].x;
+					iiGrace_copyAndComputeLine(&line, &p1, &p2);
 
-// 				iBmp_drawArbitraryQuad(bmp, (s32)vecs1[lnI].x, (s32)vecs1[lnI].y, (s32)vecs1[lnI+1].x, (s32)vecs1[lnI+1].y, lnWidth, true, blackColor);
-// 				iBmp_drawArbitraryQuad(bmp, (s32)vecs2[lnI].x, (s32)vecs2[lnI].y, (s32)vecs2[lnI+1].x, (s32)vecs2[lnI+1].y, lnWidth, true, blackColor);
+					// Northwest
+					recs[lnI].v[V1].x = vecsFrom[lnI].x + (lfNodeWidth2 * cos(line->theta - _PI2));
+					recs[lnI].v[V1].y = vecsFrom[lnI].y + (lfNodeWidth2 * sin(line->theta - _PI2));
+					recs[lnI].v[V1].z = vecsFrom[lnI].z;
+
+					// Northeast
+
+					// Southeast
+
+					// Southwest
+					vecsFrom[lnI+1].x;
+					vecsFrom[lnI+1].y;
+					vecsFrom[lnI+1].z;
+
+					// ...to node
+					iBmp_drawArbitraryQuad(bmp, (s32)vecsTo[lnI].x, (s32)vecsTo[lnI].y, (s32)vecsTo[lnI+1].x, (s32)vecsTo[lnI+1].y, lnWidth, true, blackColor);
+				}
 			}
 			--lnI;
-// 			iBmp_drawArbitraryQuad(bmp, (s32)vecs1[lnI].x, (s32)vecs1[lnI].y, (s32)vecs2[lnI].x, (s32)vecs2[lnI].y, lnWidth, true, blackColor);
+			iBmp_drawArbitraryQuad(bmp, (s32)vecsFrom[lnI].x, (s32)vecsFrom[lnI].y, (s32)vecsTo[lnI].x, (s32)vecsTo[lnI].y, lnWidth, true, blackColor);
 
 
 		//////////
 		// Clean house
 		//////
-			free(vecs1);
-			free(vecs2);
+			free(vecsFrom);
+			free(vecsTo);
 	}
 
 
@@ -1204,4 +1230,30 @@
 		// Return our vectors
 		//////
 			return(vecs);
+	}
+
+
+
+
+	void iiGrace_copyAndComputeLine(SGraceLine* line, SGraceXy* p1, SGraceXy* p2)
+	{
+		// Midpoint = (x2-x1)/2, (y2-y1)/2
+		line->mid.x		= (line->p1.x + line->p2.x) / 2.0f;
+		line->mid.y		= (line->p1.y + line->p2.y) / 2.0f;
+
+		// Compute our deltas
+		line->delta.x	= line->p2.x - line->p1.x;
+		line->delta.y	= line->p2.y - line->p1.y;
+
+		// Length
+		line->length	= (f32)sqrt(line->delta.x*line->delta.x + line->delta.y*line->delta.y);
+
+		// Slope = rise over run
+		line->m			= line->delta.y / ((line->delta.x == 0.0f) ? 0.000001f : line->delta.x);
+
+		// Perpendicular slope = -1/m
+		line->mp		= -1.0f / ((line->m == 0.0) ? 0.000001f : line->m);
+
+		// Compute theta
+		line->theta		= (f32)atan2(line->delta.y, line->delta.x);
 	}
