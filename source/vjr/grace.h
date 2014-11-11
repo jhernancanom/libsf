@@ -40,6 +40,8 @@
 
 struct SObjNode;
 struct SGraceVec;
+struct SGraceRect;
+struct SGraceVecLine;
 
 
 //////////
@@ -60,18 +62,19 @@ struct SGraceVec;
 	void			iGrace_display							(void);
 	void			iGrace_renderBegin						(f32 tfZ);
 	void			iGrace_renderEnd						(void);
-	void			iGrace_animate_childrenAndSiblings		(SObject* obj, RECT* rc, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ);
+	void			iGrace_animate_childrenAndSiblings		(SObject* obj, RECT* rc, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ, s64 tnMs);
 	void			iiGrace_animate							(SObject* obj, s64 tnMs);
-	void			iGrace_renderNode_childrenAndSiblings	(SObject* obj, RECT* rc, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ);
-	SGraceRect**	iiGrace_computeNodeLine					(SGraceVec* tsV1, SGraceVec* tsV1, bool tlIsP1East, bool tlIsP2West, s32* tnReturnVecCount);
-	void			iiGrace_renderNode						(SObject* obj, SObjNode* objNodeFrom, s32 tnNodeFromNum, s32 tnNodeToNum);
-	void			iGrace_renderObj_childrenAndSiblings	(SObject* obj, RECT* rc, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ);
+	void			iGrace_renderNode_childrenAndSiblings	(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ);
+	SGraceRect*		iiGrace_computeNodeLine					(SGraceVec* tsV1, SGraceVec* tsV2, bool tlIsP1East, bool tlIsP2West, s32* tnReturnVecCount);
+	void			iiGrace_computeNodeLine_fivePoints		(SGraceVec* tsV1, SGraceVec* tsV2, SGraceVec* v1, SGraceVec* v2, SGraceVec* v3, SGraceVec* v4, SGraceVec* v5, bool tlIsP1East, bool tlIsP2West);
+	void			iiGrace_renderNode						(SObject* obj, SObjNode* objNodeFrom);
+	void			iGrace_renderObj_childrenAndSiblings	(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ);
 	void			iiGrace_renderObj						(SObject* obj);
 
 	// Helper functions
 	void			iiGrace_computeVecLine					(SGraceVecLine* line);
 	void			iiGrace_copyAndComputeVecLine			(SGraceVecLine* line, SGraceVec* p1, SGraceVec* p2);
-	SGraceVec**		iivvm_canvasVecBezier3					(s32 tnSegmentCount, SGraceVec* tsV1, SGraceVec* tsV2, SGraceVec* tsV3);
+	SGraceVec*		iiGrace_computeVecBezier3					(s32 tnSegmentCount, SGraceVec* tsV1, SGraceVec* tsV2, SGraceVec* tsV3);
 
 
 

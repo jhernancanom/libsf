@@ -284,6 +284,14 @@ struct SObjNode
 	SLL				llFrom;											// Node link on the from
 	SLL				llTo;											// Node link from the to direction
 
+	// Slot from configuration
+	bool			isFromEast;										// Does the from originate from the east?
+	s32				slotNumFrom;									// The node slot number for the from
+
+	// Slot to configuration
+	bool			isToWest;										// Does the to terminate on the west?
+	s32				slotNumTo;										// The node slot number for the to
+
 	// If it's an individual
 	SObjNodeData	from;											// Nodes go from something to something, this is the from
 	SObjNodeData	to;												// ...and this is the to. :-)

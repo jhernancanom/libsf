@@ -524,8 +524,9 @@
 
 	void iGrace_display(void)
 	{
-		f32		lfZ;
-		RECT	lrc;
+		f32			lfZ;
+		RECT		lrc;
+		SYSTEMTIME	timeNow;
 
 
 		// Render if we have something to render
@@ -544,16 +545,17 @@
 				// Start
 				lfZ = 0.0f;
 				iGrace_renderBegin(lfZ);
+				{
+					// Apply animations
+					GetSystemTime(&timeNow);
+					iGrace_animate_childrenAndSiblings(gWinJDebi->obj, &lrc, true, true, lfZ, iTime_computeMilliseconds(&timeNow));
 
-				// Apply animations
-				iGrace_animate_childrenAndSiblings(gWinJDebi->obj, &lrc, true, true, lfZ);
+					// Render the nodes
+					iGrace_renderNode_childrenAndSiblings(gWinJDebi->obj, true, true, lfZ);
 
-				// Render the nodes
-				iGrace_renderNode_childrenAndSiblings(gWinJDebi->obj, &lrc, true, true, lfZ);
-
-				// Render Objects
-				iGrace_renderObj_childrenAndSiblings(gWinJDebi->obj, &lrc, true, true, lfZ);
-
+					// Render Objects
+					iGrace_renderObj_childrenAndSiblings(gWinJDebi->obj, true, true, lfZ);
+				}
 				// End
 				iGrace_renderEnd();
 		}
@@ -626,7 +628,7 @@
 
 
 
-	void iGrace_animate_childrenAndSiblings(SObject* obj, RECT* rc, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ)
+	void iGrace_animate_childrenAndSiblings(SObject* obj, RECT* rc, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ, s64 tnMs)
 	{
 		RECT		lrc, lrcClient;
 		SObject*	objSib;
@@ -658,14 +660,14 @@
 		// Render any children
 		//////
 			if (tlRenderChildren && obj->firstChild)
-				iGrace_animate_childrenAndSiblings(obj->firstChild, &lrcClient, true, true, tfZ + 0.01f);
+				iGrace_animate_childrenAndSiblings(obj->firstChild, &lrcClient, true, true, tfZ + 0.01f, tnMs);
 
 
 		//////////
 		// Render self
 		//////
 			iGrace_assignCoordinates(obj, &lrc, tfZ);
-			iiGrace_animate(obj);
+			iiGrace_animate(obj, tnMs);
 
 
 		//////////
@@ -677,7 +679,7 @@
 				while (objSib)
 				{
 					// Render this sibling
-					iGrace_animate_childrenAndSiblings(objSib, rc, true, false, tfZ);
+					iGrace_animate_childrenAndSiblings(objSib, rc, true, false, tfZ, tnMs);
 
 					// Move to next sibling
 					objSib = (SObject*)objSib->ll.next;
@@ -713,13 +715,10 @@
 
 
 
-	void iGrace_renderNode_childrenAndSiblings(SObject* obj, RECT* rc, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ)
+	void iGrace_renderNode_childrenAndSiblings(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ)
 	{
-		s32			lnNodeFromNum, lnNodeToNum;
-		RECT		lrc, lrcClient;
 		SObject*	objSib;
 		SObjNode*	objNodeFrom;
-		SObjNode*	objNodeTo;
 
 
 		logfunc(__FUNCTION__);
@@ -734,48 +733,34 @@
 		// Render any children
 		//////
 			if (tlRenderChildren && obj->firstChild)
-				iGrace_renderObj_childrenAndSiblings(obj->firstChild, &lrcClient, true, true, tfZ + 0.01f);
+				iGrace_renderObj_childrenAndSiblings(obj->firstChild, true, true, tfZ + 0.01f);
 
 
 		//////////
 		// Render nodes from the bottom of this item
 		//////
-			objNodeFrom		= obj->fromBottom;
-			lnNodeFromNum	= 0;
+			objNodeFrom = obj->fromBottom;
 			while (objNodeFrom)
 			{
-				//////////
-				// Find out what item this points to along this node strip on the to side
-				//////
-					objNodeTo	= objNodeFrom->to;
-					lnNodeToNum	= 0;
-					while (objNodeTo->llTo.prev)
-					{
-						++lnNodeToNum;
-						objNodeTo = (SObjNode*)objNodeTo->llTo.prev;
-					}
-
-
-				//////////
 				// Render this node
-				//////
-					iiGrace_renderNode(obj, objNodeFrom, lnNodeFromNum, lnNodeToNum);
+				iiGrace_renderNode(obj, objNodeFrom);
 
-
-				//////////
 				// Move to the next node
-				//////
-					++lnNodeFromNum;
-					objNodeFrom = (SObjNode*)objNodeFrom->llFrom;
+				objNodeFrom = (SObjNode*)objNodeFrom->llFrom.next;
 			}
 
-			if (obj->fromBottom)
-			{
-				objNodeFrom = obj->fromBottom
-			}
 
-			if (obj->fromRight)
+		//////////
+		// Render nodes from the right of this item
+		//////
+			objNodeFrom = obj->fromRight;
+			while (objNodeFrom)
 			{
+				// Render this node
+				iiGrace_renderNode(obj, objNodeFrom);
+
+				// Move to the next node
+				objNodeFrom = (SObjNode*)objNodeFrom->llFrom.next;
 			}
 
 
@@ -788,7 +773,7 @@
 				while (objSib)
 				{
 					// Render this sibling
-					iGrace_renderNode_childrenAndSiblings(objSib, rc, true, false, tfZ);
+					iGrace_renderNode_childrenAndSiblings(objSib, true, false, tfZ);
 
 					// Move to next sibling
 					objSib = (SObject*)objSib->ll.next;
@@ -800,14 +785,13 @@
 
 
 	// Note:  This algorithm ignores Z for the bezier calculation, but rather uses a linear tsGv1->z to tsGv2->z for its orientation
-	SGraceRect** iiGrace_computeNodeLine(SGraceVec* tsV1, SGraceVec* tsV2, bool tlIsP1East, bool tlIsP2West, s32* tnReturnVecCount)
+	SGraceRect* iiGrace_computeNodeLine(SGraceVec* tsV1, SGraceVec* tsV2, bool tlIsP1East, bool tlIsP2West, s32* tnReturnVecCount)
 	{
 		s32				lnI, lnWidth;
-		SGraceVec**		vecs1;
-		SGraceVec**		vecs2;
+		SGraceVec*		vecs1;
+		SGraceVec*		vecs2;
 		SGraceVec		v1, v2, v3, v4, v5;
-		SGraceRect**	recs;
-		f32				lfWidth, lfHeight;
+		SGraceRect*		recs;
 
 
 		//////////
@@ -819,10 +803,10 @@
 		//////////
 		// Compute our points
 		//////
-			vecs1		= iivvm_canvasVecBezier3(20, &v1, &v2, &v3);
-			vecs2		= iivvm_canvasVecBezier3(20, &v5, &v4, &v3);
-			recs		= (SGraceRect**)malloc(sizeof(SGraceRect) * 41);
-			*tnCount	= 41;
+			vecs1				= iiGrace_computeVecBezier3(20, &v1, &v2, &v3);
+			vecs2				= iiGrace_computeVecBezier3(20, &v5, &v4, &v3);
+			recs				= (SGraceRect*)malloc(41 * sizeof(SGraceRect));
+			*tnReturnVecCount	= 41;
 
 
 		//////////
@@ -831,11 +815,12 @@
 			lnWidth = 5;
 			for (lnI = 0; lnI < 20 - 1; lnI++)
 			{
-				iBmp_drawArbitraryQuad(bmp, (s32)vecs1[lnI].x, (s32)vecs1[lnI].y, (s32)vecs1[lnI+1].x, (s32)vecs1[lnI+1].y, lnWidth, true, blackColor);
-				iBmp_drawArbitraryQuad(bmp, (s32)vecs2[lnI].x, (s32)vecs2[lnI].y, (s32)vecs2[lnI+1].x, (s32)vecs2[lnI+1].y, lnWidth, true, blackColor);
+
+// 				iBmp_drawArbitraryQuad(bmp, (s32)vecs1[lnI].x, (s32)vecs1[lnI].y, (s32)vecs1[lnI+1].x, (s32)vecs1[lnI+1].y, lnWidth, true, blackColor);
+// 				iBmp_drawArbitraryQuad(bmp, (s32)vecs2[lnI].x, (s32)vecs2[lnI].y, (s32)vecs2[lnI+1].x, (s32)vecs2[lnI+1].y, lnWidth, true, blackColor);
 			}
 			--lnI;
-			iBmp_drawArbitraryQuad(bmp, (s32)vecs1[lnI].x, (s32)vecs1[lnI].y, (s32)vecs2[lnI].x, (s32)vecs2[lnI].y, lnWidth, true, blackColor);
+// 			iBmp_drawArbitraryQuad(bmp, (s32)vecs1[lnI].x, (s32)vecs1[lnI].y, (s32)vecs2[lnI].x, (s32)vecs2[lnI].y, lnWidth, true, blackColor);
 
 
 		//////////
@@ -847,8 +832,157 @@
 
 
 
+//////////
+//
+// The nodes originate on the right and bottom, and terminate on the top and left.
+// These equate to the standard east,south and north,west orientations.
+//
+//		       | |
+//		       o o
+//		      +----------+ o----
+//		      |          | o----
+//		      |          |
+//		----o |          |
+//		----o +----------+
+//		               o o
+//		               | |
+//
+// Based on the source and destination locations, the three points for each portion
+// of the bezier needs to be adjusted.  A typical connection has v1 and v2 in the
+// appropriate orientations, which yields these five points (two o's, and three x's):
+//
+//		       v1
+//		+----+ o--- __x
+//		|    |          -x- __    v2
+//		+----+              x  ---o +----+
+//		                            |    |
+//		                            +----+
+//
+// But there may be times when they are in other orientations, which yields these
+// five points (two o's, and three x's):
+//
+//		             v2
+//		 x       __---o +----+
+//		        |       |    |
+//		         - __   +----+
+//		              ----- _____x_____
+//		                                -----_
+//		                               v1    _-
+//		                         +----+ o----          x
+//		                         |    |
+//		                         +----+
+//
+// And for the other orientations, they perform the similar operations but in the
+// vertical rather than horizontal orientations.
+//
+//////
+	void iiGrace_computeNodeLine_fivePoints(SGraceVec* tsV1, SGraceVec* tsV2, SGraceVec* v1, SGraceVec* v2, SGraceVec* v3, SGraceVec* v4, SGraceVec* v5, bool tlIsP1East, bool tlIsP2West)
+	{
+		//////////
+		// v1 is always tsV1, v3 is always dead center, and v5 is always tsV2
+		//////
+			memcpy(v1, tsV1, sizeof(SGraceVec));
+			memcpy(v5, tsV2, sizeof(SGraceVec));
+			v3->x = (tsV1->x + tsV2->x) / 2.0f;
+			v3->y = (tsV1->y + tsV2->y) / 2.0f;
+			v3->z = (tsV1->z + tsV2->z) / 2.0f;
 
-	void iiGrace_renderNode(SObject* obj, SObjNode* objNodeFrom, s32 tnNodeFromNum, s32 tnNodeToNum)
+		//////////
+		// From
+		//////
+			if (tlIsP1East)
+			{
+				// v2->y,z is always tsV1->y,z
+				v2->y = tsV1->y;
+				v2->z = tsV1->z;
+
+				// Originates on the right
+				if (tsV1->x < tsV2->x)
+				{
+					// v1 is to the left of v2, so it can be extended outward in the easterly direction proportionally
+					v2->x = (tsV1->x + v3->x) / 2.0f;
+
+				} else if (tsV1->x == tsV2->x) {
+					// v1 and v2 are on top of each other
+					v2->x = tsV1->x + 1.0f;
+
+				} else {
+					// v1 is to the right of v2, which means it must cross-over
+					v2->x = tsV1->x + ((tsV1->x - v3->x) / 2.0f);
+				}
+
+			} else {
+				// v2->x,z is always tsV1->x,z
+				v2->x = tsV1->x;
+				v2->z = tsV1->z;
+
+				// Originates on the bottom
+				if (tsV1->y < tsV2->y)
+				{
+					// v1 is above v2, so it can be extended outward normally
+					v2->y = (tsV1->y + v3->y) / 2.0f;
+
+				} else if (tsV1->y == tsV2->y) {
+					// v1 and v2 are directly beside each other
+					v2->y = tsV1->y + 1.0f;
+
+				} else {
+					// v1 is below v2, which means it must go down and then back up
+					v2->y = tsV1->y + ((tsV1->y - v3->y) / 2.0f);
+				}
+			}
+
+
+		//////////
+		// To
+		//////
+			if (tlIsP2West)
+			{
+				// v4->y,z is always tsV2->y,z
+				v4->y = tsV2->y;
+				v4->z = tsV2->z;
+
+				// Terminates on the left
+				if (tsV1->x < tsV2->x)
+				{
+					// v1 is to the left of v2, so it can be extended outward in the easterly direction proportionally
+					v4->x = (tsV2->x - v3->x) / 2.0f;
+
+				} else if (tsV1->x == tsV2->x) {
+					// v1 and v2 are on top of each other
+					v4->x = tsV2->x - 1.0f;
+
+				} else {
+					// v1 is to the right of v2, which means it must cross-over
+					v2->x = tsV2->x - ((v3->x - tsV2->x) / 2.0f);
+				}
+
+			} else {
+				// v4->x,z is always tsV2->x,z
+				v4->x = tsV2->x;
+				v4->z = tsV2->z;
+
+				// Terminates on the top
+				if (tsV1->y < tsV2->y)
+				{
+					// v1 is above v2, so it can be extended outward normally
+					v4->y = (tsV2->y + v3->y) / 2.0f;
+
+				} else if (tsV1->y == tsV2->y) {
+					// v1 and v2 are directly beside each other
+					v4->y = tsV2->y - 1.0f;
+
+				} else {
+					// v1 is below v2, which means it must go down and then back up
+					v4->y = tsV2->y - ((tsV2->y - v3->y) / 2.0f);
+				}
+			}
+	}
+
+
+
+
+	void iiGrace_renderNode(SObject* obj, SObjNode* objNodeFrom)
 	{
 		iiGrace_computeNodeLine(obj->bmp, 1.0f, 1.0f);
 	}
@@ -856,10 +990,9 @@
 
 
 
-	void iGrace_renderObj_childrenAndSiblings(SObject* obj, RECT* rc, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ)
+	void iGrace_renderObj_childrenAndSiblings(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ)
 	{
-		RECT		lrc, lrcClient;
-		SObject*	objSib;
+		SObject* objSib;
 
 
 		logfunc(__FUNCTION__);
@@ -874,7 +1007,7 @@
 		// Render any children
 		//////
 			if (tlRenderChildren && obj->firstChild)
-				iGrace_renderObj_childrenAndSiblings(obj->firstChild, &lrcClient, true, true, tfZ + 0.01f);
+				iGrace_renderObj_childrenAndSiblings(obj->firstChild, true, true, tfZ + 0.01f);
 
 
 		//////////
@@ -892,7 +1025,7 @@
 				while (objSib)
 				{
 					// Render this sibling
-					iGrace_renderObj_childrenAndSiblings(objSib, rc, true, false, tfZ);
+					iGrace_renderObj_childrenAndSiblings(objSib, true, false, tfZ);
 
 					// Move to next sibling
 					objSib = (SObject*)objSib->ll.next;
@@ -910,7 +1043,7 @@
 
 		// Based on whether or not there's texture information, do the texture coords
 		glBegin(GL_QUADS);
-
+		{
 			glColor4f		(obj->ogl.quad.c[V1].r, obj->ogl.quad.c[V1].g, obj->ogl.quad.c[V1].b, obj->ogl.quad.c[V1].a);
 			glTexCoord2d	(obj->ogl.quad.t[V1].s, obj->ogl.quad.t[V1].t);
 			glNormal3f		(obj->ogl.quad.n[V1].x, obj->ogl.quad.n[V1].y, obj->ogl.quad.n[V1].z);
@@ -930,7 +1063,7 @@
 			glTexCoord2d	(obj->ogl.quad.t[V4].s, obj->ogl.quad.t[V4].t);
 			glNormal3f		(obj->ogl.quad.n[V4].x, obj->ogl.quad.n[V4].y, obj->ogl.quad.n[V4].z);
 			glVertex3f		(obj->ogl.quad.v[V4].x, obj->ogl.quad.v[V4].y, obj->ogl.quad.v[V4].z);
-
+		}
 		glEnd();
 	}
 
@@ -944,7 +1077,7 @@
 //////
 	void iiGrace_computeVecLine(SGraceVecLine* line)
 	{
-		// Midpoint = (x2-x1)/2, (y2-y1)/2
+		// Midpoint = (x2-x1)/2, (y2-y1)/2, (z2-z1)/2
 		line->mid.x		= (line->v1.x + line->v2.x) / 2.0f;
 		line->mid.y		= (line->v1.y + line->v2.y) / 2.0f;
 		line->mid.z		= (line->v1.z + line->v2.z) / 2.0f;
@@ -992,19 +1125,23 @@
 
 
 
-	SGraceVec** iivvm_canvasVecBezier3(s32 tnSegmentCount, SGraceVec* tsV1, SGraceVec* tsV2, SGraceVec* tsV3)
+	SGraceVec* iiGrace_computeVecBezier3(s32 tnSegmentCount, SGraceVec* tsV1, SGraceVec* tsV2, SGraceVec* tsV3)
 	{
-		s32				lnSegment;
-		f32				lfPercent, lfCosTheta1, lfSinTheta1, lfCosTheta2, lfSinTheta2;
-		SGraceVec		v1, v2, pbez;
+		s32				lnSegment, lnSize;
+		f32				lfPercent, lfPercentStep;
+		f32				lfCosTheta1, lfSinTheta1;
+		f32				lfCosTheta2, lfSinTheta2;
+		f32				lfSinTheta1Z, lfSinTheta2Z;
+		SGraceVec		v1, v2;
 		SGraceVecLine	l1, l2;		// Static lines from bez->p1 to bez->p2, and bez->p2 to bez->p3
 		SGraceVecLine	lmid;		// Dynamically computed line from l1 to l2 through segments
 		SGraceVec*		vecs;
 
 
 		// Allocate our return buffer
-		vecs = (SXYF32*)malloc(tnSegmentCount * sizeof(SXYF32));
-		memset(vecs, 0, tnSegmentCount * sizeof(SXYF32));
+		lnSize	= tnSegmentCount * sizeof(SGraceVec);
+		vecs	= (SGraceVec*)malloc(lnSize);
+		memset(vecs, 0, lnSize);
 
 
 		//////////
@@ -1013,8 +1150,8 @@
 			memset(&l1,   0, sizeof(l1));
 			memset(&l2,   0, sizeof(l2));
 			memset(&lmid, 0, sizeof(lmid));
-			iiGrace_copyAndComputeVecLine(&l1, tsV1, tsV2, true);
-			iiGrace_copyAndComputeVecLine(&l2, tsV2, tsV3, true);
+			iiGrace_copyAndComputeVecLine(&l1, tsV1, tsV2);
+			iiGrace_copyAndComputeVecLine(&l2, tsV2, tsV3);
 
 
 		//////////
@@ -1023,53 +1160,48 @@
 			// L1
 			lfCosTheta1		= (f32)cos(l1.thetaXy);
 			lfSinTheta1		= (f32)sin(l1.thetaXy);
+			lfSinTheta1Z	= (f32)sin(l1.thetaXz);
 			// L2
 			lfCosTheta2		= (f32)cos(l2.thetaXy);
 			lfSinTheta2		= (f32)sin(l2.thetaXy);
+			lfSinTheta2Z	= (f32)sin(l2.thetaXz);
 
 
 		//////////
 		// Now, iterate through the bezier building the points
 		//////
-			for (lnSegment = 0; lnSegment < tnSegmentCount; lnSegment++)
+			for (	lnSegment = 0, lfPercentStep = 1.0f / (f32)tnSegmentCount;
+					lnSegment < tnSegmentCount;
+					lnSegment++, lfPercent += lfPercentStep		)
 			{
 				//////////
-				// Get our percentage
+				// Compute our vectors
 				//////
-					lfPercent = (f32)lnSegment / (f32)tnSegmentCount;
+					// v1 for l1
+					v1.x = tsV1->x + (lfPercent * l1.lengthXy * lfCosTheta1);
+					v1.y = tsV1->y + (lfPercent * l1.lengthXy * lfSinTheta1);
+					v1.z = tsV1->z + (lfPercent * l1.lengthXz * lfSinTheta1Z);
 
+					// v2 for l2
+					v2.x = tsV2->x + (lfPercent * l2.lengthXy * lfCosTheta2);
+					v2.y = tsV2->y + (lfPercent * l2.lengthXy * lfSinTheta2);
+					v2.z = tsV2->z + (lfPercent * l2.lengthXz * lfSinTheta2Z);
 
-				//////////
-				// Determine the two points for l1 and l2
-				//////
-					// P1, L1
-					v1.x = tsV1->x + (lfPercent * l1.radius * lfCosTheta1);
-					v1.y = tsV1->y + (lfPercent * l1.radius * lfSinTheta1);
-					// P2, L2
-					v2.x = tsV2->x + (lfPercent * l2.radius * lfCosTheta2);
-					v2.y = tsV2->y + (lfPercent * l2.radius * lfSinTheta2);
-
-
-				//////////
-				// Construct the line between
-				//////
-					iiGrace_copyAndComputeVecLine(&lmid, &v1, &v2, true);
+					// Compute the line
+					iiGrace_copyAndComputeVecLine(&lmid, &v1, &v2);
 
 
 				//////////
 				// Derive the position of this bezier point
 				//////
-					// PBEZ
-					pbez.x = lmid.v1.x + (lfPercent * lmid.radius * (f32)cos(lmid.thetaXy));
-					pbez.y = lmid.v1.y + (lfPercent * lmid.radius * (f32)sin(lmid.thetaXy));
-
-
-				//////////
-				// Store the point
-				//////
-					vecs[lnSegment].x = pbez.x;
-					vecs[lnSegment].y = pbez.y;
+					vecs[lnSegment].x = lmid.v1.x + (lfPercent * lmid.lengthXy * (f32)cos(lmid.thetaXy));
+					vecs[lnSegment].y = lmid.v1.y + (lfPercent * lmid.lengthXy * (f32)sin(lmid.thetaXy));
+					vecs[lnSegment].z = lmid.v1.z + (lfPercent * lmid.lengthXz * (f32)sin(lmid.thetaXz));
 			}
 
-		return(vecs);
+
+		//////////
+		// Return our vectors
+		//////
+			return(vecs);
 	}
