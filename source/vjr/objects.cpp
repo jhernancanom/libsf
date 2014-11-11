@@ -7302,22 +7302,18 @@ if (!obj->props[lnI])
 						// Upper left arrow
 						SetRect(&lrc2, lrc.left + 1, lrc.top + 1, lrc.left + bmpArrowUl->bi.biWidth, lrc.top + bmpArrowUl->bi.biHeight);
 						iBmp_bitBltMask(obj->bmp, &lrc2, bmpArrowUl);
-CopyRect(&obj->rcArrowUl, &lrc2);
 
 						// Upper right arrow
 						SetRect(&lrc2, lrc.right - bmpArrowUr->bi.biWidth - 1, lrc.top + 1, lrc.right, lrc.top + bmpArrowUr->bi.biHeight);
 						iBmp_bitBltMask(obj->bmp, &lrc2, bmpArrowUr);
-CopyRect(&obj->rcArrowUr, &lrc2);
 
 						// Lower right arrow
 						SetRect(&lrc2, lrc.right - bmpArrowLr->bi.biWidth - 1, lrc.bottom - bmpArrowLr->bi.biHeight - 1, lrc.right, lrc.bottom);
 						iBmp_bitBltMask(obj->bmp, &lrc2, bmpArrowLr);
-CopyRect(&obj->rcArrowLl, &lrc2);
 
 						// Lower left arrow
 						SetRect(&lrc2, lrc.left + 1, lrc.bottom - bmpArrowLl->bi.biHeight - 1, lrc.left + bmpArrowLl->bi.biWidth, lrc.bottom);
 						iBmp_bitBltMask(obj->bmp, &lrc2, bmpArrowLl);
-CopyRect(&obj->rcArrowLr, &lrc2);
 
 
 					//////////

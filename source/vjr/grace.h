@@ -37,21 +37,41 @@
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
-u32			gnReccount			= 0;
 
-void		iGrace_initGl_engine				(void);
-void		iGrace_reshape						(GLsizei w, GLsizei h);
-void		iGrace_motion						(s32 x, s32 y);
-void		iGrace_projectMousePositionToScreen	(int x, int y, f64* tfX, f64* tfY, f64* tfZ);;
-void		iGrace_passiveMotion				(s32 x, s32 y);
-void		iGrace_mouse						(s32 button, s32 state, s32 x, s32 y);
-void		iGrace_Key							(unsigned char key, s32 x, s32 y);
-void		iGrace_special						(s32 key, s32 x, s32 y);
-void		iGrace_idle							(void);
-void		iGrace_assignCoordinates			(SObject* obj, RECT* rc, f32 tfZ);
-void		iGrace_display						(void);
-void		iGrace_renderChildrenAndSiblings	(SObject* obj, RECT* rc, bool tlRootRender, bool tlRenderChildren, bool tlRenderSiblings, bool tlForceRender, f32 tfZ);
-void		iGrace_render						(SObject* obj, bool tlForceRender);
+struct SObjNode;
+struct SGraceVec;
+
+
+//////////
+// Forward declarations
+//////
+	void			iGrace_initGl_engine					(void);
+	void			iGrace_reshape							(GLsizei w, GLsizei h);
+	void			iGrace_motion							(s32 x, s32 y);
+	void			iGrace_projectMousePositionToScreen		(int x, int y, f64* tfX, f64* tfY, f64* tfZ);;
+	void			iGrace_passiveMotion					(s32 x, s32 y);
+	void			iGrace_mouse							(s32 button, s32 state, s32 x, s32 y);
+	void			iGrace_Key								(unsigned char key, s32 x, s32 y);
+	void			iGrace_special							(s32 key, s32 x, s32 y);
+	void			iGrace_idle								(void);
+	void			iGrace_assignCoordinates				(SObject* obj, RECT* rc, f32 tfZ);
+
+	// Render functions
+	void			iGrace_display							(void);
+	void			iGrace_renderBegin						(f32 tfZ);
+	void			iGrace_renderEnd						(void);
+	void			iGrace_animate_childrenAndSiblings		(SObject* obj, RECT* rc, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ);
+	void			iiGrace_animate							(SObject* obj, s64 tnMs);
+	void			iGrace_renderNode_childrenAndSiblings	(SObject* obj, RECT* rc, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ);
+	SGraceRect**	iiGrace_computeNodeLine					(SGraceVec* tsV1, SGraceVec* tsV1, bool tlIsP1East, bool tlIsP2West, s32* tnReturnVecCount);
+	void			iiGrace_renderNode						(SObject* obj, SObjNode* objNodeFrom, s32 tnNodeFromNum, s32 tnNodeToNum);
+	void			iGrace_renderObj_childrenAndSiblings	(SObject* obj, RECT* rc, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ);
+	void			iiGrace_renderObj						(SObject* obj);
+
+	// Helper functions
+	void			iiGrace_computeVecLine					(SGraceVecLine* line);
+	void			iiGrace_copyAndComputeVecLine			(SGraceVecLine* line, SGraceVec* p1, SGraceVec* p2);
+	SGraceVec**		iivvm_canvasVecBezier3					(s32 tnSegmentCount, SGraceVec* tsV1, SGraceVec* tsV2, SGraceVec* tsV3);
 
 
 
@@ -110,17 +130,19 @@ void		iGrace_render						(SObject* obj, bool tlForceRender);
 	{
 		// Image data
 		u32				mipmap;
+
+		// One for each corner
 		SGraceColor		c[4];		// Colors
 		SGraceUv		t[4];		// Texture coordinates
 		SGraceVec		n[4];		// Normals
-
-		// Coordinate data
 		SGraceVec		v[4];		// Vector coordinates
-		SGraceVec		vo[4];		// Vector original coordinates
 	};
 
 	struct SGraceAnim
 	{
+		s32				msInterval;		// Number of milliseconds between frames
+		s64				msNext;			// Milliseconds where next sequence happens
+
 		SGraceRect		delta;
 		SGraceRect		start;
 		SGraceRect		end;
@@ -130,6 +152,33 @@ void		iGrace_render						(SObject* obj, bool tlForceRender);
 	{
 		SGraceRect		quad;
 		SGraceAnim		anim;
+	};
+
+	// This structure computes the line only on the x,y values
+	struct SGraceVecLine
+	{
+		SGraceVec	v1;							// Vector 1
+		SGraceVec	v2;							// Vector 2
+
+		SGraceVec	delta;						// Delta between start and end
+		SGraceVec	mid;						// Midpoint
+
+		f32			length;						// Length in 3D
+		f32			lengthXy;					// Length of X,Y line
+		f32			lengthXz;					// Length of X,Z line
+		f32			lengthYz;					// Length of Y,Z line
+
+		f32			mXy;						// Slope of X,Y line
+		f32			mXz;						// Slope of X,Z line
+		f32			mYz;						// Slope of Y,Z line
+
+		f32			mpXy;						// Perpendicular slope of X,Y line
+		f32			mpXz;						// Perpendicular slope of X,Z line
+		f32			mpYz;						// Perpendicular slope of Y,Z line
+
+		f32			thetaXy;					// Theta (from p1 to p2 on X,Y line, note: add _PI to reverse the angle from p2 to p1)
+		f32			thetaXz;					// Theta (from p1 to p2 on X,Z line, note: add _PI to reverse the angle from p2 to p1)
+		f32			thetaYz;					// Theta (from p1 to p2 on Y,Z line, note: add _PI to reverse the angle from p2 to p1)
 	};
 
 

@@ -114,6 +114,7 @@
 
 
 
+
 	void iGrace_initGl_engine(void)
 	{
 		glMatrixMode	(GL_SMOOTH);
@@ -152,6 +153,7 @@
 
 
 
+
 	void iGrace_reshape(GLsizei w, GLsizei h)
 	{
 		gnWidth			= w;
@@ -165,6 +167,7 @@
 		gluPerspective	(45.0, gfPerspective, 1.0, 10000.0);
 		iGrace_initGl_engine();
 	}
+
 
 
 
@@ -297,6 +300,7 @@
 
 
 
+
 	void iGrace_mouse(s32 button, s32 state, s32 x, s32 y)
 	{
 		bool llRedisplay;
@@ -348,6 +352,7 @@
 
 
 
+
 	void iGrace_Key(unsigned char key, s32 x, s32 y)
 	{
 		bool llRedisplay;
@@ -375,6 +380,8 @@
 			glutPostRedisplay();
 		}
 	}
+
+
 
 
 	void iGrace_special(s32 key, s32 x, s32 y)
@@ -464,15 +471,9 @@
 
 
 		//////////
-		// Copy vectors to original values
-		//////
-			memcpy(&obj->ogl.quad.vo, obj->ogl.quad.v, sizeof(obj->ogl.quad.v));
-
-
-		//////////
 		// Colors
 		//////
-			for (lnI = 0; lnI <= V4; lnI++)
+			for (lnI = V1; lnI <= V4; lnI++)
 			{
 				obj->ogl.quad.c[lnI].r = 0.98f;	// Red
 				obj->ogl.quad.c[lnI].g = 0.98f;	// Grn
@@ -523,25 +524,109 @@
 
 	void iGrace_display(void)
 	{
-		RECT lrc;
+		f32		lfZ;
+		RECT	lrc;
 
 
 		// Render if we have something to render
 		if (gWinJDebi && gWinJDebi->obj)
 		{
+			//////////
 			// We will be building centered around the origin
-			SetRect(&lrc, -(gWinJDebi->rc.right - gWinJDebi->rc.left) / 2, -(gWinJDebi->rc.bottom - gWinJDebi->rc.top) / 2, 0, 0);
-			SetRect(&lrc, lrc.left, lrc.top, lrc.left + (gWinJDebi->rc.right - gWinJDebi->rc.left), lrc.top + (gWinJDebi->rc.bottom - gWinJDebi->rc.top));
+			//////
+				SetRect(&lrc, -(gWinJDebi->rc.right - gWinJDebi->rc.left) / 2, -(gWinJDebi->rc.bottom - gWinJDebi->rc.top) / 2, 0, 0);
+				SetRect(&lrc, lrc.left, lrc.top, lrc.left + (gWinJDebi->rc.right - gWinJDebi->rc.left), lrc.top + (gWinJDebi->rc.bottom - gWinJDebi->rc.top));
 
+
+			//////////
 			// Render
-			iGrace_renderChildrenAndSiblings(gWinJDebi->obj, &lrc, true, true, true, true, 0.0f);
+			//////
+				// Start
+				lfZ = 0.0f;
+				iGrace_renderBegin(lfZ);
+
+				// Apply animations
+				iGrace_animate_childrenAndSiblings(gWinJDebi->obj, &lrc, true, true, lfZ);
+
+				// Render the nodes
+				iGrace_renderNode_childrenAndSiblings(gWinJDebi->obj, &lrc, true, true, lfZ);
+
+				// Render Objects
+				iGrace_renderObj_childrenAndSiblings(gWinJDebi->obj, &lrc, true, true, lfZ);
+
+				// End
+				iGrace_renderEnd();
 		}
 	}
 
 
 
 
-	void iGrace_renderChildrenAndSiblings(SObject* obj, RECT* rc, bool tlRootRender, bool tlRenderChildren, bool tlRenderSiblings, bool tlForceRender, f32 tfZ)
+	// Note:  glPushMatrix() here must match with corresponding glPopMatrix() in iGrace_renderEnd()
+	void iGrace_renderBegin(f32 tfZ)
+	{
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glPushMatrix();
+
+
+		//////////
+		// Always looking straight forward at the x,y coordinate from the zoomed in z location
+		//////
+			gluLookAt(gfX, gfY, gfZ,
+					  gfX, gfY, 0.0, 
+					  0.0, 1.0, 0.0);
+
+		//////////
+		// Lighting
+		//////
+			if (glLighting)
+			{
+				// Indicate where the light is
+				gfv4LightFixture[XVEC] = gfLightViewX;
+				gfv4LightFixture[YVEC] = gfLightViewY;
+				gfv4LightFixture[ZVEC] = (gfLightViewX + gfLightViewY) / (f32)2.0;
+				glLightfv(GL_LIGHT0, GL_POSITION, gfv4LightFixture);
+
+				glPushMatrix(); 
+					glTranslatef	(gfv4LightFixture[XVEC], gfv4LightFixture[YVEC], gfv4LightFixture[ZVEC]);
+					glDisable		(GL_LIGHTING);
+					glColor3f		(1.0, 1.0, 0.0);
+					glutWireCube	(1.0);
+					glEnable		(GL_LIGHTING);
+				glPopMatrix();
+			}
+
+
+		//////////
+		// Render the white background
+		//////
+			glBegin(GL_QUADS);
+
+				glColor4f	(1.0f, 1.0f, 1.0f, 1.0f);
+				glVertex3f	(-500.0f, -500.0f, tfZ - 0.01f);
+				glVertex3f	( 500.0f, -500.0f, tfZ - 0.01f);
+				glVertex3f	( 500.0f,  500.0f, tfZ - 0.01f);
+				glVertex3f	(-500.0f,  500.0f, tfZ - 0.01f);
+
+			glEnd();
+	}
+
+
+
+
+	void iGrace_renderEnd(void)
+	{
+		//////////
+		// Render finish
+		//////
+			glPopMatrix();
+			glutSwapBuffers();
+	}
+
+
+
+
+	void iGrace_animate_childrenAndSiblings(SObject* obj, RECT* rc, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ)
 	{
 		RECT		lrc, lrcClient;
 		SObject*	objSib;
@@ -553,50 +638,6 @@
 		//////
 			if (!obj || !isVisible(obj) || !isEnabled(obj))
 				return;
-
-
-		//////////
-		// Render begin
-		//////
-			if (tlRootRender)
-			{
-				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-				glPushMatrix();
-
-				// Always looking straight forward at the x,y coordinate from the zoomed in z location
-				gluLookAt(gfX, gfY, gfZ,
-						  gfX, gfY, 0.0, 
-						  0.0, 1.0, 0.0);
-
-				if (glLighting)
-				{
-					// Indicate where the light is
-					gfv4LightFixture[XVEC] = gfLightViewX;
-					gfv4LightFixture[YVEC] = gfLightViewY;
-					gfv4LightFixture[ZVEC] = (gfLightViewX + gfLightViewY) / (f32)2.0;
-					glLightfv(GL_LIGHT0, GL_POSITION, gfv4LightFixture);
-
-					glPushMatrix(); 
-					glTranslatef	(gfv4LightFixture[XVEC], gfv4LightFixture[YVEC], gfv4LightFixture[ZVEC]);
-					glDisable(GL_LIGHTING);
-					glColor3f		(1.0, 1.0, 0.0);
-					glutWireCube	(1.0);
-					glEnable(GL_LIGHTING);
-					glPopMatrix();
-				}
-
-				// Render the white background
-				glBegin(GL_QUADS);
-
-					glColor4f	(1.0f, 1.0f, 1.0f, 1.0f);
-					glVertex3f	(-1000.0f, -1000.0f, tfZ - 0.01f);
-					glVertex3f	(1000.0f, -1000.0f, tfZ - 0.01f);
-					glVertex3f	(1000.0f, 1000.0f, tfZ - 0.01f);
-					glVertex3f	(-1000.0f, 1000.0f, tfZ - 0.01f);
-
-				glEnd();
-
-			}
 
 		
 		//////////
@@ -617,15 +658,14 @@
 		// Render any children
 		//////
 			if (tlRenderChildren && obj->firstChild)
-				iGrace_renderChildrenAndSiblings(obj->firstChild, &lrcClient, false, true, true, tlForceRender, tfZ + 0.01f);
+				iGrace_animate_childrenAndSiblings(obj->firstChild, &lrcClient, true, true, tfZ + 0.01f);
 
 
 		//////////
 		// Render self
 		//////
-			obj->isDirtyRender |= tlForceRender;
 			iGrace_assignCoordinates(obj, &lrc, tfZ);
-			iGrace_render(obj, tlForceRender);
+			iiGrace_animate(obj);
 
 
 		//////////
@@ -637,32 +677,234 @@
 				while (objSib)
 				{
 					// Render this sibling
-					iGrace_renderChildrenAndSiblings(objSib, rc, false, true, false, tlForceRender, tfZ);
+					iGrace_animate_childrenAndSiblings(objSib, rc, true, false, tfZ);
 
 					// Move to next sibling
 					objSib = (SObject*)objSib->ll.next;
 				}
-			}
-
-
-		//////////
-		// Render finish
-		//////
-			if (tlRootRender)
-			{
-				glPopMatrix();
-				glutSwapBuffers();
 			}
 	}
 
 
 
 
-	void iGrace_render(SObject* obj, bool tlForceRender)
+	void iiGrace_animate(SObject* obj, s64 tnMs)
 	{
-//		// Provide any animation for this object
-//		iGrace_animateObject(lnvBase);
+		s32 lnI;
 
+
+		// If an animation is active, apply it
+		if (obj->ogl.anim.msNext <= tnMs)
+		{
+			// It's time to animate the next frame
+			obj->ogl.anim.msNext += obj->ogl.anim.msInterval;
+
+			// Iterate applying any transformations
+			for (lnI = V1; lnI <= V4; lnI++)
+			{
+				// Migrate this axis as it should be migrated
+				obj->ogl.quad.v[lnI].x += obj->ogl.anim.delta.v[lnI].x;
+				obj->ogl.quad.v[lnI].y += obj->ogl.anim.delta.v[lnI].y;
+				obj->ogl.quad.v[lnI].z += obj->ogl.anim.delta.v[lnI].z;
+			}
+		}
+	}
+
+
+
+
+	void iGrace_renderNode_childrenAndSiblings(SObject* obj, RECT* rc, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ)
+	{
+		s32			lnNodeFromNum, lnNodeToNum;
+		RECT		lrc, lrcClient;
+		SObject*	objSib;
+		SObjNode*	objNodeFrom;
+		SObjNode*	objNodeTo;
+
+
+		logfunc(__FUNCTION__);
+		//////////
+		// Make sure there is render data
+		//////
+			if (!obj || !isVisible(obj) || !isEnabled(obj))
+				return;
+
+		
+		//////////
+		// Render any children
+		//////
+			if (tlRenderChildren && obj->firstChild)
+				iGrace_renderObj_childrenAndSiblings(obj->firstChild, &lrcClient, true, true, tfZ + 0.01f);
+
+
+		//////////
+		// Render nodes from the bottom of this item
+		//////
+			objNodeFrom		= obj->fromBottom;
+			lnNodeFromNum	= 0;
+			while (objNodeFrom)
+			{
+				//////////
+				// Find out what item this points to along this node strip on the to side
+				//////
+					objNodeTo	= objNodeFrom->to;
+					lnNodeToNum	= 0;
+					while (objNodeTo->llTo.prev)
+					{
+						++lnNodeToNum;
+						objNodeTo = (SObjNode*)objNodeTo->llTo.prev;
+					}
+
+
+				//////////
+				// Render this node
+				//////
+					iiGrace_renderNode(obj, objNodeFrom, lnNodeFromNum, lnNodeToNum);
+
+
+				//////////
+				// Move to the next node
+				//////
+					++lnNodeFromNum;
+					objNodeFrom = (SObjNode*)objNodeFrom->llFrom;
+			}
+
+			if (obj->fromBottom)
+			{
+				objNodeFrom = obj->fromBottom
+			}
+
+			if (obj->fromRight)
+			{
+			}
+
+
+		//////////
+		// Render any siblings
+		//////
+			if (tlRenderSiblings && obj->ll.next)
+			{
+				objSib = (SObject*)obj->ll.next;
+				while (objSib)
+				{
+					// Render this sibling
+					iGrace_renderNode_childrenAndSiblings(objSib, rc, true, false, tfZ);
+
+					// Move to next sibling
+					objSib = (SObject*)objSib->ll.next;
+				}
+			}
+	}
+
+
+
+
+	// Note:  This algorithm ignores Z for the bezier calculation, but rather uses a linear tsGv1->z to tsGv2->z for its orientation
+	SGraceRect** iiGrace_computeNodeLine(SGraceVec* tsV1, SGraceVec* tsV2, bool tlIsP1East, bool tlIsP2West, s32* tnReturnVecCount)
+	{
+		s32				lnI, lnWidth;
+		SGraceVec**		vecs1;
+		SGraceVec**		vecs2;
+		SGraceVec		v1, v2, v3, v4, v5;
+		SGraceRect**	recs;
+		f32				lfWidth, lfHeight;
+
+
+		//////////
+		// Grab our starting and ending points based on direction and orientation
+		//////
+			iiGrace_computeNodeLine_fivePoints(tsV1, tsV2, &v1, &v2, &v3, &v4, &v5, tlIsP1East, tlIsP2West);
+
+
+		//////////
+		// Compute our points
+		//////
+			vecs1		= iivvm_canvasVecBezier3(20, &v1, &v2, &v3);
+			vecs2		= iivvm_canvasVecBezier3(20, &v5, &v4, &v3);
+			recs		= (SGraceRect**)malloc(sizeof(SGraceRect) * 41);
+			*tnCount	= 41;
+
+
+		//////////
+		// Combine them into a single SGraceRect array with color data
+		//////
+			lnWidth = 5;
+			for (lnI = 0; lnI < 20 - 1; lnI++)
+			{
+				iBmp_drawArbitraryQuad(bmp, (s32)vecs1[lnI].x, (s32)vecs1[lnI].y, (s32)vecs1[lnI+1].x, (s32)vecs1[lnI+1].y, lnWidth, true, blackColor);
+				iBmp_drawArbitraryQuad(bmp, (s32)vecs2[lnI].x, (s32)vecs2[lnI].y, (s32)vecs2[lnI+1].x, (s32)vecs2[lnI+1].y, lnWidth, true, blackColor);
+			}
+			--lnI;
+			iBmp_drawArbitraryQuad(bmp, (s32)vecs1[lnI].x, (s32)vecs1[lnI].y, (s32)vecs2[lnI].x, (s32)vecs2[lnI].y, lnWidth, true, blackColor);
+
+
+		//////////
+		// Clean house
+		//////
+			free(vecs1);
+			free(vecs2);
+	}
+
+
+
+
+	void iiGrace_renderNode(SObject* obj, SObjNode* objNodeFrom, s32 tnNodeFromNum, s32 tnNodeToNum)
+	{
+		iiGrace_computeNodeLine(obj->bmp, 1.0f, 1.0f);
+	}
+
+
+
+
+	void iGrace_renderObj_childrenAndSiblings(SObject* obj, RECT* rc, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ)
+	{
+		RECT		lrc, lrcClient;
+		SObject*	objSib;
+
+
+		logfunc(__FUNCTION__);
+		//////////
+		// Make sure there is render data
+		//////
+			if (!obj || !isVisible(obj) || !isEnabled(obj))
+				return;
+
+
+		//////////
+		// Render any children
+		//////
+			if (tlRenderChildren && obj->firstChild)
+				iGrace_renderObj_childrenAndSiblings(obj->firstChild, &lrcClient, true, true, tfZ + 0.01f);
+
+
+		//////////
+		// Render self
+		//////
+			iiGrace_renderObj(obj);
+
+
+		//////////
+		// Render any siblings
+		//////
+			if (tlRenderSiblings && obj->ll.next)
+			{
+				objSib = (SObject*)obj->ll.next;
+				while (objSib)
+				{
+					// Render this sibling
+					iGrace_renderObj_childrenAndSiblings(objSib, rc, true, false, tfZ);
+
+					// Move to next sibling
+					objSib = (SObject*)objSib->ll.next;
+				}
+			}
+	}
+
+
+
+
+	void iiGrace_renderObj(SObject* obj)
+	{
 		// Bind the texture for this quad
 		glBindTexture(GL_TEXTURE_2D, obj->ogl.quad.mipmap);
 
@@ -690,4 +932,144 @@
 			glVertex3f		(obj->ogl.quad.v[V4].x, obj->ogl.quad.v[V4].y, obj->ogl.quad.v[V4].z);
 
 		glEnd();
+	}
+
+
+
+
+//////////
+//
+// Called to compute the midpoint, slope, and perpendicular slope of a vector line
+//
+//////
+	void iiGrace_computeVecLine(SGraceVecLine* line)
+	{
+		// Midpoint = (x2-x1)/2, (y2-y1)/2
+		line->mid.x		= (line->v1.x + line->v2.x) / 2.0f;
+		line->mid.y		= (line->v1.y + line->v2.y) / 2.0f;
+		line->mid.z		= (line->v1.z + line->v2.z) / 2.0f;
+
+		// Compute our deltas
+		line->delta.x	= line->v2.x - line->v1.x;
+		line->delta.y	= line->v2.y - line->v1.y;
+		line->delta.z	= line->v2.z - line->v1.z;
+
+		// Length
+		line->lengthXy	= (f32)sqrt(line->delta.x*line->delta.x + line->delta.y*line->delta.y);
+		line->lengthXz	= (f32)sqrt(line->delta.x*line->delta.x + line->delta.z*line->delta.z);
+		line->lengthYz	= (f32)sqrt(line->delta.y*line->delta.y + line->delta.z*line->delta.z);
+		line->length	= (f32)sqrt(line->lengthXy*line->lengthXy + line->delta.z*line->delta.z);
+
+		// Slope = rise over run
+		line->mXy		= line->delta.y / ((line->delta.x == 0.0f) ? 0.000001f : line->delta.x);
+		line->mXz		= line->delta.z / ((line->delta.x == 0.0f) ? 0.000001f : line->delta.x);
+		line->mYz		= line->delta.z / ((line->delta.y == 0.0f) ? 0.000001f : line->delta.y);
+
+		// Perpendicular slope = -1/m
+		line->mpXy		= -1.0f / ((line->mXy == 0.0) ? 0.000001f : line->mXy);
+		line->mpXz		= -1.0f / ((line->mXz == 0.0) ? 0.000001f : line->mXz);
+		line->mpYz		= -1.0f / ((line->mYz == 0.0) ? 0.000001f : line->mYz);
+
+		// Compute theta
+		line->thetaXy	= (f32)atan2(line->delta.y, line->delta.x);
+		line->thetaXz	= (f32)atan2(line->delta.z, line->delta.x);
+		line->thetaYz	= (f32)atan2(line->delta.z, line->delta.y);
+	}
+
+
+
+
+	void iiGrace_copyAndComputeVecLine(SGraceVecLine* line, SGraceVec* p1, SGraceVec* p2)
+	{
+		// Copy
+		memcpy(&line->v1, p1, sizeof(line->v1));
+		memcpy(&line->v2, p2, sizeof(line->v2));
+
+		// Compute
+		iiGrace_computeVecLine(line);
+	}
+
+
+
+
+	SGraceVec** iivvm_canvasVecBezier3(s32 tnSegmentCount, SGraceVec* tsV1, SGraceVec* tsV2, SGraceVec* tsV3)
+	{
+		s32				lnSegment;
+		f32				lfPercent, lfCosTheta1, lfSinTheta1, lfCosTheta2, lfSinTheta2;
+		SGraceVec		v1, v2, pbez;
+		SGraceVecLine	l1, l2;		// Static lines from bez->p1 to bez->p2, and bez->p2 to bez->p3
+		SGraceVecLine	lmid;		// Dynamically computed line from l1 to l2 through segments
+		SGraceVec*		vecs;
+
+
+		// Allocate our return buffer
+		vecs = (SXYF32*)malloc(tnSegmentCount * sizeof(SXYF32));
+		memset(vecs, 0, tnSegmentCount * sizeof(SXYF32));
+
+
+		//////////
+		// Copy and compute our lines
+		//////
+			memset(&l1,   0, sizeof(l1));
+			memset(&l2,   0, sizeof(l2));
+			memset(&lmid, 0, sizeof(lmid));
+			iiGrace_copyAndComputeVecLine(&l1, tsV1, tsV2, true);
+			iiGrace_copyAndComputeVecLine(&l2, tsV2, tsV3, true);
+
+
+		//////////
+		// Compute our thetas for rapid use
+		//////
+			// L1
+			lfCosTheta1		= (f32)cos(l1.thetaXy);
+			lfSinTheta1		= (f32)sin(l1.thetaXy);
+			// L2
+			lfCosTheta2		= (f32)cos(l2.thetaXy);
+			lfSinTheta2		= (f32)sin(l2.thetaXy);
+
+
+		//////////
+		// Now, iterate through the bezier building the points
+		//////
+			for (lnSegment = 0; lnSegment < tnSegmentCount; lnSegment++)
+			{
+				//////////
+				// Get our percentage
+				//////
+					lfPercent = (f32)lnSegment / (f32)tnSegmentCount;
+
+
+				//////////
+				// Determine the two points for l1 and l2
+				//////
+					// P1, L1
+					v1.x = tsV1->x + (lfPercent * l1.radius * lfCosTheta1);
+					v1.y = tsV1->y + (lfPercent * l1.radius * lfSinTheta1);
+					// P2, L2
+					v2.x = tsV2->x + (lfPercent * l2.radius * lfCosTheta2);
+					v2.y = tsV2->y + (lfPercent * l2.radius * lfSinTheta2);
+
+
+				//////////
+				// Construct the line between
+				//////
+					iiGrace_copyAndComputeVecLine(&lmid, &v1, &v2, true);
+
+
+				//////////
+				// Derive the position of this bezier point
+				//////
+					// PBEZ
+					pbez.x = lmid.v1.x + (lfPercent * lmid.radius * (f32)cos(lmid.thetaXy));
+					pbez.y = lmid.v1.y + (lfPercent * lmid.radius * (f32)sin(lmid.thetaXy));
+
+
+				//////////
+				// Store the point
+				//////
+					vecs[lnSegment].x = pbez.x;
+					vecs[lnSegment].y = pbez.y;
+			}
+
+		return(vecs);
 	}

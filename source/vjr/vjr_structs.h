@@ -254,96 +254,113 @@ struct SEventsKeyboard
 
 struct SEvents
 {
-	SEventsGeneral		general;										// General object events
-	SEventsMouse		mouse;											// Mouse events for the object
-	SEventsKeyboard		keyboard;										// Keyboard events for the object
+	SEventsGeneral		general;									// General object events
+	SEventsMouse		mouse;										// Mouse events for the object
+	SEventsKeyboard		keyboard;									// Keyboard events for the object
 };
 
 struct SProperties
 {
-	RECT		rcMax;													// The maximum rectangle for the form
-	RECT		rcMin;													// The minimum rectangle for the form
+	RECT		rcMax;												// The maximum rectangle for the form
+	RECT		rcMin;												// The minimum rectangle for the form
 
-	bool		hasFocus;												// Does this object have focus?
- 	bool		processKeyPreviewEvents;								// Do keystrokes for controls on the form go through the form's Key* events as well?
+	bool		hasFocus;											// Does this object have focus?
+ 	bool		processKeyPreviewEvents;							// Do keystrokes for controls on the form go through the form's Key* events as well?
 
-	SEM*		sem;													// The content being edited
-	SFont*		font;													// Default font instance
+	SEM*		sem;												// The content being edited
+	SFont*		font;												// Default font instance
+};
+
+struct SObjNodeData
+{
+	SObject*	obj;												// If the node was created so that A was linked to B, A is primary
+	SBgra		color;												// Color for the node ball
+	SDatum		label;												// An optional bit of text for the node hookup
+};
+
+struct SObjNode
+{
+	// Nodes exist in the order they're created
+	SLL				llFrom;											// Node link on the from
+	SLL				llTo;											// Node link from the to direction
+
+	// If it's an individual
+	SObjNodeData	from;											// Nodes go from something to something, this is the from
+	SObjNodeData	to;												// ...and this is the to. :-)
 };
 
 struct SObject
 {
-	SLL			ll;														// Linked list
-	SObject*	parent;													// Pointer to parent object for this instance
-	SObject*	firstChild;												// Pointer to child objects (all objects are containers)
-
-	// Object flags
-	bool		isRendered;												// Is it rendered (can be rendered even if it's not visible)?
-	bool		isPublished;											// Should this control be published?  Every object has a .lockScreen property which allows it to not be published while changes are made.
-	bool		isDirtyRender;											// Is set if this or any child object needs re-rendered
-	bool		isDirtyPublish;											// Is set if this or any child object needs re-published
-
-	// OpenGL visualization
-	SGraceOgl	ogl;													// Open GL coordinates
+	SLL			ll;													// Linked list
+	SObject*	parent;												// Pointer to parent object for this instance
+	SObject*	firstChild;											// Pointer to child objects (all objects are containers)
 
 	// Defined class, class information
-	s32			objType;												// Object base type/class (see _OBJECT_TYPE_* constants)
+	s32			objType;											// Object base type/class (see _OBJECT_TYPE_* constants)
 
+	// Object flags
+	bool		isRendered;											// Is it rendered (can be rendered even if it's not visible)?
+	bool		isPublished;										// Should this control be published?  Every object has a .lockScreen property which allows it to not be published while changes are made.
+	bool		isDirtyRender;										// Is set if this or any child object needs re-rendered
+	bool		isDirtyPublish;										// Is set if this or any child object needs re-published
+
+
+	//////////
+	// Object size in pixels, per the .Left, .Top, .Width, and .Height properties
+	//////
+		RECT		rc;												// Object's current position in its parent
+		RECT		rco;											// Object's original position in its parent
+		RECT		rcp;											// Original size of parent at creation
+		RECT		rcClient;										// Client portion within the size of the object
+
+
+	//////////
 	// Common properties that are literal(p) and allocated(pa) values
-	SProperties		p;													// Common object properties
-	SVariable**		props;												// An allocated array of properties (varies in size by object)
-	u32				propsCount;											// The number of property variables allocated
+	//////
+		SProperties		p;											// Common object properties
+		SVariable**		props;										// An allocated array of properties (varies in size by object)
+		u32				propsCount;									// The number of property variables allocated
 
-	// Related position in the member hierarchy
-	SVariable*	firstProperty;											// User-defined property (design time and runtime)
-	SEM*		firstMethod;											// User-defined methods (design time and runtime)
+		// Related position in the member hierarchy
+		SVariable*	firstProperty;									// User-defined property (design time and runtime)
+		SEM*		firstMethod;									// User-defined methods (design time and runtime)
 
-	// Related access and assign methods
-	bool		anyPropertyHasAccessOrAssignMethods;
-	SEM*		firstAccess;											// User-defined property access methods (design time and runtime)
-	SEM*		firstAssign;											// User-defined property assignment methods (designt ime and runtime)
+		// Related access and assign methods
+		bool		anyPropertyHasAccessOrAssignMethods;
+		SEM*		firstAccess;									// User-defined property access methods (design time and runtime)
+		SEM*		firstAssign;									// User-defined property assignment methods (designt ime and runtime)
 
-	// Events
-	SEvents		ev;														// Events for this object
-
-
-//////////
-// Object size in pixels, per the .Left, .Top, .Width, and .Height properties
-//////
-	RECT		rc;													// Object's current position in its parent
-	RECT		rco;												// Object's original position in its parent
-	RECT		rcp;												// Original size of parent at creation
+		// Events
+		SEvents		ev;												// Events for this object
 
 
-//////////
-// Drawing canvas
-//////
-	SBitmap*	bmp;												// If exists, canvas for the content
-	SBitmap*	bmpPriorRendered;									// Used for speedups when not isDirty
-	SBmpCache*	bc;													// For certain compute intensive operations (color gradient controls), the bitmap is only drawn/computed once and then copied thereafter, unless any of eight data points change
-	// If not scaled:
-	s32			scrollOffsetX;										// If the bmp->bi coordinates are larger than its display area, the upper-left X coordinate
-	s32			scrollOffsetY;										// ...the upper-left Y coordinate
-	// If scaled, updated only during publish():
-	bool		isScaled;											// If the bmp->bi coordinates are larger than its display area, should it be scaled?
-	SBitmap*	bmpScaled;											// The bmp scaled into RC's size
+	//////////
+	// Base drawing canvas
+	//////
+		SBitmap*	bmp;											// If exists, canvas for the content
+		SBitmap*	bmpPriorRendered;								// Used for speedups when not isDirty
+		SBmpCache*	bc;												// For certain compute intensive operations (color gradient controls), the bitmap is only drawn/computed once and then copied thereafter, unless any of eight data points change
+		// If not scaled:
+		s32			scrollOffsetX;									// If the bmp->bi coordinates are larger than its display area, the upper-left X coordinate
+		s32			scrollOffsetY;									// ...the upper-left Y coordinate
+		// If scaled, updated only during publish():
+		bool		isScaled;										// If the bmp->bi coordinates are larger than its display area, should it be scaled?
+		SBitmap*	bmpScaled;										// The bmp scaled into RC's size
 
 
-//////////
-// Temporary properties added during development to facilitate display until such time as the full object hierarchy is created for every object.
-// Updated each render
-//////
-	RECT		rcClient;											// The client area of the form
-	RECT		rcCaption;											// The caption area (used for moving the form around)
-	RECT		rcArrowUl;											// The upper-left resize arrow is
-	RECT		rcArrowUr;											// The upper-right resize arrow is
-	RECT		rcArrowLl;											// The lower-left resize arrow is
-	RECT		rcArrowLr;											// The lower-right resize arrow is
-	RECT		rcIcon;												// The form icon
-	RECT		rcMove;												// The move button of the form
-	RECT		rcMinimize;											// The minimize button of the form
-	RECT		rcMaximize;											// The maximize button of the form
-	RECT		rcClose;											// The close button of the form
+	//////////
+	// OpenGL
+	//////
+		// Visualization
+		SGraceOgl	ogl;											// Open GL coordinates
+
+		// Nodes connect to this object on the left or top
+		SObjNode*	toLeft;											// First node in the west direction
+		SObjNode*	toTop;											// First node in the east direction
+
+		// This node connects to other things from the right or bottom
+		SObjNode*	fromRight;										// First node in the north direction
+		SObjNode*	fromBottom;										// First node in the south direction
 };
 
 struct SFocusHighlight
