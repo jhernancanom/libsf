@@ -68,12 +68,16 @@ struct SGraceLine;
 	void			iGrace_display							(void);
 	void			iGrace_renderBegin						(f32 tfZ);
 	void			iGrace_renderEnd						(void);
+
 	void			iGrace_animate_childrenAndSiblings		(SObject* obj, RECT* rc, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ, s64 tnMs);
 	void			iiGrace_animate							(SObject* obj, s64 tnMs);
+
 	void			iGrace_renderNode_childrenAndSiblings	(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ);
 	SGraceRect*		iiGrace_computeNodeLine					(SGraceVec* tsV1, SGraceVec* tsV2, f32 tfNodeWidth, bool tlIsP1East, bool tlIsP2West, s32* tnReturnVecCount);
+	void			iiGrace_positionNodeVectors				(SObjNode* objNode, SGraceVec* vFrom, SGraceVec* vTo);
 	void			iiGrace_computeNodeLine_fivePoints		(SGraceVec* tsV1, SGraceVec* tsV2, SGraceVec* v1, SGraceVec* v2, SGraceVec* v3, SGraceVec* v4, SGraceVec* v5, bool tlIsP1East, bool tlIsP2West);
-	void			iiGrace_renderNode						(SObject* obj, SObjNode* objNodeFrom);
+	void			iiGrace_renderNode						(SObjNode* objNode, f32 tfNodeWidth);
+
 	void			iGrace_renderObj_childrenAndSiblings	(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ);
 	void			iiGrace_renderObj						(SObject* obj);
 

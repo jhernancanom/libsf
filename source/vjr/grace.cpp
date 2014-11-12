@@ -743,7 +743,7 @@
 			while (objNodeFrom)
 			{
 				// Render this node
-				iiGrace_renderNode(obj, objNodeFrom);
+				iiGrace_renderNode(objNodeFrom, 0.2f);
 
 				// Move to the next node
 				objNodeFrom = (SObjNode*)objNodeFrom->llFrom.next;
@@ -757,7 +757,7 @@
 			while (objNodeFrom)
 			{
 				// Render this node
-				iiGrace_renderNode(obj, objNodeFrom);
+				iiGrace_renderNode(objNodeFrom, 0.2f);
 
 				// Move to the next node
 				objNodeFrom = (SObjNode*)objNodeFrom->llFrom.next;
@@ -813,6 +813,7 @@
 			vecsTo				= iiGrace_computeVecBezier3(lnMaxVecs, &v5, &v4, &v3);
 			lnMaxRecs			= (2 * lnMaxVecs) - 1;
 			recs				= (SGraceRect*)malloc(lnMaxRecs * sizeof(SGraceRect));
+			memset(recs, 0, lnMaxRecs * sizeof(SGraceRect));
 			*tnReturnVecCount	= lnMaxRecs;
 
 
@@ -906,7 +907,69 @@
 		//////
 			free(vecsFrom);
 			free(vecsTo);
+
+
+		///////////
+		// Return the constructed rectangle segment which make this up
+		//////
+			return(recs);
 	}
+
+
+
+
+//////////
+//
+// Called to position the vector based on where it's going from, and where it's going to.
+//
+//////
+	void iiGrace_positionNodeVectors(SObjNode* objNode, SGraceVec* vFrom, SGraceVec* vTo)
+	{
+		s32 		lnTextLengthFrom, lnTextLengthTo;
+		SObjNode*	objNodeText;
+
+
+		//////////
+		// From
+		//////
+			//////////
+			// Determine the maximum length of any label text
+			//////
+				objNodeText = (SObjNode*)iLl_getFirstNode(&objNode->llFrom);
+				for (lnTextLengthFrom = 0; objNodeText; objNodeText = (SObjNode*)objNodeText->llFrom.next)
+				{
+					// If it's longer, get the length, but only up to 10
+					lnTextLengthFrom = min(max(objNodeText->from.label.length, lnTextLengthFrom), 10);
+				}
+
+
+			//////////
+			// Position
+			//////
+				if (objNode->isFromEast)
+				{
+					// It's departing from the right (east)
+					vFrom->y += objNode->slotNumFrom * ...
+
+				} else {
+					// It's departing from the bottom (south)
+				}
+
+
+		//////////
+		// To
+		//////
+			//////////
+			// Determine the maximum length of the text in the nodes
+			//////
+				objNodeText = (SObjNode*)iLl_getFirstNode(&objNode->llTo);
+				for (lnTextLengthTo = 0; objNodeText; objNodeText = (SObjNode*)objNodeText->llTo.next)
+				{
+					// If it's longer, get the length, but only up to 10
+					lnTextLengthTo = min(max(objNodeText->to.label.length, lnTextLengthTo), 10);
+				}
+	}
+
 
 
 
@@ -1060,9 +1123,108 @@
 
 
 
-	void iiGrace_renderNode(SObject* obj, SObjNode* objNodeFrom)
+	void iiGrace_renderNode(SObjNode* objNode, f32 tfNodeWidth)
 	{
-		iiGrace_computeNodeLine(obj->bmp, 1.0f, 1.0f);
+		s32			lnI, lnV, lnVecCount;
+		f32			lfR, lfG, lfB, lfPercent, lfPercentInc;
+		SGraceVec	v1, v2;
+		SGraceRect*	recs;
+
+
+		//////////
+		// Compute the node line geometry
+		//////
+			memcpy(&v1, &objNode->from.obj->ogl.quad.v,	sizeof(SGraceVec));
+			memcpy(&v2, &objNode->to.obj->ogl.quad.v,	sizeof(SGraceVec));
+			iiGrace_positionNodeVectors(objNode, &v1, &v2);
+			recs = iiGrace_computeNodeLine(&v1, &v2, tfNodeWidth, objNode->isFromEast, objNode->isToWest, &lnVecCount);
+
+
+		//////////
+		// Populate the texture and colors
+		//////
+			for (	lnI = 0, lfPercent = 0.0f, lfPercentInc = 1.0f / (f32)lnVecCount;
+					lnI < lnVecCount;
+					lnI++, lfPercent += lfPercentInc	)
+			{
+				//////////
+				// Compute the color for this iteration
+				//////
+					lfR	= (lfPercent * ((f32)objNode->from.color.red / 255.0f)) + ((1.0f - lfPercent) * ((f32)objNode->to.color.red / 255.0f));
+					lfG	= (lfPercent * ((f32)objNode->from.color.grn / 255.0f)) + ((1.0f - lfPercent) * ((f32)objNode->to.color.grn / 255.0f));
+					lfB	= (lfPercent * ((f32)objNode->from.color.blu / 255.0f)) + ((1.0f - lfPercent) * ((f32)objNode->to.color.blu / 255.0f));
+
+
+				//////////
+				// Store the color and normals
+				//////
+					for (lnV = V1; lnV <= V4; lnV++)
+					{
+						// Store the colors
+						recs[lnI].c[lnV].r = lfR;
+						recs[lnI].c[lnV].g = lfG;
+						recs[lnI].c[lnV].b = lfB;
+
+						// Store the normals
+						recs[lnI].n[lnV].x = 0.0f;
+						recs[lnI].n[lnV].y = 0.0f;
+						recs[lnI].n[lnV].z = 1.0f;
+					}
+
+
+				//////////
+				// Store the texture coordinates
+				//////
+					// Upper-left
+					recs[lnI].t[V1].s = 0.0f;
+					recs[lnI].t[V1].t = 1.0f;
+					// Upper-right
+					recs[lnI].t[V2].s = 1.0f;
+					recs[lnI].t[V2].t = 1.0f;
+					// Lower-right
+					recs[lnI].t[V3].s = 1.0f;
+					recs[lnI].t[V3].t = 0.0f;
+					// Lower-left
+					recs[lnI].t[V4].s = 0.0f;
+					recs[lnI].t[V4].t = 0.0f;
+			}
+
+		
+		//////////
+		// Draw the quads
+		//////
+			glBegin(GL_QUADS);
+			{
+				// Iterate and create them
+				for (lnI = 0; lnI < lnVecCount; lnI++)
+				{
+					// Upper-left
+					glColor4f		(recs[lnI].c[V1].r, recs[lnI].c[V1].g, recs[lnI].c[V1].b, recs[lnI].c[V1].a);
+					glTexCoord2d	(recs[lnI].t[V1].s, recs[lnI].t[V1].t);
+					glNormal3f		(recs[lnI].n[V1].x, recs[lnI].n[V1].y, recs[lnI].n[V1].z);
+					glVertex3f		(recs[lnI].v[V1].x, recs[lnI].v[V1].y, recs[lnI].v[V1].z);
+					// Upper-right
+					glColor4f		(recs[lnI].c[V2].r, recs[lnI].c[V2].g, recs[lnI].c[V2].b, recs[lnI].c[V2].a);
+					glTexCoord2d	(recs[lnI].t[V2].s, recs[lnI].t[V2].t);
+					glNormal3f		(recs[lnI].n[V2].x, recs[lnI].n[V2].y, recs[lnI].n[V2].z);
+					glVertex3f		(recs[lnI].v[V2].x, recs[lnI].v[V2].y, recs[lnI].v[V2].z);
+					// Lower-right
+					glColor4f		(recs[lnI].c[V3].r, recs[lnI].c[V3].g, recs[lnI].c[V3].b, recs[lnI].c[V3].a);
+					glTexCoord2d	(recs[lnI].t[V3].s, recs[lnI].t[V3].t);
+					glNormal3f		(recs[lnI].n[V3].x, recs[lnI].n[V3].y, recs[lnI].n[V3].z);
+					glVertex3f		(recs[lnI].v[V3].x, recs[lnI].v[V3].y, recs[lnI].v[V3].z);
+					// Lower-left
+					glColor4f		(recs[lnI].c[V4].r, recs[lnI].c[V4].g, recs[lnI].c[V4].b, recs[lnI].c[V4].a);
+					glTexCoord2d	(recs[lnI].t[V4].s, recs[lnI].t[V4].t);
+					glNormal3f		(recs[lnI].n[V4].x, recs[lnI].n[V4].y, recs[lnI].n[V4].z);
+					glVertex3f		(recs[lnI].v[V4].x, recs[lnI].v[V4].y, recs[lnI].v[V4].z);
+				}
+			}
+			glEnd();
+
+// TODO:  A speedup here by saving the recs to last recs, and comparing if the last from and to has changed since last compute, and if not then use the last recs
+		// Free the node vectors
+		free(recs);
 	}
 
 
@@ -1122,21 +1284,22 @@
 		// Based on whether or not there's texture information, do the texture coords
 		glBegin(GL_QUADS);
 		{
+			// Upper-left
 			glColor4f		(obj->ogl.quad.c[V1].r, obj->ogl.quad.c[V1].g, obj->ogl.quad.c[V1].b, obj->ogl.quad.c[V1].a);
 			glTexCoord2d	(obj->ogl.quad.t[V1].s, obj->ogl.quad.t[V1].t);
 			glNormal3f		(obj->ogl.quad.n[V1].x, obj->ogl.quad.n[V1].y, obj->ogl.quad.n[V1].z);
 			glVertex3f		(obj->ogl.quad.v[V1].x, obj->ogl.quad.v[V1].y, obj->ogl.quad.v[V1].z);
-
+			// Upper-right
 			glColor4f		(obj->ogl.quad.c[V2].r, obj->ogl.quad.c[V2].g, obj->ogl.quad.c[V2].b, obj->ogl.quad.c[V2].a);
 			glTexCoord2d	(obj->ogl.quad.t[V2].s, obj->ogl.quad.t[V2].t);
 			glNormal3f		(obj->ogl.quad.n[V2].x, obj->ogl.quad.n[V2].y, obj->ogl.quad.n[V2].z);
 			glVertex3f		(obj->ogl.quad.v[V2].x, obj->ogl.quad.v[V2].y, obj->ogl.quad.v[V2].z);
-
+			// Lower-right
 			glColor4f		(obj->ogl.quad.c[V3].r, obj->ogl.quad.c[V3].g, obj->ogl.quad.c[V3].b, obj->ogl.quad.c[V3].a);
 			glTexCoord2d	(obj->ogl.quad.t[V3].s, obj->ogl.quad.t[V3].t);
 			glNormal3f		(obj->ogl.quad.n[V3].x, obj->ogl.quad.n[V3].y, obj->ogl.quad.n[V3].z);
 			glVertex3f		(obj->ogl.quad.v[V3].x, obj->ogl.quad.v[V3].y, obj->ogl.quad.v[V3].z);
-
+			// Lower-left
 			glColor4f		(obj->ogl.quad.c[V4].r, obj->ogl.quad.c[V4].g, obj->ogl.quad.c[V4].b, obj->ogl.quad.c[V4].a);
 			glTexCoord2d	(obj->ogl.quad.t[V4].s, obj->ogl.quad.t[V4].t);
 			glNormal3f		(obj->ogl.quad.n[V4].x, obj->ogl.quad.n[V4].y, obj->ogl.quad.n[V4].z);
@@ -1248,7 +1411,7 @@
 		//////////
 		// Now, iterate through the bezier building the points
 		//////
-			for (	lnSegment = 0, lfPercentStep = 1.0f / (f32)tnSegmentCount;
+			for (	lnSegment = 0, lfPercent = 0.0f, lfPercentStep = 1.0f / (f32)tnSegmentCount;
 					lnSegment < tnSegmentCount;
 					lnSegment++, lfPercent += lfPercentStep		)
 			{
