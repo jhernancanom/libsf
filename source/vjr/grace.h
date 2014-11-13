@@ -82,10 +82,9 @@ struct SGraceLine;
 	void			iiGrace_renderObj						(SObject* obj);
 
 	// Helper functions
-	void			iiGrace_computeVecLine					(SGraceVecLine* line);
 	void			iiGrace_copyAndComputeVecLine			(SGraceVecLine* line, SGraceVec* p1, SGraceVec* p2);
-	SGraceVec*		iiGrace_computeVecBezier3				(s32 tnSegmentCount, SGraceVec* tsV1, SGraceVec* tsV2, SGraceVec* tsV3);
 	void			iiGrace_copyAndComputeLine				(SGraceLine* line, SGraceXy* p1, SGraceXy* p2);
+	SGraceVec*		iiGrace_computeVecBezier3				(s32 tnSegmentCount, SGraceVec* tsV1, SGraceVec* tsV2, SGraceVec* tsV3);
 
 
 

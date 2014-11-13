@@ -933,14 +933,11 @@
 		// From
 		//////
 			//////////
-			// Determine the maximum length of any label text
+			// Determine the maximum length of any label text, maximum of 10 characters
 			//////
 				objNodeText = (SObjNode*)iLl_getFirstNode(&objNode->llFrom);
 				for (lnTextLengthFrom = 0; objNodeText; objNodeText = (SObjNode*)objNodeText->llFrom.next)
-				{
-					// If it's longer, get the length, but only up to 10
 					lnTextLengthFrom = min(max(objNodeText->from.label.length, lnTextLengthFrom), 10);
-				}
 
 
 			//////////
@@ -949,7 +946,7 @@
 				if (objNode->isFromEast)
 				{
 					// It's departing from the right (east)
-					vFrom->y += objNode->slotNumFrom * ...
+					vFrom->y += objNode->slotNumFrom * ...	
 
 				} else {
 					// It's departing from the bottom (south)
@@ -960,14 +957,11 @@
 		// To
 		//////
 			//////////
-			// Determine the maximum length of the text in the nodes
+			// Determine the maximum length of any label text, maximum of 10 characters
 			//////
 				objNodeText = (SObjNode*)iLl_getFirstNode(&objNode->llTo);
 				for (lnTextLengthTo = 0; objNodeText; objNodeText = (SObjNode*)objNodeText->llTo.next)
-				{
-					// If it's longer, get the length, but only up to 10
 					lnTextLengthTo = min(max(objNodeText->to.label.length, lnTextLengthTo), 10);
-				}
 	}
 
 
@@ -978,15 +972,19 @@
 // The nodes originate on the right and bottom, and terminate on the top and left.
 // These equate to the standard east,south and north,west orientations.
 //
-//		       | |
-//		       o o
-//		      +----------+ o----
-//		      |          | o----
-//		      |          |
-//		----o |          |
-//		----o +----------+
-//		               o o
-//		               | |
+//		          To
+//		        To |
+//		         | |
+//		         o o
+//		        +----------+ o---- From
+//		        |          | o---- From
+//		        |          |
+//		To----o |          |
+//		To----o +----------+
+//		                 o o
+//		                 | |
+//		                 | From
+//		                 From
 //
 // Based on the source and destination locations, the three points for each portion
 // of the bezier needs to be adjusted.  A typical connection has v1 and v2 in the
@@ -1005,11 +1003,13 @@
 //		             v2
 //		 x       __---o +----+
 //		        |       |    |
-//		         - __   +----+
+//		        |       +----+
+//		         - __
 //		              ----- _____x_____
 //		                                -----_
-//		                               v1    _-
-//		                         +----+ o----          x
+//		                                      |
+//		                               v1   __-
+//		                         +----+ o---           x
 //		                         |    |
 //		                         +----+
 //
@@ -1126,8 +1126,9 @@
 	void iiGrace_renderNode(SObjNode* objNode, f32 tfNodeWidth)
 	{
 		s32			lnI, lnV, lnVecCount;
-		f32			lfR, lfG, lfB, lfPercent, lfPercentInc;
+		f32			lfR, lfG, lfB, lfPercent, lfPercentInc, lfMPercent, lfRF, lfGF, lfBF, lfRT, lfGT, lfBT;
 		SGraceVec	v1, v2;
+		SGraceRect*	thisRec;
 		SGraceRect*	recs;
 
 
@@ -1141,18 +1142,35 @@
 
 
 		//////////
+		// Initialize
+		//////
+			// From colors
+			lfRF = (f32)objNode->from.color.red / 255.0f;
+			lfGF = (f32)objNode->from.color.grn / 255.0f;
+			lfBF = (f32)objNode->from.color.blu / 255.0f;
+
+			// To colors
+			lfRT = (f32)objNode->to.color.red / 255.0f;
+			lfGT = (f32)objNode->to.color.grn / 255.0f;
+			lfBT = (f32)objNode->to.color.blu / 255.0f;
+
+			// Percentage increment per iteration
+			lfPercentInc = 1.0f / (f32)lnVecCount;
+
+
+		//////////
 		// Populate the texture and colors
 		//////
-			for (	lnI = 0, lfPercent = 0.0f, lfPercentInc = 1.0f / (f32)lnVecCount;
+			for (	lnI = 0, thisRec = &recs[0], lfPercent = 0.0f, lfMPercent = 1.0f;
 					lnI < lnVecCount;
-					lnI++, lfPercent += lfPercentInc	)
+					lnI++, thisRec++, lfPercent += lfPercentInc, lfMPercent -= lfPercentInc	)
 			{
 				//////////
 				// Compute the color for this iteration
 				//////
-					lfR	= (lfPercent * ((f32)objNode->from.color.red / 255.0f)) + ((1.0f - lfPercent) * ((f32)objNode->to.color.red / 255.0f));
-					lfG	= (lfPercent * ((f32)objNode->from.color.grn / 255.0f)) + ((1.0f - lfPercent) * ((f32)objNode->to.color.grn / 255.0f));
-					lfB	= (lfPercent * ((f32)objNode->from.color.blu / 255.0f)) + ((1.0f - lfPercent) * ((f32)objNode->to.color.blu / 255.0f));
+					lfR	= (lfPercent * lfRF) + (lfMPercent * lfRT);
+					lfG	= (lfPercent * lfGF) + (lfMPercent * lfGT);
+					lfB	= (lfPercent * lfBF) + (lfMPercent * lfBT);
 
 
 				//////////
@@ -1161,32 +1179,24 @@
 					for (lnV = V1; lnV <= V4; lnV++)
 					{
 						// Store the colors
-						recs[lnI].c[lnV].r = lfR;
-						recs[lnI].c[lnV].g = lfG;
-						recs[lnI].c[lnV].b = lfB;
+						thisRec->c[lnV].r = lfR;
+						thisRec->c[lnV].g = lfG;
+						thisRec->c[lnV].b = lfB;
 
 						// Store the normals
-						recs[lnI].n[lnV].x = 0.0f;
-						recs[lnI].n[lnV].y = 0.0f;
-						recs[lnI].n[lnV].z = 1.0f;
+						thisRec->n[lnV].x = 0.0f;
+						thisRec->n[lnV].y = 0.0f;
+						thisRec->n[lnV].z = 1.0f;
 					}
 
 
 				//////////
 				// Store the texture coordinates
 				//////
-					// Upper-left
-					recs[lnI].t[V1].s = 0.0f;
-					recs[lnI].t[V1].t = 1.0f;
-					// Upper-right
-					recs[lnI].t[V2].s = 1.0f;
-					recs[lnI].t[V2].t = 1.0f;
-					// Lower-right
-					recs[lnI].t[V3].s = 1.0f;
-					recs[lnI].t[V3].t = 0.0f;
-					// Lower-left
-					recs[lnI].t[V4].s = 0.0f;
-					recs[lnI].t[V4].t = 0.0f;
+					thisRec->t[V1].s = 0.0f;	thisRec->t[V1].t = 1.0f;		// Upper-left
+					thisRec->t[V2].s = 1.0f;	thisRec->t[V2].t = 1.0f;		// Upper-right
+					thisRec->t[V3].s = 1.0f;	thisRec->t[V3].t = 0.0f;		// Lower-right
+					thisRec->t[V4].s = 0.0f;	thisRec->t[V4].t = 0.0f;		// Lower-left
 			}
 
 		
@@ -1196,28 +1206,31 @@
 			glBegin(GL_QUADS);
 			{
 				// Iterate and create them
-				for (lnI = 0; lnI < lnVecCount; lnI++)
+				for (lnI = 0, thisRec = &recs[0]; lnI < lnVecCount; lnI++, thisRec++)
 				{
 					// Upper-left
-					glColor4f		(recs[lnI].c[V1].r, recs[lnI].c[V1].g, recs[lnI].c[V1].b, recs[lnI].c[V1].a);
-					glTexCoord2d	(recs[lnI].t[V1].s, recs[lnI].t[V1].t);
-					glNormal3f		(recs[lnI].n[V1].x, recs[lnI].n[V1].y, recs[lnI].n[V1].z);
-					glVertex3f		(recs[lnI].v[V1].x, recs[lnI].v[V1].y, recs[lnI].v[V1].z);
+					glColor4f		(thisRec->c[V1].r, thisRec->c[V1].g, thisRec->c[V1].b, thisRec->c[V1].a);
+					glTexCoord2d	(thisRec->t[V1].s, thisRec->t[V1].t);
+					glNormal3f		(thisRec->n[V1].x, thisRec->n[V1].y, thisRec->n[V1].z);
+					glVertex3f		(thisRec->v[V1].x, thisRec->v[V1].y, thisRec->v[V1].z);
+
 					// Upper-right
-					glColor4f		(recs[lnI].c[V2].r, recs[lnI].c[V2].g, recs[lnI].c[V2].b, recs[lnI].c[V2].a);
-					glTexCoord2d	(recs[lnI].t[V2].s, recs[lnI].t[V2].t);
-					glNormal3f		(recs[lnI].n[V2].x, recs[lnI].n[V2].y, recs[lnI].n[V2].z);
-					glVertex3f		(recs[lnI].v[V2].x, recs[lnI].v[V2].y, recs[lnI].v[V2].z);
+					glColor4f		(thisRec->c[V2].r, thisRec->c[V2].g, thisRec->c[V2].b, thisRec->c[V2].a);
+					glTexCoord2d	(thisRec->t[V2].s, thisRec->t[V2].t);
+					glNormal3f		(thisRec->n[V2].x, thisRec->n[V2].y, thisRec->n[V2].z);
+					glVertex3f		(thisRec->v[V2].x, thisRec->v[V2].y, thisRec->v[V2].z);
+
 					// Lower-right
-					glColor4f		(recs[lnI].c[V3].r, recs[lnI].c[V3].g, recs[lnI].c[V3].b, recs[lnI].c[V3].a);
-					glTexCoord2d	(recs[lnI].t[V3].s, recs[lnI].t[V3].t);
-					glNormal3f		(recs[lnI].n[V3].x, recs[lnI].n[V3].y, recs[lnI].n[V3].z);
-					glVertex3f		(recs[lnI].v[V3].x, recs[lnI].v[V3].y, recs[lnI].v[V3].z);
+					glColor4f		(thisRec->c[V3].r, thisRec->c[V3].g, thisRec->c[V3].b, thisRec->c[V3].a);
+					glTexCoord2d	(thisRec->t[V3].s, thisRec->t[V3].t);
+					glNormal3f		(thisRec->n[V3].x, thisRec->n[V3].y, thisRec->n[V3].z);
+					glVertex3f		(thisRec->v[V3].x, thisRec->v[V3].y, thisRec->v[V3].z);
+
 					// Lower-left
-					glColor4f		(recs[lnI].c[V4].r, recs[lnI].c[V4].g, recs[lnI].c[V4].b, recs[lnI].c[V4].a);
-					glTexCoord2d	(recs[lnI].t[V4].s, recs[lnI].t[V4].t);
-					glNormal3f		(recs[lnI].n[V4].x, recs[lnI].n[V4].y, recs[lnI].n[V4].z);
-					glVertex3f		(recs[lnI].v[V4].x, recs[lnI].v[V4].y, recs[lnI].v[V4].z);
+					glColor4f		(thisRec->c[V4].r, thisRec->c[V4].g, thisRec->c[V4].b, thisRec->c[V4].a);
+					glTexCoord2d	(thisRec->t[V4].s, thisRec->t[V4].t);
+					glNormal3f		(thisRec->n[V4].x, thisRec->n[V4].y, thisRec->n[V4].z);
+					glVertex3f		(thisRec->v[V4].x, thisRec->v[V4].y, thisRec->v[V4].z);
 				}
 			}
 			glEnd();
@@ -1278,34 +1291,46 @@
 
 	void iiGrace_renderObj(SObject* obj)
 	{
-		// Bind the texture for this quad
-		glBindTexture(GL_TEXTURE_2D, obj->ogl.quad.mipmap);
+		SGraceRect* thisRec;
 
+
+		//////////
+		// Bind the texture for this quad
+		//////
+			glBindTexture(GL_TEXTURE_2D, obj->ogl.quad.mipmap);
+
+
+		//////////
 		// Based on whether or not there's texture information, do the texture coords
-		glBegin(GL_QUADS);
-		{
-			// Upper-left
-			glColor4f		(obj->ogl.quad.c[V1].r, obj->ogl.quad.c[V1].g, obj->ogl.quad.c[V1].b, obj->ogl.quad.c[V1].a);
-			glTexCoord2d	(obj->ogl.quad.t[V1].s, obj->ogl.quad.t[V1].t);
-			glNormal3f		(obj->ogl.quad.n[V1].x, obj->ogl.quad.n[V1].y, obj->ogl.quad.n[V1].z);
-			glVertex3f		(obj->ogl.quad.v[V1].x, obj->ogl.quad.v[V1].y, obj->ogl.quad.v[V1].z);
-			// Upper-right
-			glColor4f		(obj->ogl.quad.c[V2].r, obj->ogl.quad.c[V2].g, obj->ogl.quad.c[V2].b, obj->ogl.quad.c[V2].a);
-			glTexCoord2d	(obj->ogl.quad.t[V2].s, obj->ogl.quad.t[V2].t);
-			glNormal3f		(obj->ogl.quad.n[V2].x, obj->ogl.quad.n[V2].y, obj->ogl.quad.n[V2].z);
-			glVertex3f		(obj->ogl.quad.v[V2].x, obj->ogl.quad.v[V2].y, obj->ogl.quad.v[V2].z);
-			// Lower-right
-			glColor4f		(obj->ogl.quad.c[V3].r, obj->ogl.quad.c[V3].g, obj->ogl.quad.c[V3].b, obj->ogl.quad.c[V3].a);
-			glTexCoord2d	(obj->ogl.quad.t[V3].s, obj->ogl.quad.t[V3].t);
-			glNormal3f		(obj->ogl.quad.n[V3].x, obj->ogl.quad.n[V3].y, obj->ogl.quad.n[V3].z);
-			glVertex3f		(obj->ogl.quad.v[V3].x, obj->ogl.quad.v[V3].y, obj->ogl.quad.v[V3].z);
-			// Lower-left
-			glColor4f		(obj->ogl.quad.c[V4].r, obj->ogl.quad.c[V4].g, obj->ogl.quad.c[V4].b, obj->ogl.quad.c[V4].a);
-			glTexCoord2d	(obj->ogl.quad.t[V4].s, obj->ogl.quad.t[V4].t);
-			glNormal3f		(obj->ogl.quad.n[V4].x, obj->ogl.quad.n[V4].y, obj->ogl.quad.n[V4].z);
-			glVertex3f		(obj->ogl.quad.v[V4].x, obj->ogl.quad.v[V4].y, obj->ogl.quad.v[V4].z);
-		}
-		glEnd();
+		//////
+			thisRec = &obj->ogl.quad;
+			glBegin(GL_QUADS);
+			{
+				// Upper-left
+				glColor4f		(thisRec->c[V1].r, thisRec->c[V1].g, thisRec->c[V1].b, thisRec->c[V1].a);
+				glTexCoord2d	(thisRec->t[V1].s, thisRec->t[V1].t);
+				glNormal3f		(thisRec->n[V1].x, thisRec->n[V1].y, thisRec->n[V1].z);
+				glVertex3f		(thisRec->v[V1].x, thisRec->v[V1].y, thisRec->v[V1].z);
+
+				// Upper-right
+				glColor4f		(thisRec->c[V2].r, thisRec->c[V2].g, thisRec->c[V2].b, thisRec->c[V2].a);
+				glTexCoord2d	(thisRec->t[V2].s, thisRec->t[V2].t);
+				glNormal3f		(thisRec->n[V2].x, thisRec->n[V2].y, thisRec->n[V2].z);
+				glVertex3f		(thisRec->v[V2].x, thisRec->v[V2].y, thisRec->v[V2].z);
+
+				// Lower-right
+				glColor4f		(thisRec->c[V3].r, thisRec->c[V3].g, thisRec->c[V3].b, thisRec->c[V3].a);
+				glTexCoord2d	(thisRec->t[V3].s, thisRec->t[V3].t);
+				glNormal3f		(thisRec->n[V3].x, thisRec->n[V3].y, thisRec->n[V3].z);
+				glVertex3f		(thisRec->v[V3].x, thisRec->v[V3].y, thisRec->v[V3].z);
+
+				// Lower-left
+				glColor4f		(thisRec->c[V4].r, thisRec->c[V4].g, thisRec->c[V4].b, thisRec->c[V4].a);
+				glTexCoord2d	(thisRec->t[V4].s, thisRec->t[V4].t);
+				glNormal3f		(thisRec->n[V4].x, thisRec->n[V4].y, thisRec->n[V4].z);
+				glVertex3f		(thisRec->v[V4].x, thisRec->v[V4].y, thisRec->v[V4].z);
+			}
+			glEnd();
 	}
 
 
@@ -1316,51 +1341,84 @@
 // Called to compute the midpoint, slope, and perpendicular slope of a vector line
 //
 //////
-	void iiGrace_computeVecLine(SGraceVecLine* line)
+	void iiGrace_copyAndComputeVecLine(SGraceVecLine* line, SGraceVec* v1, SGraceVec* v2)
 	{
-		// Midpoint = (x2-x1)/2, (y2-y1)/2, (z2-z1)/2
-		line->mid.x		= (line->v1.x + line->v2.x) / 2.0f;
-		line->mid.y		= (line->v1.y + line->v2.y) / 2.0f;
-		line->mid.z		= (line->v1.z + line->v2.z) / 2.0f;
+		//////////
+		// Copy
+		//////
+			memcpy(&line->v1, v1, sizeof(line->v1));
+			memcpy(&line->v2, v2, sizeof(line->v2));
 
-		// Compute our deltas
-		line->delta.x	= line->v2.x - line->v1.x;
-		line->delta.y	= line->v2.y - line->v1.y;
-		line->delta.z	= line->v2.z - line->v1.z;
 
-		// Length
-		line->lengthXy	= (f32)sqrt(line->delta.x*line->delta.x + line->delta.y*line->delta.y);
-		line->lengthXz	= (f32)sqrt(line->delta.x*line->delta.x + line->delta.z*line->delta.z);
-		line->lengthYz	= (f32)sqrt(line->delta.y*line->delta.y + line->delta.z*line->delta.z);
-		line->length	= (f32)sqrt(line->lengthXy*line->lengthXy + line->delta.z*line->delta.z);
+		//////////
+		// Compute
+		//////
+			// Midpoint = (x2-x1)/2, (y2-y1)/2, (z2-z1)/2
+			line->mid.x		= (v1->x + v2->x) / 2.0f;
+			line->mid.y		= (v1->y + v2->y) / 2.0f;
+			line->mid.z		= (v1->z + v2->z) / 2.0f;
 
-		// Slope = rise over run
-		line->mXy		= line->delta.y / ((line->delta.x == 0.0f) ? 0.000001f : line->delta.x);
-		line->mXz		= line->delta.z / ((line->delta.x == 0.0f) ? 0.000001f : line->delta.x);
-		line->mYz		= line->delta.z / ((line->delta.y == 0.0f) ? 0.000001f : line->delta.y);
+			// Compute our deltas
+			line->delta.x	= v2->x - v1->x;
+			line->delta.y	= v2->y - v1->y;
+			line->delta.z	= v2->z - v1->z;
 
-		// Perpendicular slope = -1/m
-		line->mpXy		= -1.0f / ((line->mXy == 0.0) ? 0.000001f : line->mXy);
-		line->mpXz		= -1.0f / ((line->mXz == 0.0) ? 0.000001f : line->mXz);
-		line->mpYz		= -1.0f / ((line->mYz == 0.0) ? 0.000001f : line->mYz);
+			// Length
+			line->lengthXy	= (f32)sqrt((line->delta.x*line->delta.x) + (line->delta.y*line->delta.y));
+			line->lengthXz	= (f32)sqrt((line->delta.x*line->delta.x) + (line->delta.z*line->delta.z));
+			line->lengthYz	= (f32)sqrt((line->delta.y*line->delta.y) + (line->delta.z*line->delta.z));
+			line->length	= (f32)sqrt((line->lengthXy*line->lengthXy) + (line->delta.z*line->delta.z));
 
-		// Compute theta
-		line->thetaXy	= (f32)atan2(line->delta.y, line->delta.x);
-		line->thetaXz	= (f32)atan2(line->delta.z, line->delta.x);
-		line->thetaYz	= (f32)atan2(line->delta.z, line->delta.y);
+			// Slope = rise over run
+			line->mXy		= line->delta.y / ((line->delta.x == 0.0f) ? 0.000001f : line->delta.x);
+			line->mXz		= line->delta.z / ((line->delta.x == 0.0f) ? 0.000001f : line->delta.x);
+			line->mYz		= line->delta.z / ((line->delta.y == 0.0f) ? 0.000001f : line->delta.y);
+
+			// Perpendicular slope = -1/m
+			line->mpXy		= -1.0f / ((line->mXy == 0.0) ? 0.000001f : line->mXy);
+			line->mpXz		= -1.0f / ((line->mXz == 0.0) ? 0.000001f : line->mXz);
+			line->mpYz		= -1.0f / ((line->mYz == 0.0) ? 0.000001f : line->mYz);
+
+			// Compute theta
+			line->thetaXy	= (f32)atan2(line->delta.y, line->delta.x);
+			line->thetaXz	= (f32)atan2(line->delta.z, line->delta.x);
+			line->thetaYz	= (f32)atan2(line->delta.z, line->delta.y);
 	}
 
 
 
 
-	void iiGrace_copyAndComputeVecLine(SGraceVecLine* line, SGraceVec* p1, SGraceVec* p2)
+	void iiGrace_copyAndComputeLine(SGraceLine* line, SGraceXy* p1, SGraceXy* p2)
 	{
+		//////////
 		// Copy
-		memcpy(&line->v1, p1, sizeof(line->v1));
-		memcpy(&line->v2, p2, sizeof(line->v2));
+		//////
+			memcpy(&line->p1, p1, sizeof(SGraceXy));
+			memcpy(&line->p2, p2, sizeof(SGraceXy));
 
+
+		//////////
 		// Compute
-		iiGrace_computeVecLine(line);
+		//////
+			// Midpoint = (x2-x1)/2, (y2-y1)/2
+			line->mid.x		= (p1->x + p2->x) / 2.0f;
+			line->mid.y		= (p1->y + p2->y) / 2.0f;
+
+			// Compute our deltas
+			line->delta.x	= p2->x - p1->x;
+			line->delta.y	= p2->y - p1->y;
+
+			// Length
+			line->length	= (f32)sqrt((line->delta.x*line->delta.x) + (line->delta.y*line->delta.y));
+
+			// Slope = rise over run
+			line->m			= line->delta.y / ((line->delta.x == 0.0f) ? 0.000001f : line->delta.x);
+
+			// Perpendicular slope = -1/m
+			line->mp		= -1.0f / ((line->m == 0.0) ? 0.000001f : line->m);
+
+			// Compute theta
+			line->theta		= (f32)atan2(line->delta.y, line->delta.x);
 	}
 
 
@@ -1388,8 +1446,6 @@
 		//////////
 		// Copy and compute our lines
 		//////
-			memset(&l1,   0, sizeof(l1));
-			memset(&l2,   0, sizeof(l2));
 			memset(&lmid, 0, sizeof(lmid));
 			iiGrace_copyAndComputeVecLine(&l1, tsV1, tsV2);
 			iiGrace_copyAndComputeVecLine(&l2, tsV2, tsV3);
@@ -1445,30 +1501,4 @@
 		// Return our vectors
 		//////
 			return(vecs);
-	}
-
-
-
-
-	void iiGrace_copyAndComputeLine(SGraceLine* line, SGraceXy* p1, SGraceXy* p2)
-	{
-		// Midpoint = (x2-x1)/2, (y2-y1)/2
-		line->mid.x		= (line->p1.x + line->p2.x) / 2.0f;
-		line->mid.y		= (line->p1.y + line->p2.y) / 2.0f;
-
-		// Compute our deltas
-		line->delta.x	= line->p2.x - line->p1.x;
-		line->delta.y	= line->p2.y - line->p1.y;
-
-		// Length
-		line->length	= (f32)sqrt(line->delta.x*line->delta.x + line->delta.y*line->delta.y);
-
-		// Slope = rise over run
-		line->m			= line->delta.y / ((line->delta.x == 0.0f) ? 0.000001f : line->delta.x);
-
-		// Perpendicular slope = -1/m
-		line->mp		= -1.0f / ((line->m == 0.0) ? 0.000001f : line->m);
-
-		// Compute theta
-		line->theta		= (f32)atan2(line->delta.y, line->delta.x);
 	}
