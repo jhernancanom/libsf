@@ -71,6 +71,7 @@
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
+				OptimizeReferences="1"
 				RandomizedBaseAddress="2"
 				DataExecutionPrevention="2"
 				ImportLibrary="\libsf\source\vjr\icons.lib"
@@ -155,7 +156,7 @@
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
-				OptimizeReferences="2"
+				OptimizeReferences="1"
 				EnableCOMDATFolding="2"
 				ImportLibrary="\libsf\source\vjr\icons.lib"
 				TargetMachine="1"
@@ -245,6 +246,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\utils\common\cpp\common_types.h"
+					>
+				</File>
+				<File
 					RelativePath=".\grace.h"
 					>
 				</File>
@@ -278,6 +283,30 @@
 				</File>
 				<File
 					RelativePath=".\vjr_structs0.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="bmps"
+				>
+				<File
+					RelativePath=".\bmps\graphics\bitmaps.h"
+					>
+				</File>
+				<File
+					RelativePath=".\bmps\bmps.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							ForcedIncludeFiles=""
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\bmps\graphics\build_h_files.bat"
 					>
 				</File>
 			</Filter>

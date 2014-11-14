@@ -7,10 +7,11 @@
 // Public Domain - See main() below for command line usage.
 //////
 // Last update:
-//     February 18, 2013
+//     Feb.18.2013
 //////
 // Change log:
-//     February 18, 2013 - Initial creation, compiles with Visual Studio 2008 Professional.
+//     Nov.13.2014 - Added /ie=_SYMBOL_NAME internal/external definition or external reference
+//     Feb.18.2013 - Initial creation, compiles with Visual Studio 2008 Professional.
 //////
 //
 // This software is released into the Public Domain.  Enjoy. :-)
@@ -76,20 +77,21 @@ void	iShowUsage			(void);
 		int					lnVariableParameter, lnOutputNameParameter;
 		unsigned long long	lnSha1As64;
 		unsigned long		lnSha1As32;
-		bool				llSha1, llSha1AsHex, llSha1As64Bit, llSha1As32Bit, llPublic;
+		bool				llSha1, llSha1AsHex, llSha1As64Bit, llSha1As32Bit, llPublic, llIe;
 		size_t				lnI, lnJ, lnFileSize, lnNumRead, lnTotalAllocatedBufferSize, lnLineCount, lnOffset, lnNumWritten;
 		FILE*				lfh;
 		char*				lcContent;					// The loaded file content
 		char*				lcOutput;					// The output to write
 		char				buffer[_MAX_PATH * 2];		// Holds temporary buffer data, as well as the full SHA-1 hexadecimal value
 		unsigned char		sha20Bytes[20];
+		char				ieSymbol[256];
 
 
 		// Tell the world who we are
 		printf(" ____________________________________________________________________________\n");
 		printf("|   |                                                                    |   |\n");
 		printf("|F2H|     %s (Public Domain)     |F2H|\n", cgcVersion);
-		printf("|___|     by Liberty Software Foundation Feb.18.2013 Rick C. Hodgin      |___|\n");
+		printf("|___|     by Liberty Software Foundation Nov.13.2014 Rick C. Hodgin      |___|\n");
 
 
 	//////////
@@ -97,11 +99,12 @@ void	iShowUsage			(void);
 	// Command line must be in the form of three parameters:
 	//		(0)			f2h.exe
 	//		(1)			\path\to\input.bin
-	//		(optional)	/sha1  -- include the 20-byte value as a sequence of bytes
-	//		(optional)	/shex  -- include the 160-bit value as hexadecimal
-	//		(optional)	/s64   -- include the 160-bit value computed down to a 64-bit value
-	//		(optional)	/s32   -- include the 160-bit value computed down to a 32-bit value
-	//		(optional)	/pub   -- include the __declspec(dllexport) prefix to make the symbol public
+	//		(optional)	/sha1				-- include the 20-byte value as a sequence of bytes
+	//		(optional)	/shex				-- include the 160-bit value as hexadecimal
+	//		(optional)	/s64				-- include the 160-bit value computed down to a 64-bit value
+	//		(optional)	/s32				-- include the 160-bit value computed down to a 32-bit value
+	//		(optional)	/pub				-- include the __declspec(dllexport) prefix to make the symbol public
+	//		(optional)	/ie=_SYMBOL_NAME	-- Used for #if _SYMBOL_NAME = 0 external, #else standard declaration #endif
 	//		(2)			variableName
 	//		(3)			\path\to\output.h
 	//		
@@ -128,6 +131,7 @@ void	iShowUsage			(void);
 		llSha1As64Bit			= false;
 		llSha1As32Bit			= false;
 		llPublic				= false;
+		llIe					= false;
 
 		// Iterate through each parameter
 		for (lnI = 2; lnI < (u32)argc - 2; lnI++)
@@ -147,14 +151,18 @@ void	iShowUsage			(void);
 				} else if (_memicmp(argv[lnI], "/shex", 5) == 0) {
 					llSha1AsHex = true;
 
-				} else if (_memicmp(argv[lnI], "/s64", 5) == 0) {
+				} else if (_memicmp(argv[lnI], "/s64", 4) == 0) {
 					llSha1As64Bit = true;
 
-				} else if (_memicmp(argv[lnI], "/s32", 5) == 0) {
+				} else if (_memicmp(argv[lnI], "/s32", 4) == 0) {
 					llSha1As32Bit = true;
 
-				} else if (_memicmp(argv[lnI], "/pub", 5) == 0) {
+				} else if (_memicmp(argv[lnI], "/pub", 4) == 0) {
 					llPublic = true;
+
+				} else if (_memicmp(argv[lnI], "/ie=", 4) == 0) {
+					memcpy(ieSymbol, argv[lnI] + 4, strlen(argv[lnI] + 4) + 1);
+					llIe = true;
 
 				} else {
 					// Syntax error
@@ -268,6 +276,59 @@ void	iShowUsage			(void);
 			}
 			iAppendToBuffer(lcOutput, strlen(lcOutput), "\n\n");
 
+			// Add the internal/external symbol definition
+			if (llIe)
+			{
+				// #if _SYMBOL_NAME = 0
+				iAppendToBuffer(lcOutput, strlen(lcOutput), "#if (");
+				iAppendToBuffer(lcOutput, strlen(lcOutput), ieSymbol);
+				iAppendToBuffer(lcOutput, strlen(lcOutput), " == 0)\n");
+
+				// In 20-byte raw form
+				if (llSha1)
+				{
+					// u8 varSha1[] = { 0, 0, ... }
+					iAppendToBuffer(lcOutput, strlen(lcOutput),		"    extern const u8 cgc_");
+					iAppendToBuffer(lcOutput, strlen(lcOutput),		argv[lnVariableParameter]);
+					iAppendToBuffer(lcOutput, strlen(lcOutput),		"Sha1[];\n");
+				}
+
+				// In hexadecimal form
+				if (llSha1AsHex)
+				{
+					// u8 varSha1AsHex[] = { 0, 0, ... }
+					iAppendToBuffer(lcOutput, strlen(lcOutput),		"    extern const u8 cgc_");
+					iAppendToBuffer(lcOutput, strlen(lcOutput),		argv[lnVariableParameter]);
+					iAppendToBuffer(lcOutput, strlen(lcOutput),		"Sha1AsHex[];\n");
+				}
+
+				// In 64-bit hexadecimal integer form
+				if (llSha1As64Bit)
+				{
+					// u8 varSha1As64Bit[] = 0x000
+					iAppendToBuffer(lcOutput, strlen(lcOutput),		"    extern const u64 cgn_");
+					iAppendToBuffer(lcOutput, strlen(lcOutput),		argv[lnVariableParameter]);
+					iAppendToBuffer(lcOutput, strlen(lcOutput),		"Sha1As64Bit;\n");
+				}
+
+				// In 32-bit hexadecimal integer form
+				if (llSha1As32Bit)
+				{
+					// u8 varSha1As64Bit[] = 0x000
+					iAppendToBuffer(lcOutput, strlen(lcOutput),		"    extern const u32 cgn_");
+					iAppendToBuffer(lcOutput, strlen(lcOutput),		argv[lnVariableParameter]);
+					iAppendToBuffer(lcOutput, strlen(lcOutput),		"Sha1As32Bit;\n");
+				}
+
+				// Actual data
+				iAppendToBuffer(lcOutput, strlen(lcOutput),		"    extern u8 cgc_");
+				iAppendToBuffer(lcOutput, strlen(lcOutput),		argv[lnVariableParameter]);
+				iAppendToBuffer(lcOutput, strlen(lcOutput),		"[];\n");
+
+				// #else
+				iAppendToBuffer(lcOutput, strlen(lcOutput), "#else\n");
+			}
+
 			// Optional SHA1 values
 			if (llSha1 || llSha1AsHex || llSha1As64Bit || llSha1As32Bit)
 			{
@@ -280,9 +341,11 @@ void	iShowUsage			(void);
 				// In 20-byte raw form
 				if (llSha1)
 				{
-					if (llPublic)	iAppendToBuffer(lcOutput, strlen(lcOutput), "__declspec(dllexport) \0");
+					if (llPublic)
+						iAppendToBuffer(lcOutput, strlen(lcOutput), "__declspec(dllexport) ");
+
 					// u8 varSha1[] = { 0, 0, ... }
-					iAppendToBuffer(lcOutput, strlen(lcOutput),		"const  u8 cgc_\0");
+					iAppendToBuffer(lcOutput, strlen(lcOutput),		"const  u8 cgc_");
 					iAppendToBuffer(lcOutput, strlen(lcOutput),		argv[lnVariableParameter]);
 					iAppendToBuffer(lcOutput, strlen(lcOutput),		"Sha1[20]\t\t= { ");
 					for (lnI = 0; lnI < 20; lnI++)
@@ -296,11 +359,13 @@ void	iShowUsage			(void);
 				// In hexadecimal form
 				if (llSha1AsHex)
 				{
-					if (llPublic)	iAppendToBuffer(lcOutput, strlen(lcOutput), "__declspec(dllexport) \0");
+					if (llPublic)
+						iAppendToBuffer(lcOutput, strlen(lcOutput), "__declspec(dllexport) ");
+
 					// u8 varSha1AsHex[] = { 0, 0, ... }
 					sha1_convertSha20ToHex(sha20Bytes, buffer, true);
 					buffer[44] = 0;		// NULL terminate
-					iAppendToBuffer(lcOutput, strlen(lcOutput),		"const  u8 cgc_\0");
+					iAppendToBuffer(lcOutput, strlen(lcOutput),		"const  u8 cgc_");
 					iAppendToBuffer(lcOutput, strlen(lcOutput),		argv[lnVariableParameter]);
 					iAppendToBuffer(lcOutput, strlen(lcOutput),		"Sha1AsHex[]\t= \"");
 					iAppendToBuffer(lcOutput, strlen(lcOutput),		buffer);
@@ -310,9 +375,11 @@ void	iShowUsage			(void);
 				// In 64-bit hexadecimal integer form
 				if (llSha1As64Bit)
 				{
-					if (llPublic)	iAppendToBuffer(lcOutput, strlen(lcOutput), "__declspec(dllexport) \0");
+					if (llPublic)
+						iAppendToBuffer(lcOutput, strlen(lcOutput), "__declspec(dllexport) ");
+
 					// u8 varSha1As64Bit[] = 0x000
-					iAppendToBuffer(lcOutput, strlen(lcOutput),		"const u64 cgn_\0");
+					iAppendToBuffer(lcOutput, strlen(lcOutput),		"const u64 cgn_");
 					iAppendToBuffer(lcOutput, strlen(lcOutput),		argv[lnVariableParameter]);
 					iAppendToBuffer(lcOutput, strlen(lcOutput),		"Sha1As64Bit\t= ");
 					sprintf_s(buffer, sizeof(buffer), "0x%016llx\0", lnSha1As64);
@@ -323,9 +390,11 @@ void	iShowUsage			(void);
 				// In 32-bit hexadecimal integer form
 				if (llSha1As32Bit)
 				{
-					if (llPublic)	iAppendToBuffer(lcOutput, strlen(lcOutput), "__declspec(dllexport) \0");
+					if (llPublic)
+						iAppendToBuffer(lcOutput, strlen(lcOutput), "__declspec(dllexport) ");
+
 					// u8 varSha1As64Bit[] = 0x000
-					iAppendToBuffer(lcOutput, strlen(lcOutput),		"const u32 cgn_\0");
+					iAppendToBuffer(lcOutput, strlen(lcOutput),		"const u32 cgn_");
 					iAppendToBuffer(lcOutput, strlen(lcOutput),		argv[lnVariableParameter]);
 					iAppendToBuffer(lcOutput, strlen(lcOutput),		"Sha1As32Bit\t= ");
 					sprintf_s(buffer, sizeof(buffer), "0x%08lx\0",	lnSha1As32);
@@ -339,16 +408,23 @@ void	iShowUsage			(void);
 
 
 			// Comment about what the input file is
-			iAppendToBuffer(lcOutput, strlen(lcOutput),		"// source file \"\0");
+			iAppendToBuffer(lcOutput, strlen(lcOutput),		"    // source file \"");
 			iAppendToBuffer(lcOutput, strlen(lcOutput),		argv[1]);
-			iAppendToBuffer(lcOutput, strlen(lcOutput),		"\"\n\0");
+			iAppendToBuffer(lcOutput, strlen(lcOutput),		"\"\n");
 
 			// If we're public, prepend the line
+// 			iAppendToBuffer(lcOutput, strlen(lcOutput),		"    #pragma comment(linker, \"/include:cgc_");
+// 			iAppendToBuffer(lcOutput, strlen(lcOutput),		argv[lnVariableParameter]);
+// 			iAppendToBuffer(lcOutput, strlen(lcOutput),		"\")\n");
 			if (llPublic)
-				iAppendToBuffer(lcOutput, strlen(lcOutput),		"__declspec(dllexport) \0");
+			{
+				iAppendToBuffer(lcOutput, strlen(lcOutput),		"    __declspec(dllexport) u8 cgc_");
+
+			} else {
+				iAppendToBuffer(lcOutput, strlen(lcOutput),		"    u8 cgc_");
+			}
 
 			// Actual data
-			iAppendToBuffer(lcOutput, strlen(lcOutput),		"const  u8 cgc_\0");
 			iAppendToBuffer(lcOutput, strlen(lcOutput),		argv[lnVariableParameter]);
 			sprintf_s(buffer, sizeof(buffer), "[%u] = \n", lnFileSize);
 			iAppendToBuffer(lcOutput, strlen(lcOutput),		buffer);
@@ -393,6 +469,13 @@ void	iShowUsage			(void);
 		//////
 			lnOffset += iAppendToBuffer(lcOutput, lnOffset, "\n    };\n");
 			// All done
+
+
+		//////////
+		// Close the #if..#else..#endif block if in one
+		//////
+			if (llIe)
+				lnOffset += iAppendToBuffer(lcOutput, strlen(lcOutput), "#endif\n\n");
 
 
 		//////////
@@ -465,7 +548,7 @@ void	iShowUsage			(void);
 	{
 		printf(" __\n");
 		printf("|\n");
-		printf("|  Usage:  f2h input.bin [/sha1] [/s64] [/s32] [/pub] variableName output.h\n");
+		printf("|  Usage:  f2h input.bin [/ie=_SYMBOL_NAME] [/sha1] [/s64] [/s32] [/pub] variableName output.h\n");
 		printf("|Example:  f2h \\myGraphics\\greenDoor.png pngGreenDoor \\myProject\\greenDoor.h\n");
 		printf("|           __\n");
 		printf("|          |\n");

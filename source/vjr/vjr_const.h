@@ -40,55 +40,7 @@ struct SObject;
 struct SEM;
 
 
-// Unsigned
-#ifdef __GNUC__
-	// gcc
-	typedef unsigned long long	u64;
-	typedef unsigned			u32;
-	typedef unsigned short		u16;
-	typedef unsigned char		u8;
-
-	typedef long long			s64;
-	typedef int					s32;
-	typedef short				s16;
-	typedef char				s8;
-
-#else
-	typedef	unsigned __int64	u64;
-	typedef	unsigned int		u32;
-	typedef	unsigned short		u16;
-	typedef	unsigned char		u8;
-
-	// Signed
-	typedef	__int64				s64;
-	typedef	int					s32;
-	typedef	short				s16;
-	typedef	char				s8;
-#endif
-
-// Floating point
-typedef		float				f32;
-typedef		double				f64;
-
-// Constant signed
-typedef		const s8			cs8;
-typedef		const s16			cs16;
-typedef		const s32			cs32;
-typedef		const s64			cs64;
-
-// Constant unsigned
-typedef		const u8			cu8;
-typedef		const u16			cu16;
-typedef		const u32			cu32;
-typedef		const u64			cu64;
-
-// Constant floating point
-typedef		const f64			cf64;
-typedef		const f64			cf64;
-
-// For a null that is not considered a pointer
-const u32 null = 0;
-
+#include "\libsf\utils\common\cpp\common_types.h"
 
 // Used for passing complex parameters as references, such as SObjectpp&, or SEMpp&
 typedef SObject**	SObjectpp;

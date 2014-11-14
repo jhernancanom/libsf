@@ -247,13 +247,3 @@ struct SGraceLine;
 	s32			gnWidth							= 800;
 	s32			gnHeight						= 800;
 	f32			gfPerspective					= 1.0f;
-
-
-////////
-// Pointer for vector arrays
-//////
-	GLfloat*	c								= NULL;		// color
-	GLfloat*	t								= NULL;		// texture
-	GLfloat*	n								= NULL;		// normals
-	GLfloat*	v								= NULL;		// vector
-	GLfloat*	vo								= NULL;		// vector original

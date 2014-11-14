@@ -746,7 +746,7 @@
 				iiGrace_renderNode(objNodeFrom, 0.2f);
 
 				// Move to the next node
-				objNodeFrom = (SObjNode*)objNodeFrom->llFrom.next;
+				objNodeFrom = (SObjNode*)objNodeFrom->from_ll.next;
 			}
 
 
@@ -760,7 +760,7 @@
 				iiGrace_renderNode(objNodeFrom, 0.2f);
 
 				// Move to the next node
-				objNodeFrom = (SObjNode*)objNodeFrom->llFrom.next;
+				objNodeFrom = (SObjNode*)objNodeFrom->from_ll.next;
 			}
 
 
@@ -925,43 +925,22 @@
 //////
 	void iiGrace_positionNodeVectors(SObjNode* objNode, SGraceVec* vFrom, SGraceVec* vTo)
 	{
-		s32 		lnTextLengthFrom, lnTextLengthTo;
-		SObjNode*	objNodeText;
-
-
 		//////////
 		// From
 		//////
-			//////////
-			// Determine the maximum length of any label text, maximum of 10 characters
-			//////
-				objNodeText = (SObjNode*)iLl_getFirstNode(&objNode->llFrom);
-				for (lnTextLengthFrom = 0; objNodeText; objNodeText = (SObjNode*)objNodeText->llFrom.next)
-					lnTextLengthFrom = min(max(objNodeText->from.label.length, lnTextLengthFrom), 10);
+			if (objNode->from_isEast)
+			{
+				// It's departing from the right (east)
+				vFrom->y += objNode->from_slotNum * ...
 
-
-			//////////
-			// Position
-			//////
-				if (objNode->isFromEast)
-				{
-					// It's departing from the right (east)
-					vFrom->y += objNode->slotNumFrom * ...	
-
-				} else {
-					// It's departing from the bottom (south)
-				}
+			} else {
+				// It's departing from the bottom (south)
+			}
 
 
 		//////////
 		// To
 		//////
-			//////////
-			// Determine the maximum length of any label text, maximum of 10 characters
-			//////
-				objNodeText = (SObjNode*)iLl_getFirstNode(&objNode->llTo);
-				for (lnTextLengthTo = 0; objNodeText; objNodeText = (SObjNode*)objNodeText->llTo.next)
-					lnTextLengthTo = min(max(objNodeText->to.label.length, lnTextLengthTo), 10);
 	}
 
 
@@ -1123,6 +1102,28 @@
 
 
 
+;
+// This logic can be used when the node is created, or any text on the node is updated.
+// It would set the value for the maximum length of the text associated with the node
+//
+// 	s32 		lnTextLengthFrom, lnTextLengthTo;
+// 	SObjNode*	objNodeText;
+// 		//////////
+// 		// Determine the maximum length of any label text, maximum of 10 characters
+// 		//////
+// 			objNodeText = (SObjNode*)iLl_getFirstNode(&objNode->llFrom);
+// 			for (lnTextLengthFrom = 0; objNodeText; objNodeText = (SObjNode*)objNodeText->llFrom.next)
+// 				lnTextLengthFrom = min(max(objNodeText->from.label.length, lnTextLengthFrom), 10);
+//			objNode->from
+// 
+// 		//////////
+// 		// Determine the maximum length of any label text, maximum of 10 characters
+// 		//////
+// 			objNodeText = (SObjNode*)iLl_getFirstNode(&objNode->llTo);
+// 			for (lnTextLengthTo = 0; objNodeText; objNodeText = (SObjNode*)objNodeText->llTo.next)
+// 				lnTextLengthTo = min(max(objNodeText->to.label.length, lnTextLengthTo), 10);
+
+
 	void iiGrace_renderNode(SObjNode* objNode, f32 tfNodeWidth)
 	{
 		s32			lnI, lnV, lnVecCount;
@@ -1138,7 +1139,7 @@
 			memcpy(&v1, &objNode->from.obj->ogl.quad.v,	sizeof(SGraceVec));
 			memcpy(&v2, &objNode->to.obj->ogl.quad.v,	sizeof(SGraceVec));
 			iiGrace_positionNodeVectors(objNode, &v1, &v2);
-			recs = iiGrace_computeNodeLine(&v1, &v2, tfNodeWidth, objNode->isFromEast, objNode->isToWest, &lnVecCount);
+			recs = iiGrace_computeNodeLine(&v1, &v2, tfNodeWidth, objNode->from_isEast, objNode->to_isWest, &lnVecCount);
 
 
 		//////////

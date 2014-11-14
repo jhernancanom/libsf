@@ -278,23 +278,24 @@ struct SObjNodeData
 	SDatum		label;												// An optional bit of text for the node hookup
 };
 
+// Nodes run from something to something else...
 struct SObjNode
 {
-	// Nodes exist in the order they're created
-	SLL				llFrom;											// Node link on the from
-	SLL				llTo;											// Node link from the to direction
+	// Link lists along from and to chains
+	SLL				from_ll;										// Node link in the from chain
+	SLL				to_ll;											// Node link in the to chain
 
-	// Slot from configuration
-	bool			isFromEast;										// Does the from originate from the east?
-	s32				slotNumFrom;									// The node slot number for the from
+	// From configuration
+	SObjNodeData	from;											// The data for this node
+	bool			from_isEast;									// Does the from node originate easterly?
+	s32				from_slotNum;									// The node slot number for the from
+	s32				from_maxTextLength;								// Maximum text length along this from_ll chain
 
-	// Slot to configuration
-	bool			isToWest;										// Does the to terminate on the west?
-	s32				slotNumTo;										// The node slot number for the to
-
-	// If it's an individual
-	SObjNodeData	from;											// Nodes go from something to something, this is the from
+	// To configuration
 	SObjNodeData	to;												// ...and this is the to. :-)
+	bool			to_isWest;										// Does the to terminate from the west?
+	s32				to_slotNum;										// The node slot number for the to
+	s32				to_maxTextLength;								// Maximum text length along this to_ll chain
 };
 
 struct SObject

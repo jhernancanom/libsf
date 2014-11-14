@@ -7,6 +7,7 @@ del /s system.log
 del /s *.exe
 del /s *.ilk
 del /s *.pdb
+del /s *.idb
 del /s *.plg
 del /s *.ncb
 

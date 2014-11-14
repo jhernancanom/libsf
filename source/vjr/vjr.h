@@ -116,10 +116,10 @@
 #include "sem_line.h"
 #include "engine.h"
 #include "object_accessors.h"
-#include "graphics\bitmaps.h"
 
-
-
+// Force the bitmaps to be declared external for linking
+#define _BMP_LOCALITY 0
+#include "bmps\graphics\bitmaps.h"
 
 #include "vjr_sup.cpp"
 #include "objects.cpp"
