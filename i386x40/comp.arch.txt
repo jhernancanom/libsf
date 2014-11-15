@@ -301,3 +301,23 @@ I'm really looking forward to designing this CPU.  Very simple, clean, elegant (
 Best regards,
 Rick C. Hodgin
 
+===============================================================================
+
+Post: Nov.15.2014
+---------------------
+
+I have given i386-x40 a full 1 TB address range in 4 GB increments, meaning multiple 32-bit processes can be running each in their own isolated 4 GB space.
+
+I have tremendously simplified the protected mode execution model. For the time being, you can see what I have right now:
+
+    https://github.com/RickCHodgin/libsf/blob/master/i386x40
+
+A common descriptor used for 32-bit and 40-bit modes.  The granularity for the limit is determined by new flags in the EFLAGS register which identify the ISA in use.  i386-x40 supports i386-x40 ISA, which is a revised opcode definition version of the original x86 opcodes, with some extensions and changes.  It also supports i386 mode, which uses the existing opcodes as they are.  I also support ARM-x40, which is a version of the ARM ISA in a flat 32-bit environment.
+
+I am going to take some time to let it all sink in and then come back to it.  There are a few more graphics I'll create which relate to the use of WEX, and the definition for the i386-x40 paging model.
+
+As always, I would appreciate any feedback.  Thank you.
+
+Best regards,
+Rick C. Hodgin
+
