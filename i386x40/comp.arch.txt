@@ -1,0 +1,303 @@
+Post: Nov.03.2014
+Link: https://groups.google.com/forum/#!topic/comp.arch/KC7wqtA7ivg
+---------------------
+
+Based on the in-order i386 32-bit 3-stage core, on modern process technology, extended out to 40-bits, support for REX and other ISA extensions added making it at least i686, with multiple cores per die sharing a large cache. No real or virtual modes, only flat 40-bit protected mode, and 32-, 36-, or 40-bit externally pinned address modes.
+
+Best regards,
+Rick C. Hodgin
+
+===============================================================================
+
+Post: Nov.03.2014
+---------------------
+
+I see three advantages:
+
+    (1)  Far simpler core design (only 40-bit protected mode)
+    (2)  2^40 = 1 TB of addressable memory
+    (3)  40-bit registers (named wax, wbx, wcx, ... w14, w15 for "wider")
+
+32-bit machines are adequate on compute for most software tasks.  They only fall short in addressable memory per process, capped at a limiting 4GB (without jumping through hoops).  I wouldn't even mind dropping REX support and literally scaling the i386 to 40 bits.
+
+This design would maintain the same "32-bit look and feel," but extend all registers up to 40-bits  We could even call it a Pentier or something as it's 5x8 = 40 bits. :-)
+
+And, just to be clear, the default instruction encoding and execution wouldn't change.  Everything would still reference 32-bits as it has, but support would be added for new instructions which read/write the full 40-bits.  All internal processing would be based on 40-bits, with an EFLAGS bit setting which would limit processing to 32-bits only for legacy support. 
+
+Best regards,
+Rick C. Hodgin
+
+===============================================================================
+
+Post: Nov.03.2014
+---------------------
+
+I was driving back from lunch just now and I had an interesting thought.
+
+Rather than using REX prefixes, why not stake a claim to some of the
+unused bits in the EFLAGS register and repurpose the REX opcodes to
+convey new information about a register window to use?  The REX bits
+would translate into alternate "pages" for the reigsters WAX..WDI to
+map to, which would allow for additional registers with their use,
+and another opcode to reset to standard.
+
+It could be called a WEX instead (for the register's Window Extension).
+
+REX provides 16 additional opcodes.  WEX would do the same.  Rather
+than exist per assembly instruction thoug, WEX would be a stand-alone
+instructions which populate bits in EFLAGS which are sticky and persist
+until changed.
+
+Whenever PUSHFD is executed (directly or indirectly), it would
+automatically reset those bits to be in the standard register window.
+POPFD and IRETD would restore them.
+
+It could also be that every branching movement of the WIP instruction
+pointer (call, jmp), automatically resets those bits so the target
+receives the standard register window.
+
+In this design, the WEX bits could relate to these values which remain
+sticky until reset directly, or indirectly by branch movements:
+
+WEX opcode          Window Extension             Always Same   Instruction
+----------   ---------------------------------   -----------   ------------
+0100.0000    WAX   WBX   WCX   WDX   WSI   WDI     WBP  WSP      wexbase
+0100.0001    WAX   WBX   WCX   WDX    W1    W7     WBP  WSP      wexsd1
+0100.0010    WAX   WBX   WCX   WDX   W13   W19     WBP  WSP      wexsd13
+0100.0011    WAX   WBX   WCX   WDX   W25   W31     WBP  WSP      wexsd25
+0100.0100    WAX    W1    W7   W13   W19   W25     WBP  WSP      wexa1
+0100.0101    WAX   W31   W37   W43   W49   W55     WBP  WSP      wexa31
+0100.0110     W1    W2    W3    W4    W5    W6     WBP  WSP      wex1
+0100.0111     W7    W8    W9   W10   W11   W12     WBP  WSP      wex7
+0100.1000    W13   W14   W15   W16   W17   W18     WBP  WSP      wex13
+0100.1001    W19   W20   W21   W22   W23   W24     WBP  WSP      wex19
+0100.1010    W25   W26   W27   W28   W29   W30     WBP  WSP      wex25
+0100.1011    W31   W32   W33   W34   W35   W36     WBP  WSP      wex31
+0100.1100    W37   W38   W39   W40   W41   W42     WBP  WSP      wex37
+0100.1101    W43   W44   W45   W46   W47   W48     WBP  WSP      wex43
+0100.1110    W49   W50   W51   W52   W53   W54     WBP  WSP      wex49
+0100.1111    W55   W56   W57   W58   W59   W60     WBP  WSP      wex55
+
+Best regards,
+Rick C. Hodgin
+
+===============================================================================
+
+Post: Nov.04.2014
+---------------------
+
+> What protection mechanism are you planning on using instead?
+
+Descriptors themselves contain sufficient protection mechanisms.  In addition, in a 40-bit system they would each be extended by 2x8 (16) bits, allowing for the extra 8-bit base to be created along with 8 new bit flags.  The granularity would take on a new meaning so that in 40-bit mode it spans the entire 1 TB address range in 1MB blocks.
+
+> Also, most modern OS's also use paging for process separation,
+> shared memory,
+
+There's no hard need to require paging for those things in a heavily memory'd environment.  I'm thinking the tradeoffs in simplicity and in physical address calculation on every access would be more desirable than maintaining paging for software's sake.  In an open source environment, algorithms which handle these things in a bug-free manner need only be written once, and then distributed.
+
+> and (quite heavily) for mmap'd file I/O.
+
+Consider that in a non-paging environment CR3 can be re-purposed. Using CR3 in a new way, the effect of present/not-present, dirty, accessed, can be setup by using the descriptor's own granularity for "sized ranges" into a bitmap for each selector.  In 32-bit mode they would be 4KB ranges.  In 40-bit mode they'd be 1MB ranges.
+
+In essence:
+
+CR3 would point to a small structure which has three blocks of six entries (one for each selector CS, DS, ES, FS, GS, SS, and one block for each present/not-present, dirty/not-dirty, accessed/not-accessed).
+
+Each block of six entries contains 32- or 40-bit linear address offsets to bitmaps which store the range-mapped bits, the range size being determined by the descriptor's own granularity.
+
+The CPU automatically reads and updates the bits on reads/writes within each range when enabled (which would be by using new segment descriptor types now available through re-purposed 16-bit forms), and trigger not present interrupts on ranges which have not yet been populated, but still relate to linear memory and not a "missing page."
+
+In this way, no hard paging is required, but the effect is achieved by granularity range types being mapped.  An allocated 64 GB block would require only 64 KB for a full memory map in 40-bit mode.  For more common 4 GB block allocations, it would be a single 4 KB block per selector.
+
+-----
+With the memory quantities available today, having real paging should no longer be required.  GDT and LDT entries will provide sufficient isolation through OS protocol so that no two tasks every meet except for where they should meet.  Several machine resources can be re- purposed to provide for whatever mechanisms that would be required. And while some of this will break existing software, the overall simplicity of the design would be appealing enough to make it worth the effort.
+
+On the x40, both FS and GS would be normal segment selectors again, so they could be explicitly employed for any types of memory references outside of the normal application space in CS/DS/ES/SS for these specialized purposes.  We could claim some additional unused bits in the EFLAGS register to specify what "default segments" exist for the typical DS/ES mappings, so that "DS" could map to GS, and "ES" could map to "FS" in normal instruction encodings, making data movements possible without segment prefix overrides.
+
+Whew!  Designing this machine is awesome.  The sky's the limit because we don't have to carry legacy baggage, and we can make use of things we should've had all along. :-)
+
+Best regards,
+Rick C. Hodgin
+
+===============================================================================
+
+Post: Nov.04.2014
+---------------------
+
+I've had the thought today of changing these two (0100.0100 and 0100.0100)
+to these:
+
+0100.0100    WAX    W1    W7   W13   W19   W25     WBP  WSP      wexa
+0100.0101    WBX   W31   W37   W43   W49   W55     WBP  WSP      wexb
+
+Seems to make more sense for certain operations.
+
+Best regards,
+Rick C. Hodgin
+
+===============================================================================
+
+Post: Nov.05.2014
+---------------------
+
+> >...and this
+> >40-bit architecture will become obsolete through lack of address space
+> >much sooner than a 64-bit one.
+>
+> And then someone will come out with the "x42"
+> which can address *four times* as much memory.
+
+I had that thought.  Above I use 0200h for entering x40 mode.  There'd be no reason they couldn't add 0300h for entering x48 mode, for example.
+
+I think the architectural reasons are sound.  By removing paging, and removing legacy 16-bit modes and all support for them, the core is greatly streamlined.  When WEX is added, the number of registers grows significantly for general purpose computing.
+
+I am giving it some serious thought to see if I want to proceed, but I think I may have found the avenue for my LibSF hardware stack foundation.
+
+Best regards,
+Rick C. Hodgin
+
+===============================================================================
+
+Post: Nov.11.2014
+---------------------
+
+Given the WEX prefixes, the simplified paging mechanism, the ability to run a tiny, ported version of Bochs to meet any real-mode bootup requirements, does anyone have any thoughts about this?  Any holes to shoot through the idea?
+
+If not, I will begin spending some time on this design, and on looking at the FPGA-proven core already in existence for some cues:
+
+    http://opencores.org/project,ao486,Overview
+
+I would also welcome any assistance for this offering. :-)  Thank you.
+
+Best regards,
+Rick C. Hodgin
+
+===============================================================================
+
+Post: Nov.12.2014
+---------------------
+
+> > Does anyone have any thoughts?  ...
+>
+> ... 64-bit processors
+> already exist and can be bought cheaply. This has no obvious advantages
+> over them. Putting a lot of work into a processor whose time would have
+> been over a decade ago seems pointless.
+
+It comes back to my desire to create a hardware and software stack, one founded upon an offering unto the Lord, and unto men.  It is not being done for money, or for time schedules, or for politics, or for policy. It is being done because we possess certain skills and desire to use those skills to give ourselves, and the people of this world an offering that was founded entirely upon faith in Jesus Christ, and a pursuit of His Holy Spirit, rather than courting the spirit of this world (which is tied toward non-Godly things).
+
+> How would you align your 5-byte ints and pointers? If you put them on
+> 8-byte boundaries you're losing any memory saving. If you put them on
+> 5-byte boundaries then they reasonably often span 4-, 8- or 16-byte cache
+> line boundaries, imposing a performance overhead. If you weren't planning
+> to align things, but just pack everything with no padding, you haven't
+> understood the need to avoid extra cache line fetches to get anything
+> like performance.
+
+Is there any reason why caches have to be aligned on 4-, 8- or 16-byte boundaries?  Why not 5-, 10-, or 20-byte boundaries?  Or why not some multiple of 5 and 8, such as a 5x8 40-byte boundary?
+
+The i386 originally operated at 12 MHz IIRC.  I don't envision my CPU running much faster.  I think the cache architecture, apart from some very small caches here and there, will not make much difference when compared to the fundamental speed of memory today.  But, I could be wrong.  I'll learn more as I go along. :-)
+
+> A fundamental truth of modern processor design is that to a first
+> approximation, the instruction set doesn't matter. Performance depends so
+> strongly on caches that a design that ignores them is thereby doomed.
+> John
+
+I will keep this in mind.  But please remember I am not trying to make a commercially viable processor.  I am trying to make a functional processor that uses the talents and skills of myself and other believers, so that we'll have something which works, is adequate, error-free, and usable to conduct our compute workloads.  Optimization can come in future revisions as the slow points are identified.
+
+Our fundamental goals are:
+
+    (1)  Designed on paper without fundamental flaws.
+    (2)  Simulated and functional in C/C++.
+    (3)  Defined and operational in FPGA.
+
+The original i386-32 was about 275K transistors IIRC.  It was a very simple design.  My desire is to take that simple design, which is still capable of conducting the bulk of the 32-bit software still in use today in 2014 (were it compiled for i386 rather than i686), and to build upon that base.  I have expertise in x86 architecture, and in removing real mode, virtual-8086 mode, and complex paging, the design will be made even simpler.
+
+At least that is my thinking.  I could be wrong.
+
+We'll see ... I've gotten an initial reply from Aleksander Osman on his ao486 core, and on my i386 x40 core.  He said it took him about 2.5 years to build in a hobby fashion, but it was a very time-consuming project.  I told him about my wishes to have the i386 x40 as a fundamental offering unto the Lord.  Now I'll see if he ever responds to me again.  Many don't.
+
+The i386 x40 post is also up now on opencores.org:
+    http://opencores.org/forum,Cores,0,5563
+
+Best regards,
+Rick C. Hodgin
+
+===============================================================================
+
+Post: Nov.12.2014
+---------------------
+
+> > Is there any reason why caches have to be aligned on 4-, 8- or
+> > 16-byte boundaries?  Why not 5-, 10-, or 20-byte boundaries?
+>
+> If you do that, you'll frequently have 4-byte and 8-byte entities
+> crossing cache boundaries.
+>
+> > Or why not some multiple of 5 and 8, such as a 5x8 40-byte boundary?
+>
+> That does work, but it means you either need wider memory and a wider
+> memory controller than a normal 64-bit processor, or accept that a cache
+> line fetch needs multiple memory reads, which is again bad for
+> performance. But since you aren't actually bothered about performance...
+
+My thinking is... I do care about performance, but not as a priority. IIRC the 80386 was a simple 3-stage pipe with some of the stages taking several clocks to execute.  As such it's not going to have high clock throughput on instruction or data, meaning low pressure, meaning a minimal cache system would be sufficient (coupled to the speed of modern memory).
+
+This is all me guestimating of course.  I have no such experience in hardware to be able to speak definitively.  I can only look at what I've read in articles, and understood from the documents I've read. I do not have hands-on experience in design.
+
+As I see it, I look at the anticipated clock rate, the average instruction and data needs per clock, the memory architecture throughput, the latency, and see very clearly that some kind of cache is needed.  In my estimation it doesn't need to be a large cache due to its relatively limited compute abilities.
+
+Now, were there to be created an i386 x40 with multiple cores per die... then we'd need to step things up.  But, I can see a way to work within that as well.
+
+I think this will actually be my target design: a four core machine with a shared/common 1 TB of addressable space, but also each core will then have its own 1 TB of addressable memory.  Certain new bits in the descriptors will determine the location where its memory resides.  It will be one of three:  common, private, on another core:
+
+    ; 4 bits in the descriptor
+    [..][.][.]
+
+    ; [..] explicit core number
+    ; 00 = core 0
+    ; 01 = core 1
+    ; 10 = core 2
+    ; 11 = core 3
+
+    ; [.] override core and use self/own memory
+    ; [.] override core and use common/shared memory
+
+The use of the self/own memory bit could be removed... but for convenience sake it might be desirable.  I'll have to consider it.
+
+External fetches to remote cores will be slower, but having the ability to directly exchange data is desirable methinks, because it removes the need for a double move (of moving data through common/shared memory back out to private memory).
+
+A lot of potential when the legacy slate is up for a lot of revamping.
+
+Best regards,
+Rick C. Hodgin
+
+===============================================================================
+
+Post: Nov.12.2014
+---------------------
+
+Perhaps someone may find my work on this project of interest.
+Perhaps not. :-)
+
+You can find my progress here:
+
+    https://github.com/RickCHodgin/libsf/tree/master/i386x40
+
+I have removed 2-bit privilege levels and reduced it to 1-bit.  The bit means either 1=system (kernel) or 0=user (application).  This also frees up one bit in the selector, which, since the i386-x40 supports both shared- and self-memory 1TB address spaces per core, I will use this bit to indicate locality. 1=shared use memory (the 1 TB address shared by all four cores), and 0=use self-memory (the 1 TB address owned and isolated by each core for itself).
+
+In eflags I removed nearly everything since we're dealing only with 32-bit or 40-bit protected modes. The eflags revamping is not yet complete, but in progress. I will likely re-order what remains to make it grouped better.
+
+I have setup DS,ES,FS,GS aliasing, so that the four base DS,ES,FS,GS selectors are loaded, and then each can be referenced not by re-loading the selector to another register, but by changing the aliasing.
+
+I've added three general purpose flags, and will add one more.  These are called FL1,FL2,FL3,FL4 and can be used with new SETcc and Jcc instruction encodings.
+
+For the 32-bit descriptor I make a lot of changes.  I don't yet have the 32-bit descriptor complete, nor the 40-bit descriptor defined. Since I am dropping a lot of legacy baggage, I will probably re-orient the bit order of the descriptor contents as well, leaving future room for the x48.
+
+In going through Volume 3 of the IA-32/64 manuals, I am realizing that the i386-x40 will be about 100x more simple and straight-forward than the i386 through x64 varieties with all of their legacy baggage. I am stripping so much out I am considering adding support for an alternate ISA so I can run both i386-x40 and ARM-x40 code.  I will also re-orient the instructions freeing up many one-byte opcodes so I can introduce predicates to the i386-x40.
+
+I'm really looking forward to designing this CPU.  Very simple, clean, elegant (Lord willing).
+
+Best regards,
+Rick C. Hodgin
+
