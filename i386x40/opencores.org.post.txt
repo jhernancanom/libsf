@@ -1,0 +1,67 @@
+Post:  Nov.12.2014
+Link:  http://opencores.org/forum,Cores,0,5563
+---------------------
+
+I have an idea for an i386-based core extended out to 40 bits, allowing for a Terabyte of addressable RAM.
+
+I drop support for real mode and virtual-8086 mode, and deal only with protected mode. For backward compatibility with existing real-mode BIOS, a version of Bochs can be ported which emulates the real-mode environment. The default boot-up environment would be 32-bit mode. An extension would be created to allow 40-bit mode:
+
+; An atomic operation
+    cli
+    mov  EAX,CR0
+    or   EAX,0x100h    ; Enable 40-bit loads
+    mov  CR0,EAX
+
+    ; Setup 40-bit environment
+
+    mov  EAX,CR0
+    or   EAX,0x200h    ; Enable 40-bit processing mode
+    mov  CR0,EAX
+    sti
+    ; Now in 40-bit mode
+    ; A new 40-bit W-series register base is created (wide registers)
+
+
+-----
+I have also come up with the idea for a WEX prefix (instead of the REX prefix). WEX stands for "Window Extentions" and relates to register windows. The same EAX..EDX/ESI/EDI are available, but they are extended out to 40 bits making them WAX..WDX/WSI/WDI and WBP/WSP/WIP. They operate with the same Mod/R/RM and SIB instruction encodings, but they map through a register window that is set by staking a claim to some of the unused EFLAGS bits. This allows for a large register set to be used with the one-byte opcode WEX prefixes being injected before instruction groups which set bits in the EFLAGS register. These bits are then sticky and persist until changed, or until a branching instruction with resets them. This differs from REX in that they are not required on every instruction.
+
+Here's the WEX table with opcode and proposed instruction name thus far:
+
+    WEX opcode          Window Extension             Always Same   Instruction
+    ----------   ---------------------------------   -----------   ------------
+    0100.0000    WAX   WBX   WCX   WDX   WSI   WDI     WBP  WSP      wexbase
+    0100.0001    WAX   WBX   WCX   WDX    W1    W7     WBP  WSP      wexsd1
+    0100.0010    WAX   WBX   WCX   WDX   W13   W19     WBP  WSP      wexsd13
+    0100.0011    WAX   WBX   WCX   WDX   W25   W31     WBP  WSP      wexsd25
+    0100.0100    WAX    W1    W7   W13   W19   W25     WBP  WSP      wexa      // Originally posted as "wexa1"
+    0100.0101    WBX   W31   W37   W43   W49   W55     WBP  WSP      wexb      // Originally posted as "wexa31"
+    0100.0110     W1    W2    W3    W4    W5    W6     WBP  WSP      wex1
+    0100.0111     W7    W8    W9   W10   W11   W12     WBP  WSP      wex7
+    0100.1000    W13   W14   W15   W16   W17   W18     WBP  WSP      wex13
+    0100.1001    W19   W20   W21   W22   W23   W24     WBP  WSP      wex19
+    0100.1010    W25   W26   W27   W28   W29   W30     WBP  WSP      wex25
+    0100.1011    W31   W32   W33   W34   W35   W36     WBP  WSP      wex31
+    0100.1100    W37   W38   W39   W40   W41   W42     WBP  WSP      wex37
+    0100.1101    W43   W44   W45   W46   W47   W48     WBP  WSP      wex43
+    0100.1110    W49   W50   W51   W52   W53   W54     WBP  WSP      wex49
+    0100.1111    W55   W56   W57   W58   W59   W60     WBP  WSP      wex55
+
+A small handful of new instructions would also be defined which would spill WAX..WDX/WSI/WDI out to one of the W-number bases (W1..W6, W7..W12, W13..W18, etc.), and then fill back into the wxbase registers.
+
+-----
+In addition, a new simpler paging model would be created. Rather than using CR3 for a page table base address, it would point to a new structure which holds bits for accessed, dirty, and not present for each selector that's loaded, and these bits relate to the granularity size of the descriptor table (which by default in 40-bit mode would yield 1MB pages, though there would be 8 new bits available in the descriptor which could be purposed to allow for smaller or larger pages based on the application's anticipated memory needs and usage model). The pages in this paging system aren't physically not present, and there is no re-arrangement of requested addresses within the selector's limit then into a page-mapped linear addresses, but instead everything would be translated completely linearly. This would exist because we are now entering a time of a heavily-memory'd availability in runtime environments where it would not be difficult to have linear real memory for even huge demands in a 40-bit address model.
+
+And because we're using an extension of the i386 protected mode architecture, FS and GS would be segment selectors again, allowing for some additional sticky bits which map each of the loaded DS,ES,FS,GS registers to then be mapped to an alternate logical selector, meaning operations take place using the standard DS: and ES: requirements today can be mapped to other selectors, like FS: and GS:, and without having to actually change or reload the selectors (and their underlying descriptors), but only load a register mapping into some new bits in EFLAGS which hold the translation.
+
+-----
+And there are some more extensions I've considered. I'm working on the specific details relating to the internals in a document that's similar to the Intel IA-32 instruction manual format, specifically volume 3. But, the general model/idea is here.
+
+You can read a little more about it (specifically more about the paging model) on comp.arch under the [Core proposal, i386 40-bit dubbed "x40"] thread.
+
+-----
+I would be curious for feedback and thoughts. An openCores.org user, Aleksander Osmand from Poland already has an 486SX (no FPU) design implemented that is FPGA-proven (see http://opencores.org/project,ao486,Overview).
+
+I look forward to hearing some feedback. Thank you.
+
+Best regards,
+Rick C. Hodgin
