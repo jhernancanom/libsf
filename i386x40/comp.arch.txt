@@ -321,3 +321,68 @@ As always, I would appreciate any feedback.  Thank you.
 Best regards,
 Rick C. Hodgin
 
+
+===============================================================================
+
+Post: Nov.21.2014
+---------------------
+
+I've been verilogging myself up and will soon begin working on a tiny
+CPU project called Oppie (for "little opcode").  I am beginning this
+independently from any published tutorials (apart from the samples on
+EDA Playground and some examination of Aleksander Osman's ao486 CPU).
+
+Any help/advice would be appreciated.  My work will be published on
+GitHub in the oppie sub-directories (when they're created):
+
+    https://github.com/RickCHodgin/libsf/tree/master/i386x40
+
+-----
+I plan on several stages, the first two being:
+
+    (1)  Oppie-1, a simple CPU able to execute eight opcodes,
+         processing 8-bits at a time, with 11 bit absolute
+         addresses, and 10-bit relative addresses.
+
+         I plan on four 8-bit registers, 2 KB of RAM, and
+         these instructions:
+
+               8-bit Regs          Flags
+             --------------      ---------
+             r1 -- 00000000        zero?
+             r2 -- 00000000        carry?
+             r3 -- 00000000
+             r4 -- 00000000
+
+                              Opcode
+         ASM Instruction       Bytes    Opcode Bit Encoding (x=unused, 0)
+         -------------------  ------    ---------------------------------
+                                        * Register encodings are 2 bits
+         mov  reg8,[address]     2      000 .r8.000:00000000
+         mov  reg8,reg8          1      001 .x.r8d.r8s  (dest,src)
+         add  reg8,reg8          1      010 .x.r8d.r8s
+         adc  reg8,reg8          1      011 .x.r8d.r8s
+         mov  [address],reg8     2      100 .r8.000:00000000
+         cmp  reg8,reg8          1      101 .x.r8l.r8r  (left,right)
+         jz   +/- 1KB            2      110 .xx.s.00:00000000
+         jmp  +/- 1KB            2      111 .xx.s.00:00000000
+
+    (2)  Oppie-2, a CPU with eight 32-bit registers and additional
+         instructions supporting for 32-bit unsigned integer
+         processing.
+
+-----
+
+Future plans, all subject to change:
+
+    (3)  Oppie-3 will add a stack pointer and stack.
+    (4)  Oppie-4 will add integer support and interrupts.
+    (5)  Oppie-5 will add multiple tasks / processes.
+    (6)  Oppie-6 will add multiple cores.
+
+The ultimate target of i386-x40 is a four-core design, each able to
+address 1 TB of memory connected to its own core, and for all cores
+to be able to share an additional 1 TB of memory commonly.
+
+Best regards,
+Rick C. Hodgin
