@@ -1,5 +1,37 @@
 //////////
 //
+// /libsf/li386/oppie/oppie-1/oppie1.sv
+//
+//////
+// Version 0.01
+// Copyright (c) 2014 by Rick C. Hodgin
+//////
+// Last update:
+//     Nov.23.2014
+//////
+// Change log:
+//     Nov.17.2014 - Initial creation
+//////
+//
+// This software is released as Liberty Software under a Repeat License, as governed
+// by the Public Benefit License v1.0 or later (PBL).
+//
+// You are free to use, copy, modify and share this software.  However, it can only
+// be released under the PBL version indicated, and every project must include a copy
+// of the pbl.txt document for its version as is at http://www.libsf.org/licenses/.
+//
+// For additional information about this project, or to view the license, see:
+//
+//     http://www.libsf.org/
+//     http://www.libsf.org/licenses/
+//     http://www.visual-freepro.org/vjr/indexmain.html
+//     http://www.visual-freepro.org/wiki/index.php/PBL
+//
+// Thank you.  And may The Lord bless you richly as you lift up your life, your
+// talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
+//
+//////
+//
 // Oppie-1 -- Simple CPU able to execute these instructions:
 //
 //		ASM Instruction			Bytes		Opcode Bit Encoding (x=unused)
@@ -24,7 +56,17 @@
 //		r2 -- 00000000		carry?
 //		r3 -- 00000000
 //		r4 -- 00000000
+//
 //		ip -- 00000000		// Instruction pointer
+//
+//////
+//
+// Compiled in Icarus Verilog 0.9.7.
+// Using GTKWave for validation.
+//
+//////
+//
+// Note:  Incomplete and untested as of Nov.23.2014.
 //
 //////
 module oppie1();
@@ -47,6 +89,7 @@ module oppie1();
 		reg					ok_pipe_stage2;		// Indicates if stage-2 is okay
 		reg					ok_pipe_stage3;		// Indicates if stage-3 is okay
 		reg					ok_pipe_stage4;		// Indicates if stage-4 is okay
+		
 		`define STAGE0		3'b000
 		`define STAGE1		3'b001
 		`define STAGE2		3'b010
@@ -94,9 +137,13 @@ module oppie1();
 		reg		[10:0]		read2_address;
 		wire	[7:0]		read2_data;
 	  
-		reg					read3_enable;		// Data 1 (read in stage 3)
+		reg					read3_enable;		// Insruction 3 (read in stage 1)
 		reg		[10:0]		read3_address;
 		wire	[7:0]		read3_data;
+	  
+		reg					read4_enable;		// Data 1 (read in stage 3)
+		reg		[10:0]		read4_address;
+		wire	[7:0]		read4_data;
 	
 	
 	//////////
@@ -106,6 +153,7 @@ module oppie1();
 		
 		reg		[7:0]		p2_i_data1;			// i-data 1 read from stage 1
 		reg		[7:0]		p2_i_data2;			// i-data 2 read from stage 1
+		reg		[7:0]		p2_i_data3;			// i-data 3 read from stage 1
 		reg		[1:0]		p2_reg_src;			// Register source for stage 4
 		reg		[1:0]		p2_reg_dst;			// Register destination for stage 4
 		reg					p2_read_ok;			// Is it oky to read data in stage 3
@@ -115,6 +163,7 @@ module oppie1();
 		reg		[9:0]		p2_ip_delta;		// Delta for jump targets stage 4
 		reg		[10:0]		p2_ip_address;		// ip of this instruction
 		reg		[3:0]		p2_process_op;		// Operation to conduct for stage 4
+		reg					p2_increment2;		// Should the instruction pointer be increased by 2?
 
 		reg		[1:0]		p3_reg_src;			// Register source for stage 4
 		reg		[1:0]		p3_reg_dst;			// Register destination for stage 4
@@ -179,9 +228,13 @@ module oppie1();
 											.read2_address	(read2_address),
 											.read2_data		(read2_data),
 											
-											.read3_enable	(read3_enable		&&	ok_d_read	&&	ok_stage3),
+											.read3_enable	(read3_enable		&&	ok_i_fetch	&&	~i_halt),
 											.read3_address	(read3_address),
-											.read3_data		(read3_data)		);
+											.read3_data		(read3_data),
+
+											.read4_enable	(read4_enable		&&	ok_d_read	&&	ok_stage3	&& ~i_halt),
+											.read4_address	(read4_address),
+											.read4_data		(read4_data)		);
 
 
 	//////////
@@ -191,11 +244,10 @@ module oppie1();
 	//////
 		reg		[7:0]	add_v1;			// Value 1
 		reg		[7:0]	add_v2;			// Value 2
-		wire	[7:0]	add_result;
 		reg		[1:0]	add_dst;		// Destination register
 
 		// Will be computed on the negative edge of the clock
-		add_adc_reg8 aar8(.result(add_result), .v1(add_v1), .v2(add_v2), .carry(p4_carry), .dst_reg(add_dst));
+		add_adc_reg8 aar8(.v1(add_v1), .v2(add_v2), .carry(p4_carry), .dst_reg(add_dst));
 
 
 	//////////
@@ -205,11 +257,10 @@ module oppie1();
 	//////
 		reg		[7:0]	sub_v1;			// Value 1
 		reg		[7:0]	sub_v2;			// Value 2
-		wire	[7:0]	sub_result;
 		reg		[1:0]	sub_dst;		// Destination register
 
 		// Will be computed on the negative edge of the clock
-		sub_sbb_reg8 ssr8(.result(sub_result), .v1(sub_v1), .v2(sub_v2), .borrow(p4_carry), .dst_reg(sub_dst));
+		sub_sbb_reg8 ssr8(.v1(sub_v1), .v2(sub_v2), .borrow(p4_carry), .dst_reg(sub_dst));
 
 
 	//////////
@@ -259,9 +310,7 @@ module oppie1();
 	//
 	//////
 		always @(posedge clk) begin
-			if (i_halt == 0 && ok_d_read && ok_pipe_stage3) begin
-				d_read;
-			end
+			d_read;
 		end
 	
 	
@@ -271,9 +320,7 @@ module oppie1();
 	//
 	//////
 		always @(posedge clk) begin
-			if (i_halt == 0 && ok_i_process && ok_pipe_stage4) begin
-				i_process;
-			end
+			i_process;
 		end
 	
 	
@@ -283,9 +330,7 @@ module oppie1();
 	//
 	//////
 		always @(posedge clk) begin
-			if (i_halt == 0 && ok_d_write) begin
-				d_write;
-			end
+			d_write;
 		end
 	
 	
@@ -344,6 +389,7 @@ module oppie1();
 						p2_read_ok				<= 1'b1;
 						ok_d_write				<= 1'b0;
 						p2_process_op[3:0]		<= `MOV_FROM_MEM8;
+						p2_increment2			<= 1'b1;
 			
 					end else if (read1_data[7:5] == 3'b001) begin
 						// mov  reg8,reg8
@@ -354,6 +400,7 @@ module oppie1();
 						p2_read_ok				<= 1'b0;
 						ok_d_write				<= 1'b0;
 						p2_process_op[3:0]		<= `MOV;
+						p2_increment2			<= 1'b0;
 			  
 					end else if (read1_data[7:4] == 4'b0100) begin
 						// add  reg8,reg8
@@ -364,6 +411,7 @@ module oppie1();
 						p2_read_ok				<= 1'b0;
 						ok_d_write				<= 1'b0;
 						p2_process_op[3:0]		<= `ADD;
+						p2_increment2			<= 1'b0;
 			  
 					end else if (read1_data[7:4] == 4'b0110) begin
 						// adc  reg8,reg8
@@ -374,6 +422,7 @@ module oppie1();
 						p2_read_ok				<= 1'b0;
 						ok_d_write				<= 1'b0;
 						p2_process_op[3:0]		<= `ADC;
+						p2_increment2			<= 1'b0;
 			  
 					end else if (read1_data[7:4] == 4'b0101) begin
 						// sub  reg8,reg8
@@ -384,6 +433,7 @@ module oppie1();
 						p2_read_ok				<= 1'b0;
 						ok_d_write				<= 1'b0;
 						p2_process_op[3:0]		<= `SUB;
+						p2_increment2			<= 1'b0;
 			  
 					end else if (read1_data[7:4] == 4'b0111) begin
 						// sbb  reg8,reg8
@@ -394,6 +444,7 @@ module oppie1();
 						p2_read_ok				<= 1'b0;
 						ok_d_write				<= 1'b0;
 						p2_process_op[3:0]		<= `SBB;
+						p2_increment2			<= 1'b0;
 			  
 					end else if (read1_data[7:5] == 3'b100) begin
 						// mov  [address],reg8
@@ -405,6 +456,7 @@ module oppie1();
 						p2_read_ok				<= 1'b0;
 						ok_d_write				<= 1'b1;
 						p2_process_op[3:0]		<= `MOV_TO_MEM8;
+						p2_increment2			<= 1'b1;
 			  
 					end else if (read1_data[7:5] == 3'b101) begin
 						// cmp  reg8,reg8
@@ -415,6 +467,7 @@ module oppie1();
 						p2_read_ok				<= 1'b0;
 						ok_d_write				<= 1'b0;
 						p2_process_op[3:0]		<= `CMP;
+						p2_increment2			<= 1'b0;
 			  
 					end else if (read1_data[7:5] == 3'b110) begin
 						// jz   +/- 1KB
@@ -426,6 +479,7 @@ module oppie1();
 						p2_ip_delta[9:8][0]		<= p2_i_data1[1:0];
 						p2_ip_delta[7:0][0]		<= p2_i_data2[7:0];
 						p2_process_op[3:0]		<= `JZ;
+						p2_increment2			<= 1'b1;
 			  
 					end else /*if (read1_data[7:5] == 3'b111)*/ begin
 						// jmp  +/- 1KB
@@ -437,6 +491,7 @@ module oppie1();
 						p2_ip_delta[9:8][0]		<= p2_i_data1[1:0];
 						p2_ip_delta[7:0][0]		<= p2_i_data2[7:0];
 						p2_process_op[3:0]		<= `JMP;
+						p2_increment2			<= 1'b1;
 					end
 			
 				end else begin
@@ -453,7 +508,9 @@ module oppie1();
 	//////
 		task d_read;
 			begin
-				// This stage happens in the i_d_data() ram object
+				if (i_halt == 0 && ok_d_read && ok_pipe_stage3) begin
+					// This stage happens in the i_d_data() ram object
+				end
 			end
 		endtask
 	
@@ -545,7 +602,9 @@ module oppie1();
 	//////
 		task d_write;
 			begin
-				// This stage happens in the i_d_data() ram object
+				if (i_halt == 0 && ok_d_write) begin
+					// This stage happens in the i_d_data() ram object
+				end
 			end
 		endtask
 	
@@ -787,7 +846,7 @@ module oppie1();
 				// If we have d-read memory in flight that's from our
 				// write address, we need to update the value
 				//////
-					if (read3_address == p4_write_address) begin
+					if (read4_address == p4_write_address) begin
 						p3_data = p4_result;
 					end
 				
@@ -822,8 +881,8 @@ module oppie1();
 					p3_ip_delta			= p2_ip_delta;
 					p3_ip_address		= p2_ip_address;
 					p3_process_op		= p2_process_op;
-					read3_enable		= p2_read_ok;
-					read3_address		= p2_read_address;
+					read4_enable		= p2_read_ok;
+					read4_address		= p2_read_address;
 				
 				
 				//////////
@@ -832,6 +891,16 @@ module oppie1();
 					p2_ip_address		= p1_ip_address;
 					p2_i_data1			= read1_data;
 					p2_i_data2			= read2_data;
+					p2_i_data3			= read3_data;
+				
+				
+				//////////
+				// Increase the instruction pointer
+				//////
+					if (p2_increment2) begin
+						// Increasing by 2 bytes
+Working here... hence the error. :-)
+					end
 				
 				
 				//////////
@@ -921,7 +990,11 @@ endmodule
 					
 					read3_enable,
 					read3_address,
-					read3_data		);
+					read3_data,
+					
+					read4_enable,
+					read4_address,
+					read4_data		);
 	
 	
 	//////////
@@ -966,6 +1039,11 @@ endmodule
 		output	[WIDTH_DATA - 1:0]			read3_data;
 		reg		[WIDTH_DATA - 1:0]			read3_data;
 
+		input								read4_enable;
+		input	[WIDTH_ADDRESS - 1:0]		read4_address;
+		output	[WIDTH_DATA - 1:0]			read4_data;
+		reg		[WIDTH_DATA - 1:0]			read4_data;
+
 
     //////////
     // Write data to memory
@@ -994,6 +1072,10 @@ endmodule
 				oppie1.read3_enable		<= 1'b0;					// Lower read-flag #3
 				read3_data				<= memory[read3_address];	// Pipe the #3 data
 			end
+			if (read4_enable) begin
+				oppie1.read4_enable		<= 1'b0;					// Lower read-flag #4
+				read4_data				<= memory[read4_address];	// Pipe the #4 data
+			end
 		end
   endmodule
 
@@ -1005,8 +1087,7 @@ endmodule
 // 8-bit adder with carry
 //
 //////
-	module add_adc_reg8(	result,
-							v1,
+	module add_adc_reg8(	v1,
 							v2,
 							carry,
 							dst_reg		);
@@ -1014,11 +1095,16 @@ endmodule
 		//////////
 		// Two 8-bit inputs, and a carry
 		//////
-			output	[7:0]		result;		// Computed result
 			input	[7:0]		v1;			// Value 1
 			input	[7:0]		v2;			// Value 2
 			input				carry;
 			input	[1:0]		dst_reg;	// Destination register
+		
+		
+		//////////
+		// Local computed result
+		//////
+			reg		[7:0]		lresult;	// Local computed result
 		
 
 		//////////
@@ -1029,13 +1115,13 @@ endmodule
 				
 				// Store
 				if (dst_reg == `R1) begin
-					oppie1.r1 = result;
+					oppie1.r1 = lresult;
 				end else if (dst_reg == `R2) begin
-					oppie1.r2 = result;
+					oppie1.r2 = lresult;
 				end else if (dst_reg == `R3) begin
-					oppie1.r3 = result;
+					oppie1.r3 = lresult;
 				end else /*if (dst_reg == `R4)*/ begin
-					oppie1.r4 = result;
+					oppie1.r4 = lresult;
 				end
 			end
 	endmodule
@@ -1048,8 +1134,7 @@ endmodule
 // 8-bit subtract with borrow
 //
 //////
-	module sub_sbb_reg8(	result,
-							v1,
+	module sub_sbb_reg8(	v1,
 							v2,
 							borrow,
 							dst_reg		);
@@ -1057,28 +1142,33 @@ endmodule
 		//////////
 		// Two 8-bit inputs, and a borrow
 		//////
-			output	[7:0]		result;		// Computed result
 			input	[7:0]		v1;			// Value 1
 			input	[7:0]		v2;			// Value 2
 			input				borrow;
 			input	[1:0]		dst_reg;	// Destination register
+		
+		
+		//////////
+		// Local computed result
+		//////
+			reg		[7:0]		lresult;	// Local computed result
 		
 
 		//////////
 		// Compute the 8-bit subtraction with borrow
 		//////
 			always @(negedge oppie1.clk) begin
-				// Compue
+				// Compute
 				
 				// Store
 				if (dst_reg == `R1) begin
-					oppie1.r1 = result;
+					oppie1.r1 = lresult;
 				end else if (dst_reg == `R2) begin
-					oppie1.r2 = result;
+					oppie1.r2 = lresult;
 				end else if (dst_reg == `R3) begin
-					oppie1.r3 = result;
+					oppie1.r3 = lresult;
 				end else /*if (dst_reg == `R4)*/ begin
-					oppie1.r4 = result;
+					oppie1.r4 = lresult;
 				end
 			end
 	endmodule
