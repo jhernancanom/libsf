@@ -69,7 +69,26 @@
 // Note:  Incomplete and untested as of Nov.23.2014.
 //
 //////
-module oppie1();
+
+
+//////////
+// Added to allow compilation in both iverilog, and Quartus-II:
+//////
+//	`define _ICARUS_VERILOG_COMPILATION
+
+
+
+
+//////////
+//
+// Top-level module:  oppie1()
+//
+//////
+`ifdef _ICARUS_VERILOG_COMPILATION
+	module oppie1();
+`else
+	module oppie1(output [0:0] added_to_make_the_synthesizer_software_recognize_this_as_top_level_logic);
+`endif
 
 	//////////
 	// Oppie operational mechanics
@@ -86,7 +105,6 @@ module oppie1();
 		
 		// Valid pipe stage (used for refilling after branch)
 		reg		[2:0]		pipe_valid;
-		reg					ok_pipe_stage1;		// Indicates if stage-1 is okay (the test is at the negedge of clk, meaning we are not now the immediate target of a branch from the last posedge clk)
 		reg					ok_pipe_stage2;		// Indicates if stage-2 is okay
 		reg					ok_pipe_stage3;		// Indicates if stage-3 is okay
 		reg					ok_pipe_stage4;		// Indicates if stage-4 is okay
@@ -120,8 +138,8 @@ module oppie1();
 	//////////
 	// Memory write
 	//////
-		reg		[10:0]		write_address;
-		reg		[7:0]		write_data;
+		reg		[10:0]		p5_write_address;
+		reg		[7:0]		p5_write_data;
 
 	
 	//////////
@@ -173,6 +191,8 @@ module oppie1();
 		reg		[10:0]		p3_ip_address;		// ip of this instruction
 		reg		[3:0]		p3_process_op;		// Operation to conduct for stage 4
 
+		reg					p4_new_ip_valid;	// If valid, the new IP is set
+		reg		[10:0]		p4_new_ip;			// A new IP address for a branch in stage 4
 		reg		[1:0]		p4_reg_src;			// Register source for stage 4
 		reg		[1:0]		p4_reg_dst;			// Register destination for stage 4
 		reg		[7:0]		p4_data;			// Data read in stage 3
@@ -181,13 +201,10 @@ module oppie1();
 		reg		[10:0]		p4_write_address;	// Write address for stage 5, i_write
 		reg		[9:0]		p4_ip_sign;			// Direction for jump targets stage 4
 		reg		[9:0]		p4_ip_delta;		// Delta for jump targets stage 4
-		reg		[10:0]		p4_ip_address;		// ip of this instruction
 		reg		[3:0]		p4_process_op;		// Operation to conduct for stage 4
 		reg					p4_carry;			// Used for common operations
 
 		reg					p5_write_ok;		// Is it okay to write data in stage 5
-		reg		[10:0]		p5_write_address;	// Write address for stage 5, i_write
-		reg		[7:0]		p5_result;			// Computed result stage 4
 	
 	
 	//////////
@@ -215,9 +232,9 @@ module oppie1();
 	//		SIZE_RAM		= 2048		// BITS_DATA count
 	//
 	//////
-	  ram_1_4 #(8, 11, 2048)	i_d_data(	.write_enable	(p5_write_ok		&&	ok_i_write	&&	~i_halt),
-											.write_address	(write_address),
-											.write_data		(write_data),
+	  ram_1_4 #(8, 11, 2048)	i_d_data(	.write_enable	(p5_write_ok		&&	ok_d_write	&&	~i_halt),
+											.write_address	(p5_write_address),
+											.write_data		(p5_write_data),
 											
 											.read1_enable	(read1_enable		&&	ok_i_fetch	&&	~i_halt),
 											.read1_address	(read1_address),
@@ -231,7 +248,7 @@ module oppie1();
 											.read3_address	(read3_address),
 											.read3_data		(read3_data),
 
-											.read4_enable	(read4_enable		&&	ok_d_read	&&	ok_stage3	&& ~i_halt),
+											.read4_enable	(read4_enable		&&	ok_d_read	&&	ok_pipe_stage3	&& ~i_halt),
 											.read4_address	(read4_address),
 											.read4_data		(read4_data)		);
 
@@ -270,6 +287,9 @@ module oppie1();
 	//////
 		initial begin
 			bootup;
+`ifndef _ICARUS_VERILOG_COMPILATION
+			added_to_make_the_synthesizer_software_recognize_this_as_top_level_logic <= 1'b1;
+`endif
 		end
 
 
@@ -279,7 +299,7 @@ module oppie1();
 	//
 	//////
 		always begin
-			#1 clk = ~clk;
+			#10 clk = ~clk;
 		end
 	
 	
@@ -359,8 +379,8 @@ module oppie1();
 					read2_enable	= 1'b1;
 					p1_ip_address	= ip;			// Indicate the ip address
 					read1_address	= ip;			// Read from the IP address
-					read2_address	= ip + 1;		// Read from the IP address + 1
-					read3_address	= ip + 2;		// Read from the IP address + 2
+					read2_address	= ip + 11'd1;	// Read from the IP address + 1
+					read3_address	= ip + 11'd2;	// Read from the IP address + 2
 				end
 			end
 		endtask
@@ -446,8 +466,8 @@ module oppie1();
 						// 2 opcode bytes
 						// 100.00.000:00000000 = 100.reg8_src.address_dst
 						p2_reg_src				<= p2_i_data1[4:3];
-						write_address[10:8]		<= p2_i_data1[2:0];
-						write_address[7:0]		<= p2_i_data2[7:0];
+						p2_write_address[10:8]	<= p2_i_data1[2:0];
+						p2_write_address[7:0]	<= p2_i_data2[7:0];
 						p2_read_ok				<= 0;
 						p2_write_ok				<= 1;
 						p2_process_op[3:0]		<= `MOV_TO_MEM8;
@@ -471,8 +491,8 @@ module oppie1();
 						p2_read_ok				<= 0;
 						p2_write_ok				<= 0;
 						p2_ip_sign[0]			<= p2_i_data1[2:2];
-						p2_ip_delta[9:8][0]		<= p2_i_data1[1:0];
-						p2_ip_delta[7:0][0]		<= p2_i_data2[7:0];
+						p2_ip_delta[9:8]		<= p2_i_data1[1:0];
+						p2_ip_delta[7:0]		<= p2_i_data2[7:0];
 						p2_process_op[3:0]		<= `JZ;
 						p2_increment2			<= 1;
 			  
@@ -483,14 +503,11 @@ module oppie1();
 						p2_read_ok				<= 0;
 						p2_write_ok				<= 0;
 						p2_ip_sign[0]			<= p2_i_data1[2:2];
-						p2_ip_delta[9:8][0]		<= p2_i_data1[1:0];
-						p2_ip_delta[7:0][0]		<= p2_i_data2[7:0];
+						p2_ip_delta[9:8]		<= p2_i_data1[1:0];
+						p2_ip_delta[7:0]		<= p2_i_data2[7:0];
 						p2_process_op[3:0]		<= `JMP;
 						p2_increment2			<= 1;
 					end
-			
-				end else begin
-					ok_d_read = 1'b0;		// Lower the flag, we weren't able to decode
 				end
 			end
 		endtask
@@ -558,33 +575,27 @@ module oppie1();
 					end else if (p4_process_op == `JZ) begin
 						// We need to alter the instruction pointer if zero
 						if (flags[`CARRY:`CARRY]) begin
-							ok_i_fetch		= 0;
-							ok_i_decode		= 0;
-							ok_d_read		= 0;
-							ok_i_process	= 0;
+							p4_new_ip_valid	= 1;
 							if (p4_ip_sign) begin
 								// Jumping negative
-								ip = p3_ip_address - p4_ip_delta;
+								p4_new_ip	= p3_ip_address - p4_ip_delta;
 							
 							end else begin
 								// Jumping positive
-								ip = p3_ip_address + p4_ip_delta;
+								p4_new_ip	= p3_ip_address + p4_ip_delta;
 							end
 						end
 					
 					end else if (p4_process_op == `JMP) begin
 						// We need to alter the instruction pointer unconditionally
-						ok_i_fetch		= 0;
-						ok_i_decode		= 0;
-						ok_d_read		= 0;
-						ok_i_process	= 0;
+						p4_new_ip_valid	= 1;
 						if (p4_ip_sign) begin
 							// Jumping negative
-							ip = p3_ip_address - p4_ip_delta;
+							p4_new_ip = p3_ip_address - p4_ip_delta;
 						
 						end else begin
 							// Jumping positive
-							ip = p3_ip_address + p4_ip_delta;
+							p4_new_ip = p3_ip_address + p4_ip_delta;
 						end
 					end
 				end
@@ -726,7 +737,6 @@ module oppie1();
 	//
 	//////
 		task sub_sbb_reg8_to_reg8;
-			// Setup parameters
 			begin
 				sub_dst = p4_reg_dst;
 				if (p4_reg_dst == `R1) begin
@@ -853,7 +863,7 @@ module oppie1();
 				//////
 					p5_write_ok			= p4_write_ok;
 					p5_write_address	= p4_write_address;
-					p5_result			= p4_result;
+					p5_write_data		= p4_result;
 				
 				
 				//////////
@@ -866,7 +876,6 @@ module oppie1();
 					p4_write_address	= p3_write_address;
 					p4_ip_sign			= p3_ip_sign;
 					p4_ip_delta			= p3_ip_delta;
-					p4_ip_address		= p3_ip_address;
 					p4_process_op		= p3_process_op;
 				
 				
@@ -888,26 +897,34 @@ module oppie1();
 				//////////
 				// Increase the instruction pointer if we're not the target of a recent branch
 				//////
-					if (pipe_valid != `STAGE0) begin
-						if (p2_increment2) begin
-							// This opcode consumed 2 bytes, so we need to adjust the opcodes in the pipe, and the ip address for next read
-							ip				= ip + 2;
-							p2_ip_address	= p1_ip_address + 1;
+					if (p4_new_ip_valid == 1) begin
+						// We branched, set the new target
+						ip				= p4_new_ip;
+//						p4_new_ip_valid	= 0;			// Lower the flag for the next pass
+					
+					end else begin
+						// Continuing in normal processing
+						if (pipe_valid != `STAGE0) begin
+							if (p2_increment2) begin
+								// This opcode consumed 2 bytes, so we need to adjust the opcodes in the pipe, and the ip address for next read
+								ip				= ip + 11'd2;
+								p2_ip_address	= p1_ip_address + 11'd1;
+								
+								// Adjust opcodes pre-fetched
+								p2_i_data1		= read2_data;
+								p2_i_data2		= read3_data;
+								//p2_i_data3	= ignored
+								
 							
-							// Adjust opcodes pre-fetched
-							p2_i_data1		= read2_data;
-							p2_i_data2		= read3_data;
-							//p2_i_data3	= ignored
-							
-						
-						end else begin
-							// Incremented by 1 byte
-							ip				= ip + 1;
-							p2_ip_address	= p1_ip_address;
-							
-							// Copy opcodes forward as they are:
-							p2_i_data1		= read1_data;
-							p2_i_data2		= read2_data;
+							end else begin
+								// Incremented by 1 byte
+								ip				= ip + 11'd1;
+								p2_ip_address	= p1_ip_address;
+								
+								// Copy opcodes forward as they are:
+								p2_i_data1		= read1_data;
+								p2_i_data2		= read2_data;
+							end
 						end
 					end
 				
@@ -917,7 +934,6 @@ module oppie1();
 				//////
 					if (pipe_valid == `STAGE0) begin
 						pipe_valid		= `STAGE1;
-						ok_pipe_stage1	= 1;
 						ok_pipe_stage2	= 0;
 						ok_pipe_stage3	= 0;
 						ok_pipe_stage4	= 0;
@@ -949,26 +965,96 @@ module oppie1();
 		task bootup;
 			begin
 				// Initialize clk
-				clk				= 0;			// Clock is initially low
+				clk					= 0;			// Clock is initially low
 	    
 				// Halt all instruction processing until we're done loading
-				i_halt			= 1;			// Halt is true
-				pipe_valid		= `STAGE1;		// No valid stages except i-fetch
+				i_halt				= 1;			// Halt is true
+				pipe_valid			= `STAGE1;		// No valid stages except i-fetch
 	      
 				// Initialize ok values
-				ok_i_fetch		= 0;			// Okay to i-fetch:		is false
-				ok_i_decode		= 0;			// Okay to i-decode:	is false
-				ok_d_read		= 0;			// Okay to d-read:		is false
-				ok_i_process	= 0;			// Okay to i-process:	is false
-				ok_d_write		= 0;			// Okay to d-write:		is false
+				ok_i_fetch			= 0;			// Okay to i-fetch:		is false
+				ok_i_decode			= 0;			// Okay to i-decode:	is false
+				ok_d_read			= 0;			// Okay to d-read:		is false
+				ok_i_process		= 0;			// Okay to i-process:	is false
+				ok_d_write			= 0;			// Okay to d-write:		is false
 	    
 				// Initialize flags and registers
-				flags			= 0;			// 0=zero? 1=carry?
-				r1				= 0;			// 8-bit R1 general purpose register, set to 0
-				r2				= 0;			// 8-bit R1 general purpose register, set to 0
-				r3				= 0;			// 8-bit R1 general purpose register, set to 0
-				r4				= 0;			// 8-bit R1 general purpose register, set to 0
-				ip				= 0;			// 11-bit RI instruction pointer begins at 0
+				flags				= 0;			// 0=zero? 1=carry?
+				r1					= 0;			// 8-bit R1 general purpose register, set to 0
+				r2					= 0;			// 8-bit R1 general purpose register, set to 0
+				r3					= 0;			// 8-bit R1 general purpose register, set to 0
+				r4					= 0;			// 8-bit R1 general purpose register, set to 0
+				ip					= 0;			// 11-bit RI instruction pointer begins at 0
+				
+				// Initial write/read values
+				p5_write_address	= 0;
+				p5_write_data		= 0;
+				
+				read1_enable		= 0;
+				read1_address		= 0;
+`ifndef _ICARUS_VERILOG_COMPILATION
+				read1_data			= 0;
+`endif
+				
+				read2_enable		= 0;
+				read2_address		= 0;
+`ifndef _ICARUS_VERILOG_COMPILATION
+				read2_data			= 0;
+`endif
+				
+				read3_enable		= 0;
+				read3_address		= 0;
+`ifndef _ICARUS_VERILOG_COMPILATION
+				read3_data			= 0;
+`endif
+				
+				read4_enable		= 0;
+				read4_address		= 0;
+`ifndef _ICARUS_VERILOG_COMPILATION
+				read4_data			= 0;
+`endif
+								
+				// Setup initial values
+				p1_ip_address		= 0;
+			
+				p2_i_data1			= 0;
+				p2_i_data2			= 0;
+				p2_reg_src			= 0;
+				p2_reg_dst			= 0;
+				p2_read_ok			= 0;
+				p2_read_address		= 0;
+				p2_write_ok			= 0;
+				p2_write_address	= 0;
+				p2_ip_sign			= 0;
+				p2_ip_delta			= 0;
+				p2_ip_address		= 0;
+				p2_process_op		= 0;
+				p2_increment2		= 0;
+	
+				p3_reg_src			= 0;
+				p3_reg_dst			= 0;
+				p3_data				= 0;
+				p3_write_ok			= 0;
+				p3_write_address	= 0;
+				p3_ip_sign			= 0;
+				p3_ip_delta			= 0;
+				p3_ip_address		= 0;
+				p3_process_op		= 0;
+	
+				p4_new_ip_valid		= 0;
+				p4_new_ip			= 0;
+				p4_reg_src			= 0;
+				p4_reg_dst			= 0;
+				p4_data				= 0;
+				p4_result			= 0;
+				p4_write_ok			= 0;
+				p4_write_address	= 0;
+				p4_ip_sign			= 0;
+				p4_ip_delta			= 0;
+				p4_process_op		= 0;
+				p4_carry			= 0;
+	
+				p5_write_ok			= 0;
 	    
 				// Populate RAM
 			end
@@ -984,6 +1070,41 @@ endmodule
 // RAM with 1 write port and 4 read ports
 //
 //////
+`ifndef _ICARUS_VERILOG_COMPILATION
+  module ram_1_4(	input									write_enable,
+					input		[WIDTH_ADDRESS	- 1:0]		write_address,
+					input		[WIDTH_DATA		- 1:0]		write_data,
+
+					input									read1_enable,
+					input		[WIDTH_ADDRESS	- 1:0]		read1_address,
+					output		[WIDTH_DATA		- 1:0]		read1_data,
+
+					input									read2_enable,
+					input		[WIDTH_ADDRESS	- 1:0]		read2_address,
+					output 		[WIDTH_DATA		- 1:0]		read2_data,
+
+					input									read3_enable,
+					input		[WIDTH_ADDRESS	- 1:0]		read3_address,
+					output 		[WIDTH_DATA		- 1:0]		read3_data,
+
+					input									read4_enable,
+					input		[WIDTH_ADDRESS	- 1:0]		read4_address,
+					output 		[WIDTH_DATA		- 1:0]		read4_data
+					);
+	
+	//////////
+	// Memory sizing parameters
+	//////													// By default:
+	  parameter		WIDTH_DATA				= 8;			// 8-bit data
+	  parameter		WIDTH_ADDRESS			= 11;			// 11-bit address
+	  parameter		SIZE_RAM				= 2048;			// 2 KB buffer
+	
+	
+	//////////
+	// Physical storage
+	//////
+		reg		[WIDTH_DATA		- 1:0]		memory[SIZE_RAM - 1:0];
+`else
   module ram_1_4(	write_enable,
 					write_address,
 					write_data,
@@ -1049,7 +1170,7 @@ endmodule
 		input	[WIDTH_ADDRESS	- 1:0]		read4_address;
 		output	[WIDTH_DATA		- 1:0]		read4_data;
 		reg		[WIDTH_DATA		- 1:0]		read4_data;
-
+`endif
 
     //////////
     // Write data to memory
@@ -1062,7 +1183,7 @@ endmodule
 
 
     //////////
-    // Read data from memory
+    // Read data from memorys
     //////
 		always @(negedge oppie1.clk) begin
 			if (read1_enable) begin
@@ -1090,7 +1211,7 @@ endmodule
 //////
 	module add_adc_reg8(	input	[7:0]	v1,			// Value 1
 							input	[7:0]	v2,			// Value 2
-							input			carry_in,	// carry? in
+							input	[0:0]	carry_in,	// carry? in
 							input	[1:0]	dst_reg);	// Destination register
 
 		
@@ -1099,13 +1220,13 @@ endmodule
 		// Local computed result
 		//////
 			wire	[7:0]		lresult;	// Local computed result
-			wire				carry_out;	// Computed carry?
+			wire				carry_out;	// Computed carry? ultimately goes into flags[`CARRY:`CARRY]
 		
 		
 		//////////
 		// Hookup our subtractor
 		//////
-			full_add_sub_bit_count #(8) fasbc0(.sum(lresult), .co(carry_out), .v1(v1), .v2(v2), .ci(carry_in), .is_subtractor(0));
+			full_add_sub_bit_count #(8) fasbc0(.sum(lresult), .co(carry_out), .v1(v1), .v2(v2), .ci(carry_in), .is_subtractor(1'b0));
 		
 
 		//////////
@@ -1140,12 +1261,12 @@ endmodule
 //////
 	// Performs:  result = l1 + l2		// when is_subtractor = 0
 	// Performs:  result = l1 - l2		// when is_subtractor = 1
-	module full_adder_subtractor(	output	result,			// Result of l1 + l2 + carry? in
-									output	carry_out,		// carry? data out
-									input	l1,				// Line 1 data in
-									input	l2,				// Line 2 data in
-									input	carry_in,		// carry? data in
-									input	is_subtractor);	// 1=subtractor, 0=adder
+	module full_adder_subtractor(	output	[0:0]	result,			// Result of l1 + l2 + carry? in
+									output	[0:0]	carry_out,		// carry? data out
+									input	[0:0]	l1,				// Line 1 data in
+									input	[0:0]	l2,				// Line 2 data in
+									input	[0:0]	carry_in,		// carry? data in
+									input	[0:0]	is_subtractor);	// 1=subtractor, 0=adder
 		
 		// Circuit fabric
 		wire	net1, net2, net3, net_add_sub;
@@ -1169,11 +1290,11 @@ endmodule
 //
 //////
 	module full_add_sub_bit_count(	output	[BIT_COUNT-1:0]		sum,			// Result of v1 + v2 or v1 - v2
-									output						co,				// carry/borrow? out
+									output	[0:0]				co,				// carry?/borrow out
 									input	[BIT_COUNT-1:0]		v1,				// value1 in
 									input	[BIT_COUNT-1:0]		v2,				// value2 in
-									input						ci,				// carry/borrow? in
-									input						is_subtractor);	// 1=subtractor, 0=adder
+									input	[0:0]				ci,				// carry?/borrow in
+									input	[0:0]				is_subtractor);	// 1=subtractor, 0=adder
 		
 		parameter BIT_COUNT = 8;
 		
@@ -1183,7 +1304,7 @@ endmodule
 		// Generate adder/subtractor for BIT_COUNT bits
 		genvar i;
 		generate
-			for (i = 0; i < BIT_COUNT; i = i + 1) begin
+			for (i = 0; i < BIT_COUNT; i = i + 1) begin: nbits
 				case (i)
 					// Hook up to carry in
 					0: full_adder_subtractor	instancex(	.result(sum[i]),
@@ -1223,20 +1344,20 @@ endmodule
 //////
 	module sub_sbb_reg8(	input	[7:0]	v1,			// Value 1
 							input	[7:0]	v2,			// Value 2
-							input			borrow_in,	// borrow? in
+							input	[0:0]	borrow_in,	// borrow in
 							input	[1:0]	dst_reg);	// Destination register
 		
 		//////////
 		// Local computed result
 		//////
 			wire	[7:0]		lresult;	// Local computed result
-			wire				borrow_out;	// Computed borrow
+			wire				borrow_out;	// Computed borrow ultimately goes into flags[`CARRY:`CARRY]
 		
 		
 		//////////
 		// Hookup our subtractor
 		//////
-			full_add_sub_bit_count #(8) fasbc0(.sum(lresult), .co(borrow_out), .v1(v1), .v2(v2), .ci(borrow_in), .is_subtractor(1));
+			full_add_sub_bit_count #(8) fasbc0(.sum(lresult), .co(borrow_out), .v1(v1), .v2(v2), .ci(borrow_in), .is_subtractor(1'b1));
 		
 
 		//////////
