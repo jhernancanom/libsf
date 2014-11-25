@@ -645,3 +645,24 @@ RDC Specifications Document
 	architecture, and has a wrapper to support it.
 
 14.0 - 
+
+
+--------------
+New:
+
+Nov.24.2014
+Prefix/postfix combination operators for modulo, and, or, xor:
+
+    ++%i.4;    //        i = ((i + 1) % 4); use i
+    i++%.4;    // t = i; i = ((i + 1) % 4); use t
+
+    ++&i.4;    //        i = ((i + 1) & 4); use i
+    i++&.4;    // t = i; i = ((i + 1) & 4); use t
+
+    ++|i.4;    //        i = ((i + 1) | 4); use i
+    i++|.4;    // t = i; i = ((i + 1) | 4); use t
+
+    ++^i.4;    //        i = ((i + 1) ^ 4); use i
+    i++^.4;    // t = i; i = ((i + 1) ^ 4); use t
+
+Same for --.

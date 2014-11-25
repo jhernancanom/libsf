@@ -36,29 +36,29 @@
 // It is known to compile and synthesize in Altera Quartus-II.
 //
 //		Instruction pipeline:
-//			+-----------+	// instruction fetch/read
-//			|  i-read   |	
-//			+-----------+	
+//			+-----------+
+//			|  i-read   |	// instruction fetch/read
+//			+-----------+
 //			      |
 //			      |
-//			+-----------+	// instruction decode
-//			|  i-decode |	
-//			+-----------+	
+//			+-----------+
+//			|  i-decode |	// instruction decode
+//			+-----------+
 //			      |
 //			      |
-//			+-----------+	// data fetch/read
-//			|   d-read  |	
-//			+-----------+	
+//			+-----------+
+//			|   d-read  |	// data fetch/read
+//			+-----------+
 //			      |
 //			      |
-//			+-----------+	// instruction processing (conduct physical work)
-//			| i-process |	
-//			+-----------+	
+//			+-----------+
+//			| i-process |	// instruction processing (conduct physical work)
+//			+-----------+
 //			      |
 //			      |
-//			+-----------+	
-//			|  d-write  |	
-//			+-----------+	// data write
+//			+-----------+
+//			|  d-write  |	// data write
+//			+-----------+
 //
 //////
 //
