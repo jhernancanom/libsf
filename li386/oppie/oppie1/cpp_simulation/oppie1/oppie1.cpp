@@ -386,7 +386,7 @@ typedef unsigned int	u32;
 		//////////
 		// Simulate forever
 		//////
-			for (clk = _POSEDGE; glOppie1_isRunning; clk = (clk + 1) % 4)
+			for (clk = _POSEDGE; glOppie1_isRunning; )
 			{
 				// The debugger can override our execution
 				if (glDebo1_executionIsPaused)
@@ -397,6 +397,17 @@ typedef unsigned int	u32;
 				} else {
 					// Go ahead and execute
 					iExecute_clockPhase(clk);
+					
+					// Phase
+					clk = (clk + 1) % 4;
+					
+					// Are we single-stepping?
+					if (glDebo1_executionIsSingleStepping && clk == _POSEDGE)
+					{
+						// We're now pausing, but no longer single stepping (debugger will turn that back on should it be needed)
+						glDebo1_executionIsPaused			= true;
+						glDebo1_executionIsSingleStepping	= false;
+					}
 				}
 			}
 			return 0;

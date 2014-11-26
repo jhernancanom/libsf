@@ -43,6 +43,7 @@
 	const s8		cgcDebo1Class[]								= "debo1_oppie1_debugger_window";
 	const s8		cgcDebo1Title[]								= "Oppie-1 Debugger v0.01";
 	bool			glDebo1_executionIsPaused					= false;
+	bool			glDebo1_executionIsSingleStepping			= false;
 
 
 //////////
