@@ -1,13 +1,13 @@
 //////////
 //
-// /libsf/li386/oppie/oppie1/cpp_simulation/oppie1.sv
+// /libsf/li386/oppie/oppie1/cpp_simulation/oppie1.cpp
 //
 //////
 // Version 0.01
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
-//     Nov.24.2014
+//     Nov.26.2014
 //////
 // Change log:
 //     Nov.24.2014 - Initial creation
@@ -89,6 +89,7 @@
 //
 //////
 
+#include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <memory.h>
@@ -343,6 +344,8 @@ typedef unsigned int	u32;
 	SPipe3			pipe3;
 	SPipe4			pipe4;
 	SPipe5			pipe5;
+	bool			glOppie1_isRunning;
+
 
 
 
@@ -357,6 +360,9 @@ typedef unsigned int	u32;
 	u8				iiExecute_stage4_getRegSrc			(void);
 	void			iExecute_stage5						(u32 clk, s32 direction);
 
+	// debo1.cpp
+	void			iDebo1_launch						(void);
+#include "debo1.cpp"
 
 
 
@@ -369,12 +375,31 @@ typedef unsigned int	u32;
 	{
 		u32 clk;
 
+		
+		//////////
+		// Launch debugger
+		//////
+			glOppie1_isRunning = true;
+			iDebo1_launch();
 
+		
+		//////////
 		// Simulate forever
-		for (clk = _POSEDGE; ; clk = (clk + 1) % 4)
-			iExecute_clockPhase(clk);
-
-		return 0;
+		//////
+			for (clk = _POSEDGE; glOppie1_isRunning; clk = (clk + 1) % 4)
+			{
+				// The debugger can override our execution
+				if (glDebo1_executionIsPaused)
+				{
+					// Take a breather
+					Sleep(10);
+				
+				} else {
+					// Go ahead and execute
+					iExecute_clockPhase(clk);
+				}
+			}
+			return 0;
 	}
 
 
