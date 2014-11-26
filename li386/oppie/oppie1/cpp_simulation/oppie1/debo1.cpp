@@ -3,7 +3,7 @@
 // /libsf/li386/oppie/oppie1/cpp_simulation/debo1.cpp
 //
 //////
-// Version 0.01
+// Version 0.02
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -41,7 +41,7 @@
 // Global variables
 //////
 	const s8		cgcDebo1Class[]								= "debo1_oppie1_debugger_window";
-	const s8		cgcDebo1Title[]								= "Oppie-1 Debugger v0.01";
+	const s8		cgcDebo1Title[]								= "Oppie-1 Debugger v0.02";
 	bool			glDebo1_executionIsPaused					= false;
 	bool			glDebo1_executionIsSingleStepping			= false;
 
