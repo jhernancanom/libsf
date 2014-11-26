@@ -1,0 +1,102 @@
+//////////
+// CPU
+// wax, wbx, wcx, wdx, wsi, wdi, wbp, wsp, w1...w60
+//////
+	// 1-byte instructions
+	ADD, ADC, SUB, SBB, MUL, DIV, DEC, INC, NEG, XCHG, BSWAP, XADD
+	AND, OR, NOT, XOR
+	IDIV, IMUL, IMULI
+	CMP, TEST
+	LEA, MOV, IN, OUT, RCL/RCR, ROL/ROR, SAL/SAR, SHL/SHR, RCLI/RCRI, ROLI/RORI, SALI/SARI, SHLI, SHRI
+	Jcc, JECXZ, JMP, LOOPcc, SETcc, CMOVcc
+	REP, CMPSB, LODSB, MOVSB, SCASB, STOSB, INS, OUTS
+	INT3, NOP
+	CALL, RET
+	CLF1, CLF2, CLF3
+	STF1, STF2, STF3
+	PUSH, PUSHI, POP, POPA, PUSHA, PUSHF, POPF
+	IN, OUT
+
+	// 2-byte instructions
+	CALLF, RETF, INT, IRET
+	ENTER, LEAVE
+	SHLD, SHRD
+	SYSCALL, SYSRET, UD2
+	MOVCR, MOVDR, MOVSX, MOVZX
+	CPUID, RDTSC, RDPMC
+	BOUND
+	LF, SF		-- Load and store flags to EAX
+	CLC, CLD, CLI
+	STC, STD, STI
+	PROFILE		-- Gather bit pattern data
+	SWIZZLE		-- Apply variable bit shifting
+	
+	// 3-byte instructions
+	HALT, LOCK, CINVD, CWB, CFLUSH
+	LGDT, LIDT, LLDT
+	SGDT, SIDT, SLDT
+	LTR, STR, LAR, LMSW, SMSW
+	VERR, VERW, ARPL
+
+
+//////////
+// FPU
+// f0...f15 -- (16) 64-bit floating point scalars
+//////
+	// Prefixed with ESC1
+	FINIT, FXSAVE, FXRSTOR, FCLEX, FLDCW, FSTCW, FLDENV, FSTENV
+	FLD0, FLD1, FLD2E, FLD2T, FLDG2, FLDN2, FLDPI, FLDTAU
+	FLDB, FSTB, FLDI, FSTI, FLD, FST
+	FCHS, FABS, FSQRT
+	FADD, FSUB, FMUL, FDIV
+	FPREM, FINT
+	F2XM1, FYL2X, FYL2XP1, FSCALE
+	FSIN, FCOS, FSINCOS, FTN2, FATAN
+	FCMP, FTEST, FXAM, FXTRACT
+	FVLD2, FVST2, FVLD4, FVST4
+
+
+//////////
+// SIMD
+// v0..v15 -- (16) 128-bit floating point vectors
+//////
+	// Prefixed with ESC2
+	VMOVS32		-- Mov a 32-bit register into	vx.0, vx.1, vx.2, vx.3
+	VADDS32		-- Add a 32-bit register to		vx.0, vx.1, vx.2, vx.3
+	VSUBS32		-- Sub a 32-bit register from	vx.0, vx.1, vx.2, vx.3
+	VMULS32		-- Mul a 32-bit register by		vx.0, vx.1, vx.2, vx.3
+	VDIVS32		-- Div a 32-bit register into	vx.0, vx.1, vx.2, vx.3
+
+	VMOVF32		-- Mov a 32-bit FPU register into	vx.0, vx.1, vx.2, vx.3
+	VADDF32		-- Add a 32-bit FPU register to		vx.0, vx.1, vx.2, vx.3
+	VSUBF32		-- Sub a 32-bit FPU register from	vx.0, vx.1, vx.2, vx.3
+	VMULF32		-- Mul a 32-bit FPU register by		vx.0, vx.1, vx.2, vx.3
+	VDIVF32		-- Div a 32-bit FPU register into	vx.0, vx.1, vx.2, vx.3
+
+	VMOVF64		-- Mov a 64-bit FPU register into	vx.0, vx.2
+	VADDF64		-- Add a 64-bit FPU register to		vx.0, vx.2
+	VSUBF64		-- Sub a 64-bit FPU register from	vx.0, vx.2
+	VMULF64		-- Mul a 64-bit FPU register by		vx.0, vx.2
+	VDIVF64		-- Div a 64-bit FPU register into	vx.0, vx.2
+
+	VHADDF32	-- Adds horizontally vx.0, vx.1, vx.2, and vx.3 storing the result in vx.0
+	VHMULF32	-- Muls horizontally vx.0, vx.1, vx.2, and vx.3 storing the result in vx.0
+
+	VHADDF64	-- Adds horizontally vx.0, vx.2 storing the result in vx.0
+	VHMULF64	-- Muls horizontally vx.0, vx.2 storing the result in vx.0
+
+	VSINF32		-- Compute sin() on vx.0, vx.1, vx.2, vx.3
+	VCOSF32		-- Compute cos() on vx.0, vx.1, vx.2, vx.3
+	VTANF32		-- Compute tan() on vx.0, vx.1, vx.2, vx.3
+	VATN2F32	-- Compute atn2() on vx.0, vx.1, vx.2, vx.3
+	
+	VSINF64		-- Compute sin() on vx.0, vx.2
+	VCOSF64		-- Compute cos() on vx.0, vx.2
+	VTANF64		-- Compute tan() on vx.0, vx.2
+	VATN2F64	-- Compute atn2() on vx.0, vx.2
+	
+	VABSF32		-- Compute abs() on vx.0, vx.1, vx.2, vx.3
+	VINTF32		-- Rounds vx.0, vx.1, vx.2, vx.3 to integer
+	
+	VABSF64		-- Compute abs() on vx.0, vx.2
+	VINTF64		-- Rounds vx.0, vx.2 to integer
