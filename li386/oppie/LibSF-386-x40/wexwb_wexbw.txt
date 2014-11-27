@@ -1,5 +1,6 @@
 wexwb1:
 --------------------------------------------------------------------------------------------------------
+			000			001			010			011			100			101			110			111
 00	000		w1,eax		w1,ecx		w1,edx		w1,ebx		w1,esp		w1,ebp		w1,esi		w1,edi
 	001		w2,eax		w2,ecx		w2,edx		w2,ebx		w2,esp		w2,ebp		w2,esi		w2,edi
 	010		w3,eax		w3,ecx		w3,edx		w3,ebx		w3,esp		w3,ebp		w3,esi		w3,edi
@@ -39,6 +40,7 @@ wexwb1:
 
 wexbw1:
 --------------------------------------------------------------------------------------------------------
+			000			001			010			011			100			101			110			111
 00	000		eax,w1		ecx,w1		edx,w1		ebx,w1		esp,w1		ebp,w1		esi,w1		edi,w1
 	001		eax,w2		ecx,w2		edx,w2		ebx,w2		esp,w2		ebp,w2		esi,w2		edi,w2
 	010		eax,w3		ecx,w3		edx,w3		ebx,w3		esp,w3		ebp,w3		esi,w3		edi,w3
@@ -78,6 +80,7 @@ wexbw1:
 
 wexwb2:
 --------------------------------------------------------------------------------------------------------
+			000			001			010			011			100			101			110			111
 00	000		w33,eax		w33,ecx		w33,edx		w33,ebx		w33,esp		w33,ebp		w33,esi		w33,edi
 	001		w34,eax		w34,ecx		w34,edx		w34,ebx		w34,esp		w34,ebp		w34,esi		w34,edi
 	010		w35,eax		w35,ecx		w35,edx		w35,ebx		w35,esp		w35,ebp		w35,esi		w35,edi
@@ -117,6 +120,7 @@ wexwb2:
 
 wexbw2:
 --------------------------------------------------------------------------------------------------------
+			000			001			010			011			100			101			110			111
 00	000		eax,w33		ecx,w33		edx,w33		ebx,w33		esp,w33		ebp,w33		esi,w33		edi,w33
 	001		eax,w34		ecx,w34		edx,w34		ebx,w34		esp,w34		ebp,w34		esi,w34		edi,w34
 	010		eax,w35		ecx,w35		edx,w35		ebx,w35		esp,w35		ebp,w35		esi,w35		edi,w35
