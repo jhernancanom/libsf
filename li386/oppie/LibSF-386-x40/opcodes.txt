@@ -2,41 +2,181 @@
 // CPU
 // wax, wbx, wcx, wdx, wsi, wdi, wbp, wsp, w1...w60
 //////
-	// 1-byte instructions
-	ADD, ADC, SUB, SBB, MUL, DIV, DEC, INC, NEG, XCHG, BSWAP, XADD
-	AND, OR, NOT, XOR
-	IDIV, IMUL, IMULI
-	CMP, TEST
-	LEA, MOV, IN, OUT, RCL/RCR, ROL/ROR, SAL/SAR, SHL/SHR, RCLI/RCRI, ROLI/RORI, SALI/SARI, SHLI, SHRI
-	Jcc, JECXZ, JMP, LOOPcc, SETcc, CMOVcc
-	REP, CMPSB, LODSB, MOVSB, SCASB, STOSB, INS, OUTS
-	INT3, NOP
-	CALL, RET
-	CLF1, CLF2, CLF3
-	STF1, STF2, STF3
-	PUSH, PUSHI, POP, POPA, PUSHA, PUSHF, POPF
-	IN, OUT
-
-	// 2-byte instructions
-	CALLF, RETF, INT, IRET
-	ENTER, LEAVE
-	SHLD, SHRD
-	SYSCALL, SYSRET, UD2
-	MOVCR, MOVDR, MOVSX, MOVZX
-	CPUID, RDTSC, RDPMC
-	BOUND
-	LF, SF		-- Load and store flags to EAX
-	CLC, CLD, CLI
-	STC, STD, STI
-	PROFILE		-- Gather bit pattern data
-	SWIZZLE		-- Apply variable bit shifting
+	00	wexmova:	// The next wex will receive all from the current wex
+	01	wexmovf:	// The next wex will receive those registers flagged by the immed8 bit pattern
+	02	wexwb1:		// Use alternate Mod/RM format w1..w32,eax
+	03	wexbw1:		// Use alternate Mod/RM format eax,w1..w32
+	04	wexwb2:		// Use alternate Mod/RM format w33..w60,eax, fpu and simd
+	05	wexbw2:		// Use alternate Mod/RM format eax,w33..w60, fpu and simd
+	06	
+	07	
+	08	
+	09	
+	06	
+	07	
+	09	
+	0a	
+	0b	
+	0c	
+	0d	
+	0e	
+	0f	
+	10	lgdt
+	11	lidt
+	12	lldt
+	13	ltr
+	14	sgdt
+	15	sidt
+	16	sldt
+	17	str
+	18	
+	19	
+	1a	
+	1b	
+	1c	rep, repe/repz
+	1d	repne/repnz
+	1e	cmps
+	1f	lods
+	20	movs
+	21	scas
+	22	stos
+	23	insb
+	24	outsb
+	25	insw
+	26	outsw
+	27	insd
+	28	outsd
+	29	inb
+	2a	outb
+	2b	inw
+	2c	outw
+	2d	ind
+	2e	outd
+	2f	pusha
+	30	popa
+	31	pushf
+	32	popf
+	33	int3
+	34	nop
+	35	ret
+	36	retf
+	37	iret
+	38	enter
+	39	leave
+	3a	halt
+	3b	lock
+	3c	cinvd
+	3d	cflush
+	3e	cwb
+	3f	profile
+	40	wexbase		// wax..edi
+	41	wexsd1		// wax..edx, w1, w7
+	42	wexsd13		// wax..wdx, w13, w19
+	43	wexsd25		// wax..wdx, w25, w31
+	44	wexa		// wax, w1, w7, w13, w19, w25
+	45	wexb		// wbx, w31, w37, w43, w49, w55
+	46	wex1		// w1..w6
+	47	wex7		// w7..w12
+	48	wex13		// w13..w18
+	49	wex19		// w19..w24
+	4a	wex25		// w25..w30
+	4b	wex31		// w31..w36
+	4c	wex37		// w37..w42
+	4d	wex43		// w43..w48
+	4e	wex49		// w49..w54
+	4f	wex55		// w55..w60
+	50	wexfv0		// f0,f1, v0..v3
+	51	wexfv2		// f2,f3, v4..v7
+	52	lahf
+	53	sahf
+	54	ra32		// 32-bit register access
+	55	ra40		// 40-bit register access
+	56	ma32		// 32-bit memory access
+	57	ma40		// 40-bit memory access
+	58	wbal		// Word byte access points to standard ax,ah,al
+	59	wbau		// Word byte access points to upper-16 ax,ah,al
+	5a	wbr0		// WEX Branch Reset off
+	5b	wbr1		// WEX Branch Reset on
+	5c	dsds		// alias DS: to DS:
+	5d	dses		// alias DS: to ES:
+	5e	dsfs		// alias DS: to FS:
+	5f	dsgs		// alias DS: to GS:
+	60	esds		// alias ES: to DS:
+	61	eses		// alias ES: to ES:
+	62	esfs		// alias ES: to FS:
+	63	esgs		// alias ES: to GS:
+	64	dsesr		// alias DS: to DS: and ES: to ES:
+	65	swizzle
+	66	ud2			// Not used
+	67	stf1
+	68	stf2
+	69	stf3
+	70	clf1
+	71	clf2
+	72	clf3
+	73	cpuid
+	74	rdtsc
+	75	rdpmc
+	76	mov eax,eflags
+	77	mov eflags,eax
+	78	
+	79	
+	7a	
+	7b	rights
+	7c	syscall
+	7d	sysret
 	
-	// 3-byte instructions
-	HALT, LOCK, CINVD, CWB, CFLUSH
-	LGDT, LIDT, LLDT
-	SGDT, SIDT, SLDT
-	LTR, STR, LAR, LMSW, SMSW
-	VERR, VERW, ARPL
+	7e	fpu.
+	7f	simd.
+	
+	80	cmp
+	xx	test
+	xx	push
+	xx	pushi
+	xx	pop
+	xx	popi
+	xx	add
+	xx	adc
+	xx	sub
+	xx	sbb
+	xx	mul
+	xx	div
+	xx	dec
+	xx	inc
+	xx	neg
+	xx	xchg
+	xx	bswap
+	xx	xadd
+	xx	and
+	xx	or
+	xx	not
+	xx	xor
+	xx	idiv
+	xx	imul
+	xx	lea
+	xx	mov
+	xx	rcl
+	xx	rcr
+	xx	rol
+	xx	ror
+	xx	sal
+	xx	sar
+	xx	shl
+	xx	shr
+	xx	jcc
+	xx	jecxz
+	xx	jmp
+	xx	loopcc
+	xx	cmovcc
+	xx	call
+	xx	callf
+	xx	int
+	xx	shld
+	xx	shrd
+	xx	movcv
+	xx	movdr
+	xx	movsx
+	xx	movzx
 
 
 //////////

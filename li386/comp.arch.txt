@@ -65,8 +65,8 @@ WEX opcode          Window Extension             Always Same   Instruction
 0100.0001    WAX   WBX   WCX   WDX    W1    W7     WBP  WSP      wexsd1
 0100.0010    WAX   WBX   WCX   WDX   W13   W19     WBP  WSP      wexsd13
 0100.0011    WAX   WBX   WCX   WDX   W25   W31     WBP  WSP      wexsd25
-0100.0100    WAX    W1    W7   W13   W19   W25     WBP  WSP      wexa1
-0100.0101    WAX   W31   W37   W43   W49   W55     WBP  WSP      wexa31
+0100.0100    WAX    W1    W7   W13   W19   W25     WBP  WSP      wexa
+0100.0101    WAX   W31   W37   W43   W49   W55     WBP  WSP      wexb
 0100.0110     W1    W2    W3    W4    W5    W6     WBP  WSP      wex1
 0100.0111     W7    W8    W9   W10   W11   W12     WBP  WSP      wex7
 0100.1000    W13   W14   W15   W16   W17   W18     WBP  WSP      wex13

@@ -1,0 +1,155 @@
+wexwb1:
+--------------------------------------------------------------------------------------------------------
+00	000		w1,eax		w1,ecx		w1,edx		w1,ebx		w1,esp		w1,ebp		w1,esi		w1,edi
+	001		w2,eax		w2,ecx		w2,edx		w2,ebx		w2,esp		w2,ebp		w2,esi		w2,edi
+	010		w3,eax		w3,ecx		w3,edx		w3,ebx		w3,esp		w3,ebp		w3,esi		w3,edi
+	011		w4,eax		w4,ecx		w4,edx		w4,ebx		w4,esp		w4,ebp		w4,esi		w4,edi
+	100		w5,eax		w5,ecx		w5,edx		w5,ebx		w5,esp		w5,ebp		w5,esi		w5,edi
+	101		w6,eax		w6,ecx		w6,edx		w6,ebx		w6,esp		w6,ebp		w6,esi		w6,edi
+	110		w7,eax		w7,ecx		w7,edx		w7,ebx		w7,esp		w7,ebp		w7,esi		w7,edi
+	111		w8,eax		w8,ecx		w8,edx		w8,ebx		w8,esp		w8,ebp		w8,esi		w8,edi
+
+01	000		w9,eax		w9,ecx		w9,edx		w9,ebx		w9,esp		w9,ebp		w9,esi		w9,edi
+	001		w10,eax		w10,ecx		w10,edx		w10,ebx		w10,esp		w10,ebp		w10,esi		w10,edi
+	010		w11,eax		w11,ecx		w11,edx		w11,ebx		w11,esp		w11,ebp		w11,esi		w11,edi
+	011		w12,eax		w12,ecx		w12,edx		w12,ebx		w12,esp		w12,ebp		w12,esi		w12,edi
+	100		w13,eax		w13,ecx		w13,edx		w13,ebx		w13,esp		w13,ebp		w13,esi		w13,edi
+	101		w14,eax		w14,ecx		w14,edx		w14,ebx		w14,esp		w14,ebp		w14,esi		w14,edi
+	110		w15,eax		w15,ecx		w15,edx		w15,ebx		w15,esp		w15,ebp		w15,esi		w15,edi
+	111		w16,eax		w16,ecx		w16,edx		w16,ebx		w16,esp		w16,ebp		w16,esi		w16,edi
+                                                                                                 
+10	000		w17,eax		w17,ecx		w17,edx		w17,ebx		w17,esp		w17,ebp		w17,esi		w17,edi
+	001		w18,eax		w18,ecx		w18,edx		w18,ebx		w18,esp		w18,ebp		w18,esi		w18,edi
+	010		w19,eax		w19,ecx		w19,edx		w19,ebx		w19,esp		w19,ebp		w19,esi		w19,edi
+	011		w20,eax		w20,ecx		w20,edx		w20,ebx		w20,esp		w20,ebp		w20,esi		w20,edi
+	100		w21,eax		w21,ecx		w21,edx		w21,ebx		w21,esp		w21,ebp		w21,esi		w21,edi
+	101		w22,eax		w22,ecx		w22,edx		w22,ebx		w22,esp		w22,ebp		w22,esi		w22,edi
+	110		w23,eax		w23,ecx		w23,edx		w23,ebx		w23,esp		w23,ebp		w23,esi		w23,edi
+	111		w24,eax		w24,ecx		w24,edx		w24,ebx		w24,esp		w24,ebp		w24,esi		w24,edi
+                                                                                                 
+11	000		w25,eax		w25,ecx		w25,edx		w25,ebx		w25,esp		w25,ebp		w25,esi		w25,edi
+	001		w26,eax		w26,ecx		w26,edx		w26,ebx		w26,esp		w26,ebp		w26,esi		w26,edi
+	010		w27,eax		w27,ecx		w27,edx		w27,ebx		w27,esp		w27,ebp		w27,esi		w27,edi
+	011		w28,eax		w28,ecx		w28,edx		w28,ebx		w28,esp		w28,ebp		w28,esi		w28,edi
+	100		w29,eax		w29,ecx		w29,edx		w29,ebx		w29,esp		w29,ebp		w29,esi		w29,edi
+	101		w30,eax		w30,ecx		w30,edx		w30,ebx		w30,esp		w30,ebp		w30,esi		w30,edi
+	110		w31,eax		w31,ecx		w31,edx		w31,ebx		w31,esp		w31,ebp		w31,esi		w31,edi
+	111		w32,eax		w32,ecx		w32,edx		w32,ebx		w32,esp		w32,ebp		w32,esi		w32,edi
+--------------------------------------------------------------------------------------------------------
+
+wexbw1:
+--------------------------------------------------------------------------------------------------------
+00	000		eax,w1		ecx,w1		edx,w1		ebx,w1		esp,w1		ebp,w1		esi,w1		edi,w1
+	001		eax,w2		ecx,w2		edx,w2		ebx,w2		esp,w2		ebp,w2		esi,w2		edi,w2
+	010		eax,w3		ecx,w3		edx,w3		ebx,w3		esp,w3		ebp,w3		esi,w3		edi,w3
+	011		eax,w4		ecx,w4		edx,w4		ebx,w4		esp,w4		ebp,w4		esi,w4		edi,w4
+	100		eax,w5		ecx,w5		edx,w5		ebx,w5		esp,w5		ebp,w5		esi,w5		edi,w5
+	101		eax,w6		ecx,w6		edx,w6		ebx,w6		esp,w6		ebp,w6		esi,w6		edi,w6
+	110		eax,w7		ecx,w7		edx,w7		ebx,w7		esp,w7		ebp,w7		esi,w7		edi,w7
+	111		eax,w8		ecx,w8		edx,w8		ebx,w8		esp,w8		ebp,w8		esi,w8		edi,w8
+
+01	000		eax,w9		ecx,w9		edx,w9		ebx,w9		esp,w9		ebp,w9		esi,w9		edi,w9
+	001		eax,w10		ecx,w10		edx,w10		ebx,w10		esp,w10		ebp,w10		esi,w10		edi,w10
+	010		eax,w11		ecx,w11		edx,w11		ebx,w11		esp,w11		ebp,w11		esi,w11		edi,w11
+	011		eax,w12		ecx,w12		edx,w12		ebx,w12		esp,w12		ebp,w12		esi,w12		edi,w12
+	100		eax,w13		ecx,w13		edx,w13		ebx,w13		esp,w13		ebp,w13		esi,w13		edi,w13
+	101		eax,w14		ecx,w14		edx,w14		ebx,w14		esp,w14		ebp,w14		esi,w14		edi,w14
+	110		eax,w15		ecx,w15		edx,w15		ebx,w15		esp,w15		ebp,w15		esi,w15		edi,w15
+	111		eax,w16		ecx,w16		edx,w16		ebx,w16		esp,w16		ebp,w16		esi,w16		edi,w16
+               
+10	000		eax,w17		ecx,w17		edx,w17		ebx,w17		esp,w17		ebp,w17		esi,w17		edi,w17
+	001		eax,w18		ecx,w18		edx,w18		ebx,w18		esp,w18		ebp,w18		esi,w18		edi,w18
+	010		eax,w19		ecx,w19		edx,w19		ebx,w19		esp,w19		ebp,w19		esi,w19		edi,w19
+	011		eax,w20		ecx,w20		edx,w20		ebx,w20		esp,w20		ebp,w20		esi,w20		edi,w20
+	100		eax,w21		ecx,w21		edx,w21		ebx,w21		esp,w21		ebp,w21		esi,w21		edi,w21
+	101		eax,w22		ecx,w22		edx,w22		ebx,w22		esp,w22		ebp,w22		esi,w22		edi,w22
+	110		eax,w23		ecx,w23		edx,w23		ebx,w23		esp,w23		ebp,w23		esi,w23		edi,w23
+	111		eax,w24		ecx,w24		edx,w24		ebx,w24		esp,w24		ebp,w24		esi,w24		edi,w24
+
+11	000		eax,w25		ecx,w25		edx,w25		ebx,w25		esp,w25		ebp,w25		esi,w25		edi,w25
+	001		eax,w26		ecx,w26		edx,w26		ebx,w26		esp,w26		ebp,w26		esi,w26		edi,w26
+	010		eax,w27		ecx,w27		edx,w27		ebx,w27		esp,w27		ebp,w27		esi,w27		edi,w27
+	011		eax,w28		ecx,w28		edx,w28		ebx,w28		esp,w28		ebp,w28		esi,w28		edi,w28
+	100		eax,w29		ecx,w29		edx,w29		ebx,w29		esp,w29		ebp,w29		esi,w29		edi,w29
+	101		eax,w30		ecx,w30		edx,w30		ebx,w30		esp,w30		ebp,w30		esi,w30		edi,w30
+	110		eax,w31		ecx,w31		edx,w31		ebx,w31		esp,w31		ebp,w31		esi,w31		edi,w31
+	111		eax,w32		ecx,w32		edx,w32		ebx,w32		esp,w32		ebp,w32		esi,w32		edi,w32
+--------------------------------------------------------------------------------------------------------
+
+wexwb2:
+--------------------------------------------------------------------------------------------------------
+00	000		w33,eax		w33,ecx		w33,edx		w33,ebx		w33,esp		w33,ebp		w33,esi		w33,edi
+	001		w34,eax		w34,ecx		w34,edx		w34,ebx		w34,esp		w34,ebp		w34,esi		w34,edi
+	010		w35,eax		w35,ecx		w35,edx		w35,ebx		w35,esp		w35,ebp		w35,esi		w35,edi
+	011		w36,eax		w36,ecx		w36,edx		w36,ebx		w36,esp		w36,ebp		w36,esi		w36,edi
+	100		w37,eax		w37,ecx		w37,edx		w37,ebx		w37,esp		w37,ebp		w37,esi		w37,edi
+	101		w38,eax		w38,ecx		w38,edx		w38,ebx		w38,esp		w38,ebp		w38,esi		w38,edi
+	110		w39,eax		w39,ecx		w39,edx		w39,ebx		w39,esp		w39,ebp		w39,esi		w39,edi
+	111		w40,eax		w40,ecx		w40,edx		w40,ebx		w40,esp		w40,ebp		w40,esi		w40,edi
+
+01	000		w41,eax		w41,ecx		w41,edx		w41,ebx		w41,esp		w41,ebp		w41,esi		w41,edi
+	001		w42,eax		w42,ecx		w42,edx		w42,ebx		w42,esp		w42,ebp		w42,esi		w42,edi
+	010		w43,eax		w43,ecx		w43,edx		w43,ebx		w43,esp		w43,ebp		w43,esi		w43,edi
+	011		w44,eax		w44,ecx		w44,edx		w44,ebx		w44,esp		w44,ebp		w44,esi		w44,edi
+	100		w45,eax		w45,ecx		w45,edx		w45,ebx		w45,esp		w45,ebp		w45,esi		w45,edi
+	101		w46,eax		w46,ecx		w46,edx		w46,ebx		w46,esp		w46,ebp		w46,esi		w46,edi
+	110		w47,eax		w47,ecx		w47,edx		w47,ebx		w47,esp		w47,ebp		w47,esi		w47,edi
+	111		w48,eax		w48,ecx		w48,edx		w48,ebx		w48,esp		w48,ebp		w48,esi		w48,edi
+
+10	000		w49,eax		w49,ecx		w49,edx		w49,ebx		w49,esp		w49,ebp		w49,esi		w49,edi
+	001		w50,eax		w50,ecx		w50,edx		w50,ebx		w50,esp		w50,ebp		w50,esi		w50,edi
+	010		w51,eax		w51,ecx		w51,edx		w51,ebx		w51,esp		w51,ebp		w51,esi		w51,edi
+	011		w52,eax		w52,ecx		w52,edx		w52,ebx		w52,esp		w52,ebp		w52,esi		w52,edi
+	100		w53,eax		w53,ecx		w53,edx		w53,ebx		w53,esp		w53,ebp		w53,esi		w53,edi
+	101		w54,eax		w54,ecx		w54,edx		w54,ebx		w54,esp		w54,ebp		w54,esi		w54,edi
+	110		w55,eax		w55,ecx		w55,edx		w55,ebx		w55,esp		w55,ebp		w55,esi		w55,edi
+	111		w56,eax		w56,ecx		w56,edx		w56,ebx		w56,esp		w56,ebp		w56,esi		w56,edi
+
+11	000		w57,eax		w57,ecx		w57,edx		w57,ebx		w57,esp		w57,ebp		w57,esi		w57,edi
+	001		w58,eax		w58,ecx		w58,edx		w58,ebx		w58,esp		w58,ebp		w58,esi		w58,edi
+	010		w59,eax		w59,ecx		w59,edx		w59,ebx		w59,esp		w59,ebp		w59,esi		w59,edi
+	011		w60,eax		w60,ecx		w60,edx		w60,ebx		w60,esp		w60,ebp		w60,esi		w60,edi
+	100		f0,v0.0		v0.0,f0		f4,v1.0		v1.0,f4		f8,v2.0		v2.0,f8		f12,v3.0	v3.0,f12
+	101		f1,v0.1		v0.1,f1		f5,v1.1		v1.1,f5		f9,v2.1		v2.1,f9		f13,v3.1	v3.1,f13
+	110		f2,v0.2		v0.2,f2		f6,v1.2		v1.2,f6		f10,v2.2	v2.2,f10	f14,v3.2	v3.2,f14
+	111		f3,v0.3		v0.3,f3		f7,v1.3		v1.3,f7		f11,v2.3	v2.3,f11	f15,v3.3	v3.3,f15
+--------------------------------------------------------------------------------------------------------
+
+wexbw2:
+--------------------------------------------------------------------------------------------------------
+00	000		eax,w33		ecx,w33		edx,w33		ebx,w33		esp,w33		ebp,w33		esi,w33		edi,w33
+	001		eax,w34		ecx,w34		edx,w34		ebx,w34		esp,w34		ebp,w34		esi,w34		edi,w34
+	010		eax,w35		ecx,w35		edx,w35		ebx,w35		esp,w35		ebp,w35		esi,w35		edi,w35
+	011		eax,w36		ecx,w36		edx,w36		ebx,w36		esp,w36		ebp,w36		esi,w36		edi,w36
+	100		eax,w37		ecx,w37		edx,w37		ebx,w37		esp,w37		ebp,w37		esi,w37		edi,w37
+	101		eax,w38		ecx,w38		edx,w38		ebx,w38		esp,w38		ebp,w38		esi,w38		edi,w38
+	110		eax,w39		ecx,w39		edx,w39		ebx,w39		esp,w39		ebp,w39		esi,w39		edi,w39
+	111		eax,w40		ecx,w40		edx,w40		ebx,w40		esp,w40		ebp,w40		esi,w40		edi,w40
+
+01	000		eax,w41		ecx,w41		edx,w41		ebx,w41		esp,w41		ebp,w41		esi,w41		edi,w41
+	001		eax,w42		ecx,w42		edx,w42		ebx,w42		esp,w42		ebp,w42		esi,w42		edi,w42
+	010		eax,w43		ecx,w43		edx,w43		ebx,w43		esp,w43		ebp,w43		esi,w43		edi,w43
+	011		eax,w44		ecx,w44		edx,w44		ebx,w44		esp,w44		ebp,w44		esi,w44		edi,w44
+	100		eax,w45		ecx,w45		edx,w45		ebx,w45		esp,w45		ebp,w45		esi,w45		edi,w45
+	101		eax,w46		ecx,w46		edx,w46		ebx,w46		esp,w46		ebp,w46		esi,w46		edi,w46
+	110		eax,w47		ecx,w47		edx,w47		ebx,w47		esp,w47		ebp,w47		esi,w47		edi,w47
+	111		eax,w48		ecx,w48		edx,w48		ebx,w48		esp,w48		ebp,w48		esi,w48		edi,w48
+
+10	000		eax,w49		ecx,w49		edx,w49		ebx,w49		esp,w49		ebp,w49		esi,w49		edi,w49
+	001		eax,w50		ecx,w50		edx,w50		ebx,w50		esp,w50		ebp,w50		esi,w50		edi,w50
+	010		eax,w51		ecx,w51		edx,w51		ebx,w51		esp,w51		ebp,w51		esi,w51		edi,w51
+	011		eax,w52		ecx,w52		edx,w52		ebx,w52		esp,w52		ebp,w52		esi,w52		edi,w52
+	100		eax,w53		ecx,w53		edx,w53		ebx,w53		esp,w53		ebp,w53		esi,w53		edi,w53
+	101		eax,w54		ecx,w54		edx,w54		ebx,w54		esp,w54		ebp,w54		esi,w54		edi,w54
+	110		eax,w55		ecx,w55		edx,w55		ebx,w55		esp,w55		ebp,w55		esi,w55		edi,w55
+	111		eax,w56		ecx,w56		edx,w56		ebx,w56		esp,w56		ebp,w56		esi,w56		edi,w56
+
+11	000		eax,w57		ecx,w57		edx,w57		ebx,w57		esp,w57		ebp,w57		esi,w57		edi,w57
+	001		eax,w58		ecx,w58		edx,w58		ebx,w58		esp,w58		ebp,w58		esi,w58		edi,w58
+	010		eax,w59		ecx,w59		edx,w59		ebx,w59		esp,w59		ebp,w59		esi,w59		edi,w59
+	011		eax,w60		ecx,w60		edx,w60		ebx,w60		esp,w60		ebp,w60		esi,w60		edi,w60
+	100		f0,v4.0		v4.0,f0		f4,v5.0		v5.0,f4		f8,v6.0		v6.0,f8		f12,v7.0	v7.0,f12
+	101		f1,v4.1		v4.1,f1		f5,v5.1		v5.1,f5		f9,v6.1		v6.1,f9		f13,v7.1	v7.1,f13
+	110		f2,v4.2		v4.2,f2		f6,v5.2		v5.2,f6		f10,v6.2	v6.2,f10	f14,v7.2	v7.2,f14
+	111		f3,v4.3		v4.3,f3		f7,v5.3		v5.3,f7		f11,v6.3	v6.3,f11	f15,v7.3	v7.3,f15
+--------------------------------------------------------------------------------------------------------
