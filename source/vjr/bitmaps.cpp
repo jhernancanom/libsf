@@ -618,6 +618,11 @@
 			// Create the HDC and DIB Section
 			bmp->hdc	= CreateCompatibleDC(GetDC(GetDesktopWindow()));
 			bmp->hbmp	= CreateDIBSection(bmp->hdc, (BITMAPINFO*)&bmp->bi, DIB_RGB_COLORS, (void**)&bmp->bd, NULL, 0);
+
+			// Give it a rect
+			SetRect(&bmp->rc, 0, 0, width - 1, height - 1);
+
+			// Select its bitmap into its context
 			SelectObject(bmp->hdc, bmp->hbmp);
 
 			// Paint it white initially (the fast/easy way)
@@ -2262,6 +2267,7 @@
 //////
 	SBgra iBmp_extractColorAtPoint(SBitmap* bmp, s32 tnX, s32 tnY)
 	{
+		SBgra	invalidColor;
 		SBgr*	lbgr;
 		SBgra*	lbgra;
 		SBgra	color;
@@ -2295,7 +2301,8 @@
 		}
 
 		// If we get here, invalid
-		return(blackColor);
+		invalidColor.color = rgba(0,0,0,255);
+		return(invalidColor);
 	}
 
 
@@ -2554,6 +2561,7 @@
 // Called to create a cask bitmap scaled to the indicated width and height
 //
 //////
+#ifdef _ICODE_CASK_MINIMUM
 	SBitmap* iBmp_cask_createAndPopulate(s32 iCode, s32 tnWidth, s32 tnHeight, s32* tnSkipChars, u32 tnTextLength, SBgra* caskColor, SBgra textColor, SBgra backgroundColor, bool tlOverrideColors)
 	{
 		s32			lnI, lnWidth, lnStop, lnLeft;
@@ -2790,6 +2798,7 @@
 		// If we get here, invalid
 		return(NULL);
 	}
+#endif
 
 
 
@@ -2801,6 +2810,7 @@
 // so as to indicate the scope of the nbsp name.
 //
 //////
+#ifdef blueColor
 	SBitmap* iBmp_nbsp_createAndPopulate(SComp* comp, SFont* font, f32 tfMinColor, f32 tfMaxColor, s32 tnWidth, s32 tnHeight, SBgra backgroundColor, SBgra textColor)
 	{
 		s32			lnI, lnCount, lnDrawCount;
@@ -2876,6 +2886,7 @@
 		// Indicate our status
 		return(bmpNbsp);
 	}
+#endif
 
 
 
@@ -2885,6 +2896,7 @@
 // Called to build a common tooltip background
 //
 //////
+#ifdef tooltipNwBackColor
 	void iBmp_colorizeAsCommonTooltipBackground(SBitmap* bmp)
 	{
 		RECT lrc;
@@ -2899,6 +2911,7 @@
 			iBmp_frameRect(bmp, &lrc, tooltipForecolor, tooltipForecolor, tooltipForecolor, tooltipForecolor, false, NULL, false);
 		}
 	}
+#endif
 
 
 
@@ -3491,6 +3504,7 @@
 		}
 	}
 
+#ifdef sqrt
 	void iBmp_drawArbitraryLine(SBitmap* bmp, s32 tnX1, s32 tnY1, s32 tnX2, s32 tnY2, SBgra color)
 	{
 		f32 lfX, lfY, lfXStep, lfYStep, lfRadius, lfDeltaX, lfDeltaY;
@@ -3511,6 +3525,7 @@
 		for (lfX = (f32)tnX1, lfY = (f32)tnY1; lfRadius > 0.0f; lfRadius--, lfX += lfXStep, lfY += lfYStep)
 			iBmp_drawPoint(bmp, (s32)lfX, (s32)lfY, color);
 	}
+#endif
 
 // #define _PI2 1.570796327
 // 	void iBmp_drawArbitraryQuad(SBitmap* bmp, s32 tnX1, s32 tnY1, s32 tnX2, s32 tnY2, s32 tnWidth, bool tlDrawEnds, SBgra color)

@@ -475,6 +475,58 @@
 						/>
 					</FileConfiguration>
 				</File>
+				<File
+					RelativePath=".\bitmaps.h"
+					>
+				</File>
+				<File
+					RelativePath=".\datum.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\datum.h"
+					>
+				</File>
+				<File
+					RelativePath=".\fonts.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\fonts.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="objects"

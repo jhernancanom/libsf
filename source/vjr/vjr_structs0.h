@@ -47,7 +47,6 @@ struct SObjPropertyMap;
 
 
 
-
 struct SBgr
 {
 	u8	blu;
@@ -84,6 +83,7 @@ struct SBitmap
 	// Device context and bitmap handle to this data
 	HDC					hdc;
 	HBITMAP				hbmp;
+	RECT				rc;
 
 	// Raw bitmap data (suitable for writing to disk)
 	BITMAPFILEHEADER	bh;

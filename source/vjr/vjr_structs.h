@@ -357,6 +357,7 @@ struct SObject
 		SBitmap*	bmpScaled;										// The bmp scaled into RC's size
 
 
+#ifdef _GRACE_OGL
 	//////////
 	// OpenGL
 	//////
@@ -370,6 +371,7 @@ struct SObject
 		// This node connects to other things from the right or bottom
 		SObjNode*	fromRight;										// First node in the north direction
 		SObjNode*	fromBottom;										// First node in the south direction
+#endif
 };
 
 struct SFocusHighlight

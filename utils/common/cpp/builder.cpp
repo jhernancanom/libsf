@@ -53,20 +53,21 @@
 // Populate with iBuilder_append*().
 // Release with iBuilder_freeAndRelease().
 //////
-	struct SBuilder
-	{
-		union {
-			s8*		data;												// Pointer to a buffer allocated in blocks
-			s8*		buffer;
-			u32		_data;
-		};
-		u32			allocatedLength;									// How much of space has been allocated for the buffer
-		u32			populatedLength;									// How much of the allocated buffer is actually populated with data
-		union {
-			u32		allocateBlockSize;									// Typically 16KB, the larger the size the fewer reallocs() are required
-			u32		totSize;
-		};
-	};
+// Nov.27.2014 -- See builder.h
+// 	struct SBuilder
+// 	{
+// 		union {
+// 			s8*		data;												// Pointer to a buffer allocated in blocks
+// 			s8*		buffer;
+// 			u32		_data;
+// 		};
+// 		u32			allocatedLength;									// How much of space has been allocated for the buffer
+// 		u32			populatedLength;									// How much of the allocated buffer is actually populated with data
+// 		union {
+// 			u32		allocateBlockSize;									// Typically 16KB, the larger the size the fewer reallocs() are required
+// 			u32		totSize;
+// 		};
+// 	};
 
 
 

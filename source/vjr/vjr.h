@@ -80,6 +80,7 @@
 #include "sound\SDL-1.2.15\include\sdl\SDL_audio.h"
 
 #include "vjr_const.h"
+#include "\libsf\utils\common\cpp\builder.h"
 #include "\libsf\utils\common\cpp\builder.cpp"
 #include "\libsf\utils\common\cpp\ll.cpp"
 #include "vjr_structs0.h"
@@ -110,6 +111,10 @@
 #include "vjr_defs.h"
 #include "vjr_globals.h"
 
+#include "fonts.h"
+#include "datum.h"
+#include "bitmaps.h"
+
 #include "command_defs.h"
 #include "sound\sound.h"
 #include "sem.h"
@@ -139,3 +144,5 @@
 #include "dbf\dbf.cpp"
 #include "dbf\cdx.cpp"
 #include "grace.cpp"
+#include "datum.cpp"
+#include "fonts.cpp"

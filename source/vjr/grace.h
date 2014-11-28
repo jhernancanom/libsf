@@ -49,6 +49,10 @@ struct SGraceLine;
 	#define _PI2 1.570796327
 #endif
 
+#ifndef _GRACE_OGL
+	#define _GRACE_OGL
+#endif
+
 
 //////////
 // Forward declarations

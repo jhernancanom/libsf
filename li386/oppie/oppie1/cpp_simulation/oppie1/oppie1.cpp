@@ -94,12 +94,7 @@
 #include <stdlib.h>
 #include <memory.h>
 
-typedef char			s8;
-typedef unsigned char	u8;
-typedef short			s16;
-typedef unsigned short	u16;
-typedef int				s32;
-typedef unsigned int	u32;
+#include "\libsf\source\vjr\vjr_const.h"
 
 
 //////////
@@ -360,9 +355,13 @@ typedef unsigned int	u32;
 	u8				iiExecute_stage4_getRegSrc			(void);
 	void			iExecute_stage5						(u32 clk, s32 direction);
 
-	// debo1.cpp
+
+//////////
+// debo1.cpp
+//////
+	#include "debo1.cpp"
 	void			iDebo1_launch						(void);
-#include "debo1.cpp"
+
 
 
 
@@ -401,12 +400,14 @@ typedef unsigned int	u32;
 					// Phase
 					clk = (clk + 1) % 4;
 					
-					// Are we single-stepping?
-					if (glDebo1_executionIsSingleStepping && clk == _POSEDGE)
+					if (clk == _POSEDGE)
 					{
-						// We're now pausing, but no longer single stepping (debugger will turn that back on should it be needed)
-						glDebo1_executionIsPaused			= true;
-						glDebo1_executionIsSingleStepping	= false;
+						// Signal the debugger to update itself if need be
+						glDebo1_updateDisplay = true;
+
+						// Are we single-stepping or throttled?
+						if (glDebo1_executionIsSingleStepping || glDebo1_executionIsThrottled)
+							glDebo1_executionIsPaused = true;
 					}
 				}
 			}

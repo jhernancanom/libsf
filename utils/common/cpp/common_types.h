@@ -81,5 +81,7 @@ typedef		const u64			cu64;
 typedef		const f64			cf64;
 typedef		const f64			cf64;
 
-// For a null that is not considered a pointer
-const u32 null = 0;
+#ifndef null
+	// For a null that is not considered a pointer
+	#define null 0
+#endif
