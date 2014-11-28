@@ -241,6 +241,7 @@
 	// Overall machine state status
 	struct SState
 	{
+		u32		clk;						// Clock signal
 		bool	is_CPU_halted;				// True if the machine is halted
 		int		pipeStage;					// The current pipeline stage that's valid (set to 0 during branch, incremented up to 5 )
 
@@ -323,6 +324,8 @@
 	// Pipe stage 5:  d-write
 	struct SPipe5
 	{
+		u16		ip;							// ip address of the opcode associated with this instruction
+
 		bool	p5_d_write;					// Should data be written in stage 5?
 		u8		p5_data;					// Result of the operation computed in stage 4, to write out in stage 5
 		u16		p5_d_write_address;			// Address to write
@@ -372,9 +375,6 @@
 //////
 	int main(int argc, char* argv[])
 	{
-		u32 clk;
-
-		
 		//////////
 		// Launch debugger
 		//////
@@ -385,7 +385,7 @@
 		//////////
 		// Simulate forever
 		//////
-			for (clk = _POSEDGE; glOppie1_isRunning; )
+			for (state.clk = _POSEDGE, state.pipeStage = _STAGE1; glOppie1_isRunning; )
 			{
 				// The debugger can override our execution
 				if (glDebo1_executionIsPaused)
@@ -395,19 +395,25 @@
 				
 				} else {
 					// Go ahead and execute
-					iExecute_clockPhase(clk);
+					iExecute_clockPhase(state.clk);
 					
 					// Phase
-					clk = (clk + 1) % 4;
-					
-					if (clk == _POSEDGE)
-					{
-						// Signal the debugger to update itself if need be
-						glDebo1_updateDisplay = true;
+					state.clk = (++state.clk % (_NEGLEVEL + 1));
 
+					// Are we back to the start of a cycle again?
+					if (state.clk == _POSEDGE)
+					{
 						// Are we single-stepping or throttled?
 						if (glDebo1_executionIsSingleStepping || glDebo1_executionIsThrottled)
-							glDebo1_executionIsPaused = true;
+						{
+							// Signal the debugger to update itself if need be
+							glDebo1_updateDisplay		= true;
+							glDebo1_executionIsPaused	= true;
+						}
+
+					} else if (state.clk == _NEGLEVEL) {
+						// Indicate the pipe stage has increased
+						state.pipeStage = min(++state.pipeStage, _STAGE5);
 					}
 				}
 			}
@@ -474,6 +480,7 @@
 			if (clk == _NEGEDGE)
 			{
 				// Perform the push
+				pipe1.ip += ((pipe2.p2_increment2) ? 2 : 1);
 			}
 		}
 	}
@@ -870,6 +877,7 @@
 					pipe3.p4_data = pipe5.p5_data;
 
 				// Perform the push
+				pipe5.ip					= pipe4.ip;
 				pipe5.p5_d_write			= pipe4.p5_d_write;
 				pipe5.p5_d_write_address	= pipe4.p5_d_write_address;
 				pipe5.p5_data				= pipe4.p5_data;
