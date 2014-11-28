@@ -1,2 +1,3 @@
 # /bin/bash
-iverilog oppie1.sv
+iverilog oppie1.v
+

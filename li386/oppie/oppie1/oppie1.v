@@ -1233,7 +1233,7 @@ endmodule
 		// Compute the 8-bit sum with carry
 		//////
 			always @(negedge oppie1.clk) begin
-				// Computed in fas0
+				// Computed in fasbc0
 				
 				// Store the result
 				if (dst_reg == `R1) begin
@@ -1364,7 +1364,7 @@ endmodule
 		// Compute the 8-bit subtraction with borrow
 		//////
 			always @(negedge oppie1.clk) begin
-				// Computed in fas0
+				// Computed in fasbc0
 				
 				// Store the result
 				if (dst_reg == `R1) begin
