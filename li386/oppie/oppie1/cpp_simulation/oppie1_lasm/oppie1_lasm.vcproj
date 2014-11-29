@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="oppie1"
-	ProjectGUID="{39773ABB-C29B-4DBD-B4BD-4F282F65E183}"
-	RootNamespace="oppie1"
+	Name="oppie1_lasm"
+	ProjectGUID="{BD799102-28F5-48C0-94FF-33E574A749D9}"
+	RootNamespace="oppie1_lasm"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -62,6 +62,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="\libsf\source\vjr\lib\glew32.lib \libsf\source\vjr\lib\glew32s.lib \libsf\source\vjr\lib\freeglut.lib \libsf\source\vjr\sound\SDL-1.2.15\lib\x86\SDL.lib"
+				OutputFile="$(OutDir)\lasm1.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -118,6 +119,7 @@
 				EnableIntrinsicFunctions="true"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
+				StructMemberAlignment="1"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -173,39 +175,21 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\debo1.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="..\common\instructions.h"
 				>
 			</File>
 			<File
-				RelativePath=".\oppie1.cpp"
+				RelativePath=".\oppie1_lasm.cpp"
 				>
 			</File>
 		</Filter>
 		<Filter
-			Name="Verilog Source"
+			Name="asm_files"
+			Filter="h;hpp;hxx;hm;inl;inc;xsd"
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\oppie1.v"
+				RelativePath=".\test1.asm"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -224,6 +208,12 @@
 					/>
 				</FileConfiguration>
 			</File>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
+			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
+			>
 		</Filter>
 	</Files>
 	<Globals>

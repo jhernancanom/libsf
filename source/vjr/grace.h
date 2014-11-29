@@ -35,8 +35,8 @@
 
 
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
+#include "\libsf\source\vjr\include\GL\glew.h"
+#include "\libsf\source\vjr\include\GL\freeglut.h"
 
 struct SObjNode;
 struct SGraceVec;

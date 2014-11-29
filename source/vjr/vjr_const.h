@@ -613,7 +613,9 @@ typedef SEM**		SEMpp;
 //////////
 // Internal messages
 //////
+#ifdef WM_USER
 	const u32			WMVJR_FIRST_CREATION				= WM_USER + 1;
+#endif
 
 
 //////////

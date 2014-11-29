@@ -123,7 +123,11 @@
 #include "object_accessors.h"
 
 // Force the bitmaps to be declared external for linking
-#define _BMP_LOCALITY 0
+#ifdef _OPPIE1_COMPILE
+	#define _BMP_LOCALITY 1
+#else
+	#define _BMP_LOCALITY 0
+#endif
 #include "bmps\graphics\bitmaps.h"
 
 #include "vjr_sup.cpp"

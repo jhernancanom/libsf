@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/li386/oppie/oppie1/cpp_simulation/debo1.cpp
+// /libsf/li386/oppie/oppie1/cpp_simulation/oppie1/debo1.cpp
 //
 //////
 // Version 0.02
@@ -36,19 +36,6 @@
 
 
 //////////
-// bitmaps.cpp
-//////
-	#include "\libsf\utils\common\cpp\common_types.h"
-	#include "\libsf\utils\common\cpp\ll.h"
-	#include "\libsf\source\vjr\vjr_structs0.h"
-	#include "\libsf\source\vjr\vjr_structs.h"
-	#include "\libsf\utils\common\cpp\builder.h"
-	#include "\libsf\source\vjr\fonts.h"
-	#include "\libsf\source\vjr\datum.h"
-	#include "\libsf\source\vjr\bitmaps.h"
-
-
-//////////
 // Global variables
 //////
 	cs8				cgcDebo1Class[]								= "debo1_oppie1_debugger_window";
@@ -69,8 +56,6 @@
 	bool			glDebo1_executionIsThrottled				= false;
 	bool			glDebo1_updateDisplay						= true;
 	bool			glRenderIsBusy								= false;
-	s32				gnWidth										= 800;
-	s32				gnHeight									= 600;
 	s32				gnMemoryPage								= 0;			// Multiplied by 1KB to reach starting offset, displaying 1KB per page
 
 
@@ -104,6 +89,7 @@
 	SBitmap*		bmpF5RunOver								= NULL;			// For "F5:Run" text
 	SBitmap*		bmpF8StepOver								= NULL;			// For "F8:Step" text
 	SBitmap*		bmpF12ThrottleOver							= NULL;			// For "F12:Throttle" text
+	SBitmap*		bmpLibSF_386_x40							= NULL;			// LibSF 386-x40
 
 
 //////////
@@ -132,15 +118,11 @@
 	SBgra			registerColor								= { rgba(245,235,255,255) };		// Purple-ish
 	SBgra			disassemblyColor							= { rgba(255,255,255,255) };		// Off-white-ish
 	SBgra			redGrayColor								= { rgba(235,205,205,255) };
-	SBgra			grayColor									= { rgba(164,164,164,255) };
-	SBgra			blackColor									= { rgba(0,0,0,255) };
-	SBgra			whiteColor									= { rgba(255,255,255,255) };
 
 
 //////////
 // Fonts in use
 //////
-	SBuilder*		gFonts										= NULL;
 	s8				cgcUbuntu[]									= "Ubuntu";
 	s8				cgcUbuntuMono[]								= "Ubuntu Mono";
 	SFont*			fontUbuntuMono8								= NULL;
@@ -174,12 +156,9 @@
 
 
 //////////
-// Include files
+// Include our own logo bitmap
 //////
-	#include "\libsf\utils\common\cpp\builder.cpp"
-	#include "\libsf\source\vjr\fonts.cpp"
-	#include "\libsf\source\vjr\datum.cpp"
-	#include "\libsf\source\vjr\bitmaps.cpp"
+	#include "bmps\bitmaps.h"
 
 
 
@@ -200,6 +179,13 @@
 
 	void iiDebo1_initialize(void)
 	{
+		//////////
+		// Window size
+		//////
+			gnWidth		= 800;
+			gnHeight	= 600;
+
+
 		//////////
 		// Create the base fonts
 		//////
@@ -241,6 +227,8 @@
 			iBmp_createBySize(bmpF5RunOver			= iBmp_allocate(),			50,			19,			24);
 			iBmp_createBySize(bmpF8StepOver			= iBmp_allocate(),			54,			19,			24);
 			iBmp_createBySize(bmpF12ThrottleOver	= iBmp_allocate(),			84,			19,			24);
+			// Externally rendered
+			bmpLibSF_386_x40 = iBmp_rawLoad(cgc_libSF386x40Bmp);
 
 
 		//////////
@@ -514,7 +502,7 @@
 		s32		lnOpcodeCount;
 		SOra	iora;		// ooo.xx.aaa.aaaaaaaa
 		SOrr	iorr;		// ooo.x.rd.rs, oooo.rd.rs
-		SBsa	ibsa;		// ooo.x.s.aaa.aaaaaaaa
+		SBsa	ibsa;		// ooooo.s.aa.aaaaaaaa
 
 
 		//////////
@@ -620,8 +608,65 @@
 				// Disassembly
 				sprintf(tcText + strlen(tcText), "cmp r%u,r%u\0", (u32)iorr.rd + 1, (u32)iorr.rs + 1);
 
-			} else if (ibsa.ooo == _JZ_REL_ADDR) {
-				// jz    +/- 1KB			2			110.xx.s.00:00000000
+			} else if (ibsa.ooooo == _JNC_REL_ADDR) {
+				// jnc    +/- 1KB
+				lnOpcodeCount = 2;
+
+				// Opcode bytes
+				if (tlIncludeOpcodeBytes)
+					sprintf(tcText + strlen(tcText), "%02x %02x   \0", ram[ip_address], ram[ip_address+1]);
+
+				// Disassembly
+				if (ibsa.s)
+				{
+					// Jumping negative
+					sprintf(tcText + strlen(tcText), "jnc  -%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
+
+				} else {
+					// Jumping positive
+					sprintf(tcText + strlen(tcText), "jnc  +%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
+				}
+
+			} else if (ibsa.ooooo == _JC_REL_ADDR) {
+				// jc    +/- 1KB
+				lnOpcodeCount = 2;
+
+				// Opcode bytes
+				if (tlIncludeOpcodeBytes)
+					sprintf(tcText + strlen(tcText), "%02x %02x   \0", ram[ip_address], ram[ip_address+1]);
+
+				// Disassembly
+				if (ibsa.s)
+				{
+					// Jumping negative
+					sprintf(tcText + strlen(tcText), "jc  -%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
+
+				} else {
+					// Jumping positive
+					sprintf(tcText + strlen(tcText), "jc  +%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
+				}
+
+			} else if (ibsa.ooooo == _JNZ_REL_ADDR) {
+				// jnz    +/- 1KB
+				lnOpcodeCount = 2;
+
+				// Opcode bytes
+				if (tlIncludeOpcodeBytes)
+					sprintf(tcText + strlen(tcText), "%02x %02x   \0", ram[ip_address], ram[ip_address+1]);
+
+				// Disassembly
+				if (ibsa.s)
+				{
+					// Jumping negative
+					sprintf(tcText + strlen(tcText), "jnz  -%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
+
+				} else {
+					// Jumping positive
+					sprintf(tcText + strlen(tcText), "jnz  +%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
+				}
+
+			} else if (ibsa.ooooo == _JZ_REL_ADDR) {
+				// jz    +/- 1KB
 				lnOpcodeCount = 2;
 
 				// Opcode bytes
@@ -639,8 +684,8 @@
 					sprintf(tcText + strlen(tcText), "jz  +%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
 				}
 
-			} else if (ibsa.ooo == _JMP_REL_ADDR) {
-				// jmp   +/- 1KB			2			111.xx.s.00:00000000 
+			} else if (ibsa.ooooo == _JMP_REL_ADDR) {
+				// jmp   +/- 1KB
 				lnOpcodeCount = 2;
 
 				// Opcode bytes
@@ -1039,23 +1084,14 @@
 //////
 	void iiDebo1_renderRegisters(void)
 	{
-		s8 buffer[256];
+		RECT lrc;
 
 
 		//////////
-		// Fill the background
+		// Overlay the logo info
 		//////
-			iBmp_fillRect(bmpRegisters, &bmpRegisters->rc, registerColor, registerColor, registerColor, registerColor, false, NULL, false);
-
-
-		//////////
-		// Registers and flags
-		//////
-			sprintf(buffer, "Registers\n\n  r1 %02x\n  r2 %02x\n  r3 %02x\n  r4 %02x\n  ip %03x\n  %s %s\0", (u32)state.regs.r1, (u32)state.regs.r2, (u32)state.regs.r3, (u32)state.regs.r4, (u32)state.regs.ip, ((state.regs.carry) ? "CY" : "cy"), ((state.regs.zero) ? "ZR" : "zr"));
-			SelectObject(bmpRegisters->hdc, fontUbuntuMono8->hfont);
-			SetBkMode(bmpRegisters->hdc, TRANSPARENT);
-			SetTextColor(bmpRegisters->hdc, RGB(blackColor.red, blackColor.grn, blackColor.blu));
-			iiDebo1_renderTextCentered(bmpRegisters, buffer, &bmpRegisters->rc, false);
+			SetRect(&lrc, 0, 0, bmpRegisters->rc.right, bmpLibSF_386_x40->bi.biHeight);
+			iBmp_bitBlt(bmpRegisters, &lrc, bmpLibSF_386_x40);
 	}
 
 
@@ -1213,10 +1249,11 @@
 		//////
 			sprintf(buffer, "000:\0");
 			CopyRect(&lrcAddress, &lrc);
-			SetRect(&lrc, 40, 23, bmpMemory->bi.biWidth - 1, bmpMemory->bi.biHeight - 1);
+			SetRect(&lrc, 40, 25, bmpMemory->bi.biWidth - 1, bmpMemory->bi.biHeight - 1);
 			SetBkMode(bmpMemory->hdc, TRANSPARENT);
 			SelectObject(bmpMemory->hdc, fontUbuntuMono8->hfont);
 			DrawText(bmpMemory->hdc, buffer, strlen(buffer), &lrcDelta, DT_CALCRECT);
+			lrcDelta.bottom -= 2;
 			for (lnI = gnMemoryPage * 1024; lnI < (gnMemoryPage + 1) * 1024; lnI += 32)
 			{
 				//////////

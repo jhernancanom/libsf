@@ -931,7 +931,9 @@
 			if (objNode->from_isEast)
 			{
 				// It's departing from the right (east)
+#ifndef _OPPIE1_COMPILE
 				vFrom->y += objNode->from_slotNum * ...
+#endif
 
 			} else {
 				// It's departing from the bottom (south)

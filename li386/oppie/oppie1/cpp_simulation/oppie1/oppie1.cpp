@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/li386/oppie/oppie1/cpp_simulation/oppie1.cpp
+// /libsf/li386/oppie/oppie1/cpp_simulation/oppie/oppie1.cpp
 //
 //////
 // Version 0.01
@@ -73,8 +73,11 @@
 //		sbb   reg8,reg8			1			0111.00.00
 //		mov   [address],reg8	2			100.00.000:00000000
 //		cmp   reg8,reg8			1			101.x.00.00	(left,right)
-//		jz    +/- 1KB			2			110.xx.s.00:00000000
-//		jmp   +/- 1KB			2			111.xx.s.00:00000000 
+//		jnc   +/- 1KB			2			11000.s.00:00000000
+//		jc    +/- 1KB			2			11001.s.00:00000000
+//		jnz   +/- 1KB			2			11010.s.00:00000000
+//		jz    +/- 1KB			2			11011.s.00:00000000
+//		jmp   +/- 1KB			2			11100.s.00:00000000 
 //
 // Using this environment:
 //
@@ -89,12 +92,19 @@
 //
 //////
 
-#include <windows.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <memory.h>
 
-#include "\libsf\source\vjr\vjr_const.h"
+//////////
+// Uses Visual FreePro, Jr's existing facilities to simplify our processing
+//////
+	#define _OPPIE1_COMPILE		// Turns off some features in VJr that fail on compilation from here
+	#include "\libsf\source\vjr\vjr.h"
+	#undef main
+
+
+//////////
+// Instruction encoding
+//////
+	#include "..\common\instructions.h"
 
 
 //////////
@@ -112,12 +122,17 @@
 
 	#define		B000				0x0;		// Binary 000
 	#define		B001				0x1;		// Binary 001
-	#define		B010				0x2;		// Binary 010
-	#define		B011				0x3;		// Binary 011
 	#define		B100				0x4;		// Binary 100
 	#define		B101				0x5;		// Binary 101
-	#define		B110				0x6;		// Binary 110
-	#define		B111				0x7;		// Binary 111
+	#define		B0100				0x4;		// Binary 0100
+	#define		B0101				0x5;		// Binary 0101
+	#define		B0110				0x6;		// Binary 0110
+	#define		B0111				0x7;		// Binary 0111
+	#define		B11000				0x18;		// Binary 11000
+	#define		B11001				0x19;		// Binary 11001
+	#define		B11010				0x1a;		// Binary 11010
+	#define		B11011				0x1b;		// Binary 11011
+	#define		B11100				0x1c;		// Binary 11100
 
 	const s32	_RAM_SIZE			= 2048;		// 2KB of RAM
 
@@ -135,14 +150,17 @@
 
 	const s32	_MOV_R8_ADDR		= B000;		//		mov   reg8,[address]	2			000.00.000:00000000
 	const s32	_MOV_R8_R8			= B001;		//		mov   reg8,reg8			1			001.x.00.00	(dest,src)
-	const s32	_ADD_R8_R8			= B100;		//		add   reg8,reg8			1			0100.00.00
-	const s32	_ADC_R8_R8			= B110;		//		adc   reg8,reg8			1			0110.00.00
-	const s32	_SUB_R8_R8			= B101;		//		sub   reg8,reg8			1			0101.00.00
-	const s32	_SBB_R8_R8			= B111;		//		sbb   reg8,reg8			1			0111.00.00
+	const s32	_ADC_R8_R8			= B0110;	//		adc   reg8,reg8			1			0110.00.00
+	const s32	_SBB_R8_R8			= B0111;	//		sbb   reg8,reg8			1			0111.00.00
+	const s32	_ADD_R8_R8			= B0100;	//		add   reg8,reg8			1			0100.00.00
+	const s32	_SUB_R8_R8			= B0101;	//		sub   reg8,reg8			1			0101.00.00
 	const s32	_MOV_ADDR_R8		= B100;		//		mov   [address],reg8	2			100.00.000:00000000
 	const s32	_CMP_R8_R8			= B101;		//		cmp   reg8,reg8			1			101.x.00.00	(left,right)
-	const s32	_JZ_REL_ADDR		= B110;		//		jz    +/- 1KB			2			110.xx.s.00:00000000
-	const s32	_JMP_REL_ADDR		= B111;		//		jmp   +/- 1KB			2			111.xx.s.00:00000000 
+	const s32	_JNC_REL_ADDR		= B11000;	//		jnc   +/- 1KB			2			11000.s.00:00000000
+	const s32	_JC_REL_ADDR		= B11001;	//		jc    +/- 1KB			2			11001.s.00:00000000
+	const s32	_JNZ_REL_ADDR		= B11010;	//		jnz   +/- 1KB			2			11010.s.00:00000000
+	const s32	_JZ_REL_ADDR		= B11011;	//		jz    +/- 1KB			2			11011.s.00:00000000
+	const s32	_JMP_REL_ADDR		= B11100;	//		jmp   +/- 1KB			2			11100.s.00:00000000 
 
 	// Numbered operations mimic the bit encoding-derived instructions above
 	const s32	_OP_MOV_R8_ADDR		= 1;
@@ -153,8 +171,11 @@
 	const s32	_OP_SBB_R8_R8		= 6;
 	const s32	_OP_MOV_ADDR_R8		= 7;
 	const s32	_OP_CMP_R8_R8		= 8;
-	const s32	_OP_JZ_REL_ADDR		= 9;
-	const s32	_OP_JMP_REL_ADDR	= 10;
+	const s32	_OP_JNC_REL_ADDR	= 9;
+	const s32	_OP_JC_REL_ADDR		= 10;
+	const s32	_OP_JNZ_REL_ADDR	= 11;
+	const s32	_OP_JZ_REL_ADDR		= 12;
+	const s32	_OP_JMP_REL_ADDR	= 13;
 
 
 
@@ -172,70 +193,6 @@
 		s16		ip		:	11;
 		u8		carry	:	1;
 		u8		zero	:	1;
-	};
-
-	// Template instructions:
-	struct SOra	// Ora = Operation, register, address
-	{
-		// ooo.rr.aaa:aaaaaaaa
-		union {
-			struct {
-				u8		i_data1;			// Opcode byte 1
-				u8		i_data2;			// Opcode byte 2
-			};
-			struct {
-				u8		ooo			: 3;
-				u8		rd			: 2;
-				u8		aaa			: 3;
-				u8		aaaaaaaa	: 8;
-			};
-		};
-	};
-
-	struct SOrr // Orr = Operation, register, register
-	{
-		// ooo.x.rd.rs		-- 3-bit form
-		// oooo.rd.rs		-- 4-bit form
-		union {
-			struct {
-				u8		i_data1;			// Opcode byte 1
-			};
-			struct {
-				u8		ignore		: 4;
-				u8		rd			: 2;
-				u8		rs			: 2;
-			};
-			struct {
-				u8		ooo			: 3;
-				u8		x			: 1;
-				u8		rd1			: 2;
-				u8		rs1			: 2;
-			};
-			struct {
-				u8		oooo		: 4;
-				u8		rd2			: 2;
-				u8		rs2			: 2;
-			};
-		};
-	};
-
-	// Template instructions:
-	struct SBsa	// Ba = Branch, sign, address
-	{
-		// ooo.xx.s.aaa:aaaaaaaa
-		union {
-			struct {
-				u8		i_data1;			// Opcode byte 1
-				u8		i_data2;			// Opcode byte 2
-			};
-			struct {
-				u8		ooo			: 3;
-				u8		xx			: 2;
-				u8		s			: 1;
-				u8		aa			: 2;
-				u8		aaaaaaaa	: 8;
-			};
-		};
 	};
 
 	// Overall machine state status
@@ -507,7 +464,7 @@
 	{
 		SOra	iora;		// ooo.xx.aaa.aaaaaaaa
 		SOrr	iorr;		// ooo.x.rd.rs, oooo.rd.rs
-		SBsa	ibsa;		// ooo.x.s.aaa.aaaaaaaa
+		SBsa	ibsa;		// ooooo.s.aa.aaaaaaaa
 
 		if (direction > 0)
 		{
@@ -590,8 +547,35 @@
 						pipe2.p4_reg_src			= iorr.rs;
 						pipe2.p3_d_read				= false;
 
-					} else if (ibsa.ooo == _JZ_REL_ADDR) {
-						// jz    +/- 1KB			2			110.xx.s.00:00000000
+					} else if (ibsa.ooooo == _JNC_REL_ADDR) {
+						// jnc    +/- 1KB
+						ibsa.i_data2				= pipe2.i_data2;
+						pipe2.p2_increment2			= true;
+						pipe2.p4_op					= _OP_JNC_REL_ADDR;
+						pipe2.p4_ip_sign			= ibsa.s;
+						pipe2.p4_ip_delta			= ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa;
+						pipe2.p3_d_read				= false;
+
+					} else if (ibsa.ooooo == _JC_REL_ADDR) {
+						// jc    +/- 1KB
+						ibsa.i_data2				= pipe2.i_data2;
+						pipe2.p2_increment2			= true;
+						pipe2.p4_op					= _OP_JC_REL_ADDR;
+						pipe2.p4_ip_sign			= ibsa.s;
+						pipe2.p4_ip_delta			= ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa;
+						pipe2.p3_d_read				= false;
+
+					} else if (ibsa.ooooo == _JNZ_REL_ADDR) {
+						// jnz    +/- 1KB
+						ibsa.i_data2				= pipe2.i_data2;
+						pipe2.p2_increment2			= true;
+						pipe2.p4_op					= _OP_JNZ_REL_ADDR;
+						pipe2.p4_ip_sign			= ibsa.s;
+						pipe2.p4_ip_delta			= ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa;
+						pipe2.p3_d_read				= false;
+
+					} else if (ibsa.ooooo == _JZ_REL_ADDR) {
+						// jz    +/- 1KB
 						ibsa.i_data2				= pipe2.i_data2;
 						pipe2.p2_increment2			= true;
 						pipe2.p4_op					= _OP_JZ_REL_ADDR;
@@ -599,8 +583,8 @@
 						pipe2.p4_ip_delta			= ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa;
 						pipe2.p3_d_read				= false;
 
-					} else if (ibsa.ooo == _JMP_REL_ADDR) {
-						// jmp   +/- 1KB			2			111.xx.s.00:00000000 
+					} else if (ibsa.ooooo == _JMP_REL_ADDR) {
+						// jmp   +/- 1KB
 						ibsa.i_data2				= pipe2.i_data2;
 						pipe2.p2_increment2			= true;
 						pipe2.p4_op					= _OP_JMP_REL_ADDR;
@@ -813,8 +797,59 @@ _asm int 3;
 							}
 							break;
 
-						case _OP_JZ_REL_ADDR:
+						case _OP_JNC_REL_ADDR:
+							if (!state.regs.carry)
+							{
+								// We jump
+								state.pipeStage = _STAGE0;
+								if (pipe4.p4_ip_sign)
+								{
+									// Branching negative
+									state.regs.ip	= pipe3.ip - pipe4.p4_ip_delta;
+
+								} else {
+									// Branching positive
+									state.regs.ip	= pipe3.ip + pipe4.p4_ip_delta;
+								}
+							}
+							break;
+
+						case _OP_JC_REL_ADDR:
 							if (state.regs.carry)
+							{
+								// We jump
+								state.pipeStage = _STAGE0;
+								if (pipe4.p4_ip_sign)
+								{
+									// Branching negative
+									state.regs.ip	= pipe3.ip - pipe4.p4_ip_delta;
+
+								} else {
+									// Branching positive
+									state.regs.ip	= pipe3.ip + pipe4.p4_ip_delta;
+								}
+							}
+							break;
+
+						case _OP_JNZ_REL_ADDR:
+							if (!state.regs.zero)
+							{
+								// We jump
+								state.pipeStage = _STAGE0;
+								if (pipe4.p4_ip_sign)
+								{
+									// Branching negative
+									state.regs.ip	= pipe3.ip - pipe4.p4_ip_delta;
+
+								} else {
+									// Branching positive
+									state.regs.ip	= pipe3.ip + pipe4.p4_ip_delta;
+								}
+							}
+							break;
+
+						case _OP_JZ_REL_ADDR:
+							if (state.regs.zero)
 							{
 								// We jump
 								state.pipeStage = _STAGE0;
