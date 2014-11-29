@@ -68,6 +68,7 @@
 	bool			glDebo1_executionIsSingleStepping			= false;
 	bool			glDebo1_executionIsThrottled				= false;
 	bool			glDebo1_updateDisplay						= true;
+	bool			glRenderIsBusy								= false;
 	s32				gnWidth										= 800;
 	s32				gnHeight									= 600;
 	s32				gnMemoryPage								= 0;			// Multiplied by 1KB to reach starting offset, displaying 1KB per page
@@ -109,6 +110,7 @@
 // Render colors
 //////
 //	#define			rgba(r,g,b,a)								(((a & 0xff) << 24) + ((r & 0xff) << 16) + ((g & 0xff) <<  8) + ((b & 0xff)))
+	SBgra			titleColor									= { rgba(0, 92, 192, 255) };		// Dark blue
 	SBgra			stage1LowColor								= { rgba(255,225,172,255) };		// Orange-ish
 	SBgra			stage1HighColor								= { rgba(255,244,224,255) };
 	SBgra			stage2LowColor								= { rgba(216,255,255,255) };		// Cyan-ish
@@ -157,7 +159,7 @@
 	void					iiDebo1_renderStageBackground		(SBitmap* bmp, RECT* rc, SBgra textColor, SBgra lowColor, SBgra highColor, cs8* tcTextTop, cs8* tcTextBottom);
 	void					iiDebo1_renderTextCentered			(s8* tcText, RECT* rc, bool tlCenterHorizontally);
 	s32						iiDebo1_decodeAssembly				(s8* tcText, s32 ip_address, bool tlIncludeIpAddress, bool tlIncludeOpcodeBytes);
-	void					iiDebo1_decodeAssembly_NLines		(SBitmap* bmp, RECT* rc, s32 ip_address, s32 disassembleLineCount, SBgra lowColor, SBgra highColor, SBgra textColor);
+	void					iiDebo1_decodeAssembly_NLines		(SBitmap* bmp, RECT* rc, s32 ip_address, s32 disassembleLineCount, cs8* tcLabelText, SBgra lowColor, SBgra highColor, SBgra textColor);
 	void					iiDebo1_renderStage1				(void);
 	void					iiDebo1_renderStage2				(void);
 	void					iiDebo1_renderStage3				(void);
@@ -166,6 +168,7 @@
 	void					iiDebo1_renderRegisters				(void);
 	void					iiDebo1_renderDisassembly			(void);
 	void					iiDebo1_renderMemory				(void);
+	void					iiDebo1_renderMemory_highlightMemory(s32 start, s32 end, s32 address, SBitmap* bmp, RECT* rc, SBgra color, s32 tnBytes);
 	DWORD WINAPI			iDebo1_threadProc					(LPVOID lpParameter);
 	LRESULT CALLBACK		iDebo1_wndProc						(HWND h, UINT m, WPARAM w, LPARAM l);
 
@@ -268,6 +271,11 @@
 			iiDebo1_colorizeAndText(bmpF5Run,			"F5:Run",			stage4HighColor,				blackColor,			fontUbuntuMono8);
 			iiDebo1_colorizeAndText(bmpF8Step,			"F8:Step",			stage4HighColor,				blackColor,			fontUbuntuMono8);
 			iiDebo1_colorizeAndText(bmpF12Throttle,		"F12:Throttle",		stage4HighColor,				blackColor,			fontUbuntuMono8);
+
+			// Render a small border around the keystrokes
+			iBmp_frameRect(bmpF5Run,		&bmpF5Run->rc,			stage4LowColor, stage4LowColor, stage4LowColor, stage4LowColor, false, NULL, false);
+			iBmp_frameRect(bmpF8Step,		&bmpF8Step->rc,			stage4LowColor, stage4LowColor, stage4LowColor, stage4LowColor, false, NULL, false);
+			iBmp_frameRect(bmpF12Throttle,	&bmpF12Throttle->rc,	stage4LowColor, stage4LowColor, stage4LowColor, stage4LowColor, false, NULL, false);
 		
 		
 		//////////
@@ -347,11 +355,11 @@
 		// Title
 		//////
 			CopyRect(&lrc, &bmpDebo1->rc);
-			lrc.top		-= 3;
-			lrc.left	+= 8;
+			--lrc.top;
+			lrc.left += 8;
 			SelectObject(bmpDebo1->hdc, fontUbuntu14->hfont);
 			SetBkMode(bmpDebo1->hdc, TRANSPARENT);
-			SetTextColor(bmpDebo1->hdc, RGB(memoryOptionColor.red, memoryOptionColor.grn, memoryOptionColor.blu));
+			SetTextColor(bmpDebo1->hdc, RGB(titleColor.red, titleColor.grn, titleColor.blu));
 			DrawText(bmpDebo1->hdc, cgcAppTitle, strlen(cgcAppTitle), &lrc, DT_LEFT);
 
 
@@ -671,7 +679,7 @@
 // Called to decode three disassembly lines for the indicated IP address
 //
 //////
-	void iiDebo1_decodeAssembly_NLines(SBitmap* bmp, RECT* rc, s32 ip_address, s32 disassembleLineCount, SBgra lowColor, SBgra highColor, SBgra textColor)
+	void iiDebo1_decodeAssembly_NLines(SBitmap* bmp, RECT* rc, s32 ip_address, s32 disassembleLineCount, cs8* tcLabelText, SBgra lowColor, SBgra highColor, SBgra textColor)
 	{
 		s32		lnI, lnOpcodeBytes;
 		RECT	lrc;
@@ -679,9 +687,20 @@
 
 		
 		//////////
-		// Iterate for each
+		// Draw the header label
 		//////
+			DrawText(bmp->hdc, buffer, strlen(buffer), &lrc, DT_CALCRECT);
+			SetRect(&lrc, rc->left, rc->top, rc->right, rc->top + (lrc.bottom - lrc.top));
+			iBmp_fillRect(bmp, &lrc, lowColor, lowColor, lowColor, lowColor, false, NULL, false);
+			lrc.right -= 5;
 			SetTextColor(bmp->hdc, RGB(textColor.red, textColor.grn, textColor.blu));
+			DrawText(bmp->hdc, tcLabelText, strlen(tcLabelText), &lrc, DT_RIGHT);
+			rc->top += (lrc.bottom - lrc.top);
+
+		
+		//////////
+		// Iterate for each disassembly line
+		//////
 			for (lnI = 0, lnOpcodeBytes = 0; lnI < disassembleLineCount; lnI++)
 			{
 				// Grab the disassembly for this location
@@ -902,7 +921,54 @@
 			iiDebo1_decodeAssembly(buffer + strlen(buffer), pipe4.ip, false, false);
 			SetBkMode(bmpStage4->hdc, TRANSPARENT);
 			SetTextColor(bmpStage4->hdc, RGB(textColor.red,textColor.grn,textColor.blu));
-			iiDebo1_renderTextCentered(bmpStage4, buffer, &bmpStage4->rc, true);
+			lrc.top = 0;
+			iiDebo1_renderTextCentered(bmpStage4, buffer, &lrc, true);
+
+
+		//////////
+		// Before and after regs
+		//////
+			// Before
+			if (state.pipeStage >= _STAGE4)
+			{
+				// Label
+				sprintf(buffer, "before\0");
+				SetRect(&lrc, 0, 19, 12 + 40, bmpStage4->rc.bottom);
+				SetTextColor(bmpStage4->hdc, RGB(stage4HighColor.red,stage4HighColor.grn,stage4HighColor.blu));
+				DrawText(bmpStage4->hdc, buffer, strlen(buffer), &lrc, DT_CENTER | DT_SINGLELINE);
+
+				// Content
+				sprintf(buffer, "r1 %02x\nr2 %02x\nr3 %02x\nr4 %02x\n%s %s\0", pipe4.before.regs.r1, pipe4.before.regs.r2, pipe4.before.regs.r3, pipe4.before.regs.r4, ((pipe4.before.regs.carry) ? "CY" : "cy"), ((pipe4.before.regs.zero) ? "ZR" : "zr"));
+				SetRect(&lrc, 6, 19 + 16, 6 + 40, bmpStage4->rc.bottom);
+				SetTextColor(bmpStage4->hdc, RGB(textColor.red,textColor.grn,textColor.blu));
+				DrawText(bmpStage4->hdc, buffer, strlen(buffer), &lrc, DT_CENTER);
+
+				// Divider
+				lrc.left	= lrc.right + 2;
+				lrc.right	= lrc.left + 2;
+				iBmp_fillRect(bmpStage4, &lrc, stage4LowColor, stage4LowColor, stage4LowColor, stage4LowColor, false, NULL, false);
+			}
+
+			// Show after only after we've computed
+			if (state.pipeStage > _STAGE4)
+			{
+				// Label
+				sprintf(buffer, "after\0");
+				SetRect(&lrc, bmpStage4->rc.right - 6 - 40, 19, bmpStage4->rc.right - 6, bmpStage4->rc.bottom);
+				SetTextColor(bmpStage4->hdc, RGB(stage4HighColor.red,stage4HighColor.grn,stage4HighColor.blu));
+				DrawText(bmpStage4->hdc, buffer, strlen(buffer), &lrc, DT_CENTER | DT_SINGLELINE);
+
+				// Content
+				sprintf(buffer, "r1 %02x\nr2 %02x\nr3 %02x\nr4 %02x\n%s %s\0", pipe4.after.regs.r1, pipe4.after.regs.r2, pipe4.after.regs.r3, pipe4.after.regs.r4, ((pipe4.after.regs.carry) ? "CY" : "cy"), ((pipe4.after.regs.zero) ? "ZR" : "zr"));
+				SetRect(&lrc, bmpStage4->rc.right - 6 - 40, 19 + 16, bmpStage4->rc.right - 6, bmpStage4->rc.bottom);
+				SetTextColor(bmpStage4->hdc, RGB(textColor.red,textColor.grn,textColor.blu));
+				DrawText(bmpStage4->hdc, buffer, strlen(buffer), &lrc, DT_CENTER);
+
+				// Divider
+				lrc.left	-= 2;
+				lrc.right	= lrc.left + 2;
+				iBmp_fillRect(bmpStage4, &lrc, stage4LowColor, stage4LowColor, stage4LowColor, stage4LowColor, false, NULL, false);
+			}
 	}
 
 
@@ -1027,13 +1093,13 @@
 			if (state.pipeStage >= _STAGE1)
 			{
 				// Valid
-				iiDebo1_decodeAssembly_NLines(bmpDisassembly, &lrc, pipe1.ip, 4, stage1LowColor, stage1HighColor, blackColor);
+				iiDebo1_decodeAssembly_NLines(bmpDisassembly, &lrc, pipe1.ip, 4, cgcStage1Bottom, stage1LowColor, stage1HighColor, blackColor);
 
 			} else {
 				// Invalid
-				iiDebo1_decodeAssembly_NLines(bmpDisassembly, &lrc, pipe1.ip, 4, invalidLowColor, invalidHighColor, grayColor);
+				iiDebo1_decodeAssembly_NLines(bmpDisassembly, &lrc, pipe1.ip, 4, cgcStage1Bottom, invalidLowColor, invalidHighColor, grayColor);
 			}
-			lrc.top += 16;
+			lrc.top += 12;
 
 
 		//////////
@@ -1042,13 +1108,13 @@
 			if (state.pipeStage >= _STAGE2)
 			{
 				// Valid
-				iiDebo1_decodeAssembly_NLines(bmpDisassembly, &lrc, pipe2.ip, 4, stage2LowColor, stage2HighColor, ((state.pipeStage >= _STAGE2) ? blackColor : grayColor));
+				iiDebo1_decodeAssembly_NLines(bmpDisassembly, &lrc, pipe2.ip, 4, cgcStage2Bottom, stage2LowColor, stage2HighColor, ((state.pipeStage >= _STAGE2) ? blackColor : grayColor));
 
 			} else {
 				// Invalid
-				iiDebo1_decodeAssembly_NLines(bmpDisassembly, &lrc, pipe2.ip, 4, invalidLowColor, invalidHighColor, grayColor);
+				iiDebo1_decodeAssembly_NLines(bmpDisassembly, &lrc, pipe2.ip, 4, cgcStage2Bottom, invalidLowColor, invalidHighColor, grayColor);
 			}
-			lrc.top += 16;
+			lrc.top += 12;
 
 
 		//////////
@@ -1057,13 +1123,13 @@
 			if (state.pipeStage >= _STAGE3)
 			{
 				// Valid
-				iiDebo1_decodeAssembly_NLines(bmpDisassembly, &lrc, pipe3.ip, 4, stage3LowColor, stage3HighColor, ((state.pipeStage >= _STAGE3) ? blackColor : grayColor));
+				iiDebo1_decodeAssembly_NLines(bmpDisassembly, &lrc, pipe3.ip, 4, cgcStage3Bottom, stage3LowColor, stage3HighColor, ((state.pipeStage >= _STAGE3) ? blackColor : grayColor));
 
 			} else {
 				// Invalid
-				iiDebo1_decodeAssembly_NLines(bmpDisassembly, &lrc, pipe3.ip, 4, invalidLowColor, invalidHighColor, grayColor);
+				iiDebo1_decodeAssembly_NLines(bmpDisassembly, &lrc, pipe3.ip, 4, cgcStage3Bottom, invalidLowColor, invalidHighColor, grayColor);
 			}
-			lrc.top += 16;
+			lrc.top += 12;
 
 
 		//////////
@@ -1072,13 +1138,13 @@
 			if (state.pipeStage >= _STAGE4)
 			{
 				// Valid
-				iiDebo1_decodeAssembly_NLines(bmpDisassembly, &lrc, pipe4.ip, 4, stage4LowColor, stage4HighColor, ((state.pipeStage >= _STAGE4) ? blackColor : grayColor));
+				iiDebo1_decodeAssembly_NLines(bmpDisassembly, &lrc, pipe4.ip, 4, cgcStage4Bottom, stage4LowColor, stage4HighColor, ((state.pipeStage >= _STAGE4) ? blackColor : grayColor));
 
 			} else {
 				// Invalid
-				iiDebo1_decodeAssembly_NLines(bmpDisassembly, &lrc, pipe4.ip, 4, invalidLowColor, invalidHighColor, grayColor);
+				iiDebo1_decodeAssembly_NLines(bmpDisassembly, &lrc, pipe4.ip, 4, cgcStage4Bottom, invalidLowColor, invalidHighColor, grayColor);
 			}
-			lrc.top += 16;
+			lrc.top += 12;
 
 
 		//////////
@@ -1087,11 +1153,11 @@
 			if (state.pipeStage >= _STAGE5)
 			{
 				// Valid
-				iiDebo1_decodeAssembly_NLines(bmpDisassembly, &lrc, pipe5.ip, 4, stage5LowColor, stage5HighColor, ((state.pipeStage >= _STAGE5) ? blackColor : grayColor));
+				iiDebo1_decodeAssembly_NLines(bmpDisassembly, &lrc, pipe5.ip, 4, cgcStage5Bottom, stage5LowColor, stage5HighColor, ((state.pipeStage >= _STAGE5) ? blackColor : grayColor));
 
 			} else {
 				// Invalid
-				iiDebo1_decodeAssembly_NLines(bmpDisassembly, &lrc, pipe5.ip, 4, invalidLowColor, invalidHighColor, grayColor);
+				iiDebo1_decodeAssembly_NLines(bmpDisassembly, &lrc, pipe5.ip, 4, cgcStage5Bottom, invalidLowColor, invalidHighColor, grayColor);
 			}
 	}
 
@@ -1175,10 +1241,67 @@
 
 
 				//////////
+				// If any of the addresses are in this range, highlight them
+				//////
+					if (state.pipeStage >= _STAGE1)		iiDebo1_renderMemory_highlightMemory(lnI, lnI + 32, pipe1.ip, bmpMemory, &lrc, stage1LowColor, 3);
+					if (state.pipeStage >= _STAGE2)		iiDebo1_renderMemory_highlightMemory(lnI, lnI + 32, pipe2.ip, bmpMemory, &lrc, stage2LowColor, ((pipe2.p2_increment2) ? 2 : 1));
+					if (state.pipeStage >= _STAGE3)		iiDebo1_renderMemory_highlightMemory(lnI, lnI + 32, pipe3.ip, bmpMemory, &lrc, stage3LowColor, ((pipe3.p2_increment2) ? 2 : 1));
+					if (state.pipeStage >= _STAGE4)		iiDebo1_renderMemory_highlightMemory(lnI, lnI + 32, pipe4.ip, bmpMemory, &lrc, stage4LowColor, ((pipe4.p2_increment2) ? 2 : 1));
+					if (state.pipeStage >= _STAGE5)		iiDebo1_renderMemory_highlightMemory(lnI, lnI + 32, pipe5.ip, bmpMemory, &lrc, stage5LowColor, ((pipe5.p2_increment2) ? 2 : 1));
+
+
+				//////////
 				// Move down
 				//////
 					lrcAddress.top	+= (lrcDelta.bottom - lrcDelta.top);
 					lrc.top			+= (lrcDelta.bottom - lrcDelta.top);
+			}
+	}
+
+
+
+
+//////////
+//
+// Called to highlight a portion of memory as it is processing
+//
+//////
+	void iiDebo1_renderMemory_highlightMemory(s32 start, s32 end, s32 address, SBitmap* bmp, RECT* rc, SBgra color, s32 tnBytes)
+	{
+		s32		lnI, lnCharWidth, lnCharHeight;
+		RECT	lrc;
+		s8		buffer[16];
+
+
+		//////////
+		// Initialize
+		//////
+			buffer[0] = '0';
+			DrawText(bmp->hdc, buffer, 1, &lrc, DT_CALCRECT);
+			lnCharWidth		= (lrc.right - lrc.left);
+			lnCharHeight	= (lrc.bottom - lrc.top);
+			SetTextColor(bmp->hdc, RGB(blackColor.red, blackColor.grn, blackColor.blu));
+
+
+		//////////
+		// Draw each byte individually
+		//////
+			for (lnI = 0; lnI < tnBytes; lnI++)
+			{
+				// Is this byte in range?
+				if (address + lnI >= start && address + lnI <= end)
+				{
+					// It starts in the range
+					sprintf(buffer, "%02x\0", ram[address + lnI]);
+
+					// Draw around it
+					SetRect(&lrc, rc->left + ((address - start + lnI) * 3 * lnCharWidth) - lnCharWidth / 2, rc->top, rc->left + (2 * lnCharWidth) + ((address - start + lnI) * 3 * lnCharWidth) + lnCharWidth / 2, rc->top + lnCharHeight);
+					iBmp_fillRect(bmp, &lrc, color, color, color, color, false, NULL, false);
+
+					// Draw text
+					SetRect(&lrc, rc->left + ((address - start + lnI) * 3 * lnCharWidth), rc->top, rc->left + (2 * lnCharWidth) + ((address - start + lnI) * 3 * lnCharWidth), rc->top + lnCharHeight);
+					DrawText(bmp->hdc, buffer, 2, &lrc, DT_LEFT);
+				}
 			}
 	}
 
@@ -1237,9 +1360,9 @@
 
 
 		//////////
-		// Create a 50ms timer (20x per second)
+		// Create a 100ms timer (10x per second)
 		//////
-			SetTimer(hwnd, NULL, 50, NULL);
+			SetTimer(hwnd, NULL, 100, NULL);
 
 
 		//////////
@@ -1284,7 +1407,7 @@
 
 				break;
 
-			case WM_KEYUP:
+			case WM_KEYDOWN:
 				glDebo1_updateDisplay = true;
 				switch (w)
 				{
@@ -1325,7 +1448,12 @@
 					glDebo1_updateDisplay = false;
 
 					// Rebuild the display
-					iiDebo1_render();
+					if (!glRenderIsBusy)
+					{
+						glRenderIsBusy = true;
+						iiDebo1_render();
+						glRenderIsBusy = false;
+					}
 				}
 
 				// BitBlt our content from the buffer

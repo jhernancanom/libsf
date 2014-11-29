@@ -286,6 +286,8 @@
 	{
 		u16		ip;							// ip address of the opcode associated with this instruction
 
+		bool	p2_increment2;				// Should the instruction pointer be increased by 2?
+
 		bool	p3_d_read;					// Should data be read for this step in stage 3?
 		u16		p3_d_read_address;			// Address to read
 
@@ -306,6 +308,11 @@
 	{
 		u16		ip;							// ip address of the opcode associated with this instruction
 
+		SState	before;						// The state before processing (at the time of the last push)
+		SState	after;						// The state after processing
+
+		bool	p2_increment2;				// Should the instruction pointer be increased by 2?
+
 		u8		p4_op;						// Operation to conduct in stage 4
 		u8		p4_data;					// Data read in stage 3
 		u8		p4_reg_src;					// Register for source operation
@@ -325,6 +332,8 @@
 	struct SPipe5
 	{
 		u16		ip;							// ip address of the opcode associated with this instruction
+
+		bool	p2_increment2;				// Should the instruction pointer be increased by 2?
 
 		bool	p5_d_write;					// Should data be written in stage 5?
 		u8		p5_data;					// Result of the operation computed in stage 4, to write out in stage 5
@@ -407,8 +416,8 @@
 						if (glDebo1_executionIsSingleStepping || glDebo1_executionIsThrottled)
 						{
 							// Signal the debugger to update itself if need be
-							glDebo1_updateDisplay		= true;
 							glDebo1_executionIsPaused	= true;
+							glDebo1_updateDisplay		= true;
 						}
 
 					} else if (state.clk == _NEGLEVEL) {
@@ -481,6 +490,7 @@
 			{
 				// Perform the push
 				pipe1.ip += ((pipe2.p2_increment2) ? 2 : 1);
+				pipe1.ip = pipe1.ip % 2048;
 			}
 		}
 	}
@@ -658,6 +668,9 @@ _asm int 3;
 			{
 				// Perform the push
 				pipe3.ip					= pipe2.ip;
+
+				pipe3.p2_increment2			= pipe2.p2_increment2;
+
 				pipe3.p3_d_read				= pipe2.p3_d_read;
 				pipe3.p3_d_read_address		= pipe2.p3_d_read_address;
 
@@ -693,6 +706,9 @@ _asm int 3;
 				// i-process
 				if (!state.is_CPU_halted && state.pipeStage >= _STAGE4)
 				{
+					// Copy forward before/after state
+					memcpy(&pipe4.before, &state, sizeof(state));
+
 					// Execute the op
 					switch (pipe4.p4_op)
 					{
@@ -842,6 +858,9 @@ _asm int 3;
 			{
 				// Perform the push
 				pipe4.ip					= pipe3.ip;
+
+				pipe4.p2_increment2			= pipe3.p2_increment2;
+
 				pipe4.p4_op					= pipe3.p4_op;
 				pipe4.p4_data				= pipe3.p4_data;
 				pipe4.p4_reg_dst			= pipe3.p4_reg_dst;
@@ -849,6 +868,9 @@ _asm int 3;
 
 				pipe4.p5_d_write			= pipe3.p5_d_write;
 				pipe4.p5_d_write_address	= pipe3.p5_d_write_address;
+
+				// Copy forward before/after state
+				memcpy(&pipe4.after, &state, sizeof(state));
 			}
 		}
 	}
@@ -901,6 +923,9 @@ _asm int 3;
 
 				// Perform the push
 				pipe5.ip					= pipe4.ip;
+
+				pipe5.p2_increment2			= pipe4.p2_increment2;
+
 				pipe5.p5_d_write			= pipe4.p5_d_write;
 				pipe5.p5_d_write_address	= pipe4.p5_d_write_address;
 				pipe5.p5_data				= pipe4.p5_data;
