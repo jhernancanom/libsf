@@ -243,7 +243,7 @@
 	{
 		u32		clk;						// Clock signal
 		bool	is_CPU_halted;				// True if the machine is halted
-		int		pipeStage;					// The current pipeline stage that's valid (set to 0 during branch, incremented up to 5 )
+		s32		pipeStage;					// The current pipeline stage that's valid (set to 0 during branch, incremented up to 5 )
 
 		// Register state
 		SRegs	regs;
@@ -413,7 +413,7 @@
 
 					} else if (state.clk == _NEGLEVEL) {
 						// Indicate the pipe stage has increased
-						state.pipeStage = min(++state.pipeStage, _STAGE5);
+						state.pipeStage = min(state.pipeStage + 1, _STAGE5);
 					}
 				}
 			}
@@ -517,6 +517,7 @@
 					{
 						// mov   reg8,[address]		2			000.00.000:00000000
 						iora.i_data2				= pipe2.i_data2;
+						pipe2.p2_increment2			= true;
 						pipe2.p4_op					= _OP_MOV_R8_ADDR;
 						pipe2.p4_reg_dst			= iora.rd;
 						pipe2.p3_d_read				= true;
@@ -525,6 +526,7 @@
 					} else if (iorr.ooo == _MOV_R8_R8) {
 						// mov   reg8,reg8			1			001.x.00.00	(dest,src)
 						pipe2.p4_op					= _OP_MOV_R8_R8;
+						pipe2.p2_increment2			= false;
 						pipe2.p4_reg_dst			= iorr.rd;
 						pipe2.p4_reg_src			= iorr.rs;
 						pipe2.p3_d_read				= false;
@@ -532,6 +534,7 @@
 					} else if (iorr.oooo == _ADD_R8_R8) {
 						// add   reg8,reg8			1			0100.00.00
 						pipe2.p4_op					= _OP_ADD_R8_R8;
+						pipe2.p2_increment2			= false;
 						pipe2.p4_reg_dst			= iorr.rd;
 						pipe2.p4_reg_src			= iorr.rs;
 						pipe2.p3_d_read				= false;
@@ -539,6 +542,7 @@
 					} else if (iorr.oooo == _ADC_R8_R8) {
 						// adc   reg8,reg8			1			0110.00.00
 						pipe2.p4_op					= _OP_ADC_R8_R8;
+						pipe2.p2_increment2			= false;
 						pipe2.p4_reg_dst			= iorr.rd;
 						pipe2.p4_reg_src			= iorr.rs;
 						pipe2.p3_d_read				= false;
@@ -546,6 +550,7 @@
 					} else if (iorr.oooo == _SUB_R8_R8) {
 						// sub   reg8,reg8			1			0101.00.00
 						pipe2.p4_op					= _OP_SUB_R8_R8;
+						pipe2.p2_increment2			= false;
 						pipe2.p4_reg_dst			= iorr.rd;
 						pipe2.p4_reg_src			= iorr.rs;
 						pipe2.p3_d_read				= false;
@@ -553,6 +558,7 @@
 					} else if (iorr.oooo == _SBB_R8_R8) {
 						// sbb   reg8,reg8			1			0111.00.00
 						pipe2.p4_op					= _OP_SBB_R8_R8;
+						pipe2.p2_increment2			= false;
 						pipe2.p4_reg_dst			= iorr.rd;
 						pipe2.p4_reg_src			= iorr.rs;
 						pipe2.p3_d_read				= false;
@@ -560,6 +566,7 @@
 					} else if (iora.ooo == _MOV_ADDR_R8) {
 						// mov   [address],reg8		2			100.00.000:00000000
 						iora.i_data2				= pipe2.i_data2;
+						pipe2.p2_increment2			= true;
 						pipe2.p4_op					= _OP_MOV_ADDR_R8;
 						pipe2.p4_reg_dst			= iora.rd;
 						pipe2.p5_d_write_address	= ((u16)iora.aaa << 8) | (u16)iora.aaaaaaaa;
@@ -568,6 +575,7 @@
 					} else if (iorr.ooo == _CMP_R8_R8) {
 						// cmp   reg8,reg8			1			101.x.00.00	(left,right)
 						pipe2.p4_op					= _OP_CMP_R8_R8;
+						pipe2.p2_increment2			= false;
 						pipe2.p4_reg_dst			= iorr.rd;
 						pipe2.p4_reg_src			= iorr.rs;
 						pipe2.p3_d_read				= false;
@@ -575,6 +583,7 @@
 					} else if (ibsa.ooo == _JZ_REL_ADDR) {
 						// jz    +/- 1KB			2			110.xx.s.00:00000000
 						ibsa.i_data2				= pipe2.i_data2;
+						pipe2.p2_increment2			= true;
 						pipe2.p4_op					= _OP_JZ_REL_ADDR;
 						pipe2.p4_ip_sign			= ibsa.s;
 						pipe2.p4_ip_delta			= ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa;
@@ -583,6 +592,7 @@
 					} else if (ibsa.ooo == _JMP_REL_ADDR) {
 						// jmp   +/- 1KB			2			111.xx.s.00:00000000 
 						ibsa.i_data2				= pipe2.i_data2;
+						pipe2.p2_increment2			= true;
 						pipe2.p4_op					= _OP_JMP_REL_ADDR;
 						pipe2.p4_ip_sign			= ibsa.s;
 						pipe2.p4_ip_delta			= ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa;
@@ -591,6 +601,7 @@
 					} else {
 						// Invalid opcode
 						printf("Invalid opcode encountered at %u. Exiting.\n", pipe2.ip);
+_asm int 3;
 						exit(-1);
 					}
 				}
@@ -601,9 +612,19 @@
 			if (clk == _NEGEDGE)
 			{
 				// Perform the push
-				pipe2.ip			= pipe1.ip;
-				pipe2.i_data1		= pipe1.i_data1;
-				pipe2.i_data2		= pipe1.i_data2;
+				if (pipe2.p2_increment2)
+				{
+					// Two bye opcode
+					pipe2.ip			= pipe1.ip + 1;
+					pipe2.i_data1		= pipe1.i_data2;
+					pipe2.i_data2		= pipe1.i_data3;
+
+				} else {
+					// One byte opcode
+					pipe2.ip			= pipe1.ip;
+					pipe2.i_data1		= pipe1.i_data1;
+					pipe2.i_data2		= pipe1.i_data2;
+				}
 			}
 		}
 	}
@@ -809,6 +830,7 @@
 
 						default:
 							printf("Internal consistency error. Exiting.\n");
+_asm int 3;
 							exit(-2);
 					}
 				}
@@ -841,6 +863,7 @@
 			case _R4:	return(state.regs.r1);
 			default:
 				printf("Internal consistency error. Exiting.\n");
+_asm int 3;
 				exit(-3);
 		}
 	}
