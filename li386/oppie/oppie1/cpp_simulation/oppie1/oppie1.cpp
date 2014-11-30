@@ -120,26 +120,7 @@
 	const s32	_NEGEDGE			= 2;		// negative edge
 	const s32	_NEGLEVEL			= 3;		// negative level
 
-	#define		B000				0x0;		// Binary 000
-	#define		B001				0x1;		// Binary 001
-	#define		B100				0x4;		// Binary 100
-	#define		B101				0x5;		// Binary 101
-	#define		B0100				0x4;		// Binary 0100
-	#define		B0101				0x5;		// Binary 0101
-	#define		B0110				0x6;		// Binary 0110
-	#define		B0111				0x7;		// Binary 0111
-	#define		B11000				0x18;		// Binary 11000
-	#define		B11001				0x19;		// Binary 11001
-	#define		B11010				0x1a;		// Binary 11010
-	#define		B11011				0x1b;		// Binary 11011
-	#define		B11100				0x1c;		// Binary 11100
-
 	const s32	_RAM_SIZE			= 2048;		// 2KB of RAM
-
-	const s32	_R1					= 0;		// 00b
-	const s32	_R2					= 1;		// 01b
-	const s32	_R3					= 2;		// 10b
-	const s32	_R4					= 3;		// 11b
 
 	const s32	_STAGE0				= 0;		// Pipe stage 0... which only happens during a branch (so the instruction pipe is refilled)
 	const s32	_STAGE1				= 1;		// Pipe stage 1 is valid
@@ -148,34 +129,20 @@
 	const s32	_STAGE4				= 4;		// Pipe stage 4 is valid
 	const s32	_STAGE5				= 5;		// Pipe stage 5 is valid
 
-	const s32	_MOV_R8_ADDR		= B000;		//		mov   reg8,[address]	2			000.00.000:00000000
-	const s32	_MOV_R8_R8			= B001;		//		mov   reg8,reg8			1			001.x.00.00	(dest,src)
-	const s32	_ADC_R8_R8			= B0110;	//		adc   reg8,reg8			1			0110.00.00
-	const s32	_SBB_R8_R8			= B0111;	//		sbb   reg8,reg8			1			0111.00.00
-	const s32	_ADD_R8_R8			= B0100;	//		add   reg8,reg8			1			0100.00.00
-	const s32	_SUB_R8_R8			= B0101;	//		sub   reg8,reg8			1			0101.00.00
-	const s32	_MOV_ADDR_R8		= B100;		//		mov   [address],reg8	2			100.00.000:00000000
-	const s32	_CMP_R8_R8			= B101;		//		cmp   reg8,reg8			1			101.x.00.00	(left,right)
-	const s32	_JNC_REL_ADDR		= B11000;	//		jnc   +/- 1KB			2			11000.s.00:00000000
-	const s32	_JC_REL_ADDR		= B11001;	//		jc    +/- 1KB			2			11001.s.00:00000000
-	const s32	_JNZ_REL_ADDR		= B11010;	//		jnz   +/- 1KB			2			11010.s.00:00000000
-	const s32	_JZ_REL_ADDR		= B11011;	//		jz    +/- 1KB			2			11011.s.00:00000000
-	const s32	_JMP_REL_ADDR		= B11100;	//		jmp   +/- 1KB			2			11100.s.00:00000000 
-
 	// Numbered operations mimic the bit encoding-derived instructions above
-	const s32	_OP_MOV_R8_ADDR		= 1;
-	const s32	_OP_MOV_R8_R8		= 2;
-	const s32	_OP_ADD_R8_R8		= 3;
-	const s32	_OP_ADC_R8_R8		= 4;
-	const s32	_OP_SUB_R8_R8		= 5;
-	const s32	_OP_SBB_R8_R8		= 6;
-	const s32	_OP_MOV_ADDR_R8		= 7;
-	const s32	_OP_CMP_R8_R8		= 8;
-	const s32	_OP_JNC_REL_ADDR	= 9;
-	const s32	_OP_JC_REL_ADDR		= 10;
-	const s32	_OP_JNZ_REL_ADDR	= 11;
-	const s32	_OP_JZ_REL_ADDR		= 12;
-	const s32	_OP_JMP_REL_ADDR	= 13;
+	const s32	_OPERATION_MOV_R8_ADDR		= 1;
+	const s32	_OPERATION_MOV_R8_R8		= 2;
+	const s32	_OPERATION_ADD_R8_R8		= 3;
+	const s32	_OPERATION_ADC_R8_R8		= 4;
+	const s32	_OPERATION_SUB_R8_R8		= 5;
+	const s32	_OPERATION_SBB_R8_R8		= 6;
+	const s32	_OPERATION_MOV_ADDR_R8		= 7;
+	const s32	_OPERATION_CMP_R8_R8		= 8;
+	const s32	_OPERATION_JNC_REL_ADDR		= 9;
+	const s32	_OPERATION_JC_REL_ADDR		= 10;
+	const s32	_OPERATION_JNZ_REL_ADDR		= 11;
+	const s32	_OPERATION_JZ_REL_ADDR		= 12;
+	const s32	_OPERATION_JMP_REL_ADDR		= 13;
 
 
 
@@ -480,114 +447,114 @@
 					ibsa.i_data1 = pipe2.i_data1;
 
 					// Decode the bits
-					if (iora.ooo == _MOV_R8_ADDR)
+					if (iora.ooo == (_OPCODE_MOV_R8_ADDR & _OPCODE_MASK))
 					{
 						// mov   reg8,[address]		2			000.00.000:00000000
 						iora.i_data2				= pipe2.i_data2;
 						pipe2.p2_increment2			= true;
-						pipe2.p4_op					= _OP_MOV_R8_ADDR;
+						pipe2.p4_op					= _OPERATION_MOV_R8_ADDR;
 						pipe2.p4_reg_dst			= iora.rd;
 						pipe2.p3_d_read				= true;
 						pipe2.p3_d_read_address		= ((u16)iora.aaa << 8) | (u16)iora.aaaaaaaa;
 
-					} else if (iorr.ooo == _MOV_R8_R8) {
+					} else if (iorr.ooo == (_OPCODE_MOV_R8_R8 & _OPCODE_MASK)) {
 						// mov   reg8,reg8			1			001.x.00.00	(dest,src)
-						pipe2.p4_op					= _OP_MOV_R8_R8;
+						pipe2.p4_op					= _OPERATION_MOV_R8_R8;
 						pipe2.p2_increment2			= false;
 						pipe2.p4_reg_dst			= iorr.rd;
 						pipe2.p4_reg_src			= iorr.rs;
 						pipe2.p3_d_read				= false;
 
-					} else if (iorr.oooo == _ADD_R8_R8) {
+					} else if (iorr.oooo == (_OPCODE_ADD_R8_R8 & _OPCODE_MASK)) {
 						// add   reg8,reg8			1			0100.00.00
-						pipe2.p4_op					= _OP_ADD_R8_R8;
+						pipe2.p4_op					= _OPERATION_ADD_R8_R8;
 						pipe2.p2_increment2			= false;
 						pipe2.p4_reg_dst			= iorr.rd;
 						pipe2.p4_reg_src			= iorr.rs;
 						pipe2.p3_d_read				= false;
 
-					} else if (iorr.oooo == _ADC_R8_R8) {
+					} else if (iorr.oooo == (_OPCODE_ADC_R8_R8 & _OPCODE_MASK)) {
 						// adc   reg8,reg8			1			0110.00.00
-						pipe2.p4_op					= _OP_ADC_R8_R8;
+						pipe2.p4_op					= _OPERATION_ADC_R8_R8;
 						pipe2.p2_increment2			= false;
 						pipe2.p4_reg_dst			= iorr.rd;
 						pipe2.p4_reg_src			= iorr.rs;
 						pipe2.p3_d_read				= false;
 
-					} else if (iorr.oooo == _SUB_R8_R8) {
+					} else if (iorr.oooo == (_OPCODE_SUB_R8_R8 & _OPCODE_MASK)) {
 						// sub   reg8,reg8			1			0101.00.00
-						pipe2.p4_op					= _OP_SUB_R8_R8;
+						pipe2.p4_op					= _OPERATION_SUB_R8_R8;
 						pipe2.p2_increment2			= false;
 						pipe2.p4_reg_dst			= iorr.rd;
 						pipe2.p4_reg_src			= iorr.rs;
 						pipe2.p3_d_read				= false;
 
-					} else if (iorr.oooo == _SBB_R8_R8) {
+					} else if (iorr.oooo == (_OPCODE_SBB_R8_R8 & _OPCODE_MASK)) {
 						// sbb   reg8,reg8			1			0111.00.00
-						pipe2.p4_op					= _OP_SBB_R8_R8;
+						pipe2.p4_op					= _OPERATION_SBB_R8_R8;
 						pipe2.p2_increment2			= false;
 						pipe2.p4_reg_dst			= iorr.rd;
 						pipe2.p4_reg_src			= iorr.rs;
 						pipe2.p3_d_read				= false;
 
-					} else if (iora.ooo == _MOV_ADDR_R8) {
+					} else if (iora.ooo == (_OPCODE_MOV_ADDR_R8 & _OPCODE_MASK)) {
 						// mov   [address],reg8		2			100.00.000:00000000
 						iora.i_data2				= pipe2.i_data2;
 						pipe2.p2_increment2			= true;
-						pipe2.p4_op					= _OP_MOV_ADDR_R8;
+						pipe2.p4_op					= _OPERATION_MOV_ADDR_R8;
 						pipe2.p4_reg_dst			= iora.rd;
 						pipe2.p5_d_write_address	= ((u16)iora.aaa << 8) | (u16)iora.aaaaaaaa;
 						pipe2.p3_d_read				= false;
 
-					} else if (iorr.ooo == _CMP_R8_R8) {
+					} else if (iorr.ooo == (_OPCODE_CMP_R8_R8 & _OPCODE_MASK)) {
 						// cmp   reg8,reg8			1			101.x.00.00	(left,right)
-						pipe2.p4_op					= _OP_CMP_R8_R8;
+						pipe2.p4_op					= _OPERATION_CMP_R8_R8;
 						pipe2.p2_increment2			= false;
 						pipe2.p4_reg_dst			= iorr.rd;
 						pipe2.p4_reg_src			= iorr.rs;
 						pipe2.p3_d_read				= false;
 
-					} else if (ibsa.ooooo == _JNC_REL_ADDR) {
+					} else if (ibsa.ooooo == (_OPCODE_JNC_REL_ADDR & _OPCODE_MASK)) {
 						// jnc    +/- 1KB
 						ibsa.i_data2				= pipe2.i_data2;
 						pipe2.p2_increment2			= true;
-						pipe2.p4_op					= _OP_JNC_REL_ADDR;
+						pipe2.p4_op					= _OPERATION_JNC_REL_ADDR;
 						pipe2.p4_ip_sign			= ibsa.s;
 						pipe2.p4_ip_delta			= ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa;
 						pipe2.p3_d_read				= false;
 
-					} else if (ibsa.ooooo == _JC_REL_ADDR) {
+					} else if (ibsa.ooooo == (_OPCODE_JC_REL_ADDR & _OPCODE_MASK)) {
 						// jc    +/- 1KB
 						ibsa.i_data2				= pipe2.i_data2;
 						pipe2.p2_increment2			= true;
-						pipe2.p4_op					= _OP_JC_REL_ADDR;
+						pipe2.p4_op					= _OPERATION_JC_REL_ADDR;
 						pipe2.p4_ip_sign			= ibsa.s;
 						pipe2.p4_ip_delta			= ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa;
 						pipe2.p3_d_read				= false;
 
-					} else if (ibsa.ooooo == _JNZ_REL_ADDR) {
+					} else if (ibsa.ooooo == (_OPCODE_JNZ_REL_ADDR & _OPCODE_MASK)) {
 						// jnz    +/- 1KB
 						ibsa.i_data2				= pipe2.i_data2;
 						pipe2.p2_increment2			= true;
-						pipe2.p4_op					= _OP_JNZ_REL_ADDR;
+						pipe2.p4_op					= _OPERATION_JNZ_REL_ADDR;
 						pipe2.p4_ip_sign			= ibsa.s;
 						pipe2.p4_ip_delta			= ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa;
 						pipe2.p3_d_read				= false;
 
-					} else if (ibsa.ooooo == _JZ_REL_ADDR) {
+					} else if (ibsa.ooooo == (_OPCODE_JZ_REL_ADDR & _OPCODE_MASK)) {
 						// jz    +/- 1KB
 						ibsa.i_data2				= pipe2.i_data2;
 						pipe2.p2_increment2			= true;
-						pipe2.p4_op					= _OP_JZ_REL_ADDR;
+						pipe2.p4_op					= _OPERATION_JZ_REL_ADDR;
 						pipe2.p4_ip_sign			= ibsa.s;
 						pipe2.p4_ip_delta			= ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa;
 						pipe2.p3_d_read				= false;
 
-					} else if (ibsa.ooooo == _JMP_REL_ADDR) {
+					} else if (ibsa.ooooo == (_OPCODE_JMP_REL_ADDR & _OPCODE_MASK)) {
 						// jmp   +/- 1KB
 						ibsa.i_data2				= pipe2.i_data2;
 						pipe2.p2_increment2			= true;
-						pipe2.p4_op					= _OP_JMP_REL_ADDR;
+						pipe2.p4_op					= _OPERATION_JMP_REL_ADDR;
 						pipe2.p4_ip_sign			= ibsa.s;
 						pipe2.p4_ip_delta			= ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa;
 						pipe2.p3_d_read				= false;
@@ -696,7 +663,7 @@ _asm int 3;
 					// Execute the op
 					switch (pipe4.p4_op)
 					{
-						case _OP_MOV_R8_ADDR:
+						case _OPERATION_MOV_R8_ADDR:
 							switch (pipe4.p4_reg_dst)
 							{
 								case _R1:	rx = state.regs.r1 = pipe4.p4_data;		break;
@@ -707,7 +674,7 @@ _asm int 3;
 							state.regs.zero = (rx == 0);
 							break;
 
-						case _OP_MOV_R8_R8:
+						case _OPERATION_MOV_R8_R8:
 							rx = iiExecute_stage4_getRegSrc();
 							switch (pipe4.p4_reg_dst)
 							{
@@ -719,7 +686,7 @@ _asm int 3;
 							state.regs.zero = (rx == 0);
 							break;
 
-						case _OP_ADD_R8_R8:
+						case _OPERATION_ADD_R8_R8:
 							rx = iiExecute_stage4_getRegSrc();
 							switch (pipe4.p4_reg_dst)
 							{
@@ -731,7 +698,7 @@ _asm int 3;
 							state.regs.zero = (rx == 0);
 							break;
 
-						case _OP_ADC_R8_R8:
+						case _OPERATION_ADC_R8_R8:
 							rx = iiExecute_stage4_getRegSrc();
 							switch (pipe4.p4_reg_dst)
 							{
@@ -743,7 +710,7 @@ _asm int 3;
 							state.regs.zero = (rx == 0);
 							break;
 
-						case _OP_SUB_R8_R8:
+						case _OPERATION_SUB_R8_R8:
 							rx = iiExecute_stage4_getRegSrc();
 							switch (pipe4.p4_reg_dst)
 							{
@@ -755,7 +722,7 @@ _asm int 3;
 							state.regs.zero = (rx == 0);
 							break;
 
-						case _OP_SBB_R8_R8:
+						case _OPERATION_SBB_R8_R8:
 							rx = iiExecute_stage4_getRegSrc();
 							switch (pipe4.p4_reg_dst)
 							{
@@ -767,7 +734,7 @@ _asm int 3;
 							state.regs.zero = (rx == 0);
 							break;
 
-						case _OP_MOV_ADDR_R8:
+						case _OPERATION_MOV_ADDR_R8:
 							switch (pipe4.p4_reg_dst)
 							{
 								case _R1:	pipe4.p5_data = state.regs.r1;		break;
@@ -777,7 +744,7 @@ _asm int 3;
 							}
 							break;
 
-						case _OP_CMP_R8_R8:
+						case _OPERATION_CMP_R8_R8:
 							rx = iiExecute_stage4_getRegSrc();
 							switch (pipe4.p4_reg_dst)
 							{
@@ -797,7 +764,7 @@ _asm int 3;
 							}
 							break;
 
-						case _OP_JNC_REL_ADDR:
+						case _OPERATION_JNC_REL_ADDR:
 							if (!state.regs.carry)
 							{
 								// We jump
@@ -814,7 +781,7 @@ _asm int 3;
 							}
 							break;
 
-						case _OP_JC_REL_ADDR:
+						case _OPERATION_JC_REL_ADDR:
 							if (state.regs.carry)
 							{
 								// We jump
@@ -831,7 +798,7 @@ _asm int 3;
 							}
 							break;
 
-						case _OP_JNZ_REL_ADDR:
+						case _OPERATION_JNZ_REL_ADDR:
 							if (!state.regs.zero)
 							{
 								// We jump
@@ -848,7 +815,7 @@ _asm int 3;
 							}
 							break;
 
-						case _OP_JZ_REL_ADDR:
+						case _OPERATION_JZ_REL_ADDR:
 							if (state.regs.zero)
 							{
 								// We jump
@@ -865,7 +832,7 @@ _asm int 3;
 							}
 							break;
 
-						case _OP_JMP_REL_ADDR:
+						case _OPERATION_JMP_REL_ADDR:
 							// We jump
 							state.pipeStage = _STAGE0;
 							if (pipe4.p4_ip_sign)

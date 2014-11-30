@@ -358,4 +358,7 @@ struct SCompileNote;
 		SCompileNote*	firstError;										// Noted error(s) on this source code line
 		SCompileNote*	firstWarning;									// Noted warning(s) on this source code line
 		SCompileNote*	firstNote;										// Noted note(s) on this source code line
+		
+		// Extra information
+		void*			extra_info;										// Specific to the application
 	};

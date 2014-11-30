@@ -179,11 +179,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\keywords.h"
+				RelativePath=".\oppie1_lasm.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\oppie1_lasm.cpp"
+				RelativePath=".\oppie1_lasm.h"
 				>
 			</File>
 		</Filter>

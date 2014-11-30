@@ -88,14 +88,7 @@
 // Instruction encoding
 //////
 	#include "..\common\instructions.h"
-	#include "keywords.h"
-
-
-//////////
-// Forward declarations
-//////
-	SComp*		iParseSourceCodeLine						(SLine* line);
-	void		iCompileSourceCodeLine						(SLine* line, s32* tnErrors, s32* tnWarnings);
+	#include "oppie1_lasm.h"
 
 
 
@@ -107,9 +100,10 @@
 //////
 	int main(int argc, char* argv[])
 	{
-		s32		lnErrors, lnWarnings;
-		SEM*	asmFile;
-		SLine*	line;
+		s32					lnErrors, lnWarnings, lnOrg;
+		SEM*				asmFile;
+		SLine*				line;
+		SOppie1Instruction*	instr;
 
 
 		//////////
@@ -153,11 +147,67 @@
 						// Compile every line that can be compiled, report any errors
 						//////
 							for (	line = asmFile->firstLine, lnErrors = 0, lnWarnings = 0;
-									line && lnErrors == 0;
+									line;
 									line = (SLine*)line->ll.next	)
 							{
-								iCompileSourceCodeLine(line, &lnErrors, &lnWarnings);
+								// Compile pass-1
+								iCompileSourceCodeLine(asmFile, line, &lnErrors, &lnWarnings, 1);
 							}
+
+							// If there were any errors, exit
+							if (lnErrors != 0)
+								return -1;
+
+
+						//////////
+						// Assign addresses to everything
+						//////
+							for (	lnOrg = 0, line = asmFile->firstLine;
+									line;
+									line = (SLine*)line->ll.next	)
+							{
+								//////////
+								// Based on the type update it
+								//////
+									instr = (SOppie1Instruction*)line->compilerInfo->extra_info;
+									if (instr->isOrg)
+									{
+										// Update the origin
+										lnOrg		= instr->org;
+
+									} else {
+										// Store the origin, and increase beyond this instruction's length
+										instr->org	= lnOrg;
+										lnOrg		+= instr->size;
+									}
+							}
+
+
+						//////////
+						// Compile every line which has an address that may not have been resolvable before
+						//////
+							for (	line = asmFile->firstLine, lnErrors = 0, lnWarnings = 0;
+									line;
+									line = (SLine*)line->ll.next	)
+							{
+								// Compile pass-2
+								iCompileSourceCodeLine(asmFile, line, &lnErrors, &lnWarnings, 2);
+							}
+
+							// If there were any errors, exit
+							if (lnErrors != 0)
+								return -2;
+
+
+						//////////
+						// When we get here, every line has compiled out.
+						// Look for memory locations which will overlay
+						//////
+
+
+						//////////
+						// Write the output
+						//////
 					}
 				}
 			}
@@ -180,6 +230,40 @@
 	SComp* iParseSourceCodeLine(SLine* line)
 	{
 		SComp* compNext;
+
+
+		//////////
+		// Make sure we have a compilerInfo block
+		//////
+			if (!line->compilerInfo)
+			{
+				// Allocate the compiler info
+				line->compilerInfo = iCompiler_allocate(line);
+				if (!line->compilerInfo)
+				{
+					// Should never happen
+					printf("Out of memory\n");
+					exit(-999);
+				}
+			}
+
+		//////////
+		// Make sure we have our SOppie1Instruction allocated
+		//////
+			if (!line->compilerInfo->extra_info)
+			{
+				// Allocate a structure
+				line->compilerInfo->extra_info = (SOppie1Instruction*)malloc(sizeof(SOppie1Instruction));
+				if (!line->compilerInfo->extra_info)
+				{
+					// Should never happen
+					printf("Out of memory\n");
+					exit(-998);
+				}
+
+				// Initialize to NULLs
+				memset(line->compilerInfo->extra_info, 0, sizeof(SOppie1Instruction));
+			}
 
 
 		//////////
@@ -249,393 +333,14 @@
 // Called to parse the indicated line of source code
 //
 //////
-	cs32	_MOV_REG_REG						= 1;
-	cs32	_MOV_REG_LABEL						= 2;
-	cs32	_MOV_REG_99							= 3;
-	cs32	_MOV_LABEL_REG						= 4;
-	cs32	_MOV_99_REG							= 5;
-	cs32	_ADD_REG_REG						= 6;
-	cs32	_ADC_REG_REG						= 7;
-	cs32	_SUB_REG_REG						= 8;
-	cs32	_SBB_REG_REG						= 9;
-	cs32	_CMP_REG_REG						= 10;
-	cs32	_JNC_LABEL							= 11;
-	cs32	_JNC_PLUS_99						= 12;
-	cs32	_JNC_NEGATIVE_99					= 13;
-	cs32	_JC_LABEL							= 14;
-	cs32	_JC_PLUS_99							= 15;
-	cs32	_JC_NEGATIVE_99						= 16;
-	cs32	_JNZ_LABEL							= 17;
-	cs32	_JNZ_PLUS_99						= 18;
-	cs32	_JNZ_NEGATIVE_99					= 19;
-	cs32	_JZ_LABEL							= 20;
-	cs32	_JZ_PLUS_99							= 21;
-	cs32	_JZ_NEGATIVE_99						= 22;
-	cs32	_JMP_LABEL							= 23;
-	cs32	_JMP_PLUS_99						= 24;
-	cs32	_JMP_NEGATIVE_99					= 25;
-	cs32	_ORG_99								= 26;
-	cs32	_DB_DUP								= 27;
-
-	struct SCmdPattern
+	void iCompileSourceCodeLine(SEM* asmFile, SLine* line, s32* tnErrors, s32* tnWarnings, s32 tnPass)
 	{
-		s32		iCode;
-		s32		iCode2;
-		s32		iCat;
-	};
-
-	struct SCommand
-	{
-		s32			cmdType;
-		SCmdPattern	comp[6];
-	};
-
-	SCommand gsCommands[] = {
-		{ // mov reg,reg
-			_MOV_REG_REG,
-			{
-				{ _ICODE_MOV, -1, -1 },
-				{ -1, -1, _ICAT_REGISTER },
-				{ _ICODE_COMMA, -1, -1 },
-				{ -1, -1, _ICAT_REGISTER },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // mov reg,label
-			_MOV_REG_LABEL,
-			{
-				{ _ICODE_MOV, -1, -1 },
-				{ -1, -1, _ICAT_REGISTER },
-				{ _ICODE_COMMA, -1, -1 },
-				{ _ICODE_ALPHA, _ICODE_ALPHANUMERIC, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // mov reg,[99]
-			_MOV_REG_99,
-			{
-				{ _ICODE_MOV, -1, -1 },
-				{ -1, -1, _ICAT_REGISTER },
-				{ _ICODE_COMMA, -1, -1 },
-				{ _ICODE_BRACKET_LEFT, -1, -1 },
-				{ _ICODE_NUMERIC, -1, -1 },
-				{ _ICODE_BRACKET_RIGHT, -1, -1 }
-			}
-		},
-
-		{ // mov label,reg
-			_MOV_LABEL_REG,
-			{
-				{ _ICODE_MOV, -1, -1 },
-				{ _ICODE_ALPHA, _ICODE_ALPHANUMERIC, -1 },
-				{ _ICODE_COMMA, -1, -1 },
-				{ -1, -1, _ICAT_REGISTER },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // mov [99],reg
-			_MOV_99_REG,
-			{
-				{ _ICODE_MOV, -1, -1 },
-				{ _ICODE_BRACKET_LEFT, -1, -1 },
-				{ _ICODE_NUMERIC, -1, -1 },
-				{ _ICODE_BRACKET_RIGHT, -1, -1 },
-				{ _ICODE_COMMA, -1, -1 },
-				{ -1, -1, _ICAT_REGISTER }
-			}
-		},
-
-		{ // add reg,reg
-			_ADD_REG_REG,
-			{
-				{ _ICODE_ADD, -1, -1 },
-				{ -1, -1, _ICAT_REGISTER },
-				{ _ICODE_COMMA, -1, -1 },
-				{ -1, -1, _ICAT_REGISTER },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // adc reg,reg
-			_ADC_REG_REG,
-			{
-				{ _ICODE_ADC, -1, -1 },
-				{ -1, -1, _ICAT_REGISTER },
-				{ _ICODE_COMMA, -1, -1 },
-				{ -1, -1, _ICAT_REGISTER },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // sub reg,reg
-			_SUB_REG_REG,
-			{
-				{ _ICODE_SUB, -1, -1 },
-				{ -1, -1, _ICAT_REGISTER },
-				{ _ICODE_COMMA, -1, -1 },
-				{ -1, -1, _ICAT_REGISTER },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // sbb reg,reg
-			_SBB_REG_REG,
-			{
-				{ _ICODE_SBB, -1, -1 },
-				{ -1, -1, _ICAT_REGISTER },
-				{ _ICODE_COMMA, -1, -1 },
-				{ -1, -1, _ICAT_REGISTER },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // cmp reg,reg
-			_CMP_REG_REG,
-			{
-				{ _ICODE_CMP, -1, -1 },
-				{ -1, -1, _ICAT_REGISTER },
-				{ _ICODE_COMMA, -1, -1 },
-				{ -1, -1, _ICAT_REGISTER },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // jnc label
-			_JNC_LABEL,
-			{
-				{ _ICODE_JNC, -1, -1 },
-				{ _ICODE_ALPHA, _ICODE_ALPHANUMERIC, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // jnc +99
-			_JNC_PLUS_99,
-			{
-				{ _ICODE_JNC, -1, -1 },
-				{ _ICODE_PLUS, -1, -1 },
-				{ _ICODE_NUMERIC, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // jnc -99
-			_JNC_NEGATIVE_99,
-			{
-				{ _ICODE_JNC, -1, -1 },
-				{ _ICODE_HYPHEN, -1, -1 },
-				{ _ICODE_NUMERIC, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // jc label
-			_JC_LABEL,
-			{
-				{ _ICODE_JC, -1, -1 },
-				{ _ICODE_ALPHA, _ICODE_ALPHANUMERIC, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // jc +99
-			_JC_PLUS_99,
-			{
-				{ _ICODE_JC, -1, -1 },
-				{ _ICODE_PLUS, -1, -1 },
-				{ _ICODE_NUMERIC, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // jc -99
-			_JC_NEGATIVE_99,
-			{
-				{ _ICODE_JC, -1, -1 },
-				{ _ICODE_HYPHEN, -1, -1 },
-				{ _ICODE_NUMERIC, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // jnz label
-			_JNZ_LABEL,
-			{
-				{ _ICODE_JNZ, -1, -1 },
-				{ _ICODE_ALPHA, _ICODE_ALPHANUMERIC, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // jnz +99
-			_JNZ_PLUS_99,
-			{
-				{ _ICODE_JNZ, -1, -1 },
-				{ _ICODE_PLUS, -1, -1 },
-				{ _ICODE_NUMERIC, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // jnz -99
-			_JNZ_NEGATIVE_99,
-			{
-				{ _ICODE_JNZ, -1, -1 },
-				{ _ICODE_HYPHEN, -1, -1 },
-				{ _ICODE_NUMERIC, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // jz label
-			_JZ_LABEL,
-			{
-				{ _ICODE_JZ, -1, -1 },
-				{ _ICODE_ALPHA, _ICODE_ALPHANUMERIC, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // jz +99
-			_JZ_PLUS_99,
-			{
-				{ _ICODE_JZ, -1, -1 },
-				{ _ICODE_PLUS, -1, -1 },
-				{ _ICODE_NUMERIC, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // jz -99
-			_JZ_NEGATIVE_99,
-			{
-				{ _ICODE_JZ, -1, -1 },
-				{ _ICODE_HYPHEN, -1, -1 },
-				{ _ICODE_NUMERIC, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // jmp label
-			_JMP_LABEL,
-			{
-				{ _ICODE_JMP, -1, -1 },
-				{ _ICODE_ALPHA, _ICODE_ALPHANUMERIC, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // jmp +99
-			_JMP_PLUS_99,
-			{
-				{ _ICODE_JMP, -1, -1 },
-				{ _ICODE_PLUS, -1, -1 },
-				{ _ICODE_NUMERIC, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // jmp -99
-			_JMP_NEGATIVE_99,
-			{
-				{ _ICODE_JMP, -1, -1 },
-				{ _ICODE_HYPHEN, -1, -1 },
-				{ _ICODE_NUMERIC, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // .org 99
-			_ORG_99,
-			{
-				{ _ICODE_ORG, -1, -1 },
-				{ _ICODE_NUMERIC, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // db dup
-			_DB_DUP,
-			{
-				{ _ICODE_DB, -1, -1 },
-				{ _ICODE_NUMERIC, -1, -1 },
-				{ _ICODE_DUP, -1, -1 },
-				{ _ICODE_NUMERIC, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // End marker
-			-1,
-			{
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		}
-	};
-	void iCompileSourceCodeLine(SLine* line, s32* tnErrors, s32* tnWarnings)
-	{
-		s32			lnI;
-		bool		llFailure;
-		SOra		iora;
-		SOrr		iorr;
-		SBsa		ibsa;
-		SCommand*	cmd;
-		SComp*		comp[6];
+		s32						lnI;
+		u32						lnAddress;
+		bool					llFailure;
+		SCommand*				cmd;
+		SComp*					comp[6];
+		SOppie1Instruction*		instr;
 
 
 		//////////
@@ -674,75 +379,294 @@
 									&&	(cmd->comp[lnI].iCode2	== -1 || cmd->comp[lnI].iCode2	== comp[lnI]->iCode)
 									&&	(cmd->comp[lnI].iCat	== -1 || cmd->comp[lnI].iCat	== comp[lnI]->iCode)	)
 							{
-								// A full match
-								// No code, just capture the block without awkward logic above
+								// If we enter this block, a full match was made here
+								// No code goes here, it's just coded this way to capture the logic condition without using the awkward reverse logic in the above statement
 
 							} else {
+								// If we get to any component which fails, then this is not a match
 								llFailure = true;
 								break;
 							}
 						}
 					}
 
-					// When we get here, we either have a match or a failure
+					// When we get here, we either have a full match on this command, or a failure to match at some point
 					if (!llFailure)
 					{
-						// A match
-						switch (cmd->cmdType)
+						// A full match
+						instr = (SOppie1Instruction*)line->compilerInfo->extra_info;
+						switch (cmd->opcodeType)
 						{
-							case _MOV_REG_REG:
-							case _ADD_REG_REG:
-							case _ADC_REG_REG:
-							case _SUB_REG_REG:
-							case _SBB_REG_REG:
-							case _CMP_REG_REG:
+							//////////
+							// ORR -- Opcode,Register,Register
+							//////
+							case _ORR:
+								if (cmd->_uniqueHandler)
+								{
+									// There is a unique handler to setup the values
+									cmd->uniqueHandler(cmd, line, comp[0], tnPass);
+
+								} else {
+									// Standard handler
+									if (tnPass == 1)
+									{
+										if ((cmd->opcode & ~_OPCODE_MASK) == _OPCODE_THREE_BITS)
+										{
+											// 3-bit encoding
+											instr->orr.ooo = cmd->opcode & _OPCODE_MASK;
+
+										} else {
+											// 4-bit encoding
+											instr->orr.oooo = cmd->opcode & _OPCODE_MASK;
+										}
+
+										// Store the registers
+										instr->orr.rd = iGetRegisterEncoding(comp[1]);
+										instr->orr.rs = iGetRegisterEncoding(comp[1]);
+									}
+									// Encoding is complete
+								}
 								break;
 
-							case _MOV_REG_LABEL:
+
+							//////////
+							// ORA -- Opcode,register,address
+							//////
+							case _ORA:
+								if (cmd->_uniqueHandler)
+								{
+									// There is a unique handler to setup the values
+									cmd->uniqueHandler(cmd, line, comp[0], tnPass);
+
+								} else {
+									// Standard handler
+									if (tnPass == 2)
+									{
+										// Grab the address
+										switch (comp[cmd->componentLabelOrNumber]->iCode)
+										{
+											case _ICODE_ALPHA:
+											case _ICODE_ALPHANUMERIC:
+												// Label
+												lnAddress = iGetLabelAddress(asmFile, comp[cmd->componentLabelOrNumber]);
+												break;
+
+											case _ICODE_NUMERIC:
+												// Hard address
+												// Note:  This address is in the raw positive numeric value, the sign is stored as a separate bit
+												lnAddress = iComps_getAs_s32(comp[cmd->componentLabelOrNumber]);
+												break;
+										}
+
+										// Store the upper 3-bits of the address
+										instr->ora.aaa		= (lnAddress & 0x700) >> 8;
+
+										// Store the lower 8-bits of the address
+										instr->ora.aaaaaaaa	= (lnAddress & 0xff);
+										// Encoding is complete
+
+									} else {
+										// Always 3-bit encoding
+										instr->ora.ooo = cmd->opcode & _OPCODE_MASK;
+
+										// Store the register
+										instr->ora.rd = iGetRegisterEncoding(comp[cmd->componentRegister]);
+										// First-pass encoding is complete
+									}
+								}
 								break;
 
-							case _MOV_LABEL_REG:
-								break;
 
-							case _MOV_REG_99:
-								break;
+							//////////
+							// Branch,Sign,Address
+							//////
+							case _BSA:
+								if (cmd->_uniqueHandler)
+								{
+									// There is a unique handler to setup the values
+									cmd->uniqueHandler(cmd, line, comp[0], tnPass);
 
-							case _MOV_99_REG:
-								break;
+								} else {
+									// Standard handler
+									if (tnPass == 2)
+									{
+										// Grab the address
+										switch (comp[cmd->componentLabelOrNumber]->iCode)
+										{
+											case _ICODE_ALPHA:
+											case _ICODE_ALPHANUMERIC:
+												// Label
+												lnAddress = iGetLabelAddress(asmFile, comp[cmd->componentLabelOrNumber]);
+												break;
 
-							case _JNC_LABEL:
-							case _JC_LABEL:
-							case _JNZ_LABEL:
-							case _JZ_LABEL:
-							case _JMP_LABEL:
-								break;
+											case _ICODE_NUMERIC:
+												// Hard address
+												// Note:  This address is in the raw positive numeric value, the sign is stored as a separate bit
+												lnAddress = iComps_getAs_s32(comp[cmd->componentLabelOrNumber]);
+												break;
+										}
 
-							case _JNC_PLUS_99:
-							case _JC_PLUS_99:
-							case _JNZ_PLUS_99:
-							case _JZ_PLUS_99:
-							case _JMP_PLUS_99:
-								break;
+										// Store the upper 2-bits of the address
+										instr->bsa.aa		= (lnAddress & 0x300) >> 8;
 
-							case _JNC_NEGATIVE_99:
-							case _JC_NEGATIVE_99:
-							case _JNZ_NEGATIVE_99:
-							case _JZ_NEGATIVE_99:
-							case _JMP_NEGATIVE_99:
-								break;
+										// Store the lower 8-bits of the address
+										instr->bsa.aaaaaaaa	= (lnAddress & 0xff);
+										// Encoding is complete
 
-							case _ORG_99:
-								break;
+									} else {
+										// Always 5-bit encoding
+										instr->bsa.ooooo = cmd->opcode & _OPCODE_MASK;
 
-							case _DB_DUP:
+										// Store the sign
+										instr->bsa.s = cmd->opcodeSign;
+										// First-pass encoding is complete
+									}
+								}
 								break;
 
 							default:
-								// Should never happen
-								// Internal consistency error
+								// It's not a standard instruction, but is likely some compiler directive or data assignment
+								if (cmd->_uniqueHandler)
+								{
+									// Use the custom handler
+									cmd->uniqueHandler(cmd, line, comp[0], tnPass);
+
+								} else {
+									// Should never happen
+									// Internal consistency error
 _asm int 3;
+								}
 						}
 					}
+
 				}
+				// If we get here, we've exhausted our command patterns, and this line is unknown.
+				printf("Unrecognized command on line %u\n", line->lineNumber);
 			}
+	}
+
+
+
+
+//////////
+//
+// Called to convert the component to its actual register encoding for the instruction
+//
+//////
+	u32 iGetRegisterEncoding(SComp* comp)
+	{
+		switch (comp->iCode)
+		{
+			case _ICODE_R1:
+				return(_R1);
+				break;
+
+			case _ICODE_R2:
+				return(_R2);
+				break;
+
+			case _ICODE_R3:
+				return(_R3);
+				break;
+
+			case _ICODE_R4:
+				return(_R4);
+				break;
+
+			default:
+				// Should never happen.
+				// Indicates an internal programming error
+				// Check the call stack.  It should have something passing a component which is only an _ICODE_RN register.
+				break;
+		}
+_asm int 3;
+		return(-1);
+	}
+
+
+
+
+//////////
+//
+// Called to search for the indicated label and return its address (org or origin)
+//
+//////
+	u32 iGetLabelAddress(SEM* asmFile, SComp* compLabelSrch)
+	{
+		SLine*					line;
+		SComp*					compLabelThis;
+		SOppie1Instruction*		instr;
+
+
+		// Iterate through every line to find the label
+		for (	line = asmFile->firstLine;
+				line;
+				line = (SLine*)line->ll.next)
+		{
+			// Is this one a label
+			instr = (SOppie1Instruction*)line->compilerInfo->extra_info;
+			if (instr->isLabel)
+			{
+				//////////
+				// Grab the component
+				//////
+					compLabelThis = iComps_getNth(line->compilerInfo->firstComp, instr->labelComponentNumber);
+
+
+				//////////
+				// Is it a match?
+				//////
+					if (compLabelThis->length - 1 == compLabelSrch->length)
+					{
+						// They're the same length, are they the same?
+						if (_memicmp(	compLabelThis->line->sourceCode->data_s8	+ compLabelThis->start,
+										compLabelSrch->line->sourceCode->data_s8	+ compLabelSrch->start,
+										compLabelSrch->length) == 0)
+						{
+							// It is a match
+							return(instr->org);
+						}
+					}
+
+			}
+		}
+		// If we get here, not found
+		printf("Label not found on line %u\n", line->lineNumber);
+		exit(-4);
+	}
+
+
+
+
+//////////
+//
+// Called to handle the .ORG command
+//
+//////
+	void iCompile_orgHandler(SCommand* cmd, SLine* line, SComp* compFirst, s32 tnPass)
+	{
+	}
+
+
+
+
+//////////
+//
+// Called to handle the label assignment
+//
+//////
+	void iCompile_labelHandler(SCommand* cmd, SLine* line, SComp* compFirst, s32 tnPass)
+	{
+	}
+
+
+
+
+//////////
+//
+// Called to handle the db N dup 0 memory assignment
+//
+//////
+	void iCompile_dbDupHandler(SCommand* cmd, SLine* line, SComp* compFirst, s32 tnPass)
+	{
 	}

@@ -33,6 +33,50 @@
 //
 
 
+//////////
+// Opcode bit encodings
+//////
+	cs32		B000						= 0x0;		// Binary 000
+	cs32		B001						= 0x1;		// Binary 001
+	cs32		B100						= 0x4;		// Binary 100
+	cs32		B101						= 0x5;		// Binary 101
+	cs32		B0100						= 0x4;		// Binary 0100
+	cs32		B0101						= 0x5;		// Binary 0101
+	cs32		B0110						= 0x6;		// Binary 0110
+	cs32		B0111						= 0x7;		// Binary 0111
+	cs32		B11000						= 0x18;		// Binary 11000
+	cs32		B11001						= 0x19;		// Binary 11001
+	cs32		B11010						= 0x1a;		// Binary 11010
+	cs32		B11011						= 0x1b;		// Binary 11011
+	cs32		B11100						= 0x1c;		// Binary 11100
+	cs32		B11111						= 0x1f;		// Binary 11111
+
+	cs32		_OPCODE_THREE_BITS			= 0x30000000;
+	cs32		_OPCODE_FOUR_BITS			= 0x40000000;
+	cs32		_OPCODE_FIVE_BITS			= 0x50000000;
+	cs32		_OPCODE_MASK				= B11111;		// Mask for the actual opcode bits
+
+	cs32		_OPCODE_MOV_R8_ADDR			= _OPCODE_THREE_BITS	| B000;		//		mov   reg8,[address]	2			000.00.000:00000000
+	cs32		_OPCODE_MOV_R8_R8			= _OPCODE_THREE_BITS	| B001;		//		mov   reg8,reg8			1			001.x.00.00	(dest,src)
+	cs32		_OPCODE_ADC_R8_R8			= _OPCODE_FOUR_BITS		| B0110;	//		adc   reg8,reg8			1			0110.00.00
+	cs32		_OPCODE_SBB_R8_R8			= _OPCODE_FOUR_BITS		| B0111;	//		sbb   reg8,reg8			1			0111.00.00
+	cs32		_OPCODE_ADD_R8_R8			= _OPCODE_FOUR_BITS		| B0100;	//		add   reg8,reg8			1			0100.00.00
+	cs32		_OPCODE_SUB_R8_R8			= _OPCODE_FOUR_BITS		| B0101;	//		sub   reg8,reg8			1			0101.00.00
+	cs32		_OPCODE_MOV_ADDR_R8			= _OPCODE_THREE_BITS	| B100;		//		mov   [address],reg8	2			100.00.000:00000000
+	cs32		_OPCODE_CMP_R8_R8			= _OPCODE_THREE_BITS	| B101;		//		cmp   reg8,reg8			1			101.x.00.00	(left,right)
+	cs32		_OPCODE_JNC_REL_ADDR		= _OPCODE_FIVE_BITS		| B11000;	//		jnc   +/- 1KB			2			11000.s.00:00000000
+	cs32		_OPCODE_JC_REL_ADDR			= _OPCODE_FIVE_BITS		| B11001;	//		jc    +/- 1KB			2			11001.s.00:00000000
+	cs32		_OPCODE_JNZ_REL_ADDR		= _OPCODE_FIVE_BITS		| B11010;	//		jnz   +/- 1KB			2			11010.s.00:00000000
+	cs32		_OPCODE_JZ_REL_ADDR			= _OPCODE_FIVE_BITS		| B11011;	//		jz    +/- 1KB			2			11011.s.00:00000000
+	cs32		_OPCODE_JMP_REL_ADDR		= _OPCODE_FIVE_BITS		| B11100;	//		jmp   +/- 1KB			2			11100.s.00:00000000
+
+	cs32		_SIGN_NEGATIVE				= 1;
+	cs32		_SIGN_POSITIVE				= 0;
+
+	cs32		_R1							= 0;		// 00b
+	cs32		_R2							= 1;		// 01b
+	cs32		_R3							= 2;		// 10b
+	cs32		_R4							= 3;		// 11b
 
 
 //////////
@@ -95,6 +139,37 @@
 				u8		s			: 1;
 				u8		aa			: 2;
 				u8		aaaaaaaa	: 8;
+			};
+		};
+	};
+
+	struct SOppie1Instruction
+	{
+		s32		org;						// The offset into memory for this item
+		s32		size;						// Number of bytes for this item, either 0, or greater
+
+		// Flags for certain operations
+		bool	isOrg;						// For .org statements, the org is populated with its new org
+		bool	isLabel;					// For label: statements, indicates this one is a label
+		s32		labelComponentNumber;		// Which component within the line is the label component?
+
+		// For data we do not store in instructions
+		bool	isData;						// If true uses data, if false uses the instruction below
+		s8*		data;						// If isData, then this is the data related to it
+
+		// Instructions are at most 2-bytes in Oppie-1
+		union {
+			union {
+				u32		_ora;
+				SOra	ora;
+			};
+			union {
+				u32		_orr;
+				SOrr	orr;
+			};
+			union {
+				u32		_bsa;
+				SBsa	bsa;
 			};
 		};
 	};

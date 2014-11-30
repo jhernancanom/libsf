@@ -88,6 +88,7 @@ struct SVariable;
 	bool					iComps_isMateOf								(SComp* compTest, s32 tniCodeMate);
 	SComp*					iComps_skipPast_iCode						(SComp* comp, s32 tniCode);
 	SComp*					iComps_skipTo_iCode							(SComp* comp, s32 tniCode);
+	SComp*					iComps_getNth								(SComp* comp, s32 tnCount);
 	u32						iComps_combineNextN							(SComp* comp, u32 tnCount, s32 tnNewICode, s32 tnNewICat, SBgra* newColor);
 	u32						iComps_combineAdjacentAlphanumeric			(SLine* line);
 	u32						iComps_combineAdjacentNumeric				(SLine* line);
@@ -102,6 +103,7 @@ struct SVariable;
 	void					iComps_combineCasks							(SLine* line);
 	void					iComps_fixupNaturalGroupings				(SLine* line);
 	s32						iiComps_charactersBetween					(SComp* compLeft, SComp* compRight);
+	s32						iComps_getAs_s32							(SComp* comp);
 
 //////////
 // Jun.25.2014 -- This block of code was originally created before I began working on

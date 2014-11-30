@@ -1611,6 +1611,27 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 
 //////////
 //
+// Returns the Nth component beyond the current one
+//
+//////
+	SComp* iComps_getNth(SComp* comp, s32 tnCount)
+	{
+		s32 lnI;
+
+
+		// Iterate until we find it
+		for (lnI = 0; comp && lnI < tnCount; lnI++)
+			comp = (SComp*)comp->ll.next;
+
+		// Indicate success or failure
+		return(comp);
+	}
+
+
+
+
+//////////
+//
 // Called to combine two components into one.  If tnNewICode is > 0 then the
 // iCode is updated as well.
 //
@@ -2435,6 +2456,32 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 	{
 		// Start of right component and end of left component
 		return(compRight->start - (compLeft->start + compLeft->length));
+	}
+
+
+
+
+//////////
+//
+// Called to convert the value in this component to an s32 integer
+//
+//////
+	s32 iComps_getAs_s32(SComp* comp)
+	{
+		s8 buffer[16];
+
+
+		if (comp && comp->line && comp->line->sourceCode && comp->line->sourceCode->data_s8 && comp->line->sourceCode_populatedLength > 0)
+		{
+			// Copy to a buffer
+			memset(buffer, 0, sizeof(buffer));
+			memcpy(buffer, comp->line->sourceCode->data_s8 + comp->start, min(comp->length, sizeof(buffer) - 1));
+			return(atoi(buffer));
+
+		} else {
+			// Component is not valid
+			return(-1);
+		}
 	}
 
 

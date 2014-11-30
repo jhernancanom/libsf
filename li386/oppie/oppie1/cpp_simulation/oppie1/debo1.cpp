@@ -519,7 +519,7 @@
 			else						sprintf(tcText, "\0");
 
 			// Decode the bits
-			if (iora.ooo == _MOV_R8_ADDR)
+			if (iora.ooo == _OPCODE_MOV_R8_ADDR)
 			{
 				// mov   reg8,[address]		2			000.00.000:00000000
 				lnOpcodeCount = 2;
@@ -531,7 +531,7 @@
 				// Disassembly
 				sprintf(tcText + strlen(tcText), "mov r%u,[%03x]\0", (u32)iora.rd + 1, ((u16)iora.aaa << 8) | (u16)iora.aaaaaaaa);
 
-			} else if (iorr.ooo == _MOV_R8_R8) {
+			} else if (iorr.ooo == _OPCODE_MOV_R8_R8) {
 				// mov   reg8,reg8			1			001.x.00.00	(dest,src)
 				lnOpcodeCount = 1;
 
@@ -542,7 +542,7 @@
 				// Disassembly
 				sprintf(tcText + strlen(tcText), "mov r%u,r%u\0", (u32)iorr.rd + 1, (u32)iorr.rs + 1);
 
-			} else if (iorr.oooo == _ADD_R8_R8) {
+			} else if (iorr.oooo == _OPCODE_ADD_R8_R8) {
 				// add   reg8,reg8			1			0100.00.00
 				lnOpcodeCount = 1;
 
@@ -553,7 +553,7 @@
 				// Disassembly
 				sprintf(tcText + strlen(tcText), "add r%u,r%u\0", (u32)iorr.rd + 1, (u32)iorr.rs + 1);
 
-			} else if (iorr.oooo == _ADC_R8_R8) {
+			} else if (iorr.oooo == _OPCODE_ADC_R8_R8) {
 				// adc   reg8,reg8			1			0110.00.00
 				lnOpcodeCount = 1;
 
@@ -564,7 +564,7 @@
 				// Disassembly
 				sprintf(tcText + strlen(tcText), "adc r%u,r%u\0", (u32)iorr.rd + 1, (u32)iorr.rs + 1);
 
-			} else if (iorr.oooo == _SUB_R8_R8) {
+			} else if (iorr.oooo == _OPCODE_SUB_R8_R8) {
 				// sub   reg8,reg8			1			0101.00.00
 				lnOpcodeCount = 1;
 
@@ -575,7 +575,7 @@
 				// Disassembly
 				sprintf(tcText + strlen(tcText), "sub r%u,r%u\0", (u32)iorr.rd + 1, (u32)iorr.rs + 1);
 
-			} else if (iorr.oooo == _SBB_R8_R8) {
+			} else if (iorr.oooo == _OPCODE_SBB_R8_R8) {
 				// sbb   reg8,reg8			1			0111.00.00
 				lnOpcodeCount = 1;
 
@@ -586,7 +586,7 @@
 				// Disassembly
 				sprintf(tcText + strlen(tcText), "sbb r%u,r%u\0", (u32)iorr.rd + 1, (u32)iorr.rs + 1);
 
-			} else if (iora.ooo == _MOV_ADDR_R8) {
+			} else if (iora.ooo == _OPCODE_MOV_ADDR_R8) {
 				// mov   [address],reg8		2			100.00.000:00000000
 				lnOpcodeCount = 2;
 
@@ -597,7 +597,7 @@
 				// Disassembly
 				sprintf(tcText + strlen(tcText), "mov [%03x],r%u\0", ((u16)iora.aaa << 8) | (u16)iora.aaaaaaaa, (u32)iora.rd + 1);
 
-			} else if (iorr.ooo == _CMP_R8_R8) {
+			} else if (iorr.ooo == _OPCODE_CMP_R8_R8) {
 				// cmp   reg8,reg8			1			101.x.00.00	(left,right)
 				lnOpcodeCount = 1;
 
@@ -608,7 +608,7 @@
 				// Disassembly
 				sprintf(tcText + strlen(tcText), "cmp r%u,r%u\0", (u32)iorr.rd + 1, (u32)iorr.rs + 1);
 
-			} else if (ibsa.ooooo == _JNC_REL_ADDR) {
+			} else if (ibsa.ooooo == _OPCODE_JNC_REL_ADDR) {
 				// jnc    +/- 1KB
 				lnOpcodeCount = 2;
 
@@ -627,7 +627,7 @@
 					sprintf(tcText + strlen(tcText), "jnc  +%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
 				}
 
-			} else if (ibsa.ooooo == _JC_REL_ADDR) {
+			} else if (ibsa.ooooo == _OPCODE_JC_REL_ADDR) {
 				// jc    +/- 1KB
 				lnOpcodeCount = 2;
 
@@ -646,7 +646,7 @@
 					sprintf(tcText + strlen(tcText), "jc  +%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
 				}
 
-			} else if (ibsa.ooooo == _JNZ_REL_ADDR) {
+			} else if (ibsa.ooooo == _OPCODE_JNZ_REL_ADDR) {
 				// jnz    +/- 1KB
 				lnOpcodeCount = 2;
 
@@ -665,7 +665,7 @@
 					sprintf(tcText + strlen(tcText), "jnz  +%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
 				}
 
-			} else if (ibsa.ooooo == _JZ_REL_ADDR) {
+			} else if (ibsa.ooooo == _OPCODE_JZ_REL_ADDR) {
 				// jz    +/- 1KB
 				lnOpcodeCount = 2;
 
@@ -684,7 +684,7 @@
 					sprintf(tcText + strlen(tcText), "jz  +%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
 				}
 
-			} else if (ibsa.ooooo == _JMP_REL_ADDR) {
+			} else if (ibsa.ooooo == _OPCODE_JMP_REL_ADDR) {
 				// jmp   +/- 1KB
 				lnOpcodeCount = 2;
 
