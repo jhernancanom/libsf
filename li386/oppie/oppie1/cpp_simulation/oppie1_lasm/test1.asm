@@ -78,11 +78,16 @@ minus_one:
 	db 255
 
 	.org 544
-result1:	db 0
-result2:	db 0
-result3:	db 0
-result4:	db 0
-result5:	db 0
+result1:
+	db 0
+result2:
+	db 0
+result3:
+	db 0
+result4:
+	db 0
+result5:
+	db 0
 
 
 	.org 0

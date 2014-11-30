@@ -48,6 +48,7 @@ struct SCommand;
 	void		iCompile_orgHandler							(SCommand* cmd, SLine* line, SComp* compFirst, s32 tnPass);
 	void		iCompile_labelHandler						(SCommand* cmd, SLine* line, SComp* compFirst, s32 tnPass);
 	void		iCompile_dbDupHandler						(SCommand* cmd, SLine* line, SComp* compFirst, s32 tnPass);
+	void		iCompile_dbHandler							(SCommand* cmd, SLine* line, SComp* compFirst, s32 tnPass);
 
 
 //////////
@@ -133,6 +134,7 @@ struct SCommand;
 	cs32	_ORG_99								= 26;
 	cs32	_DB_DUP								= 27;
 	cs32	_LABEL_COLON						= 28;
+	cs32	_DB									= 29;
 
 	// Instruction encoding types:  ORA = Opcode,Register,Address, ORR = Opcode,Register,Register, BSA = Branch,Sign,Address
 	cs32	_ORA								= 1;
@@ -523,6 +525,19 @@ struct SCommand;
 			{
 				{ _ICODE_LABEL, -1, -1 },
 				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
+
+		{ // db
+			_DB, -1, -1, -1, -1, -1,
+				(u32)&iCompile_dbHandler,
+			{
+				{ _ICODE_DB, -1, -1 },
+				{ _ICODE_NUMERIC, -1, -1 },
 				{ -1, -1, -1 },
 				{ -1, -1, -1 },
 				{ -1, -1, -1 },

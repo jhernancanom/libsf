@@ -155,9 +155,10 @@
 
 		// For data we do not store in instructions
 		bool	isData;						// If true uses data, if false uses the instruction below
-		s8*		data;						// If isData, then this is the data related to it
+		u8*		data;						// If isData, then this is the data related to it
 
 		// Instructions are at most 2-bytes in Oppie-1
+		bool	isInstruction;				// Added late in the development of this project so as to bypass blank lines
 		union {
 			union {
 				u32		_ora;

@@ -7,7 +7,7 @@
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
-//     Nov.29.2014
+//     Nov.30.2014
 //////
 // Change log:
 //     Nov.29.2014 - Initial creation
@@ -73,6 +73,11 @@
 //		 ; END myfile.asm				; Comment regarding the end-of-file
 // ----------
 //
+// Known issues:
+//		(1) If multiple labels of the same name are used, only the first one is referenced.
+//
+// Please report any bugs at the location shown at the visual-freepro.org site above.
+//
 //////
 
 
@@ -100,10 +105,13 @@
 //////
 	int main(int argc, char* argv[])
 	{
-		s32					lnErrors, lnWarnings, lnOrg;
+		s32					lnI, lnErrors, lnWarnings, lnOrg, numread;
 		SEM*				asmFile;
 		SLine*				line;
+		FILE*				lfh;
 		SOppie1Instruction*	instr;
+		s8					testBuffer[2048];
+		s8					outputBuffer[2048];
 
 
 		//////////
@@ -203,11 +211,106 @@
 						// When we get here, every line has compiled out.
 						// Look for memory locations which will overlay
 						//////
+							memset(outputBuffer, 0, sizeof(outputBuffer));
+							memset(testBuffer, 0, sizeof(testBuffer));
+							for (	line = asmFile->firstLine;
+									line;
+									line = (SLine*)line->ll.next	)
+							{
+								//////////
+								// Grab the instruction for this line
+								//////
+									instr = (SOppie1Instruction*)line->compilerInfo->extra_info;
+									if (instr->isData)
+									{
+										//////////
+										// Store the data
+										//////
+											for (lnI = 0; lnI < instr->size; lnI++)
+											{
+												// Increase our test buffer count
+												++testBuffer[instr->org + lnI];
+												if (testBuffer[instr->org + 1] > 1)
+												{
+													// We've overwritten a prior memory value
+													printf("Addresses overlap on line %u\n", line->lineNumber);
+													return(-3);
+												}
+
+												// Copy the raw data
+												outputBuffer[instr->org + lnI] = instr->data[lnI];
+											}
+
+									} else if (instr->isInstruction) {
+										//////////
+										// Store the instruction
+										//////
+											if (instr->org + instr->size >= 2048)
+											{
+												// It will wrap around the end
+												printf("Invalid address for line %u\n", line->lineNumber);
+												return(-4);
+											}
+
+
+										//////////
+										// Increase for first byte
+										//////
+											++testBuffer[instr->org];
+											outputBuffer[instr->org] = instr->ora.i_data1;
+											if (testBuffer[instr->org] > 1)
+											{
+												// We've overwritten a prior memory value
+												printf("Addresses overlap on line %u\n", line->lineNumber);
+												return(-5);
+											}
+
+
+										//////////
+										// If there's a second byte, do that one as well
+										//////
+											if (instr->size == 2)
+											{
+												++testBuffer[instr->org + 1];
+												outputBuffer[instr->org + 1] = instr->ora.i_data2;
+												if (testBuffer[instr->org + 1] > 1)
+												{
+													// We've overwritten a prior memory value
+													printf("Addresses overlap on line %u\n", line->lineNumber);
+													return(-6);
+												}
+											}
+									}
+							}
 
 
 						//////////
-						// Write the output
+						// Create the otuput file
 						//////
+							memcpy(argv[1] + strlen(argv[1]) - 4, ".img", 4);
+							lfh = fopen(argv[1], "wb+");
+							if (!lfh)
+							{
+								// Could not create the output file
+								printf("Error creating %s\n", argv[1]);
+								return(-7);
+							}
+
+
+						//////////
+						// Write the buffer
+						//////
+							numread = fwrite(outputBuffer, 1, 2048, lfh);
+							fclose(lfh);
+							if (numread != 2048)
+							{
+								printf("Error writing 2048 bytes\n");
+								return(-8);
+
+							} else {
+								// Success
+								printf("Wrote 2048 bytes\n");
+							}
 					}
 				}
 			}
@@ -401,6 +504,7 @@
 							// ORR -- Opcode,Register,Register
 							//////
 							case _ORR:
+								instr->isInstruction = true;
 								if (cmd->_uniqueHandler)
 								{
 									// There is a unique handler to setup the values
@@ -433,6 +537,7 @@
 							// ORA -- Opcode,register,address
 							//////
 							case _ORA:
+								instr->isInstruction = true;
 								if (cmd->_uniqueHandler)
 								{
 									// There is a unique handler to setup the values
@@ -481,6 +586,7 @@
 							// Branch,Sign,Address
 							//////
 							case _BSA:
+								instr->isInstruction = true;
 								if (cmd->_uniqueHandler)
 								{
 									// There is a unique handler to setup the values
@@ -645,6 +751,28 @@ _asm int 3;
 //////
 	void iCompile_orgHandler(SCommand* cmd, SLine* line, SComp* compFirst, s32 tnPass)
 	{
+		s32						lnOrg;
+		SOppie1Instruction*		instr;
+
+
+		//////////
+		// Grab the value, which is known to be a numeric value
+		//////
+			lnOrg = iComps_getAs_s32(iComps_getNth(compFirst, 1));
+			if (lnOrg < 0 || lnOrg >= 2048)
+			{
+				// Invalid
+				printf("Invalid .ORG location on line %u\n", line->lineNumber);
+				exit(-999);
+			}
+
+
+		//////////
+		// Setup the instruction
+		//////
+			instr = (SOppie1Instruction*)line->compilerInfo->extra_info;
+			instr->isOrg	= true;
+			instr->org		= lnOrg;
 	}
 
 
@@ -657,6 +785,15 @@ _asm int 3;
 //////
 	void iCompile_labelHandler(SCommand* cmd, SLine* line, SComp* compFirst, s32 tnPass)
 	{
+		SOppie1Instruction* instr;
+
+
+		//////////
+		// Setup the instruction
+		//////
+			instr = (SOppie1Instruction*)line->compilerInfo->extra_info;
+			instr->isLabel				= true;
+			instr->labelComponentNumber	= cmd->componentLabelOrNumber;
 	}
 
 
@@ -669,4 +806,87 @@ _asm int 3;
 //////
 	void iCompile_dbDupHandler(SCommand* cmd, SLine* line, SComp* compFirst, s32 tnPass)
 	{
+		s32						lnCount, lnValue;
+		SOppie1Instruction*		instr;
+
+
+		//////////
+		// Grab the count and value
+		//////
+			lnCount = iComps_getAs_s32(iComps_getNth(compFirst, 1));
+			if (lnCount < 0 || lnCount >= 2048)
+			{
+				// Invalid
+				printf("Invalid DB count on line %u\n", line->lineNumber);
+				exit(-999);
+			}
+			lnValue = iComps_getAs_s32(iComps_getNth(compFirst, 1));
+			if (lnValue < 0 || lnValue > 255)
+			{
+				// Invalid
+				printf("Invalid initialization value %u on line %u\n", lnValue, line->lineNumber);
+				exit(-999);
+			}
+
+
+		//////////
+		// Setup the instruction
+		//////
+			instr = (SOppie1Instruction*)line->compilerInfo->extra_info;
+			instr->isData	= true;
+			instr->size		= lnCount;
+			instr->data		= (u8*)malloc(lnCount);
+			if (!instr->data)
+			{
+				// Should never happen
+				printf("Out of memory on line %u\n", line->lineNumber);
+				exit(-999);
+			}
+
+			// Initialize the data block
+			memset(instr->data, lnValue, lnCount);
+	}
+
+
+
+
+//////////
+//
+// Called to handle the db N memory assignment
+//
+//////
+	void iCompile_dbHandler(SCommand* cmd, SLine* line, SComp* compFirst, s32 tnPass)
+	{
+		s32						lnValue;
+		SOppie1Instruction*		instr;
+
+
+		//////////
+		// Grab the value
+		//////
+			lnValue = iComps_getAs_s32(iComps_getNth(compFirst, 1));
+			if (lnValue < 0 || lnValue > 255)
+			{
+				// Invalid
+				printf("Invalid initialization value %u on line %u\n", lnValue, line->lineNumber);
+				exit(-999);
+			}
+
+
+		//////////
+		// Setup the instruction
+		//////
+			instr = (SOppie1Instruction*)line->compilerInfo->extra_info;
+			instr->isData	= true;
+			instr->size		= 1;
+			instr->data		= (u8*)malloc(1);
+			if (!instr->data)
+			{
+				// Should never happen
+				printf("Out of memory on line %u\n", line->lineNumber);
+				exit(-999);
+			}
+
+			// Initialize the data block
+			*instr->data = lnValue;
 	}
