@@ -56,6 +56,7 @@
 	cs32		_ICODE_R4						= -13;
 	cs32		_ICODE_ORG						= -14;
 	cs32		_ICODE_DB						= -15;
+	cs32		_ICODE_DUP						= -16;
 
 
 //////////
@@ -81,5 +82,6 @@
 		{ "r4",						2,			false,		_ICODE_R4,								false,				_ICAT_REGISTER,		&colorSynHi_register,		false,						null },
 		{ "org",					3,			false,		_ICODE_ORG,								false,				_ICAT_COMMAND,		&colorSynHi_preprocessor,	false,						null },
 		{ "db",						2,			false,		_ICODE_DB,								false,				_ICAT_COMMAND,		&colorSynHi_command,		false,						null },
+		{ "dup",					3,			false,		_ICODE_DUP,								false,				_ICAT_COMMAND,		&colorSynHi_command,		false,						null },
 		{ 0,						0,			0,			0,										0,					0,					0,							0,							0 }
 	};

@@ -48,17 +48,22 @@
 //		 ; START myfile.asm				; Comment regarding start-of-file
 //		 top:							; Give this address in memory a symbolic name
 //				mov   r1,value1			; Load memory contents to a register by symbolic name
+//				mov   r1,[512]			; Load memory contents to a register by symbolic name
 //				mov   r3,r2				; Move contents from one register to another
 //				add   r4,r1				; Add the contents from one register to another
 //				adc   r1,r3				; Add with carry? the contents from one register to another
 //				sub   r2,r1				; Subtract the contents from one register to another
 //				sbb   r4,r3				; Subtract with borrow (carry?) the contents from one register to another
 //				mov   value2,r4			; Move the value from one register to memory by symbolic name
+//				mov   [513],r4			; Move the value from one register to memory by symbolic name
 //				cmp   r4,r1				; Compare the value of one register to value
-//				jz    @done				; Jump to the indicated address by symbolic name
-//				jmp   @top				; Jump unconditionally to the indicatedaddress
+//				jnc   done				; Jump to the indicated address by symbolic name
+//				jc    done				; Jump to the indicated address by symbolic name
+//				jnz   done				; Jump to the indicated address by symbolic name
+//				jz    done				; Jump to the indicated address by symbolic name
+//				jmp   top				; Jump unconditionally to the indicatedaddress
 //		 done:
-//				halt					; Stop processing
+//				jmp   done				; Stop processing
 //		
 //			.org 200					; Indicate the following begins explicitly at offset 200 decimal
 //		 value1:						; Give a symbolic name to this address
@@ -224,7 +229,7 @@
 						iComps_combineNextN(line->compilerInfo->firstComp, 1, compNext->iCode, compNext->iCat, compNext->color);
 
 					// label:
-					// [label][:] becomes [label:]
+					// [alpha][:] becomes [label]
 					if ((compNext = (SComp*)line->compilerInfo->firstComp->ll.next) && (line->compilerInfo->firstComp->iCode == _ICODE_ALPHA || line->compilerInfo->firstComp->iCode == _ICODE_ALPHANUMERIC) && compNext->iCode == _ICODE_COLON)
 						iComps_combineNextN(line->compilerInfo->firstComp, 1, _ICODE_LABEL, compNext->iCat, compNext->color);
 			}
@@ -244,172 +249,500 @@
 // Called to parse the indicated line of source code
 //
 //////
-	void iCompileSourceCodeLine(SLine* line, s32* tnErrors, s32* tnWarnings)
+	cs32	_MOV_REG_REG						= 1;
+	cs32	_MOV_REG_LABEL						= 2;
+	cs32	_MOV_REG_99							= 3;
+	cs32	_MOV_LABEL_REG						= 4;
+	cs32	_MOV_99_REG							= 5;
+	cs32	_ADD_REG_REG						= 6;
+	cs32	_ADC_REG_REG						= 7;
+	cs32	_SUB_REG_REG						= 8;
+	cs32	_SBB_REG_REG						= 9;
+	cs32	_CMP_REG_REG						= 10;
+	cs32	_JNC_LABEL							= 11;
+	cs32	_JNC_PLUS_99						= 12;
+	cs32	_JNC_NEGATIVE_99					= 13;
+	cs32	_JC_LABEL							= 14;
+	cs32	_JC_PLUS_99							= 15;
+	cs32	_JC_NEGATIVE_99						= 16;
+	cs32	_JNZ_LABEL							= 17;
+	cs32	_JNZ_PLUS_99						= 18;
+	cs32	_JNZ_NEGATIVE_99					= 19;
+	cs32	_JZ_LABEL							= 20;
+	cs32	_JZ_PLUS_99							= 21;
+	cs32	_JZ_NEGATIVE_99						= 22;
+	cs32	_JMP_LABEL							= 23;
+	cs32	_JMP_PLUS_99						= 24;
+	cs32	_JMP_NEGATIVE_99					= 25;
+	cs32	_ORG_99								= 26;
+	cs32	_DB_DUP								= 27;
+
+	struct SCmdPattern
 	{
-		SComp*	comp;
-		SComp*	compNext1;
-		SComp*	compNext2;
-		SComp*	compNext3;
-		SComp*	compNext4;
-		SComp*	compNext5;
+		s32		iCode;
+		s32		iCode2;
+		s32		iCat;
+	};
 
+	struct SCommand
+	{
+		s32			cmdType;
+		SCmdPattern	comp[6];
+	};
 
-		// Make sure we have something to do
-		if ((comp = line->compilerInfo->firstComp) && comp->iCode != _ICODE_COMMENT)
-		{
-			// Populate as many components as follow
-			if ((compNext1 = (SComp*)comp->ll.next) && (compNext2 = (SComp*)compNext1->ll.next) && (compNext3 = (SComp*)compNext2->ll.next) && (compNext4 = (SComp*)compNext3->ll.next) && (compNext5 = (SComp*)compNext4->ll.next))
+	SCommand gsCommands[] = {
+		{ // mov reg,reg
+			_MOV_REG_REG,
 			{
-				// Placeholder
+				{ _ICODE_MOV, -1, -1 },
+				{ -1, -1, _ICAT_REGISTER },
+				{ _ICODE_COMMA, -1, -1 },
+				{ -1, -1, _ICAT_REGISTER },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
 			}
+		},
 
-			// See what's there
-			switch (comp->iCode)
+		{ // mov reg,label
+			_MOV_REG_LABEL,
 			{
-				case _ICODE_MOV:
-					// mov instruction
-					if (compNext1 && compNext2 && compNext3)
-					{
-						if (compNext1->iCat == _ICAT_REGISTER && compNext2->iCode == _ICODE_COMMA)
-						{
-							// mov reg,
-							if (compNext3->iCat == _ICAT_REGISTER) {
-								// mov reg,reg
+				{ _ICODE_MOV, -1, -1 },
+				{ -1, -1, _ICAT_REGISTER },
+				{ _ICODE_COMMA, -1, -1 },
+				{ _ICODE_ALPHA, _ICODE_ALPHANUMERIC, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-							} else if (compNext3->iCode == _ICODE_BRACKET_LEFT && compNext4 && compNext4->iCode == _ICODE_ALPHANUMERIC && compNext5 && compNext5->iCode == _ICODE_BRACKET_RIGHT) {
-								// mov reg,[99]
+		{ // mov reg,[99]
+			_MOV_REG_99,
+			{
+				{ _ICODE_MOV, -1, -1 },
+				{ -1, -1, _ICAT_REGISTER },
+				{ _ICODE_COMMA, -1, -1 },
+				{ _ICODE_BRACKET_LEFT, -1, -1 },
+				{ _ICODE_NUMERIC, -1, -1 },
+				{ _ICODE_BRACKET_RIGHT, -1, -1 }
+			}
+		},
 
-							} else if (compNext3->iCode == _ICODE_ALPHA || compNext3->iCode == _ICODE_ALPHANUMERIC) {
-								// mov reg,label
+		{ // mov label,reg
+			_MOV_LABEL_REG,
+			{
+				{ _ICODE_MOV, -1, -1 },
+				{ _ICODE_ALPHA, _ICODE_ALPHANUMERIC, -1 },
+				{ _ICODE_COMMA, -1, -1 },
+				{ -1, -1, _ICAT_REGISTER },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-							} else {
-								// Syntax error
-								printf("Syntax error on line %u, column %u\n", line->lineNumber, compNext3->start + 1);
-							}
+		{ // mov [99],reg
+			_MOV_99_REG,
+			{
+				{ _ICODE_MOV, -1, -1 },
+				{ _ICODE_BRACKET_LEFT, -1, -1 },
+				{ _ICODE_NUMERIC, -1, -1 },
+				{ _ICODE_BRACKET_RIGHT, -1, -1 },
+				{ _ICODE_COMMA, -1, -1 },
+				{ -1, -1, _ICAT_REGISTER }
+			}
+		},
 
-						} else if (compNext1->iCode == _ICODE_BRACKET_LEFT && compNext4) {
-							// mov [
-							if (compNext2->iCode == _ICODE_NUMERIC && compNext3->iCode == _ICODE_BRACKET_RIGHT && compNext4 && compNext4->iCode == _ICODE_COMMA && compNext5 && compNext5->iCat == _ICAT_REGISTER) {
-								// mov [99],reg
+		{ // add reg,reg
+			_ADD_REG_REG,
+			{
+				{ _ICODE_ADD, -1, -1 },
+				{ -1, -1, _ICAT_REGISTER },
+				{ _ICODE_COMMA, -1, -1 },
+				{ -1, -1, _ICAT_REGISTER },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-							} else {
-								// Syntax error
-								printf("Syntax error on line %u, column %u\n", line->lineNumber, compNext2->start + 1);
-							}
+		{ // adc reg,reg
+			_ADC_REG_REG,
+			{
+				{ _ICODE_ADC, -1, -1 },
+				{ -1, -1, _ICAT_REGISTER },
+				{ _ICODE_COMMA, -1, -1 },
+				{ -1, -1, _ICAT_REGISTER },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-						} else if ((compNext1->iCode == _ICODE_ALPHA || compNext1->iCode == _ICODE_ALPHANUMERIC) && compNext2->iCode == _ICODE_COMMA && compNext3->iCat == _ICAT_REGISTER) {
-							// mov label,reg
+		{ // sub reg,reg
+			_SUB_REG_REG,
+			{
+				{ _ICODE_SUB, -1, -1 },
+				{ -1, -1, _ICAT_REGISTER },
+				{ _ICODE_COMMA, -1, -1 },
+				{ -1, -1, _ICAT_REGISTER },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-						} else {
-							// Syntax error
-							printf("Syntax error on line %u, column %u\n", line->lineNumber, compNext1->start + 1);
-						}
+		{ // sbb reg,reg
+			_SBB_REG_REG,
+			{
+				{ _ICODE_SBB, -1, -1 },
+				{ -1, -1, _ICAT_REGISTER },
+				{ _ICODE_COMMA, -1, -1 },
+				{ -1, -1, _ICAT_REGISTER },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-					} else {
-						// Syntax error
-						printf("Syntax error on line %u, column %u\n", line->lineNumber, comp->start + 1);
-					}
-					break;
+		{ // cmp reg,reg
+			_CMP_REG_REG,
+			{
+				{ _ICODE_CMP, -1, -1 },
+				{ -1, -1, _ICAT_REGISTER },
+				{ _ICODE_COMMA, -1, -1 },
+				{ -1, -1, _ICAT_REGISTER },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-				case _ICODE_ADD:
-					// add instruction
-					if (compNext1 && compNext2 && compNext3 && compNext1->iCat == _ICAT_REGISTER && compNext2->iCode == _ICODE_COMMA && compNext3->iCat == _ICAT_REGISTER)
-					{
-						// add reg,reg
+		{ // jnc label
+			_JNC_LABEL,
+			{
+				{ _ICODE_JNC, -1, -1 },
+				{ _ICODE_ALPHA, _ICODE_ALPHANUMERIC, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-					} else {
-						// Syntax error
-						printf("Syntax error on ADD on line %u, column %u\n", line->lineNumber, compNext1->start + 1);
-					}
-					break;
+		{ // jnc +99
+			_JNC_PLUS_99,
+			{
+				{ _ICODE_JNC, -1, -1 },
+				{ _ICODE_PLUS, -1, -1 },
+				{ _ICODE_NUMERIC, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-				case _ICODE_ADC:
-					// adc instruction
-					if (compNext1 && compNext2 && compNext3 && compNext1->iCat == _ICAT_REGISTER && compNext2->iCode == _ICODE_COMMA && compNext3->iCat == _ICAT_REGISTER)
-					{
-						// add reg,reg
+		{ // jnc -99
+			_JNC_NEGATIVE_99,
+			{
+				{ _ICODE_JNC, -1, -1 },
+				{ _ICODE_HYPHEN, -1, -1 },
+				{ _ICODE_NUMERIC, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-					} else {
-						// Syntax error
-						printf("Syntax error on ADC on line %u, column %u\n", line->lineNumber, compNext1->start + 1);
-					}
-					break;
+		{ // jc label
+			_JC_LABEL,
+			{
+				{ _ICODE_JC, -1, -1 },
+				{ _ICODE_ALPHA, _ICODE_ALPHANUMERIC, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-				case _ICODE_SUB:
-					// sub instruction
-					if (compNext1 && compNext2 && compNext3 && compNext1->iCat == _ICAT_REGISTER && compNext2->iCode == _ICODE_COMMA && compNext3->iCat == _ICAT_REGISTER)
-					{
-						// add reg,reg
+		{ // jc +99
+			_JC_PLUS_99,
+			{
+				{ _ICODE_JC, -1, -1 },
+				{ _ICODE_PLUS, -1, -1 },
+				{ _ICODE_NUMERIC, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-					} else {
-						// Syntax error
-						printf("Syntax error on SUB on line %u, column %u\n", line->lineNumber, compNext1->start + 1);
-					}
-					break;
+		{ // jc -99
+			_JC_NEGATIVE_99,
+			{
+				{ _ICODE_JC, -1, -1 },
+				{ _ICODE_HYPHEN, -1, -1 },
+				{ _ICODE_NUMERIC, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-				case _ICODE_SBB:
-					// sbb instruction
-					if (compNext1 && compNext2 && compNext3 && compNext1->iCat == _ICAT_REGISTER && compNext2->iCode == _ICODE_COMMA && compNext3->iCat == _ICAT_REGISTER)
-					{
-						// add reg,reg
+		{ // jnz label
+			_JNZ_LABEL,
+			{
+				{ _ICODE_JNZ, -1, -1 },
+				{ _ICODE_ALPHA, _ICODE_ALPHANUMERIC, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-					} else {
-						// Syntax error
-						printf("Syntax error on SBB on line %u, column %u\n", line->lineNumber, compNext1->start + 1);
-					}
-					break;
+		{ // jnz +99
+			_JNZ_PLUS_99,
+			{
+				{ _ICODE_JNZ, -1, -1 },
+				{ _ICODE_PLUS, -1, -1 },
+				{ _ICODE_NUMERIC, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-				case _ICODE_CMP:
-					// cmp instruction
-					if (compNext1 && compNext2 && compNext3 && compNext1->iCat == _ICAT_REGISTER && compNext2->iCode == _ICODE_COMMA && compNext3->iCat == _ICAT_REGISTER)
-					{
-						// add reg,reg
+		{ // jnz -99
+			_JNZ_NEGATIVE_99,
+			{
+				{ _ICODE_JNZ, -1, -1 },
+				{ _ICODE_HYPHEN, -1, -1 },
+				{ _ICODE_NUMERIC, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-					} else {
-						// Syntax error
-						printf("Syntax error on CMP on line %u, column %u\n", line->lineNumber, compNext1->start + 1);
-					}
-					break;
+		{ // jz label
+			_JZ_LABEL,
+			{
+				{ _ICODE_JZ, -1, -1 },
+				{ _ICODE_ALPHA, _ICODE_ALPHANUMERIC, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-				case _ICODE_JNC:
-					// jnc instruction
-					break;
+		{ // jz +99
+			_JZ_PLUS_99,
+			{
+				{ _ICODE_JZ, -1, -1 },
+				{ _ICODE_PLUS, -1, -1 },
+				{ _ICODE_NUMERIC, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-				case _ICODE_JC:
-					// jc instruction
-					break;
+		{ // jz -99
+			_JZ_NEGATIVE_99,
+			{
+				{ _ICODE_JZ, -1, -1 },
+				{ _ICODE_HYPHEN, -1, -1 },
+				{ _ICODE_NUMERIC, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-				case _ICODE_JNZ:
-					// jnz instruction
-					break;
+		{ // jmp label
+			_JMP_LABEL,
+			{
+				{ _ICODE_JMP, -1, -1 },
+				{ _ICODE_ALPHA, _ICODE_ALPHANUMERIC, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-				case _ICODE_JZ:
-					// jz instruction
-					break;
+		{ // jmp +99
+			_JMP_PLUS_99,
+			{
+				{ _ICODE_JMP, -1, -1 },
+				{ _ICODE_PLUS, -1, -1 },
+				{ _ICODE_NUMERIC, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-				case _ICODE_JMP:
-					// jnc instruction
-					break;
+		{ // jmp -99
+			_JMP_NEGATIVE_99,
+			{
+				{ _ICODE_JMP, -1, -1 },
+				{ _ICODE_HYPHEN, -1, -1 },
+				{ _ICODE_NUMERIC, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-				case _ICODE_ORG:
-					// .org preprocessor
-					break;
+		{ // .org 99
+			_ORG_99,
+			{
+				{ _ICODE_ORG, -1, -1 },
+				{ _ICODE_NUMERIC, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-				case _ICODE_DB:
-					// db prefix for data initialization
-					break;
+		{ // db dup
+			_DB_DUP,
+			{
+				{ _ICODE_DB, -1, -1 },
+				{ _ICODE_NUMERIC, -1, -1 },
+				{ _ICODE_DUP, -1, -1 },
+				{ _ICODE_NUMERIC, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
 
-				case _ICODE_LABEL:
-					// It's a label
-					break;
-
-				default:
-					// It's was not recognized
-					if (tnErrors)
-						++*tnErrors;
-
-					// Display the error
-					printf("Syntax error on line %u, column %u\n", line->lineNumber, comp->start + 1);
+		{ // End marker
+			-1,
+			{
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
 			}
 		}
+	};
+	void iCompileSourceCodeLine(SLine* line, s32* tnErrors, s32* tnWarnings)
+	{
+		s32			lnI;
+		bool		llFailure;
+		SOra		iora;
+		SOrr		iorr;
+		SBsa		ibsa;
+		SCommand*	cmd;
+		SComp*		comp[6];
+
+
+		//////////
+		// Grab as many components as there are
+		//////
+			// Reset to NULLs
+			for (lnI = 0; lnI < 6; lnI++)
+				comp[lnI] = NULL;
+
+			// Load whatever's possible
+			if ((comp[0] = line->compilerInfo->firstComp) && (comp[1] = (SComp*)comp[0]->ll.next) && (comp[2] = (SComp*)comp[1]->ll.next) && (comp[3] = (SComp*)comp[2]->ll.next) && (comp[4] = (SComp*)comp[3]->ll.next) && (comp[5] = (SComp*)comp[4]->ll.next))
+			{
+				// Placeholder, just used to load as many as are available up to five
+			}
+
+
+		//////////
+		// Make sure we have something to do
+		//////
+			if (comp[1] && comp[1]->iCode != _ICODE_COMMENT)
+			{
+				// Populate as many components as follow
+				for (cmd = (SCommand*)&gsCommands[0]; cmd && cmd->cmdType != -1; cmd++)
+				{
+					// Iterate for any matching components
+					for (lnI = 0, llFailure = false; lnI < 6; lnI++)
+					{
+						// Is this line valid?
+						if (cmd->comp[lnI].iCode == -1 && cmd->comp[lnI].iCode2 == -1 && cmd->comp[lnI].iCat == -1)
+						{
+							// Nothing on this line
+
+						} else {
+							// This line has something, does it match up?
+							if (		(cmd->comp[lnI].iCode	== -1 || cmd->comp[lnI].iCode	== comp[lnI]->iCode)
+									&&	(cmd->comp[lnI].iCode2	== -1 || cmd->comp[lnI].iCode2	== comp[lnI]->iCode)
+									&&	(cmd->comp[lnI].iCat	== -1 || cmd->comp[lnI].iCat	== comp[lnI]->iCode)	)
+							{
+								// A full match
+								// No code, just capture the block without awkward logic above
+
+							} else {
+								llFailure = true;
+								break;
+							}
+						}
+					}
+
+					// When we get here, we either have a match or a failure
+					if (!llFailure)
+					{
+						// A match
+						switch (cmd->cmdType)
+						{
+							case _MOV_REG_REG:
+							case _ADD_REG_REG:
+							case _ADC_REG_REG:
+							case _SUB_REG_REG:
+							case _SBB_REG_REG:
+							case _CMP_REG_REG:
+								break;
+
+							case _MOV_REG_LABEL:
+								break;
+
+							case _MOV_LABEL_REG:
+								break;
+
+							case _MOV_REG_99:
+								break;
+
+							case _MOV_99_REG:
+								break;
+
+							case _JNC_LABEL:
+							case _JC_LABEL:
+							case _JNZ_LABEL:
+							case _JZ_LABEL:
+							case _JMP_LABEL:
+								break;
+
+							case _JNC_PLUS_99:
+							case _JC_PLUS_99:
+							case _JNZ_PLUS_99:
+							case _JZ_PLUS_99:
+							case _JMP_PLUS_99:
+								break;
+
+							case _JNC_NEGATIVE_99:
+							case _JC_NEGATIVE_99:
+							case _JNZ_NEGATIVE_99:
+							case _JZ_NEGATIVE_99:
+							case _JMP_NEGATIVE_99:
+								break;
+
+							case _ORG_99:
+								break;
+
+							case _DB_DUP:
+								break;
+
+							default:
+								// Should never happen
+								// Internal consistency error
+_asm int 3;
+						}
+					}
+				}
+			}
 	}
