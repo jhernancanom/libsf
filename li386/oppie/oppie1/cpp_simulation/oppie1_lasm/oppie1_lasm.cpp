@@ -83,6 +83,16 @@
 // Instruction encoding
 //////
 	#include "..\common\instructions.h"
+	#include "keywords.h"
+
+
+//////////
+// Forward declarations
+//////
+	SComp*		iParseSourceCodeLine						(SLine* line);
+	void		iCompileSourceCodeLine						(SLine* line, s32* tnErrors, s32* tnWarnings);
+
+
 
 
 //////////
@@ -92,5 +102,314 @@
 //////
 	int main(int argc, char* argv[])
 	{
-		return 0;
+		s32		lnErrors, lnWarnings;
+		SEM*	asmFile;
+		SLine*	line;
+
+
+		//////////
+		// Identify ourself
+		//////
+			printf("LibSF Oppie-1 Assembler v0.02\n");
+
+
+		//////////
+		// lasm1 only takes one parameter, the input filename
+		//////
+			if (argc != 1)
+			{
+				// Display syntax
+				printf("Usage:  lasm1 myfile.asm\n");
+
+			} else {
+				// Allocate our load manager
+				asmFile = iSEM_allocate(true);
+				if (!asmFile)
+				{
+					// Internal error
+					printf("Internal error allocating load buffer\n");
+
+				} else {
+					// Try to physically load it
+					if (!iSEM_loadFromDisk(asmFile, argv[1], true))
+					{
+						// Error opening
+						printf("Unable to open %s\n", argv[1]);
+
+					} else {
+						//////////
+						// Parse every line into known components
+						//////
+							for (line = asmFile->firstLine; line; line = (SLine*)line->ll.next)
+								iParseSourceCodeLine(line);
+
+
+						//////////
+						// Compile every line that can be compiled, report any errors
+						//////
+							for (	line = asmFile->firstLine, lnErrors = 0, lnWarnings = 0;
+									line && lnErrors == 0;
+									line = (SLine*)line->ll.next	)
+							{
+								iCompileSourceCodeLine(line, &lnErrors, &lnWarnings);
+							}
+					}
+				}
+			}
+
+
+		//////////
+		// Task completed (one way or another :-))
+		//////
+			return 0;
+	}
+
+
+
+
+//////////
+//
+// Parses the text of the line into any known tokens
+//
+//////
+	SComp* iParseSourceCodeLine(SLine* line)
+	{
+		SComp* compNext;
+
+
+		//////////
+		// Parse out the line
+		//////
+			iComps_translateSourceLineTo(&cgcFundamentalSymbols[0], line);
+			if (!line->compilerInfo->firstComp)
+				return(NULL);	// Nothing to compile on this blank line
+
+			// Remove whitespaces [x][whitespace][y] becomes [x][y]
+			iComps_removeLeadingWhitespaces(line);
+			if (!line->compilerInfo->firstComp)
+				return(NULL);	// Nothing to compile on this line with only whitespaces
+
+
+		//////////
+		// We don't need to process comment-only lines
+		//////
+			if (line->compilerInfo->firstComp && (line->compilerInfo->firstComp->iCode == _ICODE_COMMENT || line->compilerInfo->firstComp->iCode == _ICODE_LINE_COMMENT))
+			{
+				//////////
+				// Combine every item after this to a single comment component or easy parsing and handling
+				//////
+					iComps_combineNextN(line->compilerInfo->firstComp, 99999, line->compilerInfo->firstComp->iCode, line->compilerInfo->firstComp->iCat, line->compilerInfo->firstComp->color);
+
+			} else {
+				//////////
+				// Perform natural source code fixups
+				//////
+					iComps_removeStartEndComments(line);		// Remove /* comments */
+					iComps_fixupNaturalGroupings(line);			// Fixup natural groupings [_][aaa][999] becomes [_aaa999], [999][.][99] becomes [999.99], etc.
+					iComps_removeWhitespaces(line);				// Remove all whitespaces after everything else was parsed [use][whitespace][foo] becomes [use][foo]
+
+
+				//////////
+				// Translate sequences to known keywords
+				//////
+					iComps_translateToOthers((SAsciiCompSearcher*)&cgcKeywordsOppie1[0], line);
+
+
+				//////////
+				// Perform fixups that are unique to Oppie-1
+				//////
+					// .org
+					// [.][org] becomes [.org]
+					if ((compNext = (SComp*)line->compilerInfo->firstComp->ll.next) && line->compilerInfo->firstComp->iCode == _ICODE_DOT && compNext->iCode == _ICODE_ORG)
+						iComps_combineNextN(line->compilerInfo->firstComp, 1, compNext->iCode, compNext->iCat, compNext->color);
+
+					// label:
+					// [label][:] becomes [label:]
+					if ((compNext = (SComp*)line->compilerInfo->firstComp->ll.next) && (line->compilerInfo->firstComp->iCode == _ICODE_ALPHA || line->compilerInfo->firstComp->iCode == _ICODE_ALPHANUMERIC) && compNext->iCode == _ICODE_COLON)
+						iComps_combineNextN(line->compilerInfo->firstComp, 1, _ICODE_LABEL, compNext->iCat, compNext->color);
+			}
+
+
+		//////////
+		// Return the first component
+		//////
+			return(line->compilerInfo->firstComp);
+	}
+
+
+
+
+//////////
+//
+// Called to parse the indicated line of source code
+//
+//////
+	void iCompileSourceCodeLine(SLine* line, s32* tnErrors, s32* tnWarnings)
+	{
+		SComp*	comp;
+		SComp*	compNext1;
+		SComp*	compNext2;
+		SComp*	compNext3;
+		SComp*	compNext4;
+		SComp*	compNext5;
+
+
+		// Make sure we have something to do
+		if ((comp = line->compilerInfo->firstComp) && comp->iCode != _ICODE_COMMENT)
+		{
+			// Populate as many components as follow
+			if ((compNext1 = (SComp*)comp->ll.next) && (compNext2 = (SComp*)compNext1->ll.next) && (compNext3 = (SComp*)compNext2->ll.next) && (compNext4 = (SComp*)compNext3->ll.next) && (compNext5 = (SComp*)compNext4->ll.next))
+			{
+				// Placeholder
+			}
+
+			// See what's there
+			switch (comp->iCode)
+			{
+				case _ICODE_MOV:
+					// mov instruction
+					if (compNext1 && compNext2 && compNext3)
+					{
+						if (compNext1->iCat == _ICAT_REGISTER && compNext2->iCode == _ICODE_COMMA)
+						{
+							// mov reg,
+							if (compNext3->iCat == _ICAT_REGISTER) {
+								// mov reg,reg
+
+							} else if (compNext3->iCode == _ICODE_BRACKET_LEFT && compNext4 && compNext4->iCode == _ICODE_ALPHANUMERIC && compNext5 && compNext5->iCode == _ICODE_BRACKET_RIGHT) {
+								// mov reg,[99]
+
+							} else if (compNext3->iCode == _ICODE_ALPHA || compNext3->iCode == _ICODE_ALPHANUMERIC) {
+								// mov reg,label
+
+							} else {
+								// Syntax error
+								printf("Syntax error on line %u, column %u\n", line->lineNumber, compNext3->start + 1);
+							}
+
+						} else if (compNext1->iCode == _ICODE_BRACKET_LEFT && compNext4) {
+							// mov [
+							if (compNext2->iCode == _ICODE_NUMERIC && compNext3->iCode == _ICODE_BRACKET_RIGHT && compNext4 && compNext4->iCode == _ICODE_COMMA && compNext5 && compNext5->iCat == _ICAT_REGISTER) {
+								// mov [99],reg
+
+							} else {
+								// Syntax error
+								printf("Syntax error on line %u, column %u\n", line->lineNumber, compNext2->start + 1);
+							}
+
+						} else if ((compNext1->iCode == _ICODE_ALPHA || compNext1->iCode == _ICODE_ALPHANUMERIC) && compNext2->iCode == _ICODE_COMMA && compNext3->iCat == _ICAT_REGISTER) {
+							// mov label,reg
+
+						} else {
+							// Syntax error
+							printf("Syntax error on line %u, column %u\n", line->lineNumber, compNext1->start + 1);
+						}
+
+					} else {
+						// Syntax error
+						printf("Syntax error on line %u, column %u\n", line->lineNumber, comp->start + 1);
+					}
+					break;
+
+				case _ICODE_ADD:
+					// add instruction
+					if (compNext1 && compNext2 && compNext3 && compNext1->iCat == _ICAT_REGISTER && compNext2->iCode == _ICODE_COMMA && compNext3->iCat == _ICAT_REGISTER)
+					{
+						// add reg,reg
+
+					} else {
+						// Syntax error
+						printf("Syntax error on ADD on line %u, column %u\n", line->lineNumber, compNext1->start + 1);
+					}
+					break;
+
+				case _ICODE_ADC:
+					// adc instruction
+					if (compNext1 && compNext2 && compNext3 && compNext1->iCat == _ICAT_REGISTER && compNext2->iCode == _ICODE_COMMA && compNext3->iCat == _ICAT_REGISTER)
+					{
+						// add reg,reg
+
+					} else {
+						// Syntax error
+						printf("Syntax error on ADC on line %u, column %u\n", line->lineNumber, compNext1->start + 1);
+					}
+					break;
+
+				case _ICODE_SUB:
+					// sub instruction
+					if (compNext1 && compNext2 && compNext3 && compNext1->iCat == _ICAT_REGISTER && compNext2->iCode == _ICODE_COMMA && compNext3->iCat == _ICAT_REGISTER)
+					{
+						// add reg,reg
+
+					} else {
+						// Syntax error
+						printf("Syntax error on SUB on line %u, column %u\n", line->lineNumber, compNext1->start + 1);
+					}
+					break;
+
+				case _ICODE_SBB:
+					// sbb instruction
+					if (compNext1 && compNext2 && compNext3 && compNext1->iCat == _ICAT_REGISTER && compNext2->iCode == _ICODE_COMMA && compNext3->iCat == _ICAT_REGISTER)
+					{
+						// add reg,reg
+
+					} else {
+						// Syntax error
+						printf("Syntax error on SBB on line %u, column %u\n", line->lineNumber, compNext1->start + 1);
+					}
+					break;
+
+				case _ICODE_CMP:
+					// cmp instruction
+					if (compNext1 && compNext2 && compNext3 && compNext1->iCat == _ICAT_REGISTER && compNext2->iCode == _ICODE_COMMA && compNext3->iCat == _ICAT_REGISTER)
+					{
+						// add reg,reg
+
+					} else {
+						// Syntax error
+						printf("Syntax error on CMP on line %u, column %u\n", line->lineNumber, compNext1->start + 1);
+					}
+					break;
+
+				case _ICODE_JNC:
+					// jnc instruction
+					break;
+
+				case _ICODE_JC:
+					// jc instruction
+					break;
+
+				case _ICODE_JNZ:
+					// jnz instruction
+					break;
+
+				case _ICODE_JZ:
+					// jz instruction
+					break;
+
+				case _ICODE_JMP:
+					// jnc instruction
+					break;
+
+				case _ICODE_ORG:
+					// .org preprocessor
+					break;
+
+				case _ICODE_DB:
+					// db prefix for data initialization
+					break;
+
+				case _ICODE_LABEL:
+					// It's a label
+					break;
+
+				default:
+					// It's was not recognized
+					if (tnErrors)
+						++*tnErrors;
+
+					// Display the error
+					printf("Syntax error on line %u, column %u\n", line->lineNumber, comp->start + 1);
+			}
+		}
 	}
