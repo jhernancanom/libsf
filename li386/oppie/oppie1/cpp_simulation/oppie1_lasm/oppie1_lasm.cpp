@@ -121,9 +121,16 @@
 
 
 		//////////
+		// Initialize Visual FreePro, Jr. stuff
+		///////
+			InitializeCriticalSection(&cs_uniqueIdAccess);
+			InitializeCriticalSection(&cs_logData);
+
+
+		//////////
 		// lasm1 only takes one parameter, the input filename
 		//////
-			if (argc != 1)
+			if (argc != 2)
 			{
 				// Display syntax
 				printf("Usage:  lasm1 myfile.asm\n");
@@ -138,7 +145,7 @@
 
 				} else {
 					// Try to physically load it
-					if (!iSEM_loadFromDisk(asmFile, argv[1], true))
+					if (!iSEM_loadFromDisk(asmFile, argv[1], false, false))
 					{
 						// Error opening
 						printf("Unable to open %s\n", argv[1]);
@@ -159,7 +166,8 @@
 									line = (SLine*)line->ll.next	)
 							{
 								// Compile pass-1
-								iCompileSourceCodeLine(asmFile, line, &lnErrors, &lnWarnings, 1);
+								if (line->compilerInfo->firstComp && line->compilerInfo->firstComp->iCode != _ICODE_COMMENT)
+									iCompileSourceCodeLine(asmFile, line, &lnErrors, &lnWarnings, 1);
 							}
 
 							// If there were any errors, exit
@@ -332,6 +340,7 @@
 //////
 	SComp* iParseSourceCodeLine(SLine* line)
 	{
+		SComp* comp;
 		SComp* compNext;
 
 
@@ -385,12 +394,12 @@
 		//////////
 		// We don't need to process comment-only lines
 		//////
-			if (line->compilerInfo->firstComp && (line->compilerInfo->firstComp->iCode == _ICODE_COMMENT || line->compilerInfo->firstComp->iCode == _ICODE_LINE_COMMENT))
+			if ((comp = line->compilerInfo->firstComp) && (comp->iCode == _ICODE_COMMENT || comp->iCode == _ICODE_LINE_COMMENT))
 			{
 				//////////
 				// Combine every item after this to a single comment component or easy parsing and handling
 				//////
-					iComps_combineNextN(line->compilerInfo->firstComp, 99999, line->compilerInfo->firstComp->iCode, line->compilerInfo->firstComp->iCat, line->compilerInfo->firstComp->color);
+					iComps_combineN(comp, 99999, comp->iCode, comp->iCat, comp->color);
 
 			} else {
 				//////////
@@ -411,14 +420,14 @@
 				// Perform fixups that are unique to Oppie-1
 				//////
 					// .org
-					// [.][org] becomes [.org]
-					if ((compNext = (SComp*)line->compilerInfo->firstComp->ll.next) && line->compilerInfo->firstComp->iCode == _ICODE_DOT && compNext->iCode == _ICODE_ORG)
-						iComps_combineNextN(line->compilerInfo->firstComp, 1, compNext->iCode, compNext->iCat, compNext->color);
+					// [.org] as a _ICODE_DOT_VARIABLE, becomes [.org] as _ICODE_DOT_ORG
+					if (comp->iCode == _ICODE_DOT_VARIABLE && comp->length == 4 && _memicmp(comp->line->sourceCode->data_s8 + comp->start + 1, "org", 3) == 0)
+						comp->iCode = _ICODE_ORG;
 
 					// label:
 					// [alpha][:] becomes [label]
-					if ((compNext = (SComp*)line->compilerInfo->firstComp->ll.next) && (line->compilerInfo->firstComp->iCode == _ICODE_ALPHA || line->compilerInfo->firstComp->iCode == _ICODE_ALPHANUMERIC) && compNext->iCode == _ICODE_COLON)
-						iComps_combineNextN(line->compilerInfo->firstComp, 1, _ICODE_LABEL, compNext->iCat, compNext->color);
+					if ((compNext = (SComp*)comp->ll.next) && (comp->iCode == _ICODE_ALPHA || comp->iCode == _ICODE_ALPHANUMERIC) && compNext->iCode == _ICODE_COLON)
+						iComps_combineN(comp, 2, _ICODE_LABEL, compNext->iCat, compNext->color);
 			}
 
 
@@ -445,14 +454,15 @@
 		SComp*					comp[6];
 		SOppie1Instruction*		instr;
 
+s8 bufferComps[2048];
+
 
 		//////////
 		// Grab as many components as there are
 		//////
 			// Reset to NULLs
-			for (lnI = 0; lnI < 6; lnI++)
-				comp[lnI] = NULL;
-
+			memset(&comp[0], 0, sizeof(comp));
+	
 			// Load whatever's possible
 			if ((comp[0] = line->compilerInfo->firstComp) && (comp[1] = (SComp*)comp[0]->ll.next) && (comp[2] = (SComp*)comp[1]->ll.next) && (comp[3] = (SComp*)comp[2]->ll.next) && (comp[4] = (SComp*)comp[3]->ll.next) && (comp[5] = (SComp*)comp[4]->ll.next))
 			{
@@ -463,6 +473,7 @@
 		//////////
 		// Make sure we have something to do
 		//////
+iComps_visualize(line->compilerInfo->firstComp, 999, bufferComps, sizeof(bufferComps), true, &cgcKeywordsOppie1[0], NULL);
 			if (comp[1] && comp[1]->iCode != _ICODE_COMMENT)
 			{
 				// Populate as many components as follow
@@ -478,9 +489,10 @@
 
 						} else {
 							// This line has something, does it match up?
-							if (		(cmd->comp[lnI].iCode	== -1 || cmd->comp[lnI].iCode	== comp[lnI]->iCode)
-									&&	(cmd->comp[lnI].iCode2	== -1 || cmd->comp[lnI].iCode2	== comp[lnI]->iCode)
-									&&	(cmd->comp[lnI].iCat	== -1 || cmd->comp[lnI].iCat	== comp[lnI]->iCode)	)
+							if (!comp[lnI] ||	(		(cmd->comp[lnI].iCode	== -1 || cmd->comp[lnI].iCode	== comp[lnI]->iCode)
+													&&	(cmd->comp[lnI].iCode2	== -1 || cmd->comp[lnI].iCode2	== comp[lnI]->iCode)
+													&&	(cmd->comp[lnI].iCat	== -1 || cmd->comp[lnI].iCat	== comp[lnI]->iCode)
+												))
 							{
 								// If we enter this block, a full match was made here
 								// No code goes here, it's just coded this way to capture the logic condition without using the awkward reverse logic in the above statement

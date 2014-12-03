@@ -231,7 +231,7 @@
 			{
 				// Combine every item after this to a single comment
 // TODO:  This algorithm will need to be changed so casks in comments show up graphically, rather than as raw text
-				iComps_combineNextN(line->compilerInfo->firstComp, 99999, line->compilerInfo->firstComp->iCode, line->compilerInfo->firstComp->iCat, line->compilerInfo->firstComp->color);
+				iComps_combineN(line->compilerInfo->firstComp, 99999, line->compilerInfo->firstComp->iCode, line->compilerInfo->firstComp->iCat, line->compilerInfo->firstComp->color);
 
 				// Return the first component
 				return(line->compilerInfo->firstComp);

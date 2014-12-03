@@ -35,6 +35,12 @@
 
 
 
+struct SComp;
+struct SLine;
+
+
+
+
 //////////
 //
 // Callback structure for SLL iteration
@@ -42,8 +48,16 @@
 //////
 	struct SLL
 	{
-		SLL*			next;					// Next entry in linked list
-		SLL*			prev;					// Previous entry in linked list
+		union {
+			SLL*		next;					// Next entry in linked list
+			SComp*		nextComp;
+			SLine*		nextLine;
+		};
+		union {
+			SLL*		prev;					// Previous entry in linked list
+			SComp*		prevComp;
+			SLine*		prevLine;
+		};
 		u32				uniqueId;				// Unique id associated with this object
 	};
 

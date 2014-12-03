@@ -198,7 +198,7 @@
 // Loads in a text file into an EM beginning optionally near ecHint.
 //
 //////
-	bool iSEM_loadFromDisk(SEM* sem, s8* tcPathname, bool isSourceCode)
+	bool iSEM_loadFromDisk(SEM* sem, s8* tcPathname, bool isSourceCode, bool tlLogIt)
 	{
 		s32			lnI, lnJ, lnLast;
 		bool		llOtherCharacters;
@@ -275,16 +275,15 @@
 					}
 				}
 
-				// Log it
-				sprintf(buffer, "Load %s\0", tcPathname);
-				iVjr_appendSystemLog(buffer);
-
-				// Indicate success
-				sprintf(buffer, "Loaded: %s\0", tcPathname);
-				iSEM_appendLine(output_editbox->p.sem, buffer, strlen(buffer), false);
+				if (tlLogIt)
+				{
+					// Log it
+					sprintf(buffer, "Load %s\0", tcPathname);
+					iVjr_appendSystemLog(buffer);
+				}
 				return(true);
 
-			} else {
+			} else if (tlLogIt) {
 				// Log it
 				sprintf(buffer, "Load inquiry %s\0", tcPathname);
 				iVjr_appendSystemLog(buffer);

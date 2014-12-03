@@ -836,7 +836,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 			lcData = line->sourceCode->data;
 
 			// Iterate through every byte identifying every component we can
-			compLast	= NULL;
+			compLast	= line->compilerInfo->firstComp;
 			lnMaxLength	= line->sourceCode_populatedLength;
 			for (lnI = 0; lnI < lnMaxLength; )
 			{
@@ -904,11 +904,14 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 										comp->useBoldFont	= lacs->useBoldFont;
 
 										// Update our first component (if it's not updated already)
-										if (!compFirst)	compFirst = comp;
+										if (!compFirst)
+											compFirst = comp;
 
 										// All done
-										compLast = comp;
 									}
+
+									// Make sure we're setup for the next go-round
+									compLast = comp;
 								//////
 								//
 							//////
@@ -1636,7 +1639,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // iCode is updated as well.
 //
 //////
-	u32 iComps_combineNextN(SComp* comp, u32 tnCount, s32 tnNewICode, s32 tnNewICat, SBgra* newColor)
+	u32 iComps_combineN(SComp* comp, u32 tnCount, s32 tnNewICode, s32 tnNewICat, SBgra* newColor)
 	{
 		u32		lnCount;
 		SComp*	compNext;
@@ -1735,7 +1738,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 							)
 						{
 							// Combine this comp and the next one into one
-							iComps_combineNextN(comp, 2, _ICODE_ALPHANUMERIC, comp->iCat, comp->color);
+							iComps_combineN(comp, 2, _ICODE_ALPHANUMERIC, comp->iCat, comp->color);
 							++lnCombined;
 						}
 					}
@@ -1791,18 +1794,18 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 							if ((compNext3 = (SComp*)compNext2->ll.next) && compNext3->iCode == _ICODE_NUMERIC)
 							{
 								// We have +-999.99
-								iComps_combineNextN(comp, 4, _ICODE_NUMERIC, comp->iCat, comp->color);
+								iComps_combineN(comp, 4, _ICODE_NUMERIC, comp->iCat, comp->color);
 								lnCombined += 3;
 
 							} else {
 								// Combine the +- with the 999 and the .
-								iComps_combineNextN(comp, 3, _ICODE_NUMERIC, comp->iCat, comp->color);
+								iComps_combineN(comp, 3, _ICODE_NUMERIC, comp->iCat, comp->color);
 								lnCombined += 2;
 							}
 
 						} else {
 							// Combine the +- with the 999 into one
-							iComps_combineNextN(comp, 2, _ICODE_NUMERIC, comp->iCat, comp->color);
+							iComps_combineN(comp, 2, _ICODE_NUMERIC, comp->iCat, comp->color);
 							++lnCombined;
 						}
 
@@ -1814,12 +1817,12 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 							if ((compNext3 = (SComp*)compNext2->ll.next) && compNext3->iCode == _ICODE_NUMERIC)
 							{
 								// We have 999.99
-								iComps_combineNextN(comp, 3, _ICODE_NUMERIC, comp->iCat, comp->color);
+								iComps_combineN(comp, 3, _ICODE_NUMERIC, comp->iCat, comp->color);
 								lnCombined += 2;
 
 							} else {
 								// We just have 999.
-								iComps_combineNextN(comp, 2, _ICODE_NUMERIC, comp->iCat, comp->color);
+								iComps_combineN(comp, 2, _ICODE_NUMERIC, comp->iCat, comp->color);
 								++lnCombined;
 							}
 						}
@@ -1881,13 +1884,13 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 									c = compMiddle->line->sourceCode->data[compMiddle->start];
 
 									// Which one is it?
-									     if (c == 't' || c == 'T')				{ iComps_combineNextN(compFirst, 3, _ICODE_TRUE,			compFirst->iCat, compFirst->color);				lnCombined += 3; }
-									else if (c == 'f' || c == 'F')				{ iComps_combineNextN(compFirst, 3, _ICODE_FALSE,			compFirst->iCat, compFirst->color);				lnCombined += 3; }
-									else if (c == 'o' || c == 'O')				{ iComps_combineNextN(compFirst, 3, _ICODE_OTHER,			compFirst->iCat, compFirst->color);				lnCombined += 3; }
-									else if (c == 'p' || c == 'P')				{ iComps_combineNextN(compFirst, 3, _ICODE_PARTIAL,			compFirst->iCat, compFirst->color);			lnCombined += 3; }
-									else if (c == 'x' || c == 'X')				{ iComps_combineNextN(compFirst, 3, _ICODE_EXTRA,			compFirst->iCat, compFirst->color);				lnCombined += 3; }
-									else if (c == 'y' || c == 'Y')				{ iComps_combineNextN(compFirst, 3, _ICODE_YET_ANOTHER,		compFirst->iCat, compFirst->color);		lnCombined += 3; }
-									else if (c == 'z' || c == 'Z')				{ iComps_combineNextN(compFirst, 3, _ICODE_ZATS_ALL_FOLKS,	compFirst->iCat, compFirst->color);		lnCombined += 3; }
+									     if (c == 't' || c == 'T')				{ iComps_combineN(compFirst, 3, _ICODE_TRUE,			compFirst->iCat, compFirst->color);				lnCombined += 3; }
+									else if (c == 'f' || c == 'F')				{ iComps_combineN(compFirst, 3, _ICODE_FALSE,			compFirst->iCat, compFirst->color);				lnCombined += 3; }
+									else if (c == 'o' || c == 'O')				{ iComps_combineN(compFirst, 3, _ICODE_OTHER,			compFirst->iCat, compFirst->color);				lnCombined += 3; }
+									else if (c == 'p' || c == 'P')				{ iComps_combineN(compFirst, 3, _ICODE_PARTIAL,			compFirst->iCat, compFirst->color);			lnCombined += 3; }
+									else if (c == 'x' || c == 'X')				{ iComps_combineN(compFirst, 3, _ICODE_EXTRA,			compFirst->iCat, compFirst->color);				lnCombined += 3; }
+									else if (c == 'y' || c == 'Y')				{ iComps_combineN(compFirst, 3, _ICODE_YET_ANOTHER,		compFirst->iCat, compFirst->color);		lnCombined += 3; }
+									else if (c == 'z' || c == 'Z')				{ iComps_combineN(compFirst, 3, _ICODE_ZATS_ALL_FOLKS,	compFirst->iCat, compFirst->color);		lnCombined += 3; }
 									llProcessed = true;
 									break;
 
@@ -1895,7 +1898,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 									// Could be .or.
 									if (_memicmp(compMiddle->line->sourceCode->data, "or", 2) == 0)
 									{
-										iComps_combineNextN(compFirst, 3, _ICODE_OR, compFirst->iCat, compFirst->color);
+										iComps_combineN(compFirst, 3, _ICODE_OR, compFirst->iCat, compFirst->color);
 										lnCombined += 3;
 									}
 									llProcessed = true;
@@ -1906,12 +1909,12 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 									if (_memicmp(compMiddle->line->sourceCode->data, "and", 3) == 0)
 									{
 										// AND
-										iComps_combineNextN(compFirst, 3, _ICODE_AND, compFirst->iCat, compFirst->color);
+										iComps_combineN(compFirst, 3, _ICODE_AND, compFirst->iCat, compFirst->color);
 										lnCombined += 3;
 
 									} else if (_memicmp(compMiddle->line->sourceCode->data, "not", 3) == 0) {
 										// NOT
-										iComps_combineNextN(compFirst, 3, _ICODE_NOT, compFirst->iCat, compFirst->color);
+										iComps_combineN(compFirst, 3, _ICODE_NOT, compFirst->iCat, compFirst->color);
 										lnCombined += 3;
 									}
 									llProcessed = true;
@@ -1922,7 +1925,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 									if (_memicmp(compMiddle->line->sourceCode->data, "null", 4) == 0)
 									{
 										// NULL
-										iComps_combineNextN(compFirst, 3, _ICODE_NULL, compFirst->iCat, compFirst->color);
+										iComps_combineN(compFirst, 3, _ICODE_NULL, compFirst->iCat, compFirst->color);
 										lnCombined += 3;
 									}
 									llProcessed = true;
@@ -1935,11 +1938,11 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					if (!llProcessed && (compSecond = (SComp*)compFirst->ll.next) && iiComps_charactersBetween(compFirst, compSecond) == 0 && (compSecond->iCode == _ICODE_ALPHA || compSecond->iCode == _ICODE_ALPHANUMERIC))
 					{
 						// It's a dot variable of some kind
-						iComps_combineNextN(compFirst, 2, _ICODE_DOT_VARIABLE, _ICAT_DOT_VARIABLE, &colorSynHi_dotVariable);
+						iComps_combineN(compFirst, 2, _ICODE_DOT_VARIABLE, _ICAT_DOT_VARIABLE, &colorSynHi_dotVariable);
 
 					} else if (!llProcessed && (compSecond = (SComp*)compFirst->ll.next) && iiComps_charactersBetween(compFirst, compSecond) == 0 && (compSecond->iCode == _ICODE_ALPHA || compSecond->iCode == _ICODE_ALPHANUMERIC)) {
 						// It's an exclamation point variable of some kind
-						iComps_combineNextN(compFirst, 2, _ICODE_EXCLAMATION_POINT, _ICAT_EXCLAMATION_POINT_VARIABLE, &colorSynHi_exclamationMarkVariable);
+						iComps_combineN(compFirst, 2, _ICODE_EXCLAMATION_POINT, _ICAT_EXCLAMATION_POINT_VARIABLE, &colorSynHi_exclamationMarkVariable);
 					}
 				}
 
@@ -2164,7 +2167,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					while (comp->ll.next)
 					{
 						// Combine
-						iComps_combineNextN(comp, 2, tniCodeNeedle, comp->iCat, comp->color);
+						iComps_combineN(comp, 2, tniCodeNeedle, comp->iCat, comp->color);
 
 						// Indicate the number combined
 						++lnCombined;
@@ -2351,11 +2354,11 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					{
 						// Delete everything forward until we reach _ICODE_COMMENT_END or the last comp
 						while ((compNext = (SComp*)comp->ll.next) && compNext->iCode != _ICODE_COMMENT_END)
-							iComps_combineNextN(comp, 2, comp->iCode, comp->iCat, comp->color);
+							iComps_combineN(comp, 2, comp->iCode, comp->iCat, comp->color);
 
 						// When we get here, we're sitting on the _ICODE_COMMENT_END
 						if ((compNext = (SComp*)comp->ll.next) && compNext->iCode == _ICODE_COMMENT_END)
-							iComps_combineNextN(comp, 2, comp->iCode, comp->iCat, comp->color);
+							iComps_combineN(comp, 2, comp->iCode, comp->iCat, comp->color);
 					}
 
 
@@ -2482,6 +2485,112 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 			// Component is not valid
 			return(-1);
 		}
+	}
+
+
+
+
+//////////
+//
+// Visualizes the components in text form
+//
+//////
+	s8* iComps_visualize(SComp* comp, s32 tnCount, s8* outputBuffer, s32 tnBufferLength, bool tlUseDefaultCompSearcher, SAsciiCompSearcher* tsComps1, SAsciiCompSearcher* tsComps2)
+	{
+		s32						lnI, lnJ, lnLength, lnOffset;
+		bool					llFound;
+		SAsciiCompSearcher*		lacs;
+		s8						accumBuffer[256];
+
+
+		//////////
+		// Iterate through the comps one-by-one
+		//////
+			if (comp && outputBuffer && tnBufferLength > 0 && (tlUseDefaultCompSearcher || tsComps1 || tsComps2))
+			{
+				// Reset the display buffer
+				memset(outputBuffer, 0, tnBufferLength);
+
+				// Iterate through the comps
+				for (lnI = 0, lnOffset = 0; lnI < tnCount && comp && lnOffset < tnBufferLength; comp = (SComp*)comp->ll.next)
+				{
+					//////////
+					// Lookup this comp
+					//////
+						for (lnJ = 0, llFound = false; lnJ < 3 && !llFound; lnJ++)
+						{
+							if (lnJ == 0 && tlUseDefaultCompSearcher)
+							{
+								// Search the standard complement
+								lacs = &cgcFundamentalSymbols[0];
+
+							} else if (lnJ == 1 && tsComps1) {
+								// Search the primary components
+								lacs = tsComps1;
+
+							} else if (lnJ == 2 && tsComps2) {
+								// Search the second custom components
+								lacs = tsComps2;
+
+							} else {
+								// This one is not valid
+								lacs = NULL;
+							}
+
+
+							//////////
+							// Search for a match
+							//////
+								for ( ; lacs && lacs->iCode != 0 && lacs->length != 0; lacs++)
+								{
+									// Is this a match?
+									if (comp->iCode == lacs->iCode && comp->iCat == lacs->iCat)
+									{
+										// This is a match, visualize it as:  [text]
+										memset(accumBuffer, 0, sizeof(accumBuffer));
+										accumBuffer[0] = '[';
+										memcpy(accumBuffer+ 1, comp->line->sourceCode->data_s8 + comp->start, min(comp->length, sizeof(accumBuffer) - 3));
+										accumBuffer[strlen(accumBuffer)] = ']';
+
+										// Copy to our output
+										lnLength		= min(tnBufferLength - lnOffset, (s32)strlen(accumBuffer));
+										memcpy(outputBuffer + lnOffset, accumBuffer, lnLength);
+										lnOffset				+= lnLength;
+
+										// All done
+										llFound = true;
+										break;
+									}
+								}
+
+						}
+
+
+						//////////
+						// If it wasn't found, we need to visualize it like this:  [iCode:text:length], like [5:hi:2]
+						//////
+							if (!llFound)
+							{
+								// Visualize the raw text as an unknown form
+								memset(accumBuffer, 0, sizeof(accumBuffer));
+								sprintf(accumBuffer, "[%u:", comp->iCode);
+								memcpy(accumBuffer+ strlen(accumBuffer), comp->line->sourceCode->data_s8 + comp->start, min(comp->length, sizeof(accumBuffer) - 20));
+								sprintf(accumBuffer + strlen(accumBuffer), ":%u]", comp->length);
+
+								// Copy to our output
+								lnLength		= min(tnBufferLength - lnOffset, (s32)strlen(accumBuffer));
+								memcpy(outputBuffer + lnOffset, accumBuffer, lnLength);
+								lnOffset				+= lnLength;
+							}
+
+				}
+			}
+
+
+		//////////
+		// Return the pointer
+		//////
+			return(outputBuffer);
 	}
 
 

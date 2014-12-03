@@ -96,7 +96,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 	void iVjr_init(HACCEL* hAccelTable)
 	{
 		RECT		lrc;
-		s8			buffer[256];
+		s8			logBuffer[256];
 		SBitmap*	bmp;
 
 
@@ -250,8 +250,8 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		}
 
 		// Play the startup music if any
-		sprintf(buffer, "VJr launched %u milliseconds after system boot\0", systemStartedTickCount);
-		iVjr_appendSystemLog(buffer);
+		sprintf(logBuffer, "VJr launched %u milliseconds after system boot\0", systemStartedTickCount);
+		iVjr_appendSystemLog(logBuffer);
 		if (glShowSplash)
 			CreateThread(0, 0, &iPlay_ariaSplash, (LPVOID)cgcSoundStartupWav, 0, 0);
 
@@ -291,8 +291,11 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		// Initially populate _screen
 		// Load in the history if it exists
-		if (!iSEM_loadFromDisk(screenData, (s8*)cgcScreenDataFilename, false))
+		if (!iSEM_loadFromDisk(screenData, (s8*)cgcScreenDataFilename, false, true))
 		{
+			// Indicate success
+			sprintf(logBuffer, "Loaded: %s\0", cgcScreenDataFilename);
+			iSEM_appendLine(output_editbox->p.sem, logBuffer, strlen(logBuffer), false);
 			iVjr_appendSystemLog("Populate _screen with default data");
 			iSEM_appendLine(screenData, (s8*)cgcScreenTitle, -1, false);
 			iSEM_appendLine(screenData, NULL, 0, false);
@@ -321,8 +324,11 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		// Initially populate _jdebi
 		// Load in the history if it exists
-		if (!iSEM_loadFromDisk(command_editbox->p.sem, (s8*)cgcCommandHistoryFilename, true))
+		if (!iSEM_loadFromDisk(command_editbox->p.sem, (s8*)cgcCommandHistoryFilename, true, true))
 		{
+			// Indicate success
+			sprintf(logBuffer, "Loaded: %s\0", cgcCommandHistoryFilename);
+			iSEM_appendLine(output_editbox->p.sem, logBuffer, strlen(logBuffer), false);
 			iSEM_appendLine(command_editbox->p.sem, (s8*)"*** Welcome to Visual FreePro, Junior! :-)", -1, false);
 			iSEM_appendLine(command_editbox->p.sem, (s8*)"*** For now, this can be thought of as a command window ... with a twist.", -1, false);
 			iSEM_appendLine(command_editbox->p.sem, (s8*)"*** It works like an editor window.  You can insert new lines, edit old ones, etc.", -1, false);
@@ -342,7 +348,12 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		}
 
 		// Load some source code
-		iSEM_loadFromDisk(sourceCode_editbox->p.sem, (s8*)cgcStartupPrgFilename, true);
+		if (iSEM_loadFromDisk(sourceCode_editbox->p.sem, (s8*)cgcStartupPrgFilename, true, true))
+		{
+			// Indicate success
+			sprintf(logBuffer, "Loaded: %s\0", cgcStartupPrgFilename);
+			iSEM_appendLine(output_editbox->p.sem, logBuffer, strlen(logBuffer), false);
+		}
 
 		// Redraw
 		iVjr_appendSystemLog("Final render _jdebi");

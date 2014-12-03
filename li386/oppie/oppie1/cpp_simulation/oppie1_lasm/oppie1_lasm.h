@@ -57,22 +57,22 @@ struct SCommand;
 	cs32		_ICAT_REGISTER					= -1;
 	SBgra		colorSynHi_register				= { rgba(92,92,225,255) };
 	SBgra		colorSynHi_preprocessor			= { rgba(255,92,92,255) };
-	cs32		_ICODE_MOV						= -1;
-	cs32		_ICODE_ADC						= -2;
-	cs32		_ICODE_SBB						= -3;
-	cs32		_ICODE_CMP						= -4;
-	cs32		_ICODE_JNC						= -5;
-	cs32		_ICODE_JC						= -6;
-	cs32		_ICODE_JNZ						= -7;
-	cs32		_ICODE_JZ						= -8;
-	cs32		_ICODE_JMP						= -9;
-	cs32		_ICODE_R1						= -10;
-	cs32		_ICODE_R2						= -11;
-	cs32		_ICODE_R3						= -12;
-	cs32		_ICODE_R4						= -13;
-	cs32		_ICODE_ORG						= -14;
-	cs32		_ICODE_DB						= -15;
-	cs32		_ICODE_DUP						= -16;
+	cs32		_ICODE_MOV						= -1001;
+	cs32		_ICODE_ADC						= -1002;
+	cs32		_ICODE_SBB						= -1003;
+	cs32		_ICODE_CMP						= -1004;
+	cs32		_ICODE_JNC						= -1005;
+	cs32		_ICODE_JC						= -1006;
+	cs32		_ICODE_JNZ						= -1007;
+	cs32		_ICODE_JZ						= -1008;
+	cs32		_ICODE_JMP						= -1009;
+	cs32		_ICODE_R1						= -1010;
+	cs32		_ICODE_R2						= -1011;
+	cs32		_ICODE_R3						= -1012;
+	cs32		_ICODE_R4						= -1013;
+	cs32		_ICODE_ORG						= -1014;
+	cs32		_ICODE_DB						= -1015;
+	cs32		_ICODE_DUP						= -1016;
 
 
 //////////
@@ -168,6 +168,19 @@ struct SCommand;
 	};
 
 	SCommand gsCommands[] = {
+		{ // .org 99
+			_ORG_99, -1, -1, -1, -1, -1,
+				(u32)&iCompile_orgHandler,
+			{
+				{ _ICODE_ORG, -1, -1 },
+				{ _ICODE_NUMERIC, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
+
 		{ // mov reg,reg
 			_MOV_REG_REG, _ORR, _OPCODE_MOV_R8_R8, 0, 0, 0,
 			NULL/*no unique handler*/,
@@ -487,19 +500,6 @@ struct SCommand;
 				{ _ICODE_JMP, -1, -1 },
 				{ _ICODE_HYPHEN, -1, -1 },
 				{ _ICODE_NUMERIC, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // .org 99
-			_ORG_99, -1, -1, -1, -1, -1,
-			(u32)&iCompile_orgHandler,
-			{
-				{ _ICODE_ORG, -1, -1 },
-				{ _ICODE_NUMERIC, -1, -1 },
-				{ -1, -1, -1 },
 				{ -1, -1, -1 },
 				{ -1, -1, -1 },
 				{ -1, -1, -1 }

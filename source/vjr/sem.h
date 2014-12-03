@@ -219,7 +219,7 @@
 	SEM*					iSEM_allocate						(bool tlIsSourceCode);
 	SBuilder*				iSEM_accumulateBuilder				(SEM* sem, SLine* ecHintStart, SLine* ecHintEnd);
 	bool					iSEM_saveToDisk						(SEM* sem, s8* tcPathname);
-	bool					iSEM_loadFromDisk					(SEM* sem, s8* tcPathname, bool isSourceCode);
+	bool					iSEM_loadFromDisk					(SEM* sem, s8* tcPathname, bool isSourceCode, bool tlLogIt);
 	bool					iSEM_duplicate						(SEM** root, SEM* chain, bool tlIncludeUndoHistory);
 	void					iSEM_delete							(SEM** root, bool tlDeleteSelf);
 	void					iSEM_deleteChain					(SEM** root, bool tlDeleteSelf);
