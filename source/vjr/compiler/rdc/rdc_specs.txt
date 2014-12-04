@@ -18,6 +18,7 @@ RDC Specifications Document
 	const,ro	-- Augments a type to indicate it is read-only
 	rw			-- Augments a type to explicitly indicate it is read-write
 	volatile	-- Augments a type to indicate it is to be coded as conveyed
+	hide		-- Augments a type to indicate it should not be visible in SourceLight (typically used for unused / reserved members)
 	unsigned	-- Augments char, short, int, long to make it unsigned
 	static		-- Augments a definition to make it a singleton
 	extern		-- Augments a type to indicate its body is populated elsewhere
