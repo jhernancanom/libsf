@@ -168,13 +168,61 @@
 // Top level for Debo1 (Oppie-1 Debugger)
 //
 //////
-	void iDebo1_launch(void)
+	void iDebo1_launch(s8* tcImageName)
 	{
-		// Initialize our bitmaps
-		iiDebo1_initialize();
+		u32		lnSize, lnNumread;
+		FILE*	lfh;
 
+
+		//////////
+		// Initialize our bitmaps
+		//////
+			iiDebo1_initialize();
+
+
+		//////////
+		// Load the binary image
+		//////
+			if (tcImageName)
+			{
+				lfh = fopen(tcImageName, "rb+");
+				if (lfh)
+				{
+					// See how big the file is
+					fseek(lfh, 0, SEEK_END);
+					lnSize = ftell(lfh);
+					fseek(lfh, 0, SEEK_SET);
+					if (lnSize != 2048)
+					{
+						// It's not a proper image
+						printf("Image format is incorrect. Should be 2048 bytes (was %u bytes). Terminating.\n", lnSize);
+						exit(-1);
+					}
+
+					// Load it
+					lnNumread = fread(ram, 1, lnSize, lfh);
+					fclose(lfh);
+					if (lnNumread != lnSize)
+					{
+						printf("Unable to read %u bytes (read %u) from %s. Terminating.\n", lnSize, lnNumread, tcImageName);
+						exit(-2);
+					}
+
+					// Success
+					printf("Loaded image file %s\n", tcImageName);
+
+				} else {
+					// Indicate the fact that we just couldn't open the file due to circumstances entirely beyond our control
+					printf("Unable to open %s\n. Terminating.", tcImageName);
+					exit(-3);
+				}
+			}
+
+
+		///////////
 		// Spawn our permanent debugger thread
-		CreateThread(NULL, 0, &iDebo1_threadProc, 0, 0, 0);
+		//////
+			CreateThread(NULL, 0, &iDebo1_threadProc, 0, 0, 0);
 	}
 
 	void iiDebo1_initialize(void)
@@ -1270,7 +1318,7 @@
 					// Build the line
 					memset(buffer, 32, 32 * 3);
 					for (lnOffset = 0, lnJ = lnI, buffer[0] = 0; lnOffset < 32; lnOffset++)
-						sprintf(buffer + (lnOffset * 3), "%02x \0", ram[lnJ]);
+						sprintf(buffer + (lnOffset * 3), "%02x \0", ram[lnJ + lnOffset]);
 
 					// Draw the line
 					SetTextColor(bmpMemory->hdc, RGB(blackColor.red, blackColor.grn, blackColor.blu));

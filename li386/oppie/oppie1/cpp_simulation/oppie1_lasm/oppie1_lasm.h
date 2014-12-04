@@ -41,6 +41,7 @@ struct SCommand;
 //////////
 // Forward declarations
 //////
+	void		exit_program								(int tnExitCode);
 	SComp*		iParseSourceCodeLine						(SLine* line);
 	void		iCompileSourceCodeLine						(SEM* asmFile, SLine* line, s32* tnErrors, s32* tnWarnings, s32 tnPass);
 	u32			iGetRegisterEncoding						(SComp* comp);

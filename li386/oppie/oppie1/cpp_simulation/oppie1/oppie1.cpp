@@ -296,7 +296,7 @@
 // debo1.cpp
 //////
 	#include "debo1.cpp"
-	void			iDebo1_launch						(void);
+	void			iDebo1_launch						(s8* tcImageName);
 
 
 
@@ -312,7 +312,7 @@
 		// Launch debugger
 		//////
 			glOppie1_isRunning = true;
-			iDebo1_launch();
+			iDebo1_launch(argv[1]);
 
 		
 		//////////

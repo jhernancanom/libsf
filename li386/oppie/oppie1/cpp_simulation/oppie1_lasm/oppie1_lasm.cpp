@@ -151,6 +151,10 @@
 						printf("Unable to open %s\n", argv[1]);
 
 					} else {
+						// Indicate we're in progress
+						printf("Assembling %s\n", argv[1]);
+
+
 						//////////
 						// Parse every line into known components
 						//////
@@ -172,7 +176,7 @@
 
 							// If there were any errors, exit
 							if (lnErrors != 0)
-								return -1;
+								exit_program(-1);
 
 
 						//////////
@@ -212,7 +216,7 @@
 
 							// If there were any errors, exit
 							if (lnErrors != 0)
-								return -2;
+								exit_program(-2);
 
 
 						//////////
@@ -229,65 +233,69 @@
 								// Grab the instruction for this line
 								//////
 									instr = (SOppie1Instruction*)line->compilerInfo->extra_info;
-									if (instr->isData)
+									if (instr->size != 0)
 									{
-										//////////
-										// Store the data
-										//////
-											for (lnI = 0; lnI < instr->size; lnI++)
-											{
-												// Increase our test buffer count
-												++testBuffer[instr->org + lnI];
-												if (testBuffer[instr->org + 1] > 1)
+										// There's some content there
+										if (instr->isData)
+										{
+											//////////
+											// Store the data
+											//////
+												for (lnI = 0; lnI < instr->size; lnI++)
+												{
+													// Increase our test buffer count
+													++testBuffer[instr->org + lnI];
+													if (testBuffer[instr->org + 1] > 1)
+													{
+														// We've overwritten a prior memory value
+														printf("Addresses overlap on line %u\n", line->lineNumber);
+														exit_program(-3);
+													}
+
+													// Copy the raw data
+													outputBuffer[instr->org + lnI] = instr->data[lnI];
+												}
+
+										} else if (instr->isInstruction) {
+											//////////
+											// Store the instruction
+											//////
+												if (instr->org + instr->size - 1 >= 2048)
+												{
+													// It will wrap around the end
+													printf("Invalid address for line %u\n", line->lineNumber);
+													exit_program(-4);
+												}
+
+
+											//////////
+											// Increase for first byte
+											//////
+												++testBuffer[instr->org];
+												outputBuffer[instr->org] = instr->ora.i_data1;
+												if (testBuffer[instr->org] > 1)
 												{
 													// We've overwritten a prior memory value
 													printf("Addresses overlap on line %u\n", line->lineNumber);
-													return(-3);
+													exit_program(-5);
 												}
 
-												// Copy the raw data
-												outputBuffer[instr->org + lnI] = instr->data[lnI];
-											}
 
-									} else if (instr->isInstruction) {
-										//////////
-										// Store the instruction
-										//////
-											if (instr->org + instr->size >= 2048)
-											{
-												// It will wrap around the end
-												printf("Invalid address for line %u\n", line->lineNumber);
-												return(-4);
-											}
-
-
-										//////////
-										// Increase for first byte
-										//////
-											++testBuffer[instr->org];
-											outputBuffer[instr->org] = instr->ora.i_data1;
-											if (testBuffer[instr->org] > 1)
-											{
-												// We've overwritten a prior memory value
-												printf("Addresses overlap on line %u\n", line->lineNumber);
-												return(-5);
-											}
-
-
-										//////////
-										// If there's a second byte, do that one as well
-										//////
-											if (instr->size == 2)
-											{
-												++testBuffer[instr->org + 1];
-												outputBuffer[instr->org + 1] = instr->ora.i_data2;
-												if (testBuffer[instr->org + 1] > 1)
+											//////////
+											// If there's a second byte, do that one as well
+											//////
+												if (instr->size == 2)
 												{
-													// We've overwritten a prior memory value
-													printf("Addresses overlap on line %u\n", line->lineNumber);
-													return(-6);
+													++testBuffer[instr->org + 1];
+													outputBuffer[instr->org + 1] = instr->ora.i_data2;
+													if (testBuffer[instr->org + 1] > 1)
+													{
+														// We've overwritten a prior memory value
+														printf("Addresses overlap on line %u\n", line->lineNumber);
+														exit_program(-6);
+													}
 												}
-											}
+										}
 									}
 							}
 
@@ -301,7 +309,7 @@
 							{
 								// Could not create the output file
 								printf("Error creating %s\n", argv[1]);
-								return(-7);
+								exit_program(-7);
 							}
 
 
@@ -313,7 +321,7 @@
 							if (numread != 2048)
 							{
 								printf("Error writing 2048 bytes\n");
-								return(-8);
+								exit_program(-8);
 
 							} else {
 								// Success
@@ -327,7 +335,20 @@
 		//////////
 		// Task completed (one way or another :-))
 		//////
-			return 0;
+			exit_program(0);
+	}
+
+
+
+
+//////////
+//
+// Added for debugging, allows trapping to see where the program exits.
+//
+//////
+	void exit_program(int tnExitCode)
+	{
+		exit(tnExitCode);
 	}
 
 
@@ -355,7 +376,7 @@
 				{
 					// Should never happen
 					printf("Out of memory\n");
-					exit(-999);
+					exit_program(-999);
 				}
 			}
 
@@ -370,7 +391,7 @@
 				{
 					// Should never happen
 					printf("Out of memory\n");
-					exit(-998);
+					exit_program(-998);
 				}
 
 				// Initialize to NULLs
@@ -454,8 +475,17 @@
 		SComp*					comp[6];
 		SOppie1Instruction*		instr;
 
-s8 bufferComps[2048];
 
+//////////
+// For debugging:
+//
+// 	if (line->lineNumber == 98)
+// 		_asm nop;
+//
+// 	s8 bufferComps[2048];
+// 	iComps_visualize(line->compilerInfo->firstComp, 999, bufferComps, sizeof(bufferComps), true, &cgcKeywordsOppie1[0], NULL);
+//
+//////
 
 		//////////
 		// Grab as many components as there are
@@ -473,7 +503,6 @@ s8 bufferComps[2048];
 		//////////
 		// Make sure we have something to do
 		//////
-iComps_visualize(line->compilerInfo->firstComp, 999, bufferComps, sizeof(bufferComps), true, &cgcKeywordsOppie1[0], NULL);
 			if (comp[0] && comp[0]->iCode != _ICODE_COMMENT)
 			{
 				// Populate as many components as follow
@@ -540,8 +569,9 @@ iComps_visualize(line->compilerInfo->firstComp, 999, bufferComps, sizeof(bufferC
 										}
 
 										// Store the registers
-										instr->orr.rd = iGetRegisterEncoding(comp[1]);
-										instr->orr.rs = iGetRegisterEncoding(comp[1]);
+										instr->orr.rd	= iGetRegisterEncoding(comp[1]);
+										instr->orr.rs	= iGetRegisterEncoding(comp[1]);
+										instr->size		= 1;
 									}
 									// Encoding is complete
 									return;
@@ -593,9 +623,11 @@ iComps_visualize(line->compilerInfo->firstComp, 999, bufferComps, sizeof(bufferC
 										instr->ora.ooo = cmd->opcode & _OPCODE_MASK;
 
 										// Store the register
-										instr->ora.rd = iGetRegisterEncoding(comp[cmd->componentRegister]);
+										instr->ora.rd	= iGetRegisterEncoding(comp[cmd->componentRegister]);
+
 										// First-pass encoding is complete
-										llisPassDone = true;
+										instr->size		= 2;
+										llisPassDone	= true;
 									}
 								}
 								break;
@@ -645,9 +677,11 @@ iComps_visualize(line->compilerInfo->firstComp, 999, bufferComps, sizeof(bufferC
 										instr->bsa.ooooo = cmd->opcode & _OPCODE_MASK;
 
 										// Store the sign
-										instr->bsa.s = cmd->opcodeSign;
+										instr->bsa.s	= cmd->opcodeSign;
+
 										// First-pass encoding is complete
-										llisPassDone = true;
+										instr->size		= 2;
+										llisPassDone	= true;
 									}
 								}
 								break;
@@ -765,7 +799,7 @@ _asm int 3;
 		}
 		// If we get here, not found
 		printf("Label not found on line %u\n", compLabelSrch->line->lineNumber);
-		exit(-4);
+		exit_program(-4);
 	}
 
 
@@ -790,7 +824,7 @@ _asm int 3;
 			{
 				// Invalid
 				printf("Invalid .ORG location on line %u\n", line->lineNumber);
-				exit(-999);
+				exit_program(-999);
 			}
 
 
@@ -845,14 +879,14 @@ _asm int 3;
 			{
 				// Invalid
 				printf("Invalid DB count on line %u\n", line->lineNumber);
-				exit(-999);
+				exit_program(-999);
 			}
 			lnValue = iComps_getAs_s32(iComps_getNth(compFirst, 1));
 			if (lnValue < 0 || lnValue > 255)
 			{
 				// Invalid
 				printf("Invalid initialization value %u on line %u\n", lnValue, line->lineNumber);
-				exit(-999);
+				exit_program(-999);
 			}
 
 
@@ -867,7 +901,7 @@ _asm int 3;
 			{
 				// Should never happen
 				printf("Out of memory on line %u\n", line->lineNumber);
-				exit(-999);
+				exit_program(-999);
 			}
 
 			// Initialize the data block
@@ -896,7 +930,7 @@ _asm int 3;
 			{
 				// Invalid
 				printf("Invalid initialization value %u on line %u\n", lnValue, line->lineNumber);
-				exit(-999);
+				exit_program(-999);
 			}
 
 
@@ -911,9 +945,9 @@ _asm int 3;
 			{
 				// Should never happen
 				printf("Out of memory on line %u\n", line->lineNumber);
-				exit(-999);
+				exit_program(-999);
 			}
 
 			// Initialize the data block
-			*instr->data = lnValue;
+			instr->data[0]	= (u8)lnValue;
 	}

@@ -74,6 +74,8 @@ value5_2:
 // Constants
 zero:
 	db 0
+one:
+	db 1
 minus_one:
 	db 255
 
