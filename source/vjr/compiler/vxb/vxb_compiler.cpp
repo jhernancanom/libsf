@@ -2548,9 +2548,9 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 									{
 										// This is a match, visualize it as:  [text]
 										memset(accumBuffer, 0, sizeof(accumBuffer));
-										accumBuffer[0] = '[';
-										memcpy(accumBuffer+ 1, comp->line->sourceCode->data_s8 + comp->start, min(comp->length, sizeof(accumBuffer) - 3));
-										accumBuffer[strlen(accumBuffer)] = ']';
+										sprintf(accumBuffer, "[%d:", comp->iCode);
+										memcpy(accumBuffer+ strlen(accumBuffer), comp->line->sourceCode->data_s8 + comp->start, min(comp->length, sizeof(accumBuffer) - 20));
+										sprintf(accumBuffer + strlen(accumBuffer), ":%u]", comp->length);
 
 										// Copy to our output
 										lnLength		= min(tnBufferLength - lnOffset, (s32)strlen(accumBuffer));
@@ -2573,7 +2573,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 							{
 								// Visualize the raw text as an unknown form
 								memset(accumBuffer, 0, sizeof(accumBuffer));
-								sprintf(accumBuffer, "[%u:", comp->iCode);
+								sprintf(accumBuffer, "[%d:", comp->iCode);
 								memcpy(accumBuffer+ strlen(accumBuffer), comp->line->sourceCode->data_s8 + comp->start, min(comp->length, sizeof(accumBuffer) - 20));
 								sprintf(accumBuffer + strlen(accumBuffer), ":%u]", comp->length);
 

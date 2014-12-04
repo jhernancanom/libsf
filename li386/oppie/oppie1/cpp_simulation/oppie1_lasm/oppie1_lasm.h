@@ -54,9 +54,13 @@ struct SCommand;
 //////////
 // Codes unique to Oppie-1
 //////
-	cs32		_ICAT_REGISTER					= -1;
 	SBgra		colorSynHi_register				= { rgba(92,92,225,255) };
 	SBgra		colorSynHi_preprocessor			= { rgba(255,92,92,255) };
+
+	// Categories of operations
+	cs32		_ICAT_REGISTER					= -1000;
+
+	// Codes of operations
 	cs32		_ICODE_MOV						= -1001;
 	cs32		_ICODE_ADC						= -1002;
 	cs32		_ICODE_SBB						= -1003;
@@ -168,19 +172,6 @@ struct SCommand;
 	};
 
 	SCommand gsCommands[] = {
-		{ // .org 99
-			_ORG_99, -1, -1, -1, -1, -1,
-				(u32)&iCompile_orgHandler,
-			{
-				{ _ICODE_ORG, -1, -1 },
-				{ _ICODE_NUMERIC, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
 		{ // mov reg,reg
 			_MOV_REG_REG, _ORR, _OPCODE_MOV_R8_R8, 0, 0, 0,
 			NULL/*no unique handler*/,
@@ -506,7 +497,33 @@ struct SCommand;
 			}
 		},
 
-		{ // db dup
+		{ // .org 99
+			_ORG_99, -1, -1, -1, -1, -1,
+			(u32)&iCompile_orgHandler,
+			{
+				{ _ICODE_ORG, -1, -1 },
+				{ _ICODE_NUMERIC, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
+
+		{ // db C
+			_DB, -1, -1, -1, -1, -1,
+			(u32)&iCompile_dbHandler,
+			{
+				{ _ICODE_DB, -1, -1 },
+				{ _ICODE_NUMERIC, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 },
+				{ -1, -1, -1 }
+			}
+		},
+
+		{ // db N dup C
 			_DB_DUP, -1, -1, -1, -1, -1,
 			(u32)&iCompile_dbDupHandler,
 			{
@@ -520,24 +537,11 @@ struct SCommand;
 		},
 
 		{ // label:
-			_LABEL_COLON, -1, -1, -1, -1, -1,
+			_LABEL_COLON, -1, -1, -1, -1, 0/*component number for label*/,
 			(u32)&iCompile_labelHandler,
 			{
 				{ _ICODE_LABEL, -1, -1 },
 				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 },
-				{ -1, -1, -1 }
-			}
-		},
-
-		{ // db
-			_DB, -1, -1, -1, -1, -1,
-				(u32)&iCompile_dbHandler,
-			{
-				{ _ICODE_DB, -1, -1 },
-				{ _ICODE_NUMERIC, -1, -1 },
 				{ -1, -1, -1 },
 				{ -1, -1, -1 },
 				{ -1, -1, -1 },

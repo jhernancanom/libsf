@@ -449,7 +449,7 @@
 	{
 		s32						lnI;
 		u32						lnAddress;
-		bool					llFailure;
+		bool					llMatchFailure, llisPassDone;
 		SCommand*				cmd;
 		SComp*					comp[6];
 		SOppie1Instruction*		instr;
@@ -474,39 +474,41 @@ s8 bufferComps[2048];
 		// Make sure we have something to do
 		//////
 iComps_visualize(line->compilerInfo->firstComp, 999, bufferComps, sizeof(bufferComps), true, &cgcKeywordsOppie1[0], NULL);
-			if (comp[1] && comp[1]->iCode != _ICODE_COMMENT)
+			if (comp[0] && comp[0]->iCode != _ICODE_COMMENT)
 			{
 				// Populate as many components as follow
-				for (cmd = (SCommand*)&gsCommands[0]; cmd && cmd->cmdType != -1; cmd++)
+				for (cmd = (SCommand*)&gsCommands[0], llisPassDone = false; cmd && cmd->cmdType != -1 && !llisPassDone; cmd++)
 				{
 					// Iterate for any matching components
-					for (lnI = 0, llFailure = false; lnI < 6; lnI++)
+					for (lnI = 0, llMatchFailure = false; lnI < 6; lnI++)
 					{
 						// Is this line valid?
 						if (cmd->comp[lnI].iCode == -1 && cmd->comp[lnI].iCode2 == -1 && cmd->comp[lnI].iCat == -1)
 						{
-							// Nothing on this line
+							// There's Nothing on this line, which means it's an implicit hit/match
 
 						} else {
 							// This line has something, does it match up?
-							if (!comp[lnI] ||	(		(cmd->comp[lnI].iCode	== -1 || cmd->comp[lnI].iCode	== comp[lnI]->iCode)
-													&&	(cmd->comp[lnI].iCode2	== -1 || cmd->comp[lnI].iCode2	== comp[lnI]->iCode)
-													&&	(cmd->comp[lnI].iCat	== -1 || cmd->comp[lnI].iCat	== comp[lnI]->iCode)
-												))
+							if (!comp[lnI] ||	(	(	(cmd->comp[lnI].iCode	!= -1 && cmd->comp[lnI].iCode	== comp[lnI]->iCode)
+													||	(cmd->comp[lnI].iCode2	!= -1 && cmd->comp[lnI].iCode2	== comp[lnI]->iCode)
+													||	(cmd->comp[lnI].iCode	== -1 && cmd->comp[lnI].iCode2	== -1))
+													&&	(cmd->comp[lnI].iCat	== -1 || cmd->comp[lnI].iCat	== comp[lnI]->iCat)
+												)
+											)
 							{
 								// If we enter this block, a full match was made here
 								// No code goes here, it's just coded this way to capture the logic condition without using the awkward reverse logic in the above statement
 
 							} else {
 								// If we get to any component which fails, then this is not a match
-								llFailure = true;
+								llMatchFailure = true;
 								break;
 							}
 						}
 					}
 
 					// When we get here, we either have a full match on this command, or a failure to match at some point
-					if (!llFailure)
+					if (!llMatchFailure)
 					{
 						// A full match
 						instr = (SOppie1Instruction*)line->compilerInfo->extra_info;
@@ -521,6 +523,7 @@ iComps_visualize(line->compilerInfo->firstComp, 999, bufferComps, sizeof(bufferC
 								{
 									// There is a unique handler to setup the values
 									cmd->uniqueHandler(cmd, line, comp[0], tnPass);
+									return;
 
 								} else {
 									// Standard handler
@@ -541,6 +544,7 @@ iComps_visualize(line->compilerInfo->firstComp, 999, bufferComps, sizeof(bufferC
 										instr->orr.rs = iGetRegisterEncoding(comp[1]);
 									}
 									// Encoding is complete
+									return;
 								}
 								break;
 
@@ -554,6 +558,7 @@ iComps_visualize(line->compilerInfo->firstComp, 999, bufferComps, sizeof(bufferC
 								{
 									// There is a unique handler to setup the values
 									cmd->uniqueHandler(cmd, line, comp[0], tnPass);
+									return;
 
 								} else {
 									// Standard handler
@@ -581,6 +586,7 @@ iComps_visualize(line->compilerInfo->firstComp, 999, bufferComps, sizeof(bufferC
 										// Store the lower 8-bits of the address
 										instr->ora.aaaaaaaa	= (lnAddress & 0xff);
 										// Encoding is complete
+										return;
 
 									} else {
 										// Always 3-bit encoding
@@ -589,6 +595,7 @@ iComps_visualize(line->compilerInfo->firstComp, 999, bufferComps, sizeof(bufferC
 										// Store the register
 										instr->ora.rd = iGetRegisterEncoding(comp[cmd->componentRegister]);
 										// First-pass encoding is complete
+										llisPassDone = true;
 									}
 								}
 								break;
@@ -603,6 +610,7 @@ iComps_visualize(line->compilerInfo->firstComp, 999, bufferComps, sizeof(bufferC
 								{
 									// There is a unique handler to setup the values
 									cmd->uniqueHandler(cmd, line, comp[0], tnPass);
+									return;
 
 								} else {
 									// Standard handler
@@ -630,6 +638,7 @@ iComps_visualize(line->compilerInfo->firstComp, 999, bufferComps, sizeof(bufferC
 										// Store the lower 8-bits of the address
 										instr->bsa.aaaaaaaa	= (lnAddress & 0xff);
 										// Encoding is complete
+										return;
 
 									} else {
 										// Always 5-bit encoding
@@ -638,6 +647,7 @@ iComps_visualize(line->compilerInfo->firstComp, 999, bufferComps, sizeof(bufferC
 										// Store the sign
 										instr->bsa.s = cmd->opcodeSign;
 										// First-pass encoding is complete
+										llisPassDone = true;
 									}
 								}
 								break;
@@ -648,6 +658,7 @@ iComps_visualize(line->compilerInfo->firstComp, 999, bufferComps, sizeof(bufferC
 								{
 									// Use the custom handler
 									cmd->uniqueHandler(cmd, line, comp[0], tnPass);
+									return;
 
 								} else {
 									// Should never happen
@@ -659,7 +670,11 @@ _asm int 3;
 
 				}
 				// If we get here, we've exhausted our command patterns, and this line is unknown.
-				printf("Unrecognized command on line %u\n", line->lineNumber);
+				if (llMatchFailure)
+				{
+_asm int 3;
+					printf("Unrecognized command on line %u\n", line->lineNumber);
+				}
 			}
 	}
 
@@ -749,7 +764,7 @@ _asm int 3;
 			}
 		}
 		// If we get here, not found
-		printf("Label not found on line %u\n", line->lineNumber);
+		printf("Label not found on line %u\n", compLabelSrch->line->lineNumber);
 		exit(-4);
 	}
 
