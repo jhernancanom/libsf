@@ -94,6 +94,7 @@
 //////
 	#include "..\common\instructions.h"
 	#include "oppie1_lasm.h"
+	#include "..\oppie1\debo1_disasm.cpp"
 
 
 
@@ -106,12 +107,14 @@
 	int main(int argc, char* argv[])
 	{
 		s32					lnI, lnErrors, lnWarnings, lnOrg, numread;
+		bool				llMap;
 		SEM*				asmFile;
+		SBuilder*			map;
 		SLine*				line;
 		FILE*				lfh;
 		SOppie1Instruction*	instr;
-		s8					testBuffer[2048];
-		s8					outputBuffer[2048];
+		s8					buffer[2048];
+		s8					output[2048];
 
 
 		//////////
@@ -130,10 +133,10 @@
 		//////////
 		// lasm1 only takes one parameter, the input filename
 		//////
-			if (argc != 2)
+			if (argc < 2 || argc > 3)
 			{
 				// Display syntax
-				printf("Usage:  lasm1 myfile.asm\n");
+				printf("Usage:  lasm1 myfile.asm /map\n");
 
 			} else {
 				// Allocate our load manager
@@ -154,6 +157,8 @@
 						// Indicate we're in progress
 						printf("Assembling %s\n", argv[1]);
 
+						// See if they specified /map
+						llMap = (argc == 3 && strlen(argv[2]) == 4 && _memicmp(argv[2], "/map", 4) == 0);
 
 						//////////
 						// Parse every line into known components
@@ -223,8 +228,8 @@
 						// When we get here, every line has compiled out.
 						// Look for memory locations which will overlay
 						//////
-							memset(outputBuffer, 0, sizeof(outputBuffer));
-							memset(testBuffer, 0, sizeof(testBuffer));
+							memset(output, 0, sizeof(output));
+							memset(buffer, 0, sizeof(buffer));
 							for (	line = asmFile->firstLine;
 									line;
 									line = (SLine*)line->ll.next	)
@@ -244,8 +249,8 @@
 												for (lnI = 0; lnI < instr->size; lnI++)
 												{
 													// Increase our test buffer count
-													++testBuffer[instr->org + lnI];
-													if (testBuffer[instr->org + 1] > 1)
+													++buffer[instr->org + lnI];
+													if (buffer[instr->org + 1] > 1)
 													{
 														// We've overwritten a prior memory value
 														printf("Addresses overlap on line %u\n", line->lineNumber);
@@ -253,7 +258,7 @@
 													}
 
 													// Copy the raw data
-													outputBuffer[instr->org + lnI] = instr->data[lnI];
+													output[instr->org + lnI] = instr->data[lnI];
 												}
 
 										} else if (instr->isInstruction) {
@@ -271,9 +276,9 @@
 											//////////
 											// Increase for first byte
 											//////
-												++testBuffer[instr->org];
-												outputBuffer[instr->org] = instr->ora.i_data1;
-												if (testBuffer[instr->org] > 1)
+												++buffer[instr->org];
+												output[instr->org] = instr->ora.i_data1;
+												if (buffer[instr->org] > 1)
 												{
 													// We've overwritten a prior memory value
 													printf("Addresses overlap on line %u\n", line->lineNumber);
@@ -286,9 +291,9 @@
 											//////
 												if (instr->size == 2)
 												{
-													++testBuffer[instr->org + 1];
-													outputBuffer[instr->org + 1] = instr->ora.i_data2;
-													if (testBuffer[instr->org + 1] > 1)
+													++buffer[instr->org + 1];
+													output[instr->org + 1] = instr->ora.i_data2;
+													if (buffer[instr->org + 1] > 1)
 													{
 														// We've overwritten a prior memory value
 														printf("Addresses overlap on line %u\n", line->lineNumber);
@@ -316,7 +321,7 @@
 						//////////
 						// Write the buffer
 						//////
-							numread = fwrite(outputBuffer, 1, 2048, lfh);
+							numread = fwrite(output, 1, 2048, lfh);
 							fclose(lfh);
 							if (numread != 2048)
 							{
@@ -327,6 +332,81 @@
 								// Success
 								printf("Wrote 2048 bytes\n");
 							}
+
+
+						//////////
+						// They specified a map file
+						//////
+							if (llMap)
+							{
+								//////////
+								// Allocate our output buffer
+								//////
+									iBuilder_createAndInitialize(&map, -1);
+
+
+								//////////
+								// Iterate through each line and convey data, or disassembly for the output
+								//////
+									for (	line = asmFile->firstLine, lnErrors = 0, lnWarnings = 0;
+											line;
+											line = (SLine*)line->ll.next	)
+									{
+										//////////
+										// Grab the instruction for this line
+										//////
+											instr = (SOppie1Instruction*)line->compilerInfo->extra_info;
+											if (instr->size != 0)
+											{
+												//////////
+												// Show the address:
+												//////
+													sprintf(buffer, "%03x: \0", instr->org);
+													iBuilder_appendData(map, buffer, -1);
+
+
+												//////////
+												// There's some content there
+												//////
+													memset(buffer, 0, sizeof(buffer));
+													if (instr->isData)
+													{
+														//////////
+														// Show the data
+														//////
+															for (lnI = 0; lnI < instr->size; lnI++)
+																sprintf(buffer + (lnI * 3), "%02x%s", instr->data[lnI], ((lnI + 1 < instr->size) ? ",\0" : " \0"));
+
+
+													} else if (instr->isInstruction) {
+														// Disassemble the instruction
+														iiDebo1_decodeAssembly(buffer, instr->org, false, true, (u8*)output);
+														memset(buffer + strlen(buffer), 32, 64);
+														buffer[45] = '/';
+														buffer[46] = '/';
+														memcpy(buffer + 48, line->sourceCode->data_s8, line->sourceCode_populatedLength);
+														buffer[48 + line->sourceCode_populatedLength] = 0;
+													}
+
+
+												//////////
+												// Append the data
+												//////
+													iBuilder_appendData(map, buffer, strlen(buffer));
+													iBuilder_appendCrLf(map);
+											}
+
+									}
+
+
+								//////////
+								// Save the map file
+								//////
+									memcpy(argv[1] + strlen(argv[1]) - 4, ".map", 4);
+									iBuilder_asciiWriteOutFile(map, argv[1]);
+
+							}
+
 					}
 				}
 			}
@@ -800,6 +880,9 @@ _asm int 3;
 		// If we get here, not found
 		printf("Label not found on line %u\n", compLabelSrch->line->lineNumber);
 		exit_program(-4);
+
+		// Required so the compiler doesn't complain
+		return(0);
 	}
 
 

@@ -35,6 +35,8 @@
 //
 
 
+
+
 //////////
 // Global variables
 //////
@@ -137,11 +139,10 @@
 	void					iiDebo1_render						(void);
 	void					iiDebo1_initialize					(void);
 	void					iiDebo1_populateStaticImages		(void);
+	void					iiDebo1_decodeAssembly_NLines		(SBitmap* bmp, RECT* rc, s32 ip_address, s32 disassembleLineCount, cs8* tcLabelText, SBgra lowColor, SBgra highColor, SBgra textColor);
 	void					iiDebo1_colorizeAndText				(SBitmap* bmp, s8* tcText, SBgra fillColor, SBgra textColor, SFont* font);
 	void					iiDebo1_renderStageBackground		(SBitmap* bmp, RECT* rc, SBgra textColor, SBgra lowColor, SBgra highColor, cs8* tcTextTop, cs8* tcTextBottom);
 	void					iiDebo1_renderTextCentered			(s8* tcText, RECT* rc, bool tlCenterHorizontally);
-	s32						iiDebo1_decodeAssembly				(s8* tcText, s32 ip_address, bool tlIncludeIpAddress, bool tlIncludeOpcodeBytes);
-	void					iiDebo1_decodeAssembly_NLines		(SBitmap* bmp, RECT* rc, s32 ip_address, s32 disassembleLineCount, cs8* tcLabelText, SBgra lowColor, SBgra highColor, SBgra textColor);
 	void					iiDebo1_renderStage1				(void);
 	void					iiDebo1_renderStage2				(void);
 	void					iiDebo1_renderStage3				(void);
@@ -159,6 +160,7 @@
 // Include our own logo bitmap
 //////
 	#include "bmps\bitmaps.h"
+	#include "debo1_disasm.cpp"
 
 
 
@@ -326,6 +328,52 @@
 			iiDebo1_colorizeAndText(bmpF5RunOver,		"F5:Run",			memoryOptionHighlightColor,		blackColor,			fontUbuntuMono8);
 			iiDebo1_colorizeAndText(bmpF8StepOver,		"F8:Step",			memoryOptionHighlightColor,		blackColor,			fontUbuntuMono8);
 			iiDebo1_colorizeAndText(bmpF12ThrottleOver,	"F12:Throttle",		memoryOptionHighlightColor,		blackColor,			fontUbuntuMono8);
+	}
+
+
+
+
+//////////
+//
+// Called to decode three disassembly lines for the indicated IP address
+//
+//////
+	void iiDebo1_decodeAssembly_NLines(SBitmap* bmp, RECT* rc, s32 ip_address, s32 disassembleLineCount, cs8* tcLabelText, SBgra lowColor, SBgra highColor, SBgra textColor)
+	{
+		s32		lnI, lnOpcodeBytes;
+		RECT	lrc;
+		s8		buffer[64];
+
+		
+		//////////
+		// Draw the header label
+		//////
+			DrawText(bmp->hdc, buffer, strlen(buffer), &lrc, DT_CALCRECT);
+			SetRect(&lrc, rc->left, rc->top, rc->right, rc->top + (lrc.bottom - lrc.top));
+			iBmp_fillRect(bmp, &lrc, lowColor, lowColor, lowColor, lowColor, false, NULL, false);
+			lrc.right -= 5;
+			SetTextColor(bmp->hdc, RGB(textColor.red, textColor.grn, textColor.blu));
+			DrawText(bmp->hdc, tcLabelText, strlen(tcLabelText), &lrc, DT_RIGHT);
+			rc->top += (lrc.bottom - lrc.top);
+
+		
+		//////////
+		// Iterate for each disassembly line
+		//////
+			for (lnI = 0, lnOpcodeBytes = 0; lnI < disassembleLineCount; lnI++)
+			{
+				// Grab the disassembly for this location
+				lnOpcodeBytes += iiDebo1_decodeAssembly(buffer, ip_address + lnOpcodeBytes, true, true, ram);
+
+				// Render it
+				DrawText(bmp->hdc, buffer, strlen(buffer), &lrc, DT_CALCRECT);
+				SetRect(&lrc, rc->left, rc->top, rc->right, rc->top + (lrc.bottom - lrc.top));
+				iBmp_fillRect(bmp, &lrc, ((lnI == 0) ? lowColor : highColor), whiteColor, whiteColor, whiteColor, false, NULL, false);
+				DrawText(bmp->hdc, buffer, strlen(buffer), &lrc, DT_LEFT);
+
+				// Adjust for next line
+				rc->top += (lrc.bottom - lrc.top);
+			}
 	}
 
 
@@ -542,279 +590,6 @@
 
 //////////
 //
-// Disassemble the instruction into text form
-//
-//////
-	s32 iiDebo1_decodeAssembly(s8* tcText, s32 ip_address, bool tlIncludeIpAddress, bool tlIncludeOpcodeBytes)
-	{
-		s32		lnOpcodeCount;
-		SOra	iora;		// ooo.xx.aaa.aaaaaaaa
-		SOrr	iorr;		// ooo.x.rd.rs, oooo.rd.rs
-		SBsa	ibsa;		// ooooo.s.aa.aaaaaaaa
-
-
-		//////////
-		// Fill the instruction patterns for testing
-		//////
-			iora.i_data1 = ram[ip_address];
-			iorr.i_data1 = ram[ip_address];
-			ibsa.i_data1 = ram[ip_address];
-			iora.i_data2 = ram[ip_address + 1];
-			ibsa.i_data2 = ram[ip_address + 1];
-
-			// Include the ip address
-			if (tlIncludeIpAddress)		sprintf(tcText, "%03x: \0", ip_address);
-			else						sprintf(tcText, "\0");
-
-			// Decode the bits
-			if (iora.ooo == (_OPCODE_MOV_R8_ADDR & _OPCODE_MASK))
-			{
-				// mov   reg8,[address]		2			000.00.000:00000000
-				lnOpcodeCount = 2;
-
-				// Opcode bytes
-				if (tlIncludeOpcodeBytes)
-					sprintf(tcText + strlen(tcText), "%02x %02x   \0", ram[ip_address], ram[ip_address+1]);
-
-				// Disassembly
-				sprintf(tcText + strlen(tcText), "mov r%u,[%03x]\0", (u32)iora.rd + 1, ((u16)iora.aaa << 8) | (u16)iora.aaaaaaaa);
-
-			} else if (iorr.ooo == (_OPCODE_MOV_R8_R8 & _OPCODE_MASK)) {
-				// mov   reg8,reg8			1			001.x.00.00	(dest,src)
-				lnOpcodeCount = 1;
-
-				// Opcode byte
-				if (tlIncludeOpcodeBytes)
-					sprintf(tcText + strlen(tcText), "%02x      \0", ram[ip_address]);
-
-				// Disassembly
-				sprintf(tcText + strlen(tcText), "mov r%u,r%u\0", (u32)iorr.rd + 1, (u32)iorr.rs + 1);
-
-			} else if (iorr.oooo == (_OPCODE_ADD_R8_R8 & _OPCODE_MASK)) {
-				// add   reg8,reg8			1			0100.00.00
-				lnOpcodeCount = 1;
-
-				// Opcode byte
-				if (tlIncludeOpcodeBytes)
-					sprintf(tcText + strlen(tcText), "%02x      \0", ram[ip_address]);
-
-				// Disassembly
-				sprintf(tcText + strlen(tcText), "add r%u,r%u\0", (u32)iorr.rd + 1, (u32)iorr.rs + 1);
-
-			} else if (iorr.oooo == (_OPCODE_ADC_R8_R8 & _OPCODE_MASK)) {
-				// adc   reg8,reg8			1			0110.00.00
-				lnOpcodeCount = 1;
-
-				// Opcode byte
-				if (tlIncludeOpcodeBytes)
-					sprintf(tcText + strlen(tcText), "%02x      \0", ram[ip_address]);
-
-				// Disassembly
-				sprintf(tcText + strlen(tcText), "adc r%u,r%u\0", (u32)iorr.rd + 1, (u32)iorr.rs + 1);
-
-			} else if (iorr.oooo == (_OPCODE_SUB_R8_R8 & _OPCODE_MASK)) {
-				// sub   reg8,reg8			1			0101.00.00
-				lnOpcodeCount = 1;
-
-				// Opcode byte
-				if (tlIncludeOpcodeBytes)
-					sprintf(tcText + strlen(tcText), "%02x      \0", ram[ip_address]);
-
-				// Disassembly
-				sprintf(tcText + strlen(tcText), "sub r%u,r%u\0", (u32)iorr.rd + 1, (u32)iorr.rs + 1);
-
-			} else if (iorr.oooo == (_OPCODE_SBB_R8_R8 & _OPCODE_MASK)) {
-				// sbb   reg8,reg8			1			0111.00.00
-				lnOpcodeCount = 1;
-
-				// Opcode byte
-				if (tlIncludeOpcodeBytes)
-					sprintf(tcText + strlen(tcText), "%02x      \0", ram[ip_address]);
-
-				// Disassembly
-				sprintf(tcText + strlen(tcText), "sbb r%u,r%u\0", (u32)iorr.rd + 1, (u32)iorr.rs + 1);
-
-			} else if (iora.ooo == (_OPCODE_MOV_ADDR_R8 & _OPCODE_MASK)) {
-				// mov   [address],reg8		2			100.00.000:00000000
-				lnOpcodeCount = 2;
-
-				// Opcode bytes
-				if (tlIncludeOpcodeBytes)
-					sprintf(tcText + strlen(tcText), "%02x %02x   \0", ram[ip_address], ram[ip_address+1]);
-
-				// Disassembly
-				sprintf(tcText + strlen(tcText), "mov [%03x],r%u\0", ((u16)iora.aaa << 8) | (u16)iora.aaaaaaaa, (u32)iora.rd + 1);
-
-			} else if (iorr.ooo == (_OPCODE_CMP_R8_R8 & _OPCODE_MASK)) {
-				// cmp   reg8,reg8			1			101.x.00.00	(left,right)
-				lnOpcodeCount = 1;
-
-				// Opcode byte
-				if (tlIncludeOpcodeBytes)
-					sprintf(tcText + strlen(tcText), "%02x      \0", ram[ip_address]);
-
-				// Disassembly
-				sprintf(tcText + strlen(tcText), "cmp r%u,r%u\0", (u32)iorr.rd + 1, (u32)iorr.rs + 1);
-
-			} else if (ibsa.ooooo == (_OPCODE_JNC_REL_ADDR & _OPCODE_MASK)) {
-				// jnc    +/- 1KB
-				lnOpcodeCount = 2;
-
-				// Opcode bytes
-				if (tlIncludeOpcodeBytes)
-					sprintf(tcText + strlen(tcText), "%02x %02x   \0", ram[ip_address], ram[ip_address+1]);
-
-				// Disassembly
-				if (ibsa.s)
-				{
-					// Jumping negative
-					sprintf(tcText + strlen(tcText), "jnc  -%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
-
-				} else {
-					// Jumping positive
-					sprintf(tcText + strlen(tcText), "jnc  +%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
-				}
-
-			} else if (ibsa.ooooo == (_OPCODE_JC_REL_ADDR & _OPCODE_MASK)) {
-				// jc    +/- 1KB
-				lnOpcodeCount = 2;
-
-				// Opcode bytes
-				if (tlIncludeOpcodeBytes)
-					sprintf(tcText + strlen(tcText), "%02x %02x   \0", ram[ip_address], ram[ip_address+1]);
-
-				// Disassembly
-				if (ibsa.s)
-				{
-					// Jumping negative
-					sprintf(tcText + strlen(tcText), "jc  -%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
-
-				} else {
-					// Jumping positive
-					sprintf(tcText + strlen(tcText), "jc  +%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
-				}
-
-			} else if (ibsa.ooooo == (_OPCODE_JNZ_REL_ADDR & _OPCODE_MASK)) {
-				// jnz    +/- 1KB
-				lnOpcodeCount = 2;
-
-				// Opcode bytes
-				if (tlIncludeOpcodeBytes)
-					sprintf(tcText + strlen(tcText), "%02x %02x   \0", ram[ip_address], ram[ip_address+1]);
-
-				// Disassembly
-				if (ibsa.s)
-				{
-					// Jumping negative
-					sprintf(tcText + strlen(tcText), "jnz  -%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
-
-				} else {
-					// Jumping positive
-					sprintf(tcText + strlen(tcText), "jnz  +%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
-				}
-
-			} else if (ibsa.ooooo == (_OPCODE_JZ_REL_ADDR & _OPCODE_MASK)) {
-				// jz    +/- 1KB
-				lnOpcodeCount = 2;
-
-				// Opcode bytes
-				if (tlIncludeOpcodeBytes)
-					sprintf(tcText + strlen(tcText), "%02x %02x   \0", ram[ip_address], ram[ip_address+1]);
-
-				// Disassembly
-				if (ibsa.s)
-				{
-					// Jumping negative
-					sprintf(tcText + strlen(tcText), "jz  -%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
-
-				} else {
-					// Jumping positive
-					sprintf(tcText + strlen(tcText), "jz  +%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
-				}
-
-			} else if (ibsa.ooooo == (_OPCODE_JMP_REL_ADDR & _OPCODE_MASK)) {
-				// jmp   +/- 1KB
-				lnOpcodeCount = 2;
-
-				// Opcode bytes
-				if (tlIncludeOpcodeBytes)
-					sprintf(tcText + strlen(tcText), "%02x %02x   \0", ram[ip_address], ram[ip_address+1]);
-
-				// Disassembly
-				if (ibsa.s)
-				{
-					// Jumping negative
-					sprintf(tcText + strlen(tcText), "jmp -%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
-
-				} else {
-					// Jumping positive
-					sprintf(tcText + strlen(tcText), "jmp +%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
-				}
-
-			} else {
-				// Invalid opcode
-				lnOpcodeCount = 1;
-				sprintf(tcText + strlen(tcText), "%02x      unk\0", ram[ip_address]);
-			}
-
-
-		//////////
-		// Indicate how many bytes were used in the opcode
-		//////
-			return(lnOpcodeCount);
-	}
-
-
-
-
-//////////
-//
-// Called to decode three disassembly lines for the indicated IP address
-//
-//////
-	void iiDebo1_decodeAssembly_NLines(SBitmap* bmp, RECT* rc, s32 ip_address, s32 disassembleLineCount, cs8* tcLabelText, SBgra lowColor, SBgra highColor, SBgra textColor)
-	{
-		s32		lnI, lnOpcodeBytes;
-		RECT	lrc;
-		s8		buffer[64];
-
-		
-		//////////
-		// Draw the header label
-		//////
-			DrawText(bmp->hdc, buffer, strlen(buffer), &lrc, DT_CALCRECT);
-			SetRect(&lrc, rc->left, rc->top, rc->right, rc->top + (lrc.bottom - lrc.top));
-			iBmp_fillRect(bmp, &lrc, lowColor, lowColor, lowColor, lowColor, false, NULL, false);
-			lrc.right -= 5;
-			SetTextColor(bmp->hdc, RGB(textColor.red, textColor.grn, textColor.blu));
-			DrawText(bmp->hdc, tcLabelText, strlen(tcLabelText), &lrc, DT_RIGHT);
-			rc->top += (lrc.bottom - lrc.top);
-
-		
-		//////////
-		// Iterate for each disassembly line
-		//////
-			for (lnI = 0, lnOpcodeBytes = 0; lnI < disassembleLineCount; lnI++)
-			{
-				// Grab the disassembly for this location
-				lnOpcodeBytes += iiDebo1_decodeAssembly(buffer, ip_address + lnOpcodeBytes, true, true);
-
-				// Render it
-				DrawText(bmp->hdc, buffer, strlen(buffer), &lrc, DT_CALCRECT);
-				SetRect(&lrc, rc->left, rc->top, rc->right, rc->top + (lrc.bottom - lrc.top));
-				iBmp_fillRect(bmp, &lrc, ((lnI == 0) ? lowColor : highColor), whiteColor, whiteColor, whiteColor, false, NULL, false);
-				DrawText(bmp->hdc, buffer, strlen(buffer), &lrc, DT_LEFT);
-
-				// Adjust for next line
-				rc->top += (lrc.bottom - lrc.top);
-			}
-	}
-
-
-
-
-//////////
-//
 // Pipe stage 1 is i-fetch, reads opcodes ahead in the instruction stream
 //
 //////
@@ -902,7 +677,7 @@
 
 			// Indicate the instruction
 			sprintf(buffer + strlen(buffer), "\n\0");
-			iiDebo1_decodeAssembly(buffer + strlen(buffer), pipe2.ip, false, false);
+			iiDebo1_decodeAssembly(buffer + strlen(buffer), pipe2.ip, false, false, ram);
 
 			// Draw
 			SetBkMode(bmpStage2->hdc, TRANSPARENT);
@@ -1011,7 +786,7 @@
 		// Stage 4 specific content
 		//////
 			sprintf(buffer, "ip %03x\n\0", pipe4.ip);
-			iiDebo1_decodeAssembly(buffer + strlen(buffer), pipe4.ip, false, false);
+			iiDebo1_decodeAssembly(buffer + strlen(buffer), pipe4.ip, false, false, ram);
 			SetBkMode(bmpStage4->hdc, TRANSPARENT);
 			SetTextColor(bmpStage4->hdc, RGB(textColor.red,textColor.grn,textColor.blu));
 			lrc.top = 0;
@@ -1116,7 +891,7 @@
 				// No data t read
 				sprintf(buffer + strlen(buffer), "no write\n\0");
 			}
-			iiDebo1_decodeAssembly(buffer + strlen(buffer), pipe5.ip, false, false);
+			iiDebo1_decodeAssembly(buffer + strlen(buffer), pipe5.ip, false, false, ram);
 			SetBkMode(bmpStage5->hdc, TRANSPARENT);
 			SetTextColor(bmpStage5->hdc, RGB(textColor.red,textColor.grn,textColor.blu));
 			iiDebo1_renderTextCentered(bmpStage5, buffer, &bmpStage3->rc, true);
