@@ -429,9 +429,12 @@
 //////
 	void iExecute_stage2(u32 clk, s32 direction)
 	{
-		SOra	iora;		// ooo.xx.aaa.aaaaaaaa
-		SOrr	iorr;		// ooo.x.rd.rs, oooo.rd.rs
-		SBsa	ibsa;		// ooooo.s.aa.aaaaaaaa
+		union {
+			SOra	iora;		// ooo.xx.aaa.aaaaaaaa
+			SOrr	iorr;		// ooo.x.rd.rs, oooo.rd.rs
+			SBsa	ibsa;		// ooooo.s.aa.aaaaaaaa
+		};
+
 
 		if (direction > 0)
 		{
@@ -443,8 +446,7 @@
 				{
 					// Fill the instruction patterns for testing
 					iora.i_data1 = pipe2.i_data1;
-					iorr.i_data1 = pipe2.i_data1;
-					ibsa.i_data1 = pipe2.i_data1;
+					iora.i_data2 = pipe2.i_data2;
 
 					// Decode the bits
 					if (iora.ooo == (_OPCODE_MOV_R8_ADDR & _OPCODE_MASK))

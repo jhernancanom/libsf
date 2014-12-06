@@ -117,6 +117,23 @@
 		s8					output[2048];
 
 
+//////////
+//
+// 		SBsa				bsa;
+// 		SOra				ora;
+// 		SOrr				orr;
+//
+// 		memset(&bsa, 0, sizeof(bsa));
+// 		memset(&ora, 0, sizeof(ora));
+// 		memset(&orr, 0, sizeof(orr));
+// 		bsa.ooooo	= 0x1f;
+// 		ora.ooo		= 0x7;
+// 		orr.oooo	= 0xf;
+// 		_asm nop;
+//
+//////
+
+
 		//////////
 		// Identify ourself
 		//////
@@ -549,7 +566,7 @@
 	void iCompileSourceCodeLine(SEM* asmFile, SLine* line, s32* tnErrors, s32* tnWarnings, s32 tnPass)
 	{
 		s32						lnI;
-		u32						lnAddress;
+		s32						lnAddress;
 		bool					llMatchFailure, llisPassDone;
 		SCommand*				cmd;
 		SComp*					comp[6];
@@ -558,14 +575,15 @@
 
 //////////
 // For debugging:
-//
-// 	if (line->lineNumber == 98)
-// 		_asm nop;
-//
-// 	s8 bufferComps[2048];
-// 	iComps_visualize(line->compilerInfo->firstComp, 999, bufferComps, sizeof(bufferComps), true, &cgcKeywordsOppie1[0], NULL);
-//
+// 
+	s8 bufferComps[2048];
+	iComps_visualize(line->compilerInfo->firstComp, 999, bufferComps, sizeof(bufferComps), true, &cgcKeywordsOppie1[0], NULL);
+
+	if (line->lineNumber == 100)
+		_asm nop;
+// 
 //////
+
 
 		//////////
 		// Grab as many components as there are
@@ -650,7 +668,7 @@
 
 										// Store the registers
 										instr->orr.rd	= iGetRegisterEncoding(comp[1]);
-										instr->orr.rs	= iGetRegisterEncoding(comp[1]);
+										instr->orr.rs	= iGetRegisterEncoding(comp[3]);
 										instr->size		= 1;
 									}
 									// Encoding is complete
@@ -742,6 +760,19 @@
 												// Note:  This address is in the raw positive numeric value, the sign is stored as a separate bit
 												lnAddress = iComps_getAs_s32(comp[cmd->componentLabelOrNumber]);
 												break;
+										}
+
+										// Adjust the target into a relative address
+										if (lnAddress >= (u32)(instr->org + instr->size))
+										{
+											// We're jumping positive
+											lnAddress		= lnAddress - (instr->org + instr->size);
+											instr->bsa.s	= 0;
+
+										} else {
+											// We're jumping negative
+											lnAddress		= (instr->org + instr->size) - lnAddress;
+											instr->bsa.s	= 1;
 										}
 
 										// Store the upper 2-bits of the address

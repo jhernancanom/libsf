@@ -157,7 +157,7 @@ struct SCommand;
 	{
 		s32			cmdType;
 		s32			opcodeType;				// One of _ORA, _ORR, _BSA
-		s32			opcode;					// Physical opcode encoding for the ooo bits
+		u32			opcode;					// Physical opcode encoding for the ooo bits
 
 		// Extra information for the opcode
 		s32			opcodeSign;				// Physical opcode encoding for sign bit in BSA

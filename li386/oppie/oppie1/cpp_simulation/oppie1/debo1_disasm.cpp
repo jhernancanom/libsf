@@ -32,6 +32,20 @@
 //
 //////
 //
+//		mov   reg8,[address]	2			000.00.000:00000000
+//		mov   reg8,reg8			1			0010.00.00	(dest,src)
+//		add   reg8,reg8			1			0100.00.00
+//		adc   reg8,reg8			1			0110.00.00
+//		sub   reg8,reg8			1			0101.00.00
+//		sbb   reg8,reg8			1			0111.00.00
+//		mov   [address],reg8	2			100.00.000:00000000
+//		cmp   reg8,reg8			1			1010.00.00	(left,right)
+//		jnc   +/- 1KB			2			11000.s.00:00000000
+//		jc    +/- 1KB			2			11001.s.00:00000000
+//		jnz   +/- 1KB			2			11010.s.00:00000000
+//		jz    +/- 1KB			2			11011.s.00:00000000
+//		jmp   +/- 1KB			2			11100.s.00:00000000 
+//
 //
 
 
@@ -56,10 +70,11 @@
 		//////////
 		// Fill the instruction patterns for testing
 		//////
-			iora.i_data1 = ram[ip_address];
-			iorr.i_data1 = ram[ip_address];
-			ibsa.i_data1 = ram[ip_address];
+			iora.i_data1 = ram[ip_address + 0];
 			iora.i_data2 = ram[ip_address + 1];
+			iorr.i_data1 = ram[ip_address + 0];
+			iorr.i_data2 = ram[ip_address + 1];
+			ibsa.i_data1 = ram[ip_address + 0];
 			ibsa.i_data2 = ram[ip_address + 1];
 
 			// Include the ip address
@@ -67,30 +82,8 @@
 			else						sprintf(tcText, "\0");
 
 			// Decode the bits
-			if (iora.ooo == (_OPCODE_MOV_R8_ADDR & _OPCODE_MASK))
+			if (iorr.oooo == (_OPCODE_ADD_R8_R8 & _OPCODE_MASK))
 			{
-				// mov   reg8,[address]		2			000.00.000:00000000
-				lnOpcodeCount = 2;
-
-				// Opcode bytes
-				if (tlIncludeOpcodeBytes)
-					sprintf(tcText + strlen(tcText), "%02x %02x   \0", ram[ip_address], ram[ip_address+1]);
-
-				// Disassembly
-				sprintf(tcText + strlen(tcText), "mov r%u,[%03x]\0", (u32)iora.rd + 1, ((u16)iora.aaa << 8) | (u16)iora.aaaaaaaa);
-
-			} else if (iorr.ooo == (_OPCODE_MOV_R8_R8 & _OPCODE_MASK)) {
-				// mov   reg8,reg8			1			001.x.00.00	(dest,src)
-				lnOpcodeCount = 1;
-
-				// Opcode byte
-				if (tlIncludeOpcodeBytes)
-					sprintf(tcText + strlen(tcText), "%02x      \0", ram[ip_address]);
-
-				// Disassembly
-				sprintf(tcText + strlen(tcText), "mov r%u,r%u\0", (u32)iorr.rd + 1, (u32)iorr.rs + 1);
-
-			} else if (iorr.oooo == (_OPCODE_ADD_R8_R8 & _OPCODE_MASK)) {
 				// add   reg8,reg8			1			0100.00.00
 				lnOpcodeCount = 1;
 
@@ -134,6 +127,28 @@
 				// Disassembly
 				sprintf(tcText + strlen(tcText), "sbb r%u,r%u\0", (u32)iorr.rd + 1, (u32)iorr.rs + 1);
 
+			} else if (iorr.ooo == (_OPCODE_CMP_R8_R8 & _OPCODE_MASK)) {
+				// cmp   reg8,reg8			1			101.x.00.00	(left,right)
+				lnOpcodeCount = 1;
+
+				// Opcode byte
+				if (tlIncludeOpcodeBytes)
+					sprintf(tcText + strlen(tcText), "%02x      \0", ram[ip_address]);
+
+				// Disassembly
+				sprintf(tcText + strlen(tcText), "cmp r%u,r%u\0", (u32)iorr.rd + 1, (u32)iorr.rs + 1);
+
+			} else if (iora.ooo == (_OPCODE_MOV_R8_ADDR & _OPCODE_MASK)) {
+				// mov   reg8,[address]		2			000.00.000:00000000
+				lnOpcodeCount = 2;
+
+				// Opcode bytes
+				if (tlIncludeOpcodeBytes)
+					sprintf(tcText + strlen(tcText), "%02x %02x   \0", ram[ip_address], ram[ip_address+1]);
+
+				// Disassembly
+				sprintf(tcText + strlen(tcText), "mov r%u,[%03x]\0", (u32)iora.rd + 1, ((u16)iora.aaa << 8) | (u16)iora.aaaaaaaa);
+
 			} else if (iora.ooo == (_OPCODE_MOV_ADDR_R8 & _OPCODE_MASK)) {
 				// mov   [address],reg8		2			100.00.000:00000000
 				lnOpcodeCount = 2;
@@ -145,8 +160,8 @@
 				// Disassembly
 				sprintf(tcText + strlen(tcText), "mov [%03x],r%u\0", ((u16)iora.aaa << 8) | (u16)iora.aaaaaaaa, (u32)iora.rd + 1);
 
-			} else if (iorr.ooo == (_OPCODE_CMP_R8_R8 & _OPCODE_MASK)) {
-				// cmp   reg8,reg8			1			101.x.00.00	(left,right)
+			} else if (iorr.ooo == (_OPCODE_MOV_R8_R8 & _OPCODE_MASK)) {
+				// mov   reg8,reg8			1			001.x.00.00	(dest,src)
 				lnOpcodeCount = 1;
 
 				// Opcode byte
@@ -154,7 +169,7 @@
 					sprintf(tcText + strlen(tcText), "%02x      \0", ram[ip_address]);
 
 				// Disassembly
-				sprintf(tcText + strlen(tcText), "cmp r%u,r%u\0", (u32)iorr.rd + 1, (u32)iorr.rs + 1);
+				sprintf(tcText + strlen(tcText), "mov r%u,r%u\0", (u32)iorr.rd + 1, (u32)iorr.rs + 1);
 
 			} else if (ibsa.ooooo == (_OPCODE_JNC_REL_ADDR & _OPCODE_MASK)) {
 				// jnc    +/- 1KB
@@ -168,11 +183,11 @@
 				if (ibsa.s)
 				{
 					// Jumping negative
-					sprintf(tcText + strlen(tcText), "jnc  -%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
+					sprintf(tcText + strlen(tcText), "jnc  -%03x   (%03x:)\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa, ip_address + 2 - (((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa));
 
 				} else {
 					// Jumping positive
-					sprintf(tcText + strlen(tcText), "jnc  +%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
+					sprintf(tcText + strlen(tcText), "jnc  +%03x   (%03x:)\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa, ip_address + 2 + (((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa));
 				}
 
 			} else if (ibsa.ooooo == (_OPCODE_JC_REL_ADDR & _OPCODE_MASK)) {
@@ -187,11 +202,11 @@
 				if (ibsa.s)
 				{
 					// Jumping negative
-					sprintf(tcText + strlen(tcText), "jc  -%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
+					sprintf(tcText + strlen(tcText), "jc  -%03x   (%03x:)\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa, ip_address + 2 - (((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa));
 
 				} else {
 					// Jumping positive
-					sprintf(tcText + strlen(tcText), "jc  +%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
+					sprintf(tcText + strlen(tcText), "jc  +%03x   (%03x:)\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa, ip_address + 2 + (((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa));
 				}
 
 			} else if (ibsa.ooooo == (_OPCODE_JNZ_REL_ADDR & _OPCODE_MASK)) {
@@ -206,11 +221,11 @@
 				if (ibsa.s)
 				{
 					// Jumping negative
-					sprintf(tcText + strlen(tcText), "jnz  -%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
+					sprintf(tcText + strlen(tcText), "jnz  -%03x   (%03x:)\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa, ip_address + 2 - (((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa));
 
 				} else {
 					// Jumping positive
-					sprintf(tcText + strlen(tcText), "jnz  +%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
+					sprintf(tcText + strlen(tcText), "jnz  +%03x   (%03x:)\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa, ip_address + 2 + (((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa));
 				}
 
 			} else if (ibsa.ooooo == (_OPCODE_JZ_REL_ADDR & _OPCODE_MASK)) {
@@ -225,11 +240,11 @@
 				if (ibsa.s)
 				{
 					// Jumping negative
-					sprintf(tcText + strlen(tcText), "jz  -%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
+					sprintf(tcText + strlen(tcText), "jz  -%03x   (%03x:)\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa, ip_address + 2 - (((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa));
 
 				} else {
 					// Jumping positive
-					sprintf(tcText + strlen(tcText), "jz  +%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
+					sprintf(tcText + strlen(tcText), "jz  +%03x   (%03x:)\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa, ip_address + 2 + (((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa));
 				}
 
 			} else if (ibsa.ooooo == (_OPCODE_JMP_REL_ADDR & _OPCODE_MASK)) {
@@ -244,17 +259,17 @@
 				if (ibsa.s)
 				{
 					// Jumping negative
-					sprintf(tcText + strlen(tcText), "jmp -%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
+					sprintf(tcText + strlen(tcText), "jmp -%03x   (%03x:)\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa, ip_address + 2 - (((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa));
 
 				} else {
 					// Jumping positive
-					sprintf(tcText + strlen(tcText), "jmp +%03x\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa);
+					sprintf(tcText + strlen(tcText), "jmp +%03x   (%03x:)\0", ((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa, ip_address + 2 + (((u16)ibsa.aa << 8) | (u16)ibsa.aaaaaaaa));
 				}
 
 			} else {
 				// Invalid opcode
 				lnOpcodeCount = 1;
-				sprintf(tcText + strlen(tcText), "%02x      unk\0", ram[ip_address]);
+				sprintf(tcText + strlen(tcText), "%02x unknown opcode\0", ram[ip_address]);
 			}
 
 
