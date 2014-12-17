@@ -226,19 +226,19 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 			bmpDapple1						= iBmp_rawLoad(cgc_dappleBmp);
 			bmpDapple2						= iBmp_rawLoad(cgc_dapple2Bmp);
 
-			//////////
-			// Casks
-			//////
-				iVjr_init_loadCaskIcons();
+		//////////
+		// Casks
+		//////
+			iVjr_init_loadCaskIcons();
 
 
-			//////////
-			// The radio image has a 44x44 dot in the upper-left.
-			//////
-				bmpRadio	= iBmp_rawLoad(cgc_radioBmp);											// Load the raw bmpRadio
-				bmpRadioDot = iBmp_createAndExtractRect(bmpRadio, 0, 0, 44, 44);					// Extract the 44x44 rectangle
-				SetRect(&lrc, 0, 0, 44, 44);
-				iBmp_fillRect(bmpRadio, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);		// And cover it up with white
+		//////////
+		// The radio image has a 44x44 dot in the upper-left.
+		//////
+			bmpRadio	= iBmp_rawLoad(cgc_radioBmp);											// Load the raw bmpRadio
+			bmpRadioDot = iBmp_createAndExtractRect(bmpRadio, 0, 0, 44, 44);					// Extract the 44x44 rectangle
+			SetRect(&lrc, 0, 0, 44, 44);
+			iBmp_fillRect(bmpRadio, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);		// And cover it up with white
 
 
 		if (glShowSplash)
@@ -362,6 +362,6 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		// Remove the splash screen 1/2 second later
 		CreateThread(0, 0, &iSplash_delete, (LPVOID)500, 0, 0);
 
-		// Create a thread to display the content in 3D
-		CreateThread(0, 0, &iGrace, 0, 0, 0);
+// 		// Create a thread to display the content in 3D
+// 		CreateThread(0, 0, &iGrace, 0, 0, 0);
 	}

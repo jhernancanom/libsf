@@ -2198,6 +2198,9 @@ failed_parsing:
 		SCdxKey			key;
 
 
+// Incomplete algorithm.
+// Simulate not found.
+return 0;
 		//////////
 		// Find the node it relates to
 		//////

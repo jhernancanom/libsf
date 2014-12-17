@@ -1513,6 +1513,9 @@
 				// Publish anything needing publishing
 				iObj_publish(win->obj, &win->rc, win->bmp, true, true, tlForce, 0);
 
+// Update the openGL window
+// iGrace_display();
+
 				// Determine the focus highlights
 				iObj_setFocusHighlights(win, win->obj, 0, 0, true, true);
 

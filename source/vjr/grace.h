@@ -57,6 +57,7 @@ struct SGraceLine;
 //////////
 // Forward declarations
 //////
+	DWORD WINAPI	iGrace									(LPVOID param);
 	void			iGrace_initGl_engine					(void);
 	void			iGrace_reshape							(GLsizei w, GLsizei h);
 	void			iGrace_motion							(s32 x, s32 y);
@@ -84,6 +85,13 @@ struct SGraceLine;
 
 	void			iGrace_renderObj_childrenAndSiblings	(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ);
 	void			iiGrace_renderObj						(SObject* obj);
+	void			iiGrace_renderSubdividedRect			(SGraceRect* rec, s32 tnXDivisions, s32 tnYDivisions, bool tlIssue_quadBeginAndEnd);
+	void			iiGrace_vec_add							(SGraceRect* rec, s32 recV, SGraceRect* step, s32 stepV);
+	void			iiGrace_vec_copy						(SGraceRect* recDst, s32 recDstV, SGraceRect* recSrc, s32 recSrcV);
+	void			iiGrace_vec_render						(SGraceRect* rec, s32 rV);
+	void			iiGrace_computeSteps					(SGraceRect* dst, s32 dstV, SGraceRect* rBeg, s32 rBegV, SGraceRect* rEnd, s32 rEndV, SGraceRect* step, s32 stepV, f32 tfDivisions);
+	f32				iiGrace_computeStep						(f32 tfBegin, f32 tfEnd, f32 tfCount, f32* tfStep);
+
 
 	// Helper functions
 	void			iiGrace_copyAndComputeVecLine			(SGraceVecLine* line, SGraceVec* p1, SGraceVec* p2);
@@ -163,16 +171,29 @@ struct SGraceLine;
 		f32		a;		// Alpha
 	};
 
+
+//////////
+//
+//		V1__________________V2
+//		 |                  |
+//		 |    GraceRect     |
+//		 |__________________|
+//		V4                  V3
+//
+// When drawn, these can be drawn sub-divided into many components horizontally or vertically.
+//
+//////
 	struct SGraceRect
 	{
 		// Image data
-		u32				mipmap;
+		u32				texture;
+		bool			updateTextureWithNewBitmap;		// If the associated texture bitmap content needs updated
 
 		// One for each corner
-		SGraceColor		c[4];		// Colors
-		SGraceUv		t[4];		// Texture coordinates
-		SGraceVec		n[4];		// Normals
 		SGraceVec		v[4];		// Vector coordinates
+		SGraceVec		n[4];		// Normals
+		SGraceUv		t[4];		// Texture coordinates
+		SGraceColor		c[4];		// Colors
 	};
 
 	struct SGraceAnim
@@ -224,6 +245,7 @@ struct SGraceLine;
 //////////
 // Variables used by Grace
 //////
+	bool		glGraceInitialized				= false;
 	s32			gnMouseX						= 400;
 	s32			gnMouseY						= 400;
 	bool		glMouse_leftButtonDown			= false;

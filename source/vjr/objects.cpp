@@ -1130,7 +1130,8 @@
 			//////////
 			// If they're forcing a render, set it up
 			//////
-				obj->isDirtyRender |= tlForceRender;
+				obj->isDirtyRender		|= tlForceRender;
+				obj->ogl.quad.updateTextureWithNewBitmap	= obj->isDirtyRender;
 
 
 			//////////

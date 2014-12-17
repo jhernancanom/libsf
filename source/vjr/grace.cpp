@@ -75,8 +75,9 @@
 		glutDisplayFunc			(iGrace_display);
 		glutIdleFunc			(iGrace_idle);
 
-		// See if we can load the file they've specified
+		// Pause briefly to catch our breath
 		Sleep(100);
+		glGraceInitialized = true;
 
 
 		//////////
@@ -505,17 +506,25 @@
 		//////////
 		// Texture ops
 		//////
-			if (obj->bmp && obj->bmp->bd && obj->ogl.quad.mipmap == 0)
+			if (obj->bmp && obj->bmp->bd && obj->ogl.quad.texture == 0)
 			{
 				// Delete any previous texture
-				glDeleteTextures(1, &obj->ogl.quad.mipmap);
+				glDeleteTextures(1, &obj->ogl.quad.texture);
 
 				// Generate a new texture
-				glGenTextures(1, &obj->ogl.quad.mipmap);
+				glGenTextures(1, &obj->ogl.quad.texture);
+				glBindTexture(GL_TEXTURE_2D, obj->ogl.quad.texture);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+				glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
+// float fLargest;
+// 				glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &fLargest);
+// 				glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, fLargest);
 
-				// Mipmap the image
-				glBindTexture(GL_TEXTURE_2D, obj->ogl.quad.mipmap);
-				gluBuild2DMipmaps(GL_TEXTURE_2D, 3, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, ((obj->bmp->bi.biBitCount == 24) ? GL_BGR : GL_BGRA), GL_UNSIGNED_BYTE, obj->bmp->bd);
+				// Populate its image
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, 0, GL_BGR, GL_UNSIGNED_BYTE, obj->bmp->bd);
 			}
 	}
 
@@ -530,7 +539,7 @@
 
 
 		// Render if we have something to render
-		if (gWinJDebi && gWinJDebi->obj)
+		if (glGraceInitialized && gWinJDebi && gWinJDebi->obj)
 		{
 			//////////
 			// We will be building centered around the origin
@@ -600,15 +609,15 @@
 
 
 		//////////
-		// Render the white background
+		// Render a white background
 		//////
 			glBegin(GL_QUADS);
 
 				glColor4f	(1.0f, 1.0f, 1.0f, 1.0f);
-				glVertex3f	(-500.0f, -500.0f, tfZ - 0.01f);
-				glVertex3f	( 500.0f, -500.0f, tfZ - 0.01f);
-				glVertex3f	( 500.0f,  500.0f, tfZ - 0.01f);
-				glVertex3f	(-500.0f,  500.0f, tfZ - 0.01f);
+				glVertex3f	(-500.0f, -500.0f, tfZ - 1.0f);
+				glVertex3f	( 500.0f, -500.0f, tfZ - 1.0f);
+				glVertex3f	( 500.0f,  500.0f, tfZ - 1.0f);
+				glVertex3f	(-500.0f,  500.0f, tfZ - 1.0f);
 
 			glEnd();
 	}
@@ -932,7 +941,7 @@
 			{
 				// It's departing from the right (east)
 #ifndef _OPPIE1_COMPILE
-				vFrom->y += objNode->from_slotNum * ...
+//				vFrom->y += objNode->from_slotNum * ...
 #endif
 
 			} else {
@@ -1211,29 +1220,11 @@
 				// Iterate and create them
 				for (lnI = 0, thisRec = &recs[0]; lnI < lnVecCount; lnI++, thisRec++)
 				{
-					// Upper-left
-					glColor4f		(thisRec->c[V1].r, thisRec->c[V1].g, thisRec->c[V1].b, thisRec->c[V1].a);
-					glTexCoord2d	(thisRec->t[V1].s, thisRec->t[V1].t);
-					glNormal3f		(thisRec->n[V1].x, thisRec->n[V1].y, thisRec->n[V1].z);
-					glVertex3f		(thisRec->v[V1].x, thisRec->v[V1].y, thisRec->v[V1].z);
-
-					// Upper-right
-					glColor4f		(thisRec->c[V2].r, thisRec->c[V2].g, thisRec->c[V2].b, thisRec->c[V2].a);
-					glTexCoord2d	(thisRec->t[V2].s, thisRec->t[V2].t);
-					glNormal3f		(thisRec->n[V2].x, thisRec->n[V2].y, thisRec->n[V2].z);
-					glVertex3f		(thisRec->v[V2].x, thisRec->v[V2].y, thisRec->v[V2].z);
-
-					// Lower-right
-					glColor4f		(thisRec->c[V3].r, thisRec->c[V3].g, thisRec->c[V3].b, thisRec->c[V3].a);
-					glTexCoord2d	(thisRec->t[V3].s, thisRec->t[V3].t);
-					glNormal3f		(thisRec->n[V3].x, thisRec->n[V3].y, thisRec->n[V3].z);
-					glVertex3f		(thisRec->v[V3].x, thisRec->v[V3].y, thisRec->v[V3].z);
-
-					// Lower-left
-					glColor4f		(thisRec->c[V4].r, thisRec->c[V4].g, thisRec->c[V4].b, thisRec->c[V4].a);
-					glTexCoord2d	(thisRec->t[V4].s, thisRec->t[V4].t);
-					glNormal3f		(thisRec->n[V4].x, thisRec->n[V4].y, thisRec->n[V4].z);
-					glVertex3f		(thisRec->v[V4].x, thisRec->v[V4].y, thisRec->v[V4].z);
+					for (lnV = V1; lnV <= V4; lnV++)
+					{
+						// Render around the quad
+						iiGrace_vec_render(thisRec, lnV);
+					}
 				}
 			}
 			glEnd();
@@ -1300,40 +1291,308 @@
 		//////////
 		// Bind the texture for this quad
 		//////
-			glBindTexture(GL_TEXTURE_2D, obj->ogl.quad.mipmap);
+			glBindTexture(GL_TEXTURE_2D, obj->ogl.quad.texture);
+			if (obj->ogl.quad.updateTextureWithNewBitmap)
+			{
+// 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, 0, GL_BGR, GL_UNSIGNED_BYTE, obj->bmp->bd);
+				glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, GL_BGR, GL_UNSIGNED_BYTE, obj->bmp->bd);
+			}
 
 
 		//////////
-		// Based on whether or not there's texture information, do the texture coords
+		// Render as 8x8 sub-components
 		//////
 			thisRec = &obj->ogl.quad;
-			glBegin(GL_QUADS);
+			iiGrace_renderSubdividedRect(thisRec, 8, 8, true);
+	}
+
+
+
+
+//////////
+//
+// Takes the rectangle and subdivides it into the indicated number of divisions for x and y, but
+// only for rendering purposes.
+//
+//////
+	void iiGrace_renderSubdividedRect(SGraceRect* rec, s32 tnXDivisions, s32 tnYDivisions, bool tlIssue_quadBeginAndEnd)
+	{
+		s32			lnX, lnY, lnV;
+		f32			lfXDivisions, lfYDivisions;
+		SGraceRect	cell, row1, row2, stepV, stepH;
+
+
+		//////////
+		// Begin quads (if we need to)
+		//////
+// TODO:  Could be changed into a quad strip
+			if (tlIssue_quadBeginAndEnd)
+				glBegin(GL_QUADS);
+
+
+		//////////
+		// Initialize
+		//////
+			memset(&cell,	0, sizeof(cell));
+			memset(&row1,	0, sizeof(row1));
+			memset(&row2,	0, sizeof(row2));
+			memset(&stepV,	0, sizeof(stepV));
+			memset(&stepH,	0, sizeof(stepH));
+			lfXDivisions = (f32)tnXDivisions;
+			lfYDivisions = (f32)tnYDivisions;
+
+
+		//////////
+		// Prepare vertical row iteration variables
+		// Top:		V1=left, V2=right
+		// Bottom:	V4=left, V3=right
+		//////
+			iiGrace_computeSteps(&row2,  V1,	rec,   V1,		rec,   V4,		&stepV, V1,		lfYDivisions);
+			iiGrace_computeSteps(&row2,  V2,	rec,   V2,		rec,   V3,		&stepV, V2,		lfYDivisions);
+			iiGrace_computeSteps(NULL, 0,		&row2, V1,		&row2, V2,		&stepH, V2,		lfXDivisions);
+
+
+		//////////
+		// Iterate down the rows
+		//////
+			for (lnY = 0; lnY < tnYDivisions; lnY++)
 			{
-				// Upper-left
-				glColor4f		(thisRec->c[V1].r, thisRec->c[V1].g, thisRec->c[V1].b, thisRec->c[V1].a);
-				glTexCoord2d	(thisRec->t[V1].s, thisRec->t[V1].t);
-				glNormal3f		(thisRec->n[V1].x, thisRec->n[V1].y, thisRec->n[V1].z);
-				glVertex3f		(thisRec->v[V1].x, thisRec->v[V1].y, thisRec->v[V1].z);
+				//////////
+				// Compute the starting points for this row
+				// Previous row2 goes to row1, and the horizontal steps on row2 are computed
+				//////
+					memcpy(&row1, &row2, sizeof(row1));
 
-				// Upper-right
-				glColor4f		(thisRec->c[V2].r, thisRec->c[V2].g, thisRec->c[V2].b, thisRec->c[V2].a);
-				glTexCoord2d	(thisRec->t[V2].s, thisRec->t[V2].t);
-				glNormal3f		(thisRec->n[V2].x, thisRec->n[V2].y, thisRec->n[V2].z);
-				glVertex3f		(thisRec->v[V2].x, thisRec->v[V2].y, thisRec->v[V2].z);
 
-				// Lower-right
-				glColor4f		(thisRec->c[V3].r, thisRec->c[V3].g, thisRec->c[V3].b, thisRec->c[V3].a);
-				glTexCoord2d	(thisRec->t[V3].s, thisRec->t[V3].t);
-				glNormal3f		(thisRec->n[V3].x, thisRec->n[V3].y, thisRec->n[V3].z);
-				glVertex3f		(thisRec->v[V3].x, thisRec->v[V3].y, thisRec->v[V3].z);
+				//////////
+				// Copy the horizontal stepping down (from V2 to V1, ie from what was row2 to what is now row1)
+				//////
+					iiGrace_vec_copy(&stepH, V1, &stepH, V2);
 
-				// Lower-left
-				glColor4f		(thisRec->c[V4].r, thisRec->c[V4].g, thisRec->c[V4].b, thisRec->c[V4].a);
-				glTexCoord2d	(thisRec->t[V4].s, thisRec->t[V4].t);
-				glNormal3f		(thisRec->n[V4].x, thisRec->n[V4].y, thisRec->n[V4].z);
-				glVertex3f		(thisRec->v[V4].x, thisRec->v[V4].y, thisRec->v[V4].z);
+
+				//////////
+				// row2 needs adjusted down
+				//////
+					iiGrace_vec_add(&row2, V1, &stepV, V1);
+					iiGrace_vec_add(&row2, V2, &stepV, V2);
+
+
+				//////////
+				// Populate the horizontal stepping
+				//////
+					iiGrace_computeSteps(NULL, 0, &row2, V1, &row2, V2, &stepH, V2, lfXDivisions);
+
+
+				//////////
+				// Populate the starting cell V1 and V4 (left-side)
+				//////
+					iiGrace_vec_copy(&cell, V1, &row1, V1);
+					iiGrace_vec_copy(&cell, V4, &row2, V1);
+
+
+				//////////
+				// Populate V2 and V3 (right-side) by using the left-side plus the horizontal steps
+				//////
+					iiGrace_vec_copy(&cell, V2, &row1,	V1);
+					iiGrace_vec_add	(&cell, V2, &stepH,	V1);
+
+					iiGrace_vec_copy(&cell, V3, &row2,	V1);
+					iiGrace_vec_add	(&cell, V3, &stepH,	V2);
+
+
+				//////////
+				// Iterate across the columns
+				//////
+					for (lnX = 0; lnX < tnXDivisions; lnX++)
+					{
+						//////////
+						// Render the cell's quad
+						//////
+							for (lnV = V1; lnV <= V4; lnV++)
+								iiGrace_vec_render(&cell, lnV);
+
+
+						//////////
+						// Move the cell over for the next quad
+						//////
+							if (lnX < 7)
+							{
+								//////////
+								// Iterate for row1 (which are V1,V2)
+								//////
+									for (lnV = V1; lnV <= V2; lnV++)
+										iiGrace_vec_add(&cell, lnV, &stepH, V1);
+
+
+								//////////
+								// Iterate for row2 (which are V3,V4)
+								//////
+									for (lnV = V3; lnV <= V4; lnV++)
+										iiGrace_vec_add(&cell, lnV, &stepH, V2);
+							}
+
+					}
+
 			}
-			glEnd();
+
+
+		//////////
+		// End quads (if we need to)
+		//////
+			if (tlIssue_quadBeginAndEnd)
+				glEnd();
+	}
+
+
+
+
+//////////
+//
+// Called to perform a vector add on two SGraceRects
+//
+//////
+	void iiGrace_vec_add(SGraceRect* rec, s32 rV, SGraceRect* step, s32 sV)
+	{
+		// Vector
+		rec->v[rV].x	+= step->v[sV].x;
+		rec->v[rV].y	+= step->v[sV].y;
+		rec->v[rV].z	+= step->v[sV].z;
+
+		// Normals
+		rec->n[rV].x	+= step->n[sV].x;
+		rec->n[rV].y	+= step->n[sV].y;
+		rec->n[rV].z	+= step->n[sV].z;
+
+		// Texture
+		rec->t[rV].s	+= step->t[sV].s;
+		rec->t[rV].t	+= step->t[sV].t;
+
+		// Color
+		rec->c[rV].r	+= step->c[sV].r;
+		rec->c[rV].g	+= step->c[sV].g;
+		rec->c[rV].b	+= step->c[sV].b;
+		rec->c[rV].a	+= step->c[sV].a;
+	}
+
+
+
+
+//////////
+//
+// Called to copy one vector to another
+//
+//////
+	void iiGrace_vec_copy(SGraceRect* recDst, s32 recDstV, SGraceRect* recSrc, s32 recSrcV)
+	{
+		// Vector
+		recDst->v[recDstV].x = recSrc->v[recSrcV].x;
+		recDst->v[recDstV].y = recSrc->v[recSrcV].y;
+		recDst->v[recDstV].z = recSrc->v[recSrcV].z;
+
+		// Normals
+		recDst->n[recDstV].x = recSrc->n[recSrcV].x;
+		recDst->n[recDstV].y = recSrc->n[recSrcV].y;
+		recDst->n[recDstV].z = recSrc->n[recSrcV].z;
+
+		// Texture
+		recDst->t[recDstV].s = recSrc->t[recSrcV].s;
+		recDst->t[recDstV].t = recSrc->t[recSrcV].t;
+
+		// Colors
+		recDst->c[recDstV].r = recSrc->c[recSrcV].r;
+		recDst->c[recDstV].g = recSrc->c[recSrcV].g;
+		recDst->c[recDstV].b = recSrc->c[recSrcV].b;
+		recDst->c[recDstV].a = recSrc->c[recSrcV].a;
+	}
+
+
+
+
+//////////
+//
+// Called to render the individual vectr
+//
+//////
+	void iiGrace_vec_render(SGraceRect* rec, s32 rV)
+	{
+		glColor4f		(rec->c[rV].r, rec->c[rV].g, rec->c[rV].b, rec->c[rV].a);
+		glTexCoord2d	(rec->t[rV].s, rec->t[rV].t);
+		glNormal3f		(rec->n[rV].x, rec->n[rV].y, rec->n[rV].z);
+		glVertex3f		(rec->v[rV].x, rec->v[rV].y, rec->v[rV].z);
+	}
+
+
+
+
+//////////
+//
+// 
+//
+//////
+	void iiGrace_computeSteps(SGraceRect* dst, s32 dstV, SGraceRect* rBeg, s32 rBegV, SGraceRect* rEnd, s32 rEndV, SGraceRect* step, s32 sV, f32 tfDivisions)
+	{
+		SGraceRect t;
+
+
+		//////////
+		// Make sure the dst is not the same as the step
+		//////
+			if (!dst || (dst == step && dstV == sV))
+				dst = &t;
+
+
+		//////////
+		// Vector X,Y,Z step
+		//////
+			dst->v[dstV].x	= iiGrace_computeStep(rBeg->v[rBegV].x, rEnd->v[rEndV].x, tfDivisions, &step->v[sV].x);
+			dst->v[dstV].y	= iiGrace_computeStep(rBeg->v[rBegV].y, rEnd->v[rEndV].y, tfDivisions, &step->v[sV].y);
+			dst->v[dstV].z	= iiGrace_computeStep(rBeg->v[rBegV].z, rEnd->v[rEndV].z, tfDivisions, &step->v[sV].z);
+
+
+		//////////
+		// Normal X,Y,Z step
+		//////
+			dst->n[dstV].x	= iiGrace_computeStep(rBeg->n[rBegV].x, rEnd->n[rEndV].x, tfDivisions, &step->n[sV].x);
+			dst->n[dstV].y	= iiGrace_computeStep(rBeg->n[rBegV].y, rEnd->n[rEndV].y, tfDivisions, &step->n[sV].y);
+			dst->n[dstV].z	= iiGrace_computeStep(rBeg->n[rBegV].z, rEnd->n[rEndV].z, tfDivisions, &step->n[sV].z);
+
+
+		//////////
+		// Texture S,T step
+		//////
+			dst->t[dstV].s	= iiGrace_computeStep(rBeg->t[rBegV].s, rEnd->t[rEndV].s, tfDivisions, &step->t[sV].s);
+			dst->t[dstV].t	= iiGrace_computeStep(rBeg->t[rBegV].t, rEnd->t[rEndV].t, tfDivisions, &step->t[sV].t);
+
+
+		//////////
+		// Color R,G,B,A step
+		//////
+			dst->c[dstV].r	= iiGrace_computeStep(rBeg->c[rBegV].r, rEnd->c[rEndV].r, tfDivisions, &step->c[sV].r);
+			dst->c[dstV].g	= iiGrace_computeStep(rBeg->c[rBegV].g, rEnd->c[rEndV].g, tfDivisions, &step->c[sV].g);
+			dst->c[dstV].b	= iiGrace_computeStep(rBeg->c[rBegV].b, rEnd->c[rEndV].b, tfDivisions, &step->c[sV].b);
+			dst->c[dstV].a	= iiGrace_computeStep(rBeg->c[rBegV].a, rEnd->c[rEndV].a, tfDivisions, &step->c[sV].a);
+	}
+
+
+
+
+//////////
+//
+// Computes the step delta based on a beginning, and an ending, and a count of divisions between
+//
+//////
+	f32 iiGrace_computeStep(f32 tfBegin, f32 tfEnd, f32 tfCount, f32* tfStep)
+	{
+		//////////
+		// Compute the step as ((end - beg) / step_count)
+		//////
+			*tfStep = (tfEnd - tfBegin) / tfCount;
+
+
+		//////////
+		// Return our start (so they can use it like start = f(b,e,c,s);)
+		//////
+			return(tfBegin);
 	}
 
 
