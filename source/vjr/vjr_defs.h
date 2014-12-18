@@ -66,7 +66,7 @@ struct SObjPropertyMap;
 
 
 //////////
-// objects.cpp
+// objects/base.cpp
 // Note:  Property accessors are in the object_accessors.h and object_accessors.cpp source files
 //////
 	SObject*				iObj_create								(s32 objType, SObject* objParent);
@@ -110,6 +110,10 @@ struct SObjPropertyMap;
 	SBaseclassList*			iiObj_getBaseclass_byName				(s8* tcTextname, s32 tnTextnameLength);
 	SBaseclassList*			iiObj_getBaseclass_byType				(s32 tnObjType);
 
+
+//////////
+// objects/create.cpp
+//////
 	// Creation of individual sub-objects
 	SObject*				iSubobj_createEmpty						(SObject*	template_empty,			SObject* parent);
 	SObject*				iSubobj_createForm						(SObject*	template_form,			SObject* parent);
@@ -151,6 +155,9 @@ struct SObjPropertyMap;
 	SObject*				iSubobj_createException					(SObject*	template_Exception,		SObject* parent);
 
 
+//////////
+// objects/copy.cpp
+//////
 	// For copy operations
 	void					iiSubobj_copyEmpty						(SObject*	emptyDst,		SObject*	emptySrc);
 	void					iiSubobj_copyForm						(SObject*	formDst,		SObject*	formSrc);
@@ -192,6 +199,9 @@ struct SObjPropertyMap;
 	void					iiSubobj_copyException					(SObject*	exceptionDst,	SObject*	exceptionSrc);
 
 
+//////////
+// objects/reset.cpp
+//////
 	// For initialization
 	void					iiSubobj_resetToDefaultEmpty			(SObject*	empty,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
 	void					iiSubobj_resetToDefaultForm				(SObject*	form,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
@@ -233,6 +243,9 @@ struct SObjPropertyMap;
 	void					iiSubobj_resetToDefaultException		(SObject*	exception,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
 
 
+//////////
+// objects/delete.cpp
+//////
 	// Delete individual sub-objects
 	void					iObj_deleteCommon						(SObject*	obj);
 	void					iSubobj_deleteEmpty						(SObject*	empty,		bool tlDeleteSelf);
@@ -250,6 +263,9 @@ struct SObjPropertyMap;
 	void					iSubobj_deleteRadio						(SObject*	radio,		bool tlDeleteSelf);
 
 
+//////////
+// objects/render.cpp
+//////
 	// Default render of sub-objects
 	u32						iSubobj_renderEmpty						(SObject* empty);
 	u32						iSubobj_renderForm						(SObject* form);
@@ -272,7 +288,7 @@ struct SObjPropertyMap;
 
 
 //////////
-// callbacks.cpp
+// objects/callbacks.cpp
 //////
 	bool					iDefaultCallback_onLoad					(SWindow* win, SObject* obj);
 	bool					iDefaultCallback_onInit					(SWindow* win, SObject* obj);
@@ -310,7 +326,7 @@ struct SObjPropertyMap;
 
 
 //////////
-// events.cpp
+// objects/events.cpp
 //////
 	void					iEvents_resetToDefault					(SEvents* ev);
 

@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/settings.h
+// /libsf/source/vjr/vjr_compile_time_settings.h
 //
 //////
 // Version 0.54
@@ -53,3 +53,32 @@
 // You can set this property to false and prevent the splash screen from appearing.
 //////
 	bool glShowSplash = false;
+
+
+//////////
+// Compiler-specific settings
+//////
+	#ifdef __GNUC__
+		#define debugbreak asm("int $3")
+	#else
+		#define debugbreak _asm int 3;
+	#endif
+
+
+//////////
+// Aug.11.2014 -- Added to track down functions that were slowing down the system
+//#define _VJR_LOG_ALL
+//////
+	#ifdef _VJR_LOG_ALL
+		#define logfunc(x)		iVjr_appendSystemLog((s8*)x)
+	#else
+		#define logfunc(x)
+	#endif
+
+
+//////////
+// Force the bitmaps to be declared external for linking
+//////
+	#ifndef _BMP_LOCALITY
+		#define _BMP_LOCALITY 0
+	#endif

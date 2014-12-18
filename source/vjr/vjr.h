@@ -48,30 +48,13 @@
 #define _WIN32_IE 0x0600        // Change this to the appropriate value to target other versions of IE.
 #endif
 
-#ifdef __GNUC__
-	#define debugbreak asm("int $3")
-#else
-	#define debugbreak _asm int 3;
-#endif
-
-
-//////////
-// Aug.11.2014 -- Added to track down functions that were slowing down the system
-//#define _VJR_LOG_ALL
-//////
-	#ifdef _VJR_LOG_ALL
-		#define logfunc(x)		iVjr_appendSystemLog((s8*)x)
-	#else
-		#define logfunc(x)
-	#endif
+#include "vjr_compile_time_settings.h"
 
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <share.h>
-//#include <Shobjidl.h>
 #include "resource.h"
-#include "settings.h"
 
 
 #define _USE_MATH_DEFINES
@@ -112,34 +95,33 @@
 #include "vjr_globals.h"
 
 #include "fonts.h"
-#include "datum.h"
-#include "bitmaps.h"
+#include "datum\datum.h"
+#include "bitmaps\bitmaps.h"
 
-#include "command_defs.h"
+#include "commands\command_defs.h"
 #include "sound\sound.h"
 #include "sem.h"
 #include "sem_line.h"
 #include "engine.h"
-#include "object_accessors.h"
+#include "objects\accessors.h"
 
-// Force the bitmaps to be declared external for linking
-#ifdef _OPPIE1_COMPILE
-	#define _BMP_LOCALITY 1
-#else
-	#define _BMP_LOCALITY 0
-#endif
 #include "bmps\graphics\bitmaps.h"
 
 #include "vjr_sup.cpp"
-#include "objects.cpp"
-#include "object_accessors.cpp"
-#include "callbacks.cpp"
-#include "events.cpp"
-#include "bitmaps.cpp"
+#include "objects\accessors.cpp"
+#include "objects\base.cpp"
+#include "objects\callbacks.cpp"
+#include "objects\copy.cpp"
+#include "objects\create.cpp"
+#include "objects\delete.cpp"
+#include "objects\events.cpp"
+#include "objects\render.cpp"
+#include "objects\reset.cpp"
+#include "bitmaps\bitmaps.cpp"
 #include "compiler\vxb\vxb_compiler.cpp"
 #include "compiler\rdc\rdc_compiler.cpp"
 #include "compiler\asm\asm_compiler.cpp"
-#include "commands.cpp"
+#include "commands\commands.cpp"
 #include "engine.cpp"
 #include "sem.cpp"
 #include "sem_line.cpp"
@@ -148,5 +130,5 @@
 #include "dbf\dbf.cpp"
 #include "dbf\cdx.cpp"
 #include "grace.cpp"
-#include "datum.cpp"
+#include "datum\datum.cpp"
 #include "fonts.cpp"

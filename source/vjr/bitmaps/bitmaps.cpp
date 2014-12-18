@@ -3156,53 +3156,62 @@
 	void iBmp_fillRect(SBitmap* bmp, RECT* rc, SBgra colorNW, SBgra colorNE, SBgra colorSW, SBgra colorSE, bool tlUseGradient, RECT* rcClip, bool tluseClip)
 	{
 		s32		lnY;
+		HBRUSH	hbr;
 		f32		lfRed, lfGrn, lfBlu, lfRedTo, lfGrnTo, lfBluTo, lfRedInc, lfGrnInc, lfBluInc, lfPercent, lfPercentInc, lfHeight, lfWidth;
 
 
 		if (bmp && rc)
 		{
-		//////////
-		// Fill every row
-		//////
-			lfWidth			= (f32)(rc->right  - 1 - rc->left);
-			lfHeight		= (f32)(rc->bottom - 1 - rc->top);
-			lfPercentInc	= 1.0f / lfHeight;
-			for (lfPercent = 0.0, lnY = rc->top; lnY < rc->bottom; lnY++, lfPercent += lfPercentInc)
+			// Is it a solid color?
+			if (!tlUseGradient && !tluseClip)
 			{
-				if (tlUseGradient)
+				// Use OS facilities for speedup on solid colors
+				hbr = CreateSolidBrush(RGB(colorNW.red, colorNW.grn, colorNW.blu));
+				FillRect(bmp->hdc, rc, hbr);
+				DeleteObject((HGDIOBJ)hbr);
+
+			} else {
+				// Process manually with the gradient
+				lfWidth			= (f32)(rc->right  - 1 - rc->left);
+				lfHeight		= (f32)(rc->bottom - 1 - rc->top);
+				lfPercentInc	= 1.0f / lfHeight;
+				for (lfPercent = 0.0, lnY = rc->top; lnY < rc->bottom; lnY++, lfPercent += lfPercentInc)
 				{
-					//////////
-					// Compute FROM colors
-					//////
-						lfRed		= (f32)colorNW.red + (((f32)colorSW.red - (f32)colorNW.red) * lfPercent);
-						lfGrn		= (f32)colorNW.grn + (((f32)colorSW.grn - (f32)colorNW.grn) * lfPercent);
-						lfBlu		= (f32)colorNW.blu + (((f32)colorSW.blu - (f32)colorNW.blu) * lfPercent);
+					if (tlUseGradient)
+					{
+						//////////
+						// Compute FROM colors
+						//////
+							lfRed		= (f32)colorNW.red + (((f32)colorSW.red - (f32)colorNW.red) * lfPercent);
+							lfGrn		= (f32)colorNW.grn + (((f32)colorSW.grn - (f32)colorNW.grn) * lfPercent);
+							lfBlu		= (f32)colorNW.blu + (((f32)colorSW.blu - (f32)colorNW.blu) * lfPercent);
 
 
-					//////////
-					// Compute TO colors
-					//////
-						lfRedTo		= (f32)colorNE.red + (((f32)colorSE.red - (f32)colorNE.red) * lfPercent);
-						lfGrnTo		= (f32)colorNE.grn + (((f32)colorSE.grn - (f32)colorNE.grn) * lfPercent);
-						lfBluTo		= (f32)colorNE.blu + (((f32)colorSE.blu - (f32)colorNE.blu) * lfPercent);
+						//////////
+						// Compute TO colors
+						//////
+							lfRedTo		= (f32)colorNE.red + (((f32)colorSE.red - (f32)colorNE.red) * lfPercent);
+							lfGrnTo		= (f32)colorNE.grn + (((f32)colorSE.grn - (f32)colorNE.grn) * lfPercent);
+							lfBluTo		= (f32)colorNE.blu + (((f32)colorSE.blu - (f32)colorNE.blu) * lfPercent);
 
 
-					//////////
-					// Compute increment
-					//////
-						lfRedInc	= (lfRedTo - lfRed) / lfWidth;
-						lfGrnInc	= (lfGrnTo - lfGrn) / lfWidth;
-						lfBluInc	= (lfBluTo - lfBlu) / lfWidth;
+						//////////
+						// Compute increment
+						//////
+							lfRedInc	= (lfRedTo - lfRed) / lfWidth;
+							lfGrnInc	= (lfGrnTo - lfGrn) / lfWidth;
+							lfBluInc	= (lfBluTo - lfBlu) / lfWidth;
 
 
-					//////////
-					// Draw this line with its gradient
-					//////
-						iBmp_drawHorizontalLineGradient(bmp, rc->left, rc->right - 1, lnY, lfRed, lfGrn, lfBlu, lfRedInc, lfGrnInc, lfBluInc, rcClip, tluseClip);
+						//////////
+						// Draw this line with its gradient
+						//////
+							iBmp_drawHorizontalLineGradient(bmp, rc->left, rc->right - 1, lnY, lfRed, lfGrn, lfBlu, lfRedInc, lfGrnInc, lfBluInc, rcClip, tluseClip);
 
-				} else {
-					// Draw this line with the NW color
-					iBmp_drawHorizontalLine(bmp, rc->left, rc->right - 1, lnY, colorNW);
+					} else {
+						// Draw this line with the NW color
+						iBmp_drawHorizontalLine(bmp, rc->left, rc->right - 1, lnY, colorNW);
+					}
 				}
 			}
 		}
@@ -3210,7 +3219,8 @@
 
 	void iBmp_frameRect(SBitmap* bmp, RECT* rc, SBgra colorNW, SBgra colorNE, SBgra colorSW, SBgra colorSE, bool tlUseGradient, RECT* rcClip, bool tluseClip)
 	{
-		f32 lfRed, lfGrn, lfBlu, lfRedTo, lfGrnTo, lfBluTo, lfRedInc, lfGrnInc, lfBluInc, lfWidth;
+		f32		lfRed, lfGrn, lfBlu, lfRedTo, lfGrnTo, lfBluTo, lfRedInc, lfGrnInc, lfBluInc, lfWidth;
+		HBRUSH	hbr;
 
 
 		if (bmp && rc)
@@ -3289,11 +3299,16 @@
 					iBmp_drawVerticalLineGradient(bmp, rc->top, rc->bottom - 1, rc->right - 1, lfRed, lfGrn, lfBlu, lfRedInc, lfGrnInc, lfBluInc, rcClip, true);
 
 			} else {
-				// Just draw in a solid color
-				iBmp_drawHorizontalLine(bmp, rc->left, rc->right - 1, rc->top, colorNW);
-				iBmp_drawHorizontalLine(bmp, rc->left, rc->right - 1, rc->bottom - 1, colorNW);
-				iBmp_drawVerticalLine(bmp, rc->top, rc->bottom - 1, rc->left, colorNW);
-				iBmp_drawVerticalLine(bmp, rc->top, rc->bottom - 1, rc->right - 1, colorNW);
+				// Use OS services for faster rendering
+				hbr = CreateSolidBrush(RGB(colorNW.red, colorNW.grn, colorNW.blu));
+				FrameRect(bmp->hdc, rc, hbr);
+				DeleteObject((HGDIOBJ)hbr);
+
+// 				// Just draw in a solid color
+// 				iBmp_drawHorizontalLine(bmp, rc->left, rc->right - 1, rc->top, colorNW);
+// 				iBmp_drawHorizontalLine(bmp, rc->left, rc->right - 1, rc->bottom - 1, colorNW);
+// 				iBmp_drawVerticalLine(bmp, rc->top, rc->bottom - 1, rc->left, colorNW);
+// 				iBmp_drawVerticalLine(bmp, rc->top, rc->bottom - 1, rc->right - 1, colorNW);
 			}
 		}
 	}

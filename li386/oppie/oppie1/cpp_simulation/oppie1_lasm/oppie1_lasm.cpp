@@ -85,6 +85,7 @@
 // Uses Visual FreePro, Jr's existing parsing facilities to simplify our processing
 //////
 	#define _OPPIE1_COMPILE		// Turns off some features in VJr that fail on compilation from here
+	#define _BMP_LOCALITY 1		// Force definitions to be local
 	#include "\libsf\source\vjr\vjr.h"
 	#undef main
 
@@ -566,7 +567,7 @@
 	void iCompileSourceCodeLine(SEM* asmFile, SLine* line, s32* tnErrors, s32* tnWarnings, s32 tnPass)
 	{
 		s32						lnI;
-		s32						lnAddress;
+		u32						lnAddress;
 		bool					llMatchFailure, llisPassDone;
 		SCommand*				cmd;
 		SComp*					comp[6];

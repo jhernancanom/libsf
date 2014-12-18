@@ -193,26 +193,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\grace.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath=".\vjr.cpp"
 				>
 			</File>
@@ -242,27 +222,15 @@
 				UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 				>
 				<File
-					RelativePath=".\graphics\bitmaps.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\utils\common\cpp\common_types.h"
 					>
 				</File>
 				<File
-					RelativePath=".\grace.h"
-					>
-				</File>
-				<File
-					RelativePath=".\resource.h"
-					>
-				</File>
-				<File
-					RelativePath=".\settings.h"
-					>
-				</File>
-				<File
 					RelativePath=".\vjr.h"
+					>
+				</File>
+				<File
+					RelativePath=".\vjr_compile_time_settings.h"
 					>
 				</File>
 				<File
@@ -287,6 +255,76 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="ogl"
+				>
+				<File
+					RelativePath=".\grace.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\grace.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="sound"
+				>
+				<File
+					RelativePath=".\sound\sound.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\sound\sound.h"
+					>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
+			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
+			>
+			<File
+				RelativePath=".\resource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\vjr.rc"
+				>
+			</File>
+			<Filter
 				Name="bmps"
 				>
 				<File
@@ -310,32 +348,26 @@
 					>
 				</File>
 			</Filter>
-		</Filter>
-		<Filter
-			Name="Resource Files"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
-			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
-			>
-			<File
-				RelativePath=".\icon1.ico"
+			<Filter
+				Name="icons"
 				>
-			</File>
-			<File
-				RelativePath=".\jdebi.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\small.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\vjr.ico"
-				>
-			</File>
-			<File
-				RelativePath=".\vjr.rc"
-				>
-			</File>
+				<File
+					RelativePath=".\icon1.ico"
+					>
+				</File>
+				<File
+					RelativePath=".\jdebi.ico"
+					>
+				</File>
+				<File
+					RelativePath=".\small.ico"
+					>
+				</File>
+				<File
+					RelativePath=".\vjr.ico"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="modules"
@@ -455,84 +487,96 @@
 			<Filter
 				Name="misc"
 				>
-				<File
-					RelativePath=".\bitmaps.cpp"
+				<Filter
+					Name="bitmaps"
 					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
+					<File
+						RelativePath=".\bitmaps\bitmaps.cpp"
 						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\bitmaps\bitmaps.h"
 						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\bitmaps.h"
+					</File>
+				</Filter>
+				<Filter
+					Name="datum"
 					>
-				</File>
-				<File
-					RelativePath=".\datum.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
+					<File
+						RelativePath=".\datum\datum.cpp"
 						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\datum\datum.h"
 						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\datum.h"
+					</File>
+				</Filter>
+				<Filter
+					Name="fonts"
 					>
-				</File>
-				<File
-					RelativePath=".\fonts.cpp"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						ExcludedFromBuild="true"
+					<File
+						RelativePath=".\fonts.cpp"
 						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\fonts.h"
 						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\fonts.h"
-					>
-				</File>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="objects"
 				>
 				<File
-					RelativePath=".\callbacks.cpp"
+					RelativePath=".\objects\accessors.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -552,7 +596,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\events.cpp"
+					RelativePath=".\objects\accessors.h"
+					>
+				</File>
+				<File
+					RelativePath=".\objects\base.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -572,7 +620,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\object_accessors.cpp"
+					RelativePath=".\objects\callbacks.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -592,11 +640,107 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\object_accessors.h"
+					RelativePath=".\objects\copy.cpp"
 					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\objects.cpp"
+					RelativePath=".\objects\create.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\objects\delete.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\objects\events.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\objects\render.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\objects\reset.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -824,34 +968,6 @@
 					</File>
 				</Filter>
 			</Filter>
-		</Filter>
-		<Filter
-			Name="sound"
-			>
-			<File
-				RelativePath=".\sound\sound.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\sound\sound.h"
-				>
-			</File>
 		</Filter>
 	</Files>
 	<Globals>
