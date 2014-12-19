@@ -1844,7 +1844,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 
 //////////
 //
-// Called to combine things like [.][t][.] into [.t.]
+// Called to combine things like [.][t][.] into [.t.], [xyz][.][abc] into [xyz.abc]
 //
 //////
 	u32 iComps_combineAdjacentDotForms(SLine* line)
@@ -1852,102 +1852,123 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 		u32		lnCombined;
 		u8		c;
 		bool	llProcessed;
+		SComp*	compThis;
 		SComp*	compFirst;
-		SComp*	compMiddle;
 		SComp*	compSecond;
 		SComp*	compThird;
+		SComp*	compFourth;
 
 
 		// Make sure our environment is sane
+// UNTESTED:  Breakpoint and examine
+_asm int 3;
 		lnCombined = 0;
 		if (line && line->compilerInfo)
 		{
 			// Begin at the beginning and check across all components
-			compFirst = line->compilerInfo->firstComp;
-			while (compFirst)
+			compThis = line->compilerInfo->firstComp;
+			while (compThis)
 			{
-				// Dots begin the things we're searching for
-				llProcessed = false;
-				if (compFirst->iCode == _ICODE_DOT)
+				// Grab the thing after
+				compFirst = (SComp*)compThis->ll.next;
+				if (compFirst)
 				{
-					// Grab the next two components, they must all be adjacent, and the third one must also be a dot
-					if (	(compMiddle	= (SComp*)compFirst->ll.next)										&& iiComps_charactersBetween(compFirst,		compMiddle) == 0
-						&&	(compThird	= (SComp*)compMiddle->ll.next)	&& compThird->iCode == _ICODE_DOT	&& iiComps_charactersBetween(compMiddle,	compThird) == 0)
+					// Grab any components hereafter
+					compSecond	= NULL;
+					compThird	= NULL;
+					compFourth	= NULL;
+					if ((compSecond = (SComp*)compFirst->ll.next) && (compThird = (SComp*)compSecond->ll.next) && (compFourth = (SComp*)compThird->ll.next))
 					{
-						// What is the component in the middle?
-						if (compMiddle->iCode == _ICODE_ALPHA)
+						// Placeholder for the early-out if statement above
+					}
+
+					// Dots begin the things we're searching for
+					llProcessed = false;
+					if (compFirst->iCode == _ICODE_DOT)
+					{
+						// Grab the next two components, they must all be adjacent, and the third one must also be a dot
+						if (	compSecond	&&	compThird
+							&&	compThird->iCode == _ICODE_DOT
+							&&	iiComps_charactersBetween(compFirst, compSecond) == 0
+							&&	iiComps_charactersBetween(compSecond, compThird) == 0)
 						{
-							switch (compMiddle->length)
+							// What is the component in the middle?
+							if (compSecond->iCode == _ICODE_ALPHA)
 							{
-								case 1:
-									// Could be .t., .f., .o., .p., .x., .y., .z.
-									c = compMiddle->line->sourceCode->data[compMiddle->start];
+								switch (compSecond->length)
+								{
+									case 1:
+										// Could be .t., .f., .o., .p., .x., .y., .z.
+										c = compSecond->line->sourceCode->data[compSecond->start];
 
-									// Which one is it?
-									     if (c == 't' || c == 'T')				{ iComps_combineN(compFirst, 3, _ICODE_TRUE,			compFirst->iCat, compFirst->color);				lnCombined += 3; }
-									else if (c == 'f' || c == 'F')				{ iComps_combineN(compFirst, 3, _ICODE_FALSE,			compFirst->iCat, compFirst->color);				lnCombined += 3; }
-									else if (c == 'o' || c == 'O')				{ iComps_combineN(compFirst, 3, _ICODE_OTHER,			compFirst->iCat, compFirst->color);				lnCombined += 3; }
-									else if (c == 'p' || c == 'P')				{ iComps_combineN(compFirst, 3, _ICODE_PARTIAL,			compFirst->iCat, compFirst->color);			lnCombined += 3; }
-									else if (c == 'x' || c == 'X')				{ iComps_combineN(compFirst, 3, _ICODE_EXTRA,			compFirst->iCat, compFirst->color);				lnCombined += 3; }
-									else if (c == 'y' || c == 'Y')				{ iComps_combineN(compFirst, 3, _ICODE_YET_ANOTHER,		compFirst->iCat, compFirst->color);		lnCombined += 3; }
-									else if (c == 'z' || c == 'Z')				{ iComps_combineN(compFirst, 3, _ICODE_ZATS_ALL_FOLKS,	compFirst->iCat, compFirst->color);		lnCombined += 3; }
-									llProcessed = true;
-									break;
+										// Which one is it?
+											 if (c == 't' || c == 'T')				{ iComps_combineN(compFirst, 3, _ICODE_TRUE,			compFirst->iCat, compFirst->color);		lnCombined += 3; }
+										else if (c == 'f' || c == 'F')				{ iComps_combineN(compFirst, 3, _ICODE_FALSE,			compFirst->iCat, compFirst->color);		lnCombined += 3; }
+										else if (c == 'o' || c == 'O')				{ iComps_combineN(compFirst, 3, _ICODE_OTHER,			compFirst->iCat, compFirst->color);		lnCombined += 3; }
+										else if (c == 'p' || c == 'P')				{ iComps_combineN(compFirst, 3, _ICODE_PARTIAL,			compFirst->iCat, compFirst->color);		lnCombined += 3; }
+										else if (c == 'x' || c == 'X')				{ iComps_combineN(compFirst, 3, _ICODE_EXTRA,			compFirst->iCat, compFirst->color);		lnCombined += 3; }
+										else if (c == 'y' || c == 'Y')				{ iComps_combineN(compFirst, 3, _ICODE_YET_ANOTHER,		compFirst->iCat, compFirst->color);		lnCombined += 3; }
+										else if (c == 'z' || c == 'Z')				{ iComps_combineN(compFirst, 3, _ICODE_ZATS_ALL_FOLKS,	compFirst->iCat, compFirst->color);		lnCombined += 3; }
+										llProcessed = true;
+										break;
 
-								case 2:
-									// Could be .or.
-									if (_memicmp(compMiddle->line->sourceCode->data, "or", 2) == 0)
-									{
-										iComps_combineN(compFirst, 3, _ICODE_OR, compFirst->iCat, compFirst->color);
-										lnCombined += 3;
-									}
-									llProcessed = true;
-									break;
+									case 2:
+										// Could be .or.
+										if (_memicmp(compSecond->line->sourceCode->data, "or", 2) == 0)
+										{
+											iComps_combineN(compFirst, 3, _ICODE_OR, compFirst->iCat, compFirst->color);
+											lnCombined += 3;
+										}
+										llProcessed = true;
+										break;
 
-								case 3:
-									// Could be .and., .not.
-									if (_memicmp(compMiddle->line->sourceCode->data, "and", 3) == 0)
-									{
-										// AND
-										iComps_combineN(compFirst, 3, _ICODE_AND, compFirst->iCat, compFirst->color);
-										lnCombined += 3;
+									case 3:
+										// Could be .and., .not.
+										if (_memicmp(compSecond->line->sourceCode->data, "and", 3) == 0)
+										{
+											// AND
+											iComps_combineN(compFirst, 3, _ICODE_AND, compFirst->iCat, compFirst->color);
+											lnCombined += 3;
 
-									} else if (_memicmp(compMiddle->line->sourceCode->data, "not", 3) == 0) {
-										// NOT
-										iComps_combineN(compFirst, 3, _ICODE_NOT, compFirst->iCat, compFirst->color);
-										lnCombined += 3;
-									}
-									llProcessed = true;
-									break;
+										} else if (_memicmp(compSecond->line->sourceCode->data, "not", 3) == 0) {
+											// NOT
+											iComps_combineN(compFirst, 3, _ICODE_NOT, compFirst->iCat, compFirst->color);
+											lnCombined += 3;
+										}
+										llProcessed = true;
+										break;
 
-								case 4:
-									// Could be .null.
-									if (_memicmp(compMiddle->line->sourceCode->data, "null", 4) == 0)
-									{
-										// NULL
-										iComps_combineN(compFirst, 3, _ICODE_NULL, compFirst->iCat, compFirst->color);
-										lnCombined += 3;
-									}
-									llProcessed = true;
-									break;
+									case 4:
+										// Could be .null.
+										if (_memicmp(compSecond->line->sourceCode->data, "null", 4) == 0)
+										{
+											// NULL
+											iComps_combineN(compFirst, 3, _ICODE_NULL, compFirst->iCat, compFirst->color);
+											lnCombined += 3;
+										}
+										llProcessed = true;
+										break;
+								}
 							}
+
 						}
 
-					}
+						if (llProcessed)
+						{
+							// It was processed above
+							// Move to the next component
+							compThis = (SComp*)compThis->ll.next;
 
-					if (!llProcessed && (compSecond = (SComp*)compFirst->ll.next) && iiComps_charactersBetween(compFirst, compSecond) == 0 && (compSecond->iCode == _ICODE_ALPHA || compSecond->iCode == _ICODE_ALPHANUMERIC))
-					{
-						// It's a dot variable of some kind
-						iComps_combineN(compFirst, 2, _ICODE_DOT_VARIABLE, _ICAT_DOT_VARIABLE, &colorSynHi_dotVariable);
+						} else if (compThird && iiComps_charactersBetween(compFirst, compThird) == 0 && (compThird->iCode == _ICODE_ALPHA || compThird->iCode == _ICODE_ALPHANUMERIC)) {
+							// It's a dot variable of some kind
+							iComps_combineN(compThis, 3, _ICODE_DOT_VARIABLE, _ICAT_DOT_VARIABLE, &colorSynHi_dotVariable);
 
-					} else if (!llProcessed && (compSecond = (SComp*)compFirst->ll.next) && iiComps_charactersBetween(compFirst, compSecond) == 0 && (compSecond->iCode == _ICODE_ALPHA || compSecond->iCode == _ICODE_ALPHANUMERIC)) {
-						// It's an exclamation point variable of some kind
-						iComps_combineN(compFirst, 2, _ICODE_EXCLAMATION_POINT, _ICAT_EXCLAMATION_POINT_VARIABLE, &colorSynHi_exclamationMarkVariable);
+						} else {
+							// Nothing, skip to the next component
+							compThis = (SComp*)compThis->ll.next;
+						}
 					}
 				}
-
-				// Move to the next component
-				compFirst = (SComp*)compFirst->ll.next;
 			}
 		}
 

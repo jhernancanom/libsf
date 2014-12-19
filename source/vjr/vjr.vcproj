@@ -376,15 +376,15 @@
 				Name="commands"
 				>
 				<File
-					RelativePath=".\command_defs.h"
+					RelativePath=".\commands\command_defs.h"
 					>
 				</File>
 				<File
-					RelativePath=".\command_sourcelight.h"
+					RelativePath=".\commands\command_sourcelight.h"
 					>
 				</File>
 				<File
-					RelativePath=".\commands.cpp"
+					RelativePath=".\commands\commands.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"

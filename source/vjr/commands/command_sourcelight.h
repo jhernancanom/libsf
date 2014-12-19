@@ -1,6 +1,6 @@
 //////////*****[ GENERATED FILE ]*****
 //
-// /libsf/source/vjr/command_sourcelight.h
+// /libsf/source/vjr/commands/command_sourcelight.h
 //
 //////////*****[ GENERATED FILE ]*****
 //

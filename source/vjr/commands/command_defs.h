@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/command_defs.h
+// /libsf/source/vjr/commands/command_defs.h
 //
 //////
 // Version 0.54

@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/commands.cpp
+// /libsf/source/vjr/commands/commands.cpp
 //
 //////
 // Version 0.54
@@ -40,7 +40,7 @@
 
 //////////
 //
-// Reports an error.
+// Reports an error
 //
 //////
 	void iError_report(cs8* constantErrorText)
@@ -60,7 +60,7 @@
 
 //////////
 //
-// Reports an error by number.
+// Reports an error by number
 //
 //////
 	void iError_reportByNumber(u32 tnErrorNum, SComp* comp)

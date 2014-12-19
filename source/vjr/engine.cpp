@@ -54,12 +54,17 @@
 		// Make sure our environment is sane
 		if (line && line->sourceCode && line->sourceCode->data && line->sourceCode_populatedLength > 0)
 		{
+			//////////
 			// Parse it
-			comp = iEngine_parseSourceCodeLine(line);
+			//////
+				comp = iEngine_parseSourceCodeLine(line);
 
-			// Do we have anythign to do?
-			if (!comp || comp->iCode == _ICODE_COMMENT || comp->iCode == _ICODE_LINE_COMMENT)
-				return(false);
+
+			//////////
+			// Do we have anything to do?
+			//////
+				if (!comp || comp->iCode == _ICODE_COMMENT || comp->iCode == _ICODE_LINE_COMMENT)
+					return(false);
 
 
 			//////////
@@ -181,6 +186,10 @@
 								iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)var);
 							}
 
+						} else if (comp->iCode == _ICODE_DOT_VARIABLE) {
+							// It's something like thisForm.
+							_asm nop;
+
 						} else {
 							// Not a currently supported command
 							return(false);
@@ -244,6 +253,7 @@
 			iComps_removeStartEndComments(line);		// Remove /* comments */
 			iComps_combineCasks(line);					// Replace [(|][alpha][|)] with [(|alpha|)]
 			iComps_fixupNaturalGroupings(line);			// Fixup natural groupings [_][aaa][999] becomes [_aaa999], [999][.][99] becomes [999.99], etc.
+			iComps_combineAdjacentDotForms(line);		// Fixup [thisForm][.][width] into [thisForm.width]
 			iComps_removeWhitespaces(line);				// Remove all whitespaces after everything else was parsed [use][whitespace][foo] becomes [use][foo]
 
 
