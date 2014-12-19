@@ -3695,7 +3695,7 @@
 		SBgra*	lbgra;
 
 
-		if (bmp && tnY >= 0 && tnY < bmp->bi.biHeight && (!tluseClip || !(tnY >= rcClip->top && tnY <= rcClip->bottom)))
+		if (bmp && tnY >= 0 && tnY < bmp->bi.biHeight)
 		{
 			// Get our starting point
 			lbgr	= (SBgr*)(bmp->bd  + ((bmp->bi.biHeight - tnY - 1) * bmp->rowWidth) + (tnX1 * (bmp->bi.biBitCount / 8)));
@@ -3707,7 +3707,7 @@
 				for (lnX = tnX1; lnX <= tnX2; lnX++, tfRed += tfRedInc, tfGrn += tfGrnInc, tfBlu += tfBluInc)
 				{
 					// Are we on the bitmap?
-					if ((!tluseClip || !(lnX >= rcClip->left && lnX <= rcClip->right)) && lnX >= 0 && lnX < bmp->bi.biWidth)
+					if ((!tluseClip || !(tnY >= rcClip->top && tnY <= rcClip->bottom && lnX >= rcClip->left && lnX <= rcClip->right)) && lnX >= 0 && lnX < bmp->bi.biWidth)
 					{
 						// Draw the pixel
 						lbgr->red	= (u8)tfRed;
@@ -3723,7 +3723,7 @@
 				for (lnX = tnX1; lnX <= tnX2; lnX++, tfRed += tfRedInc, tfGrn += tfGrnInc, tfBlu += tfBluInc)
 				{
 					// Are we on the bitmap?
-					if ((!tluseClip || !(lnX >= rcClip->left && lnX <= rcClip->right)) && lnX >= 0 && lnX < bmp->bi.biWidth)
+					if ((!tluseClip || !(tnY >= rcClip->top && tnY <= rcClip->bottom && lnX >= rcClip->left && lnX <= rcClip->right)) && lnX >= 0 && lnX < bmp->bi.biWidth)
 					{
 						// Draw the pixel
 						lbgra->alp	= 255;
