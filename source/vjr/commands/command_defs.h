@@ -87,11 +87,11 @@ struct SVariable;
 		u32			key;									// Refer to _SOURCELIGHT_* constants
 
 		// Data, varies based on _SOURCELIGHT_* constants
-		u32			data1;
-		u32			data2;
-		u32			data3;
-		u32			data4;
-		u32			data5;
+		uptr		data1;
+		uptr		data2;
+		uptr		data3;
+		uptr		data4;
+		uptr		data5;
 	};
 
 	#include "command_sourcelight.h"
@@ -195,7 +195,7 @@ struct SVariable;
 		// Function prototypes to call internally
 		//////
 			union {
-				u32			_func;
+				uptr		_func;
 				SVariable*	(*func_0p)		(void);
 				SVariable*	(*func_1p)		(SVariable* p1);
 				SVariable*	(*func_2p)		(SVariable* p1, SVariable* p2);
@@ -223,51 +223,51 @@ struct SVariable;
 	SFunctionData gsKnownFunctions[] = {
 		//							Return										Parameters		Parameter
 		//	iCode					Count		Function Algorithm				Required		Maximum Count	SourceLight data
-		//  ------------------		------		--------------------------		----------		-------------	-----------------------------
-		{	_ICODE_ALLTRIM,			1,			(u32)&function_alltrim,			1,				4,				&gsSourceLight_alltrim[0]		},
-		{	_ICODE_ASC,				1,			(u32)&function_asc,				1,				1,				&gsSourceLight_asc[0]			},
-		{	_ICODE_AT,				1,			(u32)&function_at,				2,				3,				&gsSourceLight_at[0]			},
-		{	_ICODE_ATC,				1,			(u32)&function_atc,				2,				3,				&gsSourceLight_atc[0]			},
-		{	_ICODE_CHR,				1,			(u32)&function_chr,				1,				1,				&gsSourceLight_chr[0]			},
-		{	_ICODE_CHRTRAN,			1,			(u32)&function_chrtran,			2,				3,				&gsSourceLight_chrtran[0]		},
-		{	_ICODE_CHRTRANC,		1,			(u32)&function_chrtranc,		2,				3,				&gsSourceLight_chrtranc[0]		},
-		{	_ICODE_CREATEOBJECT,	1,			(u32)&function_createobject,	1,				1,				&gsSourceLight_createobject[0]	},
-		{	_ICODE_DATETIME,		1,			(u32)&function_datetime,		0,				7,				&gsSourceLight_datetime[0]		},
-		{	_ICODE_INT,				1,			(u32)&function_int,				1,				1,				&gsSourceLight_int[0]			},
-		{	_ICODE_LEFT,			1,			(u32)&function_left,			2,				2,				&gsSourceLight_left[0]			},
-		{	_ICODE_LEN,				1,			(u32)&function_len,				1,				1,				&gsSourceLight_len[0]			},
-		{	_ICODE_LOWER,			1,			(u32)&function_lower,			1,				1,				&gsSourceLight_lower[0]			},
-		{	_ICODE_LTRIM,			1,			(u32)&function_ltrim,			1,				1,				&gsSourceLight_ltrim[0]			},
-		{	_ICODE_MAX,				1,			(u32)&function_max,				2,				2,				&gsSourceLight_max[0]			},
-		{	_ICODE_MIN,				1,			(u32)&function_min,				2,				2,				&gsSourceLight_min[0]			},
-		{	_ICODE_OCCURS,			1,			(u32)&function_occurs,			2,				2,				&gsSourceLight_occurs[0]		},
-		{	_ICODE_OCCURSC,			1,			(u32)&function_occursc,			2,				2,				&gsSourceLight_occursc[0]		},
-		{	_ICODE_PADC,			1,			(u32)&function_padc,			2,				3,				&gsSourceLight_padc[0]			},
-		{	_ICODE_PADL,			1,			(u32)&function_padl,			2,				3,				&gsSourceLight_padl[0]			},
-		{	_ICODE_PADR,			1,			(u32)&function_padr,			2,				3,				&gsSourceLight_padr[0]			},
-		{	_ICODE_PROPER,			1,			(u32)&function_proper,			1,				1,				&gsSourceLight_proper[0]		},
-		{	_ICODE_RAT,				1,			(u32)&function_rat,				2,				3,				&gsSourceLight_rat[0]			},
-		{	_ICODE_RATC,			1,			(u32)&function_ratc,			2,				3,				&gsSourceLight_ratc[0]			},
-		{	_ICODE_REPLICATE,		1,			(u32)&function_replicate,		2,				2,				&gsSourceLight_replicate[0]		},
-		{	_ICODE_RGB,				1,			(u32)&function_rgb,				3,				3,				&gsSourceLight_rgb[0]			},
-		{	_ICODE_RGBA,			1,			(u32)&function_rgba,			4,				4,				&gsSourceLight_rgba[0]			},
-		{	_ICODE_RIGHT,			1,			(u32)&function_right,			2,				2,				&gsSourceLight_right[0]			},
-		{	_ICODE_RTRIM,			1,			(u32)&function_rtrim,			1,				1,				&gsSourceLight_rtrim[0]			},
-		{	_ICODE_SPACE,			1,			(u32)&function_space,			1,				1,				&gsSourceLight_space[0]			},
-		{	_ICODE_STRTRAN,			1,			(u32)&function_strtran,			2,				4,				&gsSourceLight_strtran[0]		},
-		{	_ICODE_STRTRANC,		1,			(u32)&function_strtranc,		2,				4,				&gsSourceLight_strtranc[0]		},
-		{	_ICODE_STUFF,			1,			(u32)&function_stuff,			3,				4,				&gsSourceLight_stuff[0]			},
-		{	_ICODE_SYSMETRIC,		1,			(u32)&function_sysmetric,		1,				1,				&gsSourceLight_sysmetric[0]		},
-		{	_ICODE_TRANSFORM,		1,			(u32)&function_transform,		1,				2,				&gsSourceLight_transform[0]		},
-		{	_ICODE_TRIM,			1,			(u32)&function_rtrim,			1,				1,				&gsSourceLight_rtrim[0]			},
-		{	_ICODE_UPPER,			1,			(u32)&function_upper,			1,				1,				&gsSourceLight_upper[0]			},
-		{	_ICODE_VERSION,			1,			(u32)&function_version,			0,				1,				&gsSourceLight_version[0]		},
+		//  ------------------		------		--------------------------		----------		-------------	----------------------------------
+		{	_ICODE_ALLTRIM,			1,			(uptr)&function_alltrim,		1,				4,				&gsSourceLight_alltrim[0]		},
+		{	_ICODE_ASC,				1,			(uptr)&function_asc,			1,				1,				&gsSourceLight_asc[0]			},
+		{	_ICODE_AT,				1,			(uptr)&function_at,				2,				3,				&gsSourceLight_at[0]			},
+		{	_ICODE_ATC,				1,			(uptr)&function_atc,			2,				3,				&gsSourceLight_atc[0]			},
+		{	_ICODE_CHR,				1,			(uptr)&function_chr,			1,				1,				&gsSourceLight_chr[0]			},
+		{	_ICODE_CHRTRAN,			1,			(uptr)&function_chrtran,		2,				3,				&gsSourceLight_chrtran[0]		},
+		{	_ICODE_CHRTRANC,		1,			(uptr)&function_chrtranc,		2,				3,				&gsSourceLight_chrtranc[0]		},
+		{	_ICODE_CREATEOBJECT,	1,			(uptr)&function_createobject,	1,				1,				&gsSourceLight_createobject[0]	},
+		{	_ICODE_DATETIME,		1,			(uptr)&function_datetime,		0,				7,				&gsSourceLight_datetime[0]		},
+		{	_ICODE_INT,				1,			(uptr)&function_int,			1,				1,				&gsSourceLight_int[0]			},
+		{	_ICODE_LEFT,			1,			(uptr)&function_left,			2,				2,				&gsSourceLight_left[0]			},
+		{	_ICODE_LEN,				1,			(uptr)&function_len,			1,				1,				&gsSourceLight_len[0]			},
+		{	_ICODE_LOWER,			1,			(uptr)&function_lower,			1,				1,				&gsSourceLight_lower[0]			},
+		{	_ICODE_LTRIM,			1,			(uptr)&function_ltrim,			1,				1,				&gsSourceLight_ltrim[0]			},
+		{	_ICODE_MAX,				1,			(uptr)&function_max,			2,				2,				&gsSourceLight_max[0]			},
+		{	_ICODE_MIN,				1,			(uptr)&function_min,			2,				2,				&gsSourceLight_min[0]			},
+		{	_ICODE_OCCURS,			1,			(uptr)&function_occurs,			2,				2,				&gsSourceLight_occurs[0]		},
+		{	_ICODE_OCCURSC,			1,			(uptr)&function_occursc,		2,				2,				&gsSourceLight_occursc[0]		},
+		{	_ICODE_PADC,			1,			(uptr)&function_padc,			2,				3,				&gsSourceLight_padc[0]			},
+		{	_ICODE_PADL,			1,			(uptr)&function_padl,			2,				3,				&gsSourceLight_padl[0]			},
+		{	_ICODE_PADR,			1,			(uptr)&function_padr,			2,				3,				&gsSourceLight_padr[0]			},
+		{	_ICODE_PROPER,			1,			(uptr)&function_proper,			1,				1,				&gsSourceLight_proper[0]		},
+		{	_ICODE_RAT,				1,			(uptr)&function_rat,			2,				3,				&gsSourceLight_rat[0]			},
+		{	_ICODE_RATC,			1,			(uptr)&function_ratc,			2,				3,				&gsSourceLight_ratc[0]			},
+		{	_ICODE_REPLICATE,		1,			(uptr)&function_replicate,		2,				2,				&gsSourceLight_replicate[0]		},
+		{	_ICODE_RGB,				1,			(uptr)&function_rgb,			3,				3,				&gsSourceLight_rgb[0]			},
+		{	_ICODE_RGBA,			1,			(uptr)&function_rgba,			4,				4,				&gsSourceLight_rgba[0]			},
+		{	_ICODE_RIGHT,			1,			(uptr)&function_right,			2,				2,				&gsSourceLight_right[0]			},
+		{	_ICODE_RTRIM,			1,			(uptr)&function_rtrim,			1,				1,				&gsSourceLight_rtrim[0]			},
+		{	_ICODE_SPACE,			1,			(uptr)&function_space,			1,				1,				&gsSourceLight_space[0]			},
+		{	_ICODE_STRTRAN,			1,			(uptr)&function_strtran,		2,				4,				&gsSourceLight_strtran[0]		},
+		{	_ICODE_STRTRANC,		1,			(uptr)&function_strtranc,		2,				4,				&gsSourceLight_strtranc[0]		},
+		{	_ICODE_STUFF,			1,			(uptr)&function_stuff,			3,				4,				&gsSourceLight_stuff[0]			},
+		{	_ICODE_SYSMETRIC,		1,			(uptr)&function_sysmetric,		1,				1,				&gsSourceLight_sysmetric[0]		},
+		{	_ICODE_TRANSFORM,		1,			(uptr)&function_transform,		1,				2,				&gsSourceLight_transform[0]		},
+		{	_ICODE_TRIM,			1,			(uptr)&function_rtrim,			1,				1,				&gsSourceLight_rtrim[0]			},
+		{	_ICODE_UPPER,			1,			(uptr)&function_upper,			1,				1,				&gsSourceLight_upper[0]			},
+		{	_ICODE_VERSION,			1,			(uptr)&function_version,		0,				1,				&gsSourceLight_version[0]		},
 // Added temporarily until the processing engine is coded
-		{	_ICODE_CONCATENATE,		1,			(u32)&function_concatenate,		2,				2,				&gsSourceLight_concatenate[0]	},
-		{	_ICODE_ADD,				1,			(u32)&function_add,				2,				2,				&gsSourceLight_add[0]			},
-		{	_ICODE_SUB,				1,			(u32)&function_sub,				2,				2,				&gsSourceLight_sub[0]			},
-		{	_ICODE_MUL,				1,			(u32)&function_mul,				2,				2,				&gsSourceLight_mul[0]			},
-		{	_ICODE_DIV,				1,			(u32)&function_div,				2,				2,				&gsSourceLight_div[0]			},
+		{	_ICODE_CONCATENATE,		1,			(uptr)&function_concatenate,	2,				2,				&gsSourceLight_concatenate[0]	},
+		{	_ICODE_ADD,				1,			(uptr)&function_add,			2,				2,				&gsSourceLight_add[0]			},
+		{	_ICODE_SUB,				1,			(uptr)&function_sub,			2,				2,				&gsSourceLight_sub[0]			},
+		{	_ICODE_MUL,				1,			(uptr)&function_mul,			2,				2,				&gsSourceLight_mul[0]			},
+		{	_ICODE_DIV,				1,			(uptr)&function_div,			2,				2,				&gsSourceLight_div[0]			},
 	//////
 	// Insert above this step somewhere in the list of functions.
 	// STEP2:
@@ -295,7 +295,7 @@ struct SVariable;
 		// Command prototype to call internally
 		//////
 			union {
-				u32			_command;
+				uptr		_command;
 				void		(*command)		(SComp* comp);
 			};
 
@@ -309,5 +309,5 @@ struct SVariable;
 	SCommandData gsKnownCommands[] = {
 		//	iCode					Command Algorithm
 		//  ------------------		--------------------------
-		{	_ICODE_USE,				(u32)&command_use			}
+		{	_ICODE_USE,				(uptr)&command_use			}
 	};

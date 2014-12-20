@@ -2106,7 +2106,7 @@ debug_break;
 											if (comp->nbspCount != 0)
 											{
 												// Copy to a temporary buffer
-												lnBufferLength = min(comp->length, sizeof(buffer));
+												lnBufferLength = min(comp->length, (s32)sizeof(buffer));
 												memcpy(buffer, comp->line->sourceCode->data + comp->start, lnBufferLength);
 
 												// Remove nbsp characters
@@ -2574,7 +2574,7 @@ renderAsOnlyText:
 								if (iIsCharacterInHaystack(line->sourceCode->data, line->sourceCode_populatedLength, -1, NULL))
 								{
 									// Copy to a temporary buffer
-									lnBufferLength = min(line->sourceCode_populatedLength - sem->columnLeft, sizeof(buffer));
+									lnBufferLength = min(line->sourceCode_populatedLength - sem->columnLeft, (s32)sizeof(buffer));
 									memcpy(buffer, line->sourceCode->data + sem->columnLeft, lnBufferLength);
 
 									// Remove nbsp characters

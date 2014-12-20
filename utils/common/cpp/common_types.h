@@ -38,58 +38,58 @@
 	// gcc
 	// Used for pointer sizes that mate up with pointers, but are actually integers
 	#ifdef __i386__
-		typedef uint32_t		uptr;
+		#define uptr uint32_t
 	#else
-		typedef uint64_t		uptr;
+		#define uptr uint64_t
 	#endif
-	typedef uint64_t			u64;
-	typedef uint32_t			u32;
-	typedef uint16_t			u16;
-	typedef uint8_t				u8;
+	#define u64 uint64_t
+	#define u32 uint32_t
+	#define u16 uint16_t
+	#define u8 unsigned char
 
-	typedef int64_t				s64;
-	typedef int32_t				s32;
-	typedef int16_t				s16;
-	typedef int8_t				s8;
+	#define s64 int64_t
+	#define s32 int32_t
+	#define s16 int16_t
+	#define s8 char
 
 #else
 	// Used for pointer sizes that mate up with pointers, but are actually integers
 	#ifdef _M_IX86
-		typedef	unsigned int	uptr;
+		#define uptr unsigned int
 	#else
-		typedef	unsigned __int64 uptr;
+		#define uptr unsigned __int64
 	#endif
-	typedef	unsigned __int64	u64;
-	typedef	unsigned int		u32;
-	typedef	unsigned short		u16;
-	typedef	unsigned char		u8;
+	#define u64 unsigned __int64
+	#define u32 unsigned int
+	#define u16 unsigned short
+	#define u8 unsigned char
 
 	// Signed
-	typedef	__int64				s64;
-	typedef	int					s32;
-	typedef	short				s16;
-	typedef	char				s8;
+	#define s64 __int64
+	#define s32 int
+	#define s16 short
+	#define s8 char
 #endif
 
 // Floating point
-typedef		float				f32;
-typedef		double				f64;
+#define f32 float
+#define f64 double
 
 // Constant signed
-typedef		const s8			cs8;
-typedef		const s16			cs16;
-typedef		const s32			cs32;
-typedef		const s64			cs64;
+#define cs8 const s8
+#define cs16 const s16
+#define cs32 const s32
+#define cs64 const s64
 
 // Constant unsigned
-typedef		const u8			cu8;
-typedef		const u16			cu16;
-typedef		const u32			cu32;
-typedef		const u64			cu64;
+#define cu8 const u8
+#define cu16 const u16
+#define cu32 const u32
+#define cu64 const u64
 
 // Constant floating point
-typedef		const f64			cf64;
-typedef		const f64			cf64;
+#define cf32 const f32
+#define cf64 const f64
 
 #ifndef null
 	// For a null that is not considered a pointer

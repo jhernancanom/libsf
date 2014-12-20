@@ -100,9 +100,9 @@
 		struct SFieldRecord1
 		{
 			// Valid types:
-			//		C–Character		Y–Currency	D–Date		T-DateTime
-			//		B–Double		F–Float		G–General	I–Integer
-			//		L–Logical		M–Memo		N–Numeric	P–Picture
+			//		CÂ–Character		YÂ–Currency	DÂ–Date		T-DateTime
+			//		BÂ–Double		FÂ–Float		GÂ–General	IÂ–Integer
+			//		LÂ–Logical		MÂ–Memo		NÂ–Numeric	PÂ–Picture
 			//		Q-Varbinary		V-Varchar (binary)
 
 			u8		name[11];				// Offset  0, Length 11
@@ -228,13 +228,28 @@
 
 
 			// Memory for whatever
-			s8*				cachedTable;				// If isCached, then this holds the entire table contents as of when it was cached
-			s8*				data;						// Pointer to this record's line of data if locality=_DISK, or the entire table if locality=_MEMORY
-			s8*				odata;						// Pointer to this record's original line data before any changes were made
-			s8*				idata;						// Pointer to a pseudo-record suitable for constructing an index key to find through manual input
+			union {
+				uptr		_cachedTable;
+				s8*			cachedTable;				// If isCached, then this holds the entire table contents as of when it was cached
+			};
+			union {
+				uptr		_data;
+				s8*			data;						// Pointer to this record's line of data if locality=_DISK, or the entire table if locality=_MEMORY
+			};
+			union {
+				uptr		_odata;
+				s8*			odata;						// Pointer to this record's original line data before any changes were made
+			};
+			union {
+				uptr		_idata;
+				s8*			idata;						// Pointer to a pseudo-record suitable for constructing an index key to find through manual input
+			};
 
 			// Memo field data
-			s8*				mdata;						// Pointer to this record's line of data
+			union {
+				uptr		_mdata;
+				s8*			mdata;						// Pointer to this record's line of data
+			};
 			u32				dirty;						// (locality=_MEMORY only) A flag indicating whether or not the data here is dirty (has been changed) and is not written to disk yet
 
 
@@ -408,15 +423,15 @@
 		{
 			// Pointer to the key data
 			union {
+				uptr	_key;						// Same value in 32-bit form
 				s8*		key;						// Pointer to the key data
-				u32		_key;						// Same value in 32-bit form
 			};
 
 			u32			keyLength;					// Length of the key
 
 			// If keyLength is 0, then this will be node, otherwise it's the record number in big-endian form (needs BSWAP run on it)
 			union {
-				u32		record;						// Converted from its native type to little-endian form automatically
+				uptr	record;						// Converted from its native type to little-endian form automatically
 				u32*	node;						// In little-endian form
 			};
 		};

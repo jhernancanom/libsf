@@ -168,7 +168,7 @@
 //		Pointer to the point in the buffer where the text was inserted, can be used
 //		for a furthering or continuance of this function embedded in a higher call.
 //////
-	s8* iBuilder_appendData(SBuilder* buffRoot, s8* tcData, u32 tnDataLength)
+	s8* iBuilder_appendData(SBuilder* buffRoot, cs8* tcData, u32 tnDataLength)
 	{
 		// Make sure our environment is sane
 		if (buffRoot)
@@ -205,23 +205,23 @@
 // Appends the indicated 32-bit value.
 //
 //////
-	s8* iBuilder_append_u32(SBuilder* buffRoot, u32 tnValue)
+	s8* iBuilder_append_uptr(SBuilder* buffRoot, uptr tnValue)
 	{
 		// Make sure our environment is sane
 		if (buffRoot)
 		{
 			// Make sure this much data will fit there in the buffer
-			iBuilder_verifySizeForNewBytes(buffRoot, 4);
+			iBuilder_verifySizeForNewBytes(buffRoot, sizeof(uptr));
 
 			// Copy the data
 			if (buffRoot->data)
 			{
-				*(u32*)(buffRoot->data + buffRoot->populatedLength) = tnValue;
-				buffRoot->populatedLength += 4;
+				*(uptr*)(buffRoot->data + buffRoot->populatedLength) = tnValue;
+				buffRoot->populatedLength += sizeof(uptr);
 			}
 			
 			// Indicate where the start of that buffer is
-			return(buffRoot->data + buffRoot->populatedLength - 4);
+			return(buffRoot->data + buffRoot->populatedLength - sizeof(uptr));
 		}
 		// If we get here, things are bad
 		return(NULL);
@@ -425,7 +425,7 @@
 // Called to write out the indicated builder file as an 8-bit ASCII file
 //
 //////
-	u32 iBuilder_asciiWriteOutFile(SBuilder* buffRoot, s8* tcPathname)
+	u32 iBuilder_asciiWriteOutFile(SBuilder* buffRoot, cs8* tcPathname)
 	{
 		FILE* lfh;
 
@@ -461,7 +461,7 @@
 // Called to load a file into the indicated buffer.
 //
 //////
-	bool iBuilder_asciiReadFromFile(SBuilder** buffRoot, s8* tcPathname)
+	bool iBuilder_asciiReadFromFile(SBuilder** buffRoot, cs8* tcPathname)
 	{
 		u32		lnSize, lnNumread;
 		FILE*	lfh;

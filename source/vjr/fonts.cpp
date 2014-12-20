@@ -236,7 +236,7 @@
 			//////////
 			// Free self
 			//////
-				if (tlDeleteSelf && ((u32)font < (u32)gFonts->data || (u32)font > ((u32)gFonts->data + gFonts->populatedLength)))
+				if (tlDeleteSelf && ((uptr)font < gFonts->_data || (uptr)font > (gFonts->_data + gFonts->populatedLength)))
 				{
 					// Delete the memory block
 					free(font);

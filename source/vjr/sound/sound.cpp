@@ -133,7 +133,7 @@
 		{
 			// Populate the streams based on inputs
 			lnLength = length / sizeof(Sint16);
-			cb._func	= (u32)&isound_requestStreams;
+			cb._func	= (uptr)&isound_requestStreams;
 			cb.extra	= lnLength;
 			iSEChain_iterateThroughForCallback(&gseRootSounds, &cb);
 			// Once we get here, all streams have been populated
@@ -604,7 +604,7 @@
 			lss->inDeleteQueue	= true;
 
 			// We need to see if this is the last item playing, and if so, then turn off SDL
-			cb._func	= (u32)&isound_DeleteValidate;
+			cb._func	= (uptr)&isound_DeleteValidate;
 			lssPlaying	= (_isSSound*)iSEChain_searchByCallback(&gseRootSounds, &cb);
 
 			// Is anything else still playing?

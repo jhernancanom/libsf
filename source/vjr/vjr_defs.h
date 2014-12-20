@@ -336,7 +336,7 @@ struct SObjPropertyMap;
 // vjr_sup.cpp
 //////
 	void					iInit_createMessageWindow				(void);
-	bool					isValidWindow							(u32 tnWindow);
+	bool					isValidWindow							(uptr tnWindow);
 	void					iInit_createDefaultObjects				(void);
 	void					iInit_create_jdebi						(void);
 	void					iInit_createDefaultDatetimes			(void);

@@ -873,15 +873,15 @@ struct SBasePropertyInit;
 		{	_INDEX_AUTOACTIVATE,					cgc_autoActivate,				sizeof(cgc_autoActivate) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// 0=manual, 1=got focus, 2=double click (default), 3=automatic
 		{	_INDEX_AUTOCENTER,						cgc_autoCenter,					sizeof(cgc_autoCenter) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=yes, .f.=no (default)
 		{	_INDEX_AUTOCOMPLETE,					cgc_autoComplete,				sizeof(cgc_autoComplete) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// 0=no display, 1=alphabetical, 2=most frequent, 3=most recent, 4=custom weighting
-		{	_INDEX_AUTOCOMPSOURCE,					cgc_autoCompSource,				sizeof(cgc_autoCompSource) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Field to track for auto complete
-		{	_INDEX_AUTOCOMPTABLE,					cgc_autoCompTable,				sizeof(cgc_autoCompTable) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Table to for auto complete
+		{	_INDEX_AUTOCOMPSOURCE,					cgc_autoCompSource,				sizeof(cgc_autoCompSource) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Field to track for auto complete
+		{	_INDEX_AUTOCOMPTABLE,					cgc_autoCompTable,				sizeof(cgc_autoCompTable) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Table to for auto complete
 		{	_INDEX_AUTOHIDESCROLLBAR,				cgc_autoHideScrollBar,			sizeof(cgc_autoHideScrollBar) - 1,			_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// 0=no (default), 1=yes
 		{	_INDEX_AUTORELEASE,						cgc_autoRelease,				sizeof(cgc_autoRelease) - 1,				_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=released when last form is released, .f.=persists even after last form is released (in formsets)
 		{	_INDEX_AUTOSIZE,						cgc_autoSize,					sizeof(cgc_autoSize) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=auto resize, .f.=no auto resize (default)
 		{	_INDEX_AUTOVERBMENU,					cgc_autoVerbMenu,				sizeof(cgc_autoVerbMenu) - 1,				_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=shows ole menu on right-click (default), .f.=ignore
 		{	_INDEX_BACKCOLOR,						cgc_backColor,					sizeof(cgc_backColor) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		rgba(255,255,255,255)			,NULL	},	// White
 		{	_INDEX_BACKSTYLE,						cgc_backStyle,					sizeof(cgc_backStyle) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		1								,NULL	},	// 0=transparent, 1=opaque
-		{	_INDEX_BASECLASS,						cgc_baseClass,					sizeof(cgc_baseClass) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Varies by class
+		{	_INDEX_BASECLASS,						cgc_baseClass,					sizeof(cgc_baseClass) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Varies by class
 		{	_INDEX_BINDCONTROLS,					cgc_bindControls,				sizeof(cgc_bindControls) - 1,				_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=immediately bind, .f.=delayed binding (not used in Visual FreePro, Jr. as all controls delay binding and complete load operations)
 		{	_INDEX_BORDERCOLOR,						cgc_borderColor,				sizeof(cgc_borderColor) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Black
 		{	_INDEX_BORDERSTYLE,						cgc_borderStyle,				sizeof(cgc_borderStyle) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// 0=none, 1=fixed; for lines or shapes 0=none, 1=solid, 2=dash, 3=dot, 4=dash-dot, 5=dash-dash-dot, 6=inside solid; for forms 0=none, 1=fixed single, 2=fixed double, 3=sizable (not used in Visual FreePro, Jr., all windows are sizable with resize event overrides to limit the size)
@@ -892,12 +892,12 @@ struct SBasePropertyInit;
 		{	_INDEX_BUFFERMODE,						cgc_bufferMode,					sizeof(cgc_bufferMode) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// 0=none (default), 1=pessimistic, 2=optimistic
 		{	_INDEX_BUTTONCOUNT,						cgc_buttonCount,				sizeof(cgc_buttonCount) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		2								,NULL	},	// 2 buttons
 		{	_INDEX_CANCEL,							cgc_cancel,						sizeof(cgc_cancel) - 1,						_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// .t.=the control is a cancel, .f.=normal control (default)
-		{	_INDEX_CAPTION,							cgc_caption,					sizeof(cgc_caption) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Varies by class
+		{	_INDEX_CAPTION,							cgc_caption,					sizeof(cgc_caption) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Varies by class
 		{	_INDEX_CENTERED,						cgc_centered,					sizeof(cgc_centered) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=centered between boundaries, .f.=not centered (default)
 		{	_INDEX_CENTURY,							cgc_century,					sizeof(cgc_century) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		1								,NULL	},	// 0=off, 1=on, 2=uses SET CENTURY setting
-		{	_INDEX_CHILDORDER,						cgc_childOrder,					sizeof(cgc_childOrder) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Tag name
-		{	_INDEX_CLASS,							cgc_class,						sizeof(cgc_class) - 1,						_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Varies by class
-		{	_INDEX_CLASSLIBRARY,					cgc_classLibrary,				sizeof(cgc_classLibrary) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Varies by class
+		{	_INDEX_CHILDORDER,						cgc_childOrder,					sizeof(cgc_childOrder) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Tag name
+		{	_INDEX_CLASS,							cgc_class,						sizeof(cgc_class) - 1,						_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Varies by class
+		{	_INDEX_CLASSLIBRARY,					cgc_classLibrary,				sizeof(cgc_classLibrary) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Varies by class
 		{	_INDEX_CLIPCONTROLS,					cgc_clipControls,				sizeof(cgc_clipControls) - 1,				_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=repaints entire object (default), .f.=only paints newly exposed areas
 		{	_INDEX_CLOSABLE,						cgc_closable,					sizeof(cgc_closable) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=close icon (default), .f.=no close icon
 		{	_INDEX_COLORSCHEME,						cgc_colorScheme,				sizeof(cgc_colorScheme) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Not used in Visual FreePro, Jr.
@@ -907,12 +907,12 @@ struct SBasePropertyInit;
 		{	_INDEX_COLUMNORDER,						cgc_columnOrder,				sizeof(cgc_columnOrder) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// This column's order
 		{	_INDEX_COLUMNS,							cgc_columns,					sizeof(cgc_columns) - 1,					_VAR_TYPE_OBJECT,			 0, 0, 0,		0								,NULL	},	// A pseudo-object to access columns within
 		{	_INDEX_COLUMNWIDTHS,					cgc_columnWidths,				sizeof(cgc_columnWidths) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		0								,NULL	},	// A comma-delimited string
-		{	_INDEX_COMMENT,							cgc_comment,					sizeof(cgc_comment) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Unspecified
+		{	_INDEX_COMMENT,							cgc_comment,					sizeof(cgc_comment) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Unspecified
 		{	_INDEX_CONTINUOUSSCROLL,				cgc_continuousScroll,			sizeof(cgc_continuousScroll) - 1,			_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=scrolls with mouse down (default), .f.=scrolls only when released
 		{	_INDEX_CONTROLBOX,						cgc_controlBox,					sizeof(cgc_controlBox) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=form and subform icon (default), .f.=no icon
 		{	_INDEX_CONTROLCOUNT,					cgc_controlCount,				sizeof(cgc_controlCount) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Varies, based on number of direct child objects
 		{	_INDEX_CONTROLS,						cgc_controls,					sizeof(cgc_controls) - 1,					_VAR_TYPE_OBJECT,			 0, 0, 0,		0								,NULL	},	// A psuedo-object to access controls within
-		{	_INDEX_CONTROLSOURCE,					cgc_controlSource,				sizeof(cgc_controlSource) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// The source for the object
+		{	_INDEX_CONTROLSOURCE,					cgc_controlSource,				sizeof(cgc_controlSource) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// The source for the object
 		{	_INDEX_COUNT,							cgc_count,						sizeof(cgc_count) - 1,						_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Number of items in the object
 		{	_INDEX_CURRENTCONTROL,					cgc_currentControl,				sizeof(cgc_currentControl) - 1,				_VAR_TYPE_OBJECT,			 0, 0, 0,		0								,NULL	},	// Which control in a column is used for display
 		{	_INDEX_CURRENTX,						cgc_currentX,					sizeof(cgc_currentX) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// The X coordinate for drawing (not used in Visual FreePro, Jr.)
@@ -923,44 +923,44 @@ struct SBasePropertyInit;
 		{	_INDEX_DATASESSIONID,					cgc_dataSessionID,				sizeof(cgc_dataSessionID) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Varies
 		{	_INDEX_DATEFORMAT,						cgc_dateFormat,					sizeof(cgc_dateFormat) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// 0=use SET DATE (default), 1=American mm/dd/yy, 2=ANSI yy.mm.dd, 3=British dd/mm/yy, 4=Italian dd-mm-yy, 5= French dd/mm/yy, 6=German dd.mm.yy, 7=Japan yy/mm/dd, 8= Taiwan yy/mm/dd, 9=USA mm-dd-yy, 10=MDY mm/dd/yy, 11=DMY dd/mm/yy, 12=YMD yy/mm/dd, 12=short per Windows' settings, 13=long per Windows' settings
 		{	_INDEX_DATEMARK,						cgc_dateMark,					sizeof(cgc_dateMark) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		0								,NULL	},	// If unspecified, uses SET MARK
-		{	_INDEX_DECLASS,							cgc_dEClass,					sizeof(cgc_dEClass) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Varies
-		{	_INDEX_DECLASSLIBRARY,					cgc_dEClassLibrary,				sizeof(cgc_dEClassLibrary) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Varies
+		{	_INDEX_DECLASS,							cgc_dEClass,					sizeof(cgc_dEClass) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Varies
+		{	_INDEX_DECLASSLIBRARY,					cgc_dEClassLibrary,				sizeof(cgc_dEClassLibrary) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Varies
 		{	_INDEX_DEFAULT,							cgc_default,					sizeof(cgc_default) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=Control to trigger with enter key, .f.=do not trigger (default)
 		{	_INDEX_DEFOLELCID,						cgc_defOLELCID,					sizeof(cgc_defOLELCID) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Default locale ID
 		{	_INDEX_DELETEMARK,						cgc_deleteMark,					sizeof(cgc_deleteMark) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=show deleted() mark (default), .f.=do not show
 		{	_INDEX_DESKTOP,							cgc_desktop,					sizeof(cgc_desktop) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=show anywhere, .f.=show only in Visual FreePro, Jr. screen (default)
-		{	_INDEX_DETAILS,							cgc_details,					sizeof(cgc_details) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Additional information about an exception
+		{	_INDEX_DETAILS,							cgc_details,					sizeof(cgc_details) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Additional information about an exception
 		{	_INDEX_DISABLEDBACKCOLOR,				cgc_disabledBackColor,			sizeof(cgc_disabledBackColor) - 1,			_VAR_TYPE_S32,				 0, 0, 0,		_disabledBackColor				,NULL	},
 		{	_INDEX_DISABLEDFORECOLOR,				cgc_disabledForeColor,			sizeof(cgc_disabledForeColor) - 1,			_VAR_TYPE_S32,				 0, 0, 0,		_disabledForeColor				,NULL	},
 		{	_INDEX_DISABLEDITEMBACKCOLOR,			cgc_disabledItemBackColor,		sizeof(cgc_disabledItemBackColor) - 1,		_VAR_TYPE_S32,				 0, 0, 0,		_disabledBackColor				,NULL	},
 		{	_INDEX_DISABLEDITEMFORECOLOR,			cgc_disabledItemForeColor,		sizeof(cgc_disabledItemForeColor) - 1,		_VAR_TYPE_S32,				 0, 0, 0,		_disabledForeColor				,NULL	},
 		{	_INDEX_DISABLEDPICTURE,					cgc_disabledPicture,			sizeof(cgc_disabledPicture) - 1,			_VAR_TYPE_BITMAP,			 0, 0, 0,		0								,NULL	},	// No picture by default
 		{	_INDEX_DISPLAYCOUNT,					cgc_displayCount,				sizeof(cgc_displayCount) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Default number of items to display in a combobox
-		{	_INDEX_DISPLAYVALUE,					cgc_displayValue,				sizeof(cgc_displayValue) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// The displayed value in a listbox or combobox
+		{	_INDEX_DISPLAYVALUE,					cgc_displayValue,				sizeof(cgc_displayValue) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// The displayed value in a listbox or combobox
 		{	_INDEX_DOCKABLE,						cgc_dockable,					sizeof(cgc_dockable) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=yes, .f.=no (default)
 		{	_INDEX_DOCKED,							cgc_docked,						sizeof(cgc_docked) - 1,						_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=yes, .f.=no (default)
 		{	_INDEX_DOCKPOSITION,					cgc_dockPosition,				sizeof(cgc_dockPosition) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// -1=not docked, 0=top, 1=left, 2=right, 3=bottom, 4=tabbed, 5=link-docked
 		{	_INDEX_DOCREATE,						cgc_doCreate,					sizeof(cgc_doCreate) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// A pseudo-property indicating if the form should actually be created
-		{	_INDEX_DOCUMENTFILE,					cgc_documentFile,				sizeof(cgc_documentFile) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Name of the OLE-bound document file (if any)
-		{	_INDEX_DOWNPICTURE,						cgc_downPicture,				sizeof(cgc_downPicture) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Name of the graphic to display when the mouse is down
-		{	_INDEX_DRAGICON,						cgc_dragIcon,					sizeof(cgc_dragIcon) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Name of the icon to display when the object is being dragged
+		{	_INDEX_DOCUMENTFILE,					cgc_documentFile,				sizeof(cgc_documentFile) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Name of the OLE-bound document file (if any)
+		{	_INDEX_DOWNPICTURE,						cgc_downPicture,				sizeof(cgc_downPicture) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Name of the graphic to display when the mouse is down
+		{	_INDEX_DRAGICON,						cgc_dragIcon,					sizeof(cgc_dragIcon) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Name of the icon to display when the object is being dragged
 		{	_INDEX_DRAGMODE,						cgc_dragMode,					sizeof(cgc_dragMode) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// 0=manual (default), 1=automatic
 		{	_INDEX_DRAWMODE,						cgc_drawMode,					sizeof(cgc_drawMode) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		13								,NULL	},	// 1=black pen, 2=NOT Merge pen, 3=mask NOT pen, 4=NOT copy pen, 5=mask NOT pen, 6=invert, 7=xor, 8=NOT mask pen, 9=mask pen, 10=NOT xor, 11=NOP, 12=merge NOT pen, 13=copy, 14=merge pen NOT, 15=merge pen, 16=white pen
 		{	_INDEX_DRAWSTYLE,						cgc_drawStyle,					sizeof(cgc_drawStyle) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// 0=solid, 1=dash, 2=dot, 3=dash-dot, 4=dash-dot-dot, 5=transparent, 6=inside solid
 		{	_INDEX_DRAWWIDTH,						cgc_drawWidth,					sizeof(cgc_drawWidth) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		1								,NULL	},	// Pixel width for drawing
 		{	_INDEX_DYNAMICALIGNMENT,				cgc_dynamicAlignment,			sizeof(cgc_dynamicAlignment) - 1,			_VAR_TYPE_S32,				 0, 0, 0,		3								,NULL	},	// 0=middle left, 1=middle right, 2=middle center, 3=automatic (default), 4=top left, 5=top right, 6=top center, 7=bottom left, 8=bottom right, 9=bottom center
-		{	_INDEX_DYNAMICBACKCOLOR,				cgc_dynamicBackColor,			sizeof(cgc_dynamicBackColor) - 1,			_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the value
-		{	_INDEX_DYNAMICCURRENTCONTROL,			cgc_dynamicCurrentControl,		sizeof(cgc_dynamicCurrentControl) - 1,		_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the active control for that cell
-		{	_INDEX_DYNAMICFONTBOLD,					cgc_dynamicFontBold,			sizeof(cgc_dynamicFontBold) - 1,			_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the value
-		{	_INDEX_DYNAMICFONTITALIC,				cgc_dynamicFontItalic,			sizeof(cgc_dynamicFontItalic) - 1,			_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the value
-		{	_INDEX_DYNAMICFONTNAME,					cgc_dynamicFontName,			sizeof(cgc_dynamicFontName) - 1,			_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the value
-		{	_INDEX_DYNAMICFONTOUTLINE,				cgc_dynamicFontOutline,			sizeof(cgc_dynamicFontOutline) - 1,			_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the value
-		{	_INDEX_DYNAMICFONTSHADOW,				cgc_dynamicFontShadow,			sizeof(cgc_dynamicFontShadow) - 1,			_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the value
-		{	_INDEX_DYNAMICFONTSIZE,					cgc_dynamicFontSize,			sizeof(cgc_dynamicFontSize) - 1,			_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the value
-		{	_INDEX_DYNAMICFONTSTRIKETHRU,			cgc_dynamicFontStrikeThru,		sizeof(cgc_dynamicFontStrikeThru) - 1,		_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the value
-		{	_INDEX_DYNAMICFONTUNDERLINE,			cgc_dynamicFontUnderline,		sizeof(cgc_dynamicFontUnderline) - 1,		_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the value
-		{	_INDEX_DYNAMICFORECOLOR,				cgc_dynamicForeColor,			sizeof(cgc_dynamicForeColor) - 1,			_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the value
-		{	_INDEX_DYNAMICINPUTMASK,				cgc_dynamicInputMask,			sizeof(cgc_dynamicInputMask) - 1,			_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the value
+		{	_INDEX_DYNAMICBACKCOLOR,				cgc_dynamicBackColor,			sizeof(cgc_dynamicBackColor) - 1,			_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the value
+		{	_INDEX_DYNAMICCURRENTCONTROL,			cgc_dynamicCurrentControl,		sizeof(cgc_dynamicCurrentControl) - 1,		_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the active control for that cell
+		{	_INDEX_DYNAMICFONTBOLD,					cgc_dynamicFontBold,			sizeof(cgc_dynamicFontBold) - 1,			_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the value
+		{	_INDEX_DYNAMICFONTITALIC,				cgc_dynamicFontItalic,			sizeof(cgc_dynamicFontItalic) - 1,			_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the value
+		{	_INDEX_DYNAMICFONTNAME,					cgc_dynamicFontName,			sizeof(cgc_dynamicFontName) - 1,			_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the value
+		{	_INDEX_DYNAMICFONTOUTLINE,				cgc_dynamicFontOutline,			sizeof(cgc_dynamicFontOutline) - 1,			_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the value
+		{	_INDEX_DYNAMICFONTSHADOW,				cgc_dynamicFontShadow,			sizeof(cgc_dynamicFontShadow) - 1,			_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the value
+		{	_INDEX_DYNAMICFONTSIZE,					cgc_dynamicFontSize,			sizeof(cgc_dynamicFontSize) - 1,			_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the value
+		{	_INDEX_DYNAMICFONTSTRIKETHRU,			cgc_dynamicFontStrikeThru,		sizeof(cgc_dynamicFontStrikeThru) - 1,		_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the value
+		{	_INDEX_DYNAMICFONTUNDERLINE,			cgc_dynamicFontUnderline,		sizeof(cgc_dynamicFontUnderline) - 1,		_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the value
+		{	_INDEX_DYNAMICFORECOLOR,				cgc_dynamicForeColor,			sizeof(cgc_dynamicForeColor) - 1,			_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the value
+		{	_INDEX_DYNAMICINPUTMASK,				cgc_dynamicInputMask,			sizeof(cgc_dynamicInputMask) - 1,			_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Character expression evaluated for the value
 		{	_INDEX_EDITBOX_ALLOW_MOVE_BEYOND_END_OF_LINE, cgc_editboxAllowMoveBeyondEndOfLine, sizeof(cgc_editboxAllowMoveBeyondEndOfLine) - 1, _VAR_TYPE_LOGICAL, 0, 0, 0,	_LOGICAL_FALSE					,NULL	},	// .t.=allow the cursor to move beyond the end of each line (default), .f.=do not allow the cursor to move beyond the end of each line
 		{	_INDEX_EDITBOX_COLUMN,					cgc_editboxColumn,				sizeof(cgc_editboxColumn) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// The column where the cursor is shown
 		{	_INDEX_EDITBOX_IS_HEAVY_PROCESSING, 	cgc_editboxIsHeavyProcessing,	sizeof(cgc_editboxIsHeavyProcessing) - 1,	_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=heavy processing, .f.=not heavy processing (default), during heavy processing the display is not updated
@@ -983,22 +983,22 @@ struct SBasePropertyInit;
 		{	_INDEX_FONTCONDENSE,					cgc_fontCondense,				sizeof(cgc_fontCondense) - 1,				_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=condense, .f.=not condense (default)
 		{	_INDEX_FONTEXTEND,						cgc_fontExtend,					sizeof(cgc_fontExtend) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=extend, .f.=not extend (default)
 		{	_INDEX_FONTITALIC,						cgc_fontItalic,					sizeof(cgc_fontItalic) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=italic, .f.=not italic (default)
-		{	_INDEX_FONTNAME,						cgc_fontName,					sizeof(cgc_fontName) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcFontName_default[0]	,NULL	},	// Ubuntu fonts are used by Visual FreePro, Jr. by default
+		{	_INDEX_FONTNAME,						cgc_fontName,					sizeof(cgc_fontName) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcFontName_default[0]	,NULL	},	// Ubuntu fonts are used by Visual FreePro, Jr. by default
 		{	_INDEX_FONTOUTLINE,						cgc_fontOutline,				sizeof(cgc_fontOutline) - 1,				_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=outline, .f.=not outline (default)
 		{	_INDEX_FONTSHADOW,						cgc_fontShadow,					sizeof(cgc_fontShadow) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=shadow, .f.=not shadow (default)
 		{	_INDEX_FONTSIZE,						cgc_fontSize,					sizeof(cgc_fontSize) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		10								,NULL	},	// Default font size is 10pt
 		{	_INDEX_FONTSTRIKETHRU,					cgc_fontStrikeThru,				sizeof(cgc_fontStrikeThru) - 1,				_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=strikethru, .f.=not strikethru (default)
 		{	_INDEX_FONTUNDERLINE,					cgc_fontUnderLine,				sizeof(cgc_fontUnderLine) - 1,				_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=underline, .f.=not underline (default)
 		{	_INDEX_FORECOLOR,						cgc_foreColor,					sizeof(cgc_foreColor) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Black
-		{	_INDEX_FORMAT,							cgc_format,						sizeof(cgc_format) - 1,						_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// The input format string
+		{	_INDEX_FORMAT,							cgc_format,						sizeof(cgc_format) - 1,						_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// The input format string
 		{	_INDEX_FORMCOUNT,						cgc_formCount,					sizeof(cgc_formCount) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Number of forms in a form set
 		{	_INDEX_FORMS,							cgc_forms,						sizeof(cgc_forms) - 1,						_VAR_TYPE_OBJECT,			 0, 0, 0,		0								,NULL	},	// A pseudo index object to access the forms of a form set
 		{	_INDEX_GRIDLINECOLOR,					cgc_gridLineColor,				sizeof(cgc_gridLineColor) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		_blackColor						,NULL	},	// The default grid line color
 		{	_INDEX_GRIDLINES,						cgc_gridLines,					sizeof(cgc_gridLines) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		_GRID_LINES_BOTH				,NULL	},	// 0=none, 1=horizontal only, 2=vertical online, 3=both (default)
 		{	_INDEX_GRIDLINEWIDTH,					cgc_gridLineWidth,				sizeof(cgc_gridLineWidth) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		1								,NULL	},	// The default grid line width
 		{	_INDEX_HALFHEIGHTCAPTION,				cgc_halfHeightCaption,			sizeof(cgc_halfHeightCaption) - 1,			_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=half height, .f.=full height (default) visual FreePro, Jr. does not use this setting, but it remains for compatibility
-		{	_INDEX_HEADERCLASS,						cgc_headerClass,				sizeof(cgc_headerClass) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// The default header class for a grid
-		{	_INDEX_HEADERCLASSLIBRARY,				cgc_headerClassLibrary,			sizeof(cgc_headerClassLibrary) - 1,			_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// The default header class library for a grid
+		{	_INDEX_HEADERCLASS,						cgc_headerClass,				sizeof(cgc_headerClass) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// The default header class for a grid
+		{	_INDEX_HEADERCLASSLIBRARY,				cgc_headerClassLibrary,			sizeof(cgc_headerClassLibrary) - 1,			_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// The default header class library for a grid
 		{	_INDEX_HEADERHEIGHT,					cgc_headerHeight,				sizeof(cgc_headerHeight) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// The header height for a grid
 		{	_INDEX_HEIGHT,							cgc_height,						sizeof(cgc_height) - 1,						_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// The height of the object
 		{	_INDEX_HELPCONTEXTID,					cgc_helpContextID,				sizeof(cgc_helpContextID) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// The help context id
@@ -1009,15 +1009,15 @@ struct SBasePropertyInit;
 		{	_INDEX_HIGHLIGHTROW,					cgc_highLightRow,				sizeof(cgc_highLightRow) - 1,				_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=yes (default), .f.=no (should the entire  grid cell row be highlighted in navigation)
 		{	_INDEX_HIGHLIGHTROWLINEWIDTH,			cgc_highlightRowLineWidth,		sizeof(cgc_highlightRowLineWidth) - 1,		_VAR_TYPE_S32,				 0, 0, 0,		1								,NULL	},	// In pixels, the thickness of the border around the entire grid cell row
 		{	_INDEX_HIGHLIGHTSTYLE,					cgc_highlightStyle,				sizeof(cgc_highlightStyle) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// 0=no color (default), 1=highlight current row only, 2=highlight all rows
-		{	_INDEX_HOSTNAME,						cgc_hostName,					sizeof(cgc_hostName) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// The name to display for OLE controls
+		{	_INDEX_HOSTNAME,						cgc_hostName,					sizeof(cgc_hostName) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// The name to display for OLE controls
 		{	_INDEX_HOURS,							cgc_hours,						sizeof(cgc_hours) - 1,						_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// 0=use SET HOURS (default), 1=12 hour, 2=24-hour
 		{	_INDEX_HSCROLLSMALLCHANGE,				cgc_hScrollSmallChange,			sizeof(cgc_hScrollSmallChange) - 1,			_VAR_TYPE_S32,				 0, 0, 0,		10								,NULL	},	// When scalemode = 3, default is 10 pixels
 		{	_INDEX_HWND,							cgc_hWnd,						sizeof(cgc_hWnd) - 1,						_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// A direct handle to the OS window
-		{	_INDEX_ICON,							cgc_icon,						sizeof(cgc_icon) - 1,						_VAR_TYPE_BITMAP,			 0, 0, 0,		(u32)&bmpVjrIcon				,NULL	},	// Use VJr's app icon by default
+		{	_INDEX_ICON,							cgc_icon,						sizeof(cgc_icon) - 1,						_VAR_TYPE_BITMAP,			 0, 0, 0,		(uptr)&bmpVjrIcon				,NULL	},	// Use VJr's app icon by default
 		{	_INDEX_IMEMODE,							cgc_iMEMode,					sizeof(cgc_iMEMode) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// 0=use OS settings (default), 1=open on focus, 2=close on focus
 		{	_INDEX_INCREMENT,						cgc_increment,					sizeof(cgc_increment) - 1,					_VAR_TYPE_F64,				 0, 0, 0,		0								,NULL	},	// The default increment for spinners
 		{	_INDEX_INCREMENTALSEARCH,				cgc_incrementalSearch,			sizeof(cgc_incrementalSearch) - 1,			_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=yes (default), .f.=no (should keyboard input perform a search on each character)
-		{	_INDEX_INPUTMASK,						cgc_inputMask,					sizeof(cgc_inputMask) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// The input mask
+		{	_INDEX_INPUTMASK,						cgc_inputMask,					sizeof(cgc_inputMask) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// The input mask
 		{	_INDEX_INTEGRALHEIGHT,					cgc_integralHeight,				sizeof(cgc_integralHeight) - 1,				_VAR_TYPE_LOGICAL,			 0, 0, 0,		0								,NULL	},	// .t.=yes, .f.=no (default) (should the height of a control be auto-adjusted so the last line is fully displayed)
 		{	_INDEX_INTERVAL,						cgc_interval,					sizeof(cgc_interval) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// The default interval between timer fires
 		{	_INDEX_ITEMBACKCOLOR,					cgc_itemBackColor,				sizeof(cgc_itemBackColor) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		_whiteColor						,NULL	},	// White
@@ -1031,10 +1031,10 @@ struct SBasePropertyInit;
 		{	_INDEX_KEYSORT,							cgc_keySort,					sizeof(cgc_keySort) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// 0=index ascending, 1=index descending, 2=key ascending, 3=key descending
 		{	_INDEX_LEFT,							cgc_left,						sizeof(cgc_left) - 1,						_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Left coordinate
 		{	_INDEX_LEFTCOLUMN,						cgc_leftColumn,					sizeof(cgc_leftColumn) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		1								,NULL	},	// Left-most column in a grid
-		{	_INDEX_LINECONTENTS,					cgc_lineContents,				sizeof(cgc_lineContents) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// The line that triggered the exception
+		{	_INDEX_LINECONTENTS,					cgc_lineContents,				sizeof(cgc_lineContents) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// The line that triggered the exception
 		{	_INDEX_LINENO,							cgc_lineNo,						sizeof(cgc_lineNo) - 1,						_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// The line number that triggered the exception
-		{	_INDEX_LINESLANT,						cgc_lineSlant,					sizeof(cgc_lineSlant) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcBackslash[0]			,NULL	},	// Either \ (default) or / indicating if the line slants up or down, or S indicating it uses polyPoints for a bezier
-		{	_INDEX_LINKMASTER,						cgc_linkMaster,					sizeof(cgc_linkMaster) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// The linked parent table in a grid
+		{	_INDEX_LINESLANT,						cgc_lineSlant,					sizeof(cgc_lineSlant) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcBackslash[0]			,NULL	},	// Either \ (default) or / indicating if the line slants up or down, or S indicating it uses polyPoints for a bezier
+		{	_INDEX_LINKMASTER,						cgc_linkMaster,					sizeof(cgc_linkMaster) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// The linked parent table in a grid
 		{	_INDEX_LIST,							cgc_list,						sizeof(cgc_list) - 1,						_VAR_TYPE_OBJECT,			 0, 0, 0,		0								,NULL	},	// A pseudo-object to access items in a listbox or combobox
 		{	_INDEX_LISTCOUNT,						cgc_listCount,					sizeof(cgc_listCount) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// The number of items in a listbox or combobox
 		{	_INDEX_LISTINDEX,						cgc_listIndex,					sizeof(cgc_listIndex) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// The currently selected item in a listbox or combobox
@@ -1045,7 +1045,7 @@ struct SBasePropertyInit;
 		{	_INDEX_LOCKSCREEN,						cgc_lockScreen,					sizeof(cgc_lockScreen) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=ignores refresh, .f.=honors refresh (default) (whether or not the form's objects are repainted when their value changes)
 		{	_INDEX_MACDESKTOP,						cgc_macDesktop,					sizeof(cgc_macDesktop) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// 0=automatic (default, uses showWindow), 1=on OS desktop, 2=in _screen
 		{	_INDEX_MARGIN,							cgc_margin,						sizeof(cgc_margin) - 1,						_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Margin in pixels for combobox, editbox, textbox, and spinner
-		{	_INDEX_MASK,							cgc_mask,						sizeof(cgc_mask) - 1,						_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Input mask
+		{	_INDEX_MASK,							cgc_mask,						sizeof(cgc_mask) - 1,						_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Input mask
 		{	_INDEX_MAXBUTTON,						cgc_maxButton,					sizeof(cgc_maxButton) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=yes (default), .f.=no, does the form have a max button?
 		{	_INDEX_MAXHEIGHT,						cgc_maxHeight,					sizeof(cgc_maxHeight) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		-1								,NULL	},	// Maximum height for the form
 		{	_INDEX_MAXLEFT,							cgc_maxLeft,					sizeof(cgc_maxLeft) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		-1								,NULL	},	// Maximum left coordinate for the form
@@ -1053,10 +1053,10 @@ struct SBasePropertyInit;
 		{	_INDEX_MAXTOP,							cgc_maxTop,						sizeof(cgc_maxTop) - 1,						_VAR_TYPE_S32,				 0, 0, 0,		-1								,NULL	},	// Maximum top coordinate for the form
 		{	_INDEX_MAXWIDTH,						cgc_maxWidth,					sizeof(cgc_maxWidth) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		-1								,NULL	},	// The maximum width for a form
 		{	_INDEX_MDIFORM,							cgc_mDIForm,					sizeof(cgc_mDIForm) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=form is MDI, .f.=form is not MDI (default)
-		{	_INDEX_MEMBERCLASS,						cgc_memberClass,				sizeof(cgc_memberClass) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// When new members are added to a container, what class should be used for the creation?
-		{	_INDEX_MEMBERCLASSLIBRARY,				cgc_memberClassLibrary,			sizeof(cgc_memberClassLibrary) - 1,			_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Library for the memberClass
+		{	_INDEX_MEMBERCLASS,						cgc_memberClass,				sizeof(cgc_memberClass) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// When new members are added to a container, what class should be used for the creation?
+		{	_INDEX_MEMBERCLASSLIBRARY,				cgc_memberClassLibrary,			sizeof(cgc_memberClassLibrary) - 1,			_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Library for the memberClass
 		{	_INDEX_MEMOWINDOW,						cgc_memoWindow,					sizeof(cgc_memoWindow) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=yes, .f.=no (default), should the contents of this control be edited in a memo window?
-		{	_INDEX_MESSAGE,							cgc_message,					sizeof(cgc_message) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// The exception error message
+		{	_INDEX_MESSAGE,							cgc_message,					sizeof(cgc_message) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// The exception error message
 		{	_INDEX_MINBUTTON,						cgc_minButton,					sizeof(cgc_minButton) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=yes (default), .f.=no, does the form have a min button?
 		{	_INDEX_MINHEIGHT,						cgc_minHeight,					sizeof(cgc_minHeight) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Minimum height for the form
 		{	_INDEX_MINWIDTH,						cgc_minWidth,					sizeof(cgc_minWidth) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Minimum width for the form
@@ -1065,16 +1065,16 @@ struct SBasePropertyInit;
 		{	_INDEX_MOVABLE,							cgc_movable,					sizeof(cgc_movable) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=yes (default), .f.=no, is the form movable?
 		{	_INDEX_MOVERBARS,						cgc_moverBars,					sizeof(cgc_moverBars) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=show, .f.=hide (default), are mover bars shown on listboxes?
 		{	_INDEX_MULTISELECT,						cgc_multiSelect,				sizeof(cgc_multiSelect) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// 0=no multi-select (default), 1=multi-select
-		{	_INDEX_NAME,							cgc_name,						sizeof(cgc_name) - 1,						_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Object name
+		{	_INDEX_NAME,							cgc_name,						sizeof(cgc_name) - 1,						_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Object name
 		{	_INDEX_NECOLOR,							cgc_neColor,					sizeof(cgc_neColor) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		_neColor						,NULL	},	// Northeast color
 		{	_INDEX_NEWINDEX,						cgc_newIndex,					sizeof(cgc_newIndex) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// When an item is added to a sorted listbox or combobox, newIndex indicates its position
 		{	_INDEX_NEWITEMID,						cgc_newItemID,					sizeof(cgc_newItemID) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// When an item is added to a listbox or combobox, the uid of the added item
-		{	_INDEX_NULLDISPLAY,						cgc_nullDisplay,				sizeof(cgc_nullDisplay) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullText[0]			,NULL	},	// The text to display for .NULL. items
+		{	_INDEX_NULLDISPLAY,						cgc_nullDisplay,				sizeof(cgc_nullDisplay) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullText[0]			,NULL	},	// The text to display for .NULL. items
 		{	_INDEX_NUMBEROFELEMENTS,				cgc_numberOfElements,			sizeof(cgc_numberOfElements) - 1,			_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// How many items in an array are used to populate items in a listbox or combobox
 		{	_INDEX_NWCOLOR,							cgc_nwColor,					sizeof(cgc_nwColor) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		_nwColor						,NULL	},	// Northwest color
 		{	_INDEX_OBJECT,							cgc_object,						sizeof(cgc_object) - 1,						_VAR_TYPE_OBJECT,			 0, 0, 0,		0								,NULL	},	// A pseudo-object to access data within the OLE object
 		{	_INDEX_OBJECTS,							cgc_objects,					sizeof(cgc_objects) - 1,					_VAR_TYPE_OBJECT,			 0, 0, 0,		0								,NULL	},	// A pseudo-object to access child objects
-		{	_INDEX_OLECLASS,						cgc_oLEClass,					sizeof(cgc_oLEClass) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Name of the class ID for an OLE object
+		{	_INDEX_OLECLASS,						cgc_oLEClass,					sizeof(cgc_oLEClass) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Name of the class ID for an OLE object
 		{	_INDEX_OLEDRAGMODE,						cgc_oLEDragMode,				sizeof(cgc_oLEDragMode) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		_DRAG_MODE_MANUAL				,NULL	},	// 0=manual (default), 1=automatic
 		{	_INDEX_OLEDRAGPICTURE,					cgc_oLEDragPicture,				sizeof(cgc_oLEDragPicture) - 1,				_VAR_TYPE_BITMAP,			 0, 0, 0,		0								,NULL	},	// No overriding picture by default
 		{	_INDEX_OLEDROPEFFECTS,					cgc_oLEDropEffects,				sizeof(cgc_oLEDropEffects) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		_DROP_EFFECT_NONE				,NULL	},	// 0=none (default), 1=copy, 2=move, 4=link, values can be combined
@@ -1093,10 +1093,10 @@ struct SBasePropertyInit;
 		{	_INDEX_PANEL,							cgc_panel,						sizeof(cgc_panel) - 1,						_VAR_TYPE_S32,				 0, 0, 0,		_GRID_PANEL_RIGHT				,NULL	},	// 0=left, 1=right (default)
 		{	_INDEX_PANELLINK,						cgc_panelLink,					sizeof(cgc_panelLink) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=linked (default), .f.=not linked
 		{	_INDEX_PARENT,							cgc_parent,						sizeof(cgc_parent) - 1,						_VAR_TYPE_OBJECT,			 0, 0, 0,		0								,NULL	},	// A pseudo-object which accesses the parent object (if any)
-		{	_INDEX_PARENTCLASS,						cgc_parentClass,				sizeof(cgc_parentClass) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// A pseudo-property which accesses the parent object's class (if any)
+		{	_INDEX_PARENTCLASS,						cgc_parentClass,				sizeof(cgc_parentClass) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// A pseudo-property which accesses the parent object's class (if any)
 		{	_INDEX_PARTITION,						cgc_partition,					sizeof(cgc_partition) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		_GRID_NO_PARTITION				,NULL	},	// 0=not split (default), others=split
-		{	_INDEX_PASSWORDCHAR,					cgc_passwordChar,				sizeof(cgc_passwordChar) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcPasswordCharText[0]	,NULL	},	// A character placeholder for input characters on password fields
-		{	_INDEX_PICTURE,							cgc_picture,					sizeof(cgc_picture) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// A filename to use for the picture
+		{	_INDEX_PASSWORDCHAR,					cgc_passwordChar,				sizeof(cgc_passwordChar) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcPasswordCharText[0]	,NULL	},	// A character placeholder for input characters on password fields
+		{	_INDEX_PICTURE,							cgc_picture,					sizeof(cgc_picture) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// A filename to use for the picture
 		{	_INDEX_PICTUREBMP,						cgc_pictureBmp,					sizeof(cgc_pictureBmp) - 1,					_VAR_TYPE_BITMAP,			 0, 0, 0,		0								,NULL	},	// The raw bitmap data
 		{	_INDEX_PICTUREBMP_DOWN,					cgc_pictureBmpDown,				sizeof(cgc_pictureBmpDown) - 1,				_VAR_TYPE_BITMAP,			 0, 0, 0,		0								,NULL	},	// The raw bitmap data
 		{	_INDEX_PICTUREBMP_OVER,					cgc_pictureBmpOver,				sizeof(cgc_pictureBmpOver) - 1,				_VAR_TYPE_BITMAP,			 0, 0, 0,		0								,NULL	},	// The raw bitmap data
@@ -1104,9 +1104,9 @@ struct SBasePropertyInit;
 		{	_INDEX_PICTUREPOSITION,					cgc_picturePosition,			sizeof(cgc_picturePosition) - 1,			_VAR_TYPE_S32,				 0, 0, 0,		_PICTURE_CENTERED_RELATIVE		,NULL	},	// See _PICTURE_* constants
 		{	_INDEX_PICTURESELECTIONDISPLAY, 		cgc_pictureSelectionDisplay,	sizeof(cgc_pictureSelectionDisplay) - 1,	_VAR_TYPE_S32,				 0, 0, 0,		_PICTURE_NO_DISPLAY				,NULL	},	// 0=no display (default), 1=clip, 2=scale, 3=stretch
 		{	_INDEX_PICTURESPACING,					cgc_pictureSpacing,				sizeof(cgc_pictureSpacing) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Pixels between image and text
-		{	_INDEX_PICTUREVAL,						cgc_pictureVal,					sizeof(cgc_pictureVal) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Raw image data for the picture
-		{	_INDEX_POLYPOINTS,						cgc_polyPoints,					sizeof(cgc_polyPoints) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Name of the array to use for the bezier
-		{	_INDEX_PROCEDURE,						cgc_procedure,					sizeof(cgc_procedure) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Name of the error procedure
+		{	_INDEX_PICTUREVAL,						cgc_pictureVal,					sizeof(cgc_pictureVal) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Raw image data for the picture
+		{	_INDEX_POLYPOINTS,						cgc_polyPoints,					sizeof(cgc_polyPoints) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Name of the array to use for the bezier
+		{	_INDEX_PROCEDURE,						cgc_procedure,					sizeof(cgc_procedure) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Name of the error procedure
 		{	_INDEX_READBACKCOLOR,					cgc_readBackColor,				sizeof(cgc_readBackColor) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		_selectedBackColor				,NULL	},	// Back color of the control with READ focus
 		{	_INDEX_READCYCLE,						cgc_readCycle,					sizeof(cgc_readCycle) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=cycle (default), .f.=terminate read, should the READ continue on to the top when the end is reached?
 		{	_INDEX_READFORECOLOR,					cgc_readForeColor,				sizeof(cgc_readForeColor) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		_selectedForeColor				,NULL	},	// Fore color of the control with READ focus
@@ -1116,9 +1116,9 @@ struct SBasePropertyInit;
 		{	_INDEX_READSAVE,						cgc_readSave,					sizeof(cgc_readSave) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=maintain, .f.=recycle (default), should the objects associated with the READ be kept active (maintain) or discarded (recycle)?
 		{	_INDEX_READTIMEOUT,						cgc_readTimeOut,				sizeof(cgc_readTimeOut) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Default = 0. Seconds before READ automatically times out.
 		{	_INDEX_RECORDMARK,						cgc_recordMark,					sizeof(cgc_recordMark) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=show (default), .f.=hide, should the record selection mark be shown on a grid?
-		{	_INDEX_RECORDSOURCE,					cgc_recordSource,				sizeof(cgc_recordSource) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Record source relating to recordSourceType
+		{	_INDEX_RECORDSOURCE,					cgc_recordSource,				sizeof(cgc_recordSource) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Record source relating to recordSourceType
 		{	_INDEX_RECORDSOURCETYPE,				cgc_recordSourceType,			sizeof(cgc_recordSourceType) - 1,			_VAR_TYPE_S32,				 0, 0, 0,		_GRID_RECORD_SOURCE_ALIAS		,NULL	},	// 0=table, 1=alias (default), 3=prompt, 4=query, 5=sql statement
-		{	_INDEX_RELATIONALEXPR,					cgc_relationalExpr,				sizeof(cgc_relationalExpr) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// The expression for the parent/child relationship
+		{	_INDEX_RELATIONALEXPR,					cgc_relationalExpr,				sizeof(cgc_relationalExpr) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// The expression for the parent/child relationship
 		{	_INDEX_RELATIVECOLUMN,					cgc_relativeColumn,				sizeof(cgc_relativeColumn) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Active column in a grid
 		{	_INDEX_RELATIVEROW,						cgc_relativeRow,				sizeof(cgc_relativeRow) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Active row in a grid
 		{	_INDEX_RELEASETYPE,						cgc_releaseType,				sizeof(cgc_releaseType) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		_RELEASE_TYPE_VARIABLE			,NULL	},	// How an object is released
@@ -1129,7 +1129,7 @@ struct SBasePropertyInit;
 		{	_INDEX_ROUND_TO,						cgc_roundTo,					sizeof(cgc_roundTo) -1,						_VAR_TYPE_F64,				 0, 0, 0,		0								,NULL	},	// Round to 2 decimal places by default
 		{	_INDEX_ROWCOLCHANGE,					cgc_rowColChange,				sizeof(cgc_rowColChange) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		_GRID_ROW_COL_CHANGE_NONE		,NULL	},	// 0=none, 1=row, 2=col, can be combined for 3=both
 		{	_INDEX_ROWHEIGHT,						cgc_rowHeight,					sizeof(cgc_rowHeight) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Height of a row in a grid
-		{	_INDEX_ROWSOURCE,						cgc_rowSource,					sizeof(cgc_rowSource) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Related to rowSourceType
+		{	_INDEX_ROWSOURCE,						cgc_rowSource,					sizeof(cgc_rowSource) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Related to rowSourceType
 		{	_INDEX_ROWSOURCETYPE,					cgc_rowSourceType,				sizeof(cgc_rowSourceType) - 1,				_VAR_TYPE_S32,				 0, 0, 0,		_ROW_SOURCE_TYPE_NONE			,NULL	},	// 0=none (default), see _ROW_SOURCE_TYPE_* constants
 		{	_INDEX_SCALEMODE,						cgc_scaleMode,					sizeof(cgc_scaleMode) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		3								,NULL	},	// 0=foxels, 1=pixels (default)
 		{	_INDEX_SCROLLBARS,						cgc_scrollBars,					sizeof(cgc_scrollBars) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		_SCROLL_BARS_BOTH				,NULL	},	// 0=none, 1=horizontal, 2=vertical, can be combined for 3=both (default)
@@ -1146,7 +1146,7 @@ struct SBasePropertyInit;
 		{	_INDEX_SELECTONENTRY,					cgc_selectOnEntry,				sizeof(cgc_selectOnEntry) - 1,				_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=yes, .f.=no (default), should the contents be selected when the control receives focus?
 		{	_INDEX_SELLENGTH,						cgc_selLength,					sizeof(cgc_selLength) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Number of selected characters
 		{	_INDEX_SELSTART,						cgc_selStart,					sizeof(cgc_selStart) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Offset where the selection starts
-		{	_INDEX_SELTEXT,							cgc_selText,					sizeof(cgc_selText) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// A pseudo-interface to access the selected characters
+		{	_INDEX_SELTEXT,							cgc_selText,					sizeof(cgc_selText) - 1,					_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// A pseudo-interface to access the selected characters
 		{	_INDEX_SHOWINTASKBAR,					cgc_showInTaskbar,				sizeof(cgc_showInTaskbar) - 1,				_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=show (default), .f.=don't show, should the window appear in the task bar?
 		{	_INDEX_SHOWTIPS,						cgc_showTips,					sizeof(cgc_showTips) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=show, .f.=don't show (default), should tooltips be shown?
 		{	_INDEX_SHOWWINDOW,						cgc_showWindow,					sizeof(cgc_showWindow) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		_SHOW_WINDOW_IN_SCREEN			,NULL	},	// 0=in _screen, 1=inside parent form, 2=on the OS desktop
@@ -1159,7 +1159,7 @@ struct SBasePropertyInit;
 		{	_INDEX_SPINNERLOWVALUE,					cgc_spinnerLowValue,			sizeof(cgc_spinnerLowValue) - 1,			_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Minimum value for spinner
 		{	_INDEX_SPLITBAR,						cgc_splitBar,					sizeof(cgc_splitBar) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=show split bar (default), .f.=do not show, in grids when slip should the dividing bar be shown?
 		{	_INDEX_STACKLEVEL,						cgc_stackLevel,					sizeof(cgc_stackLevel) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// On exception, how many levels deep it is
-		{	_INDEX_STATUSBARTEXT,					cgc_statusBarText,				sizeof(cgc_statusBarText) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// The text to display in the status bar when the control gains focus
+		{	_INDEX_STATUSBARTEXT,					cgc_statusBarText,				sizeof(cgc_statusBarText) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// The text to display in the status bar when the control gains focus
 		{	_INDEX_STRETCH,							cgc_stretch,					sizeof(cgc_stretch) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		_STRETCH_CLIP					,NULL	},	// 0=clip, 1=scale, 2=stretch
 		{	_INDEX_STRICTDATEENTRY,					cgc_strictDateEntry,			sizeof(cgc_strictDateEntry) - 1,			_VAR_TYPE_S32,				 0, 0, 0,		_STRICT_DATE_LOOSE				,NULL	},	// 0=loose (default), 1=strict, date input allowance
 		{	_INDEX_STYLE,							cgc_style,						sizeof(cgc_style) - 1,						_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// Varies by control
@@ -1169,12 +1169,12 @@ struct SBasePropertyInit;
 		{	_INDEX_TABS,							cgc_tabs,						sizeof(cgc_tabs) - 1,						_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=show (default), .f.=hide, are tabs shown on a pageframe?
 		{	_INDEX_TABSTOP,							cgc_tabStop,					sizeof(cgc_tabStop) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// Does this control receive a stop when tabbing?
 		{	_INDEX_TABSTYLE,						cgc_tabStyle,					sizeof(cgc_tabStyle) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		_TAB_STYLE_JUSTIFIED			,NULL	},	// How does the text appear in a pageframe tab?
-		{	_INDEX_TAG,								cgc_tag,						sizeof(cgc_tag) - 1,						_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Custom text per user needs
+		{	_INDEX_TAG,								cgc_tag,						sizeof(cgc_tag) - 1,						_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Custom text per user needs
 		{	_INDEX_TERMINATEREAD,					cgc_terminateRead,				sizeof(cgc_terminateRead) - 1,				_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// When this control is activated, should the form's READ terminate?
-		{	_INDEX_TEXT,							cgc_text,						sizeof(cgc_text) - 1,						_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// The raw text form of the control's contents without pictures and auto-expansion (as with date fields)
+		{	_INDEX_TEXT,							cgc_text,						sizeof(cgc_text) - 1,						_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// The raw text form of the control's contents without pictures and auto-expansion (as with date fields)
 		{	_INDEX_THEMES,							cgc_themes,						sizeof(cgc_themes) - 1,						_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=use themes (default), .f.=standard, are themes shown?
 		{	_INDEX_TITLEBAR,						cgc_titleBar,					sizeof(cgc_titleBar) - 1,					_VAR_TYPE_LOGICAL,			 0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=has title bar (default), .f.=no title bar
-		{	_INDEX_TOOLTIPTEXT,						cgc_toolTipText,				sizeof(cgc_toolTipText) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(u32)&cgcNullString[0]			,NULL	},	// Tooltip text to display when hovering over the control
+		{	_INDEX_TOOLTIPTEXT,						cgc_toolTipText,				sizeof(cgc_toolTipText) - 1,				_VAR_TYPE_CHARACTER,		 0, 0, 0,		(uptr)&cgcNullString[0]			,NULL	},	// Tooltip text to display when hovering over the control
 		{	_INDEX_TOP,								cgc_top,						sizeof(cgc_top) - 1,						_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// The top coordinate for the object
 		{	_INDEX_TOPINDEX,						cgc_topIndex,					sizeof(cgc_topIndex) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// The index of the item in the topmost visible position of a listbox or combobox
 		{	_INDEX_TOPITEMID,						cgc_topItemID,					sizeof(cgc_topItemID) - 1,					_VAR_TYPE_S32,				 0, 0, 0,		0								,NULL	},	// The uid of the item in the topmost visible position of a listbox or combobox
@@ -1209,17 +1209,17 @@ struct SBasePropertyInit;
 		s32			index;
 
 		union {
-			u32			_initterObject;
+			uptr		_initterObject;
 			bool		(*initterObject)	(SObject* obj, u32 tnIndex);
 		};
 
 		union {
-			u32			_setterObject;
+			uptr		_setterObject;
 			bool		(*setterObject)		(SObject* obj, u32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp);
 		};
 
 		union {
-			u32			_getterObject;
+			uptr		_getterObject;
 			SVariable*	(*getterObject)		(SObject* obj, u32 tnIndex);
 		};
 	};
@@ -1274,7 +1274,7 @@ struct SBasePropertyInit;
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_BORDERCOLOR,				0, 0, 0 },
 		{	_INDEX_BORDERSTYLE,				0, 0, 0 },
-		{	_INDEX_CAPTION,					0, (u32)&iObjProp_setter_captionOnChild, 0 },
+		{	_INDEX_CAPTION,					0, (uptr)&iObjProp_setter_captionOnChild, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_CLASSLIBRARY,			0, 0, 0 },
 		{	_INDEX_COMMENT,					0, 0, 0 },
@@ -1283,22 +1283,22 @@ struct SBasePropertyInit;
 		{	_INDEX_ENABLED,					0, 0, 0 },
 		{	_INDEX_FILLCOLOR,				0, 0, 0 },
 		{	_INDEX_FILLSTYLE,				0, 0, 0 },
-		{	_INDEX_FONTBOLD,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCHARSET,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCONDENSE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTEXTEND,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTITALIC,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTNAME,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTOUTLINE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSHADOW,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSIZE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSTRIKETHRU,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTUNDERLINE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTBOLD,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCHARSET,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCONDENSE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTEXTEND,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTITALIC,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTNAME,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTOUTLINE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSHADOW,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSIZE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSTRIKETHRU,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTUNDERLINE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
 		{	_INDEX_FORECOLOR,				0, 0, 0 },
 		{	_INDEX_HEIGHT,					0, 0, 0 },
 		{	_INDEX_HELPCONTEXTID,			0, 0, 0 },
 		{	_INDEX_HWND,					0, 0, 0 },
-		{	_INDEX_ICON,					0, (u32)&iObjProp_setter_iconOnChild, 0 },
+		{	_INDEX_ICON,					0, (uptr)&iObjProp_setter_iconOnChild, 0 },
 		{	_INDEX_KEYPREVIEW,				0, 0, 0 },
 		{	_INDEX_LEFT,					0, 0, 0 },
 		{	_INDEX_MAXHEIGHT,				0, 0, 0 },
@@ -1366,7 +1366,7 @@ struct SBasePropertyInit;
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_BORDERCOLOR,				0, 0, 0 },
 		{	_INDEX_BORDERSTYLE,				0, 0, 0 },
-		{	_INDEX_CAPTION,					0, (u32)&iObjProp_setter_captionOnChild, 0 },
+		{	_INDEX_CAPTION,					0, (uptr)&iObjProp_setter_captionOnChild, 0 },
 		{	_INDEX_CENTERED,				0, 0, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_CLASSLIBRARY,			0, 0, 0 },
@@ -1381,17 +1381,17 @@ struct SBasePropertyInit;
 		{	_INDEX_DRAGICON,				0, 0, 0 },
 		{	_INDEX_DRAGMODE,				0, 0, 0 },
 		{	_INDEX_ENABLED,					0, 0, 0 },
-		{	_INDEX_FONTBOLD,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCHARSET,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCONDENSE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTEXTEND,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTITALIC,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTNAME,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTOUTLINE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSHADOW,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSIZE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSTRIKETHRU,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTUNDERLINE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTBOLD,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCHARSET,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCONDENSE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTEXTEND,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTITALIC,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTNAME,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTOUTLINE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSHADOW,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSIZE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSTRIKETHRU,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTUNDERLINE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
 		{	_INDEX_FORECOLOR,				0, 0, 0 },
 		{	_INDEX_HEIGHT,					0, 0, 0 },
 		{	_INDEX_HELPCONTEXTID,			0, 0, 0 },
@@ -1443,7 +1443,7 @@ struct SBasePropertyInit;
 		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_CANCEL,					0, 0, 0 },
-		{	_INDEX_CAPTION,					0, (u32)&iObjProp_setter_captionOnChild, 0 },
+		{	_INDEX_CAPTION,					0, (uptr)&iObjProp_setter_captionOnChild, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_CLASSLIBRARY,			0, 0, 0 },
 		{	_INDEX_COLORSCHEME,				0, 0, 0 },
@@ -1457,17 +1457,17 @@ struct SBasePropertyInit;
 		{	_INDEX_DRAGICON,				0, 0, 0 },
 		{	_INDEX_DRAGMODE,				0, 0, 0 },
 		{	_INDEX_ENABLED,					0, 0, 0 },
-		{	_INDEX_FONTBOLD,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCHARSET,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCONDENSE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTEXTEND,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTITALIC,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTNAME,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTOUTLINE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSHADOW,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSIZE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSTRIKETHRU,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTUNDERLINE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTBOLD,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCHARSET,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCONDENSE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTEXTEND,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTITALIC,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTNAME,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTOUTLINE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSHADOW,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSIZE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSTRIKETHRU,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTUNDERLINE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
 		{	_INDEX_FORECOLOR,				0, 0, 0 },
 		{	_INDEX_HEIGHT,					0, 0, 0 },
 		{	_INDEX_HELPCONTEXTID,			0, 0, 0 },
@@ -1564,7 +1564,7 @@ struct SBasePropertyInit;
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_BORDERCOLOR,				0, 0, 0 },
 		{	_INDEX_BORDERSTYLE,				0, 0, 0 },
-		{	_INDEX_CAPTION,					0, (u32)&iObjProp_setter_captionOnChild, 0 },
+		{	_INDEX_CAPTION,					0, (uptr)&iObjProp_setter_captionOnChild, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_CLASSLIBRARY,			0, 0, 0 },
 		{	_INDEX_COLORSCHEME,				0, 0, 0 },
@@ -1575,17 +1575,17 @@ struct SBasePropertyInit;
 		{	_INDEX_DRAGICON,				0, 0, 0 },
 		{	_INDEX_DRAGMODE,				0, 0, 0 },
 		{	_INDEX_ENABLED,					0, 0, 0 },
-		{	_INDEX_FONTBOLD,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCHARSET,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCONDENSE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTEXTEND,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTITALIC,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTNAME,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTOUTLINE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSHADOW,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSIZE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSTRIKETHRU,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTUNDERLINE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTBOLD,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCHARSET,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCONDENSE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTEXTEND,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTITALIC,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTNAME,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTOUTLINE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSHADOW,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSIZE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSTRIKETHRU,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTUNDERLINE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
 		{	_INDEX_FORECOLOR,				0, 0, 0 },
 		{	_INDEX_HEIGHT,					0, 0, 0 },
 		{	_INDEX_HELPCONTEXTID,			0, 0, 0 },
@@ -1625,7 +1625,7 @@ struct SBasePropertyInit;
 		{	_INDEX_AUTOSIZE,				0, 0, 0 },
 		{	_INDEX_BACKCOLOR,				0, 0, 0 },
 		{	_INDEX_BACKSTYLE,				0, 0, 0 },
-		{	_INDEX_CAPTION,					0, (u32)&iObjProp_setter_captionOnChild, 0 },
+		{	_INDEX_CAPTION,					0, (uptr)&iObjProp_setter_captionOnChild, 0 },
 		{	_INDEX_COLORSCHEME,				0, 0, 0 },
 		{	_INDEX_COLORSOURCE,				0, 0, 0 },
 		{	_INDEX_COMMENT,					0, 0, 0 },
@@ -1638,17 +1638,17 @@ struct SBasePropertyInit;
 		{	_INDEX_DRAGICON,				0, 0, 0 },
 		{	_INDEX_DRAGMODE,				0, 0, 0 },
 		{	_INDEX_ENABLED,					0, 0, 0 },
-		{	_INDEX_FONTBOLD,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCHARSET,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCONDENSE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTEXTEND,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTITALIC,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTNAME,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTOUTLINE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSHADOW,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSIZE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSTRIKETHRU,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTUNDERLINE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTBOLD,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCHARSET,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCONDENSE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTEXTEND,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTITALIC,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTNAME,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTOUTLINE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSHADOW,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSIZE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSTRIKETHRU,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTUNDERLINE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
 		{	_INDEX_FORECOLOR,				0, 0, 0 },
 		{	_INDEX_HEIGHT,					0, 0, 0 },
 		{	_INDEX_HELPCONTEXTID,			0, 0, 0 },
@@ -1761,17 +1761,17 @@ struct SBasePropertyInit;
 		{	_INDEX_DRAGMODE,				0, 0, 0 },
 		{	_INDEX_ENABLED,					0, 0, 0 },
 		{	_INDEX_ENABLEHYPERLINKS,		0, 0, 0 },
-		{	_INDEX_FONTBOLD,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCHARSET,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCONDENSE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTEXTEND,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTITALIC,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTNAME,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTOUTLINE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSHADOW,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSIZE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSTRIKETHRU,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTUNDERLINE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTBOLD,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCHARSET,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCONDENSE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTEXTEND,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTITALIC,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTNAME,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTOUTLINE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSHADOW,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSIZE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSTRIKETHRU,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTUNDERLINE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
 		{	_INDEX_FORECOLOR,				0, 0, 0 },
 		{	_INDEX_FORMAT,					0, 0, 0 },
 		{	_INDEX_HEIGHT,					0, 0, 0 },
@@ -1835,7 +1835,7 @@ struct SBasePropertyInit;
 		{	_INDEX_ALLOWTABS,					0, 0, 0 },
 		{	_INDEX_ANCHOR,						0, 0, 0 },
 		{	_INDEX_APPLICATION,					0, 0, 0 },
-		{	_INDEX_BACKCOLOR,					0, (u32)&iObjProp_setter_editboxMirror, 0 },
+		{	_INDEX_BACKCOLOR,					0, (uptr)&iObjProp_setter_editboxMirror, 0 },
 		{	_INDEX_BACKSTYLE,					0, 0, 0 },
 		{	_INDEX_BASECLASS,					0, 0, 0 },
 		{	_INDEX_BORDERCOLOR,					0, 0, 0 },
@@ -1850,31 +1850,31 @@ struct SBasePropertyInit;
 		{	_INDEX_DISABLEDFORECOLOR,			0, 0, 0 },
 		{	_INDEX_DRAGICON,					0, 0, 0 },
 		{	_INDEX_DRAGMODE,					0, 0, 0 },
-		{	_INDEX_EDITBOX_ALLOW_MOVE_BEYOND_END_OF_LINE,	0, (u32)&iObjProp_setter_editboxMirror, 0 },
-		{	_INDEX_EDITBOX_COLUMN,							0, (u32)&iObjProp_setter_editboxMirror, 0 },
-		{	_INDEX_EDITBOX_IS_HEAVY_PROCESSING,				0, (u32)&iObjProp_setter_editboxMirror, 0 },
-		{	_INDEX_EDITBOX_IS_SOURCE_CODE,					0, (u32)&iObjProp_setter_editboxMirror, 0 },
-		{	_INDEX_EDITBOX_LEFT_COLUMN,						0, (u32)&iObjProp_setter_editboxMirror, 0 },
-		{	_INDEX_EDITBOX_OVERWRITE,						0, (u32)&iObjProp_setter_editboxMirror, 0 },
-		{	_INDEX_EDITBOX_SHOW_CURSOR_LINE,				0, (u32)&iObjProp_setter_editboxMirror, 0 },
-		{	_INDEX_EDITBOX_SHOW_END_LINE,					0, (u32)&iObjProp_setter_editboxMirror, 0 },
-		{	_INDEX_EDITBOX_SHOW_LINE_NUMBERS,				0, (u32)&iObjProp_setter_editboxMirror, 0 },
-		{	_INDEX_EDITBOX_TABS_ENFORCED,					0, (u32)&iObjProp_setter_editboxMirror, 0 },
-		{	_INDEX_EDITBOX_TAB_WIDTH,						0, (u32)&iObjProp_setter_editboxMirror, 0 },
+		{	_INDEX_EDITBOX_ALLOW_MOVE_BEYOND_END_OF_LINE,	0, (uptr)&iObjProp_setter_editboxMirror, 0 },
+		{	_INDEX_EDITBOX_COLUMN,							0, (uptr)&iObjProp_setter_editboxMirror, 0 },
+		{	_INDEX_EDITBOX_IS_HEAVY_PROCESSING,				0, (uptr)&iObjProp_setter_editboxMirror, 0 },
+		{	_INDEX_EDITBOX_IS_SOURCE_CODE,					0, (uptr)&iObjProp_setter_editboxMirror, 0 },
+		{	_INDEX_EDITBOX_LEFT_COLUMN,						0, (uptr)&iObjProp_setter_editboxMirror, 0 },
+		{	_INDEX_EDITBOX_OVERWRITE,						0, (uptr)&iObjProp_setter_editboxMirror, 0 },
+		{	_INDEX_EDITBOX_SHOW_CURSOR_LINE,				0, (uptr)&iObjProp_setter_editboxMirror, 0 },
+		{	_INDEX_EDITBOX_SHOW_END_LINE,					0, (uptr)&iObjProp_setter_editboxMirror, 0 },
+		{	_INDEX_EDITBOX_SHOW_LINE_NUMBERS,				0, (uptr)&iObjProp_setter_editboxMirror, 0 },
+		{	_INDEX_EDITBOX_TABS_ENFORCED,					0, (uptr)&iObjProp_setter_editboxMirror, 0 },
+		{	_INDEX_EDITBOX_TAB_WIDTH,						0, (uptr)&iObjProp_setter_editboxMirror, 0 },
 		{	_INDEX_ENABLED,						0, 0, 0 },
 		{	_INDEX_ENABLEHYPERLINKS,			0, 0, 0 },
-		{	_INDEX_FONTBOLD,					0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCHARSET,					0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCONDENSE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTEXTEND,					0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTITALIC,					0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTNAME,					0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTOUTLINE,					0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSHADOW,					0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSIZE,					0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSTRIKETHRU,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTUNDERLINE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FORECOLOR,					0, (u32)&iObjProp_setter_editboxMirror, 0 },
+		{	_INDEX_FONTBOLD,					0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCHARSET,					0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCONDENSE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTEXTEND,					0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTITALIC,					0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTNAME,					0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTOUTLINE,					0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSHADOW,					0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSIZE,					0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSTRIKETHRU,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTUNDERLINE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FORECOLOR,					0, (uptr)&iObjProp_setter_editboxMirror, 0 },
 		{	_INDEX_FORMAT,						0, 0, 0 },
 		{	_INDEX_HEIGHT,						0, 0, 0 },
 		{	_INDEX_HELPCONTEXTID,				0, 0, 0 },
@@ -1951,17 +1951,17 @@ struct SBasePropertyInit;
 		{	_INDEX_DRAGMODE,				0, 0, 0 },
 		{	_INDEX_ENABLED,					0, 0, 0 },
 		{	_INDEX_FIRSTELEMENT,			0, 0, 0 },
-		{	_INDEX_FONTBOLD,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCHARSET,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCONDENSE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTEXTEND,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTITALIC,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTNAME,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTOUTLINE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSHADOW,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSIZE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSTRIKETHRU,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTUNDERLINE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTBOLD,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCHARSET,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCONDENSE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTEXTEND,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTITALIC,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTNAME,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTOUTLINE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSHADOW,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSIZE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSTRIKETHRU,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTUNDERLINE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
 		{	_INDEX_HEIGHT,					0, 0, 0 },
 		{	_INDEX_HELPCONTEXTID,			0, 0, 0 },
 		{	_INDEX_INCREMENTALSEARCH,		0, 0, 0 },
@@ -2055,17 +2055,17 @@ struct SBasePropertyInit;
 		{	_INDEX_DRAGMODE,				0, 0, 0 },
 		{	_INDEX_ENABLED,					0, 0, 0 },
 		{	_INDEX_FIRSTELEMENT,			0, 0, 0 },
-		{	_INDEX_FONTBOLD,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCHARSET,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCONDENSE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTEXTEND,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTITALIC,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTNAME,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTOUTLINE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSHADOW,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSIZE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSTRIKETHRU,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTUNDERLINE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTBOLD,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCHARSET,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCONDENSE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTEXTEND,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTITALIC,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTNAME,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTOUTLINE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSHADOW,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSIZE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSTRIKETHRU,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTUNDERLINE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
 		{	_INDEX_FORECOLOR,				0, 0, 0 },
 		{	_INDEX_FORMAT,					0, 0, 0 },
 		{	_INDEX_HEIGHT,					0, 0, 0 },
@@ -2160,7 +2160,7 @@ struct SBasePropertyInit;
 		{	_INDEX_BORDERCOLOR,				0, 0, 0 },
 		{	_INDEX_BORDERSTYLE,				0, 0, 0 },
 		{	_INDEX_BUFFERMODE,				0, 0, 0 },
-		{	_INDEX_CAPTION,					0, (u32)&iObjProp_setter_captionOnChild, 0 },
+		{	_INDEX_CAPTION,					0, (uptr)&iObjProp_setter_captionOnChild, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_CLASSLIBRARY,			0, 0, 0 },
 		{	_INDEX_CLIPCONTROLS,			0, 0, 0 },
@@ -2190,17 +2190,17 @@ struct SBasePropertyInit;
 		{	_INDEX_ENABLED,					0, 0, 0 },
 		{	_INDEX_FILLCOLOR,				0, 0, 0 },
 		{	_INDEX_FILLSTYLE,				0, 0, 0 },
-		{	_INDEX_FONTBOLD,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCHARSET,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCONDENSE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTEXTEND,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTITALIC,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTNAME,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTOUTLINE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSHADOW,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSIZE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSTRIKETHRU,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTUNDERLINE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTBOLD,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCHARSET,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCONDENSE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTEXTEND,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTITALIC,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTNAME,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTOUTLINE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSHADOW,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSIZE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSTRIKETHRU,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTUNDERLINE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
 		{	_INDEX_FORECOLOR,				0, 0, 0 },
 		{	_INDEX_FORECOLOR,				0, 0, 0 },
 		{	_INDEX_HALFHEIGHTCAPTION,		0, 0, 0 },
@@ -2208,7 +2208,7 @@ struct SBasePropertyInit;
 		{	_INDEX_HELPCONTEXTID,			0, 0, 0 },
 		{	_INDEX_HSCROLLSMALLCHANGE,		0, 0, 0 },
 		{	_INDEX_HWND,					0, 0, 0 },
-		{	_INDEX_ICON,					0, (u32)&iObjProp_setter_iconOnChild, 0 },
+		{	_INDEX_ICON,					0, (uptr)&iObjProp_setter_iconOnChild, 0 },
 		{	_INDEX_KEYPREVIEW,				0, 0, 0 },
 		{	_INDEX_LEFT,					0, 0, 0 },
 		{	_INDEX_LOCKSCREEN,				0, 0, 0 },
@@ -2316,7 +2316,7 @@ struct SBasePropertyInit;
 		{	_INDEX_APPLICATION,				0, 0, 0 },
 		{	_INDEX_BACKCOLOR,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
-		{	_INDEX_CAPTION,					0, (u32)&iObjProp_setter_captionOnChild, 0 },
+		{	_INDEX_CAPTION,					0, (uptr)&iObjProp_setter_captionOnChild, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_CLASSLIBRARY,			0, 0, 0 },
 		{	_INDEX_COLORSOURCE,				0, 0, 0 },
@@ -2491,7 +2491,7 @@ struct SBasePropertyInit;
 		{	_INDEX_ENABLED,					0, 0, 0 },
 		{	_INDEX_HEIGHT,					0, 0, 0 },
 		{	_INDEX_HELPCONTEXTID,			0, 0, 0 },
-		{	_INDEX_ICON,					0, (u32)&iObjProp_setter_iconOnChild, 0 },
+		{	_INDEX_ICON,					0, (uptr)&iObjProp_setter_iconOnChild, 0 },
 		{	_INDEX_LEFT,					0, 0, 0 },
 		{	_INDEX_MOUSEPOINTER,			0, 0, 0 },
 		{	_INDEX_NAME,					0, 0, 0 },
@@ -2652,17 +2652,17 @@ struct SBasePropertyInit;
 		{	_INDEX_DRAGICON,				0, 0, 0 },
 		{	_INDEX_DRAGMODE,				0, 0, 0 },
 		{	_INDEX_ENABLED,					0, 0, 0 },
-		{	_INDEX_FONTBOLD,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCHARSET,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCONDENSE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTEXTEND,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTITALIC,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTNAME,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTOUTLINE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSHADOW,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSIZE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSTRIKETHRU,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTUNDERLINE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTBOLD,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCHARSET,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCONDENSE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTEXTEND,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTITALIC,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTNAME,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTOUTLINE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSHADOW,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSIZE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSTRIKETHRU,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTUNDERLINE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
 		{	_INDEX_FORECOLOR,				0, 0, 0 },
 		{	_INDEX_GRIDLINECOLOR,			0, 0, 0 },
 		{	_INDEX_GRIDLINES,				0, 0, 0 },
@@ -2758,17 +2758,17 @@ struct SBasePropertyInit;
 		{	_INDEX_DYNAMICFORECOLOR,		0, 0, 0 },
 		{	_INDEX_DYNAMICINPUTMASK,		0, 0, 0 },
 		{	_INDEX_ENABLED,					0, 0, 0 },
-		{	_INDEX_FONTBOLD,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCHARSET,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCONDENSE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTEXTEND,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTITALIC,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTNAME,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTOUTLINE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSHADOW,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSIZE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSTRIKETHRU,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTUNDERLINE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTBOLD,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCHARSET,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCONDENSE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTEXTEND,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTITALIC,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTNAME,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTOUTLINE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSHADOW,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSIZE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSTRIKETHRU,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTUNDERLINE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
 		{	_INDEX_FORECOLOR,				0, 0, 0 },
 		{	_INDEX_FORMAT,					0, 0, 0 },
 		{	_INDEX_HEADERCLASS,				0, 0, 0 },
@@ -2801,21 +2801,21 @@ struct SBasePropertyInit;
 		{	_INDEX_APPLICATION,				0, 0, 0 },
 		{	_INDEX_BACKCOLOR,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
-		{	_INDEX_CAPTION,					0, (u32)&iObjProp_setter_captionOnChild, 0 },
+		{	_INDEX_CAPTION,					0, (uptr)&iObjProp_setter_captionOnChild, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_CLASSLIBRARY,			0, 0, 0 },
 		{	_INDEX_COMMENT,					0, 0, 0 },
-		{	_INDEX_FONTBOLD,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCHARSET,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCONDENSE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTEXTEND,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTITALIC,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTNAME,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTOUTLINE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSHADOW,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSIZE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSTRIKETHRU,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTUNDERLINE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTBOLD,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCHARSET,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCONDENSE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTEXTEND,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTITALIC,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTNAME,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTOUTLINE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSHADOW,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSIZE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSTRIKETHRU,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTUNDERLINE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
 		{	_INDEX_FORECOLOR,				0, 0, 0 },
 		{	_INDEX_MOUSEICON,				0, 0, 0 },
 		{	_INDEX_MOUSEPOINTER,			0, 0, 0 },
@@ -2945,17 +2945,17 @@ struct SBasePropertyInit;
 		{	_INDEX_DRAGICON,				0, 0, 0 },
 		{	_INDEX_DRAGMODE,				0, 0, 0 },
 		{	_INDEX_ENABLED,					0, 0, 0 },
-		{	_INDEX_FONTBOLD,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCHARSET,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCONDENSE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTEXTEND,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTITALIC,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTNAME,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTOUTLINE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSHADOW,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSIZE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSTRIKETHRU,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTUNDERLINE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTBOLD,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCHARSET,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCONDENSE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTEXTEND,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTITALIC,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTNAME,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTOUTLINE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSHADOW,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSIZE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSTRIKETHRU,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTUNDERLINE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
 		{	_INDEX_FORECOLOR,				0, 0, 0 },
 		{	_INDEX_FORMAT,					0, 0, 0 },
 		{	_INDEX_HEIGHT,					0, 0, 0 },
@@ -3069,7 +3069,7 @@ struct SBasePropertyInit;
 		{	_INDEX_BACKCOLOR,				0, 0, 0 },
 		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
-		{	_INDEX_CAPTION,					0, (u32)&iObjProp_setter_captionOnChild, 0 },
+		{	_INDEX_CAPTION,					0, (uptr)&iObjProp_setter_captionOnChild, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_CLASSLIBRARY,			0, 0, 0 },
 		{	_INDEX_COLORSOURCE,				0, 0, 0 },
@@ -3079,17 +3079,17 @@ struct SBasePropertyInit;
 		{	_INDEX_DRAGICON,				0, 0, 0 },
 		{	_INDEX_DRAGMODE,				0, 0, 0 },
 		{	_INDEX_ENABLED,					0, 0, 0 },
-		{	_INDEX_FONTBOLD,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCHARSET,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTCONDENSE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTEXTEND,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTITALIC,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTNAME,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTOUTLINE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSHADOW,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSIZE,				0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTSTRIKETHRU,			0, (u32)&iObjProp_setter_fontProperty, 0 },
-		{	_INDEX_FONTUNDERLINE,			0, (u32)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTBOLD,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCHARSET,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTCONDENSE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTEXTEND,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTITALIC,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTNAME,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTOUTLINE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSHADOW,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSIZE,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTSTRIKETHRU,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
+		{	_INDEX_FONTUNDERLINE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
 		{	_INDEX_FORECOLOR,				0, 0, 0 },
 		{	_INDEX_HELPCONTEXTID,			0, 0, 0 },
 		{	_INDEX_MOUSEICON,				0, 0, 0 },
@@ -3250,44 +3250,44 @@ struct SBasePropertyInit;
 	SBaseclassList gsKnownBaseclasses[] = {
 		//	objType					Text name				Length of name						Base object property list
 		//	------------------		-----------------		-------------------------------		-------------------------------
-		{	_OBJ_TYPE_EMPTY,		cgcName_empty,			sizeof(cgcName_empty)		- 1,	(u32)&gsProps_empty[0]			},
-		{	_OBJ_TYPE_FORM,			cgcName_form,			sizeof(cgcName_form)		- 1,	(u32)&gsProps_form[0]			},
-		{	_OBJ_TYPE_SUBFORM,		cgcName_subform,		sizeof(cgcName_subform)		- 1,	(u32)&gsProps_subform[0]		},
-		{	_OBJ_TYPE_CAROUSEL,		cgcName_carousel,		sizeof(cgcName_carousel)	- 1,	(u32)&gsProps_carousel[0]		},
-		{	_OBJ_TYPE_RIDER,		cgcName_rider,			sizeof(cgcName_rider)		- 1,	(u32)&gsProps_rider[0]			},
-		{	_OBJ_TYPE_LABEL,		cgcName_label,			sizeof(cgcName_label)		- 1,	(u32)&gsProps_label[0]			},
-		{	_OBJ_TYPE_TEXTBOX,		cgcName_textbox,		sizeof(cgcName_textbox)		- 1,	(u32)&gsProps_textbox[0]		},
-		{	_OBJ_TYPE_BUTTON,		cgcName_button,			sizeof(cgcName_button)		- 1,	(u32)&gsProps_button[0]			},
-		{	_OBJ_TYPE_EDITBOX,		cgcName_editbox,		sizeof(cgcName_editbox)		- 1,	(u32)&gsProps_editbox[0]		},
-		{	_OBJ_TYPE_IMAGE,		cgcName_image,			sizeof(cgcName_image)		- 1,	(u32)&gsProps_image[0]			},
-		{	_OBJ_TYPE_CHECKBOX,		cgcName_checkbox,		sizeof(cgcName_checkbox)	- 1,	(u32)&gsProps_checkbox[0]		},
-		{	_OBJ_TYPE_OPTION,		cgcName_option,			sizeof(cgcName_option)		- 1,	(u32)&gsProps_option[0]			},
-		{	_OBJ_TYPE_RADIO,		cgcName_radio,			sizeof(cgcName_radio)		- 1,	(u32)&gsProps_radio[0]			},
-		{	_OBJ_TYPE_CMDGROUP,		cgcName_cmdgroup,		sizeof(cgcName_cmdgroup)	- 1,	(u32)&gsProps_cmdgroup[0]		},
-		{	_OBJ_TYPE_OPTGROUP,		cgcName_optgroup,		sizeof(cgcName_optgroup)	- 1,	(u32)&gsProps_optgroup[0]		},
-		{	_OBJ_TYPE_LISTBOX,		cgcName_listbox,		sizeof(cgcName_listbox)		- 1,	(u32)&gsProps_listbox[0]		},
-		{	_OBJ_TYPE_COMBOBOX,		cgcName_combobox,		sizeof(cgcName_combobox)	- 1,	(u32)&gsProps_combobox[0]		},
-		{	_OBJ_TYPE_FORMSET,		cgcName_formset,		sizeof(cgcName_formset)		- 1,	(u32)&gsProps_formset[0]		},
-		{	_OBJ_TYPE_TOOLBAR,		cgcName_toolbar,		sizeof(cgcName_toolbar)		- 1,	(u32)&gsProps_toolbar[0]		},
-		{	_OBJ_TYPE_SEPARATOR,	cgcName_separator,		sizeof(cgcName_separator)	- 1,	(u32)&gsProps_separator[0]		},
-		{	_OBJ_TYPE_LINE,			cgcName_line,			sizeof(cgcName_line)		- 1,	(u32)&gsProps_line[0]			},
-		{	_OBJ_TYPE_SHAPE,		cgcName_shape,			sizeof(cgcName_shape)		- 1,	(u32)&gsProps_shape[0]			},
-		{	_OBJ_TYPE_CONTAINER,	cgcName_container,		sizeof(cgcName_container)	- 1,	(u32)&gsProps_container[0]		},
-		{	_OBJ_TYPE_CONTROL,		cgcName_control,		sizeof(cgcName_control)		- 1,	(u32)&gsProps_control[0]		},
-		{	_OBJ_TYPE_GRID,			cgcName_grid,			sizeof(cgcName_grid)		- 1,	(u32)&gsProps_grid[0]			},
-		{	_OBJ_TYPE_COLUMN,		cgcName_column,			sizeof(cgcName_column)		- 1,	(u32)&gsProps_column[0]			},
-		{	_OBJ_TYPE_HEADER,		cgcName_header,			sizeof(cgcName_header)		- 1,	(u32)&gsProps_header[0]			},
-		{	_OBJ_TYPE_OLEBOUND,		cgcName_olebound,		sizeof(cgcName_olebound)	- 1,	(u32)&gsProps_olebound[0]		},
-		{	_OBJ_TYPE_OLECONTAIN,	cgcName_olecontain,		sizeof(cgcName_olecontain)	- 1,	(u32)&gsProps_olecontain[0]		},
-		{	_OBJ_TYPE_SPINNER,		cgcName_spinner,		sizeof(cgcName_spinner)		- 1,	(u32)&gsProps_spinner[0]		},
-		{	_OBJ_TYPE_TIMER,		cgcName_timer,			sizeof(cgcName_timer)		- 1,	(u32)&gsProps_timer[0]			},
-		{	_OBJ_TYPE_HYPERLINK,	cgcName_hyperlink,		sizeof(cgcName_hyperlink)	- 1,	(u32)&gsProps_hyperlink[0]		},
-		{	_OBJ_TYPE_COLLECTION,	cgcName_collection,		sizeof(cgcName_collection)	- 1,	(u32)&gsProps_collection[0]		},
-		{	_OBJ_TYPE_PAGE,			cgcName_page,			sizeof(cgcName_page)		- 1,	(u32)&gsProps_page[0]			},
-		{	_OBJ_TYPE_PAGEFRAME,	cgcName_pageframe,		sizeof(cgcName_pageframe)	- 1,	(u32)&gsProps_pageframe[0]		},
-		{	_OBJ_TYPE_SESSION,		cgcName_session,		sizeof(cgcName_session)		- 1,	(u32)&gsProps_session[0]		},
-		{	_OBJ_TYPE_CUSTOM,		cgcName_custom,			sizeof(cgcName_custom)		- 1,	(u32)&gsProps_custom[0]			},
-		{	_OBJ_TYPE_EXCEPTION,	cgcName_exception,		sizeof(cgcName_exception)	- 1,	(u32)&gsProps_exception[0]		},
+		{	_OBJ_TYPE_EMPTY,		cgcName_empty,			sizeof(cgcName_empty)		- 1,	(uptr)&gsProps_empty[0]			},
+		{	_OBJ_TYPE_FORM,			cgcName_form,			sizeof(cgcName_form)		- 1,	(uptr)&gsProps_form[0]			},
+		{	_OBJ_TYPE_SUBFORM,		cgcName_subform,		sizeof(cgcName_subform)		- 1,	(uptr)&gsProps_subform[0]		},
+		{	_OBJ_TYPE_CAROUSEL,		cgcName_carousel,		sizeof(cgcName_carousel)	- 1,	(uptr)&gsProps_carousel[0]		},
+		{	_OBJ_TYPE_RIDER,		cgcName_rider,			sizeof(cgcName_rider)		- 1,	(uptr)&gsProps_rider[0]			},
+		{	_OBJ_TYPE_LABEL,		cgcName_label,			sizeof(cgcName_label)		- 1,	(uptr)&gsProps_label[0]			},
+		{	_OBJ_TYPE_TEXTBOX,		cgcName_textbox,		sizeof(cgcName_textbox)		- 1,	(uptr)&gsProps_textbox[0]		},
+		{	_OBJ_TYPE_BUTTON,		cgcName_button,			sizeof(cgcName_button)		- 1,	(uptr)&gsProps_button[0]			},
+		{	_OBJ_TYPE_EDITBOX,		cgcName_editbox,		sizeof(cgcName_editbox)		- 1,	(uptr)&gsProps_editbox[0]		},
+		{	_OBJ_TYPE_IMAGE,		cgcName_image,			sizeof(cgcName_image)		- 1,	(uptr)&gsProps_image[0]			},
+		{	_OBJ_TYPE_CHECKBOX,		cgcName_checkbox,		sizeof(cgcName_checkbox)	- 1,	(uptr)&gsProps_checkbox[0]		},
+		{	_OBJ_TYPE_OPTION,		cgcName_option,			sizeof(cgcName_option)		- 1,	(uptr)&gsProps_option[0]			},
+		{	_OBJ_TYPE_RADIO,		cgcName_radio,			sizeof(cgcName_radio)		- 1,	(uptr)&gsProps_radio[0]			},
+		{	_OBJ_TYPE_CMDGROUP,		cgcName_cmdgroup,		sizeof(cgcName_cmdgroup)	- 1,	(uptr)&gsProps_cmdgroup[0]		},
+		{	_OBJ_TYPE_OPTGROUP,		cgcName_optgroup,		sizeof(cgcName_optgroup)	- 1,	(uptr)&gsProps_optgroup[0]		},
+		{	_OBJ_TYPE_LISTBOX,		cgcName_listbox,		sizeof(cgcName_listbox)		- 1,	(uptr)&gsProps_listbox[0]		},
+		{	_OBJ_TYPE_COMBOBOX,		cgcName_combobox,		sizeof(cgcName_combobox)	- 1,	(uptr)&gsProps_combobox[0]		},
+		{	_OBJ_TYPE_FORMSET,		cgcName_formset,		sizeof(cgcName_formset)		- 1,	(uptr)&gsProps_formset[0]		},
+		{	_OBJ_TYPE_TOOLBAR,		cgcName_toolbar,		sizeof(cgcName_toolbar)		- 1,	(uptr)&gsProps_toolbar[0]		},
+		{	_OBJ_TYPE_SEPARATOR,	cgcName_separator,		sizeof(cgcName_separator)	- 1,	(uptr)&gsProps_separator[0]		},
+		{	_OBJ_TYPE_LINE,			cgcName_line,			sizeof(cgcName_line)		- 1,	(uptr)&gsProps_line[0]			},
+		{	_OBJ_TYPE_SHAPE,		cgcName_shape,			sizeof(cgcName_shape)		- 1,	(uptr)&gsProps_shape[0]			},
+		{	_OBJ_TYPE_CONTAINER,	cgcName_container,		sizeof(cgcName_container)	- 1,	(uptr)&gsProps_container[0]		},
+		{	_OBJ_TYPE_CONTROL,		cgcName_control,		sizeof(cgcName_control)		- 1,	(uptr)&gsProps_control[0]		},
+		{	_OBJ_TYPE_GRID,			cgcName_grid,			sizeof(cgcName_grid)		- 1,	(uptr)&gsProps_grid[0]			},
+		{	_OBJ_TYPE_COLUMN,		cgcName_column,			sizeof(cgcName_column)		- 1,	(uptr)&gsProps_column[0]			},
+		{	_OBJ_TYPE_HEADER,		cgcName_header,			sizeof(cgcName_header)		- 1,	(uptr)&gsProps_header[0]			},
+		{	_OBJ_TYPE_OLEBOUND,		cgcName_olebound,		sizeof(cgcName_olebound)	- 1,	(uptr)&gsProps_olebound[0]		},
+		{	_OBJ_TYPE_OLECONTAIN,	cgcName_olecontain,		sizeof(cgcName_olecontain)	- 1,	(uptr)&gsProps_olecontain[0]		},
+		{	_OBJ_TYPE_SPINNER,		cgcName_spinner,		sizeof(cgcName_spinner)		- 1,	(uptr)&gsProps_spinner[0]		},
+		{	_OBJ_TYPE_TIMER,		cgcName_timer,			sizeof(cgcName_timer)		- 1,	(uptr)&gsProps_timer[0]			},
+		{	_OBJ_TYPE_HYPERLINK,	cgcName_hyperlink,		sizeof(cgcName_hyperlink)	- 1,	(uptr)&gsProps_hyperlink[0]		},
+		{	_OBJ_TYPE_COLLECTION,	cgcName_collection,		sizeof(cgcName_collection)	- 1,	(uptr)&gsProps_collection[0]		},
+		{	_OBJ_TYPE_PAGE,			cgcName_page,			sizeof(cgcName_page)		- 1,	(uptr)&gsProps_page[0]			},
+		{	_OBJ_TYPE_PAGEFRAME,	cgcName_pageframe,		sizeof(cgcName_pageframe)	- 1,	(uptr)&gsProps_pageframe[0]		},
+		{	_OBJ_TYPE_SESSION,		cgcName_session,		sizeof(cgcName_session)		- 1,	(uptr)&gsProps_session[0]		},
+		{	_OBJ_TYPE_CUSTOM,		cgcName_custom,			sizeof(cgcName_custom)		- 1,	(uptr)&gsProps_custom[0]			},
+		{	_OBJ_TYPE_EXCEPTION,	cgcName_exception,		sizeof(cgcName_exception)	- 1,	(uptr)&gsProps_exception[0]		},
 		// Note:  Do not delete this line, it is used to terminate the search list
 		{	0,						NULL,					0,									0	}
 	};

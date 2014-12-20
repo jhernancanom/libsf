@@ -155,7 +155,7 @@ struct SCompileNote;
 		// Pointer to item, or first item if they are in succession (such as pointing to the left-parenthesis of a complex expression)
 		bool			isOpDataAllocated;								// Is the op below allocated?  If false, then it points to one allocated elsewhere
 		union {
-			u32			_opData;										// Used as a general test to see if something exists (if (op_data != 0))
+			uptr		_opData;										// Used as a general test to see if something exists (if (op_data != 0))
 
 			// Actual data items based on op_type
 			SComp*		comp;											// The first component
@@ -261,23 +261,23 @@ struct SCompileNote;
 
 		// Callback callbacks for adjustment
 		union {
-			u32			_insertCompByComp;
+			uptr		_insertCompByComp;
 			void		(*insertCompByComp)		(SComp* compRef, SComp* compNew, bool tlInsertAfter);
 		};
 		union {
-			u32			_insertCompByParams;
+			uptr		_insertCompByParams;
 			void		(*insertCompByParams)	(SComp* compRef, SLine* line, u32 tniCode, u32 tnStart, s32 tnLength, bool tlInsertAfter);
 		};
 		union {
-			u32			_deleteComps;
+			uptr		_deleteComps;
 			void		(*deleteComps)			(SComp* comp, SLine* line);
 		};
 		union {
-			u32			_cloneComps;
+			uptr		_cloneComps;
 			SComp*		(*cloneComps)			(SComp* comp, SLine* line);
 		};
 		union {
-			u32			_mergeComps;
+			uptr		_mergeComps;
 			SComp*		(*mergeComps)			(SComp* comp, SLine* line, u32 tnCount, u32 tniCodeNew);
 		};
 	};
@@ -286,7 +286,7 @@ struct SCompileNote;
 	{
 		union
 		{
-			u32		_func;
+			uptr	_func;
 			bool	(*funcBool)	(SStartEndCallback* cb);	// This callback should return false to continue searching, or true when the item is found
 			void	(*funcVoid)	(SStartEndCallback* cb);
 			//////
@@ -301,25 +301,25 @@ struct SCompileNote;
 
 		union {
 			// Extra1
-			u32			ex1;
-			u32			extra1;
-			u32			extra;
-			u32			count1;
+			uptr		ex1;
+			uptr		extra1;
+			uptr		extra;
+			uptr		count1;
 			union {
-				u32		count1_1;
-				u32		count1_2;
+				uptr	count1_1;
+				uptr	count1_2;
 			};
 			void*		ex1Ptr;
 		};
 
 		union {
 			// Extra2
-			u32			ex2;
-			u32			extra2;
-			u32			count2;
+			uptr		ex2;
+			uptr		extra2;
+			uptr		count2;
 			union {
-				u32		count2_1;
-				u32		count2_2;
+				uptr	count2_1;
+				uptr	count2_2;
 			};
 			void*		ex2Ptr;
 		};

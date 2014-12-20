@@ -161,6 +161,24 @@ typedef SEM**		SEMpp;
 	#define _seColor						rgba(172, 192, 235, 255)
 
 
+//////////
+// min and max
+//////
+	#ifndef max
+		#define max(a,b)					((a >= b) ? a : b)
+	#endif
+	#ifndef min
+		#define min(a,b)					((a <= b) ? a : b)
+	#endif
+
+
+//////////
+// Auto-converters
+//////
+	size_t strlen(s8* p)					{	return(strlen((const char*)p));		}
+	size_t strlen(u8* p)					{	return(strlen((const char*)p));		}
+
+
 // Definitions missing in MinGW
 #if !defined(WM_MOUSEHWHEEL)
 	#define WM_MOUSEHWHEEL                  0x020E

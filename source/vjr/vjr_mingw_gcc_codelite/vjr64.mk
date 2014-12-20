@@ -3,7 +3,7 @@
 ## any manual changes will be erased      
 ##
 ## Debug
-ProjectName            :=vjr
+ProjectName            :=vjr64
 ConfigurationName      :=Debug
 WorkspacePath          := "C:\libsf\source\vjr\vjr_mingw_gcc_codelite"
 ProjectPath            := "C:\libsf\source\vjr\vjr_mingw_gcc_codelite"
@@ -15,8 +15,8 @@ CurrentFileFullPath    :=
 User                   :=rhodgin
 Date                   :=12/20/14
 CodeLitePath           :="C:\Program Files (x86)\CodeLite"
-LinkerName             :=C:\MinGW\bin\g++.exe 
-SharedObjectLinkerName :=C:\MinGW\bin\g++.exe -shared -fPIC
+LinkerName             :=C:\mingw-w64\mingw64\bin\g++.exe 
+SharedObjectLinkerName :=C:\mingw-w64\mingw64\bin\g++.exe -shared -fPIC
 ObjectSuffix           :=.o
 DependSuffix           :=.o.d
 PreprocessSuffix       :=.i
@@ -27,35 +27,35 @@ OutputSwitch           :=-o
 LibraryPathSwitch      :=-L
 PreprocessorSwitch     :=-D
 SourceSwitch           :=-c 
-OutputFile             :=../vjr.exe
+OutputFile             :=$(IntermediateDirectory)/$(ProjectName)
 Preprocessors          :=
 ObjectSwitch           :=-o 
 ArchiveOutputSwitch    := 
 PreprocessOnlySwitch   :=-E
-ObjectsFileList        :="vjr.txt"
+ObjectsFileList        :="vjr64.txt"
 PCHCompileFlags        :=
 MakeDirCommand         :=makedir
 RcCmpOptions           := 
-RcCompilerName         :=C:\MinGW\bin\windres.exe 
-LinkOptions            :=  -g
-IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). $(IncludeSwitch)C:/libsf/source/vjr/vjr_mingw_gcc_codelite/include/ 
+RcCompilerName         :=C:\mingw-w64\mingw64\bin\windres.exe 
+LinkOptions            :=  
+IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). $(IncludeSwitch)/libsf/source/vjr/ 
 IncludePCH             := 
 RcIncludePath          := 
-Libs                   := $(LibrarySwitch)kernel32 $(LibrarySwitch)user32 $(LibrarySwitch)gdi32 $(LibrarySwitch)winspool $(LibrarySwitch)comdlg32 $(LibrarySwitch)advapi32 $(LibrarySwitch)shell32 $(LibrarySwitch)ole32 $(LibrarySwitch)oleaut32 $(LibrarySwitch)uuid $(LibrarySwitch)odbc32 $(LibrarySwitch)odbccp32 $(LibrarySwitch)SDL $(LibrarySwitch)glew32 $(LibrarySwitch)glew32s $(LibrarySwitch)freeglut $(LibrarySwitch)freeglut_static $(LibrarySwitch)glu32 $(LibrarySwitch)opengl32 
-ArLibs                 :=  "kernel32" "user32" "gdi32" "winspool" "comdlg32" "advapi32" "shell32" "ole32" "oleaut32" "uuid" "odbc32" "odbccp32" "SDL" "glew32" "glew32s" "freeglut" "freeglut_static" "glu32" "opengl32" 
-LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)C:/libsf/source/vjr/vjr_mingw_gcc_codelite/lib 
+Libs                   := $(LibrarySwitch)kernel $(LibrarySwitch)user $(LibrarySwitch)gdi $(LibrarySwitch)winspool $(LibrarySwitch)comdlg $(LibrarySwitch)advapi $(LibrarySwitch)shell $(LibrarySwitch)ole $(LibrarySwitch)oleaut $(LibrarySwitch)uuid $(LibrarySwitch)odbc $(LibrarySwitch)odbccp $(LibrarySwitch)SDL $(LibrarySwitch)glew32 $(LibrarySwitch)glew32s $(LibrarySwitch)freeglut $(LibrarySwitch)freeglut_static $(LibrarySwitch)glu32 $(LibrarySwitch)opengl32 
+ArLibs                 :=  "kernel" "user" "gdi" "winspool" "comdlg" "advapi" "shell" "ole" "oleaut" "uuid" "odbc" "odbccp" "SDL" "glew32" "glew32s" "freeglut" "freeglut_static" "glu32" "opengl32" 
+LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)C:/libsf/source/vjr/vjr_mingw_gcc_codelite/lib64 $(LibraryPathSwitch)C:/libsf/source/vjr/sound/SDL-1.2.15/lib/x64 
 
 ##
 ## Common variables
 ## AR, CXX, CC, AS, CXXFLAGS and CFLAGS can be overriden using an environment variables
 ##
-AR       := C:\MinGW\bin\ar.exe rcu
-CXX      := C:\MinGW\bin\g++.exe 
-CC       := C:\MinGW\bin\gcc.exe 
-CXXFLAGS :=  -g -O0 -Wall -Wno-comment -Wno-multichar -Wno-narrowing -Wno-write-strings -Wno-format-contains-nul $(Preprocessors)
-CFLAGS   :=  -g -O0 -Wall $(Preprocessors)
+AR       := C:\mingw-w64\mingw64\bin\ar.exe rcu
+CXX      := C:\mingw-w64\mingw64\bin\g++.exe 
+CC       := C:\mingw-w64\mingw64\bin\gcc.exe 
+CXXFLAGS :=  -m64 -g -O0 -Wall -Wno-comment -Wno-multichar -Wno-narrowing -Wno-write-strings -Wno-format-contains-nul -fno-permissive $(Preprocessors)
+CFLAGS   :=  -m64 -g -O0 -Wall -Wno-comment -Wno-multichar -Wno-narrowing -Wno-write-strings -Wno-format-contains-nul -fpermissive $(Preprocessors)
 ASFLAGS  := 
-AS       := C:\MinGW\bin\as.exe 
+AS       := C:\mingw-w64\mingw64\bin\as.exe 
 
 
 ##
@@ -120,6 +120,6 @@ clean:
 	$(RM) $(IntermediateDirectory)/bmps_bmps.cpp$(PreprocessSuffix)
 	$(RM) $(OutputFile)
 	$(RM) $(OutputFile).exe
-	$(RM) ".build-debug/vjr"
+	$(RM) ".build-debug/vjr64"
 
 

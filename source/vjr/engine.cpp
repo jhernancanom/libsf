@@ -769,8 +769,8 @@
 
 		// Make sure our environment is sane
 		if (breakpoint && *breakpoint && (*breakpoint)->isUsed && 
-			(u32)*breakpoint >= (u32)gBreakpoints->data && 
-			(u32)*breakpoint <= (u32)gBreakpoints->data + gBreakpoints->populatedLength - sizeof(SBreakpoint))
+			(uptr)*breakpoint >= (uptr)gBreakpoints->data && 
+			(uptr)*breakpoint <= (uptr)gBreakpoints->data + gBreakpoints->populatedLength - sizeof(SBreakpoint))
 		{
 			// Get a local copy of our pointer
 			bp = *breakpoint;

@@ -54,7 +54,7 @@
 			if (!line->sourceCode)
 			{
 				// We need to allocate the initial data block
-				iDatum_allocateSpace(line->sourceCode, max(_ECM_MINIMUM_LINE_ALLOCATION_LENGTH, newLineLength));
+				iDatum_allocateSpace(line->sourceCode, max((s32)_ECM_MINIMUM_LINE_ALLOCATION_LENGTH, newLineLength));
 				line->sourceCode_populatedLength	= 0;
 			}
 

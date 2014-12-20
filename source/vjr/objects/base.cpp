@@ -840,7 +840,7 @@
 		// Process self
 		//////
 			if (obj->p.hasFocus)
-				iBuilder_append_u32(objFocusControls, (u32)obj);
+				iBuilder_append_uptr(objFocusControls, (uptr)obj);
 
 
 		//////////

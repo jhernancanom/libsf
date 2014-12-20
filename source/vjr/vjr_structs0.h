@@ -323,7 +323,7 @@ struct SBaseclassList
 	s32				baseclassNameLength;
 
 	union {
-		u32				_objProps;
+		uptr				_objProps;
 		SObjPropertyMap*	objProps;									// Root property map for this object
 	};
 };
@@ -343,7 +343,7 @@ struct SAsciiCompSearcher
 
 	// An optional extra callback to parse on finds
 	union {
-		u32		_onFind;
+		uptr	_onFind;
 		void	(*onFind)(SAsciiCompSearcher* tacs, SComp* comp);
 	};
 };

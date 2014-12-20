@@ -842,8 +842,8 @@
 							iBuilder_appendData(data, buffer, key.keyLength);
 
 							// Postfix
-							if (node->type == 2 || node->type == 3)		sprintf(output, "], Record number: %u\r\n\0", key.record);
-							else										sprintf(output, "], File Offset: %u\r\n\0",   key.record);
+							if (node->type == 2 || node->type == 3)		sprintf(output, "], Record number: %u\r\n\0", (u32)key.record);
+							else										sprintf(output, "], File Offset: %u\r\n\0",   (u32)key.record);
 
 						} else {
 							// Should not happen
@@ -938,7 +938,7 @@
 						//////////
 						// Indicate the type it is
 						//////
-							lnNodeNumber = ((u32)node - (u32)wa->cdx_root - sizeof(SCdxHeader)) / 512;
+							lnNodeNumber = ((uptr)node - (uptr)wa->cdx_root - sizeof(SCdxHeader)) / 512;
 							switch (iiXdx_getNodeType(node->type))
 							{
 								case 0:		// Index node
@@ -2778,7 +2778,7 @@ debug_break;
 					tagRoot->keyLength		= head->keyLength;
 					tagRoot->fillChar		= iDbf_getField_type(wa, &head->keyExpression[0], &tagRoot->swapEndians, &tagRoot->needsSignBitToggled);
 					tagRoot->highestNode	= sizeof(SCdxHeader);	// Always the node after head
-					tagRoot->leftmostNode	= ((u32)node - (u32)head);
+					tagRoot->leftmostNode	= ((uptr)node - (uptr)head);
 
 					// Indicate success
 					return(true);
@@ -2824,7 +2824,7 @@ debug_break;
 					tagRoot->keyLength		= head->keyLength;
 					tagRoot->fillChar		= iDbf_getField_type(wa, &head->keyExpression[0], &tagRoot->swapEndians, &tagRoot->needsSignBitToggled);
 					tagRoot->highestNode	= sizeof(SIdxHeader);		// Always the node after head
-					tagRoot->leftmostNode	= ((u32)node - (u32)head);
+					tagRoot->leftmostNode	= ((uptr)node - (uptr)head);
 
 					// Indicate success
 					return(true);
@@ -3543,7 +3543,7 @@ debug_break;
 			if (lnNodeType == 2 || lnNodeType == 3)
 			{
 				// We're there
-				return((u32)node - (u32)head);
+				return((uptr)node - (uptr)head);
 
 			} else if (lnNodeType == 0 || lnNodeType == 1) {
 				// Index node or root node, we need to descend into the first entry

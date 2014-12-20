@@ -95,9 +95,9 @@
 // gWindows->data + gWindows->populatedLength.
 //
 //////
-	bool isValidWindow(u32 w)
+	bool isValidWindow(uptr tnWindowPtr)
 	{
-		return(w >= (u32)gWindows->data && w < (u32)(gWindows->data + gWindows->populatedLength));
+		return(tnWindowPtr >= gWindows->_data && tnWindowPtr < (gWindows->_data + gWindows->populatedLength));
 	}
 
 
@@ -317,7 +317,7 @@
 			((SObject*)sourceCode->firstChild->ll.next)->rc.right = 90;
 
 			sourceCode_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			sourceCode_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown_sourceCode;
+			sourceCode_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown_sourceCode;
 			setBorderStyle(sourceCode_editbox, _BORDER_STYLE_FIXED);
 			setBorderColor(sourceCode_editbox, lineNumberBackColor);
 			sourceCode_editbox->p.sem->showCursorLine	= true;
@@ -331,7 +331,7 @@
 // TODO:  Working here...
 			iObjProp_set_character_direct(locals, _INDEX_CAPTION, cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
 			locals_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			locals_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
+			locals_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
 
 			// Adjust the caption width
 			((SObject*)locals->firstChild->ll.next)->rc.right = 65;
@@ -342,7 +342,7 @@
 		//////
 			iObjProp_set_character_direct(watch, _INDEX_CAPTION, cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
 			watch_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			watch_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
+			watch_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
 			watch_editbox->p.sem->showCursorLine		= true;
 
 			// Adjust the caption width
@@ -354,7 +354,7 @@
 		//////
 			iObjProp_set_character_direct(command, _INDEX_CAPTION, cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
 			command_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			command_editbox->ev.keyboard._onKeyDown		= (u32)&iSEM_onKeyDown_sourceCode;
+			command_editbox->ev.keyboard._onKeyDown		= (uptr)&iSEM_onKeyDown_sourceCode;
 			command_editbox->p.hasFocus					= true;
 			command_editbox->p.sem->showCursorLine		= true;
 			command_editbox->p.sem->isSourceCode			= true;
@@ -369,7 +369,7 @@
 		//////
 			iObjProp_set_character_direct(debug, _INDEX_CAPTION, cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
 			debug_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			debug_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
+			debug_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
 			debug_editbox->p.sem->showCursorLine		= true;
 
 			// Adjust the caption width
@@ -381,7 +381,7 @@
 		//////
 			iObjProp_set_character_direct(output, _INDEX_CAPTION, cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
 			output_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_MEDIUM, false, false);
-			output_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
+			output_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
 			output_editbox->p.sem->showCursorLine	= true;
 
 			// Adjust the caption width
@@ -395,7 +395,7 @@
 			sourceLight->p.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			setVisible(sourceLight, _LOGICAL_TRUE);
 			setBackStyle(sourceLight, _BACK_STYLE_OPAQUE);
-			sourceLight_empty->ev.general._onRender = (u32)&iSourceLight_copy;
+			sourceLight_empty->ev.general._onRender = (uptr)&iSourceLight_copy;
 
 
 		//////////
@@ -409,7 +409,7 @@
 		// Setup _screen's editbox
 		//////
 			screen_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			screen_editbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
+			screen_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
 			screenData								= screen_editbox->p.sem;
 			screenData->showCursorLine				= true;
 			screenData->showEndLine					= true;
@@ -790,7 +790,7 @@
 		SetWindowRgn(gSplash.hwnd, lrgn, false);
 		
 		// Create a timer to send events to the window every 1/4 second
-		SetTimer(gSplash.hwnd, (u32)&gSplash, 250, 0);
+		SetTimer(gSplash.hwnd, (uptr)&gSplash, 250, 0);
 
 		// Position above all windows
 		SetWindowPos(gSplash.hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW | SWP_NOACTIVATE);
@@ -845,7 +845,7 @@
 		if (gSplash.isValid)
 		{
 			// Sleep for the indicated time
-			Sleep((u32)lpParameter);
+			Sleep((DWORD)(uptr)lpParameter);
 
 			// Log it
 			iVjr_appendSystemLog("Splash screen can unengage");
@@ -1190,7 +1190,7 @@
 
 						} else {
 							// Use the indicated name
-							memcpy(buffer, var->value.data,	min(var->value.length, sizeof(buffer) - 1));
+							memcpy(buffer, var->value.data,	min(var->value.length, (s32)sizeof(buffer) - 1));
 						}
 
 						// Build it
@@ -1576,7 +1576,7 @@
 //////
 	bool iWindow_isPointerValid(SWindow* win)
 	{
-		if (gWindows && win && (u32)win >= (u32)gWindows->data && (u32)win <= ((u32)gWindows->data + gWindows->populatedLength))
+		if (gWindows && win && (uptr)win >= gWindows->_data && (uptr)win <= (gWindows->_data + gWindows->populatedLength))
 			return(true);	// Valid
 
 		// If we get here, invalid
@@ -1919,7 +1919,7 @@
 		//////////
 		// Store the settings
 		//////
-			SetWindowLong(tooltip->hwnd, GWL_USERDATA, (u32)tooltip);
+			SetWindowLong(tooltip->hwnd, GWL_USERDATA, (uptr)tooltip);
 
 
 		//////////
@@ -1932,7 +1932,7 @@
 		//////////
 		// Create the timer
 		//////
-			SetTimer(tooltip->hwnd, (u32)tooltip, _TOOLTIP_TIMER_INTERVAL, 0);
+			SetTimer(tooltip->hwnd, (uptr)tooltip, _TOOLTIP_TIMER_INTERVAL, 0);
 
 
 		//////////
@@ -1971,7 +1971,7 @@
 		tooltip->isValid = false;
 
 		// Kill the timer
-		KillTimer(tooltip->hwnd, (u32)tooltip);
+		KillTimer(tooltip->hwnd, (uptr)tooltip);
 
 		// Delete the bitmap
 		if (tooltip->bmp)
@@ -3747,7 +3747,7 @@ debug_break;
 			iBmp_createBySize(gobj_splashListingEditbox->bmp, gobj_splashListing->rcClient.right - gobj_splashListing->rcClient.left, gobj_splashListing->rcClient.bottom - gobj_splashListing->rcClient.top, bmp->bi.biBitCount);
 			gobj_splashListingEditbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
 			gobj_splashListingEditbox->p.sem->font				= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
-			gobj_splashListingEditbox->ev.keyboard._onKeyDown	= (u32)&iSEM_onKeyDown;
+			gobj_splashListingEditbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
 			iObjProp_set_logical_direct(gobj_splashListingEditbox, _INDEX_VISIBLE, _LOGICAL_TRUE);
 			systemLog											= gobj_splashListingEditbox->p.sem;
 			systemLog->showEndLine								= true;

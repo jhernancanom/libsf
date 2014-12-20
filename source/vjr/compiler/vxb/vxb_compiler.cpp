@@ -2499,7 +2499,7 @@ debug_break;
 		{
 			// Copy to a buffer
 			memset(buffer, 0, sizeof(buffer));
-			memcpy(buffer, comp->line->sourceCode->data_s8 + comp->start, min(comp->length, sizeof(buffer) - 1));
+			memcpy(buffer, comp->line->sourceCode->data_s8 + comp->start, min(comp->length, (s32)sizeof(buffer) - 1));
 			return(atoi(buffer));
 
 		} else {
@@ -2570,7 +2570,7 @@ debug_break;
 										// This is a match, visualize it as:  [text]
 										memset(accumBuffer, 0, sizeof(accumBuffer));
 										sprintf(accumBuffer, "[%d:", comp->iCode);
-										memcpy(accumBuffer+ strlen(accumBuffer), comp->line->sourceCode->data_s8 + comp->start, min(comp->length, sizeof(accumBuffer) - 20));
+										memcpy(accumBuffer+ strlen(accumBuffer), comp->line->sourceCode->data_s8 + comp->start, min(comp->length, (s32)sizeof(accumBuffer) - 20));
 										sprintf(accumBuffer + strlen(accumBuffer), ":%u]", comp->length);
 
 										// Copy to our output
@@ -2595,7 +2595,7 @@ debug_break;
 								// Visualize the raw text as an unknown form
 								memset(accumBuffer, 0, sizeof(accumBuffer));
 								sprintf(accumBuffer, "[%d:", comp->iCode);
-								memcpy(accumBuffer+ strlen(accumBuffer), comp->line->sourceCode->data_s8 + comp->start, min(comp->length, sizeof(accumBuffer) - 20));
+								memcpy(accumBuffer+ strlen(accumBuffer), comp->line->sourceCode->data_s8 + comp->start, min(comp->length, (s32)sizeof(accumBuffer) - 20));
 								sprintf(accumBuffer + strlen(accumBuffer), ":%u]", comp->length);
 
 								// Copy to our output
@@ -5895,7 +5895,7 @@ debug_break;
 debug_break;
 			// Use the linked list functions, which will callback repeatedly for every entry
 			var			= *root;
-			cb._func	= (u32)&iVariable_politelyDeleteChain_callback;
+			cb._func	= (uptr)&iVariable_politelyDeleteChain_callback;
 
 			// Mark the variables there empty
 			if (tlDeleteSelf)

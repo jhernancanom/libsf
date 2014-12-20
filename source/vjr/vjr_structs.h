@@ -97,91 +97,91 @@ struct SHover
 struct SEventsGeneral
 {
 	union {
-		u32		_onLoad;
+		uptr	_onLoad;
 		bool	(*onLoad)					(SWindow* win, SObject* obj);							// Called to load anything needed by the init() event (holds a template/skeleton object)
 	};
 	union {
-		u32		_onInit;
+		uptr	_onInit;
 		bool	(*onInit)					(SWindow* win, SObject* obj);							// Called to initialize anything
 	};
 	union {
-		u32		_onCreated;
+		uptr	_onCreated;
 		bool	(*onCreated)				(SWindow* win, SObject* obj);							// Called after initialization, before the object is sized
 	};
 	union {
-		u32		_onResize;
+		uptr	_onResize;
 		bool	(*onResize)					(SWindow* win, SObject* obj, u32* widthRequired_out, u32* heightRequired_out);	// Called to size or resize the object
 	};
 	union {
-		u32		_onMoved;
+		uptr	_onMoved;
 		bool	(*onMoved)					(SWindow* win, SObject* obj, u32* xOverride_out, u32* yOverride_out);			// Called when the object has been moved
 	};
 	union {
-		u32		_onRender;
+		uptr	_onRender;
 		bool	(*onRender)					(SWindow* win, SObject* obj);							// Called to render to bmp (returns if anything was drawn)
 	};
 	union {
-		u32		_onPublish;
+		uptr	_onPublish;
 		bool	(*onPublish)				(SWindow* win, SObject* obj);							// Called to publish the control onto the parent (which will populate bmpScale if need be)
 	};
 	union {
-		u32		_onQueryUnload;
+		uptr	_onQueryUnload;
 		bool	(*onQueryUnload)			(SWindow* win, SObject* obj);							// Called before onDestroy, determines if the form should actually be destroyed
 	};
 	union {
-		u32		_onDestroy;
+		uptr	_onDestroy;
 		bool	(*onDestroy)				(SWindow* win, SObject* obj);							// Called when the object will be destroyed
 	};
 	union {
-		u32		_onUnload;
+		uptr	_onUnload;
 		bool	(*onUnload)					(SWindow* win, SObject* obj);							// Called after the object has been destroyed, to unload anything (holds a template/skeleton object)
 	};
 	union {
-		u32		_onGotFocus;
+		uptr	_onGotFocus;
 		bool	(*onGotFocus)				(SWindow* win, SObject* obj);							// Called when the object receives focus (note multiple items can have simultaneous focus)
 	};
 	union {
-		u32		_onLostFocus;
+		uptr	_onLostFocus;
 		bool	(*onLostFocus)				(SWindow* win, SObject* obj);							// Called when the object loses focus
 	};
 	union {
-		u32		_onAddObject;
+		uptr	_onAddObject;
 		bool	(*onAddObject)				(SWindow* win, SObject* obj);							// Called when an object is added
 	};
 	union {
-		u32		_onAddProperty;
+		uptr	_onAddProperty;
 		bool	(*onAddProperty)			(SWindow* win, SObject* obj);							// Called when a property is added
 	};
 	union {
-		u32		_onError;
+		uptr	_onError;
 		bool	(*onError)					(SWindow* win, SObject* obj);							// Called when an error is triggered in code on an object
 	};
 	union {
-		u32		_onScrolled;
+		uptr	_onScrolled;
 		bool	(*onScrolled)				(SWindow* win, SObject* obj);							// Called when an object has been scrolled
 	};
 	union {
-		u32		_activate;
+		uptr	_activate;
 		bool	(*activate)					(SWindow* win, SObject* obj);							// Called when activated
 	};
 	union {
-		u32		_deactivate;
+		uptr	_deactivate;
 		bool	(*deactivate)				(SWindow* win, SObject* obj);							// Called when deactivated
 	};
 	union {
-		u32		_onSelect;
+		uptr	_onSelect;
 		bool	(*onSelect)					(SWindow* win, SObject* obj, SObject* oItem);			// When an option is selected
 	};
 	union {
-		u32		_onDeselect;
+		uptr	_onDeselect;
 		bool	(*onDeselect)				(SWindow* win, SObject* obj, SObject* oItem);			// When an option is deselected
 	};
 	union {
-		u32		_onInteractiveChange;
+		uptr	_onInteractiveChange;
 		bool	(*onInteractiveChange)		(SWindow* win, SObject* obj);							// Called when the data changes
 	};
 	union {
-		u32		_onProgrammaticChange;
+		uptr	_onProgrammaticChange;
 		bool	(*onProgrammaticChange)		(SWindow* win, SObject* obj);							// Called when the data changes
 	};
 };
@@ -201,39 +201,39 @@ struct SEventsMouse
 	// These will be translated by the internal object controller into executable VJr VXB code.
 	// Return value indicates if the event should be sent to its parent instead (if NODEFAULT was issued during execution).
 	union {
-		u32		_onMouseClickEx;
+		uptr	_onMouseClickEx;
 		bool	(*onMouseClickEx)		(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);	// 1=left, 2=middle, 4=right, 2^n bit positions indicate which buttons are clicked
 	};
 	union {
-		u32		_onMouseDblClickEx;
+		uptr	_onMouseDblClickEx;
 		bool	(*onMouseDblClickEx)	(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);	// 1=left, 2=middle, 4=right, 2^n bit positions indicate which buttons are clicked
 	};
 	union {
-		u32		_onMouseWheel;
+		uptr	_onMouseWheel;
 		bool	(*onMouseWheel)			(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick, s32 tnUnits);			// Signed units indicating direction and velocity
 	};
 	union {
-		u32		_onMouseMove;
+		uptr	_onMouseMove;
 		bool	(*onMouseMove)			(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);	// Coordinates for the move
 	};
 	union {
-		u32		_onMouseDown;
+		uptr	_onMouseDown;
 		bool	(*onMouseDown)			(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);	// Coordinates for where the mouse button changed
 	};
 	union {
-		u32		_onMouseUp;
+		uptr	_onMouseUp;
 		bool	(*onMouseUp)			(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);	// Coordinates for where the mouse button changed
 	};
 	union {
-		u32		_onMouseEnter;
+		uptr	_onMouseEnter;
 		bool	(*onMouseEnter)			(SWindow* win, SObject* obj);						// When mouse enters an object
 	};
 	union {
-		u32		_onMouseLeave;
+		uptr	_onMouseLeave;
 		bool	(*onMouseLeave)			(SWindow* win, SObject* obj);						// When mouse leaves an object
 	};
 	union {
-		u32		_onMouseHover;
+		uptr	_onMouseHover;
 		bool	(*onMouseHover)			(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);	// Coordinates where hovering
 	};
 };
@@ -243,11 +243,11 @@ struct SEventsKeyboard
 	// Keyboard callbacks
 	// Bool indicates if the event should be sent to its parent instead
 	union {
-		u32		_onKeyDown;
+		uptr	_onKeyDown;
 		bool	(*onKeyDown)		(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tnAsciiChar, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
 	};
 	union {
-		u32		_onKeyUp;
+		uptr	_onKeyUp;
 		bool	(*onKeyUp)			(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tnAsciiChar, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
 	};
 };

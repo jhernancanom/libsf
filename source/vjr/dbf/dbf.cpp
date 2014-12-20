@@ -158,12 +158,12 @@
 				memset(gsArea[lnI].indexPathname,	0, sizeof(gsArea[lnI].indexPathname));
 
 				// Copy the user portion of the names
-				gsArea[lnI].tablePathnameLength = (((s32)strlen(table) >= sizeof(gsArea[lnI].tablePathname)) ? sizeof(gsArea[lnI].tablePathname) : (s32)strlen(table));
+				gsArea[lnI].tablePathnameLength = (((s32)strlen(table) >= (s32)sizeof(gsArea[lnI].tablePathname)) ? (s32)sizeof(gsArea[lnI].tablePathname) : (s32)strlen(table));
 				memcpy(gsArea[lnI].tablePathname, table, gsArea[lnI].tablePathnameLength);
 				if (alias != NULL)
 				{
 					// The alias is allowed to be as long as the alias space is, or shorter
-					gsArea[lnI].aliasLength = (((s32)strlen(alias) >= sizeof(gsArea[lnI].alias)) ? sizeof(gsArea[lnI].alias) : (u32)strlen(alias));
+					gsArea[lnI].aliasLength = (((s32)strlen(alias) >= (s32)sizeof(gsArea[lnI].alias)) ? (s32)sizeof(gsArea[lnI].alias) : (u32)strlen(alias));
 					memcpy(gsArea[lnI].alias, alias, gsArea[lnI].aliasLength);
 				}
 
@@ -1448,7 +1448,7 @@
 
 			} else {
 				// Return the offset to the actual data
-				return((u32)gsArea[tnWorkArea].data + lfrp->offset);
+				return(gsArea[tnWorkArea]._data + lfrp->offset);
 			}
 		}
 		// If we get here, failure
@@ -1607,7 +1607,7 @@
 
 			} else {
 				// Return the offset to the actual data
-				return((u32)wa->data + lfrp->offset);
+				return(wa->_data + lfrp->offset);
 			}
 		}
 		// If we get here, failure
