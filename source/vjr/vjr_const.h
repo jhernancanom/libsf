@@ -169,7 +169,7 @@ typedef SEM**		SEMpp;
 #if !defined(CLEARTYPE_NATURAL_QUALITY)
 	#define CLEARTYPE_NATURAL_QUALITY       6
 #endif
-// Missing in x6
+// Missing in x64
 #if !defined(GWL_USERDATA)
 	#define GWL_USERDATA (-21)
 #endif

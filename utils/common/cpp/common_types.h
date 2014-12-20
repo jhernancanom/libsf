@@ -55,7 +55,7 @@
 #else
 	// Used for pointer sizes that mate up with pointers, but are actually integers
 	#ifdef _M_IX86
-		typedef	unsigned int	uptr;		// Used for pointer sizes that mate up with pointers, but are actually integers
+		typedef	unsigned int	uptr;
 	#else
 		typedef	unsigned __int64 uptr;
 	#endif
