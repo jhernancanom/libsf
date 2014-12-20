@@ -1103,7 +1103,7 @@
 					if (buffer[strlen(buffer)] == '.')
 						buffer[strlen(buffer)] = 0;
 
-					lnSkip = iSkipWhitespaces(buffer, strlen(buffer));
+					lnSkip = iSkipWhitespaces(buffer, (u32)strlen(buffer));
 
 					SetRect(&lrc2,	obj->bmp->bi.biWidth / 7,
 									(obj->bmp->bi.biHeight / 2) - (obj->bmp->bi.biHeight / 7),
@@ -1113,7 +1113,7 @@
 					SetTextColor(obj->bmp->hdc, RGB(foreColor.red, foreColor.grn, foreColor.blu));
 					SetBkMode(obj->bmp->hdc, TRANSPARENT);
 					SelectObject(obj->bmp->hdc, ((obj->p.font) ? obj->p.font : gsFontDefault));
-					DrawText(obj->bmp->hdc, buffer + lnSkip, strlen(buffer + lnSkip), &lrc2, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
+					DrawText(obj->bmp->hdc, buffer + lnSkip, (int)strlen(buffer + lnSkip), &lrc2, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 
 
 				// Colorize

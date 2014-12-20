@@ -812,19 +812,19 @@ struct SBasePropertyInit;
 
 		// Initter
 		union {
-			u32			_initterBase;
+			uptr		_initterBase;
 			bool		(*initterBase)	(SObject* obj, u32 tnIndex);
 		};
 
 		// Setter
 		union {
-			u32			_setterBase;
+			uptr		_setterBase;
 			bool		(*setterBase)	(SObject* obj, u32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp);
 		};
 
 		// Getter
 		union {
-			u32			_getterBase;
+			uptr		_getterBase;
 			SVariable*	(*getterBase)	(SObject* obj, u32 tnIndex);
 		};
 

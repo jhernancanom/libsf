@@ -729,7 +729,7 @@ debug_break;
 				// Make sure the length is valid
 				if (tnTextLength == -1)
 				{
-					if (tcText)		tnTextLength = strlen(tcText);
+					if (tcText)		tnTextLength = (s32)strlen(tcText);
 					else			tnTextLength = 0;
 				}
 
@@ -1777,7 +1777,7 @@ debug_break;
 		{
 			// Make sure our length is valid
 			if (tnTextLength < 0)
-				tnTextLength = strlen(tcText);
+				tnTextLength = (s32)strlen(tcText);
 
 			// Determine where it will go
 			if (iObj_find_screenRect(obj, &lrcObjInScreenCoords))
@@ -2421,7 +2421,7 @@ renderAsOnlyText:
 						lrc3.right -= (sem->rcLineNumberLastRender.right - sem->rcLineNumberLastRender.left) / 7;
 						SetBkMode(bmp->hdc, TRANSPARENT);
 						SetTextColor(bmp->hdc, RGB(lineNumberForeColor.red, lineNumberForeColor.grn, lineNumberForeColor.blu));
-						DrawText(bmp->hdc, buffer, strlen(buffer), &lrc3, DT_SINGLELINE | DT_RIGHT | DT_NOPREFIX);
+						DrawText(bmp->hdc, buffer, (int)strlen(buffer), &lrc3, DT_SINGLELINE | DT_RIGHT | DT_NOPREFIX);
 
 
 						//////////
@@ -2616,7 +2616,7 @@ renderAsOnlyText:
 
 									// Compute the line number
 									sprintf(buffer, "%u\0", line->lineNumber);
-									DrawText(bmp->hdc, buffer, strlen(buffer), &lrc3, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
+									DrawText(bmp->hdc, buffer, (int)strlen(buffer), &lrc3, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
 								}
 						}
 					}
@@ -2652,7 +2652,7 @@ renderAsOnlyText:
 
 								// Compute the line number
 								sprintf(buffer, "%u\0", line->lineNumber);
-								DrawText(bmp->hdc, buffer, strlen(buffer), &lrc3, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
+								DrawText(bmp->hdc, buffer, (int)strlen(buffer), &lrc3, DT_VCENTER | DT_CENTER | DT_SINGLELINE | DT_NOPREFIX);
 							}
 						}
 					}

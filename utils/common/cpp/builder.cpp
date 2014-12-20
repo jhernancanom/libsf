@@ -498,7 +498,7 @@
 				//////////
 				// Read in the content
 				//////
-					lnNumread						= fread((*buffRoot)->data + (*buffRoot)->populatedLength, 1, lnSize, lfh);
+					lnNumread						= (u32)fread((*buffRoot)->data + (*buffRoot)->populatedLength, 1, lnSize, lfh);
 					(*buffRoot)->populatedLength	+= min(lnNumread, lnSize);
 
 

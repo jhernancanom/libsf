@@ -264,7 +264,7 @@
 							lnValue	= iiBswap32(*((u32*)se->data));	// It's 32-bits (4 bytes, stored as big-endian)
 
 						sprintf(buffer, "%u\000", lnValue);
-						lnLength = strlen(buffer);
+						lnLength = (u32)strlen(buffer);
 
 						// Copy it (or as much of it as we can)
 						memcpy(asInt, buffer, (asIntLength >= lnLength) ? lnLength : asIntLength);

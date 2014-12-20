@@ -58,10 +58,17 @@
 //////////
 // Compiler-specific settings
 //////
-	#ifdef __GNUC__
-		#define debugbreak asm("int $3")
+	#if !defined(_MSC_VER)
+		// gcc
+		#define debug_break			asm("int $3")
 	#else
-		#define debugbreak _asm int 3;
+		// visual studio
+		#ifdef _M_IX86
+			#define debug_break		_asm int 3
+		#else
+			void debugBreak(void)	{	int i = 4;	}
+			#define debug_break		debugBreak();
+		#endif
 	#endif
 
 

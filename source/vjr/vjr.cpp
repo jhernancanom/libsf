@@ -295,7 +295,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		{
 			// Indicate success
 			sprintf(logBuffer, "Loaded: %s\0", cgcScreenDataFilename);
-			iSEM_appendLine(output_editbox->p.sem, logBuffer, strlen(logBuffer), false);
+			iSEM_appendLine(output_editbox->p.sem, logBuffer, (s32)strlen(logBuffer), false);
 			iVjr_appendSystemLog("Populate _screen with default data");
 			iSEM_appendLine(screenData, (s8*)cgcScreenTitle, -1, false);
 			iSEM_appendLine(screenData, NULL, 0, false);
@@ -328,7 +328,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		{
 			// Indicate success
 			sprintf(logBuffer, "Loaded: %s\0", cgcCommandHistoryFilename);
-			iSEM_appendLine(output_editbox->p.sem, logBuffer, strlen(logBuffer), false);
+			iSEM_appendLine(output_editbox->p.sem, logBuffer, (s32)strlen(logBuffer), false);
 			iSEM_appendLine(command_editbox->p.sem, (s8*)"*** Welcome to Visual FreePro, Junior! :-)", -1, false);
 			iSEM_appendLine(command_editbox->p.sem, (s8*)"*** For now, this can be thought of as a command window ... with a twist.", -1, false);
 			iSEM_appendLine(command_editbox->p.sem, (s8*)"*** It works like an editor window.  You can insert new lines, edit old ones, etc.", -1, false);
@@ -352,7 +352,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		{
 			// Indicate success
 			sprintf(logBuffer, "Loaded: %s\0", cgcStartupPrgFilename);
-			iSEM_appendLine(output_editbox->p.sem, logBuffer, strlen(logBuffer), false);
+			iSEM_appendLine(output_editbox->p.sem, logBuffer, (s32)strlen(logBuffer), false);
 		}
 
 		// Redraw

@@ -134,7 +134,7 @@
 				}
 
 				// Read in the file
-				lnNumread = fread(wa->idx_header, 1, lnFileSize, wa->fhIndex);
+				lnNumread = (u32)fread(wa->idx_header, 1, lnFileSize, wa->fhIndex);
 				if (lnNumread != lnFileSize)
 				{
 					cdx_close(tnDbfHandle);
@@ -167,7 +167,7 @@
 				}
 
 				// Read in the file
-				lnNumread = fread(wa->cdx_root, 1, lnFileSize, wa->fhIndex);
+				lnNumread = (u32)fread(wa->cdx_root, 1, lnFileSize, wa->fhIndex);
 				if (lnNumread != lnFileSize)
 				{
 					cdx_close(tnDbfHandle);
@@ -812,7 +812,7 @@
 							break;
 
 						default:
-							debugbreak;
+							debug_break;
 							break;
 					}
 					sprintf(output, "Node %u: %s\r\n\0", lnNode, buffer);
@@ -949,7 +949,7 @@
 									break;
 
 								default:
-									debugbreak;
+									debug_break;
 									sprintf(output, "Node %u: Unknown type of node encountered, expected 0=index, 1=root, 2=leaf, 3=root+leaf, found %u=???\r\n\0", lnNodeNumber, node->type);
 									iBuilder_appendData(errorData, output, -1);
 									// Bad index
@@ -975,7 +975,7 @@
 										memset(buffer, 0, sizeof(buffer));
 // Added for debugging
 // if (key.keyLength > 240)
-// 	debugbreak;
+// 	debug_break;
 										memcpy(buffer, key.key, key.keyLength);
 
 
@@ -1129,7 +1129,7 @@ we_are_done:
 		// Add meta data
 		//////
 			iBuilder_appendData(metaData, "Tag: ", -1);
-			iBuilder_appendData(metaData, (s8*)tagRoot.tagName, min(strlen((s8*)tagRoot.tagName), 10));
+			iBuilder_appendData(metaData, (s8*)tagRoot.tagName, min((u32)strlen((s8*)tagRoot.tagName), 10));
 			iBuilder_backoffTrailingWhitespaces(metaData);
 			iBuilder_appendData(metaData, ", INDEX ON ", -1);
 
@@ -1162,7 +1162,7 @@ we_are_done:
 				{
 					// Store the string to return
 					iBuilder_appendData(metaData, "Tag: ", -1);
-					iBuilder_appendData(metaData, (s8*)tagRoot.tagName, min(strlen((s8*)tagRoot.tagName), 10));
+					iBuilder_appendData(metaData, (s8*)tagRoot.tagName, min((u32)strlen((s8*)tagRoot.tagName), 10));
 					iBuilder_backoffTrailingWhitespaces(metaData);
 					iBuilder_appendData(metaData, ", FOR clause is too complex for this utility.", -1);
 					goto close_and_quit;
@@ -1180,7 +1180,7 @@ we_are_done:
 				// Key expression could not be parsed
 				llResult = false;
 				iBuilder_appendData(metaData, "Tag: ", -1);
-				iBuilder_appendData(metaData, (s8*)tagRoot.tagName, min(strlen((s8*)tagRoot.tagName), 10));
+				iBuilder_appendData(metaData, (s8*)tagRoot.tagName, min((u32)strlen((s8*)tagRoot.tagName), 10));
 				iBuilder_backoffTrailingWhitespaces(metaData);
 				iBuilder_appendData(metaData, ", key expression could not be parsed", -1);
 				iBuilder_appendCrLf(metaData);
@@ -1241,7 +1241,7 @@ we_are_done:
 				if (cdxKeys->populatedLength == 0)
 				{
 					iBuilder_appendData(metaData, "Tag: ", -1);
-					iBuilder_appendData(metaData, (s8*)tagRoot.tagName, min(strlen((s8*)tagRoot.tagName), 10));
+					iBuilder_appendData(metaData, (s8*)tagRoot.tagName, min((u32)strlen((s8*)tagRoot.tagName), 10));
 					iBuilder_backoffTrailingWhitespaces(metaData);
 					iBuilder_appendData(metaData, ", DBF key count: 0, CDX key count: 0", -1);
 					iBuilder_appendCrLf(metaData);
@@ -1364,7 +1364,7 @@ we_are_done:
 			}
 			// Indicate the result
 			iBuilder_appendData(metaData, "Tag: ", -1);
-			iBuilder_appendData(metaData, (s8*)tagRoot.tagName, min(strlen((s8*)tagRoot.tagName), 10));
+			iBuilder_appendData(metaData, (s8*)tagRoot.tagName, min((u32)strlen((s8*)tagRoot.tagName), 10));
 			iBuilder_backoffTrailingWhitespaces(metaData);
 			if (llResult)
 			{
@@ -2241,7 +2241,7 @@ return 0;
 
 							} else {
 								// Should never happen
-								debugbreak;
+								debug_break;
 								break;
 							}
 						}
@@ -2268,7 +2268,7 @@ return 0;
 
 							} else {
 								// Should not happen
-								debugbreak;
+								debug_break;
 								break;
 							}
 						}
@@ -2377,7 +2377,7 @@ return 0;
 
 								} else {
 									// Should not happen
-									debugbreak;
+									debug_break;
 									break;
 								}
 							}
@@ -2572,7 +2572,7 @@ return 0;
 
 								} else {
 									// Should not happen
-									debugbreak;
+									debug_break;
 									break;
 								}
 							}
@@ -2753,7 +2753,7 @@ return 0;
 	bool iCdx_getCompactRootNode(SWorkArea* wa, SCdxHeader* head, SCdxNode* node, STagRoot* tagRoot)
 	{
 // Untested code, breakpoint and examine
-debugbreak;
+debug_break;
 
 		// We allow the root tag node to be passed as NULL, and then populated with the head
 		if (!node)
@@ -2799,7 +2799,7 @@ debugbreak;
 	bool iCdx_getStandardRootNode(SWorkArea* wa, SIdxHeader* head, SIdxNode* node, STagRoot* tagRoot)
 	{
 // Untested code, breakpoint and examine
-debugbreak;
+debug_break;
 
 		// We allow the root tag node to be passed as NULL, and then populated with the head
 		if (!node)
@@ -3471,7 +3471,7 @@ debugbreak;
 					// Search again for the node
 					nodeCache = (SCdxNodeCache*)bsearch(&node, cdxNodeCache->buffer, cdxNodeCache->populatedLength / sizeof(SCdxNodeCache), sizeof(SCdxNodeCache), iiCdx_checkNodeCache_callback_bsearchAndQsort);
 					if (!nodeCache)
-						debugbreak;		// qsort failure... should never happen because we just added nodeCache, and then sorted the list
+						debug_break;		// qsort failure... should never happen because we just added nodeCache, and then sorted the list
 				}
 			}
 
@@ -3552,12 +3552,12 @@ debugbreak;
 
 			} else {
 				// Not sure what to do here
-				debugbreak;
+				debug_break;
 				return(-1);
 			}
 		}
 		// We should never get here
-		debugbreak;
+		debug_break;
 		// Not sure what to do
 		return(-1);
 	}

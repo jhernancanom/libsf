@@ -81,7 +81,7 @@
 			{
 				// We may need to set the length
 				if (dataLength < 0)
-					dataLength = strlen(data);
+					dataLength = (s32)strlen(data);
 
 				// Initialize
 				memset(datumNew, 0, sizeof(SDatum));
@@ -102,7 +102,7 @@
 		{
 			// We may need to set the length
 			if (dataLength < 0)
-				dataLength = strlen(data);
+				dataLength = (s32)strlen(data);
 
 			// Release anything that's already there
 			iiDatum_delete(datum);
@@ -215,7 +215,7 @@
 		{
 			// Make sure our length is set
 			if (dataLength < 0)
-				dataLength = strlen(data);
+				dataLength = (s32)strlen(data);
 
 			// Do a standard compare
 			lnResult = _memicmp(datumLeft->data, data, min(datumLeft->length, dataLength));

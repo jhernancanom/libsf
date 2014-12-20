@@ -33,11 +33,15 @@
 //
 
 
-
-
 // Unsigned
 #ifdef __GNUC__
 	// gcc
+	// Used for pointer sizes that mate up with pointers, but are actually integers
+	#ifdef __i386__
+		typedef uint32_t		uptr;
+	#else
+		typedef uint64_t		uptr;
+	#endif
 	typedef uint64_t			u64;
 	typedef uint32_t			u32;
 	typedef uint16_t			u16;
@@ -49,6 +53,12 @@
 	typedef int8_t				s8;
 
 #else
+	// Used for pointer sizes that mate up with pointers, but are actually integers
+	#ifdef _M_IX86
+		typedef	unsigned int	uptr;		// Used for pointer sizes that mate up with pointers, but are actually integers
+	#else
+		typedef	unsigned __int64 uptr;
+	#endif
 	typedef	unsigned __int64	u64;
 	typedef	unsigned int		u32;
 	typedef	unsigned short		u16;

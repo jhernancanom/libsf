@@ -160,14 +160,6 @@ typedef SEM**		SEMpp;
 	#define _swColor						rgba(212, 212, 255, 255)
 	#define _seColor						rgba(172, 192, 235, 255)
 
-#if !defined(_MSC_VER)
-	// gcc
-	#define debug_break						asm("int $3")
-#else
-	// visual studio
-	#define debug_break						_asm int 3
-#endif
-
 
 // Definitions missing in MinGW
 #if !defined(WM_MOUSEHWHEEL)
@@ -176,6 +168,10 @@ typedef SEM**		SEMpp;
 // Missing in MinGW and VC98
 #if !defined(CLEARTYPE_NATURAL_QUALITY)
 	#define CLEARTYPE_NATURAL_QUALITY       6
+#endif
+// Missing in x6
+#if !defined(GWL_USERDATA)
+	#define GWL_USERDATA (-21)
 #endif
 
 

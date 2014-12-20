@@ -158,12 +158,12 @@
 				memset(gsArea[lnI].indexPathname,	0, sizeof(gsArea[lnI].indexPathname));
 
 				// Copy the user portion of the names
-				gsArea[lnI].tablePathnameLength = ((strlen(table) >= sizeof(gsArea[lnI].tablePathname)) ? sizeof(gsArea[lnI].tablePathname) : strlen(table));
+				gsArea[lnI].tablePathnameLength = (((s32)strlen(table) >= sizeof(gsArea[lnI].tablePathname)) ? sizeof(gsArea[lnI].tablePathname) : (s32)strlen(table));
 				memcpy(gsArea[lnI].tablePathname, table, gsArea[lnI].tablePathnameLength);
 				if (alias != NULL)
 				{
 					// The alias is allowed to be as long as the alias space is, or shorter
-					gsArea[lnI].aliasLength = ((strlen(alias) >= sizeof(gsArea[lnI].alias)) ? sizeof(gsArea[lnI].alias) : strlen(alias));
+					gsArea[lnI].aliasLength = (((s32)strlen(alias) >= sizeof(gsArea[lnI].alias)) ? sizeof(gsArea[lnI].alias) : (u32)strlen(alias));
 					memcpy(gsArea[lnI].alias, alias, gsArea[lnI].aliasLength);
 				}
 
@@ -176,7 +176,7 @@
 				// When we get here, the file is opened
 				// Now we have to check to see if it's a FoxPro table, and if it has a memo field
 				// Read the header
-				numread = fread(&gsArea[lnI].header, 1, sizeof(gsArea[lnI].header), gsArea[lnI].fhDbf);
+				numread = (u32)fread(&gsArea[lnI].header, 1, sizeof(gsArea[lnI].header), gsArea[lnI].fhDbf);
 				if (numread != sizeof(gsArea[lnI].header))
 				{
 					// Unable to read the header
@@ -241,7 +241,7 @@
 
 				// Read in the fields
 				fseek(gsArea[lnI].fhDbf, sizeof(STableHeader), SEEK_SET);
-				numread = fread(gsArea[lnI].fieldPtr1, 1, lStructure_size, gsArea[lnI].fhDbf);
+				numread = (u32)fread(gsArea[lnI].fieldPtr1, 1, lStructure_size, gsArea[lnI].fhDbf);
 				if (numread != lStructure_size)
 				{
 					fclose(gsArea[lnI].fhDbf);
@@ -328,7 +328,7 @@
 				gsArea[lnI].backlink		= (s8*)lfrPtr + 1;	// +1 skips past the trailing CHR(13) which terminates the structure list
 
 				// If it's a visual table, it might have a backlink
-				if (gsArea[lnI].isVisualTable)		gsArea[lnI].backlinkLength	= strlen(gsArea[lnI].backlink);
+				if (gsArea[lnI].isVisualTable)		gsArea[lnI].backlinkLength	= (u32)strlen(gsArea[lnI].backlink);
 				else								gsArea[lnI].backlinkLength	= 0;
 
 
@@ -356,7 +356,7 @@
 					//////
 						memcpy(lfr2Ptr->name,	lfrPtr->name, 11);		// Copy the full short name
 						memcpy(lfr2Ptr->name2,	lfrPtr->name, 11);		// Copy the full short name
-						lfr2Ptr->fieldName_length = strlen((s8*)lfrPtr->name);
+						lfr2Ptr->fieldName_length = (s32)strlen((s8*)lfrPtr->name);
 
 
 					//////////
@@ -488,7 +488,7 @@
 		if (gsArea[tnWorkArea].cachedTable)
 		{
 			// Read in the table
-			lnNumread = fread(gsArea[tnWorkArea].cachedTable, 1, lnCacheSize, gsArea[tnWorkArea].fhDbf);
+			lnNumread = (u32)fread(gsArea[tnWorkArea].cachedTable, 1, lnCacheSize, gsArea[tnWorkArea].fhDbf);
 			if (lnNumread != lnCacheSize)
 				return(-1);
 
@@ -781,7 +781,7 @@
 					fseek(gsArea[tnWorkArea].fhDbf, gsArea[tnWorkArea].header.firstRecord + ((recordNumber - 1) * gsArea[tnWorkArea].header.recordLength), SEEK_SET);
 
 					// Read in the record
-					lnNumread = fread(gsArea[tnWorkArea].data, 1, gsArea[tnWorkArea].header.recordLength, gsArea[tnWorkArea].fhDbf);
+					lnNumread = (u32)fread(gsArea[tnWorkArea].data, 1, gsArea[tnWorkArea].header.recordLength, gsArea[tnWorkArea].fhDbf);
 					if (lnNumread != gsArea[tnWorkArea].header.recordLength)
 						return(-1);
 				}
@@ -827,7 +827,7 @@
 				fseek(gsArea[tnWorkArea].fhDbf, gsArea[tnWorkArea].header.firstRecord + ((gsArea[tnWorkArea].currentRecord - 1) * gsArea[tnWorkArea].header.recordLength), SEEK_SET);
 
 				// Write the record
-				lnNumread = fwrite(gsArea[tnWorkArea].data, 1, gsArea[tnWorkArea].header.recordLength, gsArea[tnWorkArea].fhDbf);
+				lnNumread = (u32)fwrite(gsArea[tnWorkArea].data, 1, gsArea[tnWorkArea].header.recordLength, gsArea[tnWorkArea].fhDbf);
 				if (lnNumread != gsArea[tnWorkArea].header.recordLength)
 					return(-1);
 
@@ -901,7 +901,7 @@
 		if (lfr2Ptr)
 		{
 			// Store the name
-			lnLength = strlen(fieldName);
+			lnLength = (s32)strlen(fieldName);
 			for (lnI = 1; lnI <= (s32)gsArea[tnWorkArea].fieldCount; lnI++, lfr2Ptr++)
 			{
 				// Length must match, and the field name must match
@@ -937,7 +937,7 @@
 			dest[min(lnI, destLength - 1)] = 0;
 
 			// Return the length of the name
-			return(strlen(dest));
+			return((u32)strlen(dest));
 
 			// We should never get here unless the DBF header is messed up
 			// Just in case we do, indicate a failure
@@ -1042,7 +1042,7 @@
 					name = (s8*)buffer;
 					break;
 			}
-			length = strlen(name);
+			length = (u32)strlen(name);
 			memcpy(dest, name, (destLength >= length) ? length : destLength);
 			return(length);
 		}
@@ -1093,7 +1093,7 @@
 				sprintf(buffer, "%c(%u)\000", lfrp->type, (u32)lfrp->length);
 
 			}
-			length = strlen(buffer);
+			length = (u32)strlen(buffer);
 			memcpy(dest, buffer, (destLength >= length) ? length : destLength);
 
 			// Return the length of the name
@@ -1123,7 +1123,7 @@
 			if (dest)
 			{
 				sprintf(buffer, "%u\000", (u32)lfrp->length);
-				length = strlen(buffer);
+				length = (u32)strlen(buffer);
 				memcpy(dest, buffer, (destLength >= length) ? length : destLength);
 
 				// Return the length of the length in ascii text
@@ -1159,7 +1159,7 @@
 			{
 				if (lfrp->indexFixup_lengthOverride != 0)			sprintf(buffer, "%u\000", (u32)lfrp->indexFixup_lengthOverride);
 				else												sprintf(buffer, "%u\000", (u32)lfrp->length);
-				length = strlen(buffer);
+				length = (u32)strlen(buffer);
 				memcpy(dest, buffer, (destLength >= length) ? length : destLength);
 
 				// Return the length of the length in ascii text
@@ -1195,7 +1195,7 @@
 			if (dest)
 			{
 				sprintf(buffer, "%u\000", (u32)lfrp->decimals);
-				length = strlen(buffer);
+				length = (u32)strlen(buffer);
 				memcpy(dest, buffer, (destLength >= length) ? length : destLength);
 
 				// Return the length of the decimals in ascii text
@@ -1380,7 +1380,7 @@
 			{
 				// Store the length
 				sprintf(buffer, "%u\000", (u32)lfrp->autoIncNext);
-				length = strlen(buffer);
+				length = (u32)strlen(buffer);
 				memcpy(dest, buffer, (destLength >= length) ? length : destLength);
 
 				// Return the length of the auto-increment next value in ascii text
@@ -1413,7 +1413,7 @@
 			{
 				// Store the length
 				sprintf(buffer, "%u\000", (u32)lfrp->autoIncStep);
-				length = strlen(buffer);
+				length = (u32)strlen(buffer);
 				memcpy(dest, buffer, (destLength >= length) ? length : destLength);
 
 				// Return the length of the auto-increment stepvalue in ascii text
@@ -1923,7 +1923,7 @@
 
 
 		// Iterate through the fields until we find the one they want
-		len		= strlen(keyExpression);
+		len		= (u32)strlen(keyExpression);
 		lfrp2	= wa->field2Ptr;
 		for (lnI = 1; lnI <= wa->fieldCount; lnI++)
 		{
@@ -2057,11 +2057,11 @@
 		//////
 			// Get the full path for what would be the container
 			iiDbf_getRelativeDbc(wa, &dbcName[0]);
-			lnDbcLength = strlen(dbcName);
+			lnDbcLength = (s32)strlen(dbcName);
 
 			// Get the alias
 			iiJuststem(wa, &alias[0]);
-			lnAliasLength = strlen(alias);
+			lnAliasLength = (u32)strlen(alias);
 
 			// If it has no backlink, we're done
 			if (wa->backlink[0] == 0)
@@ -2925,7 +2925,7 @@
 	void iiGetTemporaryFilename(s8 *temp_file, s8 *prefix)
 	{
 		GetTempFileName(gcDbf_temporaryPath, prefix, gnDbf_temporaryFileNumber++, temp_file);
-		iiLowerCaseString(temp_file, strlen(temp_file));
+		iiLowerCaseString(temp_file, (u32)strlen(temp_file));
 	}
 
 

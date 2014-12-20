@@ -2149,7 +2149,7 @@
 				if (*data)
 				{
 					// Read the contents
-					lnNumread = fread(*data, 1, *dataLength, lfh);
+					lnNumread = (u32)fread(*data, 1, *dataLength, lfh);
 					if (lnNumread == *dataLength)
 					{
 						// We read everything
@@ -2313,8 +2313,8 @@
 
 
 		// Make sure the lengths are valid
-		if (haystackLength < 0)		haystackLength	= strlen(haystack);
-		if (needleLength < 0)		needleLength	= strlen(needle);
+		if (haystackLength < 0)		haystackLength	= (s32)strlen(haystack);
+		if (needleLength < 0)		needleLength	= (s32)strlen(needle);
 
 		// Iterate to see if we find it
 		for (lnI = 0; lnI <= haystackLength - needleLength; lnI++)
@@ -2339,8 +2339,8 @@
 
 
 		// Make sure the lengths are valid
-		if (haystackLength < 0)		haystackLength	= strlen(haystack);
-		if (needleLength < 0)		needleLength	= strlen(needle);
+		if (haystackLength < 0)		haystackLength	= (s32)strlen(haystack);
+		if (needleLength < 0)		needleLength	= (s32)strlen(needle);
 
 		// Check to see if the specified word / phrase / whatever exists on this line
 		for (lnI = 0; lnI <= haystackLength - needleLength; lnI++)
@@ -2368,7 +2368,7 @@
 
 		// Make sure the length is valid
 		if (haystackLength < 0)
-			haystackLength	= strlen(haystack);
+			haystackLength	= (s32)strlen(haystack);
 
 		// Check to see if the specified word / phrase / whatever contains this character
 		c = iLowerCharacter(needle);
@@ -2395,7 +2395,7 @@
 
 		// Make sure the length is valid
 		if (haystackLength < 0)
-			haystackLength	= strlen(haystack);
+			haystackLength	= (s32)strlen(haystack);
 
 		// Check to see if the specified word / phrase / whatever contains this character
 		for (lnI = 0; lnI < haystackLength; lnI++)
@@ -2422,7 +2422,7 @@
 
 		// Make sure the length is valid
 		if (haystackLength < 0)
-			haystackLength	= strlen(haystack);
+			haystackLength	= (s32)strlen(haystack);
 
 		// Check to see if the specified word / phrase / whatever contains this character
 		c = iLowerCharacter(needle);
@@ -2448,7 +2448,7 @@
 
 		// Make sure the length is valid
 		if (haystackLength < 0)
-			haystackLength	= strlen(haystack);
+			haystackLength	= (s32)strlen(haystack);
 
 		// Check to see if the specified word / phrase / whatever contains this character
 		for (lnI = haystackLength - 1; lnI >= 0; lnI--)
@@ -2486,7 +2486,7 @@
 
 		// Make sure the length is valid
 		if (haystackLength < 0)
-			haystackLength	= strlen(haystack);
+			haystackLength	= (s32)strlen(haystack);
 
 		// Skip past any whitespaces
 		lnWhitespaces = 0;
@@ -2510,8 +2510,8 @@
 
 
 		// Make sure the lengths are valid
-		if (haystackLength < 0)		haystackLength	= strlen(haystack);
-		if (needleLength < 0)		needleLength	= strlen(needle);
+		if (haystackLength < 0)		haystackLength	= (s32)strlen(haystack);
+		if (needleLength < 0)		needleLength	= (s32)strlen(needle);
 
 		// Skip past any whitespaces
 		lnWhitespaces = 0;
@@ -2553,7 +2553,7 @@
 
 		// Make sure the length is valid
 		if (maxLength < 0)
-			maxLength = strlen(source);
+			maxLength = (u32)strlen(source);
 
 		// Make sure we have valid parameters
 		if (!offset)
@@ -2674,7 +2674,7 @@
 
 
 		// Allocate it
-		lnLength	= strlen(tcText) + 1;
+		lnLength	= (u32)strlen(tcText) + 1;
 		ptr			= (s8*)malloc(lnLength);
 
 		// Copy it (including the trailing null)
@@ -3451,7 +3451,7 @@
 			lnScanCode	= (tnScanCode & 0xff000) >> 12;
 			lnAsciiChar	= 0;
 			GetKeyboardState(&keyboardState[0]);
-			llIsAscii	= (ToAscii(vKey, lnScanCode, &keyboardState[0], (LPWORD)&lnAsciiChar, 0) >= 1);
+			llIsAscii	= (ToAscii((UINT)vKey, lnScanCode, &keyboardState[0], (LPWORD)&lnAsciiChar, 0) >= 1);
 
 
 		//////////
@@ -3488,11 +3488,11 @@
 				if (m == WM_KEYDOWN && obj->ev.keyboard._onKeyDown)
 				{
 					// Signal the down key event
-					obj->ev.keyboard.onKeyDown	(win, obj, llCtrl, llAlt, llShift, llCaps, lnAsciiChar, vKey, llIsCAS, llIsAscii);
+					obj->ev.keyboard.onKeyDown	(win, obj, llCtrl, llAlt, llShift, llCaps, lnAsciiChar, (u16)vKey, llIsCAS, llIsAscii);
 
 				} else if (m == WM_KEYUP && obj->ev.keyboard._onKeyUp) {
 					// Signal the up key event
-					obj->ev.keyboard.onKeyUp	(win, obj, llCtrl, llAlt, llShift, llCaps, lnAsciiChar, vKey, llIsCAS, llIsAscii);
+					obj->ev.keyboard.onKeyUp	(win, obj, llCtrl, llAlt, llShift, llCaps, lnAsciiChar, (u16)vKey, llIsCAS, llIsAscii);
 				}
 			}
 		
@@ -3836,7 +3836,7 @@ debug_break;
 		//////
 			SelectObject(bmp->hdc, font9->hfont);
 			SetRect(&lrcAccomplishment, 0, 0, bmp->bi.biWidth, bmp->bi.biHeight);
-			DrawText(bmp->hdc, tcAccomplishment, strlen(tcAccomplishment), &lrcAccomplishment, DT_SINGLELINE | DT_LEFT | DT_CALCRECT);
+			DrawText(bmp->hdc, tcAccomplishment, (int)strlen(tcAccomplishment), &lrcAccomplishment, DT_SINGLELINE | DT_LEFT | DT_CALCRECT);
 
 
 		//////////
@@ -3847,7 +3847,7 @@ debug_break;
 				// There is a version
 				SelectObject(bmp->hdc, font8->hfont);
 				SetRect(&lrcVersion, 0, 0, bmp->bi.biWidth, bmp->bi.biHeight);
-				DrawText(bmp->hdc, tcVersion, strlen(tcVersion), &lrcVersion, DT_SINGLELINE | DT_LEFT | DT_CALCRECT);
+				DrawText(bmp->hdc, tcVersion, (int)strlen(tcVersion), &lrcVersion, DT_SINGLELINE | DT_LEFT | DT_CALCRECT);
 
 			} else {
 				// No version
@@ -3938,7 +3938,7 @@ debug_break;
 				SelectObject(bmp->hdc, font8->hfont);
 				SetTextColor(bmp->hdc, textColor);
 				SetBkMode(bmp->hdc, TRANSPARENT);
-				DrawText(bmp->hdc, tcVersion, strlen(tcVersion), &lrc, DT_SINGLELINE | DT_LEFT);
+				DrawText(bmp->hdc, tcVersion, (int)strlen(tcVersion), &lrc, DT_SINGLELINE | DT_LEFT);
 			}
 
 
@@ -3950,7 +3950,7 @@ debug_break;
 			SelectObject(bmp->hdc, font9->hfont);
 			SetTextColor(bmp->hdc, textColor);
 			SetBkMode(bmp->hdc, TRANSPARENT);
-			DrawText(bmp->hdc, tcAccomplishment, strlen(tcAccomplishment), &lrc, DT_SINGLELINE | DT_LEFT);
+			DrawText(bmp->hdc, tcAccomplishment, (int)strlen(tcAccomplishment), &lrc, DT_SINGLELINE | DT_LEFT);
 
 
 		//////////
