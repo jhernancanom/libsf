@@ -372,7 +372,7 @@ struct SObjPropertyMap;
 	void					iWindow_move							(SWindow* win);
 	void					iWindow_minimize						(SWindow* win);
 	void					iWindow_maximize						(SWindow* win);
-	bool					iWindow_isPointerValid							(SWindow* win);
+	bool					iWindow_isPointerValid					(SWindow* win);
 
 	void					iFocusHighlight_create					(SFocusHighlight* focus, RECT* rc);
 	void					iFocusHighlight_delete					(SFocusHighlight* focus);

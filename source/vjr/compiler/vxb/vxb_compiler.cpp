@@ -1860,8 +1860,6 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 
 
 		// Make sure our environment is sane
-// UNTESTED:  Breakpoint and examine
-debug_break;
 		lnCombined = 0;
 		if (line && line->compilerInfo)
 		{

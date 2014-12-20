@@ -1137,21 +1137,32 @@
 			//////
 				if (winNew)
 				{
+					//////////
 					// Lock down
-					EnterCriticalSection(&winNew->cs);
+					//////
+						EnterCriticalSection(&winNew->cs);
 
+
+					//////////
 					// Initialize
-					memset(buffer, 0, sizeof(buffer));
+					//////
+						memset(buffer, 0, sizeof(buffer));
 
+
+					//////////
 					// Populate
-					lnWidth		= obj->rc.right - obj->rc.left;
-					lnHeight	= obj->rc.bottom - obj->rc.top;
-					CopyRect(&winNew->rc, &obj->rc);
-					winNew->obj = obj;
+					//////
+						lnWidth		= obj->rc.right - obj->rc.left;
+						lnHeight	= obj->rc.bottom - obj->rc.top;
+						CopyRect(&winNew->rc, &obj->rc);
+						winNew->obj = obj;
 
+
+					//////////
 					// Create our accumulation buffer
-					winReuse->bmp = iBmp_allocate();
-					iBmp_createBySize(winReuse->bmp, lnWidth, lnHeight, 24);
+					//////
+						winNew->bmp = iBmp_allocate();
+						iBmp_createBySize(winNew->bmp, lnWidth, lnHeight, 24);
 
 
 					//////////
@@ -1211,8 +1222,11 @@
 						if (isVisible(obj))
 							ShowWindow(winNew->hwnd, SW_SHOW);
 
+
+					//////////
 					// Unlock
-					LeaveCriticalSection(&winNew->cs);
+					//////
+						LeaveCriticalSection(&winNew->cs);
 				}
 		}
 
@@ -1245,7 +1259,7 @@
 
 
 			//////////
-			// Iterate to delete all windows
+			// Iterat to delete all windows
 			//////
 				for (lnI = 0; lnI < windows->populatedLength; lnI += sizeof(SWindow))
 				{
