@@ -3,7 +3,7 @@
 // /libsf/utils/common/cpp/common_types.h
 //
 //////
-// Version 0.54
+// Version 0.55
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:

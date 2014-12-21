@@ -1,22 +1,16 @@
-
-
-    variablesÿcanÿnowÿhaveÿspaces = "Isn't that great? :-)"
-
-
-
-
 **********
 *
 * /libsf/source/vjr/startup.prg
 *
 *****
-* Version 0.20
+* Version 0.55
 * Copyright (c) 2014 by Rick C. Hodgin
 *****
 * Last update:
-*     Nov.01.2014
+*     Dec.21.2014
 *****
 * Change log:
+*     Dec.21.2014 - Preparation for normal syntax parsing
 *     Nov.01.2014 - Spaces allowed in variable names
 *     Jul.13.2014 - Modification to work with the early processing engine
 *     Jun.17.2014 - Initial creation and design
@@ -39,16 +33,10 @@
 * talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
 *
 *
-	
-	(| round cask |)				(|| round cask with parameters ||)
-
-	[| square cask |]				[|| square cask with parameters ||]
-
-	<| triangle cask |>				<|| triangle cask with parameters ||>
-
-	~| tilde cask |~				~|| tilde cask with parameters ||~
-
-	
+**********
+* ADHOC functions can be defined anywhere. They are skipped over in normal program
+* flow, and are called like real functions, receiving input, returning results.
+*****	
 	ADHOC width
 	RETURNS rnWidth
 		rnWidth = SYSMETRIC(1)
@@ -206,3 +194,20 @@
 
 	* Make JDebi visible
 	_jdebi.Visible			= .T.
+
+
+**********
+* Use the shift+spacebar
+*****
+    variablesÿcanÿnowÿhaveÿspaces = "Spaces allow human readable words, but remain as a single variable"
+
+
+**********
+* Casks are inserted into otherwise syntactically correct
+* code, injecting operations or meta data in the middle
+* of their normal flow control.
+*****
+	(| round cask |)		(|| with parameters ||)			&& Reference cask (references some defined thing)
+	[| square cask |]		[|| with parameters ||]			&& Definition cask (defines something from its point of view)
+	<| triangle cask |>		<|| with parameters ||>			&& Logic cask <||a|b|c||> same as ((a)?b:c)
+	~| tilde cask |~		~|| with parameters ||~			&& Utility casks (injects arbitrary code anywhere)
