@@ -1933,7 +1933,7 @@
 		//////////
 		// Store the settings
 		//////
-			SetWindowLong(tooltip->hwnd, GWL_USERDATA, (uptr)tooltip);
+			SetWindowLong(tooltip->hwnd, GWL_USERDATA, (uptr)lpParameter);
 
 
 		//////////

@@ -45,7 +45,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				FavorSizeOrSpeed="0"
-				AdditionalIncludeDirectories="&quot;C:\Program Files\Visual Leak Detector\include&quot;; c:\libsf\source\vjr\include"
+				AdditionalIncludeDirectories="&quot;\Program Files\Visual Leak Detector\include&quot;;\libsf\source\vjr\include;\libsf\source\vjr\vjr_vs2008"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
@@ -71,97 +71,13 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="lib\glew32.lib lib\glew32s.lib lib\freeglut.lib sound\SDL-1.2.15\lib\x86\SDL.lib &quot;C:\Program Files\Visual Leak Detector\lib\Win32\vld.lib&quot;"
+				AdditionalDependencies="..\lib\glew32.lib ..\lib\glew32s.lib ..\lib\freeglut.lib ..\sound\SDL-1.2.15\lib\x86\SDL.lib &quot;\Program Files\Visual Leak Detector\lib\Win32\vld.lib&quot;"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="1"
 				RandomizedBaseAddress="2"
 				DataExecutionPrevention="2"
-				ImportLibrary="\libsf\source\vjr\icons.lib"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="1"
-			CharacterSet="0"
-			WholeProgramOptimization="0"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				Optimization="3"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="0"
-				OmitFramePointers="false"
-				AdditionalIncludeDirectories="c:\libsf\source\vjr\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
-				BasicRuntimeChecks="0"
-				RuntimeLibrary="0"
-				StructMemberAlignment="1"
-				EnableFunctionLevelLinking="false"
-				EnableEnhancedInstructionSet="0"
-				FloatingPointModel="0"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				DebugInformationFormat="3"
-				CallingConvention="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="lib\glew32.lib lib\glew32s.lib lib\freeglut.lib sound\SDL-1.2.15\lib\x86\SDL.lib"
-				LinkIncremental="1"
-				GenerateDebugInformation="true"
-				SubSystem="2"
-				OptimizeReferences="1"
-				EnableCOMDATFolding="2"
 				ImportLibrary="\libsf\source\vjr\icons.lib"
 				TargetMachine="1"
 			/>
@@ -215,7 +131,7 @@
 				Optimization="0"
 				FavorSizeOrSpeed="0"
 				AdditionalIncludeDirectories="&quot;C:\Program Files\Visual Leak Detector\include&quot;; c:\libsf\source\vjr\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="WIN64;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				ExceptionHandling="1"
 				BasicRuntimeChecks="3"
@@ -273,6 +189,90 @@
 			/>
 		</Configuration>
 		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="1"
+			CharacterSet="0"
+			WholeProgramOptimization="0"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="3"
+				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="0"
+				OmitFramePointers="false"
+				AdditionalIncludeDirectories="\libsf\source\vjr\include;\libsf\source\vjr\vjr_vs2008"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
+				BasicRuntimeChecks="0"
+				RuntimeLibrary="0"
+				StructMemberAlignment="1"
+				EnableFunctionLevelLinking="false"
+				EnableEnhancedInstructionSet="0"
+				FloatingPointModel="0"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+				CallingConvention="0"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="..\lib\glew32.lib ..\lib\glew32s.lib ..\lib\freeglut.lib ..\sound\SDL-1.2.15\lib\x86\SDL.lib"
+				LinkIncremental="1"
+				GenerateDebugInformation="true"
+				SubSystem="2"
+				OptimizeReferences="1"
+				EnableCOMDATFolding="2"
+				ImportLibrary="\libsf\source\vjr\icons.lib"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
+		</Configuration>
+		<Configuration
 			Name="Release|x64"
 			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
@@ -303,7 +303,7 @@
 				FavorSizeOrSpeed="0"
 				OmitFramePointers="false"
 				AdditionalIncludeDirectories="c:\libsf\source\vjr\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="WIN64;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="0"
 				StructMemberAlignment="1"
@@ -367,11 +367,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\vjr.cpp"
+				RelativePath="..\vjr.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\vjr_sup.cpp"
+				RelativePath="..\vjr_sup.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -382,7 +382,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Debug|x64"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -390,7 +390,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|x64"
+					Name="Release|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -412,35 +412,35 @@
 				UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 				>
 				<File
-					RelativePath="..\..\utils\common\cpp\common_types.h"
+					RelativePath="..\..\..\utils\common\cpp\common_types.h"
 					>
 				</File>
 				<File
-					RelativePath=".\vjr.h"
+					RelativePath="..\vjr.h"
 					>
 				</File>
 				<File
-					RelativePath=".\vjr_compile_time_settings.h"
+					RelativePath="..\vjr_compile_time_settings.h"
 					>
 				</File>
 				<File
-					RelativePath=".\vjr_const.h"
+					RelativePath="..\vjr_const.h"
 					>
 				</File>
 				<File
-					RelativePath=".\vjr_defs.h"
+					RelativePath="..\vjr_defs.h"
 					>
 				</File>
 				<File
-					RelativePath=".\vjr_globals.h"
+					RelativePath="..\vjr_globals.h"
 					>
 				</File>
 				<File
-					RelativePath=".\vjr_structs.h"
+					RelativePath="..\vjr_structs.h"
 					>
 				</File>
 				<File
-					RelativePath=".\vjr_structs0.h"
+					RelativePath="..\vjr_structs0.h"
 					>
 				</File>
 			</Filter>
@@ -448,7 +448,7 @@
 				Name="ogl"
 				>
 				<File
-					RelativePath=".\grace.cpp"
+					RelativePath="..\grace.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -459,7 +459,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release|Win32"
+						Name="Debug|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -467,7 +467,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|x64"
+						Name="Release|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -484,7 +484,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\grace.h"
+					RelativePath="..\grace.h"
 					>
 				</File>
 			</Filter>
@@ -492,7 +492,7 @@
 				Name="sound"
 				>
 				<File
-					RelativePath=".\sound\sound.cpp"
+					RelativePath="..\sound\sound.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -503,7 +503,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release|Win32"
+						Name="Debug|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -511,7 +511,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|x64"
+						Name="Release|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -528,7 +528,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\sound\sound.h"
+					RelativePath="..\sound\sound.h"
 					>
 				</File>
 			</Filter>
@@ -550,11 +550,11 @@
 				Name="bmps"
 				>
 				<File
-					RelativePath=".\bmps\graphics\bitmaps.h"
+					RelativePath="..\bmps\graphics\bitmaps.h"
 					>
 				</File>
 				<File
-					RelativePath=".\bmps\bmps.cpp"
+					RelativePath="..\bmps\bmps.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -574,7 +574,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\bmps\graphics\build_h_files.bat"
+					RelativePath="..\bmps\graphics\build_h_files.bat"
 					>
 				</File>
 			</Filter>
@@ -582,19 +582,19 @@
 				Name="icons"
 				>
 				<File
-					RelativePath=".\icon1.ico"
+					RelativePath="..\icon1.ico"
 					>
 				</File>
 				<File
-					RelativePath=".\jdebi.ico"
+					RelativePath="..\jdebi.ico"
 					>
 				</File>
 				<File
-					RelativePath=".\small.ico"
+					RelativePath="..\small.ico"
 					>
 				</File>
 				<File
-					RelativePath=".\vjr.ico"
+					RelativePath="..\vjr.ico"
 					>
 				</File>
 			</Filter>
@@ -606,15 +606,15 @@
 				Name="commands"
 				>
 				<File
-					RelativePath=".\commands\command_defs.h"
+					RelativePath="..\commands\command_defs.h"
 					>
 				</File>
 				<File
-					RelativePath=".\commands\command_sourcelight.h"
+					RelativePath="..\commands\command_sourcelight.h"
 					>
 				</File>
 				<File
-					RelativePath=".\commands\commands.cpp"
+					RelativePath="..\commands\commands.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -625,7 +625,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release|Win32"
+						Name="Debug|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -633,7 +633,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|x64"
+						Name="Release|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -654,7 +654,7 @@
 				Name="engine"
 				>
 				<File
-					RelativePath=".\engine.cpp"
+					RelativePath="..\engine.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -665,7 +665,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release|Win32"
+						Name="Debug|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -673,7 +673,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|x64"
+						Name="Release|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -690,7 +690,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\engine.h"
+					RelativePath="..\engine.h"
 					>
 				</File>
 			</Filter>
@@ -698,7 +698,7 @@
 				Name="editor"
 				>
 				<File
-					RelativePath=".\sem.cpp"
+					RelativePath="..\sem.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -709,7 +709,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release|Win32"
+						Name="Debug|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -717,7 +717,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|x64"
+						Name="Release|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -734,11 +734,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\sem.h"
+					RelativePath="..\sem.h"
 					>
 				</File>
 				<File
-					RelativePath=".\sem_line.cpp"
+					RelativePath="..\sem_line.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -749,7 +749,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release|Win32"
+						Name="Debug|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -757,7 +757,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|x64"
+						Name="Release|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -774,7 +774,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\sem_line.h"
+					RelativePath="..\sem_line.h"
 					>
 				</File>
 			</Filter>
@@ -785,7 +785,7 @@
 					Name="bitmaps"
 					>
 					<File
-						RelativePath=".\bitmaps\bitmaps.cpp"
+						RelativePath="..\bitmaps\bitmaps.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -796,7 +796,7 @@
 							/>
 						</FileConfiguration>
 						<FileConfiguration
-							Name="Release|Win32"
+							Name="Debug|x64"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -804,7 +804,7 @@
 							/>
 						</FileConfiguration>
 						<FileConfiguration
-							Name="Debug|x64"
+							Name="Release|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -821,7 +821,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\bitmaps\bitmaps.h"
+						RelativePath="..\bitmaps\bitmaps.h"
 						>
 					</File>
 				</Filter>
@@ -829,7 +829,7 @@
 					Name="datum"
 					>
 					<File
-						RelativePath=".\datum\datum.cpp"
+						RelativePath="..\datum\datum.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -840,7 +840,7 @@
 							/>
 						</FileConfiguration>
 						<FileConfiguration
-							Name="Release|Win32"
+							Name="Debug|x64"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -848,7 +848,7 @@
 							/>
 						</FileConfiguration>
 						<FileConfiguration
-							Name="Debug|x64"
+							Name="Release|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -865,7 +865,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\datum\datum.h"
+						RelativePath="..\datum\datum.h"
 						>
 					</File>
 				</Filter>
@@ -873,7 +873,7 @@
 					Name="fonts"
 					>
 					<File
-						RelativePath=".\fonts.cpp"
+						RelativePath="..\fonts.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -884,7 +884,7 @@
 							/>
 						</FileConfiguration>
 						<FileConfiguration
-							Name="Release|Win32"
+							Name="Debug|x64"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -892,7 +892,7 @@
 							/>
 						</FileConfiguration>
 						<FileConfiguration
-							Name="Debug|x64"
+							Name="Release|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -909,7 +909,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\fonts.h"
+						RelativePath="..\fonts.h"
 						>
 					</File>
 				</Filter>
@@ -918,7 +918,7 @@
 				Name="objects"
 				>
 				<File
-					RelativePath=".\objects\accessors.cpp"
+					RelativePath="..\objects\accessors.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -929,7 +929,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release|Win32"
+						Name="Debug|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -937,7 +937,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|x64"
+						Name="Release|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -954,11 +954,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\objects\accessors.h"
+					RelativePath="..\objects\accessors.h"
 					>
 				</File>
 				<File
-					RelativePath=".\objects\base.cpp"
+					RelativePath="..\objects\base.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -969,7 +969,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release|Win32"
+						Name="Debug|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -977,7 +977,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|x64"
+						Name="Release|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -994,7 +994,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\objects\callbacks.cpp"
+					RelativePath="..\objects\callbacks.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1005,7 +1005,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release|Win32"
+						Name="Debug|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1013,7 +1013,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|x64"
+						Name="Release|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1030,7 +1030,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\objects\copy.cpp"
+					RelativePath="..\objects\copy.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1041,7 +1041,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release|Win32"
+						Name="Debug|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1049,7 +1049,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|x64"
+						Name="Release|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1066,7 +1066,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\objects\create.cpp"
+					RelativePath="..\objects\create.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1077,7 +1077,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release|Win32"
+						Name="Debug|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1085,7 +1085,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|x64"
+						Name="Release|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1102,7 +1102,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\objects\delete.cpp"
+					RelativePath="..\objects\delete.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1113,7 +1113,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release|Win32"
+						Name="Debug|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1121,7 +1121,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|x64"
+						Name="Release|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1138,7 +1138,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\objects\events.cpp"
+					RelativePath="..\objects\events.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1149,7 +1149,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release|Win32"
+						Name="Debug|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1157,7 +1157,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|x64"
+						Name="Release|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1174,7 +1174,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\objects\render.cpp"
+					RelativePath="..\objects\render.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1185,7 +1185,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release|Win32"
+						Name="Debug|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1193,7 +1193,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|x64"
+						Name="Release|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1210,7 +1210,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\objects\reset.cpp"
+					RelativePath="..\objects\reset.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1221,7 +1221,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release|Win32"
+						Name="Debug|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1229,7 +1229,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|x64"
+						Name="Release|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1250,7 +1250,7 @@
 				Name="dbf"
 				>
 				<File
-					RelativePath=".\dbf\cdx.cpp"
+					RelativePath="..\dbf\cdx.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1261,7 +1261,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release|Win32"
+						Name="Debug|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1269,7 +1269,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|x64"
+						Name="Release|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1286,7 +1286,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\dbf\dbc.cpp"
+					RelativePath="..\dbf\dbc.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1297,7 +1297,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release|Win32"
+						Name="Debug|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1305,7 +1305,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|x64"
+						Name="Release|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1322,7 +1322,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\dbf\dbf.cpp"
+					RelativePath="..\dbf\dbf.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1333,7 +1333,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Release|Win32"
+						Name="Debug|x64"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1341,7 +1341,7 @@
 						/>
 					</FileConfiguration>
 					<FileConfiguration
-						Name="Debug|x64"
+						Name="Release|Win32"
 						ExcludedFromBuild="true"
 						>
 						<Tool
@@ -1358,11 +1358,11 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\dbf\dbf.h"
+					RelativePath="..\dbf\dbf.h"
 					>
 				</File>
 				<File
-					RelativePath=".\dbf\dbf_defs.h"
+					RelativePath="..\dbf\dbf_defs.h"
 					>
 				</File>
 			</Filter>
@@ -1373,23 +1373,23 @@
 					Name="vxb_compiler"
 					>
 					<File
-						RelativePath=".\compiler\vxb\const.h"
+						RelativePath="..\compiler\vxb\const.h"
 						>
 					</File>
 					<File
-						RelativePath=".\compiler\vxb\defs.h"
+						RelativePath="..\compiler\vxb\defs.h"
 						>
 					</File>
 					<File
-						RelativePath=".\compiler\vxb\globals.h"
+						RelativePath="..\compiler\vxb\globals.h"
 						>
 					</File>
 					<File
-						RelativePath=".\compiler\vxb\structs.h"
+						RelativePath="..\compiler\vxb\structs.h"
 						>
 					</File>
 					<File
-						RelativePath=".\compiler\vxb\vxb_compiler.cpp"
+						RelativePath="..\compiler\vxb\vxb_compiler.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -1400,7 +1400,7 @@
 							/>
 						</FileConfiguration>
 						<FileConfiguration
-							Name="Release|Win32"
+							Name="Debug|x64"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -1408,7 +1408,7 @@
 							/>
 						</FileConfiguration>
 						<FileConfiguration
-							Name="Debug|x64"
+							Name="Release|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -1429,19 +1429,19 @@
 					Name="rdc_compiler"
 					>
 					<File
-						RelativePath=".\compiler\rdc\const.h"
+						RelativePath="..\compiler\rdc\const.h"
 						>
 					</File>
 					<File
-						RelativePath=".\compiler\rdc\defs.h"
+						RelativePath="..\compiler\rdc\defs.h"
 						>
 					</File>
 					<File
-						RelativePath=".\compiler\rdc\globals.h"
+						RelativePath="..\compiler\rdc\globals.h"
 						>
 					</File>
 					<File
-						RelativePath=".\compiler\rdc\rdc_compiler.cpp"
+						RelativePath="..\compiler\rdc\rdc_compiler.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -1452,7 +1452,7 @@
 							/>
 						</FileConfiguration>
 						<FileConfiguration
-							Name="Release|Win32"
+							Name="Debug|x64"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -1460,7 +1460,7 @@
 							/>
 						</FileConfiguration>
 						<FileConfiguration
-							Name="Debug|x64"
+							Name="Release|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -1477,11 +1477,11 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\compiler\rdc\rdc_specs.txt"
+						RelativePath="..\compiler\rdc\rdc_specs.txt"
 						>
 					</File>
 					<File
-						RelativePath=".\compiler\rdc\structs.h"
+						RelativePath="..\compiler\rdc\structs.h"
 						>
 					</File>
 				</Filter>
@@ -1489,7 +1489,7 @@
 					Name="asm_compiler"
 					>
 					<File
-						RelativePath=".\compiler\asm\asm_compiler.cpp"
+						RelativePath="..\compiler\asm\asm_compiler.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -1500,7 +1500,7 @@
 							/>
 						</FileConfiguration>
 						<FileConfiguration
-							Name="Release|Win32"
+							Name="Debug|x64"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -1508,7 +1508,7 @@
 							/>
 						</FileConfiguration>
 						<FileConfiguration
-							Name="Debug|x64"
+							Name="Release|Win32"
 							ExcludedFromBuild="true"
 							>
 							<Tool
@@ -1525,19 +1525,19 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath=".\compiler\asm\const.h"
+						RelativePath="..\compiler\asm\const.h"
 						>
 					</File>
 					<File
-						RelativePath=".\compiler\asm\defs.h"
+						RelativePath="..\compiler\asm\defs.h"
 						>
 					</File>
 					<File
-						RelativePath=".\compiler\asm\globals.h"
+						RelativePath="..\compiler\asm\globals.h"
 						>
 					</File>
 					<File
-						RelativePath=".\compiler\asm\structs.h"
+						RelativePath="..\compiler\asm\structs.h"
 						>
 					</File>
 				</Filter>
@@ -1545,7 +1545,7 @@
 					Name="common"
 					>
 					<File
-						RelativePath=".\compiler\common\compiler_common.h"
+						RelativePath="..\compiler\common\compiler_common.h"
 						>
 					</File>
 				</Filter>

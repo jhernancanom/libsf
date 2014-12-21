@@ -61,13 +61,17 @@
 	#if !defined(_MSC_VER)
 		// gcc
 		#define debug_break			asm("int $3")
+		#define debug_nop			asm("nop")
 	#else
 		// visual studio
 		#ifdef _M_IX86
 			#define debug_break		_asm int 3
+			#define debug_nop		_asm nop
 		#else
 			void debugBreak(void)	{	int i = 4;	}
+			void debugNop(void)		{	int i = 4;	}
 			#define debug_break		debugBreak();
+			#define debug_nop		debugNop();
 		#endif
 	#endif
 

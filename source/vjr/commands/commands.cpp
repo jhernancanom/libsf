@@ -4575,7 +4575,7 @@
 				if (compUse && !compUse->ll.next)
 				{
 					// They have specified USE by itself, closing the current work area
-					iDbf_close(iDbf_getWorkArea_current());
+					iDbf_close((s32)iDbf_getWorkArea_current());
 					return;
 
 				} else if (compIn && compUse->ll.next == compIn->ll.prev) {
@@ -4630,7 +4630,7 @@
 
 					} else if (iVariable_isTypeCharacter(varInXyz)) {
 						// They specified an alias name
-						lnWorkArea = iDbf_getWorkArea_byAlias(varInXyz->value.data_s8, varInXyz->value.length);
+						lnWorkArea = (s32)iDbf_getWorkArea_byAlias(varInXyz->value.data_s8, varInXyz->value.length);
 						if (lnWorkArea < 0)		{ iError_reportByNumber(_ERROR_ALIAS_NOT_FOUND, compIn); return; }
 
 					} else {
@@ -4641,20 +4641,20 @@
 
 			} else {
 				// Grab the current work area
-				lnWorkArea = iDbf_getWorkArea_current();
+				lnWorkArea = (s32)iDbf_getWorkArea_current();
 			}
 
 		
 		//////////
 		// See if the current work area already has a table open
 		//////
-			lnResult = iDbf_isWorkAreaUsed(lnWorkArea, llIsDbc);
+			lnResult = (s32)iDbf_isWorkAreaUsed(lnWorkArea, llIsDbc);
 
 			// If it's invalid, or is related to a DBC, find another one automatically
 			if (lnResult < 0 || llIsDbc)
 			{
 				// Find the lowest free work area
-				lnWorkArea	= iDbf_getWorkArea_lowestFree();
+				lnWorkArea	= (s32)iDbf_getWorkArea_lowestFree();
 				if (lnWorkArea < 0)		{ iError_reportByNumber(_ERROR_INVALID_WORK_AREA, compIn); goto clean_exit; }
 
 				// Force lower the flag indicating it's not used

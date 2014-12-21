@@ -12,11 +12,11 @@ OutDir                 := $(IntermediateDirectory)
 CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
-User                   :=rhodgin
+User                   :=Administrator
 Date                   :=12/20/14
-CodeLitePath           :="C:\Program Files (x86)\CodeLite"
-LinkerName             :=C:\MinGW\bin\g++.exe 
-SharedObjectLinkerName :=C:\MinGW\bin\g++.exe -shared -fPIC
+CodeLitePath           :="C:\Program Files\CodeLite"
+LinkerName             :=C:\MinGW-4.8.1\bin\g++.exe 
+SharedObjectLinkerName :=C:\MinGW-4.8.1\bin\g++.exe -shared -fPIC
 ObjectSuffix           :=.o
 DependSuffix           :=.o.d
 PreprocessSuffix       :=.i
@@ -36,7 +36,7 @@ ObjectsFileList        :="vjr.txt"
 PCHCompileFlags        :=
 MakeDirCommand         :=makedir
 RcCmpOptions           := 
-RcCompilerName         :=C:\MinGW\bin\windres.exe 
+RcCompilerName         :=C:\MinGW-4.8.1\bin\windres.exe 
 LinkOptions            :=  -g
 IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). $(IncludeSwitch)C:/libsf/source/vjr/vjr_mingw_gcc_codelite/include/ 
 IncludePCH             := 
@@ -49,19 +49,19 @@ LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)C:/libsf/sou
 ## Common variables
 ## AR, CXX, CC, AS, CXXFLAGS and CFLAGS can be overriden using an environment variables
 ##
-AR       := C:\MinGW\bin\ar.exe rcu
-CXX      := C:\MinGW\bin\g++.exe 
-CC       := C:\MinGW\bin\gcc.exe 
+AR       := C:\MinGW-4.8.1\bin\ar.exe rcu
+CXX      := C:\MinGW-4.8.1\bin\g++.exe 
+CC       := C:\MinGW-4.8.1\bin\gcc.exe 
 CXXFLAGS :=  -g -O0 -Wall -Wno-comment -Wno-multichar -Wno-narrowing -Wno-write-strings -Wno-format-contains-nul $(Preprocessors)
 CFLAGS   :=  -g -O0 -Wall $(Preprocessors)
 ASFLAGS  := 
-AS       := C:\MinGW\bin\as.exe 
+AS       := C:\MinGW-4.8.1\bin\as.exe 
 
 
 ##
 ## User defined environment variables
 ##
-CodeLiteDir:=C:\Program Files (x86)\CodeLite
+CodeLiteDir:=C:\Program Files\CodeLite
 UNIT_TEST_PP_SRC_DIR:=C:\UnitTest++-1.3
 Objects0=$(IntermediateDirectory)/vjr_vjr.cpp$(ObjectSuffix) $(IntermediateDirectory)/bmps_bmps.cpp$(ObjectSuffix) 
 

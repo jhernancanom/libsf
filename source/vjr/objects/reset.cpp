@@ -104,8 +104,8 @@
 			//////////
 			// Events
 			//////
-				*(u32*)&form->ev.general.activate		= (uptr)&iDefaultCallback_onActivate;
-				*(u32*)&form->ev.general.deactivate		= (uptr)&iDefaultCallback_onDeactivate;
+				*(uptr*)&form->ev.general.activate		= (uptr)&iDefaultCallback_onActivate;
+				*(uptr*)&form->ev.general.deactivate	= (uptr)&iDefaultCallback_onDeactivate;
 
 
 			//////////
@@ -261,8 +261,8 @@
 			//////////
 			// Events
 			//////
-				*(u32*)&subform->ev.general.activate		= (uptr)&iDefaultCallback_onActivate;
-				*(u32*)&subform->ev.general.deactivate		= (uptr)&iDefaultCallback_onDeactivate;
+				*(uptr*)&subform->ev.general.activate		= (uptr)&iDefaultCallback_onActivate;
+				*(uptr*)&subform->ev.general.deactivate		= (uptr)&iDefaultCallback_onDeactivate;
 
 
 			//////////

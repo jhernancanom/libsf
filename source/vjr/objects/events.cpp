@@ -56,48 +56,48 @@ void iEvents_resetToDefault(SEvents* ev)
 		//////////
 		// Reset general events
 		//////
-			*(u32*)&g->onLoad				= (uptr)&iDefaultCallback_onLoad;
-			*(u32*)&g->onInit				= (uptr)&iDefaultCallback_onInit;
-			*(u32*)&g->onCreated			= (uptr)&iDefaultCallback_onCreated;
-			*(u32*)&g->onResize				= (uptr)&iDefaultCallback_onResize;
-			*(u32*)&g->onMoved				= (uptr)&iDefaultCallback_onMoved;
-			*(u32*)&g->onRender				= (uptr)&iDefaultCallback_onRender;
-			*(u32*)&g->onPublish			= (uptr)&iDefaultCallback_onPublish;
-			*(u32*)&g->onQueryUnload		= (uptr)&iDefaultCallback_onQueryUnload;
-			*(u32*)&g->onDestroy			= (uptr)&iDefaultCallback_onDestroy;
-			*(u32*)&g->onUnload				= (uptr)&iDefaultCallback_onUnload;
-			*(u32*)&g->onGotFocus			= (uptr)&iDefaultCallback_onGotFocus;
-			*(u32*)&g->onLostFocus			= (uptr)&iDefaultCallback_onLostFocus;
-			*(u32*)&g->onAddObject			= (uptr)&iDefaultCallback_onAddObject;
-			*(u32*)&g->onAddProperty		= (uptr)&iDefaultCallback_onAddProperty;
-			*(u32*)&g->onError				= (uptr)&iDefaultCallback_onError;
-			*(u32*)&g->onScrolled			= (uptr)&iDefaultCallback_onScrolled;
-			*(u32*)&g->activate				= (uptr)&iDefaultCallback_onActivate;
-			*(u32*)&g->deactivate			= (uptr)&iDefaultCallback_onDeactivate;
-			*(u32*)&g->onSelect				= (uptr)&iDefaultCallback_onSelect;
-			*(u32*)&g->onDeselect			= (uptr)&iDefaultCallback_onDeselect;
-			*(u32*)&g->onInteractiveChange	= (uptr)&iDefaultCallback_onInteractiveChange;
-			*(u32*)&g->onProgrammaticChange	= (uptr)&iDefaultCallback_onProgrammaticChange;
+			*(uptr*)&g->onLoad				= (uptr)&iDefaultCallback_onLoad;
+			*(uptr*)&g->onInit				= (uptr)&iDefaultCallback_onInit;
+			*(uptr*)&g->onCreated			= (uptr)&iDefaultCallback_onCreated;
+			*(uptr*)&g->onResize				= (uptr)&iDefaultCallback_onResize;
+			*(uptr*)&g->onMoved				= (uptr)&iDefaultCallback_onMoved;
+			*(uptr*)&g->onRender				= (uptr)&iDefaultCallback_onRender;
+			*(uptr*)&g->onPublish			= (uptr)&iDefaultCallback_onPublish;
+			*(uptr*)&g->onQueryUnload		= (uptr)&iDefaultCallback_onQueryUnload;
+			*(uptr*)&g->onDestroy			= (uptr)&iDefaultCallback_onDestroy;
+			*(uptr*)&g->onUnload				= (uptr)&iDefaultCallback_onUnload;
+			*(uptr*)&g->onGotFocus			= (uptr)&iDefaultCallback_onGotFocus;
+			*(uptr*)&g->onLostFocus			= (uptr)&iDefaultCallback_onLostFocus;
+			*(uptr*)&g->onAddObject			= (uptr)&iDefaultCallback_onAddObject;
+			*(uptr*)&g->onAddProperty		= (uptr)&iDefaultCallback_onAddProperty;
+			*(uptr*)&g->onError				= (uptr)&iDefaultCallback_onError;
+			*(uptr*)&g->onScrolled			= (uptr)&iDefaultCallback_onScrolled;
+			*(uptr*)&g->activate				= (uptr)&iDefaultCallback_onActivate;
+			*(uptr*)&g->deactivate			= (uptr)&iDefaultCallback_onDeactivate;
+			*(uptr*)&g->onSelect				= (uptr)&iDefaultCallback_onSelect;
+			*(uptr*)&g->onDeselect			= (uptr)&iDefaultCallback_onDeselect;
+			*(uptr*)&g->onInteractiveChange	= (uptr)&iDefaultCallback_onInteractiveChange;
+			*(uptr*)&g->onProgrammaticChange	= (uptr)&iDefaultCallback_onProgrammaticChange;
 
 
 		//////////
 		// Reset mouse events
 		//////
-			*(u32*)&m->onMouseClickEx		= (uptr)&iDefaultCallback_onMouseClickEx;
-			*(u32*)&m->onMouseDblClickEx	= (uptr)&iDefaultCallback_onMouseDblClickEx;
-			*(u32*)&m->onMouseWheel			= (uptr)&iDefaultCallback_onMouseWheel;
-			*(u32*)&m->onMouseMove			= (uptr)&iDefaultCallback_onMouseMove;
-			*(u32*)&m->onMouseDown			= (uptr)&iDefaultCallback_onMouseDown;
-			*(u32*)&m->onMouseUp			= (uptr)&iDefaultCallback_onMouseUp;
-			*(u32*)&m->onMouseEnter			= (uptr)&iDefaultCallback_onMouseEnter;
-			*(u32*)&m->onMouseLeave			= (uptr)&iDefaultCallback_onMouseLeave;
-			*(u32*)&m->onMouseHover			= (uptr)&iDefaultCallback_onMouseHover;
+			*(uptr*)&m->onMouseClickEx		= (uptr)&iDefaultCallback_onMouseClickEx;
+			*(uptr*)&m->onMouseDblClickEx	= (uptr)&iDefaultCallback_onMouseDblClickEx;
+			*(uptr*)&m->onMouseWheel			= (uptr)&iDefaultCallback_onMouseWheel;
+			*(uptr*)&m->onMouseMove			= (uptr)&iDefaultCallback_onMouseMove;
+			*(uptr*)&m->onMouseDown			= (uptr)&iDefaultCallback_onMouseDown;
+			*(uptr*)&m->onMouseUp			= (uptr)&iDefaultCallback_onMouseUp;
+			*(uptr*)&m->onMouseEnter			= (uptr)&iDefaultCallback_onMouseEnter;
+			*(uptr*)&m->onMouseLeave			= (uptr)&iDefaultCallback_onMouseLeave;
+			*(uptr*)&m->onMouseHover			= (uptr)&iDefaultCallback_onMouseHover;
 
 
 		//////////
 		// Reset keyboard events
 		//////
-			*(u32*)&k->onKeyDown			= (uptr)&iDefaultCallback_onKeyDown;
-			*(u32*)&k->onKeyUp				= (uptr)&iDefaultCallback_onKeyUp;
+			*(uptr*)&k->onKeyDown			= (uptr)&iDefaultCallback_onKeyDown;
+			*(uptr*)&k->onKeyUp				= (uptr)&iDefaultCallback_onKeyUp;
 	}
 }

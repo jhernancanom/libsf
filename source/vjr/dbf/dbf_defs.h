@@ -102,47 +102,47 @@ struct SFieldRecord2;
 
 
 	// DBF functions
-	u32 				iDbf_open										(s8* table, s8* alias);
-	u32 				iDbf_cacheAllRowData							(u32 tnWorkArea);
-	u32 				iDbf_close										(u32 tnWorkArea);
-	u32 				iDbf_hasCdx										(u32 tnWorkArea);
-	s32					iDbf_isWorkAreaUsed								(u32 tnWorkArea, bool& tlIsDbc);
-	s32					iDbf_getWorkArea_current						(void);
-	s32					iDbf_getWorkArea_lowestFree						(void);
-	s32					iDbf_getWorkArea_highestFree					(void);
-	s32					iDbf_getWorkArea_byAlias						(s8* alias, u32 aliasLength);
+	uptr				iDbf_open										(s8* table, s8* alias);
+	uptr				iDbf_cacheAllRowData							(u32 tnWorkArea);
+	uptr				iDbf_close										(u32 tnWorkArea);
+	uptr				iDbf_hasCdx										(u32 tnWorkArea);
+	sptr				iDbf_isWorkAreaUsed								(u32 tnWorkArea, bool& tlIsDbc);
+	sptr				iDbf_getWorkArea_current						(void);
+	sptr				iDbf_getWorkArea_lowestFree						(void);
+	sptr				iDbf_getWorkArea_highestFree					(void);
+	sptr				iDbf_getWorkArea_byAlias						(s8* alias, u32 aliasLength);
 	SVariable*			iDbf_getAlias_fromPathname						(s8* tcTablePathname, u32 tnTablePathnameLenth);
 
-	s32 				iDbf_gotoRecord									(u32 tnWorkArea, s32 recordNumber);
-	u32					iDbf_writeChanges								(u32 tnWorkArea);
+	sptr				iDbf_gotoRecord									(u32 tnWorkArea, s32 recordNumber);
+	uptr				iDbf_writeChanges								(u32 tnWorkArea);
 
-	u32					iDbf_getFieldCount								(u32 tnWorkArea);
-	u32					iDbf_getReccount								(u32 tnWorkArea);
-	u32					iDbf_getField_number1							(u32 tnWorkArea, s8* fieldName);
-	u32					iDbf_getField_name								(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iDbf_getField_type								(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iDbf_getField_type_verbose						(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iDbf_getField_type_extended						(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iDbf_getField_length							(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iDbf_getIndex_length							(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iDbf_getField_decimals							(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iDbf_getField_isBinary							(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iDbf_getField_allowNulls						(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iDbf_getNull_flag								(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	uptr				iDbf_getFieldCount								(u32 tnWorkArea);
+	uptr				iDbf_getReccount								(u32 tnWorkArea);
+	uptr				iDbf_getField_number1							(u32 tnWorkArea, s8* fieldName);
+	uptr				iDbf_getField_name								(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	uptr				iDbf_getField_type								(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	uptr				iDbf_getField_type_verbose						(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	uptr				iDbf_getField_type_extended						(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	uptr				iDbf_getField_length							(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	uptr				iDbf_getIndex_length							(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	uptr				iDbf_getField_decimals							(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	uptr				iDbf_getField_isBinary							(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	uptr				iDbf_getField_allowNulls						(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	uptr				iDbf_getNull_flag								(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
 	bool				iDbf_getNull_offsetAndMask						(u32 tnWorkArea, u32 fieldNumber, u32* nullOffset, u8* nullMask);
-	u32					iDbf_getField_autoinc_next						(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iDbf_getField_autoinc_step						(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iDbf_getField_data								(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	u32					iiDbf_getField_data2							(SWorkArea* wa, u32 fieldNumber, s8* dest, u32 destLength, bool tlRetrieveAsIndexKey);
-	u32					iDbf_getField_dataOffset						(u32 tnWorkArea, u32 fieldNumber);
-	u32					iDbf_getIndexFixupOp							(u32 tnWorkArea, u32 fieldNumber);
-	u32 				iDbf_setField_data								(u32 tnWorkArea, s32 fieldNumber, s8* dest, u32 destLength);
-	u32 				iDbf_getField_validateContents					(u32 tnWorkArea, u32 fieldNumber, s8* src, u32 srcLength);
+	uptr				iDbf_getField_autoinc_next						(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	uptr				iDbf_getField_autoinc_step						(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	uptr				iDbf_getField_data								(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	uptr				iiDbf_getField_data2							(SWorkArea* wa, u32 fieldNumber, s8* dest, u32 destLength, bool tlRetrieveAsIndexKey);
+	uptr				iDbf_getField_dataOffset						(u32 tnWorkArea, u32 fieldNumber);
+	uptr				iDbf_getIndexFixupOp							(u32 tnWorkArea, u32 fieldNumber);
+	uptr				iDbf_setField_data								(u32 tnWorkArea, s32 fieldNumber, s8* dest, u32 destLength);
+	uptr				iDbf_getField_validateContents					(u32 tnWorkArea, u32 fieldNumber, s8* src, u32 srcLength);
 
 	SFieldRecord1*		iDbf_getField_number1							(SWorkArea* wa, u32 fieldNumber);
 	SFieldRecord2*		iDbf_getField_number2							(SWorkArea* wa, u32 fieldNumber);
 	u8					iDbf_getField_type								(SWorkArea* wa, s8* keyExpression, bool* swapEndians, bool* needsSignBitToggled);
-	u32					iDbf_getField_name								(s8* expression, s8* foundFieldName);
+	uptr				iDbf_getField_name								(s8* expression, s8* foundFieldName);
 
 	// Container information
 	void				iiDbc_lookupTableField							(SWorkArea* wa, bool* tlIsValid);
@@ -155,7 +155,7 @@ struct SFieldRecord2;
 	bool				iiDbf_forClause_subitems_parse					(SCdxHeader* head, SForClause* tsFor);
 	SForSubItem* 		iiDbf_forClause_subitems_appendItem				(SForClause* tsFor);
 	SForOp* 			iiDbf_forClause_ops_appendItem					(SForClause* tsFor);
-	u32					iiDbf_forClause_temp_appendConstant				(SForClause* tsFor, s8* tcData, u32 tnDataLength);
+	uptr				iiDbf_forClause_temp_appendConstant				(SForClause* tsFor, s8* tcData, u32 tnDataLength);
 
 
 //////////

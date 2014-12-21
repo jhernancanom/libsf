@@ -39,8 +39,10 @@
 	// Used for pointer sizes that mate up with pointers, but are actually integers
 	#ifdef __i386__
 		#define uptr uint32_t
+		#define sptr int32_t
 	#else
 		#define uptr uint64_t
+		#define sptr int64_t
 	#endif
 	#define u64 uint64_t
 	#define u32 uint32_t
@@ -54,10 +56,12 @@
 
 #else
 	// Used for pointer sizes that mate up with pointers, but are actually integers
-	#ifdef _M_IX86
+	#ifndef _M_X64
 		#define uptr unsigned int
+		#define sptr int
 	#else
 		#define uptr unsigned __int64
+		#define sptr __int64
 	#endif
 	#define u64 unsigned __int64
 	#define u32 unsigned int

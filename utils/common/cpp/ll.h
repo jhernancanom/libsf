@@ -65,7 +65,7 @@ struct SLine;
 	{
 		union
 		{
-			u32		_func;
+			uptr	_func;
 			bool	(*funcBool)	(SLLCallback* cb);
 			void	(*funcVoid)	(SLLCallback* cb);
 			//////
@@ -78,8 +78,8 @@ struct SLine;
 		// Data items for this callback
 		SLL*	node;
 		union {
-			u32		extra;
-			u32		extra1;
+			uptr	extra;
+			uptr	extra1;
 		};
 		u32		extra2;
 	};

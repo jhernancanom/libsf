@@ -58,6 +58,8 @@
     <File Name="../vjr_structs.h"/>
     <File Name="../vjr_structs0.h"/>
     <File Name="../sound/sound.h"/>
+    <File Name="../../../utils/common/cpp/common_types.h"/>
+    <File Name="../vjr_compile_time_settings.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="other">
     <File Name="../bitmaps.cpp" ExcludeProjConfig="Debug;Debug64;Release"/>

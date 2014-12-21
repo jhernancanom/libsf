@@ -830,6 +830,7 @@ struct SBasePropertyInit;
 
 		// An amalgam of default values
 		union {
+			uptr		_ptr;
 			u32			_u32;
 			f64			_f64;
 			f32			_f32;

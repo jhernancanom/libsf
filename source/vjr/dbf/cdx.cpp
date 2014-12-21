@@ -938,7 +938,7 @@
 						//////////
 						// Indicate the type it is
 						//////
-							lnNodeNumber = ((uptr)node - (uptr)wa->cdx_root - sizeof(SCdxHeader)) / 512;
+							lnNodeNumber = (u32)(((uptr)node - (uptr)wa->cdx_root - sizeof(SCdxHeader)) / 512);
 							switch (iiXdx_getNodeType(node->type))
 							{
 								case 0:		// Index node
@@ -1524,7 +1524,7 @@ close_and_quit:
 					//////////
 					// Find out how long this key is
 					//////
-						lnKeyFieldNameLength = iDbf_getField_name(keyStart, &fieldName[0]);
+						lnKeyFieldNameLength = (s32)iDbf_getField_name(keyStart, &fieldName[0]);
 						if (lnKeyFieldNameLength < 1)
 							goto failed_parsing;
 
@@ -1532,7 +1532,7 @@ close_and_quit:
 					//////////
 					// Locate this key in the current table
 					//////
-						lnFieldNumber = iDbf_getField_number1(wa->thisWorkArea, fieldName);
+						lnFieldNumber = (s32)iDbf_getField_number1(wa->thisWorkArea, fieldName);
 						if (lnFieldNumber <= 0)
 							goto failed_parsing;
 
@@ -1540,8 +1540,8 @@ close_and_quit:
 					//////////
 					// Grab its length
 					//////
-						lnFieldLength = iDbf_getField_length(wa->thisWorkArea, lnFieldNumber, NULL, 0);
-						lnIndexLength = iDbf_getIndex_length(wa->thisWorkArea, lnFieldNumber, NULL, 0);
+						lnFieldLength = (s32)iDbf_getField_length(wa->thisWorkArea, lnFieldNumber, NULL, 0);
+						lnIndexLength = (s32)iDbf_getIndex_length(wa->thisWorkArea, lnFieldNumber, NULL, 0);
 
 
 					//////////
@@ -1559,11 +1559,11 @@ close_and_quit:
 					//////////
 					// Append the contents of this key to the op
 					//////
-						lko[lnLkoNum].offsetRow		= iDbf_getField_dataOffset(wa->thisWorkArea, lnFieldNumber);
+						lko[lnLkoNum].offsetRow		= (s32)iDbf_getField_dataOffset(wa->thisWorkArea, lnFieldNumber);
 						lko[lnLkoNum].offsetKey		= lnKeyLength;
 						lko[lnLkoNum].length		= lnIndexLength;
 						lko[lnLkoNum].fieldLength	= lnFieldLength;
-						lko[lnLkoNum].indexFixup	= iDbf_getIndexFixupOp(wa->thisWorkArea, lnFieldNumber) | lnFixup;
+						lko[lnLkoNum].indexFixup	= (s32)iDbf_getIndexFixupOp(wa->thisWorkArea, lnFieldNumber) | lnFixup;
 						llIsValid					= true;
 
 				} else {
@@ -1667,7 +1667,7 @@ failed_parsing:
 			//////////
 			// Find out how long this key is
 			//////
-				lnKeyFieldNameLength = iDbf_getField_name(keyStart, &fieldName[0]);
+				lnKeyFieldNameLength = (s32)iDbf_getField_name(keyStart, &fieldName[0]);
 				if (lnKeyFieldNameLength < 1)
 					return(-1);
 
@@ -1675,12 +1675,12 @@ failed_parsing:
 			//////////
 			// Locate this key in the current table
 			//////
-				lnFieldNumber = iDbf_getField_number1(wa->thisWorkArea, fieldName);
+				lnFieldNumber = (s32)iDbf_getField_number1(wa->thisWorkArea, fieldName);
 				if (lnFieldNumber <= 0)
 					return(-2);
 
 				// Grab its length
-				lnFieldLength = iDbf_getField_length(wa->thisWorkArea, lnFieldNumber, NULL, 0);
+				lnFieldLength = (s32)iDbf_getField_length(wa->thisWorkArea, lnFieldNumber, NULL, 0);
 
 
 			//////////
@@ -2778,7 +2778,7 @@ debug_break;
 					tagRoot->keyLength		= head->keyLength;
 					tagRoot->fillChar		= iDbf_getField_type(wa, &head->keyExpression[0], &tagRoot->swapEndians, &tagRoot->needsSignBitToggled);
 					tagRoot->highestNode	= sizeof(SCdxHeader);	// Always the node after head
-					tagRoot->leftmostNode	= ((uptr)node - (uptr)head);
+					tagRoot->leftmostNode	= (u32)((uptr)node - (uptr)head);
 
 					// Indicate success
 					return(true);
@@ -2824,7 +2824,7 @@ debug_break;
 					tagRoot->keyLength		= head->keyLength;
 					tagRoot->fillChar		= iDbf_getField_type(wa, &head->keyExpression[0], &tagRoot->swapEndians, &tagRoot->needsSignBitToggled);
 					tagRoot->highestNode	= sizeof(SIdxHeader);		// Always the node after head
-					tagRoot->leftmostNode	= ((uptr)node - (uptr)head);
+					tagRoot->leftmostNode	= (u32)((uptr)node - (uptr)head);
 
 					// Indicate success
 					return(true);
@@ -2941,7 +2941,7 @@ debug_break;
 									//////////
 									// We need to do a lookup on the fieldname to make sure it exists
 									//////
-										iResetThenCopyString(fieldName, sizeof(fieldName), lfsi->start, lfsi->length);
+										iResetThenCopyString(fieldName, (s32)sizeof(fieldName), lfsi->start, (s32)lfsi->length);
 										lnFieldnum = (s32)iDbf_getField_number1(wa->thisWorkArea, fieldName);
 										if (lnFieldnum < 0)
 										{
@@ -3543,7 +3543,7 @@ debug_break;
 			if (lnNodeType == 2 || lnNodeType == 3)
 			{
 				// We're there
-				return((uptr)node - (uptr)head);
+				return((u32)((uptr)node - (uptr)head));
 
 			} else if (lnNodeType == 0 || lnNodeType == 1) {
 				// Index node or root node, we need to descend into the first entry

@@ -133,7 +133,7 @@
 //	or -3 if DBC is invalid
 //
 /////
-	u32 iDbf_open(s8 *table, s8 *alias)
+	uptr iDbf_open(s8 *table, s8 *alias)
 	{
 		u32				lnI, lnJ, lnK, lShareFlag, numread, lStructure_size;
 		bool			llDbcIsValid;
@@ -459,7 +459,7 @@
 // Note:  If the row has changed content, it will be lost in this operation.  Must flush first.
 //
 //////
-	u32 iDbf_cacheAllRowData(u32 tnWorkArea)
+	uptr iDbf_cacheAllRowData(u32 tnWorkArea)
 	{
 		u32 lnCacheSize, lnOriginalFilePosition, lnNumread;
 
@@ -525,7 +525,7 @@
 //	slot number used to access the entry they created, or -1 if error
 //
 /////
-	u32 iDbf_close(u32 tnWorkArea)
+	uptr iDbf_close(u32 tnWorkArea)
 	{
 		u32		lnI;
 		bool	llFoundReference;
@@ -611,7 +611,7 @@
 // a sanity check to see if the CDX is actually valid or not.
 //
 //////
-	u32 iDbf_hasCdx(u32 tnWorkArea)
+	uptr iDbf_hasCdx(u32 tnWorkArea)
 	{
 		SWorkArea*			wa;
 		WIN32_FIND_DATA		ffd;
@@ -653,7 +653,7 @@
 // Called to see if the work area is used
 //
 //////
-	s32 iDbf_isWorkAreaUsed(u32 tnWorkArea, bool& tlIsDbc)
+	sptr iDbf_isWorkAreaUsed(u32 tnWorkArea, bool& tlIsDbc)
 	{
 
 
@@ -679,12 +679,12 @@
 // Called to obtain a work area.
 //
 //////
-	s32 iDbf_getWorkArea_current(void)
+	sptr iDbf_getWorkArea_current(void)
 	{
 		return(gnDbf_currentWorkArea);
 	}
 
-	s32 iDbf_getWorkArea_lowestFree(void)
+	sptr iDbf_getWorkArea_lowestFree(void)
 	{
 		s32 lnI;
 
@@ -701,7 +701,7 @@
 		return(-1);
 	}
 
-	s32 iDbf_getWorkArea_highestFree(void)
+	sptr iDbf_getWorkArea_highestFree(void)
 	{
 		s32 lnI;
 
@@ -718,7 +718,7 @@
 		return(lnI);
 	}
 
-	s32 iDbf_getWorkArea_byAlias(s8* alias, u32 aliasLength)
+	sptr iDbf_getWorkArea_byAlias(s8* alias, u32 aliasLength)
 	{
 		s32 lnI;
 
@@ -753,7 +753,7 @@
 // Called to goto a record and read in the contents.
 //
 //////
-	s32 iDbf_gotoRecord(u32 tnWorkArea, s32 recordNumber)
+	sptr iDbf_gotoRecord(u32 tnWorkArea, s32 recordNumber)
 	{
 		u32 lnNumread;
 
@@ -805,7 +805,7 @@
 // Called to write any changes to the fields to disk
 //
 //////
-	u32 iDbf_writeChanges(u32 tnWorkArea)
+	uptr iDbf_writeChanges(u32 tnWorkArea)
 	{
 		u32 lnNumread;
 
@@ -860,7 +860,7 @@
 //				N = length of name
 //
 //////
-	u32 iDbf_getFieldCount(u32 tnWorkArea)
+	uptr iDbf_getFieldCount(u32 tnWorkArea)
 	{
 		// Check for errors
 		if (tnWorkArea >= _MAX_DBF_SLOTS)
@@ -872,7 +872,7 @@
 		return(gsArea[tnWorkArea].fieldCount);
 	}
 
-	u32 iDbf_getReccount(u32 tnWorkArea)
+	uptr iDbf_getReccount(u32 tnWorkArea)
 	{
 		// Check for errors
 		if (tnWorkArea >= _MAX_DBF_SLOTS)
@@ -885,7 +885,7 @@
 	}
 
 	// Returns the field number by field name
-	u32 iDbf_getField_number1(u32 tnWorkArea, s8* fieldName)
+	uptr iDbf_getField_number1(u32 tnWorkArea, s8* fieldName)
 	{
 		s32				lnI, lnLength;
 		SFieldRecord2*	lfr2Ptr;
@@ -914,7 +914,7 @@
 	}
 
 	// Returns 10-digit field name
-	u32 iDbf_getField_name(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getField_name(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		u32				lnI;
 		SFieldRecord2*	lfr2Ptr;
@@ -952,7 +952,7 @@
 	//		BDouble		FFloat		GGeneral	IInteger
 	//		LLogical		MMemo		NNumeric	PPicture
 	//		Q-Varbinary		V-Varchar (binary)
-	u32 iDbf_getField_type(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getField_type(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		// Check for errors
 		if (tnWorkArea >= _MAX_DBF_SLOTS)
@@ -977,7 +977,7 @@
 		return(-1);
 	}
 
-	u32 iDbf_getField_type_verbose(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getField_type_verbose(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		s8* name;
 		u32 length;
@@ -1053,7 +1053,7 @@
 	// Returns extended field type, such as:
 	//		C(5)
 	//		N(10,2)
-	u32 iDbf_getField_type_extended(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getField_type_extended(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		u32 length;
 		s8 buffer[32];
@@ -1104,7 +1104,7 @@
 	}
 
 	// Returns field length, "10" as in "N(10,2)"
-	u32 iDbf_getField_length(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getField_length(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		u32 length;
 		s8 buffer[32];
@@ -1139,7 +1139,7 @@
 	}
 
 	// Returns the index override length
-	u32 iDbf_getIndex_length(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getIndex_length(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		u32 length;
 		s8 buffer[32];
@@ -1176,7 +1176,7 @@
 	}
 
 	// Returns decimals, "2" as in "N(10,2)"
-	u32 iDbf_getField_decimals(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getField_decimals(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		u32 length;
 		s8 buffer[32];
@@ -1211,7 +1211,7 @@
 	}
 
 	// Returns "Y" or "N" indicating whether or not the field is binary
-	u32 iDbf_getField_isBinary(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getField_isBinary(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		// Check for errors
 		if (tnWorkArea >= _MAX_DBF_SLOTS)
@@ -1230,7 +1230,7 @@
 	}
 
 	// Returns "Y" or "N" indicating whether or not the field can store NULLs
-	u32 iDbf_getField_allowNulls(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getField_allowNulls(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		// Check for errors
 		if (tnWorkArea >= _MAX_DBF_SLOTS)
@@ -1251,7 +1251,7 @@
 	}
 
 	// Returns "Y", "N", or "X" (if invalid) indicating whether or not the field is NULL
-	u32 iDbf_getNull_flag(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getNull_flag(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		u32				lnNull, lnOffset;
 		u8				lnBitMask;
@@ -1361,7 +1361,7 @@
 	}
 
 	// Returns a value if the field is auto-incrementing, blank otherwise
-	u32 iDbf_getField_autoinc_next(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getField_autoinc_next(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		u32 length;
 		s8 buffer[32];
@@ -1394,7 +1394,7 @@
 	}
 
 	// Returns a value if the field is auto-incrementing, blank otherwise
-	u32 iDbf_getField_autoinc_step(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getField_autoinc_step(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		u32 length;
 		s8 buffer[32];
@@ -1426,7 +1426,7 @@
 		return(-1);
 	}
 
-	u32 iDbf_getField_data(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getField_data(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
 	{
 		// Check for errors
 		if (tnWorkArea >= _MAX_DBF_SLOTS)
@@ -1455,7 +1455,7 @@
 		return(-1);
 	}
 
-	u32 iiDbf_getField_data2(SWorkArea* wa, u32 fieldNumber, s8* dest, u32 destLength, bool tlRetrieveAsIndexKey)
+	uptr iiDbf_getField_data2(SWorkArea* wa, u32 fieldNumber, s8* dest, u32 destLength, bool tlRetrieveAsIndexKey)
 	{
 		s32				lnI, lnLength;
 		SFieldRecord1*	lfrp;
@@ -1614,7 +1614,7 @@
 		return(-1);
 	}
 
-	u32 iDbf_getField_dataOffset(u32 tnWorkArea, u32 fieldNumber)
+	uptr iDbf_getField_dataOffset(u32 tnWorkArea, u32 fieldNumber)
 	{
 		// Check for errors
 		if (tnWorkArea >= _MAX_DBF_SLOTS)
@@ -1632,7 +1632,7 @@
 		return(-1);
 	}
 
-	u32 iDbf_getIndexFixupOp(u32 tnWorkArea, u32 fieldNumber)
+	uptr iDbf_getIndexFixupOp(u32 tnWorkArea, u32 fieldNumber)
 	{
 		// Check for errors
 		if (tnWorkArea >= _MAX_DBF_SLOTS)
@@ -1658,7 +1658,7 @@
 // Updates data in the table
 //
 //////
-	u32 iDbf_setField_data(u32 tnWorkArea, s32 fieldNumber, s8* src, u32 srcLength)
+	uptr iDbf_setField_data(u32 tnWorkArea, s32 fieldNumber, s8* src, u32 srcLength)
 	{
 		SFieldRecord1* lfrp;
 
@@ -1721,7 +1721,7 @@
 // Makes sure the field contents contain only what they should.
 //
 //////
-	u32 iDbf_getField_validateContents(u32 tnWorkArea, u32 fieldNumber, s8* src, u32 srcLength)
+	uptr iDbf_getField_validateContents(u32 tnWorkArea, u32 fieldNumber, s8* src, u32 srcLength)
 	{
 		u32				lnI, lnErrors;
 		bool			llAllowAllStd;
@@ -1979,7 +1979,7 @@
 // at plus signs, parenthesis, etc.
 //
 //////
-	u32 iDbf_getField_name(s8* sourceExpression, s8* foundFieldName)
+	uptr iDbf_getField_name(s8* sourceExpression, s8* foundFieldName)
 	{
 		u32		lnLength;
 		s8		c;
@@ -2091,7 +2091,7 @@
 				}
 
 				// It is not already open, so we need to open it
-				lnDbcHandle = iDbf_open(dbcName, "dbc");
+				lnDbcHandle = (u32)iDbf_open(dbcName, "dbc");
 				if ((s32)lnDbcHandle >= 0)
 				{
 					// We're good
@@ -2773,7 +2773,7 @@
 // Called to append some index data to the SForClause (used for constant comparisons)
 //
 //////
-	u32 iiDbf_forClause_temp_appendConstant(SForClause* tsFor, s8* tcData, u32 tnDataLength)
+	uptr iiDbf_forClause_temp_appendConstant(SForClause* tsFor, s8* tcData, u32 tnDataLength)
 	{
 		s32			lnLastAllocated;
 		SForTemp*	lft;

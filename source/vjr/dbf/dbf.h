@@ -474,15 +474,15 @@
 		{
 			// Row/temp data for left-hand thing
 			union {
-				u32			tempIndexL;				// Index into the temporary data
-				u32			offsetL;				// Offset into the row data
+				uptr		tempIndexL;				// Index into the temporary data
+				uptr		offsetL;				// Offset into the row data
 			};
-			u32				lengthL;				// Length of the thing to compare (typically also always the right-hand length as well if used)
+			uptr			lengthL;				// Length of the thing to compare (typically also always the right-hand length as well if used)
 
 			// Row/temp data for right-hand thing
 			union {
-				u32			tempIndexR;				// Index into the temporary data
-				u32			offsetR;				// Offset into the row data
+				uptr		tempIndexR;				// Index into the temporary data
+				uptr		offsetR;				// Offset into the row data
 			};
 
 			// See _FOR_CLAUSE_OPS_* constants in dbf_defs.h
@@ -493,7 +493,7 @@
 		struct SForTemp
 		{
 			s8*				data;					// Data for this temporary
-			u32				length;					// Length of the data
+			uptr			length;					// Length of the data
 		};
 
 		// For multiple entries in the FOR clause
@@ -501,7 +501,7 @@
 		{
 			s8*				start;					// Pointer to the starting item
 			s8*				end;					// Where it ends
-			u32				length;					// Length
+			uptr			length;					// Length
 
 			u32				type;					// Known type
 		};

@@ -188,8 +188,7 @@
 
 						} else if (comp->iCode == _ICODE_DOT_VARIABLE) {
 							// It's something like thisForm.
-							//_asm nop;
-							int i = 4;
+							debug_nop;
 
 						} else {
 							// Not a currently supported command
