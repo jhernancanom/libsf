@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/cdx.cpp
+// /libsf/source/vjr/source/dbf/cdx.cpp
 //
 //////
 // Version 0.55
@@ -13,12 +13,44 @@
 //     Nov.02.2014 - Initial creation
 //////
 //
-// This software is released as Liberty Software under a Repeat License, as governed
+// This document is released as Liberty Software under a Repeat License, as governed
 // by the Public Benefit License v1.0 or later (PBL).
 //
-// You are free to use, copy, modify and share this software.  However, it can only
-// be released under the PBL version indicated, and every project must include a copy
-// of the pbl.txt document for its version as is at http://www.libsf.org/licenses/.
+// The PBL is public domain license with a caveat:  self accountability unto God.
+// You are free to use, copy, modify and share this software for any purpose, however,
+// it is the desire of those working on this project that the software remain open.
+// It is our request that you maintain it that way.  This is not a legal request unto
+// our court systems, but rather a personal matter between you and God.  Our talents
+// were received from God, and given to you through this forum.  And it is our wish
+// that those talents reach out to as many as possible in a form allowing them to wield
+// this content for their own betterment, as you are now considering doing.  And whereas
+// we could've forced the issue through something like a copyleft-protected release, the
+// truth is we are all giving an account of our lives unto God continually by the daily
+// choices we make.  And here again is another case where you get to demonstrate your
+// character unto God, and unto your fellow man.
+//
+// Jesus came to this Earth to set the captives free, to save men's eternal souls from
+// the punishment demanded by our sin.  Each one of us is given the opportunity to
+// receive Him in this world and be saved.  Whether we choose to receive Him, and follow
+// Him, and purpose our lives on the goals He has for each of us (all of which are
+// beneficial for all involved), is one way we reveal our character continually.  God
+// sees straight through to the heart, bypassing all of the words, all of the facades.
+// He is our Creator, and He knows who we are truly.
+//
+// Jesus is called "Christ" because He saves men from the eternal flames of Hell, the
+// just punishment of rebellion against God (rebellion against truth) by eternal beings,
+// which each of us are.
+//
+// Do not let His free gift escape you because of some desire to shortcut what is right
+// in your life. Instead, do what is right, and do it because He is who He is, and what
+// He has done to save us from such a fate.  Demonstrate to Him, to me, and to all of
+// mankind, and to all of the Heavenly hosts, exactly who you are on the inside.  Receive
+// Jesus Christ into your heart, learn of Him, of how He came here to guide us into that
+// which is of His Kingdom and will be forever hereafter we leave this world.  Do this,
+// and live.
+//
+// Every project released by Liberty Software Foundation will include a copy of the
+// pbl.txt document, which can be found at http://www.libsf.org/licenses/.
 //
 // For additional information about this project, or to view the license, see:
 //
@@ -405,7 +437,7 @@
 	// Note:  Data is pulled from the data loaded into dbf_set_field_data() with negative field
 	//        numbers.  It automatically constructs the appropriate key on the fly.
 	//////
-	u32 cdx_find_key(u32 tnDbfHandle, s32 tnTagIndex)
+	u32 cdx_find_key(u32 tnDbfHandle, s32 tnTagIndex, s32 tnKeyLength)
 	{
 		u32				lnResult, lnKeyOpCount;
 		SForClause*		lsFor;
@@ -460,7 +492,7 @@
 		//////////
 		// Find the key
 		//////
-			return(iiCdx_findKey(wa, &tagRoot, keyBuffer));
+			return(iiCdx_findKey(wa, &tagRoot, keyBuffer, keyLength));
 	}
 
 
@@ -670,21 +702,21 @@
 				// Get and indicate the type it is
 				//////
 					node = iCdx_getCompactIdxNode_byNumber(head, lnNode);
-					switch (iiXdx_getNodeType(node->type))
+					switch (node->type)
 					{
-						case 0:		// Index node
+						case _CDX_NODE_INDEX:		// Index node
 							sprintf(buffer, "index\0");
 							break;
 
-						case 1:		// Root node
+						case _CDX_NODE_ROOT:		// Root node
 							sprintf(buffer, "root\0");
 							break;
 
-						case 2:		// Leaf node
+						case _CDX_NODE_LEAF:		// Leaf node
 							sprintf(buffer, "leaf\0");
 							break;
 
-						case 3:		// Root leaf node
+						case _CDX_NODE_ROOT_LEAF:	// Root leaf node
 							sprintf(buffer, "root+leaf\0");
 							break;
 
@@ -713,7 +745,7 @@
 								buffer[lnI] = key.key[lnI];
 
 							// Construct the line
-							if (iiXdx_getNodeType(node->type) == 2 || iiXdx_getNodeType(node->type) == 3)
+							if (iiGetIndexNodeType(node->type) == 2 || iiGetIndexNodeType(node->type) == 3)
 							{
 								// It's a leaf node
 								sprintf(output, "  - Node key number %u: [%s], Record number: %u\r\n\0", lnKeyNumber, buffer, key.record);
@@ -795,19 +827,19 @@
 					node = iCdx_getStandardIdxNode_byNumber(head, lnNode);
 					switch (node->type)
 					{
-						case 0:		// Index node
+						case _CDX_NODE_INDEX:		// Index node
 							sprintf(buffer, "index\0");
 							break;
 
-						case 1:		// Root node
+						case _CDX_NODE_ROOT:		// Root node
 							sprintf(buffer, "root\0");
 							break;
 
-						case 2:		// Leaf node
+						case _CDX_NODE_LEAF:		// Leaf node
 							sprintf(buffer, "leaf\0");
 							break;
 
-						case 3:		// Root leaf node
+						case _CDX_NODE_ROOT_LEAF:	// Root leaf node
 							sprintf(buffer, "root+leaf\0");
 							break;
 
@@ -939,12 +971,12 @@
 						// Indicate the type it is
 						//////
 							lnNodeNumber = (u32)(((uptr)node - (uptr)wa->cdx_root - sizeof(SCdxHeader)) / 512);
-							switch (iiXdx_getNodeType(node->type))
+							switch (node->type)
 							{
-								case 0:		// Index node
-								case 1:		// Root node
-								case 2:		// Leaf node
-								case 3:		// Root leaf node
+								case _CDX_NODE_INDEX:		// Index node
+								case _CDX_NODE_ROOT:		// Root node
+								case _CDX_NODE_LEAF:		// Leaf node
+								case _CDX_NODE_ROOT_LEAF:	// Root leaf node
 									// These are all acceptable
 									break;
 
@@ -985,7 +1017,7 @@
 											if (lnKeyNumber != 0)
 											{
 												// Based on sort order, we must either be >= or <= 
-												if (tagRoot.isDescending)
+												if (tagRoot.indexIsDesc)
 												{
 													// Sort order is descending
 													if (memcmp(&key.key, &keyLast.key, key.keyLength) > 0)
@@ -2190,27 +2222,39 @@ failed_parsing:
 // If not found, it returns 0.
 //
 //////
-	u32 iiCdx_findKey(SWorkArea* wa, STagRoot* tagRoot, s8* keyBuffer)
+	u32 iiCdx_findKey(SWorkArea* wa, STagRoot* tagRoot, s8* keyBuffer, s32 tnKeyLength)
 	{
+		s32				lnResult;
 		u32				lnKeyNumber;
-		bool			llFoundCandidateNode;
+		bool			llFirstDescent, llOkayToMoveLeft, llLastNode;
 		SCdxNode*		node;
 		SCdxKey			key;
 
 
-// Incomplete algorithm.
-// Simulate not found.
-return 0;
+//////////
+// Incomplete algorithm, so simulate not found for now
+// return 0;
+//////
+		//////////
+		// Initialize
+		//////
+			llFirstDescent		= true;
+			llOkayToMoveLeft	= false;
+			llLastNode			= false;
+
+
 		//////////
 		// Find the node it relates to
 		//////
-			node = iCdx_getCompactIdxNode_byOffset(wa->cdx_root, tagRoot->highestNode);
+			node		= iCdx_getCompactIdxNode_byOffset(wa->cdx_root, tagRoot->highestNode);
+			tnKeyLength	= max(min(tnKeyLength, tagRoot->keyLength), 1);
 			while (node)
 			{
-				switch (iiXdx_getNodeType(node->type))
+				switch (iiGetIndexNodeType(node->type))
 				{
-					case 0:	// Index node, pointing to other sub-indexes
-					case 1: // Root node, pointing to other sub-indexes
+					case _CDX_NODE_INDEX:	// Index node, pointing to other sub-indexes
+					case _CDX_NODE_ROOT:	// Root node, pointing to other sub-indexes
+
 						// Index node, see where we fall
 						for (lnKeyNumber = 0; lnKeyNumber < node->keyCount; lnKeyNumber++)
 						{
@@ -2218,26 +2262,27 @@ return 0;
 							if (iCdx_getCompactIdxKey_byNumber(wa->cdx_root, tagRoot->keyLength, tagRoot->fillChar, lnKeyNumber, lnKeyNumber, node, &key, tagRoot, true, true))
 							{
 								//////////
-								// See if this key is beyond us
+								// See if this key is beyond us.
+								// Refer to the cdx_logic.txt for information on this algorithm.
 								//////
-									llFoundCandidateNode = false;
-									if (tagRoot->isDescending)
+									lnResult = memcmp(keyBuffer, key.key, tnKeyLength);
+									if (tagRoot->indexIsDesc)
 									{
 										// We are in a descending index
+										if (lnResult > 0)
+										{
+											// It is above this location in the index, meaning
+
+										} else {
+											// Still going
+										}
 
 									} else {
 										// We are in an ascending index
 									}
 
-
-								//////////
-								// Was the key we should be on found?
-								//////
-									if (llFoundCandidateNode)
-									{
-										// Continue processing
-										node = iCdx_getCompactIdxNode_byOffset(wa->cdx_root, key.fileOffset);
-									}
+									// Continue processing
+									node = iCdx_getCompactIdxNode_byOffset(wa->cdx_root, key.fileOffset);
 
 							} else {
 								// Should never happen
@@ -2247,32 +2292,50 @@ return 0;
 						}
 						break;
 
-					case 2:		// Leaf
-					case 3:		// Root + leaf
+					case _CDX_NODE_LEAF:		// Leaf
+					case _CDX_NODE_ROOT_LEAF:	// Root, and leaf
 						// Leaf node
-						// Iterate through every key for this node
-						if (node->keyCount != 0)
-						{
-							// Get the first key on this node
-							if (iCdx_getCompactIdxKey_byNumber(wa->cdx_root, tagRoot->keyLength, tagRoot->fillChar, 0, 0, node, &key, tagRoot, true, true))
+						
+						//////////
+						// we're looking for a key
+						//////
+							if (llFirstDescent)
 							{
-								// We have successfully retrieved this key
-								// Have we passed the location yet?
-								if (tagRoot->isDescending)
+								// This is the first leaf we're processing
+								llFirstDescent		= false;
+								llOkayToMoveLeft	= false;		// When we first enter a leaf node, we cannot move left because of the conditions by which this node would've been entered
+
+							} else if (!llLastNode && !llOkayToMoveLeft) {
+								// More than the first leaf
+								llOkayToMoveLeft	= true;			// On subsequent leaves, we're okay to move left one time
+							}
+
+
+						//////////
+						// Iterate through every key for this node
+						//////
+							if (node->keyCount != 0)
+							{
+								// Get the first key on this node
+								if (iCdx_getCompactIdxKey_byNumber(wa->cdx_root, tagRoot->keyLength, tagRoot->fillChar, 0, 0, node, &key, tagRoot, true, true))
 								{
-									// Index is descending
+									// We have successfully retrieved this key
+									// Have we passed the location yet?
+									if (tagRoot->indexIsDesc)
+									{
+										// Index is descending
+
+									} else {
+										// Index is ascending
+									}
 
 								} else {
-									// Index is ascending
+									// Should not happen
+									debug_break;
+									break;
 								}
-
-							} else {
-								// Should not happen
-								debug_break;
-								break;
 							}
-						}
-						break;
+							break;
 				}
 
 				// Move to next node
@@ -2675,10 +2738,10 @@ return 0;
 		// Based on the type of node we will traverse appropriately
 		while (node)
 		{
-			switch (iiXdx_getNodeType(node->type))
+			switch (node->type)
 			{
-				case 0:	// Index node, pointing to other sub-indexes
-				case 1: // Root node, pointing to other sub-indexes
+				case _CDX_NODE_INDEX:	// Index node, pointing to other sub-indexes
+				case _CDX_NODE_ROOT: // Root node, pointing to other sub-indexes
 					// Find the first node, and visit it (left-most)
 					if (!iCdx_getCompactIdxKey_byNumber(head, 10, 32, 0, 0, node, &key, tagRoot, true, true))
 						return(false);		// Failure obtaining the tag name, which is a fatal error (the index is likely corrupt)
@@ -2687,8 +2750,8 @@ return 0;
 					node = iCdx_getCompactIdxNode_byOffset(head, key.fileOffset);
 					break;
 
-				case 2:		// Leaf
-				case 3:		// Root + leaf
+				case _CDX_NODE_LEAF:		// Leaf
+				case _CDX_NODE_ROOT_LEAF:	// Root + leaf
 					// Leaf node
 					// Grab the indicated tag number
 					if (lnTagNum < node->keyCount)
@@ -2706,7 +2769,7 @@ return 0;
 							// Determine what field type the index expression is
 // TODO:  This is not fool-proof, but rather it works only with concatenated character fields, or single fields or additive single fields
 							tagRoot->fillChar		= iDbf_getField_type(wa, (s8*)nodeTag + 512, &tagRoot->swapEndians, &tagRoot->needsSignBitToggled);
-							tagRoot->isDescending	= iCdx_isDescending(nodeTag);
+							tagRoot->indexIsDesc	= iCdx_isDescending(nodeTag);
 
 							// See if that first/highest node is an index node, if so then we descend until we find the left-most leaf node
 							nodeFirst				= iCdx_getCompactIdxNode_byOffset(head, tagRoot->leftmostNode);
@@ -2762,19 +2825,19 @@ debug_break;
 		// Based on the type of node we will traverse appropriately
 		while (node)
 		{
-			switch (iiXdx_getNodeType(node->type))
+			switch (iiGetIndexNodeType(node->type))
 			{
-				case 0:	// Index node, pointing to other sub-indexes
-				case 1: // Root node, pointing to other sub-indexes
+				case _CDX_NODE_INDEX:	// Index node, pointing to other sub-indexes
+				case _CDX_NODE_ROOT: // Root node, pointing to other sub-indexes
 					// Find the first node, and visit it (left-most)
 					node = iCdx_getCompactIdxNode_byOffset(head, node->nodeLeft);
 					break;
 
-				case 2:		// Leaf
-				case 3:		// Root + leaf
+				case _CDX_NODE_LEAF:		// Leaf
+				case _CDX_NODE_ROOT_LEAF:	// Root + leaf
 					// Leaf node
 					// Populate the common fields
-					tagRoot->isDescending	= false;		// No indication in documentation about how to obtain this value, will need to research manually
+					tagRoot->indexIsDesc	= false;		// No indication in documentation about how to obtain this value, will need to research manually
 					tagRoot->keyLength		= head->keyLength;
 					tagRoot->fillChar		= iDbf_getField_type(wa, &head->keyExpression[0], &tagRoot->swapEndians, &tagRoot->needsSignBitToggled);
 					tagRoot->highestNode	= sizeof(SCdxHeader);	// Always the node after head
@@ -2808,19 +2871,19 @@ debug_break;
 		// Based on the type of node we will traverse appropriately
 		while (node)
 		{
-			switch (iiXdx_getNodeType(node->type))
+			switch (iiGetIndexNodeType(node->type))
 			{
-				case 0:	// Index node, pointing to other sub-indexes
-				case 1: // Root node, pointing to other sub-indexes
+				case _CDX_NODE_INDEX:	// Index node, pointing to other sub-indexes
+				case _CDX_NODE_ROOT: // Root node, pointing to other sub-indexes
 					// Find the first node, and visit it (left-most)
 					node = iCdx_getStandardIdxNode_byOffset(head, node->nodeLeft);
 					break;
 
-				case 2:		// Leaf
-				case 3:		// Root + leaf
+				case _CDX_NODE_LEAF:		// Leaf
+				case _CDX_NODE_ROOT_LEAF:	// Root + leaf
 					// Leaf node
 					// Populate the common fields
-					tagRoot->isDescending	= false;		// No indication in documentation about how to obtain this value, will need to research manually
+					tagRoot->indexIsDesc	= false;		// No indication in documentation about how to obtain this value, will need to research manually
 					tagRoot->keyLength		= head->keyLength;
 					tagRoot->fillChar		= iDbf_getField_type(wa, &head->keyExpression[0], &tagRoot->swapEndians, &tagRoot->needsSignBitToggled);
 					tagRoot->highestNode	= sizeof(SIdxHeader);		// Always the node after head
@@ -3208,10 +3271,12 @@ debug_break;
 		// Is this us?
 		if (head && node && tnKeyNumberThis < node->keyCount)
 		{
-			if (iiXdx_getNodeType(node->type) == 2 || iiXdx_getNodeType(node->type) == 3)
+			if (iiGetIndexNodeType(node->type) == 2 || iiGetIndexNodeType(node->type) == 3)
 			{
+				// Process the exterior/leaf node
 //////////
 // Tried to add a speedup, but it's not working... needs debugging
+// BEGIN
 //////
 // 				// Is it the same key as was accessed last time?
 // 				if (keyLastNumber == tnKeyNumber && tagRootLast == tagRoot && nodeLast == node && headLast == head)
@@ -3224,12 +3289,19 @@ debug_break;
 // END
 //////////
 
-				// Process the exterior/leaf node
-				iiCdx_extractExteriorNode_keyAccessMetaData(node, tnKeyNumberThis, &keyTrail);
+				// Grab the node-specific key information
+				iiCdx_extractExteriorNode_nodeKeyAccessData(node, tnKeyNumberThis, &keyTrail);
 
 				// See if we've already computed this index previously
+//////////
+// Speedup disabled:
+// BEGIN
+//////
 // 				if (!iiCdx_checkNodeCache(node, tnKeyNumber, key))
 // 				{
+//////
+// END
+//////////
 					// If we are duplicating bytes from the previous key, we need that key
 					if (tnKeyNumberThis != 0)
 					{
@@ -3262,16 +3334,23 @@ debug_break;
 					key->record		= keyTrail.record;
 					key->record2	= 0;
 
+//////////
+// Speedup disabled:
+// BEGIN
+//////
 // 					// Add this to the cache before we fixup the sign so next time it doesn't have to be computed
 // 					iiCdx_addToNodeCache(node, tnKeyNumber, key);
 // 				}
+//////
+// END
+//////////
 
 			} else {
 				// Process the interior node
 				lnKeyLength					= keyLength + sizeof(SCdxKeyTrail);
 				keyPtr						= (s8*)node + 12 + (tnKeyNumberThis * lnKeyLength);
 				keyTrailInterior			= (SCdxKeyTrailInterior*)(keyPtr + keyLength);
-				key->fileOffset			= iiBswap32(keyTrailInterior->fileOffset);
+				key->fileOffset				= iiBswap32(keyTrailInterior->fileOffset);
 				key->record2				= iiBswap32(keyTrailInterior->record2);
 				key->offset					= 12 + (tnKeyNumberThis * lnKeyLength);
 				key->keyLength				= keyLength;
@@ -3313,7 +3392,8 @@ debug_break;
 
 
 //////////
-// Speedup is not working... needs debugging
+// Speedup disabled:
+// BEGIN
 //////
 // 			//////////
 // 			// Save the previous key
@@ -3539,7 +3619,7 @@ debug_break;
 		if (head && node)
 		{
 			// See what node we're on
-			lnNodeType = iiXdx_getNodeType(node->type);
+			lnNodeType = iiGetIndexNodeType(node->type);
 			if (lnNodeType == 2 || lnNodeType == 3)
 			{
 				// We're there
@@ -3606,7 +3686,7 @@ debug_break;
 		u8		after[4];			// Puts a buffer after keyBuffer
 	};
 
-	void iiCdx_extractExteriorNode_keyAccessMetaData(SCdxNode* node, u32 tnNumber, SCdxKeyTrail* keyTrail)
+	void iiCdx_extractExteriorNode_nodeKeyAccessData(SCdxNode* node, u32 tnNumber, SCdxKeyTrail* keyTrail)
 	{
 		u32			lnBitsPerKey, lnFirstByte;
 		SSafeData	data;
@@ -3630,12 +3710,6 @@ debug_break;
 
 		// Grab the trailing count
 		keyTrail->count_TC = data.buffer[0] & node->mask_TC;
-	}
-
-	// Called to get the node type with only the lower 2-bits being pulled through
-	u32 iiXdx_getNodeType(u32 tnNode)
-	{
-		return(tnNode & 0x3);
 	}
 
 	void iiShiftBlockRight(u8* data, u32 tnBytes, s32 tnBits)

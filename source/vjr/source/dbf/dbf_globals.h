@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/source/dbf/dbf.h
+// /libsf/source/vjr/source/dbf/dbf_globals.h
 //
 //////
 // Version 0.55
@@ -10,8 +10,7 @@
 //     Dec.22.2014
 //////
 // Change log:
-//     Dec.22.2014 - Extraction to dbf_*.h and cdx_defs.h children
-//     Nov.02.2014 - Initial creation
+//     Dec.22.2014 - Initial creation
 //////
 //
 // This document is released as Liberty Software under a Repeat License, as governed
@@ -68,9 +67,17 @@
 
 
 
-#include "dbf_const.h"
-#include "cdx_structs.h"
-#include "dbf_structs.h"
-#include "dbf_globals.h"
-#include "dbf_defs.h"
-#include "cdx_defs.h"
+//////////
+//
+// Global variables
+//
+/////
+    s8			gcDbf_temporaryPath[_MAX_PATH];
+    u32			gnDbf_temporaryFileNumber	= 0;
+
+	// sort variables for qsort()
+	u32			gnCdx_sort_keyLength		= 1;
+
+	// Table and cursor work areas
+    SWorkArea	gsArea[_MAX_DBF_SLOTS];
+	s32			gnDbf_currentWorkArea		= 0;

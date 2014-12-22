@@ -1,17 +1,25 @@
+Dec.22.2014 by Rick C. Hodgin
+-----------------------------
+
+Every Liberty Software Foundation source file will contain a header like this.
+The source filename, version, last update, change log history, and the text
+below explaining the nature of this license.
+
+
 //////////
 //
-// /libsf/source/vjr/source/dbf/dbf.h
+// /path/to/the/source/file.txt
 //
 //////
-// Version 0.55
-// Copyright (c) 2014 by Rick C. Hodgin
+// Version 1.23
+// Copyright (c) 2014 by Author's Name
 //////
 // Last update:
-//     Dec.22.2014
+//     Jan.01.2000
 //////
 // Change log:
-//     Dec.22.2014 - Extraction to dbf_*.h and cdx_defs.h children
-//     Nov.02.2014 - Initial creation
+//     Jan.02.2000 - Brief overview of change
+//     Jan.01.2000 - Initial creation
 //////
 //
 // This document is released as Liberty Software under a Repeat License, as governed
@@ -68,9 +76,4 @@
 
 
 
-#include "dbf_const.h"
-#include "cdx_structs.h"
-#include "dbf_structs.h"
-#include "dbf_globals.h"
-#include "dbf_defs.h"
-#include "cdx_defs.h"
+[regular document content goes here below the header above]

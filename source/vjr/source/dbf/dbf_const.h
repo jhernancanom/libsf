@@ -1,19 +1,19 @@
 //////////
 //
-// /libsf/source/vjr/source/dbf/dbf.h
+// /libsf/source/vjr/source/dbf/dbf_const.h
 //
 //////
 // Version 0.55
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
-//     Dec.22.2014
+//     Nov.02.2014
 //////
 // Change log:
-//     Dec.22.2014 - Extraction to dbf_*.h and cdx_defs.h children
 //     Nov.02.2014 - Initial creation
 //////
 //
+// This software is released as Liberty Software under a Repeat License, as governed
 // This document is released as Liberty Software under a Repeat License, as governed
 // by the Public Benefit License v1.0 or later (PBL).
 //
@@ -68,9 +68,36 @@
 
 
 
-#include "dbf_const.h"
-#include "cdx_structs.h"
-#include "dbf_structs.h"
-#include "dbf_globals.h"
-#include "dbf_defs.h"
-#include "cdx_defs.h"
+//////////
+//
+// Constants
+//
+/////
+	#define 	_NO							0
+	#define 	_YES						1
+	#define		_MAX_DBF_SLOTS				512			// Up to 512 work areas can be opened simultaneously
+	#define		_MAX_CDX_TAGS				128			// Up to 128 index tags are supported per CDX, per DBF
+
+	// For field flags
+	#define 	_DBF_FIELD_SYSTEM			0x01
+	#define 	_DBF_FIELD_NULLS			0x02
+	#define 	_DBF_FIELD_BINARY			0x04
+	#define 	_DBF_FIELD_AUTO_INC			0x0c
+	
+	// Miscellaneous access
+	#define 	_BIT_1						0x1
+	#define 	_BIT_2						0x2
+	#define 	_BIT_4						0x4
+	#define 	_BIT_8						0x8
+	#define 	_BIT_16						0x10
+	#define 	_BIT_32						0x20
+	#define 	_BIT_64						0x40
+	#define 	_BIT_128					0x80
+
+	// CDX node types
+	#define _CDX_NODE_INDEX			0
+	#define _CDX_NODE_ROOT			1
+	#define _CDX_NODE_LEAF			2
+	#define _CDX_NODE_ROOT_LEAF		3
+	// Other node types have been observed, but I don't know what they indicate.
+	// I use the function iiGetIndexNodeType() to mask off only the lower 2 bits (00,01,10,11 = 0,1,2,3)
