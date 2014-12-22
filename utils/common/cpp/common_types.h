@@ -37,7 +37,7 @@
 #ifdef __GNUC__
 	// gcc
 	// Used for pointer sizes that mate up with pointers, but are actually integers
-	#ifdef __i386__
+	#ifndef __amd64
 		#define uptr uint32_t
 		#define sptr int32_t
 	#else

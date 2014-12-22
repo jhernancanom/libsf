@@ -1933,7 +1933,11 @@
 		//////////
 		// Store the settings
 		//////
+#ifdef __64_BIT_COMPILER__
+			SetWindowLong(tooltip->hwnd, GWL_USERDATA, (uptr)lpParameter);
+#else
 			SetWindowLong(tooltip->hwnd, GWL_USERDATA, (long)lpParameter);
+#endif
 
 
 		//////////

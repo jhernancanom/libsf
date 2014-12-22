@@ -740,7 +740,7 @@ typedef SEM**		SEMpp;
 	const s8			cgc_noMateFound[]					= "Mate not found";
 	const s8			cgcVersionShort[]					= "Version 0.55";
 #ifdef __GNUC__
-	#ifndef __AMD64
+	#ifndef __amd64
 		const s8		cgcScreenTitle[]					= "Visual FreePro, Jr. 0.55 -- Dec.21.2014 -- GCC 32-bit";
 		const s8		cgcJDebiTitle[]						= "JDebi Debugger 0.55 -- Dec.21.2014 -- GCC 32-bit";
 		const s8		cgcVersionText[]					= "Visual FreePro, Jr. 32-bit 00.55.0001.9999 for Windows";

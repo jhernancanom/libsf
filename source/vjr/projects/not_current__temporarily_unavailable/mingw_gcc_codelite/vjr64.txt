@@ -1,1 +1,0 @@
-./Debug/vjr_vjr.cpp.o ./Debug/bmps_bmps.cpp.o   

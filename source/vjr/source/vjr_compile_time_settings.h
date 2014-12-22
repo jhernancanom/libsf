@@ -44,22 +44,29 @@
 //////////
 // Compiler-specific settings
 //////
-	#if !defined(_MSC_VER)
+	#ifdef __GNUC__
 		// gcc
 		#define debug_break			asm("int $3")
 		#define debug_nop			asm("nop")
+		#ifndef __amd64
+			#define __32_BIT_COMPILER__
+		#else
+			#define __64_BIT_COMPILER__
+		#endif
 	#else
 		// visual studio
 		#ifndef _M_X64
 			// 32-bit
 			#define debug_break		_asm int 3
 			#define debug_nop		_asm nop
+			#define __32_BIT_COMPILER__
 		#else
 			// 64-bit
 			void debugBreak(void)	{	int i = 4;	}
 			void debugNop(void)		{	int i = 4;	}
 			#define debug_break		debugBreak();
 			#define debug_nop		debugNop();
+			#define __64_BIT_COMPILER__
 		#endif
 	#endif
 

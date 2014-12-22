@@ -2,11 +2,20 @@
 <CodeLite_Project Name="vjr64" InternalType="Console">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00010001N0005Debug000000000000]]>
+      <![CDATA[00020001N0005Debug0000000000000001N0007Release000000000000]]>
     </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
 		"name":	"Debug",
+		"enabled":	false,
+		"buildDirectory":	"build",
+		"sourceDirectory":	"$(ProjectPath)",
+		"generator":	"",
+		"buildType":	"",
+		"arguments":	[],
+		"parentProject":	""
+	}, {
+		"name":	"Release",
 		"enabled":	false,
 		"buildDirectory":	"build",
 		"sourceDirectory":	"$(ProjectPath)",
@@ -20,16 +29,15 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
-    <File Name="../vjr.cpp"/>
-    <File Name="../../../utils/common/cpp/builder.cpp" ExcludeProjConfig="Debug"/>
-    <File Name="../../../utils/common/cpp/ll.cpp" ExcludeProjConfig="Debug"/>
-    <File Name="../../../utils/common/cpp/scale.cpp" ExcludeProjConfig="Debug"/>
-    <File Name="../bmps/bmps.cpp"/>
+    <File Name="../../source/vjr.cpp"/>
+    <File Name="../../source/bmps/bmps.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="headers">
-    <File Name="../../../utils/common/cpp/common_types.h"/>
-    <File Name="../../../utils/common/cpp/builder.h"/>
-    <File Name="../dbf/dbf_defs.h"/>
+    <File Name="../../../../utils/common/cpp/common_types.h"/>
+    <File Name="../../../../utils/common/cpp/builder.h"/>
+    <File Name="../../source/dbf/dbf_defs.h"/>
+    <File Name="../../source/vjr_compile_time_settings.h"/>
+    <File Name="../../source/vjr_const.h"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
@@ -42,25 +50,25 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug" CompilerType="MinGW ( mingw64 )" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-m64;-g;-O0;-Wall;-Wno-comment;-Wno-multichar;-Wno-narrowing;-Wno-write-strings;-Wno-format-contains-nul;-fno-permissive" C_Options="-m64;-g;-O0;-Wall;-Wno-comment;-Wno-multichar;-Wno-narrowing;-Wno-write-strings;-Wno-format-contains-nul;-fpermissive" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-m64;-g;-O0;-Wall;-Wno-comment;-Wno-multichar;-Wno-narrowing;-Wno-write-strings;-Wno-format-contains-nul" C_Options="-m64;-g;-O0;-Wall;-Wno-comment;-Wno-multichar;-Wno-narrowing;-Wno-write-strings;-Wno-format-contains-nul" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
-        <IncludePath Value="/libsf/source/vjr/"/>
+        <IncludePath Value="C:/libsf/source/vjr/projects/vs2010/"/>
       </Compiler>
       <Linker Options="" Required="yes">
-        <LibraryPath Value="C:/libsf/source/vjr/vjr_mingw_gcc_codelite/lib64"/>
-        <LibraryPath Value="C:/libsf/source/vjr/sound/SDL-1.2.15/lib/x64"/>
-        <Library Value="kernel"/>
-        <Library Value="user"/>
-        <Library Value="gdi"/>
+        <LibraryPath Value="C:/libsf/source/vjr/projects/mingw_gcc_codelite/lib64"/>
+        <LibraryPath Value="C:/libsf/source/vjr/source/sound/SDL-1.2.15/lib/amd64"/>
+        <Library Value="kernel32"/>
+        <Library Value="user32"/>
+        <Library Value="gdi32"/>
         <Library Value="winspool"/>
-        <Library Value="comdlg"/>
-        <Library Value="advapi"/>
-        <Library Value="shell"/>
-        <Library Value="ole"/>
-        <Library Value="oleaut"/>
+        <Library Value="comdlg32"/>
+        <Library Value="advapi32"/>
+        <Library Value="shell32"/>
+        <Library Value="ole32"/>
+        <Library Value="oleaut32"/>
         <Library Value="uuid"/>
-        <Library Value="odbc"/>
-        <Library Value="odbccp"/>
+        <Library Value="odbc32"/>
+        <Library Value="odbccp32"/>
         <Library Value="SDL"/>
         <Library Value="glew32"/>
         <Library Value="glew32s"/>
@@ -70,7 +78,7 @@
         <Library Value="opengl32"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="c:/libsf_offline/source/vjr/bin/64-bit/vjr_gcc_64.exe" IntermediateDirectory="./Debug" Command="c:/libsf_offline/source/vjr/bin/64-bit/vjr_gcc_64.exe" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
@@ -103,13 +111,36 @@
       </Completion>
     </Configuration>
     <Configuration Name="Release" CompilerType="MinGW ( mingw64 )" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-O2;-Wall" C_Options="-O2;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+      <Compiler Options="-g;-O0;-Wall;-Wno-comment;-Wno-multichar;-Wno-narrowing;-Wno-write-strings;-Wno-format-contains-nul" C_Options="-g;-O0;-Wall;-Wno-comment;-Wno-multichar;-Wno-narrowing;-Wno-write-strings;-Wno-format-contains-nul" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
         <IncludePath Value="."/>
+        <IncludePath Value="C:/libsf/source/vjr/projects/vs2010/"/>
         <Preprocessor Value="NDEBUG"/>
       </Compiler>
-      <Linker Options="" Required="yes"/>
+      <Linker Options="" Required="yes">
+        <LibraryPath Value="C:/libsf/source/vjr/projects/mingw_gcc_codelite/lib64"/>
+        <LibraryPath Value="C:/libsf/source/vjr/source/sound/SDL-1.2.15/lib/amd64"/>
+        <Library Value="kernel32"/>
+        <Library Value="user32"/>
+        <Library Value="gdi32"/>
+        <Library Value="winspool"/>
+        <Library Value="comdlg32"/>
+        <Library Value="advapi32"/>
+        <Library Value="shell32"/>
+        <Library Value="ole32"/>
+        <Library Value="oleaut32"/>
+        <Library Value="uuid"/>
+        <Library Value="odbc32"/>
+        <Library Value="odbccp32"/>
+        <Library Value="SDL"/>
+        <Library Value="glew32"/>
+        <Library Value="glew32s"/>
+        <Library Value="freeglut"/>
+        <Library Value="freeglut_static"/>
+        <Library Value="glu32"/>
+        <Library Value="opengl32"/>
+      </Linker>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Release" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
+      <General OutputFile="c:/libsf_offline/source/vjr/bin/64-bit/vjr_gcc_64.exe" IntermediateDirectory="./Release" Command="c:/libsf_offline/source/vjr/bin/64-bit/vjr_gcc_64.exe" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
