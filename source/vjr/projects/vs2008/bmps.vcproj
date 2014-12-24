@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="c:\libsf\source\vjr\bmps.lib"
+				OutputFile="$(OutDir)\$(ProjectName).lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -125,7 +125,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="c:\libsf\source\vjr\bmps.lib"
+				OutputFile="$(OutDir)\$(ProjectName).lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -147,6 +147,10 @@
 	<References>
 	</References>
 	<Files>
+		<File
+			RelativePath="..\..\source\bmps\bmps.cpp"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
