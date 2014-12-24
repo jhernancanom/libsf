@@ -24,7 +24,7 @@
 // This document is released as Liberty Software under a Repeat License, as governed
 // by the Public Benefit License v1.0 or later (PBL).
 //
-// The PBL is public domain license with a caveat:  self accountability unto God.
+// The PBL is a public domain license with a caveat:  self accountability unto God.
 // You are free to use, copy, modify and share this software for any purpose, however,
 // it is the desire of those working on this project that the software remain open.
 // It is our request that you maintain it that way.  This is not a legal request unto
@@ -95,16 +95,20 @@
 //		04:		zelda			alex				|||			04:
 //
 // Comparison results ("frank" to each key):
-//		01:		greater			less				|||			01:		greater			less
-//		02:		equal			less				|||			02:		equal			less
-//		03:		less			equal				|||			03:		less			equal
-//		04:		less			greater				|||			04:		less			greater
+//		01:		greater			less				|||			01:		[same]
+//		02:		equal			less				|||			02:
+//		03:		less			equal				|||			03:
+//		04:		less			greater				|||			04:
 //
 // For each order, we're looking at this logic for the find:
 //		01:		fail			fail				|||			01:		fail			fail
-//		02:		success			fail				|||			02:		match, done		fail
-//		03:		fail			success				|||			03:		fail			match, done
+//		02:		success			fail				|||			02:		match, done*	fail
+//		03:		fail			success				|||			03:		fail			match, done*
 //		04:		fail			fail				|||			04:		fail			fail
+//
+//																* Done if leaf node, if index node then 
+//																  need to traverse the leaf node to obtain
+//																  the true key information.
 //
 // Once found, move to prior node and begin searching:
 //		01:		target			n/a					|||			01:		n/a				n/a
@@ -132,6 +136,24 @@
 //				03 -- frank (zigler)
 //
 // Because there can be multiple keys of the same value, the match we found on node 02
-// in an ascending order non-unique index means the key is likely on the prior node.
+// in an ascending order non-unique index means the key is potentially also on the prior
+// node.  And because we return the first match for all keys, as per natural order, the
+// prior node must be our starting point.
+//
+// If we reach the last node and it's not found, then we begin at the start of the last
+// node because it can only be found on that node.
+//
+// If it is before the first node, it is a no-find because there are no keys beyond that
+// which is found in the first key position.
+//
+//////
+//
+// Once we get to the point where we have the starting node, it requires that we now
+// traverse all the keys until we find the first match, or until we reach the opposite
+// of its order (if ascending, when it switches to less, if descending, then when it
+// switches to greater).
+//
+// At this point we know the find will be either on this node, or at the very start of
+// the next node.
 //
 //////

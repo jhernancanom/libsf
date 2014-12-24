@@ -16,7 +16,7 @@
 // This document is released as Liberty Software under a Repeat License, as governed
 // by the Public Benefit License v1.0 or later (PBL).
 //
-// The PBL is public domain license with a caveat:  self accountability unto God.
+// The PBL is a public domain license with a caveat:  self accountability unto God.
 // You are free to use, copy, modify and share this software for any purpose, however,
 // it is the desire of those working on this project that the software remain open.
 // It is our request that you maintain it that way.  This is not a legal request unto
@@ -131,8 +131,8 @@ struct SCdxKeyOp;
 	{
 		// If keyLength is 0, then this will be node, otherwise it's the record number in big-endian form (needs BSWAP run on it)
 		union {
-			u32		record;						// Converted from its native type to little-endian form automatically
-			u32		fileOffset;				// In little-endian form
+			u32		recordNumber;				// Converted from its native type to little-endian form automatically
+			u32		fileOffset;					// (for index nodes) in little-endian form
 		};
 		u32			record2;					// Compact indexes store both the record number and file_offset for root and index nodes
 		u32			offset;						// Offset from the end of the node where this key begins

@@ -16,7 +16,7 @@
 // This document is released as Liberty Software under a Repeat License, as governed
 // by the Public Benefit License v1.0 or later (PBL).
 //
-// The PBL is public domain license with a caveat:  self accountability unto God.
+// The PBL is a public domain license with a caveat:  self accountability unto God.
 // You are free to use, copy, modify and share this software for any purpose, however,
 // it is the desire of those working on this project that the software remain open.
 // It is our request that you maintain it that way.  This is not a legal request unto
@@ -84,7 +84,7 @@
 																			s8* tcCompound1,
 																			s8* tcOrder1);
 
-	u32					cdx_find_key									(u32 tntnWorkArea, s32 tnTagIndex, s32 tnKeyLength);
+	u32					cdx_find_key									(u32 tntnWorkArea, s32 tnTagIndex, u32 tnKeyLength);
 	u32					cdx_skip_n										(u32 tntnWorkArea, s32 tnTagIndex, s32 tnDelta);
 	u32					cdx_top											(u32 tntnWorkArea, s32 tnTagIndex);
 	u32					cdx_bottom										(u32 tntnWorkArea, s32 tnTagIndex);
@@ -127,7 +127,8 @@
 //////
 // END
 //////////
-	u32					iiCdx_findKey									(SWorkArea* wa, STagRoot* tagRoot, s8* keyBuffer);
+	u32					iiCdx_findKey									(SWorkArea* wa, STagRoot* tagRoot, s8* keyBuffer, u32 tnKeyLength);
+	s32					iiCdx_translateActualResultThroughIndexOrder	(s32 tnActualResult, STagRoot* tagRoot);
 	u32					iCdx_getAllKeysCdx								(SWorkArea* wa, s32 tnTagIndex, s8* tcKeySpace, u32 tnKeySpaceLength, s8* tcDecodeExpression, u32 tnDecodeExpressionLength, s8* tcKeyLength4);
 	u32					iCdx_getAllKeysIdx								(SWorkArea* wa,                 s8* tcKeySpace, u32 tnKeySpaceLength, s8* tcDecodeExpression, u32 tnDecodeExpressionLength, s8* tcKeyLength4);
 	bool				iCdx_getCompoundTagRoot							(SWorkArea* wa, SCdxHeader* head, SCdxNode* node, u32 lnTagNum, STagRoot* tagRoot);

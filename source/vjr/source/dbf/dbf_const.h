@@ -17,7 +17,7 @@
 // This document is released as Liberty Software under a Repeat License, as governed
 // by the Public Benefit License v1.0 or later (PBL).
 //
-// The PBL is public domain license with a caveat:  self accountability unto God.
+// The PBL is a public domain license with a caveat:  self accountability unto God.
 // You are free to use, copy, modify and share this software for any purpose, however,
 // it is the desire of those working on this project that the software remain open.
 // It is our request that you maintain it that way.  This is not a legal request unto
@@ -93,6 +93,9 @@
 	#define 	_BIT_32						0x20
 	#define 	_BIT_64						0x40
 	#define 	_BIT_128					0x80
+
+	// CDX no find result
+	#define _CDX_NO_FIND			0
 
 	// CDX node types
 	#define _CDX_NODE_INDEX			0

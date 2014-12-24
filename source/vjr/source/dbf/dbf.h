@@ -17,7 +17,7 @@
 // This document is released as Liberty Software under a Repeat License, as governed
 // by the Public Benefit License v1.0 or later (PBL).
 //
-// The PBL is public domain license with a caveat:  self accountability unto God.
+// The PBL is a public domain license with a caveat:  self accountability unto God.
 // You are free to use, copy, modify and share this software for any purpose, however,
 // it is the desire of those working on this project that the software remain open.
 // It is our request that you maintain it that way.  This is not a legal request unto

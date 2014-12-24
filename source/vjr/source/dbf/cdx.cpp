@@ -16,7 +16,7 @@
 // This document is released as Liberty Software under a Repeat License, as governed
 // by the Public Benefit License v1.0 or later (PBL).
 //
-// The PBL is public domain license with a caveat:  self accountability unto God.
+// The PBL is a public domain license with a caveat:  self accountability unto God.
 // You are free to use, copy, modify and share this software for any purpose, however,
 // it is the desire of those working on this project that the software remain open.
 // It is our request that you maintain it that way.  This is not a legal request unto
@@ -437,7 +437,7 @@
 	// Note:  Data is pulled from the data loaded into dbf_set_field_data() with negative field
 	//        numbers.  It automatically constructs the appropriate key on the fly.
 	//////
-	u32 cdx_find_key(u32 tnDbfHandle, s32 tnTagIndex, s32 tnKeyLength)
+	u32 cdx_find_key(u32 tnDbfHandle, s32 tnTagIndex, u32 tnKeyLength)
 	{
 		u32				lnResult, lnKeyOpCount;
 		SForClause*		lsFor;
@@ -492,7 +492,7 @@
 		//////////
 		// Find the key
 		//////
-			return(iiCdx_findKey(wa, &tagRoot, keyBuffer, keyLength));
+			return(iiCdx_findKey(wa, &tagRoot, keyBuffer, tnKeyLength));
 	}
 
 
@@ -748,7 +748,7 @@
 							if (iiGetIndexNodeType(node->type) == 2 || iiGetIndexNodeType(node->type) == 3)
 							{
 								// It's a leaf node
-								sprintf(output, "  - Node key number %u: [%s], Record number: %u\r\n\0", lnKeyNumber, buffer, key.record);
+								sprintf(output, "  - Node key number %u: [%s], Record number: %u\r\n\0", lnKeyNumber, buffer, key.recordNumber);
 
 							} else {
 								// It's an index or root node
@@ -2219,30 +2219,18 @@ failed_parsing:
 // record actually begins on that node.
 //
 // If found, it returns the record number.
-// If not found, it returns 0.
+// If not found, it returns _CDX_NO_FIND.
 //
 //////
-	u32 iiCdx_findKey(SWorkArea* wa, STagRoot* tagRoot, s8* keyBuffer, s32 tnKeyLength)
+	u32 iiCdx_findKey(SWorkArea* wa, STagRoot* tagRoot, s8* keyBuffer, u32 tnKeyLength)
 	{
-		s32				lnResult;
+		s32				lnActualResult;
 		u32				lnKeyNumber;
-		bool			llFirstDescent, llOkayToMoveLeft, llLastNode;
 		SCdxNode*		node;
 		SCdxKey			key;
 
 
-//////////
-// Incomplete algorithm, so simulate not found for now
-// return 0;
-//////
-		//////////
-		// Initialize
-		//////
-			llFirstDescent		= true;
-			llOkayToMoveLeft	= false;
-			llLastNode			= false;
-
-
+debug_break;
 		//////////
 		// Find the node it relates to
 		//////
@@ -2254,8 +2242,8 @@ failed_parsing:
 				{
 					case _CDX_NODE_INDEX:	// Index node, pointing to other sub-indexes
 					case _CDX_NODE_ROOT:	// Root node, pointing to other sub-indexes
-
-						// Index node, see where we fall
+						// Index node
+						// Index nodes point to other index nodes, or leaf nodes, but not to actual terminal keys
 						for (lnKeyNumber = 0; lnKeyNumber < node->keyCount; lnKeyNumber++)
 						{
 							// See if this key is beyond the thing we're searching for, if so then the candidate key is the previous one
@@ -2265,24 +2253,14 @@ failed_parsing:
 								// See if this key is beyond us.
 								// Refer to the cdx_logic.txt for information on this algorithm.
 								//////
-									lnResult = memcmp(keyBuffer, key.key, tnKeyLength);
-									if (tagRoot->indexIsDesc)
+									lnActualResult = memcmp(keyBuffer, key.key, tnKeyLength);
+									if (iiCdx_translateActualResultThroughIndexOrder(lnActualResult, tagRoot) <= 0)
 									{
-										// We are in a descending index
-										if (lnResult > 0)
-										{
-											// It is above this location in the index, meaning
-
-										} else {
-											// Still going
-										}
-
-									} else {
-										// We are in an ascending index
+										// We've reached (=) or passed where the key should've been
+										node = iCdx_getCompactIdxNode_byOffset(wa->cdx_root, key.fileOffset);
 									}
-
-									// Continue processing
-									node = iCdx_getCompactIdxNode_byOffset(wa->cdx_root, key.fileOffset);
+									// else
+									// We are continuing with the next index node key in the for loop
 
 							} else {
 								// Should never happen
@@ -2290,67 +2268,120 @@ failed_parsing:
 								break;
 							}
 						}
+						// If we get here, the match wasn't found on this node, move to the next node (below)
 						break;
 
 					case _CDX_NODE_LEAF:		// Leaf
 					case _CDX_NODE_ROOT_LEAF:	// Root, and leaf
 						// Leaf node
-						
-						//////////
-						// we're looking for a key
-						//////
-							if (llFirstDescent)
+						// Leaf nodes point to terminal keys
+						for (lnKeyNumber = 0; lnKeyNumber < node->keyCount; lnKeyNumber++)
+						{
+							// Get the first key on this node
+							if (iCdx_getCompactIdxKey_byNumber(wa->cdx_root, tagRoot->keyLength, tagRoot->fillChar, lnKeyNumber, 0, node, &key, tagRoot, true, true))
 							{
-								// This is the first leaf we're processing
-								llFirstDescent		= false;
-								llOkayToMoveLeft	= false;		// When we first enter a leaf node, we cannot move left because of the conditions by which this node would've been entered
+								//////////
+								// See if this key is beyond us.
+								// Refer to the cdx_logic.txt for information on this algorithm.
+								//////
+									lnActualResult = memcmp(keyBuffer, key.key, tnKeyLength);
 
-							} else if (!llLastNode && !llOkayToMoveLeft) {
-								// More than the first leaf
-								llOkayToMoveLeft	= true;			// On subsequent leaves, we're okay to move left one time
-							}
+									// Is it an exact match?
+									if (lnActualResult == 0)
+									{
+										// We found the key
+										return(key.recordNumber);
+									}
 
-
-						//////////
-						// Iterate through every key for this node
-						//////
-							if (node->keyCount != 0)
-							{
-								// Get the first key on this node
-								if (iCdx_getCompactIdxKey_byNumber(wa->cdx_root, tagRoot->keyLength, tagRoot->fillChar, 0, 0, node, &key, tagRoot, true, true))
-								{
-									// We have successfully retrieved this key
-									// Have we passed the location yet?
+									// It wasn't a match, have we past it yet?
 									if (tagRoot->indexIsDesc)
 									{
 										// Index is descending
+										// Actual result is reversed
+										if (lnActualResult >= 0)
+										{
+											// It is >=, which means in a descending index it's less than or equal to
+											// We've reached (=) or passed where the key should've been
+											// This means no find
+											return(_CDX_NO_FIND);
+										}
+										// else
+										// It is <, which means in a descending index it's greater than
+										// Still moving forward to find out match
 
-									} else {
+									} else if (lnActualResult <= 0) {
 										// Index is ascending
+										// Actual result is normal
+										// We've reached (=) or passed where the key should've been
+										// This means no find
+										return(_CDX_NO_FIND);
 									}
 
-								} else {
-									// Should not happen
-									debug_break;
-									break;
-								}
+							} else {
+								// Should not happen
+								debug_break;
+								break;
 							}
-							break;
+						}
+						break;
 				}
 
 				// Move to next node
-				if (node->nodeRight == (u32)-1)
-					break;	// All done
+				if (node->nodeRight != (u32)-1)
+				{
+					// Grab that node and continue
+					node = iCdx_getCompactIdxNode_byOffset(wa->cdx_root, node->nodeRight);
 
-				// Continue processing
-				node = iCdx_getCompactIdxNode_byOffset(wa->cdx_root, node->nodeRight);
+				} else {
+					// Nothing else to search
+					break;
+				}
 			}
 
 
 		//////////
-		// If we get here, indicate not found
+		// If we get here, indicate no find
 		//////
-			return(0);
+			return(_CDX_NO_FIND);
+	}
+
+
+
+
+//////////
+//
+// Comparison result tree for ascending and descending indexes:
+//
+//															  Meaning for:
+//		  Left		 Right		actual				--------------------------------
+//		KeyBuffer	key.key		result				ascending			 descending
+//		---------	-------		------				------------		------------
+//			f		   a		  >					greater than		less than
+//			f		   f		  =					equal				equal
+//			f		   z		  <					less than			greater than
+//
+// Note:	For ascending, it is the same.
+// Note:	For descending, less than and greater than are reversed.
+//
+//////
+	s32 iiCdx_translateActualResultThroughIndexOrder(s32 tnActualResult, STagRoot* tagRoot)
+	{
+		if (tagRoot->indexIsDesc)
+		{
+			// We are in a descending index
+			// Actual result is reversed
+			if (tnActualResult > 0)
+			{
+				// Reverse it to < 0
+				tnActualResult = -1;
+
+			} else if (tnActualResult < 0) {
+				// Reverse it to > 0
+				tnActualResult = 1;
+			}
+			// else it is equal, and it does not need reversed
+		}
+		return(tnActualResult);
 	}
 
 
@@ -2436,7 +2467,7 @@ failed_parsing:
 									// Indicate our key count has gone up
 									++lnTotalKeyCount;
 									iBuilder_appendData(keys, (s8*)&key.key[0],	key.keyLength);		// Append key
-									iBuilder_appendData(keys, (s8*)&key.record,	4);					// Append record number
+									iBuilder_appendData(keys, (s8*)&key.recordNumber,	4);					// Append record number
 
 								} else {
 									// Should not happen
@@ -2625,7 +2656,7 @@ failed_parsing:
 									{
 										// Compact
 										iBuilder_appendData(keys, (s8*)&keyCdx.key[0],	keyCdx.keyLength);		// Append key
-										iBuilder_appendData(keys, (s8*)&keyCdx.record,	4);						// Append record number
+										iBuilder_appendData(keys, (s8*)&keyCdx.recordNumber,	4);						// Append record number
 
 									} else {
 										// Standard
@@ -3331,7 +3362,7 @@ debug_break;
 						memset(&key->key[keyLength - keyTrail.count_TC], tcFillChar, keyTrail.count_TC);
 
 					// Store the record number
-					key->record		= keyTrail.record;
+					key->recordNumber		= keyTrail.record;
 					key->record2	= 0;
 
 //////////
