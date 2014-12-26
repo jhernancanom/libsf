@@ -137,6 +137,75 @@
 			comp->isError = true;
 		}
 	}
+;
+
+
+
+
+//////////
+//
+// Function: ADDBS()
+// Adds a backslash to a path if it needs one
+//
+//////
+// Version 0.55
+// Last update:
+//	   Dec.26.2014
+//////
+// Change log:
+//     Dec.26.2014 - Initial creation
+//////
+// Parameters:
+//     varString		-- Character, the string that needs to end with a backspace
+//////
+// Returns:
+//     Character		-- The string with a trailing backspace added if need be
+//////
+	SVariable* function_addbs(SVariable* varString)
+	{
+        SVariable* result;
+
+
+		//////////
+        // Parameter 1 must be character
+		//////
+			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
+			{
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varString->compRelated);
+				return(NULL);
+			}
+
+
+		//////////
+        // Based on its type, process it accordingly
+		//////
+			result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+			if (varString->value.length >= 1)
+			{
+				// If the last character is not a backslash, add one
+				if (varString->value.data_u8[varString->value.length - 1] != '\\')
+				{
+					// We need to append the string plus a backslash
+					iDatum_allocateSpace(&result->value, varString->value.length + 1);
+					memcpy(result->value.data_s8, varString->value.data_s8, varString->value.length);
+					result->value.data_u8[result->value.length - 1] = '\\';
+
+				} else {
+					// We can copy the string as is
+					iDatum_duplicate(&result->value, &varString->value);
+				}
+
+			} else {
+				// Append a trailing backslash
+				iDatum_duplicate(&result->value, (u8*)cgcBackslash, 1);
+			}
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
+	}
 
 
 
@@ -1490,11 +1559,10 @@
 	{
 		u8*			ptr;
         SVariable*	result;
-		SVariable*	varCurdir;
 
 
 		//////////
-        // Parameter 1 must be numeric
+        // Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
@@ -1504,14 +1572,9 @@
 
 
 		//////////
-		// Initialize
-		//////
-			varCurdir = NULL;
-
-
-		//////////
         // Based on its type, process it accordingly
 		//////
+			result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 			if (varString->value.length >= 2)
 			{
 				// If it is of the form "x:"... then we return the left two-most characters
@@ -1519,28 +1582,11 @@
 				{
 					// We have a drive
 					ptr = varString->value.data_u8;
-
-				} else {
-					// No drive information, use current drive
-					varCurdir = function_curdir();
-
-					// If it is of the form "x:"... then we return the left two-most characters
-					if (varCurdir->value.data_s8[1] != ':')
-					{
-						// Hmm... It's not a valid directory, so we'll create an empty variable
-						result	= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
-						ptr		= NULL;
-
-					} else {
-						// Valid directory
-						ptr = varCurdir->value.data_u8;
-					}
 				}
 
 			} else {
 				// It's too short and cannot have a drive, so we'll initialize an empty variable
-				result		= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
-				ptr			= NULL;
+				ptr = NULL;
 			}
 
 
@@ -1549,13 +1595,6 @@
 		//////
 			if (ptr)
 				iDatum_duplicate(&result->value, ptr, 2);
-
-
-		//////////
-		// Clean house
-		//////
-			if (varCurdir)
-				iVariable_delete(varCurdir, true);
 
 
 		//////////
@@ -1588,13 +1627,13 @@
 //////
 	SVariable* function_justext(SVariable* varString)
 	{
+		s32			lnI, lnLength;
 		u8*			ptr;
         SVariable*	result;
-		SVariable*	varCurdir;
 
 
 		//////////
-        // Parameter 1 must be numeric
+        // Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
@@ -1604,22 +1643,23 @@
 
 
 		//////////
-		// Initialize
-		//////
-			varCurdir = NULL;
-
-
-		//////////
         // Based on its type, process it accordingly
 		//////
+			ptr		= NULL;
+			result	= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 			if (varString->value.length >= 1)
 			{
-// TODO:  working here
-
-			} else {
-				// It's too short and cannot have a drive, so we'll initialize an empty variable
-				result		= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
-				ptr			= NULL;
+				// Iterate backwards until we find a period.
+				// If no period is found, use a blank string
+				for (lnI = varString->value.length - 1, lnLength = 0; lnI > 0; lnI--, lnLength++)
+				{
+					if (varString->value.data_u8[lnI] == '.')
+					{
+						// We found a period
+						ptr = varString->value.data_u8 + lnI + 1;
+						break;
+					}
+				}
 			}
 
 
@@ -1627,14 +1667,7 @@
 		// Populate if need be
 		//////
 			if (ptr)
-				iDatum_duplicate(&result->value, ptr, 2);
-
-
-		//////////
-		// Clean house
-		//////
-			if (varCurdir)
-				iVariable_delete(varCurdir, true);
+				iDatum_duplicate(&result->value, ptr, lnLength);
 
 
 		//////////
@@ -1667,7 +1700,56 @@
 //////
 	SVariable* function_justfname(SVariable* varString)
 	{
-		return(NULL);
+		s32			lnI, lnLength;
+		u8*			ptr;
+        SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be character
+		//////
+			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
+			{
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varString->compRelated);
+				return(NULL);
+			}
+
+
+		//////////
+        // Based on its type, process it accordingly
+		//////
+			ptr		= NULL;
+			result	= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+			if (varString->value.length >= 1)
+			{
+				// Iterate backwards until we find a period.
+				// If no period is found, use a blank string
+				for (lnI = varString->value.length - 1, lnLength = 0; lnI > 0; lnI--, lnLength++)
+				{
+					if (varString->value.data_u8[lnI] == '\\')
+					{
+						// We found a backslash
+						break;
+					}
+				}
+
+				// Set our pointer to the filename
+				ptr			= varString->value.data_u8 + lnI + ((lnI > 0) ? 1 : 0);
+				lnLength	+= ((lnI > 0) ? 0 : 1);
+			}
+
+
+		//////////
+		// Populate if need be
+		//////
+			if (ptr)
+				iDatum_duplicate(&result->value, ptr, lnLength);
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
 	}
 
 
@@ -1694,7 +1776,55 @@
 //////
 	SVariable* function_justpath(SVariable* varString)
 	{
-		return(NULL);
+		s32			lnLength;
+		u8*			ptr;
+        SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be character
+		//////
+			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
+			{
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varString->compRelated);
+				return(NULL);
+			}
+
+
+		//////////
+        // Based on its type, process it accordingly
+		//////
+			ptr		= NULL;
+			result	= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+			if (varString->value.length >= 1)
+			{
+				// Iterate backwards until we find a period.
+				// If no period is found, use a blank string
+				for (lnLength = varString->value.length - 1; lnLength >= 0; lnLength--)
+				{
+					if (varString->value.data_u8[lnLength] == '\\')
+					{
+						// We found a backslash
+						ptr = varString->value.data_u8;
+						if (lnLength == 0)
+							++lnLength;
+						break;
+					}
+				}
+			}
+
+
+		//////////
+		// Populate if need be
+		//////
+			if (ptr)
+				iDatum_duplicate(&result->value, ptr, lnLength);
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
 	}
 
 
@@ -1721,7 +1851,65 @@
 //////
 	SVariable* function_juststem(SVariable* varString)
 	{
-		return(NULL);
+		s32			lnI, lnLength;
+		u8*			ptr;
+        SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be character
+		//////
+			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
+			{
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varString->compRelated);
+				return(NULL);
+			}
+
+
+		//////////
+        // Based on its type, process it accordingly
+		//////
+			ptr		= NULL;
+			result	= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+			if (varString->value.length >= 1)
+			{
+				// Iterate backwards until we find a period.
+				// If no period is found, use a blank string
+				for (lnI = varString->value.length - 1, lnLength = 0; lnI > 0; lnI--)
+				{
+					if (varString->value.data_u8[lnI] == '\\')
+					{
+						// We found a period
+						break;
+					}
+				}
+
+				// Set our pointer to the filename
+				ptr = varString->value.data_u8 + lnI + ((lnI > 0) ? 1 : 0);
+			}
+
+
+		//////////
+		// Populate if need be
+		//////
+			if (ptr)
+			{
+				// Search forward until we find a period, or the end
+				for (lnLength = ((lnI == 0) ? 0 : -1); lnI < varString->value.length; lnI++, lnLength++)
+				{
+					if (varString->value.data_u8[lnI] == '.')
+						break;
+				}
+
+				// Copy the stem portion
+				iDatum_duplicate(&result->value, ptr, lnLength);
+			}
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
 	}
 
 

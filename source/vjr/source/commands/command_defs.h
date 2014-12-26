@@ -137,6 +137,7 @@ struct SVariable;
 // STEP1A: Define your function
 //
 //////
+	SVariable*			function_addbs								(SVariable* varString);
 	SVariable*			function_alltrim							(SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2);
 	SVariable*			ifunction_trimCommon						(SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2, bool trimStart, bool trimEnd);
 	SVariable*			function_asc								(SVariable* varString);
@@ -262,6 +263,7 @@ struct SVariable;
 		//							Return										Parameters		Parameter
 		//	iCode					Count		Function Algorithm				Required		Maximum Count	SourceLight data
 		//  ------------------		------		--------------------------		----------		-------------	----------------------------------
+		{	_ICODE_ADDBS,			1,			(uptr)&function_addbs,			1,				4,				&gsSourceLight_alltrim[0]		},
 		{	_ICODE_ALLTRIM,			1,			(uptr)&function_alltrim,		1,				4,				&gsSourceLight_alltrim[0]		},
 		{	_ICODE_ASC,				1,			(uptr)&function_asc,			1,				1,				&gsSourceLight_asc[0]			},
 		{	_ICODE_AT,				1,			(uptr)&function_at,				2,				3,				&gsSourceLight_at[0]			},

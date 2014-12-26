@@ -37,6 +37,12 @@
     <Filter Include="commands">
       <UniqueIdentifier>{ee52b45e-4a6e-4f60-b9a2-5f0423973412}</UniqueIdentifier>
     </Filter>
+    <Filter Include="compiler">
+      <UniqueIdentifier>{4a03024c-b097-4596-8453-f604db6ceb2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="compiler\vxb">
+      <UniqueIdentifier>{14fafdac-e9d6-46b1-8e73-0226b02bc6a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="small.ico">
@@ -78,6 +84,9 @@
     </ClCompile>
     <ClCompile Include="..\..\source\commands\commands.cpp">
       <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\compiler\vxb\vxb_compiler.cpp">
+      <Filter>compiler\vxb</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -152,6 +161,18 @@
     </ClInclude>
     <ClInclude Include="..\..\source\commands\command_sourcelight.h">
       <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\compiler\vxb\const.h">
+      <Filter>compiler\vxb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\compiler\vxb\defs.h">
+      <Filter>compiler\vxb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\compiler\vxb\globals.h">
+      <Filter>compiler\vxb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\compiler\vxb\structs.h">
+      <Filter>compiler\vxb</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
