@@ -171,8 +171,8 @@
 	const u32		_WARNING_UNSPECIFIED_WARNING					= 2;
 
 	// Messages
-	const s8		cgcSpuriousIgnored[]							= "spurious, ignored";
-	const s8		cgcUnspecifiedWarning[]							= "warning";
+	const u8		cgcSpuriousIgnored[]							= "spurious, ignored";
+	const u8		cgcUnspecifiedWarning[]							= "warning";
 
 
 //////////
@@ -208,62 +208,62 @@
 	const u32		_ERROR_ALIAS_ALREADY_IN_USE						= 28;
 
 	// Messages
-	const s8		cgcComponentError[]								= "Error in component, column ";
-	const s8		cgcOutOfMemory[]								= "out of memory";
-	const s8		cgcUnexpectedCommand[]							= "unexpected command";
-	const s8		cgcContextHasChanged[]							= "context has changed";
-	const s8		cgcFullRecompileRequired[]						= "full recompile required";
-	const s8		cgcNotAVariable[]								= "not a variable";
-	const s8		cgcNumericOverflow[]							= "numeric overflow";
-	const s8		cgcNotNumeric[]									= "not numeric";
-	const s8		cgcEmptyString[]								= "empty string";
-	const s8		cgcSyntaxError[]								= "syntax error";
-	const s8		cgcUnrecognizedParameter[]						= "unrecognized parameter";
-	const s8		cgcOutOfRange[]									= "out of range";
-	const s8		cgcCommaExpected[]								= "comma expected";
-	const s8		cgcTooManyParameters[]							= "too many parameters";
-	const s8		cgcDataTypeMismatch[]							= "data type mismatch";
-	const s8		cgcFeatureNotAvailable[]						= "feature not available";
-	const s8		cgcP1IsIncorrect[]								= "parameter 1 is incorrect";
-	const s8		cgcP2IsIncorrect[]								= "parameter 2 is incorrect";
-	const s8		cgcP3IsIncorrect[]								= "parameter 3 is incorrect";
-	const s8		cgcP4IsIncorrect[]								= "parameter 4 is incorrect";
-	const s8		cgcP5IsIncorrect[]								= "parameter 5 is incorrect";
-	const s8		cgcP6IsIncorrect[]								= "parameter 6 is incorrect";
-	const s8		cgcP7IsIncorrect[]								= "parameter 7 is incorrect";
-	const s8		cgcInternalError[]								= "internal error";
-	const s8		cgcInvalidArgumentTypeCountError[]				= "invalid argument, type, or count";
-	const s8		cgcVariableNotFoundError[]						= "variable not found";
-	const s8		cgcAliasNotFoundError[]							= "alias not found";
-	const s8		cgcInvalidWorkArea[]							= "invalid work area";
-	const s8		cgcAliasAlreadyInUse[]							= "alias already in use";
+	const u8		cgcComponentError[]								= "Error in component, column ";
+	const u8		cgcOutOfMemory[]								= "out of memory";
+	const u8		cgcUnexpectedCommand[]							= "unexpected command";
+	const u8		cgcContextHasChanged[]							= "context has changed";
+	const u8		cgcFullRecompileRequired[]						= "full recompile required";
+	const u8		cgcNotAVariable[]								= "not a variable";
+	const u8		cgcNumericOverflow[]							= "numeric overflow";
+	const u8		cgcNotNumeric[]									= "not numeric";
+	const u8		cgcEmptyString[]								= "empty string";
+	const u8		cgcSyntaxError[]								= "syntax error";
+	const u8		cgcUnrecognizedParameter[]						= "unrecognized parameter";
+	const u8		cgcOutOfRange[]									= "out of range";
+	const u8		cgcCommaExpected[]								= "comma expected";
+	const u8		cgcTooManyParameters[]							= "too many parameters";
+	const u8		cgcDataTypeMismatch[]							= "data type mismatch";
+	const u8		cgcFeatureNotAvailable[]						= "feature not available";
+	const u8		cgcP1IsIncorrect[]								= "parameter 1 is incorrect";
+	const u8		cgcP2IsIncorrect[]								= "parameter 2 is incorrect";
+	const u8		cgcP3IsIncorrect[]								= "parameter 3 is incorrect";
+	const u8		cgcP4IsIncorrect[]								= "parameter 4 is incorrect";
+	const u8		cgcP5IsIncorrect[]								= "parameter 5 is incorrect";
+	const u8		cgcP6IsIncorrect[]								= "parameter 6 is incorrect";
+	const u8		cgcP7IsIncorrect[]								= "parameter 7 is incorrect";
+	const u8		cgcInternalError[]								= "internal error";
+	const u8		cgcInvalidArgumentTypeCountError[]				= "invalid argument, type, or count";
+	const u8		cgcVariableNotFoundError[]						= "variable not found";
+	const u8		cgcAliasNotFoundError[]							= "alias not found";
+	const u8		cgcInvalidWorkArea[]							= "invalid work area";
+	const u8		cgcAliasAlreadyInUse[]							= "alias already in use";
 	
 
 //////////
 // Symbols in token parsing
 //////
-	const s8		cgcBackslash[]									= "\\";
-	const s8		cgcSlash[]										= "/";
-	const s8		cgcS[]											= "S";
-	const s8		cgcNullString[]									= "";
-	const s8		cgcPseudoFunctionName[]							= "__top_of_code_block";
-	const s8		cgcNullText[]									= ".NULL.";
-	const s8		cgcObjectText[]									= "(object)";
-	const s8		cgcThisCodeText[]								= "(thisCode)";
-	const s8		cgcTText[]										= ".T.";
-	const s8		cgcFText[]										= ".F.";
-	const s8		cgcYText[]										= ".Y.";
-	const s8		cgcNText[]										= ".N.";
-	const s8		cgcUText[]										= ".U.";
-	const s8		cgcDText[]										= ".D.";
-	const s8		cgcOxText[]										= ".o.";		// Other
-	const s8		cgcPxText[]										= ".p.";		// Partial
-	const s8		cgcYxText[]										= ".y.";		// Yet another
-	const s8		cgcZxText[]										= ".z.";		// Zat's all folks! :-)
-	const s8		cgcBigInteger[]									= "(BigInteger)";
-	const s8		cgcBigFloatingPoint[]							= "(BigFloatingPoint)";
-	const s8		cgcPasswordCharText[]							= "o";
-	const s8		cgcFeatureNotYetSupported[]						= "feature not yet supported";
+	const u8		cgcBackslash[]									= "\\";
+	const u8		cgcSlash[]										= "/";
+	const u8		cgcS[]											= "S";
+	const u8		cgcNullString[]									= "";
+	const u8		cgcPseudoFunctionName[]							= "__top_of_code_block";
+	const u8		cgcNullText[]									= ".NULL.";
+	const u8		cgcObjectText[]									= "(object)";
+	const u8		cgcThisCodeText[]								= "(thisCode)";
+	const u8		cgcTText[]										= ".T.";
+	const u8		cgcFText[]										= ".F.";
+	const u8		cgcYText[]										= ".Y.";
+	const u8		cgcNText[]										= ".N.";
+	const u8		cgcUText[]										= ".U.";
+	const u8		cgcDText[]										= ".D.";
+	const u8		cgcOxText[]										= ".o.";		// Other
+	const u8		cgcPxText[]										= ".p.";		// Partial
+	const u8		cgcYxText[]										= ".y.";		// Yet another
+	const u8		cgcZxText[]										= ".z.";		// Zat's all folks! :-)
+	const u8		cgcBigInteger[]									= "(BigInteger)";
+	const u8		cgcBigFloatingPoint[]							= "(BigFloatingPoint)";
+	const u8		cgcPasswordCharText[]							= "o";
+	const u8		cgcFeatureNotYetSupported[]						= "feature not yet supported";
 
 
 	// Combined items

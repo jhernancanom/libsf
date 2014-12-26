@@ -96,7 +96,12 @@
 		}
 	}
 
-	SDatum* iDatum_allocate(s8* data, s32 dataLength)
+	SDatum* iDatum_allocate(cu8* data, s32 dataLength)
+	{
+		return(iDatum_allocate((u8*)data, dataLength));
+	}
+
+	SDatum* iDatum_allocate(u8* data, s32 dataLength)
 	{
 		SDatum* datumNew;
 
@@ -127,7 +132,7 @@
 		return(datumNew);
 	}
 
-	void iDatum_duplicate(SDatum* datum, s8* data, s32 dataLength)
+	void iDatum_duplicate(SDatum* datum, u8* data, s32 dataLength)
 	{
 		// Make sure our environment is sane
 		if (datum && data)
@@ -158,16 +163,16 @@
 		}
 	}
 
-	void iDatum_duplicate(SDatum* datum, cs8* data, s32 dataLength)
+	void iDatum_duplicate(SDatum* datum, cu8* data, s32 dataLength)
 	{
-		iDatum_duplicate(datum, (s8*)data, dataLength);
+		iDatum_duplicate(datum, (u8*)data, dataLength);
 	}
 
 	void iDatum_duplicate(SDatum* datumDst, SDatum* datumSrc)
 	{
 		// Make sure our environment is sane
 		if (datumDst && datumSrc && datumSrc->data)
-			iDatum_duplicate(datumDst, datumSrc->data, datumSrc->length);
+			iDatum_duplicate(datumDst, datumSrc->data_u8, datumSrc->length);
 	}
 
 	bool iDatum_resize(SDatum* datum, s32 newDataLength)

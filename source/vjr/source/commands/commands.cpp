@@ -76,12 +76,12 @@
 // Reports an error
 //
 //////
-	void iError_report(cs8* constantErrorText)
+	void iError_report(cu8* constantErrorText)
 	{
-		iError_report((s8*)constantErrorText);
+		iError_report((u8*)constantErrorText);
 	}
 
-	void iError_report(s8* errorText)
+	void iError_report(u8* errorText)
 	{
 		// Append the error to the EM
 		iSEM_appendLine(screenData, errorText, -1, false);
@@ -100,34 +100,34 @@
 	{
 		switch (tnErrorNum)
 		{
-			case _ERROR_OUT_OF_MEMORY:						{	iError_report((s8*)cgcOutOfMemory);						break;	}
-			case _ERROR_UNEXPECTED_COMMAND:					{	iError_report((s8*)cgcUnexpectedCommand);				break;	}
-			case _ERROR_CONTEXT_HAS_CHANGED:				{	iError_report((s8*)cgcContextHasChanged);				break;	}
-			case _ERROR_FULL_RECOMPILE_REQUIRED:			{	iError_report((s8*)cgcFullRecompileRequired);			break;	}
-			case _ERROR_NOT_A_VARIABLE:						{	iError_report((s8*)cgcNotAVariable);					break;	}
-			case _ERROR_NUMERIC_OVERFLOW:					{	iError_report((s8*)cgcNumericOverflow);					break;	}
-			case _ERROR_NOT_NUMERIC:						{	iError_report((s8*)cgcNotNumeric);						break;	}
-			case _ERROR_EMPTY_STRING:						{	iError_report((s8*)cgcEmptyString);						break;	}
-			case _ERROR_SYNTAX:								{	iError_report((s8*)cgcSyntaxError);						break;	}
-			case _ERROR_UNRECOGNIZED_PARAMETER:				{	iError_report((s8*)cgcUnrecognizedParameter);			break;	}
-			case _ERROR_OUT_OF_RANGE:						{	iError_report((s8*)cgcOutOfRange);						break;	}
-			case _ERROR_COMMA_EXPECTED:						{	iError_report((s8*)cgcCommaExpected);					break;	}
-			case _ERROR_TOO_MANY_PARAMETERS:				{	iError_report((s8*)cgcTooManyParameters);				break;	}
-			case _ERROR_DATA_TYPE_MISMATCH:					{	iError_report((s8*)cgcDataTypeMismatch);				break;	}
-			case _ERROR_FEATURE_NOT_AVAILABLE:				{	iError_report((s8*)cgcFeatureNotAvailable);				break;	}
-			case _ERROR_P1_IS_INCORRECT:					{	iError_report((s8*)cgcP1IsIncorrect);					break;	}
-			case _ERROR_P2_IS_INCORRECT:					{	iError_report((s8*)cgcP2IsIncorrect);					break;	}
-			case _ERROR_P3_IS_INCORRECT:					{	iError_report((s8*)cgcP3IsIncorrect);					break;	}
-			case _ERROR_P4_IS_INCORRECT:					{	iError_report((s8*)cgcP4IsIncorrect);					break;	}
-			case _ERROR_P5_IS_INCORRECT:					{	iError_report((s8*)cgcP5IsIncorrect);					break;	}
-			case _ERROR_P6_IS_INCORRECT:					{	iError_report((s8*)cgcP6IsIncorrect);					break;	}
-			case _ERROR_P7_IS_INCORRECT:					{	iError_report((s8*)cgcP7IsIncorrect);					break;	}
-			case _ERROR_INTERNAL_ERROR:						{	iError_report((s8*)cgcInternalError);					break;	}
-			case _ERROR_INVALID_ARGUMENT_TYPE_COUNT:		{	iError_report((s8*)cgcInvalidArgumentTypeCountError);	break;	}
-			case _ERROR_VARIABLE_NOT_FOUND:					{	iError_report((s8*)cgcVariableNotFoundError);			break;	}
-			case _ERROR_ALIAS_NOT_FOUND:					{	iError_report((s8*)cgcAliasNotFoundError);				break;	}
-			case _ERROR_INVALID_WORK_AREA:					{	iError_report((s8*)cgcInvalidWorkArea);					break;	}
-			case _ERROR_ALIAS_ALREADY_IN_USE:				{	iError_report((s8*)cgcAliasAlreadyInUse);				break;	}
+			case _ERROR_OUT_OF_MEMORY:						{	iError_report(cgcOutOfMemory);						break;	}
+			case _ERROR_UNEXPECTED_COMMAND:					{	iError_report(cgcUnexpectedCommand);				break;	}
+			case _ERROR_CONTEXT_HAS_CHANGED:				{	iError_report(cgcContextHasChanged);				break;	}
+			case _ERROR_FULL_RECOMPILE_REQUIRED:			{	iError_report(cgcFullRecompileRequired);			break;	}
+			case _ERROR_NOT_A_VARIABLE:						{	iError_report(cgcNotAVariable);						break;	}
+			case _ERROR_NUMERIC_OVERFLOW:					{	iError_report(cgcNumericOverflow);					break;	}
+			case _ERROR_NOT_NUMERIC:						{	iError_report(cgcNotNumeric);						break;	}
+			case _ERROR_EMPTY_STRING:						{	iError_report(cgcEmptyString);						break;	}
+			case _ERROR_SYNTAX:								{	iError_report(cgcSyntaxError);						break;	}
+			case _ERROR_UNRECOGNIZED_PARAMETER:				{	iError_report(cgcUnrecognizedParameter);			break;	}
+			case _ERROR_OUT_OF_RANGE:						{	iError_report(cgcOutOfRange);						break;	}
+			case _ERROR_COMMA_EXPECTED:						{	iError_report(cgcCommaExpected);					break;	}
+			case _ERROR_TOO_MANY_PARAMETERS:				{	iError_report(cgcTooManyParameters);				break;	}
+			case _ERROR_DATA_TYPE_MISMATCH:					{	iError_report(cgcDataTypeMismatch);					break;	}
+			case _ERROR_FEATURE_NOT_AVAILABLE:				{	iError_report(cgcFeatureNotAvailable);				break;	}
+			case _ERROR_P1_IS_INCORRECT:					{	iError_report(cgcP1IsIncorrect);					break;	}
+			case _ERROR_P2_IS_INCORRECT:					{	iError_report(cgcP2IsIncorrect);					break;	}
+			case _ERROR_P3_IS_INCORRECT:					{	iError_report(cgcP3IsIncorrect);					break;	}
+			case _ERROR_P4_IS_INCORRECT:					{	iError_report(cgcP4IsIncorrect);					break;	}
+			case _ERROR_P5_IS_INCORRECT:					{	iError_report(cgcP5IsIncorrect);					break;	}
+			case _ERROR_P6_IS_INCORRECT:					{	iError_report(cgcP6IsIncorrect);					break;	}
+			case _ERROR_P7_IS_INCORRECT:					{	iError_report(cgcP7IsIncorrect);					break;	}
+			case _ERROR_INTERNAL_ERROR:						{	iError_report(cgcInternalError);					break;	}
+			case _ERROR_INVALID_ARGUMENT_TYPE_COUNT:		{	iError_report(cgcInvalidArgumentTypeCountError);	break;	}
+			case _ERROR_VARIABLE_NOT_FOUND:					{	iError_report(cgcVariableNotFoundError);			break;	}
+			case _ERROR_ALIAS_NOT_FOUND:					{	iError_report(cgcAliasNotFoundError);				break;	}
+			case _ERROR_INVALID_WORK_AREA:					{	iError_report(cgcInvalidWorkArea);					break;	}
+			case _ERROR_ALIAS_ALREADY_IN_USE:				{	iError_report(cgcAliasAlreadyInUse);				break;	}
 		}
 
 		// Flag the component
@@ -307,7 +307,7 @@
 	        result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 			if (!result)
 			{
-				iError_report("Internal error.");
+				iError_report(cgcInternalError);
 				return(NULL);
 			}
 
@@ -524,7 +524,7 @@
 				//////////
 				// Copy the portion of the string
 				//////
-					iDatum_duplicate(&result->value, varString->value.data + lnClipStartPos, lnClipEndPos - lnClipStartPos + 1);
+					iDatum_duplicate(&result->value, varString->value.data_u8 + lnClipStartPos, lnClipEndPos - lnClipStartPos + 1);
 			}
 
 
@@ -592,7 +592,7 @@
 	        result = iVariable_create(_VAR_TYPE_S32, NULL);
 			if (!result)
 			{
-				iError_report("Internal error.");
+				iError_report(cgcInternalError);
 				return(NULL);
 			}
 
@@ -706,7 +706,7 @@
 				// Validate that the occurrence is
 				if (lnOccurrence <= 0)
 				{
-					iError_report("Parameter 3 must be 1 or greater");
+					iError_report((cu8*)"Parameter 3 must be 1 or greater");
 					return(NULL);
 				}
 
@@ -831,7 +831,7 @@
 		u32			errorNum;
         bool		error;
         SVariable*	result;
-		s8			buffer[16];
+		u8			buffer[16];
 
 
 		//////////
@@ -857,7 +857,7 @@
 
 			} else if (value > 255 || value < 0) {
 				// We report our own error
-				iError_report("Parameter must be in the range 0..255");
+				iError_report((u8*)"Parameter must be in the range 0..255");
 				return(NULL);
 			}
 
@@ -868,7 +868,7 @@
 	        result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 			if (!result)
 			{
-				iError_report("Internal error.");
+				iError_report((u8*)"Internal error.");
 				return(NULL);
 			}
 
@@ -969,7 +969,7 @@
 		//////////
 		// Allocate a copy of the original string
 		//////
-			result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, varString->value.data, varString->value.length);
+			result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, varString->value.data_u8, varString->value.length);
 			
 			// If the original string is empty, or the characters to search for are empty, then we don't need to do anything
 			if (varString->value.length == 0 || varSearch->value.length == 0)
@@ -1108,7 +1108,7 @@
 			lnObjType = iiObj_getBaseclassType_byName(varClass->value.data, varClass->value.length);
 			if (lnObjType <= 0)
 			{
-				iError_report("Unknown class");
+				iError_report((cu8*)"Unknown class");
 				return(NULL);
 			}
 
@@ -1116,7 +1116,7 @@
 			obj = iObj_create(lnObjType, NULL);
 			if (!obj)
 			{
-				iError_report("Internal error on create object.");
+				iError_report((cu8*)"Internal error on create object.");
 				return(NULL);
 			}
 
@@ -1128,7 +1128,7 @@
 			if (!result)
 			{
 				iObj_delete(&obj, true, true, true);
-				iError_report("Internal error on create variable.");
+				iError_report((cu8*)"Internal error on create variable.");
 				return(NULL);
 			}
 
@@ -1167,13 +1167,13 @@
 //////
 	SVariable* function_curdir(void)
 	{
-		s8			curdir[_MAX_PATH];
+		u8			curdir[_MAX_PATH];
 		SVariable*	result;
 
 
 		// Get the current directory
 		memset(curdir, 0, sizeof(curdir));
-		GetCurrentDirectory(_MAX_PATH, curdir);
+		GetCurrentDirectory(_MAX_PATH, (s8*)curdir);
 
 		// Create the output variable
 		result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, curdir, strlen(curdir));
@@ -1246,7 +1246,7 @@
 					// They gave us a pYear
 					if (!iVariable_isTypeNumeric(varYear))
 					{
-						iError_report("Year must be numeric");
+						iError_report((cu8*)"Year must be numeric");
 						return(NULL);
 					}
 					lst.wYear = (u16)iiVariable_getAs_s32(varYear, false, &error, &errorNum);
@@ -1266,7 +1266,7 @@
 					// They gave us a pMonth
 					if (!iVariable_isTypeNumeric(varMonth))
 					{
-						iError_report("Month must be numeric");
+						iError_report((cu8*)"Month must be numeric");
 						return(NULL);
 					}
 					lst.wMonth = (u16)iiVariable_getAs_s32(varMonth, false, &error, &errorNum);
@@ -1286,7 +1286,7 @@
 					// They gave us a pDay
 					if (!iVariable_isTypeNumeric(varDay))
 					{
-						iError_report("Day must be numeric");
+						iError_report((cu8*)"Day must be numeric");
 						return(NULL);
 					}
 					lst.wDay = (u16)iiVariable_getAs_s32(varDay, false, &error, &errorNum);
@@ -1306,7 +1306,7 @@
 					// They gave us a pHour
 					if (!iVariable_isTypeNumeric(varHour))
 					{
-						iError_report("Hours must be numeric");
+						iError_report((cu8*)"Hours must be numeric");
 						return(NULL);
 					}
 					lst.wHour = (u16)iiVariable_getAs_s32(varHour, false, &error, &errorNum);
@@ -1326,7 +1326,7 @@
 					// They gave us a pMinute
 					if (!iVariable_isTypeNumeric(varMinute))
 					{
-						iError_report("Minutes must be numeric");
+						iError_report((cu8*)"Minutes must be numeric");
 						return(NULL);
 					}
 					lst.wMinute = (u16)iiVariable_getAs_s32(varMinute, false, &error, &errorNum);
@@ -1346,7 +1346,7 @@
 					// They gave us a pSecond
 					if (!iVariable_isTypeNumeric(varSecond))
 					{
-						iError_report("Seconds must be numeric");
+						iError_report((cu8*)"Seconds must be numeric");
 						return(NULL);
 					}
 					lst.wSecond = (u16)iiVariable_getAs_s32(varSecond, false, &error, &errorNum);
@@ -1366,7 +1366,7 @@
 					// They gave us a pMillisecond
 					if (!iVariable_isTypeNumeric(varMillisecond))
 					{
-						iError_report("Milliseconds must be numeric");
+						iError_report((cu8*)"Milliseconds must be numeric");
 						return(NULL);
 					}
 					lst.wMilliseconds = (u16)iiVariable_getAs_s32(varMillisecond, false, &error, &errorNum);
@@ -1488,9 +1488,7 @@
 //////
 	SVariable* function_justdrive(SVariable* varString)
 	{
-		u32			errorNum;
-        bool		error;
-		s8*			ptr;
+		u8*			ptr;
         SVariable*	result;
 		SVariable*	varCurdir;
 
@@ -1520,7 +1518,7 @@
 				if (varString->value.data_s8[1] == ':')
 				{
 					// We have a drive
-					ptr = varString->value.data_s8;
+					ptr = varString->value.data_u8;
 
 				} else {
 					// No drive information, use current drive
@@ -1535,7 +1533,7 @@
 
 					} else {
 						// Valid directory
-						ptr = varCurdir->value.data_s8;
+						ptr = varCurdir->value.data_u8;
 					}
 				}
 
@@ -1556,7 +1554,6 @@
 		//////////
 		// Clean house
 		//////
-clean_exit:
 			if (varCurdir)
 				iVariable_delete(varCurdir, true);
 
@@ -1591,9 +1588,7 @@ clean_exit:
 //////
 	SVariable* function_justext(SVariable* varString)
 	{
-		u32			errorNum;
-        bool		error;
-		s8*			ptr;
+		u8*			ptr;
         SVariable*	result;
 		SVariable*	varCurdir;
 
@@ -1638,7 +1633,6 @@ clean_exit:
 		//////////
 		// Clean house
 		//////
-clean_exit:
 			if (varCurdir)
 				iVariable_delete(varCurdir, true);
 
@@ -1673,6 +1667,7 @@ clean_exit:
 //////
 	SVariable* function_justfname(SVariable* varString)
 	{
+		return(NULL);
 	}
 
 
@@ -1699,6 +1694,7 @@ clean_exit:
 //////
 	SVariable* function_justpath(SVariable* varString)
 	{
+		return(NULL);
 	}
 
 
@@ -1725,6 +1721,7 @@ clean_exit:
 //////
 	SVariable* function_juststem(SVariable* varString)
 	{
+		return(NULL);
 	}
 
 
@@ -1796,7 +1793,7 @@ clean_exit:
 	        result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 			if (!result)
 			{
-				iError_report("Internal error.");
+				iError_report(cgcInternalError);
 				return(NULL);
 			}
 
@@ -1805,7 +1802,7 @@ clean_exit:
         // Copy as much of the source string as will fit
 		//////
 			if (lnLength > 0)
-				iDatum_duplicate(&result->value, varString->value.data, min(varString->value.length, lnLength));
+				iDatum_duplicate(&result->value, varString->value.data_u8, min(varString->value.length, lnLength));
 
 
 		//////////
@@ -1858,7 +1855,7 @@ clean_exit:
 	        result = iVariable_create(_VAR_TYPE_S32, NULL);
 			if (!result)
 			{
-				iError_report("Internal error.");
+				iError_report(cgcInternalError);
 				return(NULL);
 			}
 
@@ -1920,7 +1917,7 @@ clean_exit:
 	        result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 			if (!result)
 			{
-				iError_report("Internal error.");
+				iError_report(cgcInternalError);
 				return(NULL);
 			}
 
@@ -2559,7 +2556,7 @@ clean_exit:
 				// Validate the pad character is at least one character long
 				if (varPadCharacter->value.length == 0)
 				{
-					iError_report("Parameter 3 must be at least one character");
+					iError_report((cu8*)"Parameter 3 must be at least one character");
 					return(NULL);
 				}
 
@@ -2701,7 +2698,7 @@ clean_exit:
 			result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 			if (!result)
 			{
-				iError_report("Internal error.");
+				iError_report(cgcInternalError);
 				return(NULL);
 			}
 
@@ -2817,7 +2814,7 @@ clean_exit:
 			result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 			if (!result)
 			{
-				iError_report("Internal error.");
+				iError_report(cgcInternalError);
 				return(NULL);
 			}
 		
@@ -2965,7 +2962,7 @@ clean_exit:
 	        result = iVariable_create(_VAR_TYPE_U32, NULL);
 			if (!result)
 			{
-				iError_report("Internal error.");
+				iError_report(cgcInternalError);
 				return(NULL);
 			}
 
@@ -3140,7 +3137,7 @@ clean_exit:
 	        result = iVariable_create(_VAR_TYPE_U32, NULL);
 			if (!result)
 			{
-				iError_report("Internal error.");
+				iError_report(cgcInternalError);
 				return(NULL);
 			}
 
@@ -3226,7 +3223,7 @@ clean_exit:
 	        result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 			if (!result)
 			{
-				iError_report("Internal error.");
+				iError_report(cgcInternalError);
 				return(NULL);
 			}
 
@@ -3242,7 +3239,7 @@ clean_exit:
 			} else if (lnLength > 0) {
 				// We can do an extraction
 				lnStart = varString->value.length - lnLength;
-				iDatum_duplicate(&result->value, varString->value.data + lnStart, lnLength);
+				iDatum_duplicate(&result->value, varString->value.data_u8 + lnStart, lnLength);
 			}
 
 
@@ -3338,7 +3335,7 @@ clean_exit:
 			result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 			if (!result)
 			{
-				iError_report("Internal error.");
+				iError_report(cgcInternalError);
 				return(NULL);
 			}
 
@@ -3470,7 +3467,7 @@ clean_exit:
 			if (varSearch->value.length == 0 || varSearch->value.length > varString->value.length)
 			{
 				// Allocate a full copy of the original string
-				result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, varString->value.data, varString->value.length);
+				result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, varString->value.data_u8, varString->value.length);
 				return(result);
 			}
 
@@ -3518,7 +3515,7 @@ clean_exit:
 				{
 					// If we haven't made an official copy yet, we need to do so now
 					if (result == varString)
-						result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, varString->value.data, varString->value.length);
+						result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, varString->value.data_u8, varString->value.length);
 
 					// Return our result
 					return(result);
@@ -3618,7 +3615,7 @@ clean_exit:
 		s32			lnStartPosition, lnRemoveCount, lnBufferLength;
 		bool		error;
 		u32			errorNum;
-		s8*			lcBuffer;
+		u8*			lcBuffer;
 		SVariable*	result;
 
 
@@ -3693,7 +3690,7 @@ clean_exit:
 		// Construct our destination
 		//////
 			lnBufferLength	= varOriginalString->value.length - lnRemoveCount + varStuffString->value.length;
-			lcBuffer = (s8*)malloc(lnBufferLength);
+			lcBuffer = (u8*)malloc(lnBufferLength);
 			if (!lcBuffer)
 			{
 				iError_reportByNumber(_ERROR_OUT_OF_MEMORY, NULL);
@@ -3705,15 +3702,15 @@ clean_exit:
 
 			// We only copy the first part if there is something to copy
 			if (lnStartPosition > 0)
-				memcpy(lcBuffer, varOriginalString->value.data, lnStartPosition);
+				memcpy((s8*)lcBuffer, varOriginalString->value.data, lnStartPosition);
 
 			// We only insert our stuff string if there is something to put there
 			if (varStuffString->value.length > 0)
-				memcpy(lcBuffer + lnStartPosition, varStuffString->value.data, varStuffString->value.length);
+				memcpy((s8*)lcBuffer + lnStartPosition, varStuffString->value.data, varStuffString->value.length);
 
 			// We only copy over the last part if there's something there
 			if (varOriginalString->value.length - lnStartPosition - lnRemoveCount > 0)
-				memcpy(lcBuffer + lnStartPosition + varStuffString->value.length, varOriginalString->value.data + lnStartPosition + lnRemoveCount, varOriginalString->value.length - lnStartPosition - lnRemoveCount);
+				memcpy((s8*)lcBuffer + lnStartPosition + varStuffString->value.length, varOriginalString->value.data + lnStartPosition + lnRemoveCount, varOriginalString->value.length - lnStartPosition - lnRemoveCount);
 
 
 		//////////
@@ -3722,7 +3719,7 @@ clean_exit:
 	        result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 			if (!result)
 			{
-				iError_report("Internal error.");
+				iError_report((u8*)"Internal error.");
 				return(NULL);
 			}
 
@@ -3798,7 +3795,7 @@ clean_exit:
 
 			} else if (index > 34 || index < 1) {
 				// We report our own error
-				iError_report("Parameter must be in the range 1..34");
+				iError_report((cu8*)"Parameter must be in the range 1..34");
 				return(NULL);
 			}
 
@@ -3809,7 +3806,7 @@ clean_exit:
 	        result = iVariable_create(_VAR_TYPE_S32, NULL);
 			if (!result)
 			{
-				iError_report("Internal error.");
+				iError_report(cgcInternalError);
 				return(NULL);
 			}
 
@@ -4103,7 +4100,7 @@ clean_exit:
 			result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 			if (!result)
 			{
-				iError_report("Internal error.");
+				iError_report(cgcInternalError);
 				return(NULL);
 			}
 
@@ -4158,7 +4155,7 @@ clean_exit:
         s32			index;
 		u32			errorNum;
         bool		error;
-		s8*			lptr;
+		u8*			lptr;
         SVariable*	result;
 
 
@@ -4169,7 +4166,7 @@ clean_exit:
 			if (!iVariable_isValid(varIndex))
 			{
 				// They are requesting the default information
-				lptr = (s8*)cgcVersionText;
+				lptr = (u8*)cgcVersionText;
 
 			} else if (!iVariable_isTypeNumeric(varIndex)) {
 				// The parameter is not numeric
@@ -4186,7 +4183,7 @@ clean_exit:
 
 				} else if (index < 1 || index > 5) {
 					// We report our own error
-					iError_report("Parameter must be in the range 1..5");
+					iError_report((cu8*)"Parameter must be in the range 1..5");
 					return(NULL);
 				}
 			}
@@ -4231,7 +4228,7 @@ clean_exit:
 			}
 			if (!result)
 			{
-				iError_report("Internal error.");
+				iError_report(cgcInternalError);
 				return(NULL);
 			}
 
@@ -5056,7 +5053,7 @@ clean_exit:
 
 			} else {
 				// We need to construct the alias
-				varAliasName = iDbf_getAlias_fromPathname(varTableName->value.data_s8, varTableName->value.length);
+				varAliasName = iDbf_getAlias_fromPathname(varTableName);
 			}
 			if (!varAliasName)	{ iError_reportByNumber(_ERROR_INTERNAL_ERROR, compUse); goto clean_exit; }
 

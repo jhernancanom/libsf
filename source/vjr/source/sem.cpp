@@ -158,7 +158,7 @@
 							// If populated, append its content
 							//////
 								if (line->sourceCode && line->sourceCode_populatedLength > 0)
-									iBuilder_appendData(b, line->sourceCode->data, line->sourceCode_populatedLength);
+									iBuilder_appendData(b, line->sourceCode->data_u8, line->sourceCode_populatedLength);
 
 
 							//////////
@@ -195,7 +195,7 @@
 // Called to save the indicated EM to disk.  Saved as a raw text file.
 //
 //////
-	bool iSEM_saveToDisk(SEM* sem, s8* tcPathname)
+	bool iSEM_saveToDisk(SEM* sem, cu8* tcPathname)
 	{
 		SBuilder* content;
 
@@ -230,14 +230,14 @@
 // Loads in a text file into an EM beginning optionally near ecHint.
 //
 //////
-	bool iSEM_loadFromDisk(SEM* sem, s8* tcPathname, bool isSourceCode, bool tlLogIt)
+	bool iSEM_loadFromDisk(SEM* sem, cu8* tcPathname, bool isSourceCode, bool tlLogIt)
 	{
 		s32			lnI, lnJ, lnLast;
 		bool		llOtherCharacters;
 		SBuilder*	content;
 		SLine*		start;
 		SLine*		end;
-		s8			buffer[_MAX_PATH + 64];
+		u8			buffer[_MAX_PATH + 64];
 
 
 		logfunc(__FUNCTION__);
@@ -257,7 +257,7 @@
 				for (lnI = 0, lnLast = 0; (u32)lnI < content->populatedLength; )
 				{
 					// Are we on a CR/LF combination?
-					for (lnJ = 0; (content->data[lnI] == 13 || content->data[lnI] == 10) && lnJ < 2 && (u32)lnI < content->populatedLength; lnJ++)
+					for (lnJ = 0; (content->data_u8[lnI] == 13 || content->data_u8[lnI] == 10) && lnJ < 2 && (u32)lnI < content->populatedLength; lnJ++)
 						++lnI;	// Increase also past this CR/LF character
 
 					// If we found a CR/LF combination
@@ -267,11 +267,11 @@
 						if (!llOtherCharacters)
 						{
 							// We only had CR+LF characters, no data
-							end = iSEM_appendLine(sem, content->data + lnLast, 0, false);
+							end = iSEM_appendLine(sem, content->data_u8 + lnLast, 0, false);
 
 						} else {
 							// We had at least some data
-							end = iSEM_appendLine(sem, content->data + lnLast, lnI - lnJ - lnLast, false);
+							end = iSEM_appendLine(sem, content->data_u8 + lnLast, lnI - lnJ - lnLast, false);
 						}
 						if (!start)
 							start = end;
@@ -310,14 +310,14 @@
 				if (tlLogIt)
 				{
 					// Log it
-					sprintf(buffer, "Load %s\0", tcPathname);
+					sprintf((s8*)buffer, "Load %s\0", tcPathname);
 					iVjr_appendSystemLog(buffer);
 				}
 				return(true);
 
 			} else if (tlLogIt) {
 				// Log it
-				sprintf(buffer, "Load inquiry %s\0", tcPathname);
+				sprintf((s8*)buffer, "Load inquiry %s\0", tcPathname);
 				iVjr_appendSystemLog(buffer);
 			}
 		}
@@ -721,7 +721,7 @@ debug_break;
 // Called to append a line of text to the indicated SEM.
 //
 //////
-	SLine* iSEM_appendLine(SEM* sem, s8* tcText, s32 tnTextLength, bool tlSetNewLineFlag)
+	SLine* iSEM_appendLine(SEM* sem, u8* tcText, s32 tnTextLength, bool tlSetNewLineFlag)
 	{
 		s32		lnI, lnJ, lnPass, lnTextLength, lnCount;
 		SLine*	ec;
@@ -805,7 +805,7 @@ debug_break;
 					if (lnPass == 0)
 					{
 						// Allocate the datum
-						ec->sourceCode = iDatum_allocate(NULL, 0);
+						ec->sourceCode = iDatum_allocate((u8*)NULL, 0);
 
 						// Allocate space for the copy if there's any data
 						if (lnTextLength != 0)
@@ -821,7 +821,7 @@ debug_break;
 				// Copy the content to the original content
 				//////
 					ec->isNewLine	= tlSetNewLineFlag;
-					ec->sourceCodeOriginal = iDatum_allocate(ec->sourceCode->data, ec->sourceCode_populatedLength);
+					ec->sourceCodeOriginal = iDatum_allocate(ec->sourceCode->data_u8, ec->sourceCode_populatedLength);
 
 
 				//////////
@@ -845,7 +845,7 @@ debug_break;
 // Called to insert a line before or after the indicated line
 //
 //////
-	SLine* iSEM_insertLine(SEM* sem, s8* tcText, s32 tnTextLength, SLine* line, bool tlInsertAfter, bool tlSetNewLineFlag)
+	SLine* iSEM_insertLine(SEM* sem, u8* tcText, s32 tnTextLength, SLine* line, bool tlInsertAfter, bool tlSetNewLineFlag)
 	{
 		SLine* ec;
 

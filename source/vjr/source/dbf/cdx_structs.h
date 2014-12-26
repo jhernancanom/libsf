@@ -228,7 +228,7 @@ struct SCdxKeyOp;
 		u16			reserved9;					// 508,2	
 
 		u16			keyExpressionLength;		// 510,2	Length of index key expression
-		s8			keyExpression[512];		// 512,512	The key and FOR clause expression storage area, in that order, each is NULL-terminated
+		u8			keyExpression[512];		// 512,512	The key and FOR clause expression storage area, in that order, each is NULL-terminated
 												// 1024 bytes
 	};
 
@@ -238,7 +238,7 @@ struct SCdxKeyOp;
 		// Pointer to the key data
 		union {
 			uptr	_key;						// Same value in 32-bit form
-			s8*		key;						// Pointer to the key data
+			u8*		key;						// Pointer to the key data
 		};
 
 		u32			keyLength;					// Length of the key
@@ -272,8 +272,8 @@ struct SCdxKeyOp;
 		u16			keyLength;					// 12,2		Number of bytes in each key
 		u8			options;					// 14,1		1=UNIQUE, 8=FOR clause
 		u8			reserved1;					// 15,1
-		s8			keyExpression[220];			// 16,220	Key expression itself
-		s8			forClause[220];				// 236,220	FOR clause expression
+		u8			keyExpression[220];			// 16,220	Key expression itself
+		u8			forClause[220];				// 236,220	FOR clause expression
 		u8			reserved2[56];				// 456,56
 		// Total size: 512 bytes
 	};
@@ -313,8 +313,8 @@ struct SCdxKeyOp;
 	// For multiple entries in the FOR clause
 	struct SForSubItem
 	{
-		s8*				start;					// Pointer to the starting item
-		s8*				end;					// Where it ends
+		u8*				start;					// Pointer to the starting item
+		u8*				end;					// Where it ends
 		uptr			length;					// Length
 
 		u32				type;					// Known type

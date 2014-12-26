@@ -98,8 +98,8 @@
 																			s8* tcErrorsFound,		u32 tnErrorsFoundLength);
 
 	u32					cdx_get_all_keys								(u32 tnDbfHandle,				s32 tnTagIndex,
-																			s8* tcKeySpace,				u32 tnKeySpaceLength,
-																			s8* tcDecodeExpression,		u32 tnDecodeExpressionLength,
+																			u8* tcKeySpace,				u32 tnKeySpaceLength,
+																			u8* tcDecodeExpression,		u32 tnDecodeExpressionLength,
 																			s8* tcKeyLength4);
 
 	bool				iCdx_validateIdx								(SWorkArea* wa, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
@@ -114,23 +114,23 @@
 // These are for generating new keys from DBF data, or from manual data loaded for index finds
 // BEGIN
 //////
-	SCdxKeyOp*			iiCdx_generateKey_buildOps						(SWorkArea* wa, s8* keyExpression, s32* tnKeyOpCount);
-	bool				iiCdx_generateKey_buildOps_markClosingParenthesis(s8* leftParenthesis, s8 fixupAscii);
-	u32					iiCdx_generateKey								(SWorkArea* wa, SCdxHeader* head, s8* keyStorageArea);
-	void				iiCdx_generateKey_byOps							(SWorkArea* wa, SCdxKeyOp* keyOps, s32 tnKeyOpCount, s8* keyStorageArea, bool tlBuildFromIndexData);
-	void				iiCdx_generateKey_byOps_fixup_swapEndian		(SCdxKeyOp* lko, s8* keyPart);
-	void				iiCdx_generateKey_byOps_fixup_date				(SCdxKeyOp* lko, s8* keyPart);
-	void				iiCdx_generateKey_byOps_fixup_double			(SCdxKeyOp* lko, s8* keyPart);
-	void				iiCdx_generateKey_byOps_fixup_numeric			(SCdxKeyOp* lko, s8* keyPart, SWorkArea* wa);
-	bool				iiCdx_generateKey_byOps_fixup					(SWorkArea* wa, SCdxKeyOp* keyOps, s32 tnKeyOpCount, s8* keyStorageArea, bool tlIsCdxKey);
+	SCdxKeyOp*			iiCdx_generateKey_buildOps						(SWorkArea* wa, u8* keyExpression, s32* tnKeyOpCount);
+	bool				iiCdx_generateKey_buildOps_markClosingParenthesis(u8* leftParenthesis, u8 fixupAscii);
+	u32					iiCdx_generateKey								(SWorkArea* wa, SCdxHeader* head, u8* keyStorageArea);
+	void				iiCdx_generateKey_byOps							(SWorkArea* wa, SCdxKeyOp* keyOps, s32 tnKeyOpCount, u8* keyStorageArea, bool tlBuildFromIndexData);
+	void				iiCdx_generateKey_byOps_fixup_swapEndian		(SCdxKeyOp* lko, u8* keyPart);
+	void				iiCdx_generateKey_byOps_fixup_date				(SCdxKeyOp* lko, u8* keyPart);
+	void				iiCdx_generateKey_byOps_fixup_double			(SCdxKeyOp* lko, u8* keyPart);
+	void				iiCdx_generateKey_byOps_fixup_numeric			(SCdxKeyOp* lko, u8* keyPart, SWorkArea* wa);
+	bool				iiCdx_generateKey_byOps_fixup					(SWorkArea* wa, SCdxKeyOp* keyOps, s32 tnKeyOpCount, u8* keyStorageArea, bool tlIsCdxKey);
 	bool				iiCdx_get_buildOps								(SWorkArea* wa, u32 tnTagIndex, SCdxHeader* tagHeader, SForClause** tsFor, SCdxKeyOp** tsKeyOp, u32* tnKeyOpCount, u32* tnResult);
 //////
 // END
 //////////
-	u32					iiCdx_findKey									(SWorkArea* wa, STagRoot* tagRoot, s8* keyBuffer, u32 tnKeyLength);
-	s32					iiCdx_translateActualResultThroughIndexOrder	(s32 tnActualResult, STagRoot* tagRoot);
-	u32					iCdx_getAllKeysCdx								(SWorkArea* wa, s32 tnTagIndex, s8* tcKeySpace, u32 tnKeySpaceLength, s8* tcDecodeExpression, u32 tnDecodeExpressionLength, s8* tcKeyLength4);
-	u32					iCdx_getAllKeysIdx								(SWorkArea* wa,                 s8* tcKeySpace, u32 tnKeySpaceLength, s8* tcDecodeExpression, u32 tnDecodeExpressionLength, s8* tcKeyLength4);
+	u32					iiCdx_findKey									(SWorkArea* wa, STagRoot* tagRoot, u8* keyBuffer, u32 tnKeyLength);
+	s32					iiCdx_translateActualResultThroughIndexOrder	(STagRoot* tagRoot, u8* keyLeft, u8* keyRight, u32 tnKeyLength);
+	u32					iCdx_getAllKeysCdx								(SWorkArea* wa, s32 tnTagIndex, u8* tcKeySpace, u32 tnKeySpaceLength, u8* tcDecodeExpression, u32 tnDecodeExpressionLength, s8* tcKeyLength4);
+	u32					iCdx_getAllKeysIdx								(SWorkArea* wa,                 u8* tcKeySpace, u32 tnKeySpaceLength, u8* tcDecodeExpression, u32 tnDecodeExpressionLength, s8* tcKeyLength4);
 	bool				iCdx_getCompoundTagRoot							(SWorkArea* wa, SCdxHeader* head, SCdxNode* node, u32 lnTagNum, STagRoot* tagRoot);
 	bool				iCdx_getCompactRootNode							(SWorkArea* wa, SCdxHeader* head, SCdxNode* node,               STagRoot* tagRoot);
 	bool				iCdx_getStandardRootNode						(SWorkArea* wa, SIdxHeader* head, SIdxNode* node,               STagRoot* tagRoot);

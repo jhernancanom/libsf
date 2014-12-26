@@ -772,7 +772,7 @@
 				for (lnI = 0; !llFound && lnI < gFocusHighlights->populatedLength; lnI += sizeof(SFocusHighlight))
 				{
 					// Grab this pointer
-					focus = (SFocusHighlight*)(gFocusHighlights->data + lnI);
+					focus = (SFocusHighlight*)(gFocusHighlights->data_u8 + lnI);
 
 					// Is this it?
 					     if (focus->isValid && focus->obj == obj)		llFound		= true;

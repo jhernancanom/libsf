@@ -152,31 +152,31 @@ struct SFieldRecord2;
 
 	uptr				iDbf_getFieldCount								(u32 tnWorkArea);
 	uptr				iDbf_getReccount								(u32 tnWorkArea);
-	uptr				iDbf_getField_number1							(u32 tnWorkArea, s8* fieldName);
-	uptr				iDbf_getField_name								(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	uptr				iDbf_getField_type								(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	uptr				iDbf_getField_type_verbose						(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	uptr				iDbf_getField_type_extended						(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	uptr				iDbf_getField_length							(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	uptr				iDbf_getIndex_length							(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	uptr				iDbf_getField_decimals							(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	uptr				iDbf_getField_isBinary							(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	uptr				iDbf_getField_allowNulls						(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	uptr				iDbf_getNull_flag								(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
+	uptr				iDbf_getField_number1							(u32 tnWorkArea, u8* fieldName);
+	uptr				iDbf_getField_name								(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength);
+	uptr				iDbf_getField_type								(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength);
+	uptr				iDbf_getField_type_verbose						(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength);
+	uptr				iDbf_getField_type_extended						(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength);
+	uptr				iDbf_getField_length							(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength);
+	uptr				iDbf_getIndex_length							(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength);
+	uptr				iDbf_getField_decimals							(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength);
+	uptr				iDbf_getField_isBinary							(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength);
+	uptr				iDbf_getField_allowNulls						(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength);
+	uptr				iDbf_getNull_flag								(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength);
 	bool				iDbf_getNull_offsetAndMask						(u32 tnWorkArea, u32 fieldNumber, u32* nullOffset, u8* nullMask);
-	uptr				iDbf_getField_autoinc_next						(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	uptr				iDbf_getField_autoinc_step						(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	uptr				iDbf_getField_data								(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength);
-	uptr				iiDbf_getField_data2							(SWorkArea* wa, u32 fieldNumber, s8* dest, u32 destLength, bool tlRetrieveAsIndexKey);
+	uptr				iDbf_getField_autoinc_next						(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength);
+	uptr				iDbf_getField_autoinc_step						(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength);
+	uptr				iDbf_getField_data								(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength);
+	uptr				iiDbf_getField_data2							(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength, bool tlRetrieveAsIndexKey);
 	uptr				iDbf_getField_dataOffset						(u32 tnWorkArea, u32 fieldNumber);
 	uptr				iDbf_getIndexFixupOp							(u32 tnWorkArea, u32 fieldNumber);
-	uptr				iDbf_setField_data								(u32 tnWorkArea, s32 fieldNumber, s8* dest, u32 destLength);
-	uptr				iDbf_getField_validateContents					(u32 tnWorkArea, u32 fieldNumber, s8* src, u32 srcLength);
+	uptr				iDbf_setField_data								(u32 tnWorkArea, s32 fieldNumber, u8* dest, u32 destLength);
+	uptr				iDbf_getField_validateContents					(u32 tnWorkArea, u32 fieldNumber, u8* src, u32 srcLength);
 
 	SFieldRecord1*		iDbf_getField_number1							(SWorkArea* wa, u32 fieldNumber);
 	SFieldRecord2*		iDbf_getField_number2							(SWorkArea* wa, u32 fieldNumber);
-	u8					iDbf_getField_type								(SWorkArea* wa, s8* keyExpression, bool* swapEndians, bool* needsSignBitToggled);
-	uptr				iDbf_getField_name								(s8* expression, s8* foundFieldName);
+	u8					iDbf_getField_type								(SWorkArea* wa, u8* keyExpression, bool* swapEndians, bool* needsSignBitToggled);
+	uptr				iDbf_getField_name								(u8* expression, u8* foundFieldName);
 
 	// Container information
 	void				iiDbc_lookupTableField							(SWorkArea* wa, bool* tlIsValid);
@@ -204,19 +204,19 @@ struct SFieldRecord2;
 	void				iiGetTemporaryFilename							(s8 *temp_file, s8 *prefix);
 	void				iiLowerCaseString								(s8 *string, u32 length);
 	void				iiJuststem										(SWorkArea* wa, s8* alias);
-	void				iiUpperCase										(s8* cptr);
-	void				iiLowerCase										(s8* cptr);
-	s8					iiLowerCase_char								(s8 c);
+	void				iiUpperCase										(u8* cptr);
+	void				iiLowerCase										(u8* cptr);
+	u8					iiLowerCase_char								(u8 c);
 	u32					iiBswap32										(u32 tnBigEndian);		// Big-endian to little-endian
 	u64					iiBswap64										(u64 tnBigEndian);		// Big-endian to little-endian
 	void				iiShiftBlockRight								(u8* data, u32 tnBytes, s32 tnBits);
 	void				iiPtrSwap										(void** p1, void** p2);
-	s8*					iResetThenCopyString							(s8* tcDest, s32 tnDestLength, s8* tcSource, s32 tnSourceLength);
+	u8*					iResetThenCopyString							(u8* tcDest, s32 tnDestLength, u8* tcSource, s32 tnSourceLength);
 
 	// Julian date support
-	u32					iiJulianDayNumber_fromYyyyMmDd_s8				(s8* year4,  s8* month2,  s8* day2);
+	u32					iiJulianDayNumber_fromYyyyMmDd_s8				(u8* year4,  u8* month2,  u8* day2);
 	u32					iiJulianDayNumber_fromYyyyMmDd_u32				(u32 year,  u32  month,  u32  day);
-	void				iiYyyyMmDd_fromJulianDayNumber					(u32  tnJulianDayNumber, s8* year4, s8* month2, s8* day2);
+	void				iiYyyyMmDd_fromJulianDayNumber					(u32  tnJulianDayNumber, u8* year4, u8* month2, u8* day2);
 	void				iiHhMmSsMss_fromf32								(f32 tfSeconds, u32* hour, u32* minute, u32* second, u32* millisecond);
 
 	// Character tests

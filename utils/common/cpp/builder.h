@@ -55,7 +55,8 @@
 	struct SBuilder
 	{
 		union {
-			s8*		data;												// Pointer to a buffer allocated in blocks
+			s8*		data_s8;												// Pointer to a buffer allocated in blocks
+			u8*		data_u8;
 			s8*		buffer;
 			uptr	_data;
 		};
@@ -77,16 +78,16 @@
 //////
 	void		iBuilder_verifySizeForNewBytes				(SBuilder* buffRoot, u32 tnDataLength);
 	void		iBuilder_createAndInitialize				(SBuilder** buffRoot, u32 tnAllocationBlockSize);
-	s8*			iBuilder_appendData							(SBuilder* buffRoot, cs8* tcData, u32 tnDataLength);
-	s8*			iBuilder_append_uptr						(SBuilder* buffRoot, uptr tnValue);
-	s8*			iBuilder_appendCrLf							(SBuilder* buffRoot);
+	u8*			iBuilder_appendData							(SBuilder* buffRoot, cu8* tcData, u32 tnDataLength);
+	u8*			iBuilder_append_uptr						(SBuilder* buffRoot, uptr tnValue);
+	u8*			iBuilder_appendCrLf							(SBuilder* buffRoot);
 	void		iBuilder_reset								(SBuilder* dst);
 	s8*			iBuilder_allocateBytes						(SBuilder* buffRoot, u32 tnDataLength);
 	void		iBuilder_backoffTrailingWhitespaces			(SBuilder* dst);
 	void		iBuilder_setSize							(SBuilder* buffRoot, u32 tnBufferLength);
 	void		iBuilder_freeAndRelease						(SBuilder** buffRoot);
-	u32			iBuilder_asciiWriteOutFile					(SBuilder* buffRoot, cs8* tcPathname);
-	bool		iBuilder_asciiReadFromFile					(SBuilder** buffRoot, cs8* tcPathname);
+	u32			iBuilder_asciiWriteOutFile					(SBuilder* buffRoot, cu8* tcPathname);
+	bool		iBuilder_asciiReadFromFile					(SBuilder** buffRoot, cu8* tcPathname);
 	void		iBuilder_compactData						(SBuilder* buffRoot, u32 tnStart, u32 tnStride, u32 tnCompactCallbackFunction);
 	s8*			iBuilder_insertBytes						(SBuilder* buffRoot, u32 tnStart, u32 tnLength);
 	u32			iBuilder_binarySearch						(SBuilder* haystack, s8* tcNeedle, u32 tnNeedleLength, bool* tlFound, bool tlInsertIfNotFound);

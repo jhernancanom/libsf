@@ -191,47 +191,47 @@
 			if (gsWorkArea[lnI].isUsed == _NO)
 			{
 				// We found a slot
-				gsArea[lnI].thisWorkArea	= lnI;
+				gsWorkArea[lnI].thisWorkArea	= lnI;
 				gnDbf_currentWorkArea		= lnI;
 
 				// Reset the names
-				memset(gsArea[lnI].tablePathname,	0, sizeof(gsArea[lnI].tablePathname));
-				memset(gsArea[lnI].alias,			0, sizeof(gsArea[lnI].alias));
-				memset(gsArea[lnI].indexPathname,	0, sizeof(gsArea[lnI].indexPathname));
+				memset(gsWorkArea[lnI].tablePathname,	0, sizeof(gsWorkArea[lnI].tablePathname));
+				memset(gsWorkArea[lnI].alias,			0, sizeof(gsWorkArea[lnI].alias));
+				memset(gsWorkArea[lnI].indexPathname,	0, sizeof(gsWorkArea[lnI].indexPathname));
 
 				// Copy the user portion of the names
-				gsArea[lnI].tablePathnameLength = (((s32)strlen(table) >= (s32)sizeof(gsArea[lnI].tablePathname)) ? (s32)sizeof(gsArea[lnI].tablePathname) : (s32)strlen(table));
-				memcpy(gsArea[lnI].tablePathname, table, gsArea[lnI].tablePathnameLength);
+				gsWorkArea[lnI].tablePathnameLength = (((s32)strlen(table) >= (s32)sizeof(gsWorkArea[lnI].tablePathname)) ? (s32)sizeof(gsWorkArea[lnI].tablePathname) : (s32)strlen(table));
+				memcpy(gsWorkArea[lnI].tablePathname, table, gsWorkArea[lnI].tablePathnameLength);
 				if (alias != NULL)
 				{
 					// The alias is allowed to be as long as the alias space is, or shorter
-					gsArea[lnI].aliasLength = (((s32)strlen(alias) >= (s32)sizeof(gsArea[lnI].alias)) ? (s32)sizeof(gsArea[lnI].alias) : (u32)strlen(alias));
-					memcpy(gsArea[lnI].alias, alias, gsArea[lnI].aliasLength);
+					gsWorkArea[lnI].aliasLength = (((s32)strlen(alias) >= (s32)sizeof(gsWorkArea[lnI].alias)) ? (s32)sizeof(gsWorkArea[lnI].alias) : (u32)strlen(alias));
+					memcpy(gsWorkArea[lnI].alias, alias, gsWorkArea[lnI].aliasLength);
 				}
 
 				// Open the table based on the shared/exclusive mode
 				lShareFlag = _SH_DENYNO;
-				gsArea[lnI].fhDbf = _fsopen(table, "rb+", lShareFlag);
-				if (gsArea[lnI].fhDbf == NULL)
+				gsWorkArea[lnI].fhDbf = _fsopen(table, "rb+", lShareFlag);
+				if (gsWorkArea[lnI].fhDbf == NULL)
 					return(-1);	// Unable to open the specified table
 
 				// When we get here, the file is opened
 				// Now we have to check to see if it's a FoxPro table, and if it has a memo field
 				// Read the header
-				numread = (u32)fread(&gsArea[lnI].header, 1, sizeof(gsArea[lnI].header), gsArea[lnI].fhDbf);
-				if (numread != sizeof(gsArea[lnI].header))
+				numread = (u32)fread(&gsWorkArea[lnI].header, 1, sizeof(gsWorkArea[lnI].header), gsWorkArea[lnI].fhDbf);
+				if (numread != sizeof(gsWorkArea[lnI].header))
 				{
 					// Unable to read the header
-					fclose(gsArea[lnI].fhDbf);
+					fclose(gsWorkArea[lnI].fhDbf);
 					return(-1);
 				}
 
 
 				// Parse the header
-				gsArea[lnI].isVisualTable = false;
+				gsWorkArea[lnI].isVisualTable = false;
 
 				// Check the type
-				switch (gsArea[lnI].header.type)
+				switch (gsWorkArea[lnI].header.type)
 				{
 /* File types:
 		0x02   FoxBASE
@@ -250,7 +250,7 @@
 */
 					case 0x30:		// Visual FoxPro 3.0 or higher
 					case 0x31:		// Visual FoxPro 3.0 or higher, with autoincrement enabled
-						gsArea[lnI].isVisualTable = true;
+						gsWorkArea[lnI].isVisualTable = true;
 						break;
 
 					// NO memo
@@ -266,38 +266,38 @@
 
 					default:
 					// No idea.	 So, we'll say it's a bad, bad table.
-						fclose(gsArea[lnI].fhDbf);
+						fclose(gsWorkArea[lnI].fhDbf);
 						return(-1);
 				}
 
 
 				// Allocate enough memory for the table structure
-				lStructure_size = gsArea[lnI].header.firstRecord - sizeof(STableHeader);
-				gsArea[lnI].fieldPtr1 = (SFieldRecord1*)malloc(lStructure_size);
-				if (gsArea[lnI].fieldPtr1 == NULL)
+				lStructure_size = gsWorkArea[lnI].header.firstRecord - sizeof(STableHeader);
+				gsWorkArea[lnI].fieldPtr1 = (SFieldRecord1*)malloc(lStructure_size);
+				if (gsWorkArea[lnI].fieldPtr1 == NULL)
 				{
-					fclose(gsArea[lnI].fhDbf);
+					fclose(gsWorkArea[lnI].fhDbf);
 					return(-1);
 				}
 
 
 				// Read in the fields
-				fseek(gsArea[lnI].fhDbf, sizeof(STableHeader), SEEK_SET);
-				numread = (u32)fread(gsArea[lnI].fieldPtr1, 1, lStructure_size, gsArea[lnI].fhDbf);
+				fseek(gsWorkArea[lnI].fhDbf, sizeof(STableHeader), SEEK_SET);
+				numread = (u32)fread(gsWorkArea[lnI].fieldPtr1, 1, lStructure_size, gsWorkArea[lnI].fhDbf);
 				if (numread != lStructure_size)
 				{
-					fclose(gsArea[lnI].fhDbf);
+					fclose(gsWorkArea[lnI].fhDbf);
 					return(-1);
 				}
 
 
 				// Parse the fields to determine the count
-				gsArea[lnI].fieldCount = 0;
-				lfrPtr = gsArea[lnI].fieldPtr1;
+				gsWorkArea[lnI].fieldCount = 0;
+				lfrPtr = gsWorkArea[lnI].fieldPtr1;
 				while (lfrPtr->name[0] != 0 && lfrPtr->name[0] != 13)
 				{
 					// Increase the field count
-					++gsArea[lnI].fieldCount;
+					++gsWorkArea[lnI].fieldCount;
 
 
 					//////////
@@ -367,16 +367,16 @@
 				}
 				// When we get here, lfrPtr is pointing to the structure termination byte.
 				// If this table has a container, the next byte will be the start of the relative backlink to the table
-				gsArea[lnI].backlink		= (s8*)lfrPtr + 1;	// +1 skips past the trailing CHR(13) which terminates the structure list
+				gsWorkArea[lnI].backlink		= (s8*)lfrPtr + 1;	// +1 skips past the trailing CHR(13) which terminates the structure list
 
 				// If it's a visual table, it might have a backlink
-				if (gsArea[lnI].isVisualTable)		gsArea[lnI].backlinkLength	= (u32)strlen(gsArea[lnI].backlink);
-				else								gsArea[lnI].backlinkLength	= 0;
+				if (gsWorkArea[lnI].isVisualTable)		gsWorkArea[lnI].backlinkLength	= (u32)strlen(gsWorkArea[lnI].backlink);
+				else								gsWorkArea[lnI].backlinkLength	= 0;
 
 
 				// For each field, determine its name length
-				lfrPtr = gsArea[lnI].fieldPtr1;
-				for (lnJ = 0; lnJ < gsArea[lnI].fieldCount; lnJ++, lfrPtr++)
+				lfrPtr = gsWorkArea[lnI].fieldPtr1;
+				for (lnJ = 0; lnJ < gsWorkArea[lnI].fieldCount; lnJ++, lfrPtr++)
 				{
 					lfrPtr->field_name_length = 0;
 					for (lnK = 0; lnK < 10 && lfrPtr->name[lnK] != 0; lnK++)
@@ -385,13 +385,13 @@
 				// When we get here, all of the fields have their field length as well
 
 				// Copy to the SFieldRecord2.  If it's part of a container, flush out the full name.
-				gsArea[lnI].field2Ptr	= (SFieldRecord2*)malloc(gsArea[lnI].fieldCount * sizeof(SFieldRecord2));
-				memset(gsArea[lnI].field2Ptr, 0, gsArea[lnI].fieldCount * sizeof(SFieldRecord2));
+				gsWorkArea[lnI].field2Ptr	= (SFieldRecord2*)malloc(gsWorkArea[lnI].fieldCount * sizeof(SFieldRecord2));
+				memset(gsWorkArea[lnI].field2Ptr, 0, gsWorkArea[lnI].fieldCount * sizeof(SFieldRecord2));
 
 				// Copy everything over to the SFieldRecord2
-				lfrPtr	= gsArea[lnI].fieldPtr1;
-				lfr2Ptr	= gsArea[lnI].field2Ptr;
-				for (lnJ = 0; lnJ < gsArea[lnI].fieldCount; lnJ++, lfrPtr++, lfr2Ptr++)
+				lfrPtr	= gsWorkArea[lnI].fieldPtr1;
+				lfr2Ptr	= gsWorkArea[lnI].field2Ptr;
+				for (lnJ = 0; lnJ < gsWorkArea[lnI].fieldCount; lnJ++, lfrPtr++, lfr2Ptr++)
 				{
 					//////////
 					// Copy the short names over
@@ -416,15 +416,15 @@
 				}
 
 				// Reset the pointers
-				lfrPtr	= gsArea[lnI].fieldPtr1;
-				lfr2Ptr	= gsArea[lnI].field2Ptr;
+				lfrPtr	= gsWorkArea[lnI].fieldPtr1;
+				lfr2Ptr	= gsWorkArea[lnI].field2Ptr;
 
 				// See if there's an entry in the container for this table, and if so update the field names to their longer form
-				gsArea[lnI].isUsed = _YES;
-				if (gsArea[lnI].isVisualTable && gsArea[lnI].backlinkLength != 0)
+				gsWorkArea[lnI].isUsed = _YES;
+				if (gsWorkArea[lnI].isVisualTable && gsWorkArea[lnI].backlinkLength != 0)
 				{
 					// Try to open the backlink
-					iiDbc_lookupTableField(&gsArea[lnI], &llDbcIsValid);
+					iiDbc_lookupTableField(&gsWorkArea[lnI], &llDbcIsValid);
 
 				} else {
 					// Simulate true in the absence of a DBC backlink
@@ -432,44 +432,44 @@
 				}
 
 				// Allocate enough space for one line of data
-				gsArea[lnI].data = (s8*)malloc(gsArea[lnI].header.recordLength);
-				if (gsArea[lnI].data == NULL)
+				gsWorkArea[lnI].data = (s8*)malloc(gsWorkArea[lnI].header.recordLength);
+				if (gsWorkArea[lnI].data == NULL)
 				{
-					fclose(gsArea[lnI].fhDbf);
+					fclose(gsWorkArea[lnI].fhDbf);
 					return(-1);
 				}
 
 				// For loaded data
-				memset(gsArea[lnI].data, 0, gsArea[lnI].header.recordLength);
+				memset(gsWorkArea[lnI].data, 0, gsWorkArea[lnI].header.recordLength);
 
 				// Allocate enough space for one line of data
-				gsArea[lnI].odata = (s8*)malloc(gsArea[lnI].header.recordLength);
-				if (gsArea[lnI].odata == NULL)
+				gsWorkArea[lnI].odata = (s8*)malloc(gsWorkArea[lnI].header.recordLength);
+				if (gsWorkArea[lnI].odata == NULL)
 				{
-					fclose(gsArea[lnI].fhDbf);
+					fclose(gsWorkArea[lnI].fhDbf);
 					return(-1);
 				}
 
 				// For original data
-				memset(gsArea[lnI].odata, 0, gsArea[lnI].header.recordLength);		// For original copy of loaded data (allows reversion)
+				memset(gsWorkArea[lnI].odata, 0, gsWorkArea[lnI].header.recordLength);		// For original copy of loaded data (allows reversion)
 
 
 				// Allocate space for constructing index keys
-				gsArea[lnI].idata = (s8*)malloc(gsArea[lnI].header.recordLength);
-				if (gsArea[lnI].idata == NULL)
+				gsWorkArea[lnI].idata = (s8*)malloc(gsWorkArea[lnI].header.recordLength);
+				if (gsWorkArea[lnI].idata == NULL)
 				{
-					fclose(gsArea[lnI].fhDbf);
+					fclose(gsWorkArea[lnI].fhDbf);
 					return(-1);
 				}
 
 				// For index data
-				memset(gsArea[lnI].idata, 0, gsArea[lnI].header.recordLength);		// For original copy of loaded data (allows reversion)
+				memset(gsWorkArea[lnI].idata, 0, gsWorkArea[lnI].header.recordLength);		// For original copy of loaded data (allows reversion)
 
 				// We're done!
-				// Right now, the structure has been loaded into gsArea[i].fieldPtr1, and gsArea[i].field2ptr
-				gsArea[lnI].isIndexLoaded		= _NO;
-				gsArea[lnI].isCached			= _NO;
-				gsArea[lnI].currentRecord		= 0;
+				// Right now, the structure has been loaded into gsWorkArea[i].fieldPtr1, and gsWorkArea[i].field2ptr
+				gsWorkArea[lnI].isIndexLoaded		= _NO;
+				gsWorkArea[lnI].isCached			= _NO;
+				gsWorkArea[lnI].currentRecord		= 0;
 
 				// Move to the first record
 				iDbf_gotoRecord(lnI, 1);
@@ -952,7 +952,7 @@
 	}
 
 	// Returns the field number by field name
-	uptr iDbf_getField_number1(u32 tnWorkArea, s8* fieldName)
+	uptr iDbf_getField_number1(u32 tnWorkArea, u8* fieldName)
 	{
 		s32				lnI, lnLength;
 		SFieldRecord2*	lfr2Ptr;
@@ -981,7 +981,7 @@
 	}
 
 	// Returns 10-digit field name
-	uptr iDbf_getField_name(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getField_name(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		u32				lnI;
 		SFieldRecord2*	lfr2Ptr;
@@ -1019,7 +1019,7 @@
 	//		BDouble		FFloat		GGeneral	IInteger
 	//		LLogical		MMemo		NNumeric	PPicture
 	//		Q-Varbinary		V-Varchar (binary)
-	uptr iDbf_getField_type(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getField_type(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		// Check for errors
 		if (tnWorkArea >= _MAX_DBF_SLOTS)
@@ -1044,7 +1044,7 @@
 		return(-1);
 	}
 
-	uptr iDbf_getField_type_verbose(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getField_type_verbose(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		s8* name;
 		u32 length;
@@ -1120,7 +1120,7 @@
 	// Returns extended field type, such as:
 	//		C(5)
 	//		N(10,2)
-	uptr iDbf_getField_type_extended(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getField_type_extended(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		u32 length;
 		s8 buffer[32];
@@ -1171,7 +1171,7 @@
 	}
 
 	// Returns field length, "10" as in "N(10,2)"
-	uptr iDbf_getField_length(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getField_length(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		u32 length;
 		s8 buffer[32];
@@ -1206,7 +1206,7 @@
 	}
 
 	// Returns the index override length
-	uptr iDbf_getIndex_length(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getIndex_length(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		u32 length;
 		s8 buffer[32];
@@ -1243,7 +1243,7 @@
 	}
 
 	// Returns decimals, "2" as in "N(10,2)"
-	uptr iDbf_getField_decimals(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getField_decimals(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		u32 length;
 		s8 buffer[32];
@@ -1278,7 +1278,7 @@
 	}
 
 	// Returns "Y" or "N" indicating whether or not the field is binary
-	uptr iDbf_getField_isBinary(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getField_isBinary(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		// Check for errors
 		if (tnWorkArea >= _MAX_DBF_SLOTS)
@@ -1297,7 +1297,7 @@
 	}
 
 	// Returns "Y" or "N" indicating whether or not the field can store NULLs
-	uptr iDbf_getField_allowNulls(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getField_allowNulls(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		// Check for errors
 		if (tnWorkArea >= _MAX_DBF_SLOTS)
@@ -1318,7 +1318,7 @@
 	}
 
 	// Returns "Y", "N", or "X" (if invalid) indicating whether or not the field is NULL
-	uptr iDbf_getNull_flag(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getNull_flag(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		u32				lnNull, lnOffset;
 		u8				lnBitMask;
@@ -1428,7 +1428,7 @@
 	}
 
 	// Returns a value if the field is auto-incrementing, blank otherwise
-	uptr iDbf_getField_autoinc_next(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getField_autoinc_next(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		u32 length;
 		s8 buffer[32];
@@ -1461,7 +1461,7 @@
 	}
 
 	// Returns a value if the field is auto-incrementing, blank otherwise
-	uptr iDbf_getField_autoinc_step(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getField_autoinc_step(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		u32 length;
 		s8 buffer[32];
@@ -1493,7 +1493,7 @@
 		return(-1);
 	}
 
-	uptr iDbf_getField_data(u32 tnWorkArea, u32 fieldNumber, s8* dest, u32 destLength)
+	uptr iDbf_getField_data(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		// Check for errors
 		if (tnWorkArea >= _MAX_DBF_SLOTS)
@@ -1522,7 +1522,7 @@
 		return(-1);
 	}
 
-	uptr iiDbf_getField_data2(SWorkArea* wa, u32 fieldNumber, s8* dest, u32 destLength, bool tlRetrieveAsIndexKey)
+	uptr iiDbf_getField_data2(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength, bool tlRetrieveAsIndexKey)
 	{
 		s32				lnI, lnLength;
 		SFieldRecord1*	lfrp;
@@ -1788,7 +1788,7 @@
 // Makes sure the field contents contain only what they should.
 //
 //////
-	uptr iDbf_getField_validateContents(u32 tnWorkArea, u32 fieldNumber, s8* src, u32 srcLength)
+	uptr iDbf_getField_validateContents(u32 tnWorkArea, u32 fieldNumber, u8* src, u32 srcLength)
 	{
 		u32				lnI, lnErrors;
 		bool			llAllowAllStd;
@@ -1979,7 +1979,7 @@
 // on the first field.
 //
 //////
-	u8 iDbf_getField_type(SWorkArea* wa, s8* keyExpression, bool* swapEndians, bool* needsSignBitToggled)
+	u8 iDbf_getField_type(SWorkArea* wa, u8* keyExpression, bool* swapEndians, bool* needsSignBitToggled)
 	{
 		u32				lnI, len;
 		SFieldRecord2*	lfrp2;
@@ -2046,7 +2046,7 @@
 // at plus signs, parenthesis, etc.
 //
 //////
-	uptr iDbf_getField_name(s8* sourceExpression, s8* foundFieldName)
+	uptr iDbf_getField_name(u8* sourceExpression, u8* foundFieldName)
 	{
 		u32		lnLength;
 		s8		c;
@@ -2177,10 +2177,10 @@
 			if (wa->dbc)
 			{
 				// Get the offsets to the fields
-				lnObjectId			= (s32)iDbf_getField_number1(lnDbcHandle, "objectId");
-				lnParentId			= (s32)iDbf_getField_number1(lnDbcHandle, "parentId");
-				lnObjectType		= (s32)iDbf_getField_number1(lnDbcHandle, "objectType");
-				lnObjectName		= (s32)iDbf_getField_number1(lnDbcHandle, "objectName");
+				lnObjectId			= (s32)iDbf_getField_number1(lnDbcHandle, (u8*)"objectId");
+				lnParentId			= (s32)iDbf_getField_number1(lnDbcHandle, (u8*)"parentId");
+				lnObjectType		= (s32)iDbf_getField_number1(lnDbcHandle, (u8*)"objectType");
+				lnObjectName		= (s32)iDbf_getField_number1(lnDbcHandle, (u8*)"objectName");
 
 				// Did we find every field?
 				if (lnObjectId <= 0 || lnParentId <= 0 || lnObjectType <= 0 || lnObjectName <= 0)
@@ -3091,23 +3091,23 @@
 //		s8 c	  - Lower-cased version of c (such that "A" = "a", and "Z" = "z", but "a" = "a" and "z" = "z", etc.)
 //
 /////
-	void iiUpperCase(s8* cptr)
+	void iiUpperCase(u8* cptr)
 	{
-		s8 c = *cptr;
+		u8 c = *cptr;
 
 		if (c >= 'a' && c <= 'z')
 			*cptr -= 0x20;
 	}
 
-	void iiLowerCase(s8* cptr)
+	void iiLowerCase(u8* cptr)
 	{
-		s8 c = *cptr;
+		u8 c = *cptr;
 
 		if (c >= 'A' && c <= 'Z')
 			*cptr += 0x20;
 	}
 
-	s8 iiLowerCase_char(s8 c)
+	u8 iiLowerCase_char(u8 c)
 	{
 		if (c >= 'A' && c <= 'Z')
 			c |= 0x20;			// Turn on the 0x20 bit, which moves it from the 0x40+ range to the 0x60+ range (lower-case)
@@ -3124,7 +3124,7 @@
 //
 //////
 	// Note:  Expecting a full date format, as in "20140201" for Feb.01.2014
-	u32 iiJulianDayNumber_fromYyyyMmDd_s8(s8* year4, s8* month2, s8* day2)
+	u32 iiJulianDayNumber_fromYyyyMmDd_s8(u8* year4, u8* month2, u8* day2)
 	{
 		u32 lnYear, lnMonth, lnDay;
 		s8 buffer[16];
@@ -3134,17 +3134,17 @@
 		// Translate text form into numeric form
 		//////
 			// Year
-			memcpy(buffer, year4, 4);
+			memcpy(buffer, (s8*)year4, 4);
 			buffer[4] = 0;
 			lnYear = atoi(buffer);
 
 			// Month
-			memcpy(buffer, month2, 2);
+			memcpy(buffer, (s8*)month2, 2);
 			buffer[2] = 0;
 			lnMonth = atoi(buffer);
 
 			// Day
-			memcpy(buffer, day2, 2);
+			memcpy(buffer, (s8*)day2, 2);
 			lnDay = atoi(buffer);
 
 		// Convert by value
@@ -3199,7 +3199,7 @@
 		return((s32)lfJulianDayNumber);
 	}
 
-	void iiYyyyMmDd_fromJulianDayNumber(u32	 tnJulianDayNumber, s8* year4, s8* month2, s8* day2)
+	void iiYyyyMmDd_fromJulianDayNumber(u32	 tnJulianDayNumber, u8* year4, u8* month2, u8* day2)
 	{
 		u32 a, b, c, d, e, m;
 		u32 day, month, year;
@@ -3215,9 +3215,9 @@
 		year	= (b * 100) + d - 4800 + (m / 10);
 
 		// Store in text form
-		sprintf(year4,	"%04u", year);
-		sprintf(month2,	"%02u", month);
-		sprintf(day2,	"%02u", day);
+		sprintf((s8*)year4,		"%04u", year);
+		sprintf((s8*)month2,	"%02u", month);
+		sprintf((s8*)day2,		"%02u", day);
 	}
 
 	void iiHhMmSsMss_fromf32(f32 tfSeconds, u32* hour, u32* minute, u32* second, u32* millisecond)

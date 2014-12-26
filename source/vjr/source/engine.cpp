@@ -125,7 +125,7 @@
 						if (!compNext)
 						{
 							// Syntax error, expected "? something" got only "?"
-							iSEM_appendLine(screenData, (s8*)cgcSyntaxError, -1, false);
+							iSEM_appendLine(screenData, (u8*)cgcSyntaxError, -1, false);
 							iSEM_navigateToEndLine(screenData, _screen);
 							screen_editbox->isDirtyRender = true;
 							iWindow_render(gWinJDebi, false);
@@ -162,7 +162,7 @@
 							varText = iVariable_convertForDisplay(var);
 
 							// Add its contents to _screen
-							iSEM_appendLine(screenData, varText->value.data, varText->value.length, false);
+							iSEM_appendLine(screenData, varText->value.data_u8, varText->value.length, false);
 							iSEM_navigateToEndLine(screenData, _screen);
 							screen_editbox->isDirtyRender = true;
 							iWindow_render(gWinJDebi, false);
@@ -215,7 +215,7 @@
 
 							} else {
 								// We are creating a new variable
-								iDatum_duplicate(&var->name, comp->line->sourceCode->data + comp->start, comp->length);
+								iDatum_duplicate(&var->name, comp->line->sourceCode->data_u8 + comp->start, comp->length);
 								iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)var);
 							}
 
@@ -225,7 +225,7 @@
 
 						} else {
 							// See if it's a known command
-							for (cmd = gsKnownCommands[0]; cmd; cmd++)
+							for (cmd = &gsKnownCommands[0]; cmd; cmd++)
 							{
 								// Is this our command?
 								if (cmd->iCode == comp->iCode)
@@ -490,7 +490,7 @@
 					//////////
 					// Populate
 					//////
-						iDatum_duplicate(&var->value, comp->line->sourceCode->data + comp->start + 1, comp->length - 2);
+						iDatum_duplicate(&var->value, comp->line->sourceCode->data_u8 + comp->start + 1, comp->length - 2);
 
 
 					//////////
@@ -814,8 +814,8 @@
 
 		// Make sure our environment is sane
 		if (breakpoint && *breakpoint && (*breakpoint)->isUsed && 
-			(uptr)*breakpoint >= (uptr)gBreakpoints->data && 
-			(uptr)*breakpoint <= (uptr)gBreakpoints->data + gBreakpoints->populatedLength - sizeof(SBreakpoint))
+			(uptr)*breakpoint >= gBreakpoints->_data && 
+			(uptr)*breakpoint <= gBreakpoints->_data + gBreakpoints->populatedLength - sizeof(SBreakpoint))
 		{
 			// Get a local copy of our pointer
 			bp = *breakpoint;
@@ -883,7 +883,7 @@
 				for (lnI = 0; lnI < gBreakpoints->populatedLength; lnI += sizeof(SBreakpoint))
 				{
 					// Grab this pointer
-					bp = (SBreakpoint*)(gBreakpoints->data + lnI);
+					bp = (SBreakpoint*)(gBreakpoints->data_u8 + lnI);
 
 					// Is this an empty slot?
 					if (!bp->isUsed)

@@ -111,7 +111,7 @@ struct SVariable;
  	SComp*					iComps_translateSourceLineTo				(SAsciiCompSearcher* tsComps, SLine* line);
  	bool					iComps_translateToOthers					(SAsciiCompSearcher* tsComps, SLine* line);
 	bool					iComps_areAllPrecedingCompsWhitespaces		(SComp* comp);
-	s32						iComps_translateToOthers_testIfMatch		(s8* tcHaystack, s8* tcNeedle, s32 tnLength);
+	s32						iComps_translateToOthers_testIfMatch		(cu8* tcHaystack, cu8* tcNeedle, s32 tnLength);
 	SComp*					iComps_findNextBy_iCode						(SComp* comp, s32 tniCode, SComp** compLastScanned);
 	SComp*					iComps_activeComp_inSEM						(SEM* sem);
 	bool					iComps_getMateDirection						(SComp* comp, s32* tnMateDirection);
@@ -165,7 +165,7 @@ struct SVariable;
 	void					iSEChain_appendMasterList					(SStartEnd* ptrSE, SMasterList* ptrNew, u32 tnHint, u32 tnBlockSizeIfNewBlockNeeded);
 	bool					iSEChain_allocateAdditionalMasterSlots		(SStartEnd* ptrSE, u32 tnBlockSize);
 
-	s32						iTranslateToCompsTest						(s8* tcHaystack, s8* tcNeedle, s32 tnLength);
+	s32						iTranslateToCompsTest						(cu8* tcHaystack, cu8* tcNeedle, s32 tnLength);
 	bool					iioss_translateCompsToOthersCallback		(SStartEndCallback* cb);
 	void*					iSEChain_searchByCallback					(SStartEnd* ptrSE, SStartEndCallback* cb);
 	void*					iSEChain_searchByUniqueId					(SStartEnd* ptrSE, u64 tnUniqueId);
@@ -187,7 +187,7 @@ struct SVariable;
 
 	// Function functions (LOL)
 	SFunction*				iFunction_allocate							(SComp* compName);
-	SFunction*				iFunction_allocate							(s8* tcFuncName);
+	SFunction*				iFunction_allocate							(u8* tcFuncName);
 	SVariable*				iFunction_addVariable_scoped				(SFunction* func);
 	void					iFunction_politelyDeleteCompiledInfo		(SFunction* func, bool tlDeleteSelf);
 	void					iFunction_politelyDeleteChain				(SFunction** rootFunc);
@@ -196,8 +196,8 @@ struct SVariable;
 	SVariable*				iiVariable_terminateIndirect				(SVariable* var);
 	SVariable*				iVariable_create							(s32 tnVarType, SVariable* varIndirect);
 	SVariable*				iVariable_createAndPopulate					(s32 tnVarType, SDatum* datum);
-	SVariable*				iVariable_createAndPopulate					(s32 tnVarType, s8*  tcData, u32 tnDataLength);
-	SVariable*				iVariable_createAndPopulate					(s32 tnVarType, cs8* tcData, u32 tnDataLength);
+	SVariable*				iVariable_createAndPopulate					(s32 tnVarType, u8*  tcData, u32 tnDataLength);
+	SVariable*				iVariable_createAndPopulate					(s32 tnVarType, cu8* tcData, u32 tnDataLength);
 	SVariable*				iVariable_searchForName						(SVariable* varRoot, s8* tcVarName, u32 tnVarNameLength, SComp* comp);
 	bool					iVariable_setDefaultVariableValue			(s32 tnVarType);
 	void					iVariable_createDefaultValues				(void);
@@ -214,7 +214,7 @@ struct SVariable;
 	bool					iVariable_set_logical						(SVariable* var, bool tlValue);
 	bool					iVariable_set_logical						(SVariable* var, s32 value);
 	bool					iVariable_set_bitmap						(SVariable* var, SBitmap* bmp);
-	bool					iVariable_set_character						(SVariable* var, s8* tcData, u32 tnDataLength);
+	bool					iVariable_set_character						(SVariable* var, u8* tcData, u32 tnDataLength);
 	bool					iVariable_set_character						(SVariable* var, SDatum* datum);
 	void					iVariable_reset								(SVariable* var);
 	SVariable*				iVariable_convertForDisplay					(SVariable* var);
@@ -243,20 +243,20 @@ struct SVariable;
 	void					iOp_politelyDelete							(SOp* op, bool tlDeleteSelf);
 
 	// Error and warning functions
-	void					iComp_appendError							(SComp* comp, u32 tnErrorNum,   s8* tcMessage);
-	void					iComp_appendWarning							(SComp* comp, u32 tnWarningNum, s8* tcMessage);
-	void					iComp_reportWarningsOnRemainder				(SComp* comp, u32 tnWarningNum, s8* tcMessage);
+	void					iComp_appendError							(SComp* comp, u32 tnErrorNum,   cu8* tcMessage);
+	void					iComp_appendWarning							(SComp* comp, u32 tnWarningNum, cu8* tcMessage);
+	void					iComp_reportWarningsOnRemainder				(SComp* comp, u32 tnWarningNum, cu8* tcMessage);
 
 
 	// Line functions
-	void					iLine_appendError							(SLine* line, u32 tnErrorNum,   s8* tcMessage, u32 tnStartColumn, u32 tnLength);
-	void					iLine_appendWarning							(SLine* line, u32 tnWarningNum, s8* tcMessage, u32 tnStartColumn, u32 tnLength);
+	void					iLine_appendError							(SLine* line, u32 tnErrorNum,   cu8* tcMessage, u32 tnStartColumn, u32 tnLength);
+	void					iLine_appendWarning							(SLine* line, u32 tnWarningNum, cu8* tcMessage, u32 tnStartColumn, u32 tnLength);
 
 	// Compiler functions
 	SCompiler*				iCompiler_allocate							(SLine* parent);
 	void					iCompiler_delete							(SCompiler** root, bool tlDeleteSelf);
 
 	// Compile note functions
-	SCompileNote*			iCompileNote_create							(SCompileNote** noteRoot, u32 tnStart, u32 tnEnd, u32 tnNumber, s8* tcMessage);
-	SCompileNote*			iCompileNote_appendMessage					(SCompileNote** noteRoot, u32 tnStartColumn, u32 tnEndColumn, u32 tnNumber, s8* tcMessage);
+	SCompileNote*			iCompileNote_create							(SCompileNote** noteRoot, u32 tnStart,			u32 tnEnd,			u32 tnNumber, cu8* tcMessage);
+	SCompileNote*			iCompileNote_appendMessage					(SCompileNote** noteRoot, u32 tnStartColumn,	u32 tnEndColumn,	u32 tnNumber, cu8* tcMessage);
 	void					iCompileNote_removeAll						(SCompileNote** noteRoot);

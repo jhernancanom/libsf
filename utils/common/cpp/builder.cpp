@@ -84,7 +84,7 @@
 		if (buffRoot && tnDataLength != 0)
 		{
 			// Repeatedly allocate our allocation size until we get big enough
-			while (buffRoot->data)
+			while (buffRoot->data_s8)
 			{
 				// Are we there yet?
 				if (buffRoot->populatedLength + tnDataLength <= buffRoot->allocatedLength)
@@ -92,12 +92,12 @@
 				
 				// If we get here, we need to allocate more space
 				// Reallocate and continue
-				buffRoot->data				= (s8*)realloc(buffRoot->data, buffRoot->allocatedLength + buffRoot->allocateBlockSize);
+				buffRoot->data_s8				= (s8*)realloc(buffRoot->data_s8, buffRoot->allocatedLength + buffRoot->allocateBlockSize);
 				buffRoot->allocatedLength	+= buffRoot->allocateBlockSize;
 
 				// Initialize the added block
-				if (buffRoot->data)
-					memset(buffRoot->data + buffRoot->allocatedLength - buffRoot->allocateBlockSize, 0, buffRoot->allocateBlockSize);
+				if (buffRoot->data_s8)
+					memset(buffRoot->data_s8 + buffRoot->allocatedLength - buffRoot->allocateBlockSize, 0, buffRoot->allocateBlockSize);
 			}
 		}
 		// If we get here, there's been an error
@@ -139,13 +139,13 @@
 				tnAllocationBlockSize		= max(4096, tnAllocationBlockSize);
 
 				// Allocate the data space
-				buffNew->data				= (s8*)malloc(tnAllocationBlockSize);
+				buffNew->data_s8				= (s8*)malloc(tnAllocationBlockSize);
 
 				// If we allocated, we're good
-				if (buffNew->data)
+				if (buffNew->data_s8)
 				{
 					buffNew->allocatedLength = tnAllocationBlockSize;
-					memset(buffNew->data, 0, tnAllocationBlockSize);
+					memset(buffNew->data_s8, 0, tnAllocationBlockSize);
 
 				} else {
 					buffNew->allocatedLength = 0;
@@ -168,14 +168,14 @@
 //		Pointer to the point in the buffer where the text was inserted, can be used
 //		for a furthering or continuance of this function embedded in a higher call.
 //////
-	s8* iBuilder_appendData(SBuilder* buffRoot, cs8* tcData, u32 tnDataLength)
+	u8* iBuilder_appendData(SBuilder* buffRoot, cu8* tcData, u32 tnDataLength)
 	{
 		// Make sure our environment is sane
 		if (buffRoot)
 		{
 			// If they want us to populate the length, do so
 			if (tnDataLength == (u32)-1)
-				tnDataLength = (u32)strlen(tcData);
+				tnDataLength = (u32)strlen((s8*)tcData);
 
 			// If there's anything to do, do it
 			if (tnDataLength != 0)
@@ -184,14 +184,14 @@
 				iBuilder_verifySizeForNewBytes(buffRoot, tnDataLength);
 
 				// If we're still valid, proceed with the copy
-				if (buffRoot->data && tcData)
+				if (buffRoot->data_s8 && tcData)
 				{
-					memcpy(buffRoot->data + buffRoot->populatedLength, tcData, tnDataLength);
+					memcpy(buffRoot->data_s8 + buffRoot->populatedLength, (s8*)tcData, tnDataLength);
 					buffRoot->populatedLength += tnDataLength;
 				}
 			}
 			// Indicate where the start of that buffer is
-			return(buffRoot->data + buffRoot->populatedLength - tnDataLength);
+			return(buffRoot->data_u8 + buffRoot->populatedLength - tnDataLength);
 		}
 		// If we get here, things are bad
 		return(NULL);
@@ -205,7 +205,7 @@
 // Appends the indicated 32-bit value.
 //
 //////
-	s8* iBuilder_append_uptr(SBuilder* buffRoot, uptr tnValue)
+	u8* iBuilder_append_uptr(SBuilder* buffRoot, uptr tnValue)
 	{
 		// Make sure our environment is sane
 		if (buffRoot)
@@ -214,14 +214,14 @@
 			iBuilder_verifySizeForNewBytes(buffRoot, sizeof(uptr));
 
 			// Copy the data
-			if (buffRoot->data)
+			if (buffRoot->data_s8)
 			{
-				*(uptr*)(buffRoot->data + buffRoot->populatedLength) = tnValue;
+				*(uptr*)(buffRoot->data_s8 + buffRoot->populatedLength) = tnValue;
 				buffRoot->populatedLength += sizeof(uptr);
 			}
 			
 			// Indicate where the start of that buffer is
-			return(buffRoot->data + buffRoot->populatedLength - sizeof(uptr));
+			return(buffRoot->data_u8 + buffRoot->populatedLength - sizeof(uptr));
 		}
 		// If we get here, things are bad
 		return(NULL);
@@ -235,9 +235,9 @@
 // Called to append a CR+LF to the builder
 //
 //////
-	s8* iBuilder_appendCrLf(SBuilder* buffRoot)
+	u8* iBuilder_appendCrLf(SBuilder* buffRoot)
 	{
-		return(iBuilder_appendData(buffRoot, "\r\n", 2));
+		return(iBuilder_appendData(buffRoot, (cu8*)"\r\n", 2));
 	}
 
 
@@ -278,7 +278,7 @@
 			}
 			
 			// Indicate where the start of that buffer is
-			return(buffRoot->data + buffRoot->populatedLength - tnDataLength);
+			return(buffRoot->data_s8 + buffRoot->populatedLength - tnDataLength);
 		}
 		// If we get here, things are bad
 		return(NULL);
@@ -295,13 +295,13 @@
 //////
 	void iBuilder_backoffTrailingWhitespaces(SBuilder* dst)
 	{
-		if (dst && dst->data)
+		if (dst && dst->data_s8)
 		{
 			// Back off so long as there are whitespaces
-			while ((s32)dst->populatedLength > 0 && (dst->data[dst->populatedLength - 1] == 32 || dst->data[dst->populatedLength - 1] == 9))
+			while ((s32)dst->populatedLength > 0 && (dst->data_s8[dst->populatedLength - 1] == 32 || dst->data_s8[dst->populatedLength - 1] == 9))
 			{
 				// Reset the data there to the expected NULLs
-				dst->data[dst->populatedLength - 1] = 0;
+				dst->data_s8[dst->populatedLength - 1] = 0;
 
 				// Backup one
 				--dst->populatedLength;
@@ -344,8 +344,8 @@
 					//////////
 					// They are freeing everything
 					//////
-						free(buffRoot->data);
-						buffRoot->data				= NULL;
+						free(buffRoot->data_s8);
+						buffRoot->data_s8				= NULL;
 						buffRoot->populatedLength	= 0;
 						buffRoot->allocatedLength	= 0;
 
@@ -354,13 +354,13 @@
 					//////////
 					// They are resizing
 					//////
-						lcNew = (s8*)realloc(buffRoot->data, tnBufferLength);
+						lcNew = (s8*)realloc(buffRoot->data_s8, tnBufferLength);
 						if (lcNew)
 						{
 							//////////
 							// Set the allocated length
 							//////
-								buffRoot->data				= lcNew;
+								buffRoot->data_s8				= lcNew;
 								buffRoot->allocatedLength	= tnBufferLength;
 
 
@@ -399,17 +399,17 @@
 			*buffRoot	= NULL;
 
 			// Release the data buffer
-			if (buffDelete->data)
+			if (buffDelete->data_s8)
 			{
 				// Trim our sizes down to 0
 				buffDelete->allocatedLength = 0;
 				buffDelete->populatedLength = 0;
 
 				// Release our buffer
-				free(buffDelete->data);
+				free(buffDelete->data_s8);
 
 				// Mark it as no longer valid
-				buffDelete->data = NULL;
+				buffDelete->data_s8 = NULL;
 			}
 
 			// Release the SBuilder structure
@@ -425,7 +425,7 @@
 // Called to write out the indicated builder file as an 8-bit ASCII file
 //
 //////
-	u32 iBuilder_asciiWriteOutFile(SBuilder* buffRoot, cs8* tcPathname)
+	u32 iBuilder_asciiWriteOutFile(SBuilder* buffRoot, cu8* tcPathname)
 	{
 		FILE* lfh;
 
@@ -434,13 +434,13 @@
 		if (buffRoot && tcPathname)	
 		{
 			// Try to create the file
-			lfh = fopen(tcPathname, "wb+");
+			lfh = fopen((s8*)tcPathname, "wb+");
 			if (lfh)
 			{
 				// Write out the data if need be
-				if (buffRoot->data && buffRoot->populatedLength != 0)
+				if (buffRoot->data_s8 && buffRoot->populatedLength != 0)
 				{
-					fwrite(buffRoot->data, 1, buffRoot->populatedLength, lfh);
+					fwrite(buffRoot->data_s8, 1, buffRoot->populatedLength, lfh);
 					fclose(lfh);
 					return(buffRoot->populatedLength);
 				}
@@ -461,7 +461,7 @@
 // Called to load a file into the indicated buffer.
 //
 //////
-	bool iBuilder_asciiReadFromFile(SBuilder** buffRoot, cs8* tcPathname)
+	bool iBuilder_asciiReadFromFile(SBuilder** buffRoot, cu8* tcPathname)
 	{
 		u32		lnSize, lnNumread;
 		FILE*	lfh;
@@ -478,7 +478,7 @@
 
 
 			// Try to open the indicated file
-			lfh = fopen(tcPathname, "rb");
+			lfh = fopen((s8*)tcPathname, "rb");
 			if (lfh)
 			{
 				//////////
@@ -498,7 +498,7 @@
 				//////////
 				// Read in the content
 				//////
-					lnNumread						= (u32)fread((*buffRoot)->data + (*buffRoot)->populatedLength, 1, lnSize, lfh);
+					lnNumread						= (u32)fread((*buffRoot)->data_s8 + (*buffRoot)->populatedLength, 1, lnSize, lfh);
 					(*buffRoot)->populatedLength	+= min(lnNumread, lnSize);
 
 
@@ -543,7 +543,7 @@
 
 
 		// Make sure our environment is sane
-		if (buffRoot && buffRoot->data && buffRoot->populatedLength >= tnStart)
+		if (buffRoot && buffRoot->data_s8 && buffRoot->populatedLength >= tnStart)
 		{
 			// Setup our callback function
 			_compactCallbackFunction = tnCompactCallbackFunction;
@@ -552,11 +552,11 @@
 			lnCopyTo = tnStart;
 			for (lnI = tnStart; lnI < buffRoot->populatedLength; lnI += tnStride)
 			{
-				if (!compactCallbackFunction(buffRoot->data + lnI))
+				if (!compactCallbackFunction(buffRoot->data_s8 + lnI))
 				{
 					// We are keeping this one
 					if (lnCopyTo != lnI)
-						memcpy(buffRoot->data + lnCopyTo, buffRoot->data + lnI, tnStride);
+						memcpy(buffRoot->data_s8 + lnCopyTo, buffRoot->data_s8 + lnI, tnStride);
 
 					// Move to next one
 					lnCopyTo += tnStride;
@@ -588,7 +588,7 @@
 		// Make sure our environment is sane
 		//////
 			buffNew = NULL;
-			if (buffRoot && buffRoot->data)
+			if (buffRoot && buffRoot->data_s8)
 			{
 				//////////
 				// Are we adding to the end?
@@ -607,8 +607,8 @@
 						//////////
 						// Now, we have to copy everything backwards so we don't propagate a portion repeatedly
 						//////
-							lcSrc	= buffRoot->data + buffRoot->populatedLength - tnLength - 1;
-							lcDst	= buffRoot->data + buffRoot->populatedLength - 1;
+							lcSrc	= buffRoot->data_s8 + buffRoot->populatedLength - tnLength - 1;
+							lcDst	= buffRoot->data_s8 + buffRoot->populatedLength - 1;
 							lnStop	= buffRoot->populatedLength - tnStart - tnLength;
 
 
@@ -622,7 +622,7 @@
 						//////////
 						// Indicate where our new record is
 						//////
-							buffNew = buffRoot->data + tnStart;
+							buffNew = buffRoot->data_s8 + tnStart;
 					}
 			}
 			// Indicate our status
@@ -652,7 +652,7 @@
 		//////////
 		// Make sure our environment is sane
 		//////
-			if (haystack && haystack->data && haystack->populatedLength % tnNeedleLength == 0)
+			if (haystack && haystack->data_s8 && haystack->populatedLength % tnNeedleLength == 0)
 			{
 				//////////
 				// Perform a binary search
@@ -666,7 +666,7 @@
 						lnMid = (lnTop + lnBot) / 2;
 
 						// See if it's above or below this position
-						lnResult = memcmp(haystack->data + (lnMid * tnNeedleLength), tcNeedle, tnNeedleLength);
+						lnResult = memcmp(haystack->data_s8 + (lnMid * tnNeedleLength), tcNeedle, tnNeedleLength);
 						if (lnResult == 0)
 						{
 							// Found, but this may not be the first one, we need to creep backwards to find the first

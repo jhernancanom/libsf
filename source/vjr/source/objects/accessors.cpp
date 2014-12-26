@@ -198,12 +198,12 @@
 // Called to set the character variable to the indicated input
 //
 //////
-	bool iObjProp_set_character_direct (SObject* obj, s32 tnIndex, cs8* tcText, u32 tnTextLength)
+	bool iObjProp_set_character_direct (SObject* obj, s32 tnIndex, cu8* tcText, u32 tnTextLength)
 	{
-		return(iObjProp_set_character_direct(obj, tnIndex, (s8*)tcText, tnTextLength));
+		return(iObjProp_set_character_direct(obj, tnIndex, (u8*)tcText, tnTextLength));
 	}
 
-	bool iObjProp_set_character_direct(SObject* obj, s32 tnIndex, s8* tcText, u32 tnTextLength)
+	bool iObjProp_set_character_direct(SObject* obj, s32 tnIndex, u8* tcText, u32 tnTextLength)
 	{
 		bool				llResult;
 		SBasePropertyInit*	baseProp;
@@ -691,7 +691,7 @@ debug_break;
 // or (2) an add-on user property
 //
 //////
-	SVariable* iObjProp_get_variable_byName(SObject* obj, s8* tcName, u32 tnNameLength, bool tlSearchBaseProps, bool tlSearchClassProps, s32* tnIndex)
+	SVariable* iObjProp_get_variable_byName(SObject* obj, u8* tcName, u32 tnNameLength, bool tlSearchBaseProps, bool tlSearchClassProps, s32* tnIndex)
 	{
 		s32					lnI, lnIndex;
 		SBaseclassList*		lbcl;

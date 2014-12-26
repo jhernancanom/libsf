@@ -269,8 +269,8 @@ struct SDatum
 		s16*		data_s16;											// To access the data as s16
 		f32*		data_f32;											// To access the data as f32
 		f64*		data_f64;											// To access the data as f64
-		s8*			data_cs8;											// To access the data as cs8
-		s8*			data_cu8;											// To access the data as cu8
+		cs8*		data_cs8;											// To access the data as cs8
+		cu8*		data_cu8;											// To access the data as cu8
 		SBgra*		data_bgra;											// to access the data as SBgra
 		SBgra*		data_bgr;											// to access the data as SBgr
 	};
@@ -351,7 +351,7 @@ struct SBaseclassList
 	s32				objType;											// Translation between objType...
 
 	// Class name
-	cs8*			baseclassName;										// ...and the text-based name of the base class
+	cu8*			baseclassName;										// ...and the text-based name of the base class
 	s32				baseclassNameLength;
 
 	union {
@@ -362,7 +362,10 @@ struct SBaseclassList
 
 struct SAsciiCompSearcher
 {
-	cs8*		keyword;												// Text keyword being searched
+	union {
+		cs8*	keyword_s8;
+		cu8*	keyword_u8;												// Text keyword being searched
+	};
 	s32			length;													// Length of the keyword (negative for case sensitive, positive case insensitive, 0 for termination entry)
 	bool		repeats;												// Can this item repeat?  Or is this a one-shot keyword?
 	s32			iCode;													// An associated code to store when this entry is found

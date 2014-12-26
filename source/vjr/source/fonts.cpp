@@ -82,7 +82,7 @@
 		if (fontSource)
 		{
 			// Allocate a copy
-			return(iFont_create(fontSource->name.data, fontSource->_size, fontSource->_weight, ((fontSource->isItalic) ? 1 : 0), ((fontSource->isUnderline) ? 1 : 0)));
+			return(iFont_create(fontSource->name.data_cu8, fontSource->_size, fontSource->_weight, ((fontSource->isItalic) ? 1 : 0), ((fontSource->isUnderline) ? 1 : 0)));
 		}
 
 		// Indicate our success or failure
@@ -98,7 +98,7 @@
 // Create a new font
 //
 //////
-	SFont* iFont_create(cs8* tcFontName, u32 tnFontSize, u32 tnFontWeight, u32 tnItalics, u32 tnUnderline)
+	SFont* iFont_create(cu8* tcFontName, u32 tnFontSize, u32 tnFontWeight, u32 tnItalics, u32 tnUnderline)
 	{
 		s32		lnLength;
 		u32		lnI;
@@ -110,11 +110,11 @@
 		// See if there is an unused slot
 		//////
 			fontFirstUnused	= NULL;
-			lnLength		= (s32)strlen(tcFontName);
+			lnLength		= (s32)strlen((s8*)tcFontName);
 			for (lnI = 0; lnI < gFonts->populatedLength; lnI += sizeof(SFont))
 			{
 				// Grab the pointer
-				font = (SFont*)(gFonts->data + lnI);
+				font = (SFont*)(gFonts->data_u8 + lnI);
 
 				// If used
 				if (!font->isUsed)
@@ -145,7 +145,7 @@
 		//////
 			font->isUsed					= true;
 			font->hdc						= CreateCompatibleDC(GetDC(GetDesktopWindow()));
-			iDatum_duplicate(&font->name, (s8*)tcFontName, lnLength + 1);
+			iDatum_duplicate(&font->name, tcFontName, lnLength + 1);
 			font->_size						= tnFontSize;
 			font->_weight					= tnFontWeight;
 			font->_italics					= tnItalics;
@@ -178,7 +178,7 @@
 		{
 			// Create the larger font
 			fontNew = font;
-			fontNew = iFont_create(fontNew->name.data, fontNew->_size + 1, fontNew->_weight, ((fontNew->isItalic) ? 1 : 0), ((fontNew->isUnderline) ? 1 : 0));
+			fontNew = iFont_create(fontNew->name.data_cu8, fontNew->_size + 1, fontNew->_weight, ((fontNew->isItalic) ? 1 : 0), ((fontNew->isUnderline) ? 1 : 0));
 			if (!fontNew)
 				return(font);
 
@@ -203,7 +203,7 @@
 		{
 			// Create the larger font
 			fontNew = font;
-			fontNew = iFont_create(fontNew->name.data, fontNew->_size - 1, fontNew->_weight, ((fontNew->isItalic) ? 1 : 0), ((fontNew->isUnderline) ? 1 : 0));
+			fontNew = iFont_create(fontNew->name.data_cu8, fontNew->_size - 1, fontNew->_weight, ((fontNew->isItalic) ? 1 : 0), ((fontNew->isUnderline) ? 1 : 0));
 			if (!fontNew)
 				return(font);
 
@@ -304,7 +304,7 @@
 				for (lnI = 0; lnI < fontRoot->populatedLength; lnI += sizeof(SFont))
 				{
 					// Grab the pointer
-					font = (SFont*)(fontRoot->data + lnI);
+					font = (SFont*)(fontRoot->data_u8 + lnI);
 
 					// Delete this font
 					if (font->isUsed)
@@ -334,7 +334,7 @@
 // or less than the ratios indicated at the current size, yet for the desired size.
 //
 //////
-	u32 iFont_findClosestSizeMatch(s8* tcText, s8* tcFontName, u32 tnFontSize, u32 tnFontBold, u32 tnFontItalic, u32 tnFontUnderline, u32 tnWidth, u32 tnHeight, u32 tnWidthDesired, u32 tnHeightDesired)
+	u32 iFont_findClosestSizeMatch(s8* tcText, cu8* tcFontName, u32 tnFontSize, u32 tnFontBold, u32 tnFontItalic, u32 tnFontUnderline, u32 tnWidth, u32 tnHeight, u32 tnWidthDesired, u32 tnHeightDesired)
 	{
 		s32			lnI, lnJ, lnTextLength, lnFontBold;
 		f64			lfRatioH, lfRatioV, lfRatioHThis, lfRatioVThis;

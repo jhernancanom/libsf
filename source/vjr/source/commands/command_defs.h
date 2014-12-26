@@ -102,8 +102,8 @@ struct SVariable;
 //        given by its name, such as "function_chr()" being a function.
 //////
 	// Temporary error reporting until the proper engine is constructed.
-	void				iError_report								(cs8* constantErrorText);
-	void				iError_report								(s8* errorText);
+	void				iError_report								(cu8* constantErrorText);
+	void				iError_report								(u8* errorText);
 	void				iError_reportByNumber						(u32 tnErrorNum, SComp* comp);
 
 

@@ -68,9 +68,10 @@
 
 
 	void					iDatum_allocateSpace					(SDatum* datum,            s32 dataLength);
-	SDatum*					iDatum_allocate							(                s8* data, s32 dataLength);
-	void					iDatum_duplicate						(SDatum* datum,  s8* data, s32 dataLength);
-	void					iDatum_duplicate						(SDatum* datum, cs8* data, s32 dataLength);
+	SDatum*					iDatum_allocate							(               cu8* data, s32 dataLength);
+	SDatum*					iDatum_allocate							(                u8* data, s32 dataLength);
+	void					iDatum_duplicate						(SDatum* datum,  u8* data, s32 dataLength);
+	void					iDatum_duplicate						(SDatum* datum, cu8* data, s32 dataLength);
 	void					iDatum_duplicate						(SDatum* datumDst, SDatum* datumSrc);
 	bool					iDatum_resize							(SDatum* datum, s32 newDataLength);
 	s32						iDatum_compare							(SDatum* datumLeft, SDatum* datumRight);

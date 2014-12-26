@@ -441,7 +441,7 @@
 	{
 		u32				lnResult, lnKeyOpCount;
 		SForClause*		lsFor;
-		s8				keyBuffer[256];
+		u8				keyBuffer[256];
 		SCdxHeader*		tagHeader;		// Holds the tag key expression and FOR clause
 		SCdxKeyOp*		lsKeyOp;		// Key ops for generating the DBF keys
 		STagRoot		tagRoot;
@@ -626,8 +626,8 @@
 //
 /////
 	u32 cdx_get_all_keys(u32 tnDbfHandle,				s32 tnTagIndex,
-							s8* tcKeySpace,				u32 tnKeySpaceLength,
-							s8* tcDecodeExpression,		u32 tnDecodeExpressionLength,
+							u8* tcKeySpace,				u32 tnKeySpaceLength,
+							u8* tcDecodeExpression,		u32 tnDecodeExpressionLength,
 							s8* tcKeyLength4)
 	{
 		SWorkArea* wa;
@@ -679,8 +679,8 @@
 		SCdxNode*			node;
 		SCdxKey				key;
 		STagRoot			tagRoot;
-		s8					buffer[256];
-		s8					output[256];
+		u8					buffer[256];
+		u8					output[256];
 		SBuilder*			data;
 
 
@@ -705,28 +705,28 @@
 					switch (node->type)
 					{
 						case _CDX_NODE_INDEX:		// Index node
-							sprintf(buffer, "index\0");
+							sprintf((s8*)buffer, "index\0");
 							break;
 
 						case _CDX_NODE_ROOT:		// Root node
-							sprintf(buffer, "root\0");
+							sprintf((s8*)buffer, "root\0");
 							break;
 
 						case _CDX_NODE_LEAF:		// Leaf node
-							sprintf(buffer, "leaf\0");
+							sprintf((s8*)buffer, "leaf\0");
 							break;
 
 						case _CDX_NODE_ROOT_LEAF:	// Root leaf node
-							sprintf(buffer, "root+leaf\0");
+							sprintf((s8*)buffer, "root+leaf\0");
 							break;
 
 						default:
-							sprintf(output, "Node %u: Unknown type %u\r\n\0", lnNode, node->type);
+							sprintf((s8*)output, "Node %u: Unknown type %u\r\n\0", lnNode, node->type);
 							iBuilder_appendData(data, output, -1);
 							continue;
 							break;
 					}
-					sprintf(output, "Node %u: %s\r\n\0", lnNode, buffer);
+					sprintf((s8*)output, "Node %u: %s\r\n\0", lnNode, (s8*)buffer);
 					iBuilder_appendData(data, output, -1);
 
 
@@ -748,24 +748,24 @@
 							if (iiGetIndexNodeType(node->type) == 2 || iiGetIndexNodeType(node->type) == 3)
 							{
 								// It's a leaf node
-								sprintf(output, "  - Node key number %u: [%s], Record number: %u\r\n\0", lnKeyNumber, buffer, key.recordNumber);
+								sprintf((s8*)output, "  - Node key number %u: [%s], Record number: %u\r\n\0", lnKeyNumber, buffer, key.recordNumber);
 
 							} else {
 								// It's an index or root node
 								if (wa->isIdxCompact)
 								{
 									// Compact indexes have both the record number and the file offset for the node
-									sprintf(output, "  - Node key number %u: [%s], File Offset: %u (Record number: %u)\r\n\0", lnKeyNumber, buffer, key.fileOffset, key.record2);
+									sprintf((s8*)output, "  - Node key number %u: [%s], File Offset: %u (Record number: %u)\r\n\0", lnKeyNumber, buffer, key.fileOffset, key.record2);
 
 								} else {
 									// Standard indexes have only the file offset
-									sprintf(output, "  - Node key number %u: [%s], File Offset: %u\r\n\0", lnKeyNumber, buffer, key.fileOffset);
+									sprintf((s8*)output, "  - Node key number %u: [%s], File Offset: %u\r\n\0", lnKeyNumber, (s8*)buffer, key.fileOffset);
 								}
 							}
 
 						} else {
 							// Should not happen
-							sprintf(output, "Trouble accessing key number %u of node %u\r\n\0", lnKeyNumber, lnNode);
+							sprintf((s8*)output, "Trouble accessing key number %u of node %u\r\n\0", lnKeyNumber, lnNode);
 						}
 
 						// Append the data
@@ -777,7 +777,7 @@
 		//////////
 		// For debugging:
 		//////
-			iBuilder_asciiWriteOutFile(data, "c:\\temp\\test\\idx_info_compact.txt");
+			iBuilder_asciiWriteOutFile(data, (u8*)"c:\\temp\\test\\idx_info_compact.txt");
 			iBuilder_freeAndRelease(&data);
 
 
@@ -802,8 +802,8 @@
 		SIdxNode*		node;
 		SIdxKey			key;
 		STagRoot		tagRoot;
-		s8				buffer[256];
-		s8				output[256];
+		u8				buffer[256];
+		u8				output[256];
 		SBuilder*		data;
 
 
@@ -828,26 +828,26 @@
 					switch (node->type)
 					{
 						case _CDX_NODE_INDEX:		// Index node
-							sprintf(buffer, "index\0");
+							sprintf((s8*)buffer, "index\0");
 							break;
 
 						case _CDX_NODE_ROOT:		// Root node
-							sprintf(buffer, "root\0");
+							sprintf((s8*)buffer, "root\0");
 							break;
 
 						case _CDX_NODE_LEAF:		// Leaf node
-							sprintf(buffer, "leaf\0");
+							sprintf((s8*)buffer, "leaf\0");
 							break;
 
 						case _CDX_NODE_ROOT_LEAF:	// Root leaf node
-							sprintf(buffer, "root+leaf\0");
+							sprintf((s8*)buffer, "root+leaf\0");
 							break;
 
 						default:
 							debug_break;
 							break;
 					}
-					sprintf(output, "Node %u: %s\r\n\0", lnNode, buffer);
+					sprintf((s8*)output, "Node %u: %s\r\n\0", lnNode, buffer);
 					iBuilder_appendData(data, output, -1);
 
 
@@ -866,20 +866,20 @@
 
 							// Construct the line
 							// Prefix
-							if (node->type == 2 || node->type == 3)		sprintf(output, "  - Node key number %u: [\0", lnKeyNumber);
-							else										sprintf(output, "  - Node key number %u: [\0", lnKeyNumber);
+							if (node->type == 2 || node->type == 3)		sprintf((s8*)output, "  - Node key number %u: [\0", lnKeyNumber);
+							else										sprintf((s8*)output, "  - Node key number %u: [\0", lnKeyNumber);
 							iBuilder_appendData(data, output, -1);
 
 							// Key
 							iBuilder_appendData(data, buffer, key.keyLength);
 
 							// Postfix
-							if (node->type == 2 || node->type == 3)		sprintf(output, "], Record number: %u\r\n\0", (u32)key.record);
-							else										sprintf(output, "], File Offset: %u\r\n\0",   (u32)key.record);
+							if (node->type == 2 || node->type == 3)		sprintf((s8*)output, "], Record number: %u\r\n\0", (u32)key.record);
+							else										sprintf((s8*)output, "], File Offset: %u\r\n\0",   (u32)key.record);
 
 						} else {
 							// Should not happen
-							sprintf(output, "Trouble accessing key number %u of node %u\r\n\0", lnKeyNumber, lnNode);
+							sprintf((s8*)output, "Trouble accessing key number %u of node %u\r\n\0", lnKeyNumber, lnNode);
 						}
 						iBuilder_appendData(data, output, -1);
 					}
@@ -889,7 +889,7 @@
 		//////////
 		// For debugging:
 		//////
-			iBuilder_asciiWriteOutFile(data, "c:\\temp\\test\\idx_info_standard.txt");
+			iBuilder_asciiWriteOutFile(data, (u8*)"c:\\temp\\test\\idx_info_standard.txt");
 			iBuilder_freeAndRelease(&data);
 
 
@@ -914,8 +914,8 @@
 		SCdxNode*			node;
 		SCdxKey				key, keyLast;
 		STagRoot			tagRoot;
-		s8					buffer[256];
-		s8					output[256];
+		u8					buffer[256];
+		u8					output[256];
 		SBuilder*			metaData;
 		SBuilder*			errorData;
 //		SCdxHeader*			head;
@@ -954,8 +954,8 @@
 				//////////
 				// Meta data
 				//////
-					iBuilder_appendData(metaData, "Tag: ", -1);
-					iBuilder_appendData(metaData, (s8*)tagRoot.tagName, sizeof(tagRoot.tagName));
+					iBuilder_appendData(metaData, (cu8*)"Tag: ", -1);
+					iBuilder_appendData(metaData, tagRoot.tagName, sizeof(tagRoot.tagName));
 					iBuilder_backoffTrailingWhitespaces(metaData);
 
 
@@ -982,7 +982,7 @@
 
 								default:
 									debug_break;
-									sprintf(output, "Node %u: Unknown type of node encountered, expected 0=index, 1=root, 2=leaf, 3=root+leaf, found %u=???\r\n\0", lnNodeNumber, node->type);
+									sprintf((s8*)output, "Node %u: Unknown type of node encountered, expected 0=index, 1=root, 2=leaf, 3=root+leaf, found %u=???\r\n\0", lnNodeNumber, node->type);
 									iBuilder_appendData(errorData, output, -1);
 									// Bad index
 									goto we_are_done;
@@ -1023,7 +1023,7 @@
 													if (memcmp(&key.key, &keyLast.key, key.keyLength) > 0)
 													{
 														// We found a key out of order
-														sprintf(output, "Key number %u is out of index order on node %u\r\n\0", lnKeyNumber, lnNodeNumber);
+														sprintf((s8*)output, "Key number %u is out of index order on node %u\r\n\0", lnKeyNumber, lnNodeNumber);
 														iBuilder_appendData(errorData, output, -1);
 													}
 
@@ -1032,7 +1032,7 @@
 													if (memcmp(&key.key, &keyLast.key, key.keyLength) < 0)
 													{
 														// We found a key out of order
-														sprintf(output, "Key number %u is out of index order on node %u\r\n\0", lnKeyNumber, lnNodeNumber);
+														sprintf((s8*)output, "Key number %u is out of index order on node %u\r\n\0", lnKeyNumber, lnNodeNumber);
 														iBuilder_appendData(errorData, output, -1);
 													}
 												}
@@ -1041,7 +1041,7 @@
 
 									} else {
 										// Should not happen
-										sprintf(output, "Unable to access key number %u of node %u\r\n\0", lnKeyNumber, lnNodeNumber);
+										sprintf((s8*)output, "Unable to access key number %u of node %u\r\n\0", lnKeyNumber, lnNodeNumber);
 										iBuilder_appendData(errorData, output, -1);
 									}
 								}
@@ -1050,7 +1050,7 @@
 								// No keys on this node
 								if (node->nodeLeft != (u32)-1 || node->nodeRight != (u32)-1)
 								{
-									sprintf(output, "No index keys were found on node %u\r\n\0", lnNodeNumber);
+									sprintf((s8*)output, "No index keys were found on node %u\r\n\0", lnNodeNumber);
 									iBuilder_appendData(metaData, output, -1);
 								}
 								//else this is the only node, which means no keys in index
@@ -1071,7 +1071,7 @@ we_are_done:
 				//////////
 				// Meta data -- the number of keys
 				//////
-					sprintf(output, " %u keys in index.\r\n\0", lnTotalKeyCount);
+					sprintf((s8*)output, " %u keys in index.\r\n\0", lnTotalKeyCount);
 					iBuilder_appendData(metaData, output, -1);
 			}
 
@@ -1080,10 +1080,10 @@ we_are_done:
 		// Copy the data back
 		//////
 			if (tcMetaData)
-				memcpy(tcMetaData, metaData->data, min(tnMetaDataLength, metaData->populatedLength));
+				memcpy(tcMetaData, metaData->data_s8, min(tnMetaDataLength, metaData->populatedLength));
 
 			if (tcErrorsFound)
-				memcpy(tcErrorsFound, errorData->data, min(tnErrorsFoundLength, errorData->populatedLength));
+				memcpy(tcErrorsFound, errorData->data_s8, min(tnErrorsFoundLength, errorData->populatedLength));
 
 
 		//////////
@@ -1114,7 +1114,7 @@ we_are_done:
 		s32				lnI, lnKey, lnCdxKeyCount, lnDbfKeyCount, lnKeyOpCount;
 		bool			llResult;
 		SForClause*		lsFor;
-		s8				lcDecodeExpression[512];
+		u8				lcDecodeExpression[512];
 		s8				lcKeyLength4[8];
 		s8*				dbfPtr;
 		s8*				cdxPtr;
@@ -1160,23 +1160,23 @@ we_are_done:
 		//////////
 		// Add meta data
 		//////
-			iBuilder_appendData(metaData, "Tag: ", -1);
-			iBuilder_appendData(metaData, (s8*)tagRoot.tagName, min((u32)strlen((s8*)tagRoot.tagName), 10));
+			iBuilder_appendData(metaData, (cu8*)"Tag: ", -1);
+			iBuilder_appendData(metaData, tagRoot.tagName, min((u32)strlen((s8*)tagRoot.tagName), 10));
 			iBuilder_backoffTrailingWhitespaces(metaData);
-			iBuilder_appendData(metaData, ", INDEX ON ", -1);
+			iBuilder_appendData(metaData, (cu8*)", INDEX ON ", -1);
 
 			iBuilder_appendData(metaData, tagHeader->keyExpression, tagHeader->keyExpressionLength - 1);
-			iBuilder_appendData(metaData, " ", -1);
+			iBuilder_appendData(metaData, (cu8*)" ", -1);
 
 			if (iCdx_isUnique(tagHeader))
-				iBuilder_appendData(metaData, "UNIQUE ", -1);
+				iBuilder_appendData(metaData, (cu8*)"UNIQUE ", -1);
 
 			if (iCdx_isDescending(tagHeader))
-				iBuilder_appendData(metaData, "DESCENDING ", -1);
+				iBuilder_appendData(metaData, (cu8*)"DESCENDING ", -1);
 
 			if (tagHeader->forClauseLength > 1)
 			{
-				iBuilder_appendData(metaData, "FOR ", -1);
+				iBuilder_appendData(metaData, (cu8*)"FOR ", -1);
 				iBuilder_appendData(metaData, tagHeader->keyExpression + tagHeader->keyExpressionLength, tagHeader->forClauseLength - 1);
 			}
 			iBuilder_appendCrLf(metaData);
@@ -1193,10 +1193,10 @@ we_are_done:
 				if (tcMetaData)
 				{
 					// Store the string to return
-					iBuilder_appendData(metaData, "Tag: ", -1);
-					iBuilder_appendData(metaData, (s8*)tagRoot.tagName, min((u32)strlen((s8*)tagRoot.tagName), 10));
+					iBuilder_appendData(metaData, (cu8*)"Tag: ", -1);
+					iBuilder_appendData(metaData, tagRoot.tagName, min((u32)strlen((s8*)tagRoot.tagName), 10));
 					iBuilder_backoffTrailingWhitespaces(metaData);
-					iBuilder_appendData(metaData, ", FOR clause is too complex for this utility.", -1);
+					iBuilder_appendData(metaData, (cu8*)", FOR clause is too complex for this utility.", -1);
 					goto close_and_quit;
 				}
 			}
@@ -1211,10 +1211,10 @@ we_are_done:
 			{
 				// Key expression could not be parsed
 				llResult = false;
-				iBuilder_appendData(metaData, "Tag: ", -1);
-				iBuilder_appendData(metaData, (s8*)tagRoot.tagName, min((u32)strlen((s8*)tagRoot.tagName), 10));
+				iBuilder_appendData(metaData, (cu8*)"Tag: ", -1);
+				iBuilder_appendData(metaData, tagRoot.tagName, min((u32)strlen((s8*)tagRoot.tagName), 10));
 				iBuilder_backoffTrailingWhitespaces(metaData);
-				iBuilder_appendData(metaData, ", key expression could not be parsed", -1);
+				iBuilder_appendData(metaData, (cu8*)", key expression could not be parsed", -1);
 				iBuilder_appendCrLf(metaData);
 				goto close_and_quit;
 			}
@@ -1241,10 +1241,10 @@ we_are_done:
 				//////////
 				// Generate and store the key
 				//////
-					iiCdx_generateKey_byOps(wa, lsKeyOp, lnKeyOpCount, dbfKeys->data + (lnDbfKeyCount * (tagRoot.keyLength + 4)), false);
+					iiCdx_generateKey_byOps(wa, lsKeyOp, lnKeyOpCount, dbfKeys->data_u8 + (lnDbfKeyCount * (tagRoot.keyLength + 4)), false);
 
 					// Append the record number
-					*(u32*)(dbfKeys->data + (lnDbfKeyCount * (tagRoot.keyLength + 4) + tagRoot.keyLength)) = iiBswap32(lnRecno);
+					*(u32*)(dbfKeys->data_u8 + (lnDbfKeyCount * (tagRoot.keyLength + 4) + tagRoot.keyLength)) = iiBswap32(lnRecno);
 
 					// Increase our key count
 					++lnDbfKeyCount;
@@ -1259,7 +1259,7 @@ we_are_done:
 			iBuilder_allocateBytes(cdxKeys, wa->header.records * (tagRoot.keyLength + 4));
 // if (iIsNeedleInHaystack(metaData->buffer, metaData->populatedLength, "cdosname", 8))
 // 	_asm nop;
-			lnCdxKeyCount = iCdx_getAllKeysCdx(wa, tnTagIndex, cdxKeys->data, cdxKeys->totSize, &lcDecodeExpression[0], sizeof(lcDecodeExpression), &lcKeyLength4[0]);
+			lnCdxKeyCount = iCdx_getAllKeysCdx(wa, tnTagIndex, cdxKeys->data_u8, cdxKeys->totSize, &lcDecodeExpression[0], sizeof(lcDecodeExpression), &lcKeyLength4[0]);
 			// Remove any keys that weren't included
 			iBuilder_setSize(cdxKeys, lnCdxKeyCount * (tagRoot.keyLength + 4));
 
@@ -1272,10 +1272,10 @@ we_are_done:
 				// There cannot be any CDX keys either
 				if (cdxKeys->populatedLength == 0)
 				{
-					iBuilder_appendData(metaData, "Tag: ", -1);
-					iBuilder_appendData(metaData, (s8*)tagRoot.tagName, min((u32)strlen((s8*)tagRoot.tagName), 10));
+					iBuilder_appendData(metaData, (cu8*)"Tag: ", -1);
+					iBuilder_appendData(metaData, tagRoot.tagName, min((u32)strlen((s8*)tagRoot.tagName), 10));
 					iBuilder_backoffTrailingWhitespaces(metaData);
-					iBuilder_appendData(metaData, ", DBF key count: 0, CDX key count: 0", -1);
+					iBuilder_appendData(metaData, (cu8*)", DBF key count: 0, CDX key count: 0", -1);
 					iBuilder_appendCrLf(metaData);
 					goto close_and_quit;	// They indexes match (being as there are no indexes)!
 				}
@@ -1297,7 +1297,7 @@ we_are_done:
 			for (lnI = 0; lnI < (s32)dbfKeys->populatedLength; lnI += (tagRoot.keyLength + 4))
 			{
 				// Fixup any on the key data
-				iiCdx_generateKey_byOps_fixup(wa, lsKeyOp, lnKeyOpCount, dbfKeys->buffer + lnI, false);
+				iiCdx_generateKey_byOps_fixup(wa, lsKeyOp, lnKeyOpCount, dbfKeys->data_u8 + lnI, false);
 
 				// Fixup the recno()
 				*(u32*)(dbfKeys->buffer + lnI + tagRoot.keyLength) = iiBswap32(*(u32*)(dbfKeys->buffer + lnI + tagRoot.keyLength));
@@ -1311,7 +1311,7 @@ we_are_done:
 			for (lnI = 0; lnI < (s32)cdxKeys->populatedLength; lnI += (tagRoot.keyLength + 4))
 			{
 				// Early out
-				if (!iiCdx_generateKey_byOps_fixup(wa, lsKeyOp, lnKeyOpCount, cdxKeys->buffer + lnI, true))
+				if (!iiCdx_generateKey_byOps_fixup(wa, lsKeyOp, lnKeyOpCount, cdxKeys->data_u8 + lnI, true))
 					break;
 			}
 
@@ -1374,7 +1374,7 @@ we_are_done:
 					if (lnDbfRecno == lnCdxRecno)
 					{
 						// Yes, they are the same RECNO(), which means our keys are different
-						sprintf(lcDecodeExpression, "KEYNO(%u) CDX key does not match table. Index needs rebuilt. There may be other errors.\n\0", lnDbfRecno);
+						sprintf((s8*)lcDecodeExpression, "KEYNO(%u) CDX key does not match table. Index needs rebuilt. There may be other errors.\n\0", lnDbfRecno);
 						iBuilder_appendData(errorsFound, lcDecodeExpression, -1);
 
 						// We can keep going on this error... it most likely means someone made a table change without the index open, and it may not mean catastrophic failures
@@ -1384,7 +1384,7 @@ we_are_done:
 
 					} else {
 						// Nope, they are markedly different
-						sprintf(lcDecodeExpression, "KEYNO(%u) key was not found in the CDX. Index needs rebuilt. There may be other errors.\n\0", lnDbfRecno);
+						sprintf((s8*)lcDecodeExpression, "KEYNO(%u) key was not found in the CDX. Index needs rebuilt. There may be other errors.\n\0", lnDbfRecno);
 						iBuilder_appendData(errorsFound, lcDecodeExpression, -1);
 
 						// We cannot continue on this error.  It is the beginning of what will likely be many errors
@@ -1395,16 +1395,16 @@ we_are_done:
 				}
 			}
 			// Indicate the result
-			iBuilder_appendData(metaData, "Tag: ", -1);
-			iBuilder_appendData(metaData, (s8*)tagRoot.tagName, min((u32)strlen((s8*)tagRoot.tagName), 10));
+			iBuilder_appendData(metaData, (cu8*)"Tag: ", -1);
+			iBuilder_appendData(metaData, tagRoot.tagName, min((u32)strlen((s8*)tagRoot.tagName), 10));
 			iBuilder_backoffTrailingWhitespaces(metaData);
 			if (llResult)
 			{
 				// If we get here, the keys all match (by RECNO() at least) so we can continue on
-				iBuilder_appendData(metaData, ", valid", -1);
+				iBuilder_appendData(metaData, (cu8*)", valid", -1);
 
 			} else {
-				iBuilder_appendData(metaData, ", invalid", -1);
+				iBuilder_appendData(metaData, (cu8*)", invalid", -1);
 			}
 			iBuilder_appendCrLf(metaData);
 
@@ -1494,12 +1494,12 @@ close_and_quit:
 // and creating keys very fast.
 //
 //////
-	SCdxKeyOp* iiCdx_generateKey_buildOps(SWorkArea* wa, s8* keyExpression, s32* tnKeyOpCount)
+	SCdxKeyOp* iiCdx_generateKey_buildOps(SWorkArea* wa, u8* keyExpression, s32* tnKeyOpCount)
 	{
 		s32			lnKeyLength, lnFieldNumber, lnFieldLength, lnIndexLength, lnKeyFieldNameLength, lnLkoNum;
 		u32			lnFixup;
-		s8*			keyStart;
-		s8			fieldName[128];
+		u8*			keyStart;
+		u8			fieldName[128];
 		bool		llIsValid;
 		SCdxKeyOp*	lko;
 
@@ -1639,7 +1639,7 @@ failed_parsing:
 		return(NULL);
 	}
 
-	bool iiCdx_generateKey_buildOps_markClosingParenthesis(s8* leftParenthesis, s8 fixupAscii)
+	bool iiCdx_generateKey_buildOps_markClosingParenthesis(u8* leftParenthesis, u8 fixupAscii)
 	{
 		s32 lnLevel;
 
@@ -1684,11 +1684,11 @@ failed_parsing:
 // header key directly.  It does not
 //
 //////
-	u32 iiCdx_generateKey(SWorkArea* wa, SCdxHeader* head, s8* keyStorageArea)
+	u32 iiCdx_generateKey(SWorkArea* wa, SCdxHeader* head, u8* keyStorageArea)
 	{
 		s32		lnKeyLength, lnFieldNumber, lnFieldLength, lnKeyFieldNameLength;
-		s8*		keyStart;
-		s8		fieldName[128];
+		u8*		keyStart;
+		u8		fieldName[128];
 
 
 		// Iterate through each field grabbing the key data
@@ -1748,10 +1748,10 @@ failed_parsing:
 // Called to populate the key by the data stored in the ops
 //
 //////
-	void iiCdx_generateKey_byOps(SWorkArea* wa, SCdxKeyOp* keyOps, s32 tnKeyOpCount, s8* keyStorageArea, bool tlBuildFromIndexData)
+	void iiCdx_generateKey_byOps(SWorkArea* wa, SCdxKeyOp* keyOps, s32 tnKeyOpCount, u8* keyStorageArea, bool tlBuildFromIndexData)
 	{
 		s32			lnI, lnJ;
-		s8*			keyPart;
+		u8*			keyPart;
 		SCdxKeyOp*	lko;
 		s8*			dataSource;
 
@@ -1844,7 +1844,7 @@ failed_parsing:
 		}
 	}
 
-	void iiCdx_generateKey_byOps_fixup_swapEndian(SCdxKeyOp* lko, s8* keyPart)
+	void iiCdx_generateKey_byOps_fixup_swapEndian(SCdxKeyOp* lko, u8* keyPart)
 	{
 		switch (lko->length)
 		{
@@ -1879,7 +1879,7 @@ failed_parsing:
 		}
 	}
 
-	void iiCdx_generateKey_byOps_fixup_date(SCdxKeyOp* lko, s8* keyPart)
+	void iiCdx_generateKey_byOps_fixup_date(SCdxKeyOp* lko, u8* keyPart)
 	{
 		s32	lnI;
 		s8	julianBuffer[16];
@@ -1915,7 +1915,7 @@ failed_parsing:
 	}
 
 
-	void iiCdx_generateKey_byOps_fixup_double(SCdxKeyOp* lko, s8* keyPart)
+	void iiCdx_generateKey_byOps_fixup_double(SCdxKeyOp* lko, u8* keyPart)
 	{
 		switch (lko->length)
 		{
@@ -1943,7 +1943,7 @@ failed_parsing:
 		}
 	}
 
-	void iiCdx_generateKey_byOps_fixup_numeric(SCdxKeyOp* lko, s8* keyPart, SWorkArea* wa)
+	void iiCdx_generateKey_byOps_fixup_numeric(SCdxKeyOp* lko, u8* keyPart, SWorkArea* wa)
 	{
 		s8 numericBuffer[256];
 
@@ -1986,11 +1986,11 @@ failed_parsing:
 // If used on CDX index keys, only certain operations are performed, so use tlIsCdxKey = true.
 //
 //////
-	bool iiCdx_generateKey_byOps_fixup(SWorkArea* wa, SCdxKeyOp* keyOps, s32 tnKeyOpCount, s8* keyStorageArea, bool tlIsCdxKey)
+	bool iiCdx_generateKey_byOps_fixup(SWorkArea* wa, SCdxKeyOp* keyOps, s32 tnKeyOpCount, u8* keyStorageArea, bool tlIsCdxKey)
 	{
 		s32		lnI, lnJ;
 		bool	llAnyFixupApplied;	// used for early-out by the caller
-		s8*		keyPart;
+		u8*		keyPart;
 		s8		julianBuffer[16];
 
 
@@ -2222,9 +2222,9 @@ failed_parsing:
 // If not found, it returns _CDX_NO_FIND.
 //
 //////
-	u32 iiCdx_findKey(SWorkArea* wa, STagRoot* tagRoot, s8* keyBuffer, u32 tnKeyLength)
+	u32 iiCdx_findKey(SWorkArea* wa, STagRoot* tagRoot, u8* keyBuffer, u32 tnKeyLength)
 	{
-		s32				lnActualResult;
+		s32				lnTranslatedResult;
 		u32				lnKeyNumber;
 		SCdxNode*		node;
 		SCdxKey			key;
@@ -2253,8 +2253,7 @@ debug_break;
 								// See if this key is beyond us.
 								// Refer to the cdx_logic.txt for information on this algorithm.
 								//////
-									lnActualResult = memcmp(keyBuffer, key.key, tnKeyLength);
-									if (iiCdx_translateActualResultThroughIndexOrder(lnActualResult, tagRoot) <= 0)
+									if (iiCdx_translateActualResultThroughIndexOrder(tagRoot, keyBuffer, &key.key[0], tnKeyLength) <= 0)
 									{
 										// We've reached (=) or passed where the key should've been
 										node = iCdx_getCompactIdxNode_byOffset(wa->cdx_root, key.fileOffset);
@@ -2284,35 +2283,13 @@ debug_break;
 								// See if this key is beyond us.
 								// Refer to the cdx_logic.txt for information on this algorithm.
 								//////
-									lnActualResult = memcmp(keyBuffer, key.key, tnKeyLength);
-
-									// Is it an exact match?
-									if (lnActualResult == 0)
+									if ((lnTranslatedResult = iiCdx_translateActualResultThroughIndexOrder(tagRoot, keyBuffer, &key.key[0], tnKeyLength)) == 0)
 									{
 										// We found the key
 										return(key.recordNumber);
-									}
 
-									// It wasn't a match, have we past it yet?
-									if (tagRoot->indexIsDesc)
-									{
-										// Index is descending
-										// Actual result is reversed
-										if (lnActualResult >= 0)
-										{
-											// It is >=, which means in a descending index it's less than or equal to
-											// We've reached (=) or passed where the key should've been
-											// This means no find
-											return(_CDX_NO_FIND);
-										}
-										// else
-										// It is <, which means in a descending index it's greater than
-										// Still moving forward to find out match
-
-									} else if (lnActualResult <= 0) {
-										// Index is ascending
-										// Actual result is normal
-										// We've reached (=) or passed where the key should've been
+									} else if (lnTranslatedResult < 0) {
+										// We've passed where the key should've been
 										// This means no find
 										return(_CDX_NO_FIND);
 									}
@@ -2364,24 +2341,48 @@ debug_break;
 // Note:	For descending, less than and greater than are reversed.
 //
 //////
-	s32 iiCdx_translateActualResultThroughIndexOrder(s32 tnActualResult, STagRoot* tagRoot)
+	s32 iiCdx_translateActualResultThroughIndexOrder(STagRoot* tagRoot, u8* keyLeft, u8* keyRight, u32 tnKeyLength)
 	{
-		if (tagRoot->indexIsDesc)
-		{
-			// We are in a descending index
-			// Actual result is reversed
-			if (tnActualResult > 0)
-			{
-				// Reverse it to < 0
-				tnActualResult = -1;
+		s32 lnActualResult, lnTranslatedResult;
 
-			} else if (tnActualResult < 0) {
-				// Reverse it to > 0
-				tnActualResult = 1;
+
+		//////////
+		// Perform the compare
+		//////
+			lnActualResult = memcmp(keyLeft, keyRight, tnKeyLength);
+
+		
+		//////////
+		// Analyze the result as per the index order
+		//////
+			if (tagRoot->indexIsDesc)
+			{
+				// We are in a descending index
+				// Actual result is reversed
+				if (lnActualResult > 0)
+				{
+					// Reverse it to < 0
+					lnTranslatedResult = -1;
+
+				} else if (lnActualResult < 0) {
+					// Reverse it to > 0
+					lnTranslatedResult = 1;
+
+				} else {
+					// It is equal, and does not need translated
+					lnTranslatedResult = lnActualResult;
+				}
+
+			} else {
+				// It is an ascending order index, and the results of memcmp() by itself are proper and do not need translated
+				lnTranslatedResult = lnActualResult;
 			}
-			// else it is equal, and it does not need reversed
-		}
-		return(tnActualResult);
+
+
+		//////////
+		// Indicate the actual result
+		//////
+			return(lnActualResult);
 	}
 
 
@@ -2426,13 +2427,13 @@ debug_break;
 //		lnKeyRecno = CTOBIN(SUBSTR(lcKeys, 1 + (((lnI-1) * 8) + 4), 4), "4")		&& Obtains the record number as an encoded integer
 //
 //////
-	u32 iCdx_getAllKeysCdx(SWorkArea* wa, s32 tnTagIndex, s8* tcKeySpace, u32 tnKeySpaceLength, s8* tcDecodeExpression, u32 tnDecodeExpressionLength, s8* tcKeyLength4)
+	u32 iCdx_getAllKeysCdx(SWorkArea* wa, s32 tnTagIndex, u8* tcKeySpace, u32 tnKeySpaceLength, u8* tcDecodeExpression, u32 tnDecodeExpressionLength, s8* tcKeyLength4)
 	{
 		u32				lnKeyNumber, lnTotalKeyCount;
 		SCdxNode*		node;
 		SCdxKey			key;
 		STagRoot		tagRoot;
-		s8				buffer[256];
+		u8				buffer[256];
 		SBuilder*		keys;
 
 
@@ -2466,8 +2467,8 @@ debug_break;
 								{
 									// Indicate our key count has gone up
 									++lnTotalKeyCount;
-									iBuilder_appendData(keys, (s8*)&key.key[0],	key.keyLength);		// Append key
-									iBuilder_appendData(keys, (s8*)&key.recordNumber,	4);					// Append record number
+									iBuilder_appendData(keys, &key.key[0],				key.keyLength);		// Append key
+									iBuilder_appendData(keys, (cu8*)&key.recordNumber,	4);					// Append record number
 
 								} else {
 									// Should not happen
@@ -2510,16 +2511,16 @@ debug_break;
 				if (tagRoot.fillChar == 0 && (tagRoot.keyLength == 4 || tagRoot.keyLength == 8) && tagRoot.swapEndians)
 				{
 					// Extract as integers
-					sprintf(buffer, "lxKey      = CTOBIN(SUBSTR(lcKeys, 1 + (((lnI-1) * (4 + 4)) + 0), 4), '4rs')     && Obtains the key as an encoded integer\r\n\0");
+					sprintf((s8*)buffer, "lxKey      = CTOBIN(SUBSTR(lcKeys, 1 + (((lnI-1) * (4 + 4)) + 0), 4), '4rs')     && Obtains the key as an encoded integer\r\n\0");
 					iBuilder_appendData(keys, buffer, -1);
-					sprintf(buffer, "lnKeyRecno = CTOBIN(SUBSTR(lcKeys, 1 + (((lnI-1) * (4 + 4)) + 4), 4), '4rs')     && Obtains the record number as an encoded integer\r\n\0");
+					sprintf((s8*)buffer, "lnKeyRecno = CTOBIN(SUBSTR(lcKeys, 1 + (((lnI-1) * (4 + 4)) + 4), 4), '4rs')     && Obtains the record number as an encoded integer\r\n\0");
 					iBuilder_appendData(keys, buffer, -1);
 
 				} else {
 					// Extract as character
-					sprintf(buffer, "lxKey      = SUBSTR(lcKeys, 1 + (((lnI-1) * (4 + %u)) + 0), %u)                  && Obtains the key as a string\r\n\0", tagRoot.keyLength, tagRoot.keyLength);
+					sprintf((s8*)buffer, "lxKey      = SUBSTR(lcKeys, 1 + (((lnI-1) * (4 + %u)) + 0), %u)                  && Obtains the key as a string\r\n\0", tagRoot.keyLength, tagRoot.keyLength);
 					iBuilder_appendData(keys, buffer, -1);
-					sprintf(buffer, "lnKeyRecno = CTOBIN(SUBSTR(lcKeys, 1 + (((lnI-1) * (4 + %u)) + %u), 4), '4rs')   && Obtains the record number as an encoded integer\r\n\0", tagRoot.keyLength, tagRoot.keyLength);
+					sprintf((s8*)buffer, "lnKeyRecno = CTOBIN(SUBSTR(lcKeys, 1 + (((lnI-1) * (4 + %u)) + %u), 4), '4rs')   && Obtains the record number as an encoded integer\r\n\0", tagRoot.keyLength, tagRoot.keyLength);
 					iBuilder_appendData(keys, buffer, -1);
 				}
 				if (tcDecodeExpression)
@@ -2585,7 +2586,7 @@ debug_break;
 //		lnKeyRecno = CTOBIN(SUBSTR(lcKeys, (lnI * 8) + 4, 4), "4")		&& Obtains the record number as an encoded integer
 //
 //////
-	u32 iCdx_getAllKeysIdx(SWorkArea* wa, s8* tcKeySpace, u32 tnKeySpaceLength, s8* tcDecodeExpression, u32 tnDecodeExpressionLength, s8* tcKeyLength4)
+	u32 iCdx_getAllKeysIdx(SWorkArea* wa, u8* tcKeySpace, u32 tnKeySpaceLength, u8* tcDecodeExpression, u32 tnDecodeExpressionLength, s8* tcKeyLength4)
 	{
 		u32					lnKeyNumber, lnTotalKeyCount;
 		bool				llResult;
@@ -2602,7 +2603,7 @@ debug_break;
 			SIdxKey			keyIdx;
 		};
 		STagRoot			tagRoot;
-		s8					buffer[256];
+		u8					buffer[256];
 		SBuilder*			keys;
 
 
@@ -2655,13 +2656,13 @@ debug_break;
 									if (wa->isIdxCompact)
 									{
 										// Compact
-										iBuilder_appendData(keys, (s8*)&keyCdx.key[0],	keyCdx.keyLength);		// Append key
-										iBuilder_appendData(keys, (s8*)&keyCdx.recordNumber,	4);						// Append record number
+										iBuilder_appendData(keys, &keyCdx.key[0],				keyCdx.keyLength);		// Append key
+										iBuilder_appendData(keys, (cu8*)&keyCdx.recordNumber,	4);					// Append record number
 
 									} else {
 										// Standard
-										iBuilder_appendData(keys, (s8*)&keyIdx.key[0],	keyIdx.keyLength);		// Append key
-										iBuilder_appendData(keys, (s8*)&keyIdx.record,	4);						// Append record number
+										iBuilder_appendData(keys, &keyIdx.key[0],				keyIdx.keyLength);		// Append key
+										iBuilder_appendData(keys, (cu8*)&keyIdx.record,			4);						// Append record number
 									}
 
 								} else {
@@ -2706,16 +2707,16 @@ debug_break;
 				if (tagRoot.fillChar == 0 && (tagRoot.keyLength == 4 || tagRoot.keyLength == 8) && tagRoot.swapEndians)
 				{
 					// Extract as integers
-					sprintf(buffer, "lxKey      = CTOBIN(SUBSTR(lcKeys, 1 + (((lnI-1) * (4 + 4)) + 0), 4), '4rs')     && Obtains the key as an encoded integer\r\n\0");
+					sprintf((s8*)buffer, "lxKey      = CTOBIN(SUBSTR(lcKeys, 1 + (((lnI-1) * (4 + 4)) + 0), 4), '4rs')     && Obtains the key as an encoded integer\r\n\0");
 					iBuilder_appendData(keys, buffer, -1);
-					sprintf(buffer, "lnKeyRecno = CTOBIN(SUBSTR(lcKeys, 1 + (((lnI-1) * (4 + 4)) + 4), 4), '4rs')     && Obtains the record number as an encoded integer\r\n\0");
+					sprintf((s8*)buffer, "lnKeyRecno = CTOBIN(SUBSTR(lcKeys, 1 + (((lnI-1) * (4 + 4)) + 4), 4), '4rs')     && Obtains the record number as an encoded integer\r\n\0");
 					iBuilder_appendData(keys, buffer, -1);
 
 				} else {
 					// Extract as character
-					sprintf(buffer, "lxKey      = SUBSTR(lcKeys, 1 + (((lnI-1) * (4 + %u)) + 0), %u)                  && Obtains the key as a string\r\n\0", tagRoot.keyLength, tagRoot.keyLength);
+					sprintf((s8*)buffer, "lxKey      = SUBSTR(lcKeys, 1 + (((lnI-1) * (4 + %u)) + 0), %u)                  && Obtains the key as a string\r\n\0", tagRoot.keyLength, tagRoot.keyLength);
 					iBuilder_appendData(keys, buffer, -1);
-					sprintf(buffer, "lnKeyRecno = CTOBIN(SUBSTR(lcKeys, 1 + (((lnI-1) * (4 + %u)) + %u), 4), '4rs')   && Obtains the record number as an encoded integer\r\n\0", tagRoot.keyLength, tagRoot.keyLength);
+					sprintf((s8*)buffer, "lnKeyRecno = CTOBIN(SUBSTR(lcKeys, 1 + (((lnI-1) * (4 + %u)) + %u), 4), '4rs')   && Obtains the record number as an encoded integer\r\n\0", tagRoot.keyLength, tagRoot.keyLength);
 					iBuilder_appendData(keys, buffer, -1);
 				}
 				if (tcDecodeExpression)
@@ -2799,7 +2800,7 @@ debug_break;
 
 							// Determine what field type the index expression is
 // TODO:  This is not fool-proof, but rather it works only with concatenated character fields, or single fields or additive single fields
-							tagRoot->fillChar		= iDbf_getField_type(wa, (s8*)nodeTag + 512, &tagRoot->swapEndians, &tagRoot->needsSignBitToggled);
+							tagRoot->fillChar		= iDbf_getField_type(wa, (u8*)nodeTag + 512, &tagRoot->swapEndians, &tagRoot->needsSignBitToggled);
 							tagRoot->indexIsDesc	= iCdx_isDescending(nodeTag);
 
 							// See if that first/highest node is an index node, if so then we descend until we find the left-most leaf node
@@ -2970,7 +2971,7 @@ debug_break;
 		SForClause*		lsFor;
 		SForSubItem*	lfsi;
 		SForOp*			lfco;
-		s8				fieldName[128];
+		u8				fieldName[128];
 
 
 		// Is the environment workable?
@@ -3185,7 +3186,7 @@ debug_break;
 		{
 			// Get a common variable for the key length
 			lnKeyLength			= head->keyLength + 4;
-			key->key			= (s8*)(node + 1) + (tnNumber * lnKeyLength);
+			key->key			= (u8*)(node + 1) + (tnNumber * lnKeyLength);
 			key->record			= iiBswap32(*(u32*)(key->_key + head->keyLength));		// Stored in big-endian on disk, needs converted to little-endian for internal use
 			key->keyLength		= head->keyLength;
 
@@ -3782,13 +3783,13 @@ debug_break;
 // Called to copy a string to a buffer which already exists
 //
 //////
-	s8* iResetThenCopyString(s8* tcDest, s32 tnDestLength, s8* tcSource, s32 tnSourceLength)
+	u8* iResetThenCopyString(u8* tcDest, s32 tnDestLength, u8* tcSource, s32 tnSourceLength)
 	{
 		if (tcDest)
-			memset(tcDest, 0, tnDestLength);	// Initialize it to empty, then copy over whatever will fit
+			memset((s8*)tcDest, 0, tnDestLength);	// Initialize it to empty, then copy over whatever will fit
 
 		if (tcSource)
-			memcpy(tcDest, tcSource, min(tnSourceLength, tnDestLength));
+			memcpy((s8*)tcDest, (s8*)tcSource, min(tnSourceLength, tnDestLength));
 
 		// Indicate a pointer to their target, so it will propagate through an expression
 		return(tcDest);

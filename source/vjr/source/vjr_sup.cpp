@@ -83,7 +83,7 @@
 		//////
 			while (1)
 			{
-				if (!GetClassInfoExA(ghInstance, cgcMessageWindowClass, &classa))
+				if (!GetClassInfoExA(ghInstance, (cs8*)cgcMessageWindowClass, &classa))
 				{
 					// Initialize
 					memset(&classa, 0, sizeof(classa));
@@ -91,7 +91,7 @@
 					// Populate
 					classa.cbSize				= sizeof(WNDCLASSEXA);
 					classa.hInstance			= ghInstance;
-					classa.lpszClassName		= cgcMessageWindowClass;
+					classa.lpszClassName		= (cs8*)cgcMessageWindowClass;
 					classa.lpfnWndProc			= &iWindow_wndProcMessage;
 
 					// Register
@@ -105,7 +105,7 @@
 			//////////
 			// Create the message window
 			//////
-				ghwndMsg = CreateWindowA(cgcMessageWindowClass, cgcMessageWindowClass, 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, ghInstance, 0);
+				ghwndMsg = CreateWindowA((cs8*)cgcMessageWindowClass, (cs8*)cgcMessageWindowClass, 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, ghInstance, 0);
 				if (ghwndMsg)
 				{
 					// Read events
@@ -224,7 +224,7 @@
 			setBorderStyle(_jdebi, _BORDER_STYLE_FIXED);
 
 			// Give it a fixed point font
-			_jdebi->p.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			_jdebi->p.font = iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 
 
 		//////////
@@ -348,7 +348,7 @@
 			// Adjust the caption width
 			((SObject*)sourceCode->firstChild->ll.next)->rc.right = 90;
 
-			sourceCode_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			sourceCode_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			sourceCode_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown_sourceCode;
 			setBorderStyle(sourceCode_editbox, _BORDER_STYLE_FIXED);
 			setBorderColor(sourceCode_editbox, lineNumberBackColor);
@@ -362,7 +362,7 @@
 		//////
 // TODO:  Working here...
 			iObjProp_set_character_direct(locals, _INDEX_CAPTION, cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
-			locals_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			locals_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			locals_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
 
 			// Adjust the caption width
@@ -373,7 +373,7 @@
 		// Watch window caption and font
 		//////
 			iObjProp_set_character_direct(watch, _INDEX_CAPTION, cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
-			watch_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			watch_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			watch_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
 			watch_editbox->p.sem->showCursorLine		= true;
 
@@ -385,7 +385,7 @@
 		// Command window caption and font
 		//////
 			iObjProp_set_character_direct(command, _INDEX_CAPTION, cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
-			command_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			command_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			command_editbox->ev.keyboard._onKeyDown		= (uptr)&iSEM_onKeyDown_sourceCode;
 			command_editbox->p.hasFocus					= true;
 			command_editbox->p.sem->showCursorLine		= true;
@@ -400,7 +400,7 @@
 		// Debug window caption and font
 		//////
 			iObjProp_set_character_direct(debug, _INDEX_CAPTION, cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
-			debug_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			debug_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			debug_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
 			debug_editbox->p.sem->showCursorLine		= true;
 
@@ -412,7 +412,7 @@
 		// Output window caption and font
 		//////
 			iObjProp_set_character_direct(output, _INDEX_CAPTION, cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
-			output_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_MEDIUM, false, false);
+			output_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 8, FW_MEDIUM, false, false);
 			output_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
 			output_editbox->p.sem->showCursorLine	= true;
 
@@ -424,7 +424,7 @@
 		// SourceLight a caption and font
 		//////
 			iObjProp_set_character_direct(sourceLight, _INDEX_CAPTION, cgcSourceLightTitle, sizeof(cgcSourceLightTitle) - 1);
-			sourceLight->p.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			sourceLight->p.font = iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			setVisible(sourceLight, _LOGICAL_TRUE);
 			setBackStyle(sourceLight, _BACK_STYLE_OPAQUE);
 			sourceLight_empty->ev.general._onRender = (uptr)&iSourceLight_copy;
@@ -434,13 +434,13 @@
 		// _screen a caption and font
 		//////
 			iObjProp_set_character_direct(_screen, _INDEX_CAPTION, cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
-			_screen->p.font = iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			_screen->p.font = iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 
 
 		//////////
 		// Setup _screen's editbox
 		//////
-			screen_editbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			screen_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			screen_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
 			screenData								= screen_editbox->p.sem;
 			screenData->showCursorLine				= true;
@@ -473,7 +473,7 @@
 			_datetime_Jan_01_2000 = iVariable_create(_VAR_TYPE_DATETIME, NULL);
 			dt.julian	= 2451545;
 			dt.seconds	= 0.0f;
-			iDatum_duplicate(&_datetime_Jan_01_2000->value, (s8*)&dt, 8);
+			iDatum_duplicate(&_datetime_Jan_01_2000->value, (u8*)&dt, 8);
 	}
 
 
@@ -547,16 +547,16 @@
 // Append to the system log
 //
 //////
-	void iVjr_appendSystemLog(s8* tcLogText)
+	void iVjr_appendSystemLog(u8* tcLogText)
 	{
-		s8 buffer[2048];
+		u8 buffer[2048];
 
 
 		// Lock it down
 		EnterCriticalSection(&cs_logData);
 
 		// Append to it
-		sprintf(buffer, "[%u] %s\0", (u32)((s64)GetTickCount() - systemStartedTickCount), tcLogText);
+		sprintf((s8*)buffer, (s8*)"[%u] %s\0", (u32)((s64)GetTickCount() - systemStartedTickCount), (s8*)tcLogText);
 		iSEM_appendLine(systemLog, buffer, -1, false);
 
 		// Release it
@@ -579,7 +579,7 @@
 //////
 	void iVjr_flushSystemLog(void)
 	{
-		iSEM_saveToDisk(systemLog, (s8*)cgcSystemLogFilename);
+		iSEM_saveToDisk(systemLog, cgcSystemLogFilename);
 	}
 
 
@@ -743,17 +743,17 @@
 		glShuttingDown = true;
 
 		// System is shutting down
-		iVjr_appendSystemLog("Unengage VJr");
+		iVjr_appendSystemLog((u8*)"Unengage VJr");
 
 		// Tell OS to unengage our process
-		iVjr_appendSystemLog("Notify OS to shutdown");
+		iVjr_appendSystemLog((u8*)"Notify OS to shutdown");
 
 		// Flush the log
 		iVjr_flushSystemLog();
 
 		// Save where we were
-		iSEM_saveToDisk(screenData,				(s8*)cgcScreenDataFilename);
-		iSEM_saveToDisk(command_editbox->p.sem,	(s8*)cgcCommandHistoryFilename);
+		iSEM_saveToDisk(screenData,				cgcScreenDataFilename);
+		iSEM_saveToDisk(command_editbox->p.sem,	cgcCommandHistoryFilename);
 
 		// Close the allocated memory blocks
 		iVjr_releaseMemory();
@@ -788,7 +788,7 @@
 		gSplash.bmp = (SBitmap*)lpParameter;
 
 		// Make sure the class is registered
-		if (!GetClassInfoExA(ghInstance, cgcSplashClass, &classex))
+		if (!GetClassInfoExA(ghInstance, (cs8*)cgcSplashClass, &classex))
 		{
 			// Initialize
 			memset(&classex, 0, sizeof(classex));
@@ -797,7 +797,7 @@
 			classex.cbSize				= sizeof(WNDCLASSEXA);
 			classex.hInstance			= ghInstance;
 			classex.style				= CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
-			classex.lpszClassName		= cgcSplashClass;
+			classex.lpszClassName		= (cs8*)cgcSplashClass;
 			classex.hCursor				= LoadCursor(NULL, IDC_ARROW);
 			classex.lpfnWndProc			= &iSplash_wndProc;
 
@@ -809,7 +809,7 @@
 		GetWindowRect(GetDesktopWindow(), &lrcWindow);
 		lnLeft	= ((lrcWindow.right  - lrcWindow.left) / 2) - (gSplash.bmp->bi.biWidth  / 2);
 		lnTop	= ((lrcWindow.bottom - lrcWindow.top)  / 2) - (gSplash.bmp->bi.biHeight / 2);
-		gSplash.hwnd = CreateWindowEx(WS_EX_TOPMOST, cgcSplashClass, NULL, WS_POPUP, 
+		gSplash.hwnd = CreateWindowEx(WS_EX_TOPMOST, (cs8*)cgcSplashClass, NULL, WS_POPUP, 
 											lnLeft,
 											lnTop,
 											gSplash.bmp->bi.biWidth,
@@ -844,7 +844,7 @@
 				}
 		}
 		// Log it
-		iVjr_appendSystemLog("Splash screen unengaged");
+		iVjr_appendSystemLog((u8*)"Splash screen unengaged");
 
 		// Delete the timer
 		KillTimer(gSplash.hwnd, 0);
@@ -880,7 +880,7 @@
 			Sleep((DWORD)(uptr)lpParameter);
 
 			// Log it
-			iVjr_appendSystemLog("Splash screen can unengage");
+			iVjr_appendSystemLog((u8*)"Splash screen can unengage");
 
 			// Indicate no longer valid
 			gSplash.isValid = false;
@@ -951,14 +951,14 @@
 		u32		stopTickCount;
 		f32		lfVolume;
 		u64		lnSoundHandle;
-		s8		buffer[256];
+		u8		buffer[256];
 
 
 		// Load the sound file (if it exists)
 		if (iFile_readContents((s8*)lpParameter, NULL, &soundData_s8, &soundCount))
 		{
 			// Log it
-			sprintf(buffer, "Engage %s\0", (s8*)lpParameter);
+			sprintf((s8*)buffer, "Engage %s\0", (s8*)lpParameter);
 			iVjr_appendSystemLog(buffer);
 
 			// Begin at the beginning
@@ -993,7 +993,7 @@
 				Sleep(100);
 			}
 			// Log it
-			sprintf(buffer, "Unengage %s\0", (s8*)lpParameter);
+			sprintf((s8*)buffer, "Unengage %s\0", (s8*)lpParameter);
 			iVjr_appendSystemLog(buffer);
 
 			// When we get here, we're done playing
@@ -1011,7 +1011,7 @@
 
 		} else {
 			// Log it
-			sprintf(buffer, "Inquiry on sound file %s\0", (s8*)lpParameter);
+			sprintf((s8*)buffer, "Inquiry on sound file %s\0", (s8*)lpParameter);
 			iVjr_appendSystemLog(buffer);
 		}
 
@@ -1296,7 +1296,7 @@
 				for (lnI = 0; lnI < windows->populatedLength; lnI += sizeof(SWindow))
 				{
 					// Grab this pointer
-					win = (SWindow*)(windows->data + lnI);
+					win = (SWindow*)(windows->data_u8 + lnI);
 
 					// Lock it down
 					EnterCriticalSection(&win->cs);
@@ -1371,7 +1371,7 @@
 			for (lnI = 0; lnI < gWindows->populatedLength; lnI += sizeof(SWindow))
 			{
 				// Grab this one
-				win = (SWindow*)(gWindows->data + lnI);
+				win = (SWindow*)(gWindows->data_u8 + lnI);
 
 				// Lock it down
 				EnterCriticalSection(&win->cs);
@@ -1420,7 +1420,7 @@
 		for (lnI = 0; lnI < gWindows->populatedLength; lnI += sizeof(SWindow))
 		{
 			// Grab this one
-			win = (SWindow*)(gWindows->data + lnI);
+			win = (SWindow*)(gWindows->data_u8 + lnI);
 
 			// Lock it down
 			EnterCriticalSection(&win->cs);
@@ -1468,7 +1468,7 @@
 		for (lnI = 0; lnI < gWindows->populatedLength; lnI += sizeof(SWindow))
 		{
 			// Grab this one
-			win = (SWindow*)(gWindows->data + lnI);
+			win = (SWindow*)(gWindows->data_u8 + lnI);
 
 			// Lock it down
 			if (TryEnterCriticalSection(&win->cs))
@@ -1648,7 +1648,7 @@
 		//////////
 		// See if the class is already defined
 		//////
-			if (!GetClassInfoEx(GetModuleHandle(NULL), cgcFocusHighlightClass, &wcex))
+			if (!GetClassInfoEx(GetModuleHandle(NULL), (cs8*)cgcFocusHighlightClass, &wcex))
 			{
 				// We need to create said class with our class making skills
 				// If we get here, not yet registered
@@ -1658,7 +1658,7 @@
 				wcex.lpfnWndProc    = &iFocusHighlight_wndProc;
 				wcex.hInstance      = GetModuleHandle(NULL);
 				wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
-				wcex.lpszClassName  = cgcFocusHighlightClass;
+				wcex.lpszClassName  = (cs8*)cgcFocusHighlightClass;
 				atom				= RegisterClassExA(&wcex);
 
 				// Was it registered?
@@ -1670,7 +1670,7 @@
 		//////////
 		// Create the window
 		//////
-			focus->hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, cgcFocusHighlightClass, NULL, WS_POPUP, rc->left, rc->top, rc->right - rc->left, rc->bottom - rc->top, NULL, NULL, GetModuleHandle(NULL), 0);
+			focus->hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, (cs8*)cgcFocusHighlightClass, NULL, WS_POPUP, rc->left, rc->top, rc->right - rc->left, rc->bottom - rc->top, NULL, NULL, GetModuleHandle(NULL), 0);
 
 
 		//////////
@@ -1753,7 +1753,7 @@
 			for (lnI = 0; lnI < gFocusHighlights->populatedLength; lnI += sizeof(SFocusHighlight))
 			{
 				// Grab the focus
-				focus = (SFocusHighlight*)(gFocusHighlights->data + lnI);
+				focus = (SFocusHighlight*)(gFocusHighlights->data_u8 + lnI);
 
 				// Delete it if it exists
 				if (focus && focus->isValid)
@@ -1780,7 +1780,7 @@
 		for (lnI = 0; lnI < gFocusHighlights->populatedLength; lnI += sizeof(SFocusHighlight))
 		{
 			// Grab the pointer
-			focus = (SFocusHighlight*)(gFocusHighlights->data + lnI);
+			focus = (SFocusHighlight*)(gFocusHighlights->data_u8 + lnI);
 
 			// Is this it?
 			if (focus->hwnd == hwnd)
@@ -1809,7 +1809,7 @@
 		for (lnI = 0; lnI < gFocusHighlights->populatedLength; lnI += sizeof(SFocusHighlight))
 		{
 			// Grab the pointer
-			focus = (SFocusHighlight*)(gFocusHighlights->data + lnI);
+			focus = (SFocusHighlight*)(gFocusHighlights->data_u8 + lnI);
 
 			// Is this it?
 			if (focus->obj == obj)
@@ -1925,7 +1925,7 @@
 		//////////
 		// See if the class is already defined
 		//////
-			if (!GetClassInfoEx(GetModuleHandle(NULL), cgcTooltipClass, &wcex))
+			if (!GetClassInfoEx(GetModuleHandle(NULL), (cs8*)cgcTooltipClass, &wcex))
 			{
 				// We need to create said class with our class making skills
 				// If we get here, not yet registered
@@ -1935,7 +1935,7 @@
 				wcex.lpfnWndProc    = &iTooltip_wndProc;
 				wcex.hInstance      = GetModuleHandle(NULL);
 				wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
-				wcex.lpszClassName  = cgcTooltipClass;
+				wcex.lpszClassName  = (cs8*)cgcTooltipClass;
 				atom				= RegisterClassExA(&wcex);
 
 				// Was it registered?
@@ -1954,7 +1954,7 @@
 		//////
 			lnWidth			= tooltip->rc.right  - tooltip->rc.left;
 			lnHeight		= tooltip->rc.bottom - tooltip->rc.top;
-			tooltip->hwnd	= CreateWindowEx(WS_EX_TOOLWINDOW, cgcTooltipClass, NULL, 
+			tooltip->hwnd	= CreateWindowEx(WS_EX_TOOLWINDOW, (cs8*)cgcTooltipClass, NULL, 
 												WS_POPUP,
 												tooltip->rc.left,
 												tooltip->rc.top,
@@ -2316,31 +2316,31 @@
 		return(iTime_computeMilliseconds(&time));
 	}
 
-	bool iTestExactlyEqual(s8* left, u32 leftLength, cs8* right, u32 rightLength)
+	bool iTestExactlyEqual(u8* left, u32 leftLength, cu8* right, u32 rightLength)
 	{
-		return(iTestExactlyEqual(left, leftLength, (s8*)right, rightLength));
+		return(iTestExactlyEqual(left, leftLength, (u8*)right, rightLength));
 	}
 
-	bool iTestExactlyEqual(s8* left, u32 leftLength, s8* right, u32 rightLength)
+	bool iTestExactlyEqual(u8* left, u32 leftLength, u8* right, u32 rightLength)
 	{
 		// Everything must be established
 		if (left && right && leftLength == rightLength)
-			return(_memicmp(left, right, leftLength) == 0);	// Test equality without regards to case
+			return(_memicmp((s8*)left, (s8*)right, leftLength) == 0);	// Test equality without regards to case
 		
 		// If we get here, no match
 		return(false);
 	}
 
-	bool iTestExactlyEqual_case(s8* left, u32 leftLength, cs8* right, u32 rightLength)
+	bool iTestExactlyEqual_case(u8* left, u32 leftLength, cu8* right, u32 rightLength)
 	{
-		return(iTestExactlyEqual_case(left, leftLength, (s8*)right, rightLength));
+		return(iTestExactlyEqual_case(left, leftLength, (u8*)right, rightLength));
 	}
 
-	bool iTestExactlyEqual_case(s8* left, u32 leftLength, s8* right, u32 rightLength)
+	bool iTestExactlyEqual_case(u8* left, u32 leftLength, u8* right, u32 rightLength)
 	{
 		// Everything must be established
 		if (left && right && leftLength == rightLength)
-			return(memcmp(left, right, leftLength) == 0);	// Test equality
+			return(memcmp((s8*)left, (s8*)right, leftLength) == 0);	// Test equality
 
 		// If we get here, no match
 		return(false);
@@ -3532,7 +3532,7 @@
 			for (lnI = 0; lnI < lnObjFocusControlsCount; lnI++)
 			{
 				// Grab this object and its buffer
-				obj	= *(SObject**)(objFocusControls->data + (lnI * sizeof(SObject*)));
+				obj	= *(SObject**)(objFocusControls->data_u8 + (lnI * sizeof(SObject*)));
 
 				// Call the appropriate handler
 				if (m == WM_KEYDOWN && obj->ev.keyboard._onKeyDown)
@@ -3578,7 +3578,7 @@ debug_break;
 		// Iterate in a top-down manner
 		//////
 			lnCount	= root->populatedLength / sizeof(STranslate);
-			xlat	= (STranslate*)root->data;
+			xlat	= (STranslate*)root->data_u8;
 			for (lnI = 0; lnI < lnCount; lnI++, xlat++)
 			{
 				// See if this translation is the translation
@@ -3606,7 +3606,7 @@ debug_break;
 		// Iterate in a top-down manner
 		//////
 			lnCount = root->populatedLength / sizeof(STranslate);
-			xlat	= (STranslate*)root->data;
+			xlat	= (STranslate*)root->data_u8;
 			for (lnI = 0; lnI < lnCount; lnI++, xlat++)
 			{
 				// See if this translation is the translation
@@ -3795,8 +3795,8 @@ debug_break;
 			iObj_setSize(gobj_splashListingEditbox, 0, 0, gobj_splashListing->rcClient.right - gobj_splashListing->rcClient.left, gobj_splashListing->rcClient.bottom - gobj_splashListing->rcClient.top);
 			gobj_splashListingEditbox->bmp = iBmp_allocate();
 			iBmp_createBySize(gobj_splashListingEditbox->bmp, gobj_splashListing->rcClient.right - gobj_splashListing->rcClient.left, gobj_splashListing->rcClient.bottom - gobj_splashListing->rcClient.top, bmp->bi.biBitCount);
-			gobj_splashListingEditbox->p.font					= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
-			gobj_splashListingEditbox->p.sem->font				= iFont_create((s8*)cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
+			gobj_splashListingEditbox->p.font					= iFont_create(cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
+			gobj_splashListingEditbox->p.sem->font				= iFont_create(cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
 			gobj_splashListingEditbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
 			iObjProp_set_logical_direct(gobj_splashListingEditbox, _INDEX_VISIBLE, _LOGICAL_TRUE);
 			systemLog											= gobj_splashListingEditbox->p.sem;

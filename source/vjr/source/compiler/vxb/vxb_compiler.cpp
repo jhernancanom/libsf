@@ -414,7 +414,7 @@
 // TODO:  Needs added to the current function chain
 
 						// Generate warnings for ignored components if any appear after
-						iComp_reportWarningsOnRemainder((SComp*)compName->ll.next, _WARNING_SPURIOUS_COMPONENTS_IGNORED, (s8*)cgcSpuriousIgnored);
+						iComp_reportWarningsOnRemainder((SComp*)compName->ll.next, _WARNING_SPURIOUS_COMPONENTS_IGNORED, (cu8*)cgcSpuriousIgnored);
 					}
 				}
 			}
@@ -467,7 +467,7 @@
 // TODO:  Needs added to the current function
 
 						// Generate warnings for ignored components if any appear after
-						iComp_reportWarningsOnRemainder((SComp*)compName->ll.next, _WARNING_SPURIOUS_COMPONENTS_IGNORED, (s8*)cgcSpuriousIgnored);
+						iComp_reportWarningsOnRemainder((SComp*)compName->ll.next, _WARNING_SPURIOUS_COMPONENTS_IGNORED, cgcSpuriousIgnored);
 					}
 				}
 			}
@@ -722,7 +722,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 
 				} else {
 					// Internal compile error
-					iComp_appendError(comp, _ERROR_OUT_OF_MEMORY, (s8*)cgcOutOfMemory);
+					iComp_appendError(comp, _ERROR_OUT_OF_MEMORY, (u8*)cgcOutOfMemory);
 					iOp_setNull(&node->opData->op);
 				}
 		}
@@ -856,7 +856,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 		SComp*					compFirst;
 		SComp*					compLast;
 		SComp*					comp;
-		s8*						lcData;
+		u8*						lcData;
 		SAsciiCompSearcher*		lacs;
 
 
@@ -865,7 +865,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 		if (tsComps && line)
 		{
 			// Scan starting at the beginning of the line
-			lcData = line->sourceCode->data;
+			lcData = line->sourceCode->data_u8;
 
 			// Iterate through every byte identifying every component we can
 			compLast	= line->compilerInfo->firstComp;
@@ -886,7 +886,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					{
 						// There is enough room for this component to be examined
 						// See if it matches
-						if (iTranslateToCompsTest((s8*)lacs->keyword, lcData + lnI, lacs->length) == 0)
+						if (iTranslateToCompsTest(lacs->keyword_u8, lcData + lnI, lacs->length) == 0)
 						{
 							// It matches
 							// mark its current condition
@@ -896,7 +896,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 							if (lacs->repeats)
 							{
 								while (	lnStart + lnLength + lnLacsLength <= lnMaxLength
-										&& iTranslateToCompsTest((s8*)lacs->keyword, lcData + lnStart + lnLength, lacs->length) == 0)
+										&& iTranslateToCompsTest(lacs->keyword_u8, lcData + lnStart + lnLength, lacs->length) == 0)
 								{
 									// We found another repeated entry
 									lnLength += lnLacsLength;
@@ -1018,7 +1018,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 						if (!tacs->firstOnLine || !comp->ll.prev || iComps_areAllPrecedingCompsWhitespaces(comp))
 						{
 							// Physically conduct the exact comparison
-							if (iComps_translateToOthers_testIfMatch((s8*)tacs->keyword, comp->line->sourceCode->data + comp->start, tacs->length) == 0)
+							if (iComps_translateToOthers_testIfMatch(tacs->keyword_u8, comp->line->sourceCode->data_cu8 + comp->start, tacs->length) == 0)
 							{
 								// This is a match
 								llResult			= true;
@@ -1098,7 +1098,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 //		!0		= does not tmach
 //
 //////
-	s32 iComps_translateToOthers_testIfMatch(s8* tcHaystack, s8* tcNeedle, s32 tnLength)
+	s32 iComps_translateToOthers_testIfMatch(cu8* tcHaystack, cu8* tcNeedle, s32 tnLength)
 	{
 		u32		lnI;
 		bool	llSigned;
@@ -3311,7 +3311,7 @@ debug_break;
 //		!0		= does not tmach
 //
 //////
-	s32 iTranslateToCompsTest(s8* tcHaystack, s8* tcNeedle, s32 tnLength)
+	s32 iTranslateToCompsTest(cu8* tcHaystack, cu8* tcNeedle, s32 tnLength)
 	{
 		u32		lnI;
 		bool	llCase;
@@ -3346,8 +3346,8 @@ debug_break;
 
 			} else {
 				// Just a regular compare
-				if (llCase)		return(  memcmp(tcHaystack, tcNeedle, tnLength));
-				else			return(_memicmp(tcHaystack, tcNeedle, tnLength));
+				if (llCase)		return(  memcmp((s8*)tcHaystack, (s8*)tcNeedle, tnLength));
+				else			return(_memicmp((s8*)tcHaystack, (s8*)tcNeedle, tnLength));
 			}
 		}
 		// If we get here, no match
@@ -3393,9 +3393,9 @@ debug_break;
 					if (!lacs->firstOnLine || !comp->ll.prev)
 					{
 						// Physically conduct the exact comparison
-						if (iTranslateToCompsTest((s8*)lacs->keyword, 
-														comp->line->sourceCode->data + comp->start, 
-														lacs->length) == 0)
+						if (iTranslateToCompsTest(lacs->keyword_u8, 
+													comp->line->sourceCode->data_u8 + comp->start, 
+													lacs->length) == 0)
 						{
 							// This is a match
 							// Convert it, translate it, whatever you want to call it, just make it be the new code, per the user's request, got it? :-)
@@ -4349,7 +4349,7 @@ debug_break;
 				{
 					// Yes, store the name
 					iDatum_duplicate(	&funcNew->name, 
-										compName->line->sourceCode->data + compName->start,
+										compName->line->sourceCode->data_u8 + compName->start,
 										compName->length);
 				}
 			}
@@ -4359,7 +4359,7 @@ debug_break;
 		return(funcNew);
 	}
 
-	SFunction* iFunction_allocate(s8* tcFuncName)
+	SFunction* iFunction_allocate(u8* tcFuncName)
 	{
 		SFunction* funcNew;
 
@@ -4628,11 +4628,11 @@ debug_break;
 //////
 	SVariable* iVariable_createAndPopulate(s32 tnVarType, SDatum* datum)
 	{
-		if (datum)		return(iVariable_createAndPopulate(tnVarType, datum->data_s8, datum->length));
+		if (datum)		return(iVariable_createAndPopulate(tnVarType, datum->data_u8, datum->length));
 		else			return(NULL);
 	}
 
-	SVariable* iVariable_createAndPopulate(s32 tnVarType, s8* tcData, u32 tnDataLength)
+	SVariable* iVariable_createAndPopulate(s32 tnVarType, u8* tcData, u32 tnDataLength)
 	{
 		SVariable* var;
 
@@ -4659,9 +4659,9 @@ debug_break;
 		return(var);
 	}
 
-	SVariable* iVariable_createAndPopulate(s32 tnVarType, cs8* tcData, u32 tnDataLength)
+	SVariable* iVariable_createAndPopulate(s32 tnVarType, cu8* tcData, u32 tnDataLength)
 	{
-		return(iVariable_createAndPopulate(tnVarType, (s8*)tcData, tnDataLength));
+		return(iVariable_createAndPopulate(tnVarType, (u8*)tcData, tnDataLength));
 	}
 
 
@@ -4860,7 +4860,7 @@ debug_break;
 						break;
 
 					case _VAR_TYPE_CHARACTER:
-						iVariable_set_character(gsProps_master[lnI].varInit, gsProps_master[lnI]._s8p, -1);
+						iVariable_set_character(gsProps_master[lnI].varInit, gsProps_master[lnI]._u8p, -1);
 						break;
 
 					case _VAR_TYPE_BITMAP:
@@ -5398,7 +5398,7 @@ if (!gsProps_master[lnI].varInit)
 // Called to set the character value for the indicated variable
 //
 //////
-	bool iVariable_set_character(SVariable* var, s8* tcData, u32 tnDataLength)
+	bool iVariable_set_character(SVariable* var, u8* tcData, u32 tnDataLength)
 	{
 		// Make sure our environment is sane
 		if (var && tcData && tnDataLength != 0)
@@ -5566,8 +5566,8 @@ debug_break;
 		f64			lfValue64;
 		SVariable*	varDisp;
 		SDateTime*	dt;
-		char		buffer[64];
-		char		formatter[16];
+		u8			buffer[64];
+		s8			formatter[16];
 
 
 		// Make sure our environment is sane
@@ -5589,56 +5589,56 @@ debug_break;
 
 				case _VAR_TYPE_S32:
 					// Convert to integer form, then store text
-					sprintf(buffer, "%d\0", *(s32*)var->value.data);
+					sprintf((s8*)buffer, "%d\0", *(s32*)var->value.data);
 					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_U32:
 					// Convert to unsigned integer form, then store text
-					sprintf(buffer, "%u\0", *(u32*)var->value.data);
+					sprintf((s8*)buffer, "%u\0", *(u32*)var->value.data);
 					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_U64:
 					// Convert to unsigned integer form, then store text
-					sprintf(buffer, "%I64u\0", *(u64*)var->value.data);
+					sprintf((s8*)buffer, "%I64u\0", *(u64*)var->value.data);
 					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_S64:
 					// Convert to unsigned integer form, then store text
-					sprintf(buffer, "%I64d\0", *(s64*)var->value.data);
+					sprintf((s8*)buffer, "%I64d\0", *(s64*)var->value.data);
 					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_S16:
 					// Convert to integer form, then store text
-					sprintf(buffer, "%d\0", (s32)*(s16*)var->value.data);
+					sprintf((s8*)buffer, "%d\0", (s32)*(s16*)var->value.data);
 					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_S8:
 					// Convert to integer form, then store text
-					sprintf(buffer, "%d\0", (s32)*(s8*)var->value.data);
+					sprintf((s8*)buffer, "%d\0", (s32)*(s8*)var->value.data);
 					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_U16:
 					// Convert to unsigned integer form, then store text
-					sprintf(buffer, "%u\0", (u32)*(u16*)var->value.data);
+					sprintf((s8*)buffer, "%u\0", (u32)*(u16*)var->value.data);
 					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_U8:
 					// Convert to unsigned integer form, then store text
-					sprintf(buffer, "%u\0", (u32)*(u8*)var->value.data);
+					sprintf((s8*)buffer, "%u\0", (u32)*(u8*)var->value.data);
 					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
@@ -5646,7 +5646,7 @@ debug_break;
 				case _VAR_TYPE_F32:
 					// Convert to floating point form, then store text after leading zeros
 					sprintf(formatter, "%%020.%df\0", gsCurrentSetting->_set_decimals);
-					sprintf(buffer, formatter, *(f32*)var->value.data);
+					sprintf((s8*)buffer, formatter, *(f32*)var->value.data);
 
 					// Skip past leading zeros
 					for (lnI = 0; buffer[lnI] == '0'; )
@@ -5660,7 +5660,7 @@ debug_break;
 				case _VAR_TYPE_F64:
 					// Convert to floating point form, then store text after leading zeros
 					sprintf(formatter, "%%020.%dlf\0", gsCurrentSetting->_set_decimals);
-					sprintf(buffer, formatter, *(f64*)var->value.data);
+					sprintf((s8*)buffer, formatter, *(f64*)var->value.data);
 
 					// Skip past leading zeros
 					for (lnI = 0; buffer[lnI] == '0'; )
@@ -5804,7 +5804,7 @@ debug_break;
 					dt = (SDateTime*)var->value.data;
 					iiVariable_computeYyyyMmDd_fromJulianDayNumber(dt->julian, &lnYear, &lnMonth, &lnDay);
 					iiVariable_computeHhMmSsMss_fromf32(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
-					sprintf(buffer, "%02u/%02u/%04u %02u:%02u:%02u.%03u", lnMonth, lnDay, lnYear, lnHour, lnMinute, lnSecond, lnMillisecond);
+					sprintf((s8*)buffer, "%02u/%02u/%04u %02u:%02u:%02u.%03u", lnMonth, lnDay, lnYear, lnHour, lnMinute, lnSecond, lnMillisecond);
 					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
@@ -5812,7 +5812,7 @@ debug_break;
 				case _VAR_TYPE_CURRENCY:
 					// Translate to f64, then use fixed 4 decimals
 					lfValue64 = ((f64)*(s64*)var->value.data / 10000.0);
-					sprintf(buffer, "%020.4lf\0", lfValue64);
+					sprintf((s8*)buffer, "%020.4lf\0", lfValue64);
 
 					// Skip past leading zeros
 					for (lnI = 0; buffer[lnI] == '0'; )
@@ -7226,7 +7226,7 @@ debug_break;
 // Called to append an error to the indicated component
 //
 //////
-	void iComp_appendError(SComp* comp, u32 tnErrorNum, s8* tcMessage)
+	void iComp_appendError(SComp* comp, u32 tnErrorNum, cu8* tcMessage)
 	{
 		if (comp && comp->line)
 			iLine_appendError(comp->line, tnErrorNum, tcMessage, comp->start, comp->length);
@@ -7240,7 +7240,7 @@ debug_break;
 // Called to append a warning to the indicated component
 //
 //////
-	void iComp_appendWarning(SComp* comp, u32 tnWarningNum, s8* tcMessage)
+	void iComp_appendWarning(SComp* comp, u32 tnWarningNum, cu8* tcMessage)
 	{
 		if (comp && comp->line)
 			iLine_appendWarning(comp->line, tnWarningNum, tcMessage, comp->start, comp->length);
@@ -7254,12 +7254,12 @@ debug_break;
 // Called to report the indicated message 
 //
 //////
-	void iComp_reportWarningsOnRemainder(SComp* comp, u32 tnWarningNum, s8* tcMessage)
+	void iComp_reportWarningsOnRemainder(SComp* comp, u32 tnWarningNum, cu8* tcMessage)
 	{
 		while (comp)
 		{
 			// Append the warning
-			iComp_appendWarning(comp, tnWarningNum, ((tcMessage) ? tcMessage : (s8*)cgcUnspecifiedWarning));
+			iComp_appendWarning(comp, tnWarningNum, ((tcMessage) ? tcMessage : (u8*)cgcUnspecifiedWarning));
 
 			// Move to next component
 			comp = (SComp*)comp->ll.next;
@@ -7274,7 +7274,7 @@ debug_break;
 // Called to append an error the indicated source code line
 //
 //////
-	void iLine_appendError(SLine* line, u32 tnErrorNum, s8* tcMessage, u32 tnStartColumn, u32 tnLength)
+	void iLine_appendError(SLine* line, u32 tnErrorNum, cu8* tcMessage, u32 tnStartColumn, u32 tnLength)
 	{
 		if (line && line->compilerInfo)
 		{
@@ -7290,7 +7290,7 @@ debug_break;
 // Called to append a warning to the indicated source code line
 //
 //////
-	void iLine_appendWarning(SLine* line, u32 tnWarningNum, s8* tcMessage, u32 tnStartColumn, u32 tnLength)
+	void iLine_appendWarning(SLine* line, u32 tnWarningNum, cu8* tcMessage, u32 tnStartColumn, u32 tnLength)
 	{
 		if (line && line->compilerInfo)
 		{
@@ -7380,7 +7380,7 @@ debug_break;
 // Called to create a new note
 //
 //////
-	SCompileNote* iCompileNote_create(SCompileNote** noteRoot, u32 tnStart, u32 tnEnd, u32 tnNumber, s8* tcMessage)
+	SCompileNote* iCompileNote_create(SCompileNote** noteRoot, u32 tnStart, u32 tnEnd, u32 tnNumber, cu8* tcMessage)
 	{
 		SCompileNote* note;
 
@@ -7410,7 +7410,7 @@ debug_break;
 // Called to append a compiler note
 //
 //////
-	SCompileNote* iCompileNote_appendMessage(SCompileNote** noteRoot, u32 tnStartColumn, u32 tnEndColumn, u32 tnNumber, s8* tcMessage)
+	SCompileNote* iCompileNote_appendMessage(SCompileNote** noteRoot, u32 tnStartColumn, u32 tnEndColumn, u32 tnNumber, cu8* tcMessage)
 	{
 		SCompileNote* noteNew;
 

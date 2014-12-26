@@ -120,13 +120,13 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 	//////
 		ghInstance = hInstance;
 		iVjr_init(&hAccelTable);
-		iVjr_appendSystemLog("Initialization complete");
+		iVjr_appendSystemLog((u8*)"Initialization complete");
 
 
 	//////////
 	// Read events
 	//////
-		iVjr_appendSystemLog("Engage main loop");
+		iVjr_appendSystemLog((u8*)"Engage main loop");
 		while (!glShuttingDown && GetMessage(&msg, NULL, 0, 0))
 		{
 			if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
@@ -162,7 +162,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 	void iVjr_init(HACCEL* hAccelTable)
 	{
 		RECT		lrc;
-		s8			logBuffer[256];
+		u8			logBuffer[256];
 		SBitmap*	bmp;
 
 
@@ -183,10 +183,10 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iVariable_createDefaultValues();
 		iVariable_createPropsMaster();
 		varConstant_space		= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgc_spaceText, 1);
-		varEmptyString			= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, (s8*)NULL, 0);
+		varEmptyString			= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, (u8*)NULL, 0);
 		var2000Spaces			= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
-		varTrue					= iVariable_createAndPopulate(_VAR_TYPE_LOGICAL, (s8*)NULL, 0);
-		varFalse				= iVariable_createAndPopulate(_VAR_TYPE_LOGICAL, (s8*)NULL, 0);
+		varTrue					= iVariable_createAndPopulate(_VAR_TYPE_LOGICAL, (u8*)NULL, 0);
+		varFalse				= iVariable_createAndPopulate(_VAR_TYPE_LOGICAL, (u8*)NULL, 0);
 
 		// 2000 blank spaces
 		iDatum_allocateSpace(&var2000Spaces->value, 2000);
@@ -316,73 +316,73 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		}
 
 		// Play the startup music if any
-		sprintf(logBuffer, "VJr launched %u milliseconds after system boot\0", systemStartedTickCount);
+		sprintf((s8*)logBuffer, "VJr launched %u milliseconds after system boot\0", systemStartedTickCount);
 		iVjr_appendSystemLog(logBuffer);
 		if (glShowSplash)
 			CreateThread(0, 0, &iPlay_ariaSplash, (LPVOID)cgcSoundStartupWav, 0, 0);
 
 		// Focus window accumulator
-		iVjr_appendSystemLog("Create focus highlight buffer");
+		iVjr_appendSystemLog((u8*)"Create focus highlight buffer");
 		iBuilder_createAndInitialize(&gFocusHighlights, -1);
 
 		// Create the default reference datetimes
-		iVjr_appendSystemLog("Create default datetime variables");
+		iVjr_appendSystemLog((u8*)"Create default datetime variables");
 		iInit_createDefaultDatetimes();
 
 		// Create our message window
-		iVjr_appendSystemLog("Create message window");
+		iVjr_appendSystemLog((u8*)"Create message window");
 		iInit_createMessageWindow();
 
 		// Create our global variables
-		iVjr_appendSystemLog("Create global variables");
+		iVjr_appendSystemLog((u8*)"Create global variables");
 		varGlobals = function_datetime(NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 		iDatum_duplicate(&varGlobals->name, cgcName_startupTime, -1);
 
 		// Create our default objects
-		iVjr_appendSystemLog("Create default objects");
+		iVjr_appendSystemLog((u8*)"Create default objects");
 		iInit_createDefaultObjects();
 
 		// Create our main screen window
-		iVjr_appendSystemLog("TEMPORARY:  Manually create _jdebi");
+		iVjr_appendSystemLog((u8*)"TEMPORARY:  Manually create _jdebi");
 		iInit_create_jdebi();
 
 		// Initially render each one
-		iVjr_appendSystemLog("Render _jdebi");
+		iVjr_appendSystemLog((u8*)"Render _jdebi");
 		iObj_render(_jdebi, true);
 
 		// Attach them to physical windows
-		iVjr_appendSystemLog("Allocate OS Window for _jdebi");
+		iVjr_appendSystemLog((u8*)"Allocate OS Window for _jdebi");
 		gWinJDebi = iWindow_allocate();
 		iObj_createWindowForForm(_jdebi, gWinJDebi, IDI_JDEBI);
 
 		// Initially populate _screen
 		// Load in the history if it exists
-		if (!iSEM_loadFromDisk(screenData, (s8*)cgcScreenDataFilename, false, true))
+		if (!iSEM_loadFromDisk(screenData, cgcScreenDataFilename, false, true))
 		{
 			// Indicate success
-			sprintf(logBuffer, "Loaded: %s\0", cgcScreenDataFilename);
+			sprintf((s8*)logBuffer, "Loaded: %s\0", cgcScreenDataFilename);
 			iSEM_appendLine(output_editbox->p.sem, logBuffer, (s32)strlen(logBuffer), false);
-			iVjr_appendSystemLog("Populate _screen with default data");
-			iSEM_appendLine(screenData, (s8*)cgcScreenTitle, -1, false);
+			iVjr_appendSystemLog((u8*)"Populate _screen with default data");
+			iSEM_appendLine(screenData, (u8*)cgcScreenTitle, -1, false);
 			iSEM_appendLine(screenData, NULL, 0, false);
-			iSEM_appendLine(screenData, (s8*)"Please report any bugs:  http://www.visual-freepro.org/vjr", -1, false);
-			iSEM_appendLine(screenData, (s8*)"Thank you, and may the Lord Jesus Christ bless you richly. :-)", -1, false);
+			iSEM_appendLine(screenData, (u8*)"Please report any bugs:  http://www.visual-freepro.org/vjr", -1, false);
+			iSEM_appendLine(screenData, (u8*)"Thank you, and may the Lord Jesus Christ bless you richly. :-)", -1, false);
 			iSEM_appendLine(screenData, NULL, 0, false);
-			iSEM_appendLine(screenData, (s8*)"              _____", -1, false);
-			iSEM_appendLine(screenData, (s8*)"             |     |", -1, false);
-			iSEM_appendLine(screenData, (s8*)"             |     |", -1, false);
-			iSEM_appendLine(screenData, (s8*)"     ________|     |________     In God's sight we've come together.", -1, false);
-			iSEM_appendLine(screenData, (s8*)"    |                       |    We've come together to help each other.", -1, false);
-			iSEM_appendLine(screenData, (s8*)"    |________       ________|    Let's grow this project up ... together!", -1, false);
-			iSEM_appendLine(screenData, (s8*)"             |     |             In service and love to The Lord, forever!", -1, false);
-			iSEM_appendLine(screenData, (s8*)"             |     |", -1, false);
-			iSEM_appendLine(screenData, (s8*)"             |     |             Sponsored by:", -1, false);
-			iSEM_appendLine(screenData, (s8*)"             |     |                LibSF -- Liberty Software Foundation", -1, false);
-			iSEM_appendLine(screenData, (s8*)"             |     |", -1, false);
-			iSEM_appendLine(screenData, (s8*)"             |     |             We need more coders. Please consider helping out.", -1, false);
-			iSEM_appendLine(screenData, (s8*)"             |     |             Your contribution would make a difference.", -1, false);
-			iSEM_appendLine(screenData, (s8*)"             |     |", -1, false);
-			iSEM_appendLine(screenData, (s8*)"             |_____|", -1, false);
+			iSEM_appendLine(screenData, (u8*)"              _____", -1, false);
+			iSEM_appendLine(screenData, (u8*)"             |     |", -1, false);
+			iSEM_appendLine(screenData, (u8*)"             |     |", -1, false);
+			iSEM_appendLine(screenData, (u8*)"     ________|     |________     In God's sight we've come together.", -1, false);
+			iSEM_appendLine(screenData, (u8*)"    |                       |    We've come together to help each other.", -1, false);
+			iSEM_appendLine(screenData, (u8*)"    |________       ________|    Let's grow this project up ... together!", -1, false);
+			iSEM_appendLine(screenData, (u8*)"             |     |             In service and love to The Lord, forever!", -1, false);
+			iSEM_appendLine(screenData, (u8*)"             |     |", -1, false);
+			iSEM_appendLine(screenData, (u8*)"             |     |             Sponsored by:", -1, false);
+			iSEM_appendLine(screenData, (u8*)"             |     |                LibSF -- Liberty Software Foundation", -1, false);
+			iSEM_appendLine(screenData, (u8*)"             |     |", -1, false);
+			iSEM_appendLine(screenData, (u8*)"             |     |             We need more coders. Please consider helping out.", -1, false);
+			iSEM_appendLine(screenData, (u8*)"             |     |             Your contribution would make a difference.", -1, false);
+			iSEM_appendLine(screenData, (u8*)"             |     |", -1, false);
+			iSEM_appendLine(screenData, (u8*)"             |_____|", -1, false);
 			iSEM_appendLine(screenData, NULL, 0, false);
 		}
 		// Navigate to the end of the content
@@ -390,17 +390,17 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 
 		// Initially populate _jdebi
 		// Load in the history if it exists
-		if (!iSEM_loadFromDisk(command_editbox->p.sem, (s8*)cgcCommandHistoryFilename, true, true))
+		if (!iSEM_loadFromDisk(command_editbox->p.sem, cgcCommandHistoryFilename, true, true))
 		{
 			// Indicate success
-			sprintf(logBuffer, "Loaded: %s\0", cgcCommandHistoryFilename);
+			sprintf((s8*)logBuffer, "Loaded: %s\0", cgcCommandHistoryFilename);
 			iSEM_appendLine(output_editbox->p.sem, logBuffer, (s32)strlen(logBuffer), false);
-			iSEM_appendLine(command_editbox->p.sem, (s8*)"*** Welcome to Visual FreePro, Junior! :-)", -1, false);
-			iSEM_appendLine(command_editbox->p.sem, (s8*)"*** For now, this can be thought of as a command window ... with a twist.", -1, false);
-			iSEM_appendLine(command_editbox->p.sem, (s8*)"*** It works like an editor window.  You can insert new lines, edit old ones, etc.", -1, false);
-			iSEM_appendLine(command_editbox->p.sem, (s8*)"*** To execute a command, press F6 or Enter if you're on the last line, or use F6 on any line.", -1, false);
-			iSEM_appendLine(command_editbox->p.sem, (s8*)"*** You can use clear, quit, ? 999, ? \"sample\" (literals), and ? _startupTime (global variable) in this daily build.", -1, false);
-			iSEM_appendLine(command_editbox->p.sem, (s8*)"*** Remember this always:  Love makes you smile. It keeps an inward peace unlike any other. :-)", -1, false);
+			iSEM_appendLine(command_editbox->p.sem, (u8*)"*** Welcome to Visual FreePro, Junior! :-)", -1, false);
+			iSEM_appendLine(command_editbox->p.sem, (u8*)"*** For now, this can be thought of as a command window ... with a twist.", -1, false);
+			iSEM_appendLine(command_editbox->p.sem, (u8*)"*** It works like an editor window.  You can insert new lines, edit old ones, etc.", -1, false);
+			iSEM_appendLine(command_editbox->p.sem, (u8*)"*** To execute a command, press F6 or Enter if you're on the last line, or use F6 on any line.", -1, false);
+			iSEM_appendLine(command_editbox->p.sem, (u8*)"*** You can use clear, quit, ? 999, ? \"sample\" (literals), and ? _startupTime (global variable) in this daily build.", -1, false);
+			iSEM_appendLine(command_editbox->p.sem, (u8*)"*** Remember this always:  Love makes you smile. It keeps an inward peace unlike any other. :-)", -1, false);
 		}
 
 		// Navigate to the last line
@@ -414,15 +414,15 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		}
 
 		// Load some source code
-		if (iSEM_loadFromDisk(sourceCode_editbox->p.sem, (s8*)cgcStartupPrgFilename, true, true))
+		if (iSEM_loadFromDisk(sourceCode_editbox->p.sem, cgcStartupPrgFilename, true, true))
 		{
 			// Indicate success
-			sprintf(logBuffer, "Loaded: %s\0", cgcStartupPrgFilename);
+			sprintf((s8*)logBuffer, "Loaded: %s\0", cgcStartupPrgFilename);
 			iSEM_appendLine(output_editbox->p.sem, logBuffer, (s32)strlen(logBuffer), false);
 		}
 
 		// Redraw
-		iVjr_appendSystemLog("Final render _jdebi");
+		iVjr_appendSystemLog((u8*)"Final render _jdebi");
 		iWindow_render(gWinJDebi, true);
 
 		// Remove the splash screen 1/2 second later

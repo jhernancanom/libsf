@@ -144,7 +144,7 @@ typedef SEM**		SEMpp;
 	#define setStyle(obj, value)					iObjProp_set_s32_direct(obj, _INDEX_STYLE, value)
 	#define setBackStyle(obj, value)				iObjProp_set_s32_direct(obj, _INDEX_BACKSTYLE, value)
 	#define setBorderStyle(obj, value)				iObjProp_set_s32_direct(obj, _INDEX_BORDERSTYLE, value)
-	#define setCaption(obj, value)					iObjProp_set_character_direct(obj, _INDEX_CAPTION, (s8*)value, sizeof(value) - 1)
+	#define setCaption(obj, value)					iObjProp_set_character_direct(obj, _INDEX_CAPTION, (u8*)value, sizeof(value) - 1)
 	#define setCount(obj, value)					iObjProp_set_s32_direct(obj, _INDEX_COUNT, value)
 	#define setMultiSelect(obj, value)				iObjProp_set_logical_direct(obj, _INDEX_MULTISELECT, value)
 	#define setPictureBmp(obj, bmp)					iObjProp_set_bitmap_direct(obj, _INDEX_PICTUREBMP, bmp)
@@ -674,61 +674,61 @@ typedef SEM**		SEMpp;
 //////////
 // Internal variable names
 //////
-	const s8			cgcName_startupTime[]				= "_startupTime";
+	const u8			cgcName_startupTime[]				= "_startupTime";
 
 
 //////////
 // Base class control names
 //////
-	const s8			cgcName_empty[]						= "empty";
-	const s8			cgcName_form[]						= "form";
-	const s8			cgcName_subform[]					= "subform";
-	const s8			cgcName_carousel[]					= "carousel";
-	const s8			cgcName_rider[]						= "rider";
-	const s8			cgcName_label[]						= "label";
-	const s8			cgcName_textbox[]					= "textbox";
-	const s8			cgcName_button[]					= "button";
-	const s8			cgcName_editbox[]					= "editbox";
-	const s8			cgcName_image[]						= "image";
-	const s8			cgcName_checkbox[]					= "checkbox";
-	const s8			cgcName_option[]					= "option";
-	const s8			cgcName_radio[]						= "radio";
-	const s8			cgcName_cmdgroup[]					= "commandgroup";
-	const s8			cgcName_optgroup[]					= "optiongroup";
-	const s8			cgcName_listbox[]					= "listbox";
-	const s8			cgcName_combobox[]					= "combobox";
-	const s8			cgcName_formset[]					= "formset";
-	const s8			cgcName_toolbar[]					= "toolbar";
-	const s8			cgcName_separator[]					= "separator";
-	const s8			cgcName_line[]						= "line";
-	const s8			cgcName_shape[]						= "shape";
-	const s8			cgcName_container[]					= "container";
-	const s8			cgcName_control[]					= "control";
-	const s8			cgcName_grid[]						= "grid";
-	const s8			cgcName_column[]					= "column";
-	const s8			cgcName_header[]					= "header";
-	const s8			cgcName_olebound[]					= "olebound";
-	const s8			cgcName_olecontain[]				= "olecontainer";
-	const s8			cgcName_spinner[]					= "spinner";
-	const s8			cgcName_timer[]						= "timer";
-	const s8			cgcName_hyperlink[]					= "hyperlink";
-	const s8			cgcName_collection[]				= "collection";
-	const s8			cgcName_page[]						= "page";
-	const s8			cgcName_pageframe[]					= "pageframe";
-	const s8			cgcName_session[]					= "session";
-	const s8			cgcName_custom[]					= "custom";
-	const s8			cgcName_exception[]					= "exception";
+	const u8			cgcName_empty[]						= "empty";
+	const u8			cgcName_form[]						= "form";
+	const u8			cgcName_subform[]					= "subform";
+	const u8			cgcName_carousel[]					= "carousel";
+	const u8			cgcName_rider[]						= "rider";
+	const u8			cgcName_label[]						= "label";
+	const u8			cgcName_textbox[]					= "textbox";
+	const u8			cgcName_button[]					= "button";
+	const u8			cgcName_editbox[]					= "editbox";
+	const u8			cgcName_image[]						= "image";
+	const u8			cgcName_checkbox[]					= "checkbox";
+	const u8			cgcName_option[]					= "option";
+	const u8			cgcName_radio[]						= "radio";
+	const u8			cgcName_cmdgroup[]					= "commandgroup";
+	const u8			cgcName_optgroup[]					= "optiongroup";
+	const u8			cgcName_listbox[]					= "listbox";
+	const u8			cgcName_combobox[]					= "combobox";
+	const u8			cgcName_formset[]					= "formset";
+	const u8			cgcName_toolbar[]					= "toolbar";
+	const u8			cgcName_separator[]					= "separator";
+	const u8			cgcName_line[]						= "line";
+	const u8			cgcName_shape[]						= "shape";
+	const u8			cgcName_container[]					= "container";
+	const u8			cgcName_control[]					= "control";
+	const u8			cgcName_grid[]						= "grid";
+	const u8			cgcName_column[]					= "column";
+	const u8			cgcName_header[]					= "header";
+	const u8			cgcName_olebound[]					= "olebound";
+	const u8			cgcName_olecontain[]				= "olecontainer";
+	const u8			cgcName_spinner[]					= "spinner";
+	const u8			cgcName_timer[]						= "timer";
+	const u8			cgcName_hyperlink[]					= "hyperlink";
+	const u8			cgcName_collection[]				= "collection";
+	const u8			cgcName_page[]						= "page";
+	const u8			cgcName_pageframe[]					= "pageframe";
+	const u8			cgcName_session[]					= "session";
+	const u8			cgcName_custom[]					= "custom";
+	const u8			cgcName_exception[]					= "exception";
 
 	// The form caption
-	const s8			cgcName_formCaption[]				= "VJr Form";
+	const u8			cgcName_formCaption[]				= "VJr Form";
 
 
 //////////
 // Default values for various types
 //////
-	const s8			cgc_defaultNumeric[10]				= { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };	// Numeric values are internally stored as 80-bit BCDs, 18 significant digits with sign
-	const s8			cgc_defaultDate[]					= "        ";
-	const s8			cgc_spaceText[]						= " ";
+	const u8			cgc_defaultNumeric[10]				= { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };	// Numeric values are internally stored as 80-bit BCDs, 18 significant digits with sign
+	const u8			cgc_defaultDate[]					= "        ";
+	const u8			cgc_spaceText[]						= " ";
 
 
 
@@ -736,82 +736,82 @@ typedef SEM**		SEMpp;
 //////////
 // Auto-added child object names
 //////
-	const s8			cgcName_icon[]						= "_icon";								// Forms automatically get an app icon
-	const s8			cgcName_caption[]					= "_caption";							// Forms, subforms automatically get a caption
-	const s8			cgcName_iconMove[]					= "_move";								// Forms automatically get a move button (to move any subforms within using bars)
-	const s8			cgcName_iconMinimize[]				= "_minimize";							// Forms automatically get a minimize button
-	const s8			cgcName_iconMaximize[]				= "_maximize";							// Forms automatically get a maximize button
-	const s8			cgcName_iconClose[]					= "_close";								// Forms automatically get a close button
+	const u8			cgcName_icon[]						= "_icon";								// Forms automatically get an app icon
+	const u8			cgcName_caption[]					= "_caption";							// Forms, subforms automatically get a caption
+	const u8			cgcName_iconMove[]					= "_move";								// Forms automatically get a move button (to move any subforms within using bars)
+	const u8			cgcName_iconMinimize[]				= "_minimize";							// Forms automatically get a minimize button
+	const u8			cgcName_iconMaximize[]				= "_maximize";							// Forms automatically get a maximize button
+	const u8			cgcName_iconClose[]					= "_close";								// Forms automatically get a close button
 
-	const s8			cgcName_checkboxImage[]				= "_cbimage";							// Checkboxes automatically get a checkbox image
-	const s8			cgcName_checkboxLabel[]				= "_cblabel";							// Checkboxes automatically get a checkbox label
+	const u8			cgcName_checkboxImage[]				= "_cbimage";							// Checkboxes automatically get a checkbox image
+	const u8			cgcName_checkboxLabel[]				= "_cblabel";							// Checkboxes automatically get a checkbox label
 
 
 //////////
 // Supported languages
 //////
-	const s8			cgcEnglish[]						= "en";									// English
+	const u8			cgcEnglish[]						= "en";									// English
 
 
 //////////
 // Constant strings
 //////
-	const s8			cgcMessageWindowClass[]				= "VJr.MessageWindow";
-	const s8			cgcWindowClass[]					= "VJr.Window";
-	const s8			cgcFocusHighlightClass[]			= "VJr.FocusWindow";
-	const s8			cgcTooltipClass[]					= "VJr.TooltipWindow";
-	const s8			cgcSplashClass[]					= "VJr.SplashWindow";
-	const s8			cgcSourceCodeTitle[]				= "SourceCode";
-	const s8			cgcLocalsTitle[]					= "Locals";
-	const s8			cgcWatchTitle[]						= "Watch";
-	const s8			cgcCommandTitle[]					= "Command";
-	const s8			cgcDebugTitle[]						= "Debug";
-	const s8			cgcOutputTitle[]					= "Output";
-	const s8			cgcSourceLightTitle[]				= "SourceLight";
-	const s8			cgcSystemLog[]						= "System Log";
-	const s8			cgc_noMateFound[]					= "Mate not found";
-	const s8			cgcVersionShort[]					= "Version 0.55";
+	const u8			cgcMessageWindowClass[]				= "VJr.MessageWindow";
+	const u8			cgcWindowClass[]					= "VJr.Window";
+	const u8			cgcFocusHighlightClass[]			= "VJr.FocusWindow";
+	const u8			cgcTooltipClass[]					= "VJr.TooltipWindow";
+	const u8			cgcSplashClass[]					= "VJr.SplashWindow";
+	const u8			cgcSourceCodeTitle[]				= "SourceCode";
+	const u8			cgcLocalsTitle[]					= "Locals";
+	const u8			cgcWatchTitle[]						= "Watch";
+	const u8			cgcCommandTitle[]					= "Command";
+	const u8			cgcDebugTitle[]						= "Debug";
+	const u8			cgcOutputTitle[]					= "Output";
+	const u8			cgcSourceLightTitle[]				= "SourceLight";
+	const u8			cgcSystemLog[]						= "System Log";
+	const u8			cgc_noMateFound[]					= "Mate not found";
+	const u8			cgcVersionShort[]					= "Version 0.55";
 #ifdef __GNUC__
 	#ifndef __amd64
-		const s8		cgcScreenTitle[]					= "Visual FreePro, Jr. 0.55 -- Dec.21.2014 -- GCC 32-bit";
-		const s8		cgcJDebiTitle[]						= "JDebi Debugger 0.55 -- Dec.21.2014 -- GCC 32-bit";
-		const s8		cgcVersionText[]					= "Visual FreePro, Jr. 32-bit 00.55.0001.9999 for Windows";
-		const s8		cgcVersion1Text[]					= "Visual FreePro, Jr. 32-bit 00.55.0001.9999 for Windows [Dec.21.2014 00:00:00] Product ID 31415-926-5358979-32384";
-		const s8		cgcVersion4Text[]					= "00.55.3201.9999";
+		const u8		cgcScreenTitle[]					= "Visual FreePro, Jr. 0.55 -- Dec.21.2014 -- GCC 32-bit";
+		const u8		cgcJDebiTitle[]						= "JDebi Debugger 0.55 -- Dec.21.2014 -- GCC 32-bit";
+		const u8		cgcVersionText[]					= "Visual FreePro, Jr. 32-bit 00.55.0001.9999 for Windows";
+		const u8		cgcVersion1Text[]					= "Visual FreePro, Jr. 32-bit 00.55.0001.9999 for Windows [Dec.21.2014 00:00:00] Product ID 31415-926-5358979-32384";
+		const u8		cgcVersion4Text[]					= "00.55.3201.9999";
 	#else
-		const s8		cgcScreenTitle[]					= "Visual FreePro, Jr. 0.55 -- Dec.21.2014   -- GCC 64-bit";
-		const s8		cgcJDebiTitle[]						= "JDebi Debugger 0.55 -- Dec.21.2014 -- GCC 64-bit";
-		const s8		cgcVersionText[]					= "Visual FreePro, Jr. 64-bit 00.55.0001.9999 for Windows";
-		const s8		cgcVersion1Text[]					= "Visual FreePro, Jr. 64-bit 00.55.0001.9999 for Windows [Dec.21.2014 00:00:00] Product ID 31415-926-5358979-32384";
-		const s8		cgcVersion4Text[]					= "00.55.6401.9999";
+		const u8		cgcScreenTitle[]					= "Visual FreePro, Jr. 0.55 -- Dec.21.2014   -- GCC 64-bit";
+		const u8		cgcJDebiTitle[]						= "JDebi Debugger 0.55 -- Dec.21.2014 -- GCC 64-bit";
+		const u8		cgcVersionText[]					= "Visual FreePro, Jr. 64-bit 00.55.0001.9999 for Windows";
+		const u8		cgcVersion1Text[]					= "Visual FreePro, Jr. 64-bit 00.55.0001.9999 for Windows [Dec.21.2014 00:00:00] Product ID 31415-926-5358979-32384";
+		const u8		cgcVersion4Text[]					= "00.55.6401.9999";
 	#endif
 #else
 	#ifndef _M_X64
-		const s8		cgcScreenTitle[]					= "Visual FreePro, Jr. 0.55 -- Dec.21.2014 -- MSVC 32-bit";
-		const s8		cgcJDebiTitle[]						= "JDebi Debugger 0.55 -- Dec.21.2014 -- MSVC 32-bit";
-		const s8		cgcVersionText[]					= "Visual FreePro, Jr. 32-bit 00.55.0001.9999 for Windows";
-		const s8		cgcVersion1Text[]					= "Visual FreePro, Jr. 32-bit 00.55.0001.9999 for Windows [Dec.21.2014 00:00:00] Product ID 31415-926-5358979-32384";
-		const s8		cgcVersion4Text[]					= "00.55.3201.9999";
+		const u8		cgcScreenTitle[]					= "Visual FreePro, Jr. 0.55 -- Dec.21.2014 -- MSVC 32-bit";
+		const u8		cgcJDebiTitle[]						= "JDebi Debugger 0.55 -- Dec.21.2014 -- MSVC 32-bit";
+		const u8		cgcVersionText[]					= "Visual FreePro, Jr. 32-bit 00.55.0001.9999 for Windows";
+		const u8		cgcVersion1Text[]					= "Visual FreePro, Jr. 32-bit 00.55.0001.9999 for Windows [Dec.21.2014 00:00:00] Product ID 31415-926-5358979-32384";
+		const u8		cgcVersion4Text[]					= "00.55.3201.9999";
 	#else
-		const s8		cgcScreenTitle[]					= "Visual FreePro, Jr. 0.55 -- Dec.21.2014 -- MSVC 64-bit";
-		const s8		cgcJDebiTitle[]						= "JDebi Debugger 0.55 -- Dec.21.2014 -- MSVC 64-bit";
+		const u8		cgcScreenTitle[]					= "Visual FreePro, Jr. 0.55 -- Dec.21.2014 -- MSVC 64-bit";
+		const u8		cgcJDebiTitle[]						= "JDebi Debugger 0.55 -- Dec.21.2014 -- MSVC 64-bit";
 		// VERSION() support
-		const s8		cgcVersionText[]					= "Visual FreePro, Jr. 64-bit 00.55.0001.9999 for Windows";
-		const s8		cgcVersion1Text[]					= "Visual FreePro, Jr. 64-bit 00.55.0001.9999 for Windows [Dec.21.2014 00:00:00] Product ID 31415-926-5358979-32384";
-		const s8		cgcVersion4Text[]					= "00.55.6401.9999";
+		const u8		cgcVersionText[]					= "Visual FreePro, Jr. 64-bit 00.55.0001.9999 for Windows";
+		const u8		cgcVersion1Text[]					= "Visual FreePro, Jr. 64-bit 00.55.0001.9999 for Windows [Dec.21.2014 00:00:00] Product ID 31415-926-5358979-32384";
+		const u8		cgcVersion4Text[]					= "00.55.6401.9999";
 	#endif
 #endif
 	const s32			gnVersion5							= 55;	// 0.55
 	const s32			gnVersion2							= 2;	// Professional
 	const s32			gnVersion3							= 0;	// English
-	const s8			cgcFontName_default[]				= "Ubuntu";
-	const s8			cgcFontName_defaultFixed[]			= "Ubuntu Mono";
-	const s8			cgcFontName_windowTitleBar[]		= "Ubuntu Condensed";
-	const s8			cgcFontName_subwindowTitleBar[]		= "Ubuntu Condensed";
-	const s8			cgcFontName_defaultTooltip[]		= "Ubuntu Condensed";
-	const s8			cgcFontName_cask[]					= "Ubuntu Mono";
-	const s8			cgcSystemLogFilename[]				= "system.log";
-	const s8			cgcScreenDataFilename[]				= "screen.vjr";
-	const s8			cgcCommandHistoryFilename[]			= "command.vjr";
-	const s8			cgcStartupPrgFilename[]				= "startup.prg";
-	const s8			cgcSoundStartupWav[]				= "startup_44100_f32.wav";
+	const u8			cgcFontName_default[]				= "Ubuntu";
+	const u8			cgcFontName_defaultFixed[]			= "Ubuntu Mono";
+	const u8			cgcFontName_windowTitleBar[]		= "Ubuntu Condensed";
+	const u8			cgcFontName_subwindowTitleBar[]		= "Ubuntu Condensed";
+	const u8			cgcFontName_defaultTooltip[]		= "Ubuntu Condensed";
+	const u8			cgcFontName_cask[]					= "Ubuntu Mono";
+	const u8			cgcSystemLogFilename[]				= "system.log";
+	const u8			cgcScreenDataFilename[]				= "screen.vjr";
+	const u8			cgcCommandHistoryFilename[]			= "command.vjr";
+	const u8			cgcStartupPrgFilename[]				= "startup.prg";
+	const u8			cgcSoundStartupWav[]				= "startup_44100_f32.wav";
