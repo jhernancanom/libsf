@@ -139,12 +139,13 @@ struct SFieldRecord2;
 	uptr				iDbf_cacheAllRowData							(u32 tnWorkArea);
 	uptr				iDbf_close										(u32 tnWorkArea);
 	uptr				iDbf_hasCdx										(u32 tnWorkArea);
-	sptr				iDbf_isWorkAreaUsed								(u32 tnWorkArea, bool& tlIsDbc);
+	sptr				iDbf_isWorkAreaUsed								(u32 tnWorkArea);
+	bool				iDbf_isWorkAreaLetter							(SVariable* var);
 	sptr				iDbf_getWorkArea_current						(void);
 	sptr				iDbf_getWorkArea_lowestFree						(void);
 	sptr				iDbf_getWorkArea_highestFree					(void);
-	sptr				iDbf_getWorkArea_byAlias						(s8* alias, u32 aliasLength);
-	SVariable*			iDbf_getAlias_fromPathname						(s8* tcTablePathname, u32 tnTablePathnameLenth);
+	sptr				iDbf_getWorkArea_byAlias						(SVariable* varAlias);
+	SVariable*			iDbf_getAlias_fromPathname						(SVariable* varPathname);
 
 	sptr				iDbf_gotoRecord									(u32 tnWorkArea, s32 recordNumber);
 	uptr				iDbf_writeChanges								(u32 tnWorkArea);

@@ -74,13 +74,14 @@
 //////
 	bool iEngine_executeStandaloneCommand(SLine* line)
 	{
-		bool		llManufactured;
-		SComp*		comp;
-		SComp*		compNext;
-		SComp*		compThird;
-		SVariable*	var;	// Ignore the GCC warning message here... I don't know why it's throwing a warning.  var is used correctly below.
-		SVariable*	varExisting;
-		SVariable*	varText;
+		bool			llManufactured;
+		SComp*			comp;
+		SComp*			compNext;
+		SComp*			compThird;
+		SVariable*		var;	// Ignore the GCC warning message here... I don't know why it's throwing a warning.  var is used correctly below.
+		SVariable*		varExisting;
+		SVariable*		varText;
+		SCommandData*	cmd;
 
 
 		// Make sure our environment is sane
@@ -223,6 +224,18 @@
 							debug_nop;
 
 						} else {
+							// See if it's a known command
+							for (cmd = gsKnownCommands[0]; cmd; cmd++)
+							{
+								// Is this our command?
+								if (cmd->iCode == comp->iCode)
+								{
+									// Yes, execute it (self-contained execution and error reporting on every command)
+									cmd->command(comp);
+									break;
+								}
+							}
+							
 							// Not a currently supported command
 							return(false);
 						}
@@ -718,25 +731,26 @@
 			gsCurrentSetting = (SSettings*)iLl_appendNewNodeAtEnd((SLL**)&gsFirstSettings, sizeof(SSettings));
 
 			// Default settings
-			gsCurrentSetting->_set_indexMetaData					= false;
-			gsCurrentSetting->_set_honorBarriers					= true;
-			gsCurrentSetting->_set_variablesFirst					= false;
 			gsCurrentSetting->_set_autoConvert						= false;
-			gsCurrentSetting->_set_caseSensitiveNames				= false;
 			gsCurrentSetting->_set_caseSensitiveCompares			= true;
-			gsCurrentSetting->_set_namingConventions				= false;
-			gsCurrentSetting->_set_logical							= _LOGICAL_TF;
+			gsCurrentSetting->_set_caseSensitiveNames				= false;
+			gsCurrentSetting->_set_century							= true;
+			gsCurrentSetting->_set_date								= _SET_DATE_AMERICAN;
+			gsCurrentSetting->_set_decimals							= 2;
+			gsCurrentSetting->_set_exclusive						= true;
+			gsCurrentSetting->_set_focus_highlight_border_pixels	= 0;
+			gsCurrentSetting->_set_focus_highlight_pixels			= 4;
+			gsCurrentSetting->_set_honorBarriers					= true;
 			gsCurrentSetting->_set_implicitParams					= false;
+			gsCurrentSetting->_set_indexMetaData					= false;
+			iDatum_duplicate(&gsCurrentSetting->_set_languageTo, cgcEnglish, -1);
+			gsCurrentSetting->_set_logical							= _LOGICAL_TF;
+			gsCurrentSetting->_set_namingConventions				= false;
+			gsCurrentSetting->_set_sloppyPrinting					= false;
 			gsCurrentSetting->_set_stickyParameters					= true;
 			gsCurrentSetting->_set_tableEqualAssignments			= false;
 			gsCurrentSetting->_set_tableObjects						= false;
-			gsCurrentSetting->_set_sloppyPrinting					= false;
-			iDatum_duplicate(&gsCurrentSetting->_set_languageTo, cgcEnglish, -1);
-			gsCurrentSetting->_set_decimals							= 2;
-			gsCurrentSetting->_set_date								= _SET_DATE_AMERICAN;
-			gsCurrentSetting->_set_century							= true;
-			gsCurrentSetting->_set_focus_highlight_pixels			= 4;
-			gsCurrentSetting->_set_focus_highlight_border_pixels	= 0;
+			gsCurrentSetting->_set_variablesFirst					= false;
 
 			// Default variable type for uninitialized variables
 			iVariable_setDefaultVariableValue(_VAR_TYPE_LOGICAL);

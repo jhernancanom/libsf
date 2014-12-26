@@ -25,6 +25,18 @@
     <Filter Include="sem">
       <UniqueIdentifier>{a5ad27b1-b3b2-4b12-a703-957eab95183b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="dbf\cdx">
+      <UniqueIdentifier>{1ee009ce-42d7-4440-8e8a-52e19f16f7a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dbf\dbf">
+      <UniqueIdentifier>{4719f0a6-f0f5-417a-a49f-3a8461a2d83b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dbf\dbc">
+      <UniqueIdentifier>{f4368dd5-e11c-4a5b-ac7f-b8634567cb75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="commands">
+      <UniqueIdentifier>{ee52b45e-4a6e-4f60-b9a2-5f0423973412}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="small.ico">
@@ -46,15 +58,6 @@
     <ClCompile Include="..\..\source\vjr_sup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\dbf\cdx.cpp">
-      <Filter>dbf</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\dbf\dbf.cpp">
-      <Filter>dbf</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\dbf\dbc.cpp">
-      <Filter>dbf</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\engine.cpp">
       <Filter>engine</Filter>
     </ClCompile>
@@ -63,6 +66,18 @@
     </ClCompile>
     <ClCompile Include="..\..\source\sem_line.cpp">
       <Filter>sem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\dbf\cdx.cpp">
+      <Filter>dbf\cdx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\dbf\dbf.cpp">
+      <Filter>dbf\dbf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\dbf\dbc.cpp">
+      <Filter>dbf\dbc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\commands\commands.cpp">
+      <Filter>commands</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -102,12 +117,6 @@
     <ClInclude Include="..\..\source\vjr_structs.h">
       <Filter>Source Files\Header Files\vjr</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\dbf\dbf.h">
-      <Filter>dbf</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\dbf\dbf_defs.h">
-      <Filter>dbf</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\engine.h">
       <Filter>engine</Filter>
     </ClInclude>
@@ -117,20 +126,32 @@
     <ClInclude Include="..\..\source\sem_line.h">
       <Filter>sem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\dbf\cdx_defs.h">
-      <Filter>dbf</Filter>
+    <ClInclude Include="..\..\source\dbf\cdx_structs.h">
+      <Filter>dbf\cdx</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\dbf\dbf_const.h">
-      <Filter>dbf</Filter>
+    <ClInclude Include="..\..\source\dbf\cdx_defs.h">
+      <Filter>dbf\cdx</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\dbf\dbf_structs.h">
-      <Filter>dbf</Filter>
+      <Filter>dbf\dbf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\dbf\dbf.h">
+      <Filter>dbf\dbf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\dbf\dbf_const.h">
+      <Filter>dbf\dbf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\dbf\dbf_defs.h">
+      <Filter>dbf\dbf</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\dbf\dbf_globals.h">
-      <Filter>dbf</Filter>
+      <Filter>dbf\dbf</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\dbf\cdx_structs.h">
-      <Filter>dbf</Filter>
+    <ClInclude Include="..\..\source\commands\command_defs.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\commands\command_sourcelight.h">
+      <Filter>commands</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

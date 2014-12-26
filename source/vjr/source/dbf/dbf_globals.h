@@ -78,6 +78,10 @@
 	// sort variables for qsort()
 	u32			gnCdx_sort_keyLength		= 1;
 
-	// Table and cursor work areas
-    SWorkArea	gsArea[_MAX_DBF_SLOTS];
+
+///////////
+// Table, cursor, and container work areas
+//////
+    SWorkArea	gsWorkArea[_MAX_DBF_SLOTS];
+	SWorkArea	gsDbcAreas[_MAX_DBF_SLOTS];
 	s32			gnDbf_currentWorkArea		= 0;

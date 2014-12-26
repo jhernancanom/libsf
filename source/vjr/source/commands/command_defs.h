@@ -148,8 +148,14 @@ struct SVariable;
 	SVariable*			function_chrtranc							(SVariable* varString, SVariable* varSearch, SVariable* varReplace);
 	SVariable*			ifunction_chrtranCommon						(SVariable* varString, SVariable* varSearch, SVariable* varReplace, bool tlCaseSensitive);
 	SVariable*			function_createobject						(SVariable* varClass);
+	SVariable*			function_curdir								(void);
 	SVariable*			function_datetime							(SVariable* varYear, SVariable* varMonth, SVariable* varDay, SVariable* varHour, SVariable* varMinute, SVariable* varSecond, SVariable* varMillisecond);
 	SVariable*			function_int								(SVariable* varNumber);
+	SVariable*			function_justdrive							(SVariable* varString);
+	SVariable*			function_justext							(SVariable* varString);
+	SVariable*			function_justfname							(SVariable* varString);
+	SVariable*			function_justpath							(SVariable* varString);
+	SVariable*			function_juststem							(SVariable* varString);
 	SVariable*			function_left								(SVariable* varString, SVariable* varCount);
 	SVariable*			function_len								(SVariable* varString);
 	SVariable*			function_lower								(SVariable* varString);
@@ -264,8 +270,14 @@ struct SVariable;
 		{	_ICODE_CHRTRAN,			1,			(uptr)&function_chrtran,		2,				3,				&gsSourceLight_chrtran[0]		},
 		{	_ICODE_CHRTRANC,		1,			(uptr)&function_chrtranc,		2,				3,				&gsSourceLight_chrtranc[0]		},
 		{	_ICODE_CREATEOBJECT,	1,			(uptr)&function_createobject,	1,				1,				&gsSourceLight_createobject[0]	},
+		{	_ICODE_CURDIR,			1,			(uptr)&function_curdir,			0,				0,				&gsSourceLight_curdir[0]		},
 		{	_ICODE_DATETIME,		1,			(uptr)&function_datetime,		0,				7,				&gsSourceLight_datetime[0]		},
 		{	_ICODE_INT,				1,			(uptr)&function_int,			1,				1,				&gsSourceLight_int[0]			},
+		{	_ICODE_JUSTDRIVE,		1,			(uptr)&function_justdrive,		1,				1,				&gsSourceLight_justdrive[0]		},
+		{	_ICODE_JUSTEXT,			1,			(uptr)&function_justext,		1,				1,				&gsSourceLight_justext[0]		},
+		{	_ICODE_JUSTFNAME,		1,			(uptr)&function_justfname,		1,				1,				&gsSourceLight_justfname[0]		},
+		{	_ICODE_JUSTPATH,		1,			(uptr)&function_justpath,		1,				1,				&gsSourceLight_justpath[0]		},
+		{	_ICODE_JUSTSTEM,		1,			(uptr)&function_juststem,		1,				1,				&gsSourceLight_juststem[0]		},
 		{	_ICODE_LEFT,			1,			(uptr)&function_left,			2,				2,				&gsSourceLight_left[0]			},
 		{	_ICODE_LEN,				1,			(uptr)&function_len,			1,				1,				&gsSourceLight_len[0]			},
 		{	_ICODE_LOWER,			1,			(uptr)&function_lower,			1,				1,				&gsSourceLight_lower[0]			},
@@ -304,7 +316,7 @@ struct SVariable;
 	// Insert above this step somewhere in the list of functions.
 	// STEP2:
 	//////////
-		// Note:  Do not delete this line, it is used to terminate the search list
+		// Note:  Do not delete this line, it is used to terminate the function list
 		{	0,						0,					0,						0,				0,				NULL	}
 	};
 
@@ -341,5 +353,8 @@ struct SVariable;
 	SCommandData gsKnownCommands[] = {
 		//	iCode					Command Algorithm
 		//  ------------------		--------------------------
-		{	_ICODE_USE,				(uptr)&command_use			}
+		{	_ICODE_USE,				(uptr)&command_use			},
+
+		// Note:  Do not delete this line, it is used to terminate the command list
+		{	0,						0							}
 	};

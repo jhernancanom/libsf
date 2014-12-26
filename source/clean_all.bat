@@ -11,6 +11,7 @@ del /s *.idb
 del /s *.plg
 del /s *.ncb
 del /s *.sdf
+del /s vjr.aps
 
 echo Removing compiler folders
 for /d /r . %%d in (Debug Release .clang .codelite ipch x64) do @if exist "%%d" echo "%%d" && rd /s/q "%%d"

@@ -100,14 +100,14 @@
 		//////
 			if (tnDbfHandle >= _MAX_DBF_SLOTS)
 				return(-1);		// Invalid slot number
-			if (gsArea[tnDbfHandle].isUsed != _YES)
+			if (gsWorkArea[tnDbfHandle].isUsed != _YES)
 				return(-1);		// Invalid slot
 
 
 		//////////
 		// If an index is already open, close it
 		//////
-			wa = &gsArea[tnDbfHandle];
+			wa = &gsWorkArea[tnDbfHandle];
 			cdx_close(tnDbfHandle);
 
 
@@ -123,9 +123,9 @@
 
 			} else {
 				// Build the name from the table name
-				memcpy(wa->indexPathname, gsArea[tnDbfHandle].tablePathname, wa->tablePathnameLength);
-				memcpy(wa->indexPathname + gsArea[tnDbfHandle].tablePathnameLength - 4, ".cdx", 4);
-				wa->indexPathnameLength = gsArea[tnDbfHandle].tablePathnameLength;
+				memcpy(wa->indexPathname, gsWorkArea[tnDbfHandle].tablePathname, wa->tablePathnameLength);
+				memcpy(wa->indexPathname + gsWorkArea[tnDbfHandle].tablePathnameLength - 4, ".cdx", 4);
+				wa->indexPathnameLength = gsWorkArea[tnDbfHandle].tablePathnameLength;
 			}
 
 			// Determine if it was a .cdx or .idx
@@ -238,37 +238,37 @@
 		//////
 			if (tnDbfHandle >= _MAX_DBF_SLOTS)
 				return(-1);		// Invalid slot number
-			if (gsArea[tnDbfHandle].isUsed != _YES)
+			if (gsWorkArea[tnDbfHandle].isUsed != _YES)
 				return(-1);		// Invalid slot
 
 
 		//////////
 		// If an index is already open, close it
 		//////
-			if (gsArea[tnDbfHandle].isIndexLoaded)
+			if (gsWorkArea[tnDbfHandle].isIndexLoaded)
 			{
 				//////////
 				// Close the index file handle
 				//////
-					if (gsArea[tnDbfHandle].fhIndex)
+					if (gsWorkArea[tnDbfHandle].fhIndex)
 					{
-						fclose(gsArea[tnDbfHandle].fhIndex);
-						gsArea[tnDbfHandle].fhIndex = NULL;
+						fclose(gsWorkArea[tnDbfHandle].fhIndex);
+						gsWorkArea[tnDbfHandle].fhIndex = NULL;
 					}
 
 
 				//////////
 				// Free the memory
 				//////
-					if (gsArea[tnDbfHandle].isCdx)
+					if (gsWorkArea[tnDbfHandle].isCdx)
 					{
 						//////////
 						// Release the loaded CDX file
 						//////
-							if (gsArea[tnDbfHandle].cdx_root)
+							if (gsWorkArea[tnDbfHandle].cdx_root)
 							{
-								free(gsArea[tnDbfHandle].cdx_root);
-								gsArea[tnDbfHandle].cdx_root = NULL;
+								free(gsWorkArea[tnDbfHandle].cdx_root);
+								gsWorkArea[tnDbfHandle].cdx_root = NULL;
 							}
 
 
@@ -278,22 +278,22 @@
 							for (lnI = 0; lnI < _MAX_CDX_TAGS; lnI++)
 							{
 								// Clear the FOR clause if need be
-								if (gsArea[tnDbfHandle].cdx_keyOps[lnI].forClause)
-									iDbf_forClause_delete(&gsArea[tnDbfHandle].cdx_keyOps[lnI].forClause);
+								if (gsWorkArea[tnDbfHandle].cdx_keyOps[lnI].forClause)
+									iDbf_forClause_delete(&gsWorkArea[tnDbfHandle].cdx_keyOps[lnI].forClause);
 
 								// Free key ops
-								if (gsArea[tnDbfHandle].cdx_keyOps[lnI].keyOps)
-									iiFreeAndSetToNull((void**)&gsArea[tnDbfHandle].cdx_keyOps[lnI].keyOps);
+								if (gsWorkArea[tnDbfHandle].cdx_keyOps[lnI].keyOps)
+									iiFreeAndSetToNull((void**)&gsWorkArea[tnDbfHandle].cdx_keyOps[lnI].keyOps);
 							}
 
 					} else {
 						//////////
 						// Release the loaded IDX file
 						//////
-							if (gsArea[tnDbfHandle].idx_header)
+							if (gsWorkArea[tnDbfHandle].idx_header)
 							{
-								free(gsArea[tnDbfHandle].idx_header);
-								gsArea[tnDbfHandle].idx_header = NULL;
+								free(gsWorkArea[tnDbfHandle].idx_header);
+								gsWorkArea[tnDbfHandle].idx_header = NULL;
 							}
 					}
 
@@ -301,14 +301,14 @@
 				//////////
 				// Clear out the filename
 				//////
-					memset(gsArea[tnDbfHandle].indexPathname, 0, sizeof(gsArea[tnDbfHandle].indexPathname));
-					gsArea[tnDbfHandle].indexPathnameLength = 0;
+					memset(gsWorkArea[tnDbfHandle].indexPathname, 0, sizeof(gsWorkArea[tnDbfHandle].indexPathname));
+					gsWorkArea[tnDbfHandle].indexPathnameLength = 0;
 
 
 				//////////
 				// No longer open
 				//////
-					gsArea[tnDbfHandle].isIndexLoaded = _NO;
+					gsWorkArea[tnDbfHandle].isIndexLoaded = _NO;
 
 				// Indicate success
 				return(0);
@@ -345,20 +345,20 @@
 		//////
 			if (tnDbfHandle >= _MAX_DBF_SLOTS)
 				return(-1);		// Invalid slot number
-			if (gsArea[tnDbfHandle].isUsed != _YES)
+			if (gsWorkArea[tnDbfHandle].isUsed != _YES)
 				return(-1);		// Invalid slot
 
 
 		//////////
 		// Get common pointers
 		//////
-			head = gsArea[tnDbfHandle].cdx_root;			// Header is first part of file
+			head = gsWorkArea[tnDbfHandle].cdx_root;			// Header is first part of file
 
 
 		//////////
 		// Iterate through the various tags
 		//////
-			if (iCdx_getCompoundTagRoot(&gsArea[tnDbfHandle], head, NULL, tnTagIndex, &tagRoot))
+			if (iCdx_getCompoundTagRoot(&gsWorkArea[tnDbfHandle], head, NULL, tnTagIndex, &tagRoot))
 			{
 				// Copy the tag name
 				for (lnI = 0; lnI < tagRoot.keyLength && lnI < tnTagNameLength; lnI++)
@@ -453,14 +453,14 @@
 		//////
 			if (tnDbfHandle >= _MAX_DBF_SLOTS)
 				return(-1);		// Invalid slot number
-			if (gsArea[tnDbfHandle].isUsed != _YES)
+			if (gsWorkArea[tnDbfHandle].isUsed != _YES)
 				return(-1);		// Invalid slot
 
 
 		//////////
 		// Establish our pointer
 		//////
-			wa = &gsArea[tnDbfHandle];
+			wa = &gsWorkArea[tnDbfHandle];
 
 
 		//////////
@@ -560,14 +560,14 @@
 		//////
 			if (tnDbfHandle >= _MAX_DBF_SLOTS)
 				return(-1);		// Invalid slot number
-			if (gsArea[tnDbfHandle].isUsed != _YES)
+			if (gsWorkArea[tnDbfHandle].isUsed != _YES)
 				return(-1);		// Invalid slot
 
 
 		//////////
 		// If an index is already open, close it
 		//////
-			wa = &gsArea[tnDbfHandle];
+			wa = &gsWorkArea[tnDbfHandle];
 			if (wa->isCdx)		return(iCdx_validateCdx(wa, tnTagIndex, tcMetaData, tnMetaDataLength, tcErrorsFound, tnErrorsFoundLength));
 			else				return(iCdx_validateIdx(wa,             tcMetaData, tnMetaDataLength, tcErrorsFound, tnErrorsFoundLength));
 	}
@@ -598,14 +598,14 @@
 		//////
 			if (tnDbfHandle >= _MAX_DBF_SLOTS)
 				return(-1);		// Invalid slot number
-			if (gsArea[tnDbfHandle].isUsed != _YES)
+			if (gsWorkArea[tnDbfHandle].isUsed != _YES)
 				return(-1);		// Invalid slot
 
 
 		//////////
 		// If an index is already open, close it
 		//////
-			wa = &gsArea[tnDbfHandle];
+			wa = &gsWorkArea[tnDbfHandle];
 			if (wa->isCdx)		return(iCdx_validateCdxKeys(wa, tnDbfHandle, tnTagIndex, tcMetaData, tnMetaDataLength, tcErrorsFound, tnErrorsFoundLength));
 			else				return(iCdx_validateIdxKeys(wa,                          tcMetaData, tnMetaDataLength, tcErrorsFound, tnErrorsFoundLength));
 	}
@@ -638,14 +638,14 @@
 		//////
 			if (tnDbfHandle >= _MAX_DBF_SLOTS)
 				return(-1);		// Invalid slot number
-			if (gsArea[tnDbfHandle].isUsed != _YES)
+			if (gsWorkArea[tnDbfHandle].isUsed != _YES)
 				return(-1);		// Invalid slot
 
 
 		//////////
 		// If an index is already open, close it
 		//////
-			wa = &gsArea[tnDbfHandle];
+			wa = &gsWorkArea[tnDbfHandle];
 			if (wa->isCdx)		return(iCdx_getAllKeysCdx(wa, tnTagIndex, tcKeySpace, tnKeySpaceLength, tcDecodeExpression, tnDecodeExpressionLength, tcKeyLength4));
 			else				return(iCdx_getAllKeysIdx(wa,             tcKeySpace, tnKeySpaceLength, tcDecodeExpression, tnDecodeExpressionLength, tcKeyLength4));
 	}

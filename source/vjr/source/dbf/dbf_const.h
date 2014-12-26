@@ -73,9 +73,8 @@
 // Constants
 //
 /////
-	#define 	_NO							0
-	#define 	_YES						1
 	#define		_MAX_DBF_SLOTS				512			// Up to 512 work areas can be opened simultaneously
+	#define		_MAX_DBC_SLOTS				512			// Up to 512 containers can be opened simultaneously
 	#define		_MAX_CDX_TAGS				128			// Up to 128 index tags are supported per CDX, per DBF
 
 	// For field flags
@@ -95,12 +94,12 @@
 	#define 	_BIT_128					0x80
 
 	// CDX no find result
-	#define _CDX_NO_FIND			0
+	#define		_CDX_NO_FIND				0
 
 	// CDX node types
-	#define _CDX_NODE_INDEX			0
-	#define _CDX_NODE_ROOT			1
-	#define _CDX_NODE_LEAF			2
-	#define _CDX_NODE_ROOT_LEAF		3
+	#define		_CDX_NODE_INDEX				0
+	#define		_CDX_NODE_ROOT				1
+	#define		_CDX_NODE_LEAF				2
+	#define		_CDX_NODE_ROOT_LEAF			3
 	// Other node types have been observed, but I don't know what they indicate.
 	// I use the function iiGetIndexNodeType() to mask off only the lower 2 bits (00,01,10,11 = 0,1,2,3)

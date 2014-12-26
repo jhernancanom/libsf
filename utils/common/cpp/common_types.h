@@ -99,3 +99,6 @@
 	// For a null that is not considered a pointer
 	#define null 0
 #endif
+
+#define	_NO		0
+#define _YES	1

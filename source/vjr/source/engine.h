@@ -104,25 +104,26 @@
 		SLL			ll;
 
 		// Settings at this level
-		bool		_set_indexMetaData;
-		bool		_set_honorBarriers;
-		bool		_set_variablesFirst;
 		bool		_set_autoConvert;
-		bool		_set_caseSensitiveNames;
 		bool		_set_caseSensitiveCompares;
-		bool		_set_namingConventions;
-		s32			_set_logical;
+		bool		_set_caseSensitiveNames;
+		bool		_set_century;
+		s32			_set_date;
+		s32			_set_decimals;
+		bool		_set_exclusive;
+		s32			_set_focus_highlight_border_pixels;
+		s32			_set_focus_highlight_pixels;
+		bool		_set_honorBarriers;
 		bool		_set_implicitParams;
+		bool		_set_indexMetaData;
+		SDatum		_set_languageTo;
+		s32			_set_logical;
+		bool		_set_namingConventions;
+		bool		_set_sloppyPrinting;
 		bool		_set_stickyParameters;
 		bool		_set_tableEqualAssignments;
 		bool		_set_tableObjects;
-		bool		_set_sloppyPrinting;
-		SDatum		_set_languageTo;
-		s32			_set_decimals;
-		s32			_set_date;
-		bool		_set_century;
-		s32			_set_focus_highlight_pixels;
-		s32			_set_focus_highlight_border_pixels;
+		bool		_set_variablesFirst;
 
 		// Default variable type for uninitialized variables
 		s32			_set_initializeDefault;

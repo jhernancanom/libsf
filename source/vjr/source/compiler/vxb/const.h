@@ -205,6 +205,7 @@
 	const u32		_ERROR_VARIABLE_NOT_FOUND						= 25;
 	const u32		_ERROR_ALIAS_NOT_FOUND							= 26;
 	const u32		_ERROR_INVALID_WORK_AREA						= 27;
+	const u32		_ERROR_ALIAS_ALREADY_IN_USE						= 28;
 
 	// Messages
 	const s8		cgcComponentError[]								= "Error in component, column ";
@@ -235,6 +236,7 @@
 	const s8		cgcVariableNotFoundError[]						= "variable not found";
 	const s8		cgcAliasNotFoundError[]							= "alias not found";
 	const s8		cgcInvalidWorkArea[]							= "invalid work area";
+	const s8		cgcAliasAlreadyInUse[]							= "alias already in use";
 	
 
 //////////

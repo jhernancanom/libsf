@@ -127,6 +127,7 @@
 			case _ERROR_VARIABLE_NOT_FOUND:					{	iError_report((s8*)cgcVariableNotFoundError);			break;	}
 			case _ERROR_ALIAS_NOT_FOUND:					{	iError_report((s8*)cgcAliasNotFoundError);				break;	}
 			case _ERROR_INVALID_WORK_AREA:					{	iError_report((s8*)cgcInvalidWorkArea);					break;	}
+			case _ERROR_ALIAS_ALREADY_IN_USE:				{	iError_report((s8*)cgcAliasAlreadyInUse);				break;	}
 		}
 
 		// Flag the component
@@ -1140,6 +1141,44 @@
 		//////
 	        return result;
 	}
+;
+
+
+
+
+//////////
+//
+// Function: CURDIR()
+// Returns the current directory
+//
+//////
+// Version 0.55
+// Last Update:
+//		Dec.25.2014
+//////
+// Change log:
+//		Dec.25.2014 - Initial creation
+//////
+// Parameters:
+//		none
+//////
+// Returns:
+//		Character		-- Current directory
+//////
+	SVariable* function_curdir(void)
+	{
+		s8			curdir[_MAX_PATH];
+		SVariable*	result;
+
+
+		// Get the current directory
+		memset(curdir, 0, sizeof(curdir));
+		GetCurrentDirectory(_MAX_PATH, curdir);
+
+		// Create the output variable
+		result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, curdir, strlen(curdir));
+		return(result);
+	}
 
 
 
@@ -1424,6 +1463,269 @@
 		//////
 	        return result;
     }
+
+
+
+
+//////////
+//
+// Function: JUSTDRIVE()
+// Returns the drive letter from the input pathname
+//
+//////
+// Version 0.55
+// Last update:
+//		Dec.25.2014
+//////
+// Change log:
+//		Dec.25.2014 - Initial creation
+//////
+// Parameters:
+//		varString		-- Character, the input pathname
+//////
+// Returns:
+//		Character		-- The drive component of the pathname, or the current drive if it wasn't specified, ("c:" of "c:\path\to\sample.txt")
+//////
+	SVariable* function_justdrive(SVariable* varString)
+	{
+		u32			errorNum;
+        bool		error;
+		s8*			ptr;
+        SVariable*	result;
+		SVariable*	varCurdir;
+
+
+		//////////
+        // Parameter 1 must be numeric
+		//////
+			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
+			{
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varString->compRelated);
+				return(NULL);
+			}
+
+
+		//////////
+		// Initialize
+		//////
+			varCurdir = NULL;
+
+
+		//////////
+        // Based on its type, process it accordingly
+		//////
+			if (varString->value.length >= 2)
+			{
+				// If it is of the form "x:"... then we return the left two-most characters
+				if (varString->value.data_s8[1] == ':')
+				{
+					// We have a drive
+					ptr = varString->value.data_s8;
+
+				} else {
+					// No drive information, use current drive
+					varCurdir = function_curdir();
+
+					// If it is of the form "x:"... then we return the left two-most characters
+					if (varCurdir->value.data_s8[1] != ':')
+					{
+						// Hmm... It's not a valid directory, so we'll create an empty variable
+						result	= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+						ptr		= NULL;
+
+					} else {
+						// Valid directory
+						ptr = varCurdir->value.data_s8;
+					}
+				}
+
+			} else {
+				// It's too short and cannot have a drive, so we'll initialize an empty variable
+				result		= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+				ptr			= NULL;
+			}
+
+
+		//////////
+		// Populate if need be
+		//////
+			if (ptr)
+				iDatum_duplicate(&result->value, ptr, 2);
+
+
+		//////////
+		// Clean house
+		//////
+clean_exit:
+			if (varCurdir)
+				iVariable_delete(varCurdir, true);
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
+	}
+
+
+
+
+//////////
+//
+// Function: JUSTEXT()
+// Returns the file extension from the input pathname
+//
+//////
+// Version 0.55
+// Last update:
+//		Dec.25.2014
+//////
+// Change log:
+//		Dec.25.2014 - Initial creation
+//////
+// Parameters:
+//		varString		-- Character, the input pathname
+//////
+// Returns:
+//		Character		-- The file extension component, or an empty string if one was not specified, ("txt" of "c:\path\to\sample.txt")
+//////
+	SVariable* function_justext(SVariable* varString)
+	{
+		u32			errorNum;
+        bool		error;
+		s8*			ptr;
+        SVariable*	result;
+		SVariable*	varCurdir;
+
+
+		//////////
+        // Parameter 1 must be numeric
+		//////
+			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
+			{
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varString->compRelated);
+				return(NULL);
+			}
+
+
+		//////////
+		// Initialize
+		//////
+			varCurdir = NULL;
+
+
+		//////////
+        // Based on its type, process it accordingly
+		//////
+			if (varString->value.length >= 1)
+			{
+// TODO:  working here
+
+			} else {
+				// It's too short and cannot have a drive, so we'll initialize an empty variable
+				result		= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+				ptr			= NULL;
+			}
+
+
+		//////////
+		// Populate if need be
+		//////
+			if (ptr)
+				iDatum_duplicate(&result->value, ptr, 2);
+
+
+		//////////
+		// Clean house
+		//////
+clean_exit:
+			if (varCurdir)
+				iVariable_delete(varCurdir, true);
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
+	}
+
+
+
+
+//////////
+//
+// Function: JUSTFNAME()
+// Returns the file name from the input pathname
+//
+//////
+// Version 0.55
+// Last update:
+//		Dec.25.2014
+//////
+// Change log:
+//		Dec.25.2014 - Initial creation
+//////
+// Parameters:
+//		varString		-- Character, the input pathname
+//////
+// Returns:
+//		Character		-- The file name portion of the pathname ("sample.txt" of "c:\path\to\sample.txt")
+//////
+	SVariable* function_justfname(SVariable* varString)
+	{
+	}
+
+
+
+
+//////////
+//
+// Function: JUSTPATH()
+// Returns the path from the input pathname
+//
+//////
+// Version 0.55
+// Last update:
+//		Dec.25.2014
+//////
+// Change log:
+//		Dec.25.2014 - Initial creation
+//////
+// Parameters:
+//		varString		-- Character, the input pathname
+//////
+// Returns:
+//		Character		-- The file path of the pathname ("c:\path\to" of "c:\path\to\sample.txt")
+//////
+	SVariable* function_justpath(SVariable* varString)
+	{
+	}
+
+
+
+
+//////////
+//
+// Function: JUSTSTEM()
+// Returns the stem (filename left of dot-extension) from the input pathname
+//
+//////
+// Version 0.55
+// Last update:
+//		Dec.25.2014
+//////
+// Change log:
+//		Dec.25.2014 - Initial creation
+//////
+// Parameters:
+//		varString		-- Character, the input pathname
+//////
+// Returns:
+//		Character		-- The file name portion of the pathname ("sample" of "c:\path\to\sample.txt")
+//////
+	SVariable* function_juststem(SVariable* varString)
+	{
+	}
 
 
 
@@ -4526,31 +4828,46 @@
 //////
 	void command_use(SComp* compUse)
 	{
-		u32			errorNum;
 		s32			lnWorkArea, lnResult;
-		bool		llManufacturedInXyz, llManufacturedTableName, llManufacturedAliasName, llIsDbc, error;
+		bool		llManufacturedInXyz, llManufacturedTableName, llManufacturedAliasName, llIsDbc, llIsExclusive;
 		SVariable*	varInXyz;
 		SVariable*	varTableName;
 		SVariable*	varAliasName;
+		u32			errorNum;
+		bool		error;
 
 
+		//////////
+		// Initialize
+		//////
+			varInXyz					= NULL;
+			varTableName				= 0;
+			varAliasName				= 0;
+			llManufacturedInXyz			= false;
+			llManufacturedTableName		= false;
+			llManufacturedAliasName		= false;
+			llIsDbc						= false;
+			llIsExclusive				= false;
+
+
+		//////////
 		// Access the options which are available for this command
-// 		SComp*	compAgain				= iComps_findNextBy_iCode(compUse, _ICODE_AGAIN,				NULL);
-// 		SComp*	compNoRequery			= iComps_findNextBy_iCode(compUse, _ICODE_NOREQUERY,			NULL);
-// 		SComp*	compNoData				= iComps_findNextBy_iCode(compUse, _ICODE_NODATA,				NULL);
-// 		SComp*	compNoUpdate			= iComps_findNextBy_iCode(compUse, _ICODE_NOUPDATE,				NULL);
-// 		SComp*	compExclamationPoint	= iComps_findNextBy_iCode(compUse, _ICODE_EXCLAMATION_POINT,	NULL);
-		SComp*	compIn					= iComps_findNextBy_iCode(compUse, _ICODE_IN,					NULL);
-// 		SComp*	compIndex				= iComps_findNextBy_iCode(compUse, _ICODE_INDEX,				NULL);
-// 		SComp*	compOrder				= iComps_findNextBy_iCode(compUse, _ICODE_ORDER,				NULL);
-// 		SComp*	compTag					= iComps_findNextBy_iCode(compUse, _ICODE_TAG,					NULL);
-		SComp*	compAscending			= iComps_findNextBy_iCode(compUse, _ICODE_ASCENDING,			NULL);
-		SComp*	compDescending			= iComps_findNextBy_iCode(compUse, _ICODE_DESCENDING,			NULL);
-		SComp*	compAlias				= iComps_findNextBy_iCode(compUse, _ICODE_ALIAS,				NULL);
-		SComp*	compExclusive			= iComps_findNextBy_iCode(compUse, _ICODE_EXCLUSIVE,			NULL);
-		SComp*	compShared				= iComps_findNextBy_iCode(compUse, _ICODE_SHARED,				NULL);
-// 		SComp*	compConnString			= iComps_findNextBy_iCode(compUse, _ICODE_CONNSTRING,			NULL);
-		// Search for the optional components which may or may not be present
+		//////
+			SComp*	compAgain				= iComps_findNextBy_iCode(compUse, _ICODE_AGAIN,				NULL);
+//			SComp*	compNoRequery			= iComps_findNextBy_iCode(compUse, _ICODE_NOREQUERY,			NULL);
+//			SComp*	compNoData				= iComps_findNextBy_iCode(compUse, _ICODE_NODATA,				NULL);
+			SComp*	compNoUpdate			= iComps_findNextBy_iCode(compUse, _ICODE_NOUPDATE,				NULL);
+			SComp*	compExclamationPoint	= iComps_findNextBy_iCode(compUse, _ICODE_EXCLAMATION_POINT,	NULL);
+			SComp*	compIn					= iComps_findNextBy_iCode(compUse, _ICODE_IN,					NULL);
+			SComp*	compIndex				= iComps_findNextBy_iCode(compUse, _ICODE_INDEX,				NULL);
+			SComp*	compOrder				= iComps_findNextBy_iCode(compUse, _ICODE_ORDER,				NULL);
+			SComp*	compTag					= iComps_findNextBy_iCode(compUse, _ICODE_TAG,					NULL);
+			SComp*	compAscending			= iComps_findNextBy_iCode(compUse, _ICODE_ASCENDING,			NULL);
+			SComp*	compDescending			= iComps_findNextBy_iCode(compUse, _ICODE_DESCENDING,			NULL);
+			SComp*	compAlias				= iComps_findNextBy_iCode(compUse, _ICODE_ALIAS,				NULL);
+			SComp*	compExclusive			= iComps_findNextBy_iCode(compUse, _ICODE_EXCLUSIVE,			NULL);
+			SComp*	compShared				= iComps_findNextBy_iCode(compUse, _ICODE_SHARED,				NULL);
+//			SComp*	compConnString			= iComps_findNextBy_iCode(compUse, _ICODE_CONNSTRING,			NULL);
 
 
 		//////////
@@ -4562,7 +4879,7 @@
 				if (compAscending && compDescending)
 				{
 					iError_reportByNumber(_ERROR_TOO_MANY_PARAMETERS, ((compAscending->ll.uniqueId < compDescending->ll.uniqueId) ? compDescending : compAscending));
-					return;
+					goto clean_exit;
 				}
 
 
@@ -4572,7 +4889,22 @@
 				if (compShared && compExclusive)
 				{
 					iError_reportByNumber(_ERROR_TOO_MANY_PARAMETERS, ((compShared->ll.uniqueId < compExclusive->ll.uniqueId) ? compExclusive : compShared));
-					return;
+					goto clean_exit;
+				}
+
+				// Determine shared or exclusive status
+				if (compShared)
+				{
+					// Explicitly shared
+					llIsExclusive	= false;
+
+				} else if (compExclusive) {
+					// Explicitly exclusive
+					llIsExclusive	= true;
+
+				} else {
+					// Use the current SET default
+					llIsExclusive = gsCurrentSetting->_set_exclusive;
 				}
 
 
@@ -4582,8 +4914,9 @@
 				if (compIn && !compIn->ll.next)
 				{
 					iError_reportByNumber(_ERROR_SYNTAX, compIn);
-					return;
+					goto clean_exit;
 				}
+
 				// Go ahead and point after it
 				if (compIn)
 					compIn = (SComp*)compIn->ll.next;
@@ -4595,8 +4928,9 @@
 				if (compAlias && !compAlias->ll.next)
 				{
 					iError_reportByNumber(_ERROR_SYNTAX, compIn);
-					return;
+					goto clean_exit;
 				}
+
 				// Go ahead and point after it
 				if (compAlias)
 					compAlias = (SComp*)compAlias->ll.next;
@@ -4609,49 +4943,46 @@
 				{
 					// They have specified USE by itself, closing the current work area
 					iDbf_close((s32)iDbf_getWorkArea_current());
-					return;
-
-				} else if (compIn && compUse->ll.next == compIn->ll.prev) {
-					// They have specified USE IN something
-					if (compIn->iCode == _ICODE_SELECT)
-					{
-						// They've specified USE IN SELECT something
-						if (!compIn->ll.next)
-						{
-							iError_reportByNumber(_ERROR_SYNTAX, compIn);
-							return;
-
-						} else if (((SComp*)compIn->ll.next)->iCode != _ICODE_PARENTHESIS_LEFT) {
-							// Syntax error
-							iError_reportByNumber(_ERROR_SYNTAX, compIn);
-							return;
-						}
-						// They've specified USE IN SELECT(something)
-						varAliasName = iEngine_getVariableFromComponent(compIn, llManufacturedAliasName);
-
-					} else {
-						// They must've specified an alias name
-						varAliasName = iEngine_getVariableFromComponent(compIn, llManufacturedAliasName);
-					}
-
+					goto clean_exit;
 				}
-				// Go ahead and point after it
-				compUse = (SComp*)compUse->ll.next;
+
+
+		//////////
+		// Find out if they specified a workarea
+		//////
+			if (compIn)
+			{
+				// Find out what they're selecting
+				if (compIn->iCode == _ICODE_SELECT)
+				{
+					// They've specified USE IN SELECT something
+					if (!compIn->ll.next)
+					{
+						iError_reportByNumber(_ERROR_SYNTAX, compIn);
+						goto clean_exit;
+
+					} else if (((SComp*)compIn->ll.next)->iCode != _ICODE_PARENTHESIS_LEFT) {
+						// Syntax error
+						iError_reportByNumber(_ERROR_SYNTAX, compIn);
+						goto clean_exit;
+					}
+					// They've specified USE IN SELECT(something)
+					varInXyz = iEngine_getVariableFromComponent(compIn, llManufacturedAliasName);
+
+				} else {
+					// They must've specified a number or alias name
+					varInXyz = iEngine_getVariableFromComponent(compIn, llManufacturedAliasName);
+				}
+			}
+			// Go ahead and point after it
+			compUse = (SComp*)compUse->ll.next;
 
 
 		//////////
 		// See if there's an IN clause
 		//////
-			if (compIn)
+			if (varInXyz)
 			{
-				//////////
-				// Grab the value into a variable
-				//////
-					llManufacturedInXyz = false;
-					varInXyz = iEngine_getVariableFromComponent(compIn, llManufacturedInXyz);
-					if (!varInXyz)	{ iError_reportByNumber(_ERROR_UNRECOGNIZED_PARAMETER, compIn);	return; }
-
-
 				//////////
 				// See what they specified
 				//////
@@ -4659,17 +4990,31 @@
 					{
 						// They're are specifying a number
 						lnWorkArea = iiVariable_getAs_s32(varInXyz, false, &error, &errorNum);
-						if (error)		{ iError_reportByNumber(errorNum, compIn); return; }
+						if (error)	{ iError_reportByNumber(errorNum, compIn); return; }
 
 					} else if (iVariable_isTypeCharacter(varInXyz)) {
 						// They specified an alias name
-						lnWorkArea = (s32)iDbf_getWorkArea_byAlias(varInXyz->value.data_s8, varInXyz->value.length);
-						if (lnWorkArea < 0)		{ iError_reportByNumber(_ERROR_ALIAS_NOT_FOUND, compIn); return; }
+						if (iDbf_isWorkAreaLetter(varInXyz))
+						{
+							// Grab the work area letter into its number
+							lnWorkArea = (s32)iUpperCase(varInXyz->value.data_s8[0]) - (s32)'A' + 1;
+
+						} else {
+							// Alias name
+							lnWorkArea = (s32)iDbf_getWorkArea_byAlias(varInXyz);
+						}
+
+						// Did we get a valid work area?
+						if (lnWorkArea < 0)
+						{
+							iError_reportByNumber(_ERROR_ALIAS_NOT_FOUND, compIn);
+							goto clean_exit;
+						}
 
 					} else {
 						// Unrecognized syntax
-						iError_reportByNumber(_ERROR_SYNTAX, compIn);
-						return;
+						iError_reportByNumber(_ERROR_SYNTAX, (SComp*)compIn->ll.next);
+						goto clean_exit;
 					}
 
 			} else {
@@ -4677,26 +5022,16 @@
 				lnWorkArea = (s32)iDbf_getWorkArea_current();
 			}
 
-		
+
 		//////////
-		// See if the current work area already has a table open
+		// Is it USE IN...
 		//////
-			lnResult = (s32)iDbf_isWorkAreaUsed(lnWorkArea, llIsDbc);
-
-			// If it's invalid, or is related to a DBC, find another one automatically
-			if (lnResult < 0 || llIsDbc)
+			if ((SComp*)compUse->ll.next == compIn)
 			{
-				// Find the lowest free work area
-				lnWorkArea	= (s32)iDbf_getWorkArea_lowestFree();
-				if (lnWorkArea < 0)		{ iError_reportByNumber(_ERROR_INVALID_WORK_AREA, compIn); goto clean_exit; }
-
-				// Force lower the flag indicating it's not used
-				lnResult = 0;
-			}
-
-			// Close it if it's open
-			if (lnResult == 1)
+				// Yes, close that work area and we're done
 				iDbf_close(lnWorkArea);
+				goto clean_exit;
+			}
 
 
 		//////////
@@ -4713,12 +5048,33 @@
 			{
 				// They've specified an alias
 				varAliasName = iEngine_getVariableFromComponent((SComp*)compAlias->ll.next, llManufacturedTableName);
+				if (iDbf_getWorkArea_byAlias(varAliasName))
+				{
+					iError_reportByNumber(_ERROR_ALIAS_ALREADY_IN_USE, compAlias);
+					goto clean_exit;
+				}
 
 			} else {
 				// We need to construct the alias
 				varAliasName = iDbf_getAlias_fromPathname(varTableName->value.data_s8, varTableName->value.length);
 			}
 			if (!varAliasName)	{ iError_reportByNumber(_ERROR_INTERNAL_ERROR, compUse); goto clean_exit; }
+
+		
+		//////////
+		// See if the current work area already has a table open
+		//////
+			lnResult = (s32)iDbf_isWorkAreaUsed(lnWorkArea);
+			if (lnResult < 0)
+			{
+				// They specified an invalid work area number
+				iError_reportByNumber(_ERROR_INVALID_WORK_AREA, compIn);
+				goto clean_exit;
+
+			} else if (lnResult == _YES) {
+				// If it's already open, close it
+				iDbf_close(lnWorkArea);
+			}
 
 
 		//////////
