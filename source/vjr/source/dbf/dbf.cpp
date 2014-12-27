@@ -497,6 +497,113 @@
 
 //////////
 //
+// open remote
+//
+/////
+//
+// Called to open the specified table from a remote ODBC data source, and allocate
+// a local cursor to handle data storage, indexing, etc., and assign an optional
+// alias name to the table.
+//
+// Parameters:
+//		table	   - full path to the table
+//		alias	   - alias handle to use (if any)
+//
+// Returns:
+//		slot number used to access the entry they created,
+//		or -1 if error
+//		or -2 if no more slots
+//		or -3 if DBC is invalid
+//
+//////
+	uptr iDbf_openRemote(s8* connString)
+	{
+		return(0);
+// Note: This is a placeholder function outlining the steps necessary to access and retrieve remote content
+// #define	SQL_QUERY_SIZE 4096
+// 		SQLRETURN		lnResult;
+// 		SQLHANDLE		lpEnv;
+// 		SQLHANDLE		lpDbc;
+// 		SQLHANDLE		lpStmt;
+// 		SQLHDBC			handle;
+// 		SQLCHAR			serverName[128], userName[128], password[128];
+// 		SQLSMALLINT		serverNameLength, userNameLength, passwordLength, cchDisplay, cchColumnNameLength, ssType;
+// 		SQLUSMALLINT	lnCol, colCount;
+// 		SQLINTEGER		lnRow, rowCount;
+// 		s8				expression[SQL_QUERY_SIZE + 1];
+// 		SQLPOINTER		field;
+// 		SQLINTEGER		fieldLength;
+// 
+// 
+// 		lnResult = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &lpEnv);
+// 		if (lnResult == SQL_ERROR)
+// 			return(-1);
+// 
+// 		SQLSetEnvAttr(lpEnv, SQL_ATTR_ODBC_VERSION, (SQLPOINTER)SQL_OV_ODBC3, 0);
+// 		SQLAllocHandle(SQL_HANDLE_DBC, lpEnv, &lpDbc);
+// 		SQLDriverConnect(lpDbc, GetDesktopWindow(), (SQLCHAR*)connString, SQL_NTS, NULL, 0, NULL, SQL_DRIVER_COMPLETE);
+// 		SQLConnect(handle, serverName, serverNameLength, userName, userNameLength, password, passwordLength);
+// 		SQLAllocHandle(SQL_HANDLE_STMT, lpDbc, &lpStmt);
+// 
+// 		lnResult = SQLExecDirect(lpStmt, (SQLCHAR*)expression, SQL_NTS);
+// 		switch (lnResult)
+// 		{
+// 			case SQL_SUCCESS_WITH_INFO:
+// 				// An error
+// 				break;
+// 
+// 			case SQL_SUCCESS:
+// 				// Success
+// 				SQLNumResultCols(lpStmt, (SQLSMALLINT*)&colCount);		// Columns
+// 				SQLRowCount		(lpStmt, &rowCount);					// Rows
+// 
+// 
+// 				//////////
+// 				// For each column
+// 				//////
+// 					for (lnCol = 0; lnCol < colCount; lnCol++)
+// 					{
+// 						SQLColAttribute	(lpStmt, lnCol, SQL_DESC_DISPLAY_SIZE,	NULL, 0, NULL, &cchDisplay);
+// 						SQLColAttribute	(lpStmt, lnCol, SQL_DESC_CONCISE_TYPE,	NULL, 0, NULL, &ssType);
+// 						SQLColAttribute	(lpStmt, lnCol, SQL_DESC_NAME,			NULL, 0, &cchColumnNameLength, NULL);
+// 
+// 						// Content for each column
+// 						SQLBindCol		(lpStmt, lnCol, SQL_C_CHAR,				field, (cchDisplay + 1), &fieldLength);
+// 					}
+// 
+// 
+// 				//////////
+// 				// For each row
+// 				//////
+// 					for (lnRow = 0; lnRow < rowCount; lnRow++)
+// 					{
+// 						SQLFetch(lpStmt);
+// 
+// 						// Content is pulled into the field values from the SQLBindCol content
+// 					}
+// 				break;
+// 
+// 			case SQL_ERROR:
+// 				// Error
+// 				break;
+// 
+// 			default:
+// 				// Unexpected error
+// 				break;
+// 		}
+// 
+//		SQLGetDiagRec(hType, hHandle, ++iRec, szState, &iError, szMessage, (SQLSMALLINT)(sizeof(szMessage) / sizeof(TCHAR)), (SQLSMALLINT *)NULL);
+//		SQLFreeStmt(lpStmt, SQL_CLOSE);
+// 		SQLDisconnect(lpDbc);
+// 		SQLFreeConnect(lpDbc);
+// 		SQLFreeEnv(lpEnv);
+	}
+
+
+
+
+//////////
+//
 // Called to cache the table into memory for fast processing.
 // Note:  If the row has changed content, it will be lost in this operation.  Must flush first.
 //

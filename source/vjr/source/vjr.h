@@ -86,6 +86,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <share.h>
+#include <sql.h>
+#include <sqlext.h>
 #include "resource.h"
 
 

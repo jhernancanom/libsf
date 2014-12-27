@@ -136,6 +136,7 @@ struct SFieldRecord2;
 
 	// DBF functions
 	uptr				iDbf_open										(s8* table, s8* alias);
+	uptr				iDbf_openRemote									(s8* connString);
 	uptr				iDbf_cacheAllRowData							(u32 tnWorkArea);
 	uptr				iDbf_close										(u32 tnWorkArea);
 	uptr				iDbf_hasCdx										(u32 tnWorkArea);
