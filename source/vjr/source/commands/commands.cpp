@@ -128,6 +128,8 @@
 			case _ERROR_ALIAS_NOT_FOUND:					{	iError_report(cgcAliasNotFoundError);				break;	}
 			case _ERROR_INVALID_WORK_AREA:					{	iError_report(cgcInvalidWorkArea);					break;	}
 			case _ERROR_ALIAS_ALREADY_IN_USE:				{	iError_report(cgcAliasAlreadyInUse);				break;	}
+			case _ERROR_PARENTHESIS_EXPECTED:				{	iError_report(cgcParenthesisExpected);				break;	}
+			case _ERROR_MISSING_PARAMETER:					{	iError_report(cgcMissingParameter);					break;	}
 		}
 
 		// Flag the component
@@ -3929,6 +3931,194 @@
 		//////
 	        return result;
 	}
+;
+
+
+
+
+//////////
+//
+// Function: SYS()
+// SYS function support (Dec.27.2014 incomplete)
+//
+///////
+// Version 0.55
+// Last update:
+//     Dec.27.2014
+//////
+// Change log:
+//     Dec.27.2014 - Initial creation
+//////
+// Parameters:
+//		2015			-- none
+//////
+// Returns:
+//		2015			-- Character, unique procedure name
+//////
+	SVariable* function_sys(SVariable* varIndex, SVariable* varP1, SVariable* varP2, SVariable* varP3, SVariable* varP4, SVariable* varP5, SVariable* varP6)
+	{
+		s32			lnIndex;
+		u32			lnExtraPrefixWidth, lnExtraPostfixWidth;
+		s64			ln2015;
+		u32			errorNum;
+        bool		error;
+		SYSTEMTIME	lst;
+		SVariable*	result;
+
+
+// TODO:  Untested function, breakpoint and examine
+debug_break;
+		//////////
+        // Parameter 1 must be numeric
+		//////
+			if (!iVariable_isValid(varIndex) || !iVariable_isTypeNumeric(varIndex))
+			{
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varIndex->compRelated);
+				return(NULL);
+			}
+
+			// Grab the index
+			lnIndex = iiVariable_getAs_s32(varIndex, false, &error, &errorNum);
+			if (error)
+			{
+				// An error extracting the value (should never happen)
+				iError_reportByNumber(errorNum, varIndex->compRelated);
+				return(NULL);
+			}
+
+
+		//////////
+		// Based on the function...
+		//////
+			switch (lnIndex)
+			{
+				case 2015:
+					// Unique procedure names take on the form YYYYMMDDHHMMSSmmm converted to base-36, prefixed with an underscore
+					GetLocalTime(&lst);
+					ln2015 =	(lst.wYear		* 10000000000000) +
+								(lst.wMonth		* 100000000000) +
+								(lst.wDay		* 1000000000) +
+								(lst.wHour		* 10000000) +
+								(lst.wMinute	* 100000) +
+								(lst.wSecond	* 1000) +
+								lst.wMilliseconds;
+
+					// Optional 2nd and 3rd parameter indicate how many extra prefix and postfix characters to insert
+					if (iVariable_isValid(varP1))
+					{
+						//////////
+						// Since P1 was provided, it must be numeric
+						//////
+							if (!iVariable_isTypeNumeric(varP1))
+							{
+								iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varP1->compRelated);
+								goto clean_exit;
+							}
+
+
+						//////////
+						// Get the prefix width
+						//////
+							lnExtraPrefixWidth = iiVariable_getAs_s32(varP1, false, &error, &errorNum);
+							if (error)
+							{
+								iError_reportByNumber(errorNum, varP1->compRelated);
+								goto clean_exit;
+							}
+							// Right now, we have lnExtraPrefixWidth
+
+
+						/////////
+						// Did they also provide a 3rd parameter?
+						//////
+							if (iVariable_isValid(varP2))
+							{
+								//////////
+								// Since P2 was provided, it must be numeric
+								//////
+									if (!iVariable_isTypeNumeric(varP2))
+									{
+										iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varP2->compRelated);
+										goto clean_exit;
+									}
+
+
+								//////////
+								// Get the postfix width
+								//////
+									lnExtraPostfixWidth = iiVariable_getAs_s32(varP2, false, &error, &errorNum);
+									if (error)
+									{
+										iError_reportByNumber(errorNum, varP2->compRelated);
+										goto clean_exit;
+									}
+									// Right now, we have lnExtraPostfixWidth
+
+							} else {
+								// Nope, just assign it to 0
+								lnExtraPostfixWidth = 0;
+							}
+
+					} else {
+						lnExtraPrefixWidth	= 0;
+						lnExtraPostfixWidth	= 0;
+					}
+
+					// Create a variable in base-36 (uses 0..9, A..Z)
+					result = iVariable_createByRadix(ln2015, 36, 1 + lnExtraPrefixWidth, lnExtraPostfixWidth);
+
+					// Prefix with an underscore
+					if (result)
+						result->value.data_u8[lnExtraPrefixWidth] = '_';
+
+					// Right now, the variable looks something like:  _19B2L483
+					break;
+
+				default:
+					// Not currently supported
+					iError_reportByNumber(_ERROR_FEATURE_NOT_AVAILABLE, varIndex->compRelated);
+					result = iVariable_create(_VAR_TYPE_LOGICAL, varFalse);
+					break;
+			}
+
+clean_exit:
+		//////////
+		// Clean house
+		//////
+			// Currently nothing to clean
+
+
+		//////////
+		// Indicate our result
+		//////
+			return(result);
+	}
+
+	// Note:  Helper function.  function_sys2015() is a shortcut function for accessing the oft-used get-unique-procedure-name feature
+	SVariable* function_sys2015(u32 tnPrefixWidth, u32 tnPostfixWidth)
+	{
+// TODO:  Untested function, breakpoint and examine
+debug_break;
+		s32			ln2015		= 2015;
+		SVariable*	var2015		= iVariable_createAndPopulate(_VAR_TYPE_S32,	(cu8*)&ln2015,			sizeof(ln2015));
+		SVariable*	varPrefix	= iVariable_createAndPopulate(_VAR_TYPE_S32,	(cu8*)&tnPrefixWidth,	sizeof(tnPrefixWidth));
+		SVariable*	varPostfix	= iVariable_createAndPopulate(_VAR_TYPE_S32,	(cu8*)&tnPostfixWidth,	sizeof(tnPostfixWidth));
+		SVariable*	varSys2015	= function_sys(var2015, varPrefix, varPostfix, NULL, NULL, NULL, NULL);
+
+
+		//////////
+		// Clean house
+		//////
+			iVariable_delete(var2015,		true);
+			iVariable_delete(varPrefix,		true);
+			iVariable_delete(varPostfix,	true);
+
+
+		//////////
+		// Return our value
+		//////
+			return(varSys2015);
+	}
 
 
 
@@ -5013,8 +5203,11 @@
 //////
 	void command_use(SComp* compUse)
 	{
-		s32			lnWorkArea, lnResult;
+		s32			lnWorkArea, lnWorkAreaAlias, lnResult;
 		bool		llManufacturedInXyz, llManufacturedTableName, llManufacturedAliasName, llIsDbc, llIsExclusive;
+		SComp*		comp2;
+		SComp*		comp3;
+		SComp*		comp4;
 		SVariable*	varInXyz;
 		SVariable*	varTableName;
 		SVariable*	varAliasName;
@@ -5056,7 +5249,7 @@
 
 
 		//////////
-		// Report conflicts
+		// Report any conflicts
 		//////
 			//////////
 			// Cannot have both ASCENDING and DESCENDING
@@ -5102,7 +5295,7 @@
 					goto clean_exit;
 				}
 
-				// Go ahead and point after it
+				// Go ahead and point to what's after it
 				if (compIn)
 					compIn = (SComp*)compIn->ll.next;
 
@@ -5112,11 +5305,11 @@
 			//////
 				if (compAlias && !compAlias->ll.next)
 				{
-					iError_reportByNumber(_ERROR_SYNTAX, compIn);
+					iError_reportByNumber(_ERROR_SYNTAX, compAlias);
 					goto clean_exit;
 				}
 
-				// Go ahead and point after it
+				// Go ahead and point to what's after it
 				if (compAlias)
 					compAlias = (SComp*)compAlias->ll.next;
 
@@ -5126,33 +5319,61 @@
 			//////
 				if (compUse && !compUse->ll.next)
 				{
-					// They have specified USE by itself, closing the current work area
+					// USE ... They have specified USE by itself, closing the current work area
 					iDbf_close((s32)iDbf_getWorkArea_current());
 					goto clean_exit;
 				}
+
+				// Go ahead and point to what's after it
+				compUse = (SComp*)compUse->ll.next;
 
 
 		//////////
 		// Find out if they specified a workarea
 		//////
+			// Note:  Right now, compIn is already pointing to the thing after "IN"
 			if (compIn)
 			{
+				// Get what comes after the IN
+				if ((comp2 = iComps_getNth(compIn, 1)) && (comp3 = iComps_getNth(comp2, 1)) && (comp4 = iComps_getNth(comp3, 1)))
+				{
+					// Placeholder to allow execution up through as far as it will go
+				}
+
 				// Find out what they're selecting
 				if (compIn->iCode == _ICODE_SELECT)
 				{
 					// They've specified USE IN SELECT something
-					if (!compIn->ll.next)
-					{
-						iError_reportByNumber(_ERROR_SYNTAX, compIn);
-						goto clean_exit;
-
-					} else if (((SComp*)compIn->ll.next)->iCode != _ICODE_PARENTHESIS_LEFT) {
+					// Perform tests on what comes after SELECT()
+					if (!comp2) {
 						// Syntax error
 						iError_reportByNumber(_ERROR_SYNTAX, compIn);
 						goto clean_exit;
+
+					} else if (comp2->iCode != _ICODE_PARENTHESIS_LEFT) {
+						// Syntax error missing parenthesis
+						iError_reportByNumber(_ERROR_SYNTAX, comp2);
+						goto clean_exit;
+
+					} else if (!comp3) {
+						// Syntax error missing parameter
+						iError_reportByNumber(_ERROR_MISSING_PARAMETER, comp2);
+						goto clean_exit;
+
+					} else if (!(comp4 = (SComp*)comp3->ll.next)) {
+						// Syntax error
+						iError_reportByNumber(_ERROR_SYNTAX, comp3);
+						goto clean_exit;
+
+					} else if (comp4->iCode != _ICODE_PARENTHESIS_RIGHT) {
+						// Syntax error parenthesis expected
+						iError_reportByNumber(_ERROR_PARENTHESIS_EXPECTED, comp4);
+						goto clean_exit;
 					}
+					// Once we get here, we know we have SELECT(...something
+
 					// They've specified USE IN SELECT(something)
-					varInXyz = iEngine_getVariableFromComponent(compIn, llManufacturedAliasName);
+					varInXyz = iEngine_getVariableFromComponent(comp3, llManufacturedAliasName);
 
 				} else {
 					// They must've specified a number or alias name
@@ -5164,7 +5385,7 @@
 
 
 		//////////
-		// See if there's an IN clause
+		// See if they specified an integer or character for the SELECT()
 		//////
 			if (varInXyz)
 			{
@@ -5195,6 +5416,7 @@
 							iError_reportByNumber(_ERROR_ALIAS_NOT_FOUND, compIn);
 							goto clean_exit;
 						}
+						// If we get here, we have our work area number
 
 					} else {
 						// Unrecognized syntax
@@ -5203,15 +5425,16 @@
 					}
 
 			} else {
-				// Grab the current work area
+				// Just grab the current work area
 				lnWorkArea = (s32)iDbf_getWorkArea_current();
 			}
 
 
 		//////////
-		// Is it USE IN...
+		// USE IN... was specified?
 		//////
-			if ((SComp*)compUse->ll.next == compIn)
+			// Note:  Right now, compUse is already pointing to the thing after "USE"
+			if (compUse->iCode == _ICODE_IN)
 			{
 				// Yes, close that work area and we're done
 				iDbf_close(lnWorkArea);
@@ -5223,7 +5446,11 @@
 		// Get the table name
 		//////
 			varTableName = iEngine_getVariableFromComponent(compUse, llManufacturedTableName);
-			if (!varTableName)	{ iError_reportByNumber(_ERROR_UNRECOGNIZED_PARAMETER, compUse); goto clean_exit; }
+			if (!varTableName)
+			{
+				iError_reportByNumber(_ERROR_UNRECOGNIZED_PARAMETER, compUse);
+				goto clean_exit;
+			}
 
 
 		//////////
@@ -5232,18 +5459,35 @@
 			if (compAlias)
 			{
 				// They've specified an alias
-				varAliasName = iEngine_getVariableFromComponent((SComp*)compAlias->ll.next, llManufacturedTableName);
-				if (iDbf_getWorkArea_byAlias(varAliasName))
+				varAliasName	= iEngine_getVariableFromComponent((SComp*)compAlias->ll.next, llManufacturedTableName);
+				lnWorkAreaAlias	= iDbf_getWorkArea_byAlias(varAliasName);
+				if (lnWorkAreaAlias > 0)
 				{
-					iError_reportByNumber(_ERROR_ALIAS_ALREADY_IN_USE, compAlias);
+					// They've specified an alias name
+					// If it's the current work area, or the one they specified with the "IN xyz" clause, then we're okay
+					if (lnWorkArea != lnWorkAreaAlias)
+					{
+						// Nope, they're trying to re-use an alias already in use
+						iError_reportByNumber(_ERROR_ALIAS_ALREADY_IN_USE, compAlias);
+						goto clean_exit;
+					}
+					// If we get here, the work area is okay
+
+				} else {
+					// Unknown alias
+					iError_reportByNumber(_ERROR_ALIAS_NOT_FOUND, compAlias);
 					goto clean_exit;
 				}
 
 			} else {
-				// We need to construct the alias
+				// We need to construct the alias from the table name
 				varAliasName = iDbf_getAlias_fromPathname(varTableName);
 			}
-			if (!varAliasName)	{ iError_reportByNumber(_ERROR_INTERNAL_ERROR, compUse); goto clean_exit; }
+			if (!varAliasName)
+			{
+				iError_reportByNumber(_ERROR_INTERNAL_ERROR, compUse);
+				goto clean_exit;
+			}
 
 		
 		//////////

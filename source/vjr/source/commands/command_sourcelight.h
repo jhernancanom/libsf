@@ -412,6 +412,10 @@
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
+	SSourceLightData gsSourceLight_sys[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
 
 	SSourceLightData gsSourceLight_sysmetric[] =
 	{

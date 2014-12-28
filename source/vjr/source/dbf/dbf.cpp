@@ -914,9 +914,48 @@
 		return(-1);
 	}
 
+
+
+
+//////////
+//
+// Note:	This basically duplicates the JUSTSTEM() logic, except that if the JUSTSTEM() name is
+//			already in use, then it appends a SYS(2015), iterating up until it's not one in use.
+//
+//////
 	SVariable* iDbf_getAlias_fromPathname(SVariable* varPathname)
 	{
-		return(NULL);
+		SVariable* stem;
+
+
+		//////////
+		// Grab just the stem
+		//////
+			stem = 0;
+			if (varPathname)
+			{
+				// Grab the stem part of the name
+				stem = function_juststem(varPathname);
+			}
+
+
+		//////////
+		// So long as there is an alias of this name, append a 6-digit integer
+		//////
+			if (stem)
+			{
+				// Make sure it doesn't exist
+
+			} else {
+				// Just use SYS(2015)
+				stem = function_sys2015(0, 0);
+			}
+
+
+		//////////
+		// Return a SYS(2015) variable
+		//////
+			return(NULL);
 	}
 
 

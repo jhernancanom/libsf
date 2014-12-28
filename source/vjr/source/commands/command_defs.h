@@ -182,6 +182,8 @@ struct SVariable;
 	SVariable*			function_strtranc							(SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount);
 	SVariable*			ifunction_strtranCommon						(SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount, bool tlCaseSensitive);
 	SVariable*			function_stuff								(SVariable* varOriginalString, SVariable* varStartPos, SVariable* varNumToRemove, SVariable* varStuffString);
+	SVariable*			function_sys2015							(u32 tnPrefixWidth, u32 tnPostfixWidth);
+	SVariable*			function_sys								(SVariable* varIndex, SVariable* varP1, SVariable* varP2, SVariable* varP3, SVariable* varP4, SVariable* varP5, SVariable* varP6);
 	SVariable*			function_sysmetric							(SVariable* varIndex);
 	SVariable*			function_transform							(SVariable* varVariable, SVariable* varFormat);
 	SVariable*			function_upper								(SVariable* varString);
@@ -259,6 +261,7 @@ struct SVariable;
 			SSourceLightData*	data;
 	};
 
+// TODO:  Need to add a compile-time test to verify that the maximum parameter count is representative of the function definition's actual parameters because the function is referenced through the union struct above in SFunctionData
 	SFunctionData gsKnownFunctions[] = {
 		//							Return										Parameters		Parameter
 		//	iCode					Count		Function Algorithm				Required		Maximum Count	SourceLight data
@@ -303,6 +306,7 @@ struct SVariable;
 		{	_ICODE_STRTRAN,			1,			(uptr)&function_strtran,		2,				4,				&gsSourceLight_strtran[0]		},
 		{	_ICODE_STRTRANC,		1,			(uptr)&function_strtranc,		2,				4,				&gsSourceLight_strtranc[0]		},
 		{	_ICODE_STUFF,			1,			(uptr)&function_stuff,			3,				4,				&gsSourceLight_stuff[0]			},
+		{	_ICODE_SYS,				1,			(uptr)&function_sys,			1,				7,				&gsSourceLight_sys[0]			},
 		{	_ICODE_SYSMETRIC,		1,			(uptr)&function_sysmetric,		1,				1,				&gsSourceLight_sysmetric[0]		},
 		{	_ICODE_TRANSFORM,		1,			(uptr)&function_transform,		1,				2,				&gsSourceLight_transform[0]		},
 		{	_ICODE_TRIM,			1,			(uptr)&function_rtrim,			1,				1,				&gsSourceLight_rtrim[0]			},

@@ -4669,6 +4669,105 @@ debug_break;
 
 //////////
 //
+// Called to create a character variable using the indicated base/radix
+//
+//////
+	SVariable* iVariable_createByRadix(u64 tnValue, u64 tnBase, u32 tnPrefixChars, u32 tnPostfixChars)
+	{
+		s32			lnI;
+		SVariable*	result;
+		cu8*		base;
+		u8			buffer[256];
+
+
+		//////////
+		// Make sure our environment is sane
+		//////
+			if (tnBase >= 2 && tnBase <= 256)
+			{
+				//////////
+				// Based on the base, we use different characters for the conversion
+				//////
+					if (tnBase <= 10)
+					{
+						// Force into the range 0..9
+						base = &cgcBase10[0];
+
+					} else if (tnBase == 26) {
+						// Force into the range A..Z
+						base = &cgcBase26[0];
+
+					} else if (tnBase <= 36) {
+						// Force into the range 0..9, A..Z
+						base = &cgcBase36[0];
+
+					} else if (tnBase == 52) {
+						// Force into the range A..Z, a..z
+						base = &cgcBase52[0];
+
+					} else if (tnBase <= 62) {
+						// Force into the range 0..9, A..Z, a..z
+						base = &cgcBase62[0];
+
+					} else {
+						// Use ASCII and extended ASCII characters
+						base = &cgcBase256[0];
+					}
+
+				//////////
+				// Extract out the radix "digits"
+				//////
+					for (lnI = 0, memset(buffer, 0, sizeof(buffer)); tnValue != 0; lnI++)
+					{
+						// Store this digit
+						buffer[lnI] = base[(u32)(tnValue % tnBase)];
+
+						// Divide it out
+						tnValue /= tnBase;
+					}
+
+
+				//////////
+				// If the value was 0, force a zero in there
+				//////
+					if (lnI == 0)
+					{
+						++lnI;
+						buffer[0] = '0';
+					}
+
+
+				//////////
+				// Create the variable
+				//////
+					result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, buffer, lnI + tnPrefixChars + tnPostfixChars);
+					if (result)
+					{
+						// Reset everything
+						memset(result->value.data_s8, 32, result->value.length);
+
+						// Copy the radix content to its proper location in the prefix and postfix areas
+						memcpy(result->value.data_s8 + tnPrefixChars, buffer, lnI);
+					}
+
+
+			} else {
+				// Nope.  No, sir.  Uh uh.
+				result = NULL;
+			}
+
+
+		//////////
+		// Indicate our result
+		//////
+			return(result);
+	}
+
+
+
+
+//////////
+//
 // Called to search the chain and find the indicated variable name.
 //
 // Note:  VJr does not require variables have names.  Also, their names can be duplicated.

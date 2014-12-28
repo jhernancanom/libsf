@@ -198,6 +198,7 @@ struct SVariable;
 	SVariable*				iVariable_createAndPopulate					(s32 tnVarType, SDatum* datum);
 	SVariable*				iVariable_createAndPopulate					(s32 tnVarType, u8*  tcData, u32 tnDataLength);
 	SVariable*				iVariable_createAndPopulate					(s32 tnVarType, cu8* tcData, u32 tnDataLength);
+	SVariable*				iVariable_createByRadix						(u64 tnValue, u64 tnBase, u32 tnPrefixChars, u32 tnPostfixChars);
 	SVariable*				iVariable_searchForName						(SVariable* varRoot, s8* tcVarName, u32 tnVarNameLength, SComp* comp);
 	bool					iVariable_setDefaultVariableValue			(s32 tnVarType);
 	void					iVariable_createDefaultValues				(void);
