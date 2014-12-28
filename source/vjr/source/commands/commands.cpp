@@ -4094,8 +4094,8 @@ clean_exit:
 			return(result);
 	}
 
-	// Note:  Helper function.  function_sys2015() is a shortcut function for accessing the oft-used get-unique-procedure-name feature
-	SVariable* function_sys2015(u32 tnPrefixWidth, u32 tnPostfixWidth)
+	// Note:  Helper function.  iFunction_sys2015() is a shortcut function for accessing the oft-used get-unique-procedure-name feature
+	SVariable* iFunction_sys2015(u32 tnPrefixWidth, u32 tnPostfixWidth)
 	{
 // TODO:  Untested function, breakpoint and examine
 debug_break;
@@ -5215,6 +5215,8 @@ debug_break;
 		bool		error;
 
 
+// TODO:  Untested function, breakpoint and examine
+debug_break;
 		//////////
 		// Initialize
 		//////
