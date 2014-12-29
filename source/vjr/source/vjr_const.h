@@ -105,6 +105,7 @@ typedef SEM**		SEMpp;
 	#define iVariable_isTypeCurrency(var)			(var->varType == _VAR_TYPE_CURRENCY)
 	#define iVariable_isTypeBigInteger(var)			(var->varType == _VAR_TYPE_BI)
 	#define iVariable_isTypeBigFloatingPoint(var)	(var->varType == _VAR_TYPE_BFP)
+	#define iVariable_isEmpty(var)					(!var->value.data || var->value.length <= 0)
 
 	#define isVisible(obj)							(iObjProp_get_logical_direct(obj, _INDEX_VISIBLE)  != _LOGICAL_FALSE)
 	#define isEnabled(obj)							(iObjProp_get_logical_direct(obj, _INDEX_ENABLED)  != _LOGICAL_FALSE)

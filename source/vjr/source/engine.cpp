@@ -136,7 +136,7 @@
 							if (compNext->iCat == _ICAT_FUNCTION)
 							{
 								// It is something like "? func(x)"
-								var = iEngine_getFunctionResult(compNext, llManufactured);
+								var = iEngine_getFunctionResult(compNext);
 								if (!var)
 								{
 									// Unknown function, or parameters were not correct
@@ -148,7 +148,7 @@
 
 							} else if (compNext->iCat == _ICAT_GENERIC) {
 								// It is something like "? k" or "? 29"
-								var = iEngine_getVariableFromComponent(compNext, llManufactured);
+								var = iEngine_getVariableFromComponent(compNext, &llManufactured);
 								if (!var)
 								{
 									// Unknown parameter
@@ -182,7 +182,7 @@
 							if (compThird->iCat == _ICAT_FUNCTION)
 							{
 								// It is something like "? func(x)"
-								var = iEngine_getFunctionResult(compThird, llManufactured);
+								var = iEngine_getFunctionResult(compThird);
 								if (!var)
 								{
 									// Unknown function, or parameters were not correct
@@ -194,7 +194,7 @@
 
 							} else if (compThird->iCat == _ICAT_GENERIC) {
 								// It is something like "x = y" or "x = 29"
-								if (!(var = iEngine_getVariableFromComponent(compThird, llManufactured)))
+								if (!(var = iEngine_getVariableFromComponent(compThird, &llManufactured)))
 								{
 									// Unknown parameter
 									iError_report(cgcUnrecognizedParameter);
@@ -324,7 +324,7 @@
 // reference.
 //
 //////
-	SVariable* iEngine_getVariableFromComponent(SComp* comp, bool& tlManufactured)
+	SVariable* iEngine_getVariableFromComponent(SComp* comp, bool* tlManufactured)
 	{
 		SVariable*	var;
 		SVariable*	varCopy;
@@ -336,7 +336,15 @@
 //        We need to pass something here so it can look to a function definition for parameters, locals, return variables
 //////////
 		// Make sure our environment is sane
-		tlManufactured = false;
+		if (!tlManufactured)
+		{
+			// This error should only exist during development when something is left off by the developer
+			debug_break;
+			return(NULL);
+		}
+
+		// Initially lower the flag
+		*tlManufactured = false;
 		if (comp)
 		{
 			switch (comp->iCode)
@@ -350,7 +358,7 @@
 					//////////
 					// Create and populate our output variable
 					//////
-						tlManufactured = true;
+						*tlManufactured = true;
 						if (value >= (s64)_s32_min && value <= (s64)_s32_max)
 						{
 							// Store as 32-bits
@@ -376,7 +384,7 @@
 				case _ICODE_UP:
 					// It's a .T. or some equivalent
 					var					= iVariable_create(_VAR_TYPE_LOGICAL, NULL);
-					tlManufactured		= true;
+					*tlManufactured		= true;
 					var->value.data[0]	= _LOGICAL_TRUE;
 					var->compRelated	= comp;
 					return(var);
@@ -387,7 +395,7 @@
 				case _ICODE_DOWN:
 					// It's a .F. or some equivalent
 					var					= iVariable_create(_VAR_TYPE_LOGICAL, NULL);
-					tlManufactured		= true;
+					*tlManufactured		= true;
 					var->value.data[0]	= _LOGICAL_FALSE;
 					var->compRelated	= comp;
 					return(var);
@@ -396,7 +404,7 @@
 				case _ICODE_EXTRA:
 					// It's a .X.
 					var					= iVariable_create(_VAR_TYPE_LOGICAL, NULL);
-					tlManufactured		= true;
+					*tlManufactured		= true;
 					var->value.data[0]	= _LOGICALX_EXTRA;
 					var->compRelated	= comp;
 					return(var);
@@ -405,7 +413,7 @@
 				case _ICODE_YET_ANOTHER:
 					// It's a .Y.
 					var					= iVariable_create(_VAR_TYPE_LOGICAL, NULL);
-					tlManufactured		= true;
+					*tlManufactured		= true;
 					var->value.data[0]	= _LOGICALX_YET_ANOTHER;
 					var->compRelated	= comp;
 					return(var);
@@ -414,7 +422,7 @@
 				case _ICODE_ZATS_ALL_FOLKS:
 					// It's a .X.
 					var					= iVariable_create(_VAR_TYPE_LOGICAL, NULL);
-					tlManufactured		= true;
+					*tlManufactured		= true;
 					var->value.data[0]	= _LOGICALX_ZATS_ALL_FOLKS;
 					var->compRelated	= comp;
 					return(var);
@@ -484,7 +492,7 @@
 					// Create our output variable
 					//////
 						var				= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
-						tlManufactured	= true;
+						*tlManufactured	= true;
 
 
 					//////////
@@ -517,7 +525,7 @@
 // Called to find the function, execute it, and return the result
 //
 //////
-	SVariable* iEngine_getFunctionResult(SComp* comp, bool& tlManufactured)
+	SVariable* iEngine_getFunctionResult(SComp* comp)
 	{
 		u32				lnParamsFound;
 		SFunctionData*	lfl;
@@ -689,13 +697,13 @@
 			// Derive whatever this is as a variable
 			//////
 /*SVariable* var;*/
-				     if (lnParamCount == 1)		{	/*var =*/ (*p1 = iEngine_getVariableFromComponent(comp, llManufactured));		}
-				else if (lnParamCount == 2)		{	/*var =*/ (*p2 = iEngine_getVariableFromComponent(comp, llManufactured));		}
-				else if (lnParamCount == 3)		{	/*var =*/ (*p3 = iEngine_getVariableFromComponent(comp, llManufactured));		}
-				else if (lnParamCount == 4)		{	/*var =*/ (*p4 = iEngine_getVariableFromComponent(comp, llManufactured));		}
-				else if (lnParamCount == 5)		{	/*var =*/ (*p5 = iEngine_getVariableFromComponent(comp, llManufactured));		}
-				else if (lnParamCount == 6)		{	/*var =*/ (*p6 = iEngine_getVariableFromComponent(comp, llManufactured));		}
-				else if (lnParamCount == 7)		{	/*var =*/ (*p7 = iEngine_getVariableFromComponent(comp, llManufactured));		}
+				     if (lnParamCount == 1)		{	/*var =*/ (*p1 = iEngine_getVariableFromComponent(comp, &llManufactured));		}
+				else if (lnParamCount == 2)		{	/*var =*/ (*p2 = iEngine_getVariableFromComponent(comp, &llManufactured));		}
+				else if (lnParamCount == 3)		{	/*var =*/ (*p3 = iEngine_getVariableFromComponent(comp, &llManufactured));		}
+				else if (lnParamCount == 4)		{	/*var =*/ (*p4 = iEngine_getVariableFromComponent(comp, &llManufactured));		}
+				else if (lnParamCount == 5)		{	/*var =*/ (*p5 = iEngine_getVariableFromComponent(comp, &llManufactured));		}
+				else if (lnParamCount == 6)		{	/*var =*/ (*p6 = iEngine_getVariableFromComponent(comp, &llManufactured));		}
+				else if (lnParamCount == 7)		{	/*var =*/ (*p7 = iEngine_getVariableFromComponent(comp, &llManufactured));		}
 
 
 			// Move to next component

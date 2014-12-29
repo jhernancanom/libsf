@@ -156,7 +156,7 @@ struct SVariable;
 	SVariable*			function_justext							(SVariable* varString);
 	SVariable*			function_justfname							(SVariable* varString);
 	SVariable*			function_justpath							(SVariable* varString);
-	SVariable*			function_juststem							(SVariable* varString);
+	SVariable*			function_juststem							(SVariable* varString, SVariable* varPostfixWidth);
 	SVariable*			function_left								(SVariable* varString, SVariable* varCount);
 	SVariable*			function_len								(SVariable* varString);
 	SVariable*			function_lower								(SVariable* varString);
@@ -282,7 +282,7 @@ struct SVariable;
 		{	_ICODE_JUSTEXT,			1,			(uptr)&function_justext,		1,				1,				&gsSourceLight_justext[0]		},
 		{	_ICODE_JUSTFNAME,		1,			(uptr)&function_justfname,		1,				1,				&gsSourceLight_justfname[0]		},
 		{	_ICODE_JUSTPATH,		1,			(uptr)&function_justpath,		1,				1,				&gsSourceLight_justpath[0]		},
-		{	_ICODE_JUSTSTEM,		1,			(uptr)&function_juststem,		1,				1,				&gsSourceLight_juststem[0]		},
+		{	_ICODE_JUSTSTEM,		1,			(uptr)&function_juststem,		1,				2,				&gsSourceLight_juststem[0]		},
 		{	_ICODE_LEFT,			1,			(uptr)&function_left,			2,				2,				&gsSourceLight_left[0]			},
 		{	_ICODE_LEN,				1,			(uptr)&function_len,			1,				1,				&gsSourceLight_len[0]			},
 		{	_ICODE_LOWER,			1,			(uptr)&function_lower,			1,				1,				&gsSourceLight_lower[0]			},

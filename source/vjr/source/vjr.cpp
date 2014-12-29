@@ -161,6 +161,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 //////
 	void iVjr_init(HACCEL* hAccelTable)
 	{
+		s32			lnSix;
 		RECT		lrc;
 		u8			logBuffer[256];
 		SBitmap*	bmp;
@@ -183,10 +184,11 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iVariable_createDefaultValues();
 		iVariable_createPropsMaster();
 		varConstant_space		= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgc_spaceText, 1);
-		varEmptyString			= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, (u8*)NULL, 0);
+		varEmptyString			= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, (cu8*)NULL, 0);
 		var2000Spaces			= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
-		varTrue					= iVariable_createAndPopulate(_VAR_TYPE_LOGICAL, (u8*)NULL, 0);
-		varFalse				= iVariable_createAndPopulate(_VAR_TYPE_LOGICAL, (u8*)NULL, 0);
+		varTrue					= iVariable_createAndPopulate(_VAR_TYPE_LOGICAL, (cu8*)NULL, 0);
+		varFalse				= iVariable_createAndPopulate(_VAR_TYPE_LOGICAL, (cu8*)NULL, 0);
+		varSix					= iVariable_createAndPopulate(_VAR_TYPE_S32, (cu8*)&lnSix, sizeof(lnSix));
 
 		// 2000 blank spaces
 		iDatum_allocateSpace(&var2000Spaces->value, 2000);

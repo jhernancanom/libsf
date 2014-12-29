@@ -139,8 +139,8 @@
 //////
 	bool					iEngine_executeStandaloneCommand		(SLine* line);
 	SComp*					iEngine_parseSourceCodeLine				(SLine* line);
-	SVariable*				iEngine_getVariableFromComponent		(SComp* comp, bool& tlManufactured);
-	SVariable*				iEngine_getFunctionResult				(SComp* comp, bool& tlManufactured);
+	SVariable*				iEngine_getVariableFromComponent		(SComp* comp, bool* tlManufactured);
+	SVariable*				iEngine_getFunctionResult				(SComp* comp);
 	void					iEngine_executeSetter					(cs8* name, SVariable* varOld, SVariable* varNew);
 	void					iEngine_executeSetter					(s8*  name, SVariable* varOld, SVariable* varNew);
 	void					iEngine_error							(u32 tnErrorNumber, SVariable* varRelated);

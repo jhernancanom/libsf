@@ -925,7 +925,9 @@
 //////
 	SVariable* iDbf_getAlias_fromPathname(SVariable* varPathname)
 	{
-		SVariable* stem;
+		s32			lnAppendValue;
+		bool		llAppended;
+		SVariable*	varAlias;
 
 
 // TODO:  Untested function, breakpoint and examine
@@ -933,32 +935,52 @@ debug_break;
 		//////////
 		// Grab just the stem
 		//////
-			stem = 0;
+			varAlias = NULL;
 			if (varPathname)
 			{
 				// Grab the stem part of the name
-				stem = function_juststem(varPathname);
+				varAlias = function_juststem(varPathname, varSix);
+
+				// If it's invalid, or unreachable, then just use a default alias name
+				if (!iVariable_isTypeCharacter(varAlias) || iVariable_isEmpty(varAlias))
+				{
+					// Allocate with an extra six characters afterward
+					varAlias = iFunction_sys2015(0, 6);
+
+					// Reduce the length by the trailing 6 characters if need be
+					if (varAlias)
+						varAlias->value.length -= 6;
+				}
 			}
 
 
 		//////////
 		// So long as there is an alias of this name, append a 6-digit integer
 		//////
-			if (stem)
+			if (varAlias)
 			{
-				// Make sure it doesn't exist
-working here...
+				// Make sure the alias name doesn't exist
+				llAppended		= false;
+				lnAppendValue	= 1;
+				while (iDbf_getWorkArea_byAlias(varAlias))
+				{
+					// Append a six-digit number onto the alias name
+					if (!llAppended)
+					{
+						// Add on the space for the 
+					}
+				}
 
 			} else {
 				// Just use SYS(2015)
-				stem = iFunction_sys2015(0, 0);
+				varAlias = iFunction_sys2015(0, 0);
 			}
 
 
 		//////////
-		// Return a SYS(2015) variable
+		// Indicate our status
 		//////
-			return(NULL);
+			return(varAlias);
 	}
 
 

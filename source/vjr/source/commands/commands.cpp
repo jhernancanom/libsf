@@ -1847,14 +1847,17 @@
 //////
 // Parameters:
 //		varString		-- Character, the input pathname
+//		varPostfixWidth	-- (optional) Numeric, the number of extra spaces to postfix pad the juststem() result with
 //////
 // Returns:
 //		Character		-- The file name portion of the pathname ("sample" of "c:\path\to\sample.txt")
 //////
-	SVariable* function_juststem(SVariable* varString)
+	SVariable* function_juststem(SVariable* varString, SVariable* varPostfixWidth)
 	{
-		s32			lnI, lnLength;
+		s32			lnI, lnLength, lnPostfixWidth;
 		u8*			ptr;
+		bool		error;
+		u32			errorNum;
         SVariable*	result;
 
 
@@ -1865,6 +1868,25 @@
 			{
 				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varString->compRelated);
 				return(NULL);
+			}
+
+
+		//////////
+		// If parameter 2 was specified, it must be numeric
+		//////
+			if (varPostfixWidth)
+			{
+				if (!iVariable_isValid(varPostfixWidth) || !iVariable_isTypeNumeric(varPostfixWidth))
+				{
+					iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varPostfixWidth->compRelated);
+					return(NULL);
+				}
+				// Grab the postfix width
+				lnPostfixWidth = iiVariable_getAs_s32(varPostfixWidth, false, &error, &errorNum);
+
+			} else {
+				// No postfix
+				lnPostfixWidth = 0;
 			}
 
 
@@ -1904,7 +1926,16 @@
 				}
 
 				// Copy the stem portion
-				iDatum_duplicate(&result->value, ptr, lnLength);
+				iDatum_allocateSpace(&result->value, lnLength + lnPostfixWidth);
+				if (result->value.data && result->value.length == lnLength + lnPostfixWidth)
+				{
+					// Copy the ptr content
+					memcpy(result->value.data_s8, ptr, lnLength);
+
+					// Postfix width is populated with spaces
+					if (lnPostfixWidth != 0)
+						memset(result->value.data_s8 + lnLength, 32, lnPostfixWidth);
+				}
 			}
 
 
@@ -5337,6 +5368,8 @@ debug_break;
 			if (compIn)
 			{
 				// Get what comes after the IN
+				comp3 = NULL;
+				comp4 = NULL;
 				if ((comp2 = iComps_getNth(compIn, 1)) && (comp3 = iComps_getNth(comp2, 1)) && (comp4 = iComps_getNth(comp3, 1)))
 				{
 					// Placeholder to allow execution up through as far as it will go
@@ -5375,11 +5408,11 @@ debug_break;
 					// Once we get here, we know we have SELECT(...something
 
 					// They've specified USE IN SELECT(something)
-					varInXyz = iEngine_getVariableFromComponent(comp3, llManufacturedAliasName);
+					varInXyz = iEngine_getVariableFromComponent(comp3, &llManufacturedAliasName);
 
 				} else {
 					// They must've specified a number or alias name
-					varInXyz = iEngine_getVariableFromComponent(compIn, llManufacturedAliasName);
+					varInXyz = iEngine_getVariableFromComponent(compIn, &llManufacturedAliasName);
 				}
 			}
 			// Go ahead and point after it
@@ -5401,10 +5434,10 @@ debug_break;
 						if (error)	{ iError_reportByNumber(errorNum, compIn); return; }
 
 					} else if (iVariable_isTypeCharacter(varInXyz)) {
-						// They specified an alias name
+						// They specified something character (could be a work area letter, or alias)
 						if (iDbf_isWorkAreaLetter(varInXyz))
 						{
-							// Grab the work area letter into its number
+							// Work area letter
 							lnWorkArea = (s32)iUpperCase(varInXyz->value.data_s8[0]) - (s32)'A' + 1;
 
 						} else {
@@ -5415,7 +5448,7 @@ debug_break;
 						// Did we get a valid work area?
 						if (lnWorkArea < 0)
 						{
-							iError_reportByNumber(_ERROR_ALIAS_NOT_FOUND, compIn);
+							iError_reportByNumber(_ERROR_ALIAS_NOT_FOUND, varInXyz->compRelated);
 							goto clean_exit;
 						}
 						// If we get here, we have our work area number
@@ -5433,7 +5466,7 @@ debug_break;
 
 
 		//////////
-		// USE IN... was specified?
+		// Was "USE IN..." specified?
 		//////
 			// Note:  Right now, compUse is already pointing to the thing after "USE"
 			if (compUse->iCode == _ICODE_IN)
@@ -5447,8 +5480,8 @@ debug_break;
 		//////////
 		// Get the table name
 		//////
-			varTableName = iEngine_getVariableFromComponent(compUse, llManufacturedTableName);
-			if (!varTableName)
+			varTableName = iEngine_getVariableFromComponent(compUse, &llManufacturedTableName);
+			if (!varTableName || !iVariable_isTypeCharacter(varTableName))
 			{
 				iError_reportByNumber(_ERROR_UNRECOGNIZED_PARAMETER, compUse);
 				goto clean_exit;
@@ -5461,7 +5494,7 @@ debug_break;
 			if (compAlias)
 			{
 				// They've specified an alias
-				varAliasName	= iEngine_getVariableFromComponent((SComp*)compAlias->ll.next, llManufacturedTableName);
+				varAliasName	= iEngine_getVariableFromComponent((SComp*)compAlias->ll.next, &llManufacturedTableName);
 				lnWorkAreaAlias	= iDbf_getWorkArea_byAlias(varAliasName);
 				if (lnWorkAreaAlias > 0)
 				{
