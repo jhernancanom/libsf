@@ -135,6 +135,7 @@ struct SFieldRecord2;
 
 
 	// DBF functions
+	uptr				iDbf_open										(SVariable* table, SVariable* alias);
 	uptr				iDbf_open										(s8* table, s8* alias);
 	uptr				iDbf_openRemote									(s8* connString);
 	uptr				iDbf_cacheAllRowData							(u32 tnWorkArea);
@@ -142,11 +143,12 @@ struct SFieldRecord2;
 	uptr				iDbf_hasCdx										(u32 tnWorkArea);
 	sptr				iDbf_isWorkAreaUsed								(u32 tnWorkArea);
 	bool				iDbf_isWorkAreaLetter							(SVariable* var);
-	sptr				iDbf_getWorkArea_current						(void);
-	sptr				iDbf_getWorkArea_lowestFree						(void);
-	sptr				iDbf_getWorkArea_highestFree					(void);
-	sptr				iDbf_getWorkArea_byAlias						(SVariable* varAlias);
-	SVariable*			iDbf_getAlias_fromPathname						(SVariable* varPathname);
+	sptr				iDbf_set_workArea_current						(u32 tnWorkArea);
+	sptr				iDbf_get_workArea_current						(void);
+	sptr				iDbf_get_workArea_lowestFree					(void);
+	sptr				iDbf_get_workArea_highestFree					(void);
+	sptr				iDbf_get_workArea_byAlias						(SVariable* varAlias);
+	SVariable*			iDbf_get_alias_fromPathname						(SVariable* varPathname);
 
 	sptr				iDbf_gotoRecord									(u32 tnWorkArea, s32 recordNumber);
 	uptr				iDbf_writeChanges								(u32 tnWorkArea);

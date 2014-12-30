@@ -136,7 +136,7 @@
 							if (compNext->iCat == _ICAT_FUNCTION)
 							{
 								// It is something like "? func(x)"
-								var = iEngine_getFunctionResult(compNext);
+								var = iEngine_get_functionResult(compNext);
 								if (!var)
 								{
 									// Unknown function, or parameters were not correct
@@ -148,7 +148,7 @@
 
 							} else if (compNext->iCat == _ICAT_GENERIC) {
 								// It is something like "? k" or "? 29"
-								var = iEngine_getVariableFromComponent(compNext, &llManufactured);
+								var = iEngine_get_variableName_fromComponent(compNext, &llManufactured);
 								if (!var)
 								{
 									// Unknown parameter
@@ -182,7 +182,7 @@
 							if (compThird->iCat == _ICAT_FUNCTION)
 							{
 								// It is something like "? func(x)"
-								var = iEngine_getFunctionResult(compThird);
+								var = iEngine_get_functionResult(compThird);
 								if (!var)
 								{
 									// Unknown function, or parameters were not correct
@@ -194,7 +194,7 @@
 
 							} else if (compThird->iCat == _ICAT_GENERIC) {
 								// It is something like "x = y" or "x = 29"
-								if (!(var = iEngine_getVariableFromComponent(compThird, &llManufactured)))
+								if (!(var = iEngine_get_variableName_fromComponent(compThird, &llManufactured)))
 								{
 									// Unknown parameter
 									iError_report(cgcUnrecognizedParameter);
@@ -324,7 +324,7 @@
 // reference.
 //
 //////
-	SVariable* iEngine_getVariableFromComponent(SComp* comp, bool* tlManufactured)
+	SVariable* iEngine_get_variableName_fromComponent(SComp* comp, bool* tlManufactured)
 	{
 		SVariable*	var;
 		SVariable*	varCopy;
@@ -522,10 +522,48 @@
 
 //////////
 //
+// Gets the contiguous components, comprised of every consecutive component hereafter,
+// or the quoted content.
+//
+//////
+	SVariable* iEngine_get_contiguousComponents(SComp* comp, bool* tlManufactured)
+	{
+		SVariable* varPathname;
+
+
+		// Make sure our environment is sane
+		varPathname = NULL;
+		if (comp && comp->line && comp->line->sourceCode && comp->line->sourceCode->data)
+		{
+			// Find out what the component is
+			switch (comp->iCode)
+			{
+				case _ICODE_DOUBLE_QUOTED_TEXT:
+				case _ICODE_SINGLE_QUOTED_TEXT:
+					// By definition, quoted content is its own independent thing
+					varPathname = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, comp->line->sourceCode->data_u8 + comp->start, comp->length);
+					break;
+
+				default:
+					// Get every contiguous component
+					varPathname	= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, comp->line->sourceCode->data_u8 + comp->start, iComps_getContiguousLength(comp));
+					break;
+			}
+		}
+
+		// Indicate where we are
+		return(varPathname);
+	}
+
+
+
+
+//////////
+//
 // Called to find the function, execute it, and return the result
 //
 //////
-	SVariable* iEngine_getFunctionResult(SComp* comp)
+	SVariable* iEngine_get_functionResult(SComp* comp)
 	{
 		u32				lnParamsFound;
 		SFunctionData*	lfl;
@@ -697,13 +735,13 @@
 			// Derive whatever this is as a variable
 			//////
 /*SVariable* var;*/
-				     if (lnParamCount == 1)		{	/*var =*/ (*p1 = iEngine_getVariableFromComponent(comp, &llManufactured));		}
-				else if (lnParamCount == 2)		{	/*var =*/ (*p2 = iEngine_getVariableFromComponent(comp, &llManufactured));		}
-				else if (lnParamCount == 3)		{	/*var =*/ (*p3 = iEngine_getVariableFromComponent(comp, &llManufactured));		}
-				else if (lnParamCount == 4)		{	/*var =*/ (*p4 = iEngine_getVariableFromComponent(comp, &llManufactured));		}
-				else if (lnParamCount == 5)		{	/*var =*/ (*p5 = iEngine_getVariableFromComponent(comp, &llManufactured));		}
-				else if (lnParamCount == 6)		{	/*var =*/ (*p6 = iEngine_getVariableFromComponent(comp, &llManufactured));		}
-				else if (lnParamCount == 7)		{	/*var =*/ (*p7 = iEngine_getVariableFromComponent(comp, &llManufactured));		}
+				     if (lnParamCount == 1)		{	/*var =*/ (*p1 = iEngine_get_variableName_fromComponent(comp, &llManufactured));		}
+				else if (lnParamCount == 2)		{	/*var =*/ (*p2 = iEngine_get_variableName_fromComponent(comp, &llManufactured));		}
+				else if (lnParamCount == 3)		{	/*var =*/ (*p3 = iEngine_get_variableName_fromComponent(comp, &llManufactured));		}
+				else if (lnParamCount == 4)		{	/*var =*/ (*p4 = iEngine_get_variableName_fromComponent(comp, &llManufactured));		}
+				else if (lnParamCount == 5)		{	/*var =*/ (*p5 = iEngine_get_variableName_fromComponent(comp, &llManufactured));		}
+				else if (lnParamCount == 6)		{	/*var =*/ (*p6 = iEngine_get_variableName_fromComponent(comp, &llManufactured));		}
+				else if (lnParamCount == 7)		{	/*var =*/ (*p7 = iEngine_get_variableName_fromComponent(comp, &llManufactured));		}
 
 
 			// Move to next component

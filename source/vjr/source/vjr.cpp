@@ -188,6 +188,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		var2000Spaces			= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 		varTrue					= iVariable_createAndPopulate(_VAR_TYPE_LOGICAL, (cu8*)NULL, 0);
 		varFalse				= iVariable_createAndPopulate(_VAR_TYPE_LOGICAL, (cu8*)NULL, 0);
+		lnSix					= 6;
 		varSix					= iVariable_createAndPopulate(_VAR_TYPE_S32, (cu8*)&lnSix, sizeof(lnSix));
 
 		// 2000 blank spaces

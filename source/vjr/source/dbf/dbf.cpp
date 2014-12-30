@@ -175,9 +175,35 @@
 //	or -3 if DBC is invalid
 //
 /////
+	uptr iDbf_open(SVariable* table, SVariable* alias)
+	{
+		s8 tableBuffer[_MAX_PATH + 1];
+		s8 aliasBuffer[_MAX_PATH + 1];
+
+
+		// Make sure our environment is sane
+		if (table && alias && table->value.data && alias->value.data && table->value.length >= 1 && alias->value.length >= 1)
+		{
+			// Initialize
+			memset(tableBuffer, 0, sizeof(tableBuffer));
+			memset(aliasBuffer, 0, sizeof(aliasBuffer));
+
+			// Copy
+			memcpy(tableBuffer, table->value.data_s8, min(_MAX_PATH, table->value.length));
+			memcpy(aliasBuffer, alias->value.data_s8, min(_MAX_PATH, alias->value.length));
+
+			// Open
+			return(iDbf_open(tableBuffer, aliasBuffer));
+		}
+
+		// If we get here, something was not provided properly
+		return(-1);
+	}
+
 	uptr iDbf_open(s8 *table, s8 *alias)
 	{
-		u32				lnI, lnJ, lnK, lShareFlag, numread, lStructure_size;
+		s32				lnI;
+		u32				lnJ, lnK, lShareFlag, numread, lStructure_size;
 		bool			llDbcIsValid;
 		SFieldRecord1*	lfrPtr;
 		SFieldRecord2*	lfr2Ptr;
@@ -186,7 +212,7 @@
 		// Scan through all of the slots and find the first empty one
 		// Began ignoring the 0 slot, because 0 is used as a cue/record for some applications.
 		// Valid handles will be 1+
-		for (lnI=1; lnI<_MAX_DBF_SLOTS; lnI++)
+		for (lnI = gnDbf_currentWorkArea; lnI <= gnDbf_currentWorkArea; lnI++)
 		{
 			if (gsWorkArea[lnI].isUsed == _NO)
 			{
@@ -850,12 +876,22 @@
 // Called to obtain a work area.
 //
 //////
-	sptr iDbf_getWorkArea_current(void)
+	sptr iDbf_set_workArea_current(u32 tnWorkArea)
+	{
+		// Update if valid
+		if (tnWorkArea < _MAX_DBF_SLOTS)
+			gnDbf_currentWorkArea = tnWorkArea;
+
+		// Indicate our (potentially new) current work area
+		return(gnDbf_currentWorkArea);
+	}
+
+	sptr iDbf_get_workArea_current(void)
 	{
 		return(gnDbf_currentWorkArea);
 	}
 
-	sptr iDbf_getWorkArea_lowestFree(void)
+	sptr iDbf_get_workArea_lowestFree(void)
 	{
 		s32 lnI;
 
@@ -872,7 +908,7 @@
 		return(-1);
 	}
 
-	sptr iDbf_getWorkArea_highestFree(void)
+	sptr iDbf_get_workArea_highestFree(void)
 	{
 		s32 lnI;
 
@@ -889,7 +925,7 @@
 		return(lnI);
 	}
 
-	sptr iDbf_getWorkArea_byAlias(SVariable* varAlias)
+	sptr iDbf_get_workArea_byAlias(SVariable* varAlias)
 	{
 		s32 lnI;
 
@@ -923,15 +959,13 @@
 //			already in use, then it appends a SYS(2015), iterating up until it's not one in use.
 //
 //////
-	SVariable* iDbf_getAlias_fromPathname(SVariable* varPathname)
+	SVariable* iDbf_get_alias_fromPathname(SVariable* varPathname)
 	{
-		s32			lnAppendValue;
-		bool		llAppended;
+		u32			lnAppendValue;
+		bool		llAppendedSix;
 		SVariable*	varAlias;
 
 
-// TODO:  Untested function, breakpoint and examine
-debug_break;
 		//////////
 		// Grab just the stem
 		//////
@@ -946,10 +980,12 @@ debug_break;
 				{
 					// Allocate with an extra six characters afterward
 					varAlias = iFunction_sys2015(0, 6);
+				}
 
+				if (iVariable_isValid(varAlias) && iVariable_isTypeCharacter(varAlias))
+				{
 					// Reduce the length by the trailing 6 characters if need be
-					if (varAlias)
-						varAlias->value.length -= 6;
+					varAlias->value.length -= 6;
 				}
 			}
 
@@ -960,15 +996,20 @@ debug_break;
 			if (varAlias)
 			{
 				// Make sure the alias name doesn't exist
-				llAppended		= false;
+				llAppendedSix	= false;
 				lnAppendValue	= 1;
-				while (iDbf_getWorkArea_byAlias(varAlias))
+				while (iDbf_get_workArea_byAlias(varAlias) >= 0)
 				{
 					// Append a six-digit number onto the alias name
-					if (!llAppended)
+					if (!llAppendedSix)
 					{
 						// Add on the space for the 
+						varAlias->value.length	+= 6;
+						llAppendedSix			= true;
 					}
+
+					// Store the current iteration of the appended value
+					sprintf(varAlias->value.data_s8 + varAlias->value.length - 6, "_%05u", lnAppendValue++);
 				}
 
 			} else {

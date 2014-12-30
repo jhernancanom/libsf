@@ -208,6 +208,9 @@
 	const u32		_ERROR_ALIAS_ALREADY_IN_USE						= 28;
 	const u32		_ERROR_PARENTHESIS_EXPECTED						= 29;
 	const u32		_ERROR_MISSING_PARAMETER						= 30;
+	const u32		_ERROR_UNABLE_TO_OPEN_TABLE						= 31;
+	const u32		_ERROR_WORK_AREA_ALREADY_IN_USE					= 32;
+	const u32		_ERROR_ERROR_OPENING_DBC						= 33;
 
 	// Messages
 	const u8		cgcComponentError[]								= "Error in component, column ";
@@ -241,6 +244,9 @@
 	const u8		cgcAliasAlreadyInUse[]							= "alias already in use";
 	const u8		cgcParenthesisExpected[]						= "parenthesis expected";
 	const u8		cgcMissingParameter[]							= "missing parameter";
+	const u8		cgcUnableToOpenTable[]							= "unable to open table";
+	const u8		cgcWorkAreaAlreadyInUse[]						= "work area already in use";
+	const u8		cgcErrorOpeningDbc[]							= "error in opening dbc";
 
 
 //////////

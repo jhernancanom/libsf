@@ -130,6 +130,10 @@
 			case _ERROR_ALIAS_ALREADY_IN_USE:				{	iError_report(cgcAliasAlreadyInUse);				break;	}
 			case _ERROR_PARENTHESIS_EXPECTED:				{	iError_report(cgcParenthesisExpected);				break;	}
 			case _ERROR_MISSING_PARAMETER:					{	iError_report(cgcMissingParameter);					break;	}
+			case _ERROR_UNABLE_TO_OPEN_TABLE:				{	iError_report(cgcUnableToOpenTable);				break;	}
+			case _ERROR_WORK_AREA_ALREADY_IN_USE:			{	iError_report(cgcWorkAreaAlreadyInUse);				break;	}
+			case _ERROR_ERROR_OPENING_DBC:					{	iError_report(cgcErrorOpeningDbc);					break;	}
+
 		}
 
 		// Flag the component
@@ -5353,7 +5357,7 @@ debug_break;
 				if (compUse && !compUse->ll.next)
 				{
 					// USE ... They have specified USE by itself, closing the current work area
-					iDbf_close((s32)iDbf_getWorkArea_current());
+					iDbf_close((s32)iDbf_get_workArea_current());
 					goto clean_exit;
 				}
 
@@ -5408,15 +5412,13 @@ debug_break;
 					// Once we get here, we know we have SELECT(...something
 
 					// They've specified USE IN SELECT(something)
-					varInXyz = iEngine_getVariableFromComponent(comp3, &llManufacturedAliasName);
+					varInXyz = iEngine_get_variableName_fromComponent(comp3, &llManufacturedAliasName);
 
 				} else {
 					// They must've specified a number or alias name
-					varInXyz = iEngine_getVariableFromComponent(compIn, &llManufacturedAliasName);
+					varInXyz = iEngine_get_variableName_fromComponent(compIn, &llManufacturedAliasName);
 				}
 			}
-			// Go ahead and point after it
-			compUse = (SComp*)compUse->ll.next;
 
 
 		//////////
@@ -5442,7 +5444,7 @@ debug_break;
 
 						} else {
 							// Alias name
-							lnWorkArea = (s32)iDbf_getWorkArea_byAlias(varInXyz);
+							lnWorkArea = (s32)iDbf_get_workArea_byAlias(varInXyz);
 						}
 
 						// Did we get a valid work area?
@@ -5461,7 +5463,7 @@ debug_break;
 
 			} else {
 				// Just grab the current work area
-				lnWorkArea = (s32)iDbf_getWorkArea_current();
+				lnWorkArea = (s32)iDbf_get_workArea_current();
 			}
 
 
@@ -5480,7 +5482,13 @@ debug_break;
 		//////////
 		// Get the table name
 		//////
-			varTableName = iEngine_getVariableFromComponent(compUse, &llManufacturedTableName);
+			if (	!(varTableName = iEngine_get_variableName_fromComponent(compUse, &llManufacturedTableName))
+				&&	!(varTableName = iEngine_get_contiguousComponents(compUse, &llManufacturedTableName)))
+			{
+				// Placeholder to allow execution through varTableName possibilities
+			}
+
+			// Is it valid?
 			if (!varTableName || !iVariable_isTypeCharacter(varTableName))
 			{
 				iError_reportByNumber(_ERROR_UNRECOGNIZED_PARAMETER, compUse);
@@ -5494,8 +5502,8 @@ debug_break;
 			if (compAlias)
 			{
 				// They've specified an alias
-				varAliasName	= iEngine_getVariableFromComponent((SComp*)compAlias->ll.next, &llManufacturedTableName);
-				lnWorkAreaAlias	= iDbf_getWorkArea_byAlias(varAliasName);
+				varAliasName	= iEngine_get_variableName_fromComponent((SComp*)compAlias->ll.next, &llManufacturedTableName);
+				lnWorkAreaAlias	= iDbf_get_workArea_byAlias(varAliasName);
 				if (lnWorkAreaAlias > 0)
 				{
 					// They've specified an alias name
@@ -5516,7 +5524,7 @@ debug_break;
 
 			} else {
 				// We need to construct the alias from the table name
-				varAliasName = iDbf_getAlias_fromPathname(varTableName);
+				varAliasName = iDbf_get_alias_fromPathname(varTableName);
 			}
 			if (!varAliasName)
 			{
@@ -5544,7 +5552,28 @@ debug_break;
 		//////////
 		// Get the alias
 		//////
-			iDbf_open(varTableName->value.data_s8, varAliasName->value.data_s8);
+			iDbf_set_workArea_current(lnWorkArea);
+			lnWorkArea = iDbf_open(varTableName, varAliasName);
+			if (lnWorkArea < 0)
+			{
+				switch (lnWorkArea)
+				{
+					case -1:
+						// General error
+						iError_reportByNumber(_ERROR_UNABLE_TO_OPEN_TABLE, compUse);
+						break;
+
+					case -2:
+						// Work area is not free
+						iError_reportByNumber(_ERROR_WORK_AREA_ALREADY_IN_USE, compUse);
+						break;
+
+					case -3:
+						// Error in DBC
+						iError_reportByNumber(_ERROR_ERROR_OPENING_DBC, compUse);
+						break;
+				}
+			}
 
 clean_exit:
 			// Release variables
