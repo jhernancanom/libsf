@@ -2552,61 +2552,110 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 //////
 	s32 iComps_getContiguousLength(SComp* comp, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount)
 	{
-		s32		lnI, lnLength, lnThisSpacing;
+		s32		lnLength, lnThisSpacing;
 		bool	llAtLeastOne, llIsValid;
-		SComp*	compValidTest;
 
 
 		// Make sure our environment is sane
 		lnLength = 0;
 		if (comp)
 		{
+			//////////
 			// Iterate so long as there are components after it
-			llIsValid		= true;
-			llAtLeastOne	= false;
-			while (comp->ll.next)
-			{
-				// See if it's contiguous
-				if ((lnThisSpacing = iiComps_get_charactersBetween(comp, (SComp*)comp->ll.next)) != 0)
-					break;		// We're done
-
-				// Are we validating against a list?
-				if (tnValid_iCodeArrayCount > 0 && valid_iCodeArray)
+			//////
+				lnThisSpacing	= -1;
+				llIsValid		= true;
+				llAtLeastOne	= false;
+				while (comp->ll.next)
 				{
-					// Is it valid?
-					for (lnI = 0; lnI < tnValid_iCodeArrayCount; ++compValidTest)
-					{
-						// Does it match this one?
-						if (comp->iCode == valid_iCodeArray[lnI])
-							break;	// It matches
-					}
+					//////////
+					// See if it's contiguously adjoined
+					//////
+						if ((lnThisSpacing = iiComps_get_charactersBetween(comp, (SComp*)comp->ll.next)) != 0)
+							break;		// We're done
 
-					// When we get here, lnI indicates if we're valid or not
-					if (lnI >= tnValid_iCodeArrayCount)
+
+					//////////
+					// Validate if need be
+					//////
+						if (tnValid_iCodeArrayCount > 0 && valid_iCodeArray)
+						{
+							// We do need to validate
+							if (!iiComps_validate(comp, valid_iCodeArray, tnValid_iCodeArrayCount))
+							{
+								// If we get here, it did not pass validation
+								llIsValid = false;
+								break;
+							}
+						}
+
+
+					//////////
+					// Increase our length
+					//////
+						lnLength += comp->length;
+
+
+					//////////
+					// Raise our flag
+					//////
+						llAtLeastOne = true;
+
+
+					//////////
+					// Move to next comp
+					//////
+						comp = (SComp*)comp->ll.next;
+				}
+
+
+			//////////
+			// Do we need to add in the last component?
+			//////
+				if (!comp->ll.next && llAtLeastOne && llIsValid && lnThisSpacing == 0)
+				{
+					// Validate if need be
+					if (tnValid_iCodeArrayCount > 0 && valid_iCodeArray)
 					{
-						// Raise a flag so we don't add this component into our total
-						llIsValid = false;
-						break;
+						// If it's valid, add it
+						if (iiComps_validate(comp, valid_iCodeArray, tnValid_iCodeArrayCount))
+							lnLength += comp->length;	// It's valid
+
+					} else {
+						// No validation, just add it in
+						lnLength += comp->length;
 					}
 				}
 
-				// Increase our length
-				lnLength += comp->length;
-
-				// Raise our flag
-				llAtLeastOne = true;
-
-				// Move to next comp
-				comp = (SComp*)comp->ll.next;
-			}
-
-			// If we processed at least one, then include this component
-			if (!comp->ll.next && llAtLeastOne && llIsValid)
-				lnLength += comp->length;
 		}
 
 		// Indicate where we are
 		return(lnLength);
+	}
+
+
+
+
+//////////
+//
+// Called to validate the indicated component against a valid array list
+//
+//////
+	bool iiComps_validate(SComp* comp, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount)
+	{
+		s32 lnI;
+
+
+		// Iterate through the valid list
+		for (lnI = 0; lnI < tnValid_iCodeArrayCount; lnI++)
+		{
+			// Does it match this one?
+			if (comp->iCode == valid_iCodeArray[lnI])
+				return(true);	// It matches
+		}
+
+		// If we get here, no match
+		return(false);
 	}
 
 

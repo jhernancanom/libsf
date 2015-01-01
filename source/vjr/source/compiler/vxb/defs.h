@@ -137,6 +137,7 @@ struct SVariable;
 	s32						iiComps_get_charactersBetween				(SComp* compLeft, SComp* compRight);
 	s32						iComps_getAs_s32							(SComp* comp);
 	s32						iComps_getContiguousLength					(SComp* comp, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount);
+	bool					iiComps_validate							(SComp* comp, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount);
 	s8*						iComps_visualize							(SComp* comp, s32 tnCount, s8* outputBuffer, s32 tnBufferLength, bool tlUseDefaultCompSearcher, SAsciiCompSearcher* tsComps1, SAsciiCompSearcher* tsComps2);
 
 //////////
