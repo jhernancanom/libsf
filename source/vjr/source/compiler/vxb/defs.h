@@ -134,9 +134,9 @@ struct SVariable;
 	void					iComps_removeStartEndComments				(SLine* line);
 	void					iComps_combineCasks							(SLine* line);
 	void					iComps_fixupNaturalGroupings				(SLine* line);
-	s32						iiComps_getCharactersBetween					(SComp* compLeft, SComp* compRight);
+	s32						iiComps_get_charactersBetween				(SComp* compLeft, SComp* compRight);
 	s32						iComps_getAs_s32							(SComp* comp);
-	s32						iComps_getContiguousLength					(SComp* comp);
+	s32						iComps_getContiguousLength					(SComp* comp, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount);
 	s8*						iComps_visualize							(SComp* comp, s32 tnCount, s8* outputBuffer, s32 tnBufferLength, bool tlUseDefaultCompSearcher, SAsciiCompSearcher* tsComps1, SAsciiCompSearcher* tsComps2);
 
 //////////

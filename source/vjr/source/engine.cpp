@@ -526,7 +526,7 @@
 // or the quoted content.
 //
 //////
-	SVariable* iEngine_get_contiguousComponents(SComp* comp, bool* tlManufactured)
+	SVariable* iEngine_get_contiguousComponents(SComp* comp, bool* tlManufactured, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount)
 	{
 		SVariable* varPathname;
 
@@ -546,7 +546,7 @@
 
 				default:
 					// Get every contiguous component
-					varPathname	= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, comp->line->sourceCode->data_u8 + comp->start, iComps_getContiguousLength(comp));
+					varPathname	= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, comp->line->sourceCode->data_u8 + comp->start, iComps_getContiguousLength(comp, valid_iCodeArray, tnValid_iCodeArrayCount));
 					break;
 			}
 		}

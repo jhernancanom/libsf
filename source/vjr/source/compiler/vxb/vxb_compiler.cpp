@@ -1692,7 +1692,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					if (compNext)
 					{
 						// Add in the length of the next component, plus any spaces between them
-						comp->length	+= (compNext->length + iiComps_getCharactersBetween(comp, compNext));
+						comp->length	+= (compNext->length + iiComps_get_charactersBetween(comp, compNext));
 						comp->nbspCount	+= compNext->nbspCount;
 
 						// Delete the next component
@@ -1761,7 +1761,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					{
 						// Combine so long as the following are immediately adjacent, and are one of underscore, alpha, numeric, alphanumeric
 						while (	(compNext = (SComp*)comp->ll.next)
-								&& iiComps_getCharactersBetween(comp, compNext) == 0
+								&& iiComps_get_charactersBetween(comp, compNext) == 0
 								&& (	compNext->iCode == _ICODE_UNDERSCORE
 									||	compNext->iCode == _ICODE_ALPHA
 									||	compNext->iCode == _ICODE_NUMERIC
@@ -1814,7 +1814,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 			while (comp)
 			{
 				// Grab the next component
-				if ((compNext1 = (SComp*)comp->ll.next) && iiComps_getCharactersBetween(comp, compNext1) == 0)
+				if ((compNext1 = (SComp*)comp->ll.next) && iiComps_get_charactersBetween(comp, compNext1) == 0)
 				{
 					// Is this an underscore, alpha, or alphanumeric?
 					if ((comp->iCode == _ICODE_PLUS || comp->iCode == _ICODE_HYPHEN) && compNext1->iCode == _ICODE_NUMERIC)
@@ -1920,8 +1920,8 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					// Grab the next two components, they must all be adjacent, and the third one must also be a dot
 					if (	compSecond	&&	compThird
 						&&	compThird->iCode == _ICODE_DOT
-						&&	iiComps_getCharactersBetween(compFirst, compSecond) == 0
-						&&	iiComps_getCharactersBetween(compSecond, compThird) == 0)
+						&&	iiComps_get_charactersBetween(compFirst, compSecond) == 0
+						&&	iiComps_get_charactersBetween(compSecond, compThird) == 0)
 					{
 						// What is the component in the middle?
 						if (compSecond->iCode == _ICODE_ALPHA)
@@ -1990,7 +1990,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 						// Move to the next component
 						compThis = (SComp*)compThis->ll.next;
 
-					} else if (compThird && iiComps_getCharactersBetween(compFirst, compThird) == 0 && (compThird->iCode == _ICODE_ALPHA || compThird->iCode == _ICODE_ALPHANUMERIC)) {
+					} else if (compThird && iiComps_get_charactersBetween(compFirst, compThird) == 0 && (compThird->iCode == _ICODE_ALPHA || compThird->iCode == _ICODE_ALPHANUMERIC)) {
 						// It's a dot variable of some kind
 						iComps_combineN(compThis, 3, _ICODE_DOT_VARIABLE, _ICAT_DOT_VARIABLE, &colorSynHi_dotVariable);
 
@@ -2510,7 +2510,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Returns the number of characters between two components.
 //
 //////
-	s32 iiComps_getCharactersBetween(SComp* compLeft, SComp* compRight)
+	s32 iiComps_get_charactersBetween(SComp* compLeft, SComp* compRight)
 	{
 		// Start of right component and end of left component
 		return(compRight->start - (compLeft->start + compLeft->length));
@@ -2550,10 +2550,11 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Called to get the length of the contiguous components
 //
 //////
-	s32 iComps_getContiguousLength(SComp* comp)
+	s32 iComps_getContiguousLength(SComp* comp, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount)
 	{
-		s32		lnLength, lnThisSpacing;
-		bool	llAtLeastOne;
+		s32		lnI, lnLength, lnThisSpacing;
+		bool	llAtLeastOne, llIsValid;
+		SComp*	compValidTest;
 
 
 		// Make sure our environment is sane
@@ -2561,12 +2562,33 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 		if (comp)
 		{
 			// Iterate so long as there are components after it
-			llAtLeastOne = false;
+			llIsValid		= true;
+			llAtLeastOne	= false;
 			while (comp->ll.next)
 			{
 				// See if it's contiguous
-				if ((lnThisSpacing = iiComps_getCharactersBetween(comp, (SComp*)comp->ll.next)) != 0)
+				if ((lnThisSpacing = iiComps_get_charactersBetween(comp, (SComp*)comp->ll.next)) != 0)
 					break;		// We're done
+
+				// Are we validating against a list?
+				if (tnValid_iCodeArrayCount > 0 && valid_iCodeArray)
+				{
+					// Is it valid?
+					for (lnI = 0; lnI < tnValid_iCodeArrayCount; ++compValidTest)
+					{
+						// Does it match this one?
+						if (comp->iCode == valid_iCodeArray[lnI])
+							break;	// It matches
+					}
+
+					// When we get here, lnI indicates if we're valid or not
+					if (lnI >= tnValid_iCodeArrayCount)
+					{
+						// Raise a flag so we don't add this component into our total
+						llIsValid = false;
+						break;
+					}
+				}
 
 				// Increase our length
 				lnLength += comp->length;
@@ -2579,7 +2601,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 			}
 
 			// If we processed at least one, then include this component
-			if (!comp->ll.next && llAtLeastOne)
+			if (!comp->ll.next && llAtLeastOne && llIsValid)
 				lnLength += comp->length;
 		}
 
@@ -2940,7 +2962,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 		//////
 			comp		= compRoot;
 			op->count	= 0;
-			while (comp && comp->ll.prev && iiComps_getCharactersBetween((SComp*)comp->ll.prev, comp) == 0)
+			while (comp && comp->ll.prev && iiComps_get_charactersBetween((SComp*)comp->ll.prev, comp) == 0)
 			{
 				//////////
 				// Previous component
@@ -2989,7 +3011,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 		//////
 			comp		= compRoot;
 			op->count	= 0;
-			while (comp && comp->ll.next && iiComps_getCharactersBetween(comp, (SComp*)comp->ll.next) == 0)
+			while (comp && comp->ll.next && iiComps_get_charactersBetween(comp, (SComp*)comp->ll.next) == 0)
 			{
 				//////////
 				// Next component

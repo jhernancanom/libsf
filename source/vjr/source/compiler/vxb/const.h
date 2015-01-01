@@ -211,6 +211,7 @@
 	const u32		_ERROR_UNABLE_TO_OPEN_TABLE						= 31;
 	const u32		_ERROR_WORK_AREA_ALREADY_IN_USE					= 32;
 	const u32		_ERROR_ERROR_OPENING_DBC						= 33;
+	const u32		_ERROR_CONFLICTING_PARAMETERS					= 34;
 
 	// Messages
 	const u8		cgcComponentError[]								= "Error in component, column ";
@@ -247,6 +248,7 @@
 	const u8		cgcUnableToOpenTable[]							= "unable to open table";
 	const u8		cgcWorkAreaAlreadyInUse[]						= "work area already in use";
 	const u8		cgcErrorOpeningDbc[]							= "error in opening dbc";
+	const u8		cgcConflictingParameters[]						= "conflicting parameters";
 
 
 //////////

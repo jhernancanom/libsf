@@ -133,6 +133,7 @@
 			case _ERROR_UNABLE_TO_OPEN_TABLE:				{	iError_report(cgcUnableToOpenTable);				break;	}
 			case _ERROR_WORK_AREA_ALREADY_IN_USE:			{	iError_report(cgcWorkAreaAlreadyInUse);				break;	}
 			case _ERROR_ERROR_OPENING_DBC:					{	iError_report(cgcErrorOpeningDbc);					break;	}
+			case _ERROR_CONFLICTING_PARAMETERS:				{	iError_report(cgcConflictingParameters);			break;	}
 
 		}
 
@@ -5250,8 +5251,6 @@ debug_break;
 		bool		error;
 
 
-// TODO:  Untested function, breakpoint and examine
-debug_break;
 		//////////
 		// Initialize
 		//////
@@ -5293,7 +5292,7 @@ debug_break;
 			//////
 				if (compAscending && compDescending)
 				{
-					iError_reportByNumber(_ERROR_TOO_MANY_PARAMETERS, ((compAscending->ll.uniqueId < compDescending->ll.uniqueId) ? compDescending : compAscending));
+					iError_reportByNumber(_ERROR_CONFLICTING_PARAMETERS, ((compAscending->ll.uniqueId < compDescending->ll.uniqueId) ? compDescending : compAscending));
 					goto clean_exit;
 				}
 
@@ -5303,7 +5302,7 @@ debug_break;
 			//////
 				if (compShared && compExclusive)
 				{
-					iError_reportByNumber(_ERROR_TOO_MANY_PARAMETERS, ((compShared->ll.uniqueId < compExclusive->ll.uniqueId) ? compExclusive : compShared));
+					iError_reportByNumber(_ERROR_CONFLICTING_PARAMETERS, ((compShared->ll.uniqueId < compExclusive->ll.uniqueId) ? compExclusive : compShared));
 					goto clean_exit;
 				}
 
@@ -5326,6 +5325,8 @@ debug_break;
 			//////////
 			// If they specify IN, they must specify something after it
 			//////
+// TODO:  Untested function, breakpoint and examine
+// debug_break;
 				if (compIn && !compIn->ll.next)
 				{
 					iError_reportByNumber(_ERROR_SYNTAX, compIn);
@@ -5482,15 +5483,42 @@ debug_break;
 		//////////
 		// Get the table name
 		//////
-			if (	!(varTableName = iEngine_get_variableName_fromComponent(compUse, &llManufacturedTableName))
-				&&	!(varTableName = iEngine_get_contiguousComponents(compUse, &llManufacturedTableName)))
-			{
-				// Placeholder to allow execution through varTableName possibilities
+			// It could be a variable name if there's nothing next to it, and it's found :-)
+			if ((varTableName = iEngine_get_variableName_fromComponent(compUse, &llManufacturedTableName))) {
+				// Placeholder, we were able to obtain a variable name
+
+			} else if ((varTableName = iEngine_get_contiguousComponents(compUse, &llManufacturedTableName, NULL, 0))) {
+					// Placeholder, we were able to obtain a contiguous stream of characters
+//////////
+// TODO:	Enhancement consideration.  May not ever be needed.
+//
+//			For the contiguous components grab, it may be desirable to pass an array through to obtain only
+//			those components that are known to be part of a valid pathname for the target OS.  This could
+//			also be setup to be specified by a SET VALID_PATHNAME_CHARS TO cString to allow that string to
+//			be parsed out and the components derived obtained therein.  Such a creature would generally look
+//			like this:
+//
+// 				#define _VALID_PATHNAME_ICODE_ARRAY_COUNT 7
+// 				s32 gnValidPathname_iCodeArray[_VALID_PATHNAME_ICODE_ARRAY_COUNT];
+//
+// 				gnValidPathname_iCodeArray[0] = _ICODE_ALPHA;
+// 				gnValidPathname_iCodeArray[1] = _ICODE_NUMERIC;
+// 				gnValidPathname_iCodeArray[2] = _ICODE_ALPHANUMERIC;
+// 				gnValidPathname_iCodeArray[3] = _ICODE_COLON;
+// 				gnValidPathname_iCodeArray[4] = _ICODE_BACKSLASH;
+// 				gnValidPathname_iCodeArray[5] = _ICODE_DOT;
+// 				gnValidPathname_iCodeArray[6] = _ICODE_UNDERSCORE;
+// 				// Plus any other characters to add
+//
+//			And in use:
+//				iEngine_get_contiguousComponents(compUse, &llManufacturedTableName, &gnValidPathname_iCodeArray[0], _VALID_PATHNAME_ICODE_ARRAY_COUNT)
+//////
 			}
 
 			// Is it valid?
 			if (!varTableName || !iVariable_isTypeCharacter(varTableName))
 			{
+				// We didn't get what we needed
 				iError_reportByNumber(_ERROR_UNRECOGNIZED_PARAMETER, compUse);
 				goto clean_exit;
 			}
