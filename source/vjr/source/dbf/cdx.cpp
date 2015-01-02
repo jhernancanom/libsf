@@ -89,27 +89,24 @@
 // (which can be either a .CDX or .IDX file, but not both LOL!).
 //
 /////
-	u32 cdx_open(u32 tnDbfHandle, s8* tcCdxFilename, u32 tnCdxFilenameLength, bool tlExclusive)
+	u32 cdx_open(SWorkArea* wa, s8* tcCdxFilename, u32 tnCdxFilenameLength)
 	{
 		u32			lnShareFlag;
+		bool		llIsValid;
 		u64			lnFileSize, lnNumread;
-		SWorkArea*	wa;
 
 
 		//////////
 		// Validate that our environment is sane
 		//////
-			if (tnDbfHandle >= _MAX_DBF_SLOTS)
-				return(-1);		// Invalid slot number
-			if (gsWorkArea[tnDbfHandle].isUsed != _YES)
-				return(-1);		// Invalid slot
+			if (!iDbf_isWorkAreaUsed(wa, &llIsValid) || !llIsValid)
+				return(-1);		// Invalid work area
 
 
 		//////////
 		// If an index is already open, close it
 		//////
-			wa = &gsWorkArea[tnDbfHandle];
-			cdx_close(tnDbfHandle);
+			cdx_close(wa);
 
 
 		//////////
@@ -124,9 +121,9 @@
 
 			} else {
 				// Build the name from the table name
-				memcpy(wa->indexPathname, gsWorkArea[tnDbfHandle].tablePathname, wa->tablePathnameLength);
-				memcpy(wa->indexPathname + gsWorkArea[tnDbfHandle].tablePathnameLength - 4, ".cdx", 4);
-				wa->indexPathnameLength = gsWorkArea[tnDbfHandle].tablePathnameLength;
+				memcpy(wa->indexPathname, wa->tablePathname, wa->tablePathnameLength);
+				memcpy(wa->indexPathname + wa->tablePathnameLength - 4, ".cdx", 4);
+				wa->indexPathnameLength = wa->tablePathnameLength;
 			}
 
 
@@ -149,9 +146,9 @@
 
 
 		//////////
-		// Set the 
+		// Set the shared/exclusive status to match its table
 		//////
-			if (tlExclusive)
+			if (wa->isExclusive)
 			{
 				// Exclusive
 				lnShareFlag = _SH_DENYRW;
@@ -187,7 +184,7 @@
 				wa->idx_header = (SIdxHeader*)malloc((uptr)lnFileSize);
 				if (!wa->idx_header)
 				{
-					cdx_close(tnDbfHandle);
+					cdx_close(wa);
 					return(-4);
 				}
 
@@ -195,7 +192,7 @@
 				lnNumread = _read(wa->fhIndex, wa->idx_header, (uptr)lnFileSize);
 				if (lnNumread != lnFileSize)
 				{
-					cdx_close(tnDbfHandle);
+					cdx_close(wa);
 					return(-5);
 				}
 
@@ -220,7 +217,7 @@
 				wa->cdx_root = (SCdxHeader*)malloc((uptr)lnFileSize);
 				if (!wa->cdx_root)
 				{
-					cdx_close(tnDbfHandle);
+					cdx_close(wa);
 					return(-6);
 				}
 
@@ -228,7 +225,7 @@
 				lnNumread = _read(wa->fhIndex, wa->cdx_root, (uptr)lnFileSize);
 				if (lnNumread != lnFileSize)
 				{
-					cdx_close(tnDbfHandle);
+					cdx_close(wa);
 					return(-7);
 				}
 
@@ -254,47 +251,46 @@
 // Called to close an open index
 //
 //////
-	u32 cdx_close(u32 tnDbfHandle)
+	u32 cdx_close(SWorkArea* wa)
 	{
-		s32 lnI;
+		s32		lnI;
+		bool	llIsValid;
 
 
 		//////////
 		// Validate that our environment is sane
 		//////
-			if (tnDbfHandle >= _MAX_DBF_SLOTS)
-				return(-1);		// Invalid slot number
-			if (gsWorkArea[tnDbfHandle].isUsed != _YES)
-				return(-1);		// Invalid slot
+			if (!iDbf_isWorkAreaUsed(wa, &llIsValid) || !llIsValid)
+				return(-1);		// Invalid work area
 
 
 		//////////
 		// If an index is already open, close it
 		//////
-			if (gsWorkArea[tnDbfHandle].isIndexLoaded)
+			if (wa->isIndexLoaded)
 			{
 				//////////
 				// Close the index file handle
 				//////
-					if (gsWorkArea[tnDbfHandle].fhIndex)
+					if (wa->fhIndex)
 					{
-						_close(gsWorkArea[tnDbfHandle].fhIndex);
-						gsWorkArea[tnDbfHandle].fhIndex = NULL;
+						_close(wa->fhIndex);
+						wa->fhIndex = NULL;
 					}
 
 
 				//////////
 				// Free the memory
 				//////
-					if (gsWorkArea[tnDbfHandle].isCdx)
+					if (wa->isCdx)
 					{
 						//////////
 						// Release the loaded CDX file
 						//////
-							if (gsWorkArea[tnDbfHandle].cdx_root)
+							if (wa->cdx_root)
 							{
-								free(gsWorkArea[tnDbfHandle].cdx_root);
-								gsWorkArea[tnDbfHandle].cdx_root = NULL;
+								free(wa->cdx_root);
+								wa->cdx_root = NULL;
 							}
 
 
@@ -304,22 +300,22 @@
 							for (lnI = 0; lnI < _MAX_CDX_TAGS; lnI++)
 							{
 								// Clear the FOR clause if need be
-								if (gsWorkArea[tnDbfHandle].cdx_keyOps[lnI].forClause)
-									iDbf_forClause_delete(&gsWorkArea[tnDbfHandle].cdx_keyOps[lnI].forClause);
+								if (wa->cdx_keyOps[lnI].forClause)
+									iDbf_forClause_delete(&wa->cdx_keyOps[lnI].forClause);
 
 								// Free key ops
-								if (gsWorkArea[tnDbfHandle].cdx_keyOps[lnI].keyOps)
-									iiFreeAndSetToNull((void**)&gsWorkArea[tnDbfHandle].cdx_keyOps[lnI].keyOps);
+								if (wa->cdx_keyOps[lnI].keyOps)
+									iiFreeAndSetToNull((void**)&wa->cdx_keyOps[lnI].keyOps);
 							}
 
 					} else {
 						//////////
 						// Release the loaded IDX file
 						//////
-							if (gsWorkArea[tnDbfHandle].idx_header)
+							if (wa->idx_header)
 							{
-								free(gsWorkArea[tnDbfHandle].idx_header);
-								gsWorkArea[tnDbfHandle].idx_header = NULL;
+								free(wa->idx_header);
+								wa->idx_header = NULL;
 							}
 					}
 
@@ -327,14 +323,14 @@
 				//////////
 				// Clear out the filename
 				//////
-					memset(gsWorkArea[tnDbfHandle].indexPathname, 0, sizeof(gsWorkArea[tnDbfHandle].indexPathname));
-					gsWorkArea[tnDbfHandle].indexPathnameLength = 0;
+					memset(wa->indexPathname, 0, sizeof(wa->indexPathname));
+					wa->indexPathnameLength = 0;
 
 
 				//////////
 				// No longer open
 				//////
-					gsWorkArea[tnDbfHandle].isIndexLoaded = _NO;
+					wa->isIndexLoaded = _NO;
 
 				// Indicate success
 				return(0);
@@ -352,39 +348,39 @@
 // Called to retrieve tag information based on the tag index
 //
 /////
-	u32 cdx_get_tag(u32 tnDbfHandle,		u32 tnTagIndex,
-							s8* tcTagName,		u32 tnTagNameLength,
-							s8* tcExpression,	u32 tnExpressionLength,
-							s8* tcForClause,	u32 tnForClauseLength,
-							s8* tcKeyLength4, s8* tcUnique1, s8* tcCompact1, s8* tcCompound1, s8* tcOrder1)
+	u32 cdx_get_tag(SWorkArea* wa,		u32 tnTagIndex,
+					s8* tcTagName,		u32 tnTagNameLength,
+					s8* tcExpression,	u32 tnExpressionLength,
+					s8* tcForClause,	u32 tnForClauseLength,
+					s8* tcKeyLength4,
+					s8* tcUnique1, s8* tcCompact1, s8* tcCompound1, s8* tcOrder1)
 	{
-		u32					lnI, lnJ;
-		SCdxHeader*			head;
-		SCdxNode*			nodeTag;
-		s8*					nodePtr;
-		s8*					expForPtr;
-		STagRoot			tagRoot;
+		u32				lnI, lnJ;
+		bool			llIsValid;
+		SCdxHeader*		head;
+		SCdxNode*		nodeTag;
+		s8*				nodePtr;
+		s8*				expForPtr;
+		STagRoot		tagRoot;
 
 
 		//////////
 		// Validate that our environment is sane
 		//////
-			if (tnDbfHandle >= _MAX_DBF_SLOTS)
-				return(-1);		// Invalid slot number
-			if (gsWorkArea[tnDbfHandle].isUsed != _YES)
-				return(-1);		// Invalid slot
+			if (!iDbf_isWorkAreaUsed(wa, &llIsValid) || !llIsValid)
+				return(-1);		// Invalid work area
 
 
 		//////////
 		// Get common pointers
 		//////
-			head = gsWorkArea[tnDbfHandle].cdx_root;			// Header is first part of file
+			head = wa->cdx_root;			// Header is first part of file
 
 
 		//////////
 		// Iterate through the various tags
 		//////
-			if (iCdx_getCompoundTagRoot(&gsWorkArea[tnDbfHandle], head, NULL, tnTagIndex, &tagRoot))
+			if (iCdx_getCompoundTagRoot(wa, head, NULL, tnTagIndex, &tagRoot))
 			{
 				// Copy the tag name
 				for (lnI = 0; lnI < tagRoot.keyLength && lnI < tnTagNameLength; lnI++)
@@ -419,18 +415,18 @@
 
 				// Store the flags
 				// 1 unique, 8 FOR clause, 32 compact index, 64 compound index
-				if (iCdx_isCompact(head))				sprintf(tcCompact1, "Y");
-				else									sprintf(tcCompact1, "N");
+				if (iCdx_isCompact(head))			sprintf(tcCompact1, "Y");
+				else								sprintf(tcCompact1, "N");
 
-				if (iCdx_isCompound(head))				sprintf(tcCompound1, "Y");
-				else									sprintf(tcCompound1, "N");
+				if (iCdx_isCompound(head))			sprintf(tcCompound1, "Y");
+				else								sprintf(tcCompound1, "N");
 
-				if (iCdx_isUnique(head))				sprintf(tcUnique1, "Y");
-				else									sprintf(tcUnique1, "N");
+				if (iCdx_isUnique(head))			sprintf(tcUnique1, "Y");
+				else								sprintf(tcUnique1, "N");
 
 // Will have to nail this down better at some point, to determine the entire structure of this child node
-				if (iCdx_isDescending(head))			sprintf(tcOrder1, "D");
-				else									sprintf(tcOrder1, "A");
+				if (iCdx_isDescending(head))		sprintf(tcOrder1, "D");
+				else								sprintf(tcOrder1, "A");
 
 				// Indicate the length of the key as a success
 				return(tagRoot.keyLength);

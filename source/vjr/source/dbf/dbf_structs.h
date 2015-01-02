@@ -189,6 +189,7 @@
 			u32				isUsed;						// _YES or _NO
 			u32				thisWorkArea;				// Added to hold this entry's slot number
 			bool			isDbc;						// true if this is a container
+			bool			isExclusive;				// true if this index was used exclusively
 			bool			isIndexLoaded;				// true if an index is loaded
 			bool			isCached;					// If the table's been cached, then it will be true, otherwise false
 			bool			isVisualTable;				// Visual tables can have DBC backlinks

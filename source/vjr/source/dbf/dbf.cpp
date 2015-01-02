@@ -920,22 +920,63 @@
 
 //////////
 //
+// Called to verify the pointer is valid
+//
+//////
+	bool iDbf_isWorkAreaUsed(SWorkArea* wa, bool* tlIsValidWorkArea)
+	{
+		// Make sure it's a valid pointer, and it's in range
+		if (wa && (uptr)wa >= (uptr)&gsWorkArea[0] && (uptr)wa < (uptr)&gsWorkArea[_MAX_DBF_SLOTS])
+		{
+			// We're good
+			if (tlIsValidWorkArea)
+				*tlIsValidWorkArea = true;
+
+			// Indicate if it's used or not
+			return((wa->isUsed == _YES));
+		}
+
+		// If we get here, not valid
+		if (tlIsValidWorkArea)
+			*tlIsValidWorkArea = false;
+
+		// Indicate als it's not in use
+		return(false);
+	}
+
+
+
+
+//////////
+//
 // Called to see if the work area is used
 //
 //////
-	sptr iDbf_isWorkAreaUsed(u32 tnWorkArea)
+	bool iDbf_isWorkAreaUsed(u32 tnWorkArea, bool* tlIsValidWorkArea)
 	{
 		//////////
 		// Check for errors
 		//////
 			if (tnWorkArea >= _MAX_DBF_SLOTS)
-				return(-1);		// Invalid slot number
+			{
+				// Invalid work area
+				if (tlIsValidWorkArea)
+					*tlIsValidWorkArea = false;
+
+				// Invalid slot number
+				return(false);
+			}
 
 
 		//////////
-		// Report status
+		// Report actual status
 		//////
-			return(gsWorkArea[tnWorkArea].isUsed);
+			// It is a valid work area
+			if (tlIsValidWorkArea)
+				*tlIsValidWorkArea = true;
+
+			// Indicate if it's used or not
+			return((gsWorkArea[tnWorkArea].isUsed == _YES));
 	}
 
 

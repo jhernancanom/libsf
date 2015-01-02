@@ -5239,8 +5239,8 @@ debug_break;
 //////
 	void command_use(SComp* compUse)
 	{
-		s32			lnWorkArea, lnWorkAreaAlias, lnResult;
-		bool		llManufacturedInXyz, llManufacturedTableName, llManufacturedAliasName, llIsDbc, llIsExclusive;
+		s32			lnWorkArea, lnWorkAreaAlias;
+		bool		llIsInUse, llIsValidWorkArea, llManufacturedInXyz, llManufacturedTableName, llManufacturedAliasName, llIsDbc, llIsExclusive;
 		SComp*		comp2;
 		SComp*		comp3;
 		SComp*		comp4;
@@ -5564,14 +5564,14 @@ debug_break;
 		//////////
 		// See if the current work area already has a table open
 		//////
-			lnResult = (s32)iDbf_isWorkAreaUsed(lnWorkArea);
-			if (lnResult < 0)
+			llIsInUse = iDbf_isWorkAreaUsed(lnWorkArea, &llIsValidWorkArea);
+			if (!llIsValidWorkArea)
 			{
 				// They specified an invalid work area number
 				iError_reportByNumber(_ERROR_INVALID_WORK_AREA, compIn);
 				goto clean_exit;
 
-			} else if (lnResult == _YES) {
+			} else if (llIsInUse) {
 				// If it's already open, close it
 				iDbf_close(lnWorkArea);
 			}
