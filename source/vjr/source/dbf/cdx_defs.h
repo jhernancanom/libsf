@@ -72,7 +72,7 @@
 // Note:  Many of the functions referred to in these functions are defined in dbf_defs.h.
 //
 //////
-	u32					cdx_open										(SWorkArea* wa, s8* tcCdxFilename, u32 tnCdxFilenameLength);
+	u32					cdx_open										(SWorkArea* wa, s8* tcCdxFilename, u32 tnCdxFilenameLength, u32 tnExplicitIndexType);
 	u32					cdx_close										(SWorkArea* wa);
 	u32					cdx_get_tag										(SWorkArea* wa,			u32 tnTagIndex,
 																			s8* tcTagName,		u32 tnTagNameLength,

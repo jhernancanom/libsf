@@ -88,8 +88,15 @@
 // Called to open the indicated CDX associated with the table, or an explicitly named index
 // (which can be either a .CDX or .IDX file, but not both LOL!).
 //
-/////
-	u32 cdx_open(SWorkArea* wa, s8* tcCdxFilename, u32 tnCdxFilenameLength)
+//////
+// Parameters:
+//		wa					-- Work area
+//		tcCdxFilename		-- IDX/CDX filename
+//		tnCdxFilenameLength	-- Length of the filename
+//		tnExplicitIndexType	-- 
+//
+//////
+	u32 cdx_open(SWorkArea* wa, s8* tcCdxFilename, u32 tnCdxFilenameLength, u32 tnExplicitIndexType)
 	{
 		u32			lnShareFlag;
 		bool		llIsValid;
@@ -100,7 +107,9 @@
 		// Validate that our environment is sane
 		//////
 			if (!iDbf_isWorkAreaUsed(wa, &llIsValid) || !llIsValid)
-				return(-1);		// Invalid work area
+				return(_CDX_ERROR_INVALID_WORK_AREA);		// Invalid work area
+			if (tnCdxFilenameLength >= sizeof(wa->indexPathname))
+				return(_CDX_ERROR_INDEX_NAME_TOO_LONG);
 
 
 		//////////
@@ -130,18 +139,18 @@
 		//////////
 		// Determine if it was a .cdx or .idx
 		//////
-			if (_memicmp(wa->indexPathname + wa->indexPathnameLength - 4, ".idx", 4) == 0)
+			if (tnExplicitIndexType == _INDEX_IS_IDX || (tnExplicitIndexType == 0 && _memicmp(wa->indexPathname + wa->indexPathnameLength - 4, ".idx", 4) == 0))
 			{
 				// It's a .idx
 				wa->isCdx = false;
 
-			} else if (_memicmp(wa->indexPathname + wa->indexPathnameLength - 4, ".cdx", 4) == 0) {
+			} else if (tnExplicitIndexType == _INDEX_IS_CDX || (tnExplicitIndexType == 0 && _memicmp(wa->indexPathname + wa->indexPathnameLength - 4, ".cdx", 4) == 0)) {
 				// It's a .cdx
 				wa->isCdx = true;
 
 			} else {
 				// Unknown, report the error
-				return(-2);
+				return(_CDX_ERROR_UNKNOWN_INDEX_TYPE);
 			}
 
 
@@ -180,67 +189,76 @@
 		//////
 			if (!wa->isCdx)
 			{
-				// Allocate memory
-				wa->idx_header = (SIdxHeader*)malloc((uptr)lnFileSize);
-				if (!wa->idx_header)
-				{
-					cdx_close(wa);
-					return(-4);
-				}
+				//////////
+				// Allocate
+				//////
+					wa->idx_header = (SIdxHeader*)malloc((uptr)lnFileSize);
+					if (!wa->idx_header)
+					{
+						cdx_close(wa);
+						return(_CDX_ERROR_MEMORY_IDX);
+					}
 
-				// Read in the file
-				lnNumread = _read(wa->fhIndex, wa->idx_header, (uptr)lnFileSize);
-				if (lnNumread != lnFileSize)
-				{
-					cdx_close(wa);
-					return(-5);
-				}
 
+				//////////
+				// Read the entire index
+				/////
+					lnNumread = _read(wa->fhIndex, wa->idx_header, (uptr)lnFileSize);
+					if (lnNumread != lnFileSize)
+					{
+						cdx_close(wa);
+						return(_CDX_ERROR_READING_HEADER_IDX);
+					}
+
+
+				//////////
 				// See if it's a compact idx
-				wa->isIdxCompact = ((wa->idx_header->options & _BIT_32) != 0);
-				if (wa->isIdxCompact)
-				{
-					// Compact IDX headers need to be stored in the CDX structure
-					wa->cdx_root				= (SCdxHeader*)wa->idx_header;
-					wa->idx_header				= NULL;
+				//////
+					wa->isIdxCompact = ((wa->idx_header->options & _BIT_COMPACT_INDEX) != 0);
+					if (wa->isIdxCompact)
+					{
+						// Compact IDX headers need to be stored in the CDX structure
+						wa->cdx_root				= (SCdxHeader*)wa->idx_header;
+						wa->idx_header				= NULL;
+						wa->isIndexLoaded			= _YES;
+						wa->cdx_root->fileSize		= (u32)lnFileSize;
+					}
+
+			} else /* It's CDX */ {
+
+				//////////
+				// Allocate
+				/////
+					wa->cdx_root = (SCdxHeader*)malloc((uptr)lnFileSize);
+					if (!wa->cdx_root)
+					{
+						cdx_close(wa);
+						return(_CDX_ERROR_MEMORY_CDX);
+					}
+
+
+				//////////
+				// Read in the file
+				//////
+					lnNumread = _read(wa->fhIndex, wa->cdx_root, (uptr)lnFileSize);
+					if (lnNumread != lnFileSize)
+					{
+						cdx_close(wa);
+						return(_CDX_ERROR_READING_HEADER_CDX);
+					}
+
+				
+				//////////
+				// Indicate it's a compact index, store the file size manually
+				//////
+					wa->isIdxCompact			= true;		// All CDXs are compact indexes
 					wa->isIndexLoaded			= _YES;
 					wa->cdx_root->fileSize		= (u32)lnFileSize;
-				}
-
-				// If we get here, it's opened and happy
-				return(0);
-
-			} else {
-				// It's .CDX
-
-				// Allocate memory
-				wa->cdx_root = (SCdxHeader*)malloc((uptr)lnFileSize);
-				if (!wa->cdx_root)
-				{
-					cdx_close(wa);
-					return(-6);
-				}
-
-				// Read in the file
-				lnNumread = _read(wa->fhIndex, wa->cdx_root, (uptr)lnFileSize);
-				if (lnNumread != lnFileSize)
-				{
-					cdx_close(wa);
-					return(-7);
-				}
-
-				// Indicate it's a compact index, store the file size manually
-				wa->isIdxCompact			= true;
-				wa->isIndexLoaded			= _YES;
-				wa->cdx_root->fileSize		= (u32)lnFileSize;
-
-				// If we get here, it's opened and happy
-				return(0);
 			}
 
 
-		// Returns the number of tags if positive, negative if error
-		return(-1);
+		// If we get here, it's opened and happy
+		return(_CDX_OKAY);
 	}
 
 
@@ -2313,7 +2331,7 @@ debug_break;
 									} else if (lnTranslatedResult < 0) {
 										// We've passed where the key should've been
 										// This means no find
-										return(_CDX_NO_FIND);
+										return(_CDX_FIND_NO);
 									}
 
 							} else {
@@ -2341,7 +2359,7 @@ debug_break;
 		//////////
 		// If we get here, indicate no find
 		//////
-			return(_CDX_NO_FIND);
+			return(_CDX_FIND_NO);
 	}
 
 
@@ -2964,26 +2982,26 @@ debug_break;
 //////
 	bool iCdx_isCompact(SCdxHeader* head)
 	{
-		if ((head->options & _BIT_32) != 0)		return(true);
-		else									return(false);
+		if ((head->options & _BIT_COMPACT_INDEX) != 0)		return(true);
+		else												return(false);
 	}
 
 	bool iCdx_isCompound(SCdxHeader* head)
 	{
-		if ((head->options & _BIT_64) != 0)		return(true);
-		else									return(false);
+		if ((head->options & _BIT_COMPOUND_INDEX) != 0)		return(true);
+		else												return(false);
 	}
 
 	bool iCdx_isUnique(SCdxHeader* head)
 	{
-		if ((head->options & _BIT_1) != 0)		return(true);
-		else									return(false);
+		if ((head->options & _BIT_UNIQUE) != 0)				return(true);
+		else												return(false);
 	}
 
 	bool iCdx_isDescending(SCdxHeader* head)
 	{
-		if (head->order != 0)					return(true);
-		else									return(false);
+		if (head->order != 0)								return(true);
+		else												return(false);
 	}
 
 	bool iCdx_isForClauseComplex(SWorkArea* wa, SCdxHeader* head, SForClause** tsFor)

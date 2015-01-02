@@ -13,7 +13,6 @@
 //     Nov.02.2014 - Initial creation
 //////
 //
-// This software is released as Liberty Software under a Repeat License, as governed
 // This document is released as Liberty Software under a Repeat License, as governed
 // by the Public Benefit License v1.0 or later (PBL).
 //
@@ -79,7 +78,7 @@
 
 	// Errors
 	#define		_DBF_ERROR__INTERNAL_PROGRAMMER		-9999
-	#define		_DBF_ERROR_SLOT_ALREADY_IN_USE		-2
+	#define		_DBF_ERROR_WORK_AREA_ALREADY_IN_USE	-2
 	#define		_DBF_ERROR_TABLE_NOT_FOUND			-3
 	#define		_DBF_ERROR_ERROR_READING_HEADER1	-4
 	#define		_DBF_ERROR_UNKNOWN_TABLE_TYPE		-5
@@ -92,28 +91,17 @@
 	#define		_DBF_ERROR_DBC						-12
 
 	// For field flags
-	#define 	_DBF_FIELD_SYSTEM			0x01
-	#define 	_DBF_FIELD_NULLS			0x02
-	#define 	_DBF_FIELD_BINARY			0x04
-	#define 	_DBF_FIELD_AUTO_INC			0x0c
+	#define 	_DBF_FIELD_SYSTEM					0x01
+	#define 	_DBF_FIELD_NULLS					0x02
+	#define 	_DBF_FIELD_BINARY					0x04
+	#define 	_DBF_FIELD_AUTO_INC					0x0c
 	
 	// Miscellaneous access
-	#define 	_BIT_1						0x1
-	#define 	_BIT_2						0x2
-	#define 	_BIT_4						0x4
-	#define 	_BIT_8						0x8
-	#define 	_BIT_16						0x10
-	#define 	_BIT_32						0x20
-	#define 	_BIT_64						0x40
-	#define 	_BIT_128					0x80
-
-	// CDX no find result
-	#define		_CDX_NO_FIND				0
-
-	// CDX node types
-	#define		_CDX_NODE_INDEX				0
-	#define		_CDX_NODE_ROOT				1
-	#define		_CDX_NODE_LEAF				2
-	#define		_CDX_NODE_ROOT_LEAF			3
-	// Other node types have been observed, but I don't know what they indicate.
-	// I use the function iiGetIndexNodeType() to mask off only the lower 2 bits (00,01,10,11 = 0,1,2,3)
+	#define 	_BIT_1								0x1
+	#define 	_BIT_2								0x2
+	#define 	_BIT_4								0x4
+	#define 	_BIT_8								0x8
+	#define 	_BIT_16								0x10
+	#define 	_BIT_32								0x20
+	#define 	_BIT_64								0x40
+	#define 	_BIT_128							0x80

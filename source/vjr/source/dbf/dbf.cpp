@@ -230,7 +230,7 @@
 			if (gsWorkArea[lnI].isUsed != _NO)
 			{
 				// This slot is already in use, and therefore invalid
-				return(_DBF_ERROR_SLOT_ALREADY_IN_USE);
+				return(_DBF_ERROR_WORK_AREA_ALREADY_IN_USE);
 			}
 
 

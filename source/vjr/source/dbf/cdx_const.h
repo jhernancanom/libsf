@@ -1,17 +1,16 @@
 //////////
 //
-// /libsf/source/vjr/source/dbf/dbf.h
+// /libsf/source/vjr/source/dbf/cdx_const.h
 //
 //////
 // Version 0.55
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
-//     Dec.22.2014
+//     Jan.02.2015
 //////
 // Change log:
-//     Dec.22.2014 - Extraction to dbf_*.h and cdx_defs.h children
-//     Nov.02.2014 - Initial creation
+//     Jan.02.2015 - Initial creation
 //////
 //
 // This document is released as Liberty Software under a Repeat License, as governed
@@ -68,13 +67,44 @@
 
 
 
-#include "cdx_const.h"
-#include "dbf_const.h"
+//////////
+//
+// Constants
+//
+/////
+	// Responses to cdx_open()
+	#define		_CDX_OKAY							0
+	#define		_CDX_ERROR_INVALID_WORK_AREA		-201
+	#define		_CDX_ERROR_UNKNOWN_INDEX_TYPE		-202
+	#define		_CDX_ERROR_INDEX_NAME_TOO_LONG		-203
+	#define		_CDX_ERROR_MEMORY_IDX				-204
+	#define		_CDX_ERROR_READING_HEADER_IDX		-205
+	#define		_CDX_ERROR_MEMORY_CDX				-206
+	#define		_CDX_ERROR_READING_HEADER_CDX		-207
 
-#include "cdx_structs.h"
-#include "dbf_structs.h"
+	// Index header flags
+	#define		_BIT_UNIQUE					0x1
+	#define		_BIT_TEMPORARY				0x2
+	#define		_BIT_CUSTOM					0x4
+	#define		_BIT_FOR_CLAUSE				0x8
+	#define		_BIT_COMPACT_INDEX			0x20
+	#define		_BIT_COMPOUND_INDEX			0x40
+	#define		_BIT_STRUCTURAL_INDEX		0x80
 
-#include "dbf_globals.h"
+	// Explicit index types for cdx_open()
+	#define		_INDEX_IS_IDX						1
+	#define		_INDEX_IS_CDX						2
+	#define		_INDEX_IS_SDX						3
 
-#include "dbf_defs.h"
-#include "cdx_defs.h"
+	// CDX no find result
+	#define		_CDX_FIND_NEAR						-2
+	#define		_CDX_FIND_NO						-1
+	#define		_CDX_FIND_EXACT						1
+
+	// CDX node types
+	#define		_CDX_NODE_INDEX						0
+	#define		_CDX_NODE_ROOT						1
+	#define		_CDX_NODE_LEAF						2
+	#define		_CDX_NODE_ROOT_LEAF					3
+	// Other node types have been observed, but I don't know what they indicate.
+	// I use the function iiGetIndexNodeType() to mask off only the lower 2 bits (00,01,10,11 = 0,1,2,3)

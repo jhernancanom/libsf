@@ -270,7 +270,7 @@ struct SCdxKeyOp;
 		u32			free;						// 4,4		Offset to the first free node (-1 if not present) (SIdxNode*)
 		u32			fileSize;					// 8,4		File size in bytes
 		u16			keyLength;					// 12,2		Number of bytes in each key
-		u8			options;					// 14,1		1=UNIQUE, 8=FOR clause
+		u8			options;					// 14,1		1=UNIQUE, 8=FOR clause, 32=Compact IDX
 		u8			reserved1;					// 15,1
 		u8			keyExpression[220];			// 16,220	Key expression itself
 		u8			forClause[220];				// 236,220	FOR clause expression

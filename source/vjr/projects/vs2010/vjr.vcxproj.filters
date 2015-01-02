@@ -174,5 +174,8 @@
     <ClInclude Include="..\..\source\compiler\vxb\structs.h">
       <Filter>compiler\vxb</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\source\dbf\cdx_const.h">
+      <Filter>dbf\cdx</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
