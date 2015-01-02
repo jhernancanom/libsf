@@ -89,9 +89,10 @@
 // (which can be either a .CDX or .IDX file, but not both LOL!).
 //
 /////
-	u32 cdx_open(u32 tnDbfHandle, s8* tcCdxFilename, u32 tnCdxFilenameLength)
+	u32 cdx_open(u32 tnDbfHandle, s8* tcCdxFilename, u32 tnCdxFilenameLength, bool tlExclusive)
 	{
-		u32			lnFileSize, lnNumread, lnShareFlag;
+		u32			lnShareFlag;
+		u64			lnFileSize, lnNumread;
 		SWorkArea*	wa;
 
 
@@ -128,7 +129,10 @@
 				wa->indexPathnameLength = gsWorkArea[tnDbfHandle].tablePathnameLength;
 			}
 
-			// Determine if it was a .cdx or .idx
+
+		//////////
+		// Determine if it was a .cdx or .idx
+		//////
 			if (_memicmp(wa->indexPathname + wa->indexPathnameLength - 4, ".idx", 4) == 0)
 			{
 				// It's a .idx
@@ -143,22 +147,44 @@
 				return(-2);
 			}
 
-			// Open it
-			lnShareFlag = _SH_DENYNO;
-			wa->fhIndex = _fsopen(wa->indexPathname, "rb+", lnShareFlag);
+
+		//////////
+		// Set the 
+		//////
+			if (tlExclusive)
+			{
+				// Exclusive
+				lnShareFlag = _SH_DENYRW;
+
+			} else {
+				// Shared
+				lnShareFlag = _SH_DENYNO;
+			}
+
+
+		//////////
+		// Open it
+		//////
+			wa->fhIndex = _sopen(wa->indexPathname, _O_BINARY | _O_RDWR, lnShareFlag);
 			if (!wa->fhIndex)
 				return(-3);
 
-			// Find out how big it is
-			fseek(wa->fhIndex, 0, SEEK_END);
-			lnFileSize = ftell(wa->fhIndex);
-			fseek(wa->fhIndex, 0, SEEK_SET);
 
-			// Allocate the memory
+		//////////
+		// Find out how big it is
+		//////
+			_lseeki64(wa->fhIndex, 0, SEEK_END);
+			lnFileSize = _telli64(wa->fhIndex);
+			_lseeki64(wa->fhIndex, 0, SEEK_SET);
+
+
+		//////////
+		// Allocate the memory
+		//////
 			if (!wa->isCdx)
 			{
 				// Allocate memory
-				wa->idx_header	= (SIdxHeader*)malloc(lnFileSize);
+				wa->idx_header = (SIdxHeader*)malloc((uptr)lnFileSize);
 				if (!wa->idx_header)
 				{
 					cdx_close(tnDbfHandle);
@@ -166,7 +192,7 @@
 				}
 
 				// Read in the file
-				lnNumread = (u32)fread(wa->idx_header, 1, lnFileSize, wa->fhIndex);
+				lnNumread = _read(wa->fhIndex, wa->idx_header, (uptr)lnFileSize);
 				if (lnNumread != lnFileSize)
 				{
 					cdx_close(tnDbfHandle);
@@ -181,7 +207,7 @@
 					wa->cdx_root				= (SCdxHeader*)wa->idx_header;
 					wa->idx_header				= NULL;
 					wa->isIndexLoaded			= _YES;
-					wa->cdx_root->fileSize		= lnFileSize;
+					wa->cdx_root->fileSize		= (u32)lnFileSize;
 				}
 
 				// If we get here, it's opened and happy
@@ -191,7 +217,7 @@
 				// It's .CDX
 
 				// Allocate memory
-				wa->cdx_root	= (SCdxHeader*)malloc(lnFileSize);
+				wa->cdx_root = (SCdxHeader*)malloc((uptr)lnFileSize);
 				if (!wa->cdx_root)
 				{
 					cdx_close(tnDbfHandle);
@@ -199,7 +225,7 @@
 				}
 
 				// Read in the file
-				lnNumread = (u32)fread(wa->cdx_root, 1, lnFileSize, wa->fhIndex);
+				lnNumread = _read(wa->fhIndex, wa->cdx_root, (uptr)lnFileSize);
 				if (lnNumread != lnFileSize)
 				{
 					cdx_close(tnDbfHandle);
@@ -209,7 +235,7 @@
 				// Indicate it's a compact index, store the file size manually
 				wa->isIdxCompact			= true;
 				wa->isIndexLoaded			= _YES;
-				wa->cdx_root->fileSize		= lnFileSize;
+				wa->cdx_root->fileSize		= (u32)lnFileSize;
 
 				// If we get here, it's opened and happy
 				return(0);
@@ -252,7 +278,7 @@
 				//////
 					if (gsWorkArea[tnDbfHandle].fhIndex)
 					{
-						fclose(gsWorkArea[tnDbfHandle].fhIndex);
+						_close(gsWorkArea[tnDbfHandle].fhIndex);
 						gsWorkArea[tnDbfHandle].fhIndex = NULL;
 					}
 

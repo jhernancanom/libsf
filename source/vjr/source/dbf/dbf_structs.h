@@ -99,6 +99,7 @@
 
 	//////////
 	// Field records within the variable portion of the DBF header
+	// Actual DBF field record content
 	//////
 		struct SFieldRecord1
 		{
@@ -154,7 +155,10 @@
 
 	//////////
 	// More or less a copy of the SFieldRecord, but stores longer
-	// field names and additional fields used by VXB/VXB++
+	// field names and additional fields used by VXB/VXB++.
+	//////
+	// Internally, these records are always used and then
+	// synchronized back to SFieldRecord1, and to the DBC
 	//////
 		struct SFieldRecord2
 		{
@@ -197,7 +201,7 @@
 
 
 			// File handles for the related/opened table
-			FILE*			fhDbf;						// File handle for the table
+			s32				fhDbf;						// File handle for the table
 			SWorkArea*		dbc;						// The DBC this table relates to (if any)
 			u32				dbc_parentRecno;			// in the DBC, the record number of the "Table" record
 			u32				dbc_parentId;				// In the DBC, the parentId of the "Table" record
@@ -260,5 +264,5 @@
 					SIdxHeader*	idx_header;					// Pointer to the start of the .IDX
 					s8*			_idx_header;
 				};
-				FILE*			fhIndex;					// File handle for the index
+				s32				fhIndex;					// File handle for the index
 		};

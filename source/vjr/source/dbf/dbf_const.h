@@ -77,6 +77,20 @@
 	#define		_MAX_DBC_SLOTS				512			// Up to 512 containers can be opened simultaneously
 	#define		_MAX_CDX_TAGS				128			// Up to 128 index tags are supported per CDX, per DBF
 
+	// Errors
+	#define		_DBF_ERROR__INTERNAL_PROGRAMMER		-9999
+	#define		_DBF_ERROR_SLOT_ALREADY_IN_USE		-2
+	#define		_DBF_ERROR_TABLE_NOT_FOUND			-3
+	#define		_DBF_ERROR_ERROR_READING_HEADER1	-4
+	#define		_DBF_ERROR_UNKNOWN_TABLE_TYPE		-5
+	#define		_DBF_ERROR_MEMORY					-6
+	#define		_DBF_ERROR_ERROR_READING_HEADER2	-7
+	#define		_DBF_ERROR_TABLE_NAME_TOO_LONG		-8
+	#define		_DBF_ERROR_MEMORY_ROW				-9
+	#define		_DBF_ERROR_MEMORY_ORIGINAL			-10
+	#define		_DBF_ERROR_MEMORY_INDEX				-11
+	#define		_DBF_ERROR_DBC						-12
+
 	// For field flags
 	#define 	_DBF_FIELD_SYSTEM			0x01
 	#define 	_DBF_FIELD_NULLS			0x02

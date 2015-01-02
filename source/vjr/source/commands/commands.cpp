@@ -5581,7 +5581,7 @@ debug_break;
 		// Get the alias
 		//////
 			iDbf_set_workArea_current(lnWorkArea);
-			lnWorkArea = iDbf_open(varTableName, varAliasName);
+			lnWorkArea = iDbf_open(varTableName, varAliasName, llIsExclusive);
 			if (lnWorkArea < 0)
 			{
 				switch (lnWorkArea)

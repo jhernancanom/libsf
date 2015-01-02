@@ -135,8 +135,8 @@ struct SFieldRecord2;
 
 
 	// DBF functions
-	uptr				iDbf_open										(SVariable* table, SVariable* alias);
-	uptr				iDbf_open										(s8* table, s8* alias);
+	uptr				iDbf_open										(SVariable* table, SVariable* alias, bool tlExclusive);
+	uptr				iDbf_open										(s8* table, s8* alias, bool tlExclusive);
 	uptr				iDbf_openRemote									(s8* connString);
 	uptr				iDbf_cacheAllRowData							(u32 tnWorkArea);
 	uptr				iDbf_close										(u32 tnWorkArea);
@@ -182,7 +182,7 @@ struct SFieldRecord2;
 	uptr				iDbf_getField_name								(u8* expression, u8* foundFieldName);
 
 	// Container information
-	void				iiDbc_lookupTableField							(SWorkArea* wa, bool* tlIsValid);
+	void				iiDbc_lookupTableField							(SWorkArea* wa, bool* tlIsValid, bool tlExcusive);
 	void				iiDbf_getRelativeDbc							(SWorkArea* wa, s8* dbcName);
 
 	// FOR clauses used to test row data for inclusion in various operations

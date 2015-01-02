@@ -157,7 +157,8 @@
 
 //////////
 //
-// open
+// Open a DBF, its associated memo file, associated CDX if present,
+// and associated DBC if not already open.
 //
 /////
 //
@@ -165,17 +166,21 @@
 // Note:  This feature only opens in shared mode presently.
 //
 // Parameters:
-//	table	   - full path to the table
-//	alias	   - alias handle to use (if any)
+//		table				-- full path to the table
+//		alias				-- alias handle to use (if any)
 //
 // Returns:
-//	slot number used to access the entry they created,
-//	or -1 if error
-//	or -2 if no more slots
-//	or -3 if DBC is invalid
+//		work area number			-- Any value BETWEEN(0, _MAX_DBF_SLOTS) indicates success
+//		_DBF_ERROR_PROGRAMMER		-- Programmer error, something that should only happen during development
+//		_DBF_ERROR_NO_MORE_SLOTS	-- no more slots
+//		-3							-- DBC is invalid
+//		-4							-- DBF not found
+//		-5							-- associated memo file not found
+//		Errors below -100			-- CDX errors
+//		Errors below -200			-- DBC errors
 //
 /////
-	uptr iDbf_open(SVariable* table, SVariable* alias)
+	uptr iDbf_open(SVariable* table, SVariable* alias, bool tlExclusive)
 	{
 		s8 tableBuffer[_MAX_PATH + 1];
 		s8 aliasBuffer[_MAX_PATH + 1];
@@ -184,338 +189,427 @@
 		// Make sure our environment is sane
 		if (table && alias && table->value.data && alias->value.data && table->value.length >= 1 && alias->value.length >= 1)
 		{
+			//////////
 			// Initialize
-			memset(tableBuffer, 0, sizeof(tableBuffer));
-			memset(aliasBuffer, 0, sizeof(aliasBuffer));
+			//////
+				// Null
+				memset(tableBuffer, 0, sizeof(tableBuffer));
+				memset(aliasBuffer, 0, sizeof(aliasBuffer));
 
-			// Copy
-			memcpy(tableBuffer, table->value.data_s8, min(_MAX_PATH, table->value.length));
-			memcpy(aliasBuffer, alias->value.data_s8, min(_MAX_PATH, alias->value.length));
+				// Copy
+				memcpy(tableBuffer, table->value.data_s8, min(_MAX_PATH, table->value.length));
+				memcpy(aliasBuffer, alias->value.data_s8, min(_MAX_PATH, alias->value.length));
 
+
+			//////////
 			// Open
-			return(iDbf_open(tableBuffer, aliasBuffer));
+			//////
+				return(iDbf_open(tableBuffer, aliasBuffer, tlExclusive));
 		}
 
-		// If we get here, something was not provided properly
-		return(-1);
+		// Should never happen
+		// If we get here, something was not provided properly by the developer working on writing VJr C/C++ code
+		return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 	}
 
-	uptr iDbf_open(s8 *table, s8 *alias)
+	// Note:  table and alias must be NULL-terminated
+	// Note:  an alias is not required
+	uptr iDbf_open(s8 *table, s8 *alias, bool tlExclusive)
 	{
 		s32				lnI;
-		u32				lnJ, lnK, lShareFlag, numread, lStructure_size;
+		u32				lnJ, lnK, lShareFlag, lStructure_size, numread;
 		bool			llDbcIsValid;
 		SFieldRecord1*	lfrPtr;
 		SFieldRecord2*	lfr2Ptr;
 
 
-		// Scan through all of the slots and find the first empty one
-		// Began ignoring the 0 slot, because 0 is used as a cue/record for some applications.
-		// Valid handles will be 1+
-		for (lnI = gnDbf_currentWorkArea; lnI <= gnDbf_currentWorkArea; lnI++)
-		{
-			if (gsWorkArea[lnI].isUsed == _NO)
+		//////////
+		// We can only populate into the indicated work area
+		//////
+			lnI = gnDbf_currentWorkArea;
+			if (gsWorkArea[lnI].isUsed != _NO)
 			{
-				// We found a slot
-				gsWorkArea[lnI].thisWorkArea	= lnI;
-				gnDbf_currentWorkArea		= lnI;
-
-				// Reset the names
-				memset(gsWorkArea[lnI].tablePathname,	0, sizeof(gsWorkArea[lnI].tablePathname));
-				memset(gsWorkArea[lnI].alias,			0, sizeof(gsWorkArea[lnI].alias));
-				memset(gsWorkArea[lnI].indexPathname,	0, sizeof(gsWorkArea[lnI].indexPathname));
-
-				// Copy the user portion of the names
-				gsWorkArea[lnI].tablePathnameLength = (((s32)strlen(table) >= (s32)sizeof(gsWorkArea[lnI].tablePathname)) ? (s32)sizeof(gsWorkArea[lnI].tablePathname) : (s32)strlen(table));
-				memcpy(gsWorkArea[lnI].tablePathname, table, gsWorkArea[lnI].tablePathnameLength);
-				if (alias != NULL)
-				{
-					// The alias is allowed to be as long as the alias space is, or shorter
-					gsWorkArea[lnI].aliasLength = (((s32)strlen(alias) >= (s32)sizeof(gsWorkArea[lnI].alias)) ? (s32)sizeof(gsWorkArea[lnI].alias) : (u32)strlen(alias));
-					memcpy(gsWorkArea[lnI].alias, alias, gsWorkArea[lnI].aliasLength);
-				}
-
-				// Open the table based on the shared/exclusive mode
-				lShareFlag = _SH_DENYNO;
-				gsWorkArea[lnI].fhDbf = _fsopen(table, "rb+", lShareFlag);
-				if (gsWorkArea[lnI].fhDbf == NULL)
-					return(-1);	// Unable to open the specified table
-
-				// When we get here, the file is opened
-				// Now we have to check to see if it's a FoxPro table, and if it has a memo field
-				// Read the header
-				numread = (u32)fread(&gsWorkArea[lnI].header, 1, sizeof(gsWorkArea[lnI].header), gsWorkArea[lnI].fhDbf);
-				if (numread != sizeof(gsWorkArea[lnI].header))
-				{
-					// Unable to read the header
-					fclose(gsWorkArea[lnI].fhDbf);
-					return(-1);
-				}
+				// This slot is already in use, and therefore invalid
+				return(_DBF_ERROR_SLOT_ALREADY_IN_USE);
+			}
 
 
-				// Parse the header
-				gsWorkArea[lnI].isVisualTable = false;
+		//////////
+		// Valid slot
+		//////
+			gsWorkArea[lnI].thisWorkArea = lnI;
 
-				// Check the type
-				switch (gsWorkArea[lnI].header.type)
-				{
-/* File types:
-		0x02   FoxBASE
-		0x03   FoxBASE+/dBASE III plus, no memo
 
-		0x30   Visual FoxPro
-		0x31   Visual FoxPro, auto-increment enabled
+		//////////
+		// Initialize
+		//////
+			memset(gsWorkArea[lnI].tablePathname,	0, sizeof(gsWorkArea[lnI].tablePathname));
+			memset(gsWorkArea[lnI].alias,			0, sizeof(gsWorkArea[lnI].alias));
+			memset(gsWorkArea[lnI].indexPathname,	0, sizeof(gsWorkArea[lnI].indexPathname));
 
-		0x43   dBASE IV SQL table files, no memo
-		0x63   dBASE IV SQL system files, no memo
-		0x83   FoxBASE+/dBASE III PLUS, with memo
-		0x8B   dBASE IV with memo
-		0xCB   dBASE IV SQL table files, with memo
-		0xF5   FoxPro 2.x (or earlier) with memo
-		0xFB   FoxBASE
-*/
-					case 0x30:		// Visual FoxPro 3.0 or higher
-					case 0x31:		// Visual FoxPro 3.0 or higher, with autoincrement enabled
-						gsWorkArea[lnI].isVisualTable = true;
-						break;
 
-					// NO memo
-					case 0x02:		// FoxBASE
-					case 0x03:		// FoxBASE+, no memo
-						break;
+		//////////
+		// Copy the user portion of the names
+		//////
+			gsWorkArea[lnI].tablePathnameLength = strlen(table);
+			if (gsWorkArea[lnI].tablePathnameLength >= (s32)sizeof(gsWorkArea[lnI].tablePathname))
+			{
+				// Table filename is too long
+				return(_DBF_ERROR_TABLE_NAME_TOO_LONG);
+			}
+			memcpy(gsWorkArea[lnI].tablePathname, table, gsWorkArea[lnI].tablePathnameLength);
+			if (alias != NULL)
+			{
+				// The alias is allowed to be as long as the alias space is, or shorter
+				gsWorkArea[lnI].aliasLength = (((s32)strlen(alias) >= (s32)sizeof(gsWorkArea[lnI].alias)) ? (s32)sizeof(gsWorkArea[lnI].alias) : (u32)strlen(alias));
+				memcpy(gsWorkArea[lnI].alias, alias, gsWorkArea[lnI].aliasLength);
+			}
 
-					// WITH memo
-					case 0x83:		// FoxBASE+, with memo
-					case 0xf5:		// FoxPro 2.x (or earlier), with memo
-					case 0xfb:		// FoxBASE, with memo
-						break;
 
-					default:
+		//////////
+		// Set the flags based on shared or exclusive
+		//////
+			if (tlExclusive)
+			{
+				// Exclusive
+				lShareFlag = _SH_DENYRW;	// Deny reads and writes
+
+			} else {
+				// Shared
+				lShareFlag = _SH_DENYNO;	// Deny none
+			}
+
+
+		//////////
+		// Open the table based on the shared/exclusive mode
+		//////
+			gsWorkArea[lnI].fhDbf = _sopen(table, _O_BINARY | _O_RDWR, lShareFlag);
+			if (gsWorkArea[lnI].fhDbf == NULL)
+				return(_DBF_ERROR_TABLE_NOT_FOUND);	// Unable to open the specified table
+
+
+		//////////
+		// Read the header
+		//////
+			numread = (u32)_read(gsWorkArea[lnI].fhDbf, &gsWorkArea[lnI].header, sizeof(gsWorkArea[lnI].header));
+			if (numread != sizeof(gsWorkArea[lnI].header))
+			{
+				// Unable to read the header
+				_close(gsWorkArea[lnI].fhDbf);
+				return(_DBF_ERROR_ERROR_READING_HEADER1);
+			}
+
+
+//////////
+// Recognized DBF types:
+// 		0x02   FoxBASE
+// 		0x03   FoxBASE+/dBASE III plus, no memo
+// 		0x30   Visual FoxPro
+// 		0x31   Visual FoxPro, auto-increment enabled
+// 		0x83   FoxBASE+/dBASE III PLUS, with memo
+// 		0xf5   FoxPro 2.x (or earlier) with memo
+// 		0xfb   FoxBASE
+//
+// Not currently supported:
+// 		0x43   dBASE IV SQL table files, no memo
+// 		0x63   dBASE IV SQL system files, no memo
+// 		0x8B   dBASE IV with memo
+// 		0xcb   dBASE IV SQL table files, with memo
+//////
+		//////////
+		// Parse the header
+		//////
+			gsWorkArea[lnI].isVisualTable = false;
+			switch (gsWorkArea[lnI].header.type)
+			{
+				case 0x30:		// Visual FoxPro 3.0 or higher
+				case 0x31:		// Visual FoxPro 3.0 or higher, with autoincrement enabled
+					gsWorkArea[lnI].isVisualTable = true;
+					break;
+
+				case 0x02:		// FoxBASE, no memo
+				case 0x03:		// FoxBASE+, no memo
+					break;
+
+				case 0x83:		// FoxBASE+, with memo
+				case 0xf5:		// FoxPro 2.x (or earlier), with memo
+				case 0xfb:		// FoxBASE, with memo
+					break;
+
+				default:
 					// No idea.	 So, we'll say it's a bad, bad table.
-						fclose(gsWorkArea[lnI].fhDbf);
-						return(-1);
-				}
+					_close(gsWorkArea[lnI].fhDbf);
+					return(_DBF_ERROR_UNKNOWN_TABLE_TYPE);
+			}
 
 
-				// Allocate enough memory for the table structure
-				lStructure_size = gsWorkArea[lnI].header.firstRecord - sizeof(STableHeader);
-				gsWorkArea[lnI].fieldPtr1 = (SFieldRecord1*)malloc(lStructure_size);
-				if (gsWorkArea[lnI].fieldPtr1 == NULL)
-				{
-					fclose(gsWorkArea[lnI].fhDbf);
-					return(-1);
-				}
+		//////////
+		// Allocate enough memory for the table structure
+		//////
+			lStructure_size				= gsWorkArea[lnI].header.firstRecord - sizeof(STableHeader);
+			gsWorkArea[lnI].fieldPtr1	= (SFieldRecord1*)malloc(lStructure_size);
+			if (gsWorkArea[lnI].fieldPtr1 == NULL)
+			{
+				_close(gsWorkArea[lnI].fhDbf);
+				return(_DBF_ERROR_MEMORY);
+			}
 
 
-				// Read in the fields
-				fseek(gsWorkArea[lnI].fhDbf, sizeof(STableHeader), SEEK_SET);
-				numread = (u32)fread(gsWorkArea[lnI].fieldPtr1, 1, lStructure_size, gsWorkArea[lnI].fhDbf);
-				if (numread != lStructure_size)
-				{
-					fclose(gsWorkArea[lnI].fhDbf);
-					return(-1);
-				}
+		//////////
+		// Read in the fields
+		//////
+			_lseek(gsWorkArea[lnI].fhDbf, sizeof(STableHeader), SEEK_SET);
+			numread = (u32)_read(gsWorkArea[lnI].fhDbf, gsWorkArea[lnI].fieldPtr1, lStructure_size);
+			if (numread != lStructure_size)
+			{
+				_close(gsWorkArea[lnI].fhDbf);
+				return(_DBF_ERROR_ERROR_READING_HEADER2);
+			}
 
 
-				// Parse the fields to determine the count
-				gsWorkArea[lnI].fieldCount = 0;
-				lfrPtr = gsWorkArea[lnI].fieldPtr1;
-				while (lfrPtr->name[0] != 0 && lfrPtr->name[0] != 13)
-				{
-					// Increase the field count
+		//////////
+		// Parse the fields to determine the count
+		//////
+			lfrPtr						= gsWorkArea[lnI].fieldPtr1;
+			gsWorkArea[lnI].fieldCount	= 0;
+			while (lfrPtr->name[0] != 0 && lfrPtr->name[0] != 13)
+			{
+				//////////
+				// Increase the field count
+				//////
 					++gsWorkArea[lnI].fieldCount;
 
 
-					//////////
-					// Set the index fixup for this field (if any)
-					//////
-						switch (lfrPtr->type)
-						{
-							case 'I':	// 4-byte integer (s32)
-							case 'Y':	// currency, which is technically an 8-byte integer (s64)
-								lfrPtr->indexFixup = _DBF_INDEX_FIXUP_SWAP_ENDIAN;
-								lfrPtr->fillChar	= 0;
-								break;
+				//////////
+				// Set the index fixup for this field (if any)
+				//////
+					switch (lfrPtr->type)
+					{
+						case 'I':	// 4-byte integer (s32)
+						case 'Y':	// currency, which is technically an 8-byte integer (s64)
+							lfrPtr->indexFixup = _DBF_INDEX_FIXUP_SWAP_ENDIAN;
+							lfrPtr->fillChar	= 0;
+							break;
 
-							case 'B':	// Double (f64)
-								lfrPtr->indexFixup = _DBF_INDEX_FIXUP_FLOAT_DOUBLE;
-								lfrPtr->fillChar	= 0;
-								break;
+						case 'B':	// Double (f64)
+							lfrPtr->indexFixup = _DBF_INDEX_FIXUP_FLOAT_DOUBLE;
+							lfrPtr->fillChar	= 0;
+							break;
 
-							case 'D':	// Date
-								lfrPtr->indexFixup = _DBF_INDEX_FIXUP_DATE;
-								lfrPtr->fillChar	= 32;
-								break;
+						case 'D':	// Date
+							lfrPtr->indexFixup = _DBF_INDEX_FIXUP_DATE;
+							lfrPtr->fillChar	= 32;
+							break;
 
-							case 'T':	// Datetime, needs 2nd DWORD fixed up as it is a float (f32)
-								lfrPtr->indexFixup = _DBF_INDEX_FIXUP_DATETIME;
-								lfrPtr->fillChar	= 0;
-								break;
+						case 'T':	// Datetime, needs 2nd DWORD fixed up as it is a float (f32)
+							lfrPtr->indexFixup = _DBF_INDEX_FIXUP_DATETIME;
+							lfrPtr->fillChar	= 0;
+							break;
 
-							case 'L':	// Logical
-								lfrPtr->indexFixup = _DBF_INDEX_FIXUP_LOGICAL;
-								lfrPtr->fillChar	= 32;
-								break;
+						case 'L':	// Logical
+							lfrPtr->indexFixup = _DBF_INDEX_FIXUP_LOGICAL;
+							lfrPtr->fillChar	= 32;
+							break;
 
-							case 'F':	// Float
-							case 'N':	// Numeric
-								lfrPtr->indexFixup = _DBF_INDEX_FIXUP_NUMERIC;
-								lfrPtr->indexFixup_lengthOverride = 8;										// 8 for f64, and -1 to indicate it's valid
-								lfrPtr->fillChar	= 32;
-								break;
+						case 'F':	// Float
+						case 'N':	// Numeric
+							lfrPtr->indexFixup = _DBF_INDEX_FIXUP_NUMERIC;
+							lfrPtr->indexFixup_lengthOverride = 8;										// 8 for f64, and -1 to indicate it's valid
+							lfrPtr->fillChar	= 32;
+							break;
 
-							case 'M':	// Memo
-							case 'W':	// Blob
-							case 'G':	// General
-							case 'Q':	// Varbinary
-							case 'V':	// Varchar
-								lfrPtr->indexFixup = _DBF_INDEX_FIXUP_NONE;
-								lfrPtr->fillChar	= 0;
-								break;
+						case 'M':	// Memo
+						case 'W':	// Blob
+						case 'G':	// General
+						case 'Q':	// Varbinary
+						case 'V':	// Varchar
+							lfrPtr->indexFixup = _DBF_INDEX_FIXUP_NONE;
+							lfrPtr->fillChar	= 0;
+							break;
 
-							case 'C':	// Character
-								lfrPtr->indexFixup = _DBF_INDEX_FIXUP_NONE;
-								lfrPtr->fillChar	= 32;
+						case 'C':	// Character
+							lfrPtr->indexFixup = _DBF_INDEX_FIXUP_NONE;
+							lfrPtr->fillChar	= 32;
 
-							default:
-								lfrPtr->indexFixup = _DBF_INDEX_FIXUP_NONE;
-								lfrPtr->fillChar	= 32;
-								break;
-						}
+						default:
+							lfrPtr->indexFixup = _DBF_INDEX_FIXUP_NONE;
+							lfrPtr->fillChar	= 32;
+							break;
+					}
 
-						// Add in the flag for NULL if possible
-						if (lfrPtr->flags & _DBF_FIELD_NULLS)
-							lfrPtr->indexFixup |= _DBF_INDEX_FIXUP_NULL;
-
-
-					// Move to the next field in the field structure
-					++lfrPtr;
-				}
-				// When we get here, lfrPtr is pointing to the structure termination byte.
-				// If this table has a container, the next byte will be the start of the relative backlink to the table
-				gsWorkArea[lnI].backlink		= (s8*)lfrPtr + 1;	// +1 skips past the trailing CHR(13) which terminates the structure list
-
-				// If it's a visual table, it might have a backlink
-				if (gsWorkArea[lnI].isVisualTable)		gsWorkArea[lnI].backlinkLength	= (u32)strlen(gsWorkArea[lnI].backlink);
-				else								gsWorkArea[lnI].backlinkLength	= 0;
+					// Add in the flag for NULL if possible
+					if (lfrPtr->flags & _DBF_FIELD_NULLS)
+						lfrPtr->indexFixup |= _DBF_INDEX_FIXUP_NULL;
 
 
-				// For each field, determine its name length
-				lfrPtr = gsWorkArea[lnI].fieldPtr1;
-				for (lnJ = 0; lnJ < gsWorkArea[lnI].fieldCount; lnJ++, lfrPtr++)
-				{
-					lfrPtr->field_name_length = 0;
-					for (lnK = 0; lnK < 10 && lfrPtr->name[lnK] != 0; lnK++)
-						++lfrPtr->field_name_length;
-				}
-				// When we get here, all of the fields have their field length as well
-
-				// Copy to the SFieldRecord2.  If it's part of a container, flush out the full name.
-				gsWorkArea[lnI].field2Ptr	= (SFieldRecord2*)malloc(gsWorkArea[lnI].fieldCount * sizeof(SFieldRecord2));
-				memset(gsWorkArea[lnI].field2Ptr, 0, gsWorkArea[lnI].fieldCount * sizeof(SFieldRecord2));
-
-				// Copy everything over to the SFieldRecord2
-				lfrPtr	= gsWorkArea[lnI].fieldPtr1;
-				lfr2Ptr	= gsWorkArea[lnI].field2Ptr;
-				for (lnJ = 0; lnJ < gsWorkArea[lnI].fieldCount; lnJ++, lfrPtr++, lfr2Ptr++)
-				{
-					//////////
-					// Copy the short names over
-					//////
-						memcpy(lfr2Ptr->name,	lfrPtr->name, 11);		// Copy the full short name
-						memcpy(lfr2Ptr->name2,	lfrPtr->name, 11);		// Copy the full short name
-						lfr2Ptr->fieldName_length = (s32)strlen((s8*)lfrPtr->name);
-
-
-					//////////
-					// Copy normal attributes
-					//////
-						lfr2Ptr->type			= lfrPtr->type;
-						lfr2Ptr->offset			= lfrPtr->offset;
-						lfr2Ptr->length			= lfrPtr->length;
-						lfr2Ptr->decimals		= lfrPtr->decimals;
-						lfr2Ptr->flags			= lfrPtr->flags;
-						lfr2Ptr->autoIncNext	= lfrPtr->autoIncNext;
-						lfr2Ptr->autoIncStep	= lfrPtr->autoIncStep;
-						lfr2Ptr->indexFixup	= lfrPtr->indexFixup;
-						lfr2Ptr->fillChar		= lfrPtr->fillChar;
-				}
-
-				// Reset the pointers
-				lfrPtr	= gsWorkArea[lnI].fieldPtr1;
-				lfr2Ptr	= gsWorkArea[lnI].field2Ptr;
-
-				// See if there's an entry in the container for this table, and if so update the field names to their longer form
-				gsWorkArea[lnI].isUsed = _YES;
-				if (gsWorkArea[lnI].isVisualTable && gsWorkArea[lnI].backlinkLength != 0)
-				{
-					// Try to open the backlink
-					iiDbc_lookupTableField(&gsWorkArea[lnI], &llDbcIsValid);
-
-				} else {
-					// Simulate true in the absence of a DBC backlink
-					llDbcIsValid = true;
-				}
-
-				// Allocate enough space for one line of data
-				gsWorkArea[lnI].data = (s8*)malloc(gsWorkArea[lnI].header.recordLength);
-				if (gsWorkArea[lnI].data == NULL)
-				{
-					fclose(gsWorkArea[lnI].fhDbf);
-					return(-1);
-				}
-
-				// For loaded data
-				memset(gsWorkArea[lnI].data, 0, gsWorkArea[lnI].header.recordLength);
-
-				// Allocate enough space for one line of data
-				gsWorkArea[lnI].odata = (s8*)malloc(gsWorkArea[lnI].header.recordLength);
-				if (gsWorkArea[lnI].odata == NULL)
-				{
-					fclose(gsWorkArea[lnI].fhDbf);
-					return(-1);
-				}
-
-				// For original data
-				memset(gsWorkArea[lnI].odata, 0, gsWorkArea[lnI].header.recordLength);		// For original copy of loaded data (allows reversion)
-
-
-				// Allocate space for constructing index keys
-				gsWorkArea[lnI].idata = (s8*)malloc(gsWorkArea[lnI].header.recordLength);
-				if (gsWorkArea[lnI].idata == NULL)
-				{
-					fclose(gsWorkArea[lnI].fhDbf);
-					return(-1);
-				}
-
-				// For index data
-				memset(gsWorkArea[lnI].idata, 0, gsWorkArea[lnI].header.recordLength);		// For original copy of loaded data (allows reversion)
-
-				// We're done!
-				// Right now, the structure has been loaded into gsWorkArea[i].fieldPtr1, and gsWorkArea[i].field2ptr
-				gsWorkArea[lnI].isIndexLoaded		= _NO;
-				gsWorkArea[lnI].isCached			= _NO;
-				gsWorkArea[lnI].currentRecord		= 0;
-
-				// Move to the first record
-				iDbf_gotoRecord(lnI, 1);
-
-				// If it wasn't valid, we need to now close it
-				if (!llDbcIsValid)
-				{
-					// Close what we've opened, and un-allocate what we've allocated
-					iDbf_close(lnI);
-					lnI = -3;
-				}
-
-				// Indicate success
-				return(lnI);
-
+				// Move to the next field in the field structure
+				++lfrPtr;
 			}
-			// This slot is not used
-		}
-		// No more slots
-		return(-2);
+			// When we get here, lfrPtr is pointing to the structure termination byte.
+			// If this table has a container, the next byte will be the start of the relative backlink to the table
+			gsWorkArea[lnI].backlink		= (s8*)lfrPtr + 1;	// +1 skips past the trailing CHR(13) which terminates the structure list
+
+
+		//////////
+		// If it's a visual table, it might have a DBC backlink
+		//////
+			if (gsWorkArea[lnI].isVisualTable)
+			{
+				// Backlink is specified
+				gsWorkArea[lnI].backlinkLength	= (u32)strlen(gsWorkArea[lnI].backlink);
+
+			} else {
+				// No backlink
+				gsWorkArea[lnI].backlinkLength	= 0;
+			}
+
+
+		//////////
+		// For each field, determine its name length
+		//////
+			lfrPtr = gsWorkArea[lnI].fieldPtr1;
+			for (lnJ = 0; lnJ < gsWorkArea[lnI].fieldCount; lnJ++, lfrPtr++)
+			{
+				lfrPtr->field_name_length = 0;
+				for (lnK = 0; lnK < 10 && lfrPtr->name[lnK] != 0; lnK++)
+					++lfrPtr->field_name_length;
+			}
+			// When we get here, all of the fields have their field length as well
+
+
+		//////////
+		// Copy to the SFieldRecord2.  If it's part of a container, flush out the full name.
+		//////
+			gsWorkArea[lnI].field2Ptr = (SFieldRecord2*)malloc(gsWorkArea[lnI].fieldCount * sizeof(SFieldRecord2));
+			memset(gsWorkArea[lnI].field2Ptr, 0, gsWorkArea[lnI].fieldCount * sizeof(SFieldRecord2));
+
+			lfrPtr	= gsWorkArea[lnI].fieldPtr1;
+			lfr2Ptr	= gsWorkArea[lnI].field2Ptr;
+			for (lnJ = 0; lnJ < gsWorkArea[lnI].fieldCount; lnJ++, lfrPtr++, lfr2Ptr++)
+			{
+				//////////
+				// Copy the short names over
+				//////
+					memcpy(lfr2Ptr->name,	lfrPtr->name, 11);		// Copy the full short name
+					memcpy(lfr2Ptr->name2,	lfrPtr->name, 11);		// Copy the full short name
+					lfr2Ptr->fieldName_length = (s32)strlen((s8*)lfrPtr->name);
+
+
+				//////////
+				// Copy normal attributes
+				//////
+					lfr2Ptr->type			= lfrPtr->type;
+					lfr2Ptr->offset			= lfrPtr->offset;
+					lfr2Ptr->length			= lfrPtr->length;
+					lfr2Ptr->decimals		= lfrPtr->decimals;
+					lfr2Ptr->flags			= lfrPtr->flags;
+					lfr2Ptr->autoIncNext	= lfrPtr->autoIncNext;
+					lfr2Ptr->autoIncStep	= lfrPtr->autoIncStep;
+					lfr2Ptr->indexFixup		= lfrPtr->indexFixup;
+					lfr2Ptr->fillChar		= lfrPtr->fillChar;
+			}
+
+
+		//////////
+		// Reset the pointers
+		//////
+			lfrPtr	= gsWorkArea[lnI].fieldPtr1;
+			lfr2Ptr	= gsWorkArea[lnI].field2Ptr;
+
+
+		//////////
+		// See if there's an entry in the container for this table,
+		// and if so update the field names to their longer form
+		//////
+			if (gsWorkArea[lnI].isVisualTable && gsWorkArea[lnI].backlinkLength != 0)
+			{
+				// Try to open the backlink
+				iiDbc_lookupTableField(&gsWorkArea[lnI], &llDbcIsValid, tlExclusive);
+				// llDbcIsValid is populated as a passed-in return parameter
+
+			} else {
+				// Simulate true in the absence of a DBC backlink
+				llDbcIsValid = true;
+			}
+
+
+		//////////
+		// Allocate enough space for one row of data
+		// Active data changed per current row
+		//////
+			gsWorkArea[lnI].data = (s8*)malloc(gsWorkArea[lnI].header.recordLength);
+			if (gsWorkArea[lnI].data == NULL)
+			{
+				_close(gsWorkArea[lnI].fhDbf);
+				return(_DBF_ERROR_MEMORY_ROW);
+			}
+			memset(gsWorkArea[lnI].data, 0, gsWorkArea[lnI].header.recordLength);
+
+
+		//////////
+		// Allocate enough space for one row of data
+		// Original data
+		//////
+			gsWorkArea[lnI].odata = (s8*)malloc(gsWorkArea[lnI].header.recordLength);
+			if (gsWorkArea[lnI].odata == NULL)
+			{
+				_close(gsWorkArea[lnI].fhDbf);
+				return(_DBF_ERROR_MEMORY_ORIGINAL);
+			}
+			memset(gsWorkArea[lnI].odata, 0, gsWorkArea[lnI].header.recordLength);		// For original copy of loaded data (allows reversion)
+
+
+		//////////
+		// Allocate enough space for one row of data
+		// Index data (for the creation of index keys, population of a data source for key generation, without affecting the current row's record data)
+		//////
+			gsWorkArea[lnI].idata = (s8*)malloc(gsWorkArea[lnI].header.recordLength);
+			if (gsWorkArea[lnI].idata == NULL)
+			{
+				_close(gsWorkArea[lnI].fhDbf);
+				return(_DBF_ERROR_MEMORY_INDEX);
+			}
+			memset(gsWorkArea[lnI].idata, 0, gsWorkArea[lnI].header.recordLength);		// For original copy of loaded data (allows reversion)
+
+
+		//////////
+		// We're done!
+		// Right now, the structure has been loaded into gsWorkArea[i].fieldPtr1, and gsWorkArea[i].field2ptr
+		//////////
+
+
+		//////////
+		// Move to the first record
+		//////
+// TODO:  If CDX is populated, and a primary key is specified, we need to position to that tag's first index key's record
+			iDbf_gotoRecord(lnI, 1);
+
+
+		//////////
+		// If it wasn't valid, we need to now close it
+		//////
+			if (!llDbcIsValid)
+			{
+				// Close what we've opened, and un-allocate what we've allocated
+				iDbf_close(lnI);
+				return(_DBF_ERROR_DBC);
+			}
+
+
+		//////////
+		// Success.
+		// Set initial flags
+		//////
+			gsWorkArea[lnI].isIndexLoaded	= _NO;
+			gsWorkArea[lnI].isCached		= _NO;
+			gsWorkArea[lnI].currentRecord	= 0;
+			gsWorkArea[lnI].isUsed			= _YES;
+
+
+		//////////
+		// Return the current work area number
+		//////
+			return(lnI);
 	}
 
 
@@ -636,7 +730,7 @@
 //////
 	uptr iDbf_cacheAllRowData(u32 tnWorkArea)
 	{
-		u32 lnCacheSize, lnOriginalFilePosition, lnNumread;
+		u64 lnCacheSize, lnOriginalFilePosition, lnNumread;
 
 
 		// See if it has any memo fields
@@ -649,21 +743,21 @@
 
 
 		// Find out how big the file is
-		lnOriginalFilePosition = ftell(gsWorkArea[tnWorkArea].fhDbf);
-		fseek(gsWorkArea[tnWorkArea].fhDbf, 0, SEEK_END);
-		lnCacheSize = ftell(gsWorkArea[tnWorkArea].fhDbf) - (u32)gsWorkArea[tnWorkArea].header.firstRecord;
-		fseek(gsWorkArea[tnWorkArea].fhDbf, gsWorkArea[tnWorkArea].header.firstRecord, SEEK_SET);
+		lnOriginalFilePosition = _telli64(gsWorkArea[tnWorkArea].fhDbf);
+		_lseeki64(gsWorkArea[tnWorkArea].fhDbf, 0, SEEK_END);
+		lnCacheSize = _telli64(gsWorkArea[tnWorkArea].fhDbf) - (u32)gsWorkArea[tnWorkArea].header.firstRecord;
+		_lseeki64(gsWorkArea[tnWorkArea].fhDbf, gsWorkArea[tnWorkArea].header.firstRecord, SEEK_SET);
 
 		// If we're smaller than 200 MB we'll go ahead and cache, otherwise ... not so much
 		if (lnCacheSize > 200 * 1024 * 1000)
 			return(-5);		// Too big to cache
 
 		// Allocate that much space
-		gsWorkArea[tnWorkArea].cachedTable = (s8*)malloc(lnCacheSize);
+		gsWorkArea[tnWorkArea].cachedTable = (s8*)malloc((size_t)lnCacheSize);
 		if (gsWorkArea[tnWorkArea].cachedTable)
 		{
 			// Read in the table
-			lnNumread = (u32)fread(gsWorkArea[tnWorkArea].cachedTable, 1, lnCacheSize, gsWorkArea[tnWorkArea].fhDbf);
+			lnNumread = _read(gsWorkArea[tnWorkArea].fhDbf, gsWorkArea[tnWorkArea].cachedTable, (sptr)lnCacheSize);
 			if (lnNumread != lnCacheSize)
 				return(-1);
 
@@ -674,13 +768,13 @@
 			iiFreeAndSetToNull((void **)&gsWorkArea[tnWorkArea].data);
 
 			// Reset the file pointer to where it was
-			fseek(gsWorkArea[tnWorkArea].fhDbf, lnOriginalFilePosition, SEEK_SET);
+			_lseeki64(gsWorkArea[tnWorkArea].fhDbf, lnOriginalFilePosition, SEEK_SET);
 
 			// Set data to where it should be in the cache
 			iDbf_gotoRecord(tnWorkArea, gsWorkArea[tnWorkArea].currentRecord);
 
 			// Indicate success
-			return(lnCacheSize);
+			return((u32)lnCacheSize);
 		}
 		// If we get here, unable to allocate
 		return(-4);
@@ -714,8 +808,8 @@
 
 
 		// Close the file handle
-		fclose(gsWorkArea[tnWorkArea].fhDbf);				// Note:  No non-null checking here because: a) It should never be non-null and b) if it is, we don't care because we're making it that way anyway
-		gsWorkArea[tnWorkArea].fhDbf = (FILE*)NULL;
+		_close(gsWorkArea[tnWorkArea].fhDbf);				// Note:  No non-null checking here because: a) It should never be non-null and b) if it is, we don't care because we're making it that way anyway
+		gsWorkArea[tnWorkArea].fhDbf = 0;
 
 
 		// If we were connected to a DBC, go ahead and close our reference to it if no other open DBFs are referencing it
@@ -806,6 +900,7 @@
 		//////////
 		// Get the CDX filename
 		//////
+// TODO:  Since JUSTPATH() and JUSTSTEM() have been written, this can be modified to use those functions
 			wa = &gsWorkArea[tnWorkArea];
 			memset(cdxName, 0, sizeof(cdxName));
 			memcpy(cdxName, wa->tablePathname, wa->tablePathnameLength);
@@ -1034,7 +1129,7 @@
 //////
 	sptr iDbf_gotoRecord(u32 tnWorkArea, s32 recordNumber)
 	{
-		u32 lnNumread;
+		u64 lnNumread;
 
 
 		// Check for errors
@@ -1057,17 +1152,19 @@
 				} else {
 					// Manual seek in the table, and a manual read
 					// Seek to the indicated offset, and read in the record
-					fseek(gsWorkArea[tnWorkArea].fhDbf, gsWorkArea[tnWorkArea].header.firstRecord + ((recordNumber - 1) * gsWorkArea[tnWorkArea].header.recordLength), SEEK_SET);
+					_lseeki64(	gsWorkArea[tnWorkArea].fhDbf, 
+								gsWorkArea[tnWorkArea].header.firstRecord + ((recordNumber - 1) * gsWorkArea[tnWorkArea].header.recordLength),
+								SEEK_SET);
 
 					// Read in the record
-					lnNumread = (u32)fread(gsWorkArea[tnWorkArea].data, 1, gsWorkArea[tnWorkArea].header.recordLength, gsWorkArea[tnWorkArea].fhDbf);
+					lnNumread = _read(gsWorkArea[tnWorkArea].fhDbf, gsWorkArea[tnWorkArea].data, gsWorkArea[tnWorkArea].header.recordLength);
 					if (lnNumread != gsWorkArea[tnWorkArea].header.recordLength)
 						return(-1);
 				}
 
 				// Set the current record, and lower the dirty flag
 				gsWorkArea[tnWorkArea].currentRecord	= recordNumber;
-				gsWorkArea[tnWorkArea].dirty				= 0;
+				gsWorkArea[tnWorkArea].dirty			= 0;
 
 				// Copy to the original record
 				memcpy(gsWorkArea[tnWorkArea].odata, gsWorkArea[tnWorkArea].data, gsWorkArea[tnWorkArea].header.recordLength);
@@ -1103,10 +1200,12 @@
 			{
 				// Write the record
 				// Seek to the indicated offset, and read in the record
-				fseek(gsWorkArea[tnWorkArea].fhDbf, gsWorkArea[tnWorkArea].header.firstRecord + ((gsWorkArea[tnWorkArea].currentRecord - 1) * gsWorkArea[tnWorkArea].header.recordLength), SEEK_SET);
+				_lseeki64(	gsWorkArea[tnWorkArea].fhDbf,
+							gsWorkArea[tnWorkArea].header.firstRecord + ((gsWorkArea[tnWorkArea].currentRecord - 1) * gsWorkArea[tnWorkArea].header.recordLength),
+							SEEK_SET);
 
 				// Write the record
-				lnNumread = (u32)fwrite(gsWorkArea[tnWorkArea].data, 1, gsWorkArea[tnWorkArea].header.recordLength, gsWorkArea[tnWorkArea].fhDbf);
+				lnNumread = _write(gsWorkArea[tnWorkArea].fhDbf, gsWorkArea[tnWorkArea].data, gsWorkArea[tnWorkArea].header.recordLength);
 				if (lnNumread != gsWorkArea[tnWorkArea].header.recordLength)
 					return(-1);
 
@@ -2316,7 +2415,7 @@
 // copies over the frPtr field name to the fr2Ptr field.
 //
 //////
-	void iiDbc_lookupTableField(SWorkArea* wa, bool* tlIsValid)
+	void iiDbc_lookupTableField(SWorkArea* wa, bool* tlIsValid, bool tlExcusive)
 	{
 		u32				lnI, lnDbcHandle, lnRecno, lnAliasLength, lnField;
 		s32				lnObjectId, lnParentId, lnObjectType, lnObjectName, lnDbcLength;
@@ -2370,7 +2469,7 @@
 				}
 
 				// It is not already open, so we need to open it
-				lnDbcHandle = (u32)iDbf_open(dbcName, "dbc");
+				lnDbcHandle = (u32)iDbf_open(dbcName, "dbc", tlExcusive);
 				if ((s32)lnDbcHandle >= 0)
 				{
 					// We're good

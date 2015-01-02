@@ -85,11 +85,15 @@
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <io.h>
+#include <sys/locking.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <share.h>
 #include <sql.h>
 #include <sqlext.h>
 #include "resource.h"
-
 
 #define _USE_MATH_DEFINES
 #include <math.h>
