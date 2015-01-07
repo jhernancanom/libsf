@@ -135,8 +135,8 @@ struct SFieldRecord2;
 
 
 	// DBF functions
-	uptr				iDbf_open										(SVariable* table, SVariable* alias, bool tlExclusive);
-	uptr				iDbf_open										(s8* table, s8* alias, bool tlExclusive);
+	uptr				iDbf_open										(SVariable* table,	SVariable* alias,	bool tlExclusive, bool tlAgain);
+	uptr				iDbf_open										(cs8* table,		cs8* alias,			bool tlExclusive, bool tlAgain);
 	uptr				iDbf_openRemote									(s8* connString);
 	uptr				iDbf_cacheAllRowData							(u32 tnWorkArea);
 	uptr				iDbf_close										(u32 tnWorkArea);
@@ -148,6 +148,8 @@ struct SFieldRecord2;
 	sptr				iDbf_get_workArea_current						(void);
 	sptr				iDbf_get_workArea_lowestFree					(void);
 	sptr				iDbf_get_workArea_highestFree					(void);
+	sptr				iDbf_get_workArea_byTablePathname				(SVariable* varPathname);
+	sptr				iDbf_get_workArea_byTablePathname				(cs8* varPathname);
 	sptr				iDbf_get_workArea_byAlias						(SVariable* varAlias);
 	SVariable*			iDbf_get_alias_fromPathname						(SVariable* varPathname);
 
@@ -156,7 +158,7 @@ struct SFieldRecord2;
 
 	uptr				iDbf_getFieldCount								(u32 tnWorkArea);
 	uptr				iDbf_getReccount								(u32 tnWorkArea);
-	uptr				iDbf_getField_number1							(u32 tnWorkArea, u8* fieldName);
+	uptr				iDbf_getField_number1							(u32 tnWorkArea, const u8* fieldName);
 	uptr				iDbf_getField_name								(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength);
 	uptr				iDbf_getField_type								(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength);
 	uptr				iDbf_getField_type_verbose						(u32 tnWorkArea, u32 fieldNumber, u8* dest, u32 destLength);

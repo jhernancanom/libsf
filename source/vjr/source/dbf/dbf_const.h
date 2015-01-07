@@ -68,9 +68,7 @@
 
 
 //////////
-//
 // Constants
-//
 /////
 	#define		_MAX_DBF_SLOTS				512			// Up to 512 work areas can be opened simultaneously
 	#define		_MAX_DBC_SLOTS				512			// Up to 512 containers can be opened simultaneously
@@ -105,3 +103,13 @@
 	#define 	_BIT_32								0x20
 	#define 	_BIT_64								0x40
 	#define 	_BIT_128							0x80
+
+
+//////////
+// Strings
+//////
+	const u8	cgcDbcKeyName[]			= "$__dbc__$";
+	const u8	cgcObjectId[]			= "objectId";
+	const u8	cgcParentId[]			= "parentId";
+	const u8	cgcObjectType[]			= "objectType";
+	const u8	cgcObjectName[]			= "objectName";

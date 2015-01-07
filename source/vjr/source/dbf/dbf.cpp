@@ -180,7 +180,7 @@
 //		Errors below -200			-- DBC errors
 //
 /////
-	uptr iDbf_open(SVariable* table, SVariable* alias, bool tlExclusive)
+	uptr iDbf_open(SVariable* table, SVariable* alias, bool tlExclusive, bool tlAgain)
 	{
 		s8 tableBuffer[_MAX_PATH + 1];
 		s8 aliasBuffer[_MAX_PATH + 1];
@@ -204,7 +204,7 @@
 			//////////
 			// Open
 			//////
-				return(iDbf_open(tableBuffer, aliasBuffer, tlExclusive));
+				return(iDbf_open(tableBuffer, aliasBuffer, tlExclusive, tlAgain));
 		}
 
 		// Should never happen
@@ -214,9 +214,9 @@
 
 	// Note:  table and alias must be NULL-terminated
 	// Note:  an alias is not required
-	uptr iDbf_open(s8 *table, s8 *alias, bool tlExclusive)
+	uptr iDbf_open(cs8* table, cs8* alias, bool tlExclusive, bool tlAgain)
 	{
-		s32				lnI;
+		s32				lnI, lnWorkArea;
 		u32				lnJ, lnK, lShareFlag, lStructure_size, numread;
 		bool			llDbcIsValid;
 		SFieldRecord1*	lfrPtr;
@@ -285,7 +285,21 @@
 		//////
 			gsWorkArea[lnI].fhDbf = _sopen(table, _O_BINARY | _O_RDWR, lShareFlag);
 			if (gsWorkArea[lnI].fhDbf == NULL)
-				return(_DBF_ERROR_TABLE_NOT_FOUND);	// Unable to open the specified table
+			{
+				// Unable to open
+				// See if it's already open and if we can use it again
+				if (tlAgain && (lnWorkArea = iDbf_get_workArea_byTablePathname(table)) >= 0)
+				{
+					// We found the work area where this table is already open ... share its file handle
+					gsWorkArea[lnI].fhDbf = _dup(gsWorkArea[lnWorkArea].fhDbf);
+				}
+				
+				if (gsWorkArea[lnI].fhDbf == NULL)
+				{
+					// Unable to open the specified table
+					return(_DBF_ERROR_TABLE_NOT_FOUND);
+				}
+			}
 
 
 		//////////
@@ -1061,6 +1075,53 @@
 		return(lnI);
 	}
 
+	// Note:  This algorithm can be fooled, such as mapping a network location to K: and J:
+	sptr iDbf_get_workArea_byTablePathname(SVariable* varTablePathname)
+	{
+		s8 table[_MAX_PATH];
+
+
+		// Make sure our environment is sane
+		if (varTablePathname && varTablePathname->varType == _VAR_TYPE_CHARACTER && varTablePathname->value.data_s8 && varTablePathname->value.length >= 1 && varTablePathname->value.length < sizeof(gsWorkArea[0].tablePathname))
+		{
+			// Initialize and copy the pathname
+			memset(table, 0, sizeof(table));
+			memcpy(table, varTablePathname->value.data_s8, varTablePathname->value.length);
+
+			// Search for it
+			return(iDbf_get_workArea_byTablePathname((cs8*)table));
+
+		} else {
+			// Invalid parameters
+			return(-1);
+		}
+	}
+
+	sptr iDbf_get_workArea_byTablePathname(cs8* tcTablePathname)
+	{
+		s32 lnI, lnLength;
+
+
+		// Make sure our environment is sane
+		if (tcTablePathname && (lnLength = strlen(tcTablePathname)) < sizeof(gsWorkArea[0].tablePathname))
+		{
+			// Iterate through every work area searching tables
+			for (lnI = 0; lnI < _MAX_DBF_SLOTS; lnI++)
+			{
+				// If it's a table, and the alias name is the same length, continue checking the name
+				if (gsWorkArea[lnI].isUsed == _YES && gsWorkArea[lnI].aliasLength == lnLength)
+				{
+					// Check the name
+					if (_memicmp(gsWorkArea[lnI].tablePathname, tcTablePathname, lnLength) == 0)
+						return(lnI);	// It is a match
+				}
+			}
+		}
+
+		// If we get here, not found
+		return(-1);
+	}
+
 	sptr iDbf_get_workArea_byAlias(SVariable* varAlias)
 	{
 		s32 lnI;
@@ -1304,7 +1365,7 @@
 	}
 
 	// Returns the field number by field name
-	uptr iDbf_getField_number1(u32 tnWorkArea, u8* fieldName)
+	uptr iDbf_getField_number1(u32 tnWorkArea, const u8* fieldName)
 	{
 		s32				lnI, lnLength;
 		SFieldRecord2*	lfr2Ptr;
@@ -1320,11 +1381,11 @@
 		if (lfr2Ptr)
 		{
 			// Store the name
-			lnLength = (s32)strlen(fieldName);
+			lnLength = (s32)strlen((u8*)fieldName);
 			for (lnI = 1; lnI <= (s32)gsWorkArea[tnWorkArea].fieldCount; lnI++, lfr2Ptr++)
 			{
 				// Length must match, and the field name must match
-				if (lnLength == lfr2Ptr->fieldName_length && _memicmp(fieldName, lfr2Ptr->name2, lnLength) == 0)
+				if (lnLength == lfr2Ptr->fieldName_length && _memicmp((u8*)fieldName, lfr2Ptr->name2, lnLength) == 0)
 					return(lnI);
 			}
 		}
@@ -2510,7 +2571,7 @@
 				}
 
 				// It is not already open, so we need to open it
-				lnDbcHandle = (u32)iDbf_open(dbcName, "dbc", tlExcusive);
+				lnDbcHandle = (u32)iDbf_open((cs8*)dbcName, (cs8*)cgcDbcKeyName, tlExcusive, false);
 				if ((s32)lnDbcHandle >= 0)
 				{
 					// We're good
@@ -2529,10 +2590,10 @@
 			if (wa->dbc)
 			{
 				// Get the offsets to the fields
-				lnObjectId			= (s32)iDbf_getField_number1(lnDbcHandle, (u8*)"objectId");
-				lnParentId			= (s32)iDbf_getField_number1(lnDbcHandle, (u8*)"parentId");
-				lnObjectType		= (s32)iDbf_getField_number1(lnDbcHandle, (u8*)"objectType");
-				lnObjectName		= (s32)iDbf_getField_number1(lnDbcHandle, (u8*)"objectName");
+				lnObjectId			= (s32)iDbf_getField_number1(lnDbcHandle, cgcObjectId);
+				lnParentId			= (s32)iDbf_getField_number1(lnDbcHandle, cgcParentId);
+				lnObjectType		= (s32)iDbf_getField_number1(lnDbcHandle, cgcObjectType);
+				lnObjectName		= (s32)iDbf_getField_number1(lnDbcHandle, cgcObjectName);
 
 				// Did we find every field?
 				if (lnObjectId <= 0 || lnParentId <= 0 || lnObjectType <= 0 || lnObjectName <= 0)

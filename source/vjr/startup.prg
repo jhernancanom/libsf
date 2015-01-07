@@ -242,5 +242,5 @@
 *****
 	(| round cask |)		(|| with parameters ||)			&& Reference cask (references some defined thing)
 	[| square cask |]		[|| with parameters ||]			&& Definition cask (defines something from its point of view)
-	<| triangle cask |>		<|| with parameters ||>			&& Logic cask <||a|b|c||> same as ((a)?b:c)
+	<| triangle cask |>		<|| with parameters ||>			&& Logic cask <||a|b|c||> same as ((a)?b:c) or IIF(a,b,c)
 	~| tilde cask |~		~|| with parameters ||~			&& Utility casks (injects arbitrary code anywhere)

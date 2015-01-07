@@ -212,6 +212,10 @@
 	const u32		_ERROR_WORK_AREA_ALREADY_IN_USE					= 32;
 	const u32		_ERROR_ERROR_OPENING_DBC						= 33;
 	const u32		_ERROR_CONFLICTING_PARAMETERS					= 34;
+	const u32		_ERROR_PARAMETER_IS_INCORRECT					= 35;
+	const u32		_ERROR_TABLE_ALREADY_IN_USE						= 36;
+	const u32		_ERROR_PARAMETER_TOO_LONG						= 37;
+	const u32		_ERROR_UNABLE_TO_OPEN_DBC						= 38;
 
 	// Messages
 	const u8		cgcComponentError[]								= "Error in component, column ";
@@ -249,6 +253,10 @@
 	const u8		cgcWorkAreaAlreadyInUse[]						= "work area already in use";
 	const u8		cgcErrorOpeningDbc[]							= "error in opening dbc";
 	const u8		cgcConflictingParameters[]						= "conflicting parameters";
+	const u8		cgcParameterIsIncorrect[]						= "parameter is incorrect";
+	const u8		cgcTableAlreadyInUse[]							= "table already in use";
+	const u8		cgcParameterTooLong[]							= "parameter too long";
+	const u8		cgcUnableToOpenDbc[]							= "unable to open container";
 
 
 //////////

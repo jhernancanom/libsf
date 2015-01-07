@@ -134,6 +134,10 @@
 			case _ERROR_WORK_AREA_ALREADY_IN_USE:			{	iError_report(cgcWorkAreaAlreadyInUse);				break;	}
 			case _ERROR_ERROR_OPENING_DBC:					{	iError_report(cgcErrorOpeningDbc);					break;	}
 			case _ERROR_CONFLICTING_PARAMETERS:				{	iError_report(cgcConflictingParameters);			break;	}
+			case _ERROR_PARAMETER_IS_INCORRECT:				{	iError_report(cgcParameterIsIncorrect);				break;	}
+			case _ERROR_TABLE_ALREADY_IN_USE:				{	iError_report(cgcTableAlreadyInUse);				break;	}
+			case _ERROR_PARAMETER_TOO_LONG:					{	iError_report(cgcParameterTooLong);					break;	}
+			case _ERROR_UNABLE_TO_OPEN_DBC:					{	iError_report(cgcUnableToOpenDbc);					break;	}
 
 		}
 
@@ -5212,6 +5216,99 @@ debug_break;
 		//////
 			return(result);
 	}
+;
+
+
+
+
+//////////
+//
+// Command:  OPEN
+// Multiple forms.  Opens a database container.
+//
+//////
+// Version 0.55
+// Last update:
+//     Jan.06.2015
+//////
+// Change log:
+//     Jan.06.2015 - Initial creation
+//////
+// Parameters:
+//     comp		-- The [OPEN] component
+//////
+// Returns:
+//    Nothing, but the environment may be changed.
+//////
+	void command_open(SComp* compOpen)
+	{
+		s32		lnLength, lnDbcArea;
+		bool	llExclusive;
+		SComp*	compPathname;
+		SComp*	compDatabase;
+		SComp*	compExclusive;
+		SComp*	compShared;
+		SComp*	compValidate;
+		s8		dbcNameBuffer[_MAX_PATH];
+
+
+		//////////
+		// Access the options which are available for this command
+		//////
+			compDatabase	= iComps_findNextBy_iCode(compOpen, _ICODE_DATABASE,	NULL);
+			compExclusive	= iComps_findNextBy_iCode(compOpen, _ICODE_EXCLUSIVE,	NULL);
+			compShared		= iComps_findNextBy_iCode(compOpen, _ICODE_SHARED,		NULL);
+			compValidate	= iComps_findNextBy_iCode(compOpen, _ICODE_VALIDATE,	NULL);
+
+
+		//////////
+		// Make sure the syntax was OPEN DATABASE
+		//////
+			if (!compDatabase)
+			{
+				// Syntax error
+				iError_reportByNumber(_ERROR_SYNTAX, compOpen);
+				return;
+			}
+			if (!compDatabase->ll.next)
+			{
+				// Syntax error
+				iError_reportByNumber(_ERROR_SYNTAX, compDatabase);
+				return;
+			}
+			// Grab the component after [database]
+			compPathname = iComps_getNth(compDatabase, 1);
+
+
+		//////////
+		// Extract the DBC name
+		//////
+			lnLength = iComps_getContiguousLength(compPathname, NULL, 0);
+			if (lnLength >= sizeof(dbcNameBuffer))
+			{
+				// Parameter is too long
+				iError_reportByNumber(_ERROR_PARAMETER_TOO_LONG, compPathname);
+				return;
+			}
+			memset(dbcNameBuffer, 0, sizeof(dbcNameBuffer));
+			memcpy(dbcNameBuffer, compPathname->line->sourceCode->data + compPathname->start, lnLength);
+
+
+// TODO:  Shared / exclusive, set llExclusive
+			working here...
+
+
+		//////////
+		// Try to open it
+		//////
+			lnDbcArea = iDbf_open((cs8*)dbcNameBuffer, (cs8*)cgcDbcKeyName, llExclusive, false);
+			if (lnDbcArea < 0)
+			{
+				// Unable to open
+				iError_reportByNumber(_ERROR_UNABLE_TO_OPEN_DBC, compPathname);
+				return;
+			}
+	}
 
 
 
@@ -5231,11 +5328,9 @@ debug_break;
 //////
 // Parameters:
 //     comp		-- The [USE] component
-//
 //////
 // Returns:
-//    The sum of p1 / p2
-//
+//    Nothing, but the environment may be changed.
 //////
 	void command_use(SComp* compUse)
 	{
@@ -5483,9 +5578,10 @@ debug_break;
 		//////////
 		// Get the table name
 		//////
-			// It could be a variable name if there's nothing next to it, and it's found :-)
+			// Note:  compUse is actually pointing to whatever was after USE by this point
 			if ((varTableName = iEngine_get_variableName_fromComponent(compUse, &llManufacturedTableName))) {
 				// Placeholder, we were able to obtain a variable name
+				// Note:  The variable is checked for sanity below
 
 			} else if ((varTableName = iEngine_get_contiguousComponents(compUse, &llManufacturedTableName, NULL, 0))) {
 					// Placeholder, we were able to obtain a contiguous stream of characters
@@ -5521,6 +5617,23 @@ debug_break;
 				// We didn't get what we needed
 				iError_reportByNumber(_ERROR_UNRECOGNIZED_PARAMETER, compUse);
 				goto clean_exit;
+			}
+			// Note:	The parameter, while character, may still be incorrect.
+			//			It may be an invalid filename.  That will be sorted out on the open.
+
+
+		//////////
+		// If they didn't specify AGAIN, make sure it's not already open
+		//////
+			if (!compAgain)
+			{
+				// No AGAIN clause was specified, so make sure it isn't already found as being in use
+				if (iDbf_get_workArea_byTablePathname(varTableName) >= 0)
+				{
+					// It was found, which means it's already in use
+					iError_reportByNumber(_ERROR_TABLE_ALREADY_IN_USE, compUse);
+					goto clean_exit;
+				}
 			}
 
 
@@ -5581,9 +5694,10 @@ debug_break;
 		// Get the alias
 		//////
 			iDbf_set_workArea_current(lnWorkArea);
-			lnWorkArea = iDbf_open(varTableName, varAliasName, llIsExclusive);
+			lnWorkArea = iDbf_open(varTableName, varAliasName, llIsExclusive, (compAgain != NULL));
 			if (lnWorkArea < 0)
 			{
+				// The negative work area number indicates the error
 				switch (lnWorkArea)
 				{
 					case -1:
@@ -5600,7 +5714,30 @@ debug_break;
 						// Error in DBC
 						iError_reportByNumber(_ERROR_ERROR_OPENING_DBC, compUse);
 						break;
+
+					default:
+						// Unexpected error (shouldn't happen)
+						iError_reportByNumber(_ERROR_INTERNAL_ERROR, compUse);
+						break;
 				}
+
+			} else {
+				// Set any meta data about the table
+				SComp*	compAgain				= iComps_findNextBy_iCode(compUse, _ICODE_AGAIN,				NULL);
+				SComp*	compNoRequery			= iComps_findNextBy_iCode(compUse, _ICODE_NOREQUERY,			NULL);
+				SComp*	compNoData				= iComps_findNextBy_iCode(compUse, _ICODE_NODATA,				NULL);
+				SComp*	compNoUpdate			= iComps_findNextBy_iCode(compUse, _ICODE_NOUPDATE,				NULL);
+				SComp*	compExclamationPoint	= iComps_findNextBy_iCode(compUse, _ICODE_EXCLAMATION_POINT,	NULL);
+				SComp*	compIn					= iComps_findNextBy_iCode(compUse, _ICODE_IN,					NULL);
+				SComp*	compIndex				= iComps_findNextBy_iCode(compUse, _ICODE_INDEX,				NULL);
+				SComp*	compOrder				= iComps_findNextBy_iCode(compUse, _ICODE_ORDER,				NULL);
+				SComp*	compTag					= iComps_findNextBy_iCode(compUse, _ICODE_TAG,					NULL);
+				SComp*	compAscending			= iComps_findNextBy_iCode(compUse, _ICODE_ASCENDING,			NULL);
+				SComp*	compDescending			= iComps_findNextBy_iCode(compUse, _ICODE_DESCENDING,			NULL);
+				SComp*	compAlias				= iComps_findNextBy_iCode(compUse, _ICODE_ALIAS,				NULL);
+				SComp*	compExclusive			= iComps_findNextBy_iCode(compUse, _ICODE_EXCLUSIVE,			NULL);
+				SComp*	compShared				= iComps_findNextBy_iCode(compUse, _ICODE_SHARED,				NULL);
+				SComp*	compConnString			= iComps_findNextBy_iCode(compUse, _ICODE_CONNSTRING,			NULL);
 			}
 
 clean_exit:

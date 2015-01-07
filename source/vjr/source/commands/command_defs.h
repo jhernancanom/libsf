@@ -209,7 +209,8 @@ struct SVariable;
 // STEP1B: Define your command
 //
 //////
-	void				command_use									(SComp* comp);
+	void				command_open								(SComp* compOpen);
+	void				command_use									(SComp* compUse);
 
 
 
@@ -359,6 +360,7 @@ struct SVariable;
 	SCommandData gsKnownCommands[] = {
 		//	iCode					Command Algorithm
 		//  ------------------		--------------------------
+		{	_ICODE_OPEN,			(uptr)&command_open			},
 		{	_ICODE_USE,				(uptr)&command_use			},
 
 		// Note:  Do not delete this line, it is used to terminate the command list
