@@ -72,6 +72,10 @@
 /////
 	#define		_MAX_DBF_SLOTS				512			// Up to 512 work areas can be opened simultaneously
 	#define		_MAX_DBC_SLOTS				512			// Up to 512 containers can be opened simultaneously
+	#define		_MAX_SCX_SLOTS				1024		// Up to 1024 forms can be opened simultaneously
+	#define		_MAX_VCX_SLOTS				2048		// Up to 2048 classes can be opened simultaneously
+	#define		_MAX_FRX_SLOTS				32			// Up to 32 reports can be opened simultaneously
+	#define		_MAX_MNX_SLOTS				128			// Up to 128 menus can be opened simultaneously
 	#define		_MAX_CDX_TAGS				128			// Up to 128 index tags are supported per CDX, per DBF
 
 	// Errors
@@ -87,6 +91,7 @@
 	#define		_DBF_ERROR_MEMORY_ORIGINAL			-10
 	#define		_DBF_ERROR_MEMORY_INDEX				-11
 	#define		_DBF_ERROR_DBC						-12
+	#define		_DBF_ERROR_NO_MORE_WORK_AREAS		-13
 
 	// For field flags
 	#define 	_DBF_FIELD_SYSTEM					0x01
@@ -109,6 +114,10 @@
 // Strings
 //////
 	const u8	cgcDbcKeyName[]			= "$__dbc__$";
+	const u8	cgcScxKeyName[]			= "$__scx__$";
+	const u8	cgcVcxKeyName[]			= "$__vcx__$";
+	const u8	cgcFrxKeyName[]			= "$__frx__$";
+	const u8	cgcMnxKeyName[]			= "$__mnx__$";
 	const u8	cgcObjectId[]			= "objectId";
 	const u8	cgcParentId[]			= "parentId";
 	const u8	cgcObjectType[]			= "objectType";

@@ -106,10 +106,10 @@
 			for (lnI = 0; lnI < _MAX_DBC_SLOTS; lnI++)
 			{
 				// Initialize everything
-				memset(&gsDbcAreas[lnI], 0, sizeof(gsDbcAreas[lnI]));
+				memset(&gsDbcArea[lnI], 0, sizeof(gsDbcArea[lnI]));
 
 				// Set its number
-				gsDbcAreas[lnI].thisWorkArea = lnI;
+				gsDbcArea[lnI].thisWorkArea = lnI;
 			}
 	}
 
@@ -216,53 +216,131 @@
 	// Note:  an alias is not required
 	uptr iDbf_open(cs8* table, cs8* alias, bool tlExclusive, bool tlAgain)
 	{
-		s32				lnI, lnWorkArea;
+		s32				lnI, lnI_max, lnWorkArea, lnLength;
 		u32				lnJ, lnK, lShareFlag, lStructure_size, numread;
+		s32*			lnCurrentWorkArea;
 		bool			llDbcIsValid;
 		SFieldRecord1*	lfrPtr;
 		SFieldRecord2*	lfr2Ptr;
+		SWorkArea*		waBase;
+		SWorkArea*		wa;
 
 
 		//////////
+		// Based on the type of table, it goes into its own area
+		//////
+			lnLength = strlen(alias);
+			if (lnLength == sizeof(cgcDbcKeyName) - 1 && _memicmp(alias, cgcDbcKeyName, lnLength) == 0)
+			{
+				// It's a DBC
+				lnI					= gnDbc_currentWorkArea;
+				lnCurrentWorkArea	= &gnDbc_currentWorkArea;
+				lnI_max				= _MAX_DBC_SLOTS;
+				waBase				= &gsDbcArea[0];
+
+			} else if (lnLength == sizeof(cgcScxKeyName) - 1 && _memicmp(alias, cgcScxKeyName, lnLength) == 0) {
+				// It's an SCX
+				lnI					= gnScx_currentWorkArea;
+				lnCurrentWorkArea	= &gnScx_currentWorkArea;
+				lnI_max				= _MAX_SCX_SLOTS;
+				waBase				= &gsScxArea[0];
+
+			} else if (lnLength == sizeof(cgcVcxKeyName) - 1 && _memicmp(alias, cgcVcxKeyName, lnLength) == 0) {
+				// It's an VCX
+				lnI					= gnVcx_currentWorkArea;
+				lnCurrentWorkArea	= &gnVcx_currentWorkArea;
+				lnI_max				= _MAX_VCX_SLOTS;
+				waBase				= &gsVcxArea[0];
+
+			} else if (lnLength == sizeof(cgcFrxKeyName) - 1 && _memicmp(alias, cgcFrxKeyName, lnLength) == 0) {
+				// It's an FRX
+				lnI					= gnFrx_currentWorkArea;
+				lnCurrentWorkArea	= &gnFrx_currentWorkArea;
+				lnI_max				= _MAX_FRX_SLOTS;
+				waBase				= &gsFrxArea[0];
+
+			} else if (lnLength == sizeof(cgcMnxKeyName) - 1 && _memicmp(alias, cgcMnxKeyName, lnLength) == 0) {
+				// It's an MNX
+				lnI					= gnMnx_currentWorkArea;
+				lnCurrentWorkArea	= &gnMnx_currentWorkArea;
+				lnI_max				= _MAX_MNX_SLOTS;
+				waBase				= &gsMnxArea[0];
+
+			} else {
+				// It's a table
+				lnI					= gnDbf_currentWorkArea;
+				lnCurrentWorkArea	= &gnDbf_currentWorkArea;
+				lnI_max				= _MAX_DBF_SLOTS;
+				waBase				= &gsWorkArea[0];
+			}
+
+
+
+		//////////
+		// If we need to select the lowest work area, do so
+		//////
+			if (lnI == -1)
+			{
+				// Search for the first free open one
+				for (lnI = 0; lnI < lnI_max; lnI++)
+				{
+					if (waBase[lnI].isUsed == _NO)
+					{
+						// Update the current work area
+						*lnCurrentWorkArea = lnI;
+						break;
+					}
+				}
+
+				// When we get here, we're either good or not good. :-)
+				if (lnI >= lnI_max)
+				{
+					// Not good, no unused work areas were found
+					return(_DBF_ERROR_NO_MORE_WORK_AREAS);
+				}
+			}
+
+			
+		//////////
 		// We can only populate into the indicated work area
 		//////
-			lnI = gnDbf_currentWorkArea;
-			if (gsWorkArea[lnI].isUsed != _NO)
+			if (waBase[lnI].isUsed != _NO)
 			{
 				// This slot is already in use, and therefore invalid
 				return(_DBF_ERROR_WORK_AREA_ALREADY_IN_USE);
 			}
+			wa = waBase + lnI;
 
 
 		//////////
 		// Valid slot
 		//////
-			gsWorkArea[lnI].thisWorkArea = lnI;
+			wa->thisWorkArea = lnI;
 
 
 		//////////
 		// Initialize
 		//////
-			memset(gsWorkArea[lnI].tablePathname,	0, sizeof(gsWorkArea[lnI].tablePathname));
-			memset(gsWorkArea[lnI].alias,			0, sizeof(gsWorkArea[lnI].alias));
-			memset(gsWorkArea[lnI].indexPathname,	0, sizeof(gsWorkArea[lnI].indexPathname));
+			memset(wa->tablePathname,	0, sizeof(wa->tablePathname));
+			memset(wa->alias,			0, sizeof(wa->alias));
+			memset(wa->indexPathname,	0, sizeof(wa->indexPathname));
 
 
 		//////////
 		// Copy the user portion of the names
 		//////
-			gsWorkArea[lnI].tablePathnameLength = strlen(table);
-			if (gsWorkArea[lnI].tablePathnameLength >= (s32)sizeof(gsWorkArea[lnI].tablePathname))
+			wa->tablePathnameLength = strlen(table);
+			if (wa->tablePathnameLength >= (s32)sizeof(wa->tablePathname))
 			{
 				// Table filename is too long
 				return(_DBF_ERROR_TABLE_NAME_TOO_LONG);
 			}
-			memcpy(gsWorkArea[lnI].tablePathname, table, gsWorkArea[lnI].tablePathnameLength);
+			memcpy(wa->tablePathname, table, wa->tablePathnameLength);
 			if (alias != NULL)
 			{
 				// The alias is allowed to be as long as the alias space is, or shorter
-				gsWorkArea[lnI].aliasLength = (((s32)strlen(alias) >= (s32)sizeof(gsWorkArea[lnI].alias)) ? (s32)sizeof(gsWorkArea[lnI].alias) : (u32)strlen(alias));
-				memcpy(gsWorkArea[lnI].alias, alias, gsWorkArea[lnI].aliasLength);
+				wa->aliasLength = (((s32)strlen(alias) >= (s32)sizeof(wa->alias)) ? (s32)sizeof(wa->alias) : (u32)strlen(alias));
+				memcpy(wa->alias, alias, wa->aliasLength);
 			}
 
 
@@ -283,18 +361,18 @@
 		//////////
 		// Open the table based on the shared/exclusive mode
 		//////
-			gsWorkArea[lnI].fhDbf = _sopen(table, _O_BINARY | _O_RDWR, lShareFlag);
-			if (gsWorkArea[lnI].fhDbf == NULL)
+			wa->fhDbf = _sopen(table, _O_BINARY | _O_RDWR, lShareFlag);
+			if (wa->fhDbf == NULL)
 			{
 				// Unable to open
 				// See if it's already open and if we can use it again
 				if (tlAgain && (lnWorkArea = iDbf_get_workArea_byTablePathname(table)) >= 0)
 				{
 					// We found the work area where this table is already open ... share its file handle
-					gsWorkArea[lnI].fhDbf = _dup(gsWorkArea[lnWorkArea].fhDbf);
+					wa->fhDbf = _dup(gsWorkArea[lnWorkArea].fhDbf);
 				}
 				
-				if (gsWorkArea[lnI].fhDbf == NULL)
+				if (wa->fhDbf == NULL)
 				{
 					// Unable to open the specified table
 					return(_DBF_ERROR_TABLE_NOT_FOUND);
@@ -305,11 +383,11 @@
 		//////////
 		// Read the header
 		//////
-			numread = (u32)_read(gsWorkArea[lnI].fhDbf, &gsWorkArea[lnI].header, sizeof(gsWorkArea[lnI].header));
-			if (numread != sizeof(gsWorkArea[lnI].header))
+			numread = (u32)_read(wa->fhDbf, &wa->header, sizeof(wa->header));
+			if (numread != sizeof(wa->header))
 			{
 				// Unable to read the header
-				_close(gsWorkArea[lnI].fhDbf);
+				_close(wa->fhDbf);
 				return(_DBF_ERROR_ERROR_READING_HEADER1);
 			}
 
@@ -333,12 +411,12 @@
 		//////////
 		// Parse the header
 		//////
-			gsWorkArea[lnI].isVisualTable = false;
-			switch (gsWorkArea[lnI].header.type)
+			wa->isVisualTable = false;
+			switch (wa->header.type)
 			{
 				case 0x30:		// Visual FoxPro 3.0 or higher
 				case 0x31:		// Visual FoxPro 3.0 or higher, with autoincrement enabled
-					gsWorkArea[lnI].isVisualTable = true;
+					wa->isVisualTable = true;
 					break;
 
 				case 0x02:		// FoxBASE, no memo
@@ -352,7 +430,7 @@
 
 				default:
 					// No idea.	 So, we'll say it's a bad, bad table.
-					_close(gsWorkArea[lnI].fhDbf);
+					_close(wa->fhDbf);
 					return(_DBF_ERROR_UNKNOWN_TABLE_TYPE);
 			}
 
@@ -360,11 +438,11 @@
 		//////////
 		// Allocate enough memory for the table structure
 		//////
-			lStructure_size				= gsWorkArea[lnI].header.firstRecord - sizeof(STableHeader);
-			gsWorkArea[lnI].fieldPtr1	= (SFieldRecord1*)malloc(lStructure_size);
-			if (gsWorkArea[lnI].fieldPtr1 == NULL)
+			lStructure_size		= wa->header.firstRecord - sizeof(STableHeader);
+			wa->fieldPtr1		= (SFieldRecord1*)malloc(lStructure_size);
+			if (wa->fieldPtr1 == NULL)
 			{
-				_close(gsWorkArea[lnI].fhDbf);
+				_close(wa->fhDbf);
 				return(_DBF_ERROR_MEMORY);
 			}
 
@@ -372,11 +450,11 @@
 		//////////
 		// Read in the fields
 		//////
-			_lseek(gsWorkArea[lnI].fhDbf, sizeof(STableHeader), SEEK_SET);
-			numread = (u32)_read(gsWorkArea[lnI].fhDbf, gsWorkArea[lnI].fieldPtr1, lStructure_size);
+			_lseek(wa->fhDbf, sizeof(STableHeader), SEEK_SET);
+			numread = (u32)_read(wa->fhDbf, wa->fieldPtr1, lStructure_size);
 			if (numread != lStructure_size)
 			{
-				_close(gsWorkArea[lnI].fhDbf);
+				_close(wa->fhDbf);
 				return(_DBF_ERROR_ERROR_READING_HEADER2);
 			}
 
@@ -384,14 +462,14 @@
 		//////////
 		// Parse the fields to determine the count
 		//////
-			lfrPtr						= gsWorkArea[lnI].fieldPtr1;
-			gsWorkArea[lnI].fieldCount	= 0;
+			lfrPtr			= wa->fieldPtr1;
+			wa->fieldCount	= 0;
 			while (lfrPtr->name[0] != 0 && lfrPtr->name[0] != 13)
 			{
 				//////////
 				// Increase the field count
 				//////
-					++gsWorkArea[lnI].fieldCount;
+					++wa->fieldCount;
 
 
 				//////////
@@ -401,33 +479,33 @@
 					{
 						case 'I':	// 4-byte integer (s32)
 						case 'Y':	// currency, which is technically an 8-byte integer (s64)
-							lfrPtr->indexFixup = _DBF_INDEX_FIXUP_SWAP_ENDIAN;
+							lfrPtr->indexFixup	= _DBF_INDEX_FIXUP_SWAP_ENDIAN;
 							lfrPtr->fillChar	= 0;
 							break;
 
 						case 'B':	// Double (f64)
-							lfrPtr->indexFixup = _DBF_INDEX_FIXUP_FLOAT_DOUBLE;
+							lfrPtr->indexFixup	= _DBF_INDEX_FIXUP_FLOAT_DOUBLE;
 							lfrPtr->fillChar	= 0;
 							break;
 
 						case 'D':	// Date
-							lfrPtr->indexFixup = _DBF_INDEX_FIXUP_DATE;
+							lfrPtr->indexFixup	= _DBF_INDEX_FIXUP_DATE;
 							lfrPtr->fillChar	= 32;
 							break;
 
 						case 'T':	// Datetime, needs 2nd DWORD fixed up as it is a float (f32)
-							lfrPtr->indexFixup = _DBF_INDEX_FIXUP_DATETIME;
+							lfrPtr->indexFixup	= _DBF_INDEX_FIXUP_DATETIME;
 							lfrPtr->fillChar	= 0;
 							break;
 
 						case 'L':	// Logical
-							lfrPtr->indexFixup = _DBF_INDEX_FIXUP_LOGICAL;
+							lfrPtr->indexFixup	= _DBF_INDEX_FIXUP_LOGICAL;
 							lfrPtr->fillChar	= 32;
 							break;
 
 						case 'F':	// Float
 						case 'N':	// Numeric
-							lfrPtr->indexFixup = _DBF_INDEX_FIXUP_NUMERIC;
+							lfrPtr->indexFixup	= _DBF_INDEX_FIXUP_NUMERIC;
 							lfrPtr->indexFixup_lengthOverride = 8;										// 8 for f64, and -1 to indicate it's valid
 							lfrPtr->fillChar	= 32;
 							break;
@@ -437,16 +515,16 @@
 						case 'G':	// General
 						case 'Q':	// Varbinary
 						case 'V':	// Varchar
-							lfrPtr->indexFixup = _DBF_INDEX_FIXUP_NONE;
+							lfrPtr->indexFixup	= _DBF_INDEX_FIXUP_NONE;
 							lfrPtr->fillChar	= 0;
 							break;
 
 						case 'C':	// Character
-							lfrPtr->indexFixup = _DBF_INDEX_FIXUP_NONE;
+							lfrPtr->indexFixup	= _DBF_INDEX_FIXUP_NONE;
 							lfrPtr->fillChar	= 32;
 
 						default:
-							lfrPtr->indexFixup = _DBF_INDEX_FIXUP_NONE;
+							lfrPtr->indexFixup	= _DBF_INDEX_FIXUP_NONE;
 							lfrPtr->fillChar	= 32;
 							break;
 					}
@@ -461,28 +539,28 @@
 			}
 			// When we get here, lfrPtr is pointing to the structure termination byte.
 			// If this table has a container, the next byte will be the start of the relative backlink to the table
-			gsWorkArea[lnI].backlink		= (s8*)lfrPtr + 1;	// +1 skips past the trailing CHR(13) which terminates the structure list
+			wa->backlink = (s8*)lfrPtr + 1;	// +1 skips past the trailing CHR(13) which terminates the structure list
 
 
 		//////////
 		// If it's a visual table, it might have a DBC backlink
 		//////
-			if (gsWorkArea[lnI].isVisualTable)
+			if (wa->isVisualTable)
 			{
 				// Backlink is specified
-				gsWorkArea[lnI].backlinkLength	= (u32)strlen(gsWorkArea[lnI].backlink);
+				wa->backlinkLength	= (u32)strlen(wa->backlink);
 
 			} else {
 				// No backlink
-				gsWorkArea[lnI].backlinkLength	= 0;
+				wa->backlinkLength	= 0;
 			}
 
 
 		//////////
 		// For each field, determine its name length
 		//////
-			lfrPtr = gsWorkArea[lnI].fieldPtr1;
-			for (lnJ = 0; lnJ < gsWorkArea[lnI].fieldCount; lnJ++, lfrPtr++)
+			lfrPtr = wa->fieldPtr1;
+			for (lnJ = 0; lnJ < wa->fieldCount; lnJ++, lfrPtr++)
 			{
 				lfrPtr->field_name_length = 0;
 				for (lnK = 0; lnK < 10 && lfrPtr->name[lnK] != 0; lnK++)
@@ -494,12 +572,12 @@
 		//////////
 		// Copy to the SFieldRecord2.  If it's part of a container, flush out the full name.
 		//////
-			gsWorkArea[lnI].field2Ptr = (SFieldRecord2*)malloc(gsWorkArea[lnI].fieldCount * sizeof(SFieldRecord2));
-			memset(gsWorkArea[lnI].field2Ptr, 0, gsWorkArea[lnI].fieldCount * sizeof(SFieldRecord2));
+			wa->field2Ptr = (SFieldRecord2*)malloc(wa->fieldCount * sizeof(SFieldRecord2));
+			memset(wa->field2Ptr, 0, wa->fieldCount * sizeof(SFieldRecord2));
 
-			lfrPtr	= gsWorkArea[lnI].fieldPtr1;
-			lfr2Ptr	= gsWorkArea[lnI].field2Ptr;
-			for (lnJ = 0; lnJ < gsWorkArea[lnI].fieldCount; lnJ++, lfrPtr++, lfr2Ptr++)
+			lfrPtr	= wa->fieldPtr1;
+			lfr2Ptr	= wa->field2Ptr;
+			for (lnJ = 0; lnJ < wa->fieldCount; lnJ++, lfrPtr++, lfr2Ptr++)
 			{
 				//////////
 				// Copy the short names over
@@ -527,15 +605,15 @@
 		//////////
 		// Reset the pointers
 		//////
-			lfrPtr	= gsWorkArea[lnI].fieldPtr1;
-			lfr2Ptr	= gsWorkArea[lnI].field2Ptr;
+			lfrPtr	= wa->fieldPtr1;
+			lfr2Ptr	= wa->field2Ptr;
 
 
 		//////////
 		// See if there's an entry in the container for this table,
 		// and if so update the field names to their longer form
 		//////
-			if (gsWorkArea[lnI].isVisualTable && gsWorkArea[lnI].backlinkLength != 0)
+			if (wa->isVisualTable && wa->backlinkLength != 0)
 			{
 				// Try to open the backlink
 				iiDbc_lookupTableField(&gsWorkArea[lnI], &llDbcIsValid, tlExclusive);
@@ -551,39 +629,39 @@
 		// Allocate enough space for one row of data
 		// Active data changed per current row
 		//////
-			gsWorkArea[lnI].data = (s8*)malloc(gsWorkArea[lnI].header.recordLength);
-			if (gsWorkArea[lnI].data == NULL)
+			wa->data = (s8*)malloc(wa->header.recordLength);
+			if (wa->data == NULL)
 			{
-				_close(gsWorkArea[lnI].fhDbf);
+				_close(wa->fhDbf);
 				return(_DBF_ERROR_MEMORY_ROW);
 			}
-			memset(gsWorkArea[lnI].data, 0, gsWorkArea[lnI].header.recordLength);
+			memset(wa->data, 0, wa->header.recordLength);
 
 
 		//////////
 		// Allocate enough space for one row of data
 		// Original data
 		//////
-			gsWorkArea[lnI].odata = (s8*)malloc(gsWorkArea[lnI].header.recordLength);
-			if (gsWorkArea[lnI].odata == NULL)
+			wa->odata = (s8*)malloc(wa->header.recordLength);
+			if (wa->odata == NULL)
 			{
-				_close(gsWorkArea[lnI].fhDbf);
+				_close(wa->fhDbf);
 				return(_DBF_ERROR_MEMORY_ORIGINAL);
 			}
-			memset(gsWorkArea[lnI].odata, 0, gsWorkArea[lnI].header.recordLength);		// For original copy of loaded data (allows reversion)
+			memset(wa->odata, 0, wa->header.recordLength);		// For original copy of loaded data (allows reversion)
 
 
 		//////////
 		// Allocate enough space for one row of data
 		// Index data (for the creation of index keys, population of a data source for key generation, without affecting the current row's record data)
 		//////
-			gsWorkArea[lnI].idata = (s8*)malloc(gsWorkArea[lnI].header.recordLength);
-			if (gsWorkArea[lnI].idata == NULL)
+			wa->idata = (s8*)malloc(wa->header.recordLength);
+			if (wa->idata == NULL)
 			{
-				_close(gsWorkArea[lnI].fhDbf);
+				_close(wa->fhDbf);
 				return(_DBF_ERROR_MEMORY_INDEX);
 			}
-			memset(gsWorkArea[lnI].idata, 0, gsWorkArea[lnI].header.recordLength);		// For original copy of loaded data (allows reversion)
+			memset(wa->idata, 0, wa->header.recordLength);		// For original copy of loaded data (allows reversion)
 
 
 		//////////
@@ -614,10 +692,10 @@
 		// Success.
 		// Set initial flags
 		//////
-			gsWorkArea[lnI].isIndexLoaded	= _NO;
-			gsWorkArea[lnI].isCached		= _NO;
-			gsWorkArea[lnI].currentRecord	= 0;
-			gsWorkArea[lnI].isUsed			= _YES;
+			wa->isIndexLoaded	= _NO;
+			wa->isCached		= _NO;
+			wa->currentRecord	= 0;
+			wa->isUsed			= _YES;
 
 
 		//////////

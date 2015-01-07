@@ -5243,7 +5243,7 @@ debug_break;
 	void command_open(SComp* compOpen)
 	{
 		s32		lnLength, lnDbcArea;
-		bool	llExclusive;
+		bool	llIsExclusive;
 		SComp*	compPathname;
 		SComp*	compDatabase;
 		SComp*	compExclusive;
@@ -5294,14 +5294,35 @@ debug_break;
 			memcpy(dbcNameBuffer, compPathname->line->sourceCode->data + compPathname->start, lnLength);
 
 
-// TODO:  Shared / exclusive, set llExclusive
-			working here...
+		//////////
+		// Cannot have both SHARED and EXCLUSIVE
+		//////
+			if (compShared && compExclusive)
+			{
+				iError_reportByNumber(_ERROR_CONFLICTING_PARAMETERS, ((compShared->ll.uniqueId < compExclusive->ll.uniqueId) ? compExclusive : compShared));
+				return;
+			}
+
+			// Determine shared or exclusive status
+			if (compShared)
+			{
+				// Explicitly shared
+				llIsExclusive	= false;
+
+			} else if (compExclusive) {
+				// Explicitly exclusive
+				llIsExclusive	= true;
+
+			} else {
+				// Use the current SET default
+				llIsExclusive	= gsCurrentSetting->_set_exclusive;
+			}
 
 
 		//////////
 		// Try to open it
 		//////
-			lnDbcArea = iDbf_open((cs8*)dbcNameBuffer, (cs8*)cgcDbcKeyName, llExclusive, false);
+			lnDbcArea = iDbf_open((cs8*)dbcNameBuffer, (cs8*)cgcDbcKeyName, llIsExclusive, false);
 			if (lnDbcArea < 0)
 			{
 				// Unable to open
@@ -5413,7 +5434,7 @@ debug_break;
 
 				} else {
 					// Use the current SET default
-					llIsExclusive = gsCurrentSetting->_set_exclusive;
+					llIsExclusive	= gsCurrentSetting->_set_exclusive;
 				}
 
 
