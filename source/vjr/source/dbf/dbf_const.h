@@ -70,16 +70,18 @@
 //////////
 // Constants
 /////
-	#define		_MAX_DBF_SLOTS				512			// Up to 512 work areas can be opened simultaneously
-	#define		_MAX_DBC_SLOTS				512			// Up to 512 containers can be opened simultaneously
-	#define		_MAX_SCX_SLOTS				1024		// Up to 1024 forms can be opened simultaneously
-	#define		_MAX_VCX_SLOTS				2048		// Up to 2048 classes can be opened simultaneously
-	#define		_MAX_FRX_SLOTS				32			// Up to 32 reports can be opened simultaneously
-	#define		_MAX_MNX_SLOTS				128			// Up to 128 menus can be opened simultaneously
-	#define		_MAX_CDX_TAGS				128			// Up to 128 index tags are supported per CDX, per DBF
+	#define		_MAX_DBF_SLOTS						512			// Up to 512 work areas can be opened simultaneously
+	#define		_MAX_DBC_SLOTS						512			// Up to 512 containers can be opened simultaneously
+	#define		_MAX_SCX_SLOTS						1024		// Up to 1024 forms can be opened simultaneously
+	#define		_MAX_VCX_SLOTS						2048		// Up to 2048 classes can be opened simultaneously
+	#define		_MAX_FRX_SLOTS						32			// Up to 32 reports can be opened simultaneously
+	#define		_MAX_MNX_SLOTS						128			// Up to 128 menus can be opened simultaneously
+	#define		_MAX_CDX_TAGS						128			// Up to 128 index tags are supported per CDX, per DBF
 
 	// Errors
 	#define		_DBF_ERROR__INTERNAL_PROGRAMMER		-9999
+	#define		_DBF_OKAY							0
+	#define		_DBF_ERROR_WORK_AREA_NOT_IN_USE		-1
 	#define		_DBF_ERROR_WORK_AREA_ALREADY_IN_USE	-2
 	#define		_DBF_ERROR_TABLE_NOT_FOUND			-3
 	#define		_DBF_ERROR_ERROR_READING_HEADER1	-4
@@ -113,6 +115,7 @@
 //////////
 // Strings
 //////
+	const u8	cgcDbfKeyName[]			= "$__cur__$";
 	const u8	cgcDbcKeyName[]			= "$__dbc__$";
 	const u8	cgcScxKeyName[]			= "$__scx__$";
 	const u8	cgcVcxKeyName[]			= "$__vcx__$";
@@ -122,3 +125,52 @@
 	const u8	cgcParentId[]			= "parentId";
 	const u8	cgcObjectType[]			= "objectType";
 	const u8	cgcObjectName[]			= "objectName";
+	const u8	cgcCode[]				= "code";
+	const u8	cgcRiInfo[]				= "riInfo";
+	const u8	cgcUser[]				= "user";
+	const u8	cgcObjType[]			= "ObjType";
+	const u8	cgcObjCode[]			= "ObjCode";
+	const u8	cgcName[]				= "Name";
+	const u8	cgcPrompt[]				= "Prompt";
+	const u8	cgcCommand[]			= "Command";
+	const u8	cgcMessage[]			= "Message";
+	const u8	cgcProcType[]			= "ProcType";
+	const u8	cgcProcedure[]			= "Procedure";
+	const u8	cgcSetupType[]			= "SetupType";
+	const u8	cgcSetup[]				= "Setup";
+	const u8	cgcCleanType[]			= "CleanType";
+	const u8	cgcCleanup[]			= "Cleanup";
+	const u8	cgcMark[]				= "Mark";
+	const u8	cgcKeyName[]			= "KeyName";
+	const u8	cgcKeyLabel[]			= "KeyLabel";
+	const u8	cgcSkipFor[]			= "SkipFor";
+	const u8	cgcNameChange[]			= "NameChange";
+	const u8	cgcNumItems[]			= "NumItems";
+	const u8	cgcLevelName[]			= "LevelName";
+	const u8	cgcItemNum[]			= "ItemNum";
+	const u8	cgcComment[]			= "Comment";
+	const u8	cgcLocation[]			= "Location";
+	const u8	cgcScheme[]				= "Scheme";
+	const u8	cgcSysRes[]				= "SysRes";
+	const u8	cgcResName[]			= "ResName";
+	const u8	cgcPlatform[]			= "Platform";
+	const u8	cgcUniqueId[]			= "UniqueId";
+	const u8	cgcTimeStamp[]			= "TimeStamp";
+	const u8	cgcClass[]				= "Class";
+	const u8	cgcClassLoc[]			= "ClassLoc";
+	const u8	cgcBaseClass[]			= "BaseClass";
+	const u8	cgcObjName[]			= "ObjName";
+	const u8	cgcParent[]				= "Parent";
+	const u8	cgcProperties[]			= "Properties";
+	const u8	cgcProtected[]			= "Protected";
+	const u8	cgcMethods[]			= "Methods";
+	const u8	cgcOle[]				= "Ole";
+	const u8	cgcOle2[]				= "Ole2";
+	const u8	cgcReserved1[]			= "Reserved1";
+	const u8	cgcReserved2[]			= "Reserved2";
+	const u8	cgcReserved3[]			= "Reserved3";
+	const u8	cgcReserved4[]			= "Reserved4";
+	const u8	cgcReserved5[]			= "Reserved5";
+	const u8	cgcReserved6[]			= "Reserved6";
+	const u8	cgcReserved7[]			= "Reserved7";
+	const u8	cgcReserved8[]			= "Reserved8";

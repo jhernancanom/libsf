@@ -5474,7 +5474,18 @@ debug_break;
 				if (compUse && !compUse->ll.next)
 				{
 					// USE ... They have specified USE by itself, closing the current work area
-					iDbf_close((s32)iDbf_get_workArea_current());
+					if ((lnWorkArea = iDbf_get_workArea_current(null)))
+					{
+						// Close it
+						iDbf_close(&gsWorkArea[lnWorkArea]);
+
+					} else {
+						// The current work area is invalid
+						// Hmmm... this shouldn't ever happen. Ever. :-)
+						iError_reportByNumber(_ERROR_INTERNAL_ERROR, compUse);
+					}
+
+					// We're good
 					goto clean_exit;
 				}
 
@@ -5561,7 +5572,7 @@ debug_break;
 
 						} else {
 							// Alias name
-							lnWorkArea = (s32)iDbf_get_workArea_byAlias(varInXyz);
+							lnWorkArea = (s32)iDbf_get_workArea_byAlias(varInXyz, null);
 						}
 
 						// Did we get a valid work area?
@@ -5580,7 +5591,7 @@ debug_break;
 
 			} else {
 				// Just grab the current work area
-				lnWorkArea = (s32)iDbf_get_workArea_current();
+				lnWorkArea = (s32)iDbf_get_workArea_current(null);
 			}
 
 
@@ -5591,7 +5602,7 @@ debug_break;
 			if (compUse->iCode == _ICODE_IN)
 			{
 				// Yes, close that work area and we're done
-				iDbf_close(lnWorkArea);
+				iDbf_close(&gsWorkArea[lnWorkArea]);
 				goto clean_exit;
 			}
 
@@ -5649,7 +5660,7 @@ debug_break;
 			if (!compAgain)
 			{
 				// No AGAIN clause was specified, so make sure it isn't already found as being in use
-				if (iDbf_get_workArea_byTablePathname(varTableName) >= 0)
+				if (iDbf_get_workArea_byTablePathname(varTableName, null) >= 0)
 				{
 					// It was found, which means it's already in use
 					iError_reportByNumber(_ERROR_TABLE_ALREADY_IN_USE, compUse);
@@ -5665,7 +5676,7 @@ debug_break;
 			{
 				// They've specified an alias
 				varAliasName	= iEngine_get_variableName_fromComponent((SComp*)compAlias->ll.next, &llManufacturedTableName);
-				lnWorkAreaAlias	= iDbf_get_workArea_byAlias(varAliasName);
+				lnWorkAreaAlias	= iDbf_get_workArea_byAlias(varAliasName, null);
 				if (lnWorkAreaAlias > 0)
 				{
 					// They've specified an alias name
@@ -5686,7 +5697,7 @@ debug_break;
 
 			} else {
 				// We need to construct the alias from the table name
-				varAliasName = iDbf_get_alias_fromPathname(varTableName);
+				varAliasName = iDbf_get_alias_fromPathname(varTableName, null);
 			}
 			if (!varAliasName)
 			{
@@ -5698,7 +5709,7 @@ debug_break;
 		//////////
 		// See if the current work area already has a table open
 		//////
-			llIsInUse = iDbf_isWorkAreaUsed(lnWorkArea, &llIsValidWorkArea);
+			llIsInUse = iDbf_isWorkAreaUsed(&gsWorkArea[lnWorkArea], &llIsValidWorkArea);
 			if (!llIsValidWorkArea)
 			{
 				// They specified an invalid work area number
@@ -5707,14 +5718,14 @@ debug_break;
 
 			} else if (llIsInUse) {
 				// If it's already open, close it
-				iDbf_close(lnWorkArea);
+				iDbf_close(&gsWorkArea[lnWorkArea]);
 			}
 
 
 		//////////
 		// Get the alias
 		//////
-			iDbf_set_workArea_current(lnWorkArea);
+			iDbf_set_workArea_current(lnWorkArea, null);
 			lnWorkArea = iDbf_open(varTableName, varAliasName, llIsExclusive, (compAgain != NULL));
 			if (lnWorkArea < 0)
 			{
