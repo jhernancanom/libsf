@@ -10,6 +10,7 @@
 //     Nov.02.2014
 //////
 // Change log:
+//     Jan.09.2015 - Added function purposes
 //     Nov.02.2014 - Initial creation
 //////
 //
@@ -142,6 +143,7 @@ RDC Specifications Document
 
 	adhoc		-- Declares an adhoc
 	function	-- Declares a function
+	purpose		-- Declares a purpose within a function
 	params		-- Declares input parameters
 	returns		-- Declares return values
 	inline		-- Provides an optimization hint
@@ -715,9 +717,104 @@ RDC Specifications Document
 	single generated output file can be run on any machine that is for the targeted
 	architecture, and has a wrapper to support it.
 
-14.0 - 
+14.0 - Function Purpose
+-----------------------
 
+	RDC employs groupings within a single function which allow for self-documenting
+	code and multi-targeted operations all under the same "function umbrella."
+	This exists outside of the general class structure and is designed to further
+	align source code with its true purpose per context.  Each one is called a
+	"purpose".
+	
+	Functions can have multiple entry points based on their purposes.  Each purpose
+	is a self-contained entity that acts as a separate function being referenced in
+	source code using "name().help();" syntax, as in the example below.  The normal
+	function content is accessed using "name();" or "name().main();".
+	
+		function name
+		| returns CAbc* abc
+		| params SMyStruct* ms, SBgra bgra
+		{
+			// Explicitly named purpose accessed in source code as "name().help();"
+			purpose help {
+				// Code for this purpose goes here
+			}
+			
+			// Normal code is the default purpose when not named, or the "main" purpose.
+		}
+	
+	Each purpose can override function parameter blocks using its own parameter block.
+	
+		function name
+		| returns CAbc* abc
+		| params SMyStruct* ms, SBgra bgra
+		{
+			// Explicitly named purpose with its own parameter block
+			purpose help
+			| returns s8* helpText
+			| params void
+			{
+				// Code for this purpose goes here
+			}
+			
+			// Normal code is the default purpose when not named, or the "main" purpose.
+		}
+	
+	To access this function, you would use "labc = name(lms, color);" for the main purpose,
+	and for the help purpose it could be accessed as "printf("%s\n", name().help());".
+	
+	The purpose of the "purpose" ability in functions is to allow a single function to more
+	fully encapsulate the various qualities that would typically be required for related
+	functionality within a class as separate and discrete entities within its implementation
+	in a system.  Purposes can be created for different variable types, for example, or to
+	include self-documenting code, test suites, and more.  And if the function itself must
+	not contain a main() body, but instead must explicitly require named purposes throughout,
+	it can use the "purpose" keyword in its parameter block to indicate that it is a purpose-
+	only function.
+	
+	For example:
 
+		function convert
+		| purpose	// Only purposes are allowed below
+		{
+			//////////
+			// Explicitly named int-to-char purpose
+			//////
+				purpose toChar
+				| returns s8* output
+				| params int input
+				{
+					// Code to convert the integer input to a string here
+				}
+			
+			
+			//////////
+			// Explicitly named char-to-int purpose
+			//////
+				purpose toInt
+				| returns int output
+				| params s8* input
+				{
+					// Code to convert the string to integer goes here
+				}
+
+			// Normal code is not allowed here because it was declared above "| purpose"
+			// in the "function convert" parameter block.
+		}
+	
+	To use these functions it would be:
+	
+		lcNumber = convert().toChar(20);
+		lnValue  = convert().toInt("123");
+	
+	Were these to be added to a class or struct, then it would have the following syntax:
+	
+		CSample sample = new CSample();
+
+		lcNumber = sample.convert().toChar(20);
+		lnValue  = sample.convert().toInt("123");
+		
+		
 --------------
 New:
 
