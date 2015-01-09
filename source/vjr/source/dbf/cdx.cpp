@@ -1604,7 +1604,7 @@ close_and_quit:
 					//////////
 					// Locate this key in the current table
 					//////
-						lnFieldNumber = (s32)iDbf_getField_number1(wa, fieldName);
+						lnFieldNumber = (s32)iDbf_getField_byName2(wa, fieldName);
 						if (lnFieldNumber <= 0)
 							goto failed_parsing;
 
@@ -1747,7 +1747,7 @@ failed_parsing:
 			//////////
 			// Locate this key in the current table
 			//////
-				lnFieldNumber = (s32)iDbf_getField_number1(wa, fieldName);
+				lnFieldNumber = (s32)iDbf_getField_byName2(wa, fieldName);
 				if (lnFieldNumber <= 0)
 					return(-2);
 
@@ -3077,7 +3077,7 @@ debug_break;
 									// We need to do a lookup on the fieldname to make sure it exists
 									//////
 										iResetThenCopyString(fieldName, (s32)sizeof(fieldName), lfsi->start, (s32)lfsi->length);
-										lnFieldnum = (s32)iDbf_getField_number1(wa, fieldName);
+										lnFieldnum = (s32)iDbf_getField_byName2(wa, fieldName);
 										if (lnFieldnum < 0)
 										{
 											// We've encountered an unknown fieldname3

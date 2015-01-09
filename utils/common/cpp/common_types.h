@@ -97,7 +97,7 @@
 
 #ifndef null
 	// For a null that is not considered a pointer
-	#define null 0
+	#define null NULL
 #endif
 
 #define	_NO		0

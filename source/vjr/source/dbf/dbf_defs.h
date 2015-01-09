@@ -158,7 +158,6 @@ struct SFieldRecord2;
 
 	uptr				iDbf_getFieldCount								(SWorkArea* wa);
 	uptr				iDbf_getReccount								(SWorkArea* wa);
-	uptr				iDbf_getField_number1							(SWorkArea* wa, const u8* fieldName);
 	uptr				iDbf_getField_name								(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength);
 	uptr				iDbf_getField_type								(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength);
 	uptr				iDbf_getField_type_verbose						(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength);
@@ -179,10 +178,12 @@ struct SFieldRecord2;
 	uptr				iDbf_setField_data								(SWorkArea* wa, s32 fieldNumber, u8* dest, u32 destLength);
 	uptr				iDbf_getField_validateContents					(SWorkArea* wa, u32 fieldNumber, u8* src, u32 srcLength);
 
-	SFieldRecord1*		iDbf_getField_number1							(SWorkArea* wa, u32 fieldNumber);
-	SFieldRecord2*		iDbf_getField_number2							(SWorkArea* wa, u32 fieldNumber);
+	SFieldRecord1*		iDbf_getField_byName1							(SWorkArea* wa, cu8* fieldName);
+	SFieldRecord1*		iDbf_getField_byNumber1							(SWorkArea* wa, u32 fieldNumber);
+	SFieldRecord2*		iDbf_getField_byName2							(SWorkArea* wa, cu8* fieldName);
+	SFieldRecord2*		iDbf_getField_byNumber2							(SWorkArea* wa, u32 fieldNumber);
 	u8					iDbf_getField_type								(SWorkArea* wa, u8* keyExpression, bool* swapEndians, bool* needsSignBitToggled);
-	uptr				iDbf_getField_name								(u8* expression, u8* foundFieldName);
+	uptr				iDbf_getField_name								(u8* expression, const u8* foundFieldName);
 
 	// Container information
 	void				iiDbc_lookupTableField							(SWorkArea* wa, bool* tlIsValid, bool tlExcusive);
@@ -198,6 +199,7 @@ struct SFieldRecord2;
 	uptr				iiDbf_forClause_temp_appendConstant				(SForClause* tsFor, s8* tcData, u32 tnDataLength);
 
 	// Structure tests from iDbf_open() for specific file types
+	SFieldRecord2*		iiDbf_validate_fieldExists						(SWorkArea* wa, cu8* tcFieldName, cs8* tcFieldType, s32 length, s32 decimals);
 	bool				iiDbf_validate_isDbc							(SWorkArea* wa);
 	bool				iiDbf_validate_isScx							(SWorkArea* wa);
 	bool				iiDbf_validate_isVcx							(SWorkArea* wa);

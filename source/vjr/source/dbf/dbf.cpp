@@ -573,9 +573,9 @@
 			lfrPtr = wa->fieldPtr1;
 			for (lnJ = 0; lnJ < wa->fieldCount; lnJ++, lfrPtr++)
 			{
-				lfrPtr->field_name_length = 0;
+				lfrPtr->fieldName_length = 0;
 				for (lnK = 0; lnK < 10 && lfrPtr->name[lnK] != 0; lnK++)
-					++lfrPtr->field_name_length;
+					++lfrPtr->fieldName_length;
 			}
 			// When we get here, all of the fields have their field length as well
 
@@ -1780,41 +1780,6 @@
 		return(wa->header.records);
 	}
 
-	// Returns the field number by field name
-	uptr iDbf_getField_number1(SWorkArea* wa, const u8* fieldName)
-	{
-		s32				lnI, lnLength;
-		SFieldRecord2*	lfr2Ptr;
-
-
-		//////////
-		// Check for errors
-		//////
-			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
-				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
-			if (wa->isUsed != _YES)
-				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
-
-
-		// Retrieve the first field
-		lfr2Ptr = iDbf_getField_number2(wa, 1);
-		if (lfr2Ptr)
-		{
-			// Search for the name
-			lnLength = (s32)strlen((u8*)fieldName);
-			for (lnI = 1; lnI <= (s32)wa->fieldCount; lnI++, lfr2Ptr++)
-			{
-				// Length must match, and the field name must match
-				if (lnLength == lfr2Ptr->fieldName_length && _memicmp((u8*)fieldName, lfr2Ptr->name2, lnLength) == 0)
-					return(lnI);	// Field number
-			}
-		}
-
-		// If we get here, failure
-		return(-1);
-	}
-
 	// Returns 10-digit field name
 	uptr iDbf_getField_name(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
 	{
@@ -1833,7 +1798,7 @@
 
 
 		// Grab the indicated field number
-		lfr2Ptr = iDbf_getField_number2(wa, fieldNumber);
+		lfr2Ptr = iDbf_getField_byNumber2(wa, fieldNumber);
 		if (lfr2Ptr)
 		{
 			// Store the name (or as much of it as will fit)
@@ -1871,7 +1836,7 @@
 
 
 		// Grab the indicated field number
-		lfrp = iDbf_getField_number1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the type
@@ -1910,7 +1875,7 @@
 
 
 		// Grab the indicated field number
-		lfrp = iDbf_getField_number1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the type's related name
@@ -1965,7 +1930,7 @@
 
 
 		// Grab the indicated field number
-		lfrp = iDbf_getField_number1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
 		if (lfrp)
 		{	// Store the type
 			if (lfrp->type == 'N' ||	// Numeric
@@ -2031,7 +1996,7 @@
 
 
 		// Grab the indicated field
-		lfrp = iDbf_getField_number1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the length
@@ -2073,7 +2038,7 @@
 
 
 		// Grab the indicated field
-		lfrp = iDbf_getField_number1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the length
@@ -2120,7 +2085,7 @@
 
 
 		// Grab the indicated field
-		lfrp = iDbf_getField_number1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the decimals
@@ -2159,7 +2124,7 @@
 
 
 		// Grab the indicated field
-		lfrp = iDbf_getField_number1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the binary condition
@@ -2191,7 +2156,7 @@
 
 
 		// Grab the indicated field
-		lfrp = iDbf_getField_number1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the allow nulls condition
@@ -2225,7 +2190,7 @@
 
 
 		// Grab the indicated field
-		lfrp = iDbf_getField_number1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the type
@@ -2344,7 +2309,7 @@
 
 
 		// Grab the indicated field
-		lfrp = iDbf_getField_number1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the auto-incrementing next value
@@ -2387,7 +2352,7 @@
 
 
 		// Grab the indicated field
-		lfrp = iDbf_getField_number1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the auto-incrementing next value
@@ -2427,7 +2392,7 @@
 
 
 		// Grab the indicated field
-		lfrp = iDbf_getField_number1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the reserved bytes
@@ -2456,7 +2421,7 @@
 
 
 		// Grab our field
-		lfrp = iDbf_getField_number1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the reserved bytes
@@ -2623,7 +2588,7 @@
 
 
 		// Grab the indicated field number
-		lfrp = iDbf_getField_number1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
 		if (lfrp)
 		{
 			// Return the offset to the actual data
@@ -2650,7 +2615,7 @@
 
 
 		// Grab the indicated field number
-		lfrp = iDbf_getField_number1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
 		if (lfrp)
 		{
 			// Return the offset to the actual data
@@ -2685,7 +2650,7 @@
 
 
 		// Grab the indicated field number
-		lfrp = iDbf_getField_number1(wa, ((fieldNumber < 0) ? -fieldNumber : fieldNumber));
+		lfrp = iDbf_getField_byNumber1(wa, ((fieldNumber < 0) ? -fieldNumber : fieldNumber));
 		if (lfrp)
 		{
 			// Store the reserved bytes
@@ -2760,7 +2725,7 @@
 
 
 		// Get the field
-		lfrp = iDbf_getField_number1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
 		if (lfrp)
 		{
 			//////////
@@ -2865,15 +2830,43 @@
 		return(-1);
 	}
 
+	// Returns the field number by field name
+	SFieldRecord1* iDbf_getField_byName1(SWorkArea* wa, const u8* fieldName)
+	{
+		s32				lnI, lnLength;
+		SFieldRecord1*	lfr1Ptr;
 
 
+		//////////
+		// Check for errors
+		//////
+			// Make sure it's valid
+			if (!iDbf_isWorkAreaValid(wa, NULL))
+				return(null);
+			if (wa->isUsed != _YES)
+				return(null);
 
-//////////
-//
-// Called to retrieve the field for the indicated field number.
-//
-//////
-	SFieldRecord1* iDbf_getField_number1(SWorkArea* wa, u32 fieldNumber)
+
+		// Retrieve the first field
+		lfr1Ptr = iDbf_getField_byNumber1(wa, 1);
+		if (lfr1Ptr)
+		{
+			// Search for the name
+			lnLength = (s32)strlen((u8*)fieldName);
+			for (lnI = 1; lnI <= (s32)wa->fieldCount; lnI++, lfr1Ptr++)
+			{
+				// Length must match, and the field name must match
+				if (lnLength == lfr1Ptr->fieldName_length && _memicmp((u8*)fieldName, lfr1Ptr->name, lnLength) == 0)
+					return(lfr1Ptr);
+			}
+		}
+
+		// If we get here, failure
+		return(null);
+	}
+
+	// Called to retrieve the field for the indicated field number.
+	SFieldRecord1* iDbf_getField_byNumber1(SWorkArea* wa, u32 fieldNumber)
 	{
 		u32				lnI;
 		SFieldRecord1*	lfrp;
@@ -2904,7 +2897,41 @@
 		return(NULL);
 	}
 
-	SFieldRecord2* iDbf_getField_number2(SWorkArea* wa, u32 fieldNumber)
+	SFieldRecord2* iDbf_getField_byName2(SWorkArea* wa, cu8* fieldName)
+	{
+		s32				lnI, lnLength;
+		SFieldRecord2*	lfr2Ptr;
+
+
+		//////////
+		// Check for errors
+		//////
+			// Make sure it's valid
+			if (!iDbf_isWorkAreaValid(wa, NULL))
+				return(null);
+			if (wa->isUsed != _YES)
+				return(null);
+
+
+		// Retrieve the first field
+		lfr2Ptr = iDbf_getField_byNumber2(wa, 1);
+		if (lfr2Ptr)
+		{
+			// Search for the name
+			lnLength = (s32)strlen((u8*)fieldName);
+			for (lnI = 1; lnI <= (s32)wa->fieldCount; lnI++, lfr2Ptr++)
+			{
+				// Length must match, and the field name must match
+				if (lnLength == lfr2Ptr->fieldName_length && _memicmp((u8*)fieldName, lfr2Ptr->name2, lnLength) == 0)
+					return(lfr2Ptr);
+			}
+		}
+
+		// If we get here, failure
+		return(null);
+	}
+
+	SFieldRecord2* iDbf_getField_byNumber2(SWorkArea* wa, u32 fieldNumber)
 	{
 		u32				lnI;
 		SFieldRecord2*	lfr2Ptr;
@@ -3149,10 +3176,10 @@
 			if (iDbf_isWorkAreaValid(wa->dbc, &workAreaKeyName) || workAreaKeyName != cgcDbcKeyName)
 			{
 				// Get the offsets to the fields
-				lnObjectId		= (s32)iDbf_getField_number1(wa->dbc, cgcObjectId);
-				lnParentId		= (s32)iDbf_getField_number1(wa->dbc, cgcParentId);
-				lnObjectType	= (s32)iDbf_getField_number1(wa->dbc, cgcObjectType);
-				lnObjectName	= (s32)iDbf_getField_number1(wa->dbc, cgcObjectName);
+				lnObjectId		= (s32)iDbf_getField_byName2(wa->dbc, cgcObjectId);
+				lnParentId		= (s32)iDbf_getField_byName2(wa->dbc, cgcParentId);
+				lnObjectType	= (s32)iDbf_getField_byName2(wa->dbc, cgcObjectType);
+				lnObjectName	= (s32)iDbf_getField_byName2(wa->dbc, cgcObjectName);
 
 				// Did we find every field?
 				if (lnObjectId <= 0 || lnParentId <= 0 || lnObjectType <= 0 || lnObjectName <= 0)
@@ -3879,11 +3906,36 @@
 // Called to validate that the indicated table types have the correct structures
 //
 //////
-	SFieldRecord2* iDbf_validate_fieldExists(cu8* tcFieldName, cs8* tcFieldType, s32 length, s32 decimals)
+	SFieldRecord2* iiDbf_validate_fieldExists(SWorkArea* wa, cu8* tcFieldName, cs8* tcFieldType, s32 length, s32 decimals)
 	{
-// TODO:
-working here...
-		return(null);
+		SFieldRecord2* lfptr2;
+
+
+		//////////
+		// Locate the field by name
+		//////
+// TODO:  Untested code, breakpoint and examine
+debug_break;
+			lfptr2 = iDbf_getField_byName2(wa, tcFieldName);
+			if (lfptr2)
+			{
+				// The field name exists
+				if (iUpperCase(tcFieldType[0]) == iUpperCase(lfptr2->type))
+				{
+					// The type is correct
+					if (lfptr2->length == length && lfptr2->decimals == decimals)
+					{
+						// We're good
+						return(lfptr2);
+					}
+				}
+			}
+
+
+		//////////
+		// If we get here, failure on this field
+		//////
+			return(null);
 	}
 
 	bool iiDbf_validate_isDbc(SWorkArea* wa)
@@ -3906,13 +3958,13 @@ working here...
 		//
 		//////
 			return(
-								iDbf_validate_fieldExists(cgcObjectId,		"i",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcParentId,		"i",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcObjectType,	"c",	10,		0)
-				&&				iDbf_validate_fieldExists(cgcObjectName,	"c",	128,	0)
-				&&	((lfptr2 =	iDbf_validate_fieldExists(cgcCode,			"m",	4,		0))		&&	(lfptr2->flags & _DBF_FIELD_BINARY) != 0)
-				&&				iDbf_validate_fieldExists(cgcRiInfo,		"c",	6,		0)
-				&&				iDbf_validate_fieldExists(cgcUser,			"m",	4,		0)
+								iiDbf_validate_fieldExists(wa,	cgcObjectId,		"i",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcParentId,		"i",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcObjectType,		"c",	10,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcObjectName,		"c",	128,	0)
+				&&	((lfptr2 =	iiDbf_validate_fieldExists(wa,	cgcCode,			"m",	4,		0))		&&	(lfptr2->flags & _DBF_FIELD_BINARY) != 0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcRiInfo,			"c",	6,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcUser,			"m",	4,		0)
 			);
 	}
 
@@ -3957,34 +4009,40 @@ working here...
 		//
 		//////
 			return(
-								iDbf_validate_fieldExists(cgcPlatform,		"c",	8,		0)
-				&&				iDbf_validate_fieldExists(cgcUniqueId,		"c",	10,		0)
-				&&				iDbf_validate_fieldExists(cgcTimeStamp,		"n",	10,		0)
-				&&				iDbf_validate_fieldExists(cgcClass,			"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcClassLoc,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcBaseClass,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcObjName,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcParent,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcProperties,	"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcProtected,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcMethods,		"m",	4,		0)
-				&&	((lfptr2 =	iDbf_validate_fieldExists(cgcObjCode,		"m",	4,		0))		&&	(lfptr2->flags & _DBF_FIELD_BINARY) != 0)
-				&&				iDbf_validate_fieldExists(cgcOle,			"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcOle2,			"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcReserved1,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcReserved2,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcReserved3,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcReserved4,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcReserved5,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcReserved6,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcReserved7,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcReserved8,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcUser,			"m",	4,		0)
+								iiDbf_validate_fieldExists(wa,	cgcPlatform,		"c",	8,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcUniqueId,		"c",	10,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcTimeStamp,		"n",	10,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcClass,			"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcClassLoc,		"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcBaseClass,		"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcObjName,			"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcParent,			"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcProperties,		"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcProtected,		"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcMethods,			"m",	4,		0)
+				&&	((lfptr2 =	iiDbf_validate_fieldExists(wa,	cgcObjCode,			"m",	4,		0))		&&	(lfptr2->flags & _DBF_FIELD_BINARY) != 0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcOle,				"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcOle2,			"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcReserved1,		"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcReserved2,		"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcReserved3,		"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcReserved4,		"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcReserved5,		"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcReserved6,		"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcReserved7,		"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcReserved8,		"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcUser,			"m",	4,		0)
 			);
 	}
 
 	bool iiDbf_validate_isFrx(SWorkArea* wa)
 	{
+		SFieldRecord2* lfptr2;
+
+		//////////
+		//
+		// FRX required structure:
+		//
 		//	platform		c(8)
 		//	uniqueId		c(10)
 		//	timeStamp		n(10)
@@ -4060,9 +4118,85 @@ working here...
 		//	supvalchng		l
 		//	supexpr			m
 		//	user			m
-// TODO:
-		working here
-		return(false);
+		//
+		//////
+			return(
+								iiDbf_validate_fieldExists(wa,	cgcPlatform,		"c",	8,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcUniqueId,		"c",	10,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcTimeStamp,		"n",	10,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcObjType,			"n",	2,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcObjCode,			"n",	3,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcName,			"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcExpr,			"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcVpos,			"n",	9,		3)
+				&&				iiDbf_validate_fieldExists(wa,	cgcHpos,			"n",	9,		3)
+				&&				iiDbf_validate_fieldExists(wa,	cgcHeight,			"n",	9,		3)
+				&&				iiDbf_validate_fieldExists(wa,	cgcWidth,			"n",	9,		3)
+				&&				iiDbf_validate_fieldExists(wa,	cgcStyle,			"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcPicture,			"m",	4,		0)
+				&&	((lfptr2 =	iiDbf_validate_fieldExists(wa,	cgcOrder,			"m",	4,		0))		&&	(lfptr2->flags & _DBF_FIELD_BINARY) != 0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcUnique,			"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcComment,			"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcEnviron,			"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcBoxChar,			"c",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcFillChar,		"c",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcTag,				"m",	4,		0)
+				&&	((lfptr2 =	iiDbf_validate_fieldExists(wa,	cgcTag2,			"m",	4,		0))		&&	(lfptr2->flags & _DBF_FIELD_BINARY) != 0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcPenRed,			"n",	5,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcPenGreen,		"n",	5,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcPenBlue,			"n",	5,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcFillRed,			"n",	5,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcFillGreen,		"n",	5,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcFillBlue,		"n",	5,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcPenSize,			"n",	5,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcPenPat,			"n",	5,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcFillPat,			"n",	5,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcFontFace,		"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcFontStyle,		"n",	3,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcFontSize,		"n",	3,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcMode,			"n",	3,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcRuler,			"n",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcRulerLines,		"n",	3,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcGrid,			"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcGridY,			"n",	2,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcGridH,			"n",	2,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcFloat,			"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcStretch,			"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcStretchTop,		"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcTop,				"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcBottom,			"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcSubType,			"n",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcSubRest,			"n",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcNoRepeat,		"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcResetRpt,		"n",	2,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcPageBreak,		"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcColBreak,		"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcResetPage,		"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcGeneral,			"n",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcSpacing,			"n",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcDouble,			"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcSwapHeader,		"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcSwapFooter,		"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcEjectBefore,		"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcEjectAfter,		"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcPlain,			"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcSummary,			"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcAddAlias,		"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcOffset,			"n",	3,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcTopMargin,		"n",	3,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcBotMargin,		"n",	3,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcTotalType,		"n",	2,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcResetTotal,		"n",	2,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcResoId,			"n",	3,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcCurPos,			"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcSupAlways,		"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcSupOvflow,		"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcSupRpcol,		"n",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcGroup,			"n",	2,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcSupValChng,		"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcSupExpr,			"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcUser,			"m",	4,		0)
+			);
 	}
 
 	bool iiDbf_validate_isMnx(SWorkArea* wa)
@@ -4098,31 +4232,31 @@ working here...
 		//
 		//////
 			return(
-								iDbf_validate_fieldExists(cgcObjType,		"n",	2,		0)
-				&&				iDbf_validate_fieldExists(cgcObjCode,		"n",	2,		0)
-				&&				iDbf_validate_fieldExists(cgcName,			"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcPrompt,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcCommand,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcMessage,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcProcType,		"n",	1,		0)
-				&&				iDbf_validate_fieldExists(cgcProcedure,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcSetupType,		"n",	1,		0)
-				&&				iDbf_validate_fieldExists(cgcSetup,			"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcCleanType,		"n",	1,		0)
-				&&				iDbf_validate_fieldExists(cgcCleanup,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcMark,			"c",	1,		0)
-				&&				iDbf_validate_fieldExists(cgcKeyName,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcKeyLabel,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcSkipFor,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcNameChange,	"l",	1,		0)
-				&&				iDbf_validate_fieldExists(cgcNumItems,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcLevelName,		"c",	10,		0)
-				&&				iDbf_validate_fieldExists(cgcItemNum,		"c",	3,		0)
-				&&				iDbf_validate_fieldExists(cgcComment,		"m",	4,		0)
-				&&				iDbf_validate_fieldExists(cgcLocation,		"n",	2,		0)
-				&&				iDbf_validate_fieldExists(cgcScheme,		"n",	2,		0)
-				&&				iDbf_validate_fieldExists(cgcSysRes,		"n",	1,		0)
-				&&				iDbf_validate_fieldExists(cgcResName,		"m",	4,		0)
+								iiDbf_validate_fieldExists(wa,	cgcObjType,			"n",	2,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcObjCode,			"n",	2,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcName,			"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcPrompt,			"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcCommand,			"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcMessage,			"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcProcType,		"n",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcProcedure,		"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcSetupType,		"n",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcSetup,			"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcCleanType,		"n",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcCleanup,			"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcMark,			"c",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcKeyName,			"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcKeyLabel,		"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcSkipFor,			"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcNameChange,		"l",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcNumItems,		"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcLevelName,		"c",	10,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcItemNum,			"c",	3,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcComment,			"m",	4,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcLocation,		"n",	2,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcScheme,			"n",	2,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcSysRes,			"n",	1,		0)
+				&&				iiDbf_validate_fieldExists(wa,	cgcResName,			"m",	4,		0)
 			);
 	}
 

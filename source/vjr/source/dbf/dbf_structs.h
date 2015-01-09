@@ -133,7 +133,7 @@
 			//////
 				union {							// Offset 24, Length  1
 					u8	reserved1;
-					u8	field_name_length;
+					u8	fieldName_length;
 				};
 
 				union {
