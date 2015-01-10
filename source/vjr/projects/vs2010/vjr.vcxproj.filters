@@ -43,6 +43,9 @@
     <Filter Include="compiler\vxb">
       <UniqueIdentifier>{14fafdac-e9d6-46b1-8e73-0226b02bc6a2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="objects">
+      <UniqueIdentifier>{19fb788a-5076-4cf9-9b1f-dd5439a6b957}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="small.ico">
@@ -87,6 +90,33 @@
     </ClCompile>
     <ClCompile Include="..\..\source\compiler\vxb\vxb_compiler.cpp">
       <Filter>compiler\vxb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\objects\accessors.cpp">
+      <Filter>objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\objects\base.cpp">
+      <Filter>objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\objects\callbacks.cpp">
+      <Filter>objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\objects\copy.cpp">
+      <Filter>objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\objects\create.cpp">
+      <Filter>objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\objects\delete.cpp">
+      <Filter>objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\objects\events.cpp">
+      <Filter>objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\objects\render.cpp">
+      <Filter>objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\objects\reset.cpp">
+      <Filter>objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -176,6 +206,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\dbf\cdx_const.h">
       <Filter>dbf\cdx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\objects\accessors.h">
+      <Filter>objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -363,7 +363,6 @@ struct SObjPropertyMap;
 	void					iEvents_resetToDefault					(SEvents* ev);
 
 
-
 //////////
 // vjr_sup.cpp
 //////
@@ -457,14 +456,15 @@ struct SObjPropertyMap;
 	s8*						iDuplicateString						(s8* tcText);
 
 	// Mouse processing (callback from iWindow_wndProc()
-	s32						iMouse_processMessage					(SWindow* win, UINT m, WPARAM w, LPARAM l);
-	void					iiMouse_translatePosition				(SWindow* win, POINTS* pt, UINT m);
-	s32						iiMouse_processMouseEvents				(SWindow* win, UINT m, WPARAM w, LPARAM l);
+	s32						iMouse_processMessage					(SWindow* win, UINT msg, WPARAM w, LPARAM l);
+	void					iiMouse_translatePosition				(SWindow* win, POINTS* pt, UINT msg);
+	s32						iiMouse_processMouseEvents				(SWindow* win, UINT msg, WPARAM w, LPARAM l);
+	void					iiMouse_processMouseEvents_windowSpecial(SWindow* win);
 	void					iiMouse_processMouseEvents_mouseMove	(SWindow* win, SObject* obj, RECT* rc,         bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed);
 	bool					iiMouse_processMouseEvents_common		(SWindow* win, SObject* obj, RECT* rc, UINT m, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed);
 //	s32						iiMouse_processMouseEvents_nonclient	(SWindow* win, UINT m, WPARAM w, LPARAM l);
-	void					iiMouse_getFlags_wparam					(WPARAM w, bool* tlCtrl, bool* tlAlt, bool* tlShift, bool* tlLeft, bool* tlMiddle, bool* tlRight, bool* tlCaps);
-	void					iiMouse_getFlags_async					(          bool* tlCtrl, bool* tlAlt, bool* tlShift, bool* tlLeft, bool* tlMiddle, bool* tlRight, bool* tlCaps);
+	void					iiMouse_getFlags_wparam					(WPARAM w, bool* tlCtrl, bool* tlAlt, bool* tlShift, bool* tlLeft, bool* tlMiddle, bool* tlRight, bool* tlCaps, bool* tlAnyButton);
+	void					iiMouse_getFlags_async					(          bool* tlCtrl, bool* tlAlt, bool* tlShift, bool* tlLeft, bool* tlMiddle, bool* tlRight, bool* tlCaps, bool* tlAnyButton);
 
 	// For processing keystrokes
 	s32						iKeyboard_processMessage				(SWindow* win, UINT m, WPARAM w, LPARAM l);

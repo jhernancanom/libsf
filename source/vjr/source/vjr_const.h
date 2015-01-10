@@ -744,6 +744,12 @@ typedef SEM**		SEMpp;
 	const u8			cgcName_iconMaximize[]				= "_maximize";							// Forms automatically get a maximize button
 	const u8			cgcName_iconClose[]					= "_close";								// Forms automatically get a close button
 
+	// Scale icons
+	const u8			cgcName_iconScaleUl[]				= "_scaleul";							// Upper-left scale icon
+	const u8			cgcName_iconScaleUr[]				= "_scaleUr";							// Upper-right scale icon
+	const u8			cgcName_iconScaleLr[]				= "_scaleLr";							// Lower-right scale icon
+	const u8			cgcName_iconScaleLl[]				= "_scaleLl";							// Lower-left scale icon
+
 	const u8			cgcName_checkboxImage[]				= "_cbimage";							// Checkboxes automatically get a checkbox image
 	const u8			cgcName_checkboxLabel[]				= "_cblabel";							// Checkboxes automatically get a checkbox label
 

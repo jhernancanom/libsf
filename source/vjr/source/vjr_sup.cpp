@@ -108,6 +108,9 @@
 				ghwndMsg = CreateWindowA((cs8*)cgcMessageWindowClass, (cs8*)cgcMessageWindowClass, 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, ghInstance, 0);
 				if (ghwndMsg)
 				{
+					// Create a timer for the message window firing 20x per second
+					SetTimer(ghwndMsg, 0, 50, NULL);
+
 					// Read events
 					CreateThread(NULL, 0, &iReadEvents_messageWindow, 0, 0, 0);
 					return;
@@ -164,10 +167,36 @@
 // Processes internal messages to process things internally.
 //
 //////
-	LRESULT CALLBACK iWindow_wndProcMessage(HWND hwnd, UINT m, WPARAM w, LPARAM l)
+	LRESULT CALLBACK iWindow_wndProcMessage(HWND hwnd, UINT msg, WPARAM w, LPARAM l)
 	{
+		u32			lnI;
+		MSG			msgPeek;
+		SWindow*	win;
+
+
 		// Call Windows' default procedure handler
-		return(DefWindowProc(hwnd, m, w, l));
+		switch (msg)
+		{
+			case WM_TIMER:
+				// See if any windows need to receive this message
+				for (lnI = 0; lnI < gWindows->populatedLength; lnI += sizeof(SWindow))
+				{
+					// Grab this one
+					win = (SWindow*)(gWindows->data_u8 + lnI);
+
+					// If it's in use, and it's moving or resizing, send it this message
+					if (win->isValid && (win->isMoving || win->isResizing))
+					{
+						// Send the message if there isn't already one of these messages in the queue
+						if (!PeekMessage(&msgPeek, win->hwnd, WM_TIMER, WM_TIMER, PM_NOREMOVE))
+							PostMessage(win->hwnd, WM_TIMER, 0, 0);		// Not in queue, send it
+					}
+				}
+				// Indicate we processed it
+				return 0;
+				break;
+		}
+		return(DefWindowProc(hwnd, msg, w, l));
 	}
 
 
@@ -1047,6 +1076,7 @@
 	LRESULT CALLBACK iWindow_wndProcForms(HWND h, UINT m, WPARAM w, LPARAM l)
 	{
 		SWindow*		win;
+		POINT			lpt;
 		HDC				lhdc;
 		PAINTSTRUCT		ps;
 
@@ -1060,6 +1090,19 @@
 			{
 				case WMVJR_FIRST_CREATION:
 					// Currently unused
+					break;
+
+				case WM_TIMER:
+					if (win->isMoving || win->isResizing)
+					{
+						// Grab the mouse coordinates
+						GetCursorPos(&lpt);
+						win->mouseCurrent.positionInOsDesktop.x = lpt.x;
+						win->mouseCurrent.positionInOsDesktop.y = lpt.y;
+
+						// Reposition or resize
+						iiMouse_processMouseEvents_windowSpecial(win);
+					}
 					break;
 
 				case WM_DESTROY:
@@ -1091,7 +1134,8 @@
 				case WM_MOUSEWHEEL:
 				case WM_MOUSEMOVE:
 				case WM_MOUSEHOVER:
-					return(iMouse_processMessage(win, m, w, l));
+					if (!win->isMoving && !win->isResizing)
+						return(iMouse_processMessage(win, m, w, l));
 					break;
 
 				case WM_SYSKEYDOWN:
@@ -2743,18 +2787,21 @@
 // Called to process the mouse messages.
 //
 //////
-	s32 iMouse_processMessage(SWindow* win, UINT m, WPARAM w, LPARAM l)
+	s32 iMouse_processMessage(SWindow* win, UINT msg, WPARAM w, LPARAM l)
 	{
 		//////////
 		// If we're a valid window, process the mouse
 		//////
 			if (win && win->obj && win->obj->rc.right > win->obj->rc.left)
 			{
+				// Copy the prior mouse condition to the current one
+				memcpy(&win->mousePrior, &win->mouseCurrent, sizeof(win->mousePrior));
+				
 				// Translate the mouse from the scaled position to its real position
-				iiMouse_translatePosition(win, (POINTS*)&l, m);
+				iiMouse_translatePosition(win, (POINTS*)&l, msg);
 
 				// Signal the event(s)
-				iiMouse_processMouseEvents(win, m, w, l);
+				iiMouse_processMouseEvents(win, msg, w, l);
 			}
 			// If we get here, invalid
 			return(-1);
@@ -2769,60 +2816,59 @@
 // Note:  The win parameter is required.
 //
 //////
-	void iiMouse_translatePosition(SWindow* win, POINTS* pt, UINT m)
+	void iiMouse_translatePosition(SWindow* win, POINTS* pt, UINT msg)
 	{
-		POINT	lpt;
+		POINT	lpt, lptOnOSDesktop;
 		bool	llWheelMessage;
-
-
-		//////////
-		// If we're moving or resizing, we're reading screen coordinate mouse data
-		//////
-			if (win->isMoving || win->isResizing)
-			{
-				// Get the mouse pointer in screen coordinates
-				GetCursorPos(&lpt);
-
-			} else {
-				// Use the indicated coordinates
-				lpt.x = pt->x;
-				lpt.y = pt->y;
-			}
 
 
 		//////////
 		// Translate our SHORT points structure to the LONG point structure
 		//////
-			win->mousePosition.x = lpt.x;
-			win->mousePosition.y = lpt.y;
-
-
-		//////////
-		// If we're moving or resizing, we're reading screen coordinate mouse data
-		//////
-			if (win->isMoving || win->isResizing)
-				return;
-
-
-		//////////
-		// If it's a mouse scroll, the coordinates are given in screen coordinates.
-		// Subtract off the window portion
-		//////
-			llWheelMessage = (m == WM_MOUSEWHEEL);
-#ifdef WM_MOUSEHWHEEL
-			llWheelMessage |= (m == WM_MOUSEHWHEEL);
-#endif
-			if (llWheelMessage)
+			if (pt)
 			{
-				win->mousePosition.x -= win->rc.left;
-				win->mousePosition.y -= win->rc.top;
+				lpt.x = pt->x;
+				lpt.y = pt->y;
+				win->mouseCurrent.position.x = lpt.x;
+				win->mouseCurrent.position.y = lpt.y;
 			}
 
 
 		//////////
 		// Get the mouse flags
 		//////
-			iiMouse_getFlags_async(&win->isCtrl, &win->isAlt, &win->isShift, &win->isMouseLeftButton, &win->isMouseMiddleButton, &win->isMouseRightButton, &win->isCaps);
+			iiMouse_getFlags_async(	&win->mouseCurrent.isCtrl,		&win->mouseCurrent.isAlt,			&win->mouseCurrent.isShift,
+									&win->mouseCurrent.buttonLeft,	&win->mouseCurrent.buttonMiddle,	&win->mouseCurrent.buttonRight,
+									&win->mouseCurrent.isCaps,
+									&win->mouseCurrent.buttonAnyDown);
+
+
+		//////////
+		// If we're moving or resizing, also read the screen coordinate mouse data, and then return
+		//////
+			GetCursorPos(&lptOnOSDesktop);
+			if (!(win->isMoving || win->isResizing))
+			{
+				// Get the mouse pointer in screen coordinates
+				win->mouseCurrent.positionInOsDesktop.x = lptOnOSDesktop.x;
+				win->mouseCurrent.positionInOsDesktop.y = lptOnOSDesktop.y;
+				return;
+			}
+
+
+		//////////
+		// If it's a mouse scroll, the coordinates are given in screen coordinates.
+		// Subtract off the window portion
+		//////
+			llWheelMessage = (msg == WM_MOUSEWHEEL);
+#ifdef WM_MOUSEHWHEEL
+			llWheelMessage |= (msg == WM_MOUSEHWHEEL);
+#endif
+			if (llWheelMessage)
+			{
+				win->mouseCurrent.position.x -= win->rc.left;
+				win->mouseCurrent.position.y -= win->rc.top;
+			}
 	}
 
 
@@ -2833,7 +2879,7 @@
 // Process the mouse events in the client area for this form
 //
 //////
-	s32 iiMouse_processMouseEvents(SWindow* win, UINT m, WPARAM w, LPARAM l)
+	s32 iiMouse_processMouseEvents(SWindow* win, UINT msg, WPARAM w, LPARAM l)
 	{
 		s32			lnResult;
 		bool		llProcessed;
@@ -2850,9 +2896,9 @@
 		// Determine the click flags
 		//////
 			obj->ev.mouse.thisClick = 0;
-			obj->ev.mouse.thisClick	|= ((win->isMouseLeftButton)	? _MOUSE_LEFT_BUTTON	: 0);
-			obj->ev.mouse.thisClick	|= ((win->isMouseMiddleButton)	? _MOUSE_MIDDLE_BUTTON	: 0);
-			obj->ev.mouse.thisClick	|= ((win->isMouseRightButton)	? _MOUSE_RIGHT_BUTTON	: 0);
+			obj->ev.mouse.thisClick	|= ((win->mouseCurrent.buttonLeft)		? _MOUSE_LEFT_BUTTON	: 0);
+			obj->ev.mouse.thisClick	|= ((win->mouseCurrent.buttonMiddle)	? _MOUSE_MIDDLE_BUTTON	: 0);
+			obj->ev.mouse.thisClick	|= ((win->mouseCurrent.buttonRight)		? _MOUSE_RIGHT_BUTTON	: 0);
 
 
 		//////////
@@ -2861,31 +2907,41 @@
 			// Note:  win->mouseLastPosition holds the coordinates
 			// Note:  win->is* flags indicate both button and keyboard state conditions (ctrl, alt, shift, caps)
 			llProcessed = false;
-			switch (m)
+			switch (msg)
 			{
 				case WM_MOUSEWHEEL:
 					// Signal a mouseScroll
-					win->mouseWheelDelta	= (s32)((s16)(((u32)w) >> 16)) / WHEEL_DELTA;
-					win->mouseHWheelDelta	= 0;
-					iiMouse_processMouseEvents_common(win, obj, &obj->rc, m, true, true, &llProcessed);
+					if (!win->isMoving && ! win->isResizing)
+					{
+						win->mouseCurrent.wheelDeltaV	= (s32)((s16)(((u32)w) >> 16)) / WHEEL_DELTA;
+						win->mouseCurrent.wheelDeltaH	= 0;
+						iiMouse_processMouseEvents_common(win, obj, &obj->rc, msg, true, true, &llProcessed);
+					}
 					break;
 
 #ifdef WM_MOUSEHWHEEL
 				case WM_MOUSEHWHEEL:
 					// Signal a mouseHScroll
-					win->mouseWheelDelta	= 0;
-					win->mouseHWheelDelta	= (s32)((s16)(((u32)w) >> 16)) / WHEEL_DELTA;
-					iiMouse_processMouseEvents_common(win, obj, &obj->rc, m, true, true, &llProcessed);
+					if (!win->isMoving && ! win->isResizing)
+					{
+						win->mouseCurrent.wheelDeltaV	= 0;
+						win->mouseCurrent.wheelDeltaH	= (s32)((s16)(((u32)w) >> 16)) / WHEEL_DELTA;
+						iiMouse_processMouseEvents_common(win, obj, &obj->rc, msg, true, true, &llProcessed);
+					}
 					break;
 #endif
 
 				case WM_MOUSEMOVE:
 					// Check for mouseEnter and mouseLeave, then a mouseMove
-					iiMouse_processMouseEvents_mouseMove(win, obj, &obj->rc, true, true, &llProcessed);
-
-					// The mouse has moved, reset the hover counter
-					obj->ev.mouse.startHoverTickCount	= GetTickCount();
-					obj->ev.mouse.hasHoverSignaled		= false;
+					if (!win->isMoving && ! win->isResizing)
+					{
+						// Process normal mouse moves
+						iiMouse_processMouseEvents_mouseMove(win, obj, &obj->rc, true, true, &llProcessed);
+						
+						// The mouse has moved, reset the hover counter
+						obj->ev.mouse.startHoverTickCount	= GetTickCount();
+						obj->ev.mouse.hasHoverSignaled		= false;
+					}
 					break;
 
 
@@ -2893,7 +2949,7 @@
 				case WM_RBUTTONDOWN:
 				case WM_MBUTTONDOWN:
 					// Signal a mouseDown, then a click
-					if (iiMouse_processMouseEvents_common(win, obj, &obj->rc, m, true, true, &llProcessed))
+					if (iiMouse_processMouseEvents_common(win, obj, &obj->rc, msg, true, true, &llProcessed))
 					{
 						// Set the last click
 						obj->ev.mouse._lastClick = obj->ev.mouse.thisClick;
@@ -2904,7 +2960,11 @@
 				case WM_RBUTTONUP:
 				case WM_MBUTTONUP:
 					// Signal a mouseUp
-					iiMouse_processMouseEvents_common(win, obj, &obj->rc, m, true, true, &llProcessed);
+					if (!win->isMoving && ! win->isResizing)
+					{
+						// A mouse button was released
+						iiMouse_processMouseEvents_common(win, obj, &obj->rc, msg, true, true, &llProcessed);
+					}
 					break;
 
 				case WM_LBUTTONDBLCLK:
@@ -2980,7 +3040,84 @@
 		//////////
 		// Indicate if we're in the client area
 		//////
-			return((PtInRect(&lrcClient, win->mousePosition)) ? true : false);
+			return((PtInRect(&lrcClient, win->mouseCurrent.position)) ? true : false);
+	}
+
+
+
+
+//////////
+//
+// Called to process the mouse move events when the window is being moved or resized
+//
+//////
+	void iiMouse_processMouseEvents_windowSpecial(SWindow* win)
+	{
+		s32 lnDeltaX, lnDeltaY;
+
+
+		//////////
+		// If the window is moving or resizing
+		//////
+			if (win->isMoving)
+			{
+				//////////
+				// Get current mouse flags
+				//////
+					iiMouse_getFlags_async(	&win->mouseCurrent.isCtrl,		&win->mouseCurrent.isAlt,			&win->mouseCurrent.isShift,
+											&win->mouseCurrent.buttonLeft,	&win->mouseCurrent.buttonMiddle,	&win->mouseCurrent.buttonRight,
+											&win->mouseCurrent.isCaps,
+											&win->mouseCurrent.buttonAnyDown);
+
+
+				//////////
+				// Calculate the deltas from where it began moving
+				//////
+					// delta = (started - current)
+					lnDeltaX = win->mouseMoveResizeStart.positionInOsDesktop.x - win->mouseCurrent.positionInOsDesktop.x;
+					lnDeltaY = win->mouseMoveResizeStart.positionInOsDesktop.y - win->mouseCurrent.positionInOsDesktop.y;
+
+
+				//////////
+				// Are we done?
+				//////
+					if (!win->mouseCurrent.buttonLeft)
+					{
+						// They've released the mouse button since the last move
+						// We go ahead and process through even if it hasn't moved
+
+					} else if (lnDeltaX == win->movingLastDeltaX && lnDeltaY == win->movingLastDeltaY) {
+						// Nothing has changed this go around
+						return;
+					}
+
+
+				//////////
+				// Set our last values
+				//////
+					win->movingLastDeltaX = lnDeltaX;
+					win->movingLastDeltaY = lnDeltaY;
+
+
+				//////////
+				// Position the window to its new location
+				//////
+					SetWindowPos(win->hwnd, NULL, win->rc.left - lnDeltaX, win->rc.top - lnDeltaY, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+
+
+				//////////
+				// If we're done, then we're done
+				//////
+					if (!win->mouseCurrent.buttonLeft)
+					{
+						// We're done
+						GetWindowRect(win->hwnd, &win->rc);
+						win->isMoving = false;
+					}
+
+			} else if (win->isResizing) {
+				// Resizing
+			}
 	}
 
 
@@ -2998,96 +3135,101 @@
 		SObject*	objSib;
 
 
-		// Make sure our environment is sane
-		if (obj && isEnabled(obj) && obj->bmp)
-		{
-			// Get the rectangle we're in at this level
+		// Make sure our object environment is sane
+		if (!isEnabled(obj) || !obj->bmp)
+			return;
+
+
+		//////////
+		// Get the rectangle we're in at this level
+		/////
 			llInClientArea = iiMouse_processMouseEvents_getRectDescent(win, obj, rc, lrc, lrcClient);
 
 
-			//////////
-			// Process any children
-			//////
-				if (tlProcessChildren && obj->firstChild)
-					iiMouse_processMouseEvents_mouseMove(win, obj->firstChild, &lrcClient, true, true, tlProcessed);
+		//////////
+		// Process any children
+		//////
+			if (tlProcessChildren && obj->firstChild)
+				iiMouse_processMouseEvents_mouseMove(win, obj->firstChild, &lrcClient, true, true, tlProcessed);
 
 
-			//////////
-			// Are we within this object?
-			//////
-				if (PtInRect(&lrc, win->mousePosition))
+		//////////
+		// Are we within this object?
+		//////
+			if (PtInRect(&lrc, win->mouseCurrent.position))
+			{
+				// We are in this object
+				*tlProcessed = true;	// Indicate we've processed this
+				if (!obj->ev.mouse.isMouseOver)
 				{
-					// We are in this object
-					*tlProcessed = true;	// Indicate we've processed this
-					if (!obj->ev.mouse.isMouseOver)
-					{
-						// Signal the mouseEnter event
-						if (obj->ev.mouse._onMouseEnter)
-							obj->ev.mouse.onMouseEnter(win, obj);
-					}
+					// Signal the mouseEnter event
+					if (obj->ev.mouse._onMouseEnter)
+						obj->ev.mouse.onMouseEnter(win, obj);
+				}
 
-					// Are we in the client area?
-					if (llInClientArea)
-					{
-						//////////
-						// Signal the mouseMove event
-						//////
-							if (obj->ev.mouse._onMouseMove)
-							{
-								obj->ev.mouse.onMouseMove(win, obj, 
-															win->mousePosition.x - lrc.left, 
-															win->mousePosition.y - lrc.top, 
-															win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
-							}
-
-					} else {
-						// We are in the non-client area
-
-						//////////
-						// Signal the mouseMove event in the non-client area, which means negative values, or
-						// values outside of the width
-						//
-						// For non-client areas, we translate to negative is to the left or above the client area,
-						// with values extending beyond the width and height if it is in the outer area
-						//////
-							*tlProcessed = true;	// Indicate we've processed this
-							if (obj->ev.mouse._onMouseMove)
-							{
-								obj->ev.mouse.onMouseMove(win, obj, 
-															win->mousePosition.x - lrcClient.left, 
-															win->mousePosition.y - lrcClient.top, 
-															win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
-							}
-					}
+				// Are we in the client area?
+				if (llInClientArea)
+				{
+					//////////
+					// Signal the mouseMove event
+					//////
+						if (obj->ev.mouse._onMouseMove)
+						{
+							obj->ev.mouse.onMouseMove(win, obj, 
+														win->mouseCurrent.position.x - lrc.left, 
+														win->mouseCurrent.position.y - lrc.top, 
+														win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
+														win->obj->ev.mouse.thisClick);
+						}
 
 				} else {
-					// We are outside of this object
-					if (obj->ev.mouse.isMouseOver)
-					{
-						// Signal the mouseLeave event
-						if (obj->ev.mouse._onMouseLeave)
-							obj->ev.mouse.onMouseLeave(win, obj);
-					}
+					// We are in the non-client area
+
+					//////////
+					// Signal the mouseMove event in the non-client area, which means negative values, or
+					// values outside of the width
+					//
+					// For non-client areas, we translate to negative is to the left or above the client area,
+					// with values extending beyond the width and height if it is in the outer area
+					//////
+						*tlProcessed = true;	// Indicate we've processed this
+						if (obj->ev.mouse._onMouseMove)
+						{
+							obj->ev.mouse.onMouseMove(win, obj, 
+														win->mouseCurrent.position.x - lrcClient.left, 
+														win->mouseCurrent.position.y - lrcClient.top, 
+														win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
+														win->obj->ev.mouse.thisClick);
+						}
 				}
 
-
-			//////////
-			// Process any siblings
-			//////
-				if (tlProcessSiblings)
+			} else {
+				// We are outside of this object
+				if (obj->ev.mouse.isMouseOver)
 				{
-					// Begin at the next sibling
-					objSib = (SObject*)obj->ll.next;
-					while (objSib)
-					{
-						// Process this sibling
-						iiMouse_processMouseEvents_mouseMove(win, objSib, rc, true, false, tlProcessed);
-
-						// Move to next sibling
-						objSib = (SObject*)objSib->ll.next;
-					}
+					// Signal the mouseLeave event
+					if (obj->ev.mouse._onMouseLeave)
+						obj->ev.mouse.onMouseLeave(win, obj);
 				}
-		}
+			}
+
+
+		//////////
+		// Process any siblings
+		//////
+			if (tlProcessSiblings)
+			{
+				// Begin at the next sibling
+				objSib = (SObject*)obj->ll.next;
+				while (objSib)
+				{
+					// Process this sibling
+					iiMouse_processMouseEvents_mouseMove(win, objSib, rc, true, false, tlProcessed);
+
+					// Move to next sibling
+					objSib = (SObject*)objSib->ll.next;
+				}
+			}
 	}
 
 
@@ -3142,16 +3284,18 @@
 								*tlProcessed = true;		// Indicate we've processed this
 								if (llContinue && obj->ev.mouse._onMouseDown)
 									llContinue = obj->ev.mouse.onMouseDown(	win, obj, 
-																			win->mousePosition.x - lrc.left, 
-																			win->mousePosition.y - lrc.top, 
-																			win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
+																			win->mouseCurrent.position.x - lrc.left, 
+																			win->mouseCurrent.position.y - lrc.top, 
+																			win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
+																			win->obj->ev.mouse.thisClick);
 								
 								// Signal the click event
 								if (llContinue && obj->ev.mouse._onMouseClickEx)
 									llContinue = obj->ev.mouse.onMouseClickEx(	win, obj, 
-																				win->mousePosition.x - lrc.left, 
-																				win->mousePosition.y - lrc.top, 
-																				win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
+																				win->mouseCurrent.position.x - lrc.left, 
+																				win->mouseCurrent.position.y - lrc.top, 
+																				win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
+																				win->obj->ev.mouse.thisClick);
 									break;
 
 							case WM_LBUTTONUP:
@@ -3161,9 +3305,10 @@
 								*tlProcessed = true;		// Indicate we've processed this
 								if (llContinue && obj->ev.mouse._onMouseUp)
 									llContinue = obj->ev.mouse.onMouseUp(	win, obj, 
-																			win->mousePosition.x - lrc.left, 
-																			win->mousePosition.y - lrc.top, 
-																			win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
+																			win->mouseCurrent.position.x - lrc.left, 
+																			win->mouseCurrent.position.y - lrc.top, 
+																			win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
+																			win->obj->ev.mouse.thisClick);
 								break;
 
 							case WM_MOUSEWHEEL:
@@ -3174,14 +3319,15 @@
 								*tlProcessed = true;		// Indicate we've processed this
 								if (llContinue && obj->ev.mouse._onMouseWheel)
 									llContinue = obj->ev.mouse.onMouseWheel(win, obj, 
-																			win->mousePosition.x - lrc.left, 
-																			win->mousePosition.y - lrc.top, 
-																			win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick,
-																			win->mouseWheelDelta);
+																			win->mouseCurrent.position.x - lrc.left, 
+																			win->mouseCurrent.position.y - lrc.top, 
+																			win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
+																			win->obj->ev.mouse.thisClick,
+																			win->mouseCurrent.wheelDeltaV);
 								break;
 						}
 
-					} else if (PtInRect(&lrc, win->mousePosition)) {
+					} else if (PtInRect(&lrc, win->mouseCurrent.position)) {
 						//////////
 						// Signal the mouseMove event in the non-client area, which means negative values, or values
 						// outside of the width.  For non-client areas, we translate to negative is to the left or
@@ -3200,17 +3346,19 @@
 								*tlProcessed = true;		// Indicate we've processed this
 								if (llContinue && obj->ev.mouse._onMouseDown)
 									llContinue = obj->ev.mouse.onMouseDown(	win, obj, 
-																			win->mousePosition.x - lrcClient.left, 
-																			win->mousePosition.y - lrcClient.top, 
-																			win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
+																			win->mouseCurrent.position.x - lrcClient.left, 
+																			win->mouseCurrent.position.y - lrcClient.top, 
+																			win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
+																			win->obj->ev.mouse.thisClick);
 								
 
 								// Signal the click event
 								if (llContinue && obj->ev.mouse._onMouseClickEx)
 									llContinue = obj->ev.mouse.onMouseClickEx(	win, obj, 
-																				win->mousePosition.x - lrcClient.left, 
-																				win->mousePosition.y - lrcClient.top, 
-																				win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
+																				win->mouseCurrent.position.x - lrcClient.left, 
+																				win->mouseCurrent.position.y - lrcClient.top, 
+																				win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
+																				win->obj->ev.mouse.thisClick);
 
 							case WM_LBUTTONUP:
 							case WM_RBUTTONUP:
@@ -3219,9 +3367,10 @@
 								*tlProcessed = true;		// Indicate we've processed this
 								if (llContinue && obj->ev.mouse._onMouseUp)
 									llContinue = obj->ev.mouse.onMouseUp(	win, obj, 
-																			win->mousePosition.x - lrcClient.left, 
-																			win->mousePosition.y - lrcClient.top, 
-																			win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick);
+																			win->mouseCurrent.position.x - lrcClient.left, 
+																			win->mouseCurrent.position.y - lrcClient.top, 
+																			win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
+																			win->obj->ev.mouse.thisClick);
 								break;
 
 							case WM_MOUSEWHEEL:
@@ -3232,10 +3381,11 @@
 								*tlProcessed = true;		// Indicate we've processed this
 								if (llContinue && obj->ev.mouse._onMouseWheel)
 									llContinue = obj->ev.mouse.onMouseWheel(win, obj, 
-																			win->mousePosition.x - lrcClient.left, 
-																			win->mousePosition.y - lrcClient.top, 
-																			win->isCtrl, win->isAlt, win->isShift, win->obj->ev.mouse.thisClick,
-																			win->mouseWheelDelta);
+																			win->mouseCurrent.position.x - lrcClient.left, 
+																			win->mouseCurrent.position.y - lrcClient.top, 
+																			win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
+																			win->obj->ev.mouse.thisClick,
+																			win->mouseCurrent.wheelDeltaV);
 								break;
 						}
 					}
@@ -3435,17 +3585,18 @@
 // determined by the VK_MENU key's current state.
 //
 //////
-	void iiMouse_getFlags_wparam(WPARAM w, bool* tlCtrl, bool* tlAlt, bool* tlShift, bool* tlLeft, bool* tlMiddle, bool* tlRight, bool* tlCaps)
+	void iiMouse_getFlags_wparam(WPARAM w, bool* tlCtrl, bool* tlAlt, bool* tlShift, bool* tlLeft, bool* tlMiddle, bool* tlRight, bool* tlCaps, bool* tlAnyButton)
 	{
 		//////////
 		// Obtain from WPARAM
 		//////
-			*tlCtrl		= ((w & MK_CONTROL)		!= 0);
-			*tlAlt		= (GetKeyState(VK_MENU)	< 0);
-			*tlShift	= ((w & MK_SHIFT)		!= 0);
-			*tlLeft		= ((w & MK_LBUTTON)		!= 0);
-			*tlRight	= ((w & MK_RBUTTON)		!= 0);
-			*tlMiddle	= ((w & MK_MBUTTON)		!= 0);
+			*tlCtrl			= ((w & MK_CONTROL)		!= 0);
+			*tlAlt			= (GetKeyState(VK_MENU)	< 0);
+			*tlShift		= ((w & MK_SHIFT)		!= 0);
+			*tlLeft			= ((w & MK_LBUTTON)		!= 0);
+			*tlRight		= ((w & MK_RBUTTON)		!= 0);
+			*tlMiddle		= ((w & MK_MBUTTON)		!= 0);
+			*tlAnyButton	= (*tlLeft || *tlMiddle || *tlRight);
 	}
 
 
@@ -3457,18 +3608,19 @@
 // determined by the VK_MENU key's current state.
 //
 //////
-	void iiMouse_getFlags_async(bool* tlCtrl, bool* tlAlt, bool* tlShift, bool* tlLeft, bool* tlMiddle, bool* tlRight, bool* tlCaps)
+	void iiMouse_getFlags_async(bool* tlCtrl, bool* tlAlt, bool* tlShift, bool* tlLeft, bool* tlMiddle, bool* tlRight, bool* tlCaps, bool* tlAnyButton)
 	{
 		//////////
 		// Grab each one asynchronously
 		//////
-			*tlCtrl		= ((GetAsyncKeyState(VK_CONTROL)	& 0x8000)	!= 0);
-			*tlAlt		= (GetKeyState(VK_MENU)							< 0);
-			*tlShift	= ((GetAsyncKeyState(VK_SHIFT)		& 0x8000)	!= 0);
-			*tlLeft		= ((GetAsyncKeyState(VK_LBUTTON)	& 0x8000)	!= 0);
-			*tlMiddle	= ((GetAsyncKeyState(VK_MBUTTON)	& 0x8000)	!= 0);
-			*tlRight	= ((GetAsyncKeyState(VK_RBUTTON)	& 0x8000)	!= 0);
-			*tlCaps		= (GetAsyncKeyState(VK_CAPITAL)		& 0x8000)	!= 0;
+			*tlCtrl			= ((GetAsyncKeyState(VK_CONTROL)	& 0x8000)	!= 0);
+			*tlAlt			= (GetKeyState(VK_MENU)							< 0);
+			*tlShift		= ((GetAsyncKeyState(VK_SHIFT)		& 0x8000)	!= 0);
+			*tlLeft			= ((GetAsyncKeyState(VK_LBUTTON)	& 0x8000)	!= 0);
+			*tlMiddle		= ((GetAsyncKeyState(VK_MBUTTON)	& 0x8000)	!= 0);
+			*tlRight		= ((GetAsyncKeyState(VK_RBUTTON)	& 0x8000)	!= 0);
+			*tlCaps			= (GetAsyncKeyState(VK_CAPITAL)		& 0x8000)	!= 0;
+			*tlAnyButton	= (*tlLeft || *tlMiddle || *tlRight);
 	}
 
 
@@ -3485,14 +3637,14 @@
 		u32			lnI, lnScanCode, lnObjFocusControlsCount;
 		SBuilder*	objFocusControls;
 		SObject*	obj;
-		bool		llCtrl, llAlt, llShift, llLeft, llMiddle, llRight, llCaps, llIsAscii, llIsCAS;
+		bool		llCtrl, llAlt, llShift, llLeft, llMiddle, llRight, llCaps, llIsAscii, llIsCAS, llIsAnyMouseButtonDown;
 		u8			keyboardState[256];
 
 
 		//////////
 		// Grab our key states
 		//////
-			iiMouse_getFlags_async(&llCtrl, &llAlt, &llShift, &llLeft, &llMiddle, &llRight, &llCaps);
+			iiMouse_getFlags_async(&llCtrl, &llAlt, &llShift, &llLeft, &llMiddle, &llRight, &llCaps, &llIsAnyMouseButtonDown);
 
 
 		//////////

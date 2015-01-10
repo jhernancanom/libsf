@@ -267,6 +267,16 @@
 		return(iDatum_compare(datumLeft, (s8*)data, dataLength));
 	}
 
+	s32 iDatum_compare(SDatum* datumLeft, u8*  data, s32 dataLength)
+	{
+		return(iDatum_compare(datumLeft, (s8*)data, dataLength));
+	}
+
+	s32 iDatum_compare(SDatum* datumLeft, cu8* data, s32 dataLength)
+	{
+		return(iDatum_compare(datumLeft, (s8*)data, dataLength));
+	}
+
 	void iDatum_delete(SDatum* datum, bool tlDeleteSelf)
 	{
 		// Make sure our environment is sane

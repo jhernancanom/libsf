@@ -222,6 +222,22 @@ struct SXYS32
 	s32			y;
 };
 
+struct SMouseData
+{
+	POINT				positionInOsDesktop;							// Mouse position with regards to the entire desktop
+	POINT				position;										// Mouse position in this window
+	s32					wheelDeltaV;									// How far the vertical mouse wheel has scrolled
+	s32					wheelDeltaH;									// How far the horizontal mouse wheel has scrolled
+	bool				buttonLeft;										// Is the left mouse button down?
+	bool				buttonMiddle;									// Is the middle mouse button down?
+	bool				buttonRight;									// Is the right mouse button down?
+	bool				buttonAnyDown;									// Is any mouse button down?
+	bool				isCaps;											// Is caps lock on?
+	bool				isCtrl;											// Is the control key down?
+	bool				isAlt;											// Is the alt key down?
+	bool				isShift;										// Is the shift key down?
+};
+
 struct SWindow
 {
 	bool				isValid;										// When windows fall out of scope they are marked not valid
@@ -232,21 +248,17 @@ struct SWindow
 	SObject*			obj;											// The top-level object being rendered in this window
 
 	// Mouse data
-	POINT				mousePosition;									// Mouse position in this window
-	s32					mouseWheelDelta;								// How far the vertical mouse wheel has scrolled
-	s32					mouseHWheelDelta;								// How far the horizontal mouse wheel has scrolled
-	bool				isMouseLeftButton;								// Is the left mouse button down?
-	bool				isMouseMiddleButton;							// Is the middle mouse button down?
-	bool				isMouseRightButton;								// Is the right mouse button down?
-	bool				isCaps;											// Is caps lock on?
-	bool				isCtrl;											// Is the control key down?
-	bool				isAlt;											// Is the alt key down?
-	bool				isShift;										// Is the shift key down?
+	SMouseData			mousePrior;										// Mouse activity before the most recent mouse activity
+	SMouseData			mouseCurrent;									// Current mouse activity
 
 	// For manual movement
 	bool				isMoving;										// Is this window moving?
 	bool				isResizing;										// Is this window resizing?
+	SMouseData			mouseMoveResizeStart;							// The mouse data within the window when the move or resize started
+	RECT				rcMoveResizeStart;								// The location and size of the window when the move or resize started
 	u32					resizingFrom;									// If resizing, the arrow (upper-left, upper-right, lower-left, lower-right)
+	s32					movingLastDeltaX;								// When moving, this was the last delta-X for the last redraw
+	s32					movingLastDeltaY;								// When moving, this was the last delta-Y for the last redraw
 
 	// Updated as the mouse moves across the form
 	POINT				mousePositionClick;								// When the mouse was last left-clicked, this is where it was clicked

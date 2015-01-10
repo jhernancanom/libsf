@@ -215,6 +215,7 @@
 	{
 		bool		llMouseDown;
 		f64			lfPercent, lfX, lfY, lfWidth, lfHeight, lfValue;
+		SVariable*	varName;
 		SVariable*	valueMin;
 		SObject*	objRoot;
 
@@ -233,9 +234,37 @@
 			iObj_setDirtyRender_ascent(objRoot, true);
 		}
 
-		// For checkboxes, we toggle
+		// For forms, they can be clicking down on special things for various operations
+		if (obj->parent && obj->parent->objType == _OBJ_TYPE_FORM && win->obj == obj->parent)
+		{
+			// Left button only?
+			if (win->mouseCurrent.buttonLeft && !win->mouseCurrent.buttonMiddle && !win->mouseCurrent.buttonRight)
+			{
+				// We're on the top-level form for the window
+				varName = iObjProp_get_variable_byIndex(obj, _INDEX_NAME);
+				if (	iDatum_compare(&varName->value, cgcName_iconMove,	sizeof(cgcName_iconMove) - 1)	== 0
+					||	iDatum_compare(&varName->value, cgcName_caption,	sizeof(cgcName_caption) - 1)	== 0)
+				{
+					// We're on the _move icon or the caption, which means they want to move the window
+					win->isMoving = true;
+					memcpy(&win->rcMoveResizeStart,		&win->rc,			sizeof(win->rcMoveResizeStart));
+					memcpy(&win->mouseMoveResizeStart,	&win->mouseCurrent,	sizeof(win->mouseMoveResizeStart));
+
+//				} else if (iDatum_compare(&varName->value, cgcName_iconScaleUl, sizeof(cgcName_iconScaleUl) - 1) == 0) {
+//					// We're on the upper-left scaling arrow
+//				} else if (iDatum_compare(&varName->value, cgcName_iconScaleUr, sizeof(cgcName_iconScaleUr) - 1) == 0) {
+//					// We're on the upper-right scaling arrow
+//				} else if (iDatum_compare(&varName->value, cgcName_iconScaleLr, sizeof(cgcName_iconScaleLr) - 1) == 0) {
+//					// We're on the lower-right scaling arrow
+//				} else if (iDatum_compare(&varName->value, cgcName_iconScaleLl, sizeof(cgcName_iconScaleLl) - 1) == 0) {
+//					// We're on the lower-left scaling arrow
+				}
+			}
+		}
+
 		if (obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX)
 		{
+			// For checkboxes, we toggle
 			// They're clicking on a checkbox, toggle the value and re-render
 			iObjProp_set_s32_direct(obj, _INDEX_VALUE, ((iObjProp_get_s32_direct(obj, _INDEX_VALUE) != 0) ? 0 : 1));
 
