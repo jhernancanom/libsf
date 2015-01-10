@@ -89,7 +89,7 @@
 
 
 		//////////
-		// Use their, or our, compile context
+		// Use their compile context if provided, otherwise use our pseudo one
 		//////
 			if (vxbParam)
 			{
@@ -103,7 +103,7 @@
 
 
 		//////////
-		// Initialize our compile context
+		// Initialize the compile context
 		//////
 			memset(vxb, 0, sizeof(SCompileVxbContext));
 			vxb->codeBlock	= codeBlock;
@@ -156,7 +156,7 @@
 //////
 	void iiCompile_vxb_precompile_forEditAndContinue(SCompileVxbContext* vxb)
 	{
-		// Make a full deep copy of the current codeBlock
+		// Iterate through every line that has changed, and note all components
 	}
 
 
@@ -1738,7 +1738,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // component of [c:\some\dir\file.txt].
 //
 //////
-	u32 iComps_combineAdjacent(SComp* compLeftmost, s32 tniCode, s32 tniCat, SBgra* tnColor)
+	u32 iComps_combineAdjacent(SComp* compLeftmost, s32 tniCode, s32 tniCat, SBgra* tnColor, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount)
 	{
 		u32 lnCombined;
 
@@ -1753,6 +1753,17 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 				// And continue so long as they are immediately adjacent
 				if (iiComps_get_charactersBetween(compLeftmost, (SComp*)compLeftmost->ll.next) != 0)
 					return(lnCombined);	// All done
+
+				// Validate if need be
+				if (tnValid_iCodeArrayCount > 0 && valid_iCodeArray)
+				{
+					// If it's valid, add it
+					if (!iiComps_validate((SComp*)compLeftmost->ll.next, valid_iCodeArray, tnValid_iCodeArrayCount))
+						return(lnCombined);		// Invalid
+
+					// If we get here, it is still valid
+				}
+				// else no validation is required
 
 				// Combine these two...
 				iComps_combineN(compLeftmost, 2, tniCode, tniCat, tnColor);

@@ -546,7 +546,7 @@
 
 				default:
 					// Get every contiguous component
-					varPathname	= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, comp->line->sourceCode->data_u8 + comp->start, iComps_getContiguousLength(comp, valid_iCodeArray, tnValid_iCodeArrayCount));
+					varPathname	= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, comp->line->sourceCode->data_u8 + comp->start, iComps_getContiguousLength(comp, valid_iCodeArray, tnValid_iCodeArrayCount, NULL));
 					break;
 			}
 		}

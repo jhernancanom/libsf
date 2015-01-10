@@ -122,7 +122,7 @@ struct SVariable;
 	SComp*					iComps_skipTo_iCode							(SComp* comp, s32 tniCode);
 	SComp*					iComps_getNth								(SComp* comp, s32 tnCount);
 	u32						iComps_combineN								(SComp* comp, u32 tnCount, s32 tnNewICode, s32 tnNewICat, SBgra* newColor);
-	u32						iComps_combineAdjacent						(SComp* compLeftmost, s32 tniCode, s32 tniCat, SBgra* tnColor);
+	u32						iComps_combineAdjacent						(SComp* compLeftmost, s32 tniCode, s32 tniCat, SBgra* tnColor, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount);
 	u32						iComps_combineAdjacentAlphanumeric			(SLine* line);
 	u32						iComps_combineAdjacentNumeric				(SLine* line);
 	u32						iComps_combineAdjacentDotForms				(SLine* line);

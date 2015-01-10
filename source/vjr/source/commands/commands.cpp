@@ -5404,7 +5404,7 @@ debug_break;
 		//////////
 		// Extract the DBC name
 		//////
-			lnLength = iComps_getContiguousLength(compPathname, NULL, 0);
+			lnLength = iComps_getContiguousLength(compPathname, NULL, 0, NULL);
 			if (lnLength >= sizeof(dbcNameBuffer))
 			{
 				// Parameter is too long
