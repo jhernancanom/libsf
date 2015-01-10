@@ -1732,6 +1732,43 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 
 //////////
 //
+// Called to combine all immediately adjacent components into a single one.
+// This is typically done to aggegate things that should be something like
+// a filename, such as [c][:][\][some][\][dir][\][file][.][txt], into one
+// component of [c:\some\dir\file.txt].
+//
+//////
+	u32 iComps_combineAdjacent(SComp* compLeftmost, s32 tniCode, s32 tniCat, SBgra* tnColor)
+	{
+		u32 lnCombined;
+
+
+		// Make sure the environment is sane
+		lnCombined = 0;
+		if (compLeftmost)
+		{
+			// Repeat so long as there is a component to the right
+			for ( ; compLeftmost->ll.next; lnCombined++)
+			{
+				// And continue so long as they are immediately adjacent
+				if (iiComps_get_charactersBetween(compLeftmost, (SComp*)compLeftmost->ll.next) != 0)
+					return(lnCombined);	// All done
+
+				// Combine these two...
+				iComps_combineN(compLeftmost, 2, tniCode, tniCat, tnColor);
+				// ...and continue on to the next component after
+			}
+		}
+
+		// Indicate how many were combined
+		return(lnCombined);
+	}
+
+
+
+
+//////////
+//
 // Called to combine adjacent combinations of underscore, alpha, numeric, or alphanumeric,
 // which begin with an underscore, alpha, or alphanumeric, into one component that is then
 // branded as alphanumeric.
@@ -2550,14 +2587,15 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Called to get the length of the contiguous components
 //
 //////
-	s32 iComps_getContiguousLength(SComp* comp, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount)
+	s32 iComps_getContiguousLength(SComp* comp, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount, s32* tnCount)
 	{
-		s32		lnLength, lnThisSpacing;
+		s32		lnCount, lnLength, lnThisSpacing;
 		bool	llAtLeastOne, llIsValid;
 
 
 		// Make sure our environment is sane
-		lnLength = 0;
+		lnCount		= 0;
+		lnLength	= 0;
 		if (comp)
 		{
 			//////////
@@ -2597,9 +2635,10 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 
 
 					//////////
-					// Raise our flag
+					// Raise our flag and increase our count
 					//////
 						llAtLeastOne = true;
+						++lnCount;
 
 
 					//////////
@@ -2619,15 +2658,23 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					{
 						// If it's valid, add it
 						if (iiComps_validate(comp, valid_iCodeArray, tnValid_iCodeArrayCount))
+						{
 							lnLength += comp->length;	// It's valid
+							++lnCount;
+						}
 
 					} else {
 						// No validation, just add it in
 						lnLength += comp->length;
+						++lnCount;
 					}
 				}
 
 		}
+
+		// Store the count if need be
+		if (tnCount)
+			*tnCount = lnCount;
 
 		// Indicate where we are
 		return(lnLength);

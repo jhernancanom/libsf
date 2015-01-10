@@ -122,6 +122,7 @@ struct SVariable;
 	SComp*					iComps_skipTo_iCode							(SComp* comp, s32 tniCode);
 	SComp*					iComps_getNth								(SComp* comp, s32 tnCount);
 	u32						iComps_combineN								(SComp* comp, u32 tnCount, s32 tnNewICode, s32 tnNewICat, SBgra* newColor);
+	u32						iComps_combineAdjacent						(SComp* compLeftmost, s32 tniCode, s32 tniCat, SBgra* tnColor);
 	u32						iComps_combineAdjacentAlphanumeric			(SLine* line);
 	u32						iComps_combineAdjacentNumeric				(SLine* line);
 	u32						iComps_combineAdjacentDotForms				(SLine* line);
@@ -136,7 +137,7 @@ struct SVariable;
 	void					iComps_fixupNaturalGroupings				(SLine* line);
 	s32						iiComps_get_charactersBetween				(SComp* compLeft, SComp* compRight);
 	s32						iComps_getAs_s32							(SComp* comp);
-	s32						iComps_getContiguousLength					(SComp* comp, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount);
+	s32						iComps_getContiguousLength					(SComp* comp, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount, s32* tnCount);
 	bool					iiComps_validate							(SComp* comp, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount);
 	s8*						iComps_visualize							(SComp* comp, s32 tnCount, s8* outputBuffer, s32 tnBufferLength, bool tlUseDefaultCompSearcher, SAsciiCompSearcher* tsComps1, SAsciiCompSearcher* tsComps2);
 

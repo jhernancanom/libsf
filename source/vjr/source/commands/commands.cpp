@@ -5223,6 +5223,127 @@ debug_break;
 
 //////////
 //
+// Command:  MODIFY
+// Modifies various things.
+//
+//////
+// Version 0.55
+// Last update:
+//     Jan.09.2015
+//////
+// Change log:
+//     Jan.09.2015
+//////
+// Parameters:
+//		compModify	-- The [MODIFY] component
+//////
+// Returns:
+//		Nothing, but whatever it is that's being modified may be open for modifying.
+//////
+	void command_modify(SComp* compModify)
+	{
+		SComp*	compType;
+		SComp*	compTarget;
+
+
+		//////////
+		// Make sure there's something after the modify command
+		//////
+			if (!(compType = iComps_getNth(compModify, 1)))
+			{
+				// There was nothing after, which means syntax error
+				iError_reportByNumber(_ERROR_MISSING_PARAMETER, compModify);
+				return;
+			}
+
+
+		//////////
+		// Based on what's after, validate the syntaxes
+		//////
+			compTarget = iComps_getNth(compType, 1);
+			switch (compType->iCode)
+			{
+				case _ICODE_CLASS:
+					// MODIFY CLASS
+					break;
+
+				case _ICODE_COMMAND:
+					// MODIFY COMMAND
+					break;
+
+				case _ICODE_CONNECTION:
+					// MODIFY CONNECTION
+					break;
+
+				case _ICODE_DATABASE:
+					// MODIFY DATABASE
+					break;
+
+				case _ICODE_FILE:
+					// MODIFY FILE
+					break;
+
+				case _ICODE_FORM:
+					// MODIFY FORM
+					break;
+
+				case _ICODE_GENERAL:
+					// MODIFY GENERAL
+					break;
+
+				case _ICODE_LABEL:
+					// MODIFY LABEL
+					break;
+
+				case _ICODE_MEMO:
+					// MODIFY MEMO
+					break;
+
+				case _ICODE_MENU:
+					// MODIFY MENU
+					break;
+
+				case _ICODE_PROCEDURE:
+					// MODIFY PROCEDURE
+					break;
+
+				case _ICODE_PROJECT:
+					// MODIFY PROJECT
+					break;
+
+				case _ICODE_QUERY:
+					// MODIFY QUERY
+					break;
+
+				case _ICODE_REPORT:
+					// MODIFY REPORT
+					break;
+
+				case _ICODE_STRUCTURE:
+					// MODIFY STRUCTURE
+					break;
+
+				case _ICODE_VIEW:
+					// MODIFY VIEW
+					break;
+
+				case _ICODE_WINDOW:
+					// MODIFY WINDOW
+					break;
+			}
+
+
+		//////////
+		// If we get here, syntax error
+		//////
+			iError_reportByNumber(_ERROR_SYNTAX, compType);
+	}
+
+
+
+
+//////////
+//
 // Command:  OPEN
 // Multiple forms.  Opens a database container.
 //
@@ -5235,10 +5356,10 @@ debug_break;
 //     Jan.06.2015 - Initial creation
 //////
 // Parameters:
-//     comp		-- The [OPEN] component
+//		compOpen		-- The [OPEN] component
 //////
 // Returns:
-//    Nothing, but the environment may be changed.
+//		Nothing, but the environment may be changed.
 //////
 	void command_open(SComp* compOpen)
 	{

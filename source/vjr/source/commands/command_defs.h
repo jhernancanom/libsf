@@ -209,6 +209,7 @@ struct SVariable;
 // STEP1B: Define your command
 //
 //////
+	void				command_modify								(SComp* compModify);
 	void				command_open								(SComp* compOpen);
 	void				command_use									(SComp* compUse);
 
@@ -360,6 +361,7 @@ struct SVariable;
 	SCommandData gsKnownCommands[] = {
 		//	iCode					Command Algorithm
 		//  ------------------		--------------------------
+		{	_ICODE_MODIFY,			(uptr)&command_modify		},
 		{	_ICODE_OPEN,			(uptr)&command_open			},
 		{	_ICODE_USE,				(uptr)&command_use			},
 
