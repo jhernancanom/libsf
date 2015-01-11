@@ -215,7 +215,6 @@
 	{
 		bool		llMouseDown;
 		f64			lfPercent, lfX, lfY, lfWidth, lfHeight, lfValue;
-		SVariable*	varName;
 		SVariable*	valueMin;
 		SObject*	objRoot;
 
@@ -241,7 +240,6 @@
 			if (win->mouseCurrent.buttonLeft && !win->mouseCurrent.buttonMiddle && !win->mouseCurrent.buttonRight)
 			{
 				// We're on the top-level form for the window
-				varName = iObjProp_get_variable_byIndex(obj, _INDEX_NAME);
 				if (propIsName(obj, cgcName_iconMove) || propIsName(obj, cgcName_caption))
 				{
 					// We're on the _move icon or the caption, which means they want to move the window

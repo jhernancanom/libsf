@@ -80,6 +80,19 @@
     <File Name="../../source/command_defs.h"/>
     <File Name="../../source/commands.cpp" ExcludeProjConfig="Debug;Debug64;Release"/>
   </VirtualDirectory>
+  <VirtualDirectory Name="dbf">
+    <File Name="../../source/dbf/cdx.cpp" ExcludeProjConfig="Debug"/>
+    <File Name="../../source/dbf/cdx_const.h"/>
+    <File Name="../../source/dbf/cdx_defs.h"/>
+    <File Name="../../source/dbf/cdx_structs.h"/>
+    <File Name="../../source/dbf/dbc.cpp" ExcludeProjConfig="Debug"/>
+    <File Name="../../source/dbf/dbf.cpp" ExcludeProjConfig="Debug"/>
+    <File Name="../../source/dbf/dbf.h"/>
+    <File Name="../../source/dbf/dbf_const.h"/>
+    <File Name="../../source/dbf/dbf_defs.h"/>
+    <File Name="../../source/dbf/dbf_globals.h"/>
+    <File Name="../../source/dbf/dbf_structs.h"/>
+  </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">

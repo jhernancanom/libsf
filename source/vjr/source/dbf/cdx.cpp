@@ -203,7 +203,7 @@
 				//////////
 				// Read the entire index
 				/////
-					lnNumread = _read(wa->fhIndex, wa->idx_header, (uptr)lnFileSize);
+					lnNumread = _read(wa->fhIndex, wa->idx_header, (u32)lnFileSize);
 					if (lnNumread != lnFileSize)
 					{
 						cdx_close(wa);
@@ -240,7 +240,7 @@
 				//////////
 				// Read in the file
 				//////
-					lnNumread = _read(wa->fhIndex, wa->cdx_root, (uptr)lnFileSize);
+					lnNumread = _read(wa->fhIndex, wa->cdx_root, (u32)lnFileSize);
 					if (lnNumread != lnFileSize)
 					{
 						cdx_close(wa);
@@ -293,7 +293,7 @@
 					if (wa->fhIndex)
 					{
 						_close(wa->fhIndex);
-						wa->fhIndex = NULL;
+						wa->fhIndex = null0;
 					}
 
 
@@ -1536,7 +1536,8 @@ close_and_quit:
 //////
 	SCdxKeyOp* iiCdx_generateKey_buildOps(SWorkArea* wa, u8* keyExpression, s32* tnKeyOpCount)
 	{
-		s32			lnKeyLength, lnFieldNumber, lnFieldLength, lnIndexLength, lnKeyFieldNameLength, lnLkoNum;
+		s32			lnKeyLength, lnFieldLength, lnIndexLength, lnKeyFieldNameLength, lnLkoNum;
+		sptr		lnFieldNumber;
 		u32			lnFixup;
 		u8*			keyStart;
 		u8			fieldName[128];
@@ -1604,7 +1605,7 @@ close_and_quit:
 					//////////
 					// Locate this key in the current table
 					//////
-						lnFieldNumber = (s32)iDbf_getField_byName2(wa, fieldName);
+						lnFieldNumber = (sptr)iDbf_getField_byName2(wa, fieldName);
 						if (lnFieldNumber <= 0)
 							goto failed_parsing;
 
@@ -1612,18 +1613,18 @@ close_and_quit:
 					//////////
 					// Grab its length
 					//////
-						lnFieldLength = (s32)iDbf_getField_length(wa, lnFieldNumber, NULL, 0);
-						lnIndexLength = (s32)iDbf_getIndex_length(wa, lnFieldNumber, NULL, 0);
+						lnFieldLength = (s32)iDbf_getField_length(wa, (u32)lnFieldNumber, NULL, 0);
+						lnIndexLength = (s32)iDbf_getIndex_length(wa, (u32)lnFieldNumber, NULL, 0);
 
 
 					//////////
 					// If the field allows NULLs, allow for that byte
 					// Note:  The _DBF_INDEX_FIXUP_NULL is used for the index_fixup, so the content will be adjusted appropriately
 					//////
-						if (iDbf_getField_allowNulls(wa, lnFieldNumber, NULL, 0))
+						if (iDbf_getField_allowNulls(wa, (u32)lnFieldNumber, NULL, 0))
 						{
 							// Grab the offset and mask for rapid updating as we generate each field
-							iDbf_getNull_offsetAndMask(wa, lnFieldNumber, &lko[lnLkoNum].null_offset, &lko[lnLkoNum].null_mask);
+							iDbf_getNull_offsetAndMask(wa, (u32)lnFieldNumber, &lko[lnLkoNum].null_offset, &lko[lnLkoNum].null_mask);
 							++lnIndexLength;
 						}
 
@@ -1631,11 +1632,11 @@ close_and_quit:
 					//////////
 					// Append the contents of this key to the op
 					//////
-						lko[lnLkoNum].offsetRow		= (s32)iDbf_getField_dataOffset(wa, lnFieldNumber);
+						lko[lnLkoNum].offsetRow		= (u32)iDbf_getField_dataOffset(wa, (u32)lnFieldNumber);
 						lko[lnLkoNum].offsetKey		= lnKeyLength;
 						lko[lnLkoNum].length		= lnIndexLength;
 						lko[lnLkoNum].fieldLength	= lnFieldLength;
-						lko[lnLkoNum].indexFixup	= (s32)iDbf_getIndexFixupOp(wa, lnFieldNumber) | lnFixup;
+						lko[lnLkoNum].indexFixup	= (u32)iDbf_getIndexFixupOp(wa, (u32)lnFieldNumber) | lnFixup;
 						llIsValid					= true;
 
 				} else {
@@ -1726,9 +1727,10 @@ failed_parsing:
 //////
 	u32 iiCdx_generateKey(SWorkArea* wa, SCdxHeader* head, u8* keyStorageArea)
 	{
-		s32		lnKeyLength, lnFieldNumber, lnFieldLength, lnKeyFieldNameLength;
-		u8*		keyStart;
-		u8		fieldName[128];
+		s32				lnKeyLength, lnFieldLength, lnKeyFieldNameLength;
+		u8*				keyStart;
+		u8				fieldName[128];
+		SFieldRecord2*	lfptr2;
 
 
 		// Iterate through each field grabbing the key data
@@ -1747,18 +1749,18 @@ failed_parsing:
 			//////////
 			// Locate this key in the current table
 			//////
-				lnFieldNumber = (s32)iDbf_getField_byName2(wa, fieldName);
-				if (lnFieldNumber <= 0)
+				lfptr2 = iDbf_getField_byName2(wa, fieldName);
+				if (!lfptr2)
 					return(-2);
 
 				// Grab its length
-				lnFieldLength = (s32)iDbf_getField_length(wa, lnFieldNumber, NULL, 0);
+				lnFieldLength = lfptr2->length;
 
 
 			//////////
 			// Append the contents of this key
 			//////
-				iiDbf_getField_data2(wa, lnFieldNumber, keyStorageArea, lnFieldLength, true);
+				iiDbf_getField_data2(wa, lfptr2->fieldNumber, keyStorageArea, lnFieldLength, true);
 
 
 			//////////
@@ -2420,9 +2422,9 @@ debug_break;
 
 
 		//////////
-		// Indicate the actual result
+		// Indicate the translated result through the sort order
 		//////
-			return(lnActualResult);
+			return(lnTranslatedResult);
 	}
 
 
@@ -3006,11 +3008,12 @@ debug_break;
 
 	bool iCdx_isForClauseComplex(SWorkArea* wa, SCdxHeader* head, SForClause** tsFor)
 	{
-		s32				lnI, lnFieldnum;
+		s32				lnI;
 		u32				lnForModifier;
 		SForClause*		lsFor;
 		SForSubItem*	lfsi;
 		SForOp*			lfco;
+		SFieldRecord2*	lfptr2;
 		u8				fieldName[128];
 
 
@@ -3077,8 +3080,8 @@ debug_break;
 									// We need to do a lookup on the fieldname to make sure it exists
 									//////
 										iResetThenCopyString(fieldName, (s32)sizeof(fieldName), lfsi->start, (s32)lfsi->length);
-										lnFieldnum = (s32)iDbf_getField_byName2(wa, fieldName);
-										if (lnFieldnum < 0)
+										lfptr2 = iDbf_getField_byName2(wa, fieldName);
+										if (!lfptr2)
 										{
 											// We've encountered an unknown fieldname3
 											iDbf_forClause_delete(tsFor);	// Reset whatever's there
@@ -3089,7 +3092,7 @@ debug_break;
 									//////////
 									// We have the field name, get its type, must be logical
 									//////
-										iDbf_getField_type(wa, lnFieldnum, fieldName, sizeof(fieldName));
+										iDbf_getField_type(wa, lfptr2->fieldNumber, fieldName, sizeof(fieldName));
 										if (fieldName[0] != 'L' && fieldName[0] != 'l')
 										{
 											// Unsupported type
@@ -3103,7 +3106,7 @@ debug_break;
 									//////
 										lfco				= iiDbf_forClause_ops_appendItem(lsFor);
 										lfco->op			= _FOR_CLAUSE_OPS_EQUAL_TEMPORARY | lnForModifier;
-										lfco->offsetL		= iDbf_getField_dataOffset(wa, lnFieldnum);
+										lfco->offsetL		= iDbf_getField_dataOffset(wa, lfptr2->fieldNumber);
 										lfco->tempIndexR	= iiDbf_forClause_temp_appendConstant(lsFor, "T", 1);
 										lfco->lengthL		= 1;	// 1 byte for logical
 

@@ -796,6 +796,7 @@
 			gsCurrentSetting->_set_stickyParameters					= true;
 			gsCurrentSetting->_set_tableEqualAssignments			= false;
 			gsCurrentSetting->_set_tableObjects						= false;
+			gsCurrentSetting->_set_talk								= true;
 			gsCurrentSetting->_set_variablesFirst					= false;
 
 			// Default variable type for uninitialized variables

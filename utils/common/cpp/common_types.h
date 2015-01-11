@@ -95,8 +95,13 @@
 #define cf32 const f32
 #define cf64 const f64
 
-#ifndef null
+#ifndef null0
 	// For a null that is not considered a pointer
+	#define null0 0
+#endif
+
+#ifndef null
+	// For a null that is lower-case ... as it should be. :-)
 	#define null NULL
 #endif
 

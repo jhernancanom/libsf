@@ -217,8 +217,9 @@
 	// Note:  an alias is not required
 	uptr iDbf_open(cs8* table, cs8* alias, bool tlExclusive, bool tlAgain)
 	{
-		s32				lnI, lnI_max, lnWorkArea, lnLength;
-		u32				lnJ, lnK, lShareFlag, lStructure_size, numread;
+		s32				lnI, lnI_max;
+		sptr			lnWorkArea, lnLength;
+		u32				lnField, lnFieldNameLength, lShareFlag, lStructure_size, numread;
 		s32*			lnCurrentWorkArea;
 		bool			llDbcIsValid;
 		SFieldRecord1*	lfrPtr;
@@ -340,7 +341,7 @@
 		//////////
 		// Copy the user portion of the names
 		//////
-			wa->tablePathnameLength = strlen(table);
+			wa->tablePathnameLength = (s32)strlen(table);
 			if (wa->tablePathnameLength >= (s32)sizeof(wa->tablePathname))
 			{
 				// Table filename is too long
@@ -373,7 +374,7 @@
 		// Open the table based on the shared/exclusive mode
 		//////
 			wa->fhDbf = _sopen(table, _O_BINARY | _O_RDWR, lShareFlag);
-			if (wa->fhDbf == NULL)
+			if (wa->fhDbf == null0)
 			{
 				// Unable to open
 				// See if it's already open and if we can use it again
@@ -383,7 +384,7 @@
 					wa->fhDbf = _dup(gsWorkArea[lnWorkArea].fhDbf);
 				}
 				
-				if (wa->fhDbf == NULL)
+				if (wa->fhDbf == null0)
 				{
 					// Unable to open the specified table
 					return(_DBF_ERROR_TABLE_NOT_FOUND);
@@ -571,10 +572,11 @@
 		// For each field, determine its name length
 		//////
 			lfrPtr = wa->fieldPtr1;
-			for (lnJ = 0; lnJ < wa->fieldCount; lnJ++, lfrPtr++)
+			for (lnField = 0; lnField < wa->fieldCount; lnField++, lfrPtr++)
 			{
+// TODO:  We could possibly use strlen() here ... I don't remember for sure if it's always NULL terminated at 11th char.
 				lfrPtr->fieldName_length = 0;
-				for (lnK = 0; lnK < 10 && lfrPtr->name[lnK] != 0; lnK++)
+				for (lnFieldNameLength = 0; lnFieldNameLength < 10 && lfrPtr->name[lnFieldNameLength] != 0; lnFieldNameLength++)
 					++lfrPtr->fieldName_length;
 			}
 			// When we get here, all of the fields have their field length as well
@@ -588,7 +590,7 @@
 
 			lfrPtr	= wa->fieldPtr1;
 			lfr2Ptr	= wa->field2Ptr;
-			for (lnJ = 0; lnJ < wa->fieldCount; lnJ++, lfrPtr++, lfr2Ptr++)
+			for (lnField = 1; lnField <= wa->fieldCount; lnField++, lfrPtr++, lfr2Ptr++)
 			{
 				//////////
 				// Copy the short names over
@@ -606,6 +608,7 @@
 					lfr2Ptr->length			= lfrPtr->length;
 					lfr2Ptr->decimals		= lfrPtr->decimals;
 					lfr2Ptr->flags			= lfrPtr->flags;
+					lfr2Ptr->fieldNumber	= lnField;
 					lfr2Ptr->autoIncNext	= lfrPtr->autoIncNext;
 					lfr2Ptr->autoIncStep	= lfrPtr->autoIncStep;
 					lfr2Ptr->indexFixup		= lfrPtr->indexFixup;
@@ -860,7 +863,7 @@
 		if (wa->cachedTable)
 		{
 			// Read in the table
-			lnNumread = _read(wa->fhDbf, wa->cachedTable, (sptr)lnCacheSize);
+			lnNumread = _read(wa->fhDbf, wa->cachedTable, (u32)lnCacheSize);
 			if (lnNumread != lnCacheSize)
 				return(-1);
 
@@ -1334,38 +1337,38 @@
 	// Note:  This algorithm can be fooled, such as mapping a network location to K: and J:
 	sptr iDbf_get_workArea_byTablePathname(SVariable* varTablePathname, cu8* tcSpecialKeyName)
 	{
-		SWorkArea*	wa;
+//		SWorkArea*	wa;
 		s8			table[_MAX_PATH];
 
 
 		// Make sure our environment is sane
-		if (varTablePathname && varTablePathname->varType == _VAR_TYPE_CHARACTER && varTablePathname->value.data_s8 && varTablePathname->value.length >= 1 && varTablePathname->value.length < sizeof(gsWorkArea[0].tablePathname))
+		if (varTablePathname && varTablePathname->varType == _VAR_TYPE_CHARACTER && varTablePathname->value.data_s8 && varTablePathname->value.length >= 1 && varTablePathname->value.length < (s32)sizeof(gsWorkArea[0].tablePathname))
 		{
 			// See what they're searching for
 			if (!tcSpecialKeyName || tcSpecialKeyName == cgcDbfKeyName)
 			{
 				// It's a standard DBF
-				wa = &gsWorkArea[0];
+//				wa = &gsWorkArea[0];
 
 			} else if (tcSpecialKeyName == cgcDbcKeyName) {
 				// It's a DBC
-				wa = &gsDbcArea[0];
+//				wa = &gsDbcArea[0];
 
 			} else if (tcSpecialKeyName == cgcScxKeyName) {
 				// It's an SCX
-				wa = &gsScxArea[0];
+//				wa = &gsScxArea[0];
 
 			} else if (tcSpecialKeyName == cgcVcxKeyName) {
 				// It's a VCX
-				wa = &gsVcxArea[0];
+//				wa = &gsVcxArea[0];
 
 			} else if (tcSpecialKeyName == cgcFrxKeyName) {
 				// It's an FRX
-				wa = &gsFrxArea[0];
+//				wa = &gsFrxArea[0];
 
 			} else if (tcSpecialKeyName == cgcMnxKeyName) {
 				// It's an MNX
-				wa = &gsMnxArea[0];
+//				wa = &gsMnxArea[0];
 
 			} else {
 				// If we get here, it's an unknown type
@@ -1398,7 +1401,7 @@
 
 
 		// Make sure our environment is sane
-		if (tcTablePathname && (lnLength = strlen(tcTablePathname)) < sizeof(gsWorkArea[0].tablePathname))
+		if (tcTablePathname && (lnLength = (s32)strlen(tcTablePathname)) < (s32)sizeof(gsWorkArea[0].tablePathname))
 		{
 			// See what they're searching for
 			if (!tcSpecialKeyName || tcSpecialKeyName == cgcDbfKeyName)
@@ -1457,7 +1460,7 @@
 	sptr iDbf_get_workArea_byAlias(SVariable* varAlias, cu8* tcSpecialKeyName)
 	{
 		s32			lnI, lnI_max;
-		SWorkArea*	wa;
+//		SWorkArea*	wa;
 
 
 		// Make sure our environment is sane
@@ -1468,32 +1471,32 @@
 			{
 				// It's a standard DBF
 				lnI_max	= _MAX_DBF_SLOTS;
-				wa		= &gsWorkArea[0];
+//				wa		= &gsWorkArea[0];
 
 			} else if (tcSpecialKeyName == cgcDbcKeyName) {
 				// It's a DBC
 				lnI_max	= _MAX_DBC_SLOTS;
-				wa		= &gsDbcArea[0];
+//				wa		= &gsDbcArea[0];
 
 			} else if (tcSpecialKeyName == cgcScxKeyName) {
 				// It's an SCX
 				lnI_max	= _MAX_SCX_SLOTS;
-				wa		= &gsScxArea[0];
+//				wa		= &gsScxArea[0];
 
 			} else if (tcSpecialKeyName == cgcVcxKeyName) {
 				// It's a VCX
 				lnI_max	= _MAX_VCX_SLOTS;
-				wa		= &gsVcxArea[0];
+//				wa		= &gsVcxArea[0];
 
 			} else if (tcSpecialKeyName == cgcFrxKeyName) {
 				// It's an FRX
 				lnI_max	= _MAX_FRX_SLOTS;
-				wa		= &gsFrxArea[0];
+//				wa		= &gsFrxArea[0];
 
 			} else if (tcSpecialKeyName == cgcMnxKeyName) {
 				// It's an MNX
 				lnI_max	= _MAX_MNX_SLOTS;
-				wa		= &gsMnxArea[0];
+//				wa		= &gsMnxArea[0];
 
 			} else {
 				// If we get here, it's an unknown type
@@ -2376,7 +2379,7 @@
 		return(-1);
 	}
 
-	uptr iDbf_getField_data(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
+	s8* iDbf_getField_data(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		SFieldRecord1*	lfrp;
 
@@ -2386,9 +2389,9 @@
 		//////
 			// Make sure it's valid
 			if (!iDbf_isWorkAreaValid(wa, NULL))
-				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
+				return((s8*)_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
-				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
+				return((s8*)_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		// Grab the indicated field
@@ -2402,18 +2405,18 @@
 				memcpy(dest, wa->data + lfrp->offset, min(lfrp->length, destLength));
 
 				// Return the length
-				return(min(lfrp->length, destLength));
+				return((s8*)min(lfrp->length, destLength));
 
 			} else {
 				// Return the offset to the actual data
-				return(wa->_data + lfrp->offset);
+				return(wa->data_s8 + lfrp->offset);
 			}
 		}
 		// If we get here, failure
-		return(-1);
+		return((s8*)-1);
 	}
 
-	uptr iiDbf_getField_data2(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength, bool tlRetrieveAsIndexKey)
+	s8* iiDbf_getField_data2(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength, bool tlRetrieveAsIndexKey)
 	{
 		s32				lnI, lnLength;
 		SFieldRecord1*	lfrp;
@@ -2561,15 +2564,15 @@
 				}
 
 				// Return the length of the reserved bytes
-				return(min(lfrp->length, destLength));
+				return((s8*)min(lfrp->length, destLength));
 
 			} else {
 				// Return the offset to the actual data
-				return(wa->_data + lfrp->offset);
+				return(wa->data_s8 + lfrp->offset);
 			}
 		}
 		// If we get here, failure
-		return(-1);
+		return((s8*)-1);
 	}
 
 	uptr iDbf_getField_dataOffset(SWorkArea* wa, u32 fieldNumber)
@@ -3109,7 +3112,8 @@
 	void iiDbc_lookupTableField(SWorkArea* wa, bool* tlIsValid, bool tlExcusive)
 	{
 		u32				lnI, lnDbcHandle, lnRecno, lnAliasLength, lnField;
-		s32				lnObjectId, lnParentId, lnObjectType, lnObjectName, lnDbcLength;
+		sptr			lnObjectId, lnParentId, lnObjectType, lnObjectName;
+		s32				lnDbcLength;
 		bool			llSearchingForTable, llFoundFirstField;
 		s8*				lcObjectId;
 		s8*				lcParentId;
@@ -3176,10 +3180,10 @@
 			if (iDbf_isWorkAreaValid(wa->dbc, &workAreaKeyName) || workAreaKeyName != cgcDbcKeyName)
 			{
 				// Get the offsets to the fields
-				lnObjectId		= (s32)iDbf_getField_byName2(wa->dbc, cgcObjectId);
-				lnParentId		= (s32)iDbf_getField_byName2(wa->dbc, cgcParentId);
-				lnObjectType	= (s32)iDbf_getField_byName2(wa->dbc, cgcObjectType);
-				lnObjectName	= (s32)iDbf_getField_byName2(wa->dbc, cgcObjectName);
+				lnObjectId		= (sptr)iDbf_getField_byName2(wa->dbc, cgcObjectId);
+				lnParentId		= (sptr)iDbf_getField_byName2(wa->dbc, cgcParentId);
+				lnObjectType	= (sptr)iDbf_getField_byName2(wa->dbc, cgcObjectType);
+				lnObjectName	= (sptr)iDbf_getField_byName2(wa->dbc, cgcObjectName);
 
 				// Did we find every field?
 				if (lnObjectId <= 0 || lnParentId <= 0 || lnObjectType <= 0 || lnObjectName <= 0)
@@ -3189,10 +3193,10 @@
 					return;
 				}
 
-				lcObjectId		= (s8*)iDbf_getField_data(wa->dbc, lnObjectId, NULL, 0);
-				lcParentId		= (s8*)iDbf_getField_data(wa->dbc, lnParentId, NULL, 0);
-				lcObjectType	= (s8*)iDbf_getField_data(wa->dbc, lnObjectType, NULL, 0);
-				lcObjectName	= (s8*)iDbf_getField_data(wa->dbc, lnObjectName, NULL, 0);
+				lcObjectId		= iDbf_getField_data(wa->dbc, (u32)lnObjectId, NULL, 0);
+				lcParentId		= iDbf_getField_data(wa->dbc, (u32)lnParentId, NULL, 0);
+				lcObjectType	= iDbf_getField_data(wa->dbc, (u32)lnObjectType, NULL, 0);
+				lcObjectName	= iDbf_getField_data(wa->dbc, (u32)lnObjectName, NULL, 0);
 
 				// Locate the long filename
 				llSearchingForTable	= true;

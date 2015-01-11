@@ -133,12 +133,12 @@
 			//////
 				union {							// Offset 24, Length  1
 					u8	reserved1;
-					u8	fieldName_length;
+					u8	fieldName_length;		// As used by VJr
 				};
 
 				union {
 					u8	reserved2;				// Offset 25, Length  1
-					u8	fillChar;
+					u8	fillChar;				// As used by VJr
 				};
 
 				u8		reserved3;				// Offset 26, Length  1
@@ -161,23 +161,25 @@
 	// synchronized back to SFieldRecord1, and to the DBC
 	//////
 		struct SFieldRecord2
-		{
-			u8		name[11];				// Offset  0, Length 11
-			u8		type;					// offset 11, Length  1
-			u32		offset;					// Offset 12, Length  4
-			u8		length;					// Offset 16, Length  1
-			u8		decimals;				// Offset 17, Length  1
-			u8		flags;					// Offset 18, Length  1
-			u32		autoIncNext;			// Offset 19, Length  4
-			u8		autoIncStep;			// Offset 23, Length  1
-			s32		fieldName_length;		// Offset 24, Length  4
-			u8		name2[129];				// Offset 28, Length 129
+		{									// Copy of:
+			u8		name[11];				// SFieldRecord1->name
+			u8		type;					// SFieldRecord1->type
+			u32		offset;					// SFieldRecord1->offset
+			u8		length;					// SFieldRecord1->length
+			u8		decimals;				// SFieldRecord1->decimals
+			u8		flags;					// SFieldRecord1->flags
+			u32		autoIncNext;			// SFieldRecord1->autoIncNext
+			u8		autoIncStep;			// SFieldRecord1->autoIncStep
+
+			// New for SFieldRecord2:
+			s32		fieldName_length;		// Length of the long field name derived from its dbc
+			u8		name2[129];				// Long field name
+			u32		fieldNumber;			// Field number within the table
 
 			// Used for index creation
-			u8		fillChar;				// Offset 157, Length 1
-			u32		dbcRecno;				// Offset 160, Length 4
-			u32		indexFixup;				// Offset 251, Length 4
-			// Total:  256 bytes
+			u8		fillChar;				// The fill character required for this type of field
+			u32		dbcRecno;				// The related dbc RECNO() this entry was found on
+			u32		indexFixup;				// The fixup required to make the cdx work for this type of field
 		};
 
 	//////////
@@ -198,7 +200,7 @@
 			s8				tablePathname[256];			// Filename to get to the table
 			s32				tablePathnameLength;		// Length of the table filename
 			s8				alias[32];					// Alias associated with this
-			u32				aliasLength;				// Length of the alias name
+			s32				aliasLength;				// Length of the alias name
 
 
 			// File handles for the related/opened table
@@ -231,20 +233,28 @@
 			union {
 				uptr		_data;
 				s8*			data;						// Pointer to this record's line of data if locality=_DISK, or the entire table if locality=_MEMORY
+				s8*			data_s8;
+				u8*			data_u8;
 			};
 			union {
 				uptr		_odata;
 				s8*			odata;						// Pointer to this record's original line data before any changes were made
+				s8*			odata_s8;
+				u8*			odata_u8;
 			};
 			union {
 				uptr		_idata;
 				s8*			idata;						// Pointer to a pseudo-record suitable for constructing an index key to find through manual input
+				s8*			idata_s8;
+				u8*			idata_u8;
 			};
 
 			// Memo field data
 			union {
 				uptr		_mdata;
 				s8*			mdata;						// Pointer to this record's line of data
+				s8*			mdata_s8;
+				u8*			mdata_u8;
 			};
 			u32				dirty;						// (locality=_MEMORY only) A flag indicating whether or not the data here is dirty (has been changed) and is not written to disk yet
 

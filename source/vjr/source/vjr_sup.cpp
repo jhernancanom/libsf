@@ -2011,6 +2011,7 @@
 		// Store the settings
 		//////
 #ifdef __64_BIT_COMPILER__
+			// I get a warning in VS2010 if I use this code, and if I don't I get a warning in GCC... can't win. :-)
 			SetWindowLong(tooltip->hwnd, GWL_USERDATA, (uptr)lpParameter);
 #else
 			SetWindowLong(tooltip->hwnd, GWL_USERDATA, (long)lpParameter);
@@ -2092,7 +2093,7 @@
 
 
 		// The only message we handle is the paint
-		tooltip = (STooltip*)GetWindowLong(hwnd, GWL_USERDATA);
+		tooltip = (STooltip*)GetWindowLong(hwnd, GWL_USERDATA);		// GCC's 64-bit compiler throws a warning on this line ... I'm not sure how to remove it.
 		if (tooltip)
 		{
 			switch (m)

@@ -171,8 +171,8 @@ struct SFieldRecord2;
 	bool				iDbf_getNull_offsetAndMask						(SWorkArea* wa, u32 fieldNumber, u32* nullOffset, u8* nullMask);
 	uptr				iDbf_getField_autoinc_next						(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength);
 	uptr				iDbf_getField_autoinc_step						(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength);
-	uptr				iDbf_getField_data								(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength);
-	uptr				iiDbf_getField_data2							(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength, bool tlRetrieveAsIndexKey);
+	s8*					iDbf_getField_data								(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength);
+	s8*					iiDbf_getField_data2							(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength, bool tlRetrieveAsIndexKey);
 	uptr				iDbf_getField_dataOffset						(SWorkArea* wa, u32 fieldNumber);
 	uptr				iDbf_getIndexFixupOp							(SWorkArea* wa, u32 fieldNumber);
 	uptr				iDbf_setField_data								(SWorkArea* wa, s32 fieldNumber, u8* dest, u32 destLength);
@@ -185,11 +185,18 @@ struct SFieldRecord2;
 	u8					iDbf_getField_type								(SWorkArea* wa, u8* keyExpression, bool* swapEndians, bool* needsSignBitToggled);
 	uptr				iDbf_getField_name								(u8* expression, const u8* foundFieldName);
 
-	// Container information
+
+//////////
+// Container functions
+//////
 	void				iiDbc_lookupTableField							(SWorkArea* wa, bool* tlIsValid, bool tlExcusive);
 	void				iiDbf_getRelativeDbc							(SWorkArea* wa, s8* dbcName);
+	s32					iDbc_validate									(SWorkArea* wa, bool tlRecover, SEM* sem, SWindow* win);
 
-	// FOR clauses used to test row data for inclusion in various operations
+
+//////////
+// FOR clauses used to test row data for inclusion in various operations
+//////
 	SForClause*			iDbf_forClause_allocate							(SForClause** tsFor);
 	void				iDbf_forClause_delete							(SForClause** tsFor);
 	bool				iiDbf_forClause_isRowIncluded					(SWorkArea* wa, SForClause* tsFor);
@@ -198,15 +205,18 @@ struct SFieldRecord2;
 	SForOp* 			iiDbf_forClause_ops_appendItem					(SForClause* tsFor);
 	uptr				iiDbf_forClause_temp_appendConstant				(SForClause* tsFor, s8* tcData, u32 tnDataLength);
 
-	// Structure tests from iDbf_open() for specific file types
+
+//////////
+// Structure tests from iDbf_open() for specific file types
+//////
 	SFieldRecord2*		iiDbf_validate_fieldExists						(SWorkArea* wa, cu8* tcFieldName, cs8* tcFieldType, s32 length, s32 decimals);
 	bool				iiDbf_validate_isDbc							(SWorkArea* wa);
 	bool				iiDbf_validate_isScx							(SWorkArea* wa);
 	bool				iiDbf_validate_isVcx							(SWorkArea* wa);
 	bool				iiDbf_validate_isFrx							(SWorkArea* wa);
 	bool				iiDbf_validate_isMnx							(SWorkArea* wa);
-
-
+	
+	
 
 
 //////////

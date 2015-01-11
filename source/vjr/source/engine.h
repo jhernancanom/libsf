@@ -103,6 +103,7 @@
 	{
 		SLL			ll;
 
+// TODO:  Jan.11.2015 -- I am considering refactoring these into properties added to an new Settings object, so in addition to SET TALK OFF there would be _settings.talk = .F. and so on...
 		// Settings at this level
 		bool		_set_autoConvert;
 		bool		_set_caseSensitiveCompares;
@@ -124,6 +125,8 @@
 		bool		_set_tableEqualAssignments;
 		bool		_set_tableObjects;
 		bool		_set_variablesFirst;
+		bool		_set_talk;
+		// When changes are made, set the default startup value in engine.cpp -- iSettings_push()
 
 		// Default variable type for uninitialized variables
 		s32			_set_initializeDefault;

@@ -312,3 +312,22 @@
 		// If we get here, the index specified wasn't found
 		return(0);
 	}
+
+
+
+
+//////////
+//
+// Called to validate the datbase.  If sem is provided, output from validate is
+// routed to that buffer.  If win is provided, that win is redrawn as the
+// validation continues.
+//
+// Returns:
+//		Number of changes made (if tlRecover), or would've been made (if !tlRecover).
+//
+//////
+	s32 iDbc_validate(SWorkArea* wa, bool tlRecover, SEM* sem, SWindow* win)
+	{
+// TODO:  Write the DBC validation algorithm.  A small task I assure you. :-)
+		return(-1);
+	}

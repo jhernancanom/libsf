@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=Rick
-Date                   :=12/22/14
+Date                   :=01/11/15
 CodeLitePath           :="C:\Program Files (x86)\CodeLite"
 LinkerName             :=C:\MinGW-4.8.1\bin\g++.exe 
 SharedObjectLinkerName :=C:\MinGW-4.8.1\bin\g++.exe -shared -fPIC
@@ -120,6 +120,6 @@ clean:
 	$(RM) $(IntermediateDirectory)/bmps_bmps.cpp$(PreprocessSuffix)
 	$(RM) $(OutputFile)
 	$(RM) $(OutputFile).exe
-	$(RM) ".build-release/vjr"
+	$(RM) ".build-debug/vjr"
 
 

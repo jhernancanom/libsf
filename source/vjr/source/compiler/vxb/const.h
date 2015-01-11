@@ -1132,6 +1132,8 @@
 	// _ICODE_LESLEIF												= 2282;
 	// _ICODE_FELSEIF												= 2283;
 	// _ICODE_FIF													= 2284;
+	// _ICODE_ROLL													= 2285;
+	const s32		_ICODE_RECOVER									= 2286;
 
 
 //////////

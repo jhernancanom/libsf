@@ -1256,7 +1256,7 @@
 		GetCurrentDirectory(_MAX_PATH, (s8*)curdir);
 
 		// Create the output variable
-		result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, curdir, strlen(curdir));
+		result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, curdir, (u32)strlen(curdir));
 		return(result);
 	}
 
@@ -5243,7 +5243,7 @@ debug_break;
 	void command_modify(SComp* compModify)
 	{
 		SComp*	compType;
-		SComp*	compTarget;
+//		SComp*	compTarget;
 
 
 		//////////
@@ -5260,7 +5260,8 @@ debug_break;
 		//////////
 		// Based on what's after, validate the syntaxes
 		//////
-			compTarget = iComps_getNth(compType, 1);
+// TODO:  Working on here ... the thing after MODIFY should be a fully qualified thing as per the compiler engine
+//			compTarget = iComps_getNth(compType, 1);
 			switch (compType->iCode)
 			{
 				case _ICODE_CLASS:
@@ -5363,13 +5364,15 @@ debug_break;
 //////
 	void command_open(SComp* compOpen)
 	{
-		s32		lnLength, lnDbcArea;
+		s32		lnLength;
+		sptr	lnDbcArea;
 		bool	llIsExclusive;
 		SComp*	compPathname;
 		SComp*	compDatabase;
 		SComp*	compExclusive;
 		SComp*	compShared;
 		SComp*	compValidate;
+		SComp*	compRecover;
 		s8		dbcNameBuffer[_MAX_PATH];
 
 
@@ -5380,6 +5383,7 @@ debug_break;
 			compExclusive	= iComps_findNextBy_iCode(compOpen, _ICODE_EXCLUSIVE,	NULL);
 			compShared		= iComps_findNextBy_iCode(compOpen, _ICODE_SHARED,		NULL);
 			compValidate	= iComps_findNextBy_iCode(compOpen, _ICODE_VALIDATE,	NULL);
+			compRecover		= iComps_findNextBy_iCode(compOpen, _ICODE_RECOVER,		NULL);
 
 
 		//////////
@@ -5405,7 +5409,7 @@ debug_break;
 		// Extract the DBC name
 		//////
 			lnLength = iComps_getContiguousLength(compPathname, NULL, 0, NULL);
-			if (lnLength >= sizeof(dbcNameBuffer))
+			if (lnLength >= (s32)sizeof(dbcNameBuffer))
 			{
 				// Parameter is too long
 				iError_reportByNumber(_ERROR_PARAMETER_TOO_LONG, compPathname);
@@ -5450,6 +5454,14 @@ debug_break;
 				iError_reportByNumber(_ERROR_UNABLE_TO_OPEN_DBC, compPathname);
 				return;
 			}
+		
+		
+		//////////
+		// If we need to validate, do so
+		//////
+			// Pass it our output screen
+			if (compValidate)
+				iDbc_validate(&gsDbcArea[lnDbcArea], (compRecover != NULL), ((gsCurrentSetting->_set_talk) ? screen_editbox->p.sem : NULL), gWinJDebi);
 	}
 
 
@@ -5476,8 +5488,8 @@ debug_break;
 //////
 	void command_use(SComp* compUse)
 	{
-		s32			lnWorkArea, lnWorkAreaAlias;
-		bool		llIsInUse, llIsValidWorkArea, llManufacturedInXyz, llManufacturedTableName, llManufacturedAliasName, llIsDbc, llIsExclusive;
+		sptr		lnWorkArea, lnWorkAreaAlias;
+		bool		llIsInUse, llIsValidWorkArea, llManufacturedTableName, llManufacturedAliasName, llIsExclusive;
 		SComp*		comp2;
 		SComp*		comp3;
 		SComp*		comp4;
@@ -5494,10 +5506,8 @@ debug_break;
 			varInXyz					= NULL;
 			varTableName				= 0;
 			varAliasName				= 0;
-			llManufacturedInXyz			= false;
 			llManufacturedTableName		= false;
 			llManufacturedAliasName		= false;
-			llIsDbc						= false;
 			llIsExclusive				= false;
 
 
@@ -5505,20 +5515,20 @@ debug_break;
 		// Access the options which are available for this command
 		//////
 			SComp*	compAgain				= iComps_findNextBy_iCode(compUse, _ICODE_AGAIN,				NULL);
-			SComp*	compNoRequery			= iComps_findNextBy_iCode(compUse, _ICODE_NOREQUERY,			NULL);
-			SComp*	compNoData				= iComps_findNextBy_iCode(compUse, _ICODE_NODATA,				NULL);
-			SComp*	compNoUpdate			= iComps_findNextBy_iCode(compUse, _ICODE_NOUPDATE,				NULL);
-			SComp*	compExclamationPoint	= iComps_findNextBy_iCode(compUse, _ICODE_EXCLAMATION_POINT,	NULL);
+//			SComp*	compNoRequery			= iComps_findNextBy_iCode(compUse, _ICODE_NOREQUERY,			NULL);
+//			SComp*	compNoData				= iComps_findNextBy_iCode(compUse, _ICODE_NODATA,				NULL);
+//			SComp*	compNoUpdate			= iComps_findNextBy_iCode(compUse, _ICODE_NOUPDATE,				NULL);
+//			SComp*	compExclamationPoint	= iComps_findNextBy_iCode(compUse, _ICODE_EXCLAMATION_POINT,	NULL);
 			SComp*	compIn					= iComps_findNextBy_iCode(compUse, _ICODE_IN,					NULL);
-			SComp*	compIndex				= iComps_findNextBy_iCode(compUse, _ICODE_INDEX,				NULL);
-			SComp*	compOrder				= iComps_findNextBy_iCode(compUse, _ICODE_ORDER,				NULL);
-			SComp*	compTag					= iComps_findNextBy_iCode(compUse, _ICODE_TAG,					NULL);
+//			SComp*	compIndex				= iComps_findNextBy_iCode(compUse, _ICODE_INDEX,				NULL);
+//			SComp*	compOrder				= iComps_findNextBy_iCode(compUse, _ICODE_ORDER,				NULL);
+//			SComp*	compTag					= iComps_findNextBy_iCode(compUse, _ICODE_TAG,					NULL);
 			SComp*	compAscending			= iComps_findNextBy_iCode(compUse, _ICODE_ASCENDING,			NULL);
 			SComp*	compDescending			= iComps_findNextBy_iCode(compUse, _ICODE_DESCENDING,			NULL);
 			SComp*	compAlias				= iComps_findNextBy_iCode(compUse, _ICODE_ALIAS,				NULL);
 			SComp*	compExclusive			= iComps_findNextBy_iCode(compUse, _ICODE_EXCLUSIVE,			NULL);
 			SComp*	compShared				= iComps_findNextBy_iCode(compUse, _ICODE_SHARED,				NULL);
-			SComp*	compConnString			= iComps_findNextBy_iCode(compUse, _ICODE_CONNSTRING,			NULL);
+//			SComp*	compConnString			= iComps_findNextBy_iCode(compUse, _ICODE_CONNSTRING,			NULL);
 
 
 		//////////
@@ -5846,7 +5856,7 @@ debug_break;
 		//////////
 		// Get the alias
 		//////
-			iDbf_set_workArea_current(lnWorkArea, null);
+			iDbf_set_workArea_current((u32)lnWorkArea, null);
 			lnWorkArea = iDbf_open(varTableName, varAliasName, llIsExclusive, (compAgain != NULL));
 			if (lnWorkArea < 0)
 			{
@@ -5876,21 +5886,21 @@ debug_break;
 
 			} else {
 				// Set any meta data about the table
-				SComp*	compAgain				= iComps_findNextBy_iCode(compUse, _ICODE_AGAIN,				NULL);
-				SComp*	compNoRequery			= iComps_findNextBy_iCode(compUse, _ICODE_NOREQUERY,			NULL);
-				SComp*	compNoData				= iComps_findNextBy_iCode(compUse, _ICODE_NODATA,				NULL);
-				SComp*	compNoUpdate			= iComps_findNextBy_iCode(compUse, _ICODE_NOUPDATE,				NULL);
-				SComp*	compExclamationPoint	= iComps_findNextBy_iCode(compUse, _ICODE_EXCLAMATION_POINT,	NULL);
-				SComp*	compIn					= iComps_findNextBy_iCode(compUse, _ICODE_IN,					NULL);
-				SComp*	compIndex				= iComps_findNextBy_iCode(compUse, _ICODE_INDEX,				NULL);
-				SComp*	compOrder				= iComps_findNextBy_iCode(compUse, _ICODE_ORDER,				NULL);
-				SComp*	compTag					= iComps_findNextBy_iCode(compUse, _ICODE_TAG,					NULL);
-				SComp*	compAscending			= iComps_findNextBy_iCode(compUse, _ICODE_ASCENDING,			NULL);
-				SComp*	compDescending			= iComps_findNextBy_iCode(compUse, _ICODE_DESCENDING,			NULL);
-				SComp*	compAlias				= iComps_findNextBy_iCode(compUse, _ICODE_ALIAS,				NULL);
-				SComp*	compExclusive			= iComps_findNextBy_iCode(compUse, _ICODE_EXCLUSIVE,			NULL);
-				SComp*	compShared				= iComps_findNextBy_iCode(compUse, _ICODE_SHARED,				NULL);
-				SComp*	compConnString			= iComps_findNextBy_iCode(compUse, _ICODE_CONNSTRING,			NULL);
+//				SComp*	compAgain				= iComps_findNextBy_iCode(compUse, _ICODE_AGAIN,				NULL);
+//				SComp*	compNoRequery			= iComps_findNextBy_iCode(compUse, _ICODE_NOREQUERY,			NULL);
+//				SComp*	compNoData				= iComps_findNextBy_iCode(compUse, _ICODE_NODATA,				NULL);
+//				SComp*	compNoUpdate			= iComps_findNextBy_iCode(compUse, _ICODE_NOUPDATE,				NULL);
+//				SComp*	compExclamationPoint	= iComps_findNextBy_iCode(compUse, _ICODE_EXCLAMATION_POINT,	NULL);
+//				SComp*	compIn					= iComps_findNextBy_iCode(compUse, _ICODE_IN,					NULL);
+//				SComp*	compIndex				= iComps_findNextBy_iCode(compUse, _ICODE_INDEX,				NULL);
+//				SComp*	compOrder				= iComps_findNextBy_iCode(compUse, _ICODE_ORDER,				NULL);
+//				SComp*	compTag					= iComps_findNextBy_iCode(compUse, _ICODE_TAG,					NULL);
+//				SComp*	compAscending			= iComps_findNextBy_iCode(compUse, _ICODE_ASCENDING,			NULL);
+//				SComp*	compDescending			= iComps_findNextBy_iCode(compUse, _ICODE_DESCENDING,			NULL);
+//				SComp*	compAlias				= iComps_findNextBy_iCode(compUse, _ICODE_ALIAS,				NULL);
+//				SComp*	compExclusive			= iComps_findNextBy_iCode(compUse, _ICODE_EXCLUSIVE,			NULL);
+//				SComp*	compShared				= iComps_findNextBy_iCode(compUse, _ICODE_SHARED,				NULL);
+//				SComp*	compConnString			= iComps_findNextBy_iCode(compUse, _ICODE_CONNSTRING,			NULL);
 			}
 
 clean_exit:
@@ -5899,17 +5909,3 @@ clean_exit:
 			if (varTableName)		iVariable_delete(varTableName,	true);
 			if (varAliasName)		iVariable_delete(varAliasName,	true);
 	}
-// USE [[DatabaseName!] TableName | SQLViewName | ?]
-// 
-//    [IN nWorkArea | cTableAlias] [ONLINE] [ADMIN] [AGAIN]
-// 
-//    [NOREQUERY [nDataSessionNumber]] [NODATA] 
-// 
-//    [INDEX IndexFileList | ? [ORDER [nIndexNumber | IDXFileName 
-// 
-//    | [TAG] TagName [OF CDXFileName] [ASCENDING | DESCENDING]]]]
-// 
-//    [ALIAS cTableAlias] [EXCLUSIVE] [SHARED] [NOUPDATE] 
-// 
-//    [CONNSTRING cConnectionString | nStatementHandle ]
-//  
