@@ -52,11 +52,13 @@ struct SLine;
 			SLL*		next;					// Next entry in linked list
 			SComp*		nextComp;
 			SLine*		nextLine;
+			SObject*	nextObject;
 		};
 		union {
 			SLL*		prev;					// Previous entry in linked list
 			SComp*		prevComp;
 			SLine*		prevLine;
+			SObject*	prevObject;
 		};
 		u32				uniqueId;				// Unique id associated with this object
 	};

@@ -164,7 +164,7 @@
 					objChild = obj->firstChild;
 					while (objChild)
 					{
-						if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_icon))
+						if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_icon))
 						{
 							// Sets the three by setting the one (see how it handles _INDEX_PICTUREBMP above)
 							iObjProp_set_bitmap_direct(objChild, _INDEX_PICTUREBMP, bmp);
@@ -174,7 +174,7 @@
 						}
 
 						// Move to the next sibling
-						objChild = (SObject*)objChild->ll.next;
+						objChild = objChild->ll.nextObject;
 
 					}
 				}
@@ -1128,7 +1128,7 @@ debug_break;
 			while (objChild)
 			{
 				// Is this the one
-				if (isName(objChild, cgcName_caption))
+				if (propIsName(objChild, cgcName_caption))
 				{
 					// Set the caption here
 					varChild = iObjProp_get_variable_byIndex(objChild, _INDEX_CAPTION);
@@ -1140,7 +1140,7 @@ debug_break;
 				}
 
 				// Move to next sibling
-				objChild = (SObject*)objChild->ll.next;
+				objChild = objChild->ll.nextObject;
 			}
 		}
 
@@ -1175,7 +1175,7 @@ debug_break;
 			while (objChild)
 			{
 				// Is this the one
-				if (isName(objChild, cgcName_icon))
+				if (propIsName(objChild, cgcName_icon))
 				{
 					// Set the caption here
 					varChild = iObjProp_get_variable_byIndex(objChild, _INDEX_ICON);
@@ -1187,7 +1187,7 @@ debug_break;
 				}
 
 				// Move to next sibling
-				objChild = (SObject*)objChild->ll.next;
+				objChild = objChild->ll.nextObject;
 			}
 		}
 

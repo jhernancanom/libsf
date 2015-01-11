@@ -577,7 +577,7 @@
 // Asks the VVM to coordinate with the program's loaded DLLs to compile the indicated snippet.
 //
 //////
-	// For edit-and-continue (SUpSnip is SSnippet with _prevLine member, indicating the relationship of the old snippet code to the new snippet code)
+	// For LiveCode (SUpSnip is SSnippet with _prevLine member, indicating the relationship of the old snippet code to the new snippet code)
 	SUpSnip* CALLTYPE vvm_snippetCompile(u64 id, SLine* firstLineOfSnippetSourceCode)
     {
 		return(NULL);

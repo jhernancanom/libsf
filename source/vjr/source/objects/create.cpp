@@ -104,7 +104,7 @@
 				iiSubobj_resetToDefaultEmpty(emptyNew, true, true, &gsProps_empty[0], gnProps_emptySize);
 
 				// Initially populate
-				setEnabled(emptyNew, _LOGICAL_TRUE);
+				propSetEnabled(emptyNew, _LOGICAL_TRUE);
 				emptyNew->isRendered	= true;
 				emptyNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(emptyNew, _INDEX_NAME);				iDatum_duplicate(&var->value, cgcName_empty, -1);
@@ -142,6 +142,10 @@
 		SObject*	minimize;
 		SObject*	maximize;
 		SObject*	close;
+		SObject*	scaleUl;
+		SObject*	scaleUr;
+		SObject*	scaleLr;
+		SObject*	scaleLl;
 		SVariable*	var;
 
 
@@ -161,8 +165,9 @@
 				memset(formNew, 0, sizeof(SObject));
 
 				// Initialize properties to VJr defaults
-				formNew->objType		= _OBJ_TYPE_FORM;
-				formNew->parent			= parent;
+				formNew->objType	= _OBJ_TYPE_FORM;
+				formNew->parent		= parent;
+
 
 				//////////
 				// Create the default children for this object
@@ -173,6 +178,10 @@
 					minimize	= iObj_addChild(_OBJ_TYPE_IMAGE, formNew);
 					maximize	= iObj_addChild(_OBJ_TYPE_IMAGE, formNew);
 					close		= iObj_addChild(_OBJ_TYPE_IMAGE, formNew);
+					scaleUl		= iObj_addChild(_OBJ_TYPE_IMAGE, formNew);
+					scaleUr		= iObj_addChild(_OBJ_TYPE_IMAGE, formNew);
+					scaleLr		= iObj_addChild(_OBJ_TYPE_IMAGE, formNew);
+					scaleLl		= iObj_addChild(_OBJ_TYPE_IMAGE, formNew);
 
 
 				//////////
@@ -184,6 +193,10 @@
 					var = iObjProp_get_variable_byIndex(minimize,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconMinimize,	-1);
 					var = iObjProp_get_variable_byIndex(maximize,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconMaximize,	-1);
 					var = iObjProp_get_variable_byIndex(close,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconClose,		-1);
+					var = iObjProp_get_variable_byIndex(scaleUl,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconScaleUl,	-1);
+					var = iObjProp_get_variable_byIndex(scaleUr,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconScaleUr,	-1);
+					var = iObjProp_get_variable_byIndex(scaleLr,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconScaleLr,	-1);
+					var = iObjProp_get_variable_byIndex(scaleLl,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconScaleLl,	-1);
 
 
 				//////////
@@ -193,7 +206,7 @@
 
 
 				// Initially populate
-				setEnabled(formNew, _LOGICAL_TRUE);
+				propSetEnabled(formNew, _LOGICAL_TRUE);
 				formNew->isRendered		= true;
 				formNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(formNew, _INDEX_NAME);				iDatum_duplicate(&var->value, cgcName_form, -1);
@@ -269,7 +282,7 @@
 					iiSubobj_resetToDefaultSubform(subformNew, true, true, &gsProps_subform[0], gnProps_subformSize);
 
 				// Initially populate
-				setEnabled(subformNew, _LOGICAL_TRUE);
+				propSetEnabled(subformNew, _LOGICAL_TRUE);
 				subformNew->isRendered	= true;
 				subformNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(subformNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_subform, -1);
@@ -349,7 +362,7 @@
 
 
 				// Initially populate
-				setEnabled(carouselNew, _LOGICAL_TRUE);
+				propSetEnabled(carouselNew, _LOGICAL_TRUE);
 				carouselNew->isRendered		= true;
 				carouselNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(carouselNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_carousel, -1);
@@ -404,7 +417,7 @@
 				iiSubobj_resetToDefaultRider(riderNew, true, true, &gsProps_rider[0], gnProps_riderSize);
 
 				// Initially populate
-				setEnabled(riderNew, _LOGICAL_TRUE);
+				propSetEnabled(riderNew, _LOGICAL_TRUE);
 				riderNew->isRendered	= true;
 				riderNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(riderNew, _INDEX_NAME);				iDatum_duplicate(&var->value, cgcName_rider, -1);
@@ -459,7 +472,7 @@
 				iiSubobj_resetToDefaultLabel(labelNew, true, true, &gsProps_label[0], gnProps_labelSize);
 
 				// Initially populate
-				setEnabled(labelNew, _LOGICAL_TRUE);
+				propSetEnabled(labelNew, _LOGICAL_TRUE);
 				labelNew->isRendered	= true;
 				labelNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(labelNew, _INDEX_NAME);				iDatum_duplicate(&var->value, cgcName_label, -1);
@@ -514,7 +527,7 @@
 				iiSubobj_resetToDefaultTextbox(textboxNew, true, true, &gsProps_textbox[0], gnProps_textboxSize);
 
 				// Initially populate
-				setEnabled(textboxNew, _LOGICAL_TRUE);
+				propSetEnabled(textboxNew, _LOGICAL_TRUE);
 				textboxNew->isRendered	= true;
 				textboxNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(textboxNew, _INDEX_NAME);				iDatum_duplicate(&var->value, cgcName_textbox, -1);
@@ -569,7 +582,7 @@
 				iiSubobj_resetToDefaultButton(buttonNew, true, true, &gsProps_button[0], gnProps_buttonSize);
 
 				// Initially populate
-				setEnabled(buttonNew, _LOGICAL_TRUE);
+				propSetEnabled(buttonNew, _LOGICAL_TRUE);
 				buttonNew->isRendered	= true;
 				buttonNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(buttonNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_button, -1);
@@ -624,7 +637,7 @@
 				iiSubobj_resetToDefaultEditbox(editboxNew, true, true, &gsProps_editbox[0], gnProps_editboxSize);
 
 				// Initially populate
-				setEnabled(editboxNew, _LOGICAL_TRUE);
+				propSetEnabled(editboxNew, _LOGICAL_TRUE);
 				editboxNew->isRendered	= true;
 				editboxNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(editboxNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_editbox, -1);
@@ -679,7 +692,7 @@
 				iiSubobj_resetToDefaultImage(imageNew, true, true, &gsProps_image[0], gnProps_imageSize);
 
 				// Initially populate
-				setEnabled(imageNew, _LOGICAL_TRUE);
+				propSetEnabled(imageNew, _LOGICAL_TRUE);
 				imageNew->isRendered	= true;
 				imageNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(imageNew, _INDEX_NAME);				iDatum_duplicate(&var->value, cgcName_image, -1);
@@ -756,7 +769,7 @@
 
 
 				// Initially populate
-				setEnabled(checkboxNew, _LOGICAL_TRUE);
+				propSetEnabled(checkboxNew, _LOGICAL_TRUE);
 				checkboxNew->isRendered		= true;
 				checkboxNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(checkboxNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_checkbox, -1);
@@ -811,7 +824,7 @@
 				iiSubobj_resetToDefaultOption(optionNew, true, true, &gsProps_option[0], gnProps_optionSize);
 
 				// Initially populate
-				setEnabled(optionNew, _LOGICAL_TRUE);
+				propSetEnabled(optionNew, _LOGICAL_TRUE);
 				optionNew->isRendered	= true;
 				optionNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(optionNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_option, -1);
@@ -866,7 +879,7 @@
 				iiSubobj_resetToDefaultRadio(radioNew, true, true, &gsProps_radio[0], gnProps_radioSize);
 
 				// Initially populate
-				setEnabled(radioNew, _LOGICAL_TRUE);
+				propSetEnabled(radioNew, _LOGICAL_TRUE);
 				radioNew->isRendered	= true;
 				radioNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(radioNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_radio, -1);
@@ -921,7 +934,7 @@
 				iiSubobj_resetToDefaultCmdGroup(cmdGroupNew, true, true, &gsProps_cmdgroup[0], gnProps_cmdgroupSize);
 
 				// Initially populate
-				setEnabled(cmdGroupNew, _LOGICAL_TRUE);
+				propSetEnabled(cmdGroupNew, _LOGICAL_TRUE);
 				cmdGroupNew->isRendered		= true;
 				cmdGroupNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(cmdGroupNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_cmdgroup, -1);
@@ -976,7 +989,7 @@
 				iiSubobj_resetToDefaultOptGroup(optGroupNew, true, true, &gsProps_optgroup[0], gnProps_optgroupSize);
 
 				// Initially populate
-				setEnabled(optGroupNew, _LOGICAL_TRUE);
+				propSetEnabled(optGroupNew, _LOGICAL_TRUE);
 				optGroupNew->isRendered		= true;
 				optGroupNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(optGroupNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_optgroup, -1);
@@ -1031,7 +1044,7 @@
 				iiSubobj_resetToDefaultListbox(listboxNew, true, true, &gsProps_listbox[0], gnProps_listboxSize);
 
 				// Initially populate
-				setEnabled(listboxNew, _LOGICAL_TRUE);
+				propSetEnabled(listboxNew, _LOGICAL_TRUE);
 				listboxNew->isRendered		= true;
 				listboxNew->isPublished		= true;
 				var = iObjProp_get_variable_byIndex(listboxNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_listbox, -1);
@@ -1086,7 +1099,7 @@
 				iiSubobj_resetToDefaultCombobox(comboboxNew, true, true, &gsProps_combobox[0], gnProps_comboboxSize);
 
 				// Initially populate
-				setEnabled(comboboxNew, _LOGICAL_TRUE);
+				propSetEnabled(comboboxNew, _LOGICAL_TRUE);
 				comboboxNew->isRendered		= true;
 				comboboxNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(comboboxNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_combobox, -1);
@@ -1141,7 +1154,7 @@
 				iiSubobj_resetToDefaultFormset(formsetNew, true, true, &gsProps_formset[0], gnProps_formsetSize);
 
 				// Initially populate
-				setEnabled(formsetNew, _LOGICAL_TRUE);
+				propSetEnabled(formsetNew, _LOGICAL_TRUE);
 				formsetNew->isRendered		= true;
 				formsetNew->isPublished		= true;
 				var = iObjProp_get_variable_byIndex(formsetNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_formset, -1);
@@ -1196,7 +1209,7 @@
 				iiSubobj_resetToDefaultToolbar(toolbarNew, true, true, &gsProps_toolbar[0], gnProps_toolbarSize);
 
 				// Initially populate
-				setEnabled(toolbarNew, _LOGICAL_TRUE);
+				propSetEnabled(toolbarNew, _LOGICAL_TRUE);
 				toolbarNew->isRendered		= true;
 				toolbarNew->isPublished		= true;
 				var = iObjProp_get_variable_byIndex(toolbarNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_toolbar, -1);
@@ -1251,7 +1264,7 @@
 				iiSubobj_resetToDefaultSeparator(separatorNew, true, true, &gsProps_separator[0], gnProps_separatorSize);
 
 				// Initially populate
-				setEnabled(separatorNew, _LOGICAL_TRUE);
+				propSetEnabled(separatorNew, _LOGICAL_TRUE);
 				separatorNew->isRendered	= true;
 				separatorNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(separatorNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_separator, -1);
@@ -1306,7 +1319,7 @@
 				iiSubobj_resetToDefaultLine(lineNew, true, true, &gsProps_line[0], gnProps_lineSize);
 
 				// Initially populate
-				setEnabled(lineNew, _LOGICAL_TRUE);
+				propSetEnabled(lineNew, _LOGICAL_TRUE);
 				lineNew->isRendered		= true;
 				lineNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(lineNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_line, -1);
@@ -1361,7 +1374,7 @@
 				iiSubobj_resetToDefaultShape(shapeNew, true, true, &gsProps_shape[0], gnProps_shapeSize);
 
 				// Initially populate
-				setEnabled(shapeNew, _LOGICAL_TRUE);
+				propSetEnabled(shapeNew, _LOGICAL_TRUE);
 				shapeNew->isRendered	= true;
 				shapeNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(shapeNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_shape, -1);
@@ -1416,7 +1429,7 @@
 				iiSubobj_resetToDefaultContainer(containerNew, true, true, &gsProps_container[0], gnProps_containerSize);
 
 				// Initially populate
-				setEnabled(containerNew, _LOGICAL_TRUE);
+				propSetEnabled(containerNew, _LOGICAL_TRUE);
 				containerNew->isRendered	= true;
 				containerNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(containerNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_container, -1);
@@ -1471,7 +1484,7 @@
 				iiSubobj_resetToDefaultControl(controlNew, true, true, &gsProps_control[0], gnProps_controlSize);
 
 				// Initially populate
-				setEnabled(controlNew, _LOGICAL_TRUE);
+				propSetEnabled(controlNew, _LOGICAL_TRUE);
 				controlNew->isRendered		= true;
 				controlNew->isPublished		= true;
 				var = iObjProp_get_variable_byIndex(controlNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_control, -1);
@@ -1526,7 +1539,7 @@
 				iiSubobj_resetToDefaultGrid(gridNew, true, true, &gsProps_grid[0], gnProps_gridSize);
 
 				// Initially populate
-				setEnabled(gridNew, _LOGICAL_TRUE);
+				propSetEnabled(gridNew, _LOGICAL_TRUE);
 				gridNew->isRendered		= true;
 				gridNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(gridNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_grid, -1);
@@ -1581,7 +1594,7 @@
 				iiSubobj_resetToDefaultColumn(columnNew, true, true, &gsProps_column[0], gnProps_columnSize);
 
 				// Initially populate
-				setEnabled(columnNew, _LOGICAL_TRUE);
+				propSetEnabled(columnNew, _LOGICAL_TRUE);
 				columnNew->isRendered	= true;
 				columnNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(columnNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_column, -1);
@@ -1636,7 +1649,7 @@
 				iiSubobj_resetToDefaultHeader(headerNew, true, true, &gsProps_header[0], gnProps_headerSize);
 
 				// Initially populate
-				setEnabled(headerNew, _LOGICAL_TRUE);
+				propSetEnabled(headerNew, _LOGICAL_TRUE);
 				headerNew->isRendered	= true;
 				headerNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(headerNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_header, -1);
@@ -1691,7 +1704,7 @@
 				iiSubobj_resetToDefaultOleBound(oleBoundNew, true, true, &gsProps_olebound[0], gnProps_oleboundSize);
 
 				// Initially populate
-				setEnabled(oleBoundNew, _LOGICAL_TRUE);
+				propSetEnabled(oleBoundNew, _LOGICAL_TRUE);
 				oleBoundNew->isRendered		= true;
 				oleBoundNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(oleBoundNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_olebound, -1);
@@ -1746,7 +1759,7 @@
 				iiSubobj_resetToDefaultContainer(oleContainNew, true, true, &gsProps_olecontain[0], gnProps_olecontainSize);
 
 				// Initially populate
-				setEnabled(oleContainNew, _LOGICAL_TRUE);
+				propSetEnabled(oleContainNew, _LOGICAL_TRUE);
 				oleContainNew->isRendered	= true;
 				oleContainNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(oleContainNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_olecontain, -1);
@@ -1801,7 +1814,7 @@
 				iiSubobj_resetToDefaultSpinner(spinnerNew, true, true, &gsProps_spinner[0], gnProps_spinnerSize);
 
 				// Initially populate
-				setEnabled(spinnerNew, _LOGICAL_TRUE);
+				propSetEnabled(spinnerNew, _LOGICAL_TRUE);
 				spinnerNew->isRendered		= true;
 				spinnerNew->isPublished		= true;
 				var = iObjProp_get_variable_byIndex(spinnerNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_spinner, -1);
@@ -1856,7 +1869,7 @@
 				iiSubobj_resetToDefaultTimer(timerNew, true, true, &gsProps_timer[0], gnProps_timerSize);
 
 				// Initially populate
-				setEnabled(timerNew, _LOGICAL_TRUE);
+				propSetEnabled(timerNew, _LOGICAL_TRUE);
 				timerNew->isRendered	= true;
 				timerNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(timerNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_timer, -1);
@@ -1911,7 +1924,7 @@
 				iiSubobj_resetToDefaultHyperlink(hyperlinkNew, true, true, &gsProps_hyperlink[0], gnProps_hyperlinkSize);
 
 				// Initially populate
-				setEnabled(hyperlinkNew, _LOGICAL_TRUE);
+				propSetEnabled(hyperlinkNew, _LOGICAL_TRUE);
 				hyperlinkNew->isRendered	= true;
 				hyperlinkNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(hyperlinkNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_hyperlink, -1);
@@ -1966,7 +1979,7 @@
 				iiSubobj_resetToDefaultCollection(collectionNew, true, true, &gsProps_collection[0], gnProps_collectionSize);
 
 				// Initially populate
-				setEnabled(collectionNew, _LOGICAL_TRUE);
+				propSetEnabled(collectionNew, _LOGICAL_TRUE);
 				collectionNew->isRendered		= true;
 				collectionNew->isPublished		= true;
 				var = iObjProp_get_variable_byIndex(collectionNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_collection, -1);
@@ -2021,7 +2034,7 @@
 				iiSubobj_resetToDefaultPage(pageNew, true, true, &gsProps_page[0], gnProps_pageSize);
 
 				// Initially populate
-				setEnabled(pageNew, _LOGICAL_TRUE);
+				propSetEnabled(pageNew, _LOGICAL_TRUE);
 				pageNew->isRendered		= true;
 				pageNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(pageNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_page, -1);
@@ -2076,7 +2089,7 @@
 				iiSubobj_resetToDefaultPageframe(pageframeNew, true, true, &gsProps_pageframe[0], gnProps_pageframeSize);
 
 				// Initially populate
-				setEnabled(pageframeNew, _LOGICAL_TRUE);
+				propSetEnabled(pageframeNew, _LOGICAL_TRUE);
 				pageframeNew->isRendered	= true;
 				pageframeNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(pageframeNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_pageframe, -1);
@@ -2131,7 +2144,7 @@
 				iiSubobj_resetToDefaultSession(sessionNew, true, true, &gsProps_session[0], gnProps_sessionSize);
 
 				// Initially populate
-				setEnabled(sessionNew, _LOGICAL_TRUE);
+				propSetEnabled(sessionNew, _LOGICAL_TRUE);
 				sessionNew->isRendered		= true;
 				sessionNew->isPublished		= true;
 				var = iObjProp_get_variable_byIndex(sessionNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_session, -1);
@@ -2186,7 +2199,7 @@
 				iiSubobj_resetToDefaultCustom(customNew, true, true, &gsProps_custom[0], gnProps_customSize);
 
 				// Initially populate
-				setEnabled(customNew, _LOGICAL_TRUE);
+				propSetEnabled(customNew, _LOGICAL_TRUE);
 				customNew->isRendered		= true;
 				customNew->isPublished		= true;
 				var = iObjProp_get_variable_byIndex(customNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_custom, -1);
@@ -2241,7 +2254,7 @@
 				iiSubobj_resetToDefaultException(exceptionNew, true, true, &gsProps_exception[0], gnProps_exceptionSize);
 
 				// Initially populate
-				setEnabled(exceptionNew, _LOGICAL_TRUE);
+				propSetEnabled(exceptionNew, _LOGICAL_TRUE);
 				exceptionNew->isRendered		= true;
 				exceptionNew->isPublished		= true;
 				var = iObjProp_get_variable_byIndex(exceptionNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_exception, -1);

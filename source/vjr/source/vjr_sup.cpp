@@ -132,6 +132,7 @@
 //////
 	bool isValidWindow(uptr tnWindowPtr)
 	{
+// TODO:  We may need to add a module test here to make sure the ((tnWindowPtr - gsWindows) % sizeof(SWindow)) == 0
 		return(tnWindowPtr >= gWindows->_data && tnWindowPtr < (gWindows->_data + gWindows->populatedLength));
 	}
 
@@ -249,8 +250,8 @@
 				return;
 
 			// Set the app icon and enable the border
-			setPictureBmp(_jdebi, bmpJDebiIcon);
-			setBorderStyle(_jdebi, _BORDER_STYLE_FIXED);
+			propSetPictureBmp(_jdebi, bmpJDebiIcon);
+			propSetBorderStyle(_jdebi, _BORDER_STYLE_FIXED);
 
 			// Give it a fixed point font
 			_jdebi->p.font = iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
@@ -287,23 +288,23 @@
 			_screen			= iObj_addChild(_OBJ_TYPE_SUBFORM, _jdebi);
 
 			// Set the icons
-			setIcon(sourceCode,		bmpSourceCodeIcon);
-			setIcon(locals,			bmpLocalsIcon);
-			setIcon(watch,			bmpWatchIcon);
-			setIcon(command,		bmpCommandIcon);
-			setIcon(debug,			bmpDebugIcon);
-			setIcon(output,			bmpOutputIcon);
-			setIcon(sourceLight,	bmpSourceLightIcon);
-			setIcon(_screen,		bmpVjrIcon);
-			setIcon(_jdebi,			bmpJDebiIcon);
+			propSetIcon(sourceCode,		bmpSourceCodeIcon);
+			propSetIcon(locals,			bmpLocalsIcon);
+			propSetIcon(watch,			bmpWatchIcon);
+			propSetIcon(command,		bmpCommandIcon);
+			propSetIcon(debug,			bmpDebugIcon);
+			propSetIcon(output,			bmpOutputIcon);
+			propSetIcon(sourceLight,	bmpSourceLightIcon);
+			propSetIcon(_screen,		bmpVjrIcon);
+			propSetIcon(_jdebi,			bmpJDebiIcon);
 
 			// Make them visible
-			setVisible(sourceCode,	_LOGICAL_TRUE);
-			setVisible(locals,		_LOGICAL_TRUE);
-			setVisible(watch,		_LOGICAL_TRUE);
-			setVisible(command,		_LOGICAL_TRUE);
-			setVisible(sourceLight,	_LOGICAL_TRUE);
-			setVisible(_screen,		_LOGICAL_TRUE);
+			propSetVisible(sourceCode,	_LOGICAL_TRUE);
+			propSetVisible(locals,		_LOGICAL_TRUE);
+			propSetVisible(watch,		_LOGICAL_TRUE);
+			propSetVisible(command,		_LOGICAL_TRUE);
+			propSetVisible(sourceLight,	_LOGICAL_TRUE);
+			propSetVisible(_screen,		_LOGICAL_TRUE);
 
 
 		//////////
@@ -338,14 +339,14 @@
 		//////////
 		// Add the editbox controls to the subforms
 		//////
-			setVisible(sourceCode_editbox,	_LOGICAL_TRUE);
-			setVisible(locals_editbox,		_LOGICAL_TRUE);
-			setVisible(watch_editbox,		_LOGICAL_TRUE);
-			setVisible(command_editbox,		_LOGICAL_TRUE);
-			setVisible(debug_editbox,		_LOGICAL_TRUE);
-			setVisible(output_editbox,		_LOGICAL_TRUE);
-			setVisible(screen_editbox,		_LOGICAL_TRUE);
-			setVisible(sourceLight_empty,	_LOGICAL_TRUE);
+			propSetVisible(sourceCode_editbox,	_LOGICAL_TRUE);
+			propSetVisible(locals_editbox,		_LOGICAL_TRUE);
+			propSetVisible(watch_editbox,		_LOGICAL_TRUE);
+			propSetVisible(command_editbox,		_LOGICAL_TRUE);
+			propSetVisible(debug_editbox,		_LOGICAL_TRUE);
+			propSetVisible(output_editbox,		_LOGICAL_TRUE);
+			propSetVisible(screen_editbox,		_LOGICAL_TRUE);
+			propSetVisible(sourceLight_empty,	_LOGICAL_TRUE);
 
 
 		//////////
@@ -365,22 +366,22 @@
 		//////////
 		// Give it a caption
 		//////
-			setCaption(_jdebi, cgcJDebiTitle);
+			propSetCaption(_jdebi, cgcJDebiTitle);
 
 
 		//////////
 		// SourceCode window caption and font
 		//////
-			setBackStyle(sourceCode, _BACK_STYLE_TRANSPARENT);
-			setCaption(sourceCode, cgcSourceCodeTitle);
+			propSetBackStyle(sourceCode, _BACK_STYLE_TRANSPARENT);
+			propSetCaption(sourceCode, cgcSourceCodeTitle);
 
 			// Adjust the caption width
 			((SObject*)sourceCode->firstChild->ll.next)->rc.right = 90;
 
 			sourceCode_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			sourceCode_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown_sourceCode;
-			setBorderStyle(sourceCode_editbox, _BORDER_STYLE_FIXED);
-			setBorderColor(sourceCode_editbox, lineNumberBackColor);
+			propSetBorderStyle(sourceCode_editbox, _BORDER_STYLE_FIXED);
+			propSetBorderColor(sourceCode_editbox, lineNumberBackColor);
 			sourceCode_editbox->p.sem->showCursorLine	= true;
 			sourceCode_editbox->p.sem->isSourceCode		= true;
 			sourceCode_editbox->p.sem->showLineNumbers	= true;
@@ -454,8 +455,8 @@
 		//////
 			iObjProp_set_character_direct(sourceLight, _INDEX_CAPTION, cgcSourceLightTitle, sizeof(cgcSourceLightTitle) - 1);
 			sourceLight->p.font = iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			setVisible(sourceLight, _LOGICAL_TRUE);
-			setBackStyle(sourceLight, _BACK_STYLE_OPAQUE);
+			propSetVisible(sourceLight, _LOGICAL_TRUE);
+			propSetBackStyle(sourceLight, _BACK_STYLE_OPAQUE);
 			sourceLight_empty->ev.general._onRender = (uptr)&iSourceLight_copy;
 
 
@@ -474,13 +475,13 @@
 			screenData								= screen_editbox->p.sem;
 			screenData->showCursorLine				= true;
 			screenData->showEndLine					= true;
-			setVisible(_screen, _LOGICAL_TRUE);
+			propSetVisible(_screen, _LOGICAL_TRUE);
 
 
 		//////////
 		// Set it visible
 		//////
-			setVisible(_jdebi, _LOGICAL_TRUE);
+			propSetVisible(_jdebi, _LOGICAL_TRUE);
 	}
 
 
@@ -1295,7 +1296,7 @@
 						PostMessage(winNew->hwnd, WMVJR_FIRST_CREATION, 0, 0);
 
 						// If visible, show it
-						if (isVisible(obj))
+						if (propIsVisible(obj))
 							ShowWindow(winNew->hwnd, SW_SHOW);
 
 
@@ -1892,7 +1893,7 @@
 				lhdc = BeginPaint(hwnd, &ps);
 
 				// Paint it
-				if (isReadonly(focus->obj))
+				if (propIsReadonly(focus->obj))
 				{
 					// Read-only coloring
 					FillRect(lhdc, &ps.rcPaint, focus->readOnlyBrush);
@@ -3033,8 +3034,11 @@
 		//////////
 		// Clip to the parent rectangle
 		//////
-			lrc.right	= min(rc->right,	lrc.right);
-			lrc.bottom	= min(rc->bottom,	lrc.bottom);
+			if (!obj->parent || obj->parent->objType != _OBJ_TYPE_FORM)
+			{
+				lrc.right	= min(rc->right,	lrc.right);
+				lrc.bottom	= min(rc->bottom,	lrc.bottom);
+			}
 
 
 		//////////
@@ -3136,7 +3140,7 @@
 
 
 		// Make sure our object environment is sane
-		if (!isEnabled(obj) || !obj->bmp)
+		if (!propIsEnabled(obj) || !obj->bmp)
 			return;
 
 
@@ -3220,14 +3224,14 @@
 			if (tlProcessSiblings)
 			{
 				// Begin at the next sibling
-				objSib = (SObject*)obj->ll.next;
+				objSib = obj->ll.nextObject;
 				while (objSib)
 				{
 					// Process this sibling
 					iiMouse_processMouseEvents_mouseMove(win, objSib, rc, true, false, tlProcessed);
 
 					// Move to next sibling
-					objSib = (SObject*)objSib->ll.next;
+					objSib = objSib->ll.nextObject;
 				}
 			}
 	}
@@ -3249,7 +3253,7 @@
 
 		// Make sure our environment is sane
 		llContinue = false;
-		if (obj && isEnabled(obj) && obj->bmp)
+		if (obj && propIsEnabled(obj) && obj->bmp)
 		{
 			// Get the rectangle we're in at this level
 			llContinue		= true;
@@ -3397,7 +3401,7 @@
 					if (llContinue && tlProcessSiblings)
 					{
 						// Begin at the next sibling
-						objSib = (SObject*)obj->ll.next;
+						objSib = obj->ll.nextObject;
 						while (llContinue && !*tlProcessed && objSib)
 						{
 							// Process this sibling
@@ -3406,7 +3410,7 @@
 								break;
 
 							// Move to next sibling
-							objSib = (SObject*)objSib->ll.next;
+							objSib = objSib->ll.nextObject;
 						}
 					}
 			}
@@ -3929,7 +3933,7 @@ debug_break;
 		//////////
 		// Give it a caption
 		//////
-			setCaption(gobj_splashListing, cgcSystemLog);
+			propSetCaption(gobj_splashListing, cgcSystemLog);
 
 
 		//////////

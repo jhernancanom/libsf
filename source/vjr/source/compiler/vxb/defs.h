@@ -90,9 +90,9 @@ struct SVariable;
 // compiler.cpp
 //////////
 	u32						compile_vxb									(SEM* codeBlock, SCompileVxbContext* vxbParam, SCompileStats* stats);
-	void					iiCompile_vxb_precompile_forEditAndContinue	(SCompileVxbContext* vxb);
-	void					iiCompile_vxb_compile_forEditAndContinue	(SCompileVxbContext* vxb);
-	void					iiCompile_vxb_postcompile_forEditAndContinue(SCompileVxbContext* vxb);
+	void					iiCompile_vxb_precompile_forLiveCode	(SCompileVxbContext* vxb);
+	void					iiCompile_vxb_compile_forLiveCode	(SCompileVxbContext* vxb);
+	void					iiCompile_vxb_postcompile_forLiveCode(SCompileVxbContext* vxb);
 
 	SFunction*				iiComps_decodeSyntax_function				(SCompileVxbContext* vxb);
 	SFunction*				iiComps_decodeSyntax_adhoc					(SCompileVxbContext* vxb);

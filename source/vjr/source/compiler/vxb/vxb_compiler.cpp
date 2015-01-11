@@ -74,7 +74,7 @@
 
 //////////
 //
-// Compiles a VXB source code block.  If tlEditAndContinue is true, then only those
+// Compiles a VXB source code block.  If tlLiveCode is true, then only those
 // lines which have differing line->compilerInfo->sourceCode and line->sourceCode are
 // compiled.  If the current debug environment is operating on this line, the debugger
 // will need to take special note about the before and after sub-instructions to
@@ -123,13 +123,13 @@
 			if (vxb->codeBlock && vxb->codeBlock->firstLine)
 			{
 				// Before compilation, we need to remove any dependencies on things that have changed
-				iiCompile_vxb_precompile_forEditAndContinue(vxb);
+				iiCompile_vxb_precompile_forLiveCode(vxb);
 
 				// Physically compile
-				iiCompile_vxb_compile_forEditAndContinue(vxb);		// Note:  Compilation compiles source code, and generates executable ops
+				iiCompile_vxb_compile_forLiveCode(vxb);		// Note:  Compilation compiles source code, and generates executable ops
 
 				// After compilation, clean up anything that's dead
-				iiCompile_vxb_postcompile_forEditAndContinue(vxb);
+				iiCompile_vxb_postcompile_forLiveCode(vxb);
 			}
 
 
@@ -154,9 +154,20 @@
 // references what will become the new function, new adhoc, or new variable.
 //
 //////
-	void iiCompile_vxb_precompile_forEditAndContinue(SCompileVxbContext* vxb)
+	void iiCompile_vxb_precompile_forLiveCode(SCompileVxbContext* vxb)
 	{
-		// Iterate through every line that has changed, and note all components
+		SLine*	line;
+
+
+		// Make sure the codeBlock is sane
+		if (vxb->codeBlock)
+		{
+			// Iterate through every source line, copying everything through to compilerInfo_LiveCode
+			for (line = vxb->codeBlock->firstLine; line; line = line->ll.nextLine)
+			{
+				// If this line has existing compilerInfo_LiveCode
+			}
+		}
 	}
 
 
@@ -167,7 +178,7 @@
 // Called to physically compile each line of source code.
 //
 //////
-	void iiCompile_vxb_compile_forEditAndContinue(SCompileVxbContext* vxb)
+	void iiCompile_vxb_compile_forLiveCode(SCompileVxbContext* vxb)
 	{
 		// Begin compiling
 		vxb->currentFunction	= NULL;
@@ -194,7 +205,7 @@
 				//////////
 				// Determine if this line needs compiled
 				//////
-					// We are in edit-and-continue mode, which means we only process this line
+					// We are in LiveCode mode, which means we only process this line
 					// if its contents have changed.  Otherwise, we use what was already compiled.
 					if (!vxb->line->compilerInfo->sourceCode || vxb->line->forceRecompile || !vxb->line->compilerInfo->firstComp)
 					{
@@ -224,7 +235,7 @@
 				//////
 					if (!vxb->processThisLine)
 					{
-						// In an edit-and-continue environment, we have to track functions so we maintain the
+						// In an LiveCode environment, we have to track functions so we maintain the
 						// current function we are in, even if the source code for those functions didn't change.
 						if (vxb->line->compilerInfo->firstComp)
 						{
@@ -367,7 +378,7 @@
 // Called to post-compile, primarily to flag variables that are not referenced
 // 
 //////
-	void iiCompile_vxb_postcompile_forEditAndContinue(SCompileVxbContext* vxb)
+	void iiCompile_vxb_postcompile_forLiveCode(SCompileVxbContext* vxb)
 	{
 	}
 
@@ -399,7 +410,7 @@
 				if (comp->ll.next)
 				{
 					// [FUNCTION][something after]
-					if ((compName = (SComp*)comp->ll.next) && (compName->iCode == _ICODE_ALPHA || compName->iCode == _ICODE_ALPHANUMERIC))
+					if ((compName = comp->ll.nextComp) && (compName->iCode == _ICODE_ALPHA || compName->iCode == _ICODE_ALPHANUMERIC))
 					{
 						// [FUNCTION][cFuncionName]
 // TODO:  We need to do a lookup on this name to see if we're replacing a function, or adding a new one
@@ -414,7 +425,7 @@
 // TODO:  Needs added to the current function chain
 
 						// Generate warnings for ignored components if any appear after
-						iComp_reportWarningsOnRemainder((SComp*)compName->ll.next, _WARNING_SPURIOUS_COMPONENTS_IGNORED, (cu8*)cgcSpuriousIgnored);
+						iComp_reportWarningsOnRemainder(compName->ll.nextComp, _WARNING_SPURIOUS_COMPONENTS_IGNORED, (cu8*)cgcSpuriousIgnored);
 					}
 				}
 			}
@@ -452,7 +463,7 @@
 				if (comp->ll.next)
 				{
 					// [ADHOC][something after]
-					if ((compName = (SComp*)comp->ll.next) && (compName->iCode == _ICODE_ALPHA || compName->iCode == _ICODE_ALPHANUMERIC))
+					if ((compName = comp->ll.nextComp) && (compName->iCode == _ICODE_ALPHA || compName->iCode == _ICODE_ALPHANUMERIC))
 					{
 						// [ADHOC][cAdhocName]
 // TODO:  We need to do a lookup on this name to see if we're replacing an adhoc, or adding a new one
@@ -467,7 +478,7 @@
 // TODO:  Needs added to the current function
 
 						// Generate warnings for ignored components if any appear after
-						iComp_reportWarningsOnRemainder((SComp*)compName->ll.next, _WARNING_SPURIOUS_COMPONENTS_IGNORED, cgcSpuriousIgnored);
+						iComp_reportWarningsOnRemainder(compName->ll.nextComp, _WARNING_SPURIOUS_COMPONENTS_IGNORED, cgcSpuriousIgnored);
 					}
 				}
 			}
@@ -669,7 +680,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 			// Move to next component
 			//////
 //				compLast	= comp;
-				comp		= (SComp*)comp->ll.next;
+				comp		= comp->ll.nextComp;
 		}
 
 		// If we get here everything was processed properly
@@ -767,7 +778,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 			while (comp)
 			{
 				// Grab the next comp
-				compNext = (SComp*)comp->ll.next;
+				compNext = comp->ll.nextComp;
 
 				// Delete this one
 				iComps_delete(comp, true);
@@ -805,7 +816,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 			while (comp)
 			{
 				// Grab the next comp
-				compNext = (SComp*)comp->ll.next;
+				compNext = comp->ll.nextComp;
 
 				// Delete this one
 				iComps_delete(comp, true);
@@ -1045,7 +1056,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 				}
 
 				// Move to next component
-				comp = (SComp*)comp->ll.next;
+				comp = comp->ll.nextComp;
 			}
 		}
 		
@@ -1211,7 +1222,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 				break;		// It is, we're done
 
 			// Move to the next component
-			comp = (SComp*)comp->ll.next;
+			comp = comp->ll.nextComp;
 		}
 		// When we get here, we either found it or not
 		// Store our results
@@ -1243,7 +1254,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					return(comp);
 
 				// Move to next component
-				comp = (SComp*)comp->ll.next;
+				comp = comp->ll.nextComp;
 			}
 		}
 		
@@ -1430,7 +1441,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 				do
 				{
 					// Move to next comp
-					compStart = (SComp*)compStart->ll.next;
+					compStart = compStart->ll.nextComp;
 
 					// Is this a target?
 					if (compStart)
@@ -1462,8 +1473,8 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 			lnLevel = 0;
 			do {
 				// Move to next comp
-				if (lnDirection == -1)			compStart = (SComp*)compStart->ll.prev;
-				else							compStart = (SComp*)compStart->ll.next;
+				if (lnDirection == -1)			compStart = compStart->ll.prevComp;
+				else							compStart = compStart->ll.nextComp;
 
 				// Is this our match?
 				if (compStart)
@@ -1611,7 +1622,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 		while (comp && comp->iCode == tniCode)
 		{
 			// Move to next component
-			comp = (SComp*)comp->ll.next;
+			comp = comp->ll.nextComp;
 		}
 		// When we get here, we're sitting on either no valid component, or the one which does not match the specified type
 		return(comp);
@@ -1628,14 +1639,11 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 	SComp* iComps_skipTo_iCode(SComp* comp, s32 tniCode)
 	{
 		// Skip to next comp
-		comp = (SComp*)comp->ll.next;
+		comp = comp->ll.nextComp;
 
 		// Repeat until we find our match
 		while (comp && comp->iCode != tniCode)
-		{
-			// Move to next component
-			comp = (SComp*)comp->ll.next;
-		}
+			comp = comp->ll.nextComp;	// Move to next component
 
 		// When we get here, we're sitting on the iCode, or we've exhausted our comps and it's NULL
 		return(comp);
@@ -1656,7 +1664,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 
 		// Iterate until we find it
 		for (lnI = 0; comp && lnI < tnCount; lnI++)
-			comp = (SComp*)comp->ll.next;
+			comp = comp->ll.nextComp;
 
 		// Indicate success or failure
 		return(comp);
@@ -1686,7 +1694,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 				for (lnCount = 1; lnCount < tnCount; lnCount++)
 				{
 					// Grab the next component
-					compNext = (SComp*)comp->ll.next;
+					compNext = comp->ll.nextComp;
 
 					// Combine it into this one
 					if (compNext)
@@ -1751,14 +1759,14 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 			for ( ; compLeftmost->ll.next; lnCombined++)
 			{
 				// And continue so long as they are immediately adjacent
-				if (iiComps_get_charactersBetween(compLeftmost, (SComp*)compLeftmost->ll.next) != 0)
+				if (iiComps_get_charactersBetween(compLeftmost, compLeftmost->ll.nextComp) != 0)
 					return(lnCombined);	// All done
 
 				// Validate if need be
 				if (tnValid_iCodeArrayCount > 0 && valid_iCodeArray)
 				{
 					// If it's valid, add it
-					if (!iiComps_validate((SComp*)compLeftmost->ll.next, valid_iCodeArray, tnValid_iCodeArrayCount))
+					if (!iiComps_validate(compLeftmost->ll.nextComp, valid_iCodeArray, tnValid_iCodeArrayCount))
 						return(lnCombined);		// Invalid
 
 					// If we get here, it is still valid
@@ -1801,14 +1809,14 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 			while (comp)
 			{
 				// Grab the next component
-				compNext = (SComp*)comp->ll.next;
+				compNext = comp->ll.nextComp;
 				if (compNext)
 				{
 					// Is this an underscore, alpha, or alphanumeric?
 					if (comp->iCode == _ICODE_UNDERSCORE || comp->iCode == _ICODE_ALPHA || comp->iCode == _ICODE_ALPHANUMERIC)
 					{
 						// Combine so long as the following are immediately adjacent, and are one of underscore, alpha, numeric, alphanumeric
-						while (	(compNext = (SComp*)comp->ll.next)
+						while (	(compNext = comp->ll.nextComp)
 								&& iiComps_get_charactersBetween(comp, compNext) == 0
 								&& (	compNext->iCode == _ICODE_UNDERSCORE
 									||	compNext->iCode == _ICODE_ALPHA
@@ -1826,7 +1834,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 
 
 				// Move to the next component
-				comp = (SComp*)comp->ll.next;
+				comp = comp->ll.nextComp;
 			}
 		}
 
@@ -1862,16 +1870,16 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 			while (comp)
 			{
 				// Grab the next component
-				if ((compNext1 = (SComp*)comp->ll.next) && iiComps_get_charactersBetween(comp, compNext1) == 0)
+				if ((compNext1 = comp->ll.nextComp) && iiComps_get_charactersBetween(comp, compNext1) == 0)
 				{
 					// Is this an underscore, alpha, or alphanumeric?
 					if ((comp->iCode == _ICODE_PLUS || comp->iCode == _ICODE_HYPHEN) && compNext1->iCode == _ICODE_NUMERIC)
 					{
 						// We have +-999
-						if ((compNext2 = (SComp*)compNext1->ll.next) && compNext2->iCode == _ICODE_DOT)
+						if ((compNext2 = compNext1->ll.nextComp) && compNext2->iCode == _ICODE_DOT)
 						{
 							// We have +-999.
-							if ((compNext3 = (SComp*)compNext2->ll.next) && compNext3->iCode == _ICODE_NUMERIC)
+							if ((compNext3 = compNext2->ll.nextComp) && compNext3->iCode == _ICODE_NUMERIC)
 							{
 								// We have +-999.99
 								iComps_combineN(comp, 4, _ICODE_NUMERIC, comp->iCat, comp->color);
@@ -1891,10 +1899,10 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 
 					} else if (comp->iCode == _ICODE_NUMERIC) {
 						// We have 999
-						if ((compNext2 = (SComp*)compNext1->ll.next) && compNext2->iCode == _ICODE_DOT)
+						if ((compNext2 = compNext1->ll.nextComp) && compNext2->iCode == _ICODE_DOT)
 						{
 							// We have 999.
-							if ((compNext3 = (SComp*)compNext2->ll.next) && compNext3->iCode == _ICODE_NUMERIC)
+							if ((compNext3 = compNext2->ll.nextComp) && compNext3->iCode == _ICODE_NUMERIC)
 							{
 								// We have 999.99
 								iComps_combineN(comp, 3, _ICODE_NUMERIC, comp->iCat, comp->color);
@@ -1911,7 +1919,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 
 
 				// Move to the next component
-				comp = (SComp*)comp->ll.next;
+				comp = comp->ll.nextComp;
 			}
 		}
 
@@ -1948,7 +1956,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 			while (compThis)
 			{
 				// Grab the thing after
-				compFirst = (SComp*)compThis->ll.next;
+				compFirst = compThis->ll.nextComp;
 				if (!compFirst)
 					break;
 
@@ -1956,7 +1964,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 				compSecond	= NULL;
 				compThird	= NULL;
 				compFourth	= NULL;
-				if ((compSecond = (SComp*)compFirst->ll.next) && (compThird = (SComp*)compSecond->ll.next) && (compFourth = (SComp*)compThird->ll.next))
+				if ((compSecond = compFirst->ll.nextComp) && (compThird = compSecond->ll.nextComp) && (compFourth = compThird->ll.nextComp))
 				{
 					// Placeholder for the early-out if statement above
 				}
@@ -2036,7 +2044,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					{
 						// It was processed above
 						// Move to the next component
-						compThis = (SComp*)compThis->ll.next;
+						compThis = compThis->ll.nextComp;
 
 					} else if (compThird && iiComps_get_charactersBetween(compFirst, compThird) == 0 && (compThird->iCode == _ICODE_ALPHA || compThird->iCode == _ICODE_ALPHANUMERIC)) {
 						// It's a dot variable of some kind
@@ -2044,12 +2052,12 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 
 					} else {
 						// Nothing, skip to the next component
-						compThis = (SComp*)compThis->ll.next;
+						compThis = compThis->ll.nextComp;
 					}
 
 				} else {
 					// It's not a dot command, so skip to the next one
-					compThis = (SComp*)compThis->ll.next;
+					compThis = compThis->ll.nextComp;
 				}
 			}
 		}
@@ -2090,7 +2098,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 			while (comp)
 			{
 				// Grab the next component sequentially
-				compNext = (SComp*)comp->ll.next;
+				compNext = comp->ll.nextComp;
 
 				// Make sure there's something to do
 				if (!compNext)
@@ -2125,19 +2133,19 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 									break;		// This was the last one, we're done
 
 								// Move to the next component (which is the comp->ll.next component again, because we just migrated the previous compNext
-								compNext = (SComp*)comp->ll.next;
+								compNext = comp->ll.nextComp;
 							}
 							// When we get here, everything's migrated
 
 							// Grab the new next, which is the one after the matched entry
-							compNext = (SComp*)comp->ll.next;
+							compNext = comp->ll.nextComp;
 
 							// Continue looking for more combinations on this line
 							break;
 						}
 
 						// Move to the next component
-						compSearcher = (SComp*)compSearcher->ll.next;
+						compSearcher = compSearcher->ll.nextComp;
 					}
 				}
 				// Move to the next component
@@ -2176,7 +2184,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 			while (comp)
 			{
 				// Grab the next component sequentially
-				compNext = (SComp*)comp->ll.next;
+				compNext = comp->ll.nextComp;
 
 				// Make sure there's something to do
 				if (!compNext)
@@ -2215,19 +2223,19 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 									break;		// This was the last one, we're done
 
 								// Move to the next component (which is the comp->ll.next component again, because we just migrated the previous compNext
-								compNext = (SComp*)comp->ll.next;
+								compNext = comp->ll.nextComp;
 							}
 							// When we get here, everything's migrated
 
 							// Grab the new next, which is the one after the matched entry
-							compNext = (SComp*)comp->ll.next;
+							compNext = comp->ll.nextComp;
 
 							// Continue looking for more combinations on this line
 							break;
 						}
 
 						// Move to the next component
-						compSearcher = (SComp*)compSearcher->ll.next;
+						compSearcher = compSearcher->ll.nextComp;
 					}
 				}
 				// Move to the next component
@@ -2278,7 +2286,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 				}
 
 				// Move to the next component
-				comp = (SComp*)comp->ll.next;
+				comp = comp->ll.nextComp;
 			}
 			// When we get here, we're good
 		}
@@ -2322,7 +2330,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 						++lnDeleted;
 
 						// Move to the next component
-						comp = (SComp*)comp->ll.next;
+						comp = comp->ll.nextComp;
 					}
 
 					// Delete from here on out
@@ -2332,7 +2340,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 
 				// Move to the next component
 				compLast	= (SComp**)&comp->ll.next;
-				comp		= (SComp*)comp->ll.next;
+				comp		= comp->ll.nextComp;
 			}
 			// When we get here, we're good
 		}
@@ -2407,7 +2415,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					{
 						// Is it at the head of the class?
 						if (line->compilerInfo->firstComp == comp)
-							line->compilerInfo->firstComp = (SComp*)comp->ll.next;
+							line->compilerInfo->firstComp = comp->ll.nextComp;
 
 						// Migrate this whitespace to the whitespace area
 						comp = (SComp*)iLl_migrateNodeToOther((SLL**)&line->compilerInfo->firstComp, (SLL**)&line->compilerInfo->firstWhitespace, (SLL*)comp, true);
@@ -2421,7 +2429,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 				// Continue on to next component
 				//////
 					if (comp)
-						comp = (SComp*)comp->ll.next;
+						comp = comp->ll.nextComp;
 			}
 		}
 
@@ -2456,11 +2464,11 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					if (comp->iCode == _ICODE_COMMENT_START)
 					{
 						// Delete everything forward until we reach _ICODE_COMMENT_END or the last comp
-						while ((compNext = (SComp*)comp->ll.next) && compNext->iCode != _ICODE_COMMENT_END)
+						while ((compNext = comp->ll.nextComp) && compNext->iCode != _ICODE_COMMENT_END)
 							iComps_combineN(comp, 2, comp->iCode, comp->iCat, comp->color);
 
 						// When we get here, we're sitting on the _ICODE_COMMENT_END
-						if ((compNext = (SComp*)comp->ll.next) && compNext->iCode == _ICODE_COMMENT_END)
+						if ((compNext = comp->ll.nextComp) && compNext->iCode == _ICODE_COMMENT_END)
 							iComps_combineN(comp, 2, comp->iCode, comp->iCat, comp->color);
 					}
 
@@ -2469,7 +2477,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 				// Continue on to next component
 				//////
 					if (comp)
-						comp = (SComp*)comp->ll.next;
+						comp = comp->ll.nextComp;
 			}
 		}
 	}
@@ -2514,7 +2522,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 				}
 
 				// Move to next comp
-				comp = (SComp*)comp->ll.next;
+				comp = comp->ll.nextComp;
 			}
 		}
 	}
@@ -2620,7 +2628,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					//////////
 					// See if it's contiguously adjoined
 					//////
-						if ((lnThisSpacing = iiComps_get_charactersBetween(comp, (SComp*)comp->ll.next)) != 0)
+						if ((lnThisSpacing = iiComps_get_charactersBetween(comp, comp->ll.nextComp)) != 0)
 							break;		// We're done
 
 
@@ -2655,7 +2663,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					//////////
 					// Move to next comp
 					//////
-						comp = (SComp*)comp->ll.next;
+						comp = comp->ll.nextComp;
 				}
 
 
@@ -2741,7 +2749,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 				memset(outputBuffer, 0, tnBufferLength);
 
 				// Iterate through the comps
-				for (lnI = 0, lnOffset = 0; lnI < tnCount && comp && lnOffset < tnBufferLength; comp = (SComp*)comp->ll.next)
+				for (lnI = 0, lnOffset = 0; lnI < tnCount && comp && lnOffset < tnBufferLength; comp = comp->ll.nextComp)
 				{
 					//////////
 					// Lookup this comp
@@ -3034,7 +3042,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 						// Search for something to the right of the exponent, like the "thisForm.someObject.someProperty" in "k = xyz ^ thisForm.someObject.someProperty"
 // TODO:  Refactor for left and right nodes
 // 						iiComps_xlatToSubInstr_findStartOfComponent	((SComp*)comp->ll.prev, si->op);
-// 						iiComps_xlatToSubInstr_findFullComponent	((SComp*)comp->ll.next, si->op);
+// 						iiComps_xlatToSubInstr_findFullComponent	(comp->ll.nextComp, si->op);
 
 						// When we get here, si has been populated if there are operations there.
 						// If they are null, then it is a syntax error
@@ -3043,7 +3051,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 
 
 				// Move to next component
-				comp = (SComp*)comp->ll.next;
+				comp = comp->ll.nextComp;
 			}
 
 		// Indicate our result
@@ -3118,12 +3126,12 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 		//////
 			comp		= compRoot;
 			op->count	= 0;
-			while (comp && comp->ll.next && iiComps_get_charactersBetween(comp, (SComp*)comp->ll.next) == 0)
+			while (comp && comp->ll.next && iiComps_get_charactersBetween(comp, comp->ll.nextComp) == 0)
 			{
 				//////////
 				// Next component
 				//////
-					compNext = (SComp*)comp->ll.next;
+					compNext = comp->ll.nextComp;
 
 
 				//////////
@@ -3887,7 +3895,7 @@ debug_break;
 		if (comp)
 		{
 			// Iterate for each merging
-			for (lnI = 1, compThis = (SComp*)comp->ll.next; compThis && lnI < tnCount; lnI++, compThis = (SComp*)comp->ll.next)
+			for (lnI = 1, compThis = comp->ll.nextComp; compThis && lnI < tnCount; lnI++, compThis = comp->ll.nextComp)
 			{
 				// Absorb compThis's length into comp's "collective"
 				comp->length += compThis->length;
@@ -4972,7 +4980,7 @@ debug_break;
 					{
 						case _VAR_TYPE_OBJECT:
 							// If the next component is a ., and the one after that is an alpha or alphanumeric, then they are referencing an object property
-							if ((compNext = (SComp*)comp->ll.next) && compNext->iCode == _ICODE_DOT && (compNext2 = (SComp*)compNext->ll.next) && (compNext2->iCode == _ICODE_ALPHA || compNext2->iCode == _ICODE_ALPHANUMERIC))
+							if ((compNext = comp->ll.nextComp) && compNext->iCode == _ICODE_DOT && (compNext2 = compNext->ll.nextComp) && (compNext2->iCode == _ICODE_ALPHA || compNext2->iCode == _ICODE_ALPHANUMERIC))
 							{
 								// We've found something like "lo." where lo is an object, and there is a name reference after it
 								var = iObj_getPropertyAsVariable(var->obj, compNext2->line->sourceCode->data + compNext2->start, compNext2->length, compNext2);
@@ -4982,7 +4990,7 @@ debug_break;
 
 						case _VAR_TYPE_THISCODE:
 							// They could be referencing a variable from that location
-							if ((compNext = (SComp*)comp->ll.next) && compNext->iCode == _ICODE_DOT)
+							if ((compNext = comp->ll.nextComp) && compNext->iCode == _ICODE_DOT)
 							{
 								// We've found something like "fred." where fred is a thisCode, and there is a name reference after it
 // TODO:  We need to search the thisCode object for the indicated name
@@ -7535,7 +7543,7 @@ debug_break;
 			iComp_appendWarning(comp, tnWarningNum, ((tcMessage) ? tcMessage : (u8*)cgcUnspecifiedWarning));
 
 			// Move to next component
-			comp = (SComp*)comp->ll.next;
+			comp = comp->ll.nextComp;
 		}
 	}
 

@@ -242,8 +242,7 @@
 			{
 				// We're on the top-level form for the window
 				varName = iObjProp_get_variable_byIndex(obj, _INDEX_NAME);
-				if (	iDatum_compare(&varName->value, cgcName_iconMove,	sizeof(cgcName_iconMove) - 1)	== 0
-					||	iDatum_compare(&varName->value, cgcName_caption,	sizeof(cgcName_caption) - 1)	== 0)
+				if (propIsName(obj, cgcName_iconMove) || propIsName(obj, cgcName_caption))
 				{
 					// We're on the _move icon or the caption, which means they want to move the window
 					win->isMoving = true;
@@ -303,24 +302,24 @@
 			switch (obj->objType)
 			{
 				case _OBJ_TYPE_IMAGE:
-					if (isName(obj, cgcName_iconClose)) {
+					if (propIsName(obj, cgcName_iconClose)) {
 						// Close
 						iVjr_shutdown();	// They clicked quit
 						return(false);		// When we get here, the object no longer exists
 
-					} else if (isName(obj, cgcName_iconMove)) {
+					} else if (propIsName(obj, cgcName_iconMove)) {
 						// Move
 						llMouseDown					= false;
 						obj->ev.mouse.isMouseOver	= false;
 						iWindow_move(win);
 
-					} else if (isName(obj, cgcName_iconMinimize)) {
+					} else if (propIsName(obj, cgcName_iconMinimize)) {
 						// Minimize
 						llMouseDown					= false;
 						obj->ev.mouse.isMouseOver	= false;
 						iWindow_minimize(win);
 
-					} else if (isName(obj, cgcName_iconMaximize)) {
+					} else if (propIsName(obj, cgcName_iconMaximize)) {
 						// Maximize
 						llMouseDown					= false;
 						obj->ev.mouse.isMouseOver	= false;

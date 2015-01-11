@@ -93,8 +93,8 @@ which then forwards on to the external DLL.  And, upon return,
 based upon the return parameter(s), it translates information
 from the DLL into VVM-specific variables.
 
-(2) The VVM supports an edit-and-continue ABI, and this is how it
-is implemented.  Initially (at the time of first compile), an
+(2) The VVM supports a LiveCode ABI, and this is how it is
+implemented.  Initially (at the time of first compile), an
 actual snippet is created.  However, if that snippet is replaced
 in the debugger during runtime, a dynamic snippet takes its place.
 A "forward pointer" from the snippet indicates which dynamic
@@ -146,15 +146,16 @@ Memory
 	object.
 
 
-Edit-and-continue
------------------
+LiveCode
+--------
 	The VVM also allows the code stream to be intermixed with non-VVM code running on the native CPU.  As of
 	the 0.70 draft revision, plans are for x86 and ARM support.  The integrated compiler allows for edit-and-
 	continue on all supported CPU architectures.  Anything that exists outside of the snippet nature of the
 	VVM, x86, or ARM, can only be viewed in disassembly mode, and edited by changing opcodes as through the
 	assembler.  These changes, at present, cannot persist beyond current execution.
 
-	All VVM, x86, and ARM snippets, and any corresponding dynamic snippets, support full edit-and-continue.
+	All VVM, x86, and ARM snippets, and any corresponding dynamic snippets, support full LiveCode.
+	
 	Every line of code can be edited and changes applied on a running VVM instance.  Any thread currently
 	executing code in a snippet being updated will be suspended, the change applied, and if the source line
 	in operation will not be affected by the change, continued, otherwise the thread will be suspended so a

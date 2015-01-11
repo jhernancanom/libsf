@@ -702,13 +702,13 @@ RDC Specifications Document
 	external applications can link directly to the function knowing exactly the input
 	types, and there is never any ambiguity as to the expected input parameters.
 
-13.0 - Edit-and-continue ABI
-----------------------------
+13.0 - LiveCode ABI
+-------------------
 
 	RDC employs a new ABI that's designed around two central concepts:
 	
 		(1)  Every compilation is for a target machine architecture, not an OS flavor.
-		(2)  Every compilation is targeted for edit-and-continue support.
+		(2)  Every compilation is targeted for LiveCode support.
 	
 	The code generated operates on a particular instruction set.  To provide OS
 	facilities, a thin OS-specific wrapper is required to launch the ABI.  This

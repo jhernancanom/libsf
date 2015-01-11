@@ -130,12 +130,12 @@
 				if (obj->isDirtyRender)
 				{
 					// Grab the colors
-					borderColor = borderColor(obj);
-					backColor	= backColor(obj);
-					nwRgba		= nwRgba(obj);
-					neRgba		= neRgba(obj);
-					swRgba		= swRgba(obj);
-					seRgba		= seRgba(obj);
+					borderColor = propBorderColor(obj);
+					backColor	= propBackColor(obj);
+					nwRgba		= propNwRgba(obj);
+					neRgba		= propNeRgba(obj);
+					swRgba		= propSwRgba(obj);
+					seRgba		= propSeRgba(obj);
 
 					//////////
 					// Frame it
@@ -146,8 +146,8 @@
 							iBmp_deleteCache(&obj->bc);
 
 							// Draw the window border
-							if (borderStyle(obj) != _BORDER_STYLE_NONE)		iBmp_fillRect(obj->bmp, &lrc, nwRgba, neRgba, swRgba, seRgba, true, &obj->rcClient,	true);
-							else											iBmp_fillRect(obj->bmp, &lrc, nwRgba, neRgba, swRgba, seRgba, true, NULL,			false);
+							if (propBorderStyle(obj) != _BORDER_STYLE_NONE)		iBmp_fillRect(obj->bmp, &lrc, nwRgba, neRgba, swRgba, seRgba, true, &obj->rcClient,	true);
+							else												iBmp_fillRect(obj->bmp, &lrc, nwRgba, neRgba, swRgba, seRgba, true, NULL,			false);
 
 							// Apply a dappling
 							iBmp_dapple(obj->bmp, bmpDapple1, 215.0f, 3);
@@ -166,36 +166,15 @@
 						// Draw the client area
 						bmp = bmpVjrIcon;
 						SetRect(&lrc2, 8, bmp->bi.biHeight + 2, lrc.right - bmp->bi.biHeight - 2, lrc.bottom - bmp->bi.biHeight - 1);
-						if (backStyle(obj) == _BACK_STYLE_OPAQUE)
+						if (propBackStyle(obj) == _BACK_STYLE_OPAQUE)
 							iBmp_fillRect(obj->bmp, &lrc2, backColor, backColor, backColor, backColor, false, NULL, false);
 
 						// Put a border around the client area
-						if (borderStyle(obj) != _BORDER_STYLE_NONE)
+						if (propBorderStyle(obj) != _BORDER_STYLE_NONE)
 						{
 							InflateRect(&lrc2, 1, 1);
 							iBmp_frameRect(obj->bmp, &lrc2, borderColor, borderColor, borderColor, borderColor, false, NULL, false);
 						}
-
-
-// Note:  Eventually these will be moved to form objects, like the icon, caption, and control buttons
-					//////////
-					// Resizing arrows
-					//////
-						// Upper left arrow
-						SetRect(&lrc2, lrc.left + 1, lrc.top + 1, lrc.left + bmpArrowUl->bi.biWidth, lrc.top + bmpArrowUl->bi.biHeight);
-						iBmp_bitBltMask(obj->bmp, &lrc2, bmpArrowUl);
-
-						// Upper right arrow
-						SetRect(&lrc2, lrc.right - bmpArrowUr->bi.biWidth - 1, lrc.top + 1, lrc.right, lrc.top + bmpArrowUr->bi.biHeight);
-						iBmp_bitBltMask(obj->bmp, &lrc2, bmpArrowUr);
-
-						// Lower right arrow
-						SetRect(&lrc2, lrc.right - bmpArrowLr->bi.biWidth - 1, lrc.bottom - bmpArrowLr->bi.biHeight - 1, lrc.right, lrc.bottom);
-						iBmp_bitBltMask(obj->bmp, &lrc2, bmpArrowLr);
-
-						// Lower left arrow
-						SetRect(&lrc2, lrc.left + 1, lrc.bottom - bmpArrowLl->bi.biHeight - 1, lrc.left + bmpArrowLl->bi.biWidth, lrc.bottom);
-						iBmp_bitBltMask(obj->bmp, &lrc2, bmpArrowLl);
 
 
 					//////////
@@ -248,12 +227,12 @@
 		if (obj && obj->isRendered && obj->rc.right > 0 && obj->rc.bottom > 0 && obj->rc.right >= obj->rc.left && obj->rc.bottom >= obj->rc.bottom && obj->rc.right - obj->rc.left < 4400 && obj->rc.bottom - obj->rc.top < 4400)
 		{
 			// Grab our colors
-			backColor	= backColor(obj);
-			borderColor	= borderColor(obj);
-			nwRgba		= nwRgba(obj);
-			neRgba		= neRgba(obj);
-			swRgba		= swRgba(obj);
-			seRgba		= seRgba(obj);
+			backColor	= propBackColor(obj);
+			borderColor	= propBorderColor(obj);
+			nwRgba		= propNwRgba(obj);
+			neRgba		= propNeRgba(obj);
+			swRgba		= propSwRgba(obj);
+			seRgba		= propSeRgba(obj);
 
 			//////////
 			// If we need re-rendering, re-render
@@ -275,7 +254,7 @@
 							iBmp_deleteCache(&obj->bc);
 
 							// Draw the window border
-							if (backStyle(obj) == _BACK_STYLE_OPAQUE)
+							if (propBackStyle(obj) == _BACK_STYLE_OPAQUE)
 							{
 								// Render the subform and client area
 								if (llIsFocusSubform)		iBmp_fillRect(obj->bmp, &lrc, NwFocusColor,		NeFocusColor,	SwFocusColor,	SeFocusColor,	true, &obj->rcClient,	true);
@@ -302,7 +281,7 @@
 						}
 
 						// Frame the client area
-						if (borderStyle(obj) != _BORDER_STYLE_NONE)
+						if (propBorderStyle(obj) != _BORDER_STYLE_NONE)
 						{
 							CopyRect(&lrc2, &obj->rcClient);
 							InflateRect(&lrc2, 1, 1);
@@ -371,10 +350,10 @@
 				if (obj->isDirtyRender)
 				{
 					// Grab colors
-					nwRgba = nwRgba(obj);
-					neRgba = neRgba(obj);
-					swRgba = swRgba(obj);
-					seRgba = seRgba(obj);
+					nwRgba = propNwRgba(obj);
+					neRgba = propNeRgba(obj);
+					swRgba = propSwRgba(obj);
+					seRgba = propSeRgba(obj);
 
 
 					//////////
@@ -509,10 +488,10 @@
 		{
 			if (obj->isDirtyRender)
 			{
-				borderColor	= borderColor(obj);
-				backColor	= backColor(obj);
-				foreColor	= foreColor(obj);
-				backStyle	= backStyle(obj);
+				borderColor	= propBorderColor(obj);
+				backColor	= propBackColor(obj);
+				foreColor	= propForeColor(obj);
+				backStyle	= propBackStyle(obj);
 				if (backStyle == _BACK_STYLE_OPAQUE)
 				{
 					// Use the back color
@@ -534,7 +513,7 @@
 				SelectObject(obj->bmp->hdc, obj->p.font->hfont);
 
 				// Determine our orientation
-				switch (alignment(obj))
+				switch (propAlignment(obj))
 				{
 					default:
 					case _ALIGNMENT_LEFT:
@@ -567,7 +546,7 @@
 					lrc.left -= 4;
 
 				// Frame rectangle
-				if (borderStyle(obj) != _BORDER_STYLE_NONE)
+				if (propBorderStyle(obj) != _BORDER_STYLE_NONE)
 					iBmp_frameRect(obj->bmp, &lrc, borderColor, borderColor, borderColor, borderColor, false, NULL, false);
 
 				// For checkbox labels, we handle them differently
@@ -650,21 +629,21 @@
 				iiBmp_frameInNineParts(obj->bmp, &lrc, bmpTextbox);
 
 				// Grab the colors
-				backColor	= backColor(obj);
-				foreColor	= foreColor(obj);
-				borderColor	= borderColor(obj);
+				backColor	= propBackColor(obj);
+				foreColor	= propForeColor(obj);
+				borderColor	= propBorderColor(obj);
 
 				// Colorize
-				     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
-				else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
-				else									iBmp_colorize(obj->bmp, &lrc, backColor(obj),	false, 0.0f);
+				     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,		false, 0.0f);
+				else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,		false, 0.0f);
+				else									iBmp_colorize(obj->bmp, &lrc, propBackColor(obj),	false, 0.0f);
 
 				// Inset slightly for the text part
 				CopyRect(&lrc2, &lrc);
 				InflateRect(&lrc2, -4, -4);
 
 				// If we're opaque, draw the text inset by a margin, otherwise just overlay
-				if (backStyle(obj) == _BACK_STYLE_OPAQUE)
+				if (propBackStyle(obj) == _BACK_STYLE_OPAQUE)
 				{
 					// Opaque
 					SetBkColor(obj->bmp->hdc, RGB(backColor.red, backColor.grn, backColor.blu));
@@ -680,7 +659,7 @@
 				SelectObject(obj->bmp->hdc, obj->p.font->hfont);
 
 				// Determine our orientation
-				switch (alignment(obj))
+				switch (propAlignment(obj))
 				{
 					default:
 					case _ALIGNMENT_LEFT:
@@ -701,7 +680,7 @@
 				DrawText(obj->bmp->hdc, value->value.data, value->value.length, &lrc2, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
 
 				// Frame rectangle
-				if (borderStyle(obj) != _BORDER_STYLE_NONE)
+				if (propBorderStyle(obj) != _BORDER_STYLE_NONE)
 					iBmp_frameRect(obj->bmp, &lrc, borderColor, borderColor, borderColor, borderColor, false, NULL, false);
 
 
@@ -758,21 +737,21 @@
 				iiBmp_frameInNineParts(obj->bmp, &lrc, bmpButton);
 
 				// Get the colors
-				backColor	= backColor(obj);
-				foreColor	= foreColor(obj);
-				borderColor	= borderColor(obj);
+				backColor	= propBackColor(obj);
+				foreColor	= propForeColor(obj);
+				borderColor	= propBorderColor(obj);
 
 				// Colorize
-				     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
-				else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
-				else									iBmp_colorize(obj->bmp, &lrc, backColor(obj),	false, 0.0f);
+				     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,		false, 0.0f);
+				else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,		false, 0.0f);
+				else									iBmp_colorize(obj->bmp, &lrc, propBackColor(obj),	false, 0.0f);
 
 				// Inset slightly for the text part
 				CopyRect(&lrc2, &lrc);
 				InflateRect(&lrc2, -4, -4);
 
 				// If we're opaque, draw the text inset by a margin, otherwise just overlay
-				if (backStyle(obj) == _BACK_STYLE_OPAQUE)
+				if (propBackStyle(obj) == _BACK_STYLE_OPAQUE)
 				{
 					// Opaque
 					SetBkColor(obj->bmp->hdc, RGB(backColor.red, backColor.grn, backColor.blu));
@@ -788,7 +767,7 @@
 				SelectObject(obj->bmp->hdc, obj->p.font->hfont);
 
 				// Determine our orientation
-				switch (alignment(obj))
+				switch (propAlignment(obj))
 				{
 					default:
 					case _ALIGNMENT_LEFT:
@@ -809,7 +788,7 @@
 				DrawText(obj->bmp->hdc, caption->value.data, caption->value.length, &lrc2, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
 
 				// Frame rectangle
-				if (borderStyle(obj) != _BORDER_STYLE_NONE)
+				if (propBorderStyle(obj) != _BORDER_STYLE_NONE)
 					iBmp_frameRect(obj->bmp, &lrc, borderColor, borderColor, borderColor, borderColor, false, NULL, false);
 
 
@@ -868,9 +847,9 @@
 				lnPixelsRendered = iSEM_render(obj->p.sem, obj, obj->p.hasFocus);
 
 				// Get colors
-				borderColor = borderColor(obj);
+				borderColor = propBorderColor(obj);
 
-				if (borderStyle(obj) != _BORDER_STYLE_NONE)
+				if (propBorderStyle(obj) != _BORDER_STYLE_NONE)
 					iBmp_frameRect(obj->bmp, &lrc, borderColor, borderColor, borderColor, borderColor, false, NULL, false);
 
 				//////////
@@ -920,7 +899,6 @@
 		{
 			// Compute our rectangle for drawing
 			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
-
 			if (obj->isDirtyRender)
 			{
 				// Based on the current conditions, render the appropriate image
@@ -1090,7 +1068,7 @@
 					lfTheta	= (f32)((lfValue - lfMin) / (lfMax - lfMin)) * (f32)(M_PI * 2.0);
 
 					// Color
-					foreColor = foreColor(obj);
+					foreColor = propForeColor(obj);
 
 
 				//////////
@@ -1151,7 +1129,7 @@
 				// Colorize
 				     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
 				else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
-				else									iBmp_colorize(obj->bmp, &lrc, backColor(obj),	false, 0.0f);
+				else									iBmp_colorize(obj->bmp, &lrc, propBackColor(obj),	false, 0.0f);
 
 
 				//////////

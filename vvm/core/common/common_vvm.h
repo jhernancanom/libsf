@@ -91,7 +91,7 @@
 	const u32		_VVM_DSNIP										= 2;			// Indicates any of the 3 forms
 	const u32		_VVM_DSNIP__RUNTIME_LOADED						= 10;			// An BXML file loaded at runtime
 	const u32		_VVM_DSNIP__DLL									= 11;			// Access to a DLL through protocol
-	const u32		_VVM_DSNIP__EDIT_AND_CONTINUE					= 12;			// Edit-and-continue, compiled VVM code replacing a previous snippet or non-DLL-based dynamic snippet
+	const u32		_VVM_DSNIP__LIVECODE							= 12;			// LiveCode, compiled VVM code replacing a previous snippet or non-DLL-based dynamic snippet
 
 	// Identifiers for snippet components, for view in the debugger while hovering over source code
 // TODO:  for the compiler + debugger source code line components, this will require some thought, about what types of data items can be viewed from the debugger, as is stored in the PDB
@@ -539,7 +539,7 @@
 		bool			(CALLTYPE *vvm_copySnippetSS)							(u64 id, SSnipExec* snippet,    SSnipExec** copy);
 		bool			(CALLTYPE *vvm_copyDynamicSnippet)						(u64 id, SDynSnip* dynSnippet, SDynSnip** copy);
 
-		// For edit-and-continue (SUpSnip is SSnippet with _prevLine member, indicating the relationship of the old snippet code to the new snippet code)
+		// For LiveCode (SUpSnip is SSnippet with _prevLine member, indicating the relationship of the old snippet code to the new snippet code)
 		SUpSnip*		(CALLTYPE *vvm_snippetCompile)							(u64 id, SLine* firstLineOfSnippetSourceCode);
 		SUpLine*		(CALLTYPE *vvm_snippetCompileLine)						(u64 id, SSnipExec* snippet,    SLine* originalLineOfSnippetSourceCode, SLine* replacementLineOfSnippetSourceCode, bool commitIfCompilesOkay);
 		SUpLine*		(CALLTYPE *vvm_dynSnipCompileLine)						(u64 id, SDynSnip* dynSnippet, SLine* originalLineOfDynSnipSourceCode, SLine* replacementLineOfDynSnipSourceCode, bool commitIfCompilesOkay);

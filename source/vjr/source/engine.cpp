@@ -104,7 +104,7 @@
 			// Based on the first keyword, process it
 			//////
 				comp		= line->compilerInfo->firstComp;
-				compNext	= (SComp*)comp->ll.next;
+				compNext	= comp->ll.nextComp;
 				switch (comp->iCode)
 				{
 					case _ICODE_QUIT:
@@ -178,7 +178,7 @@
 						if ((comp->iCode == _ICODE_ALPHA || comp->iCode == _ICODE_ALPHANUMERIC) && compNext && compNext->iCode == _ICODE_EQUAL_SIGN)
 						{
 							// It is an assignment
-							compThird = (SComp*)compNext->ll.next;
+							compThird = compNext->ll.nextComp;
 							if (compThird->iCat == _ICAT_FUNCTION)
 							{
 								// It is something like "? func(x)"
@@ -579,7 +579,7 @@
 		
 		
 		// Make sure our environment is sane
-		if (comp && (compLeftParen = (SComp*)comp->ll.next) && compLeftParen->iCode == _ICODE_PARENTHESIS_LEFT)
+		if (comp && (compLeftParen = comp->ll.nextComp) && compLeftParen->iCode == _ICODE_PARENTHESIS_LEFT)
 		{
 			// Right now, we know we have something like:  xyz(
 
@@ -706,7 +706,7 @@
 
 		// Begin to the thing to the right of the left parenthesis
 		lnParamCount	= 1;
-		comp			= (SComp*)compLeftParen->ll.next;
+		comp			= compLeftParen->ll.nextComp;
 		while (comp && comp->iCode != _ICODE_PARENTHESIS_RIGHT)
 		{
 			//////////
@@ -722,7 +722,7 @@
 			//////////
 			// The component after this must be a comma
 			//////
-				compComma = (SComp*)comp->ll.next;
+				compComma = comp->ll.nextComp;
 				if (!compComma || (compComma->iCode != _ICODE_COMMA && compComma->iCode != _ICODE_PARENTHESIS_RIGHT && lnParamCount > requiredCount))
 				{
 					// Comma expected error
@@ -746,7 +746,7 @@
 
 			// Move to next component
 			++lnParamCount;
-			comp = (SComp*)compComma->ll.next;
+			comp = compComma->ll.nextComp;
 		}
 
 		// Indicate how many we found

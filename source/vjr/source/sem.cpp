@@ -1966,7 +1966,7 @@ debug_break;
 							comp->overrideMatchingForeColor = NULL;
 
 							// Move to next component
-							comp = (SComp*)comp->ll.next;
+							comp = comp->ll.nextComp;
 						}
 
 
@@ -2029,7 +2029,7 @@ debug_break;
 									}
 
 									// Move to next component
-									comp = (SComp*)comp->ll.next;
+									comp = comp->ll.nextComp;
 								}
 						}
 				}
@@ -2404,7 +2404,7 @@ renderAsOnlyText:
 
 
 										// Move to next component
-										comp = (SComp*)comp->ll.next;
+										comp = comp->ll.nextComp;
 									}
 								}
 							}
@@ -2845,7 +2845,7 @@ renderAsOnlyText:
 				//////////
 				// Move to next component
 				//////
-					comp = (SComp*)comp->ll.next;
+					comp = comp->ll.nextComp;
 			}
 		}
 	}

@@ -125,12 +125,12 @@
 			//////////
 			// Set default anchor to fixed in all positions, no resize
 			//////
-				setAnchor(form, _ANCHOR_FIXED_NORESIZE);
-				setBackColor(form, whiteColor);
-				setForeColor(form, blackColor);
-				setIcon(form, bmpVjrIcon);
-				setCaption(form, cgcName_form);
-				setPictureBmp(form, bmpNoImage);
+				propSetAnchor(form, _ANCHOR_FIXED_NORESIZE);
+				propSetBackColor(form, whiteColor);
+				propSetForeColor(form, blackColor);
+				propSetIcon(form, bmpVjrIcon);
+				propSetCaption(form, cgcName_form);
+				propSetPictureBmp(form, bmpNoImage);
 
 
 			//////////
@@ -155,95 +155,155 @@
 				while (objChild)
 				{
 					// See which object this is
-					if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_icon))
+					if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_icon))
 					{
 						// Adjust the size
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
 						// Form icon
-						setPictureBmp(objChild, bmpVjrIcon);
-						setPictureBmpDown(objChild, bmpVjrIcon);
-						setPictureBmpOver(objChild, bmpVjrIcon);
+						propSetPictureBmp(objChild, bmpVjrIcon);
+						propSetPictureBmpDown(objChild, bmpVjrIcon);
+						propSetPictureBmpOver(objChild, bmpVjrIcon);
 
 						// Add highlighting for the over and down
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
-						setBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
-						setVisible(objChild, _LOGICAL_TRUE);
+						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
+						propSetVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_caption)) {
+					} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName(objChild, cgcName_caption)) {
 						// Caption
-						setCaption(objChild, cgcName_formCaption);
+						propSetCaption(objChild, cgcName_formCaption);
 						iObjProp_set_s32_direct(objChild, _INDEX_BACKSTYLE, _BACK_STYLE_TRANSPARENT);
 						iFont_delete(&objChild->p.font, true);
 						objChild->p.font		= iFont_create(cgcFontName_windowTitleBar, 12, FW_NORMAL, false, false);
-						setVisible(objChild, _LOGICAL_TRUE);
+						propSetVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconMove)) {
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconMove)) {
 						// Adjust the size
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
 						// Move icon
-						setPictureBmp(objChild, bmpMove);
-						setPictureBmpDown(objChild, bmpMove);
-						setPictureBmpOver(objChild, bmpMove);
+						propSetPictureBmp(objChild, bmpMove);
+						propSetPictureBmpDown(objChild, bmpMove);
+						propSetPictureBmpOver(objChild, bmpMove);
 
 						// Add highlighting for the over and down
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
-						setBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
-						setVisible(objChild, _LOGICAL_TRUE);
+						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
+						propSetVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconMinimize)) {
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconMinimize)) {
 						// Adjust the size
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
 						// Minimize icon
-						setPictureBmp(objChild, bmpMinimize);
-						setPictureBmpDown(objChild, bmpMinimize);
-						setPictureBmpOver(objChild, bmpMinimize);
+						propSetPictureBmp(objChild, bmpMinimize);
+						propSetPictureBmpDown(objChild, bmpMinimize);
+						propSetPictureBmpOver(objChild, bmpMinimize);
 
 						// Add highlighting for the over and down
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);
 						iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);
 						iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
-						setBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
-						setVisible(objChild, _LOGICAL_TRUE);
+						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
+						propSetVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconMaximize)) {
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconMaximize)) {
 						// Adjust the size
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
 						// Maximize icon
-						setPictureBmp(objChild, bmpMaximize);
-						setPictureBmpDown(objChild, bmpMaximize);
-						setPictureBmpOver(objChild, bmpMaximize);
+						propSetPictureBmp(objChild, bmpMaximize);
+						propSetPictureBmpDown(objChild, bmpMaximize);
+						propSetPictureBmpOver(objChild, bmpMaximize);
 
 						// Add highlighting for the over and down
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
-						setBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
-						setVisible(objChild, _LOGICAL_TRUE);
+						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
+						propSetVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconClose)) {
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconClose)) {
 						// Adjust the size
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
 						// Close icon
-						setPictureBmp(objChild, bmpClose);
-						setPictureBmpDown(objChild, bmpClose);
-						setPictureBmpOver(objChild, bmpClose);
+						propSetPictureBmp(objChild, bmpClose);
+						propSetPictureBmpDown(objChild, bmpClose);
+						propSetPictureBmpOver(objChild, bmpClose);
 
 						// Add highlighting for the over and down
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
-						setBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
-						setVisible(objChild, _LOGICAL_TRUE);
+						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
+						propSetVisible(objChild, _LOGICAL_TRUE);
+
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconScaleUl)) {
+						// Adjust the size
+						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
+
+						// Arrow icon
+						propSetPictureBmp(objChild, bmpArrowUl);
+						propSetPictureBmpDown(objChild, bmpArrowUl);
+						propSetPictureBmpOver(objChild, bmpArrowUl);
+
+						// Add highlighting for the over and down
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
+						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
+						propSetVisible(objChild, _LOGICAL_TRUE);
+
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconScaleUr)) {
+						// Adjust the size
+						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
+
+						// Arrow icon
+						propSetPictureBmp(objChild, bmpArrowUr);
+						propSetPictureBmpDown(objChild, bmpArrowUr);
+						propSetPictureBmpOver(objChild, bmpArrowUr);
+
+						// Add highlighting for the over and down
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
+						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
+						propSetVisible(objChild, _LOGICAL_TRUE);
+
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconScaleLr)) {
+						// Adjust the size
+						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
+
+						// Arrow icon
+						propSetPictureBmp(objChild, bmpArrowLr);
+						propSetPictureBmpDown(objChild, bmpArrowLr);
+						propSetPictureBmpOver(objChild, bmpArrowLr);
+
+						// Add highlighting for the over and down
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
+						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
+						propSetVisible(objChild, _LOGICAL_TRUE);
+
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconScaleLl)) {
+						// Adjust the size
+						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
+
+						// Arrow icon
+						propSetPictureBmp(objChild, bmpArrowLl);
+						propSetPictureBmpDown(objChild, bmpArrowLl);
+						propSetPictureBmpOver(objChild, bmpArrowLl);
+
+						// Add highlighting for the over and down
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
+						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
+						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
+						propSetVisible(objChild, _LOGICAL_TRUE);
 					}
 
 					// Move to next object
-					objChild = (SObject*)objChild->ll.next;
+					objChild = objChild->ll.nextObject;
 				}
 		}
 	}
@@ -282,12 +342,12 @@
 			//////////
 			// Set the defaults
 			//////
-				setAnchor(subform, _ANCHOR_FIXED_NORESIZE);
-				setBackColor(subform, whiteColor);
-				setBackStyle(subform, _BACK_STYLE_TRANSPARENT);
-				setForeColor(subform, blackColor);
-				setIcon(subform, bmpVjrIcon);
-				setCaption(subform, cgcName_subform);
+				propSetAnchor(subform, _ANCHOR_FIXED_NORESIZE);
+				propSetBackColor(subform, whiteColor);
+				propSetBackStyle(subform, _BACK_STYLE_TRANSPARENT);
+				propSetForeColor(subform, blackColor);
+				propSetIcon(subform, bmpVjrIcon);
+				propSetCaption(subform, cgcName_subform);
 
 
 			//////////
@@ -305,33 +365,33 @@
 				while (objChild)
 				{
 					// See which object this is
-					if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_icon))
+					if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_icon))
 					{
 						// Adjust the size
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
 						// Form icon
-						setPictureBmp(objChild, bmpVjrIcon);
-						setPictureBmpDown(objChild, bmpVjrIcon);
-						setPictureBmpOver(objChild, bmpVjrIcon);
+						propSetPictureBmp(objChild, bmpVjrIcon);
+						propSetPictureBmpDown(objChild, bmpVjrIcon);
+						propSetPictureBmpOver(objChild, bmpVjrIcon);
 
 						// Add highlighting for the over and down
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.5f);
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.5f);
-						setBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
-						setVisible(objChild, _LOGICAL_TRUE);
+						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
+						propSetVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_caption)) {
+					} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName(objChild, cgcName_caption)) {
 						// Caption
 						iObjProp_set_character_direct(objChild, _INDEX_CAPTION, cgcName_formCaption, -1);
 						iObjProp_set_s32_direct(objChild, _INDEX_BACKSTYLE, _BACK_STYLE_TRANSPARENT);
 						iFont_delete(&objChild->p.font, true);
 						objChild->p.font = iFont_create(cgcFontName_windowTitleBar, 10, FW_NORMAL, false, false);
-						setVisible(objChild, _LOGICAL_TRUE);
+						propSetVisible(objChild, _LOGICAL_TRUE);
 					}
 
 					// Move to next object
-					objChild = (SObject*)objChild->ll.next;
+					objChild = objChild->ll.nextObject;
 				}
 		}
 	}
@@ -371,7 +431,7 @@
 				while (objChild)
 				{
 					// See which object this is
-					if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_icon))
+					if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_icon))
 					{
 						// Adjust the size
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpCarouselIcon->bi.biWidth, bmpCarouselIcon->bi.biHeight);
@@ -384,17 +444,17 @@
 						// Add highlighting for the over and down
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
-						setVisible(objChild, _LOGICAL_TRUE);
+						propSetVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_caption)) {
+					} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName(objChild, cgcName_caption)) {
 						// Caption
-						setCaption(objChild, cgcName_formCaption);
+						propSetCaption(objChild, cgcName_formCaption);
 						iObjProp_set_s32_direct(objChild, _INDEX_BACKSTYLE, _BACK_STYLE_TRANSPARENT);
 						iFont_delete(&objChild->p.font, true);
 						objChild->p.font = iFont_create(cgcFontName_windowTitleBar, 12, FW_NORMAL, false, false);
-						setVisible(objChild, _LOGICAL_TRUE);
+						propSetVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconClose)) {
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconClose)) {
 						// Adjust the size
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, bmpCarouselIcon->bi.biWidth, bmpCarouselIcon->bi.biHeight);
 
@@ -406,11 +466,11 @@
 						// Add highlighting for the over and down
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
 						bmp = iObjProp_get_bitmap(objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
-						setVisible(objChild, _LOGICAL_TRUE);
+						propSetVisible(objChild, _LOGICAL_TRUE);
 					}
 
 					// Move to next object
-					objChild = (SObject*)objChild->ll.next;
+					objChild = objChild->ll.nextObject;
 				}
 
 		}
@@ -468,20 +528,20 @@
 			//////////
 			// Set the default colors
 			//////
-				setBackColor(label, whiteColor);
-				setForeColor(label, blackColor);
+				propSetBackColor(label, whiteColor);
+				propSetForeColor(label, blackColor);
 
 
 			//////////
 			// Set the characteristics
 			//////
-				setAlignment(label, _ALIGNMENT_LEFT);
-				setCaption(label, cgcName_label);
-				setBackStyle(label, _BACK_STYLE_TRANSPARENT);
-				setBorderStyle(label, _BORDER_STYLE_NONE);
-				setBorderColor(label, blackColor);
-				setDisabledBackColor(label, disabledBackColor);
-				setDisabledForeColor(label, disabledForeColor);
+				propSetAlignment(label, _ALIGNMENT_LEFT);
+				propSetCaption(label, cgcName_label);
+				propSetBackStyle(label, _BACK_STYLE_TRANSPARENT);
+				propSetBorderStyle(label, _BORDER_STYLE_NONE);
+				propSetBorderColor(label, blackColor);
+				propSetDisabledBackColor(label, disabledBackColor);
+				propSetDisabledForeColor(label, disabledForeColor);
 		}
 	}
 
@@ -514,18 +574,18 @@
 			//////////
 			// Set the defaults
 			//////
-				setAnchor(textbox, _ANCHOR_FIXED_NORESIZE);
-				setBackColor(textbox, whiteColor);
-				setForeColor(textbox, blackColor);
-				setStyle(textbox, _STYLE_3D);
-				setAlignment(textbox, _ALIGNMENT_LEFT);
-				setBackStyle(textbox, _BACK_STYLE_OPAQUE);
-				setBorderStyle(textbox, _BORDER_STYLE_NONE);
-				setBorderColor(textbox, blackColor);
-				setSelectedBackColor(textbox, selectedBackColor);
-				setSelectedForeColor(textbox, selectedForeColor);
-				setDisabledBackColor(textbox, disabledBackColor);
-				setDisabledForeColor(textbox, disabledForeColor);
+				propSetAnchor(textbox, _ANCHOR_FIXED_NORESIZE);
+				propSetBackColor(textbox, whiteColor);
+				propSetForeColor(textbox, blackColor);
+				propSetStyle(textbox, _STYLE_3D);
+				propSetAlignment(textbox, _ALIGNMENT_LEFT);
+				propSetBackStyle(textbox, _BACK_STYLE_OPAQUE);
+				propSetBorderStyle(textbox, _BORDER_STYLE_NONE);
+				propSetBorderColor(textbox, blackColor);
+				propSetSelectedBackColor(textbox, selectedBackColor);
+				propSetSelectedForeColor(textbox, selectedForeColor);
+				propSetDisabledBackColor(textbox, disabledBackColor);
+				propSetDisabledForeColor(textbox, disabledForeColor);
 
 
 			//////////
@@ -564,14 +624,14 @@
 			//////////
 			// Set the default properties
 			//////
-				setBackColor(button, grayColor);
-				setForeColor(button, blackColor);
-				setStyle(button, _STYLE_3D);
-				setAlignment(button, _ALIGNMENT_CENTER);
-				setBackStyle(button, _BACK_STYLE_TRANSPARENT);
-				setCaption(button, cgcName_button);
-				setDisabledBackColor(button, disabledBackColor);
-				setDisabledForeColor(button, disabledForeColor);
+				propSetBackColor(button, grayColor);
+				propSetForeColor(button, blackColor);
+				propSetStyle(button, _STYLE_3D);
+				propSetAlignment(button, _ALIGNMENT_CENTER);
+				propSetBackStyle(button, _BACK_STYLE_TRANSPARENT);
+				propSetCaption(button, cgcName_button);
+				propSetDisabledBackColor(button, disabledBackColor);
+				propSetDisabledForeColor(button, disabledForeColor);
 
 
 			//////////
@@ -610,17 +670,17 @@
 			//////////
 			// Set the defaults
 			//////
-				setBackColor(editbox, whiteColor);
-				setForeColor(editbox, blackColor);
-				setStyle(editbox, _STYLE_3D);
-				setAlignment(editbox, _ALIGNMENT_LEFT);
-				setBackStyle(editbox, _BACK_STYLE_OPAQUE);
-				setBorderStyle(editbox, _BORDER_STYLE_NONE);
-				setBorderColor(editbox, blackColor);
-				setSelectedBackColor(editbox, selectedBackColor);
-				setSelectedBackColor(editbox, selectedForeColor);
-				setDisabledBackColor(editbox, disabledBackColor);
-				setDisabledForeColor(editbox, disabledForeColor);
+				propSetBackColor(editbox, whiteColor);
+				propSetForeColor(editbox, blackColor);
+				propSetStyle(editbox, _STYLE_3D);
+				propSetAlignment(editbox, _ALIGNMENT_LEFT);
+				propSetBackStyle(editbox, _BACK_STYLE_OPAQUE);
+				propSetBorderStyle(editbox, _BORDER_STYLE_NONE);
+				propSetBorderColor(editbox, blackColor);
+				propSetSelectedBackColor(editbox, selectedBackColor);
+				propSetSelectedBackColor(editbox, selectedForeColor);
+				propSetDisabledBackColor(editbox, disabledBackColor);
+				propSetDisabledForeColor(editbox, disabledForeColor);
 
 				iSEM_deleteChain(&editbox->p.sem, true);
 				editbox->p.sem = iSEM_allocate(false);
@@ -659,8 +719,8 @@
 			//////////
 			// Set the default values
 			//////
-				setStyle(image, _IMAGE_STYLE_OPAQUE);
-				setPictureBmp(image, bmpNoImage);
+				propSetStyle(image, _IMAGE_STYLE_OPAQUE);
+				propSetPictureBmp(image, bmpNoImage);
 
 
 			//////////
@@ -703,18 +763,18 @@
 			//////////
 			// Set the default values
 			//////
-				setValue_s32(checkbox, 0);
+				propSetValue_s32(checkbox, 0);
 
-				setBackColor(checkbox, whiteColor);
-				setForeColor(checkbox, blackColor);
-				setAlignment(checkbox, _ALIGNMENT_LEFT);
-				setStyle(checkbox, _STYLE_3D);
-				setCaption(checkbox, cgcName_checkbox);
-				setBackStyle(checkbox, _BACK_STYLE_TRANSPARENT);
-				setBorderStyle(checkbox, _BORDER_STYLE_NONE);
-				setBorderColor(checkbox, blackColor);
-				setDisabledBackColor(checkbox, disabledBackColor);
-				setDisabledForeColor(checkbox, disabledForeColor);
+				propSetBackColor(checkbox, whiteColor);
+				propSetForeColor(checkbox, blackColor);
+				propSetAlignment(checkbox, _ALIGNMENT_LEFT);
+				propSetStyle(checkbox, _STYLE_3D);
+				propSetCaption(checkbox, cgcName_checkbox);
+				propSetBackStyle(checkbox, _BACK_STYLE_TRANSPARENT);
+				propSetBorderStyle(checkbox, _BORDER_STYLE_NONE);
+				propSetBorderColor(checkbox, blackColor);
+				propSetDisabledBackColor(checkbox, disabledBackColor);
+				propSetDisabledForeColor(checkbox, disabledForeColor);
 
 
 			//////////
@@ -732,7 +792,7 @@
 				while (objChild)
 				{
 					// See which object this is
-					if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_checkboxImage))
+					if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_checkboxImage))
 					{
 						// Adjust the size
 						iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, 17, objChild->rc.bottom);
@@ -766,25 +826,25 @@
 
 						// Mark it for re-rendering
 						objChild->isDirtyRender	= true;
-						setVisible(objChild, _LOGICAL_TRUE);
+						propSetVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_checkboxLabel)) {
+					} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName(objChild, cgcName_checkboxLabel)) {
 						// Adjust the size
 						iObj_setSize(objChild, 17, 0, 60, objChild->rc.bottom);
 
 						// Checkbox label
-						setCaption(objChild, cgcName_checkbox);
-						setBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
+						propSetCaption(objChild, cgcName_checkbox);
+						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
 						iFont_delete(&objChild->p.font, true);
 						objChild->p.font = iFont_duplicate(checkbox->p.font);
 
 						// Mark it for re-rendering
 						objChild->isDirtyRender	= true;
-						setVisible(objChild, _LOGICAL_TRUE);
+						propSetVisible(objChild, _LOGICAL_TRUE);
 					}
 
 					// Move to next object
-					objChild = (SObject*)objChild->ll.next;
+					objChild = objChild->ll.nextObject;
 				}
 		}
 	}
@@ -817,12 +877,12 @@
 			//////////
 			// Set the default values
 			//////
-				setBackColor(option, whiteColor);
-				setForeColor(option, blackColor);
-				setAlignment(option, _ALIGNMENT_LEFT);
-				setStyle(option, _STYLE_3D);
-				setCount(option, 0);
-				setMultiSelect(option, _LOGICAL_FALSE);
+				propSetBackColor(option, whiteColor);
+				propSetForeColor(option, blackColor);
+				propSetAlignment(option, _ALIGNMENT_LEFT);
+				propSetStyle(option, _STYLE_3D);
+				propSetCount(option, 0);
+				propSetMultiSelect(option, _LOGICAL_FALSE);
 
 
 			//////////
@@ -863,21 +923,21 @@
 			//////////
 			// Set the default properties
 			//////
-				setBackColor(radio, whiteColor);
-				setForeColor(radio, blackColor);
-				setAlignment(radio, _ALIGNMENT_LEFT);
-				setStyle(radio, _STYLE_3D);
+				propSetBackColor(radio, whiteColor);
+				propSetForeColor(radio, blackColor);
+				propSetAlignment(radio, _ALIGNMENT_LEFT);
+				propSetStyle(radio, _STYLE_3D);
 
-				setValue_f64(radio, 1.0);
-				setValueMinimum(radio, 1.0);
-				setValueMaximum(radio, 100.0);
-				setValueRoundTo(radio, 1.0f);
+				propSetValue_f64(radio, 1.0);
+				propSetValueMinimum(radio, 1.0);
+				propSetValueMaximum(radio, 100.0);
+				propSetValueRoundTo(radio, 1.0f);
 
-				setBackStyle(radio, _BACK_STYLE_OPAQUE);
-				setBorderStyle(radio, _BORDER_STYLE_NONE);
-				setBorderColor(radio, blackColor);
-				setDisabledBackColor(radio, disabledBackColor);
-				setDisabledForeColor(radio, disabledForeColor);
+				propSetBackStyle(radio, _BACK_STYLE_OPAQUE);
+				propSetBorderStyle(radio, _BORDER_STYLE_NONE);
+				propSetBorderColor(radio, blackColor);
+				propSetDisabledBackColor(radio, disabledBackColor);
+				propSetDisabledForeColor(radio, disabledForeColor);
 
 
 			//////////

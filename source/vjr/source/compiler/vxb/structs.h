@@ -216,7 +216,7 @@ struct SCompileNote;
 //
 // This structure is used for two operations in VJr.  One is for parsing source code into
 // sub-instructions, the second is for generating actual sub-instruction lists for faster
-// execution by the processing engine while still retaining edit-and-continue abilities.
+// execution by the processing engine while still retaining LiveCode abilities.
 //
 //                      ______
 //                     |parent|

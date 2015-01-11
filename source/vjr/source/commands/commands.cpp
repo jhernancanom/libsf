@@ -5572,7 +5572,7 @@ debug_break;
 
 				// Go ahead and point to what's after it
 				if (compIn)
-					compIn = (SComp*)compIn->ll.next;
+					compIn = compIn->ll.nextComp;
 
 			
 			//////////
@@ -5586,7 +5586,7 @@ debug_break;
 
 				// Go ahead and point to what's after it
 				if (compAlias)
-					compAlias = (SComp*)compAlias->ll.next;
+					compAlias = compAlias->ll.nextComp;
 
 
 			//////////
@@ -5611,7 +5611,7 @@ debug_break;
 				}
 
 				// Go ahead and point to what's after it
-				compUse = (SComp*)compUse->ll.next;
+				compUse = compUse->ll.nextComp;
 
 
 		//////////
@@ -5648,7 +5648,7 @@ debug_break;
 						iError_reportByNumber(_ERROR_MISSING_PARAMETER, comp2);
 						goto clean_exit;
 
-					} else if (!(comp4 = (SComp*)comp3->ll.next)) {
+					} else if (!(comp4 = iComps_getNth(comp3, 1))) {
 						// Syntax error
 						iError_reportByNumber(_ERROR_SYNTAX, comp3);
 						goto clean_exit;
@@ -5706,7 +5706,7 @@ debug_break;
 
 					} else {
 						// Unrecognized syntax
-						iError_reportByNumber(_ERROR_SYNTAX, (SComp*)compIn->ll.next);
+						iError_reportByNumber(_ERROR_SYNTAX, compIn->ll.nextComp);
 						goto clean_exit;
 					}
 
@@ -5796,7 +5796,7 @@ debug_break;
 			if (compAlias)
 			{
 				// They've specified an alias
-				varAliasName	= iEngine_get_variableName_fromComponent((SComp*)compAlias->ll.next, &llManufacturedTableName);
+				varAliasName	= iEngine_get_variableName_fromComponent(compAlias->ll.nextComp, &llManufacturedTableName);
 				lnWorkAreaAlias	= iDbf_get_workArea_byAlias(varAliasName, null);
 				if (lnWorkAreaAlias > 0)
 				{

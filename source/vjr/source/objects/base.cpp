@@ -338,11 +338,11 @@
 				if (tlDeleteSiblings && obj->ll.next)
 				{
 					// Iterate by looking ahead to the next entry, so we update the chain
-					objSib = (SObject*)obj->ll.next;
+					objSib = obj->ll.nextObject;
 					while (objSib)
 					{
 						// Grab the next sibling
-						objSibNext = (SObject*)objSib->ll.next;
+						objSibNext = objSib->ll.nextObject;
 
 						// Delete this sibling
 						iObj_delete(&objSib, true, true, false);
@@ -488,14 +488,14 @@
 		if (tlClearSiblings && obj->ll.next)
 		{
 			// Begin at the next sibling
-			objSib = (SObject*)obj->ll.next;
+			objSib = obj->ll.nextObject;
 			while (objSib)
 			{
 				// Clear this sibling
 				iObj_clearFocus(win, objSib, true, false);
 
 				// Move to the next sibling
-				objSib = (SObject*)objSib->ll.next;
+				objSib = objSib->ll.nextObject;
 			}
 		}
 	}
@@ -623,7 +623,7 @@
 				if (tlProcessSiblings)
 				{
 					// Begin at the first sibling
-					objSib = (SObject*)objThis->ll.next;
+					objSib = objThis->ll.nextObject;
 					while (objSib)
 					{
 						// Process this sibling
@@ -631,7 +631,7 @@
 							return(true);
 
 						// Move to the next sibling
-						objSib = (SObject*)objSib->ll.next;
+						objSib = objSib->ll.nextObject;
 					}
 				}
 			}
@@ -834,14 +834,14 @@
 				if (tlProcessSiblings)
 				{
 					// Begin at the first sibling
-					objSib = (SObject*)obj->ll.next;
+					objSib = obj->ll.nextObject;
 					while (objSib)
 					{
 						// Process this sibling
 						iObj_setFocusHighlights(win, objSib, x, y, true, false);
 
 						// Move to the next sibling
-						objSib = (SObject*)objSib->ll.next;
+						objSib = objSib->ll.nextObject;
 					}
 				}
 		}
@@ -881,14 +881,14 @@
 			if (tlProcessSiblings)
 			{
 				// Iterate through every sibling and process it, but don't process its siblings
-				objSib = (SObject*)obj->ll.next;
+				objSib = obj->ll.nextObject;
 				while (objSib)
 				{
 					// Process this sibling
 					iObj_findFocusControls(objSib, objFocusControls, false);
 
 					// Move to next sibling
-					objSib = (SObject*)objSib->ll.next;
+					objSib = objSib->ll.nextObject;
 				}
 			}
 	}
@@ -925,7 +925,7 @@
 		// Attempt the focus
 		logfunc(__FUNCTION__);
 		if (obj->ll.next)
-			return(iObj_setFocus(win, (SObject*)obj->ll.next, true));
+			return(iObj_setFocus(win, obj->ll.nextObject, true));
 
 		// Nothing after
 		return(false);
@@ -978,7 +978,7 @@
 			if (tlCheckSiblings && obj->ll.next)
 			{
 				// Skip to the sibling
-				objSib = (SObject*)obj->ll.next;
+				objSib = obj->ll.nextObject;
 				while (objSib)
 				{
 					// See if this one has focus
@@ -986,7 +986,7 @@
 						return(objFocus);
 
 					// Move to next sibling
-					objSib = (SObject*)objSib->ll.next;
+					objSib = objSib->ll.nextObject;
 				}
 			}
 
@@ -1056,14 +1056,14 @@
 				if (tlProcessSiblings && obj->ll.next)
 				{
 					// Grab the first sibling
-					objSib = (SObject*)obj->ll.next;
+					objSib = obj->ll.nextObject;
 					while (objSib)
 					{
 						// Process this sibling
 						iObj_setDirtyRender_descent(objSib, true, false);
 
 						// Move to next sibling
-						objSib = (SObject*)objSib->ll.next;
+						objSib = objSib->ll.nextObject;
 					}
 				}
 		}
@@ -1126,14 +1126,14 @@
 				if (tlProcessSiblings && obj->ll.next)
 				{
 					// Grab the first sibling
-					objSib = (SObject*)obj->ll.next;
+					objSib = obj->ll.nextObject;
 					while (objSib)
 					{
 						// Process this sibling
 						iObj_setDirtyPublish_descent(objSib, true, false);
 
 						// Move to next sibling
-						objSib = (SObject*)objSib->ll.next;
+						objSib = objSib->ll.nextObject;
 					}
 				}
 		}
@@ -1295,7 +1295,7 @@
 			if (tlCheckSiblings && obj->ll.next)
 			{
 				// Skip to the sibling
-				objSib = (SObject*)obj->ll.next;
+				objSib = obj->ll.nextObject;
 				while (objSib)
 				{
 					// See if this one needs rendering
@@ -1303,7 +1303,7 @@
 						return(true);
 
 					// Move to next sibling
-					objSib = (SObject*)objSib->ll.next;
+					objSib = objSib->ll.nextObject;
 				}
 			}
 
@@ -1349,14 +1349,14 @@
 		//////
 			if (tlRenderSiblings && obj->ll.next)
 			{
-				objSib = (SObject*)obj->ll.next;
+				objSib = obj->ll.nextObject;
 				while (objSib)
 				{
 					// Render this sibling
 					lnPixelsRendered += iObj_renderChildrenAndSiblings(objSib, true, false, tlForceRender);
 
 					// Move to next sibling
-					objSib = (SObject*)objSib->ll.next;
+					objSib = objSib->ll.nextObject;
 				}
 			}
 
@@ -1433,16 +1433,19 @@
 			//////////
 			// Clip the publication to the target rectangle
 			//////
-				lrc.right	= min(rc->right, lrc.right);
-				lrc.bottom	= min(rc->bottom, lrc.bottom);
+				if (!obj->parent || obj->parent->objType != _OBJ_TYPE_FORM)
+				{
+					lrc.right	= min(rc->right, lrc.right);
+					lrc.bottom	= min(rc->bottom, lrc.bottom);
+				}
 
 
 			//////////
 			// Publish any children
 			//////
-				llIsVisible = isVisible(obj);
-				llIsEnabled = isEnabled(obj);
-				lnBackStyle	= backStyle(obj);
+				llIsVisible = propIsVisible(obj);
+				llIsEnabled = propIsEnabled(obj);
+				lnBackStyle	= propBackStyle(obj);
 				if (llPublishChildren && llIsVisible && tlPublishChildren && obj->firstChild)
 					lnPixelsRendered += iObj_publish(obj->firstChild, &lrcChild, obj->bmp, true, true, tlForcePublish, tnLevel + 1);
 
@@ -1573,14 +1576,14 @@
 				if (tlPublishSiblings)
 				{
 					// Begin at the next sibling
-					objSib = (SObject*)obj->ll.next;
+					objSib = obj->ll.nextObject;
 					while (objSib)
 					{
 						// Publish this sibling
 						lnPixelsRendered += iObj_publish(objSib, rc, bmpDst, true, false, tlForcePublish, tnLevel);
 
 						// Move to next sibling
-						objSib = (SObject*)objSib->ll.next;
+						objSib = objSib->ll.nextObject;
 					}
 				}
 		}
@@ -1625,7 +1628,7 @@
 			if (tlCheckSiblings && obj->ll.next)
 			{
 				// Skip to the sibling
-				objSib = (SObject*)obj->ll.next;
+				objSib = obj->ll.nextObject;
 				while (objSib)
 				{
 					// See if this one needs to be published
@@ -1633,7 +1636,7 @@
 						return(true);
 
 					// Move to next sibling
-					objSib = (SObject*)objSib->ll.next;
+					objSib = objSib->ll.nextObject;
 				}
 			}
 
@@ -1778,7 +1781,7 @@
 					iObj_appendObjToParent(objDst, objChild);
 
 				// Move to next
-				objChild = (SObject*)objChild->ll.next;
+				objChild = objChild->ll.nextObject;
 			}
 		}
 	}
@@ -1793,7 +1796,8 @@
 //////
 	void iObj_setSize(SObject* obj, s32 tnLeft, s32 tnTop, s32 tnWidth, s32 tnHeight)
 	{
-		s32			lnAlignment;
+		s32			lnAlignment, lnBorderStyle;
+		bool		llTitleBar;
 		SObject*	objChild;
 		SBitmap*	bmp;
 		RECT		lrc;
@@ -1820,7 +1824,56 @@
 				break;
 
 			case _OBJ_TYPE_FORM:
-				SetRect(&obj->rcClient, 8, bmpArrowUl->bi.biHeight + 2, tnWidth - bmpArrowUl->bi.biHeight - 2, tnHeight - bmpArrowUl->bi.biHeight - 1);
+				// The client portion of a form is inset so as to allow for the border
+				llTitleBar		= propTitleBar(obj);
+				lnBorderStyle	= propBorderStyle(obj);
+				if (llTitleBar)
+				{
+					// It has a title bar
+					SetRect(&obj->rcClient,
+								8,
+								bmpArrowUl->bi.biHeight + 2,
+								tnWidth - bmpArrowUl->bi.biHeight - 2,
+								tnHeight - bmpArrowUl->bi.biHeight - 1);
+
+				} else {
+					// No title bar
+					switch (lnBorderStyle)
+					{
+						case _BORDER_STYLE_NONE:
+							SetRect(&obj->rcClient,
+										0,
+										0,
+										tnWidth,
+										tnHeight);
+							break;
+
+						case _BORDER_STYLE_OUTLINE:
+							SetRect(&obj->rcClient,
+										2,
+										2,
+										tnWidth - 2,
+										tnHeight - 2);
+							break;
+
+						case _BORDER_STYLE_FIXED:
+							SetRect(&obj->rcClient,
+										8,
+										8,
+										tnWidth - 8,
+										tnHeight - 8);
+							break;
+
+						case _BORDER_STYLE_SIZABLE:
+						default:
+							SetRect(&obj->rcClient,
+										8,
+										bmpArrowUl->bi.biHeight + 2,
+										tnWidth - bmpArrowUl->bi.biHeight - 2,
+										tnHeight - bmpArrowUl->bi.biHeight - 1);
+					}
+				}
+
 
 				//////////
 				// Default child settings:
@@ -1830,7 +1883,7 @@
 					while (objChild)
 					{
 						// See which object this is
-						if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_icon))
+						if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_icon))
 						{
 							logfunc("form icon");
 							// Form icon
@@ -1843,7 +1896,7 @@
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_caption)) {
+						} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName(objChild, cgcName_caption)) {
 							// Caption
 							logfunc("form caption");
 							SetRect(&objChild->rc,
@@ -1855,7 +1908,7 @@
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconMove)) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconMove)) {
 							// Move icon
 							logfunc("form move icon");
 							SetRect(&objChild->rc,
@@ -1867,7 +1920,7 @@
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconMinimize)) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconMinimize)) {
 							// Minimize icon
 							logfunc("form minimize icon");
 							SetRect(&objChild->rc,
@@ -1879,7 +1932,7 @@
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconMaximize)) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconMaximize)) {
 							// Maximize icon
 							logfunc("form maximize icon");
 							SetRect(&objChild->rc,
@@ -1891,7 +1944,7 @@
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_iconClose)) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconClose)) {
 							// Close icon
 							logfunc("form close icon");
 							SetRect(&objChild->rc,
@@ -1902,15 +1955,63 @@
 
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
+
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconScaleUl)) {
+							// Upper left arrow
+							logfunc("form ul scale");
+							SetRect(&objChild->rc,
+											1 - obj->rcClient.left,
+											1 - obj->rcClient.top,
+											1 + bmpArrowUl->bi.biWidth - obj->rcClient.left,
+											1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
+
+							// Update the size
+							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
+
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconScaleUr)) {
+							// Upper right arrow
+							logfunc("form ur scale");
+							SetRect(&objChild->rc,
+											tnWidth - bmpArrowUr->bi.biWidth - obj->rcClient.left - 1,
+											1 - obj->rcClient.top,
+											tnWidth - obj->rcClient.left - 1,
+											1 - obj->rcClient.top + bmpArrowUr->bi.biHeight);
+
+							// Update the size
+							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
+
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconScaleLr)) {
+							// Lower right arrow
+							logfunc("form lr scale");
+							SetRect(&objChild->rc,
+											tnWidth  - bmpArrowLr->bi.biWidth  - obj->rcClient.left - 1,
+											tnHeight - bmpArrowLr->bi.biHeight - obj->rcClient.top - 1,
+											tnWidth  - obj->rcClient.left - 1,
+											tnHeight - obj->rcClient.top - 1);
+
+							// Update the size
+							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
+
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconScaleLl)) {
+							// Lower left arrow
+							logfunc("form ll scale");
+							SetRect(&objChild->rc,
+											1 - obj->rcClient.left,
+											tnHeight - bmpArrowLl->bi.biHeight - obj->rcClient.top - 1,
+											1 + bmpArrowUl->bi.biWidth - obj->rcClient.left,
+											tnHeight - obj->rcClient.top - 1);
+
+							// Update the size
+							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 						}
 
 						// Move to next object
-						objChild = (SObject*)objChild->ll.next;
+						objChild = objChild->ll.nextObject;
 					}
 				break;
 
 			case _OBJ_TYPE_SUBFORM:
-				if (borderStyle(obj) != _BORDER_STYLE_NONE)		SetRect(&obj->rcClient, 1, bmpArrowUl->bi.biHeight + 1, tnWidth - 8 - 1, tnHeight - 1);
+				if (propBorderStyle(obj) != _BORDER_STYLE_NONE)		SetRect(&obj->rcClient, 1, bmpArrowUl->bi.biHeight + 1, tnWidth - 8 - 1, tnHeight - 1);
 				else											SetRect(&obj->rcClient, 0, bmpArrowUl->bi.biHeight, tnWidth - 8, tnHeight);
 
 				//////////
@@ -1921,7 +2022,7 @@
 					while (objChild)
 					{
 						// See which object this is
-						if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_icon))
+						if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_icon))
 						{
 							// Subform icon
 							logfunc("subform icon");
@@ -1934,7 +2035,7 @@
 							// Update the size
 							iObj_setSize(objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_caption)) {
+						} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName(objChild, cgcName_caption)) {
 							// Caption
 							logfunc("subform caption");
 							SetRect(&objChild->rc,
@@ -1951,7 +2052,7 @@
 						}
 
 						// Move to next object
-						objChild = (SObject*)objChild->ll.next;
+						objChild = objChild->ll.nextObject;
 					}
 				break;
 
@@ -1972,12 +2073,12 @@
 				// [check][label]
 				//////
 					SetRect(&lrc, 0, 0, tnHeight, tnHeight);
-					lnAlignment	= alignment(obj);
+					lnAlignment	= propAlignment(obj);
 					objChild	= obj->firstChild;
 					while (objChild)
 					{
 						// See which object this is
-						if (objChild->objType == _OBJ_TYPE_IMAGE && isName(objChild, cgcName_checkboxImage))
+						if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_checkboxImage))
 						{
 							// Adjust the size and position
 							logfunc("checkbox image");
@@ -2023,10 +2124,10 @@
 							// Mark it for re-render
 							objChild->isDirtyRender = true;
 
-						} else if (objChild->objType == _OBJ_TYPE_LABEL && isName(objChild, cgcName_checkboxLabel)) {
+						} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName(objChild, cgcName_checkboxLabel)) {
 							// Adjust the size
 							logfunc("checkbox label");
-							switch (alignment(obj))
+							switch (propAlignment(obj))
 							{
 								default:
 								case _ALIGNMENT_LEFT:
@@ -2043,7 +2144,7 @@
 						}
 
 						// Move to next object
-						objChild = (SObject*)objChild->ll.next;
+						objChild = objChild->ll.nextObject;
 					}
 				break;
 

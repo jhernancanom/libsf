@@ -679,7 +679,7 @@
 		//////////
 		// Make sure there is render data
 		//////
-			if (!obj || !isVisible(obj) || !isEnabled(obj))
+			if (!obj || !propIsVisible(obj) || !propIsEnabled(obj))
 				return;
 
 		
@@ -766,7 +766,7 @@
 		//////////
 		// Make sure there is render data
 		//////
-			if (!obj || !isVisible(obj) || !isEnabled(obj))
+			if (!obj || !propIsVisible(obj) || !propIsEnabled(obj))
 				return;
 
 		
@@ -1278,7 +1278,7 @@
 		//////////
 		// Make sure there is render data
 		//////
-			if (!obj || !isVisible(obj) || !isEnabled(obj))
+			if (!obj || !propIsVisible(obj) || !propIsEnabled(obj))
 				return;
 
 

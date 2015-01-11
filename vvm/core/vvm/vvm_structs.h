@@ -95,7 +95,7 @@ struct	SUpSnip;
 //		
 //		(1) Calls to loaded BXML files (loaded at runtime)
 //		(2) Calls to a loaded DLL
-//		(3) Calls to changed VVM snippets or dynamic snippets (edit-and-continue)
+//		(3) Calls to changed VVM snippets or dynamic snippets (LiveCode)
 //
 //////
 	struct SDynSnipDll;
@@ -146,7 +146,7 @@ struct	SUpSnip;
 		SStartEnd		dsnips;					// DL functions known to this dsnip				(SDSnipDllFuncs)
 	};
 
-	// Edit-and-continue dynamic snippets
+	// LiveCode dynamic snippets
 	struct SDynSnipVvm
 	{
 		SLL				ll;						// 2-way link list
@@ -163,7 +163,7 @@ struct	SUpSnip;
 
 		// Used for quick reference by machine code
 		u64				funcId;					// The previous snippet's unique id
-		SSnip*			snip;					// The snippet this edit-and-continue will now execute
+		SSnip*			snip;					// The snippet this LiveCode will now execute
 	};
 
 	// Dynamic snippets are one of three forms (see VVM_DSNIP_* in common_vvm.h)
@@ -178,7 +178,7 @@ struct	SUpSnip;
 		union {
 			SStartEnd		dsnipBxml;			// Pointer to data for the DSNIP_Bxml info		(SDynSnipBxml)
 			SStartEnd		dsnipDll;			// Pointer to data for the DSNIP_DLL info		(SDynSnipDll)
-			SDynSnipVvm*	dsnipVvm;			// Pointer to data for edit-and-continue dynamic snippets
+			SDynSnipVvm*	dsnipVvm;			// Pointer to data for LiveCode dynamic snippets
 		};
 	};
 
