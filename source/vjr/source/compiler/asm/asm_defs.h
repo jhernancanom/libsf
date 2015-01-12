@@ -1,16 +1,16 @@
 //////////
 //
-// /libsf/source/vjr/source/sem_line.h
+// /libsf/source/vjr/source/compiler/asm/asm_defs.h
 //
 //////
-// Version 0.55
+// Version 0.54
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
-//     Jul.06.2014
+//     Nov.02.2014
 //////
 // Change log:
-//     Jul.06.2014 - Initial creation
+//     Nov.02.2014 - Initial creation
 //////
 //
 // This document is released as Liberty Software under a Repeat License, as governed
@@ -67,17 +67,3 @@
 
 
 
-//////////
-// Forward declarations
-//////
-	void					iEditChain_free							(SLine** root, bool tlDeleteSelf);
-	void					iEditChain_ensureLineLength				(SLine* em, s32 newLineLength);
-
-	// For editing
-	bool					iEditChain_characterInsert				(SEM* sem, u8 asciiChar);
-	bool					iEditChain_characterOverwrite			(SEM* sem, u8 asciiChar);
-	bool					iEditChain_characterDelete				(SEM* sem);
-	SBreakpoint*			iEditChain_toggleBreakpoint				(SEM* sem);
-
-	// For reporting on a line's state
-	bool					iEditChain_hasChanged					(SLine* ec);

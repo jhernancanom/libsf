@@ -470,17 +470,10 @@ struct SObjPropertyMap;
 	s32						iKeyboard_processMessage				(SWindow* win, UINT m, WPARAM w, LPARAM l);
 
 	// EditManager
-	// Moved to edit_chain_manager.cpp
+	// Moved to sem.cpp and renamed sem (struct edit manager, also a reference to Sammy Edward Mitchell from the SEMware editor, which guided me from 1990s through until today Jan.11.2015 as it is still the best editor I've ever used
 
 	// Edit Chain
-	// Moved to edit_chain.cpp
+	// Moved to sem_line.cpp and renamed line
 
 	// Engine
 	// Moved to engine.cpp
-
-	// Translate
-	void*					iTranslate_p1_to_p2						(SBuilder* root, void* ptr);
-	void*					iTranslate_p2_to_p1						(SBuilder* root, void* ptr);
-
-	// ExtraInfo
-	void					iExtraInfo_free							(SEM* sem, SLine* ec, SExtraInfo** root, bool tlDeleteSelf);

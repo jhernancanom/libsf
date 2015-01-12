@@ -67,24 +67,6 @@
 
 
 
-struct SExtraInfo
-{
-	SExtraInfo* next;													// Next extra info item in chain (if any)
-	u32			use_identifier;											// A registered identifier with the system for this extra info block
-	u32			type;													// Application defined type, identifies what's stored in this.info.data
-	SDatum		info;													// The extra info
-
-	// Functions to use to access this extra info block
-	void		(*onAccess)					(SEM* chainMgr, SLine* chain, SExtraInfo* extra_info);	// When the parent chain is accessed
-	void		(*onArrival)				(SEM* chainMgr, SLine* chain, SExtraInfo* extra_info);	// When the target implementation is sitting on the chain record
-	void		(*onUpdate)					(SEM* chainMgr, SLine* chain, SExtraInfo* extra_info);	// When the parent chain is updated
-
-	// Functions called before freeing, and after allocating, the this.info datum
-	SExtraInfo*	(*extra_info_allocate)		(SEM* chainMgr, SLine* chain, SExtraInfo* extra_info);	// Called to allocate this.info per needs
-	SExtraInfo*	(*extra_info_duplicate)		(SEM* chainMgr, SLine* chain, SExtraInfo* extra_info);	// Called when a chain is duplicated, determines what if any of the source's data needs to be duplicated as well
-	SExtraInfo*	(*extra_info_free)			(SEM* chainMgr, SLine* chain, SExtraInfo* extra_info);	// Called to free any data in this.info
-};
-
 struct SDateTime
 {
 	u32		julian;														// Julian day number

@@ -46,6 +46,12 @@
     <Filter Include="objects">
       <UniqueIdentifier>{19fb788a-5076-4cf9-9b1f-dd5439a6b957}</UniqueIdentifier>
     </Filter>
+    <Filter Include="compiler\rdc">
+      <UniqueIdentifier>{40d552a6-9f8e-4f3d-a67d-aab5d5fc4b7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="compiler\asm">
+      <UniqueIdentifier>{b6632999-217b-4158-b23e-266666a11af6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="small.ico">
@@ -53,6 +59,9 @@
     </None>
     <None Include="vjr.ico">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\source\compiler\rdc\rdc_specs.txt">
+      <Filter>compiler\rdc</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -69,12 +78,6 @@
     </ClCompile>
     <ClCompile Include="..\..\source\engine.cpp">
       <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\sem.cpp">
-      <Filter>sem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\sem_line.cpp">
-      <Filter>sem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\dbf\cdx.cpp">
       <Filter>dbf\cdx</Filter>
@@ -118,6 +121,21 @@
     <ClCompile Include="..\..\source\objects\reset.cpp">
       <Filter>objects</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\compiler\asm\asm_compiler.cpp">
+      <Filter>compiler\asm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\compiler\rdc\rdc_compiler.cpp">
+      <Filter>compiler\rdc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\sem\sem.cpp">
+      <Filter>sem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\sem\sem_extra_info.cpp">
+      <Filter>sem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\sem\sem_line.cpp">
+      <Filter>sem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\utils\common\cpp\common_types.h">
@@ -159,12 +177,6 @@
     <ClInclude Include="..\..\source\engine.h">
       <Filter>engine</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\sem.h">
-      <Filter>sem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\sem_line.h">
-      <Filter>sem</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\dbf\cdx_structs.h">
       <Filter>dbf\cdx</Filter>
     </ClInclude>
@@ -192,23 +204,56 @@
     <ClInclude Include="..\..\source\commands\command_sourcelight.h">
       <Filter>commands</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\compiler\vxb\const.h">
-      <Filter>compiler\vxb</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\compiler\vxb\defs.h">
-      <Filter>compiler\vxb</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\compiler\vxb\globals.h">
-      <Filter>compiler\vxb</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\compiler\vxb\structs.h">
-      <Filter>compiler\vxb</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\dbf\cdx_const.h">
       <Filter>dbf\cdx</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\objects\accessors.h">
       <Filter>objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\compiler\vxb\vxb_structs.h">
+      <Filter>compiler\vxb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\compiler\vxb\vxb_globals.h">
+      <Filter>compiler\vxb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\compiler\vxb\vxb_defs.h">
+      <Filter>compiler\vxb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\compiler\vxb\vxb_const.h">
+      <Filter>compiler\vxb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\compiler\asm\asm_const.h">
+      <Filter>compiler\asm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\compiler\asm\asm_defs.h">
+      <Filter>compiler\asm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\compiler\asm\asm_globals.h">
+      <Filter>compiler\asm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\compiler\asm\asm_structs.h">
+      <Filter>compiler\asm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\compiler\rdc\rdc_const.h">
+      <Filter>compiler\rdc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\compiler\rdc\rdc_defs.h">
+      <Filter>compiler\rdc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\compiler\rdc\rdc_globals.h">
+      <Filter>compiler\rdc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\compiler\rdc\rdc_structs.h">
+      <Filter>compiler\rdc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\sem\sem.h">
+      <Filter>sem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\sem\sem_extra_info.h">
+      <Filter>sem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\sem\sem_line.h">
+      <Filter>sem</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

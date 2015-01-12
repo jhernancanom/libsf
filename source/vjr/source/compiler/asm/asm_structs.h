@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/source/compiler/asm/defs.h
+// /libsf/source/vjr/source/compiler/asm/asm_structs.h
 //
 //////
 // Version 0.54

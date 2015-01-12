@@ -168,6 +168,7 @@ copy $(OutputPath)$(ProjectName).exe \libsf_offline\source\vjr\bin\64-bit\vjr_ms
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="..\..\source\compiler\rdc\rdc_specs.txt" />
     <None Include="small.ico" />
     <None Include="vjr.ico" />
   </ItemGroup>
@@ -176,6 +177,18 @@ copy $(OutputPath)$(ProjectName).exe \libsf_offline\source\vjr\bin\64-bit\vjr_ms
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\source\commands\commands.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\source\compiler\asm\asm_compiler.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\source\compiler\rdc\rdc_compiler.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -265,13 +278,19 @@ copy $(OutputPath)$(ProjectName).exe \libsf_offline\source\vjr\bin\64-bit\vjr_ms
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\source\sem.cpp">
+    <ClCompile Include="..\..\source\sem\sem.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\source\sem_line.cpp">
+    <ClCompile Include="..\..\source\sem\sem_extra_info.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\source\sem\sem_line.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -289,10 +308,18 @@ copy $(OutputPath)$(ProjectName).exe \libsf_offline\source\vjr\bin\64-bit\vjr_ms
     <ClInclude Include="..\..\..\..\utils\common\cpp\common_types.h" />
     <ClInclude Include="..\..\source\commands\command_defs.h" />
     <ClInclude Include="..\..\source\commands\command_sourcelight.h" />
-    <ClInclude Include="..\..\source\compiler\vxb\const.h" />
-    <ClInclude Include="..\..\source\compiler\vxb\defs.h" />
-    <ClInclude Include="..\..\source\compiler\vxb\globals.h" />
-    <ClInclude Include="..\..\source\compiler\vxb\structs.h" />
+    <ClInclude Include="..\..\source\compiler\asm\asm_const.h" />
+    <ClInclude Include="..\..\source\compiler\asm\asm_defs.h" />
+    <ClInclude Include="..\..\source\compiler\asm\asm_globals.h" />
+    <ClInclude Include="..\..\source\compiler\asm\asm_structs.h" />
+    <ClInclude Include="..\..\source\compiler\rdc\rdc_const.h" />
+    <ClInclude Include="..\..\source\compiler\rdc\rdc_defs.h" />
+    <ClInclude Include="..\..\source\compiler\rdc\rdc_globals.h" />
+    <ClInclude Include="..\..\source\compiler\rdc\rdc_structs.h" />
+    <ClInclude Include="..\..\source\compiler\vxb\vxb_const.h" />
+    <ClInclude Include="..\..\source\compiler\vxb\vxb_defs.h" />
+    <ClInclude Include="..\..\source\compiler\vxb\vxb_globals.h" />
+    <ClInclude Include="..\..\source\compiler\vxb\vxb_structs.h" />
     <ClInclude Include="..\..\source\dbf\cdx_const.h" />
     <ClInclude Include="..\..\source\dbf\cdx_defs.h" />
     <ClInclude Include="..\..\source\dbf\cdx_structs.h" />
@@ -306,8 +333,9 @@ copy $(OutputPath)$(ProjectName).exe \libsf_offline\source\vjr\bin\64-bit\vjr_ms
     <ClInclude Include="..\..\source\grace.h" />
     <ClInclude Include="..\..\source\objects\accessors.h" />
     <ClInclude Include="..\..\source\resource.h" />
-    <ClInclude Include="..\..\source\sem.h" />
-    <ClInclude Include="..\..\source\sem_line.h" />
+    <ClInclude Include="..\..\source\sem\sem.h" />
+    <ClInclude Include="..\..\source\sem\sem_extra_info.h" />
+    <ClInclude Include="..\..\source\sem\sem_line.h" />
     <ClInclude Include="..\..\source\targetver.h" />
     <ClInclude Include="..\..\source\vjr.h" />
     <ClInclude Include="..\..\source\vjr_compile_time_settings.h" />

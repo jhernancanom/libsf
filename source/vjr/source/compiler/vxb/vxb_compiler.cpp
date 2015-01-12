@@ -98,6 +98,7 @@
 
 			} else {
 				// Ours
+				memset(&vxbLocal, 0, sizeof(vxbLocal));
 				vxb = &vxbLocal;
 			}
 
@@ -165,7 +166,8 @@
 			// Iterate through every source line, copying everything through to compilerInfo_LiveCode
 			for (line = vxb->codeBlock->firstLine; line; line = line->ll.nextLine)
 			{
-				// If this line has existing compilerInfo_LiveCode
+				// If this line has existing compilerInfo_LiveCode, free it
+				iiCompile_LiveCode_free(line->compilerInfo_LiveCode);
 			}
 		}
 	}
@@ -516,6 +518,58 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 
 //////////
 //
+// Release the compiler info contained here
+//
+//////
+	void iiCompile_LiveCode_free(SCompiler* compiler)
+	{
+		//////////
+		// Free this copy of the original source code line if need be
+		/////
+			if (compiler->sourceCode)
+			{
+				iDatum_delete(compiler->sourceCode, true);
+				compiler->sourceCode = NULL;
+			}
+
+
+		//////////
+		// Free the components and whitespaces
+		//////
+			iComps_deleteAll(compiler->firstComp);
+			iComps_deleteAll(compiler->firstWhitespace);
+
+
+		//////////
+		// Free the previous compute nodes
+		//////
+			if (compiler->firstNode)
+			{
+				// Release the array
+				free(compiler->firstNode);
+				compiler->nodeArrayCount = 0;
+			}
+
+
+		//////////
+		// Delete any errors, warnings, or notes
+		//////
+			iCompileNote_removeAll(&compiler->firstError);
+			iCompileNote_removeAll(&compiler->firstWarning);
+			iCompileNote_removeAll(&compiler->firstNote);
+
+
+		//////////
+		// Delete any extra info that's stored
+		//////
+			iExtraInfo_removeAll(NULL, NULL, &compiler->firstExtraInfo, true);
+	}
+
+
+
+
+//////////
+//
 // Translates components into a sequence of sub-instruction operations.
 //
 /////
@@ -755,6 +809,34 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // TODO:  Working here
 		return(NULL);
 	}
+;
+
+
+
+
+//////////
+//
+// 
+//
+//////
+	void iComps_deleteAll(SComp* comp)
+	{
+		SComp* compNext;
+
+
+		// Iterate while there's something to delete
+		while (comp)
+		{
+			// Grab the next comp
+			compNext = comp->ll.nextComp;
+
+			// Delete this one
+			iComps_delete(comp, true);
+
+			// Move to the next one
+			comp = compNext;
+		}
+	}
 
 
 
@@ -766,26 +848,11 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 //////
 	void iComps_deleteAll_byLine(SLine* line)
 	{
-		SComp*	comp;
-		SComp*	compNext;
-
-
 		// Make sure our environment is sane
 		if (line && line->compilerInfo)
 		{
 			// Delete all components
-			comp = line->compilerInfo->firstComp;
-			while (comp)
-			{
-				// Grab the next comp
-				compNext = comp->ll.nextComp;
-
-				// Delete this one
-				iComps_delete(comp, true);
-
-				// Move to the next one
-				comp = compNext;
-			}
+			iComps_deleteAll(line->compilerInfo->firstComp);
 
 			// Reset the pointer
 			line->compilerInfo->firstComp = NULL;

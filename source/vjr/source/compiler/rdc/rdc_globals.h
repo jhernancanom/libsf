@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/source/compiler/rdc/globals.h
+// /libsf/source/vjr/source/compiler/rdc/rdc_globals.h
 //
 //////
 // Version 0.54

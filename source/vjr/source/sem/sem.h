@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/source/sem.h
+// /libsf/source/vjr/source/sem/sem.h
 //
 //////
 // Version 0.55

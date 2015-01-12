@@ -1,16 +1,16 @@
 //////////
 //
-// /libsf/source/vjr/source/compiler/asm/const.h
+// /libsf/source/vjr/source/sem/sem_extra_info.h
 //
 //////
-// Version 0.54
-// Copyright (c) 2014 by Rick C. Hodgin
+// Version 0.55
+// Copyright (c) 2015 by Rick C. Hodgin
 //////
 // Last update:
-//     Nov.02.2014
+//     Jan.11.2014
 //////
 // Change log:
-//     Nov.02.2014 - Initial creation
+//     Jan.11.2014 - Initial creation
 //////
 //
 // This document is released as Liberty Software under a Repeat License, as governed
@@ -67,3 +67,63 @@
 
 
 
+//////////
+// Extra info contains information about a line of source code
+//////
+	struct SExtraInfo
+	{
+		SLL			ll;
+
+		u32			identifier;						// A registered identifier with the system for this extra info block
+		u32			identifier_type;				// Application defined type, identifies what's stored in this.info.data
+		SDatum		info;							// The extra info block stored for this entry
+
+
+		//////////
+		// Functions to called when the associated line is processed in some way
+		//////
+		union {
+			sptr	_onAccess;					// When the line is accessed
+			void	(*onAccess)					(SEM* sem, SLine* line, SExtraInfo* extra_info);
+		};
+
+		union {
+			sptr	_onArrival;					// When the target implementation is sitting on this line
+			void	(*onArrival)				(SEM* sem, SLine* line, SExtraInfo* extra_info);
+		};
+
+		union {
+			sptr	_onUpdate;					// When the line is updated
+			void	(*onUpdate)					(SEM* sem, SLine* line, SExtraInfo* extra_info);
+		};
+
+
+		//////////
+		// Function to call before freeing an entry
+		//////
+		union {
+			sptr		_freeInternal;			// Called to free any data in this.info
+			SExtraInfo*	(*freeInternal)			(SEM* sem, SLine* line, SExtraInfo* extra_info);
+		};
+	};
+
+
+
+
+//////////
+// Extra info callback codes for callbackCommon
+//////
+	const s32		_EXTRA_INFO_ON_ACCESS					= 1;
+	const s32		_EXTRA_INFO_ON_ARRIVAL					= 2;
+	const s32		_EXTRA_INFO_ON_UPDATE					= 3;
+
+
+//////////
+// ExtraInfo
+//////
+	SExtraInfo*		iExtraInfo_allocate						(SEM* sem, SLine* line, SExtraInfo** root);
+	void			iExtraInfo_removeAll					(SEM* sem, SLine* line, SExtraInfo** root, bool tlDeleteSelf);
+	void			iExtraInfo_access						(SEM* sem, SLine* line);
+	void			iExtraInfo_arrival						(SEM* sem, SLine* line);
+	void			iExtraInfo_update						(SEM* sem, SLine* line);
+	void			iiExtraInfo_callbackCommon				(SEM* sem, SLine* line, s32 tnCallbackType);

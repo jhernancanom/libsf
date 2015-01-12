@@ -108,22 +108,26 @@
 
 #include "compiler\common\compiler_common.h"
 
-#include "compiler\vxb\const.h"
-#include "compiler\vxb\structs.h"
-#include "compiler\vxb\defs.h"
-#include "compiler\vxb\globals.h"
+#include "compiler\vxb\vxb_const.h"
+#include "compiler\vxb\vxb_structs.h"
+#include "compiler\vxb\vxb_defs.h"
+#include "compiler\vxb\vxb_globals.h"
 
-#include "compiler\rdc\const.h"
-#include "compiler\rdc\structs.h"
-#include "compiler\rdc\defs.h"
-#include "compiler\rdc\globals.h"
+#include "compiler\rdc\rdc_const.h"
+#include "compiler\rdc\rdc_structs.h"
+#include "compiler\rdc\rdc_defs.h"
+#include "compiler\rdc\rdc_globals.h"
 
-#include "compiler\asm\const.h"
-#include "compiler\asm\structs.h"
-#include "compiler\asm\defs.h"
-#include "compiler\asm\globals.h"
+#include "compiler\asm\asm_const.h"
+#include "compiler\asm\asm_structs.h"
+#include "compiler\asm\asm_defs.h"
+#include "compiler\asm\asm_globals.h"
 
 #include "dbf\dbf.h"
+
+#include "sem\sem.h"
+#include "sem\sem_line.h"
+#include "sem\sem_extra_info.h"
 
 #include "grace.h"
 
@@ -137,8 +141,6 @@
 
 #include "commands\command_defs.h"
 #include "sound\sound.h"
-#include "sem.h"
-#include "sem_line.h"
 #include "engine.h"
 #include "objects\accessors.h"
 

@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/source/sem_line.cpp
+// /libsf/source/vjr/source/sem/sem_line.cpp
 //
 //////
 // Version 0.54
@@ -73,7 +73,7 @@
 // buffer for the new indicated line length.
 //
 //////
-	bool iEditChain_ensureLineLength(SEM* sem, s32 newLineLength)
+	bool iLine_ensureLineLength(SEM* sem, s32 newLineLength)
 	{
 		SLine* line;
 
@@ -109,7 +109,7 @@
 // Free the edit chain
 //
 //////
-	void iEditChain_free(SLine** root, bool tlDeleteSelf)
+	void iLine_free(SLine** root, bool tlDeleteSelf)
 	{
 		SLine*		line;
 		SLine*		lineNext;
@@ -133,7 +133,7 @@
 					//////////
 					// Delete any extra information associated with this chain entry
 					//////
-						iExtraInfo_free(NULL, line, &line->extra_info, true);
+						iExtraInfo_removeAll(NULL, line, &line->extra_info, true);
 
 
 					//////////
@@ -173,7 +173,7 @@
 // Called to insert a character
 //
 //////
-	bool iEditChain_characterInsert(SEM* sem, u8 asciiChar)
+	bool iLine_characterInsert(SEM* sem, u8 asciiChar)
 	{
 		s32			lnI;
 		SLine*		line;
@@ -184,7 +184,7 @@
 		{
 			// Make sure there's room enough for the keystroke
 			line = sem->line_cursor;
-			if (iEditChain_ensureLineLength(sem, sem->line_cursor->sourceCode_populatedLength + 1))
+			if (iLine_ensureLineLength(sem, sem->line_cursor->sourceCode_populatedLength + 1))
 			{
 				// They could've been beyond the end of line, and if so then we need to insert spaces between the end and here
 				if (sem->columnEdit > line->sourceCode_populatedLength)
@@ -197,6 +197,9 @@
 				// Move everything from the end of the line to where we are right one character
 				for (lnI = line->sourceCode_populatedLength + 1; lnI > sem->columnEdit && lnI > 0; lnI--)
 					line->sourceCode->data[lnI] = line->sourceCode->data[lnI - 1];
+
+				// Signal the update
+				iExtraInfo_update(sem, sem->line_cursor);
 
 				// Insert the character
 				line->sourceCode->data[sem->columnEdit] = asciiChar;
@@ -228,7 +231,7 @@
 // Called to overwrite the existing character wherever we are
 //
 //////
-	bool iEditChain_characterOverwrite(SEM* sem, u8 asciiChar)
+	bool iLine_characterOverwrite(SEM* sem, u8 asciiChar)
 	{
 		s32			lnI;
 		SLine*		line;
@@ -239,12 +242,12 @@
 		{
 			// Is there room to inject it?
 			line = sem->line_cursor;
-			if (iEditChain_ensureLineLength(sem, sem->line_cursor->sourceCode_populatedLength + 1))
+			if (iLine_ensureLineLength(sem, sem->line_cursor->sourceCode_populatedLength + 1))
 			{
 				if (sem->columnEdit > line->sourceCode_populatedLength)
 				{
 					// We need to insert it because we're at the end of the populated length
-					return(iEditChain_characterInsert(sem, asciiChar));
+					return(iLine_characterInsert(sem, asciiChar));
 
 				} else {
 					// We can overwrite it
@@ -256,6 +259,9 @@
 						for (lnI = line->sourceCode_populatedLength; lnI < sem->columnEdit; lnI++)
 							line->sourceCode->data[lnI] = ' ';
 					}
+
+					// Signal the update
+					iExtraInfo_update(sem, sem->line_cursor);
 
 					// Overwrite the character
 					line->sourceCode->data[sem->columnEdit] = asciiChar;
@@ -286,7 +292,7 @@
 // will affect the line in different ways.
 //
 //////
-	bool iEditChain_characterDelete(SEM* sem)
+	bool iLine_characterDelete(SEM* sem)
 	{
 		s32		lnI;
 		SLine*	line;
@@ -304,6 +310,9 @@
 				// Move everything left one character
 				for (lnI = sem->columnEdit; lnI < line->sourceCode_populatedLength; lnI++)
 					line->sourceCode->data[lnI] = line->sourceCode->data[lnI + 1];
+
+				// Signal the update
+				iExtraInfo_update(sem, sem->line_cursor);
 
 				// Reduce the length of the populated portion of the line by one
 				--line->sourceCode_populatedLength;
@@ -328,7 +337,7 @@
 // Called to toggle the breakpoint on the current line
 //
 //////
-	SBreakpoint* iEditChain_toggleBreakpoint(SEM* sem)
+	SBreakpoint* iLine_toggleBreakpoint(SEM* sem)
 	{
 		SBreakpoint* bp;
 
@@ -348,7 +357,7 @@
 				bp = iBreakpoint_add(&sem->line_cursor->breakpoint, _BREAKPOINT_ALWAYS);
 			}
 
-			// Indicate our statuts
+			// Indicate our status
 			return(bp);
 		}
 
@@ -364,7 +373,7 @@
 // Called to see if a line has changed
 //
 //////
-	bool iEditChain_hasChanged(SLine* ec)
+	bool iLine_hasChanged(SLine* ec)
 	{
 		// Make sure our environment is sane
 		if (ec && ec->sourceCode && ec->sourceCodeOriginal)

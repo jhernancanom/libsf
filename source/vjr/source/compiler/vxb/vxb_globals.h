@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/source/compiler/vxb/globals.h
+// /libsf/source/vjr/source/compiler/vxb/vxb_globals.h
 //
 //////
 // Version 0.54

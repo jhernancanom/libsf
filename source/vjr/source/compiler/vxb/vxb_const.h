@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/source/compiler/vxb/const.h
+// /libsf/source/vjr/source/compiler/vxb/vxb_const.h
 //
 //////
 // Version 0.54

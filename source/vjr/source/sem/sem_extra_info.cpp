@@ -1,16 +1,16 @@
 //////////
 //
-// /libsf/source/vjr/source/vjr_compile_time_settings.h
+// /libsf/source/vjr/source/sem/sem_extra_info.cpp
 //
 //////
 // Version 0.55
-// Copyright (c) 2014 by Rick C. Hodgin
+// Copyright (c) 2015 by Rick C. Hodgin
 //////
 // Last update:
-//     Nov.05.2014
+//     Jan.11.2014
 //////
 // Change log:
-//     Nov.05.2014 - Initial creation
+//     Jan.11.2014 - Initial creation
 //////
 //
 // This document is released as Liberty Software under a Repeat License, as governed
@@ -65,59 +65,139 @@
 //
 
 
-//////////
-// For debugging, the splash screen gets in the way if you're doing debugging
-// on a single monitor machine (like a notebook) during the initial startup.
-// You can set this property to false and prevent the splash screen from appearing.
-//////
-	bool glShowSplash = true;
-//	bool glShowSplash = false;
 
 
 //////////
-// Compiler-specific settings
+//
+// Called to allocate a new extra info and append it from the chain
+//
 //////
-	#ifdef __GNUC__
-		// gcc
-		#define debug_break			asm("int $3")
-		#define debug_nop			asm("nop")
-		#ifndef __amd64
-			#define __32_BIT_COMPILER__
-		#else
-			#define __64_BIT_COMPILER__
-		#endif
-	#else
-		// visual studio
-		#ifndef _M_X64
-			// 32-bit
-			#define debug_break		_asm int 3
-			#define debug_nop		_asm nop
-			#define __32_BIT_COMPILER__
-		#else
-			// 64-bit
-			void debugBreak(void)	{	int i = 4;	}
-			void debugNop(void)		{	int i = 4;	}
-			#define debug_break		debugBreak();
-			#define debug_nop		debugNop();
-			#define __64_BIT_COMPILER__
-		#endif
-	#endif
+	SExtraInfo* iExtraInfo_allocate(SEM* sem, SLine* line, SExtraInfo** root)
+	{
+		SExtraInfo* ei;
+
+		
+		// Make sure our environment is sane
+		ei = NULL;
+		if (sem && line && root)
+		{
+			// Allocate a new one
+			ei = (SExtraInfo*)iLl_appendNewNodeAtEnd((SLL**)root, sizeof(SExtraInfo));
+		}
+
+		// Indicate our status
+		return(ei);
+	}
+
+
 
 
 //////////
-// Aug.11.2014 -- Added to track down functions that were slowing down the system
-//#define _VJR_LOG_ALL
+//
+// Called to free the extra info associated with this entry
+//
 //////
-	#ifdef _VJR_LOG_ALL
-		#define logfunc(x)		iVjr_appendSystemLog((s8*)x)
-	#else
-		#define logfunc(x)
-	#endif
+	void iExtraInfo_removeAll(SEM* sem, SLine* line, SExtraInfo** root, bool tlDeleteSelf)
+	{
+		SExtraInfo*		ei;
+		SExtraInfo*		eiNext;
+
+
+		// Make sure our environment is sane
+		if (root && *root)
+		{
+// TODO:  COMPLETELY UNTESTED.  BREAKPOINT AND EXAMINE.
+debug_break;
+			// Iterate through all entries in the chain
+			ei = *root;
+			while (ei)
+			{
+				// Note the next entry
+				eiNext = ei->ll.nextExtraInfo;
+
+
+				//////////
+				// Call any freeInternal() functions to the data contained within and manually delete the extra info block
+				//////
+					if (ei->_freeInternal!= 0)
+						ei->freeInternal(NULL, line, ei);
+
+					// Now, manually free the actual info block itself
+					iDatum_delete(&ei->info, false);
+
+
+				// Free self if need be
+				if (tlDeleteSelf)
+					free(ei);
+
+				// Move to next entry
+				ei = eiNext;
+			}
+
+			// Reset the root pointer
+			*root = NULL;
+		}
+	}
+
+
 
 
 //////////
-// Force the bitmaps to be declared external for linking
+//
+// Called to process the extra info block's callbacks (if any)
+//
 //////
-	#ifndef _BMP_LOCALITY
-		#define _BMP_LOCALITY 0
-	#endif
+	void iExtraInfo_access(SEM* sem, SLine* line)
+	{
+		// If there's a callback, call it
+		if (sem && line && line->extra_info)
+			iiExtraInfo_callbackCommon(sem, line, _EXTRA_INFO_ON_ACCESS);
+	}
+
+	void iExtraInfo_arrival(SEM* sem, SLine* line)
+	{
+		// If there's a callback, call it
+		if (sem && line && line->extra_info)
+			iiExtraInfo_callbackCommon(sem, line, _EXTRA_INFO_ON_ARRIVAL);
+	}
+
+	void iExtraInfo_update(SEM* sem, SLine* line)
+	{
+		// If there's a callback, call it
+		if (sem && line && line->extra_info)
+			iiExtraInfo_callbackCommon(sem, line, _EXTRA_INFO_ON_UPDATE);
+	}
+
+	void iiExtraInfo_callbackCommon(SEM* sem, SLine* line, s32 tnCallbackType)
+	{
+		SExtraInfo* ei;
+
+
+// TODO:  COMPLETELY UNTESTED.  BREAKPOINT AND EXAMINE.
+debug_break;
+		// Iterate through each one and call its host
+		ei = line->extra_info;
+		while (ei)
+		{
+			switch (tnCallbackType)
+			{
+				case _EXTRA_INFO_ON_ACCESS:
+					// Call this one if it has an onAccess member
+					if (ei->_onAccess)		ei->onAccess(sem, line, ei);
+					break;
+
+				case _EXTRA_INFO_ON_ARRIVAL:
+					// Call this one if it has an onArrival member
+					if (ei->_onArrival)		ei->onArrival(sem, line, ei);
+					break;
+
+				case _EXTRA_INFO_ON_UPDATE:
+					// Call this one if it has an onUpdate member
+					if (ei->_onUpdate)		ei->onUpdate(sem, line, ei);
+					break;
+			}
+
+			// Move to next one
+			ei = ei->ll.nextExtraInfo;
+		}
+	}

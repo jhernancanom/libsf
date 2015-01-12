@@ -37,6 +37,7 @@
 
 struct SComp;
 struct SLine;
+struct SExtraInfo;
 
 
 
@@ -53,12 +54,14 @@ struct SLine;
 			SComp*		nextComp;
 			SLine*		nextLine;
 			SObject*	nextObject;
+			SExtraInfo*	nextExtraInfo;
 		};
 		union {
 			SLL*		prev;					// Previous entry in linked list
 			SComp*		prevComp;
 			SLine*		prevLine;
 			SObject*	prevObject;
+			SExtraInfo*	prevExtraInfo;
 		};
 		u32				uniqueId;				// Unique id associated with this object
 	};

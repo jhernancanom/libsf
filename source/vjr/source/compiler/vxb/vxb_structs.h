@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/source/compiler/vxb/structs.h
+// /libsf/source/vjr/source/compiler/vxb/vxb_structs.h
 //
 //////
 // Version 0.54
@@ -392,5 +392,5 @@ struct SCompileNote;
 		SCompileNote*	firstNote;										// Noted note(s) on this source code line
 		
 		// Extra information
-		void*			extra_info;										// Specific to the application
+		SExtraInfo*		firstExtraInfo;									// Specific to the application
 	};

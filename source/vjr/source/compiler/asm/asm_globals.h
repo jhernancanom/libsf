@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/source/compiler/rdc/defs.h
+// /libsf/source/vjr/source/compiler/asm/asm_globals.h
 //
 //////
 // Version 0.54

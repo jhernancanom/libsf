@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/source/compiler/vxb/defs.h
+// /libsf/source/vjr/source/compiler/vxb/vxb_defs.h
 //
 //////
 // Version 0.54
@@ -101,10 +101,14 @@ struct SVariable;
 	void					iiComps_decodeSyntax_lparameters			(SCompileVxbContext* vxb);
 	void					iiComps_decodeSyntax_returns				(SCompileVxbContext* vxb);
 
+	// LiveCode
+	void					iiCompile_LiveCode_free						(SCompiler* compiler);
+
 	bool					iiComps_xlatToNodes							(SLine* line, SCompiler* compiler);
 	SNode*					iiComps_xlatToNodes_parenthesis_left		(SNode** root, SNode* active, SComp* comp);
 	SNode*					iiComps_xlatToNodes_parenthesis_right		(SNode** root, SNode* active, SComp* comp);
 
+	void					iComps_deleteAll							(SComp* comp);
 	void					iComps_deleteAll_byLine						(SLine* line);
 	void					iComps_deleteAll_byFirstComp				(SComp** firstComp);
 	void					iComps_delete								(SComp* comp, bool tlDeleteSelf);

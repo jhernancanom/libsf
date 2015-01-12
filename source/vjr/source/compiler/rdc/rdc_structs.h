@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/source/compiler/rdc/const.h
+// /libsf/source/vjr/source/compiler/rdc/rdc_structs.h
 //
 //////
 // Version 0.54

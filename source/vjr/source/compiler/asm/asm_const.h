@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/source/compiler/asm/structs.h
+// /libsf/source/vjr/source/compiler/asm/asm_const.h
 //
 //////
 // Version 0.54
