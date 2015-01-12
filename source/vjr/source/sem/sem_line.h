@@ -70,14 +70,14 @@
 //////////
 // Forward declarations
 //////
-	void					iLine_free									(SLine** root, bool tlDeleteSelf);
-	void					iLine_ensureLineLength						(SLine* em, s32 newLineLength);
+	void					iSEMLine_free								(SLine** root, bool tlDeleteSelf);
+	void					iSEMLine_ensureLineLength					(SLine* em, s32 newLineLength);
 
 	// For editing
-	bool					iLine_characterInsert						(SEM* sem, u8 asciiChar);
-	bool					iLine_characterOverwrite					(SEM* sem, u8 asciiChar);
-	bool					iLine_characterDelete						(SEM* sem);
-	SBreakpoint*			iLine_toggleBreakpoint						(SEM* sem);
+	bool					iSEMLine_characterInsert					(SEM* sem, u8 asciiChar);
+	bool					iSEMLine_characterOverwrite					(SEM* sem, u8 asciiChar);
+	bool					iSEMLine_characterDelete					(SEM* sem);
+	SBreakpoint*			iSEMLine_toggleBreakpoint					(SEM* sem);
 
 	// For reporting on a line's state
-	bool					iLine_hasChanged							(SLine* ec);
+	bool					iSEMLine_hasChanged							(SLine* ec);

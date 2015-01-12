@@ -541,12 +541,26 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 
 
 		//////////
-		// Free the previous compute nodes
+		// Free the previous parse, optimize, and engage nodes
 		//////
-			if (compiler->firstNode)
+			if (compiler->firstNodeParsed)
 			{
 				// Release the array
-				free(compiler->firstNode);
+				free(compiler->firstNodeParsed);
+				compiler->nodeParsedCount = 0;
+			}
+
+			if (compiler->firstNodeOptimized)
+			{
+				// Release the array
+				free(compiler->firstNodeOptimized);
+				compiler->nodeOptimizedCount = 0;
+			}
+
+			if (compiler->firstNodeEngaged)
+			{
+				// Release the array
+				free(compiler->firstNodeEngaged);
 				compiler->nodeArrayCount = 0;
 			}
 
@@ -582,7 +596,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 		// Iterate through every component building the operations as we go
 		comp		= line->compilerInfo->firstComp;
 //		compLast	= comp;
-		nodeActive	= iNode_create(&compiler->firstNode, NULL, 0, NULL, NULL, NULL, NULL, NULL);
+		nodeActive	= iNode_create(&compiler->firstNodeEngaged, NULL, 0, NULL, NULL, NULL, NULL, NULL);
 		while (comp)
 		{
 			//////////
@@ -592,12 +606,12 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 				{
 					// (
 					case _ICODE_PARENTHESIS_LEFT:
-						nodeActive = iiComps_xlatToNodes_parenthesis_left(&compiler->firstNode, nodeActive, comp);
+						nodeActive = iiComps_xlatToNodes_parenthesis_left(&compiler->firstNodeEngaged, nodeActive, comp);
 						break;
 
 					// )
 					case _ICODE_PARENTHESIS_RIGHT:
-						nodeActive = iiComps_xlatToNodes_parenthesis_right(&compiler->firstNode, nodeActive, comp);
+						nodeActive = iiComps_xlatToNodes_parenthesis_right(&compiler->firstNodeEngaged, nodeActive, comp);
 						break;
 
 					// [
@@ -4681,7 +4695,7 @@ debug_break;
 			while (line && llContinue)
 			{
 				// Delete every node if need be
-				if (line->compilerInfo && line->compilerInfo->firstNode)
+				if (line->compilerInfo && line->compilerInfo->firstNodeEngaged)
 				{
 					// Delete from regular components, and whitespaces
 					iComps_deleteAll_byFirstComp(&line->compilerInfo->firstComp);

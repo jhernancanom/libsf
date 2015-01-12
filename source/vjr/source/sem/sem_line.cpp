@@ -73,7 +73,7 @@
 // buffer for the new indicated line length.
 //
 //////
-	bool iLine_ensureLineLength(SEM* sem, s32 newLineLength)
+	bool iSEMLine_ensureLineLength(SEM* sem, s32 newLineLength)
 	{
 		SLine* line;
 
@@ -109,7 +109,7 @@
 // Free the edit chain
 //
 //////
-	void iLine_free(SLine** root, bool tlDeleteSelf)
+	void iSEMLine_free(SLine** root, bool tlDeleteSelf)
 	{
 		SLine*		line;
 		SLine*		lineNext;
@@ -173,7 +173,7 @@
 // Called to insert a character
 //
 //////
-	bool iLine_characterInsert(SEM* sem, u8 asciiChar)
+	bool iSEMLine_characterInsert(SEM* sem, u8 asciiChar)
 	{
 		s32			lnI;
 		SLine*		line;
@@ -184,7 +184,7 @@
 		{
 			// Make sure there's room enough for the keystroke
 			line = sem->line_cursor;
-			if (iLine_ensureLineLength(sem, sem->line_cursor->sourceCode_populatedLength + 1))
+			if (iSEMLine_ensureLineLength(sem, sem->line_cursor->sourceCode_populatedLength + 1))
 			{
 				// They could've been beyond the end of line, and if so then we need to insert spaces between the end and here
 				if (sem->columnEdit > line->sourceCode_populatedLength)
@@ -231,7 +231,7 @@
 // Called to overwrite the existing character wherever we are
 //
 //////
-	bool iLine_characterOverwrite(SEM* sem, u8 asciiChar)
+	bool iSEMLine_characterOverwrite(SEM* sem, u8 asciiChar)
 	{
 		s32			lnI;
 		SLine*		line;
@@ -242,12 +242,12 @@
 		{
 			// Is there room to inject it?
 			line = sem->line_cursor;
-			if (iLine_ensureLineLength(sem, sem->line_cursor->sourceCode_populatedLength + 1))
+			if (iSEMLine_ensureLineLength(sem, sem->line_cursor->sourceCode_populatedLength + 1))
 			{
 				if (sem->columnEdit > line->sourceCode_populatedLength)
 				{
 					// We need to insert it because we're at the end of the populated length
-					return(iLine_characterInsert(sem, asciiChar));
+					return(iSEMLine_characterInsert(sem, asciiChar));
 
 				} else {
 					// We can overwrite it
@@ -292,7 +292,7 @@
 // will affect the line in different ways.
 //
 //////
-	bool iLine_characterDelete(SEM* sem)
+	bool iSEMLine_characterDelete(SEM* sem)
 	{
 		s32		lnI;
 		SLine*	line;
@@ -337,7 +337,7 @@
 // Called to toggle the breakpoint on the current line
 //
 //////
-	SBreakpoint* iLine_toggleBreakpoint(SEM* sem)
+	SBreakpoint* iSEMLine_toggleBreakpoint(SEM* sem)
 	{
 		SBreakpoint* bp;
 
@@ -373,7 +373,7 @@
 // Called to see if a line has changed
 //
 //////
-	bool iLine_hasChanged(SLine* ec)
+	bool iSEMLine_hasChanged(SLine* ec)
 	{
 		// Make sure our environment is sane
 		if (ec && ec->sourceCode && ec->sourceCodeOriginal)

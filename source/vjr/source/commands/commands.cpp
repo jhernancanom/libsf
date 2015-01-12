@@ -5635,7 +5635,7 @@ debug_break;
 				comp4 = NULL;
 				if ((comp2 = iComps_getNth(compIn, 1)) && (comp3 = iComps_getNth(comp2, 1)) && (comp4 = iComps_getNth(comp3, 1)))
 				{
-					// Placeholder to allow execution up through as far as it will go
+					// Placeholder to allow engagement through the if expression as far as it will go
 				}
 
 				// Find out what they're selecting

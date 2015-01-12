@@ -216,7 +216,7 @@ struct SCompileNote;
 //
 // This structure is used for two operations in VJr.  One is for parsing source code into
 // sub-instructions, the second is for generating actual sub-instruction lists for faster
-// execution by the processing engine while still retaining LiveCode abilities.
+// throughput by the processing engine while still retaining LiveCode abilities.
 //
 //                      ______
 //                     |parent|
@@ -372,25 +372,47 @@ struct SCompileNote;
 	struct SCompiler
 	{
 		// EC was designed with source code in mind, and that means a tight compiler relationship
-		SLine*			parent;											// The EC this belongs to (parent->parent points back to EM)
+		SLine*			parent;											// SEMLine this compiler data belongs to (parent->compilerInfo points back to here)
 
 		// The last source code line
 		SDatum*			sourceCode;										// Copy at last compile of LEFT(parent->sourceCode.data, parent->sourceCodePopulated)
 		// Note:  If the source code line ended in a semicolon, the following sourceCode line(s) will be appended here on top of the semicolon until there are no more semicolon lines
 
+		// Extra information
+		SExtraInfo*		firstExtraInfo;									// Specific to the application, contains triggers on errors, warnings, notes, etc.
+
 		// Components compiled in prior compiler passes
 		SComp*			firstComp;										// Pointer to the first component identified on this line
 		SComp*			firstWhitespace;								// Whitespaces are removed for ease of compilation, but they persist here for rendering and reference
 
-		// Executable code
-		SNode*			firstNode;										// Low-level executable code (nodes, or sub instructions) for this line
-		u32				nodeArrayCount;									// How many sub-instructions there are
 
-		// Results of compilation
+	//////////
+	// During compilation, three steps:
+	//		(1) parse		-- Parse out the components into sequenced steps
+	//		(2) optimize	-- Optimize away redundancy, combine literals, possibly reorder
+	//		(3) generate	-- Write the sequenced engagement code for the target
+	//////
+		// (1) parse
+		SNode*			firstNodeParsed;								// Component sequencing prior to optimization
+		u32				nodeParsedCount;								// How many nodes after parsing
+
+		// (2) optimize
+		SNode*			firstNodeOptimized;								// Component sequencing after optimization
+		u32				nodeOptimizedCount;								// How many nodes after optimization
+
+		// (3) generate
+		SNode*			firstNodeEngaged;								// Final generation of engagement code steps
+		u32				nodeArrayCount;									// How many nodes in engagement code
+	//////
+	// Note:  The firstNodeEngaged code generated here will be added to the function's complete
+	//        engagement code, sequenced with meta data for flow control and error reporting.
+	//////////
+
+
+	//////////
+	// Results of compilation
+	//////
 		SCompileNote*	firstError;										// Noted error(s) on this source code line
 		SCompileNote*	firstWarning;									// Noted warning(s) on this source code line
 		SCompileNote*	firstNote;										// Noted note(s) on this source code line
-		
-		// Extra information
-		SExtraInfo*		firstExtraInfo;									// Specific to the application
 	};

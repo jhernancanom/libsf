@@ -149,7 +149,7 @@ RDC Specifications Document
 	inline		-- Provides an optimization hint
 	optimize	-- Provides an optimization level hint (0=none)
 	nodebug		-- Declares that a function should not be entered on single-step debugging
-	breakpoint	-- Code execution will trap to the debugger if connected, ignored otherwise
+	breakpoint	-- Code will trap to the debugger if connected and engaged, ignored otherwise
 
 	do			-- Loop which always enters once, requires trailing while test
 	while		-- Conditionally tests loop logic and continues in the loop if true
@@ -204,22 +204,37 @@ RDC Specifications Document
 	flowof		-- Defines a function to be a flow of another function
 	super		-- Executes commands from the parent's point of view (as in "super return;")
 
-2.0 - Program Execution
------------------------
+2.0 - Program Engagement
+------------------------
 
-	main() is the top level function for creating a console-based application.
+	RDC defines engage and unengage as the start and ending concepts for running a program.
+	In order to run, startup code is called to engage the application.  When flow brings the
+	program to a close, it is goes through unengaging steps until it is fully unengaged.
+
+	main() is the top level user-function for creating a console-based application.
 	main() is defined as int main(int argc, char* argv[]);.
 
-	dllmain() is the top level function for creating a DLL.
+	dllmain() is the top level user-function for creating a DLL.
 	dllmain() is defined as bool dllmain(u32 instance, u32 callType);
+
+	guimain() is the top level user-function for creating a gui-based application.
+	guimain() is defined in various forms depending on the operating system in use, and is
+	analgous to WinMain() on Windows.
 
 	For backward compatibility other definitions of dllmain() may also exist.
 
 	At startup, an application compiled with RDC will go through these stages:
-		(1) Self-initialization of global/static memory variables/enums to default values.
+		(1) Engaging steps of self-initialization, global/static memory to default values.
 		(2) Link to all required DLLs.
 		(3) Call dllmain() in sequence for each loaded DLL.
-		(3) Call main().
+		(3) Call main(), dllmain(), or guimain() for user app.
+
+	Upon closing, an application compiled with RDC will go through these stages:
+		(1) Unengaging steps of releasing OS handles and allocated memory blocks.
+		(2) Saving any machine-state information (depending on what platform the
+			RDC-compiled code was running on).
+		(3) Signal its unengage() to the OS, which ends the program.
+
 
 2.1 - Function and Adhoc Definitions
 ------------------------------------
@@ -448,8 +463,8 @@ RDC Specifications Document
 
 
 	Each thread will execute the code within, which can call other functions, etc.
-	Thread execution will automatically end when its closing brace is reached.
-	To explicitly exit a thread at any point, use the out keyword.
+	Thread unengage will automatically signal when its closing brace is reached.
+	To explicitly exit a thread at any point, use the [out] keyword.
 
 6.0 - Unions and Anonymous Unions
 ---------------------------------
@@ -638,7 +653,7 @@ RDC Specifications Document
 			// Code goes here
 		}
 
-	Logic test casks perform tests for execution:
+	Logic test casks perform tests for logic flow and engagement:
 		<||test|if true|if false||>		&& Equivalent to ((test) ? if true : if false);
 
 	Utility casks allow arbitary code injection:
