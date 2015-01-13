@@ -2273,3 +2273,56 @@
 		//////
 			return(exceptionNew);
 	}
+
+
+
+
+//////////
+//
+// Create the settings structure
+//
+//////
+	SObject* iSubobj_createSettings(SObject* template_Settings, SObject* parent)
+	{
+		SObject*	settingsNew;
+		SVariable*	var;
+
+
+		logfunc(__FUNCTION__);
+		//////////
+		// Create the indicated item
+		//////
+			settingsNew = (SObject*)malloc(sizeof(SObject));
+
+
+		//////////
+		// If successful, initialize it
+		//////
+			if (settingsNew)
+			{
+				// Initialize
+				memset(settingsNew, 0, sizeof(SObject));
+
+				// Initialize properties to VJr defaults
+				settingsNew->objType		= _OBJ_TYPE_SETTINGS;
+				settingsNew->parent		= parent;
+				iiSubobj_resetToDefaultException(settingsNew, true, true, &gsProps_settings[0], gnProps_settingsSize);
+
+				// Initially populate
+				settingsNew->isRendered		= false;
+				settingsNew->isPublished	= false;
+				var = iObjProp_get_variable_byIndex(settingsNew, _INDEX_NAME);		iDatum_duplicate(&var->value, cgcName_settings, -1);
+				var = iObjProp_get_variable_byIndex(settingsNew, _INDEX_CLASS);		iDatum_duplicate(&var->value, cgcName_settings, -1);
+				iEvents_resetToDefault(&settingsNew->ev);
+
+				// Initialize based on template
+				if (template_Settings)
+					iiSubobj_copyException(settingsNew, template_Settings);		// Copy from indicated template
+			}
+
+
+		//////////
+		// Indicate our success or failure
+		//////
+			return(settingsNew);
+	}

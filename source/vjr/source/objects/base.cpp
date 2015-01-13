@@ -197,6 +197,9 @@
 			case _OBJ_TYPE_EXCEPTION:	// An exception
 				return(iSubobj_createException(NULL, objParent));
 
+			case _OBJ_TYPE_SETTINGS:	// Settings
+				return(iSubobj_createSettings(NULL, objParent));
+
 			default:
 // TODO:  We should never get here.  If we do it's a developer error.  Check the call stack and determine the cause.
 				return(NULL);

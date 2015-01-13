@@ -185,6 +185,7 @@ struct SObjPropertyMap;
 	SObject*				iSubobj_createSession					(SObject*	template_Session,		SObject* parent);
 	SObject*				iSubobj_createCustom					(SObject*	template_Custom,		SObject* parent);
 	SObject*				iSubobj_createException					(SObject*	template_Exception,		SObject* parent);
+	SObject*				iSubobj_createSettings					(SObject*	template_Settings,		SObject* parent);
 
 
 //////////

@@ -103,7 +103,6 @@
 	{
 		SLL			ll;
 
-// TODO:  Jan.11.2015 -- I am considering refactoring these into properties added to an new Settings object, so in addition to SET TALK OFF there would be _settings.talk = .F. and so on...
 		// Settings at this level
 		bool		_set_autoConvert;
 		bool		_set_caseSensitiveCompares;
@@ -133,6 +132,8 @@
 		SVariable*	varInitializeDefault_value;
 	};
 	// First entry
+	SObject*	settings									= NULL;
+	SObject*	settingsDefaults							= NULL;
 	SSettings* gsFirstSettings								= NULL;
 	SSettings* gsCurrentSetting								= NULL;
 

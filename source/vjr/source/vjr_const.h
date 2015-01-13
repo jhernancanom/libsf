@@ -305,6 +305,7 @@ typedef SEM**		SEMpp;
 	const u32			_OBJ_TYPE_SESSION					= 36;						// A session
 	const u32			_OBJ_TYPE_CUSTOM					= 37;						// A custom class
 	const u32			_OBJ_TYPE_EXCEPTION					= 38;						// An exception
+	const u32			_OBJ_TYPE_SETTINGS					= 39;						// Settings (SET TALK ON, etc.)
 
 //////////
 // A shortcut timesaver offered out of the goodness of my heart. :-)
@@ -722,6 +723,7 @@ typedef SEM**		SEMpp;
 	const u8			cgcName_session[]					= "session";
 	const u8			cgcName_custom[]					= "custom";
 	const u8			cgcName_exception[]					= "exception";
+	const u8			cgcName_settings[]					= "_settings";
 
 	// The form caption
 	const u8			cgcName_formCaption[]				= "VJr Form";
