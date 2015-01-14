@@ -166,6 +166,7 @@ typedef SEM**		SEMpp;
 	#define propGet_settings_Exclusive(obj)						(iObjProp_get_logical_direct	(obj, _INDEX_SET_EXCLUSIVE)			!= _LOGICAL_FALSE)
 	#define propGet_settings_Talk(obj)							(iObjProp_get_logical_direct	(obj, _INDEX_SET_TALK)				!= _LOGICAL_FALSE)
 	#define propGet_settings_VariablesFirst(obj)				(iObjProp_get_logical_direct	(obj, _INDEX_SET_VARIABLES_FIRST)	!= _LOGICAL_FALSE)
+	#define propGet_settings_InitializeDefaultValue(obj)		iObjProp_get_variable_byIndex	(obj, _INDEX_SET_INITIALIZE_DEFAULT_VALUE)
 
 
 //////////

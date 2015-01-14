@@ -453,7 +453,10 @@ struct SBasePropertyInit;
 	const u8		cgc_setTableObjects[]									= "tableObjects";
 	const u8		cgc_setTalk[]											= "talk";
 	const u8		cgc_setVariablesFirst[]									= "variablesFirst";
+	const u8		cgc_setInitializeDefaultValue[]							= "initializeDefaultValue";
 
+	// Note:  The value 0 is used for the terminator in variable-length lists, so the values here must begin at 1.
+	// Note:  Because the values here begin at 1, every reference that is direct must be referenced as gsProps_master[_INDEX_WHATEVER - 1].
 	const u32		_INDEX_ACTIVECOLUMN										= 1;
 	const u32		_INDEX_ACTIVECONTROL									= 2;
 	const u32		_INDEX_ACTIVEFORM										= 3;
@@ -815,15 +818,16 @@ struct SBasePropertyInit;
 	const u32		_INDEX_SET_HONOR_BARRIERS								= 358;
 	const u32		_INDEX_SET_IMPLICIT_PARAMS								= 359;
 	const u32		_INDEX_SET_INDEX_META_DATA								= 360;
-	const u32		_INDEX_SET_LANGUAGE										= 361;
-	const u32		_INDEX_SET_LOGICAL										= 362;
-	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 363;
-	const u32		_INDEX_SET_SLOPPY_PRINTING								= 364;
-	const u32		_INDEX_SET_STICKY_PARAMETERS							= 365;
-	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 366;
-	const u32		_INDEX_SET_TABLE_OBJECS									= 367;
-	const u32		_INDEX_SET_TALK											= 368;
-	const u32		_INDEX_SET_VARIABLES_FIRST								= 369;
+	const u32		_INDEX_SET_INITIALIZE_DEFAULT_VALUE						= 361;
+	const u32		_INDEX_SET_LANGUAGE										= 362;
+	const u32		_INDEX_SET_LOGICAL										= 363;
+	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 364;
+	const u32		_INDEX_SET_SLOPPY_PRINTING								= 365;
+	const u32		_INDEX_SET_STICKY_PARAMETERS							= 366;
+	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 367;
+	const u32		_INDEX_SET_TABLE_OBJECS									= 368;
+	const u32		_INDEX_SET_TALK											= 369;
+	const u32		_INDEX_SET_VARIABLES_FIRST								= 370;
 
 
 	// Basic setters and getters
@@ -1292,6 +1296,7 @@ struct SBasePropertyInit;
 		{	_INDEX_SET_HONOR_BARRIERS,				cgc_setHonorBarriers,			sizeof(cgc_setHonorBarriers) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=honors the 2GB file size barrier, .f.=allows file sizes larger than 2GB
 		{	_INDEX_SET_IMPLICIT_PARAMS,				cgc_setImplicitParams,			sizeof(cgc_setImplicitParams) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=allows empty or partially empty parameters, .f.=requires 1:1 received parameters to passed parameters
 		{	_INDEX_SET_INDEX_META_DATA,				cgc_setIndexMetaData,			sizeof(cgc_setIndexMetaData) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=stores meta data for dates, defined variables inside the index, .f.=uses live environment on subsequent index tag reopens
+		{	_INDEX_SET_INITIALIZE_DEFAULT_VALUE,	cgc_setInitializeDefaultValue,	sizeof(cgc_setInitializeDefaultValue) - 1,	_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// The default initialize variable type for new variables, such as "LOCAL fred" ... by default, logical false
 		{	_INDEX_SET_LANGUAGE,					cgc_setLanguage,				sizeof(cgc_setLanguage) - 1,				_VAR_TYPE_CHARACTER,		0, 0, 0,		(uptr)&cgcEnglish[0]			,NULL	},	// The default language for any new loaded objects
 		{	_INDEX_SET_LOGICAL,						cgc_setLogical,					sizeof(cgc_setLogical) - 1,					_VAR_TYPE_S32,				0, 0, 0,		_LOGICAL_TF						,NULL	},	// See _LOGICAL_* constants
 		{	_INDEX_SET_NAMING_CONVENTIONS,			cgc_setNamingConvention,		sizeof(cgc_setNamingConvention) - 1,		_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=Field and variables are examined for standard naming conventions with errors reported, .f.=no checks are made
@@ -3379,6 +3384,7 @@ struct SBasePropertyInit;
 		{	_INDEX_SET_HONOR_BARRIERS,					0, 0, 0 },		// bool
 		{	_INDEX_SET_IMPLICIT_PARAMS,					0, 0, 0 },		// bool
 		{	_INDEX_SET_INDEX_META_DATA,					0, 0, 0 },		// bool
+		{	_INDEX_SET_INITIALIZE_DEFAULT_VALUE,		0, 0, 0 },		// Varies, but initially it is bool
 		{	_INDEX_SET_LANGUAGE,						0, 0, 0 },		// SDatum
 		{	_INDEX_SET_LOGICAL,							0, 0, 0 },		// s32
 		{	_INDEX_SET_NAMING_CONVENTIONS,				0, 0, 0 },		// bool

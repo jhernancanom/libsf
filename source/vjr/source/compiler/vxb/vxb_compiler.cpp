@@ -4785,7 +4785,8 @@ debug_break;
 //////
 	SVariable* iVariable_create(s32 tnVarType, SVariable* varIndirect)
 	{
-		SVariable* varNew;
+		SVariable*	varDefault;
+		SVariable*	varNew;
 
 
 		//////////
@@ -4868,10 +4869,18 @@ debug_break;
 
 						default:
 							// Unspecified.  Default to the system default.
-// TODO:  Need to add a property which will hold the default initialized value, and then always copy that one (which by default would be logical .f.)
-//							if (gsCurrentSetting->varInitializeDefault_value)		varNew = iVariable_copy(gsCurrentSetting->varInitializeDefault_value, false);
-// 							else													varNew = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
-							varNew = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+							// Until initialization is complete, _settings may not be defined
+							if (_settings)
+							{
+								// Grab the default initialization type, which is logical false unless otherwise set
+								varDefault = propGet_settings_InitializeDefaultValue(_settings);
+								if (varDefault)		varNew = iVariable_copy(varDefault, false);
+								else				varNew = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+
+							} else {
+								// Create default type until initialization is complete
+								varNew = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+							}
 					}
 				}
 			}
@@ -5205,7 +5214,7 @@ debug_break;
 						break;
 
 					default:
-// TODO: Whatever type is added that's not defined above needs added
+// TODO:  Whatever type is added that's not defined above needs added
 						debug_break;
 				}
 
