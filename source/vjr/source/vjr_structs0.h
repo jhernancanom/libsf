@@ -393,6 +393,13 @@ struct SAsciiCompSearcher
 		uptr	_onFind;
 		void	(*onFind)(SAsciiCompSearcher* tacs, SComp* comp);
 	};
+
+	// A callback function for the syntax parsing phase of compilation, to determine if the parameters are correct at compile-time, rather than run-time
+	union {
+		uptr	_compilerDictionaryLookup;
+		s32		(*compilerDictionaryLookup)(SAsciiCompSearcher* tacs, SComp* comp, SComp* paramOrder[], s32* paramCount);
+		// Returns an index into the internal function/command dictionary if a match is found, -1 if not
+	};
 };
 
 struct SCompiler;

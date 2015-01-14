@@ -136,6 +136,9 @@
     <ClCompile Include="..\..\source\sem\sem_line.cpp">
       <Filter>sem</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\compiler\vxb\vxb_dictionary.cpp">
+      <Filter>compiler\vxb</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\utils\common\cpp\common_types.h">
@@ -254,6 +257,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\sem\sem_line.h">
       <Filter>sem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\compiler\vxb\vxb_dictionary.h">
+      <Filter>compiler\vxb</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -89,6 +89,7 @@
 	#include "objects\reset.cpp"
 	#include "bitmaps\bitmaps.cpp"
 	#include "compiler\vxb\vxb_compiler.cpp"
+	#include "compiler\vxb\vxb_dictionary.cpp"
 	#include "compiler\rdc\rdc_compiler.cpp"
 	#include "compiler\asm\asm_compiler.cpp"
 	#include "commands\commands.cpp"

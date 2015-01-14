@@ -1,16 +1,16 @@
 //////////
 //
-// /libsf/source/vjr/source/vjr.h
+// /libsf/source/vjr/source/compiler/vxb/vxb_dictionary.cpp
 //
 //////
-// Version 0.55
+// Version 0.54
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
-//     Feb.12.2014
+//     Jan.13.2015
 //////
 // Change log:
-//     Feb.12.2014 - Initial creation
+//     Jan.13.2015 - Initial creation
 //////
 //
 // This document is released as Liberty Software under a Repeat License, as governed
@@ -64,85 +64,16 @@
 //
 //
 
-#ifndef WINVER                  // Specifies that the minimum required platform is Windows XP.
-#define WINVER 0x0501           // Change this to the appropriate value to target other versions of Windows.
-#endif
 
-#ifndef _WIN32_WINNT            // Specifies that the minimum required platform is Windows XP.
-#define _WIN32_WINNT 0x0501     // Change this to the appropriate value to target other versions of Windows.
-#endif
 
-#ifndef _WIN32_WINDOWS          // Specifies that the minimum required platform is Windows XP.
-#define _WIN32_WINDOWS 0x0501   // Change this to the appropriate value to target Windows Me or later.
-#endif
 
-#ifndef _WIN32_IE               // Specifies that the minimum required platform is Internet Explorer 6.0.
-#define _WIN32_IE 0x0600        // Change this to the appropriate value to target other versions of IE.
-#endif
-
-#include "vjr_compile_time_settings.h"
-
-#include <windows.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <io.h>
-#include <sys/locking.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <share.h>
-#include <sql.h>
-#include <sqlext.h>
-#include "resource.h"
-
-#define _USE_MATH_DEFINES
-#include <math.h>
-#include "sound\SDL-1.2.15\include\sdl\SDL.h"
-#include "sound\SDL-1.2.15\include\sdl\SDL_audio.h"
-
-#include "vjr_const.h"
-#include "\libsf\utils\common\cpp\builder.h"
-#include "\libsf\utils\common\cpp\builder.cpp"
-#include "\libsf\utils\common\cpp\ll.cpp"
-#include "vjr_structs0.h"
-
-#include "compiler\common\compiler_common.h"
-
-#include "compiler\vxb\vxb_const.h"
-#include "compiler\vxb\vxb_structs.h"
-#include "compiler\vxb\vxb_defs.h"
-#include "compiler\vxb\vxb_dictionary.h"
-#include "compiler\vxb\vxb_globals.h"
-
-#include "compiler\rdc\rdc_const.h"
-#include "compiler\rdc\rdc_structs.h"
-#include "compiler\rdc\rdc_defs.h"
-#include "compiler\rdc\rdc_globals.h"
-
-#include "compiler\asm\asm_const.h"
-#include "compiler\asm\asm_structs.h"
-#include "compiler\asm\asm_defs.h"
-#include "compiler\asm\asm_globals.h"
-
-#include "dbf\dbf.h"
-
-#include "sem\sem.h"
-#include "sem\sem_line.h"
-#include "sem\sem_extra_info.h"
-
-#include "grace.h"
-
-#include "vjr_structs.h"
-#include "vjr_defs.h"
-#include "vjr_globals.h"
-
-#include "fonts.h"
-#include "datum\datum.h"
-#include "bitmaps\bitmaps.h"
-
-#include "commands\command_defs.h"
-#include "sound\sound.h"
-#include "engine.h"
-#include "objects\accessors.h"
-
-#include "bmps\graphics\bitmaps.h"
+//////////
+//
+// Compiles the USE command parameters on the source code line, aligning their variable
+// component ordering with the fixed parameter requirements for the USE execution engine.
+//
+//////
+	s32 compilerDictionary_command_use(SAsciiCompSearcher* tacs, SComp* comp, SComp* paramOrder[], s32* paramCount)
+	{
+		return(-1);
+	}
