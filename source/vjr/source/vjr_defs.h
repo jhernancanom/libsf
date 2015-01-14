@@ -181,7 +181,7 @@ struct SObjPropertyMap;
 	SObject*				iSubobj_createHyperlink					(SObject*	template_Hyperlink,		SObject* parent);
 	SObject*				iSubobj_createCollection				(SObject*	template_Collection,	SObject* parent);
 	SObject*				iSubobj_createPage						(SObject*	template_Page,			SObject* parent);
-	SObject*				iSubobj_createPageframe					(SObject*	template_Pageframe,		SObject* parent);
+	SObject*				iSubobj_createPageFrame					(SObject*	template_Pageframe,		SObject* parent);
 	SObject*				iSubobj_createSession					(SObject*	template_Session,		SObject* parent);
 	SObject*				iSubobj_createCustom					(SObject*	template_Custom,		SObject* parent);
 	SObject*				iSubobj_createException					(SObject*	template_Exception,		SObject* parent);
@@ -274,6 +274,7 @@ struct SObjPropertyMap;
 	void					iiSubobj_resetToDefaultSession			(SObject*	session,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
 	void					iiSubobj_resetToDefaultCustom			(SObject*	custom,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
 	void					iiSubobj_resetToDefaultException		(SObject*	exception,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultSettings			(SObject*	exception,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
 
 
 //////////
@@ -294,6 +295,32 @@ struct SObjPropertyMap;
 	void					iSubobj_deleteCheckbox					(SObject*	checkbox,	bool tlDeleteSelf);
 	void					iSubobj_deleteOption					(SObject*	option,		bool tlDeleteSelf);
 	void					iSubobj_deleteRadio						(SObject*	radio,		bool tlDeleteSelf);
+	void					iSubobj_deleteCmdGroup					(SObject*	cmdGroup,	bool tlDeleteSelf);
+	void					iSubobj_deleteOptGroup					(SObject*	optGroup,	bool tlDeleteSelf);
+	void					iSubobj_deleteListbox					(SObject*	listbox,	bool tlDeleteSelf);
+	void					iSubobj_deleteCombobox					(SObject*	combobox,	bool tlDeleteSelf);
+	void					iSubobj_deleteFormset					(SObject*	formset,	bool tlDeleteSelf);
+	void					iSubobj_deleteToolbar					(SObject*	toolbar,	bool tlDeleteSelf);
+	void					iSubobj_deleteSeparator					(SObject*	separator,	bool tlDeleteSelf);
+	void					iSubobj_deleteLine						(SObject*	line,		bool tlDeleteSelf);
+	void					iSubobj_deleteShape						(SObject*	shape,		bool tlDeleteSelf);
+	void					iSubobj_deleteContainer					(SObject*	container,	bool tlDeleteSelf);
+	void					iSubobj_deleteControl					(SObject*	control,	bool tlDeleteSelf);
+	void					iSubobj_deleteGrid						(SObject*	grid,		bool tlDeleteSelf);
+	void					iSubobj_deleteColumn					(SObject*	column,		bool tlDeleteSelf);
+	void					iSubobj_deleteHeader					(SObject*	header,		bool tlDeleteSelf);
+	void					iSubobj_deleteOleBound					(SObject*	oleBound,	bool tlDeleteSelf);
+	void					iSubobj_deleteOleContain				(SObject*	oleContain,	bool tlDeleteSelf);
+	void					iSubobj_deleteSpinner					(SObject*	spinner,	bool tlDeleteSelf);
+	void					iSubobj_deleteTimer						(SObject*	timer,		bool tlDeleteSelf);
+	void					iSubobj_deleteHyperlink					(SObject*	hyperlink,	bool tlDeleteSelf);
+	void					iSubobj_deleteCollection				(SObject*	collection,	bool tlDeleteSelf);
+	void					iSubobj_deletePage						(SObject*	page,		bool tlDeleteSelf);
+	void					iSubobj_deletePageFrame					(SObject*	pageFrame,	bool tlDeleteSelf);
+	void					iSubobj_deleteSession					(SObject*	session,	bool tlDeleteSelf);
+	void					iSubobj_deleteCustom					(SObject*	custom,		bool tlDeleteSelf);
+	void					iSubobj_deleteException					(SObject*	exception,	bool tlDeleteSelf);
+	void					iSubobj_deleteSettings					(SObject*	settings,	bool tlDeleteSelf);
 
 
 //////////
@@ -313,6 +340,32 @@ struct SObjPropertyMap;
 	u32						iSubobj_renderCheckbox					(SObject* checkbox);
 	u32						iSubobj_renderOption					(SObject* option);
 	u32						iSubobj_renderRadio						(SObject* radio);
+	u32						iSubobj_renderCmdGroup					(SObject* cmdGroup);
+	u32						iSubobj_renderOptGroup					(SObject* optGroup);
+	u32						iSubobj_renderListbox					(SObject* listbox);
+	u32						iSubobj_renderCombobox					(SObject* combobox);
+	u32						iSubobj_renderFormset					(SObject* formset);
+	u32						iSubobj_renderToolbar					(SObject* toolbar);
+	u32						iSubobj_renderSeparator					(SObject* separator);
+	u32						iSubobj_renderLine						(SObject* line);
+	u32						iSubobj_renderShape						(SObject* shape);
+	u32						iSubobj_renderContainer					(SObject* container);
+	u32						iSubobj_renderControl					(SObject* control);
+	u32						iSubobj_renderGrid						(SObject* grid);
+	u32						iSubobj_renderColumn					(SObject* column);
+	u32						iSubobj_renderHeader					(SObject* header);
+	u32						iSubobj_renderOleBound					(SObject* oleBound);
+	u32						iSubobj_renderOleContain				(SObject* oleContain);
+	u32						iSubobj_renderSpinner					(SObject* spinner);
+	u32						iSubobj_renderTimer						(SObject* timer);
+	u32						iSubobj_renderHyperlink					(SObject* hyperlink);
+	u32						iSubobj_renderCollection				(SObject* collection);
+	u32						iSubobj_renderPage						(SObject* page);
+	u32						iSubobj_renderPageFrame					(SObject* pageFrame);
+	u32						iSubobj_renderSession					(SObject* session);
+	u32						iSubobj_renderCustom					(SObject* custom);
+	u32						iSubobj_renderException					(SObject* exception);
+	u32						iSubobj_renderSettings					(SObject* settings);
 
 
 	// Default publish of carousels and riders

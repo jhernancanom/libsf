@@ -451,3 +451,627 @@
 			if (tlDeleteSelf)
 				free(radio);
 	}
+
+
+
+
+//////////
+//
+// Called to delete the cmdGroup.
+//
+//////
+	void iSubobj_deleteCmdGroup(SObject* cmdGroup, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(cmdGroup);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(cmdGroup);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the optGroup.
+//
+//////
+	void iSubobj_deleteOptGroup(SObject* optGroup, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(optGroup);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(optGroup);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the listbox.
+//
+//////
+	void iSubobj_deleteListbox(SObject* listbox, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(listbox);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(listbox);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the combobox.
+//
+//////
+	void iSubobj_deleteCombobox(SObject* combobox, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(combobox);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(combobox);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the formset.
+//
+//////
+	void iSubobj_deleteFormset(SObject* formset, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(formset);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(formset);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the toolbar.
+//
+//////
+	void iSubobj_deleteToolbar(SObject* toolbar, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(toolbar);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(toolbar);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the separator.
+//
+//////
+	void iSubobj_deleteSeparator(SObject* separator, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(separator);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(separator);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the line.
+//
+//////
+	void iSubobj_deleteLine(SObject* line, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(line);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(line);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the shape.
+//
+//////
+	void iSubobj_deleteShape(SObject* shape, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(shape);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(shape);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the container.
+//
+//////
+	void iSubobj_deleteContainer(SObject* container, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(container);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(container);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the control.
+//
+//////
+	void iSubobj_deleteControl(SObject* control, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(control);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(control);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the grid.
+//
+//////
+	void iSubobj_deleteGrid(SObject* grid, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(grid);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(grid);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the column.
+//
+//////
+	void iSubobj_deleteColumn(SObject* column, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(column);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(column);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the header.
+//
+//////
+	void iSubobj_deleteHeader(SObject* header, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(header);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(header);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the oleBound.
+//
+//////
+	void iSubobj_deleteOleBound(SObject* oleBound, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(oleBound);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(oleBound);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the oleContain.
+//
+//////
+	void iSubobj_deleteOleContain(SObject* oleContain, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(oleContain);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(oleContain);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the spinner.
+//
+//////
+	void iSubobj_deleteSpinner(SObject* spinner, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(spinner);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(spinner);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the timer.
+//
+//////
+	void iSubobj_deleteTimer(SObject* timer, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(timer);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(timer);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the hyperlink.
+//
+//////
+	void iSubobj_deleteHyperlink(SObject* hyperlink, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(hyperlink);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(hyperlink);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the collection.
+//
+//////
+	void iSubobj_deleteCollection(SObject* collection, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(collection);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(collection);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the page.
+//
+//////
+	void iSubobj_deletePage(SObject* page, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(page);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(page);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the pageFrame.
+//
+//////
+	void iSubobj_deletePageFrame(SObject* pageFrame, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(pageFrame);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(pageFrame);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the session.
+//
+//////
+	void iSubobj_deleteSession(SObject* session, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(session);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(session);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the custom.
+//
+//////
+	void iSubobj_deleteCustom(SObject* custom, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(custom);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(custom);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the exception.
+//
+//////
+	void iSubobj_deleteException(SObject* exception, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(exception);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(exception);
+	}
+
+
+
+
+//////////
+//
+// Called to delete the settings.
+//
+//////
+	void iSubobj_deleteSettings(SObject* settings, bool tlDeleteSelf)
+	{
+		logfunc(__FUNCTION__);
+		//////////
+		// Free common components
+		//////
+			iObj_deleteCommon(settings);
+
+
+		//////////
+		// Free self
+		//////
+			if (tlDeleteSelf)
+				free(settings);
+	}

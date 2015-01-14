@@ -454,377 +454,376 @@ struct SBasePropertyInit;
 	const u8		cgc_setTalk[]											= "talk";
 	const u8		cgc_setVariablesFirst[]									= "variablesFirst";
 
-	const u32		_INDEX_ACTIVECOLUMN										= 0;
-	const u32		_INDEX_ACTIVECONTROL									= 1;
-	const u32		_INDEX_ACTIVEFORM										= 2;
-	const u32		_INDEX_ACTIVEPAGE										= 3;
-	const u32		_INDEX_ACTIVEROW										= 4;
-	const u32		_INDEX_ADDLINEFEEDS										= 5;
-	const u32		_INDEX_ALIGN											= 6;
-	const u32		_INDEX_ALIGNMENT										= 7;
-	const u32		_INDEX_ALLOWADDNEW										= 8;
-	const u32		_INDEX_ALLOWAUTOCOLUMNFIT								= 9;
-	const u32		_INDEX_ALLOWCELLSELECTION								= 10;
-	const u32		_INDEX_ALLOWHEADERSIZING								= 11;
-	const u32		_INDEX_ALLOWOUTPUT										= 12;
-	const u32		_INDEX_ALLOWROWSIZING									= 13;
-	const u32		_INDEX_ALLOWTABS										= 14;
-	const u32		_INDEX_ALWAYSONBOTTOM									= 15;
-	const u32		_INDEX_ALWAYSONTOP										= 16;
-	const u32		_INDEX_ANCHOR											= 17;
-	const u32		_INDEX_APPLICATION										= 18;
-	const u32		_INDEX_AUTOACTIVATE										= 19;
-	const u32		_INDEX_AUTOCENTER										= 20;
-	const u32		_INDEX_AUTOCOMPLETE										= 21;
-	const u32		_INDEX_AUTOCOMPSOURCE									= 22;
-	const u32		_INDEX_AUTOCOMPTABLE									= 23;
-	const u32		_INDEX_AUTOHIDESCROLLBAR								= 24;
-	const u32		_INDEX_AUTORELEASE										= 25;
-	const u32		_INDEX_AUTOSIZE											= 26;
-	const u32		_INDEX_AUTOVERBMENU										= 27;
-	const u32		_INDEX_BACKCOLOR										= 28;
-	const u32		_INDEX_BACKSTYLE										= 29;
-	const u32		_INDEX_BASECLASS										= 30;
-	const u32		_INDEX_BINDCONTROLS										= 31;
-	const u32		_INDEX_BORDERCOLOR										= 32;
-	const u32		_INDEX_BORDERSTYLE										= 33;
-	const u32		_INDEX_BORDERWIDTH										= 34;
-	const u32		_INDEX_BOUND											= 35;
-	const u32		_INDEX_BOUNDCOLUMN										= 36;
-	const u32		_INDEX_BOUNDTO											= 37;
-	const u32		_INDEX_BUFFERMODE										= 38;
-	const u32		_INDEX_BUTTONCOUNT										= 39;
-	const u32		_INDEX_CANCEL											= 40;
-	const u32		_INDEX_CAPTION											= 41;
-	const u32		_INDEX_CENTERED											= 42;
-	const u32		_INDEX_CENTURY											= 43;
-	const u32		_INDEX_CHILDORDER										= 44;
-	const u32		_INDEX_CLASS											= 45;
-	const u32		_INDEX_CLASSLIBRARY										= 46;
-	const u32		_INDEX_CLIPCONTROLS										= 47;
-	const u32		_INDEX_CLOSABLE											= 48;
-	const u32		_INDEX_COLORSCHEME										= 49;
-	const u32		_INDEX_COLORSOURCE										= 50;
-	const u32		_INDEX_COLUMNCOUNT										= 51;
-	const u32		_INDEX_COLUMNLINES										= 52;
-	const u32		_INDEX_COLUMNORDER										= 53;
-	const u32		_INDEX_COLUMNS											= 54;
-	const u32		_INDEX_COLUMNWIDTHS										= 55;
-	const u32		_INDEX_COMMENT											= 56;
-	const u32		_INDEX_CONTINUOUSSCROLL									= 57;
-	const u32		_INDEX_CONTROLBOX										= 58;
-	const u32		_INDEX_CONTROLCOUNT										= 59;
-	const u32		_INDEX_CONTROLS											= 60;
-	const u32		_INDEX_CONTROLSOURCE									= 61;
-	const u32		_INDEX_COUNT											= 62;
-	const u32		_INDEX_CURRENTCONTROL									= 63;
-	const u32		_INDEX_CURRENTX											= 64;
-	const u32		_INDEX_CURRENTY											= 65;
-	const u32		_INDEX_CURVATURE										= 66;
-	const u32		_INDEX_DATAENVIRONMENT									= 67;
-	const u32		_INDEX_DATASESSION										= 68;
-	const u32		_INDEX_DATASESSIONID									= 69;
-	const u32		_INDEX_DATEFORMAT										= 70;
-	const u32		_INDEX_DATEMARK											= 71;
-	const u32		_INDEX_DECLASS											= 72;
-	const u32		_INDEX_DECLASSLIBRARY									= 73;
-	const u32		_INDEX_DEFAULT											= 74;
-	const u32		_INDEX_DEFOLELCID										= 75;
-	const u32		_INDEX_DELETEMARK										= 76;
-	const u32		_INDEX_DESKTOP											= 77;
-	const u32		_INDEX_DETAILS											= 78;
-	const u32		_INDEX_DISABLEDBACKCOLOR								= 79;
-	const u32		_INDEX_DISABLEDFORECOLOR								= 80;
-	const u32		_INDEX_DISABLEDITEMBACKCOLOR							= 81;
-	const u32		_INDEX_DISABLEDITEMFORECOLOR							= 82;
-	const u32		_INDEX_DISABLEDPICTURE									= 83;
-	const u32		_INDEX_DISPLAYCOUNT										= 84;
-	const u32		_INDEX_DISPLAYVALUE										= 85;
-	const u32		_INDEX_DOCKABLE											= 86;
-	const u32		_INDEX_DOCKED											= 87;
-	const u32		_INDEX_DOCKPOSITION										= 88;
-	const u32		_INDEX_DOCREATE											= 89;
-	const u32		_INDEX_DOCUMENTFILE										= 90;
-	const u32		_INDEX_DOWNPICTURE										= 91;
-	const u32		_INDEX_DRAGICON											= 92;
-	const u32		_INDEX_DRAGMODE											= 93;
-	const u32		_INDEX_DRAWMODE											= 94;
-	const u32		_INDEX_DRAWSTYLE										= 95;
-	const u32		_INDEX_DRAWWIDTH										= 96;
-	const u32		_INDEX_DYNAMICALIGNMENT									= 97;
-	const u32		_INDEX_DYNAMICBACKCOLOR									= 98;
-	const u32		_INDEX_DYNAMICCURRENTCONTROL							= 99;
-	const u32		_INDEX_DYNAMICFONTBOLD									= 100;
-	const u32		_INDEX_DYNAMICFONTITALIC								= 101;
-	const u32		_INDEX_DYNAMICFONTNAME									= 102;
-	const u32		_INDEX_DYNAMICFONTOUTLINE								= 103;
-	const u32		_INDEX_DYNAMICFONTSHADOW								= 104;
-	const u32		_INDEX_DYNAMICFONTSIZE									= 105;
-	const u32		_INDEX_DYNAMICFONTSTRIKETHRU							= 106;
-	const u32		_INDEX_DYNAMICFONTUNDERLINE								= 107;
-	const u32		_INDEX_DYNAMICFORECOLOR									= 108;
-	const u32		_INDEX_DYNAMICINPUTMASK									= 109;
-	const u32		_INDEX_EDITBOX_ALLOW_MOVE_BEYOND_END_OF_LINE			= 110;
-	const u32		_INDEX_EDITBOX_COLUMN									= 111;
-	const u32		_INDEX_EDITBOX_IS_HEAVY_PROCESSING						= 112;
-	const u32		_INDEX_EDITBOX_IS_SOURCE_CODE							= 113;
-	const u32		_INDEX_EDITBOX_LEFT_COLUMN								= 114;
-	const u32		_INDEX_EDITBOX_OVERWRITE								= 115;
-	const u32		_INDEX_EDITBOX_SHOW_CURSOR_LINE							= 116;
-	const u32		_INDEX_EDITBOX_SHOW_END_LINE							= 117;
-	const u32		_INDEX_EDITBOX_SHOW_LINE_NUMBERS						= 118;
-	const u32		_INDEX_EDITBOX_TABS_ENFORCED							= 119;
-	const u32		_INDEX_EDITBOX_TAB_WIDTH								= 120;
-	const u32		_INDEX_ENABLED											= 121;
-	const u32		_INDEX_ENABLEHYPERLINKS									= 122;
-	const u32		_INDEX_ERRORNO											= 123;
-	const u32		_INDEX_FILLCOLOR										= 124;
-	const u32		_INDEX_FILLSTYLE										= 125;
-	const u32		_INDEX_FIRSTELEMENT										= 126;
-	const u32		_INDEX_FONTBOLD											= 127;
-	const u32		_INDEX_FONTCHARSET										= 128;
-	const u32		_INDEX_FONTCONDENSE										= 129;
-	const u32		_INDEX_FONTEXTEND										= 130;
-	const u32		_INDEX_FONTITALIC										= 131;
-	const u32		_INDEX_FONTNAME											= 132;
-	const u32		_INDEX_FONTOUTLINE										= 133;
-	const u32		_INDEX_FONTSHADOW										= 134;
-	const u32		_INDEX_FONTSIZE											= 135;
-	const u32		_INDEX_FONTSTRIKETHRU									= 136;
-	const u32		_INDEX_FONTUNDERLINE									= 137;
-	const u32		_INDEX_FORECOLOR										= 138;
-	const u32		_INDEX_FORMAT											= 139;
-	const u32		_INDEX_FORMCOUNT										= 140;
-	const u32		_INDEX_FORMS											= 141;
-	const u32		_INDEX_GRIDLINECOLOR									= 142;
-	const u32		_INDEX_GRIDLINES										= 143;
-	const u32		_INDEX_GRIDLINEWIDTH									= 144;
-	const u32		_INDEX_HALFHEIGHTCAPTION								= 145;
-	const u32		_INDEX_HEADERCLASS										= 146;
-	const u32		_INDEX_HEADERCLASSLIBRARY								= 147;
-	const u32		_INDEX_HEADERHEIGHT										= 148;
-	const u32		_INDEX_HEIGHT											= 149;
-	const u32		_INDEX_HELPCONTEXTID									= 150;
-	const u32		_INDEX_HIDESELECTION									= 151;
-	const u32		_INDEX_HIGHLIGHT										= 152;
-	const u32		_INDEX_HIGHLIGHTBACKCOLOR								= 153;
-	const u32		_INDEX_HIGHLIGHTFORECOLOR								= 154;
-	const u32		_INDEX_HIGHLIGHTROW										= 155;
-	const u32		_INDEX_HIGHLIGHTROWLINEWIDTH							= 156;
-	const u32		_INDEX_HIGHLIGHTSTYLE									= 157;
-	const u32		_INDEX_HOSTNAME											= 158;
-	const u32		_INDEX_HOURS											= 159;
-	const u32		_INDEX_HSCROLLSMALLCHANGE								= 160;
-	const u32		_INDEX_HWND												= 161;
-	const u32		_INDEX_ICON												= 162;
-	const u32		_INDEX_IMEMODE											= 163;
-	const u32		_INDEX_INCREMENT										= 164;
-	const u32		_INDEX_INCREMENTALSEARCH								= 165;
-	const u32		_INDEX_INPUTMASK										= 166;
-	const u32		_INDEX_INTEGRALHEIGHT									= 167;
-	const u32		_INDEX_INTERVAL											= 168;
-	const u32		_INDEX_ITEMBACKCOLOR									= 169;
-	const u32		_INDEX_ITEMDATA											= 170;
-	const u32		_INDEX_ITEMFORECOLOR									= 171;
-	const u32		_INDEX_ITEMIDDATA										= 172;
-	const u32		_INDEX_ITEMTIPS											= 173;
-	const u32		_INDEX_KEYBOARDHIGHVALUE								= 174;
-	const u32		_INDEX_KEYBOARDLOWVALUE									= 175;
-	const u32		_INDEX_KEYPREVIEW										= 176;
-	const u32		_INDEX_KEYSORT											= 177;
-	const u32		_INDEX_LEFT												= 178;
-	const u32		_INDEX_LEFTCOLUMN										= 179;
-	const u32		_INDEX_LINECONTENTS										= 180;
-	const u32		_INDEX_LINENO											= 181;
-	const u32		_INDEX_LINESLANT										= 182;
-	const u32		_INDEX_LINKMASTER										= 183;
-	const u32		_INDEX_LIST												= 184;
-	const u32		_INDEX_LISTCOUNT										= 185;
-	const u32		_INDEX_LISTINDEX										= 186;
-	const u32		_INDEX_LISTITEM											= 187;
-	const u32		_INDEX_LISTITEMID										= 188;
-	const u32		_INDEX_LOCKCOLUMNS										= 189;
-	const u32		_INDEX_LOCKCOLUMNSLEFT									= 190;
-	const u32		_INDEX_LOCKSCREEN										= 191;
-	const u32		_INDEX_MACDESKTOP										= 192;
-	const u32		_INDEX_MARGIN											= 193;
-	const u32		_INDEX_MASK												= 194;
-	const u32		_INDEX_MAXBUTTON										= 195;
-	const u32		_INDEX_MAXHEIGHT										= 196;
-	const u32		_INDEX_MAXLEFT											= 197;
-	const u32		_INDEX_MAXLENGTH										= 198;
-	const u32		_INDEX_MAXTOP											= 199;
-	const u32		_INDEX_MAXWIDTH											= 200;
-	const u32		_INDEX_MDIFORM											= 201;
-	const u32		_INDEX_MEMBERCLASS										= 202;
-	const u32		_INDEX_MEMBERCLASSLIBRARY								= 203;
-	const u32		_INDEX_MEMOWINDOW										= 204;
-	const u32		_INDEX_MESSAGE											= 205;
-	const u32		_INDEX_MINBUTTON										= 206;
-	const u32		_INDEX_MINHEIGHT										= 207;
-	const u32		_INDEX_MINWIDTH											= 208;
-	const u32		_INDEX_MOUSEICON										= 209;
-	const u32		_INDEX_MOUSEPOINTER										= 210;
-	const u32		_INDEX_MOVABLE											= 211;
-	const u32		_INDEX_MOVERBARS										= 212;
-	const u32		_INDEX_MULTISELECT										= 213;
-	const u32		_INDEX_NAME												= 214;
-	const u32		_INDEX_NECOLOR											= 215;
-	const u32		_INDEX_NEWINDEX											= 216;
-	const u32		_INDEX_NEWITEMID										= 217;
-	const u32		_INDEX_NULLDISPLAY										= 218;
-	const u32		_INDEX_NUMBEROFELEMENTS									= 219;
-	const u32		_INDEX_NWCOLOR											= 220;
-	const u32		_INDEX_OBJECT											= 221;
-	const u32		_INDEX_OBJECTS											= 222;
-	const u32		_INDEX_OLECLASS											= 223;
-	const u32		_INDEX_OLEDRAGMODE										= 224;
-	const u32		_INDEX_OLEDRAGPICTURE									= 225;
-	const u32		_INDEX_OLEDROPEFFECTS									= 226;
-	const u32		_INDEX_OLEDROPHASDATA									= 227;
-	const u32		_INDEX_OLEDROPMODE										= 228;
-	const u32		_INDEX_OLEDROPTEXTINSERTION								= 229;
-	const u32		_INDEX_OLELCID											= 230;
-	const u32		_INDEX_OLETYPEALLOWED									= 231;
-	const u32		_INDEX_OPENWINDOW										= 232;
-	const u32		_INDEX_OPTIMIZE											= 233;
-	const u32		_INDEX_PAGECOUNT										= 234;
-	const u32		_INDEX_PAGEHEIGHT										= 235;
-	const u32		_INDEX_PAGEORDER										= 236;
-	const u32		_INDEX_PAGES											= 237;
-	const u32		_INDEX_PAGEWIDTH										= 238;
-	const u32		_INDEX_PANEL											= 239;
-	const u32		_INDEX_PANELLINK										= 240;
-	const u32		_INDEX_PARENT											= 241;
-	const u32		_INDEX_PARENTCLASS										= 242;
-	const u32		_INDEX_PARTITION										= 243;
-	const u32		_INDEX_PASSWORDCHAR										= 244;
-	const u32		_INDEX_PICTURE											= 245;
-	const u32		_INDEX_PICTUREBMP										= 246;
-	const u32		_INDEX_PICTUREBMP_DOWN									= 247;
-	const u32		_INDEX_PICTUREBMP_OVER									= 248;
-	const u32		_INDEX_PICTUREMARGIN									= 249;
-	const u32		_INDEX_PICTUREPOSITION									= 250;
-	const u32		_INDEX_PICTURESELECTIONDISPLAY							= 251;
-	const u32		_INDEX_PICTURESPACING									= 252;
-	const u32		_INDEX_PICTUREVAL										= 253;
-	const u32		_INDEX_POLYPOINTS										= 254;
-	const u32		_INDEX_PROCEDURE										= 255;
-	const u32		_INDEX_READBACKCOLOR									= 256;
-	const u32		_INDEX_READCYCLE										= 257;
-	const u32		_INDEX_READFORECOLOR									= 258;
-	const u32		_INDEX_READLOCK											= 259;
-	const u32		_INDEX_READMOUSE										= 260;
-	const u32		_INDEX_READONLY											= 261;
-	const u32		_INDEX_READSAVE											= 262;
-	const u32		_INDEX_READTIMEOUT										= 263;
-	const u32		_INDEX_RECORDMARK										= 264;
-	const u32		_INDEX_RECORDSOURCE										= 265;
-	const u32		_INDEX_RECORDSOURCETYPE									= 266;
-	const u32		_INDEX_RELATIONALEXPR									= 267;
-	const u32		_INDEX_RELATIVECOLUMN									= 268;
-	const u32		_INDEX_RELATIVEROW										= 269;
-	const u32		_INDEX_RELEASETYPE										= 270;
-	const u32		_INDEX_RESIZABLE										= 271;
-	const u32		_INDEX_RIGHTTOLEFT										= 272;
-	const u32		_INDEX_ROTATEFLIP										= 273;
-	const u32		_INDEX_ROTATION											= 274;
-	const u32		_INDEX_ROUND_TO											= 275;
-	const u32		_INDEX_ROWCOLCHANGE										= 276;
-	const u32		_INDEX_ROWHEIGHT										= 277;
-	const u32		_INDEX_ROWSOURCE										= 278;
-	const u32		_INDEX_ROWSOURCETYPE									= 279;
-	const u32		_INDEX_SCALEMODE										= 280;
-	const u32		_INDEX_SCROLLBARS										= 281;
-	const u32		_INDEX_SCROLLX											= 282;
-	const u32		_INDEX_SCROLLY											= 283;
-	const u32		_INDEX_SECOLOR											= 284;
-	const u32		_INDEX_SECONDS											= 285;
-	const u32		_INDEX_SELECTED											= 286;
-	const u32		_INDEX_SELECTEDBACKCOLOR								= 287;
-	const u32		_INDEX_SELECTEDFORECOLOR								= 288;
-	const u32		_INDEX_SELECTEDID										= 289;
-	const u32		_INDEX_SELECTEDITEMBACKCOLOR							= 290;
-	const u32		_INDEX_SELECTEDITEMFORECOLOR							= 291;
-	const u32		_INDEX_SELECTONENTRY									= 292;
-	const u32		_INDEX_SELLENGTH										= 293;
-	const u32		_INDEX_SELSTART											= 294;
-	const u32		_INDEX_SELTEXT											= 295;
-	const u32		_INDEX_SHOWINTASKBAR									= 296;
-	const u32		_INDEX_SHOWTIPS											= 297;
-	const u32		_INDEX_SHOWWINDOW										= 298;
-	const u32		_INDEX_SIZABLE											= 299;
-	const u32		_INDEX_SIZEBOX											= 300;
-	const u32		_INDEX_SORTED											= 301;
-	const u32		_INDEX_SPARSE											= 302;
-	const u32		_INDEX_SPECIALEFFECT									= 303;
-	const u32		_INDEX_SPINNERHIGHVALUE									= 304;
-	const u32		_INDEX_SPINNERLOWVALUE									= 305;
-	const u32		_INDEX_SPLITBAR											= 306;
-	const u32		_INDEX_STACKLEVEL										= 307;
-	const u32		_INDEX_STATUSBARTEXT									= 308;
-	const u32		_INDEX_STRETCH											= 309;
-	const u32		_INDEX_STRICTDATEENTRY									= 310;
-	const u32		_INDEX_STYLE											= 311;
-	const u32		_INDEX_SWCOLOR											= 312;
-	const u32		_INDEX_TABINDEX											= 313;
-	const u32		_INDEX_TABORIENTATION									= 314;
-	const u32		_INDEX_TABS												= 315;
-	const u32		_INDEX_TABSTOP											= 316;
-	const u32		_INDEX_TABSTYLE											= 317;
-	const u32		_INDEX_TAG												= 318;
-	const u32		_INDEX_TERMINATEREAD									= 319;
-	const u32		_INDEX_TEXT												= 320;
-	const u32		_INDEX_THEMES											= 321;
-	const u32		_INDEX_TITLEBAR											= 322;
-	const u32		_INDEX_TOOLTIPTEXT										= 323;
-	const u32		_INDEX_TOP												= 324;
-	const u32		_INDEX_TOPINDEX											= 325;
-	const u32		_INDEX_TOPITEMID										= 326;
-	const u32		_INDEX_USERVALUE										= 327;
-	const u32		_INDEX_VALUE											= 328;
-	const u32		_INDEX_VALUE_MAXIMUM									= 329;
-	const u32		_INDEX_VALUE_MINIMUM									= 330;
-	const u32		_INDEX_VIEW												= 331;
-	const u32		_INDEX_VIEWPORTHEIGHT									= 332;
-	const u32		_INDEX_VIEWPORTLEFT										= 333;
-	const u32		_INDEX_VIEWPORTTOP										= 334;
-	const u32		_INDEX_VIEWPORTWIDTH									= 335;
-	const u32		_INDEX_VISIBLE											= 336;
-	const u32		_INDEX_VISUALEFFECT										= 337;
-	const u32		_INDEX_VSCROLLSMALLCHANGE								= 338;
-	const u32		_INDEX_WHATSTHISBUTTON									= 339;
-	const u32		_INDEX_WHATSTHISHELP									= 340;
-	const u32		_INDEX_WHATSTHISHELPID									= 341;
-	const u32		_INDEX_WIDTH											= 342;
-	const u32		_INDEX_WINDOWLIST										= 343;
-	const u32		_INDEX_WINDOWSTATE										= 344;
-	const u32		_INDEX_WINDOWTYPE										= 345;
-	const u32		_INDEX_WORDWRAP											= 346;
-	const u32		_INDEX_ZOOMBOX											= 347;
+	const u32		_INDEX_ACTIVECOLUMN										= 1;
+	const u32		_INDEX_ACTIVECONTROL									= 2;
+	const u32		_INDEX_ACTIVEFORM										= 3;
+	const u32		_INDEX_ACTIVEPAGE										= 4;
+	const u32		_INDEX_ACTIVEROW										= 5;
+	const u32		_INDEX_ADDLINEFEEDS										= 6;
+	const u32		_INDEX_ALIGN											= 7;
+	const u32		_INDEX_ALIGNMENT										= 8;
+	const u32		_INDEX_ALLOWADDNEW										= 9;
+	const u32		_INDEX_ALLOWAUTOCOLUMNFIT								= 10;
+	const u32		_INDEX_ALLOWCELLSELECTION								= 11;
+	const u32		_INDEX_ALLOWHEADERSIZING								= 12;
+	const u32		_INDEX_ALLOWOUTPUT										= 13;
+	const u32		_INDEX_ALLOWROWSIZING									= 14;
+	const u32		_INDEX_ALLOWTABS										= 15;
+	const u32		_INDEX_ALWAYSONBOTTOM									= 16;
+	const u32		_INDEX_ALWAYSONTOP										= 17;
+	const u32		_INDEX_ANCHOR											= 18;
+	const u32		_INDEX_APPLICATION										= 19;
+	const u32		_INDEX_AUTOACTIVATE										= 20;
+	const u32		_INDEX_AUTOCENTER										= 21;
+	const u32		_INDEX_AUTOCOMPLETE										= 22;
+	const u32		_INDEX_AUTOCOMPSOURCE									= 23;
+	const u32		_INDEX_AUTOCOMPTABLE									= 24;
+	const u32		_INDEX_AUTOHIDESCROLLBAR								= 25;
+	const u32		_INDEX_AUTORELEASE										= 26;
+	const u32		_INDEX_AUTOSIZE											= 27;
+	const u32		_INDEX_AUTOVERBMENU										= 28;
+	const u32		_INDEX_BACKCOLOR										= 29;
+	const u32		_INDEX_BACKSTYLE										= 30;
+	const u32		_INDEX_BASECLASS										= 31;
+	const u32		_INDEX_BINDCONTROLS										= 32;
+	const u32		_INDEX_BORDERCOLOR										= 33;
+	const u32		_INDEX_BORDERSTYLE										= 34;
+	const u32		_INDEX_BORDERWIDTH										= 35;
+	const u32		_INDEX_BOUND											= 36;
+	const u32		_INDEX_BOUNDCOLUMN										= 37;
+	const u32		_INDEX_BOUNDTO											= 38;
+	const u32		_INDEX_BUFFERMODE										= 39;
+	const u32		_INDEX_BUTTONCOUNT										= 40;
+	const u32		_INDEX_CANCEL											= 41;
+	const u32		_INDEX_CAPTION											= 42;
+	const u32		_INDEX_CENTERED											= 43;
+	const u32		_INDEX_CENTURY											= 44;
+	const u32		_INDEX_CHILDORDER										= 45;
+	const u32		_INDEX_CLASS											= 46;
+	const u32		_INDEX_CLASSLIBRARY										= 47;
+	const u32		_INDEX_CLIPCONTROLS										= 48;
+	const u32		_INDEX_CLOSABLE											= 49;
+	const u32		_INDEX_COLORSCHEME										= 50;
+	const u32		_INDEX_COLORSOURCE										= 51;
+	const u32		_INDEX_COLUMNCOUNT										= 52;
+	const u32		_INDEX_COLUMNLINES										= 53;
+	const u32		_INDEX_COLUMNORDER										= 54;
+	const u32		_INDEX_COLUMNS											= 55;
+	const u32		_INDEX_COLUMNWIDTHS										= 56;
+	const u32		_INDEX_COMMENT											= 57;
+	const u32		_INDEX_CONTINUOUSSCROLL									= 58;
+	const u32		_INDEX_CONTROLBOX										= 59;
+	const u32		_INDEX_CONTROLCOUNT										= 60;
+	const u32		_INDEX_CONTROLS											= 61;
+	const u32		_INDEX_CONTROLSOURCE									= 62;
+	const u32		_INDEX_COUNT											= 63;
+	const u32		_INDEX_CURRENTCONTROL									= 64;
+	const u32		_INDEX_CURRENTX											= 65;
+	const u32		_INDEX_CURRENTY											= 66;
+	const u32		_INDEX_CURVATURE										= 67;
+	const u32		_INDEX_DATAENVIRONMENT									= 68;
+	const u32		_INDEX_DATASESSION										= 69;
+	const u32		_INDEX_DATASESSIONID									= 70;
+	const u32		_INDEX_DATEFORMAT										= 71;
+	const u32		_INDEX_DATEMARK											= 72;
+	const u32		_INDEX_DECLASS											= 73;
+	const u32		_INDEX_DECLASSLIBRARY									= 74;
+	const u32		_INDEX_DEFAULT											= 75;
+	const u32		_INDEX_DEFOLELCID										= 76;
+	const u32		_INDEX_DELETEMARK										= 77;
+	const u32		_INDEX_DESKTOP											= 78;
+	const u32		_INDEX_DETAILS											= 79;
+	const u32		_INDEX_DISABLEDBACKCOLOR								= 80;
+	const u32		_INDEX_DISABLEDFORECOLOR								= 81;
+	const u32		_INDEX_DISABLEDITEMBACKCOLOR							= 82;
+	const u32		_INDEX_DISABLEDITEMFORECOLOR							= 83;
+	const u32		_INDEX_DISABLEDPICTURE									= 84;
+	const u32		_INDEX_DISPLAYCOUNT										= 85;
+	const u32		_INDEX_DISPLAYVALUE										= 86;
+	const u32		_INDEX_DOCKABLE											= 87;
+	const u32		_INDEX_DOCKED											= 88;
+	const u32		_INDEX_DOCKPOSITION										= 89;
+	const u32		_INDEX_DOCREATE											= 90;
+	const u32		_INDEX_DOCUMENTFILE										= 91;
+	const u32		_INDEX_DOWNPICTURE										= 92;
+	const u32		_INDEX_DRAGICON											= 93;
+	const u32		_INDEX_DRAGMODE											= 94;
+	const u32		_INDEX_DRAWMODE											= 95;
+	const u32		_INDEX_DRAWSTYLE										= 96;
+	const u32		_INDEX_DRAWWIDTH										= 97;
+	const u32		_INDEX_DYNAMICALIGNMENT									= 98;
+	const u32		_INDEX_DYNAMICBACKCOLOR									= 99;
+	const u32		_INDEX_DYNAMICCURRENTCONTROL							= 100;
+	const u32		_INDEX_DYNAMICFONTBOLD									= 101;
+	const u32		_INDEX_DYNAMICFONTITALIC								= 102;
+	const u32		_INDEX_DYNAMICFONTNAME									= 103;
+	const u32		_INDEX_DYNAMICFONTOUTLINE								= 104;
+	const u32		_INDEX_DYNAMICFONTSHADOW								= 105;
+	const u32		_INDEX_DYNAMICFONTSIZE									= 106;
+	const u32		_INDEX_DYNAMICFONTSTRIKETHRU							= 107;
+	const u32		_INDEX_DYNAMICFONTUNDERLINE								= 108;
+	const u32		_INDEX_DYNAMICFORECOLOR									= 109;
+	const u32		_INDEX_DYNAMICINPUTMASK									= 110;
+	const u32		_INDEX_EDITBOX_ALLOW_MOVE_BEYOND_END_OF_LINE			= 111;
+	const u32		_INDEX_EDITBOX_COLUMN									= 112;
+	const u32		_INDEX_EDITBOX_IS_HEAVY_PROCESSING						= 113;
+	const u32		_INDEX_EDITBOX_IS_SOURCE_CODE							= 114;
+	const u32		_INDEX_EDITBOX_LEFT_COLUMN								= 115;
+	const u32		_INDEX_EDITBOX_OVERWRITE								= 116;
+	const u32		_INDEX_EDITBOX_SHOW_CURSOR_LINE							= 117;
+	const u32		_INDEX_EDITBOX_SHOW_END_LINE							= 118;
+	const u32		_INDEX_EDITBOX_SHOW_LINE_NUMBERS						= 119;
+	const u32		_INDEX_EDITBOX_TABS_ENFORCED							= 120;
+	const u32		_INDEX_EDITBOX_TAB_WIDTH								= 121;
+	const u32		_INDEX_ENABLED											= 122;
+	const u32		_INDEX_ENABLEHYPERLINKS									= 123;
+	const u32		_INDEX_ERRORNO											= 124;
+	const u32		_INDEX_FILLCOLOR										= 125;
+	const u32		_INDEX_FILLSTYLE										= 126;
+	const u32		_INDEX_FIRSTELEMENT										= 127;
+	const u32		_INDEX_FONTBOLD											= 128;
+	const u32		_INDEX_FONTCHARSET										= 129;
+	const u32		_INDEX_FONTCONDENSE										= 130;
+	const u32		_INDEX_FONTEXTEND										= 131;
+	const u32		_INDEX_FONTITALIC										= 132;
+	const u32		_INDEX_FONTNAME											= 133;
+	const u32		_INDEX_FONTOUTLINE										= 134;
+	const u32		_INDEX_FONTSHADOW										= 135;
+	const u32		_INDEX_FONTSIZE											= 136;
+	const u32		_INDEX_FONTSTRIKETHRU									= 137;
+	const u32		_INDEX_FONTUNDERLINE									= 138;
+	const u32		_INDEX_FORECOLOR										= 139;
+	const u32		_INDEX_FORMAT											= 140;
+	const u32		_INDEX_FORMCOUNT										= 141;
+	const u32		_INDEX_FORMS											= 142;
+	const u32		_INDEX_GRIDLINECOLOR									= 143;
+	const u32		_INDEX_GRIDLINES										= 144;
+	const u32		_INDEX_GRIDLINEWIDTH									= 145;
+	const u32		_INDEX_HALFHEIGHTCAPTION								= 146;
+	const u32		_INDEX_HEADERCLASS										= 147;
+	const u32		_INDEX_HEADERCLASSLIBRARY								= 148;
+	const u32		_INDEX_HEADERHEIGHT										= 149;
+	const u32		_INDEX_HEIGHT											= 150;
+	const u32		_INDEX_HELPCONTEXTID									= 151;
+	const u32		_INDEX_HIDESELECTION									= 152;
+	const u32		_INDEX_HIGHLIGHT										= 153;
+	const u32		_INDEX_HIGHLIGHTBACKCOLOR								= 154;
+	const u32		_INDEX_HIGHLIGHTFORECOLOR								= 155;
+	const u32		_INDEX_HIGHLIGHTROW										= 156;
+	const u32		_INDEX_HIGHLIGHTROWLINEWIDTH							= 157;
+	const u32		_INDEX_HIGHLIGHTSTYLE									= 158;
+	const u32		_INDEX_HOSTNAME											= 159;
+	const u32		_INDEX_HOURS											= 160;
+	const u32		_INDEX_HSCROLLSMALLCHANGE								= 161;
+	const u32		_INDEX_HWND												= 162;
+	const u32		_INDEX_ICON												= 163;
+	const u32		_INDEX_IMEMODE											= 164;
+	const u32		_INDEX_INCREMENT										= 165;
+	const u32		_INDEX_INCREMENTALSEARCH								= 166;
+	const u32		_INDEX_INPUTMASK										= 167;
+	const u32		_INDEX_INTEGRALHEIGHT									= 168;
+	const u32		_INDEX_INTERVAL											= 169;
+	const u32		_INDEX_ITEMBACKCOLOR									= 170;
+	const u32		_INDEX_ITEMDATA											= 171;
+	const u32		_INDEX_ITEMFORECOLOR									= 172;
+	const u32		_INDEX_ITEMIDDATA										= 173;
+	const u32		_INDEX_ITEMTIPS											= 174;
+	const u32		_INDEX_KEYBOARDHIGHVALUE								= 175;
+	const u32		_INDEX_KEYBOARDLOWVALUE									= 176;
+	const u32		_INDEX_KEYPREVIEW										= 177;
+	const u32		_INDEX_KEYSORT											= 178;
+	const u32		_INDEX_LEFT												= 179;
+	const u32		_INDEX_LEFTCOLUMN										= 180;
+	const u32		_INDEX_LINECONTENTS										= 181;
+	const u32		_INDEX_LINENO											= 182;
+	const u32		_INDEX_LINESLANT										= 183;
+	const u32		_INDEX_LINKMASTER										= 184;
+	const u32		_INDEX_LIST												= 185;
+	const u32		_INDEX_LISTCOUNT										= 186;
+	const u32		_INDEX_LISTINDEX										= 187;
+	const u32		_INDEX_LISTITEM											= 188;
+	const u32		_INDEX_LISTITEMID										= 189;
+	const u32		_INDEX_LOCKCOLUMNS										= 190;
+	const u32		_INDEX_LOCKCOLUMNSLEFT									= 191;
+	const u32		_INDEX_LOCKSCREEN										= 192;
+	const u32		_INDEX_MACDESKTOP										= 193;
+	const u32		_INDEX_MARGIN											= 194;
+	const u32		_INDEX_MASK												= 195;
+	const u32		_INDEX_MAXBUTTON										= 196;
+	const u32		_INDEX_MAXHEIGHT										= 197;
+	const u32		_INDEX_MAXLEFT											= 198;
+	const u32		_INDEX_MAXLENGTH										= 199;
+	const u32		_INDEX_MAXTOP											= 200;
+	const u32		_INDEX_MAXWIDTH											= 201;
+	const u32		_INDEX_MDIFORM											= 202;
+	const u32		_INDEX_MEMBERCLASS										= 203;
+	const u32		_INDEX_MEMBERCLASSLIBRARY								= 204;
+	const u32		_INDEX_MEMOWINDOW										= 205;
+	const u32		_INDEX_MESSAGE											= 206;
+	const u32		_INDEX_MINBUTTON										= 207;
+	const u32		_INDEX_MINHEIGHT										= 208;
+	const u32		_INDEX_MINWIDTH											= 209;
+	const u32		_INDEX_MOUSEICON										= 210;
+	const u32		_INDEX_MOUSEPOINTER										= 211;
+	const u32		_INDEX_MOVABLE											= 212;
+	const u32		_INDEX_MOVERBARS										= 213;
+	const u32		_INDEX_MULTISELECT										= 214;
+	const u32		_INDEX_NAME												= 215;
+	const u32		_INDEX_NECOLOR											= 216;
+	const u32		_INDEX_NEWINDEX											= 217;
+	const u32		_INDEX_NEWITEMID										= 218;
+	const u32		_INDEX_NULLDISPLAY										= 219;
+	const u32		_INDEX_NUMBEROFELEMENTS									= 220;
+	const u32		_INDEX_NWCOLOR											= 221;
+	const u32		_INDEX_OBJECT											= 222;
+	const u32		_INDEX_OBJECTS											= 223;
+	const u32		_INDEX_OLECLASS											= 224;
+	const u32		_INDEX_OLEDRAGMODE										= 225;
+	const u32		_INDEX_OLEDRAGPICTURE									= 226;
+	const u32		_INDEX_OLEDROPEFFECTS									= 227;
+	const u32		_INDEX_OLEDROPHASDATA									= 228;
+	const u32		_INDEX_OLEDROPMODE										= 229;
+	const u32		_INDEX_OLEDROPTEXTINSERTION								= 230;
+	const u32		_INDEX_OLELCID											= 231;
+	const u32		_INDEX_OLETYPEALLOWED									= 232;
+	const u32		_INDEX_OPENWINDOW										= 233;
+	const u32		_INDEX_OPTIMIZE											= 234;
+	const u32		_INDEX_PAGECOUNT										= 235;
+	const u32		_INDEX_PAGEHEIGHT										= 236;
+	const u32		_INDEX_PAGEORDER										= 237;
+	const u32		_INDEX_PAGES											= 238;
+	const u32		_INDEX_PAGEWIDTH										= 239;
+	const u32		_INDEX_PANEL											= 240;
+	const u32		_INDEX_PANELLINK										= 241;
+	const u32		_INDEX_PARENT											= 242;
+	const u32		_INDEX_PARENTCLASS										= 243;
+	const u32		_INDEX_PARTITION										= 244;
+	const u32		_INDEX_PASSWORDCHAR										= 245;
+	const u32		_INDEX_PICTURE											= 246;
+	const u32		_INDEX_PICTUREBMP										= 247;
+	const u32		_INDEX_PICTUREBMP_DOWN									= 248;
+	const u32		_INDEX_PICTUREBMP_OVER									= 249;
+	const u32		_INDEX_PICTUREMARGIN									= 250;
+	const u32		_INDEX_PICTUREPOSITION									= 251;
+	const u32		_INDEX_PICTURESELECTIONDISPLAY							= 252;
+	const u32		_INDEX_PICTURESPACING									= 253;
+	const u32		_INDEX_PICTUREVAL										= 254;
+	const u32		_INDEX_POLYPOINTS										= 255;
+	const u32		_INDEX_PROCEDURE										= 256;
+	const u32		_INDEX_READBACKCOLOR									= 257;
+	const u32		_INDEX_READCYCLE										= 258;
+	const u32		_INDEX_READFORECOLOR									= 259;
+	const u32		_INDEX_READLOCK											= 260;
+	const u32		_INDEX_READMOUSE										= 261;
+	const u32		_INDEX_READONLY											= 262;
+	const u32		_INDEX_READSAVE											= 263;
+	const u32		_INDEX_READTIMEOUT										= 264;
+	const u32		_INDEX_RECORDMARK										= 265;
+	const u32		_INDEX_RECORDSOURCE										= 266;
+	const u32		_INDEX_RECORDSOURCETYPE									= 267;
+	const u32		_INDEX_RELATIONALEXPR									= 268;
+	const u32		_INDEX_RELATIVECOLUMN									= 269;
+	const u32		_INDEX_RELATIVEROW										= 270;
+	const u32		_INDEX_RELEASETYPE										= 271;
+	const u32		_INDEX_RESIZABLE										= 272;
+	const u32		_INDEX_RIGHTTOLEFT										= 273;
+	const u32		_INDEX_ROTATEFLIP										= 274;
+	const u32		_INDEX_ROTATION											= 275;
+	const u32		_INDEX_ROUND_TO											= 276;
+	const u32		_INDEX_ROWCOLCHANGE										= 277;
+	const u32		_INDEX_ROWHEIGHT										= 278;
+	const u32		_INDEX_ROWSOURCE										= 279;
+	const u32		_INDEX_ROWSOURCETYPE									= 280;
+	const u32		_INDEX_SCALEMODE										= 281;
+	const u32		_INDEX_SCROLLBARS										= 282;
+	const u32		_INDEX_SCROLLX											= 283;
+	const u32		_INDEX_SCROLLY											= 284;
+	const u32		_INDEX_SECOLOR											= 285;
+	const u32		_INDEX_SECONDS											= 286;
+	const u32		_INDEX_SELECTED											= 287;
+	const u32		_INDEX_SELECTEDBACKCOLOR								= 288;
+	const u32		_INDEX_SELECTEDFORECOLOR								= 289;
+	const u32		_INDEX_SELECTEDID										= 290;
+	const u32		_INDEX_SELECTEDITEMBACKCOLOR							= 291;
+	const u32		_INDEX_SELECTEDITEMFORECOLOR							= 292;
+	const u32		_INDEX_SELECTONENTRY									= 293;
+	const u32		_INDEX_SELLENGTH										= 294;
+	const u32		_INDEX_SELSTART											= 295;
+	const u32		_INDEX_SELTEXT											= 296;
+	const u32		_INDEX_SHOWINTASKBAR									= 297;
+	const u32		_INDEX_SHOWTIPS											= 298;
+	const u32		_INDEX_SHOWWINDOW										= 299;
+	const u32		_INDEX_SIZABLE											= 300;
+	const u32		_INDEX_SIZEBOX											= 301;
+	const u32		_INDEX_SORTED											= 302;
+	const u32		_INDEX_SPARSE											= 303;
+	const u32		_INDEX_SPECIALEFFECT									= 304;
+	const u32		_INDEX_SPINNERHIGHVALUE									= 305;
+	const u32		_INDEX_SPINNERLOWVALUE									= 306;
+	const u32		_INDEX_SPLITBAR											= 307;
+	const u32		_INDEX_STACKLEVEL										= 308;
+	const u32		_INDEX_STATUSBARTEXT									= 309;
+	const u32		_INDEX_STRETCH											= 310;
+	const u32		_INDEX_STRICTDATEENTRY									= 311;
+	const u32		_INDEX_STYLE											= 312;
+	const u32		_INDEX_SWCOLOR											= 313;
+	const u32		_INDEX_TABINDEX											= 314;
+	const u32		_INDEX_TABORIENTATION									= 315;
+	const u32		_INDEX_TABS												= 316;
+	const u32		_INDEX_TABSTOP											= 317;
+	const u32		_INDEX_TABSTYLE											= 318;
+	const u32		_INDEX_TAG												= 319;
+	const u32		_INDEX_TERMINATEREAD									= 320;
+	const u32		_INDEX_TEXT												= 321;
+	const u32		_INDEX_THEMES											= 322;
+	const u32		_INDEX_TITLEBAR											= 323;
+	const u32		_INDEX_TOOLTIPTEXT										= 324;
+	const u32		_INDEX_TOP												= 325;
+	const u32		_INDEX_TOPINDEX											= 326;
+	const u32		_INDEX_TOPITEMID										= 327;
+	const u32		_INDEX_USERVALUE										= 328;
+	const u32		_INDEX_VALUE											= 329;
+	const u32		_INDEX_VALUE_MAXIMUM									= 330;
+	const u32		_INDEX_VALUE_MINIMUM									= 331;
+	const u32		_INDEX_VIEW												= 332;
+	const u32		_INDEX_VIEWPORTHEIGHT									= 333;
+	const u32		_INDEX_VIEWPORTLEFT										= 334;
+	const u32		_INDEX_VIEWPORTTOP										= 335;
+	const u32		_INDEX_VIEWPORTWIDTH									= 336;
+	const u32		_INDEX_VISIBLE											= 337;
+	const u32		_INDEX_VISUALEFFECT										= 338;
+	const u32		_INDEX_VSCROLLSMALLCHANGE								= 339;
+	const u32		_INDEX_WHATSTHISBUTTON									= 340;
+	const u32		_INDEX_WHATSTHISHELP									= 341;
+	const u32		_INDEX_WHATSTHISHELPID									= 342;
+	const u32		_INDEX_WIDTH											= 343;
+	const u32		_INDEX_WINDOWLIST										= 344;
+	const u32		_INDEX_WINDOWSTATE										= 345;
+	const u32		_INDEX_WINDOWTYPE										= 346;
+	const u32		_INDEX_WORDWRAP											= 347;
+	const u32		_INDEX_ZOOMBOX											= 348;
 	// For _settings object
-	const u32		_INDEX_SET_AUTO_CONVERT									= 348;
-	const u32		_INDEX_SET_CASE_SENSITIVE_COMPARES						= 349;
-	const u32		_INDEX_SET_CASE_SENSITIVE_NAMES							= 350;
-	const u32		_INDEX_SET_CENTURY										= 351;
-	const u32		_INDEX_SET_DATE											= 352;
-	const u32		_INDEX_SET_DECIMALS										= 353;
-	const u32		_INDEX_SET_EXCLUSIVE									= 354;
-	const u32		_INDEX_SET_FOCUS_HIGHLIGHT_BORDER_PIXELS				= 355;
-	const u32		_INDEX_SET_FOCUS_HIGHLIGHT_PIXELS						= 356;
-	const u32		_INDEX_SET_HONOR_BARRIERS								= 357;
-	const u32		_INDEX_SET_IMPLICIT_PARAMS								= 358;
-	const u32		_INDEX_SET_INDEX_META_DATA								= 359;
-	const u32		_INDEX_SET_LANGUAGE										= 360;
-	const u32		_INDEX_SET_LOGICAL										= 361;
-	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 362;
-	const u32		_INDEX_SET_SLOPPY_PRINTING								= 363;
-	const u32		_INDEX_SET_STICKY_PARAMETERS							= 364;
-	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 365;
-	const u32		_INDEX_SET_TABLE_OBJECS									= 366;
-	const u32		_INDEX_SET_TALK											= 367;
-	const u32		_INDEX_SET_VARIABLES_FIRST								= 368;
-
+	const u32		_INDEX_SET_AUTO_CONVERT									= 349;
+	const u32		_INDEX_SET_CASE_SENSITIVE_COMPARES						= 350;
+	const u32		_INDEX_SET_CASE_SENSITIVE_NAMES							= 351;
+	const u32		_INDEX_SET_CENTURY										= 352;
+	const u32		_INDEX_SET_DATE											= 353;
+	const u32		_INDEX_SET_DECIMALS										= 354;
+	const u32		_INDEX_SET_EXCLUSIVE									= 355;
+	const u32		_INDEX_SET_FOCUS_HIGHLIGHT_BORDER_PIXELS				= 356;
+	const u32		_INDEX_SET_FOCUS_HIGHLIGHT_PIXELS						= 357;
+	const u32		_INDEX_SET_HONOR_BARRIERS								= 358;
+	const u32		_INDEX_SET_IMPLICIT_PARAMS								= 359;
+	const u32		_INDEX_SET_INDEX_META_DATA								= 360;
+	const u32		_INDEX_SET_LANGUAGE										= 361;
+	const u32		_INDEX_SET_LOGICAL										= 362;
+	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 363;
+	const u32		_INDEX_SET_SLOPPY_PRINTING								= 364;
+	const u32		_INDEX_SET_STICKY_PARAMETERS							= 365;
+	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 366;
+	const u32		_INDEX_SET_TABLE_OBJECS									= 367;
+	const u32		_INDEX_SET_TALK											= 368;
+	const u32		_INDEX_SET_VARIABLES_FIRST								= 369;
 
 
 	// Basic setters and getters
@@ -1280,7 +1279,7 @@ struct SBasePropertyInit;
 		{	_INDEX_WORDWRAP,						cgc_wordWrap,					sizeof(cgc_wordWrap) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=wraps, .f.=single line (default), how text is presented
 		{	_INDEX_ZOOMBOX,							cgc_zoomBox,					sizeof(cgc_zoomBox) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=shows zoom box, .f.=does not show (default), for backward compatibility, not used
 
-		// Settings objects always appear at the end ... so make sure their numbers are always appropriate (like _INDEX_SET_AUTO_CONVERT is always after the items above)
+		// Settings objects always appear at the end ... so make sure their numbers are always appropriate (like _INDEX_SET_AUTO_CONVERT is always after the last item above numerically)
 		{	_INDEX_SET_AUTO_CONVERT,				cgc_setAutoConvert,				sizeof(cgc_setAutoConvert) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=auto-converts mismatched variable types, such as "fred " + 5, converted to "fred" + "5", .f.=signals error
 		{	_INDEX_SET_CASE_SENSITIVE_COMPARES,		cgc_setCaseSensitiveCompares,	sizeof(cgc_setCaseSensitiveCompares) - 1,	_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=character compares are case sensitive, .f.=not case sensitive
 		{	_INDEX_SET_CASE_SENSITIVE_NAMES,		cgc_setCaseSensitiveNames,		sizeof(cgc_setCaseSensitiveNames) - 1,		_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=token names are case sensitive, .f.=not case sensitive
@@ -1289,37 +1288,19 @@ struct SBasePropertyInit;
 		{	_INDEX_SET_DECIMALS,					cgc_setDecimals,				sizeof(cgc_setDecimals) - 1,				_VAR_TYPE_S32,				0, 0, 0,		2								,NULL	},	// Number of decimals
 		{	_INDEX_SET_EXCLUSIVE,					cgc_setExclusive,				sizeof(cgc_setExclusive) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=exclusive access, .f.=shared access
 		{	_INDEX_SET_FOCUS_HIGHLIGHT_BORDER_PIXELS,cgc_setFocusHighlightBorderPixels,sizeof(cgc_setFocusHighlightBorderPixels) -1,_VAR_TYPE_S32,			0, 0, 0,		0								,NULL	},	// Number of pixels between the object and the focus highlight border
-// TODO:  working here
-		{	_INDEX_SET_FOCUS_HIGHLIGHT_PIXELS,			0, 0, 0 };		// s32
-		{	_INDEX_SET_HONOR_BARRIERS,					0, 0, 0 };		// bool
-		{	_INDEX_SET_IMPLICIT_PARAMS,					0, 0, 0 };		// bool
-		{	_INDEX_SET_INDEX_META_DATA,					0, 0, 0 };		// bool
-		{	_INDEX_SET_LANGUAGE,						0, 0, 0 };		// SDatum
-		{	_INDEX_SET_LOGICAL,							0, 0, 0 };		// s32
-		{	_INDEX_SET_NAMING_CONVENTIONS,				0, 0, 0 };		// bool
-		{	_INDEX_SET_SLOPPY_PRINTING,					0, 0, 0 };		// bool
-		{	_INDEX_SET_STICKY_PARAMETERS,				0, 0, 0 };		// bool
-		{	_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS,			0, 0, 0 };		// bool
-		{	_INDEX_SET_TABLE_OBJECS,					0, 0, 0 };		// bool
-		{	_INDEX_SET_TALK,							0, 0, 0 };		// bool
-		{	_INDEX_SET_VARIABLES_FIRST,					0, 0, 0 };		// bool
-
-// 		gsCurrentSetting->_set_focus_highlight_border_pixels	= 0;
-// 		gsCurrentSetting->_set_focus_highlight_pixels			= 4;
-// 		gsCurrentSetting->_set_honorBarriers					= true;
-// 		gsCurrentSetting->_set_implicitParams					= false;
-// 		gsCurrentSetting->_set_indexMetaData					= false;
-// 		iDatum_duplicate(&gsCurrentSetting->_set_languageTo, cgcEnglish, -1);
-// 		gsCurrentSetting->_set_logical							= _LOGICAL_TF;
-// 		gsCurrentSetting->_set_namingConventions				= false;
-// 		gsCurrentSetting->_set_sloppyPrinting					= false;
-// 		gsCurrentSetting->_set_stickyParameters					= true;
-// 		gsCurrentSetting->_set_tableEqualAssignments			= false;
-// 		gsCurrentSetting->_set_tableObjects						= false;
-// 		gsCurrentSetting->_set_talk								= true;
-// 		gsCurrentSetting->_set_variablesFirst					= false;
-
-
+		{	_INDEX_SET_FOCUS_HIGHLIGHT_PIXELS,		cgc_setFocusHighlightPixels,	sizeof(cgc_setFocusHighlightPixels) - 1,	_VAR_TYPE_S32,				0, 0, 0,		4								,NULL	},	// Number of pixels thick the focus highlight border is
+		{	_INDEX_SET_HONOR_BARRIERS,				cgc_setHonorBarriers,			sizeof(cgc_setHonorBarriers) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=honors the 2GB file size barrier, .f.=allows file sizes larger than 2GB
+		{	_INDEX_SET_IMPLICIT_PARAMS,				cgc_setImplicitParams,			sizeof(cgc_setImplicitParams) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=allows empty or partially empty parameters, .f.=requires 1:1 received parameters to passed parameters
+		{	_INDEX_SET_INDEX_META_DATA,				cgc_setIndexMetaData,			sizeof(cgc_setIndexMetaData) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=stores meta data for dates, defined variables inside the index, .f.=uses live environment on subsequent index tag reopens
+		{	_INDEX_SET_LANGUAGE,					cgc_setLanguage,				sizeof(cgc_setLanguage) - 1,				_VAR_TYPE_CHARACTER,		0, 0, 0,		(uptr)&cgcEnglish[0]			,NULL	},	// The default language for any new loaded objects
+		{	_INDEX_SET_LOGICAL,						cgc_setLogical,					sizeof(cgc_setLogical) - 1,					_VAR_TYPE_S32,				0, 0, 0,		_LOGICAL_TF						,NULL	},	// See _LOGICAL_* constants
+		{	_INDEX_SET_NAMING_CONVENTIONS,			cgc_setNamingConvention,		sizeof(cgc_setNamingConvention) - 1,		_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=Field and variables are examined for standard naming conventions with errors reported, .f.=no checks are made
+		{	_INDEX_SET_SLOPPY_PRINTING,				cgc_setSloppyPrinting,			sizeof(cgc_setSloppyPrinting) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=items outside of printer margins do not throw errors, but are simply clipped, .f.=items outside of printer margins throw errors
+		{	_INDEX_SET_STICKY_PARAMETERS,			cgc_setStickyParameters,		sizeof(cgc_setStickyParameters) - 1,		_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=allows parameters for functions to maintain their last value allowing access after use, and not requiring initialization , .f.=parameters are reset to logical .f.
+		{	_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS,		cgc_setTableObjects,			sizeof(cgc_setTableObjects) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=instead of REPLACE cField WITH .t., cField = .t. can be used, .f.=requires REPLACE or UPDATE
+		{	_INDEX_SET_TABLE_OBJECS,				cgc_setTableObjects,			sizeof(cgc_setTableObjects) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=allows tables to be accessed as array objects, .f.=tables are accessed normally
+		{	_INDEX_SET_TALK,						cgc_setTalk,					sizeof(cgc_setTalk) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=TALK is on and content is output, .f.=TALK is off
+		{	_INDEX_SET_VARIABLES_FIRST,				cgc_setVariablesFirst,			sizeof(cgc_setVariablesFirst) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=memory variables are searched first without m., .f.=the current alias is searched first, and then memory variables
 		{	0,										NULL,							0,											0,						    0, 0, 0,		0								,NULL	}
 	};
 	const s32 gsProps_masterSize = sizeof(gsProps_master) / sizeof(SBasePropertyInit) - 1;
@@ -1347,6 +1328,7 @@ struct SBasePropertyInit;
 
 	SObjPropertyMap gsProps_empty[] =
 	{
+		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_ENABLED,					0, 0, 0 },
@@ -1365,6 +1347,7 @@ struct SBasePropertyInit;
 
 	SObjPropertyMap gsProps_carousel[] =
 	{
+		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_ENABLED,					0, 0, 0 },
 		{	_INDEX_NAME,					0, 0, 0 },
@@ -1376,6 +1359,7 @@ struct SBasePropertyInit;
 
 	SObjPropertyMap gsProps_rider[] =
 	{
+		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_ENABLED,					0, 0, 0 },
 		{	_INDEX_NAME,					0, 0, 0 },
@@ -1457,6 +1441,7 @@ struct SBasePropertyInit;
 		{	_INDEX_ALIGNMENT,				0, 0, 0 },
 		{	_INDEX_BACKCOLOR,				0, 0, 0 },
 		{	_INDEX_BACKSTYLE,				0, 0, 0 },
+		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_BORDERCOLOR,				0, 0, 0 },
 		{	_INDEX_BORDERSTYLE,				0, 0, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
@@ -1637,9 +1622,11 @@ struct SBasePropertyInit;
 		{	_INDEX_AUTOSIZE,				0, 0, 0 },
 		{	_INDEX_BACKCOLOR,				0, 0, 0 },
 		{	_INDEX_BACKSTYLE,				0, 0, 0 },
+		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_BORDERCOLOR,				0, 0, 0 },
 		{	_INDEX_BORDERSTYLE,				0, 0, 0 },
 		{	_INDEX_BUTTONCOUNT,				0, 0, 0 },
+		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_COLORSOURCE,				0, 0, 0 },
 		{	_INDEX_COMMENT,					0, 0, 0 },
 		{	_INDEX_CONTROLSOURCE,			0, 0, 0 },
@@ -1746,7 +1733,9 @@ struct SBasePropertyInit;
 		{	_INDEX_AUTOSIZE,				0, 0, 0 },
 		{	_INDEX_BACKCOLOR,				0, 0, 0 },
 		{	_INDEX_BACKSTYLE,				0, 0, 0 },
+		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_CAPTION,					0, (uptr)&iObjProp_setter_captionOnChild, 0 },
+		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_COLORSCHEME,				0, 0, 0 },
 		{	_INDEX_COLORSOURCE,				0, 0, 0 },
 		{	_INDEX_COMMENT,					0, 0, 0 },
@@ -1816,9 +1805,11 @@ struct SBasePropertyInit;
 		{	_INDEX_AUTOSIZE,				0, 0, 0 },
 		{	_INDEX_BACKCOLOR,				0, 0, 0 },
 		{	_INDEX_BACKSTYLE,				0, 0, 0 },
+		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_BORDERCOLOR,				0, 0, 0 },
 		{	_INDEX_BORDERSTYLE,				0, 0, 0 },
 		{	_INDEX_BUTTONCOUNT,				0, 0, 0 },
+		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_COLORSOURCE,				0, 0, 0 },
 		{	_INDEX_COMMENT,					0, 0, 0 },
 		{	_INDEX_CONTROLSOURCE,			0, 0, 0 },
@@ -2409,6 +2400,7 @@ struct SBasePropertyInit;
 		{	_INDEX_DATAENVIRONMENT,			0, 0, 0 },
 		{	_INDEX_DATASESSION,				0, 0, 0 },
 		{	_INDEX_DATASESSIONID,			0, 0, 0 },
+		{	_INDEX_ENABLED,					0, 0, 0 },
 		{	_INDEX_FORMCOUNT,				0, 0, 0 },
 		{	_INDEX_FORMS,					0, 0, 0 },
 		{	_INDEX_NAME,					0, 0, 0 },
@@ -2926,6 +2918,7 @@ struct SBasePropertyInit;
 		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_CLASSLIBRARY,			0, 0, 0 },
 		{	_INDEX_COMMENT,					0, 0, 0 },
+		{	_INDEX_ENABLED,					0, 0, 0 },
 		{	_INDEX_FONTBOLD,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
 		{	_INDEX_FONTCHARSET,				0, (uptr)&iObjProp_setter_fontProperty, 0 },
 		{	_INDEX_FONTCONDENSE,			0, (uptr)&iObjProp_setter_fontProperty, 0 },
@@ -3157,6 +3150,7 @@ struct SBasePropertyInit;
 		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_CLASSLIBRARY,			0, 0, 0 },
 		{	_INDEX_COMMENT,					0, 0, 0 },
+		{	_INDEX_ENABLED,					0, 0, 0 },
 		{	_INDEX_NAME,					0, 0, 0 },
 		{	_INDEX_PARENT,					0, 0, 0 },
 		{	_INDEX_PARENTCLASS,				0, 0, 0 },
@@ -3173,6 +3167,7 @@ struct SBasePropertyInit;
 		{	_INDEX_CLASSLIBRARY,			0, 0, 0 },
 		{	_INDEX_COMMENT,					0, 0, 0 },
 		{	_INDEX_COUNT,					0, 0, 0 },
+		{	_INDEX_ENABLED,					0, 0, 0 },
 		{	_INDEX_KEYSORT,					0, 0, 0 },
 		{	_INDEX_NAME,					0, 0, 0 },
 		{	_INDEX_PARENT,					0, 0, 0 },
@@ -3301,6 +3296,7 @@ struct SBasePropertyInit;
 		{	_INDEX_COMMENT,					0, 0, 0 },
 		{	_INDEX_DATASESSION,				0, 0, 0 },
 		{	_INDEX_DATASESSIONID,			0, 0, 0 },
+		{	_INDEX_ENABLED,					0, 0, 0 },
 		{	_INDEX_NAME,					0, 0, 0 },
 		{	_INDEX_PARENT,					0, 0, 0 },
 		{	_INDEX_PARENTCLASS,				0, 0, 0 },
@@ -3319,6 +3315,7 @@ struct SBasePropertyInit;
 		{	_INDEX_COMMENT,					0, 0, 0 },
 		{	_INDEX_CONTROLCOUNT,			0, 0, 0 },
 		{	_INDEX_CONTROLS,				0, 0, 0 },
+		{	_INDEX_ENABLED,					0, 0, 0 },
 		{	_INDEX_HEIGHT,					0, 0, 0 },
 		{	_INDEX_HELPCONTEXTID,			0, 0, 0 },
 		{	_INDEX_LEFT,					0, 0, 0 },
@@ -3346,6 +3343,7 @@ struct SBasePropertyInit;
 		{	_INDEX_CLASSLIBRARY,			0, 0, 0 },
 		{	_INDEX_COMMENT,					0, 0, 0 },
 		{	_INDEX_DETAILS,					0, 0, 0 },
+		{	_INDEX_ENABLED,					0, 0, 0 },
 		{	_INDEX_ERRORNO,					0, 0, 0 },
 		{	_INDEX_LINECONTENTS,			0, 0, 0 },
 		{	_INDEX_LINENO,					0, 0, 0 },
@@ -3367,6 +3365,8 @@ struct SBasePropertyInit;
 		{	_INDEX_BASECLASS,							0, 0, 0 },
 		{	_INDEX_CLASS,								0, 0, 0 },
 		{	_INDEX_NAME,								0, 0, 0 },
+		{	_INDEX_ENABLED,								0, 0, 0 },
+		// Specific to settings
 		{	_INDEX_SET_AUTO_CONVERT,					0, 0, 0 },		// bool
 		{	_INDEX_SET_CASE_SENSITIVE_COMPARES,			0, 0, 0 },		// bool
 		{	_INDEX_SET_CASE_SENSITIVE_NAMES,			0, 0, 0 },		// bool
@@ -3439,6 +3439,7 @@ struct SBasePropertyInit;
 		{	_OBJ_TYPE_SESSION,		cgcName_session,		sizeof(cgcName_session)		- 1,	(uptr)&gsProps_session[0]		},
 		{	_OBJ_TYPE_CUSTOM,		cgcName_custom,			sizeof(cgcName_custom)		- 1,	(uptr)&gsProps_custom[0]		},
 		{	_OBJ_TYPE_EXCEPTION,	cgcName_exception,		sizeof(cgcName_exception)	- 1,	(uptr)&gsProps_exception[0]		},
+		{	_OBJ_TYPE_SETTINGS,		cgcName_settings,		sizeof(cgcName_settings)	- 1,	(uptr)&gsProps_settings[0]		},
 		// Note:  Do not delete this line, it is used to terminate the search list
 		{	0,						NULL,					0,									0	}
 	};

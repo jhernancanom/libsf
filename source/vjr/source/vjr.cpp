@@ -173,15 +173,14 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		systemStartedMs			= iTime_getLocalMs();
 
 		// Default value for spinners
-		gsProps_master[_INDEX_INCREMENT]._f64	= 1.0;		// Default to 1.0 for incrementing
-		gsProps_master[_INDEX_ROUND_TO]._f64	= 0.01;		// Default to 2 decimal places
+		gsProps_master[_INDEX_INCREMENT - 1]._f64	= 1.0;		// Default to 1.0 for incrementing
+		gsProps_master[_INDEX_ROUND_TO  - 1]._f64	= 0.01;		// Default to 2 decimal places
 
 		// Create a 1x1 no image bitmap placeholder
 		bmpNoImage = iBmp_allocate();
 		iBmp_createBySize(bmpNoImage, 1, 1, 24);
 
 		// Initialize primitive variables
-		iSettings_push();
 		iVariable_createDefaultValues();
 		iVariable_createPropsMaster();
 		varConstant_space		= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgc_spaceText, 1);

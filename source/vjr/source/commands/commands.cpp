@@ -5440,7 +5440,7 @@ debug_break;
 
 			} else {
 				// Use the current SET default
-				llIsExclusive	= gsCurrentSetting->_set_exclusive;
+				llIsExclusive	= propGet_settings_Exclusive(_settings);
 			}
 
 
@@ -5461,7 +5461,7 @@ debug_break;
 		//////
 			// Pass it our output screen
 			if (compValidate)
-				iDbc_validate(&gsDbcArea[lnDbcArea], (compRecover != NULL), ((gsCurrentSetting->_set_talk) ? screen_editbox->p.sem : NULL), gWinJDebi);
+				iDbc_validate(&gsDbcArea[lnDbcArea], (compRecover != NULL), ((propGet_settings_Talk(_settings)) ? screen_editbox->p.sem : NULL), gWinJDebi);
 	}
 
 
@@ -5565,7 +5565,7 @@ debug_break;
 
 				} else {
 					// Use the current SET default
-					llIsExclusive	= gsCurrentSetting->_set_exclusive;
+					llIsExclusive	= propGet_settings_Exclusive(_settings);
 				}
 
 

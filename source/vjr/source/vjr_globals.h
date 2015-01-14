@@ -317,6 +317,7 @@
 
 
 	// Default screens used by VJr
+	SObject*			_settings							= NULL;
 	SObject*			_screen								= NULL;
 	SObject*			screen_editbox						= NULL;
 	SObject*			_jdebi								= NULL;
@@ -351,6 +352,33 @@
 	SObject*			gobj_defaultCheckbox				= NULL;
 	SObject*			gobj_defaultOption					= NULL;
 	SObject*			gobj_defaultRadio					= NULL;
+	SObject*			gobj_defaultCmdGroup				= NULL;
+	SObject*			gobj_defaultOptGroup				= NULL;
+	SObject*			gobj_defaultListbox					= NULL;
+	SObject*			gobj_defaultCombobox				= NULL;
+	SObject*			gobj_defaultFormset					= NULL;
+	SObject*			gobj_defaultToolbar					= NULL;
+	SObject*			gobj_defaultSeparator				= NULL;
+	SObject*			gobj_defaultLine					= NULL;
+	SObject*			gobj_defaultShape					= NULL;
+	SObject*			gobj_defaultContainer				= NULL;
+	SObject*			gobj_defaultControl					= NULL;
+	SObject*			gobj_defaultGrid					= NULL;
+	SObject*			gobj_defaultColumn					= NULL;
+	SObject*			gobj_defaultHeader					= NULL;
+	SObject*			gobj_defaultOleBound				= NULL;
+	SObject*			gobj_defaultOleContain				= NULL;
+	SObject*			gobj_defaultSpinner					= NULL;
+	SObject*			gobj_defaultTimer					= NULL;
+	SObject*			gobj_defaultHyperlink				= NULL;
+	SObject*			gobj_defaultCollection				= NULL;
+	SObject*			gobj_defaultPage					= NULL;
+	SObject*			gobj_defaultPageFrame				= NULL;
+	SObject*			gobj_defaultSession					= NULL;
+	SObject*			gobj_defaultCustom					= NULL;
+	SObject*			gobj_defaultException				= NULL;
+	SObject*			gobj_defaultSettings				= NULL;
+
 
 	//////////
 	// General defaults

@@ -211,6 +211,12 @@
 	void iInit_createDefaultObjects(void)
 	{
 		//////////
+		// Create base objects
+		//////
+			_settings = iObj_create(_OBJ_TYPE_SETTINGS, NULL);
+
+
+		//////////
 		// Create each default object
 		//////
 			gobj_defaultEmpty		= iObj_create(_OBJ_TYPE_EMPTY,		NULL);
@@ -219,6 +225,33 @@
 			gobj_defaultButton		= iObj_create(_OBJ_TYPE_BUTTON,		NULL);
 			gobj_defaultImage		= iObj_create(_OBJ_TYPE_IMAGE,		NULL);
 			gobj_defaultCheckbox	= iObj_create(_OBJ_TYPE_CHECKBOX,	NULL);
+			gobj_defaultCmdGroup	= iObj_create(_OBJ_TYPE_CMDGROUP,	NULL);
+			gobj_defaultOptGroup	= iObj_create(_OBJ_TYPE_OPTGROUP,	NULL);
+			gobj_defaultListbox		= iObj_create(_OBJ_TYPE_LISTBOX,	NULL);
+			gobj_defaultCombobox	= iObj_create(_OBJ_TYPE_COMBOBOX,	NULL);
+			gobj_defaultFormset		= iObj_create(_OBJ_TYPE_FORMSET,	NULL);
+			gobj_defaultToolbar		= iObj_create(_OBJ_TYPE_TOOLBAR,	NULL);
+			gobj_defaultSeparator	= iObj_create(_OBJ_TYPE_SEPARATOR,	NULL);
+			gobj_defaultLine		= iObj_create(_OBJ_TYPE_LINE,		NULL);
+			gobj_defaultShape		= iObj_create(_OBJ_TYPE_SHAPE,		NULL);
+			gobj_defaultContainer	= iObj_create(_OBJ_TYPE_CONTAINER,	NULL);
+			gobj_defaultControl		= iObj_create(_OBJ_TYPE_CONTROL,	NULL);
+			gobj_defaultGrid		= iObj_create(_OBJ_TYPE_GRID,		NULL);
+			gobj_defaultColumn		= iObj_create(_OBJ_TYPE_COLUMN,		NULL);
+			gobj_defaultHeader		= iObj_create(_OBJ_TYPE_HEADER,		NULL);
+			gobj_defaultOleBound	= iObj_create(_OBJ_TYPE_OLEBOUND,	NULL);
+			gobj_defaultOleContain	= iObj_create(_OBJ_TYPE_OLECONTAIN,	NULL);
+			gobj_defaultSpinner		= iObj_create(_OBJ_TYPE_SPINNER,	NULL);
+			gobj_defaultTimer		= iObj_create(_OBJ_TYPE_TIMER,		NULL);
+			gobj_defaultHyperlink	= iObj_create(_OBJ_TYPE_HYPERLINK,	NULL);
+			gobj_defaultCollection	= iObj_create(_OBJ_TYPE_COLLECTION,	NULL);
+			gobj_defaultPage		= iObj_create(_OBJ_TYPE_PAGE,		NULL);
+			gobj_defaultPageFrame	= iObj_create(_OBJ_TYPE_PAGEFRAME,	NULL);
+			gobj_defaultSession		= iObj_create(_OBJ_TYPE_SESSION,	NULL);
+			gobj_defaultCustom		= iObj_create(_OBJ_TYPE_CUSTOM,		NULL);
+			gobj_defaultException	= iObj_create(_OBJ_TYPE_EXCEPTION,	NULL);
+			gobj_defaultSettings	= iObj_create(_OBJ_TYPE_SETTINGS,	NULL);
+
 			// Option and radio both have label controls within
 			gobj_defaultOption		= iObj_create(_OBJ_TYPE_OPTION,		NULL);
 			gobj_defaultRadio		= iObj_create(_OBJ_TYPE_RADIO,		NULL);
@@ -1684,6 +1717,7 @@
 //////
 	void iFocusHighlight_create(SFocusHighlight* focus, RECT* rc)
 	{
+		s32			lnFocusHighlightPixels;
 		WNDCLASSEX	wcex;
 		ATOM		atom;
 		HRGN		lrgn;
@@ -1732,8 +1766,9 @@
 		// Cut out a region for the indicated border pixel width, so the window is transparent except for where it should cut through
 		//////
 			GetClientRect(focus->hwnd, &lrc);
-			focus->hrgn = CreateRectRgnIndirect(&lrc);
-			InflateRect(&lrc, - gsCurrentSetting->_set_focus_highlight_pixels, - gsCurrentSetting->_set_focus_highlight_pixels);
+			focus->hrgn				= CreateRectRgnIndirect(&lrc);
+			lnFocusHighlightPixels	= propGet_settings_FocusHighlightPixels(_settings);
+			InflateRect(&lrc, -lnFocusHighlightPixels, -lnFocusHighlightPixels);
 			lrgn = CreateRectRgnIndirect(&lrc);
 			CombineRgn(focus->hrgn, focus->hrgn, lrgn, RGN_XOR);		// Create a region with the inner part masked out
 			SetWindowRgn(focus->hwnd, focus->hrgn, TRUE);

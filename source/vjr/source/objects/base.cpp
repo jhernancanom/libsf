@@ -186,7 +186,7 @@
 				return(iSubobj_createPage(NULL, objParent));
 
 			case _OBJ_TYPE_PAGEFRAME:	// A pageframe
-				return(iSubobj_createPageframe(NULL, objParent));
+				return(iSubobj_createPageFrame(NULL, objParent));
 
 			case _OBJ_TYPE_SESSION:		// A session
 				return(iSubobj_createSession(NULL, objParent));
@@ -399,6 +399,84 @@
 						break;
 					case _OBJ_TYPE_RADIO:
 						iSubobj_deleteRadio(obj, true);
+						break;
+					case _OBJ_TYPE_CMDGROUP:
+						iSubobj_deleteCmdGroup(obj, true);
+						break;
+					case _OBJ_TYPE_OPTGROUP:
+						iSubobj_deleteOptGroup(obj, true);
+						break;
+					case _OBJ_TYPE_LISTBOX:
+						iSubobj_deleteListbox(obj, true);
+						break;
+					case _OBJ_TYPE_COMBOBOX:
+						iSubobj_deleteCombobox(obj, true);
+						break;
+					case _OBJ_TYPE_FORMSET:
+						iSubobj_deleteFormset(obj, true);
+						break;
+					case _OBJ_TYPE_TOOLBAR:
+						iSubobj_deleteToolbar(obj, true);
+						break;
+					case _OBJ_TYPE_SEPARATOR:
+						iSubobj_deleteSeparator(obj, true);
+						break;
+					case _OBJ_TYPE_LINE:
+						iSubobj_deleteLine(obj, true);
+						break;
+					case _OBJ_TYPE_SHAPE:
+						iSubobj_deleteShape(obj, true);
+						break;
+					case _OBJ_TYPE_CONTAINER:
+						iSubobj_deleteContainer(obj, true);
+						break;
+					case _OBJ_TYPE_CONTROL:
+						iSubobj_deleteControl(obj, true);
+						break;
+					case _OBJ_TYPE_GRID:
+						iSubobj_deleteGrid(obj, true);
+						break;
+					case _OBJ_TYPE_COLUMN:
+						iSubobj_deleteColumn(obj, true);
+						break;
+					case _OBJ_TYPE_HEADER:
+						iSubobj_deleteHeader(obj, true);
+						break;
+					case _OBJ_TYPE_OLEBOUND:
+						iSubobj_deleteOleBound(obj, true);
+						break;
+					case _OBJ_TYPE_OLECONTAIN:
+						iSubobj_deleteOleContain(obj, true);
+						break;
+					case _OBJ_TYPE_SPINNER:
+						iSubobj_deleteSpinner(obj, true);
+						break;
+					case _OBJ_TYPE_TIMER:
+						iSubobj_deleteTimer(obj, true);
+						break;
+					case _OBJ_TYPE_HYPERLINK:
+						iSubobj_deleteHyperlink(obj, true);
+						break;
+					case _OBJ_TYPE_COLLECTION:
+						iSubobj_deleteCollection(obj, true);
+						break;
+					case _OBJ_TYPE_PAGE:
+						iSubobj_deletePage(obj, true);
+						break;
+					case _OBJ_TYPE_PAGEFRAME:
+						iSubobj_deletePageFrame(obj, true);
+						break;
+					case _OBJ_TYPE_SESSION:
+						iSubobj_deleteSession(obj, true);
+						break;
+					case _OBJ_TYPE_CUSTOM:
+						iSubobj_deleteCustom(obj, true);
+						break;
+					case _OBJ_TYPE_EXCEPTION:
+						iSubobj_deleteException(obj, true);
+						break;
+					case _OBJ_TYPE_SETTINGS:
+						iSubobj_deleteSettings(obj, true);
 						break;
 				}
 		}
@@ -734,7 +812,7 @@
 	void iObj_setFocusHighlights(SWindow* win, SObject* obj, s32 x, s32 y, bool tlProcessChildren, bool tlProcessSiblings)
 	{
 		u32					lnI;
-		s32					lnX, lnY;
+		s32					lnX, lnY, lnFocusHighlightPixels, lnFocusHighlightBorderPixels;
 		bool				llFound, llChildHasFocus;
 		RECT				lrc;
 		SObject*			objSib;
@@ -814,10 +892,12 @@
 							// Populate the new entry
 							focus->obj	= obj;
 							focus->win	= win;
-							SetRect(&lrc,	lnX - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.left : 0) - gsCurrentSetting->_set_focus_highlight_pixels - gsCurrentSetting->_set_focus_highlight_border_pixels,
-											lnY - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.top  : 0) - gsCurrentSetting->_set_focus_highlight_pixels - gsCurrentSetting->_set_focus_highlight_border_pixels,
-											lnX - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.left : 0) + gsCurrentSetting->_set_focus_highlight_pixels + gsCurrentSetting->_set_focus_highlight_border_pixels + obj->rc.right  - obj->rc.left,
-											lnY - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.top  : 0) + gsCurrentSetting->_set_focus_highlight_pixels + gsCurrentSetting->_set_focus_highlight_border_pixels + obj->rc.bottom - obj->rc.top);
+							lnFocusHighlightPixels			= propGet_settings_FocusHighlightPixels(_settings);
+							lnFocusHighlightBorderPixels	= propGet_settings_FocusHighlightBorderPixels(_settings);
+							SetRect(&lrc,	lnX - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.left : 0) - lnFocusHighlightPixels - lnFocusHighlightBorderPixels,
+											lnY - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.top  : 0) - lnFocusHighlightPixels - lnFocusHighlightBorderPixels,
+											lnX - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.left : 0) + lnFocusHighlightPixels + lnFocusHighlightBorderPixels + obj->rc.right  - obj->rc.left,
+											lnY - ((obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) ? obj->rcClient.top  : 0) + lnFocusHighlightPixels + lnFocusHighlightBorderPixels + obj->rc.bottom - obj->rc.top);
 
 							// Physically create the window
 							iFocusHighlight_create(focus, &lrc);
@@ -1214,45 +1294,113 @@
 					case _OBJ_TYPE_EMPTY:		// Empty, used as a placeholder object that is not drawn
 						lnPixelsRendered += iSubobj_renderEmpty(obj);
 						break;
-
 					case _OBJ_TYPE_FORM:			// Form class, the main outer window the OS sees
 						lnPixelsRendered += iSubobj_renderForm(obj);
 						break;
-
 					case _OBJ_TYPE_SUBFORM:		// A new class which has its own drawing content and can be moved about using UI features
 						lnPixelsRendered += iSubobj_renderSubform(obj);
 						break;
-
 					case _OBJ_TYPE_LABEL:		// A label
 						lnPixelsRendered += iSubobj_renderLabel(obj);
 						break;
-
 					case _OBJ_TYPE_TEXTBOX:		// An input textbox
 						lnPixelsRendered += iSubobj_renderTextbox(obj);
 						break;
-
 					case _OBJ_TYPE_BUTTON:		// A push button
 						lnPixelsRendered += iSubobj_renderButton(obj);
 						break;
-
 					case _OBJ_TYPE_EDITBOX:		// An input multi-line editbox
 						lnPixelsRendered += iSubobj_renderEditbox(obj);
 						break;
-
 					case _OBJ_TYPE_IMAGE:		// A graphical image
 						lnPixelsRendered += iSubobj_renderImage(obj);
 						break;
-
 					case _OBJ_TYPE_CHECKBOX:		// A checkbox
 						lnPixelsRendered += iSubobj_renderCheckbox(obj);
 						break;
-
 					case _OBJ_TYPE_OPTION:		// A combination selection
 						lnPixelsRendered += iSubobj_renderOption(obj);
 						break;
-
 					case _OBJ_TYPE_RADIO:		// A radio dial, which can also present as a slider or spinner
 						lnPixelsRendered += iSubobj_renderRadio(obj);
+						break;
+					case _OBJ_TYPE_CMDGROUP:
+						lnPixelsRendered += iSubobj_renderCmdGroup(obj);
+						break;
+					case _OBJ_TYPE_OPTGROUP:
+						lnPixelsRendered += iSubobj_renderOptGroup(obj);
+						break;
+					case _OBJ_TYPE_LISTBOX:
+						lnPixelsRendered += iSubobj_renderListbox(obj);
+						break;
+					case _OBJ_TYPE_COMBOBOX:
+						lnPixelsRendered += iSubobj_renderCombobox(obj);
+						break;
+					case _OBJ_TYPE_FORMSET:
+						lnPixelsRendered += iSubobj_renderFormset(obj);
+						break;
+					case _OBJ_TYPE_TOOLBAR:
+						lnPixelsRendered += iSubobj_renderToolbar(obj);
+						break;
+					case _OBJ_TYPE_SEPARATOR:
+						lnPixelsRendered += iSubobj_renderSeparator(obj);
+						break;
+					case _OBJ_TYPE_LINE:
+						lnPixelsRendered += iSubobj_renderLine(obj);
+						break;
+					case _OBJ_TYPE_SHAPE:
+						lnPixelsRendered += iSubobj_renderShape(obj);
+						break;
+					case _OBJ_TYPE_CONTAINER:
+						lnPixelsRendered += iSubobj_renderContainer(obj);
+						break;
+					case _OBJ_TYPE_CONTROL:
+						lnPixelsRendered += iSubobj_renderControl(obj);
+						break;
+					case _OBJ_TYPE_GRID:
+						lnPixelsRendered += iSubobj_renderGrid(obj);
+						break;
+					case _OBJ_TYPE_COLUMN:
+						lnPixelsRendered += iSubobj_renderColumn(obj);
+						break;
+					case _OBJ_TYPE_HEADER:
+						lnPixelsRendered += iSubobj_renderHeader(obj);
+						break;
+					case _OBJ_TYPE_OLEBOUND:
+						lnPixelsRendered += iSubobj_renderOleBound(obj);
+						break;
+					case _OBJ_TYPE_OLECONTAIN:
+						lnPixelsRendered += iSubobj_renderOleContain(obj);
+						break;
+					case _OBJ_TYPE_SPINNER:
+						lnPixelsRendered += iSubobj_renderSpinner(obj);
+						break;
+					case _OBJ_TYPE_TIMER:
+						lnPixelsRendered += iSubobj_renderTimer(obj);
+						break;
+					case _OBJ_TYPE_HYPERLINK:
+						lnPixelsRendered += iSubobj_renderHyperlink(obj);
+						break;
+					case _OBJ_TYPE_COLLECTION:
+						lnPixelsRendered += iSubobj_renderCollection(obj);
+						break;
+					case _OBJ_TYPE_PAGE:
+						lnPixelsRendered += iSubobj_renderPage(obj);
+						break;
+					case _OBJ_TYPE_PAGEFRAME:
+						lnPixelsRendered += iSubobj_renderPageFrame(obj);
+						break;
+					case _OBJ_TYPE_SESSION:
+						lnPixelsRendered += iSubobj_renderSession(obj);
+						break;
+					case _OBJ_TYPE_CUSTOM:
+						lnPixelsRendered += iSubobj_renderCustom(obj);
+						break;
+					case _OBJ_TYPE_EXCEPTION:
+						lnPixelsRendered += iSubobj_renderException(obj);
+						break;
+					case _OBJ_TYPE_SETTINGS:
+						lnPixelsRendered += iSubobj_renderSettings(obj);
 						break;
 
 					default:
@@ -1733,45 +1881,113 @@
 					case _OBJ_TYPE_EMPTY:
 						objCopy = iSubobj_createForm(objChild, objDst);
 						break;
-
 					case _OBJ_TYPE_FORM:
 						objCopy = iSubobj_createForm(objChild, objDst);
 						break;
-
 					case _OBJ_TYPE_SUBFORM:
 						objCopy = iSubobj_createSubform(objChild, objDst);
 						break;
-
 					case _OBJ_TYPE_LABEL:
 						objCopy = iSubobj_createLabel(objChild, objDst);
 						break;
-
 					case _OBJ_TYPE_TEXTBOX:
 						objCopy = iSubobj_createTextbox(objChild, objDst);
 						break;
-
 					case _OBJ_TYPE_BUTTON:
 						objCopy = iSubobj_createButton(objChild, objDst);
 						break;
-
 					case _OBJ_TYPE_EDITBOX:
 						objCopy = iSubobj_createEditbox(objChild, objDst);
 						break;
-
 					case _OBJ_TYPE_IMAGE:
 						objCopy = iSubobj_createImage(objChild, objDst);
 						break;
-
 					case _OBJ_TYPE_CHECKBOX:
 						objCopy = iSubobj_createCheckbox(objChild, objDst);
 						break;
-
 					case _OBJ_TYPE_OPTION:
 						objCopy = iSubobj_createOption(objChild, objDst);
 						break;
-
 					case _OBJ_TYPE_RADIO:
 						objCopy = iSubobj_createRadio(objChild, objDst);
+						break;
+					case _OBJ_TYPE_CMDGROUP:
+						objCopy = iSubobj_createCmdGroup(objChild, objDst);
+						break;
+					case _OBJ_TYPE_OPTGROUP:
+						objCopy = iSubobj_createOptGroup(objChild, objDst);
+						break;
+					case _OBJ_TYPE_LISTBOX:
+						objCopy = iSubobj_createListbox(objChild, objDst);
+						break;
+					case _OBJ_TYPE_COMBOBOX:
+						objCopy = iSubobj_createCombobox(objChild, objDst);
+						break;
+					case _OBJ_TYPE_FORMSET:
+						objCopy = iSubobj_createFormset(objChild, objDst);
+						break;
+					case _OBJ_TYPE_TOOLBAR:
+						objCopy = iSubobj_createToolbar(objChild, objDst);
+						break;
+					case _OBJ_TYPE_SEPARATOR:
+						objCopy = iSubobj_createSeparator(objChild, objDst);
+						break;
+					case _OBJ_TYPE_LINE:
+						objCopy = iSubobj_createLine(objChild, objDst);
+						break;
+					case _OBJ_TYPE_SHAPE:
+						objCopy = iSubobj_createShape(objChild, objDst);
+						break;
+					case _OBJ_TYPE_CONTAINER:
+						objCopy = iSubobj_createContainer(objChild, objDst);
+						break;
+					case _OBJ_TYPE_CONTROL:
+						objCopy = iSubobj_createControl(objChild, objDst);
+						break;
+					case _OBJ_TYPE_GRID:
+						objCopy = iSubobj_createGrid(objChild, objDst);
+						break;
+					case _OBJ_TYPE_COLUMN:
+						objCopy = iSubobj_createColumn(objChild, objDst);
+						break;
+					case _OBJ_TYPE_HEADER:
+						objCopy = iSubobj_createHeader(objChild, objDst);
+						break;
+					case _OBJ_TYPE_OLEBOUND:
+						objCopy = iSubobj_createOleBound(objChild, objDst);
+						break;
+					case _OBJ_TYPE_OLECONTAIN:
+						objCopy = iSubobj_createOleContain(objChild, objDst);
+						break;
+					case _OBJ_TYPE_SPINNER:
+						objCopy = iSubobj_createSpinner(objChild, objDst);
+						break;
+					case _OBJ_TYPE_TIMER:
+						objCopy = iSubobj_createTimer(objChild, objDst);
+						break;
+					case _OBJ_TYPE_HYPERLINK:
+						objCopy = iSubobj_createHyperlink(objChild, objDst);
+						break;
+					case _OBJ_TYPE_COLLECTION:
+						objCopy = iSubobj_createCollection(objChild, objDst);
+						break;
+					case _OBJ_TYPE_PAGE:
+						objCopy = iSubobj_createPage(objChild, objDst);
+						break;
+					case _OBJ_TYPE_PAGEFRAME:
+						objCopy = iSubobj_createPageFrame(objChild, objDst);
+						break;
+					case _OBJ_TYPE_SESSION:
+						objCopy = iSubobj_createSession(objChild, objDst);
+						break;
+					case _OBJ_TYPE_CUSTOM:
+						objCopy = iSubobj_createCustom(objChild, objDst);
+						break;
+					case _OBJ_TYPE_EXCEPTION:
+						objCopy = iSubobj_createException(objChild, objDst);
+						break;
+					case _OBJ_TYPE_SETTINGS:
+						objCopy = iSubobj_createSettings(objChild, objDst);
 						break;
 
 					default:
@@ -2321,6 +2537,12 @@
 			{
 				lnAllocationSize	= tnPropCount * sizeof(SVariable*);
 				obj->props			= (SVariable**)malloc(lnAllocationSize);
+				if (!obj->props)
+				{
+					// Out of memory
+					debug_break;
+					return;
+				}
 				memset(obj->props, 0, lnAllocationSize);
 			}
 
@@ -2347,21 +2569,24 @@
 
 
 				//////////
-				// Create the base variable based on the master init variable created at startup
+				// Create the base variable based on the master init variable created at startup and set its property name
 				//////
 // if (lnIndex == 235 || lnIndex == 234 || lnIndex == 233)
 // 	debug_break;
-					obj->props[lnI] = iVariable_copy(gsProps_master[lnIndex].varInit, false);
+					obj->props[lnI] = iVariable_copy(gsProps_master[lnIndex - 1].varInit, false);
 
 // Should never happen
 if (!obj->props[lnI])
 	debug_break;
+					// Set its name
+					iVariable_setName(obj->props[lnI], gsProps_master[lnIndex - 1].propName, gsProps_master[lnIndex - 1].propLength);
+
 
 				//////////
 				// Perform any base class initialization
 				//////
-					if (gsProps_master[lnIndex]._initterBase)
-						gsProps_master[lnIndex].initterBase(obj, lnIndex);
+					if (gsProps_master[lnIndex - 1]._initterBase)
+						gsProps_master[lnIndex - 1].initterBase(obj, lnIndex);
 
 
 				//////////
@@ -2474,7 +2699,7 @@ if (!obj->props[lnI])
 	{
 		// Iterate through each function for matches
 		logfunc(__FUNCTION__);
-		if (tnObjType < gnKnownBaseclasses_size)
+		if (tnObjType <= gnKnownBaseclasses_size)
 			return(&gsKnownBaseclasses[tnObjType - 1]);
 
 		// If we get here, invalid

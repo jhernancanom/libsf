@@ -155,6 +155,18 @@ typedef SEM**		SEMpp;
 	#define propSetPictureBmpDown(obj, bmp)				iObjProp_set_bitmap_direct		(obj, _INDEX_PICTUREBMP_DOWN,	bmp)
 	#define propSetPictureBmpOver(obj, bmp)				iObjProp_set_bitmap_direct		(obj, _INDEX_PICTUREBMP_OVER,	bmp)
 
+	// Settings shortcuts
+	#define propGet_settings_FocusHighlightPixels(obj)			iObjProp_get_s32_direct			(obj, _INDEX_SET_FOCUS_HIGHLIGHT_PIXELS)
+	#define propGet_settings_FocusHighlightBorderPixels(obj)	iObjProp_get_s32_direct			(obj, _INDEX_SET_FOCUS_HIGHLIGHT_BORDER_PIXELS)
+	#define propGet_settings_Decimals(obj)						iObjProp_get_s32_direct			(obj, _INDEX_SET_DECIMALS)
+	#define propGet_settings_Century(obj)						(iObjProp_get_logical_direct	(obj, _INDEX_SET_CENTURY)			!= _LOGICAL_FALSE)
+	#define propGet_settings_Date(obj)							iObjProp_get_s32_direct			(obj, _INDEX_SET_DATE)
+	#define propGet_settings_Logical(obj)						iObjProp_get_s32_direct			(obj, _INDEX_SET_LOGICAL)
+	#define propGet_settings_AutoConvert(obj)					(iObjProp_get_logical_direct	(obj, _INDEX_SET_AUTO_CONVERT)		!= _LOGICAL_FALSE)
+	#define propGet_settings_Exclusive(obj)						(iObjProp_get_logical_direct	(obj, _INDEX_SET_EXCLUSIVE)			!= _LOGICAL_FALSE)
+	#define propGet_settings_Talk(obj)							(iObjProp_get_logical_direct	(obj, _INDEX_SET_TALK)				!= _LOGICAL_FALSE)
+	#define propGet_settings_VariablesFirst(obj)				(iObjProp_get_logical_direct	(obj, _INDEX_SET_VARIABLES_FIRST)	!= _LOGICAL_FALSE)
+
 
 //////////
 // Red,Grn,Blu,Alp color maker

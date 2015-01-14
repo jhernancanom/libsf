@@ -663,7 +663,7 @@
 					if (thisObjProp[lnI].index == tnIndex)
 					{
 						// Store the raw property entries (if requested)
-						if (baseProp)		*baseProp	= &gsProps_master[tnIndex];
+						if (baseProp)		*baseProp	= &gsProps_master[tnIndex - 1];
 						if (objProp)		*objProp	= &thisObjProp[lnI];
 
 						// Return the variable associated with this position
@@ -677,6 +677,7 @@
 // This should never happen.
 // If it does it's a design-time error.  Search the call stack to determine which _INDEX_* variable was referenced.
 // That variable needs to be added to the gsProps_* related to this object (such as gsProps_empty for objType = _OBJ_TYPE_EMPTY).
+// If a new class has been added, it might be missing from gsKnownBaseclasses as per the iiObj_getBaseclass_byType() function.
 debug_break;
 		// Invalid
 		return(NULL);
@@ -717,7 +718,7 @@ debug_break;
 						lnIndex = objProps[lnI].index;
 
 						// Search the name associated with that property
-						if (iTestExactlyEqual(tcName, tnNameLength, gsProps_master[lnIndex].propName, gsProps_master[lnIndex].propLength))
+						if (iTestExactlyEqual(tcName, tnNameLength, gsProps_master[lnIndex - 1].propName, gsProps_master[lnIndex - 1].propLength))
 							return(obj->props[lnI]);	// Return the variable associated with this position
 					}
 					// If we get here, not found

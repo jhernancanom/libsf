@@ -2096,7 +2096,7 @@
 // Creates the pageframe structure
 //
 //////
-	SObject* iSubobj_createPageframe(SObject* template_pageframe, SObject* parent)
+	SObject* iSubobj_createPageFrame(SObject* template_pageframe, SObject* parent)
 	{
 		SObject*	pageframeNew;
 		SVariable*	var;
@@ -2342,9 +2342,9 @@
 				memset(settingsNew, 0, sizeof(SObject));
 
 				// Initialize properties to VJr defaults
-				settingsNew->objType		= _OBJ_TYPE_SETTINGS;
+				settingsNew->objType	= _OBJ_TYPE_SETTINGS;
 				settingsNew->parent		= parent;
-				iiSubobj_resetToDefaultException(settingsNew, true, true, &gsProps_settings[0], gnProps_settingsSize);
+				iiSubobj_resetToDefaultSettings(settingsNew, true, true, &gsProps_settings[0], gnProps_settingsSize);
 
 				// Initially populate
 				settingsNew->isRendered		= false;

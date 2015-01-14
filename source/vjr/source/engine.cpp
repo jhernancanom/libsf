@@ -431,7 +431,7 @@
 				case _ICODE_ALPHANUMERIC:
 				case _ICODE_ALPHA:
 					// It's some kind of text, could be a field or variable
-					if (gsCurrentSetting->_set_variablesFirst)
+					if (propGet_settings_VariablesFirst(_settings))
 					{
 						// Searching variables first, field names last.
 						if ((var = iVariable_searchForName(varGlobals, comp->line->sourceCode->data + comp->start, comp->length, comp)))
@@ -754,96 +754,6 @@
 
 		// Indicate success
 		return(lnParamCount >= requiredCount && lnParamCount <= maxCount);
-	}
-
-
-
-
-//////////
-//
-// Push a copy of the current settings onto the stack, and it to the current.
-// If this is the first one, create it and initialize it to VJr defaults.
-//
-//////
-	SSettings* iSettings_push(void)
-	{
-		SSettings*	lSettingsLast;
-
-
-		// Is this the first one?
-		if (!gsFirstSettings)
-		{
-			// Create the first entry
-			gsCurrentSetting = (SSettings*)iLl_appendNewNodeAtEnd((SLL**)&gsFirstSettings, sizeof(SSettings));
-
-			// Default settings
-			gsCurrentSetting->_set_autoConvert						= false;
-			gsCurrentSetting->_set_caseSensitiveCompares			= true;
-			gsCurrentSetting->_set_caseSensitiveNames				= false;
-			gsCurrentSetting->_set_century							= true;
-			gsCurrentSetting->_set_date								= _SET_DATE_AMERICAN;
-			gsCurrentSetting->_set_decimals							= 2;
-			gsCurrentSetting->_set_exclusive						= true;
-			gsCurrentSetting->_set_focus_highlight_border_pixels	= 0;
-			gsCurrentSetting->_set_focus_highlight_pixels			= 4;
-			gsCurrentSetting->_set_honorBarriers					= true;
-			gsCurrentSetting->_set_implicitParams					= false;
-			gsCurrentSetting->_set_indexMetaData					= false;
-			iDatum_duplicate(&gsCurrentSetting->_set_languageTo, cgcEnglish, -1);
-			gsCurrentSetting->_set_logical							= _LOGICAL_TF;
-			gsCurrentSetting->_set_namingConventions				= false;
-			gsCurrentSetting->_set_sloppyPrinting					= false;
-			gsCurrentSetting->_set_stickyParameters					= true;
-			gsCurrentSetting->_set_tableEqualAssignments			= false;
-			gsCurrentSetting->_set_tableObjects						= false;
-			gsCurrentSetting->_set_talk								= true;
-			gsCurrentSetting->_set_variablesFirst					= false;
-
-			// Default variable type for uninitialized variables
-			iVariable_setDefaultVariableValue(_VAR_TYPE_LOGICAL);
-
-		} else {
-			// Add another copy
-			lSettingsLast		= gsCurrentSetting;
-			gsCurrentSetting	= (SSettings*)iLl_appendNewNodeAtEnd((SLL**)&gsFirstSettings, sizeof(SSettings));
-
-			// Copy the last one over this one
-			memcpy(gsCurrentSetting, lSettingsLast, sizeof(SSettings));
-
-			// Create a copy of the default initialization variable for this level
-			gsCurrentSetting->varInitializeDefault_value = NULL;
-			iVariable_setDefaultVariableValue(gsCurrentSetting->_set_initializeDefault);
-		}
-
-		// Right now, we have our current stack level
-		return(gsCurrentSetting);
-	}
-
-
-
-
-//////////
-//
-// Pop the current level off the settings stack.
-//
-//////
-	SSettings* iSettings_pop(void)
-	{
-		// If there's one before this, we can pop
-		if (gsCurrentSetting->ll.prev)
-		{
-			// Delete the initialization variable
-			iVariable_delete(gsCurrentSetting->varInitializeDefault_value, true);
-
-			// Delete the entire node
-			iLl_deleteNode((SLL*)gsCurrentSetting, true);
-
-			// Grab the last node
-			gsCurrentSetting = (SSettings*)iLl_getLastNode((SLL*)gsFirstSettings);
-		}
-
-		// Indicate our current stack level
-		return(gsCurrentSetting);
 	}
 
 

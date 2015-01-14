@@ -94,48 +94,9 @@
 	const u32	_SET_DATE_MDY					= 13;			// mm/dd/yy
 	const u32	_SET_DATE_YMD					= 14;			// yy/mm/dd
 
-
-//////////
-// SET settings. :-)
-// http://www.visual-freepro.org/wiki/index.php/VFrP_changes#SET_Options
-//////
-	struct SSettings
-	{
-		SLL			ll;
-
-		// Settings at this level
-		bool		_set_autoConvert;
-		bool		_set_caseSensitiveCompares;
-		bool		_set_caseSensitiveNames;
-		bool		_set_century;
-		s32			_set_date;
-		s32			_set_decimals;
-		bool		_set_exclusive;
-		s32			_set_focus_highlight_border_pixels;
-		s32			_set_focus_highlight_pixels;
-		bool		_set_honorBarriers;
-		bool		_set_implicitParams;
-		bool		_set_indexMetaData;
-		SDatum		_set_languageTo;
-		s32			_set_logical;
-		bool		_set_namingConventions;
-		bool		_set_sloppyPrinting;
-		bool		_set_stickyParameters;
-		bool		_set_tableEqualAssignments;
-		bool		_set_tableObjects;
-		bool		_set_variablesFirst;
-		bool		_set_talk;
-		// When changes are made, set the default startup value in engine.cpp -- iSettings_push()
-
-		// Default variable type for uninitialized variables
-		s32			_set_initializeDefault;
-		SVariable*	varInitializeDefault_value;
-	};
 	// First entry
 	SObject*	settings									= NULL;
 	SObject*	settingsDefaults							= NULL;
-	SSettings* gsFirstSettings								= NULL;
-	SSettings* gsCurrentSetting								= NULL;
 
 
 //////////
@@ -150,9 +111,6 @@
 	void					iEngine_executeSetter					(s8*  name, SVariable* varOld, SVariable* varNew);
 	void					iEngine_error							(u32 tnErrorNumber, SVariable* varRelated);
 	bool					iiEngine_getParametersBetween			(SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable** p1, SVariable** p2, SVariable** p3, SVariable** p4, SVariable** p5, SVariable** p6, SVariable** p7);
-
-	SSettings*				iSettings_push							(void);
-	SSettings*				iSettings_pop							(void);
 
 	void					iBreakpoint_delete						(SBreakpoint** breakpoint);
 	SBreakpoint* 			iBreakpoint_add							(SBreakpoint** breakpoint, u32 tnType);

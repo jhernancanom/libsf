@@ -953,100 +953,312 @@
 
 	void iiSubobj_resetToDefaultCmdGroup(SObject* cmdGroup, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (cmdGroup)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(cmdGroup, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultOptGroup(SObject* optGroup, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (optGroup)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(optGroup, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultListbox(SObject* listbox, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (listbox)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(listbox, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultCombobox(SObject* combobox, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (combobox)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(combobox, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultFormset(SObject* formset, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (formset)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(formset, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultToolbar(SObject* toolbar, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (toolbar)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(toolbar, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultSeparator(SObject* separator, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (separator)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(separator, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultLine(SObject* line, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (line)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(line, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultShape(SObject* shape, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (shape)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(shape, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultContainer(SObject* container, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (container)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(container, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultControl(SObject* control, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (control)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(control, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultGrid(SObject* grid, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (grid)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(grid, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultColumn(SObject* column, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (column)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(column, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultHeader(SObject* header, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (header)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(header, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultOleBound(SObject* oleBound, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (oleBound)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(oleBound, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultOleContain(SObject* oleContain, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (oleContain)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(oleContain, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultSpinner(SObject* spinner, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (spinner)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(spinner, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultTimer(SObject* timer, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (timer)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(timer, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultHyperlink(SObject* hyperlink, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (hyperlink)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(hyperlink, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultCollection(SObject* collection, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (collection)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(collection, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultPage(SObject* page, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (page)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(page, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultPageframe(SObject* pageframe, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (pageframe)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(pageframe, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultSession(SObject* session, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (session)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(session, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultCustom(SObject* custom, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (custom)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(custom, true, true, propList, tnPropCount);
+		}
 	}
 
 	void iiSubobj_resetToDefaultException(SObject* exception, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
 	{
+		logfunc(__FUNCTION__);
+		if (exception)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(exception, true, true, propList, tnPropCount);
+		}
+	}
+
+	void iiSubobj_resetToDefaultSettings(SObject* settings, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount)
+	{
+		logfunc(__FUNCTION__);
+		if (settings)
+		{
+			//////////
+			// Reset the common settings
+			//////
+				iiObj_resetToDefaultCommon(settings, true, true, propList, tnPropCount);
+		}
 	}

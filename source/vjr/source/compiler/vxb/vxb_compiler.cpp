@@ -4868,8 +4868,10 @@ debug_break;
 
 						default:
 							// Unspecified.  Default to the system default.
-							if (gsCurrentSetting->varInitializeDefault_value)		varNew = iVariable_copy(gsCurrentSetting->varInitializeDefault_value, false);
-							else													varNew = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+// TODO:  Need to add a property which will hold the default initialized value, and then always copy that one (which by default would be logical .f.)
+//							if (gsCurrentSetting->varInitializeDefault_value)		varNew = iVariable_copy(gsCurrentSetting->varInitializeDefault_value, false);
+// 							else													varNew = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+							varNew = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
 					}
 				}
 			}
@@ -5098,40 +5100,6 @@ debug_break;
 
 //////////
 //
-// Called to 
-//
-//////
-	bool iVariable_setDefaultVariableValue(s32 tnVarType)
-	{
-		SVariable* varDefaultValue;
-
-
-		// Set the indicated type
-		if (iVariable_isVarTypeValid(tnVarType, &varDefaultValue))
-		{
-			if (gsCurrentSetting->_set_initializeDefault != tnVarType)
-			{
-				// Indicate our current default variable type
-				gsCurrentSetting->_set_initializeDefault = tnVarType;
-
-				// Set the new value
-				if (varDefaultValue)		gsCurrentSetting->varInitializeDefault_value = iVariable_copy(varDefaultValue, false);
-				else						gsCurrentSetting->varInitializeDefault_value = iVariable_create(tnVarType, NULL);
-			}
-
-			// Indicate success
-			return(true);
-		}
-
-		// Indicate failure
-		return(false);
-	}
-
-
-
-
-//////////
-//
 // Called to create all of the default variable values
 //
 //////
@@ -5173,8 +5141,6 @@ debug_break;
 		for (lnI = 0; lnI < gsProps_masterSize; lnI++)
 		{
 			// Create the variable
-// if (gsProps_master[lnI].varType == _VAR_TYPE_BITMAP)
-// 	debug_break;
 			gsProps_master[lnI].varInit = iVariable_create(gsProps_master[lnI].varType, NULL);
 
 			// If a valid variable was created, initialize it to the static baseclass values
@@ -5565,6 +5531,30 @@ if (!gsProps_master[lnI].varInit)
 
 //////////
 //
+// Called to set the variable name
+//
+//////
+	SDatum* iVariable_setName(SVariable* var, cu8* tcName, s32 tnNameLength)
+	{
+		// Make sure our environment is sane
+		if (var && tcName && tnNameLength > 0)
+		{
+			// Copy the name
+			iDatum_duplicate(&var->name, tcName, tnNameLength);
+
+			// Return a pointer to the name
+			return(&var->name);
+		}
+
+		// Invalid
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
 // Called to set the value to an s32 value
 //
 //////
@@ -5923,7 +5913,7 @@ debug_break;
 //////
 	SVariable* iVariable_convertForDisplay(SVariable* var)
 	{
-		s32			lnI, lnYearOffset;
+		s32			lnI, lnYearOffset, lnSetLogical;
 		u32			lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond;
 		f64			lfValue64;
 		SVariable*	varDisp;
@@ -6007,7 +5997,7 @@ debug_break;
 
 				case _VAR_TYPE_F32:
 					// Convert to floating point form, then store text after leading zeros
-					sprintf(formatter, "%%020.%df\0", gsCurrentSetting->_set_decimals);
+					sprintf(formatter, "%%020.%df\0", propGet_settings_Decimals(_settings));
 					sprintf((s8*)buffer, formatter, *(f32*)var->value.data);
 
 					// Skip past leading zeros
@@ -6021,7 +6011,7 @@ debug_break;
 
 				case _VAR_TYPE_F64:
 					// Convert to floating point form, then store text after leading zeros
-					sprintf(formatter, "%%020.%dlf\0", gsCurrentSetting->_set_decimals);
+					sprintf(formatter, "%%020.%dlf\0", propGet_settings_Decimals(_settings));
 					sprintf((s8*)buffer, formatter, *(f64*)var->value.data);
 
 					// Skip past leading zeros
@@ -6049,11 +6039,11 @@ debug_break;
 					// We can convert this from its text form into numeric if we're auto-converting
 // TODO:  This needs to go into a DTOC() function
 					// Prepare for our year
-					if (gsCurrentSetting->_set_century)		lnYearOffset = 0;
-					else									lnYearOffset = 2;
+					if (propGet_settings_Century(_settings))	lnYearOffset = 0;
+					else										lnYearOffset = 2;
 
 					// Based on type, convert
-					switch (gsCurrentSetting->_set_date)
+					switch (propGet_settings_Date(_settings))
 					{
 						case _SET_DATE_MDY:
 						case _SET_DATE_AMERICAN:		// mm/dd/yy
@@ -6138,14 +6128,15 @@ debug_break;
 
 				case _VAR_TYPE_LOGICAL:
 					// Based on setting, display as indicated
-					if (gsCurrentSetting->_set_logical == _LOGICAL_TF)
+					lnSetLogical = propGet_settings_Logical(_settings);
+					if (lnSetLogical == _LOGICAL_TF)
 					{
 						// True/False
 						varDisp->isValueAllocated = true;
 						if (var->value.data[0] == 0)		iDatum_duplicate(&varDisp->value, cgcFText, -1);
 						else								iDatum_duplicate(&varDisp->value, cgcTText, -1);
 
-					} else if (gsCurrentSetting->_set_logical == _LOGICAL_YN) {
+					} else if (lnSetLogical == _LOGICAL_YN) {
 						// Yes/No
 						varDisp->isValueAllocated = true;
 						if (var->value.data[0] == 0)		iDatum_duplicate(&varDisp->value, cgcNText, -1);
@@ -6502,7 +6493,7 @@ debug_break;
 
 			case _VAR_TYPE_CHARACTER:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
@@ -6524,7 +6515,7 @@ debug_break;
 
 			case _VAR_TYPE_DATE:
 				// We can convert this from its text form into numeric if we're auto-converting
-				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
 					// Dates are stored internally in text form as YYYYMMDD.
@@ -6548,7 +6539,7 @@ debug_break;
 
 			case _VAR_TYPE_DATETIME:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
@@ -6569,7 +6560,7 @@ debug_break;
 
 			case _VAR_TYPE_CURRENCY:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
 					// We can return the value after verifying it is not out of range for a 32-bit signed integer
@@ -6745,7 +6736,7 @@ debug_break;
 
 			case _VAR_TYPE_CHARACTER:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
 					// We can convert this from its text form into numeric
@@ -6757,7 +6748,7 @@ debug_break;
 
 			case _VAR_TYPE_DATE:
 				// We can convert this from its text form into numeric if we're auto-converting
-				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
 					// Dates are stored internally in text form as YYYYMMDD.
@@ -6771,7 +6762,7 @@ debug_break;
 
 			case _VAR_TYPE_LOGICAL:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
@@ -6784,7 +6775,7 @@ debug_break;
 
 			case _VAR_TYPE_DATETIME:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
@@ -6795,7 +6786,7 @@ debug_break;
 
 			case _VAR_TYPE_CURRENCY:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
 					// We can return the value after verifying it is not out of range for a 32-bit signed integer
@@ -6949,7 +6940,7 @@ debug_break;
 
 			case _VAR_TYPE_CHARACTER:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
 					// We can convert this from its text form into numeric
@@ -6961,7 +6952,7 @@ debug_break;
 
 			case _VAR_TYPE_DATE:
 				// We can convert this from its text form into numeric if we're auto-converting
-				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
 					// Dates are stored internally in text form as YYYYMMDD.
@@ -6975,7 +6966,7 @@ debug_break;
 
 			case _VAR_TYPE_LOGICAL:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
@@ -6988,7 +6979,7 @@ debug_break;
 
 			case _VAR_TYPE_DATETIME:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
@@ -6999,7 +6990,7 @@ debug_break;
 
 			case _VAR_TYPE_CURRENCY:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
 					// We can return the value after verifying it is not out of range for a 32-bit signed integer
@@ -7144,7 +7135,7 @@ debug_break;
 
 			case _VAR_TYPE_CHARACTER:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
 					// We can convert this from its text form into numeric
@@ -7156,7 +7147,7 @@ debug_break;
 
 			case _VAR_TYPE_DATE:
 				// We can convert this from its text form into numeric if we're auto-converting
-				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
 					// Dates are stored internally in text form as YYYYMMDD.
@@ -7170,7 +7161,7 @@ debug_break;
 
 			case _VAR_TYPE_LOGICAL:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
@@ -7183,7 +7174,7 @@ debug_break;
 
 			case _VAR_TYPE_DATETIME:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
@@ -7194,7 +7185,7 @@ debug_break;
 
 			case _VAR_TYPE_CURRENCY:
 				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || gsCurrentSetting->_set_autoConvert)
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
 					// We can return the value after verifying it is not out of range for a 32-bit signed integer

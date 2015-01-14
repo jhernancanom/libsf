@@ -1155,3 +1155,1329 @@
 		// Indicate status
 		return(lnPixelsRendered);
 	}
+
+
+
+
+//////////
+//
+// Renders the cmdGroup.
+//
+//////
+	u32 iSubobj_renderCmdGroup(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the optGroup.
+//
+//////
+	u32 iSubobj_renderOptGroup(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the listbox.
+//
+//////
+	u32 iSubobj_renderListbox(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the combobox.
+//
+//////
+	u32 iSubobj_renderCombobox(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the formset.
+//
+//////
+	u32 iSubobj_renderFormset(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the toolbar.
+//
+//////
+	u32 iSubobj_renderToolbar(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the separator.
+//
+//////
+	u32 iSubobj_renderSeparator(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the line.
+//
+//////
+	u32 iSubobj_renderLine(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the shape.
+//
+//////
+	u32 iSubobj_renderShape(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the container.
+//
+//////
+	u32 iSubobj_renderContainer(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the control.
+//
+//////
+	u32 iSubobj_renderControl(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the grid.
+//
+//////
+	u32 iSubobj_renderGrid(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the column.
+//
+//////
+	u32 iSubobj_renderColumn(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the header.
+//
+//////
+	u32 iSubobj_renderHeader(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the oleBound.
+//
+//////
+	u32 iSubobj_renderOleBound(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the oleContain.
+//
+//////
+	u32 iSubobj_renderOleContain(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the spinner.
+//
+//////
+	u32 iSubobj_renderSpinner(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the timer.
+//
+//////
+	u32 iSubobj_renderTimer(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the hyperlink.
+//
+//////
+	u32 iSubobj_renderHyperlink(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the collection.
+//
+//////
+	u32 iSubobj_renderCollection(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the page.
+//
+//////
+	u32 iSubobj_renderPage(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the pageFrame.
+//
+//////
+	u32 iSubobj_renderPageFrame(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the session.
+//
+//////
+	u32 iSubobj_renderSession(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the custom.
+//
+//////
+	u32 iSubobj_renderCustom(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the exception.
+//
+//////
+	u32 iSubobj_renderException(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Renders the settings.
+//
+//////
+	u32 iSubobj_renderSettings(SObject* obj)
+	{
+		u32		lnPixelsRendered;
+		RECT	lrc;
+
+
+		// Make sure our environment is sane
+		logfunc(__FUNCTION__);
+		lnPixelsRendered = 0;
+		if (obj && obj->isRendered)
+		{
+			// Compute our rectangle for drawing
+			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
+			if (obj->isDirtyRender)
+			{
+				// Render a white box as a placeholder
+				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+				//////////
+				// Copy to prior rendered bitmap
+				//////
+					// Make sure our bmpPriorRendered exists
+					obj->bmpPriorRendered = iBmp_verifyCopyIsSameSize(obj->bmpPriorRendered, obj->bmp);
+
+					// Copy to the prior rendered version
+					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
+					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
+			} else {
+				// Render from its prior rendered version
+				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, obj->bmpPriorRendered);
+			}
+
+			// Indicate we're no longer dirty, that we have everything rendered, but it needs publishing
+			obj->isDirtyRender = false;
+			obj->isDirtyPublish	= true;
+		}
+
+		// Indicate status
+		return(lnPixelsRendered);
+	}
