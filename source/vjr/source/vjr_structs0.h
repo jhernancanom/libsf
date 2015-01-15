@@ -442,14 +442,19 @@ struct SComp
 	s32				iCode;											// Refer to _ICODE_* constants
 	s32				iCat;											// Refer to _ICAT_* constants
 	SBgra*			color;											// Syntax highlight color
-	bool			useBoldFont;									// Syntax highlight font should be bold?
 	s32				start;											// Start into the indicates line's source code
 	s32				length;											// Length of the component
 	s32				nbspCount;										// Number of non-breaking-spaces in this component
 
+	// Should the syntax highlighting for this component be bold?
+	bool			useBoldFont;									// Syntax highlight font should be bold?
+
 	// For each compilation pass, components can be marked in error or warning or both
 	bool			isError;										// Is this component part of an error?
 	bool			isWarning;										// Is this component part of a warning?
+
+	// Was this component allocated?
+	bool			llAllocated;									// If true, it should be deleted
 
 	// For selected components
 	SBgra*			overrideSelectionBackColor;

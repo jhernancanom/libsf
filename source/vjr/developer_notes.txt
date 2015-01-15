@@ -1,0 +1,39 @@
+**********
+* Consider the following code
+*****
+	LOCAL lo
+
+	lo = CREATEOBJECT("Form")
+	lo = .NULL.
+
+	lo.Visible = .t.
+	* Ordinarily, this would signal an error.
+	* Visual FreePro, Jr. will allow property references on .NULL. objects.
+	* However, when referenced it will signal ON WARNING which can trap the
+	* condition and then generate an error using the RETURNENGAGE command.
+
+
+-----------------
+ON PREDIALOG DO myPreDialogHandler...
+
+
+-----------------
+ON WARNING DO myWarningHandler WITH thisCode, WARNING(), MESSAGE(), MESSAGE(1)
+
+PROCEDURE myWarningHandler
+LOBJECT po STICKY AS oThisCode, nWarning i, cMsg c(80), cMsg1 c(80)
+	IF po.nWarning = _NULL_OBJECT_REFERENCE
+		* RETRY will go back to the errant line, function, command, but in its place execute the ENGAGE code in its place
+		RETRYENGAGE ERROR _NULL_OBJECT_REFERENCE
+		
+		* RETURN will go back and ignore the errant line, function, command, but will execute the ENGAGE code before it continues on with the next line
+		RETURNENGAGE ERROR _NULL_OBJECT_REFERENCE
+	ENDIF
+
+	
+-----------------
+needle		= CREATEOBJECT("Form")
+haystack	= CREATEOBJECT("Form")
+IF TYPELIKE(needle, haystack)
+	* needle and haystack are the same type
+ENDIF
