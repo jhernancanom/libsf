@@ -74,8 +74,10 @@
 
 //////////
 //
-// Function prototypes for use with the SAsciiCompSearcher::compilerDictionaryLookup() member.
+// COMMANDS
+// Prototypes for use with the SAsciiCompSearcher::compilerDictionaryLookup() member.
 //
 //////
-	s32				compilerDictionary_command_use					(SAsciiCompSearcher* tacs, SComp* comp, SComp* paramOrder[], s32* paramCount);
-	s32				compilerDictionary_command_open					(SAsciiCompSearcher* tacs, SComp* comp, SComp* paramOrder[], s32* paramCount);
+	s32				compilerDictionary_command_clear				(SAsciiCompSearcher* tacs, SComp* comp, SCompParams* cpOrder[], s32* cpCount);
+	s32				compilerDictionary_command_open					(SAsciiCompSearcher* tacs, SComp* comp, SCompParams* cpOrder[], s32* cpCount);
+	s32				compilerDictionary_command_use					(SAsciiCompSearcher* tacs, SComp* comp, SCompParams* cpOrder[], s32* cpCount);

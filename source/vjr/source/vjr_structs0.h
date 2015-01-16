@@ -467,3 +467,14 @@ struct SComp
 	// For faster rendering in source code windows
 	SBmpCache*		bc;												// Holds drawn things (casks for example)
 };
+
+struct SCompParams
+{
+	s32				cpType;											// See _CP_TYPE constants
+
+	// Based on _CP_TYPE, one of these will be populated
+	union {
+		SComp*		comp;
+		SVariable*	var;
+	};
+};

@@ -69,11 +69,39 @@
 
 //////////
 //
+// Compiles the OPEN command parameters on the source code line, aligning their variable
+// component ordering with the fixed parameter requirements for the CLEAR execution engine.
+//
+//////
+	s32 compilerDictionary_command_clear(SAsciiCompSearcher* tacs, SComp* comp, SCompParams* cpOrder[], s32* cpCount)
+	{
+		return(-1);
+	}
+
+
+
+
+//////////
+//
+// Compiles the OPEN command parameters on the source code line, aligning their variable
+// component ordering with the fixed parameter requirements for the OPEN execution engine.
+//
+//////
+	s32 compilerDictionary_command_open(SAsciiCompSearcher* tacs, SComp* comp, SCompParams* cpOrder[], s32* cpCount)
+	{
+		return(-1);
+	}
+
+
+
+
+//////////
+//
 // Compiles the USE command parameters on the source code line, aligning their variable
 // component ordering with the fixed parameter requirements for the USE execution engine.
 //
 //////
-	s32 compilerDictionary_command_use(SAsciiCompSearcher* tacs, SComp* comp, SComp* paramOrder[], s32* paramCount)
+	s32 compilerDictionary_command_use(SAsciiCompSearcher* tacs, SComp* comp, SCompParams* cpOrder[], s32* cpCount)
 	{
 		return(-1);
 	}
