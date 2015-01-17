@@ -886,8 +886,12 @@ typedef struct tagBITMAPINFOHEADER {
 	u32		biClrImportant;
 } BITMAPINFOHEADER, *PBITMAPINFOHEADER;
 
-struct _RTL_CRITICAL_SECTION;
+typedef struct tagBITMAPINFO
+{
+	BITMAPINFOHEADER    bmiHeader;
+} BITMAPINFO;
 
+struct _RTL_CRITICAL_SECTION;
 typedef struct _LIST_ENTRY
 {
    struct _LIST_ENTRY *Flink;
