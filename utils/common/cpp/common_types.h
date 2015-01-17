@@ -75,6 +75,10 @@
 	#define s8 char
 #endif
 
+#if !defined(size_t)
+	#define size_t sptr
+#endif
+
 // Floating point
 #define f32 float
 #define f64 double

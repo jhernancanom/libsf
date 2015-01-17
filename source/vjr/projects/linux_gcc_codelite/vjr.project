@@ -92,5 +92,17 @@
   </Settings>
   <VirtualDirectory Name="src">
     <File Name="../../source/vjr.cpp"/>
+    <File Name="../../source/vjr.h"/>
+    <File Name="../../source/vjr_compile_time_settings.h"/>
+    <File Name="../../source/vjr_const.h"/>
+    <File Name="../../source/vjr_defs.h"/>
+    <File Name="../../source/vjr_globals.h"/>
+    <File Name="../../source/vjr_structs.h"/>
+    <File Name="../../source/vjr_structs0.h"/>
+    <File Name="../../source/vxb_compiler_const.h"/>
+    <File Name="../../../../utils/common/cpp/linux/windows.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="utils">
+    <File Name="../../../../utils/common/cpp/common_types.h"/>
   </VirtualDirectory>
 </CodeLite_Project>

@@ -82,67 +82,207 @@
 
 #include "vjr_compile_time_settings.h"
 
-#include <windows.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <io.h>
-#include <sys/locking.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <share.h>
-#include <sql.h>
-#include <sqlext.h>
-#include "resource.h"
 
-#define _USE_MATH_DEFINES
-#include <math.h>
-#include "sound\SDL-1.2.15\include\sdl\SDL.h"
-#include "sound\SDL-1.2.15\include\sdl\SDL_audio.h"
+#if defined(_WIN64) || defined(_WIN32)
+	// Compiling directly on Windows
+	#include <windows.h>
+	#include <io.h>
+	#include <sys/locking.h>
+	#include <fcntl.h>
+	#include <sys/types.h>
+	#include <sys/stat.h>
+	#include <share.h>
+	#include <sql.h>
+	#include <sqlext.h>
+	#include "resource.h"
+	
+	#define _USE_MATH_DEFINES
+	#include <math.h>
+	#include "sound\SDL-1.2.15\include\sdl\SDL.h"
+	#include "sound\SDL-1.2.15\include\sdl\SDL_audio.h"
 
-#include "vjr_const.h"
-#include "\libsf\utils\common\cpp\builder.h"
-#include "\libsf\utils\common\cpp\builder.cpp"
-#include "\libsf\utils\common\cpp\ll.cpp"
-#include "vjr_structs0.h"
+	#include <stdio.h>
+	#include <stdlib.h>
 
-#include "compiler\common\compiler_common.h"
+	#include "vjr_const.h"
+	
+	#include "\libsf\utils\common\cpp\builder.h"
+	#include "\libsf\utils\common\cpp\builder.cpp"
+	#include "\libsf\utils\common\cpp\ll.cpp"
+	
+	#include "vjr_structs0.h"
 
-#include "compiler\vxb\vxb_const.h"
-#include "compiler\vxb\vxb_structs.h"
-#include "compiler\vxb\vxb_defs.h"
-#include "compiler\vxb\vxb_dictionary.h"
-#include "compiler\vxb\vxb_globals.h"
+	#include "compiler\common\compiler_common.h"
 
-#include "compiler\rdc\rdc_const.h"
-#include "compiler\rdc\rdc_structs.h"
-#include "compiler\rdc\rdc_defs.h"
-#include "compiler\rdc\rdc_globals.h"
+	#include "compiler\vxb\vxb_const.h"
+	#include "compiler\vxb\vxb_structs.h"
+	#include "compiler\vxb\vxb_defs.h"
+	#include "compiler\vxb\vxb_dictionary.h"
+	#include "compiler\vxb\vxb_globals.h"
 
-#include "compiler\asm\asm_const.h"
-#include "compiler\asm\asm_structs.h"
-#include "compiler\asm\asm_defs.h"
-#include "compiler\asm\asm_globals.h"
+	#include "compiler\rdc\rdc_const.h"
+	#include "compiler\rdc\rdc_structs.h"
+	#include "compiler\rdc\rdc_defs.h"
+	#include "compiler\rdc\rdc_globals.h"
 
-#include "dbf\dbf.h"
+	#include "compiler\asm\asm_const.h"
+	#include "compiler\asm\asm_structs.h"
+	#include "compiler\asm\asm_defs.h"
+	#include "compiler\asm\asm_globals.h"
 
-#include "sem\sem.h"
-#include "sem\sem_line.h"
-#include "sem\sem_extra_info.h"
+	#include "dbf\dbf.h"
 
-#include "grace.h"
+	#include "sem\sem.h"
+	#include "sem\sem_line.h"
+	#include "sem\sem_extra_info.h"
 
-#include "vjr_structs.h"
-#include "vjr_defs.h"
-#include "vjr_globals.h"
+	#include "grace.h"
 
-#include "fonts.h"
-#include "datum\datum.h"
-#include "bitmaps\bitmaps.h"
+	#include "vjr_structs.h"
+	#include "vjr_defs.h"
+	#include "vjr_globals.h"
 
-#include "commands\command_defs.h"
-#include "sound\sound.h"
-#include "engine.h"
-#include "objects\accessors.h"
+	#include "fonts.h"
+	#include "datum\datum.h"
+	#include "bitmaps\bitmaps.h"
 
-#include "bmps\graphics\bitmaps.h"
+	#include "commands\command_defs.h"
+	#include "sound\sound.h"
+	#include "engine.h"
+	#include "objects\accessors.h"
+
+	#include "bmps\graphics\bitmaps.h"
+
+	//////////
+	// Source files are all included in this one source file
+	// for ease of compilation across platforms and compilers.
+	//////
+		#include "vjr_sup.cpp"
+		#include "objects\accessors.cpp"
+		#include "objects\base.cpp"
+		#include "objects\callbacks.cpp"
+		#include "objects\copy.cpp"
+		#include "objects\create.cpp"
+		#include "objects\delete.cpp"
+		#include "objects\events.cpp"
+		#include "objects\render.cpp"
+		#include "objects\reset.cpp"
+		#include "bitmaps\bitmaps.cpp"
+		#include "compiler\vxb\vxb_compiler.cpp"
+		#include "compiler\vxb\vxb_dictionary.cpp"
+		#include "compiler\rdc\rdc_compiler.cpp"
+		#include "compiler\asm\asm_compiler.cpp"
+		#include "commands\commands.cpp"
+		#include "engine.cpp"
+		#include "sem\sem.cpp"
+		#include "sem\sem_line.cpp"
+		#include "sem\sem_extra_info.cpp"
+		#include "sound\sound.cpp"
+		#include "dbf\dbc.cpp"
+		#include "dbf\dbf.cpp"
+		#include "dbf\cdx.cpp"
+		#include "grace.cpp"
+		#include "datum\datum.cpp"
+		#include "fonts.cpp"
+
+
+#elif defined(__linux__)
+	// Compiling on Linux
+//	#include "/libsf/utils/common/cpp/linux/io.h"
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <inttypes.h>
+	#include <memory.h>
+	#include <string.h>
+
+	#define _USE_MATH_DEFINES
+	#include <math.h>
+	#include <SDL2/SDL.h>
+	#include <SDL2/SDL_audio.h>
+
+	#include "vjr_const.h"
+	
+	#include "/libsf/utils/common/cpp/linux/windows.h"
+	
+	#include "/libsf/utils/common/cpp/builder.h"
+	#include "/libsf/utils/common/cpp/builder.cpp"
+	#include "/libsf/utils/common/cpp/ll.cpp"
+	
+	#include "vjr_structs0.h"
+
+	#include "compiler/common/compiler_common.h"
+
+	#include "compiler/vxb/vxb_const.h"
+	#include "compiler/vxb/vxb_structs.h"
+	#include "compiler/vxb/vxb_defs.h"
+	#include "compiler/vxb/vxb_dictionary.h"
+	#include "compiler/vxb/vxb_globals.h"
+
+	#include "compiler/rdc/rdc_const.h"
+	#include "compiler/rdc/rdc_structs.h"
+	#include "compiler/rdc/rdc_defs.h"
+	#include "compiler/rdc/rdc_globals.h"
+
+	#include "compiler/asm/asm_const.h"
+	#include "compiler/asm/asm_structs.h"
+	#include "compiler/asm/asm_defs.h"
+	#include "compiler/asm/asm_globals.h"
+
+	#include "dbf/dbf.h"
+
+	#include "sem/sem.h"
+	#include "sem/sem_line.h"
+	#include "sem/sem_extra_info.h"
+
+	#include "grace.h"
+
+	#include "vjr_structs.h"
+	#include "vjr_defs.h"
+	#include "vjr_globals.h"
+
+	#include "fonts.h"
+	#include "datum/datum.h"
+	#include "bitmaps/bitmaps.h"
+
+	#include "commands/command_defs.h"
+	#include "sound/sound.h"
+	#include "engine.h"
+	#include "objects/accessors.h"
+
+	#include "bmps/graphics/bitmaps.h"
+
+	//////////
+	// Source files are all included in this one source file
+	// for ease of compilation across platforms and compilers.
+	//////
+		#include "vjr_sup.cpp"
+		#include "objects/accessors.cpp"
+		#include "objects/base.cpp"
+		#include "objects/callbacks.cpp"
+		#include "objects/copy.cpp"
+		#include "objects/create.cpp"
+		#include "objects/delete.cpp"
+		#include "objects/events.cpp"
+		#include "objects/render.cpp"
+		#include "objects/reset.cpp"
+		#include "bitmaps/bitmaps.cpp"
+		#include "compiler/vxb/vxb_compiler.cpp"
+		#include "compiler/vxb/vxb_dictionary.cpp"
+		#include "compiler/rdc/rdc_compiler.cpp"
+		#include "compiler/asm/asm_compiler.cpp"
+		#include "commands/commands.cpp"
+		#include "engine.cpp"
+		#include "sem/sem.cpp"
+		#include "sem/sem_line.cpp"
+		#include "sem/sem_extra_info.cpp"
+		#include "sound/sound.cpp"
+		#include "dbf/dbc.cpp"
+		#include "dbf/dbf.cpp"
+		#include "dbf/cdx.cpp"
+		#include "grace.cpp"
+		#include "datum/datum.cpp"
+		#include "fonts.cpp"
+
+#else
+	#error Unknown target for compilation (must be Windows or Linux)
+#endif

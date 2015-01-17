@@ -207,6 +207,7 @@ struct SCompileNote;
 		s32				count;											// The number of components (in comp or other) as input
 	};
 
+/*
 //////////
 //
 // Sub-instructions are components of a source code line broken out into individual tasks.
@@ -234,6 +235,7 @@ struct SCompileNote;
 //              |_____|       |_____|
 //
 //////
+*/
 	// Processing ops
 	struct SSubInstr
 	{

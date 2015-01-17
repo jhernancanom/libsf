@@ -73,39 +73,6 @@
 	#include "vjr.h"
 
 
-//////////
-// Source files are all included in this one source file
-// for ease of compilation across platforms and compilers.
-//////
-	#include "vjr_sup.cpp"
-	#include "objects\accessors.cpp"
-	#include "objects\base.cpp"
-	#include "objects\callbacks.cpp"
-	#include "objects\copy.cpp"
-	#include "objects\create.cpp"
-	#include "objects\delete.cpp"
-	#include "objects\events.cpp"
-	#include "objects\render.cpp"
-	#include "objects\reset.cpp"
-	#include "bitmaps\bitmaps.cpp"
-	#include "compiler\vxb\vxb_compiler.cpp"
-	#include "compiler\vxb\vxb_dictionary.cpp"
-	#include "compiler\rdc\rdc_compiler.cpp"
-	#include "compiler\asm\asm_compiler.cpp"
-	#include "commands\commands.cpp"
-	#include "engine.cpp"
-	#include "sem\sem.cpp"
-	#include "sem\sem_line.cpp"
-	#include "sem\sem_extra_info.cpp"
-	#include "sound\sound.cpp"
-	#include "dbf\dbc.cpp"
-	#include "dbf\dbf.cpp"
-	#include "dbf\cdx.cpp"
-	#include "grace.cpp"
-	#include "datum\datum.cpp"
-	#include "fonts.cpp"
-
-
 
 
 int CALLBACK WinMain(	HINSTANCE	hInstance,

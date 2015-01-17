@@ -72,7 +72,13 @@ struct SObject;
 struct SEM;
 
 
-#include "\libsf\utils\common\cpp\common_types.h"
+#if defined(_WIN64) || defined(_WIN32)
+	#include "\libsf\utils\common\cpp\common_types.h"
+#elif defined(__linux__)
+	#include "/libsf/utils/common/cpp/common_types.h"
+#else
+	#error Unknown target for compilation (must be Windows or Linux)
+#endif
 
 // Used for passing complex parameters as references, such as SObjectpp&, or SEMpp&
 typedef SObject**	SObjectpp;

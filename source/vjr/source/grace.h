@@ -67,8 +67,15 @@
 
 
 
-#include "include\GL\glew.h"
-#include "include\GL\freeglut.h"
+#if defined(_WIN64) || defined(_WIN32)
+	#include "include\GL\glew.h"
+	#include "include\GL\freeglut.h"
+#elif defined(__linux__)
+	#include "GL/glew.h"
+	#include "GL/freeglut.h"
+#else
+	#error Unknown target for compilation (must be Windows or Linux)
+#endif
 
 struct SObjNode;
 struct SGraceVec;
