@@ -188,6 +188,8 @@
 
 #elif defined(__linux__)
 	// Compiling on Linux
+	#define WM_USER				0x0400
+	
 //	#include "/libsf/utils/common/cpp/linux/io.h"
 	#include <stdio.h>
 	#include <stdlib.h>
@@ -201,7 +203,6 @@
 	#include <SDL2/SDL_audio.h>
 
 	#include "vjr_const.h"
-	
 	#include "/libsf/utils/common/cpp/linux/windows.h"
 	
 	#include "/libsf/utils/common/cpp/builder.h"

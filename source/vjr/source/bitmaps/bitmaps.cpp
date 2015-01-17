@@ -649,7 +649,7 @@
 
 			// Create the HDC and DIB Section
 			bmp->hdc	= CreateCompatibleDC(GetDC(GetDesktopWindow()));
-			bmp->hbmp	= CreateDIBSection(bmp->hdc, (BITMAPINFO*)&bmp->bi, DIB_RGB_COLORS, (void**)&bmp->bd, NULL, 0);
+			bmp->hbmp	= CreateDIBSection(bmp->hdc, (BITMAPINFOHEADER*)&bmp->bi, DIB_RGB_COLORS, (void**)&bmp->bd, NULL, 0);
 
 			// Give it a rect
 			SetRect(&bmp->rc, 0, 0, width - 1, height - 1);
