@@ -94,8 +94,8 @@
 #define VOID			void
 #define SIZE_T			size_t
 
-#define FALSE			0
-#define TRUE			1
+#define FALSE			false
+#define TRUE			true
 
 #define SHORT			u16
 #define LONG			sptr
@@ -136,6 +136,10 @@ typedef DWORD		(__stdcall*	LPTHREAD_START_ROUTINE)	(LPVOID lpThreadParameter);
 #define __inout
 #define __deref
 #define __drv_aliasesMem
+
+#define IDI_JDEBI		-1
+#define IDI_VJR			-2
+#define IDC_VJR			-3
 
 #define MB_OK			0x00000000L
 
@@ -1118,7 +1122,6 @@ WINBASEAPI BOOL WINAPI		SetSystemTime			(__in CONST SYSTEMTIME *lpSystemTime);
 WINBASEAPI VOID WINAPI		GetLocalTime			(__out LPSYSTEMTIME lpSystemTime);
 WINBASEAPI BOOL WINAPI		SetLocalTime			(__in CONST SYSTEMTIME *lpSystemTime);
 WINUSERAPI HWND WINAPI		GetActiveWindow			(VOID);
-WINBASEAPI VOID WINAPI		GetSystemTimeAsFileTime	(__out LPFILETIME lpSystemTimeAsFileTime);
 WINGDIAPI COLORREF WINAPI	SetBkColor				(__in HDC hdc, __in COLORREF color);
 WINUSERAPI HDC WINAPI		GetDC					(__in_opt HWND hWnd);
 WINGDIAPI HDC WINAPI		CreateCompatibleDC		( __in_opt HDC hdc);
@@ -1126,7 +1129,6 @@ WINGDIAPI HBITMAP WINAPI	CreateDIBSection		(__in_opt HDC hdc, __in CONST BITMAPI
 s64							_atoi64					(cs8* string);
 WINUSERAPI int WINAPI		GetSystemMetrics		(__in int nIndex);
 WINUSERAPI BOOL WINAPI		OffsetRect				(__inout LPRECT lprc, __in int dx, __in int dy);
-WINBASEAPI DWORD WINAPI		GetTempPath				(__in DWORD nBufferLength, s8 lpBuffer[_MAX_PATH]);
 WINBASEAPI DWORD WINAPI		GetCurrentDirectory		(__in DWORD nBufferLength, s8 lpBuffer[_MAX_PATH]);
 int							sopen					(cs8* tcPathname, s32 mode, s32 sharing);
 s64							telli64					(s32 fileno);
@@ -1141,5 +1143,3 @@ WINGDIAPI HFONT WINAPI		CreateFont				( __in int cHeight, __in int cWidth, __in 
 													 __in DWORD bUnderline, __in DWORD bStrikeOut, __in DWORD iCharSet, __in DWORD iOutPrecision, __in DWORD iClipPrecision,
 													 __in DWORD iQuality, __in DWORD iPitchAndFamily, __in_opt cs8* pszFaceName);
 WINGDIAPI BOOL WINAPI		GetTextMetricsA			(__in HDC hdc, __out LPTEXTMETRIC lptm);
-WINUSERAPI int WINAPI		TranslateAccelerator	(__in HWND hWnd, __in HACCEL hAccTable, __in LPMSG lpMsg);
-WINUSERAPI HACCEL WINAPI	LoadAccelerators		(__in_opt HINSTANCE hInstance, __in cs8* lpTableName);

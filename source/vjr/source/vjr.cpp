@@ -75,13 +75,23 @@
 
 
 
-int CALLBACK WinMain(	HINSTANCE	hInstance,
-						HINSTANCE	hPrevInstance,
-						LPSTR		lpCmdLine,
-						int			nCmdShow	)
+#if defined(_WIN64) || defined(_WIN32)
+	int CALLBACK WinMain(	HINSTANCE	hInstance,
+							HINSTANCE	hPrevInstance,
+							LPSTR		lpCmdLine,
+							int			nCmdShow	)
+#elif __linux__
+	int main(int argc, char* argv[])
+#else
+	#error Unknown target for compilation (must be Windows or Linux)
+#endif
 {
 	MSG		msg;
 	HACCEL	hAccelTable;
+#if !defined(_WIN64) && !defined(_WIN32)
+	HINSTANCE hInstance = 0;
+#endif
+
 
 
 	//////////
@@ -98,11 +108,8 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		iVjr_appendSystemLog((u8*)"Engage main loop");
 		while (!glShuttingDown && GetMessage(&msg, null0, 0, 0))
 		{
-			if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
 		}
 		// When the WM_QUIT message is received, we exit
 
@@ -167,8 +174,8 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 		*varTrue->value.data_s8		= (s8)_LOGICAL_TRUE;
 		*varFalse->value.data_s8	= (s8)_LOGICAL_FALSE;
 
-		// Keyboard shortcuts
-		*hAccelTable = LoadAccelerators(ghInstance, MAKEINTRESOURCE(IDC_VJR));
+//		// Keyboard shortcuts
+//		*hAccelTable = LoadAccelerators(ghInstance, MAKEINTRESOURCE(IDC_VJR));
 
 		// Initialize our critical sections
 		InitializeCriticalSection(&cs_uniqueIdAccess);

@@ -65,8 +65,20 @@
 //
 
 
-#include "\libsf\utils\common\cpp\common_types.h"
+#if defined(_WIN64) || defined(_WIN32)
+	#include "\libsf\utils\common\cpp\common_types.h"
 
-// Force the bitmaps to be for definition
-#define _BMP_LOCALITY 1
-#include "graphics\bitmaps.h"
+	// Force the bitmaps to be for definition
+	#define _BMP_LOCALITY 1
+	#include "graphics\bitmaps.h"
+
+#elif __linux__
+	#include "/libsf/utils/common/cpp/common_types.h"
+
+	// Force the bitmaps to be for definition
+	#define _BMP_LOCALITY 1
+	#include "graphics/bitmaps.h"
+
+#else
+	#error Unknown target for compilation (must be Windows or Linux)
+#endif

@@ -290,7 +290,8 @@
 		#include "grace.cpp"
 		#include "datum/datum.cpp"
 		#include "fonts.cpp"
-
+		#include "/libsf/utils/common/cpp/linux/windows.cpp"
+		
 #else
 	#error Unknown target for compilation (must be Windows or Linux)
 #endif

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="vjr" InternalType="Console">
   <Plugins>
+    <Plugin Name="qmake">
+      <![CDATA[00010001N0005Debug000000000000]]>
+    </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
   "name": "Debug",
@@ -12,9 +15,6 @@
   "arguments": [],
   "parentProject": ""
  }]]]>
-    </Plugin>
-    <Plugin Name="qmake">
-      <![CDATA[00010001N0005Debug000000000000]]>
     </Plugin>
   </Plugins>
   <Description/>
@@ -29,10 +29,12 @@
     <File Name="../../source/vjr_structs.h"/>
     <File Name="../../source/vjr_structs0.h"/>
     <File Name="../../source/vxb_compiler_const.h"/>
-    <File Name="../../../../utils/common/cpp/linux/windows.h"/>
+    <File Name="../../source/bmps/bmps.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="utils">
     <File Name="../../../../utils/common/cpp/common_types.h"/>
+    <File Name="../../../../utils/common/cpp/linux/windows.h"/>
+    <File Name="../../../../utils/common/cpp/linux/windows.cpp" ExcludeProjConfig="Debug"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
@@ -48,7 +50,13 @@
       <Compiler Options="-g;-O0;-Wall;-Wno-comment;-Wno-multichar;-Wno-narrowing;-Wno-write-strings;-Wno-format-contains-nul" C_Options="-g;-O0;-Wall;;-Wno-comment;-Wno-multichar;-Wno-narrowing;-Wno-write-strings;-Wno-format-contains-nul" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
       </Compiler>
-      <Linker Options="" Required="yes"/>
+      <Linker Options="" Required="yes">
+        <Library Value="SDL2"/>
+        <Library Value="GL"/>
+        <Library Value="GLEW"/>
+        <Library Value="GLU"/>
+        <Library Value="glut"/>
+      </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName)" IntermediateDirectory="./Debug" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes" IsGUIProgram="no" IsEnabled="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">

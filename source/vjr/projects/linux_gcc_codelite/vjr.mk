@@ -39,8 +39,8 @@ LinkOptions            :=
 IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). 
 IncludePCH             := 
 RcIncludePath          := 
-Libs                   := 
-ArLibs                 :=  
+Libs                   := $(LibrarySwitch)SDL2 $(LibrarySwitch)GL $(LibrarySwitch)GLEW $(LibrarySwitch)GLU $(LibrarySwitch)glut 
+ArLibs                 :=  "SDL2" "GL" "GLEW" "GLU" "glut" 
 LibPath                := $(LibraryPathSwitch). 
 
 ##
@@ -60,7 +60,7 @@ AS       := /usr/bin/as
 ## User defined environment variables
 ##
 CodeLiteDir:=/usr/share/codelite
-Objects0=$(IntermediateDirectory)/source_vjr.cpp$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/source_vjr.cpp$(ObjectSuffix) $(IntermediateDirectory)/bmps_bmps.cpp$(ObjectSuffix) 
 
 
 
@@ -94,6 +94,14 @@ $(IntermediateDirectory)/source_vjr.cpp$(DependSuffix): ../../source/vjr.cpp
 
 $(IntermediateDirectory)/source_vjr.cpp$(PreprocessSuffix): ../../source/vjr.cpp
 	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/source_vjr.cpp$(PreprocessSuffix) "../../source/vjr.cpp"
+
+$(IntermediateDirectory)/bmps_bmps.cpp$(ObjectSuffix): ../../source/bmps/bmps.cpp $(IntermediateDirectory)/bmps_bmps.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "/libsf/source/vjr/source/bmps/bmps.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/bmps_bmps.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/bmps_bmps.cpp$(DependSuffix): ../../source/bmps/bmps.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/bmps_bmps.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/bmps_bmps.cpp$(DependSuffix) -MM "../../source/bmps/bmps.cpp"
+
+$(IntermediateDirectory)/bmps_bmps.cpp$(PreprocessSuffix): ../../source/bmps/bmps.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/bmps_bmps.cpp$(PreprocessSuffix) "../../source/bmps/bmps.cpp"
 
 
 -include $(IntermediateDirectory)/*$(DependSuffix)
