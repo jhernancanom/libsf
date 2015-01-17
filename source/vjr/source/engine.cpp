@@ -630,7 +630,7 @@
 							break;
 
 						default:
-							MessageBox(NULL, "Need to add more parameter functions to iEngine_getFunctionResult()", "VJr Programmer Error", MB_OK);
+							MessageBox(null0, "Need to add more parameter functions to iEngine_getFunctionResult()", "VJr Programmer Error", MB_OK);
 							return(NULL);
 					}
 					// We need to free anything that needs freed

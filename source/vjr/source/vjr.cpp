@@ -96,7 +96,7 @@ int CALLBACK WinMain(	HINSTANCE	hInstance,
 	// Read events
 	//////
 		iVjr_appendSystemLog((u8*)"Engage main loop");
-		while (!glShuttingDown && GetMessage(&msg, NULL, 0, 0))
+		while (!glShuttingDown && GetMessage(&msg, null0, 0, 0))
 		{
 			if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
 			{

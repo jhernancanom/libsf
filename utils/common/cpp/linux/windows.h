@@ -99,6 +99,7 @@
 
 #define SHORT			u16
 #define LONG			sptr
+#define LONG_PTR		sptr*
 #define ULONG_PTR		uptr*
 #define _MAX_PATH		256
 #define BYTE			u8
@@ -111,9 +112,10 @@
 #define LPVOID			void*
 #define LRESULT			sptr*
 #define COLORREF		DWORD
+#define LPSTR			s8*
 
 #define RGB(r,g,b)			((COLORREF)(((BYTE)(r)|((WORD)((BYTE)(g))<<8))|(((DWORD)(BYTE)(b))<<16)))
-#define MAKEINTRESOURCE(i)	((s8*)((ULONG_PTR)((WORD)(i))))
+#define MAKEINTRESOURCE(i)	((uptr)(i))
 
 #define __stdcall
 #define WINAPI			__stdcall
@@ -777,6 +779,54 @@ typedef DWORD		(__stdcall*	LPTHREAD_START_ROUTINE)	(LPVOID lpThreadParameter);
 #define SM_REMOTECONTROL        0x2001
 #define SM_CARETBLINKINGENABLED 0x2002
 
+#define _SH_DENYRW				0x10    /* deny read/write mode */
+#define _SH_DENYWR				0x20    /* deny write mode */
+#define _SH_DENYRD				0x30    /* deny read mode */
+#define _SH_DENYNO				0x40    /* deny none mode */
+#define _SH_SECURE				0x80    /* secure mode */
+
+#define _O_RDONLY       0x0000  /* open for reading only */
+#define _O_WRONLY       0x0001  /* open for writing only */
+#define _O_RDWR         0x0002  /* open for reading and writing */
+#define _O_APPEND       0x0008  /* writes done at eof */
+#define _O_CREAT        0x0100  /* create and open file */
+#define _O_TRUNC        0x0200  /* open and truncate */
+#define _O_EXCL         0x0400  /* open only if file doesn't already exist */
+#define _O_TEXT         0x4000  /* file mode is text (translated) */
+#define _O_BINARY       0x8000  /* file mode is binary (untranslated) */
+
+#define DRIVERVERSION 0     /* Device driver version                    */
+#define TECHNOLOGY    2     /* Device classification                    */
+#define HORZSIZE      4     /* Horizontal size in millimeters           */
+#define VERTSIZE      6     /* Vertical size in millimeters             */
+#define HORZRES       8     /* Horizontal width in pixels               */
+#define VERTRES       10    /* Vertical height in pixels                */
+#define BITSPIXEL     12    /* Number of bits per pixel                 */
+#define PLANES        14    /* Number of planes                         */
+#define NUMBRUSHES    16    /* Number of brushes the device has         */
+#define NUMPENS       18    /* Number of pens the device has            */
+#define NUMMARKERS    20    /* Number of markers the device has         */
+#define NUMFONTS      22    /* Number of fonts the device has           */
+#define NUMCOLORS     24    /* Number of colors the device supports     */
+#define PDEVICESIZE   26    /* Size required for device descriptor      */
+#define CURVECAPS     28    /* Curve capabilities                       */
+#define LINECAPS      30    /* Line capabilities                        */
+#define POLYGONALCAPS 32    /* Polygonal capabilities                   */
+#define TEXTCAPS      34    /* Text capabilities                        */
+#define CLIPCAPS      36    /* Clipping capabilities                    */
+#define RASTERCAPS    38    /* Bitblt capabilities                      */
+#define ASPECTX       40    /* Length of the X leg                      */
+#define ASPECTY       42    /* Length of the Y leg                      */
+#define ASPECTXY      44    /* Length of the hypotenuse                 */
+#define LOGPIXELSX    88    /* Logical pixels/inch in X                 */
+#define LOGPIXELSY    90    /* Logical pixels/inch in Y                 */
+#define SIZEPALETTE  104    /* Number of entries in physical palette    */
+#define NUMRESERVED  106    /* Number of reserved entries in palette    */
+#define COLORRES     108    /* Actual color resolution                  */
+
+
+#define INVALID_HANDLE_VALUE ((HANDLE)(LONG_PTR)-1)
+
 struct RECT
 {
 	s32		left;
@@ -871,30 +921,6 @@ typedef struct _RTL_CRITICAL_SECTION
 typedef RTL_CRITICAL_SECTION CRITICAL_SECTION;
 #define LPCRITICAL_SECTION CRITICAL_SECTION*
 
-typedef struct tagTEXTMETRICW
-{
-	s32		tmHeight;
-	s32		tmAscent;
-	s32		tmDescent;
-	s32		tmInternalLeading;
-	s32		tmExternalLeading;
-	s32		tmAveCharWidth;
-	s32		tmMaxCharWidth;
-	s32		tmWeight;
-	s32		tmOverhang;
-	s32		tmDigitizedAspectX;
-	s32		tmDigitizedAspectY;
-	u16		tmFirstChar;
-	u16		tmLastChar;
-	u16		tmDefaultChar;
-	u16		tmBreakChar;
-	u8		tmItalic;
-	u8		tmUnderlined;
-	u8		tmStruckOut;
-	u8		tmPitchAndFamily;
-	u8		tmCharSet;
-} TEXTMETRIC;
-
 typedef struct _SYSTEMTIME
 {
 	u16		wYear;
@@ -950,7 +976,55 @@ typedef struct tagMSG
 } MSG;
 #define LPMSG MSG*
 
-#define _memicmp strncmp
+typedef struct _WIN32_FIND_DATAA
+{
+    DWORD		dwFileAttributes;
+    FILETIME	ftCreationTime;
+    FILETIME	ftLastAccessTime;
+    FILETIME	ftLastWriteTime;
+    DWORD		nFileSizeHigh;
+    DWORD		nFileSizeLow;
+    DWORD		dwReserved0;
+    DWORD		dwReserved1;
+    s8			cFileName[260];
+    s8			cAlternateFileName[14];
+} WIN32_FIND_DATA;
+#define LPWIN32_FIND_DATA WIN32_FIND_DATA*
+
+typedef struct tagTEXTMETRICA
+{
+	LONG		tmHeight;
+	LONG		tmAscent;
+	LONG		tmDescent;
+	LONG		tmInternalLeading;
+	LONG		tmExternalLeading;
+	LONG		tmAveCharWidth;
+	LONG		tmMaxCharWidth;
+	LONG		tmWeight;
+	LONG		tmOverhang;
+	LONG		tmDigitizedAspectX;
+	LONG		tmDigitizedAspectY;
+	BYTE		tmFirstChar;
+	BYTE		tmLastChar;
+	BYTE		tmDefaultChar;
+	BYTE		tmBreakChar;
+	BYTE		tmItalic;
+	BYTE		tmUnderlined;
+	BYTE		tmStruckOut;
+	BYTE		tmPitchAndFamily;
+	BYTE		tmCharSet;
+} TEXTMETRIC;
+#define LPTEXTMETRIC TEXTMETRIC*
+
+#define _memicmp(l,r,s)		strncmp((cs8*)l, (cs8*)r, s)
+#define _sopen				sopen
+#define _dup				dup
+#define _read				read
+#define _write				write
+#define _close				close
+#define _lseek				lseek
+#define _lseeki64			lseek64
+#define _telli64			telli64
 
 WINUSERAPI HWND WINAPI CreateWindowEx(	__in		DWORD dwExStyle,
 										__in_opt	cs8* lpClassName,
@@ -1000,7 +1074,7 @@ WINBASEAPI BOOL WINAPI		TryEnterCriticalSection	(__inout LPCRITICAL_SECTION lpCr
 WINBASEAPI VOID WINAPI		LeaveCriticalSection	(__inout LPCRITICAL_SECTION lpCriticalSection);
 WINBASEAPI VOID WINAPI		DeleteCriticalSection	(__inout LPCRITICAL_SECTION lpCriticalSection);
 WINUSERAPI VOID WINAPI		PostQuitMessage			(__in int nExitCode);
-WINUSERAPI HCURSOR WINAPI	LoadCursor				(__in_opt HINSTANCE hInstance, __in cs8* lpCursorName);
+WINUSERAPI HCURSOR WINAPI	LoadCursor				(__in_opt HINSTANCE hInstance, __in uptr lpCursorName);
 WINBASEAPI HMODULE WINAPI	GetModuleHandle			(__in_opt cs8* lpModuleName);
 WINUSERAPI int WINAPI		SetWindowRgn			(__in HWND hWnd, __in_opt HRGN hRgn, __in BOOL bRedraw);
 WINUSERAPI BOOL WINAPI		KillTimer				(__in_opt HWND hWnd,__in s64 uIDEvent);
@@ -1017,7 +1091,7 @@ WINGDIAPI BOOL WINAPI		PtInRegion				(__in HRGN hrgn, __in int x, __in int y);
 WINUSERAPI HDC WINAPI		BeginPaint				(__in HWND hWnd, __out LPPAINTSTRUCT lpPaint);
 WINUSERAPI BOOL WINAPI		EndPaint				(__in HWND hWnd, __in CONST PAINTSTRUCT *lpPaint);
 WINGDIAPI BOOL WINAPI		BitBlt					( __in HDC hdc, __in int x, __in int y, __in int cx, __in int cy, __in_opt HDC hdcSrc, __in int x1, __in int y1, __in DWORD rop);
-WINUSERAPI HICON WINAPI		LoadIcon				(__in_opt HINSTANCE hInstance, __in cs8* lpIconName);
+WINUSERAPI HICON WINAPI		LoadIcon				(__in_opt HINSTANCE hInstance, __in uptr lpIconName);
 WINUSERAPI BOOL WINAPI		CopyRect				(__out LPRECT lprcDst, __in CONST RECT *lprcSrc);
 WINUSERAPI BOOL WINAPI		InflateRect				(__inout LPRECT lprc, __in int dx, __in int dy);
 WINUSERAPI LONG WINAPI		GetWindowLongA			(__in HWND hWnd, __in int nIndex);
@@ -1053,3 +1127,19 @@ s64							_atoi64					(cs8* string);
 WINUSERAPI int WINAPI		GetSystemMetrics		(__in int nIndex);
 WINUSERAPI BOOL WINAPI		OffsetRect				(__inout LPRECT lprc, __in int dx, __in int dy);
 WINBASEAPI DWORD WINAPI		GetTempPath				(__in DWORD nBufferLength, s8 lpBuffer[_MAX_PATH]);
+WINBASEAPI DWORD WINAPI		GetCurrentDirectory		(__in DWORD nBufferLength, s8 lpBuffer[_MAX_PATH]);
+int							sopen					(cs8* tcPathname, s32 mode, s32 sharing);
+s64							telli64					(s32 fileno);
+WINBASEAPI HANDLE WINAPI	FindFirstFile			(__in cs8* lpFileName, __out LPWIN32_FIND_DATA lpFindFileData);
+WINBASEAPI BOOL WINAPI		FindNextFile			(__in HANDLE hFindFile, __out LPWIN32_FIND_DATA lpFindFileData);
+WINBASEAPI DWORD WINAPI		GetFullPathName			(__in cs8* lpFileName, __in DWORD nBufferLength, s8 lpBuffer[_MAX_PATH], s8** lpFilePart);
+WINBASEAPI DWORD WINAPI		GetTempPath				(__in DWORD nBufferLength, s8 lpBuffer[_MAX_PATH]);
+WINBASEAPI UINT WINAPI		GetTempFileName			(__in cs8* lpPathName, __in cs8* lpPrefixString, __in UINT uUnique, s8 lpTempFileName[_MAX_PATH]);
+WINGDIAPI int WINAPI		GetDeviceCaps			(__in_opt HDC hdc, __in int index);
+WINBASEAPI int WINAPI		MulDiv					(__in int nNumber, __in int nNumerator, __in int nDenominator);
+WINGDIAPI HFONT WINAPI		CreateFont				( __in int cHeight, __in int cWidth, __in int cEscapement, __in int cOrientation, __in int cWeight, __in DWORD bItalic,
+													 __in DWORD bUnderline, __in DWORD bStrikeOut, __in DWORD iCharSet, __in DWORD iOutPrecision, __in DWORD iClipPrecision,
+													 __in DWORD iQuality, __in DWORD iPitchAndFamily, __in_opt cs8* pszFaceName);
+WINGDIAPI BOOL WINAPI		GetTextMetricsA			(__in HDC hdc, __out LPTEXTMETRIC lptm);
+WINUSERAPI int WINAPI		TranslateAccelerator	(__in HWND hWnd, __in HACCEL hAccTable, __in LPMSG lpMsg);
+WINUSERAPI HACCEL WINAPI	LoadAccelerators		(__in_opt HINSTANCE hInstance, __in cs8* lpTableName);

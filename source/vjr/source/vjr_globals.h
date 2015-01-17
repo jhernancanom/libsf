@@ -118,7 +118,7 @@
 //////////
 // Global Variables
 //////
-	HINSTANCE			ghInstance							= NULL;
+	HINSTANCE			ghInstance							= null0;
 	bool				glShuttingDown						= false;
 //	ITaskbarList*		giTaskbar							= NULL;
 
@@ -134,7 +134,7 @@
 // END
 //////////
 
-	HWND				ghwndMsg							= NULL;
+	HWND				ghwndMsg							= null0;
 	CRITICAL_SECTION	cs_uniqueIdAccess;
 	CRITICAL_SECTION	cs_logData;
 	u32					gnNextUniqueId						= 0;

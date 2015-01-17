@@ -1,7 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Project Name="vjr" InternalType="Console">
+  <Plugins>
+    <Plugin Name="CMakePlugin">
+      <![CDATA[[{
+  "name": "Debug",
+  "enabled": false,
+  "buildDirectory": "build",
+  "sourceDirectory": "$(ProjectPath)",
+  "generator": "",
+  "buildType": "",
+  "arguments": [],
+  "parentProject": ""
+ }]]]>
+    </Plugin>
+    <Plugin Name="qmake">
+      <![CDATA[00010001N0005Debug000000000000]]>
+    </Plugin>
+  </Plugins>
   <Description/>
   <Dependencies/>
+  <VirtualDirectory Name="src">
+    <File Name="../../source/vjr.cpp"/>
+    <File Name="../../source/vjr.h"/>
+    <File Name="../../source/vjr_compile_time_settings.h"/>
+    <File Name="../../source/vjr_const.h"/>
+    <File Name="../../source/vjr_defs.h"/>
+    <File Name="../../source/vjr_globals.h"/>
+    <File Name="../../source/vjr_structs.h"/>
+    <File Name="../../source/vjr_structs0.h"/>
+    <File Name="../../source/vxb_compiler_const.h"/>
+    <File Name="../../../../utils/common/cpp/linux/windows.h"/>
+  </VirtualDirectory>
+  <VirtualDirectory Name="utils">
+    <File Name="../../../../utils/common/cpp/common_types.h"/>
+  </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
       <Compiler Options="" C_Options="" Assembler="">
@@ -13,7 +45,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-O0;-Wall" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;-O0;-Wall;-Wno-comment;-Wno-multichar;-Wno-narrowing;-Wno-write-strings;-Wno-format-contains-nul" C_Options="-g;-O0;-Wall;;-Wno-comment;-Wno-multichar;-Wno-narrowing;-Wno-write-strings;-Wno-format-contains-nul" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
       </Compiler>
       <Linker Options="" Required="yes"/>
@@ -90,19 +122,4 @@
       </Completion>
     </Configuration>
   </Settings>
-  <VirtualDirectory Name="src">
-    <File Name="../../source/vjr.cpp"/>
-    <File Name="../../source/vjr.h"/>
-    <File Name="../../source/vjr_compile_time_settings.h"/>
-    <File Name="../../source/vjr_const.h"/>
-    <File Name="../../source/vjr_defs.h"/>
-    <File Name="../../source/vjr_globals.h"/>
-    <File Name="../../source/vjr_structs.h"/>
-    <File Name="../../source/vjr_structs0.h"/>
-    <File Name="../../source/vxb_compiler_const.h"/>
-    <File Name="../../../../utils/common/cpp/linux/windows.h"/>
-  </VirtualDirectory>
-  <VirtualDirectory Name="utils">
-    <File Name="../../../../utils/common/cpp/common_types.h"/>
-  </VirtualDirectory>
 </CodeLite_Project>

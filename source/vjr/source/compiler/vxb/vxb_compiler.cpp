@@ -5964,14 +5964,14 @@ debug_break;
 
 				case _VAR_TYPE_U64:
 					// Convert to unsigned integer form, then store text
-					sprintf((s8*)buffer, "%I64u\0", *(u64*)var->value.data);
+					sprintf((s8*)buffer, "%I64u\0", (unsigned int)*(u64*)var->value.data);
 					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_S64:
 					// Convert to unsigned integer form, then store text
-					sprintf((s8*)buffer, "%I64d\0", *(s64*)var->value.data);
+					sprintf((s8*)buffer, "%I64d\0", (int)*(s64*)var->value.data);
 					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;

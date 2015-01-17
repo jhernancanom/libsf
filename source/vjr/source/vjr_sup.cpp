@@ -105,11 +105,11 @@
 			//////////
 			// Create the message window
 			//////
-				ghwndMsg = CreateWindowA((cs8*)cgcMessageWindowClass, (cs8*)cgcMessageWindowClass, 0, 0, 0, 0, 0, HWND_MESSAGE, NULL, ghInstance, 0);
+				ghwndMsg = CreateWindowA((cs8*)cgcMessageWindowClass, (cs8*)cgcMessageWindowClass, 0, 0, 0, 0, 0, HWND_MESSAGE, null0, ghInstance, 0);
 				if (ghwndMsg)
 				{
 					// Create a timer for the message window firing 20x per second
-					SetTimer(ghwndMsg, 0, 50, NULL);
+					SetTimer(ghwndMsg, 0, 50, null0);
 
 					// Read events
 					CreateThread(NULL, 0, &iReadEvents_messageWindow, 0, 0, 0);
@@ -118,7 +118,7 @@
 				break;
 			}
 			// We should never get here
-			MessageBoxA(NULL, "Error creating Visual FreePro Jr's message window.", "VJr - Fatal Error", MB_OK);
+			MessageBoxA(null0, "Error creating Visual FreePro Jr's message window.", "VJr - Fatal Error", MB_OK);
 	}
 
 
@@ -861,7 +861,7 @@
 			classex.hInstance			= ghInstance;
 			classex.style				= CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
 			classex.lpszClassName		= (cs8*)cgcSplashClass;
-			classex.hCursor				= LoadCursor(NULL, IDC_ARROW);
+			classex.hCursor				= LoadCursor(null0, IDC_ARROW);
 			classex.lpfnWndProc			= &iSplash_wndProc;
 
 			// Register
@@ -877,7 +877,7 @@
 											lnTop,
 											gSplash.bmp->bi.biWidth,
 											gSplash.bmp->bi.biHeight,
-											NULL, NULL, GetModuleHandle(NULL), 0);
+											null0, null0, GetModuleHandle(NULL), 0);
 
 		// Process any region info
 		GetClientRect(gSplash.hwnd, &lrcClient);
@@ -1169,18 +1169,18 @@
 				case WM_MOUSEMOVE:
 				case WM_MOUSEHOVER:
 					if (!win->isMoving && !win->isResizing)
-						return(iMouse_processMessage(win, m, w, l));
+						return((LRESULT)(sptr)iMouse_processMessage(win, m, w, l));
 					break;
 
 				case WM_SYSKEYDOWN:
 				case WM_SYSKEYUP:
-					if (w == VK_F10)		return(iKeyboard_processMessage(win, ((WM_SYSKEYDOWN) ? WM_KEYDOWN : WM_KEYUP), w, l));
-					else					return(iKeyboard_processMessage(win, m, w, l));		// Send it as is
+					if (w == VK_F10)		return((LRESULT)(sptr)iKeyboard_processMessage(win, ((WM_SYSKEYDOWN) ? WM_KEYDOWN : WM_KEYUP), w, l));
+					else					return((LRESULT)(sptr)iKeyboard_processMessage(win, m, w, l));		// Send it as is
 					break;
 
 				case WM_KEYDOWN:
 				case WM_KEYUP:
-					return(iKeyboard_processMessage(win, m, w, l));
+					return((LRESULT)(sptr)iKeyboard_processMessage(win, m, w, l));
 
 				case WM_CAPTURECHANGED:
 					if (win->isMoving)
@@ -1291,7 +1291,7 @@
 							classex.style				= CS_OWNDC | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
 							classex.lpszClassName		= bufferClass;
 							classex.hIcon				= LoadIcon(ghInstance, MAKEINTRESOURCE(icon));
-							classex.hCursor				= LoadCursor(NULL, IDC_ARROW);
+							classex.hCursor				= LoadCursor(null0, IDC_ARROW);
 							classex.lpfnWndProc			= &iWindow_wndProcForms;
 
 							// Register
@@ -1320,7 +1320,7 @@
 														winNew->rc.top, 
 														winNew->rc.right - winNew->rc.left, 
 														winNew->rc.bottom - winNew->rc.top, 
-														NULL, NULL, ghInstance, 0);
+														null0, null0, ghInstance, 0);
 
 						// Set the coordinates for the form within the window
 						SetRect(&obj->rc, 0, 0, lnWidth, lnHeight);
@@ -1461,7 +1461,7 @@
 					lnHwnd = win->hwnd;
 
 				} else {
-					lnHwnd = NULL;
+					lnHwnd = null0;
 				}
 
 				// Unlock it
@@ -1736,7 +1736,7 @@
 				wcex.style          = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
 				wcex.lpfnWndProc    = &iFocusHighlight_wndProc;
 				wcex.hInstance      = GetModuleHandle(NULL);
-				wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
+				wcex.hCursor		= LoadCursor(null0, IDC_ARROW);
 				wcex.lpszClassName  = (cs8*)cgcFocusHighlightClass;
 				atom				= RegisterClassExA(&wcex);
 
@@ -1749,7 +1749,7 @@
 		//////////
 		// Create the window
 		//////
-			focus->hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, (cs8*)cgcFocusHighlightClass, NULL, WS_POPUP, rc->left, rc->top, rc->right - rc->left, rc->bottom - rc->top, NULL, NULL, GetModuleHandle(NULL), 0);
+			focus->hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, (cs8*)cgcFocusHighlightClass, NULL, WS_POPUP, rc->left, rc->top, rc->right - rc->left, rc->bottom - rc->top, null0, null0, GetModuleHandle(NULL), 0);
 
 
 		//////////
@@ -1757,7 +1757,7 @@
 		//////
 			GetWindowRect(focus->win->hwnd, &lrcp);
 			CopyRect(&lrcParent, &lrcp);
-			AdjustWindowRect(&lrcParent, GetWindowLong(focus->win->hwnd, GWL_STYLE), (GetMenu(focus->win->hwnd) != NULL));
+			AdjustWindowRect(&lrcParent, GetWindowLong(focus->win->hwnd, GWL_STYLE), (GetMenu(focus->win->hwnd) != null0));
 			lrcParent.left	= lrcp.left + (lrcp.left - lrcp.left);
 			lrcParent.top	= lrcp.top  + (lrcp.top  - lrcp.top);
 
@@ -2014,7 +2014,7 @@
 				wcex.style          = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
 				wcex.lpfnWndProc    = &iTooltip_wndProc;
 				wcex.hInstance      = GetModuleHandle(NULL);
-				wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
+				wcex.hCursor		= LoadCursor(null0, IDC_ARROW);
 				wcex.lpszClassName  = (cs8*)cgcTooltipClass;
 				atom				= RegisterClassExA(&wcex);
 
@@ -2040,7 +2040,7 @@
 												tooltip->rc.top,
 												lnWidth,
 												lnHeight,
-												NULL, NULL, GetModuleHandle(NULL), 0);
+												null0, null0, GetModuleHandle(NULL), 0);
 
 		//////////
 		// Store the settings
@@ -2069,7 +2069,7 @@
 		//////////
 		// Process messages
 		//////
-			while (tooltip->isValid && GetMessage(&msg, NULL, 0, 0))
+			while (tooltip->isValid && GetMessage(&msg, null0, 0, 0))
 			{
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
@@ -3142,7 +3142,7 @@
 				//////////
 				// Position the window to its new location
 				//////
-					SetWindowPos(win->hwnd, NULL, win->rc.left - lnDeltaX, win->rc.top - lnDeltaY, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+					SetWindowPos(win->hwnd, null0, win->rc.left - lnDeltaX, win->rc.top - lnDeltaY, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 
 
 				//////////

@@ -1122,7 +1122,7 @@
 					
 					SetTextColor(obj->bmp->hdc, RGB(foreColor.red, foreColor.grn, foreColor.blu));
 					SetBkMode(obj->bmp->hdc, TRANSPARENT);
-					SelectObject(obj->bmp->hdc, ((obj->p.font) ? obj->p.font : gsFontDefault));
+					SelectObject(obj->bmp->hdc, ((obj->p.font) ? obj->p.font : gsFontDefault)->hfont);
 					DrawText(obj->bmp->hdc, buffer + lnSkip, (int)strlen(buffer + lnSkip), &lrc2, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 
 

@@ -2382,6 +2382,10 @@
 	s8* iDbf_getField_data(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		SFieldRecord1*	lfrp;
+		union {
+			s32		_value;
+			s8*		value;
+		};
 
 
 		//////////
@@ -2405,7 +2409,8 @@
 				memcpy(dest, wa->data + lfrp->offset, min(lfrp->length, destLength));
 
 				// Return the length
-				return((s8*)min(lfrp->length, destLength));
+				_value = min(lfrp->length, destLength);
+				return(value);
 
 			} else {
 				// Return the offset to the actual data
@@ -2413,12 +2418,17 @@
 			}
 		}
 		// If we get here, failure
-		return((s8*)-1);
+		_value = -1;
+		return(value);
 	}
 
 	s8* iiDbf_getField_data2(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength, bool tlRetrieveAsIndexKey)
 	{
 		s32				lnI, lnLength;
+		union {
+			s32			_value;
+			s8*			value;
+		};
 		SFieldRecord1*	lfrp;
 		s8				julianBuffer[16];
 
@@ -2564,7 +2574,8 @@
 				}
 
 				// Return the length of the reserved bytes
-				return((s8*)min(lfrp->length, destLength));
+				_value = min(lfrp->length, destLength);
+				return(value);
 
 			} else {
 				// Return the offset to the actual data
@@ -2572,7 +2583,8 @@
 			}
 		}
 		// If we get here, failure
-		return((s8*)-1);
+		_value = -1;
+		return(value);
 	}
 
 	uptr iDbf_getField_dataOffset(SWorkArea* wa, u32 fieldNumber)

@@ -193,10 +193,17 @@
 //	#include "/libsf/utils/common/cpp/linux/io.h"
 	#include <stdio.h>
 	#include <stdlib.h>
+	#include <unistd.h>
+	#include <fcntl.h>
+	#include <sys/types.h>
+	#include <sys/stat.h>
+//	#include <io.h>
+//	#include <sys/locking.h>
+//	#include <share.h>
 	#include <inttypes.h>
 	#include <memory.h>
 	#include <string.h>
-
+	
 	#define _USE_MATH_DEFINES
 	#include <math.h>
 	#include <SDL2/SDL.h>
