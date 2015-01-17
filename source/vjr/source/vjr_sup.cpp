@@ -2047,7 +2047,13 @@
 		//////
 #ifdef __64_BIT_COMPILER__
 			// I get a warning in VS2010 if I use this code, and if I don't I get a warning in GCC... can't win. :-)
+	#if defined(_WIN64)
+			SetWindowLong(tooltip->hwnd, GWL_USERDATA, (long)lpParameter);
+	#elif __linux__
 			SetWindowLong(tooltip->hwnd, GWL_USERDATA, (uptr)lpParameter);
+	#else
+			#error Unknown target for compilation (must be Windows or Linux)
+	#endif
 #else
 			SetWindowLong(tooltip->hwnd, GWL_USERDATA, (long)lpParameter);
 #endif
