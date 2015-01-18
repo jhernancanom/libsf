@@ -190,16 +190,13 @@
 	// Compiling on Linux
 	#define WM_USER				0x0400
 	
-//	#include "/libsf/utils/common/cpp/linux/io.h"
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <unistd.h>
 	#include <fcntl.h>
 	#include <sys/types.h>
 	#include <sys/stat.h>
-//	#include <io.h>
-//	#include <sys/locking.h>
-//	#include <share.h>
+	#include <sys/time.h>
 	#include <inttypes.h>
 	#include <memory.h>
 	#include <string.h>
@@ -210,7 +207,9 @@
 	#include <SDL2/SDL_audio.h>
 
 	#include "vjr_const.h"
+	
 	#include "/libsf/utils/common/cpp/linux/windows.h"
+	#include "/libsf/utils/common/cpp/linux/hwndx.h"
 	
 	#include "/libsf/utils/common/cpp/builder.h"
 	#include "/libsf/utils/common/cpp/builder.cpp"
@@ -290,7 +289,9 @@
 		#include "grace.cpp"
 		#include "datum/datum.cpp"
 		#include "fonts.cpp"
+		
 		#include "/libsf/utils/common/cpp/linux/windows.cpp"
+		#include "/libsf/utils/common/cpp/linux/hwndx.cpp"
 		
 #else
 	#error Unknown target for compilation (must be Windows or Linux)

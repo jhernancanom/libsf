@@ -35,6 +35,10 @@
     <File Name="../../../../utils/common/cpp/common_types.h"/>
     <File Name="../../../../utils/common/cpp/linux/windows.h"/>
     <File Name="../../../../utils/common/cpp/linux/windows.cpp" ExcludeProjConfig="Debug"/>
+    <File Name="../../../../utils/common/cpp/builder.cpp" ExcludeProjConfig="Debug"/>
+    <File Name="../../../../utils/common/cpp/builder.h"/>
+    <File Name="../../../../utils/common/cpp/linux/hwndx.h"/>
+    <File Name="../../../../utils/common/cpp/linux/hwndx.cpp" ExcludeProjConfig="Debug"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

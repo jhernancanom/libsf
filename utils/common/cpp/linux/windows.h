@@ -66,6 +66,9 @@
 
 
 
+#include "/libsf/utils/common/cpp/builder.h"
+
+
 
 // Added as a temporary placeholder.
 // windows.h and windows.cpp will provide Linux-based simulation of Windows
@@ -1024,6 +1027,23 @@ typedef struct tagTEXTMETRICA
 } TEXTMETRIC;
 #define LPTEXTMETRIC TEXTMETRIC*
 
+typedef struct tagCREATESTRUCT
+{
+	LPVOID		lpCreateParams;
+	HINSTANCE	hInstance;
+	HMENU		hMenu;
+	HWND		hwndParent;
+	int			cy;
+	int			cx;
+	int			y;
+	int			x;
+	LONG		style;
+	cs8*		lpszName;
+	cs8*		lpszClass;
+	DWORD		dwExStyle;
+} CREATESTRUCT;
+#define LPCREATESTRUCT CREATESTRUCT*
+
 #define _memicmp(l,r,s)		strncmp((cs8*)l, (cs8*)r, s)
 #define _sopen				sopen
 #define _dup				dup
@@ -1100,8 +1120,8 @@ WINUSERAPI HDC WINAPI		BeginPaint				(__in HWND hWnd, __out LPPAINTSTRUCT lpPain
 WINUSERAPI BOOL WINAPI		EndPaint				(__in HWND hWnd, __in CONST PAINTSTRUCT *lpPaint);
 WINGDIAPI BOOL WINAPI		BitBlt					( __in HDC hdc, __in int x, __in int y, __in int cx, __in int cy, __in_opt HDC hdcSrc, __in int x1, __in int y1, __in DWORD rop);
 WINUSERAPI HICON WINAPI		LoadIcon				(__in_opt HINSTANCE hInstance, __in uptr lpIconName);
-WINUSERAPI BOOL WINAPI		CopyRect				(__out LPRECT lprcDst, __in CONST RECT *lprcSrc);
-WINUSERAPI BOOL WINAPI		InflateRect				(__inout LPRECT lprc, __in int dx, __in int dy);
+WINUSERAPI BOOL WINAPI		CopyRect				(__out RECT* lprcDst, __in CONST RECT *lprcSrc);
+WINUSERAPI BOOL WINAPI		InflateRect				(__inout RECT* lprc, __in int dx, __in int dy);
 WINUSERAPI LONG WINAPI		GetWindowLongA			(__in HWND hWnd, __in int nIndex);
 #define GetWindowLong GetWindowLongA
 WINUSERAPI LONG WINAPI		SetWindowLongA			(__in HWND hWnd, __in int nIndex,__in LONG dwNewLong);

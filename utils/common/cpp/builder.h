@@ -44,6 +44,11 @@
 //////
 
 
+//#pragma once
+#ifndef __BUILDER_H__
+#define __BUILDER_H__
+
+
 
 
 //////////
@@ -91,3 +96,6 @@
 	void		iBuilder_compactData						(SBuilder* buffRoot, u32 tnStart, u32 tnStride, u32 tnCompactCallbackFunction);
 	s8*			iBuilder_insertBytes						(SBuilder* buffRoot, u32 tnStart, u32 tnLength);
 	u32			iBuilder_binarySearch						(SBuilder* haystack, s8* tcNeedle, u32 tnNeedleLength, bool* tlFound, bool tlInsertIfNotFound);
+
+
+#endif	&& __BUILDER_H__
