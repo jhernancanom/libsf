@@ -69,6 +69,105 @@
 
 //////////
 //
+// Posts a message to the indicated win->msgQueue.
+//
+//////
+	bool iHwndX_postMessage_byWin(SHwndX* win, uptr message, uptr wParam, uptr lParam)
+	{
+		SMessageX* msg;
+		
+		
+		// Make sure our environment is sane
+		if (win && win->isValid)
+		{
+			//////////
+			// Make sure there's a message queue
+			//////
+				if (!win->msgQueue)
+					iBuilder_createAndInitialize(&win->msgQueue, -1);
+			
+			
+			//////////
+			// Append the message
+			//////
+				msg = (SMessageX*)iBuilder_appendData(win->msgQueue, sizeof(SMessageX));
+				if (msg)
+				{
+					msg->msg.hwnd		= win->hwnd;
+					msg->msg.message	= message;
+					msg->msg.wParam		= wParam;
+					msg->msg.lParam		= lParam;
+					msg->msg.time		= iHwnd_getTime();
+					memcpy(&msg->msg.pt, win->pt, sizeof(msg->msg.pt));
+					
+					// Indicate success
+					return(true);
+				}
+		}
+		
+		// If we get here, failure
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Posts a message to the win->msgQueue derived by the hWnd.
+//
+//////
+	bool iHwndX_postMessage_byHwnd(HWND hWnd, uptr message, uptr wParam, uptr lParam)
+	{
+		SHwndX* win;
+		
+		
+		// Try to find the window
+		win = iHwndX_findWindow_byHwnd(hWnd);
+		if (win)
+			return(iHwndX_postMessage_byWin(win, message, wParam, lParam));
+		
+		// If we get here, not found
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Obtain the current time in milliseconds since startup, or rollover if up for a long, long time.
+//
+//////
+	DWORD iHwndX_getTime(void)
+	{
+		timespec tp;
+		
+		
+		//////////
+		// Grab the time
+		//////
+			clock_gettime(CLOCK_MONOTONIC, &tp);
+		
+		
+		//////////
+		// Convert to milliseconds
+		//////
+			tp.tv_nsec	/= 1000000;								// Divide nanoseconds by 1 million to get milliseconds
+			tp.tv_nsec	= tp.tv_sec + ((s32)tp.tv_sec * 1000);	// Add milliseconds to (1000*sec)
+		
+		
+		//////////
+		// Return our result
+		//////
+			return((DWORD)tp.tv_nsec);		// (1000*sec) + milliseconds
+	}
+
+
+
+
+//////////
+//
 // Find the indicated window based on its hwnd
 //
 //////
@@ -106,7 +205,7 @@
 	{
 		// Schedule the messages for new window creation
 // TOOD:  Determine which messages from Windows are sent in which order, and replicate here
-//		iHwndX_postMessage(win, WM_CREATE,)
+//		iHwndX_postMessage_byWin(win, WM_CREATE, 0, 0);
 	}
 
 

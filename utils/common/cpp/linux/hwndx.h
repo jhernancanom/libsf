@@ -101,8 +101,18 @@
 		// Structure used for callbacks
 		CREATESTRUCT	data;
 		SClassX*		cls;
-
+		
 		// For X-windows
+	};
+	
+	struct SMessageX
+	{
+		MSG				msg;
+	};
+	
+	struct STimerX
+	{
+		
 	};
 
 
@@ -111,6 +121,9 @@
 //////////
 // Prototype definitions
 //////
+	bool			iHwndX_postMessage_byWin				(SHwndX* win,	uptr message, uptr wParam, uptr lParam);
+	bool			iHwndX_postMessage_byHwnd				(HWND hWnd,		uptr message, uptr wParam, uptr lParam);
+	DWORD			iHwndX_getTime							(void);
 	SHwndX*			iHwndX_findWindow_byHwnd				(HWND hWnd);
 	void			iHwndX_createWindow						(SHwndX* win);
 	bool			iHwndX_addTimer							(SHwndX* win, s32 nIDEvent, UINT uElapse);

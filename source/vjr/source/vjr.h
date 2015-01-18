@@ -200,6 +200,7 @@
 	#include <memory.h>
 	#include <string.h>
 	#include <pthread.h>
+	#include <time.h>
 	#include <semaphore.h>
 	
 	#define _USE_MATH_DEFINES

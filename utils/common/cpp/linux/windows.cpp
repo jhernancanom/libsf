@@ -439,7 +439,7 @@ WINUSERAPI BOOL WINAPI GetClassInfoExA(__in_opt HINSTANCE hInstance, __in cs8* l
 	
 	
 	// Make sure the environment is sane
-	if (lpszClass && lpwcx)
+	if (lpszClass && lpwcx && gsClasses)
 	{
 		// Iterate through all of the defined classes and report
 		lnLength = strlen(lpszClass);
@@ -463,25 +463,152 @@ WINUSERAPI BOOL WINAPI GetClassInfoExA(__in_opt HINSTANCE hInstance, __in cs8* l
 
 
 
-WINUSERAPI ATOM WINAPI RegisterClassExA(__in CONST WNDCLASSEXA* lpwcx)
+WINUSERAPI ATOM WINAPI RegisterClassExA(__in CONST WNDCLASSEX* lpwcx)
 {
+	union {
+		uptr		_cls;
+		SClassX*	cls;
+	};
+	WNDCLASSEX	wcx;
+	
+	
+	// Make sure there is a class builder
+	if (!gsClasses)
+		iBuilder_createAndInitialize(&gsClasses, -1);
+	
+	// make sure our environment is sane
+	if (gsClasses && lpwcx)
+	{
+		// See if the class already exists
+		if (!GetClassInfoExA(lpwcx->hInstance, lpwcx->lpszClassName, &wcx))
+		{
+			// Does not exist, add it
+			cls = (SClassX*)iBuilder_appendData(gsClasses, NULL, sizeof(SClassX));
+			if (cls)
+			{
+				// Initialize it
+				cls->isValid = true;
+				iDatum_duplicate(&cls->cClass, lpwcx->lpszClassName, -1);
+				
+				// Copy over the WNDCLASSEX structure
+				memcpy(cls->wcx, lpwcx, sizeof(WNDCLASSEX));
+				
+				// Indicate our "atom" return value
+				return(_cls & 0xffff);
+			}
+		}
+		// If we get here, it already exists
+	}
+	
+	// If we get here, failure
 	return(0);
 }
 
 
 
 
-WINUSERAPI BOOL WINAPI GetMessage(__out LPMSG lpMsg, __in_opt HWND hWnd, __in UINT wMsgFilterMin, __in UINT wMsgFilterMax)
-{
-	return(FALSE);
-}
+//////////
+//
+// Peek or grab the next message from the queue.
+// Note:  This function is not fully implemented.  It only honors PM_NOREMOVE, and !PM_NOREMOVE.
+//        It does not honor other PM_* settings, and will simply remove or not remove based on
+//        the value PM_NOREMOVE.
+//
+//////
+	WINUSERAPI BOOL WINAPI PeekMessage(__out MSG* lpMsg, __in_opt HWND hWnd, __in UINT wMsgFilterMin, __in UINT wMsgFilterMax, __in UINT wRemoveMsg)
+	{
+		u32			lnI;
+		SHwndX*		win;
+		SMessageX*	msg;
+		pthread_t	lnThreadId;
+		
+		
+		// Make sure our environment is sane
+		if (lpMsg)
+		{
+			// Grab the current thread (because Windows only allows hwnd messages to be read
+			// for those windows created in the current thread)
+			lnThreadId = pthread_self();
+			
+			// Iterate through every window to see which one of them has a message to dispatch
+			for (lnI = 0, win = (SHwndX*)gsWindows.buffer; lnI < gsWindows.populatedLength; lnI += sizeof(SHwndX), win++)
+			{
+				// Is this entry valid?
+				if (win->isValid)
+				{
+					// Is it our hwnd?
+					if (hWnd == null0 || hWnd == win->hwnd)
+					{
+						// Is this window valid?
+						if (win->msgQueue && win->nThreadId == lnThreadId && win->msgQueue->populatedLength > 0)
+						{
+							// This one is for our thread, it has a message queue, and it matches the hWnd filter
+							// If no filter, it's always the top message
+							if (wMsgFilterMin == 0 && wMsgFilterMax == 0)
+							{
+								// Dispatch the top message
+								memcpy(lpMsg, ((SMessageX*)win->msgQueue->buffer)->msg, sizeof(*lpMsg));
+								
+								// Delete if need be
+								if (wRemoveMsg != PM_NOREMOVE)
+									iBuilder_delete(win->msgQueue, 0, sizeof(SMessageX));
+								
+								// Indicate success
+								return(TRUE);
+							
+							} else {
+								// Only filtered messages
+								for (lnI = 0, msg = (SMessageX*)win->msgQueue->buffer; lnI < win->msgQueue->populatedLength; lnI += sizeof(SMessageX), msg++)
+								{
+									// Is this within the range?
+									if (msg->msg.message >= wMsgFilterMin && msg->msg.message <= wMsgFilterMax)
+									{
+										// Yes, dispatch this message
+										memcpy(lpMsg, msg->msg, sizeof(*lpMsg));
+										
+										// Delete if need be
+										if (wRemoveMsg != PM_NOREMOVE)
+											iBuilder_delete(win->msgQueue, lnI, sizeof(SMessageX));
+										
+										// Indicate success
+										return(TRUE);
+									}
+								}
+							}
+						}
+					}
+					// When we get here, the message has no mesages waiting
+					if (hWnd != null0)
+						break;	// We were only searching for this one window, and now we're done
+				}
+				// If we get here, no messages are waiting for this window
+			}
+		}
+		
+		// If we get here, not valid
+		return(FALSE);
+	}
+
+
+
+
+//////////
+//
+// Grab the next message from the queue.
+//
+//////
+	WINUSERAPI BOOL WINAPI GetMessage(__out LPMSG lpMsg, __in_opt HWND hWnd, __in UINT wMsgFilterMin, __in UINT wMsgFilterMax)
+	{
+		// Call PeekMessage() with a consume setting
+		return(PeekMessage(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, 0));
+	}
 
 
 
 
 WINUSERAPI BOOL WINAPI TranslateMessage(__in CONST MSG *lpMsg)
 {
-	// No translations are currently processed
+	// No translations are currently processed, so we pass through exactly as is
 	return(TRUE);
 }
 
@@ -498,11 +625,11 @@ WINUSERAPI LRESULT WINAPI DispatchMessage(__in CONST MSG *lpMsg)
 	{
 		// They are retrieving from a particular window for the current thread
 		win = iHwndX_findWindow_byHwnd(lpMsg->hwnd);
+		
+		// If valid, call the associated wndProc()
 		if (win)
-		{
-			// Call the associated wndProc()
 			return(win->cls->wcx.lpfnWndProc(lpMsg->hwnd, lpMsg->message, lpMsg->wParam, lpMsg->lParam));
-		}
+		
 		// If we get here, we didn't find the indicated message, so ignore it
 	}
 	return(0);
@@ -511,16 +638,38 @@ WINUSERAPI LRESULT WINAPI DispatchMessage(__in CONST MSG *lpMsg)
 
 
 
-WINUSERAPI BOOL WINAPI PeekMessage(__out LPMSG lpMsg, __in_opt HWND hWnd, __in UINT wMsgFilterMin, __in UINT wMsgFilterMax, __in UINT wRemoveMsg)
-{
-	return(FALSE);
-}
-
-
-
-
 LRESULT CALLBACK DefWindowProc(__in HWND hWnd, __in UINT Msg, __in WPARAM wParam, __in LPARAM lParam)
 {
+	SHwndX*			win;
+	HDC				hdc;
+	PAINTSTRUCT		ps;
+	
+	
+	// Try to find the window
+	win = iHwndX_findWindow_byHwnd(hWnd);
+	if (win && win->isValid)
+	{
+		switch (Msg)
+		{
+			case WM_QUIT:
+				// They are wanting to quit the app
+				exit(wParam);
+				break;
+			
+			case WM_ERASEBKGND:
+			case WM_PAINT:
+				if (win->isVisible)
+				{
+					// By default, we simply paint it white
+					hdc = BeginPaint(hWnd, &ps);
+					FillRect(hdc, &ps.rcPaint, (HBRUSH)GetStockObject(WHITE_BRUSH));
+					EndPaint(hWnd, &ps);
+				}
+				break;
+		}
+	}
+	
+	// If we get here, the window is invalid ... ignore it
 	return(0);
 }
 
@@ -905,6 +1054,7 @@ WINUSERAPI HICON WINAPI LoadIcon(__in_opt HINSTANCE hInstance, __in uptr lpIconN
 
 WINUSERAPI LONG WINAPI GetWindowLongA(__in HWND hWnd, __in int nIndex)
 {
+	// Not currently supported
 	return(0);
 }
 
@@ -913,6 +1063,7 @@ WINUSERAPI LONG WINAPI GetWindowLongA(__in HWND hWnd, __in int nIndex)
 
 WINUSERAPI LONG WINAPI SetWindowLongA(__in HWND hWnd, __in int nIndex,__in LONG dwNewLong)
 {
+	// Not currently supported
 	return(0);
 }
 
@@ -921,7 +1072,19 @@ WINUSERAPI LONG WINAPI SetWindowLongA(__in HWND hWnd, __in int nIndex,__in LONG 
 
 WINUSERAPI BOOL WINAPI InvalidateRect(__in_opt HWND hWnd, __in_opt CONST RECT *lpRect, __in BOOL bErase)
 {
-	return(FALSE);
+	MSG msg;
+	
+	
+	//////////
+	// Because of the way VJr draws, we don't really support invalidated rects,
+	// but instead simply append a WM_PAINT message (if one isn't already present)
+	//////
+		if (!PeekMessage(&msg, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+			iHwndX_postMessage_byHwnd(hWnd, WM_PAINT, 0, 0);
+	
+	
+	// Indicate success either way
+	return(TRUE);
 }
 
 
@@ -929,7 +1092,8 @@ WINUSERAPI BOOL WINAPI InvalidateRect(__in_opt HWND hWnd, __in_opt CONST RECT *l
 
 WINUSERAPI HMENU WINAPI GetMenu(__in HWND hWnd)
 {
-	return(0);
+	// We do not support menus, except as placeholder functions
+	return(null0);
 }
 
 
@@ -937,6 +1101,7 @@ WINUSERAPI HMENU WINAPI GetMenu(__in HWND hWnd)
 
 WINUSERAPI BOOL WINAPI SetMenu(__in HWND hWnd, __in_opt HMENU hMenu)
 {
+	// We do not support menus, except as placeholder functions
 	return(FALSE);
 }
 
@@ -951,10 +1116,24 @@ WINGDIAPI HRGN WINAPI CreateRectRgnIndirect( __in CONST RECT *lprect)
 
 
 
-WINUSERAPI BOOL WINAPI PtInRect(__in CONST RECT *lprc, __in POINT pt)
-{
-	return(FALSE);
-}
+//////////
+//
+// Returns if the point is within the physical borders of the rectangle, inclusive
+//
+//////
+	WINUSERAPI BOOL WINAPI PtInRect(__in CONST RECT *lprc, __in POINT pt)
+	{
+		// Make sure our environment is sane
+		if (lprc)
+		{
+			// If the point is in the rectangle, indicate the same
+			return((	pt.x >= lprc->left	&&	pt.x <= lprc->right
+					&&	pt.y >= lprc->top	&&	pt.y <= lprc->bottom));
+		}
+		
+		// Invalid rect
+		return(FALSE);
+	}
 
 
 
@@ -977,7 +1156,11 @@ WINUSERAPI SHORT WINAPI GetKeyState(__in int nVirtKey)
 
 WINUSERAPI BOOL WINAPI AdjustWindowRect(__inout LPRECT lpRect, __in DWORD dwStyle, __in BOOL bMenu)
 {
-	return(FALSE);
+	// Not currently supported, because we only allow windows that are basically WS_POPUP
+	// windows, which have no border, and allow for no menu
+	
+	// Indicate success anyway (because there is no adjustment for the window type)
+	return(TRUE);
 }
 
 
@@ -1007,10 +1190,25 @@ WINGDIAPI int WINAPI CombineRgn(__in_opt HRGN hrgnDst, __in_opt HRGN hrgnSrc1, _
 
 
 
-WINGDIAPI HBRUSH WINAPI CreateSolidBrush(__in COLORREF color)
-{
-	return(0);
-}
+//////////
+//
+// For "solid brushes" we don't actually use a brush, but rather the direct color
+//
+//////
+	WINGDIAPI HBRUSH WINAPI CreateSolidBrush(__in COLORREF color)
+	{
+		union {
+			HBRUSH	_rgba;
+			SBgra	rgba;
+		};
+		
+		
+		// Create the "solid brush" by color
+		rgba._color = color;
+		
+		// Return the "solid brush"
+		return(_rgba);
+	}
 
 
 
@@ -1045,24 +1243,8 @@ WINBASEAPI VOID WINAPI GetSystemTimeAsFileTime(__out LPFILETIME lpSystemTimeAsFi
 
 
 
-WINBASEAPI BOOL WINAPI SetSystemTime(__in CONST SYSTEMTIME *lpSystemTime)
-{
-	return(FALSE);
-}
-
-
-
-
 WINBASEAPI VOID WINAPI GetLocalTime(__out LPSYSTEMTIME lpSystemTime)
 {
-}
-
-
-
-
-WINBASEAPI BOOL WINAPI SetLocalTime(__in CONST SYSTEMTIME *lpSystemTime)
-{
-	return(FALSE);
 }
 
 
@@ -1226,3 +1408,68 @@ WINGDIAPI BOOL WINAPI GetTextMetricsA(__in HDC hdc, __out LPTEXTMETRIC lptm)
 {
 	return(FALSE);
 }
+
+
+
+
+//////////
+//
+// Returns default objects for various forms.
+// Note:  Not all of them are used in VJr, so not all are implemented.
+//
+//////
+	WINGDIAPI HGDIOBJ WINAPI GetStockObject(__in DWORD obj)
+	{
+		union {
+			HGDIOBJ	_value;
+			SBgra	color;
+		}
+		
+		
+		// What object are they requesting?
+		switch (obj)
+		{
+			case NULL_BRUSH:
+			case WHITE_BRUSH:
+				color = rgba(255,255,255,255);
+				break;
+
+			case LTGRAY_BRUSH:
+				color = rgba(235,235,235,255);
+				break;
+
+			case GRAY_BRUSH:
+				color = rgba(192,192,192,255);
+				break;
+
+			case DKGRAY_BRUSH:
+				color = rgba(92,92,92,255);
+				break;
+
+			case BLACK_BRUSH:
+				color = rgba(0,0,0,255);
+				break;
+			
+			case WHITE_PEN:
+			case BLACK_PEN:
+			case NULL_PEN:
+//				break;
+			
+			case OEM_FIXED_FONT:
+			case ANSI_FIXED_FONT:
+			case ANSI_VAR_FONT:
+			case SYSTEM_FONT:
+			case DEVICE_DEFAULT_FONT:
+			case DEFAULT_PALETTE:
+			case SYSTEM_FIXED_FONT:
+//				break;
+			
+			default:
+				// Default to an invalid value
+				_color = -1;
+				break;
+		}
+		
+		// Return our result
+		return(_value);
+	}

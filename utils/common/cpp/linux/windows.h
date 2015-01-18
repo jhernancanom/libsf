@@ -174,7 +174,47 @@ typedef DWORD		(__stdcall*	LPTHREAD_START_ROUTINE)	(LPVOID lpThreadParameter);
 #define IDCONTINUE			11
 #define IDTIMEOUT			32000
 
+#define WHITE_BRUSH         0
+#define LTGRAY_BRUSH        1
+#define GRAY_BRUSH          2
+#define DKGRAY_BRUSH        3
+#define BLACK_BRUSH         4
+#define NULL_BRUSH          5
+#define HOLLOW_BRUSH        NULL_BRUSH
+#define WHITE_PEN           6
+#define BLACK_PEN           7
+#define NULL_PEN            8
+#define OEM_FIXED_FONT      10
+#define ANSI_FIXED_FONT     11
+#define ANSI_VAR_FONT       12
+#define SYSTEM_FONT         13
+#define DEVICE_DEFAULT_FONT 14
+#define DEFAULT_PALETTE     15
+#define SYSTEM_FIXED_FONT   16
+
+// Jan.18.2015 -- For PeekMessage(), may be useful to add in the future ... but VJr doesn't use them. :-)
+// #define QS_KEY              0x0001
+// #define QS_MOUSEMOVE        0x0002
+// #define QS_MOUSEBUTTON      0x0004
+// #define QS_POSTMESSAGE      0x0008
+// #define QS_TIMER            0x0010
+// #define QS_PAINT            0x0020
+// #define QS_SENDMESSAGE      0x0040
+// #define QS_HOTKEY           0x0080
+// #define QS_ALLPOSTMESSAGE   0x0100
+// #define QS_RAWINPUT         0x0400
+// #define QS_MOUSE           (QS_MOUSEMOVE | QS_MOUSEBUTTON)
+// #define QS_INPUT           (QS_MOUSE | QS_KEY | QS_RAWINPUT)
+// #define QS_ALLEVENTS       (QS_INPUT | QS_POSTMESSAGE | QS_TIMER | QS_PAINT | QS_HOTKEY)
+// #define QS_ALLINPUT        (QS_INPUT | QS_POSTMESSAGE | QS_TIMER | QS_PAINT | QS_HOTKEY | QS_SENDMESSAGE)
+// 
 #define PM_NOREMOVE			0x0000
+// #define PM_REMOVE           0x0001
+// #define PM_NOYIELD          0x0002
+// #define PM_QS_INPUT         (QS_INPUT << 16)
+// #define PM_QS_POSTMESSAGE   ((QS_POSTMESSAGE | QS_HOTKEY | QS_TIMER) << 16)
+// #define PM_QS_PAINT         (QS_PAINT << 16)
+// #define PM_QS_SENDMESSAGE   (QS_SENDMESSAGE << 16)
 
 #define WM_NULL				0x0000
 #define WM_CREATE			0x0001
@@ -980,7 +1020,7 @@ typedef struct _FILETIME
 } FILETIME;
 #define LPFILETIME FILETIME*
 
-typedef struct tagWNDCLASSEXA
+typedef struct tagWNDCLASSEX
 {
 	UINT        cbSize;
 	UINT        style;
@@ -997,8 +1037,8 @@ typedef struct tagWNDCLASSEXA
 	cs8*		lpszMenuName;
 	cs8*		lpszClassName;
 	HICON       hIconSm;
-} WNDCLASSEXA;
-#define WNDCLASSEX WNDCLASSEXA
+} WNDCLASSEX;
+#define WNDCLASSEXA WNDCLASSEX
 
 typedef struct _SECURITY_ATTRIBUTES
 {
@@ -1111,12 +1151,12 @@ WINBASEAPI HANDLE WINAPI	CreateThread			(__in_opt LPSECURITY_ATTRIBUTES lpThread
 WINBASEAPI VOID WINAPI		ExitThread				(__in DWORD dwExitCode);
 WINUSERAPI BOOL WINAPI		GetClassInfoExA			(__in_opt HINSTANCE hInstance, __in cs8* lpszClass, __out WNDCLASSEXA* lpwcx);
 #define GetClassInfoEx GetClassInfoExA
-WINUSERAPI ATOM WINAPI		RegisterClassExA		(__in CONST WNDCLASSEXA* lpwcx);
+WINUSERAPI ATOM WINAPI		RegisterClassExA		(__in CONST WNDCLASSEX* lpwcx);
 #define RegisterClassEx RegisterClassExA
 WINUSERAPI BOOL WINAPI		GetMessage				(__out LPMSG lpMsg, __in_opt HWND hWnd, __in UINT wMsgFilterMin, __in UINT wMsgFilterMax);
 WINUSERAPI BOOL WINAPI		TranslateMessage		(__in CONST MSG *lpMsg);
 WINUSERAPI LRESULT WINAPI	DispatchMessage			(__in CONST MSG *lpMsg);
-WINUSERAPI BOOL WINAPI		PeekMessage				(__out LPMSG lpMsg, __in_opt HWND hWnd, __in UINT wMsgFilterMin, __in UINT wMsgFilterMax, __in UINT wRemoveMsg);
+WINUSERAPI BOOL WINAPI		PeekMessage				(__out MSG* lpMsg, __in_opt HWND hWnd, __in UINT wMsgFilterMin, __in UINT wMsgFilterMax, __in UINT wRemoveMsg);
 LRESULT CALLBACK			DefWindowProc			(__in HWND hWnd, __in UINT Msg, __in WPARAM wParam, __in LPARAM lParam);
 WINUSERAPI BOOL WINAPI		PostMessage				(__in_opt HWND hWnd, __in UINT Msg, __in WPARAM wParam, __in LPARAM lParam);
 WINUSERAPI HWND WINAPI		GetDesktopWindow		(VOID);
@@ -1174,9 +1214,7 @@ WINUSERAPI int WINAPI		FillRect				(__in HDC hDC, __in CONST RECT *lprc, __in HB
 WINUSERAPI int WINAPI		FrameRect				(__in HDC hDC, __in CONST RECT *lprc,__in HBRUSH hbr);
 WINBASEAPI VOID WINAPI		GetSystemTime			(__out LPSYSTEMTIME lpSystemTime);
 WINBASEAPI VOID WINAPI		GetSystemTimeAsFileTime	(__out LPFILETIME lpSystemTimeAsFileTime);
-WINBASEAPI BOOL WINAPI		SetSystemTime			(__in CONST SYSTEMTIME *lpSystemTime);
 WINBASEAPI VOID WINAPI		GetLocalTime			(__out LPSYSTEMTIME lpSystemTime);
-WINBASEAPI BOOL WINAPI		SetLocalTime			(__in CONST SYSTEMTIME *lpSystemTime);
 WINUSERAPI HWND WINAPI		GetActiveWindow			(VOID);
 WINGDIAPI COLORREF WINAPI	SetBkColor				(__in HDC hdc, __in COLORREF color);
 WINUSERAPI HDC WINAPI		GetDC					(__in_opt HWND hWnd);
@@ -1199,3 +1237,4 @@ WINGDIAPI HFONT WINAPI		CreateFont				( __in int cHeight, __in int cWidth, __in 
 													 __in DWORD bUnderline, __in DWORD bStrikeOut, __in DWORD iCharSet, __in DWORD iOutPrecision, __in DWORD iClipPrecision,
 													 __in DWORD iQuality, __in DWORD iPitchAndFamily, __in_opt cs8* pszFaceName);
 WINGDIAPI BOOL WINAPI		GetTextMetricsA			(__in HDC hdc, __out LPTEXTMETRIC lptm);
+WINGDIAPI HGDIOBJ WINAPI	GetStockObject			(__in DWORD obj);
