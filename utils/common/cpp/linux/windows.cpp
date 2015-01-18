@@ -233,10 +233,188 @@
 
 
 
-WINUSERAPI int WINAPI MessageBox(__in_opt HWND hWnd, __in_opt cs8* lpText, __in_opt cs8* lpCaption, __in UINT uType)
-{
-	return(0);
-}
+//////////
+//
+// Called to display a message box
+//
+//////
+    const SDL_MessageBoxButtonData mb_buttons_ok[] =
+	{
+        { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 0, "ok" }
+    };
+	const int mb_buttons_ok_choice[] = { IDOK };
+	
+    const SDL_MessageBoxButtonData mb_buttons_ok_cancel[] =
+	{
+        { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 0, "ok" },
+        { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 1, "cancel" }
+    };
+	const int mb_buttons_ok_cancel_choice[] = { IDOK, IDCANCEL };
+
+    const SDL_MessageBoxButtonData mb_buttons_yes_no_cancel[] =
+	{
+        { /* .flags, .buttonid, .text */        0, 0, "no" },
+        { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "yes" },
+        { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 2, "cancel" }
+    };
+	const int mb_buttons_yes_no_cancel_choice[] = { IDNO, IDYES, IDCANCEL };
+
+    const SDL_MessageBoxButtonData mb_buttons_abort_retry_ignore[] =
+	{
+        { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 0, "abort" },
+        { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "retry" },
+        { /* .flags, .buttonid, .text */        0, 2, "ignore" }
+    };
+	const int mb_buttons_abort_retry_ignore_choice[] = { IDABORT, IDRETRY, IDIGNORE };
+	
+    const SDL_MessageBoxButtonData mb_buttons_yes_no[] =
+	{
+        { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 0, "yes" },
+        { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 1, "no" }
+    };
+	const int mb_buttons_yes_no_choice[] = { IDYES, IDNO };
+	
+    const SDL_MessageBoxButtonData mb_buttons_retry_cancel[] =
+	{
+        { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 0, "retry" },
+        { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 1, "cancel" }
+    };
+	const int mb_buttons_retry_cancel_choice[] = { IDRETRY, IDCANCEL };
+
+    const SDL_MessageBoxButtonData mb_buttons_cancel_retry_continue[] =
+	{
+        { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 0, "cancel" },
+        { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "retry" },
+        { /* .flags, .buttonid, .text */        0, 2, "continue" }
+    };
+	const int mb_buttons_cancel_retry_continue_choice[] = { IDCANCEL, IDRETRY, IDCONTINUE };
+	
+    const SDL_MessageBoxColorScheme mb_colorScheme_information =
+	{
+        { /* .colors (.r, .g, .b) */
+            { 255, 255, 255 },		// [SDL_MESSAGEBOX_COLOR_BACKGROUND]
+            {   0,   0,   0 },		// [SDL_MESSAGEBOX_COLOR_TEXT]
+            {   0,   0, 255 },		// [SDL_MESSAGEBOX_COLOR_BUTTON_BORDER]
+            { 112, 164, 255 },		// [SDL_MESSAGEBOX_COLOR_BUTTON_BACKGROUND]
+            { 255, 255, 128 }		// [SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED]
+        }
+    };
+	
+    const SDL_MessageBoxColorScheme mb_colorScheme_warning =
+	{
+        { /* .colors (.r, .g, .b) */
+            { 255, 255, 192 },		// [SDL_MESSAGEBOX_COLOR_BACKGROUND]
+            {   0,   0,   0 },		// [SDL_MESSAGEBOX_COLOR_TEXT]
+            {   0,   0, 255 },		// [SDL_MESSAGEBOX_COLOR_BUTTON_BORDER]
+            { 112, 164, 255 },		// [SDL_MESSAGEBOX_COLOR_BUTTON_BACKGROUND]
+            { 128, 255, 255 }		// [SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED]
+        }
+    };
+	
+    const SDL_MessageBoxColorScheme mb_colorScheme_error =
+	{
+        { /* .colors (.r, .g, .b) */
+            { 255, 128, 128 },		// [SDL_MESSAGEBOX_COLOR_BACKGROUND]
+            {   0,   0,   0 },		// [SDL_MESSAGEBOX_COLOR_TEXT]
+            {   0,   0, 255 },		// [SDL_MESSAGEBOX_COLOR_BUTTON_BORDER]
+            { 112, 164, 255 },		// [SDL_MESSAGEBOX_COLOR_BUTTON_BACKGROUND]
+            { 255, 255, 255 }		// [SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED]
+        }
+    };
+
+	WINUSERAPI int WINAPI MessageBox(__in_opt HWND hWnd, __in_opt cs8* lpText, __in_opt cs8* lpCaption, __in UINT uType)
+	{
+		int					lnChoice;
+		const int*			buttonChoiceTranslation;
+		SDL_MessageBoxData	messageboxdata;
+		
+		
+		// Initialize
+		memset(&messageboxdata, 0, sizeof(messageboxdata));
+		messageboxdata.title		= lpCaption;
+		messageboxdata.message		= lpText;
+		
+		
+		//////////
+		// Establish the expected values
+		//////
+			switch (uType)
+			{
+				default:
+				case MB_OK:
+					messageboxdata.buttons		= &mb_buttons_ok[0];
+					messageboxdata.numbuttons	= 1;
+					buttonChoiceTranslation		= &mb_buttons_ok_choice[0];
+					break;
+				case MB_OKCANCEL:
+					messageboxdata.buttons		= &mb_buttons_ok_cancel[0];
+					messageboxdata.numbuttons	= 2;
+					buttonChoiceTranslation		= &mb_buttons_ok_cancel_choice[0];
+					break;
+				case MB_ABORTRETRYIGNORE:
+					messageboxdata.buttons		= &mb_buttons_abort_retry_ignore[0];
+					messageboxdata.numbuttons	= 3;
+					buttonChoiceTranslation		= &mb_buttons_abort_retry_ignore_choice[0];
+					break;
+				case MB_YESNOCANCEL:
+					messageboxdata.buttons		= &mb_buttons_yes_no_cancel[0];
+					messageboxdata.numbuttons	= 3;
+					buttonChoiceTranslation		= &mb_buttons_yes_no_cancel_choice[0];
+					break;
+				case MB_YESNO:
+					messageboxdata.buttons		= &mb_buttons_yes_no[0];
+					messageboxdata.numbuttons	= 2;
+					buttonChoiceTranslation		= &mb_buttons_yes_no_choice[0];
+					break;
+				case MB_RETRYCANCEL:
+					messageboxdata.buttons		= &mb_buttons_retry_cancel[0];
+					messageboxdata.numbuttons	= 2;
+					buttonChoiceTranslation		= &mb_buttons_retry_cancel_choice[0];
+					break;
+				case MB_CANCELTRYCONTINUE:
+					messageboxdata.buttons		= &mb_buttons_cancel_retry_continue[0];
+					messageboxdata.numbuttons	= 3;
+					buttonChoiceTranslation		= &mb_buttons_cancel_retry_continue_choice[0];
+					break;
+			}
+		
+		
+		//////////
+		// Establish the message box type
+		//////
+			switch (uType & 0x70)
+			{
+				default:
+					messageboxdata.flags		= SDL_MESSAGEBOX_INFORMATION;
+					messageboxdata.colorScheme	= &mb_colorScheme_information;
+					break;
+				case MB_ICONWARNING:
+					messageboxdata.flags		= SDL_MESSAGEBOX_WARNING;
+					messageboxdata.colorScheme	= &mb_colorScheme_warning;
+					break;
+				case MB_ICONERROR:
+					messageboxdata.flags		= SDL_MESSAGEBOX_ERROR;
+					messageboxdata.colorScheme	= &mb_colorScheme_error;
+					break;
+			}
+
+		
+		//////////
+		// Display the message box
+		//////
+			lnChoice = -2;	// Default to an error code
+			if (SDL_ShowMessageBox(&messageboxdata, &lnChoice) < 0)
+			{
+				// Error
+				return(lnChoice);
+			}
+		
+		
+		//////////
+		// Indicate their choice
+		//////
+			return(buttonChoiceTranslation[lnChoice]);
+	}
 
 
 
