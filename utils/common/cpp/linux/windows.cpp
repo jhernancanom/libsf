@@ -72,36 +72,7 @@
 //////
 	// SHwndX listing
 	SBuilder*		gsWindows				= NULL;
-
-
-
-
-//////////
-//
-// Find the indicated window based on its hwnd
-//
-//////
-	SHwndX* iWindows_findWindow_byHwnd(HWND hWnd)
-	{
-		u32		lnI;
-		SHwndX*	win;
-		
-		
-		// Make sure our environment is sane
-		if (gsWindows)
-		{
-			// Iterate through each window until we find the correct one
-			for (lnI = 0, win = (SHwndX*)gsWindows->buffer; lnI < gsWindows->populatedLength; lnI += sizeof(SHwndX), win++)
-			{
-				// Is this our window?
-				if (win->isValid && win->hwnd == hWnd)
-					return(win);
-			}
-			// If we get here, not found
-		}
-		// If we get here, failure
-		return(NULL);
-	}
+	SBuilder*		gsClasses				= NULL;
 
 
 
@@ -143,6 +114,7 @@
 					win->isValid	= true;
 					win->isVisible	= false;
 					win->isEnabled	= true;
+					win->nThreadId	= pthread_self();
 					
 					SetRect(&win->rc, X, Y, X + nWidth, Y + nHeight);
 					CopyRect(&win->rcClient, &win->rc);
@@ -207,7 +179,7 @@
 		{
 			// They are applying the timer directly to the hWnd as a message in queue
 			// Locate the window
-			win = iWindows_findWindow_byHwnd(hWnd);
+			win = iHwndX_findWindow_byHwnd(hWnd);
 			if (win && win->isValid)
 				if (iHwndX_addTimer(win, nIDEvent, uElapse))
 				{
@@ -419,8 +391,33 @@
 
 
 
-WINBASEAPI HANDLE WINAPI CreateThread(__in_opt LPSECURITY_ATTRIBUTES lpThreadAttributes, __in SIZE_T dwStackSize, __in LPTHREAD_START_ROUTINE lpStartAddress, __in_opt __deref __drv_aliasesMem LPVOID lpParameter, __in DWORD dwCreationFlags, __out_opt LPDWORD lpThreadId)
+WINBASEAPI HANDLE WINAPI CreateThread(	__in_opt LPSECURITY_ATTRIBUTES lpThreadAttributes,
+										__in SIZE_T dwStackSize,
+										__in LPTHREAD_START_ROUTINE lpStartAddress,
+										__in_opt __deref __drv_aliasesMem LPVOID lpParameter,
+										__in DWORD dwCreationFlags,
+										__out_opt LPDWORD lpThreadId)
 {
+//	DWORD				lnThreadId;
+//	pthread_attr_t		attr;
+//
+//
+//	// Setup attributes and stack
+//	pthread_attr_init(&attr);
+//	pthread_attr_setstacksize(&attr, ((dwStackSize) ? dwStackSize : /*64KB*/64 * 1024));
+//	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+//
+// TODO:  Honor dwCreationFlags
+//
+//	// Make sure we have a target for the thread id
+//	if (!lpThreadId)
+//		lpThreadId = &lnThreadId;
+//
+//	// Create the worker thread
+//	pthread_create(lpTthreadId, &attr, lpStartAddress, lpParameter);
+//
+//	// Return the id
+//	return(lnThreadId);
 	return(0);
 }
 
@@ -429,13 +426,37 @@ WINBASEAPI HANDLE WINAPI CreateThread(__in_opt LPSECURITY_ATTRIBUTES lpThreadAtt
 
 WINBASEAPI VOID WINAPI ExitThread(__in DWORD dwExitCode)
 {
+//	pthread_exit(dwExitCode);
 }
 
 
 
 
-WINUSERAPI BOOL WINAPI GetClassInfoExA(__in_opt HINSTANCE hInstance, __in cs8* lpszClass, __out WNDCLASSEXA* lpwcx)
+WINUSERAPI BOOL WINAPI GetClassInfoExA(__in_opt HINSTANCE hInstance, __in cs8* lpszClass, __out WNDCLASSEX* lpwcx)
 {
+	u32			lnI, lnLength;
+	SClassX*	cls;
+	
+	
+	// Make sure the environment is sane
+	if (lpszClass && lpwcx)
+	{
+		// Iterate through all of the defined classes and report
+		lnLength = strlen(lpszClass);
+		for (lnI = 0, cls = (SClassX*)gsClasses->buffer; lnI < gsClasses->populatedLength; lnI += sizeof(SClassX), cls++)
+		{
+			// If it's valid, and the class maches, we're good
+			if (cls->isValid && strlen(cls->wcx.lpszClassName) == lnLength && _memicmp(cls->wcx.lpszClassName, lpszClass, lnLength) == 0)
+			{
+				// Indicate success
+				memcpy(lpwcx, &cls->wcx, sizeof(WNDCLASSEX));
+				return(TRUE);
+			}
+		}
+		// If we get here, the class wasn't found
+	}
+	
+	// If we get here, failure
 	return(FALSE);
 }
 
@@ -460,7 +481,8 @@ WINUSERAPI BOOL WINAPI GetMessage(__out LPMSG lpMsg, __in_opt HWND hWnd, __in UI
 
 WINUSERAPI BOOL WINAPI TranslateMessage(__in CONST MSG *lpMsg)
 {
-	return(FALSE);
+	// No translations are currently processed
+	return(TRUE);
 }
 
 
@@ -468,6 +490,21 @@ WINUSERAPI BOOL WINAPI TranslateMessage(__in CONST MSG *lpMsg)
 
 WINUSERAPI LRESULT WINAPI DispatchMessage(__in CONST MSG *lpMsg)
 {
+	SHwndX* win;
+	
+	
+	// Make sure our environment is sane
+	if (lpMsg)
+	{
+		// They are retrieving from a particular window for the current thread
+		win = iHwndX_findWindow_byHwnd(lpMsg->hwnd);
+		if (win)
+		{
+			// Call the associated wndProc()
+			return(win->cls->wcx.lpfnWndProc(lpMsg->hwnd, lpMsg->message, lpMsg->wParam, lpMsg->lParam));
+		}
+		// If we get here, we didn't find the indicated message, so ignore it
+	}
 	return(0);
 }
 
@@ -500,6 +537,7 @@ WINUSERAPI BOOL WINAPI PostMessage(__in_opt HWND hWnd, __in UINT Msg, __in WPARA
 
 WINUSERAPI HWND WINAPI GetDesktopWindow(VOID)
 {
+// TODO:  The desktop window will be a pass-thru window onto the base X-window desktop
 	return(0);
 }
 
@@ -517,7 +555,7 @@ WINUSERAPI HWND WINAPI GetDesktopWindow(VOID)
 		
 		
 		// Locate the window
-		win = iWindows_findWindow_byHwnd(hWnd);
+		win = iHwndX_findWindow_byHwnd(hWnd);
 		
 		// Is it valid?
 		if (win && win->isValid)
@@ -545,7 +583,7 @@ WINUSERAPI HWND WINAPI GetDesktopWindow(VOID)
 		
 		
 		// Locate the window
-		win = iWindows_findWindow_byHwnd(hWnd);
+		win = iHwndX_findWindow_byHwnd(hWnd);
 		
 		// Is it valid?
 		if (win && win->isValid)

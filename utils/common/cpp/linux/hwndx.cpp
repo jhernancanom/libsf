@@ -69,6 +69,36 @@
 
 //////////
 //
+// Find the indicated window based on its hwnd
+//
+//////
+	SHwndX* iHwndX_findWindow_byHwnd(HWND hWnd)
+	{
+		u32		lnI;
+		SHwndX*	win;
+		
+		
+		// Make sure our environment is sane
+		if (gsWindows)
+		{
+			// Iterate through each window until we find the correct one
+			for (lnI = 0, win = (SHwndX*)gsWindows->buffer; lnI < gsWindows->populatedLength; lnI += sizeof(SHwndX), win++)
+			{
+				// Is this our window?
+				if (win->isValid && win->hwnd == hWnd)
+					return(win);
+			}
+			// If we get here, not found
+		}
+		// If we get here, failure
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
 // Called when a new window is created to schedule the startup messages
 //
 //////

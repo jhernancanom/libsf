@@ -199,6 +199,8 @@
 	#include <inttypes.h>
 	#include <memory.h>
 	#include <string.h>
+	#include <pthread.h>
+	#include <semaphore.h>
 	
 	#define _USE_MATH_DEFINES
 	#include <math.h>

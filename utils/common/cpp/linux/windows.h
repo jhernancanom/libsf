@@ -982,18 +982,21 @@ typedef struct _FILETIME
 
 typedef struct tagWNDCLASSEXA
 {
-    UINT        cbSize;
-    UINT        style;
-    WNDPROC     lpfnWndProc;
-    int         cbClsExtra;
-    int         cbWndExtra;
-    HINSTANCE   hInstance;
-    HICON       hIcon;
-    HCURSOR     hCursor;
-    HBRUSH      hbrBackground;
-    cs8*		lpszMenuName;
-    cs8*		lpszClassName;
-    HICON       hIconSm;
+	UINT        cbSize;
+	UINT        style;
+	union {
+		uptr		_lpfnWndProc;
+		WNDPROC		lpfnWndProc;
+	};
+	int         cbClsExtra;
+	int         cbWndExtra;
+	HINSTANCE   hInstance;
+	HICON       hIcon;
+	HCURSOR     hCursor;
+	HBRUSH      hbrBackground;
+	cs8*		lpszMenuName;
+	cs8*		lpszClassName;
+	HICON       hIconSm;
 } WNDCLASSEXA;
 #define WNDCLASSEX WNDCLASSEXA
 
@@ -1072,7 +1075,8 @@ typedef struct tagCREATESTRUCT
 } CREATESTRUCT;
 #define LPCREATESTRUCT CREATESTRUCT*
 
-#define _memicmp(l,r,s)		strncmp((cs8*)l, (cs8*)r, s)
+#define _memcmp(l,r,s)		strncmp((cs8*)l, (cs8*)r, s)
+#define _memicmp(l,r,s)		strncasecmp((cs8*)l, (cs8*)r, s)
 #define _sopen				sopen
 #define _dup				dup
 #define _read				read

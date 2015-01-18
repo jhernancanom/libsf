@@ -75,6 +75,13 @@
 //////////
 // Windows Hwnd -to- X-Windows translation
 //////
+	struct SClassX
+	{
+		bool			isValid;
+		WNDCLASSEX		wcx;
+		SDatum			cClass;
+	};
+
 	struct SHwndX
 	{
 		// For Windows
@@ -82,6 +89,7 @@
 		bool			isValid;
 		bool			isVisible;
 		bool			isEnabled;
+		pthread_t		nThreadId;
 		RECT			rc;
 		RECT			rcClient;
 		SBuilder*		msgQueue;
@@ -92,6 +100,7 @@
 
 		// Structure used for callbacks
 		CREATESTRUCT	data;
+		SClassX*		cls;
 
 		// For X-windows
 	};
@@ -102,5 +111,6 @@
 //////////
 // Prototype definitions
 //////
+	SHwndX*			iHwndX_findWindow_byHwnd				(HWND hWnd);
 	void			iHwndX_createWindow						(SHwndX* win);
 	bool			iHwndX_addTimer							(SHwndX* win, s32 nIDEvent, UINT uElapse);
