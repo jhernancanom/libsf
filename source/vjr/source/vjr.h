@@ -143,7 +143,6 @@
 	#include "vjr_globals.h"
 
 	#include "fonts.h"
-	#include "datum\datum.h"
 	#include "bitmaps\bitmaps.h"
 
 	#include "commands\command_defs.h"
@@ -182,7 +181,7 @@
 		#include "dbf\dbf.cpp"
 		#include "dbf\cdx.cpp"
 		#include "grace.cpp"
-		#include "datum\datum.cpp"
+		#include "\libsf\utils\common\cpp\datum.cpp"
 		#include "fonts.cpp"
 
 
@@ -287,7 +286,7 @@
 		#include "dbf/dbf.cpp"
 		#include "dbf/cdx.cpp"
 		#include "grace.cpp"
-		#include "datum/datum.cpp"
+		#include "/libsf/utils/common/cpp/datum.cpp"
 		#include "fonts.cpp"
 		
 		#include "/libsf/utils/common/cpp/linux/windows.cpp"

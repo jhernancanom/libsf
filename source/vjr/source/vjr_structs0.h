@@ -267,27 +267,13 @@ struct SWindow
 	CRITICAL_SECTION	cs;												// Atomic access
 };
 
-struct SDatum
-{
-	union {
-		s8*			data;												// Content
-		s8*			data_s8;											// To access the data as s8
-		u8*			data_u8;											// To access the data as u8
-		u64*		data_u64;											// To access the data as u64
-		s64*		data_s64;											// To access the data as s64
-		u32*		data_u32;											// To access the data as u32
-		s32*		data_s32;											// To access the data as s32
-		u16*		data_u16;											// To access the data as u16
-		s16*		data_s16;											// To access the data as s16
-		f32*		data_f32;											// To access the data as f32
-		f64*		data_f64;											// To access the data as f64
-		cs8*		data_cs8;											// To access the data as cs8
-		cu8*		data_cu8;											// To access the data as cu8
-		SBgra*		data_bgra;											// to access the data as SBgra
-		SBgra*		data_bgr;											// to access the data as SBgr
-	};
-	s32				length;												// Content length
-};
+#if defined(_WIN64) || defined(_WIN32)
+	#include "\libsf\utils\common\cpp\datum.h"
+#elif __linux__
+	#include "/libsf/utils/common/cpp/datum.h"
+#else
+	#error Unknown target for compilation (must be Windows or Linux)
+#endif
 
 struct STranslate
 {
