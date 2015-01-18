@@ -247,7 +247,7 @@
 	#include "vjr_globals.h"
 
 	#include "fonts.h"
-	#include "datum/datum.h"
+	#include "/libsf/utils/common/cpp/datum.h"
 	#include "bitmaps/bitmaps.h"
 
 	#include "commands/command_defs.h"

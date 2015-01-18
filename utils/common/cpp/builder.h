@@ -98,4 +98,4 @@
 	u32			iBuilder_binarySearch						(SBuilder* haystack, s8* tcNeedle, u32 tnNeedleLength, bool* tlFound, bool tlInsertIfNotFound);
 
 
-#endif	&& __BUILDER_H__
+#endif	// __BUILDER_H__

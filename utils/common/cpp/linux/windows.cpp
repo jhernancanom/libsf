@@ -83,7 +83,7 @@
 //////
 	SHwndX* iWindows_findWindow_byHwnd(HWND hWnd)
 	{
-		s32		lnI;
+		u32		lnI;
 		SHwndX*	win;
 		
 		
@@ -95,11 +95,7 @@
 			{
 				// Is this our window?
 				if (win->isValid && win->hwnd == hWnd)
-				{
-					// Yes, indicate success
-					CopyRect(lpRect, &win->rcClient);
-					return(TRUE);
-				}
+					return(win);
 			}
 			// If we get here, not found
 		}
@@ -134,10 +130,10 @@
 		
 		
 		// Make sure our environment is sane
-		if (lpClassName & nWidth > 0 && nHeight > 0)
+		if (lpClassName && nWidth > 0 && nHeight > 0)
 		{
 			// Allocate a new window
-			win = iBuilder_appendData(gsWindows, NULL, sizeof(SHwndX));
+			win = (SHwndX*)iBuilder_appendData(gsWindows, NULL, sizeof(SHwndX));
 			if (win)
 			{
 				//////////
@@ -152,22 +148,22 @@
 					CopyRect(&win->rcClient, &win->rc);
 					iBuilder_createAndInitialize(&win->msgQueue, -1);
 
-					iDatum_duplicate&win->cClass, lpClassName,	strlen(lpClassName)		+ 1);
-					iDatum_duplicate&win->cTitle, lpWindowName,	strlen(lpWindowName)	+ 1);
+					iDatum_duplicate(&win->cClass, (cu8*)lpClassName,	strlen(lpClassName)		+ 1);
+					iDatum_duplicate(&win->cTitle, (cu8*)lpWindowName,	strlen(lpWindowName)	+ 1);
 
 					// Createstruct used for callback
-					win->data->lpCreateParams	= lpParam;
-					win->data->style			= dwStyle;
-					win->data->dwExStyle		= dwExStyle;
-					win->data->x				= X;
-					win->data->y				= Y;
-					win->data->cx				= nWidth;
-					win->data->cy				= nHeight;
-					win->data->hwndParent		= hWndParent;
-					win->data->hMenu			= hMenu;
-					win->data->hInstance		= hInstance;
-					win->data->lpszClass		= win->class.data_cs8;
-					win->data->lpszName			= win->name.data_cs8;
+					win->data.lpCreateParams	= lpParam;
+					win->data.style				= dwStyle;
+					win->data.dwExStyle			= dwExStyle;
+					win->data.x					= X;
+					win->data.y					= Y;
+					win->data.cx				= nWidth;
+					win->data.cy				= nHeight;
+					win->data.hwndParent		= hWndParent;
+					win->data.hMenu				= hMenu;
+					win->data.hInstance			= hInstance;
+					win->data.lpszClass			= win->cClass.data_cs8;
+					win->data.lpszName			= win->cTitle.data_cs8;
 				
 				
 				//////////
@@ -180,7 +176,7 @@
 				// If it's initially visible, go ahead and show it
 				//////
 					if ((dwStyle & WS_VISIBLE) != 0)
-						ShowWindow(win->hwnd);
+						ShowWindow(win->hwnd, SW_SHOW);
 			}
 		}
 		
@@ -200,6 +196,10 @@
 	{
 		SHwndX*		win;
 		itimerval	itv;
+		union {
+			s32			_eventId;
+			UINT_PTR	eventId;
+		};
 		
 		
 		// The timer is either for the window, or in general
@@ -210,16 +210,19 @@
 			win = iWindows_findWindow_byHwnd(hWnd);
 			if (win && win->isValid)
 				if (iHwndX_addTimer(win, nIDEvent, uElapse))
-					return(nIDEvent);
+				{
+					_eventId = nIDEvent;
+					return(eventId);
+				}
 			
 			// If we get here, the window is not found, not valid, or the timer could not be added
 		
 		} else {
 			// It is a general timer that goes to a specific function address
 			debug_break;
+			memset(&itv, 0, sizeof(itv));
+			itv.it_interval.tv_usec	= uElapse;
 // TODO:  Need to append an entry to our timer handler, and then dispatch as necessary
-//			memset(&itv, 0, sizeof(itv));
-//			itv.it_interval.tv_usec	= uElapse;
 //			return(setitimer(ITIMER_REAL, &itv, NULL));
 		}
 		
@@ -389,7 +392,7 @@ WINUSERAPI HWND WINAPI GetDesktopWindow(VOID)
 	WINUSERAPI BOOL WINAPI SetRect(__out LPRECT lprc, __in int xLeft, __in int yTop, __in int xRight, __in int yBottom)
 	{
 		// Make sure our environment is sane
-		if (lptrc)
+		if (lprc)
 		{
 			// Set the coordinates
 			lprc->left		= xLeft;
@@ -666,12 +669,12 @@ WINUSERAPI HICON WINAPI LoadIcon(__in_opt HINSTANCE hInstance, __in uptr lpIconN
 		if (lprc)
 		{
 			// Adjust horizontally
-			lprc.left	-= dx;
-			lprc.right	+= dx;
+			lprc->left		-= dx;
+			lprc->right		+= dx;
 			
 			// Adjust vertically
-			lprc.top	-= dy;
-			lprc.bottom	+= dy;
+			lprc->top		-= dy;
+			lprc->bottom	+= dy;
 			
 			// If we get here, success
 			return(TRUE);
@@ -881,7 +884,7 @@ WINGDIAPI HDC WINAPI CreateCompatibleDC( __in_opt HDC hdc)
 
 
 
-WINGDIAPI HBITMAP WINAPI CreateDIBSection(__in_opt HDC hdc, __in CONST BITMAPINFOHEADER* lpbmi, __in UINT usage, VOID **ppvBits, __in_opt HANDLE hSection, __in DWORD offset)
+WINGDIAPI HBITMAP WINAPI CreateDIBSection(__in_opt HDC hdc, __in CONST BITMAPINFO* lpbmi, __in UINT usage, VOID **ppvBits, __in_opt HANDLE hSection, __in DWORD offset)
 {
 	return(0);
 }

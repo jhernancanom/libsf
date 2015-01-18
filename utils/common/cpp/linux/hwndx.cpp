@@ -75,7 +75,8 @@
 	void iHwndX_createWindow(SHwndX* win)
 	{
 		// Schedule the messages for new window creation
-		iHwndX_postMessage(win, WM_CREATE,)
+// TOOD:  Determine which messages from Windows are sent in which order, and replicate here
+//		iHwndX_postMessage(win, WM_CREATE,)
 	}
 
 

@@ -69,6 +69,10 @@
 #define __DATUM_H__
 
 
+struct SBgra;
+struct SBgr;
+
+
 	struct SDatum
 	{
 		union {
@@ -86,7 +90,7 @@
 			cs8*		data_cs8;											// To access the data as cs8
 			cu8*		data_cu8;											// To access the data as cu8
 			SBgra*		data_bgra;											// to access the data as SBgra
-			SBgra*		data_bgr;											// to access the data as SBgr
+			SBgr*		data_bgr;											// to access the data as SBgr
 		};
 		s32				length;												// Content length
 	};

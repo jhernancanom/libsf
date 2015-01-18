@@ -67,6 +67,7 @@
 
 
 #include "/libsf/utils/common/cpp/builder.h"
+#include "/libsf/utils/common/cpp/datum.h"
 
 
 
@@ -74,22 +75,22 @@
 // windows.h and windows.cpp will provide Linux-based simulation of Windows
 // functionality for those features required by LibSF software.
 
-#define	HDC				sptr
-#define HBITMAP			sptr
-#define HWND			sptr
-#define HANDLE			sptr
-#define HFONT			sptr
-#define HRGN			sptr
-#define HBRUSH			sptr
-#define HINSTANCE		sptr
-#define HACCEL			sptr
-#define HICON			sptr
-#define HCURSOR			sptr
-#define HMENU			sptr
-#define HGDIOBJ			sptr
-#define HMODULE			sptr
-#define WPARAM			sptr
-#define LPARAM			sptr
+#define	HDC				uptr
+#define HBITMAP			uptr
+#define HWND			uptr
+#define HANDLE			uptr
+#define HFONT			uptr
+#define HRGN			uptr
+#define HBRUSH			uptr
+#define HINSTANCE		uptr
+#define HACCEL			uptr
+#define HICON			uptr
+#define HCURSOR			uptr
+#define HMENU			uptr
+#define HGDIOBJ			uptr
+#define HMODULE			uptr
+#define WPARAM			uptr
+#define LPARAM			uptr
 #define ATOM			u16
 
 #define BOOL			bool
@@ -1149,7 +1150,7 @@ WINUSERAPI HWND WINAPI		GetActiveWindow			(VOID);
 WINGDIAPI COLORREF WINAPI	SetBkColor				(__in HDC hdc, __in COLORREF color);
 WINUSERAPI HDC WINAPI		GetDC					(__in_opt HWND hWnd);
 WINGDIAPI HDC WINAPI		CreateCompatibleDC		( __in_opt HDC hdc);
-WINGDIAPI HBITMAP WINAPI	CreateDIBSection		(__in_opt HDC hdc, __in CONST BITMAPINFOHEADER* lpbmi, __in UINT usage, VOID **ppvBits, __in_opt HANDLE hSection, __in DWORD offset);
+WINGDIAPI HBITMAP WINAPI	CreateDIBSection		(__in_opt HDC hdc, __in CONST BITMAPINFO* lpbmi, __in UINT usage, VOID **ppvBits, __in_opt HANDLE hSection, __in DWORD offset);
 s64							_atoi64					(cs8* string);
 WINUSERAPI int WINAPI		GetSystemMetrics		(__in int nIndex);
 WINUSERAPI BOOL WINAPI		OffsetRect				(__inout LPRECT lprc, __in int dx, __in int dy);
