@@ -391,34 +391,49 @@
 
 
 
-WINBASEAPI HANDLE WINAPI CreateThread(	__in_opt LPSECURITY_ATTRIBUTES lpThreadAttributes,
-										__in SIZE_T dwStackSize,
-										__in LPTHREAD_START_ROUTINE lpStartAddress,
-										__in_opt __deref __drv_aliasesMem LPVOID lpParameter,
-										__in DWORD dwCreationFlags,
-										__out_opt LPDWORD lpThreadId)
+WINBASEAPI HANDLE WINAPI CreateThread(	__in_opt LPSECURITY_ATTRIBUTES				lpThreadAttributes,
+										__in SIZE_T									dwStackSize,
+										__in LPTHREAD_START_ROUTINE					lpStartAddress,
+										__in_opt __deref __drv_aliasesMem LPVOID	lpParameter,
+										__in DWORD									dwCreationFlags,
+										__out_opt LPDWORD							lpThreadId)
 {
-//	DWORD				lnThreadId;
-//	pthread_attr_t		attr;
-//
-//
-//	// Setup attributes and stack
-//	pthread_attr_init(&attr);
-//	pthread_attr_setstacksize(&attr, ((dwStackSize) ? dwStackSize : /*64KB*/64 * 1024));
-//	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-//
+	pthread_t			lnThreadId;
+	pthread_attr_t		attr;
+	void*				stackptr;
+
+
+	// Make sure we have a target for the thread id
+	if (!lpThreadId)
+		lpThreadId = &lnThreadId;
+
 // TODO:  Honor dwCreationFlags
-//
-//	// Make sure we have a target for the thread id
-//	if (!lpThreadId)
-//		lpThreadId = &lnThreadId;
-//
-//	// Create the worker thread
-//	pthread_create(lpTthreadId, &attr, lpStartAddress, lpParameter);
-//
-//	// Return the id
-//	return(lnThreadId);
-	return(0);
+
+	// Iterate through the pthread process to verify we can create the thread successfully
+	if (pthread_attr_init(&attr) == 0)
+	{
+		if (pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED) == 0)
+		{
+			if (pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED) == 0)
+			{
+				if (posix_memalign(&stackptr, sysconf(_SC_PAGESIZE), _CREATE_THREAD_DEFAULT_STACK_SIZE) == 0)
+				{
+					if (pthread_attr_setstack(&attr, stackptr, _CREATE_THREAD_DEFAULT_STACK_SIZE) == 0)
+					{
+						if (pthread_create(lpThreadId, &attr, lpStartAddress, lpParameter) == 0)
+						{
+							// If we get here, the thread was created successfully
+							return(*lpThreadId);
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	// If we get here, failure
+	pthread_attr_destroy(&attr);
+	return(-1);
 }
 
 
@@ -426,7 +441,7 @@ WINBASEAPI HANDLE WINAPI CreateThread(	__in_opt LPSECURITY_ATTRIBUTES lpThreadAt
 
 WINBASEAPI VOID WINAPI ExitThread(__in DWORD dwExitCode)
 {
-//	pthread_exit(dwExitCode);
+	pthread_exit(dwExitCode);
 }
 
 
@@ -576,10 +591,10 @@ WINUSERAPI ATOM WINAPI RegisterClassExA(__in CONST WNDCLASSEX* lpwcx)
 								}
 							}
 						}
+						// When we get here, the message has no mesages waiting
+						if (hWnd == win->hwnd)
+							break;	// We were only searching for this one window, and now we're done
 					}
-					// When we get here, the message has no mesages waiting
-					if (hWnd != null0)
-						break;	// We were only searching for this one window, and now we're done
 				}
 				// If we get here, no messages are waiting for this window
 			}
@@ -600,7 +615,7 @@ WINUSERAPI ATOM WINAPI RegisterClassExA(__in CONST WNDCLASSEX* lpwcx)
 	WINUSERAPI BOOL WINAPI GetMessage(__out LPMSG lpMsg, __in_opt HWND hWnd, __in UINT wMsgFilterMin, __in UINT wMsgFilterMax)
 	{
 		// Call PeekMessage() with a consume setting
-		return(PeekMessage(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, 0));
+		return(PeekMessage(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, PM_NOREMOVE));
 	}
 
 
@@ -1453,7 +1468,8 @@ WINGDIAPI BOOL WINAPI GetTextMetricsA(__in HDC hdc, __out LPTEXTMETRIC lptm)
 			case WHITE_PEN:
 			case BLACK_PEN:
 			case NULL_PEN:
-//				break;
+				_color = -1;
+				break;
 			
 			case OEM_FIXED_FONT:
 			case ANSI_FIXED_FONT:
@@ -1462,7 +1478,8 @@ WINGDIAPI BOOL WINAPI GetTextMetricsA(__in HDC hdc, __out LPTEXTMETRIC lptm)
 			case DEVICE_DEFAULT_FONT:
 			case DEFAULT_PALETTE:
 			case SYSTEM_FIXED_FONT:
-//				break;
+				_color = -1;
+				break;
 			
 			default:
 				// Default to an invalid value

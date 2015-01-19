@@ -71,7 +71,12 @@
 
 
 
-// Added as a temporary placeholder.
+//////////
+// Constants used by windows.cpp
+//////
+	cu32	_CREATE_THREAD_DEFAULT_STACK_SIZE 		= (1024 * 1000);
+
+
 // windows.h and windows.cpp will provide Linux-based simulation of Windows
 // functionality for those features required by LibSF software.
 

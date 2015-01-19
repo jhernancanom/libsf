@@ -153,8 +153,8 @@
 		//////////
 		// Convert to milliseconds
 		//////
-			tp.tv_nsec	/= 1000000;								// Divide nanoseconds by 1 million to get milliseconds
-			tp.tv_nsec	= tp.tv_sec + ((s32)tp.tv_sec * 1000);	// Add milliseconds to (1000*sec)
+			tp.tv_nsec	/= 1000000;						// Divide nanoseconds by 1 million to get milliseconds
+			tp.tv_nsec	+= ((s32)tp.tv_sec * 1000);		// Add (1000*sec) to milliseconds
 		
 		
 		//////////
