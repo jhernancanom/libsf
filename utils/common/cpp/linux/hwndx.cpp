@@ -136,6 +136,66 @@
 
 //////////
 //
+// Called at startup one time to declare the initial desktop window as a pseudo-window
+// which is 
+//
+//////
+	SHwndX* iHwndX_declareDesktopHwnd(void)
+	{
+		s32			lnWidth, lnHeight;
+		WNDCLASSEX	wcx;
+
+
+		//////////
+		// Allocate our primary SHwndX buffer if need be
+		//////
+			if (!gsWindows)
+				iBuilder_createAndInitialize(&gsWindows, -1);
+		
+		
+		//////////
+		// Connect to X11
+		//////
+			gsDesktop.display		= XOpenDisplay(NULL);
+			gsDesktop.screen		= DefaultScreen(gsDesktop.display);
+			gsDesktop.depth			= DefaultDepth(gsDesktop.display, gsDesktop.screen);
+			gsDesktop.connection	= ConnectionNumber(gsDesktop.display);
+			gsDesktop.rootwindow	= RootWindow(gsDesktop.display, gsDesktop.screen);
+
+		
+		//////////
+		// Register our logical desktop class
+		//////
+			memset(&wcx, 0, sizeof(wcx));
+			wcx.cbSize			= sizeof(wcx);
+			wcx.style			= CS_OWNDC;
+			wcx._lpfnWndProc	= &DefWindowProc;
+			wcx.lpszClassName	= cgcDesktop;
+			wcx.lpszMenuName	= cgcDesktop;
+			RegisterClassEx(&wcx);
+		
+		
+		//////////
+		// Create our logical desktop window
+		//////
+			lnWidth			= XDisplayWidth(gsDesktop.display, gsDesktop.screen);
+			lnHeight		= XDisplayHeight(gsDesktop.display, gsDesktop.screen);
+			ghWndDesktop	= CreateWindowEx(	0, cgcDesktop, cgcDesktop, WS_POPUP,
+												0, 0, lnWidth, lnHeight,
+												null0, null0, null0, null0);
+		
+		
+		//////////
+		// Return the logical desktop pointer
+		//////
+			return(iHwndX_findWindow_byHwnd(ghWndDesktop));
+	}
+
+
+
+
+//////////
+//
 // Obtain the current time in milliseconds since startup, or rollover if up for a long, long time.
 //
 //////
@@ -198,14 +258,220 @@
 
 //////////
 //
-// Called when a new window is created to schedule the startup messages
+// Find the indicated class based on its name
+//
+//////
+	SClassX* iHwnd_findClass_byName(s8* lpClassName)
+	{
+		u32			lnI, lnLength;
+		SClassX*	cls;
+		
+		
+		// Make sure our environment is sane
+		if (lpClassName)
+		{
+			// Iterate through each class until we find the correct one
+			lnLength = strlen(lpszClass);
+			for (lnI = 0, cls = (SClassX*)gsClasses->buffer; lnI < gsClasses->populatedLength; lnI += sizeof(SClassX), cls++)
+			{
+				// If it's valid, and the class maches, we're good
+				if (cls->isValid && strlen(cls->wcx.lpszClassName) == lnLength && _memicmp(cls->wcx.lpszClassName, lpszClass, lnLength) == 0)
+					return(cls);
+			}
+			// If we get here, the class was not found
+		}
+		
+		// If we get here, invalid
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Called when a new logical Windows window is created to create the associated X-window,
+// and also to logically schedule the Windows startup messages
 //
 //////
 	void iHwndX_createWindow(SHwndX* win)
 	{
-		// Schedule the messages for new window creation
-// TOOD:  Determine which messages from Windows are sent in which order, and replicate here
-//		iHwndX_postMessage_byWin(win, WM_CREATE, 0, 0);
+		if (!win->x11)
+			win->x11 = iHwndX_createXWindow(win);
+	}
+
+
+
+
+//////////
+//
+// Called to populate the X11 window portion
+//
+//////
+	SXWindow* iHwndX_createXWindow(SHwndX* win)
+	{
+		XWindow* xwin;
+		
+		
+		// Make sure our environment is sane
+		if (win)
+		{
+			// Allocate the structure
+			xwin = (SXWindow*)malloc(sizeof(SXWindow));
+			if (xwin)
+			{
+				// Initialize
+				memset(xwin, 0, sizeof(*xwin));
+				
+				// Initialize X for this window
+				if (iHwndX_initializeXWindow(xwin, win->rc.right - win->rc.left, win->rc.bottom - win->rc.top, win->cTitle.data_s8) == ERR_XI_OK)
+					return(xwin);
+				
+				// If we get here, failure
+				free(xwin);
+			}
+		}
+		
+		// If we get here, invalid
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Called to physically create the X11 window which will be drawn on the desktop.
+//
+//////
+	s32 iHwndX_initializeXWindow(SXWindow* xwin, s32 width, s32 height, s8* title)
+	{
+		XSizeHints Hints;
+		
+		if (xwin)
+		{
+			//////////
+			// Allocate a display
+			//////
+				xwin->display = XOpenDisplay(NULL);
+				if (!xwin->display)
+					return _X11_NO_DISPLAY;
+			
+			
+			//////////
+			// Populate our local settings
+			//////
+				xwin->width		= width;
+				xwin->height		= height;
+				xwin->screennum	= DefaultScreen(xwin->display);
+				xwin->screenptr	= DefaultScreenOfDisplay(xwin->display);
+				xwin->visual		= DefaultVisualOfScreen(xwin->screenptr);
+				xwin->depth		= DefaultDepth(xwin->display, xwin->screennum);
+				xwin->pixelsize	= 4;
+
+
+			//////////
+			// Make sure we have a compatible display
+			//////
+				if (xwin->depth != 24)
+					return _X11_UNSUPPORTED;
+
+
+			//////////
+			// Physically create the window on the desktop
+			//////
+				xwin->window	= XCreateWindow(xwin->display,
+											RootWindowOfScreen(xwin->screenptr),
+											0, 0, xwin->width, xwin->height,
+											0, xwin->depth,
+											InputOutput,
+											xwin->visual, 0, NULL);
+				
+				// Are we valid?
+				if (!xwin->window)
+					return _X11_NO_WINDOW;
+				
+				// Raise it to the top
+				XMapRaised(xwin->display, xwin->window);
+
+
+			//////////
+			// Provide hints because we do our own resizing internally
+			//////
+				Hints.flags			= PSize | PMinSize | PMaxSize;
+				Hints.min_width		= Hints.max_width	= Hints.base_width	= width;
+				Hints.min_height	= Hints.max_height	= Hints.base_height	= height;
+				XSetWMNormalHints(XWnd->display, XWnd->window,&Hints);
+
+
+			//////////
+			// Set window title and specify those events we would like to receive
+			//////
+				XStoreName(xwin->display, xwin->window, title);
+				XSelectInput(xwin->display, xwin->window, 		ExposureMask
+															|	KeyPressMask
+															|	KeyReleaseMask
+															|	ButtonPressMask
+															|	EnterWindowMask
+															|	LeaveWindowMask
+															|	PointerMotionMask
+															|	FocusChangeMask);
+			
+			//////////
+			// Graphical context
+			//////
+				xwin->gc = XCreateGC(xwin->display, xwin->window, 0, NULL);
+
+
+			//////////
+			// Primray pixel buffer
+			//////
+				xwin->screensize		= xwin->height * xwin->width * xwin->pixelsize;
+				xwin->virtualscreen	= (SBgra*)malloc(xwin->screensize);
+				if (!xwin->virtualscreen)
+					return _X11_NO_VIRTUAL_SCREEN;
+			
+				// Logical image
+				xwin->ximage = XCreateImage(xwin->display, xwin->visual, xwin->depth,
+											ZPixmap, 0, 
+											(s8*)xwin->virtualscreen,
+											xwin->width, xwin->height,
+											(xwin->pixelsize * 8),
+											xwin->width * xwin->pixelsize);
+				
+				// Did we get the buffer?
+				if (!xwin->ximage)
+					return _X11_NO_PIXEL_BUFFER;
+
+
+			//////////
+			// Pixel buffer 2
+			//////
+				xwin->screensize2	= xwin->height * xwin->width * xwin->pixelsize;
+				xwin->virtualscreen2	= (SBgra*)malloc(xwin->screensize2);
+				if (!xwin->virtualscreen2)
+					return _X11_VIRTALLOC;
+				
+				// Logical image
+				xwin->ximage2 = XCreateImage(xwin->display, xwin->visual, xwin->depth,
+											ZPixmap, 0, 
+											(s8*)xwin->virtualscreen2,
+											xwin->width, xwin->height,
+											(xwin->pixelsize * 8),
+											xwin->width * xwin->pixelsize);
+				// Did we get the buffer?
+				if (!xwin->ximage2)
+					return _X11_NO_PIXEL_BUFFER;
+
+
+			//////////
+			// We're good
+			//////
+				return _X11_OK;
+		}
+		
+		// If we get here, invalid
+		return _X11_GENERAL_FAILURE;
 	}
 
 
@@ -218,5 +484,13 @@
 //////
 	bool iHwndX_addTimer(SHwndX* win, s32 nIDEvent, UINT uElapse)
 	{
-		return(false);
+		itimerval itv, itvold;
+		
+		
+		// Determine the interval
+		itv.it_interval.tv_sec		= (u32)uElapse / 1000;
+		itv.it_interval.tv_usec		= (u32)uElapse % 1000;
+		
+		// Create the timer
+		setitimer(ITIMER_REAL, &itv, &itvold);
 	}

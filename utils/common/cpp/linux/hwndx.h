@@ -72,9 +72,44 @@
 
 
 
+
+#define _X11_OK					0
+#define _X11_NO_DISPLAY			-1
+#define _X11_UNSUPPORTED		-2
+#define _X11_NO_WINDOW			-3
+#define _X11_NO_VIRTUAL_SCREEN	-4
+#define _X11_NO_PIXEL_BUFFER	-5
+#define _X11_GENERAL_FAILURE	-99
+
+
+
+
 //////////
 // Windows Hwnd -to- X-Windows translation
 //////
+	struct SXWindow
+	{
+		Display*		display;
+		Window			window;
+		Screen*			screenptr;
+		s32				screennum;
+		Visual*			visual;
+		GC				gc;
+		
+		XImage*			ximage;
+		SBgra*			virtualscreen;
+		
+		XImage*			ximage2;
+		SBgra*			virtualscreen2;
+
+		s32				width;
+		s32				height;
+		s32				depth;
+		s32				pixelsize;
+		s32				screensize;
+	};
+
+
 	struct SClassX
 	{
 		bool			isValid;
@@ -97,12 +132,17 @@
 		// Note:  Both of these contain the trailing NULL in their length ... this is done because some callbacks require ASCIIZ strings
 		SDatum			cClass;
 		SDatum			cTitle;
+		
+		// Current mouse and keyboard flags
+		uptr			mouseKbdFlags;
+		POINT			mousePt;
 
 		// Structure used for callbacks
 		CREATESTRUCT	data;
 		SClassX*		cls;
 		
 		// For X-windows
+		SXWindow		x11;
 	};
 	
 	struct SMessageX
@@ -112,8 +152,33 @@
 	
 	struct STimerX
 	{
+		bool		isValid;
+		SHwndX*		winAssociated;
 		
+		// From setitimer()
+		s32			timerId;
 	};
+
+	struct SDesktopX
+	{
+		Display*	display;
+		s32			screen;
+		s32			depth;
+		s32			connection;
+		Window		windowDesktop;
+	};
+
+
+//////////
+// Global variables
+//////
+	SBuilder*		gsWindows								= NULL;
+	SBuilder*		gsClasses								= NULL;
+	
+	// "Desktop" window related
+	SHwndX*			gsDesktopWindow							= iHwndX_declareDesktopHwnd();
+	SDesktopX		gsDesktop;
+	HWND			ghWndDesktop							= NULL;
 
 
 
@@ -123,7 +188,11 @@
 //////
 	bool			iHwndX_postMessage_byWin				(SHwndX* win,	uptr message, uptr wParam, uptr lParam);
 	bool			iHwndX_postMessage_byHwnd				(HWND hWnd,		uptr message, uptr wParam, uptr lParam);
+	SHwndX*			iHwndX_declareDesktopHwnd				(void);
 	DWORD			iHwndX_getTime							(void);
 	SHwndX*			iHwndX_findWindow_byHwnd				(HWND hWnd);
+	SClassX*		iHwnd_findClass_byName					(s8* lpClassName);
 	void			iHwndX_createWindow						(SHwndX* win);
+	SXWindow*		iHwndX_createXWindow					(SHwndX* win);
+	s32				iHwndX_initializeXWindow				(SXWindow* win, s32 width, s32 height, s8* title);
 	bool			iHwndX_addTimer							(SHwndX* win, s32 nIDEvent, UINT uElapse);

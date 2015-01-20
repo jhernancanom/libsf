@@ -203,6 +203,9 @@
 	#include <time.h>
 	#include <semaphore.h>
 	
+	#include <X11/XLib.h>
+	#include <X11/Xutil.h>
+	
 	#define _USE_MATH_DEFINES
 	#include <math.h>
 	#include <SDL2/SDL.h>

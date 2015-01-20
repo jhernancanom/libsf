@@ -68,16 +68,6 @@
 
 
 //////////
-// For HWND-to-X translation
-//////
-	// SHwndX listing
-	SBuilder*		gsWindows				= NULL;
-	SBuilder*		gsClasses				= NULL;
-
-
-
-
-//////////
 //
 // Called to create a window
 //
@@ -89,19 +79,15 @@
 											__in_opt HWND hWndParent, __in_opt HMENU hMenu, __in_opt HINSTANCE hInstance,
 											__in_opt LPVOID lpParam)
 	{
+		SClassX*		cls;
 		union {
-			uptr	_win;
-			SHwndX* win;
+			uptr		_win;
+			SHwndX*		win;
 		};
 		
 		
-		// Make sure we have our gsWindows builder allocated
-		if (!gsWindows)
-			iBuilder_createAndInitialize(&gsWindows, -1);
-		
-		
 		// Make sure our environment is sane
-		if (lpClassName && nWidth > 0 && nHeight > 0)
+		if (lpClassName && nWidth > 0 && nHeight > 0 && (cls == iHwnd_findClass_byName(lpClassName)))
 		{
 			// Allocate a new window
 			win = (SHwndX*)iBuilder_appendData(gsWindows, NULL, sizeof(SHwndX));
@@ -115,6 +101,7 @@
 					win->isVisible	= false;
 					win->isEnabled	= true;
 					win->nThreadId	= pthread_self();
+					win->cls		= cls;
 					
 					SetRect(&win->rc, X, Y, X + nWidth, Y + nHeight);
 					CopyRect(&win->rcClient, &win->rc);
@@ -391,133 +378,149 @@
 
 
 
-WINBASEAPI HANDLE WINAPI CreateThread(	__in_opt LPSECURITY_ATTRIBUTES				lpThreadAttributes,
-										__in SIZE_T									dwStackSize,
-										__in LPTHREAD_START_ROUTINE					lpStartAddress,
-										__in_opt __deref __drv_aliasesMem LPVOID	lpParameter,
-										__in DWORD									dwCreationFlags,
-										__out_opt LPDWORD							lpThreadId)
-{
-	pthread_t			lnThreadId;
-	pthread_attr_t		attr;
-	void*				stackptr;
+//////////
+//
+// Called to create a new thread
+//
+//////
+	WINBASEAPI HANDLE WINAPI CreateThread(	__in_opt LPSECURITY_ATTRIBUTES				lpThreadAttributes,
+											__in SIZE_T									dwStackSize,
+											__in LPTHREAD_START_ROUTINE					lpStartAddress,
+											__in_opt __deref __drv_aliasesMem LPVOID	lpParameter,
+											__in DWORD									dwCreationFlags,
+											__out_opt LPDWORD							lpThreadId)
+	{
+		pthread_t			lnThreadId;
+		pthread_attr_t		attr;
+		void*				stackptr;
 
 
-	// Make sure we have a target for the thread id
-	if (!lpThreadId)
-		lpThreadId = &lnThreadId;
+		// Make sure we have a target for the thread id
+		if (!lpThreadId)
+			lpThreadId = &lnThreadId;
 
 // TODO:  Honor dwCreationFlags
 
-	// Iterate through the pthread process to verify we can create the thread successfully
-	if (pthread_attr_init(&attr) == 0)
-	{
-		if (pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED) == 0)
+		// Iterate through the pthread process to verify we can create the thread successfully
+		if (pthread_attr_init(&attr) == 0)
 		{
-			if (pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED) == 0)
+			if (pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED) == 0)
 			{
-				if (posix_memalign(&stackptr, sysconf(_SC_PAGESIZE), _CREATE_THREAD_DEFAULT_STACK_SIZE) == 0)
+				if (pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED) == 0)
 				{
-					if (pthread_attr_setstack(&attr, stackptr, _CREATE_THREAD_DEFAULT_STACK_SIZE) == 0)
+					if (posix_memalign(&stackptr, sysconf(_SC_PAGESIZE), _CREATE_THREAD_DEFAULT_STACK_SIZE) == 0)
 					{
-						if (pthread_create(lpThreadId, &attr, lpStartAddress, lpParameter) == 0)
+						if (pthread_attr_setstack(&attr, stackptr, _CREATE_THREAD_DEFAULT_STACK_SIZE) == 0)
 						{
-							// If we get here, the thread was created successfully
-							return(*lpThreadId);
+							if (pthread_create(lpThreadId, &attr, lpStartAddress, lpParameter) == 0)
+							{
+								// If we get here, the thread was created successfully
+								return(*lpThreadId);
+							}
 						}
 					}
 				}
 			}
 		}
+		
+		// If we get here, failure
+		pthread_attr_destroy(&attr);
+		return(-1);
 	}
-	
-	// If we get here, failure
-	pthread_attr_destroy(&attr);
-	return(-1);
-}
 
 
 
 
-WINBASEAPI VOID WINAPI ExitThread(__in DWORD dwExitCode)
-{
-	pthread_exit(dwExitCode);
-}
-
-
-
-
-WINUSERAPI BOOL WINAPI GetClassInfoExA(__in_opt HINSTANCE hInstance, __in cs8* lpszClass, __out WNDCLASSEX* lpwcx)
-{
-	u32			lnI, lnLength;
-	SClassX*	cls;
-	
-	
-	// Make sure the environment is sane
-	if (lpszClass && lpwcx && gsClasses)
+//////////
+//
+// Exits the thread
+//
+//////
+	WINBASEAPI VOID WINAPI ExitThread(__in DWORD dwExitCode)
 	{
-		// Iterate through all of the defined classes and report
-		lnLength = strlen(lpszClass);
-		for (lnI = 0, cls = (SClassX*)gsClasses->buffer; lnI < gsClasses->populatedLength; lnI += sizeof(SClassX), cls++)
+		pthread_exit(dwExitCode);
+	}
+
+
+
+
+//////////
+//
+// Retrieves the class indicated by the name.
+// Note:  The instance is ignored because in this context there's only one instance you see. :-)
+//
+//////
+	WINUSERAPI BOOL WINAPI GetClassInfoExA(__in_opt HINSTANCE hInstance, __in cs8* lpszClass, __out WNDCLASSEX* lpwcx)
+	{
+		SClassX* cls;
+		
+		
+		// Make sure the environment is sane
+		if (lpszClass && lpwcx && gsClasses)
 		{
-			// If it's valid, and the class maches, we're good
-			if (cls->isValid && strlen(cls->wcx.lpszClassName) == lnLength && _memicmp(cls->wcx.lpszClassName, lpszClass, lnLength) == 0)
+			// Iterate through all of the defined classes and report
+			cls = iHwnd_findClass_byName(lpszClass);
+			if (cls)
 			{
 				// Indicate success
 				memcpy(lpwcx, &cls->wcx, sizeof(WNDCLASSEX));
 				return(TRUE);
 			}
+			// If we get here, the class wasn't found
 		}
-		// If we get here, the class wasn't found
+		
+		// If we get here, failure
+		return(FALSE);
 	}
-	
-	// If we get here, failure
-	return(FALSE);
-}
 
 
 
 
-WINUSERAPI ATOM WINAPI RegisterClassExA(__in CONST WNDCLASSEX* lpwcx)
-{
-	union {
-		uptr		_cls;
-		SClassX*	cls;
-	};
-	WNDCLASSEX	wcx;
-	
-	
-	// Make sure there is a class builder
-	if (!gsClasses)
-		iBuilder_createAndInitialize(&gsClasses, -1);
-	
-	// make sure our environment is sane
-	if (gsClasses && lpwcx)
+//////////
+//
+// Registers a class if it doesn't already exist
+//
+//////
+	WINUSERAPI ATOM WINAPI RegisterClassExA(__in CONST WNDCLASSEX* lpwcx)
 	{
-		// See if the class already exists
-		if (!GetClassInfoExA(lpwcx->hInstance, lpwcx->lpszClassName, &wcx))
+		union {
+			uptr		_cls;
+			SClassX*	cls;
+		};
+		WNDCLASSEX	wcx;
+		
+		
+		// Make sure there is a class builder
+		if (!gsClasses)
+			iBuilder_createAndInitialize(&gsClasses, -1);
+		
+		// make sure our environment is sane
+		if (gsClasses && lpwcx)
 		{
-			// Does not exist, add it
-			cls = (SClassX*)iBuilder_appendData(gsClasses, NULL, sizeof(SClassX));
-			if (cls)
+			// See if the class already exists
+			if (!GetClassInfoExA(lpwcx->hInstance, lpwcx->lpszClassName, &wcx))
 			{
-				// Initialize it
-				cls->isValid = true;
-				iDatum_duplicate(&cls->cClass, lpwcx->lpszClassName, -1);
-				
-				// Copy over the WNDCLASSEX structure
-				memcpy(cls->wcx, lpwcx, sizeof(WNDCLASSEX));
-				
-				// Indicate our "atom" return value
-				return(_cls & 0xffff);
+				// Does not exist, add it
+				cls = (SClassX*)iBuilder_appendData(gsClasses, NULL, sizeof(SClassX));
+				if (cls)
+				{
+					// Initialize it
+					cls->isValid = true;
+					iDatum_duplicate(&cls->cClass, lpwcx->lpszClassName, -1);
+					
+					// Copy over the WNDCLASSEX structure
+					memcpy(cls->wcx, lpwcx, sizeof(WNDCLASSEX));
+					
+					// Indicate our "atom" return value
+					return(_cls & 0xffff);
+				}
 			}
+			// If we get here, it already exists
 		}
-		// If we get here, it already exists
+		
+		// If we get here, failure
+		return(0);
 	}
-	
-	// If we get here, failure
-	return(0);
-}
 
 
 
@@ -609,7 +612,7 @@ WINUSERAPI ATOM WINAPI RegisterClassExA(__in CONST WNDCLASSEX* lpwcx)
 
 //////////
 //
-// Grab the next message from the queue.
+// Grab the next message from the queue
 //
 //////
 	WINUSERAPI BOOL WINAPI GetMessage(__out LPMSG lpMsg, __in_opt HWND hWnd, __in UINT wMsgFilterMin, __in UINT wMsgFilterMax)
@@ -621,89 +624,117 @@ WINUSERAPI ATOM WINAPI RegisterClassExA(__in CONST WNDCLASSEX* lpwcx)
 
 
 
-WINUSERAPI BOOL WINAPI TranslateMessage(__in CONST MSG *lpMsg)
-{
-	// No translations are currently processed, so we pass through exactly as is
-	return(TRUE);
-}
-
-
-
-
-WINUSERAPI LRESULT WINAPI DispatchMessage(__in CONST MSG *lpMsg)
-{
-	SHwndX* win;
-	
-	
-	// Make sure our environment is sane
-	if (lpMsg)
+//////////
+//
+// Called to translate the raw message into possibly other messages based on ... who knows? :-)
+// Note:  This is not supported because all messages are untranslated, but go through raw
+//        (because we handle the signaled messages anyway you see)
+//
+//////
+	WINUSERAPI BOOL WINAPI TranslateMessage(__in CONST MSG *lpMsg)
 	{
-		// They are retrieving from a particular window for the current thread
-		win = iHwndX_findWindow_byHwnd(lpMsg->hwnd);
-		
-		// If valid, call the associated wndProc()
-		if (win)
-			return(win->cls->wcx.lpfnWndProc(lpMsg->hwnd, lpMsg->message, lpMsg->wParam, lpMsg->lParam));
-		
-		// If we get here, we didn't find the indicated message, so ignore it
+		// No translations are currently processed, so we pass through exactly as is
+		return(TRUE);
 	}
-	return(0);
-}
 
 
 
 
-LRESULT CALLBACK DefWindowProc(__in HWND hWnd, __in UINT Msg, __in WPARAM wParam, __in LPARAM lParam)
-{
-	SHwndX*			win;
-	HDC				hdc;
-	PAINTSTRUCT		ps;
-	
-	
-	// Try to find the window
-	win = iHwndX_findWindow_byHwnd(hWnd);
-	if (win && win->isValid)
+//////////
+//
+// Called to call the wndProc() for the indicated message context
+//
+//////
+	WINUSERAPI LRESULT WINAPI DispatchMessage(__in CONST MSG *lpMsg)
 	{
-		switch (Msg)
+		SHwndX* win;
+		
+		
+		// Make sure our environment is sane
+		if (lpMsg)
 		{
-			case WM_QUIT:
-				// They are wanting to quit the app
-				exit(wParam);
-				break;
+			// They are retrieving from a particular window for the current thread
+			win = iHwndX_findWindow_byHwnd(lpMsg->hwnd);
 			
-			case WM_ERASEBKGND:
-			case WM_PAINT:
-				if (win->isVisible)
-				{
-					// By default, we simply paint it white
-					hdc = BeginPaint(hWnd, &ps);
-					FillRect(hdc, &ps.rcPaint, (HBRUSH)GetStockObject(WHITE_BRUSH));
-					EndPaint(hWnd, &ps);
-				}
-				break;
+			// If valid, call the associated wndProc()
+			if (win)
+				return(win->cls->wcx.lpfnWndProc(lpMsg->hwnd, lpMsg->message, lpMsg->wParam, lpMsg->lParam));
+			
+			// If we get here, we didn't find the indicated message, so ignore it
 		}
+		return(0);
 	}
-	
-	// If we get here, the window is invalid ... ignore it
-	return(0);
-}
 
 
 
 
-WINUSERAPI BOOL WINAPI PostMessage(__in_opt HWND hWnd, __in UINT Msg, __in WPARAM wParam, __in LPARAM lParam)
-{
-	return(FALSE);
-}
+//////////
+//
+// Basic default wndProc() which quits, and then draws basic stuff.  It also updates
+// the win->pt position as the mouse moves.
+//////
+	LRESULT CALLBACK DefWindowProc(__in HWND hWnd, __in UINT Msg, __in WPARAM wParam, __in LPARAM lParam)
+	{
+		SHwndX*			win;
+		HDC				hdc;
+		PAINTSTRUCT		ps;
+		
+		
+		// Try to find the window
+		win = iHwndX_findWindow_byHwnd(hWnd);
+		if (win && win->isValid)
+		{
+			// Process the message
+			switch (Msg)
+			{
+				case WM_QUIT:
+					// They are wanting to quit the app
+					exit(wParam);
+					break;
+				
+				case WM_ERASEBKGND:
+				case WM_PAINT:
+					if (win->isVisible)
+					{
+						// By default, we simply paint it white
+						hdc = BeginPaint(hWnd, &ps);
+						FillRect(hdc, &ps.rcPaint, (HBRUSH)GetStockObject(WHITE_BRUSH));
+						EndPaint(hWnd, &ps);
+					}
+					break;
+			}
+		}
+		
+		// If we get here, the window is invalid ... ignore it
+		return(0);
+	}
 
 
 
 
-WINUSERAPI HWND WINAPI GetDesktopWindow(VOID)
-{
-// TODO:  The desktop window will be a pass-thru window onto the base X-window desktop
-	return(0);
-}
+//////////
+//
+// Posts the message to the indicated window if it's valid
+//
+//////
+	WINUSERAPI BOOL WINAPI PostMessage(__in_opt HWND hWnd, __in UINT Msg, __in WPARAM wParam, __in LPARAM lParam)
+	{
+		// If possible, post the associated message
+		return(iHwndX_postMessage_byHwnd(hWnd, Msg, wParam, lParam));
+	}
+
+
+
+
+//////////
+//
+// Returns the "pseudo desktop window" which is always the first window
+//
+//////
+	WINUSERAPI HWND WINAPI GetDesktopWindow(VOID)
+	{
+		return(ghWndDesktop);
+	}
 
 
 
