@@ -81,6 +81,8 @@
 #define _X11_NO_PIXEL_BUFFER	-5
 #define _X11_GENERAL_FAILURE	-99
 
+struct SHdcX;
+
 
 
 
@@ -140,6 +142,7 @@
 		// Structure used for callbacks
 		CREATESTRUCT	data;
 		SClassX*		cls;
+		SHdcX*			hdc;
 		
 		// For X-windows
 		SXWindow		x11;
@@ -158,6 +161,27 @@
 		// From setitimer()
 		s32			timerId;
 	};
+	
+	struct SFontX
+	{
+		bool		isValid;
+		Font		xfont;
+	}
+	
+	struct SHdcX
+	{
+		bool		isValid;
+		HDC			hdc;
+		
+		// Current settings for the device context
+		SFontX*		font;
+		bool		isOpaque;
+		SBgra		colorFore;
+		SBgra		colorBack;
+		
+		// Bitmaps take on the size of the thing they belong to, so they may be constantly resized
+		SBitmap*	bmp;
+	};
 
 	struct SDesktopX
 	{
@@ -174,6 +198,7 @@
 //////
 	SBuilder*		gsWindows								= NULL;
 	SBuilder*		gsClasses								= NULL;
+	SBuilder*		gsHdcs									= NULL;
 	
 	// "Desktop" window related
 	SHwndX*			gsDesktopWindow							= iHwndX_declareDesktopHwnd();
@@ -191,7 +216,8 @@
 	SHwndX*			iHwndX_declareDesktopHwnd				(void);
 	DWORD			iHwndX_getTime							(void);
 	SHwndX*			iHwndX_findWindow_byHwnd				(HWND hWnd);
-	SClassX*		iHwnd_findClass_byName					(s8* lpClassName);
+	SHdcX*			iHwndX_findHdc_byHdc					(HDC hdc);
+	SClassX*		iHwndX_findClass_byName					(s8* lpClassName);
 	void			iHwndX_createWindow						(SHwndX* win);
 	SXWindow*		iHwndX_createXWindow					(SHwndX* win);
 	s32				iHwndX_initializeXWindow				(SXWindow* win, s32 width, s32 height, s8* title);

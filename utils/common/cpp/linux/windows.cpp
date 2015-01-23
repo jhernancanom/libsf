@@ -87,7 +87,7 @@
 		
 		
 		// Make sure our environment is sane
-		if (lpClassName && nWidth > 0 && nHeight > 0 && (cls == iHwnd_findClass_byName(lpClassName)))
+		if (lpClassName && nWidth > 0 && nHeight > 0 && (cls == iHwndX_findClass_byName(lpClassName)))
 		{
 			// Allocate a new window
 			win = (SHwndX*)iBuilder_appendData(gsWindows, NULL, sizeof(SHwndX));
@@ -459,7 +459,7 @@
 		if (lpszClass && lpwcx && gsClasses)
 		{
 			// Iterate through all of the defined classes and report
-			cls = iHwnd_findClass_byName(lpszClass);
+			cls = iHwndX_findClass_byName(lpszClass);
 			if (cls)
 			{
 				// Indicate success
@@ -962,6 +962,31 @@ WINUSERAPI BOOL WINAPI DestroyWindow(__in HWND hWnd)
 
 WINUSERAPI BOOL WINAPI ShowWindow(__in HWND hWnd, __in int nCmdShow)
 {
+	SHwndX* win;
+	
+	
+	// Try to find the window
+	win = iHwndX_findWindow_byHwnd(hWnd);
+	if (win)
+	{
+		switch (nCmdShow)
+		{
+			case SW_HIDE:
+//				XMapWindow(win->x11->display, win->x11->window);
+				return(TRUE);
+			
+			case SW_SHOW:
+//				XMapWindow(win->x11->display, win->x11->window);
+				return(TRUE);
+			
+			default:
+				// We don't support any other values
+				// Let it fall through and fail
+				break;
+		}
+	}
+	
+	// If we get here, failure
 	return(FALSE);
 }
 
@@ -970,6 +995,8 @@ WINUSERAPI BOOL WINAPI ShowWindow(__in HWND hWnd, __in int nCmdShow)
 
 WINBASEAPI VOID WINAPI Sleep(__in DWORD dwMilliseconds)
 {
+	// Call the microsecond sleep function
+	usleep(dwMilliseconds * 1000);
 }
 
 
@@ -1314,7 +1341,32 @@ WINGDIAPI COLORREF WINAPI SetBkColor(__in HDC hdc, __in COLORREF color)
 
 WINUSERAPI HDC WINAPI GetDC(__in_opt HWND hWnd)
 {
-	return(0);
+	SHwndX*		win;
+	union {
+		HDC		_lhdc;
+		SHdcX*	lhdc;
+	};
+	
+	
+	//////////
+	// Try to find it by hWnd
+	//////
+		win = iHwndX_findWindow_byHwnd(hWnd);
+		if (win)
+		{
+			// Grab the DC for this window
+			lhdc = win->hdc;
+		
+		} else {
+			// Not found
+			_lhdc = -1;
+		}
+	
+	
+	//////////
+	// Indicate our status
+	//////
+		return(_lhdc);
 }
 
 
@@ -1322,7 +1374,29 @@ WINUSERAPI HDC WINAPI GetDC(__in_opt HWND hWnd)
 
 WINGDIAPI HDC WINAPI CreateCompatibleDC( __in_opt HDC hdc)
 {
-	return(0);
+	SHdcX*	lhdcRef;
+	SHdcX*	lhdcNew;
+	
+	
+	// Try to find it by hdc
+	lhdcRef = iHwndX_findHdc_byHdc(hdc);
+	if (lhdcRef && lhdcRef->isValid)
+	{
+		// Create a new entry, and copy everything
+		lhdcNew = (SHdcX*)iBuilder_appendData(gsHdcs, sizeof(SHdcX));
+		if (lhdcNew)
+		{
+			// Populate with the content from the other one
+			memcpy(lhdcNew, lhdcRef, sizeof(*lhdcNew));
+			
+			// Create copies of the non-copyable things
+			lhdcNew->bmp = iBmp_allocate();
+			iBmp_createBySize(lhdcNew->bmp, lhdcRef->bmp.bi.biWidth, lhdcRef->bmp.bi.biHeight, lhdcRef->bmp.bi.biBitCount);
+		}
+	}
+	
+	// If we get here, failure
+	return(-1);
 }
 
 

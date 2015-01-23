@@ -151,8 +151,12 @@
 		//////
 			if (!gsWindows)
 				iBuilder_createAndInitialize(&gsWindows, -1);
-		
-		
+			if (!gsClasses)
+				iBuilder_createAndInitialize(&gsClasses, -1);
+			if (!gsHdcs)
+				iBuilder_createAndInitialize(&gsHdcs, -1);
+
+
 		//////////
 		// Connect to X11
 		//////
@@ -162,7 +166,7 @@
 			gsDesktop.connection	= ConnectionNumber(gsDesktop.display);
 			gsDesktop.rootwindow	= RootWindow(gsDesktop.display, gsDesktop.screen);
 
-		
+
 		//////////
 		// Register our logical desktop class
 		//////
@@ -173,22 +177,36 @@
 			wcx.lpszClassName	= cgcDesktop;
 			wcx.lpszMenuName	= cgcDesktop;
 			RegisterClassEx(&wcx);
-		
-		
+
+
 		//////////
 		// Create our logical desktop window
 		//////
 			lnWidth			= XDisplayWidth(gsDesktop.display, gsDesktop.screen);
-			lnHeight		= XDisplayHeight(gsDesktop.display, gsDesktop.screen);
+			lnHeight		= XDisplayHeight(gsDesktop.display, gsDesk		top.screen);
 			ghWndDesktop	= CreateWindowEx(	0, cgcDesktop, cgcDesktop, WS_POPUP,
 												0, 0, lnWidth, lnHeight,
 												null0, null0, null0, null0);
-		
-		
+
+
+		//////////
+		// Create our default device context
+		//////
+			win = iHwndX_findWindow_byHwnd(ghWndDesktop);
+			if (win)
+			{
+				// Create the actual hdc
+				win->hdc = iHwndX_createHdc(lnWidth, lnHeight);
+				
+				// Populate with default items
+				//XQueryFont(gsDesktop.display, "*");
+			}
+
+
 		//////////
 		// Return the logical desktop pointer
 		//////
-			return(iHwndX_findWindow_byHwnd(ghWndDesktop));
+			return(win);
 	}
 
 
@@ -258,10 +276,40 @@
 
 //////////
 //
+// Find the indicated device context based on its hdc
+//
+//////
+	SHdcX* iHwndX_findHdc_byHdc(HDC hdc)
+	{
+		u32		lnI;
+		SHdcX*	lhdc;
+		
+		
+		// Make sure our environment is sane
+		if (gsHdcs)
+		{
+			// Iterate through each window until we find the correct one
+			for (lnI = 0, lhdc = (SHwndX*)gsHdcs->buffer; lnI < gsHdcs->populatedLength; lnI += sizeof(SHdcX), lhdc++)
+			{
+				// Is this our window?
+				if (lhdc->isValid && lhdc->hdc == hdc)
+					return(lhdc);
+			}
+			// If we get here, not found
+		}
+		// If we get here, failure
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
 // Find the indicated class based on its name
 //
 //////
-	SClassX* iHwnd_findClass_byName(s8* lpClassName)
+	SClassX* iHwndX_findClass_byName(s8* lpClassName)
 	{
 		u32			lnI, lnLength;
 		SClassX*	cls;
