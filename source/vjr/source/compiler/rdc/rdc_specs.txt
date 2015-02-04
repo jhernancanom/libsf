@@ -204,6 +204,22 @@ RDC Specifications Document
 	flowof		-- Defines a function to be a flow of another function
 	super		-- Executes commands from the parent's point of view (as in "super return;")
 
+
+1.1 - New Operators
+-----------------------
+
+	Reverse operators are addd for source code convenience, as well as ad hoc
+	code execution in a command window.  Rather than reversing the typewritten
+	quantity, the > < surround operators allow it to be reversed programmatically.
+	
+		>-<		-- Reverse minus, such as b - a; equals a >-< b;
+		>+<		-- Reverse plus, such as b + a; equals a >+< b;
+		>*<		-- Reverse multiply, such as b * a; equals a >*< b;
+		>/<		-- Reverse divide, such as b / a; equals a >/< b;
+		
+		Note:  Some of these are useful only in floating point numbers.
+
+
 2.0 - Program Engagement
 ------------------------
 
