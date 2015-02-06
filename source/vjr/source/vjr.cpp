@@ -277,6 +277,12 @@
 
 
 		//////////
+		// Bitmap array
+		//////
+			iVjr_init_loadBitmapArray();
+
+
+		//////////
 		// The radio image has a 44x44 dot in the upper-left.
 		//////
 			bmpRadio	= iBmp_rawLoad(cgc_radioBmp);											// Load the raw bmpRadio

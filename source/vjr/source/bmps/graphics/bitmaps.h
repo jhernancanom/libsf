@@ -111,8 +111,6 @@
 	#include "h\stoplight_green.h"
 	#include "h\stoplight_blue.h"
 
-	#include "h\cask_icons.h"
-
 	#include "h\breakpoint_always.h"
 	#include "h\breakpoint_always_countdown.h"
 	#include "h\breakpoint_conditional_true.h"
@@ -141,6 +139,9 @@
 	#include "h\grace\node_port_ball_purple.h"
 	#include "h\grace\node_port_ball_red.h"
 	#include "h\grace\node_port_ball_yellow.h"
+
+	#include "h\cask_icons.h"
+	#include "h\array_bmp.h"
 
 #elif defined(__linux__)
 	#include "h/app_icon.h"
@@ -182,8 +183,6 @@
 	#include "h/stoplight_green.h"
 	#include "h/stoplight_blue.h"
 
-	#include "h/cask_icons.h"
-
 	#include "h/breakpoint_always.h"
 	#include "h/breakpoint_always_countdown.h"
 	#include "h/breakpoint_conditional_true.h"
@@ -212,6 +211,9 @@
 	#include "h/grace/node_port_ball_purple.h"
 	#include "h/grace/node_port_ball_red.h"
 	#include "h/grace/node_port_ball_yellow.h"
+
+	#include "h/cask_icons.h"
+	#include "h/array_bmp.h"
 
 #else
 	#error Unknown target for compilation (must be Windows or Linux)

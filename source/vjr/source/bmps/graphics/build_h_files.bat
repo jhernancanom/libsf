@@ -40,8 +40,6 @@
 \libsf\vvm\bin\f2h raw\stoplight_green.bmp /ie=_BMP_LOCALITY stoplightGreenBmp h\stoplight_green.h
 \libsf\vvm\bin\f2h raw\stoplight_blue.bmp /ie=_BMP_LOCALITY stoplightBlueBmp h\stoplight_blue.h
 
-\libsf\vvm\bin\f2h raw_tiled\cask_icons.bmp /ie=_BMP_LOCALITY caskIconsBmp h\cask_icons.h
-
 \libsf\vvm\bin\f2h raw\breakpoint_always.bmp /ie=_BMP_LOCALITY breakpointAlways h\breakpoint_always.h
 \libsf\vvm\bin\f2h raw\breakpoint_always_countdown.bmp /ie=_BMP_LOCALITY breakpointAlwaysCountdown h\breakpoint_always_countdown.h
 \libsf\vvm\bin\f2h raw\breakpoint_conditional_true.bmp /ie=_BMP_LOCALITY breakpointConditionalTrue h\breakpoint_conditional_true.h
@@ -70,3 +68,6 @@
 \libsf\vvm\bin\f2h raw\grace\node_port_ball_purple.bmp /ie=_BMP_LOCALITY nodePortBallPurpleBmp h\grace\node_port_ball_purple.h
 \libsf\vvm\bin\f2h raw\grace\node_port_ball_red.bmp /ie=_BMP_LOCALITY nodePortBallRedBmp h\grace\node_port_ball_red.h
 \libsf\vvm\bin\f2h raw\grace\node_port_ball_yellow.bmp /ie=_BMP_LOCALITY nodePortBallYellowBmp h\grace\node_port_ball_yellow.h
+
+\libsf\vvm\bin\f2h raw_tiled\cask_icons.bmp /ie=_BMP_LOCALITY caskIconsBmp h\cask_icons.h
+\libsf\vvm\bin\f2h raw_tiled\array_bmp.bmp /ie=_BMP_LOCALITY arrayBmp h\array_bmp.h

@@ -3830,6 +3830,41 @@
 
 //////////
 //
+// Loads an array strip of icons into an SBitmap array for access through constants.
+//
+//////
+	void iVjr_init_loadBitmapArray(void)
+	{
+		s32 lnIndex, lnY, lnX;
+
+
+		//////////
+		// Load the raw array content in strip form
+		//////
+			bmpArrayTiled = iBmp_rawLoad(cgc_arrayBmp);
+
+
+		//////////
+		// Iterate throughout extracting the icons into the actual bmps into the array
+		// Each element of the array is 38x38, but the bitmap content is centered within, 36x36
+		//////
+			// Iterate vertically
+			for (lnY = 2, lnIndex = 0; lnY < bmpArrayTiled->bi.biHeight && lnIndex < _BMP__ARRAY_MAX; lnY += 38)
+			{
+				// Iterate horizontally
+				for (lnX = 2; lnX < bmpArrayTiled->bi.biWidth && lnIndex < _BMP__ARRAY_MAX; lnX += 38, lnIndex++)
+				{
+					// Extract this element of the tiled strip into the sequential array
+					bmpArray[lnIndex] = iBmp_createAndExtractRect(bmpArrayTiled, lnX, lnY, lnX + 36, lnY + 36);
+				}
+			}
+	}
+
+
+
+
+//////////
+//
 // Called to build the listing along the right side, which is a subform with
 // an editbox contained within to hold the items.
 //
