@@ -6327,6 +6327,97 @@ debug_break;
 
 //////////
 //
+// Called to return the value of the indicated variable as a bool.
+//
+//////
+	bool iiVariable_getAs_bool(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
+	{
+		s8		buffer[16];
+		union {
+			s8			lnValue_s8;
+			s16			lnValue_s16;
+			u8			lnValue_u8;
+			u16			lnValue_u16;
+			u32			lnValue_u32;
+			s64			lnValue_s64;
+			u64			lnValue_u64;
+			f32			lnValue_f32;
+			f64			lnValue_f64;
+			SDateTime	dt;
+		};
+		bool	llError;
+		u32		lnErrorNum;
+
+
+		// Make sure we have error and errorNum parameters
+		if (!tlError)		tlError		= &llError;
+		if (!tnErrorNum)	tnErrorNum	= &lnErrorNum;
+
+		// Begin
+		*tlError	= false;
+		*tnErrorNum	= 0;
+
+		// Based on the type of variable it is, return the value
+		switch (var->varType)
+		{
+			case _VAR_TYPE_LOGICAL:		return(!(var->value.data[0]			== _LOGICAL_FALSE));
+			case _VAR_TYPE_NUMERIC:		return(!(_atoi64(var->value.data)	== 0));
+			case _VAR_TYPE_S32:			return(!(*(u32*)var->value.data		== 0));
+			case _VAR_TYPE_U32:			return(!(*(u32*)var->value.data		== 0));
+			case _VAR_TYPE_U64:			return(!(*(u64*)var->value.data		== 0));
+			case _VAR_TYPE_CURRENCY:	// Currency is an s64 * 10000, but we are still testing for 0 or not-zero, falls through to s64
+			case _VAR_TYPE_S64:			return(!(*(s64*)var->value.data		== 0));
+			case _VAR_TYPE_S16:			return(!(*(s16*)var->value.data		== 0));
+			case _VAR_TYPE_S8:			return(!(*(s8*)var->value.data		== 0));
+			case _VAR_TYPE_U16:			return(!(*(u16*)var->value.data		== 0));
+			case _VAR_TYPE_U8:			return(!(*(u8*)var->value.data		== 0));
+			case _VAR_TYPE_F32:			return(!(*(f32*)var->value.data		== 0.0f));
+			case _VAR_TYPE_F64:			return(!(*(f64*)var->value.data		== 0.0));
+			case _VAR_TYPE_CURRENCY:	(*(s64*)var->value.data / 10000);
+
+			case _VAR_TYPE_BI:			// TODO:  BI needs coded
+				break;
+
+			case _VAR_TYPE_BFP:			// TODO:  BFP needs coded
+				break;
+
+			case _VAR_TYPE_CHARACTER:
+				// We can convert it to bool if auto-convert is on, or if it has been force converted
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
+				{
+					// Result of forced auto-conversion is based on length
+					if (var->value.length != 1)
+					{
+						// For lengths other than 1 byte we simply test if there is any data or not
+						return(!(var->value.length == 0));
+
+					} else {
+						// It is one byte long, so we will test for Y,N,T,F
+						switch (iObjProp_get_s32_direct(_settings, _INDEX_SET_LOGICAL))
+						{
+							case _LOGICAL_TF:		return(iiLowerCase(var->value.data_u8[0] == 't'));
+							case _LOGICAL_YN:		return(iiLowerCase(var->value.data_u8[0] == 'y'));
+							case _LOGICAL_UD:		return(iiLowerCase(var->value.data_u8[0] == 'u'));
+							default:
+								// Internal system error
+								break;
+						}
+					}
+				}
+				// If we get here, we are not supposed to auto-convert
+		}
+
+		// If we get here, we could not convert it
+		*tlError	= true;
+		*tnErrorNum	= _ERROR_PARAMETER_IS_INCORRECT;
+		return(0);
+	}
+
+
+
+
+//////////
+//
 // Called to return the value of the indicated variable as an s32 (signed 32-bit integer).
 //
 // Uses:
@@ -6348,30 +6439,20 @@ debug_break;
 			f64			lnValue_f64;
 			SDateTime	dt;
 		};
+		bool	llError;
+		u32		lnErrorNum;
 
 
+		// Make sure we have error and errorNum parameters
+		if (!tlError)		tlError		= &llError;
+		if (!tnErrorNum)	tnErrorNum	= &lnErrorNum;
+
+		// Begin
 		*tlError	= false;
 		*tnErrorNum	= 0;
 		// Based on the type of variable it is, return the value
 		switch (var->varType)
 		{
-			case _VAR_TYPE_NUMERIC:
-				//////////
-				// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
-				//////
-					lnValue_s64 = _atoi64(var->value.data);
-					if (lnValue_s64 > (s64)_s32_min && lnValue_s64 < (s64)_s32_max)
-						return((s32)lnValue_s64);
-
-
-				//////////
-				// If we get here, it's not in range
-				//////
-					*tlError	= true;
-					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
-					return(0);
-
-
 			case _VAR_TYPE_S32:
 				//////////
 				// We can directly return the value
@@ -6386,6 +6467,23 @@ debug_break;
 					lnValue_u32 = *(u32*)var->value.data;
 					if (lnValue_u32 <= (u32)_s32_max)
 						return((s32)lnValue_u32);
+
+
+				//////////
+				// If we get here, it's not in range
+				//////
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+
+
+			case _VAR_TYPE_NUMERIC:
+				//////////
+				// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
+				//////
+					lnValue_s64 = _atoi64(var->value.data);
+					if (lnValue_s64 > (s64)_s32_min && lnValue_s64 < (s64)_s32_max)
+						return((s32)lnValue_s64);
 
 
 				//////////
@@ -6501,7 +6599,7 @@ debug_break;
 				break;
 
 			case _VAR_TYPE_CHARACTER:
-				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				// We can convert it to s32 if auto-convert is on, or if it has been force converted
 				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
@@ -6539,7 +6637,7 @@ debug_break;
 
 			case _VAR_TYPE_LOGICAL:
 				//////////
-				// Convert this from its logiacl form into numeric
+				// Convert this from its logical form into numeric
 				//////
 					if (var->value.data[0] == _LOGICAL_FALSE)	return(_LOGICAL_FALSE);
 					else										return(_LOGICAL_TRUE);
@@ -6547,7 +6645,7 @@ debug_break;
 
 
 			case _VAR_TYPE_DATETIME:
-				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				// We can convert it to s32 if auto-convert is on, or if it has been force converted
 				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
@@ -6568,7 +6666,7 @@ debug_break;
 				break;
 
 			case _VAR_TYPE_CURRENCY:
-				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				// We can convert it to s32 if auto-convert is on, or if it has been force converted
 				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
@@ -6621,33 +6719,29 @@ debug_break;
 			f64			lnValue_f64;
 			SDateTime	dt;
 		};
+		bool	llError;
+		u32		lnErrorNum;
 
 
+		// Make sure we have error and errorNum parameters
+		if (!tlError)		tlError		= &llError;
+		if (!tnErrorNum)	tnErrorNum	= &lnErrorNum;
+
+		// Begin
 		*tlError	= false;
 		*tnErrorNum	= 0;
 		// Based on the type of variable it is, return the value
 		switch (var->varType)
 		{
-			case _VAR_TYPE_NUMERIC:
-				//////////
-				// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
-				//////
-					return(_atoi64(var->value.data));
-
-
-			case _VAR_TYPE_S32:
-				//////////
-				// We can directly return the value
-				//////
-					return((s64)*(u32*)var->value.data);
-
-
-			case _VAR_TYPE_U32:
-				//////////
-				// We can return the value after verifying it is not out of range for a 32-bit signed integer
-				//////
-					return((s64)*(u32*)var->value.data);
-
+			case _VAR_TYPE_NUMERIC:			return(_atoi64(var->value.data));
+			case _VAR_TYPE_S32:				return((s64)*(u32*)var->value.data);
+			case _VAR_TYPE_U32:				return((s64)*(u32*)var->value.data);
+			case _VAR_TYPE_S64:				return(*(s64*)var->value.data);
+			case _VAR_TYPE_S16:				return((s64)*(s16*)var->value.data);
+			case _VAR_TYPE_S8:				return((s64)*(s8*)var->value.data);
+			case _VAR_TYPE_U16:				return((s64)*(u16*)var->value.data);
+			case _VAR_TYPE_U8:				return((s64)*(u8*)var->value.data);
+			case _VAR_TYPE_CURRENCY:		return((*(s64*)var->value.data / 10000));
 
 			case _VAR_TYPE_U64:
 				//////////
@@ -6664,41 +6758,6 @@ debug_break;
 					*tlError	= true;
 					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
 					return(0);
-
-
-			case _VAR_TYPE_S64:
-				//////////
-				// We can return the value after verifying it is not out of range for a 32-bit signed integer
-				//////
-					return(*(s64*)var->value.data);
-
-
-			case _VAR_TYPE_S16:
-				//////////
-				// We can directly return the value after upsizing to 32-bits
-				//////
-					return((s64)*(s16*)var->value.data);
-
-
-			case _VAR_TYPE_S8:
-				//////////
-				// We can directly return the value after upsizing to 32-bits
-				//////
-					return((s64)*(s8*)var->value.data);
-
-
-			case _VAR_TYPE_U16:
-				//////////
-				// We can directly return the value after upsizing to 32-bits
-				//////
-					return((s64)*(u16*)var->value.data);
-
-
-			case _VAR_TYPE_U8:
-				//////////
-				// We can directly return the value after upsizing to 32-bits
-				//////
-					return((s64)*(u8*)var->value.data);
 
 
 			case _VAR_TYPE_F32:
@@ -6744,7 +6803,7 @@ debug_break;
 				break;
 
 			case _VAR_TYPE_CHARACTER:
-				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				// We can convert it to s32 if auto-convert is on, or if it has been force converted
 				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
@@ -6770,7 +6829,7 @@ debug_break;
 
 
 			case _VAR_TYPE_LOGICAL:
-				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				// We can convert it to s32 if auto-convert is on, or if it has been force converted
 				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
@@ -6783,24 +6842,13 @@ debug_break;
 
 
 			case _VAR_TYPE_DATETIME:
-				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				// We can convert it to s32 if auto-convert is on, or if it has been force converted
 				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
 					//////
 						return(iiVariable_computeDatetimeDifference(var, _datetime_Jan_01_2000));
-				}
-				break;
-
-			case _VAR_TYPE_CURRENCY:
-				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
-				{
-					//////////
-					// We can return the value after verifying it is not out of range for a 32-bit signed integer
-					//////
-						return((*(s64*)var->value.data / 10000));
 				}
 				break;
 		}
@@ -6837,90 +6885,31 @@ debug_break;
 			f64			lnValue_f64;
 			SDateTime	dt;
 		};
+		bool	llError;
+		u32		lnErrorNum;
 
 
+		// Make sure we have error and errorNum parameters
+		if (!tlError)		tlError		= &llError;
+		if (!tnErrorNum)	tnErrorNum	= &lnErrorNum;
+
+		// Begin
 		*tlError	= false;
 		*tnErrorNum	= 0;
 		// Based on the type of variable it is, return the value
 		switch (var->varType)
 		{
-			case _VAR_TYPE_NUMERIC:
-				//////////
-				// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
-				//////
-					return((f32)_atoi64(var->value.data));
-
-
-			case _VAR_TYPE_S32:
-				//////////
-				// We can directly return the value
-				//////
-					return((f32)*var->value.data_s32);
-
-
-			case _VAR_TYPE_U32:
-				//////////
-				// We can return the value after verifying it is not out of range for a 32-bit signed integer
-				//////
-					return((f32)*var->value.data_u32);
-
-
-			case _VAR_TYPE_U64:
-				//////////
-				// We can return the value after verifying it is not out of range for a 32-bit signed integer
-				//////
-					if (*var->value.data_u64 <= _s64_max)
-						return((f32)*var->value.data_s64);
-					
-				//////////
-				// If we get here, it's not in range
-				//////
-					*tlError	= true;
-					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
-					return(0);
-
-
-			case _VAR_TYPE_S64:
-				//////////
-				// We can return the value after verifying it is not out of range for a 32-bit signed integer
-				//////
-					return((f32)*var->value.data_s64);
-
-
-			case _VAR_TYPE_S16:
-				//////////
-				// We can directly return the value after upsizing to 32-bits
-				//////
-					return((f32)*var->value.data_s16);
-
-
-			case _VAR_TYPE_S8:
-				//////////
-				// We can directly return the value after upsizing to 32-bits
-				//////
-					return((f32)*var->value.data_s8);
-
-
-			case _VAR_TYPE_U16:
-				//////////
-				// We can directly return the value after upsizing to 32-bits
-				//////
-					return((f32)*var->value.data_u16);
-
-
-			case _VAR_TYPE_U8:
-				//////////
-				// We can directly return the value after upsizing to 32-bits
-				//////
-					return((f32)*var->value.data_u8);
-
-
-			case _VAR_TYPE_F32:
-				//////////
-				// We can return the value after verifying it is not out of range for a 32-bit signed integer
-				//////
-					return(*var->value.data_f32);
-
+			case _VAR_TYPE_NUMERIC:			return((f32)_atoi64(var->value.data));
+			case _VAR_TYPE_S32:				return((f32)*var->value.data_s32);
+			case _VAR_TYPE_U32:				return((f32)*var->value.data_u32);
+			case _VAR_TYPE_U64:				return((f32)*var->value.data_s64);
+			case _VAR_TYPE_S64:				return((f32)*var->value.data_s64);
+			case _VAR_TYPE_S16:				return((f32)*var->value.data_s16);
+			case _VAR_TYPE_S8:				return((f32)*var->value.data_s8);
+			case _VAR_TYPE_U16:				return((f32)*var->value.data_u16);
+			case _VAR_TYPE_U8:				return((f32)*var->value.data_u8);
+			case _VAR_TYPE_F32:				return(*var->value.data_f32);
+			case _VAR_TYPE_CURRENCY:		return((f32)(*(s64*)var->value.data / 10000));
 
 			case _VAR_TYPE_F64:
 				//////////
@@ -6948,7 +6937,7 @@ debug_break;
 				break;
 
 			case _VAR_TYPE_CHARACTER:
-				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				// We can convert it to s32 if auto-convert is on, or if it has been force converted
 				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
@@ -6974,7 +6963,7 @@ debug_break;
 
 
 			case _VAR_TYPE_LOGICAL:
-				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				// We can convert it to s32 if auto-convert is on, or if it has been force converted
 				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
@@ -6987,24 +6976,13 @@ debug_break;
 
 
 			case _VAR_TYPE_DATETIME:
-				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				// We can convert it to s32 if auto-convert is on, or if it has been force converted
 				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
 					//////
 						return((f32)iiVariable_computeDatetimeDifference(var, _datetime_Jan_01_2000));
-				}
-				break;
-
-			case _VAR_TYPE_CURRENCY:
-				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
-				{
-					//////////
-					// We can return the value after verifying it is not out of range for a 32-bit signed integer
-					//////
-						return((f32)(*(s64*)var->value.data / 10000));
 				}
 				break;
 		}
@@ -7041,98 +7019,32 @@ debug_break;
 			f64			lnValue_f64;
 			SDateTime	dt;
 		};
+		bool	llError;
+		u32		lnErrorNum;
 
 
+		// Make sure we have error and errorNum parameters
+		if (!tlError)		tlError		= &llError;
+		if (!tnErrorNum)	tnErrorNum	= &lnErrorNum;
+
+		// Begin
 		*tlError	= false;
 		*tnErrorNum	= 0;
 		// Based on the type of variable it is, return the value
 		switch (var->varType)
 		{
-			case _VAR_TYPE_NUMERIC:
-				//////////
-				// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
-				//////
-					return((f64)_atoi64(var->value.data));
-
-
-			case _VAR_TYPE_S32:
-				//////////
-				// We can directly return the value
-				//////
-					return((f64)*var->value.data_s32);
-
-
-			case _VAR_TYPE_U32:
-				//////////
-				// We can return the value after verifying it is not out of range for a 32-bit signed integer
-				//////
-					return((f64)*var->value.data_u32);
-
-
-			case _VAR_TYPE_U64:
-				//////////
-				// We can return the value after verifying it is not out of range for a 32-bit signed integer
-				//////
-					if (*var->value.data_u64 < _s64_max)
-						return((f64)*var->value.data_s64);
-
-
-				//////////
-				// If we get here, we could not convert it
-				//////
-					*tlError	= true;
-					*tnErrorNum	= _ERROR_NOT_NUMERIC;
-					return(0);
-
-
-			case _VAR_TYPE_S64:
-				//////////
-				// We can return the value after verifying it is not out of range for a 32-bit signed integer
-				//////
-					return((f64)*var->value.data_s64);
-
-
-			case _VAR_TYPE_S16:
-				//////////
-				// We can directly return the value after upsizing to 32-bits
-				//////
-					return((f64)*var->value.data_s16);
-
-
-			case _VAR_TYPE_S8:
-				//////////
-				// We can directly return the value after upsizing to 32-bits
-				//////
-					return((f64)*var->value.data_s8);
-
-
-			case _VAR_TYPE_U16:
-				//////////
-				// We can directly return the value after upsizing to 32-bits
-				//////
-					return((f64)*var->value.data_u16);
-
-
-			case _VAR_TYPE_U8:
-				//////////
-				// We can directly return the value after upsizing to 32-bits
-				//////
-					return((f64)*var->value.data_u8);
-
-
-			case _VAR_TYPE_F32:
-				//////////
-				// We can return the value after verifying it is not out of range for a 32-bit signed integer
-				//////
-					return((f64)*var->value.data_f32);
-
-
-			case _VAR_TYPE_F64:
-				//////////
-				// We can return the value after verifying it is not out of range for a 32-bit signed integer
-				//////
-					return(*var->value.data_f64);
-
+			case _VAR_TYPE_NUMERIC:			return((f64)_atoi64(var->value.data));
+			case _VAR_TYPE_S32:				return((f64)*var->value.data_s32);
+			case _VAR_TYPE_U32:				return((f64)*var->value.data_u32);
+			case _VAR_TYPE_S64:				return((f64)*var->value.data_s64);
+			case _VAR_TYPE_S16:				return((f64)*var->value.data_s16);
+			case _VAR_TYPE_S8:				return((f64)*var->value.data_s8);
+			case _VAR_TYPE_U16:				return((f64)*var->value.data_u16);
+			case _VAR_TYPE_U8:				return((f64)*var->value.data_u8);
+			case _VAR_TYPE_F32:				return((f64)*var->value.data_f32);
+			case _VAR_TYPE_F64:				return(*var->value.data_f64);
+			case _VAR_TYPE_U64:				return((f64)*var->value.data_s64);
+			case _VAR_TYPE_CURRENCY:		return((f64)(*(s64*)var->value.data / 10000));
 
 			case _VAR_TYPE_BI:
 // TODO:  BI needs coded
@@ -7143,7 +7055,7 @@ debug_break;
 				break;
 
 			case _VAR_TYPE_CHARACTER:
-				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				// We can convert it to s32 if auto-convert is on, or if it has been force converted
 				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
@@ -7169,7 +7081,7 @@ debug_break;
 
 
 			case _VAR_TYPE_LOGICAL:
-				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				// We can convert it to s32 if auto-convert is on, or if it has been force converted
 				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
@@ -7182,24 +7094,13 @@ debug_break;
 
 
 			case _VAR_TYPE_DATETIME:
-				// We can convert it to s32 if autoconvert is on, or if it has been force converted
+				// We can convert it to s32 if auto-convert is on, or if it has been force converted
 				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
 					//////
 						return((f64)iiVariable_computeDatetimeDifference(var, _datetime_Jan_01_2000));
-				}
-				break;
-
-			case _VAR_TYPE_CURRENCY:
-				// We can convert it to s32 if autoconvert is on, or if it has been force converted
-				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
-				{
-					//////////
-					// We can return the value after verifying it is not out of range for a 32-bit signed integer
-					//////
-						return((f64)(*(s64*)var->value.data / 10000));
 				}
 				break;
 		}
@@ -7216,6 +7117,7 @@ debug_break;
 //////////
 //
 // Called to get the value stored in the component as an s64.
+//
 // Note:  We simply process the component's content here.  No type checking.
 // Note:  We expect that the component has been identified appropriately as a numeric type, and that
 //        there is some character after which will cease its conversion, and thereby make it convert

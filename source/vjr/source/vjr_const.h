@@ -389,6 +389,18 @@ typedef SEM**		SEMpp;
 	const u32			_ALIGNMENT_LEFT						= 0;
 	const u32			_ALIGNMENT_RIGHT					= 1;
 	const u32			_ALIGNMENT_CENTER					= 2;
+	const u32			_ALIGNMENT_MIDDLE_LEFT				= 0;
+	const u32			_ALIGNMENT_MIDDLE_RIGHT				= 1;
+	const u32			_ALIGNMENT_MIDDLE_CENTER			= 2;
+	const u32			_ALIGNMENT_TOP_LEFT					= 3;
+	const u32			_ALIGNMENT_TOP_RIGHT				= 4;
+	const u32			_ALIGNMENT_TOP_CENTER				= 5;
+	const u32			_ALIGNMENT_BOTTOM_LEFT				= 7;
+	const u32			_ALIGNMENT_BOTTOM_RIGHT				= 8;
+	const u32			_ALIGNMENT_BOTTOM_CENTER			= 9;
+	// For rider objects (how they behave inside of carousels)
+	const u32			_ALIGNMENT_FIXED					= 100;
+	const u32			_ALIGNMENT_SPINS					= 101;
 
 
 //////////
@@ -439,6 +451,20 @@ typedef SEM**		SEMpp;
 	const u32			_WINDOW_TYPE_MODAL					= 1;						// The focus is limited to one form
 	const u32			_WINDOW_TYPE_READ					= 2;						// The input is a READ window
 	const u32			_WINDOW_TYPE_READ_MODAL				= 3;						// The input is a READ MODAL window
+
+
+//////////
+// Carousel types
+//////
+	const u32			_CAROUSEL_WINDOW_TYPE_RIDER			= 1;						// Only rider objects are allowed
+	const u32			_CAROUSEL_WINDOW_TYPE_TOOLBAR		= 2;						// Only toolbar objects are allowed
+
+
+//////////
+// Rider types
+//////
+	const u32			_RIDER_WINDOW_TYPE_FIXED			= 1;						// Can only be fully displayed
+	const u32			_RIDER_WINDOW_TYPE_SPINS			= 2;						// Allows spinning
 
 
 //////////
@@ -557,6 +583,7 @@ typedef SEM**		SEMpp;
 	const u32			_STRETCH_CLIP						= 0;
 	const u32			_STRETCH_ISOMETRIC					= 1;
 	const u32			_STRETCH_STRETCH					= 2;
+	const u32			_STRETCH_SCROLL						= 3;
 
 
 //////////

@@ -229,6 +229,7 @@ struct SVariable;
 	void					iVariable_delete							(SVariable* var, bool tlDeleteSelf);
 	void					iVariable_politelyDeleteChain				(SVariable** root, bool tlDeleteSelf);
 	void					iVariable_politelyDeleteChain_callback		(SLLCallback* cb);
+	bool					iiVariable_getAs_bool						(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	s32						iiVariable_getAs_s32						(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	s64						iiVariable_getAs_s64						(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	f32						iiVariable_getAs_f32						(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);

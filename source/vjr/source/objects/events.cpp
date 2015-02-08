@@ -110,6 +110,9 @@ void iEvents_resetToDefault(SEvents* ev)
 			*(uptr*)&g->onDeselect				= (uptr)&iDefaultCallback_onDeselect;
 			*(uptr*)&g->onInteractiveChange		= (uptr)&iDefaultCallback_onInteractiveChange;
 			*(uptr*)&g->onProgrammaticChange	= (uptr)&iDefaultCallback_onProgrammaticChange;
+			*(uptr*)&g->onSetActiveControl		= (uptr)&iDefaultCallback_onSetActiveControl;
+			*(uptr*)&g->onSpin					= (uptr)&iDefaultCallback_onSpin;
+			*(uptr*)&g->onSpin					= (uptr)&iDefaultCallback_onSpin;
 
 
 		//////////

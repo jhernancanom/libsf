@@ -111,92 +111,105 @@ struct SHover
 struct SEventsGeneral
 {
 	union {
-		uptr	_onLoad;
-		bool	(*onLoad)					(SWindow* win, SObject* obj);							// Called to load anything needed by the init() event (holds a template/skeleton object)
+		uptr	_onLoad;					// Called to load anything needed by the init() event (holds a template/skeleton object)
+		bool	(*onLoad)					(SWindow* win, SObject* obj);
 	};
 	union {
-		uptr	_onInit;
-		bool	(*onInit)					(SWindow* win, SObject* obj);							// Called to initialize anything
+		uptr	_onInit;					// Called to initialize anything
+		bool	(*onInit)					(SWindow* win, SObject* obj);
 	};
 	union {
-		uptr	_onCreated;
-		bool	(*onCreated)				(SWindow* win, SObject* obj);							// Called after initialization, before the object is sized
+		uptr	_onCreated;					// Called after initialization, before the object is sized
+		bool	(*onCreated)				(SWindow* win, SObject* obj);
 	};
 	union {
-		uptr	_onResize;
-		bool	(*onResize)					(SWindow* win, SObject* obj, u32* widthRequired_out, u32* heightRequired_out);	// Called to size or resize the object
+		uptr	_onResize;					// Called to size or resize the object
+		bool	(*onResize)					(SWindow* win, SObject* obj, SVariable* widthRequired_out, SVariable* heightRequired_out);
 	};
 	union {
-		uptr	_onMoved;
-		bool	(*onMoved)					(SWindow* win, SObject* obj, u32* xOverride_out, u32* yOverride_out);			// Called when the object has been moved
+		uptr	_onMoved;					// Called when the object has been moved
+		bool	(*onMoved)					(SWindow* win, SObject* obj, SVariable* xOverride_out, SVariable* yOverride_out);
 	};
 	union {
-		uptr	_onRender;
-		bool	(*onRender)					(SWindow* win, SObject* obj);							// Called to render to bmp (returns if anything was drawn)
+		uptr	_onRender;					// Called to render to bmp (returns if anything was drawn)
+		bool	(*onRender)					(SWindow* win, SObject* obj);
 	};
 	union {
-		uptr	_onPublish;
-		bool	(*onPublish)				(SWindow* win, SObject* obj);							// Called to publish the control onto the parent (which will populate bmpScale if need be)
+		uptr	_onPublish;					// Called to publish the control onto the parent (which will populate bmpScale if need be)
+		bool	(*onPublish)				(SWindow* win, SObject* obj);
 	};
 	union {
-		uptr	_onQueryUnload;
-		bool	(*onQueryUnload)			(SWindow* win, SObject* obj);							// Called before onDestroy, determines if the form should actually be destroyed
+		uptr	_onQueryUnload;				// Called before onDestroy, determines if the form should actually be destroyed
+		bool	(*onQueryUnload)			(SWindow* win, SObject* obj);
 	};
 	union {
-		uptr	_onDestroy;
-		bool	(*onDestroy)				(SWindow* win, SObject* obj);							// Called when the object will be destroyed
+		uptr	_onDestroy;					// Called when the object will be destroyed
+		bool	(*onDestroy)				(SWindow* win, SObject* obj);
 	};
 	union {
-		uptr	_onUnload;
-		bool	(*onUnload)					(SWindow* win, SObject* obj);							// Called after the object has been destroyed, to unload anything (holds a template/skeleton object)
+		uptr	_onUnload;					// Called after the object has been destroyed, to unload anything (holds a template/skeleton object)
+		bool	(*onUnload)					(SWindow* win, SObject* obj);
 	};
 	union {
-		uptr	_onGotFocus;
-		bool	(*onGotFocus)				(SWindow* win, SObject* obj);							// Called when the object receives focus (note multiple items can have simultaneous focus)
+		uptr	_onGotFocus;				// Called when the object receives focus (note multiple items can have simultaneous focus)
+		bool	(*onGotFocus)				(SWindow* win, SObject* obj);
 	};
 	union {
-		uptr	_onLostFocus;
-		bool	(*onLostFocus)				(SWindow* win, SObject* obj);							// Called when the object loses focus
+		uptr	_onLostFocus;				// Called when the object loses focus
+		bool	(*onLostFocus)				(SWindow* win, SObject* obj);
 	};
 	union {
-		uptr	_onAddObject;
-		bool	(*onAddObject)				(SWindow* win, SObject* obj);							// Called when an object is added
+		uptr	_onAddObject;				// Called when an object is added
+		bool	(*onAddObject)				(SWindow* win, SObject* obj);
 	};
 	union {
-		uptr	_onAddProperty;
-		bool	(*onAddProperty)			(SWindow* win, SObject* obj);							// Called when a property is added
+		uptr	_onAddProperty;				// Called when a property is added
+		bool	(*onAddProperty)			(SWindow* win, SObject* obj);
 	};
 	union {
-		uptr	_onError;
-		bool	(*onError)					(SWindow* win, SObject* obj);							// Called when an error is triggered in code on an object
+		uptr	_onError;					// Called when an error is triggered in code on an object
+		bool	(*onError)					(SWindow* win, SObject* obj);
 	};
 	union {
-		uptr	_onScrolled;
-		bool	(*onScrolled)				(SWindow* win, SObject* obj);							// Called when an object has been scrolled
+		uptr	_onScrolled;				// Called when an object has been scrolled
+		bool	(*onScrolled)				(SWindow* win, SObject* obj);
 	};
 	union {
-		uptr	_activate;
-		bool	(*activate)					(SWindow* win, SObject* obj);							// Called when activated
+		uptr	_activate;					// Called when activated
+		bool	(*activate)					(SWindow* win, SObject* obj);
 	};
 	union {
-		uptr	_deactivate;
-		bool	(*deactivate)				(SWindow* win, SObject* obj);							// Called when deactivated
+		uptr	_deactivate;				// Called when deactivated
+		bool	(*deactivate)				(SWindow* win, SObject* obj);
 	};
 	union {
-		uptr	_onSelect;
-		bool	(*onSelect)					(SWindow* win, SObject* obj, SObject* oItem);			// When an option is selected
+		uptr	_onSelect;					// When an option is selected
+		bool	(*onSelect)					(SWindow* win, SObject* obj, SObject* oItem);
 	};
 	union {
-		uptr	_onDeselect;
-		bool	(*onDeselect)				(SWindow* win, SObject* obj, SObject* oItem);			// When an option is deselected
+		uptr	_onDeselect;				// When an option is deselected
+		bool	(*onDeselect)				(SWindow* win, SObject* obj, SVariable* objItem);
 	};
 	union {
-		uptr	_onInteractiveChange;
-		bool	(*onInteractiveChange)		(SWindow* win, SObject* obj);							// Called when the data changes
+		uptr	_onInteractiveChange;		// Called when the data changes
+		bool	(*onInteractiveChange)		(SWindow* win, SObject* obj);
 	};
 	union {
-		uptr	_onProgrammaticChange;
-		bool	(*onProgrammaticChange)		(SWindow* win, SObject* obj);							// Called when the data changes
+		uptr	_onProgrammaticChange;		// Called when the data changes
+		bool	(*onProgrammaticChange)		(SWindow* win, SObject* obj);
+	};
+
+
+//////////
+// Added for carousels and riders
+//////
+	union {
+		uptr	_onSetActiveControl;		// Fired programmatically, specifies the object to make active
+		bool	(*onSetActiveControl)		(SWindow* win, SObject* obj, SVariable* objActive);
+	};
+	union {
+		uptr	_onSpin;					// Fired programmatically, specifies the object to make active
+		bool	(*onSpin)					(SWindow* win, SObject* obj, SVariable* tnDelta, SVariable* tnDirection, SVariable* tnType);
 	};
 };
 
