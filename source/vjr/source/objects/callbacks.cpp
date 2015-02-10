@@ -132,33 +132,96 @@
 		return(false);
 	}
 
+	bool iiDefaultCallback_processMouseVariables(	SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick,
+													s32* lnX, s32* lnY, bool* llCtrl, bool* llAlt, bool* llShift, u32* lnClick)
+	{
+		//////////
+		// Validate the variables are appropriate
+		//////
+			if (!iVariable_isValid(varX) || !iVariable_isValid(varY) || !iVariable_isValid(varCtrl) || !iVariable_isValid(varAlt) || !iVariable_isValid(varShift) || !iVariable_isValid(varClick))
+			{
+				// Something is invalid, ignore it
+				return(false);
+			}
+			if (!iVariable_isTypeNumeric(varX) || !iVariable_isTypeNumeric(varY) || !iVariable_isTypeLogical(varCtrl) || !iVariable_isTypeLogical(varAlt) || !iVariable_isTypeLogical(varShift) || !iVariable_isTypeNumeric(varClick))
+			{
+				// Something is not a proper variable, ignore it
+				return(false);
+			}
+			*lnX		= (s16)iiVariable_getAs_s32(varX,	false, NULL, NULL);
+			*lnY		= (u16)iiVariable_getAs_s32(varY,	false, NULL, NULL);
+			*llCtrl		= iiVariable_getAs_bool(varCtrl,	false, NULL, NULL);
+			*llAlt		= iiVariable_getAs_bool(varAlt,		false, NULL, NULL);
+			*llShift	= iiVariable_getAs_bool(varShift,	false, NULL, NULL);
+			*lnClick	= iiVariable_getAs_u32(varClick,	false, NULL, NULL);
+
+
+		//////////
+		// Indicate success
+		//////
+			return(true);
+	}
+
 	bool iDefaultCallback_onMouseClickEx(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick)
 	{
+		s32		lnX, lnY;
+		u32		lnClick;
+		bool	llCtrl, llAlt, llShift;
+
+
+		// Make sure our environment is sane
+		if (!iiDefaultCallback_processMouseVariables(varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
+			return(false);
+
+
 		// Assume we consumed the mouse click, and that the parent doesn't need to receive it
 		return(false);
 	}
 
 	bool iDefaultCallback_onMouseDblClickEx(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick)
 	{
+		s32		lnX, lnY;
+		u32		lnClick;
+		bool	llCtrl, llAlt, llShift;
+
+
+		// Make sure our environment is sane
+		if (!iiDefaultCallback_processMouseVariables(varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
+			return(false);
+
+
 		// Assume we consumed the mouse click, and that the parent doesn't need to receive it
 		return(false);
 	}
 
 	bool iDefaultCallback_onMouseWheel(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick, SVariable* varUnits)
 	{
+		s32		lnX, lnY, lnUnits;
+		u32		lnClick;
+		bool	llCtrl, llAlt, llShift;
+
+
+		// Make sure our environment is sane
+		if (!iiDefaultCallback_processMouseVariables(varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick) || !iVariable_isValid(varUnits) || !iVariable_isTypeNumeric(varUnits))
+			return(false);
+
+		// Grab the units
+		lnUnits = (u16)iiVariable_getAs_s32(varUnits, false, NULL, NULL);
+
+
 		// Assume we consumed the mouse wheel, and that the parent doesn't need to receive it
 		if (obj->objType == _OBJ_TYPE_EDITBOX)
 		{
 			// Ctrl+MouseWheel is a normal navigate
-			if (tlCtrl)
+			if (llCtrl)
 			{
 				// They are just moving the cursor line
-				iSEM_navigate(obj->p.sem, obj, tnUnits * ((tlShift) ? -1 : -3), 0);
+				iSEM_navigate(obj->p.sem, obj, lnUnits * ((llShift) ? -1 : -3), 0);
 
 			// MouseWheel is a scroll
 			} else {
 				// They want to scroll the entire window, including the cursor line
-				iSEM_scroll(obj->p.sem, obj, tnUnits * ((tlShift) ? -1 : -3), 0);
+				iSEM_scroll(obj->p.sem, obj, lnUnits * ((llShift) ? -1 : -3), 0);
 			}
 			iObj_setDirtyRender_ascent(obj, true);
 			iWindow_render(win, false);
@@ -170,17 +233,25 @@
 	{
 		f64			lfPercent, lfX, lfY, lfWidth, lfHeight;
 		SVariable*	valueMin;
+		s32			lnX, lnY;
+		u32			lnClick;
+		bool		llCtrl, llAlt, llShift;
+
+
+		// Make sure our environment is sane
+		if (!iiDefaultCallback_processMouseVariables(varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
+			return(false);
 
 
 		// If we're clicking on a radio button, adjust the dial
-		if (tnClick != 0 && obj->objType == _OBJ_TYPE_RADIO)
+		if (lnClick != 0 && obj->objType == _OBJ_TYPE_RADIO)
 		{
 			// The mouse indicates the position
 			// Determine theta
 			lfWidth		= (f64)(obj->rc.right  - obj->rc.left);
 			lfHeight	= (f64)(obj->rc.bottom - obj->rc.top);
-			lfX			= (f64)x - (lfWidth / 2.0);
-			lfY			= (lfHeight - (f64)y) - (lfHeight / 2.0);
+			lfX			= (f64)lnX - (lfWidth / 2.0);
+			lfY			= (lfHeight - (f64)lnY) - (lfHeight / 2.0);
 
 			lfPercent	= atan2(lfY, lfX) / (M_PI * 2.0);
 			if (lfPercent < 0.0)
@@ -192,12 +263,12 @@
 			iWindow_render(win, false);
 
 		} else if (obj->objType == _OBJ_TYPE_EDITBOX) {
-			if ((tnClick & _MOUSE_LEFT_BUTTON) != 0)
+			if ((lnClick & _MOUSE_LEFT_BUTTON) != 0)
 			{
 				// They are clicking and dragging
 
 				// Need to navigate to the indicated x,y coordinate
-				iSEM_navigateTo_pixelXY(obj->p.sem, obj, x, y);
+				iSEM_navigateTo_pixelXY(obj->p.sem, obj, lnX, lnY);
 
 				// Mark the mouse activity
 				iSEM_selectStart(obj->p.sem, _SEM_SELECT_MODE_ANCHOR);
@@ -217,6 +288,14 @@
 		f64			lfPercent, lfX, lfY, lfWidth, lfHeight, lfValue;
 		SVariable*	valueMin;
 		SObject*	objRoot;
+		s32			lnX, lnY;
+		u32			lnClick;
+		bool		llCtrl, llAlt, llShift;
+
+
+		// Make sure our environment is sane
+		if (!iiDefaultCallback_processMouseVariables(varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
+			return(false);
 
 
 		// Set the flag
@@ -274,10 +353,10 @@
 
 		} else if (obj->objType == _OBJ_TYPE_EDITBOX) {
 			// Need to navigate to the indicated x,y coordinate
-			iSEM_navigateTo_pixelXY(obj->p.sem, obj, x, y);
+			iSEM_navigateTo_pixelXY(obj->p.sem, obj, lnX, lnY);
 
 			// Mark the mouse activity
-			if (!tlShift)		iSEM_selectStop(obj->p.sem);
+			if (!llShift)		iSEM_selectStop(obj->p.sem);
 			else				iSEM_selectStart(obj->p.sem, _SEM_SELECT_MODE_ANCHOR);
 
 		} else if (obj->objType == _OBJ_TYPE_RADIO) {
@@ -285,8 +364,8 @@
 			// Determine theta
 			lfWidth							= (f64)(obj->rc.right  - obj->rc.left);
 			lfHeight						= (f64)(obj->rc.bottom - obj->rc.top);
-			lfX								= (f64)x - (lfWidth / 2.0);
-			lfY								= (lfHeight - (f64)y) - (lfHeight / 2.0);
+			lfX								= (f64)lnX - (lfWidth / 2.0);
+			lfY								= (lfHeight - (f64)lnY) - (lfHeight / 2.0);
 			lfPercent						= atan2(lfY, lfX) / (M_PI * 2.0);
 			if (lfPercent < 0.0)
 				lfPercent += 1.0;
@@ -336,6 +415,16 @@
 
 	bool iDefaultCallback_onMouseUp(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick)
 	{
+		s32		lnX, lnY;
+		u32		lnClick;
+		bool	llCtrl, llAlt, llShift;
+
+
+		// Make sure our environment is sane
+		if (!iiDefaultCallback_processMouseVariables(varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
+			return(false);
+
+
 		// We are leaving this object, lower the flag
 		obj->ev.mouse.isMouseDown = (obj->ev.mouse.thisClick != 0);	// Indicate if the mouse is down here
 		obj->ev.mouse.isMouseDown = false;
@@ -373,20 +462,24 @@
 
 	bool iDefaultCallback_onMouseHover(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick)
 	{
+		s32		lnX, lnY;
+		u32		lnClick;
+		bool	llCtrl, llAlt, llShift;
+
+
+		// Make sure our environment is sane
+		if (!iiDefaultCallback_processMouseVariables(varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
+			return(false);
+
+
 		// Assume we consumed the hover, and that the parent doesn't need to receive it
 		return(false);
 	}
 
-	bool iDefaultCallback_onKeyDown(SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii)
+	bool iiDefaultCallback_processKeyVariables(	SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii,
+												bool* llCtrl, bool* llAlt, bool* llShift, bool* llCaps, bool* llIsCAS, bool* llIsAscii,
+												s16* lcAscii, u16* lnVKey)
 	{
-		bool		llRender;
-		SObject*	objCheckbox;
-		SObject*	objRender2;
-		bool		llCtrl, llAlt, llShift, llCaps, llIsCAS, llIsAscii;
-		s16			lcAscii;
-		u16			lnVKey;
-
-
 		//////////
 		// Validate the variables are appropriate
 		//////
@@ -400,14 +493,35 @@
 				// Something is not a proper variable, ignore it
 				return(false);
 			}
-			llCtrl		= iiVariable_getAs_bool(varCtrl,		false, NULL, NULL);
-			llAlt		= iiVariable_getAs_bool(varAlt,			false, NULL, NULL);
-			llShift		= iiVariable_getAs_bool(varShift,		false, NULL, NULL);
-			llCaps		= iiVariable_getAs_bool(varCaps,		false, NULL, NULL);
-			llIsCAS		= iiVariable_getAs_bool(varIsCAS,		false, NULL, NULL);
-			llIsAscii	= iiVariable_getAs_bool(varIsAscii,		false, NULL, NULL);
-			lcAscii		= (s16)iiVariable_getAs_s32(varAscii,	false, NULL, NULL);
-			lnVKey		= (u16)iiVariable_getAs_s32(varVKey,	false, NULL, NULL);
+			*llCtrl		= iiVariable_getAs_bool(varCtrl,		false, NULL, NULL);
+			*llAlt		= iiVariable_getAs_bool(varAlt,			false, NULL, NULL);
+			*llShift	= iiVariable_getAs_bool(varShift,		false, NULL, NULL);
+			*llCaps		= iiVariable_getAs_bool(varCaps,		false, NULL, NULL);
+			*llIsCAS	= iiVariable_getAs_bool(varIsCAS,		false, NULL, NULL);
+			*llIsAscii	= iiVariable_getAs_bool(varIsAscii,		false, NULL, NULL);
+			*lcAscii	= (s16)iiVariable_getAs_s32(varAscii,	false, NULL, NULL);
+			*lnVKey		= (u16)iiVariable_getAs_s32(varVKey,	false, NULL, NULL);
+
+
+		//////////
+		// Indicate success
+		//////
+			return(true);
+	}
+
+	bool iDefaultCallback_onKeyDown(SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii)
+	{
+		bool		llRender;
+		SObject*	objCheckbox;
+		SObject*	objRender2;
+		bool		llCtrl, llAlt, llShift, llCaps, llIsCAS, llIsAscii;
+		s16			lcAscii;
+		u16			lnVKey;
+
+
+		// Make sure our environment is sane
+		if (!iiDefaultCallback_processKeyVariables(varCtrl, varAlt, varShift, varCaps, varAscii, varVKey, varIsCAS, varIsAscii, &llCtrl, &llAlt, &llShift, &llCaps, &llIsCAS, &llIsAscii, &lcAscii, &lnVKey))
+			return(false);
 
 
 		//////////
@@ -501,27 +615,9 @@
 		u16			lnVKey;
 
 
-		//////////
-		// Validate the variables are appropriate
-		//////
-			if (!iVariable_isValid(varCtrl) || !iVariable_isValid(varAlt) || !iVariable_isValid(varShift) || !iVariable_isValid(varCaps) || !iVariable_isValid(varIsAscii) || !iVariable_isValid(varAscii)	|| !iVariable_isValid(varVKey))
-			{
-				// Something is invalid, ignore it
-				return(false);
-			}
-			if (!iVariable_isTypeLogical(varCtrl) || !iVariable_isTypeLogical(varAlt) || !iVariable_isTypeLogical(varShift) || !iVariable_isTypeLogical(varCaps) || !iVariable_isTypeLogical(varIsAscii) || !iVariable_isTypeNumeric(varAscii)	|| !iVariable_isTypeNumeric(varVKey))
-			{
-				// Something is not a proper variable, ignore it
-				return(false);
-			}
-			llCtrl		= iiVariable_getAs_bool(varCtrl,		false, NULL, NULL);
-			llAlt		= iiVariable_getAs_bool(varAlt,			false, NULL, NULL);
-			llShift		= iiVariable_getAs_bool(varShift,		false, NULL, NULL);
-			llCaps		= iiVariable_getAs_bool(varCaps,		false, NULL, NULL);
-			llIsCAS		= iiVariable_getAs_bool(varIsCAS,		false, NULL, NULL);
-			llIsAscii	= iiVariable_getAs_bool(varIsAscii,		false, NULL, NULL);
-			lcAscii		= (s16)iiVariable_getAs_s32(varAscii,	false, NULL, NULL);
-			lnVKey		= (u16)iiVariable_getAs_s32(varVKey,	false, NULL, NULL);
+		// Make sure our environment is sane
+		if (!iiDefaultCallback_processKeyVariables(varCtrl, varAlt, varShift, varCaps, varAscii, varVKey, varIsCAS, varIsAscii, &llCtrl, &llAlt, &llShift, &llCaps, &llIsCAS, &llIsAscii, &lcAscii, &lnVKey))
+			return(false);
 
 
 		// Assume we consumed the keyup, and that the parent doesn't need to receive it
@@ -609,6 +705,7 @@
 		// Mark dirty
 		// If on rider, mark parent carousel dirty
 		// Trigger refresh
+		return(false);
 	}
 
 	bool iDefaultCallback_onSpin(SWindow* win, SObject* obj, SVariable* tnDelta, SVariable* tnDirection, SVariable* tnType)
@@ -617,4 +714,5 @@
 		// tnDelta		= units (in riders, or pixels based on tnType), defaults to riders
 		// tnDirection	= negative=left, positive=right, defaults to right
 		// tnType		= 0=riders/toolbars, 1=pixels, defaults to riders
+		return(false);
 	}

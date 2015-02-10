@@ -229,39 +229,39 @@ struct SEventsMouse
 	// Return value indicates if the event should be sent to its parent instead (if NODEFAULT was issued during execution).
 	union {
 		uptr	_onMouseClickEx;
-		bool	(*onMouseClickEx)		(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);	// 1=left, 2=middle, 4=right, 2^n bit positions indicate which buttons are clicked
+		bool	(*onMouseClickEx)		(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);	// varClick is 1=left, 2=middle, 4=right, 2^n bit positions indicate which buttons are clicked
 	};
 	union {
 		uptr	_onMouseDblClickEx;
-		bool	(*onMouseDblClickEx)	(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);	// 1=left, 2=middle, 4=right, 2^n bit positions indicate which buttons are clicked
+		bool	(*onMouseDblClickEx)	(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
 	};
 	union {
 		uptr	_onMouseWheel;
-		bool	(*onMouseWheel)			(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick, s32 tnUnits);			// Signed units indicating direction and velocity
+		bool	(*onMouseWheel)			(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick, SVariable varUnits);	// Signed units indicating direction and velocity
 	};
 	union {
 		uptr	_onMouseMove;
-		bool	(*onMouseMove)			(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);	// Coordinates for the move
+		bool	(*onMouseMove)			(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
 	};
 	union {
 		uptr	_onMouseDown;
-		bool	(*onMouseDown)			(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);	// Coordinates for where the mouse button changed
+		bool	(*onMouseDown)			(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
 	};
 	union {
 		uptr	_onMouseUp;
-		bool	(*onMouseUp)			(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);	// Coordinates for where the mouse button changed
+		bool	(*onMouseUp)			(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
 	};
 	union {
 		uptr	_onMouseEnter;
-		bool	(*onMouseEnter)			(SWindow* win, SObject* obj);						// When mouse enters an object
+		bool	(*onMouseEnter)			(SWindow* win, SObject* obj);
 	};
 	union {
 		uptr	_onMouseLeave;
-		bool	(*onMouseLeave)			(SWindow* win, SObject* obj);						// When mouse leaves an object
+		bool	(*onMouseLeave)			(SWindow* win, SObject* obj);
 	};
 	union {
 		uptr	_onMouseHover;
-		bool	(*onMouseHover)			(SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClick);	// Coordinates where hovering
+		bool	(*onMouseHover)			(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
 	};
 };
 
@@ -271,11 +271,11 @@ struct SEventsKeyboard
 	// Bool indicates if the event should be sent to its parent instead
 	union {
 		uptr	_onKeyDown;
-		bool	(*onKeyDown)		(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tnAsciiChar, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
+		bool	(*onKeyDown)		(SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii);
 	};
 	union {
 		uptr	_onKeyUp;
-		bool	(*onKeyUp)			(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tnAsciiChar, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
+		bool	(*onKeyUp)			(SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii);
 	};
 };
 
