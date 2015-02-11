@@ -67,72 +67,469 @@
 
 
 
-void iEvents_resetToDefault(SEvents* ev)
-{
-	SEventsGeneral*		g;
-	SEventsMouse*		m;
-	SEventsKeyboard*	k;
+//////////
+// onMouseMove
+//////
+	SVariable* varX_onMouseMove			= NULL;
+	SVariable* varY_onMouseMove			= NULL;
+	SVariable* varCtrl_onMouseMove		= NULL;
+	SVariable* varAlt_onMouseMove		= NULL;
+	SVariable* varShift_onMouseMove		= NULL;
+	SVariable* varClick_onMouseMove		= NULL;
 
 
-	// Make sure our environment is sane
-	if (ev)
+//////////
+// onMouseDown
+//////
+	SVariable* varX_onMouseDown			= NULL;
+	SVariable* varY_onMouseDown			= NULL;
+	SVariable* varCtrl_onMouseDown		= NULL;
+	SVariable* varAlt_onMouseDown		= NULL;
+	SVariable* varShift_onMouseDown		= NULL;
+	SVariable* varClick_onMouseDown		= NULL;
+
+
+//////////
+// onMouseClickEx
+//////
+	SVariable* varX_onMouseClickEx		= NULL;
+	SVariable* varY_onMouseClickEx		= NULL;
+	SVariable* varCtrl_onMouseClickEx	= NULL;
+	SVariable* varAlt_onMouseClickEx	= NULL;
+	SVariable* varShift_onMouseClickEx	= NULL;
+	SVariable* varClick_onMouseClickEx	= NULL;
+
+
+//////////
+// onMouseUp
+//////
+	SVariable* varX_onMouseUp			= NULL;
+	SVariable* varY_onMouseUp			= NULL;
+	SVariable* varCtrl_onMouseUp		= NULL;
+	SVariable* varAlt_onMouseUp			= NULL;
+	SVariable* varShift_onMouseUp		= NULL;
+	SVariable* varClick_onMouseUp		= NULL;
+
+
+//////////
+// onMouseWheel
+//////
+	SVariable* varX_onMouseWheel		= NULL;
+	SVariable* varY_onMouseWheel		= NULL;
+	SVariable* varCtrl_onMouseWheel		= NULL;
+	SVariable* varAlt_onMouseWheel		= NULL;
+	SVariable* varShift_onMouseWheel	= NULL;
+	SVariable* varClick_onMouseWheel	= NULL;
+	SVariable* varDeltaY_onMouseWheel	= NULL;
+
+
+//////////
+// onKeyDown
+//////
+	SVariable* varCtrl_onKeyDown		= NULL;
+	SVariable* varAlt_onKeyDown			= NULL;
+	SVariable* varShift_onKeyDown		= NULL;
+	SVariable* varCaps_onKeyDown		= NULL;
+	SVariable* varAsciiChar_onKeyDown	= NULL;
+	SVariable* varVKey_onKeyDown		= NULL;
+	SVariable* varIsCAS_onKeyDown		= NULL;
+	SVariable* varIsAscii_onKeyDown		= NULL;
+
+
+//////////
+// onKeyUp
+//////
+	SVariable* varCtrl_onKeyUp			= NULL;
+	SVariable* varAlt_onKeyUp			= NULL;
+	SVariable* varShift_onKeyUp			= NULL;
+	SVariable* varCaps_onKeyUp			= NULL;
+	SVariable* varAsciiChar_onKeyUp		= NULL;
+	SVariable* varVKey_onKeyUp			= NULL;
+	SVariable* varIsCAS_onKeyUp			= NULL;
+	SVariable* varIsAscii_onKeyUp		= NULL;
+
+
+
+
+//////////
+//
+// Initialize the weakly typed events passed parameters
+//
+//////
+	void iEvents_init(void)
 	{
 		//////////
-		// Grab our events
+		// onMouseMove
 		//////
-			g = &ev->general;
-			m = &ev->mouse;
-			k = &ev->keyboard;
+			if (!varX_onMouseMove)				varX_onMouseMove		= iVariable_create(_VAR_TYPE_S32,		NULL);
+			if (!varY_onMouseMove)				varY_onMouseMove		= iVariable_create(_VAR_TYPE_S32,		NULL);
+			if (!varCtrl_onMouseMove)			varCtrl_onMouseMove		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varAlt_onMouseMove)			varAlt_onMouseMove		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varShift_onMouseMove)			varShift_onMouseMove	= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varClick_onMouseMove)			varClick_onMouseMove	= iVariable_create(_VAR_TYPE_S32,		NULL);
 
 
 		//////////
-		// Reset general events
+		// onMouseDown
 		//////
-			*(uptr*)&g->onLoad					= (uptr)&iDefaultCallback_onLoad;
-			*(uptr*)&g->onInit					= (uptr)&iDefaultCallback_onInit;
-			*(uptr*)&g->onCreated				= (uptr)&iDefaultCallback_onCreated;
-			*(uptr*)&g->onResize				= (uptr)&iDefaultCallback_onResize;
-			*(uptr*)&g->onMoved					= (uptr)&iDefaultCallback_onMoved;
-			*(uptr*)&g->onRender				= (uptr)&iDefaultCallback_onRender;
-			*(uptr*)&g->onPublish				= (uptr)&iDefaultCallback_onPublish;
-			*(uptr*)&g->onQueryUnload			= (uptr)&iDefaultCallback_onQueryUnload;
-			*(uptr*)&g->onDestroy				= (uptr)&iDefaultCallback_onDestroy;
-			*(uptr*)&g->onUnload				= (uptr)&iDefaultCallback_onUnload;
-			*(uptr*)&g->onGotFocus				= (uptr)&iDefaultCallback_onGotFocus;
-			*(uptr*)&g->onLostFocus				= (uptr)&iDefaultCallback_onLostFocus;
-			*(uptr*)&g->onAddObject				= (uptr)&iDefaultCallback_onAddObject;
-			*(uptr*)&g->onAddProperty			= (uptr)&iDefaultCallback_onAddProperty;
-			*(uptr*)&g->onError					= (uptr)&iDefaultCallback_onError;
-			*(uptr*)&g->onScrolled				= (uptr)&iDefaultCallback_onScrolled;
-			*(uptr*)&g->activate				= (uptr)&iDefaultCallback_onActivate;
-			*(uptr*)&g->deactivate				= (uptr)&iDefaultCallback_onDeactivate;
-			*(uptr*)&g->onSelect				= (uptr)&iDefaultCallback_onSelect;
-			*(uptr*)&g->onDeselect				= (uptr)&iDefaultCallback_onDeselect;
-			*(uptr*)&g->onInteractiveChange		= (uptr)&iDefaultCallback_onInteractiveChange;
-			*(uptr*)&g->onProgrammaticChange	= (uptr)&iDefaultCallback_onProgrammaticChange;
-			*(uptr*)&g->onSetActiveControl		= (uptr)&iDefaultCallback_onSetActiveControl;
-			*(uptr*)&g->onSpin					= (uptr)&iDefaultCallback_onSpin;
-			*(uptr*)&g->onSpin					= (uptr)&iDefaultCallback_onSpin;
+			if (!varX_onMouseDown)				varX_onMouseDown		= iVariable_create(_VAR_TYPE_S32,		NULL);
+			if (!varY_onMouseDown)				varY_onMouseDown		= iVariable_create(_VAR_TYPE_S32,		NULL);
+			if (!varCtrl_onMouseDown)			varCtrl_onMouseDown		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varAlt_onMouseDown)			varAlt_onMouseDown		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varShift_onMouseDown)			varShift_onMouseDown	= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varClick_onMouseDown)			varClick_onMouseDown	= iVariable_create(_VAR_TYPE_S32,		NULL);
 
 
 		//////////
-		// Reset mouse events
+		// onMouseClickEx
 		//////
-			*(uptr*)&m->onMouseClickEx			= (uptr)&iDefaultCallback_onMouseClickEx;
-			*(uptr*)&m->onMouseDblClickEx		= (uptr)&iDefaultCallback_onMouseDblClickEx;
-			*(uptr*)&m->onMouseWheel			= (uptr)&iDefaultCallback_onMouseWheel;
-			*(uptr*)&m->onMouseMove				= (uptr)&iDefaultCallback_onMouseMove;
-			*(uptr*)&m->onMouseDown				= (uptr)&iDefaultCallback_onMouseDown;
-			*(uptr*)&m->onMouseUp				= (uptr)&iDefaultCallback_onMouseUp;
-			*(uptr*)&m->onMouseEnter			= (uptr)&iDefaultCallback_onMouseEnter;
-			*(uptr*)&m->onMouseLeave			= (uptr)&iDefaultCallback_onMouseLeave;
-			*(uptr*)&m->onMouseHover			= (uptr)&iDefaultCallback_onMouseHover;
+			if (!varX_onMouseClickEx)			varX_onMouseClickEx		= iVariable_create(_VAR_TYPE_S32,		NULL);
+			if (!varY_onMouseClickEx)			varY_onMouseClickEx		= iVariable_create(_VAR_TYPE_S32,		NULL);
+			if (!varCtrl_onMouseClickEx)		varCtrl_onMouseClickEx	= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varAlt_onMouseClickEx)			varAlt_onMouseClickEx	= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varShift_onMouseClickEx)		varShift_onMouseClickEx	= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varClick_onMouseClickEx)		varClick_onMouseClickEx	= iVariable_create(_VAR_TYPE_S32,		NULL);
 
 
 		//////////
-		// Reset keyboard events
+		// onMouseUp
 		//////
-			*(uptr*)&k->onKeyDown			= (uptr)&iDefaultCallback_onKeyDown;
-			*(uptr*)&k->onKeyUp				= (uptr)&iDefaultCallback_onKeyUp;
+			if (!varX_onMouseUp)				varX_onMouseUp			= iVariable_create(_VAR_TYPE_S32,		NULL);
+			if (!varY_onMouseUp)				varY_onMouseUp			= iVariable_create(_VAR_TYPE_S32,		NULL);
+			if (!varCtrl_onMouseUp)				varCtrl_onMouseUp		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varAlt_onMouseUp)				varAlt_onMouseUp		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varShift_onMouseUp)			varShift_onMouseUp		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varClick_onMouseUp)			varClick_onMouseUp		= iVariable_create(_VAR_TYPE_S32,		NULL);
+
+
+		//////////
+		// onMouseWheel
+		//////
+			if (!varX_onMouseWheel)				varX_onMouseWheel		= iVariable_create(_VAR_TYPE_S32,		NULL);
+			if (!varY_onMouseWheel)				varY_onMouseWheel		= iVariable_create(_VAR_TYPE_S32,		NULL);
+			if (!varCtrl_onMouseWheel)			varCtrl_onMouseWheel	= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varAlt_onMouseWheel)			varAlt_onMouseWheel		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varShift_onMouseWheel)			varShift_onMouseWheel	= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varClick_onMouseWheel)			varClick_onMouseWheel	= iVariable_create(_VAR_TYPE_S32,		NULL);
+			if (!varDeltaY_onMouseWheel)		varDeltaY_onMouseWheel	= iVariable_create(_VAR_TYPE_U32,		NULL);
+
+
+		//////////
+		// onKeyDown
+		//////
+			if (!varCtrl_onKeyDown)				varCtrl_onKeyDown		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varAlt_onKeyDown)				varAlt_onKeyDown		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varShift_onKeyDown)			varShift_onKeyDown		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varCaps_onKeyDown)				varCaps_onKeyDown		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varAsciiChar_onKeyDown)		varAsciiChar_onKeyDown	= iVariable_create(_VAR_TYPE_U16,		NULL);
+			if (!varVKey_onKeyDown)				varVKey_onKeyDown		= iVariable_create(_VAR_TYPE_U16,		NULL);
+			if (!varIsCAS_onKeyDown)			varIsCAS_onKeyDown		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varIsAscii_onKeyDown)			varIsAscii_onKeyDown	= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+
+
+		//////////
+		// onKeyUp
+		//////
+			if (!varCtrl_onKeyUp)				varCtrl_onKeyUp			= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varAlt_onKeyUp)				varAlt_onKeyUp			= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varShift_onKeyUp)				varShift_onKeyUp		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varCaps_onKeyUp)				varCaps_onKeyUp			= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varAsciiChar_onKeyUp)			varAsciiChar_onKeyUp	= iVariable_create(_VAR_TYPE_U16,		NULL);
+			if (!varVKey_onKeyUp)				varVKey_onKeyUp			= iVariable_create(_VAR_TYPE_U16,		NULL);
+			if (!varIsCAS_onKeyUp)				varIsCAS_onKeyUp		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varIsAscii_onKeyUp)			varIsAscii_onKeyUp		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
 	}
-}
+
+
+
+
+//////////
+//
+// Called to reset an object's events to its default
+//
+//////
+	void iEvents_resetToDefault(SEvents* ev)
+	{
+		SEventsGeneral*		g;
+		SEventsMouse*		m;
+		SEventsKeyboard*	k;
+
+
+		// Make sure our environment is sane
+		if (ev)
+		{
+			//////////
+			// Grab our events
+			//////
+				g = &ev->general;
+				m = &ev->mouse;
+				k = &ev->keyboard;
+
+
+			//////////
+			// Reset general events
+			//////
+				*(uptr*)&g->onLoad					= (uptr)&iDefaultCallback_onLoad;
+				*(uptr*)&g->onInit					= (uptr)&iDefaultCallback_onInit;
+				*(uptr*)&g->onCreated				= (uptr)&iDefaultCallback_onCreated;
+				*(uptr*)&g->onResize				= (uptr)&iDefaultCallback_onResize;
+				*(uptr*)&g->onMoved					= (uptr)&iDefaultCallback_onMoved;
+				*(uptr*)&g->onRender				= (uptr)&iDefaultCallback_onRender;
+				*(uptr*)&g->onPublish				= (uptr)&iDefaultCallback_onPublish;
+				*(uptr*)&g->onQueryUnload			= (uptr)&iDefaultCallback_onQueryUnload;
+				*(uptr*)&g->onDestroy				= (uptr)&iDefaultCallback_onDestroy;
+				*(uptr*)&g->onUnload				= (uptr)&iDefaultCallback_onUnload;
+				*(uptr*)&g->onGotFocus				= (uptr)&iDefaultCallback_onGotFocus;
+				*(uptr*)&g->onLostFocus				= (uptr)&iDefaultCallback_onLostFocus;
+				*(uptr*)&g->onAddObject				= (uptr)&iDefaultCallback_onAddObject;
+				*(uptr*)&g->onAddProperty			= (uptr)&iDefaultCallback_onAddProperty;
+				*(uptr*)&g->onError					= (uptr)&iDefaultCallback_onError;
+				*(uptr*)&g->onScrolled				= (uptr)&iDefaultCallback_onScrolled;
+				*(uptr*)&g->activate				= (uptr)&iDefaultCallback_onActivate;
+				*(uptr*)&g->deactivate				= (uptr)&iDefaultCallback_onDeactivate;
+				*(uptr*)&g->onSelect				= (uptr)&iDefaultCallback_onSelect;
+				*(uptr*)&g->onDeselect				= (uptr)&iDefaultCallback_onDeselect;
+				*(uptr*)&g->onInteractiveChange		= (uptr)&iDefaultCallback_onInteractiveChange;
+				*(uptr*)&g->onProgrammaticChange	= (uptr)&iDefaultCallback_onProgrammaticChange;
+				*(uptr*)&g->onSetActiveControl		= (uptr)&iDefaultCallback_onSetActiveControl;
+				*(uptr*)&g->onSpin					= (uptr)&iDefaultCallback_onSpin;
+				*(uptr*)&g->onSpin					= (uptr)&iDefaultCallback_onSpin;
+
+
+			//////////
+			// Reset mouse events
+			//////
+				*(uptr*)&m->onMouseClickEx			= (uptr)&iDefaultCallback_onMouseClickEx;
+				*(uptr*)&m->onMouseDblClickEx		= (uptr)&iDefaultCallback_onMouseDblClickEx;
+				*(uptr*)&m->onMouseWheel			= (uptr)&iDefaultCallback_onMouseWheel;
+				*(uptr*)&m->onMouseMove				= (uptr)&iDefaultCallback_onMouseMove;
+				*(uptr*)&m->onMouseDown				= (uptr)&iDefaultCallback_onMouseDown;
+				*(uptr*)&m->onMouseUp				= (uptr)&iDefaultCallback_onMouseUp;
+				*(uptr*)&m->onMouseEnter			= (uptr)&iDefaultCallback_onMouseEnter;
+				*(uptr*)&m->onMouseLeave			= (uptr)&iDefaultCallback_onMouseLeave;
+				*(uptr*)&m->onMouseHover			= (uptr)&iDefaultCallback_onMouseHover;
+
+
+			//////////
+			// Reset keyboard events
+			//////
+				*(uptr*)&k->onKeyDown			= (uptr)&iDefaultCallback_onKeyDown;
+				*(uptr*)&k->onKeyUp				= (uptr)&iDefaultCallback_onKeyUp;
+		}
+	}
+
+
+
+
+//////////
+//
+// Called with strongly typed variables to dispatch the same event using weakly typed
+// SVariable variables, so as to align with conventional source code processing.
+//
+//////
+	bool iiEventDispatch_onMouseMove(SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks)
+	{
+		//////////
+		// Prepare for dispatch
+		//////
+			iVariable_set_s32		(varX_onMouseMove,			x);
+			iVariable_set_s32		(varY_onMouseMove,			y);
+			iVariable_set_logical	(varCtrl_onMouseMove,		((tlCtrl)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(varAlt_onMouseMove,		((tlAlt)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(varShift_onMouseMove,		((tlShift)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_s32		(varClick_onMouseMove,		tnClicks);
+
+
+		//////////
+		// Dispatch
+		//////
+			return(ev->mouse.onMouseMove(win, obj,	varX_onMouseMove,		varY_onMouseMove,
+													varCtrl_onMouseMove,	varAlt_onMouseMove,		varShift_onMouseMove,
+													varClick_onMouseMove));
+	}
+
+
+
+
+//////////
+//
+// Called with strongly typed variables to dispatch the same event using weakly typed
+// SVariable variables, so as to align with conventional source code processing.
+//
+//////
+	bool iiEventDispatch_onMouseDown(SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks)
+	{
+		//////////
+		// Prepare for dispatch
+		//////
+			iVariable_set_s32		(varX_onMouseDown,			x);
+			iVariable_set_s32		(varY_onMouseDown,			y);
+			iVariable_set_logical	(varCtrl_onMouseDown,		((tlCtrl)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(varAlt_onMouseDown,		((tlAlt)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(varShift_onMouseDown,		((tlShift)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_s32		(varClick_onMouseDown,		tnClicks);
+
+
+		//////////
+		// Dispatch
+		//////
+			return(ev->mouse.onMouseDown(win, obj,		varX_onMouseDown,			varY_onMouseDown,
+														varCtrl_onMouseDown,		varAlt_onMouseDown,		varShift_onMouseDown,
+														varClick_onMouseDown));
+	}
+
+
+
+
+//////////
+//
+// Called with strongly typed variables to dispatch the same event using weakly typed
+// SVariable variables, so as to align with conventional source code processing.
+//
+//////
+	bool iiEventDispatch_onMouseClickEx(SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks)
+	{
+		//////////
+		// Prepare for dispatch
+		//////
+			iVariable_set_s32		(varX_onMouseClickEx,			x);
+			iVariable_set_s32		(varY_onMouseClickEx,			y);
+			iVariable_set_logical	(varCtrl_onMouseClickEx,		((tlCtrl)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(varAlt_onMouseClickEx,			((tlAlt)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(varShift_onMouseClickEx,		((tlShift)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_s32		(varClick_onMouseClickEx,		tnClicks);
+
+
+		//////////
+		// Dispatch
+		//////
+			return(ev->mouse.onMouseClickEx(win, obj,	varX_onMouseClickEx,		varY_onMouseClickEx,
+														varCtrl_onMouseClickEx,		varAlt_onMouseClickEx,		varShift_onMouseClickEx,
+														varClick_onMouseClickEx));
+	}
+
+
+
+
+//////////
+//
+// Called with strongly typed variables to dispatch the same event using weakly typed
+// SVariable variables, so as to align with conventional source code processing.
+//
+//////
+	bool iiEventDispatch_onMouseUp(SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks)
+	{
+		//////////
+		// Prepare for dispatch
+		//////
+			iVariable_set_s32		(varX_onMouseUp,			x);
+			iVariable_set_s32		(varY_onMouseUp,			y);
+			iVariable_set_logical	(varCtrl_onMouseUp,			((tlCtrl)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(varAlt_onMouseUp,			((tlAlt)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(varShift_onMouseUp,		((tlShift)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_s32		(varClick_onMouseUp,		tnClicks);
+
+
+		//////////
+		// Dispatch
+		//////
+			return(ev->mouse.onMouseUp(win, obj,	varX_onMouseUp,			varY_onMouseUp,
+													varCtrl_onMouseUp,		varAlt_onMouseUp,		varShift_onMouseUp,
+													varClick_onMouseUp));
+	}
+
+
+
+
+//////////
+//
+// Called with strongly typed variables to dispatch the same event using weakly typed
+// SVariable variables, so as to align with conventional source code processing.
+//
+//////
+	bool iiEventDispatch_onMouseWheel(SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks, u32 tnDeltaY)
+	{
+		//////////
+		// Prepare for dispatch
+		//////
+			iVariable_set_s32		(varX_onMouseWheel,			x);
+			iVariable_set_s32		(varY_onMouseWheel,			y);
+			iVariable_set_logical	(varCtrl_onMouseWheel,		((tlCtrl)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(varAlt_onMouseWheel,		((tlAlt)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(varShift_onMouseWheel,		((tlShift)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_s32		(varClick_onMouseWheel,		tnClicks);
+			iVariable_set_u32		(varDeltaY_onMouseWheel,	tnDeltaY);
+
+
+		//////////
+		// Dispatch
+		//////
+			return(ev->mouse.onMouseWheel(win, obj,		varX_onMouseWheel,			varY_onMouseWheel,
+														varCtrl_onMouseWheel,		varAlt_onMouseWheel,	varShift_onMouseWheel,
+														varClick_onMouseWheel,
+														varDeltaY_onMouseWheel));
+	}
+
+
+
+
+//////////
+//
+// Called with strongly typed variables to dispatch the same event using weakly typed
+// SVariable variables, so as to align with conventional source code processing.
+//
+//////
+	bool iiEventDispatch_onKeyDown(SEvents* ev, SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, u16 tnAsciiChar, u16 tvKey, bool tlIsCAS, bool tlIsAscii)
+	{
+		//////////
+		// Prepare for dispatch
+		//////
+			iVariable_set_logical	(varCtrl_onKeyDown,			((tlCtrl)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(varAlt_onKeyDown,			((tlAlt)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(varShift_onKeyDown,		((tlShift)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(varCaps_onKeyDown,			((tlCaps)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_u32		(varAsciiChar_onKeyDown,	(u32)tnAsciiChar);
+			iVariable_set_u32		(varVKey_onKeyDown,			(u32)tvKey);
+			iVariable_set_logical	(varIsCAS_onKeyDown,		((tlIsCAS)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(varIsAscii_onKeyDown,		((tlIsAscii)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+
+
+		//////////
+		// Dispatch
+		//////
+			return(ev->keyboard.onKeyDown(win, obj,	varCtrl_onKeyDown,		varAlt_onKeyDown,			varShift_onKeyDown,
+													varCaps_onKeyDown,		varAsciiChar_onKeyDown,		varVKey_onKeyDown,
+													varIsCAS_onKeyDown,		varIsAscii_onKeyDown));
+	}
+
+
+
+
+//////////
+//
+// Called with strongly typed variables to dispatch the same event using weakly typed
+// SVariable variables, so as to align with conventional source code processing.
+//
+//////
+	bool iiEventDispatch_onKeyUp(SEvents* ev, SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, u16 tnAsciiChar, u16 tvKey, bool tlIsCAS, bool tlIsAscii)
+	{
+		//////////
+		// Prepare for dispatch
+		//////
+			iVariable_set_logical	(varCtrl_onKeyUp,			((tlCtrl)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(varAlt_onKeyUp,			((tlAlt)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(varShift_onKeyUp,			((tlShift)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(varCaps_onKeyUp,			((tlCaps)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_u32		(varAsciiChar_onKeyUp,		(u32)tnAsciiChar);
+			iVariable_set_u32		(varVKey_onKeyUp,			(u32)tvKey);
+			iVariable_set_logical	(varIsCAS_onKeyUp,			((tlIsCAS)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(varIsAscii_onKeyUp,		((tlIsAscii)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+
+
+		//////////
+		// Dispatch
+		//////
+			return(ev->keyboard.onKeyUp(win, obj,	varCtrl_onKeyUp,		varAlt_onKeyUp,				varShift_onKeyUp,
+													varCaps_onKeyUp,		varAsciiChar_onKeyUp,		varVKey_onKeyUp,
+													varIsCAS_onKeyUp,		varIsAscii_onKeyUp));
+	}

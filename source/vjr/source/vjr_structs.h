@@ -237,7 +237,7 @@ struct SEventsMouse
 	};
 	union {
 		uptr	_onMouseWheel;
-		bool	(*onMouseWheel)			(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick, SVariable varUnits);	// Signed units indicating direction and velocity
+		bool	(*onMouseWheel)			(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick, SVariable* varUnits);	// Signed units indicating direction and velocity
 	};
 	union {
 		uptr	_onMouseMove;

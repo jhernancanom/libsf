@@ -3221,7 +3221,7 @@
 					//////
 						if (obj->ev.mouse._onMouseMove)
 						{
-							obj->ev.mouse.onMouseMove(win, obj,
+							iiEventDispatch_onMouseMove(&obj->ev, win, obj,
 														win->mouseCurrent.position.x - lrc.left,
 														win->mouseCurrent.position.y - lrc.top,
 														win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
@@ -3241,7 +3241,7 @@
 						*tlProcessed = true;	// Indicate we've processed this
 						if (obj->ev.mouse._onMouseMove)
 						{
-							obj->ev.mouse.onMouseMove(win, obj,
+							iiEventDispatch_onMouseMove(&obj->ev, win, obj,
 														win->mouseCurrent.position.x - lrcClient.left,
 														win->mouseCurrent.position.y - lrcClient.top,
 														win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
@@ -3329,19 +3329,19 @@
 								// Signal the mouseDown event
 								*tlProcessed = true;		// Indicate we've processed this
 								if (llContinue && obj->ev.mouse._onMouseDown)
-									llContinue = obj->ev.mouse.onMouseDown(	win, obj,
-																			win->mouseCurrent.position.x - lrc.left,
-																			win->mouseCurrent.position.y - lrc.top,
-																			win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
-																			win->obj->ev.mouse.thisClick);
-
-								// Signal the click event
-								if (llContinue && obj->ev.mouse._onMouseClickEx)
-									llContinue = obj->ev.mouse.onMouseClickEx(	win, obj,
+									llContinue = iiEventDispatch_onMouseDown(&obj->ev, win, obj,
 																				win->mouseCurrent.position.x - lrc.left,
 																				win->mouseCurrent.position.y - lrc.top,
 																				win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
 																				win->obj->ev.mouse.thisClick);
+
+								// Signal the click event
+								if (llContinue && obj->ev.mouse._onMouseClickEx)
+									llContinue = iiEventDispatch_onMouseClickEx(&obj->ev, win, obj,
+																					win->mouseCurrent.position.x - lrc.left,
+																					win->mouseCurrent.position.y - lrc.top,
+																					win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
+																					win->obj->ev.mouse.thisClick);
 									break;
 
 							case WM_LBUTTONUP:
@@ -3350,7 +3350,7 @@
 								// Signal the mouseUp event
 								*tlProcessed = true;		// Indicate we've processed this
 								if (llContinue && obj->ev.mouse._onMouseUp)
-									llContinue = obj->ev.mouse.onMouseUp(	win, obj,
+									llContinue = iiEventDispatch_onMouseUp(&obj->ev, win, obj,
 																			win->mouseCurrent.position.x - lrc.left,
 																			win->mouseCurrent.position.y - lrc.top,
 																			win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
@@ -3364,12 +3364,12 @@
 								// Signal the mouseWheel event
 								*tlProcessed = true;		// Indicate we've processed this
 								if (llContinue && obj->ev.mouse._onMouseWheel)
-									llContinue = obj->ev.mouse.onMouseWheel(win, obj,
-																			win->mouseCurrent.position.x - lrc.left,
-																			win->mouseCurrent.position.y - lrc.top,
-																			win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
-																			win->obj->ev.mouse.thisClick,
-																			win->mouseCurrent.wheelDeltaV);
+									llContinue = iiEventDispatch_onMouseWheel(&obj->ev, win, obj,
+																				win->mouseCurrent.position.x - lrc.left,
+																				win->mouseCurrent.position.y - lrc.top,
+																				win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
+																				win->obj->ev.mouse.thisClick,
+																				win->mouseCurrent.wheelDeltaV);
 								break;
 						}
 
@@ -3391,20 +3391,20 @@
 								// Signal the mouseDown event
 								*tlProcessed = true;		// Indicate we've processed this
 								if (llContinue && obj->ev.mouse._onMouseDown)
-									llContinue = obj->ev.mouse.onMouseDown(	win, obj,
-																			win->mouseCurrent.position.x - lrcClient.left,
-																			win->mouseCurrent.position.y - lrcClient.top,
-																			win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
-																			win->obj->ev.mouse.thisClick);
-
-
-								// Signal the click event
-								if (llContinue && obj->ev.mouse._onMouseClickEx)
-									llContinue = obj->ev.mouse.onMouseClickEx(	win, obj,
+									llContinue = iiEventDispatch_onMouseDown(&obj->ev, win, obj,
 																				win->mouseCurrent.position.x - lrcClient.left,
 																				win->mouseCurrent.position.y - lrcClient.top,
 																				win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
 																				win->obj->ev.mouse.thisClick);
+
+
+								// Signal the click event
+								if (llContinue && obj->ev.mouse._onMouseClickEx)
+									llContinue = iiEventDispatch_onMouseClickEx(&obj->ev, win, obj,
+																					win->mouseCurrent.position.x - lrcClient.left,
+																					win->mouseCurrent.position.y - lrcClient.top,
+																					win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
+																					win->obj->ev.mouse.thisClick);
 
 							case WM_LBUTTONUP:
 							case WM_RBUTTONUP:
@@ -3412,7 +3412,7 @@
 								// Signal the mouseUp event
 								*tlProcessed = true;		// Indicate we've processed this
 								if (llContinue && obj->ev.mouse._onMouseUp)
-									llContinue = obj->ev.mouse.onMouseUp(	win, obj,
+									llContinue = iiEventDispatch_onMouseUp(&obj->ev, win, obj,
 																			win->mouseCurrent.position.x - lrcClient.left,
 																			win->mouseCurrent.position.y - lrcClient.top,
 																			win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
@@ -3426,12 +3426,12 @@
 								// Signal the mouseWheel event
 								*tlProcessed = true;		// Indicate we've processed this
 								if (llContinue && obj->ev.mouse._onMouseWheel)
-									llContinue = obj->ev.mouse.onMouseWheel(win, obj,
-																			win->mouseCurrent.position.x - lrcClient.left,
-																			win->mouseCurrent.position.y - lrcClient.top,
-																			win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
-																			win->obj->ev.mouse.thisClick,
-																			win->mouseCurrent.wheelDeltaV);
+									llContinue = iiEventDispatch_onMouseWheel(&obj->ev, win, obj,
+																				win->mouseCurrent.position.x - lrcClient.left,
+																				win->mouseCurrent.position.y - lrcClient.top,
+																				win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
+																				win->obj->ev.mouse.thisClick,
+																				win->mouseCurrent.wheelDeltaV);
 								break;
 						}
 					}
@@ -3736,11 +3736,11 @@
 				if (m == WM_KEYDOWN && obj->ev.keyboard._onKeyDown)
 				{
 					// Signal the down key event
-					obj->ev.keyboard.onKeyDown	(win, obj, llCtrl, llAlt, llShift, llCaps, lnAsciiChar, (u16)vKey, llIsCAS, llIsAscii);
+					iiEventDispatch_onKeyDown(&obj->ev, win, obj, llCtrl, llAlt, llShift, llCaps, lnAsciiChar, (u16)vKey, llIsCAS, llIsAscii);
 
 				} else if (m == WM_KEYUP && obj->ev.keyboard._onKeyUp) {
 					// Signal the up key event
-					obj->ev.keyboard.onKeyUp	(win, obj, llCtrl, llAlt, llShift, llCaps, lnAsciiChar, (u16)vKey, llIsCAS, llIsAscii);
+					iiEventDispatch_onKeyUp(&obj->ev, win, obj, llCtrl, llAlt, llShift, llCaps, lnAsciiChar, (u16)vKey, llIsCAS, llIsAscii);
 				}
 			}
 

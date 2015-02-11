@@ -419,7 +419,16 @@ struct SObjPropertyMap;
 //////////
 // objects/events.cpp
 //////
+	void					iEvents_init							(void);
 	void					iEvents_resetToDefault					(SEvents* ev);
+	bool					iiEventDispatch_onMouseMove				(SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks);
+	bool					iiEventDispatch_onMouseDown				(SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks);
+	bool					iiEventDispatch_onMouseClickEx			(SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks);
+	bool					iiEventDispatch_onMouseUp				(SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks);
+	bool					iiEventDispatch_onMouseWheel			(SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks, u32 tnDeltaY);
+	bool					iiEventDispatch_onKeyDown				(SEvents* ev, SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, u16 tnAsciiChar, u16 tvKey, bool tlIsCAS, bool tlIsAscii);
+	bool					iiEventDispatch_onKeyUp					(SEvents* ev, SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, u16 tnAsciiChar, u16 tvKey, bool tlIsCAS, bool tlIsAscii);
+
 
 
 //////////
