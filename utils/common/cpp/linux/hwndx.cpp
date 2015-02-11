@@ -75,8 +75,8 @@
 	bool iHwndX_postMessage_byWin(SHwndX* win, uptr message, uptr wParam, uptr lParam)
 	{
 		SMessageX* msg;
-		
-		
+
+
 		// Make sure our environment is sane
 		if (win && win->isValid)
 		{
@@ -85,26 +85,26 @@
 			//////
 				if (!win->msgQueue)
 					iBuilder_createAndInitialize(&win->msgQueue, -1);
-			
-			
+
+
 			//////////
 			// Append the message
 			//////
-				msg = (SMessageX*)iBuilder_appendData(win->msgQueue, sizeof(SMessageX));
+				msg = (SMessageX*)iBuilder_appendData(win->msgQueue, NULL, sizeof(SMessageX));
 				if (msg)
 				{
 					msg->msg.hwnd		= win->hwnd;
 					msg->msg.message	= message;
 					msg->msg.wParam		= wParam;
 					msg->msg.lParam		= lParam;
-					msg->msg.time		= iHwnd_getTime();
-					memcpy(&msg->msg.pt, win->pt, sizeof(msg->msg.pt));
-					
+					msg->msg.time		= iHwndX_getTime();
+					memcpy(&msg->msg.pt, &win->mousePt, sizeof(msg->msg.pt));
+
 					// Indicate success
 					return(true);
 				}
 		}
-		
+
 		// If we get here, failure
 		return(false);
 	}
@@ -120,13 +120,13 @@
 	bool iHwndX_postMessage_byHwnd(HWND hWnd, uptr message, uptr wParam, uptr lParam)
 	{
 		SHwndX* win;
-		
-		
+
+
 		// Try to find the window
 		win = iHwndX_findWindow_byHwnd(hWnd);
 		if (win)
 			return(iHwndX_postMessage_byWin(win, message, wParam, lParam));
-		
+
 		// If we get here, not found
 		return(false);
 	}
@@ -137,13 +137,14 @@
 //////////
 //
 // Called at startup one time to declare the initial desktop window as a pseudo-window
-// which is 
+// which is
 //
 //////
 	SHwndX* iHwndX_declareDesktopHwnd(void)
 	{
 		s32			lnWidth, lnHeight;
 		WNDCLASSEX	wcx;
+		SHwndX*		win;
 
 
 		//////////
@@ -164,7 +165,7 @@
 			gsDesktop.screen		= DefaultScreen(gsDesktop.display);
 			gsDesktop.depth			= DefaultDepth(gsDesktop.display, gsDesktop.screen);
 			gsDesktop.connection	= ConnectionNumber(gsDesktop.display);
-			gsDesktop.rootwindow	= RootWindow(gsDesktop.display, gsDesktop.screen);
+			gsDesktop.windowDesktop	= RootWindow(gsDesktop.display, gsDesktop.screen);
 
 
 		//////////
@@ -173,7 +174,7 @@
 			memset(&wcx, 0, sizeof(wcx));
 			wcx.cbSize			= sizeof(wcx);
 			wcx.style			= CS_OWNDC;
-			wcx._lpfnWndProc	= &DefWindowProc;
+			wcx._lpfnWndProc	= (uptr)&DefWindowProc;
 			wcx.lpszClassName	= cgcDesktop;
 			wcx.lpszMenuName	= cgcDesktop;
 			RegisterClassEx(&wcx);
@@ -183,7 +184,7 @@
 		// Create our logical desktop window
 		//////
 			lnWidth			= XDisplayWidth(gsDesktop.display, gsDesktop.screen);
-			lnHeight		= XDisplayHeight(gsDesktop.display, gsDesk		top.screen);
+			lnHeight		= XDisplayHeight(gsDesktop.display, gsDesktop.screen);
 			ghWndDesktop	= CreateWindowEx(	0, cgcDesktop, cgcDesktop, WS_POPUP,
 												0, 0, lnWidth, lnHeight,
 												null0, null0, null0, null0);
@@ -197,7 +198,7 @@
 			{
 				// Create the actual hdc
 				win->hdc = iHwndX_createHdc(lnWidth, lnHeight);
-				
+
 				// Populate with default items
 				//XQueryFont(gsDesktop.display, "*");
 			}
@@ -220,21 +221,21 @@
 	DWORD iHwndX_getTime(void)
 	{
 		timespec tp;
-		
-		
+
+
 		//////////
 		// Grab the time
 		//////
 			clock_gettime(CLOCK_MONOTONIC, &tp);
-		
-		
+
+
 		//////////
 		// Convert to milliseconds
 		//////
 			tp.tv_nsec	/= 1000000;						// Divide nanoseconds by 1 million to get milliseconds
 			tp.tv_nsec	+= ((s32)tp.tv_sec * 1000);		// Add (1000*sec) to milliseconds
-		
-		
+
+
 		//////////
 		// Return our result
 		//////
@@ -253,8 +254,8 @@
 	{
 		u32		lnI;
 		SHwndX*	win;
-		
-		
+
+
 		// Make sure our environment is sane
 		if (gsWindows)
 		{
@@ -283,13 +284,13 @@
 	{
 		u32		lnI;
 		SHdcX*	lhdc;
-		
-		
+
+
 		// Make sure our environment is sane
 		if (gsHdcs)
 		{
 			// Iterate through each window until we find the correct one
-			for (lnI = 0, lhdc = (SHwndX*)gsHdcs->buffer; lnI < gsHdcs->populatedLength; lnI += sizeof(SHdcX), lhdc++)
+			for (lnI = 0, lhdc = (SHdcX*)gsHdcs->buffer; lnI < gsHdcs->populatedLength; lnI += sizeof(SHdcX), lhdc++)
 			{
 				// Is this our window?
 				if (lhdc->isValid && lhdc->hdc == hdc)
@@ -309,26 +310,26 @@
 // Find the indicated class based on its name
 //
 //////
-	SClassX* iHwndX_findClass_byName(s8* lpClassName)
+	SClassX* iHwndX_findClass_byName(cs8* lpClassName)
 	{
 		u32			lnI, lnLength;
 		SClassX*	cls;
-		
-		
+
+
 		// Make sure our environment is sane
 		if (lpClassName)
 		{
 			// Iterate through each class until we find the correct one
-			lnLength = strlen(lpszClass);
+			lnLength = strlen(lpClassName);
 			for (lnI = 0, cls = (SClassX*)gsClasses->buffer; lnI < gsClasses->populatedLength; lnI += sizeof(SClassX), cls++)
 			{
 				// If it's valid, and the class maches, we're good
-				if (cls->isValid && strlen(cls->wcx.lpszClassName) == lnLength && _memicmp(cls->wcx.lpszClassName, lpszClass, lnLength) == 0)
+				if (cls->isValid && strlen(cls->wcx.lpszClassName) == lnLength && _memicmp(cls->wcx.lpszClassName, lpClassName, lnLength) == 0)
 					return(cls);
 			}
 			// If we get here, the class was not found
 		}
-		
+
 		// If we get here, invalid
 		return(NULL);
 	}
@@ -358,9 +359,9 @@
 //////
 	SXWindow* iHwndX_createXWindow(SHwndX* win)
 	{
-		XWindow* xwin;
-		
-		
+		SXWindow* xwin;
+
+
 		// Make sure our environment is sane
 		if (win)
 		{
@@ -370,18 +371,47 @@
 			{
 				// Initialize
 				memset(xwin, 0, sizeof(*xwin));
-				
+
 				// Initialize X for this window
-				if (iHwndX_initializeXWindow(xwin, win->rc.right - win->rc.left, win->rc.bottom - win->rc.top, win->cTitle.data_s8) == ERR_XI_OK)
+				if (iHwndX_initializeXWindow(xwin, win->rc.right - win->rc.left, win->rc.bottom - win->rc.top, win->cTitle.data_s8) == _X11_OK)
 					return(xwin);
-				
+
 				// If we get here, failure
 				free(xwin);
 			}
 		}
-		
+
 		// If we get here, invalid
 		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Called to create a pseudo device context
+//
+//////
+	SHdcX* iHwndX_createHdc(s32 tnWidth, s32 tnHeight)
+	{
+		SHdcX* hdc;
+
+/*
+bool		isValid;
+HDC			hdc;
+
+// Current settings for the device context
+SFontX*		font;
+bool		isOpaque;
+SBgra		colorFore;
+SBgra		colorBack;
+
+// Bitmaps take on the size of the thing they belong to, so they may be constantly resized
+SBitmap*	bmp;
+*/
+		hdc = NULL;
+		return(hdc);
 	}
 
 
@@ -395,7 +425,7 @@
 	s32 iHwndX_initializeXWindow(SXWindow* xwin, s32 width, s32 height, s8* title)
 	{
 		XSizeHints Hints;
-		
+
 		if (xwin)
 		{
 			//////////
@@ -404,8 +434,8 @@
 				xwin->display = XOpenDisplay(NULL);
 				if (!xwin->display)
 					return _X11_NO_DISPLAY;
-			
-			
+
+
 			//////////
 			// Populate our local settings
 			//////
@@ -434,11 +464,11 @@
 											0, xwin->depth,
 											InputOutput,
 											xwin->visual, 0, NULL);
-				
+
 				// Are we valid?
 				if (!xwin->window)
 					return _X11_NO_WINDOW;
-				
+
 				// Raise it to the top
 				XMapRaised(xwin->display, xwin->window);
 
@@ -449,7 +479,7 @@
 				Hints.flags			= PSize | PMinSize | PMaxSize;
 				Hints.min_width		= Hints.max_width	= Hints.base_width	= width;
 				Hints.min_height	= Hints.max_height	= Hints.base_height	= height;
-				XSetWMNormalHints(XWnd->display, XWnd->window,&Hints);
+				XSetWMNormalHints(xwin->display, xwin->window, &Hints);
 
 
 			//////////
@@ -464,7 +494,7 @@
 															|	LeaveWindowMask
 															|	PointerMotionMask
 															|	FocusChangeMask);
-			
+
 			//////////
 			// Graphical context
 			//////
@@ -478,15 +508,15 @@
 				xwin->virtualscreen	= (SBgra*)malloc(xwin->screensize);
 				if (!xwin->virtualscreen)
 					return _X11_NO_VIRTUAL_SCREEN;
-			
+
 				// Logical image
 				xwin->ximage = XCreateImage(xwin->display, xwin->visual, xwin->depth,
-											ZPixmap, 0, 
+											ZPixmap, 0,
 											(s8*)xwin->virtualscreen,
 											xwin->width, xwin->height,
 											(xwin->pixelsize * 8),
 											xwin->width * xwin->pixelsize);
-				
+
 				// Did we get the buffer?
 				if (!xwin->ximage)
 					return _X11_NO_PIXEL_BUFFER;
@@ -495,14 +525,14 @@
 			//////////
 			// Pixel buffer 2
 			//////
-				xwin->screensize2	= xwin->height * xwin->width * xwin->pixelsize;
+				xwin->screensize2		= xwin->height * xwin->width * xwin->pixelsize;
 				xwin->virtualscreen2	= (SBgra*)malloc(xwin->screensize2);
 				if (!xwin->virtualscreen2)
 					return _X11_VIRTALLOC;
-				
+
 				// Logical image
 				xwin->ximage2 = XCreateImage(xwin->display, xwin->visual, xwin->depth,
-											ZPixmap, 0, 
+											ZPixmap, 0,
 											(s8*)xwin->virtualscreen2,
 											xwin->width, xwin->height,
 											(xwin->pixelsize * 8),
@@ -517,7 +547,7 @@
 			//////
 				return _X11_OK;
 		}
-		
+
 		// If we get here, invalid
 		return _X11_GENERAL_FAILURE;
 	}
@@ -533,12 +563,12 @@
 	bool iHwndX_addTimer(SHwndX* win, s32 nIDEvent, UINT uElapse)
 	{
 		itimerval itv, itvold;
-		
-		
+
+
 		// Determine the interval
 		itv.it_interval.tv_sec		= (u32)uElapse / 1000;
 		itv.it_interval.tv_usec		= (u32)uElapse % 1000;
-		
+
 		// Create the timer
-		setitimer(ITIMER_REAL, &itv, &itvold);
+		return(setitimer(ITIMER_REAL, &itv, &itvold) == 0);
 	}

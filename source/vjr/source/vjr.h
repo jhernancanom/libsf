@@ -95,7 +95,7 @@
 	#include <sql.h>
 	#include <sqlext.h>
 	#include "resource.h"
-	
+
 	#define _USE_MATH_DEFINES
 	#include <math.h>
 	#include "sound\SDL-1.2.15\include\sdl\SDL.h"
@@ -105,11 +105,11 @@
 	#include <stdlib.h>
 
 	#include "vjr_const.h"
-	
+
 	#include "\libsf\utils\common\cpp\builder.h"
 	#include "\libsf\utils\common\cpp\builder.cpp"
 	#include "\libsf\utils\common\cpp\ll.cpp"
-	
+
 	#include "vjr_structs0.h"
 
 	#include "compiler\common\compiler_common.h"
@@ -188,7 +188,7 @@
 #elif defined(__linux__)
 	// Compiling on Linux
 	#define WM_USER				0x0400
-	
+
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <unistd.h>
@@ -202,24 +202,24 @@
 	#include <pthread.h>
 	#include <time.h>
 	#include <semaphore.h>
-	
-	#include <X11/XLib.h>
+
+	#include <X11/Xlib.h>
 	#include <X11/Xutil.h>
-	
+
 	#define _USE_MATH_DEFINES
 	#include <math.h>
 	#include <SDL2/SDL.h>
 	#include <SDL2/SDL_audio.h>
 
 	#include "vjr_const.h"
-	
+
 	#include "/libsf/utils/common/cpp/linux/windows.h"
 	#include "/libsf/utils/common/cpp/linux/hwndx.h"
-	
+
 	#include "/libsf/utils/common/cpp/builder.h"
 	#include "/libsf/utils/common/cpp/builder.cpp"
 	#include "/libsf/utils/common/cpp/ll.cpp"
-	
+
 	#include "vjr_structs0.h"
 
 	#include "compiler/common/compiler_common.h"
@@ -294,10 +294,10 @@
 		#include "grace.cpp"
 		#include "/libsf/utils/common/cpp/datum.cpp"
 		#include "fonts.cpp"
-		
+
 		#include "/libsf/utils/common/cpp/linux/windows.cpp"
 		#include "/libsf/utils/common/cpp/linux/hwndx.cpp"
-		
+
 #else
 	#error Unknown target for compilation (must be Windows or Linux)
 #endif

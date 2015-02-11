@@ -79,8 +79,12 @@
 #define _X11_NO_WINDOW			-3
 #define _X11_NO_VIRTUAL_SCREEN	-4
 #define _X11_NO_PIXEL_BUFFER	-5
+#define _X11_VIRTALLOC			-6
 #define _X11_GENERAL_FAILURE	-99
 
+struct SBitmap;
+struct SClassX;
+struct SHwndX;
 struct SHdcX;
 
 
@@ -97,18 +101,19 @@ struct SHdcX;
 		s32				screennum;
 		Visual*			visual;
 		GC				gc;
-		
+
 		XImage*			ximage;
 		SBgra*			virtualscreen;
-		
+		s32				screensize;
+
 		XImage*			ximage2;
 		SBgra*			virtualscreen2;
+		s32				screensize2;
 
 		s32				width;
 		s32				height;
 		s32				depth;
 		s32				pixelsize;
-		s32				screensize;
 	};
 
 
@@ -130,11 +135,11 @@ struct SHdcX;
 		RECT			rc;
 		RECT			rcClient;
 		SBuilder*		msgQueue;
-		
+
 		// Note:  Both of these contain the trailing NULL in their length ... this is done because some callbacks require ASCIIZ strings
 		SDatum			cClass;
 		SDatum			cTitle;
-		
+
 		// Current mouse and keyboard flags
 		uptr			mouseKbdFlags;
 		POINT			mousePt;
@@ -143,42 +148,42 @@ struct SHdcX;
 		CREATESTRUCT	data;
 		SClassX*		cls;
 		SHdcX*			hdc;
-		
+
 		// For X-windows
-		SXWindow		x11;
+		SXWindow*		x11;
 	};
-	
+
 	struct SMessageX
 	{
 		MSG				msg;
 	};
-	
+
 	struct STimerX
 	{
 		bool		isValid;
 		SHwndX*		winAssociated;
-		
+
 		// From setitimer()
 		s32			timerId;
 	};
-	
+
 	struct SFontX
 	{
 		bool		isValid;
 		Font		xfont;
-	}
-	
+	};
+
 	struct SHdcX
 	{
 		bool		isValid;
 		HDC			hdc;
-		
+
 		// Current settings for the device context
 		SFontX*		font;
 		bool		isOpaque;
 		SBgra		colorFore;
 		SBgra		colorBack;
-		
+
 		// Bitmaps take on the size of the thing they belong to, so they may be constantly resized
 		SBitmap*	bmp;
 	};
@@ -193,19 +198,6 @@ struct SHdcX;
 	};
 
 
-//////////
-// Global variables
-//////
-	SBuilder*		gsWindows								= NULL;
-	SBuilder*		gsClasses								= NULL;
-	SBuilder*		gsHdcs									= NULL;
-	
-	// "Desktop" window related
-	SHwndX*			gsDesktopWindow							= iHwndX_declareDesktopHwnd();
-	SDesktopX		gsDesktop;
-	HWND			ghWndDesktop							= NULL;
-
-
 
 
 //////////
@@ -217,8 +209,24 @@ struct SHdcX;
 	DWORD			iHwndX_getTime							(void);
 	SHwndX*			iHwndX_findWindow_byHwnd				(HWND hWnd);
 	SHdcX*			iHwndX_findHdc_byHdc					(HDC hdc);
-	SClassX*		iHwndX_findClass_byName					(s8* lpClassName);
+	SClassX*		iHwndX_findClass_byName					(cs8* lpClassName);
 	void			iHwndX_createWindow						(SHwndX* win);
 	SXWindow*		iHwndX_createXWindow					(SHwndX* win);
+	SHdcX*			iHwndX_createHdc						(s32 tnWidth, s32 tnHeight);
 	s32				iHwndX_initializeXWindow				(SXWindow* win, s32 width, s32 height, s8* title);
 	bool			iHwndX_addTimer							(SHwndX* win, s32 nIDEvent, UINT uElapse);
+
+
+//////////
+// Global variables
+//////
+	SBuilder*		gsWindows								= NULL;
+	SBuilder*		gsClasses								= NULL;
+	SBuilder*		gsHdcs									= NULL;
+
+	// "Desktop" window related
+	SHwndX*			gsDesktopWindow							= iHwndX_declareDesktopHwnd();
+	SDesktopX		gsDesktop;
+	HWND			ghWndDesktop							= null0;
+
+	cs8				cgcDesktop[]							= "_desktop";

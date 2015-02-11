@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=rick
-Date                   :=01/17/15
+Date                   :=02/10/15
 CodeLitePath           :="/home/rick/.codelite"
 LinkerName             :=/usr/bin/g++ 
 SharedObjectLinkerName :=/usr/bin/g++ -shared -fPIC
@@ -109,9 +109,6 @@ $(IntermediateDirectory)/bmps_bmps.cpp$(PreprocessSuffix): ../../source/bmps/bmp
 ## Clean
 ##
 clean:
-	$(RM) ./Debug/*$(ObjectSuffix)
-	$(RM) ./Debug/*$(DependSuffix)
-	$(RM) $(OutputFile)
-	$(RM) ".build-debug/vjr"
+	$(RM) -r ./Debug/
 
 

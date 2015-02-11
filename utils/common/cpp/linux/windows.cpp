@@ -72,20 +72,20 @@
 // Called to create a window
 //
 //////
-	WINUSERAPI HWND WINAPI CreateWindowEx(	__in DWORD dwExStyle,
-											__in_opt cs8* lpClassName, __in_opt cs8* lpWindowName,
-											__in DWORD dwStyle,
-											__in int X, __in int Y, __in int nWidth, __in int nHeight,
-											__in_opt HWND hWndParent, __in_opt HMENU hMenu, __in_opt HINSTANCE hInstance,
-											__in_opt LPVOID lpParam)
+	WINUSERAPI HWND WINAPI CreateWindowEx(	__in DWORD		dwExStyle,
+											__in_opt cs8*	lpClassName, __in_opt cs8* lpWindowName,
+											__in DWORD		dwStyle,
+											__in int		X, __in int Y, __in int nWidth, __in int nHeight,
+											__in_opt		HWND hWndParent, __in_opt HMENU hMenu, __in_opt HINSTANCE hInstance,
+											__in_opt LPVOID	lpParam)
 	{
 		SClassX*		cls;
 		union {
 			uptr		_win;
 			SHwndX*		win;
 		};
-		
-		
+
+
 		// Make sure our environment is sane
 		if (lpClassName && nWidth > 0 && nHeight > 0 && (cls == iHwndX_findClass_byName(lpClassName)))
 		{
@@ -102,7 +102,7 @@
 					win->isEnabled	= true;
 					win->nThreadId	= pthread_self();
 					win->cls		= cls;
-					
+
 					SetRect(&win->rc, X, Y, X + nWidth, Y + nHeight);
 					CopyRect(&win->rcClient, &win->rc);
 					iBuilder_createAndInitialize(&win->msgQueue, -1);
@@ -123,14 +123,14 @@
 					win->data.hInstance			= hInstance;
 					win->data.lpszClass			= win->cClass.data_cs8;
 					win->data.lpszName			= win->cTitle.data_cs8;
-				
-				
+
+
 				//////////
 				// Ask HwndX to send out the CreateWindow() messages into the msgQueue
 				//////
 					iHwndX_createWindow(win);
-				
-				
+
+
 				//////////
 				// If it's initially visible, go ahead and show it
 				//////
@@ -138,7 +138,7 @@
 						ShowWindow(win->hwnd, SW_SHOW);
 			}
 		}
-		
+
 		// If we get here, the window could not be created
 		return(0);
 	}
@@ -159,8 +159,8 @@
 			s32			_eventId;
 			UINT_PTR	eventId;
 		};
-		
-		
+
+
 		// The timer is either for the window, or in general
 		if (hWnd)
 		{
@@ -173,9 +173,9 @@
 					_eventId = nIDEvent;
 					return(eventId);
 				}
-			
+
 			// If we get here, the window is not found, not valid, or the timer could not be added
-		
+
 		} else {
 			// It is a general timer that goes to a specific function address
 			debug_break;
@@ -184,7 +184,7 @@
 // TODO:  Need to append an entry to our timer handler, and then dispatch as necessary
 //			return(setitimer(ITIMER_REAL, &itv, NULL));
 		}
-		
+
 		// If we get here, failure
 		return(NULL);
 	}
@@ -202,7 +202,7 @@
         { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 0, "ok" }
     };
 	const int mb_buttons_ok_choice[] = { IDOK };
-	
+
     const SDL_MessageBoxButtonData mb_buttons_ok_cancel[] =
 	{
         { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 0, "ok" },
@@ -225,14 +225,14 @@
         { /* .flags, .buttonid, .text */        0, 2, "ignore" }
     };
 	const int mb_buttons_abort_retry_ignore_choice[] = { IDABORT, IDRETRY, IDIGNORE };
-	
+
     const SDL_MessageBoxButtonData mb_buttons_yes_no[] =
 	{
         { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 0, "yes" },
         { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 1, "no" }
     };
 	const int mb_buttons_yes_no_choice[] = { IDYES, IDNO };
-	
+
     const SDL_MessageBoxButtonData mb_buttons_retry_cancel[] =
 	{
         { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 0, "retry" },
@@ -247,7 +247,7 @@
         { /* .flags, .buttonid, .text */        0, 2, "continue" }
     };
 	const int mb_buttons_cancel_retry_continue_choice[] = { IDCANCEL, IDRETRY, IDCONTINUE };
-	
+
     const SDL_MessageBoxColorScheme mb_colorScheme_information =
 	{
         { /* .colors (.r, .g, .b) */
@@ -258,7 +258,7 @@
             { 255, 255, 128 }		// [SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED]
         }
     };
-	
+
     const SDL_MessageBoxColorScheme mb_colorScheme_warning =
 	{
         { /* .colors (.r, .g, .b) */
@@ -269,7 +269,7 @@
             { 128, 255, 255 }		// [SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED]
         }
     };
-	
+
     const SDL_MessageBoxColorScheme mb_colorScheme_error =
 	{
         { /* .colors (.r, .g, .b) */
@@ -286,14 +286,14 @@
 		int					lnChoice;
 		const int*			buttonChoiceTranslation;
 		SDL_MessageBoxData	messageboxdata;
-		
-		
+
+
 		// Initialize
 		memset(&messageboxdata, 0, sizeof(messageboxdata));
 		messageboxdata.title		= lpCaption;
 		messageboxdata.message		= lpText;
-		
-		
+
+
 		//////////
 		// Establish the expected values
 		//////
@@ -336,8 +336,8 @@
 					buttonChoiceTranslation		= &mb_buttons_cancel_retry_continue_choice[0];
 					break;
 			}
-		
-		
+
+
 		//////////
 		// Establish the message box type
 		//////
@@ -357,7 +357,7 @@
 					break;
 			}
 
-		
+
 		//////////
 		// Display the message box
 		//////
@@ -367,8 +367,8 @@
 				// Error
 				return(lnChoice);
 			}
-		
-		
+
+
 		//////////
 		// Indicate their choice
 		//////
@@ -393,11 +393,15 @@
 		pthread_t			lnThreadId;
 		pthread_attr_t		attr;
 		void*				stackptr;
+		union {
+			LPTHREAD_START_ROUTINE	_startRoutine;
+			void*					(*startRoutine)(void*);
+		};
 
 
 		// Make sure we have a target for the thread id
 		if (!lpThreadId)
-			lpThreadId = &lnThreadId;
+			lpThreadId = (DWORD*)&lnThreadId;
 
 // TODO:  Honor dwCreationFlags
 
@@ -412,7 +416,8 @@
 					{
 						if (pthread_attr_setstack(&attr, stackptr, _CREATE_THREAD_DEFAULT_STACK_SIZE) == 0)
 						{
-							if (pthread_create(lpThreadId, &attr, lpStartAddress, lpParameter) == 0)
+							_startRoutine = lpStartAddress;
+							if (pthread_create((pthread_t*)lpThreadId, &attr, startRoutine, lpParameter) == 0)
 							{
 								// If we get here, the thread was created successfully
 								return(*lpThreadId);
@@ -422,7 +427,7 @@
 				}
 			}
 		}
-		
+
 		// If we get here, failure
 		pthread_attr_destroy(&attr);
 		return(-1);
@@ -438,7 +443,7 @@
 //////
 	WINBASEAPI VOID WINAPI ExitThread(__in DWORD dwExitCode)
 	{
-		pthread_exit(dwExitCode);
+		pthread_exit((void*)(uptr)dwExitCode);
 	}
 
 
@@ -453,8 +458,8 @@
 	WINUSERAPI BOOL WINAPI GetClassInfoExA(__in_opt HINSTANCE hInstance, __in cs8* lpszClass, __out WNDCLASSEX* lpwcx)
 	{
 		SClassX* cls;
-		
-		
+
+
 		// Make sure the environment is sane
 		if (lpszClass && lpwcx && gsClasses)
 		{
@@ -468,7 +473,7 @@
 			}
 			// If we get here, the class wasn't found
 		}
-		
+
 		// If we get here, failure
 		return(FALSE);
 	}
@@ -488,12 +493,12 @@
 			SClassX*	cls;
 		};
 		WNDCLASSEX	wcx;
-		
-		
+
+
 		// Make sure there is a class builder
 		if (!gsClasses)
 			iBuilder_createAndInitialize(&gsClasses, -1);
-		
+
 		// make sure our environment is sane
 		if (gsClasses && lpwcx)
 		{
@@ -507,17 +512,17 @@
 					// Initialize it
 					cls->isValid = true;
 					iDatum_duplicate(&cls->cClass, lpwcx->lpszClassName, -1);
-					
+
 					// Copy over the WNDCLASSEX structure
-					memcpy(cls->wcx, lpwcx, sizeof(WNDCLASSEX));
-					
+					memcpy(&cls->wcx, lpwcx, sizeof(WNDCLASSEX));
+
 					// Indicate our "atom" return value
 					return(_cls & 0xffff);
 				}
 			}
 			// If we get here, it already exists
 		}
-		
+
 		// If we get here, failure
 		return(0);
 	}
@@ -539,17 +544,17 @@
 		SHwndX*		win;
 		SMessageX*	msg;
 		pthread_t	lnThreadId;
-		
-		
+
+
 		// Make sure our environment is sane
 		if (lpMsg)
 		{
 			// Grab the current thread (because Windows only allows hwnd messages to be read
 			// for those windows created in the current thread)
 			lnThreadId = pthread_self();
-			
+
 			// Iterate through every window to see which one of them has a message to dispatch
-			for (lnI = 0, win = (SHwndX*)gsWindows.buffer; lnI < gsWindows.populatedLength; lnI += sizeof(SHwndX), win++)
+			for (lnI = 0, win = (SHwndX*)gsWindows->buffer; lnI < gsWindows->populatedLength; lnI += sizeof(SHwndX), win++)
 			{
 				// Is this entry valid?
 				if (win->isValid)
@@ -565,15 +570,15 @@
 							if (wMsgFilterMin == 0 && wMsgFilterMax == 0)
 							{
 								// Dispatch the top message
-								memcpy(lpMsg, ((SMessageX*)win->msgQueue->buffer)->msg, sizeof(*lpMsg));
-								
+								memcpy(lpMsg, &((SMessageX*)win->msgQueue->buffer)->msg, sizeof(*lpMsg));
+
 								// Delete if need be
 								if (wRemoveMsg != PM_NOREMOVE)
 									iBuilder_delete(win->msgQueue, 0, sizeof(SMessageX));
-								
+
 								// Indicate success
 								return(TRUE);
-							
+
 							} else {
 								// Only filtered messages
 								for (lnI = 0, msg = (SMessageX*)win->msgQueue->buffer; lnI < win->msgQueue->populatedLength; lnI += sizeof(SMessageX), msg++)
@@ -582,12 +587,12 @@
 									if (msg->msg.message >= wMsgFilterMin && msg->msg.message <= wMsgFilterMax)
 									{
 										// Yes, dispatch this message
-										memcpy(lpMsg, msg->msg, sizeof(*lpMsg));
-										
+										memcpy(lpMsg, &msg->msg, sizeof(*lpMsg));
+
 										// Delete if need be
 										if (wRemoveMsg != PM_NOREMOVE)
 											iBuilder_delete(win->msgQueue, lnI, sizeof(SMessageX));
-										
+
 										// Indicate success
 										return(TRUE);
 									}
@@ -602,7 +607,7 @@
 				// If we get here, no messages are waiting for this window
 			}
 		}
-		
+
 		// If we get here, not valid
 		return(FALSE);
 	}
@@ -648,18 +653,18 @@
 	WINUSERAPI LRESULT WINAPI DispatchMessage(__in CONST MSG *lpMsg)
 	{
 		SHwndX* win;
-		
-		
+
+
 		// Make sure our environment is sane
 		if (lpMsg)
 		{
 			// They are retrieving from a particular window for the current thread
 			win = iHwndX_findWindow_byHwnd(lpMsg->hwnd);
-			
+
 			// If valid, call the associated wndProc()
 			if (win)
 				return(win->cls->wcx.lpfnWndProc(lpMsg->hwnd, lpMsg->message, lpMsg->wParam, lpMsg->lParam));
-			
+
 			// If we get here, we didn't find the indicated message, so ignore it
 		}
 		return(0);
@@ -678,8 +683,8 @@
 		SHwndX*			win;
 		HDC				hdc;
 		PAINTSTRUCT		ps;
-		
-		
+
+
 		// Try to find the window
 		win = iHwndX_findWindow_byHwnd(hWnd);
 		if (win && win->isValid)
@@ -691,7 +696,7 @@
 					// They are wanting to quit the app
 					exit(wParam);
 					break;
-				
+
 				case WM_ERASEBKGND:
 				case WM_PAINT:
 					if (win->isVisible)
@@ -704,7 +709,7 @@
 					break;
 			}
 		}
-		
+
 		// If we get here, the window is invalid ... ignore it
 		return(0);
 	}
@@ -747,11 +752,11 @@
 	WINUSERAPI BOOL WINAPI GetClientRect(__in HWND hWnd, __out LPRECT lpRect)
 	{
 		SHwndX* win;
-		
-		
+
+
 		// Locate the window
 		win = iHwndX_findWindow_byHwnd(hWnd);
-		
+
 		// Is it valid?
 		if (win && win->isValid)
 		{
@@ -759,7 +764,7 @@
 			CopyRect(lpRect, &win->rcClient);
 			return(TRUE);
 		}
-		
+
 		// If we get here, failure
 		return(FALSE);
 	}
@@ -775,11 +780,11 @@
 	WINUSERAPI BOOL WINAPI GetWindowRect(__in HWND hWnd, __out LPRECT lpRect)
 	{
 		SHwndX* win;
-		
-		
+
+
 		// Locate the window
 		win = iHwndX_findWindow_byHwnd(hWnd);
-		
+
 		// Is it valid?
 		if (win && win->isValid)
 		{
@@ -787,7 +792,7 @@
 			CopyRect(lpRect, &win->rc);
 			return(TRUE);
 		}
-		
+
 		// If we get here, failure
 		return(FALSE);
 	}
@@ -810,7 +815,7 @@
 			lprc->top		= yTop;
 			lprc->right		= xRight;
 			lprc->bottom	= yBottom;
-			
+
 			// If we get here, success
 			return(TRUE);
 		}
@@ -963,8 +968,8 @@ WINUSERAPI BOOL WINAPI DestroyWindow(__in HWND hWnd)
 WINUSERAPI BOOL WINAPI ShowWindow(__in HWND hWnd, __in int nCmdShow)
 {
 	SHwndX* win;
-	
-	
+
+
 	// Try to find the window
 	win = iHwndX_findWindow_byHwnd(hWnd);
 	if (win)
@@ -974,18 +979,18 @@ WINUSERAPI BOOL WINAPI ShowWindow(__in HWND hWnd, __in int nCmdShow)
 			case SW_HIDE:
 //				XMapWindow(win->x11->display, win->x11->window);
 				return(TRUE);
-			
+
 			case SW_SHOW:
 //				XMapWindow(win->x11->display, win->x11->window);
 				return(TRUE);
-			
+
 			default:
 				// We don't support any other values
 				// Let it fall through and fail
 				break;
 		}
 	}
-	
+
 	// If we get here, failure
 	return(FALSE);
 }
@@ -1084,11 +1089,11 @@ WINUSERAPI HICON WINAPI LoadIcon(__in_opt HINSTANCE hInstance, __in uptr lpIconN
 		// Make sure our environment is sane
 		if (lprcDst && lprcSrc)
 		{
-			// 
+			//
 			memcpy(lprcDst, lprcSrc, sizeof(RECT));
 			return(TRUE);
 		}
-		
+
 		// If we get here, failure
 		return(FALSE);
 	}
@@ -1109,15 +1114,15 @@ WINUSERAPI HICON WINAPI LoadIcon(__in_opt HINSTANCE hInstance, __in uptr lpIconN
 			// Adjust horizontally
 			lprc->left		-= dx;
 			lprc->right		+= dx;
-			
+
 			// Adjust vertically
 			lprc->top		-= dy;
 			lprc->bottom	+= dy;
-			
+
 			// If we get here, success
 			return(TRUE);
 		}
-		
+
 		// If we get here, failure
 		return(FALSE);
 	}
@@ -1146,16 +1151,16 @@ WINUSERAPI LONG WINAPI SetWindowLongA(__in HWND hWnd, __in int nIndex,__in LONG 
 WINUSERAPI BOOL WINAPI InvalidateRect(__in_opt HWND hWnd, __in_opt CONST RECT *lpRect, __in BOOL bErase)
 {
 	MSG msg;
-	
-	
+
+
 	//////////
 	// Because of the way VJr draws, we don't really support invalidated rects,
 	// but instead simply append a WM_PAINT message (if one isn't already present)
 	//////
-		if (!PeekMessage(&msg, WM_PAINT, WM_PAINT, PM_NOREMOVE))
+		if (!PeekMessage(&msg, hWnd, WM_PAINT, WM_PAINT, PM_NOREMOVE))
 			iHwndX_postMessage_byHwnd(hWnd, WM_PAINT, 0, 0);
-	
-	
+
+
 	// Indicate success either way
 	return(TRUE);
 }
@@ -1203,7 +1208,7 @@ WINGDIAPI HRGN WINAPI CreateRectRgnIndirect( __in CONST RECT *lprect)
 			return((	pt.x >= lprc->left	&&	pt.x <= lprc->right
 					&&	pt.y >= lprc->top	&&	pt.y <= lprc->bottom));
 		}
-		
+
 		// Invalid rect
 		return(FALSE);
 	}
@@ -1231,7 +1236,7 @@ WINUSERAPI BOOL WINAPI AdjustWindowRect(__inout LPRECT lpRect, __in DWORD dwStyl
 {
 	// Not currently supported, because we only allow windows that are basically WS_POPUP
 	// windows, which have no border, and allow for no menu
-	
+
 	// Indicate success anyway (because there is no adjustment for the window type)
 	return(TRUE);
 }
@@ -1270,17 +1275,14 @@ WINGDIAPI int WINAPI CombineRgn(__in_opt HRGN hrgnDst, __in_opt HRGN hrgnSrc1, _
 //////
 	WINGDIAPI HBRUSH WINAPI CreateSolidBrush(__in COLORREF color)
 	{
-		union {
-			HBRUSH	_rgba;
-			SBgra	rgba;
-		};
-		
-		
+		SBgra rgba;
+
+
 		// Create the "solid brush" by color
-		rgba._color = color;
-		
+		rgba.color = color;
+
 		// Return the "solid brush"
-		return(_rgba);
+		return(rgba.color);
 	}
 
 
@@ -1346,8 +1348,8 @@ WINUSERAPI HDC WINAPI GetDC(__in_opt HWND hWnd)
 		HDC		_lhdc;
 		SHdcX*	lhdc;
 	};
-	
-	
+
+
 	//////////
 	// Try to find it by hWnd
 	//////
@@ -1356,13 +1358,13 @@ WINUSERAPI HDC WINAPI GetDC(__in_opt HWND hWnd)
 		{
 			// Grab the DC for this window
 			lhdc = win->hdc;
-		
+
 		} else {
 			// Not found
 			_lhdc = -1;
 		}
-	
-	
+
+
 	//////////
 	// Indicate our status
 	//////
@@ -1376,25 +1378,25 @@ WINGDIAPI HDC WINAPI CreateCompatibleDC( __in_opt HDC hdc)
 {
 	SHdcX*	lhdcRef;
 	SHdcX*	lhdcNew;
-	
-	
+
+
 	// Try to find it by hdc
 	lhdcRef = iHwndX_findHdc_byHdc(hdc);
 	if (lhdcRef && lhdcRef->isValid)
 	{
 		// Create a new entry, and copy everything
-		lhdcNew = (SHdcX*)iBuilder_appendData(gsHdcs, sizeof(SHdcX));
+		lhdcNew = (SHdcX*)iBuilder_appendData(gsHdcs, NULL, sizeof(SHdcX));
 		if (lhdcNew)
 		{
 			// Populate with the content from the other one
 			memcpy(lhdcNew, lhdcRef, sizeof(*lhdcNew));
-			
+
 			// Create copies of the non-copyable things
 			lhdcNew->bmp = iBmp_allocate();
-			iBmp_createBySize(lhdcNew->bmp, lhdcRef->bmp.bi.biWidth, lhdcRef->bmp.bi.biHeight, lhdcRef->bmp.bi.biBitCount);
+			iBmp_createBySize(lhdcNew->bmp, lhdcRef->bmp->bi.biWidth, lhdcRef->bmp->bi.biHeight, lhdcRef->bmp->bi.biBitCount);
 		}
 	}
-	
+
 	// If we get here, failure
 	return(-1);
 }
@@ -1540,42 +1542,39 @@ WINGDIAPI BOOL WINAPI GetTextMetricsA(__in HDC hdc, __out LPTEXTMETRIC lptm)
 //////
 	WINGDIAPI HGDIOBJ WINAPI GetStockObject(__in DWORD obj)
 	{
-		union {
-			HGDIOBJ	_value;
-			SBgra	color;
-		}
-		
-		
+		SBgra color;
+
+
 		// What object are they requesting?
 		switch (obj)
 		{
 			case NULL_BRUSH:
 			case WHITE_BRUSH:
-				color = rgba(255,255,255,255);
+				color.color = rgba(255,255,255,255);
 				break;
 
 			case LTGRAY_BRUSH:
-				color = rgba(235,235,235,255);
+				color.color = rgba(235,235,235,255);
 				break;
 
 			case GRAY_BRUSH:
-				color = rgba(192,192,192,255);
+				color.color = rgba(192,192,192,255);
 				break;
 
 			case DKGRAY_BRUSH:
-				color = rgba(92,92,92,255);
+				color.color = rgba(92,92,92,255);
 				break;
 
 			case BLACK_BRUSH:
-				color = rgba(0,0,0,255);
+				color.color = rgba(0,0,0,255);
 				break;
-			
+
 			case WHITE_PEN:
 			case BLACK_PEN:
 			case NULL_PEN:
-				_color = -1;
+				color.color = -1;
 				break;
-			
+
 			case OEM_FIXED_FONT:
 			case ANSI_FIXED_FONT:
 			case ANSI_VAR_FONT:
@@ -1583,15 +1582,15 @@ WINGDIAPI BOOL WINAPI GetTextMetricsA(__in HDC hdc, __out LPTEXTMETRIC lptm)
 			case DEVICE_DEFAULT_FONT:
 			case DEFAULT_PALETTE:
 			case SYSTEM_FIXED_FONT:
-				_color = -1;
+				color.color = -1;
 				break;
-			
+
 			default:
 				// Default to an invalid value
-				_color = -1;
+				color.color = -1;
 				break;
 		}
-		
+
 		// Return our result
-		return(_value);
+		return(color.color);
 	}

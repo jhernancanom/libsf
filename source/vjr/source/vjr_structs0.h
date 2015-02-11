@@ -79,37 +79,6 @@ struct SObjPropertyMap;
 
 
 
-struct SBgr
-{
-	u8	blu;
-	u8	grn;
-	u8	red;
-};
-
-struct SBgra
-{
-	union {
-		u32		color;
-		struct {
-			u8	blu;
-			u8	grn;
-			u8	red;
-			u8	alp;
-		};
-	};
-};
-
-
-struct SBgraf
-{
-	f32		blu;				// 24-bit RGB values in bitmap files are physically stored as BGR
-	f32		grn;
-	f32		red;
-	f32		alp;				// For 32-bit bitmaps
-
-	f32		area;				// Holds area
-};
-
 struct SBitmap
 {
 	// Device context and bitmap handle to this data
@@ -285,7 +254,7 @@ struct STranslate
 // {
 // 	void*		p1;														// Pointer 1
 // 	void*		p2;														// Pointer 2
-// 
+//
 // 	// Extra information
 // 	union {
 // 		struct {
