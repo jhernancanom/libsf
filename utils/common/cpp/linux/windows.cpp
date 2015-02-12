@@ -87,7 +87,7 @@
 
 
 		// Make sure our environment is sane
-		if (lpClassName && nWidth > 0 && nHeight > 0 && (cls == iHwndX_findClass_byName(lpClassName)))
+		if (lpClassName && nWidth > 0 && nHeight > 0 && (cls = iHwndX_findClass_byName(lpClassName)))
 		{
 			// Allocate a new window
 			win = (SHwndX*)iBuilder_appendData(gsWindows, NULL, sizeof(SHwndX));
@@ -511,7 +511,7 @@
 				{
 					// Initialize it
 					cls->isValid = true;
-					iDatum_duplicate(&cls->cClass, lpwcx->lpszClassName, -1);
+					iDatum_duplicate(&cls->cClass, (cu8*)lpwcx->lpszClassName, -1);
 
 					// Copy over the WNDCLASSEX structure
 					memcpy(&cls->wcx, lpwcx, sizeof(WNDCLASSEX));

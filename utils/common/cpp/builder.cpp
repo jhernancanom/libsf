@@ -89,7 +89,7 @@
 				// Are we there yet?
 				if (buffRoot->populatedLength + tnDataLength <= buffRoot->allocatedLength)
 					return;		// We're good
-				
+
 				// If we get here, we need to allocate more space
 				// Reallocate and continue
 				buffRoot->data_s8				= (s8*)realloc(buffRoot->data_s8, buffRoot->allocatedLength + buffRoot->allocateBlockSize);
@@ -111,7 +111,7 @@
 // Initializes a new buffer to the default allocation size.
 // No content is changed.
 //
-// Returns:  
+// Returns:
 //		Pointer to the point in the buffer where the
 //////
 	void iBuilder_createAndInitialize(SBuilder** buffRoot, u32 tnAllocationBlockSize)
@@ -164,7 +164,7 @@
 //
 // Appends the indicated text to the end of the buffer.
 //
-// Returns:  
+// Returns:
 //		Pointer to the point in the buffer where the text was inserted, can be used
 //		for a furthering or continuance of this function embedded in a higher call.
 //////
@@ -219,7 +219,7 @@
 				*(uptr*)(buffRoot->data_s8 + buffRoot->populatedLength) = tnValue;
 				buffRoot->populatedLength += sizeof(uptr);
 			}
-			
+
 			// Indicate where the start of that buffer is
 			return(buffRoot->data_u8 + buffRoot->populatedLength - sizeof(uptr));
 		}
@@ -245,15 +245,40 @@
 
 //////////
 //
+// Called to delete the indicated bytes
+//
+//////
+	void iBuilder_delete(SBuilder* buffRoot, u32 tnStartOffset, u32 tnDeleteLength)
+	{
+		if (buffRoot && tnStartOffset <= buffRoot->populatedLength)
+		{
+			// Move any data that was after the deleted block forward in the block
+			if (tnStartOffset + tnDeleteLength < buffRoot->populatedLength)
+			{
+				memmove(buffRoot->buffer + tnStartOffset,
+						buffRoot->buffer + tnStartOffset + tnDeleteLength,
+						buffRoot->populatedLength - tnStartOffset - tnDeleteLength);
+			}
+
+			// Indicate the new size
+			buffRoot->populatedLength -= tnDeleteLength;
+		}
+	}
+
+
+
+
+//////////
+//
 // Called to reset the buffer to 0 bytes
 //
 //////
-	void iBuilder_reset(SBuilder* dst)
+	void iBuilder_reset(SBuilder* buffRoot)
 	{
-		if (dst && dst->populatedLength != 0)
+		if (buffRoot && buffRoot->populatedLength != 0)
 		{
-			memset(dst->buffer, 0, dst->totSize);
-			dst->populatedLength = 0;
+			memset(buffRoot->buffer, 0, buffRoot->totSize);
+			buffRoot->populatedLength = 0;
 		}
 	}
 
@@ -276,7 +301,7 @@
 				iBuilder_verifySizeForNewBytes(buffRoot, tnDataLength);
 				buffRoot->populatedLength += tnDataLength;
 			}
-			
+
 			// Indicate where the start of that buffer is
 			return(buffRoot->data_s8 + buffRoot->populatedLength - tnDataLength);
 		}
@@ -293,18 +318,18 @@
 // that the last data is not a whitespace.
 //
 //////
-	void iBuilder_backoffTrailingWhitespaces(SBuilder* dst)
+	void iBuilder_backoffTrailingWhitespaces(SBuilder* buffRoot)
 	{
-		if (dst && dst->data_s8)
+		if (buffRoot && buffRoot->data_s8)
 		{
 			// Back off so long as there are whitespaces
-			while ((s32)dst->populatedLength > 0 && (dst->data_s8[dst->populatedLength - 1] == 32 || dst->data_s8[dst->populatedLength - 1] == 9))
+			while ((s32)buffRoot->populatedLength > 0 && (buffRoot->data_s8[buffRoot->populatedLength - 1] == 32 || buffRoot->data_s8[buffRoot->populatedLength - 1] == 9))
 			{
 				// Reset the data there to the expected NULLs
-				dst->data_s8[dst->populatedLength - 1] = 0;
+				buffRoot->data_s8[buffRoot->populatedLength - 1] = 0;
 
 				// Backup one
-				--dst->populatedLength;
+				--buffRoot->populatedLength;
 			}
 		}
 	}
@@ -431,7 +456,7 @@
 
 
 		// Make sure there's something to write
-		if (buffRoot && tcPathname)	
+		if (buffRoot && tcPathname)
 		{
 			// Try to create the file
 			lfh = fopen((s8*)tcPathname, "wb+");
@@ -488,7 +513,7 @@
 					lnSize = ftell(lfh);
 					fseek(lfh, 0, SEEK_SET);
 
-				
+
 				//////////
 				// Allocate that buffer
 				//////

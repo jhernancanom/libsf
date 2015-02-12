@@ -39,6 +39,8 @@
     <File Name="../../../../utils/common/cpp/builder.h"/>
     <File Name="../../../../utils/common/cpp/linux/hwndx.h"/>
     <File Name="../../../../utils/common/cpp/linux/hwndx.cpp" ExcludeProjConfig="Debug"/>
+    <File Name="../../../../utils/common/cpp/datum.cpp" ExcludeProjConfig="Debug"/>
+    <File Name="../../../../utils/common/cpp/datum.h"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

@@ -86,9 +86,10 @@
 	u8*			iBuilder_appendData							(SBuilder* buffRoot, cu8* tcData, u32 tnDataLength);
 	u8*			iBuilder_append_uptr						(SBuilder* buffRoot, uptr tnValue);
 	u8*			iBuilder_appendCrLf							(SBuilder* buffRoot);
-	void		iBuilder_reset								(SBuilder* dst);
+	void		iBuilder_delete								(SBuilder* buffRoot, u32 tnStartOffset, u32 tnDeleteLength);
+	void		iBuilder_reset								(SBuilder* buffRoot);
 	s8*			iBuilder_allocateBytes						(SBuilder* buffRoot, u32 tnDataLength);
-	void		iBuilder_backoffTrailingWhitespaces			(SBuilder* dst);
+	void		iBuilder_backoffTrailingWhitespaces			(SBuilder* buffRoot);
 	void		iBuilder_setSize							(SBuilder* buffRoot, u32 tnBufferLength);
 	void		iBuilder_freeAndRelease						(SBuilder** buffRoot);
 	u32			iBuilder_asciiWriteOutFile					(SBuilder* buffRoot, cu8* tcPathname);
