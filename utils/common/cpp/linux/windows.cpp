@@ -509,7 +509,10 @@
 				cls = (SClassX*)iBuilder_appendData(gsClasses, NULL, sizeof(SClassX));
 				if (cls)
 				{
-					// Initialize it
+					// Initialize
+					memset(cls, 0, sizeof(SClassX));
+
+					// Establish
 					cls->isValid = true;
 					iDatum_duplicate(&cls->cClass, (cu8*)lpwcx->lpszClassName, -1);
 

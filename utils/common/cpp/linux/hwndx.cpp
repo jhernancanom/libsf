@@ -175,8 +175,8 @@
 			wcx.cbSize			= sizeof(wcx);
 			wcx.style			= CS_OWNDC;
 			wcx._lpfnWndProc	= (uptr)&DefWindowProc;
-			wcx.lpszClassName	= cgcDesktop;
-			wcx.lpszMenuName	= cgcDesktop;
+			wcx.lpszClassName	= (cs8*)&cgcDesktop[0];
+			wcx.lpszMenuName	= (cs8*)&cgcDesktop[0];
 			RegisterClassEx(&wcx);
 
 
@@ -185,6 +185,7 @@
 		//////
 			lnWidth			= XDisplayWidth(gsDesktop.display, gsDesktop.screen);
 			lnHeight		= XDisplayHeight(gsDesktop.display, gsDesktop.screen);
+debug_break;
 			ghWndDesktop	= CreateWindowEx(	0, cgcDesktop, cgcDesktop, WS_POPUP,
 												0, 0, lnWidth, lnHeight,
 												null0, null0, null0, null0);

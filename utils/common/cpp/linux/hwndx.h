@@ -114,7 +114,7 @@ struct SHdcX;
 		s32				height;
 		s32				depth;
 		s32				pixelsize;
-	};
+	} __attribute__((packed));
 
 
 	struct SClassX
@@ -122,7 +122,7 @@ struct SHdcX;
 		bool			isValid;
 		WNDCLASSEX		wcx;
 		SDatum			cClass;
-	};
+	} __attribute__((packed));
 
 	struct SHwndX
 	{
@@ -151,12 +151,12 @@ struct SHdcX;
 
 		// For X-windows
 		SXWindow*		x11;
-	};
+	} __attribute__((packed));
 
 	struct SMessageX
 	{
 		MSG				msg;
-	};
+	} __attribute__((packed));
 
 	struct STimerX
 	{
@@ -165,13 +165,13 @@ struct SHdcX;
 
 		// From setitimer()
 		s32			timerId;
-	};
+	} __attribute__((packed));
 
 	struct SFontX
 	{
 		bool		isValid;
 		Font		xfont;
-	};
+	} __attribute__((packed));
 
 	struct SHdcX
 	{
@@ -186,7 +186,7 @@ struct SHdcX;
 
 		// Bitmaps take on the size of the thing they belong to, so they may be constantly resized
 		SBitmap*	bmp;
-	};
+	} __attribute__((packed));
 
 	struct SDesktopX
 	{
@@ -195,7 +195,7 @@ struct SHdcX;
 		s32			depth;
 		s32			connection;
 		Window		windowDesktop;
-	};
+	} __attribute__((packed));
 
 
 
