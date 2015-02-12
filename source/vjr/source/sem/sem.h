@@ -265,8 +265,8 @@
 	u32						iSEM_render							(SEM* sem, SObject* obj, bool tlRenderCursorline);
 	void					iSEM_render_highlightSelectedComps	(SEM* sem, SComp* firstComp);
 	bool					iSEM_verifyCursorIsVisible			(SEM* sem, SObject* obj);
-	bool					iSEM_onKeyDown_sourceCode			(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
-	bool					iSEM_onKeyDown						(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tcAscii, u16 tnVKey, bool tlIsCAS, bool tlIsAscii);
+	bool					iSEM_onKeyDown_sourceCode			(SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii);
+	bool					iSEM_onKeyDown						(SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii);
 	void*					iSEM_findMate						(SEM* sem, SLine* lineStart, SComp* comp);
 	void					iSEM_addTooltipHighlight			(SEM* sem, SLine* line, SObject* obj, s8* tcText, s32 tnTextLength, bool tlShowAbove);
 

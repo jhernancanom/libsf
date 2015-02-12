@@ -1055,7 +1055,7 @@ debug_break;
 // is now signaling repated keystrokes.
 //
 //////
-	bool iSEM_onKeyDown_sourceCode(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tnAsciiChar, u16 tnVKey, bool tlIsCAS, bool tlIsAscii)
+	bool iSEM_onKeyDown_sourceCode(SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii)
 	{
 		s32				lnMateDirection;
 		SEM*			sem;
@@ -1063,6 +1063,14 @@ debug_break;
 		SLine*			line;
 		SLine*			lineMate;
 		SComp*			comp;
+		bool			llCtrl, llAlt, llShift, llCaps, llIsCAS, llIsAscii;
+		s16				lcAscii;
+		u16				lnVKey;
+
+
+		// Make sure our environment is sane
+		if (!iiDefaultCallback_processKeyVariables(varCtrl, varAlt, varShift, varCaps, varAscii, varVKey, varIsCAS, varIsAscii, &llCtrl, &llAlt, &llShift, &llCaps, &llIsCAS, &llIsAscii, &lcAscii, &lnVKey))
+			return(false);
 
 
 		logfunc(__FUNCTION__);
@@ -1074,10 +1082,10 @@ debug_break;
 			sem = obj->p.sem;
 
 			// Send it its key
-			if (!tlCtrl && !tlShift && !tlAlt)
+			if (!llCtrl && !llShift && !llAlt)
 			{
 				// Regular key without special flags
-				switch (tnVKey)
+				switch (lnVKey)
 				{
 					case VK_F9:
 						// Breakpoint toggle
@@ -1142,27 +1150,27 @@ debug_break;
 						break;
 				}
 
-			} else if (tlCtrl && !tlShift && !tlAlt) {
+			} else if (llCtrl && !llShift && !llAlt) {
 				// CTRL+
 
-			} else if (!tlCtrl && tlShift && !tlAlt) {
+			} else if (!llCtrl && llShift && !llAlt) {
 				// SHIFT+
 
-			} else if (!tlCtrl && !tlShift && tlAlt) {
+			} else if (!llCtrl && !llShift && llAlt) {
 				// ALT+
 
-			} else if (tlCtrl && tlShift && !tlAlt) {
+			} else if (llCtrl && llShift && !llAlt) {
 				// CTRL+SHIFT+
 
-			} else if (tlCtrl && !tlShift && tlAlt) {
+			} else if (llCtrl && !llShift && llAlt) {
 				// CTRL+ALT+
 
-			} else if (!tlCtrl && tlShift && tlAlt) {
+			} else if (!llCtrl && llShift && llAlt) {
 				// SHIFT+ALT
 
-			} else if (tlCtrl && tlShift && tlAlt) {
+			} else if (llCtrl && llShift && llAlt) {
 				// CTRL+ALT+SHIFT
-				switch (tnVKey)
+				switch (lnVKey)
 				{
 					case 'M':
 						// Mate, they're searching for this component's mate
@@ -1197,7 +1205,7 @@ debug_break;
 		}
 
 		// When ctrl+alt+shift changes, remove the highlighted
-		if (sem && !(tlCtrl && tlShift && tlAlt) && (sem->line_highlightBefore || sem->line_highlightAfter))
+		if (sem && !(llCtrl && llShift && llAlt) && (sem->line_highlightBefore || sem->line_highlightAfter))
 		{
 			// We're done displaying the highlight
 			sem->line_highlightBefore	= NULL;
@@ -1209,7 +1217,7 @@ debug_break;
 		}
 
 		// Indicate additional events should be processed
-		return(iSEM_onKeyDown(win, obj, tlCtrl, tlAlt, tlShift, tlCaps, tnAsciiChar, tnVKey, tlIsCAS, tlIsAscii));
+		return(iSEM_onKeyDown(win, obj, varCtrl, varAlt, varShift, varCaps, varAscii, varVKey, varIsCAS, varIsAscii));
 	}
 
 
@@ -1220,11 +1228,19 @@ debug_break;
 // Called when a keypress is made, or when a prior keypress is now signaling repated keystrokes.
 //
 //////
-	bool iSEM_onKeyDown(SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, s16 tnAsciiChar, u16 tnVKey, bool tlIsCAS, bool tlIsAscii)
+	bool iSEM_onKeyDown(SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii)
 	{
 		s32		lnDeltaX;
 		bool	llProcessed;
 		SEM*	sem;
+		bool	llCtrl, llAlt, llShift, llCaps, llIsCAS, llIsAscii;
+		s16		lcAscii;
+		u16		lnVKey;
+
+
+		// Make sure our environment is sane
+		if (!iiDefaultCallback_processKeyVariables(varCtrl, varAlt, varShift, varCaps, varAscii, varVKey, varIsCAS, varIsAscii, &llCtrl, &llAlt, &llShift, &llCaps, &llIsCAS, &llIsAscii, &lcAscii, &lnVKey))
+			return(false);
 
 
 		logfunc(__FUNCTION__);
@@ -1236,10 +1252,10 @@ debug_break;
 			sem = obj->p.sem;
 
 			// Send it its key
-			if (!tlCtrl && !tlShift && !tlAlt)
+			if (!llCtrl && !llShift && !llAlt)
 			{
 				// Regular key without special flags
-				switch (tnVKey)
+				switch (lnVKey)
 				{
 					case VK_UP:
 						if (iSEM_isSelecting(sem))
@@ -1432,9 +1448,9 @@ debug_break;
 						break;
 				}
 
-			} else if (tlCtrl && !tlShift && !tlAlt) {
+			} else if (llCtrl && !llShift && !llAlt) {
 				// CTRL+
-				switch (tnVKey)
+				switch (lnVKey)
 				{
 					case VK_ADD:
 						if (sem->font)			sem->font = iFont_bigger(sem->font,		true);
@@ -1543,9 +1559,9 @@ debug_break;
 						break;
 				}
 
-			} else if (!tlCtrl && tlShift && !tlAlt) {
+			} else if (!llCtrl && llShift && !llAlt) {
 				// SHIFT+
-				switch (tnVKey)
+				switch (lnVKey)
 				{
 					case VK_LEFT:	// Select left
 						iSEM_selectLeft(sem, obj);
@@ -1611,14 +1627,14 @@ debug_break;
 						break;
 
 					case VK_SPACE:		// Shift+space is a way to input a space into a token name
-						tnAsciiChar	= 255;
-						tlIsAscii	= true;
+						lcAscii		= 255;
+						llIsAscii	= true;
 						break;
 				}
 
-			} else if (!tlCtrl && !tlShift && tlAlt) {
+			} else if (!llCtrl && !llShift && llAlt) {
 				// ALT+
-				switch (tnVKey)
+				switch (lnVKey)
 				{
 					case 'K':		// Select column mode
 						iSEM_selectColumnToggle(sem, obj);
@@ -1635,9 +1651,9 @@ debug_break;
 						break;
 				}
 
-			} else if (tlCtrl && tlShift && !tlAlt) {
+			} else if (llCtrl && llShift && !llAlt) {
 				// CTRL+SHIFT+
-				switch (tnVKey)
+				switch (lnVKey)
 				{
 					case VK_END:	// Select to end
 						iSEM_selectToEndLine(sem, obj);
@@ -1684,20 +1700,20 @@ debug_break;
 						break;
 				}
 
-			} else if (tlCtrl && !tlShift && tlAlt) {
+			} else if (llCtrl && !llShift && llAlt) {
 				// CTRL+ALT+
 
-			} else if (!tlCtrl && tlShift && tlAlt) {
+			} else if (!llCtrl && llShift && llAlt) {
 				// SHIFT+ALT
 
-			} else if (tlCtrl && tlShift && tlAlt) {
+			} else if (llCtrl && llShift && llAlt) {
 				// CTRL+ALT+SHIFT+
 
 			}
 
 			// If we get here, it wasn't processed above.  Try to stick it in the buffer
-			if (!llProcessed && tlIsAscii)
-				iSEM_keystroke(sem, obj, (u8)tnAsciiChar);		// It's a regular input key
+			if (!llProcessed && llIsAscii)
+				iSEM_keystroke(sem, obj, (u8)lcAscii);		// It's a regular input key
 		}
 
 		// Re-render the window if need be

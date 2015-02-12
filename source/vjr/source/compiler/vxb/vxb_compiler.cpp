@@ -5564,6 +5564,34 @@ if (!gsProps_master[lnI].varInit)
 
 //////////
 //
+// Called to set the value to an s16 value
+//
+//////
+	bool iVariable_set_s16(SVariable* var, s16 value)
+	{
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(var);
+
+		// Are we still valid?
+		if (var && var->varType == _VAR_TYPE_S16 && var->value.data_s16)
+		{
+			// Set it
+			*var->value.data_s16 = value;
+
+			// Success
+			return(true);
+
+		} else {
+			// Failure
+			return(false);
+		}
+	}
+
+
+
+
+//////////
+//
 // Called to set the value to an s32 value
 //
 //////
@@ -5577,6 +5605,34 @@ if (!gsProps_master[lnI].varInit)
 		{
 			// Set it
 			*var->value.data_s32 = value;
+
+			// Success
+			return(true);
+
+		} else {
+			// Failure
+			return(false);
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to set the value to a u16 value
+//
+//////
+	bool iVariable_set_u16(SVariable* var, u16 value)
+	{
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(var);
+
+		// Are we still valid?
+		if (var && var->varType == _VAR_TYPE_U16 && var->value.data_u16)
+		{
+			// Set it
+			*var->value.data_u16 = value;
 
 			// Success
 			return(true);
@@ -6416,6 +6472,307 @@ debug_break;
 
 //////////
 //
+// Called to return the value of the indicated variable as an s16 (signed 16-bit integer).
+//
+// Uses:
+//		_set_autoConvert
+//
+//////
+	s16 iiVariable_getAs_s16(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
+	{
+		s8		buffer[16];
+		union {
+			s8			lnValue_s8;
+			s16			lnValue_s16;
+			s32			lnValue_s32;
+			u8			lnValue_u8;
+			u16			lnValue_u16;
+			u32			lnValue_u32;
+			s64			lnValue_s64;
+			u64			lnValue_u64;
+			f32			lnValue_f32;
+			f64			lnValue_f64;
+			SDateTime	dt;
+		};
+		bool	llError;
+		u32		lnErrorNum;
+
+
+		// Make sure we have error and errorNum parameters
+		if (!tlError)		tlError		= &llError;
+		if (!tnErrorNum)	tnErrorNum	= &lnErrorNum;
+
+		// Begin
+		*tlError	= false;
+		*tnErrorNum	= 0;
+		// Based on the type of variable it is, return the value
+		switch (var->varType)
+		{
+			case _VAR_TYPE_S32:
+				//////////
+				// We can directly return the value
+				//////
+					lnValue_s32 = *(s32*)var->value.data;
+					if (lnValue_s32 >= _s16_min && lnValue_s32 <= _s32_max)
+						return((s16)lnValue_u32);
+
+
+				//////////
+				// If we get here, it's not in range
+				//////
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+
+
+			case _VAR_TYPE_U32:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					lnValue_u32 = *(u32*)var->value.data;
+					if (lnValue_u32 <= (u32)_s16_max)
+						return((s16)lnValue_u32);
+
+
+				//////////
+				// If we get here, it's not in range
+				//////
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+
+
+			case _VAR_TYPE_NUMERIC:
+				//////////
+				// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
+				//////
+					lnValue_s64 = _atoi64(var->value.data);
+					if (lnValue_s64 > (s64)_s16_min && lnValue_s64 < (s64)_s16_max)
+						return((s16)lnValue_s64);
+
+
+				//////////
+				// If we get here, it's not in range
+				//////
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+
+
+			case _VAR_TYPE_U64:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					lnValue_u64 = *(u64*)var->value.data;
+					if (lnValue_u64 <= (u64)_s16_max)
+						return((s16)lnValue_u64);
+
+
+				//////////
+				// If we get here, it's not in range
+				//////
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+
+
+			case _VAR_TYPE_S64:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					lnValue_s64 = *(s64*)var->value.data;
+					if (lnValue_s64 >= (s64)_s16_min && lnValue_s64 <= (s64)_s16_max)
+						return((s16)lnValue_s64);
+
+
+				//////////
+				// If we get here, it's not in range
+				//////
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+
+
+			case _VAR_TYPE_S16:
+				//////////
+				// We can directly return the value after upsizing to 32-bits
+				//////
+					return(*(s16*)var->value.data);
+
+
+			case _VAR_TYPE_S8:
+				//////////
+				// We can directly return the value after upsizing to 32-bits
+				//////
+					return((s16)*(s8*)var->value.data);
+
+
+			case _VAR_TYPE_U16:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					lnValue_u16 = *(u16*)var->value.data;
+					if (lnValue_u16 <= (u16)_s16_max)
+						return((s16)lnValue_u16);
+
+
+				//////////
+				// If we get here, it's not in range
+				//////
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+
+
+			case _VAR_TYPE_U8:
+				//////////
+				// We can directly return the value after upsizing to 32-bits
+				//////
+					return((s16)*(u8*)var->value.data);
+
+
+			case _VAR_TYPE_F32:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					lnValue_f32 = *(f32*)var->value.data;
+					if (lnValue_f32 >= (f32)_s16_min || lnValue_f32 <= (f32)_s16_max)
+						return((s16)lnValue_f32);
+
+
+				//////////
+				// If we get here, it's not in range
+				//////
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+
+
+			case _VAR_TYPE_F64:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					lnValue_f64 = *(f64*)var->value.data;
+					if (lnValue_f64 >= (f64)_s16_min && lnValue_f64 <= (f64)_s16_max)
+						return((s16)lnValue_f64);
+
+
+				//////////
+				// If we get here, it's not in range
+				//////
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+
+
+			case _VAR_TYPE_BI:
+// TODO:  BI needs coded
+				break;
+
+			case _VAR_TYPE_BFP:
+// TODO:  BFP needs coded
+				break;
+
+			case _VAR_TYPE_CHARACTER:
+				// We can convert it to s32 if auto-convert is on, or if it has been force converted
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
+				{
+					//////////
+					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
+					//////
+						lnValue_s64 = _atoi64(var->value.data);
+						if (lnValue_s64 >= (s64)_s16_min && lnValue_s64 <= (s64)_s16_max)
+							return((s16)lnValue_s64);
+
+
+					//////////
+					// If we get here, it's not in range
+					//////
+						*tlError	= true;
+						*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+						return(0);
+				}
+				// If we get here, an invalid variable type was encountered
+				break;
+
+			case _VAR_TYPE_DATE:
+				// We can convert this from its text form into numeric if we're auto-converting
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
+				{
+					//////////
+					// Dates are stored internally in text form as YYYYMMDD.
+					// This will produce an integer suitable for sorting, comparing, etc.
+					//////
+						buffer[4] = 0;
+						memcpy(buffer, var->value.data + 4, 4);
+						lnValue_s64 = _atoi64(buffer);
+						return((s16)lnValue_s64);
+				}
+
+
+			case _VAR_TYPE_LOGICAL:
+				//////////
+				// Convert this from its logical form into numeric
+				//////
+					if (var->value.data[0] == _LOGICAL_FALSE)	return(_LOGICAL_FALSE);
+					else										return(_LOGICAL_TRUE);
+				// If we get here, an invalid variable type was encountered
+
+
+			case _VAR_TYPE_DATETIME:
+				// We can convert it to s32 if auto-convert is on, or if it has been force converted
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
+				{
+					//////////
+					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
+					//////
+						lnValue_s64 = iiVariable_computeDatetimeDifference(var, _datetime_Jan_01_2000);
+						if (lnValue_s64 >= (s64)_s16_min && lnValue_s64 <= (s64)_s16_max)
+							return((s16)lnValue_s64);
+
+
+					//////////
+					// If we get here, it's not in range
+					//////
+						*tlError	= true;
+						*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+						return(0);
+				}
+				break;
+
+			case _VAR_TYPE_CURRENCY:
+				// We can convert it to s32 if auto-convert is on, or if it has been force converted
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
+				{
+					//////////
+					// We can return the value after verifying it is not out of range for a 32-bit signed integer
+					//////
+						lnValue_s64 = (*(s64*)var->value.data / 10000);
+						if (lnValue_s64 >= (s64)_s16_min && lnValue_s64 <= (s64)_s16_max)
+							return((s16)lnValue_s64);
+
+
+					//////////
+					// If we get here, it's not in range
+					//////
+						*tlError	= true;
+						*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+						return(0);
+				}
+				break;
+		}
+
+		// If we get here, we could not convert it
+		*tlError	= true;
+		*tnErrorNum	= _ERROR_NOT_NUMERIC;
+		return(0);
+	}
+
+
+
+
+//////////
+//
 // Called to return the value of the indicated variable as an s32 (signed 32-bit integer).
 //
 // Uses:
@@ -6673,6 +7030,268 @@ debug_break;
 						lnValue_s64 = (*(s64*)var->value.data / 10000);
 						if (lnValue_s64 < (s64)_s32_min || lnValue_s64 > (s64)_s32_max)
 							return((s32)lnValue_s64);
+
+
+					//////////
+					// If we get here, it's not in range
+					//////
+						*tlError	= true;
+						*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+						return(0);
+				}
+				break;
+		}
+
+		// If we get here, we could not convert it
+		*tlError	= true;
+		*tnErrorNum	= _ERROR_NOT_NUMERIC;
+		return(0);
+	}
+
+
+
+
+//////////
+//
+// Called to return the value of the indicated variable as a u16 (unsigned 16-bit integer).
+//
+// Uses:
+//		_set_autoConvert
+//
+//////
+	u16 iiVariable_getAs_u16(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
+	{
+		s8		buffer[16];
+		union {
+			s8			lnValue_s8;
+			s16			lnValue_s16;
+			s32			lnValue_s32;
+			u8			lnValue_u8;
+			u16			lnValue_u16;
+			u32			lnValue_u32;
+			s64			lnValue_s64;
+			u64			lnValue_u64;
+			f32			lnValue_f32;
+			f64			lnValue_f64;
+			SDateTime	dt;
+		};
+		bool	llError;
+		u32		lnErrorNum;
+
+
+		// Make sure we have error and errorNum parameters
+		if (!tlError)		tlError		= &llError;
+		if (!tnErrorNum)	tnErrorNum	= &lnErrorNum;
+
+		// Begin
+		*tlError	= false;
+		*tnErrorNum	= 0;
+		// Based on the type of variable it is, return the value
+		switch (var->varType)
+		{
+			case _VAR_TYPE_U32:
+			case _VAR_TYPE_S32:
+					return(*var->value.data_u32);
+
+
+			case _VAR_TYPE_NUMERIC:
+				//////////
+				// We can convert this from its text form into numeric, and if it's in the range of a u32 then we're good to go
+				//////
+					lnValue_s64 = _atoi64(var->value.data);
+					if (lnValue_s64 <= (s64)_u16_max)
+						return((u16)lnValue_s64);
+
+
+				//////////
+				// If we get here, it's not in range
+				//////
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+
+
+			case _VAR_TYPE_U64:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					lnValue_u64 = *(u64*)var->value.data;
+					if (lnValue_u64 <= (u64)_u16_max)
+						return((u16)lnValue_u64);
+
+
+				//////////
+				// If we get here, it's not in range
+				//////
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+
+
+			case _VAR_TYPE_S64:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					lnValue_s64 = *(s64*)var->value.data;
+					if (lnValue_s64 >= 0 && lnValue_s64 <= (s64)_u16_max)
+						return((u16)lnValue_s64);
+
+
+				//////////
+				// If we get here, it's not in range
+				//////
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+
+
+			case _VAR_TYPE_S16:
+				//////////
+				// We can directly return the value after upsizing to 32-bits
+				//////
+					return(*(u16*)var->value.data);
+
+
+			case _VAR_TYPE_S8:
+				//////////
+				// We can directly return the value after upsizing to 32-bits
+				//////
+					return((u16)*(s8*)var->value.data);
+
+
+			case _VAR_TYPE_U16:
+				//////////
+				// We can directly return the value after upsizing to 32-bits
+				//////
+					return(*(u16*)var->value.data);
+
+
+			case _VAR_TYPE_U8:
+				//////////
+				// We can directly return the value after upsizing to 32-bits
+				//////
+					return((u16)*(u8*)var->value.data);
+
+
+			case _VAR_TYPE_F32:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					lnValue_f32 = *(f32*)var->value.data;
+					if (lnValue_f32 >= 0.0f && lnValue_f32 <= (f32)_u16_max)
+						return((u16)lnValue_f32);
+
+
+				//////////
+				// If we get here, it's not in range
+				//////
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+
+
+			case _VAR_TYPE_F64:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					lnValue_f64 = *(f64*)var->value.data;
+					if (lnValue_f64 >= 0.0 && lnValue_f64 <= (f64)_u16_max)
+						return((u16)lnValue_f64);
+
+
+				//////////
+				// If we get here, it's not in range
+				//////
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+
+
+			case _VAR_TYPE_BI:
+// TODO:  BI needs coded
+				break;
+
+			case _VAR_TYPE_BFP:
+// TODO:  BFP needs coded
+				break;
+
+			case _VAR_TYPE_CHARACTER:
+				// We can convert it to u32 if auto-convert is on, or if it has been force converted
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
+				{
+					//////////
+					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
+					//////
+						lnValue_s64 = _atoi64(var->value.data);
+						if (lnValue_s64 >= 0 && lnValue_s64 <= (s64)_u16_max)
+							return((u16)lnValue_s64);
+
+
+					//////////
+					// If we get here, it's not in range
+					//////
+						*tlError	= true;
+						*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+						return(0);
+				}
+				// If we get here, an invalid variable type was encountered
+				break;
+
+			case _VAR_TYPE_DATE:
+				// We can convert this from its text form into numeric if we're auto-converting
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
+				{
+					//////////
+					// Dates are stored internally in text form as YYYYMMDD.
+					// This will produce an integer suitable for sorting, comparing, etc.
+					//////
+						buffer[4] = 0;
+						memcpy(buffer, var->value.data + 4, 4);
+						lnValue_s64 = _atoi64(buffer);
+						return((u16)lnValue_s64);
+				}
+
+
+			case _VAR_TYPE_LOGICAL:
+				//////////
+				// Convert this from its logical form into numeric
+				//////
+					if (var->value.data[0] == _LOGICAL_FALSE)	return(_LOGICAL_FALSE);
+					else										return(_LOGICAL_TRUE);
+				// If we get here, an invalid variable type was encountered
+
+
+			case _VAR_TYPE_DATETIME:
+				// We can convert it to u32 if auto-convert is on, or if it has been force converted
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
+				{
+					//////////
+					// We can convert this from its text form into numeric, and if it's in the range of an u32 then we're good to go
+					//////
+						lnValue_s64 = iiVariable_computeDatetimeDifference(var, _datetime_Jan_01_2000);
+						if (lnValue_s64 >= 0 && lnValue_s64 <= (s64)_u16_max)
+							return((u16)lnValue_s64);
+
+
+					//////////
+					// If we get here, it's not in range
+					//////
+						*tlError	= true;
+						*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+						return(0);
+				}
+				break;
+
+			case _VAR_TYPE_CURRENCY:
+				// We can convert it to s32 if auto-convert is on, or if it has been force converted
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
+				{
+					//////////
+					// We can return the value after verifying it is not out of range for a 32-bit signed integer
+					//////
+						lnValue_s64 = (*(s64*)var->value.data / 10000);
+						if (lnValue_s64 >= 0 && lnValue_s64 <= (s64)_u16_max)
+							return((u16)lnValue_s64);
 
 
 					//////////

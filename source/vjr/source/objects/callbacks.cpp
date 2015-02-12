@@ -499,8 +499,8 @@
 			*llCaps		= iiVariable_getAs_bool(varCaps,		false, NULL, NULL);
 			*llIsCAS	= iiVariable_getAs_bool(varIsCAS,		false, NULL, NULL);
 			*llIsAscii	= iiVariable_getAs_bool(varIsAscii,		false, NULL, NULL);
-			*lcAscii	= (s16)iiVariable_getAs_s32(varAscii,	false, NULL, NULL);
-			*lnVKey		= (u16)iiVariable_getAs_s32(varVKey,	false, NULL, NULL);
+			*lcAscii	= iiVariable_getAs_s16(varAscii,	false, NULL, NULL);
+			*lnVKey		= iiVariable_getAs_u16(varVKey,	false, NULL, NULL);
 
 
 		//////////

@@ -222,7 +222,7 @@
 			if (!varShift_onKeyDown)			varShift_onKeyDown		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
 			if (!varCaps_onKeyDown)				varCaps_onKeyDown		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
 			if (!varAsciiChar_onKeyDown)		varAsciiChar_onKeyDown	= iVariable_create(_VAR_TYPE_U16,		NULL);
-			if (!varVKey_onKeyDown)				varVKey_onKeyDown		= iVariable_create(_VAR_TYPE_U16,		NULL);
+			if (!varVKey_onKeyDown)				varVKey_onKeyDown		= iVariable_create(_VAR_TYPE_S16,		NULL);
 			if (!varIsCAS_onKeyDown)			varIsCAS_onKeyDown		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
 			if (!varIsAscii_onKeyDown)			varIsAscii_onKeyDown	= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
 
@@ -235,7 +235,7 @@
 			if (!varShift_onKeyUp)				varShift_onKeyUp		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
 			if (!varCaps_onKeyUp)				varCaps_onKeyUp			= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
 			if (!varAsciiChar_onKeyUp)			varAsciiChar_onKeyUp	= iVariable_create(_VAR_TYPE_U16,		NULL);
-			if (!varVKey_onKeyUp)				varVKey_onKeyUp			= iVariable_create(_VAR_TYPE_U16,		NULL);
+			if (!varVKey_onKeyUp)				varVKey_onKeyUp			= iVariable_create(_VAR_TYPE_S16,		NULL);
 			if (!varIsCAS_onKeyUp)				varIsCAS_onKeyUp		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
 			if (!varIsAscii_onKeyUp)			varIsAscii_onKeyUp		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
 	}
@@ -488,8 +488,8 @@
 			iVariable_set_logical	(varAlt_onKeyDown,			((tlAlt)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
 			iVariable_set_logical	(varShift_onKeyDown,		((tlShift)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
 			iVariable_set_logical	(varCaps_onKeyDown,			((tlCaps)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_u32		(varAsciiChar_onKeyDown,	(u32)tnAsciiChar);
-			iVariable_set_u32		(varVKey_onKeyDown,			(u32)tvKey);
+			iVariable_set_u16		(varAsciiChar_onKeyDown,	tnAsciiChar);
+			iVariable_set_s16		(varVKey_onKeyDown,			tvKey);
 			iVariable_set_logical	(varIsCAS_onKeyDown,		((tlIsCAS)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
 			iVariable_set_logical	(varIsAscii_onKeyDown,		((tlIsAscii)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
 
@@ -520,8 +520,8 @@
 			iVariable_set_logical	(varAlt_onKeyUp,			((tlAlt)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
 			iVariable_set_logical	(varShift_onKeyUp,			((tlShift)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
 			iVariable_set_logical	(varCaps_onKeyUp,			((tlCaps)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_u32		(varAsciiChar_onKeyUp,		(u32)tnAsciiChar);
-			iVariable_set_u32		(varVKey_onKeyUp,			(u32)tvKey);
+			iVariable_set_u16		(varAsciiChar_onKeyUp,		tnAsciiChar);
+			iVariable_set_s16		(varVKey_onKeyUp,			tvKey);
 			iVariable_set_logical	(varIsCAS_onKeyUp,			((tlIsCAS)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
 			iVariable_set_logical	(varIsAscii_onKeyUp,		((tlIsAscii)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
 
