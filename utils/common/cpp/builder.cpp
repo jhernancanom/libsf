@@ -184,9 +184,13 @@
 				iBuilder_verifySizeForNewBytes(buffRoot, tnDataLength);
 
 				// If we're still valid, proceed with the copy
-				if (buffRoot->data_s8 && tcData)
+				if (buffRoot->data_s8)
 				{
-					memcpy(buffRoot->data_s8 + buffRoot->populatedLength, (s8*)tcData, tnDataLength);
+					// Copy the original content
+					if (tcData)			memcpy(buffRoot->data_s8 + buffRoot->populatedLength, (s8*)tcData, tnDataLength);
+					else				memset(buffRoot->data_s8 + buffRoot->populatedLength, 0, tnDataLength);
+
+					// Increase the size
 					buffRoot->populatedLength += tnDataLength;
 				}
 			}

@@ -136,6 +136,12 @@
 				//////
 					if ((dwStyle & WS_VISIBLE) != 0)
 						ShowWindow(win->hwnd, SW_SHOW);
+
+
+				//////////
+				// Indicate success
+				//////
+					return(win->hwnd);
 			}
 		}
 
@@ -510,9 +516,6 @@
 				if (cls)
 				{
 					// Initialize
-					memset(cls, 0, sizeof(SClassX));
-
-					// Establish
 					cls->isValid = true;
 					iDatum_duplicate(&cls->cClass, (cu8*)lpwcx->lpszClassName, -1);
 
@@ -855,6 +858,14 @@ WINGDIAPI int WINAPI SetBkMode(__in HDC hdc, __in int mode)
 
 WINUSERAPI int WINAPI DrawText(__in HDC hdc, cs8* lpchText, __in int cchText, __inout LPRECT lprc, __in UINT format)
 {
+	//////////
+	//
+	// For DT_CALCRECT:
+	//
+	//		XTextExtents()
+	//		XQueryTextExtents()
+	//
+	//////////
 	return(0);
 }
 
@@ -1513,7 +1524,10 @@ WINGDIAPI int WINAPI GetDeviceCaps(__in_opt HDC hdc, __in int index)
 
 WINBASEAPI int WINAPI MulDiv(__in int nNumber, __in int nNumerator, __in int nDenominator)
 {
-	return(0);
+	//////////
+	// (a * b) / c
+	//////
+		return((int)(((s64)nNumber * (s64)nNumerator) / (s64)nDenominator));
 }
 
 
@@ -1523,7 +1537,48 @@ WINGDIAPI HFONT WINAPI CreateFont(	__in int cHeight, __in int cWidth, __in int c
 									__in DWORD bUnderline, __in DWORD bStrikeOut, __in DWORD iCharSet, __in DWORD iOutPrecision, __in DWORD iClipPrecision,
 									__in DWORD iQuality, __in DWORD iPitchAndFamily, __in_opt cs8* pszFaceName)
 {
-	return(0);
+	s32		lnLength;
+	int		lnI, lnNames;
+	s8*		fontNameArray[];
+	union {
+		uptr	_hfont;
+		HFONT	hfont;
+	};
+
+
+	//////////
+	// Grab the list of font names
+	//////
+		lnLength		= strlen(pszFaceName);
+		fontNameArray	= XListFonts(gsDesktop->display, "*", 999, &lnNames);
+		for (lnI = 0, _hfont = 0; lnI < lnNames; lnI++)
+		{
+			// Search for the font name that matches
+			if (strlen(fontNameArray[lnI]) == lnLength && _memicmp(fontNameArray[lnI], pszFaceName, lnLength) == 0)
+			{
+				// Load the font they indicated
+				hfont = (HFONT)XLoadFont(gsDesktop->display, pszFaceName);
+				break;
+			}
+		}
+		// If we get here, _hfont indicates our success
+		XFreeFontNames(fontNameArray);
+
+
+	//////////
+	// If we were unsuccessful, load the default font
+	//////
+		if (!_hfont)
+		{
+			// Unsuccessful, try the default fixed point font
+			hfont = (HFONT)XLoadFont(gsDesktop->display, cgcFontName_defaultFixed);
+		}
+
+
+	//////////
+	// Indicate failure
+	//////
+		return(hfont);
 }
 
 
@@ -1531,6 +1586,7 @@ WINGDIAPI HFONT WINAPI CreateFont(	__in int cHeight, __in int cWidth, __in int c
 
 WINGDIAPI BOOL WINAPI GetTextMetricsA(__in HDC hdc, __out LPTEXTMETRIC lptm)
 {
+	// XTextWidth()
 	return(FALSE);
 }
 

@@ -198,7 +198,7 @@ debug_break;
 			if (win)
 			{
 				// Create the actual hdc
-				win->hdc = iHwndX_createHdc(lnWidth, lnHeight);
+				win->hdc = iHwndX_createHdc(lnWidth, lnHeight, NULL);
 
 				// Populate with default items
 				//XQueryFont(gsDesktop.display, "*");
@@ -394,25 +394,57 @@ debug_break;
 // Called to create a pseudo device context
 //
 //////
-	SHdcX* iHwndX_createHdc(s32 tnWidth, s32 tnHeight)
+	SHdcX* iHwndX_createHdc(s32 tnWidth, s32 tnHeight, SBitmap* bmp)
 	{
-		SHdcX* hdc;
+		union {
+			uptr	_hdc;
+			SHdcX*	hdc;
+		};
 
-/*
-bool		isValid;
-HDC			hdc;
 
-// Current settings for the device context
-SFontX*		font;
-bool		isOpaque;
-SBgra		colorFore;
-SBgra		colorBack;
+		//////////
+		// Make sure we have our HDC buffer allocated
+		//////
+			if (!gsHdcs)
+				iBuilder_createAndInitialize(&gsHdcs, -1);
 
-// Bitmaps take on the size of the thing they belong to, so they may be constantly resized
-SBitmap*	bmp;
-*/
-		hdc = NULL;
-		return(hdc);
+
+		//////////
+		// Allocate a new one
+		//////
+			hdc = (SHdcX*)iBuilder_appendData(gsHdcs, 0, sizeof(SHdcX));
+			if (hdc)
+			{
+				// Initialize
+				hdc->isValid			= true;
+				hdc->hdc				= _hdc;
+
+				// Default settings
+				hdc->isOpaque			= false;
+				hdc->colorFore.color	= rgba(0,0,0,255);
+				hdc->colorBack.color	= rgba(255,255,255,255);;
+
+				// Allocate the default font
+				hdc->font				= iFont_create(cgcFontName_default, 10, FW_NORMAL, 0, 0);
+
+				// Allocate a bitmap
+				if (!bmp)
+				{
+					// Create a bitmap
+					hdc->bmp = iBmp_allocate();
+					iBmp_createBySize(hdc->bmp, tnWidth, tnHeight, 24);
+
+				} else {
+					// Use the indicated bitmap
+					hdc->bmp = bmp;
+				}
+			}
+
+
+		//////////
+		// Indicate success or failure
+		//////
+			return(hdc);
 	}
 
 
@@ -441,10 +473,10 @@ SBitmap*	bmp;
 			// Populate our local settings
 			//////
 				xwin->width		= width;
-				xwin->height		= height;
+				xwin->height	= height;
 				xwin->screennum	= DefaultScreen(xwin->display);
 				xwin->screenptr	= DefaultScreenOfDisplay(xwin->display);
-				xwin->visual		= DefaultVisualOfScreen(xwin->screenptr);
+				xwin->visual	= DefaultVisualOfScreen(xwin->screenptr);
 				xwin->depth		= DefaultDepth(xwin->display, xwin->screennum);
 				xwin->pixelsize	= 4;
 
@@ -460,11 +492,11 @@ SBitmap*	bmp;
 			// Physically create the window on the desktop
 			//////
 				xwin->window	= XCreateWindow(xwin->display,
-											RootWindowOfScreen(xwin->screenptr),
-											0, 0, xwin->width, xwin->height,
-											0, xwin->depth,
-											InputOutput,
-											xwin->visual, 0, NULL);
+												RootWindowOfScreen(xwin->screenptr),
+												0, 0, xwin->width, xwin->height,
+												0, xwin->depth,
+												InputOutput,
+												xwin->visual, 0, NULL);
 
 				// Are we valid?
 				if (!xwin->window)
@@ -505,7 +537,7 @@ SBitmap*	bmp;
 			//////////
 			// Primray pixel buffer
 			//////
-				xwin->screensize		= xwin->height * xwin->width * xwin->pixelsize;
+				xwin->screensize	= xwin->height * xwin->width * xwin->pixelsize;
 				xwin->virtualscreen	= (SBgra*)malloc(xwin->screensize);
 				if (!xwin->virtualscreen)
 					return _X11_NO_VIRTUAL_SCREEN;

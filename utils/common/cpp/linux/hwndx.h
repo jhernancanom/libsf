@@ -83,6 +83,7 @@
 #define _X11_GENERAL_FAILURE	-99
 
 struct SBitmap;
+struct SFont;
 struct SClassX;
 struct SHwndX;
 struct SHdcX;
@@ -167,19 +168,13 @@ struct SHdcX;
 		s32			timerId;
 	} __attribute__((packed));
 
-	struct SFontX
-	{
-		bool		isValid;
-		Font		xfont;
-	} __attribute__((packed));
-
 	struct SHdcX
 	{
 		bool		isValid;
 		HDC			hdc;
 
 		// Current settings for the device context
-		SFontX*		font;
+		SFont*		font;
 		bool		isOpaque;
 		SBgra		colorFore;
 		SBgra		colorBack;
@@ -212,7 +207,7 @@ struct SHdcX;
 	SClassX*		iHwndX_findClass_byName					(cs8* lpClassName);
 	void			iHwndX_createWindow						(SHwndX* win);
 	SXWindow*		iHwndX_createXWindow					(SHwndX* win);
-	SHdcX*			iHwndX_createHdc						(s32 tnWidth, s32 tnHeight);
+	SHdcX*			iHwndX_createHdc						(s32 tnWidth, s32 tnHeight, SBitmap* bmp);
 	s32				iHwndX_initializeXWindow				(SXWindow* win, s32 width, s32 height, s8* title);
 	bool			iHwndX_addTimer							(SHwndX* win, s32 nIDEvent, UINT uElapse);
 
