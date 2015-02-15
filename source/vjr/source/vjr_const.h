@@ -872,32 +872,32 @@ typedef SEM**		SEMpp;
 	const u8			cgcVersionShort[]					= "Version 0.55";
 #ifdef __GNUC__
 	#ifndef __amd64
-		const u8		cgcScreenTitle[]					= "Visual FreePro, Jr. 0.55 -- Dec.21.2014 -- GCC 32-bit";
-		const u8		cgcJDebiTitle[]						= "JDebi Debugger 0.55 -- Dec.21.2014 -- GCC 32-bit";
-		const u8		cgcVersionText[]					= "Visual FreePro, Jr. 32-bit 00.55.0001.9999 for Windows";
-		const u8		cgcVersion1Text[]					= "Visual FreePro, Jr. 32-bit 00.55.0001.9999 for Windows [Dec.21.2014 00:00:00] Product ID 31415-926-5358979-32384";
-		const u8		cgcVersion4Text[]					= "00.55.3201.9999";
+		const u8		cgcScreenTitle[]					= "Visual FreePro, Jr. 0.55.2 -- Feb.12.2015 -- GCC 32-bit";
+		const u8		cgcJDebiTitle[]						= "JDebi Debugger 0.55.2 -- Feb.12.2015 -- GCC 32-bit";
+		const u8		cgcVersionText[]					= "Visual FreePro, Jr. 32-bit 00.55.2.0001.9999 for Windows";
+		const u8		cgcVersion1Text[]					= "Visual FreePro, Jr. 32-bit 00.55.2.0001.9999 for Windows [Feb.12.2015 00:00:00] Product ID 31415-926-5358979-32384";
+		const u8		cgcVersion4Text[]					= "00.55.2.3201.9999";
 	#else
-		const u8		cgcScreenTitle[]					= "Visual FreePro, Jr. 0.55 -- Dec.21.2014   -- GCC 64-bit";
-		const u8		cgcJDebiTitle[]						= "JDebi Debugger 0.55 -- Dec.21.2014 -- GCC 64-bit";
-		const u8		cgcVersionText[]					= "Visual FreePro, Jr. 64-bit 00.55.0001.9999 for Windows";
-		const u8		cgcVersion1Text[]					= "Visual FreePro, Jr. 64-bit 00.55.0001.9999 for Windows [Dec.21.2014 00:00:00] Product ID 31415-926-5358979-32384";
-		const u8		cgcVersion4Text[]					= "00.55.6401.9999";
+		const u8		cgcScreenTitle[]					= "Visual FreePro, Jr. 0.55.2 -- Feb.12.2015   -- GCC 64-bit";
+		const u8		cgcJDebiTitle[]						= "JDebi Debugger 0.55.2 -- Feb.12.2015 -- GCC 64-bit";
+		const u8		cgcVersionText[]					= "Visual FreePro, Jr. 64-bit 00.55.2.0001.9999 for Windows";
+		const u8		cgcVersion1Text[]					= "Visual FreePro, Jr. 64-bit 00.55.2.0001.9999 for Windows [Feb.12.2015 00:00:00] Product ID 31415-926-5358979-32384";
+		const u8		cgcVersion4Text[]					= "00.55.2.6401.9999";
 	#endif
 #else
 	#ifndef _M_X64
-		const u8		cgcScreenTitle[]					= "Visual FreePro, Jr. 0.55 -- Dec.21.2014 -- MSVC 32-bit";
-		const u8		cgcJDebiTitle[]						= "JDebi Debugger 0.55 -- Dec.21.2014 -- MSVC 32-bit";
-		const u8		cgcVersionText[]					= "Visual FreePro, Jr. 32-bit 00.55.0001.9999 for Windows";
-		const u8		cgcVersion1Text[]					= "Visual FreePro, Jr. 32-bit 00.55.0001.9999 for Windows [Dec.21.2014 00:00:00] Product ID 31415-926-5358979-32384";
-		const u8		cgcVersion4Text[]					= "00.55.3201.9999";
+		const u8		cgcScreenTitle[]					= "Visual FreePro, Jr. 0.55.2 -- Feb.12.2015 -- MSVC 32-bit";
+		const u8		cgcJDebiTitle[]						= "JDebi Debugger 0.55.2 -- Feb.12.2015 -- MSVC 32-bit";
+		const u8		cgcVersionText[]					= "Visual FreePro, Jr. 32-bit 00.55.2.0001.9999 for Windows";
+		const u8		cgcVersion1Text[]					= "Visual FreePro, Jr. 32-bit 00.55.2.0001.9999 for Windows [Feb.12.2015 00:00:00] Product ID 31415-926-5358979-32384";
+		const u8		cgcVersion4Text[]					= "00.55.2.3201.9999";
 	#else
-		const u8		cgcScreenTitle[]					= "Visual FreePro, Jr. 0.55 -- Dec.21.2014 -- MSVC 64-bit";
-		const u8		cgcJDebiTitle[]						= "JDebi Debugger 0.55 -- Dec.21.2014 -- MSVC 64-bit";
+		const u8		cgcScreenTitle[]					= "Visual FreePro, Jr. 0.55.2 -- Feb.12.2015 -- MSVC 64-bit";
+		const u8		cgcJDebiTitle[]						= "JDebi Debugger 0.55.2 -- Feb.12.2015 -- MSVC 64-bit";
 		// VERSION() support
-		const u8		cgcVersionText[]					= "Visual FreePro, Jr. 64-bit 00.55.0001.9999 for Windows";
-		const u8		cgcVersion1Text[]					= "Visual FreePro, Jr. 64-bit 00.55.0001.9999 for Windows [Dec.21.2014 00:00:00] Product ID 31415-926-5358979-32384";
-		const u8		cgcVersion4Text[]					= "00.55.6401.9999";
+		const u8		cgcVersionText[]					= "Visual FreePro, Jr. 64-bit 00.55.2.0001.9999 for Windows";
+		const u8		cgcVersion1Text[]					= "Visual FreePro, Jr. 64-bit 00.55.2.0001.9999 for Windows [Feb.12.2015 00:00:00] Product ID 31415-926-5358979-32384";
+		const u8		cgcVersion4Text[]					= "00.55.2.6401.9999";
 	#endif
 #endif
 	const s32			gnVersion5							= 55;	// 0.55
