@@ -229,13 +229,20 @@
 //////
 	void iiFont_refresh(SFont* font)
 	{
+		//////////
 		// Create the font
-		font->_sizeUsedForCreateFont	= -MulDiv(font->_size, GetDeviceCaps(GetDC(GetDesktopWindow()), LOGPIXELSY), 72);
-		font->hfont						= CreateFont(font->_sizeUsedForCreateFont, 0, 0, 0, font->_weight, (font->isItalic ? 1 : 0), (font->isUnderline ? 1 : 0), false, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_NATURAL_QUALITY, FF_SWISS, font->name.data);
-		SelectObject(font->hdc, font->hfont);
+		//////
+			font->_sizeUsedForCreateFont	= -MulDiv(font->_size, GetDeviceCaps(GetDC(GetDesktopWindow()), LOGPIXELSY), 72);
+			font->hfont						= CreateFont(font->_sizeUsedForCreateFont, 0, 0, 0, font->_weight, (font->isItalic ? 1 : 0), (font->isUnderline ? 1 : 0), false, ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_NATURAL_QUALITY, FF_SWISS, font->name.data);
 
-		// Find out the text metrics
-		GetTextMetricsA(font->hdc, &font->tm);
+			// Find out the text metrics
+			GetTextMetricsA(font->hdc, &font->tm);
+
+
+		//////////
+		// Select the font into its context
+		//////
+			SelectObject(font->hdc, font->hfont);
 	}
 
 
@@ -360,7 +367,7 @@
 		// When we get here, we have all of the fonts computed
 		// size[0] contains the raw font
 		// We search for size[1..N] which has the font which most closely matches its proportions for the tnWidthDesired, tnHeightDesired,
-		// as per the ratio 
+		// as per the ratio
 
 		// Compute the size[0]
 		lfRatioH	= (f64)(size[0].fWidth)  / (f64)tnWidth;

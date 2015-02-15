@@ -90,7 +90,7 @@ struct SFont
 	bool		isOutline;					// Is the font outlined?
 	bool		isShadow;					// Is the font shadowed?
 
-	// Handles to the current font setting
+	// OS font handle
 	HFONT		hfont;
 
 	// Internal Windows settings

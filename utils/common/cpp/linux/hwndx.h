@@ -83,6 +83,7 @@
 #define _X11_GENERAL_FAILURE	-99
 
 struct SBitmap;
+struct SFont;
 struct SClassX;
 struct SHwndX;
 struct SHdcX;
@@ -114,7 +115,7 @@ struct SHdcX;
 		s32				height;
 		s32				depth;
 		s32				pixelsize;
-	};
+	} __attribute__((packed));
 
 
 	struct SClassX
@@ -122,7 +123,7 @@ struct SHdcX;
 		bool			isValid;
 		WNDCLASSEX		wcx;
 		SDatum			cClass;
-	};
+	} __attribute__((packed));
 
 	struct SHwndX
 	{
@@ -151,12 +152,12 @@ struct SHdcX;
 
 		// For X-windows
 		SXWindow*		x11;
-	};
+	} __attribute__((packed));
 
 	struct SMessageX
 	{
 		MSG				msg;
-	};
+	} __attribute__((packed));
 
 	struct STimerX
 	{
@@ -165,13 +166,7 @@ struct SHdcX;
 
 		// From setitimer()
 		s32			timerId;
-	};
-
-	struct SFontX
-	{
-		bool		isValid;
-		Font		xfont;
-	};
+	} __attribute__((packed));
 
 	struct SHdcX
 	{
@@ -179,14 +174,14 @@ struct SHdcX;
 		HDC			hdc;
 
 		// Current settings for the device context
-		SFontX*		font;
+		SFont*		font;
 		bool		isOpaque;
 		SBgra		colorFore;
 		SBgra		colorBack;
 
 		// Bitmaps take on the size of the thing they belong to, so they may be constantly resized
 		SBitmap*	bmp;
-	};
+	} __attribute__((packed));
 
 	struct SDesktopX
 	{
@@ -195,7 +190,7 @@ struct SHdcX;
 		s32			depth;
 		s32			connection;
 		Window		windowDesktop;
-	};
+	} __attribute__((packed));
 
 
 
@@ -212,7 +207,7 @@ struct SHdcX;
 	SClassX*		iHwndX_findClass_byName					(cs8* lpClassName);
 	void			iHwndX_createWindow						(SHwndX* win);
 	SXWindow*		iHwndX_createXWindow					(SHwndX* win);
-	SHdcX*			iHwndX_createHdc						(s32 tnWidth, s32 tnHeight);
+	SHdcX*			iHwndX_createHdc						(s32 tnWidth, s32 tnHeight, SBitmap* bmp);
 	s32				iHwndX_initializeXWindow				(SXWindow* win, s32 width, s32 height, s8* title);
 	bool			iHwndX_addTimer							(SHwndX* win, s32 nIDEvent, UINT uElapse);
 

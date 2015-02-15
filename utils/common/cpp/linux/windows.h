@@ -913,7 +913,7 @@ struct RECT
 	s32		top;
 	s32		right;
 	s32		bottom;
-};
+} __attribute__((packed));
 #define LPRECT RECT*
 
 typedef struct tagPAINTSTRUCT
@@ -924,20 +924,20 @@ typedef struct tagPAINTSTRUCT
 	BOOL		fRestore;
 	BOOL		fIncUpdate;
 	BYTE		rgbReserved[32];
-} PAINTSTRUCT, *PPAINTSTRUCT, *NPPAINTSTRUCT, *LPPAINTSTRUCT;
+} __attribute__((packed)) PAINTSTRUCT, *PPAINTSTRUCT, *NPPAINTSTRUCT, *LPPAINTSTRUCT;
 
 struct POINT
 {
 	s32		x;
 	s32		y;
-};
+} __attribute__((packed));
 #define LPPOINT POINT*
 
 struct POINTS
 {
 	s16		x;
 	s16		y;
-};
+} __attribute__((packed));
 //#define LPPOINT POINTS*
 
 typedef struct tagBITMAPFILEHEADER {
@@ -946,7 +946,7 @@ typedef struct tagBITMAPFILEHEADER {
 	u16		bfReserved1;
 	u16		bfReserved2;
 	u32		bfOffBits;
-} BITMAPFILEHEADER, *PBITMAPFILEHEADER;
+} __attribute__((packed)) BITMAPFILEHEADER, *PBITMAPFILEHEADER;
 
 typedef struct tagBITMAPINFOHEADER {
 	u32		biSize;
@@ -960,19 +960,19 @@ typedef struct tagBITMAPINFOHEADER {
 	s32		biYPelsPerMeter;
 	u32		biClrUsed;
 	u32		biClrImportant;
-} BITMAPINFOHEADER, *PBITMAPINFOHEADER;
+} __attribute__((packed)) BITMAPINFOHEADER, *PBITMAPINFOHEADER;
 
 typedef struct tagBITMAPINFO
 {
 	BITMAPINFOHEADER	bmiHeader;
-} BITMAPINFO;
+} __attribute__((packed)) BITMAPINFO;
 
 struct _RTL_CRITICAL_SECTION;
 typedef struct _LIST_ENTRY
 {
    struct _LIST_ENTRY *Flink;
    struct _LIST_ENTRY *Blink;
-} LIST_ENTRY;
+} __attribute__((packed)) LIST_ENTRY;
 
 typedef struct _RTL_CRITICAL_SECTION_DEBUG
 {
@@ -985,7 +985,7 @@ typedef struct _RTL_CRITICAL_SECTION_DEBUG
 	u32		Flags;
 	u16		CreatorBackTraceIndexHigh;
 	u16		SpareWORD  ;
-} RTL_CRITICAL_SECTION_DEBUG, *PRTL_CRITICAL_SECTION_DEBUG, RTL_RESOURCE_DEBUG, *PRTL_RESOURCE_DEBUG;
+} __attribute__((packed)) RTL_CRITICAL_SECTION_DEBUG, *PRTL_CRITICAL_SECTION_DEBUG, RTL_RESOURCE_DEBUG, *PRTL_RESOURCE_DEBUG;
 
 typedef struct _RTL_CRITICAL_SECTION
 {
@@ -1001,7 +1001,7 @@ typedef struct _RTL_CRITICAL_SECTION
 	HANDLE		OwningThread;		// from the thread's ClientId->UniqueThread
 	HANDLE		LockSemaphore;
 	ULONG_PTR	SpinCount;		// force size on 64-bit systems when packed
-} RTL_CRITICAL_SECTION, *PRTL_CRITICAL_SECTION;
+} __attribute__((packed)) RTL_CRITICAL_SECTION, *PRTL_CRITICAL_SECTION;
 typedef RTL_CRITICAL_SECTION CRITICAL_SECTION;
 #define LPCRITICAL_SECTION CRITICAL_SECTION*
 
@@ -1015,14 +1015,14 @@ typedef struct _SYSTEMTIME
 	u16		wMinute;
 	u16		wSecond;
 	u16		wMilliseconds;
-} SYSTEMTIME;
+} __attribute__((packed)) SYSTEMTIME;
 #define LPSYSTEMTIME SYSTEMTIME*
 
 typedef struct _FILETIME
 {
 	DWORD dwLowDateTime;
 	DWORD dwHighDateTime;
-} FILETIME;
+} __attribute__((packed)) FILETIME;
 #define LPFILETIME FILETIME*
 
 typedef struct tagWNDCLASSEX
@@ -1030,19 +1030,19 @@ typedef struct tagWNDCLASSEX
 	UINT		cbSize;
 	UINT		style;
 	union {
-		uptr		_lpfnWndProc;
-		WNDPROC		lpfnWndProc;
+		uptr	_lpfnWndProc;
+		WNDPROC	lpfnWndProc;
 	};
-	int		cbClsExtra;
-	int		cbWndExtra;
+	int			cbClsExtra;
+	int			cbWndExtra;
 	HINSTANCE   hInstance;
-	HICON	hIcon;
-	HCURSOR	hCursor;
-	HBRUSH	hbrBackground;
+	HICON		hIcon;
+	HCURSOR		hCursor;
+	HBRUSH		hbrBackground;
 	cs8*		lpszMenuName;
 	cs8*		lpszClassName;
-	HICON	hIconSm;
-} WNDCLASSEX;
+	HICON		hIconSm;
+} __attribute__((packed)) WNDCLASSEX;
 #define WNDCLASSEXA WNDCLASSEX
 
 typedef struct _SECURITY_ATTRIBUTES
@@ -1050,7 +1050,7 @@ typedef struct _SECURITY_ATTRIBUTES
 	DWORD		nLength;
 	LPVOID		lpSecurityDescriptor;
 	BOOL		bInheritHandle;
-} SECURITY_ATTRIBUTES, *PSECURITY_ATTRIBUTES, *LPSECURITY_ATTRIBUTES;
+} __attribute__((packed)) SECURITY_ATTRIBUTES, *PSECURITY_ATTRIBUTES, *LPSECURITY_ATTRIBUTES;
 
 typedef struct tagMSG
 {
@@ -1060,7 +1060,7 @@ typedef struct tagMSG
 	LPARAM		lParam;
 	DWORD		time;
 	POINT		pt;
-} MSG;
+} __attribute__((packed)) MSG;
 #define LPMSG MSG*
 
 typedef struct _WIN32_FIND_DATAA
@@ -1075,7 +1075,7 @@ typedef struct _WIN32_FIND_DATAA
 	DWORD		dwReserved1;
 	s8			cFileName[260];
 	s8			cAlternateFileName[14];
-} WIN32_FIND_DATA;
+} __attribute__((packed)) WIN32_FIND_DATA;
 #define LPWIN32_FIND_DATA WIN32_FIND_DATA*
 
 typedef struct tagTEXTMETRICA
@@ -1100,7 +1100,7 @@ typedef struct tagTEXTMETRICA
 	BYTE		tmStruckOut;
 	BYTE		tmPitchAndFamily;
 	BYTE		tmCharSet;
-} TEXTMETRIC;
+} __attribute__((packed)) TEXTMETRIC;
 #define LPTEXTMETRIC TEXTMETRIC*
 
 typedef struct tagCREATESTRUCT
@@ -1117,7 +1117,7 @@ typedef struct tagCREATESTRUCT
 	cs8*		lpszName;
 	cs8*		lpszClass;
 	DWORD		dwExStyle;
-} CREATESTRUCT;
+} __attribute__((packed)) CREATESTRUCT;
 #define LPCREATESTRUCT CREATESTRUCT*
 
 #define _memcmp(l,r,s)		strncmp((cs8*)l, (cs8*)r, s)

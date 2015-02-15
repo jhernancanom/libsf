@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=rick
-Date                   :=02/10/15
+Date                   :=02/12/15
 CodeLitePath           :="/home/rick/.codelite"
 LinkerName             :=/usr/bin/g++ 
 SharedObjectLinkerName :=/usr/bin/g++ -shared -fPIC
@@ -39,8 +39,8 @@ LinkOptions            :=
 IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). 
 IncludePCH             := 
 RcIncludePath          := 
-Libs                   := $(LibrarySwitch)SDL2 $(LibrarySwitch)GL $(LibrarySwitch)GLEW $(LibrarySwitch)GLU $(LibrarySwitch)glut 
-ArLibs                 :=  "SDL2" "GL" "GLEW" "GLU" "glut" 
+Libs                   := $(LibrarySwitch)SDL2 $(LibrarySwitch)GL $(LibrarySwitch)GLEW $(LibrarySwitch)GLU $(LibrarySwitch)glut $(LibrarySwitch)X11 $(LibrarySwitch)pthread 
+ArLibs                 :=  "SDL2" "GL" "GLEW" "GLU" "glut" "X11" "pthread" 
 LibPath                := $(LibraryPathSwitch). 
 
 ##
