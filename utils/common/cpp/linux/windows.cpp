@@ -7,10 +7,10 @@
 // Copyright (c) 2015 by Rick C. Hodgin
 //////
 // Last update:
-//     Jan.17.2014
+//    Jan.17.2014
 //////
 // Change log:
-//     Jan.17.2014 - Initial creation
+//    Jan.17.2014 - Initial creation
 //////
 //
 // This document is released as Liberty Software under a Repeat License, as governed
@@ -54,10 +54,10 @@
 //
 // For additional information about this project, or to view the license, see:
 //
-//     http://www.libsf.org/
-//     http://www.libsf.org/licenses/
-//     http://www.visual-freepro.org/vjr/indexmain.html
-//     http://www.visual-freepro.org/wiki/index.php/PBL
+//    http://www.libsf.org/
+//    http://www.libsf.org/licenses/
+//    http://www.visual-freepro.org/vjr/indexmain.html
+//    http://www.visual-freepro.org/wiki/index.php/PBL
 //
 // Thank you.  And may The Lord bless you richly as you lift up your life, your
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
@@ -203,89 +203,89 @@
 // Called to display a message box
 //
 //////
-    const SDL_MessageBoxButtonData mb_buttons_ok[] =
+	const SDL_MessageBoxButtonData mb_buttons_ok[] =
 	{
-        { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 0, "ok" }
-    };
+		{ SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 0, "ok" }
+	};
 	const int mb_buttons_ok_choice[] = { IDOK };
 
-    const SDL_MessageBoxButtonData mb_buttons_ok_cancel[] =
+	const SDL_MessageBoxButtonData mb_buttons_ok_cancel[] =
 	{
-        { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 0, "ok" },
-        { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 1, "cancel" }
-    };
+		{ SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 0, "ok" },
+		{ SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 1, "cancel" }
+	};
 	const int mb_buttons_ok_cancel_choice[] = { IDOK, IDCANCEL };
 
-    const SDL_MessageBoxButtonData mb_buttons_yes_no_cancel[] =
+	const SDL_MessageBoxButtonData mb_buttons_yes_no_cancel[] =
 	{
-        { /* .flags, .buttonid, .text */        0, 0, "no" },
-        { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "yes" },
-        { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 2, "cancel" }
-    };
+		{ /* .flags, .buttonid, .text */		0, 0, "no" },
+		{ SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "yes" },
+		{ SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 2, "cancel" }
+	};
 	const int mb_buttons_yes_no_cancel_choice[] = { IDNO, IDYES, IDCANCEL };
 
-    const SDL_MessageBoxButtonData mb_buttons_abort_retry_ignore[] =
+	const SDL_MessageBoxButtonData mb_buttons_abort_retry_ignore[] =
 	{
-        { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 0, "abort" },
-        { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "retry" },
-        { /* .flags, .buttonid, .text */        0, 2, "ignore" }
-    };
+		{ SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 0, "abort" },
+		{ SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "retry" },
+		{ /* .flags, .buttonid, .text */		0, 2, "ignore" }
+	};
 	const int mb_buttons_abort_retry_ignore_choice[] = { IDABORT, IDRETRY, IDIGNORE };
 
-    const SDL_MessageBoxButtonData mb_buttons_yes_no[] =
+	const SDL_MessageBoxButtonData mb_buttons_yes_no[] =
 	{
-        { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 0, "yes" },
-        { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 1, "no" }
-    };
+		{ SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 0, "yes" },
+		{ SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 1, "no" }
+	};
 	const int mb_buttons_yes_no_choice[] = { IDYES, IDNO };
 
-    const SDL_MessageBoxButtonData mb_buttons_retry_cancel[] =
+	const SDL_MessageBoxButtonData mb_buttons_retry_cancel[] =
 	{
-        { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 0, "retry" },
-        { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 1, "cancel" }
-    };
+		{ SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 0, "retry" },
+		{ SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 1, "cancel" }
+	};
 	const int mb_buttons_retry_cancel_choice[] = { IDRETRY, IDCANCEL };
 
-    const SDL_MessageBoxButtonData mb_buttons_cancel_retry_continue[] =
+	const SDL_MessageBoxButtonData mb_buttons_cancel_retry_continue[] =
 	{
-        { SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 0, "cancel" },
-        { SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "retry" },
-        { /* .flags, .buttonid, .text */        0, 2, "continue" }
-    };
+		{ SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT, 0, "cancel" },
+		{ SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT, 1, "retry" },
+		{ /* .flags, .buttonid, .text */		0, 2, "continue" }
+	};
 	const int mb_buttons_cancel_retry_continue_choice[] = { IDCANCEL, IDRETRY, IDCONTINUE };
 
-    const SDL_MessageBoxColorScheme mb_colorScheme_information =
+	const SDL_MessageBoxColorScheme mb_colorScheme_information =
 	{
-        { /* .colors (.r, .g, .b) */
-            { 255, 255, 255 },		// [SDL_MESSAGEBOX_COLOR_BACKGROUND]
-            {   0,   0,   0 },		// [SDL_MESSAGEBOX_COLOR_TEXT]
-            {   0,   0, 255 },		// [SDL_MESSAGEBOX_COLOR_BUTTON_BORDER]
-            { 112, 164, 255 },		// [SDL_MESSAGEBOX_COLOR_BUTTON_BACKGROUND]
-            { 255, 255, 128 }		// [SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED]
-        }
-    };
+		{ /* .colors (.r, .g, .b) */
+			{ 255, 255, 255 },		// [SDL_MESSAGEBOX_COLOR_BACKGROUND]
+			{   0,   0,   0 },		// [SDL_MESSAGEBOX_COLOR_TEXT]
+			{   0,   0, 255 },		// [SDL_MESSAGEBOX_COLOR_BUTTON_BORDER]
+			{ 112, 164, 255 },		// [SDL_MESSAGEBOX_COLOR_BUTTON_BACKGROUND]
+			{ 255, 255, 128 }		// [SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED]
+		}
+	};
 
-    const SDL_MessageBoxColorScheme mb_colorScheme_warning =
+	const SDL_MessageBoxColorScheme mb_colorScheme_warning =
 	{
-        { /* .colors (.r, .g, .b) */
-            { 255, 255, 192 },		// [SDL_MESSAGEBOX_COLOR_BACKGROUND]
-            {   0,   0,   0 },		// [SDL_MESSAGEBOX_COLOR_TEXT]
-            {   0,   0, 255 },		// [SDL_MESSAGEBOX_COLOR_BUTTON_BORDER]
-            { 112, 164, 255 },		// [SDL_MESSAGEBOX_COLOR_BUTTON_BACKGROUND]
-            { 128, 255, 255 }		// [SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED]
-        }
-    };
+		{ /* .colors (.r, .g, .b) */
+			{ 255, 255, 192 },		// [SDL_MESSAGEBOX_COLOR_BACKGROUND]
+			{   0,   0,   0 },		// [SDL_MESSAGEBOX_COLOR_TEXT]
+			{   0,   0, 255 },		// [SDL_MESSAGEBOX_COLOR_BUTTON_BORDER]
+			{ 112, 164, 255 },		// [SDL_MESSAGEBOX_COLOR_BUTTON_BACKGROUND]
+			{ 128, 255, 255 }		// [SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED]
+		}
+	};
 
-    const SDL_MessageBoxColorScheme mb_colorScheme_error =
+	const SDL_MessageBoxColorScheme mb_colorScheme_error =
 	{
-        { /* .colors (.r, .g, .b) */
-            { 255, 128, 128 },		// [SDL_MESSAGEBOX_COLOR_BACKGROUND]
-            {   0,   0,   0 },		// [SDL_MESSAGEBOX_COLOR_TEXT]
-            {   0,   0, 255 },		// [SDL_MESSAGEBOX_COLOR_BUTTON_BORDER]
-            { 112, 164, 255 },		// [SDL_MESSAGEBOX_COLOR_BUTTON_BACKGROUND]
-            { 255, 255, 255 }		// [SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED]
-        }
-    };
+		{ /* .colors (.r, .g, .b) */
+			{ 255, 128, 128 },		// [SDL_MESSAGEBOX_COLOR_BACKGROUND]
+			{   0,   0,   0 },		// [SDL_MESSAGEBOX_COLOR_TEXT]
+			{   0,   0, 255 },		// [SDL_MESSAGEBOX_COLOR_BUTTON_BORDER]
+			{ 112, 164, 255 },		// [SDL_MESSAGEBOX_COLOR_BUTTON_BACKGROUND]
+			{ 255, 255, 255 }		// [SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED]
+		}
+	};
 
 	WINUSERAPI int WINAPI MessageBox(__in_opt HWND hWnd, __in_opt cs8* lpText, __in_opt cs8* lpCaption, __in UINT uType)
 	{
@@ -540,8 +540,8 @@
 //
 // Peek or grab the next message from the queue.
 // Note:  This function is not fully implemented.  It only honors PM_NOREMOVE, and !PM_NOREMOVE.
-//        It does not honor other PM_* settings, and will simply remove or not remove based on
-//        the value PM_NOREMOVE.
+//		It does not honor other PM_* settings, and will simply remove or not remove based on
+//		the value PM_NOREMOVE.
 //
 //////
 	WINUSERAPI BOOL WINAPI PeekMessage(__out MSG* lpMsg, __in_opt HWND hWnd, __in UINT wMsgFilterMin, __in UINT wMsgFilterMax, __in UINT wRemoveMsg)
@@ -639,7 +639,7 @@
 //
 // Called to translate the raw message into possibly other messages based on ... who knows? :-)
 // Note:  This is not supported because all messages are untranslated, but go through raw
-//        (because we handle the signaled messages anyway you see)
+//		(because we handle the signaled messages anyway you see)
 //
 //////
 	WINUSERAPI BOOL WINAPI TranslateMessage(__in CONST MSG *lpMsg)
@@ -921,8 +921,8 @@ WINUSERAPI int WINAPI DrawText(__in HDC hdc, cs8* lpchText, __in int cchText, __
 
 WINBASEAPI DWORD WINAPI GetTickCount(VOID)
 {
-    timespec	lts;
-    DWORD		lnTickCount;
+	timespec	lts;
+	DWORD		lnTickCount;
 
 
 	//////////
@@ -1530,7 +1530,7 @@ WINUSERAPI int WINAPI FrameRect(__in HDC hDC, __in CONST RECT *lprc,__in HBRUSH 
 WINBASEAPI VOID WINAPI GetSystemTime(__out LPSYSTEMTIME lpSystemTime)
 {
 	timeb	ltb;
-    tm*		lts;
+	tm*		lts;
 
 
 	//////////
@@ -1558,6 +1558,52 @@ WINBASEAPI VOID WINAPI GetSystemTime(__out LPSYSTEMTIME lpSystemTime)
 
 WINBASEAPI VOID WINAPI GetSystemTimeAsFileTime(__out LPFILETIME lpSystemTimeAsFileTime)
 {
+	timeval		tv;
+
+	union {
+		u64		result;
+		struct Sul
+		{
+			u32	upper;
+			u32 lower;
+		} ul;
+	};
+
+
+	// Make sure our environment is sane
+	if (lpSystemTimeAsFileTime)
+	{
+		//////////
+		// Set the initial value
+		//////
+			// Epochs:
+			// Jan.01.1601 00:00	-- Unix
+			// Jan.01.1970 00:00	-- Windows
+			result = 11644473600;	// Difference between Unix and Windows
+
+
+		//////////
+		// Get current time
+		//////
+			gettimeofday(&tv, NULL);
+
+
+		//////////
+		// Convert to FILETIME
+		//////
+			result	+= tv.tv_sec;
+			result	*= 10000000;
+			result	+= tv.tv_usec * 10;
+
+
+		//////////
+		// Store the result
+		//////
+// These need validated ... they could be inverted
+debug_break;
+			lpSystemTimeAsFileTime->dwHighDateTime	= ul.upper;
+			lpSystemTimeAsFileTime->dwLowDateTime	= ul.lower;
+	}
 }
 
 
@@ -1566,7 +1612,7 @@ WINBASEAPI VOID WINAPI GetSystemTimeAsFileTime(__out LPFILETIME lpSystemTimeAsFi
 WINBASEAPI VOID WINAPI GetLocalTime(__out LPSYSTEMTIME lpSystemTime)
 {
 	timeb	ltb;
-    tm*		lts;
+	tm*		lts;
 
 
 	//////////
@@ -1744,7 +1790,22 @@ WINUSERAPI BOOL WINAPI OffsetRect(__inout LPRECT lprc, __in int dx, __in int dy)
 
 WINBASEAPI DWORD WINAPI GetCurrentDirectory(__in DWORD nBufferLength, s8 lpBuffer[_MAX_PATH])
 {
-	return(0);
+	//////////
+	// Reset
+	//////
+		memset(lpBuffer, 0, _MAX_PATH);
+
+
+	//////////
+	// Grab the
+	//////
+		getcwd(lpBuffer, nBufferLength);
+
+
+	//////////
+	// Indicate our length
+	//////
+		return(strlen(lpBuffer));
 }
 
 
@@ -1760,7 +1821,7 @@ int sopen(cs8* tcPathname, s32 mode, s32 sharing)
 
 s64 telli64(s32 fileno)
 {
-	return(0);
+	return(lseek64(fileno, 0, SEEK_CUR));
 }
 
 
@@ -1768,7 +1829,30 @@ s64 telli64(s32 fileno)
 
 WINBASEAPI HANDLE WINAPI FindFirstFile(__in cs8* lpFileName, __out LPWIN32_FIND_DATA lpFindFileData)
 {
-	return(0);
+//	BOOL llResult;
+//
+//
+//	// Make sure our environment is sane
+//	if (lpFindFileData)
+//	{
+//		// Try to open the indicated directory
+//		if ((lpFindFileData->dp = opendir(lpFileName)) == NULL)
+//			return(-1);
+//
+//		// Get the first file
+//		llResult = FindNextFile((HANDLE)&lpFindFileData, lpFindFileData);
+//		if (!llResult)
+//		{
+//			closedir(lpFindFileData->dp);
+//			return(-1);
+//		}
+//
+//		// Indicate success
+//		return((HANDLE)&lpFindFileData);
+//	}
+//
+//	// If we get here, error
+	return(-1);
 }
 
 
@@ -1776,6 +1860,28 @@ WINBASEAPI HANDLE WINAPI FindFirstFile(__in cs8* lpFileName, __out LPWIN32_FIND_
 
 WINBASEAPI BOOL WINAPI FindNextFile(__in HANDLE hFindFile, __out LPWIN32_FIND_DATA lpFindFileData)
 {
+//	// Make sure our environment is sane
+//	if (lpFindFileData)
+//	{
+//		// Find the next file
+//		lpFindFileData->dirp = readdir(lpFindFileData->dp);
+//		if (!lpFindFileData->dirp)
+//		{
+//			// All done!
+//			closedir(lpFindFileData->dp));
+//			return(FALSE);
+//		}
+//
+//		// Copy attributes
+//
+//		// Copy the name
+//		memcpy(lpFindFileData->cFileName, lpFindFileData->dirp->d_name, strlen(lpFindFileData->dirp->d_name));
+//
+//		// Indicate success
+//		return(TRUE);
+//	}
+//
+//	// If we get here, invalid
 	return(FALSE);
 }
 
@@ -1792,7 +1898,8 @@ WINBASEAPI DWORD WINAPI GetFullPathName(__in cs8* lpFileName, __in DWORD nBuffer
 
 WINBASEAPI DWORD WINAPI GetTempPath(__in DWORD nBufferLength, s8 lpBuffer[_MAX_PATH])
 {
-	return(0);
+	memcpy(lpBuffer, "\\var\\tmp\\0", 10);
+	return(10);
 }
 
 
@@ -1800,7 +1907,42 @@ WINBASEAPI DWORD WINAPI GetTempPath(__in DWORD nBufferLength, s8 lpBuffer[_MAX_P
 
 WINBASEAPI UINT WINAPI GetTempFileName(__in cs8* lpPathName, __in cs8* lpPrefixString, __in UINT uUnique, s8 lpTempFileName[_MAX_PATH])
 {
-	return(0);
+	//////////
+	// Initialize to empty
+	//////
+		if (lpTempFileName)
+			memset(lpTempFileName, 0, _MAX_PATH);
+
+
+	//////////
+	// Prepend the directory
+	//////
+		if (lpPathName)
+		{
+			// Copy the path
+			memcpy(lpTempFileName, lpPathName, min(strlen(lpPathName), _MAX_PATH - 1));
+
+			// Make sure it ends with a directory symbol
+			if (lpTempFileName[strlen(lpTempFileName) - 1] != '\\')
+				lpTempFileName[strlen(lpTempFileName) - 1] = '\\';
+
+			// Add the prefix string
+// This code could be bad :-)
+debug_break;
+			memcpy(lpTempFileName + strlen(lpTempFileName), lpPrefixString, min(_MAX_PATH - strlen(lpPrefixString) - strlen(lpTempFileName), strlen(lpPrefixString)));
+
+			// Addin the unique id
+			sprintf(lpTempFileName + strlen(lpTempFileName), "%lu", uUnique);
+
+			// Indicate the length
+			return(strlen(lpTempFileName));
+		}
+
+
+	//////////
+	// If we get here, failure
+	//////
+		return(-1);
 }
 
 

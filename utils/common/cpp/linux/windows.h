@@ -1028,6 +1028,8 @@ typedef struct tagMSG
 } __attribute__((packed)) MSG;
 #define LPMSG MSG*
 
+struct DIR;
+struct dirent;
 typedef struct _WIN32_FIND_DATAA
 {
 	DWORD		dwFileAttributes;
@@ -1040,6 +1042,11 @@ typedef struct _WIN32_FIND_DATAA
 	DWORD		dwReserved1;
 	s8			cFileName[260];
 	s8			cAlternateFileName[14];
+
+	// For Linux (opendir, readdir, closedir)
+	DIR*		dp;
+	dirent*		dirp;
+
 } __attribute__((packed)) WIN32_FIND_DATA;
 #define LPWIN32_FIND_DATA WIN32_FIND_DATA*
 
