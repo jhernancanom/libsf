@@ -196,6 +196,7 @@
 	#include <sys/types.h>
 	#include <sys/stat.h>
 	#include <sys/time.h>
+	#include <sys/timeb.h>
 	#include <inttypes.h>
 	#include <memory.h>
 	#include <string.h>

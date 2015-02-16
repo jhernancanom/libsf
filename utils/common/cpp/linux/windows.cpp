@@ -842,7 +842,33 @@ WINGDIAPI HGDIOBJ WINAPI SelectObject(__in HDC hdc, __in HGDIOBJ h)
 
 WINGDIAPI COLORREF WINAPI SetTextColor(__in HDC hdc, __in COLORREF color)
 {
-	return(0);
+	SHdcX*	hdcx;
+	u32		lnColor;
+
+
+	//////////
+	// Get the HDC
+	//////
+		hdcx = iHwndX_findHdc_byHdc(hdc);
+		if (hdcx && hdcx->isValid)
+		{
+			// Set the color
+			lnColor					= hdcx->colorFore.color;
+			hdcx->colorFore.color	= color;
+
+			// Make sure the alpha channel is fully saturated
+			hdcx->colorFore.alp		= 255;
+
+		} else {
+			// Set to black
+			lnColor					= 0;
+		}
+
+
+	//////////
+	// Return
+	//////
+		return(lnColor);
 }
 
 
@@ -887,7 +913,7 @@ WINUSERAPI int WINAPI DrawText(__in HDC hdc, cs8* lpchText, __in int cchText, __
 	//		XQueryTextExtents()
 	//
 	//////////
-	return(0);
+		return(0);
 }
 
 
@@ -1503,6 +1529,28 @@ WINUSERAPI int WINAPI FrameRect(__in HDC hDC, __in CONST RECT *lprc,__in HBRUSH 
 
 WINBASEAPI VOID WINAPI GetSystemTime(__out LPSYSTEMTIME lpSystemTime)
 {
+	timeb	ltb;
+    tm*		lts;
+
+
+	//////////
+	// Grab the current time
+	//////
+		ftime(&ltb);
+		lts = gmtime(&ltb.time);
+
+
+	//////////
+	// Translate to Windows' format
+	//////
+		lpSystemTime->wYear			= lts->tm_year + 1900;
+		lpSystemTime->wMonth		= lts->tm_mon;
+		lpSystemTime->wDayOfWeek	= lts->tm_wday;
+		lpSystemTime->wDay			= lts->tm_mday;
+		lpSystemTime->wHour			= lts->tm_hour;
+		lpSystemTime->wMinute		= lts->tm_min;
+		lpSystemTime->wSecond		= lts->tm_sec;
+		lpSystemTime->wMilliseconds	= ltb.millitm;
 }
 
 
@@ -1517,6 +1565,28 @@ WINBASEAPI VOID WINAPI GetSystemTimeAsFileTime(__out LPFILETIME lpSystemTimeAsFi
 
 WINBASEAPI VOID WINAPI GetLocalTime(__out LPSYSTEMTIME lpSystemTime)
 {
+	timeb	ltb;
+    tm*		lts;
+
+
+	//////////
+	// Grab the current time
+	//////
+		ftime(&ltb);
+		lts = localtime(&ltb.time);
+
+
+	//////////
+	// Translate to Windows' format
+	//////
+		lpSystemTime->wYear			= lts->tm_year + 1900;
+		lpSystemTime->wMonth		= lts->tm_mon;
+		lpSystemTime->wDayOfWeek	= lts->tm_wday;
+		lpSystemTime->wDay			= lts->tm_mday;
+		lpSystemTime->wHour			= lts->tm_hour;
+		lpSystemTime->wMinute		= lts->tm_min;
+		lpSystemTime->wSecond		= lts->tm_sec;
+		lpSystemTime->wMilliseconds	= ltb.millitm;
 }
 
 
@@ -1532,7 +1602,33 @@ WINUSERAPI HWND WINAPI GetActiveWindow(VOID)
 
 WINGDIAPI COLORREF WINAPI SetBkColor(__in HDC hdc, __in COLORREF color)
 {
-	return(0);
+	SHdcX*	hdcx;
+	u32		lnColor;
+
+
+	//////////
+	// Get the HDC
+	//////
+		hdcx = iHwndX_findHdc_byHdc(hdc);
+		if (hdcx && hdcx->isValid)
+		{
+			// Set the color
+			lnColor					= hdcx->colorBack.color;
+			hdcx->colorBack.color	= color;
+
+			// Make sure the alpha channel is fully saturated
+			hdcx->colorBack.alp		= 255;
+
+		} else {
+			// Set to black
+			lnColor					= 0;
+		}
+
+
+	//////////
+	// Return
+	//////
+		return(lnColor);
 }
 
 
@@ -1608,7 +1704,7 @@ WINGDIAPI HBITMAP WINAPI CreateDIBSection(__in_opt HDC hdc, __in CONST BITMAPINF
 
 s64 _atoi64(cs8* string)
 {
-	return(0);
+	return((s64)strtoll(string, NULL, 10));
 }
 
 
@@ -1624,6 +1720,22 @@ WINUSERAPI int WINAPI GetSystemMetrics(__in int nIndex)
 
 WINUSERAPI BOOL WINAPI OffsetRect(__inout LPRECT lprc, __in int dx, __in int dy)
 {
+	// Make sure the environment is sane
+	if (lprc)
+	{
+		// Delta-X
+		lprc->left		+= dx;
+		lprc->right		+= dx;
+
+		// Delta-Y
+		lprc->top		+= dy;
+		lprc->bottom	+= dy;
+
+		// Indicate success
+		return(TRUE);
+	}
+
+	// If we get here, failure
 	return(FALSE);
 }
 
@@ -1704,10 +1816,8 @@ WINGDIAPI int WINAPI GetDeviceCaps(__in_opt HDC hdc, __in int index)
 
 WINBASEAPI int WINAPI MulDiv(__in int nNumber, __in int nNumerator, __in int nDenominator)
 {
-	//////////
 	// (a * b) / c
-	//////
-		return((int)(((s64)nNumber * (s64)nNumerator) / (s64)nDenominator));
+	return((int)(((s64)nNumber * (s64)nNumerator) / (s64)nDenominator));
 }
 
 
