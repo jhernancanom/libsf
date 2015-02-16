@@ -70,14 +70,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <io.h>
+#include <string.h>
 #include <memory.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include "/libsf/utils/common/cpp/common_types.h"
+#define max(a,b)	(((a) > (b)) ? (a) : (b))
+#define min(a,b)	(((a) < (b)) ? (a) : (b))
+#define debug_break	_asm int 3
 
-bool iConvert_fasta(void);
+#include "/libsf/utils/common/cpp/common_types.h"
+#include "/libsf/utils/common/cpp/builder.h"
+
+bool iConvert_fasta		(void);
+bool iSearch			(s8* tcBitWidth, s8* tcOutputFile, s8* tcAtCg);
 
 
 
@@ -94,28 +101,31 @@ bool iConvert_fasta(void);
 		//////////
 		// Command line options
 		//////
-			printf("LibSF -- DNA Project Butterfly -- Feb.15.2015/n");
-			printf("See us on Google Groups: https://groups.google.com/forum/#!forum/dnaprojectbutterfly\n");
+			printf("LibSF -- DNA Project Butterfly -- Feb.15.2015\n");
+			printf("See Google Groups: https://groups.google.com/forum/#!forum/dnaprojectbutterfly\n");
 
 			// Process the option
-			if (_memicmp(argv[1], "fasta", 5) == 0)		llShowHelp = !iConvert_fasta();		// Convert dp_genome_v3.fasta file to outputs
-			else										llShowHelp = true;
+			     if (_memicmp(argv[1], "fasta", 5) == 0)		llShowHelp = !iConvert_fasta();							// Convert dp_genome_v3.fasta file to outputs
+			else if (_memicmp(argv[1], "bitwidth:", 9) == 0)	llShowHelp = !iSearch(argv[1] + 9, argv[2], argv[3]);	// Search for successive bits of the indicated size
+			else												llShowHelp = true;
 
 			// If we should show help...
 			if (llShowHelp)
 			{
-				printf("Usage: butterfly [option]/n");
-				printf("/n");
-				printf("Options:/n");
-				printf("/tfasta -- Converts dp_genome_v3.fasta to/n");
-				printf("/t             (1) at.txt/n");
-				printf("/t             (2) cg.txt/n");
+				printf("Usage: butterfly [option]\n");
+				printf("\n");
+				printf("Options:\n");
+				printf("\tfasta -- Converts dp_genome_v3.fasta to\n");
+				printf("\t             (1) at.txt\n");
+				printf("\t             (2) cg.txt\n");
 			}
 
-// Added to let the output screen be examined
-_asm int 3;
+// Added to let the output screen be examined during debugging
+//_asm int 3;
 		return 0;
 	}
+
+#include "/libsf/utils/common/cpp/builder.cpp"
 
 
 
@@ -141,10 +151,10 @@ _asm int 3;
 		//////////
 		// Open dp_genome_v3.fasta
 		//////
-			lhFasta = _open("//libsf_offline//source//unsorted//dna_project_butterfly//butterfly//data//dp_genome_v3.fasta", _O_RDWR | _O_BINARY);
+			lhFasta = _open("\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\dp_genome_v3.fasta", _O_RDWR | _O_BINARY);
 			if (lhFasta == -1)
 			{
-				printf("Error: Unable to open //libsf_offline//source//unsorted//dna_project_butterfly//butterfly//data//dp_genome_v3.fasta/n");
+				printf("Error: Unable to open \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\dp_genome_v3.fasta\n");
 				return(false);
 			}
 
@@ -162,7 +172,7 @@ _asm int 3;
 			fasta_raw = (s8*)malloc(lnFastaSize);
 			if (!fasta_raw)
 			{
-				printf("Error: Unable to allocate %d bytes/n", lnFastaSize);
+				printf("Error: Unable to allocate %d bytes\n", lnFastaSize);
 				return(false);
 			}
 
@@ -173,7 +183,7 @@ _asm int 3;
 			lnReadSize = _read(lhFasta, fasta_raw, lnFastaSize);
 			if (lnReadSize != lnFastaSize)
 			{
-				printf("Error: Unable to read %d bytes/n", lnFastaSize);
+				printf("Error: Unable to read %d bytes\n", lnFastaSize);
 				return(false);
 			}
 			_close(lhFasta);
@@ -234,7 +244,7 @@ _asm int 3;
 			at_raw = (s8*)malloc(lnFastaSize);
 			if (!at_raw)
 			{
-				printf("Error: Unable to allocate %d bytes for A,T/n", lnFastaSize);
+				printf("Error: Unable to allocate %d bytes for A,T\n", lnFastaSize);
 				return(false);
 			}
 			memcpy(at_raw, fasta_raw, lnFastaSize);
@@ -246,7 +256,7 @@ _asm int 3;
 			cg_raw = (s8*)malloc(lnFastaSize);
 			if (!cg_raw)
 			{
-				printf("Error: Unable to allocate %d bytes for C,G/n", lnFastaSize);
+				printf("Error: Unable to allocate %d bytes for C,G\n", lnFastaSize);
 				return(false);
 			}
 			memcpy(cg_raw, fasta_raw, lnFastaSize);
@@ -269,7 +279,7 @@ _asm int 3;
 
 				lnAtCount += ((at_raw[lnI] == ' ') ? 0 : 1);
 			}
-			printf("A,T occurred %d times/n", lnAtCount);
+			printf("A,T occurred %d times\n", lnAtCount);
 
 
 		//////////
@@ -283,16 +293,16 @@ _asm int 3;
 
 				lnCgCount += ((cg_raw[lnI] == ' ') ? 0 : 1);
 			}
-			printf("C,G occurred %d times/n", lnCgCount);
+			printf("C,G occurred %d times\n", lnCgCount);
 
 
 		//////////
 		// Write the data//at.txt
 		//////
-			lhAt = _open("//libsf_offline//source//unsorted//dna_project_butterfly//butterfly//data//at.txt", O_WRONLY | O_CREAT);
+			lhAt = _open("\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\at.txt", _O_WRONLY | _O_CREAT);
 			if (lhAt == -1)
 			{
-				printf("Error: Unable to open //libsf_offline//source//unsorted//dna_project_butterfly//butterfly//data//at.txt/n");
+				printf("Error: Unable to open \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\at.txt\n");
 				return(false);
 			}
 			_write(lhAt, at_raw, lnFastaSize);
@@ -303,10 +313,10 @@ _asm int 3;
 		//////////
 		// Write the data//cg.txt
 		//////
-			lhCg = _open("//libsf_offline//source//unsorted//dna_project_butterfly//butterfly//data//cg.txt", O_WRONLY | O_CREAT);
+			lhCg = _open("\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\cg.txt", _O_WRONLY | _O_CREAT);
 			if (lhCg == -1)
 			{
-				printf("Error: Unable to open //libsf_offline//source//unsorted//dna_project_butterfly//butterfly//data//cg.txt/n");
+				printf("Error: Unable to open \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\cg.txt\n");
 				return(false);
 			}
 			_write(lhCg, cg_raw, lnFastaSize);
@@ -317,5 +327,143 @@ _asm int 3;
 		//////////
 		// Indicate success
 		//////
+			return(true);
+	}
+
+
+
+
+//////////
+//
+// Search for the indicated sequential bit width values
+//
+//////
+	bool iSearch (s8* tcBitWidth, s8* tcOutputFile, s8* tcAtCg)
+	{
+		s32			lnI, lnJ, lnILast, lnEnd, lhAtCg, lnAtCgSize, lnReadSize, lnBits;
+		bool		llAt;
+		s8*			raw;
+		SBuilder*	matches;
+		s8			filename[_MAX_PATH];
+		s8			buffer[256];
+
+
+		//////////
+		// A,T or C,G ?
+		//////
+			llAt = (!tcAtCg || (tcAtCg[0] != 'C' && tcAtCg[0] != 'G'));
+
+
+		//////////
+		// Grab the number of bits, and open the file
+		//////
+			lnBits	= atoi(tcBitWidth);
+			if (llAt)		lhAtCg = _open("\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\at.txt", _O_RDONLY | _O_BINARY);
+			else			lhAtCg = _open("\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\cg.txt", _O_RDONLY | _O_BINARY);
+
+			if (lhAtCg == -1)
+			{
+				if (llAt)	printf("Error: Unable to open \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\at.txt\n");
+				else		printf("Error: Unable to open \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\cg.txt\n");
+				return(false);
+			}
+
+
+		//////////
+		// Find out how big the file is
+		//////
+			lnAtCgSize = _lseek(lhAtCg, 0, SEEK_END);
+			_lseek(lhAtCg, 0, SEEK_SET);
+
+
+		//////////
+		// Allocate memory
+		//////
+			raw = (s8*)malloc(lnAtCgSize);
+			if (!raw)
+			{
+				if (llAt)	printf("Error: Unable to allocate %d bytes to load \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\at.txt\n", lnAtCgSize);
+				else		printf("Error: Unable to allocate %d bytes to load \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\cg.txt\n", lnAtCgSize);
+				return(false);
+			}
+
+
+		//////////
+		// Read content
+		//////
+			lnReadSize = _read(lhAtCg, raw, lnAtCgSize);
+			if (lnReadSize != lnAtCgSize)
+			{
+				if (llAt)	printf("Error: Unable to read %d bytes from \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\at.txt\n", lnAtCgSize);
+				else		printf("Error: Unable to read %d bytes from \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\cg.txt\n", lnAtCgSize);
+				return(false);
+			}
+			_close(lhAtCg);
+
+
+		//////////
+		// Iterate repeatedly until we exhaust our supply of bits
+		//////
+			iBuilder_createAndInitialize(&matches, -1);
+			for (lnI = 0, lnILast = 0, lnEnd = lnAtCgSize - lnBits; lnI < lnEnd; )
+			{
+				// If there's a space before, and a space after, and everything between is a 0 or 1...
+				if ((lnI == 0 || raw[lnI - 1] == ' ') && raw[lnI + lnBits + 1] == ' ')
+				{
+					//////////
+					// Is every bit between a 0 or 1?
+					//////
+						for (lnJ = 0; lnJ < lnBits; lnJ++)
+						{
+							// Is it not a number?
+							if (raw[lnI + lnJ] == ' ')
+								break;	// Yes, we're done
+						}
+
+
+					//////////
+					// Did we find a match?
+					//////
+						if (lnJ >= lnBits)
+						{
+							// Yes
+							memset(buffer, 0, sizeof(buffer));
+							sprintf(buffer, "%010d -- %010d -- ", lnI, lnI - lnILast);
+							memcpy(buffer + strlen(buffer), raw + lnI, lnBits);
+
+							// Append
+							iBuilder_appendData(matches, (u8*)buffer, strlen(buffer));
+							iBuilder_appendCrLf(matches);
+
+							// Save our last location
+							lnILast = lnI;
+							
+							// Skip past this entire bit section
+							lnI += lnBits + 2;
+
+						} else {
+							// No, skip forward to where we found the space which broke our hope :-)
+							lnI += lnJ + 1;
+						}
+
+				} else {
+					// Not a match, skip 
+					++lnI;
+				}
+			}
+
+
+		//////////
+		// Write the output file
+		//////
+			sprintf(filename, "\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\%s", tcOutputFile);
+			iBuilder_asciiWriteOutFile(matches, (u8*)filename);
+			iBuilder_freeAndRelease(&matches);
+
+
+		//////////
+		// Completed
+		//////
+			free(raw);
 			return(true);
 	}

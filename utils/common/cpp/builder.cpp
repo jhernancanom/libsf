@@ -92,7 +92,7 @@
 
 				// If we get here, we need to allocate more space
 				// Reallocate and continue
-				buffRoot->data_s8				= (s8*)realloc(buffRoot->data_s8, buffRoot->allocatedLength + buffRoot->allocateBlockSize);
+				buffRoot->data_s8			= (s8*)realloc(buffRoot->data_s8, buffRoot->allocatedLength + buffRoot->allocateBlockSize);
 				buffRoot->allocatedLength	+= buffRoot->allocateBlockSize;
 
 				// Initialize the added block
@@ -139,7 +139,7 @@
 				tnAllocationBlockSize		= max(4096, tnAllocationBlockSize);
 
 				// Allocate the data space
-				buffNew->data_s8				= (s8*)malloc(tnAllocationBlockSize);
+				buffNew->data_s8			= (s8*)malloc(tnAllocationBlockSize);
 
 				// If we allocated, we're good
 				if (buffNew->data_s8)
@@ -374,7 +374,7 @@
 					// They are freeing everything
 					//////
 						free(buffRoot->data_s8);
-						buffRoot->data_s8				= NULL;
+						buffRoot->data_s8			= NULL;
 						buffRoot->populatedLength	= 0;
 						buffRoot->allocatedLength	= 0;
 
@@ -389,7 +389,7 @@
 							//////////
 							// Set the allocated length
 							//////
-								buffRoot->data_s8				= lcNew;
+								buffRoot->data_s8			= lcNew;
 								buffRoot->allocatedLength	= tnBufferLength;
 
 
