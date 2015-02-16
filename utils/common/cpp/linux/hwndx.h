@@ -147,8 +147,8 @@ struct SHdcX;
 
 		// Structure used for callbacks
 		CREATESTRUCT	data;
-		SClassX*		cls;
-		SHdcX*			hdc;
+		SClassX*		clsx;
+		SHdcX*			hdcx;
 
 		// For X-windows
 		SXWindow*		x11;
@@ -207,6 +207,7 @@ struct SHdcX;
 	SClassX*		iHwndX_findClass_byName					(cs8* lpClassName);
 	void			iHwndX_createWindow						(SHwndX* win);
 	SXWindow*		iHwndX_createXWindow					(SHwndX* win);
+	void			iHwndX_deleteXWindow					(SHwndX* win);
 	SHdcX*			iHwndX_createHdc						(s32 tnWidth, s32 tnHeight, SBitmap* bmp);
 	s32				iHwndX_initializeXWindow				(SXWindow* win, s32 width, s32 height, s8* title);
 	bool			iHwndX_addTimer							(SHwndX* win, s32 nIDEvent, UINT uElapse);

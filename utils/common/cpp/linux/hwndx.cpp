@@ -150,12 +150,9 @@
 		//////////
 		// Allocate our primary SHwndX buffer if need be
 		//////
-			if (!gsWindows)
-				iBuilder_createAndInitialize(&gsWindows, -1);
-			if (!gsClasses)
-				iBuilder_createAndInitialize(&gsClasses, -1);
-			if (!gsHdcs)
-				iBuilder_createAndInitialize(&gsHdcs, -1);
+			if (!gsWindows)			iBuilder_createAndInitialize(&gsWindows, -1);
+			if (!gsClasses)			iBuilder_createAndInitialize(&gsClasses, -1);
+			if (!gsHdcs)			iBuilder_createAndInitialize(&gsHdcs, -1);
 
 
 		//////////
@@ -198,7 +195,7 @@ debug_break;
 			if (win)
 			{
 				// Create the actual hdc
-				win->hdc = iHwndX_createHdc(lnWidth, lnHeight, NULL);
+				win->hdcx = iHwndX_createHdc(lnWidth, lnHeight, NULL);
 
 				// Populate with default items
 				//XQueryFont(gsDesktop.display, "*");
@@ -391,6 +388,77 @@ debug_break;
 
 //////////
 //
+// Called to delete the X11 window portion
+//
+//////
+	void iHwndX_deleteXWindow(SHwndX* win)
+	{
+		SXWindow* xwin;
+
+
+		// Make sure the window is valid
+		if (win && win->isValid && win->x11)
+		{
+			//////////
+			// Delete the graphical context
+			//////
+				xwin = win->x11;
+				if (xwin->gc)
+					XFreeGC(xwin->display, xwin->gc);
+
+
+			//////////
+			// Primray pixel buffer
+			//////
+				if (xwin->virtualscreen)
+				{
+					free(xwin->virtualscreen);
+					xwin->virtualscreen = NULL;
+				}
+				if (xwin->ximage)
+				{
+					XDestroyImage(xwin->ximage);
+					xwin->ximage = NULL;
+				}
+
+
+			//////////
+			// Pixel buffer 2
+			//////
+				if (xwin->virtualscreen2)
+				{
+					free(xwin->virtualscreen2);
+					xwin->virtualscreen2 = NULL;
+				}
+				if (xwin->ximage2)
+				{
+					XDestroyImage(xwin->ximage2);
+					xwin->ximage = NULL;
+				}
+
+
+			//////////
+			// Delete the window on the desktop
+			//////
+				if (xwin->window)
+				{
+					XDestroyWindow(xwin->display, xwin->window);
+					xwin->window = 0;
+				}
+
+
+			//////////
+			// Reset the x11 pointer
+			//////
+				win->x11 = NULL;
+		}
+	}
+
+
+
+
+//////////
+//
 // Called to create a pseudo device context
 //
 //////
@@ -459,6 +527,8 @@ debug_break;
 	{
 		XSizeHints Hints;
 
+
+		// Make sure our environment is sane
 		if (xwin)
 		{
 			//////////

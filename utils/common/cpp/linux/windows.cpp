@@ -101,7 +101,7 @@
 					win->isVisible	= false;
 					win->isEnabled	= true;
 					win->nThreadId	= pthread_self();
-					win->cls		= cls;
+					win->clsx		= cls;
 
 					SetRect(&win->rc, X, Y, X + nWidth, Y + nHeight);
 					CopyRect(&win->rcClient, &win->rc);
@@ -669,7 +669,7 @@
 
 			// If valid, call the associated wndProc()
 			if (win)
-				return(win->cls->wcx.lpfnWndProc(lpMsg->hwnd, lpMsg->message, lpMsg->wParam, lpMsg->lParam));
+				return(win->clsx->wcx.lpfnWndProc(lpMsg->hwnd, lpMsg->message, lpMsg->wParam, lpMsg->lParam));
 
 			// If we get here, we didn't find the indicated message, so ignore it
 		}
@@ -850,7 +850,28 @@ WINGDIAPI COLORREF WINAPI SetTextColor(__in HDC hdc, __in COLORREF color)
 
 WINGDIAPI int WINAPI SetBkMode(__in HDC hdc, __in int mode)
 {
-	return(0);
+	SHdcX* hdcx;
+
+
+	//////////
+	// Find the HDC
+	//////
+		hdcx = iHwndX_findHdc_byHdc(hdc);
+		if (hdcx)
+		{
+			// We're good, set the mode
+			hdcx->isOpaque = (mode == OPAQUE);
+
+			// Indicate success
+			return(1);
+		}
+
+
+	//////////
+	// Could not find HDC
+	//////
+		// Indicate failure
+		return(0);
 }
 
 
@@ -874,7 +895,27 @@ WINUSERAPI int WINAPI DrawText(__in HDC hdc, cs8* lpchText, __in int cchText, __
 
 WINBASEAPI DWORD WINAPI GetTickCount(VOID)
 {
-	return(0);
+    timespec	lts;
+    DWORD		lnTickCount;
+
+
+	//////////
+	// Grab the current time
+	//////
+		clock_gettime(CLOCK_REALTIME, &lts);
+
+
+	//////////
+	// Compute the tick count
+	//////
+		lnTickCount  = lts.tv_nsec / 1000000;
+		lnTickCount += lts.tv_sec * 1000;
+
+
+	//////////
+	// Return the count
+	//////
+		return(lnTickCount);
 }
 
 
@@ -882,6 +923,15 @@ WINBASEAPI DWORD WINAPI GetTickCount(VOID)
 
 WINBASEAPI VOID WINAPI InitializeCriticalSection(__out LPCRITICAL_SECTION lpCriticalSection)
 {
+	pthread_mutexattr_t attr;
+
+
+	//////////
+	// Create (initialize)
+	//////
+		pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_NORMAL/*PTHREAD_MUTEX_RECURSIVE_NP*/);
+		pthread_mutex_init(lpCriticalSection, &attr);
+		pthread_mutexattr_destroy(&attr);
 }
 
 
@@ -889,6 +939,7 @@ WINBASEAPI VOID WINAPI InitializeCriticalSection(__out LPCRITICAL_SECTION lpCrit
 
 WINBASEAPI VOID WINAPI EnterCriticalSection(__inout LPCRITICAL_SECTION lpCriticalSection)
 {
+	pthread_mutex_lock(lpCriticalSection);
 }
 
 
@@ -896,7 +947,7 @@ WINBASEAPI VOID WINAPI EnterCriticalSection(__inout LPCRITICAL_SECTION lpCritica
 
 WINBASEAPI BOOL WINAPI TryEnterCriticalSection(__inout LPCRITICAL_SECTION lpCriticalSection)
 {
-	return(FALSE);
+	return(pthread_mutex_trylock(lpCriticalSection) == 0);
 }
 
 
@@ -904,6 +955,7 @@ WINBASEAPI BOOL WINAPI TryEnterCriticalSection(__inout LPCRITICAL_SECTION lpCrit
 
 WINBASEAPI VOID WINAPI LeaveCriticalSection(__inout LPCRITICAL_SECTION lpCriticalSection)
 {
+	pthread_mutex_unlock(lpCriticalSection);
 }
 
 
@@ -911,6 +963,7 @@ WINBASEAPI VOID WINAPI LeaveCriticalSection(__inout LPCRITICAL_SECTION lpCritica
 
 WINBASEAPI VOID WINAPI DeleteCriticalSection(__inout LPCRITICAL_SECTION lpCriticalSection)
 {
+	pthread_mutex_destroy(lpCriticalSection);
 }
 
 
@@ -918,6 +971,19 @@ WINBASEAPI VOID WINAPI DeleteCriticalSection(__inout LPCRITICAL_SECTION lpCritic
 
 WINUSERAPI VOID WINAPI PostQuitMessage(__in int nExitCode)
 {
+	u32		lnI;
+	SHwndX*	win;
+
+
+	//////////
+	// Iterate through every window and send the WM_QUIT message
+	//////
+		for (lnI = 0, win = (SHwndX*)gsWindows->buffer; lnI < gsWindows->populatedLength; lnI += sizeof(SHwndX), win++)
+		{
+			// If the window's valid, send it
+			if (win->isValid)
+				PostMessage(win->hwnd, WM_QUIT, nExitCode, 0);
+		}
 }
 
 
@@ -957,7 +1023,34 @@ WINUSERAPI BOOL WINAPI KillTimer(__in_opt HWND hWnd,__in s64 uIDEvent)
 
 WINGDIAPI BOOL WINAPI DeleteDC( __in HDC hdc)
 {
-	return(FALSE);
+	SHdcX* hdcx;
+
+
+	//////////
+	// Locate the HDC
+	//////
+		hdcx = iHwndX_findHdc_byHdc(hdc);
+		if (hdcx && hdcx->isValid)
+		{
+			//////////
+			// Mark it unused, delete the bitmap
+			//////
+				hdcx->isValid = false;
+				if (hdcx->bmp)
+					iBmp_delete(&hdcx->bmp, true, true);
+
+
+			//////////
+			// Indicate success
+			//////
+				return(TRUE);
+		}
+
+
+	//////////
+	// If we get here, not found
+	//////
+		return(FALSE);
 }
 
 
@@ -973,7 +1066,64 @@ WINGDIAPI BOOL WINAPI DeleteObject( __in HGDIOBJ ho)
 
 WINUSERAPI BOOL WINAPI DestroyWindow(__in HWND hWnd)
 {
-	return(FALSE);
+	SHwndX* win;
+
+
+	//////////
+	// Find the window
+	//////
+		win = iHwndX_findWindow_byHwnd(hWnd);
+		if (win && win->isValid)
+		{
+			//////////
+			// Delete the associated x-window if any
+			//////
+				if (win->x11)
+					iHwndX_deleteXWindow(win);
+
+
+			//////////
+			// Delete the associated HDC
+			//////
+				if (win->hdcx)
+				{
+					DeleteDC(win->hdcx->hdc);
+					win->hdcx = NULL;
+				}
+
+
+			//////////
+			// Delete the class and title allocation associated with this window
+			//////
+				iDatum_delete(&win->cClass, false);
+				iDatum_delete(&win->cTitle, false);
+
+
+			//////////
+			// Delete the message queue
+			//////
+				if (win->msgQueue)
+					iBuilder_freeAndRelease(&win->msgQueue);
+
+
+			//////////
+			// Mark the window as invalid
+			//////
+				win->isValid	= false;
+				win->hwnd		= null0;
+
+
+			//////////
+			// Indicate success
+			//////
+				return(TRUE);
+		}
+
+
+	//////////
+	// If we get here, not found
+	//////
+		return(FALSE);
 }
 
 
@@ -1063,7 +1213,39 @@ WINGDIAPI BOOL WINAPI PtInRegion(__in HRGN hrgn, __in int x, __in int y)
 
 WINUSERAPI HDC WINAPI BeginPaint(__in HWND hWnd, __out LPPAINTSTRUCT lpPaint)
 {
-	return(0);
+	SHwndX* win;
+
+
+	// Make sure our environment is sane
+	if (lpPaint)
+	{
+		// Locate the window
+		win = iHwndX_findWindow_byHwnd(hWnd);
+		if (win)
+		{
+			//////////
+			// Initialize the paint stucture
+			//////
+				lpPaint->hdc		= win->hdcx->hdc;
+				lpPaint->fErase		= FALSE;
+				memcpy(&lpPaint->rcPaint, &win->rcClient, sizeof(lpPaint->rcPaint));
+				lpPaint->fRestore	= FALSE;
+				lpPaint->fIncUpdate	= FALSE;
+				memset(&lpPaint->rgbReserved[0], 0, sizeof(lpPaint->rgbReserved));
+
+
+			//////////
+			// Return the HDC
+			//////
+				return(lpPaint->hdc);
+		}
+	}
+
+
+	//////////
+	// If we get here, failure
+	//////
+		return(null0);
 }
 
 
@@ -1071,7 +1253,8 @@ WINUSERAPI HDC WINAPI BeginPaint(__in HWND hWnd, __out LPPAINTSTRUCT lpPaint)
 
 WINUSERAPI BOOL WINAPI EndPaint(__in HWND hWnd, __in CONST PAINTSTRUCT *lpPaint)
 {
-	return(FALSE);
+	// Always indicate success
+	return(TRUE);
 }
 
 
@@ -1357,21 +1540,18 @@ WINGDIAPI COLORREF WINAPI SetBkColor(__in HDC hdc, __in COLORREF color)
 
 WINUSERAPI HDC WINAPI GetDC(__in_opt HWND hWnd)
 {
-	SHwndX*		win;
-	union {
-		HDC		_lhdc;
-		SHdcX*	lhdc;
-	};
+	SHwndX*	win;
+	HDC		_lhdc;
 
 
 	//////////
 	// Try to find it by hWnd
 	//////
 		win = iHwndX_findWindow_byHwnd(hWnd);
-		if (win)
+		if (win && win->hdcx)
 		{
 			// Grab the DC for this window
-			lhdc = win->hdc;
+			_lhdc = win->hdcx->hdc;
 
 		} else {
 			// Not found
@@ -1539,7 +1719,7 @@ WINGDIAPI HFONT WINAPI CreateFont(	__in int cHeight, __in int cWidth, __in int c
 {
 	s32		lnLength;
 	int		lnI, lnNames;
-	s8*		fontNameArray[];
+	s8**	fontNameArray;
 	union {
 		uptr	_hfont;
 		HFONT	hfont;
@@ -1550,14 +1730,14 @@ WINGDIAPI HFONT WINAPI CreateFont(	__in int cHeight, __in int cWidth, __in int c
 	// Grab the list of font names
 	//////
 		lnLength		= strlen(pszFaceName);
-		fontNameArray	= XListFonts(gsDesktop->display, "*", 999, &lnNames);
+		fontNameArray	= XListFonts(gsDesktop.display, "*", 999, &lnNames);
 		for (lnI = 0, _hfont = 0; lnI < lnNames; lnI++)
 		{
 			// Search for the font name that matches
 			if (strlen(fontNameArray[lnI]) == lnLength && _memicmp(fontNameArray[lnI], pszFaceName, lnLength) == 0)
 			{
 				// Load the font they indicated
-				hfont = (HFONT)XLoadFont(gsDesktop->display, pszFaceName);
+				hfont = (HFONT)XLoadFont(gsDesktop.display, pszFaceName);
 				break;
 			}
 		}
@@ -1571,7 +1751,7 @@ WINGDIAPI HFONT WINAPI CreateFont(	__in int cHeight, __in int cWidth, __in int c
 		if (!_hfont)
 		{
 			// Unsuccessful, try the default fixed point font
-			hfont = (HFONT)XLoadFont(gsDesktop->display, cgcFontName_defaultFixed);
+			hfont = (HFONT)XLoadFont(gsDesktop.display, (cs8*)cgcFontName_defaultFixed);
 		}
 
 

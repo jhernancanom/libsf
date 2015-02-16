@@ -42,6 +42,8 @@
     <File Name="../../source/vjr_sup.cpp" ExcludeProjConfig="Debug"/>
     <File Name="../../source/fonts.cpp" ExcludeProjConfig="Debug"/>
     <File Name="../../source/fonts.h"/>
+    <File Name="../../source/bitmaps/bitmaps.cpp" ExcludeProjConfig="Debug"/>
+    <File Name="../../source/bitmaps/bitmaps.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="utils">
     <File Name="../../../../utils/common/cpp/common_types.h"/>

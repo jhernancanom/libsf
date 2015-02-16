@@ -919,11 +919,11 @@ struct RECT
 typedef struct tagPAINTSTRUCT
 {
 	HDC		hdc;
-	BOOL		fErase;
-	RECT		rcPaint;
-	BOOL		fRestore;
-	BOOL		fIncUpdate;
-	BYTE		rgbReserved[32];
+	BOOL	fErase;
+	RECT	rcPaint;
+	BOOL	fRestore;
+	BOOL	fIncUpdate;
+	BYTE	rgbReserved[32];
 } __attribute__((packed)) PAINTSTRUCT, *PPAINTSTRUCT, *NPPAINTSTRUCT, *LPPAINTSTRUCT;
 
 struct POINT
@@ -967,42 +967,7 @@ typedef struct tagBITMAPINFO
 	BITMAPINFOHEADER	bmiHeader;
 } __attribute__((packed)) BITMAPINFO;
 
-struct _RTL_CRITICAL_SECTION;
-typedef struct _LIST_ENTRY
-{
-   struct _LIST_ENTRY *Flink;
-   struct _LIST_ENTRY *Blink;
-} __attribute__((packed)) LIST_ENTRY;
-
-typedef struct _RTL_CRITICAL_SECTION_DEBUG
-{
-	u16		Type;
-	u16		CreatorBackTraceIndex;
-	_RTL_CRITICAL_SECTION *CriticalSection;
-	LIST_ENTRY ProcessLocksList;
-	u32		EntryCount;
-	u32		ContentionCount;
-	u32		Flags;
-	u16		CreatorBackTraceIndexHigh;
-	u16		SpareWORD  ;
-} __attribute__((packed)) RTL_CRITICAL_SECTION_DEBUG, *PRTL_CRITICAL_SECTION_DEBUG, RTL_RESOURCE_DEBUG, *PRTL_RESOURCE_DEBUG;
-
-typedef struct _RTL_CRITICAL_SECTION
-{
-	PRTL_CRITICAL_SECTION_DEBUG DebugInfo;
-
-	//
-	//  The following three fields control entering and exiting the critical
-	//  section for the resource
-	//
-
-	s32			LockCount;
-	s32			RecursionCount;
-	HANDLE		OwningThread;		// from the thread's ClientId->UniqueThread
-	HANDLE		LockSemaphore;
-	ULONG_PTR	SpinCount;		// force size on 64-bit systems when packed
-} __attribute__((packed)) RTL_CRITICAL_SECTION, *PRTL_CRITICAL_SECTION;
-typedef RTL_CRITICAL_SECTION CRITICAL_SECTION;
+typedef pthread_mutex_t CRITICAL_SECTION;
 #define LPCRITICAL_SECTION CRITICAL_SECTION*
 
 typedef struct _SYSTEMTIME
