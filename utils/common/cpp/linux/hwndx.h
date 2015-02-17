@@ -87,6 +87,7 @@ struct SFont;
 struct SClassX;
 struct SHwndX;
 struct SHdcX;
+struct STimerX;
 
 
 
@@ -162,10 +163,20 @@ struct SHdcX;
 	struct STimerX
 	{
 		bool		isValid;
-		SHwndX*		winAssociated;
+		s32			timerId;		// Linux id from timer_create()
+		itimerspec	its;			// Linux-based interval data
 
-		// From setitimer()
-		s32			timerId;
+		// User parameters
+		sptr		nIDEvent;		// User-supplied id
+		s32			interval;		// User-supplied millisecond interval
+
+		// Windows callback if winAssociated != NULL, and _timerFunc != 0
+		SHwndX*		winAssociated;
+		union {
+			sptr			_timerFunc;
+			void CALLBACK	(*timerFunc)(HWND hwnd, UINT uMsg, UINT idEvent, DWORD dwTime);
+		};
+
 	} __attribute__((packed));
 
 	struct SHdcX
@@ -210,7 +221,8 @@ struct SHdcX;
 	void			iHwndX_deleteXWindow					(SHwndX* win);
 	SHdcX*			iHwndX_createHdc						(s32 tnWidth, s32 tnHeight, SBitmap* bmp);
 	s32				iHwndX_initializeXWindow				(SXWindow* win, s32 width, s32 height, s8* title);
-	bool			iHwndX_addTimer							(SHwndX* win, s32 nIDEvent, UINT uElapse);
+	bool			iHwndX_addTimer							(SHwndX* win, sptr nIDEvent, UINT uElapse, sptr lpTimerFunc);
+	void			iHwndX_deleteTimer						(SHwndX* win, sptr nIDEvent);
 
 
 //////////
@@ -219,6 +231,7 @@ struct SHdcX;
 	SBuilder*		gsWindows								= NULL;
 	SBuilder*		gsClasses								= NULL;
 	SBuilder*		gsHdcs									= NULL;
+	SBuilder*		gsTimers								= NULL;
 
 	// "Desktop" window related
 	SHwndX*			gsDesktopWindow							= iHwndX_declareDesktopHwnd();

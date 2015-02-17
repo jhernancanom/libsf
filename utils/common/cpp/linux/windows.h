@@ -166,6 +166,23 @@ typedef DWORD				(__stdcall*	LPTHREAD_START_ROUTINE)	(LPVOID lpThreadParameter);
 #define MB_ICONINFORMATION	MB_ICONASTERISK
 #define MB_ICONSTOP			MB_ICONHAND
 
+#define IDC_ARROW           32512	// XC_arrow
+#define IDC_IBEAM           32513	// XC_xterm
+#define IDC_WAIT            32514	// XC_watch
+#define IDC_CROSS           32515	// XC_cross
+#define IDC_UPARROW         32516	// XC_center_ptr
+#define IDC_SIZENWSE        32642	// XC_fleur
+#define IDC_SIZENESW        32643	// XC_fleur
+#define IDC_SIZEWE          32644	// XC_
+#define IDC_SIZENS          32645	// XC_double_arrow
+#define IDC_SIZEALL         32646	// XC_fleur
+#define IDC_NO              32648	// XC_circle
+#define IDC_HAND            32649	// XC_hand2
+#define IDC_APPSTARTING     32650	// XC_left_ptr
+#define IDC_HELP            32651	// XC_question_arrow
+#define IDC_SIZE            IDC_SIZEALL
+#define IDC_ICON            IDC_ARROW
+
 #define IDOK				1
 #define IDCANCEL			2
 #define IDABORT				3
@@ -480,20 +497,20 @@ typedef DWORD				(__stdcall*	LPTHREAD_START_ROUTINE)	(LPVOID lpThreadParameter);
 #define CS_IME				0x00010000
 #define CS_DROPSHADOW		0x00020000
 
-#define IDC_ARROW			MAKEINTRESOURCE(32512)
-#define IDC_IBEAM			MAKEINTRESOURCE(32513)
-#define IDC_WAIT			MAKEINTRESOURCE(32514)
-#define IDC_CROSS			MAKEINTRESOURCE(32515)
-#define IDC_UPARROW			MAKEINTRESOURCE(32516)
-#define IDC_SIZENWSE		MAKEINTRESOURCE(32642)
-#define IDC_SIZENESW		MAKEINTRESOURCE(32643)
-#define IDC_SIZEWE			MAKEINTRESOURCE(32644)
-#define IDC_SIZENS			MAKEINTRESOURCE(32645)
-#define IDC_SIZEALL			MAKEINTRESOURCE(32646)
-#define IDC_NO				MAKEINTRESOURCE(32648)
-#define IDC_HAND			MAKEINTRESOURCE(32649)
-#define IDC_APPSTARTING		MAKEINTRESOURCE(32650)
-#define IDC_HELP			MAKEINTRESOURCE(32651)
+#define IDC_ARROW			32512
+#define IDC_IBEAM			32513
+#define IDC_WAIT			32514
+#define IDC_CROSS			32515
+#define IDC_UPARROW			32516
+#define IDC_SIZENWSE		32642
+#define IDC_SIZENESW		32643
+#define IDC_SIZEWE			32644
+#define IDC_SIZENS			32645
+#define IDC_SIZEALL			32646
+#define IDC_NO				32648
+#define IDC_HAND			32649
+#define IDC_APPSTARTING		32650
+#define IDC_HELP			32651
 #define IDC_SIZE			IDC_SIZEALL
 #define IDC_ICON			IDC_ARROW
 
@@ -1154,7 +1171,7 @@ WINUSERAPI	VOID	WINAPI		PostQuitMessage			(__in int nExitCode);
 WINUSERAPI	HCURSOR	WINAPI		LoadCursor				(__in_opt HINSTANCE hInstance, __in uptr lpCursorName);
 WINBASEAPI	HMODULE	WINAPI		GetModuleHandle			(__in_opt cs8* lpModuleName);
 WINUSERAPI	int		WINAPI		SetWindowRgn			(__in HWND hWnd, __in_opt HRGN hRgn, __in BOOL bRedraw);
-WINUSERAPI	BOOL	WINAPI		KillTimer				(__in_opt HWND hWnd,__in s64 uIDEvent);
+WINUSERAPI	BOOL	WINAPI		KillTimer				(__in_opt HWND hWnd, __in sptr uIDEvent);
 WINGDIAPI	BOOL	WINAPI		DeleteDC				( __in HDC hdc);
 WINGDIAPI	BOOL	WINAPI		DeleteObject			( __in HGDIOBJ ho);
 WINUSERAPI	BOOL	WINAPI		DestroyWindow			(__in HWND hWnd);

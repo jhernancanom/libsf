@@ -159,40 +159,45 @@
 //////
 	WINUSERAPI UINT_PTR WINAPI SetTimer(__in_opt HWND hWnd, __in s32 nIDEvent, __in UINT uElapse, sptr lpTimerFunc)
 	{
+		bool		llSuccess;
 		SHwndX*		win;
-		itimerval	itv;
 		union {
 			s32			_eventId;
 			UINT_PTR	eventId;
 		};
 
 
-		// The timer is either for the window, or in general
-		if (hWnd)
-		{
-			// They are applying the timer directly to the hWnd as a message in queue
-			// Locate the window
-			win = iHwndX_findWindow_byHwnd(hWnd);
-			if (win && win->isValid)
-				if (iHwndX_addTimer(win, nIDEvent, uElapse))
-				{
-					_eventId = nIDEvent;
-					return(eventId);
-				}
+		//////////
+		// Either window timer, or general timer
+		//////
+			llSuccess = false;
+			if (hWnd)
+			{
+				// They are applying the timer directly to the hWnd as a message in queue
+				// Locate the window
+				win = iHwndX_findWindow_byHwnd(hWnd);
+				if (win && win->isValid)
+					llSuccess = iHwndX_addTimer(win, nIDEvent, uElapse, 0);
 
-			// If we get here, the window is not found, not valid, or the timer could not be added
+			} else {
+				// It is a general timer that goes to a specific function address
+				llSuccess = iHwndX_addTimer(NULL, nIDEvent, uElapse, lpTimerFunc);
+			}
 
-		} else {
-			// It is a general timer that goes to a specific function address
-			debug_break;
-			memset(&itv, 0, sizeof(itv));
-			itv.it_interval.tv_usec	= uElapse;
-// TODO:  Need to append an entry to our timer handler, and then dispatch as necessary
-//			return(setitimer(ITIMER_REAL, &itv, NULL));
-		}
 
-		// If we get here, failure
-		return(NULL);
+		//////////
+		// Indicate success or failure
+		//////
+			if (llSuccess)
+			{
+				// Indicate success
+				_eventId = nIDEvent;
+				return(eventId);
+
+			} else {
+				// Failure
+				return(NULL);
+			}
 	}
 
 
@@ -1017,7 +1022,25 @@ WINUSERAPI VOID WINAPI PostQuitMessage(__in int nExitCode)
 
 WINUSERAPI HCURSOR WINAPI LoadCursor(__in_opt HINSTANCE hInstance, __in uptr lpCursorName)
 {
-	return(0);
+	switch (lpCursorName)
+	{
+		default:
+		case IDC_ARROW:			return(XCreateFontCursor(gsDesktop.display, XC_arrow));
+		case IDC_IBEAM:			return(XCreateFontCursor(gsDesktop.display, XC_xterm));
+		case IDC_WAIT:			return(XCreateFontCursor(gsDesktop.display, XC_watch));
+		case IDC_CROSS:			return(XCreateFontCursor(gsDesktop.display, XC_cross));
+		case IDC_UPARROW:		return(XCreateFontCursor(gsDesktop.display, XC_center_ptr));
+		case IDC_SIZENWSE:		return(XCreateFontCursor(gsDesktop.display, XC_fleur));
+		case IDC_SIZENESW:		return(XCreateFontCursor(gsDesktop.display, XC_fleur));
+		case IDC_SIZEWE:		return(XCreateFontCursor(gsDesktop.display, XC_fleur));
+		case IDC_SIZENS:		return(XCreateFontCursor(gsDesktop.display, XC_fleur));
+		case IDC_SIZEALL:		return(XCreateFontCursor(gsDesktop.display, XC_fleur));
+		case IDC_NO:			return(XCreateFontCursor(gsDesktop.display, XC_circle));
+		case IDC_HAND:			return(XCreateFontCursor(gsDesktop.display, XC_hand2));
+		case IDC_APPSTARTING:	return(XCreateFontCursor(gsDesktop.display, XC_left_ptr));
+		case IDC_HELP:			return(XCreateFontCursor(gsDesktop.display, XC_question_arrow));
+	}
+	// Control will never reach here
 }
 
 
@@ -1025,6 +1048,7 @@ WINUSERAPI HCURSOR WINAPI LoadCursor(__in_opt HINSTANCE hInstance, __in uptr lpC
 
 WINBASEAPI HMODULE WINAPI GetModuleHandle(__in_opt cs8* lpModuleName)
 {
+	// Always return 0 because we don't use modules
 	return(0);
 }
 
@@ -1039,9 +1063,30 @@ WINUSERAPI int WINAPI SetWindowRgn(__in HWND hWnd, __in_opt HRGN hRgn, __in BOOL
 
 
 
-WINUSERAPI BOOL WINAPI KillTimer(__in_opt HWND hWnd,__in s64 uIDEvent)
+WINUSERAPI BOOL WINAPI KillTimer(__in_opt HWND hWnd, __in sptr uIDEvent)
 {
-	return(FALSE);
+//	s32			lnI;
+	SHwndX*		win;
+//	STimerX*	timer;
+
+
+	//////////
+	// Locate the window
+	//////
+		if (hWnd)		win = iHwndX_findWindow_byHwnd(hWnd);
+		else			win = NULL;
+
+
+	//////////
+	// Delete the indicated timer
+	//////
+		iHwndX_deleteTimer(win, uIDEvent);
+
+
+	//////////
+	// Indicate success
+	//////
+		return(TRUE);
 }
 
 

@@ -206,6 +206,7 @@
 
 	#include <X11/Xlib.h>
 	#include <X11/Xutil.h>
+	#include <X11/cursorfont.h>
 
 	#define _USE_MATH_DEFINES
 	#include <math.h>
