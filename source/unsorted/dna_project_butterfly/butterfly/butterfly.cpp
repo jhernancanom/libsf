@@ -83,8 +83,16 @@
 #include "/libsf/utils/common/cpp/common_types.h"
 #include "/libsf/utils/common/cpp/builder.h"
 
-bool iConvert_fasta		(void);
-bool iSearch			(s8* tcBitWidth, s8* tcOutputFile, s8* tcAtCg);
+
+//////////
+// Function prototype
+//////
+	bool		iConvert_fasta					(void);
+	bool		iSearch_bitwidth				(s8* tcBitWidth, s8* tcOutputFile, s8* tcAtCg);
+	bool		iSearch_bitspace				(s8* tcBitWidth, s8* tcOutputFile, s8* tcAtCg);
+	s32			iiCountToNeedleInHaystack		(s8* haystack, s8 needle, s32 count);
+	bool		iSearch_bitspaceAuto			(void);
+
 
 
 
@@ -105,9 +113,11 @@ bool iSearch			(s8* tcBitWidth, s8* tcOutputFile, s8* tcAtCg);
 			printf("See Google Groups: https://groups.google.com/forum/#!forum/dnaprojectbutterfly\n");
 
 			// Process the option
-			     if (_memicmp(argv[1], "fasta", 5) == 0)		llShowHelp = !iConvert_fasta();							// Convert dp_genome_v3.fasta file to outputs
-			else if (_memicmp(argv[1], "bitwidth:", 9) == 0)	llShowHelp = !iSearch(argv[1] + 9, argv[2], argv[3]);	// Search for successive bits of the indicated size
-			else												llShowHelp = true;
+			     if (_memicmp(argv[1], "fasta", 5) == 0)			llShowHelp = !iConvert_fasta();									// Convert dp_genome_v3.fasta file to outputs
+			else if (_memicmp(argv[1], "bitwidth:", 9) == 0)		llShowHelp = !iSearch_bitwidth(argv[1] + 9, argv[2], argv[3]);	// Search for successive bits of the indicated size
+			else if (_memicmp(argv[1], "bitspace:", 9) == 0)		llShowHelp = !iSearch_bitspace(argv[1] + 9, argv[2], argv[3]);	// Search for successive bits of the indicated size
+			else if (_memicmp(argv[1], "bitspaceauto", 12) == 0)	llShowHelp = !iSearch_bitspaceAuto();							// Search for successive bits of the indicated size
+			else													llShowHelp = true;
 
 			// If we should show help...
 			if (llShowHelp)
@@ -115,9 +125,20 @@ bool iSearch			(s8* tcBitWidth, s8* tcOutputFile, s8* tcAtCg);
 				printf("Usage: butterfly [option]\n");
 				printf("\n");
 				printf("Options:\n");
-				printf("\tfasta -- Converts dp_genome_v3.fasta to\n");
+				printf("\n");
+				printf("\tfasta -- Converts dp_genome_v3.fasta to:\n");
 				printf("\t             (1) at.txt\n");
 				printf("\t             (2) cg.txt\n");
+				printf("\n");
+				printf("\bitwidth:N output.txt [A|C] -- Searches for N-bit sequences.\n");
+				printf("\t         bitwidth:N -- Number of bits to scan.\n");
+				printf("\t         output.txt -- Output file for matches.\n");
+				printf("\t         A or C     -- Scan the at.txt or cg.txt file\n");
+				printf("\n");
+				printf("\tbitspace:N:M output.txt [A|C] -- Searches for N-bit sequences w/M spaces.\n");
+				printf("\t         bitspace:N:M:O -- N bits to scan with only M spaces within at offset O.\n");
+				printf("\t         output.txt     -- Output file for matches.\n");
+				printf("\t         A or C         -- Scan the at.txt or cg.txt file\n");
 			}
 
 // Added to let the output screen be examined during debugging
@@ -338,7 +359,7 @@ bool iSearch			(s8* tcBitWidth, s8* tcOutputFile, s8* tcAtCg);
 // Search for the indicated sequential bit width values
 //
 //////
-	bool iSearch (s8* tcBitWidth, s8* tcOutputFile, s8* tcAtCg)
+	bool iSearch_bitwidth (s8* tcBitWidth, s8* tcOutputFile, s8* tcAtCg)
 	{
 		s32			lnI, lnJ, lnILast, lnEnd, lhAtCg, lnAtCgSize, lnReadSize, lnBits;
 		bool		llAt;
@@ -465,5 +486,245 @@ bool iSearch			(s8* tcBitWidth, s8* tcOutputFile, s8* tcAtCg);
 		// Completed
 		//////
 			free(raw);
+			return(true);
+	}
+
+
+
+
+//////////
+//
+// Searches for numbers of the indicated size with up to M spaces internally.
+//
+//////
+	s8* raw_at = NULL;
+	s8* raw_cg = NULL;
+	bool iSearch_bitspace(s8* tcBitWidth, s8* tcOutputFile, s8* tcAtCg)
+	{
+		s32			lnI, lnJ, lnILast, lnEnd, lhAtCg, lnAtCgSize, lnReadSize, lnBits, lnSpaces, lnSpaceCount;
+		u32			lnSuccessiveBitCount, lnSuccessiveBits;
+		bool		llAt, llSkip, llLoad;
+		s8*			raw;
+		SBuilder*	matches;
+		s8			filename[_MAX_PATH];
+		s8			buffer[256];
+
+
+		//////////
+		// A,T or C,G ?
+		//////
+			llAt = (!tcAtCg || (tcAtCg[0] != 'C' && tcAtCg[0] != 'G'));
+
+
+		//////////
+		// Grab the number of bits, and open the file
+		//////
+			lnBits				= atoi(tcBitWidth);
+			lnSpaces			= atoi(tcBitWidth + iiCountToNeedleInHaystack(tcBitWidth, ':', 1) + 1);
+			lnSuccessiveBits	= atoi(tcBitWidth + iiCountToNeedleInHaystack(tcBitWidth, ':', 2) + 1);
+			if (llAt)		lhAtCg = _open("\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\at.txt", _O_RDONLY | _O_BINARY);
+			else			lhAtCg = _open("\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\cg.txt", _O_RDONLY | _O_BINARY);
+
+			if (lhAtCg == -1)
+			{
+				if (llAt)	printf("Error: Unable to open \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\at.txt\n");
+				else		printf("Error: Unable to open \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\cg.txt\n");
+				return(false);
+			}
+
+
+		//////////
+		// Find out how big the file is
+		//////
+			lnAtCgSize = _lseek(lhAtCg, 0, SEEK_END);
+			_lseek(lhAtCg, 0, SEEK_SET);
+
+
+		//////////
+		// Allocate memory
+		//////
+			llLoad = false;
+			if (llAt)
+			{
+				// A,T
+				if (!raw_at)
+				{
+					llLoad	= true;
+					raw_at	= (s8*)malloc(lnAtCgSize);
+				}
+				raw = raw_at;
+
+			} else {
+				// C,G
+				if (!raw_cg)
+				{
+					llLoad	= true;
+					raw_cg	= (s8*)malloc(lnAtCgSize);
+				}
+				raw = raw_cg;
+			}
+			if (!raw)
+			{
+				if (llAt)	printf("Error: Unable to allocate %d bytes to load \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\at.txt\n", lnAtCgSize);
+				else		printf("Error: Unable to allocate %d bytes to load \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\cg.txt\n", lnAtCgSize);
+				return(false);
+			}
+
+
+		//////////
+		// Read content
+		//////
+			if (llLoad)
+			{
+				lnReadSize = _read(lhAtCg, raw, lnAtCgSize);
+				if (lnReadSize != lnAtCgSize)
+				{
+					if (llAt)	printf("Error: Unable to read %d bytes from \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\at.txt\n", lnAtCgSize);
+					else		printf("Error: Unable to read %d bytes from \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\cg.txt\n", lnAtCgSize);
+					return(false);
+				}
+			}
+			_close(lhAtCg);
+
+
+		//////////
+		// Iterate repeatedly until we exhaust our supply of bits
+		//////
+			iBuilder_createAndInitialize(&matches, -1);
+			for (lnI = 0, lnILast = 0, lnEnd = lnAtCgSize - lnBits; lnI < lnEnd; lnI++)
+			{
+				//////////
+				// Is every bit between a 0 or 1, except for lnSpaces spaces?
+				//////
+					for (lnJ = 0, lnSpaceCount = 0, lnSuccessiveBitCount = 0, llSkip = false; lnJ < lnBits && lnSpaceCount <= lnSpaces; lnJ++)
+					{
+						// Is it not a number?
+						if (raw[lnI + lnJ] == ' ')
+						{
+							// If the first or last character is a space, we'll ignore this group
+							if (lnJ == 0 || lnJ == lnBits - 1)
+								break;
+
+							// Skip this one
+							if (lnSuccessiveBitCount != lnSuccessiveBits)
+							{
+								llSkip = true;
+								break;
+							}
+
+							// Increase the space count
+							++lnSpaceCount;
+
+							// Reset the successive numbers
+							lnSuccessiveBitCount = 0;
+
+						} else {
+							// It's a number
+							++lnSuccessiveBitCount;
+						}
+					}
+
+
+				//////////
+				// Did we find a match?
+				//////
+					if (lnJ >= lnBits && lnSpaceCount == lnSpaces && !llSkip)
+					{
+						// Yes
+						memset(buffer, 0, sizeof(buffer));
+						sprintf(buffer, "%010d -- %010d -- ", lnI, lnI - lnILast);
+						memcpy(buffer + strlen(buffer), raw + lnI, lnBits);
+
+						// Append
+						iBuilder_appendData(matches, (u8*)buffer, strlen(buffer));
+						iBuilder_appendCrLf(matches);
+
+						// Save our last location
+						lnILast = lnI;
+					}
+			}
+
+
+		//////////
+		// Write the output file
+		//////
+			sprintf(filename, "\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\%s", tcOutputFile);
+			iBuilder_asciiWriteOutFile(matches, (u8*)filename);
+			iBuilder_freeAndRelease(&matches);
+
+
+		//////////
+		// Completed
+		//////
+			return(true);
+	}
+
+	// Search for the needle in the haystack
+	s32 iiCountToNeedleInHaystack(s8* haystack, s8 needle, s32 count)
+	{
+		s32 lnI, lnMatch;
+
+
+		// Scan forward until we reach NULL or our character
+		for (lnI = 0, lnMatch = 0; haystack[lnI] != 0; lnI++)
+		{
+			// Is this our character?
+			if (haystack[lnI] == needle)
+			{
+				// Is this our match?
+				++lnMatch;
+				if (lnMatch == count)
+					return(lnI);	// Yes
+
+				// Still going
+			}
+		}
+
+		// If we get here, it wasn't found
+		return(0);
+	}
+
+
+
+
+//////////
+//
+// Automatically 
+//
+//////
+	bool iSearch_bitspaceAuto(void)
+	{
+		s32		lnBits, lnSpaceLocation;
+		s8		buffer1[256];
+		s8		buffer2[256];
+
+
+		//////////
+		// Iterate through bits, and space location
+		//////
+			for (lnBits = 64; lnBits <= 65; lnBits++)
+			{
+				// Iterate for the space location
+				for (lnSpaceLocation = 4; lnSpaceLocation <= 10 && lnSpaceLocation <= lnBits / 2; lnSpaceLocation++)
+				{
+					//////////
+					// Build the expression like:  bitspace:32:1:5 at_32_1_5_bitspace.txt A
+					//////
+						sprintf(buffer1, "%d:1:%d\0",					lnBits, lnSpaceLocation);
+						sprintf(buffer2, "at_%d_1_%d_bitspace.txt\0",	lnBits, lnSpaceLocation);
+						printf("%s\n", buffer1);
+
+
+					//////////
+					// Do the work
+					//////
+						iSearch_bitspace(buffer1, buffer2, "A");
+				}
+			}
+
+
+		//////////
+		// Indicate success
+		//////
 			return(true);
 	}
