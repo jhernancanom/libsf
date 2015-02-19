@@ -69,6 +69,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <windows.h>
 #include <io.h>
 #include <string.h>
 #include <memory.h>
@@ -87,11 +88,12 @@
 //////////
 // Function prototype
 //////
-	bool		iConvert_fasta					(void);
-	bool		iSearch_bitwidth				(s8* tcBitWidth, s8* tcOutputFile, s8* tcAtCg);
-	bool		iSearch_bitspace				(s8* tcBitWidth, s8* tcOutputFile, s8* tcAtCg);
-	s32			iiCountToNeedleInHaystack		(s8* haystack, s8 needle, s32 count);
-	bool		iSearch_bitspaceAuto			(void);
+	bool			iConvert_fasta							(void);
+	bool			iSearch_bitwidth						(s8* tcBitWidth, s8* tcOutputFile, s8* tcAtCg);
+	bool			iSearch_bitspace						(s8* tcBitWidth, s8* tcOutputFile, s8* tcAtCg, u32 tnDataSize);
+	s32				iiCountToNeedleInHaystack				(s8* haystack, s8 needle, s32 count);
+	bool			iSearch_bitspaceAuto					(void);
+	DWORD WINAPI	iSearch_bitspaceAuto_threadScheduler	(void* param);
 
 
 
@@ -115,7 +117,6 @@
 			// Process the option
 			     if (_memicmp(argv[1], "fasta", 5) == 0)			llShowHelp = !iConvert_fasta();									// Convert dp_genome_v3.fasta file to outputs
 			else if (_memicmp(argv[1], "bitwidth:", 9) == 0)		llShowHelp = !iSearch_bitwidth(argv[1] + 9, argv[2], argv[3]);	// Search for successive bits of the indicated size
-			else if (_memicmp(argv[1], "bitspace:", 9) == 0)		llShowHelp = !iSearch_bitspace(argv[1] + 9, argv[2], argv[3]);	// Search for successive bits of the indicated size
 			else if (_memicmp(argv[1], "bitspaceauto", 12) == 0)	llShowHelp = !iSearch_bitspaceAuto();							// Search for successive bits of the indicated size
 			else													llShowHelp = true;
 
@@ -135,10 +136,7 @@
 				printf("\t         output.txt -- Output file for matches.\n");
 				printf("\t         A or C     -- Scan the at.txt or cg.txt file\n");
 				printf("\n");
-				printf("\tbitspace:N:M output.txt [A|C] -- Searches for N-bit sequences w/M spaces.\n");
-				printf("\t         bitspace:N:M:O -- N bits to scan with only M spaces within at offset O.\n");
-				printf("\t         output.txt     -- Output file for matches.\n");
-				printf("\t         A or C         -- Scan the at.txt or cg.txt file\n");
+				printf("\tbitspaceauto -- Searches for N-bit sequences w/M spaces.\n");
 			}
 
 // Added to let the output screen be examined during debugging
@@ -499,11 +497,12 @@
 //////
 	s8* raw_at = NULL;
 	s8* raw_cg = NULL;
-	bool iSearch_bitspace(s8* tcBitWidth, s8* tcOutputFile, s8* tcAtCg)
+
+	bool iSearch_bitspace(s8* tcBitWidth, s8* tcOutputFile, s8* tcAtCg, u32 tnDataSize)
 	{
-		s32			lnI, lnJ, lnILast, lnEnd, lhAtCg, lnAtCgSize, lnReadSize, lnBits, lnSpaces, lnSpaceCount;
+		s32			lnI, lnJ, lnILast, lnEnd, lnBits, lnSpaces, lnSpaceCount;
 		u32			lnSuccessiveBitCount, lnSuccessiveBits;
-		bool		llAt, llSkip, llLoad;
+		bool		llAt, llSkip;
 		s8*			raw;
 		SBuilder*	matches;
 		s8			filename[_MAX_PATH];
@@ -522,76 +521,20 @@
 			lnBits				= atoi(tcBitWidth);
 			lnSpaces			= atoi(tcBitWidth + iiCountToNeedleInHaystack(tcBitWidth, ':', 1) + 1);
 			lnSuccessiveBits	= atoi(tcBitWidth + iiCountToNeedleInHaystack(tcBitWidth, ':', 2) + 1);
-			if (llAt)		lhAtCg = _open("\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\at.txt", _O_RDONLY | _O_BINARY);
-			else			lhAtCg = _open("\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\cg.txt", _O_RDONLY | _O_BINARY);
-
-			if (lhAtCg == -1)
-			{
-				if (llAt)	printf("Error: Unable to open \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\at.txt\n");
-				else		printf("Error: Unable to open \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\cg.txt\n");
-				return(false);
-			}
 
 
 		//////////
-		// Find out how big the file is
+		// Grab the data pointer
 		//////
-			lnAtCgSize = _lseek(lhAtCg, 0, SEEK_END);
-			_lseek(lhAtCg, 0, SEEK_SET);
-
-
-		//////////
-		// Allocate memory
-		//////
-			llLoad = false;
-			if (llAt)
-			{
-				// A,T
-				if (!raw_at)
-				{
-					llLoad	= true;
-					raw_at	= (s8*)malloc(lnAtCgSize);
-				}
-				raw = raw_at;
-
-			} else {
-				// C,G
-				if (!raw_cg)
-				{
-					llLoad	= true;
-					raw_cg	= (s8*)malloc(lnAtCgSize);
-				}
-				raw = raw_cg;
-			}
-			if (!raw)
-			{
-				if (llAt)	printf("Error: Unable to allocate %d bytes to load \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\at.txt\n", lnAtCgSize);
-				else		printf("Error: Unable to allocate %d bytes to load \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\cg.txt\n", lnAtCgSize);
-				return(false);
-			}
-
-
-		//////////
-		// Read content
-		//////
-			if (llLoad)
-			{
-				lnReadSize = _read(lhAtCg, raw, lnAtCgSize);
-				if (lnReadSize != lnAtCgSize)
-				{
-					if (llAt)	printf("Error: Unable to read %d bytes from \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\at.txt\n", lnAtCgSize);
-					else		printf("Error: Unable to read %d bytes from \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\cg.txt\n", lnAtCgSize);
-					return(false);
-				}
-			}
-			_close(lhAtCg);
+			if (llAt)	raw = raw_at;
+			else		raw = raw_cg;
 
 
 		//////////
 		// Iterate repeatedly until we exhaust our supply of bits
 		//////
 			iBuilder_createAndInitialize(&matches, -1);
-			for (lnI = 0, lnILast = 0, lnEnd = lnAtCgSize - lnBits; lnI < lnEnd; lnI++)
+			for (lnI = 0, lnILast = 0, lnEnd = tnDataSize - lnBits; lnI < lnEnd; lnI++)
 			{
 				//////////
 				// Is every bit between a 0 or 1, except for lnSpaces spaces?
@@ -692,39 +635,235 @@
 // Automatically 
 //
 //////
+	struct SBitSpaceAuto
+	{
+		bool	isRunning;			// false until it begins, then true thereafter
+		bool	isFinished;			// false until it is completed, then true
+
+		// Parameters for this iteration
+		s8		buffer1[64];
+		s8		buffer2[64];
+		s8		ac[2];
+		u32		dataSize;
+
+		// Access semaphore
+		CRITICAL_SECTION cs;
+
+		// Windows thread specific
+		HANDLE	hThread;
+		DWORD	threadId;
+	};
+	SBuilder* gsSpaceAutoThreads = NULL;
+
 	bool iSearch_bitspaceAuto(void)
 	{
-		s32		lnBits, lnSpaceLocation;
-		s8		buffer1[256];
-		s8		buffer2[256];
+		u32				lnI;
+		s32				lnAc, lnBits, lnSpaceLocation;
+		SBitSpaceAuto*	bsa;
+		SBitSpaceAuto*	bsaStart;
+		SYSTEM_INFO		sysinfo;
+		s32				lhAt, lhCg, lnAtSize, lnCgSize, lnReadSize;
+
+
+		//////////
+		// Open the required files for preload
+		//////
+			lhAt = _open("\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\at.txt", _O_RDONLY | _O_BINARY);
+			lhCg = _open("\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\cg.txt", _O_RDONLY | _O_BINARY);
+
+			if (lhAt == -1)
+			{
+				printf("Error: Unable to open \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\at.txt\n");
+				return(false);
+			}
+			if (lhCg == -1)
+			{
+				printf("Error: Unable to open \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\cg.txt\n");
+				return(false);
+			}
+
+
+		//////////
+		// Find out how big the file is
+		//////
+			lnAtSize = _lseek(lhAt, 0, SEEK_END);
+			_lseek(lhAt, 0, SEEK_SET);
+
+			lnCgSize = _lseek(lhCg, 0, SEEK_END);
+			_lseek(lhCg, 0, SEEK_SET);
+
+
+		//////////
+		// Allocate memory
+		//////
+			// A,T
+			if (!raw_at)
+				raw_at	= (s8*)malloc(lnAtSize);
+
+			// C,G
+			if (!raw_cg)
+				raw_cg	= (s8*)malloc(lnCgSize);
+
+			if (!raw_at)
+			{
+				printf("Error: Unable to allocate %d bytes to load \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\at.txt\n", lnAtSize);
+				return(false);
+			}
+
+			if (!raw_cg)
+			{
+				printf("Error: Unable to allocate %d bytes to load \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\cg.txt\n", lnCgSize);
+				return(false);
+			}
+
+
+		//////////
+		// Read content
+		//////
+			lnReadSize = _read(lhAt, raw_at, lnAtSize);
+			if (lnReadSize != lnAtSize)
+			{
+				printf("Error: Unable to read %d bytes from \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\at.txt\n", lnAtSize);
+				return(false);
+			}
+			_close(lhAt);
+
+			lnReadSize = _read(lhCg, raw_cg, lnCgSize);
+			if (lnReadSize != lnCgSize)
+			{
+				printf("Error: Unable to read %d bytes from \\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\cg.txt\n", lnCgSize);
+				return(false);
+			}
+			_close(lhCg);
 
 
 		//////////
 		// Iterate through bits, and space location
 		//////
-			for (lnBits = 64; lnBits <= 65; lnBits++)
+			iBuilder_createAndInitialize(&gsSpaceAutoThreads, -1);
+			for (lnAc = 0; lnAc < 2; lnAc++)
 			{
-				// Iterate for the space location
-				for (lnSpaceLocation = 4; lnSpaceLocation <= 10 && lnSpaceLocation <= lnBits / 2; lnSpaceLocation++)
+				for (lnBits = 12; lnBits <= 65; lnBits++)
 				{
-					//////////
-					// Build the expression like:  bitspace:32:1:5 at_32_1_5_bitspace.txt A
-					//////
-						sprintf(buffer1, "%d:1:%d\0",					lnBits, lnSpaceLocation);
-						sprintf(buffer2, "at_%d_1_%d_bitspace.txt\0",	lnBits, lnSpaceLocation);
-						printf("%s\n", buffer1);
+					// Iterate for the space location
+					for (lnSpaceLocation = 4; lnSpaceLocation <= 32 && lnSpaceLocation <= lnBits / 2; lnSpaceLocation++)
+					{
+						//////////
+						// Create this thread entry
+						//////
+							bsa = (SBitSpaceAuto*)iBuilder_appendData(gsSpaceAutoThreads, NULL, sizeof(SBitSpaceAuto));
 
 
-					//////////
-					// Do the work
-					//////
-						iSearch_bitspace(buffer1, buffer2, "A");
+						//////////
+						// Build the expression like:  bitspace:32:1:5 at_32_1_5_bitspace.txt A
+						//////
+							sprintf(bsa->buffer1, "%d:1:%d\0",												lnBits, lnSpaceLocation);
+							sprintf(bsa->buffer2, "%s_%d_1_%d_bitspace.txt\0", ((lnAc == 0) ? "at" : "cg"),	lnBits, lnSpaceLocation);
+
+
+						//////////
+						// Are we scheduling for A,T or C,G?
+						//////
+							bsa->ac[0]		= ((lnAc == 0) ? 'A' : 'C');
+							bsa->ac[1]		= 0;
+							bsa->dataSize	= ((lnAc == 0) ? lnAtSize : lnCgSize);
+
+
+						//////////
+						// Initialize
+						//////
+							InitializeCriticalSection(&bsa->cs);
+
+
+						//////////
+						// Schedule the thread
+						//////
+							bsa->isRunning	= false;
+							bsa->isFinished	= false;
+					}
 				}
 			}
+
+
+		//////////
+		// Fire off one thread for each core
+		//////
+			GetSystemInfo(&sysinfo);
+			for (lnI = 0, bsaStart = (SBitSpaceAuto*)gsSpaceAutoThreads->buffer; lnI < sysinfo.dwNumberOfProcessors; lnI++, bsaStart++)
+			{
+				// Lock and schedule
+				EnterCriticalSection(&bsaStart->cs);
+				bsaStart->hThread = CreateThread(NULL, 0, &iSearch_bitspaceAuto_threadScheduler, bsaStart, 0, &bsaStart->threadId);
+			}
+
+
+		//////////
+		// Wait for the last one to complete
+		//////
+			while (!bsa->isFinished)
+				Sleep(333);
 
 
 		//////////
 		// Indicate success
 		//////
 			return(true);
+	}
+
+	DWORD WINAPI iSearch_bitspaceAuto_threadScheduler(void* param)
+	{
+		u32				lnI;
+		SBitSpaceAuto*	bsa;
+		SBitSpaceAuto*	bsaStart;
+
+
+		//////////
+		// Reclaim our pointer
+		//////
+			bsa				= (SBitSpaceAuto*)param;
+			bsa->isRunning	= true;
+
+
+		//////////
+		// Dispatch
+		//////
+			iSearch_bitspace(bsa->buffer1, bsa->buffer2, bsa->ac, bsa->dataSize);
+			bsa->isFinished	= true;
+
+
+		//////////
+		// Unlock
+		//////
+			LeaveCriticalSection(&bsa->cs);
+
+
+		//////////
+		// Fire off the next thread in sequence
+		//////
+			for (lnI = 0, bsaStart = (SBitSpaceAuto*)gsSpaceAutoThreads->buffer; lnI < gsSpaceAutoThreads->populatedLength; lnI += sizeof(SBitSpaceAuto), bsaStart++)
+			{
+				// Lock it down
+				if (TryEnterCriticalSection(&bsaStart->cs))
+				{
+					// Is this one not running?
+					if (!bsaStart->isRunning)
+					{
+						// Resume the thread
+						bsaStart->hThread = CreateThread(NULL, 0, &iSearch_bitspaceAuto_threadScheduler, bsaStart, 0, &bsaStart->threadId);
+
+						// All done
+						SuspendThread(bsa->hThread);
+					}
+
+					// Unlock
+					LeaveCriticalSection(&bsaStart->cs);
+				}
+			}
+
+
+		//////////
+		// If we get here, nothing left to schedule
+		//////
+			SuspendThread(bsa->hThread);
+			return(0);
 	}
