@@ -655,9 +655,13 @@
 	};
 	SBuilder* gsSpaceAutoThreads = NULL;
 
+#define _AC_START			1
+#define _BITS_START			12
+#define _SPACE_LOCATION		4
+
 	bool iSearch_bitspaceAuto(void)
 	{
-		u32				lnI;
+		u32				lnI, lnRunningCount;
 		s32				lnAc, lnBits, lnSpaceLocation;
 		SBitSpaceAuto*	bsa;
 		SBitSpaceAuto*	bsaStart;
@@ -741,12 +745,12 @@
 		// Iterate through bits, and space location
 		//////
 			iBuilder_createAndInitialize(&gsSpaceAutoThreads, -1);
-			for (lnAc = 0; lnAc < 2; lnAc++)
+			for (lnAc = _AC_START; lnAc < 2; lnAc++)
 			{
-				for (lnBits = 12; lnBits <= 65; lnBits++)
+				for (lnBits = _BITS_START; lnBits <= 65; lnBits++)
 				{
 					// Iterate for the space location
-					for (lnSpaceLocation = 4; lnSpaceLocation <= 32 && lnSpaceLocation <= lnBits / 2; lnSpaceLocation++)
+					for (lnSpaceLocation = _SPACE_LOCATION; lnSpaceLocation <= 32 && lnSpaceLocation <= lnBits / 2; lnSpaceLocation++)
 					{
 						//////////
 						// Create this thread entry
@@ -789,7 +793,7 @@
 		// Fire off one thread for each core
 		//////
 			GetSystemInfo(&sysinfo);
-			for (lnI = 0, bsaStart = (SBitSpaceAuto*)gsSpaceAutoThreads->buffer; lnI < sysinfo.dwNumberOfProcessors; lnI++, bsaStart++)
+			for (lnI = 0, bsaStart = (SBitSpaceAuto*)gsSpaceAutoThreads->buffer; bsaStart <= bsa && lnI < sysinfo.dwNumberOfProcessors; lnI++, bsaStart++)
 			{
 				// Lock and schedule
 				EnterCriticalSection(&bsaStart->cs);
@@ -801,7 +805,34 @@
 		// Wait for the last one to complete
 		//////
 			while (!bsa->isFinished)
+			{
+				// Wait 1/3rd second
 				Sleep(333);
+
+				// Make sure at least two threads are still running
+				for (lnRunningCount = 0, bsaStart = (SBitSpaceAuto*)gsSpaceAutoThreads->buffer; bsaStart <= bsa && lnRunningCount < sysinfo.dwNumberOfProcessors; bsaStart++)
+				{
+					// If this one isn't yet finished...
+					if (!bsaStart->isFinished)
+					{
+						// Is it currently running?
+						if (bsaStart->isRunning)
+						{
+							// Yes
+							++lnRunningCount;
+
+						} else {
+							// Go ahead and lock and schedule this one
+							if (TryEnterCriticalSection(&bsaStart->cs))
+							{
+								// Increase our count
+								++lnRunningCount;
+								bsaStart->hThread = CreateThread(NULL, 0, &iSearch_bitspaceAuto_threadScheduler, bsaStart, 0, &bsaStart->threadId);
+							}
+						}
+					}
+				}
+			}
 
 
 		//////////
@@ -852,7 +883,7 @@
 						bsaStart->hThread = CreateThread(NULL, 0, &iSearch_bitspaceAuto_threadScheduler, bsaStart, 0, &bsaStart->threadId);
 
 						// All done
-						SuspendThread(bsa->hThread);
+						TerminateThread(bsa->hThread, 0);
 					}
 
 					// Unlock
@@ -864,6 +895,6 @@
 		//////////
 		// If we get here, nothing left to schedule
 		//////
-			SuspendThread(bsa->hThread);
+			TerminateThread(bsa->hThread, 0);
 			return(0);
 	}
