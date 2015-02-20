@@ -85,6 +85,8 @@
 #include "/libsf/utils/common/cpp/builder.h"
 
 
+
+
 //////////
 // Function prototype
 //////
@@ -94,6 +96,7 @@
 	s32				iiCountToNeedleInHaystack				(s8* haystack, s8 needle, s32 count);
 	bool			iSearch_bitspaceAuto					(void);
 	DWORD WINAPI	iSearch_bitspaceAuto_threadScheduler	(void* param);
+	void			iSchedule_n_threads						(SBuilder* threadManager, s32 tnRunningCount);
 
 
 
@@ -661,11 +664,8 @@
 
 	bool iSearch_bitspaceAuto(void)
 	{
-		u32				lnI, lnRunningCount;
 		s32				lnAc, lnBits, lnSpaceLocation;
 		SBitSpaceAuto*	bsa;
-		SBitSpaceAuto*	bsaStart;
-		SYSTEM_INFO		sysinfo;
 		s32				lhAt, lhCg, lnAtSize, lnCgSize, lnReadSize;
 
 
@@ -790,48 +790,14 @@
 
 
 		//////////
-		// Fire off one thread for each core
-		//////
-			GetSystemInfo(&sysinfo);
-			for (lnI = 0, bsaStart = (SBitSpaceAuto*)gsSpaceAutoThreads->buffer; bsaStart <= bsa && lnI < sysinfo.dwNumberOfProcessors; lnI++, bsaStart++)
-			{
-				// Lock and schedule
-				EnterCriticalSection(&bsaStart->cs);
-				bsaStart->hThread = CreateThread(NULL, 0, &iSearch_bitspaceAuto_threadScheduler, bsaStart, 0, &bsaStart->threadId);
-			}
-
-
-		//////////
 		// Wait for the last one to complete
 		//////
 			while (!bsa->isFinished)
 			{
-				// Wait 1/3rd second
+				iSchedule_n_threads(gsSpaceAutoThreads, -1);
+
+				// Wait 1/3rd second and make sure the threads are running
 				Sleep(333);
-
-				// Make sure at least two threads are still running
-				for (lnRunningCount = 0, bsaStart = (SBitSpaceAuto*)gsSpaceAutoThreads->buffer; bsaStart <= bsa && lnRunningCount < sysinfo.dwNumberOfProcessors; bsaStart++)
-				{
-					// If this one isn't yet finished...
-					if (!bsaStart->isFinished)
-					{
-						// Is it currently running?
-						if (bsaStart->isRunning)
-						{
-							// Yes
-							++lnRunningCount;
-
-						} else {
-							// Go ahead and lock and schedule this one
-							if (TryEnterCriticalSection(&bsaStart->cs))
-							{
-								// Increase our count
-								++lnRunningCount;
-								bsaStart->hThread = CreateThread(NULL, 0, &iSearch_bitspaceAuto_threadScheduler, bsaStart, 0, &bsaStart->threadId);
-							}
-						}
-					}
-				}
 			}
 
 
@@ -841,11 +807,10 @@
 			return(true);
 	}
 
+	// Note: Upon entry, this bsa should already be locked
 	DWORD WINAPI iSearch_bitspaceAuto_threadScheduler(void* param)
 	{
-		u32				lnI;
-		SBitSpaceAuto*	bsa;
-		SBitSpaceAuto*	bsaStart;
+		SBitSpaceAuto* bsa;
 
 
 		//////////
@@ -871,25 +836,7 @@
 		//////////
 		// Fire off the next thread in sequence
 		//////
-			for (lnI = 0, bsaStart = (SBitSpaceAuto*)gsSpaceAutoThreads->buffer; lnI < gsSpaceAutoThreads->populatedLength; lnI += sizeof(SBitSpaceAuto), bsaStart++)
-			{
-				// Lock it down
-				if (TryEnterCriticalSection(&bsaStart->cs))
-				{
-					// Is this one not running?
-					if (!bsaStart->isRunning)
-					{
-						// Resume the thread
-						bsaStart->hThread = CreateThread(NULL, 0, &iSearch_bitspaceAuto_threadScheduler, bsaStart, 0, &bsaStart->threadId);
-
-						// All done
-						TerminateThread(bsa->hThread, 0);
-					}
-
-					// Unlock
-					LeaveCriticalSection(&bsaStart->cs);
-				}
-			}
+			iSchedule_n_threads(gsSpaceAutoThreads, -1);
 
 
 		//////////
@@ -897,4 +844,58 @@
 		//////
 			TerminateThread(bsa->hThread, 0);
 			return(0);
+	}
+
+
+
+
+//////////
+//
+// Called to make sure the specified number of threads are running, if possible
+//
+//////
+	void iSchedule_n_threads(SBuilder* threadManager, s32 tnRunningCount)
+	{
+		u32				lnI, lnRunningCount;
+		SYSTEM_INFO		sysinfo;
+		SBitSpaceAuto*	bsa;
+
+
+		//////////
+		// If they didn't provide a count, use the system processors
+		//////
+			if (tnRunningCount < 0)
+			{
+				// Find out how many 
+				GetSystemInfo(&sysinfo);
+				tnRunningCount = sysinfo.dwNumberOfProcessors;
+			}
+
+
+		//////////
+		// Make sure at least two threads are still running
+		//////
+			for (lnI = 0, lnRunningCount = 0, bsa = (SBitSpaceAuto*)gsSpaceAutoThreads->buffer; lnI < gsSpaceAutoThreads->populatedLength && lnRunningCount < sysinfo.dwNumberOfProcessors; lnI += sizeof(SBitSpaceAuto), bsa++)
+			{
+				// If this one isn't yet finished...
+				if (!bsa->isFinished)
+				{
+					// Is it currently running?
+					if (bsa->isRunning)
+					{
+						// Yes
+						++lnRunningCount;
+
+					} else {
+						// Go ahead and lock and schedule this one
+						if (TryEnterCriticalSection(&bsa->cs))
+						{
+							// Increase our count
+							++lnRunningCount;
+							bsa->hThread = CreateThread(NULL, 0, &iSearch_bitspaceAuto_threadScheduler, bsa, 0, &bsa->threadId);
+						}
+					}
+				}
+			}
+
 	}
