@@ -876,50 +876,52 @@ typedef DWORD				(__stdcall*	LPTHREAD_START_ROUTINE)	(LPVOID lpThreadParameter);
 #define SM_REMOTECONTROL 0x2001
 #define SM_CARETBLINKINGENABLED 0x2002
 
-#define _SH_DENYRW		0x10	/* deny read/write mode */
-#define _SH_DENYWR		0x20	/* deny write mode */
-#define _SH_DENYRD		0x30	/* deny read mode */
-#define _SH_DENYNO		0x40	/* deny none mode */
-#define _SH_SECURE		0x80	/* secure mode */
+#define _SH_DENYRW		0x10	// deny read/write mode
+#define _SH_DENYWR		0x20	// deny write mode
+#define _SH_DENYRD		0x30	// deny read mode
+#define _SH_DENYNO		0x40	// deny none mode
+#define _SH_SECURE		0x80	// secure mode
 
-#define _O_RDONLY		0x0000  /* open for reading only */
-#define _O_WRONLY		0x0001  /* open for writing only */
-#define _O_RDWR			0x0002  /* open for reading and writing */
-#define _O_APPEND		0x0008  /* writes done at eof */
-#define _O_CREAT		0x0100  /* create and open file */
-#define _O_TRUNC		0x0200  /* open and truncate */
-#define _O_EXCL			0x0400  /* open only if file doesn't already exist */
-#define _O_TEXT			0x4000  /* file mode is text (translated) */
-#define _O_BINARY		0x8000  /* file mode is binary (untranslated) */
+#define _O_RDONLY		0x0000  // open for reading only
+#define _O_WRONLY		0x0001  // open for writing only
+#define _O_RDWR			0x0002  // open for reading and writing
+#define _O_APPEND		0x0008  // writes done at eof
+#define _O_CREAT		0x0100  // create and open file
+#define _O_TRUNC		0x0200  // open and truncate
+#define _O_EXCL			0x0400  // open only if file doesn't already exist
+#define _O_TEXT			0x4000  // file mode is text (translated)
+#define _O_BINARY		0x8000  // file mode is binary (untranslated)
 
-#define DRIVERVERSION	0	/* Device driver version					*/
-#define TECHNOLOGY		2	/* Device classification					*/
-#define HORZSIZE		4	/* Horizontal size in millimeters		*/
-#define VERTSIZE		6	/* Vertical size in millimeters			*/
-#define HORZRES			8	/* Horizontal width in pixels			*/
-#define VERTRES			10	/* Vertical height in pixels				*/
-#define BITSPIXEL		12	/* Number of bits per pixel				*/
-#define PLANES			14	/* Number of planes						*/
-#define NUMBRUSHES		16	/* Number of brushes the device has		*/
-#define NUMPENS			18	/* Number of pens the device has			*/
-#define NUMMARKERS		20	/* Number of markers the device has		*/
-#define NUMFONTS		22	/* Number of fonts the device has		*/
-#define NUMCOLORS		24	/* Number of colors the device supports	*/
-#define PDEVICESIZE 	26	/* Size required for device descriptor	*/
-#define CURVECAPS		28	/* Curve capabilities					*/
-#define LINECAPS		30	/* Line capabilities						*/
-#define POLYGONALCAPS	32	/* Polygonal capabilities				*/
-#define TEXTCAPS		34	/* Text capabilities						*/
-#define CLIPCAPS		36	/* Clipping capabilities					*/
-#define RASTERCAPS		38	/* Bitblt capabilities					*/
-#define ASPECTX			40	/* Length of the X leg					*/
-#define ASPECTY			42	/* Length of the Y leg					*/
-#define ASPECTXY		44	/* Length of the hypotenuse				*/
-#define LOGPIXELSX		88	/* Logical pixels/inch in X				*/
-#define LOGPIXELSY		90	/* Logical pixels/inch in Y				*/
-#define SIZEPALETTE		104	/* Number of entries in physical palette	*/
-#define NUMRESERVED		106	/* Number of reserved entries in palette	*/
-#define COLORRES		108	/* Actual color resolution				*/
+#define DRIVERVERSION	0		// Device driver version
+#define TECHNOLOGY		2		// Device classification
+#define HORZSIZE		4		// Horizontal size in millimeters
+#define VERTSIZE		6		// Vertical size in millimeters
+#define HORZRES			8		// Horizontal width in pixels
+#define VERTRES			10		// Vertical height in pixels
+#define BITSPIXEL		12		// Number of bits per pixel
+#define PLANES			14		// Number of planes
+#define NUMBRUSHES		16		// Number of brushes the device has
+#define NUMPENS			18		// Number of pens the device has
+#define NUMMARKERS		20		// Number of markers the device has
+#define NUMFONTS		22		// Number of fonts the device has
+#define NUMCOLORS		24		// Number of colors the device supports
+#define PDEVICESIZE 	26		// Size required for device descriptor
+#define CURVECAPS		28		// Curve capabilities
+#define LINECAPS		30		// Line capabilities
+#define POLYGONALCAPS	32		// Polygonal capabilities
+#define TEXTCAPS		34		// Text capabilities
+#define CLIPCAPS		36		// Clipping capabilities
+#define RASTERCAPS		38		// Bitblt capabilities
+#define ASPECTX			40		// Length of the X leg
+#define ASPECTY			42		// Length of the Y leg
+#define ASPECTXY		44		// Length of the hypotenuse
+#define LOGPIXELSX		88		// Logical pixels/inch in X
+#define LOGPIXELSY		90		// Logical pixels/inch in Y
+#define SIZEPALETTE		104		// Number of entries in physical palette
+#define NUMRESERVED		106		// Number of reserved entries in palette
+#define COLORRES		108		// Actual color resolution
+
+#define DT_RASDISPLAY	1
 
 
 #define INVALID_HANDLE_VALUE ((HANDLE)(LONG_PTR)-1)

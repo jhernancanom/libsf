@@ -851,6 +851,7 @@ debug_break;
 
 
 
+
 //////////
 //
 // Called to delete the indicated timer.
@@ -873,4 +874,113 @@ debug_break;
 //					// See code sample above
 //				}
 //			}
+	}
+
+
+
+
+//////////
+//
+// Obtain the next font that's available
+//
+//////
+	SFontX* iHwndX_getNextFont(void)
+	{
+		u32		lnI;
+		SFontX* font;
+
+
+		//////////
+		// Make sure the master list exists
+		//////
+			if (!gsHfonts)
+				iBuilder_createAndInitialize(&gsHfonts, -1);
+
+
+		//////////
+		// Search for an empty slot
+		//////
+			for (lnI = 0, font = (SFontX*)gsHfonts->buffer; lnI < gsHfonts->populatedLength; lnI += sizeof(SFontX), font++)
+			{
+				// If this one is not used, return it
+				if (!font->isValid)
+					break;
+			}
+			// If we get here, none were found
+
+
+		//////////
+		// Allocate a new slot if need be
+		//////
+			if (lnI >= gsHfonts->populatedLength)
+				font = (SFontX*)iBuilder_appendData(gsHfonts, NULL, sizeof(SFontX));
+
+
+
+		//////////
+		// Indicate success or failure
+		//////
+			return(font);
+	}
+
+
+
+
+///////////
+//
+// Called to create a new brush
+//
+//////
+	SBrushX* iHwndX_createBrush(bool isSolidBrush, uptr data)
+	{
+		return(NULL);
+	}
+
+
+
+
+///////////
+//
+// Called to delete a brush
+//
+//////
+	SBrushX* iHwndX_deleteBrush(HBRUSH hbr)
+	{
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Locate the indicated brush
+//
+//////
+	SBrushX* iHwndX_findBrush_byBrush(HBRUSH hbr)
+	{
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Create a region for population
+//
+//////
+	SRegionX* iHwndX_createRegion(void)
+	{
+		//////////
+		// Make sure the array is valid
+		//////
+			if (!gsRegions)
+				iBuilder_createAndInitialize(&gsRegions, 1024);
+
+
+		//////////
+		// Create a new region
+		//////
+			return((SRegionX*)iBuilder_appendData(gsRegions, NULL, sizeof(SRegionX)));
 	}

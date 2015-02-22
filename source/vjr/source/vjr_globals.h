@@ -566,7 +566,11 @@
 	cu32	_BMP__saveAll									= 257;			// Save all icon
 	cu32	_BMP__open										= 258;			// Open icon
 	cu32	_BMP__cross										= 259;			// Cross icon
-	cu32	_BMP__ARRAY_MAX									= 259;
+	cu32	_BMP__ARRAY_MAX									= 259;			// 259 pixels in the tile/strip
+	cu32	_BMP__ARRAY_STRIDE_WIDTH						= 38;			// 38 pixels wide
+	cu32	_BMP__ARRAY_STRIDE_HEIGHT						= 38;			// 38 pixels tall
+	cu32	_BMP__ARRAY_WIDTH								= 36;			// 36 pixels wide
+	cu32	_BMP__ARRAY_HEIGHT								= 36;			// 36 pixels tall
 	SBitmap* bmpArrayTiled									= NULL;
 	SBitmap* bmpArray[_BMP__ARRAY_MAX];
 //////
@@ -774,7 +778,7 @@
 // 		SXYS32			gMousePositionMoveEnd				= { -1, -1 };							// Mouse position when the move ended
 // 		SXYS32			gMousePositionResizeStart			= { -1, -1 };							// Mouse position when the resize started
 // 		SXYS32			gMousePositionResizeEnd				= { -1, -1 };							// Mouse position when the resize ended
-// 
+//
 // 		SXYS32			gMousePosition						= { -1, -1 };							// Mouse position indicated by windows in the interface window
 // 		bool			glMouseInClientArea					= false;								// When the mouse is in the client area, this flag is raised
 // 		SXYS32			gMousePositionClientArea			= { -1, -1 };							// Mouse position in the client area of the interface window

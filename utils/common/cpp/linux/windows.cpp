@@ -839,6 +839,9 @@
 
 WINGDIAPI HGDIOBJ WINAPI SelectObject(__in HDC hdc, __in HGDIOBJ h)
 {
+	union {
+		SFont*	font;
+	};
 	return(0);
 }
 
@@ -1055,9 +1058,27 @@ WINBASEAPI HMODULE WINAPI GetModuleHandle(__in_opt cs8* lpModuleName)
 
 
 
+// The HRGN is an SBitmap with a binary pattern (black = no draw, non-black = draw)
 WINUSERAPI int WINAPI SetWindowRgn(__in HWND hWnd, __in_opt HRGN hRgn, __in BOOL bRedraw)
 {
-	return(0);
+	SHwndX* hwndx;
+
+
+	//////////
+	// Locate the window
+	//////
+		hwndx = iHwndX_findWindow_byHwnd(hWnd);
+		if (hwndx && hwndx->isValid)
+		{
+			// The window is valid
+			// Build the region array
+		}
+
+
+	//////////
+	// If we get here, the window wasn't found, or isn't active
+	//////
+		return(0);
 }
 
 
@@ -1129,7 +1150,42 @@ WINGDIAPI BOOL WINAPI DeleteDC( __in HDC hdc)
 
 WINGDIAPI BOOL WINAPI DeleteObject( __in HGDIOBJ ho)
 {
-	return(FALSE);
+	union {
+		uptr		_ho;
+		SBrushX*	brush;
+		SFontX*		font;
+	};
+
+
+	//////////
+	// Brushes
+	//////
+		_ho = ho;
+		if (iBuilder_isPointer(gsBrushes, brush))
+		{
+			// It's a brush
+			brush->isValid = false;
+			return(TRUE);
+		}
+
+
+	//////////
+	// Fonts
+	//////
+		if (iBuilder_isPointer(gsHfonts, font))
+		{
+			// It's a font
+			font->isValid = false;
+// Possibly actually delete the fonts?
+debug_break;
+			return(TRUE);
+		}
+
+
+	//////////
+	// If we get here, it was an unknown object, indicate failure
+	//////
+		return(FALSE);
 }
 
 
@@ -1260,7 +1316,58 @@ WINUSERAPI BOOL WINAPI GetCursorPos(__out LPPOINT lpPoint)
 
 WINGDIAPI HRGN WINAPI CreateRectRgn(__in int x1, __in int y1, __in int x2, __in int y2)
 {
-	return(0);
+	s32				t;
+	SRegionRectX*	rectx;
+	union {
+		HRGN		_rgn;
+		SRegionX*	regionx;
+	};
+
+
+	//////////
+	// Make sure the parameters are in appropriate order
+	// (x1,y1) should be upper-left, (x2,y2) should be lower-right
+	//////
+		if (x2 < x1)
+		{
+			t = x2;
+			x2 = x1;
+			x1 = t;
+		}
+
+		if (y2 < y1)
+		{
+			t = y2;
+			y2 = y1;
+			y1 = t;
+		}
+
+
+	//////////
+	// Create a region
+	//////
+		regionx = iHwndX_createRegion();
+		if (regionx)
+		{
+			// Mark it active
+			regionx->isValid = true;
+
+			// Set the coordinates
+			iBuilder_createAndInitialize(&regionx->regionArray, 1024);
+			rectx = (SRegionRectX*)iBuilder_appendData(regionx->regionArray, NULL, sizeof(SRegionRectX));
+			if (rectx)
+			{
+				// Set the rectangle
+				SetRect(&rectx->rc, x1, y1, x2, y2);
+				rectx->op = _REGION_RECT_OP_DRAW;
+			}
+		}
+
+
+	//////////
+	// Indicate our success or failure
+	//////
+		return(_rgn);
 }
 
 
@@ -1268,7 +1375,32 @@ WINGDIAPI HRGN WINAPI CreateRectRgn(__in int x1, __in int y1, __in int x2, __in 
 
 WINUSERAPI int WINAPI GetWindowRgn(__in HWND hWnd, __in HRGN hRgn)
 {
-	return(0);
+	SHwndX*			hwndx;
+	union {
+		HRGN		_rgn;
+		SRegionX*	regionx;
+	};
+
+
+	//////////
+	// Locate the window
+	//////
+		hwndx = iHwndX_findWindow_byHwnd(hWnd);
+		if (hwndx)
+		{
+			// We found the window, indicate the region
+			regionx = hwndx->regionx;
+
+		} else {
+			// Indicate failure
+			_rgn = 0;
+		}
+
+
+	//////////
+	// Indicate success or failure
+	//////
+		return(_rgn);
 }
 
 
@@ -1276,7 +1408,31 @@ WINUSERAPI int WINAPI GetWindowRgn(__in HWND hWnd, __in HRGN hRgn)
 
 WINGDIAPI BOOL WINAPI PtInRegion(__in HRGN hrgn, __in int x, __in int y)
 {
-	return(FALSE);
+	union {
+		HRGN		_rgn;
+		SRegionX*	regionx;
+	};
+
+
+	//////////
+	// Make sure the region exists
+	//////
+		if (iBuilder_isPointer(gsRegions, regionx))
+		{
+			// Is it currently valid?
+			if (regionx->isValid)
+			{
+				// Iterate through the array to determine if the point is in the array or not
+// TODO:  Working here
+			}
+		}
+		// If we get here, failure
+
+
+	//////////
+	// Indicate failure
+	//////
+		return(FALSE);
 }
 
 
@@ -1543,14 +1699,26 @@ WINGDIAPI int WINAPI CombineRgn(__in_opt HRGN hrgnDst, __in_opt HRGN hrgnSrc1, _
 //////
 	WINGDIAPI HBRUSH WINAPI CreateSolidBrush(__in COLORREF color)
 	{
-		SBgra rgba;
+		union {
+			HBRUSH		_brushx;
+			SBrushX*	brushx;
+		};
 
 
 		// Create the "solid brush" by color
-		rgba.color = color;
+		brushx = iHwndX_createBrush(true, (uptr)color);
+		if (brushx)
+		{
+			// Mark the brush valid
+			brushx->isValid			= true;
+
+			// Store the brush
+			brushx->color.color		= color;
+			brushx->isSolidBrush	= true;
+		}
 
 		// Return the "solid brush"
-		return(rgba.color);
+		return(_brushx);
 	}
 
 
@@ -1558,7 +1726,33 @@ WINGDIAPI int WINAPI CombineRgn(__in_opt HRGN hrgnDst, __in_opt HRGN hrgnSrc1, _
 
 WINUSERAPI int WINAPI FillRect(__in HDC hDC, __in CONST RECT *lprc, __in HBRUSH hbr)
 {
-	return(0);
+	RECT		lrc;
+	SHdcX*		hdcx;
+	SBrushX*	brushx;
+
+
+	//////////
+	// Fill the rect using our internal algorithms
+	//////
+		// Locate the hdx
+		hdcx = iHwndX_findHdc_byHdc(hDC);
+		if (hdcx)
+		{
+			// Locate the brushx
+			brushx = iHwndX_findBrush_byBrush(hbr);
+			if (brushx)
+			{
+				SetRect(&lrc, 0, 0, hdcx->bmp->bi.biWidth, hdcx->bmp->bi.biHeight);
+				iBmp_fillRect(hdcx->bmp, &lrc, brushx->color, brushx->color, brushx->color, brushx->color, false, NULL, false);
+				return(1);
+			}
+		}
+
+
+	//////////
+	// If we get here, something wasn't valid
+	//////
+		return(0);
 }
 
 
@@ -1685,7 +1879,27 @@ WINBASEAPI VOID WINAPI GetLocalTime(__out LPSYSTEMTIME lpSystemTime)
 
 WINUSERAPI HWND WINAPI GetActiveWindow(VOID)
 {
-	return(0);
+	u32		lnI;
+	SHwndX* hwndx;
+
+
+	//////////
+	// Iterate through every window and find which one is currently active
+	//////
+		for (lnI = 0, hwndx = (SHwndX*)gsWindows->buffer; lnI < gsWindows->populatedLength; lnI += sizeof(SHwndX), hwndx++)
+		{
+			// Is this window active?
+			if (hwndx->isValid && hwndx->isActive)
+				return(hwndx->hwnd);
+		}
+
+
+
+	//////////
+	// If we get here, we didn't find an active window
+	//////
+		debug_break;	// Shouldn't happen
+		return(0);
 }
 
 
@@ -1787,7 +2001,45 @@ WINGDIAPI HDC WINAPI CreateCompatibleDC( __in_opt HDC hdc)
 
 WINGDIAPI HBITMAP WINAPI CreateDIBSection(__in_opt HDC hdc, __in CONST BITMAPINFO* lpbmi, __in UINT usage, VOID **ppvBits, __in_opt HANDLE hSection, __in DWORD offset)
 {
-	return(0);
+	SHdcX*		hdcx;
+	union {
+		HBITMAP		_bmp;
+		SBitmap*	bmp;
+	};
+
+
+	//////////
+	// Intercept any unsupported features
+	//////
+		if (hSection || offset)
+		{
+			// We do not support mapped files
+			debug_break;
+			return(null0);
+		}
+
+
+	//////////
+	// Locate the HDC
+	//////
+		hdcx = iHwndX_findHdc_byHdc(hdc);
+		if (hdcx)
+		{
+			// Allocate the bitmap
+			bmp = iBmp_allocate();
+			iBmp_createBySize(bmp, lpbmi->bmiHeader.biWidth, lpbmi->bmiHeader.biHeight, 24);
+			if (ppvBits)
+				*ppvBits = bmp->bd;
+
+		} else {
+			bmp = NULL;
+		}
+
+
+	//////////
+	// Indicate success or failure
+	//////
+		return(_bmp);
 }
 
 
@@ -1803,7 +2055,130 @@ s64 _atoi64(cs8* string)
 
 WINUSERAPI int WINAPI GetSystemMetrics(__in int nIndex)
 {
-	return(0);
+	switch (nIndex)
+	{
+		case SM_CXFULLSCREEN:
+		case SM_CXSCREEN:
+		case SM_CXSIZE:
+		case SM_CXMAXIMIZED:
+		case SM_CXMAXTRACK:
+			return gsDesktopWindow->rc.right - gsDesktopWindow->rc.left;
+
+		case SM_CYFULLSCREEN:
+		case SM_CYSCREEN:
+		case SM_CYSIZE:
+		case SM_CYMAXIMIZED:
+		case SM_CYMAXTRACK:
+			return gsDesktopWindow->rc.bottom - gsDesktopWindow->rc.top;
+
+		case SM_CXHTHUMB:
+		case SM_CXCURSOR:
+		case SM_CXICON:
+		case SM_CXHSCROLL:
+			return _BMP__ARRAY_WIDTH;
+
+		case SM_CYVTHUMB:
+		case SM_CYICON:
+		case SM_CYCURSOR:
+		case SM_CYVSCROLL:
+			return _BMP__ARRAY_HEIGHT;
+
+		case SM_CXMINTRACK:
+		case SM_CXMIN:
+		case SM_CXMINIMIZED:
+			return bmpClose->bi.biWidth * 10;
+
+		case SM_CYMINTRACK:
+		case SM_CYMIN:
+		case SM_CYMINIMIZED:
+			return bmpClose->bi.biHeight;
+
+		case SM_CXICONSPACING:
+		case SM_CXDOUBLECLK:
+			return 5;
+
+		case SM_CYICONSPACING:
+		case SM_CYDOUBLECLK:
+			return 5;
+
+		case SM_CYCAPTION:			return bmpClose->bi.biHeight;
+		case SM_MOUSEPRESENT:		return 1;
+		case SM_REMOTESESSION:		return 0;
+		case SM_MOUSEWHEELPRESENT:	return 1;
+		case SM_SHUTTINGDOWN:		return 0;
+
+
+	//////////
+	// The following
+	//////
+		case SM_CXVSCROLL:
+		case SM_CYHSCROLL:
+		case SM_CXBORDER:
+		case SM_CYBORDER:
+		case SM_CXDLGFRAME:
+		case SM_CYDLGFRAME:
+		case SM_CYMENU:
+		case SM_CYKANJIWINDOW:
+		case SM_DEBUG:
+		case SM_SWAPBUTTON:
+		case SM_RESERVED1:
+		case SM_RESERVED2:
+		case SM_RESERVED3:
+		case SM_RESERVED4:
+		case SM_CXFRAME:
+		case SM_CYFRAME:
+		case SM_MENUDROPALIGNMENT:
+		case SM_PENWINDOWS:
+		case SM_DBCSENABLED:
+		case SM_CMOUSEBUTTONS:
+		case SM_SECURE:
+		case SM_CXEDGE:
+		case SM_CYEDGE:
+		case SM_CXMINSPACING:
+		case SM_CYMINSPACING:
+		case SM_CXSMICON:
+		case SM_CYSMICON:
+		case SM_CYSMCAPTION:
+		case SM_CXSMSIZE:
+		case SM_CYSMSIZE:
+		case SM_CXMENUSIZE:
+		case SM_CYMENUSIZE:
+		case SM_ARRANGE:
+		case SM_NETWORK:
+		case SM_CLEANBOOT:
+		case SM_CXDRAG:
+		case SM_CYDRAG:
+		case SM_SHOWSOUNDS:
+		case SM_CXMENUCHECK:
+		case SM_CYMENUCHECK:
+		case SM_SLOWMACHINE:
+		case SM_MIDEASTENABLED:
+//		case SM_XVIRTUALSCREEN:
+		case SM_YVIRTUALSCREEN:
+		case SM_CXVIRTUALSCREEN:
+		case SM_CYVIRTUALSCREEN:
+		case SM_CMONITORS:
+		case SM_SAMEDISPLAYFORMAT:
+		case SM_IMMENABLED:
+		case SM_CXFOCUSBORDER:
+		case SM_CYFOCUSBORDER:
+		case SM_TABLETPC:
+		case SM_MEDIACENTER:
+		case SM_STARTER:
+		case SM_SERVERR2:
+		case SM_MOUSEHORIZONTALWHEELPRESENT:
+		case SM_CXPADDEDBORDER:
+		case SM_DIGITIZER:
+		case SM_MAXIMUMTOUCHES:
+//		case SM_CMETRICS:
+//		case SM_REMOTECONTROL:
+		case SM_CARETBLINKINGENABLED:
+			// These constants can have their return values defined if needed
+			debug_break;
+			return(0);
+	}
+	// If we get here it wasn't found
+	return(-1);
 }
 
 
@@ -1995,6 +2370,72 @@ debug_break;
 
 WINGDIAPI int WINAPI GetDeviceCaps(__in_opt HDC hdc, __in int index)
 {
+	switch (index)
+	{
+		case DRIVERVERSION:
+			return 1;
+
+		case TECHNOLOGY:
+			return DT_RASDISPLAY;
+
+		case HORZSIZE:
+			return gsDesktopWindow->rc.right - gsDesktopWindow->rc.left;
+
+		case VERTSIZE:
+			return gsDesktopWindow->rc.bottom - gsDesktopWindow->rc.top;
+
+		case HORZRES:
+			return 500;
+
+		case VERTRES:
+			return 312;
+
+		case BITSPIXEL:
+			return 24;
+
+		case PLANES:
+			return 1;
+
+		case NUMBRUSHES:
+			return 1000;
+
+		case NUMPENS:
+			return 1000;
+
+		case NUMMARKERS:
+			return 1000;
+
+		case NUMFONTS:
+			return 1000;
+
+		case NUMCOLORS:
+			return 1;
+
+		case ASPECTX:
+			return (gsDesktopWindow->rc.right - gsDesktopWindow->rc.left) / (gsDesktopWindow->rc.bottom - gsDesktopWindow->rc.top);
+
+		case ASPECTY:
+			return (gsDesktopWindow->rc.bottom - gsDesktopWindow->rc.top) / (gsDesktopWindow->rc.right - gsDesktopWindow->rc.left);
+
+		case ASPECTXY:
+			return (gsDesktopWindow->rc.right - gsDesktopWindow->rc.left) / (gsDesktopWindow->rc.bottom - gsDesktopWindow->rc.top);
+
+		case LOGPIXELSX:
+		case LOGPIXELSY:
+			return 96;
+
+		case SIZEPALETTE:
+		case NUMRESERVED:
+		case COLORRES:
+		case PDEVICESIZE:
+		case CURVECAPS:
+		case LINECAPS:
+		case POLYGONALCAPS:
+		case TEXTCAPS:
+		case CLIPCAPS:
+		case RASTERCAPS:
+			return 0;
+	}
 	return(0);
 }
 
@@ -2014,48 +2455,70 @@ WINGDIAPI HFONT WINAPI CreateFont(	__in int cHeight, __in int cWidth, __in int c
 									__in DWORD bUnderline, __in DWORD bStrikeOut, __in DWORD iCharSet, __in DWORD iOutPrecision, __in DWORD iClipPrecision,
 									__in DWORD iQuality, __in DWORD iPitchAndFamily, __in_opt cs8* pszFaceName)
 {
-	s32		lnLength;
-	int		lnI, lnNames;
-	s8**	fontNameArray;
-	union {
-		uptr	_hfont;
-		HFONT	hfont;
-	};
+	int			lnI, lnNames;
+	s8**		fontNameArray;
+	SFontX*		font;
 
 
-	//////////
-	// Grab the list of font names
-	//////
-		lnLength		= strlen(pszFaceName);
-		fontNameArray	= XListFonts(gsDesktop.display, "*", 999, &lnNames);
-		for (lnI = 0, _hfont = 0; lnI < lnNames; lnI++)
-		{
-			// Search for the font name that matches
-			if (strlen(fontNameArray[lnI]) == lnLength && _memicmp(fontNameArray[lnI], pszFaceName, lnLength) == 0)
+	// Grab the next font
+	font = iHwndX_getNextFont();
+	if (font)
+	{
+		//////////
+		// Copy the attributes
+		//////
+			font->nHeight			= cHeight;
+			font->nWidth			= cWidth;
+			font->nEscapement		= cEscapement;
+			font->nOrientation		= cOrientation;
+			font->nWeight			= cWeight;
+			font->lItalic			= bItalic;
+			font->lUnderline		= bUnderline;
+			font->lStrikeOut		= bStrikeOut;
+			font->nCharSet			= iCharSet;
+			font->nOutPrecision		= iOutPrecision;
+			font->nClipPrecision	= iClipPrecision;
+			font->nQuality			= iQuality;
+			font->nPitchAndFamily	= iPitchAndFamily;
+			iDatum_duplicate(&font->faceName, (u8*)pszFaceName, (u32)strlen(pszFaceName));
+
+
+		//////////
+		// Grab the list of font names
+		//////
+			fontNameArray = XListFonts(gsDesktop.display, "*", 999, &lnNames);
+			for (lnI = 0; lnI < lnNames; lnI++)
 			{
-				// Load the font they indicated
-				hfont = (HFONT)XLoadFont(gsDesktop.display, pszFaceName);
-				break;
+				// Search for the font name that matches
+				if (strlen(fontNameArray[lnI]) == font->faceName.length && _memicmp(fontNameArray[lnI], font->faceName.data, font->faceName.length) == 0)
+				{
+					// Load the font they indicated
+					font->font = (HFONT)XLoadFont(gsDesktop.display, font->faceName.data);
+					break;
+				}
 			}
-		}
-		// If we get here, _hfont indicates our success
-		XFreeFontNames(fontNameArray);
+			// If we get here, _hfont indicates our success
+			XFreeFontNames(fontNameArray);
+
+
+		//////////
+		// If we were unsuccessful, load the default font
+		//////
+			if (!font->font)
+				font->font = (HFONT)XLoadFont(gsDesktop.display, (cs8*)cgcFontName_defaultFixed);
+
+
+		//////////
+		// Query informationa bout the font
+		//////
+			font->fontData = XQueryFont(gsDesktop.display, gsDesktopWindow->x11->gc->gid);
+	}
 
 
 	//////////
-	// If we were unsuccessful, load the default font
+	// Indicate success or failure
 	//////
-		if (!_hfont)
-		{
-			// Unsuccessful, try the default fixed point font
-			hfont = (HFONT)XLoadFont(gsDesktop.display, (cs8*)cgcFontName_defaultFixed);
-		}
-
-
-	//////////
-	// Indicate failure
-	//////
-		return(hfont);
+		return((HFONT)font);
 }
 
 

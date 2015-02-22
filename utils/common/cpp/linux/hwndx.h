@@ -88,6 +88,8 @@ struct SClassX;
 struct SHwndX;
 struct SHdcX;
 struct STimerX;
+struct SRegionRectX;
+struct SRegionX;
 
 
 
@@ -116,6 +118,7 @@ struct STimerX;
 		s32				height;
 		s32				depth;
 		s32				pixelsize;
+
 	} __attribute__((packed));
 
 
@@ -124,6 +127,7 @@ struct STimerX;
 		bool			isValid;
 		WNDCLASSEX		wcx;
 		SDatum			cClass;
+
 	} __attribute__((packed));
 
 	struct SHwndX
@@ -133,6 +137,7 @@ struct STimerX;
 		bool			isValid;
 		bool			isVisible;
 		bool			isEnabled;
+		bool			isActive;
 		pthread_t		nThreadId;
 		RECT			rc;
 		RECT			rcClient;
@@ -153,11 +158,17 @@ struct STimerX;
 
 		// For X-windows
 		SXWindow*		x11;
+
+		// For region
+		SRegionX*		regionx;
+		Pixmap			pixmapRegion;		// Built from the SRegionX structure, as would size to the window
+
 	} __attribute__((packed));
 
 	struct SMessageX
 	{
 		MSG				msg;
+
 	} __attribute__((packed));
 
 	struct STimerX
@@ -192,15 +203,68 @@ struct STimerX;
 
 		// Bitmaps take on the size of the thing they belong to, so they may be constantly resized
 		SBitmap*	bmp;
+
 	} __attribute__((packed));
 
 	struct SDesktopX
 	{
 		Display*	display;
+
 		s32			screen;
 		s32			depth;
 		s32			connection;
 		Window		windowDesktop;
+
+	} __attribute__((packed));
+
+	struct SFontX
+	{
+		bool		isValid;
+
+		int			nHeight;
+		int			nWidth;
+		int			nEscapement;
+		int			nOrientation;
+		int			nWeight;
+		DWORD		lItalic;
+		DWORD		lUnderline;
+		DWORD		lStrikeOut;
+		DWORD		nCharSet;
+		DWORD		nOutPrecision;
+		DWORD		nClipPrecision;
+		DWORD		nQuality;
+		DWORD		nPitchAndFamily;
+		SDatum		faceName;
+
+		Font			font;
+		XFontStruct*	fontData;
+
+	} __attribute__((packed));
+
+	struct SBrushX
+	{
+		bool		isValid;
+		bool		isSolidBrush;
+
+		SBgra		color;
+
+	} __attribute__((packed));
+
+#define _REGION_RECT_OP_DRAW	1
+
+	struct SRegionRectX
+	{
+		RECT		rc;					// Logical rectangle
+		s32			op;					// How is this rectangle applied to the region stack, see _REGION_RECT_OP_* constants
+
+	} __attribute__((packed));
+
+	struct SRegionX
+	{
+		bool		isValid;
+
+		SBuilder*	regionArray;		// SRegionRectX structures
+
 	} __attribute__((packed));
 
 
@@ -223,6 +287,11 @@ struct STimerX;
 	s32				iHwndX_initializeXWindow				(SXWindow* win, s32 width, s32 height, s8* title);
 	bool			iHwndX_addTimer							(SHwndX* win, sptr nIDEvent, UINT uElapse, sptr lpTimerFunc);
 	void			iHwndX_deleteTimer						(SHwndX* win, sptr nIDEvent);
+	SFontX*			iHwndX_getNextFont						(void);
+	SBrushX*		iHwndX_createBrush						(bool isSolidBrush, uptr data);
+	SBrushX*		iHwndX_deleteBrush						(HBRUSH hbr);
+	SBrushX*		iHwndX_findBrush_byBrush				(HBRUSH hbr);
+	SRegionX*		iHwndX_createRegion						(void);
 
 
 //////////
@@ -232,6 +301,9 @@ struct STimerX;
 	SBuilder*		gsClasses								= NULL;
 	SBuilder*		gsHdcs									= NULL;
 	SBuilder*		gsTimers								= NULL;
+	SBuilder*		gsHfonts								= NULL;
+	SBuilder*		gsBrushes								= NULL;
+	SBuilder*		gsRegions								= NULL;
 
 	// "Desktop" window related
 	SHwndX*			gsDesktopWindow							= iHwndX_declareDesktopHwnd();

@@ -318,9 +318,9 @@ typedef SEM**		SEMpp;
 //////////
 // Constants for SCompParams
 //////
-	const u32		_CP_TYPE_EMPTY							= 1;						// Parameter was not provided, such as fred(,3)
-	const u32		_CP_TYPE_COMP							= 2;						// Parameter points to a component on the source code line
-	const u32		_CP_TYPE_VAR							= 3;						// Parameter is a variable
+	const u32			_CP_TYPE_EMPTY						= 1;						// Parameter was not provided, such as fred(,3)
+	const u32			_CP_TYPE_COMP						= 2;						// Parameter points to a component on the source code line
+	const u32			_CP_TYPE_VAR						= 3;						// Parameter is a variable
 
 
 //////////

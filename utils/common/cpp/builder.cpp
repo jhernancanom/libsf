@@ -162,6 +162,29 @@
 
 //////////
 //
+// Called to determine if the testptr falls in the range of this builder
+//
+// Returns:
+//		true	-- buffRoot is valid, and the testptr is in range
+//		false	-- Either buffRoot is invalid, or testptr is not in range
+//////
+	bool iBuilder_isPointer(SBuilder* buffRoot, uptr testptr)
+	{
+		if (buffRoot)
+		{
+			// It must fall in [range) to be considered valid
+			if (testptr >= buffRoot->_data && testptr < (buffRoot->_data + buffRoot->populatedLength))
+				return(true);
+		}
+		// If we get here, not a pointer of this buffRoot
+		return(false);
+	}
+
+
+
+
+//////////
+//
 // Appends the indicated text to the end of the buffer.
 //
 // Returns:

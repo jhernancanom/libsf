@@ -3849,13 +3849,13 @@
 		// Each element of the array is 38x38, but the bitmap content is centered within, 36x36
 		//////
 			// Iterate vertically
-			for (lnY = 2, lnIndex = 0; lnY < bmpArrayTiled->bi.biHeight && lnIndex < (s32)_BMP__ARRAY_MAX; lnY += 38)
+			for (lnY = 2, lnIndex = 0; lnY < bmpArrayTiled->bi.biHeight && lnIndex < (s32)_BMP__ARRAY_MAX; lnY += _BMP__ARRAY_STRIDE_HEIGHT)
 			{
 				// Iterate horizontally
-				for (lnX = 2; lnX < bmpArrayTiled->bi.biWidth && lnIndex < (s32)_BMP__ARRAY_MAX; lnX += 38, lnIndex++)
+				for (lnX = 2; lnX < bmpArrayTiled->bi.biWidth && lnIndex < (s32)_BMP__ARRAY_MAX; lnX += _BMP__ARRAY_STRIDE_WIDTH, lnIndex++)
 				{
 					// Extract this element of the tiled strip into the sequential array
-					bmpArray[lnIndex] = iBmp_createAndExtractRect(bmpArrayTiled, lnX, lnY, lnX + 36, lnY + 36);
+					bmpArray[lnIndex] = iBmp_createAndExtractRect(bmpArrayTiled, lnX, lnY, lnX + _BMP__ARRAY_WIDTH, lnY + _BMP__ARRAY_HEIGHT);
 				}
 			}
 	}
