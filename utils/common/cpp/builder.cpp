@@ -477,7 +477,7 @@
 // Called to write out the indicated builder file as an 8-bit ASCII file
 //
 //////
-	u32 iBuilder_asciiWriteOutFile(SBuilder* buffRoot, cu8* tcPathname)
+	u32 iBuilder_asciiWriteOutFile(SBuilder* buffRoot, cu8* tcPathname, bool tlAppend)
 	{
 		FILE* lfh;
 
@@ -486,7 +486,7 @@
 		if (buffRoot && tcPathname)
 		{
 			// Try to create the file
-			lfh = fopen((s8*)tcPathname, "wb+");
+			lfh = fopen((s8*)tcPathname, ((tlAppend) ? "ab+" : "wb+"));
 			if (lfh)
 			{
 				// Write out the data if need be
