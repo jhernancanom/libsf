@@ -135,7 +135,7 @@
 	};
 
 	// The 40-byte block assemblage of these various components
-	struct SButterflyBlock8
+	struct SButterflyBlock8a
 	{
 		SRowInstr		top;			// dd dd II dd dd
 		SRowAata		head;			// dd dd AA dd dd
@@ -143,6 +143,19 @@
 		SRowInstrAata	arms2;			// II AA II AA II
 		SRowAata		legs1;			// dd dd AA dd dd
 		SRowAata		legs2;			// dd dd AA dd dd
+		SRowAata		feet;			// dd dd AA dd dd
+		SRowInstr		bottom;			// dd dd II dd dd
+	};
+
+	// The 40-byte block assemblage of these various components
+	struct SButterflyBlock8b
+	{
+		SRowInstr		top;			// dd dd II dd dd
+		SRowAata		crown;			// dd dd AA dd dd
+		SRowAata		head;			// dd dd AA dd dd
+		SRowInstrAata	arms1;			// II AA II AA II
+		SRowInstrAata	arms2;			// II AA II AA II
+		SRowAata		legs;			// dd dd AA dd dd
 		SRowAata		feet;			// dd dd AA dd dd
 		SRowInstr		bottom;			// dd dd II dd dd
 	};
@@ -157,7 +170,8 @@
 	cs8				cgcAtFile[]								= "\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\at.txt";
 	cs8				cgcCgFile[]								= "\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\cg.txt";
 	cs8				cgcButterflyBlocks7File[]				= "\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\butterfly_blocks7.txt";
-	cs8				cgcButterflyBlocks8File[]				= "\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\butterfly_blocks8.txt";
+	cs8				cgcButterflyBlocks8aFile[]				= "\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\butterfly_blocks8a.txt";
+	cs8				cgcButterflyBlocks8bFile[]				= "\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\butterfly_blocks8b.txt";
 
 
 //////////
@@ -172,8 +186,10 @@
 	void			iSchedule_n_threads						(SBuilder* threadManager, s32 tnRunningCount);
 	bool			iSearch_butterflyBlocks7				(void);
 	void			iExtract_butterflyBlock7				(SBuilder* bld, SButterflyBlock7* bb7, u32 tnMaxSize);
-	bool			iSearch_butterflyBlocks8				(void);
-	void			iExtract_butterflyBlock8				(SBuilder* bld, SButterflyBlock8* bb8, u32 tnMaxSize);
+	bool			iSearch_butterflyBlocks8a				(void);
+	void			iExtract_butterflyBlock8a				(SBuilder* bld, SButterflyBlock8a* bb8a, u32 tnMaxSize);
+	bool			iSearch_butterflyBlocks8b				(void);
+	void			iExtract_butterflyBlock8b				(SBuilder* bld, SButterflyBlock8b* bb8b, u32 tnMaxSize);
 	s8				iConvert_DNA_toBinary					(s8 ch);
 
 
@@ -200,7 +216,8 @@
 			else if (_memicmp(argv[1], "bitwidth:", 9) == 0)			llShowHelp = !iSearch_bitwidth(argv[1] + 9, argv[2], argv[3]);	// Search for successive bits of the indicated size
 			else if (_memicmp(argv[1], "bitspaceauto", 12) == 0)		llShowHelp = !iSearch_bitspaceAuto();							// Search for successive bits of the indicated size
 			else if (_memicmp(argv[1], "butterflyblocks7", 16) == 0)	llShowHelp = !iSearch_butterflyBlocks7();
-			else if (_memicmp(argv[1], "butterflyblocks8", 16) == 0)	llShowHelp = !iSearch_butterflyBlocks8();
+			else if (_memicmp(argv[1], "butterflyblocks8a", 17) == 0)	llShowHelp = !iSearch_butterflyBlocks8a();
+			else if (_memicmp(argv[1], "butterflyblocks8b", 17) == 0)	llShowHelp = !iSearch_butterflyBlocks8b();
 			else														llShowHelp = true;
 
 			// If we should show help...
@@ -1083,6 +1100,9 @@
 			return(true);
 	}
 
+
+
+
 	//////////
 	//
 	// Format of the output line is:
@@ -1177,14 +1197,14 @@
 
 //////////
 //
-// Generates butterfly blocks in the 8-row format
+// Generates butterfly blocks in the 8-row-a format
 //
 //////
-	bool iSearch_butterflyBlocks8(void)
+	bool iSearch_butterflyBlocks8a(void)
 	{
 		s32					lnI;
 		s32					lhFasta, lnFastaSize, lnReadSize;
-		SButterflyBlock8*	bb8;
+		SButterflyBlock8a*	bb8a;
 		SBuilder*			butterfly_blocks;
 
 
@@ -1236,22 +1256,22 @@
 		// Iterate through butterfly blocks
 		//////
 			iBuilder_createAndInitialize(&butterfly_blocks, _BUTTERFLY_BLOCK_SIZE);
-			for (lnI = 0; lnI < lnFastaSize; lnI += sizeof(SButterflyBlock8))
+			for (lnI = 0; lnI < lnFastaSize; lnI += sizeof(SButterflyBlock8a))
 			{
 				//////////
 				// Set the pointer
 				//////
-					bb8 = (SButterflyBlock8*)(raw_fasta + lnI);
+					bb8a = (SButterflyBlock8a*)(raw_fasta + lnI);
 
 
 				//////////
 				// Extract the instruction, ata, and data
 				//////
-					iExtract_butterflyBlock8(butterfly_blocks, bb8, _BUTTERFLY_BLOCK_SIZE - (2 * sizeof(SButterflyBlock8)));
+					iExtract_butterflyBlock8a(butterfly_blocks, bb8a, _BUTTERFLY_BLOCK_SIZE - (2 * sizeof(SButterflyBlock8a)));
 			}
 
 			// Write the last portion
-			iBuilder_asciiWriteOutFile(butterfly_blocks, (cu8*)cgcButterflyBlocks8File, true);
+			iBuilder_asciiWriteOutFile(butterfly_blocks, (cu8*)cgcButterflyBlocks8aFile, true);
 
 
 		//////////
@@ -1259,6 +1279,9 @@
 		//////
 			return(true);
 	}
+
+
+
 
 	//////////
 	//
@@ -1271,7 +1294,7 @@
 	// Size:  8+1 + 8+1 + 24+2 = 44
 	//
 	//////
-	void iExtract_butterflyBlock8(SBuilder* bld, SButterflyBlock8* bb8, u32 tnMaxSize)
+	void iExtract_butterflyBlock8a(SBuilder* bld, SButterflyBlock8a* bb8a, u32 tnMaxSize)
 	{
 		s8 line[44];
 
@@ -1279,58 +1302,58 @@
 		//////////
 		// Instruction, space
 		//////
-			line[0] = iConvert_DNA_toBinary(bb8->top.instr);		// II
-			line[1] = iConvert_DNA_toBinary(bb8->arms1.instr1);		// II
-			line[2] = iConvert_DNA_toBinary(bb8->arms1.instr2);		// II
-			line[3] = iConvert_DNA_toBinary(bb8->arms1.instr3);		// II
-			line[4] = iConvert_DNA_toBinary(bb8->arms2.instr1);		// II
-			line[5] = iConvert_DNA_toBinary(bb8->arms2.instr2);		// II
-			line[6] = iConvert_DNA_toBinary(bb8->arms2.instr3);		// II
-			line[7] = iConvert_DNA_toBinary(bb8->bottom.instr);		// II
+			line[0] = iConvert_DNA_toBinary(bb8a->top.instr);			// II
+			line[1] = iConvert_DNA_toBinary(bb8a->arms1.instr1);		// II
+			line[2] = iConvert_DNA_toBinary(bb8a->arms1.instr2);		// II
+			line[3] = iConvert_DNA_toBinary(bb8a->arms1.instr3);		// II
+			line[4] = iConvert_DNA_toBinary(bb8a->arms2.instr1);		// II
+			line[5] = iConvert_DNA_toBinary(bb8a->arms2.instr2);		// II
+			line[6] = iConvert_DNA_toBinary(bb8a->arms2.instr3);		// II
+			line[7] = iConvert_DNA_toBinary(bb8a->bottom.instr);		// II
 			line[8] = 32;
 
 
 		//////////
 		// Aata, space
 		//////
-			line[9]		= iConvert_DNA_toBinary(bb8->head.aata);	// AA
-			line[10]	= iConvert_DNA_toBinary(bb8->arms1.aata1);	// AA
-			line[11]	= iConvert_DNA_toBinary(bb8->arms1.aata2);	// AA
-			line[12]	= iConvert_DNA_toBinary(bb8->arms2.aata1);	// AA
-			line[13]	= iConvert_DNA_toBinary(bb8->arms2.aata2);	// AA
-			line[14]	= iConvert_DNA_toBinary(bb8->legs1.aata);	// AA
-			line[15]	= iConvert_DNA_toBinary(bb8->legs2.aata);	// AA
-			line[16]	= iConvert_DNA_toBinary(bb8->feet.aata);	// AA
+			line[9]		= iConvert_DNA_toBinary(bb8a->head.aata);		// AA
+			line[10]	= iConvert_DNA_toBinary(bb8a->arms1.aata1);		// AA
+			line[11]	= iConvert_DNA_toBinary(bb8a->arms1.aata2);		// AA
+			line[12]	= iConvert_DNA_toBinary(bb8a->arms2.aata1);		// AA
+			line[13]	= iConvert_DNA_toBinary(bb8a->arms2.aata2);		// AA
+			line[14]	= iConvert_DNA_toBinary(bb8a->legs1.aata);		// AA
+			line[15]	= iConvert_DNA_toBinary(bb8a->legs2.aata);		// AA
+			line[16]	= iConvert_DNA_toBinary(bb8a->feet.aata);		// AA
 			line[17]	= 32;
 
 
 		//////////
 		// Data, cr+lf
 		//////
-			line[18]	= iConvert_DNA_toBinary(bb8->top.data1);	// dd
-			line[19]	= iConvert_DNA_toBinary(bb8->top.data2);	// dd
-			line[20]	= iConvert_DNA_toBinary(bb8->top.data3);	// dd
-			line[21]	= iConvert_DNA_toBinary(bb8->top.data4);	// dd
-			line[22]	= iConvert_DNA_toBinary(bb8->head.data1);	// dd
-			line[23]	= iConvert_DNA_toBinary(bb8->head.data2);	// dd
-			line[24]	= iConvert_DNA_toBinary(bb8->head.data3);	// dd
-			line[25]	= iConvert_DNA_toBinary(bb8->head.data4);	// dd
-			line[26]	= iConvert_DNA_toBinary(bb8->legs1.data1);	// dd
-			line[27]	= iConvert_DNA_toBinary(bb8->legs1.data2);	// dd
-			line[28]	= iConvert_DNA_toBinary(bb8->legs1.data3);	// dd
-			line[29]	= iConvert_DNA_toBinary(bb8->legs1.data4);	// dd
-			line[30]	= iConvert_DNA_toBinary(bb8->legs2.data1);	// dd
-			line[31]	= iConvert_DNA_toBinary(bb8->legs2.data2);	// dd
-			line[32]	= iConvert_DNA_toBinary(bb8->legs2.data3);	// dd
-			line[33]	= iConvert_DNA_toBinary(bb8->legs2.data4);	// dd
-			line[34]	= iConvert_DNA_toBinary(bb8->feet.data1);	// dd
-			line[35]	= iConvert_DNA_toBinary(bb8->feet.data2);	// dd
-			line[36]	= iConvert_DNA_toBinary(bb8->feet.data3);	// dd
-			line[37]	= iConvert_DNA_toBinary(bb8->feet.data4);	// dd
-			line[38]	= iConvert_DNA_toBinary(bb8->bottom.data1);	// dd
-			line[39]	= iConvert_DNA_toBinary(bb8->bottom.data2);	// dd
-			line[40]	= iConvert_DNA_toBinary(bb8->bottom.data3);	// dd
-			line[41]	= iConvert_DNA_toBinary(bb8->bottom.data4);	// dd
+			line[18]	= iConvert_DNA_toBinary(bb8a->top.data1);		// dd
+			line[19]	= iConvert_DNA_toBinary(bb8a->top.data2);		// dd
+			line[20]	= iConvert_DNA_toBinary(bb8a->top.data3);		// dd
+			line[21]	= iConvert_DNA_toBinary(bb8a->top.data4);		// dd
+			line[22]	= iConvert_DNA_toBinary(bb8a->head.data1);		// dd
+			line[23]	= iConvert_DNA_toBinary(bb8a->head.data2);		// dd
+			line[24]	= iConvert_DNA_toBinary(bb8a->head.data3);		// dd
+			line[25]	= iConvert_DNA_toBinary(bb8a->head.data4);		// dd
+			line[26]	= iConvert_DNA_toBinary(bb8a->legs1.data1);		// dd
+			line[27]	= iConvert_DNA_toBinary(bb8a->legs1.data2);		// dd
+			line[28]	= iConvert_DNA_toBinary(bb8a->legs1.data3);		// dd
+			line[29]	= iConvert_DNA_toBinary(bb8a->legs1.data4);		// dd
+			line[30]	= iConvert_DNA_toBinary(bb8a->legs2.data1);		// dd
+			line[31]	= iConvert_DNA_toBinary(bb8a->legs2.data2);		// dd
+			line[32]	= iConvert_DNA_toBinary(bb8a->legs2.data3);		// dd
+			line[33]	= iConvert_DNA_toBinary(bb8a->legs2.data4);		// dd
+			line[34]	= iConvert_DNA_toBinary(bb8a->feet.data1);		// dd
+			line[35]	= iConvert_DNA_toBinary(bb8a->feet.data2);		// dd
+			line[36]	= iConvert_DNA_toBinary(bb8a->feet.data3);		// dd
+			line[37]	= iConvert_DNA_toBinary(bb8a->feet.data4);		// dd
+			line[38]	= iConvert_DNA_toBinary(bb8a->bottom.data1);	// dd
+			line[39]	= iConvert_DNA_toBinary(bb8a->bottom.data2);	// dd
+			line[40]	= iConvert_DNA_toBinary(bb8a->bottom.data3);	// dd
+			line[41]	= iConvert_DNA_toBinary(bb8a->bottom.data4);	// dd
 			line[42]	= 13;	// cr
 			line[43]	= 10;	// lf
 
@@ -1347,7 +1370,203 @@
 			if (bld->populatedLength >= tnMaxSize)
 			{
 				// Write out the current contents, appending to the butterfly blocks file
-				iBuilder_asciiWriteOutFile(bld, (cu8*)cgcButterflyBlocks8File, true);
+				iBuilder_asciiWriteOutFile(bld, (cu8*)cgcButterflyBlocks8aFile, true);
+
+				// Reset for the next portion
+				bld->populatedLength = 0;
+			}
+	}
+
+
+
+
+//////////
+//
+// Generates butterfly blocks in the 8-row-a format
+//
+//////
+	bool iSearch_butterflyBlocks8b(void)
+	{
+		s32					lnI;
+		s32					lhFasta, lnFastaSize, lnReadSize;
+		SButterflyBlock8b*	bb8b;
+		SBuilder*			butterfly_blocks;
+
+
+		//////////
+		// Open the required files for preload
+		//////
+			lhFasta = _open(cgcFastaFile, _O_RDONLY | _O_BINARY);
+			if (lhFasta == -1)
+			{
+				printf("Error: Unable to open %s\n", cgcFastaFile);
+				return(false);
+			}
+
+
+		//////////
+		// Find out how big the file is
+		//////
+			lnFastaSize = _lseek(lhFasta, 0, SEEK_END);
+			_lseek(lhFasta, 0, SEEK_SET);
+
+
+		//////////
+		// Allocate memory
+		//////
+			// A,T,C,G all combined
+			if (!raw_fasta)
+				raw_fasta	= (s8*)malloc(lnFastaSize);
+
+			if (!raw_fasta)
+			{
+				printf("Error: Unable to allocate %d bytes to load %s\n", lnFastaSize, cgcFastaFile);
+				return(false);
+			}
+
+
+		//////////
+		// Read content
+		//////
+			lnReadSize = _read(lhFasta, raw_fasta, lnFastaSize);
+			if (lnReadSize != lnFastaSize)
+			{
+				printf("Error: Unable to read %d bytes from %s\n", lnFastaSize, cgcFastaFile);
+				return(false);
+			}
+			_close(lhFasta);
+
+
+		//////////
+		// Iterate through butterfly blocks
+		//////
+			iBuilder_createAndInitialize(&butterfly_blocks, _BUTTERFLY_BLOCK_SIZE);
+			for (lnI = 0; lnI < lnFastaSize; lnI += sizeof(SButterflyBlock8b))
+			{
+				//////////
+				// Set the pointer
+				//////
+					bb8b = (SButterflyBlock8b*)(raw_fasta + lnI);
+
+
+				//////////
+				// Extract the instruction, ata, and data
+				//////
+					iExtract_butterflyBlock8b(butterfly_blocks, bb8b, _BUTTERFLY_BLOCK_SIZE - (2 * sizeof(SButterflyBlock8b)));
+			}
+
+			// Write the last portion
+			iBuilder_asciiWriteOutFile(butterfly_blocks, (cu8*)cgcButterflyBlocks8bFile, true);
+
+
+		//////////
+		// Indicate success
+		//////
+			return(true);
+	}
+
+
+
+
+	//////////
+	//
+	// Format of the output line is:
+	//
+	//		IIIIIIII[space]
+	//		AAAAAAAA[space]
+	//		dddddddddddddddddddddddd[cr+lf]
+	//
+	// Size:  8+1 + 8+1 + 24+2 = 44
+	//
+	//////
+	void iExtract_butterflyBlock8b(SBuilder* bld, SButterflyBlock8b* bb8b, u32 tnMaxSize)
+	{
+		s8 line[44];
+
+
+		//////////
+		// Instruction, space
+		//////
+			line[0] = iConvert_DNA_toBinary(bb8b->top.instr);			// II
+			line[1] = iConvert_DNA_toBinary(bb8b->arms1.instr1);		// II
+			line[2] = iConvert_DNA_toBinary(bb8b->arms1.instr2);		// II
+			line[3] = iConvert_DNA_toBinary(bb8b->arms1.instr3);		// II
+			line[4] = iConvert_DNA_toBinary(bb8b->arms2.instr1);		// II
+			line[5] = iConvert_DNA_toBinary(bb8b->arms2.instr2);		// II
+			line[6] = iConvert_DNA_toBinary(bb8b->arms2.instr3);		// II
+			line[7] = iConvert_DNA_toBinary(bb8b->bottom.instr);		// II
+			line[8] = 32;
+
+
+		//////////
+		// Aata, space
+		//////
+			line[9]		= iConvert_DNA_toBinary(bb8b->crown.aata);		// AA
+			line[10]	= iConvert_DNA_toBinary(bb8b->head.aata);		// AA
+			line[11]	= iConvert_DNA_toBinary(bb8b->arms1.aata1);		// AA
+			line[12]	= iConvert_DNA_toBinary(bb8b->arms1.aata2);		// AA
+			line[13]	= iConvert_DNA_toBinary(bb8b->arms2.aata1);		// AA
+			line[14]	= iConvert_DNA_toBinary(bb8b->arms2.aata2);		// AA
+			line[15]	= iConvert_DNA_toBinary(bb8b->legs.aata);		// AA
+			line[16]	= iConvert_DNA_toBinary(bb8b->feet.aata);		// AA
+			line[17]	= 32;
+
+
+		//////////
+		// Data, cr+lf
+		//////
+	struct SButterflyBlock8b
+	{
+		SRowInstr		top;			// dd dd II dd dd
+		SRowAata		crown;			// dd dd AA dd dd
+		SRowAata		head;			// dd dd AA dd dd
+		SRowInstrAata	arms1;			// II AA II AA II
+		SRowInstrAata	arms2;			// II AA II AA II
+		SRowAata		legs;			// dd dd AA dd dd
+		SRowAata		feet;			// dd dd AA dd dd
+		SRowInstr		bottom;			// dd dd II dd dd
+	};
+			line[18]	= iConvert_DNA_toBinary(bb8b->top.data1);		// dd
+			line[19]	= iConvert_DNA_toBinary(bb8b->top.data2);		// dd
+			line[20]	= iConvert_DNA_toBinary(bb8b->top.data3);		// dd
+			line[21]	= iConvert_DNA_toBinary(bb8b->top.data4);		// dd
+			line[22]	= iConvert_DNA_toBinary(bb8b->crown.data1);		// dd
+			line[23]	= iConvert_DNA_toBinary(bb8b->crown.data2);		// dd
+			line[24]	= iConvert_DNA_toBinary(bb8b->crown.data3);		// dd
+			line[25]	= iConvert_DNA_toBinary(bb8b->crown.data4);		// dd
+			line[26]	= iConvert_DNA_toBinary(bb8b->head.data1);		// dd
+			line[27]	= iConvert_DNA_toBinary(bb8b->head.data2);		// dd
+			line[28]	= iConvert_DNA_toBinary(bb8b->head.data3);		// dd
+			line[29]	= iConvert_DNA_toBinary(bb8b->head.data4);		// dd
+			line[30]	= iConvert_DNA_toBinary(bb8b->legs.data1);		// dd
+			line[31]	= iConvert_DNA_toBinary(bb8b->legs.data2);		// dd
+			line[32]	= iConvert_DNA_toBinary(bb8b->legs.data3);		// dd
+			line[33]	= iConvert_DNA_toBinary(bb8b->legs.data4);		// dd
+			line[34]	= iConvert_DNA_toBinary(bb8b->feet.data1);		// dd
+			line[35]	= iConvert_DNA_toBinary(bb8b->feet.data2);		// dd
+			line[36]	= iConvert_DNA_toBinary(bb8b->feet.data3);		// dd
+			line[37]	= iConvert_DNA_toBinary(bb8b->feet.data4);		// dd
+			line[38]	= iConvert_DNA_toBinary(bb8b->bottom.data1);	// dd
+			line[39]	= iConvert_DNA_toBinary(bb8b->bottom.data2);	// dd
+			line[40]	= iConvert_DNA_toBinary(bb8b->bottom.data3);	// dd
+			line[41]	= iConvert_DNA_toBinary(bb8b->bottom.data4);	// dd
+			line[42]	= 13;	// cr
+			line[43]	= 10;	// lf
+
+
+		//////////
+		// Append to the butterfly block data
+		//////
+			iBuilder_appendData(bld, (cu8*)&line[0], sizeof(line));
+
+
+		//////////
+		// If we've exceeded our maximum size, write it to disk
+		//////
+			if (bld->populatedLength >= tnMaxSize)
+			{
+				// Write out the current contents, appending to the butterfly blocks file
+				iBuilder_asciiWriteOutFile(bld, (cu8*)cgcButterflyBlocks8bFile, true);
 
 				// Reset for the next portion
 				bld->populatedLength = 0;
