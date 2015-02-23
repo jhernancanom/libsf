@@ -65,7 +65,7 @@
 //
 
 
-#if defined(_WIN64) || defined(_WIN32)
+#if defined(_MSC_VER)
 	#include "\libsf\utils\common\cpp\common_types.h"
 
 	// Force the bitmaps to be for definition

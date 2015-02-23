@@ -817,7 +817,7 @@
 		//////////
 		// For debugging:
 		//////
-			iBuilder_asciiWriteOutFile(data, (u8*)"c:\\temp\\test\\idx_info_compact.txt");
+			iBuilder_asciiWriteOutFile(data, (u8*)"c:\\temp\\test\\idx_info_compact.txt", false);
 			iBuilder_freeAndRelease(&data);
 
 
@@ -929,7 +929,7 @@
 		//////////
 		// For debugging:
 		//////
-			iBuilder_asciiWriteOutFile(data, (u8*)"c:\\temp\\test\\idx_info_standard.txt");
+			iBuilder_asciiWriteOutFile(data, (u8*)"c:\\temp\\test\\idx_info_standard.txt", false);
 			iBuilder_freeAndRelease(&data);
 
 

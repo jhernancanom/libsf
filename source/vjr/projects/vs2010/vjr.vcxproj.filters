@@ -52,6 +52,9 @@
     <Filter Include="compiler\asm">
       <UniqueIdentifier>{b6632999-217b-4158-b23e-266666a11af6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="builder">
+      <UniqueIdentifier>{9398fc02-b9b0-4b3a-bb37-f9b9c346186d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="small.ico">
@@ -138,6 +141,9 @@
     </ClCompile>
     <ClCompile Include="..\..\source\compiler\vxb\vxb_dictionary.cpp">
       <Filter>compiler\vxb</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\utils\common\cpp\builder.cpp">
+      <Filter>builder</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -260,6 +266,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\compiler\vxb\vxb_dictionary.h">
       <Filter>compiler\vxb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\utils\common\cpp\builder.h">
+      <Filter>builder</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

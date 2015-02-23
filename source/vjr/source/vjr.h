@@ -83,7 +83,7 @@
 #include "vjr_compile_time_settings.h"
 
 
-#if defined(_WIN64) || defined(_WIN32)
+#ifdef _MSC_VER
 	// Compiling directly on Windows
 	#include <windows.h>
 	#include <io.h>

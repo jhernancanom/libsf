@@ -71,7 +71,7 @@
 
 
 
-#if defined(_WIN64) || defined(_WIN32)
+#if defined(_MSC_VER)
 	#include "h\app_icon.h"
 	#include "h\move.h"
 	#include "h\minimize.h"

@@ -67,7 +67,7 @@
 
 
 
-#if defined(_WIN64) || defined(_WIN32)
+#if defined(_MSC_VER)
 	#include "include\GL\glew.h"
 	#include "include\GL\freeglut.h"
 #elif defined(__linux__)

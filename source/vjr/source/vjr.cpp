@@ -75,7 +75,7 @@
 
 
 
-#if defined(_WIN64) || defined(_WIN32)
+#if defined(_MSC_VER)
 	int CALLBACK WinMain(	HINSTANCE	hInstance,
 							HINSTANCE	hPrevInstance,
 							LPSTR		lpCmdLine,
@@ -88,7 +88,7 @@
 {
 	MSG		msg;
 	HACCEL	hAccelTable;
-#if !defined(_WIN64) && !defined(_WIN32)
+#if !defined(_MSC_VER)
 	HINSTANCE hInstance = 0;
 #endif
 

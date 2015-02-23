@@ -209,7 +209,7 @@
 			if (content)
 			{
 				// Write it out
-				iBuilder_asciiWriteOutFile(content, tcPathname);
+				iBuilder_asciiWriteOutFile(content, tcPathname, false);
 
 				// Release it
 				iBuilder_freeAndRelease(&content);

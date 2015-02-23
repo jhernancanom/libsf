@@ -72,7 +72,7 @@ struct SObject;
 struct SEM;
 
 
-#if defined(_WIN64) || defined(_WIN32)
+#if defined(_MSC_VER)
 	#include "\libsf\utils\common\cpp\common_types.h"
 #elif defined(__linux__)
 	#include "/libsf/utils/common/cpp/common_types.h"

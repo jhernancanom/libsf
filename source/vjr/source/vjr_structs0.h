@@ -236,7 +236,7 @@ struct SWindow
 	CRITICAL_SECTION	cs;												// Atomic access
 };
 
-#if defined(_WIN64) || defined(_WIN32)
+#if defined(_MSC_VER)
 	#include "\libsf\utils\common\cpp\datum.h"
 #elif __linux__
 	#include "/libsf/utils/common/cpp/datum.h"
