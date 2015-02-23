@@ -2781,6 +2781,92 @@
 
 //////////
 //
+// Checks to see if any point in the needle exists in the haystack, and if tlIncludeOversizes it will also
+// check to see if the needle rectangle may be larger than the haystack needle, actually encompassing it.
+//
+// Normal needle (/// rectangle) in haystack checks:
+//		// Within			// Point in		// Crosses
+//		+------------+		+-----+			    +-----+
+//		|            |		|/////|			    |/////|
+//		|   +----+   |		|//+------+		+------+//|
+//		|   |////|   |		|//|//|   |		|	|//|//|
+//		|   +----+   |		+--|--x   |		|   |//|//|		... et cetera
+//		|            |		   +------+		+------+//|
+//		+------------+		           		    |/////|
+//											    +-----+
+//
+// If checking oversizes, performs this check:
+//		+------------+
+//		|////////////|
+//		|///+----+///|
+//		|///|    |///|
+//		|///+----+///|
+//		|////////////|
+//		+------------+
+//
+//////
+	bool iMath_isRectInRect(RECT* rcHaystack, RECT* rcNeedle, bool tlIncludeOversizes)
+	{
+		s32		lnI;
+		RECT*	lrcHaystack;
+		RECT*	lrcNeedle;
+		bool	llResult_left, llResult_top, llResult_right, llResult_bottom;
+
+
+		// We may iterate twice depending on tlIncludeOversizes
+		for (lnI = 0; lnI < 2; lnI++)
+		{
+			//////////
+			// Determine each point
+			//////
+				if (lnI == 0)
+				{
+					// Set rcHaystack and rcNeedle
+					lrcHaystack = rcHaystack;
+					lrcNeedle	= rcNeedle;
+
+				} else {
+					// Swap rcHaystack and rcNeedle
+					lrcHaystack = rcNeedle;
+					lrcNeedle	= rcHaystack;
+				}
+
+
+			//////////
+			// Check the bounding rectangle, if at least one point is within...
+			//////
+				llResult_left	= iMath_between(lrcNeedle->left,	lrcHaystack->left,	lrcHaystack->right);
+				llResult_top	= iMath_between(lrcNeedle->top,		lrcHaystack->top,	lrcHaystack->bottom);
+				llResult_right	= iMath_between(lrcNeedle->right,	lrcHaystack->left,	lrcHaystack->right);
+				llResult_bottom	= iMath_between(lrcNeedle->bottom,	lrcHaystack->top,	lrcHaystack->bottom);
+
+
+			//////////
+			// Does it at any point intersect the rect?
+			//////
+				if (llResult_left || llResult_top || llResult_right || llResult_bottom)
+					return(true);
+
+
+			//////////
+			// When we get here, it doesn't intersect
+			//////
+				if (!tlIncludeOversizes)
+					break;
+		}
+
+
+		//////////
+		// If we get here, it was not inside at any point
+		//////
+			return(false);
+	}
+
+
+
+
+//////////
+//
 // Convert the case.
 //
 //////

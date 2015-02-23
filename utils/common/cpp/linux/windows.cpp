@@ -1061,17 +1061,106 @@ WINBASEAPI HMODULE WINAPI GetModuleHandle(__in_opt cs8* lpModuleName)
 // The HRGN is an SBitmap with a binary pattern (black = no draw, non-black = draw)
 WINUSERAPI int WINAPI SetWindowRgn(__in HWND hWnd, __in_opt HRGN hRgn, __in BOOL bRedraw)
 {
-	SHwndX* hwndx;
+	u32				lnI;
+	s32				lnWidth, lnHeight;
+	RECT			lrc;
+	SBitmap*		bmp;
+	SHwndX*			hwndx;
+	SRegionRectX*	regionRect;
+	union {
+		HRGN		_rgn;
+		SRegionX*	region;
+		uptr		_ptr;
+	};
 
 
 	//////////
 	// Locate the window
 	//////
 		hwndx = iHwndX_findWindow_byHwnd(hWnd);
-		if (hwndx && hwndx->isValid)
+		if (hwndx && hwndx->isValid && hwndx->x11 && hwndx->x11->drawable)
 		{
-			// The window is valid
-			// Build the region array
+			//////////
+			// Delete any existing region
+			//////
+				if (hwndx->regionx)
+					iHwndX_deleteRegion(hwndx);
+
+
+			//////////
+			// Create the new region (if any)
+			//////
+				_rgn = hRgn;
+				if (iBuilder_isPointer(gsRegions, _ptr))
+				{
+					//////////
+					// Create the physical pixmap for the window
+					//////
+						lnWidth				= (hwndx->rc.right - hwndx->rc.left);
+						lnHeight			= (hwndx->rc.bottom - hwndx->rc.top);
+						hwndx->regionPixmap = XCreatePixmap(hwndx->x11->display, hwndx->x11->drawable, lnWidth, lnHeight, hwndx->x11->depth);
+
+
+					//////////
+					// Populate the pixmap with the region array
+					//////
+						if (hwndx->regionPixmap)
+						{
+							//////////
+							// Create a temporary bitmap to accumulate the region ops
+							//////
+								bmp = iBmp_allocate();
+								if (bmp)
+								{
+									// Create the bitmap
+									iBmp_createBySize(bmp, lnWidth, lnHeight, 24);
+
+									// Initially make it black
+									iBmp_fillRect(bmp, &lrc, blackColor, blackColor, blackColor, blackColor, false, NULL, false);
+
+
+									/////////
+									// Iterate through each region, applying it logically to the pixmap
+									//////
+										SetRect(&lrc, 0, 0, lnWidth, lnHeight);
+										for (lnI = 0, regionRect = (SRegionRectX*)hwndx->regionx->regionArray->buffer; lnI < hwndx->regionx->regionArray->populatedLength; lnI += sizeof(SRegionRectX), regionRect++)
+										{
+											//////////
+											// If this rectangle overlaps the pixmap, apply its logic to the pixmap
+											//////
+												if (iMath_isRectInRect(&lrc, &regionRect->rc, false))
+												{
+													// Apply this region's logic to the accumulation bitmap
+													switch (regionRect->op)
+													{
+														case RGN_AND:
+															// Where the two intersect, make that
+															iBmp_fillRect_op(bmp, &regionRect->rc, whiteColor, blackColor, _FILL_RECT_OP_AND);
+															break;
+
+														case RGN_OR:
+															// Turn on everything in this rectangle
+															iBmp_fillRect_op(bmp, &regionRect->rc, whiteColor, blackColor, _FILL_RECT_OP_OR);
+															break;
+
+														case RGN_XOR:
+															iBmp_fillRect_op(bmp, &regionRect->rc, whiteColor, blackColor, _FILL_RECT_OP_XOR);
+															break;
+													}
+												}
+
+										}
+
+
+									//////////
+									// Reconstruct this into the pixmap
+									//////
+// TODO:  working here
+							}
+						}
+
+				}
+
 		}
 
 
@@ -1161,7 +1250,7 @@ WINGDIAPI BOOL WINAPI DeleteObject( __in HGDIOBJ ho)
 	// Brushes
 	//////
 		_ho = ho;
-		if (iBuilder_isPointer(gsBrushes, brush))
+		if (iBuilder_isPointer(gsBrushes, _ho))
 		{
 			// It's a brush
 			brush->isValid = false;
@@ -1172,7 +1261,7 @@ WINGDIAPI BOOL WINAPI DeleteObject( __in HGDIOBJ ho)
 	//////////
 	// Fonts
 	//////
-		if (iBuilder_isPointer(gsHfonts, font))
+		if (iBuilder_isPointer(gsHfonts, _ho))
 		{
 			// It's a font
 			font->isValid = false;
@@ -1408,22 +1497,53 @@ WINUSERAPI int WINAPI GetWindowRgn(__in HWND hWnd, __in HRGN hRgn)
 
 WINGDIAPI BOOL WINAPI PtInRegion(__in HRGN hrgn, __in int x, __in int y)
 {
+	u32				lnI;
+	bool			lIsInRect;
+	BOOL			lIsInRegion;
+	SRegionRectX*	regionRect;
+	POINT			pt;
 	union {
-		HRGN		_rgn;
 		SRegionX*	regionx;
+		HRGN		_rgn;
+		uptr		_ptr;
 	};
 
 
 	//////////
 	// Make sure the region exists
 	//////
-		if (iBuilder_isPointer(gsRegions, regionx))
+		if (iBuilder_isPointer(gsRegions, _ptr))
 		{
 			// Is it currently valid?
 			if (regionx->isValid)
 			{
 				// Iterate through the array to determine if the point is in the array or not
-// TODO:  Working here
+				pt.x = x;
+				pt.y = y;
+				for (lnI = 0, regionRect = (SRegionRectX*)regionx->regionArray->buffer; lnI < regionx->regionArray->populatedLength; lnI += sizeof(SRegionRectX), regionRect++)
+				{
+					// Are we in this region?
+					lIsInRect = PtInRect(&regionRect->rc, pt);
+
+					// Based on the operation, continue to propagate the condition
+					switch (regionRect->op)
+					{
+						case RGN_AND:
+							// Must be in the current one, and this one
+							lIsInRegion = (lIsInRegion & lIsInRect);
+							break;
+
+						case RGN_OR:
+							// Must be in either current one, or this one
+							lIsInRegion = (lIsInRegion | lIsInRect);
+							break;
+
+						case RGN_XOR:
+							// Must be in only one of them, but not both
+							lIsInRegion = (lIsInRegion ^ lIsInRect);
+							break;
+					}
+				}
 			}
 		}
 		// If we get here, failure
@@ -1743,7 +1863,8 @@ WINUSERAPI int WINAPI FillRect(__in HDC hDC, __in CONST RECT *lprc, __in HBRUSH 
 			if (brushx)
 			{
 				SetRect(&lrc, 0, 0, hdcx->bmp->bi.biWidth, hdcx->bmp->bi.biHeight);
-				iBmp_fillRect(hdcx->bmp, &lrc, brushx->color, brushx->color, brushx->color, brushx->color, false, NULL, false);
+				// Note:  We force a clip here so it will use the internal drawing algorithm
+				iBmp_fillRect(hdcx->bmp, &lrc, brushx->color, brushx->color, brushx->color, brushx->color, false, NULL, true);
 				return(1);
 			}
 		}

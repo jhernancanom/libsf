@@ -83,7 +83,7 @@
 //////
 	void		iBuilder_verifySizeForNewBytes				(SBuilder* buffRoot, u32 tnDataLength);
 	void		iBuilder_createAndInitialize				(SBuilder** buffRoot, u32 tnAllocationBlockSize);
-	bool		iBuilder_isPointer							(SBuilder* buffRoot, void* testptr);
+	bool		iBuilder_isPointer							(SBuilder* buffRoot, uptr testptr);
 	u8*			iBuilder_appendData							(SBuilder* buffRoot, cu8* tcData, u32 tnDataLength);
 	u8*			iBuilder_append_uptr						(SBuilder* buffRoot, uptr tnValue);
 	u8*			iBuilder_appendCrLf							(SBuilder* buffRoot);

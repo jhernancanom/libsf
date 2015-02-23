@@ -67,6 +67,17 @@
 
 
 
+//////////
+// Constants
+//////
+	#define					_FILL_RECT_OP_AND						1
+	#define					_FILL_RECT_OP_OR						2
+	#define					_FILL_RECT_OP_XOR						3
+
+
+//////////
+// Function prototypes
+//////
 	SBitmap*				iBmp_allocate							(void);
 	SBitmap*				iBmp_copy								(SBitmap* bmpSrc);
 	SBitmap*				iBmp_verifyCopyIsSameSize				(SBitmap* bmpCopy, SBitmap* bmp);
@@ -111,6 +122,7 @@
 // TODO:  The following void functions need to be changed to u32 and indicate how many pixels were rendered
 	void					iBmp_drawPoint							(SBitmap* bmp, s32 tnX, s32 tnY, SBgra color);
 	void					iBmp_fillRect							(SBitmap* bmp, RECT* rc, SBgra colorNW, SBgra colorNE, SBgra colorSW, SBgra colorSE, bool tlUseGradient, RECT* rcClip, bool tluseClip);
+	void					iBmp_fillRect_op						(SBitmap* bmp, RECT* rc, SBgra colorOn, SBgra colorOff, u32 tnOp);
 	void					iBmp_frameRect							(SBitmap* bmp, RECT* rc, SBgra colorNW, SBgra colorNE, SBgra colorSW, SBgra colorSE, bool tlUseGradient, RECT* rcClip, bool tluseClip);
 	void					iBmp_colorizeRect						(SBitmap* bmp, RECT* rc, SBgra colorNW, SBgra colorNE, SBgra colorSW, SBgra colorSE, bool tlUseGradient, RECT* rcClip, bool tluseClip, f32 alpha);
 	void					iiBmp_frameInNineParts					(SBitmap* bmpDst, RECT* trc, SBitmap* bmpFrame);

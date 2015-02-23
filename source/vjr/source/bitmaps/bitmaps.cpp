@@ -111,7 +111,7 @@
 			{
 				// Create a bitmap of the target size
 				iBmp_createBySize(bmp, bmpSrc->bi.biWidth, bmpSrc->bi.biHeight, bmpSrc->bi.biBitCount);
-				
+
 				// Copy the bitmap over
 				SetRect(&lrc, 0, 0, bmpSrc->bi.biWidth, bmpSrc->bi.biHeight);
 
@@ -561,7 +561,7 @@
 		// Pointer must exist
 		if (!bmp)
 			return(false);
-		
+
 		// Planes must be 1
 		if (bmp->bi.biPlanes != 1)
 			return(false);
@@ -2662,7 +2662,7 @@
 					}
 					llAddParams		= true;
 					break;
-				
+
 				case _ICODE_CASK_ROUND:
 					// (|round|)
 					*tnSkipChars	= 2;
@@ -3249,6 +3249,146 @@
 		}
 	}
 
+	// Uses color as the key for AND and XOR ops
+	void iBmp_fillRect_op(SBitmap* bmp, RECT* rc, SBgra colorOn, SBgra colorOff, u32 tnOp)
+	{
+		s32		lnY, lnX;
+		SBgr*	lbgr;
+		SBgra*	lbgra;
+
+
+		// Make sure our environment is sane
+		if (bmp && rc)
+		{
+			//////////
+			// Validate our op
+			//////
+				switch (tnOp)
+				{
+					case _FILL_RECT_OP_AND:
+					case _FILL_RECT_OP_OR:
+					case _FILL_RECT_OP_XOR:
+						break;
+
+					default:
+						return;
+				}
+
+
+			//////////
+			// Process vertically
+			//////
+				for (lnY = rc->top; lnY < rc->bottom; lnY++)
+				{
+					// Is it inside the bitmap vertically?
+					if (lnY >= 0 && lnY <= bmp->bi.biHeight)
+					{
+						switch (bmp->bi.biBitCount)
+						{
+							case 24:
+								// Iterate across each pixel on this row
+								lbgr = (SBgr*) (bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth) + (rc->left * 3));
+								for (lnX = rc->left; lnX <= rc->right; lnX++, lbgr++)
+								{
+									// Is it inside the bitmap horizontally?
+									if (lnX >= 0 && lnX < bmp->bi.biWidth)
+									{
+										// Which op is it?
+										switch (tnOp)
+										{
+											case _FILL_RECT_OP_AND:
+												// Maintains the point only if the existing point is already the "ON" color
+												if (lbgr->blu == colorOn.blu && lbgr->grn == colorOn.grn && lbgr->red == colorOn.red)
+												{
+													// It's already the color it needs to be
+
+												} else {
+													// We need to set it to the off color
+													lbgr->red = colorOff.red;
+													lbgr->grn = colorOff.grn;
+													lbgr->blu = colorOff.blu;
+												}
+												break;
+
+											case _FILL_RECT_OP_OR:
+												// Always draw
+												lbgr->red = colorOn.red;
+												lbgr->grn = colorOn.grn;
+												lbgr->blu = colorOn.blu;
+												break;
+
+											case _FILL_RECT_OP_XOR:
+												// If either one of them is different, turn it on, otherwise, turn it off
+												if (lbgr->blu != colorOn.blu || lbgr->grn != colorOn.grn || lbgr->red != colorOn.red)
+												{
+													// At least one is not the same as the on color, so turn it on
+													lbgr->red = colorOn.red;
+													lbgr->grn = colorOn.grn;
+													lbgr->blu = colorOn.blu;
+
+												} else {
+													// It needs to be off
+													lbgr->red = colorOff.red;
+													lbgr->grn = colorOff.grn;
+													lbgr->blu = colorOff.blu;
+												}
+												break;
+										}
+									}
+								}
+								break;
+
+							case 32:
+								// Iterate across each pixel on this row
+								lbgra = (SBgra*)(bmp->bd + ((bmp->bi.biHeight - lnY - 1) * bmp->rowWidth) + (rc->left * 4));
+								for (lnX = rc->left; lnX <= rc->right; lnX++, lbgra++)
+								{
+									// Is it inside the bitmap horizontally?
+									if (lnX >= 0 && lnX < bmp->bi.biWidth)
+									{
+										// Which op is it?
+										switch (tnOp)
+										{
+											case _FILL_RECT_OP_AND:
+												// Maintains the point only if the existing point is already the "ON" color
+												if (lbgr->blu == colorOn.blu && lbgr->grn == colorOn.grn && lbgr->red == colorOn.red)
+												{
+													// It's already the color it needs to be
+
+												} else {
+													// We need to set it to the off color
+													lbgra->color = colorOff.color;
+												}
+												break;
+
+											case _FILL_RECT_OP_OR:
+												// Always draw
+												lbgra->color = colorOn.color;
+												break;
+
+											case _FILL_RECT_OP_XOR:
+												// If either one of them is different, turn it on, otherwise, turn it off
+												if (lbgr->blu != colorOn.blu || lbgr->grn != colorOn.grn || lbgr->red != colorOn.red)
+												{
+													// At least one is not the same as the on color, so turn it on
+													lbgra->color = colorOn.color;
+
+												} else {
+													// It needs to be off
+													lbgra->color = colorOff.color;
+												}
+												break;
+										}
+									}
+								}
+								break;
+						}
+					}
+				}
+
+		}
+	}
+
 	void iBmp_frameRect(SBitmap* bmp, RECT* rc, SBgra colorNW, SBgra colorNE, SBgra colorSW, SBgra colorSE, bool tlUseGradient, RECT* rcClip, bool tluseClip)
 	{
 		f32		lfRed, lfGrn, lfBlu, lfRedTo, lfGrnTo, lfBluTo, lfRedInc, lfGrnInc, lfBluInc, lfWidth;
@@ -3573,8 +3713,8 @@
 // 	{
 // 		f32				lfX1, lfY1, lfX2, lfY2, lfX3, lfY3, lfX4, lfY4;
 // 		SGraceVecLine	line;
-// 
-// 
+//
+//
 // 		//////////
 // 		// Compute the line
 // 		/////
@@ -3583,8 +3723,8 @@
 // 			line.p2.x = (f32)tnX2;
 // 			line.p2.y = (f32)tnY2;
 // 			iivvm_math_computeLine(&line);
-// 
-// 
+//
+//
 // 		//////////
 // 		// Draw the line
 // 		//////
@@ -3594,14 +3734,14 @@
 // 			lfY2 = line.p1.y + ((f32)sin(line.theta - _PI2) * ((f32)tnWidth / 2.0f));
 // 			if (tlDrawEnds)
 // 				iBmp_drawArbitraryLine(bmp, (s32)lfX1, (s32)lfY1, (s32)lfX2, (s32)lfY2, color);
-// 
+//
 // 			lfX3 = line.p2.x + ((f32)cos(line.theta + _PI2) * ((f32)tnWidth / 2.0f));
 // 			lfY3 = line.p2.y + ((f32)sin(line.theta + _PI2) * ((f32)tnWidth / 2.0f));
 // 			lfX4 = line.p2.x + ((f32)cos(line.theta - _PI2) * ((f32)tnWidth / 2.0f));
 // 			lfY4 = line.p2.y + ((f32)sin(line.theta - _PI2) * ((f32)tnWidth / 2.0f));
 // 			if (tlDrawEnds)
 // 				iBmp_drawArbitraryLine(bmp, (s32)lfX3, (s32)lfY3, (s32)lfX4, (s32)lfY4, color);
-// 
+//
 // 			iBmp_drawArbitraryLine(bmp, (s32)lfX1, (s32)lfY1, (s32)lfX3, (s32)lfY3, color);
 // 			iBmp_drawArbitraryLine(bmp, (s32)lfX2, (s32)lfY2, (s32)lfX4, (s32)lfY4, color);
 // 	}
@@ -4586,7 +4726,7 @@
 // 	{
 // 		if (tnX >= bp->bii->biWidth)
 // 			_asm nop;
-// 
+//
 // 		if (tnY >= bp->bii->biHeight)
 // 			_asm nop;
 // 	}

@@ -204,6 +204,8 @@
 	#include <time.h>
 	#include <semaphore.h>
 
+	// Seriously, X11??  "Illegal access??"  Really??
+	#define XLIB_ILLEGAL_ACCESS		1
 	#include <X11/Xlib.h>
 	#include <X11/Xutil.h>
 	#include <X11/cursorfont.h>

@@ -400,6 +400,13 @@ debug_break;
 		if (win && win->isValid && win->x11)
 		{
 			//////////
+			// Delete the region
+			//////
+				if (win->regionx)
+					iHwndX_deleteRegion(win);
+
+
+			//////////
 			// Delete the graphical context
 			//////
 				xwin = win->x11;
@@ -544,10 +551,10 @@ debug_break;
 			//////
 				xwin->width		= width;
 				xwin->height	= height;
-				xwin->screennum	= DefaultScreen(xwin->display);
+				xwin->drawable	= DefaultScreen(xwin->display);
 				xwin->screenptr	= DefaultScreenOfDisplay(xwin->display);
 				xwin->visual	= DefaultVisualOfScreen(xwin->screenptr);
-				xwin->depth		= DefaultDepth(xwin->display, xwin->screennum);
+				xwin->depth		= DefaultDepth(xwin->display, xwin->drawable);
 				xwin->pixelsize	= 4;
 
 
@@ -983,4 +990,49 @@ debug_break;
 		// Create a new region
 		//////
 			return((SRegionX*)iBuilder_appendData(gsRegions, NULL, sizeof(SRegionX)));
+	}
+
+
+
+
+//////////
+//
+// Delete the region for this window (if any)
+//
+//////
+	void iHwndX_deleteRegion(SHwndX* win)
+	{
+		//////////
+		// Make sure we have a window and a region
+		//////
+			if (win && win->x11 && win->regionx && win->regionPixmap)
+			{
+				// Is there a region?
+				if (iBuilder_isPointer(gsRegions, (uptr)win->regionx))
+				{
+					//////////
+					// Disable it
+					//////
+						win->regionx->isValid = false;
+
+
+					//////////
+					// Remove the clipping mask
+					//////
+						XSetClipMask(win->x11->display, win->x11->gc, null0);
+
+
+					//////////
+					// Delete the Pixmap
+					//////
+						XFreePixmap(win->x11->display, win->regionPixmap);
+						win->regionPixmap = null0;
+
+
+					//////////
+					// Delete the regionx itself
+					//////
+						iBuilder_freeAndRelease(&win->regionx->regionArray);
+				}
+			}
 	}

@@ -71,8 +71,6 @@
 #include "/libsf/utils/common/cpp/datum.h"
 
 
-
-
 #define _X11_OK					0
 #define _X11_NO_DISPLAY			-1
 #define _X11_UNSUPPORTED		-2
@@ -102,7 +100,7 @@ struct SRegionX;
 		Display*		display;
 		Window			window;
 		Screen*			screenptr;
-		s32				screennum;
+		s32				drawable;
 		Visual*			visual;
 		GC				gc;
 
@@ -161,7 +159,7 @@ struct SRegionX;
 
 		// For region
 		SRegionX*		regionx;
-		Pixmap			pixmapRegion;		// Built from the SRegionX structure, as would size to the window
+		Pixmap			regionPixmap;		// Built from the SRegionX structure at the time of SetWindowRgn() as it sizes to the window
 
 	} __attribute__((packed));
 
@@ -292,6 +290,7 @@ struct SRegionX;
 	SBrushX*		iHwndX_deleteBrush						(HBRUSH hbr);
 	SBrushX*		iHwndX_findBrush_byBrush				(HBRUSH hbr);
 	SRegionX*		iHwndX_createRegion						(void);
+	void			iHwndX_deleteRegion						(SHwndX* win);
 
 
 //////////

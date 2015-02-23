@@ -499,7 +499,7 @@ struct SObjPropertyMap;
 	s64						iTime_getLocalMs						(void);
 	s8						iLowerCase								(s8 c);
 	s8						iUpperCase								(s8 c);
-	
+
 	bool					iTestExactlyEqual						(u8* left, u32 leftLength, cu8* right, u32 rightLength);
 	bool					iTestExactlyEqual						(u8* left, u32 leftLength,  u8* right, u32 rightLength);
 	bool					iTestExactlyEqual_case					(u8* left, u32 leftLength, cu8* right, u32 rightLength);
@@ -520,6 +520,7 @@ struct SObjPropertyMap;
 	s64						iMath_delta								(s64 tnBaseValue, s64 tnSubtractionValue);
 	s8*						iMath_roundTo							(f64* tfValue, f64 tfRoundTo);
 	bool					iMath_between							(s32 tnValue, s32 tnN1, s32 tnN2);
+	bool					iMath_isRectInRect						(RECT* rcHaystack, RECT* rcNeedle, bool tlIncludeOversizes);
 
 	s8*						iDuplicateString						(s8* tcText);
 
