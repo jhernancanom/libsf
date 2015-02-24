@@ -233,6 +233,7 @@ struct SRegionX;
 		DWORD		nQuality;
 		DWORD		nPitchAndFamily;
 		SDatum		faceName;
+		TEXTMETRIC	tm;
 
 		Font			font;
 		XFontStruct*	fontData;
@@ -276,6 +277,7 @@ struct SRegionX;
 	SHwndX*			iHwndX_declareDesktopHwnd				(void);
 	DWORD			iHwndX_getTime							(void);
 	SHwndX*			iHwndX_findWindow_byHwnd				(HWND hWnd);
+	SHwndX*			iHwndX_findWindow_byHdcx				(SHdcX* hdcx);
 	SHdcX*			iHwndX_findHdc_byHdc					(HDC hdc);
 	SClassX*		iHwndX_findClass_byName					(cs8* lpClassName);
 	void			iHwndX_createWindow						(SHwndX* win);

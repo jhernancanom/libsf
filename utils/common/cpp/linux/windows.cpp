@@ -954,30 +954,160 @@ WINGDIAPI int WINAPI SetBkMode(__in HDC hdc, __in int mode)
 //////////
 WINUSERAPI int WINAPI DrawText(__in HDC hdc, cs8* lpchText, __in int cchText, __inout LPRECT lprc, __in UINT format)
 {
-	SHdcX*	hdcx;
-	RECT	lrc;
+	int				direction, ascent, descent;
+	XCharStruct		cs;
+	SHdcX*			hdcx;
+	SHwndX*			hwndx;
+	RECT			lrc;
 
 
 	// Make sure our environment is sane
 	if (lpchText && cchText > 0 && lprc)
 	{
-		// Locate the hdc
+		// Locate the associated hdcx
 		hdcx = iHwndX_findHdc_byHdc(hdc);
 		if (hdcx)
 		{
-			// Are we computing the rectangle for this text?
-			if (format & DT_CALCRECT)
+			// Locate the associated window to this hdcx
+			hwndx = iHwndX_findWindow_byHdcx(hdcx);
+			if (hwndx && hwndx->x11)
 			{
-// TODO:  Draw text calculate rectangle
+				//////////
+				// Compute the size of the rectangle
+				//////
+					if ((format & DT_CALCRECT) != 0 || (format & DT_CENTER) != 0 || (format & DT_RIGHT) != 0)
+					{
+						// Query the extents
+						XQueryTextExtents(hwndx->x11->display, hwndx->x11->gc->gid, lpchText, cchText, &direction, &ascent, &descent, &cs);
 
-			} else {
-				// Make sure the text we'll be drawing is actually at least partially on the device context we'll be drawing into
-				SetRect(&lrc, 0, 0, hdcx->bmp->bi.biWidth - 1, hdcx->bmp->bi.biHeight - 1);
-				if (iMath_isRectInRect(&lrc, lprc, true))
-				{
-					// At least some of it will be drawn
-// TODO:  Draw text
-				}
+						// Populate the rectangle
+						SetRect(&lrc, 0, 0, cs.width, cs.ascent + cs.descent);
+					}
+
+
+				//////////
+				// Are we computing the rectangle for this text?
+				//////
+					if (format & DT_CALCRECT)
+					{
+						// Copy the extents
+						CopyRect(lprc, &lrc);
+
+					} else {
+// TODO:  honor the other flags
+						if (format & DT_CENTER)
+						{
+							// Draw centered within the area
+							if (cs.width <= lprc->right - lprc->left)
+							{
+								// The entire string will fit inside the rectangle
+								if (format & DT_VCENTER)
+								{
+									// Center vertically
+									XDrawString(hwndx->x11->display, hwndx->x11->drawable, hwndx->x11->gc,
+													(lprc->left + lprc->right - cs.width) / 2,
+													((lprc->top + lprc->bottom) / 2) - ((cs.ascent + cs.descent) / 2),
+													lpchText, cchText);
+
+								} else if (format & DT_BOTTOM) {
+									// Draw at the bottom
+									XDrawString(hwndx->x11->display, hwndx->x11->drawable, hwndx->x11->gc,
+													(lprc->left + lprc->right - cs.width) / 2,
+													lprc->bottom - cs.ascent - cs.descent,
+													lpchText, cchText);
+
+								} else {
+									// Draw at top
+									XDrawString(hwndx->x11->display, hwndx->x11->drawable, hwndx->x11->gc,
+													(lprc->left + lprc->right - cs.width) / 2,
+													lprc->top,
+													lpchText, cchText);
+								}
+
+							} else {
+								// It's too wide, so we draw from the lefft
+								if (format & DT_VCENTER)
+								{
+									// Center vertically
+									XDrawString(hwndx->x11->display, hwndx->x11->drawable, hwndx->x11->gc,
+													lprc->left,
+													((lprc->top + lprc->bottom) / 2) - ((cs.ascent + cs.descent) / 2),
+													lpchText, cchText);
+
+								} else if (format & DT_BOTTOM) {
+									// Draw at the bottom
+									XDrawString(hwndx->x11->display, hwndx->x11->drawable, hwndx->x11->gc,
+													lprc->left,
+													lprc->bottom - cs.ascent - cs.descent,
+													lpchText, cchText);
+
+								} else {
+									// Draw at top
+									XDrawString(hwndx->x11->display, hwndx->x11->drawable, hwndx->x11->gc,
+													lprc->left,
+													lprc->top,
+													lpchText, cchText);
+								}
+							}
+
+						} else if (format & DT_RIGHT) {
+							// Draw right-justified
+							if (format & DT_VCENTER)
+							{
+								// Center vertically
+								XDrawString(hwndx->x11->display, hwndx->x11->drawable, hwndx->x11->gc,
+												max(lprc->left, lprc->right - cs.width),
+												((lprc->top + lprc->bottom) / 2) - ((cs.ascent + cs.descent) / 2),
+												lpchText, cchText);
+
+							} else if (format & DT_BOTTOM) {
+								// Draw at the bottom
+								XDrawString(hwndx->x11->display, hwndx->x11->drawable, hwndx->x11->gc,
+												max(lprc->left, lprc->right - cs.width),
+												lprc->bottom - cs.ascent - cs.descent,
+												lpchText, cchText);
+
+							} else {
+								// Draw at top
+								XDrawString(hwndx->x11->display, hwndx->x11->drawable, hwndx->x11->gc,
+												max(lprc->left, lprc->right - cs.width),
+												lprc->top,
+												lpchText, cchText);
+							}
+
+						} else {
+							// Draw left-justified
+							if (format & DT_VCENTER)
+							{
+								// Center vertically
+								XDrawString(hwndx->x11->display, hwndx->x11->drawable, hwndx->x11->gc,
+												lprc->left,
+												((lprc->top + lprc->bottom) / 2) - ((cs.ascent + cs.descent) / 2),
+												lpchText, cchText);
+
+							} else if (format & DT_BOTTOM) {
+								// Draw at the bottom
+								XDrawString(hwndx->x11->display, hwndx->x11->drawable, hwndx->x11->gc,
+												lprc->left,
+												lprc->bottom - cs.ascent - cs.descent,
+												lpchText, cchText);
+
+							} else {
+								// Draw at top
+								XDrawString(hwndx->x11->display, hwndx->x11->drawable, hwndx->x11->gc,
+												lprc->left,
+												lprc->top,
+												lpchText, cchText);
+							}
+						}
+					}
+
+
+				//////////
+				// Indicate success
+				//////
+					return(cchText);
+
 			}
 		}
 	}
@@ -2710,7 +2840,96 @@ WINBASEAPI DWORD WINAPI GetCurrentDirectory(__in DWORD nBufferLength, s8 lpBuffe
 
 int sopen(cs8* tcPathname, s32 mode, s32 sharing)
 {
-	return(0);
+	int		file;
+	u32		lnFlags;
+	flock	f;
+
+
+	//////////
+	// Open how?
+	//////
+		lnFlags	= 0;
+		if (mode & _O_CREAT)
+		{
+			// Creating a new file
+			if (mode & _O_WRONLY)
+			{
+				// Write only
+				lnFlags = O_CREAT | O_WRONLY | O_TRUNC;
+
+			} else {
+				// Read/write
+				lnFlags = O_CREAT | O_RDWR | O_TRUNC;
+			}
+
+		} else {
+			// Opening an existing
+			if (mode & _O_RDONLY)
+			{
+				// Read-only
+				lnFlags = O_RDONLY;
+
+			} else if (mode & _O_WRONLY) {
+				// Write-only
+				lnFlags = O_WRONLY;
+
+			} else {
+				// Read/write
+				lnFlags = O_RDWR;
+			}
+		}
+
+
+	//////////
+	// Perform the open
+	//////
+		file = open(tcPathname, lnFlags);
+
+
+	//////////
+	// Allow sharing?
+	//////
+		if (file != -1 && sharing != _SH_DENYNO)
+		{
+			//////////
+			// Populate a lock from 0 to maximum file size
+			//////
+				f.l_whence	= SEEK_SET;
+				f.l_start	= 0;
+				f.l_len		= _s64_max;
+
+
+			//////////
+			// Put read/write/both locks on the file
+			//////
+				if (sharing & _SH_DENYRW/*read/write*/ || (sharing & _SH_DENYWR && sharing & _SH_DENYRD))
+				{
+					// Read lock
+					f.l_type = F_RDLCK;
+					fcntl(file, F_RDLCK, &f);
+
+					// Write lock
+					f.l_type = F_WRLCK;
+					fcntl(file, F_WRLCK, &f);
+
+				} else if (sharing & _SH_DENYWR/*write*/) {
+					// Read lock
+					f.l_type = F_RDLCK;
+					fcntl(file, F_RDLCK, &f);
+
+				} else if (sharing & _SH_DENYRD/*read*/) {
+					// Write lock
+					f.l_type = F_WRLCK;
+					fcntl(file, F_WRLCK, &f);
+				}
+
+		}
+
+
+	//////////
+	// Indicate success or failure
+	//////
+		return(file);
 }
 
 
@@ -2787,6 +3006,7 @@ WINBASEAPI BOOL WINAPI FindNextFile(__in HANDLE hFindFile, __out LPWIN32_FIND_DA
 
 WINBASEAPI DWORD WINAPI GetFullPathName(__in cs8* lpFileName, __in DWORD nBufferLength, s8 lpBuffer[_MAX_PATH], s8** lpFilePart)
 {
+// TODO:  Will use VJr's own algorithms for this
 	return(0);
 }
 
@@ -2934,30 +3154,30 @@ WINGDIAPI HFONT WINAPI CreateFont(	__in int cHeight, __in int cWidth, __in int c
 {
 	int			lnI, lnNames;
 	s8**		fontNameArray;
-	SFontX*		font;
+	SFontX*		fontx;
 
 
 	// Grab the next font
-	font = iHwndX_getNextFont();
-	if (font)
+	fontx = iHwndX_getNextFont();
+	if (fontx)
 	{
 		//////////
 		// Copy the attributes
 		//////
-			font->nHeight			= cHeight;
-			font->nWidth			= cWidth;
-			font->nEscapement		= cEscapement;
-			font->nOrientation		= cOrientation;
-			font->nWeight			= cWeight;
-			font->lItalic			= bItalic;
-			font->lUnderline		= bUnderline;
-			font->lStrikeOut		= bStrikeOut;
-			font->nCharSet			= iCharSet;
-			font->nOutPrecision		= iOutPrecision;
-			font->nClipPrecision	= iClipPrecision;
-			font->nQuality			= iQuality;
-			font->nPitchAndFamily	= iPitchAndFamily;
-			iDatum_duplicate(&font->faceName, (u8*)pszFaceName, (u32)strlen(pszFaceName));
+			fontx->nHeight			= cHeight;
+			fontx->nWidth			= cWidth;
+			fontx->nEscapement		= cEscapement;
+			fontx->nOrientation		= cOrientation;
+			fontx->nWeight			= cWeight;
+			fontx->lItalic			= bItalic;
+			fontx->lUnderline		= bUnderline;
+			fontx->lStrikeOut		= bStrikeOut;
+			fontx->nCharSet			= iCharSet;
+			fontx->nOutPrecision	= iOutPrecision;
+			fontx->nClipPrecision	= iClipPrecision;
+			fontx->nQuality			= iQuality;
+			fontx->nPitchAndFamily	= iPitchAndFamily;
+			iDatum_duplicate(&fontx->faceName, (u8*)pszFaceName, (u32)strlen(pszFaceName));
 
 
 		//////////
@@ -2967,10 +3187,10 @@ WINGDIAPI HFONT WINAPI CreateFont(	__in int cHeight, __in int cWidth, __in int c
 			for (lnI = 0; lnI < lnNames; lnI++)
 			{
 				// Search for the font name that matches
-				if (strlen(fontNameArray[lnI]) == font->faceName.length && _memicmp(fontNameArray[lnI], font->faceName.data, font->faceName.length) == 0)
+				if (strlen(fontNameArray[lnI]) == fontx->faceName.length && _memicmp(fontNameArray[lnI], fontx->faceName.data, fontx->faceName.length) == 0)
 				{
 					// Load the font they indicated
-					font->font = (HFONT)XLoadFont(gsDesktop.display, font->faceName.data);
+					fontx->font = (HFONT)XLoadFont(gsDesktop.display, fontx->faceName.data);
 					break;
 				}
 			}
@@ -2981,21 +3201,49 @@ WINGDIAPI HFONT WINAPI CreateFont(	__in int cHeight, __in int cWidth, __in int c
 		//////////
 		// If we were unsuccessful, load the default font
 		//////
-			if (!font->font)
-				font->font = (HFONT)XLoadFont(gsDesktop.display, (cs8*)cgcFontName_defaultFixed);
+			if (!fontx->font)
+				fontx->font = (HFONT)XLoadFont(gsDesktop.display, (cs8*)cgcFontName_defaultFixed);
 
 
 		//////////
 		// Query informationa bout the font
 		//////
-			font->fontData = XQueryFont(gsDesktop.display, gsDesktopWindow->x11->gc->gid);
+			fontx->fontData = XQueryFont(gsDesktop.display, gsDesktopWindow->x11->gc->gid);
+
+
+		//////////
+		// Populate textmetrics for Windows-related calls
+		//////
+			// LONG
+			fontx->tm.tmHeight				= fontx->fontData->ascent + fontx->fontData->descent;
+			fontx->tm.tmAscent				= fontx->fontData->ascent;
+			fontx->tm.tmDescent				= fontx->fontData->descent;
+			fontx->tm.tmInternalLeading		= 0;
+			fontx->tm.tmExternalLeading		= 0;
+			fontx->tm.tmAveCharWidth		= fontx->fontData->per_char[fontx->fontData->default_char].width;
+			fontx->tm.tmMaxCharWidth		= fontx->fontData->max_bounds.width;
+			fontx->tm.tmWeight				= cWeight;
+			fontx->tm.tmOverhang			= 0;
+			fontx->tm.tmDigitizedAspectX	= 96;
+			fontx->tm.tmDigitizedAspectY	= 96;
+
+			// BYTE
+			fontx->tm.tmFirstChar			= fontx->fontData->min_char_or_byte2;
+			fontx->tm.tmLastChar			= fontx->fontData->max_char_or_byte2;
+			fontx->tm.tmDefaultChar			= fontx->fontData->default_char;
+			fontx->tm.tmBreakChar			= ' ';
+			fontx->tm.tmItalic				= bItalic;
+			fontx->tm.tmUnderlined			= bUnderline;
+			fontx->tm.tmStruckOut			= bStrikeOut;
+			fontx->tm.tmPitchAndFamily		= iPitchAndFamily;
+			fontx->tm.tmCharSet				= iCharSet;
 	}
 
 
 	//////////
 	// Indicate success or failure
 	//////
-		return((HFONT)font);
+		return((HFONT)fontx);
 }
 
 
@@ -3003,8 +3251,29 @@ WINGDIAPI HFONT WINAPI CreateFont(	__in int cHeight, __in int cWidth, __in int c
 
 WINGDIAPI BOOL WINAPI GetTextMetricsA(__in HDC hdc, __out LPTEXTMETRIC lptm)
 {
-	// XTextWidth()
-	return(FALSE);
+	SHdcX*	hdcx;
+
+
+	//////////
+	// Grab the hdcx
+	//////
+		hdcx = iHwndX_findHdc_byHdc(hdc);
+		if (hdcx)
+		{
+			// Has a font been assigned?
+			if (hdcx->font)
+			{
+				// Copy the text metrics
+				memcpy(lptm, &hdcx->font->tm, sizeof(*lptm));
+				return(TRUE);
+			}
+		}
+
+
+	//////////
+	// If we get here, failure
+	//////
+		return(FALSE);
 }
 
 
