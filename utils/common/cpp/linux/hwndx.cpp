@@ -561,7 +561,7 @@ debug_break;
 			//////////
 			// Make sure we have a compatible display
 			//////
-				if (xwin->depth != 24)
+				if (xwin->depth != 24 && xwin->depth != 32)
 					return _X11_UNSUPPORTED;
 
 

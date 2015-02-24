@@ -238,6 +238,17 @@ typedef DWORD				(__stdcall*	LPTHREAD_START_ROUTINE)	(LPVOID lpThreadParameter);
 // #define PM_QS_PAINT		(QS_PAINT << 16)
 // #define PM_QS_SENDMESSAGE (QS_SENDMESSAGE << 16)
 
+#define IDI_APPLICATION		32512
+#define IDI_ERROR			32513
+#define IDI_QUESTION		32514
+#define IDI_EXCLAMATION		32515
+#define IDI_ASTERISK		32516
+#define IDI_WINLOGO			32517
+#define IDI_SHIELD			32518
+#define IDI_HAND			IDI_ERROR
+#define IDI_INFORMATION		IDI_ASTERISK
+#define IDI_WARNING			IDI_EXCLAMATION
+
 #define WM_NULL				0x0000
 #define WM_CREATE			0x0001
 #define WM_DESTROY			0x0002
@@ -932,6 +943,7 @@ struct RECT
 	s32		top;
 	s32		right;
 	s32		bottom;
+
 } __attribute__((packed));
 #define LPRECT RECT*
 
@@ -943,12 +955,14 @@ typedef struct tagPAINTSTRUCT
 	BOOL	fRestore;
 	BOOL	fIncUpdate;
 	BYTE	rgbReserved[32];
+
 } __attribute__((packed)) PAINTSTRUCT, *PPAINTSTRUCT, *NPPAINTSTRUCT, *LPPAINTSTRUCT;
 
 struct POINT
 {
 	s32		x;
 	s32		y;
+
 } __attribute__((packed));
 #define LPPOINT POINT*
 
@@ -956,6 +970,7 @@ struct POINTS
 {
 	s16		x;
 	s16		y;
+
 } __attribute__((packed));
 //#define LPPOINT POINTS*
 
@@ -965,6 +980,7 @@ typedef struct tagBITMAPFILEHEADER {
 	u16		bfReserved1;
 	u16		bfReserved2;
 	u32		bfOffBits;
+
 } __attribute__((packed)) BITMAPFILEHEADER, *PBITMAPFILEHEADER;
 
 typedef struct tagBITMAPINFOHEADER {
@@ -979,6 +995,7 @@ typedef struct tagBITMAPINFOHEADER {
 	s32		biYPelsPerMeter;
 	u32		biClrUsed;
 	u32		biClrImportant;
+
 } __attribute__((packed)) BITMAPINFOHEADER, *PBITMAPINFOHEADER;
 
 typedef struct tagBITMAPINFO
@@ -999,6 +1016,7 @@ typedef struct _SYSTEMTIME
 	u16		wMinute;
 	u16		wSecond;
 	u16		wMilliseconds;
+
 } __attribute__((packed)) SYSTEMTIME;
 #define LPSYSTEMTIME SYSTEMTIME*
 
@@ -1006,6 +1024,7 @@ typedef struct _FILETIME
 {
 	DWORD dwLowDateTime;
 	DWORD dwHighDateTime;
+
 } __attribute__((packed)) FILETIME;
 #define LPFILETIME FILETIME*
 
@@ -1026,6 +1045,7 @@ typedef struct tagWNDCLASSEX
 	cs8*		lpszMenuName;
 	cs8*		lpszClassName;
 	HICON		hIconSm;
+
 } __attribute__((packed)) WNDCLASSEX;
 #define WNDCLASSEXA WNDCLASSEX
 
@@ -1034,6 +1054,7 @@ typedef struct _SECURITY_ATTRIBUTES
 	DWORD		nLength;
 	LPVOID		lpSecurityDescriptor;
 	BOOL		bInheritHandle;
+
 } __attribute__((packed)) SECURITY_ATTRIBUTES, *PSECURITY_ATTRIBUTES, *LPSECURITY_ATTRIBUTES;
 
 typedef struct tagMSG
@@ -1044,6 +1065,7 @@ typedef struct tagMSG
 	LPARAM		lParam;
 	DWORD		time;
 	POINT		pt;
+
 } __attribute__((packed)) MSG;
 #define LPMSG MSG*
 
@@ -1091,6 +1113,7 @@ typedef struct tagTEXTMETRICA
 	BYTE		tmStruckOut;
 	BYTE		tmPitchAndFamily;
 	BYTE		tmCharSet;
+
 } __attribute__((packed)) TEXTMETRIC;
 #define LPTEXTMETRIC TEXTMETRIC*
 
@@ -1108,6 +1131,7 @@ typedef struct tagCREATESTRUCT
 	cs8*		lpszName;
 	cs8*		lpszClass;
 	DWORD		dwExStyle;
+
 } __attribute__((packed)) CREATESTRUCT;
 #define LPCREATESTRUCT CREATESTRUCT*
 

@@ -826,8 +826,10 @@
 
 
 		// Use the system bitblt for speed
+#ifdef _MSC_VER
 		BitBlt(bmpDst->hdc, trc->left, trc->top, trc->right - trc->left, trc->bottom - trc->top, bmpSrc->hdc, 0, 0, SRCCOPY);
 		return(bmpSrc->bi.biSizeImage);
+#endif
 
 
 		// Make sure the environment is sane
@@ -1677,11 +1679,6 @@
 		SBgr*		lbgrSrc;
 		SBgra*		lbgraDst;
 		SBgra*		lbgraSrc;
-
-
-// 		// Use the system bitblt for speed
-// 		BitBlt(bmpDst->hdc, trc->left, trc->top, trc->right - trc->left, trc->bottom - trc->top, bmpSrc->hdc, 0, 0, SRCCOPY);
-// 		return(bmpSrc->bi.biSizeImage);
 
 
 		lnPixelsRendered = 0;
@@ -3188,62 +3185,62 @@
 	void iBmp_fillRect(SBitmap* bmp, RECT* rc, SBgra colorNW, SBgra colorNE, SBgra colorSW, SBgra colorSE, bool tlUseGradient, RECT* rcClip, bool tluseClip)
 	{
 		s32		lnY;
-		HBRUSH	hbr;
 		f32		lfRed, lfGrn, lfBlu, lfRedTo, lfGrnTo, lfBluTo, lfRedInc, lfGrnInc, lfBluInc, lfPercent, lfPercentInc, lfHeight, lfWidth;
 
 
 		if (bmp && rc)
 		{
 			// Is it a solid color?
+#ifdef _MSC_VER
 			if (!tlUseGradient && !tluseClip)
 			{
 				// Use OS facilities for speedup on solid colors
-				hbr = CreateSolidBrush(RGB(colorNW.red, colorNW.grn, colorNW.blu));
+				HBRUSH hbr = CreateSolidBrush(RGB(colorNW.red, colorNW.grn, colorNW.blu));
 				FillRect(bmp->hdc, rc, hbr);
 				DeleteObject((HGDIOBJ)hbr);
-
-			} else {
-				// Process manually with the gradient
-				lfWidth			= (f32)(rc->right  - 1 - rc->left);
-				lfHeight		= (f32)(rc->bottom - 1 - rc->top);
-				lfPercentInc	= 1.0f / lfHeight;
-				for (lfPercent = 0.0, lnY = rc->top; lnY < rc->bottom; lnY++, lfPercent += lfPercentInc)
+				return;
+			}
+#endif
+			// Process manually with the gradient
+			lfWidth			= (f32)(rc->right  - 1 - rc->left);
+			lfHeight		= (f32)(rc->bottom - 1 - rc->top);
+			lfPercentInc	= 1.0f / lfHeight;
+			for (lfPercent = 0.0, lnY = rc->top; lnY < rc->bottom; lnY++, lfPercent += lfPercentInc)
+			{
+				if (tlUseGradient)
 				{
-					if (tlUseGradient)
-					{
-						//////////
-						// Compute FROM colors
-						//////
-							lfRed		= (f32)colorNW.red + (((f32)colorSW.red - (f32)colorNW.red) * lfPercent);
-							lfGrn		= (f32)colorNW.grn + (((f32)colorSW.grn - (f32)colorNW.grn) * lfPercent);
-							lfBlu		= (f32)colorNW.blu + (((f32)colorSW.blu - (f32)colorNW.blu) * lfPercent);
+					//////////
+					// Compute FROM colors
+					//////
+						lfRed		= (f32)colorNW.red + (((f32)colorSW.red - (f32)colorNW.red) * lfPercent);
+						lfGrn		= (f32)colorNW.grn + (((f32)colorSW.grn - (f32)colorNW.grn) * lfPercent);
+						lfBlu		= (f32)colorNW.blu + (((f32)colorSW.blu - (f32)colorNW.blu) * lfPercent);
 
 
-						//////////
-						// Compute TO colors
-						//////
-							lfRedTo		= (f32)colorNE.red + (((f32)colorSE.red - (f32)colorNE.red) * lfPercent);
-							lfGrnTo		= (f32)colorNE.grn + (((f32)colorSE.grn - (f32)colorNE.grn) * lfPercent);
-							lfBluTo		= (f32)colorNE.blu + (((f32)colorSE.blu - (f32)colorNE.blu) * lfPercent);
+					//////////
+					// Compute TO colors
+					//////
+						lfRedTo		= (f32)colorNE.red + (((f32)colorSE.red - (f32)colorNE.red) * lfPercent);
+						lfGrnTo		= (f32)colorNE.grn + (((f32)colorSE.grn - (f32)colorNE.grn) * lfPercent);
+						lfBluTo		= (f32)colorNE.blu + (((f32)colorSE.blu - (f32)colorNE.blu) * lfPercent);
 
 
-						//////////
-						// Compute increment
-						//////
-							lfRedInc	= (lfRedTo - lfRed) / lfWidth;
-							lfGrnInc	= (lfGrnTo - lfGrn) / lfWidth;
-							lfBluInc	= (lfBluTo - lfBlu) / lfWidth;
+					//////////
+					// Compute increment
+					//////
+						lfRedInc	= (lfRedTo - lfRed) / lfWidth;
+						lfGrnInc	= (lfGrnTo - lfGrn) / lfWidth;
+						lfBluInc	= (lfBluTo - lfBlu) / lfWidth;
 
 
-						//////////
-						// Draw this line with its gradient
-						//////
-							iBmp_drawHorizontalLineGradient(bmp, rc->left, rc->right - 1, lnY, lfRed, lfGrn, lfBlu, lfRedInc, lfGrnInc, lfBluInc, rcClip, tluseClip);
+					//////////
+					// Draw this line with its gradient
+					//////
+						iBmp_drawHorizontalLineGradient(bmp, rc->left, rc->right - 1, lnY, lfRed, lfGrn, lfBlu, lfRedInc, lfGrnInc, lfBluInc, rcClip, tluseClip);
 
-					} else {
-						// Draw this line with the NW color
-						iBmp_drawHorizontalLine(bmp, rc->left, rc->right - 1, lnY, colorNW);
-					}
+				} else {
+					// Draw this line with the NW color
+					iBmp_drawHorizontalLine(bmp, rc->left, rc->right - 1, lnY, colorNW);
 				}
 			}
 		}

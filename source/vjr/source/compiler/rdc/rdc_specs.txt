@@ -84,6 +84,7 @@ RDC Specifications Document
 	long		-- 64-bit signed quantity
 	float		-- 32-bit floating point
 	double		-- 64-bit floating point
+	alias		-- Alias a token to a longer form for ease of typing (alias rc = hwndx->window->properties->geometry.rc;)
 
 	const,ro	-- Augments a type to indicate it is read-only
 	rw			-- Augments a type to explicitly indicate it is read-write

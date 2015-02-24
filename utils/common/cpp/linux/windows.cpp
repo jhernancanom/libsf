@@ -839,10 +839,43 @@
 
 WINGDIAPI HGDIOBJ WINAPI SelectObject(__in HDC hdc, __in HGDIOBJ h)
 {
+	SHdcX*			hdcx;
 	union {
-		SFont*	font;
+		HGDIOBJ		_hOld;
+		SFont*		fontOld;
 	};
-	return(0);
+	union {
+		HGDIOBJ		_h;
+		SFont*		font;
+	};
+
+
+
+	// Locate the HDC
+	hdcx = iHwndX_findHdc_byHdc(hdc);
+	if (hdcx)
+	{
+		// See what type of object it is
+		_h = h;
+
+
+		//////////
+		// Font?
+		//////
+			if (iBuilder_isPointer(gsHfonts, _h))
+			{
+				// They're selecting a font into this hdc
+				fontOld		= hdcx->font;
+				hdcx->font	= font;
+				return(_hOld);
+			}
+	}
+
+
+	//////////
+	// If we get here, it wasn't a valid object
+	//////
+		return(-1);
 }
 
 
@@ -911,16 +944,48 @@ WINGDIAPI int WINAPI SetBkMode(__in HDC hdc, __in int mode)
 
 
 
+//////////
+//
+// For DT_CALCRECT:
+//
+//		XTextExtents()
+//		XQueryTextExtents()
+//
+//////////
 WINUSERAPI int WINAPI DrawText(__in HDC hdc, cs8* lpchText, __in int cchText, __inout LPRECT lprc, __in UINT format)
 {
+	SHdcX*	hdcx;
+	RECT	lrc;
+
+
+	// Make sure our environment is sane
+	if (lpchText && cchText > 0 && lprc)
+	{
+		// Locate the hdc
+		hdcx = iHwndX_findHdc_byHdc(hdc);
+		if (hdcx)
+		{
+			// Are we computing the rectangle for this text?
+			if (format & DT_CALCRECT)
+			{
+// TODO:  Draw text calculate rectangle
+
+			} else {
+				// Make sure the text we'll be drawing is actually at least partially on the device context we'll be drawing into
+				SetRect(&lrc, 0, 0, hdcx->bmp->bi.biWidth - 1, hdcx->bmp->bi.biHeight - 1);
+				if (iMath_isRectInRect(&lrc, lprc, true))
+				{
+					// At least some of it will be drawn
+// TODO:  Draw text
+				}
+			}
+		}
+	}
+
+
 	//////////
-	//
-	// For DT_CALCRECT:
-	//
-	//		XTextExtents()
-	//		XQueryTextExtents()
-	//
-	//////////
+	// If we get here, failure
+	//////
 		return(0);
 }
 
@@ -1064,7 +1129,7 @@ WINUSERAPI int WINAPI SetWindowRgn(__in HWND hWnd, __in_opt HRGN hRgn, __in BOOL
 	u32				lnI;
 	s32				lnWidth, lnHeight;
 	RECT			lrc;
-	SBitmap*		bmp;
+	SBitmap*		bmpTemp;
 	SHwndX*			hwndx;
 	SRegionRectX*	regionRect;
 	union {
@@ -1098,76 +1163,91 @@ WINUSERAPI int WINAPI SetWindowRgn(__in HWND hWnd, __in_opt HRGN hRgn, __in BOOL
 					//////
 						lnWidth				= (hwndx->rc.right - hwndx->rc.left);
 						lnHeight			= (hwndx->rc.bottom - hwndx->rc.top);
-						hwndx->regionPixmap = XCreatePixmap(hwndx->x11->display, hwndx->x11->drawable, lnWidth, lnHeight, hwndx->x11->depth);
 
 
 					//////////
-					// Populate the pixmap with the region array
+					// Create a temporary bitmap to accumulate the region ops
 					//////
-						if (hwndx->regionPixmap)
+						bmpTemp = iBmp_allocate();
+						if (bmpTemp)
 						{
 							//////////
-							// Create a temporary bitmap to accumulate the region ops
+							// Create the bitmap initially white (region is enabled)
 							//////
-								bmp = iBmp_allocate();
-								if (bmp)
+								iBmp_createBySize(bmpTemp, lnWidth, lnHeight, hwndx->x11->depth);
+								iBmp_fillRect(bmpTemp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+
+
+							/////////
+							// Iterate through each region, applying it logically to the pixmap
+							//////
+								SetRect(&lrc, 0, 0, lnWidth, lnHeight);
+								for (lnI = 0, regionRect = (SRegionRectX*)hwndx->regionx->regionArray->buffer; lnI < hwndx->regionx->regionArray->populatedLength; lnI += sizeof(SRegionRectX), regionRect++)
 								{
-									// Create the bitmap
-									iBmp_createBySize(bmp, lnWidth, lnHeight, 24);
-
-									// Initially make it black
-									iBmp_fillRect(bmp, &lrc, blackColor, blackColor, blackColor, blackColor, false, NULL, false);
-
-
-									/////////
-									// Iterate through each region, applying it logically to the pixmap
+									//////////
+									// If this rectangle overlaps the pixmap, apply its logic to the pixmap
 									//////
-										SetRect(&lrc, 0, 0, lnWidth, lnHeight);
-										for (lnI = 0, regionRect = (SRegionRectX*)hwndx->regionx->regionArray->buffer; lnI < hwndx->regionx->regionArray->populatedLength; lnI += sizeof(SRegionRectX), regionRect++)
+										if (iMath_isRectInRect(&lrc, &regionRect->rc, false))
 										{
-											//////////
-											// If this rectangle overlaps the pixmap, apply its logic to the pixmap
-											//////
-												if (iMath_isRectInRect(&lrc, &regionRect->rc, false))
-												{
-													// Apply this region's logic to the accumulation bitmap
-													switch (regionRect->op)
-													{
-														case RGN_AND:
-															// Where the two intersect, make that
-															iBmp_fillRect_op(bmp, &regionRect->rc, whiteColor, blackColor, _FILL_RECT_OP_AND);
-															break;
+											// Apply this region's logic to the accumulation bitmap
+											switch (regionRect->op)
+											{
+												case RGN_AND:
+													// Where the two intersect, make that
+//////////
+//
+// We are only ANDing or XORing the indicated (///)
+// rectangle, and the other portions need to also be processed:
+//
+//		+---+---+---+
+//		|   |   |   |
+//		+---+---+---+
+//		|   |///|   |
+//		+---+---+---+
+//		|   |   |   |
+//		+---+---+---+
+//
+//////////
 
-														case RGN_OR:
-															// Turn on everything in this rectangle
-															iBmp_fillRect_op(bmp, &regionRect->rc, whiteColor, blackColor, _FILL_RECT_OP_OR);
-															break;
+// TODO:  This is only ANDing the 1-in-9 part, and the remaining portions will need to be blacked out
+													iBmp_fillRect_op(bmpTemp, &regionRect->rc, whiteColor, blackColor, _FILL_RECT_OP_AND);
+													break;
 
-														case RGN_XOR:
-															iBmp_fillRect_op(bmp, &regionRect->rc, whiteColor, blackColor, _FILL_RECT_OP_XOR);
-															break;
-													}
-												}
+												case RGN_OR:
+													// Turn on everything in this rectangle
+													iBmp_fillRect_op(bmpTemp, &regionRect->rc, whiteColor, blackColor, _FILL_RECT_OP_OR);
+													break;
 
+												case RGN_XOR:
+// TODO:  Same as with ANDing, except the XOR in the other 8 areas will be processed against black
+													iBmp_fillRect_op(bmpTemp, &regionRect->rc, whiteColor, blackColor, _FILL_RECT_OP_XOR);
+													break;
+											}
 										}
 
+								}
 
-									//////////
-									// Reconstruct this into the pixmap
-									//////
-// TODO:  working here
-							}
-						}
 
+							//////////
+							// Convert temporary bitmap into pixmap, and delete
+							//////
+								hwndx->regionPixmap = XCreatePixmapFromBitmapData(hwndx->x11->display, hwndx->x11->drawable, bmpTemp->bd, lnWidth, lnHeight, blackColor.color, whiteColor.color, hwndx->x11->depth);
+								iBmp_delete(&bmpTemp, true, true);
+
+
+							/////////
+							// Indicate success
+							//////
+								return(hwndx->regionPixmap);
+					}
 				}
-
 		}
 
 
 	//////////
 	// If we get here, the window wasn't found, or isn't active
 	//////
-		return(0);
+		return(-1);
 }
 
 
@@ -1389,6 +1469,120 @@ WINBASEAPI VOID WINAPI Sleep(__in DWORD dwMilliseconds)
 
 WINUSERAPI BOOL WINAPI SetWindowPos(__in HWND hWnd, __in_opt HWND hWndInsertAfter, __in int X, __in int Y, __in int cx, __in int cy, __in UINT uFlags)
 {
+	SHwndX*					hwndx;
+	SHwndX*					hwndxAfter;
+	XClientMessageEvent		msge;
+	Atom					state;
+	Window					wndRoot, wndParent;
+	Window*					wndChildList;
+	unsigned int			lnChildCount;
+
+
+	// Locate the window
+	hwndx = iHwndX_findWindow_byHwnd(hWnd);
+	if (hwndx && hwndx->x11)
+	{
+		//////////
+		// Reposition?
+		//////
+			if ((uFlags & SWP_NOMOVE) == 0)
+				XMoveWindow(hwndx->x11->display, hwndx->x11->window, X, Y);
+
+
+		//////////
+		// Resize?
+		//////
+			// Note:  Any draw buffers will need to be resized
+			if ((uFlags & SWP_NOSIZE) == 0)
+				XResizeWindow(hwndx->x11->display, hwndx->x11->window, cx, cy);
+
+
+		//////////
+		// Z-order
+		//////
+			if ((uFlags & SWP_NOZORDER) == 0)
+			{
+				switch (hWndInsertAfter)
+				{
+					case HWND_BOTTOM:
+						XLowerWindow(hwndx->x11->display, hwndx->x11->window);
+						break;
+
+					case HWND_TOP:
+						XMapRaised(hwndx->x11->display, hwndx->x11->window);
+						break;
+
+					case HWND_NOTOPMOST:
+					case HWND_TOPMOST:
+						//////////
+						// Reset our message struture
+						//////
+							memset(&msge, 0, sizeof(msge));
+
+
+						//////////
+						// Grab our atom
+						//////
+							state = XInternAtom(hwndx->x11->display, "_NET_WM_STATE_ABOVE", 1);
+							if (state == None)
+							{
+								// This version of x11 does not support always-on-top
+								// Simply raise it
+								XMapRaised(hwndx->x11->display, hwndx->x11->window);
+								return(FALSE);
+							}
+
+
+						//////////
+						// Populate
+						//////
+							msge.type		= ClientMessage;
+							msge.window		= hwndx->x11->window;
+							msge.format		= 32;
+							msge.data.l[0]	= ((hWndInsertAfter == HWND_TOPMOST) ? 1/*add*/ : 0/*remove*/);
+							msge.data.l[1]	= state;
+
+
+						//////////
+						// Dispatch
+						//////
+							XSendEvent(hwndx->x11->display, DefaultRootWindow(hwndx->x11->window), FALSE, SubstructureRedirectMask | SubstructureNotifyMask, (XEvent*)&msge);
+
+
+						//////////
+						// Indicate success
+						//////
+							return(TRUE);
+
+					default:
+						// It must be an existing window, which will now be below it in the z order
+						hwndxAfter = iHwndX_findWindow_byHwnd(hWndInsertAfter);
+						if (hwndxAfter)
+						{
+							//////////
+							// Query the existing tree/z-order
+							//////
+								XQueryTree(hwndx->x11->display, hwndx->x11->window, &wndRoot, &wndParent, &wndChildList, &lnChildCount);
+
+
+							//////////
+							// Restack with our window on top
+							//////
+								XRestackWindows(hwndx->x11->display, wndChildList, hwndx->x11->window);
+
+
+							//////////
+							// Free temporarily allocated resources by XQueryTree()
+							//////
+								XFree(wndChildList);
+
+							// Indicate success
+							return(TRUE);
+						}
+						break;
+				}
+			}
+	}
 	return(FALSE);
 }
 
@@ -1397,6 +1591,18 @@ WINUSERAPI BOOL WINAPI SetWindowPos(__in HWND hWnd, __in_opt HWND hWndInsertAfte
 
 WINUSERAPI BOOL WINAPI GetCursorPos(__out LPPOINT lpPoint)
 {
+	//////////
+	// Return current mouse position in desktop
+	//////
+		if (lpPoint)
+		{
+			lpPoint->x = gnMouseDesktop.x;
+			lpPoint->y = gnMouseDesktop.y;
+			return(TRUE);
+		}
+
+
+	// Invalid data
 	return(FALSE);
 }
 
@@ -1609,7 +1815,42 @@ WINUSERAPI BOOL WINAPI EndPaint(__in HWND hWnd, __in CONST PAINTSTRUCT *lpPaint)
 
 WINGDIAPI BOOL WINAPI BitBlt( __in HDC hdc, __in int x, __in int y, __in int cx, __in int cy, __in_opt HDC hdcSrc, __in int x1, __in int y1, __in DWORD rop)
 {
-	return(FALSE);
+	SHdcX*	hdcx;
+	SHdcX*	hdcxSrc;
+	RECT	lrc;
+
+
+	// Find our device contexts
+	hdcx	= iHwndX_findHdc_byHdc(hdc);
+	hdcxSrc	= iHwndX_findHdc_byHdc(hdcSrc);
+	if (hdcx && hdcxSrc && hdcx->bmp && hdcxSrc->bmp)
+	{
+		//////////
+		// Our rectangle
+		//////
+			SetRect(&lrc,	x,
+							y,
+							x + cx,
+							y + cy);
+
+
+		//////////
+		// Physically render
+		//////
+			iBmp_bitBlt(hdcx->bmp, &lrc, hdcxSrc->bmp);
+
+
+		//////////
+		// Indicate success
+		//////
+			return(TRUE);
+	}
+
+
+	//////////
+	// If we get here, failure
+	//////
+		return(FALSE);
 }
 
 
@@ -1617,7 +1858,56 @@ WINGDIAPI BOOL WINAPI BitBlt( __in HDC hdc, __in int x, __in int y, __in int cx,
 
 WINUSERAPI HICON WINAPI LoadIcon(__in_opt HINSTANCE hInstance, __in uptr lpIconName)
 {
-	return(0);
+	union {
+		HICON		_icon;
+		SBitmap*	bmp;
+	};
+
+
+	//////////
+	// What are they loading?
+	//////
+		switch (lpIconName)
+		{
+			case IDI_APPLICATION:
+			case IDI_WINLOGO:			// Standard app icon
+				bmp = bmpArray[_BMP__app_win];
+				break;
+
+			case IDI_ERROR:				// Hand/halt! icon
+				bmp = bmpArray[_BMP__halt_win];
+				break;
+
+			case IDI_QUESTION:			// Question mark
+				bmp = bmpArray[_BMP__question_mark_win];
+				break;
+
+			case IDI_EXCLAMATION:		// Exclamation point
+				bmp = bmpArray[_BMP__exclamation_point_win];
+				break;
+
+			case IDI_ASTERISK:			// Stop sign
+				bmp = bmpArray[_BMP__stop_sign_win];
+				break;
+
+			case IDI_SHIELD:			// Shield
+				bmp = bmpArray[_BMP__shield_win];
+				break;
+
+			default:
+				// It is a custom icon from a resource
+// TODO:  need to figure out what protocol we want to implement this
+
+				// For now, go ahead and use the standard app icon
+				bmp = bmpArray[_BMP__app_win];
+				break;
+		}
+
+
+	//////////
+	// Indicate success
+	//////
+		return(_icon);
 }
 
 
@@ -1732,7 +2022,45 @@ WINUSERAPI BOOL WINAPI SetMenu(__in HWND hWnd, __in_opt HMENU hMenu)
 
 WINGDIAPI HRGN WINAPI CreateRectRgnIndirect( __in CONST RECT *lprect)
 {
-	return(0);
+	union {
+		HRGN		_rgn;
+		SRegionX*	regionx;
+	};
+	SRegionRectX*	regionxRect;
+
+
+	//////////
+	// Create the new region
+	//////
+		regionx = iHwndX_createRegion();
+		if (regionx)
+		{
+			// Activate and create the regionArray
+			regionx->isValid = true;
+			iBuilder_createAndInitialize(&regionx->regionArray, -1);
+			if (regionx->regionArray)
+			{
+				// Add in this rectangle
+				regionxRect = (SRegionRectX*)iBuilder_appendData(regionx->regionArray, NULL, sizeof(SRegionRectX));
+				if (regionxRect)
+				{
+					// The op is AND against however big the full region is
+					regionxRect->op = RGN_AND;
+
+					// Set the rectangle
+					CopyRect(&regionxRect->rc, lprect);
+
+					// Indicate success
+					return(_rgn);
+				}
+			}
+		}
+
+
+	//////////
+	// If we get here, failure
+	//////
+		return(0);
 }
 
 
@@ -1778,8 +2106,11 @@ WINUSERAPI SHORT WINAPI GetKeyState(__in int nVirtKey)
 
 WINUSERAPI BOOL WINAPI AdjustWindowRect(__inout LPRECT lpRect, __in DWORD dwStyle, __in BOOL bMenu)
 {
+	//////////
 	// Not currently supported, because we only allow windows that are basically WS_POPUP
 	// windows, which have no border, and allow for no menu
+	//////////
+
 
 	// Indicate success anyway (because there is no adjustment for the window type)
 	return(TRUE);
@@ -1863,8 +2194,7 @@ WINUSERAPI int WINAPI FillRect(__in HDC hDC, __in CONST RECT *lprc, __in HBRUSH 
 			if (brushx)
 			{
 				SetRect(&lrc, 0, 0, hdcx->bmp->bi.biWidth, hdcx->bmp->bi.biHeight);
-				// Note:  We force a clip here so it will use the internal drawing algorithm
-				iBmp_fillRect(hdcx->bmp, &lrc, brushx->color, brushx->color, brushx->color, brushx->color, false, NULL, true);
+				iBmp_fillRect(hdcx->bmp, &lrc, brushx->color, brushx->color, brushx->color, brushx->color, false, NULL, false);
 				return(1);
 			}
 		}
@@ -1881,7 +2211,33 @@ WINUSERAPI int WINAPI FillRect(__in HDC hDC, __in CONST RECT *lprc, __in HBRUSH 
 
 WINUSERAPI int WINAPI FrameRect(__in HDC hDC, __in CONST RECT *lprc,__in HBRUSH hbr)
 {
-	return(0);
+	RECT		lrc;
+	SHdcX*		hdcx;
+	SBrushX*	brushx;
+
+
+	//////////
+	// Fill the rect using our internal algorithms
+	//////
+		// Locate the hdx
+		hdcx = iHwndX_findHdc_byHdc(hDC);
+		if (hdcx)
+		{
+			// Locate the brushx
+			brushx = iHwndX_findBrush_byBrush(hbr);
+			if (brushx)
+			{
+				SetRect(&lrc, 0, 0, hdcx->bmp->bi.biWidth, hdcx->bmp->bi.biHeight);
+				iBmp_frameRect(hdcx->bmp, &lrc, brushx->color, brushx->color, brushx->color, brushx->color, false, NULL, false);
+				return(1);
+			}
+		}
+
+
+	//////////
+	// If we get here, something wasn't valid
+	//////
+		return(0);
 }
 
 

@@ -566,11 +566,23 @@
 	cu32	_BMP__saveAll									= 257;			// Save all icon
 	cu32	_BMP__open										= 258;			// Open icon
 	cu32	_BMP__cross										= 259;			// Cross icon
-	cu32	_BMP__ARRAY_MAX									= 259;			// 259 pixels in the tile/strip
+	cu32	_BMP__app_win									= 260;			// Application icon
+	cu32	_BMP__halt_win									= 261;			// Hand/halt! icon
+	cu32	_BMP__question_mark_win							= 262;			// Question mark icon
+	cu32	_BMP__exclamation_point_win						= 263;			// Exclamation point icon
+	cu32	_BMP__stop_sign_win								= 264;			// Stop sign icon
+	cu32	_BMP__shield_win								= 265;			// Shield icon
+	// Maximum
+	cu32	_BMP__ARRAY_MAX									= 265;			// N icons in the tile/strip
+
+
+	// Constants for the tiled strip layout
 	cu32	_BMP__ARRAY_STRIDE_WIDTH						= 38;			// 38 pixels wide
 	cu32	_BMP__ARRAY_STRIDE_HEIGHT						= 38;			// 38 pixels tall
 	cu32	_BMP__ARRAY_WIDTH								= 36;			// 36 pixels wide
 	cu32	_BMP__ARRAY_HEIGHT								= 36;			// 36 pixels tall
+
+	// Actual bitmaps
 	SBitmap* bmpArrayTiled									= NULL;
 	SBitmap* bmpArray[_BMP__ARRAY_MAX];
 //////

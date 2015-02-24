@@ -253,7 +253,7 @@ struct SRegionX;
 	struct SRegionRectX
 	{
 		RECT		rc;					// Logical rectangle
-		s32			op;					// How is this rectangle applied to the region stack, see _REGION_RECT_OP_* constants
+		s32			op;					// How is this rectangle applied to the region stack, see RGN_* constants
 
 	} __attribute__((packed));
 
@@ -303,6 +303,9 @@ struct SRegionX;
 	SBuilder*		gsHfonts								= NULL;
 	SBuilder*		gsBrushes								= NULL;
 	SBuilder*		gsRegions								= NULL;
+
+	// Holds mouse position relative to the desktop
+	POINT			gnMouseDesktop							= { 0, 0 };
 
 	// "Desktop" window related
 	SHwndX*			gsDesktopWindow							= iHwndX_declareDesktopHwnd();
