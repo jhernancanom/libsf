@@ -169,9 +169,9 @@
 	cs8				cgcFastaFile[]							= "\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\fasta.txt";
 	cs8				cgcAtFile[]								= "\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\at.txt";
 	cs8				cgcCgFile[]								= "\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\cg.txt";
-	cs8				cgcButterflyBlocks7File[]				= "\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\butterfly_blocks7.txt";
-	cs8				cgcButterflyBlocks8aFile[]				= "\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\butterfly_blocks8a.txt";
-	cs8				cgcButterflyBlocks8bFile[]				= "\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\butterfly_blocks8b.txt";
+	cs8				cgcButterflyBlocks7File[]				= "\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\butterfly_blocks7";
+	cs8				cgcButterflyBlocks8aFile[]				= "\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\butterfly_blocks8a";
+	cs8				cgcButterflyBlocks8bFile[]				= "\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\butterfly_blocks8b";
 
 
 //////////
@@ -185,11 +185,11 @@
 	DWORD WINAPI	iSearch_bitspaceAuto_threadScheduler	(void* param);
 	void			iSchedule_n_threads						(SBuilder* threadManager, s32 tnRunningCount);
 	bool			iSearch_butterflyBlocks7				(void);
-	void			iExtract_butterflyBlock7				(SBuilder* bld, SButterflyBlock7* bb7, u32 tnMaxSize);
+	void			iExtract_butterflyBlock7				(SBuilder* bld, SButterflyBlock7* bb7, u32 tnMaxSize, cs8* tcFilename);
 	bool			iSearch_butterflyBlocks8a				(void);
-	void			iExtract_butterflyBlock8a				(SBuilder* bld, SButterflyBlock8a* bb8a, u32 tnMaxSize);
+	void			iExtract_butterflyBlock8a				(SBuilder* bld, SButterflyBlock8a* bb8a, u32 tnMaxSize, cs8* tcFilename);
 	bool			iSearch_butterflyBlocks8b				(void);
-	void			iExtract_butterflyBlock8b				(SBuilder* bld, SButterflyBlock8b* bb8b, u32 tnMaxSize);
+	void			iExtract_butterflyBlock8b				(SBuilder* bld, SButterflyBlock8b* bb8b, u32 tnMaxSize, cs8* tcFilename);
 	s8				iConvert_DNA_toBinary					(s8 ch);
 
 
@@ -589,7 +589,7 @@
 		// Write the output file
 		//////
 			sprintf(filename, "%s%s", cgcBaseDirectory, tcOutputFile);
-			iBuilder_asciiWriteOutFile(matches, (u8*)filename);
+			iBuilder_asciiWriteOutFile(matches, (u8*)filename, false);
 			iBuilder_freeAndRelease(&matches);
 
 
@@ -705,7 +705,7 @@
 		// Write the output file
 		//////
 			sprintf(filename, "%s%s", cgcBaseDirectory, tcOutputFile);
-			iBuilder_asciiWriteOutFile(matches, (u8*)filename);
+			iBuilder_asciiWriteOutFile(matches, (u8*)filename, false);
 			iBuilder_freeAndRelease(&matches);
 
 
@@ -1022,10 +1022,11 @@
 	// Parse through the file 
 	bool iSearch_butterflyBlocks7(void)
 	{
-		s32					lnI;
+		s32					lnI, lnJ;
 		s32					lhFasta, lnFastaSize, lnReadSize;
 		SButterflyBlock7*	bb7;
 		SBuilder*			butterfly_blocks;
+		s8					filename[_MAX_PATH];
 
 
 		//////////
@@ -1076,22 +1077,29 @@
 		// Iterate through butterfly blocks
 		//////
 			iBuilder_createAndInitialize(&butterfly_blocks, _BUTTERFLY_BLOCK_SIZE);
-			for (lnI = 0; lnI < lnFastaSize; lnI += sizeof(SButterflyBlock7))
+			// Iterate through for shifting
+			for (lnI = 0; lnI < sizeof(SButterflyBlock7) - 1; lnI++)
 			{
-				//////////
-				// Set the pointer
-				//////
-					bb7 = (SButterflyBlock7*)(raw_fasta + lnI);
+				// Iterate through the entire file
+				sprintf(filename, "%s_%02d.txt\0", cgcButterflyBlocks7File, lnI);
+				for (lnJ = 0; lnJ < lnFastaSize; lnJ += sizeof(SButterflyBlock7))
+				{
+					//////////
+					// Set the pointer
+					//////
+						bb7 = (SButterflyBlock7*)(raw_fasta + lnJ);
 
 
-				//////////
-				// Extract the instruction, ata, and data
-				//////
-					iExtract_butterflyBlock7(butterfly_blocks, bb7, _BUTTERFLY_BLOCK_SIZE - (2 * sizeof(SButterflyBlock7)));
+					//////////
+					// Extract the instruction, ata, and data
+					//////
+						iExtract_butterflyBlock7(butterfly_blocks, bb7, _BUTTERFLY_BLOCK_SIZE - (2 * sizeof(SButterflyBlock7)), (cs8*)filename);
+				}
+
+				// Write the last portion
+				iBuilder_asciiWriteOutFile(butterfly_blocks, (cu8*)filename, true);
+				butterfly_blocks->populatedLength = 0;
 			}
-
-			// Write the last portion
-			iBuilder_asciiWriteOutFile(butterfly_blocks, (cu8*)cgcButterflyBlocks7File, true);
 
 
 		//////////
@@ -1114,7 +1122,7 @@
 	// Size:  5+1 + 6+1 + 24+2 = 39
 	//
 	//////
-	void iExtract_butterflyBlock7(SBuilder* bld, SButterflyBlock7* bb7, u32 tnMaxSize)
+	void iExtract_butterflyBlock7(SBuilder* bld, SButterflyBlock7* bb7, u32 tnMaxSize, cs8* tcFilename)
 	{
 		s8 line[39];
 
@@ -1185,7 +1193,7 @@
 			if (bld->populatedLength >= tnMaxSize)
 			{
 				// Write out the current contents, appending to the butterfly blocks file
-				iBuilder_asciiWriteOutFile(bld, (cu8*)cgcButterflyBlocks7File, true);
+				iBuilder_asciiWriteOutFile(bld, (cu8*)tcFilename, true);
 
 				// Reset for the next portion
 				bld->populatedLength = 0;
@@ -1202,10 +1210,11 @@
 //////
 	bool iSearch_butterflyBlocks8a(void)
 	{
-		s32					lnI;
+		s32					lnI, lnJ;
 		s32					lhFasta, lnFastaSize, lnReadSize;
 		SButterflyBlock8a*	bb8a;
 		SBuilder*			butterfly_blocks;
+		s8					filename[_MAX_PATH];
 
 
 		//////////
@@ -1256,22 +1265,29 @@
 		// Iterate through butterfly blocks
 		//////
 			iBuilder_createAndInitialize(&butterfly_blocks, _BUTTERFLY_BLOCK_SIZE);
-			for (lnI = 0; lnI < lnFastaSize; lnI += sizeof(SButterflyBlock8a))
+			// Iterate through for shifting
+			for (lnI = 0; lnI < sizeof(SButterflyBlock8a) - 1; lnI++)
 			{
-				//////////
-				// Set the pointer
-				//////
-					bb8a = (SButterflyBlock8a*)(raw_fasta + lnI);
+				// Iterate through the entire file
+				sprintf(filename, "%s_%02d.txt\0", cgcButterflyBlocks8aFile, lnI);
+				for (lnJ = 0; lnJ < lnFastaSize; lnJ += sizeof(SButterflyBlock8a))
+				{
+					//////////
+					// Set the pointer
+					//////
+						bb8a = (SButterflyBlock8a*)(raw_fasta + lnJ);
 
 
-				//////////
-				// Extract the instruction, ata, and data
-				//////
-					iExtract_butterflyBlock8a(butterfly_blocks, bb8a, _BUTTERFLY_BLOCK_SIZE - (2 * sizeof(SButterflyBlock8a)));
+					//////////
+					// Extract the instruction, ata, and data
+					//////
+						iExtract_butterflyBlock8a(butterfly_blocks, bb8a, _BUTTERFLY_BLOCK_SIZE - (2 * sizeof(SButterflyBlock8a)), filename);
+				}
+
+				// Write the last portion
+				iBuilder_asciiWriteOutFile(butterfly_blocks, (cu8*)filename, true);
+				butterfly_blocks->populatedLength = 0;
 			}
-
-			// Write the last portion
-			iBuilder_asciiWriteOutFile(butterfly_blocks, (cu8*)cgcButterflyBlocks8aFile, true);
 
 
 		//////////
@@ -1294,7 +1310,7 @@
 	// Size:  8+1 + 8+1 + 24+2 = 44
 	//
 	//////
-	void iExtract_butterflyBlock8a(SBuilder* bld, SButterflyBlock8a* bb8a, u32 tnMaxSize)
+	void iExtract_butterflyBlock8a(SBuilder* bld, SButterflyBlock8a* bb8a, u32 tnMaxSize, cs8* tcFilename)
 	{
 		s8 line[44];
 
@@ -1370,7 +1386,7 @@
 			if (bld->populatedLength >= tnMaxSize)
 			{
 				// Write out the current contents, appending to the butterfly blocks file
-				iBuilder_asciiWriteOutFile(bld, (cu8*)cgcButterflyBlocks8aFile, true);
+				iBuilder_asciiWriteOutFile(bld, (cu8*)tcFilename, true);
 
 				// Reset for the next portion
 				bld->populatedLength = 0;
@@ -1387,10 +1403,11 @@
 //////
 	bool iSearch_butterflyBlocks8b(void)
 	{
-		s32					lnI;
+		s32					lnI, lnJ;
 		s32					lhFasta, lnFastaSize, lnReadSize;
 		SButterflyBlock8b*	bb8b;
 		SBuilder*			butterfly_blocks;
+		s8					filename[_MAX_PATH];
 
 
 		//////////
@@ -1441,22 +1458,29 @@
 		// Iterate through butterfly blocks
 		//////
 			iBuilder_createAndInitialize(&butterfly_blocks, _BUTTERFLY_BLOCK_SIZE);
-			for (lnI = 0; lnI < lnFastaSize; lnI += sizeof(SButterflyBlock8b))
+			// Iterate through for shifting
+			for (lnI = 0; lnI < sizeof(SButterflyBlock8b) - 1; lnI++)
 			{
-				//////////
-				// Set the pointer
-				//////
-					bb8b = (SButterflyBlock8b*)(raw_fasta + lnI);
+				// Iterate through the entire file
+				sprintf(filename, "%s_%02d.txt\0", cgcButterflyBlocks8bFile, lnI);
+				for (lnJ = 0; lnJ < lnFastaSize; lnJ += sizeof(SButterflyBlock8b))
+				{
+					//////////
+					// Set the pointer
+					//////
+						bb8b = (SButterflyBlock8b*)(raw_fasta + lnJ);
 
 
-				//////////
-				// Extract the instruction, ata, and data
-				//////
-					iExtract_butterflyBlock8b(butterfly_blocks, bb8b, _BUTTERFLY_BLOCK_SIZE - (2 * sizeof(SButterflyBlock8b)));
+					//////////
+					// Extract the instruction, ata, and data
+					//////
+						iExtract_butterflyBlock8b(butterfly_blocks, bb8b, _BUTTERFLY_BLOCK_SIZE - (2 * sizeof(SButterflyBlock8b)), filename);
+				}
+
+				// Write the last portion
+				iBuilder_asciiWriteOutFile(butterfly_blocks, (cu8*)filename, true);
+				butterfly_blocks->populatedLength = 0;
 			}
-
-			// Write the last portion
-			iBuilder_asciiWriteOutFile(butterfly_blocks, (cu8*)cgcButterflyBlocks8bFile, true);
 
 
 		//////////
@@ -1479,7 +1503,7 @@
 	// Size:  8+1 + 8+1 + 24+2 = 44
 	//
 	//////
-	void iExtract_butterflyBlock8b(SBuilder* bld, SButterflyBlock8b* bb8b, u32 tnMaxSize)
+	void iExtract_butterflyBlock8b(SBuilder* bld, SButterflyBlock8b* bb8b, u32 tnMaxSize, cs8* tcFilename)
 	{
 		s8 line[44];
 
@@ -1515,17 +1539,6 @@
 		//////////
 		// Data, cr+lf
 		//////
-	struct SButterflyBlock8b
-	{
-		SRowInstr		top;			// dd dd II dd dd
-		SRowAata		crown;			// dd dd AA dd dd
-		SRowAata		head;			// dd dd AA dd dd
-		SRowInstrAata	arms1;			// II AA II AA II
-		SRowInstrAata	arms2;			// II AA II AA II
-		SRowAata		legs;			// dd dd AA dd dd
-		SRowAata		feet;			// dd dd AA dd dd
-		SRowInstr		bottom;			// dd dd II dd dd
-	};
 			line[18]	= iConvert_DNA_toBinary(bb8b->top.data1);		// dd
 			line[19]	= iConvert_DNA_toBinary(bb8b->top.data2);		// dd
 			line[20]	= iConvert_DNA_toBinary(bb8b->top.data3);		// dd
@@ -1566,7 +1579,7 @@
 			if (bld->populatedLength >= tnMaxSize)
 			{
 				// Write out the current contents, appending to the butterfly blocks file
-				iBuilder_asciiWriteOutFile(bld, (cu8*)cgcButterflyBlocks8bFile, true);
+				iBuilder_asciiWriteOutFile(bld, (cu8*)tcFilename, true);
 
 				// Reset for the next portion
 				bld->populatedLength = 0;
