@@ -172,6 +172,7 @@
 	cs8				cgcButterflyBlocks7File[]				= "\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\butterfly_blocks7";
 	cs8				cgcButterflyBlocks8aFile[]				= "\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\butterfly_blocks8a";
 	cs8				cgcButterflyBlocks8bFile[]				= "\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\butterfly_blocks8b";
+	cs8				cgcButterflyCubeFile[]					= "\\libsf_offline\\source\\unsorted\\dna_project_butterfly\\butterfly\\data\\butterfly_cubes";
 
 
 //////////
@@ -190,6 +191,8 @@
 	void			iExtract_butterflyBlock8a				(SBuilder* bld, SButterflyBlock8a* bb8a, u32 tnMaxSize, cs8* tcFilename);
 	bool			iSearch_butterflyBlocks8b				(void);
 	void			iExtract_butterflyBlock8b				(SBuilder* bld, SButterflyBlock8b* bb8b, u32 tnMaxSize, cs8* tcFilename);
+	bool			iSearch_butterflyCubes8a				(void);
+	void			iExtract_butterflyCubes8a				(SBuilder* bld, SButterflyBlock8a* bb8a, u32 tnMaxSize, cs8* tcFilename);
 	s8				iConvert_DNA_toBinary					(s8 ch);
 
 
@@ -218,6 +221,7 @@
 			else if (_memicmp(argv[1], "butterflyblocks7", 16) == 0)	llShowHelp = !iSearch_butterflyBlocks7();
 			else if (_memicmp(argv[1], "butterflyblocks8a", 17) == 0)	llShowHelp = !iSearch_butterflyBlocks8a();
 			else if (_memicmp(argv[1], "butterflyblocks8b", 17) == 0)	llShowHelp = !iSearch_butterflyBlocks8b();
+			else if (_memicmp(argv[1], "butterflycubes8a", 16) == 0)	llShowHelp = !iSearch_butterflyCubes8a();
 			else														llShowHelp = true;
 
 			// If we should show help...
@@ -1565,6 +1569,180 @@
 			line[41]	= iConvert_DNA_toBinary(bb8b->bottom.data4);	// dd
 			line[42]	= 13;	// cr
 			line[43]	= 10;	// lf
+
+
+		//////////
+		// Append to the butterfly block data
+		//////
+			iBuilder_appendData(bld, (cu8*)&line[0], sizeof(line));
+
+
+		//////////
+		// If we've exceeded our maximum size, write it to disk
+		//////
+			if (bld->populatedLength >= tnMaxSize)
+			{
+				// Write out the current contents, appending to the butterfly blocks file
+				iBuilder_asciiWriteOutFile(bld, (cu8*)tcFilename, true);
+
+				// Reset for the next portion
+				bld->populatedLength = 0;
+			}
+	}
+
+
+
+
+//////////
+//
+// Generates butterfly cube alignment strips in the 8-row-a format
+//
+//////
+	bool iSearch_butterflyCubes8a(void)
+	{
+		u32					lnI, lnJ;
+		s32					lhFasta, lnFastaSize, lnReadSize;
+		SButterflyBlock8a*	bb8a;
+		SBuilder*			butterfly_blocks;
+		s8					filename[_MAX_PATH];
+
+
+		//////////
+		// Open the required files for preload
+		//////
+			lhFasta = _open(cgcFastaFile, _O_RDONLY | _O_BINARY);
+			if (lhFasta == -1)
+			{
+				printf("Error: Unable to open %s\n", cgcFastaFile);
+				return(false);
+			}
+
+
+		//////////
+		// Find out how big the file is
+		//////
+			lnFastaSize = _lseek(lhFasta, 0, SEEK_END);
+			_lseek(lhFasta, 0, SEEK_SET);
+
+
+		//////////
+		// Allocate memory
+		//////
+			// A,T,C,G all combined
+			if (!raw_fasta)
+				raw_fasta	= (s8*)malloc(lnFastaSize);
+
+			if (!raw_fasta)
+			{
+				printf("Error: Unable to allocate %d bytes to load %s\n", lnFastaSize, cgcFastaFile);
+				return(false);
+			}
+
+
+		//////////
+		// Read content
+		//////
+			lnReadSize = _read(lhFasta, raw_fasta, lnFastaSize);
+			if (lnReadSize != lnFastaSize)
+			{
+				printf("Error: Unable to read %d bytes from %s\n", lnFastaSize, cgcFastaFile);
+				return(false);
+			}
+			_close(lhFasta);
+
+
+		//////////
+		// Iterate through butterfly blocks
+		//////
+			iBuilder_createAndInitialize(&butterfly_blocks, _BUTTERFLY_BLOCK_SIZE);
+			// Iterate through for shifting
+			for (lnI = 0; lnI < sizeof(SButterflyBlock8a) - 1; lnI++)
+			{
+				// Iterate through the entire file
+				sprintf(filename, "%s_%02d.txt\0", cgcButterflyCubeFile, lnI);
+				for (lnJ = 0; lnJ <= lnFastaSize - (sizeof(SButterflyBlock8a) * 5); lnJ += (sizeof(SButterflyBlock8a) * 5))
+				{
+					//////////
+					// Set the pointer
+					//////
+						bb8a = (SButterflyBlock8a*)(raw_fasta + lnJ);
+
+
+					//////////
+					// Extract the instruction, ata, and data
+					//////
+						iExtract_butterflyCubes8a(butterfly_blocks, bb8a, _BUTTERFLY_BLOCK_SIZE - (2 * sizeof(SButterflyBlock8a)), filename);
+				}
+
+				// Write the last portion
+				iBuilder_asciiWriteOutFile(butterfly_blocks, (cu8*)filename, true);
+				butterfly_blocks->populatedLength = 0;
+			}
+
+
+		//////////
+		// Indicate success
+		//////
+			return(true);
+	}
+
+
+
+
+	//////////
+	//
+	// The source comes from a 5-deep stacked block8a alignment:
+	//	Layer:	      _________________
+	//		5	     / dd dd II dd dd /|
+	//		4	    / dd dd II dd dd /||
+	//		3	   / dd dd II dd dd /|||
+	//		2	  / dd dd II dd dd /||||
+	//			+----------------+ |||||
+	//		1	| dd dd II dd dd | |||||
+	//			| dd dd AA dd dd | |||||
+	//			| II AA II AA II | |||||
+	//			| II AA II AA II | |||/
+	//			| dd dd AA dd dd | ||/
+	//			| dd dd AA dd dd | |/
+	//			| dd dd AA dd dd | /
+	//			| dd dd II dd dd |
+	//			+----------------+
+	//
+	// Format of the output line is:
+	//		IIIII[space]IIIII[space]IIIII[space]IIIII[space]IIIII[space]IIIII[space]
+	//
+	// This is in the layer order 1..5, in the order shown below in the code block.
+	// Note:  arm1->instr2 and arm2->instr2 are not included in this strip, as I believe these have special meaning (the heart of God)
+	//
+	// Size:  5+1 + 5+1 + 5+1 + 5+1 + 5+1 + 5 + 2 = 37
+	//
+	//////
+	void iExtract_butterflyCubes8a(SBuilder* bld, SButterflyBlock8a* bb8a, u32 tnMaxSize, cs8* tcFilename)
+	{
+		u32		lnI;
+		s8		line[37];
+
+
+		//////////
+		// Build the strips in parallel
+		//////
+			memset(line, 32, sizeof(line));
+			for (lnI = 0; lnI < 5; lnI++)
+			{
+				line[ 0 + lnI] = (bb8a+lnI)->top.instr;			// Top
+				line[ 6 + lnI] = (bb8a+lnI)->arms1.instr1;		// Arms1 left
+				line[12 + lnI] = (bb8a+lnI)->arms1.instr3;		// Arms1 right
+				line[18 + lnI] = (bb8a+lnI)->arms2.instr1;		// Arms2 left
+				line[24 + lnI] = (bb8a+lnI)->arms2.instr3;		// Arms2 right
+				line[30 + lnI] = (bb8a+lnI)->bottom.instr;		// Bottom
+			}
+
+
+		//////////
+		// Append cr+lf
+		//////
+			line[35] = 13;
+			line[36] = 10;
 
 
 		//////////
