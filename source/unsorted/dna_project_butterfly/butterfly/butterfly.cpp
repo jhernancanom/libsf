@@ -1727,14 +1727,14 @@
 		// Build the strips in parallel
 		//////
 			memset(line, 32, sizeof(line));
-			for (lnI = 0; lnI < 5; lnI++)
+			for (lnI = 0; lnI < 5; lnI++, bb8a++)
 			{
-				line[ 0 + lnI] = (bb8a+lnI)->top.instr;			// Top
-				line[ 6 + lnI] = (bb8a+lnI)->arms1.instr1;		// Arms1 left
-				line[12 + lnI] = (bb8a+lnI)->arms1.instr3;		// Arms1 right
-				line[18 + lnI] = (bb8a+lnI)->arms2.instr1;		// Arms2 left
-				line[24 + lnI] = (bb8a+lnI)->arms2.instr3;		// Arms2 right
-				line[30 + lnI] = (bb8a+lnI)->bottom.instr;		// Bottom
+				line[ 0 + lnI] = bb8a->top.instr;			// Top
+				line[ 6 + lnI] = bb8a->arms1.instr1;		// Arms1 left
+				line[12 + lnI] = bb8a->arms1.instr3;		// Arms1 right
+				line[18 + lnI] = bb8a->arms2.instr1;		// Arms2 left
+				line[24 + lnI] = bb8a->arms2.instr3;		// Arms2 right
+				line[30 + lnI] = bb8a->bottom.instr;		// Bottom
 			}
 
 
