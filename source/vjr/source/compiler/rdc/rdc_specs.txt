@@ -86,16 +86,6 @@ RDC Specifications Document
 	double		-- 64-bit floating point
 	alias		-- Alias a token to a longer form for ease of typing (alias rc = hwndx->window->properties->geometry.rc;)
 
-	const,ro	-- Augments a type to indicate it is read-only
-	rw			-- Augments a type to explicitly indicate it is read-write
-	volatile	-- Augments a type to indicate it is to be coded as conveyed
-	hide		-- Augments a type to indicate it should not be visible in SourceLight (typically used for unused / reserved members)
-	unsigned	-- Augments char, short, int, long to make it unsigned
-	static		-- Augments a definition to make it a singleton
-	extern		-- Augments a type to indicate its body is populated elsewhere
-	sizeof		-- Returns the size of a type
-	offsetof	-- Returns the offset of a type
-
 	s8,u8		-- Signed and unsigned 8-bit quantities
 	s16,u16		-- Signed and unsigned 16-bit quantities
 	s32,u32		-- Signed and unsigned 32-bit quantities
@@ -108,11 +98,24 @@ RDC Specifications Document
 	date		-- A date with year, month, day
 	datetime	-- A datetime with year, month, day, hour, minute, second, millisecond
 	thread		-- A thread variable
+	process		-- A process variable
+
+	const,ro	-- Augments a type to indicate it is read-only
+	rw			-- Augments a type to explicitly indicate it is read-write
+	volatile	-- Augments a type to indicate it is to be coded as conveyed
+	hide		-- Augments a type to indicate it should not be visible in SourceLight (typically used for unused / reserved members)
+	unsigned	-- Augments char, short, int, long to make it unsigned
+	static		-- Augments a definition to make it a singleton
+	extern		-- Augments a type to indicate its body is populated elsewhere
+	sizeof		-- Returns the size of a type
+	offsetof	-- Returns the offset of a type
 
 	NULL		-- A constant pointer to 0
 	null		-- A constant integer value of 0
 	true		-- Sets a bool to 0xff
+	yes			-- Sets a bool to 0xff
 	false		-- Sets a bool to 0x00
+	no			-- Sets a bool to 0x00
 
 	and			-- A verbose form of &&
 	or			-- A verbose form of ||
@@ -162,9 +165,11 @@ RDC Specifications Document
 	if			-- A conditional test on true
 	else		-- An else clause on an if or unless
 	elseif		-- An elseif clause on an
-	lif			-- A line conditional test on true which
+	lif			-- A line conditional test on true which executes multiple items on source-code line without braces
+	lelse		-- A line conditional test on false which executes multiple items on source-code line without braces
 	lelseif		-- A line elseif clause on an if or unless
 	fif			-- A full conditional test on true which executes one line, no braces
+	felse		-- An else statement in the fif..felseif..felse form, identical to else
 	felseif		-- A full elseif clause on an if or unless
 	switch		-- A switch statement
 	case		-- A member test of a switch statement

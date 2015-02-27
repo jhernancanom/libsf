@@ -68,6 +68,93 @@
 
 
 //////////
+//
+//	CREATE TABLE somename.dbf
+//		[ALIAS whatever]
+//		[IN [cAlias|nWorkArea]]
+//		[SHARED|EXLCUSIVE]
+//		[CLOSE]
+//		[IGNORESAFETY]
+//		[FROM cAlias|cPathname]
+//		[ATOP cPathname]
+//
+//		ALIAS whatever			-- Allow the created table to have whatever alias you desire at creation
+//		IN cAlias|nWorkArea		-- Allow it to be created at a specific place
+//		SHARED|EXCLUSIVE		-- Allow it to be opened with explicit SHARED or EXCLUSIVE access
+//		CLOSE					-- Allow it to be created, but not opened for use.
+//		IGNORESAFETY			-- Ignore the SET SAFETY setting, and always create the table
+//		FROM cAlias|cPathname	-- Allow the structure definition to come from another alias, or pathname
+//		ATOP cPathname			-- Creates a logical table that does not exist as a .DBF on disk, but rather operates atop the SDF data on disk as though it were a DBF, allowing for all normal disk operations without having to bring it in to the DBF, then writing it back out. Useful for parsing text files, or old style Hollerith-format data files with control and data portions in the same file, because multiple tables can be used which sit ATOP the same data set (same cPathname on disk), allowing multi-access to a single data source.
+//
+//////
+//
+// New commands:
+//			REDIMENSION laArray[x,y,z]		-- Resizes array and keeps [2,2] data in those positions when resizing to [3,3] for example, can also be used as DIMENSION laArray[x,y,z] RESIZE
+//			ON ANYDIALOG ...				-- Whenever any dialog window is about to be displayed to the user, it allows for interception, redirection, automation, recording of system commands, etc.
+//			ON ANYDIALOGRESPONSE ...		-- Whenever a user chooses an option on a dialog, this is called
+//			ON WARNING ...
+//
+//////
+//
+// New functions:
+//			ABOVE			(xVal, xTest)
+//			BELOW			(xVal, xTest)
+//			OUTSIDE			(xVal, xMin, xMax)
+//			FOUNDIN			(cHaystack, cNeedle1, cNeedle2, cNeedle3...)[.ignorecase]
+//			ALINESTOSTR		(laArray)
+//			ALINESTOFILE	(laArray, lcPathname)
+//
+//		BROWSE FOR ABOVE(nValue, nAmount)
+//		Equivalent:		BROWSE FOR nValue >= nAmount
+//
+//		BROWSE FOR BELOW(nValue, nAmount)
+//		Equivalent:		BROWSE FOR nValue <= nAmount
+//
+//		BROWSE FOR OUTSIDE(nVal, 10, 100)
+//		Equivalent:		BROWSE FOR nValue < 10 AND nValue > 100
+//		Equivalent:		BROWSE FOR NOT BETWEEN(nValue, 10, 100)
+//
+//		BROWSE FOR FOUNDIN(cName, "Fred", "Ethyl").ignorecase
+//		Equivalent:		BROWSE FOR LOWER("Fred") $ LOWER(cName) OR LOWER("Ethyl") $ LOWER(cName)
+//
+//		BROWSE FOR FOUNDIN(cName, "Fred", "Ethyl").and.ignorecase
+//		Equivalent:		BROWSE FOR LOWER("Fred") $ LOWER(cName) AND LOWER("Ethyl") $ LOWER(cName)
+//
+//////
+//
+// "Vector" functions:
+//			VABOVE		(xMax, xTest1, xTest2, xTest3...)[.and][.ignorecase]
+//			VBELOW		(xMin, xTest1, xTest2, xTest3...)[.and][.ignorecase]
+//			VBETWEEN	(xMin, xMax, xTest1, xTest2, xTest3...)[.and][.ignorecase]
+//			VOUTSIDE	(xMin, xMax, xTest1, xTest2, xTest3...)[.and][.ignorecase]
+//			VFOUNDIN	(cNeedle, cHaystack1, cHaystack2, cHaystack3...)[.and][.ignorecase]
+//
+//		BROWSE FOR VABOVE(1000, nVal1, nVal2, nVal3)
+//		Equivalent:		BROWSE FOR nVal1 >= 1000 OR nVal2 >= 1000 OR nVal3 >= 1000
+//
+//		BROWSE FOR VABOVE(1000, nVal1, nVal2, nVal3).and
+//		Equivalent:		BROWSE FOR nVal1 >= 1000 AND nVal2 >= 1000 AND nVal3 >= 1000
+//	
+//		BROWSE FOR VBELOW(50, nVal1, nVal2, nVal3)
+//		Equivalent:		BROWSE FOR nVal1 <= 50 OR nVal2 <= 50 OR nVal3 <= 50
+//	
+//		BROWSE FOR VBETWEEN(50, 1000, nVal1, nVal2, nVal3)
+//		Equivalent:		BROWSE FOR BETWEEN(nVal1, 50, 1000) OR BETWEEN(nVal2, 50, 1000) OR BETWEEN(nVal3, 50, 1000)
+//	
+//		BROWSE FOR VOUTSIDE(50, 1000, nVal1, nVal2, nVal3)
+//		Equivalent:		BROWSE FOR NOT BETWEEN(nVal1, 50, 1000) OR NOT BETWEEN(nVal2, 50, 1000) OR NOT BETWEEN(nVal3, 50, 1000)
+//	
+//		BROWSE FOR VFOUNDIN(cNeedle, cHay1, cHay2, cHay3).ignorecase
+//		Equivalent:		BROWSE FOR LOWER(cNeedle) $ LOWER(cHay1) OR LOWER(cNeedle) $ LOWER(cHay2) OR LOWER(cNeedle) $ LOWER(cHay3)...
+//	
+//		BROWSE FOR VFOUNDIN(cNeedle, cHay1, cHay2, cHay3).and.ignorecase
+//		Equivalent:		BROWSE FOR LOWER(cNeedle) $ LOWER(cHay1) AND LOWER(cNeedle) $ LOWER(cHay2) AND LOWER(cNeedle) $ LOWER(cHay3)...
+//	
+//////////
+
+
+
+//////////
 // Syntax highlight colors for VXB
 //////
 	SBgra			colorSynHi_dotVariable				= { rgba(0, 128, 192, 255) };			// Cyanish
