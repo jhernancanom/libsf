@@ -80,6 +80,15 @@
 
 
 **********
+* Paths
+*****
+	SET CLASSLIB TO .\forms\primeharmonics.vcx		ADDITIVE
+	SET CLASSLIB TO .\forms\realtime.vcx			ADDITIVE
+	SET PATH TO .\forms\							ADDITIVE
+	SET PATH TO .\progs\							ADDITIVE
+
+
+**********
 * Display the main form
 ******
 	_vfp.Visible = .f.
