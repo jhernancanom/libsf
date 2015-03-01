@@ -424,7 +424,9 @@
 
 						} else {
 							// Failure on resize -- should not happen
+#ifdef debug_break
 							debug_break;
+#endif
 						}
 				}
 		}
@@ -700,7 +702,9 @@
 
 
 // TODO:  untested, breakpoint and examine
+#ifdef debug_break
 		debug_break;
+#endif
 		//////////
 		// Make sure our environment is sane
 		//////
