@@ -1,16 +1,16 @@
 //////////
 //
-// /libsf/source/vjr/source/datum/datum.h
+// /libsf/source/vjr/source/test/test.cpp
 //
 //////
-// Version 0.54
-// Copyright (c) 2014 by Rick C. Hodgin
+// Version 0.55
+// Copyright (c) 2015 by Rick C. Hodgin
 //////
 // Last update:
-//     Nov.27.2014
+//     Mar.03.2015
 //////
 // Change log:
-//     Nov.27.2014 - Initial creation
+//     Mar.03.2015 - Initial creation
 //////
 //
 // This document is released as Liberty Software under a Repeat License, as governed
@@ -64,53 +64,30 @@
 //
 //
 
-// #pragma once
-#ifndef __DATUM_H__
-#define __DATUM_H__
 
 
-struct SBgra;
-struct SBgr;
 
-
-	struct SDatum
+//////////
+//
+// Added to allow a simple place to execute various tests.
+//
+//////
+	void iTest_execute(void)
 	{
-		union {
-			s8*			data;												// Content
-			s8*			data_s8;											// To access the data as s8
-			u8*			data_u8;											// To access the data as u8
-			u64*		data_u64;											// To access the data as u64
-			s64*		data_s64;											// To access the data as s64
-			u32*		data_u32;											// To access the data as u32
-			s32*		data_s32;											// To access the data as s32
-			u16*		data_u16;											// To access the data as u16
-			s16*		data_s16;											// To access the data as s16
-			f32*		data_f32;											// To access the data as f32
-			f64*		data_f64;											// To access the data as f64
-			cs8*		data_cs8;											// To access the data as cs8
-			cu8*		data_cu8;											// To access the data as cu8
-			SBgra*		data_bgra;											// to access the data as SBgra
-			SBgr*		data_bgr;											// to access the data as SBgr
-		};
-		s32				length;												// Content length
-	};
+		uptr lnHandle;
 
 
-	void					iDatum_allocateSpace					(SDatum* datum,            s32 dataLength);
-	SDatum*					iDatum_allocate							(               cu8* data, s32 dataLength);
-	SDatum*					iDatum_allocate							(                u8* data, s32 dataLength);
-	void					iDatum_duplicate						(SDatum* datum,  u8* data, s32 dataLength);
-	void					iDatum_duplicate						(SDatum* datum,  s8* data, s32 dataLength);
-	void					iDatum_duplicate						(SDatum* datum, cu8* data, s32 dataLength);
-	void					iDatum_duplicate						(SDatum* datum, cs8* data, s32 dataLength);
-	void					iDatum_duplicate						(SDatum* datumDst, SDatum* datumSrc);
-	bool					iDatum_resize							(SDatum* datum, s32 newDataLength);
-	s32						iDatum_compare							(SDatum* datumLeft, SDatum* datumRight);
-	s32						iDatum_compare							(SDatum* datumLeft, s8*  data, s32 dataLength);
-	s32						iDatum_compare							(SDatum* datumLeft, cs8* data, s32 dataLength);
-	s32						iDatum_compare							(SDatum* datumLeft, u8*  data, s32 dataLength);
-	s32						iDatum_compare							(SDatum* datumLeft, cu8* data, s32 dataLength);
-	void					iDatum_delete							(SDatum* datum, bool tlDeleteSelf);
-	void					iiDatum_delete							(SDatum* datum);
+		//////////
+		// Open the test table
+		//////
+			lnHandle = iDbf_open("c:\\libsf_offline\\source\\vjr\\test\\cdx\\test.dbf", "test", true, false);
+			if (lnHandle > _UPTR_ERROR)
+			{
+				// An error occurred
+				debug_break;
+			}
 
-#endif
+
+		//////////
+		// 
+	}

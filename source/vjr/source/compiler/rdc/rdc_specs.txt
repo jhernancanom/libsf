@@ -147,6 +147,7 @@ RDC Specifications Document
 
 	adhoc		-- Declares an adhoc
 	function	-- Declares a function
+	port		-- Declares an initial launch port within a function
 	purpose		-- Declares a purpose within a function
 	params		-- Declares input parameters
 	returns		-- Declares return values
@@ -186,7 +187,7 @@ RDC Specifications Document
 	engage		-- Launches another process
 	unengage	-- Explicitly ends a running process launched with engage
 
-	default		-- In a switch statement, specifies the unspecified operation
+	default		-- In a port or switch statement, specifies the unspecified operation
 	break		-- Breaks the current loop
 	breakto		-- Breaks to the indicated level
 	continue	-- Continues to the current level
@@ -377,6 +378,23 @@ RDC Specifications Document
 				case constant_test2:
 					break;
 				case constant..range:
+					break;
+				default:
+					// If nothing above matched, flows here
+					break;
+			}
+		
+		// A switch with multiple constant tests
+		switch (variable1, variable2[, ...]) {
+				case constant_test1_1, constant_test1_2:
+					break;
+				case constant_test2_1, constant_test2_2:
+					break;
+				case constant1..range, constant2_test3:
+					break;
+				case constant_test3, constant2..range:
+					break;
+				case constant1..range, constant2..range:
 					break;
 				default:
 					// If nothing above matched, flows here
@@ -754,8 +772,100 @@ RDC Specifications Document
 	single generated output file can be run on any machine that is for the targeted
 	architecture, and has a wrapper to support it.
 
-14.0 - Function Purpose
------------------------
+14.0 - Function Ports
+---------------------
+
+	RDC allows for known-at-compile-time parameter branching into specific
+	destinations within the function block so that runtime testing is not
+	required.  It is used like a switch statement, and must appear as the
+	top-most non-declaratory item in the function's source code.  By default,
+	when a port is used, any item that is not known at compile time will
+	automatically be directed to the default: code.
+	
+		function name
+		| returns CAbc* abc
+		| params int type, datum* data
+		{
+			port (type)
+			{
+				case _CHARACTER:
+					// Automatically entered if type = _CHARACTER
+					break;
+					
+				case _INTEGER:
+					// Automatically entered if type = _INTEGER
+					break;
+				
+				default:
+					// Automatically entered if type is not _CHARACTER or _INTEGER
+					break;
+			}
+		}
+	
+	To assist in automatically processing unknown parameters without the need of
+	additional source code, RDC will also allow the "port switch" syntax, which will
+	act as both a port and a switch based on whether the value is known or unknown
+	at compile time.  In such a case, the port code will automatically be entered
+	into if the parameter value is known at compile time, and it will automatically
+	enter the switch logic if it is not known at compile time.
+	
+		function name
+		| returns CAbc* abc
+		| params int type, datum* data
+		{
+			port switch (type)
+			{
+				case _CHARACTER:
+					// Automatically entered if type = _CHARACTER
+					break;
+					
+				case _INTEGER:
+					// Automatically entered if type = _INTEGER
+					break;
+				
+				default:
+					// Automatically entered if type is not _CHARACTER or _INTEGER
+					break;
+			}
+		}
+	
+	To test more than one parameter for port entry, use commas:
+	
+		function name
+		| returns CAbc* abc
+		| params int type, int subtype, datum* data
+		{
+			port switch (type, subtype)
+			{
+				case _CHARACTER, _SIGNED:
+					// Automatically entered if type = _CHARACTER and subtype = _SIGNED
+					break;
+					
+				case _CHARACTER, _UNSIGNED:
+					// Automatically entered if type = _CHARACTER and subtype = _SIGNED
+					break;
+					
+				case _INTEGER, _S32:
+					// Automatically entered if type = _INTEGER and subtype = _S32
+					break;
+					
+				case _INTEGER, _S64:
+					// Automatically entered if type = _INTEGER and subtype = _S64
+					break;
+				
+				default:
+					// Automatically entered if any of the four combinations above
+					// are not satisfied.
+					break;
+			}
+		}
+	
+	The port functionality will allow speedups on various multi-purpose functions
+	which receive constants as passed parameters, and must examine those parameters
+	to determine what to do within.
+
+14.1 - Function Purposes
+------------------------
 
 	RDC employs groupings within a single function which allow for self-documenting
 	code and multi-targeted operations all under the same "function umbrella."
@@ -799,6 +909,9 @@ RDC Specifications Document
 	
 	To access this function, you would use "labc = name(lms, color);" for the main purpose,
 	and for the help purpose it could be accessed as "printf("%s\n", name().help());".
+	
+	Each purpose can also have its own destination ports within, and these are honored
+	when the parameter is known as advance (as per enums and constants).
 	
 	The purpose of the "purpose" ability in functions is to allow a single function to more
 	fully encapsulate the various qualities that would typically be required for related
@@ -844,7 +957,8 @@ RDC Specifications Document
 		lcNumber = convert().toChar(20);
 		lnValue  = convert().toInt("123");
 	
-	Were these to be added to a class or struct, then it would have the following syntax:
+	Were these to be added to a class or struct as member functions, then it
+	would have the following syntax:
 	
 		CSample sample = new CSample();
 

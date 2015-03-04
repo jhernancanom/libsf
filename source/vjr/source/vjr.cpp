@@ -147,6 +147,9 @@
 		systemStartedTickCount	= GetTickCount();
 		systemStartedMs			= iTime_getLocalMs();
 
+		// Initialize basic data engine
+		iDbf_startup(true);
+
 		// Default value for spinners
 		gsProps_master[_INDEX_INCREMENT - 1]._f64	= 1.0;		// Default to 1.0 for incrementing
 		gsProps_master[_INDEX_ROUND_TO  - 1]._f64	= 0.01;		// Default to 2 decimal places
@@ -417,4 +420,7 @@
 
 // 		// Create a thread to display the content in 3D
 // 		CreateThread(0, 0, &iGrace, 0, 0, 0);
+
+		// Execute any test code
+		iTest_execute();
 	}

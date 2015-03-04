@@ -477,7 +477,7 @@
 	// Note:  Data is pulled from the data loaded into dbf_set_field_data() with negative field
 	//        numbers.  It automatically constructs the appropriate key on the fly.
 	//////
-	u32 cdx_find_key(u32 tnDbfHandle, s32 tnTagIndex, u32 tnKeyLength)
+	u32 cdx_find_key(u32 tnWorkArea, s32 tnTagIndex, u32 tnKeyLength)
 	{
 		u32				lnResult, lnKeyOpCount;
 		SForClause*		lsFor;
@@ -491,16 +491,16 @@
 		//////////
 		// Validate that our environment is sane
 		//////
-			if (tnDbfHandle >= _MAX_DBF_SLOTS)
+			if (tnWorkArea >= _MAX_DBF_SLOTS)
 				return(-1);		// Invalid slot number
-			if (gsWorkArea[tnDbfHandle].isUsed != _YES)
+			if (gsWorkArea[tnWorkArea].isUsed != _YES)
 				return(-1);		// Invalid slot
 
 
 		//////////
 		// Establish our pointer
 		//////
-			wa = &gsWorkArea[tnDbfHandle];
+			wa = &gsWorkArea[tnWorkArea];
 
 
 		//////////
@@ -543,7 +543,7 @@
 // Called to SKIP N records forward or backward from the current location in the CDX.
 //
 //////
-	u32 cdx_skip_n(u32 tnDbfHandle, s32 tnTagIndex, s32 tnDelta)
+	u32 cdx_skip_n(u32 tnWorkArea, s32 tnTagIndex, s32 tnDelta)
 	{
 		return(0);
 	}
@@ -556,7 +556,7 @@
 // Called to go to the first record in the CDX.
 //
 //////
-	u32 cdx_top(u32 tnDbfHandle, s32 tnTagIndex)
+	u32 cdx_top(u32 tnWorkArea, s32 tnTagIndex)
 	{
 		return(0);
 	}
@@ -569,7 +569,7 @@
 // Called to go to the last record in the CDX.
 //
 //////
-	u32 cdx_bottom(u32 tnDbfHandle, s32 tnTagIndex)
+	u32 cdx_bottom(u32 tnWorkArea, s32 tnTagIndex)
 	{
 		return(0);
 	}
@@ -588,7 +588,7 @@
 //		others			- index is good
 //
 /////
-	u32 cdx_validate_tag(u32 tnDbfHandle,		s32 tnTagIndex,
+	u32 cdx_validate_tag(	u32 tnWorkArea,		s32 tnTagIndex,
 							s8* tcMetaData,		u32 tnMetaDataLength,
 							s8* tcErrorsFound,	u32 tnErrorsFoundLength)
 	{
@@ -598,16 +598,16 @@
 		//////////
 		// Validate that our environment is sane
 		//////
-			if (tnDbfHandle >= _MAX_DBF_SLOTS)
+			if (tnWorkArea >= _MAX_DBF_SLOTS)
 				return(-1);		// Invalid slot number
-			if (gsWorkArea[tnDbfHandle].isUsed != _YES)
+			if (gsWorkArea[tnWorkArea].isUsed != _YES)
 				return(-1);		// Invalid slot
 
 
 		//////////
 		// If an index is already open, close it
 		//////
-			wa = &gsWorkArea[tnDbfHandle];
+			wa = &gsWorkArea[tnWorkArea];
 			if (wa->isCdx)		return(iCdx_validateCdx(wa, tnTagIndex, tcMetaData, tnMetaDataLength, tcErrorsFound, tnErrorsFoundLength));
 			else				return(iCdx_validateIdx(wa,             tcMetaData, tnMetaDataLength, tcErrorsFound, tnErrorsFoundLength));
 	}
@@ -626,9 +626,9 @@
 //		others			- index is good
 //
 /////
-	u32 cdx_validate_keys(u32 tnDbfHandle,			s32 tnTagIndex,
-									s8* tcMetaData,			u32 tnMetaDataLength,
-									s8* tcErrorsFound,		u32 tnErrorsFoundLength)
+	u32 cdx_validate_keys(	u32 tnWorkArea,			s32 tnTagIndex,
+							s8* tcMetaData,			u32 tnMetaDataLength,
+							s8* tcErrorsFound,		u32 tnErrorsFoundLength)
 	{
 		SWorkArea* wa;
 
@@ -636,18 +636,18 @@
 		//////////
 		// Validate that our environment is sane
 		//////
-			if (tnDbfHandle >= _MAX_DBF_SLOTS)
+			if (tnWorkArea >= _MAX_DBF_SLOTS)
 				return(-1);		// Invalid slot number
-			if (gsWorkArea[tnDbfHandle].isUsed != _YES)
+			if (gsWorkArea[tnWorkArea].isUsed != _YES)
 				return(-1);		// Invalid slot
 
 
 		//////////
 		// If an index is already open, close it
 		//////
-			wa = &gsWorkArea[tnDbfHandle];
-			if (wa->isCdx)		return(iCdx_validateCdxKeys(wa, tnDbfHandle, tnTagIndex, tcMetaData, tnMetaDataLength, tcErrorsFound, tnErrorsFoundLength));
-			else				return(iCdx_validateIdxKeys(wa,                          tcMetaData, tnMetaDataLength, tcErrorsFound, tnErrorsFoundLength));
+			wa = &gsWorkArea[tnWorkArea];
+			if (wa->isCdx)		return(iCdx_validateCdxKeys(wa, tnWorkArea, tnTagIndex, tcMetaData, tnMetaDataLength, tcErrorsFound, tnErrorsFoundLength));
+			else				return(iCdx_validateIdxKeys(wa,                         tcMetaData, tnMetaDataLength, tcErrorsFound, tnErrorsFoundLength));
 	}
 
 
@@ -665,7 +665,7 @@
 // tcDecodeExpression	- The VFP code to use to decode the index
 //
 /////
-	u32 cdx_get_all_keys(u32 tnDbfHandle,				s32 tnTagIndex,
+	u32 cdx_get_all_keys(	u32 tnWorkArea,				s32 tnTagIndex,
 							u8* tcKeySpace,				u32 tnKeySpaceLength,
 							u8* tcDecodeExpression,		u32 tnDecodeExpressionLength,
 							s8* tcKeyLength4)
@@ -676,16 +676,16 @@
 		//////////
 		// Validate that our environment is sane
 		//////
-			if (tnDbfHandle >= _MAX_DBF_SLOTS)
+			if (tnWorkArea >= _MAX_DBF_SLOTS)
 				return(-1);		// Invalid slot number
-			if (gsWorkArea[tnDbfHandle].isUsed != _YES)
+			if (gsWorkArea[tnWorkArea].isUsed != _YES)
 				return(-1);		// Invalid slot
 
 
 		//////////
 		// If an index is already open, close it
 		//////
-			wa = &gsWorkArea[tnDbfHandle];
+			wa = &gsWorkArea[tnWorkArea];
 			if (wa->isCdx)		return(iCdx_getAllKeysCdx(wa, tnTagIndex, tcKeySpace, tnKeySpaceLength, tcDecodeExpression, tnDecodeExpressionLength, tcKeyLength4));
 			else				return(iCdx_getAllKeysIdx(wa,             tcKeySpace, tnKeySpaceLength, tcDecodeExpression, tnDecodeExpressionLength, tcKeyLength4));
 	}
@@ -926,11 +926,11 @@
 			}
 
 
-		//////////
-		// For debugging:
-		//////
-			iBuilder_asciiWriteOutFile(data, (u8*)"c:\\temp\\test\\idx_info_standard.txt", false);
-			iBuilder_freeAndRelease(&data);
+// 		//////////
+// 		// For debugging:
+// 		//////
+// 			iBuilder_asciiWriteOutFile(data, (u8*)"c:\\temp\\test\\idx_info_standard.txt", false);
+// 			iBuilder_freeAndRelease(&data);
 
 
 		//////////
@@ -1148,7 +1148,7 @@ we_are_done:
 // on single field keys, or simple concatenated string keys (a+b+c).
 //
 //////
-	s32 iCdx_validateCdxKeys(SWorkArea* wa, u32 tnDbfHandle, s32 tnTagIndex, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength)
+	s32 iCdx_validateCdxKeys(SWorkArea* wa, u32 tnWorkArea, s32 tnTagIndex, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength)
 	{
 		u32				lnRecno, lnDbfRecno, lnCdxRecno;
 		s32				lnI, lnKey, lnCdxKeyCount, lnDbfKeyCount, lnKeyOpCount;

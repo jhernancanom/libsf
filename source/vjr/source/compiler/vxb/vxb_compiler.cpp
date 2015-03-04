@@ -4933,7 +4933,17 @@ debug_break;
 		return(var);
 	}
 
+	SVariable* iVariable_createAndPopulate(s32 tnVarType, s8* tcData, u32 tnDataLength)
+	{
+		return(iVariable_createAndPopulate(tnVarType, (u8*)tcData, tnDataLength));
+	}
+
 	SVariable* iVariable_createAndPopulate(s32 tnVarType, cu8* tcData, u32 tnDataLength)
+	{
+		return(iVariable_createAndPopulate(tnVarType, (u8*)tcData, tnDataLength));
+	}
+
+	SVariable* iVariable_createAndPopulate(s32 tnVarType, cs8* tcData, u32 tnDataLength)
 	{
 		return(iVariable_createAndPopulate(tnVarType, (u8*)tcData, tnDataLength));
 	}

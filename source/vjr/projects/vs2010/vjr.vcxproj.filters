@@ -145,6 +145,9 @@
     <ClCompile Include="..\..\..\..\utils\common\cpp\builder.cpp">
       <Filter>builder</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\test\test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\utils\common\cpp\common_types.h">

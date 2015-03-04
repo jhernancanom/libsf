@@ -130,7 +130,7 @@ struct SFieldRecord2;
 //
 /////
 	// Startup and shutdown
-	void 				iDbf_startup									(void);
+	void 				iDbf_startup									(bool tlFirstRun);
 	void 				iDbf_shutdown									(void);
 
 

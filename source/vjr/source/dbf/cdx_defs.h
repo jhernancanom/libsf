@@ -84,20 +84,20 @@
 																			s8* tcCompound1,
 																			s8* tcOrder1);
 
-	u32					cdx_find_key									(u32 tntnWorkArea, s32 tnTagIndex, u32 tnKeyLength);
-	u32					cdx_skip_n										(u32 tntnWorkArea, s32 tnTagIndex, s32 tnDelta);
-	u32					cdx_top											(u32 tntnWorkArea, s32 tnTagIndex);
-	u32					cdx_bottom										(u32 tntnWorkArea, s32 tnTagIndex);
+	u32					cdx_find_key									(u32 tnWorkArea, s32 tnTagIndex, u32 tnKeyLength);
+	u32					cdx_skip_n										(u32 tnWorkArea, s32 tnTagIndex, s32 tnDelta);
+	u32					cdx_top											(u32 tnWorkArea, s32 tnTagIndex);
+	u32					cdx_bottom										(u32 tnWorkArea, s32 tnTagIndex);
 
-	u32					cdx_validate_tag								(u32 tntnWorkArea,		s32 tnTagIndex,
+	u32					cdx_validate_tag								(u32 tnWorkArea,		s32 tnTagIndex,
 																			s8* tcMetaData,		u32 tnMetaDataLength,
 																			s8* tcErrorsFound,	u32 tnErrorsFoundLength);
 
-	u32					cdx_validate_keys								(u32 tntnWorkArea,			s32 tnTagIndex,
+	u32					cdx_validate_keys								(u32 tnWorkArea,			s32 tnTagIndex,
 																			s8* tcMetaData,			u32 tnMetaDataLength,
 																			s8* tcErrorsFound,		u32 tnErrorsFoundLength);
 
-	u32					cdx_get_all_keys								(u32 tnDbfHandle,				s32 tnTagIndex,
+	u32					cdx_get_all_keys								(u32 tnWorkArea,				s32 tnTagIndex,
 																			u8* tcKeySpace,				u32 tnKeySpaceLength,
 																			u8* tcDecodeExpression,		u32 tnDecodeExpressionLength,
 																			s8* tcKeyLength4);
@@ -106,7 +106,7 @@
 	bool				iCdx_validateIdx_compact						(SWorkArea* wa, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
 	bool				iCdx_validateIdx_standard						(SWorkArea* wa, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
 	s32					iCdx_validateCdx								(SWorkArea* wa, s32 tnTagIndex, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
-	s32					iCdx_validateCdxKeys							(SWorkArea* wa, u32 tntnWorkArea, s32 tnTagIndex, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
+	s32					iCdx_validateCdxKeys							(SWorkArea* wa, u32 tnWorkArea, s32 tnTagIndex, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
 	int					iKeys_sortDescending							(const void* l, const void* r);
 	int					iKeys_sortAscending								(const void* l, const void* r);
 	s32					iCdx_validateIdxKeys							(SWorkArea* wa,                                  s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);

@@ -163,7 +163,17 @@
 		}
 	}
 
+	void iDatum_duplicate(SDatum* datum, s8* data, s32 dataLength)
+	{
+		iDatum_duplicate(datum, (u8*)data, dataLength);
+	}
+
 	void iDatum_duplicate(SDatum* datum, cu8* data, s32 dataLength)
+	{
+		iDatum_duplicate(datum, (u8*)data, dataLength);
+	}
+
+	void iDatum_duplicate(SDatum* datum, cs8* data, s32 dataLength)
 	{
 		iDatum_duplicate(datum, (u8*)data, dataLength);
 	}

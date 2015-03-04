@@ -99,6 +99,10 @@
 #define cf32 const f32
 #define cf64 const f64
 
+#ifndef _UPTR_ERROR
+	#define _UPTR_ERROR -1
+#endif
+
 #ifndef null0
 	// For a null that is not considered a pointer
 	#define null0 0

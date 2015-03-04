@@ -305,3 +305,10 @@
 #else
 	#error Unknown target for compilation (must be Windows or Linux)
 #endif
+
+
+//////////
+// Added for test purposes
+//////
+	void iTest_execute(void);
+	#include "test/test.cpp"

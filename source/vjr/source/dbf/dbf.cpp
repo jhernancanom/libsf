@@ -72,7 +72,7 @@
 // Called to initialize DBF.
 //
 /////
-	void iDbf_startup(void)
+	void iDbf_startup(bool tlFirstRun)
 	{
 		u32 lnI;
 
@@ -81,7 +81,8 @@
 		GetTempPath(sizeof(gcDbf_temporaryPath), (s8*)&gcDbf_temporaryPath);
 
 		// Shut down anything that's currently open or used
-		iDbf_shutdown();
+		if (!tlFirstRun)
+			iDbf_shutdown();
 
 		// Initialize all of the DBF entries (this also means close any that are already open)
 		memset((s8*)&gsWorkArea, -1, sizeof(gsWorkArea));
