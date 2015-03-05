@@ -6,6 +6,7 @@
     t_Name -- Parameter
     r_Name -- Return value
     s_Name -- Scoped
+    z_Name -- Sticky
 
 
 **********
@@ -24,7 +25,7 @@
     _m  -- Logicalx
     _d  -- Date
     _t  -- Datetime
-    _v  -- Datetimex
+    _s  -- Datetimex
     _z  -- GUID8 or GUID16, typically ended as zName8 or zName16
        
     _q  -- Signed 32-bit or 64-bit (s32 or s64), use Nn at the end to indicate the size (if it's important)
@@ -32,4 +33,4 @@
        
     _a  -- Array, each element can be its own type
     _u  -- Unicode (only supported in VXB++)
-    _x  -- Varies
+    _x  -- Varies, can change, multiple types are allowed, etc.

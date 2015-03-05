@@ -55,6 +55,9 @@
     <Filter Include="builder">
       <UniqueIdentifier>{9398fc02-b9b0-4b3a-bb37-f9b9c346186d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="compiler\sourcelight">
+      <UniqueIdentifier>{c29e1094-51b9-450a-9fe6-edff8902f2ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="small.ico">
@@ -272,6 +275,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\utils\common\cpp\builder.h">
       <Filter>builder</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\compiler\sourcelight\sourcelight_globals.h">
+      <Filter>compiler\sourcelight</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

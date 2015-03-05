@@ -331,6 +331,7 @@ copy $(OutputPath)$(ProjectName).exe \libsf_offline\source\vjr\bin\64-bit\vjr_ms
     <ClInclude Include="..\..\source\compiler\rdc\rdc_defs.h" />
     <ClInclude Include="..\..\source\compiler\rdc\rdc_globals.h" />
     <ClInclude Include="..\..\source\compiler\rdc\rdc_structs.h" />
+    <ClInclude Include="..\..\source\compiler\sourcelight\sourcelight_globals.h" />
     <ClInclude Include="..\..\source\compiler\vxb\vxb_const.h" />
     <ClInclude Include="..\..\source\compiler\vxb\vxb_defs.h" />
     <ClInclude Include="..\..\source\compiler\vxb\vxb_dictionary.h" />

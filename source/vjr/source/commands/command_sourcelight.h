@@ -97,98 +97,104 @@
 	const u32	_SOURCELIGHT_P30							= 30;
 
 //////////*****[ GENERATED FILE ]*****
-	const u32	_SOURCELIGHT_P1_OPTIONAL					= 31;
-	const u32	_SOURCELIGHT_P2_OPTIONAL					= 32;
-	const u32	_SOURCELIGHT_P3_OPTIONAL					= 33;
-	const u32	_SOURCELIGHT_P4_OPTIONAL					= 34;
-	const u32	_SOURCELIGHT_P5_OPTIONAL					= 30;
-	const u32	_SOURCELIGHT_P6_OPTIONAL					= 36;
-	const u32	_SOURCELIGHT_P7_OPTIONAL					= 37;
-	const u32	_SOURCELIGHT_P8_OPTIONAL					= 38;
-	const u32	_SOURCELIGHT_P9_OPTIONAL					= 39;
-	const u32	_SOURCELIGHT_P10_OPTIONAL					= 40;
-	const u32	_SOURCELIGHT_P11_OPTIONAL					= 41;
-	const u32	_SOURCELIGHT_P12_OPTIONAL					= 42;
-	const u32	_SOURCELIGHT_P13_OPTIONAL					= 43;
-	const u32	_SOURCELIGHT_P14_OPTIONAL					= 44;
-	const u32	_SOURCELIGHT_P15_OPTIONAL					= 45;
-	const u32	_SOURCELIGHT_P16_OPTIONAL					= 46;
-	const u32	_SOURCELIGHT_P17_OPTIONAL					= 47;
-	const u32	_SOURCELIGHT_P18_OPTIONAL					= 48;
-	const u32	_SOURCELIGHT_P19_OPTIONAL					= 49;
-	const u32	_SOURCELIGHT_P20_OPTIONAL					= 50;
-	const u32	_SOURCELIGHT_P21_OPTIONAL					= 51;
-	const u32	_SOURCELIGHT_P22_OPTIONAL					= 51;
-	const u32	_SOURCELIGHT_P23_OPTIONAL					= 51;
-	const u32	_SOURCELIGHT_P24_OPTIONAL					= 54;
-	const u32	_SOURCELIGHT_P25_OPTIONAL					= 55;
-	const u32	_SOURCELIGHT_P26_OPTIONAL					= 56;
-	const u32	_SOURCELIGHT_P27_OPTIONAL					= 57;
-	const u32	_SOURCELIGHT_P28_OPTIONAL					= 51;
-	const u32	_SOURCELIGHT_P29_OPTIONAL					= 59;
-	const u32	_SOURCELIGHT_P30_OPTIONAL					= 60;
+	const u32	_SOURCELIGHT_P1_OPTIONAL					= 101;
+	const u32	_SOURCELIGHT_P2_OPTIONAL					= 102;
+	const u32	_SOURCELIGHT_P3_OPTIONAL					= 103;
+	const u32	_SOURCELIGHT_P4_OPTIONAL					= 104;
+	const u32	_SOURCELIGHT_P5_OPTIONAL					= 105;
+	const u32	_SOURCELIGHT_P6_OPTIONAL					= 106;
+	const u32	_SOURCELIGHT_P7_OPTIONAL					= 107;
+	const u32	_SOURCELIGHT_P8_OPTIONAL					= 108;
+	const u32	_SOURCELIGHT_P9_OPTIONAL					= 109;
+	const u32	_SOURCELIGHT_P10_OPTIONAL					= 110;
+	const u32	_SOURCELIGHT_P11_OPTIONAL					= 111;
+	const u32	_SOURCELIGHT_P12_OPTIONAL					= 112;
+	const u32	_SOURCELIGHT_P13_OPTIONAL					= 113;
+	const u32	_SOURCELIGHT_P14_OPTIONAL					= 114;
+	const u32	_SOURCELIGHT_P15_OPTIONAL					= 115;
+	const u32	_SOURCELIGHT_P16_OPTIONAL					= 116;
+	const u32	_SOURCELIGHT_P17_OPTIONAL					= 117;
+	const u32	_SOURCELIGHT_P18_OPTIONAL					= 118;
+	const u32	_SOURCELIGHT_P19_OPTIONAL					= 119;
+	const u32	_SOURCELIGHT_P20_OPTIONAL					= 120;
+	const u32	_SOURCELIGHT_P21_OPTIONAL					= 121;
+	const u32	_SOURCELIGHT_P22_OPTIONAL					= 122;
+	const u32	_SOURCELIGHT_P23_OPTIONAL					= 123;
+	const u32	_SOURCELIGHT_P24_OPTIONAL					= 124;
+	const u32	_SOURCELIGHT_P25_OPTIONAL					= 125;
+	const u32	_SOURCELIGHT_P26_OPTIONAL					= 126;
+	const u32	_SOURCELIGHT_P27_OPTIONAL					= 127;
+	const u32	_SOURCELIGHT_P28_OPTIONAL					= 128;
+	const u32	_SOURCELIGHT_P29_OPTIONAL					= 129;
+	const u32	_SOURCELIGHT_P30_OPTIONAL					= 130;
 
 //////////*****[ GENERATED FILE ]*****
-	const u32	_SOURCELIGHT_P1_REQUIRED					= 71;
-	const u32	_SOURCELIGHT_P2_REQUIRED					= 72;
-	const u32	_SOURCELIGHT_P3_REQUIRED					= 73;
-	const u32	_SOURCELIGHT_P4_REQUIRED					= 74;
-	const u32	_SOURCELIGHT_P5_REQUIRED					= 75;
-	const u32	_SOURCELIGHT_P6_REQUIRED					= 76;
-	const u32	_SOURCELIGHT_P7_REQUIRED					= 77;
-	const u32	_SOURCELIGHT_P8_REQUIRED					= 70;
-	const u32	_SOURCELIGHT_P9_REQUIRED					= 79;
-	const u32	_SOURCELIGHT_P10_REQUIRED					= 80;
-	const u32	_SOURCELIGHT_P11_REQUIRED					= 81;
-	const u32	_SOURCELIGHT_P12_REQUIRED					= 82;
-	const u32	_SOURCELIGHT_P13_REQUIRED					= 83;
-	const u32	_SOURCELIGHT_P14_REQUIRED					= 84;
-	const u32	_SOURCELIGHT_P15_REQUIRED					= 85;
-	const u32	_SOURCELIGHT_P16_REQUIRED					= 86;
-	const u32	_SOURCELIGHT_P17_REQUIRED					= 87;
-	const u32	_SOURCELIGHT_P18_REQUIRED					= 88;
-	const u32	_SOURCELIGHT_P19_REQUIRED					= 89;
-	const u32	_SOURCELIGHT_P20_REQUIRED					= 90;
-	const u32	_SOURCELIGHT_P21_REQUIRED					= 91;
-	const u32	_SOURCELIGHT_P22_REQUIRED					= 92;
-	const u32	_SOURCELIGHT_P23_REQUIRED					= 93;
-	const u32	_SOURCELIGHT_P24_REQUIRED					= 94;
-	const u32	_SOURCELIGHT_P25_REQUIRED					= 91;
-	const u32	_SOURCELIGHT_P26_REQUIRED					= 96;
-	const u32	_SOURCELIGHT_P27_REQUIRED					= 97;
-	const u32	_SOURCELIGHT_P28_REQUIRED					= 98;
-	const u32	_SOURCELIGHT_P29_REQUIRED					= 99;
-	const u32	_SOURCELIGHT_P30_REQUIRED					= 100;
+	const u32	_SOURCELIGHT_P1_REQUIRED					= 200;
+	const u32	_SOURCELIGHT_P2_REQUIRED					= 201;
+	const u32	_SOURCELIGHT_P3_REQUIRED					= 202;
+	const u32	_SOURCELIGHT_P4_REQUIRED					= 203;
+	const u32	_SOURCELIGHT_P5_REQUIRED					= 204;
+	const u32	_SOURCELIGHT_P6_REQUIRED					= 205;
+	const u32	_SOURCELIGHT_P7_REQUIRED					= 206;
+	const u32	_SOURCELIGHT_P8_REQUIRED					= 207;
+	const u32	_SOURCELIGHT_P9_REQUIRED					= 208;
+	const u32	_SOURCELIGHT_P10_REQUIRED					= 209;
+	const u32	_SOURCELIGHT_P11_REQUIRED					= 210;
+	const u32	_SOURCELIGHT_P12_REQUIRED					= 211;
+	const u32	_SOURCELIGHT_P13_REQUIRED					= 212;
+	const u32	_SOURCELIGHT_P14_REQUIRED					= 213;
+	const u32	_SOURCELIGHT_P15_REQUIRED					= 214;
+	const u32	_SOURCELIGHT_P16_REQUIRED					= 215;
+	const u32	_SOURCELIGHT_P17_REQUIRED					= 216;
+	const u32	_SOURCELIGHT_P18_REQUIRED					= 217;
+	const u32	_SOURCELIGHT_P19_REQUIRED					= 218;
+	const u32	_SOURCELIGHT_P20_REQUIRED					= 219;
+	const u32	_SOURCELIGHT_P21_REQUIRED					= 220;
+	const u32	_SOURCELIGHT_P22_REQUIRED					= 221;
+	const u32	_SOURCELIGHT_P23_REQUIRED					= 222;
+	const u32	_SOURCELIGHT_P24_REQUIRED					= 223;
+	const u32	_SOURCELIGHT_P25_REQUIRED					= 224;
+	const u32	_SOURCELIGHT_P26_REQUIRED					= 225;
+	const u32	_SOURCELIGHT_P27_REQUIRED					= 226;
+	const u32	_SOURCELIGHT_P28_REQUIRED					= 227;
+	const u32	_SOURCELIGHT_P29_REQUIRED					= 228;
+	const u32	_SOURCELIGHT_P30_REQUIRED					= 229;
+
+//////////*****[ GENERATED FILE ]*****
+	const u32	_SOURCELIGHT_LOGICAL_FLAG					= 300;
+	const u32	_SOURCELIGHT_LOGICAL_FLAG_AFTER_PN			= 301;
+	const u32	_SOURCELIGHT_LOGICAL_FLAG_AFTER_NAMED		= 302;
+	const u32	_SOURCELIGHT_PN_LOGICAL_FLAG				= 332;
 
 //////////*****[ GENERATED FILE ]*****
 // Required return values
 //////
-	const u32	_SOURCELIGHT_R1_REQUIRED					= 201;
-	const u32	_SOURCELIGHT_R2_REQUIRED					= 202;
-	const u32	_SOURCELIGHT_R3_REQUIRED					= 203;
-	const u32	_SOURCELIGHT_R4_REQUIRED					= 204;
-	const u32	_SOURCELIGHT_R5_REQUIRED					= 205;
-	const u32	_SOURCELIGHT_R6_REQUIRED					= 205;
-	const u32	_SOURCELIGHT_R7_REQUIRED					= 207;
-	const u32	_SOURCELIGHT_R8_REQUIRED					= 208;
+	const u32	_SOURCELIGHT_R1_REQUIRED					= 1001;
+	const u32	_SOURCELIGHT_R2_REQUIRED					= 1002;
+	const u32	_SOURCELIGHT_R3_REQUIRED					= 1003;
+	const u32	_SOURCELIGHT_R4_REQUIRED					= 1004;
+	const u32	_SOURCELIGHT_R5_REQUIRED					= 1005;
+	const u32	_SOURCELIGHT_R6_REQUIRED					= 1005;
+	const u32	_SOURCELIGHT_R7_REQUIRED					= 1007;
+	const u32	_SOURCELIGHT_R8_REQUIRED					= 1008;
 
 //////////*****[ GENERATED FILE ]*****
 // Optional return values
 //////
-	const u32	_SOURCELIGHT_R1_OPTIONAL					= 231;
-	const u32	_SOURCELIGHT_R2_OPTIONAL					= 232;
-	const u32	_SOURCELIGHT_R3_OPTIONAL					= 233;
-	const u32	_SOURCELIGHT_R4_OPTIONAL					= 234;
-	const u32	_SOURCELIGHT_R5_OPTIONAL					= 235;
-	const u32	_SOURCELIGHT_R6_OPTIONAL					= 236;
-	const u32	_SOURCELIGHT_R7_OPTIONAL					= 237;
-	const u32	_SOURCELIGHT_R8_OPTIONAL					= 238;
+	const u32	_SOURCELIGHT_R1_OPTIONAL					= 1101;
+	const u32	_SOURCELIGHT_R2_OPTIONAL					= 1102;
+	const u32	_SOURCELIGHT_R3_OPTIONAL					= 1103;
+	const u32	_SOURCELIGHT_R4_OPTIONAL					= 1104;
+	const u32	_SOURCELIGHT_R5_OPTIONAL					= 1105;
+	const u32	_SOURCELIGHT_R6_OPTIONAL					= 1106;
+	const u32	_SOURCELIGHT_R7_OPTIONAL					= 1107;
+	const u32	_SOURCELIGHT_R8_OPTIONAL					= 1108;
 
 //////////*****[ GENERATED FILE ]*****
 // Controls
 //////
-	const u32	_SOURCELIGHT_FUNCTION_NAME					= 500;
-	const u32	_SOURCELIGHT_FUNCTION_DESCRIPTION			= 501;
+	const u32	_SOURCELIGHT_FUNCTION_NAME					= 5000;
+	const u32	_SOURCELIGHT_FUNCTION_DESCRIPTION			= 5001;
 
 //////////*****[ GENERATED FILE ]*****
 // Constants
@@ -207,19 +213,19 @@
 	{
 		// lcResult = ALLTRIM(cString, lIgnoreCase|nIgnoreCase, cTrimChars1, cTrimChars2)
 		{	_SOURCELIGHT_FUNCTION_NAME,				0,	0,	0,	0,	0	},
-		{	_SOURCELIGHT_FUNCTION_DESCRIPTION,		(uptr)"Four parameter variation. Converts the input string to a form where the cTrimChars are removed off the left and right sides.", 0,	0, 0, 0 },
+		{	_SOURCELIGHT_FUNCTION_DESCRIPTION,		(uptr)"Four parameter variation. Converts the input string to a form where the cTrimChars are removed off the left and right sides.", 0, 0, 0, 0 },
 		{	_SOURCELIGHT_P1_REQUIRED,				(uptr)&cgc_cString,			(uptr)&cgc_character,	(uptr)&"Input string",																	_VAR_TYPE_CHARACTER,	0	},
-		{	_SOURCELIGHT_P2_OPTIONAL,				(uptr)&"lIgnoreCase",		(uptr)&cgc_logical,		(uptr)&"Default = .T.. Should the cTrimChar variables ignore case?",						_VAR_TYPE_LOGICAL,		_LOGICAL_TRUE},
-		{	_SOURCELIGHT_P2_OPTIONAL,				(uptr)&"nIgnoreCase",		(uptr)&cgc_numeric,		(uptr)&"Default = 1. Should the cTrimChar variables ignore case? 0=no, others=yes.",		_VAR_TYPE_S32,			1	},
-		{	_SOURCELIGHT_P3_OPTIONAL,				(uptr)&"cTrimChars1",		(uptr)&cgc_character,	(uptr)&"String 1 containing characters to trim",											_VAR_TYPE_CHARACTER,	0	},
-		{	_SOURCELIGHT_P4_OPTIONAL,				(uptr)&"cTrimChars2",		(uptr)&cgc_character,	(uptr)&"String 2 containing characters to trim",											_VAR_TYPE_CHARACTER,	0	},
+		{	_SOURCELIGHT_P2_OPTIONAL,				(uptr)&"lIgnoreCase",		(uptr)&cgc_logical,		(uptr)&"Default = .T.. Should the cTrimChar variables ignore case?",					_VAR_TYPE_LOGICAL,		_LOGICAL_TRUE},
+		{	_SOURCELIGHT_P2_OPTIONAL,				(uptr)&"nIgnoreCase",		(uptr)&cgc_numeric,		(uptr)&"Default = 1. Should the cTrimChar variables ignore case? 0=no, others=yes.",	_VAR_TYPE_S32,			1	},
+		{	_SOURCELIGHT_P3_OPTIONAL,				(uptr)&"cTrimChars1",		(uptr)&cgc_character,	(uptr)&"String 1 containing characters to trim",										_VAR_TYPE_CHARACTER,	0	},
+		{	_SOURCELIGHT_P4_OPTIONAL,				(uptr)&"cTrimChars2",		(uptr)&cgc_character,	(uptr)&"String 2 containing characters to trim",										_VAR_TYPE_CHARACTER,	0	},
 		{	_SOURCELIGHT_R1_REQUIRED,				(uptr)&"cResult",			(uptr)&cgc_character,	(uptr)&"Input string trimmed",															_VAR_TYPE_CHARACTER,	0	},
 		// lcResult = ALLTRIM(cString, cTrimChars)
 		{	_SOURCELIGHT_FUNCTION_NAME,				0,	0,	0,	0,	0	},
 		{	_SOURCELIGHT_FUNCTION_DESCRIPTION,		(uptr)"Two parameter variation. Converts the input string to a form where the cTrimChars are removed off the left and right sides.",	0, 0, 0, 0 },
-		{	_SOURCELIGHT_P1_REQUIRED,				(uptr)&cgc_cString,			(uptr)&cgc_character,	(uptr)&"Input string",																	_VAR_TYPE_CHARACTER,	0	},
-		{	_SOURCELIGHT_P2_OPTIONAL,				(uptr)&"cTrimChars",			(uptr)&cgc_character,	(uptr)&"String containing characters to trim",											_VAR_TYPE_CHARACTER,	0	},
-		{	_SOURCELIGHT_R1_REQUIRED,				(uptr)&"cResult",			(uptr)&cgc_character,	(uptr)&"Input string trimmed",															_VAR_TYPE_CHARACTER,	0	},
+		{	_SOURCELIGHT_P1_REQUIRED,				(uptr)&cgc_cString,			(uptr)&cgc_character,	(uptr)&"Input string",																_VAR_TYPE_CHARACTER,	0	},
+		{	_SOURCELIGHT_P2_OPTIONAL,				(uptr)&"cTrimChars",			(uptr)&cgc_character,	(uptr)&"String containing characters to trim",									_VAR_TYPE_CHARACTER,	0	},
+		{	_SOURCELIGHT_R1_REQUIRED,				(uptr)&"cResult",			(uptr)&cgc_character,	(uptr)&"Input string trimmed",														_VAR_TYPE_CHARACTER,	0	},
 		{	0,										0,	0,	0,	0,	0	},
 	};
 

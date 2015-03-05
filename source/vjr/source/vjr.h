@@ -130,6 +130,8 @@
 	#include "compiler\asm\asm_defs.h"
 	#include "compiler\asm\asm_globals.h"
 
+	#include "compiler\sourcelight\sourcelight_globals.h"
+
 	#include "dbf\dbf.h"
 
 	#include "sem\sem.h"
@@ -243,6 +245,8 @@
 	#include "compiler/asm/asm_structs.h"
 	#include "compiler/asm/asm_defs.h"
 	#include "compiler/asm/asm_globals.h"
+
+	#include "compiler/sourcelight/sourcelight_globals.h"
 
 	#include "dbf/dbf.h"
 

@@ -292,4 +292,7 @@
 
 		{ "main",					4,			false,		_ICODE_MAIN,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ "dllmain",				4,			false,		_ICODE_DLLMAIN,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
+
+		// Terminates the list
+		{ 0,						0,			0,			0,										0,					0,					0,							0,							0,			0 }
 	};
