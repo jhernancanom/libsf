@@ -108,7 +108,14 @@
 
 	#include "\libsf\utils\common\cpp\builder.h"
 	#include "\libsf\utils\common\cpp\builder.cpp"
+
 	#include "\libsf\utils\common\cpp\ll.cpp"
+
+	#include "\libsf\utils\common\cpp\time.h"
+	#include "\libsf\utils\common\cpp\time.cpp"
+
+	#include "\libsf\utils\common\cpp\disk.h"
+	#include "\libsf\utils\common\cpp\disk.cpp"
 
 	#include "vjr_structs0.h"
 
@@ -224,7 +231,14 @@
 
 	#include "/libsf/utils/common/cpp/builder.h"
 	#include "/libsf/utils/common/cpp/builder.cpp"
+
 	#include "/libsf/utils/common/cpp/ll.cpp"
+
+	#include "/libsf/utils/common/cpp/time.h"
+	#include "/libsf/utils/common/cpp/time.cpp"
+
+	#include "/libsf/utils/common/cpp/disk.h"
+	#include "/libsf/utils/common/cpp/disk.cpp"
 
 	#include "vjr_structs0.h"
 

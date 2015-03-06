@@ -98,9 +98,9 @@
 //////
 	u32 cdx_open(SWorkArea* wa, s8* tcCdxFilename, u32 tnCdxFilenameLength, u32 tnExplicitIndexType)
 	{
-		u32			lnShareFlag;
 		bool		llIsValid;
 		u64			lnFileSize, lnNumread;
+		SDiskLock*	dl;
 
 
 		//////////
@@ -155,23 +155,26 @@
 
 
 		//////////
-		// Set the shared/exclusive status to match its table
+		// Make sure we have a lock area
 		//////
-			if (wa->isExclusive)
-			{
-				// Exclusive
-				lnShareFlag = _SH_DENYRW;
-
-			} else {
-				// Shared
-				lnShareFlag = _SH_DENYNO;
-			}
+			if (!wa->cdxFileLocks)
+				iBuilder_createAndInitialize(&wa->cdxFileLocks, -1);
 
 
 		//////////
 		// Open it
 		//////
-			wa->fhIndex = _sopen(wa->indexPathname, _O_BINARY | _O_RDWR, lnShareFlag);
+			if (wa->isExclusive)
+			{
+				// Exclusive
+				wa->fhIndex = iDisk_openExclusive(wa->indexPathname, _O_BINARY | _O_RDWR);
+
+			} else {
+				// Shared
+				wa->fhIndex = iDisk_openShared(wa->indexPathname, _O_BINARY | _O_RDWR);
+			}
+
+			// Was it opened successfully?
 			if (!wa->fhIndex)
 				return(-3);
 
@@ -179,20 +182,18 @@
 		//////////
 		// Find out how big it is
 		//////
-			_lseeki64(wa->fhIndex, 0, SEEK_END);
-			lnFileSize = _telli64(wa->fhIndex);
-			_lseeki64(wa->fhIndex, 0, SEEK_SET);
+			lnFileSize = iDisk_getFileSize(wa->fhIndex);
 
 
 		//////////
-		// Allocate the memory
+		// Allocate one block
 		//////
 			if (!wa->isCdx)
 			{
 				//////////
 				// Allocate
 				//////
-					wa->idx_header = (SIdxHeader*)malloc((uptr)lnFileSize);
+					wa->idx_header = (SIdxHeader*)malloc(sizeof(wa->idx_header));
 					if (!wa->idx_header)
 					{
 						cdx_close(wa);
@@ -201,10 +202,10 @@
 
 
 				//////////
-				// Read the entire index
+				// Read the first block
 				/////
-					lnNumread = _read(wa->fhIndex, wa->idx_header, (u32)lnFileSize);
-					if (lnNumread != lnFileSize)
+					lnNumread = _read(wa->fhIndex, wa->idx_header, sizeof(wa->idx_header));
+					if (lnNumread != sizeof(wa->idx_header))
 					{
 						cdx_close(wa);
 						return(_CDX_ERROR_READING_HEADER_IDX);
@@ -229,7 +230,7 @@
 				//////////
 				// Allocate
 				/////
-					wa->cdx_root = (SCdxHeader*)malloc((uptr)lnFileSize);
+					wa->cdx_root = (SCdxHeader*)malloc(sizeof(wa->cdx_root));
 					if (!wa->cdx_root)
 					{
 						cdx_close(wa);
@@ -240,8 +241,19 @@
 				//////////
 				// Read in the file
 				//////
-					lnNumread = _read(wa->fhIndex, wa->cdx_root, (u32)lnFileSize);
-					if (lnNumread != lnFileSize)
+// TODO:  Working here
+					if (!wa->isExclusive)
+					{
+						// Shared access, lock the header
+						dl = iDisk_lock_range_retryCallback(wa->cdxFileLocks, wa->fhIndex, 0, sizeof(wa->cdx_root), funcName, 0);
+						if (dl->nLength != sizeof(wa->cdx_root))
+						{
+							// Error locking the file
+						}
+					}
+
+					lnNumread = _read(wa->fhIndex, wa->cdx_root, sizeof(wa->cdx_root));
+					if (lnNumread != sizeof(wa->cdx_root))
 					{
 						cdx_close(wa);
 						return(_CDX_ERROR_READING_HEADER_CDX);
@@ -279,7 +291,14 @@
 		// Validate that our environment is sane
 		//////
 			if (!iDbf_isWorkAreaUsed(wa, &llIsValid) || !llIsValid)
-				return(-1);		// Invalid work area
+				return(_DBF_ERROR_INVALID_WORK_AREA);
+
+
+		//////////
+		// Release any and all locks
+		//////
+			if (wa->cdxFileLocks)
+				iDisk_unlock_all(wa->cdxFileLocks);
 
 
 		//////////
@@ -355,7 +374,7 @@
 			}
 
 			// If we get here, failure
-			return(-1);
+			return(_CDX_ERROR_NO_INDEX_IN_USE);
 	}
 
 
@@ -386,7 +405,7 @@
 		// Validate that our environment is sane
 		//////
 			if (!iDbf_isWorkAreaUsed(wa, &llIsValid) || !llIsValid)
-				return(-1);		// Invalid work area
+				return(_DBF_ERROR_INVALID_WORK_AREA);
 
 
 		//////////
@@ -458,8 +477,74 @@
 				*tcCompact1		= 32;
 				*tcCompound1	= 32;
 				*tcOrder1		= 32;
-				return(-1);
+				return(_CDX_ERROR_NO_INDEX_IN_USE);
 			}
+	}
+
+
+
+
+//////////
+//
+// Called to find the explicitly indicated key
+//
+//////
+	u32 cdx_find_key(u32 tnWorkArea, s32 tnTagIndex, u8* tcKey, u32 tnKeyLength)
+	{
+		u32				lnResult, lnKeyOpCount;
+		SForClause*		lsFor;
+		SCdxHeader*		tagHeader;		// Holds the tag key expression and FOR clause
+		SCdxKeyOp*		lsKeyOp;		// Key ops for generating the DBF keys
+		STagRoot		tagRoot;
+		SWorkArea*		wa;
+
+
+		//////////
+		// Validate that our environment is sane
+		//////
+			if (tnWorkArea >= _MAX_DBF_SLOTS)								return(_DBF_ERROR_INVALID_WORK_AREA);
+			if (gsWorkArea[tnWorkArea].isUsed != _YES)						return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
+			if (tnKeyLength == 0 || tnKeyLength > _MAX_CDX_KEY_LENGTH)		return(_CDX_ERROR_INVALID_KEY_LENGTH);
+			if (!tcKey)														return(_CDX_ERROR_INVALID_KEY);
+
+
+		//////////
+		// Establish our pointer
+		//////
+			wa = &gsWorkArea[tnWorkArea];
+
+
+		//////////
+		// Grab the index tag header info so we can generate the keys
+		//////
+			memset(&tagRoot, 0, sizeof(tagRoot));
+			if (!iCdx_getCompoundTagRoot(wa, wa->cdx_root, NULL, tnTagIndex, &tagRoot))
+				return(_CDX_ERROR_INVALID_TAG);
+
+			// Right now, head and tagRoot are setup
+			// Grab the actual key node
+			tagHeader = (SCdxHeader*)iCdx_getCompactIdxNode_byOffset(wa->cdx_root, tagRoot.keyNode);
+
+
+		//////////
+		// Get or build the buildOps for this key
+		//////
+			if (!iiCdx_get_buildOps(wa, tnTagIndex, tagHeader, &lsFor, &lsKeyOp, &lnKeyOpCount, &lnResult))
+				return(_CDX_ERROR_CONTEXTUAL + lnResult);	// Something is invalid
+
+
+		//////////
+		// Validate the key is not too long
+		//////
+			_CDX_ERROR_MEMORY_CDX;
+			if (tnKeyLength > tagHeader->keyLength)
+				return(_CDX_ERROR_INVALID_KEY_LENGTH);		// Invalid key length
+
+
+		//////////
+		// Find the key
+		//////
+			return(iiCdx_findKey(wa, &tagRoot, tcKey, tnKeyLength));
 	}
 
 
@@ -471,13 +556,14 @@
 // negative field numbers, so it sets the internal cdata content rather than the data content.
 // That is an "accumulation area" for the data that will searched for.  It remains sticky, so
 // whatever was put in there previously remains until later changed, or until the table is closed.
+// That field content is copied to our own key buffer, and then used for the find.
 //
 //////////////
 	//
 	// Note:  Data is pulled from the data loaded into dbf_set_field_data() with negative field
 	//        numbers.  It automatically constructs the appropriate key on the fly.
 	//////
-	u32 cdx_find_key(u32 tnWorkArea, s32 tnTagIndex, u32 tnKeyLength)
+	u32 cdx_build_and_find_key(u32 tnWorkArea, s32 tnTagIndex, u32 tnKeyLength)
 	{
 		u32				lnResult, lnKeyOpCount;
 		SForClause*		lsFor;
@@ -491,10 +577,8 @@
 		//////////
 		// Validate that our environment is sane
 		//////
-			if (tnWorkArea >= _MAX_DBF_SLOTS)
-				return(-1);		// Invalid slot number
-			if (gsWorkArea[tnWorkArea].isUsed != _YES)
-				return(-1);		// Invalid slot
+			if (tnWorkArea >= _MAX_DBF_SLOTS)				return(_DBF_ERROR_INVALID_WORK_AREA);
+			if (gsWorkArea[tnWorkArea].isUsed != _YES)		return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		//////////
@@ -516,10 +600,17 @@
 
 
 		//////////
+		// Check for invalid index
+		//////
+			if (tagHeader->keyLength > _MAX_CDX_KEY_LENGTH)
+				return(_CDX_ERROR_INVALID_INDEX);
+
+
+		//////////
 		// Get or build the buildOps for this key
 		//////
 			if (!iiCdx_get_buildOps(wa, tnTagIndex, tagHeader, &lsFor, &lsKeyOp, &lnKeyOpCount, &lnResult))
-				return(-2 + lnResult);	// Something is invalid
+				return(_CDX_ERROR_CONTEXTUAL + lnResult);	// Something is invalid
 
 
 		//////////
@@ -598,10 +689,8 @@
 		//////////
 		// Validate that our environment is sane
 		//////
-			if (tnWorkArea >= _MAX_DBF_SLOTS)
-				return(-1);		// Invalid slot number
-			if (gsWorkArea[tnWorkArea].isUsed != _YES)
-				return(-1);		// Invalid slot
+			if (tnWorkArea >= _MAX_DBF_SLOTS)				return(_DBF_ERROR_INVALID_WORK_AREA);
+			if (gsWorkArea[tnWorkArea].isUsed != _YES)		return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		//////////
@@ -636,10 +725,8 @@
 		//////////
 		// Validate that our environment is sane
 		//////
-			if (tnWorkArea >= _MAX_DBF_SLOTS)
-				return(-1);		// Invalid slot number
-			if (gsWorkArea[tnWorkArea].isUsed != _YES)
-				return(-1);		// Invalid slot
+			if (tnWorkArea >= _MAX_DBF_SLOTS)				return(_DBF_ERROR_INVALID_WORK_AREA);
+			if (gsWorkArea[tnWorkArea].isUsed != _YES)		return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		//////////
@@ -676,10 +763,8 @@
 		//////////
 		// Validate that our environment is sane
 		//////
-			if (tnWorkArea >= _MAX_DBF_SLOTS)
-				return(-1);		// Invalid slot number
-			if (gsWorkArea[tnWorkArea].isUsed != _YES)
-				return(-1);		// Invalid slot
+			if (tnWorkArea >= _MAX_DBF_SLOTS)				return(_DBF_ERROR_INVALID_WORK_AREA);
+			if (gsWorkArea[tnWorkArea].isUsed != _YES)		return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		//////////
@@ -3836,4 +3921,58 @@ debug_break;
 
 		// Indicate a pointer to their target, so it will propagate through an expression
 		return(tcDest);
+	}
+
+
+
+
+//////////
+//
+// Called to lock the entire file
+//////
+	uptr iiCdx_lock_file(SWorkArea* wa, STagRoot* tagRoot)
+	{
+		// See if the index is loaded
+		if (wa->isIndexLoaded)
+		{
+			// Retry until stopped
+			iDisk_lock_range_retryCallback(wa->cdxFileLocks, wa->fhIndex, 0, (s32)iDisk_getFileSize(wa->fhIndex), 0, 0);
+
+		} else {
+			// Return failure
+			return(_CDX_ERROR_NO_INDEX_IN_USE);
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to lock the entire file
+//////
+	uptr iiCdx_lock_node(SWorkArea* wa, STagRoot* tagRoot, s32 tnOffset, s32 tnLength)
+	{
+	}
+
+
+
+
+//////////
+//
+// Called to lock the entire file
+//////
+	uptr iiCdx_lock_range(SWorkArea* wa, STagRoot* tagRoot, s32 tnOffset, s32 tnLength)
+	{
+	}
+
+
+
+
+//////////
+//
+// Called to lock the entire file
+//////
+	bool iiCdx_unlock(uptr tnHandle)
+	{
 	}

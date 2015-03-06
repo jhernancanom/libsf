@@ -52,11 +52,11 @@
     <Filter Include="compiler\asm">
       <UniqueIdentifier>{b6632999-217b-4158-b23e-266666a11af6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="builder">
-      <UniqueIdentifier>{9398fc02-b9b0-4b3a-bb37-f9b9c346186d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="compiler\sourcelight">
       <UniqueIdentifier>{c29e1094-51b9-450a-9fe6-edff8902f2ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common">
+      <UniqueIdentifier>{b805109b-559d-4fc9-84be-09da420c3ce7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -145,11 +145,23 @@
     <ClCompile Include="..\..\source\compiler\vxb\vxb_dictionary.cpp">
       <Filter>compiler\vxb</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\utils\common\cpp\builder.cpp">
-      <Filter>builder</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\test\test.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\utils\common\cpp\disk.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\utils\common\cpp\builder.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\utils\common\cpp\ll.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\utils\common\cpp\datum.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\utils\common\cpp\time.cpp">
+      <Filter>common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -273,11 +285,23 @@
     <ClInclude Include="..\..\source\compiler\vxb\vxb_dictionary.h">
       <Filter>compiler\vxb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\utils\common\cpp\builder.h">
-      <Filter>builder</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\compiler\sourcelight\sourcelight_globals.h">
       <Filter>compiler\sourcelight</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\utils\common\cpp\disk.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\utils\common\cpp\builder.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\utils\common\cpp\ll.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\utils\common\cpp\datum.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\utils\common\cpp\time.h">
+      <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

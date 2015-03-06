@@ -494,9 +494,6 @@ struct SObjPropertyMap;
 	void					iMisc_adjustColorBrightness				(SBgra& color, f32 tfPercent);
 	bool					iInit_shutdownPolitely					(void);
 
-	s64						iTime_computeMilliseconds				(SYSTEMTIME* time);
-	s64						iTime_getSystemMs						(void);
-	s64						iTime_getLocalMs						(void);
 	s8						iLowerCase								(s8 c);
 	s8						iUpperCase								(s8 c);
 

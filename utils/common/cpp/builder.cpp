@@ -185,7 +185,9 @@
 
 //////////
 //
-// Appends the indicated text to the end of the buffer.
+// Appends the indicated data to the end of the buffer.  If the buffer is NULL, the
+// data is initialized to all 0s.  This differs from iBuilder_appendBytes() which
+// does not do any initialization.
 //
 // Returns:
 //		Pointer to the point in the buffer where the text was inserted, can be used
@@ -314,7 +316,9 @@
 
 //////////
 //
-// Called to allocate bytes in the builder, but not yet populate them with anything
+// Called to allocate bytes in the builder, but not yet populate them with anything,
+// nor initializing them.  If you would like to allocate a block that is initialized
+// to something, or to all 0s, then use iBuilder_appendData().
 //
 //////
 	s8* iBuilder_allocateBytes(SBuilder* buffRoot, u32 tnDataLength)

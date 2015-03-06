@@ -2365,44 +2365,6 @@
 		return(true);
 	}
 
-
-
-
-//////////
-//
-// Time functions
-//
-//////
-	s64 iTime_computeMilliseconds(SYSTEMTIME* time)
-	{
-		s64 lnMs;
-
-
-		// Compute the milliseconds
-		lnMs	=		(time->wMilliseconds)
-					+	(time->wSecond			* 1000)
-					+	(time->wMinute			* 1000 * 60)
-					+	(time->wHour			* 1000 * 60 * 60)
-					+	(time->wDay				* 1000 * 60 * 60 * 24)
-					+	(time->wMonth			* 1000 * 60 * 60 * 24 * 31)
-					+	(time->wYear			* 1000 * 60 * 60 * 24 * 31 * 366);
-		return(lnMs);
-	}
-
-	s64 iTime_getSystemMs(void)
-	{
-		SYSTEMTIME time;
-		GetSystemTime(&time);
-		return(iTime_computeMilliseconds(&time));
-	}
-
-	s64 iTime_getLocalMs(void)
-	{
-		SYSTEMTIME time;
-		GetLocalTime(&time);
-		return(iTime_computeMilliseconds(&time));
-	}
-
 	bool iTestExactlyEqual(u8* left, u32 leftLength, cu8* right, u32 rightLength)
 	{
 		return(iTestExactlyEqual(left, leftLength, (u8*)right, rightLength));

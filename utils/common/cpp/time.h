@@ -1,16 +1,16 @@
 //////////
 //
-// /libsf/source/vjr/source/test/test.cpp
+// /libsf/utils/common/cpp/time.h
 //
 //////
 // Version 0.55
-// Copyright (c) 2015 by Rick C. Hodgin
+// Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
-//     Mar.03.2015
+//	   Mar.05.2015 - Initial creation
 //////
 // Change log:
-//     Mar.03.2015 - Initial creation
+//	   Mar.05.2015 - Initial creation
 //////
 //
 // This document is released as Liberty Software under a Repeat License, as governed
@@ -65,31 +65,21 @@
 //
 
 
+//#pragma once
+#ifndef __TIME_H__
+#define __TIME_H__
+
+
 
 
 //////////
-//
-// Added to allow a simple place to execute various tests.
-//
+// Forward declaration
 //////
-	void iTest_execute(void)
-	{
-		uptr lnHandle;
+	s64						iTime_computeMillisecondsBetween		(SYSTEMTIME* time1, SYSTEMTIME* time2);
+	s64						iTime_computeMillisecondsBetween		(SYSTEMTIME* time1, s64 tnMilliseconds2);
+	s64						iTime_computeMilliseconds				(SYSTEMTIME* time);
+	s64						iTime_getSystemMs						(void);
+	s64						iTime_getLocalMs						(void);
 
 
-		//////////
-		// Open the test table
-		//////
-			lnHandle = iDbf_open("c:\\libsf_offline\\source\\vjr\\test\\cdx\\test.dbf", "test", true, false);
-			if (lnHandle > _UPTR_ERROR)
-			{
-				// An error occurred
-				debug_break;
-			}
-
-
-		//////////
-		// Try to find every key
-		//////
-
-	}
+#endif	// __TIME_H__

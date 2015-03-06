@@ -1,16 +1,16 @@
 //////////
 //
-// /libsf/source/vjr/source/test/test.cpp
+// /libsf/utils/common/cpp/time.cpp
 //
 //////
 // Version 0.55
-// Copyright (c) 2015 by Rick C. Hodgin
+// Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
-//     Mar.03.2015
+//	   Mar.05.2015 - Initial creation
 //////
 // Change log:
-//     Mar.03.2015 - Initial creation
+//	   Mar.05.2015 - Initial creation
 //////
 //
 // This document is released as Liberty Software under a Repeat License, as governed
@@ -69,27 +69,85 @@
 
 //////////
 //
-// Added to allow a simple place to execute various tests.
+// Time functions
 //
 //////
-	void iTest_execute(void)
+	// Computes time1 - time2
+	s64 iTime_computeMillisecondsBetween(SYSTEMTIME* time1, SYSTEMTIME* time2)
 	{
-		uptr lnHandle;
+		s64 lnMs1, lnMs2;
 
 
-		//////////
-		// Open the test table
-		//////
-			lnHandle = iDbf_open("c:\\libsf_offline\\source\\vjr\\test\\cdx\\test.dbf", "test", true, false);
-			if (lnHandle > _UPTR_ERROR)
-			{
-				// An error occurred
-				debug_break;
-			}
+		// Compute the times together
+		if (time1 && time2)
+		{
+			// Grab each
+			lnMs1 = iTime_computeMilliseconds(time1);
+			lnMs2 = iTime_computeMilliseconds(time2);
+
+			// Return the result
+			return(lnMs1 - lnMs2);
+
+		} else {
+			// 
+			return(0);
+		}
+	}
+
+	// Used for the computations like (timeNow - lnMillisecondsStart)
+	s64 iTime_computeMillisecondsBetween(SYSTEMTIME* time1, s64 tnMilliseconds2)
+	{
+		s64 lnMs1;
 
 
-		//////////
-		// Try to find every key
-		//////
+		// Compute the times together
+		if (time1)
+		{
+			// Grab each
+			lnMs1 = iTime_computeMilliseconds(time1);
 
+			// Return the result
+			return(lnMs1 - tnMilliseconds2);
+
+		} else {
+			// 
+			return(0);
+		}
+	}
+
+	s64 iTime_computeMilliseconds(SYSTEMTIME* time)
+	{
+		s64 lnMs;
+
+
+		// Compute the milliseconds
+		lnMs	=		(time->wMilliseconds)
+					+	(time->wSecond			* 1000)
+					+	(time->wMinute			* 1000 * 60)
+					+	(time->wHour			* 1000 * 60 * 60)
+					+	(time->wDay				* 1000 * 60 * 60 * 24)
+					+	(time->wMonth			* 1000 * 60 * 60 * 24 * 31)
+					+	(time->wYear			* 1000 * 60 * 60 * 24 * 31 * 366);
+// TODO:  366, Rick?  Really. :-)
+
+		// Indicate milliseconds
+		return(lnMs);
+	}
+
+	s64 iTime_getSystemMs(void)
+	{
+		SYSTEMTIME time;
+
+
+		GetSystemTime(&time);
+		return(iTime_computeMilliseconds(&time));
+	}
+
+	s64 iTime_getLocalMs(void)
+	{
+		SYSTEMTIME time;
+
+
+		GetLocalTime(&time);
+		return(iTime_computeMilliseconds(&time));
 	}

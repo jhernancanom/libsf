@@ -275,5 +275,8 @@
 					SIdxHeader*	idx_header;					// Pointer to the start of the .IDX
 					s8*			_idx_header;
 				};
+
+				// File operations
 				s32				fhIndex;					// File handle for the index
+				SBuilder*		cdxFileLocks;				// Locks for shared access
 		};

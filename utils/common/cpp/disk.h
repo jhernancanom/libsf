@@ -1,16 +1,16 @@
 //////////
 //
-// /libsf/source/vjr/source/test/test.cpp
+// /libsf/utils/common/cpp/disk.h
 //
 //////
 // Version 0.55
-// Copyright (c) 2015 by Rick C. Hodgin
+// Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
-//     Mar.03.2015
+//	   Mar.05.2015 - Initial creation
 //////
 // Change log:
-//     Mar.03.2015 - Initial creation
+//	   Mar.05.2015 - Initial creation
 //////
 //
 // This document is released as Liberty Software under a Repeat License, as governed
@@ -65,31 +65,90 @@
 //
 
 
+//#pragma once
+#ifndef __DISK_H__
+#define __DISK_H__
+
+
 
 
 //////////
-//
-// Added to allow a simple place to execute various tests.
-//
+// The SDisk structure.
 //////
-	void iTest_execute(void)
+	// Note:  For each SBuilder in use for the function calls below, there needs
+	//        to be external semaphore locking.
+	struct SDiskLock
 	{
-		uptr lnHandle;
+		bool		isValid;				// Is this lock currently valid (is it an active lock)?
+
+		s32			nFile;					// File handle
+		s64			nOffset;				// Offset for start of lock
+		s32			nLength;				// Length of lock
+	
+		uptr		extra1;					// user-defined extra data associated with this lock
+	};
+
+	struct SDiskLockCallback
+	{
+		SDiskLock*	dl;
+		uptr		extra;
 
 
 		//////////
-		// Open the test table
+		// For the unlock callback
 		//////
-			lnHandle = iDbf_open("c:\\libsf_offline\\source\\vjr\\test\\cdx\\test.dbf", "test", true, false);
-			if (lnHandle > _UPTR_ERROR)
-			{
-				// An error occurred
-				debug_break;
-			}
+			union {
+				uptr	_diskUnlockCallback;
+				bool	(*diskUnlockCallback)(SDiskLockCallback* dcb);
+			};
 
 
 		//////////
-		// Try to find every key
+		// For the retry callback
 		//////
+			SYSTEMTIME	timeStart;
+			SYSTEMTIME	timeNow;
+			union {
+				uptr	_diskRetryLockCallback;
+				// Note:  There is no delay involved in the retry process, so the callback should issue a Sleep() before retrying, probably a Sleep(100)
+				bool	(*diskRetryLockCallback)(SDiskLockCallback* dcb, s32 tnAttempts, s32 tnMillisecondsSpentThusFar);
+			};
+	};
 
-	}
+
+
+
+//////////
+// Forward declarations
+//////
+	s32				iDisk_open								(s8* tcPathname, s32 tnType, s32 tnShare);
+	s32				iDisk_openShared						(s8* tcPathname, s32 tnType, s32 tnShare);
+	s32				iDisk_openExclusive						(s8* tcPathname, s32 tnType, s32 tnShare);
+	s64				iDisk_getFileSize						(s32 tnFile);
+
+
+//////////
+// Locking
+// BEGIN
+//////
+	// Standard instance validation
+	SDiskLock*		iDisk_lock_range_retryCallback			(SBuilder* buffRoot, s32 tnFile, s64 tnOffset, s32 tnLength, uptr tnCallbackFunction, uptr tnExtra);
+	SDiskLock*		iDisk_lock_range						(SBuilder* buffRoot, s32 tnFile, s64 tnOffset, s32 tnLength, uptr tnExtra);
+	void			iDisk_unlock							(SBuilder* buffRoot, uptr tnHandle);
+	void			iDisk_unlock_all						(SBuilder* buffRoot);
+	s32				iDisk_unlock_all_byCallback				(SBuilder* buffRoot, uptr tnCallbackFunction, uptr tnExtra);
+
+	// Faster functions with no validation
+	SDiskLock*		iiDisk_lock_range						(SBuilder* buffRoot, s32 tnFile, s64 tnOffset, s32 tnLength, uptr tnExtra);
+	void			iiDisk_unlock							(SBuilder* buffRoot, uptr tnHandle);
+	void			iiDisk_unlock_all						(SBuilder* buffRoot);
+	s32				iiDisk_unlock_all_byCallback			(SBuilder* buffRoot, uptr tnCallbackFunction, uptr tnExtra);
+
+	// Support functions
+	bool			iiDisk_isValidLockHandle				(SBuilder* buffRoot, uptr tnHandle);
+//////
+// END
+//////////
+
+
+#endif	// __DISK_H__

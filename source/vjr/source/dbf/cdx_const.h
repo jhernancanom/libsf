@@ -81,6 +81,12 @@
 	#define		_CDX_ERROR_READING_HEADER_IDX		-205
 	#define		_CDX_ERROR_MEMORY_CDX				-206
 	#define		_CDX_ERROR_READING_HEADER_CDX		-207
+	#define		_CDX_ERROR_INVALID_KEY_LENGTH		-208
+	#define		_CDX_ERROR_INVALID_TAG				-209
+	#define		_CDX_ERROR_INVALID_KEY				-210
+	#define		_CDX_ERROR_INVALID_INDEX			-211
+	#define		_CDX_ERROR_NO_INDEX_IN_USE			-212
+	#define		_CDX_ERROR_CONTEXTUAL				-10000
 
 	// Index header flags
 	#define		_BIT_UNIQUE					0x1

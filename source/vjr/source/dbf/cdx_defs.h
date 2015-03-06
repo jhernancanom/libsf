@@ -84,7 +84,8 @@
 																			s8* tcCompound1,
 																			s8* tcOrder1);
 
-	u32					cdx_find_key									(u32 tnWorkArea, s32 tnTagIndex, u32 tnKeyLength);
+	u32					cdx_find_key									(u32 tnWorkArea, s32 tnTagIndex, u8* tcKey, u32 tnKeyLength);
+	u32					cdx_build_and_find_key							(u32 tnWorkArea, s32 tnTagIndex, u32 tnKeyLength);
 	u32					cdx_skip_n										(u32 tnWorkArea, s32 tnTagIndex, s32 tnDelta);
 	u32					cdx_top											(u32 tnWorkArea, s32 tnTagIndex);
 	u32					cdx_bottom										(u32 tnWorkArea, s32 tnTagIndex);
@@ -151,3 +152,14 @@
 	u32					iCdx_descendToLeftmostNode						(               SCdxHeader* head, u32 keyLength, SCdxNode* node, STagRoot* tagRoot);
 	// Internal functions that do not have special testing
 	void				iiCdx_extractExteriorNode_nodeKeyAccessData		(SCdxNode* node, u32 tnNumber, SCdxKeyTrail* keyTrail);
+//////////
+// These are for non-exclusive use indexes
+// BEGIN
+//////
+	uptr				iiCdx_lock_file									(SWorkArea* wa, STagRoot* tagRoot);
+	uptr				iiCdx_lock_node									(SWorkArea* wa, STagRoot* tagRoot, s32 tnOffset, s32 tnLength);
+	uptr				iiCdx_lock_range								(SWorkArea* wa, STagRoot* tagRoot, s32 tnOffset, s32 tnLength);
+	bool				iiCdx_unlock									(uptr tnHandle);
+//////
+// END
+//////////
