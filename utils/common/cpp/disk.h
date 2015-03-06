@@ -85,7 +85,11 @@
 		s64			nOffset;				// Offset for start of lock
 		s32			nLength;				// Length of lock
 	
-		uptr		extra1;					// user-defined extra data associated with this lock
+		// user-defined extra data associated with this lock
+		uptr		extra1;
+		uptr		extra2;
+		uptr		extra3;
+		uptr		extra4;
 	};
 
 	struct SDiskLockCallback
@@ -134,13 +138,13 @@
 	// Standard instance validation
 	SDiskLock*		iDisk_lock_range_retryCallback			(SBuilder* buffRoot, s32 tnFile, s64 tnOffset, s32 tnLength, uptr tnCallbackFunction, uptr tnExtra);
 	SDiskLock*		iDisk_lock_range						(SBuilder* buffRoot, s32 tnFile, s64 tnOffset, s32 tnLength, uptr tnExtra);
-	void			iDisk_unlock							(SBuilder* buffRoot, uptr tnHandle);
+	bool			iDisk_unlock							(SBuilder* buffRoot, uptr tnHandle);
 	void			iDisk_unlock_all						(SBuilder* buffRoot);
 	s32				iDisk_unlock_all_byCallback				(SBuilder* buffRoot, uptr tnCallbackFunction, uptr tnExtra);
 
 	// Faster functions with no validation
 	SDiskLock*		iiDisk_lock_range						(SBuilder* buffRoot, s32 tnFile, s64 tnOffset, s32 tnLength, uptr tnExtra);
-	void			iiDisk_unlock							(SBuilder* buffRoot, uptr tnHandle);
+	bool			iiDisk_unlock							(SBuilder* buffRoot, uptr tnHandle);
 	void			iiDisk_unlock_all						(SBuilder* buffRoot);
 	s32				iiDisk_unlock_all_byCallback			(SBuilder* buffRoot, uptr tnCallbackFunction, uptr tnExtra);
 

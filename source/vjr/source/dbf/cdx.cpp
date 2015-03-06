@@ -245,7 +245,7 @@
 					if (!wa->isExclusive)
 					{
 						// Shared access, lock the header
-						dl = iDisk_lock_range_retryCallback(wa->cdxFileLocks, wa->fhIndex, 0, sizeof(wa->cdx_root), funcName, 0);
+						dl = iDisk_lock_range_retryCallback(wa->cdxFileLocks, wa->fhIndex, 0, sizeof(wa->cdx_root), (uptr)&iiDbf_continueWithLockOperation, (uptr)&dl);
 						if (dl->nLength != sizeof(wa->cdx_root))
 						{
 							// Error locking the file
@@ -3932,11 +3932,47 @@ debug_break;
 //////
 	uptr iiCdx_lock_file(SWorkArea* wa, STagRoot* tagRoot)
 	{
+		s32			lnFileSize;
+		SDiskLock*	dl;
+
+
+// TODO:  VJr is limited to the 2GB barrier ... if this is every removed, this code can be refactored to lock the entire file in 2GB pieces
 		// See if the index is loaded
 		if (wa->isIndexLoaded)
 		{
 			// Retry until stopped
-			iDisk_lock_range_retryCallback(wa->cdxFileLocks, wa->fhIndex, 0, (s32)iDisk_getFileSize(wa->fhIndex), 0, 0);
+			lnFileSize	= (s32)iDisk_getFileSize(wa->fhIndex);
+			dl			= iDisk_lock_range_retryCallback(wa->cdxFileLocks, wa->fhIndex, 0, lnFileSize, 0, 0);
+
+			// Indicate our success or failure
+			return(((dl && dl->nLength == lnFileSize) ? _CDX_OKAY : _CDX_LOCK_FAILURE));
+
+		} else {
+			// Return failure
+			return(_CDX_ERROR_NO_INDEX_IN_USE);
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to lock the indicated range
+//////
+	uptr iiCdx_lock_node(SWorkArea* wa, STagRoot* tagRoot, s32 tnNode)
+	{
+		SDiskLock* dl;
+
+
+		// See if the index is loaded
+		if (wa->isIndexLoaded)
+		{
+			// Retry until stopped
+			dl = iDisk_lock_range_retryCallback(wa->cdxFileLocks, wa->fhIndex, (tnNode * 512), 512, 0, 0);
+
+			// Indicate our success or failure
+			return(((dl && dl->nLength == 512) ? _CDX_OKAY : _CDX_LOCK_FAILURE));
 
 		} else {
 			// Return failure
@@ -3951,19 +3987,24 @@ debug_break;
 //
 // Called to lock the entire file
 //////
-	uptr iiCdx_lock_node(SWorkArea* wa, STagRoot* tagRoot, s32 tnOffset, s32 tnLength)
-	{
-	}
-
-
-
-
-//////////
-//
-// Called to lock the entire file
-//////
 	uptr iiCdx_lock_range(SWorkArea* wa, STagRoot* tagRoot, s32 tnOffset, s32 tnLength)
 	{
+		SDiskLock* dl;
+
+
+		// See if the index is loaded
+		if (wa->isIndexLoaded)
+		{
+			// Retry until stopped
+			dl = iDisk_lock_range_retryCallback(wa->cdxFileLocks, wa->fhIndex, tnOffset, tnLength, 0, 0);
+
+			// Indicate our success or failure
+			return(((dl && dl->nLength == tnLength) ? _CDX_OKAY : _CDX_LOCK_FAILURE));
+
+		} else {
+			// Return failure
+			return(_CDX_ERROR_NO_INDEX_IN_USE);
+		}
 	}
 
 
@@ -3973,6 +4014,7 @@ debug_break;
 //
 // Called to lock the entire file
 //////
-	bool iiCdx_unlock(uptr tnHandle)
+	bool iiCdx_unlock(SWorkArea* wa, uptr tnHandle)
 	{
+		return(iDisk_unlock(wa->cdxFileLocks, tnHandle));
 	}

@@ -133,6 +133,8 @@ struct SFieldRecord2;
 	void 				iDbf_startup									(bool tlFirstRun);
 	void 				iDbf_shutdown									(void);
 
+	// User interaction functions
+	bool				iiDbf_continueWithLockOperation					(SDiskLockCallback* dcb, s32 tnAttempts, s32 tnMillisecondsSpentThusFar);
 
 	// DBF functions
 	uptr				iDbf_open										(SVariable* table,	SVariable* alias,	bool tlExclusive, bool tlAgain);

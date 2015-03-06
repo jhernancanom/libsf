@@ -157,9 +157,9 @@
 // BEGIN
 //////
 	uptr				iiCdx_lock_file									(SWorkArea* wa, STagRoot* tagRoot);
-	uptr				iiCdx_lock_node									(SWorkArea* wa, STagRoot* tagRoot, s32 tnOffset, s32 tnLength);
+	uptr				iiCdx_lock_node									(SWorkArea* wa, STagRoot* tagRoot, s32 tnNode);
 	uptr				iiCdx_lock_range								(SWorkArea* wa, STagRoot* tagRoot, s32 tnOffset, s32 tnLength);
-	bool				iiCdx_unlock									(uptr tnHandle);
+	bool				iiCdx_unlock									(SWorkArea* wa, uptr tnHandle);
 //////
 // END
 //////////

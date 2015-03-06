@@ -199,12 +199,12 @@
 //////////*****[ GENERATED FILE ]*****
 // Constants
 //////
-	const s8	cgc_date[]									= "Date";
-	const s8	cgc_datetime[]								= "DateTime";
-	const s8	cgc_numeric[]								= "Numeric";
-	const s8	cgc_logical[]								= "Logical";
-	const s8	cgc_character[]								= "Character";
-	const s8	cgc_cString[]								= "cString";
+	const s8	cgc_sl_date[]								= "Date";
+	const s8	cgc_sl_datetime[]							= "DateTime";
+	const s8	cgc_sl_numeric[]							= "Numeric";
+	const s8	cgc_sl_logical[]							= "Logical";
+	const s8	cgc_sl_character[]							= "Character";
+	const s8	cgc_sl_cString[]							= "cString";
 
 //////////*****[ GENERATED FILE ]*****
 // ALLTRIM()
@@ -214,18 +214,18 @@
 		// lcResult = ALLTRIM(cString, lIgnoreCase|nIgnoreCase, cTrimChars1, cTrimChars2)
 		{	_SOURCELIGHT_FUNCTION_NAME,				0,	0,	0,	0,	0	},
 		{	_SOURCELIGHT_FUNCTION_DESCRIPTION,		(uptr)"Four parameter variation. Converts the input string to a form where the cTrimChars are removed off the left and right sides.", 0, 0, 0, 0 },
-		{	_SOURCELIGHT_P1_REQUIRED,				(uptr)&cgc_cString,			(uptr)&cgc_character,	(uptr)&"Input string",																	_VAR_TYPE_CHARACTER,	0	},
-		{	_SOURCELIGHT_P2_OPTIONAL,				(uptr)&"lIgnoreCase",		(uptr)&cgc_logical,		(uptr)&"Default = .T.. Should the cTrimChar variables ignore case?",					_VAR_TYPE_LOGICAL,		_LOGICAL_TRUE},
-		{	_SOURCELIGHT_P2_OPTIONAL,				(uptr)&"nIgnoreCase",		(uptr)&cgc_numeric,		(uptr)&"Default = 1. Should the cTrimChar variables ignore case? 0=no, others=yes.",	_VAR_TYPE_S32,			1	},
-		{	_SOURCELIGHT_P3_OPTIONAL,				(uptr)&"cTrimChars1",		(uptr)&cgc_character,	(uptr)&"String 1 containing characters to trim",										_VAR_TYPE_CHARACTER,	0	},
-		{	_SOURCELIGHT_P4_OPTIONAL,				(uptr)&"cTrimChars2",		(uptr)&cgc_character,	(uptr)&"String 2 containing characters to trim",										_VAR_TYPE_CHARACTER,	0	},
-		{	_SOURCELIGHT_R1_REQUIRED,				(uptr)&"cResult",			(uptr)&cgc_character,	(uptr)&"Input string trimmed",															_VAR_TYPE_CHARACTER,	0	},
+		{	_SOURCELIGHT_P1_REQUIRED,				(uptr)&cgc_sl_cString,		(uptr)&cgc_sl_character,	(uptr)&"Input string",																	_VAR_TYPE_CHARACTER,	0	},
+		{	_SOURCELIGHT_P2_OPTIONAL,				(uptr)&"lIgnoreCase",		(uptr)&cgc_sl_logical,		(uptr)&"Default = .T.. Should the cTrimChar variables ignore case?",					_VAR_TYPE_LOGICAL,		_LOGICAL_TRUE},
+		{	_SOURCELIGHT_P2_OPTIONAL,				(uptr)&"nIgnoreCase",		(uptr)&cgc_sl_numeric,		(uptr)&"Default = 1. Should the cTrimChar variables ignore case? 0=no, others=yes.",	_VAR_TYPE_S32,			1	},
+		{	_SOURCELIGHT_P3_OPTIONAL,				(uptr)&"cTrimChars1",		(uptr)&cgc_sl_character,	(uptr)&"String 1 containing characters to trim",										_VAR_TYPE_CHARACTER,	0	},
+		{	_SOURCELIGHT_P4_OPTIONAL,				(uptr)&"cTrimChars2",		(uptr)&cgc_sl_character,	(uptr)&"String 2 containing characters to trim",										_VAR_TYPE_CHARACTER,	0	},
+		{	_SOURCELIGHT_R1_REQUIRED,				(uptr)&"cResult",			(uptr)&cgc_sl_character,	(uptr)&"Input string trimmed",															_VAR_TYPE_CHARACTER,	0	},
 		// lcResult = ALLTRIM(cString, cTrimChars)
 		{	_SOURCELIGHT_FUNCTION_NAME,				0,	0,	0,	0,	0	},
 		{	_SOURCELIGHT_FUNCTION_DESCRIPTION,		(uptr)"Two parameter variation. Converts the input string to a form where the cTrimChars are removed off the left and right sides.",	0, 0, 0, 0 },
-		{	_SOURCELIGHT_P1_REQUIRED,				(uptr)&cgc_cString,			(uptr)&cgc_character,	(uptr)&"Input string",																_VAR_TYPE_CHARACTER,	0	},
-		{	_SOURCELIGHT_P2_OPTIONAL,				(uptr)&"cTrimChars",			(uptr)&cgc_character,	(uptr)&"String containing characters to trim",									_VAR_TYPE_CHARACTER,	0	},
-		{	_SOURCELIGHT_R1_REQUIRED,				(uptr)&"cResult",			(uptr)&cgc_character,	(uptr)&"Input string trimmed",														_VAR_TYPE_CHARACTER,	0	},
+		{	_SOURCELIGHT_P1_REQUIRED,				(uptr)&cgc_sl_cString,		(uptr)&cgc_sl_character,	(uptr)&"Input string",																_VAR_TYPE_CHARACTER,	0	},
+		{	_SOURCELIGHT_P2_OPTIONAL,				(uptr)&"cTrimChars",		(uptr)&cgc_sl_character,	(uptr)&"String containing characters to trim",									_VAR_TYPE_CHARACTER,	0	},
+		{	_SOURCELIGHT_R1_REQUIRED,				(uptr)&"cResult",			(uptr)&cgc_sl_character,	(uptr)&"Input string trimmed",														_VAR_TYPE_CHARACTER,	0	},
 		{	0,										0,	0,	0,	0,	0	},
 	};
 

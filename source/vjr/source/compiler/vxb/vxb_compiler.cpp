@@ -5166,7 +5166,7 @@ debug_break;
 			if (gsProps_master[lnI].varInit)
 			{
 				// Give it its name
-				iDatum_duplicate(&gsProps_master[lnI].varInit->name, gsProps_master[lnI].propName, gsProps_master[lnI].propLength);
+				iDatum_duplicate(&gsProps_master[lnI].varInit->name, gsProps_master[lnI].propName_u8, gsProps_master[lnI].propLength);
 
 				// Populate it
 				switch (gsProps_master[lnI].varType)
@@ -6208,20 +6208,20 @@ debug_break;
 					{
 						// True/False
 						varDisp->isValueAllocated = true;
-						if (var->value.data[0] == 0)		iDatum_duplicate(&varDisp->value, cgcFText, -1);
-						else								iDatum_duplicate(&varDisp->value, cgcTText, -1);
+						if (var->value.data[0] == _LOGICAL_FALSE)		iDatum_duplicate(&varDisp->value, cgc_f_dots, -1);
+						else											iDatum_duplicate(&varDisp->value, cgc_t_dots, -1);
 
 					} else if (lnSetLogical == _LOGICAL_YN) {
 						// Yes/No
 						varDisp->isValueAllocated = true;
-						if (var->value.data[0] == 0)		iDatum_duplicate(&varDisp->value, cgcNText, -1);
-						else								iDatum_duplicate(&varDisp->value, cgcYText, -1);
+						if (var->value.data[0] == _LOGICAL_FALSE)		iDatum_duplicate(&varDisp->value, cgc_no_dots, -1);
+						else											iDatum_duplicate(&varDisp->value, cgc_yes_dots, -1);
 
 					} else {
 						// Up/Down
 						var->isValueAllocated = true;
-						if (var->value.data[0] == 0)		iDatum_duplicate(&varDisp->value, cgcDText, -1);
-						else								iDatum_duplicate(&varDisp->value, cgcUText, -1);
+						if (var->value.data[0] == _LOGICAL_FALSE)		iDatum_duplicate(&varDisp->value, cgc_down_dots, -1);
+						else											iDatum_duplicate(&varDisp->value, cgc_up_dots, -1);
 					}
 					break;
 

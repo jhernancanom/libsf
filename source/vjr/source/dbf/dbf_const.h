@@ -80,6 +80,9 @@
 	#define		_MAX_IDX_KEY_LENGTH					100			// Up to 100 bytes per IDX key
 	#define		_MAX_CDX_KEY_LENGTH					240			// Up to 240 bytes per CDX key
 
+	#define		_MIN_SLEEP_INTERVAL_BETWEEN_LOCK_FILE_RETRY_ATTEMPTS 20		// Minimum of 0.05 seconds between attempts
+	#define		_MAX_SLEEP_INTERVAL_BETWEEN_LOCK_FILE_RETRY_ATTEMPTS 10000	// Up to 10 seconds between retry attempts
+
 	// Errors
 	#define		_DBF_ERROR__INTERNAL_PROGRAMMER		-9999
 	#define		_DBF_OKAY							0

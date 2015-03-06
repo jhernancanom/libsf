@@ -633,6 +633,46 @@
 
 //////////
 //
+// Called to get the type of the variable for the indicated property
+//
+//////
+	s32 iObjProp_getVarAndType(SObject* obj, s32 tnIndex, SVariable** varDst)
+	{
+		SVariable* var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			//////////
+			// Make sure we have a target
+			//////
+				if (!varDst)
+					varDst = &var;
+
+
+			//////////
+			// Grab the variable
+			//////
+				*varDst = iObjProp_get_variable_byIndex(obj, tnIndex);
+
+
+			//////////
+			// Indicate the type
+			//////
+				if (*varDst)
+					return((*varDst)->varType);
+		}
+
+		// If we get here, failure
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
 // Get the associated variable based upon the object type and property index.
 //
 // Note:  For performance, the value returned here is a pointer to the direct
@@ -718,7 +758,7 @@ debug_break;
 						lnIndex = objProps[lnI].index;
 
 						// Search the name associated with that property
-						if (iTestExactlyEqual(tcName, tnNameLength, gsProps_master[lnIndex - 1].propName, gsProps_master[lnIndex - 1].propLength))
+						if (iTestExactlyEqual(tcName, tnNameLength, gsProps_master[lnIndex - 1].propName_u8, gsProps_master[lnIndex - 1].propLength))
 							return(obj->props[lnI]);	// Return the variable associated with this position
 					}
 					// If we get here, not found
@@ -728,6 +768,7 @@ debug_break;
 			// Locate the user property
 			if (tlSearchClassProps)
 			{
+// TODO:  Write code to search for dynamically allocated properties (allocated at runtime)
 			}
 		}
 

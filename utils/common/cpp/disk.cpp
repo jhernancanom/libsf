@@ -295,18 +295,22 @@
 // Note:  After unlocking, the slot in the original buffRoot is freed, available for re-use.
 //
 //////
-	void iDisk_unlock(SBuilder* buffRoot, uptr tnHandle)
+	bool iDisk_unlock(SBuilder* buffRoot, uptr tnHandle)
 	{
 		// Make sure our environment is sane
 		if (iiDisk_isValidLockHandle(buffRoot, tnHandle))
 		{
 			// Unlock it
-			iiDisk_unlock(buffRoot, tnHandle);
+			return(iiDisk_unlock(buffRoot, tnHandle));
 		}
+
+		// If we get here, failure
+		return(false);
 	}
 
-	void iiDisk_unlock(SBuilder* buffRoot, uptr tnHandle)
+	bool iiDisk_unlock(SBuilder* buffRoot, uptr tnHandle)
 	{
+		bool			llResult;
 		union {
 			uptr		_dl;
 			SDiskLock*	dl;
@@ -314,14 +318,15 @@
 
 
 		// If it's a valid lock, unlock it
-		_dl = tnHandle;
+		_dl			= tnHandle;
+		llResult	= false;
 		if (dl->isValid)
 		{
 			// Seek
 			if (_lseeki64(dl->nFile, dl->nOffset, SEEK_SET) == dl->nOffset)
 			{
 				// Unlock
-				_locking(dl->nFile, _LK_UNLCK, dl->nLength);
+				llResult = (_locking(dl->nFile, _LK_UNLCK, dl->nLength) == 0);
 
 			} else {
 				// If we get here, the file is likely no longer open, so all locks are closed
@@ -331,6 +336,9 @@
 			// Indicate the lock is no longer valid
 			dl->isValid = false;
 		}
+
+		// Indicate success or failure
+		return(llResult);
 	}
 
 

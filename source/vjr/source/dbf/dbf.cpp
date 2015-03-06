@@ -151,7 +151,84 @@
 
 
 
+/////////
+//
+// Called to see if the particular lock operation should continue
+//
+//////
+	bool iiDbf_continueWithLockOperation(SDiskLockCallback* dcb, s32 tnAttempts, s32 tnMillisecondsSpentThusFar)
+	{
+		s32			lnType, lnValue, lnMaxAttempts, lnRetryInterval;
+		SVariable*	varReprocess;
+		s8			buffer[1024];
+		SDiskLock*	dl;
 
+
+		//////////
+		// Find out how we're reprocessing
+		//////
+			dl		= (SDiskLock*)dcb->extra;
+			lnType	= iObjProp_getVarAndType(_settings, _INDEX_SET_REPROCESS, &varReprocess);
+			if (varReprocess)
+			{
+				// Grab our interval and max attempts
+				lnRetryInterval	= max(min(iObjProp_get_s32_direct(_settings, _INDEX_SET_REPROCESSINTERVAL), _MAX_SLEEP_INTERVAL_BETWEEN_LOCK_FILE_RETRY_ATTEMPTS), _MIN_SLEEP_INTERVAL_BETWEEN_LOCK_FILE_RETRY_ATTEMPTS);
+				lnMaxAttempts	= iObjProp_get_s32_direct(_settings, _INDEX_SET_REPROCESSATTEMPTS);
+
+				// Increase our attempted count
+				++dl->extra2;
+
+				// Is it logical (automatic reprocessing?)
+				switch (lnType)
+				{
+					case _VAR_TYPE_LOGICAL:
+						// SET REPROCESS TO AUTOMATIC
+						// Are we beyond our max?
+						if (dl->extra2 > lnMaxAttempts)
+							return(false);	// We're done retrying, now we fail
+
+						// If we get here, we are retrying again
+						Sleep(lnRetryInterval);
+
+						// Retry
+						return(true);
+
+
+					case _VAR_TYPE_S32:
+						// SET REPROCESS TO [N|N SECONDS]
+						lnValue = iObjProp_get_s32_direct(_settings, _INDEX_SET_REPROCESS);
+						if (lnValue < 0)
+						{
+							// SET REPROCESS TO 30
+							// Are we beyond our max?
+							if (dl->extra2 > lnMaxAttempts)
+								return(false);	// We're done retrying, now we fail
+
+						} else {
+							// SET REPROCESS TO 30 SECONDS
+							if (dl->extra2 > lnMaxAttempts)
+								return(false);	// We're done retrying, now we fail
+
+							// Sleep for our sleep interval
+							Sleep(lnRetryInterval);
+						}
+						// We succeed, retrying immediately
+						return(true);
+				}
+				// Control SHOULD never reach here, if it does it falls through to the internal system error
+			}
+
+
+		//////////
+		// Internal system error
+		//////
+			// Build the error string "_settings.reprocess not found or invalid"
+			sprintf(buffer, "%s.%s %s\0", cgc__settings, cgc_reprocess, cgc_notFoundOrInvalidDataType);
+			iError_signal(_ERROR_INTERNAL_ERROR, buffer);
+
+			// Indicate no retry
+			return(false);
+	}
 
 
 

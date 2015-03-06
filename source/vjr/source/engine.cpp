@@ -152,7 +152,7 @@
 								if (!var)
 								{
 									// Unknown parameter
-									iError_report(cgcUnrecognizedParameter);
+									iError_report(cgcUnrecognizedParameter, false);
 									screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(screenData, _screen);
 									iWindow_render(gWinJDebi, false);
 									return(false);
@@ -197,7 +197,7 @@
 								if (!(var = iEngine_get_variableName_fromComponent(compThird, &llManufactured)))
 								{
 									// Unknown parameter
-									iError_report(cgcUnrecognizedParameter);
+									iError_report(cgcUnrecognizedParameter, false);
 									screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(screenData, _screen);
 									iWindow_render(gWinJDebi, false);
 									return(false);
@@ -715,7 +715,7 @@
 				if (lnParamCount > maxCount)
 				{
 					// Too many parameters
-					iError_reportByNumber(_ERROR_TOO_MANY_PARAMETERS, comp);
+					iError_reportByNumber(_ERROR_TOO_MANY_PARAMETERS, comp, false);
 					return(NULL);
 				}
 
@@ -726,7 +726,7 @@
 				if (!compComma || (compComma->iCode != _ICODE_COMMA && compComma->iCode != _ICODE_PARENTHESIS_RIGHT && lnParamCount > requiredCount))
 				{
 					// Comma expected error
-					iError_reportByNumber(_ERROR_COMMA_EXPECTED, comp);
+					iError_reportByNumber(_ERROR_COMMA_EXPECTED, comp, false);
 					return(NULL);
 				}
 

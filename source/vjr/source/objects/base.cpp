@@ -2429,10 +2429,10 @@
 			{
 				// Search through the properties
 				lpm = lbcl->objProps;
-				while (lpm && gsProps_master[lpm->index].propName)
+				while (lpm && gsProps_master[lpm->index].propName_u8)
 				{
 					// Is this the name?
-					if (gsProps_master[lpm->index].propLength == tnPropertyNameLength && _memicmp(tcPropertyName, gsProps_master[lpm->index].propName, tnPropertyNameLength) == 0)
+					if (gsProps_master[lpm->index].propLength == tnPropertyNameLength && _memicmp(tcPropertyName, gsProps_master[lpm->index].propName_u8, tnPropertyNameLength) == 0)
 						return(obj->props[lpm->index]);		// This is the property, retrieve its value
 
 					// Move to next property
@@ -2579,7 +2579,7 @@
 if (!obj->props[lnI])
 	debug_break;
 					// Set its name
-					iVariable_setName(obj->props[lnI], gsProps_master[lnIndex - 1].propName, gsProps_master[lnIndex - 1].propLength);
+					iVariable_setName(obj->props[lnI], gsProps_master[lnIndex - 1].propName_u8, gsProps_master[lnIndex - 1].propLength);
 
 
 				//////////

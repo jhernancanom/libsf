@@ -86,6 +86,7 @@
 	#define		_CDX_ERROR_INVALID_KEY				-210
 	#define		_CDX_ERROR_INVALID_INDEX			-211
 	#define		_CDX_ERROR_NO_INDEX_IN_USE			-212
+	#define		_CDX_LOCK_FAILURE					-213
 	#define		_CDX_ERROR_CONTEXTUAL				-10000
 
 	// Index header flags
