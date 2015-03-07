@@ -3,6 +3,21 @@
 // /libsf/vvm/core/vvmtests/vvmt_core/vvmt_const.h
 //
 //////
+//    _     _ _     _____ _____ 
+//   | |   (_) |__ / ____|  ___|
+//   | |   | | '_ \\___ \|  __|
+//   | |___| | |_) |___) | |
+//   |_____|_|_.__/_____/|_|
+//
+//   Liberty Software Foundation
+// and the Village Freedom Project
+//   __     _______     ____  
+//   \ \   / /  ___| __|  _ \ 
+//    \ \ / /| |_ | '__| |_) |
+//     \ V / |  _|| |  |  __/ 
+//      \_/  |_|  |_|  |_|
+//
+//////
 // Version 0.70
 // Copyright (c) 2012, 2014 by Rick C. Hodgin
 //////

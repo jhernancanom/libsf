@@ -3,6 +3,21 @@
 // /libsf/li386/oppie/oppie1/cpp_simulation/oppie1/bmps/bitmaps.h
 //
 //////
+//    _     _ _     _____ _____ 
+//   | |   (_) |__ / ____|  ___|
+//   | |   | | '_ \\___ \|  __|
+//   | |___| | |_) |___) | |
+//   |_____|_|_.__/_____/|_|
+//
+//   Liberty Software Foundation
+// and the Village Freedom Project
+//   __     _______     ____  
+//   \ \   / /  ___| __|  _ \ 
+//    \ \ / /| |_ | '__| |_) |
+//     \ V / |  _|| |  |  __/ 
+//      \_/  |_|  |_|  |_|
+//
+//////
 // Version 0.02
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
