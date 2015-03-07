@@ -3,7 +3,7 @@
 // /libsf/source/vjr/source/datum/datum.h
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -77,7 +77,19 @@
 // Thank you.  And may The Lord bless you richly as you lift up your life, your
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
 //
+//////
+//  _____          _
+// |  __ \        | |
+// | |  | |  __ _ | |_  _   _  _ __ ___
+// | |  | | / _` || __|| | | || '_ ` _ \
+// | |__| || (_| || |_ | |_| || | | | | |
+// |_____/  \__,_| \__| \__,_||_| |_| |_|
+// Datum --- Data w/allocation and length
 //
+//////////
+
+
+
 
 // #pragma once
 #ifndef __DATUM_H__

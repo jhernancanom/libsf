@@ -3,7 +3,7 @@
 // /libsf/utils/common/cpp/disk.h
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -77,7 +77,17 @@
 // Thank you.  And may The Lord bless you richly as you lift up your life, your
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
 //
-//
+//////
+//   _____   _       _
+//  |  __ \ (_)     | |
+//  | |  | | _  ___ | | __
+//  | |  | || |/ __|| |/ /
+//  | |__| || |\__ \|   <
+//  |_____/ |_||___/|_|\_\
+//     Disk Algorithms.
+//////////
+
+
 
 
 //#pragma once
@@ -99,7 +109,7 @@
 		s32			nFile;					// File handle
 		s64			nOffset;				// Offset for start of lock
 		s32			nLength;				// Length of lock
-	
+
 		// user-defined extra data associated with this lock
 		uptr		extra1;
 		uptr		extra2;

@@ -3,7 +3,7 @@
 // /libsf/utils/common/cpp/ll.cpp
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -46,7 +46,15 @@
 // Thank you.  And may The Lord bless you richly as you lift up your life, your
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
 //
-//
+//////
+//   _       _         _     _       _       _
+//  | |     (_)       | |   | |     (_)     | |
+//  | |      _  _ __  | | __| |      _  ___ | |_
+//  | |     | || '_ \ | |/ /| |     | |/ __|| __|
+//  | |____ | || | | ||   < | |____ | |\__ \| |_
+//  |______||_||_| |_||_|\_\|______||_||___/ \__|
+//    Link List -- Simple link list algorithms.
+//////////
 
 
 
@@ -71,7 +79,7 @@
 // 		};
 // 		u32				uniqueId;				// Unique id associated with this object
 // 	};
-// 
+//
 // 	struct SLLCallback
 // 	{
 // 		union
@@ -85,7 +93,7 @@
 // 			//		bool func(SLLCallback* cb)
 // 			//////////
 // 		};
-// 
+//
 // 		// Data items for this callback
 // 		SLL*	node;
 // 		union {
@@ -94,10 +102,10 @@
 // 		};
 // 		u32		extra2;
 // 	};
-// 
-// 
-// 
-// 
+//
+//
+//
+//
 // //////////
 // // Forward declarations (some of the functions below call themselves)
 // //////
@@ -119,7 +127,7 @@
 // 	SLL*					iLl_getLastNode								(SLL* node);
 // 	u32						iLl_countNodesToEnd							(SLL* node);
 
-	
+
 
 
 //////////
@@ -141,7 +149,7 @@
 		{
 			// Create a new node
 			node = iLl_createOrphanNode(nodePrev, nodeNext, tnUniqueId, tnSize);
-			
+
 			// Append it to the chain
 			if (*root)
 			{
@@ -184,7 +192,7 @@
 		{
 			// We're good
 			memset(node, 0, tnSize);
-			
+
 			// Store a unique id
 			node->uniqueId	= tnUniqueId;
 
@@ -433,7 +441,7 @@
 			// Indicate the one after the one we migrated
 			//////
 				return(nodeNext);
-			
+
 		} else {
 			// Failure
 			return(NULL);
@@ -598,7 +606,7 @@
 			{
 				// Grab the next node
 				nodeNext = node->next;
-				
+
 				// Delete the node
 				free(node);
 

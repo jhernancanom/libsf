@@ -55,6 +55,14 @@
     <File Name="../../../../utils/common/cpp/linux/hwndx.cpp" ExcludeProjConfig="Debug"/>
     <File Name="../../../../utils/common/cpp/datum.cpp" ExcludeProjConfig="Debug"/>
     <File Name="../../../../utils/common/cpp/datum.h"/>
+    <File Name="../../../../utils/common/cpp/time.h"/>
+    <File Name="../../../../utils/common/cpp/time.cpp" ExcludeProjConfig="Debug"/>
+    <File Name="../../../../utils/common/cpp/disk.h"/>
+    <File Name="../../../../utils/common/cpp/disk.cpp" ExcludeProjConfig="Debug"/>
+    <File Name="../../../../utils/common/cpp/scale.h"/>
+    <File Name="../../../../utils/common/cpp/scale.cpp" ExcludeProjConfig="Debug"/>
+    <File Name="../../../../utils/common/cpp/ll.h"/>
+    <File Name="../../../../utils/common/cpp/ll.cpp" ExcludeProjConfig="Debug"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>

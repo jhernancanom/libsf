@@ -3,7 +3,7 @@
 // /libsf/source/vjr/source/vjr.h
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -77,7 +77,20 @@
 // Thank you.  And may The Lord bless you richly as you lift up your life, your
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
 //
+//////
 //
+//   __      __   _
+//   \ \    / /  | |
+//    \ \  / /   | | _ __
+//     \ \/ /_   | || '__|
+//      \  /| |__| || |
+//       \/  \____/ |_|
+//     Visual FreePro, Jr.
+//
+//////////
+
+
+
 
 #ifndef WINVER                  // Specifies that the minimum required platform is Windows XP.
 #define WINVER 0x0501           // Change this to the appropriate value to target other versions of Windows.

@@ -3,7 +3,7 @@
 // /libsf/utils/common/cpp/scale.cpp
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -56,6 +56,16 @@
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
 //
 //////
+//   ____                       _____              _  _
+//  |  _ \                     / ____|            | |(_)
+//  | |_) | _ __ ___   _ __   | (___    ___  __ _ | | _  _ __    __ _
+//  |  _ < | '_ ` _ \ | '_ \   \___ \  / __|/ _` || || || '_ \  / _` |
+//  | |_) || | | | | || |_) |  ____) || (__| (_| || || || | | || (_| |
+//  |____/ |_| |_| |_|| .__/  |_____/  \___|\__,_||_||_||_| |_| \__, |
+//                    | |                                        __/ |
+//                    |_|                                       |___/
+//   Bitmap Scaling -- Simple arbitrary bitmap scaling algorithm.
+//////////
 
 
 
@@ -192,7 +202,7 @@ struct SBitmapProcess
 			fclose(lfh);
 			return(-4);		// Unable to read header from file
 		}
-		
+
 		// Read the info
 		lnNumread = fread(&bii, 1, sizeof(bii), lfh);
 		if (lnNumread != sizeof(bii))
@@ -654,7 +664,7 @@ struct SBitmapProcess
 // 	{
 // 		if (tnX >= bp->bii->biWidth)
 // 			_asm nop;
-// 
+//
 // 		if (tnY >= bp->bii->biHeight)
 // 			_asm nop;
 // 	}

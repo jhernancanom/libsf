@@ -3,7 +3,7 @@
 // /libsf/utils/common/cpp/ll.h
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -45,7 +45,15 @@
 // Thank you.  And may The Lord bless you richly as you lift up your life, your
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
 //
-//
+//////
+//   _       _         _     _       _       _
+//  | |     (_)       | |   | |     (_)     | |
+//  | |      _  _ __  | | __| |      _  ___ | |_
+//  | |     | || '_ \ | |/ /| |     | |/ __|| __|
+//  | |____ | || | | ||   < | |____ | |\__ \| |_
+//  |______||_||_| |_||_|\_\|______||_||___/ \__|
+//    Link List -- Simple link list algorithms.
+//////////
 
 
 
