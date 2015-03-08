@@ -3,7 +3,7 @@
 // /libsf/source/vjr/source/compiler/vxb/vxb_compiler.cpp
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -393,7 +393,7 @@
 //////////
 //
 // Called to post-compile, primarily to flag variables that are not referenced
-// 
+//
 //////
 	void iiCompile_vxb_postcompile_forLiveCode(SCompileVxbContext* vxb)
 	{
@@ -845,7 +845,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 
 //////////
 //
-// 
+//
 //
 //////
 	void iComps_deleteAll(SComp* comp)
@@ -1129,7 +1129,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 							{
 								// This is a match
 								llResult			= true;
-								
+
 								// Convert it, translate it, whatever you want to call it, just make it be the new code, per the user's request, got it? :-)
 								comp->iCode			= tacs->iCode;
 								comp->iCat			= tacs->iCat;
@@ -1143,7 +1143,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 									if (tacs->_onFind)
 										tacs->onFind(tacs, comp);
 
-								
+
 								// All done with this component
 								break;
 							}
@@ -1155,7 +1155,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 				comp = comp->ll.nextComp;
 			}
 		}
-		
+
 		// Indicate our status
 		return(llResult);
 	}
@@ -1353,7 +1353,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 				comp = comp->ll.nextComp;
 			}
 		}
-		
+
 		// If we get here, invalid or not found
 		return(NULL);
 	}
@@ -3074,7 +3074,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Second level:
 //		(4)		parenthetical expressions
 //		(5)		bracket expressions (arrays)
-//		(6)		
+//		(6)
 //
 //////
 	SComp* iiComps_xlatToSubInstr_findInmostExpression(SNode* si, SLine* line)
@@ -3516,7 +3516,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 		}
 	}
 
-	
+
 	bool iSEChain_allocateAdditionalMasterSlots(SStartEnd* ptrSE, u32 tnBlockSize)
 	{
 		bool			llResult;
@@ -3671,8 +3671,8 @@ debug_break;
 					if (!lacs->firstOnLine || !comp->ll.prev)
 					{
 						// Physically conduct the exact comparison
-						if (iTranslateToCompsTest(lacs->keyword_u8, 
-													comp->line->sourceCode->data_u8 + comp->start, 
+						if (iTranslateToCompsTest(lacs->keyword_u8,
+													comp->line->sourceCode->data_u8 + comp->start,
 													lacs->length) == 0)
 						{
 							// This is a match
@@ -4626,7 +4626,7 @@ debug_break;
 				if (compName->start + compName->length <= compName->line->sourceCode_populatedLength)
 				{
 					// Yes, store the name
-					iDatum_duplicate(	&funcNew->name, 
+					iDatum_duplicate(	&funcNew->name,
 										compName->line->sourceCode->data_u8 + compName->start,
 										compName->length);
 				}
@@ -6042,7 +6042,7 @@ do_as_numeric:
 
 				// Copy the bitmap to the destination
 				var->bmp = iBmp_copy(bmp);
-				
+
 				// Indicate success
 				return(true);
 			}
@@ -6265,14 +6265,14 @@ debug_break;
 
 				case _VAR_TYPE_U64:
 					// Convert to unsigned integer form, then store text
-					sprintf((s8*)buffer, "%I64u\0", (unsigned int)*(u64*)var->value.data);
+					sprintf((s8*)buffer, "%I64u\0", *(u64*)var->value.data);
 					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_S64:
 					// Convert to unsigned integer form, then store text
-					sprintf((s8*)buffer, "%I64d\0", (int)*(s64*)var->value.data);
+					sprintf((s8*)buffer, "%I64d\0", *(s64*)var->value.data);
 					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
@@ -8312,8 +8312,8 @@ debug_break;
 		//////////
 		// For Gregorian calendar dates (dates after October 15, 1582):
 		//////
-			*tfJulianDayNumber = (f32)((f64)day + 
-									floor(((153.0 * m) + 2.0) / 5.0) + 
+			*tfJulianDayNumber = (f32)((f64)day +
+									floor(((153.0 * m) + 2.0) / 5.0) +
 									(365.0 * y) +
 									floor(y / 4.0) -
 									floor(y / 100.0) +
@@ -8324,8 +8324,8 @@ debug_break;
 // 		//////////
 // 		// For Julian calendar dates (dates before October 15, 1582):
 // 		//////
-// 			*tfJulianDayNumber = (f32)((f64)day + 
-// 									floor(((153.0 * m) + 2.0) / 5.0) + 
+// 			*tfJulianDayNumber = (f32)((f64)day +
+// 									floor(((153.0 * m) + 2.0) / 5.0) +
 // 									(365.0 * y) +
 // 									floor(y / 4.0) -
 // 									32083.0);
@@ -8643,7 +8643,7 @@ debug_break;
 
 //////////
 //
-// Called to report the indicated message 
+// Called to report the indicated message
 //
 //////
 	void iComp_reportWarningsOnRemainder(SComp* comp, u32 tnWarningNum, cu8* tcMessage)

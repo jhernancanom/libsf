@@ -3,7 +3,7 @@
 // /libsf/source/vjr/source/vjr_const.h
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -89,7 +89,7 @@ struct SEM;
 
 #if defined(_MSC_VER)
 	#include "\libsf\utils\common\cpp\common_types.h"
-#elif defined(__linux__)
+#elif defined(__GNUC__)
 	#include "/libsf/utils/common/cpp/common_types.h"
 #else
 	#error Unknown target for compilation (must be Windows or Linux)

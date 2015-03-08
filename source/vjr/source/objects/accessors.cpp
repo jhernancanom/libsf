@@ -3,7 +3,7 @@
 // /libsf/source/vjr/source/object_accessors.cpp
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -168,7 +168,7 @@
 					// Set the two
 					iObjProp_set_bitmap_direct(obj, _INDEX_PICTUREBMP_DOWN, bmp);
 					iObjProp_set_bitmap_direct(obj, _INDEX_PICTUREBMP_OVER, bmp);
-					
+
 					// Colorize
 					SetRect(&lrc, 0, 0, bmp->bi.biWidth, bmp->bi.biHeight);
 					bmp = iObjProp_get_bitmap(obj, _INDEX_PICTUREBMP_OVER);		iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f + ((obj->objType == _OBJ_TYPE_CHECKBOX) ? 0.25f : 0.0f));
@@ -209,7 +209,7 @@
 
 
 //////////
-// 
+//
 // Called to set the character variable to the indicated input
 //
 //////
@@ -638,7 +638,7 @@
 		// Make sure the environment is sane
 		if (obj)
 			return(iObjProp_get_variable_byIndex(obj, tnIndex));
-		
+
 		// If we get here, failure
 		return(NULL);
 	}
@@ -680,7 +680,7 @@
 		}
 
 		// If we get here, failure
-		return(NULL);
+		return(null0);
 	}
 
 

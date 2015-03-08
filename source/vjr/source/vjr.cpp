@@ -100,20 +100,18 @@
 
 
 
-#if defined(_MSC_VER)
+#if defined(__linux__)
+	int main(int argc, char* argv[])
+#else
 	int CALLBACK WinMain(	HINSTANCE	hInstance,
 							HINSTANCE	hPrevInstance,
 							LPSTR		lpCmdLine,
 							int			nCmdShow	)
-#elif __linux__
-	int main(int argc, char* argv[])
-#else
-	#error Unknown target for compilation (must be Windows or Linux)
 #endif
 {
 	MSG		msg;
 	HACCEL	hAccelTable;
-#if !defined(_MSC_VER)
+#if defined(__linux__)
 	HINSTANCE hInstance = 0;
 #endif
 

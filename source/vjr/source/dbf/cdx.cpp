@@ -3,7 +3,7 @@
 // /libsf/source/vjr/source/dbf/cdx.cpp
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -108,7 +108,7 @@
 //		wa					-- Work area
 //		tcCdxFilename		-- IDX/CDX filename
 //		tnCdxFilenameLength	-- Length of the filename
-//		tnExplicitIndexType	-- 
+//		tnExplicitIndexType	--
 //
 //////
 	u32 cdx_open(SWorkArea* wa, s8* tcCdxFilename, u32 tnCdxFilenameLength, u32 tnExplicitIndexType)
@@ -274,7 +274,7 @@
 						return(_CDX_ERROR_READING_HEADER_CDX);
 					}
 
-				
+
 				//////////
 				// Indicate it's a compact index, store the file size manually
 				//////
@@ -551,7 +551,6 @@
 		//////////
 		// Validate the key is not too long
 		//////
-			_CDX_ERROR_MEMORY_CDX;
 			if (tnKeyLength > tagHeader->keyLength)
 				return(_CDX_ERROR_INVALID_KEY_LENGTH);		// Invalid key length
 
@@ -1156,7 +1155,7 @@
 										//////
 											if (lnKeyNumber != 0)
 											{
-												// Based on sort order, we must either be >= or <= 
+												// Based on sort order, we must either be >= or <=
 												if (tagRoot.indexIsDesc)
 												{
 													// Sort order is descending
@@ -2493,7 +2492,7 @@ debug_break;
 		//////
 			lnActualResult = memcmp(keyLeft, keyRight, tnKeyLength);
 
-		
+
 		//////////
 		// Analyze the result as per the index order
 		//////

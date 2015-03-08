@@ -143,7 +143,7 @@
 	#include "h\cask_icons.h"
 	#include "h\array_bmp.h"
 
-#elif defined(__linux__)
+#elif defined(__GNUC__)
 	#include "h/app_icon.h"
 	#include "h/move.h"
 	#include "h/minimize.h"

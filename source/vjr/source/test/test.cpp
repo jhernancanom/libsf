@@ -91,6 +91,8 @@
 	{
 		uptr lnHandle;
 
+return;
+
 
 		//////////
 		// Open the test table

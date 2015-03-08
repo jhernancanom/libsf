@@ -3,7 +3,7 @@
 // /libsf/source/vjr/source/forms3d/grace.h
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -85,9 +85,14 @@
 #if defined(_MSC_VER)
 	#include "include\GL\glew.h"
 	#include "include\GL\freeglut.h"
-#elif defined(__linux__)
-	#include "GL/glew.h"
-	#include "GL/freeglut.h"
+#elif defined(__GNUC__)
+	#if defined(__linux__)
+		#include "GL/glew.h"
+		#include "GL/freeglut.h"
+	#else
+		#include "include/GL/glew.h"
+		#include "include/GL/freeglut.h"
+	#endif
 #else
 	#error Unknown target for compilation (must be Windows or Linux)
 #endif
@@ -213,7 +218,7 @@ struct SGraceLine;
 
 	struct SGraceUv
 	{
-		f32		s;		
+		f32		s;
 		f32		t;
 	};
 
@@ -305,7 +310,7 @@ struct SGraceLine;
 	bool		glMouse_leftButtonDown			= false;
 	bool		glMouse_middleButtonDown		= false;
 	bool		glMouse_rightButtonDown			= false;
-	
+
 	f32			gfLightViewX					= 0.0;
 	f32			gfLightViewY					= 0.0;
 	f32			gfLightViewZ					= 0.0;

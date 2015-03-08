@@ -3,7 +3,7 @@
 // /libsf/utils/common/cpp/common_types.h
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -115,7 +115,11 @@
 #define cf64 const f64
 
 #ifndef _UPTR_ERROR
-	#define _UPTR_ERROR -1
+	#if defined(__amd64) || defined(_M_X64)
+		#define _UPTR_ERROR 0xffffffffffffffff
+	#else
+		#define _UPTR_ERROR 0xffffffff
+	#endif
 #endif
 
 #ifndef null0

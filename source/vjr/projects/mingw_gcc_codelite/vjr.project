@@ -60,6 +60,9 @@
     <File Name="../../source/sound/sound.h"/>
     <File Name="../../../../utils/common/cpp/common_types.h"/>
     <File Name="../../source/vjr_compile_time_settings.h"/>
+    <File Name="../../source/bitmaps/bitmaps.h"/>
+    <File Name="../../source/bmps/graphics/bitmaps.h"/>
+    <File Name="../../source/forms3d/grace.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="other">
     <File Name="../../source/bitmaps.cpp" ExcludeProjConfig="Debug;Debug64;Release"/>
@@ -77,8 +80,9 @@
     <File Name="../../../../utils/common/cpp/builder.cpp" ExcludeProjConfig="Debug;Debug64;Release"/>
   </VirtualDirectory>
   <VirtualDirectory Name="commands">
-    <File Name="../../source/command_defs.h"/>
-    <File Name="../../source/commands.cpp" ExcludeProjConfig="Debug;Debug64;Release"/>
+    <File Name="../../source/commands/command_defs.h"/>
+    <File Name="../../source/commands/command_sourcelight.h"/>
+    <File Name="../../source/commands/commands.cpp" ExcludeProjConfig="Debug"/>
   </VirtualDirectory>
   <VirtualDirectory Name="dbf">
     <File Name="../../source/dbf/cdx.cpp" ExcludeProjConfig="Debug"/>

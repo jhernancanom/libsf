@@ -3,7 +3,7 @@
 // /libsf/source/vjr/commands/command_defs.h
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -179,7 +179,7 @@ struct SVariable;
 	SVariable*			function_ltrim								(SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2);
 	SVariable*			function_max								(SVariable* varLeft, SVariable* varRight);
 	SVariable*			function_min								(SVariable* varLeft, SVariable* varRight);
-	SVariable*			function_mod								(SVariable* varDividend, SVariable* varDivisor);
+	SVariable*			function_mod		/* Stefano D'Amico */	(SVariable* varDividend, SVariable* varDivisor);
 	SVariable*			function_occurs								(SVariable* varNeedle, SVariable* varHaystack);
 	SVariable*			function_occursc							(SVariable* varNeedle, SVariable* varHaystack);
 	SVariable*			function_padc								(SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter);

@@ -3,7 +3,7 @@
 // /libsf/source/vjr/commands/commands.cpp
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -185,7 +185,6 @@
 			comp->isError = true;
 		}
 	}
-;
 
 
 
@@ -296,7 +295,7 @@
 //////
 // Syntax forms supported:
 //	    (1)  *TRIM(cString[, cTrimString])
-//	    (2)  *TRIM(cString[, nCaseSensitive|lCaseSensitive[, cTrimChar1[, cTrimChar2]]]) 
+//	    (2)  *TRIM(cString[, nCaseSensitive|lCaseSensitive[, cTrimChar1[, cTrimChar2]]])
 //
 //////
 	SVariable* ifunction_trimCommon(SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2, bool tlTrimTheStart, bool tlTrimTheEnd)
@@ -1081,13 +1080,13 @@
 				iError_reportByNumber(_ERROR_P3_IS_INCORRECT, varReplace->compRelated, false);
 				return(NULL);
 			}
-		
+
 
 		//////////
 		// Allocate a copy of the original string
 		//////
 			result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, varString->value.data_u8, varString->value.length);
-			
+
 			// If the original string is empty, or the characters to search for are empty, then we don't need to do anything
 			if (varString->value.length == 0 || varSearch->value.length == 0)
 				return(result);
@@ -1345,7 +1344,7 @@
 
 		} else {
 			// They have provided us datetime parameters.
-			// Default to 01/01/1600 00:00:00.000 for any 
+			// Default to 01/01/1600 00:00:00.000 for any
 			lst.wYear			= 1600;
 			lst.wMonth			= 1;
 			lst.wDay			= 1;
@@ -2741,21 +2740,21 @@
 
 		//////////
 		// Grab the dividend
-		//////			
+		//////
 			if (iVariable_isTypeFloatingPoint(varDividend))
 			{
 				lfDividend = iiVariable_getAs_f64(varDividend, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, varDividend->compRelated, false);	return(NULL);	}					
+				if (error)	{	iError_reportByNumber(errorNum, varDividend->compRelated, false);	return(NULL);	}
 
 			} else {
 				if (iVariable_isNumeric64Bit(varDividend))
 				{
 					lfDividend = (f64)iiVariable_getAs_s64(varDividend, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(errorNum, varDividend->compRelated, false);	return(NULL);	}				
+					if (error)	{	iError_reportByNumber(errorNum, varDividend->compRelated, false);	return(NULL);	}
 
 				} else {
 					lfDividend = (f64)iiVariable_getAs_s32(varDividend, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(errorNum, varDividend->compRelated, false);	return(NULL);	}				
+					if (error)	{	iError_reportByNumber(errorNum, varDividend->compRelated, false);	return(NULL);	}
 				}
 			}
 
@@ -2766,18 +2765,18 @@
 			if (iVariable_isTypeFloatingPoint(varDivisor))
 			{
 				lfDivisor = iiVariable_getAs_f64(varDivisor, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(errorNum, varDivisor->compRelated, false);	return(NULL);	}					
+				if (error)	{	iError_reportByNumber(errorNum, varDivisor->compRelated, false);	return(NULL);	}
 
 			} else {
 				if (iVariable_isNumeric64Bit(varDivisor))
 				{
 					lfDivisor = (f64)iiVariable_getAs_s64(varDivisor, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(errorNum, varDivisor->compRelated, false);	return(NULL);	}				
+					if (error)	{	iError_reportByNumber(errorNum, varDivisor->compRelated, false);	return(NULL);	}
 
 				} else {
 					lfDivisor = (f64)iiVariable_getAs_s32(varDivisor, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(errorNum, varDivisor->compRelated, false);	return(NULL);	}				
-				}			
+					if (error)	{	iError_reportByNumber(errorNum, varDivisor->compRelated, false);	return(NULL);	}
+				}
 			}
 
 
@@ -2886,7 +2885,7 @@
 //////////
 //
 // Function: PADC(), PADL(), and PADR()
-// 
+//
 // and lowercases everything else.
 //
 //////
@@ -2997,7 +2996,7 @@
 			// If it wasn't created, or it's already as long or longer than its target, return it
 			if (!tempVar || tempVar->value.length >= lnResultSize)
 				return(tempVar);
-			
+
 			// If we get here, the result will be needed
 			result = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 			iDatum_allocateSpace(&result->value, lnResultSize);
@@ -3240,7 +3239,7 @@
 				iError_report(cgcInternalError, false);
 				return(NULL);
 			}
-		
+
 			if (lnCopies > 0 && varString->value.length > 0)
 			{
 				// Repeat the string as many as are indicated
@@ -3248,7 +3247,7 @@
 				for (lnI = 0; lnI < lnCopies; lnI++)
 					memcpy(result->value.data + (lnI * varString->value.length), varString->value.data, varString->value.length);
 			}
-		
+
 
 		//////////
         // Return our converted result
@@ -3330,7 +3329,7 @@
 				lfRed = iiVariable_getAs_f32(varRed, false, &error, &errorNum);
 				if (error)	{	iError_reportByNumber(errorNum, varRed->compRelated, false);	return(NULL);	}
 				lnRed = (s32)(255.0f * min(max(lfRed, 0.0f), 1.0f));
-				
+
 			} else {
 				// It is an integer, which means it must be in the range 0..255
 				lnRed = iiVariable_getAs_s32(varRed, false, &error, &errorNum);
@@ -3487,7 +3486,7 @@
 				lfRed = iiVariable_getAs_f32(varRed, false, &error, &errorNum);
 				if (error)	{	iError_reportByNumber(errorNum, varRed->compRelated, false);	return(NULL);	}
 				lnRed = (s32)(255.0f * min(max(lfRed, 0.0f), 1.0f));
-				
+
 			} else {
 				// It is an integer, which means it must be in the range 0..255
 				lnRed = iiVariable_getAs_s32(varRed, false, &error, &errorNum);
@@ -5647,8 +5646,8 @@ debug_break;
 				iError_reportByNumber(_ERROR_UNABLE_TO_OPEN_DBC, compPathname, false);
 				return;
 			}
-		
-		
+
+
 		//////////
 		// If we need to validate, do so
 		//////
@@ -5777,7 +5776,7 @@ debug_break;
 				if (compIn)
 					compIn = compIn->ll.nextComp;
 
-			
+
 			//////////
 			// If they specified an alias, they must specify something after it
 			//////
@@ -6029,7 +6028,7 @@ debug_break;
 				goto clean_exit;
 			}
 
-		
+
 		//////////
 		// See if the current work area already has a table open
 		//////

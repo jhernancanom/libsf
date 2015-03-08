@@ -222,10 +222,19 @@
 		#include "fonts.cpp"
 
 
-#elif defined(__linux__)
+#elif defined(__GNUC__)
 	// Compiling on Linux
 	#define WM_USER				0x0400
 
+	#if !defined(__linux__)
+		#include <windows.h>
+		#include <io.h>
+		#include <sys/locking.h>
+		#include <share.h>
+		#include <sql.h>
+		#include <sqlext.h>
+		#include "resource.h"
+	#endif
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <unistd.h>
@@ -243,19 +252,28 @@
 
 	// Seriously, X11??  "Illegal access??"  Really??
 	#define XLIB_ILLEGAL_ACCESS		1
-	#include <X11/Xlib.h>
-	#include <X11/Xutil.h>
-	#include <X11/cursorfont.h>
+	#if defined(__linux__)
+		#include <X11/Xlib.h>
+		#include <X11/Xutil.h>
+		#include <X11/cursorfont.h>
+	#endif
 
 	#define _USE_MATH_DEFINES
 	#include <math.h>
-	#include <SDL2/SDL.h>
-	#include <SDL2/SDL_audio.h>
+	#if defined(__linux__)
+		#include <SDL2/SDL.h>
+		#include <SDL2/SDL_audio.h>
+	#else
+		#include "sound/SDL-1.2.15/include/sdl/SDL.h"
+		#include "sound/SDL-1.2.15/include/sdl/SDL_audio.h"
+	#endif
 
 	#include "vjr_const.h"
 
-	#include "/libsf/utils/common/cpp/linux/windows.h"
-	#include "/libsf/utils/common/cpp/linux/hwndx.h"
+	#if defined(__linux__)
+		#include "/libsf/utils/common/cpp/linux/windows.h"
+		#include "/libsf/utils/common/cpp/linux/hwndx.h"
+	#endif
 
 	#include "/libsf/utils/common/cpp/builder.h"
 	#include "/libsf/utils/common/cpp/builder.cpp"
@@ -345,8 +363,10 @@
 		#include "/libsf/utils/common/cpp/datum.cpp"
 		#include "fonts.cpp"
 
-		#include "/libsf/utils/common/cpp/linux/windows.cpp"
-		#include "/libsf/utils/common/cpp/linux/hwndx.cpp"
+		#if defined(__linux__)
+			#include "/libsf/utils/common/cpp/linux/windows.cpp"
+			#include "/libsf/utils/common/cpp/linux/hwndx.cpp"
+		#endif
 
 #else
 	#error Unknown target for compilation (must be Windows or Linux)

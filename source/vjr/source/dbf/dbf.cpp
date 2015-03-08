@@ -3,7 +3,7 @@
 // /libsf/source/vjr/source/dbf/dbf.cpp
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -199,7 +199,7 @@
 					case _VAR_TYPE_LOGICAL:
 						// SET REPROCESS TO AUTOMATIC
 						// Are we beyond our max?
-						if (dl->extra2 > lnMaxAttempts)
+						if ((s32)dl->extra2 > lnMaxAttempts)
 							return(false);	// We're done retrying, now we fail
 
 						// If we get here, we are retrying again
@@ -216,12 +216,12 @@
 						{
 							// SET REPROCESS TO 30
 							// Are we beyond our max?
-							if (dl->extra2 > lnMaxAttempts)
+							if ((s32)dl->extra2 > lnMaxAttempts)
 								return(false);	// We're done retrying, now we fail
 
 						} else {
 							// SET REPROCESS TO 30 SECONDS
-							if (dl->extra2 > lnMaxAttempts)
+							if ((s32)dl->extra2 > lnMaxAttempts)
 								return(false);	// We're done retrying, now we fail
 
 							// Sleep for our sleep interval
@@ -405,7 +405,7 @@
 				}
 			}
 
-			
+
 		//////////
 		// We can only populate into the indicated work area
 		//////
@@ -476,7 +476,7 @@
 					// We found the work area where this table is already open ... share its file handle
 					wa->fhDbf = _dup(gsWorkArea[lnWorkArea].fhDbf);
 				}
-				
+
 				if (wa->fhDbf == null0)
 				{
 					// Unable to open the specified table
@@ -852,31 +852,31 @@
 // 		s8				expression[SQL_QUERY_SIZE + 1];
 // 		SQLPOINTER		field;
 // 		SQLINTEGER		fieldLength;
-// 
-// 
+//
+//
 // 		lnResult = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &lpEnv);
 // 		if (lnResult == SQL_ERROR)
 // 			return(-1);
-// 
+//
 // 		SQLSetEnvAttr(lpEnv, SQL_ATTR_ODBC_VERSION, (SQLPOINTER)SQL_OV_ODBC3, 0);
 // 		SQLAllocHandle(SQL_HANDLE_DBC, lpEnv, &lpDbc);
 // 		SQLDriverConnect(lpDbc, GetDesktopWindow(), (SQLCHAR*)connString, SQL_NTS, NULL, 0, NULL, SQL_DRIVER_COMPLETE);
 // 		SQLConnect(handle, serverName, serverNameLength, userName, userNameLength, password, passwordLength);
 // 		SQLAllocHandle(SQL_HANDLE_STMT, lpDbc, &lpStmt);
-// 
+//
 // 		lnResult = SQLExecDirect(lpStmt, (SQLCHAR*)expression, SQL_NTS);
 // 		switch (lnResult)
 // 		{
 // 			case SQL_SUCCESS_WITH_INFO:
 // 				// An error
 // 				break;
-// 
+//
 // 			case SQL_SUCCESS:
 // 				// Success
 // 				SQLNumResultCols(lpStmt, (SQLSMALLINT*)&colCount);		// Columns
 // 				SQLRowCount		(lpStmt, &rowCount);					// Rows
-// 
-// 
+//
+//
 // 				//////////
 // 				// For each column
 // 				//////
@@ -885,32 +885,32 @@
 // 						SQLColAttribute	(lpStmt, lnCol, SQL_DESC_DISPLAY_SIZE,	NULL, 0, NULL, &cchDisplay);
 // 						SQLColAttribute	(lpStmt, lnCol, SQL_DESC_CONCISE_TYPE,	NULL, 0, NULL, &ssType);
 // 						SQLColAttribute	(lpStmt, lnCol, SQL_DESC_NAME,			NULL, 0, &cchColumnNameLength, NULL);
-// 
+//
 // 						// Content for each column
 // 						SQLBindCol		(lpStmt, lnCol, SQL_C_CHAR,				field, (cchDisplay + 1), &fieldLength);
 // 					}
-// 
-// 
+//
+//
 // 				//////////
 // 				// For each row
 // 				//////
 // 					for (lnRow = 0; lnRow < rowCount; lnRow++)
 // 					{
 // 						SQLFetch(lpStmt);
-// 
+//
 // 						// Content is pulled into the field values from the SQLBindCol content
 // 					}
 // 				break;
-// 
+//
 // 			case SQL_ERROR:
 // 				// Error
 // 				break;
-// 
+//
 // 			default:
 // 				// Unexpected error
 // 				break;
 // 		}
-// 
+//
 //		SQLGetDiagRec(hType, hHandle, ++iRec, szState, &iError, szMessage, (SQLSMALLINT)(sizeof(szMessage) / sizeof(TCHAR)), (SQLSMALLINT *)NULL);
 //		SQLFreeStmt(lpStmt, SQL_CLOSE);
 // 		SQLDisconnect(lpDbc);
@@ -1698,7 +1698,7 @@
 					// Append a six-digit number onto the alias name
 					if (!llAppendedSix)
 					{
-						// Add on the space for the 
+						// Add on the space for the
 						varAlias->value.length	+= 6;
 						llAppendedSix			= true;
 					}
@@ -1755,7 +1755,7 @@
 				} else {
 					// Manual seek in the table, and a manual read
 					// Seek to the indicated offset, and read in the record
-					_lseeki64(	wa->fhDbf, 
+					_lseeki64(	wa->fhDbf,
 								wa->header.firstRecord + ((recordNumber - 1) * wa->header.recordLength),
 								SEEK_SET);
 
@@ -1870,7 +1870,7 @@
 				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
-		
+
 
 		// Iterate through the fields until we find the one they want
 		return(wa->header.records);
@@ -2989,7 +2989,7 @@
 			if (wa->isUsed != _YES)
 				return(null);
 
-		
+
 		// Iterate through the fields until we find the one they want
 		lfrp = wa->fieldPtr1;
 		for (lnI = 1; lnI <= wa->fieldCount; lnI++)
@@ -4581,7 +4581,7 @@ debug_break;
 	{
 		if (c >= 'A' && c <= 'Z')
 			c |= 0x20;			// Turn on the 0x20 bit, which moves it from the 0x40+ range to the 0x60+ range (lower-case)
-		
+
 		return(c);
 	}
 
