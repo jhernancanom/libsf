@@ -974,14 +974,15 @@ debug_break;
 		if (sem && !sem->isReadOnly && sem->line_cursor)
 		{
 			// Delete any content on this line
-			if (sem->line_cursor->sourceCode)
+			if (sem->line_cursor->sourceCode && sem->firstLine != sem->lastLine)
 				iDatum_delete(sem->line_cursor->sourceCode, true);
 
 // TODO:  delete compiler info, and extra info
 
-			// Delete the line itself, and determine which one would be the new line
-			lineDeleted			= sem->line_cursor;
-			lineNewCursorLine	= (SLine*)iLl_deleteNode((SLL*)sem->line_cursor, true);
+			// Delete the line itself if it's not the only line
+			lineDeleted = sem->line_cursor;
+			if (sem->firstLine != sem->lastLine)		lineNewCursorLine = (SLine*)iLl_deleteNode((SLL*)sem->line_cursor, true);
+			else										lineNewCursorLine = sem->line_top;
 
 			// Update anything that may have changed as a result
 			if (sem->lastLine == lineDeleted)

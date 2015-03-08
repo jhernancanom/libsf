@@ -231,6 +231,7 @@ struct SVariable;
 	bool					iVariable_copy								(SVariable* varDst, SVariable* varSrc);
 	SVariable*				iVariable_copy								(SVariable* varSrc, bool tlMakeReference);
 	bool					iVariable_set								(SVariable* varDst, SVariable* varSrc);
+	bool					iVariable_setNumeric_toType					(SVariable* varDst, f32* val_f32, f64* val_f64, s32* val_s32, u32* val_u32, s64* val_s64, u64* val_u64);
 	SDatum*					iVariable_setName							(SVariable* var, cu8* tcName, s32 tnNameLength);
 	bool					iVariable_set_s16							(SVariable* var, s16 value);
 	bool					iVariable_set_s32							(SVariable* var, s32 value);
@@ -257,6 +258,7 @@ struct SVariable;
 	f32						iiVariable_getAs_f32						(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	f64						iiVariable_getAs_f64						(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	s64						iiVariable_getCompAs_s64					(SComp* comp);
+	f64						iiVariable_getCompAs_f64					(SComp* comp);
 
 	// Support functions
 	s32						iiVariable_julianDayNumber_fromYyyyMmDd			(f32* tnJulianDayNumber, u32  year, u32  month, u32  day);

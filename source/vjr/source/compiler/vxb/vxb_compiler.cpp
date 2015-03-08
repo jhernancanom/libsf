@@ -1995,10 +1995,10 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 
 					} else if (comp->iCode == _ICODE_NUMERIC) {
 						// We have 999
-						if ((compNext2 = compNext1->ll.nextComp) && compNext2->iCode == _ICODE_DOT)
+						if ((compNext1 = comp->ll.nextComp) && compNext1->iCode == _ICODE_DOT)
 						{
 							// We have 999.
-							if ((compNext3 = compNext2->ll.nextComp) && compNext3->iCode == _ICODE_NUMERIC)
+							if ((compNext2 = compNext1->ll.nextComp) && compNext2->iCode == _ICODE_NUMERIC)
 							{
 								// We have 999.99
 								iComps_combineN(comp, 3, _ICODE_NUMERIC, comp->iCat, comp->color);
@@ -5565,6 +5565,226 @@ if (!gsProps_master[lnI].varInit)
 
 //////////
 //
+// Called to set the input variable of varying types to the output variable of existing type
+//
+//////
+	bool iVariable_setNumeric_toType(SVariable* varDst, f32* val_f32, f64* val_f64, s32* val_s32, u32* val_u32, s64* val_s64, u64* val_u64)
+	{
+		s32	lnI;
+		f64	lfValue;
+		s8	formatter[16];
+		s8	buffer[32];
+
+
+		// Make sure our environment is sane
+		if (varDst && varDst->value.data && varDst->value.length > 0)
+		{
+			//////////
+			// Process the ones that can handle a direct conversion
+			//////
+				switch (varDst->varType)
+				{
+					case _VAR_TYPE_F32:
+						// For any type that can be converted, convert it
+						     if (val_f32)		*varDst->value.data_f32 = (f32)*val_f32;
+						else if (val_f64)		*varDst->value.data_f32 = (f32)*val_f64;
+						else if (val_s32)		*varDst->value.data_f32 = (f32)*val_s32;
+						else if (val_u32)		*varDst->value.data_f32 = (f32)*val_u32;
+						else if (val_s64)		*varDst->value.data_f32 = (f32)*val_s64;
+						else if (val_u64)		*varDst->value.data_f32 = (f32)*val_u64;
+						else {
+							// Every parameter they passed was NULL
+							debug_break;
+							return(false);
+						}
+						return(true);
+
+					case _VAR_TYPE_F64:
+						// For any type that can be converted, convert it
+						     if (val_f32)		*varDst->value.data_f64 = (f64)*val_f32;
+						else if (val_f64)		*varDst->value.data_f64 = (f64)*val_f64;
+						else if (val_s32)		*varDst->value.data_f64 = (f64)*val_s32;
+						else if (val_u32)		*varDst->value.data_f64 = (f64)*val_u32;
+						else if (val_s64)		*varDst->value.data_f64 = (f64)*val_s64;
+						else if (val_u64)		*varDst->value.data_f64 = (f64)*val_u64;
+						else {
+							// Every parameter they passed was NULL
+							debug_break;
+							return(false);
+						}
+						return(true);
+
+					case _VAR_TYPE_S32:
+						// For any type that can be converted, convert it
+						     if (val_f32)		*varDst->value.data_s32 = (s32)*val_f32;
+						else if (val_f64)		*varDst->value.data_s32 = (s32)*val_f64;
+						else if (val_s32)		*varDst->value.data_s32 = (s32)*val_s32;
+						else if (val_u32)		*varDst->value.data_s32 = (s32)*val_u32;
+						else if (val_s64)		*varDst->value.data_s32 = (s32)*val_s64;
+						else if (val_u64)		*varDst->value.data_s32 = (s32)*val_u64;
+						else {
+							// Every parameter they passed was NULL
+							debug_break;
+							return(false);
+						}
+						return(true);
+
+					case _VAR_TYPE_U32:
+						// For any type that can be converted, convert it
+						     if (val_f32)		*varDst->value.data_u32 = (u32)*val_f32;
+						else if (val_f64)		*varDst->value.data_u32 = (u32)*val_f64;
+						else if (val_s32)		*varDst->value.data_u32 = (u32)*val_s32;
+						else if (val_u32)		*varDst->value.data_u32 = (u32)*val_u32;
+						else if (val_s64)		*varDst->value.data_u32 = (u32)*val_s64;
+						else if (val_u64)		*varDst->value.data_u32 = (u32)*val_u64;
+						else {
+							// Every parameter they passed was NULL
+							debug_break;
+							return(false);
+						}
+						return(true);
+
+					case _VAR_TYPE_CURRENCY:
+					case _VAR_TYPE_S64:
+						// For any type that can be converted, convert it
+						     if (val_f32)		*varDst->value.data_s64 = (s64)*val_f32;
+						else if (val_f64)		*varDst->value.data_s64 = (s64)*val_f64;
+						else if (val_s32)		*varDst->value.data_s64 = (s64)*val_s32;
+						else if (val_u32)		*varDst->value.data_s64 = (s64)*val_u32;
+						else if (val_s64)		*varDst->value.data_s64 = (s64)*val_s64;
+						else if (val_u64)		*varDst->value.data_s64 = (s64)*val_u64;
+						else {
+							// Every parameter they passed was NULL
+							debug_break;
+							return(false);
+						}
+						return(true);
+
+					case _VAR_TYPE_U64:
+						// For any type that can be converted, convert it
+						     if (val_f32)		*varDst->value.data_u64 = (u64)*val_f32;
+						else if (val_f64)		*varDst->value.data_u64 = (u64)*val_f64;
+						else if (val_s32)		*varDst->value.data_u64 = (u64)*val_s32;
+						else if (val_u32)		*varDst->value.data_u64 = (u64)*val_u32;
+						else if (val_s64)		*varDst->value.data_u64 = (u64)*val_s64;
+						else if (val_u64)		*varDst->value.data_u64 = (u64)*val_u64;
+						else {
+							// Every parameter they passed was NULL
+							debug_break;
+							return(false);
+						}
+						return(true);
+
+					case _VAR_TYPE_S8:
+						// For any type that can be converted, convert it
+						     if (val_f32)		*varDst->value.data_s8 = (s8)*val_f32;
+						else if (val_f64)		*varDst->value.data_s8 = (s8)*val_f64;
+						else if (val_s32)		*varDst->value.data_s8 = (s8)*val_s32;
+						else if (val_u32)		*varDst->value.data_s8 = (s8)*val_u32;
+						else if (val_s64)		*varDst->value.data_s8 = (s8)*val_s64;
+						else if (val_u64)		*varDst->value.data_s8 = (s8)*val_u64;
+						else {
+							// Every parameter they passed was NULL
+							debug_break;
+							return(false);
+						}
+						return(true);
+
+					case _VAR_TYPE_U8:
+						// For any type that can be converted, convert it
+						     if (val_f32)		*varDst->value.data_u8 = (u8)*val_f32;
+						else if (val_f64)		*varDst->value.data_u8 = (u8)*val_f64;
+						else if (val_s32)		*varDst->value.data_u8 = (u8)*val_s32;
+						else if (val_u32)		*varDst->value.data_u8 = (u8)*val_u32;
+						else if (val_s64)		*varDst->value.data_u8 = (u8)*val_s64;
+						else if (val_u64)		*varDst->value.data_u8 = (u8)*val_u64;
+						else {
+							// Every parameter they passed was NULL
+							debug_break;
+							return(false);
+						}
+						return(true);
+
+					case _VAR_TYPE_NUMERIC:
+						// Numerics are actually stored as character sequences
+do_as_numeric:
+						     if (val_f32)		lfValue = (f64)*val_f32;
+						else if (val_f64)		lfValue = (f64)*val_f64;
+						else if (val_s32)		lfValue = (f64)*val_s32;
+						else if (val_u32)		lfValue = (f64)*val_u32;
+						else if (val_s64)		lfValue = (f64)*val_s64;
+						else if (val_u64)		lfValue = (f64)*val_u64;
+						else {
+							// Every parameter they passed was NULL
+							debug_break;
+							return(false);
+						}
+
+						// Create the formatter based on the current SET DECIMALS setting
+						sprintf(formatter, "%%020.%dlf\0", propGet_settings_Decimals(_settings));
+
+						// Create the converted value
+						sprintf((s8*)buffer, formatter, lfValue);
+
+						// Skip past leading zeros
+						for (lnI = 0; buffer[lnI] == '0'; )
+							++lnI;
+
+						// Append it
+						iDatum_duplicate(&varDst->value, buffer + lnI, -1);
+
+						// Indicate success
+						return(true);
+
+					case _VAR_TYPE_BI:
+					case _VAR_TYPE_BFP:
+						iError_reportByNumber(_ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+						break;
+
+					default:
+						if (propGet_settings_AutoConvert(_settings))
+						{
+							// They want it automatically converted to the output format
+							switch (varDst->varType)
+							{
+								case _VAR_TYPE_CHARACTER:
+									// Convert the result to a character string, and then store the character result
+									// This is the same as how numeric is processed, so we'll just use that logic
+									goto do_as_numeric;
+
+								case _VAR_TYPE_LOGICAL:
+									// .F. if 0, otherwise set to .T.
+										 if (val_f32)		*varDst->value.data_u8 = (((u8)*val_f32 == 0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
+									else if (val_f64)		*varDst->value.data_u8 = (((u8)*val_f64 == 0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
+									else if (val_s32)		*varDst->value.data_u8 = (((u8)*val_s32 == 0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
+									else if (val_u32)		*varDst->value.data_u8 = (((u8)*val_u32 == 0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
+									else if (val_s64)		*varDst->value.data_u8 = (((u8)*val_s64 == 0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
+									else if (val_u64)		*varDst->value.data_u8 = (((u8)*val_u64 == 0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
+									else {
+										// Every parameter they passed was NULL
+										debug_break;
+										return(false);
+									}
+									break;
+							}
+
+						} else {
+							iError_reportByNumber(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, NULL, false);
+							return(false);
+						}
+						break;
+				}
+		}
+
+		// If we get here, failure
+		return(false);
+	}
+
+
+
+
+//////////
+//
 // Called to set the variable name
 //
 //////
@@ -8030,6 +8250,11 @@ debug_break;
 	s64 iiVariable_getCompAs_s64(SComp* comp)
 	{
 		return(_atoi64(comp->line->sourceCode->data + comp->start));
+	}
+
+	f64 iiVariable_getCompAs_f64(SComp* comp)
+	{
+		return(atof(comp->line->sourceCode->data + comp->start));
 	}
 
 

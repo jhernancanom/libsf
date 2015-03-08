@@ -187,8 +187,8 @@
 			if (varReprocess)
 			{
 				// Grab our interval and max attempts
-				lnRetryInterval	= max(min(iObjProp_get_s32_direct(_settings, _INDEX_SET_REPROCESSINTERVAL), _MAX_SLEEP_INTERVAL_BETWEEN_LOCK_FILE_RETRY_ATTEMPTS), _MIN_SLEEP_INTERVAL_BETWEEN_LOCK_FILE_RETRY_ATTEMPTS);
-				lnMaxAttempts	= iObjProp_get_s32_direct(_settings, _INDEX_SET_REPROCESSATTEMPTS);
+				lnRetryInterval	= max(min(propGet_settings_ReprocessInterval(_settings), _MAX_SLEEP_INTERVAL_BETWEEN_LOCK_FILE_RETRY_ATTEMPTS), _MIN_SLEEP_INTERVAL_BETWEEN_LOCK_FILE_RETRY_ATTEMPTS);
+				lnMaxAttempts	= propGet_settings_ReprocessAttempts(_settings);
 
 				// Increase our attempted count
 				++dl->extra2;
@@ -211,7 +211,7 @@
 
 					case _VAR_TYPE_S32:
 						// SET REPROCESS TO [N|N SECONDS]
-						lnValue = iObjProp_get_s32_direct(_settings, _INDEX_SET_REPROCESS);
+						lnValue = propGet_settings_Reprocess(_settings);
 						if (lnValue < 0)
 						{
 							// SET REPROCESS TO 30

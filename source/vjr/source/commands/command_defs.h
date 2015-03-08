@@ -179,6 +179,7 @@ struct SVariable;
 	SVariable*			function_ltrim								(SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2);
 	SVariable*			function_max								(SVariable* varLeft, SVariable* varRight);
 	SVariable*			function_min								(SVariable* varLeft, SVariable* varRight);
+	SVariable*			function_mod								(SVariable* varDividend, SVariable* varDivisor);
 	SVariable*			function_occurs								(SVariable* varNeedle, SVariable* varHaystack);
 	SVariable*			function_occursc							(SVariable* varNeedle, SVariable* varHaystack);
 	SVariable*			function_padc								(SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter);
@@ -307,6 +308,7 @@ struct SVariable;
 		{	_ICODE_LTRIM,			1,			(uptr)&function_ltrim,			1,				1,				&gsSourceLight_ltrim[0]			},
 		{	_ICODE_MAX,				1,			(uptr)&function_max,			2,				2,				&gsSourceLight_max[0]			},
 		{	_ICODE_MIN,				1,			(uptr)&function_min,			2,				2,				&gsSourceLight_min[0]			},
+		{	_ICODE_MOD,				1,			(uptr)&function_mod,			2,				2,				&gsSourceLight_mod[0]			},	// MOD() by Stefano D'Amico, VJr 0.56, Mar.08.2015
 		{	_ICODE_OCCURS,			1,			(uptr)&function_occurs,			2,				2,				&gsSourceLight_occurs[0]		},
 		{	_ICODE_OCCURSC,			1,			(uptr)&function_occursc,		2,				2,				&gsSourceLight_occursc[0]		},
 		{	_ICODE_PADC,			1,			(uptr)&function_padc,			2,				3,				&gsSourceLight_padc[0]			},

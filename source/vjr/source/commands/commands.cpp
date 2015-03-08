@@ -174,6 +174,7 @@
 			case _ERROR_TABLE_ALREADY_IN_USE:				{	iError_report(cgcTableAlreadyInUse, tlInvasive);				break;	}
 			case _ERROR_PARAMETER_TOO_LONG:					{	iError_report(cgcParameterTooLong, tlInvasive);					break;	}
 			case _ERROR_UNABLE_TO_OPEN_DBC:					{	iError_report(cgcUnableToOpenDbc, tlInvasive);					break;	}
+			case _ERROR_DIVISION_BY_ZERO:					{	iError_report(cgcDivisionByZero, tlInvasive);					break;	}
 
 		}
 
@@ -2663,6 +2664,162 @@
 	}
 
 
+
+
+	// Version 0.54   (Determine the current version from the header in vjr.cpp)
+	// Last update:
+	//     Jul.12.2014
+	//////
+	// Change log:
+	//     Jul.12.2014 - Initial creation
+	//////
+	// Parameters:
+	//     pLeft		-- Left-side value, first parameter
+	//     pRight		-- Right-side value, second parameter
+	//
+	//////
+	// Returns:
+	//    Either pLeft or pRight copied, depending on which is less.
+	//    If they're equal, a copy of pLeft is returned.
+	//
+
+//////////
+//
+// Function: MOD()
+// Divides one numeric expression by another numeric expression and returns the remainder.
+//
+//////
+// Version 0.55   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Mar.08.2015
+//////
+// Change log:
+//     Mar.08.2015 - Merge into main by Rick C. Hodgin, reformatting
+//     Feb.28.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//    nDividend		-- Specifies the dividend
+//    nDivisor		-- Specifies the divisor
+//
+//////
+// Returns:
+//    Numeric		-- Returns the remainder
+//////
+// Example:
+//    ? MOD(5, 2)      && 1
+//    ? MOD(5, -2)     && -1
+//    ? MOD(5.3, 2)    && 1.3
+//    ? MOD(5.3, -2)   && -0.7
+//////
+	SVariable* function_mod(SVariable* varDividend, SVariable* varDivisor)
+	{
+		f64			lfDividend, lfDivisor, lfMod;
+		bool		error;
+		u32			errorNum;
+		SVariable*	result;
+
+
+		//////////
+        // Parameter 1 must be numeric
+		//////
+			if (!iVariable_isValid(varDividend) || !iVariable_isTypeNumeric(varDividend))
+			{
+				iError_reportByNumber(_ERROR_P1_IS_INCORRECT, varDividend->compRelated, false);
+				return(NULL);
+			}
+
+
+		//////////
+        // Parameter 2 must be numeric
+		//////
+			if (!iVariable_isValid(varDivisor) || !iVariable_isTypeNumeric(varDivisor))
+			{
+				iError_reportByNumber(_ERROR_P2_IS_INCORRECT, varDivisor->compRelated, false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Grab the dividend
+		//////			
+			if (iVariable_isTypeFloatingPoint(varDividend))
+			{
+				lfDividend = iiVariable_getAs_f64(varDividend, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varDividend->compRelated, false);	return(NULL);	}					
+
+			} else {
+				if (iVariable_isNumeric64Bit(varDividend))
+				{
+					lfDividend = (f64)iiVariable_getAs_s64(varDividend, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, varDividend->compRelated, false);	return(NULL);	}				
+
+				} else {
+					lfDividend = (f64)iiVariable_getAs_s32(varDividend, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, varDividend->compRelated, false);	return(NULL);	}				
+				}
+			}
+
+
+		//////////
+		// Grab the divisor
+		//////
+			if (iVariable_isTypeFloatingPoint(varDivisor))
+			{
+				lfDivisor = iiVariable_getAs_f64(varDivisor, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(errorNum, varDivisor->compRelated, false);	return(NULL);	}					
+
+			} else {
+				if (iVariable_isNumeric64Bit(varDivisor))
+				{
+					lfDivisor = (f64)iiVariable_getAs_s64(varDivisor, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, varDivisor->compRelated, false);	return(NULL);	}				
+
+				} else {
+					lfDivisor = (f64)iiVariable_getAs_s32(varDivisor, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(errorNum, varDivisor->compRelated, false);	return(NULL);	}				
+				}			
+			}
+
+
+		//////////
+		// Verify divisor not 0
+		//////
+			if (lfDivisor == 0.0)
+			{
+				// Oops!
+				iError_reportByNumber(_ERROR_DIVISION_BY_ZERO, varDivisor->compRelated, false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Compute
+		//////
+			lfMod = fmod(lfDividend, abs(lfDivisor));
+			if (lfDivisor < 0)
+				lfMod += lfDivisor;
+
+
+		//////////
+        // Create the return result
+		//////
+	        result = iVariable_create(varDividend->varType, NULL);
+			if (!result)
+				iError_reportByNumber(_ERROR_INTERNAL_ERROR, NULL, false);
+
+
+		//////////
+        // Populate the return value
+		//////
+			if (!iVariable_setNumeric_toType(result, NULL, &lfMod, NULL, NULL, NULL, NULL))
+				iError_reportByNumber(_ERROR_INTERNAL_ERROR, NULL, false);
+
+
+		//////////
+        // Return our result
+		//////
+	        return result;
+	}
 
 
 //////////

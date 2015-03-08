@@ -221,6 +221,9 @@ typedef SEM**		SEMpp;
 	#define propGet_settings_Talk(obj)							(iObjProp_get_logical_direct	(obj, _INDEX_SET_TALK)				!= _LOGICAL_FALSE)
 	#define propGet_settings_VariablesFirst(obj)				(iObjProp_get_logical_direct	(obj, _INDEX_SET_VARIABLES_FIRST)	!= _LOGICAL_FALSE)
 	#define propGet_settings_InitializeDefaultValue(obj)		iObjProp_get_variable_byIndex	(obj, _INDEX_SET_INITIALIZE_DEFAULT_VALUE)
+	#define propGet_settings_Reprocess(obj)						iObjProp_get_s32_direct			(obj, _INDEX_SET_REPROCESS)			// negative = attempts, positive = seconds
+	#define propGet_settings_ReprocessInterval(obj)				iObjProp_get_s32_direct			(obj, _INDEX_SET_REPROCESSINTERVAL)
+	#define propGet_settings_ReprocessAttempts(obj)				iObjProp_get_s32_direct			(obj, _INDEX_SET_REPROCESSATTEMPTS)
 
 
 //////////
@@ -317,8 +320,8 @@ typedef SEM**		SEMpp;
 	const s64			_s64_min							= 0xffffffffffffffff;
 	const s64			_s64_max							= 0x7fffffffffffffff;
 	const u64			_u64_max							= 0xffffffffffffffff;
-	const f32			_f32_min							= 3.402823466e+38f;
-	const f32			_f32_max							= 1.175494351e-38f;
+	const f32			_f32_min							= 1.175494351e-38f;
+	const f32			_f32_max							= 3.402823466e+38f;
 	const f64			_f64_min							= 2.22507385850720138e-308;
 	const f64			_f64_max							= 1.79769313486231571e+308;
 

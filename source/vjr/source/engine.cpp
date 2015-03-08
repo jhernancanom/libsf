@@ -151,6 +151,7 @@
 							if (compNext->iCat == _ICAT_FUNCTION)
 							{
 								// It is something like "? func(x)"
+								llManufactured = true;
 								var = iEngine_get_functionResult(compNext);
 								if (!var)
 								{
@@ -341,9 +342,12 @@
 //////
 	SVariable* iEngine_get_variableName_fromComponent(SComp* comp, bool* tlManufactured)
 	{
+		s32			lnI;
+		s64			lnValue;
+		f64			lfValue;
+		bool		llDot;
 		SVariable*	var;
 		SVariable*	varCopy;
-		s64			value;
 
 
 //////////
@@ -366,25 +370,64 @@
 			{
 				case _ICODE_NUMERIC:
 					// It's a raw number
-					// Grab its value
-					value = iiVariable_getCompAs_s64(comp);
-
-
-					//////////
-					// Create and populate our output variable
-					//////
-						*tlManufactured = true;
-						if (value >= (s64)_s32_min && value <= (s64)_s32_max)
+					// See if it has a dot/period in it
+					for (lnI = 0, llDot = false; lnI < comp->length; lnI++)
+					{
+						if (comp->line->sourceCode->data[comp->start + lnI] == '.')
 						{
-							// Store as 32-bits
-							var						= iVariable_create(_VAR_TYPE_S32, NULL);
-							*(s32*)var->value.data	= (s32)value;
-
-						} else {
-							// Store as 64-bits
-							var						= iVariable_create(_VAR_TYPE_S64, NULL);
-							*(s64*)var->value.data	= value;
+							llDot = true;
+							break;
 						}
+					}
+
+					// Is it integer or floating point?
+					if (!llDot)
+					{
+						// Integer
+						lnValue = iiVariable_getCompAs_s64(comp);
+
+
+						//////////
+						// Create and populate our output variable
+						//////
+							*tlManufactured = true;
+							if (lnValue >= (s64)_s32_min && lnValue <= (s64)_s32_max)
+							{
+								// Store as 32-bits
+								var = iVariable_create(_VAR_TYPE_S32, NULL);
+								if (var)
+									*var->value.data_s32 = (s32)lnValue;
+
+							} else {
+								// Store as 64-bits
+								var = iVariable_create(_VAR_TYPE_S64, NULL);
+								if (var)
+									*var->value.data_s64 = lnValue;
+							}
+
+					} else {
+						// Floating point
+						lfValue = iiVariable_getCompAs_f64(comp);
+
+
+						//////////
+						// Create and populate our output variable
+						//////
+							*tlManufactured = true;
+							if (lfValue >= (f64)_f32_min && lfValue <= (f64)_f32_max)
+							{
+								// Store as 32-bits
+								var = iVariable_create(_VAR_TYPE_F32, NULL);
+								if (var)
+									*var->value.data_f32 = (f32)lfValue;
+
+							} else {
+								// Store as 64-bits
+								var = iVariable_create(_VAR_TYPE_F64, NULL);
+								if (var)
+									*var->value.data_f64 = lfValue;
+							}
+					}
 
 
 					//////////
@@ -398,10 +441,13 @@
 				case _ICODE_YES:
 				case _ICODE_UP:
 					// It's a .T. or some equivalent
-					var					= iVariable_create(_VAR_TYPE_LOGICAL, NULL);
-					*tlManufactured		= true;
-					var->value.data[0]	= _LOGICAL_TRUE;
-					var->compRelated	= comp;
+					var = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+					if (var)
+					{
+						*tlManufactured		= true;
+						var->value.data[0]	= _LOGICAL_TRUE;
+						var->compRelated	= comp;
+					}
 					return(var);
 
 
@@ -409,37 +455,49 @@
 				case _ICODE_NO:
 				case _ICODE_DOWN:
 					// It's a .F. or some equivalent
-					var					= iVariable_create(_VAR_TYPE_LOGICAL, NULL);
-					*tlManufactured		= true;
-					var->value.data[0]	= _LOGICAL_FALSE;
-					var->compRelated	= comp;
+					var = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+					if (var)
+					{
+						*tlManufactured		= true;
+						var->value.data[0]	= _LOGICAL_FALSE;
+						var->compRelated	= comp;
+					}
 					return(var);
 
 
 				case _ICODE_EXTRA:
 					// It's a .X.
-					var					= iVariable_create(_VAR_TYPE_LOGICAL, NULL);
-					*tlManufactured		= true;
-					var->value.data[0]	= _LOGICALX_EXTRA;
-					var->compRelated	= comp;
+					var = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+					if (var)
+					{
+						*tlManufactured		= true;
+						var->value.data[0]	= _LOGICALX_EXTRA;
+						var->compRelated	= comp;
+					}
 					return(var);
 
 
 				case _ICODE_YET_ANOTHER:
 					// It's a .Y.
-					var					= iVariable_create(_VAR_TYPE_LOGICAL, NULL);
-					*tlManufactured		= true;
-					var->value.data[0]	= _LOGICALX_YET_ANOTHER;
-					var->compRelated	= comp;
+					var = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+					if (var)
+					{
+						*tlManufactured		= true;
+						var->value.data[0]	= _LOGICALX_YET_ANOTHER;
+						var->compRelated	= comp;
+					}
 					return(var);
 
 
 				case _ICODE_ZATS_ALL_FOLKS:
 					// It's a .X.
-					var					= iVariable_create(_VAR_TYPE_LOGICAL, NULL);
-					*tlManufactured		= true;
-					var->value.data[0]	= _LOGICALX_ZATS_ALL_FOLKS;
-					var->compRelated	= comp;
+					var = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+					if (var)
+					{
+						*tlManufactured		= true;
+						var->value.data[0]	= _LOGICALX_ZATS_ALL_FOLKS;
+						var->compRelated	= comp;
+					}
 					return(var);
 
 
@@ -478,22 +536,26 @@
 						{
 							// It's a null variable
 							varCopy = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
-							iDatum_duplicate(&varCopy->value, cgcNullText, -1);
+							if (varCopy)
+								iDatum_duplicate(&varCopy->value, cgcNullText, -1);
 
 						} else if (var->varType == _VAR_TYPE_OBJECT) {
 							// It's an object
 							varCopy = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
-							iDatum_duplicate(&varCopy->value, cgcObjectText, -1);
+							if (varCopy)
+								iDatum_duplicate(&varCopy->value, cgcObjectText, -1);
 
 						} else if (var->varType == _VAR_TYPE_THISCODE) {
 							// It's a thisCode reference
 							varCopy = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
-							iDatum_duplicate(&varCopy->value, cgcThisCodeText, -1);
+							if (varCopy)
+								iDatum_duplicate(&varCopy->value, cgcThisCodeText, -1);
 
 						} else {
 							// It's a traditional variable
 							varCopy = iVariable_create(var->varType, NULL);
-							iDatum_duplicate(&varCopy->value, &var->value);
+							if (varCopy)
+								iDatum_duplicate(&varCopy->value, &var->value);
 						}
 						varCopy->compRelated = comp;
 						return(varCopy);
@@ -504,16 +566,12 @@
 				case _ICODE_SINGLE_QUOTED_TEXT:
 				case _ICODE_DOUBLE_QUOTED_TEXT:		// It's quoted text
 					//////////
-					// Create our output variable
+					// Create and populate our output variable
 					//////
-						var				= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
 						*tlManufactured	= true;
-
-
-					//////////
-					// Populate
-					//////
-						iDatum_duplicate(&var->value, comp->line->sourceCode->data_u8 + comp->start + 1, comp->length - 2);
+						var = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+						if (var)
+							iDatum_duplicate(&var->value, comp->line->sourceCode->data_u8 + comp->start + 1, comp->length - 2);
 
 
 					//////////

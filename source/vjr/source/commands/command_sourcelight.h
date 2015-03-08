@@ -349,6 +349,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_mod[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_occurs[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
