@@ -173,7 +173,7 @@
 	#include "sem\sem_line.h"
 	#include "sem\sem_extra_info.h"
 
-	#include "grace.h"
+	#include "forms3d\grace.h"
 
 	#include "vjr_structs.h"
 	#include "vjr_defs.h"
@@ -217,7 +217,7 @@
 		#include "dbf\dbc.cpp"
 		#include "dbf\dbf.cpp"
 		#include "dbf\cdx.cpp"
-		#include "grace.cpp"
+		#include "forms3d\grace.cpp"
 		#include "\libsf\utils\common\cpp\datum.cpp"
 		#include "fonts.cpp"
 
@@ -296,7 +296,7 @@
 	#include "sem/sem_line.h"
 	#include "sem/sem_extra_info.h"
 
-	#include "grace.h"
+	#include "forms3d/grace.h"
 
 	#include "vjr_structs.h"
 	#include "vjr_defs.h"
@@ -341,7 +341,7 @@
 		#include "dbf/dbc.cpp"
 		#include "dbf/dbf.cpp"
 		#include "dbf/cdx.cpp"
-		#include "grace.cpp"
+		#include "forms3d/grace.cpp"
 		#include "/libsf/utils/common/cpp/datum.cpp"
 		#include "fonts.cpp"
 
