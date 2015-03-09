@@ -1,6 +1,6 @@
 //////////
 //
-// /libsf/source/vjr/source/compiler/asm/asm_const.h
+// /libsf/source/vjr/source/compiler/licoa/licoa_globals.h
 //
 //////
 //    _     _ _     _____ _____ 
@@ -78,13 +78,13 @@
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
 //
 //////
-//                             
-//      /\                    
-//     /  \    ___  _ __ ___  
-//    / /\ \  / __|| '_ ` _ \ 
-//   / ____ \ \__ \| | | | | |
-//  /_/    \_\|___/|_| |_| |_|
-//   RDC's LiveCode Assembler
+//    _       _   _____                
+//   | |     (_) / ____|         /\    
+//   | |      _ | |      ___    /  \   
+//   | |     | || |     / _ \  / /\ \  
+//   | |____ | || |____| (_) |/ ____ \ 
+//   |______||_| \_____|\___//_/    \_\
+//       The RDC LiveCode Assembler
 //
 //////////
 

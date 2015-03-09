@@ -212,7 +212,7 @@ copy $(OutputPath)$(ProjectName).exe \libsf_offline\source\vjr\bin\64-bit\vjr_ms
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\source\compiler\asm\asm_compiler.cpp">
+    <ClCompile Include="..\..\source\compiler\licoa\licoa_compiler.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -355,10 +355,10 @@ copy $(OutputPath)$(ProjectName).exe \libsf_offline\source\vjr\bin\64-bit\vjr_ms
     <ClInclude Include="..\..\..\..\utils\common\cpp\time.h" />
     <ClInclude Include="..\..\source\commands\command_defs.h" />
     <ClInclude Include="..\..\source\commands\command_sourcelight.h" />
-    <ClInclude Include="..\..\source\compiler\asm\asm_const.h" />
-    <ClInclude Include="..\..\source\compiler\asm\asm_defs.h" />
-    <ClInclude Include="..\..\source\compiler\asm\asm_globals.h" />
-    <ClInclude Include="..\..\source\compiler\asm\asm_structs.h" />
+    <ClInclude Include="..\..\source\compiler\licoa\licoa_const.h" />
+    <ClInclude Include="..\..\source\compiler\licoa\licoa_defs.h" />
+    <ClInclude Include="..\..\source\compiler\licoa\licoa_globals.h" />
+    <ClInclude Include="..\..\source\compiler\licoa\licoa_structs.h" />
     <ClInclude Include="..\..\source\compiler\rdc\rdc_const.h" />
     <ClInclude Include="..\..\source\compiler\rdc\rdc_defs.h" />
     <ClInclude Include="..\..\source\compiler\rdc\rdc_globals.h" />

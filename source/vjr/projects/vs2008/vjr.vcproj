@@ -1526,10 +1526,10 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="asm_compiler"
+					Name="licoa_assembler"
 					>
 					<File
-						RelativePath="..\..\source\compiler\asm\asm_compiler.cpp"
+						RelativePath="..\..\source\compiler\licoa\licoa_compiler.cpp"
 						>
 						<FileConfiguration
 							Name="Debug|Win32"
@@ -1565,19 +1565,19 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\..\source\compiler\asm\asm_const.h"
+						RelativePath="..\..\source\compiler\licoa\licoa_const.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\source\compiler\asm\asm_defs.h"
+						RelativePath="..\..\source\compiler\licoa\licoa_defs.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\source\compiler\asm\asm_globals.h"
+						RelativePath="..\..\source\compiler\licoa\licoa_globals.h"
 						>
 					</File>
 					<File
-						RelativePath="..\..\source\compiler\asm\asm_structs.h"
+						RelativePath="..\..\source\compiler\licoa\licoa_structs.h"
 						>
 					</File>
 				</Filter>

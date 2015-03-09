@@ -49,14 +49,14 @@
     <Filter Include="compiler\rdc">
       <UniqueIdentifier>{40d552a6-9f8e-4f3d-a67d-aab5d5fc4b7a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="compiler\asm">
-      <UniqueIdentifier>{b6632999-217b-4158-b23e-266666a11af6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="compiler\sourcelight">
       <UniqueIdentifier>{c29e1094-51b9-450a-9fe6-edff8902f2ba}</UniqueIdentifier>
     </Filter>
     <Filter Include="common">
       <UniqueIdentifier>{b805109b-559d-4fc9-84be-09da420c3ce7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="compiler\licoa_assembler">
+      <UniqueIdentifier>{b6632999-217b-4158-b23e-266666a11af6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -127,9 +127,6 @@
     <ClCompile Include="..\..\source\objects\reset.cpp">
       <Filter>objects</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\compiler\asm\asm_compiler.cpp">
-      <Filter>compiler\asm</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\compiler\rdc\rdc_compiler.cpp">
       <Filter>compiler\rdc</Filter>
     </ClCompile>
@@ -162,6 +159,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\utils\common\cpp\time.cpp">
       <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\compiler\licoa\licoa_compiler.cpp">
+      <Filter>compiler\licoa_assembler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -249,18 +249,6 @@
     <ClInclude Include="..\..\source\compiler\vxb\vxb_const.h">
       <Filter>compiler\vxb</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\compiler\asm\asm_const.h">
-      <Filter>compiler\asm</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\compiler\asm\asm_defs.h">
-      <Filter>compiler\asm</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\compiler\asm\asm_globals.h">
-      <Filter>compiler\asm</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\compiler\asm\asm_structs.h">
-      <Filter>compiler\asm</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\compiler\rdc\rdc_const.h">
       <Filter>compiler\rdc</Filter>
     </ClInclude>
@@ -302,6 +290,18 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\utils\common\cpp\time.h">
       <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\compiler\licoa\licoa_structs.h">
+      <Filter>compiler\licoa_assembler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\compiler\licoa\licoa_const.h">
+      <Filter>compiler\licoa_assembler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\compiler\licoa\licoa_defs.h">
+      <Filter>compiler\licoa_assembler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\compiler\licoa\licoa_globals.h">
+      <Filter>compiler\licoa_assembler</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

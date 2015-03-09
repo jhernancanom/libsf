@@ -160,10 +160,10 @@
 	#include "compiler\rdc\rdc_defs.h"
 	#include "compiler\rdc\rdc_globals.h"
 
-	#include "compiler\asm\asm_const.h"
-	#include "compiler\asm\asm_structs.h"
-	#include "compiler\asm\asm_defs.h"
-	#include "compiler\asm\asm_globals.h"
+	#include "compiler\licoa\licoa_const.h"
+	#include "compiler\licoa\licoa_structs.h"
+	#include "compiler\licoa\licoa_defs.h"
+	#include "compiler\licoa\licoa_globals.h"
 
 	#include "compiler\sourcelight\sourcelight_globals.h"
 
@@ -207,7 +207,7 @@
 		#include "compiler\vxb\vxb_compiler.cpp"
 		#include "compiler\vxb\vxb_dictionary.cpp"
 		#include "compiler\rdc\rdc_compiler.cpp"
-		#include "compiler\asm\asm_compiler.cpp"
+		#include "compiler\licoa\licoa_compiler.cpp"
 		#include "commands\commands.cpp"
 		#include "engine.cpp"
 		#include "sem\sem.cpp"
@@ -301,10 +301,10 @@
 	#include "compiler/rdc/rdc_defs.h"
 	#include "compiler/rdc/rdc_globals.h"
 
-	#include "compiler/asm/asm_const.h"
-	#include "compiler/asm/asm_structs.h"
-	#include "compiler/asm/asm_defs.h"
-	#include "compiler/asm/asm_globals.h"
+	#include "compiler/licoa/licoa_const.h"
+	#include "compiler/licoa/licoa_structs.h"
+	#include "compiler/licoa/licoa_defs.h"
+	#include "compiler/licoa/licoa_globals.h"
 
 	#include "compiler/sourcelight/sourcelight_globals.h"
 
@@ -349,7 +349,7 @@
 		#include "compiler/vxb/vxb_compiler.cpp"
 		#include "compiler/vxb/vxb_dictionary.cpp"
 		#include "compiler/rdc/rdc_compiler.cpp"
-		#include "compiler/asm/asm_compiler.cpp"
+		#include "compiler/licoa/licoa_compiler.cpp"
 		#include "commands/commands.cpp"
 		#include "engine.cpp"
 		#include "sem/sem.cpp"
