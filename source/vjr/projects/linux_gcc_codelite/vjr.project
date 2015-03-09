@@ -44,6 +44,9 @@
     <File Name="../../source/fonts.h"/>
     <File Name="../../source/bitmaps/bitmaps.cpp" ExcludeProjConfig="Debug"/>
     <File Name="../../source/bitmaps/bitmaps.h"/>
+    <File Name="../../source/commands/command_defs.h"/>
+    <File Name="../../source/commands/command_sourcelight.h"/>
+    <File Name="../../source/commands/commands.cpp" ExcludeProjConfig="Debug"/>
   </VirtualDirectory>
   <VirtualDirectory Name="utils">
     <File Name="../../../../utils/common/cpp/common_types.h"/>

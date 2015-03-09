@@ -214,7 +214,7 @@
 
 
 		//////////
-        // Parameter 1 must be character
+		// Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
@@ -312,7 +312,7 @@
 // TODO:  Incomplete function.  Breakpoint, debug, and finish development
 //_asm_int3;
 		//////////
-        // Parameter 1 must be character
+		// Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
@@ -680,7 +680,7 @@
 
 
 		//////////
-        // Parameter 1 must be character
+		// Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
@@ -784,7 +784,7 @@
 
 
 		//////////
-        // Parameter 1 must be character
+		// Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varNeedle) || !iVariable_isTypeCharacter(varNeedle))
 			{
@@ -794,7 +794,7 @@
 
 
 		//////////
-        // Parameter 2 must be character
+		// Parameter 2 must be character
 		//////
 			if (!iVariable_isValid(varHaystack) || !iVariable_isTypeCharacter(varHaystack))
 			{
@@ -804,7 +804,7 @@
 
 
 		//////////
-        // Parameter 3 is optional, but if present...
+		// Parameter 3 is optional, but if present...
 		//////
 			if (iVariable_isValid(varOccurrence))
 			{
@@ -951,7 +951,7 @@
 
 
 		//////////
-        // Parameter 1 must be numeric
+		// Parameter 1 must be numeric
 		//////
 			if (!iVariable_isValid(varNumer) || !iVariable_isTypeNumeric(varNumer))
 			{
@@ -1048,7 +1048,7 @@
 
 
 		//////////
-        // Parameter 1 must be character
+		// Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
@@ -1058,7 +1058,7 @@
 
 
 		//////////
-        // Parameter 2 must be character
+		// Parameter 2 must be character
 		//////
 			if (!iVariable_isValid(varSearch) || !iVariable_isTypeCharacter(varSearch))
 			{
@@ -1068,7 +1068,7 @@
 
 
 		//////////
-        // Parameter 3 is optional, but must be character if present
+		// Parameter 3 is optional, but must be character if present
 		//////
 			if (!iVariable_isValid(varReplace))
 			{
@@ -1202,7 +1202,7 @@
 
 
 		//////////
-        // Parameter 1 must be character
+		// Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varClass) || !iVariable_isTypeCharacter(varClass))
 			{
@@ -1546,7 +1546,7 @@
 
 
 		//////////
-        // Parameter 1 must be numeric
+		// Parameter 1 must be numeric
 		//////
 			if (!iVariable_isValid(varNumber) || !iVariable_isTypeNumeric(varNumber))
 			{
@@ -1609,7 +1609,7 @@
 
 
 		//////////
-        // Parameter 1 must be character
+		// Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
@@ -1680,7 +1680,7 @@
 
 
 		//////////
-        // Parameter 1 must be character
+		// Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
@@ -1753,7 +1753,7 @@
 
 
 		//////////
-        // Parameter 1 must be character
+		// Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
@@ -1829,7 +1829,7 @@
 
 
 		//////////
-        // Parameter 1 must be character
+		// Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
@@ -1907,7 +1907,7 @@
 
 
 		//////////
-        // Parameter 1 must be character
+		// Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
@@ -2023,7 +2023,7 @@
 
 
 		//////////
-        // Parameter 1 must be character
+		// Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varString) || iVariable_getType(varString) != _VAR_TYPE_CHARACTER)
 			{
@@ -2033,7 +2033,7 @@
 
 
 		//////////
-        // Parameter 2 must be nmumeric
+		// Parameter 2 must be nmumeric
 		//////
 			if (!iVariable_isValid(varCount) || !iVariable_isTypeNumeric(varCount))
 			{
@@ -2106,7 +2106,7 @@
 
 
 		//////////
-        // Parameter 1 must be character
+		// Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varString) || iVariable_getType(varString) != _VAR_TYPE_CHARACTER)
 			{
@@ -2168,7 +2168,7 @@
 
 
 		//////////
-        // Parameter 1 must be character
+		// Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varString) || iVariable_getType(varString) != _VAR_TYPE_CHARACTER)
 			{
@@ -2279,7 +2279,7 @@
 
 
 		//////////
-        // Parameter 1 must be numeric
+		// Parameter 1 must be numeric
 		//////
 			if (!iVariable_isValid(varLeft))
 			{
@@ -2289,7 +2289,7 @@
 
 
 		//////////
-        // Parameter 2 must be numeric
+		// Parameter 2 must be numeric
 		//////
 			if (!iVariable_isValid(varRight))
 			{
@@ -2491,7 +2491,7 @@
 
 
 		//////////
-        // Parameter 1 must be numeric
+		// Parameter 1 must be numeric
 		//////
 			if (!iVariable_isValid(varLeft))
 			{
@@ -2501,7 +2501,7 @@
 
 
 		//////////
-        // Parameter 2 must be numeric
+		// Parameter 2 must be numeric
 		//////
 			if (!iVariable_isValid(varRight))
 			{
@@ -2665,22 +2665,6 @@
 
 
 
-	// Version 0.54   (Determine the current version from the header in vjr.cpp)
-	// Last update:
-	//     Jul.12.2014
-	//////
-	// Change log:
-	//     Jul.12.2014 - Initial creation
-	//////
-	// Parameters:
-	//     pLeft		-- Left-side value, first parameter
-	//     pRight		-- Right-side value, second parameter
-	//
-	//////
-	// Returns:
-	//    Either pLeft or pRight copied, depending on which is less.
-	//    If they're equal, a copy of pLeft is returned.
-	//
 
 //////////
 //
@@ -2719,7 +2703,7 @@
 
 
 		//////////
-        // Parameter 1 must be numeric
+		// Parameter 1 must be numeric
 		//////
 			if (!iVariable_isValid(varDividend) || !iVariable_isTypeNumeric(varDividend))
 			{
@@ -2729,7 +2713,7 @@
 
 
 		//////////
-        // Parameter 2 must be numeric
+		// Parameter 2 must be numeric
 		//////
 			if (!iVariable_isValid(varDivisor) || !iVariable_isTypeNumeric(varDivisor))
 			{
@@ -2942,7 +2926,7 @@
 
 
 		//////////
-        // Parameter 1 must be valid
+		// Parameter 1 must be valid
 		//////
 			if (!iVariable_isValid(varExpression))
 			{
@@ -2952,7 +2936,7 @@
 
 
 		//////////
-        // Parameter 2 must be numeric
+		// Parameter 2 must be numeric
 		//////
 			if (!iVariable_isValid(varResultSize) || !iVariable_isTypeNumeric(varResultSize))
 			{
@@ -2964,7 +2948,7 @@
 
 
 		//////////
-        // Parameter 3 is optional, but if present...
+		// Parameter 3 is optional, but if present...
 		//////
 			if (iVariable_isValid(varPadCharacter))
 			{
@@ -3105,7 +3089,7 @@
 
 
 		//////////
-        // Parameter 1 must be character
+		// Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varString) || iVariable_getType(varString) != _VAR_TYPE_CHARACTER)
 			{
@@ -3200,7 +3184,7 @@
 
 
 		//////////
-        // Parameter 1 must be character
+		// Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varString) || iVariable_getType(varString) != _VAR_TYPE_CHARACTER)
 			{
@@ -3210,7 +3194,7 @@
 
 
 		//////////
-        // Parameter 2 must be nmumeric
+		// Parameter 2 must be nmumeric
 		//////
 			if (!iVariable_isValid(varCount) || !iVariable_isTypeNumeric(varCount))
 			{
@@ -3291,7 +3275,7 @@
 
 
 		//////////
-        // Parameter 1 must be numeric
+		// Parameter 1 must be numeric
 		//////
 			if (!iVariable_isValid(varRed) || !iVariable_isTypeNumeric(varRed))
 			{
@@ -3301,7 +3285,7 @@
 
 
 		//////////
-        // Parameter 2 must be numeric
+		// Parameter 2 must be numeric
 		//////
 			if (!iVariable_isValid(varGrn) || !iVariable_isTypeNumeric(varGrn))
 			{
@@ -3311,7 +3295,7 @@
 
 
 		//////////
-        // Parameter 3 must be numeric
+		// Parameter 3 must be numeric
 		//////
 			if (!iVariable_isValid(varBlu) || !iVariable_isTypeNumeric(varBlu))
 			{
@@ -3438,7 +3422,7 @@
 
 
 		//////////
-        // Parameter 1 must be numeric
+		// Parameter 1 must be numeric
 		//////
 			if (!iVariable_isValid(varRed) || !iVariable_isTypeNumeric(varRed))
 			{
@@ -3448,7 +3432,7 @@
 
 
 		//////////
-        // Parameter 2 must be numeric
+		// Parameter 2 must be numeric
 		//////
 			if (!iVariable_isValid(varGrn) || !iVariable_isTypeNumeric(varGrn))
 			{
@@ -3458,7 +3442,7 @@
 
 
 		//////////
-        // Parameter 3 must be numeric
+		// Parameter 3 must be numeric
 		//////
 			if (!iVariable_isValid(varBlu) || !iVariable_isTypeNumeric(varBlu))
 			{
@@ -3468,7 +3452,7 @@
 
 
 		//////////
-        // Parameter 4 must be numeric
+		// Parameter 4 must be numeric
 		//////
 			if (!iVariable_isValid(varAlp) || !iVariable_isTypeNumeric(varAlp))
 			{
@@ -3609,7 +3593,7 @@
 
 
 		//////////
-        // Parameter 1 must be character
+		// Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varString) || iVariable_getType(varString) != _VAR_TYPE_CHARACTER)
 			{
@@ -3619,7 +3603,7 @@
 
 
 		//////////
-        // Parameter 2 must be nmumeric
+		// Parameter 2 must be nmumeric
 		//////
 			if (!iVariable_isValid(varCount) || !iVariable_isTypeNumeric(varCount))
 			{
@@ -3731,7 +3715,7 @@
 
 
 		//////////
-        // Parameter 1 must be numeric
+		// Parameter 1 must be numeric
 		//////
 			if (!iVariable_isValid(varCount) || !iVariable_isTypeNumeric(varCount))
 			{
@@ -3822,7 +3806,7 @@
 
 
 		//////////
-        // Parameter 1 must be character
+		// Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
 			{
@@ -3832,7 +3816,7 @@
 
 
 		//////////
-        // Parameter 2 must be character
+		// Parameter 2 must be character
 		//////
 			if (!iVariable_isValid(varSearch) || !iVariable_isTypeCharacter(varSearch))
 			{
@@ -3842,7 +3826,7 @@
 
 
 		//////////
-        // Parameter 3 is optional, but must be character if present
+		// Parameter 3 is optional, but must be character if present
 		//////
 			if (!iVariable_isValid(varReplace))
 			{
@@ -3857,7 +3841,7 @@
 
 
 		//////////
-        // Parameter 4 is optional, but must be numeric if present
+		// Parameter 4 is optional, but must be numeric if present
 		//////
 			if (!iVariable_isValid(varRecursiveCount))
 			{
@@ -4042,7 +4026,7 @@
 
 
 		//////////
-        // Parameter 1 must be character
+		// Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varOriginalString) || !iVariable_isTypeCharacter(varOriginalString))
 			{
@@ -4052,7 +4036,7 @@
 
 
 		//////////
-        // Parameter 2 must be numeric
+		// Parameter 2 must be numeric
 		//////
 			if (!iVariable_isValid(varStartPos) || !iVariable_isTypeNumeric(varStartPos))
 			{
@@ -4062,7 +4046,7 @@
 
 
 		//////////
-        // Parameter 3 must be numeric
+		// Parameter 3 must be numeric
 		//////
 			if (!iVariable_isValid(varNumToRemove) || !iVariable_isTypeNumeric(varNumToRemove))
 			{
@@ -4072,7 +4056,7 @@
 
 
 		//////////
-        // Parameter 4 must be character
+		// Parameter 4 must be character
 		//////
 			if (!iVariable_isValid(varStuffString) || !iVariable_isTypeCharacter(varStuffString))
 			{
@@ -4201,7 +4185,7 @@
 // TODO:  Untested function, breakpoint and examine
 debug_break;
 		//////////
-        // Parameter 1 must be numeric
+		// Parameter 1 must be numeric
 		//////
 			if (!iVariable_isValid(varIndex) || !iVariable_isTypeNumeric(varIndex))
 			{
@@ -4385,7 +4369,7 @@ debug_break;
 
 
 		//////////
-        // Parameter 1 must be numeric
+		// Parameter 1 must be numeric
 		//////
 			if (!iVariable_isValid(varIndex) || !iVariable_isTypeNumeric(varIndex))
 			{
@@ -4602,7 +4586,7 @@ debug_break;
 
 
 		//////////
-        // Parameter 1 must be valid
+		// Parameter 1 must be valid
 		//////
 			if (!iVariable_isValid(varVariable))
 			{
@@ -4612,7 +4596,7 @@ debug_break;
 
 
 		//////////
-        // Parameter 2 is optional, but if present...
+		// Parameter 2 is optional, but if present...
 		//////
 			if (iVariable_isValid(varFormat))
 			{
@@ -4695,7 +4679,7 @@ debug_break;
 
 
 		//////////
-        // Parameter 1 must be character
+		// Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varString) || iVariable_getType(varString) != _VAR_TYPE_CHARACTER)
 			{
@@ -4770,7 +4754,7 @@ debug_break;
 
 
 		//////////
-        // Parameter 1 must be numeric
+		// Parameter 1 must be numeric
 		//////
 			lptr = NULL;
 			if (!iVariable_isValid(varIndex))
@@ -4881,7 +4865,7 @@ debug_break;
 
 
 		//////////
-        // Parameter 1 must be character
+		// Parameter 1 must be character
 		//////
 			if (!iVariable_isValid(varString1) || !iVariable_isTypeCharacter(varString1))
 			{
@@ -4891,7 +4875,7 @@ debug_break;
 
 
 		//////////
-        // Parameter 2 must be character
+		// Parameter 2 must be character
 		//////
 			if (!iVariable_isValid(varString2) || !iVariable_isTypeCharacter(varString2))
 			{
@@ -4952,7 +4936,7 @@ debug_break;
 
 
 		//////////
-        // Parameter 1 must be numeric
+		// Parameter 1 must be numeric
 		//////
 			if (!iVariable_isValid(varNum1) || !iVariable_isTypeNumeric(varNum1))
 			{
@@ -4962,7 +4946,7 @@ debug_break;
 
 
 		//////////
-        // Parameter 2 must be numeric
+		// Parameter 2 must be numeric
 		//////
 			if (!iVariable_isValid(varNum2) || !iVariable_isTypeNumeric(varNum2))
 			{
@@ -5076,7 +5060,7 @@ debug_break;
 
 
 		//////////
-        // Parameter 1 must be numeric
+		// Parameter 1 must be numeric
 		//////
 			if (!iVariable_isValid(varSub1) || !iVariable_isTypeNumeric(varSub1))
 			{
@@ -5086,7 +5070,7 @@ debug_break;
 
 
 		//////////
-        // Parameter 2 must be numeric
+		// Parameter 2 must be numeric
 		//////
 			if (!iVariable_isValid(varSub2) || !iVariable_isTypeNumeric(varSub2))
 			{
@@ -5200,7 +5184,7 @@ debug_break;
 
 
 		//////////
-        // Parameter 1 must be numeric
+		// Parameter 1 must be numeric
 		//////
 			if (!iVariable_isValid(varNum1) || !iVariable_isTypeNumeric(varNum1))
 			{
@@ -5210,7 +5194,7 @@ debug_break;
 
 
 		//////////
-        // Parameter 2 must be numeric
+		// Parameter 2 must be numeric
 		//////
 			if (!iVariable_isValid(varNum2) || !iVariable_isTypeNumeric(varNum2))
 			{
@@ -5324,7 +5308,7 @@ debug_break;
 
 
 		//////////
-        // Parameter 1 must be numeric
+		// Parameter 1 must be numeric
 		//////
 			if (!iVariable_isValid(varNum1) || !iVariable_isTypeNumeric(varNum1))
 			{
@@ -5334,7 +5318,7 @@ debug_break;
 
 
 		//////////
-        // Parameter 2 must be numeric
+		// Parameter 2 must be numeric
 		//////
 			if (!iVariable_isValid(varNum2) || !iVariable_isTypeNumeric(varNum2))
 			{
