@@ -118,11 +118,11 @@
 		//////
 			if (vxbParam)
 			{
-				// Theirs
+				// Using theirs
 				vxb = vxbParam;
 
 			} else {
-				// Ours
+				// Using our temporary one
 				memset(&vxbLocal, 0, sizeof(vxbLocal));
 				vxb = &vxbLocal;
 			}
