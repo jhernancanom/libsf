@@ -299,7 +299,7 @@
 		{ "flowoutto",				9,			false,		_ICODE_FLOWOUT_TO,						false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null0,		null0 },
 		{ "flowto",					6,			false,		_ICODE_FLOWTO,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null0,		null0 },
 		{ "subflow",				7,			false,		_ICODE_SUBFLOW,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null0,		null0 },
-		{ "meia",					4,			false,		_ICODE_MERA,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null0,		null0 },
+		{ "meia",					4,			false,		_ICODE_MEIA,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null0,		null0 },
 		{ "mema",					4,			false,		_ICODE_MEMA,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null0,		null0 },
 
 		{ "flowof",					6,			false,		_ICODE_FLOWOF,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null0,		null0 },

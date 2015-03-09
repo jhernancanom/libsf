@@ -78,18 +78,36 @@
 // Thank you.  And may The Lord bless you richly as you lift up your life, your
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
 //
+//////
+//    _____   _____    _____ 
+//   |  __ \ |  __ \  / ____|
+//   | |__) || |  | || |     
+//   |  _  / | |  | || |     
+//   | | \ \ | |__| || |____ 
+//   |_|  \_\|_____/  \_____|
+//  Rapid Development Compiler
 //
+//////////
 
 
 
 
 Nov.03.2014 -- Early draft.  Incomplete.  Inconsistent.
+Mar.09.2015 -- Approaching finalization.  Still in draft form.
+
+
+
 
 RDC Specifications Document
 ---------------------------
 
 1.0 - Reserved Keywords
 -----------------------
+
+	(|cask|)	-- Reference cask
+	[|cask|]	-- Definition cask
+	<|cask|>	-- Logic cask
+	~|cask|~	-- Utility cask
 
 	void		-- An unspecified type
 	bool		-- 8-bit boolean quantity which explicitly tests 0 for false, all others true
@@ -202,6 +220,11 @@ RDC Specifications Document
 	engage		-- Launches another process
 	unengage	-- Explicitly ends a running process launched with engage
 
+	marker		-- Establish a marker through a process, allowing for multi-level returns.
+	in			-- Code to execute upon natural entry into the chain
+	out			-- Code to execute upon natural exit from the chain
+	flow		-- Code to execute when flow control returns to the home marker explicitly.
+
 	default		-- In a port or switch statement, specifies the unspecified operation
 	break		-- Breaks the current loop
 	breakto		-- Breaks to the indicated level
@@ -213,7 +236,8 @@ RDC Specifications Document
 	loopto		-- A pseudonym for continueto
 	goto		-- Goes to the indicated label or named block
 	return		-- Returns from a called function and optionally explicitly returns
-				   one or more of the following:  a value or values, a meia, and mema.
+				   one or more of the following:  a value, values, a meia, mema, or
+				   home.
 
 	flow		-- A structured flow control block
 	flowout		-- Exit a structured flow control block 
@@ -425,7 +449,101 @@ RDC Specifications Document
 				default:
 					break;
 			}
+
+2.3 - Markers
+-------------
+
+	RDC provides for markers, which are sign posts or indicators noting specific places
+	in the normal flow of an application that have been passed in the descent.  These
+	mark places in code that can be returned to through a type of multi-level return.
 	
+	Consider the descent sequence main() to level1() to level2() to level3():
+	
+		function main
+		| returns int exitCode;
+		| params int argc, char* argv[];
+		{
+			level1();
+		}
+		
+		function level1
+		{
+			level2();
+		}
+		
+		function level2
+		{
+			level3();
+		}
+		
+		function level3
+		{
+			// Eventually flow lands here
+		}
+	
+	Suppose you wanted to return directly to main() from level3().  How would you
+	do this?  In RDC, the marker cask has been introduced to allow for this ability.
+	Markers are introduced wherever flow should be allowed.
+	
+	Consider:
+	
+		function main
+		| returns int exitCode;
+		| params int argc, char* argv[];
+		{
+			level1() [|marker|top||];
+		}
+		
+		function level1
+		{
+			level2();
+		}
+		
+		function level2
+		{
+			level3();
+		}
+		
+		function level3
+		{
+			// To return directly to main(), do this:
+			flowto marker top;
+		}
+
+	The marker can either be anonymous, or it can have an explicit name.  Multiple
+	markers can be defined, and they are entered into, and exited out of, like a
+	normal stack.  However, sequential markers on the stack can be directly bypassed
+	using the flowto marker	keyword, which will look for an explicit marker by name,
+	potentially skipping all others to get there.
+	
+	Markers are physically defined by casks, and can be inserted into normal program
+	flow wherever they are desired.  In the example above, the [|marker|top||] cask
+	is inserted after the level1() function call, meaning flow control would return
+	immediately after that point in the program.
+	
+	However, consider something like this:
+	
+		function main
+		| returns int exitCode;
+		| params int argc, char* argv[];
+		{
+			[|marker|reset||] level1();
+		}
+	
+	In this case a marker called "reset" has been created, which would flow to the
+	point in the program before level1() was called, allowing for some descent code
+	which may have encountered a condition where it failed to reset itself and start
+	over without implementing complex logic through variable tests.
+
+	Markers can make use of a normal [|definition cask|] to simply define a marker
+	that can be referenced by name, allowing flow control to return to that location
+	with the "flowto marker" command.
+	
+	In addition, a marker ~|utility cask|~ can be defined to allow for event processing,
+	giving the ability to directly execute arbitrary code upon the normal signaling of
+	events as entry, exit, and flowto the marker.  And if the ~|utility cask|~ signals
+	an adhoc or function, the events are available as ports (see "14.0 - Function Ports").
+
 3.0 - Assignment Operations
 ---------------------------
 
@@ -693,14 +811,15 @@ RDC Specifications Document
 		(|cask|input||)			-- An example of where input parameters go
 		(||return|cask|input||)	-- An example with both return and input parameters
 
-	Definition casks define their thing in cask form:
+	Definition and utility casks define their thing in cask form:
 
 		[||int r1, int r2|function xyz|int a, int b||]
 		{
 			// Code goes here
 		}
 
-		same as:
+	Syntax equivalent to:
+	
 		function xzy
 		| returns int r1, int r2;
 		| params int a, int b;
@@ -712,13 +831,116 @@ RDC Specifications Document
 		<||test|if true|if false||>		&& Equivalent to ((test) ? if true : if false);
 
 	Utility casks allow arbitary code injection:
-		~|code goes here|~
+		~|name|code goes here||~
 
 	Executing multiple bits of code:
-		~|code goes here; more code; more code;|~
+		~|name|code goes here; more code; more code;||~
 
 	Executing intermixed code and called functions:
-		~|code here; someFunction(); more code; etc...|~
+		~|name|code here; someFunction(); more code; etc...||~
+	
+	
+	-----
+	There is a special type of utility cask which is used with the name "marker".
+	It uses the full cask syntax, including the marker name on the left parameter,
+	the keyword "marker" for the cask's name, and the code to execute on the right
+	parameter.
+	
+	Example:
+		~||name|marker|code here; someFunction(); more code; etc...||~
+	
+	Typically these will more often be used with an adhoc function that has been setup
+	to process marker ports.
+	
+	Definition of the adhoc or function exists at some point in scope:
+	
+		adhoc reset
+		// Optional parameters can be received, but return parameters are out of scope
+		// as there is no ability to reference them in a marker cask.  When required,
+		// local or global variables can be used within an adhoc, and global variables
+		// within a function, along with any passed parameter pointers being updated
+		// to any location.
+		{
+			port in
+			{
+			}
+			
+			port out
+			{
+			}
+			
+			port flowto
+			{
+			}
+		}
+	
+	Reerence is then made in the program by insertion of the ~|utility cask|~ marker:
+	
+		function something
+		{
+			~||name|marker|reset()||~ normal_command();
+		}
+	
+	In this case, the marker is inserted before the normal_command(), which means it
+	can act as a reset should anything normal_command() calls result in a failure
+	which is not recoverable.
+	
+	Because utility casks can also directly define code to execute, including ports,
+	the ability to add code directly without the use of an adhoc or function is also
+	provided.
+	
+	Example:
+
+		function something
+		{
+			~||reset|marker|||~
+			{
+				port in
+				{
+				}
+				
+				port out
+				{
+				}
+				
+				port flowto
+				{
+				}
+				
+			} normal_command();
+		}
+
+	This is functionally equivalent to the example above with the adhoc reset and the
+	"function something" reference.  Note that the entire definition of the
+	~|utility cask|~ was conducted through the ~| and |~ markers, with the { and }
+	content as well, before the "normal_command();" was executed.  The ~|utility cask|~
+	here named "reset" could also be later referenced by another utility cask.
+	
+	Example:
+
+		function something
+		{
+			~||reset|marker|||~
+			{
+				port in
+				{
+				}
+				
+				port out
+				{
+				}
+				
+				port flowto
+				{
+				}
+				
+			} normal_command();
+			
+			~||reset2|marker|reset()||~ normal_command2();
+		}
+	
+	These abilities allow for many different ways to accomplish the same task.  Some
+	may be more or less desirable based on syntax preferences, and documentation needs.
 
 11.0 - The Class
 ----------------
@@ -727,7 +949,7 @@ RDC Specifications Document
 	operator overrides, and member overloading.  All members are public, and the
 	keywords new and delete are used to create a class instance, and delete the
 	same.
-
+	
 		class name extends class1, class2, class3, ... classN
 		{
 		}
@@ -879,7 +1101,57 @@ RDC Specifications Document
 	which receive constants as passed parameters, and must examine those parameters
 	to determine what to do within.
 
-14.1 - Function Purposes
+14.1 - Pre-defined ports
+------------------------
+
+	RDC allows for some pre-defined ports which are arbitrary code markers, and
+	are automatically signaled through normal execution, or explicitly by name.
+	
+	These include:  in, out, always, always before, always after
+	
+	The always, always before, and always after allow for an optional "once" keyword,
+	which will signal their execution only once per thread.
+	
+	Consider:
+	
+		adhoc name
+		{
+			//////////
+			// Can be used anywhere:
+			//////
+				port always [once] {
+				}
+				
+				port always before [once] {
+				}
+				
+				port always after [once] {
+				}
+
+
+			//////////
+			// Used only in markers:
+			//////
+				port in
+				{
+					// Code to execute on the normal entry into a marker
+				}
+				
+				port out
+				{
+					// Code to execute on the normal exit out of a marker
+				}
+				
+				port flowto
+				{
+					// Code to execute on the "flowto marker" command goes here
+					// Note:  When a flowto marker is signaled, it will not automatically
+					//        signal the out port, but only this one.  However, the out
+					//        code can be explicitly called using the "name().out" syntax.
+				}
+		}
+
+15.0 - Function Purposes
 ------------------------
 
 	RDC employs groupings within a single function which allow for self-documenting
@@ -1002,7 +1274,7 @@ The same for ++ and --:
 
 
 Dec.27.2014
-The ability to obtain the address of literals will be provided.
+The address of literals will be made available.
 
 	int sample(int* value)
 	{

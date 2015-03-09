@@ -77,7 +77,17 @@
 // Thank you.  And may The Lord bless you richly as you lift up your life, your
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
 //
+//////
+//   ___      ___   ___  ___    _______
+//  |"  \    /"  | |"  \/"  |  |   _  "\
+//   \   \  //  /   \   \  /   (. |_)  :)
+//    \\  \/. ./     \\  \/    |:     \/
+//     \.    //      /\.  \    (|  _  \\
+//      \\   /      /  \   \   |: |_)  :)
+//       \__/      |___/\___|  (_______/
+//     Visual FreePro, Jr. XBase Compiler
 //
+//////////
 
 
 
@@ -313,11 +323,11 @@
 	const s32		_ICODE_FLAGS									= 206;
 	const s32		_ICODE_META										= 207;
 	const s32		_ICODE_MEFA										= 208;
-	const s32		_ICODE_MERA										= 209;
+	const s32		_ICODE_MEIA										= 209;
 	const s32		_ICODE_MEMA										= 210;
 	const s32		_ICODE_METAICASE								= 211;
 	const s32		_ICODE_MEFAICASE								= 212;
-	const s32		_ICODE_MERAICASE								= 213;
+	const s32		_ICODE_MEIAICASE								= 213;
 	const s32		_ICODE_MEMAICASE								= 214;
 	const s32		_ICODE_FLOW										= 215;
 	const s32		_ICODE_SUBFLOW									= 216;
@@ -1986,11 +1996,11 @@
 	const s8		cgc_flags[]										= "flags";
 	const s8		cgc_metaicase[]									= "metaicase";
 	const s8		cgc_mefaicase[]									= "mefaicase";
-	const s8		cgc_meraicase[]									= "meraicase";
+	const s8		cgc_meiaicase[]									= "meiaicase";
 	const s8		cgc_memaicase[]									= "memaicase";
 	const s8		cgc_meta[]										= "meta";
 	const s8		cgc_mefa[]										= "mefa";
-	const s8		cgc_mera[]										= "mera";
+	const s8		cgc_meia[]										= "meia";
 	const s8		cgc_mema[]										= "mema";
 	const s8		cgc_flowof[]									= "flowof";
 	const s8		cgc_flowout[]									= "flowout";

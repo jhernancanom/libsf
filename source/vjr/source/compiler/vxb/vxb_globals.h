@@ -77,7 +77,22 @@
 // Thank you.  And may The Lord bless you richly as you lift up your life, your
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
 //
+//////
+//   ___      ___   ___  ___    _______
+//  |"  \    /"  | |"  \/"  |  |   _  "\
+//   \   \  //  /   \   \  /   (. |_)  :)
+//    \\  \/. ./     \\  \/    |:     \/
+//     \.    //      /\.  \    (|  _  \\
+//      \\   /      /  \   \   |: |_)  :)
+//       \__/      |___/\___|  (_______/
+//     Visual FreePro, Jr. XBase Compiler
 //
+//////////
+
+
+
+
+
 
 
 
@@ -1003,11 +1018,11 @@
 		{ cgc_flags,				5,			false,		_ICODE_FLAGS,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null0,		null0 },
 		{ cgc_metaicase,			9,			false,		_ICODE_METAICASE,						false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null0,		null0 },
 		{ cgc_mefaicase,			9,			false,		_ICODE_MEFAICASE,						false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null0,		null0 },
-		{ cgc_meraicase,			9,			false,		_ICODE_MERAICASE,						false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null0,		null0 },
+		{ cgc_meiaicase,			9,			false,		_ICODE_MEIAICASE,						false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null0,		null0 },
 		{ cgc_memaicase,			9,			false,		_ICODE_MEMAICASE,						false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null0,		null0 },
 		{ cgc_meta,					4,			false,		_ICODE_META,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null0,		null0 },
 		{ cgc_mefa,					4,			false,		_ICODE_MEFA,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null0,		null0 },
-		{ cgc_mera,					4,			false,		_ICODE_MERA,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null0,		null0 },
+		{ cgc_meia,					4,			false,		_ICODE_MEIA,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null0,		null0 },
 		{ cgc_mema,					4,			false,		_ICODE_MEMA,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null0,		null0 },
 		{ cgc_flowof,				6,			false,		_ICODE_FLOWOF,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null0,		null0 },
 		{ cgc_flowout,				7,			false,		_ICODE_FLOWOUT,							false,				_ICAT_GENERIC,		&colorSynHi_command,		true,						null0,		null0 },

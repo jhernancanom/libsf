@@ -77,7 +77,16 @@
 // Thank you.  And may The Lord bless you richly as you lift up your life, your
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
 //
+//////
+//     ____                                 _      _         _      _   
+//    / ___|   ___   _   _  _ __  ___  ___ | |    (_)  __ _ | |__  | |_ 
+//    \___ \  / _ \ | | | || '__|/ __|/ _ \| |    | | / _` || '_ \ | __|
+//     ___) || (_) || |_| || |  | (__|  __/| |___ | || (_| || | | || |_ 
+//    |____/  \___/  \__,_||_|   \___|\___||_____||_| \__, ||_| |_| \__|
+//                                                    |___/
+//  SourceLight -- A companion utility for augmenting editors and compilers.
 //
+//////////
 
 
 
@@ -120,7 +129,7 @@
 	cs32		_ICODE_SL_META				= 2000000024;
 	cs32		_ICODE_SL_MEFA				= 2000000025;
 	cs32		_ICODE_SL_MEMA				= 2000000026;
-	cs32		_ICODE_SL_MERA				= 2000000027;
+	cs32		_ICODE_SL_MEIA				= 2000000027;
 	cs32		_ICODE_SL_EXAMPLE			= 2000000028;
 	cs32		_ICODE_SL_MORE				= 2000000029;
 	cs32		_ICODE_SL_RELATED			= 2000000030;
@@ -169,7 +178,7 @@
 		{ "flow",				4,			false,		_ICODE_SL_FLOW,							true,				_ICAT_SL_KEYWORD,		&colorSynHi_keyword,		false,						null0,		null0 },
 		{ "meta",				4,			false,		_ICODE_SL_META,							true,				_ICAT_SL_KEYWORD,		&colorSynHi_keyword,		false,						null0,		null0 },
 		{ "mefa",				4,			false,		_ICODE_SL_MEFA,							true,				_ICAT_SL_KEYWORD,		&colorSynHi_keyword,		false,						null0,		null0 },
-		{ "mera",				4,			false,		_ICODE_SL_MERA,							true,				_ICAT_SL_KEYWORD,		&colorSynHi_keyword,		false,						null0,		null0 },
+		{ "meia",				4,			false,		_ICODE_SL_MEIA,							true,				_ICAT_SL_KEYWORD,		&colorSynHi_keyword,		false,						null0,		null0 },
 		{ "mema",				4,			false,		_ICODE_SL_MEMA,							true,				_ICAT_SL_KEYWORD,		&colorSynHi_keyword,		false,						null0,		null0 },
 		{ "example",			7,			false,		_ICODE_SL_EXAMPLE,						true,				_ICAT_SL_KEYWORD,		&colorSynHi_keyword,		false,						null0,		null0 },
 		{ "more",				4,			false,		_ICODE_SL_MORE,							true,				_ICAT_SL_KEYWORD,		&colorSynHi_keyword,		false,						null0,		null0 },

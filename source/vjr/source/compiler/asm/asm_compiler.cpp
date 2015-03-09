@@ -77,7 +77,16 @@
 // Thank you.  And may The Lord bless you richly as you lift up your life, your
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
 //
+//////
+//                             
+//      /\                    
+//     /  \    ___  _ __ ___  
+//    / /\ \  / __|| '_ ` _ \ 
+//   / ____ \ \__ \| | | | | |
+//  /_/    \_\|___/|_| |_| |_|
+//   RDC's LiveCode Assembler
 //
+//////////
 
 
 

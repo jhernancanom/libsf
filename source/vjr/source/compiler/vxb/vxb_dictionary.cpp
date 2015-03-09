@@ -77,7 +77,22 @@
 // Thank you.  And may The Lord bless you richly as you lift up your life, your
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
 //
+//////
+//   ___      ___   ___  ___    _______
+//  |"  \    /"  | |"  \/"  |  |   _  "\
+//   \   \  //  /   \   \  /   (. |_)  :)
+//    \\  \/. ./     \\  \/    |:     \/
+//     \.    //      /\.  \    (|  _  \\
+//      \\   /      /  \   \   |: |_)  :)
+//       \__/      |___/\___|  (_______/
+//     Visual FreePro, Jr. XBase Compiler
 //
+//////////
+
+
+
+
+
 
 
 
