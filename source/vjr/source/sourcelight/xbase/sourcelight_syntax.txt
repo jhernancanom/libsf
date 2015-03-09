@@ -1,28 +1,28 @@
-nameStatic:
+[nameStatic]
 Global name to reference this SourceLight entry.
 
 title:
 Something like "USE command" or "MYFUNCTION()".
 
-short:
+[short]
 Short description (five words or so, "Opens a table for editing").
 
-category:
+[category]
 Internal use.
 
-subcategory:
+[subcategory]
 Internal use.
 
-preface:
+[preface]
 A brief description before the syntax.
 
-syntax:
+[syntax]
 An example of this command or function's options.
 
-long:
+[long]
 Long description
 
-notes:
+[notes]
 Additional remarks about the function
 <pre></pre>
 <b></b>
@@ -31,18 +31,18 @@ Additional remarks about the function
 Combinations like <bi> <ui>, etc.
 <color=#ffffff></color>
 
-command:
+[command]
 USE
 
-function:
+[function]
 SAMPLE()
 
-flags:
+[flags]
 (SHARED,EXCLUSIVE)
 AGAIN
 READONLY
 
-params:
+[params]
 (required) VARIABLE cTable FOLLOWS use
 (optional) KEYWORD order
 (optional) KEYWORD alias
@@ -52,23 +52,23 @@ params:
 (optional) KEYWORD tag FOLLOWS order
 (required) VARIABLE cName FOLLOWS order OR tag
 
-returns:
+[returns]
 (none)
 
-defaults:
+[defaults]
 variable = default value
 
-flow:
+[flow]
 META
 MEFA
 MEMA
 MERA
 
-example:
+[example]
 source code showing an example usage
 
-similar:
+[similar]
 A list of nameStatic names, of which title and short are pulled in.
 
-related:
+[related]
 A list of nameStatic names, of which title and short are pulled in.
