@@ -275,7 +275,7 @@
 
 
 			//////////
-			// Index support
+			// IDX and CDX index support
 			//////
 				s8				indexPathname[_MAX_PATH];	// Filename to get to the index (either .cdx or .idx)
 				u32				indexPathnameLength;		// Length of the index filename
@@ -283,15 +283,16 @@
 				bool			isCdx;						// Is it a CDX?  If no, then is IDX.
 				bool			isIdxCompact;				// If it's IDX, is it a compact IDX?
 				union {
-					SCdxHeader*	cdx_root;					// Pointer to the start of the .CDX
+					// CDX support
+					SCdxHeader*	cdx_root;
 					s8*			_cdx_header;
-				};
-				union {
-					SIdxHeader*	idx_header;					// Pointer to the start of the .IDX
+
+					// IDX support
+					SIdxHeader*	idx_header;
 					s8*			_idx_header;
 				};
 
-				// File operations
+				// Index file operations
 				s32				fhIndex;					// File handle for the index
 				SBuilder*		cdxFileLocks;				// Locks for shared access
 		};

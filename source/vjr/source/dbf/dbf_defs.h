@@ -152,8 +152,8 @@ struct SFieldRecord2;
 	bool				iiDbf_continueWithLockOperation					(SDiskLockCallback* dcb, s32 tnAttempts, s32 tnMillisecondsSpentThusFar);
 
 	// DBF functions
-	uptr				iDbf_open										(SVariable* table,	SVariable* alias,	bool tlExclusive, bool tlAgain);
-	uptr				iDbf_open										(cs8* table,		cs8* alias,			bool tlExclusive, bool tlAgain);
+	uptr				iDbf_open										(SVariable* table,	SVariable* alias,	bool tlExclusive, bool tlAgain, bool tlValidate);
+	uptr				iDbf_open										(cs8* table,		cs8* alias,			bool tlExclusive, bool tlAgain, bool tlValidate);
 	uptr				iDbf_openRemote									(s8* connString);
 	uptr				iDbf_cacheAllRowData							(SWorkArea* wa);
 	uptr				iDbf_close										(SWorkArea* wa);
@@ -171,6 +171,7 @@ struct SFieldRecord2;
 	SVariable*			iDbf_get_alias_fromPathname						(SVariable* varPathname,	cu8* tcSpecialKeyName);
 
 	sptr				iDbf_gotoRecord									(SWorkArea* wa, s32 recordNumber);
+	sptr				iDbf_gotoTop									(SWorkArea* wa);
 	uptr				iDbf_writeChanges								(SWorkArea* wa);
 
 	uptr				iDbf_getFieldCount								(SWorkArea* wa);

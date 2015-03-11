@@ -87,7 +87,7 @@
 // Note:  Many of the functions referred to in these functions are defined in dbf_defs.h.
 //
 //////
-	u32					cdx_open										(SWorkArea* wa, s8* tcCdxFilename, u32 tnCdxFilenameLength, u32 tnExplicitIndexType);
+	u32					cdx_open										(SWorkArea* wa, s8* tcCdxFilename, u32 tnCdxFilenameLength, u32 tnExplicitIndexType, bool tlValidate);
 	u32					cdx_close										(SWorkArea* wa);
 	u32					cdx_get_tag										(SWorkArea* wa,			u32 tnTagIndex,
 																			s8* tcTagName,		u32 tnTagNameLength,
@@ -118,6 +118,7 @@
 																			u8* tcDecodeExpression,		u32 tnDecodeExpressionLength,
 																			s8* tcKeyLength4);
 
+	bool				iiCdx_setPrimaryKey								(SWorkArea* wa);
 	bool				iCdx_validateIdx								(SWorkArea* wa, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
 	bool				iCdx_validateIdx_compact						(SWorkArea* wa, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
 	bool				iCdx_validateIdx_standard						(SWorkArea* wa, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
@@ -143,7 +144,24 @@
 //////
 // END
 //////////
-	u32					iiCdx_findKey									(SWorkArea* wa, STagRoot* tagRoot, u8* keyBuffer, u32 tnKeyLength);
+
+//////////
+// Index navigation
+// BEGIN
+//////
+	s32					iiCdx_findKey									(SWorkArea* wa, STagRoot* tagRoot, u8* keyBuffer, u32 tnKeyLength);
+
+	s32					iiCdx_gotoTop									(SWorkArea* wa);
+	s32					iiCdx_skip										(SWorkArea* wa, s32 tnDelta);
+	s32					iiCdx_gotoBottom								(SWorkArea* wa);
+
+	s32					iiIdx_gotoTop									(SWorkArea* wa);
+	s32					iiIdx_skip										(SWorkArea* wa, s32 tnDelta);
+	s32					iiIdx_gotoBottom								(SWorkArea* wa);
+//////
+// END
+//////////
+
 	s32					iiCdx_translateActualResultThroughIndexOrder	(STagRoot* tagRoot, u8* keyLeft, u8* keyRight, u32 tnKeyLength);
 	u32					iCdx_getAllKeysCdx								(SWorkArea* wa, s32 tnTagIndex, u8* tcKeySpace, u32 tnKeySpaceLength, u8* tcDecodeExpression, u32 tnDecodeExpressionLength, s8* tcKeyLength4);
 	u32					iCdx_getAllKeysIdx								(SWorkArea* wa,                 u8* tcKeySpace, u32 tnKeySpaceLength, u8* tcDecodeExpression, u32 tnDecodeExpressionLength, s8* tcKeyLength4);
@@ -167,6 +185,8 @@
 	u32					iCdx_descendToLeftmostNode						(               SCdxHeader* head, u32 keyLength, SCdxNode* node, STagRoot* tagRoot);
 	// Internal functions that do not have special testing
 	void				iiCdx_extractExteriorNode_nodeKeyAccessData		(SCdxNode* node, u32 tnNumber, SCdxKeyTrail* keyTrail);
+
+
 //////////
 // These are for non-exclusive use indexes
 // BEGIN

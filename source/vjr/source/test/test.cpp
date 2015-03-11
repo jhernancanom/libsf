@@ -91,13 +91,11 @@
 	{
 		uptr lnHandle;
 
-return;
-
 
 		//////////
 		// Open the test table
 		//////
-			lnHandle = iDbf_open("c:\\libsf_offline\\source\\vjr\\test\\cdx\\test.dbf", "test", true, false);
+			lnHandle = iDbf_open("c:\\libsf_offline\\source\\vjr\\test\\cdx\\test.dbf", "test", true, false, true);
 			if (lnHandle > _UPTR_ERROR)
 			{
 				// An error occurred

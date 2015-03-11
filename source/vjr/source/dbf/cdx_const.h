@@ -117,6 +117,7 @@
 	#define		_INDEX_IS_IDX						1
 	#define		_INDEX_IS_CDX						2
 	#define		_INDEX_IS_SDX						3
+	#define		_INDEX_IS_DCX						4
 
 	// CDX no find result
 	#define		_CDX_FIND_NEAR						-2

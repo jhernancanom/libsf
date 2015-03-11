@@ -229,9 +229,24 @@ struct SCdxKeyOp;
 		u8			options;					// 14,1		1=UNIQUE, 2=Temporary index, 4=Custom index, 8=FOR clause, 16=??, 32=Compact, 64=Compound, 128=Structural index
 		u8			signature;					// 15,1		Index signature
 
-		u32			reserved2;					// 16,4
-		u32			reserved3;					// 20,4
-		u32			reserved4;					// 24,4
+		// The last recno() obtained from the last accessed index key
+		union {
+			u32		reserved2;					// 16,4
+			u32		lastRecno;
+		};
+
+		// The last node that the last key was at/on
+		union {
+			u32		reserved3;					// 20,4
+			u32		lastNode;
+		};
+
+		// The last slot within the last node the last key was found at/on
+		union {
+			u32		reserved4;					// 24,4
+			u32		lastSlotInNode;
+		};
+
 		u32			reserved5;					// 28,4
 		u32			reserved6;					// 32,4
 		u8			reserved7[466];				// 36,466
@@ -243,8 +258,8 @@ struct SCdxKeyOp;
 		u16			reserved9;					// 508,2	
 
 		u16			keyExpressionLength;		// 510,2	Length of index key expression
-		u8			keyExpression[512];		// 512,512	The key and FOR clause expression storage area, in that order, each is NULL-terminated
-												// 1024 bytes
+		u8			keyExpression[512];			// 512,512	The key and FOR clause expression storage area, in that order, each is NULL-terminated
+		// 1024 bytes
 	};
 
 	// Pointer to each key record in an IDX leaf node

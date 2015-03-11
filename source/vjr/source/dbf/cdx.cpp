@@ -111,7 +111,7 @@
 //		tnExplicitIndexType	--
 //
 //////
-	u32 cdx_open(SWorkArea* wa, s8* tcCdxFilename, u32 tnCdxFilenameLength, u32 tnExplicitIndexType)
+	u32 cdx_open(SWorkArea* wa, s8* tcCdxFilename, u32 tnCdxFilenameLength, u32 tnExplicitIndexType, bool tlValidate)
 	{
 		bool		llIsValid;
 		u64			lnFileSize, lnNumread;
@@ -154,13 +154,21 @@
 		//////////
 		// Determine if it was a .cdx or .idx
 		//////
-			if (tnExplicitIndexType == _INDEX_IS_IDX || (tnExplicitIndexType == 0 && _memicmp(wa->indexPathname + wa->indexPathnameLength - 4, ".idx", 4) == 0))
+			if (tnExplicitIndexType == _INDEX_IS_IDX || (tnExplicitIndexType == 0 && _memicmp(wa->indexPathname + wa->indexPathnameLength - sizeof(cgcIdxExtension) - 1, cgcIdxExtension, sizeof(cgcIdxExtension) - 1) == 0))
 			{
 				// It's a .idx
 				wa->isCdx = false;
 
-			} else if (tnExplicitIndexType == _INDEX_IS_CDX || (tnExplicitIndexType == 0 && _memicmp(wa->indexPathname + wa->indexPathnameLength - 4, ".cdx", 4) == 0)) {
+			} else if (tnExplicitIndexType == _INDEX_IS_CDX || (tnExplicitIndexType == 0 && _memicmp(wa->indexPathname + wa->indexPathnameLength - sizeof(cgcCdxExtension) - 1, cgcCdxExtension, sizeof(cgcCdxExtension) - 1) == 0)) {
 				// It's a .cdx
+				wa->isCdx = true;
+
+// 			} else if (tnExplicitIndexType == _INDEX_IS_SDX || (tnExplicitIndexType == 0 && _memicmp(wa->indexPathname + wa->indexPathnameLength - sizeof(cgcSdxExtension) - 1, cgcSdxExtension, sizeof(cgcSdxExtension) - 1) == 0)) {
+// 				// It's a .sdx
+// 				wa->isSdx = true;
+
+			} else if (tnExplicitIndexType == _INDEX_IS_DCX || (tnExplicitIndexType == 0 && _memicmp(wa->indexPathname + wa->indexPathnameLength - sizeof(cgcDcxExtension) - 1, cgcDcxExtension, sizeof(cgcDcxExtension) - 1) == 0)) {
+				// It's a .cdx, albeit in sheep's clothing
 				wa->isCdx = true;
 
 			} else {
@@ -281,6 +289,16 @@
 					wa->isIdxCompact			= true;		// All CDXs are compact indexes
 					wa->isIndexLoaded			= _YES;
 					wa->cdx_root->fileSize		= (u32)lnFileSize;
+
+
+				//////////
+				// Auto-validate the index if need be
+				//////
+					if (tlValidate || propGet_settings_AutoValidate(_settings))
+					{
+						// Auto-validate
+// TODO:  Working here
+					}
 			}
 
 
@@ -787,6 +805,26 @@
 			wa = &gsWorkArea[tnWorkArea];
 			if (wa->isCdx)		return(iCdx_getAllKeysCdx(wa, tnTagIndex, tcKeySpace, tnKeySpaceLength, tcDecodeExpression, tnDecodeExpressionLength, tcKeyLength4));
 			else				return(iCdx_getAllKeysIdx(wa,             tcKeySpace, tnKeySpaceLength, tcDecodeExpression, tnDecodeExpressionLength, tcKeyLength4));
+	}
+
+
+
+
+//////////
+//
+// Called to set the primary index (if it exists)
+//
+//////
+	bool iiCdx_setPrimaryKey(SWorkArea* wa)
+	{
+		// See if we're in a CDX
+		if (wa->isIndexLoaded)
+		{
+			// Iterate through each key to see if we have a primary key
+		}
+
+		// If we get here, no primary key
+		return(false);
 	}
 
 
@@ -2363,7 +2401,7 @@ failed_parsing:
 // If not found, it returns _CDX_NO_FIND.
 //
 //////
-	u32 iiCdx_findKey(SWorkArea* wa, STagRoot* tagRoot, u8* keyBuffer, u32 tnKeyLength)
+	s32 iiCdx_findKey(SWorkArea* wa, STagRoot* tagRoot, u8* keyBuffer, u32 tnKeyLength)
 	{
 		s32				lnTranslatedResult;
 		u32				lnKeyNumber;
@@ -2462,6 +2500,125 @@ debug_break;
 		//////
 			return(_CDX_FIND_NO);
 	}
+
+
+
+
+//////////
+//
+// Called to position the record pointer of a CDX.
+//
+//////
+	s32 iiCdx_gotoTop(SWorkArea* wa)
+	{
+		// Make sure the index is loaded
+		if (wa->isIndexLoaded)
+		{
+			// Is it an idx?
+			if (!wa->isCdx)
+				return(iiIdx_gotoTop(wa));
+
+			// If we get here, it is a cdx
+// TODO:  Write this algorithm
+		}
+
+		// If we get here, no index
+		return(-1);
+	}
+
+	s32 iiCdx_skip(SWorkArea* wa, s32 tnDelta)
+	{
+		// Make sure the index is loaded
+		if (wa->isIndexLoaded)
+		{
+			// Is it an idx?
+			if (!wa->isCdx)
+				return(iiIdx_skip(wa, tnDelta));
+
+			// If we get here, it is a cdx
+// TODO:  Write this algorithm
+		}
+
+		// If we get here, no index
+		return(-1);
+	}
+
+	s32 iiCdx_gotoBottom(SWorkArea* wa)
+	{
+		// Make sure the index is loaded
+		if (wa->isIndexLoaded)
+		{
+			// Is it an idx?
+			if (!wa->isCdx)
+				return(iiIdx_gotoBottom(wa));
+
+			// If we get here, it is a cdx
+// TODO:  Write this algorithm
+		}
+
+		// If we get here, no index
+		return(-1);
+	}
+
+
+
+
+//////////
+//
+// Called to position the record pointer of a IDX.
+//
+//////
+	s32 iiIdx_gotoTop(SWorkArea* wa)
+	{
+		// Is an index loaded?
+		if (wa->isIndexLoaded)
+		{
+			// Is it an idx?
+			if (wa->isCdx)
+				return(iiCdx_gotoTop(wa));
+
+			// If we get here, it is a cdx
+// TODO:  Write this algorithm
+		}
+
+		// If we get here, no index
+		return(-1);
+	}
+
+	s32 iiIdx_skip(SWorkArea* wa, s32 tnDelta)
+	{
+		// Is an index loaded?
+		if (wa->isIndexLoaded)
+		{
+			// Is it an idx?
+			if (wa->isCdx)
+				return(iiCdx_skip(wa, tnDelta));
+
+			// If we get here, it is a cdx
+// TODO:  Write this algorithm
+		}
+
+		// If we get here, no index
+		return(-1);
+	}
+
+	s32 iiIdx_gotoBottom(SWorkArea* wa)
+	{
+		// Is an index loaded?
+		if (wa->isIndexLoaded)
+		{
+			// Is it an idx?
+			if (wa->isCdx)
+				return(iiCdx_gotoBottom(wa));
+
+			// If we get here, it is a cdx
+// TODO:  Write this algorithm
+		}
+
+		// If we get here, no index
+		return(-1);
+	}
+
 
 
 

@@ -85,8 +85,8 @@
 // on a single monitor machine (like a notebook) during the initial startup.
 // You can set this property to false and prevent the splash screen from appearing.
 //////
-	bool glShowSplash = true;
-//	bool glShowSplash = false;
+//	bool glShowSplash = true;
+	bool glShowSplash = false;
 
 
 //////////

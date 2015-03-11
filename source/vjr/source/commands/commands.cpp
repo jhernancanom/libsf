@@ -5623,7 +5623,7 @@ debug_break;
 		//////////
 		// Try to open it
 		//////
-			lnDbcArea = iDbf_open((cs8*)dbcNameBuffer, (cs8*)cgcDbcKeyName, llIsExclusive, false);
+			lnDbcArea = iDbf_open((cs8*)dbcNameBuffer, (cs8*)cgcDbcKeyName, llIsExclusive, false, false);
 			if (lnDbcArea < 0)
 			{
 				// Unable to open
@@ -5705,6 +5705,7 @@ debug_break;
 			SComp*	compExclusive			= iComps_findNextBy_iCode(compUse, _ICODE_EXCLUSIVE,			NULL);
 			SComp*	compShared				= iComps_findNextBy_iCode(compUse, _ICODE_SHARED,				NULL);
 //			SComp*	compConnString			= iComps_findNextBy_iCode(compUse, _ICODE_CONNSTRING,			NULL);
+			SComp*	compValidate			= iComps_findNextBy_iCode(compUse, _ICODE_VALIDATE,				NULL);
 
 
 		//////////
@@ -6033,7 +6034,7 @@ debug_break;
 		// Get the alias
 		//////
 			iDbf_set_workArea_current((u32)lnWorkArea, null);
-			lnWorkArea = iDbf_open(varTableName, varAliasName, llIsExclusive, (compAgain != NULL));
+			lnWorkArea = iDbf_open(varTableName, varAliasName, llIsExclusive, (compAgain != NULL), (compValidate != NULL));
 			if (lnWorkArea < 0)
 			{
 				// The negative work area number indicates the error

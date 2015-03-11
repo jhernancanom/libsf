@@ -142,6 +142,10 @@
 	const u8	cgcVcxKeyName[]						= "$__vcx__$";
 	const u8	cgcFrxKeyName[]						= "$__frx__$";
 	const u8	cgcMnxKeyName[]						= "$__mnx__$";
+	const u8	cgcIdxExtension[]					= "idx";
+	const u8	cgcCdxExtension[]					= "cdx";
+	const u8	cgcSdxExtension[]					= "sdx";
+	const u8	cgcDcxExtension[]					= "dcx";
 	const u8	cgcObjectId[]						= "objectId";
 	const u8	cgcParentId[]						= "parentId";
 	const u8	cgcObjectType[]						= "objectType";

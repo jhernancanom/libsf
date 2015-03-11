@@ -452,6 +452,7 @@ struct SBasePropertyInit;
 	const s8		cgc_wordWrap[]											= "wordWrap";
 	const s8		cgc_zoomBox[]											= "zoomBox";
 	const s8		cgc_setAutoConvert[]									= "autoConvert";
+	const s8		cgc_setAutoValidate[]									= "autoValidate";
 	const s8		cgc_setCaseSensitiveCompares[]							= "caseSensitiveCompares";
 	const s8		cgc_setCaseSensitiveNames[]								= "caseSensitiveNames";
 	const s8		cgc_setCentury[]										= "century";
@@ -829,31 +830,32 @@ struct SBasePropertyInit;
 	const u32		_INDEX_ZOOMBOX											= 348;
 	// For _settings object
 	const u32		_INDEX_SET_AUTO_CONVERT									= 349;
-	const u32		_INDEX_SET_CASE_SENSITIVE_COMPARES						= 350;
-	const u32		_INDEX_SET_CASE_SENSITIVE_NAMES							= 351;
-	const u32		_INDEX_SET_CENTURY										= 352;
-	const u32		_INDEX_SET_DATE											= 353;
-	const u32		_INDEX_SET_DECIMALS										= 354;
-	const u32		_INDEX_SET_EXCLUSIVE									= 355;
-	const u32		_INDEX_SET_FOCUS_HIGHLIGHT_BORDER_PIXELS				= 356;
-	const u32		_INDEX_SET_FOCUS_HIGHLIGHT_PIXELS						= 357;
-	const u32		_INDEX_SET_HONOR_BARRIERS								= 358;
-	const u32		_INDEX_SET_IMPLICIT_PARAMS								= 359;
-	const u32		_INDEX_SET_INDEX_META_DATA								= 360;
-	const u32		_INDEX_SET_INITIALIZE_DEFAULT_VALUE						= 361;
-	const u32		_INDEX_SET_LANGUAGE										= 362;
-	const u32		_INDEX_SET_LOGICAL										= 363;
-	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 364;
-	const u32		_INDEX_SET_REPROCESS									= 365;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 366;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
-	const u32		_INDEX_SET_REPROCESSINTERVAL							= 367;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
-	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 368;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_SLOPPY_PRINTING								= 369;
-	const u32		_INDEX_SET_STICKY_PARAMETERS							= 370;
-	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 371;
-	const u32		_INDEX_SET_TABLE_OBJECS									= 372;
-	const u32		_INDEX_SET_TALK											= 373;
-	const u32		_INDEX_SET_VARIABLES_FIRST								= 374;
+	const u32		_INDEX_SET_AUTO_VALIDATE								= 350;
+	const u32		_INDEX_SET_CASE_SENSITIVE_COMPARES						= 351;
+	const u32		_INDEX_SET_CASE_SENSITIVE_NAMES							= 352;
+	const u32		_INDEX_SET_CENTURY										= 353;
+	const u32		_INDEX_SET_DATE											= 354;
+	const u32		_INDEX_SET_DECIMALS										= 355;
+	const u32		_INDEX_SET_EXCLUSIVE									= 356;
+	const u32		_INDEX_SET_FOCUS_HIGHLIGHT_BORDER_PIXELS				= 357;
+	const u32		_INDEX_SET_FOCUS_HIGHLIGHT_PIXELS						= 358;
+	const u32		_INDEX_SET_HONOR_BARRIERS								= 359;
+	const u32		_INDEX_SET_IMPLICIT_PARAMS								= 360;
+	const u32		_INDEX_SET_INDEX_META_DATA								= 361;
+	const u32		_INDEX_SET_INITIALIZE_DEFAULT_VALUE						= 362;
+	const u32		_INDEX_SET_LANGUAGE										= 363;
+	const u32		_INDEX_SET_LOGICAL										= 364;
+	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 365;
+	const u32		_INDEX_SET_REPROCESS									= 366;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 367;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
+	const u32		_INDEX_SET_REPROCESSINTERVAL							= 368;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
+	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 369;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_SLOPPY_PRINTING								= 370;
+	const u32		_INDEX_SET_STICKY_PARAMETERS							= 371;
+	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 372;
+	const u32		_INDEX_SET_TABLE_OBJECS									= 373;
+	const u32		_INDEX_SET_TALK											= 374;
+	const u32		_INDEX_SET_VARIABLES_FIRST								= 375;
 
 
 	// Basic setters and getters
@@ -1317,6 +1319,7 @@ struct SBasePropertyInit;
 
 		// Settings objects always appear at the end ... so make sure their numbers are always appropriate and sequential, immediately after the last one above
 		{	_INDEX_SET_AUTO_CONVERT,				cgc_setAutoConvert,				sizeof(cgc_setAutoConvert) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=auto-converts mismatched variable types, such as "fred " + 5, converted to "fred" + "5", .f.=signals error
+		{	_INDEX_SET_AUTO_VALIDATE,				cgc_setAutoValidate,			sizeof(cgc_setAutoValidate) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=auto-validates indexes on load, .f.=(default) does not validate indexes on load
 		{	_INDEX_SET_CASE_SENSITIVE_COMPARES,		cgc_setCaseSensitiveCompares,	sizeof(cgc_setCaseSensitiveCompares) - 1,	_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=character compares are case sensitive, .f.=not case sensitive
 		{	_INDEX_SET_CASE_SENSITIVE_NAMES,		cgc_setCaseSensitiveNames,		sizeof(cgc_setCaseSensitiveNames) - 1,		_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=token names are case sensitive, .f.=not case sensitive
 		{	_INDEX_SET_CENTURY,						cgc_setCentury,					sizeof(cgc_setCentury) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=4-digit years, .f.=2-digit years
@@ -3481,6 +3484,7 @@ struct SBasePropertyInit;
 		{	_INDEX_ENABLED,								0, 0, 0 },
 		// Specific to settings
 		{	_INDEX_SET_AUTO_CONVERT,					0, 0, 0 },		// bool
+		{	_INDEX_SET_AUTO_VALIDATE,					0, 0, 0 },		// bool
 		{	_INDEX_SET_CASE_SENSITIVE_COMPARES,			0, 0, 0 },		// bool
 		{	_INDEX_SET_CASE_SENSITIVE_NAMES,			0, 0, 0 },		// bool
 		{	_INDEX_SET_CENTURY,							0, 0, 0 },		// bool

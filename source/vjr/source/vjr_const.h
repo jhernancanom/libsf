@@ -217,6 +217,7 @@ typedef SEM**		SEMpp;
 	#define propGet_settings_Date(obj)							iObjProp_get_s32_direct			(obj, _INDEX_SET_DATE)
 	#define propGet_settings_Logical(obj)						iObjProp_get_s32_direct			(obj, _INDEX_SET_LOGICAL)
 	#define propGet_settings_AutoConvert(obj)					(iObjProp_get_logical_direct	(obj, _INDEX_SET_AUTO_CONVERT)		!= _LOGICAL_FALSE)
+	#define propGet_settings_AutoValidate(obj)					(iObjProp_get_logical_direct	(obj, _INDEX_SET_AUTO_VALIDATE)		!= _LOGICAL_FALSE)
 	#define propGet_settings_Exclusive(obj)						(iObjProp_get_logical_direct	(obj, _INDEX_SET_EXCLUSIVE)			!= _LOGICAL_FALSE)
 	#define propGet_settings_Talk(obj)							(iObjProp_get_logical_direct	(obj, _INDEX_SET_TALK)				!= _LOGICAL_FALSE)
 	#define propGet_settings_VariablesFirst(obj)				(iObjProp_get_logical_direct	(obj, _INDEX_SET_VARIABLES_FIRST)	!= _LOGICAL_FALSE)

@@ -273,7 +273,7 @@
 //		Errors below -200			-- DBC errors
 //
 /////
-	uptr iDbf_open(SVariable* table, SVariable* alias, bool tlExclusive, bool tlAgain)
+	uptr iDbf_open(SVariable* table, SVariable* alias, bool tlExclusive, bool tlAgain, bool tlValidate)
 	{
 		s8 tableBuffer[_MAX_PATH + 1];
 		s8 aliasBuffer[_MAX_PATH + 1];
@@ -297,7 +297,7 @@
 			//////////
 			// Open
 			//////
-				return(iDbf_open(tableBuffer, aliasBuffer, tlExclusive, tlAgain));
+				return(iDbf_open(tableBuffer, aliasBuffer, tlExclusive, tlAgain, tlValidate));
 		}
 
 		// Should never happen
@@ -308,17 +308,18 @@
 
 	// Note:  table and alias must be NULL-terminated
 	// Note:  an alias is not required
-	uptr iDbf_open(cs8* table, cs8* alias, bool tlExclusive, bool tlAgain)
+	uptr iDbf_open(cs8* table, cs8* alias, bool tlExclusive, bool tlAgain, bool tlValidate)
 	{
-		s32				lnI, lnI_max;
+		s32				lnI, lnI_max, lnIndexType;
 		sptr			lnWorkArea, lnLength;
 		u32				lnField, lnFieldNameLength, lShareFlag, lStructure_size, numread;
 		s32*			lnCurrentWorkArea;
 		bool			llDbcIsValid;
 		SFieldRecord1*	lfrPtr;
 		SFieldRecord2*	lfr2Ptr;
-		SWorkArea*		waBase;
+		SWorkArea*		waBase;		// Work Area base (used to access VCX, SCX, DBF work areas, etc.)
 		SWorkArea*		wa;
+		s8				cdxFilename[_MAX_PATH];
 		union {
 			uptr		_validateStruture;
 			bool		(*validateStructure)(SWorkArea* wa);
@@ -328,7 +329,8 @@
 		//////////
 		// Based on the type of table, it goes into its own area
 		//////
-			lnLength = strlen(alias);
+			lnIndexType	= 0;
+			lnLength	= strlen(alias);
 			if (lnLength == sizeof(cgcDbcKeyName) - 1 && _memicmp(alias, cgcDbcKeyName, lnLength) == 0)
 			{
 				// It's a DBC
@@ -337,6 +339,7 @@
 				lnI_max				= _MAX_DBC_SLOTS;
 				waBase				= &gsDbcArea[0];
 				_validateStruture	= (uptr)&iiDbf_validate_isDbc;
+				lnIndexType			= _INDEX_IS_DCX;
 
 			} else if (lnLength == sizeof(cgcScxKeyName) - 1 && _memicmp(alias, cgcScxKeyName, lnLength) == 0) {
 				// It's an SCX
@@ -377,6 +380,7 @@
 				lnI_max				= _MAX_DBF_SLOTS;
 				waBase				= &gsWorkArea[0];
 				_validateStruture	= (uptr)0;
+				lnIndexType			= _INDEX_IS_CDX;
 			}
 
 
@@ -627,6 +631,7 @@
 						case 'C':	// Character
 							lfrPtr->indexFixup	= _DBF_INDEX_FIXUP_NONE;
 							lfrPtr->fillChar	= 32;
+							break;
 
 						default:
 							lfrPtr->indexFixup	= _DBF_INDEX_FIXUP_NONE;
@@ -650,10 +655,27 @@
 		//////////
 		// If it's a visual table, it might have a DBC backlink
 		//////
-			if (wa->isVisualTable)
+			if (wa->isVisualTable && lnIndexType != 0)
 			{
 				// Backlink is specified
 				wa->backlinkLength	= (u32)strlen(wa->backlink);
+
+				// Prepare to see if it has an associated CDX
+				memset(cdxFilename, 0, sizeof(cdxFilename));
+				if (wa->tablePathnameLength >= 5)
+				{
+					// Filename is at least something like "a.dbf"
+					memcpy(cdxFilename, wa->tablePathname, wa->tablePathnameLength);
+					if (lnIndexType == _INDEX_IS_CDX)
+					{
+						// It's a cdx
+						memcpy(cdxFilename + wa->tablePathnameLength - sizeof(cgcCdxExtension) - 1, cgcCdxExtension, sizeof(cgcCdxExtension) - 1);
+
+					} else if (lnIndexType == _INDEX_IS_DCX) {
+						// It's a dcx
+						memcpy(cdxFilename + wa->tablePathnameLength - sizeof(cgcCdxExtension) - 1, cgcDcxExtension, sizeof(cgcDcxExtension) - 1);
+					}
+				}
 
 			} else {
 				// No backlink
@@ -725,10 +747,6 @@
 				// Try to open the backlink
 				iiDbc_lookupTableField(&gsWorkArea[lnI], &llDbcIsValid, tlExclusive);
 				// llDbcIsValid is populated as a passed-in return parameter
-
-			} else {
-				// Simulate true in the absence of a DBC backlink
-				llDbcIsValid = true;
 			}
 
 
@@ -772,22 +790,11 @@
 
 
 		//////////
-		// We're done!
+		// We're done loading (or attempting to load) everything!
 		// Right now, the structure has been loaded into gsWorkArea[i].fieldPtr1, and gsWorkArea[i].field2ptr
+		// And the test here indicates final success or failure on the table itself and dbc itself.
 		//////////
-
-
-		//////////
-		// Move to the first record
-		//////
-// TODO:  If CDX is populated, and a primary key is specified, we need to position to that tag's first index key's record
-			iDbf_gotoRecord(wa, 1);
-
-
-		//////////
-		// If it wasn't valid, we need to now close it
-		//////
-			if (!llDbcIsValid)
+			if (wa->isVisualTable && wa->backlinkLength != 0 && !llDbcIsValid)
 			{
 				// Close what we've opened, and un-allocate what we've allocated
 				iDbf_close(wa);
@@ -803,6 +810,23 @@
 			wa->isCached		= _NO;
 			wa->currentRecord	= 0;
 			wa->isUsed			= _YES;
+
+
+		//////////
+		// Move to the first record
+		//////
+			if (cdxFilename[0] != 0)
+			{
+				// Try to open the associated cdx
+				cdx_open(wa, cdxFilename, strlen(cdxFilename), lnIndexType, tlValidate);
+
+				// Right now, it will either be open or not
+				if (wa->isIndexLoaded && wa->isCdx)
+					iiCdx_setPrimaryKey(wa);
+			}
+
+			// Move to the top of the table
+			iDbf_gotoTop(wa);
 
 
 		//////////
@@ -1774,6 +1798,25 @@
 			}
 			// Indicate where we are
 			return(wa->currentRecord);
+	}
+	
+
+
+
+//////////
+//
+// Called to go to the top of the table.  If it has an active index, it goes there.
+// Otherwise, goes to RECNO() 1.
+//
+//////
+	sptr iDbf_gotoTop(SWorkArea* wa)
+	{
+		// If the work area is valid, move to the appropriate record
+		if (iDbf_isWorkAreaValid(wa, NULL))
+			return(iDbf_gotoRecord(wa, ((wa->isIndexLoaded) ? iiCdx_gotoTop(wa) : 1)));
+
+		// If we get here, invalid work area
+		return(-1);
 	}
 
 
@@ -3270,7 +3313,7 @@
 				}
 
 				// It is not already open, so we need to open it
-				lnDbcHandle = (u32)iDbf_open((cs8*)dbcName, (cs8*)cgcDbcKeyName, tlExcusive, false);
+				lnDbcHandle = (u32)iDbf_open((cs8*)dbcName, (cs8*)cgcDbcKeyName, tlExcusive, false, false);
 				if ((s32)lnDbcHandle >= 0)
 				{
 					// We're good

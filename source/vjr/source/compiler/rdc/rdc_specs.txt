@@ -117,6 +117,7 @@ RDC Specifications Document
 	long		-- 64-bit signed quantity
 	float		-- 32-bit floating point
 	double		-- 64-bit floating point
+	var			-- A weakly typed variable defined by usage
 	alias		-- Alias a token to a longer form for ease of typing (alias rc = hwndx->window->properties->geometry.rc;)
 
 	s8,u8		-- Signed and unsigned 8-bit quantities
@@ -553,6 +554,66 @@ RDC Specifications Document
 	All signed and unsigned values becoming a float or double will convert as closely as possible.
 	All float or double values becoming a signed or unsigned value will round.
 	All assignments will be done with = or :=.
+
+3.1 - builder Type
+------------------
+
+	An explicit builder type is provided, which allows for concatenating operations
+	as for an output string, or structure array that may grow during runtime.  It is
+	allocated in default-size blocks, which are typically 16 KB, but can be of nearly
+	any size.  Several built-in functions are defined to allow builder types to be
+	used easily for many tasks.
+
+		struct SBuilder
+		{
+			uptr*		buffer;
+			uptr		populatedLength;
+			uptr		allocatedLength;
+		};
+
+3.2 - datum Type
+----------------
+
+	An explicit datum type is provided, which allows for sequential data to be stored,
+	along with its length.  datums are essentially pointers to the following structure:
+	
+		struct SDatum
+		{
+			uptr*		buffer;
+			uptr		length;
+		};
+	
+3.3 - Weak var Type
+-------------------
+
+	Weak var types are essentially built-in pointers to the following structure:
+	
+		struct SVariable
+		{
+			u32			type;
+			SDatum		value;
+		};
+	
+	References to the various types can be made through explicit conversion creating a
+	new var type, or usage if they are already in the required form.  Several built-in
+	functions are defined to allow var types to be used easily for many tasks.
+	
+	The value member in var types have built-in references for all fundamental types,
+	using the direct form, as in "data_s8" shown here:
+	
+		var fred = "Hi, mom.";
+		sprintf(fred->value.data_s8);
+	
+	These types are provided:
+	
+	Values:
+		_s8, _u8, _s16, _u16, _s32, _u32, _s64, _u64, _f32, _f64, _bi, _bfp
+		
+	Pointers to values:
+		_s8p, _u8p, _s16p, _u16p, _s32p, _u32p, _s64p, _u64p, _f32p, _f64p, _bip, _bfpp
+		
+	Pointer to pointers to values:
+		_s8pp, _u8pp, _s16pp, _u16pp, _s32pp, _u32pp, _s64pp, _u64pp, _f32pp, _f64pp, _bipp, _bfppp
 
 4.0 - Comparison Operations
 ---------------------------
