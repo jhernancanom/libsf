@@ -247,7 +247,9 @@
 	const u8		cgc_notFoundOrInvalidDataType[]					= "not found or is invalid data type";
 
 	// Messages
+#ifdef _LANG_EN
 	const u8		cgcVjrError[]									= "Visual FreePro, Jr. Encountered an Error";
+	const s8		cgcFeatureNotYetSupported[]						= "feature not yet supported";
 	const u8		cgcComponentError[]								= "Error in component, column ";
 	const u8		cgcOutOfMemory[]								= "out of memory";
 	const u8		cgcUnexpectedCommand[]							= "unexpected command";
@@ -288,6 +290,9 @@
 	const u8		cgcParameterTooLong[]							= "parameter too long";
 	const u8		cgcUnableToOpenDbc[]							= "unable to open container";
 	const u8		cgcDivisionByZero[]								= "division by zero";
+#else
+	#error Language not specified
+#endif
 
 
 //////////
@@ -1176,7 +1181,6 @@
 	const s8		cgcBigInteger[]									= "(BigInteger)";
 	const s8		cgcBigFloatingPoint[]							= "(BigFloatingPoint)";
 	const s8		cgcPasswordCharText[]							= "o";
-	const s8		cgcFeatureNotYetSupported[]						= "feature not yet supported";
 
 	const s8		cgc_asterisk[]									= "*";
 	const s8		cgc_ampersandComment[]							= "&&";

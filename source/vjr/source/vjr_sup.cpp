@@ -4037,7 +4037,7 @@
 	#define _GREEN	2
 	#define _BLUE	3
 
-	void iiVjr_renderAccomplishment(SBitmap* bmp, RECT* trc, s32 tnRAGB, s8* tcAccomplishment, s8* tcVersion, bool tlBold, bool tlItalic, bool tlUnderline, s32 tnAdjustAccomplishmentFontSize, s32 tnAdjustVersionFontSize)
+	void iiVjr_renderAccomplishment(SBitmap* bmp, RECT* trc, s32 tnRAGB, cs8* tcAccomplishment, s8* tcVersion, bool tlBold, bool tlItalic, bool tlUnderline, s32 tnAdjustAccomplishmentFontSize, s32 tnAdjustVersionFontSize)
 	{
 		s32			lnWidthAccomplishment;//, lnWidthVersion;
 		RECT		lrc, lrc2, lrcAccomplishment, lrcVersion;
@@ -4208,32 +4208,51 @@
 		CopyRect(&lrc, trc);
 
 		// System log
-		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Forms working (future, James 4:15)",			"0.70", false, false, false, -2, 0);
-		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Compiler completed (future, James 4:15)",		"0.65", false, false, false, -2, 0);
-		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Running programs (future, James 4:15)",		"0.60", false, false, false, -2, 0);
-		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, "Stefano D'Amico is a VJr developer",			"0.56", false, false, false, 0, 0);
+#ifdef _LANG_EN
+	const s8 cgcFormsWorking_070[]					= "Forms working (future, James 4:15)";
+	const s8 cgcCompilerCompleted_065[]				= "Compiler completed (future, James 4:15)";
+	const s8 cgcRunningPrograms_060[]				= "Running programs (future, James 4:15)";
+	const s8 cgcStefanoDamico_056[]					= "Stefano D'Amico is a VJr developer";
+	const s8 cgcCurdirJustMod_056[]					= "CURDIR(), JUST*(), MOD()";
+	const s8 cgc64bitAnd32bit_055[]					= "Native 32-bit and 64-bit Versions";
+	const s8 cgcShiftSpaceInNames_054[]				= "Support for Shift+Spaces in names";
+	const s8 cgcInternalPropertyRefactoring_054[]	= "Internal Property refactoring";
+	const s8 cgcChrtranStrtran_052[]				= "CHRTRAN() and STRTRAN()";
+	const s8 cgcBugFixesMemoryLeaksRemoved_051[]	= "Bug fixes, memory leaks removed";
+	const s8 cgcEditorHighlightsWord_050[]			= "Editor highlights word under cursor";
+	const s8 cgcEditorResize_047[]					= "Editor resize CTRL+ and CTRL-";
+	const s8 cgcTransformPartiallySupported_043[]	= "TRANSFORM() partially supported";
+	const s8 cgcTooltipsFramed_039[]				= "Tooltips framed (hover framed)";
+#else
+	#error Language not specified
+#endif
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _RED, "CURDIR(), JUST*(), MOD()",						"0.56", false, false, false, 0, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, cgcFormsWorking_070,							"0.70", false, false, false, -2, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, cgcCompilerCompleted_065,						"0.65", false, false, false, -2, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, cgcRunningPrograms_060,						"0.60", false, false, false, -2, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, cgcStefanoDamico_056,							"0.56", false, false, false, 0, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Native 32-bit and 64-bit Versions",			"0.55", false, false, false, -2, 0);
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Support for Shift+Spaces in names",			"0.54", false, false, false, -2, 0);
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Internal Property refactoring",				"0.54", false, false, false, -2, 0);
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "CHRTRAN() and STRTRAN()",					"0.52", false, false, false, -2, 0);
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Bug fixes, memory leaks removed",			"0.51", false, false, false, -2, 0);
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Editor highlights word under cursor",		"0.50", false, false, false, -2, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _RED, cgcCurdirJustMod_056,							"0.56", false, false, false, 0, 0);
+
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, cgc64bitAnd32bit_055,							"0.55", false, false, false, -2, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, cgcShiftSpaceInNames_054,						"0.54", false, false, false, -2, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, cgcInternalPropertyRefactoring_054,			"0.54", false, false, false, -2, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, cgcChrtranStrtran_052,						"0.52", false, false, false, -2, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, cgcBugFixesMemoryLeaksRemoved_051,			"0.51", false, false, false, -2, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, cgcEditorHighlightsWord_050,					"0.50", false, false, false, -2, 0);
 
 //		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "UI redesign geared toward debugger",			"0.50", false, false, false, -2, 0);
 //		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Editor development",							"0.49", false, false, false, -2, 0);
 //		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Editor line numbers, breakpoints",			"0.48", false, false, false, -2, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Editor resize CTRL+ and CTRL-",				"0.47", false, false, false, -2, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, cgcEditorResize_047,							"0.47", false, false, false, -2, 0);
 
 //		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Casks",										"0.46", false, true, false, -2, 0);
 //		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Syntax highlighting",						"0.45", false, true, false, -2, 0);
 // 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Tabs expanded, mouse wheel",					"0.44", false, true, false, -2, 0);
 
 // Planned:
-		iiVjr_renderAccomplishment(bmp, &lrc, _AMBER, "TRANSFORM() partially supported",			"0.43", false, true, false, -1, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _AMBER, cgcTransformPartiallySupported_043,			"0.43", false, true, false, -1, 0);
 //		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "PADC(), PADL(), PADR()",						"0.43", false, true, false, -2, 0);
 // 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "OCCURS(), OCCURSC()",						"0.43", false, true, false, -2, 0);
 // 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "AT(), ATC(), RAT(), RATC()",					"0.43", false, true, false, -2, 0);
@@ -4243,7 +4262,7 @@
 //		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Memory leak bug fixes",						"0.41", false, true, false, -2, 0);
 // 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Sound support",								"0.40", false, true, false, -2, 0);
 //		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "Focus highlight border",						"0.39", false, true, false, -2, 0);
- 		iiVjr_renderAccomplishment(bmp, &lrc, _AMBER, "Tooltips framed (hover framed)",				"0.39", false, true, false, -1, 0);
+ 		iiVjr_renderAccomplishment(bmp, &lrc, _AMBER, cgcTooltipsFramed_039,						"0.39", false, true, false, -1, 0);
 // 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "_screen editable",							"0.39", false, true, false, -2, 0);
 //		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, "MinGW GCC 4.8.1 and CodeLite",				"0.38", false, true, false, -2, 0);
 	}

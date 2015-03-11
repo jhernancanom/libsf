@@ -136,3 +136,14 @@
 	#ifndef _BMP_LOCALITY
 		#define _BMP_LOCALITY 0
 	#endif
+
+
+//////////
+// The language to compile for:
+//		EN - English
+//		IT - Italian
+//		ES - Spanish
+//////
+	#define _LANG_EN
+// 	#define _LANG_IT
+// 	#define _LANG_ES

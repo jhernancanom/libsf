@@ -109,7 +109,7 @@ struct SObjPropertyMap;
 	void					iVjr_init_loadBitmapArray				(void);
 	void					iVjr_createOverlayListing				(SBitmap* bmp, RECT* trc);
 	void					iVjr_renderOverlayListing				(SBitmap* bmp, RECT* trc);
-	void					iiVjr_renderAccomplishment				(SBitmap* bmp, RECT* trc, s32 tnRAG, s8* tcAccomplishment, s8* tcVersion, bool tlBold, bool tlItalic, bool tlUnderline, s32 tnAdjustAccomplishmentFontSize, s32 tnAdjustVersionFontSize);
+	void					iiVjr_renderAccomplishment				(SBitmap* bmp, RECT* trc, s32 tnRAG, cs8* tcAccomplishment, s8* tcVersion, bool tlBold, bool tlItalic, bool tlUnderline, s32 tnAdjustAccomplishmentFontSize, s32 tnAdjustVersionFontSize);
 	void					iVjr_renderAccomplishments				(SBitmap* bmp, RECT* trc);
 
 

@@ -2,6 +2,9 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vjr", "vjr.vcproj", "{BE3F790C-6F61-4DFE-92DB-5BA5E731A0F1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A67E8718-81F3-490E-9849-FA5977727D40} = {A67E8718-81F3-490E-9849-FA5977727D40}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bmps", "bmps.vcproj", "{A67E8718-81F3-490E-9849-FA5977727D40}"
 EndProject
