@@ -93,6 +93,9 @@ SET SAFETY OFF
 * Set the app paths
 SET CLASSLIB TO sourcelight.vcx ADDITIVE
 
+* Open the tables
+USE data\sourcelight IN 0 SHARED
+
 * Engage
 DO FORM frmMain
 
