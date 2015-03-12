@@ -18,7 +18,7 @@
 //      \_/  |_|  |_|  |_|
 //
 //////
-// Version 0.54
+// Version 0.56
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -195,7 +195,7 @@
 // Adds a backslash to a path if it needs one
 //
 //////
-// Version 0.55
+// Version 0.56
 // Last update:
 //	   Dec.26.2014
 //////
@@ -263,7 +263,7 @@
 // Trims spaces off the start and end of the string.
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Jul.12.2014
 //////
@@ -659,7 +659,7 @@
 // Takes a character input and converts it to its ASCII value.
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Jul.05.2014
 //////
@@ -739,7 +739,7 @@
 // times the search string is found, and optionally with regard to case (trailing "C").
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Aug.03.2014
 //////
@@ -927,7 +927,7 @@
 // Takes a numeric input in the range 0..255, and converts it to its ASCII character.
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Jul.05.2014
 //////
@@ -1012,7 +1012,7 @@
 // Character transformation
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Aug.21.2014
 //////
@@ -1178,7 +1178,7 @@
 // Instantiates and instance of the indicated class.
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Jul.12.2014
 //////
@@ -1268,7 +1268,7 @@
 // Returns the current directory
 //
 //////
-// Version 0.55
+// Version 0.56
 // Last Update:
 //		Dec.25.2014
 //////
@@ -1305,7 +1305,7 @@
 // Returns the current local time, or uses the input variables to create the indicated datetime.
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Jul.10.2014
 //////
@@ -1519,11 +1519,127 @@
 
 //////////
 //
+// Function: FORCEEXT()
+// Takes a pathname and forces the file extension to the new value
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.12.2015
+//////
+// Change log:
+//     Mar.12.2015 - Framed, incomplete
+//////
+// Parameters:
+//     varPathname		-- The filename or pathname.
+//     varNewExtension	-- The new file extension to force.
+//////
+// Returns:
+//    The input pathname with the next extension.
+//////
+	SVariable* function_forceext(SVariable* varPathname, SVariable varNewExtension)
+	{
+		iError_reportByNumber(_ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Function: FORCEFNAME()
+// Takes a pathname and forces the filename to the new value
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.12.2015
+//////
+// Change log:
+//     Mar.12.2015 - Framed, incomplete
+//////
+// Parameters:
+//     varPathname		-- The filename or pathname.
+//     varNewFilename	-- The new filename to force.
+//////
+// Returns:
+//    The input pathname with the filename.
+//////
+	SVariable* function_forcefname(SVariable* varPathname, SVariable varNewFilename)
+	{
+		iError_reportByNumber(_ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Function: FORCEEXT()
+// Takes a pathname and forces the path to the new value
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.12.2015
+//////
+// Change log:
+//     Mar.12.2015 - Framed, incomplete
+//////
+// Parameters:
+//     varPathname		-- The filename or pathname.
+//     varNewPathname	-- The new pathname to force.
+//////
+// Returns:
+//    The input pathname with the new path.
+//////
+	SVariable* function_forcepath(SVariable* varPathname, SVariable varNewPathname)
+	{
+		iError_reportByNumber(_ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Function: FORCESTEM()
+// Takes a pathname and forces the stem to the new value
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.12.2015
+//////
+// Change log:
+//     Mar.12.2015 - Framed, incomplete
+//////
+// Parameters:
+//     varPathname		-- The filename or pathname.
+//     varNewStem		-- The new stem to force.
+//////
+// Returns:
+//    The input pathname with the new stem.
+//////
+	SVariable* function_forcestem(SVariable* varPathname, SVariable varNewStem)
+	{
+		iError_reportByNumber(_ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
 // Function: INT()
 // Takes a value and returns the INT(n) of that value.
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Jul.13.2014
 //////
@@ -1589,7 +1705,7 @@
 // Returns the drive letter from the input pathname
 //
 //////
-// Version 0.55
+// Version 0.56
 // Last update:
 //		Dec.25.2014
 //////
@@ -1659,7 +1775,7 @@
 // Returns the file extension from the input pathname
 //
 //////
-// Version 0.55
+// Version 0.56
 // Last update:
 //		Dec.25.2014
 //////
@@ -1732,7 +1848,7 @@
 // Returns the file name from the input pathname
 //
 //////
-// Version 0.55
+// Version 0.56
 // Last update:
 //		Dec.25.2014
 //////
@@ -1808,7 +1924,7 @@
 // Returns the path from the input pathname
 //
 //////
-// Version 0.55
+// Version 0.56
 // Last update:
 //		Dec.25.2014
 //////
@@ -1883,7 +1999,7 @@
 // Returns the stem (filename left of dot-extension) from the input pathname
 //
 //////
-// Version 0.55
+// Version 0.56
 // Last update:
 //		Dec.25.2014
 //////
@@ -1999,7 +2115,7 @@
 // Returns the left N characters of a string.
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Jul.12.2014
 //////
@@ -2086,7 +2202,7 @@
 // Returns the length of the string.
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Jul.12.2014
 //////
@@ -2147,7 +2263,7 @@
 // Converts every character in the string to lowercase.
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Jul.12.2014
 //////
@@ -2219,7 +2335,7 @@
 // Trims spaces off the start of the string.
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Jul.12.2014
 //////
@@ -2247,7 +2363,7 @@
 // Returns the maximum value of the two inputs.
 //
 //////
-// Version 0.54   (Determine the current version from the header in vjr.cpp)
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.12.2014
 //////
@@ -2459,7 +2575,7 @@
 // Returns the minimum value of the two inputs.
 //
 //////
-// Version 0.54   (Determine the current version from the header in vjr.cpp)
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.12.2014
 //////
@@ -2672,7 +2788,7 @@
 // Divides one numeric expression by another numeric expression and returns the remainder.
 //
 //////
-// Version 0.55   (Determine the current version from the header in vjr.cpp)
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Mar.08.2015
 //////
@@ -2812,7 +2928,7 @@
 // optionally with regards to case.
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Aug.03.2014
 //////
@@ -2873,7 +2989,7 @@
 // and lowercases everything else.
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Aug.03.2014
 //////
@@ -3067,7 +3183,7 @@
 // and lowercases everything else.
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Jul.12.2014
 //////
@@ -3160,7 +3276,7 @@
 // Returns the indicated string replicated N times.
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Jul.12.2014
 //////
@@ -3248,7 +3364,7 @@
 // Returns the RGB() of the three input values.
 //
 //////
-// Version 0.54   (Determine the current version from the header in vjr.cpp)
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -3394,7 +3510,7 @@
 // Returns the RGBA() of the four input values.
 //
 //////
-// Version 0.54   (Determine the current version from the header in vjr.cpp)
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -3569,7 +3685,7 @@
 // Returns the right N characters of a string.
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Jul.12.2014
 //////
@@ -3664,7 +3780,7 @@
 // Trims spaces off the end of the string.
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Jul.12.2014
 //////
@@ -3692,7 +3808,7 @@
 // Creates a character variable initialized with spaces.
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Jul.12.2014
 //////
@@ -3768,7 +3884,7 @@
 // Converts the matching portions of the string from one form to another.
 //
 //////
-// Version 0.54   (Determine the current version from the header in vjr.cpp)
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Aug.21.2014
 //////
@@ -3998,7 +4114,7 @@
 // Returns a string which has been modified, having optionally some characters optionally removed, some optionally inserted.
 //
 //////
-// Version 0.54   (Determine the current version from the header in vjr.cpp)
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.12.2014
 //////
@@ -4158,7 +4274,7 @@
 // SYS function support (Dec.27.2014 incomplete)
 //
 ///////
-// Version 0.55
+// Version 0.56
 // Last update:
 //     Dec.27.2014
 //////
@@ -4345,7 +4461,7 @@ debug_break;
 // Based on the index, returns a wide array of information.
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Jul.13.2014
 //////
@@ -4565,7 +4681,7 @@ debug_break;
 // Converts any variable input to a character form, and applies formatting based on codes.
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Aug.03.2014
 //////
@@ -4658,7 +4774,7 @@ debug_break;
 // Converts every character in the string to uppercase.
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Jul.12.2014
 //////
@@ -4730,7 +4846,7 @@ debug_break;
 // Based on input, retrieves various version information.
 //
 //////
-// Version 0.54
+// Version 0.56
 // Last update:
 //     Jul.13.2014
 //////
@@ -4843,7 +4959,7 @@ debug_break;
 // Concatenates two strings together.
 //
 //////
-// Version 0.54   (Determine the current version from the header in vjr.cpp)
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -4910,7 +5026,7 @@ debug_break;
 // Adds two values and returns the result.
 //
 //////
-// Version 0.54   (Determine the current version from the header in vjr.cpp)
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -5034,7 +5150,7 @@ debug_break;
 // Subtracts two values and returns the result.
 //
 //////
-// Version 0.54   (Determine the current version from the header in vjr.cpp)
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -5158,7 +5274,7 @@ debug_break;
 // Multiplies two values and returns the result.
 //
 //////
-// Version 0.54   (Determine the current version from the header in vjr.cpp)
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -5282,7 +5398,7 @@ debug_break;
 // Divides two values and returns the result.
 //
 //////
-// Version 0.54   (Determine the current version from the header in vjr.cpp)
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Jul.13.2014
 //////
@@ -5403,7 +5519,7 @@ debug_break;
 // Modifies various things.
 //
 //////
-// Version 0.55
+// Version 0.56
 // Last update:
 //     Jan.09.2015
 //////
@@ -5525,7 +5641,7 @@ debug_break;
 // Multiple forms.  Opens a database container.
 //
 //////
-// Version 0.55
+// Version 0.56
 // Last update:
 //     Jan.06.2015
 //////
@@ -5649,7 +5765,7 @@ debug_break;
 // Multiple forms.  Opens or close a table or view in the current or another area.
 //
 //////
-// Version 0.54   (Determine the current version from the header in vjr.cpp)
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
 // Last update:
 //     Nov.02.2014
 //////

@@ -18,7 +18,7 @@
 //      \_/  |_|  |_|  |_|
 //
 //////
-// Version 0.54
+// Version 0.56
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -565,7 +565,9 @@
 	const s32		_ICODE_FOPEN                                    = 1170;
 	const s32		_ICODE_FOR                                      = 1171;
 	const s32		_ICODE_FORCEEXT                                 = 1172;
+	const s32		_ICODE_FORCEFNAME								= 1446;
 	const s32		_ICODE_FORCEPATH                                = 1173;
+	const s32		_ICODE_FORCESTEM								= 1447;
 	const s32		_ICODE_FOUND                                    = 1174;
 	const s32		_ICODE_FPUTS                                    = 1175;
 	const s32		_ICODE_FREAD                                    = 1176;
@@ -842,7 +844,8 @@
 	// again			= 1439				shared			= 1440
 	// connstring		= 1441				loadparams		= 1442
 	// noloadparams		= 1443				unloadparams	= 1444
-	// nounloadparams	= 1445
+	// nounloadparams	= 1445				forcefname		= 1446
+	// forcestem		= 1447
 
 // Temporarily added until the processing engine is coded
 	const s32		_ICODE_CONCATENATE								= 1900;
@@ -1372,7 +1375,9 @@
 	const s8		cgc_fopen[]										= "fopen";
 	//		co		st char cgc_for[]								= "har cgc_for";
 	const s8		cgc_forceext[]									= "forceext";
+	const s8		cgc_forcefname[]								= "forcefname";
 	const s8		cgc_forcepath[]									= "forcepath";
+	const s8		cgc_forcestem[]									= "forcestem";
 	const s8		cgc_found[]										= "found";
 	const s8		cgc_fputs[]										= "fputs";
 	const s8		cgc_fread[]										= "fread";

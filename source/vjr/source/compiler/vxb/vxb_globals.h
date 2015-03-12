@@ -18,7 +18,7 @@
 //      \_/  |_|  |_|  |_|
 //
 //////
-// Version 0.54
+// Version 0.56
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -386,7 +386,9 @@
 		{ cgc_fopen,				5,			false,		_ICODE_FOPEN,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 //		{ cgc_for,					3,			false,		_ICODE_FOR,								false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_forceext,				8,			false,		_ICODE_FORCEEXT,						false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
+		{ cgc_forcefname,			10,			false,		_ICODE_FORCEFNAME,						false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_forcepath,			9,			false,		_ICODE_FORCEPATH,						false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
+		{ cgc_forcestem,			9,			false,		_ICODE_FORCESTEM,						false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_found,				5,			false,		_ICODE_FOUND,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_fputs,				5,			false,		_ICODE_FPUTS,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_fread,				5,			false,		_ICODE_FREAD,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },

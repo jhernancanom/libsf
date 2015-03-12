@@ -18,7 +18,7 @@
 //      \_/  |_|  |_|  |_|
 //
 //////
-// Version 0.54
+// Version 0.56
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -167,6 +167,10 @@ struct SVariable;
 	SVariable*			function_createobject						(SVariable* varClass);
 	SVariable*			function_curdir								(void);
 	SVariable*			function_datetime							(SVariable* varYear, SVariable* varMonth, SVariable* varDay, SVariable* varHour, SVariable* varMinute, SVariable* varSecond, SVariable* varMillisecond);
+	SVariable*			function_forceext							(SVariable* varPathname, SVariable varNewExtension);
+	SVariable*			function_forcefname							(SVariable* varPathname, SVariable varNewFilename);
+	SVariable*			function_forcepath							(SVariable* varPathname, SVariable varNewPathname);
+	SVariable*			function_forcestem							(SVariable* varPathname, SVariable varNewStem);
 	SVariable*			function_int								(SVariable* varNumber);
 	SVariable*			function_justdrive							(SVariable* varString);
 	SVariable*			function_justext							(SVariable* varString);
@@ -296,6 +300,10 @@ struct SVariable;
 		{	_ICODE_CREATEOBJECT,	1,			(uptr)&function_createobject,	1,				1,				&gsSourceLight_createobject[0]	},
 		{	_ICODE_CURDIR,			1,			(uptr)&function_curdir,			0,				0,				&gsSourceLight_curdir[0]		},
 		{	_ICODE_DATETIME,		1,			(uptr)&function_datetime,		0,				7,				&gsSourceLight_datetime[0]		},
+		{	_ICODE_FORCEEXT,		1,			(uptr)&function_forceext,		2,				2,				&gsSourceLight_forceext[0]		},
+		{	_ICODE_FORCEFNAME,		1,			(uptr)&function_forcefname,		2,				2,				&gsSourceLight_forcefname[0]	},
+		{	_ICODE_FORCEPATH,		1,			(uptr)&function_forcepath,		2,				2,				&gsSourceLight_forcepath[0]		},
+		{	_ICODE_FORCESTEM,		1,			(uptr)&function_forcestem,		2,				2,				&gsSourceLight_forcestem[0]		},
 		{	_ICODE_INT,				1,			(uptr)&function_int,			1,				1,				&gsSourceLight_int[0]			},
 		{	_ICODE_JUSTDRIVE,		1,			(uptr)&function_justdrive,		1,				1,				&gsSourceLight_justdrive[0]		},
 		{	_ICODE_JUSTEXT,			1,			(uptr)&function_justext,		1,				1,				&gsSourceLight_justext[0]		},

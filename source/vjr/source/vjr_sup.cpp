@@ -18,7 +18,7 @@
 //      \_/  |_|  |_|  |_|
 //
 //////
-// Version 0.54
+// Version 0.56
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
@@ -4213,7 +4213,7 @@
 	const s8 cgcCompilerCompleted_065[]				= "Compiler completed (future, James 4:15)";
 	const s8 cgcRunningPrograms_060[]				= "Running programs (future, James 4:15)";
 	const s8 cgcStefanoDamico_056[]					= "Stefano D'Amico is a VJr developer";
-	const s8 cgcCurdirJustMod_056[]					= "CURDIR(), JUST*(), MOD()";
+	const s8 cgcCurdirJustMod_056[]					= "CURDIR(), FORCE*(), JUST*(), MOD()";
 	const s8 cgc64bitAnd32bit_055[]					= "Native 32-bit and 64-bit Versions";
 	const s8 cgcShiftSpaceInNames_054[]				= "Support for Shift+Spaces in names";
 	const s8 cgcInternalPropertyRefactoring_054[]	= "Internal Property refactoring";
@@ -4232,7 +4232,7 @@
 		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, cgcRunningPrograms_060,						"0.60", false, false, false, -2, 0);
 		iiVjr_renderAccomplishment(bmp, &lrc, _BLUE, cgcStefanoDamico_056,							"0.56", false, false, false, 0, 0);
 
-		iiVjr_renderAccomplishment(bmp, &lrc, _RED, cgcCurdirJustMod_056,							"0.56", false, false, false, 0, 0);
+		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, cgcCurdirJustMod_056,							"0.56", false, false, false, 0, 0);
 
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, cgc64bitAnd32bit_055,							"0.55", false, false, false, -2, 0);
 		iiVjr_renderAccomplishment(bmp, &lrc, _GREEN, cgcShiftSpaceInNames_054,						"0.54", false, false, false, -2, 0);
