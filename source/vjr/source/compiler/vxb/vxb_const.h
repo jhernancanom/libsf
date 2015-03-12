@@ -634,6 +634,7 @@
 	const s32		_ICODE_JUSTSTEM                                 = 1238;
 	const s32		_ICODE_KEYMATCH                                 = 1239;
 	const s32		_ICODE_KEY                                      = 1240;
+	const s32		_ICODE_LOADPARAMS								= 1442;
 	const s32		_ICODE_LASTKEY                                  = 1241;
 	const s32		_ICODE_LEFTC                                    = 1242;
 	const s32		_ICODE_LEFT                                     = 1243;
@@ -675,6 +676,8 @@
 	const s32		_ICODE_NDX                                      = 1279;
 	const s32		_ICODE_NEWOBJECT                                = 1280;
 	const s32		_ICODE_NODATA									= 1437;
+	const s32		_ICODE_NOLOADPARAMS								= 1443;
+	const s32		_ICODE_NOUNLOADPARAMS							= 1445;
 	const s32		_ICODE_NOREQUERY								= 1438;
 	const s32		_ICODE_NORMALIZE                                = 1281;
 	const s32		_ICODE_NOUPDATE									= 1436;
@@ -801,6 +804,7 @@
 	const s32		_ICODE_TXTWIDTH                                 = 1398;
 	const s32		_ICODE_TYPE                                     = 1399;
 	const s32		_ICODE_UNBINDEVENTS                             = 1400;
+	const s32		_ICODE_UNLOADPARAMS								= 1444;
 	const s32		_ICODE_UNIQUE                                   = 1401;
 	const s32		_ICODE_UPDATED                                  = 1402;
 	const s32		_ICODE_UPPER                                    = 1403;
@@ -831,12 +835,14 @@
 	const s32		_ICODE_XMLTOCURSOR                              = 1428;
 	const s32		_ICODE_XMLUPDATEGRAM                            = 1429;
 	const s32		_ICODE_YEAR                                     = 1430;
-	// occursc		= 1431			addobject	= 1432
-	// strtranc		= 1433			ascending	= 1434
-	// in			= 1435			noupdate	= 1436
-	// nodata		= 1437			norequery	= 1438
-	// again		= 1439			shared		= 1440
-	// connstring	= 1441
+	// occursc			= 1431				addobject		= 1432
+	// strtranc			= 1433				ascending		= 1434
+	// in				= 1435				noupdate		= 1436
+	// nodata			= 1437				norequery		= 1438
+	// again			= 1439				shared			= 1440
+	// connstring		= 1441				loadparams		= 1442
+	// noloadparams		= 1443				unloadparams	= 1444
+	// nounloadparams	= 1445
 
 // Temporarily added until the processing engine is coded
 	const s32		_ICODE_CONCATENATE								= 1900;
@@ -1435,6 +1441,7 @@
 	const s8		cgc_juststem[]									= "juststem";
 	const s8		cgc_keymatch[]									= "keymatch";
 	const s8		cgc_key[]										= "key";
+	const s8		cgc_loadParams[]								= "loadparams";
 	const s8		cgc_lastkey[]									= "lastkey";
 	const s8		cgc_leftc[]										= "leftc";
 	const s8		cgc_left[]										= "left";
@@ -1475,9 +1482,11 @@
 	const s8		cgc_mwindow[]									= "mwindow";
 	const s8		cgc_ndx[]										= "ndx";
 	const s8		cgc_newobject[]									= "newobject";
+	const s8		cgc_noLoadParams[]								= "noloadparams";
 	const s8		cgc_nodata[]									= "nodata";
 	const s8		cgc_norequery[]									= "norequery";
 	const s8		cgc_normalize[]									= "normalize";
+	const s8		cgc_noUnloadParams[]							= "nounloadparams";
 	const s8		cgc_noupdate[]									= "noupdate";
 	const s8		cgc_ntom[]										= "ntom";
 	const s8		cgc_numlock[]									= "numlock";
@@ -1601,6 +1610,7 @@
 	const s8		cgc_txtwidth[]									= "txtwidth";
 	const s8		cgc_type[]										= "type";
 	const s8		cgc_unbindevents[]								= "unbindevents";
+	const s8		cgc_unloadparams[]								= "unloadparams";
 	const s8		cgc_unique[]									= "unique";
 	const s8		cgc_updated[]									= "updated";
 	const s8		cgc_upper[]										= "upper";

@@ -94,7 +94,9 @@ SET SAFETY OFF
 SET CLASSLIB TO sourcelight.vcx ADDITIVE
 
 * Open the tables
-USE data\sourcelight IN 0 SHARED
+IF NOT USED("sourcelight")
+	USE data\sourcelight IN 0 SHARED
+ENDIF
 
 * Engage
 DO FORM frmMain

@@ -465,6 +465,7 @@ struct SBasePropertyInit;
 	const s8		cgc_setImplicitParams[]									= "implicitParams";
 	const s8		cgc_setIndexMetaData[]									= "indexMetaData";
 	const s8		cgc_setLanguage[]										= "language";
+	const s8		cgc_setLoadReceivesParams[]								= "loadReceivesParams";
 	const s8		cgc_setLogical[]										= "logical";
 	const s8		cgc_setNamingConvention[]								= "namingConvention";
 	const s8		cgc_setReprocess[]										= "reprocess";
@@ -475,7 +476,9 @@ struct SBasePropertyInit;
 	const s8		cgc_setTableEqualAssignments[]							= "tableEqualAssignments";
 	const s8		cgc_setTableObjects[]									= "tableObjects";
 	const s8		cgc_setTalk[]											= "talk";
+	const s8		cgc_setTime[]											= "time";
 	const s8		cgc_setVariablesFirst[]									= "variablesFirst";
+	const s8		cgc_setUnloadReceivesParams[]							= "unloadReceivesParams";
 	const s8		cgc_setInitializeDefaultValue[]							= "initializeDefaultValue";
 
 	// Note:  The value 0 is used for the terminator in variable-length lists, so the values here must begin at 1.
@@ -844,18 +847,21 @@ struct SBasePropertyInit;
 	const u32		_INDEX_SET_INDEX_META_DATA								= 361;
 	const u32		_INDEX_SET_INITIALIZE_DEFAULT_VALUE						= 362;
 	const u32		_INDEX_SET_LANGUAGE										= 363;
-	const u32		_INDEX_SET_LOGICAL										= 364;
-	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 365;
-	const u32		_INDEX_SET_REPROCESS									= 366;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 367;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
-	const u32		_INDEX_SET_REPROCESSINTERVAL							= 368;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
-	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 369;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_SLOPPY_PRINTING								= 370;
-	const u32		_INDEX_SET_STICKY_PARAMETERS							= 371;
-	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 372;
-	const u32		_INDEX_SET_TABLE_OBJECS									= 373;
-	const u32		_INDEX_SET_TALK											= 374;
-	const u32		_INDEX_SET_VARIABLES_FIRST								= 375;
+	const u32		_INDEX_SET_LOAD_RECEIVES_PARAMS							= 364;
+	const u32		_INDEX_SET_LOGICAL										= 365;
+	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 366;
+	const u32		_INDEX_SET_REPROCESS									= 367;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 368;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
+	const u32		_INDEX_SET_REPROCESSINTERVAL							= 369;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
+	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 370;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_SLOPPY_PRINTING								= 371;
+	const u32		_INDEX_SET_STICKY_PARAMETERS							= 372;
+	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 373;
+	const u32		_INDEX_SET_TABLE_OBJECS									= 374;
+	const u32		_INDEX_SET_TALK											= 375;
+	const u32		_INDEX_SET_TIME											= 376;
+	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 377;
+	const u32		_INDEX_SET_VARIABLES_FIRST								= 378;
 
 
 	// Basic setters and getters
@@ -1333,6 +1339,7 @@ struct SBasePropertyInit;
 		{	_INDEX_SET_INDEX_META_DATA,				cgc_setIndexMetaData,			sizeof(cgc_setIndexMetaData) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=stores meta data for dates, defined variables inside the index, .f.=uses live environment on subsequent index tag reopens
 		{	_INDEX_SET_INITIALIZE_DEFAULT_VALUE,	cgc_setInitializeDefaultValue,	sizeof(cgc_setInitializeDefaultValue) - 1,	_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// The default initialize variable type for new variables, such as "LOCAL fred" ... by default, logical false
 		{	_INDEX_SET_LANGUAGE,					cgc_setLanguage,				sizeof(cgc_setLanguage) - 1,				_VAR_TYPE_CHARACTER,		0, 0, 0,		(uptr)&cgcEnglish[0]			,NULL	},	// The default language for any new loaded objects
+		{	_INDEX_SET_LOAD_RECEIVES_PARAMS,		cgc_setLoadReceivesParams,		sizeof(cgc_setLoadReceivesParams) - 1,		_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=Load() events receive the same parameters that will be passed to init(), .f.=(default) Load() does not receive any parameters
 		{	_INDEX_SET_LOGICAL,						cgc_setLogical,					sizeof(cgc_setLogical) - 1,					_VAR_TYPE_S32,				0, 0, 0,		_LOGICAL_TF						,NULL	},	// See _LOGICAL_* constants
 		{	_INDEX_SET_NAMING_CONVENTIONS,			cgc_setNamingConvention,		sizeof(cgc_setNamingConvention) - 1,		_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=Field and variables are examined for standard naming conventions with errors reported, .f.=no checks are made
 		{	_INDEX_SET_REPROCESS,					cgc_setReprocess,				sizeof(cgc_setReprocess) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=Reprocessing is set to automatic, .f. is not supported, if it's not .t. it must be signed numeric with negative indicating attempts, and positive indicating seconds
@@ -1344,6 +1351,8 @@ struct SBasePropertyInit;
 		{	_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS,		cgc_setTableObjects,			sizeof(cgc_setTableObjects) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=instead of REPLACE cField WITH .t., cField = .t. can be used, .f.=requires REPLACE or UPDATE
 		{	_INDEX_SET_TABLE_OBJECS,				cgc_setTableObjects,			sizeof(cgc_setTableObjects) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=allows tables to be accessed as array objects, .f.=tables are accessed normally
 		{	_INDEX_SET_TALK,						cgc_setTalk,					sizeof(cgc_setTalk) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=TALK is on and content is output, .f.=TALK is off
+		{	_INDEX_SET_TIME,						cgc_setTime,					sizeof(cgc_setTime) - 1,					_VAR_TYPE_S32,				0, 0, 0,		_TIME_LOCAL						,NULL	},	// Refer to _TIME_* constants, either uses local time (adjusted for timezone) or system time (raw time) for all time references.
+		{	_INDEX_SET_UNLOAD_RECEIVES_PARAMS,		cgc_setUnloadReceivesParams,	sizeof(cgc_setUnloadReceivesParams) - 1,	_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=Unload() events receive the same parameters that were passed to init(), .f.=(default) Unload() does not receive any parameters
 		{	_INDEX_SET_VARIABLES_FIRST,				cgc_setVariablesFirst,			sizeof(cgc_setVariablesFirst) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=memory variables are searched first without m., .f.=the current alias is searched first, and then memory variables
 		{	0,										NULL,							0,											0,						    0, 0, 0,		0								,NULL	}
 	};
@@ -3498,6 +3507,7 @@ struct SBasePropertyInit;
 		{	_INDEX_SET_INDEX_META_DATA,					0, 0, 0 },		// bool
 		{	_INDEX_SET_INITIALIZE_DEFAULT_VALUE,		0, 0, 0 },		// Varies, but initially it is bool
 		{	_INDEX_SET_LANGUAGE,						0, 0, 0 },		// SDatum
+		{	_INDEX_SET_LOAD_RECEIVES_PARAMS,			0, 0, 0 },		// bool
 		{	_INDEX_SET_LOGICAL,							0, 0, 0 },		// s32
 		{	_INDEX_SET_NAMING_CONVENTIONS,				0, 0, 0 },		// bool
 		{	_INDEX_SET_REPROCESS,						0, 0, 0 },		// bool or s32 
@@ -3509,6 +3519,8 @@ struct SBasePropertyInit;
 		{	_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS,			0, 0, 0 },		// bool
 		{	_INDEX_SET_TABLE_OBJECS,					0, 0, 0 },		// bool
 		{	_INDEX_SET_TALK,							0, 0, 0 },		// bool
+		{	_INDEX_SET_TIME,							0, 0, 0 },		// s32
+		{	_INDEX_SET_UNLOAD_RECEIVES_PARAMS,			0, 0, 0 },		// bool
 		{	_INDEX_SET_VARIABLES_FIRST,					0, 0, 0 },		// bool
 		{	0,											0, 0, 0 }
 	};
