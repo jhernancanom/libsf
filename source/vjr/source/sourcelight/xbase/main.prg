@@ -90,22 +90,40 @@ SET ENGINEBEHAVIOR 70
 SET STATUS BAR ON
 SET SAFETY OFF
 
+**********
 * Set the app paths
-SET CLASSLIB TO sourcelight.vcx ADDITIVE
+*****
+	SET CLASSLIB TO sourcelight.vcx ADDITIVE
 
+
+**********
 * Open the tables
-IF NOT USED("sourcelight")
-	USE data\sourcelight IN 0 SHARED
-ENDIF
-SELECT sourcelight
-SET ORDER TO SORTORDER   && CSORTKEY
+*****
+	IF NOT USED("sourcelight")
+		SELECT 0
+		USE data\sourcelight SHARED
+	ELSE
+		SELECT sourcelight
+		SET FILTER TO
+		GOTO TOP
+	ENDIF
+	SET ORDER TO SORTORDER   && CSORTKEY
 
+
+**********
 * Engage
-DO FORM frmMain
+*****
+	DO FORM frmMain
 
+
+**********
 * Wait until we're done
-READ EVENTS
+*****
+	READ EVENTS
 
+
+**********
 * Upon termination, restore things
-_vfp.Visible = .t.
-SET TALK ON
+*****
+	_vfp.Visible = .t.
+	SET TALK ON
