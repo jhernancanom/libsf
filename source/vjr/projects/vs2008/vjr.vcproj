@@ -1464,6 +1464,14 @@
 							>
 						</File>
 					</Filter>
+					<Filter
+						Name="sourcelight"
+						>
+						<File
+							RelativePath="..\..\source\compiler\sourcelight\sourcelight_globals.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="rdc_compiler"

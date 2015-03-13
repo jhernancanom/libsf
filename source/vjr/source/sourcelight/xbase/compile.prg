@@ -1,6 +1,6 @@
 *****
 *
-* /libsf/source/vjr/source/sourcelight/main.prg
+* /libsf/source/vjr/source/sourcelight/compile.prg
 *
 *****
 *    _     _ _     _____ _____
@@ -19,13 +19,13 @@
 *
 ***
 * Version 0.10
-* Copyright (c) 2014-2015 by Rick C. Hodgin
+* Copyright (c) 2015 by Rick C. Hodgin
 ***
 * Last update:
-*     Sep.24.2014
+*     Mar.13.2015
 ***
 * Change log:
-*     Sep.24.2014 - Initial creation
+*     Mar.13.2015 - Initial creation
 ***
 *
 * This document is released as Liberty Software under a Repeat License, as governed
@@ -80,50 +80,147 @@
 *
 
 
+LOCAL lnErrorCount, lcErrors
+LOCAL laLines, lcHFile, lcConstants, lcCmdFunc
 
 
-SET STATUS OFF
-SET BELL OFF
-SET DOHISTORY OFF
-SET TALK OFF
-SET ENGINEBEHAVIOR 70
-SET STATUS BAR ON
-SET SAFETY OFF
-
-**********
-* Set the app paths
-*****
-	SET CLASSLIB TO sourcelight.vcx ADDITIVE
 
 
 **********
-* Open the tables
+* Clear all errors
 *****
-	IF NOT USED("sourcelight")
-		SELECT 0
-		USE data\sourcelight SHARED
-	ELSE
-		SELECT sourcelight
-		SET FILTER TO
-		GOTO TOP
+	REPLACE ALL cErrors WITH SPACE(0)
+
+
+**********
+* Do some initial sanity checking, reporting formatting errors
+*****
+	SELECT sourcelight
+	lnErrorCount = 0
+	SCAN FOR NOT isValidRecord(.t.)
+		* Store our error information
+		lnErrorCount	= lnErrorCount + 1
+		lcErrors		= lcErrors + ALLTRIM(cErrors) + CHR(13)
+	ENDSCAN
+	IF lnErrorCount != 0
+		* Errors are preventing compilation
+		MESSAGEBOX(	"Errors were encountered that must" + CHR(13) + ;
+					"be resolved before continuing. Sorry.", ;
+					0+16, ;
+					"SourceLight Precompile Errors")
+		RETURN .F.
 	ENDIF
-	SET ORDER TO SORTORDER   && CSORTKEY
+	* If we get here, the content is valid
 
 
 **********
-* Engage
+* Output files
 *****
-	DO FORM frmMain
+	lcHFile		= SPACE(0)
+	lcConstants	= SPACE(0)
 
 
 **********
-* Wait until we're done
+* Iterate through each record building the output
 *****
-	READ EVENTS
+	SELECT sourcelight
+	SCAN
+	
+		**********
+		* Grab the command definitions
+		*****
+			lcCmdFunc = ALLTRIM(sourcelight.cCmdFunc)
+		
+		
+		**********
+		* Extract out the lines one-by-one
+		*****
+			DIMENSION laLines[1]
+			ALINES(laLines, lcCmdFunc)
+			
+		
+		**********
+		* Is it a command, function, or flow control?
+		*****
+			DO CASE
+				CASE nCmdFunc = 1		&& Command
+				CASE nCmdFunc = 2		&& Function
+				CASE nCmdFunc = 3
+			ENDCASE
+
+			FOR lnI = 1 TO ALEN(laLines, 1)
+
+				**********
+				* Parse out each expression
+				*****
+					
+
+			NEXT
+
+	ENDSCAN
+
+
 
 
 **********
-* Upon termination, restore things
+* Performs sanity checks looking for invalid data
 *****
-	_vfp.Visible = .t.
-	SET TALK ON
+FUNCTION isValidRecord
+LPARAMETERS tlRecordErrors
+LOCAL llIsValid, lc
+
+
+**********
+* Optimism!
+*****
+	llIsValid = .T.
+
+
+**********
+* #1
+* Every nCmdFunc is 1..3
+*****
+	SCAN FOR NOT BETWEEN(nCmdFunc, 1, 3)
+		llIsValid = .f.
+		REPLACE cError WITH cError + "Needs to be set to Command, Function, or Flow." + CHR(13)
+	ENDSCAN
+
+
+**********
+* #2
+* All functions have an equal sign on every line
+*****
+	SCAN FOR nCmdFunc = 2		&& Functions only
+
+		**********
+		* Get rid of blank lines
+		*****
+			lcCmdFunc = CHRTRAN(ALLTRIM(cCmdFunc), CHR(10), SPACE(0))
+			DO WHILE CHR(13)+CHR(13) $ lcCmdFunc
+				lcCmdFunc = STRTRAN(ALLTRIM(cCmdFunc), CHR(13)+CHR(13), CHR(13))
+			ENDDO
+			lcCmdFunc = ALLTRIM(lcCmdFunc, 0, CHR(13)) + CHR(13)
+
+
+		**********
+		* Verify there's an equal sign for every line
+		*****
+			IF OCCURS("=", lcCmdFunc) != OCCURS(CHR(13), lcCmdFunc)
+				llIsValid = .f.
+				REPLACE cError WITH cError + "The function equal sign count does not match the populated line count." + CHR(13)
+			ENDIF
+
+	ENDSCAN
+
+
+**********
+* #3
+* All names on each function line is found in the parameters
+*****
+	* Working here
+
+
+**********
+* Indicate success or failure
+*****
+	RETURN llIsValid
