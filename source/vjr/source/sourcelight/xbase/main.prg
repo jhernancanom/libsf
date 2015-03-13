@@ -97,6 +97,8 @@ SET CLASSLIB TO sourcelight.vcx ADDITIVE
 IF NOT USED("sourcelight")
 	USE data\sourcelight IN 0 SHARED
 ENDIF
+SELECT sourcelight
+SET ORDER TO SORTORDER   && CSORTKEY
 
 * Engage
 DO FORM frmMain
