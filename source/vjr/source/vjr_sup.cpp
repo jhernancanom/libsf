@@ -361,11 +361,11 @@
 		//////
 			lnWidth		= (_jdebi->rcClient.right - _jdebi->rcClient.left) / 8;
 			lnHeight	= (_jdebi->rcClient.bottom - _jdebi->rcClient.top) / 8;
-			iObj_setSize(thisCode, sourceCode,	0,						0,							5 * lnWidth,																6 * lnHeight);
-			iObj_setSize(thisCode, locals,		sourceCode->rc.right,	0,							lnWidth * 3 / 2,															2 * lnHeight);
-			iObj_setSize(thisCode, watch,		locals->rc.right,		0,							(_jdebi->rcClient.right - _jdebi->rcClient.left) - locals->rc.right,		2 * lnHeight);
-			iObj_setSize(thisCode, command,		0,						sourceCode->rc.bottom,		5 * lnWidth,																(_jdebi->rcClient.bottom - _jdebi->rcClient.top) - sourceCode->rc.bottom);
-			iObj_setSize(thisCode, sourceLight,	sourceCode->rc.right,	watch->rc.bottom,			(_jdebi->rcClient.right - _jdebi->rcClient.left) - sourceCode->rc.right,	2 * lnHeight);
+			iObj_setSize(thisCode, sourceCode,	0,						0,							4 * lnWidth,																4 * lnHeight);
+			iObj_setSize(thisCode, locals,		sourceCode->rc.right,	0,							lnWidth * 3 / 2,															3 * lnHeight / 2);
+			iObj_setSize(thisCode, watch,		locals->rc.right,		0,							(_jdebi->rcClient.right - _jdebi->rcClient.left) - locals->rc.right,		3 * lnHeight / 2);
+			iObj_setSize(thisCode, command,		0,						sourceCode->rc.bottom,		4 * lnWidth,																(_jdebi->rcClient.bottom - _jdebi->rcClient.top) - sourceCode->rc.bottom);
+			iObj_setSize(thisCode, sourceLight,	sourceCode->rc.right,	watch->rc.bottom,			(_jdebi->rcClient.right - _jdebi->rcClient.left) - sourceCode->rc.right,	3 * lnHeight);
 			iObj_setSize(thisCode, _screen,		sourceCode->rc.right,	sourceLight->rc.bottom,		(_jdebi->rcClient.right - _jdebi->rcClient.left) - sourceCode->rc.right,	(_jdebi->rcClient.bottom - _jdebi->rcClient.top) - sourceLight->rc.bottom);
 
 			// These are created, but they are not visible
