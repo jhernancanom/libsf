@@ -3,7 +3,7 @@
 // /libsf/source/vjr/source/vjr_sup.cpp
 //
 //////
-//    _     _ _     _____ _____ 
+//    _     _ _     _____ _____
 //   | |   (_) |__ / ____|  ___|
 //   | |   | | '_ \\___ \|  __|
 //   | |___| | |_) |___) | |
@@ -11,10 +11,10 @@
 //
 //   Liberty Software Foundation
 // and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
+//   __     _______     ____
+//   \ \   / /  ___| __|  _ \
 //    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
+//     \ V / |  _|| |  |  __/
 //      \_/  |_|  |_|  |_|
 //
 //////
@@ -2011,7 +2011,7 @@
 		CreateThread(NULL, 0, &iTooltip_thread, tooltip, 0, 0);
 	}
 
-	DWORD WINAPI iTooltip_thread(LPVOID lpParameter/*STooltip*/)
+	DWORD WINAPI iTooltip_thread(LPVOID param/*STooltip*/)
 	{
 		s32			lnWidth, lnHeight;
 		WNDCLASSEX	wcex;
@@ -2019,10 +2019,16 @@
 		MSG			msg;
 		STooltip*	tooltip;
 
+		union {
+			uptr	_lpParameter;
+			LPVOID	lpParameter;
+		};
+
 
 		//////////
 		// See if the class is already defined
 		//////
+			lpParameter = param;
 			if (!GetClassInfoEx(GetModuleHandle(NULL), (cs8*)cgcTooltipClass, &wcex))
 			{
 				// We need to create said class with our class making skills
@@ -2066,7 +2072,8 @@
 #ifdef __64_BIT_COMPILER__
 			// I get a warning in VS2010 if I use this code, and if I don't I get a warning in GCC... can't win. :-)
 	#if defined(WIN64)
-			SetWindowLong(tooltip->hwnd, GWL_USERDATA, (long)lpParameter);
+
+			SetWindowLong(tooltip->hwnd, GWL_USERDATA, (long)_lpParameter);
 	#elif __linux__
 			SetWindowLong(tooltip->hwnd, GWL_USERDATA, (uptr)lpParameter);
 	#else

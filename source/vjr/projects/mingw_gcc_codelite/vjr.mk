@@ -12,9 +12,9 @@ OutDir                 := $(IntermediateDirectory)
 CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
-User                   :=Administrator
+User                   :=Rick
 Date                   :=03/14/15
-CodeLitePath           :="C:\Program Files\CodeLite"
+CodeLitePath           :="C:\Program Files (x86)\CodeLite"
 LinkerName             :=C:\MinGW-4.8.1\bin\g++.exe 
 SharedObjectLinkerName :=C:\MinGW-4.8.1\bin\g++.exe -shared -fPIC
 ObjectSuffix           :=.o
@@ -61,7 +61,7 @@ AS       := C:\MinGW-4.8.1\bin\as.exe
 ##
 ## User defined environment variables
 ##
-CodeLiteDir:=C:\Program Files\CodeLite
+CodeLiteDir:=C:\Program Files (x86)\CodeLite
 UNIT_TEST_PP_SRC_DIR:=C:\UnitTest++-1.3
 Objects0=$(IntermediateDirectory)/source_vjr.cpp$(ObjectSuffix) $(IntermediateDirectory)/bmps_bmps.cpp$(ObjectSuffix) 
 
