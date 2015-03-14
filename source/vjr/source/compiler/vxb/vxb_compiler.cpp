@@ -5145,6 +5145,81 @@ debug_break;
 
 //////////
 //
+// Returns the fundamental type
+//
+//////
+	SComp* iVariable_compRelated(SThisCode* thisCode, SVariable* var)
+	{
+		// If it's valid, convey
+		if (var)
+			return(var->compRelated);
+
+		// If we get here, invalid
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Returns the fundamental weakly typed xbase variable form that would match the actual varType.
+//
+//////
+	s32 iVariable_fundamentalType(SThisCode* thisCode, SVariable* var)
+	{
+		if (var)
+		{
+			switch (var->varType)
+			{
+				case _VAR_TYPE_NULL:
+				case _VAR_TYPE_OBJECT:
+				case _VAR_TYPE_THISCODE:
+				case _VAR_TYPE_CHARACTER:
+					// These are already fundamental types
+					return(var->varType);
+
+				case _VAR_TYPE_NUMERIC:
+				case _VAR_TYPE_CURRENCY:
+				case _VAR_TYPE_S32:
+				case _VAR_TYPE_S64:
+				case _VAR_TYPE_U32:
+				case _VAR_TYPE_U64:
+				case _VAR_TYPE_F32:
+				case _VAR_TYPE_F64:
+				case _VAR_TYPE_BI:
+				case _VAR_TYPE_BFP:
+				case _VAR_TYPE_S16:
+				case _VAR_TYPE_S8:
+				case _VAR_TYPE_U16:
+				case _VAR_TYPE_U8:
+					return(_VAR_TYPE_NUMERIC);
+
+				case _VAR_TYPE_DATE:
+				case _VAR_TYPE_DATETIME:
+				case _VAR_TYPE_LOGICAL:
+				case _VAR_TYPE_BITMAP:
+					// These are already fundamental types
+					return(var->varType);
+
+// TODO:  Not yet implemented:
+// 				case _VAR_TYPE_DATETIMEX
+// 				case _VAR_TYPE_ARRAY
+// 				case _VAR_TYPE_GUID8
+// 				case _VAR_TYPE_GUID16
+// 				case _VAR_TYPE_FIELD
+			}
+		}
+
+		// If we get here, unknown type
+		return(_VAR_TYPE_NULL);
+	}
+
+
+
+
+//////////
+//
 // Called to create all of the default variable values
 //
 //////
@@ -5579,7 +5654,7 @@ if (!gsProps_master[lnI].varInit)
 // Called to set the input variable of varying types to the output variable of existing type
 //
 //////
-	bool iVariable_setNumeric_toExistingType(SThisCode* thisCode, SVariable* varDst, f32* val_f32, f64* val_f64, s32* val_s32, u32* val_u32, s64* val_s64, u64* val_u64)
+	bool iVariable_setNumeric_toNumericType(SThisCode* thisCode, SVariable* varDst, f32* val_f32, f64* val_f64, s32* val_s32, u32* val_u32, s64* val_s64, u64* val_u64)
 	{
 		s32	lnI;
 		f64	lfValue;
@@ -5801,6 +5876,323 @@ do_as_numeric:
 									else if (val_u32)		*varDst->value.data_u8 = (((u8)*val_u32 == 0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
 									else if (val_s64)		*varDst->value.data_u8 = (((u8)*val_s64 == 0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
 									else if (val_u64)		*varDst->value.data_u8 = (((u8)*val_u64 == 0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
+									else {
+										// Every parameter they passed was NULL
+										debug_break;
+										return(false);
+									}
+									break;
+							}
+
+						} else {
+							iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, NULL, false);
+							return(false);
+						}
+						break;
+				}
+		}
+
+		// If we get here, failure
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to store the varSrc into the format of the varDst, converting its value as needed into the varDst
+//
+//////
+	bool iVariable_setNumeric_toDestinationType(SThisCode* thisCode, SVariable* varDst, SVariable* varSrc)
+	{
+		s32	lnI;
+		f64	lfValue;
+		s8	formatter[16];
+		s8	buffer[32];
+		union {
+			s8*		data_s8;
+			f32*	val_f32;
+			f64*	val_f64;
+			s32*	val_s32;
+			u32*	val_u32;
+			s64*	val_s64;
+			u64*	val_u64;
+			s8*		val_s8;
+			u8*		val_u8;
+			s16*	val_s16;
+			u16*	val_u16;
+		};
+
+
+		// Make sure our environment is sane
+		if (varDst && varDst->value.data && varDst->value.length > 0 && varSrc && varSrc->value.data && varSrc->value.length > 0)
+		{
+			// Copy our value for shorthand references
+			data_s8 = varSrc->value.data_s8;
+
+			//////////
+			// Process the ones that can handle a direct conversion
+			//////
+				switch (varDst->varType)
+				{
+					case _VAR_TYPE_F32:
+						// For any type that can be converted, convert it
+						     if (varSrc->varType == _VAR_TYPE_F32)		*varDst->value.data_f32 = (f32)*val_f32;
+						else if (varSrc->varType == _VAR_TYPE_F64)		*varDst->value.data_f32 = (f32)iErrorCandidate_signalOutOfRange_f64(thisCode, *val_f64, _VAR_TYPE_F32, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S32)		*varDst->value.data_f32 = (f32)iErrorCandidate_signalOutOfRange_s32(thisCode, *val_s32, _VAR_TYPE_F32, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_U32)		*varDst->value.data_f32 = (f32)iErrorCandidate_signalOutOfRange_u32(thisCode, *val_u32, _VAR_TYPE_F32, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S64)		*varDst->value.data_f32 = (f32)iErrorCandidate_signalOutOfRange_s64(thisCode, *val_s64, _VAR_TYPE_F32, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_U64)		*varDst->value.data_f32 = (f32)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_u64, _VAR_TYPE_F32, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S8)		*varDst->value.data_f32 = (f32)*val_s8;
+						else if (varSrc->varType == _VAR_TYPE_U8)		*varDst->value.data_f32 = (f32)*val_u8;
+						else if (varSrc->varType == _VAR_TYPE_S16)		*varDst->value.data_f32 = (f32)*val_s16;
+						else if (varSrc->varType == _VAR_TYPE_U16)		*varDst->value.data_f32 = (f32)*val_u16;
+						else if (varSrc->varType == _VAR_TYPE_NUMERIC)	*varDst->value.data_f32 = (f32)iErrorCandidate_signalOutOfRange_numeric(thisCode, &varSrc->value, _VAR_TYPE_F32, NULL, false, NULL);
+						else {
+							// Every parameter they passed was NULL
+							debug_break;
+							return(false);
+						}
+						return(true);
+
+					case _VAR_TYPE_F64:
+						// For any type that can be converted, convert it
+						     if (varSrc->varType == _VAR_TYPE_F32)		*varDst->value.data_f64 = (f64)*val_f32;
+						else if (varSrc->varType == _VAR_TYPE_F64)		*varDst->value.data_f64 = (f64)*val_f64;
+						else if (varSrc->varType == _VAR_TYPE_S32)		*varDst->value.data_f64 = (f64)*val_s32;
+						else if (varSrc->varType == _VAR_TYPE_U32)		*varDst->value.data_f64 = (f64)*val_u32;
+						else if (varSrc->varType == _VAR_TYPE_S64)		*varDst->value.data_f64 = (f64)*val_s64;
+						else if (varSrc->varType == _VAR_TYPE_U64)		*varDst->value.data_f64 = (f64)*val_u64;
+						else if (varSrc->varType == _VAR_TYPE_S8)		*varDst->value.data_f64 = (f32)*val_s8;
+						else if (varSrc->varType == _VAR_TYPE_U8)		*varDst->value.data_f64 = (f32)*val_u8;
+						else if (varSrc->varType == _VAR_TYPE_S16)		*varDst->value.data_f64 = (f32)*val_s16;
+						else if (varSrc->varType == _VAR_TYPE_U16)		*varDst->value.data_f64 = (f32)*val_u16;
+						else {
+							// Every parameter they passed was NULL
+							debug_break;
+							return(false);
+						}
+						return(true);
+
+					case _VAR_TYPE_S32:
+						// For any type that can be converted, convert it
+						     if (varSrc->varType == _VAR_TYPE_F32)		*varDst->value.data_s32 = (s32)iErrorCandidate_signalOutOfRange_f32(thisCode, *val_f32, _VAR_TYPE_S32, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_F64)		*varDst->value.data_s32 = (s32)iErrorCandidate_signalOutOfRange_f64(thisCode, *val_f64, _VAR_TYPE_S32, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S32)		*varDst->value.data_s32 = (s32)*val_s32;
+						else if (varSrc->varType == _VAR_TYPE_U32)		*varDst->value.data_s32 = (s32)iErrorCandidate_signalOutOfRange_u32(thisCode, *val_u32, _VAR_TYPE_S32, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S64)		*varDst->value.data_s32 = (s32)iErrorCandidate_signalOutOfRange_s64(thisCode, *val_s64, _VAR_TYPE_S32, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_U64)		*varDst->value.data_s32 = (s32)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_u64, _VAR_TYPE_S32, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S8)		*varDst->value.data_s32 = (s32)*val_s8;
+						else if (varSrc->varType == _VAR_TYPE_U8)		*varDst->value.data_s32 = (s32)*val_u8;
+						else if (varSrc->varType == _VAR_TYPE_S16)		*varDst->value.data_s32 = (s32)*val_s16;
+						else if (varSrc->varType == _VAR_TYPE_U16)		*varDst->value.data_s32 = (s32)*val_u16;
+						else {
+							// Every parameter they passed was NULL
+							debug_break;
+							return(false);
+						}
+						return(true);
+
+					case _VAR_TYPE_U32:
+						// For any type that can be converted, convert it
+						     if (varSrc->varType == _VAR_TYPE_F32)		*varDst->value.data_u32 = (u32)iErrorCandidate_signalOutOfRange_f32(thisCode, *val_f32, _VAR_TYPE_U32, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_F64)		*varDst->value.data_u32 = (u32)iErrorCandidate_signalOutOfRange_f64(thisCode, *val_f64, _VAR_TYPE_U32, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S32)		*varDst->value.data_u32 = (u32)*val_s32;
+						else if (varSrc->varType == _VAR_TYPE_U32)		*varDst->value.data_u32 = (u32)*val_u32;
+						else if (varSrc->varType == _VAR_TYPE_S64)		*varDst->value.data_u32 = (u32)iErrorCandidate_signalOutOfRange_s64(thisCode, *val_s64, _VAR_TYPE_U32, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_U64)		*varDst->value.data_u32 = (u32)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_u64, _VAR_TYPE_U32, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S8)		*varDst->value.data_u32 = (u32)*val_s8;
+						else if (varSrc->varType == _VAR_TYPE_U8)		*varDst->value.data_u32 = (u32)*val_u8;
+						else if (varSrc->varType == _VAR_TYPE_S16)		*varDst->value.data_u32 = (u32)*val_s16;
+						else if (varSrc->varType == _VAR_TYPE_U16)		*varDst->value.data_u32 = (u32)*val_u16;
+						else {
+							// Every parameter they passed was NULL
+							debug_break;
+							return(false);
+						}
+						return(true);
+
+					case _VAR_TYPE_CURRENCY:
+					case _VAR_TYPE_S64:
+						// For any type that can be converted, convert it
+						     if (varSrc->varType == _VAR_TYPE_F32)		*varDst->value.data_s64 = (s64)iErrorCandidate_signalOutOfRange_f32(thisCode, *val_f32, _VAR_TYPE_S64, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_F64)		*varDst->value.data_s64 = (s64)iErrorCandidate_signalOutOfRange_f64(thisCode, *val_f64, _VAR_TYPE_S64, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S32)		*varDst->value.data_s64 = (s64)*val_s32;
+						else if (varSrc->varType == _VAR_TYPE_U32)		*varDst->value.data_s64 = (s64)*val_u32;
+						else if (varSrc->varType == _VAR_TYPE_S64)		*varDst->value.data_s64 = (s64)*val_s64;
+						else if (varSrc->varType == _VAR_TYPE_U64)		*varDst->value.data_s64 = (s64)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_u64, _VAR_TYPE_S64, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S8)		*varDst->value.data_s64 = (s64)*val_s8;
+						else if (varSrc->varType == _VAR_TYPE_U8)		*varDst->value.data_s64 = (s64)*val_u8;
+						else if (varSrc->varType == _VAR_TYPE_S16)		*varDst->value.data_s64 = (s64)*val_s16;
+						else if (varSrc->varType == _VAR_TYPE_U16)		*varDst->value.data_s64 = (s64)*val_u16;
+						else {
+							// Every parameter they passed was NULL
+							debug_break;
+							return(false);
+						}
+						return(true);
+
+					case _VAR_TYPE_U64:
+						// For any type that can be converted, convert it
+						     if (varSrc->varType == _VAR_TYPE_F32)		*varDst->value.data_u64 = (u64)iErrorCandidate_signalOutOfRange_f32(thisCode, *val_f32, _VAR_TYPE_U64, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_F64)		*varDst->value.data_u64 = (u64)iErrorCandidate_signalOutOfRange_f64(thisCode, *val_f64, _VAR_TYPE_U64, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S32)		*varDst->value.data_u64 = (u64)*val_s32;
+						else if (varSrc->varType == _VAR_TYPE_U32)		*varDst->value.data_u64 = (u64)*val_u32;
+						else if (varSrc->varType == _VAR_TYPE_S64)		*varDst->value.data_u64 = (u64)*val_s64;
+						else if (varSrc->varType == _VAR_TYPE_U64)		*varDst->value.data_u64 = (u64)*val_u64;
+						else if (varSrc->varType == _VAR_TYPE_S8)		*varDst->value.data_u64 = (u64)*val_s8;
+						else if (varSrc->varType == _VAR_TYPE_U8)		*varDst->value.data_u64 = (u64)*val_u8;
+						else if (varSrc->varType == _VAR_TYPE_S16)		*varDst->value.data_u64 = (u64)*val_s16;
+						else if (varSrc->varType == _VAR_TYPE_U16)		*varDst->value.data_u64 = (u64)*val_u16;
+						else {
+							// Every parameter they passed was NULL
+							debug_break;
+							return(false);
+						}
+						return(true);
+
+					case _VAR_TYPE_S8:
+						// For any type that can be converted, convert it
+						     if (varSrc->varType == _VAR_TYPE_F32)		*varDst->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_f32(thisCode, *val_f32, _VAR_TYPE_S8, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_F64)		*varDst->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_f64(thisCode, *val_f64, _VAR_TYPE_S8, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S32)		*varDst->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_s32(thisCode, *val_s32, _VAR_TYPE_S8, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_U32)		*varDst->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_u32(thisCode, *val_u32, _VAR_TYPE_S8, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S64)		*varDst->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_s64(thisCode, *val_s64, _VAR_TYPE_S8, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_U64)		*varDst->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_u64, _VAR_TYPE_S8, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S8)		*varDst->value.data_s8 = (s8)*val_s8;
+						else if (varSrc->varType == _VAR_TYPE_U8)		*varDst->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_u8 (thisCode, *val_u8,  _VAR_TYPE_S8, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S16)		*varDst->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_s16(thisCode, *val_s16, _VAR_TYPE_S8, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_U16)		*varDst->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_u16(thisCode, *val_u16, _VAR_TYPE_S8, NULL, false, NULL);
+						else {
+							// Every parameter they passed was NULL
+							debug_break;
+							return(false);
+						}
+						return(true);
+
+					case _VAR_TYPE_U8:
+						// For any type that can be converted, convert it
+						     if (varSrc->varType == _VAR_TYPE_F32)		*varDst->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_f32(thisCode, *val_f32, _VAR_TYPE_U8, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_F64)		*varDst->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_f64(thisCode, *val_f64, _VAR_TYPE_U8, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S32)		*varDst->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_s32(thisCode, *val_s32, _VAR_TYPE_U8, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_U32)		*varDst->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_u32(thisCode, *val_u32, _VAR_TYPE_U8, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S64)		*varDst->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_s64(thisCode, *val_s64, _VAR_TYPE_U8, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_U64)		*varDst->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_u64, _VAR_TYPE_U8, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S8)		*varDst->value.data_u8 = (u8)*val_s8;
+						else if (varSrc->varType == _VAR_TYPE_U8)		*varDst->value.data_u8 = (u8)*val_u8;
+						else if (varSrc->varType == _VAR_TYPE_S16)		*varDst->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_s16, _VAR_TYPE_U8, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_U16)		*varDst->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_u16, _VAR_TYPE_U8, NULL, false, NULL);
+						else {
+							// Every parameter they passed was NULL
+							debug_break;
+							return(false);
+						}
+						return(true);
+
+					case _VAR_TYPE_S16:
+						// For any type that can be converted, convert it
+						     if (varSrc->varType == _VAR_TYPE_F32)		*varDst->value.data_s16 = (s16)iErrorCandidate_signalOutOfRange_f32(thisCode, *val_f32, _VAR_TYPE_S16, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_F64)		*varDst->value.data_s16 = (s16)iErrorCandidate_signalOutOfRange_f64(thisCode, *val_f64, _VAR_TYPE_S16, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S32)		*varDst->value.data_s16 = (s16)iErrorCandidate_signalOutOfRange_s32(thisCode, *val_s32, _VAR_TYPE_S16, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_U32)		*varDst->value.data_s16 = (s16)iErrorCandidate_signalOutOfRange_u32(thisCode, *val_u32, _VAR_TYPE_S16, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S64)		*varDst->value.data_s16 = (s16)iErrorCandidate_signalOutOfRange_s64(thisCode, *val_s64, _VAR_TYPE_S16, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_U64)		*varDst->value.data_s16 = (s16)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_u64, _VAR_TYPE_S16, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S8)		*varDst->value.data_s16 = (s16)*val_s8;
+						else if (varSrc->varType == _VAR_TYPE_U8)		*varDst->value.data_s16 = (s16)*val_u8;
+						else if (varSrc->varType == _VAR_TYPE_S16)		*varDst->value.data_s16 = (s16)*val_s16;
+						else if (varSrc->varType == _VAR_TYPE_U16)		*varDst->value.data_s16 = (s16)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_u16, _VAR_TYPE_F32, NULL, false, NULL);
+						else {
+							// Every parameter they passed was NULL
+							debug_break;
+							return(false);
+						}
+						return(true);
+
+					case _VAR_TYPE_U16:
+						// For any type that can be converted, convert it
+						     if (varSrc->varType == _VAR_TYPE_F32)		*varDst->value.data_u16 = (u16)iErrorCandidate_signalOutOfRange_f32(thisCode, *val_f32, _VAR_TYPE_U16, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_F64)		*varDst->value.data_u16 = (u16)iErrorCandidate_signalOutOfRange_f64(thisCode, *val_f64, _VAR_TYPE_U16, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S32)		*varDst->value.data_u16 = (u16)iErrorCandidate_signalOutOfRange_s32(thisCode, *val_s32, _VAR_TYPE_U16, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_U32)		*varDst->value.data_u16 = (u16)iErrorCandidate_signalOutOfRange_u32(thisCode, *val_u32, _VAR_TYPE_U16, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S64)		*varDst->value.data_u16 = (u16)iErrorCandidate_signalOutOfRange_s64(thisCode, *val_s64, _VAR_TYPE_U16, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_U64)		*varDst->value.data_u16 = (u16)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_u64, _VAR_TYPE_U16, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_S8)		*varDst->value.data_u16 = (u16)*val_s8;
+						else if (varSrc->varType == _VAR_TYPE_U8)		*varDst->value.data_u16 = (u16)*val_u8;
+						else if (varSrc->varType == _VAR_TYPE_S16)		*varDst->value.data_u16 = (u16)*val_s16;
+						else if (varSrc->varType == _VAR_TYPE_U16)		*varDst->value.data_u16 = (u16)*val_u16;
+						else {
+							// Every parameter they passed was NULL
+							debug_break;
+							return(false);
+						}
+						return(true);
+
+					case _VAR_TYPE_NUMERIC:
+						// Numerics are actually stored as character sequences
+do_as_numeric:
+						     if (varSrc->varType == _VAR_TYPE_F32)		lfValue = (f64)*val_f32;
+						else if (varSrc->varType == _VAR_TYPE_F64)		lfValue = (f64)*val_f64;
+						else if (varSrc->varType == _VAR_TYPE_S32)		lfValue = (f64)*val_s32;
+						else if (varSrc->varType == _VAR_TYPE_U32)		lfValue = (f64)*val_u32;
+						else if (varSrc->varType == _VAR_TYPE_S64)		lfValue = (f64)*val_s64;
+						else if (varSrc->varType == _VAR_TYPE_U64)		lfValue = (f64)*val_u64;
+						else if (varSrc->varType == _VAR_TYPE_S8)		lfValue = (f64)*val_s8;
+						else if (varSrc->varType == _VAR_TYPE_U8)		lfValue = (f64)*val_u8;
+						else if (varSrc->varType == _VAR_TYPE_S16)		lfValue = (f64)*val_s16;
+						else if (varSrc->varType == _VAR_TYPE_U16)		lfValue = (f64)*val_u16;
+						else if (varSrc->varType == _VAR_TYPE_NUMERIC)
+						{
+							// It's already in the correct form
+							iVariable_set(thisCode, varDst, varSrc);
+							return(true);
+
+						} else {
+							// Every parameter they passed was NULL
+							debug_break;
+							return(false);
+						}
+
+						// Create the formatter based on the current SET DECIMALS setting
+						sprintf(formatter, "%%020.%dlf\0", propGet_settings_Decimals(_settings));
+
+						// Create the converted value
+						sprintf((s8*)buffer, formatter, lfValue);
+
+						// Skip past leading zeros
+						for (lnI = 0; buffer[lnI] == '0'; )
+							++lnI;
+
+						// Append it
+						iDatum_duplicate(&varDst->value, buffer + lnI, -1);
+
+						// Indicate success
+						return(true);
+
+					case _VAR_TYPE_BI:
+					case _VAR_TYPE_BFP:
+						iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+						break;
+
+					default:
+						if (propGet_settings_AutoConvert(_settings))
+						{
+							// They want it automatically converted to the output format
+							switch (varDst->varType)
+							{
+								case _VAR_TYPE_CHARACTER:
+									// Convert the result to a character string, and then store the character result
+									// This is the same as how numeric is processed, so we'll just use that logic
+									goto do_as_numeric;
+
+								case _VAR_TYPE_LOGICAL:
+									// .F. if 0, otherwise set to .T.
+										 if (varSrc->varType == _VAR_TYPE_F32)		*varDst->value.data_u8 = (((u8)*val_f32 == 0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
+									else if (varSrc->varType == _VAR_TYPE_F64)		*varDst->value.data_u8 = (((u8)*val_f64 == 0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
+									else if (varSrc->varType == _VAR_TYPE_S32)		*varDst->value.data_u8 = (((u8)*val_s32 == 0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
+									else if (varSrc->varType == _VAR_TYPE_U32)		*varDst->value.data_u8 = (((u8)*val_u32 == 0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
+									else if (varSrc->varType == _VAR_TYPE_S64)		*varDst->value.data_u8 = (((u8)*val_s64 == 0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
+									else if (varSrc->varType == _VAR_TYPE_U64)		*varDst->value.data_u8 = (((u8)*val_u64 == 0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
 									else {
 										// Every parameter they passed was NULL
 										debug_break;
