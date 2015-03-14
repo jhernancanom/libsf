@@ -228,51 +228,51 @@
 		//////////
 		// Create base objects
 		//////
-			_settings = iObj_create(_OBJ_TYPE_SETTINGS, NULL);
+			_settings = iObj_create(NULL, _OBJ_TYPE_SETTINGS, NULL);
 
 
 		//////////
 		// Create each default object
 		//////
-			gobj_defaultEmpty		= iObj_create(_OBJ_TYPE_EMPTY,		NULL);
-			gobj_defaultLabel		= iObj_create(_OBJ_TYPE_LABEL,		NULL);
-			gobj_defaultTextbox		= iObj_create(_OBJ_TYPE_TEXTBOX,	NULL);
-			gobj_defaultButton		= iObj_create(_OBJ_TYPE_BUTTON,		NULL);
-			gobj_defaultImage		= iObj_create(_OBJ_TYPE_IMAGE,		NULL);
-			gobj_defaultCheckbox	= iObj_create(_OBJ_TYPE_CHECKBOX,	NULL);
-			gobj_defaultCmdGroup	= iObj_create(_OBJ_TYPE_CMDGROUP,	NULL);
-			gobj_defaultOptGroup	= iObj_create(_OBJ_TYPE_OPTGROUP,	NULL);
-			gobj_defaultListbox		= iObj_create(_OBJ_TYPE_LISTBOX,	NULL);
-			gobj_defaultCombobox	= iObj_create(_OBJ_TYPE_COMBOBOX,	NULL);
-			gobj_defaultFormset		= iObj_create(_OBJ_TYPE_FORMSET,	NULL);
-			gobj_defaultToolbar		= iObj_create(_OBJ_TYPE_TOOLBAR,	NULL);
-			gobj_defaultSeparator	= iObj_create(_OBJ_TYPE_SEPARATOR,	NULL);
-			gobj_defaultLine		= iObj_create(_OBJ_TYPE_LINE,		NULL);
-			gobj_defaultShape		= iObj_create(_OBJ_TYPE_SHAPE,		NULL);
-			gobj_defaultContainer	= iObj_create(_OBJ_TYPE_CONTAINER,	NULL);
-			gobj_defaultControl		= iObj_create(_OBJ_TYPE_CONTROL,	NULL);
-			gobj_defaultGrid		= iObj_create(_OBJ_TYPE_GRID,		NULL);
-			gobj_defaultColumn		= iObj_create(_OBJ_TYPE_COLUMN,		NULL);
-			gobj_defaultHeader		= iObj_create(_OBJ_TYPE_HEADER,		NULL);
-			gobj_defaultOleBound	= iObj_create(_OBJ_TYPE_OLEBOUND,	NULL);
-			gobj_defaultOleContain	= iObj_create(_OBJ_TYPE_OLECONTAIN,	NULL);
-			gobj_defaultSpinner		= iObj_create(_OBJ_TYPE_SPINNER,	NULL);
-			gobj_defaultTimer		= iObj_create(_OBJ_TYPE_TIMER,		NULL);
-			gobj_defaultHyperlink	= iObj_create(_OBJ_TYPE_HYPERLINK,	NULL);
-			gobj_defaultCollection	= iObj_create(_OBJ_TYPE_COLLECTION,	NULL);
-			gobj_defaultPage		= iObj_create(_OBJ_TYPE_PAGE,		NULL);
-			gobj_defaultPageFrame	= iObj_create(_OBJ_TYPE_PAGEFRAME,	NULL);
-			gobj_defaultSession		= iObj_create(_OBJ_TYPE_SESSION,	NULL);
-			gobj_defaultCustom		= iObj_create(_OBJ_TYPE_CUSTOM,		NULL);
-			gobj_defaultException	= iObj_create(_OBJ_TYPE_EXCEPTION,	NULL);
-			gobj_defaultSettings	= iObj_create(_OBJ_TYPE_SETTINGS,	NULL);
+			gobj_defaultEmpty		= iObj_create(NULL, _OBJ_TYPE_EMPTY,		NULL);
+			gobj_defaultLabel		= iObj_create(NULL, _OBJ_TYPE_LABEL,		NULL);
+			gobj_defaultTextbox		= iObj_create(NULL, _OBJ_TYPE_TEXTBOX,		NULL);
+			gobj_defaultButton		= iObj_create(NULL, _OBJ_TYPE_BUTTON,		NULL);
+			gobj_defaultImage		= iObj_create(NULL, _OBJ_TYPE_IMAGE,		NULL);
+			gobj_defaultCheckbox	= iObj_create(NULL, _OBJ_TYPE_CHECKBOX,		NULL);
+			gobj_defaultCmdGroup	= iObj_create(NULL, _OBJ_TYPE_CMDGROUP,		NULL);
+			gobj_defaultOptGroup	= iObj_create(NULL, _OBJ_TYPE_OPTGROUP,		NULL);
+			gobj_defaultListbox		= iObj_create(NULL, _OBJ_TYPE_LISTBOX,		NULL);
+			gobj_defaultCombobox	= iObj_create(NULL, _OBJ_TYPE_COMBOBOX,		NULL);
+			gobj_defaultFormset		= iObj_create(NULL, _OBJ_TYPE_FORMSET,		NULL);
+			gobj_defaultToolbar		= iObj_create(NULL, _OBJ_TYPE_TOOLBAR,		NULL);
+			gobj_defaultSeparator	= iObj_create(NULL, _OBJ_TYPE_SEPARATOR,	NULL);
+			gobj_defaultLine		= iObj_create(NULL, _OBJ_TYPE_LINE,			NULL);
+			gobj_defaultShape		= iObj_create(NULL, _OBJ_TYPE_SHAPE,		NULL);
+			gobj_defaultContainer	= iObj_create(NULL, _OBJ_TYPE_CONTAINER,	NULL);
+			gobj_defaultControl		= iObj_create(NULL, _OBJ_TYPE_CONTROL,		NULL);
+			gobj_defaultGrid		= iObj_create(NULL, _OBJ_TYPE_GRID,			NULL);
+			gobj_defaultColumn		= iObj_create(NULL, _OBJ_TYPE_COLUMN,		NULL);
+			gobj_defaultHeader		= iObj_create(NULL, _OBJ_TYPE_HEADER,		NULL);
+			gobj_defaultOleBound	= iObj_create(NULL, _OBJ_TYPE_OLEBOUND,		NULL);
+			gobj_defaultOleContain	= iObj_create(NULL, _OBJ_TYPE_OLECONTAIN,	NULL);
+			gobj_defaultSpinner		= iObj_create(NULL, _OBJ_TYPE_SPINNER,		NULL);
+			gobj_defaultTimer		= iObj_create(NULL, _OBJ_TYPE_TIMER,		NULL);
+			gobj_defaultHyperlink	= iObj_create(NULL, _OBJ_TYPE_HYPERLINK,	NULL);
+			gobj_defaultCollection	= iObj_create(NULL, _OBJ_TYPE_COLLECTION,	NULL);
+			gobj_defaultPage		= iObj_create(NULL, _OBJ_TYPE_PAGE,			NULL);
+			gobj_defaultPageFrame	= iObj_create(NULL, _OBJ_TYPE_PAGEFRAME,	NULL);
+			gobj_defaultSession		= iObj_create(NULL, _OBJ_TYPE_SESSION,		NULL);
+			gobj_defaultCustom		= iObj_create(NULL, _OBJ_TYPE_CUSTOM,		NULL);
+			gobj_defaultException	= iObj_create(NULL, _OBJ_TYPE_EXCEPTION,	NULL);
+			gobj_defaultSettings	= iObj_create(NULL, _OBJ_TYPE_SETTINGS,		NULL);
 
 			// Option and radio both have label controls within
-			gobj_defaultOption		= iObj_create(_OBJ_TYPE_OPTION,		NULL);
-			gobj_defaultRadio		= iObj_create(_OBJ_TYPE_RADIO,		NULL);
+			gobj_defaultOption		= iObj_create(NULL, _OBJ_TYPE_OPTION,		NULL);
+			gobj_defaultRadio		= iObj_create(NULL, _OBJ_TYPE_RADIO,		NULL);
 			// Forms and subforms are created last because they have internal child objects references to classes which must be created before
-			gobj_defaultForm		= iObj_create(_OBJ_TYPE_FORM,		NULL);
-			gobj_defaultSubform		= iObj_create(_OBJ_TYPE_SUBFORM,	NULL);
+			gobj_defaultForm		= iObj_create(NULL, _OBJ_TYPE_FORM,			NULL);
+			gobj_defaultSubform		= iObj_create(NULL, _OBJ_TYPE_SUBFORM,		NULL);
 	}
 
 
@@ -285,6 +285,7 @@
 //////
 	void iInit_create_jdebi(void)
 	{
+		SThisCode*	thisCode = NULL;
 		s32			lnLeft, lnTop, lnWidth, lnHeight;
 		RECT		lrc;
 
@@ -293,7 +294,7 @@
 		// Create the object and its sub-objects
 		//////
 			// Create object
-			_jdebi = iObj_create(_OBJ_TYPE_FORM, NULL);
+			_jdebi = iObj_create(thisCode, _OBJ_TYPE_FORM, NULL);
 			if (!_jdebi)
 				return;
 
@@ -320,20 +321,20 @@
 			lnTop		= (lrc.bottom - lrc.top)  / 32;
 			lnWidth		-= (2 * lnLeft);
 			lnHeight	-= (2 * lnTop);
-			iObj_setSize(_jdebi, lnLeft, lnTop, lnWidth, lnHeight);
+			iObj_setSize(thisCode, _jdebi, lnLeft, lnTop, lnWidth, lnHeight);
 
 
 		//////////
 		// Create the subforms
 		//////
-			sourceCode		= iObj_addChild(_OBJ_TYPE_SUBFORM, _jdebi);
-			locals			= iObj_addChild(_OBJ_TYPE_SUBFORM, _jdebi);
-			watch			= iObj_addChild(_OBJ_TYPE_SUBFORM, _jdebi);
-			command			= iObj_addChild(_OBJ_TYPE_SUBFORM, _jdebi);
-			debug			= iObj_addChild(_OBJ_TYPE_SUBFORM, _jdebi);
-			output			= iObj_addChild(_OBJ_TYPE_SUBFORM, _jdebi);
-			sourceLight		= iObj_addChild(_OBJ_TYPE_SUBFORM, _jdebi);
-			_screen			= iObj_addChild(_OBJ_TYPE_SUBFORM, _jdebi);
+			sourceCode		= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
+			locals			= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
+			watch			= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
+			command			= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
+			debug			= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
+			output			= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
+			sourceLight		= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
+			_screen			= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
 
 			// Set the icons
 			propSetIcon(sourceCode,		bmpSourceCodeIcon);
@@ -360,12 +361,12 @@
 		//////
 			lnWidth		= (_jdebi->rcClient.right - _jdebi->rcClient.left) / 8;
 			lnHeight	= (_jdebi->rcClient.bottom - _jdebi->rcClient.top) / 8;
-			iObj_setSize(sourceCode,	0,						0,							5 * lnWidth,																6 * lnHeight);
-			iObj_setSize(locals,		sourceCode->rc.right,	0,							lnWidth * 3 / 2,															2 * lnHeight);
-			iObj_setSize(watch,			locals->rc.right,		0,							(_jdebi->rcClient.right - _jdebi->rcClient.left) - locals->rc.right,		2 * lnHeight);
-			iObj_setSize(command,		0,						sourceCode->rc.bottom,		5 * lnWidth,																(_jdebi->rcClient.bottom - _jdebi->rcClient.top) - sourceCode->rc.bottom);
-			iObj_setSize(sourceLight,	sourceCode->rc.right,	watch->rc.bottom,			(_jdebi->rcClient.right - _jdebi->rcClient.left) - sourceCode->rc.right,	2 * lnHeight);
-			iObj_setSize(_screen,		sourceCode->rc.right,	sourceLight->rc.bottom,		(_jdebi->rcClient.right - _jdebi->rcClient.left) - sourceCode->rc.right,	(_jdebi->rcClient.bottom - _jdebi->rcClient.top) - sourceLight->rc.bottom);
+			iObj_setSize(thisCode, sourceCode,	0,						0,							5 * lnWidth,																6 * lnHeight);
+			iObj_setSize(thisCode, locals,		sourceCode->rc.right,	0,							lnWidth * 3 / 2,															2 * lnHeight);
+			iObj_setSize(thisCode, watch,		locals->rc.right,		0,							(_jdebi->rcClient.right - _jdebi->rcClient.left) - locals->rc.right,		2 * lnHeight);
+			iObj_setSize(thisCode, command,		0,						sourceCode->rc.bottom,		5 * lnWidth,																(_jdebi->rcClient.bottom - _jdebi->rcClient.top) - sourceCode->rc.bottom);
+			iObj_setSize(thisCode, sourceLight,	sourceCode->rc.right,	watch->rc.bottom,			(_jdebi->rcClient.right - _jdebi->rcClient.left) - sourceCode->rc.right,	2 * lnHeight);
+			iObj_setSize(thisCode, _screen,		sourceCode->rc.right,	sourceLight->rc.bottom,		(_jdebi->rcClient.right - _jdebi->rcClient.left) - sourceCode->rc.right,	(_jdebi->rcClient.bottom - _jdebi->rcClient.top) - sourceLight->rc.bottom);
 
 			// These are created, but they are not visible
 // 			iObj_setSize(debug,			command->rc.right,		watch->rc.bottom,			(sourceCode->rc.right - command->rc.right) / 2,									(_jdebi->rcClient.bottom - _jdebi->rcClient.top) - watch->rc.bottom);
@@ -374,14 +375,14 @@
 		//////////
 		// Add the editbox controls to the subforms
 		//////
-			sourceCode_editbox	= iObj_addChild(_OBJ_TYPE_EDITBOX,	sourceCode);
-			locals_editbox		= iObj_addChild(_OBJ_TYPE_EDITBOX,	locals);
-			watch_editbox		= iObj_addChild(_OBJ_TYPE_EDITBOX,	watch);
-			command_editbox		= iObj_addChild(_OBJ_TYPE_EDITBOX,	command);
-			debug_editbox		= iObj_addChild(_OBJ_TYPE_EDITBOX,	debug);
-			output_editbox		= iObj_addChild(_OBJ_TYPE_EDITBOX,	output);
-			screen_editbox		= iObj_addChild(_OBJ_TYPE_EDITBOX,	_screen);
-			sourceLight_empty	= iObj_addChild(_OBJ_TYPE_EMPTY,	sourceLight);
+			sourceCode_editbox	= iObj_addChild(thisCode, _OBJ_TYPE_EDITBOX,	sourceCode);
+			locals_editbox		= iObj_addChild(thisCode, _OBJ_TYPE_EDITBOX,	locals);
+			watch_editbox		= iObj_addChild(thisCode, _OBJ_TYPE_EDITBOX,	watch);
+			command_editbox		= iObj_addChild(thisCode, _OBJ_TYPE_EDITBOX,	command);
+			debug_editbox		= iObj_addChild(thisCode, _OBJ_TYPE_EDITBOX,	debug);
+			output_editbox		= iObj_addChild(thisCode, _OBJ_TYPE_EDITBOX,	output);
+			screen_editbox		= iObj_addChild(thisCode, _OBJ_TYPE_EDITBOX,	_screen);
+			sourceLight_empty	= iObj_addChild(thisCode, _OBJ_TYPE_EMPTY,		sourceLight);
 
 
 		//////////
@@ -401,14 +402,14 @@
 		// Position and size each control
 		//////
 			lnHeight = (_jdebi->rcClient.bottom - _jdebi->rcClient.top) / 8;
-			iObj_setSize(sourceCode_editbox,	48,	24,		sourceCode->rcClient.right	- sourceCode->rcClient.left - 48,	sourceCode->rcClient.bottom		- sourceCode->rcClient.top - 24);
-			iObj_setSize(locals_editbox,		8,	0,		locals->rcClient.right		- locals->rcClient.left - 8,		locals->rcClient.bottom			- locals->rcClient.top);
-			iObj_setSize(watch_editbox,			8,	0,		watch->rcClient.right		- watch->rcClient.left - 8,			watch->rcClient.bottom			- watch->rcClient.top);
-			iObj_setSize(command_editbox,		8,	0,		command->rcClient.right		- command->rcClient.left - 8,		command->rcClient.bottom		- command->rcClient.top);
-			iObj_setSize(debug_editbox,			8,	0,		debug->rcClient.right		- debug->rcClient.left - 8,			debug->rcClient.bottom			- debug->rcClient.top);
-			iObj_setSize(output_editbox,		8,	0,		output->rcClient.right		- output->rcClient.left - 8,		output->rcClient.bottom			- output->rcClient.top);
-			iObj_setSize(screen_editbox,		8,	0,		_screen->rcClient.right		- _screen->rcClient.left - 8,		_screen->rcClient.bottom		- _screen->rcClient.top);
-			iObj_setSize(sourceLight_empty,		0,	0,		sourceLight->rcClient.right	- sourceLight->rcClient.left,		sourceLight->rcClient.bottom	- sourceLight->rcClient.top);
+			iObj_setSize(thisCode, sourceCode_editbox,	48,	24,		sourceCode->rcClient.right	- sourceCode->rcClient.left - 48,	sourceCode->rcClient.bottom		- sourceCode->rcClient.top - 24);
+			iObj_setSize(thisCode, locals_editbox,		8,	0,		locals->rcClient.right		- locals->rcClient.left - 8,		locals->rcClient.bottom			- locals->rcClient.top);
+			iObj_setSize(thisCode, watch_editbox,		8,	0,		watch->rcClient.right		- watch->rcClient.left - 8,			watch->rcClient.bottom			- watch->rcClient.top);
+			iObj_setSize(thisCode, command_editbox,		8,	0,		command->rcClient.right		- command->rcClient.left - 8,		command->rcClient.bottom		- command->rcClient.top);
+			iObj_setSize(thisCode, debug_editbox,		8,	0,		debug->rcClient.right		- debug->rcClient.left - 8,			debug->rcClient.bottom			- debug->rcClient.top);
+			iObj_setSize(thisCode, output_editbox,		8,	0,		output->rcClient.right		- output->rcClient.left - 8,		output->rcClient.bottom			- output->rcClient.top);
+			iObj_setSize(thisCode, screen_editbox,		8,	0,		_screen->rcClient.right		- _screen->rcClient.left - 8,		_screen->rcClient.bottom		- _screen->rcClient.top);
+			iObj_setSize(thisCode, sourceLight_empty,	0,	0,		sourceLight->rcClient.right	- sourceLight->rcClient.left,		sourceLight->rcClient.bottom	- sourceLight->rcClient.top);
 
 
 		//////////
@@ -439,7 +440,7 @@
 		// Locals window caption and font
 		//////
 // TODO:  Working here...
-			iObjProp_set_character_direct(locals, _INDEX_CAPTION, cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
+			iObjProp_set_character_direct(thisCode, locals, _INDEX_CAPTION, cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
 			locals_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			locals_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
 
@@ -450,7 +451,7 @@
 		//////////
 		// Watch window caption and font
 		//////
-			iObjProp_set_character_direct(watch, _INDEX_CAPTION, cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
+			iObjProp_set_character_direct(thisCode, watch, _INDEX_CAPTION, cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
 			watch_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			watch_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
 			watch_editbox->p.sem->showCursorLine		= true;
@@ -462,7 +463,7 @@
 		//////////
 		// Command window caption and font
 		//////
-			iObjProp_set_character_direct(command, _INDEX_CAPTION, cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
+			iObjProp_set_character_direct(thisCode, command, _INDEX_CAPTION, cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
 			command_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			command_editbox->ev.keyboard._onKeyDown		= (uptr)&iSEM_onKeyDown_sourceCode;
 			command_editbox->p.hasFocus					= true;
@@ -477,7 +478,7 @@
 		//////////
 		// Debug window caption and font
 		//////
-			iObjProp_set_character_direct(debug, _INDEX_CAPTION, cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
+			iObjProp_set_character_direct(thisCode, debug, _INDEX_CAPTION, cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
 			debug_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			debug_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
 			debug_editbox->p.sem->showCursorLine		= true;
@@ -489,7 +490,7 @@
 		//////////
 		// Output window caption and font
 		//////
-			iObjProp_set_character_direct(output, _INDEX_CAPTION, cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
+			iObjProp_set_character_direct(thisCode, output, _INDEX_CAPTION, cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
 			output_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 8, FW_MEDIUM, false, false);
 			output_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
 			output_editbox->p.sem->showCursorLine	= true;
@@ -501,7 +502,7 @@
 		//////////
 		// SourceLight a caption and font
 		//////
-			iObjProp_set_character_direct(sourceLight, _INDEX_CAPTION, cgcSourceLightTitle, sizeof(cgcSourceLightTitle) - 1);
+			iObjProp_set_character_direct(thisCode, sourceLight, _INDEX_CAPTION, cgcSourceLightTitle, sizeof(cgcSourceLightTitle) - 1);
 			sourceLight->p.font = iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			propSetVisible(sourceLight, _LOGICAL_TRUE);
 			propSetBackStyle(sourceLight, _BACK_STYLE_OPAQUE);
@@ -511,7 +512,7 @@
 		//////////
 		// _screen a caption and font
 		//////
-			iObjProp_set_character_direct(_screen, _INDEX_CAPTION, cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
+			iObjProp_set_character_direct(thisCode, _screen, _INDEX_CAPTION, cgcScreenTitle, sizeof(cgcScreenTitle) - 1);
 			_screen->p.font = iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 
 
@@ -548,7 +549,7 @@
 		//////////
 		// Jan.01.2000 00:00:00.000
 		//////
-			_datetime_Jan_01_2000 = iVariable_create(_VAR_TYPE_DATETIME, NULL);
+			_datetime_Jan_01_2000 = iVariable_create(NULL, _VAR_TYPE_DATETIME, NULL);
 			dt.julian	= 2451545;
 			dt.seconds	= 0.0f;
 			iDatum_duplicate(&_datetime_Jan_01_2000->value, (u8*)&dt, 8);
@@ -734,15 +735,15 @@
 		iVjr_release_jdebi();
 
 		// Global variables
-		iVariable_delete(varGlobals,		true);
-		iVariable_delete(varConstant_space,	true);
-		iVariable_delete(varEmptyString,	true);
-		iVariable_delete(var2000Spaces,		true);
-		iVariable_delete(varTrue,			true);
-		iVariable_delete(varFalse,			true);
+		iVariable_delete(NULL, varGlobals,			true);
+		iVariable_delete(NULL, varConstant_space,	true);
+		iVariable_delete(NULL, varEmptyString,		true);
+		iVariable_delete(NULL, var2000Spaces,		true);
+		iVariable_delete(NULL, varTrue,				true);
+		iVariable_delete(NULL, varFalse,			true);
 
 		// Delete the splash objects and images
-		iObj_delete(&gobj_splashListing, true, true, true);
+		iObj_delete(NULL, &gobj_splashListing, true, true, true);
 		iBmp_delete(&gSplash.bmp, true, false);
 
 		// Release our builders
@@ -760,26 +761,26 @@
 //////
 	void iVjr_releaseAllDefaultDatetimes(void)
 	{
-		iVariable_delete(_datetime_Jan_01_2000, true);
+		iVariable_delete(NULL, _datetime_Jan_01_2000, true);
 	}
 
 	void iVjr_releaseAllDefaultObjects(void)
 	{
-		iObj_delete(&gobj_defaultEmpty,		true, true, true);
-		iObj_delete(&gobj_defaultLabel,		true, true, true);
-		iObj_delete(&gobj_defaultTextbox,	true, true, true);
-		iObj_delete(&gobj_defaultButton,	true, true, true);
-		iObj_delete(&gobj_defaultImage,		true, true, true);
-		iObj_delete(&gobj_defaultCheckbox,	true, true, true);
-		iObj_delete(&gobj_defaultOption,	true, true, true);
-		iObj_delete(&gobj_defaultRadio,		true, true, true);
-		iObj_delete(&gobj_defaultForm,		true, true, true);
-		iObj_delete(&gobj_defaultSubform,	true, true, true);
+		iObj_delete(NULL, &gobj_defaultEmpty,		true, true, true);
+		iObj_delete(NULL, &gobj_defaultLabel,		true, true, true);
+		iObj_delete(NULL, &gobj_defaultTextbox,		true, true, true);
+		iObj_delete(NULL, &gobj_defaultButton,		true, true, true);
+		iObj_delete(NULL, &gobj_defaultImage,		true, true, true);
+		iObj_delete(NULL, &gobj_defaultCheckbox,	true, true, true);
+		iObj_delete(NULL, &gobj_defaultOption,		true, true, true);
+		iObj_delete(NULL, &gobj_defaultRadio,		true, true, true);
+		iObj_delete(NULL, &gobj_defaultForm,		true, true, true);
+		iObj_delete(NULL, &gobj_defaultSubform,		true, true, true);
 	}
 
 	void iVjr_release_jdebi(void)
 	{
-		iObj_delete(&_jdebi, true, true, true);
+		iObj_delete(NULL, &_jdebi, true, true, true);
 	}
 
 	void iVjr_releaseCaskIcons(void)
@@ -1150,7 +1151,7 @@
 						win->mouseCurrent.positionInOsDesktop.y = lpt.y;
 
 						// Reposition or resize
-						iiMouse_processMouseEvents_windowSpecial(win);
+						iiMouse_processMouseEvents_windowSpecial(NULL, win);
 					}
 					break;
 
@@ -1165,7 +1166,7 @@
 
 				case WM_SETFOCUS:
 				case WM_WINDOWPOSCHANGED:
-					iWindow_render(win, true);
+					iWindow_render(NULL, win, true);
 					break;
 
 				case WM_LBUTTONDOWN:
@@ -1184,18 +1185,18 @@
 				case WM_MOUSEMOVE:
 				case WM_MOUSEHOVER:
 					if (!win->isMoving && !win->isResizing)
-						return((LRESULT)(sptr)iMouse_processMessage(win, m, w, l));
+						return((LRESULT)(sptr)iMouse_processMessage(NULL, win, m, w, l));
 					break;
 
 				case WM_SYSKEYDOWN:
 				case WM_SYSKEYUP:
-					if (w == VK_F10)		return((LRESULT)(sptr)iKeyboard_processMessage(win, ((WM_SYSKEYDOWN) ? WM_KEYDOWN : WM_KEYUP), w, l));
-					else					return((LRESULT)(sptr)iKeyboard_processMessage(win, m, w, l));		// Send it as is
+					if (w == VK_F10)		return((LRESULT)(sptr)iKeyboard_processMessage(NULL, win, ((WM_SYSKEYDOWN) ? WM_KEYDOWN : WM_KEYUP), w, l));
+					else					return((LRESULT)(sptr)iKeyboard_processMessage(NULL, win, m, w, l));		// Send it as is
 					break;
 
 				case WM_KEYDOWN:
 				case WM_KEYUP:
-					return((LRESULT)(sptr)iKeyboard_processMessage(win, m, w, l));
+					return((LRESULT)(sptr)iKeyboard_processMessage(NULL, win, m, w, l));
 
 				case WM_CAPTURECHANGED:
 					if (win->isMoving)
@@ -1236,7 +1237,7 @@
 // Note:  Any object can be presented in a window, though typically on form objects are.
 //
 //////
-	SWindow* iWindow_createForObject(SObject* obj, SWindow* winReuse, s32 icon)
+	SWindow* iWindow_createForObject(SThisCode* thisCode, SObject* obj, SWindow* winReuse, s32 icon)
 	{
 		s32				lnWidth, lnHeight;
 		SWindow*		winNew;
@@ -1318,7 +1319,7 @@
 					// Physically create the window
 					//////
 						// Window name
-						var = iObjProp_get_variable_byIndex(obj, _INDEX_NAME);
+						var = iObjProp_get_variable_byIndex(thisCode, obj, _INDEX_NAME);
 						if (var->varType != _VAR_TYPE_CHARACTER)
 						{
 							// Use a default name
@@ -1396,7 +1397,7 @@
 
 					// Delete
 					if (win->isValid)
-						iWindow_delete(win, false);		// Delete the window (marks itself invalid)
+						iWindow_delete(NULL, win, false);		// Delete the window (marks itself invalid)
 
 					// Unlock it
 					LeaveCriticalSection(&win->cs);
@@ -1420,14 +1421,14 @@
 // Note:  When called, the window must be already locked (if required).
 //
 //////
-	void iWindow_delete(SWindow* win, bool tlDeleteSelf)
+	void iWindow_delete(SThisCode* thisCode, SWindow* win, bool tlDeleteSelf)
 	{
 		// Make sure our environment is sane
 		if (win && iWindow_isPointerValid(win))
 		{
 			// Delete it
 			iBmp_delete(&win->bmp, true, true);
-			iObj_delete(&win->obj, true, true, true);
+			iObj_delete(thisCode, &win->obj, true, true, true);
 
 			// Delete self
 			if (tlDeleteSelf)
@@ -1635,7 +1636,7 @@
 // Called to re-render the indicated window
 //
 //////
-	void iWindow_render(SWindow* win, bool tlForce)
+	void iWindow_render(SThisCode* thisCode, SWindow* win, bool tlForce)
 	{
 		// Make sure we have something to render
 		if (win && win->obj && iWindow_isPointerValid(win))
@@ -1647,16 +1648,16 @@
 			if (win->isValid)
 			{
 				// Render anything needing rendering
-				iObj_renderChildrenAndSiblings(win->obj, true, true, tlForce);
+				iObj_renderChildrenAndSiblings(thisCode, win->obj, true, true, tlForce);
 
 				// Publish anything needing publishing
-				iObj_publish(win->obj, &win->rc, win->bmp, true, true, tlForce, 0);
+				iObj_publish(thisCode, win->obj, &win->rc, win->bmp, true, true, tlForce, 0);
 
 // Update the openGL window
 // iGrace_display();
 
 				// Determine the focus highlights
-				iObj_setFocusHighlights(win, win->obj, 0, 0, true, true);
+				iObj_setFocusHighlights(thisCode, win, win->obj, 0, 0, true, true);
 
 				// And force the redraw
 				InvalidateRect(win->hwnd, 0, FALSE);
@@ -1732,6 +1733,7 @@
 //////
 	void iFocusHighlight_create(SFocusHighlight* focus, RECT* rc)
 	{
+		SThisCode*	thisCode = NULL;
 		s32			lnFocusHighlightPixels;
 		WNDCLASSEX	wcex;
 		ATOM		atom;
@@ -1925,6 +1927,7 @@
 //////
 	LRESULT CALLBACK iFocusHighlight_wndProc(HWND hwnd, UINT m, WPARAM w, LPARAM l)
 	{
+		SThisCode*			thisCode = NULL;
 		SFocusHighlight*	focus;
 		HDC					lhdc;
 		PAINTSTRUCT			ps;
@@ -2225,8 +2228,9 @@
 ///////
 	bool iSourceLight_copy(SWindow* win, SObject* obj)
 	{
-		s32		scrollX, scrollY;
-		RECT	lrc;
+		SThisCode*	thisCode = NULL;
+		s32			scrollX, scrollY;
+		RECT		lrc;
 
 
 		// Make sure our environment is sane
@@ -2235,8 +2239,8 @@
 			//////////
 			// Grab our scroll offsets
 			//////
-				scrollX = iObjProp_get_s32_direct(obj, _INDEX_SCROLLX);
-				scrollY = iObjProp_get_s32_direct(obj, _INDEX_SCROLLX);
+				scrollX = iObjProp_get_s32_direct(thisCode, obj, _INDEX_SCROLLX);
+				scrollY = iObjProp_get_s32_direct(thisCode, obj, _INDEX_SCROLLX);
 
 
 			//////////
@@ -2893,7 +2897,7 @@
 // Called to process the mouse messages.
 //
 //////
-	s32 iMouse_processMessage(SWindow* win, UINT msg, WPARAM w, LPARAM l)
+	s32 iMouse_processMessage(SThisCode* thisCode, SWindow* win, UINT msg, WPARAM w, LPARAM l)
 	{
 		//////////
 		// If we're a valid window, process the mouse
@@ -2904,10 +2908,10 @@
 				memcpy(&win->mousePrior, &win->mouseCurrent, sizeof(win->mousePrior));
 
 				// Translate the mouse from the scaled position to its real position
-				iiMouse_translatePosition(win, (POINTS*)&l, msg);
+				iiMouse_translatePosition(thisCode, win, (POINTS*)&l, msg);
 
 				// Signal the event(s)
-				iiMouse_processMouseEvents(win, msg, w, l);
+				iiMouse_processMouseEvents(thisCode, win, msg, w, l);
 			}
 			// If we get here, invalid
 			return(-1);
@@ -2922,7 +2926,7 @@
 // Note:  The win parameter is required.
 //
 //////
-	void iiMouse_translatePosition(SWindow* win, POINTS* pt, UINT msg)
+	void iiMouse_translatePosition(SThisCode* thisCode, SWindow* win, POINTS* pt, UINT msg)
 	{
 		POINT	lpt, lptOnOSDesktop;
 		bool	llWheelMessage;
@@ -2985,7 +2989,7 @@
 // Process the mouse events in the client area for this form
 //
 //////
-	s32 iiMouse_processMouseEvents(SWindow* win, UINT msg, WPARAM w, LPARAM l)
+	s32 iiMouse_processMouseEvents(SThisCode* thisCode, SWindow* win, UINT msg, WPARAM w, LPARAM l)
 	{
 		s32			lnResult;
 		bool		llProcessed;
@@ -3021,7 +3025,7 @@
 					{
 						win->mouseCurrent.wheelDeltaV	= (s32)((s16)(((u32)w) >> 16)) / WHEEL_DELTA;
 						win->mouseCurrent.wheelDeltaH	= 0;
-						iiMouse_processMouseEvents_common(win, obj, &obj->rc, msg, true, true, &llProcessed);
+						iiMouse_processMouseEvents_common(thisCode, win, obj, &obj->rc, msg, true, true, &llProcessed);
 					}
 					break;
 
@@ -3032,7 +3036,7 @@
 					{
 						win->mouseCurrent.wheelDeltaV	= 0;
 						win->mouseCurrent.wheelDeltaH	= (s32)((s16)(((u32)w) >> 16)) / WHEEL_DELTA;
-						iiMouse_processMouseEvents_common(win, obj, &obj->rc, msg, true, true, &llProcessed);
+						iiMouse_processMouseEvents_common(thisCode, win, obj, &obj->rc, msg, true, true, &llProcessed);
 					}
 					break;
 #endif
@@ -3042,7 +3046,7 @@
 					if (!win->isMoving && ! win->isResizing)
 					{
 						// Process normal mouse moves
-						iiMouse_processMouseEvents_mouseMove(win, obj, &obj->rc, true, true, &llProcessed);
+						iiMouse_processMouseEvents_mouseMove(thisCode, win, obj, &obj->rc, true, true, &llProcessed);
 
 						// The mouse has moved, reset the hover counter
 						obj->ev.mouse.startHoverTickCount	= GetTickCount();
@@ -3055,7 +3059,7 @@
 				case WM_RBUTTONDOWN:
 				case WM_MBUTTONDOWN:
 					// Signal a mouseDown, then a click
-					if (iiMouse_processMouseEvents_common(win, obj, &obj->rc, msg, true, true, &llProcessed))
+					if (iiMouse_processMouseEvents_common(thisCode, win, obj, &obj->rc, msg, true, true, &llProcessed))
 					{
 						// Set the last click
 						obj->ev.mouse._lastClick = obj->ev.mouse.thisClick;
@@ -3069,7 +3073,7 @@
 					if (!win->isMoving && ! win->isResizing)
 					{
 						// A mouse button was released
-						iiMouse_processMouseEvents_common(win, obj, &obj->rc, msg, true, true, &llProcessed);
+						iiMouse_processMouseEvents_common(thisCode, win, obj, &obj->rc, msg, true, true, &llProcessed);
 					}
 					break;
 
@@ -3103,7 +3107,7 @@
 // Called as a common function to obtain the coordinates for the current object descent
 //
 //////
-	bool iiMouse_processMouseEvents_getRectDescent(SWindow* win, SObject* obj, RECT* rc, RECT& lrc, RECT& lrcClient)
+	bool iiMouse_processMouseEvents_getRectDescent(SThisCode* thisCode, SWindow* win, SObject* obj, RECT* rc, RECT& lrc, RECT& lrcClient)
 	{
 		//////////
 		// Determine the position within the parent's rectangle where this object will go
@@ -3160,7 +3164,7 @@
 // Called to process the mouse move events when the window is being moved or resized
 //
 //////
-	void iiMouse_processMouseEvents_windowSpecial(SWindow* win)
+	void iiMouse_processMouseEvents_windowSpecial(SThisCode* thisCode, SWindow* win)
 	{
 		s32 lnDeltaX, lnDeltaY;
 
@@ -3237,7 +3241,7 @@
 // Called to process mouseEnter and mouseLeave events based on mouse movement
 //
 //////
-	void iiMouse_processMouseEvents_mouseMove(SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed)
+	void iiMouse_processMouseEvents_mouseMove(SThisCode* thisCode, SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed)
 	{
 		bool		llInClientArea;
 		RECT		lrc, lrcClient;
@@ -3252,14 +3256,14 @@
 		//////////
 		// Get the rectangle we're in at this level
 		/////
-			llInClientArea = iiMouse_processMouseEvents_getRectDescent(win, obj, rc, lrc, lrcClient);
+			llInClientArea = iiMouse_processMouseEvents_getRectDescent(thisCode, win, obj, rc, lrc, lrcClient);
 
 
 		//////////
 		// Process any children
 		//////
 			if (tlProcessChildren && obj->firstChild)
-				iiMouse_processMouseEvents_mouseMove(win, obj->firstChild, &lrcClient, true, true, tlProcessed);
+				iiMouse_processMouseEvents_mouseMove(thisCode, win, obj->firstChild, &lrcClient, true, true, tlProcessed);
 
 
 		//////////
@@ -3273,7 +3277,7 @@
 				{
 					// Signal the mouseEnter event
 					if (obj->ev.mouse._onMouseEnter)
-						obj->ev.mouse.onMouseEnter(win, obj);
+						obj->ev.mouse.onMouseEnter(thisCode, win, obj);
 				}
 
 				// Are we in the client area?
@@ -3284,7 +3288,7 @@
 					//////
 						if (obj->ev.mouse._onMouseMove)
 						{
-							iiEventDispatch_onMouseMove(&obj->ev, win, obj,
+							iiEventDispatch_onMouseMove(thisCode, &obj->ev, win, obj,
 														win->mouseCurrent.position.x - lrc.left,
 														win->mouseCurrent.position.y - lrc.top,
 														win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
@@ -3304,7 +3308,7 @@
 						*tlProcessed = true;	// Indicate we've processed this
 						if (obj->ev.mouse._onMouseMove)
 						{
-							iiEventDispatch_onMouseMove(&obj->ev, win, obj,
+							iiEventDispatch_onMouseMove(thisCode, &obj->ev, win, obj,
 														win->mouseCurrent.position.x - lrcClient.left,
 														win->mouseCurrent.position.y - lrcClient.top,
 														win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
@@ -3318,7 +3322,7 @@
 				{
 					// Signal the mouseLeave event
 					if (obj->ev.mouse._onMouseLeave)
-						obj->ev.mouse.onMouseLeave(win, obj);
+						obj->ev.mouse.onMouseLeave(thisCode, win, obj);
 				}
 			}
 
@@ -3333,7 +3337,7 @@
 				while (objSib)
 				{
 					// Process this sibling
-					iiMouse_processMouseEvents_mouseMove(win, objSib, rc, true, false, tlProcessed);
+					iiMouse_processMouseEvents_mouseMove(thisCode, win, objSib, rc, true, false, tlProcessed);
 
 					// Move to next sibling
 					objSib = objSib->ll.nextObject;
@@ -3349,7 +3353,7 @@
 // Called to signal a mouseDown event, then the mouseClickEx event
 //
 //////
-	bool iiMouse_processMouseEvents_common(SWindow* win, SObject* obj, RECT* rc, UINT m, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed)
+	bool iiMouse_processMouseEvents_common(SThisCode* thisCode, SWindow* win, SObject* obj, RECT* rc, UINT m, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed)
 	{
 		bool		llInClientArea, llContinue;
 		RECT		lrc, lrcClient;
@@ -3362,14 +3366,14 @@
 		{
 			// Get the rectangle we're in at this level
 			llContinue		= true;
-			llInClientArea	= iiMouse_processMouseEvents_getRectDescent(win, obj, rc, lrc, lrcClient);
+			llInClientArea	= iiMouse_processMouseEvents_getRectDescent(thisCode, win, obj, rc, lrc, lrcClient);
 
 
 			//////////
 			// Process any children
 			//////
 				if (tlProcessChildren && obj->firstChild)
-					llContinue = iiMouse_processMouseEvents_common(win, obj->firstChild, &lrcClient, m, true, true, tlProcessed);
+					llContinue = iiMouse_processMouseEvents_common(thisCode, win, obj->firstChild, &lrcClient, m, true, true, tlProcessed);
 
 
 			//////////
@@ -3392,7 +3396,7 @@
 								// Signal the mouseDown event
 								*tlProcessed = true;		// Indicate we've processed this
 								if (llContinue && obj->ev.mouse._onMouseDown)
-									llContinue = iiEventDispatch_onMouseDown(&obj->ev, win, obj,
+									llContinue = iiEventDispatch_onMouseDown(thisCode, &obj->ev, win, obj,
 																				win->mouseCurrent.position.x - lrc.left,
 																				win->mouseCurrent.position.y - lrc.top,
 																				win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
@@ -3400,7 +3404,7 @@
 
 								// Signal the click event
 								if (llContinue && obj->ev.mouse._onMouseClickEx)
-									llContinue = iiEventDispatch_onMouseClickEx(&obj->ev, win, obj,
+									llContinue = iiEventDispatch_onMouseClickEx(thisCode, &obj->ev, win, obj,
 																					win->mouseCurrent.position.x - lrc.left,
 																					win->mouseCurrent.position.y - lrc.top,
 																					win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
@@ -3413,7 +3417,7 @@
 								// Signal the mouseUp event
 								*tlProcessed = true;		// Indicate we've processed this
 								if (llContinue && obj->ev.mouse._onMouseUp)
-									llContinue = iiEventDispatch_onMouseUp(&obj->ev, win, obj,
+									llContinue = iiEventDispatch_onMouseUp(thisCode, &obj->ev, win, obj,
 																			win->mouseCurrent.position.x - lrc.left,
 																			win->mouseCurrent.position.y - lrc.top,
 																			win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
@@ -3427,7 +3431,7 @@
 								// Signal the mouseWheel event
 								*tlProcessed = true;		// Indicate we've processed this
 								if (llContinue && obj->ev.mouse._onMouseWheel)
-									llContinue = iiEventDispatch_onMouseWheel(&obj->ev, win, obj,
+									llContinue = iiEventDispatch_onMouseWheel(thisCode, &obj->ev, win, obj,
 																				win->mouseCurrent.position.x - lrc.left,
 																				win->mouseCurrent.position.y - lrc.top,
 																				win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
@@ -3454,7 +3458,7 @@
 								// Signal the mouseDown event
 								*tlProcessed = true;		// Indicate we've processed this
 								if (llContinue && obj->ev.mouse._onMouseDown)
-									llContinue = iiEventDispatch_onMouseDown(&obj->ev, win, obj,
+									llContinue = iiEventDispatch_onMouseDown(thisCode, &obj->ev, win, obj,
 																				win->mouseCurrent.position.x - lrcClient.left,
 																				win->mouseCurrent.position.y - lrcClient.top,
 																				win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
@@ -3463,7 +3467,7 @@
 
 								// Signal the click event
 								if (llContinue && obj->ev.mouse._onMouseClickEx)
-									llContinue = iiEventDispatch_onMouseClickEx(&obj->ev, win, obj,
+									llContinue = iiEventDispatch_onMouseClickEx(thisCode, &obj->ev, win, obj,
 																					win->mouseCurrent.position.x - lrcClient.left,
 																					win->mouseCurrent.position.y - lrcClient.top,
 																					win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
@@ -3475,7 +3479,7 @@
 								// Signal the mouseUp event
 								*tlProcessed = true;		// Indicate we've processed this
 								if (llContinue && obj->ev.mouse._onMouseUp)
-									llContinue = iiEventDispatch_onMouseUp(&obj->ev, win, obj,
+									llContinue = iiEventDispatch_onMouseUp(thisCode, &obj->ev, win, obj,
 																			win->mouseCurrent.position.x - lrcClient.left,
 																			win->mouseCurrent.position.y - lrcClient.top,
 																			win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
@@ -3489,7 +3493,7 @@
 								// Signal the mouseWheel event
 								*tlProcessed = true;		// Indicate we've processed this
 								if (llContinue && obj->ev.mouse._onMouseWheel)
-									llContinue = iiEventDispatch_onMouseWheel(&obj->ev, win, obj,
+									llContinue = iiEventDispatch_onMouseWheel(thisCode, &obj->ev, win, obj,
 																				win->mouseCurrent.position.x - lrcClient.left,
 																				win->mouseCurrent.position.y - lrcClient.top,
 																				win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
@@ -3510,7 +3514,7 @@
 						while (llContinue && !*tlProcessed && objSib)
 						{
 							// Process this sibling
-							llContinue = iiMouse_processMouseEvents_common(win, objSib, rc, m, true, false, tlProcessed);
+							llContinue = iiMouse_processMouseEvents_common(thisCode, win, objSib, rc, m, true, false, tlProcessed);
 							if (!llContinue)
 								break;
 
@@ -3533,7 +3537,7 @@
 // // Process the mouse events in the non-client area for this form
 // //
 // //////
-// 	s32 iiMouse_processMouseEvents_nonclient(SWindow* win, UINT m, WPARAM w, LPARAM l)
+// 	s32 iiMouse_processMouseEvents_nonclient(SThisCode* thisCode, SWindow* win, UINT m, WPARAM w, LPARAM l)
 // 	{
 // 		s32			lnResult, lnDeltaX, lnDeltaY, lnWidth, lnHeight, lnLeft, lnTop;
 // 		bool		llCtrl, llAlt, llShift, llLeft, llRight, llMiddle, llCaps;
@@ -3740,7 +3744,7 @@
 // Process the indicated keystroke
 //
 //////
-	s32 iKeyboard_processMessage(SWindow* win, UINT m, WPARAM vKey, LPARAM tnScanCode)
+	s32 iKeyboard_processMessage(SThisCode* thisCode, SWindow* win, UINT m, WPARAM vKey, LPARAM tnScanCode)
 	{
 		s16			lnAsciiChar;
 		u32			lnI, lnScanCode, lnObjFocusControlsCount;
@@ -3775,7 +3779,7 @@
 		//////////
 		// Find out which objects within has focus
 		//////
-			iObj_findFocusControls(win->obj, objFocusControls, true);
+			iObj_findFocusControls(thisCode, win->obj, objFocusControls, true);
 			lnObjFocusControlsCount = objFocusControls->populatedLength / sizeof(SObject*);
 			if (lnObjFocusControlsCount == 0)
 				return(0);		// Nothing to process
@@ -3799,11 +3803,11 @@
 				if (m == WM_KEYDOWN && obj->ev.keyboard._onKeyDown)
 				{
 					// Signal the down key event
-					iiEventDispatch_onKeyDown(&obj->ev, win, obj, llCtrl, llAlt, llShift, llCaps, lnAsciiChar, (u16)vKey, llIsCAS, llIsAscii);
+					iiEventDispatch_onKeyDown(thisCode, &obj->ev, win, obj, llCtrl, llAlt, llShift, llCaps, lnAsciiChar, (u16)vKey, llIsCAS, llIsAscii);
 
 				} else if (m == WM_KEYUP && obj->ev.keyboard._onKeyUp) {
 					// Signal the up key event
-					iiEventDispatch_onKeyUp(&obj->ev, win, obj, llCtrl, llAlt, llShift, llCaps, lnAsciiChar, (u16)vKey, llIsCAS, llIsAscii);
+					iiEventDispatch_onKeyUp(thisCode, &obj->ev, win, obj, llCtrl, llAlt, llShift, llCaps, lnAsciiChar, (u16)vKey, llIsCAS, llIsAscii);
 				}
 			}
 
@@ -3934,17 +3938,20 @@
 //////
 	void iVjr_createOverlayListing(SBitmap* bmp, RECT* trc)
 	{
+		SThisCode* thisCode = NULL;
+
+
 		//////////
 		// Create the object
 		//////
 			// Create object
-			gobj_splashListing = iObj_create(_OBJ_TYPE_SUBFORM, NULL);
+			gobj_splashListing = iObj_create(thisCode, _OBJ_TYPE_SUBFORM, NULL);
 			if (!gobj_splashListing)
 				return;
 
 			// Set the icon and border
-			iObjProp_set_bitmap_direct(gobj_splashListing, _INDEX_ICON, bmpOutputIcon);
-			iObjProp_set_s32_direct(gobj_splashListing, _INDEX_BORDERSTYLE, _BORDER_STYLE_FIXED);
+			iObjProp_set_bitmap_direct(thisCode, gobj_splashListing, _INDEX_ICON, bmpOutputIcon);
+			iObjProp_set_s32_direct(thisCode, gobj_splashListing, _INDEX_BORDERSTYLE, _BORDER_STYLE_FIXED);
 
 
 		//////////
@@ -3956,7 +3963,7 @@
 		//////////
 		// Size and position it
 		//////
-			iObj_setSize(gobj_splashListing, trc->left, trc->top, trc->right - trc->left, bmp->bi.biHeight);
+			iObj_setSize(thisCode, gobj_splashListing, trc->left, trc->top, trc->right - trc->left, bmp->bi.biHeight);
 			gobj_splashListing->bmp = iBmp_allocate();
 			iBmp_createBySize(gobj_splashListing->bmp, trc->right - trc->left, trc->bottom - trc->top, bmp->bi.biBitCount);
 
@@ -3964,14 +3971,14 @@
 		//////////
 		// Add the editbox
 		//////
-			gobj_splashListingEditbox							= iObj_addChild(_OBJ_TYPE_EDITBOX,	gobj_splashListing);
-			iObj_setSize(gobj_splashListingEditbox, 0, 0, gobj_splashListing->rcClient.right - gobj_splashListing->rcClient.left, gobj_splashListing->rcClient.bottom - gobj_splashListing->rcClient.top);
+			gobj_splashListingEditbox							= iObj_addChild(thisCode, _OBJ_TYPE_EDITBOX,	gobj_splashListing);
+			iObj_setSize(thisCode, gobj_splashListingEditbox, 0, 0, gobj_splashListing->rcClient.right - gobj_splashListing->rcClient.left, gobj_splashListing->rcClient.bottom - gobj_splashListing->rcClient.top);
 			gobj_splashListingEditbox->bmp = iBmp_allocate();
 			iBmp_createBySize(gobj_splashListingEditbox->bmp, gobj_splashListing->rcClient.right - gobj_splashListing->rcClient.left, gobj_splashListing->rcClient.bottom - gobj_splashListing->rcClient.top, bmp->bi.biBitCount);
 			gobj_splashListingEditbox->p.font					= iFont_create(cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
 			gobj_splashListingEditbox->p.sem->font				= iFont_create(cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
 			gobj_splashListingEditbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
-			iObjProp_set_logical_direct(gobj_splashListingEditbox, _INDEX_VISIBLE, _LOGICAL_TRUE);
+			iObjProp_set_logical_direct(thisCode, gobj_splashListingEditbox, _INDEX_VISIBLE, _LOGICAL_TRUE);
 			systemLog											= gobj_splashListingEditbox->p.sem;
 			systemLog->showEndLine								= true;
 			systemLog->showCursorLine							= true;
@@ -3980,7 +3987,7 @@
 		//////////
 		// Set it visible
 		//////
-			iObjProp_set_logical_direct(gobj_splashListing, _INDEX_VISIBLE, _LOGICAL_TRUE);
+			iObjProp_set_logical_direct(thisCode, gobj_splashListing, _INDEX_VISIBLE, _LOGICAL_TRUE);
 	}
 
 
@@ -3993,7 +4000,8 @@
 //////
 	void iVjr_renderOverlayListing(SBitmap* bmp, RECT* trc)
 	{
-		RECT lrc;
+		SThisCode*	thisCode = NULL;
+		RECT		lrc;
 
 
 		// Make sure our environment is sane
@@ -4005,14 +4013,14 @@
 			if (trc && gobj_splashListing->bmp)
 			{
 				// Render
-				iObj_renderChildrenAndSiblings(gobj_splashListing, true, true, true);
+				iObj_renderChildrenAndSiblings(thisCode, gobj_splashListing, true, true, true);
 
 				// Publish it if we can
 				if (bmp)
 				{
 					// Publish
 					SetRect(&lrc, 0, 0, gobj_splashListing->bmp->bi.biWidth, gobj_splashListing->bmp->bi.biHeight);
-					iObj_publish(gobj_splashListing, &lrc, bmp, true, true, true, 0);
+					iObj_publish(thisCode, gobj_splashListing, &lrc, bmp, true, true, true, 0);
 
 					// Update our bitmap
 					iBmp_bitBlt(bmp, trc, gobj_splashListing->bmp);

@@ -127,91 +127,91 @@ struct SEventsGeneral
 {
 	union {
 		uptr	_onLoad;					// Called to load anything needed by the init() event (holds a template/skeleton object)
-		bool	(*onLoad)					(SWindow* win, SObject* obj);
+		bool	(*onLoad)					(SThisCode* thisCode, SWindow* win, SObject* obj);
 	};
 	union {
 		uptr	_onInit;					// Called to initialize anything
-		bool	(*onInit)					(SWindow* win, SObject* obj);
+		bool	(*onInit)					(SThisCode* thisCode, SWindow* win, SObject* obj);
 	};
 	union {
 		uptr	_onCreated;					// Called after initialization, before the object is sized
-		bool	(*onCreated)				(SWindow* win, SObject* obj);
+		bool	(*onCreated)				(SThisCode* thisCode, SWindow* win, SObject* obj);
 	};
 	union {
 		uptr	_onResize;					// Called to size or resize the object
-		bool	(*onResize)					(SWindow* win, SObject* obj, SVariable* widthRequired_out, SVariable* heightRequired_out);
+		bool	(*onResize)					(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* widthRequired_out, SVariable* heightRequired_out);
 	};
 	union {
 		uptr	_onMoved;					// Called when the object has been moved
-		bool	(*onMoved)					(SWindow* win, SObject* obj, SVariable* xOverride_out, SVariable* yOverride_out);
+		bool	(*onMoved)					(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* xOverride_out, SVariable* yOverride_out);
 	};
 	union {
 		uptr	_onRender;					// Called to render to bmp (returns if anything was drawn)
-		bool	(*onRender)					(SWindow* win, SObject* obj);
+		bool	(*onRender)					(SThisCode* thisCode, SWindow* win, SObject* obj);
 	};
 	union {
 		uptr	_onPublish;					// Called to publish the control onto the parent (which will populate bmpScale if need be)
-		bool	(*onPublish)				(SWindow* win, SObject* obj);
+		bool	(*onPublish)				(SThisCode* thisCode, SWindow* win, SObject* obj);
 	};
 	union {
 		uptr	_onQueryUnload;				// Called before onDestroy, determines if the form should actually be destroyed
-		bool	(*onQueryUnload)			(SWindow* win, SObject* obj);
+		bool	(*onQueryUnload)			(SThisCode* thisCode, SWindow* win, SObject* obj);
 	};
 	union {
 		uptr	_onDestroy;					// Called when the object will be destroyed
-		bool	(*onDestroy)				(SWindow* win, SObject* obj);
+		bool	(*onDestroy)				(SThisCode* thisCode, SWindow* win, SObject* obj);
 	};
 	union {
 		uptr	_onUnload;					// Called after the object has been destroyed, to unload anything (holds a template/skeleton object)
-		bool	(*onUnload)					(SWindow* win, SObject* obj);
+		bool	(*onUnload)					(SThisCode* thisCode, SWindow* win, SObject* obj);
 	};
 	union {
 		uptr	_onGotFocus;				// Called when the object receives focus (note multiple items can have simultaneous focus)
-		bool	(*onGotFocus)				(SWindow* win, SObject* obj);
+		bool	(*onGotFocus)				(SThisCode* thisCode, SWindow* win, SObject* obj);
 	};
 	union {
 		uptr	_onLostFocus;				// Called when the object loses focus
-		bool	(*onLostFocus)				(SWindow* win, SObject* obj);
+		bool	(*onLostFocus)				(SThisCode* thisCode, SWindow* win, SObject* obj);
 	};
 	union {
 		uptr	_onAddObject;				// Called when an object is added
-		bool	(*onAddObject)				(SWindow* win, SObject* obj);
+		bool	(*onAddObject)				(SThisCode* thisCode, SWindow* win, SObject* obj);
 	};
 	union {
 		uptr	_onAddProperty;				// Called when a property is added
-		bool	(*onAddProperty)			(SWindow* win, SObject* obj);
+		bool	(*onAddProperty)			(SThisCode* thisCode, SWindow* win, SObject* obj);
 	};
 	union {
 		uptr	_onError;					// Called when an error is triggered in code on an object
-		bool	(*onError)					(SWindow* win, SObject* obj);
+		bool	(*onError)					(SThisCode* thisCode, SWindow* win, SObject* obj);
 	};
 	union {
 		uptr	_onScrolled;				// Called when an object has been scrolled
-		bool	(*onScrolled)				(SWindow* win, SObject* obj);
+		bool	(*onScrolled)				(SThisCode* thisCode, SWindow* win, SObject* obj);
 	};
 	union {
 		uptr	_activate;					// Called when activated
-		bool	(*activate)					(SWindow* win, SObject* obj);
+		bool	(*activate)					(SThisCode* thisCode, SWindow* win, SObject* obj);
 	};
 	union {
 		uptr	_deactivate;				// Called when deactivated
-		bool	(*deactivate)				(SWindow* win, SObject* obj);
+		bool	(*deactivate)				(SThisCode* thisCode, SWindow* win, SObject* obj);
 	};
 	union {
 		uptr	_onSelect;					// When an option is selected
-		bool	(*onSelect)					(SWindow* win, SObject* obj, SObject* oItem);
+		bool	(*onSelect)					(SThisCode* thisCode, SWindow* win, SObject* obj, SObject* oItem);
 	};
 	union {
 		uptr	_onDeselect;				// When an option is deselected
-		bool	(*onDeselect)				(SWindow* win, SObject* obj, SVariable* objItem);
+		bool	(*onDeselect)				(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* objItem);
 	};
 	union {
 		uptr	_onInteractiveChange;		// Called when the data changes
-		bool	(*onInteractiveChange)		(SWindow* win, SObject* obj);
+		bool	(*onInteractiveChange)		(SThisCode* thisCode, SWindow* win, SObject* obj);
 	};
 	union {
 		uptr	_onProgrammaticChange;		// Called when the data changes
-		bool	(*onProgrammaticChange)		(SWindow* win, SObject* obj);
+		bool	(*onProgrammaticChange)		(SThisCode* thisCode, SWindow* win, SObject* obj);
 	};
 
 
@@ -220,11 +220,11 @@ struct SEventsGeneral
 //////
 	union {
 		uptr	_onSetActiveControl;		// Fired programmatically, specifies the object to make active
-		bool	(*onSetActiveControl)		(SWindow* win, SObject* obj, SVariable* objActive);
+		bool	(*onSetActiveControl)		(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* objActive);
 	};
 	union {
 		uptr	_onSpin;					// Fired programmatically, specifies the object to make active
-		bool	(*onSpin)					(SWindow* win, SObject* obj, SVariable* tnDelta, SVariable* tnDirection, SVariable* tnType);
+		bool	(*onSpin)					(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* tnDelta, SVariable* tnDirection, SVariable* tnType);
 	};
 };
 
@@ -244,39 +244,39 @@ struct SEventsMouse
 	// Return value indicates if the event should be sent to its parent instead (if NODEFAULT was issued during execution).
 	union {
 		uptr	_onMouseClickEx;
-		bool	(*onMouseClickEx)		(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);	// varClick is 1=left, 2=middle, 4=right, 2^n bit positions indicate which buttons are clicked
+		bool	(*onMouseClickEx)		(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);	// varClick is 1=left, 2=middle, 4=right, 2^n bit positions indicate which buttons are clicked
 	};
 	union {
 		uptr	_onMouseDblClickEx;
-		bool	(*onMouseDblClickEx)	(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
+		bool	(*onMouseDblClickEx)	(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
 	};
 	union {
 		uptr	_onMouseWheel;
-		bool	(*onMouseWheel)			(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick, SVariable* varUnits);	// Signed units indicating direction and velocity
+		bool	(*onMouseWheel)			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick, SVariable* varUnits);	// Signed units indicating direction and velocity
 	};
 	union {
 		uptr	_onMouseMove;
-		bool	(*onMouseMove)			(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
+		bool	(*onMouseMove)			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
 	};
 	union {
 		uptr	_onMouseDown;
-		bool	(*onMouseDown)			(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
+		bool	(*onMouseDown)			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
 	};
 	union {
 		uptr	_onMouseUp;
-		bool	(*onMouseUp)			(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
+		bool	(*onMouseUp)			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
 	};
 	union {
 		uptr	_onMouseEnter;
-		bool	(*onMouseEnter)			(SWindow* win, SObject* obj);
+		bool	(*onMouseEnter)			(SThisCode* thisCode, SWindow* win, SObject* obj);
 	};
 	union {
 		uptr	_onMouseLeave;
-		bool	(*onMouseLeave)			(SWindow* win, SObject* obj);
+		bool	(*onMouseLeave)			(SThisCode* thisCode, SWindow* win, SObject* obj);
 	};
 	union {
 		uptr	_onMouseHover;
-		bool	(*onMouseHover)			(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
+		bool	(*onMouseHover)			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
 	};
 };
 
@@ -286,11 +286,11 @@ struct SEventsKeyboard
 	// Bool indicates if the event should be sent to its parent instead
 	union {
 		uptr	_onKeyDown;
-		bool	(*onKeyDown)		(SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii);
+		bool	(*onKeyDown)		(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii);
 	};
 	union {
 		uptr	_onKeyUp;
-		bool	(*onKeyUp)			(SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii);
+		bool	(*onKeyUp)			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii);
 	};
 };
 

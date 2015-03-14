@@ -87,67 +87,68 @@
 // Default callbacks
 //
 //////
-	bool iDefaultCallback_onLoad(SWindow* win, SObject* obj)
+	bool iDefaultCallback_onLoad(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume it's okay to load
 		return(true);
 	}
 
-	bool iDefaultCallback_onInit(SWindow* win, SObject* obj)
+	bool iDefaultCallback_onInit(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume we consumed the gotFocus, and that the parent doesn't need to receive it
 		return(false);
 	}
 
-	bool iDefaultCallback_onCreated(SWindow* win, SObject* obj)
+	bool iDefaultCallback_onCreated(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume we consumed the gotFocus, and that the parent doesn't need to receive it
 		return(false);
 	}
 
-	bool iDefaultCallback_onResize(SWindow* win, SObject* obj, SVariable* widthRequired_out, SVariable* heightRequired_out)
+	bool iDefaultCallback_onResize(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* widthRequired_out, SVariable* heightRequired_out)
 	{
 		// Assume we consumed the gotFocus, and that the parent doesn't need to receive it
 		return(false);
 	}
 
-	bool iDefaultCallback_onRender(SWindow* win, SObject* obj)
+	bool iDefaultCallback_onRender(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume it was rendered okay
 		return(true);
 	}
 
-	bool iDefaultCallback_onPublish(SWindow* win, SObject* obj)
+	bool iDefaultCallback_onPublish(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume it was published okay
 		return(true);
 	}
 
-	bool iDefaultCallback_onDestroy(SWindow* win, SObject* obj)
+	bool iDefaultCallback_onDestroy(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume we consumed the gotFocus, and that the parent doesn't need to receive it
 		return(false);
 	}
 
-	bool iDefaultCallback_onUnload(SWindow* win, SObject* obj)
+	bool iDefaultCallback_onUnload(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume we consumed the gotFocus, and that the parent doesn't need to receive it
 		return(false);
 	}
 
-	bool iDefaultCallback_onGotFocus(SWindow* win, SObject* obj)
+	bool iDefaultCallback_onGotFocus(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume we consumed the gotFocus, and that the parent doesn't need to receive it
 		return(false);
 	}
 
-	bool iDefaultCallback_onLostFocus(SWindow* win, SObject* obj)
+	bool iDefaultCallback_onLostFocus(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume we consumed the lostFocus, and that the parent doesn't need to receive it
 		return(false);
 	}
 
-	bool iiDefaultCallback_processMouseVariables(	SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick,
+	bool iiDefaultCallback_processMouseVariables(	SThisCode* thisCode, 
+													SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick,
 													s32* lnX, s32* lnY, bool* llCtrl, bool* llAlt, bool* llShift, u32* lnClick)
 	{
 		//////////
@@ -163,12 +164,12 @@
 				// Something is not a proper variable, ignore it
 				return(false);
 			}
-			*lnX		= (s16)iiVariable_getAs_s32(varX,	false, NULL, NULL);
-			*lnY		= (u16)iiVariable_getAs_s32(varY,	false, NULL, NULL);
-			*llCtrl		= iiVariable_getAs_bool(varCtrl,	false, NULL, NULL);
-			*llAlt		= iiVariable_getAs_bool(varAlt,		false, NULL, NULL);
-			*llShift	= iiVariable_getAs_bool(varShift,	false, NULL, NULL);
-			*lnClick	= iiVariable_getAs_u32(varClick,	false, NULL, NULL);
+			*lnX		= (s16)iiVariable_getAs_s32(thisCode,	varX,		false, NULL, NULL);
+			*lnY		= (u16)iiVariable_getAs_s32(thisCode,	varY,		false, NULL, NULL);
+			*llCtrl		= iiVariable_getAs_bool(thisCode,		varCtrl,	false, NULL, NULL);
+			*llAlt		= iiVariable_getAs_bool(thisCode,		varAlt,		false, NULL, NULL);
+			*llShift	= iiVariable_getAs_bool(thisCode,		varShift,	false, NULL, NULL);
+			*lnClick	= iiVariable_getAs_u32(thisCode,		varClick,	false, NULL, NULL);
 
 
 		//////////
@@ -177,7 +178,7 @@
 			return(true);
 	}
 
-	bool iDefaultCallback_onMouseClickEx(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick)
+	bool iDefaultCallback_onMouseClickEx(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick)
 	{
 		s32		lnX, lnY;
 		u32		lnClick;
@@ -185,7 +186,7 @@
 
 
 		// Make sure our environment is sane
-		if (!iiDefaultCallback_processMouseVariables(varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
+		if (!iiDefaultCallback_processMouseVariables(thisCode, varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
 			return(false);
 
 
@@ -193,7 +194,7 @@
 		return(false);
 	}
 
-	bool iDefaultCallback_onMouseDblClickEx(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick)
+	bool iDefaultCallback_onMouseDblClickEx(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick)
 	{
 		s32		lnX, lnY;
 		u32		lnClick;
@@ -201,7 +202,7 @@
 
 
 		// Make sure our environment is sane
-		if (!iiDefaultCallback_processMouseVariables(varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
+		if (!iiDefaultCallback_processMouseVariables(thisCode, varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
 			return(false);
 
 
@@ -209,7 +210,7 @@
 		return(false);
 	}
 
-	bool iDefaultCallback_onMouseWheel(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick, SVariable* varUnits)
+	bool iDefaultCallback_onMouseWheel(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick, SVariable* varUnits)
 	{
 		s32		lnX, lnY, lnUnits;
 		u32		lnClick;
@@ -217,11 +218,11 @@
 
 
 		// Make sure our environment is sane
-		if (!iiDefaultCallback_processMouseVariables(varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick) || !iVariable_isValid(varUnits) || !iVariable_isTypeNumeric(varUnits))
+		if (!iiDefaultCallback_processMouseVariables(thisCode, varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick) || !iVariable_isValid(varUnits) || !iVariable_isTypeNumeric(varUnits))
 			return(false);
 
 		// Grab the units
-		lnUnits = (u16)iiVariable_getAs_s32(varUnits, false, NULL, NULL);
+		lnUnits = (u16)iiVariable_getAs_s32(thisCode, varUnits, false, NULL, NULL);
 
 
 		// Assume we consumed the mouse wheel, and that the parent doesn't need to receive it
@@ -238,13 +239,13 @@
 				// They want to scroll the entire window, including the cursor line
 				iSEM_scroll(obj->p.sem, obj, lnUnits * ((llShift) ? -1 : -3), 0);
 			}
-			iObj_setDirtyRender_ascent(obj, true);
-			iWindow_render(win, false);
+			iObj_setDirtyRender_ascent(thisCode, obj, true);
+			iWindow_render(thisCode, win, false);
 		}
 		return(false);
 	}
 
-	bool iDefaultCallback_onMouseMove(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick)
+	bool iDefaultCallback_onMouseMove(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick)
 	{
 		f64			lfPercent, lfX, lfY, lfWidth, lfHeight;
 		SVariable*	valueMin;
@@ -254,7 +255,7 @@
 
 
 		// Make sure our environment is sane
-		if (!iiDefaultCallback_processMouseVariables(varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
+		if (!iiDefaultCallback_processMouseVariables(thisCode, varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
 			return(false);
 
 
@@ -272,10 +273,10 @@
 			if (lfPercent < 0.0)
 				lfPercent += 1.0;
 
-			valueMin = iObjProp_get_variable_byIndex(obj, _INDEX_VALUE_MINIMUM);
-			iObjProp_set_f64_direct(obj, _INDEX_VALUE, get_f64(valueMin) + (lfPercent * (iObjProp_get_f64_direct(obj, _INDEX_VALUE_MAXIMUM) - get_f64(valueMin))));
-			iObj_setDirtyRender_ascent(obj, true);
-			iWindow_render(win, false);
+			valueMin = iObjProp_get_variable_byIndex(thisCode, obj, _INDEX_VALUE_MINIMUM);
+			iObjProp_set_f64_direct(thisCode, obj, _INDEX_VALUE, get_f64(valueMin) + (lfPercent * (iObjProp_get_f64_direct(thisCode, obj, _INDEX_VALUE_MAXIMUM) - get_f64(valueMin))));
+			iObj_setDirtyRender_ascent(thisCode, obj, true);
+			iWindow_render(thisCode, win, false);
 
 		} else if (obj->objType == _OBJ_TYPE_EDITBOX) {
 			if ((lnClick & _MOUSE_LEFT_BUTTON) != 0)
@@ -289,15 +290,15 @@
 				iSEM_selectStart(obj->p.sem, _SEM_SELECT_MODE_ANCHOR);
 
 				// Redraw our changes
-				iObj_setDirtyRender_ascent(obj, true);
-				iWindow_render(win, false);
+				iObj_setDirtyRender_ascent(thisCode, obj, true);
+				iWindow_render(thisCode, win, false);
 			}
 		}
 
 		return(false);
 	}
 
-	bool iDefaultCallback_onMouseDown(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick)
+	bool iDefaultCallback_onMouseDown(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick)
 	{
 		bool		llMouseDown;
 		f64			lfPercent, lfX, lfY, lfWidth, lfHeight, lfValue;
@@ -309,7 +310,7 @@
 
 
 		// Make sure our environment is sane
-		if (!iiDefaultCallback_processMouseVariables(varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
+		if (!iiDefaultCallback_processMouseVariables(thisCode, varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
 			return(false);
 
 
@@ -319,12 +320,12 @@
 		// If focus isn't already set on this control, set focus on this control
 		if (!obj->p.hasFocus)
 		{
-			objRoot = iObj_find_rootmostObject(obj);
+			objRoot = iObj_find_rootmostObject(thisCode, obj);
 			if (objRoot)
-				iObj_clearFocus(win, objRoot, true, true);
+				iObj_clearFocus(thisCode, win, objRoot, true, true);
 
-			iObj_setFocus(win, obj, true);
-			iObj_setDirtyRender_ascent(objRoot, true);
+			iObj_setFocus(thisCode, win, obj, true);
+			iObj_setDirtyRender_ascent(thisCode, objRoot, true);
 		}
 
 		// For forms, they can be clicking down on special things for various operations
@@ -357,14 +358,14 @@
 		{
 			// For checkboxes, we toggle
 			// They're clicking on a checkbox, toggle the value and re-render
-			iObjProp_set_s32_direct(obj, _INDEX_VALUE, ((iObjProp_get_s32_direct(obj, _INDEX_VALUE) != 0) ? 0 : 1));
+			iObjProp_set_s32_direct(thisCode, obj, _INDEX_VALUE, ((iObjProp_get_s32_direct(thisCode, obj, _INDEX_VALUE) != 0) ? 0 : 1));
 
 			// Calling the size with its current size forces the refresh
-			iObj_setSize(obj->parent,
-							obj->parent->rc.left,
-							obj->parent->rc.top,
-							obj->parent->rc.right  - obj->parent->rc.left,
-							obj->parent->rc.bottom - obj->parent->rc.top);
+			iObj_setSize(thisCode, obj->parent,
+									obj->parent->rc.left,
+									obj->parent->rc.top,
+									obj->parent->rc.right  - obj->parent->rc.left,
+									obj->parent->rc.bottom - obj->parent->rc.top);
 
 		} else if (obj->objType == _OBJ_TYPE_EDITBOX) {
 			// Need to navigate to the indicated x,y coordinate
@@ -385,9 +386,9 @@
 			if (lfPercent < 0.0)
 				lfPercent += 1.0;
 
-			valueMin	= iObjProp_get_variable_byIndex(obj, _INDEX_VALUE_MINIMUM);
-			lfValue		= get_f64(valueMin) + (lfPercent * (iObjProp_get_f64_direct(obj, _INDEX_VALUE_MAXIMUM) - get_f64(valueMin)));
-			iObjProp_set_f64_direct(obj, _INDEX_VALUE, lfValue);
+			valueMin	= iObjProp_get_variable_byIndex(thisCode, obj, _INDEX_VALUE_MINIMUM);
+			lfValue		= get_f64(valueMin) + (lfPercent * (iObjProp_get_f64_direct(thisCode, obj, _INDEX_VALUE_MAXIMUM) - get_f64(valueMin)));
+			iObjProp_set_f64_direct(thisCode, obj, _INDEX_VALUE, lfValue);
 
 		} else {
 			// Assume we consumed the mouse down event, and that the parent doesn't need to receive it
@@ -423,12 +424,12 @@
 
 		// Update our condition
 		obj->ev.mouse.isMouseDown = llMouseDown;
-		iObj_setDirtyRender_ascent(obj, true);
-		iWindow_render(win, false);
+		iObj_setDirtyRender_ascent(thisCode, obj, true);
+		iWindow_render(thisCode, win, false);
 		return(true);
 	}
 
-	bool iDefaultCallback_onMouseUp(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick)
+	bool iDefaultCallback_onMouseUp(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick)
 	{
 		s32		lnX, lnY;
 		u32		lnClick;
@@ -436,46 +437,46 @@
 
 
 		// Make sure our environment is sane
-		if (!iiDefaultCallback_processMouseVariables(varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
+		if (!iiDefaultCallback_processMouseVariables(thisCode, varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
 			return(false);
 
 
 		// We are leaving this object, lower the flag
 		obj->ev.mouse.isMouseDown = (obj->ev.mouse.thisClick != 0);	// Indicate if the mouse is down here
 		obj->ev.mouse.isMouseDown = false;
-		iObj_setDirtyRender_ascent(obj, true);
-		iWindow_render(win, false);
+		iObj_setDirtyRender_ascent(thisCode, obj, true);
+		iWindow_render(thisCode, win, false);
 		return(false);
 	}
 
-	bool iDefaultCallback_onMouseEnter(SWindow* win, SObject* obj)
+	bool iDefaultCallback_onMouseEnter(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// We are newly over this object, raise the flag
 		obj->ev.mouse.isMouseDown = (obj->ev.mouse.thisClick != 0);	// Indicate if the mouse is down here
 		if (!obj->ev.mouse.isMouseOver)
 		{
 			obj->ev.mouse.isMouseOver = true;
-			iObj_setDirtyRender_ascent(obj, true);
-			iWindow_render(win, false);
+			iObj_setDirtyRender_ascent(thisCode, obj, true);
+			iWindow_render(thisCode, win, false);
 		}
 
 		// Assume we consumed the enter, and that the parent doesn't need to receive it
 		return(false);
 	}
 
-	bool iDefaultCallback_onMouseLeave(SWindow* win, SObject* obj)
+	bool iDefaultCallback_onMouseLeave(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume we consumed the leave, and that the parent doesn't need to receive it
 		if (obj->ev.mouse.isMouseOver)
 		{
 			obj->ev.mouse.isMouseOver = false;
-			iObj_setDirtyRender_ascent(obj, true);
-			iWindow_render(win, false);
+			iObj_setDirtyRender_ascent(thisCode, obj, true);
+			iWindow_render(thisCode, win, false);
 		}
 		return(false);
 	}
 
-	bool iDefaultCallback_onMouseHover(SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick)
+	bool iDefaultCallback_onMouseHover(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick)
 	{
 		s32		lnX, lnY;
 		u32		lnClick;
@@ -483,7 +484,7 @@
 
 
 		// Make sure our environment is sane
-		if (!iiDefaultCallback_processMouseVariables(varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
+		if (!iiDefaultCallback_processMouseVariables(thisCode, varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
 			return(false);
 
 
@@ -491,7 +492,8 @@
 		return(false);
 	}
 
-	bool iiDefaultCallback_processKeyVariables(	SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii,
+	bool iiDefaultCallback_processKeyVariables(	SThisCode* thisCode, 
+												SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii,
 												bool* llCtrl, bool* llAlt, bool* llShift, bool* llCaps, bool* llIsCAS, bool* llIsAscii,
 												s16* lcAscii, u16* lnVKey)
 	{
@@ -508,14 +510,14 @@
 				// Something is not a proper variable, ignore it
 				return(false);
 			}
-			*llCtrl		= iiVariable_getAs_bool(varCtrl,		false, NULL, NULL);
-			*llAlt		= iiVariable_getAs_bool(varAlt,			false, NULL, NULL);
-			*llShift	= iiVariable_getAs_bool(varShift,		false, NULL, NULL);
-			*llCaps		= iiVariable_getAs_bool(varCaps,		false, NULL, NULL);
-			*llIsCAS	= iiVariable_getAs_bool(varIsCAS,		false, NULL, NULL);
-			*llIsAscii	= iiVariable_getAs_bool(varIsAscii,		false, NULL, NULL);
-			*lcAscii	= iiVariable_getAs_s16(varAscii,	false, NULL, NULL);
-			*lnVKey		= iiVariable_getAs_u16(varVKey,	false, NULL, NULL);
+			*llCtrl		= iiVariable_getAs_bool(thisCode, varCtrl,		false, NULL, NULL);
+			*llAlt		= iiVariable_getAs_bool(thisCode, varAlt,		false, NULL, NULL);
+			*llShift	= iiVariable_getAs_bool(thisCode, varShift,		false, NULL, NULL);
+			*llCaps		= iiVariable_getAs_bool(thisCode, varCaps,		false, NULL, NULL);
+			*llIsCAS	= iiVariable_getAs_bool(thisCode, varIsCAS,		false, NULL, NULL);
+			*llIsAscii	= iiVariable_getAs_bool(thisCode, varIsAscii,	false, NULL, NULL);
+			*lcAscii	= iiVariable_getAs_s16(thisCode, varAscii,		false, NULL, NULL);
+			*lnVKey		= iiVariable_getAs_u16(thisCode, varVKey,		false, NULL, NULL);
 
 
 		//////////
@@ -524,7 +526,7 @@
 			return(true);
 	}
 
-	bool iDefaultCallback_onKeyDown(SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii)
+	bool iDefaultCallback_onKeyDown(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii)
 	{
 		bool		llRender;
 		SObject*	objCheckbox;
@@ -535,7 +537,7 @@
 
 
 		// Make sure our environment is sane
-		if (!iiDefaultCallback_processKeyVariables(varCtrl, varAlt, varShift, varCaps, varAscii, varVKey, varIsCAS, varIsAscii, &llCtrl, &llAlt, &llShift, &llCaps, &llIsCAS, &llIsAscii, &lcAscii, &lnVKey))
+		if (!iiDefaultCallback_processKeyVariables(thisCode, varCtrl, varAlt, varShift, varCaps, varAscii, varVKey, varIsCAS, varIsAscii, &llCtrl, &llAlt, &llShift, &llCaps, &llIsCAS, &llIsAscii, &lcAscii, &lnVKey))
 			return(false);
 
 
@@ -562,36 +564,36 @@
 				{
 					// Toggle the value and redraw
 					llRender = true;
-					iObjProp_set_s32_direct(objCheckbox, _INDEX_VALUE, ((iObjProp_get_s32_direct(objCheckbox, _INDEX_VALUE) == 0) ? 1 : 0));
-					iObj_setDirtyRender_ascent(objCheckbox, false);
+					iObjProp_set_s32_direct(thisCode, objCheckbox, _INDEX_VALUE, ((iObjProp_get_s32_direct(thisCode, objCheckbox, _INDEX_VALUE) == 0) ? 1 : 0));
+					iObj_setDirtyRender_ascent(thisCode, objCheckbox, false);
 					if (objRender2 != objCheckbox)
-						iObj_setDirtyRender_ascent(objRender2, false);
+						iObj_setDirtyRender_ascent(thisCode, objRender2, false);
 
 				} else if (llShift && lnVKey == VK_TAB) {
 					// Move to previous object
-					llRender = iObj_setFocusObjectPrev(win, objCheckbox);
+					llRender = iObj_setFocusObjectPrev(thisCode, win, objCheckbox);
 
 				} else if (lnVKey == VK_TAB) {
 					// Move to next object
-					llRender = iObj_setFocusObjectNext(win, objCheckbox);
+					llRender = iObj_setFocusObjectNext(thisCode, win, objCheckbox);
 
 				} else if (llIsAscii) {
 					if ((u8)lcAscii == 't' || (u8)lcAscii == 'T' || (u8)lcAscii == 'y' || (u8)lcAscii == 'Y' || (u8)lcAscii == '1')
 					{
 						// Set it to on
 						llRender = true;
-						iObjProp_set_s32_direct(obj, _INDEX_VALUE, 1);
-						iObj_setDirtyRender_ascent(objCheckbox, false);
+						iObjProp_set_s32_direct(thisCode, obj, _INDEX_VALUE, 1);
+						iObj_setDirtyRender_ascent(thisCode, objCheckbox, false);
 						if (objRender2 != objCheckbox)
-							iObj_setDirtyRender_ascent(objRender2, false);
+							iObj_setDirtyRender_ascent(thisCode, objRender2, false);
 
 					} else if ((u8)lcAscii == 'f' || (u8)lcAscii == 'F' || (u8)lcAscii == 'n' || (u8)lcAscii == 'N' || (u8)lcAscii == '0') {
 						// Set it to off
 						llRender = true;
-						iObjProp_set_s32_direct(obj, _INDEX_VALUE, 0);
-						iObj_setDirtyRender_ascent(objCheckbox, false);
+						iObjProp_set_s32_direct(thisCode, obj, _INDEX_VALUE, 0);
+						iObj_setDirtyRender_ascent(thisCode, objCheckbox, false);
 						if (objRender2 != objCheckbox)
-							iObj_setDirtyRender_ascent(objRender2, false);
+							iObj_setDirtyRender_ascent(thisCode, objRender2, false);
 					}
 				}
 
@@ -600,11 +602,11 @@
 				if (llShift && lnVKey == VK_TAB)
 				{
 					// Move to previous object
-					llRender = iObj_setFocusObjectPrev(win, obj);
+					llRender = iObj_setFocusObjectPrev(thisCode, win, obj);
 
 				} else if (lnVKey == VK_TAB) {
 					// Move to next object
-					llRender = iObj_setFocusObjectNext(win, obj);
+					llRender = iObj_setFocusObjectNext(thisCode, win, obj);
 				}
 			}
 
@@ -614,16 +616,16 @@
 		{
 			// Redraw the checkbox if needed
 			if (objCheckbox)
-				iObj_setSize(objCheckbox, objCheckbox->rc.left, objCheckbox->rc.top, objCheckbox->rc.right - objCheckbox->rc.left, objCheckbox->rc.bottom - objCheckbox->rc.top);
+				iObj_setSize(thisCode, objCheckbox, objCheckbox->rc.left, objCheckbox->rc.top, objCheckbox->rc.right - objCheckbox->rc.left, objCheckbox->rc.bottom - objCheckbox->rc.top);
 
 			// Redraw the window
-			iWindow_render(win, false);
+			iWindow_render(thisCode, win, false);
 		}
 		
 		return(false);
 	}
 
-	bool iDefaultCallback_onKeyUp(SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii)
+	bool iDefaultCallback_onKeyUp(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii)
 	{
 		bool		llCtrl, llAlt, llShift, llCaps, llIsCAS, llIsAscii;
 		s16			lcAscii;
@@ -631,7 +633,7 @@
 
 
 		// Make sure our environment is sane
-		if (!iiDefaultCallback_processKeyVariables(varCtrl, varAlt, varShift, varCaps, varAscii, varVKey, varIsCAS, varIsAscii, &llCtrl, &llAlt, &llShift, &llCaps, &llIsCAS, &llIsAscii, &lcAscii, &lnVKey))
+		if (!iiDefaultCallback_processKeyVariables(thisCode, varCtrl, varAlt, varShift, varCaps, varAscii, varVKey, varIsCAS, varIsAscii, &llCtrl, &llAlt, &llShift, &llCaps, &llIsCAS, &llIsAscii, &lcAscii, &lnVKey))
 			return(false);
 
 
@@ -639,80 +641,80 @@
 		return(false);
 	}
 
-	bool iDefaultCallback_onActivate(SWindow* win, SObject* obj)
+	bool iDefaultCallback_onActivate(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume we consumed the activate, and that the parent doesn't need to receive it
 		return(false);
 	}
 
-	bool iDefaultCallback_onDeactivate(SWindow* win, SObject* obj)
+	bool iDefaultCallback_onDeactivate(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume we consumed the deactivate, and that the parent doesn't need to receive it
 		return(false);
 	}
 
-	bool iDefaultCallback_onInteractiveChange(SWindow* win, SObject* obj)
+	bool iDefaultCallback_onInteractiveChange(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume we consumed the interactiveChange, and that the parent doesn't need to receive it
 		return(false);
 	}
 
-	bool iDefaultCallback_onProgrammaticChange(SWindow* win, SObject* obj)
+	bool iDefaultCallback_onProgrammaticChange(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume we consumed the programmaticChange, and that the parent doesn't need to receive it
 		return(false);
 	}
 
-	bool iDefaultCallback_onSelect(SWindow* win, SObject* obj)
+	bool iDefaultCallback_onSelect(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume we consumed the onSelect, and that the parent doesn't need to receive it
 		return(false);
 	}
 
-	bool iDefaultCallback_onDeselect(SWindow* win, SObject* obj)
+	bool iDefaultCallback_onDeselect(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume we consumed the onDeselect, and that the parent doesn't need to receive it
 		return(false);
 	}
 
-	bool iDefaultCallback_onMoved(SWindow* win, SObject* obj, SVariable* xOverride_out, SVariable* yOverride_out)
+	bool iDefaultCallback_onMoved(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* xOverride_out, SVariable* yOverride_out)
 	{
 		// Assume we consumed the onDeselect, and that the parent doesn't need to receive it
 		return(false);
 	}
 
-	bool iDefaultCallback_onQueryUnload(SWindow* win, SObject* obj)
+	bool iDefaultCallback_onQueryUnload(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume we consumed the onDeselect, and that the parent doesn't need to receive it
 		return(false);
 	}
 
-	bool iDefaultCallback_onAddObject(SWindow* win, SObject* obj)
+	bool iDefaultCallback_onAddObject(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume we consumed the onDeselect, and that the parent doesn't need to receive it
 		return(false);
 	}
 
-	bool iDefaultCallback_onAddProperty(SWindow* win, SObject* obj)
+	bool iDefaultCallback_onAddProperty(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume we consumed the onDeselect, and that the parent doesn't need to receive it
 		return(false);
 	}
 
-	bool iDefaultCallback_onError(SWindow* win, SObject* obj)
+	bool iDefaultCallback_onError(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume we consumed the onDeselect, and that the parent doesn't need to receive it
 		return(false);
 	}
 
-	bool iDefaultCallback_onScrolled(SWindow* win, SObject* obj)
+	bool iDefaultCallback_onScrolled(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume we consumed the onDeselect, and that the parent doesn't need to receive it
 		return(false);
 	}
 
 	// For carousels and riders, sets the left-most object of carousel, or the object to present for a rider
-	bool iDefaultCallback_onSetActiveControl(SWindow* win, SObject* obj, SVariable* toActive)
+	bool iDefaultCallback_onSetActiveControl(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* toActive)
 	{
 // TODO:  relates to accessors.h gsProps_carousel, gsProps_rider, base.cpp, create.cpp, render.cpp, etc.
 		// Verify object exists within this.controls[]
@@ -723,7 +725,7 @@
 		return(false);
 	}
 
-	bool iDefaultCallback_onSpin(SWindow* win, SObject* obj, SVariable* tnDelta, SVariable* tnDirection, SVariable* tnType)
+	bool iDefaultCallback_onSpin(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* tnDelta, SVariable* tnDirection, SVariable* tnType)
 	{
 // TODO:  same as onSetActiveControl()
 		// tnDelta		= units (in riders, or pixels based on tnType), defaults to riders

@@ -686,6 +686,7 @@
 
 	void iGrace_animate_childrenAndSiblings(SObject* obj, RECT* rc, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ, s64 tnMs)
 	{
+		SThisCode*	thisCode = NULL;
 		RECT		lrc, lrcClient;
 		SObject*	objSib;
 
@@ -773,6 +774,7 @@
 
 	void iGrace_renderNode_childrenAndSiblings(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ)
 	{
+		SThisCode*	thisCode = NULL;
 		SObject*	objSib;
 		SObjNode*	objNodeFrom;
 
@@ -1286,7 +1288,8 @@
 
 	void iGrace_renderObj_childrenAndSiblings(SObject* obj, bool tlRenderChildren, bool tlRenderSiblings, f32 tfZ)
 	{
-		SObject* objSib;
+		SThisCode*	thisCode = NULL;
+		SObject*	objSib;
 
 
 		logfunc(__FUNCTION__);

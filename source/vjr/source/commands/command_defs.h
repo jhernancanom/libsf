@@ -93,6 +93,7 @@
 
 
 struct SVariable;
+struct SThisCode;
 
 #define get_s64(a)		(*a->value.data_s64)
 #define get_u64(a)		(*a->value.data_u64)
@@ -117,10 +118,18 @@ struct SVariable;
 //        given by its name, such as "function_chr()" being a function.
 //////
 	// Temporary error reporting until the proper engine is constructed.
-	void				iError_signal								(u32 tnErrorNum, s8* tcExtraInfo);
+	void				iError_signal								(SThisCode* thisCode, u32 tnErrorNum, SComp* comp, bool tlInvasive, s8* tcExtraInfo);
 	void				iError_report								(cu8* constantErrorText, bool tlInvasive);
 	void				iError_report								(u8* errorText, bool tlInvasive);
-	void				iError_reportByNumber						(u32 tnErrorNum, SComp* comp, bool tlInvasive);
+	void				iError_reportByNumber						(SThisCode* thisCode, u32 tnErrorNum, SComp* comp, bool tlInvasive);
+
+	// Called to check if potential errors exist
+	f32					iErrorCandidate_signalOutOfRange_f32		(SThisCode* thisCode, f32 value, s32 tnVarType, SComp* compRelated, bool tlInvasive, s8* tcExtraInfo);
+	f64					iErrorCandidate_signalOutOfRange_f64		(SThisCode* thisCode, f64 value, s32 tnVarType, SComp* compRelated, bool tlInvasive, s8* tcExtraInfo);
+	s32					iErrorCandidate_signalOutOfRange_s32		(SThisCode* thisCode, s32 value, s32 tnVarType, SComp* compRelated, bool tlInvasive, s8* tcExtraInfo);
+	s64					iErrorCandidate_signalOutOfRange_s64		(SThisCode* thisCode, s64 value, s32 tnVarType, SComp* compRelated, bool tlInvasive, s8* tcExtraInfo);
+	u32					iErrorCandidate_signalOutOfRange_u32		(SThisCode* thisCode, u32 value, s32 tnVarType, SComp* compRelated, bool tlInvasive, s8* tcExtraInfo);
+	u64					iErrorCandidate_signalOutOfRange_u64		(SThisCode* thisCode, u64 value, s32 tnVarType, SComp* compRelated, bool tlInvasive, s8* tcExtraInfo);
 
 
 
@@ -153,68 +162,68 @@ struct SVariable;
 // STEP1A: Define your function
 //
 //////
-	SVariable*			function_addbs								(SVariable* varString);
-	SVariable*			function_alltrim							(SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2);
-	SVariable*			ifunction_trimCommon						(SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2, bool trimStart, bool trimEnd);
-	SVariable*			function_asc								(SVariable* varString);
-	SVariable*			function_at									(SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence);
-	SVariable*			function_atc								(SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence);
-	SVariable*			ifunction_atOccursCommon					(SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence, bool tlCaseSensitive, bool tlScanBackward, u32* tnFoundCount);
-	SVariable*			function_chr								(SVariable* varNumber);
-	SVariable*			function_chrtran							(SVariable* varString, SVariable* varSearch, SVariable* varReplace);
-	SVariable*			function_chrtranc							(SVariable* varString, SVariable* varSearch, SVariable* varReplace);
-	SVariable*			ifunction_chrtranCommon						(SVariable* varString, SVariable* varSearch, SVariable* varReplace, bool tlCaseSensitive);
-	SVariable*			function_createobject						(SVariable* varClass);
-	SVariable*			function_curdir								(void);
-	SVariable*			function_datetime							(SVariable* varYear, SVariable* varMonth, SVariable* varDay, SVariable* varHour, SVariable* varMinute, SVariable* varSecond, SVariable* varMillisecond);
-	SVariable*			function_forceext							(SVariable* varPathname, SVariable varNewExtension);
-	SVariable*			function_forcefname							(SVariable* varPathname, SVariable varNewFilename);
-	SVariable*			function_forcepath							(SVariable* varPathname, SVariable varNewPathname);
-	SVariable*			function_forcestem							(SVariable* varPathname, SVariable varNewStem);
-	SVariable*			function_int								(SVariable* varNumber);
-	SVariable*			function_justdrive							(SVariable* varString);
-	SVariable*			function_justext							(SVariable* varString);
-	SVariable*			function_justfname							(SVariable* varString);
-	SVariable*			function_justpath							(SVariable* varString);
-	SVariable*			function_juststem							(SVariable* varString, SVariable* varPostfixWidth);
-	SVariable*			function_left								(SVariable* varString, SVariable* varCount);
-	SVariable*			function_len								(SVariable* varString);
-	SVariable*			function_lower								(SVariable* varString);
-	SVariable*			function_ltrim								(SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2);
-	SVariable*			function_max								(SVariable* varLeft, SVariable* varRight);
-	SVariable*			function_min								(SVariable* varLeft, SVariable* varRight);
-	SVariable*			function_mod		/* Stefano D'Amico */	(SVariable* varDividend, SVariable* varDivisor);
-	SVariable*			function_occurs								(SVariable* varNeedle, SVariable* varHaystack);
-	SVariable*			function_occursc							(SVariable* varNeedle, SVariable* varHaystack);
-	SVariable*			function_padc								(SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter);
-	SVariable*			function_padl								(SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter);
-	SVariable*			function_padr								(SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter);
-	SVariable*			ifunction_padCommon							(SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter, bool tlPadLeft, bool tlPadRight);
-	SVariable*			function_proper								(SVariable* varString);
-	SVariable*			function_rat								(SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence);
-	SVariable*			function_ratc								(SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence);
-	SVariable*			function_replicate							(SVariable* varString, SVariable* varCount);
-	SVariable*			function_rgb								(SVariable* varRed, SVariable* varGrn, SVariable* varBlu);
-	SVariable*			function_rgba								(SVariable* varRed, SVariable* varGrn, SVariable* varBlu, SVariable* varAlp);
-	SVariable*			function_right								(SVariable* varString, SVariable* varCount);
-	SVariable*			function_rtrim								(SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2);
-	SVariable*			function_space								(SVariable* varCount);
-	SVariable*			function_strtran							(SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount);
-	SVariable*			function_strtranc							(SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount);
-	SVariable*			ifunction_strtranCommon						(SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount, bool tlCaseSensitive);
-	SVariable*			function_stuff								(SVariable* varOriginalString, SVariable* varStartPos, SVariable* varNumToRemove, SVariable* varStuffString);
-	SVariable*			function_sys								(SVariable* varIndex, SVariable* varP1, SVariable* varP2, SVariable* varP3, SVariable* varP4, SVariable* varP5, SVariable* varP6);
-	SVariable*			iFunction_sys2015							(u32 tnPrefixWidth, u32 tnPostfixWidth);
-	SVariable*			function_sysmetric							(SVariable* varIndex);
-	SVariable*			function_transform							(SVariable* varVariable, SVariable* varFormat);
-	SVariable*			function_upper								(SVariable* varString);
-	SVariable*			function_version							(SVariable* varIndex);
+	SVariable*			function_addbs								(SThisCode* thisCode, SVariable* varString);
+	SVariable*			function_alltrim							(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2);
+	SVariable*			ifunction_trimCommon						(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2, bool trimStart, bool trimEnd);
+	SVariable*			function_asc								(SThisCode* thisCode, SVariable* varString);
+	SVariable*			function_at									(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence);
+	SVariable*			function_atc								(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence);
+	SVariable*			ifunction_atOccursCommon					(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence, bool tlCaseSensitive, bool tlScanBackward, u32* tnFoundCount);
+	SVariable*			function_chr								(SThisCode* thisCode, SVariable* varNumber);
+	SVariable*			function_chrtran							(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace);
+	SVariable*			function_chrtranc							(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace);
+	SVariable*			ifunction_chrtranCommon						(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, bool tlCaseSensitive);
+	SVariable*			function_createobject						(SThisCode* thisCode, SVariable* varClass);
+	SVariable*			function_curdir								(SThisCode* thisCode);
+	SVariable*			function_datetime							(SThisCode* thisCode, SVariable* varYear, SVariable* varMonth, SVariable* varDay, SVariable* varHour, SVariable* varMinute, SVariable* varSecond, SVariable* varMillisecond);
+	SVariable*			function_forceext							(SThisCode* thisCode, SVariable* varPathname, SVariable varNewExtension);
+	SVariable*			function_forcefname							(SThisCode* thisCode, SVariable* varPathname, SVariable varNewFilename);
+	SVariable*			function_forcepath							(SThisCode* thisCode, SVariable* varPathname, SVariable varNewPathname);
+	SVariable*			function_forcestem							(SThisCode* thisCode, SVariable* varPathname, SVariable varNewStem);
+	SVariable*			function_int								(SThisCode* thisCode, SVariable* varNumber);
+	SVariable*			function_justdrive							(SThisCode* thisCode, SVariable* varString);
+	SVariable*			function_justext							(SThisCode* thisCode, SVariable* varString);
+	SVariable*			function_justfname							(SThisCode* thisCode, SVariable* varString);
+	SVariable*			function_justpath							(SThisCode* thisCode, SVariable* varString);
+	SVariable*			function_juststem							(SThisCode* thisCode, SVariable* varString, SVariable* varPostfixWidth);
+	SVariable*			function_left								(SThisCode* thisCode, SVariable* varString, SVariable* varCount);
+	SVariable*			function_len								(SThisCode* thisCode, SVariable* varString);
+	SVariable*			function_lower								(SThisCode* thisCode, SVariable* varString);
+	SVariable*			function_ltrim								(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2);
+	SVariable*			function_max								(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight);
+	SVariable*			function_min								(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight);
+	SVariable*			function_mod		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varDividend, SVariable* varDivisor);
+	SVariable*			function_occurs								(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack);
+	SVariable*			function_occursc							(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack);
+	SVariable*			function_padc								(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter);
+	SVariable*			function_padl								(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter);
+	SVariable*			function_padr								(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter);
+	SVariable*			ifunction_padCommon							(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter, bool tlPadLeft, bool tlPadRight);
+	SVariable*			function_proper								(SThisCode* thisCode, SVariable* varString);
+	SVariable*			function_rat								(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence);
+	SVariable*			function_ratc								(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence);
+	SVariable*			function_replicate							(SThisCode* thisCode, SVariable* varString, SVariable* varCount);
+	SVariable*			function_rgb								(SThisCode* thisCode, SVariable* varRed, SVariable* varGrn, SVariable* varBlu);
+	SVariable*			function_rgba								(SThisCode* thisCode, SVariable* varRed, SVariable* varGrn, SVariable* varBlu, SVariable* varAlp);
+	SVariable*			function_right								(SThisCode* thisCode, SVariable* varString, SVariable* varCount);
+	SVariable*			function_rtrim								(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2);
+	SVariable*			function_space								(SThisCode* thisCode, SVariable* varCount);
+	SVariable*			function_strtran							(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount);
+	SVariable*			function_strtranc							(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount);
+	SVariable*			ifunction_strtranCommon						(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount, bool tlCaseSensitive);
+	SVariable*			function_stuff								(SThisCode* thisCode, SVariable* varOriginalString, SVariable* varStartPos, SVariable* varNumToRemove, SVariable* varStuffString);
+	SVariable*			function_sys								(SThisCode* thisCode, SVariable* varIndex, SVariable* varP1, SVariable* varP2, SVariable* varP3, SVariable* varP4, SVariable* varP5, SVariable* varP6);
+	SVariable*			iFunction_sys2015							(SThisCode* thisCode, u32 tnPrefixWidth, u32 tnPostfixWidth);
+	SVariable*			function_sysmetric							(SThisCode* thisCode, SVariable* varIndex);
+	SVariable*			function_transform							(SThisCode* thisCode, SVariable* varVariable, SVariable* varFormat);
+	SVariable*			function_upper								(SThisCode* thisCode, SVariable* varString);
+	SVariable*			function_version							(SThisCode* thisCode, SVariable* varIndex);
 // Added temporarily until the processing engine is coded
-	SVariable*			function_concatenate						(SVariable* varString1, SVariable* varString2);
-	SVariable*			function_add								(SVariable* varNum1, SVariable* varNum2);
-	SVariable*			function_sub								(SVariable* varNum1, SVariable* varNum2);
-	SVariable*			function_mul								(SVariable* varNum1, SVariable* varNum2);
-	SVariable*			function_div								(SVariable* varNum1, SVariable* varNum2);
+	SVariable*			function_concatenate						(SThisCode* thisCode, SVariable* varString1, SVariable* varString2);
+	SVariable*			function_add								(SThisCode* thisCode, SVariable* varNum1, SVariable* varNum2);
+	SVariable*			function_sub								(SThisCode* thisCode, SVariable* varNum1, SVariable* varNum2);
+	SVariable*			function_mul								(SThisCode* thisCode, SVariable* varNum1, SVariable* varNum2);
+	SVariable*			function_div								(SThisCode* thisCode, SVariable* varNum1, SVariable* varNum2);
 	// transform (partial support, only converts to character, does not do any formatting ... yet)
 //////
 // STEP3: Copy the code above near one of the other functions in commands.cpp.
@@ -230,9 +239,9 @@ struct SVariable;
 // STEP1B: Define your command
 //
 //////
-	void				command_modify								(SComp* compModify);
-	void				command_open								(SComp* compOpen);
-	void				command_use									(SComp* compUse);
+	void				command_modify								(SThisCode* thisCode, SComp* compModify);
+	void				command_open								(SThisCode* thisCode, SComp* compOpen);
+	void				command_use									(SThisCode* thisCode, SComp* compUse);
 
 
 
@@ -260,14 +269,14 @@ struct SVariable;
 		//////
 			union {
 				uptr		_func;
-				SVariable*	(*func_0p)		(void);
-				SVariable*	(*func_1p)		(SVariable* p1);
-				SVariable*	(*func_2p)		(SVariable* p1, SVariable* p2);
-				SVariable*	(*func_3p)		(SVariable* p1, SVariable* p2, SVariable* p3);
-				SVariable*	(*func_4p)		(SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4);
-				SVariable*	(*func_5p)		(SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5);
-				SVariable*	(*func_6p)		(SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6);
-				SVariable*	(*func_7p)		(SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6, SVariable* p7);
+				SVariable*	(*func_0p)		(SThisCode* thisCode);
+				SVariable*	(*func_1p)		(SThisCode* thisCode, SVariable* p1);
+				SVariable*	(*func_2p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2);
+				SVariable*	(*func_3p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3);
+				SVariable*	(*func_4p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4);
+				SVariable*	(*func_5p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5);
+				SVariable*	(*func_6p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6);
+				SVariable*	(*func_7p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6, SVariable* p7);
 			};
 
 

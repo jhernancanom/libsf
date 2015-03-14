@@ -112,20 +112,47 @@
 	// First entry
 	SObject*	settings									= NULL;
 	SObject*	settingsDefaults							= NULL;
+;
+
+
+//////////
+// Structures used for processing
+//////
+	struct SSourceCode
+	{
+		SFunction*		firstFunction;			// First function in the program
+
+		SVariable*		params;					// The first parameter in the function
+		SVariable*		globals;				// The first global variable declared
+		SVariable*		locals;					// The first local variable declared
+		SVariable*		returns;				// The first return variable declared
+		SVariable*		scoped;					// The first scoped/temporary variable needed by the function
+
+		SEM*			sourceCode;				// The source code for this program
+	};
+
+	struct SThisCode
+	{
+		SLL				ll;
+
+		SSourceCode*	definition;				// As defined at compile time
+		SSourceCode*	live;					// As exists live in this instance at this level
+	};
 
 
 //////////
 // Forward declarations
 //////
-	bool					iEngine_executeStandaloneCommand		(SLine* line);
-	SComp*					iEngine_parseSourceCodeLine				(SLine* line);
-	SVariable*				iEngine_get_variableName_fromComponent	(SComp* comp, bool* tlManufactured);
-	SVariable*				iEngine_get_contiguousComponents		(SComp* comp, bool* tlManufactured, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount);
-	SVariable*				iEngine_get_functionResult				(SComp* comp);
-	void					iEngine_executeSetter					(cs8* name, SVariable* varOld, SVariable* varNew);
-	void					iEngine_executeSetter					(s8*  name, SVariable* varOld, SVariable* varNew);
-	void					iEngine_error							(u32 tnErrorNumber, SVariable* varRelated);
-	bool					iiEngine_getParametersBetween			(SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable** p1, SVariable** p2, SVariable** p3, SVariable** p4, SVariable** p5, SVariable** p6, SVariable** p7);
+	bool					iEngine_executeStandaloneCommand		(SThisCode* thisCode, SLine* line);
+	SComp*					iEngine_parseSourceCodeLine				(SThisCode* thisCode, SLine* line);
+	SVariable*				iEngine_get_variableName_fromComponent	(SThisCode* thisCode, SComp* comp, bool* tlManufactured);
+	SVariable*				iEngine_get_contiguousComponents		(SThisCode* thisCode, SComp* comp, bool* tlManufactured, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount);
+	SVariable*				iEngine_get_functionResult				(SThisCode* thisCode, SComp* comp);
+	void					iEngine_executeSetter					(SThisCode* thisCode, cs8* name, SVariable* varOld, SVariable* varNew);
+	void					iEngine_executeSetter					(SThisCode* thisCode, s8*  name, SVariable* varOld, SVariable* varNew);
+	void					iEngine_error							(SThisCode* thisCode, u32 tnErrorNumber, SVariable* varRelated);
+
+	bool					iiEngine_getParametersBetween			(SThisCode* thisCode, SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable** p1, SVariable** p2, SVariable** p3, SVariable** p4, SVariable** p5, SVariable** p6, SVariable** p7);
 
 	void					iBreakpoint_delete						(SBreakpoint** breakpoint);
 	SBreakpoint* 			iBreakpoint_add							(SBreakpoint** breakpoint, u32 tnType);

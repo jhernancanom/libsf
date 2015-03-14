@@ -94,6 +94,7 @@
 	struct SFont;
 	struct SFunction;
 	struct SVariable;
+	struct SSourceCode;
 
 	// When line-selecting, indicates the type
 	const u32		_SEM_SELECT_MODE_NONE						= 0;
@@ -117,19 +118,6 @@
 		SLine*	first;													// The first SEditChain that would've gone between them
 		// If multiple lines were deleted, the chain is moved here.
 		// If the line was changed, the old value is here
-	};
-
-	struct SSourceCode
-	{
-		SFunction*		firstFunction;									// First function in the program
-
-		SVariable*		params;											// The first parameter in the function
-		SVariable*		globals;										// The first global variable declared
-		SVariable*		locals;											// The first local variable declared
-		SVariable*		returns;										// The first return variable declared
-		SVariable*		scoped;											// The first scoped/temporary variable needed by the function
-
-		SEM*			sourceCode;										// The source code for this program
 	};
 
 	struct SBreakpoint
@@ -280,8 +268,8 @@
 	u32						iSEM_render							(SEM* sem, SObject* obj, bool tlRenderCursorline);
 	void					iSEM_render_highlightSelectedComps	(SEM* sem, SComp* firstComp);
 	bool					iSEM_verifyCursorIsVisible			(SEM* sem, SObject* obj);
-	bool					iSEM_onKeyDown_sourceCode			(SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii);
-	bool					iSEM_onKeyDown						(SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii);
+	bool					iSEM_onKeyDown_sourceCode			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii);
+	bool					iSEM_onKeyDown						(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii);
 	void*					iSEM_findMate						(SEM* sem, SLine* lineStart, SComp* comp);
 	void					iSEM_addTooltipHighlight			(SEM* sem, SLine* line, SObject* obj, s8* tcText, s32 tnTextLength, bool tlShowAbove);
 

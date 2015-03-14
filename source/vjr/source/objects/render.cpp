@@ -93,7 +93,7 @@
 // But they serve as placeholders for anything contained within.
 //
 //////
-	u32 iSubobj_renderEmpty(SObject* empty)
+	u32 iSubobj_renderEmpty(SThisCode* thisCode, SObject* empty)
 	{
 // 		SWindow*	win;
 // 		SObject*	objRoot;
@@ -122,7 +122,7 @@
 //        network resource.
 //
 //////
-	u32 iSubobj_renderForm(SObject* obj)
+	u32 iSubobj_renderForm(SThisCode* thisCode, SObject* obj)
 	{
 		u32			lnPixelsRendered;
 		RECT		lrc, lrc2;
@@ -228,7 +228,7 @@
 // Renders the subform.
 //
 //////
-	u32 iSubobj_renderSubform(SObject* obj)
+	u32 iSubobj_renderSubform(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		bool	llIsFocusSubform;
@@ -262,7 +262,7 @@
 					// Frame it
 					//////
 						// Determine if a control on this subform has focus
-						llIsFocusSubform = iObj_focus_descentCheck(obj, true, false);
+						llIsFocusSubform = iObj_focus_descentCheck(thisCode, obj, true, false);
 						if (!obj->bc || !iBmp_isValidCache(&obj->bc, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)llIsFocusSubform))
 						{
 							// The bitmap cache is no longer valid
@@ -341,7 +341,7 @@
 // they'll be displayed by their rendered nature below is if they do not possess any riders.
 //
 //////
-	u32 iSubobj_renderCarousel(SObject* obj)
+	u32 iSubobj_renderCarousel(SThisCode* thisCode, SObject* obj)
 	{
 		u32			lnPixelsRendered;
 		bool		llIsFocusCarousel;
@@ -375,7 +375,7 @@
 					// Frame it
 					//////
 						// Determine if a control on this subform has focus
-						objFocus			= iObj_focus_descentCheckObj(obj, true, false);
+						objFocus			= iObj_focus_descentCheckObj(thisCode, obj, true, false);
 						llIsFocusCarousel	= (objFocus != NULL);
 						if (!obj->bc || !iBmp_isValidCache(&obj->bc, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)llIsFocusCarousel))
 						{
@@ -433,7 +433,7 @@
 // Renders the rider.
 //
 //////
-	u32 iSubobj_renderRider(SObject* obj)
+	u32 iSubobj_renderRider(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -486,7 +486,7 @@
 // Renders the label.
 //
 //////
-	u32 iSubobj_renderLabel(SObject* obj)
+	u32 iSubobj_renderLabel(SThisCode* thisCode, SObject* obj)
 	{
 		s32			backStyle;
 		u32			lnPixelsRendered, lnFormat;
@@ -552,8 +552,8 @@
 					lrc.left += 4;
 
 				// Draw the text
-				caption = iObjProp_get_variable_byIndex(obj, _INDEX_CAPTION);
-				value	= iObjProp_get_variable_byIndex(obj, _INDEX_VALUE);
+				caption = iObjProp_get_variable_byIndex(thisCode, obj, _INDEX_CAPTION);
+				value	= iObjProp_get_variable_byIndex(thisCode, obj, _INDEX_VALUE);
 				DrawText(obj->bmp->hdc, caption->value.data, caption->value.length, &lrc, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
 
 				// And adjust back if need be
@@ -624,7 +624,7 @@
 // Renders the textbox.
 //
 //////
-	u32 iSubobj_renderTextbox(SObject* obj)
+	u32 iSubobj_renderTextbox(SThisCode* thisCode, SObject* obj)
 	{
 		u32			lnPixelsRendered, lnFormat;
 		SBgra		backColor, foreColor, borderColor;
@@ -691,7 +691,7 @@
 				}
 
 				// Draw the text
-				value = iObjProp_get_variable_byIndex(obj, _INDEX_VALUE);
+				value = iObjProp_get_variable_byIndex(thisCode, obj, _INDEX_VALUE);
 				DrawText(obj->bmp->hdc, value->value.data, value->value.length, &lrc2, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
 
 				// Frame rectangle
@@ -732,7 +732,7 @@
 // Renders the button.
 //
 //////
-	u32 iSubobj_renderButton(SObject* obj)
+	u32 iSubobj_renderButton(SThisCode* thisCode, SObject* obj)
 	{
 		u32			lnPixelsRendered, lnFormat;
 		SBgra		backColor, foreColor, borderColor;
@@ -799,7 +799,7 @@
 				}
 
 				// Draw the text
-				caption = iObjProp_get_variable_byIndex(obj, _INDEX_CAPTION);
+				caption = iObjProp_get_variable_byIndex(thisCode, obj, _INDEX_CAPTION);
 				DrawText(obj->bmp->hdc, caption->value.data, caption->value.length, &lrc2, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
 
 				// Frame rectangle
@@ -840,7 +840,7 @@
 // Renders the editbox.
 //
 //////
-	u32 iSubobj_renderEditbox(SObject* obj)
+	u32 iSubobj_renderEditbox(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		SBgra	borderColor;
@@ -900,7 +900,7 @@
 // Renders the image.
 //
 //////
-	u32 iSubobj_renderImage(SObject* obj)
+	u32 iSubobj_renderImage(SThisCode* thisCode, SObject* obj)
 	{
 		u32			lnPixelsRendered;
 		SBitmap*	bmp;
@@ -920,15 +920,15 @@
 				if (obj->ev.mouse.isMouseDown)
 				{
 					// Mouse is down on this item
-					bmp = iObjProp_get_bitmap(obj, _INDEX_PICTUREBMP_DOWN);
+					bmp = iObjProp_get_bitmap(thisCode, obj, _INDEX_PICTUREBMP_DOWN);
 
 				} else if (obj->ev.mouse.isMouseOver) {
 					// Mouse is over this item
-					bmp = iObjProp_get_bitmap(obj, _INDEX_PICTUREBMP_OVER);
+					bmp = iObjProp_get_bitmap(thisCode, obj, _INDEX_PICTUREBMP_OVER);
 
 				} else {
 					// Render normally
-					bmp = iObjProp_get_bitmap(obj, _INDEX_PICTUREBMP);
+					bmp = iObjProp_get_bitmap(thisCode, obj, _INDEX_PICTUREBMP);
 				}
 
 				// Render it
@@ -977,7 +977,7 @@
 // of the render request, then it draws the child objects atop itself.
 //
 //////
-	u32 iSubobj_renderCheckbox(SObject* obj)
+	u32 iSubobj_renderCheckbox(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -1026,7 +1026,7 @@
 // Renders the option.
 //
 //////
-	u32 iSubobj_renderOption(SObject* obj)
+	u32 iSubobj_renderOption(SThisCode* thisCode, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
 
@@ -1046,7 +1046,7 @@
 // Renders the radio.
 //
 //////
-	u32 iSubobj_renderRadio(SObject* obj)
+	u32 iSubobj_renderRadio(SThisCode* thisCode, SObject* obj)
 	{
 		u32			lnPixelsRendered, lnXCenter, lnYCenter, lnSkip;
 		f32			lfTheta, lfRadius;
@@ -1071,9 +1071,9 @@
 				//////////
 				// Get the values
 				//////
-					lfValue	= iObjProp_get_f64_direct(obj, _INDEX_VALUE);
-					lfMin	= iObjProp_get_f64_direct(obj, _INDEX_VALUE_MINIMUM);
-					lfMax	= iObjProp_get_f64_direct(obj, _INDEX_VALUE_MAXIMUM);
+					lfValue	= iObjProp_get_f64_direct(thisCode, obj, _INDEX_VALUE);
+					lfMin	= iObjProp_get_f64_direct(thisCode, obj, _INDEX_VALUE_MINIMUM);
+					lfMax	= iObjProp_get_f64_direct(thisCode, obj, _INDEX_VALUE_MAXIMUM);
 
 					// Make sure max is greater than or equal to min, and value is in range
 					lfMax	= max(lfMin, lfMax);
@@ -1122,7 +1122,7 @@
 				//////////
 				// Draw the text of the value into the center
 				//////
-					lcSprintfFormat = iMath_roundTo(&lfValue, iObjProp_get_f64_direct(obj, _INDEX_ROUND_TO));
+					lcSprintfFormat = iMath_roundTo(&lfValue, iObjProp_get_f64_direct(thisCode, obj, _INDEX_ROUND_TO));
 					sprintf(buffer, lcSprintfFormat, lfValue);
 
 					if (buffer[strlen(buffer)] == '.')
@@ -1179,7 +1179,7 @@
 // Renders the cmdGroup.
 //
 //////
-	u32 iSubobj_renderCmdGroup(SObject* obj)
+	u32 iSubobj_renderCmdGroup(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -1230,7 +1230,7 @@
 // Renders the optGroup.
 //
 //////
-	u32 iSubobj_renderOptGroup(SObject* obj)
+	u32 iSubobj_renderOptGroup(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -1281,7 +1281,7 @@
 // Renders the listbox.
 //
 //////
-	u32 iSubobj_renderListbox(SObject* obj)
+	u32 iSubobj_renderListbox(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -1332,7 +1332,7 @@
 // Renders the combobox.
 //
 //////
-	u32 iSubobj_renderCombobox(SObject* obj)
+	u32 iSubobj_renderCombobox(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -1383,7 +1383,7 @@
 // Renders the formset.
 //
 //////
-	u32 iSubobj_renderFormset(SObject* obj)
+	u32 iSubobj_renderFormset(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -1434,7 +1434,7 @@
 // Renders the toolbar.
 //
 //////
-	u32 iSubobj_renderToolbar(SObject* obj)
+	u32 iSubobj_renderToolbar(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -1485,7 +1485,7 @@
 // Renders the separator.
 //
 //////
-	u32 iSubobj_renderSeparator(SObject* obj)
+	u32 iSubobj_renderSeparator(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -1536,7 +1536,7 @@
 // Renders the line.
 //
 //////
-	u32 iSubobj_renderLine(SObject* obj)
+	u32 iSubobj_renderLine(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -1587,7 +1587,7 @@
 // Renders the shape.
 //
 //////
-	u32 iSubobj_renderShape(SObject* obj)
+	u32 iSubobj_renderShape(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -1638,7 +1638,7 @@
 // Renders the container.
 //
 //////
-	u32 iSubobj_renderContainer(SObject* obj)
+	u32 iSubobj_renderContainer(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -1689,7 +1689,7 @@
 // Renders the control.
 //
 //////
-	u32 iSubobj_renderControl(SObject* obj)
+	u32 iSubobj_renderControl(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -1740,7 +1740,7 @@
 // Renders the grid.
 //
 //////
-	u32 iSubobj_renderGrid(SObject* obj)
+	u32 iSubobj_renderGrid(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -1791,7 +1791,7 @@
 // Renders the column.
 //
 //////
-	u32 iSubobj_renderColumn(SObject* obj)
+	u32 iSubobj_renderColumn(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -1842,7 +1842,7 @@
 // Renders the header.
 //
 //////
-	u32 iSubobj_renderHeader(SObject* obj)
+	u32 iSubobj_renderHeader(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -1893,7 +1893,7 @@
 // Renders the oleBound.
 //
 //////
-	u32 iSubobj_renderOleBound(SObject* obj)
+	u32 iSubobj_renderOleBound(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -1944,7 +1944,7 @@
 // Renders the oleContain.
 //
 //////
-	u32 iSubobj_renderOleContain(SObject* obj)
+	u32 iSubobj_renderOleContain(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -1995,7 +1995,7 @@
 // Renders the spinner.
 //
 //////
-	u32 iSubobj_renderSpinner(SObject* obj)
+	u32 iSubobj_renderSpinner(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -2046,7 +2046,7 @@
 // Renders the timer.
 //
 //////
-	u32 iSubobj_renderTimer(SObject* obj)
+	u32 iSubobj_renderTimer(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -2097,7 +2097,7 @@
 // Renders the hyperlink.
 //
 //////
-	u32 iSubobj_renderHyperlink(SObject* obj)
+	u32 iSubobj_renderHyperlink(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -2148,7 +2148,7 @@
 // Renders the collection.
 //
 //////
-	u32 iSubobj_renderCollection(SObject* obj)
+	u32 iSubobj_renderCollection(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -2199,7 +2199,7 @@
 // Renders the page.
 //
 //////
-	u32 iSubobj_renderPage(SObject* obj)
+	u32 iSubobj_renderPage(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -2250,7 +2250,7 @@
 // Renders the pageFrame.
 //
 //////
-	u32 iSubobj_renderPageFrame(SObject* obj)
+	u32 iSubobj_renderPageFrame(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -2301,7 +2301,7 @@
 // Renders the session.
 //
 //////
-	u32 iSubobj_renderSession(SObject* obj)
+	u32 iSubobj_renderSession(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -2352,7 +2352,7 @@
 // Renders the custom.
 //
 //////
-	u32 iSubobj_renderCustom(SObject* obj)
+	u32 iSubobj_renderCustom(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -2403,7 +2403,7 @@
 // Renders the exception.
 //
 //////
-	u32 iSubobj_renderException(SObject* obj)
+	u32 iSubobj_renderException(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;
@@ -2454,7 +2454,7 @@
 // Renders the settings.
 //
 //////
-	u32 iSubobj_renderSettings(SObject* obj)
+	u32 iSubobj_renderSettings(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
 		RECT	lrc;

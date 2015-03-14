@@ -800,6 +800,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 //////
 	SNode* iiComps_xlatToNodes_parenthesis_left(SNode** root, SNode* active, SComp* comp)
 	{
+		SThisCode*	thisCode = NULL;
 		SNode*		node;
 		SVariable*	var;
 
@@ -818,7 +819,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 			//////////
 			// Indicate we'll need a temporary variable for our result
 			//////
-				var = iVariable_create(_VAR_TYPE_NULL, NULL);
+				var = iVariable_create(thisCode, _VAR_TYPE_NULL, NULL);
 				if (var)
 				{
 					// Append the temporary variable
@@ -4789,11 +4790,11 @@ debug_break;
 // Called to terminate the indirect references to the point of
 //
 //////
-	SVariable* iiVariable_terminateIndirect(SVariable* var)
+	SVariable* iiVariable_terminateIndirect(SThisCode* thisCode, SVariable* var)
 	{
 		// Is there an indirect reference?
 		if (var && var->indirect)
-			return(iiVariable_terminateIndirect(var->indirect));
+			return(iiVariable_terminateIndirect(thisCode, var->indirect));
 
 		// We're done
 		return(var);
@@ -4808,7 +4809,7 @@ debug_break;
 // no identity.
 //
 //////
-	SVariable* iVariable_create(s32 tnVarType, SVariable* varIndirect)
+	SVariable* iVariable_create(SThisCode* thisCode, s32 tnVarType, SVariable* varIndirect)
 	{
 		SVariable*	varDefault;
 		SVariable*	varNew;
@@ -4899,12 +4900,12 @@ debug_break;
 							{
 								// Grab the default initialization type, which is logical false unless otherwise set
 								varDefault = propGet_settings_InitializeDefaultValue(_settings);
-								if (varDefault)		varNew = iVariable_copy(varDefault, false);
-								else				varNew = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+								if (varDefault)		varNew = iVariable_copy(thisCode, varDefault, false);
+								else				varNew = iVariable_create(thisCode, _VAR_TYPE_LOGICAL, NULL);
 
 							} else {
 								// Create default type until initialization is complete
-								varNew = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+								varNew = iVariable_create(thisCode, _VAR_TYPE_LOGICAL, NULL);
 							}
 					}
 				}
@@ -4925,19 +4926,19 @@ debug_break;
 // Called to create and populate a new variable in one go
 //
 //////
-	SVariable* iVariable_createAndPopulate(s32 tnVarType, SDatum* datum)
+	SVariable* iVariable_createAndPopulate(SThisCode* thisCode, s32 tnVarType, SDatum* datum)
 	{
-		if (datum)		return(iVariable_createAndPopulate(tnVarType, datum->data_u8, datum->length));
+		if (datum)		return(iVariable_createAndPopulate(thisCode, tnVarType, datum->data_u8, datum->length));
 		else			return(NULL);
 	}
 
-	SVariable* iVariable_createAndPopulate(s32 tnVarType, u8* tcData, u32 tnDataLength)
+	SVariable* iVariable_createAndPopulate(SThisCode* thisCode, s32 tnVarType, u8* tcData, u32 tnDataLength)
 	{
 		SVariable* var;
 
 
 		// Create the variable
-		var = iVariable_create(tnVarType, NULL);
+		var = iVariable_create(thisCode, tnVarType, NULL);
 		if (var && tcData && tnDataLength > 0)
 		{
 			// Populate it
@@ -4958,19 +4959,19 @@ debug_break;
 		return(var);
 	}
 
-	SVariable* iVariable_createAndPopulate(s32 tnVarType, s8* tcData, u32 tnDataLength)
+	SVariable* iVariable_createAndPopulate(SThisCode* thisCode, s32 tnVarType, s8* tcData, u32 tnDataLength)
 	{
-		return(iVariable_createAndPopulate(tnVarType, (u8*)tcData, tnDataLength));
+		return(iVariable_createAndPopulate(thisCode, tnVarType, (u8*)tcData, tnDataLength));
 	}
 
-	SVariable* iVariable_createAndPopulate(s32 tnVarType, cu8* tcData, u32 tnDataLength)
+	SVariable* iVariable_createAndPopulate(SThisCode* thisCode, s32 tnVarType, cu8* tcData, u32 tnDataLength)
 	{
-		return(iVariable_createAndPopulate(tnVarType, (u8*)tcData, tnDataLength));
+		return(iVariable_createAndPopulate(thisCode, tnVarType, (u8*)tcData, tnDataLength));
 	}
 
-	SVariable* iVariable_createAndPopulate(s32 tnVarType, cs8* tcData, u32 tnDataLength)
+	SVariable* iVariable_createAndPopulate(SThisCode* thisCode, s32 tnVarType, cs8* tcData, u32 tnDataLength)
 	{
-		return(iVariable_createAndPopulate(tnVarType, (u8*)tcData, tnDataLength));
+		return(iVariable_createAndPopulate(thisCode, tnVarType, (u8*)tcData, tnDataLength));
 	}
 
 
@@ -4981,7 +4982,7 @@ debug_break;
 // Called to create a character variable using the indicated base/radix
 //
 //////
-	SVariable* iVariable_createByRadix(u64 tnValue, u64 tnBase, u32 tnPrefixChars, u32 tnPostfixChars)
+	SVariable* iVariable_createByRadix(SThisCode* thisCode, u64 tnValue, u64 tnBase, u32 tnPrefixChars, u32 tnPostfixChars)
 	{
 		s32			lnI;
 		SVariable*	result;
@@ -5049,7 +5050,7 @@ debug_break;
 				//////////
 				// Create the variable
 				//////
-					result = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, buffer, lnI + tnPrefixChars + tnPostfixChars);
+					result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, buffer, lnI + tnPrefixChars + tnPostfixChars);
 					if (result)
 					{
 						// Reset everything
@@ -5084,7 +5085,7 @@ debug_break;
 //        rather than a name-driven model.  However, names are still used nearly everywhere. :-)
 //
 //////
-	SVariable* iVariable_searchForName(SVariable* varRoot, s8* tcVarName, u32 tnVarNameLength, SComp* comp)
+	SVariable* iVariable_searchForName(SThisCode* thisCode, SVariable* varRoot, s8* tcVarName, u32 tnVarNameLength, SComp* comp)
 	{
 		SVariable*	var;
 		SComp*		compNext;
@@ -5110,7 +5111,7 @@ debug_break;
 							if ((compNext = comp->ll.nextComp) && compNext->iCode == _ICODE_DOT && (compNext2 = compNext->ll.nextComp) && (compNext2->iCode == _ICODE_ALPHA || compNext2->iCode == _ICODE_ALPHANUMERIC))
 							{
 								// We've found something like "lo." where lo is an object, and there is a name reference after it
-								var = iObj_getPropertyAsVariable(var->obj, compNext2->line->sourceCode->data + compNext2->start, compNext2->length, compNext2);
+								var = iObj_getPropertyAsVariable(thisCode, var->obj, compNext2->line->sourceCode->data + compNext2->start, compNext2->length, compNext2);
 							}
 							// If we get here, then they did not have a "." after the the object reference, and are referencing the object directly
 							break;
@@ -5147,26 +5148,26 @@ debug_break;
 // Called to create all of the default variable values
 //
 //////
-	void iVariable_createDefaultValues(void)
+	void iVariable_createDefaultValues(SThisCode* thisCode)
 	{
-		varDefault_null			= iVariable_create(_VAR_TYPE_NULL,		NULL);
-		varDefault_numeric		= iVariable_create(_VAR_TYPE_NUMERIC,	NULL);
-		varDefault_s32			= iVariable_create(_VAR_TYPE_S32,		NULL);
-		varDefault_u32			= iVariable_create(_VAR_TYPE_U32,		NULL);
-		varDefault_f32			= iVariable_create(_VAR_TYPE_F32,		NULL);
-		varDefault_s64			= iVariable_create(_VAR_TYPE_S64,		NULL);
-		varDefault_u64			= iVariable_create(_VAR_TYPE_U64,		NULL);
-		varDefault_f64			= iVariable_create(_VAR_TYPE_F64,		NULL);
-		varDefault_date			= iVariable_create(_VAR_TYPE_DATE,		NULL);
-		varDefault_datetime		= iVariable_create(_VAR_TYPE_DATETIME,	NULL);
-		varDefault_currency		= iVariable_create(_VAR_TYPE_CURRENCY,	NULL);
-		varDefault_s16			= iVariable_create(_VAR_TYPE_S16,		NULL);
-		varDefault_u16			= iVariable_create(_VAR_TYPE_U16,		NULL);
-		varDefault_s8			= iVariable_create(_VAR_TYPE_S8,		NULL);
-		varDefault_u8			= iVariable_create(_VAR_TYPE_U8,		NULL);
-		varDefault_logical		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-		varDefault_bitmap		= iVariable_create(_VAR_TYPE_BITMAP,	NULL);
-		varDefault_thiscode		= iVariable_create(_VAR_TYPE_THISCODE,	NULL);
+		varDefault_null			= iVariable_create(thisCode, _VAR_TYPE_NULL,		NULL);
+		varDefault_numeric		= iVariable_create(thisCode, _VAR_TYPE_NUMERIC,		NULL);
+		varDefault_s32			= iVariable_create(thisCode, _VAR_TYPE_S32,			NULL);
+		varDefault_u32			= iVariable_create(thisCode, _VAR_TYPE_U32,			NULL);
+		varDefault_f32			= iVariable_create(thisCode, _VAR_TYPE_F32,			NULL);
+		varDefault_s64			= iVariable_create(thisCode, _VAR_TYPE_S64,			NULL);
+		varDefault_u64			= iVariable_create(thisCode, _VAR_TYPE_U64,			NULL);
+		varDefault_f64			= iVariable_create(thisCode, _VAR_TYPE_F64,			NULL);
+		varDefault_date			= iVariable_create(thisCode, _VAR_TYPE_DATE,		NULL);
+		varDefault_datetime		= iVariable_create(thisCode, _VAR_TYPE_DATETIME,	NULL);
+		varDefault_currency		= iVariable_create(thisCode, _VAR_TYPE_CURRENCY,	NULL);
+		varDefault_s16			= iVariable_create(thisCode, _VAR_TYPE_S16,			NULL);
+		varDefault_u16			= iVariable_create(thisCode, _VAR_TYPE_U16,			NULL);
+		varDefault_s8			= iVariable_create(thisCode, _VAR_TYPE_S8,			NULL);
+		varDefault_u8			= iVariable_create(thisCode, _VAR_TYPE_U8,			NULL);
+		varDefault_logical		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,		NULL);
+		varDefault_bitmap		= iVariable_create(thisCode, _VAR_TYPE_BITMAP,		NULL);
+		varDefault_thiscode		= iVariable_create(thisCode, _VAR_TYPE_THISCODE,	NULL);
 	}
 
 
@@ -5177,7 +5178,7 @@ debug_break;
 // Called to initialize all of the gsProps_master[] variables
 //
 //////
-	void iVariable_createPropsMaster(void)
+	void iVariable_createPropsMaster(SThisCode* thisCode)
 	{
 		s32 lnI;
 
@@ -5185,7 +5186,7 @@ debug_break;
 		for (lnI = 0; lnI < gsProps_masterSize; lnI++)
 		{
 			// Create the variable
-			gsProps_master[lnI].varInit = iVariable_create(gsProps_master[lnI].varType, NULL);
+			gsProps_master[lnI].varInit = iVariable_create(thisCode, gsProps_master[lnI].varType, NULL);
 
 			// If a valid variable was created, initialize it to the static baseclass values
 			if (gsProps_master[lnI].varInit)
@@ -5232,12 +5233,12 @@ debug_break;
 						break;
 
 					case _VAR_TYPE_CHARACTER:
-						iVariable_set_character(gsProps_master[lnI].varInit, gsProps_master[lnI]._u8p, -1);
+						iVariable_set_character(thisCode, gsProps_master[lnI].varInit, gsProps_master[lnI]._u8p, -1);
 						break;
 
 					case _VAR_TYPE_BITMAP:
-						if (gsProps_master[lnI]._bmp)		iVariable_set_bitmap(gsProps_master[lnI].varInit, gsProps_master[lnI]._bmp);
-						else								iVariable_set_bitmap(gsProps_master[lnI].varInit, bmpNoImage);
+						if (gsProps_master[lnI]._bmp)		iVariable_set_bitmap(thisCode, gsProps_master[lnI].varInit, gsProps_master[lnI]._bmp);
+						else								iVariable_set_bitmap(thisCode, gsProps_master[lnI].varInit, bmpNoImage);
 						break;
 
 					case _VAR_TYPE_LOGICAL:
@@ -5269,7 +5270,7 @@ if (!gsProps_master[lnI].varInit)
 // associated default value for the variable type.
 //
 //////
-	bool iVariable_isVarTypeValid(s32 tnVarType, SVariable** varDefaultValue)
+	bool iVariable_isVarTypeValid(SThisCode* thisCode, s32 tnVarType, SVariable** varDefaultValue)
 	{
 		SVariable* holder;
 
@@ -5369,7 +5370,7 @@ if (!gsProps_master[lnI].varInit)
 // which can be in a wide variety of internal storage mechanisms, but are all still numeric.
 //
 //////
-	bool iVariable_areTypesCompatible(SVariable* var1, SVariable* var2)
+	bool iVariable_areTypesCompatible(SThisCode* thisCode, SVariable* var1, SVariable* var2)
 	{
 		if (var1 && var2)
 		{
@@ -5398,7 +5399,7 @@ if (!gsProps_master[lnI].varInit)
 // Called to replace the varDst with the varSrc.
 //
 //////
-	bool iVariable_copy(SVariable* varDst, SVariable* varSrc)
+	bool iVariable_copy(SThisCode* thisCode, SVariable* varDst, SVariable* varSrc)
 	{
 		bool llResult;
 
@@ -5410,8 +5411,8 @@ if (!gsProps_master[lnI].varInit)
 			//////////
 			// Make sure we're dealing with the actual variable
 			//////
-				varDst = iiVariable_terminateIndirect(varDst);
-				varSrc = iiVariable_terminateIndirect(varSrc);
+				varDst = iiVariable_terminateIndirect(thisCode, varDst);
+				varSrc = iiVariable_terminateIndirect(thisCode, varSrc);
 
 
 			//////////
@@ -5424,7 +5425,7 @@ if (!gsProps_master[lnI].varInit)
 			//////////
 			// Delete the existing variable contents
 			//////
-				iVariable_delete(varDst, false);
+				iVariable_delete(thisCode, varDst, false);
 
 
 			//////////
@@ -5452,7 +5453,7 @@ if (!gsProps_master[lnI].varInit)
 						{
 							case _VAR_TYPE_OBJECT:
 								// Copy the object
-								varDst->obj = iObj_copy(varSrc->obj, NULL, NULL, true, true);
+								varDst->obj = iObj_copy(thisCode, varSrc->obj, NULL, NULL, true, true);
 								break;
 
 							case _VAR_TYPE_BITMAP:
@@ -5482,13 +5483,13 @@ if (!gsProps_master[lnI].varInit)
 // Called to copy the variable to a new variable
 //
 //////
-	SVariable* iVariable_copy(SVariable* varSrc, bool tlMakeReference)
+	SVariable* iVariable_copy(SThisCode* thisCode, SVariable* varSrc, bool tlMakeReference)
 	{
 		SVariable* varDst;
 
 
 		// De-reference the variable
-		varSrc = iiVariable_terminateIndirect(varSrc);
+		varSrc = iiVariable_terminateIndirect(thisCode, varSrc);
 
 		// Are we still valid?
 		if (varSrc)
@@ -5497,12 +5498,12 @@ if (!gsProps_master[lnI].varInit)
 			if (tlMakeReference)
 			{
 				// Just create a reference to the variable
-				varDst = iVariable_create(varSrc->varType, varSrc);
+				varDst = iVariable_create(thisCode, varSrc->varType, varSrc);
 
 			} else {
 				// Create a new real variable, a full copy of the original
-				varDst = iVariable_create(varSrc->varType, NULL);
-				iVariable_copy(varDst, varSrc);
+				varDst = iVariable_create(thisCode, varSrc->varType, NULL);
+				iVariable_copy(thisCode, varDst, varSrc);
 			}
 
 			// Success or failure ... it's in the allocation
@@ -5522,11 +5523,11 @@ if (!gsProps_master[lnI].varInit)
 // Called to set the variable to the value of the other variable
 //
 //////
-	bool iVariable_set(SVariable* varDst, SVariable* varSrc)
+	bool iVariable_set(SThisCode* thisCode, SVariable* varDst, SVariable* varSrc)
 	{
 		// De-reference the variable
-		varDst = iiVariable_terminateIndirect(varDst);
-		varSrc = iiVariable_terminateIndirect(varSrc);
+		varDst = iiVariable_terminateIndirect(thisCode, varDst);
+		varSrc = iiVariable_terminateIndirect(thisCode, varSrc);
 
 		// Are we still valid?
 // TODO:  Need to check the variable type before performing the varDst->value test
@@ -5557,7 +5558,7 @@ if (!gsProps_master[lnI].varInit)
 
 			} else {
 				// Copy the content the long way
-				iVariable_copy(varDst, varSrc);
+				iVariable_copy(thisCode, varDst, varSrc);
 			}
 
 			// Success
@@ -5565,7 +5566,7 @@ if (!gsProps_master[lnI].varInit)
 
 		} else {
 			// Failure
-			iEngine_error(_ERROR_VARIABLE_NOT_FOUND, ((varDst) ? varDst : varSrc));
+			iEngine_error(thisCode, _ERROR_VARIABLE_NOT_FOUND, ((varDst) ? varDst : varSrc));
 			return(false);
 		}
 	}
@@ -5578,7 +5579,7 @@ if (!gsProps_master[lnI].varInit)
 // Called to set the input variable of varying types to the output variable of existing type
 //
 //////
-	bool iVariable_setNumeric_toType(SVariable* varDst, f32* val_f32, f64* val_f64, s32* val_s32, u32* val_u32, s64* val_s64, u64* val_u64)
+	bool iVariable_setNumeric_toExistingType(SThisCode* thisCode, SVariable* varDst, f32* val_f32, f64* val_f64, s32* val_s32, u32* val_u32, s64* val_s64, u64* val_u64)
 	{
 		s32	lnI;
 		f64	lfValue;
@@ -5597,11 +5598,11 @@ if (!gsProps_master[lnI].varInit)
 					case _VAR_TYPE_F32:
 						// For any type that can be converted, convert it
 						     if (val_f32)		*varDst->value.data_f32 = (f32)*val_f32;
-						else if (val_f64)		*varDst->value.data_f32 = (f32)*val_f64;
-						else if (val_s32)		*varDst->value.data_f32 = (f32)*val_s32;
-						else if (val_u32)		*varDst->value.data_f32 = (f32)*val_u32;
-						else if (val_s64)		*varDst->value.data_f32 = (f32)*val_s64;
-						else if (val_u64)		*varDst->value.data_f32 = (f32)*val_u64;
+						else if (val_f64)		*varDst->value.data_f32 = (f32)iErrorCandidate_signalOutOfRange_f64(thisCode, *val_f64, _VAR_TYPE_F32, NULL, false, NULL);
+						else if (val_s32)		*varDst->value.data_f32 = (f32)iErrorCandidate_signalOutOfRange_s32(thisCode, *val_s32, _VAR_TYPE_F32, NULL, false, NULL);
+						else if (val_u32)		*varDst->value.data_f32 = (f32)iErrorCandidate_signalOutOfRange_u32(thisCode, *val_u32, _VAR_TYPE_F32, NULL, false, NULL);
+						else if (val_s64)		*varDst->value.data_f32 = (f32)iErrorCandidate_signalOutOfRange_s64(thisCode, *val_s64, _VAR_TYPE_F32, NULL, false, NULL);
+						else if (val_u64)		*varDst->value.data_f32 = (f32)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_u64, _VAR_TYPE_F32, NULL, false, NULL);
 						else {
 							// Every parameter they passed was NULL
 							debug_break;
@@ -5748,7 +5749,7 @@ do_as_numeric:
 
 					case _VAR_TYPE_BI:
 					case _VAR_TYPE_BFP:
-						iError_reportByNumber(_ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+						iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
 						break;
 
 					default:
@@ -5779,7 +5780,7 @@ do_as_numeric:
 							}
 
 						} else {
-							iError_reportByNumber(_ERROR_INVALID_ARGUMENT_TYPE_COUNT, NULL, false);
+							iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, NULL, false);
 							return(false);
 						}
 						break;
@@ -5795,10 +5796,88 @@ do_as_numeric:
 
 //////////
 //
+// Called to set the f32 value to the existing type of the variable, forcing it into that type
+//
+//////
+	bool iVariable_set_f32_toExistingType(SThisCode* thisCode, SVariable* var, f32 value)
+	{
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to set the f32 value to the existing type of the variable, forcing it into that type
+//
+//////
+	bool iVariable_set_f64_toExistingType(SThisCode* thisCode, SVariable* var, f64 value)
+	{
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to set the f32 value to the existing type of the variable, forcing it into that type
+//
+//////
+	bool iVariable_set_s32_toExistingType(SThisCode* thisCode, SVariable* var, s32 value)
+	{
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to set the f32 value to the existing type of the variable, forcing it into that type
+//
+//////
+	bool iVariable_set_s64_toExistingType(SThisCode* thisCode, SVariable* var, s64 value)
+	{
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to set the f32 value to the existing type of the variable, forcing it into that type
+//
+//////
+	bool iVariable_set_u32_toExistingType(SThisCode* thisCode, SVariable* var, u32 value)
+	{
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to set the f32 value to the existing type of the variable, forcing it into that type
+//
+//////
+	bool iVariable_set_u64_toExistingType(SThisCode* thisCode, SVariable* var, u64 value)
+	{
+		return(false);
+	}
+
+
+
+
+//////////
+//
 // Called to set the variable name
 //
 //////
-	SDatum* iVariable_setName(SVariable* var, cu8* tcName, s32 tnNameLength)
+	SDatum* iVariable_setName(SThisCode* thisCode, SVariable* var, cu8* tcName, s32 tnNameLength)
 	{
 		// Make sure our environment is sane
 		if (var && tcName && tnNameLength > 0)
@@ -5822,10 +5901,10 @@ do_as_numeric:
 // Called to set the value to an s16 value
 //
 //////
-	bool iVariable_set_s16(SVariable* var, s16 value)
+	bool iVariable_set_s16(SThisCode* thisCode, SVariable* var, s16 value)
 	{
 		// De-reference the variable
-		var = iiVariable_terminateIndirect(var);
+		var = iiVariable_terminateIndirect(thisCode, var);
 
 		// Are we still valid?
 		if (var && var->varType == _VAR_TYPE_S16 && var->value.data_s16)
@@ -5850,10 +5929,10 @@ do_as_numeric:
 // Called to set the value to an s32 value
 //
 //////
-	bool iVariable_set_s32(SVariable* var, s32 value)
+	bool iVariable_set_s32(SThisCode* thisCode, SVariable* var, s32 value)
 	{
 		// De-reference the variable
-		var = iiVariable_terminateIndirect(var);
+		var = iiVariable_terminateIndirect(thisCode, var);
 
 		// Are we still valid?
 		if (var && var->varType == _VAR_TYPE_S32 && var->value.data_s32)
@@ -5878,10 +5957,10 @@ do_as_numeric:
 // Called to set the value to a u16 value
 //
 //////
-	bool iVariable_set_u16(SVariable* var, u16 value)
+	bool iVariable_set_u16(SThisCode* thisCode, SVariable* var, u16 value)
 	{
 		// De-reference the variable
-		var = iiVariable_terminateIndirect(var);
+		var = iiVariable_terminateIndirect(thisCode, var);
 
 		// Are we still valid?
 		if (var && var->varType == _VAR_TYPE_U16 && var->value.data_u16)
@@ -5906,10 +5985,10 @@ do_as_numeric:
 // Called to set the value to a u32 value
 //
 //////
-	bool iVariable_set_u32(SVariable* var, u32 value)
+	bool iVariable_set_u32(SThisCode* thisCode, SVariable* var, u32 value)
 	{
 		// De-reference the variable
-		var = iiVariable_terminateIndirect(var);
+		var = iiVariable_terminateIndirect(thisCode, var);
 
 		// Are we still valid?
 		if (var && var->varType == _VAR_TYPE_U32 && var->value.data_u32)
@@ -5934,10 +6013,10 @@ do_as_numeric:
 // Called to set the value to a f32 value
 //
 //////
-	bool iVariable_set_f32(SVariable* var, f32 value)
+	bool iVariable_set_f32(SThisCode* thisCode, SVariable* var, f32 value)
 	{
 		// De-reference the variable
-		var = iiVariable_terminateIndirect(var);
+		var = iiVariable_terminateIndirect(thisCode, var);
 
 		// Are we still valid?
 		if (var && var->varType == _VAR_TYPE_F32 && var->value.data_f32)
@@ -5962,10 +6041,10 @@ do_as_numeric:
 // Called to set the value to a f64 value
 //
 //////
-	bool iVariable_set_f64(SVariable* var, f64 value)
+	bool iVariable_set_f64(SThisCode* thisCode, SVariable* var, f64 value)
 	{
 		// De-reference the variable
-		var = iiVariable_terminateIndirect(var);
+		var = iiVariable_terminateIndirect(thisCode, var);
 
 		// Are we still valid?
 		if (var && var->varType == _VAR_TYPE_F64 && var->value.data_f64)
@@ -5990,16 +6069,16 @@ do_as_numeric:
 // Called to set the bool value
 //
 //////
-	bool iVariable_set_logical(SVariable* var, bool tlValue)
+	bool iVariable_set_logical(SThisCode* thisCode, SVariable* var, bool tlValue)
 	{
 		// Translate bool to logical true or false
-		return(iVariable_set_logical(var, ((tlValue) ? _LOGICAL_TRUE : _LOGICAL_FALSE)));
+		return(iVariable_set_logical(thisCode, var, ((tlValue) ? _LOGICAL_TRUE : _LOGICAL_FALSE)));
 	}
 
-	bool iVariable_set_logical(SVariable* var, s32 value)
+	bool iVariable_set_logical(SThisCode* thisCode, SVariable* var, s32 value)
 	{
 		// De-reference the variable
-		var = iiVariable_terminateIndirect(var);
+		var = iiVariable_terminateIndirect(thisCode, var);
 
 		// Are we still valid?
 		if (var && var->varType == _VAR_TYPE_LOGICAL && var->value.data_s8)
@@ -6024,13 +6103,13 @@ do_as_numeric:
 // Called to set the bitmap value for the indicated variable
 //
 //////
-	bool iVariable_set_bitmap(SVariable* var, SBitmap* bmp)
+	bool iVariable_set_bitmap(SThisCode* thisCode, SVariable* var, SBitmap* bmp)
 	{
 		// Make sure the environment is sane
 		if (var && bmp)
 		{
 			// De-reference the variable
-			var = iiVariable_terminateIndirect(var);
+			var = iiVariable_terminateIndirect(thisCode, var);
 
 			// Are we still valid?
 			if (var)
@@ -6040,7 +6119,7 @@ do_as_numeric:
 				{
 					// We need to refactor this variable into a bitmap
 					// Delete the old contents
-					iVariable_delete(var, false);
+					iVariable_delete(thisCode, var, false);
 
 					// At this point, var->varType = _VAR_TYPE_NULL
 					var->varType = _VAR_TYPE_BITMAP;
@@ -6070,13 +6149,13 @@ do_as_numeric:
 // Called to set the character value for the indicated variable
 //
 //////
-	bool iVariable_set_character(SVariable* var, u8* tcData, u32 tnDataLength)
+	bool iVariable_set_character(SThisCode* thisCode, SVariable* var, u8* tcData, u32 tnDataLength)
 	{
 		// Make sure our environment is sane
 		if (var && tcData && tnDataLength != 0)
 		{
 			// De-reference the variable
-			var = iiVariable_terminateIndirect(var);
+			var = iiVariable_terminateIndirect(thisCode, var);
 
 			// Are we still valid?
 			if (var)
@@ -6086,7 +6165,7 @@ do_as_numeric:
 				{
 					// We need to refactor this variable into a character
 					// Delete the old contents
-					iVariable_delete(var, false);
+					iVariable_delete(thisCode, var, false);
 
 					// At this point, var->varType = _VAR_TYPE_NULL
 					var->varType = _VAR_TYPE_CHARACTER;
@@ -6105,14 +6184,14 @@ do_as_numeric:
 		return(false);
 	}
 
-	bool iVariable_set_character(SVariable* var, SDatum* datum)
+	bool iVariable_set_character(SThisCode* thisCode, SVariable* var, SDatum* datum)
 	{
 		// Make sure our environment is sane
 		if (var && datum)
 		{
 debug_break;
 			// De-reference the variable
-			var = iiVariable_terminateIndirect(var);
+			var = iiVariable_terminateIndirect(thisCode, var);
 
 			// Are we still valid?
 			if (var)
@@ -6122,7 +6201,7 @@ debug_break;
 				{
 					// We need to refactor this variable into a character
 					// Delete the old contents
-					iVariable_delete(var, false);
+					iVariable_delete(thisCode, var, false);
 
 					// At this point, var->varType = _VAR_TYPE_NULL
 					var->varType = _VAR_TYPE_CHARACTER;
@@ -6149,10 +6228,10 @@ debug_break;
 // Reset the variables to their default types
 //
 //////
-	void iVariable_reset(SVariable* var)
+	void iVariable_reset(SThisCode* thisCode, SVariable* var)
 	{
 		// De-reference the variable
-		var = iiVariable_terminateIndirect(var);
+		var = iiVariable_terminateIndirect(thisCode, var);
 
 		// Are we still valid?
 		if (var)
@@ -6231,7 +6310,7 @@ debug_break;
 // Converts the indicated variable to a form suitable for display.
 //
 //////
-	SVariable* iVariable_convertForDisplay(SVariable* var)
+	SVariable* iVariable_convertForDisplay(SThisCode* thisCode, SVariable* var)
 	{
 		s32			lnI, lnYearOffset, lnSetLogical;
 		u32			lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond;
@@ -6243,7 +6322,7 @@ debug_break;
 
 
 		// Make sure our environment is sane
-		varDisp = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+		varDisp = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL);
 		if (var && varDisp)
 		{
 			// Initialize
@@ -6519,7 +6598,7 @@ debug_break;
 // Called to delete the indicated variable
 //
 //////
-	void iVariable_delete(SVariable* var, bool tlDeleteSelf)
+	void iVariable_delete(SThisCode* thisCode, SVariable* var, bool tlDeleteSelf)
 	{
 		// Make sure our environment is sane
 		if (var)
@@ -6541,7 +6620,7 @@ debug_break;
 					{
 						case _VAR_TYPE_OBJECT:
 							// Delete the object
-							iObj_delete(&var->obj, true, true, true);
+							iObj_delete(thisCode, &var->obj, true, true, true);
 							var->obj = NULL;
 							break;
 
@@ -6630,7 +6709,7 @@ debug_break;
 	void iVariable_politelyDeleteChain_callback(SLLCallback* cb)
 	{
 		// Delete this variable appropriately
-		iVariable_delete((SVariable*)cb->node, false);
+		iVariable_delete(cb->thisCode, (SVariable*)cb->node, false);
 	}
 
 
@@ -6641,7 +6720,7 @@ debug_break;
 // Called to return the value of the indicated variable as a bool.
 //
 //////
-	bool iiVariable_getAs_bool(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
+	bool iiVariable_getAs_bool(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
 		union {
 			s8			lnValue_s8;
@@ -6702,7 +6781,7 @@ debug_break;
 
 					} else {
 						// It is one byte long, so we will test for Y,N,T,F
-						switch (iObjProp_get_s32_direct(_settings, _INDEX_SET_LOGICAL))
+						switch (iObjProp_get_s32_direct(thisCode, _settings, _INDEX_SET_LOGICAL))
 						{
 							case _LOGICAL_TF:		return(iiLowerCase_char(var->value.data_u8[0]) == 't');
 							case _LOGICAL_YN:		return(iiLowerCase_char(var->value.data_u8[0]) == 'y');
@@ -6733,7 +6812,7 @@ debug_break;
 //		_set_autoConvert
 //
 //////
-	s16 iiVariable_getAs_s16(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
+	s16 iiVariable_getAs_s16(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
 		s8		buffer[16];
 		union {
@@ -7034,7 +7113,7 @@ debug_break;
 //		_set_autoConvert
 //
 //////
-	s32 iiVariable_getAs_s32(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
+	s32 iiVariable_getAs_s32(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
 		s8		buffer[16];
 		union {
@@ -7314,7 +7393,7 @@ debug_break;
 //		_set_autoConvert
 //
 //////
-	u16 iiVariable_getAs_u16(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
+	u16 iiVariable_getAs_u16(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
 		s8		buffer[16];
 		union {
@@ -7576,7 +7655,7 @@ debug_break;
 //		_set_autoConvert
 //
 //////
-	u32 iiVariable_getAs_u32(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
+	u32 iiVariable_getAs_u32(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
 		s8		buffer[16];
 		union {
@@ -7837,7 +7916,7 @@ debug_break;
 //		_set_autoConvert
 //
 //////
-	s64 iiVariable_getAs_s64(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
+	s64 iiVariable_getAs_s64(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
 		s8		buffer[16];
 		union {
@@ -8003,7 +8082,7 @@ debug_break;
 //		_set_autoConvert
 //
 //////
-	f32 iiVariable_getAs_f32(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
+	f32 iiVariable_getAs_f32(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
 		s8		buffer[16];
 		union {
@@ -8137,7 +8216,7 @@ debug_break;
 //		_set_autoConvert
 //
 //////
-	f64 iiVariable_getAs_f64(SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
+	f64 iiVariable_getAs_f64(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
 		s8		buffer[16];
 		union {
@@ -8584,23 +8663,23 @@ debug_break;
 					switch (op->opType)
 					{
 						case _OP_TYPE_PARAM:
-							iVariable_delete(op->param, true);
+							iVariable_delete(NULL, op->param, true);
 							break;
 
 						case _OP_TYPE_LOCAL:
-							iVariable_delete(op->local, true);
+							iVariable_delete(NULL, op->local, true);
 							break;
 
 						case _OP_TYPE_SCOPED:
-							iVariable_delete(op->scoped, true);
+							iVariable_delete(NULL, op->scoped, true);
 							break;
 
 						case _OP_TYPE_RETURNS:
-							iVariable_delete(op->returns, true);
+							iVariable_delete(NULL, op->returns, true);
 							break;
 
 						case _OP_TYPE_OBJECT:
-							iObj_delete(&op->obj, true, true, true);
+							iObj_delete(NULL, &op->obj, true, true, true);
 							break;
 
 // These types are only referenced

@@ -136,6 +136,8 @@
 	HINSTANCE			ghInstance							= null0;
 	bool				glShuttingDown						= false;
 //	ITaskbarList*		giTaskbar							= NULL;
+	SThisCode*			_thisCodeNull						= NULL;
+
 
 //////////
 // TOOD: We need to add semaphores to these because the ultimate goal is to allow multiple

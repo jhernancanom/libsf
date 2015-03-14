@@ -61,6 +61,7 @@
 struct SComp;
 struct SLine;
 struct SExtraInfo;
+struct SThisCode;
 
 
 
@@ -102,6 +103,9 @@ struct SExtraInfo;
 			//		bool func(SLLCallback* cb)
 			//////////
 		};
+
+		// For runtime
+		SThisCode*	thisCode;
 
 		// Data items for this callback
 		SLL*	node;

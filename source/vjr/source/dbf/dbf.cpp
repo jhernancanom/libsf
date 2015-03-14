@@ -156,7 +156,7 @@
 				if (gsWorkArea[lnI].dirty == _YES)
 				{
 					// And changes need to be written to disk
-					iDbf_close(&gsWorkArea[lnI]);
+					iDbf_close(NULL, &gsWorkArea[lnI]);
 				}
 			}
 			// Initialize this entry
@@ -171,7 +171,7 @@
 // Called to see if the particular lock operation should continue
 //
 //////
-	bool iiDbf_continueWithLockOperation(SDiskLockCallback* dcb, s32 tnAttempts, s32 tnMillisecondsSpentThusFar)
+	bool iiDbf_continueWithLockOperation(SThisCode* thisCode, SDiskLockCallback* dcb, s32 tnAttempts, s32 tnMillisecondsSpentThusFar)
 	{
 		s32			lnType, lnValue, lnMaxAttempts, lnRetryInterval;
 		SVariable*	varReprocess;
@@ -183,7 +183,7 @@
 		// Find out how we're reprocessing
 		//////
 			dl		= (SDiskLock*)dcb->extra;
-			lnType	= iObjProp_getVarAndType(_settings, _INDEX_SET_REPROCESS, &varReprocess);
+			lnType	= iObjProp_getVarAndType(thisCode, _settings, _INDEX_SET_REPROCESS, &varReprocess);
 			if (varReprocess)
 			{
 				// Grab our interval and max attempts
@@ -239,7 +239,7 @@
 		//////
 			// Build the error string "_settings.reprocess not found or invalid"
 			sprintf(buffer, "%s.%s %s\0", cgc__settings, cgc_reprocess, cgc_notFoundOrInvalidDataType);
-			iError_signal(_ERROR_INTERNAL_ERROR, buffer);
+			iError_signal(thisCode, _ERROR_INTERNAL_ERROR, NULL, false, buffer);
 
 			// Indicate no retry
 			return(false);
@@ -273,7 +273,7 @@
 //		Errors below -200			-- DBC errors
 //
 /////
-	uptr iDbf_open(SVariable* table, SVariable* alias, bool tlExclusive, bool tlAgain, bool tlValidate)
+	uptr iDbf_open(SThisCode* thisCode, SVariable* table, SVariable* alias, bool tlExclusive, bool tlAgain, bool tlValidate)
 	{
 		s8 tableBuffer[_MAX_PATH + 1];
 		s8 aliasBuffer[_MAX_PATH + 1];
@@ -297,7 +297,7 @@
 			//////////
 			// Open
 			//////
-				return(iDbf_open(tableBuffer, aliasBuffer, tlExclusive, tlAgain, tlValidate));
+				return(iDbf_open(thisCode, tableBuffer, aliasBuffer, tlExclusive, tlAgain, tlValidate));
 		}
 
 		// Should never happen
@@ -308,7 +308,7 @@
 
 	// Note:  table and alias must be NULL-terminated
 	// Note:  an alias is not required
-	uptr iDbf_open(cs8* table, cs8* alias, bool tlExclusive, bool tlAgain, bool tlValidate)
+	uptr iDbf_open(SThisCode* thisCode, cs8* table, cs8* alias, bool tlExclusive, bool tlAgain, bool tlValidate)
 	{
 		s32				lnI, lnI_max, lnIndexType;
 		sptr			lnWorkArea, lnLength;
@@ -338,7 +338,7 @@
 				lnCurrentWorkArea	= &gnDbc_currentWorkArea;
 				lnI_max				= _MAX_DBC_SLOTS;
 				waBase				= &gsDbcArea[0];
-				_validateStruture	= (uptr)&iiDbf_validate_isDbc;
+				_validateStruture	= (uptr)&iDbf_validate_isDbc;
 				lnIndexType			= _INDEX_IS_DCX;
 
 			} else if (lnLength == sizeof(cgcScxKeyName) - 1 && _memicmp(alias, cgcScxKeyName, lnLength) == 0) {
@@ -347,7 +347,7 @@
 				lnCurrentWorkArea	= &gnScx_currentWorkArea;
 				lnI_max				= _MAX_SCX_SLOTS;
 				waBase				= &gsScxArea[0];
-				_validateStruture	= (uptr)&iiDbf_validate_isScx;
+				_validateStruture	= (uptr)&iDbf_validate_isScx;
 
 			} else if (lnLength == sizeof(cgcVcxKeyName) - 1 && _memicmp(alias, cgcVcxKeyName, lnLength) == 0) {
 				// It's an VCX
@@ -355,7 +355,7 @@
 				lnCurrentWorkArea	= &gnVcx_currentWorkArea;
 				lnI_max				= _MAX_VCX_SLOTS;
 				waBase				= &gsVcxArea[0];
-				_validateStruture	= (uptr)&iiDbf_validate_isVcx;
+				_validateStruture	= (uptr)&iDbf_validate_isVcx;
 
 			} else if (lnLength == sizeof(cgcFrxKeyName) - 1 && _memicmp(alias, cgcFrxKeyName, lnLength) == 0) {
 				// It's an FRX
@@ -363,7 +363,7 @@
 				lnCurrentWorkArea	= &gnFrx_currentWorkArea;
 				lnI_max				= _MAX_FRX_SLOTS;
 				waBase				= &gsFrxArea[0];
-				_validateStruture	= (uptr)&iiDbf_validate_isFrx;
+				_validateStruture	= (uptr)&iDbf_validate_isFrx;
 
 			} else if (lnLength == sizeof(cgcMnxKeyName) - 1 && _memicmp(alias, cgcMnxKeyName, lnLength) == 0) {
 				// It's an MNX
@@ -371,7 +371,7 @@
 				lnCurrentWorkArea	= &gnMnx_currentWorkArea;
 				lnI_max				= _MAX_MNX_SLOTS;
 				waBase				= &gsMnxArea[0];
-				_validateStruture	= (uptr)&iiDbf_validate_isMnx;
+				_validateStruture	= (uptr)&iDbf_validate_isMnx;
 
 			} else {
 				// It's a table
@@ -475,7 +475,7 @@
 			{
 				// Unable to open
 				// See if it's already open and if we can use it again
-				if (tlAgain && (lnWorkArea = iDbf_get_workArea_byTablePathname(table, null)) >= 0)
+				if (tlAgain && (lnWorkArea = iDbf_get_workArea_byTablePathname(thisCode, table, null)) >= 0)
 				{
 					// We found the work area where this table is already open ... share its file handle
 					wa->fhDbf = _dup(gsWorkArea[lnWorkArea].fhDbf);
@@ -745,7 +745,7 @@
 			if (wa->isVisualTable && wa->backlinkLength != 0)
 			{
 				// Try to open the backlink
-				iiDbc_lookupTableField(&gsWorkArea[lnI], &llDbcIsValid, tlExclusive);
+				iiDbc_lookupTableField(thisCode, &gsWorkArea[lnI], &llDbcIsValid, tlExclusive);
 				// llDbcIsValid is populated as a passed-in return parameter
 			}
 
@@ -797,7 +797,7 @@
 			if (wa->isVisualTable && wa->backlinkLength != 0 && !llDbcIsValid)
 			{
 				// Close what we've opened, and un-allocate what we've allocated
-				iDbf_close(wa);
+				iDbf_close(thisCode, wa);
 				return(_DBF_ERROR_DBC);
 			}
 
@@ -818,15 +818,15 @@
 			if (cdxFilename[0] != 0)
 			{
 				// Try to open the associated cdx
-				cdx_open(wa, cdxFilename, strlen(cdxFilename), lnIndexType, tlValidate);
+				cdx_open(thisCode, wa, cdxFilename, strlen(cdxFilename), lnIndexType, tlValidate);
 
 				// Right now, it will either be open or not
 				if (wa->isIndexLoaded && wa->isCdx)
-					iiCdx_setPrimaryKey(wa);
+					iiCdx_setPrimaryKey(thisCode, wa);
 			}
 
 			// Move to the top of the table
-			iDbf_gotoTop(wa);
+			iDbf_gotoTop(thisCode, wa);
 
 
 		//////////
@@ -859,7 +859,7 @@
 //		or -3 if DBC is invalid
 //
 //////
-	uptr iDbf_openRemote(s8* connString)
+	uptr iDbf_openRemote(SThisCode* thisCode, s8* connString)
 	{
 		return(0);
 // Note: This is a placeholder function outlining the steps necessary to access and retrieve remote content
@@ -951,13 +951,13 @@
 // Note:  If the row has changed content, it will be lost in this operation.  Must flush first.
 //
 //////
-	uptr iDbf_cacheAllRowData(SWorkArea* wa)
+	uptr iDbf_cacheAllRowData(SThisCode* thisCode, SWorkArea* wa)
 	{
 		u64 lnCacheSize, lnOriginalFilePosition, lnNumread;
 
 
 		// Make sure it's valid
-		if (!iDbf_isWorkAreaValid(wa, NULL))
+		if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 			return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 		if (wa->isUsed != _YES)
 			return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
@@ -994,7 +994,7 @@
 			_lseeki64(wa->fhDbf, lnOriginalFilePosition, SEEK_SET);
 
 			// Set data to where it should be in the cache
-			iDbf_gotoRecord(wa, wa->currentRecord);
+			iDbf_gotoRecord(thisCode, wa, wa->currentRecord);
 
 			// Indicate success
 			return((u32)lnCacheSize);
@@ -1017,10 +1017,10 @@
 //	slot number used to access the entry they created, or -1 if error
 //
 /////
-	uptr iDbf_close(SWorkArea* wa)
+	uptr iDbf_close(SThisCode* thisCode, SWorkArea* wa)
 	{
 		// Make sure it's valid
-		if (!iDbf_isWorkAreaValid(wa, NULL))
+		if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 			return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 		if (wa->isUsed != _YES)
 			return(_DBF_OKAY);	// Already closed
@@ -1070,7 +1070,7 @@
 // a sanity check to see if the CDX is actually valid or not.
 //
 //////
-	uptr iDbf_hasCdx(SWorkArea* wa)
+	uptr iDbf_hasCdx(SThisCode* thisCode, SWorkArea* wa)
 	{
 		WIN32_FIND_DATA		ffd;
 		HANDLE				hFind;
@@ -1081,7 +1081,7 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
@@ -1113,7 +1113,7 @@
 // type of work area it is.
 //
 //////
-	bool iDbf_isWorkAreaValid(SWorkArea* wa, cu8** tcSpecialWorkAreaKeyName)
+	bool iDbf_isWorkAreaValid(SThisCode* thisCode, SWorkArea* wa, cu8** tcSpecialWorkAreaKeyName)
 	{
 		// Make sure our environment is sane
 		if (wa)
@@ -1189,10 +1189,10 @@
 // Called to verify the pointer is valid
 //
 //////
-	bool iDbf_isWorkAreaUsed(SWorkArea* wa, bool* tlIsValidWorkArea)
+	bool iDbf_isWorkAreaUsed(SThisCode* thisCode, SWorkArea* wa, bool* tlIsValidWorkArea)
 	{
 		// Make sure it's valid
-		if (!iDbf_isWorkAreaValid(wa, NULL))
+		if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 		{
 			// Invalid work area
 			if (tlIsValidWorkArea)
@@ -1218,7 +1218,7 @@
 // Valid letters are A..J, work areas 1..10
 //
 //////
-	bool iDbf_isWorkAreaLetter(SVariable* var)
+	bool iDbf_isWorkAreaLetter(SThisCode* thisCode, SVariable* var)
 	{
 		s8 c;
 
@@ -1243,7 +1243,7 @@
 // Called to obtain a work area.
 //
 //////
-	sptr iDbf_set_workArea_current(u32 tnWorkArea, cu8* tcSpecialKeyName)
+	sptr iDbf_set_workArea_current(SThisCode* thisCode, u32 tnWorkArea, cu8* tcSpecialKeyName)
 	{
 		// See what they're searching for
 		if (!tcSpecialKeyName || tcSpecialKeyName == cgcDbfKeyName)
@@ -1300,7 +1300,7 @@
 		return(-1);
 	}
 
-	sptr iDbf_get_workArea_current(cu8* tcSpecialKeyName)
+	sptr iDbf_get_workArea_current(SThisCode* thisCode, cu8* tcSpecialKeyName)
 	{
 		// See what they're searching for
 		if (!tcSpecialKeyName || tcSpecialKeyName == cgcDbfKeyName)
@@ -1333,7 +1333,7 @@
 		return(-1);
 	}
 
-	sptr iDbf_get_workArea_lowestFree(cu8* tcSpecialKeyName)
+	sptr iDbf_get_workArea_lowestFree(SThisCode* thisCode, cu8* tcSpecialKeyName)
 	{
 		s32			lnI, lnI_max;
 		SWorkArea*	wa;
@@ -1392,7 +1392,7 @@
 		return(-1);
 	}
 
-	sptr iDbf_get_workArea_highestFree(cu8* tcSpecialKeyName)
+	sptr iDbf_get_workArea_highestFree(SThisCode* thisCode, cu8* tcSpecialKeyName)
 	{
 		s32			lnI, lnI_max;
 		SWorkArea*	wa;
@@ -1452,7 +1452,7 @@
 	}
 
 	// Note:  This algorithm can be fooled, such as mapping a network location to K: and J:
-	sptr iDbf_get_workArea_byTablePathname(SVariable* varTablePathname, cu8* tcSpecialKeyName)
+	sptr iDbf_get_workArea_byTablePathname(SThisCode* thisCode, SVariable* varTablePathname, cu8* tcSpecialKeyName)
 	{
 //		SWorkArea*	wa;
 		s8			table[_MAX_PATH];
@@ -1503,7 +1503,7 @@
 			//////////
 			// Search for it
 			//////
-				return(iDbf_get_workArea_byTablePathname((cs8*)table, tcSpecialKeyName));
+				return(iDbf_get_workArea_byTablePathname(thisCode, (cs8*)table, tcSpecialKeyName));
 
 		} else {
 			// Invalid parameters
@@ -1511,7 +1511,7 @@
 		}
 	}
 
-	sptr iDbf_get_workArea_byTablePathname(cs8* tcTablePathname, cu8* tcSpecialKeyName)
+	sptr iDbf_get_workArea_byTablePathname(SThisCode* thisCode, cs8* tcTablePathname, cu8* tcSpecialKeyName)
 	{
 		s32			lnI, lnI_max, lnLength;
 		SWorkArea*	wa;
@@ -1574,7 +1574,7 @@
 		return(-1);
 	}
 
-	sptr iDbf_get_workArea_byAlias(SVariable* varAlias, cu8* tcSpecialKeyName)
+	sptr iDbf_get_workArea_byAlias(SThisCode* thisCode, SVariable* varAlias, cu8* tcSpecialKeyName)
 	{
 		s32			lnI, lnI_max;
 //		SWorkArea*	wa;
@@ -1646,7 +1646,7 @@
 //			already in use, then it appends a SYS(2015), iterating up until it's not one in use.
 //
 //////
-	SVariable* iDbf_get_alias_fromPathname(SVariable* varPathname, cu8* tcSpecialKeyName)
+	SVariable* iDbf_get_alias_fromPathname(SThisCode* thisCode, SVariable* varPathname, cu8* tcSpecialKeyName)
 	{
 		u32			lnI_max, lnAppendValue;
 		bool		llAppendedSix;
@@ -1660,13 +1660,13 @@
 			if (varPathname)
 			{
 				// Grab the stem part of the name
-				varAlias = function_juststem(varPathname, varSix);
+				varAlias = function_juststem(thisCode, varPathname, varSix);
 
 				// If it's invalid, or unreachable, then just use a default alias name
 				if (!iVariable_isTypeCharacter(varAlias) || iVariable_isEmpty(varAlias))
 				{
 					// Allocate with an extra six characters afterward
-					varAlias = iFunction_sys2015(0, 6);
+					varAlias = iFunction_sys2015(thisCode, 0, 6);
 				}
 
 				if (iVariable_isValid(varAlias) && iVariable_isTypeCharacter(varAlias))
@@ -1717,7 +1717,7 @@
 				// Make sure the alias name doesn't exist
 				llAppendedSix	= false;
 				lnAppendValue	= 1;
-				while (iDbf_get_workArea_byAlias(varAlias, tcSpecialKeyName) >= 0 && lnAppendValue < lnI_max)
+				while (iDbf_get_workArea_byAlias(thisCode, varAlias, tcSpecialKeyName) >= 0 && lnAppendValue < lnI_max)
 				{
 					// Append a six-digit number onto the alias name
 					if (!llAppendedSix)
@@ -1733,7 +1733,7 @@
 
 			} else {
 				// Just use SYS(2015)
-				varAlias = iFunction_sys2015(0, 0);
+				varAlias = iFunction_sys2015(thisCode, 0, 0);
 			}
 
 
@@ -1751,7 +1751,7 @@
 // Called to goto a record and read in the contents.
 //
 //////
-	sptr iDbf_gotoRecord(SWorkArea* wa, s32 recordNumber)
+	sptr iDbf_gotoRecord(SThisCode* thisCode, SWorkArea* wa, s32 recordNumber)
 	{
 		u64 lnNumread;
 
@@ -1760,7 +1760,7 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
@@ -1809,11 +1809,11 @@
 // Otherwise, goes to RECNO() 1.
 //
 //////
-	sptr iDbf_gotoTop(SWorkArea* wa)
+	sptr iDbf_gotoTop(SThisCode* thisCode, SWorkArea* wa)
 	{
 		// If the work area is valid, move to the appropriate record
-		if (iDbf_isWorkAreaValid(wa, NULL))
-			return(iDbf_gotoRecord(wa, ((wa->isIndexLoaded) ? iiCdx_gotoTop(wa) : 1)));
+		if (iDbf_isWorkAreaValid(thisCode, wa, NULL))
+			return(iDbf_gotoRecord(thisCode, wa, ((wa->isIndexLoaded) ? iCdx_gotoTop(thisCode, wa) : 1)));
 
 		// If we get here, invalid work area
 		return(-1);
@@ -1827,7 +1827,7 @@
 // Called to write any changes to the fields to disk
 //
 //////
-	uptr iDbf_writeChanges(SWorkArea* wa)
+	uptr iDbf_writeChanges(SThisCode* thisCode, SWorkArea* wa)
 	{
 		u32 lnNumread;
 
@@ -1836,7 +1836,7 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
@@ -1887,13 +1887,13 @@
 //				N = length of name
 //
 //////
-	uptr iDbf_getFieldCount(SWorkArea* wa)
+	uptr iDbf_getFieldCount(SThisCode* thisCode, SWorkArea* wa)
 	{
 		//////////
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
@@ -1903,13 +1903,13 @@
 		return(wa->fieldCount);
 	}
 
-	uptr iDbf_getReccount(SWorkArea* wa)
+	uptr iDbf_getReccount(SThisCode* thisCode, SWorkArea* wa)
 	{
 		//////////
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
@@ -1920,7 +1920,7 @@
 	}
 
 	// Returns 10-digit field name
-	uptr iDbf_getField_name(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
+	uptr iDbf_getField_name(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		u32				lnI;
 		SFieldRecord2*	lfr2Ptr;
@@ -1930,14 +1930,14 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		// Grab the indicated field number
-		lfr2Ptr = iDbf_getField_byNumber2(wa, fieldNumber);
+		lfr2Ptr = iDbf_getField_byNumber2(thisCode, wa, fieldNumber);
 		if (lfr2Ptr)
 		{
 			// Store the name (or as much of it as will fit)
@@ -1959,7 +1959,7 @@
 	//		B - Double			F - Float			G - General		I - Integer
 	//		L - Logical			M - Memo			N - Numeric		P - Picture
 	//		Q - Varbinary		V - Varchar (binary)
-	uptr iDbf_getField_type(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
+	uptr iDbf_getField_type(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		SFieldRecord1* lfrp;
 
@@ -1968,14 +1968,14 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		// Grab the indicated field number
-		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(thisCode, wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the type
@@ -1995,7 +1995,7 @@
 		return(-1);
 	}
 
-	uptr iDbf_getField_type_verbose(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
+	uptr iDbf_getField_type_verbose(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		s8*				name;
 		u32				length;
@@ -2007,14 +2007,14 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		// Grab the indicated field number
-		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(thisCode, wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the type's related name
@@ -2051,7 +2051,7 @@
 	// Returns extended field type, such as:
 	//		C(5)
 	//		N(10,2)
-	uptr iDbf_getField_type_extended(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
+	uptr iDbf_getField_type_extended(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		u32				length;
 		SFieldRecord1*	lfrp;
@@ -2062,14 +2062,14 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		// Grab the indicated field number
-		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(thisCode, wa, fieldNumber);
 		if (lfrp)
 		{	// Store the type
 			if (lfrp->type == 'N' ||	// Numeric
@@ -2117,7 +2117,7 @@
 	}
 
 	// Returns field length, "10" as in "N(10,2)"
-	uptr iDbf_getField_length(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
+	uptr iDbf_getField_length(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		u32				length;
 		SFieldRecord1*	lfrp;
@@ -2128,14 +2128,14 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		// Grab the indicated field
-		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(thisCode, wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the length
@@ -2159,7 +2159,7 @@
 	}
 
 	// Returns the index override length
-	uptr iDbf_getIndex_length(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
+	uptr iDbf_getIndex_length(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		u32				length;
 		SFieldRecord1*	lfrp;
@@ -2170,14 +2170,14 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		// Grab the indicated field
-		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(thisCode, wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the length
@@ -2206,7 +2206,7 @@
 	}
 
 	// Returns decimals, "2" as in "N(10,2)"
-	uptr iDbf_getField_decimals(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
+	uptr iDbf_getField_decimals(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		u32				length;
 		SFieldRecord1*	lfrp;
@@ -2217,14 +2217,14 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		// Grab the indicated field
-		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(thisCode, wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the decimals
@@ -2247,7 +2247,7 @@
 	}
 
 	// Returns "Y" or "N" indicating whether or not the field is binary
-	uptr iDbf_getField_isBinary(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
+	uptr iDbf_getField_isBinary(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		SFieldRecord1* lfrp;
 
@@ -2256,14 +2256,14 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		// Grab the indicated field
-		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(thisCode, wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the binary condition
@@ -2279,7 +2279,7 @@
 	}
 
 	// Returns "Y" or "N" indicating whether or not the field can store NULLs
-	uptr iDbf_getField_allowNulls(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
+	uptr iDbf_getField_allowNulls(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		SFieldRecord1* lfrp;
 
@@ -2288,14 +2288,14 @@
 		// Check for errors
 		//////
 		// Make sure it's valid
-		if (!iDbf_isWorkAreaValid(wa, NULL))
+		if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 			return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 		if (wa->isUsed != _YES)
 			return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		// Grab the indicated field
-		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(thisCode, wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the allow nulls condition
@@ -2311,7 +2311,7 @@
 	}
 
 	// Returns "Y", "N", or "X" (if invalid) indicating whether or not the field is NULL
-	uptr iDbf_getNull_flag(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
+	uptr iDbf_getNull_flag(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		u32				lnNull, lnOffset;
 		u8				lnBitMask;
@@ -2322,14 +2322,14 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		// Grab the indicated field
-		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(thisCode, wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the type
@@ -2343,7 +2343,7 @@
 			} else {
 				// NULLs are allowed, but we must check the condition for this field
 				// Get the offset and bitmask into the row
-				if (iDbf_getNull_offsetAndMask(wa, fieldNumber, &lnOffset, &lnBitMask))
+				if (iDbf_getNull_offsetAndMask(thisCode, wa, fieldNumber, &lnOffset, &lnBitMask))
 				{
 					// See if this field is actually null
 					if ((wa->data[lnOffset] & lnBitMask) != 0)
@@ -2376,7 +2376,7 @@
 	}
 
 	// Gets the NULL offset into the row, and the byte mask
-	bool iDbf_getNull_offsetAndMask(SWorkArea* wa, u32 fieldNumber, u32* nullOffset, u8* nullMask)
+	bool iDbf_getNull_offsetAndMask(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u32* nullOffset, u8* nullMask)
 	{
 		s32				lnI, lnNullFieldNum;
 		SFieldRecord1*	lfrpNull;
@@ -2386,7 +2386,7 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL) || wa->isUsed != _YES)
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL) || wa->isUsed != _YES)
 			{
 				if (nullOffset)		*nullOffset = -1;
 				if (nullMask)		*nullMask	= -1;
@@ -2430,7 +2430,7 @@
 	}
 
 	// Returns a value if the field is auto-incrementing, blank otherwise
-	uptr iDbf_getField_autoinc_next(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
+	uptr iDbf_getField_autoinc_next(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		u32				length;
 		SFieldRecord1*	lfrp;
@@ -2441,14 +2441,14 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		// Grab the indicated field
-		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(thisCode, wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the auto-incrementing next value
@@ -2473,7 +2473,7 @@
 	}
 
 	// Returns a value if the field is auto-incrementing, blank otherwise
-	uptr iDbf_getField_autoinc_step(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
+	uptr iDbf_getField_autoinc_step(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		u32				length;
 		SFieldRecord1*	lfrp;
@@ -2484,14 +2484,14 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		// Grab the indicated field
-		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(thisCode, wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the auto-incrementing next value
@@ -2515,7 +2515,7 @@
 		return(-1);
 	}
 
-	s8* iDbf_getField_data(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
+	s8* iDbf_getField_data(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength)
 	{
 		SFieldRecord1*	lfrp;
 		union {
@@ -2528,14 +2528,14 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return((s8*)_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
 				return((s8*)_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		// Grab the indicated field
-		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(thisCode, wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the reserved bytes
@@ -2558,7 +2558,7 @@
 		return(value);
 	}
 
-	s8* iiDbf_getField_data2(SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength, bool tlRetrieveAsIndexKey)
+	s8* iiDbf_getField_data2(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength, bool tlRetrieveAsIndexKey)
 	{
 		s32				lnI, lnLength;
 		union {
@@ -2570,7 +2570,7 @@
 
 
 		// Grab our field
-		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(thisCode, wa, fieldNumber);
 		if (lfrp)
 		{
 			// Store the reserved bytes
@@ -2581,7 +2581,7 @@
 				{
 					// Obtain the null value
 					lnLength	= 1;
-					*dest++		= ((iDbf_getNull_flag(wa, fieldNumber, NULL, 0) == 1) ? 0x80 : 0x00);
+					*dest++		= ((iDbf_getNull_flag(thisCode, wa, fieldNumber, NULL, 0) == 1) ? 0x80 : 0x00);
 
 				} else {
 					lnLength = 0;
@@ -2723,7 +2723,7 @@
 		return(value);
 	}
 
-	uptr iDbf_getField_dataOffset(SWorkArea* wa, u32 fieldNumber)
+	uptr iDbf_getField_dataOffset(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber)
 	{
 		SFieldRecord1* lfrp;
 
@@ -2732,14 +2732,14 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		// Grab the indicated field number
-		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(thisCode, wa, fieldNumber);
 		if (lfrp)
 		{
 			// Return the offset to the actual data
@@ -2750,7 +2750,7 @@
 		return(-1);
 	}
 
-	uptr iDbf_getIndexFixupOp(SWorkArea* wa, u32 fieldNumber)
+	uptr iDbf_getIndexFixupOp(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber)
 	{
 		SFieldRecord1* lfrp;
 
@@ -2759,14 +2759,14 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		// Grab the indicated field number
-		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(thisCode, wa, fieldNumber);
 		if (lfrp)
 		{
 			// Return the offset to the actual data
@@ -2785,7 +2785,7 @@
 // Updates data in the table
 //
 //////
-	uptr iDbf_setField_data(SWorkArea* wa, s32 fieldNumber, s8* src, u32 srcLength)
+	uptr iDbf_setField_data(SThisCode* thisCode, SWorkArea* wa, s32 fieldNumber, s8* src, u32 srcLength)
 	{
 		SFieldRecord1* lfrp;
 
@@ -2794,14 +2794,14 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		// Grab the indicated field number
-		lfrp = iDbf_getField_byNumber1(wa, ((fieldNumber < 0) ? -fieldNumber : fieldNumber));
+		lfrp = iDbf_getField_byNumber1(thisCode, wa, ((fieldNumber < 0) ? -fieldNumber : fieldNumber));
 		if (lfrp)
 		{
 			// Store the reserved bytes
@@ -2829,7 +2829,7 @@
 					wa->dirty = _YES;
 
 					// Flush the row to disk
-					iDbf_writeChanges(wa);
+					iDbf_writeChanges(thisCode, wa);
 				}
 
 				// Return the number of bytes written/updated.
@@ -2852,7 +2852,7 @@
 // Makes sure the field contents contain only what they should.
 //
 //////
-	uptr iDbf_getField_validateContents(SWorkArea* wa, u32 fieldNumber, u8* src, u32 srcLength)
+	uptr iDbf_getField_validateContents(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* src, u32 srcLength)
 	{
 		u32				lnI, lnErrors;
 		bool			llAllowAllStd;
@@ -2864,7 +2864,7 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(_DBF_ERROR__INTERNAL_PROGRAMMER);
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
@@ -2876,7 +2876,7 @@
 
 
 		// Get the field
-		lfrp = iDbf_getField_byNumber1(wa, fieldNumber);
+		lfrp = iDbf_getField_byNumber1(thisCode, wa, fieldNumber);
 		if (lfrp)
 		{
 			//////////
@@ -2982,7 +2982,7 @@
 	}
 
 	// Returns the field number by field name
-	SFieldRecord1* iDbf_getField_byName1(SWorkArea* wa, const u8* fieldName)
+	SFieldRecord1* iDbf_getField_byName1(SThisCode* thisCode, SWorkArea* wa, const u8* fieldName)
 	{
 		s32				lnI, lnLength;
 		SFieldRecord1*	lfr1Ptr;
@@ -2992,14 +2992,14 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(null);
 			if (wa->isUsed != _YES)
 				return(null);
 
 
 		// Retrieve the first field
-		lfr1Ptr = iDbf_getField_byNumber1(wa, 1);
+		lfr1Ptr = iDbf_getField_byNumber1(thisCode, wa, 1);
 		if (lfr1Ptr)
 		{
 			// Search for the name
@@ -3017,7 +3017,7 @@
 	}
 
 	// Called to retrieve the field for the indicated field number.
-	SFieldRecord1* iDbf_getField_byNumber1(SWorkArea* wa, u32 fieldNumber)
+	SFieldRecord1* iDbf_getField_byNumber1(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber)
 	{
 		u32				lnI;
 		SFieldRecord1*	lfrp;
@@ -3027,7 +3027,7 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(null);
 			if (wa->isUsed != _YES)
 				return(null);
@@ -3048,7 +3048,7 @@
 		return(NULL);
 	}
 
-	SFieldRecord2* iDbf_getField_byName2(SWorkArea* wa, cu8* fieldName)
+	SFieldRecord2* iDbf_getField_byName2(SThisCode* thisCode, SWorkArea* wa, cu8* fieldName)
 	{
 		s32				lnI, lnLength;
 		SFieldRecord2*	lfr2Ptr;
@@ -3058,14 +3058,14 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(null);
 			if (wa->isUsed != _YES)
 				return(null);
 
 
 		// Retrieve the first field
-		lfr2Ptr = iDbf_getField_byNumber2(wa, 1);
+		lfr2Ptr = iDbf_getField_byNumber2(thisCode, wa, 1);
 		if (lfr2Ptr)
 		{
 			// Search for the name
@@ -3082,7 +3082,7 @@
 		return(null);
 	}
 
-	SFieldRecord2* iDbf_getField_byNumber2(SWorkArea* wa, u32 fieldNumber)
+	SFieldRecord2* iDbf_getField_byNumber2(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber)
 	{
 		u32				lnI;
 		SFieldRecord2*	lfr2Ptr;
@@ -3092,7 +3092,7 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL))
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL))
 				return(null);
 			if (wa->isUsed != _YES)
 				return(null);
@@ -3122,7 +3122,7 @@
 // on the first field.
 //
 //////
-	u8 iDbf_getField_type(SWorkArea* wa, u8* keyExpression, bool* swapEndians, bool* needsSignBitToggled)
+	u8 iDbf_getField_type(SThisCode* thisCode, SWorkArea* wa, u8* keyExpression, bool* swapEndians, bool* needsSignBitToggled)
 	{
 		u32				lnI, len;
 		SFieldRecord2*	lfrp2;
@@ -3132,7 +3132,7 @@
 		// Check for errors
 		//////
 			// Make sure it's valid
-			if (!iDbf_isWorkAreaValid(wa, NULL) || wa->isUsed != _YES)
+			if (!iDbf_isWorkAreaValid(thisCode, wa, NULL) || wa->isUsed != _YES)
 			{
 				if (*swapEndians)			*swapEndians			= false;
 				if (*needsSignBitToggled)	*needsSignBitToggled	= false;
@@ -3199,7 +3199,7 @@
 // at plus signs, parenthesis, etc.
 //
 //////
-	uptr iDbf_getField_name(u8* sourceExpression, u8* foundFieldName)
+	uptr iDbf_getField_name(SThisCode* thisCode, u8* sourceExpression, u8* foundFieldName)
 	{
 		u32		lnLength;
 		s8		c;
@@ -3257,7 +3257,7 @@
 // copies over the frPtr field name to the fr2Ptr field.
 //
 //////
-	void iiDbc_lookupTableField(SWorkArea* wa, bool* tlIsValid, bool tlExcusive)
+	void iiDbc_lookupTableField(SThisCode* thisCode, SWorkArea* wa, bool* tlIsValid, bool tlExcusive)
 	{
 		u32				lnI, lnDbcHandle, lnRecno, lnAliasLength, lnField;
 		sptr			lnObjectId, lnParentId, lnObjectType, lnObjectName;
@@ -3278,7 +3278,7 @@
 		// Initialize
 		//////
 			// Get the full path for what would be the container
-			iiDbf_getRelativeDbc(wa, &dbcName[0]);
+			iiDbf_getRelativeDbc(thisCode, wa, &dbcName[0]);
 			lnDbcLength = (s32)strlen(dbcName);
 
 			// Get the alias
@@ -3313,7 +3313,7 @@
 				}
 
 				// It is not already open, so we need to open it
-				lnDbcHandle = (u32)iDbf_open((cs8*)dbcName, (cs8*)cgcDbcKeyName, tlExcusive, false, false);
+				lnDbcHandle = (u32)iDbf_open(thisCode, (cs8*)dbcName, (cs8*)cgcDbcKeyName, tlExcusive, false, false);
 				if ((s32)lnDbcHandle >= 0)
 				{
 					// We're good
@@ -3325,13 +3325,13 @@
 		//////////
 		// When we get here, we have the DBC open, or not
 		//////
-			if (iDbf_isWorkAreaValid(wa->dbc, &workAreaKeyName) || workAreaKeyName != cgcDbcKeyName)
+			if (iDbf_isWorkAreaValid(thisCode, wa->dbc, &workAreaKeyName) || workAreaKeyName != cgcDbcKeyName)
 			{
 				// Get the offsets to the fields
-				lnObjectId		= (sptr)iDbf_getField_byName2(wa->dbc, cgcObjectId);
-				lnParentId		= (sptr)iDbf_getField_byName2(wa->dbc, cgcParentId);
-				lnObjectType	= (sptr)iDbf_getField_byName2(wa->dbc, cgcObjectType);
-				lnObjectName	= (sptr)iDbf_getField_byName2(wa->dbc, cgcObjectName);
+				lnObjectId		= (sptr)iDbf_getField_byName2(thisCode, wa->dbc, cgcObjectId);
+				lnParentId		= (sptr)iDbf_getField_byName2(thisCode, wa->dbc, cgcParentId);
+				lnObjectType	= (sptr)iDbf_getField_byName2(thisCode, wa->dbc, cgcObjectType);
+				lnObjectName	= (sptr)iDbf_getField_byName2(thisCode, wa->dbc, cgcObjectName);
 
 				// Did we find every field?
 				if (lnObjectId <= 0 || lnParentId <= 0 || lnObjectType <= 0 || lnObjectName <= 0)
@@ -3341,10 +3341,10 @@
 					return;
 				}
 
-				lcObjectId		= iDbf_getField_data(wa->dbc, (u32)lnObjectId, NULL, 0);
-				lcParentId		= iDbf_getField_data(wa->dbc, (u32)lnParentId, NULL, 0);
-				lcObjectType	= iDbf_getField_data(wa->dbc, (u32)lnObjectType, NULL, 0);
-				lcObjectName	= iDbf_getField_data(wa->dbc, (u32)lnObjectName, NULL, 0);
+				lcObjectId		= iDbf_getField_data(thisCode, wa->dbc, (u32)lnObjectId, NULL, 0);
+				lcParentId		= iDbf_getField_data(thisCode, wa->dbc, (u32)lnParentId, NULL, 0);
+				lcObjectType	= iDbf_getField_data(thisCode, wa->dbc, (u32)lnObjectType, NULL, 0);
+				lcObjectName	= iDbf_getField_data(thisCode, wa->dbc, (u32)lnObjectName, NULL, 0);
 
 				// Locate the long filename
 				llSearchingForTable	= true;
@@ -3352,7 +3352,7 @@
 				for (lnRecno = 1; lnRecno < wa->dbc->header.records; lnRecno++)
 				{
 					// Go to that record
-					iDbf_gotoRecord(wa->dbc, lnRecno);
+					iDbf_gotoRecord(thisCode, wa->dbc, lnRecno);
 
 					// Is it deleted?
 					if (wa->dbc->data[0] == 32)
@@ -3401,7 +3401,7 @@
 							lnField++, lnRecno++, frPtr++, fr2Ptr++		)
 					{
 						// Go to that record
-						iDbf_gotoRecord(wa->dbc, lnRecno);
+						iDbf_gotoRecord(thisCode, wa->dbc, lnRecno);
 
 						// Is it deleted?
 						if (gsWorkArea[lnDbcHandle].odata[0] == 32)
@@ -3430,7 +3430,7 @@
 			*tlIsValid = false;
 	}
 
-	void iiDbf_getRelativeDbc(SWorkArea* wa, s8* dbcName)
+	void iiDbf_getRelativeDbc(SThisCode* thisCode, SWorkArea* wa, s8* dbcName)
 	{
 		s32		lnI;
 		s8*		name;
@@ -3500,7 +3500,7 @@
 // Allocates a FOR clause, and initializes it to an empty state
 //
 //////
-	SForClause* iDbf_forClause_allocate(SForClause** tsFor)
+	SForClause* iDbf_forClause_allocate(SThisCode* thisCode, SForClause** tsFor)
 	{
 		// Make sure our environment is sane
 		if (tsFor)
@@ -3543,7 +3543,7 @@
 // Delete the FOR clause, release all variables internally
 //
 //////
-	void iDbf_forClause_delete(SForClause** tsFor)
+	void iDbf_forClause_delete(SThisCode* thisCode, SForClause** tsFor)
 	{
 		s32				lnI;
 		SForClause*		lsFor;
@@ -4058,7 +4058,7 @@
 // Called to validate that the indicated table types have the correct structures
 //
 //////
-	SFieldRecord2* iiDbf_validate_fieldExists(SWorkArea* wa, cu8* tcFieldName, cs8* tcFieldType, s32 length, s32 decimals)
+	SFieldRecord2* iDbf_validate_fieldExists(SThisCode* thisCode, SWorkArea* wa, cu8* tcFieldName, cs8* tcFieldType, s32 length, s32 decimals)
 	{
 		SFieldRecord2* lfptr2;
 
@@ -4068,7 +4068,7 @@
 		//////
 // TODO:  Untested code, breakpoint and examine
 debug_break;
-			lfptr2 = iDbf_getField_byName2(wa, tcFieldName);
+			lfptr2 = iDbf_getField_byName2(thisCode, wa, tcFieldName);
 			if (lfptr2)
 			{
 				// The field name exists
@@ -4090,7 +4090,7 @@ debug_break;
 			return(null);
 	}
 
-	bool iiDbf_validate_isDbc(SWorkArea* wa)
+	bool iDbf_validate_isDbc(SThisCode* thisCode, SWorkArea* wa)
 	{
 		SFieldRecord2* lfptr2;
 
@@ -4110,23 +4110,23 @@ debug_break;
 		//
 		//////
 			return(
-								iiDbf_validate_fieldExists(wa,	cgcObjectId,		"i",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcParentId,		"i",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcObjectType,		"c",	10,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcObjectName,		"c",	128,	0)
-				&&	((lfptr2 =	iiDbf_validate_fieldExists(wa,	cgcCode,			"m",	4,		0))		&&	(lfptr2->flags & _DBF_FIELD_BINARY) != 0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcRiInfo,			"c",	6,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcUser,			"m",	4,		0)
+								iDbf_validate_fieldExists(thisCode, wa,	cgcObjectId,		"i",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcParentId,		"i",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcObjectType,		"c",	10,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcObjectName,		"c",	128,	0)
+				&&	((lfptr2 =	iDbf_validate_fieldExists(thisCode, wa,	cgcCode,			"m",	4,		0))		&&	(lfptr2->flags & _DBF_FIELD_BINARY) != 0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcRiInfo,			"c",	6,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcUser,			"m",	4,		0)
 			);
 	}
 
-	bool iiDbf_validate_isScx(SWorkArea* wa)
+	bool iDbf_validate_isScx(SThisCode* thisCode, SWorkArea* wa)
 	{
 		// Same as VCX
-		return(iiDbf_validate_isVcx(wa));
+		return(iDbf_validate_isVcx(thisCode, wa));
 	}
 
-	bool iiDbf_validate_isVcx(SWorkArea* wa)
+	bool iDbf_validate_isVcx(SThisCode* thisCode, SWorkArea* wa)
 	{
 		SFieldRecord2* lfptr2;
 
@@ -4161,33 +4161,33 @@ debug_break;
 		//
 		//////
 			return(
-								iiDbf_validate_fieldExists(wa,	cgcPlatform,		"c",	8,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcUniqueId,		"c",	10,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcTimeStamp,		"n",	10,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcClass,			"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcClassLoc,		"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcBaseClass,		"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcObjName,			"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcParent,			"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcProperties,		"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcProtected,		"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcMethods,			"m",	4,		0)
-				&&	((lfptr2 =	iiDbf_validate_fieldExists(wa,	cgcObjCode,			"m",	4,		0))		&&	(lfptr2->flags & _DBF_FIELD_BINARY) != 0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcOle,				"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcOle2,			"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcReserved1,		"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcReserved2,		"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcReserved3,		"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcReserved4,		"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcReserved5,		"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcReserved6,		"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcReserved7,		"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcReserved8,		"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcUser,			"m",	4,		0)
+								iDbf_validate_fieldExists(thisCode, wa,	cgcPlatform,		"c",	8,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcUniqueId,		"c",	10,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcTimeStamp,		"n",	10,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcClass,			"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcClassLoc,		"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcBaseClass,		"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcObjName,			"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcParent,			"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcProperties,		"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcProtected,		"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcMethods,			"m",	4,		0)
+				&&	((lfptr2 =	iDbf_validate_fieldExists(thisCode, wa,	cgcObjCode,			"m",	4,		0))		&&	(lfptr2->flags & _DBF_FIELD_BINARY) != 0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcOle,				"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcOle2,			"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcReserved1,		"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcReserved2,		"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcReserved3,		"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcReserved4,		"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcReserved5,		"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcReserved6,		"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcReserved7,		"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcReserved8,		"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcUser,			"m",	4,		0)
 			);
 	}
 
-	bool iiDbf_validate_isFrx(SWorkArea* wa)
+	bool iDbf_validate_isFrx(SThisCode* thisCode, SWorkArea* wa)
 	{
 		SFieldRecord2* lfptr2;
 
@@ -4273,85 +4273,85 @@ debug_break;
 		//
 		//////
 			return(
-								iiDbf_validate_fieldExists(wa,	cgcPlatform,		"c",	8,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcUniqueId,		"c",	10,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcTimeStamp,		"n",	10,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcObjType,			"n",	2,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcObjCode,			"n",	3,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcName,			"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcExpr,			"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcVpos,			"n",	9,		3)
-				&&				iiDbf_validate_fieldExists(wa,	cgcHpos,			"n",	9,		3)
-				&&				iiDbf_validate_fieldExists(wa,	cgcHeight,			"n",	9,		3)
-				&&				iiDbf_validate_fieldExists(wa,	cgcWidth,			"n",	9,		3)
-				&&				iiDbf_validate_fieldExists(wa,	cgcStyle,			"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcPicture,			"m",	4,		0)
-				&&	((lfptr2 =	iiDbf_validate_fieldExists(wa,	cgcOrder,			"m",	4,		0))		&&	(lfptr2->flags & _DBF_FIELD_BINARY) != 0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcUnique,			"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcComment,			"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcEnviron,			"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcBoxChar,			"c",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcFillChar,		"c",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcTag,				"m",	4,		0)
-				&&	((lfptr2 =	iiDbf_validate_fieldExists(wa,	cgcTag2,			"m",	4,		0))		&&	(lfptr2->flags & _DBF_FIELD_BINARY) != 0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcPenRed,			"n",	5,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcPenGreen,		"n",	5,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcPenBlue,			"n",	5,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcFillRed,			"n",	5,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcFillGreen,		"n",	5,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcFillBlue,		"n",	5,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcPenSize,			"n",	5,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcPenPat,			"n",	5,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcFillPat,			"n",	5,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcFontFace,		"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcFontStyle,		"n",	3,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcFontSize,		"n",	3,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcMode,			"n",	3,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcRuler,			"n",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcRulerLines,		"n",	3,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcGrid,			"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcGridY,			"n",	2,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcGridH,			"n",	2,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcFloat,			"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcStretch,			"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcStretchTop,		"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcTop,				"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcBottom,			"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcSubType,			"n",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcSubRest,			"n",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcNoRepeat,		"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcResetRpt,		"n",	2,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcPageBreak,		"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcColBreak,		"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcResetPage,		"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcGeneral,			"n",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcSpacing,			"n",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcDouble,			"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcSwapHeader,		"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcSwapFooter,		"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcEjectBefore,		"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcEjectAfter,		"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcPlain,			"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcSummary,			"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcAddAlias,		"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcOffset,			"n",	3,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcTopMargin,		"n",	3,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcBotMargin,		"n",	3,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcTotalType,		"n",	2,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcResetTotal,		"n",	2,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcResoId,			"n",	3,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcCurPos,			"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcSupAlways,		"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcSupOvflow,		"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcSupRpcol,		"n",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcGroup,			"n",	2,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcSupValChng,		"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcSupExpr,			"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcUser,			"m",	4,		0)
+								iDbf_validate_fieldExists(thisCode, wa,	cgcPlatform,		"c",	8,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcUniqueId,		"c",	10,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcTimeStamp,		"n",	10,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcObjType,			"n",	2,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcObjCode,			"n",	3,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcName,			"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcExpr,			"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcVpos,			"n",	9,		3)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcHpos,			"n",	9,		3)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcHeight,			"n",	9,		3)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcWidth,			"n",	9,		3)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcStyle,			"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcPicture,			"m",	4,		0)
+				&&	((lfptr2 =	iDbf_validate_fieldExists(thisCode, wa,	cgcOrder,			"m",	4,		0))		&&	(lfptr2->flags & _DBF_FIELD_BINARY) != 0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcUnique,			"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcComment,			"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcEnviron,			"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcBoxChar,			"c",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcFillChar,		"c",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcTag,				"m",	4,		0)
+				&&	((lfptr2 =	iDbf_validate_fieldExists(thisCode, wa,	cgcTag2,			"m",	4,		0))		&&	(lfptr2->flags & _DBF_FIELD_BINARY) != 0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcPenRed,			"n",	5,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcPenGreen,		"n",	5,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcPenBlue,			"n",	5,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcFillRed,			"n",	5,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcFillGreen,		"n",	5,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcFillBlue,		"n",	5,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcPenSize,			"n",	5,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcPenPat,			"n",	5,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcFillPat,			"n",	5,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcFontFace,		"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcFontStyle,		"n",	3,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcFontSize,		"n",	3,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcMode,			"n",	3,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcRuler,			"n",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcRulerLines,		"n",	3,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcGrid,			"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcGridY,			"n",	2,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcGridH,			"n",	2,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcFloat,			"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcStretch,			"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcStretchTop,		"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcTop,				"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcBottom,			"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcSubType,			"n",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcSubRest,			"n",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcNoRepeat,		"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcResetRpt,		"n",	2,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcPageBreak,		"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcColBreak,		"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcResetPage,		"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcGeneral,			"n",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcSpacing,			"n",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcDouble,			"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcSwapHeader,		"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcSwapFooter,		"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcEjectBefore,		"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcEjectAfter,		"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcPlain,			"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcSummary,			"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcAddAlias,		"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcOffset,			"n",	3,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcTopMargin,		"n",	3,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcBotMargin,		"n",	3,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcTotalType,		"n",	2,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcResetTotal,		"n",	2,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcResoId,			"n",	3,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcCurPos,			"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcSupAlways,		"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcSupOvflow,		"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcSupRpcol,		"n",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcGroup,			"n",	2,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcSupValChng,		"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcSupExpr,			"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcUser,			"m",	4,		0)
 			);
 	}
 
-	bool iiDbf_validate_isMnx(SWorkArea* wa)
+	bool iDbf_validate_isMnx(SThisCode* thisCode, SWorkArea* wa)
 	{
 		//////////
 		// MNX required structure:
@@ -4384,31 +4384,31 @@ debug_break;
 		//
 		//////
 			return(
-								iiDbf_validate_fieldExists(wa,	cgcObjType,			"n",	2,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcObjCode,			"n",	2,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcName,			"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcPrompt,			"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcCommand,			"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcMessage,			"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcProcType,		"n",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcProcedure,		"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcSetupType,		"n",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcSetup,			"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcCleanType,		"n",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcCleanup,			"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcMark,			"c",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcKeyName,			"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcKeyLabel,		"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcSkipFor,			"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcNameChange,		"l",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcNumItems,		"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcLevelName,		"c",	10,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcItemNum,			"c",	3,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcComment,			"m",	4,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcLocation,		"n",	2,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcScheme,			"n",	2,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcSysRes,			"n",	1,		0)
-				&&				iiDbf_validate_fieldExists(wa,	cgcResName,			"m",	4,		0)
+								iDbf_validate_fieldExists(thisCode, wa,	cgcObjType,			"n",	2,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcObjCode,			"n",	2,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcName,			"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcPrompt,			"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcCommand,			"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcMessage,			"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcProcType,		"n",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcProcedure,		"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcSetupType,		"n",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcSetup,			"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcCleanType,		"n",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcCleanup,			"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcMark,			"c",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcKeyName,			"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcKeyLabel,		"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcSkipFor,			"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcNameChange,		"l",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcNumItems,		"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcLevelName,		"c",	10,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcItemNum,			"c",	3,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcComment,			"m",	4,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcLocation,		"n",	2,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcScheme,			"n",	2,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcSysRes,			"n",	1,		0)
+				&&				iDbf_validate_fieldExists(thisCode, wa,	cgcResName,			"m",	4,		0)
 			);
 	}
 
@@ -4431,7 +4431,7 @@ debug_break;
 //		others		- Size, in bytes, of the header
 //
 /////
-	u32 dbf_get_header(u32 tnWorkArea, s8 *dest, u32 dest_length)
+	u32 dbf_get_header(SThisCode* thisCode, u32 tnWorkArea, s8 *dest, u32 dest_length)
 	{
 		u32 lTotal_size;
 

@@ -867,37 +867,37 @@ struct SBasePropertyInit;
 	// Basic setters and getters
 	// Note:  The _direct()* function variations are used to bypass the normal setters
 	//         and getters, and should be used for internal use only.
-	bool					iObjProp_set							(SObject* obj, s32 tnIndex, SVariable* varNewValue);
-	bool					iObjProp_set_bitmap_direct				(SObject* obj, s32 tnIndex, SBitmap* bmp);
-	bool					iObjProp_set_character					(SObject* obj, s32 tnIndex, SVariable* varNewValue);
-	bool					iObjProp_set_character_direct			(SObject* obj, s32 tnIndex, cu8* tcText, u32 tnTextLength);
-	bool					iObjProp_set_character_direct			(SObject* obj, s32 tnIndex,  u8* tcText, u32 tnTextLength);
-	bool					iObjProp_set_character_direct			(SObject* obj, s32 tnIndex, SDatum* datum);
-	bool					iObjProp_set_logical_direct				(SObject* obj, s32 tnIndex, s32 tnValue);
-	bool					iObjProp_set_s32_direct					(SObject* obj, s32 tnIndex, s32 tnValue);
-	bool					iObjProp_set_u32_direct					(SObject* obj, s32 tnIndex, u32 tnValue);
-	bool					iObjProp_set_f32_direct					(SObject* obj, s32 tnIndex, f32 tfValue);
-	bool					iObjProp_set_f64_direct					(SObject* obj, s32 tnIndex, f64 tfValue);
-	bool					iObjProp_set_sbgra_direct				(SObject* obj, s32 tnIndex, SBgra color);
-	bool					iObjProp_copy_byIndex					(SObject* objDst, s32 tnIndexDst, SObject* objSrc, s32 tnIndexSrc);
+	bool					iObjProp_set							(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* varNewValue);
+	bool					iObjProp_set_bitmap_direct				(SThisCode* thisCode, SObject* obj, s32 tnIndex, SBitmap* bmp);
+	bool					iObjProp_set_character					(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* varNewValue);
+	bool					iObjProp_set_character_direct			(SThisCode* thisCode, SObject* obj, s32 tnIndex, cu8* tcText, u32 tnTextLength);
+	bool					iObjProp_set_character_direct			(SThisCode* thisCode, SObject* obj, s32 tnIndex,  u8* tcText, u32 tnTextLength);
+	bool					iObjProp_set_character_direct			(SThisCode* thisCode, SObject* obj, s32 tnIndex, SDatum* datum);
+	bool					iObjProp_set_logical_direct				(SThisCode* thisCode, SObject* obj, s32 tnIndex, s32 tnValue);
+	bool					iObjProp_set_s32_direct					(SThisCode* thisCode, SObject* obj, s32 tnIndex, s32 tnValue);
+	bool					iObjProp_set_u32_direct					(SThisCode* thisCode, SObject* obj, s32 tnIndex, u32 tnValue);
+	bool					iObjProp_set_f32_direct					(SThisCode* thisCode, SObject* obj, s32 tnIndex, f32 tfValue);
+	bool					iObjProp_set_f64_direct					(SThisCode* thisCode, SObject* obj, s32 tnIndex, f64 tfValue);
+	bool					iObjProp_set_sbgra_direct				(SThisCode* thisCode, SObject* obj, s32 tnIndex, SBgra color);
+	bool					iObjProp_copy_byIndex					(SThisCode* thisCode, SObject* objDst, s32 tnIndexDst, SObject* objSrc, s32 tnIndexSrc);
 
-	SVariable*				iObjProp_get							(SObject* obj, s32 tnIndex);
-	s32						iObjProp_getVarAndType					(SObject* obj, s32 tnIndex, SVariable** varDst);
-	SVariable*				iObjProp_get_variable_byIndex			(SObject* obj, s32 tnIndex, SBasePropertyInit** baseProp = NULL, SObjPropertyMap** objProp = NULL);
-	SVariable*				iObjProp_get_variable_byName			(SObject* obj, u8* tcName, u32 tnNameLength, bool tlSearchBaseProps, bool tlSearchClassProps, u32* tnIndex);
-	SBitmap*				iObjProp_get_bitmap						(SObject* obj, s32 tnIndex);
-	SVariable*				iObjProp_get_character					(SObject* obj, s32 tnIndex);
-	f64						iObjProp_get_f64_direct					(SObject* obj, s32 tnIndex);
-	SVariable*				iObjProp_get_logical					(SObject* obj, s32 tnIndex);
+	SVariable*				iObjProp_get							(SThisCode* thisCode, SObject* obj, s32 tnIndex);
+	s32						iObjProp_getVarAndType					(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable** varDst);
+	SVariable*				iObjProp_get_variable_byIndex			(SThisCode* thisCode, SObject* obj, s32 tnIndex, SBasePropertyInit** baseProp = NULL, SObjPropertyMap** objProp = NULL);
+	SVariable*				iObjProp_get_variable_byName			(SThisCode* thisCode, SObject* obj, u8* tcName, u32 tnNameLength, bool tlSearchBaseProps, bool tlSearchClassProps, u32* tnIndex);
+	SBitmap*				iObjProp_get_bitmap						(SThisCode* thisCode, SObject* obj, s32 tnIndex);
+	SVariable*				iObjProp_get_character					(SThisCode* thisCode, SObject* obj, s32 tnIndex);
+	f64						iObjProp_get_f64_direct					(SThisCode* thisCode, SObject* obj, s32 tnIndex);
+	SVariable*				iObjProp_get_logical					(SThisCode* thisCode, SObject* obj, s32 tnIndex);
 	// Note:  The s32 value returned will be a _LOGICAL_* or _LOGICALX_* value.  To test for .T., use (x != _LOGICAL_FALSE).
-	s32						iObjProp_get_logical_direct				(SObject* obj, s32 tnIndex);
-	SVariable*				iObjProp_get_object						(SObject* obj, s32 tnIndex);
-	s32						iObjProp_get_s32_direct					(SObject* obj, s32 tnIndex);
-	SBgra					iObjProp_get_sbgra_direct				(SObject* obj, s32 tnIndex);
+	s32						iObjProp_get_logical_direct				(SThisCode* thisCode, SObject* obj, s32 tnIndex);
+	SVariable*				iObjProp_get_object						(SThisCode* thisCode, SObject* obj, s32 tnIndex);
+	s32						iObjProp_get_s32_direct					(SThisCode* thisCode, SObject* obj, s32 tnIndex);
+	SBgra					iObjProp_get_sbgra_direct				(SThisCode* thisCode, SObject* obj, s32 tnIndex);
 
-	bool					iObjProp_delete_variable_byIndex		(SObject* obj, s32 tnIndex);
+	bool					iObjProp_delete_variable_byIndex		(SThisCode* thisCode, SObject* obj, s32 tnIndex);
 
-	s32						iObjProp_compare_character				(SObject* obj, s32 tnIndex, s8* tcText, u32 tnTextLength);
+	s32						iObjProp_compare_character				(SThisCode* thisCode, SObject* obj, s32 tnIndex, s8* tcText, u32 tnTextLength);
 
 
 //////////
@@ -905,10 +905,10 @@ struct SBasePropertyInit;
 // Note:  Because of 8.5.1/15, braced union declarations are limited only to first member so we cannot validate these parameters are correct at compile time.
 // Note:  But, it's pretty easy to learn if they're wrong because you'll get stack errors in debug mode.
 //////
-	bool					iObjProp_setter_captionOnChild			(SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp);
-	bool					iObjProp_setter_iconOnChild				(SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp);
-	bool					iObjProp_setter_editboxMirror			(SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp);
-	bool					iObjProp_setter_fontProperty			(SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp);
+	bool					iObjProp_setter_captionOnChild			(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp);
+	bool					iObjProp_setter_iconOnChild				(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp);
+	bool					iObjProp_setter_editboxMirror			(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp);
+	bool					iObjProp_setter_fontProperty			(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp);
 
 
 	// For different types of properties
@@ -932,19 +932,19 @@ struct SBasePropertyInit;
 		// Initter
 		union {
 			uptr		_initterBase;
-			bool		(*initterBase)	(SObject* obj, u32 tnIndex);
+			bool		(*initterBase)	(SThisCode* thisCode, SObject* obj, u32 tnIndex);
 		};
 
 		// Setter
 		union {
 			uptr		_setterBase;
-			bool		(*setterBase)	(SObject* obj, u32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp);
+			bool		(*setterBase)	(SThisCode* thisCode, SObject* obj, u32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp);
 		};
 
 		// Getter
 		union {
 			uptr		_getterBase;
-			SVariable*	(*getterBase)	(SObject* obj, u32 tnIndex);
+			SVariable*	(*getterBase)	(SThisCode* thisCode, SObject* obj, u32 tnIndex);
 		};
 
 		// An amalgam of default values
@@ -1365,17 +1365,17 @@ struct SBasePropertyInit;
 
 		union {
 			uptr		_initterObject;
-			bool		(*initterObject)	(SObject* obj, u32 tnIndex);
+			bool		(*initterObject)	(SThisCode* thisCode, SObject* obj, u32 tnIndex);
 		};
 
 		union {
 			uptr		_setterObject;
-			bool		(*setterObject)		(SObject* obj, u32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp);
+			bool		(*setterObject)		(SThisCode* thisCode, SObject* obj, u32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp);
 		};
 
 		union {
 			uptr		_getterObject;
-			SVariable*	(*getterObject)		(SObject* obj, u32 tnIndex);
+			SVariable*	(*getterObject)		(SThisCode* thisCode, SObject* obj, u32 tnIndex);
 		};
 	};
 

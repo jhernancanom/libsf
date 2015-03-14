@@ -171,88 +171,88 @@
 // Initialize the weakly typed events passed parameters
 //
 //////
-	void iEvents_init(void)
+	void iEvents_init(SThisCode* thisCode)
 	{
 		//////////
 		// onMouseMove
 		//////
-			if (!varX_onMouseMove)				varX_onMouseMove		= iVariable_create(_VAR_TYPE_S32,		NULL);
-			if (!varY_onMouseMove)				varY_onMouseMove		= iVariable_create(_VAR_TYPE_S32,		NULL);
-			if (!varCtrl_onMouseMove)			varCtrl_onMouseMove		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varAlt_onMouseMove)			varAlt_onMouseMove		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varShift_onMouseMove)			varShift_onMouseMove	= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varClick_onMouseMove)			varClick_onMouseMove	= iVariable_create(_VAR_TYPE_S32,		NULL);
+			if (!varX_onMouseMove)				varX_onMouseMove		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
+			if (!varY_onMouseMove)				varY_onMouseMove		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
+			if (!varCtrl_onMouseMove)			varCtrl_onMouseMove		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varAlt_onMouseMove)			varAlt_onMouseMove		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varShift_onMouseMove)			varShift_onMouseMove	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varClick_onMouseMove)			varClick_onMouseMove	= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
 
 
 		//////////
 		// onMouseDown
 		//////
-			if (!varX_onMouseDown)				varX_onMouseDown		= iVariable_create(_VAR_TYPE_S32,		NULL);
-			if (!varY_onMouseDown)				varY_onMouseDown		= iVariable_create(_VAR_TYPE_S32,		NULL);
-			if (!varCtrl_onMouseDown)			varCtrl_onMouseDown		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varAlt_onMouseDown)			varAlt_onMouseDown		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varShift_onMouseDown)			varShift_onMouseDown	= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varClick_onMouseDown)			varClick_onMouseDown	= iVariable_create(_VAR_TYPE_S32,		NULL);
+			if (!varX_onMouseDown)				varX_onMouseDown		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
+			if (!varY_onMouseDown)				varY_onMouseDown		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
+			if (!varCtrl_onMouseDown)			varCtrl_onMouseDown		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varAlt_onMouseDown)			varAlt_onMouseDown		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varShift_onMouseDown)			varShift_onMouseDown	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varClick_onMouseDown)			varClick_onMouseDown	= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
 
 
 		//////////
 		// onMouseClickEx
 		//////
-			if (!varX_onMouseClickEx)			varX_onMouseClickEx		= iVariable_create(_VAR_TYPE_S32,		NULL);
-			if (!varY_onMouseClickEx)			varY_onMouseClickEx		= iVariable_create(_VAR_TYPE_S32,		NULL);
-			if (!varCtrl_onMouseClickEx)		varCtrl_onMouseClickEx	= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varAlt_onMouseClickEx)			varAlt_onMouseClickEx	= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varShift_onMouseClickEx)		varShift_onMouseClickEx	= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varClick_onMouseClickEx)		varClick_onMouseClickEx	= iVariable_create(_VAR_TYPE_S32,		NULL);
+			if (!varX_onMouseClickEx)			varX_onMouseClickEx		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
+			if (!varY_onMouseClickEx)			varY_onMouseClickEx		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
+			if (!varCtrl_onMouseClickEx)		varCtrl_onMouseClickEx	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varAlt_onMouseClickEx)			varAlt_onMouseClickEx	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varShift_onMouseClickEx)		varShift_onMouseClickEx	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varClick_onMouseClickEx)		varClick_onMouseClickEx	= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
 
 
 		//////////
 		// onMouseUp
 		//////
-			if (!varX_onMouseUp)				varX_onMouseUp			= iVariable_create(_VAR_TYPE_S32,		NULL);
-			if (!varY_onMouseUp)				varY_onMouseUp			= iVariable_create(_VAR_TYPE_S32,		NULL);
-			if (!varCtrl_onMouseUp)				varCtrl_onMouseUp		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varAlt_onMouseUp)				varAlt_onMouseUp		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varShift_onMouseUp)			varShift_onMouseUp		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varClick_onMouseUp)			varClick_onMouseUp		= iVariable_create(_VAR_TYPE_S32,		NULL);
+			if (!varX_onMouseUp)				varX_onMouseUp			= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
+			if (!varY_onMouseUp)				varY_onMouseUp			= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
+			if (!varCtrl_onMouseUp)				varCtrl_onMouseUp		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varAlt_onMouseUp)				varAlt_onMouseUp		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varShift_onMouseUp)			varShift_onMouseUp		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varClick_onMouseUp)			varClick_onMouseUp		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
 
 
 		//////////
 		// onMouseWheel
 		//////
-			if (!varX_onMouseWheel)				varX_onMouseWheel		= iVariable_create(_VAR_TYPE_S32,		NULL);
-			if (!varY_onMouseWheel)				varY_onMouseWheel		= iVariable_create(_VAR_TYPE_S32,		NULL);
-			if (!varCtrl_onMouseWheel)			varCtrl_onMouseWheel	= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varAlt_onMouseWheel)			varAlt_onMouseWheel		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varShift_onMouseWheel)			varShift_onMouseWheel	= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varClick_onMouseWheel)			varClick_onMouseWheel	= iVariable_create(_VAR_TYPE_S32,		NULL);
-			if (!varDeltaY_onMouseWheel)		varDeltaY_onMouseWheel	= iVariable_create(_VAR_TYPE_U32,		NULL);
+			if (!varX_onMouseWheel)				varX_onMouseWheel		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
+			if (!varY_onMouseWheel)				varY_onMouseWheel		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
+			if (!varCtrl_onMouseWheel)			varCtrl_onMouseWheel	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varAlt_onMouseWheel)			varAlt_onMouseWheel		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varShift_onMouseWheel)			varShift_onMouseWheel	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varClick_onMouseWheel)			varClick_onMouseWheel	= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
+			if (!varDeltaY_onMouseWheel)		varDeltaY_onMouseWheel	= iVariable_create(thisCode, _VAR_TYPE_U32,		NULL);
 
 
 		//////////
 		// onKeyDown
 		//////
-			if (!varCtrl_onKeyDown)				varCtrl_onKeyDown		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varAlt_onKeyDown)				varAlt_onKeyDown		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varShift_onKeyDown)			varShift_onKeyDown		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varCaps_onKeyDown)				varCaps_onKeyDown		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varAsciiChar_onKeyDown)		varAsciiChar_onKeyDown	= iVariable_create(_VAR_TYPE_U16,		NULL);
-			if (!varVKey_onKeyDown)				varVKey_onKeyDown		= iVariable_create(_VAR_TYPE_S16,		NULL);
-			if (!varIsCAS_onKeyDown)			varIsCAS_onKeyDown		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varIsAscii_onKeyDown)			varIsAscii_onKeyDown	= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varCtrl_onKeyDown)				varCtrl_onKeyDown		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varAlt_onKeyDown)				varAlt_onKeyDown		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varShift_onKeyDown)			varShift_onKeyDown		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varCaps_onKeyDown)				varCaps_onKeyDown		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varAsciiChar_onKeyDown)		varAsciiChar_onKeyDown	= iVariable_create(thisCode, _VAR_TYPE_U16,		NULL);
+			if (!varVKey_onKeyDown)				varVKey_onKeyDown		= iVariable_create(thisCode, _VAR_TYPE_S16,		NULL);
+			if (!varIsCAS_onKeyDown)			varIsCAS_onKeyDown		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varIsAscii_onKeyDown)			varIsAscii_onKeyDown	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
 
 
 		//////////
 		// onKeyUp
 		//////
-			if (!varCtrl_onKeyUp)				varCtrl_onKeyUp			= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varAlt_onKeyUp)				varAlt_onKeyUp			= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varShift_onKeyUp)				varShift_onKeyUp		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varCaps_onKeyUp)				varCaps_onKeyUp			= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varAsciiChar_onKeyUp)			varAsciiChar_onKeyUp	= iVariable_create(_VAR_TYPE_U16,		NULL);
-			if (!varVKey_onKeyUp)				varVKey_onKeyUp			= iVariable_create(_VAR_TYPE_S16,		NULL);
-			if (!varIsCAS_onKeyUp)				varIsCAS_onKeyUp		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
-			if (!varIsAscii_onKeyUp)			varIsAscii_onKeyUp		= iVariable_create(_VAR_TYPE_LOGICAL,	NULL);
+			if (!varCtrl_onKeyUp)				varCtrl_onKeyUp			= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varAlt_onKeyUp)				varAlt_onKeyUp			= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varShift_onKeyUp)				varShift_onKeyUp		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varCaps_onKeyUp)				varCaps_onKeyUp			= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varAsciiChar_onKeyUp)			varAsciiChar_onKeyUp	= iVariable_create(thisCode, _VAR_TYPE_U16,		NULL);
+			if (!varVKey_onKeyUp)				varVKey_onKeyUp			= iVariable_create(thisCode, _VAR_TYPE_S16,		NULL);
+			if (!varIsCAS_onKeyUp)				varIsCAS_onKeyUp		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varIsAscii_onKeyUp)			varIsAscii_onKeyUp		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
 	}
 
 
@@ -263,7 +263,7 @@
 // Called to reset an object's events to its default
 //
 //////
-	void iEvents_resetToDefault(SEvents* ev)
+	void iEvents_resetToDefault(SThisCode* thisCode, SEvents* ev)
 	{
 		SEventsGeneral*		g;
 		SEventsMouse*		m;
@@ -342,23 +342,24 @@
 // SVariable variables, so as to align with conventional source code processing.
 //
 //////
-	bool iiEventDispatch_onMouseMove(SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks)
+	bool iiEventDispatch_onMouseMove(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks)
 	{
 		//////////
 		// Prepare for dispatch
 		//////
-			iVariable_set_s32		(varX_onMouseMove,			x);
-			iVariable_set_s32		(varY_onMouseMove,			y);
-			iVariable_set_logical	(varCtrl_onMouseMove,		((tlCtrl)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_logical	(varAlt_onMouseMove,		((tlAlt)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_logical	(varShift_onMouseMove,		((tlShift)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_s32		(varClick_onMouseMove,		tnClicks);
+			iVariable_set_s32		(thisCode, varX_onMouseMove,		x);
+			iVariable_set_s32		(thisCode, varY_onMouseMove,		y);
+			iVariable_set_logical	(thisCode, varCtrl_onMouseMove,		((tlCtrl)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(thisCode, varAlt_onMouseMove,		((tlAlt)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(thisCode, varShift_onMouseMove,	((tlShift)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_s32		(thisCode, varClick_onMouseMove,	tnClicks);
 
 
 		//////////
 		// Dispatch
 		//////
-			return(ev->mouse.onMouseMove(win, obj,	varX_onMouseMove,		varY_onMouseMove,
+			return(ev->mouse.onMouseMove(thisCode, win, obj,
+													varX_onMouseMove,		varY_onMouseMove,
 													varCtrl_onMouseMove,	varAlt_onMouseMove,		varShift_onMouseMove,
 													varClick_onMouseMove));
 	}
@@ -372,25 +373,26 @@
 // SVariable variables, so as to align with conventional source code processing.
 //
 //////
-	bool iiEventDispatch_onMouseDown(SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks)
+	bool iiEventDispatch_onMouseDown(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks)
 	{
 		//////////
 		// Prepare for dispatch
 		//////
-			iVariable_set_s32		(varX_onMouseDown,			x);
-			iVariable_set_s32		(varY_onMouseDown,			y);
-			iVariable_set_logical	(varCtrl_onMouseDown,		((tlCtrl)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_logical	(varAlt_onMouseDown,		((tlAlt)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_logical	(varShift_onMouseDown,		((tlShift)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_s32		(varClick_onMouseDown,		tnClicks);
+			iVariable_set_s32		(thisCode, varX_onMouseDown,			x);
+			iVariable_set_s32		(thisCode, varY_onMouseDown,			y);
+			iVariable_set_logical	(thisCode, varCtrl_onMouseDown,			((tlCtrl)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(thisCode, varAlt_onMouseDown,			((tlAlt)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(thisCode, varShift_onMouseDown,		((tlShift)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_s32		(thisCode, varClick_onMouseDown,		tnClicks);
 
 
 		//////////
 		// Dispatch
 		//////
-			return(ev->mouse.onMouseDown(win, obj,		varX_onMouseDown,			varY_onMouseDown,
-														varCtrl_onMouseDown,		varAlt_onMouseDown,		varShift_onMouseDown,
-														varClick_onMouseDown));
+			return(ev->mouse.onMouseDown(thisCode, win, obj,
+													varX_onMouseDown,			varY_onMouseDown,
+													varCtrl_onMouseDown,		varAlt_onMouseDown,		varShift_onMouseDown,
+													varClick_onMouseDown));
 	}
 
 
@@ -402,23 +404,24 @@
 // SVariable variables, so as to align with conventional source code processing.
 //
 //////
-	bool iiEventDispatch_onMouseClickEx(SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks)
+	bool iiEventDispatch_onMouseClickEx(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks)
 	{
 		//////////
 		// Prepare for dispatch
 		//////
-			iVariable_set_s32		(varX_onMouseClickEx,			x);
-			iVariable_set_s32		(varY_onMouseClickEx,			y);
-			iVariable_set_logical	(varCtrl_onMouseClickEx,		((tlCtrl)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_logical	(varAlt_onMouseClickEx,			((tlAlt)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_logical	(varShift_onMouseClickEx,		((tlShift)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_s32		(varClick_onMouseClickEx,		tnClicks);
+			iVariable_set_s32		(thisCode, varX_onMouseClickEx,			x);
+			iVariable_set_s32		(thisCode, varY_onMouseClickEx,			y);
+			iVariable_set_logical	(thisCode, varCtrl_onMouseClickEx,		((tlCtrl)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(thisCode, varAlt_onMouseClickEx,		((tlAlt)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(thisCode, varShift_onMouseClickEx,		((tlShift)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_s32		(thisCode, varClick_onMouseClickEx,		tnClicks);
 
 
 		//////////
 		// Dispatch
 		//////
-			return(ev->mouse.onMouseClickEx(win, obj,	varX_onMouseClickEx,		varY_onMouseClickEx,
+			return(ev->mouse.onMouseClickEx(thisCode, win, obj,
+														varX_onMouseClickEx,		varY_onMouseClickEx,
 														varCtrl_onMouseClickEx,		varAlt_onMouseClickEx,		varShift_onMouseClickEx,
 														varClick_onMouseClickEx));
 	}
@@ -432,23 +435,24 @@
 // SVariable variables, so as to align with conventional source code processing.
 //
 //////
-	bool iiEventDispatch_onMouseUp(SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks)
+	bool iiEventDispatch_onMouseUp(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks)
 	{
 		//////////
 		// Prepare for dispatch
 		//////
-			iVariable_set_s32		(varX_onMouseUp,			x);
-			iVariable_set_s32		(varY_onMouseUp,			y);
-			iVariable_set_logical	(varCtrl_onMouseUp,			((tlCtrl)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_logical	(varAlt_onMouseUp,			((tlAlt)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_logical	(varShift_onMouseUp,		((tlShift)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_s32		(varClick_onMouseUp,		tnClicks);
+			iVariable_set_s32		(thisCode, varX_onMouseUp,			x);
+			iVariable_set_s32		(thisCode, varY_onMouseUp,			y);
+			iVariable_set_logical	(thisCode, varCtrl_onMouseUp,		((tlCtrl)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(thisCode, varAlt_onMouseUp,		((tlAlt)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(thisCode, varShift_onMouseUp,		((tlShift)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_s32		(thisCode, varClick_onMouseUp,		tnClicks);
 
 
 		//////////
 		// Dispatch
 		//////
-			return(ev->mouse.onMouseUp(win, obj,	varX_onMouseUp,			varY_onMouseUp,
+			return(ev->mouse.onMouseUp(thisCode, win, obj,
+													varX_onMouseUp,			varY_onMouseUp,
 													varCtrl_onMouseUp,		varAlt_onMouseUp,		varShift_onMouseUp,
 													varClick_onMouseUp));
 	}
@@ -462,24 +466,25 @@
 // SVariable variables, so as to align with conventional source code processing.
 //
 //////
-	bool iiEventDispatch_onMouseWheel(SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks, u32 tnDeltaY)
+	bool iiEventDispatch_onMouseWheel(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks, u32 tnDeltaY)
 	{
 		//////////
 		// Prepare for dispatch
 		//////
-			iVariable_set_s32		(varX_onMouseWheel,			x);
-			iVariable_set_s32		(varY_onMouseWheel,			y);
-			iVariable_set_logical	(varCtrl_onMouseWheel,		((tlCtrl)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_logical	(varAlt_onMouseWheel,		((tlAlt)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_logical	(varShift_onMouseWheel,		((tlShift)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_s32		(varClick_onMouseWheel,		tnClicks);
-			iVariable_set_u32		(varDeltaY_onMouseWheel,	tnDeltaY);
+			iVariable_set_s32		(thisCode, varX_onMouseWheel,			x);
+			iVariable_set_s32		(thisCode, varY_onMouseWheel,			y);
+			iVariable_set_logical	(thisCode, varCtrl_onMouseWheel,		((tlCtrl)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(thisCode, varAlt_onMouseWheel,			((tlAlt)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(thisCode, varShift_onMouseWheel,		((tlShift)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_s32		(thisCode, varClick_onMouseWheel,		tnClicks);
+			iVariable_set_u32		(thisCode, varDeltaY_onMouseWheel,		tnDeltaY);
 
 
 		//////////
 		// Dispatch
 		//////
-			return(ev->mouse.onMouseWheel(win, obj,		varX_onMouseWheel,			varY_onMouseWheel,
+			return(ev->mouse.onMouseWheel(thisCode, win, obj,
+														varX_onMouseWheel,			varY_onMouseWheel,
 														varCtrl_onMouseWheel,		varAlt_onMouseWheel,	varShift_onMouseWheel,
 														varClick_onMouseWheel,
 														varDeltaY_onMouseWheel));
@@ -494,25 +499,26 @@
 // SVariable variables, so as to align with conventional source code processing.
 //
 //////
-	bool iiEventDispatch_onKeyDown(SEvents* ev, SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, u16 tnAsciiChar, u16 tvKey, bool tlIsCAS, bool tlIsAscii)
+	bool iiEventDispatch_onKeyDown(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, u16 tnAsciiChar, u16 tvKey, bool tlIsCAS, bool tlIsAscii)
 	{
 		//////////
 		// Prepare for dispatch
 		//////
-			iVariable_set_logical	(varCtrl_onKeyDown,			((tlCtrl)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_logical	(varAlt_onKeyDown,			((tlAlt)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_logical	(varShift_onKeyDown,		((tlShift)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_logical	(varCaps_onKeyDown,			((tlCaps)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_u16		(varAsciiChar_onKeyDown,	tnAsciiChar);
-			iVariable_set_s16		(varVKey_onKeyDown,			tvKey);
-			iVariable_set_logical	(varIsCAS_onKeyDown,		((tlIsCAS)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_logical	(varIsAscii_onKeyDown,		((tlIsAscii)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(thisCode, varCtrl_onKeyDown,			((tlCtrl)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(thisCode, varAlt_onKeyDown,			((tlAlt)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(thisCode, varShift_onKeyDown,			((tlShift)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(thisCode, varCaps_onKeyDown,			((tlCaps)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_u16		(thisCode, varAsciiChar_onKeyDown,		tnAsciiChar);
+			iVariable_set_s16		(thisCode, varVKey_onKeyDown,			tvKey);
+			iVariable_set_logical	(thisCode, varIsCAS_onKeyDown,			((tlIsCAS)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(thisCode, varIsAscii_onKeyDown,		((tlIsAscii)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
 
 
 		//////////
 		// Dispatch
 		//////
-			return(ev->keyboard.onKeyDown(win, obj,	varCtrl_onKeyDown,		varAlt_onKeyDown,			varShift_onKeyDown,
+			return(ev->keyboard.onKeyDown(thisCode, win, obj,
+													varCtrl_onKeyDown,		varAlt_onKeyDown,			varShift_onKeyDown,
 													varCaps_onKeyDown,		varAsciiChar_onKeyDown,		varVKey_onKeyDown,
 													varIsCAS_onKeyDown,		varIsAscii_onKeyDown));
 	}
@@ -526,25 +532,26 @@
 // SVariable variables, so as to align with conventional source code processing.
 //
 //////
-	bool iiEventDispatch_onKeyUp(SEvents* ev, SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, u16 tnAsciiChar, u16 tvKey, bool tlIsCAS, bool tlIsAscii)
+	bool iiEventDispatch_onKeyUp(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, u16 tnAsciiChar, u16 tvKey, bool tlIsCAS, bool tlIsAscii)
 	{
 		//////////
 		// Prepare for dispatch
 		//////
-			iVariable_set_logical	(varCtrl_onKeyUp,			((tlCtrl)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_logical	(varAlt_onKeyUp,			((tlAlt)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_logical	(varShift_onKeyUp,			((tlShift)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_logical	(varCaps_onKeyUp,			((tlCaps)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_u16		(varAsciiChar_onKeyUp,		tnAsciiChar);
-			iVariable_set_s16		(varVKey_onKeyUp,			tvKey);
-			iVariable_set_logical	(varIsCAS_onKeyUp,			((tlIsCAS)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
-			iVariable_set_logical	(varIsAscii_onKeyUp,		((tlIsAscii)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(thisCode, varCtrl_onKeyUp,			((tlCtrl)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(thisCode, varAlt_onKeyUp,			((tlAlt)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(thisCode, varShift_onKeyUp,		((tlShift)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(thisCode, varCaps_onKeyUp,			((tlCaps)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_u16		(thisCode, varAsciiChar_onKeyUp,	tnAsciiChar);
+			iVariable_set_s16		(thisCode, varVKey_onKeyUp,			tvKey);
+			iVariable_set_logical	(thisCode, varIsCAS_onKeyUp,		((tlIsCAS)		? _LOGICAL_TRUE : _LOGICAL_FALSE));
+			iVariable_set_logical	(thisCode, varIsAscii_onKeyUp,		((tlIsAscii)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
 
 
 		//////////
 		// Dispatch
 		//////
-			return(ev->keyboard.onKeyUp(win, obj,	varCtrl_onKeyUp,		varAlt_onKeyUp,				varShift_onKeyUp,
+			return(ev->keyboard.onKeyUp(thisCode, win, obj,
+													varCtrl_onKeyUp,		varAlt_onKeyUp,				varShift_onKeyUp,
 													varCaps_onKeyUp,		varAsciiChar_onKeyUp,		varVKey_onKeyUp,
 													varIsCAS_onKeyUp,		varIsAscii_onKeyUp));
 	}

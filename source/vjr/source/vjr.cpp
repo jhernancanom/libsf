@@ -182,18 +182,18 @@
 		iBmp_createBySize(bmpNoImage, 1, 1, 24);
 
 		// Initialize event dispatch variables
-		iEvents_init();
+		iEvents_init(NULL);
 
 		// Initialize primitive variables
-		iVariable_createDefaultValues();
-		iVariable_createPropsMaster();
-		varConstant_space		= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, cgc_spaceText, 1);
-		varEmptyString			= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, (cu8*)NULL, 0);
-		var2000Spaces			= iVariable_create(_VAR_TYPE_CHARACTER, NULL);
-		varTrue					= iVariable_createAndPopulate(_VAR_TYPE_LOGICAL, (cu8*)NULL, 0);
-		varFalse				= iVariable_createAndPopulate(_VAR_TYPE_LOGICAL, (cu8*)NULL, 0);
+		iVariable_createDefaultValues(NULL);
+		iVariable_createPropsMaster(NULL);
+		varConstant_space		= iVariable_createAndPopulate(NULL, _VAR_TYPE_CHARACTER, cgc_spaceText, 1);
+		varEmptyString			= iVariable_createAndPopulate(NULL, _VAR_TYPE_CHARACTER, (cu8*)NULL, 0);
+		var2000Spaces			= iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL);
+		varTrue					= iVariable_createAndPopulate(NULL, _VAR_TYPE_LOGICAL, (cu8*)NULL, 0);
+		varFalse				= iVariable_createAndPopulate(NULL, _VAR_TYPE_LOGICAL, (cu8*)NULL, 0);
 		lnSix					= 6;
-		varSix					= iVariable_createAndPopulate(_VAR_TYPE_S32, (cu8*)&lnSix, sizeof(lnSix));
+		varSix					= iVariable_createAndPopulate(NULL, _VAR_TYPE_S32, (cu8*)&lnSix, sizeof(lnSix));
 
 		// 2000 blank spaces
 		iDatum_allocateSpace(&var2000Spaces->value, 2000);
@@ -348,7 +348,7 @@
 
 		// Create our global variables
 		iVjr_appendSystemLog((u8*)"Create global variables");
-		varGlobals = function_datetime(NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+		varGlobals = function_datetime(NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 		iDatum_duplicate(&varGlobals->name, cgcName_startupTime, -1);
 
 		// Create our default objects
@@ -361,12 +361,12 @@
 
 		// Initially render each one
 		iVjr_appendSystemLog((u8*)"Render _jdebi");
-		iObj_render(_jdebi, true);
+		iObj_render(NULL, _jdebi, true);
 
 		// Attach them to physical windows
 		iVjr_appendSystemLog((u8*)"Allocate OS Window for _jdebi");
 		gWinJDebi = iWindow_allocate();
-		iObj_createWindowForForm(_jdebi, gWinJDebi, IDI_JDEBI);
+		iObj_createWindowForForm(NULL, _jdebi, gWinJDebi, IDI_JDEBI);
 
 		// Initially populate _screen
 		// Load in the history if it exists
@@ -436,7 +436,7 @@
 
 		// Redraw
 		iVjr_appendSystemLog((u8*)"Final render _jdebi");
-		iWindow_render(gWinJDebi, true);
+		iWindow_render(NULL, gWinJDebi, true);
 
 		// Remove the splash screen 1/2 second later
 		CreateThread(0, 0, &iSplash_delete, (LPVOID)500, 0, 0);

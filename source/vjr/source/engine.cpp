@@ -87,7 +87,7 @@
 // Called to execute a stand-alone command, such as from the command window.
 //
 //////
-	bool iEngine_executeStandaloneCommand(SLine* line)
+	bool iEngine_executeStandaloneCommand(SThisCode* thisCode, SLine* line)
 	{
 		bool			llManufactured;
 		SComp*			comp;
@@ -105,7 +105,7 @@
 			//////////
 			// Parse it
 			//////
-				comp = iEngine_parseSourceCodeLine(line);
+				comp = iEngine_parseSourceCodeLine(thisCode, line);
 
 
 			//////////
@@ -132,7 +132,7 @@
 						iSEM_navigateToTopLine(screenData, _screen);
 						iSEM_deleteChain(&screenData, false);
 						screen_editbox->isDirtyRender = true;
-						iWindow_render(gWinJDebi, false);
+						iWindow_render(NULL, gWinJDebi, false);
 						break;
 
 					case _ICODE_QUESTION_MARK:
@@ -143,7 +143,7 @@
 							iSEM_appendLine(screenData, (u8*)cgcSyntaxError, -1, false);
 							iSEM_navigateToEndLine(screenData, _screen);
 							screen_editbox->isDirtyRender = true;
-							iWindow_render(gWinJDebi, false);
+							iWindow_render(NULL, gWinJDebi, false);
 							return(false);
 
 						} else {
@@ -152,41 +152,41 @@
 							{
 								// It is something like "? func(x)"
 								llManufactured = true;
-								var = iEngine_get_functionResult(compNext);
+								var = iEngine_get_functionResult(thisCode, compNext);
 								if (!var)
 								{
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error
 									screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(screenData, _screen);
-									iWindow_render(gWinJDebi, false);
+									iWindow_render(NULL, gWinJDebi, false);
 									return(false);
 								}
 
 							} else if (compNext->iCat == _ICAT_GENERIC) {
 								// It is something like "? k" or "? 29"
-								var = iEngine_get_variableName_fromComponent(compNext, &llManufactured);
+								var = iEngine_get_variableName_fromComponent(thisCode, compNext, &llManufactured);
 								if (!var)
 								{
 									// Unknown parameter
 									iError_report(cgcUnrecognizedParameter, false);
 									screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(screenData, _screen);
-									iWindow_render(gWinJDebi, false);
+									iWindow_render(NULL, gWinJDebi, false);
 									return(false);
 								}
 							}
 							// We have a variable we can display its contents
-							varText = iVariable_convertForDisplay(var);
+							varText = iVariable_convertForDisplay(NULL, var);
 
 							// Add its contents to _screen
 							iSEM_appendLine(screenData, varText->value.data_u8, varText->value.length, false);
 							iSEM_navigateToEndLine(screenData, _screen);
 							screen_editbox->isDirtyRender = true;
-							iWindow_render(gWinJDebi, false);
+							iWindow_render(NULL, gWinJDebi, false);
 
 							// Release the variable if it was manufactured
-							iVariable_delete(varText, true);
+							iVariable_delete(NULL, varText, true);
 							if (llManufactured)
-								iVariable_delete(var, true);
+								iVariable_delete(NULL, var, true);
 						}
 						break;
 
@@ -198,36 +198,36 @@
 							if (compThird->iCat == _ICAT_FUNCTION)
 							{
 								// It is something like "? func(x)"
-								var = iEngine_get_functionResult(compThird);
+								var = iEngine_get_functionResult(thisCode, compThird);
 								if (!var)
 								{
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error
 									screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(screenData, _screen);
-									iWindow_render(gWinJDebi, false);
+									iWindow_render(NULL, gWinJDebi, false);
 									return(false);
 								}
 
 							} else if (compThird->iCat == _ICAT_GENERIC) {
 								// It is something like "x = y" or "x = 29"
-								if (!(var = iEngine_get_variableName_fromComponent(compThird, &llManufactured)))
+								if (!(var = iEngine_get_variableName_fromComponent(thisCode, compThird, &llManufactured)))
 								{
 									// Unknown parameter
 									iError_report(cgcUnrecognizedParameter, false);
 									screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(screenData, _screen);
-									iWindow_render(gWinJDebi, false);
+									iWindow_render(NULL, gWinJDebi, false);
 									return(false);
 								}
 							}
 
 							// If we get here, we have the variable they're storing
 							// Based on the name from comp, see if it's a variable we already possess
-							varExisting = iVariable_searchForName(varGlobals, comp->line->sourceCode->data + comp->start, comp->length, comp);
+							varExisting = iVariable_searchForName(NULL, varGlobals, comp->line->sourceCode->data + comp->start, comp->length, comp);
 							if (varExisting)
 							{
 								// We are updating the value
-								iVariable_copy(varExisting, var);
-								iVariable_delete(var, true);
+								iVariable_copy(NULL, varExisting, var);
+								iVariable_delete(NULL, var, true);
 
 							} else {
 								// We are creating a new variable
@@ -274,7 +274,7 @@
 // This process does not process variables, table names, fields, etc.
 //
 //////
-	SComp* iEngine_parseSourceCodeLine(SLine* line)
+	SComp* iEngine_parseSourceCodeLine(SThisCode* thisCode, SLine* line)
 	{
 		//////////
 		// If we have existing compiler data, get rid of it
@@ -340,7 +340,7 @@
 // reference.
 //
 //////
-	SVariable* iEngine_get_variableName_fromComponent(SComp* comp, bool* tlManufactured)
+	SVariable* iEngine_get_variableName_fromComponent(SThisCode* thisCode, SComp* comp, bool* tlManufactured)
 	{
 		s32			lnI;
 		s64			lnValue;
@@ -394,13 +394,13 @@
 							if (lnValue >= (s64)_s32_min && lnValue <= (s64)_s32_max)
 							{
 								// Store as 32-bits
-								var = iVariable_create(_VAR_TYPE_S32, NULL);
+								var = iVariable_create(NULL, _VAR_TYPE_S32, NULL);
 								if (var)
 									*var->value.data_s32 = (s32)lnValue;
 
 							} else {
 								// Store as 64-bits
-								var = iVariable_create(_VAR_TYPE_S64, NULL);
+								var = iVariable_create(NULL, _VAR_TYPE_S64, NULL);
 								if (var)
 									*var->value.data_s64 = lnValue;
 							}
@@ -417,13 +417,13 @@
 							if (lfValue >= (f64)_f32_min && lfValue <= (f64)_f32_max)
 							{
 								// Store as 32-bits
-								var = iVariable_create(_VAR_TYPE_F32, NULL);
+								var = iVariable_create(NULL, _VAR_TYPE_F32, NULL);
 								if (var)
 									*var->value.data_f32 = (f32)lfValue;
 
 							} else {
 								// Store as 64-bits
-								var = iVariable_create(_VAR_TYPE_F64, NULL);
+								var = iVariable_create(NULL, _VAR_TYPE_F64, NULL);
 								if (var)
 									*var->value.data_f64 = lfValue;
 							}
@@ -441,7 +441,7 @@
 				case _ICODE_YES:
 				case _ICODE_UP:
 					// It's a .T. or some equivalent
-					var = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+					var = iVariable_create(NULL, _VAR_TYPE_LOGICAL, NULL);
 					if (var)
 					{
 						*tlManufactured		= true;
@@ -455,7 +455,7 @@
 				case _ICODE_NO:
 				case _ICODE_DOWN:
 					// It's a .F. or some equivalent
-					var = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+					var = iVariable_create(NULL, _VAR_TYPE_LOGICAL, NULL);
 					if (var)
 					{
 						*tlManufactured		= true;
@@ -467,7 +467,7 @@
 
 				case _ICODE_EXTRA:
 					// It's a .X.
-					var = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+					var = iVariable_create(NULL, _VAR_TYPE_LOGICAL, NULL);
 					if (var)
 					{
 						*tlManufactured		= true;
@@ -479,7 +479,7 @@
 
 				case _ICODE_YET_ANOTHER:
 					// It's a .Y.
-					var = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+					var = iVariable_create(NULL, _VAR_TYPE_LOGICAL, NULL);
 					if (var)
 					{
 						*tlManufactured		= true;
@@ -491,7 +491,7 @@
 
 				case _ICODE_ZATS_ALL_FOLKS:
 					// It's a .X.
-					var = iVariable_create(_VAR_TYPE_LOGICAL, NULL);
+					var = iVariable_create(NULL, _VAR_TYPE_LOGICAL, NULL);
 					if (var)
 					{
 						*tlManufactured		= true;
@@ -507,7 +507,7 @@
 					if (propGet_settings_VariablesFirst(_settings))
 					{
 						// Searching variables first, field names last.
-						if ((var = iVariable_searchForName(varGlobals, comp->line->sourceCode->data + comp->start, comp->length, comp)))
+						if ((var = iVariable_searchForName(NULL, varGlobals, comp->line->sourceCode->data + comp->start, comp->length, comp)))
 						{
 							// It was found in the global variables
 
@@ -524,7 +524,7 @@
 							// It was found in a table field
 							return(var);
 
-						} else*/ if ((var = iVariable_searchForName(varGlobals, comp->line->sourceCode->data + comp->start, comp->length, comp))) {
+						} else*/ if ((var = iVariable_searchForName(NULL, varGlobals, comp->line->sourceCode->data + comp->start, comp->length, comp))) {
 							// It was found in the global variables
 						}
 					}
@@ -535,25 +535,25 @@
 						if (var->varType == _VAR_TYPE_NULL)
 						{
 							// It's a null variable
-							varCopy = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+							varCopy = iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL);
 							if (varCopy)
 								iDatum_duplicate(&varCopy->value, cgcNullText, -1);
 
 						} else if (var->varType == _VAR_TYPE_OBJECT) {
 							// It's an object
-							varCopy = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+							varCopy = iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL);
 							if (varCopy)
 								iDatum_duplicate(&varCopy->value, cgcObjectText, -1);
 
 						} else if (var->varType == _VAR_TYPE_THISCODE) {
 							// It's a thisCode reference
-							varCopy = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+							varCopy = iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL);
 							if (varCopy)
 								iDatum_duplicate(&varCopy->value, cgcThisCodeText, -1);
 
 						} else {
 							// It's a traditional variable
-							varCopy = iVariable_create(var->varType, NULL);
+							varCopy = iVariable_create(NULL, var->varType, NULL);
 							if (varCopy)
 								iDatum_duplicate(&varCopy->value, &var->value);
 						}
@@ -569,7 +569,7 @@
 					// Create and populate our output variable
 					//////
 						*tlManufactured	= true;
-						var = iVariable_create(_VAR_TYPE_CHARACTER, NULL);
+						var = iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL);
 						if (var)
 							iDatum_duplicate(&var->value, comp->line->sourceCode->data_u8 + comp->start + 1, comp->length - 2);
 
@@ -599,7 +599,7 @@
 // or the quoted content.
 //
 //////
-	SVariable* iEngine_get_contiguousComponents(SComp* comp, bool* tlManufactured, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount)
+	SVariable* iEngine_get_contiguousComponents(SThisCode* thisCode, SComp* comp, bool* tlManufactured, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount)
 	{
 		SVariable* varPathname;
 
@@ -614,12 +614,12 @@
 				case _ICODE_DOUBLE_QUOTED_TEXT:
 				case _ICODE_SINGLE_QUOTED_TEXT:
 					// By definition, quoted content is its own independent thing
-					varPathname = iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, comp->line->sourceCode->data_u8 + comp->start, comp->length);
+					varPathname = iVariable_createAndPopulate(NULL, _VAR_TYPE_CHARACTER, comp->line->sourceCode->data_u8 + comp->start, comp->length);
 					break;
 
 				default:
 					// Get every contiguous component
-					varPathname	= iVariable_createAndPopulate(_VAR_TYPE_CHARACTER, comp->line->sourceCode->data_u8 + comp->start, iComps_getContiguousLength(comp, valid_iCodeArray, tnValid_iCodeArrayCount, NULL));
+					varPathname	= iVariable_createAndPopulate(NULL, _VAR_TYPE_CHARACTER, comp->line->sourceCode->data_u8 + comp->start, iComps_getContiguousLength(comp, valid_iCodeArray, tnValid_iCodeArrayCount, NULL));
 					break;
 			}
 		}
@@ -636,7 +636,7 @@
 // Called to find the function, execute it, and return the result
 //
 //////
-	SVariable* iEngine_get_functionResult(SComp* comp)
+	SVariable* iEngine_get_functionResult(SThisCode* thisCode, SComp* comp)
 	{
 		u32				lnParamsFound;
 		SFunctionData*	lfl;
@@ -664,42 +664,42 @@
 				if (lfl->iCode == comp->iCode)
 				{
 					// We need to find the minimum number of parameters between)
-					if (!iiEngine_getParametersBetween(compLeftParen, &lnParamsFound, lfl->requiredCount, lfl->parameterCount, &p1, &p2, &p3, &p4, &p5, &p6, &p7))
+					if (!iiEngine_getParametersBetween(thisCode, compLeftParen, &lnParamsFound, lfl->requiredCount, lfl->parameterCount, &p1, &p2, &p3, &p4, &p5, &p6, &p7))
 						return(NULL);
 
 					// When we get here we found the correct number of parameters
 					switch (lfl->parameterCount)
 					{
 						case 0:			// Zero parameters for this function
-							result = lfl->func_0p();
+							result = lfl->func_0p(NULL);
 							break;
 
 						case 1:			// One parameter max
-							result = lfl->func_1p(p1);
+							result = lfl->func_1p(NULL, p1);
 							break;
 
 						case 2:			// Two parameters max
-							result = lfl->func_2p(p1, p2);
+							result = lfl->func_2p(NULL, p1, p2);
 							break;
 
 						case 3:			// Two parameters max
-							result = lfl->func_3p(p1, p2, p3);
+							result = lfl->func_3p(NULL, p1, p2, p3);
 							break;
 
 						case 4:			// Two parameters max
-							result = lfl->func_4p(p1, p2, p3, p4);
+							result = lfl->func_4p(NULL, p1, p2, p3, p4);
 							break;
 
 						case 5:			// Two parameters max
-							result = lfl->func_5p(p1, p2, p3, p4, p5);
+							result = lfl->func_5p(NULL, p1, p2, p3, p4, p5);
 							break;
 
 						case 6:			// Two parameters max
-							result = lfl->func_6p(p1, p2, p3, p4, p5, p6);
+							result = lfl->func_6p(NULL, p1, p2, p3, p4, p5, p6);
 							break;
 
 						case 7:			// Two parameters max
-							result = lfl->func_7p(p1, p2, p3, p4, p5, p6, p7);
+							result = lfl->func_7p(NULL, p1, p2, p3, p4, p5, p6, p7);
 							break;
 
 						default:
@@ -707,13 +707,13 @@
 							return(NULL);
 					}
 					// We need to free anything that needs freed
-					if (p1)		iVariable_delete(p1, true);
-					if (p2)		iVariable_delete(p2, true);
-					if (p3)		iVariable_delete(p3, true);
-					if (p4)		iVariable_delete(p4, true);
-					if (p5)		iVariable_delete(p5, true);
-					if (p6)		iVariable_delete(p6, true);
-					if (p7)		iVariable_delete(p7, true);
+					if (p1)		iVariable_delete(thisCode, p1, true);
+					if (p2)		iVariable_delete(thisCode, p2, true);
+					if (p3)		iVariable_delete(thisCode, p3, true);
+					if (p4)		iVariable_delete(thisCode, p4, true);
+					if (p5)		iVariable_delete(thisCode, p5, true);
+					if (p6)		iVariable_delete(thisCode, p6, true);
+					if (p7)		iVariable_delete(thisCode, p7, true);
 
 					// Indicate our return value
 					return(result);
@@ -734,7 +734,7 @@
 // Called to find the indicated setter, and execute it if found
 //
 //////
-	void iEngine_executeSetter(cs8* name, SVariable* varOld, SVariable* varNew)
+	void iEngine_executeSetter(SThisCode* thisCode, cs8* name, SVariable* varOld, SVariable* varNew)
 	{
 // TODO:  When the engine is developed and working, a found setter will suspend execution and branch to that location
 	}
@@ -747,7 +747,7 @@
 // Called to report the indicated error and relate it to the indicated variable (if any)
 //
 //////
-	void iEngine_error(u32 tnErrorNumber, SVariable* varRelated)
+	void iEngine_error(SThisCode* thisCode, u32 tnErrorNumber, SVariable* varRelated)
 	{
 // TODO:  Report the error and relate the variable
 	}
@@ -760,7 +760,7 @@
 // Called to obtain the parameters between the indicated parenthesis.
 //
 //////
-	bool iiEngine_getParametersBetween(SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable** p1, SVariable** p2, SVariable** p3, SVariable** p4, SVariable** p5, SVariable** p6, SVariable** p7)
+	bool iiEngine_getParametersBetween(SThisCode* thisCode, SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable** p1, SVariable** p2, SVariable** p3, SVariable** p4, SVariable** p5, SVariable** p6, SVariable** p7)
 	{
 		u32			lnParamCount;
 		bool		llManufactured;
@@ -788,7 +788,7 @@
 				if (lnParamCount > maxCount)
 				{
 					// Too many parameters
-					iError_reportByNumber(_ERROR_TOO_MANY_PARAMETERS, comp, false);
+					iError_reportByNumber(thisCode, _ERROR_TOO_MANY_PARAMETERS, comp, false);
 					return(NULL);
 				}
 
@@ -799,7 +799,7 @@
 				if (!compComma || (compComma->iCode != _ICODE_COMMA && compComma->iCode != _ICODE_PARENTHESIS_RIGHT && lnParamCount > requiredCount))
 				{
 					// Comma expected error
-					iError_reportByNumber(_ERROR_COMMA_EXPECTED, comp, false);
+					iError_reportByNumber(thisCode, _ERROR_COMMA_EXPECTED, comp, false);
 					return(NULL);
 				}
 
@@ -808,13 +808,13 @@
 			// Derive whatever this is as a variable
 			//////
 /*SVariable* var;*/
-				     if (lnParamCount == 1)		{	/*var =*/ (*p1 = iEngine_get_variableName_fromComponent(comp, &llManufactured));		}
-				else if (lnParamCount == 2)		{	/*var =*/ (*p2 = iEngine_get_variableName_fromComponent(comp, &llManufactured));		}
-				else if (lnParamCount == 3)		{	/*var =*/ (*p3 = iEngine_get_variableName_fromComponent(comp, &llManufactured));		}
-				else if (lnParamCount == 4)		{	/*var =*/ (*p4 = iEngine_get_variableName_fromComponent(comp, &llManufactured));		}
-				else if (lnParamCount == 5)		{	/*var =*/ (*p5 = iEngine_get_variableName_fromComponent(comp, &llManufactured));		}
-				else if (lnParamCount == 6)		{	/*var =*/ (*p6 = iEngine_get_variableName_fromComponent(comp, &llManufactured));		}
-				else if (lnParamCount == 7)		{	/*var =*/ (*p7 = iEngine_get_variableName_fromComponent(comp, &llManufactured));		}
+				     if (lnParamCount == 1)		{	/*var =*/ (*p1 = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
+				else if (lnParamCount == 2)		{	/*var =*/ (*p2 = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
+				else if (lnParamCount == 3)		{	/*var =*/ (*p3 = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
+				else if (lnParamCount == 4)		{	/*var =*/ (*p4 = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
+				else if (lnParamCount == 5)		{	/*var =*/ (*p5 = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
+				else if (lnParamCount == 6)		{	/*var =*/ (*p6 = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
+				else if (lnParamCount == 7)		{	/*var =*/ (*p7 = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
 
 
 			// Move to next component

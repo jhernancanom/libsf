@@ -315,7 +315,7 @@
 					while (start && (SLine*)start->ll.prev != end)
 					{
 						// Parse it
-						iEngine_parseSourceCodeLine(start);
+						iEngine_parseSourceCodeLine(NULL, start);
 
 						// Move to next line
 						start = (SLine*)start->ll.next;
@@ -1017,8 +1017,8 @@ debug_break;
 		if (sem && obj)
 		{
 			// What is the object?
-			backColor	= iObjProp_get_sbgra_direct(obj, _INDEX_BACKCOLOR);
-			foreColor	= iObjProp_get_sbgra_direct(obj, _INDEX_FORECOLOR);
+			backColor	= iObjProp_get_sbgra_direct(NULL, obj, _INDEX_BACKCOLOR);
+			foreColor	= iObjProp_get_sbgra_direct(NULL, obj, _INDEX_FORECOLOR);
 
 		} else {
 			// It's insane, so we set our colors to default
@@ -1071,7 +1071,7 @@ debug_break;
 // is now signaling repated keystrokes.
 //
 //////
-	bool iSEM_onKeyDown_sourceCode(SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii)
+	bool iSEM_onKeyDown_sourceCode(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii)
 	{
 		s32				lnMateDirection;
 		SEM*			sem;
@@ -1085,7 +1085,7 @@ debug_break;
 
 
 		// Make sure our environment is sane
-		if (!iiDefaultCallback_processKeyVariables(varCtrl, varAlt, varShift, varCaps, varAscii, varVKey, varIsCAS, varIsAscii, &llCtrl, &llAlt, &llShift, &llCaps, &llIsCAS, &llIsAscii, &lcAscii, &lnVKey))
+		if (!iiDefaultCallback_processKeyVariables(thisCode, varCtrl, varAlt, varShift, varCaps, varAscii, varVKey, varIsCAS, varIsAscii, &llCtrl, &llAlt, &llShift, &llCaps, &llIsCAS, &llIsAscii, &lcAscii, &lnVKey))
 			return(false);
 
 
@@ -1111,10 +1111,10 @@ debug_break;
 							iSEMLine_toggleBreakpoint(sem);
 
 							// Force the redraw
-							iObj_setDirtyRender_ascent(obj, true);
+							iObj_setDirtyRender_ascent(thisCode, obj, true);
 
 							// Re-render the window
-							iWindow_render(win, false);
+							iWindow_render(thisCode, win, false);
 						}
 						break;
 
@@ -1124,14 +1124,14 @@ debug_break;
 						if (sem && sem->line_cursor && sem->line_cursor->sourceCode_populatedLength > 0)
 						{
 							// Execute the command
-							iEngine_executeStandaloneCommand(sem->line_cursor);
+							iEngine_executeStandaloneCommand(thisCode, sem->line_cursor);
 
 							// If we're still going, then update the screen
 							if (!glShuttingDown)
 							{
 								// Move to next line and redraw
 								iSEM_navigate(sem, obj, 1, 0);
-								iWindow_render(win, false);
+								iWindow_render(thisCode, win, false);
 							}
 							return(true);
 						}
@@ -1146,18 +1146,18 @@ debug_break;
 						// Are we on the last line in the command window?
 						if (sem && sem->line_cursor && !sem->line_cursor->ll.next && sem->line_cursor->sourceCode_populatedLength > 0)
 						{
-							subform = iObj_find_thisSubform(obj);
-							if (subform && iObj_isCommandWindow(subform))
+							subform = iObj_find_thisSubform(thisCode, obj);
+							if (subform && iObj_isCommandWindow(thisCode, subform))
 							{
 								// Execute the command
-								iEngine_executeStandaloneCommand(sem->line_cursor);
+								iEngine_executeStandaloneCommand(thisCode, sem->line_cursor);
 
 								// If we're not shutting down, update the screen
 								if (!glShuttingDown)
 								{
 									// Draw it like normal
 									iSEM_returnKey(sem, obj);
-									iWindow_render(win, false);
+									iWindow_render(NULL, win, false);
 								}
 								return(true);
 							}
@@ -1213,8 +1213,8 @@ debug_break;
 						}
 
 						// Redraw the window
-						iObj_setDirtyRender_ascent(obj, true);
-						iWindow_render(win, false);
+						iObj_setDirtyRender_ascent(thisCode, obj, true);
+						iWindow_render(thisCode, win, false);
 						return(true);
 				}
 			}
@@ -1228,12 +1228,12 @@ debug_break;
 			sem->line_highlightAfter	= NULL;
 
 			// Redraw
-			iObj_setDirtyRender_ascent(obj, true);
-			iWindow_render(win, false);
+			iObj_setDirtyRender_ascent(thisCode, obj, true);
+			iWindow_render(thisCode, win, false);
 		}
 
 		// Indicate additional events should be processed
-		return(iSEM_onKeyDown(win, obj, varCtrl, varAlt, varShift, varCaps, varAscii, varVKey, varIsCAS, varIsAscii));
+		return(iSEM_onKeyDown(thisCode, win, obj, varCtrl, varAlt, varShift, varCaps, varAscii, varVKey, varIsCAS, varIsAscii));
 	}
 
 
@@ -1244,7 +1244,7 @@ debug_break;
 // Called when a keypress is made, or when a prior keypress is now signaling repated keystrokes.
 //
 //////
-	bool iSEM_onKeyDown(SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii)
+	bool iSEM_onKeyDown(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii)
 	{
 		s32		lnDeltaX;
 		bool	llProcessed;
@@ -1255,7 +1255,7 @@ debug_break;
 
 
 		// Make sure our environment is sane
-		if (!iiDefaultCallback_processKeyVariables(varCtrl, varAlt, varShift, varCaps, varAscii, varVKey, varIsCAS, varIsAscii, &llCtrl, &llAlt, &llShift, &llCaps, &llIsCAS, &llIsAscii, &lcAscii, &lnVKey))
+		if (!iiDefaultCallback_processKeyVariables(thisCode, varCtrl, varAlt, varShift, varCaps, varAscii, varVKey, varIsCAS, varIsAscii, &llCtrl, &llAlt, &llShift, &llCaps, &llIsCAS, &llIsAscii, &lcAscii, &lnVKey))
 			return(false);
 
 
@@ -1472,7 +1472,7 @@ debug_break;
 						if (sem->font)			sem->font = iFont_bigger(sem->font,		true);
 						else					sem->font = iFont_bigger(obj->p.font,	false);
 						iSEM_verifyCursorIsVisible(sem, obj);
-						iObj_setDirtyRender_ascent(obj, true);
+						iObj_setDirtyRender_ascent(thisCode, obj, true);
 						llProcessed = true;
 						break;
 
@@ -1480,7 +1480,7 @@ debug_break;
 						if (sem->font)			sem->font = iFont_smaller(sem->font,		true);
 						else					sem->font = iFont_smaller(obj->p.font,	false);
 						iSEM_verifyCursorIsVisible(sem, obj);
-						iObj_setDirtyRender_ascent(obj, true);
+						iObj_setDirtyRender_ascent(thisCode, obj, true);
 						llProcessed = true;
 						break;
 
@@ -1733,7 +1733,7 @@ debug_break;
 		}
 
 		// Re-render the window if need be
-		iWindow_render(win, false);
+		iWindow_render(thisCode, win, false);
 
 		// Indicate additional events should be processed
 		return(true);
@@ -1844,7 +1844,7 @@ debug_break;
 				tnTextLength = (s32)strlen(tcText);
 
 			// Determine where it will go
-			if (iObj_find_screenRect(obj, &lrcObjInScreenCoords))
+			if (iObj_find_screenRect(NULL, obj, &lrcObjInScreenCoords))
 			{
 				// This is the rectangle of the em in screen coordinates
 
@@ -3037,7 +3037,7 @@ renderAsOnlyText:
 		iExtraInfo_arrival(sem, sem->line_cursor);
 
 		// If something has changed, we need to re-render
-		iObj_setDirtyRender_ascent(obj, true);
+		iObj_setDirtyRender_ascent(NULL, obj, true);
 		iSEM_selectUpdateExtents(sem);
 
 		// Indicate our status
@@ -3119,7 +3119,7 @@ renderAsOnlyText:
 			obj->isDirtyRender = true;
 
 			// Reprocess the source code on the line
-			iEngine_parseSourceCodeLine(sem->line_cursor);
+			iEngine_parseSourceCodeLine(NULL, sem->line_cursor);
 
 			// Verify our cursor is visible
 			iSEM_verifyCursorIsVisible(sem, obj);
@@ -3558,7 +3558,7 @@ renderAsOnlyText:
 			sem->isOverwrite = !sem->isOverwrite;
 
 			// Something has changed, we need to re-render
-			iObj_setDirtyRender_ascent(obj, true);
+			iObj_setDirtyRender_ascent(NULL, obj, true);
 
 			// Toggling insert changes the shape of the cursor, so we always redraw
 			return(true);
@@ -4596,7 +4596,7 @@ renderAsOnlyText:
 				}
 
 				// Reprocess the source code on the line
-				iEngine_parseSourceCodeLine(sem->line_cursor);
+				iEngine_parseSourceCodeLine(NULL, sem->line_cursor);
 
 
 				//////////
@@ -4642,7 +4642,7 @@ renderAsOnlyText:
 				}
 
 				// Reprocess the source code on the line
-				iEngine_parseSourceCodeLine(sem->line_cursor);
+				iEngine_parseSourceCodeLine(NULL, sem->line_cursor);
 
 
 				//////////
@@ -4708,7 +4708,7 @@ renderAsOnlyText:
 
 					// Reprocess the source code on the line if need be
 					if (sem->isSourceCode)
-						iEngine_parseSourceCodeLine(sem->line_cursor);
+						iEngine_parseSourceCodeLine(NULL, sem->line_cursor);
 
 					// Indicate success
 					return(true);
@@ -4772,7 +4772,7 @@ renderAsOnlyText:
 
 							// Reprocess the source code on the line if need be
 							if (sem->isSourceCode)
-								iEngine_parseSourceCodeLine(sem->line_cursor);
+								iEngine_parseSourceCodeLine(NULL, sem->line_cursor);
 
 							// Indicate success
 							return(true);
@@ -4789,7 +4789,7 @@ renderAsOnlyText:
 
 							// Reprocess the source code on the line if need be
 							if (sem->isSourceCode)
-								iEngine_parseSourceCodeLine(sem->line_cursor);
+								iEngine_parseSourceCodeLine(NULL, sem->line_cursor);
 
 							// Indicate success
 							return(true);
