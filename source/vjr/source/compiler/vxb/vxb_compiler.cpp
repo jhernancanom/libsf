@@ -5627,12 +5627,12 @@ if (!gsProps_master[lnI].varInit)
 
 					case _VAR_TYPE_S32:
 						// For any type that can be converted, convert it
-						     if (val_f32)		*varDst->value.data_s32 = (s32)*val_f32;
-						else if (val_f64)		*varDst->value.data_s32 = (s32)*val_f64;
+						     if (val_f32)		*varDst->value.data_s32 = (s32)iErrorCandidate_signalOutOfRange_f32(thisCode, *val_f32, _VAR_TYPE_S32, NULL, false, NULL);
+						else if (val_f64)		*varDst->value.data_s32 = (s32)iErrorCandidate_signalOutOfRange_f64(thisCode, *val_f64, _VAR_TYPE_S32, NULL, false, NULL);
 						else if (val_s32)		*varDst->value.data_s32 = (s32)*val_s32;
-						else if (val_u32)		*varDst->value.data_s32 = (s32)*val_u32;
-						else if (val_s64)		*varDst->value.data_s32 = (s32)*val_s64;
-						else if (val_u64)		*varDst->value.data_s32 = (s32)*val_u64;
+						else if (val_u32)		*varDst->value.data_s32 = (s32)iErrorCandidate_signalOutOfRange_u32(thisCode, *val_u32, _VAR_TYPE_S32, NULL, false, NULL);
+						else if (val_s64)		*varDst->value.data_s32 = (s32)iErrorCandidate_signalOutOfRange_s64(thisCode, *val_s64, _VAR_TYPE_S32, NULL, false, NULL);
+						else if (val_u64)		*varDst->value.data_s32 = (s32)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_u64, _VAR_TYPE_S32, NULL, false, NULL);
 						else {
 							// Every parameter they passed was NULL
 							debug_break;
@@ -5642,12 +5642,12 @@ if (!gsProps_master[lnI].varInit)
 
 					case _VAR_TYPE_U32:
 						// For any type that can be converted, convert it
-						     if (val_f32)		*varDst->value.data_u32 = (u32)*val_f32;
-						else if (val_f64)		*varDst->value.data_u32 = (u32)*val_f64;
+						     if (val_f32)		*varDst->value.data_u32 = (u32)iErrorCandidate_signalOutOfRange_f32(thisCode, *val_f32, _VAR_TYPE_U32, NULL, false, NULL);
+						else if (val_f64)		*varDst->value.data_u32 = (u32)iErrorCandidate_signalOutOfRange_f64(thisCode, *val_f64, _VAR_TYPE_U32, NULL, false, NULL);
 						else if (val_s32)		*varDst->value.data_u32 = (u32)*val_s32;
 						else if (val_u32)		*varDst->value.data_u32 = (u32)*val_u32;
-						else if (val_s64)		*varDst->value.data_u32 = (u32)*val_s64;
-						else if (val_u64)		*varDst->value.data_u32 = (u32)*val_u64;
+						else if (val_s64)		*varDst->value.data_u32 = (u32)iErrorCandidate_signalOutOfRange_s64(thisCode, *val_s64, _VAR_TYPE_U32, NULL, false, NULL);
+						else if (val_u64)		*varDst->value.data_u32 = (u32)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_u64, _VAR_TYPE_U32, NULL, false, NULL);
 						else {
 							// Every parameter they passed was NULL
 							debug_break;
@@ -5658,12 +5658,12 @@ if (!gsProps_master[lnI].varInit)
 					case _VAR_TYPE_CURRENCY:
 					case _VAR_TYPE_S64:
 						// For any type that can be converted, convert it
-						     if (val_f32)		*varDst->value.data_s64 = (s64)*val_f32;
-						else if (val_f64)		*varDst->value.data_s64 = (s64)*val_f64;
+						     if (val_f32)		*varDst->value.data_s64 = (s64)iErrorCandidate_signalOutOfRange_f32(thisCode, *val_f32, _VAR_TYPE_S64, NULL, false, NULL);
+						else if (val_f64)		*varDst->value.data_s64 = (s64)iErrorCandidate_signalOutOfRange_f64(thisCode, *val_f64, _VAR_TYPE_S64, NULL, false, NULL);
 						else if (val_s32)		*varDst->value.data_s64 = (s64)*val_s32;
 						else if (val_u32)		*varDst->value.data_s64 = (s64)*val_u32;
 						else if (val_s64)		*varDst->value.data_s64 = (s64)*val_s64;
-						else if (val_u64)		*varDst->value.data_s64 = (s64)*val_u64;
+						else if (val_u64)		*varDst->value.data_s64 = (s64)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_u64, _VAR_TYPE_S64, NULL, false, NULL);
 						else {
 							// Every parameter they passed was NULL
 							debug_break;
@@ -5673,8 +5673,8 @@ if (!gsProps_master[lnI].varInit)
 
 					case _VAR_TYPE_U64:
 						// For any type that can be converted, convert it
-						     if (val_f32)		*varDst->value.data_u64 = (u64)*val_f32;
-						else if (val_f64)		*varDst->value.data_u64 = (u64)*val_f64;
+						     if (val_f32)		*varDst->value.data_u64 = (u64)iErrorCandidate_signalOutOfRange_f32(thisCode, *val_f32, _VAR_TYPE_U64, NULL, false, NULL);
+						else if (val_f64)		*varDst->value.data_u64 = (u64)iErrorCandidate_signalOutOfRange_f64(thisCode, *val_f64, _VAR_TYPE_U64, NULL, false, NULL);
 						else if (val_s32)		*varDst->value.data_u64 = (u64)*val_s32;
 						else if (val_u32)		*varDst->value.data_u64 = (u64)*val_u32;
 						else if (val_s64)		*varDst->value.data_u64 = (u64)*val_s64;
@@ -5688,12 +5688,12 @@ if (!gsProps_master[lnI].varInit)
 
 					case _VAR_TYPE_S8:
 						// For any type that can be converted, convert it
-						     if (val_f32)		*varDst->value.data_s8 = (s8)*val_f32;
-						else if (val_f64)		*varDst->value.data_s8 = (s8)*val_f64;
-						else if (val_s32)		*varDst->value.data_s8 = (s8)*val_s32;
-						else if (val_u32)		*varDst->value.data_s8 = (s8)*val_u32;
-						else if (val_s64)		*varDst->value.data_s8 = (s8)*val_s64;
-						else if (val_u64)		*varDst->value.data_s8 = (s8)*val_u64;
+						     if (val_f32)		*varDst->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_f32(thisCode, *val_f32, _VAR_TYPE_S8, NULL, false, NULL);
+						else if (val_f64)		*varDst->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_f64(thisCode, *val_f64, _VAR_TYPE_S8, NULL, false, NULL);
+						else if (val_s32)		*varDst->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_s32(thisCode, *val_s32, _VAR_TYPE_S8, NULL, false, NULL);
+						else if (val_u32)		*varDst->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_u32(thisCode, *val_u32, _VAR_TYPE_S8, NULL, false, NULL);
+						else if (val_s64)		*varDst->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_s64(thisCode, *val_s64, _VAR_TYPE_S8, NULL, false, NULL);
+						else if (val_u64)		*varDst->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_u64, _VAR_TYPE_S8, NULL, false, NULL);
 						else {
 							// Every parameter they passed was NULL
 							debug_break;
@@ -5703,12 +5703,42 @@ if (!gsProps_master[lnI].varInit)
 
 					case _VAR_TYPE_U8:
 						// For any type that can be converted, convert it
-						     if (val_f32)		*varDst->value.data_u8 = (u8)*val_f32;
-						else if (val_f64)		*varDst->value.data_u8 = (u8)*val_f64;
-						else if (val_s32)		*varDst->value.data_u8 = (u8)*val_s32;
-						else if (val_u32)		*varDst->value.data_u8 = (u8)*val_u32;
-						else if (val_s64)		*varDst->value.data_u8 = (u8)*val_s64;
-						else if (val_u64)		*varDst->value.data_u8 = (u8)*val_u64;
+						     if (val_f32)		*varDst->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_f32(thisCode, *val_f32, _VAR_TYPE_U8, NULL, false, NULL);
+						else if (val_f64)		*varDst->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_f64(thisCode, *val_f64, _VAR_TYPE_U8, NULL, false, NULL);
+						else if (val_s32)		*varDst->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_s32(thisCode, *val_s32, _VAR_TYPE_U8, NULL, false, NULL);
+						else if (val_u32)		*varDst->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_u32(thisCode, *val_u32, _VAR_TYPE_U8, NULL, false, NULL);
+						else if (val_s64)		*varDst->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_s64(thisCode, *val_s64, _VAR_TYPE_U8, NULL, false, NULL);
+						else if (val_u64)		*varDst->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_u64, _VAR_TYPE_U8, NULL, false, NULL);
+						else {
+							// Every parameter they passed was NULL
+							debug_break;
+							return(false);
+						}
+						return(true);
+
+					case _VAR_TYPE_S16:
+						// For any type that can be converted, convert it
+						     if (val_f32)		*varDst->value.data_s16 = (s16)iErrorCandidate_signalOutOfRange_f32(thisCode, *val_f32, _VAR_TYPE_S16, NULL, false, NULL);
+						else if (val_f64)		*varDst->value.data_s16 = (s16)iErrorCandidate_signalOutOfRange_f64(thisCode, *val_f64, _VAR_TYPE_S16, NULL, false, NULL);
+						else if (val_s32)		*varDst->value.data_s16 = (s16)iErrorCandidate_signalOutOfRange_s32(thisCode, *val_s32, _VAR_TYPE_S16, NULL, false, NULL);
+						else if (val_u32)		*varDst->value.data_s16 = (s16)iErrorCandidate_signalOutOfRange_u32(thisCode, *val_u32, _VAR_TYPE_S16, NULL, false, NULL);
+						else if (val_s64)		*varDst->value.data_s16 = (s16)iErrorCandidate_signalOutOfRange_s64(thisCode, *val_s64, _VAR_TYPE_S16, NULL, false, NULL);
+						else if (val_u64)		*varDst->value.data_s16 = (s16)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_u64, _VAR_TYPE_S16, NULL, false, NULL);
+						else {
+							// Every parameter they passed was NULL
+							debug_break;
+							return(false);
+						}
+						return(true);
+
+					case _VAR_TYPE_U16:
+						// For any type that can be converted, convert it
+						     if (val_f32)		*varDst->value.data_u16 = (u16)iErrorCandidate_signalOutOfRange_f32(thisCode, *val_f32, _VAR_TYPE_U16, NULL, false, NULL);
+						else if (val_f64)		*varDst->value.data_u16 = (u16)iErrorCandidate_signalOutOfRange_f64(thisCode, *val_f64, _VAR_TYPE_U16, NULL, false, NULL);
+						else if (val_s32)		*varDst->value.data_u16 = (u16)iErrorCandidate_signalOutOfRange_s32(thisCode, *val_s32, _VAR_TYPE_U16, NULL, false, NULL);
+						else if (val_u32)		*varDst->value.data_u16 = (u16)iErrorCandidate_signalOutOfRange_u32(thisCode, *val_u32, _VAR_TYPE_U16, NULL, false, NULL);
+						else if (val_s64)		*varDst->value.data_u16 = (u16)iErrorCandidate_signalOutOfRange_s64(thisCode, *val_s64, _VAR_TYPE_U16, NULL, false, NULL);
+						else if (val_u64)		*varDst->value.data_u16 = (u16)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_u64, _VAR_TYPE_U16, NULL, false, NULL);
 						else {
 							// Every parameter they passed was NULL
 							debug_break;
@@ -5801,6 +5831,120 @@ do_as_numeric:
 //////
 	bool iVariable_set_f32_toExistingType(SThisCode* thisCode, SVariable* var, f32 value)
 	{
+		s32	lnI;
+		s8	formatter[16];
+		s8	buffer[32];
+
+
+		// Make sure our environment is sane
+		if (var && var->value.data && var->value.length > 0)
+		{
+			//////////
+			// Process the ones that can handle a direct conversion
+			//////
+				switch (var->varType)
+				{
+					case _VAR_TYPE_F32:
+						// For any type that can be converted, convert it
+						 *var->value.data_f32 = (f32)iErrorCandidate_signalOutOfRange_f32(thisCode, value, _VAR_TYPE_F32, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_F64:
+						// For any type that can be converted, convert it
+						*var->value.data_f64 = value;
+						return(true);
+
+					case _VAR_TYPE_S32:
+						// For any type that can be converted, convert it
+						*var->value.data_s32 = (s32)iErrorCandidate_signalOutOfRange_f32(thisCode, value, _VAR_TYPE_S32, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U32:
+						// For any type that can be converted, convert it
+						*var->value.data_u32 = (u32)iErrorCandidate_signalOutOfRange_f32(thisCode, value, _VAR_TYPE_U32, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_CURRENCY:
+					case _VAR_TYPE_S64:
+						// For any type that can be converted, convert it
+						*var->value.data_s64 = (s64)iErrorCandidate_signalOutOfRange_f32(thisCode, value, _VAR_TYPE_S64, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U64:
+						// For any type that can be converted, convert it
+						*var->value.data_u64 = (u64)iErrorCandidate_signalOutOfRange_f32(thisCode, value, _VAR_TYPE_U64, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_S8:
+						// For any type that can be converted, convert it
+						*var->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_f32(thisCode, value, _VAR_TYPE_S8, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U8:
+						// For any type that can be converted, convert it
+						*var->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_f32(thisCode, value, _VAR_TYPE_U8, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_S16:
+						// For any type that can be converted, convert it
+						*var->value.data_s16 = (s16)iErrorCandidate_signalOutOfRange_f32(thisCode, value, _VAR_TYPE_S16, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U16:
+						// For any type that can be converted, convert it
+						*var->value.data_u16 = (u16)iErrorCandidate_signalOutOfRange_f32(thisCode, value, _VAR_TYPE_U16, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_NUMERIC:
+						// Numerics are actually stored as character sequences
+do_as_numeric:
+						// Create the formatter based on the current SET DECIMALS setting
+						sprintf(formatter, "%%020.%dlf\0", propGet_settings_Decimals(_settings));
+
+						// Create the converted value
+						sprintf((s8*)buffer, formatter, value);
+
+						// Skip past leading zeros
+						for (lnI = 0; buffer[lnI] == '0'; )
+							++lnI;
+
+						// Append it
+						iDatum_duplicate(&var->value, buffer + lnI, -1);
+
+						// Indicate success
+						return(true);
+
+					case _VAR_TYPE_BI:
+					case _VAR_TYPE_BFP:
+						iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+						break;
+
+					default:
+						if (propGet_settings_AutoConvert(_settings))
+						{
+							// They want it automatically converted to the output format
+							switch (var->varType)
+							{
+								case _VAR_TYPE_CHARACTER:
+									// Convert the result to a character string, and then store the character result
+									// This is the same as how numeric is processed, so we'll just use that logic
+									goto do_as_numeric;
+
+								case _VAR_TYPE_LOGICAL:
+									// .F. if 0, otherwise set to .T.
+									*var->value.data_u8 = ((value == 0.0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
+									break;
+							}
+
+						} else {
+							iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, NULL, false);
+							return(false);
+						}
+						break;
+				}
+		}
+
+		// If we get here, failure
 		return(false);
 	}
 
@@ -5814,6 +5958,120 @@ do_as_numeric:
 //////
 	bool iVariable_set_f64_toExistingType(SThisCode* thisCode, SVariable* var, f64 value)
 	{
+		s32	lnI;
+		s8	formatter[16];
+		s8	buffer[32];
+
+
+		// Make sure our environment is sane
+		if (var && var->value.data && var->value.length > 0)
+		{
+			//////////
+			// Process the ones that can handle a direct conversion
+			//////
+				switch (var->varType)
+				{
+					case _VAR_TYPE_F32:
+						// For any type that can be converted, convert it
+						 *var->value.data_f32 = (f32)iErrorCandidate_signalOutOfRange_f64(thisCode, value, _VAR_TYPE_F32, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_F64:
+						// For any type that can be converted, convert it
+						*var->value.data_f64 = value;
+						return(true);
+
+					case _VAR_TYPE_S32:
+						// For any type that can be converted, convert it
+						*var->value.data_s32 = (s32)iErrorCandidate_signalOutOfRange_f64(thisCode, value, _VAR_TYPE_S32, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U32:
+						// For any type that can be converted, convert it
+						*var->value.data_u32 = (u32)iErrorCandidate_signalOutOfRange_f64(thisCode, value, _VAR_TYPE_U32, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_CURRENCY:
+					case _VAR_TYPE_S64:
+						// For any type that can be converted, convert it
+						*var->value.data_s64 = (s64)iErrorCandidate_signalOutOfRange_f64(thisCode, value, _VAR_TYPE_S64, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U64:
+						// For any type that can be converted, convert it
+						*var->value.data_u64 = (u64)iErrorCandidate_signalOutOfRange_f64(thisCode, value, _VAR_TYPE_U64, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_S8:
+						// For any type that can be converted, convert it
+						*var->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_f64(thisCode, value, _VAR_TYPE_S8, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U8:
+						// For any type that can be converted, convert it
+						*var->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_f64(thisCode, value, _VAR_TYPE_U8, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_S16:
+						// For any type that can be converted, convert it
+						*var->value.data_s16 = (s16)iErrorCandidate_signalOutOfRange_f64(thisCode, value, _VAR_TYPE_S16, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U16:
+						// For any type that can be converted, convert it
+						*var->value.data_u16 = (u16)iErrorCandidate_signalOutOfRange_f64(thisCode, value, _VAR_TYPE_U16, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_NUMERIC:
+						// Numerics are actually stored as character sequences
+do_as_numeric:
+						// Create the formatter based on the current SET DECIMALS setting
+						sprintf(formatter, "%%020.%dlf\0", propGet_settings_Decimals(_settings));
+
+						// Create the converted value
+						sprintf((s8*)buffer, formatter, value);
+
+						// Skip past leading zeros
+						for (lnI = 0; buffer[lnI] == '0'; )
+							++lnI;
+
+						// Append it
+						iDatum_duplicate(&var->value, buffer + lnI, -1);
+
+						// Indicate success
+						return(true);
+
+					case _VAR_TYPE_BI:
+					case _VAR_TYPE_BFP:
+						iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+						break;
+
+					default:
+						if (propGet_settings_AutoConvert(_settings))
+						{
+							// They want it automatically converted to the output format
+							switch (var->varType)
+							{
+								case _VAR_TYPE_CHARACTER:
+									// Convert the result to a character string, and then store the character result
+									// This is the same as how numeric is processed, so we'll just use that logic
+									goto do_as_numeric;
+
+								case _VAR_TYPE_LOGICAL:
+									// .F. if 0, otherwise set to .T.
+									*var->value.data_u8 = ((value == 0.0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
+									break;
+							}
+
+						} else {
+							iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, NULL, false);
+							return(false);
+						}
+						break;
+				}
+		}
+
+		// If we get here, failure
 		return(false);
 	}
 
@@ -5827,6 +6085,110 @@ do_as_numeric:
 //////
 	bool iVariable_set_s32_toExistingType(SThisCode* thisCode, SVariable* var, s32 value)
 	{
+		s32	lnI;
+		s8	formatter[16];
+		s8	buffer[32];
+
+
+		// Make sure our environment is sane
+		if (var && var->value.data && var->value.length > 0)
+		{
+			//////////
+			// Process the ones that can handle a direct conversion
+			//////
+				switch (var->varType)
+				{
+					case _VAR_TYPE_F32:
+						 *var->value.data_f32 = (f32)iErrorCandidate_signalOutOfRange_s32(thisCode, value, _VAR_TYPE_F32, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_F64:
+						*var->value.data_f64 = value;
+						return(true);
+
+					case _VAR_TYPE_S32:
+						*var->value.data_s32 = (s32)iErrorCandidate_signalOutOfRange_s32(thisCode, value, _VAR_TYPE_S32, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U32:
+						*var->value.data_u32 = (u32)iErrorCandidate_signalOutOfRange_s32(thisCode, value, _VAR_TYPE_U32, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_CURRENCY:
+					case _VAR_TYPE_S64:
+						*var->value.data_s64 = (s64)iErrorCandidate_signalOutOfRange_s32(thisCode, value, _VAR_TYPE_S64, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U64:
+						*var->value.data_u64 = (u64)iErrorCandidate_signalOutOfRange_s32(thisCode, value, _VAR_TYPE_U64, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_S8:
+						*var->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_s32(thisCode, value, _VAR_TYPE_S8, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U8:
+						*var->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_s32(thisCode, value, _VAR_TYPE_U8, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_S16:
+						*var->value.data_s16 = (s16)iErrorCandidate_signalOutOfRange_s32(thisCode, value, _VAR_TYPE_S16, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U16:
+						*var->value.data_u16 = (u16)iErrorCandidate_signalOutOfRange_s32(thisCode, value, _VAR_TYPE_U16, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_NUMERIC:
+						// Numerics are actually stored as character sequences
+do_as_numeric:
+						// Create the formatter based on the current SET DECIMALS setting
+						sprintf(formatter, "%%020.%dlf\0", propGet_settings_Decimals(_settings));
+
+						// Create the converted value
+						sprintf((s8*)buffer, formatter, value);
+
+						// Skip past leading zeros
+						for (lnI = 0; buffer[lnI] == '0'; )
+							++lnI;
+
+						// Append it
+						iDatum_duplicate(&var->value, buffer + lnI, -1);
+
+						// Indicate success
+						return(true);
+
+					case _VAR_TYPE_BI:
+					case _VAR_TYPE_BFP:
+						iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+						break;
+
+					default:
+						if (propGet_settings_AutoConvert(_settings))
+						{
+							// They want it automatically converted to the output format
+							switch (var->varType)
+							{
+								case _VAR_TYPE_CHARACTER:
+									// Convert the result to a character string, and then store the character result
+									// This is the same as how numeric is processed, so we'll just use that logic
+									goto do_as_numeric;
+
+								case _VAR_TYPE_LOGICAL:
+									// .F. if 0, otherwise set to .T.
+									*var->value.data_u8 = ((value == 0.0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
+									break;
+							}
+
+						} else {
+							iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, NULL, false);
+							return(false);
+						}
+						break;
+				}
+		}
+
+		// If we get here, failure
 		return(false);
 	}
 
@@ -5840,6 +6202,110 @@ do_as_numeric:
 //////
 	bool iVariable_set_s64_toExistingType(SThisCode* thisCode, SVariable* var, s64 value)
 	{
+		s32	lnI;
+		s8	formatter[16];
+		s8	buffer[32];
+
+
+		// Make sure our environment is sane
+		if (var && var->value.data && var->value.length > 0)
+		{
+			//////////
+			// Process the ones that can handle a direct conversion
+			//////
+				switch (var->varType)
+				{
+					case _VAR_TYPE_F32:
+						 *var->value.data_f32 = (f32)iErrorCandidate_signalOutOfRange_s64(thisCode, value, _VAR_TYPE_F32, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_F64:
+						*var->value.data_f64 = (f64)value;
+						return(true);
+
+					case _VAR_TYPE_S32:
+						*var->value.data_s32 = (s32)iErrorCandidate_signalOutOfRange_s64(thisCode, value, _VAR_TYPE_S32, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U32:
+						*var->value.data_u32 = (u32)iErrorCandidate_signalOutOfRange_s64(thisCode, value, _VAR_TYPE_U32, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_CURRENCY:
+					case _VAR_TYPE_S64:
+						*var->value.data_s64 = (s64)iErrorCandidate_signalOutOfRange_s64(thisCode, value, _VAR_TYPE_S64, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U64:
+						*var->value.data_u64 = (u64)iErrorCandidate_signalOutOfRange_s64(thisCode, value, _VAR_TYPE_U64, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_S8:
+						*var->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_s64(thisCode, value, _VAR_TYPE_S8, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U8:
+						*var->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_s64(thisCode, value, _VAR_TYPE_U8, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_S16:
+						*var->value.data_s16 = (s16)iErrorCandidate_signalOutOfRange_s64(thisCode, value, _VAR_TYPE_S16, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U16:
+						*var->value.data_u16 = (u16)iErrorCandidate_signalOutOfRange_s64(thisCode, value, _VAR_TYPE_U16, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_NUMERIC:
+						// Numerics are actually stored as character sequences
+do_as_numeric:
+						// Create the formatter based on the current SET DECIMALS setting
+						sprintf(formatter, "%%020.%dlf\0", propGet_settings_Decimals(_settings));
+
+						// Create the converted value
+						sprintf((s8*)buffer, formatter, value);
+
+						// Skip past leading zeros
+						for (lnI = 0; buffer[lnI] == '0'; )
+							++lnI;
+
+						// Append it
+						iDatum_duplicate(&var->value, buffer + lnI, -1);
+
+						// Indicate success
+						return(true);
+
+					case _VAR_TYPE_BI:
+					case _VAR_TYPE_BFP:
+						iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+						break;
+
+					default:
+						if (propGet_settings_AutoConvert(_settings))
+						{
+							// They want it automatically converted to the output format
+							switch (var->varType)
+							{
+								case _VAR_TYPE_CHARACTER:
+									// Convert the result to a character string, and then store the character result
+									// This is the same as how numeric is processed, so we'll just use that logic
+									goto do_as_numeric;
+
+								case _VAR_TYPE_LOGICAL:
+									// .F. if 0, otherwise set to .T.
+									*var->value.data_u8 = ((value == 0.0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
+									break;
+							}
+
+						} else {
+							iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, NULL, false);
+							return(false);
+						}
+						break;
+				}
+		}
+
+		// If we get here, failure
 		return(false);
 	}
 
@@ -5853,6 +6319,110 @@ do_as_numeric:
 //////
 	bool iVariable_set_u32_toExistingType(SThisCode* thisCode, SVariable* var, u32 value)
 	{
+		s32	lnI;
+		s8	formatter[16];
+		s8	buffer[32];
+
+
+		// Make sure our environment is sane
+		if (var && var->value.data && var->value.length > 0)
+		{
+			//////////
+			// Process the ones that can handle a direct conversion
+			//////
+				switch (var->varType)
+				{
+					case _VAR_TYPE_F32:
+						 *var->value.data_f32 = (f32)iErrorCandidate_signalOutOfRange_u32(thisCode, value, _VAR_TYPE_F32, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_F64:
+						*var->value.data_f64 = value;
+						return(true);
+
+					case _VAR_TYPE_S32:
+						*var->value.data_s32 = (s32)iErrorCandidate_signalOutOfRange_u32(thisCode, value, _VAR_TYPE_S32, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U32:
+						*var->value.data_u32 = (u32)iErrorCandidate_signalOutOfRange_u32(thisCode, value, _VAR_TYPE_U32, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_CURRENCY:
+					case _VAR_TYPE_S64:
+						*var->value.data_s64 = (s64)iErrorCandidate_signalOutOfRange_u32(thisCode, value, _VAR_TYPE_S64, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U64:
+						*var->value.data_u64 = (u64)iErrorCandidate_signalOutOfRange_u32(thisCode, value, _VAR_TYPE_U64, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_S8:
+						*var->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_u32(thisCode, value, _VAR_TYPE_S8, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U8:
+						*var->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_u32(thisCode, value, _VAR_TYPE_U8, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_S16:
+						*var->value.data_s16 = (s16)iErrorCandidate_signalOutOfRange_u32(thisCode, value, _VAR_TYPE_S16, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U16:
+						*var->value.data_u16 = (u16)iErrorCandidate_signalOutOfRange_u32(thisCode, value, _VAR_TYPE_U16, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_NUMERIC:
+						// Numerics are actually stored as character sequences
+do_as_numeric:
+						// Create the formatter based on the current SET DECIMALS setting
+						sprintf(formatter, "%%020.%dlf\0", propGet_settings_Decimals(_settings));
+
+						// Create the converted value
+						sprintf((s8*)buffer, formatter, value);
+
+						// Skip past leading zeros
+						for (lnI = 0; buffer[lnI] == '0'; )
+							++lnI;
+
+						// Append it
+						iDatum_duplicate(&var->value, buffer + lnI, -1);
+
+						// Indicate success
+						return(true);
+
+					case _VAR_TYPE_BI:
+					case _VAR_TYPE_BFP:
+						iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+						break;
+
+					default:
+						if (propGet_settings_AutoConvert(_settings))
+						{
+							// They want it automatically converted to the output format
+							switch (var->varType)
+							{
+								case _VAR_TYPE_CHARACTER:
+									// Convert the result to a character string, and then store the character result
+									// This is the same as how numeric is processed, so we'll just use that logic
+									goto do_as_numeric;
+
+								case _VAR_TYPE_LOGICAL:
+									// .F. if 0, otherwise set to .T.
+									*var->value.data_u8 = ((value == 0.0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
+									break;
+							}
+
+						} else {
+							iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, NULL, false);
+							return(false);
+						}
+						break;
+				}
+		}
+
+		// If we get here, failure
 		return(false);
 	}
 
@@ -5866,6 +6436,110 @@ do_as_numeric:
 //////
 	bool iVariable_set_u64_toExistingType(SThisCode* thisCode, SVariable* var, u64 value)
 	{
+		s32	lnI;
+		s8	formatter[16];
+		s8	buffer[32];
+
+
+		// Make sure our environment is sane
+		if (var && var->value.data && var->value.length > 0)
+		{
+			//////////
+			// Process the ones that can handle a direct conversion
+			//////
+				switch (var->varType)
+				{
+					case _VAR_TYPE_F32:
+						 *var->value.data_f32 = (f32)iErrorCandidate_signalOutOfRange_u64(thisCode, value, _VAR_TYPE_F32, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_F64:
+						*var->value.data_f64 = (f64)value;
+						return(true);
+
+					case _VAR_TYPE_S32:
+						*var->value.data_s32 = (s32)iErrorCandidate_signalOutOfRange_u64(thisCode, value, _VAR_TYPE_S32, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U32:
+						*var->value.data_u32 = (u32)iErrorCandidate_signalOutOfRange_u64(thisCode, value, _VAR_TYPE_U32, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_CURRENCY:
+					case _VAR_TYPE_S64:
+						*var->value.data_s64 = (s64)iErrorCandidate_signalOutOfRange_u64(thisCode, value, _VAR_TYPE_S64, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U64:
+						*var->value.data_u64 = (u64)iErrorCandidate_signalOutOfRange_u64(thisCode, value, _VAR_TYPE_U64, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_S8:
+						*var->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_u64(thisCode, value, _VAR_TYPE_S8, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U8:
+						*var->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_u64(thisCode, value, _VAR_TYPE_U8, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_S16:
+						*var->value.data_s16 = (s16)iErrorCandidate_signalOutOfRange_u64(thisCode, value, _VAR_TYPE_S16, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_U16:
+						*var->value.data_u16 = (u16)iErrorCandidate_signalOutOfRange_u64(thisCode, value, _VAR_TYPE_U16, NULL, false, NULL);
+						return(true);
+
+					case _VAR_TYPE_NUMERIC:
+						// Numerics are actually stored as character sequences
+do_as_numeric:
+						// Create the formatter based on the current SET DECIMALS setting
+						sprintf(formatter, "%%020.%dlf\0", propGet_settings_Decimals(_settings));
+
+						// Create the converted value
+						sprintf((s8*)buffer, formatter, value);
+
+						// Skip past leading zeros
+						for (lnI = 0; buffer[lnI] == '0'; )
+							++lnI;
+
+						// Append it
+						iDatum_duplicate(&var->value, buffer + lnI, -1);
+
+						// Indicate success
+						return(true);
+
+					case _VAR_TYPE_BI:
+					case _VAR_TYPE_BFP:
+						iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+						break;
+
+					default:
+						if (propGet_settings_AutoConvert(_settings))
+						{
+							// They want it automatically converted to the output format
+							switch (var->varType)
+							{
+								case _VAR_TYPE_CHARACTER:
+									// Convert the result to a character string, and then store the character result
+									// This is the same as how numeric is processed, so we'll just use that logic
+									goto do_as_numeric;
+
+								case _VAR_TYPE_LOGICAL:
+									// .F. if 0, otherwise set to .T.
+									*var->value.data_u8 = ((value == 0.0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
+									break;
+							}
+
+						} else {
+							iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, NULL, false);
+							return(false);
+						}
+						break;
+				}
+		}
+
+		// If we get here, failure
 		return(false);
 	}
 

@@ -289,6 +289,60 @@
 
 //////////
 //
+// Called to signal an error if the s16 value is outside the valid range for the target type
+//
+//////
+	s16 iErrorCandidate_signalOutOfRange_s16(SThisCode* thisCode, s16 value, s32 tnVarType, SComp* compRelated, bool tlInvasive, s8* tcExtraInfo)
+	{
+		switch (tnVarType)
+		{
+			case _VAR_TYPE_S8:
+				if (value <= (s32)_s8_min || value >= (s32)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				break;
+
+			case _VAR_TYPE_U8:
+				if (value >= (s32)_u8_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				break;
+		}
+
+		// Return the input value
+		return(value);
+	}
+
+
+
+
+//////////
+//
+// Called to signal an error if the u16 value is outside the valid range for the target type
+//
+//////
+	u16 iErrorCandidate_signalOutOfRange_u16(SThisCode* thisCode, u16 value, s32 tnVarType, SComp* compRelated, bool tlInvasive, s8* tcExtraInfo)
+	{
+		switch (tnVarType)
+		{
+			case _VAR_TYPE_S8:
+				if (value <= (s32)_s8_min || value >= (s32)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				break;
+
+			case _VAR_TYPE_U8:
+				if (value >= (s32)_u8_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				break;
+
+			case _VAR_TYPE_S16:
+				if (value <= (s32)_s16_min || value >= (s32)_s16_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				break;
+		}
+
+		// Return the input value
+		return(value);
+	}
+
+
+
+
+//////////
+//
 // Called to signal an error if the s32 value is outside the valid range for the target type
 //
 //////
@@ -310,6 +364,39 @@
 
 			case _VAR_TYPE_U16:
 				if (value >= (s32)_u16_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				break;
+		}
+
+		// Return the input value
+		return(value);
+	}
+
+
+
+
+//////////
+//
+// Called to signal an error if the s32 value is outside the valid range for the target type
+//
+//////
+	u32 iErrorCandidate_signalOutOfRange_u32(SThisCode* thisCode, u32 value, s32 tnVarType, SComp* compRelated, bool tlInvasive, s8* tcExtraInfo)
+	{
+		switch (tnVarType)
+		{
+			case _VAR_TYPE_S8:
+				if (value >= (u32)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				break;
+
+			case _VAR_TYPE_U8:
+				if (value >= (u32)_u8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				break;
+
+			case _VAR_TYPE_S16:
+				if (value >= (u32)_s16_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				break;
+
+			case _VAR_TYPE_U16:
+				if (value >= (u32)_u16_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
 				break;
 		}
 
@@ -351,39 +438,6 @@
 
 			case _VAR_TYPE_U32:
 				if (value >= (s64)_u32_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
-				break;
-		}
-
-		// Return the input value
-		return(value);
-	}
-
-
-
-
-//////////
-//
-// Called to signal an error if the s32 value is outside the valid range for the target type
-//
-//////
-	u32 iErrorCandidate_signalOutOfRange_u32(SThisCode* thisCode, u32 value, s32 tnVarType, SComp* compRelated, bool tlInvasive, s8* tcExtraInfo)
-	{
-		switch (tnVarType)
-		{
-			case _VAR_TYPE_S8:
-				if (value >= (u32)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
-				break;
-
-			case _VAR_TYPE_U8:
-				if (value >= (u32)_u8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
-				break;
-
-			case _VAR_TYPE_S16:
-				if (value >= (u32)_s16_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
-				break;
-
-			case _VAR_TYPE_U16:
-				if (value >= (u32)_u16_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
 				break;
 		}
 
@@ -3042,6 +3096,7 @@
 //     Mar.08.2015
 //////
 // Change log:
+//     Mar.14.2015 - Fix bug when lfMod = 0 by Stefano D'Amico			// https://github.com/RickCHodgin/libsf/issues/2
 //     Mar.08.2015 - Merge into main by Rick C. Hodgin, reformatting
 //     Feb.28.2015 - Initial creation by Stefano D'Amico
 //////
@@ -3144,7 +3199,7 @@
 		// Compute
 		//////
 			lfMod = fmod(lfDividend, abs(lfDivisor));
-			if (lfDivisor < 0)
+			if (lfDivisor < 0 && lfMod != 0.0)			// Mar.14.2015
 				lfMod += lfDivisor;
 
 
@@ -3157,7 +3212,7 @@
 		//////////
         // Populate the return value
 		//////
-			if (result && !iVariable_setNumeric_toExistingType(thisCode, result, NULL, &lfMod, NULL, NULL, NULL, NULL))
+			if (result && !iVariable_set_f64_toExistingType(thisCode, result, lfMod))
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
 
 
