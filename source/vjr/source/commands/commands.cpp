@@ -4360,18 +4360,22 @@
 	}
 
 
+
+
 //////////
 //
 // Function: SIGN()
-// Returns a numeric value of 1, –1, or 0 if the specified numeric expression evaluates to a positive, negative, or 0 value.
+// Returns a numeric value of 1, –1, or 0 based on whether or not the specified
+// numeric expression evaluates to a positive, negative, or 0 value.
 //
 //////
 // Version 0.56
 // Last update:
-//     Jul.14.2014
+//     Mar.14.2015
 //////
 // Change log:
-//     Jul.14.2014 - Initial creation
+//     Mar.14.2015 - Merge into main by Rick C. Hodgin, refactor result to match varNumber varType
+//     Mar.14.2015 - Initial creation by Stefano D'Amico
 //////
 // Parameters:
 //     p1			-- Numeric or floating point
@@ -4381,13 +4385,13 @@
 //    SIGN(n) of the value in p1
 //////
 // Example:
-//    ?sign(2)			&&Display 1
-//    ?sign(-2)			&&Display -1
-//    ?sign(0)			&&Display 0
-//    ?sign(-0.0)		&&Display 0
-//    ?sign(-0.3333)	&&Display -1
-//    ?sign(2.65656)	&&Display 1
-//    ?sign(-2.65656)	&&Display -1
+//    ? sign(2)				&& Displays 1
+//    ? sign(-2)			&& Displays -1
+//    ? sign(0)				&& Displays 0
+//    ? sign(-0.0)			&& Displays 0
+//    ? sign(-0.3333)		&& Displays -1
+//    ? sign(2.65656)		&& Displays 1
+//    ? sign(-2.65656)		&& Displays -1
 //////
     SVariable* function_sign(SThisCode* thisCode, SVariable* varNumber)
     {
@@ -4402,7 +4406,7 @@
 		//////
 			if (!iVariable_isValid(varNumber) || !iVariable_isTypeNumeric(varNumber))
 			{
-				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, varNumber->compRelated, false);
+				iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, varNumber->compRelated, false);
 				return(NULL);
 			}
 
@@ -4410,37 +4414,41 @@
 		//////////
 		// Parameter 1, Convert to f64
 		//////
-			if (iVariable_isTypeFloatingPoint(varNumber))
+			lfValue = iiVariable_getAs_f64(thisCode, varNumber, false, &error, &errorNum);
+			if (error)
 			{
-				lfValue = iiVariable_getAs_f64(thisCode, varNumber, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(thisCode, errorNum, varNumber->compRelated, false);	return(NULL);	}
-
-			} else {
-				if (iVariable_isNumeric64Bit(varNumber))
-				{
-					lfValue = (f64)iiVariable_getAs_s64(thisCode, varNumber, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(thisCode, errorNum, varNumber->compRelated, false);	return(NULL);	}
-
-				} else {
-					lfValue = (f64)iiVariable_getAs_s32(thisCode, varNumber, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(thisCode, errorNum, varNumber->compRelated, false);	return(NULL);	}
-				}
+				iError_reportByNumber(thisCode, errorNum, varNumber->compRelated, false);
+				return(NULL);
 			}
+
+
+		//////////
+		// Create output variable
+		//////
+			result = iVariable_create(thisCode, varNumber->varType, NULL);
+			if (!result)
+			{
+				iError_reportByNumber(thisCode, errorNum, varNumber->compRelated, false);
+				return(NULL);
+			}
+
 
 		//////////
 		// Compute sign
 		//////
 			if (lfValue != 0.0)
 			{
-				//Converting of lfValue to 1 or -1
+				// Converting of lfValue to 1 or -1
 				lfValue = lfValue / abs(lfValue);	
 			} 
+
+			// Set the value
+			iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfValue, NULL, NULL, NULL, NULL);
+
 
 		//////////
         // Return sign, converted to s64
 		//////
-			result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL);
-			*(s64*)result->value.data = (s64)lfValue;
 	        return result;
     }
 
