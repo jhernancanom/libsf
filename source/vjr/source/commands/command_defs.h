@@ -210,6 +210,7 @@ struct SThisCode;
 	SVariable*			function_rgba								(SThisCode* thisCode, SVariable* varRed, SVariable* varGrn, SVariable* varBlu, SVariable* varAlp);
 	SVariable*			function_right								(SThisCode* thisCode, SVariable* varString, SVariable* varCount);
 	SVariable*			function_rtrim								(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2);
+	SVariable*			function_sign								(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_space								(SThisCode* thisCode, SVariable* varCount);
 	SVariable*			function_strtran							(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount);
 	SVariable*			function_strtranc							(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount);
@@ -343,6 +344,7 @@ struct SThisCode;
 		{	_ICODE_RGBA,			1,			(uptr)&function_rgba,			4,				4,				&gsSourceLight_rgba[0]			},
 		{	_ICODE_RIGHT,			1,			(uptr)&function_right,			2,				2,				&gsSourceLight_right[0]			},
 		{	_ICODE_RTRIM,			1,			(uptr)&function_rtrim,			1,				1,				&gsSourceLight_rtrim[0]			},
+		{	_ICODE_SIGN,			1,			(uptr)&function_sign,			1,				1,				&gsSourceLight_sign[0]			},
 		{	_ICODE_SPACE,			1,			(uptr)&function_space,			1,				1,				&gsSourceLight_space[0]			},
 		{	_ICODE_STRTRAN,			1,			(uptr)&function_strtran,		2,				4,				&gsSourceLight_strtran[0]		},
 		{	_ICODE_STRTRANC,		1,			(uptr)&function_strtranc,		2,				4,				&gsSourceLight_strtranc[0]		},
