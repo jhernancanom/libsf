@@ -444,6 +444,10 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_sign[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
 	SSourceLightData gsSourceLight_space[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}

@@ -4360,6 +4360,91 @@
 	}
 
 
+//////////
+//
+// Function: SIGN()
+// Returns a numeric value of 1, –1, or 0 if the specified numeric expression evaluates to a positive, negative, or 0 value.
+//
+//////
+// Version 0.56
+// Last update:
+//     Jul.14.2014
+//////
+// Change log:
+//     Jul.14.2014 - Initial creation
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    SIGN(n) of the value in p1
+//////
+// Example:
+//    ?sign(2)			&&Display 1
+//    ?sign(-2)			&&Display -1
+//    ?sign(0)			&&Display 0
+//    ?sign(-0.0)		&&Display 0
+//    ?sign(-0.3333)	&&Display -1
+//    ?sign(2.65656)	&&Display 1
+//    ?sign(-2.65656)	&&Display -1
+//////
+    SVariable* function_sign(SThisCode* thisCode, SVariable* varNumber)
+    {
+		f64			lfValue;
+		u32			errorNum;
+        bool		error;
+        SVariable*	result;
+
+
+		//////////
+		// Parameter 1 must be numeric
+		//////
+			if (!iVariable_isValid(varNumber) || !iVariable_isTypeNumeric(varNumber))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, varNumber->compRelated, false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Parameter 1, Convert to f64
+		//////
+			if (iVariable_isTypeFloatingPoint(varNumber))
+			{
+				lfValue = iiVariable_getAs_f64(thisCode, varNumber, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(thisCode, errorNum, varNumber->compRelated, false);	return(NULL);	}
+
+			} else {
+				if (iVariable_isNumeric64Bit(varNumber))
+				{
+					lfValue = (f64)iiVariable_getAs_s64(thisCode, varNumber, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(thisCode, errorNum, varNumber->compRelated, false);	return(NULL);	}
+
+				} else {
+					lfValue = (f64)iiVariable_getAs_s32(thisCode, varNumber, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(thisCode, errorNum, varNumber->compRelated, false);	return(NULL);	}
+				}
+			}
+
+		//////////
+		// Compute sign
+		//////
+			if (lfValue != 0.0)
+			{
+				//Converting of lfValue to 1 or -1
+				lfValue = lfValue / abs(lfValue);	
+			} 
+
+		//////////
+        // Return sign, converted to s64
+		//////
+			result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL);
+			*(s64*)result->value.data = (s64)lfValue;
+	        return result;
+    }
+
+
 
 
 //////////
