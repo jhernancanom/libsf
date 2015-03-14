@@ -4406,7 +4406,7 @@
 		//////
 			if (!iVariable_isValid(varNumber) || !iVariable_isTypeNumeric(varNumber))
 			{
-				iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, varNumber->compRelated, false);
+				iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_compRelated(thisCode, varNumber), false);
 				return(NULL);
 			}
 
@@ -4417,7 +4417,7 @@
 			lfValue = iiVariable_getAs_f64(thisCode, varNumber, false, &error, &errorNum);
 			if (error)
 			{
-				iError_reportByNumber(thisCode, errorNum, varNumber->compRelated, false);
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
 				return(NULL);
 			}
 
@@ -4428,7 +4428,7 @@
 			result = iVariable_create(thisCode, varNumber->varType, NULL);
 			if (!result)
 			{
-				iError_reportByNumber(thisCode, errorNum, varNumber->compRelated, false);
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
 				return(NULL);
 			}
 
@@ -4442,8 +4442,12 @@
 				lfValue = lfValue / abs(lfValue);	
 			} 
 
-			// Set the value
-			iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfValue, NULL, NULL, NULL, NULL);
+
+		//////////
+		// Set the value
+		//////
+			if (!iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfValue, NULL, NULL, NULL, NULL))
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
 
 
 		//////////
