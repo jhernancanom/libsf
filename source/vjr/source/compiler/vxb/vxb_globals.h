@@ -541,6 +541,7 @@
 		{ cgc_putfile,				7,			false,		_ICODE_PUTFILE,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_pv,					2,			false,		_ICODE_PV,								false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_quarter,				7,			false,		_ICODE_QUARTER,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
+		{ cgc_ranger,				6,			false,		_ICODE_RANGER,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_raiseevent,			10,			false,		_ICODE_RAISEEVENT,						false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_rand,					4,			false,		_ICODE_RAND,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_ratc,					4,			false,		_ICODE_RATC,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },

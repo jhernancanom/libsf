@@ -720,6 +720,7 @@
 	const s32		_ICODE_PUTFILE                                  = 1315;
 	const s32		_ICODE_PV                                       = 1316;
 	const s32		_ICODE_QUARTER                                  = 1317;
+	const s32		_ICODE_RANGER									= 1448;
 	const s32		_ICODE_RAISEEVENT                               = 1318;
 	const s32		_ICODE_RAND                                     = 1319;
 	const s32		_ICODE_RATC                                     = 1320;
@@ -845,7 +846,7 @@
 	// connstring		= 1441				loadparams		= 1442
 	// noloadparams		= 1443				unloadparams	= 1444
 	// nounloadparams	= 1445				forcefname		= 1446
-	// forcestem		= 1447
+	// forcestem		= 1447				ranger			= 1448
 
 // Temporarily added until the processing engine is coded
 	const s32		_ICODE_CONCATENATE								= 1900;
@@ -1530,6 +1531,7 @@
 	const s8		cgc_putfile[]									= "putfile";
 	const s8		cgc_pv[]										= "pv";
 	const s8		cgc_quarter[]									= "quarter";
+	const s8		cgc_ranger[]									= "ranger";
 	const s8		cgc_raiseevent[]								= "raiseevent";
 	const s8		cgc_rand[]										= "rand";
 	const s8		cgc_ratc[]										= "ratc";

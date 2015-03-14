@@ -404,6 +404,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_ranger[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_rat[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}

@@ -3574,6 +3574,114 @@
 
 //////////
 //
+// Function: RANGER()
+// Force Into Range.  The function is the equivalent of xResult = MIN(MAX(xVar, xMin), xMax)).
+//
+//////
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Mar.14.2015
+//////
+// Change log:
+//     Mar.14.2015 - GitHub commit by Rick C. Hodgin
+//     Mar.13.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//    varExpression	-- Specifies the expression to valuate
+//    varMin		-- Specifies the min range
+//    varMin		-- Specifies the max range
+//
+//////
+// Returns:
+//   Returns the value forced into the range xMin..xMax
+//////
+// Example:
+//  x = 10
+//	? x                            && Displays 10
+//	? RANGER(x, 20, 80)            && Displays 20
+//	x = RANGER(x, 20, 80)          && Can be used as assignment
+//	? x							   && Displays 20
+//////
+	SVariable* function_ranger(SThisCode* thisCode, SVariable* varExpression, SVariable* varMin, SVariable* varMax)
+	{
+		SVariable* tempResult;
+		SVariable* result;
+
+
+		//////////
+		// Test Parameter 1
+		//////
+			if (!iVariable_isValid(varExpression))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, varExpression->compRelated, false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Test Parameter 2
+		//////
+			if (!iVariable_isValid(varMin))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, varMin->compRelated, false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Test Parameter 3 
+		//////
+			if (!iVariable_isValid(varMax))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, varMax->compRelated, false);
+				return(NULL);
+			}
+
+
+		//////////
+		// They must be the same type
+		//////
+			if (varExpression->varType != varMin->varType)
+			{
+				// Operand mismatch
+				iError_reportByNumber(thisCode, _ERROR_DATA_TYPE_MISMATCH, varMin->compRelated, false);
+				return(NULL);
+			}	
+			if (varExpression->varType != varMax->varType)
+			{
+				// Operand mismatch
+				iError_reportByNumber(thisCode, _ERROR_DATA_TYPE_MISMATCH, varMax->compRelated, false);
+				return(NULL);
+			}
+
+
+// TODO:  Verify xMin <= xMax
+
+
+		//////////
+		// RANGER() executed as "result = MIN(MAX(xVar, xMin), xMax))"
+		//////
+			tempResult	= function_max(thisCode, varExpression, varMin);
+			result		= function_min(thisCode, tempResult, varMax);
+
+
+		//////////
+		// Delete our temporary result
+		/////
+			iVariable_delete(thisCode, tempResult, true);
+
+
+		//////////
+		// Indicate our true result
+		//////
+			return(result);
+	}
+
+
+
+
+//////////
+//
 // Function: REPLICATE()
 // Returns the indicated string replicated N times.
 //

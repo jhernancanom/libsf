@@ -202,6 +202,7 @@ struct SThisCode;
 	SVariable*			function_padr								(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter);
 	SVariable*			ifunction_padCommon							(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter, bool tlPadLeft, bool tlPadRight);
 	SVariable*			function_proper								(SThisCode* thisCode, SVariable* varString);
+	SVariable*			function_ranger								(SThisCode* thisCode, SVariable* varExpression, SVariable* varMin, SVariable* varMax);
 	SVariable*			function_rat								(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence);
 	SVariable*			function_ratc								(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence);
 	SVariable*			function_replicate							(SThisCode* thisCode, SVariable* varString, SVariable* varCount);
@@ -334,6 +335,7 @@ struct SThisCode;
 		{	_ICODE_PADL,			1,			(uptr)&function_padl,			2,				3,				&gsSourceLight_padl[0]			},
 		{	_ICODE_PADR,			1,			(uptr)&function_padr,			2,				3,				&gsSourceLight_padr[0]			},
 		{	_ICODE_PROPER,			1,			(uptr)&function_proper,			1,				1,				&gsSourceLight_proper[0]		},
+		{	_ICODE_RANGER,			1,			(uptr)&function_ranger,			3,				3,				&gsSourceLight_ranger[0]		},
 		{	_ICODE_RAT,				1,			(uptr)&function_rat,			2,				3,				&gsSourceLight_rat[0]			},
 		{	_ICODE_RATC,			1,			(uptr)&function_ratc,			2,				3,				&gsSourceLight_ratc[0]			},
 		{	_ICODE_REPLICATE,		1,			(uptr)&function_replicate,		2,				2,				&gsSourceLight_replicate[0]		},
