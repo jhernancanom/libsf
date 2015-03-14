@@ -5964,10 +5964,11 @@ do_as_numeric:
 						else if (varSrc->varType == _VAR_TYPE_U32)		*varDst->value.data_f64 = (f64)*val_u32;
 						else if (varSrc->varType == _VAR_TYPE_S64)		*varDst->value.data_f64 = (f64)*val_s64;
 						else if (varSrc->varType == _VAR_TYPE_U64)		*varDst->value.data_f64 = (f64)*val_u64;
-						else if (varSrc->varType == _VAR_TYPE_S8)		*varDst->value.data_f64 = (f32)*val_s8;
-						else if (varSrc->varType == _VAR_TYPE_U8)		*varDst->value.data_f64 = (f32)*val_u8;
-						else if (varSrc->varType == _VAR_TYPE_S16)		*varDst->value.data_f64 = (f32)*val_s16;
-						else if (varSrc->varType == _VAR_TYPE_U16)		*varDst->value.data_f64 = (f32)*val_u16;
+						else if (varSrc->varType == _VAR_TYPE_S8)		*varDst->value.data_f64 = (f64)*val_s8;
+						else if (varSrc->varType == _VAR_TYPE_U8)		*varDst->value.data_f64 = (f64)*val_u8;
+						else if (varSrc->varType == _VAR_TYPE_S16)		*varDst->value.data_f64 = (f64)*val_s16;
+						else if (varSrc->varType == _VAR_TYPE_U16)		*varDst->value.data_f64 = (f64)*val_u16;
+						else if (varSrc->varType == _VAR_TYPE_NUMERIC)	*varDst->value.data_f64 = (f64)iErrorCandidate_signalOutOfRange_numeric(thisCode, &varSrc->value, _VAR_TYPE_F64, NULL, false, NULL);
 						else {
 							// Every parameter they passed was NULL
 							debug_break;
@@ -5987,6 +5988,7 @@ do_as_numeric:
 						else if (varSrc->varType == _VAR_TYPE_U8)		*varDst->value.data_s32 = (s32)*val_u8;
 						else if (varSrc->varType == _VAR_TYPE_S16)		*varDst->value.data_s32 = (s32)*val_s16;
 						else if (varSrc->varType == _VAR_TYPE_U16)		*varDst->value.data_s32 = (s32)*val_u16;
+						else if (varSrc->varType == _VAR_TYPE_NUMERIC)	*varDst->value.data_s32 = (s32)iErrorCandidate_signalOutOfRange_numeric(thisCode, &varSrc->value, _VAR_TYPE_S32, NULL, false, NULL);
 						else {
 							// Every parameter they passed was NULL
 							debug_break;
@@ -6006,6 +6008,7 @@ do_as_numeric:
 						else if (varSrc->varType == _VAR_TYPE_U8)		*varDst->value.data_u32 = (u32)*val_u8;
 						else if (varSrc->varType == _VAR_TYPE_S16)		*varDst->value.data_u32 = (u32)*val_s16;
 						else if (varSrc->varType == _VAR_TYPE_U16)		*varDst->value.data_u32 = (u32)*val_u16;
+						else if (varSrc->varType == _VAR_TYPE_NUMERIC)	*varDst->value.data_u32 = (u32)iErrorCandidate_signalOutOfRange_numeric(thisCode, &varSrc->value, _VAR_TYPE_U32, NULL, false, NULL);
 						else {
 							// Every parameter they passed was NULL
 							debug_break;
@@ -6026,6 +6029,7 @@ do_as_numeric:
 						else if (varSrc->varType == _VAR_TYPE_U8)		*varDst->value.data_s64 = (s64)*val_u8;
 						else if (varSrc->varType == _VAR_TYPE_S16)		*varDst->value.data_s64 = (s64)*val_s16;
 						else if (varSrc->varType == _VAR_TYPE_U16)		*varDst->value.data_s64 = (s64)*val_u16;
+						else if (varSrc->varType == _VAR_TYPE_NUMERIC)	*varDst->value.data_s64 = (s64)iErrorCandidate_signalOutOfRange_numeric(thisCode, &varSrc->value, _VAR_TYPE_S64, NULL, false, NULL);
 						else {
 							// Every parameter they passed was NULL
 							debug_break;
@@ -6045,6 +6049,7 @@ do_as_numeric:
 						else if (varSrc->varType == _VAR_TYPE_U8)		*varDst->value.data_u64 = (u64)*val_u8;
 						else if (varSrc->varType == _VAR_TYPE_S16)		*varDst->value.data_u64 = (u64)*val_s16;
 						else if (varSrc->varType == _VAR_TYPE_U16)		*varDst->value.data_u64 = (u64)*val_u16;
+						else if (varSrc->varType == _VAR_TYPE_NUMERIC)	*varDst->value.data_u64 = (u64)iErrorCandidate_signalOutOfRange_numeric(thisCode, &varSrc->value, _VAR_TYPE_U64, NULL, false, NULL);
 						else {
 							// Every parameter they passed was NULL
 							debug_break;
@@ -6064,6 +6069,7 @@ do_as_numeric:
 						else if (varSrc->varType == _VAR_TYPE_U8)		*varDst->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_u8 (thisCode, *val_u8,  _VAR_TYPE_S8, NULL, false, NULL);
 						else if (varSrc->varType == _VAR_TYPE_S16)		*varDst->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_s16(thisCode, *val_s16, _VAR_TYPE_S8, NULL, false, NULL);
 						else if (varSrc->varType == _VAR_TYPE_U16)		*varDst->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_u16(thisCode, *val_u16, _VAR_TYPE_S8, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_NUMERIC)	*varDst->value.data_s8 = (s8)iErrorCandidate_signalOutOfRange_numeric(thisCode, &varSrc->value, _VAR_TYPE_S8, NULL, false, NULL);
 						else {
 							// Every parameter they passed was NULL
 							debug_break;
@@ -6083,6 +6089,7 @@ do_as_numeric:
 						else if (varSrc->varType == _VAR_TYPE_U8)		*varDst->value.data_u8 = (u8)*val_u8;
 						else if (varSrc->varType == _VAR_TYPE_S16)		*varDst->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_s16, _VAR_TYPE_U8, NULL, false, NULL);
 						else if (varSrc->varType == _VAR_TYPE_U16)		*varDst->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_u16, _VAR_TYPE_U8, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_NUMERIC)	*varDst->value.data_u8 = (u8)iErrorCandidate_signalOutOfRange_numeric(thisCode, &varSrc->value, _VAR_TYPE_U8, NULL, false, NULL);
 						else {
 							// Every parameter they passed was NULL
 							debug_break;
@@ -6101,7 +6108,8 @@ do_as_numeric:
 						else if (varSrc->varType == _VAR_TYPE_S8)		*varDst->value.data_s16 = (s16)*val_s8;
 						else if (varSrc->varType == _VAR_TYPE_U8)		*varDst->value.data_s16 = (s16)*val_u8;
 						else if (varSrc->varType == _VAR_TYPE_S16)		*varDst->value.data_s16 = (s16)*val_s16;
-						else if (varSrc->varType == _VAR_TYPE_U16)		*varDst->value.data_s16 = (s16)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_u16, _VAR_TYPE_F32, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_U16)		*varDst->value.data_s16 = (s16)iErrorCandidate_signalOutOfRange_u64(thisCode, *val_u16, _VAR_TYPE_S16, NULL, false, NULL);
+						else if (varSrc->varType == _VAR_TYPE_NUMERIC)	*varDst->value.data_s16 = (s16)iErrorCandidate_signalOutOfRange_numeric(thisCode, &varSrc->value, _VAR_TYPE_S16, NULL, false, NULL);
 						else {
 							// Every parameter they passed was NULL
 							debug_break;
@@ -6121,6 +6129,7 @@ do_as_numeric:
 						else if (varSrc->varType == _VAR_TYPE_U8)		*varDst->value.data_u16 = (u16)*val_u8;
 						else if (varSrc->varType == _VAR_TYPE_S16)		*varDst->value.data_u16 = (u16)*val_s16;
 						else if (varSrc->varType == _VAR_TYPE_U16)		*varDst->value.data_u16 = (u16)*val_u16;
+						else if (varSrc->varType == _VAR_TYPE_NUMERIC)	*varDst->value.data_u16 = (u16)iErrorCandidate_signalOutOfRange_numeric(thisCode, &varSrc->value, _VAR_TYPE_U16, NULL, false, NULL);
 						else {
 							// Every parameter they passed was NULL
 							debug_break;
@@ -6193,6 +6202,7 @@ do_as_numeric:
 									else if (varSrc->varType == _VAR_TYPE_U32)		*varDst->value.data_u8 = (((u8)*val_u32 == 0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
 									else if (varSrc->varType == _VAR_TYPE_S64)		*varDst->value.data_u8 = (((u8)*val_s64 == 0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
 									else if (varSrc->varType == _VAR_TYPE_U64)		*varDst->value.data_u8 = (((u8)*val_u64 == 0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
+									else if (varSrc->varType == _VAR_TYPE_NUMERIC)	*varDst->value.data_u8 = (((u8)iErrorCandidate_signalOutOfRange_numeric(thisCode, &varSrc->value, _VAR_TYPE_S32, NULL, false, NULL) == 0) ? _LOGICAL_FALSE : _LOGICAL_TRUE);
 									else {
 										// Every parameter they passed was NULL
 										debug_break;
