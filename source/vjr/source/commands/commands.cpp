@@ -526,7 +526,7 @@
 
 
 		// Based on the test type, make sure it's in range
-		if (value && value->length <= sizeof(buffer) - 1)
+		if (value && value->length >= 1 && (u32)value->length <= sizeof(buffer) - 1)
 		{
 			// Copy text to null-terminate
 			memcpy(buffer, value->data, value->length);
@@ -4365,7 +4365,7 @@
 //////////
 //
 // Function: SIGN()
-// Returns a numeric value of 1, –1, or 0 based on whether or not the specified
+// Returns a numeric value of 1, Â–1, or 0 based on whether or not the specified
 // numeric expression evaluates to a positive, negative, or 0 value.
 //
 //////
