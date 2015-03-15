@@ -951,3 +951,9 @@ typedef SEM**		SEMpp;
 	const f64			_MATH_PI2							= 1.570796326794896619;
 	const f64			_MATH_2PI							= 6.283185307179586476;
 	const f64			_MATH_EXP							= 2.718281828459045235;
+	//	common functions
+	const u32			_FP_COMMON_SQRT						= 0;
+	const u32			_FP_COMMON_EXP						= 1;
+	const u32			_FP_COMMON_PI						= 2;
+	const u32			_FP_COMMON_LOG						= 3;
+	const u32			_FP_COMMON_LOG10					= 4;
