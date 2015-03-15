@@ -181,6 +181,7 @@ struct SThisCode;
 	SVariable*			function_curdir								(SThisCode* thisCode);
 	SVariable*			function_datetime							(SThisCode* thisCode, SVariable* varYear, SVariable* varMonth, SVariable* varDay, SVariable* varHour, SVariable* varMinute, SVariable* varSecond, SVariable* varMillisecond);
 	SVariable*			function_exp		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
+	SVariable*			ifunction_commonNumbers						(SThisCode* thisCode, SVariable* varNumber, u32 functionType, bool resultFloatingPoint);
 	SVariable*			function_forceext							(SThisCode* thisCode, SVariable* varPathname, SVariable varNewExtension);
 	SVariable*			function_forcefname							(SThisCode* thisCode, SVariable* varPathname, SVariable varNewFilename);
 	SVariable*			function_forcepath							(SThisCode* thisCode, SVariable* varPathname, SVariable varNewPathname);
@@ -193,8 +194,8 @@ struct SThisCode;
 	SVariable*			function_juststem							(SThisCode* thisCode, SVariable* varString, SVariable* varPostfixWidth);
 	SVariable*			function_left								(SThisCode* thisCode, SVariable* varString, SVariable* varCount);
 	SVariable*			function_len								(SThisCode* thisCode, SVariable* varString);
-	SVariable*			function_log								(SThisCode* thisCode, SVariable* varNumber);
-	SVariable*			function_log10								(SThisCode* thisCode, SVariable* varNumber);
+	SVariable*			function_log		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
+	SVariable*			function_log10		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_lower								(SThisCode* thisCode, SVariable* varString);
 	SVariable*			function_ltrim								(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2);
 	SVariable*			function_max								(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight);
@@ -338,8 +339,8 @@ struct SThisCode;
 		{	_ICODE_JUSTSTEM,		1,			(uptr)&function_juststem,		1,				2,				&gsSourceLight_juststem[0]		},
 		{	_ICODE_LEFT,			1,			(uptr)&function_left,			2,				2,				&gsSourceLight_left[0]			},
 		{	_ICODE_LEN,				1,			(uptr)&function_len,			1,				1,				&gsSourceLight_len[0]			},
-		{	_ICODE_LOG,				1,			(uptr)&function_log,			1,				1,				&gsSourceLight_log[0]			},
-		{	_ICODE_LOG10,			1,			(uptr)&function_log10,			1,				1,				&gsSourceLight_log10[0]			},
+		{	_ICODE_LOG,				1,			(uptr)&function_log,			1,				1,				&gsSourceLight_log[0]			},	// LOG() by Stefano D'Amico, VJr 0.56, Mar.15.2015
+		{	_ICODE_LOG10,			1,			(uptr)&function_log10,			1,				1,				&gsSourceLight_log10[0]			},	// LOG10() by Stefano D'Amico, VJr 0.56, Mar.15.2015
 		{	_ICODE_LOWER,			1,			(uptr)&function_lower,			1,				1,				&gsSourceLight_lower[0]			},
 		{	_ICODE_LTRIM,			1,			(uptr)&function_ltrim,			1,				1,				&gsSourceLight_ltrim[0]			},
 		{	_ICODE_MAX,				1,			(uptr)&function_max,			2,				2,				&gsSourceLight_max[0]			},

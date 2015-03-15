@@ -588,142 +588,6 @@
 	}
 
 
-//////////
-//
-// Common numeric functions
-//
-//////
-    SVariable* ifunction_commonNumFunction(SThisCode* thisCode, SVariable* varNumber, u32 functionType, bool resultFloatingPoint)
-    {
-		f64			lfValue;
-		u32			errorNum;
-        bool		error;
-        SVariable*	result;
-
-		if (varNumber)
-		{
-			//////////
-			// Parameter 1 must be numeric
-			//////
-				if (!iVariable_isValid(varNumber) || !iVariable_isTypeNumeric(varNumber))
-				{
-					iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_compRelated(thisCode, varNumber), false);
-					return(NULL);
-				}
-
-
-			//////////
-			// Parameter 1, Convert to f64
-			//////
-				lfValue = iiVariable_getAs_f64(thisCode, varNumber, false, &error, &errorNum);
-				if (error)
-				{
-					iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
-					return(NULL);
-				}
-		} else {
-			//no parameter (PI())
-			lfValue = 0.0;
-		}
-
-
-		//////////
-		// Compute numeric function
-		//////
-			switch (functionType)
-			{
-				case _FP_COMMON_SQRT:
-
-					//////////
-					// Verify p1 >= 0
-					//////
-						if (lfValue < 0.0)
-						{
-							// Oops!
-							iError_reportByNumber(thisCode, _ERROR_CANNOT_BE_NEGATIVE, iVariable_compRelated(thisCode, varNumber), false);
-							return(NULL);
-						}
-
-					//////////
-					// Compute sqrt
-					//////
-						lfValue = sqrt(lfValue);	
-						break;
-				case _FP_COMMON_EXP:	
-					
-					//////////
-					// Compute exp
-					//////
-						lfValue = exp(lfValue);	
-						break;
-				case _FP_COMMON_PI:
-
-					//////////
-					// Compute pi
-					//////
-						lfValue = _MATH_PI;
-						break;
-				case _FP_COMMON_LOG:
-				case _FP_COMMON_LOG10:
-
-					//////////
-					// Verify p1 > 0
-					//////
-						if (lfValue <= 0.0)
-						{
-							// Oops!
-							iError_reportByNumber(thisCode, _ERROR_CANNOT_BE_ZERO_OR_NEGATIVE, iVariable_compRelated(thisCode, varNumber), false);
-							return(NULL);
-						}
-
-						if (functionType == _FP_COMMON_LOG)
-						{
-							//////////
-							// Compute log
-							//////
-								lfValue = log(lfValue);	
-						} else {
-							//////////
-							// Compute log10
-							//////
-								lfValue = log10(lfValue);	
-						}
-						break;
-				default:
-					// Oops!
-					iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_compRelated(thisCode, varNumber), false);
-					return(NULL);
-			}
-
-
-		//////////
-		// Create output variable
-		//////
-			if (resultFloatingPoint)
-			{
-				result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL);
-			} else { 
-				result = iVariable_create(thisCode, varNumber->varType, NULL); 
-			}
-			if (!result)
-			{
-				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
-				return(NULL);
-			}
-
-		//////////
-		// Set the value
-		//////
-			if (!iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfValue, NULL, NULL, NULL, NULL))
-				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
-
-
-		//////////
-        // Return result
-		//////
-	        return result;   
-	}
-
 
 
 //////////
@@ -2078,11 +1942,141 @@
 //////
     SVariable* function_exp(SThisCode* thisCode, SVariable* varNumber)
     {
-		//////////
         // Return exp
-		//////
-	        return ifunction_commonNumFunction(thisCode, varNumber, _FP_COMMON_EXP, true);   
+        return(ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_EXP, true));
 	}
+
+	// Common numeric functions used for EXP(), LOG(), LOG10(), PI(), SQRT().
+    SVariable* ifunction_commonNumbers(SThisCode* thisCode, SVariable* varNumber, u32 functionType, bool resultFloatingPoint)
+    {
+		f64			lfValue;
+		u32			errorNum;
+        bool		error;
+        SVariable*	result;
+
+
+		// Is a number required?
+		lfValue = 0.0;	// Assume no
+		if (varNumber)
+		{
+			//////////
+			// Must be numeric
+			//////
+				if (!iVariable_isValid(varNumber) || !iVariable_isTypeNumeric(varNumber))
+				{
+					iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_compRelated(thisCode, varNumber), false);
+					return(NULL);
+				}
+
+
+			//////////
+			// Convert to f64
+			//////
+				lfValue = iiVariable_getAs_f64(thisCode, varNumber, false, &error, &errorNum);
+				if (error)
+				{
+					iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
+					return(NULL);
+				}
+		}
+
+
+		//////////
+		// Compute numeric function
+		//////
+			switch (functionType)
+			{
+
+// SQRT()
+				case _FP_COMMON_SQRT:
+
+					//////////
+					// Verify p1 >= 0
+					//////
+						if (lfValue < 0.0)
+						{
+							// Oops!
+							iError_reportByNumber(thisCode, _ERROR_CANNOT_BE_NEGATIVE, iVariable_compRelated(thisCode, varNumber), false);
+							return(NULL);
+						}
+
+
+					//////////
+					// Compute sqrt
+					//////
+						lfValue = sqrt(lfValue);	
+						break;
+
+
+// EXP()
+				case _FP_COMMON_EXP:
+					lfValue = exp(lfValue);	
+					break;
+
+// PI()
+				case _FP_COMMON_PI:
+					lfValue = _MATH_PI;
+					break;
+
+
+// LOG()
+// LOG10()
+				case _FP_COMMON_LOG:
+				case _FP_COMMON_LOG10:
+
+					//////////
+					// Verify p1 > 0
+					//////
+						if (lfValue <= 0.0)
+						{
+							// Oops!
+							iError_reportByNumber(thisCode, _ERROR_CANNOT_BE_ZERO_OR_NEGATIVE, iVariable_compRelated(thisCode, varNumber), false);
+							return(NULL);
+						}
+
+
+					//////////
+					// Compute
+					//////
+						if (functionType == _FP_COMMON_LOG)		lfValue = log(lfValue);	
+						else									lfValue = log10(lfValue);	
+						break;
+
+
+				default:
+					// Programmer error... this is an internal function and we should never get here
+					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_compRelated(thisCode, varNumber), false);
+					return(NULL);
+			}
+
+
+		//////////
+		// Create output variable
+		//////
+			if (resultFloatingPoint)	result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL);
+			else						result = iVariable_create(thisCode, varNumber->varType, NULL); 
+
+			if (!result)
+			{
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Set the value
+		//////
+			if (!iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfValue, NULL, NULL, NULL, NULL))
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
+
+
+		//////////
+        // Return result
+		//////
+	        return result;   
+	}
+
+
 
 
 //////////
@@ -2851,8 +2845,10 @@
 		//////////
         // Return log
 		//////
-	        return ifunction_commonNumFunction(thisCode, varNumber, _FP_COMMON_LOG, true);   
+	        return ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_LOG, true);   
 	}
+
+
 
 
 //////////
@@ -2883,8 +2879,9 @@
 		//////////
         // Return log10
 		//////
-	        return ifunction_commonNumFunction(thisCode, varNumber, _FP_COMMON_LOG10, true);   
+	        return ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_LOG10, true);   
 	}
+
 
 
 
@@ -3962,7 +3959,7 @@
 //////
 	SVariable* function_pi(SThisCode* thisCode)
 	{
-		return ifunction_commonNumFunction(thisCode, NULL, _FP_COMMON_PI, true);
+		return ifunction_commonNumbers(thisCode, NULL, _FP_COMMON_PI, true);
 	}
 
 
@@ -4989,7 +4986,7 @@
 		//////////
         // Return sqrt
 		//////
-		return ifunction_commonNumFunction(thisCode, varNumber, _FP_COMMON_SQRT, true);
+		return ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_SQRT, true);
 	}
 
 
