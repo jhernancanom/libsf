@@ -289,6 +289,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_exp[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_forceext[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -403,6 +408,11 @@
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
+	
+	SSourceLightData gsSourceLight_pi[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
 
 	SSourceLightData gsSourceLight_proper[] =
 	{
@@ -453,7 +463,13 @@
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
+
 	SSourceLightData gsSourceLight_space[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_sqrt[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};

@@ -175,6 +175,7 @@
 			case _ERROR_PARAMETER_TOO_LONG:					{	iError_report(cgcParameterTooLong, tlInvasive);					break;	}
 			case _ERROR_UNABLE_TO_OPEN_DBC:					{	iError_report(cgcUnableToOpenDbc, tlInvasive);					break;	}
 			case _ERROR_DIVISION_BY_ZERO:					{	iError_report(cgcDivisionByZero, tlInvasive);					break;	}
+			case _ERROR_CANNOT_BE_NEGATIVE:					{	iError_report(cgcCannotBeNegative, tlInvasive);					break;	}
 
 		}
 
@@ -1911,7 +1912,87 @@
 	        return result;
 	}
 
+//////////
+//
+// Function: EXP()
+// Returns the value of ex where x is a specified numeric expression.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.15.2015
+//////
+// Change log:
+//     Mar.15.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    EXP(n) of the value in p1
+//////
+// Example:
+//    ? EXP(2)		&& Display 7.39
+//////
+    SVariable* function_exp(SThisCode* thisCode, SVariable* varNumber)
+    {
+		f64			lfValue;
+		u32			errorNum;
+        bool		error;
+        SVariable*	result;
 
+
+		//////////
+		// Parameter 1 must be numeric
+		//////
+			if (!iVariable_isValid(varNumber) || !iVariable_isTypeNumeric(varNumber))
+			{
+				iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_compRelated(thisCode, varNumber), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Parameter 1, Convert to f64
+		//////
+			lfValue = iiVariable_getAs_f64(thisCode, varNumber, false, &error, &errorNum);
+			if (error)
+			{
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Create output variable
+		//////
+			result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL);
+			if (!result)
+			{
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Compute exp
+		//////
+			lfValue = pow(_MATH_EXP, lfValue);	
+
+
+		//////////
+		// Set the value
+		//////
+			if (!iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfValue, NULL, NULL, NULL, NULL))
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
+
+
+		//////////
+        // Return exp
+		//////
+	        return result;   
+	}
 
 
 //////////
@@ -3702,7 +3783,45 @@
 	}
 
 
+//////////
+//
+// Function: PI()
+// Returns the numeric constant pi.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.15.2015
+//////
+// Change log:
+//     Mar.15.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     none
+//////
+// Returns:
+//    Numeric		-- Returns the numeric constant pi
+//////
+// Example:
+//    ? pi()				&& Displays 3.14
+//////
+	SVariable* function_pi(SThisCode* thisCode)
+	{
+		u32			errorNum;
+		SVariable*	result;	
 
+		//////////
+        // Return pi
+		//////
+			result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL);
+			if (!result)
+			{
+				iError_reportByNumber(thisCode, errorNum, NULL, false);
+				return(NULL);
+			}
+			*(f64*)result->value.data_f64 = (f64)_MATH_PI;
+	        return result;
+	}
 
 //////////
 //
@@ -4664,6 +4783,101 @@
 	        return result;
 	}
 
+
+//////////
+//
+// Function: SQRT()
+// Returns the square root of the specified numeric expression.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.15.2015
+//////
+// Change log:
+//     Mar.15.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    SQRT(n) of the value in p1
+//////
+// Example:
+//    ? SQRT(2)		&& Display 1.41
+//    ? SQRT(2.0)	&& Display 1.41
+//    ? SQRT(-2)	&& Error: argument cannot be negative
+//////
+    SVariable* function_sqrt(SThisCode* thisCode, SVariable* varNumber)
+    {
+		f64			lfValue;
+		u32			errorNum;
+        bool		error;
+        SVariable*	result;
+
+
+		//////////
+		// Parameter 1 must be numeric
+		//////
+			if (!iVariable_isValid(varNumber) || !iVariable_isTypeNumeric(varNumber))
+			{
+				iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_compRelated(thisCode, varNumber), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Parameter 1, Convert to f64
+		//////
+			lfValue = iiVariable_getAs_f64(thisCode, varNumber, false, &error, &errorNum);
+			if (error)
+			{
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Create output variable
+		//////
+			result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL);
+			if (!result)
+			{
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Verify p1 >= 0
+		//////
+			if (lfValue < 0.0)
+			{
+				// Oops!
+				iError_reportByNumber(thisCode, _ERROR_CANNOT_BE_NEGATIVE, iVariable_compRelated(thisCode, varNumber), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Compute sqrt
+		//////
+			lfValue = sqrt(lfValue);	
+
+
+		//////////
+		// Set the value
+		//////
+			if (!iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfValue, NULL, NULL, NULL, NULL))
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
+
+
+		//////////
+        // Return sqrt
+		//////
+	        return result;   
+	}
 
 
 

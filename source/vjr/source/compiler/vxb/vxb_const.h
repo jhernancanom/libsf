@@ -242,6 +242,7 @@
 	const u32		_ERROR_PARAMETER_TOO_LONG						= 37;
 	const u32		_ERROR_UNABLE_TO_OPEN_DBC						= 38;
 	const u32		_ERROR_DIVISION_BY_ZERO							= 39;
+	const u32		_ERROR_CANNOT_BE_NEGATIVE						= 40;
 
 	// Fill ins
 	const u8		cgc_notFoundOrInvalidDataType[]					= "not found or is invalid data type";
@@ -290,6 +291,8 @@
 	const u8		cgcParameterTooLong[]							= "parameter too long";
 	const u8		cgcUnableToOpenDbc[]							= "unable to open container";
 	const u8		cgcDivisionByZero[]								= "division by zero";
+	const u8		cgcCannotBeNegative[]							= "argument cannot be negative";
+
 #else
 	#error Language not specified
 #endif
