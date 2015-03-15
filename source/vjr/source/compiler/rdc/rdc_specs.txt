@@ -266,6 +266,13 @@ RDC Specifications Document
 		
 		Note:  Some of these are useful only in floating point numbers.
 
+1.2 - Simplified Pointers
+-------------------------
+
+	RDC does not distinguish between . and ->. They are completely interchangeable.  In
+	addition, repeated . or - (hyphen) character can be used for visual clarity, such as
+	this..that being the same as this.that, being the same as this---->that, being the
+	same as this->that, etc.
 
 2.0 - Program Engagement
 ------------------------

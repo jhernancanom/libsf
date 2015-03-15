@@ -90,7 +90,7 @@ struct SLine;
 struct SComp;
 struct SCompiler;
 struct SFunction;
-struct SObjPropertyMap;
+struct SObjPropMap;
 
 
 
@@ -338,7 +338,7 @@ struct SBaseclassList
 
 	union {
 		uptr				_objProps;
-		SObjPropertyMap*	objProps;									// Root property map for this object
+		SObjPropMap*	objProps;									// Root property map for this object
 	};
 };
 

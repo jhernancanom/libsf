@@ -95,7 +95,7 @@
 
 
 
-struct SObjPropertyMap;
+struct SObjPropMap;
 
 
 
@@ -153,7 +153,7 @@ struct SObjPropertyMap;
 	SWindow* 				iObj_createWindowForForm				(SThisCode* thisCode, SObject*  form, SWindow* win, s32 icon);
 	SVariable*				iObj_getPropertyAsVariable				(SThisCode* thisCode, SObject*  obj, s8* tcPropertyName, u32 tnPropertyNameLength, SComp* comp);
 	void					iiObj_resetToDefault					(SThisCode* thisCode, SObject*  obj, bool tlResetProperties, bool tlResetMethods);
-	void					iiObj_resetToDefaultCommon				(SThisCode* thisCode, SObject*  obj, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, s32 tnPropCount);
+	void					iiObj_resetToDefaultCommon				(SThisCode* thisCode, SObject*  obj, bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, s32 tnPropCount);
 	s32						iiObj_getBaseclassType_byName			(SThisCode* thisCode, s8* tcTextname, s32 tnTextnameLength);
 	SBaseclassList*			iiObj_getBaseclass_byName				(SThisCode* thisCode, s8* tcTextname, s32 tnTextnameLength);
 	SBaseclassList*			iiObj_getBaseclass_byType				(SThisCode* thisCode, s32 tnObjType);
@@ -252,45 +252,45 @@ struct SObjPropertyMap;
 // objects/reset.cpp
 //////
 	// For initialization
-	void					iiSubobj_resetToDefaultEmpty			(SThisCode* thisCode, SObject*	empty,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultForm				(SThisCode* thisCode, SObject*	form,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultSubform			(SThisCode* thisCode, SObject*	subform,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultCarousel			(SThisCode* thisCode, SObject*	carousel,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultRider			(SThisCode* thisCode, SObject*	rider,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultLabel			(SThisCode* thisCode, SObject*	label,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultTextbox			(SThisCode* thisCode, SObject*	textbox,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultButton			(SThisCode* thisCode, SObject*	button,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultEditbox			(SThisCode* thisCode, SObject*	editbox,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultImage			(SThisCode* thisCode, SObject*	image,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultCheckbox			(SThisCode* thisCode, SObject*	checkbox,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultOption			(SThisCode* thisCode, SObject*	option,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultRadio			(SThisCode* thisCode, SObject*	radio,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultCmdGroup			(SThisCode* thisCode, SObject*	cmdGroup,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultOptGroup			(SThisCode* thisCode, SObject*	optGroup,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultListbox			(SThisCode* thisCode, SObject*	listbox,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultCombobox			(SThisCode* thisCode, SObject*	combobox,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultFormset			(SThisCode* thisCode, SObject*	formset,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultToolbar			(SThisCode* thisCode, SObject*	toolbar,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultSeparator		(SThisCode* thisCode, SObject*	separator,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultLine				(SThisCode* thisCode, SObject*	line,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultShape			(SThisCode* thisCode, SObject*	shape,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultContainer		(SThisCode* thisCode, SObject*	container,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultControl			(SThisCode* thisCode, SObject*	control,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultGrid				(SThisCode* thisCode, SObject*	grid,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultColumn			(SThisCode* thisCode, SObject*	column,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultHeader			(SThisCode* thisCode, SObject*	header,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultOleBound			(SThisCode* thisCode, SObject*	oleBound,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultOleContain		(SThisCode* thisCode, SObject*	oleContain,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultSpinner			(SThisCode* thisCode, SObject*	spinner,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultTimer			(SThisCode* thisCode, SObject*	timer,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultHyperlink		(SThisCode* thisCode, SObject*	hyperlink,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultCollection		(SThisCode* thisCode, SObject*	collection,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultPage				(SThisCode* thisCode, SObject*	page,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultPageframe		(SThisCode* thisCode, SObject*	pageframe,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultSession			(SThisCode* thisCode, SObject*	session,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultCustom			(SThisCode* thisCode, SObject*	custom,		bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultException		(SThisCode* thisCode, SObject*	exception,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
-	void					iiSubobj_resetToDefaultSettings			(SThisCode* thisCode, SObject*	exception,	bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultEmpty			(SThisCode* thisCode, SObject*	empty,		bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultForm				(SThisCode* thisCode, SObject*	form,		bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultSubform			(SThisCode* thisCode, SObject*	subform,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultCarousel			(SThisCode* thisCode, SObject*	carousel,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultRider			(SThisCode* thisCode, SObject*	rider,		bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultLabel			(SThisCode* thisCode, SObject*	label,		bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultTextbox			(SThisCode* thisCode, SObject*	textbox,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultButton			(SThisCode* thisCode, SObject*	button,		bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultEditbox			(SThisCode* thisCode, SObject*	editbox,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultImage			(SThisCode* thisCode, SObject*	image,		bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultCheckbox			(SThisCode* thisCode, SObject*	checkbox,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultOption			(SThisCode* thisCode, SObject*	option,		bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultRadio			(SThisCode* thisCode, SObject*	radio,		bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultCmdGroup			(SThisCode* thisCode, SObject*	cmdGroup,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultOptGroup			(SThisCode* thisCode, SObject*	optGroup,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultListbox			(SThisCode* thisCode, SObject*	listbox,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultCombobox			(SThisCode* thisCode, SObject*	combobox,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultFormset			(SThisCode* thisCode, SObject*	formset,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultToolbar			(SThisCode* thisCode, SObject*	toolbar,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultSeparator		(SThisCode* thisCode, SObject*	separator,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultLine				(SThisCode* thisCode, SObject*	line,		bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultShape			(SThisCode* thisCode, SObject*	shape,		bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultContainer		(SThisCode* thisCode, SObject*	container,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultControl			(SThisCode* thisCode, SObject*	control,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultGrid				(SThisCode* thisCode, SObject*	grid,		bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultColumn			(SThisCode* thisCode, SObject*	column,		bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultHeader			(SThisCode* thisCode, SObject*	header,		bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultOleBound			(SThisCode* thisCode, SObject*	oleBound,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultOleContain		(SThisCode* thisCode, SObject*	oleContain,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultSpinner			(SThisCode* thisCode, SObject*	spinner,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultTimer			(SThisCode* thisCode, SObject*	timer,		bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultHyperlink		(SThisCode* thisCode, SObject*	hyperlink,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultCollection		(SThisCode* thisCode, SObject*	collection,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultPage				(SThisCode* thisCode, SObject*	page,		bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultPageframe		(SThisCode* thisCode, SObject*	pageframe,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultSession			(SThisCode* thisCode, SObject*	session,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultCustom			(SThisCode* thisCode, SObject*	custom,		bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultException		(SThisCode* thisCode, SObject*	exception,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
+	void					iiSubobj_resetToDefaultSettings			(SThisCode* thisCode, SObject*	exception,	bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount);
 
 
 //////////

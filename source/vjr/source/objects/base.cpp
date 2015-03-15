@@ -2432,7 +2432,7 @@
 	SVariable* iObj_getPropertyAsVariable(SThisCode* thisCode, SObject* obj, s8* tcPropertyName, u32 tnPropertyNameLength, SComp* comp)
 	{
 		SBaseclassList*		lbcl;
-		SObjPropertyMap*	lpm;
+		SObjPropMap*	lpm;
 
 
 		// Make sure our environment is sane
@@ -2540,7 +2540,7 @@
 // Resets common object properties to their defaults.
 //
 //////
-	void iiObj_resetToDefaultCommon(SThisCode* thisCode, SObject* obj, bool tlResetProperties, bool tlResetMethods, SObjPropertyMap* propMap, s32 tnPropCount)
+	void iiObj_resetToDefaultCommon(SThisCode* thisCode, SObject* obj, bool tlResetProperties, bool tlResetMethods, SObjPropMap* propMap, s32 tnPropCount)
 	{
 		s32 lnI, lnIndex, lnAllocationSize;
 

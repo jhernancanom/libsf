@@ -1013,6 +1013,7 @@
 	const s32       _ICODE_INSERT                                   = 2137;
 	const s32       _ICODE_INTENSITY                                = 2138;
 	const s32       _ICODE_JOIN                                     = 2139;
+	const s32		_ICODE_KEEP										= 2291;
 	const s32       _ICODE_KEYBOARD                                 = 2140;
 	const s32       _ICODE_KEYCOMP                                  = 2141;
 	const s32       _ICODE_LABEL                                    = 2142;
@@ -1170,6 +1171,7 @@
 	// _ICODE_RECOVER												= 2288;
 	// _ICODE_ALL													= 2289;
 	// _ICODE_RESOURCES												= 2290;
+	// _ICODE_KEEP													= 2291;
 
 
 //////////
@@ -1458,6 +1460,7 @@
 	const s8		cgc_justpath[]									= "justpath";
 	const s8		cgc_juststem[]									= "juststem";
 	const s8		cgc_keymatch[]									= "keymatch";
+	const s8		cgc_keep[]										= "keep";
 	const s8		cgc_key[]										= "key";
 	const s8		cgc_loadParams[]								= "loadparams";
 	const s8		cgc_lastkey[]									= "lastkey";

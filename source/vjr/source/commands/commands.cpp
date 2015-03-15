@@ -6659,8 +6659,8 @@ debug_break;
 // 		SComp*	compClassName		= iComps_getNth(compClass, 1);
 // 		SComp*	compClassLib		= iComps_findNextBy_iCode(compModify, _ICODE_CLASSLIB,	NULL);
 // 		SComp*	compClassLibName	= iComps_getNth(compClassLib, 1);
-		SComp*	compContinue		= iComps_findNextBy_iCode(compClear, _ICODE_CONTINUE,	NULL);;
-		SComp*	compContinueCount	= iComps_getNth(compContinue, 1);
+		SComp*	compKeep			= iComps_findNextBy_iCode(compClear, _ICODE_KEEP,	NULL);;
+		SComp*	compKeepCount		= iComps_getNth(compKeep, 1);
 // 		SComp*	compDebug			= iComps_findNextBy_iCode(compModify, _ICODE_DEBUG,		NULL);
 // 		SComp*	compDlls			= iComps_findNextBy_iCode(compModify, _ICODE_DLLS,		NULL);
 // 		SComp*	compDllAlias		= iComps_getNth(compDlls, 1);
@@ -6680,19 +6680,19 @@ debug_break;
 // 		SComp*	compWindows			= iComps_findNextBy_iCode(compModify, _ICODE_WINDOWS,	NULL);
 // 		SComp*	compFilename		= iComps_getNth(compWindows, 1);
 
-		if (compContinue)
+		if (compKeep)
 		{
-			// CLEAR CONTINUE
-			if (compContinueCount)
+			// CLEAR KEEP -- Keeps a certain number of lines at the end of the buffer, and clears the rest
+			if (compKeepCount)
 			{
 				//////////
-				// CLEAR CONTINUE nCount
+				// CLEAR KEEP nCount
 				//////
-					var = iEngine_get_variableName_fromComponent(thisCode, compContinueCount, &llManufactured);
+					var = iEngine_get_variableName_fromComponent(thisCode, compKeepCount, &llManufactured);
 					if (!var)
 					{
 						// Unknown parameter
-						iError_reportByNumber(thisCode, _ERROR_UNRECOGNIZED_PARAMETER, compContinueCount, false);
+						iError_reportByNumber(thisCode, _ERROR_UNRECOGNIZED_PARAMETER, compKeepCount, false);
 						return;
 					}
 
@@ -6703,7 +6703,7 @@ debug_break;
 					lnSaveLines = iiVariable_getAs_s32(thisCode, var, false, &error, &errorNum);
 					if (error)
 					{
-						iError_reportByNumber(thisCode, errorNum, compContinueCount, false);
+						iError_reportByNumber(thisCode, errorNum, compKeepCount, false);
 						return;
 					}
 
@@ -6720,7 +6720,7 @@ debug_break;
 				//////
 					if (lnSaveLines < 0)
 					{
-						iError_reportByNumber(thisCode, _ERROR_CANNOT_BE_NEGATIVE, compContinueCount, false);
+						iError_reportByNumber(thisCode, _ERROR_CANNOT_BE_NEGATIVE, compKeepCount, false);
 						return;
 					}
 
@@ -6734,7 +6734,7 @@ debug_break;
 			// Prepare for the clear
 			//////
 				memset(&ecb, 0, sizeof(ecb));
-				ecb._callback = (uptr)&iiCommand_clear_continue_callback;
+				ecb._callback = (uptr)&iiCommand_clear_keep_callback;
 				ecb.extra1 = (uptr)lnSaveLines;
 				ecb.extra2 = (uptr)iSEM_renumber(screenData, 1);
 
@@ -6765,7 +6765,7 @@ debug_break;
 	}
 
 	// Tests the line number, only saves the tail
-	bool iiCommand_clear_continue_callback(SEM_callback* ecb)
+	bool iiCommand_clear_keep_callback(SEM_callback* ecb)
 	{
 		// If (endNum - saveCount) > lineNum ... delete it
 		return(ecb->sem->lastLine->lineNumber - ecb->extra1 >= ecb->line->lineNumber);
@@ -7015,6 +7015,87 @@ debug_break;
 			// Pass it our output screen
 			if (compValidate)
 				iDbc_validate(thisCode, &gsDbcArea[lnDbcArea], (compRecover != NULL), ((propGet_settings_Talk(_settings)) ? screen_editbox->p.sem : NULL), gWinJDebi);
+	}
+
+
+
+
+//////////
+//
+// Command: SET
+// Sets various components within the current _settings object.
+//
+//////
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Mar.15.2015
+//////
+// Change log:
+//     Mar.15.2015 - Initial creation
+//////
+// Parameters:
+//     comp		-- The [SET] component
+//////
+// Returns:
+//    Nothing, but the environment may be changed.
+//////
+	void command_set(SThisCode* thisCode, SComp* compSet)
+	{
+		SComp*				compSetTarget;
+		SComp*				compValue;
+		SObjPropMap*		opm;
+		SBasePropertyInit*	lbpi;
+
+
+iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, compSet, false);
+return;
+
+		//////////
+		// Get the next component
+		//////
+			compSetTarget = iComps_getNth(compSet, 1);
+			if (compSet)
+			{
+				// SET SOMETHING
+
+
+				//////////
+				// The thing after should be the value, or the keyword TO
+				//////
+					compValue = iComps_getNth(compSet, 1);
+
+					// TO is superfluous, so if it exists, skip it
+					if (compValue && compValue->iCode == _ICODE_TO)
+						compValue = iComps_getNth(compValue, 1);
+
+
+				//////////
+				// Is there anything there?
+				//////
+					if (!compValue)
+					{
+						// Syntax error
+						iError_reportByNumber(thisCode, _ERROR_SYNTAX, compSet, false);
+						return;
+					}
+
+
+				//////////
+				// Find out what the component is
+				//////
+					opm = iObjProp_get_objPropMap_and_basePropInit(thisCode, _settings, compSetTarget->iCode, &lbpi);
+					if (opm && lbpi)
+					{
+						// We found the setting and the default variable type
+					}
+
+			}
+
+
+		//////////
+		// If we get here, syntax error
+		//////
+			iError_reportByNumber(thisCode, _ERROR_SYNTAX, compSet, false);
 	}
 
 

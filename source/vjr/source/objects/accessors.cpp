@@ -103,7 +103,7 @@
 	{
 		bool				llResult;
 		SBasePropertyInit*	baseProp;
-		SObjPropertyMap*	objProp;
+		SObjPropMap*	objProp;
 		SVariable*			var;
 
 
@@ -139,7 +139,7 @@
 	{
 		bool				llResult;
 		SBasePropertyInit*	baseProp;
-		SObjPropertyMap*	objProp;
+		SObjPropMap*	objProp;
 		SVariable*			varNewValue;
 		SVariable*			var;
 		SObject*			objChild;
@@ -222,7 +222,7 @@
 	{
 		bool				llResult;
 		SBasePropertyInit*	baseProp;
-		SObjPropertyMap*	objProp;
+		SObjPropMap*	objProp;
 		SVariable*			varNewValue;
 		SVariable*			var;
 
@@ -257,7 +257,7 @@
 	{
 		bool				llResult;
 		SBasePropertyInit*	baseProp;
-		SObjPropertyMap*	objProp;
+		SObjPropMap*	objProp;
 		SVariable*			varNewValue;
 		SVariable*			var;
 
@@ -305,7 +305,7 @@
 	{
 		bool				llResult;
 		SBasePropertyInit*	baseProp;
-		SObjPropertyMap*	objProp;
+		SObjPropMap*	objProp;
 		SVariable*			varNewValue;
 		SVariable*			var;
 
@@ -370,7 +370,7 @@
 	{
 		bool				llResult;
 		SBasePropertyInit*	baseProp;
-		SObjPropertyMap*	objProp;
+		SObjPropMap*	objProp;
 		SVariable*			varNewValue;
 		SVariable*			var;
 
@@ -419,7 +419,7 @@
 	{
 		bool				llResult;
 		SBasePropertyInit*	baseProp;
-		SObjPropertyMap*	objProp;
+		SObjPropMap*	objProp;
 		SVariable*			varNewValue;
 		SVariable*			var;
 
@@ -468,7 +468,7 @@
 	{
 		bool				llResult;
 		SBasePropertyInit*	baseProp;
-		SObjPropertyMap*	objProp;
+		SObjPropMap*	objProp;
 		SVariable*			varNewValue;
 		SVariable*			var;
 
@@ -517,7 +517,7 @@
 	{
 		bool				llResult;
 		SBasePropertyInit*	baseProp;
-		SObjPropertyMap*	objProp;
+		SObjPropMap*	objProp;
 		SVariable*			varNewValue;
 		SVariable*			var;
 
@@ -566,7 +566,7 @@
 	{
 		bool				llResult;
 		SBasePropertyInit*	baseProp;
-		SObjPropertyMap*	objProp;
+		SObjPropMap*	objProp;
 		SVariable*			varNewValue;
 		SVariable*			var;
 
@@ -699,11 +699,11 @@
 //        variable, not a copy.
 //
 //////
-	SVariable* iObjProp_get_variable_byIndex(SThisCode* thisCode, SObject* obj, s32 tnIndex, SBasePropertyInit** baseProp, SObjPropertyMap** objProp)
+	SVariable* iObjProp_get_variable_byIndex(SThisCode* thisCode, SObject* obj, s32 tnIndex, SBasePropertyInit** baseProp, SObjPropMap** objProp)
 	{
 		s32					lnI;
 		SBaseclassList*		baseclassList;
-		SObjPropertyMap*	thisObjProp;
+		SObjPropMap*	thisObjProp;
 
 
 		// Make sure the environment is sane
@@ -756,7 +756,7 @@ debug_break;
 	{
 		s32					lnI, lnIndex;
 		SBaseclassList*		lbcl;
-		SObjPropertyMap*	objProps;
+		SObjPropMap*		objProps;
 
 
 		// Make sure the environment is sane
@@ -783,6 +783,10 @@ debug_break;
 					}
 					// If we get here, not found
 				}
+
+				// If we get here, there's an internal system error
+				iError_signal(thisCode, _ERROR_INTERNAL_ERROR, NULL, true, NULL, true);
+				return(NULL);
 			}
 
 			// Locate the user property
@@ -793,6 +797,88 @@ debug_break;
 		}
 
 		// Invalid
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Called to retrieve the associated SObjPropMap in the indicated object.
+// And if baseObjPropMap is specified, it will search for the base property
+// entry, and return that record as well.
+//
+//////
+	SObjPropMap* iObjProp_get_objPropMap_and_basePropInit(SThisCode* thisCode, SObject* obj, s32 tnIndex, SBasePropertyInit** basePropInit)
+	{
+		SBaseclassList*		lbcl;
+		SObjPropMap*		objProps;
+		SBasePropertyInit*	lbpi;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Locate the base class
+			lbcl = iiObj_getBaseclass_byType(thisCode, obj->objType);
+			if (lbcl)
+			{
+				//////////
+				// Reset the pointer in case it's not found
+				//////
+					if (basePropInit)
+						*basePropInit = NULL;
+
+
+				//////////
+				// Locate the property within the object's properties
+				//////
+					for (objProps = lbcl->objProps; objProps->index != 0; objProps++)
+					{
+						// Is this our match?
+						if (objProps->index == tnIndex)
+						{
+							//////////
+							// This is the entry
+							//////
+								if (!basePropInit)
+								{
+									// They want this record
+									return(objProps);
+								}
+
+
+							//////////
+							// If we get here, they also want the entry in the master properties list
+							//////
+								for (lbpi = &gsProps_master[0]; lbpi->index != 0; lbpi++)
+								{
+									if (lbpi->index == tnIndex)
+									{
+										// We've found both
+										*basePropInit = lbpi;
+										return(objProps);
+									}
+								}
+								// If we get here, we didn't find the master property
+								// This is a fatal internal system error that should never occur except possibly during development before all the i's are dotted, and t's are crossed.
+								iError_signal(thisCode, _ERROR_INTERNAL_ERROR, NULL, true, NULL, true);
+								return(NULL);
+						}
+					}
+
+					// If we get here, not found
+					return(NULL);
+			}
+
+			// If we get here, we didn't find the base class reference.
+			// This is a fatal internal system error that should never occur except possibly during development before all the i's are dotted, and t's are crossed.
+			iError_signal(thisCode, _ERROR_INTERNAL_ERROR, NULL, true, NULL, true);
+			return(NULL);
+		}
+
+		// Invalid parameters
 		return(NULL);
 	}
 
@@ -1173,7 +1259,7 @@ debug_break;
 // has its own properties, and these are used for rendering.
 //
 //////
-	bool iObjProp_setter_captionOnChild(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp)
+	bool iObjProp_setter_captionOnChild(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropMap* objProp)
 	{
 		SObject*	objChild;
 		SVariable*	varChild;
@@ -1220,7 +1306,7 @@ debug_break;
 // has its own properties, and these are used for rendering.
 //
 //////
-	bool iObjProp_setter_iconOnChild(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp)
+	bool iObjProp_setter_iconOnChild(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropMap* objProp)
 	{
 		SObject*	objChild;
 		SVariable*	varChild;
@@ -1265,7 +1351,7 @@ debug_break;
 // Called to mirror the color setting into the parent object into the nested child object
 //
 //////
-	bool iObjProp_setter_editboxMirror(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp)
+	bool iObjProp_setter_editboxMirror(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropMap* objProp)
 	{
 		// Make sure our environment is sane
 		if (obj && obj->objType == _OBJ_TYPE_EDITBOX && var && varNewValue)
@@ -1430,7 +1516,7 @@ debug_break;
 // Called to set the font object members associated with the object's font property settings.
 //
 //////
-	bool iObjProp_setter_fontProperty(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp)
+	bool iObjProp_setter_fontProperty(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropMap* objProp)
 	{
 		bool llResult;
 

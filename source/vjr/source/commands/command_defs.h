@@ -255,9 +255,10 @@ struct SThisCode;
 //
 //////
 	void				command_clear								(SThisCode* thisCode, SComp* compClear);
-	bool				iiCommand_clear_continue_callback			(SEM_callback* ecb);
+	bool				iiCommand_clear_keep_callback				(SEM_callback* ecb);
 	void				command_modify								(SThisCode* thisCode, SComp* compModify);
 	void				command_open								(SThisCode* thisCode, SComp* compOpen);
+	void				command_set									(SThisCode* thisCode, SComp* compSet);
 	void				command_use									(SThisCode* thisCode, SComp* compUse);
 
 

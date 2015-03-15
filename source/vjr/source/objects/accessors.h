@@ -890,14 +890,15 @@ struct SBasePropertyInit;
 
 	SVariable*				iObjProp_get							(SThisCode* thisCode, SObject* obj, s32 tnIndex);
 	s32						iObjProp_getVarAndType					(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable** varDst);
-	SVariable*				iObjProp_get_variable_byIndex			(SThisCode* thisCode, SObject* obj, s32 tnIndex, SBasePropertyInit** baseProp = NULL, SObjPropertyMap** objProp = NULL);
+	SVariable*				iObjProp_get_variable_byIndex			(SThisCode* thisCode, SObject* obj, s32 tnIndex, SBasePropertyInit** baseProp = NULL, SObjPropMap** objProp = NULL);
 	SVariable*				iObjProp_get_variable_byName			(SThisCode* thisCode, SObject* obj, u8* tcName, u32 tnNameLength, bool tlSearchBaseProps, bool tlSearchClassProps, u32* tnIndex);
+	SObjPropMap*			iObjProp_get_objPropMap_and_basePropInit(SThisCode* thisCode, SObject* obj, s32 tnIndex, SBasePropertyInit** baseObjPropMap);
 	SBitmap*				iObjProp_get_bitmap						(SThisCode* thisCode, SObject* obj, s32 tnIndex);
 	SVariable*				iObjProp_get_character					(SThisCode* thisCode, SObject* obj, s32 tnIndex);
 	f64						iObjProp_get_f64_direct					(SThisCode* thisCode, SObject* obj, s32 tnIndex);
 	SVariable*				iObjProp_get_logical					(SThisCode* thisCode, SObject* obj, s32 tnIndex);
 	// Note:  The s32 value returned will be a _LOGICAL_* or _LOGICALX_* value.  To test for .T., use (x != _LOGICAL_FALSE).
-	s32						iObjProp_get_logical_fromLogicalConstants				(SThisCode* thisCode, SObject* obj, s32 tnIndex);
+	s32						iObjProp_get_logical_fromLogicalConstants(SThisCode* thisCode, SObject* obj, s32 tnIndex);
 	SVariable*				iObjProp_get_object						(SThisCode* thisCode, SObject* obj, s32 tnIndex);
 	s32						iObjProp_get_s32_direct					(SThisCode* thisCode, SObject* obj, s32 tnIndex);
 	SBgra					iObjProp_get_sbgra_direct				(SThisCode* thisCode, SObject* obj, s32 tnIndex);
@@ -912,10 +913,10 @@ struct SBasePropertyInit;
 // Note:  Because of 8.5.1/15, braced union declarations are limited only to first member so we cannot validate these parameters are correct at compile time.
 // Note:  But, it's pretty easy to learn if they're wrong because you'll get stack errors in debug mode.
 //////
-	bool					iObjProp_setter_captionOnChild			(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp);
-	bool					iObjProp_setter_iconOnChild				(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp);
-	bool					iObjProp_setter_editboxMirror			(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp);
-	bool					iObjProp_setter_fontProperty			(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp);
+	bool					iObjProp_setter_captionOnChild			(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropMap* objProp);
+	bool					iObjProp_setter_iconOnChild				(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropMap* objProp);
+	bool					iObjProp_setter_editboxMirror			(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropMap* objProp);
+	bool					iObjProp_setter_fontProperty			(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropMap* objProp);
 
 
 	// For different types of properties
@@ -945,7 +946,7 @@ struct SBasePropertyInit;
 		// Setter
 		union {
 			uptr		_setterBase;
-			bool		(*setterBase)	(SThisCode* thisCode, SObject* obj, u32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp);
+			bool		(*setterBase)	(SThisCode* thisCode, SObject* obj, u32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropMap* objProp);
 		};
 
 		// Getter
@@ -1369,7 +1370,7 @@ struct SBasePropertyInit;
 	const s32 gsProps_masterSize = sizeof(gsProps_master) / sizeof(SBasePropertyInit) - 1;
 
 
-	struct SObjPropertyMap
+	struct SObjPropMap
 	{
 		s32			index;
 
@@ -1380,7 +1381,7 @@ struct SBasePropertyInit;
 
 		union {
 			uptr		_setterObject;
-			bool		(*setterObject)		(SThisCode* thisCode, SObject* obj, u32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropertyMap* objProp);
+			bool		(*setterObject)		(SThisCode* thisCode, SObject* obj, u32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropMap* objProp);
 		};
 
 		union {
@@ -1390,7 +1391,7 @@ struct SBasePropertyInit;
 	};
 
 	// _OBJ_TYPE_EMPTY
-	SObjPropertyMap gsProps_empty[] =
+	SObjPropMap gsProps_empty[] =
 	{
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
@@ -1407,10 +1408,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WIDTH,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_emptySize = sizeof(gsProps_empty) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_emptySize = sizeof(gsProps_empty) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_FORM
-	SObjPropertyMap gsProps_form[] =
+	SObjPropMap gsProps_form[] =
 	{
 		{	_INDEX_ACTIVECONTROL,			0, 0, 0 },
 		{	_INDEX_ACTIVEFORM,				0, 0, 0 },
@@ -1540,10 +1541,10 @@ struct SBasePropertyInit;
 		{	_INDEX_ZOOMBOX,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_formSize = sizeof(gsProps_form) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_formSize = sizeof(gsProps_form) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_SUBFORM
-	SObjPropertyMap gsProps_subform[] =
+	SObjPropMap gsProps_subform[] =
 	{
 		{	_INDEX_ACTIVECONTROL,			0, 0, 0 },
 		{	_INDEX_ALLOWOUTPUT,				0, 0, 0 },
@@ -1608,10 +1609,10 @@ struct SBasePropertyInit;
 		{	_INDEX_ZOOMBOX,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_subformSize = sizeof(gsProps_subform) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_subformSize = sizeof(gsProps_subform) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_CAROUSEL
-	SObjPropertyMap gsProps_carousel[] =
+	SObjPropMap gsProps_carousel[] =
 	{
 		{	_INDEX_ACTIVECONTROL,			0, 0, 0 },		// Item in this.controls[] which is being presented left-most
 		{	_INDEX_AUTOSIZE,				0, 0, 0 },
@@ -1645,10 +1646,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WINDOWTYPE,				0, 0, 0 },		// see _CAROUSEL_WINDOW_TYPE_* constants
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_carouselSize = sizeof(gsProps_carousel) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_carouselSize = sizeof(gsProps_carousel) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_RIDER
-	SObjPropertyMap gsProps_rider[] =
+	SObjPropMap gsProps_rider[] =
 	{
 		{	_INDEX_ACTIVECONTROL,			0, 0, 0 },		// Item in this.controls[] which is being presented currently for this rider
 		{	_INDEX_ALIGNMENT,				0, 0, 0 },		// _ALIGNMENT_FIXED, or _ALIGNMENT_SPINS
@@ -1667,10 +1668,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WIDTH,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_riderSize = sizeof(gsProps_rider) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_riderSize = sizeof(gsProps_rider) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_LABEL
-	SObjPropertyMap gsProps_label[] =
+	SObjPropMap gsProps_label[] =
 	{
 		{	_INDEX_ALIGNMENT,				0, 0, 0 },
 		{	_INDEX_ANCHOR,					0, 0, 0 },
@@ -1733,10 +1734,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WORDWRAP,				0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_labelSize = sizeof(gsProps_label) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_labelSize = sizeof(gsProps_label) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_TEXTBOX
-	SObjPropertyMap gsProps_textbox[] =
+	SObjPropMap gsProps_textbox[] =
 	{
 		{	_INDEX_ALIGNMENT,				0, 0, 0 },
 		{	_INDEX_ANCHOR,					0, 0, 0 },
@@ -1829,10 +1830,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WIDTH,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_textboxSize = sizeof(gsProps_textbox) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_textboxSize = sizeof(gsProps_textbox) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_BUTTON
-	SObjPropertyMap gsProps_button[] =
+	SObjPropMap gsProps_button[] =
 	{
 		{	_INDEX_ALIGNMENT,				0, 0, 0 },
 		{	_INDEX_ANCHOR,					0, 0, 0 },
@@ -1907,10 +1908,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WORDWRAP,				0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_buttonSize = sizeof(gsProps_button) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_buttonSize = sizeof(gsProps_button) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_EDITBOX
-	SObjPropertyMap gsProps_editbox[] =
+	SObjPropMap gsProps_editbox[] =
 	{
 		{	_INDEX_ADDLINEFEEDS,				0, 0, 0 },
 		{	_INDEX_ALIGNMENT,					0, 0, 0 },
@@ -2004,10 +2005,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WIDTH,						0, 0, 0 },
 		{	0,									0, 0, 0 }
 	};
-	const s32 gnProps_editboxSize = sizeof(gsProps_editbox) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_editboxSize = sizeof(gsProps_editbox) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_IMAGE
-	SObjPropertyMap gsProps_image[] =
+	SObjPropMap gsProps_image[] =
 	{
 		{	_INDEX_ANCHOR,					0, 0, 0 },
 		{	_INDEX_APPLICATION,				0, 0, 0 },
@@ -2054,10 +2055,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WIDTH,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_imageSize = sizeof(gsProps_image) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_imageSize = sizeof(gsProps_image) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_CHECKBOX
-	SObjPropertyMap gsProps_checkbox[] =
+	SObjPropMap gsProps_checkbox[] =
 	{
 		{	_INDEX_ALIGNMENT,				0, 0, 0 },
 		{	_INDEX_ANCHOR,					0, 0, 0 },
@@ -2133,10 +2134,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WORDWRAP,				0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_checkboxSize = sizeof(gsProps_checkbox) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_checkboxSize = sizeof(gsProps_checkbox) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_OPTION
-	SObjPropertyMap gsProps_option[] =
+	SObjPropMap gsProps_option[] =
 	{
 		{	_INDEX_ALIGNMENT,				0, 0, 0 },
 		{	_INDEX_ANCHOR,					0, 0, 0 },
@@ -2207,10 +2208,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WORDWRAP,				0, 0, 0 },
 		{	0,								0, 0, 0 },
 	};
-	const s32 gnProps_optionSize = sizeof(gsProps_option) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_optionSize = sizeof(gsProps_option) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_RADIO
-	SObjPropertyMap gsProps_radio[] =
+	SObjPropMap gsProps_radio[] =
 	{
 		{	_INDEX_ALIGNMENT,				0, 0, 0 },
 		{	_INDEX_BACKCOLOR,				0, 0, 0 },
@@ -2233,10 +2234,10 @@ struct SBasePropertyInit;
 		{	_INDEX_VALUE_MINIMUM,			0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_radioSize = sizeof(gsProps_radio) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_radioSize = sizeof(gsProps_radio) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_CMDGROUP
-	SObjPropertyMap gsProps_cmdgroup[] =
+	SObjPropMap gsProps_cmdgroup[] =
 	{
 		{	_INDEX_ANCHOR,					0, 0, 0 },
 		{	_INDEX_AUTOSIZE,				0, 0, 0 },
@@ -2279,10 +2280,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WIDTH,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_cmdgroupSize = sizeof(gsProps_cmdgroup) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_cmdgroupSize = sizeof(gsProps_cmdgroup) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_OPTGROUP
-	SObjPropertyMap gsProps_optgroup[] =
+	SObjPropMap gsProps_optgroup[] =
 	{
 		{	_INDEX_ANCHOR,					0, 0, 0 },
 		{	_INDEX_AUTOSIZE,				0, 0, 0 },
@@ -2326,10 +2327,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WIDTH,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_optgroupSize = sizeof(gsProps_optgroup) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_optgroupSize = sizeof(gsProps_optgroup) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_LISTBOX
-	SObjPropertyMap gsProps_listbox[] =
+	SObjPropMap gsProps_listbox[] =
 	{
 		{	_INDEX_ANCHOR,					0, 0, 0 },
 		{	_INDEX_APPLICATION,				0, 0, 0 },
@@ -2428,10 +2429,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WIDTH,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_listboxSize = sizeof(gsProps_listbox) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_listboxSize = sizeof(gsProps_listbox) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_COMBOBOX
-	SObjPropertyMap gsProps_combobox[] =
+	SObjPropMap gsProps_combobox[] =
 	{
 		{	_INDEX_ALIGNMENT,				0, 0, 0 },
 		{	_INDEX_ANCHOR,					0, 0, 0 },
@@ -2547,10 +2548,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WIDTH,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_comboboxSize = sizeof(gsProps_combobox) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_comboboxSize = sizeof(gsProps_combobox) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_FORMSET
-	SObjPropertyMap gsProps_formset[] =
+	SObjPropMap gsProps_formset[] =
 	{
 		{	_INDEX_ACTIVEFORM,				0, 0, 0 },
 		{	_INDEX_APPLICATION,				0, 0, 0 },
@@ -2584,10 +2585,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WINDOWTYPE,				0, 0, 0 },
 		{	0,								0, 0, 0 },
 	};
-	const s32 gnProps_formsetSize = sizeof(gsProps_formset) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_formsetSize = sizeof(gsProps_formset) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_TOOLBAR
-	SObjPropertyMap gsProps_toolbar[] =
+	SObjPropMap gsProps_toolbar[] =
 	{
 		{	_INDEX_ACTIVECONTROL,			0, 0, 0 },
 		{	_INDEX_APPLICATION,				0, 0, 0 },
@@ -2638,10 +2639,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WIDTH,					0, 0, 0 },
 		{	0,								0, 0, 0 },
 	};
-	const s32 gnProps_toolbarSize = sizeof(gsProps_toolbar) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_toolbarSize = sizeof(gsProps_toolbar) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_SEPARATOR
-	SObjPropertyMap gsProps_separator[] =
+	SObjPropMap gsProps_separator[] =
 	{
 		{	_INDEX_APPLICATION,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
@@ -2658,10 +2659,10 @@ struct SBasePropertyInit;
 		{	_INDEX_VISIBLE,					0, 0, 0 },
 		{	0,								0, 0, 0 },
 	};
-	const s32 gnProps_separatorSize = sizeof(gsProps_separator) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_separatorSize = sizeof(gsProps_separator) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_LINE
-	SObjPropertyMap gsProps_line[] =
+	SObjPropMap gsProps_line[] =
 	{
 		{	_INDEX_ANCHOR,					0, 0, 0 },
 		{	_INDEX_APPLICATION,				0, 0, 0 },
@@ -2702,10 +2703,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WIDTH,					0, 0, 0 },
 		{	0,								0, 0, 0 },
 	};
-	const s32 gnProps_lineSize = sizeof(gsProps_line) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_lineSize = sizeof(gsProps_line) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_SHAPE
-	SObjPropertyMap gsProps_shape[] =
+	SObjPropMap gsProps_shape[] =
 	{
 		{	_INDEX_ANCHOR,					0, 0, 0 },
 		{	_INDEX_APPLICATION,				0, 0, 0 },
@@ -2752,10 +2753,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WIDTH,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_shapeSize = sizeof(gsProps_shape) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_shapeSize = sizeof(gsProps_shape) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_CONTAINER
-	SObjPropertyMap gsProps_container[] =
+	SObjPropMap gsProps_container[] =
 	{
 		{	_INDEX_ACTIVECONTROL,			0, 0, 0 },
 		{	_INDEX_ANCHOR,					0, 0, 0 },
@@ -2806,10 +2807,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WIDTH,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_containerSize = sizeof(gsProps_container) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_containerSize = sizeof(gsProps_container) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_CONTROL
-	SObjPropertyMap gsProps_control[] =
+	SObjPropMap gsProps_control[] =
 	{
 		{	_INDEX_ACTIVECONTROL,			0, 0, 0 },
 		{	_INDEX_ANCHOR,					0, 0, 0 },
@@ -2860,10 +2861,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WIDTH,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_controlSize = sizeof(gsProps_control) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_controlSize = sizeof(gsProps_control) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_GRID
-	SObjPropertyMap gsProps_grid[] =
+	SObjPropMap gsProps_grid[] =
 	{
 		{	_INDEX_ACTIVECOLUMN,			0, 0, 0 },
 		{	_INDEX_ACTIVEROW,				0, 0, 0 },
@@ -2961,10 +2962,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WIDTH,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_gridSize = sizeof(gsProps_grid) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_gridSize = sizeof(gsProps_grid) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_COLUMN
-	SObjPropertyMap gsProps_column[] =
+	SObjPropMap gsProps_column[] =
 	{
 		{	_INDEX_ALIGNMENT,				0, 0, 0 },
 		{	_INDEX_APPLICATION,				0, 0, 0 },
@@ -3027,10 +3028,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WIDTH,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_columnSize = sizeof(gsProps_column) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_columnSize = sizeof(gsProps_column) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_HEADER
-	SObjPropertyMap gsProps_header[] =
+	SObjPropMap gsProps_header[] =
 	{
 		{	_INDEX_ALIGNMENT,				0, 0, 0 },
 		{	_INDEX_ANCHOR,					0, 0, 0 },
@@ -3070,10 +3071,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WORDWRAP,				0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_headerSize = sizeof(gsProps_header) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_headerSize = sizeof(gsProps_header) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_OLEBOUND
-	SObjPropertyMap gsProps_olebound[] =
+	SObjPropMap gsProps_olebound[] =
 	{
 		{	_INDEX_ANCHOR,					0, 0, 0 },
 		{	_INDEX_APPLICATION,				0, 0, 0 },
@@ -3115,10 +3116,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WORDWRAP,				0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_oleboundSize = sizeof(gsProps_olebound) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_oleboundSize = sizeof(gsProps_olebound) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_OLECONTAIN
-	SObjPropertyMap gsProps_olecontain[] =
+	SObjPropMap gsProps_olecontain[] =
 	{
 		{	_INDEX_ALIGN,					0, 0, 0 },
 		{	_INDEX_ANCHOR,					0, 0, 0 },
@@ -3162,10 +3163,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WIDTH,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_olecontainSize = sizeof(gsProps_olecontain) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_olecontainSize = sizeof(gsProps_olecontain) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_SPINNER
-	SObjPropertyMap gsProps_spinner[] =
+	SObjPropMap gsProps_spinner[] =
 	{
 		{	_INDEX_ALIGNMENT,				0, 0, 0 },
 		{	_INDEX_ANCHOR,					0, 0, 0 },
@@ -3245,10 +3246,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WIDTH,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_spinnerSize = sizeof(gsProps_spinner) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_spinnerSize = sizeof(gsProps_spinner) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_TIMER
-	SObjPropertyMap gsProps_timer[] =
+	SObjPropMap gsProps_timer[] =
 	{
 		{	_INDEX_APPLICATION,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
@@ -3268,10 +3269,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WIDTH,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_timerSize = sizeof(gsProps_timer) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_timerSize = sizeof(gsProps_timer) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_HYPERLINK
-	SObjPropertyMap gsProps_hyperlink[] =
+	SObjPropMap gsProps_hyperlink[] =
 	{
 		{	_INDEX_APPLICATION,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
@@ -3286,10 +3287,10 @@ struct SBasePropertyInit;
 		{	_INDEX_TAG,						0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_hyperlinkSize = sizeof(gsProps_hyperlink) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_hyperlinkSize = sizeof(gsProps_hyperlink) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_COLLECTION
-	SObjPropertyMap gsProps_collection[] =
+	SObjPropMap gsProps_collection[] =
 	{
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
@@ -3305,10 +3306,10 @@ struct SBasePropertyInit;
 		{	_INDEX_TAG,						0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_collectionSize = sizeof(gsProps_collection) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_collectionSize = sizeof(gsProps_collection) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_PAGE
-	SObjPropertyMap gsProps_page[] =
+	SObjPropMap gsProps_page[] =
 	{
 		{	_INDEX_ACTIVECONTROL,			0, 0, 0 },
 		{	_INDEX_APPLICATION,				0, 0, 0 },
@@ -3360,10 +3361,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WHATSTHISHELPID,			0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_pageSize = sizeof(gsProps_page) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_pageSize = sizeof(gsProps_page) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_PAGEFRAME
-	SObjPropertyMap gsProps_pageframe[] =
+	SObjPropMap gsProps_pageframe[] =
 	{
 		{	_INDEX_ACTIVEPAGE,				0, 0, 0 },
 		{	_INDEX_ANCHOR,					0, 0, 0 },
@@ -3416,10 +3417,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WIDTH,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_pageframeSize = sizeof(gsProps_pageframe) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_pageframeSize = sizeof(gsProps_pageframe) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_SESSION
-	SObjPropertyMap gsProps_session[] =
+	SObjPropMap gsProps_session[] =
 	{
 		{	_INDEX_APPLICATION,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
@@ -3436,10 +3437,10 @@ struct SBasePropertyInit;
 		{	_INDEX_TAG,						0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_sessionSize = sizeof(gsProps_session) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_sessionSize = sizeof(gsProps_session) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_CUSTOM
-	SObjPropertyMap gsProps_custom[] =
+	SObjPropMap gsProps_custom[] =
 	{
 		{	_INDEX_APPLICATION,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
@@ -3467,10 +3468,10 @@ struct SBasePropertyInit;
 		{	_INDEX_WIDTH,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_customSize = sizeof(gsProps_custom) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_customSize = sizeof(gsProps_custom) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_EXCEPTION
-	SObjPropertyMap gsProps_exception[] =
+	SObjPropMap gsProps_exception[] =
 	{
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
@@ -3492,10 +3493,10 @@ struct SBasePropertyInit;
 		{	_INDEX_USERVALUE,				0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
-	const s32 gnProps_exceptionSize = sizeof(gsProps_exception) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_exceptionSize = sizeof(gsProps_exception) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_SETTINGS
-	SObjPropertyMap gsProps_settings[] =
+	SObjPropMap gsProps_settings[] =
 	{	// 
 		{	_INDEX_BASECLASS,							0, 0, 0 },
 		{	_INDEX_CLASS,								0, 0, 0 },
@@ -3537,7 +3538,7 @@ struct SBasePropertyInit;
 		{	_INDEX_SET_VARIABLES_FIRST,					0, 0, 0 },		// bool
 		{	0,											0, 0, 0 }
 	};
-	const s32 gnProps_settingsSize = sizeof(gsProps_settings) / sizeof(SObjPropertyMap) - 1;
+	const s32 gnProps_settingsSize = sizeof(gsProps_settings) / sizeof(SObjPropMap) - 1;
 
 
 

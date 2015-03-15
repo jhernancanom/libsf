@@ -822,6 +822,7 @@
 		{ cgc_insert,				6,			false,		_ICODE_INSERT,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_intensity,			9,			false,		_ICODE_INTENSITY,						false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_join,					4,			false,		_ICODE_JOIN,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
+		{ cgc_keep,					4,			false,		_ICODE_KEEP,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_key,					3,			false,		_ICODE_KEY,								false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_keyboard,				8,			false,		_ICODE_KEYBOARD,						false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_keycomp,				7,			false,		_ICODE_KEYCOMP,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
