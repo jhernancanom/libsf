@@ -943,3 +943,11 @@ typedef SEM**		SEMpp;
 	const u8			cgcCommandHistoryFilename[]			= "command.vjr";
 	const u8			cgcStartupPrgFilename[]				= "startup.prg";
 	const u8			cgcSoundStartupWav[]				= "startup_44100_f32.wav";
+
+//////////
+// Math constants
+//////
+	const f64			_MATH_PI							= 3.141592653589793238;
+	const f64			_MATH_PI2							= 1.570796326794896619;
+	const f64			_MATH_2PI							= 6.283185307179586476;
+	const f64			_MATH_EXP							= 2.718281828459045235;
