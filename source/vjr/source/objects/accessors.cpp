@@ -296,7 +296,12 @@
 // Called to set the s32 variable directly by value
 //
 //////
-	bool iObjProp_set_logical_direct(SThisCode* thisCode, SObject* obj, s32 tnIndex, s32 tnValue)
+	bool iObjProp_set_logical_direct(SThisCode* thisCode, SObject* obj, s32 tnIndex, bool tlValue)
+	{
+		return(iObjProp_set_logical_fromLogicalConstants(thisCode, obj, tnIndex, ((tlValue) ? _LOGICAL_TRUE : _LOGICAL_FALSE)));
+	}
+
+	bool iObjProp_set_logical_fromLogicalConstants(SThisCode* thisCode, SObject* obj, s32 tnIndex, s32 tnValue)
 	{
 		bool				llResult;
 		SBasePropertyInit*	baseProp;
@@ -977,7 +982,7 @@ debug_break;
 // Called to obtain the property's direct value
 //
 //////
-	s32 iObjProp_get_logical_direct(SThisCode* thisCode, SObject* obj, s32 tnIndex)
+	s32 iObjProp_get_logical_fromLogicalConstants(SThisCode* thisCode, SObject* obj, s32 tnIndex)
 	{
 		bool		error;
 		s32			lnResult;

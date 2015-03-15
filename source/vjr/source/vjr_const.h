@@ -147,6 +147,7 @@ typedef SEM**		SEMpp;
 	#define iVariable_isTypeObject(var)					(var->varType == _VAR_TYPE_OBJECT)
 	#define iVariable_isTypethisCode(var)				(var->varType == _VAR_TYPE_THISCODE)
 	#define iVariable_isTypeLogical(var)				(var->varType == _VAR_TYPE_LOGICAL)
+	#define iVariable_isFundamentalTypeLogical(var)		(var->varType == _VAR_TYPE_LOGICAL || (iVariable_areTypesCompatible(thisCode, var, varDefault_logical)))
 	#define iVariable_isTypeCharacter(var)				(var->varType == _VAR_TYPE_CHARACTER)
 	#define iVariable_isTypeNumeric(var)				(var->varType >= _VAR_TYPE_NUMERIC_START && var->varType <= _VAR_TYPE_NUMERIC_END)
 	#define iVariable_isNumeric64Bit(var)				(var->varType == _VAR_TYPE_S64 || var->varType == _VAR_TYPE_U64 || var->varType == _VAR_TYPE_CURRENCY)
@@ -161,11 +162,11 @@ typedef SEM**		SEMpp;
 	#define iVariable_isTypeBigFloatingPoint(var)		(var->varType == _VAR_TYPE_BFP)
 	#define iVariable_isEmpty(var)						(!var->value.data || var->value.length <= 0)
 
-	#define propIsFalse(obj, index)						(iObjProp_get_logical_direct	(thisCode, obj, index)				== _LOGICAL_FALSE)
-	#define propIsTrue(obj, index)						(iObjProp_get_logical_direct	(thisCode, obj, index)				!= _LOGICAL_FALSE)
-	#define propIsVisible(obj)							(iObjProp_get_logical_direct	(thisCode, obj, _INDEX_VISIBLE)		!= _LOGICAL_FALSE)
-	#define propIsEnabled(obj)							(iObjProp_get_logical_direct	(thisCode, obj, _INDEX_ENABLED)		!= _LOGICAL_FALSE)
-	#define propIsReadonly(obj)							(iObjProp_get_logical_direct	(thisCode, obj, _INDEX_READONLY)	!= _LOGICAL_FALSE)
+	#define propIsFalse(obj, index)						(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, index)				== _LOGICAL_FALSE)
+	#define propIsTrue(obj, index)						(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, index)				!= _LOGICAL_FALSE)
+	#define propIsVisible(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_VISIBLE)		!= _LOGICAL_FALSE)
+	#define propIsEnabled(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_ENABLED)		!= _LOGICAL_FALSE)
+	#define propIsReadonly(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_READONLY)	!= _LOGICAL_FALSE)
 	#define propIsName(obj, text)						(iObjProp_compare_character		(thisCode, obj, _INDEX_NAME,		(s8*)text,		sizeof(text) - 1) == 0)
 
 	#define propBackStyle(obj)							iObjProp_get_s32_direct			(thisCode, obj, _INDEX_BACKSTYLE)
@@ -178,7 +179,7 @@ typedef SEM**		SEMpp;
 	#define propSwRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_SWCOLOR)
 	#define propSeRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_SECOLOR)
 	#define propAlignment(obj)							iObjProp_get_s32_direct			(thisCode, obj, _INDEX_ALIGNMENT)
-	#define propTitleBar(obj)							(iObjProp_get_logical_direct	(thisCode, obj, _INDEX_TITLEBAR)	!= _LOGICAL_FALSE)
+	#define propTitleBar(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_TITLEBAR)	!= _LOGICAL_FALSE)
 
 	#define propSetValue_s32(obj, value)				iObjProp_set_s32_direct			(thisCode, obj, _INDEX_VALUE,				value)
 	#define propSetValue_f64(obj, value)				iObjProp_set_f64_direct			(thisCode, obj, _INDEX_VALUE,				value)
@@ -196,15 +197,15 @@ typedef SEM**		SEMpp;
 
 	#define propSetAnchor(obj, value)					iObjProp_set_s32_direct			(thisCode, obj, _INDEX_ANCHOR,			value)
 	#define propSetIcon(obj, bmp)						iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_ICON,			bmp)
-	#define propSetVisible(obj, value)					iObjProp_set_logical_direct		(thisCode, obj, _INDEX_VISIBLE,			value)
-	#define propSetEnabled(obj, value)					iObjProp_set_logical_direct		(thisCode, obj, _INDEX_ENABLED,			value);
+	#define propSetVisible(obj, value)					iObjProp_set_logical_fromLogicalConstants(thisCode, obj, _INDEX_VISIBLE, value)
+	#define propSetEnabled(obj, value)					iObjProp_set_logical_fromLogicalConstants(thisCode, obj, _INDEX_ENABLED, value);
 	#define propSetAlignment(obj, value)				iObjProp_set_s32_direct			(thisCode, obj, _INDEX_ALIGNMENT,		value)
 	#define propSetStyle(obj, value)					iObjProp_set_s32_direct			(thisCode, obj, _INDEX_STYLE,			value)
 	#define propSetBackStyle(obj, value)				iObjProp_set_s32_direct			(thisCode, obj, _INDEX_BACKSTYLE,		value)
 	#define propSetBorderStyle(obj, value)				iObjProp_set_s32_direct			(thisCode, obj, _INDEX_BORDERSTYLE,		value)
 	#define propSetCaption(obj, value)					iObjProp_set_character_direct	(thisCode, obj, _INDEX_CAPTION,			(u8*)value,		sizeof(value) - 1)
 	#define propSetCount(obj, value)					iObjProp_set_s32_direct			(thisCode, obj, _INDEX_COUNT,			value)
-	#define propSetMultiSelect(obj, value)				iObjProp_set_logical_direct		(thisCode, obj, _INDEX_MULTISELECT,		value)
+	#define propSetMultiSelect(obj, value)				iObjProp_set_logical_fromLogicalConstants(thisCode, obj, _INDEX_MULTISELECT, value)
 	#define propSetPictureBmp(obj, bmp)					iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_PICTUREBMP,		bmp)
 	#define propSetPictureBmpDown(obj, bmp)				iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_PICTUREBMP_DOWN,	bmp)
 	#define propSetPictureBmpOver(obj, bmp)				iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_PICTUREBMP_OVER,	bmp)
@@ -212,22 +213,27 @@ typedef SEM**		SEMpp;
 //////////
 // _settings macros
 //////
-	#define propGet_settings_AutoConvert(obj)					(iObjProp_get_logical_direct	(thisCode, obj, _INDEX_SET_AUTO_CONVERT)			!= _LOGICAL_FALSE)
-	#define propGet_settings_AutoValidate(obj)					(iObjProp_get_logical_direct	(thisCode, obj, _INDEX_SET_AUTO_VALIDATE)			!= _LOGICAL_FALSE)
-	#define propGet_settings_Century(obj)						(iObjProp_get_logical_direct	(thisCode, obj, _INDEX_SET_CENTURY)					!= _LOGICAL_FALSE)
+	#define propGet_settings_AutoConvert(obj)					(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_AUTO_CONVERT)			!= _LOGICAL_FALSE)
+	#define propGet_settings_AutoValidate(obj)					(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_AUTO_VALIDATE)			!= _LOGICAL_FALSE)
+	#define propGet_settings_Century(obj)						(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_CENTURY)					!= _LOGICAL_FALSE)
 	#define propGet_settings_Date(obj)							iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_DATE)
 	#define propGet_settings_Decimals(obj)						iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_DECIMALS)
-	#define propGet_settings_Exclusive(obj)						(iObjProp_get_logical_direct	(thisCode, obj, _INDEX_SET_EXCLUSIVE)				!= _LOGICAL_FALSE)
+	#define propGet_settings_Exclusive(obj)						(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_EXCLUSIVE)				!= _LOGICAL_FALSE)
 	#define propGet_settings_FocusHighlightBorderPixels(obj)	iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_FOCUS_HIGHLIGHT_BORDER_PIXELS)
 	#define propGet_settings_FocusHighlightPixels(obj)			iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_FOCUS_HIGHLIGHT_PIXELS)
 	#define propGet_settings_InitializeDefaultValue(obj)		iObjProp_get_variable_byIndex	(thisCode, obj, _INDEX_SET_INITIALIZE_DEFAULT_VALUE)
-	#define propGet_settings_LoadReceivesParams(obj)			(iObjProp_get_logical_direct	(thisCode, obj, _INDEX_SET_LOAD_RECEIVES_PARAMS)	!= _LOGICAL_FALSE)
+	#define propGet_settings_LoadReceivesParams(obj)			(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_LOAD_RECEIVES_PARAMS)	!= _LOGICAL_FALSE)
 	#define propGet_settings_Logical(obj)						iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_LOGICAL)
 	#define propGet_settings_Reprocess(obj)						iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_REPROCESS)	// negative attempts, positive seconds
 	#define propGet_settings_ReprocessAttempts(obj)				iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_REPROCESSATTEMPTS)
 	#define propGet_settings_ReprocessInterval(obj)				iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_REPROCESSINTERVAL)
-	#define propGet_settings_Talk(obj)							(iObjProp_get_logical_direct	(thisCode, obj, _INDEX_SET_TALK)					!= _LOGICAL_FALSE)
-	#define propGet_settings_VariablesFirst(obj)				(iObjProp_get_logical_direct	(thisCode, obj, _INDEX_SET_VARIABLES_FIRST)			!= _LOGICAL_FALSE)
+	#define propGet_settings_Talk(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_TALK)					!= _LOGICAL_FALSE)
+	#define propGet_settings_VariablesFirst(obj)				(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_VARIABLES_FIRST)			!= _LOGICAL_FALSE)
+
+	#define propGet_settings_ncset_signSign2(obj)				(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_NCSET_SIGN_SIGN2)		!= _LOGICAL_FALSE)
+	#define propSet_settings_ncset_signSign2_fromBool(obj, value) iObjProp_set_logical_direct	(thisCode, obj, _INDEX_SET_NCSET_SIGN_SIGN2, value)
+	#define propGet_settings_ncset_ceilingFloor(obj)			(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_NCSET_CEILING_FLOOR)	!= _LOGICAL_FALSE)
+	#define propSet_settings_ncset_ceilingFloor_fromBool(obj, value) iObjProp_set_logical_direct(thisCode, obj, _INDEX_SET_NCSET_CEILING_FLOOR, value)
 
 
 //////////
@@ -778,6 +784,31 @@ typedef SEM**		SEMpp;
 
 
 //////////
+// NCSET() Nuance Compatibility Settings
+/////
+	const u32			_NCSET_SIGN_SIGN2					= 1;
+	const u32			_NCSET_CEILING_FLOOR				= 2;
+
+
+//////////
+// Math constants
+//////
+	const f64			_MATH_PI							= 3.141592653589793238;
+	const f64			_MATH_PI2							= 1.570796326794896619;
+	const f64			_MATH_2PI							= 6.283185307179586476;
+	const f64			_MATH_EXP							= 2.718281828459045235;
+
+//////////
+// Common numeric functions constants
+//////
+	const u32			_FP_COMMON_SQRT						= 0;
+	const u32			_FP_COMMON_EXP						= 1;
+	const u32			_FP_COMMON_PI						= 2;
+	const u32			_FP_COMMON_LOG						= 3;
+	const u32			_FP_COMMON_LOG10					= 4;
+
+
+//////////
 // Internal messages
 //////
 #ifdef WM_USER
@@ -944,16 +975,3 @@ typedef SEM**		SEMpp;
 	const u8			cgcStartupPrgFilename[]				= "startup.prg";
 	const u8			cgcSoundStartupWav[]				= "startup_44100_f32.wav";
 
-//////////
-// Math constants
-//////
-	const f64			_MATH_PI							= 3.141592653589793238;
-	const f64			_MATH_PI2							= 1.570796326794896619;
-	const f64			_MATH_2PI							= 6.283185307179586476;
-	const f64			_MATH_EXP							= 2.718281828459045235;
-	//	common functions
-	const u32			_FP_COMMON_SQRT						= 0;
-	const u32			_FP_COMMON_EXP						= 1;
-	const u32			_FP_COMMON_PI						= 2;
-	const u32			_FP_COMMON_LOG						= 3;
-	const u32			_FP_COMMON_LOG10					= 4;

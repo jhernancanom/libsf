@@ -681,6 +681,7 @@
 	const s32		_ICODE_MROW                                     = 1276;
 	const s32		_ICODE_MTON                                     = 1277;
 	const s32		_ICODE_MWINDOW                                  = 1278;
+	const s32		_ICODE_NCSET									= 1449;
 	const s32		_ICODE_NDX                                      = 1279;
 	const s32		_ICODE_NEWOBJECT                                = 1280;
 	const s32		_ICODE_NODATA									= 1437;
@@ -853,6 +854,7 @@
 	// noloadparams		= 1443				unloadparams	= 1444
 	// nounloadparams	= 1445				forcefname		= 1446
 	// forcestem		= 1447				ranger			= 1448
+	// ncset			= 1449
 
 // Temporarily added until the processing engine is coded
 	const s32		_ICODE_CONCATENATE								= 1900;
@@ -1492,6 +1494,7 @@
 	const s8		cgc_mrow[]										= "mrow";
 	const s8		cgc_mton[]										= "mton";
 	const s8		cgc_mwindow[]									= "mwindow";
+	const s8		cgc_ncset[]										= "ncset";
 	const s8		cgc_ndx[]										= "ndx";
 	const s8		cgc_newobject[]									= "newobject";
 	const s8		cgc_noLoadParams[]								= "noloadparams";

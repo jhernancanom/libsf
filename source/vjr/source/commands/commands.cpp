@@ -2050,10 +2050,13 @@
 	        return result;
 	}
 
+
+
+
 //////////
 //
 // Function: EXP()
-// Returns the value of ex where x is a specified numeric expression.
+// Returns the value of e^x where x is a specified numeric expression.
 //
 //////
 // Version 0.56
@@ -3548,6 +3551,138 @@
 	}
 
 
+
+
+//////////
+//
+// Function: NCSET()
+// Nuance compatibility settings. Used to enable or disable enhancements
+// in VXB which may not be present in other xbase languages.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.15.2015
+//////
+// Change log:
+//     Mar.15.2015 -- Initial creation
+//////
+// Parameters:
+//    varIndex		-- The index to set
+//    varP1..varP6	-- Various, depends on the indexed function's requirements
+//
+//////
+// Returns:
+//    s32			-- The number of times
+//////
+	SVariable* function_ncset(SThisCode* thisCode, SVariable* varIndex, SVariable* varP1, SVariable* varP2, SVariable* varP3, SVariable* varP4, SVariable* varP5, SVariable* varP6)
+	{
+		s32			lnIndex;
+		bool		llEnabled, llNewValue;
+		bool		error;
+		u32			errorNum;
+		SVariable*	result;
+
+
+		//////////
+		// nIndex must be numeric
+		//////
+			if (!iVariable_isValid(varIndex) || !iVariable_isTypeNumeric(varIndex))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varIndex), false);
+				return(NULL);
+			}
+			lnIndex = iiVariable_getAs_s32(thisCode, varIndex, false, &error, &errorNum);
+			if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varIndex), false);	return(NULL);	}
+
+
+		//////////
+		// Create the return variable
+		//////
+			result = iVariable_create(thisCode, _VAR_TYPE_LOGICAL, NULL);
+			if (!result)
+			{
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_compRelated(thisCode, varIndex), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// What function are they requesting?
+		//////
+			// Based on the index, set the value
+			switch (lnIndex)
+			{
+				//////////
+				// SIGN(), SIGN2()
+				//////
+					case _NCSET_SIGN_SIGN2:
+						// Get the value
+						llEnabled = propGet_settings_ncset_signSign2(_settings);
+						if (varP1)
+						{
+							// They are setting the value
+							if (iVariable_isFundamentalTypeLogical(varP1))
+							{
+								// Obtain its value as a logical
+								llNewValue = iiVariable_getAs_bool(thisCode, varP1, false, &error, &errorNum);
+								if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varIndex), false);	return(NULL);	}
+
+								// Set the new value
+								propSet_settings_ncset_signSign2_fromBool(_settings, llNewValue);
+
+							} else {
+								// The variable is not a type that can be processed as logical
+								iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varP1), false);
+								return(NULL);
+							}
+						}
+						break;
+
+
+				//////////
+				// CEILING(), FLOOR()
+				//////
+					case _NCSET_CEILING_FLOOR:
+						// Get the value
+						llEnabled = propGet_settings_ncset_ceilingFloor(_settings);
+						if (varP1)
+						{
+							// They are setting the value
+							if (iVariable_isFundamentalTypeLogical(varP1))
+							{
+								// Obtain its value as a logical
+								llNewValue = iiVariable_getAs_bool(thisCode, varP1, false, &error, &errorNum);
+								if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varIndex), false);	return(NULL);	}
+
+								// Set the new value
+								propSet_settings_ncset_ceilingFloor_fromBool(_settings, llNewValue);
+
+							} else {
+								// The variable is not a type that can be processed as logical
+								iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varP1), false);
+								return(NULL);
+							}
+						}
+						break;
+
+				default:
+					// Unrecognized option
+					iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_compRelated(thisCode, varIndex), false);
+					return(NULL);
+			}
+
+
+		//////////
+		// Set the result based on the value, and return it
+		//////
+			*result->value.data_s8 = ((llEnabled) ? _LOGICAL_TRUE : _LOGICAL_FALSE);
+			return(result);
+	}
+
+
+
+
 //////////
 //
 // Function: OCCURS(), and OCCURSC()
@@ -3801,6 +3936,8 @@
 	}
 
 
+
+
 //////////
 //
 // Function: PI()
@@ -3826,11 +3963,15 @@
 	SVariable* function_pi(SThisCode* thisCode)
 	{
 
+
 		//////////
         // Return pi
 		//////
 			return ifunction_commonNumFunction(thisCode, NULL, _FP_COMMON_PI, true);
 	}
+
+
+
 
 //////////
 //
@@ -4625,8 +4766,13 @@
 //////////
 //
 // Function: SIGN()
-// Returns a numeric value of 1, 1, or 0 based on whether or not the specified
-// numeric expression evaluates to a positive, negative, or 0 value.
+// Returns a numeric value of 1, -1, or 0 if varNumber is positive,
+// negative, or 0 value.
+//
+//////
+//
+// Function: SIGN2()
+// Returns a numeric value of 1 if varNumber >= 0, and -1 otherwise.
 //
 //////
 // Version 0.56
@@ -4634,6 +4780,7 @@
 //     Mar.14.2015
 //////
 // Change log:
+//     Mar.15.2015 - Added common() and sign2() functions
 //     Mar.14.2015 - Merge into main by Rick C. Hodgin, refactor result to match varNumber varType
 //     Mar.14.2015 - Initial creation by Stefano D'Amico
 //////
@@ -4655,6 +4802,18 @@
 //////
     SVariable* function_sign(SThisCode* thisCode, SVariable* varNumber)
     {
+		// SIGN() returns -1, 0, or 1
+		return(ifunction_sign_common(thisCode, varNumber, false));
+	}
+
+	SVariable* function_sign2(SThisCode* thisCode, SVariable* varNumber)
+	{
+		// SIGN2() returns -1 if non-zero negative, 1 otherwise
+		return(ifunction_sign_common(thisCode, varNumber, true));
+	}
+
+	SVariable* ifunction_sign_common(SThisCode* thisCode, SVariable* varNumber, bool tlIncrementZero)
+	{
 		f64			lfValue;
 		u32			errorNum;
         bool		error;
@@ -4685,7 +4844,15 @@
 		//////////
 		// Create output variable
 		//////
-			result = iVariable_create(thisCode, varNumber->varType, NULL);
+			if (propGet_settings_ncset_signSign2(_settings))
+			{
+				// They want it to be the input type if possible
+				result = iVariable_create(thisCode, varNumber->varType, NULL);
+
+			} else {
+				// Always an integer return value
+				result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL);
+			}
 			if (!result)
 			{
 				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
@@ -4700,7 +4867,11 @@
 			{
 				// Converting of lfValue to 1 or -1
 				lfValue = lfValue / abs(lfValue);	
-			} 
+
+			} if (tlIncrementZero) {
+				// Should we increment a 0 value (so it will be returned as 1 instead of 0)?
+				++lfValue;
+			}
 
 
 		//////////
@@ -4807,7 +4978,7 @@
 //     Mar.15.2015 - Initial creation by Stefano D'Amico
 //////
 // Parameters:
-//     p1			-- Numeric or floating point
+//     varNumber	-- Numeric or floating point
 //
 //////
 // Returns:
@@ -4825,6 +4996,7 @@
 		//////
 		return ifunction_commonNumFunction(thisCode, varNumber, _FP_COMMON_SQRT, true);
 	}
+
 
 
 

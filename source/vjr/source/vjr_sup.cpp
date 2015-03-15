@@ -3985,7 +3985,7 @@
 			gobj_splashListingEditbox->p.font					= iFont_create(cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
 			gobj_splashListingEditbox->p.sem->font				= iFont_create(cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
 			gobj_splashListingEditbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
-			iObjProp_set_logical_direct(thisCode, gobj_splashListingEditbox, _INDEX_VISIBLE, _LOGICAL_TRUE);
+			iObjProp_set_logical_fromLogicalConstants(thisCode, gobj_splashListingEditbox, _INDEX_VISIBLE, _LOGICAL_TRUE);
 			systemLog											= gobj_splashListingEditbox->p.sem;
 			systemLog->showEndLine								= true;
 			systemLog->showCursorLine							= true;
@@ -3994,7 +3994,7 @@
 		//////////
 		// Set it visible
 		//////
-			iObjProp_set_logical_direct(thisCode, gobj_splashListing, _INDEX_VISIBLE, _LOGICAL_TRUE);
+			iObjProp_set_logical_fromLogicalConstants(thisCode, gobj_splashListing, _INDEX_VISIBLE, _LOGICAL_TRUE);
 	}
 
 
