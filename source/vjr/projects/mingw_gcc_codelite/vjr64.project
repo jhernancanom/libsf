@@ -37,6 +37,7 @@
     <File Name="../../../../utils/common/cpp/builder.h"/>
     <File Name="../../source/vjr_compile_time_settings.h"/>
     <File Name="../../source/vjr_const.h"/>
+    <File Name="../../source/vjr.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="dbf">
     <File Name="../../source/dbf/cdx.cpp" ExcludeProjConfig="Debug"/>

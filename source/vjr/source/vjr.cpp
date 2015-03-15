@@ -381,21 +381,21 @@
 			iSEM_appendLine(screenData, (u8*)"Please report any bugs:  http://www.visual-freepro.org/vjr", -1, false);
 			iSEM_appendLine(screenData, (u8*)"Thank you, and may the Lord Jesus Christ bless you richly. :-)", -1, false);
 			iSEM_appendLine(screenData, NULL, 0, false);
-			iSEM_appendLine(screenData, (u8*)"              _____", -1, false);
+			iSEM_appendLine(screenData, (u8*)"              _____              In God's sight we've come together.", -1, false);
+			iSEM_appendLine(screenData, (u8*)"             |     |             We've come together to help each other.", -1, false);
+			iSEM_appendLine(screenData, (u8*)"             |     |             Let's grow this project up ... together!", -1, false);
+			iSEM_appendLine(screenData, (u8*)"     ________|     |________     In service and love to The Lord, forever!", -1, false);
+			iSEM_appendLine(screenData, (u8*)"    |                       |", -1, false);
+			iSEM_appendLine(screenData, (u8*)"    |________       ________|    Sponsored by:", -1, false);
+			iSEM_appendLine(screenData, (u8*)"             |     |                 LibSF -- Liberty Software Foundation", -1, false);
 			iSEM_appendLine(screenData, (u8*)"             |     |", -1, false);
+			iSEM_appendLine(screenData, (u8*)"             |     |    Contributors:", -1, false);
+			iSEM_appendLine(screenData, (u8*)"             |     |        Hernan Cano, Stefano D'Amico", -1, false);
 			iSEM_appendLine(screenData, (u8*)"             |     |", -1, false);
-			iSEM_appendLine(screenData, (u8*)"     ________|     |________     In God's sight we've come together.", -1, false);
-			iSEM_appendLine(screenData, (u8*)"    |                       |    We've come together to help each other.", -1, false);
-			iSEM_appendLine(screenData, (u8*)"    |________       ________|    Let's grow this project up ... together!", -1, false);
-			iSEM_appendLine(screenData, (u8*)"             |     |             In service and love to The Lord, forever!", -1, false);
+			iSEM_appendLine(screenData, (u8*)"             |     |    Lead Project Contact:  rick.c.hodgin@gmail.com", -1, false);
 			iSEM_appendLine(screenData, (u8*)"             |     |", -1, false);
-			iSEM_appendLine(screenData, (u8*)"             |     |             Sponsored by:", -1, false);
-			iSEM_appendLine(screenData, (u8*)"             |     |                LibSF -- Liberty Software Foundation", -1, false);
-			iSEM_appendLine(screenData, (u8*)"             |     |", -1, false);
-			iSEM_appendLine(screenData, (u8*)"             |     |             We need more coders. Please consider helping out.", -1, false);
-			iSEM_appendLine(screenData, (u8*)"             |     |             Your contribution would make a difference.", -1, false);
-			iSEM_appendLine(screenData, (u8*)"             |     |", -1, false);
-			iSEM_appendLine(screenData, (u8*)"             |_____|", -1, false);
+			iSEM_appendLine(screenData, (u8*)"             |     |    We need more coders. Please consider helping out.", -1, false);
+			iSEM_appendLine(screenData, (u8*)"             |_____|    Your contribution would make a difference. :-)", -1, false);
 			iSEM_appendLine(screenData, NULL, 0, false);
 		}
 		// Navigate to the end of the content
@@ -411,9 +411,9 @@
 			iSEM_appendLine(command_editbox->p.sem, (u8*)"*** Welcome to Visual FreePro, Junior! :-)", -1, false);
 			iSEM_appendLine(command_editbox->p.sem, (u8*)"*** For now, this can be thought of as a command window ... with a twist.", -1, false);
 			iSEM_appendLine(command_editbox->p.sem, (u8*)"*** It works like an editor window.  You can insert new lines, edit old ones, etc.", -1, false);
-			iSEM_appendLine(command_editbox->p.sem, (u8*)"*** To execute a command, press F6 or Enter if you're on the last line, or use F6 on any line.", -1, false);
-			iSEM_appendLine(command_editbox->p.sem, (u8*)"*** You can use clear, quit, ? 999, ? \"sample\" (literals), and ? _startupTime (global variable) in this daily build.", -1, false);
-			iSEM_appendLine(command_editbox->p.sem, (u8*)"*** Remember this always:  Love makes you smile. It keeps an inward peace unlike any other. :-)", -1, false);
+			iSEM_appendLine(command_editbox->p.sem, (u8*)"*** To execute a command, press F6. If you're on the last line use F6 or Enter.", -1, false);
+			iSEM_appendLine(command_editbox->p.sem, (u8*)"*** See http://www.visual-freepro.org/wiki/index.php/VXB for supported commands.", -1, false);
+			iSEM_appendLine(command_editbox->p.sem, (u8*)"*** Remember always:  Love makes you smile. It keeps an inner peace like no other. :-)", -1, false);
 		}
 
 		// Navigate to the last line

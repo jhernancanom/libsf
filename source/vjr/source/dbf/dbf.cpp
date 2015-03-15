@@ -818,7 +818,7 @@
 			if (cdxFilename[0] != 0)
 			{
 				// Try to open the associated cdx
-				cdx_open(thisCode, wa, cdxFilename, strlen(cdxFilename), lnIndexType, tlValidate);
+				cdx_open(thisCode, wa, cdxFilename, (u32)strlen(cdxFilename), lnIndexType, tlValidate);
 
 				// Right now, it will either be open or not
 				if (wa->isIndexLoaded && wa->isCdx)

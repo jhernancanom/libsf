@@ -25,6 +25,7 @@
 //     Jul.06.2014
 //////
 // Change log:
+//     Mar.15.2015 - GitHub:4 -- Delete all does not clear the last line
 //     Jul.06.2014 - Initial creation
 //////
 //
@@ -601,6 +602,7 @@ debug_break;
 	void iSEM_deleteChain(SEM** root, bool tlDeleteSelf)
 	{
 		logfunc(__FUNCTION__);
+
 		// Delete, but with no callback
 		iSEM_deleteChainWithCallback(root, tlDeleteSelf, NULL);
 	}
@@ -981,8 +983,18 @@ debug_break;
 
 			// Delete the line itself if it's not the only line
 			lineDeleted = sem->line_cursor;
-			if (sem->firstLine != sem->lastLine)		lineNewCursorLine = (SLine*)iLl_deleteNode((SLL*)sem->line_cursor, true);
-			else										lineNewCursorLine = sem->line_top;
+			if (sem->firstLine != sem->lastLine)
+			{
+				// Delete the line
+				lineNewCursorLine = (SLine*)iLl_deleteNode((SLL*)sem->line_cursor, true);
+
+			} else {
+				// Set the line to this one line
+				lineNewCursorLine = sem->line_top;
+
+				// GitHub:4 -- And set the populated length to 0
+				sem->line_top->sourceCode_populatedLength = 0;
+			}
 
 			// Update anything that may have changed as a result
 			if (sem->lastLine == lineDeleted)
@@ -4633,7 +4645,7 @@ renderAsOnlyText:
 				if (sem->line_cursor->sourceCode_populatedLength == 0)
 				{
 					// There's no data on this line, if we're in insert mode delete the line
-					if (!sem->isOverwrite)
+					if (!sem->isOverwrite && sem->firstLine != sem->lastLine)
 						iSEM_deleteLine(sem);
 
 				} else {
