@@ -176,6 +176,8 @@
 			case _ERROR_UNABLE_TO_OPEN_DBC:					{	iError_report(cgcUnableToOpenDbc, tlInvasive);					break;	}
 			case _ERROR_DIVISION_BY_ZERO:					{	iError_report(cgcDivisionByZero, tlInvasive);					break;	}
 			case _ERROR_CANNOT_BE_NEGATIVE:					{	iError_report(cgcCannotBeNegative, tlInvasive);					break;	}
+			case _ERROR_CANNOT_BE_ZERO_OR_NEGATIVE:			{	iError_report(cgcCannotBeZeroOrNegative, tlInvasive);			break;	}
+															
 
 		}
 
@@ -585,6 +587,142 @@
 		return(lfValue);
 	}
 
+
+//////////
+//
+// Common numeric functions
+//
+//////
+    SVariable* ifunction_commonNumFunction(SThisCode* thisCode, SVariable* varNumber, u32 functionType, bool resultFloatingPoint)
+    {
+		f64			lfValue;
+		u32			errorNum;
+        bool		error;
+        SVariable*	result;
+
+		if (varNumber)
+		{
+			//////////
+			// Parameter 1 must be numeric
+			//////
+				if (!iVariable_isValid(varNumber) || !iVariable_isTypeNumeric(varNumber))
+				{
+					iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_compRelated(thisCode, varNumber), false);
+					return(NULL);
+				}
+
+
+			//////////
+			// Parameter 1, Convert to f64
+			//////
+				lfValue = iiVariable_getAs_f64(thisCode, varNumber, false, &error, &errorNum);
+				if (error)
+				{
+					iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
+					return(NULL);
+				}
+		} else {
+			//no parameter (PI())
+			lfValue = 0.0;
+		}
+
+
+		//////////
+		// Compute numeric function
+		//////
+			switch (functionType)
+			{
+				case _FP_COMMON_SQRT:
+
+					//////////
+					// Verify p1 >= 0
+					//////
+						if (lfValue < 0.0)
+						{
+							// Oops!
+							iError_reportByNumber(thisCode, _ERROR_CANNOT_BE_NEGATIVE, iVariable_compRelated(thisCode, varNumber), false);
+							return(NULL);
+						}
+
+					//////////
+					// Compute sqrt
+					//////
+						lfValue = sqrt(lfValue);	
+						break;
+				case _FP_COMMON_EXP:	
+					
+					//////////
+					// Compute exp
+					//////
+						lfValue = exp(lfValue);	
+						break;
+				case _FP_COMMON_PI:
+
+					//////////
+					// Compute pi
+					//////
+						lfValue = _MATH_PI;
+						break;
+				case _FP_COMMON_LOG:
+				case _FP_COMMON_LOG10:
+
+					//////////
+					// Verify p1 > 0
+					//////
+						if (lfValue <= 0.0)
+						{
+							// Oops!
+							iError_reportByNumber(thisCode, _ERROR_CANNOT_BE_ZERO_OR_NEGATIVE, iVariable_compRelated(thisCode, varNumber), false);
+							return(NULL);
+						}
+
+						if (functionType == _FP_COMMON_LOG)
+						{
+							//////////
+							// Compute log
+							//////
+								lfValue = log(lfValue);	
+						} else {
+							//////////
+							// Compute log10
+							//////
+								lfValue = log10(lfValue);	
+						}
+						break;
+				default:
+					// Oops!
+					iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_compRelated(thisCode, varNumber), false);
+					return(NULL);
+			}
+
+
+		//////////
+		// Create output variable
+		//////
+			if (resultFloatingPoint)
+			{
+				result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL);
+			} else { 
+				result = iVariable_create(thisCode, varNumber->varType, NULL); 
+			}
+			if (!result)
+			{
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
+				return(NULL);
+			}
+
+		//////////
+		// Set the value
+		//////
+			if (!iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfValue, NULL, NULL, NULL, NULL))
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
+
+
+		//////////
+        // Return result
+		//////
+	        return result;   
+	}
 
 
 
@@ -1940,49 +2078,10 @@
 //////
     SVariable* function_exp(SThisCode* thisCode, SVariable* varNumber)
     {
-		f64			lfValue;
-		u32			errorNum;
-        bool		error;
-        SVariable*	result;
-
-
 		//////////
-		// Parameter 1 must be numeric
+        // Return exp
 		//////
-			if (!iVariable_isValid(varNumber) || !iVariable_isTypeNumeric(varNumber))
-			{
-				iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_compRelated(thisCode, varNumber), false);
-				return(NULL);
-			}
-
-
-		//////////
-		// Parameter 1, Convert to f64
-		//////
-			lfValue = iiVariable_getAs_f64(thisCode, varNumber, false, &error, &errorNum);
-			if (error)
-			{
-				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
-				return(NULL);
-			}
-
-
-		//////////
-		// Create output variable
-		//////
-			result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL);
-			if (!result)
-			{
-				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
-				return(NULL);
-			}
-
-
-		//////////
-		// Compute, store, and return exp
-		//////
-			*result->value.data_f64 = pow(_MATH_EXP, lfValue);
-	        return result;
+	        return ifunction_commonNumFunction(thisCode, varNumber, _FP_COMMON_EXP, true);   
 	}
 
 
@@ -2723,6 +2822,69 @@
 	        return result;
 	}
 
+
+//////////
+//
+// Function: LOG()
+// Returns the natural logarithm (base e) of the specified numeric expression.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.15.2015
+//////
+// Change log:
+//     Mar.15.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    LOG(n) of the value in p1
+//////
+// Example:
+//    ? LOG(2)		&& Display 0.69
+//////
+    SVariable* function_log(SThisCode* thisCode, SVariable* varNumber)
+    {
+		//////////
+        // Return log
+		//////
+	        return ifunction_commonNumFunction(thisCode, varNumber, _FP_COMMON_LOG, true);   
+	}
+
+
+//////////
+//
+// Function: LOG10()
+// Returns the common logarithm (base 10) of the specified numeric expression.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.15.2015
+//////
+// Change log:
+//     Mar.15.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    LOG10(n) of the value in p1
+//////
+// Example:
+//    ? LOG10(2)		&& Display 0.30
+//////
+    SVariable* function_log10(SThisCode* thisCode, SVariable* varNumber)
+    {
+		//////////
+        // Return log10
+		//////
+	        return ifunction_commonNumFunction(thisCode, varNumber, _FP_COMMON_LOG10, true);   
+	}
 
 
 
@@ -3800,25 +3962,7 @@
 //////
 	SVariable* function_pi(SThisCode* thisCode)
 	{
-		SVariable* result;	
-
-
-		//////////
-        // Create a return variable
-		//////
-			result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL);
-			if (!result)
-			{
-				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
-				return(NULL);
-			}
-
-
-		//////////
-		// Store and return pi
-		//////
-			*(f64*)result->value.data_f64 = (f64)_MATH_PI;
-	        return result;
+		return ifunction_commonNumFunction(thisCode, NULL, _FP_COMMON_PI, true);
 	}
 
 
@@ -4841,61 +4985,11 @@
 //    ? SQRT(-2)	&& Error: argument cannot be negative
 //////
     SVariable* function_sqrt(SThisCode* thisCode, SVariable* varNumber)
-    {
-		f64			lfValue;
-		u32			errorNum;
-        bool		error;
-        SVariable*	result;
-
-
+	{
 		//////////
-		// Parameter 1 must be numeric
+        // Return sqrt
 		//////
-			if (!iVariable_isValid(varNumber) || !iVariable_isTypeNumeric(varNumber))
-			{
-				iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_compRelated(thisCode, varNumber), false);
-				return(NULL);
-			}
-
-
-		//////////
-		// Parameter 1, Convert to f64
-		//////
-			lfValue = iiVariable_getAs_f64(thisCode, varNumber, false, &error, &errorNum);
-			if (error)
-			{
-				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
-				return(NULL);
-			}
-
-
-		//////////
-		// Create output variable
-		//////
-			result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL);
-			if (!result)
-			{
-				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
-				return(NULL);
-			}
-
-
-		//////////
-		// Verify p1 >= 0
-		//////
-			if (lfValue < 0.0)
-			{
-				// Oops!
-				iError_reportByNumber(thisCode, _ERROR_CANNOT_BE_NEGATIVE, iVariable_compRelated(thisCode, varNumber), false);
-				return(NULL);
-			}
-
-
-		//////////
-		// Compute and return sqrt
-		//////
-			*result->value.data_f64 = sqrt(lfValue);	
-	        return result;   
+		return ifunction_commonNumFunction(thisCode, varNumber, _FP_COMMON_SQRT, true);
 	}
 
 

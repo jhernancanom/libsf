@@ -354,6 +354,17 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_log[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_log10[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+
 	SSourceLightData gsSourceLight_lower[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
