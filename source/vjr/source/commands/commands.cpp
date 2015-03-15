@@ -3570,7 +3570,63 @@
 	}
 
 
+//////////
+//
+// Function: PI()
+// Returns the numeric constant pi.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.15.2015
+//////
+// Change log:
+//     Mar.15.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     none
+//////
+// Returns:
+//    Numeric		-- Returns the numeric constant pi
+//////
+// Example:
+//    ? pi()				&& Displays 3.14
+//////
+	SVariable* function_pi(SThisCode* thisCode)
+	{
+		f64			lfValue;
+		u32			errorNum;
+        bool		error;
+        SVariable*	result;	
 
+		//////////
+		// Create output variable
+		//////
+			result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL);
+			if (!result)
+			{
+				iError_reportByNumber(thisCode, errorNum, NULL, false);
+				return(NULL);
+			}
+		//////////
+		// Compute pi
+		//////
+			lfValue = acos(-1.0); //M_PI
+
+		//////////
+		// Set the value
+		//////
+			if (!iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfValue, NULL, NULL, NULL, NULL))
+			{
+				iError_reportByNumber(thisCode, errorNum, NULL, false);
+				return(NULL);
+			}
+
+		//////////
+        // Return pi
+		//////
+	        return result;
+	}
 
 //////////
 //

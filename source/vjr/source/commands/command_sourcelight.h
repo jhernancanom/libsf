@@ -398,6 +398,11 @@
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
+	
+	SSourceLightData gsSourceLight_pi[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
 
 	SSourceLightData gsSourceLight_proper[] =
 	{
