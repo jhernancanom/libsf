@@ -3379,28 +3379,58 @@
 			// Based on the index, set the value
 			switch (lnIndex)
 			{
-				case _NCSET_SIGN_SIGN2:
-					// Get the value
-					llEnabled = propGet_settings_ncset_signSign2(_settings);
-					if (varP1)
-					{
-						// They are setting the value
-						if (iVariable_isFundamentalTypeLogical(varP1))
+				//////////
+				// SIGN(), SIGN2()
+				//////
+					case _NCSET_SIGN_SIGN2:
+						// Get the value
+						llEnabled = propGet_settings_ncset_signSign2(_settings);
+						if (varP1)
 						{
-							// Obtain its value as a logical
-							llNewValue = iiVariable_getAs_bool(thisCode, varP1, false, &error, &errorNum);
-							if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varIndex), false);	return(NULL);	}
+							// They are setting the value
+							if (iVariable_isFundamentalTypeLogical(varP1))
+							{
+								// Obtain its value as a logical
+								llNewValue = iiVariable_getAs_bool(thisCode, varP1, false, &error, &errorNum);
+								if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varIndex), false);	return(NULL);	}
 
-							// Set the new value
-							propSet_settings_ncset_signSign2_fromBool(_settings, llNewValue);
+								// Set the new value
+								propSet_settings_ncset_signSign2_fromBool(_settings, llNewValue);
 
-						} else {
-							// The variable is not a type that can be processed as logical
-							iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varP1), false);
-							return(NULL);
+							} else {
+								// The variable is not a type that can be processed as logical
+								iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varP1), false);
+								return(NULL);
+							}
 						}
-					}
-					break;
+						break;
+
+
+				//////////
+				// CEILING(), FLOOR()
+				//////
+					case _NCSET_CEILING_FLOOR:
+						// Get the value
+						llEnabled = propGet_settings_ncset_ceilingFloor(_settings);
+						if (varP1)
+						{
+							// They are setting the value
+							if (iVariable_isFundamentalTypeLogical(varP1))
+							{
+								// Obtain its value as a logical
+								llNewValue = iiVariable_getAs_bool(thisCode, varP1, false, &error, &errorNum);
+								if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varIndex), false);	return(NULL);	}
+
+								// Set the new value
+								propSet_settings_ncset_ceilingFloor_fromBool(_settings, llNewValue);
+
+							} else {
+								// The variable is not a type that can be processed as logical
+								iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varP1), false);
+								return(NULL);
+							}
+						}
+						break;
 
 				default:
 					// Unrecognized option

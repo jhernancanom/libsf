@@ -982,7 +982,7 @@ debug_break;
 // Called to obtain the property's direct value
 //
 //////
-	s32 iObjProp_get_logical_direct(SThisCode* thisCode, SObject* obj, s32 tnIndex)
+	s32 iObjProp_get_logical_fromLogicalConstants(SThisCode* thisCode, SObject* obj, s32 tnIndex)
 	{
 		bool		error;
 		s32			lnResult;
