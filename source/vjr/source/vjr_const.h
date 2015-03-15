@@ -147,6 +147,7 @@ typedef SEM**		SEMpp;
 	#define iVariable_isTypeObject(var)					(var->varType == _VAR_TYPE_OBJECT)
 	#define iVariable_isTypethisCode(var)				(var->varType == _VAR_TYPE_THISCODE)
 	#define iVariable_isTypeLogical(var)				(var->varType == _VAR_TYPE_LOGICAL)
+	#define iVariable_isFundamentalTypeLogical(var)		(var->varType == _VAR_TYPE_LOGICAL || (iVariable_areTypesCompatible(thisCode, var, varDefault_logical)))
 	#define iVariable_isTypeCharacter(var)				(var->varType == _VAR_TYPE_CHARACTER)
 	#define iVariable_isTypeNumeric(var)				(var->varType >= _VAR_TYPE_NUMERIC_START && var->varType <= _VAR_TYPE_NUMERIC_END)
 	#define iVariable_isNumeric64Bit(var)				(var->varType == _VAR_TYPE_S64 || var->varType == _VAR_TYPE_U64 || var->varType == _VAR_TYPE_CURRENCY)
@@ -196,15 +197,15 @@ typedef SEM**		SEMpp;
 
 	#define propSetAnchor(obj, value)					iObjProp_set_s32_direct			(thisCode, obj, _INDEX_ANCHOR,			value)
 	#define propSetIcon(obj, bmp)						iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_ICON,			bmp)
-	#define propSetVisible(obj, value)					iObjProp_set_logical_direct		(thisCode, obj, _INDEX_VISIBLE,			value)
-	#define propSetEnabled(obj, value)					iObjProp_set_logical_direct		(thisCode, obj, _INDEX_ENABLED,			value);
+	#define propSetVisible(obj, value)					iObjProp_set_logical_fromLogicalConstants(thisCode, obj, _INDEX_VISIBLE, value)
+	#define propSetEnabled(obj, value)					iObjProp_set_logical_fromLogicalConstants(thisCode, obj, _INDEX_ENABLED, value);
 	#define propSetAlignment(obj, value)				iObjProp_set_s32_direct			(thisCode, obj, _INDEX_ALIGNMENT,		value)
 	#define propSetStyle(obj, value)					iObjProp_set_s32_direct			(thisCode, obj, _INDEX_STYLE,			value)
 	#define propSetBackStyle(obj, value)				iObjProp_set_s32_direct			(thisCode, obj, _INDEX_BACKSTYLE,		value)
 	#define propSetBorderStyle(obj, value)				iObjProp_set_s32_direct			(thisCode, obj, _INDEX_BORDERSTYLE,		value)
 	#define propSetCaption(obj, value)					iObjProp_set_character_direct	(thisCode, obj, _INDEX_CAPTION,			(u8*)value,		sizeof(value) - 1)
 	#define propSetCount(obj, value)					iObjProp_set_s32_direct			(thisCode, obj, _INDEX_COUNT,			value)
-	#define propSetMultiSelect(obj, value)				iObjProp_set_logical_direct		(thisCode, obj, _INDEX_MULTISELECT,		value)
+	#define propSetMultiSelect(obj, value)				iObjProp_set_logical_fromLogicalConstants(thisCode, obj, _INDEX_MULTISELECT, value)
 	#define propSetPictureBmp(obj, bmp)					iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_PICTUREBMP,		bmp)
 	#define propSetPictureBmpDown(obj, bmp)				iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_PICTUREBMP_DOWN,	bmp)
 	#define propSetPictureBmpOver(obj, bmp)				iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_PICTUREBMP_OVER,	bmp)
@@ -228,6 +229,9 @@ typedef SEM**		SEMpp;
 	#define propGet_settings_ReprocessInterval(obj)				iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_REPROCESSINTERVAL)
 	#define propGet_settings_Talk(obj)							(iObjProp_get_logical_direct	(thisCode, obj, _INDEX_SET_TALK)					!= _LOGICAL_FALSE)
 	#define propGet_settings_VariablesFirst(obj)				(iObjProp_get_logical_direct	(thisCode, obj, _INDEX_SET_VARIABLES_FIRST)			!= _LOGICAL_FALSE)
+
+	#define propGet_settings_ncset_signSign2(obj)				(iObjProp_get_logical_direct	(thisCode, obj, _INDEX_SET_NCSET_SIGN_SIGN2)		!= _LOGICAL_FALSE)
+	#define propSet_settings_ncset_signSign2_fromBool(obj, value) iObjProp_set_logical_direct		(thisCode, obj, _INDEX_SET_NCSET_SIGN_SIGN2, value)
 
 
 //////////
@@ -775,6 +779,12 @@ typedef SEM**		SEMpp;
 	const u32			_OPTION								= 512;
 	const u32			_RADIO								= 1024;
 	const u32			_ALL								= _EMPTY + _FORM + _SUBFORM + _LABEL + _TEXTBOX + _BUTTON + _EDITBOX + _IMAGE + _CHECKBOX + _OPTION + _RADIO;
+
+
+//////////
+// NCSET() Nuance Compatibility Settings
+/////
+	const u32			_NCSET_SIGN_SIGN2					= 1;
 
 
 //////////

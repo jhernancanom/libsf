@@ -5444,20 +5444,78 @@ if (!gsProps_master[lnI].varInit)
 // Are the two variable types comparable?  This function is used to relate numeric forms
 // which can be in a wide variety of internal storage mechanisms, but are all still numeric.
 //
+// Note:  The logical portion relates to the varTypes supported in iiVariable_getAs_bool()
+//
 //////
 	bool iVariable_areTypesCompatible(SThisCode* thisCode, SVariable* var1, SVariable* var2)
 	{
 		if (var1 && var2)
 		{
+			//////////
 			// Are they the same?  If so, they're compatible. :-)
-			if (var1->varType == var2->varType)
-				return(true);
+			//////
+				if (var1->varType == var2->varType)
+					return(true);
 
-			// Are they both numeric?
-			if (iVariable_isTypeNumeric(var1) && iVariable_isTypeNumeric(var2))
-				return(true);
 
-			// Are they all logical
+			//////////
+			// Are they both of the same fundamental type?
+			//////
+				if (iVariable_fundamentalType(thisCode, var1) && iVariable_fundamentalType(thisCode, var2))
+					return(true);
+
+
+			//////////
+			// Are they able to be translated to logicals?
+			// See iiVariable_getAs_bool()
+			//////
+				if (var1->varType == _VAR_TYPE_LOGICAL)
+				{
+					// var1 is logical, so if var2 is an integer form, they are compatible
+					switch (var2->varType)
+					{
+						case _VAR_TYPE_LOGICAL:
+						case _VAR_TYPE_NUMERIC:
+						case _VAR_TYPE_S32:
+						case _VAR_TYPE_U32:
+						case _VAR_TYPE_U64:
+						case _VAR_TYPE_CURRENCY:
+						case _VAR_TYPE_S64:
+						case _VAR_TYPE_S16:
+						case _VAR_TYPE_S8:
+						case _VAR_TYPE_U16:
+						case _VAR_TYPE_U8:
+						case _VAR_TYPE_F32:
+						case _VAR_TYPE_F64:
+						case _VAR_TYPE_BI:
+						case _VAR_TYPE_BFP:
+						case _VAR_TYPE_CHARACTER:
+							return(true);
+					}
+
+				} else if (var2->varType == _VAR_TYPE_LOGICAL) {
+					// var2 is logical, so if var1 is an integer form, they are compatible
+					switch (var1->varType)
+					{
+						case _VAR_TYPE_LOGICAL:
+						case _VAR_TYPE_NUMERIC:
+						case _VAR_TYPE_S32:
+						case _VAR_TYPE_U32:
+						case _VAR_TYPE_U64:
+						case _VAR_TYPE_CURRENCY:
+						case _VAR_TYPE_S64:
+						case _VAR_TYPE_S16:
+						case _VAR_TYPE_S8:
+						case _VAR_TYPE_U16:
+						case _VAR_TYPE_U8:
+						case _VAR_TYPE_F32:
+						case _VAR_TYPE_F64:
+						case _VAR_TYPE_BI:
+						case _VAR_TYPE_BFP:
+						case _VAR_TYPE_CHARACTER:
+							return(true);
+					}
+				}
 
 			// If we get here, they're not compatible
 		}
@@ -7795,6 +7853,8 @@ debug_break;
 //
 // Called to return the value of the indicated variable as a bool.
 //
+// Note:  The types supported hre relate to the varTypes flagged in iVariable_areTypesCompatible()
+//
 //////
 	bool iiVariable_getAs_bool(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
@@ -7825,6 +7885,7 @@ debug_break;
 		// Based on the type of variable it is, return the value
 		switch (var->varType)
 		{
+			// See iVariable_areTypesCompatible()
 			case _VAR_TYPE_LOGICAL:		return(!(var->value.data[0]			== _LOGICAL_FALSE));
 			case _VAR_TYPE_NUMERIC:		return(!(_atoi64(var->value.data)	== 0));
 			case _VAR_TYPE_S32:			return(!(*(u32*)var->value.data		== 0));

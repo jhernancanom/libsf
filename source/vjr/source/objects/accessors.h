@@ -468,6 +468,7 @@ struct SBasePropertyInit;
 	const s8		cgc_setLoadReceivesParams[]								= "loadReceivesParams";
 	const s8		cgc_setLogical[]										= "logical";
 	const s8		cgc_setNamingConvention[]								= "namingConvention";
+	const s8		cgc_setNcsetSignSign2[]									= "ncsetSignSign2";
 	const s8		cgc_setReprocess[]										= "reprocess";
 	const s8		cgc_setReprocessAttempts[]								= "reprocessAttempts";
 	const s8		cgc_setReprocessInterval[]								= "reprocessInterval";
@@ -850,18 +851,19 @@ struct SBasePropertyInit;
 	const u32		_INDEX_SET_LOAD_RECEIVES_PARAMS							= 364;
 	const u32		_INDEX_SET_LOGICAL										= 365;
 	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 366;
-	const u32		_INDEX_SET_REPROCESS									= 367;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 368;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
-	const u32		_INDEX_SET_REPROCESSINTERVAL							= 369;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
-	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 370;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_SLOPPY_PRINTING								= 371;
-	const u32		_INDEX_SET_STICKY_PARAMETERS							= 372;
-	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 373;
-	const u32		_INDEX_SET_TABLE_OBJECS									= 374;
-	const u32		_INDEX_SET_TALK											= 375;
-	const u32		_INDEX_SET_TIME											= 376;
-	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 377;
-	const u32		_INDEX_SET_VARIABLES_FIRST								= 378;
+	const u32		_INDEX_SET_NCSET_SIGN_SIGN2								= 367;
+	const u32		_INDEX_SET_REPROCESS									= 368;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 369;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
+	const u32		_INDEX_SET_REPROCESSINTERVAL							= 370;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
+	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 371;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_SLOPPY_PRINTING								= 372;
+	const u32		_INDEX_SET_STICKY_PARAMETERS							= 373;
+	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 374;
+	const u32		_INDEX_SET_TABLE_OBJECS									= 375;
+	const u32		_INDEX_SET_TALK											= 376;
+	const u32		_INDEX_SET_TIME											= 377;
+	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 378;
+	const u32		_INDEX_SET_VARIABLES_FIRST								= 379;
 
 
 	// Basic setters and getters
@@ -873,7 +875,8 @@ struct SBasePropertyInit;
 	bool					iObjProp_set_character_direct			(SThisCode* thisCode, SObject* obj, s32 tnIndex, cu8* tcText, u32 tnTextLength);
 	bool					iObjProp_set_character_direct			(SThisCode* thisCode, SObject* obj, s32 tnIndex,  u8* tcText, u32 tnTextLength);
 	bool					iObjProp_set_character_direct			(SThisCode* thisCode, SObject* obj, s32 tnIndex, SDatum* datum);
-	bool					iObjProp_set_logical_direct				(SThisCode* thisCode, SObject* obj, s32 tnIndex, s32 tnValue);
+	bool					iObjProp_set_logical_direct				(SThisCode* thisCode, SObject* obj, s32 tnIndex, bool tlValue);
+	bool					iObjProp_set_logical_fromLogicalConstants(SThisCode* thisCode, SObject* obj, s32 tnIndex, s32 tnValue);
 	bool					iObjProp_set_s32_direct					(SThisCode* thisCode, SObject* obj, s32 tnIndex, s32 tnValue);
 	bool					iObjProp_set_u32_direct					(SThisCode* thisCode, SObject* obj, s32 tnIndex, u32 tnValue);
 	bool					iObjProp_set_f32_direct					(SThisCode* thisCode, SObject* obj, s32 tnIndex, f32 tfValue);
@@ -1342,6 +1345,7 @@ struct SBasePropertyInit;
 		{	_INDEX_SET_LOAD_RECEIVES_PARAMS,		cgc_setLoadReceivesParams,		sizeof(cgc_setLoadReceivesParams) - 1,		_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=Load() events receive the same parameters that will be passed to init(), .f.=(default) Load() does not receive any parameters
 		{	_INDEX_SET_LOGICAL,						cgc_setLogical,					sizeof(cgc_setLogical) - 1,					_VAR_TYPE_S32,				0, 0, 0,		_LOGICAL_TF						,NULL	},	// See _LOGICAL_* constants
 		{	_INDEX_SET_NAMING_CONVENTIONS,			cgc_setNamingConvention,		sizeof(cgc_setNamingConvention) - 1,		_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=Field and variables are examined for standard naming conventions with errors reported, .f.=no checks are made
+		{	_INDEX_SET_NCSET_SIGN_SIGN2,			cgc_setNcsetSignSign2,			sizeof(cgc_setNcsetSignSign2) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=sign() and sign2() return floating point values if floating point input, .f.=always returns integer
 		{	_INDEX_SET_REPROCESS,					cgc_setReprocess,				sizeof(cgc_setReprocess) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=Reprocessing is set to automatic, .f. is not supported, if it's not .t. it must be signed numeric with negative indicating attempts, and positive indicating seconds
 		{	_INDEX_SET_REPROCESSATTEMPTS,			cgc_setReprocessAttempts,		sizeof(cgc_setReprocessAttempts) - 1,		_VAR_TYPE_S32,				0, 0, 0,		30								,NULL	},	// Number of reprocessing attempts when set to automatic, typically 30 for 30 seconds of retries after pausing 1 second between each
 		{	_INDEX_SET_REPROCESSINTERVAL,			cgc_setReprocessInterval,		sizeof(cgc_setReprocessInterval) - 1,		_VAR_TYPE_S32,				0, 0, 0,		30								,NULL	},	// Number of milliseconds to pause between retry attempts, typically 1000
@@ -3510,6 +3514,7 @@ struct SBasePropertyInit;
 		{	_INDEX_SET_LOAD_RECEIVES_PARAMS,			0, 0, 0 },		// bool
 		{	_INDEX_SET_LOGICAL,							0, 0, 0 },		// s32
 		{	_INDEX_SET_NAMING_CONVENTIONS,				0, 0, 0 },		// bool
+		{	_INDEX_SET_NCSET_SIGN_SIGN2,				0, 0, 0 },		// bool
 		{	_INDEX_SET_REPROCESS,						0, 0, 0 },		// bool or s32 
 		{	_INDEX_SET_REPROCESSATTEMPTS,				0, 0, 0 },		// s32
 		{	_INDEX_SET_REPROCESSINTERVAL,				0, 0, 0 },		// s32

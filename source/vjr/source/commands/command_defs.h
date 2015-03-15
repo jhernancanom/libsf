@@ -197,6 +197,7 @@ struct SThisCode;
 	SVariable*			function_max								(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight);
 	SVariable*			function_min								(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight);
 	SVariable*			function_mod		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varDividend, SVariable* varDivisor);
+	SVariable*			function_ncset								(SThisCode* thisCode, SVariable* varIndex, SVariable* varP1, SVariable* varP2, SVariable* varP3, SVariable* varP4, SVariable* varP5, SVariable* varP6);
 	SVariable*			function_occurs								(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack);
 	SVariable*			function_occursc							(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack);
 	SVariable*			function_padc								(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter);
@@ -204,7 +205,7 @@ struct SThisCode;
 	SVariable*			function_padr								(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter);
 	SVariable*			ifunction_padCommon							(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter, bool tlPadLeft, bool tlPadRight);
 	SVariable*			function_proper								(SThisCode* thisCode, SVariable* varString);
-	SVariable*			function_ranger								(SThisCode* thisCode, SVariable* varExpression, SVariable* varMin, SVariable* varMax);
+	SVariable*			function_ranger		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varExpression, SVariable* varMin, SVariable* varMax);
 	SVariable*			function_rat								(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence);
 	SVariable*			function_ratc								(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence);
 	SVariable*			function_replicate							(SThisCode* thisCode, SVariable* varString, SVariable* varCount);
@@ -212,7 +213,7 @@ struct SThisCode;
 	SVariable*			function_rgba								(SThisCode* thisCode, SVariable* varRed, SVariable* varGrn, SVariable* varBlu, SVariable* varAlp);
 	SVariable*			function_right								(SThisCode* thisCode, SVariable* varString, SVariable* varCount);
 	SVariable*			function_rtrim								(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2);
-	SVariable*			function_sign								(SThisCode* thisCode, SVariable* varNumber);
+	SVariable*			function_sign		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_space								(SThisCode* thisCode, SVariable* varCount);
 	SVariable*			function_strtran							(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount);
 	SVariable*			function_strtranc							(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount);
@@ -332,13 +333,14 @@ struct SThisCode;
 		{	_ICODE_MAX,				1,			(uptr)&function_max,			2,				2,				&gsSourceLight_max[0]			},
 		{	_ICODE_MIN,				1,			(uptr)&function_min,			2,				2,				&gsSourceLight_min[0]			},
 		{	_ICODE_MOD,				1,			(uptr)&function_mod,			2,				2,				&gsSourceLight_mod[0]			},	// MOD() by Stefano D'Amico, VJr 0.56, Mar.08.2015
+		{	_ICODE_NCSET,			1,			(uptr)&function_ncset,			2,				7,				&gsSourceLight_ncset[0]			},
 		{	_ICODE_OCCURS,			1,			(uptr)&function_occurs,			2,				2,				&gsSourceLight_occurs[0]		},
 		{	_ICODE_OCCURSC,			1,			(uptr)&function_occursc,		2,				2,				&gsSourceLight_occursc[0]		},
 		{	_ICODE_PADC,			1,			(uptr)&function_padc,			2,				3,				&gsSourceLight_padc[0]			},
 		{	_ICODE_PADL,			1,			(uptr)&function_padl,			2,				3,				&gsSourceLight_padl[0]			},
 		{	_ICODE_PADR,			1,			(uptr)&function_padr,			2,				3,				&gsSourceLight_padr[0]			},
 		{	_ICODE_PROPER,			1,			(uptr)&function_proper,			1,				1,				&gsSourceLight_proper[0]		},
-		{	_ICODE_RANGER,			1,			(uptr)&function_ranger,			3,				3,				&gsSourceLight_ranger[0]		},
+		{	_ICODE_RANGER,			1,			(uptr)&function_ranger,			3,				3,				&gsSourceLight_ranger[0]		},	// RANGER() by Stefano D'Amico, VJr 0.56, Mar.14.2015
 		{	_ICODE_RAT,				1,			(uptr)&function_rat,			2,				3,				&gsSourceLight_rat[0]			},
 		{	_ICODE_RATC,			1,			(uptr)&function_ratc,			2,				3,				&gsSourceLight_ratc[0]			},
 		{	_ICODE_REPLICATE,		1,			(uptr)&function_replicate,		2,				2,				&gsSourceLight_replicate[0]		},
@@ -346,7 +348,7 @@ struct SThisCode;
 		{	_ICODE_RGBA,			1,			(uptr)&function_rgba,			4,				4,				&gsSourceLight_rgba[0]			},
 		{	_ICODE_RIGHT,			1,			(uptr)&function_right,			2,				2,				&gsSourceLight_right[0]			},
 		{	_ICODE_RTRIM,			1,			(uptr)&function_rtrim,			1,				1,				&gsSourceLight_rtrim[0]			},
-		{	_ICODE_SIGN,			1,			(uptr)&function_sign,			1,				1,				&gsSourceLight_sign[0]			},
+		{	_ICODE_SIGN,			1,			(uptr)&function_sign,			1,				1,				&gsSourceLight_sign[0]			},	// SIGN() by Stefano D'Amico, VJr 0.56, Mar.14.2015
 		{	_ICODE_SPACE,			1,			(uptr)&function_space,			1,				1,				&gsSourceLight_space[0]			},
 		{	_ICODE_STRTRAN,			1,			(uptr)&function_strtran,		2,				4,				&gsSourceLight_strtran[0]		},
 		{	_ICODE_STRTRANC,		1,			(uptr)&function_strtranc,		2,				4,				&gsSourceLight_strtranc[0]		},

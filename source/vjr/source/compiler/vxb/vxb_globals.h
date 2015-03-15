@@ -496,6 +496,7 @@
 		{ cgc_mrow,					4,			false,		_ICODE_MROW,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_mton,					4,			false,		_ICODE_MTON,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_mwindow,				7,			false,		_ICODE_MWINDOW,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
+		{ cgc_ncset,				5,			false,		_ICODE_NCSET,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_ndx,					3,			false,		_ICODE_NDX,								false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_noLoadParams,			12,			false,		_ICODE_NOLOADPARAMS,					false,				_ICAT_OPTION,		&colorSynHi_flag,			false,						null0,		null0 },
 		{ cgc_newobject,			9,			false,		_ICODE_NEWOBJECT,						false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },

@@ -3317,6 +3317,108 @@
 	}
 
 
+
+
+//////////
+//
+// Function: NCSET()
+// Nuance compatibility settings. Used to enable or disable enhancements
+// in VXB which may not be present in other xbase languages.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.15.2015
+//////
+// Change log:
+//     Mar.15.2015 -- Initial creation
+//////
+// Parameters:
+//    varIndex		-- The index to set
+//    varP1..varP6	-- Various, depends on the indexed function's requirements
+//
+//////
+// Returns:
+//    s32			-- The number of times
+//////
+	SVariable* function_ncset(SThisCode* thisCode, SVariable* varIndex, SVariable* varP1, SVariable* varP2, SVariable* varP3, SVariable* varP4, SVariable* varP5, SVariable* varP6)
+	{
+		s32			lnIndex;
+		bool		llEnabled, llNewValue;
+		bool		error;
+		u32			errorNum;
+		SVariable*	result;
+
+
+		//////////
+		// nIndex must be numeric
+		//////
+			if (!iVariable_isValid(varIndex) || !iVariable_isTypeNumeric(varIndex))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varIndex), false);
+				return(NULL);
+			}
+			lnIndex = iiVariable_getAs_s32(thisCode, varIndex, false, &error, &errorNum);
+			if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varIndex), false);	return(NULL);	}
+
+
+		//////////
+		// Create the return variable
+		//////
+			result = iVariable_create(thisCode, _VAR_TYPE_LOGICAL, NULL);
+			if (!result)
+			{
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_compRelated(thisCode, varIndex), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// What function are they requesting?
+		//////
+			// Based on the index, set the value
+			switch (lnIndex)
+			{
+				case _NCSET_SIGN_SIGN2:
+					// Get the value
+					llEnabled = propGet_settings_ncset_signSign2(_settings);
+					if (varP1)
+					{
+						// They are setting the value
+						if (iVariable_isFundamentalTypeLogical(varP1))
+						{
+							// Obtain its value as a logical
+							llNewValue = iiVariable_getAs_bool(thisCode, varP1, false, &error, &errorNum);
+							if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varIndex), false);	return(NULL);	}
+
+							// Set the new value
+							propSet_settings_ncset_signSign2_fromBool(_settings, llNewValue);
+
+						} else {
+							// The variable is not a type that can be processed as logical
+							iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varP1), false);
+							return(NULL);
+						}
+					}
+					break;
+
+				default:
+					// Unrecognized option
+					iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_compRelated(thisCode, varIndex), false);
+					return(NULL);
+			}
+
+
+		//////////
+		// Set the result based on the value, and return it
+		//////
+			*result->value.data_s8 = ((llEnabled) ? _LOGICAL_TRUE : _LOGICAL_FALSE);
+			return(result);
+	}
+
+
+
+
 //////////
 //
 // Function: OCCURS(), and OCCURSC()
