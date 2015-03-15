@@ -174,6 +174,7 @@
 	SVariable*			varConstant_space					= NULL;									// Holds a single space, and is a constant
 	SVariable*			varEmptyString						= NULL;
 	SVariable*			var2000Spaces						= NULL;
+	SVariable*			varZero								= NULL;									// A constant 0
 	SVariable*			varTrue								= NULL;									// A constant .T.
 	SVariable*			varFalse							= NULL;									// A constant .F.
 	SVariable*			varSix								= NULL;									// A numeric value of 6, used for padding widths

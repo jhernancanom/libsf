@@ -1647,20 +1647,27 @@
 			// Validate validity
 			if (win->isValid)
 			{
-				// Render anything needing rendering
-				iObj_renderChildrenAndSiblings(thisCode, win->obj, true, true, tlForce);
+				// Is the screen locked?
+				if (!propGet_settings_Lock(_settings))
+				{
+					// Render anything needing rendering
+					iObj_renderChildrenAndSiblings(thisCode, win->obj, true, true, tlForce);
 
-				// Publish anything needing publishing
-				iObj_publish(thisCode, win->obj, &win->rc, win->bmp, true, true, tlForce, 0);
+					// Publish anything needing publishing
+					iObj_publish(thisCode, win->obj, &win->rc, win->bmp, true, true, tlForce, 0);
 
-// Update the openGL window
-// iGrace_display();
+//////////
+// Disabled ... cannot find a good (realtime) scaling algorithm for forms bitmaps
+//////
+	// Update the openGL window
+	// iGrace_display();
 
-				// Determine the focus highlights
-				iObj_setFocusHighlights(thisCode, win, win->obj, 0, 0, true, true);
+					// Determine the focus highlights
+					iObj_setFocusHighlights(thisCode, win, win->obj, 0, 0, true, true);
 
-				// And force the redraw
-				InvalidateRect(win->hwnd, 0, FALSE);
+					// And force the redraw
+					InvalidateRect(win->hwnd, 0, FALSE);
+				}
 			}
 
 			// Unlock

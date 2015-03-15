@@ -126,14 +126,14 @@
 						// They want to quit
 						iVjr_shutdown();
 						break;
-
-					case _ICODE_CLEAR:
-						// They want to clear the screen
-						iSEM_navigateToTopLine(screenData, _screen);
-						iSEM_deleteChain(&screenData, false);
-						screen_editbox->isDirtyRender = true;
-						iWindow_render(NULL, gWinJDebi, false);
-						break;
+// 
+// 					case _ICODE_CLEAR:
+// 						// They want to clear the screen
+// 						iSEM_navigateToTopLine(screenData, _screen);
+// 						iSEM_deleteChain(&screenData, false);
+// 						screen_editbox->isDirtyRender = true;
+// 						iWindow_render(NULL, gWinJDebi, false);
+// 						break;
 
 					case _ICODE_QUESTION_MARK:
 						// It is a "? something" command
@@ -247,7 +247,7 @@
 								if (cmd->iCode == comp->iCode)
 								{
 									// Yes, execute it (self-contained execution and error reporting on every command)
-									cmd->command(comp);
+									cmd->command(thisCode, comp);
 									break;
 								}
 							}
@@ -750,6 +750,50 @@
 	void iEngine_error(SThisCode* thisCode, u32 tnErrorNumber, SVariable* varRelated)
 	{
 // TODO:  Report the error and relate the variable
+	}
+
+
+
+
+//////////
+//
+// Called to update the global _tally value
+//
+//////
+	s64 iEngine_update_tally(SThisCode* thisCode, s64 tnValue)
+	{
+		s64			lnOldValue;
+		SVariable*	varTally;
+
+
+		//////////
+		// Locate the variable
+		//////
+			varTally = iVariable_searchForName(NULL, varGlobals, (s8*)cgcName_tally, -1, NULL);
+			if (!varTally)
+			{
+				// This should never happen
+				iError_signal(thisCode, _ERROR_INTERNAL_ERROR, NULL, true, (s8*)cgcFatalSystemError_tally, true);
+				// Control will never return here
+			}
+
+
+		//////////
+		// Grab the old value
+		//////
+			lnOldValue = *varTally->value.data_s64;
+
+
+		//////////
+		// Update with the new value
+		//////
+			*varTally->value.data_s64 = tnValue;
+
+
+		//////////
+		// Return the old value
+		//////
+			return(lnOldValue);
 	}
 
 

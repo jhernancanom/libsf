@@ -239,7 +239,7 @@
 		//////
 			// Build the error string "_settings.reprocess not found or invalid"
 			sprintf(buffer, "%s.%s %s\0", cgc__settings, cgc_reprocess, cgc_notFoundOrInvalidDataType);
-			iError_signal(thisCode, _ERROR_INTERNAL_ERROR, NULL, false, buffer);
+			iError_signal(thisCode, _ERROR_INTERNAL_ERROR, NULL, false, buffer, false);
 
 			// Indicate no retry
 			return(false);

@@ -118,7 +118,7 @@ struct SThisCode;
 //        given by its name, such as "function_chr()" being a function.
 //////
 	// Temporary error reporting until the proper engine is constructed.
-	void				iError_signal								(SThisCode* thisCode, u32 tnErrorNum, SComp* comp, bool tlInvasive, s8* tcExtraInfo);
+	void				iError_signal								(SThisCode* thisCode, u32 tnErrorNum, SComp* comp, bool tlInvasive, s8* tcExtraInfo, bool tlFatal);
 	void				iError_report								(cu8* constantErrorText, bool tlInvasive);
 	void				iError_report								(u8* errorText, bool tlInvasive);
 	void				iError_reportByNumber						(SThisCode* thisCode, u32 tnErrorNum, SComp* comp, bool tlInvasive);
@@ -251,6 +251,8 @@ struct SThisCode;
 // STEP1B: Define your command
 //
 //////
+	void				command_clear								(SThisCode* thisCode, SComp* compClear);
+	bool				iiCommand_clear_continue_callback			(SEM_callback* ecb);
 	void				command_modify								(SThisCode* thisCode, SComp* compModify);
 	void				command_open								(SThisCode* thisCode, SComp* compOpen);
 	void				command_use									(SThisCode* thisCode, SComp* compUse);
@@ -401,7 +403,7 @@ struct SThisCode;
 		//////
 			union {
 				uptr		_command;
-				void		(*command)		(SComp* comp);
+				void		(*command)		(SThisCode* thisCode, SComp* comp);
 			};
 
 
@@ -414,6 +416,7 @@ struct SThisCode;
 	SCommandData gsKnownCommands[] = {
 		//	iCode					Command Algorithm
 		//  ------------------		--------------------------
+		{	_ICODE_CLEAR,			(uptr)&command_clear		},
 		{	_ICODE_MODIFY,			(uptr)&command_modify		},
 		{	_ICODE_OPEN,			(uptr)&command_open			},
 		{	_ICODE_USE,				(uptr)&command_use			},

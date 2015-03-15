@@ -466,6 +466,7 @@ struct SBasePropertyInit;
 	const s8		cgc_setIndexMetaData[]									= "indexMetaData";
 	const s8		cgc_setLanguage[]										= "language";
 	const s8		cgc_setLoadReceivesParams[]								= "loadReceivesParams";
+	const s8		cgc_setLock[]											= "lock";
 	const s8		cgc_setLogical[]										= "logical";
 	const s8		cgc_setNamingConvention[]								= "namingConvention";
 	const s8		cgc_setNcsetCeilingFloor[]								= "ncsetCeilingFloor";
@@ -850,22 +851,23 @@ struct SBasePropertyInit;
 	const u32		_INDEX_SET_INITIALIZE_DEFAULT_VALUE						= 362;
 	const u32		_INDEX_SET_LANGUAGE										= 363;
 	const u32		_INDEX_SET_LOAD_RECEIVES_PARAMS							= 364;
-	const u32		_INDEX_SET_LOGICAL										= 365;
-	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 366;
-	const u32		_INDEX_SET_NCSET_CEILING_FLOOR							= 367;
-	const u32		_INDEX_SET_NCSET_SIGN_SIGN2								= 368;
-	const u32		_INDEX_SET_REPROCESS									= 369;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 370;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
-	const u32		_INDEX_SET_REPROCESSINTERVAL							= 371;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
-	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 372;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_SLOPPY_PRINTING								= 373;
-	const u32		_INDEX_SET_STICKY_PARAMETERS							= 374;
-	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 375;
-	const u32		_INDEX_SET_TABLE_OBJECS									= 376;
-	const u32		_INDEX_SET_TALK											= 377;
-	const u32		_INDEX_SET_TIME											= 378;
-	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 379;
-	const u32		_INDEX_SET_VARIABLES_FIRST								= 380;
+	const u32		_INDEX_SET_LOCK											= 365;
+	const u32		_INDEX_SET_LOGICAL										= 366;
+	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 367;
+	const u32		_INDEX_SET_NCSET_CEILING_FLOOR							= 368;
+	const u32		_INDEX_SET_NCSET_SIGN_SIGN2								= 369;
+	const u32		_INDEX_SET_REPROCESS									= 370;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 371;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
+	const u32		_INDEX_SET_REPROCESSINTERVAL							= 372;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
+	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 373;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_SLOPPY_PRINTING								= 374;
+	const u32		_INDEX_SET_STICKY_PARAMETERS							= 375;
+	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 376;
+	const u32		_INDEX_SET_TABLE_OBJECS									= 377;
+	const u32		_INDEX_SET_TALK											= 378;
+	const u32		_INDEX_SET_TIME											= 379;
+	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 380;
+	const u32		_INDEX_SET_VARIABLES_FIRST								= 381;
 
 
 	// Basic setters and getters
@@ -1345,6 +1347,7 @@ struct SBasePropertyInit;
 		{	_INDEX_SET_INITIALIZE_DEFAULT_VALUE,	cgc_setInitializeDefaultValue,	sizeof(cgc_setInitializeDefaultValue) - 1,	_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// The default initialize variable type for new variables, such as "LOCAL fred" ... by default, logical false
 		{	_INDEX_SET_LANGUAGE,					cgc_setLanguage,				sizeof(cgc_setLanguage) - 1,				_VAR_TYPE_CHARACTER,		0, 0, 0,		(uptr)&cgcEnglish[0]			,NULL	},	// The default language for any new loaded objects
 		{	_INDEX_SET_LOAD_RECEIVES_PARAMS,		cgc_setLoadReceivesParams,		sizeof(cgc_setLoadReceivesParams) - 1,		_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=Load() events receive the same parameters that will be passed to init(), .f.=(default) Load() does not receive any parameters
+		{	_INDEX_SET_LOCK,						cgc_setLock,					sizeof(cgc_setLock) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=Screen is locked and will not be rendered or updated, .f.=(default) Screen is updated
 		{	_INDEX_SET_LOGICAL,						cgc_setLogical,					sizeof(cgc_setLogical) - 1,					_VAR_TYPE_S32,				0, 0, 0,		_LOGICAL_TF						,NULL	},	// See _LOGICAL_* constants
 		{	_INDEX_SET_NAMING_CONVENTIONS,			cgc_setNamingConvention,		sizeof(cgc_setNamingConvention) - 1,		_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=Field and variables are examined for standard naming conventions with errors reported, .f.=no checks are made
 		{	_INDEX_SET_NCSET_CEILING_FLOOR,			cgc_setNcsetCeilingFloor,		sizeof(cgc_setNcsetCeilingFloor) - 1,		_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=ceiling() and floor() return floating point values if floating point input, .f.=always returns integer
@@ -3515,6 +3518,7 @@ struct SBasePropertyInit;
 		{	_INDEX_SET_INITIALIZE_DEFAULT_VALUE,		0, 0, 0 },		// Varies, but initially it is bool
 		{	_INDEX_SET_LANGUAGE,						0, 0, 0 },		// SDatum
 		{	_INDEX_SET_LOAD_RECEIVES_PARAMS,			0, 0, 0 },		// bool
+		{	_INDEX_SET_LOCK,							0, 0, 0 },		// bool
 		{	_INDEX_SET_LOGICAL,							0, 0, 0 },		// s32
 		{	_INDEX_SET_NAMING_CONVENTIONS,				0, 0, 0 },		// bool
 		{	_INDEX_SET_NCSET_CEILING_FLOOR,				0, 0, 0 },		// bool

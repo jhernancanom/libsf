@@ -112,7 +112,6 @@
 	// First entry
 	SObject*	settings									= NULL;
 	SObject*	settingsDefaults							= NULL;
-;
 
 
 //////////
@@ -151,6 +150,8 @@
 	void					iEngine_executeSetter					(SThisCode* thisCode, cs8* name, SVariable* varOld, SVariable* varNew);
 	void					iEngine_executeSetter					(SThisCode* thisCode, s8*  name, SVariable* varOld, SVariable* varNew);
 	void					iEngine_error							(SThisCode* thisCode, u32 tnErrorNumber, SVariable* varRelated);
+
+	s64						iEngine_update_tally					(SThisCode* thisCode, s64 tnValue);
 
 	bool					iiEngine_getParametersBetween			(SThisCode* thisCode, SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable** p1, SVariable** p2, SVariable** p3, SVariable** p4, SVariable** p5, SVariable** p6, SVariable** p7);
 

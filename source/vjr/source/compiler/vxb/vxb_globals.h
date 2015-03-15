@@ -670,6 +670,7 @@
 		// Commands
 		{ cgc_activate,				8,			false,		_ICODE_ACTIVATE,						false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 //		{ cgc_add,					3,			false,		_ICODE_ADD,								false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
+		{ cgc_all,					3,			false,		_ICODE_ALL,								false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_alter,				5,			false,		_ICODE_ALTER,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_alternate,			9,			false,		_ICODE_ALTERNATE,						false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_ansi,					4,			false,		_ICODE_ANSI,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
@@ -913,6 +914,7 @@
 		{ cgc_reprocessattempts,	17,			false,		_ICODE_REPROCESS_ATTEMPTS,				false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_reprocess,			9,			false,		_ICODE_REPROCESS,						false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_resource,				8,			false,		_ICODE_RESOURCE,						false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
+		{ cgc_resources,			9,			false,		_ICODE_RESOURCES,						false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_restore,				7,			false,		_ICODE_RESTORE,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_resume,				6,			false,		_ICODE_RESUME,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_retry,				5,			false,		_ICODE_RETRY,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },

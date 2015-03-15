@@ -239,10 +239,15 @@
 		SEM*		sem;											// The manager
 		SLine*		line;											// This line
 
-		// Functions to use to access this extra info block
+		// Values used for miscellaneous purposes
+		uptr		extra1;
+		uptr		extra2;
+
+		// Callback to delete any extra information.
+		// Based on the return value, both line->sourceCode and line will be deleted automatically.
 		union {
-			u32				_callback;
-			void			(*callback)		(SEM_callback* ecb);	// Callback to delete any extra information.  The ec->sourceCode and ec itself will be deleted automatically.
+			uptr			_callback;
+			bool			(*callback)		(SEM_callback* ecb);
 		};
 
 	};
@@ -259,7 +264,7 @@
 	void					iSEM_delete							(SEM** root, bool tlDeleteSelf);
 	void					iSEM_deleteChain					(SEM** root, bool tlDeleteSelf);
 	void					iSEM_deleteChainWithCallback		(SEM** root, bool tlDeleteSelf, SEM_callback* ecb);
-	void					iSEM_renumber						(SEM* sem, u32 tnStartingLineNumber);
+	u32						iSEM_renumber						(SEM* sem, u32 tnStartingLineNumber);
 	SLine*					iSEM_appendLine						(SEM* sem, u8* tcText, s32 tnTextLength, bool tlSetNewLineFlag);
 	SLine*					iSEM_insertLine						(SEM* sem, u8* tcText, s32 tnTextLength, SLine* line, bool tlInsertAfter, bool tlSetNewLineFlag);
 	void					iSEM_deleteLine						(SEM* sem);

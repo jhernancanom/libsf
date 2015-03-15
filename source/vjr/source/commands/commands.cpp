@@ -91,9 +91,9 @@
 // Called to signal an error in the current running program
 //
 //////
-	void iError_signal(SThisCode* thisCode, u32 tnErrorNum, SComp* comp, bool tlInvasive, s8* tcExtraInfo)
+	void iError_signal(SThisCode* thisCode, u32 tnErrorNum, SComp* comp, bool tlInvasive, s8* tcExtraInfo, bool tlFatal)
 	{
-// TODO:  This will need to potentially break the 
+// TODO:  This will need to potentially break the program execution
 		iError_reportByNumber(thisCode, tnErrorNum, comp, tlInvasive);
 	}
 
@@ -200,35 +200,35 @@
 		switch (tnVarType)
 		{
 			case _VAR_TYPE_S8:
-				if (value <= (f32)_s8_min || value >= (f32)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value <= (f32)_s8_min || value >= (f32)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_U8:
-				if (value >= (f32)_u8_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (f32)_u8_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_S16:
-				if (value <= (f32)_s16_min || value >= (f32)_s16_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value <= (f32)_s16_min || value >= (f32)_s16_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_U16:
-				if (value >= (f32)_u16_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (f32)_u16_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_S32:
-				if (value <= (f32)_s32_min || value >= (f32)_s32_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value <= (f32)_s32_min || value >= (f32)_s32_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_U32:
-				if (value >= (f32)_u32_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (f32)_u32_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_S64:
-				if (value <= (f32)_s64_min || value >= (f32)_s64_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value <= (f32)_s64_min || value >= (f32)_s64_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_U64:
-				if (value >= (f32)_u64_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (f32)_u64_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 		}
 
@@ -249,35 +249,35 @@
 		switch (tnVarType)
 		{
 			case _VAR_TYPE_S8:
-				if (value <= (f64)_s8_min || value >= (f64)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value <= (f64)_s8_min || value >= (f64)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_U8:
-				if (value >= (f64)_u8_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (f64)_u8_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_S16:
-				if (value <= (f64)_s16_min || value >= (f64)_s16_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value <= (f64)_s16_min || value >= (f64)_s16_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_U16:
-				if (value >= (f64)_u16_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (f64)_u16_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_S32:
-				if (value <= (f64)_s32_min || value >= (f64)_s32_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value <= (f64)_s32_min || value >= (f64)_s32_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_U32:
-				if (value >= (f64)_u32_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (f64)_u32_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_S64:
-				if (value <= (f64)_s64_min || value >= (f64)_s64_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value <= (f64)_s64_min || value >= (f64)_s64_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_U64:
-				if (value >= (f64)_u64_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (f64)_u64_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 		}
 
@@ -298,7 +298,7 @@
 		switch (tnVarType)
 		{
 			case _VAR_TYPE_S8:
-				if (value >= (u8)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (u8)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 		}
 
@@ -319,11 +319,11 @@
 		switch (tnVarType)
 		{
 			case _VAR_TYPE_S8:
-				if (value <= (s16)_s8_min || value >= (s16)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value <= (s16)_s8_min || value >= (s16)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_U8:
-				if (value >= (s16)_u8_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (s16)_u8_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 		}
 
@@ -344,15 +344,15 @@
 		switch (tnVarType)
 		{
 			case _VAR_TYPE_S8:
-				if (value >= (u16)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (u16)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_U8:
-				if (value >= (u16)_u8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (u16)_u8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_S16:
-				if (value >= (u16)_s16_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (u16)_s16_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 		}
 
@@ -373,19 +373,19 @@
 		switch (tnVarType)
 		{
 			case _VAR_TYPE_S8:
-				if (value <= (s32)_s8_min || value >= (s32)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value <= (s32)_s8_min || value >= (s32)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_U8:
-				if (value >= (s32)_u8_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (s32)_u8_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_S16:
-				if (value <= (s32)_s16_min || value >= (s32)_s16_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value <= (s32)_s16_min || value >= (s32)_s16_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_U16:
-				if (value >= (s32)_u16_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (s32)_u16_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 		}
 
@@ -406,19 +406,19 @@
 		switch (tnVarType)
 		{
 			case _VAR_TYPE_S8:
-				if (value >= (u32)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (u32)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_U8:
-				if (value >= (u32)_u8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (u32)_u8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_S16:
-				if (value >= (u32)_s16_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (u32)_s16_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_U16:
-				if (value >= (u32)_u16_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (u32)_u16_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 		}
 
@@ -439,27 +439,27 @@
 		switch (tnVarType)
 		{
 			case _VAR_TYPE_S8:
-				if (value <= (s64)_s8_min || value >= (s64)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value <= (s64)_s8_min || value >= (s64)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_U8:
-				if (value >= (s64)_u8_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (s64)_u8_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_S16:
-				if (value <= (s64)_s16_min || value >= (s64)_s16_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value <= (s64)_s16_min || value >= (s64)_s16_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_U16:
-				if (value >= (s64)_u16_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (s64)_u16_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_S32:
-				if (value <= (s64)_s32_min || value >= (s64)_s32_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value <= (s64)_s32_min || value >= (s64)_s32_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_U32:
-				if (value >= (s64)_u32_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (s64)_u32_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 		}
 
@@ -480,31 +480,31 @@
 		switch (tnVarType)
 		{
 			case _VAR_TYPE_S8:
-				if (value >= (u64)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (u64)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_U8:
-				if (value >= (u64)_u8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (u64)_u8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_S16:
-				if (value >= (u64)_s16_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (u64)_s16_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_U16:
-				if (value >= (u64)_u16_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (u64)_u16_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_S32:
-				if (value >= (u64)_s32_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (u64)_s32_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_U32:
-				if (value >= (u64)_u32_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (u64)_u32_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 
 			case _VAR_TYPE_S64:
-				if (value >= (u64)_s64_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+				if (value >= (u64)_s64_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 				break;
 		}
 
@@ -540,39 +540,39 @@
 			switch (tnVarType)
 			{
 				case _VAR_TYPE_S8:
-					if (lfValue <= (f64)_s8_min || lfValue >= (f64)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+					if (lfValue <= (f64)_s8_min || lfValue >= (f64)_s8_max)			iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 					break;
 
 				case _VAR_TYPE_U8:
-					if (lfValue >= (f64)_u8_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+					if (lfValue >= (f64)_u8_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 					break;
 
 				case _VAR_TYPE_S16:
-					if (lfValue <= (f64)_s16_min || lfValue >= (f64)_s16_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+					if (lfValue <= (f64)_s16_min || lfValue >= (f64)_s16_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 					break;
 
 				case _VAR_TYPE_U16:
-					if (lfValue >= (f64)_u16_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+					if (lfValue >= (f64)_u16_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 					break;
 
 				case _VAR_TYPE_S32:
-					if (lfValue <= (f64) _s32_min || lfValue >= (f64)_s32_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+					if (lfValue <= (f64) _s32_min || lfValue >= (f64)_s32_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 					break;
 
 				case _VAR_TYPE_U32:
-					if (lfValue >= (f64)_u32_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+					if (lfValue >= (f64)_u32_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 					break;
 
 				case _VAR_TYPE_S64:
-					if (lfValue <= (f64)_s64_min || lfValue >= (f64)_s64_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+					if (lfValue <= (f64)_s64_min || lfValue >= (f64)_s64_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 					break;
 
 				case _VAR_TYPE_U64:
-					if (lfValue >= (f64)_u64_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+					if (lfValue >= (f64)_u64_max)									iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 					break;
 
 				case _VAR_TYPE_F32:
-					if (lfValue <= (f64)_s32_min || lfValue >= (f64)_s32_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo);
+					if (lfValue <= (f64)_s32_min || lfValue >= (f64)_s32_max)		iError_signal(thisCode, _ERROR_OUT_OF_RANGE, compRelated, tlInvasive, tcExtraInfo, false);
 					break;
 			}
 
@@ -3800,19 +3800,23 @@
 //////
 	SVariable* function_pi(SThisCode* thisCode)
 	{
-		u32			errorNum;
-		SVariable*	result;	
+		SVariable* result;	
 
 
 		//////////
-        // Return pi
+        // Create a return variable
 		//////
 			result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL);
 			if (!result)
 			{
-				iError_reportByNumber(thisCode, errorNum, NULL, false);
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
 				return(NULL);
 			}
+
+
+		//////////
+		// Store and return pi
+		//////
 			*(f64*)result->value.data_f64 = (f64)_MATH_PI;
 	        return result;
 	}
@@ -4715,7 +4719,7 @@
 				// Converting of lfValue to 1 or -1
 				lfValue = lfValue / abs(lfValue);	
 
-			} if (tlIncrementZero) {
+			} else if (tlIncrementZero) {
 				// Should we increment a 0 value (so it will be returned as 1 instead of 0)?
 				++lfValue;
 			}
@@ -6527,7 +6531,156 @@ debug_break;
 			return(result);
 	}
 
+ 
 
+
+//////////
+//
+// Command:  CLEAR
+// Clears various things.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.15.2015
+//////
+// Change log:
+//     Mar.15.2015
+//////
+// Parameters:
+//		compClear -- The [CLEAR] component
+//////
+// Returns:
+//		Nothing, but whatever it is that's being modified may be open for modifying.
+//////
+	void command_clear(SThisCode* thisCode, SComp* compClear)
+	{
+		s32				lnSaveLines;
+		bool			llManufactured;
+		SEM_callback	ecb;
+		SVariable*		var;
+		bool			error;
+		u32				errorNum;
+
+
+// 		SComp*	compAll				= iComps_findNextBy_iCode(compModify, _ICODE_ALL,		NULL);
+// 		SComp*	compClass			= iComps_findNextBy_iCode(compModify, _ICODE_CLASS,		NULL);
+// 		SComp*	compClassName		= iComps_getNth(compClass, 1);
+// 		SComp*	compClassLib		= iComps_findNextBy_iCode(compModify, _ICODE_CLASSLIB,	NULL);
+// 		SComp*	compClassLibName	= iComps_getNth(compClassLib, 1);
+		SComp*	compContinue		= iComps_findNextBy_iCode(compClear, _ICODE_CONTINUE,	NULL);;
+		SComp*	compContinueCount	= iComps_getNth(compContinue, 1);
+// 		SComp*	compDebug			= iComps_findNextBy_iCode(compModify, _ICODE_DEBUG,		NULL);
+// 		SComp*	compDlls			= iComps_findNextBy_iCode(compModify, _ICODE_DLLS,		NULL);
+// 		SComp*	compDllAlias		= iComps_getNth(compDlls, 1);
+// 		SComp*	compEvents			= iComps_findNextBy_iCode(compModify, _ICODE_EVENTS,	NULL);
+// 		SComp*	compError			= iComps_findNextBy_iCode(compModify, _ICODE_ERROR,		NULL);
+// 		SComp*	compFields			= iComps_findNextBy_iCode(compModify, _ICODE_FIELDS,	NULL);
+// 		SComp*	compGets			= iComps_findNextBy_iCode(compModify, _ICODE_GETS,		NULL);
+// 		SComp*	compMacros			= iComps_findNextBy_iCode(compModify, _ICODE_MACROS,	NULL);
+// 		SComp*	compMemory			= iComps_findNextBy_iCode(compModify, _ICODE_MEMORY,	NULL);
+// 		SComp*	compMenus			= iComps_findNextBy_iCode(compModify, _ICODE_MENUS,		NULL);
+// 		SComp*	compPopups			= iComps_findNextBy_iCode(compModify, _ICODE_POPUPS,	NULL);
+// 		SComp*	compProgram			= iComps_findNextBy_iCode(compModify, _ICODE_PROGRAM,	NULL);
+// 		SComp*	compPrompt			= iComps_findNextBy_iCode(compModify, _ICODE_PROMPT,	NULL);
+// 		SComp*	compRead			= iComps_findNextBy_iCode(compModify, _ICODE_READ,		NULL);
+// 		SComp*	compResources		= iComps_findNextBy_iCode(compModify, _ICODE_RESOURCES,	NULL);
+// 		SComp*	compTypeahead		= iComps_findNextBy_iCode(compModify, _ICODE_TYPEAHEAD,	NULL);
+// 		SComp*	compWindows			= iComps_findNextBy_iCode(compModify, _ICODE_WINDOWS,	NULL);
+// 		SComp*	compFilename		= iComps_getNth(compWindows, 1);
+
+		if (compContinue)
+		{
+			// CLEAR CONTINUE
+			if (compContinueCount)
+			{
+				//////////
+				// CLEAR CONTINUE nCount
+				//////
+					var = iEngine_get_variableName_fromComponent(thisCode, compContinueCount, &llManufactured);
+					if (!var)
+					{
+						// Unknown parameter
+						iError_reportByNumber(thisCode, _ERROR_UNRECOGNIZED_PARAMETER, compContinueCount, false);
+						return;
+					}
+
+
+				//////////
+				// Find out how many lines
+				//////
+					lnSaveLines = iiVariable_getAs_s32(thisCode, var, false, &error, &errorNum);
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, compContinueCount, false);
+						return;
+					}
+
+
+				//////////
+				// Clean house
+				//////
+					if (llManufactured)
+						iVariable_delete(thisCode, var, true);
+
+
+				//////////
+				// Validate the number is in range
+				//////
+					if (lnSaveLines < 0)
+					{
+						iError_reportByNumber(thisCode, _ERROR_CANNOT_BE_NEGATIVE, compContinueCount, false);
+						return;
+					}
+
+			} else {
+				// Clear them all
+				lnSaveLines = 0;
+			}
+
+
+			//////////
+			// Prepare for the clear
+			//////
+				memset(&ecb, 0, sizeof(ecb));
+				ecb._callback = (uptr)&iiCommand_clear_continue_callback;
+				ecb.extra1 = (uptr)lnSaveLines;
+				ecb.extra2 = (uptr)iSEM_renumber(screenData, 1);
+
+
+			//////////
+			// Clear
+			//////
+				iSEM_deleteChainWithCallback(&screenData, false, &ecb);
+
+
+			//////////
+			// Count what remains, and set _tally
+			//////
+				iEngine_update_tally(thisCode, iSEM_renumber(screenData, 1));
+
+
+			//////////
+			// Redraw what remains
+			//////
+				iSEM_navigateToEndLine(screenData, _screen);
+				screen_editbox->isDirtyRender = true;
+				iWindow_render(NULL, gWinJDebi, false);
+				// All done
+
+		} else {
+			iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, compClear, false);
+		}
+	}
+
+	// Tests the line number, only saves the tail
+	bool iiCommand_clear_continue_callback(SEM_callback* ecb)
+	{
+		// If (endNum - saveCount) > lineNum ... delete it
+		return(ecb->sem->lastLine->lineNumber - ecb->extra1 >= ecb->line->lineNumber);
+	}
+	
+ 
 
 
 //////////

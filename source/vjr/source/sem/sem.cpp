@@ -609,7 +609,8 @@ debug_break;
 
 	void iSEM_deleteChainWithCallback(SEM** root, bool tlDeleteSelf, SEM_callback* ecb)
 	{
-		SLL* nodeNext;
+		bool			llDeleteThisLine;
+		SLL*			nodeNext;
 		SEM_callback	lecb;
 
 
@@ -636,7 +637,8 @@ debug_break;
 
 
 			// Iterate through deleting each entry after turning off the display
-			ecb->sem->isHeavyProcessing = true;
+			llDeleteThisLine			= true;
+			ecb->sem->isHeavyProcessing	= true;
 			while (ecb->line)
 			{
 				//////////
@@ -649,14 +651,15 @@ debug_break;
 				// Perform the callback
 				//////
 					if (ecb && ecb->_callback)
-						ecb->callback(ecb);
+						llDeleteThisLine = ecb->callback(ecb);
 
 
 				//////////
-				// Delete the node itself
+				// Delete the node itself if we're supposed to
 				//////
 					ecb->sem->line_cursor = ecb->line;
-					iSEM_deleteLine(ecb->sem);
+					if (llDeleteThisLine)
+						iSEM_deleteLine(ecb->sem);
 
 
 				//////////
@@ -675,7 +678,7 @@ debug_break;
 // Renumber the source code lines
 //
 //////
-	void iSEM_renumber(SEM* sem, u32 tnStartingLineNumber)
+	u32 iSEM_renumber(SEM* sem, u32 tnStartingLineNumber)
 	{
 		SLine* line;
 
@@ -727,7 +730,13 @@ debug_break;
 				//////
 					line = (SLine*)line->ll.next;
 			}
+
+			// Indicate the new ending line number
+			return(tnStartingLineNumber - 1);
 		}
+
+		// If we get here, no processing
+		return(-1);
 	}
 
 

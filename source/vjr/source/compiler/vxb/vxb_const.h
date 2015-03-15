@@ -291,7 +291,8 @@
 	const u8		cgcParameterTooLong[]							= "parameter too long";
 	const u8		cgcUnableToOpenDbc[]							= "unable to open container";
 	const u8		cgcDivisionByZero[]								= "division by zero";
-	const u8		cgcCannotBeNegative[]							= "argument cannot be negative";
+	const u8		cgcCannotBeNegative[]							= "parameter cannot be negative";
+	const u8		cgcFatalSystemError_tally[]						= "system variable _tally could not be found";
 
 #else
 	#error Language not specified
@@ -863,6 +864,7 @@
 	// Commands
 	const s32       _ICODE_ACTIVATE                                 = 2000;
 //	const s32       _ICODE_ADD                                      = 2001;
+	const s32		_ICODE_ALL										= 2289;
 	const s32       _ICODE_ALTER                                    = 2002;
 	const s32       _ICODE_ALTERNATE                                = 2003;
 	const s32       _ICODE_ANSI                                     = 2004;
@@ -1080,6 +1082,7 @@
 	const s32       _ICODE_READBORDER                               = 2204;
 	const s32       _ICODE_READERROR                                = 2205;
 	const s32       _ICODE_RECALL                                   = 2206;
+	const s32		_ICODE_RECOVER									= 2288;
 	const s32       _ICODE_REINDEX                                  = 2207;
 	const s32       _ICODE_RELEASE                                  = 2208;
 	const s32       _ICODE_REMOVE                                   = 2209;
@@ -1089,6 +1092,7 @@
 	const s32       _ICODE_REPROCESS                                = 2213;
 	const s32		_ICODE_REPROCESS_ATTEMPTS						= 2286;
 	const s32       _ICODE_RESOURCE                                 = 2214;
+	const s32		_ICODE_RESOURCES								= 2290;
 	const s32       _ICODE_RESTORE                                  = 2215;
 	const s32       _ICODE_RESUME                                   = 2216;
 	const s32       _ICODE_RETRY                                    = 2217;
@@ -1162,7 +1166,9 @@
 	// _ICODE_ROLL													= 2285;
 	// _ICODE_REPROCESSATTEMPTS										= 2286;
 	// _ICODE_SYSTEM												= 2287;
-	const s32		_ICODE_RECOVER									= 2288;
+	// _ICODE_RECOVER												= 2288;
+	// _ICODE_ALL													= 2289;
+	// _ICODE_RESOURCES												= 2290;
 
 
 //////////
@@ -1665,6 +1671,7 @@
 	// Commands
 	const s8		cgc_activate[]									= "activate";
 //	const s8		cgc_add[]										= "add";
+	const s8		cgc_all[]										= "all";
 	const s8		cgc_alter[]										= "alter";
 	const s8		cgc_alternate[]									= "alternate";
 	const s8		cgc_ansi[]										= "ansi";
@@ -1906,6 +1913,7 @@
 	const s8		cgc_reprocessattempts[]							= "reprocessattempts";
 	const s8		cgc_reprocess[]									= "reprocess";
 	const s8		cgc_resource[]									= "resource";
+	const s8		cgc_resources[]									= "resources";
 	const s8		cgc_restore[]									= "restore";
 	const s8		cgc_resume[]									= "resume";
 	const s8		cgc_retry[]										= "retry";

@@ -5096,6 +5096,10 @@ debug_break;
 		var = NULL;
 		if (varRoot)
 		{
+			// Make sure our length is set
+			if (tnVarNameLength == -1)
+				tnVarNameLength = strlen(tcVarName);
+
 			// Iterate from beginning through
 			var = varRoot;
 			while (var)
@@ -5127,6 +5131,10 @@ debug_break;
 							// If we get here, then they did not have a "." after the thisCode reference, and are referencing it directly
 							break;
 					}
+
+// TODO:  A possible performance enhancement here would be to move this variable to the top of its ll chain if it's below, say, the 10th position...
+// TODO:  A system variable SET OPTIMIZEVARIABLES TO nValue could be used instead of 10 ... to allow runtime peculiarities to be examined
+
 					// If we get here, this is our variable
 					return(var);
 				}

@@ -164,6 +164,7 @@
 		RECT		lrc;
 		u8			logBuffer[256];
 		SBitmap*	bmp;
+		SVariable*	var;
 
 
 		// Get startup time
@@ -192,6 +193,7 @@
 		var2000Spaces			= iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL);
 		varTrue					= iVariable_createAndPopulate(NULL, _VAR_TYPE_LOGICAL, (cu8*)NULL, 0);
 		varFalse				= iVariable_createAndPopulate(NULL, _VAR_TYPE_LOGICAL, (cu8*)NULL, 0);
+		varZero					= iVariable_create(NULL, _VAR_TYPE_S64, NULL);
 		lnSix					= 6;
 		varSix					= iVariable_createAndPopulate(NULL, _VAR_TYPE_S32, (cu8*)&lnSix, sizeof(lnSix));
 
@@ -346,10 +348,21 @@
 		iVjr_appendSystemLog((u8*)"Create message window");
 		iInit_createMessageWindow();
 
+
+		//////////
 		// Create our global variables
-		iVjr_appendSystemLog((u8*)"Create global variables");
-		varGlobals = function_datetime(NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-		iDatum_duplicate(&varGlobals->name, cgcName_startupTime, -1);
+		//////
+			iVjr_appendSystemLog((u8*)"Create global variables");
+
+			// _startupTime
+			varGlobals = function_datetime(NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+			iDatum_duplicate(&varGlobals->name, cgcName_startupTime, -1);
+
+			// _tally
+			var = iVariable_copy(NULL, varZero, false);
+			iDatum_duplicate(&var->name, cgcName_tally, -1);
+			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)var);
+
 
 		// Create our default objects
 		iVjr_appendSystemLog((u8*)"Create default objects");

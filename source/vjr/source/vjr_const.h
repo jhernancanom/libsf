@@ -223,17 +223,19 @@ typedef SEM**		SEMpp;
 	#define propGet_settings_FocusHighlightPixels(obj)			iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_FOCUS_HIGHLIGHT_PIXELS)
 	#define propGet_settings_InitializeDefaultValue(obj)		iObjProp_get_variable_byIndex	(thisCode, obj, _INDEX_SET_INITIALIZE_DEFAULT_VALUE)
 	#define propGet_settings_LoadReceivesParams(obj)			(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_LOAD_RECEIVES_PARAMS)	!= _LOGICAL_FALSE)
+	#define propGet_settings_Lock(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_LOCK)					!= _LOGICAL_FALSE)
 	#define propGet_settings_Logical(obj)						iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_LOGICAL)
+	#define propGet_settings_ncset_signSign2(obj)				(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_NCSET_SIGN_SIGN2)		!= _LOGICAL_FALSE)
+	#define propGet_settings_ncset_ceilingFloor(obj)			(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_NCSET_CEILING_FLOOR)	!= _LOGICAL_FALSE)
 	#define propGet_settings_Reprocess(obj)						iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_REPROCESS)	// negative attempts, positive seconds
 	#define propGet_settings_ReprocessAttempts(obj)				iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_REPROCESSATTEMPTS)
 	#define propGet_settings_ReprocessInterval(obj)				iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_REPROCESSINTERVAL)
 	#define propGet_settings_Talk(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_TALK)					!= _LOGICAL_FALSE)
-	#define propGet_settings_VariablesFirst(obj)				(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_VARIABLES_FIRST)			!= _LOGICAL_FALSE)
+	#define propGet_settings_VariablesFirst(obj)				(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_VARIABLES_FIRST)		!= _LOGICAL_FALSE)
 
-	#define propGet_settings_ncset_signSign2(obj)				(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_NCSET_SIGN_SIGN2)		!= _LOGICAL_FALSE)
-	#define propSet_settings_ncset_signSign2_fromBool(obj, value) iObjProp_set_logical_direct	(thisCode, obj, _INDEX_SET_NCSET_SIGN_SIGN2, value)
-	#define propGet_settings_ncset_ceilingFloor(obj)			(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_NCSET_CEILING_FLOOR)	!= _LOGICAL_FALSE)
-	#define propSet_settings_ncset_ceilingFloor_fromBool(obj, value) iObjProp_set_logical_direct(thisCode, obj, _INDEX_SET_NCSET_CEILING_FLOOR, value)
+	// Setters
+	#define propSet_settings_ncset_signSign2_fromBool(obj, value)		iObjProp_set_logical_direct(thisCode, obj, _INDEX_SET_NCSET_SIGN_SIGN2,		value)
+	#define propSet_settings_ncset_ceilingFloor_fromBool(obj, value)	iObjProp_set_logical_direct(thisCode, obj, _INDEX_SET_NCSET_CEILING_FLOOR,	value)
 
 
 //////////
@@ -818,6 +820,7 @@ typedef SEM**		SEMpp;
 // Internal variable names
 //////
 	const u8			cgcName_startupTime[]				= "_startupTime";
+	const u8			cgcName_tally[]						= "_tally";
 
 
 //////////
