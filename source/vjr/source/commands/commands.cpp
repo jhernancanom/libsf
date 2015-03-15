@@ -1912,10 +1912,13 @@
 	        return result;
 	}
 
+
+
+
 //////////
 //
 // Function: EXP()
-// Returns the value of ex where x is a specified numeric expression.
+// Returns the value of e^x where x is a specified numeric expression.
 //
 //////
 // Version 0.56
@@ -1976,22 +1979,10 @@
 
 
 		//////////
-		// Compute exp
+		// Compute, store, and return exp
 		//////
-			lfValue = pow(_MATH_EXP, lfValue);	
-
-
-		//////////
-		// Set the value
-		//////
-			if (!iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfValue, NULL, NULL, NULL, NULL))
-				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
-
-
-		//////////
-        // Return exp
-		//////
-	        return result;   
+			*result->value.data_f64 = pow(_MATH_EXP, lfValue);
+	        return result;
 	}
 
 
@@ -3783,6 +3774,8 @@
 	}
 
 
+
+
 //////////
 //
 // Function: PI()
@@ -3810,6 +3803,7 @@
 		u32			errorNum;
 		SVariable*	result;	
 
+
 		//////////
         // Return pi
 		//////
@@ -3822,6 +3816,9 @@
 			*(f64*)result->value.data_f64 = (f64)_MATH_PI;
 	        return result;
 	}
+
+
+
 
 //////////
 //
@@ -4616,8 +4613,13 @@
 //////////
 //
 // Function: SIGN()
-// Returns a numeric value of 1, 1, or 0 based on whether or not the specified
-// numeric expression evaluates to a positive, negative, or 0 value.
+// Returns a numeric value of 1, -1, or 0 if varNumber is positive,
+// negative, or 0 value.
+//
+//////
+//
+// Function: SIGN2()
+// Returns a numeric value of 1 if varNumber >= 0, and -1 otherwise.
 //
 //////
 // Version 0.56
@@ -4625,6 +4627,7 @@
 //     Mar.14.2015
 //////
 // Change log:
+//     Mar.15.2015 - Added common() and sign2() functions
 //     Mar.14.2015 - Merge into main by Rick C. Hodgin, refactor result to match varNumber varType
 //     Mar.14.2015 - Initial creation by Stefano D'Amico
 //////
@@ -4646,6 +4649,18 @@
 //////
     SVariable* function_sign(SThisCode* thisCode, SVariable* varNumber)
     {
+		// SIGN() returns -1, 0, or 1
+		return(ifunction_sign_common(thisCode, varNumber, false));
+	}
+
+	SVariable* function_sign2(SThisCode* thisCode, SVariable* varNumber)
+	{
+		// SIGN2() returns -1 if non-zero negative, 1 otherwise
+		return(ifunction_sign_common(thisCode, varNumber, true));
+	}
+
+	SVariable* ifunction_sign_common(SThisCode* thisCode, SVariable* varNumber, bool tlIncrementZero)
+	{
 		f64			lfValue;
 		u32			errorNum;
         bool		error;
@@ -4676,7 +4691,15 @@
 		//////////
 		// Create output variable
 		//////
-			result = iVariable_create(thisCode, varNumber->varType, NULL);
+			if (propGet_settings_ncset_signSign2(_settings))
+			{
+				// They want it to be the input type if possible
+				result = iVariable_create(thisCode, varNumber->varType, NULL);
+
+			} else {
+				// Always an integer return value
+				result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL);
+			}
 			if (!result)
 			{
 				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
@@ -4691,7 +4714,11 @@
 			{
 				// Converting of lfValue to 1 or -1
 				lfValue = lfValue / abs(lfValue);	
-			} 
+
+			} if (tlIncrementZero) {
+				// Should we increment a 0 value (so it will be returned as 1 instead of 0)?
+				++lfValue;
+			}
 
 
 		//////////
@@ -4798,7 +4825,7 @@
 //     Mar.15.2015 - Initial creation by Stefano D'Amico
 //////
 // Parameters:
-//     p1			-- Numeric or floating point
+//     varNumber	-- Numeric or floating point
 //
 //////
 // Returns:
@@ -4861,23 +4888,12 @@
 
 
 		//////////
-		// Compute sqrt
+		// Compute and return sqrt
 		//////
-			lfValue = sqrt(lfValue);	
-
-
-		//////////
-		// Set the value
-		//////
-			if (!iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfValue, NULL, NULL, NULL, NULL))
-				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
-
-
-		//////////
-        // Return sqrt
-		//////
+			*result->value.data_f64 = sqrt(lfValue);	
 	        return result;   
 	}
+
 
 
 
