@@ -815,7 +815,8 @@ typedef SEM**		SEMpp;
 	const u32			_FP_COMMON_PI						= 2;
 	const u32			_FP_COMMON_LOG						= 3;
 	const u32			_FP_COMMON_LOG10					= 4;
-
+	const u32			_FP_COMMON_CEILING					= 5;
+	const u32			_FP_COMMON_FLOOR					= 6;
 
 //////////
 // Internal messages
