@@ -804,6 +804,8 @@ typedef SEM**		SEMpp;
 //////
 	const f64			_MATH_PI							= 3.141592653589793238;
 	const f64			_MATH_PI2							= 1.570796326794896619;
+	const f64			_MATH_PI180							= 0.017453292519943295;
+	const f64			_MATH_180PI							= 57.29577951308232087;
 	const f64			_MATH_2PI							= 6.283185307179586476;
 	const f64			_MATH_EXP							= 2.718281828459045235;
 
@@ -817,6 +819,8 @@ typedef SEM**		SEMpp;
 	const u32			_FP_COMMON_LOG10					= 4;
 	const u32			_FP_COMMON_CEILING					= 5;
 	const u32			_FP_COMMON_FLOOR					= 6;
+	const u32			_FP_COMMON_DTOR						= 7;
+	const u32			_FP_COMMON_RTOD						= 8;
 
 //////////
 // Internal messages
