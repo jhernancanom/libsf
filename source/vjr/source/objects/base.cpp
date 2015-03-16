@@ -2431,7 +2431,7 @@
 //////
 	SVariable* iObj_getPropertyAsVariable(SThisCode* thisCode, SObject* obj, s8* tcPropertyName, u32 tnPropertyNameLength, SComp* comp)
 	{
-		SBaseclassList*		lbcl;
+		SBaseClassMap*	lbcl;
 		SObjPropMap*	lpm;
 
 
@@ -2685,7 +2685,7 @@ if (!obj->props[lnI])
 // Called to translate the text-based class name to its internal object reference
 //
 //////
-	SBaseclassList* iiObj_getBaseclass_byName(SThisCode* thisCode, s8* tcTextname, s32 tnTextnameLength)
+	SBaseClassMap* iiObj_getBaseclass_byName(SThisCode* thisCode, s8* tcTextname, s32 tnTextnameLength)
 	{
 		s32 lnI;
 		
@@ -2711,7 +2711,7 @@ if (!obj->props[lnI])
 // Called to translate the class object type to its text-base name
 //
 //////
-	SBaseclassList* iiObj_getBaseclass_byType(SThisCode* thisCode, s32 tnObjType)
+	SBaseClassMap* iiObj_getBaseclass_byType(SThisCode* thisCode, s32 tnObjType)
 	{
 		// Iterate through each function for matches
 		logfunc(__FUNCTION__);

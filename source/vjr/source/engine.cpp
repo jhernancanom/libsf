@@ -241,7 +241,7 @@
 
 						} else {
 							// See if it's a known command
-							for (cmd = &gsKnownCommands[0]; cmd; cmd++)
+							for (cmd = &gsKnownCommands[0]; cmd->iCode != 0; cmd++)
 							{
 								// Is this our command?
 								if (cmd->iCode == comp->iCode)

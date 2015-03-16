@@ -912,7 +912,7 @@
 		{ cgc_rename,				6,			false,		_ICODE_RENAME,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_replace,				7,			false,		_ICODE_REPLACE,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_report,				6,			false,		_ICODE_REPORT,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
-		{ cgc_reprocessattempts,	17,			false,		_ICODE_REPROCESS_ATTEMPTS,				false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
+		{ cgc_reprocessattempts,	17,			false,		_ICODE_REPROCESSATTEMPTS,				false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_reprocess,			9,			false,		_ICODE_REPROCESS,						false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_resource,				8,			false,		_ICODE_RESOURCE,						false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_resources,			9,			false,		_ICODE_RESOURCES,						false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },

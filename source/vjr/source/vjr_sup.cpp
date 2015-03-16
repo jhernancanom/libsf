@@ -1647,8 +1647,8 @@
 			// Validate validity
 			if (win->isValid)
 			{
-				// Is the screen locked?
-				if (!propGet_settings_Lock(_settings))
+				// Re-render if the screen's not locked
+				if (!propGet_settings_LockScreen(_settings))
 				{
 					// Render anything needing rendering
 					iObj_renderChildrenAndSiblings(thisCode, win->obj, true, true, tlForce);

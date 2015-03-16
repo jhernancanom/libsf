@@ -425,6 +425,7 @@ struct SThisCode;
 		{	_ICODE_CLEAR,			(uptr)&command_clear		},
 		{	_ICODE_MODIFY,			(uptr)&command_modify		},
 		{	_ICODE_OPEN,			(uptr)&command_open			},
+		{	_ICODE_SET,				(uptr)&command_set			},
 		{	_ICODE_USE,				(uptr)&command_use			},
 
 		// Note:  Do not delete this line, it is used to terminate the command list

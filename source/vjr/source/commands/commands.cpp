@@ -7041,20 +7041,23 @@ debug_break;
 //////
 	void command_set(SThisCode* thisCode, SComp* compSet)
 	{
-		SComp*				compSetTarget;
-		SComp*				compValue;
-		SObjPropMap*		opm;
-		SBasePropertyInit*	lbpi;
+		s32				lnIndex;
+		bool			llManufactured;
+		SComp*			compSetTarget;
+		SComp*			compSetValue;
+		SObjPropMap*	objProp;
+		SBasePropMap*	baseProp;
+		SVariable*		varSet;
+		SVariable*		varSetNewValue;
 
-
-iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, compSet, false);
-return;
+// iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, compSet, false);
+// return;
 
 		//////////
 		// Get the next component
 		//////
 			compSetTarget = iComps_getNth(compSet, 1);
-			if (compSet)
+			if (compSetTarget)
 			{
 				// SET SOMETHING
 
@@ -7062,33 +7065,77 @@ return;
 				//////////
 				// The thing after should be the value, or the keyword TO
 				//////
-					compValue = iComps_getNth(compSet, 1);
+					compSetValue = iComps_getNth(compSetTarget, 1);
 
 					// TO is superfluous, so if it exists, skip it
-					if (compValue && compValue->iCode == _ICODE_TO)
-						compValue = iComps_getNth(compValue, 1);
+					if (compSetValue && compSetValue->iCode == _ICODE_TO)
+						compSetValue = iComps_getNth(compSetValue, 1);
 
 
 				//////////
 				// Is there anything there?
 				//////
-					if (!compValue)
+					if (!compSetValue)
 					{
 						// Syntax error
-						iError_reportByNumber(thisCode, _ERROR_SYNTAX, compSet, false);
+						iError_reportByNumber(thisCode, _ERROR_SYNTAX, compSetTarget, false);
 						return;
 					}
 
 
 				//////////
-				// Find out what the component is
-				//////
-					opm = iObjProp_get_objPropMap_and_basePropInit(thisCode, _settings, compSetTarget->iCode, &lbpi);
-					if (opm && lbpi)
+				// Translate the xyz part of the SET xyz TO abcc into the actual _INDEX_SET_* value
+				/////
+					lnIndex = iObjProp_settingsTranslate(thisCode, compSetTarget->iCode);
+					if (lnIndex <= 0)
 					{
-						// We found the setting and the default variable type
+						iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, compSetTarget, false);
+						return;
 					}
 
+
+				//////////
+				// Find out what the xyz is for SET xyz TO ...
+				//////
+					varSet = iObjProp_get_variable_byIndex(thisCode, _settings, lnIndex, &baseProp, &objProp);
+					if (varSet && objProp && baseProp)
+					{
+						// We found the setting and the default variable type
+						varSetNewValue = iEngine_get_variableName_fromComponent(thisCode, compSetValue, &llManufactured);
+						if (varSetNewValue)
+						{
+//////////
+// Note:
+//		Settings are handled a little differently compared to other objects.
+//		They are only ever referenced as a settings object, so their values are
+//		only ever set through the setter settings, which use the setterObject_set()
+//		function instead of the standard setterObject() function.
+//////////
+
+							// Try to set the value using our special set values
+							if (objProp->_setterObject_set)
+							{
+								// We have our own value, use it
+								if (objProp->setterObject_set(thisCode, varSet, compSetValue, varSetNewValue, llManufactured))
+								{
+									return;		// If we get here, we're good
+								}
+
+								// If we get here, it couldn't be set
+								iError_reportByNumber(thisCode, _ERROR_SYNTAX, compSetValue, false);
+								return;
+							}
+
+							// If we get here, try the standard method
+							if (!iObjProp_set(thisCode, _settings, compSetTarget->iCode, varSetNewValue))
+							{
+								iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, compSetTarget, false);
+								return;
+							}
+						}
+					}
+					// If we get here, invalid setting
+					// Fall through
 			}
 
 

@@ -874,9 +874,11 @@
 	const s32       _ICODE_ARRAY                                    = 2007;
 	const s32       _ICODE_ASSERTS                                  = 2008;
 	const s32       _ICODE_ASSERT                                   = 2009;
-	const s32       _ICODE_ASSIST                                   = 2010;
+	const s32       _ICODE_ASSIST									= 2010;
+	const s32		_ICODE_AUTOCONVERT								= 2292;
 	const s32       _ICODE_AUTOINCERROR                             = 2011;
 	const s32       _ICODE_AUTOSAVE                                 = 2012;
+	const s32		_ICODE_AUTOVALIDATE								= 2293;
 	const s32       _ICODE_AVERAGE                                  = 2013;
 	const s32       _ICODE_BEGIN                                    = 2014;
 	const s32       _ICODE_BELL                                     = 2015;
@@ -893,6 +895,8 @@
 	const s32       _ICODE_CANCEL                                   = 2026;
 	const s32       _ICODE_CARRY                                    = 2027;
 	const s32       _ICODE_CASE                                     = 2028;
+	const s32		_ICODE_CASESENSITIVECOMPARES					= 2294;
+	const s32		_ICODE_CASESENSITIVENAMES						= 2295;
 	const s32       _ICODE_CATCH                                    = 2029;
 	const s32       _ICODE_CD                                       = 2030;
 	const s32       _ICODE_CENTURY                                  = 2031;
@@ -987,6 +991,8 @@
 	const s32       _ICODE_FIND                                     = 2111;
 	const s32       _ICODE_FIXED                                    = 2112;
 	const s32       _ICODE_FLUSH                                    = 2113;
+	const s32		_ICODE_FOCUSHIGHLIGHTBORDERPIXELS				= 2296;
+	const s32		_ICODE_FOCUSHIGHLIGHTPIXELS						= 2297;
 	const s32       _ICODE_FORMAT                                   = 2114;
 	const s32       _ICODE_FORM                                     = 2115;
 	const s32       _ICODE_FREE                                     = 2116;
@@ -1003,12 +1009,16 @@
 	const s32       _ICODE_HEADINGS                                 = 2127;
 	const s32       _ICODE_HELP                                     = 2128;
 	const s32       _ICODE_HIDE                                     = 2129;
+	const s32		_ICODE_HONORBARRIERS							= 2298;
 	const s32       _ICODE_HOURS                                    = 2130;
 	const s32       _ICODE_ID                                       = 2131;
 	const s32       _ICODE_IF                                       = 2132;
+	const s32		_ICODE_IMPLICITPARAMS							= 2299;
 	const s32       _ICODE_IMPORT                                   = 2133;
 	const s32       _ICODE_INDEXES                                  = 2134;
 	const s32       _ICODE_INDEX                                    = 2135;
+	const s32		_ICODE_INDEXMETADATA							= 2300;
+	const s32		_ICODE_INITIALIZEDEFAULTVALUE					= 2301;
 	const s32       _ICODE_INPUT                                    = 2136;
 	const s32       _ICODE_INSERT                                   = 2137;
 	const s32       _ICODE_INTENSITY                                = 2138;
@@ -1017,6 +1027,7 @@
 	const s32       _ICODE_KEYBOARD                                 = 2140;
 	const s32       _ICODE_KEYCOMP                                  = 2141;
 	const s32       _ICODE_LABEL                                    = 2142;
+	const s32		_ICODE_LANGUAGE									= 2302;
 	const s32		_ICODE_LELSE									= 2281;
 	const s32		_ICODE_LELSEIF									= 2282;
 	const s32       _ICODE_LIBRARY                                  = 2143;
@@ -1024,8 +1035,10 @@
 	const s32       _ICODE_LISTS                                    = 2144;
 	const s32       _ICODE_LIST                                     = 2145;
 	const s32       _ICODE_LOAD                                     = 2146;
+	const s32		_ICODE_LOAD_RECEIVES_PARAMS						= 2303;
 	const s32       _ICODE_LOCAL                                    = 2147;
 	const s32       _ICODE_LOCATE                                   = 2148;
+	const s32		_ICODE_LOCKSCREEN								= 2304;
 	const s32       _ICODE_LOGERRORS                                = 2149;
 	const s32       _ICODE_LOOP                                     = 2150;
 	const s32       _ICODE_LPARAMETERS                              = 2151;
@@ -1044,6 +1057,9 @@
 	const s32       _ICODE_MOVE                                     = 2164;
 	const s32       _ICODE_MTDLL                                    = 2165;
 	const s32       _ICODE_MULTILOCKS                               = 2166;
+	const s32		_ICODE_NAMINGCONVENTIONS						= 2306;
+	const s32		_ICODE_NCSETCEILINGFLOOR						= 2307;
+	const s32		_ICODE_NCSETSIGNSIGN2							= 2308;
 	const s32       _ICODE_NEAR                                     = 2167;
 // 	const s32       _ICODE_NEXT                                     = 2168;
 	const s32       _ICODE_NOCPTRANS                                = 2169;
@@ -1092,7 +1108,9 @@
 	const s32       _ICODE_REPLACE                                  = 2211;
 	const s32       _ICODE_REPORT                                   = 2212;
 	const s32       _ICODE_REPROCESS                                = 2213;
-	const s32		_ICODE_REPROCESS_ATTEMPTS						= 2286;
+	const s32		_ICODE_REPROCESSATTEMPTS						= 2286;
+	const s32		_ICODE_REPROCESSINTERVAL						= 2309;
+	const s32		_ICODE_REPROCESSSYSTEM							= 2310;
 	const s32       _ICODE_RESOURCE                                 = 2214;
 	const s32		_ICODE_RESOURCES								= 2290;
 	const s32       _ICODE_RESTORE                                  = 2215;
@@ -1115,10 +1133,12 @@
 	const s32       _ICODE_SHUTDOWN                                 = 2232;
 	const s32       _ICODE_SIZE                                     = 2233;
 	const s32       _ICODE_SKIP                                     = 2234;
+	const s32		_ICODE_SLOPPYPRINTING							= 2311;
 	const s32       _ICODE_SORT                                     = 2235;
 	const s32       _ICODE_SQL                                      = 2236;
 	const s32       _ICODE_STATUS                                   = 2237;
 	const s32       _ICODE_STEP                                     = 2238;
+	const s32		_ICODE_STICKYPARAMETERS							= 2312;
 	const s32       _ICODE_STORE                                    = 2239;
 	const s32       _ICODE_STRICTDATE                               = 2240;
 	const s32       _ICODE_STRUCTURE                                = 2241;
@@ -1126,6 +1146,8 @@
 	const s32       _ICODE_SUSPEND                                  = 2243;
 	const s32       _ICODE_SYSFORMATS                               = 2244;
 	const s32       _ICODE_SYSMENU                                  = 2245;
+	const s32		_ICODE_TABLEEQUALASSIGNMENTS					= 2313;
+	const s32		_ICODE_TABLEOBJECTS								= 2314;
 	const s32       _ICODE_TABLEVALIDATE                            = 2246;
 	const s32       _ICODE_TABLES                                   = 2247;
 	const s32       _ICODE_TABLE                                    = 2248;
@@ -1140,10 +1162,12 @@
 	const s32       _ICODE_TRY                                      = 2257;
 	const s32       _ICODE_TYPEAHEAD                                = 2258;
 	const s32       _ICODE_UDFPARMS                                 = 2259;
+	const s32		_ICODE_UNLOADRECEIVESPARAMS						= 2315;
 	const s32       _ICODE_UNLOCK                                   = 2260;
 	const s32       _ICODE_UPDATE                                   = 2261;
 	const s32       _ICODE_USE                                      = 2262;
 	const s32       _ICODE_VALIDATE                                 = 2263;
+	const s32		_ICODE_VARIABLESFIRST							= 2316;
 	const s32       _ICODE_VIEWS                                    = 2264;
 	const s32       _ICODE_VIEW                                     = 2265;
 	const s32       _ICODE_WAIT                                     = 2266;
@@ -1172,7 +1196,31 @@
 	// _ICODE_ALL													= 2289;
 	// _ICODE_RESOURCES												= 2290;
 	// _ICODE_KEEP													= 2291;
-
+	// _ICODE_AUTOCONVERT											= 2292;
+	// _ICODE_AUTOVALIDATE											= 2293;
+	// _ICODE_CASESENSITIVECOMPARES									= 2294;
+	// _ICODE_CASESENSITIVENAMES									= 2295;
+	// _ICODE_FOCUSHIGHLIGHTBORDERPIXELS							= 2296;
+	// _ICODE_FOCUSHIGHLIGHTPIXELS									= 2297;
+	// _ICODE_HONORBARRIERS											= 2298;
+	// _ICODE_IMPLICITPARAMS										= 2299;
+	// _ICODE_INDEXMETADATA											= 2300;
+	// _ICODE_INITIALIZEDEFAULTVALUE								= 2301;
+	// _ICODE_LANGUAGE												= 2302;
+	// _ICODE_LOAD_RECEIVES_PARAMS									= 2303;
+	// _ICODE_LOCKSCREEN											= 2304;
+	//										unused, available		= 2305;
+	// _ICODE_NAMINGCONVENTIONS										= 2306;
+	// _ICODE_NCSETCEILINGFLOOR										= 2307;
+	// _ICODE_NCSETSIGNSIGN2										= 2308;
+	// _ICODE_REPROCESSINTERVAL										= 2309;
+	// _ICODE_REPROCESSSYSTEM										= 2310;
+	// _ICODE_SLOPPYPRINTING										= 2311;
+	// _ICODE_STICKYPARAMETERS										= 2312;
+	// _ICODE_TABLEEQUALASSIGNMENTS									= 2313;
+	// _ICODE_TABLEOBJECTS											= 2314;
+	// _ICODE_UNLOADRECEIVESPARAMS									= 2315;
+	// _ICODE_VARIABLESFIRST										= 2316;
 
 //////////
 // VXB iCat codes

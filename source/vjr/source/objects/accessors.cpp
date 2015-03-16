@@ -102,7 +102,7 @@
 	bool iObjProp_set(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* varNewValue)
 	{
 		bool				llResult;
-		SBasePropertyInit*	baseProp;
+		SBasePropMap*	baseProp;
 		SObjPropMap*	objProp;
 		SVariable*			var;
 
@@ -138,7 +138,7 @@
 	bool iObjProp_set_bitmap_direct(SThisCode* thisCode, SObject* obj, s32 tnIndex, SBitmap* bmp)
 	{
 		bool				llResult;
-		SBasePropertyInit*	baseProp;
+		SBasePropMap*	baseProp;
 		SObjPropMap*	objProp;
 		SVariable*			varNewValue;
 		SVariable*			var;
@@ -221,7 +221,7 @@
 	bool iObjProp_set_character_direct(SThisCode* thisCode, SObject* obj, s32 tnIndex, u8* tcText, u32 tnTextLength)
 	{
 		bool				llResult;
-		SBasePropertyInit*	baseProp;
+		SBasePropMap*	baseProp;
 		SObjPropMap*	objProp;
 		SVariable*			varNewValue;
 		SVariable*			var;
@@ -256,7 +256,7 @@
 	bool iObjProp_set_character_direct(SThisCode* thisCode, SObject* obj, s32 tnIndex, SDatum* datum)
 	{
 		bool				llResult;
-		SBasePropertyInit*	baseProp;
+		SBasePropMap*	baseProp;
 		SObjPropMap*	objProp;
 		SVariable*			varNewValue;
 		SVariable*			var;
@@ -304,7 +304,7 @@
 	bool iObjProp_set_logical_fromLogicalConstants(SThisCode* thisCode, SObject* obj, s32 tnIndex, s32 tnValue)
 	{
 		bool				llResult;
-		SBasePropertyInit*	baseProp;
+		SBasePropMap*	baseProp;
 		SObjPropMap*	objProp;
 		SVariable*			varNewValue;
 		SVariable*			var;
@@ -369,7 +369,7 @@
 	bool iObjProp_set_s32_direct(SThisCode* thisCode, SObject* obj, s32 tnIndex, s32 tnValue)
 	{
 		bool				llResult;
-		SBasePropertyInit*	baseProp;
+		SBasePropMap*	baseProp;
 		SObjPropMap*	objProp;
 		SVariable*			varNewValue;
 		SVariable*			var;
@@ -418,7 +418,7 @@
 	bool iObjProp_set_u32_direct(SThisCode* thisCode, SObject* obj, s32 tnIndex, u32 tnValue)
 	{
 		bool				llResult;
-		SBasePropertyInit*	baseProp;
+		SBasePropMap*	baseProp;
 		SObjPropMap*	objProp;
 		SVariable*			varNewValue;
 		SVariable*			var;
@@ -467,7 +467,7 @@
 	bool iObjProp_set_f32_direct(SThisCode* thisCode, SObject* obj, s32 tnIndex, f32 tfValue)
 	{
 		bool				llResult;
-		SBasePropertyInit*	baseProp;
+		SBasePropMap*	baseProp;
 		SObjPropMap*	objProp;
 		SVariable*			varNewValue;
 		SVariable*			var;
@@ -516,7 +516,7 @@
 	bool iObjProp_set_f64_direct(SThisCode* thisCode, SObject* obj, s32 tnIndex, f64 tfValue)
 	{
 		bool				llResult;
-		SBasePropertyInit*	baseProp;
+		SBasePropMap*	baseProp;
 		SObjPropMap*	objProp;
 		SVariable*			varNewValue;
 		SVariable*			var;
@@ -565,7 +565,7 @@
 	bool iObjProp_set_sbgra_direct(SThisCode* thisCode, SObject* obj, s32 tnIndex, SBgra color)
 	{
 		bool				llResult;
-		SBasePropertyInit*	baseProp;
+		SBasePropMap*	baseProp;
 		SObjPropMap*	objProp;
 		SVariable*			varNewValue;
 		SVariable*			var;
@@ -627,6 +627,147 @@
 				return(iVariable_copy(thisCode, varDst, varSrc));
 		}
 		// If we get here, failure
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to set the value using an on/off component
+//
+//////
+	bool iObjProp_setOnOff(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet)
+	{
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to set the value using the valid date texts
+//
+//////
+	bool iObjProp_setDate(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet)
+	{
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to set the integer using the valid settings for decimals (0..18)
+//
+//////
+	bool iObjProp_setDecimals(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet)
+	{
+		s32		lnDecimals;
+		bool	llResult;
+		bool	error;
+		u32		errorNum;
+
+
+		//////////
+		// Validate it's numeric
+		//////
+			llResult = false;
+			if (iVariable_isTypeNumeric(varNew))
+			{
+				//////////
+				// Grab our value
+				//////
+					lnDecimals = iiVariable_getAs_s32(thisCode, varNew, false, &error, &errorNum);
+					if (!error && lnDecimals >= _MIN_SET_DECIMALS && lnDecimals <= _MAX_SET_DECIMALS)
+					{
+						// Set the value
+						iVariable_set(thisCode, varSet, varNew);
+
+						// Indicate success
+						llResult = true;
+					}
+			}
+
+
+		//////////
+		// Optionally clean house
+		//////
+			if (tlDeleteVarNewAfterSet)
+				iVariable_delete(thisCode, varNew, true);
+
+
+		//////////
+		// If we get here, failure
+		//////
+			return(llResult);
+	}
+
+
+
+
+//////////
+//
+// Called to set the integer using the valid integer variable
+//
+//////
+	bool iObjProp_setInteger(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet)
+	{
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to set the value using the valid date texts
+//
+//////
+	bool iObjProp_setLanguage(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet)
+	{
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to set the logical using the variable converted to logical
+//
+//////
+	bool iObjProp_setLogical(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet)
+	{
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to set reprocess using the valid reprocess options
+//
+//////
+	bool iObjProp_setReprocess(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet)
+	{
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to set the time using the valid time texts
+//
+//////
+	bool iObjProp_setTime(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet)
+	{
 		return(false);
 	}
 
@@ -699,10 +840,10 @@
 //        variable, not a copy.
 //
 //////
-	SVariable* iObjProp_get_variable_byIndex(SThisCode* thisCode, SObject* obj, s32 tnIndex, SBasePropertyInit** baseProp, SObjPropMap** objProp)
+	SVariable* iObjProp_get_variable_byIndex(SThisCode* thisCode, SObject* obj, s32 tnIndex, SBasePropMap** baseProp, SObjPropMap** objProp)
 	{
-		s32					lnI;
-		SBaseclassList*		baseclassList;
+		s32				lnI;
+		SBaseClassMap*	baseClassMap;
 		SObjPropMap*	thisObjProp;
 
 
@@ -710,12 +851,12 @@
 		if (obj)
 		{
 			// Locate the base class
-// TODO:  We could add a speedup here by storing the lbcl location in the object itself at the time of creation
-			baseclassList = iiObj_getBaseclass_byType(thisCode, obj->objType);
-			if (baseclassList)
+// TODO:  We could add a speedup here by storing the baseClassMap location in the object itself at the time of creation
+			baseClassMap = iiObj_getBaseclass_byType(thisCode, obj->objType);
+			if (baseClassMap)
 			{
 				// Locate the property within the object's properties
-				thisObjProp = baseclassList->objProps;
+				thisObjProp = baseClassMap->objProps;
 // TODO:  We could add a speedup by sorting at startup each baseclassList->objProps, and then use a binary search
 				for (lnI = 0; lnI < thisObjProp[lnI].index; lnI++)
 				{
@@ -755,7 +896,7 @@ debug_break;
 	SVariable* iObjProp_get_variable_byName(SThisCode* thisCode, SObject* obj, u8* tcName, u32 tnNameLength, bool tlSearchBaseProps, bool tlSearchClassProps, s32* tnIndex)
 	{
 		s32					lnI, lnIndex;
-		SBaseclassList*		lbcl;
+		SBaseClassMap*		lbcl;
 		SObjPropMap*		objProps;
 
 
@@ -797,88 +938,6 @@ debug_break;
 		}
 
 		// Invalid
-		return(NULL);
-	}
-
-
-
-
-//////////
-//
-// Called to retrieve the associated SObjPropMap in the indicated object.
-// And if baseObjPropMap is specified, it will search for the base property
-// entry, and return that record as well.
-//
-//////
-	SObjPropMap* iObjProp_get_objPropMap_and_basePropInit(SThisCode* thisCode, SObject* obj, s32 tnIndex, SBasePropertyInit** basePropInit)
-	{
-		SBaseclassList*		lbcl;
-		SObjPropMap*		objProps;
-		SBasePropertyInit*	lbpi;
-
-
-		// Make sure the environment is sane
-		if (obj)
-		{
-			// Locate the base class
-			lbcl = iiObj_getBaseclass_byType(thisCode, obj->objType);
-			if (lbcl)
-			{
-				//////////
-				// Reset the pointer in case it's not found
-				//////
-					if (basePropInit)
-						*basePropInit = NULL;
-
-
-				//////////
-				// Locate the property within the object's properties
-				//////
-					for (objProps = lbcl->objProps; objProps->index != 0; objProps++)
-					{
-						// Is this our match?
-						if (objProps->index == tnIndex)
-						{
-							//////////
-							// This is the entry
-							//////
-								if (!basePropInit)
-								{
-									// They want this record
-									return(objProps);
-								}
-
-
-							//////////
-							// If we get here, they also want the entry in the master properties list
-							//////
-								for (lbpi = &gsProps_master[0]; lbpi->index != 0; lbpi++)
-								{
-									if (lbpi->index == tnIndex)
-									{
-										// We've found both
-										*basePropInit = lbpi;
-										return(objProps);
-									}
-								}
-								// If we get here, we didn't find the master property
-								// This is a fatal internal system error that should never occur except possibly during development before all the i's are dotted, and t's are crossed.
-								iError_signal(thisCode, _ERROR_INTERNAL_ERROR, NULL, true, NULL, true);
-								return(NULL);
-						}
-					}
-
-					// If we get here, not found
-					return(NULL);
-			}
-
-			// If we get here, we didn't find the base class reference.
-			// This is a fatal internal system error that should never occur except possibly during development before all the i's are dotted, and t's are crossed.
-			iError_signal(thisCode, _ERROR_INTERNAL_ERROR, NULL, true, NULL, true);
-			return(NULL);
-		}
-
-		// Invalid parameters
 		return(NULL);
 	}
 
@@ -1189,11 +1248,43 @@ debug_break;
 				// If we got it...
 				if (!error)
 					return(color);		// ...return the value
+
 			}
 		}
 		// If we get here, failure
 		_color = -1;
 		return(color);
+	}
+
+
+
+
+//////////
+//
+// Called to translate the xyz keyword used in the SET xzy TO abc expression
+// into its proper _INDEX_SET_* value.
+//
+//////
+	s32 iObjProp_settingsTranslate(SThisCode* thisCode, s32 tniCodeKeyword)
+	{
+		SBasePropMap* baseProps;
+
+
+		//////////
+		// Iterate though looking for the matching keyword
+		//////
+			for (baseProps = (SBasePropMap*)&gsProps_master[0]; baseProps->index != 0; baseProps++)
+			{
+				// Is this our iCode?
+				if (baseProps->associated_iCode == tniCodeKeyword)
+					return(baseProps->index);		// We found our match
+			}
+
+
+		//////////
+		// If we get here, not found
+		//////
+			return(-1);
 	}
 
 
@@ -1259,7 +1350,7 @@ debug_break;
 // has its own properties, and these are used for rendering.
 //
 //////
-	bool iObjProp_setter_captionOnChild(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropMap* objProp)
+	bool iObjProp_setter_captionOnChild(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropMap* baseProp, SObjPropMap* objProp)
 	{
 		SObject*	objChild;
 		SVariable*	varChild;
@@ -1306,7 +1397,7 @@ debug_break;
 // has its own properties, and these are used for rendering.
 //
 //////
-	bool iObjProp_setter_iconOnChild(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropMap* objProp)
+	bool iObjProp_setter_iconOnChild(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropMap* baseProp, SObjPropMap* objProp)
 	{
 		SObject*	objChild;
 		SVariable*	varChild;
@@ -1351,7 +1442,7 @@ debug_break;
 // Called to mirror the color setting into the parent object into the nested child object
 //
 //////
-	bool iObjProp_setter_editboxMirror(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropMap* objProp)
+	bool iObjProp_setter_editboxMirror(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropMap* baseProp, SObjPropMap* objProp)
 	{
 		// Make sure our environment is sane
 		if (obj && obj->objType == _OBJ_TYPE_EDITBOX && var && varNewValue)
@@ -1516,7 +1607,7 @@ debug_break;
 // Called to set the font object members associated with the object's font property settings.
 //
 //////
-	bool iObjProp_setter_fontProperty(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropertyInit* baseProp, SObjPropMap* objProp)
+	bool iObjProp_setter_fontProperty(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* var, SVariable* varNewValue, SBasePropMap* baseProp, SObjPropMap* objProp)
 	{
 		bool llResult;
 

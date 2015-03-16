@@ -328,7 +328,7 @@ struct SVariable
 	SEM*		firstAssign;											// Source code executed whenever this variable is assigned
 };
 
-struct SBaseclassList
+struct SBaseClassMap
 {
 	s32				objType;											// Translation between objType...
 

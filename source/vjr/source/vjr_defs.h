@@ -155,8 +155,8 @@ struct SObjPropMap;
 	void					iiObj_resetToDefault					(SThisCode* thisCode, SObject*  obj, bool tlResetProperties, bool tlResetMethods);
 	void					iiObj_resetToDefaultCommon				(SThisCode* thisCode, SObject*  obj, bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, s32 tnPropCount);
 	s32						iiObj_getBaseclassType_byName			(SThisCode* thisCode, s8* tcTextname, s32 tnTextnameLength);
-	SBaseclassList*			iiObj_getBaseclass_byName				(SThisCode* thisCode, s8* tcTextname, s32 tnTextnameLength);
-	SBaseclassList*			iiObj_getBaseclass_byType				(SThisCode* thisCode, s32 tnObjType);
+	SBaseClassMap*			iiObj_getBaseclass_byName				(SThisCode* thisCode, s8* tcTextname, s32 tnTextnameLength);
+	SBaseClassMap*			iiObj_getBaseclass_byType				(SThisCode* thisCode, s32 tnObjType);
 
 
 //////////
