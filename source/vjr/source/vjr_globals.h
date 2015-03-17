@@ -178,6 +178,7 @@
 	SVariable*			varTrue								= NULL;									// A constant .T.
 	SVariable*			varFalse							= NULL;									// A constant .F.
 	SVariable*			varSix								= NULL;									// A numeric value of 6, used for padding widths
+	SVariable*			varTwoFiftyFive						= NULL;									// A numeric value of 255, used for color channels
 
 	// Default variable values used for references
 	SVariable*			varDefault_null						= NULL;									// NULL

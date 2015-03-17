@@ -8350,7 +8350,7 @@ debug_break;
 				// We can return the value after verifying it is not out of range for a 32-bit signed integer
 				//////
 					lnValue_s64 = *(s64*)var->value.data;
-					if (lnValue_s64 < (s64)_s32_min || lnValue_s64 > (s64)_s32_max)
+					if (lnValue_s64 >= (s64)_s32_min && lnValue_s64 <= (s64)_s32_max)
 						return((s32)lnValue_s64);
 
 

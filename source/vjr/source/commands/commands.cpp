@@ -683,7 +683,7 @@
 //////
 	SVariable* function_alltrim(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2)
 	{
-		return(ifunction_trimCommon(thisCode, varString, varCaseInsensitive, varTrimChars1, varTrimChars2, true, true));
+		return(ifunction_trim_common(thisCode, varString, varCaseInsensitive, varTrimChars1, varTrimChars2, true, true));
 	}
 
 
@@ -699,7 +699,7 @@
 //	    (2)  *TRIM(cString[, nCaseSensitive|lCaseSensitive[, cTrimChar1[, cTrimChar2]]])
 //
 //////
-	SVariable* ifunction_trimCommon(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2, bool tlTrimTheStart, bool tlTrimTheEnd)
+	SVariable* ifunction_trim_common(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2, bool tlTrimTheStart, bool tlTrimTheEnd)
 	{
 		s32			lnI, lnClipStartPos, lnClipEndPos;
 		s8			lc;
@@ -1056,6 +1056,34 @@
 
 //////////
 //
+// Function: ALP()
+// Retrieves the alpha channel from an RGBA or BGRA color.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.16.2015
+//////
+// Change log:
+//     Mar.16.2015 - Initial creation
+//////
+// Parameters:
+//     varColor		-- Numeric, a color (0..(2^32)-1)
+//
+//////
+// Returns:
+//    Numeric	-- Input number converted to ASCII value number
+//////
+	SVariable* function_alp(SThisCode* thisCode, SVariable* varColor)
+	{
+		return(ifunction_color_common(thisCode, varColor, 0xff000000, 24));
+	}
+
+
+
+
+//////////
+//
 // Function: ASC()
 // Takes a character input and converts it to its ASCII value.
 //
@@ -1158,25 +1186,25 @@
 //////
 	SVariable* function_at(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence)
 	{
-		return(ifunction_atOccursCommon(thisCode, varNeedle, varHaystack, varOccurrence, true, false, NULL));
+		return(ifunction_at_occurs_common(thisCode, varNeedle, varHaystack, varOccurrence, true, false, NULL));
 	}
 
 	SVariable* function_atc(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence)
 	{
-		return(ifunction_atOccursCommon(thisCode, varNeedle, varHaystack, varOccurrence, false, false, NULL));
+		return(ifunction_at_occurs_common(thisCode, varNeedle, varHaystack, varOccurrence, false, false, NULL));
 	}
 
 	SVariable* function_rat(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence)
 	{
-		return(ifunction_atOccursCommon(thisCode, varNeedle, varHaystack, varOccurrence, true, true, NULL));
+		return(ifunction_at_occurs_common(thisCode, varNeedle, varHaystack, varOccurrence, true, true, NULL));
 	}
 
 	SVariable* function_ratc(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence)
 	{
-		return(ifunction_atOccursCommon(thisCode, varNeedle, varHaystack, varOccurrence, false, true, NULL));
+		return(ifunction_at_occurs_common(thisCode, varNeedle, varHaystack, varOccurrence, false, true, NULL));
 	}
 
-	SVariable* ifunction_atOccursCommon(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence, bool tlCaseSensitive, bool tlScanBackward, u32* tnFoundCount)
+	SVariable* ifunction_at_occurs_common(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence, bool tlCaseSensitive, bool tlScanBackward, u32* tnFoundCount)
 	{
 		u32			errorNum;
 		s32			lnI, lnStart, lnInc, lnStopper, lnFoundCount, lnOccurrence;
@@ -1321,6 +1349,98 @@
 
 
 
+
+//////////
+//
+// Function: BLU()
+// Retrieves the blue channel from an RGBA or BGRA color.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.16.2015
+//////
+// Change log:
+//     Mar.16.2015 - Initial creation
+//////
+// Parameters:
+//     varColor		-- Numeric, a color (0..(2^32)-1)
+//
+//////
+// Returns:
+//    Numeric	-- Input number converted to ASCII value number
+//////
+	SVariable* function_blu(SThisCode* thisCode, SVariable* varColor)
+	{
+		return(ifunction_color_common(thisCode, varColor, 0x00ff0000, 16));
+	}
+
+
+
+
+//////////
+//
+// Function: BGR()
+// Returns the BGR() of the three input values.
+//
+//////
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Mar.16.2015
+//////
+// Change log:
+//     Mar.16.2015 - Initial creation
+//////
+// Parameters:
+//     pBlu			-- Blue, in the range 0..255, or 0.0..1.0
+//     pGrn			-- Green, in the range 0..255, or 0.0..1.0
+//     pRed			-- Red, in the range 0..255, or 0.0..1.0
+//
+//////
+// Returns:
+//    Numeric		-- Constructed system-wide RGBA() integer
+//
+//////
+	SVariable* function_bgr(SThisCode* thisCode, SVariable* varBlu, SVariable* varGrn, SVariable* varRed)
+	{
+		return(ifunction_rgba_common(thisCode, varRed, varGrn, varBlu, NULL));
+	}
+
+
+
+
+//////////
+//
+// Function: BGRA()
+// Returns the BGRA() of the four input values.
+//
+//////
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Mar.16.2015
+//////
+// Change log:
+//     Mar.16.2015 - Initial creation
+//////
+// Parameters:
+//     pBlu			-- Blue, in the range 0..255, or 0.0..1.0
+//     pGrn			-- Green, in the range 0..255, or 0.0..1.0
+//     pRed			-- Red, in the range 0..255, or 0.0..1.0
+//     pAlp			-- Alpha, in the range 0..255, or 0.0..1.0
+//
+//////
+// Returns:
+//    Numeric		-- Constructed system-wide RGBA() integer
+//
+//////
+	SVariable* function_bgra(SThisCode* thisCode, SVariable* varBlu, SVariable* varGrn, SVariable* varRed, SVariable* varAlp)
+	{
+		return(ifunction_rgba_common(thisCode, varRed, varGrn, varBlu, varAlp));
+	}
+
+
+
+
 //////////
 //
 // Function: CEILING()
@@ -1348,7 +1468,7 @@
     {
         // Return ceiling
 
-        return(ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_CEILING, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings)));
+        return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_CEILING, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings)));
 	}
 
 
@@ -1463,15 +1583,15 @@
 //////
 	SVariable* function_chrtran(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace)
 	{
-		return(ifunction_chrtranCommon(thisCode, varString, varSearch, varReplace, true));
+		return(ifunction_chrtran_common(thisCode, varString, varSearch, varReplace, true));
 	}
 
 	SVariable* function_chrtranc(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace)
 	{
-		return(ifunction_chrtranCommon(thisCode, varString, varSearch, varReplace, false));
+		return(ifunction_chrtran_common(thisCode, varString, varSearch, varReplace, false));
 	}
 
-	SVariable* ifunction_chrtranCommon(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, bool tlCaseSensitive)
+	SVariable* ifunction_chrtran_common(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, bool tlCaseSensitive)
 	{
 		s8			c1, c2;
 		s32			lnSrc, lnDst, lnSearch;
@@ -1974,7 +2094,7 @@
     SVariable* function_dtor(SThisCode* thisCode, SVariable* varNumber)
     {
 		// Return exp
-		return(ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_DTOR, _VAR_TYPE_F64, false));
+		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_DTOR, _VAR_TYPE_F64, false));
 	}
 
 
@@ -2005,11 +2125,11 @@
     SVariable* function_exp(SThisCode* thisCode, SVariable* varNumber)
     {
 		// Return exp
-		return(ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_EXP, _VAR_TYPE_F64, false));
+		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_EXP, _VAR_TYPE_F64, false));
 	}
 
 	// Common numeric functions used for EXP(), LOG(), LOG10(), PI(), SQRT(), CEILING(), FLOOR(), DTOR(), RTOD().
-    SVariable* ifunction_commonNumbers(SThisCode* thisCode, SVariable* varNumber, u32 functionType, const u32 resultType, bool sameInputType)
+    SVariable* ifunction_numbers_common(SThisCode* thisCode, SVariable* varNumber, u32 functionType, const u32 resultType, bool sameInputType)
     {
 		f64			lfValue;
 		u32			errorNum;
@@ -2181,7 +2301,7 @@
     SVariable* function_floor(SThisCode* thisCode, SVariable* varNumber)
     {
         // Return floor
-		return(ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_FLOOR, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings)));
+		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_FLOOR, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings)));
 	}
 
 
@@ -2296,6 +2416,34 @@
 	{
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
 		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Function: GRN()
+// Retrieves the green channel from an RGBA or BGRA color.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.16.2015
+//////
+// Change log:
+//     Mar.16.2015 - Initial creation
+//////
+// Parameters:
+//     varColor		-- Numeric, a color (0..(2^32)-1)
+//
+//////
+// Returns:
+//    Numeric	-- Input number converted to ASCII value number
+//////
+	SVariable* function_grn(SThisCode* thisCode, SVariable* varColor)
+	{
+		return(ifunction_color_common(thisCode, varColor, 0x0000ff00, 8));
 	}
 
 
@@ -2949,7 +3097,7 @@
     SVariable* function_log(SThisCode* thisCode, SVariable* varNumber)
     {
         // Return log
-		return ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_LOG, _VAR_TYPE_F64, false);   
+		return ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_LOG, _VAR_TYPE_F64, false);   
 	}
 
 
@@ -2981,7 +3129,7 @@
     SVariable* function_log10(SThisCode* thisCode, SVariable* varNumber)
     {
         // Return log10
-		return ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_LOG10, _VAR_TYPE_F64, false);
+		return ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_LOG10, _VAR_TYPE_F64, false);
 	}
 
 
@@ -3081,7 +3229,7 @@
 //////
 	SVariable* function_ltrim(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2)
 	{
-		return(ifunction_trimCommon(thisCode, varString, varCaseInsensitive, varTrimChars1, varTrimChars2, true, false));
+		return(ifunction_trim_common(thisCode, varString, varCaseInsensitive, varTrimChars1, varTrimChars2, true, false));
 	}
 
 
@@ -3765,6 +3913,33 @@
 						}
 						break;
 
+
+				//////////
+				// Alpha channel is opaque in RGB() and BGR() colors
+				//////
+					case _NCSET_RGBA_ALPHA_IS_OPAQUE:
+						// Get the value
+						llEnabled = propGet_settings_ncset_alphaIsOpaque(_settings);
+						if (varP1)
+						{
+							// They are setting the value
+							if (iVariable_isFundamentalTypeLogical(varP1))
+							{
+								// Obtain its value as a logical
+								llNewValue = iiVariable_getAs_bool(thisCode, varP1, false, &error, &errorNum);
+								if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varIndex), false);	return(NULL);	}
+
+								// Set the new value
+								propSet_settings_ncset_alphaIsOpaque_fromBool(_settings, llNewValue);
+
+							} else {
+								// The variable is not a type that can be processed as logical
+								iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varP1), false);
+								return(NULL);
+							}
+						}
+						break;
+
 				default:
 					// Unrecognized option
 					iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_compRelated(thisCode, varIndex), false);
@@ -3811,7 +3986,7 @@
 
 
 		// Compute the found count
-		result = ifunction_atOccursCommon(thisCode, varNeedle, varHaystack, NULL, true, false, &lnFoundCount);
+		result = ifunction_at_occurs_common(thisCode, varNeedle, varHaystack, NULL, true, false, &lnFoundCount);
 		if (result)
 		{
 			// Update the return variable
@@ -3829,7 +4004,7 @@
 
 
 		// Compute the found count
-		result = ifunction_atOccursCommon(thisCode, varNeedle, varHaystack, NULL, false, false, &lnFoundCount);
+		result = ifunction_at_occurs_common(thisCode, varNeedle, varHaystack, NULL, false, false, &lnFoundCount);
 		if (result)
 		{
 			// Update the return variable
@@ -3870,20 +4045,20 @@
 //////
 	SVariable* function_padc(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter)
 	{
-		return(ifunction_padCommon(thisCode, varExpression, varResultSize, varPadCharacter, true, true));
+		return(ifunction_pad_common(thisCode, varExpression, varResultSize, varPadCharacter, true, true));
 	}
 
 	SVariable* function_padl(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter)
 	{
-		return(ifunction_padCommon(thisCode, varExpression, varResultSize, varPadCharacter, true, false));
+		return(ifunction_pad_common(thisCode, varExpression, varResultSize, varPadCharacter, true, false));
 	}
 
 	SVariable* function_padr(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter)
 	{
-		return(ifunction_padCommon(thisCode, varExpression, varResultSize, varPadCharacter, false, true));
+		return(ifunction_pad_common(thisCode, varExpression, varResultSize, varPadCharacter, false, true));
 	}
 
-	SVariable* ifunction_padCommon(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter, bool tlPadLeft, bool tlPadRight)
+	SVariable* ifunction_pad_common(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter, bool tlPadLeft, bool tlPadRight)
 	{
 		u32			errorNum;
 		s32			lnI, lnResultSize, lnCopyStart, lnPadLeftStopper, lnPadRightStart, lnPadRightStopper;
@@ -4062,7 +4237,7 @@
 	SVariable* function_pi(SThisCode* thisCode)
 	{
 		// Return pi
-		return ifunction_commonNumbers(thisCode, NULL, _FP_COMMON_PI, _VAR_TYPE_F64, false);
+		return ifunction_numbers_common(thisCode, NULL, _FP_COMMON_PI, _VAR_TYPE_F64, false);
 	}
 
 
@@ -4439,152 +4614,10 @@
 //////
 	SVariable* function_rgb(SThisCode* thisCode, SVariable* varRed, SVariable* varGrn, SVariable* varBlu)
 	{
-		f32			lfRed, lfGrn, lfBlu;
-		s32			lnRed, lnGrn, lnBlu;
-		bool		error;
-		u32			errorNum;
-		SVariable*	result;
-
-
-		//////////
-		// Parameter 1 must be numeric
-		//////
-			if (!iVariable_isValid(varRed) || !iVariable_isTypeNumeric(varRed))
-			{
-				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varRed), false);
-				return(NULL);
-			}
-
-
-		//////////
-		// Parameter 2 must be numeric
-		//////
-			if (!iVariable_isValid(varGrn) || !iVariable_isTypeNumeric(varGrn))
-			{
-				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_compRelated(thisCode, varGrn), false);
-				return(NULL);
-			}
-
-
-		//////////
-		// Parameter 3 must be numeric
-		//////
-			if (!iVariable_isValid(varBlu) || !iVariable_isTypeNumeric(varBlu))
-			{
-				iError_reportByNumber(thisCode, _ERROR_P3_IS_INCORRECT, iVariable_compRelated(thisCode, varBlu), false);
-				return(NULL);
-			}
-
-
-		//////////
-		// Grab the parameters as usable values
-		//////
-			if (iVariable_isTypeFloatingPoint(varRed))
-			{
-				// It is a floating point, which means it must be in the range 0..1
-				lfRed = iiVariable_getAs_f32(thisCode, varRed, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varRed), false);	return(NULL);	}
-				lnRed = (s32)(255.0f * min(max(lfRed, 0.0f), 1.0f));
-
-			} else {
-				// It is an integer, which means it must be in the range 0..255
-				lnRed = iiVariable_getAs_s32(thisCode, varRed, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varRed), false);	return(NULL);	}
-			}
-			if (lnRed < 0 || lnRed > 255)
-			{
-				iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_compRelated(thisCode, varRed), false);
-				return(NULL);
-			}
-
-			if (iVariable_isTypeFloatingPoint(varGrn))
-			{
-				// It is a floating point, which means it must be in the range 0..1
-				lfGrn = iiVariable_getAs_f32(thisCode, varGrn, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varGrn), false);	return(NULL);	}
-				lnGrn = (s32)(255.0f * min(max(lfGrn, 0.0f), 1.0f));
-
-			} else {
-				// It is an integer, which means it must be in the range 0..255
-				lnGrn = iiVariable_getAs_s32(thisCode, varGrn, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varGrn), false);	return(NULL);	}
-			}
-			if (lnGrn < 0 || lnGrn > 255)
-			{
-				iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_compRelated(thisCode, varGrn), false);
-				return(NULL);
-			}
-
-			if (iVariable_isTypeFloatingPoint(varBlu))
-			{
-				// It is a floating point, which means it must be in the range 0..1
-				lfBlu = iiVariable_getAs_f32(thisCode, varBlu, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varBlu), false);	return(NULL);	}
-				lnBlu = (s32)(255.0f * min(max(lfBlu, 0.0f), 1.0f));
-
-			} else {
-				// It is an integer, which means it must be in the range 0..255
-				lnBlu	= iiVariable_getAs_s32(thisCode, varBlu, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varBlu), false);	return(NULL);	}
-			}
-			if (lnBlu < 0 || lnBlu > 255)
-			{
-				iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_compRelated(thisCode, varBlu), false);
-				return(NULL);
-			}
-
-
-		//////////
-        // Create the return result
-		//////
-	        result = iVariable_create(thisCode, _VAR_TYPE_U32, NULL);
-			if (!result)
-			{
-				iError_report(cgcInternalError, false);
-				return(NULL);
-			}
-
-
-		//////////
-        // Populate the return value
-		//////
-			*(u32*)result->value.data = bgra((u32)lnBlu, (u32)lnGrn, (u32)lnRed, 0);
-
-
-		//////////
-        // Return our converted result
-		//////
-	        return result;
+		return(ifunction_rgba_common(thisCode, varRed, varGrn, varBlu, NULL));
 	}
 
-
-
-
-//////////
-//
-// Function: RGBA()
-// Returns the RGBA() of the four input values.
-//
-//////
-// Version 0.56   (Determine the current version from the header in vjr.cpp)
-// Last update:
-//     Jul.13.2014
-//////
-// Change log:
-//     Jul.13.2014 - Initial creation
-//////
-// Parameters:
-//     pRed			-- Red, in the range 0..255, or 0.0..1.0
-//     pGrn			-- Green, in the range 0..255, or 0.0..1.0
-//     pBlu			-- Blue, in the range 0..255, or 0.0..1.0
-//     pAlp			-- Blue, in the range 0..255, or 0.0..1.0
-//
-//////
-// Returns:
-//    Numeric		-- Constructed RGBA() integer
-//
-//////
-	SVariable* function_rgba(SThisCode* thisCode, SVariable* varRed, SVariable* varGrn, SVariable* varBlu, SVariable* varAlp)
+	SVariable* ifunction_rgba_common(SThisCode* thisCode, SVariable* varRed, SVariable* varGrn, SVariable* varBlu, SVariable* varAlp)
 	{
 		f32			lfRed, lfGrn, lfBlu, lfAlp;
 		s32			lnRed, lnGrn, lnBlu, lnAlp;
@@ -4598,7 +4631,7 @@
 		//////
 			if (!iVariable_isValid(varRed) || !iVariable_isTypeNumeric(varRed))
 			{
-				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varRed), false);
+				iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_compRelated(thisCode, varRed), false);
 				return(NULL);
 			}
 
@@ -4608,7 +4641,7 @@
 		//////
 			if (!iVariable_isValid(varGrn) || !iVariable_isTypeNumeric(varGrn))
 			{
-				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_compRelated(thisCode, varGrn), false);
+				iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_compRelated(thisCode, varGrn), false);
 				return(NULL);
 			}
 
@@ -4618,7 +4651,7 @@
 		//////
 			if (!iVariable_isValid(varBlu) || !iVariable_isTypeNumeric(varBlu))
 			{
-				iError_reportByNumber(thisCode, _ERROR_P3_IS_INCORRECT, iVariable_compRelated(thisCode, varBlu), false);
+				iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_compRelated(thisCode, varBlu), false);
 				return(NULL);
 			}
 
@@ -4626,15 +4659,23 @@
 		//////////
 		// Parameter 4 must be numeric
 		//////
-			if (!iVariable_isValid(varAlp) || !iVariable_isTypeNumeric(varAlp))
+			if (varAlp)
 			{
-				iError_reportByNumber(thisCode, _ERROR_P3_IS_INCORRECT, iVariable_compRelated(thisCode, varAlp), false);
-				return(NULL);
+				if (!iVariable_isValid(varAlp) || !iVariable_isTypeNumeric(varAlp))
+				{
+					iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_compRelated(thisCode, varAlp), false);
+					return(NULL);
+				}
+
+			} else {
+				// Default to fully transparent or fully opaque based on its ncset()
+				if (propGet_settings_ncset_alphaIsOpaque(_settings))	varAlp = varTwoFiftyFive;
+				else													varAlp = varZero;
 			}
 
 
 		//////////
-		// Grab the parameters as usable values
+		// Red
 		//////
 			if (iVariable_isTypeFloatingPoint(varRed))
 			{
@@ -4654,6 +4695,10 @@
 				return(NULL);
 			}
 
+
+		//////////
+		// Green
+		//////
 			if (iVariable_isTypeFloatingPoint(varGrn))
 			{
 				// It is a floating point, which means it must be in the range 0..1
@@ -4672,6 +4717,10 @@
 				return(NULL);
 			}
 
+
+		//////////
+		// Blue
+		//////
 			if (iVariable_isTypeFloatingPoint(varBlu))
 			{
 				// It is a floating point, which means it must be in the range 0..1
@@ -4690,6 +4739,10 @@
 				return(NULL);
 			}
 
+
+		//////////
+		// Alpha
+		//////
 			if (iVariable_isTypeFloatingPoint(varAlp))
 			{
 				// It is a floating point, which means it must be in the range 0..1
@@ -4730,6 +4783,117 @@
         // Return our converted result
 		//////
 	        return result;
+	}
+
+
+
+
+//////////
+//
+// Function: RGBA()
+// Returns the RGBA() of the four input values.
+//
+//////
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Jul.13.2014
+//////
+// Change log:
+//     Jul.13.2014 - Initial creation
+//////
+// Parameters:
+//     pRed			-- Red, in the range 0..255, or 0.0..1.0
+//     pGrn			-- Green, in the range 0..255, or 0.0..1.0
+//     pBlu			-- Blue, in the range 0..255, or 0.0..1.0
+//     pAlp			-- Blue, in the range 0..255, or 0.0..1.0
+//
+//////
+// Returns:
+//    Numeric		-- Constructed RGBA() integer
+//
+//////
+	SVariable* function_rgba(SThisCode* thisCode, SVariable* varRed, SVariable* varGrn, SVariable* varBlu, SVariable* varAlp)
+	{
+		return(ifunction_rgba_common(thisCode, varRed, varGrn, varBlu, varAlp));
+	}
+
+
+
+
+//////////
+//
+// Function: RED()
+// Retrieves the red channel from an RGBA or BGRA color.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.16.2015
+//////
+// Change log:
+//     Mar.16.2015 - Initial creation
+//////
+// Parameters:
+//     varColor		-- Numeric, a color (0..(2^32)-1)
+//
+//////
+// Returns:
+//    Numeric	-- Input number converted to ASCII value number
+//////
+	SVariable* function_red(SThisCode* thisCode, SVariable* varColor)
+	{
+		return(ifunction_color_common(thisCode, varColor, 0x000000ff, 0));
+	}
+
+	SVariable* ifunction_color_common(SThisCode* thisCode, SVariable* varColor, u32 tnMask, u32 tnShift)
+	{
+		u32			lnColor;
+		bool		error;
+		u32			errorNum;
+		SVariable*	result;
+
+
+		//////////
+		// Color must be numeric
+		//////
+			if (!iVariable_isValid(varColor) || !iVariable_isTypeNumeric(varColor))
+			{
+				iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_compRelated(thisCode, varColor), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Grab the value
+		//////
+			lnColor = iiVariable_getAs_u32(thisCode, varColor, false, &error, &errorNum);
+			if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varColor), false);	return(NULL);	}
+
+
+		//////////
+		// Apply the mask and shift
+		//////
+			lnColor &= tnMask;
+			if (tnShift != 0)
+				lnColor >>= tnShift;
+
+
+		//////////
+		// Construct our result
+		//////
+			result = iVariable_create(thisCode, _VAR_TYPE_U32, NULL);
+			if (!result)
+			{
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Populate and return our result
+		//////
+			*result->value.data_u32 = lnColor;
+			return(result);
 	}
 
 
@@ -4856,7 +5020,7 @@
     SVariable* function_rtod(SThisCode* thisCode, SVariable* varNumber)
     {
         // Return rtod
-		return(ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_RTOD, _VAR_TYPE_F64, false));
+		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_RTOD, _VAR_TYPE_F64, false));
 	}
 
 
@@ -4884,7 +5048,7 @@
 //////
 	SVariable* function_rtrim(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2)
 	{
-		return(ifunction_trimCommon(thisCode, varString, varCaseInsensitive, varTrimChars1, varTrimChars2, false, true));
+		return(ifunction_trim_common(thisCode, varString, varCaseInsensitive, varTrimChars1, varTrimChars2, false, true));
 	}
 
 
@@ -5121,7 +5285,7 @@
     SVariable* function_sqrt(SThisCode* thisCode, SVariable* varNumber)
 	{
 		// Return sqrt
-		return ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_SQRT, _VAR_TYPE_F64, false);
+		return ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_SQRT, _VAR_TYPE_F64, false);
 	}
 
 
@@ -5153,15 +5317,15 @@
 //////
 	SVariable* function_strtran(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount)
 	{
-		return(ifunction_strtranCommon(thisCode, varString, varSearch, varReplace, varRecursiveCount, true));
+		return(ifunction_strtran_common(thisCode, varString, varSearch, varReplace, varRecursiveCount, true));
 	}
 
 	SVariable* function_strtranc(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount)
 	{
-		return(ifunction_strtranCommon(thisCode, varString, varSearch, varReplace, varRecursiveCount, false));
+		return(ifunction_strtran_common(thisCode, varString, varSearch, varReplace, varRecursiveCount, false));
 	}
 
-	SVariable* ifunction_strtranCommon(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount, bool tlCaseSensitive)
+	SVariable* ifunction_strtran_common(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount, bool tlCaseSensitive)
 	{
 		s32			lnI, lnIteration, lnSrc, lnDst, lnLength, lnRecursiveCount, lnFoundCount;
 		bool		error;

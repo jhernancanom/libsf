@@ -244,6 +244,11 @@
 		{	0,										0,	0,	0,	0,	0	},
 	};
 
+	SSourceLightData gsSourceLight_alp[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_asc[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -255,6 +260,21 @@
 	};
 
 	SSourceLightData gsSourceLight_atc[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_bgr[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_bgra[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_blu[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
@@ -325,6 +345,11 @@
 	};
 
 	SSourceLightData gsSourceLight_forcestem[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_grn[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
@@ -456,6 +481,11 @@
 	};
 
 	SSourceLightData gsSourceLight_ratc[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_red[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};

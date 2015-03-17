@@ -421,6 +421,7 @@
 	const s32		_ICODE_ALIAS                                    = 1023;
 	const s32		_ICODE_ALINES                                   = 1024;
 	const s32		_ICODE_ALLTRIM                                  = 1025;
+	const s32		_ICODE_ALP										= 1453;
 	const s32		_ICODE_AMEMBERS                                 = 1026;
 	const s32		_ICODE_AMOUSEOBJ                                = 1027;
 	const s32		_ICODE_ANETRESOURCES                            = 1028;
@@ -452,6 +453,9 @@
 	const s32		_ICODE_BARCOUNT                                 = 1052;
 	const s32		_ICODE_BAR                                      = 1053;
 	const s32		_ICODE_BETWEEN                                  = 1054;
+	const s32		_ICODE_BGR										= 1451;
+	const s32		_ICODE_BGRA										= 1452;
+	const s32		_ICODE_BLU										= 1454;
 	const s32		_ICODE_BINDEVENT                                = 1055;
 	const s32		_ICODE_BINTOC                                   = 1056;
 	const s32		_ICODE_BITAND                                   = 1057;
@@ -604,6 +608,7 @@
 	const s32		_ICODE_GETWORDCOUNT                             = 1201;
 	const s32		_ICODE_GETWORDNUM                               = 1202;
 	const s32		_ICODE_GOMONTH                                  = 1203;
+	const s32		_ICODE_GRN										= 1455;
 	const s32		_ICODE_HEADER                                   = 1204;
 	const s32		_ICODE_HOME                                     = 1205;
 	const s32		_ICODE_HOUR                                     = 1206;
@@ -738,6 +743,7 @@
 	const s32		_ICODE_RECCOUNT                                 = 1325;
 	const s32		_ICODE_RECNO                                    = 1326;
 	const s32		_ICODE_RECSIZE                                  = 1327;
+	const s32		_ICODE_RED										= 1456;
 	const s32		_ICODE_REFRESH                                  = 1328;
 	const s32		_ICODE_RELATION                                 = 1329;
 	const s32		_ICODE_REPLICATE                                = 1330;
@@ -855,6 +861,11 @@
 	// nounloadparams	= 1445				forcefname		= 1446
 	// forcestem		= 1447				ranger			= 1448
 	// ncset			= 1449				automatic		= 1450
+	// bgr				= 1451				bgra			= 1452
+	// alp				= 1453				blu				= 1454
+	// grn				= 1455				red				= 1456
+	// malp				= 1457				grayscale		= 1458
+	// colorize			= 1459
 
 // Temporarily added until the processing engine is coded
 	const s32		_ICODE_CONCATENATE								= 1900;
@@ -1065,6 +1076,7 @@
 	const s32       _ICODE_MTDLL                                    = 2165;
 	const s32       _ICODE_MULTILOCKS                               = 2166;
 	const s32		_ICODE_NAMINGCONVENTIONS						= 2306;
+	const s32		_ICODE_NCSETALPHAISOPAQUE						= 2325;
 	const s32		_ICODE_NCSETCEILINGFLOOR						= 2307;
 	const s32		_ICODE_NCSETSIGNSIGN2							= 2308;
 	const s32       _ICODE_NEAR                                     = 2167;
@@ -1239,6 +1251,7 @@
 	// _ICODE_TAIWAN												= 2322;
 	// _ICODE_USA													= 2323;
 	// _ICODE_YMD													= 2324;
+	// _ICODE_NCSETALPHAISOPAQUE									= 2325;
 
 
 //////////
@@ -1308,6 +1321,7 @@
 	const s8		cgc_alias[]										= "alias";
 	const s8		cgc_alines[]									= "alines";
 	const s8		cgc_alltrim[]									= "alltrim";
+	const s8		cgc_alp[]										= "alp";
 	const s8		cgc_amembers[]									= "amembers";
 	const s8		cgc_amouseobj[]									= "amouseobj";
 	const s8		cgc_anetresources[]								= "anetresources";
@@ -1338,6 +1352,8 @@
 	const s8		cgc_barcount[]									= "barcount";
 	const s8		cgc_bar[]										= "bar";
 	const s8		cgc_between[]									= "between";
+	const s8		cgc_bgr[]										= "bgr";
+	const s8		cgc_bgra[]										= "bgra";
 	const s8		cgc_bindevent[]									= "bindevent";
 	const s8		cgc_bintoc[]									= "bintoc";
 	const s8		cgc_bitand[]									= "bitand";
@@ -1349,6 +1365,7 @@
 	const s8		cgc_bitset[]									= "bitset";
 	const s8		cgc_bittest[]									= "bittest";
 	const s8		cgc_bitxor[]									= "bitxor";
+	const s8		cgc_blu[]										= "blu";
 	const s8		cgc_bof[]										= "bof";
 	const s8		cgc_candidate[]									= "candidate";
 	const s8		cgc_capslock[]									= "capslock";
@@ -1490,6 +1507,7 @@
 	const s8		cgc_getwordcount[]								= "getwordcount";
 	const s8		cgc_getwordnum[]								= "getwordnum";
 	const s8		cgc_gomonth[]									= "gomonth";
+	const s8		cgc_grn[]										= "grn";
 	const s8		cgc_header[]									= "header";
 	const s8		cgc_home[]										= "home";
 	const s8		cgc_hour[]										= "hour";
@@ -1625,6 +1643,7 @@
 	const s8		cgc_reccount[]									= "reccount";
 	const s8		cgc_recno[]										= "recno";
 	const s8		cgc_recsize[]									= "recsize";
+	const s8		cgc_red[]										= "red";
 	const s8		cgc_refresh[]									= "refresh";
 	const s8		cgc_relation[]									= "relation";
 	const s8		cgc_replicate[]									= "replicate";

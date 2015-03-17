@@ -160,7 +160,7 @@
 //////
 	void iVjr_init(HACCEL* hAccelTable)
 	{
-		s32			lnSix;
+		s32			lnValue;
 		RECT		lrc;
 		u8			logBuffer[256];
 		SBitmap*	bmp;
@@ -194,8 +194,14 @@
 		varTrue					= iVariable_createAndPopulate(NULL, _VAR_TYPE_LOGICAL, (cu8*)NULL, 0);
 		varFalse				= iVariable_createAndPopulate(NULL, _VAR_TYPE_LOGICAL, (cu8*)NULL, 0);
 		varZero					= iVariable_create(NULL, _VAR_TYPE_S64, NULL);
-		lnSix					= 6;
-		varSix					= iVariable_createAndPopulate(NULL, _VAR_TYPE_S32, (cu8*)&lnSix, sizeof(lnSix));
+
+		// 6
+		lnValue					= 6;
+		varSix					= iVariable_createAndPopulate(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, sizeof(lnValue));
+
+		// 255
+		lnValue					= 255;
+		varTwoFiftyFive			= iVariable_createAndPopulate(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, sizeof(lnValue));
 
 		// 2000 blank spaces
 		iDatum_allocateSpace(&var2000Spaces->value, 2000);

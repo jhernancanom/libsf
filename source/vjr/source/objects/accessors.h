@@ -469,6 +469,7 @@ struct SBasePropMap;
 	const s8		cgc_setLockScreen[]										= "lockScreen";
 	const s8		cgc_setLogical[]										= "logical";
 	const s8		cgc_setNamingConvention[]								= "namingConvention";
+	const s8		cgc_setNcsetAlphaIsOpaque[]								= "ncsetAlphaIsOpaque";
 	const s8		cgc_setNcsetCeilingFloor[]								= "ncsetCeilingFloor";
 	const s8		cgc_setNcsetSignSign2[]									= "ncsetSignSign2";
 	const s8		cgc_setReprocess[]										= "reprocess";
@@ -855,20 +856,21 @@ struct SBasePropMap;
 	const u32		_INDEX_SET_LOCK_SCREEN									= 365;
 	const u32		_INDEX_SET_LOGICAL										= 366;
 	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 367;
-	const u32		_INDEX_SET_NCSET_CEILING_FLOOR							= 368;
-	const u32		_INDEX_SET_NCSET_SIGN_SIGN2								= 369;
-	const u32		_INDEX_SET_REPROCESS									= 370;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 371;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
-	const u32		_INDEX_SET_REPROCESSINTERVAL							= 372;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
-	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 373;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_SLOPPY_PRINTING								= 374;
-	const u32		_INDEX_SET_STICKY_PARAMETERS							= 375;
-	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 376;
-	const u32		_INDEX_SET_TABLE_OBJECS									= 377;
-	const u32		_INDEX_SET_TALK											= 378;
-	const u32		_INDEX_SET_TIME											= 379;
-	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 380;
-	const u32		_INDEX_SET_VARIABLES_FIRST								= 381;
+	const u32		_INDEX_SET_NCSET_ALPHA_IS_OPAQUE						= 368;
+	const u32		_INDEX_SET_NCSET_CEILING_FLOOR							= 369;
+	const u32		_INDEX_SET_NCSET_SIGN_SIGN2								= 370;
+	const u32		_INDEX_SET_REPROCESS									= 371;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 372;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
+	const u32		_INDEX_SET_REPROCESSINTERVAL							= 373;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
+	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 374;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_SLOPPY_PRINTING								= 375;
+	const u32		_INDEX_SET_STICKY_PARAMETERS							= 376;
+	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 377;
+	const u32		_INDEX_SET_TABLE_OBJECTS								= 378;
+	const u32		_INDEX_SET_TALK											= 379;
+	const u32		_INDEX_SET_TIME											= 380;
+	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 381;
+	const u32		_INDEX_SET_VARIABLES_FIRST								= 382;
 
 
 	// Basic setters and getters
@@ -1365,6 +1367,7 @@ struct SBasePropMap;
 		{	_INDEX_SET_LOCK_SCREEN,							_ICODE_LOCKSCREEN,					cgc_setLockScreen,					sizeof(cgc_setLockScreen) - 1,						_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=Screen is locked and will not be rendered or updated, .f.=(default) Screen is updated
 		{	_INDEX_SET_LOGICAL,								_ICODE_LOGICAL,						cgc_setLogical,						sizeof(cgc_setLogical) - 1,							_VAR_TYPE_S32,				0, 0, 0,		_LOGICAL_TF						,NULL	},	// See _LOGICAL_* constants
 		{	_INDEX_SET_NAMING_CONVENTIONS,					_ICODE_NAMINGCONVENTIONS,			cgc_setNamingConvention,			sizeof(cgc_setNamingConvention) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=Field and variables are examined for standard naming conventions with errors reported, .f.=no checks are made
+		{	_INDEX_SET_NCSET_ALPHA_IS_OPAQUE,				_ICODE_NCSETALPHAISOPAQUE,			cgc_setNcsetAlphaIsOpaque,			sizeof(cgc_setNcsetAlphaIsOpaque) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=alpha channel color in rgb() and bgr() is opaque (255), .f.=alpha channel is transparent (0)
 		{	_INDEX_SET_NCSET_CEILING_FLOOR,					_ICODE_NCSETCEILINGFLOOR,			cgc_setNcsetCeilingFloor,			sizeof(cgc_setNcsetCeilingFloor) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=ceiling() and floor() return floating point values if floating point input, .f.=always returns integer
 		{	_INDEX_SET_NCSET_SIGN_SIGN2,					_ICODE_NCSETSIGNSIGN2,				cgc_setNcsetSignSign2,				sizeof(cgc_setNcsetSignSign2) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=sign() and sign2() return floating point values if floating point input, .f.=always returns integer
 		{	_INDEX_SET_REPROCESS,							_ICODE_REPROCESS,					cgc_setReprocess,					sizeof(cgc_setReprocess) - 1,						_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=Reprocessing is set to automatic, .f. is not supported, if it's not .t. it must be signed numeric with negative indicating attempts, and positive indicating seconds
@@ -1374,7 +1377,7 @@ struct SBasePropMap;
 		{	_INDEX_SET_SLOPPY_PRINTING,						_ICODE_SLOPPYPRINTING,				cgc_setSloppyPrinting,				sizeof(cgc_setSloppyPrinting) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=items outside of printer margins do not throw errors, but are simply clipped, .f.=items outside of printer margins throw errors
 		{	_INDEX_SET_STICKY_PARAMETERS,					_ICODE_STICKYPARAMETERS,			cgc_setStickyParameters,			sizeof(cgc_setStickyParameters) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=allows parameters for functions to maintain their last value allowing access after use, and not requiring initialization , .f.=parameters are reset to logical .f.
 		{	_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS,				_ICODE_TABLEEQUALASSIGNMENTS,		cgc_setTableObjects,				sizeof(cgc_setTableObjects) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=instead of REPLACE cField WITH .t., cField = .t. can be used, .f.=requires REPLACE or UPDATE
-		{	_INDEX_SET_TABLE_OBJECS,						_ICODE_TABLEOBJECTS,				cgc_setTableObjects,				sizeof(cgc_setTableObjects) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=allows tables to be accessed as array objects, .f.=tables are accessed normally
+		{	_INDEX_SET_TABLE_OBJECTS,						_ICODE_TABLEOBJECTS,				cgc_setTableObjects,				sizeof(cgc_setTableObjects) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=allows tables to be accessed as array objects, .f.=tables are accessed normally
 		{	_INDEX_SET_TALK,								_ICODE_TALK,						cgc_setTalk,						sizeof(cgc_setTalk) - 1,							_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=TALK is on and content is output, .f.=TALK is off
 		{	_INDEX_SET_TIME,								_ICODE_TIME,						cgc_setTime,						sizeof(cgc_setTime) - 1,							_VAR_TYPE_S32,				0, 0, 0,		_TIME_LOCAL						,NULL	},	// Refer to _TIME_* constants, either uses local time (adjusted for timezone) or system time (raw time) for all time references.
 		{	_INDEX_SET_UNLOAD_RECEIVES_PARAMS,				_ICODE_UNLOADRECEIVESPARAMS,		cgc_setUnloadReceivesParams,		sizeof(cgc_setUnloadReceivesParams) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=Unload() events receive the same parameters that were passed to init(), .f.=(default) Unload() does not receive any parameters
@@ -3538,6 +3541,7 @@ struct SBasePropMap;
 		{	_INDEX_SET_LOCK_SCREEN,						0, (uptr)&iObjProp_setOnOff,		0 },	// bool
 		{	_INDEX_SET_LOGICAL,							0, (uptr)&iObjProp_setLogical,		0 },	// s32
 		{	_INDEX_SET_NAMING_CONVENTIONS,				0, (uptr)&iObjProp_setOnOff,		0 },	// bool
+		{	_INDEX_SET_NCSET_ALPHA_IS_OPAQUE,			0, (uptr)&iObjProp_setLogical,		0 },	// bool
 		{	_INDEX_SET_NCSET_CEILING_FLOOR,				0, (uptr)&iObjProp_setLogical,		0 },	// bool
 		{	_INDEX_SET_NCSET_SIGN_SIGN2,				0, (uptr)&iObjProp_setLogical,		0 },	// bool
 		{	_INDEX_SET_REPROCESS,						0, (uptr)&iObjProp_setReprocess,	0 },	// bool or s32 
@@ -3547,7 +3551,7 @@ struct SBasePropMap;
 		{	_INDEX_SET_SLOPPY_PRINTING,					0, (uptr)&iObjProp_setOnOff,		0 },	// bool
 		{	_INDEX_SET_STICKY_PARAMETERS,				0, (uptr)&iObjProp_setOnOff,		0 },	// bool
 		{	_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS,			0, (uptr)&iObjProp_setOnOff,		0 },	// bool
-		{	_INDEX_SET_TABLE_OBJECS,					0, (uptr)&iObjProp_setOnOff,		0 },	// bool
+		{	_INDEX_SET_TABLE_OBJECTS,					0, (uptr)&iObjProp_setOnOff,		0 },	// bool
 		{	_INDEX_SET_TALK,							0, (uptr)&iObjProp_setOnOff,		0 },	// bool
 		{	_INDEX_SET_TIME,							0, (uptr)&iObjProp_setTime,			0 },	// s32
 		{	_INDEX_SET_UNLOAD_RECEIVES_PARAMS,			0, (uptr)&iObjProp_setLogical,		0 },	// bool

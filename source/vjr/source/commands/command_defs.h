@@ -168,27 +168,32 @@ struct SThisCode;
 //////
 	SVariable*			function_addbs								(SThisCode* thisCode, SVariable* varString);
 	SVariable*			function_alltrim							(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2);
-	SVariable*			ifunction_trimCommon						(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2, bool trimStart, bool trimEnd);
+	SVariable*			ifunction_trim_common						(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2, bool trimStart, bool trimEnd);
+	SVariable*			function_alp								(SThisCode* thisCode, SVariable* varColor);
 	SVariable*			function_asc								(SThisCode* thisCode, SVariable* varString);
 	SVariable*			function_at									(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence);
 	SVariable*			function_atc								(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence);
-	SVariable*			ifunction_atOccursCommon					(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence, bool tlCaseSensitive, bool tlScanBackward, u32* tnFoundCount);
+	SVariable*			ifunction_at_occurs_common					(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence, bool tlCaseSensitive, bool tlScanBackward, u32* tnFoundCount);
+	SVariable*			function_blu								(SThisCode* thisCode, SVariable* varColor);
+	SVariable*			function_bgr								(SThisCode* thisCode, SVariable* varBlu, SVariable* varGrn, SVariable* varRed);
+	SVariable*			function_bgra								(SThisCode* thisCode, SVariable* varBlu, SVariable* varGrn, SVariable* varRed, SVariable* varAlp);
 	SVariable*			function_ceiling	/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_chr								(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_chrtran							(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace);
 	SVariable*			function_chrtranc							(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace);
-	SVariable*			ifunction_chrtranCommon						(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, bool tlCaseSensitive);
+	SVariable*			ifunction_chrtran_common					(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, bool tlCaseSensitive);
 	SVariable*			function_createobject						(SThisCode* thisCode, SVariable* varClass);
 	SVariable*			function_curdir								(SThisCode* thisCode);
 	SVariable*			function_datetime							(SThisCode* thisCode, SVariable* varYear, SVariable* varMonth, SVariable* varDay, SVariable* varHour, SVariable* varMinute, SVariable* varSecond, SVariable* varMillisecond);
 	SVariable*			function_dtor		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_exp		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
-	SVariable*			ifunction_commonNumbers						(SThisCode* thisCode, SVariable* varNumber, u32 functionType, const u32 resultType, bool sameInputType);
+	SVariable*			ifunction_numbers_common					(SThisCode* thisCode, SVariable* varNumber, u32 functionType, const u32 resultType, bool sameInputType);
 	SVariable*			function_floor		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_forceext							(SThisCode* thisCode, SVariable* varPathname, SVariable varNewExtension);
 	SVariable*			function_forcefname							(SThisCode* thisCode, SVariable* varPathname, SVariable varNewFilename);
 	SVariable*			function_forcepath							(SThisCode* thisCode, SVariable* varPathname, SVariable varNewPathname);
 	SVariable*			function_forcestem							(SThisCode* thisCode, SVariable* varPathname, SVariable varNewStem);
+	SVariable*			function_grn								(SThisCode* thisCode, SVariable* varColor);
 	SVariable*			function_int								(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_justdrive							(SThisCode* thisCode, SVariable* varString);
 	SVariable*			function_justext							(SThisCode* thisCode, SVariable* varString);
@@ -210,7 +215,7 @@ struct SThisCode;
 	SVariable*			function_padc								(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter);
 	SVariable*			function_padl								(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter);
 	SVariable*			function_padr								(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter);
-	SVariable*			ifunction_padCommon							(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter, bool tlPadLeft, bool tlPadRight);
+	SVariable*			ifunction_pad_common						(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter, bool tlPadLeft, bool tlPadRight);
 	SVariable*			function_pi			/* Stefano D'Amico */	(SThisCode* thisCode);
 	SVariable*			function_proper								(SThisCode* thisCode, SVariable* varString);
 	SVariable*			function_ranger		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varExpression, SVariable* varMin, SVariable* varMax);
@@ -218,7 +223,10 @@ struct SThisCode;
 	SVariable*			function_ratc								(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence);
 	SVariable*			function_replicate							(SThisCode* thisCode, SVariable* varString, SVariable* varCount);
 	SVariable*			function_rgb								(SThisCode* thisCode, SVariable* varRed, SVariable* varGrn, SVariable* varBlu);
+	SVariable*			ifunction_rgba_common						(SThisCode* thisCode, SVariable* varRed, SVariable* varGrn, SVariable* varBlu, SVariable* varAlp);
 	SVariable*			function_rgba								(SThisCode* thisCode, SVariable* varRed, SVariable* varGrn, SVariable* varBlu, SVariable* varAlp);
+	SVariable*			function_red								(SThisCode* thisCode, SVariable* varColor);
+	SVariable*			ifunction_color_common						(SThisCode* thisCode, SVariable* varColor, u32 tnMask, u32 tnShift);
 	SVariable*			function_right								(SThisCode* thisCode, SVariable* varString, SVariable* varCount);
 	SVariable*			function_rtod		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_rtrim								(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2);
@@ -229,7 +237,7 @@ struct SThisCode;
 	SVariable*			function_sqrt		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_strtran							(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount);
 	SVariable*			function_strtranc							(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount);
-	SVariable*			ifunction_strtranCommon						(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount, bool tlCaseSensitive);
+	SVariable*			ifunction_strtran_common					(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount, bool tlCaseSensitive);
 	SVariable*			function_stuff								(SThisCode* thisCode, SVariable* varOriginalString, SVariable* varStartPos, SVariable* varNumToRemove, SVariable* varStuffString);
 	SVariable*			function_sys								(SThisCode* thisCode, SVariable* varIndex, SVariable* varP1, SVariable* varP2, SVariable* varP3, SVariable* varP4, SVariable* varP5, SVariable* varP6);
 	SVariable*			iFunction_sys2015							(SThisCode* thisCode, u32 tnPrefixWidth, u32 tnPostfixWidth);
@@ -322,9 +330,13 @@ struct SThisCode;
 		//  ------------------		------		--------------------------		----------		-------------	----------------------------------
 		{	_ICODE_ADDBS,			1,			(uptr)&function_addbs,			1,				4,				&gsSourceLight_alltrim[0]		},
 		{	_ICODE_ALLTRIM,			1,			(uptr)&function_alltrim,		1,				4,				&gsSourceLight_alltrim[0]		},
+		{	_ICODE_ALP,				1,			(uptr)&function_alp,			1,				1,				&gsSourceLight_alp[0]			},
 		{	_ICODE_ASC,				1,			(uptr)&function_asc,			1,				1,				&gsSourceLight_asc[0]			},
 		{	_ICODE_AT,				1,			(uptr)&function_at,				2,				3,				&gsSourceLight_at[0]			},
 		{	_ICODE_ATC,				1,			(uptr)&function_atc,			2,				3,				&gsSourceLight_atc[0]			},
+		{	_ICODE_BGR,				1,			(uptr)&function_bgr,			3,				3,				&gsSourceLight_bgr[0]			},
+		{	_ICODE_BGRA,			1,			(uptr)&function_bgra,			4,				4,				&gsSourceLight_bgra[0]			},
+		{	_ICODE_BLU,				1,			(uptr)&function_blu,			1,				1,				&gsSourceLight_blu[0]			},
 		{	_ICODE_CEILING,			1,			(uptr)&function_ceiling,		1,				1,				&gsSourceLight_ceiling[0]		},	// CEILING() by Stefano D'Amico, VJr 0.56, Mar.15.2015
 		{	_ICODE_CHR,				1,			(uptr)&function_chr,			1,				1,				&gsSourceLight_chr[0]			},
 		{	_ICODE_CHRTRAN,			1,			(uptr)&function_chrtran,		2,				3,				&gsSourceLight_chrtran[0]		},
@@ -339,6 +351,7 @@ struct SThisCode;
 		{	_ICODE_FORCEFNAME,		1,			(uptr)&function_forcefname,		2,				2,				&gsSourceLight_forcefname[0]	},
 		{	_ICODE_FORCEPATH,		1,			(uptr)&function_forcepath,		2,				2,				&gsSourceLight_forcepath[0]		},
 		{	_ICODE_FORCESTEM,		1,			(uptr)&function_forcestem,		2,				2,				&gsSourceLight_forcestem[0]		},
+		{	_ICODE_GRN,				1,			(uptr)&function_grn,			1,				1,				&gsSourceLight_grn[0]			},
 		{	_ICODE_INT,				1,			(uptr)&function_int,			1,				1,				&gsSourceLight_int[0]			},
 		{	_ICODE_JUSTDRIVE,		1,			(uptr)&function_justdrive,		1,				1,				&gsSourceLight_justdrive[0]		},
 		{	_ICODE_JUSTEXT,			1,			(uptr)&function_justext,		1,				1,				&gsSourceLight_justext[0]		},
@@ -365,6 +378,7 @@ struct SThisCode;
 		{	_ICODE_RANGER,			1,			(uptr)&function_ranger,			3,				3,				&gsSourceLight_ranger[0]		},	// RANGER() by Stefano D'Amico, VJr 0.56, Mar.14.2015
 		{	_ICODE_RAT,				1,			(uptr)&function_rat,			2,				3,				&gsSourceLight_rat[0]			},
 		{	_ICODE_RATC,			1,			(uptr)&function_ratc,			2,				3,				&gsSourceLight_ratc[0]			},
+		{	_ICODE_RED,				1,			(uptr)&function_red,			1,				1,				&gsSourceLight_red[0]			},
 		{	_ICODE_REPLICATE,		1,			(uptr)&function_replicate,		2,				2,				&gsSourceLight_replicate[0]		},
 		{	_ICODE_RGB,				1,			(uptr)&function_rgb,			3,				3,				&gsSourceLight_rgb[0]			},
 		{	_ICODE_RGBA,			1,			(uptr)&function_rgba,			4,				4,				&gsSourceLight_rgba[0]			},
