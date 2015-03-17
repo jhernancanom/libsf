@@ -232,6 +232,7 @@ struct SThisCode;
 	SVariable*			function_red								(SThisCode* thisCode, SVariable* varColor);
 	SVariable*			ifunction_color_common						(SThisCode* thisCode, SVariable* varColor, u32 tnMask, u32 tnShift);
 	SVariable*			function_right								(SThisCode* thisCode, SVariable* varString, SVariable* varCount);
+	SVariable*			function_round		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber, SVariable* varDecimalPlaces);
 	SVariable*			function_rtod		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_rtrim								(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2);
 	SVariable*			function_sign		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
@@ -390,6 +391,7 @@ struct SThisCode;
 		{	_ICODE_RGB,				1,			(uptr)&function_rgb,			3,				3,				&gsSourceLight_rgb[0]			},
 		{	_ICODE_RGBA,			1,			(uptr)&function_rgba,			4,				4,				&gsSourceLight_rgba[0]			},
 		{	_ICODE_RIGHT,			1,			(uptr)&function_right,			2,				2,				&gsSourceLight_right[0]			},
+		{	_ICODE_ROUND,			1,			(uptr)&function_round,			2,				2,				&gsSourceLight_round[0]			},	// ROUND() by Stefano D'Amico, VJr 0.56, Mar.16.2015
 		{	_ICODE_RTOD,			1,			(uptr)&function_rtod,			1,				1,				&gsSourceLight_rtod[0]			},	// RTOD() by Stefano D'Amico, VJr 0.56, Mar.16.2015
 		{	_ICODE_RTRIM,			1,			(uptr)&function_rtrim,			1,				1,				&gsSourceLight_rtrim[0]			},
 		{	_ICODE_SIGN,			1,			(uptr)&function_sign,			1,				1,				&gsSourceLight_sign[0]			},	// SIGN() by Stefano D'Amico, VJr 0.56, Mar.14.2015

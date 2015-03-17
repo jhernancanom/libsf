@@ -525,6 +525,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_round[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_rtod[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
