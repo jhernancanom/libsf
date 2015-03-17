@@ -682,6 +682,7 @@
 		{ cgc_assert,				6,			false,		_ICODE_ASSERT,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_assist,				6,			false,		_ICODE_ASSIST,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_autoincerror,			12,			false,		_ICODE_AUTOINCERROR,					false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
+		{ cgc_automatic,			9,			false,		_ICODE_AUTOMATIC,						false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_autosave,				8,			false,		_ICODE_AUTOSAVE,						false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_average,				7,			false,		_ICODE_AVERAGE,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_bar,					3,			false,		_ICODE_BAR,								false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },

@@ -446,6 +446,7 @@
 	const s32		_ICODE_ATLINE                                   = 1047;
 	const s32		_ICODE_ATN2                                     = 1048;
 	const s32		_ICODE_AUSED                                    = 1049;
+	const s32		_ICODE_AUTOMATIC								= 1450;
 	const s32		_ICODE_AVCXCLASSES                              = 1050;
 	const s32		_ICODE_BARPROMPT                                = 1051;
 	const s32		_ICODE_BARCOUNT                                 = 1052;
@@ -853,7 +854,7 @@
 	// noloadparams		= 1443				unloadparams	= 1444
 	// nounloadparams	= 1445				forcefname		= 1446
 	// forcestem		= 1447				ranger			= 1448
-	// ncset			= 1449
+	// ncset			= 1449				automatic		= 1450
 
 // Temporarily added until the processing engine is coded
 	const s32		_ICODE_CONCATENATE								= 1900;
@@ -1754,6 +1755,7 @@
 	const s8		cgc_assert[]									= "assert";
 	const s8		cgc_assist[]									= "assist";
 	const s8		cgc_autoincerror[]								= "autoincerror";
+	const s8		cgc_automatic[]									= "automatic";
 	const s8		cgc_autosave[]									= "autosave";
 	const s8		cgc_average[]									= "average";
 //	const s8		cgc_bar[]										= "bar";

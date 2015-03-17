@@ -98,13 +98,16 @@
 //
 // Called to set the f64 variable to the indicated input
 //
+// Note:  For nested sets, such as something already calling setterObject_set(), which then calls here,
+//        we want it to then go through the normal setterObject() function.
+//
 //////
-	bool iObjProp_set(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* varNewValue)
+	bool iObjProp_set(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* varNewValue, bool tlNestedSet)
 	{
-		bool				llResult;
+		bool			llResult;
 		SBasePropMap*	baseProp;
 		SObjPropMap*	objProp;
-		SVariable*			var;
+		SVariable*		var;
 
 
 		// Make sure the environment is sane
@@ -115,10 +118,10 @@
 			if (var)
 			{
 				// Validate against the object class if available, and if not then the base class if available, and if not then just copy
-				     if (objProp->_setterObject && tnIndex < _INDEX_SET_FIRST_ITEM)			llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
-				else if (objProp->_setterObject_set && tnIndex >= _INDEX_SET_FIRST_ITEM)	llResult = objProp->setterObject_set(thisCode, var, NULL, varNewValue, false);
-				else if (baseProp->_setterBase)												llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
-				else																		llResult = iVariable_copy(thisCode, var, varNewValue);
+				     if (objProp->_setterObject && !tlNestedSet && tnIndex < _INDEX_SET_FIRST_ITEM)			llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
+				else if (objProp->_setterObject_set && !tlNestedSet && tnIndex >= _INDEX_SET_FIRST_ITEM)	llResult = objProp->setterObject_set(thisCode, var, NULL, varNewValue, false);
+				else if (baseProp->_setterBase)																llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
+				else																						llResult = iVariable_copy(thisCode, var, varNewValue);
 
 				// Indicate our status
 				return(llResult);
@@ -138,13 +141,13 @@
 //////
 	bool iObjProp_set_bitmap_direct(SThisCode* thisCode, SObject* obj, s32 tnIndex, SBitmap* bmp)
 	{
-		bool				llResult;
+		bool			llResult;
 		SBasePropMap*	baseProp;
 		SObjPropMap*	objProp;
-		SVariable*			varNewValue;
-		SVariable*			var;
-		SObject*			objChild;
-		RECT				lrc;
+		SVariable*		varNewValue;
+		SVariable*		var;
+		SObject*		objChild;
+		RECT			lrc;
 
 
 		// Make sure the environment is sane
@@ -848,6 +851,7 @@
 //////
 	bool iObjProp_setLanguage(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet)
 	{
+// TODO:  This will need to be implemented once we get resources moved out to loadable DLLs.  We'll look for a vjrres_en.dll, for example
 		return(false);
 	}
 
@@ -898,10 +902,100 @@
 //
 // Called to set reprocess using the valid reprocess options
 //
+// Note:  Reprocess is logical, or numeric. When numeric if negative it is attempts, if positive it is seconds
+//
 //////
 	bool iObjProp_setReprocess(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet)
 	{
-		return(false);
+		s32		lnValue;
+		bool	llResult;
+		SComp*	compSystem;
+		SComp*	compSeconds;
+		bool	error;
+		u32		errorNum;
+
+
+		//////////
+		// Locate any additional components
+		//////
+			compSystem	= iComps_findNextBy_iCode(compNew, _ICODE_SYSTEM, NULL);
+			compSeconds	= iComps_findNextBy_iCode(compNew, _ICODE_SECONDS, NULL);
+
+
+		//////////
+		// Are they specifying a number?
+		//////
+			llResult = false;
+			if (varNew)
+			{
+				// It's a value, which means it must not
+				if (iVariable_isTypeNumeric(varNew))
+				{
+					// Grab the value
+					lnValue = iiVariable_getAs_s32(thisCode, varNew, false, &error, &errorNum);
+
+					// Must be positive, and there must have been no error in conversion
+					if (lnValue >= 0 && !error)
+					{
+						// Indicate success
+						llResult = true;
+
+
+						//////////
+						// Is it seconds or attempts?
+						//////
+							if (!compSeconds)
+								*varNew->value.data_s32 *= -1;		// It is ATTEMPTS, make negative
+
+
+						//////////
+						// Perform the set
+						//////
+							if (compSystem)
+							{
+								// Setting the system reprocess
+								iObjProp_set(thisCode, _settings, _INDEX_SET_REPROCESS_SYSTEM, varNew, true);
+
+							} else {
+								// Setting the normal reprocess
+								iObjProp_set(thisCode, _settings, _INDEX_SET_REPROCESS, varNew, true);
+							}
+
+					}
+				}
+
+			} else if (compNew && compNew->iCode == _ICODE_AUTOMATIC) {
+				// They're indicating that it should be automatic processing
+				// Indicate success
+				llResult = true;
+
+
+				//////////
+				// Perform the set
+				//////
+					if (compSystem)
+					{
+						// Setting the system reprocess to true (automatic)
+						iObjProp_set(thisCode, _settings, _INDEX_SET_REPROCESS_SYSTEM, varTrue, true);
+
+					} else {
+						// Setting the normal reprocess to true (automatic)
+						iObjProp_set(thisCode, _settings, _INDEX_SET_REPROCESS, varTrue, true);
+					}
+			}
+
+
+		//////////
+		// Optionally clean house
+		//////
+			if (tlDeleteVarNewAfterSet)
+				iVariable_delete(thisCode, varNew, true);
+
+
+		//////////
+		// Indicate
+		//////
+			return(llResult);
 	}
 
 
@@ -914,7 +1008,34 @@
 //////
 	bool iObjProp_setTime(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet)
 	{
-		return(false);
+		bool llResult;
+
+
+		//////////
+		// Validate the component is a SYSTEM or LOCAL
+		//////
+			llResult = false;
+			if (compNew && (compNew->iCode == _ICODE_SYSTEM || compNew->iCode == _ICODE_LOCAL))
+			{
+				// Set the value
+				iVariable_set_s32(thisCode, varSet, ((compNew->iCode == _ICODE_SYSTEM) ? _TIME_SYSTEM : _TIME_LOCAL));
+
+				// Indicate success
+				llResult = true;
+			}
+
+
+		//////////
+		// Optionally clean house
+		//////
+			if (tlDeleteVarNewAfterSet)
+				iVariable_delete(thisCode, varNew, true);
+
+
+		//////////
+		// Indicate our status
+		//////
+			return(llResult);
 	}
 
 
