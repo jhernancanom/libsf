@@ -481,6 +481,7 @@
 		{ cgc_ltrim,				5,			false,		_ICODE_LTRIM,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_lupdate,				7,			false,		_ICODE_LUPDATE,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_maketransactable,		16,			false,		_ICODE_MAKETRANSACTABLE,				false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
+		{ cgc_malp,					4,			false,		_ICODE_MALP,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_max,					3,			false,		_ICODE_MAX,								false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_mcol,					4,			false,		_ICODE_MCOL,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_mdown,				5,			false,		_ICODE_MDOWN,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },

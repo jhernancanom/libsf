@@ -666,6 +666,7 @@
 	const s32		_ICODE_LTRIM                                    = 1256;
 	const s32		_ICODE_LUPDATE                                  = 1257;
 	const s32		_ICODE_MAKETRANSACTABLE                         = 1258;
+	const s32		_ICODE_MALP										= 1457;
 	const s32		_ICODE_MAX                                      = 1259;
 	const s32		_ICODE_MCOL                                     = 1260;
 	const s32		_ICODE_MDOWN                                    = 1261;
@@ -1566,6 +1567,7 @@
 	const s8		cgc_ltrim[]										= "ltrim";
 	const s8		cgc_lupdate[]									= "lupdate";
 	const s8		cgc_maketransactable[]							= "maketransactable";
+	const s8		cgc_malp[]										= "malp";
 	const s8		cgc_max[]										= "max";
 	const s8		cgc_mcol[]										= "mcol";
 	const s8		cgc_mdown[]										= "mdown";

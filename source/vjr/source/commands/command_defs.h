@@ -206,6 +206,7 @@ struct SThisCode;
 	SVariable*			function_log10		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_lower								(SThisCode* thisCode, SVariable* varString);
 	SVariable*			function_ltrim								(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2);
+	SVariable*			function_malp								(SThisCode* thisCode, SVariable* varColor, SVariable* varAsInteger);
 	SVariable*			function_max								(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight);
 	SVariable*			function_min								(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight);
 	SVariable*			function_mod		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varDividend, SVariable* varDivisor);
@@ -364,6 +365,7 @@ struct SThisCode;
 		{	_ICODE_LOG10,			1,			(uptr)&function_log10,			1,				1,				&gsSourceLight_log10[0]			},	// LOG10() by Stefano D'Amico, VJr 0.56, Mar.15.2015
 		{	_ICODE_LOWER,			1,			(uptr)&function_lower,			1,				1,				&gsSourceLight_lower[0]			},
 		{	_ICODE_LTRIM,			1,			(uptr)&function_ltrim,			1,				1,				&gsSourceLight_ltrim[0]			},
+		{	_ICODE_MALP,			1,			(uptr)&function_malp,			1,				2,				&gsSourceLight_malp[0]			},
 		{	_ICODE_MAX,				1,			(uptr)&function_max,			2,				2,				&gsSourceLight_max[0]			},
 		{	_ICODE_MIN,				1,			(uptr)&function_min,			2,				2,				&gsSourceLight_min[0]			},
 		{	_ICODE_MOD,				1,			(uptr)&function_mod,			2,				2,				&gsSourceLight_mod[0]			},	// MOD() by Stefano D'Amico, VJr 0.56, Mar.08.2015

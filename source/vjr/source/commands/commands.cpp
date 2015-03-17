@@ -3237,6 +3237,119 @@
 
 //////////
 //
+// Function: MALP()
+// Returns the 1.0 - ((255 - ALP()) / 255) calculation.
+//
+//////
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Mar.16.2015
+//////
+// Change log:
+//     Mar.16.2015 - Initial creation
+//////
+// Parameters:
+//     varColor		-- Color to extract alpha channel from
+//
+//////
+// Returns:
+//    Integer in the range 0..255, or floating point in the range 0.0 to 1.0
+//
+//////
+// Usage:
+//   ? malp(lnColor)          && Returns floating point
+//   ? malp(lnColor, .t.)     && Returns integer
+//   ? malp(lnColor, .f.)     && Returns floating point
+//////
+	SVariable* function_malp(SThisCode* thisCode, SVariable* varColor, SVariable* varAsInteger)
+	{
+		u32			lnColor;
+		f32			lfMalp;
+		bool		llAsInteger;
+		bool		error;
+		u32			errorNum;
+		SVariable*	result;
+
+
+		//////////
+		// Color must be numeric
+		//////
+			if (!iVariable_isValid(varColor) || !iVariable_isTypeNumeric(varColor))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varColor), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// If varAsInteger exists, it must be logical
+		//////
+			if (varAsInteger)
+			{
+				if (!iVariable_isFundamentalTypeLogical(varAsInteger))
+				{
+					iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varColor), false);
+					return(NULL);
+				}
+
+				// Grab the value
+				llAsInteger = iiVariable_getAs_bool(thisCode, varAsInteger, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varColor), false);	return(NULL);	}
+
+			} else {
+				// Set it to false
+				llAsInteger = false;
+			}
+
+
+		//////////
+		// Grab the value
+		//////
+			lnColor = iiVariable_getAs_u32(thisCode, varColor, false, &error, &errorNum);
+			if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varColor), false);	return(NULL);	}
+
+
+		//////////
+		// Apply the mask and shift
+		//////
+			lnColor &= 0xff0000000;
+			lnColor >>= 24;
+			if (llAsInteger)
+			{
+				// Unsigned 32-bit integer
+				lnColor	= 255 - lnColor;
+				result	= iVariable_create(thisCode, _VAR_TYPE_U32, NULL);
+
+			} else {
+				// Floating point
+				lfMalp	= 1.0f - ((255.0f - (f32)lnColor) / 255.0f);
+				result	= iVariable_create(thisCode, _VAR_TYPE_F32, NULL);
+			}
+
+
+		//////////
+		// Construct our result
+		//////
+			if (!result)
+			{
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Populate and return our result
+		//////
+			if (llAsInteger)		*result->value.data_u32 = lnColor;
+			else					*result->value.data_f32 = lfMalp;
+			return(result);
+	}
+
+
+
+
+//////////
+//
 // Function: MAX()
 // Returns the maximum value of the two inputs.
 //
