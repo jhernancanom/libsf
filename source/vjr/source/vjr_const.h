@@ -825,6 +825,8 @@ typedef SEM**		SEMpp;
 	const u32			_FP_COMMON_FLOOR					= 6;
 	const u32			_FP_COMMON_DTOR						= 7;
 	const u32			_FP_COMMON_RTOD						= 8;
+	const u32			_FP_COMMON_COS						= 9;
+	const u32			_FP_COMMON_SIN						= 10;
 
 //////////
 // Internal messages
