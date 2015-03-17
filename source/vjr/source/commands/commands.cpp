@@ -1901,6 +1901,37 @@
 
 //////////
 //
+// Function: COS()
+// Returns the cosine of a numeric expression.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.17.2015
+//////
+// Change log:
+//     Mar.17.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    COS(n) of the value in p1
+//////
+// Example:
+//    ? COS(0)		&& Display 1.00
+//////
+    SVariable* function_cos(SThisCode* thisCode, SVariable* varNumber)
+    {
+		// Return exp
+		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_COS, _VAR_TYPE_F64, false));
+	}
+
+
+
+//////////
+//
 // Function: CREATEOBJECT()
 // Instantiates and instance of the indicated class.
 //
@@ -2415,6 +2446,16 @@
 // RTOD()
 				case _FP_COMMON_RTOD:
 					lfValue = lfValue * _MATH_180PI;
+					break;
+
+// COS()
+				case _FP_COMMON_COS:
+					lfValue = cos(lfValue);
+					break;
+
+// SIN()
+				case _FP_COMMON_SIN:
+					lfValue = sin(lfValue);
 					break;
 				default:
 					// Programmer error... this is an internal function and we should never get here
@@ -5619,6 +5660,36 @@
 	        return result;
     }
 
+	
+
+//////////
+//
+// Function: SIN()
+// Returns the sine of an angle.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.17.2015
+//////
+// Change log:
+//     Mar.17.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    SIN(n) of the value in p1
+//////
+// Example:
+//    ? SIN(0)		&& Display 0.00
+//////
+    SVariable* function_sin(SThisCode* thisCode, SVariable* varNumber)
+    {
+		// Return exp
+		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_SIN, _VAR_TYPE_F64, false));
+	}
 
 
 

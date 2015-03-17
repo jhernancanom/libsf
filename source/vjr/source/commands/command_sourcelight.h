@@ -304,6 +304,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_cos[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_createobject[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -541,6 +546,11 @@
 	};
 
 	SSourceLightData gsSourceLight_sign[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_sin[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
