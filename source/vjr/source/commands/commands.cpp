@@ -1901,6 +1901,37 @@
 
 //////////
 //
+// Function: COS()
+// Returns the cosine of a numeric expression.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.17.2015
+//////
+// Change log:
+//     Mar.17.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    COS(n) of the value in p1
+//////
+// Example:
+//    ? COS(0)		&& Display 1.00
+//////
+    SVariable* function_cos(SThisCode* thisCode, SVariable* varNumber)
+    {
+		// Return exp
+		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_COS, _VAR_TYPE_F64, false));
+	}
+
+
+
+//////////
+//
 // Function: CREATEOBJECT()
 // Instantiates and instance of the indicated class.
 //
@@ -2415,6 +2446,16 @@
 // RTOD()
 				case _FP_COMMON_RTOD:
 					lfValue = lfValue * _MATH_180PI;
+					break;
+
+// COS()
+				case _FP_COMMON_COS:
+					lfValue = cos(lfValue);
+					break;
+
+// SIN()
+				case _FP_COMMON_SIN:
+					lfValue = sin(lfValue);
 					break;
 				default:
 					// Programmer error... this is an internal function and we should never get here
@@ -4098,12 +4139,16 @@
         // Create the return result
 		//////
 	        result = iVariable_create(thisCode, varDividend->varType, NULL);
-
+			if (!result)
+			{
+				iError_report(cgcInternalError, false);
+				return(NULL);
+			}
 
 		//////////
         // Populate the return value
 		//////
-			if (result && !iVariable_set_f64_toExistingType(thisCode, result, lfMod))
+			if (!iVariable_set_f64_toExistingType(thisCode, result, lfMod))
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
 
 
@@ -5312,6 +5357,127 @@
 
 //////////
 //
+// Function: ROUND()
+// Returns a numeric expression rounded to a specified number of decimal places.
+//  
+//////
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Mar.17.2015
+//////
+// Change log:
+//     Mar.17.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//    varNumber			-- Specifies the numeric expression whose value is to be rounded.
+//    varDecimalPlaces	-- Specifies the number of decimal places nExpression is rounded to.
+//
+//////
+// Returns:
+//    Numeric		-- ROUND( ) returns a value rounded to the nearest decimal position as specified by nDecimalPlaces.
+//////
+// Example:
+//    ? ROUND(53.213, 2)   && 53.21
+//    ? ROUND(532, -2)     && 500
+//////
+	SVariable* function_round(SThisCode* thisCode, SVariable* varNumber, SVariable* varDecimalPlaces)
+	{
+		f64			lfValue, lfRounded;
+		s32			lnDecimalPlaces;
+		bool		error;
+		u32			errorNum;
+
+		SVariable*	result;
+
+//TODO: more speed by type checking :-)
+
+		//////////
+		// Parameter 1 must be numeric
+		//////
+			if (!iVariable_isValid(varNumber) || !iVariable_isTypeNumeric(varNumber))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varNumber), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Parameter 2 must be numeric
+		//////
+			if (!iVariable_isValid(varDecimalPlaces) || !iVariable_isTypeNumeric(varDecimalPlaces))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_compRelated(thisCode, varDecimalPlaces), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Grab the p1, convert to f64
+		//////
+			lfValue = iiVariable_getAs_f64(thisCode, varNumber, false, &error, &errorNum);
+			if (error)
+			{
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Grab the p2, convert to s32
+		//////
+			lnDecimalPlaces = iiVariable_getAs_s32(thisCode, varDecimalPlaces, false, &error, &errorNum);
+			if (error)
+			{
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varDecimalPlaces), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Check -18<=lnDecimalPlaces<=16,  max 16 :-(
+		//////
+			if (lnDecimalPlaces < -18 || lnDecimalPlaces > 16)
+			{
+				iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_compRelated(thisCode, varDecimalPlaces), false);
+				return(NULL);
+			}
+
+		//////////
+		// Compute round
+		//////
+			lfRounded = ((s64)(lfValue * pow(10.0, lnDecimalPlaces) + .5) / pow(10.0, lnDecimalPlaces));
+
+
+		//////////
+        // Create the return result
+		//////
+	        result = iVariable_create(thisCode, varNumber->varType, NULL);
+			if (!result)
+			{
+				iError_report(cgcInternalError, false);
+				return(NULL);
+			}
+
+
+		//////////
+        // Populate the return value
+		//////
+			if (!iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfRounded, NULL, NULL, NULL, NULL))
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber), false);
+
+
+		//////////
+        // Return our result
+		//////
+	        return result;
+	}
+
+
+
+
+
+//////////
+//
 // Function: RTOD()
 // Converts radians to its equivalent in degrees.
 //
@@ -5494,6 +5660,36 @@
 	        return result;
     }
 
+	
+
+//////////
+//
+// Function: SIN()
+// Returns the sine of an angle.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.17.2015
+//////
+// Change log:
+//     Mar.17.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    SIN(n) of the value in p1
+//////
+// Example:
+//    ? SIN(0)		&& Display 0.00
+//////
+    SVariable* function_sin(SThisCode* thisCode, SVariable* varNumber)
+    {
+		// Return exp
+		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_SIN, _VAR_TYPE_F64, false));
+	}
 
 
 
