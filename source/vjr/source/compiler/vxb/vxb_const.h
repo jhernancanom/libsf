@@ -483,6 +483,7 @@
 	const s32		_ICODE_CNTBAR                                   = 1079;
 	const s32		_ICODE_CNTPAD                                   = 1080;
 	const s32		_ICODE_COL                                      = 1081;
+	const s32		_ICODE_COLORIZE									= 1459;
 	const s32		_ICODE_COMARRAY                                 = 1082;
 	const s32		_ICODE_COMCLASSINFO                             = 1083;
 	const s32		_ICODE_COMMAND                                  = 1084;
@@ -608,6 +609,7 @@
 	const s32		_ICODE_GETWORDCOUNT                             = 1201;
 	const s32		_ICODE_GETWORDNUM                               = 1202;
 	const s32		_ICODE_GOMONTH                                  = 1203;
+	const s32		_ICODE_GRAYSCALE								= 1458;
 	const s32		_ICODE_GRN										= 1455;
 	const s32		_ICODE_HEADER                                   = 1204;
 	const s32		_ICODE_HOME                                     = 1205;
@@ -1383,6 +1385,7 @@
 	const s8		cgc_cntbar[]									= "cntbar";
 	const s8		cgc_cntpad[]									= "cntpad";
 	const s8		cgc_col[]										= "col";
+	const s8		cgc_colorize[]									= "cgc_colorize";
 	const s8		cgc_comarray[]									= "comarray";
 	const s8		cgc_comclassinfo[]								= "comclassinfo";
 	const s8		cgc_command[]									= "command";
@@ -1508,6 +1511,7 @@
 	const s8		cgc_getwordcount[]								= "getwordcount";
 	const s8		cgc_getwordnum[]								= "getwordnum";
 	const s8		cgc_gomonth[]									= "gomonth";
+	const s8		cgc_grayscale[]									= "grayscale";
 	const s8		cgc_grn[]										= "grn";
 	const s8		cgc_header[]									= "header";
 	const s8		cgc_home[]										= "home";

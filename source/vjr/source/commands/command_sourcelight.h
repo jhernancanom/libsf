@@ -299,6 +299,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_colorize[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_createobject[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -345,6 +350,11 @@
 	};
 
 	SSourceLightData gsSourceLight_forcestem[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_grayscale[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};

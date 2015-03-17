@@ -161,6 +161,7 @@
 	void iVjr_init(HACCEL* hAccelTable)
 	{
 		s32			lnValue;
+		f32			lfValue;
 		RECT		lrc;
 		u8			logBuffer[256];
 		SBitmap*	bmp;
@@ -202,6 +203,14 @@
 		// 255
 		lnValue					= 255;
 		varTwoFiftyFive			= iVariable_createAndPopulate(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, sizeof(lnValue));
+
+		// 0.5
+		lfValue					= 0.5f;
+		varFiftyPercent			= iVariable_createAndPopulate(NULL, _VAR_TYPE_F32, (cu8*)&lfValue, sizeof(lfValue));
+
+		// 1.0
+		lfValue					= 0.5f;
+		varOneHundredPercent	= iVariable_createAndPopulate(NULL, _VAR_TYPE_F32, (cu8*)&lfValue, sizeof(lfValue));
 
 		// 2000 blank spaces
 		iDatum_allocateSpace(&var2000Spaces->value, 2000);

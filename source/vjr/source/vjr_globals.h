@@ -179,6 +179,8 @@
 	SVariable*			varFalse							= NULL;									// A constant .F.
 	SVariable*			varSix								= NULL;									// A numeric value of 6, used for padding widths
 	SVariable*			varTwoFiftyFive						= NULL;									// A numeric value of 255, used for color channels
+	SVariable*			varFiftyPercent						= NULL;									// An f32 0.5
+	SVariable*			varOneHundredPercent				= NULL;									// An f32 1.0
 
 	// Default variable values used for references
 	SVariable*			varDefault_null						= NULL;									// NULL

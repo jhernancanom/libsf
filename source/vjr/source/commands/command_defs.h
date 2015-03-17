@@ -182,6 +182,8 @@ struct SThisCode;
 	SVariable*			function_chrtran							(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace);
 	SVariable*			function_chrtranc							(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace);
 	SVariable*			ifunction_chrtran_common					(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, bool tlCaseSensitive);
+	SVariable*			function_colorize							(SThisCode* thisCode, SVariable* varColor, SVariable* varColorTarget, SVariable* varPercentage);
+	SVariable*			ifunction_colorize_common					(SThisCode* thisCode, SVariable* varColor, SVariable* varColorTarget, SVariable* varPercentage, bool tlApplyColorTarget);
 	SVariable*			function_createobject						(SThisCode* thisCode, SVariable* varClass);
 	SVariable*			function_curdir								(SThisCode* thisCode);
 	SVariable*			function_datetime							(SThisCode* thisCode, SVariable* varYear, SVariable* varMonth, SVariable* varDay, SVariable* varHour, SVariable* varMinute, SVariable* varSecond, SVariable* varMillisecond);
@@ -193,6 +195,7 @@ struct SThisCode;
 	SVariable*			function_forcefname							(SThisCode* thisCode, SVariable* varPathname, SVariable varNewFilename);
 	SVariable*			function_forcepath							(SThisCode* thisCode, SVariable* varPathname, SVariable varNewPathname);
 	SVariable*			function_forcestem							(SThisCode* thisCode, SVariable* varPathname, SVariable varNewStem);
+	SVariable*			function_grayscale							(SThisCode* thisCode, SVariable* varColor, SVariable* varPercentage);
 	SVariable*			function_grn								(SThisCode* thisCode, SVariable* varColor);
 	SVariable*			function_int								(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_justdrive							(SThisCode* thisCode, SVariable* varString);
@@ -342,6 +345,7 @@ struct SThisCode;
 		{	_ICODE_CHR,				1,			(uptr)&function_chr,			1,				1,				&gsSourceLight_chr[0]			},
 		{	_ICODE_CHRTRAN,			1,			(uptr)&function_chrtran,		2,				3,				&gsSourceLight_chrtran[0]		},
 		{	_ICODE_CHRTRANC,		1,			(uptr)&function_chrtranc,		2,				3,				&gsSourceLight_chrtranc[0]		},
+		{	_ICODE_COLORIZE,		1,			(uptr)&function_colorize,		2,				3,				&gsSourceLight_colorize[0]		},
 		{	_ICODE_CREATEOBJECT,	1,			(uptr)&function_createobject,	1,				1,				&gsSourceLight_createobject[0]	},
 		{	_ICODE_CURDIR,			1,			(uptr)&function_curdir,			0,				0,				&gsSourceLight_curdir[0]		},
 		{	_ICODE_DATETIME,		1,			(uptr)&function_datetime,		0,				7,				&gsSourceLight_datetime[0]		},
@@ -352,6 +356,7 @@ struct SThisCode;
 		{	_ICODE_FORCEFNAME,		1,			(uptr)&function_forcefname,		2,				2,				&gsSourceLight_forcefname[0]	},
 		{	_ICODE_FORCEPATH,		1,			(uptr)&function_forcepath,		2,				2,				&gsSourceLight_forcepath[0]		},
 		{	_ICODE_FORCESTEM,		1,			(uptr)&function_forcestem,		2,				2,				&gsSourceLight_forcestem[0]		},
+		{	_ICODE_GRAYSCALE,		1,			(uptr)&function_grayscale,		1,				2,				&gsSourceLight_grayscale[0]		},
 		{	_ICODE_GRN,				1,			(uptr)&function_grn,			1,				1,				&gsSourceLight_grn[0]			},
 		{	_ICODE_INT,				1,			(uptr)&function_int,			1,				1,				&gsSourceLight_int[0]			},
 		{	_ICODE_JUSTDRIVE,		1,			(uptr)&function_justdrive,		1,				1,				&gsSourceLight_justdrive[0]		},

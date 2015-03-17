@@ -1720,6 +1720,181 @@
 		/////
 			return(result);
 	}
+;
+
+
+
+
+//////////
+//
+// Function: COLORIZE()
+// Colorizes an existing color by blending two colors.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.16.2015
+//////
+// Change log:
+//     Mar.16.2015 - Initial creation
+//////
+// Parameters:
+//     varColor			-- The original color
+//     varColorTarget	-- The color to blend in
+//     varPercentage	-- (Optional) How much to blend
+//
+//////
+// Returns:
+//    Numeric			-- The resulting colorized color
+//
+//////
+	SVariable* function_colorize(SThisCode* thisCode, SVariable* varColor, SVariable* varColorTarget, SVariable* varPercentage)
+	{
+		return(ifunction_colorize_common(thisCode, varColor, varColorTarget, varPercentage, true));
+	}
+
+	SVariable* ifunction_colorize_common(SThisCode* thisCode, SVariable* varColor, SVariable* varColorTarget, SVariable* varPercentage, bool tlApplyColorTarget)
+	{
+		u32			lnColor, lnColorTarget, lnColorNew;
+		f32			lfRedC, lfGrnC, lfBluC, lfAlpC;		// varColor
+		f32			lfRedT, lfGrnT, lfBluT, lfAlpT;		// varColorTarget
+		f32			lfAlp, lfMalp, lfGray, lfRedNew, lfGrnNew, lfBluNew, lfAlpNew;
+		bool		error;
+		u32			errorNum;
+		SVariable*	result;
+
+
+		//////////
+		// Color must be numeric
+		//////
+			if (!iVariable_isValid(varColor) || !iVariable_isTypeNumeric(varColor))
+			{
+				iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_compRelated(thisCode, varColor), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// If present, varColorTarget must be numeric
+		//////
+			if (tlApplyColorTarget)
+			{
+				if (!iVariable_isValid(varColorTarget) || !iVariable_isTypeNumeric(varColorTarget))
+				{
+					iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_compRelated(thisCode, varColorTarget), false);
+					return(NULL);
+				}
+			}
+
+
+		//////////
+		// Grab the percentage
+		//////
+			if (varPercentage)
+			{
+				// Must be floating point
+				if (!iVariable_isValid(varPercentage) || !iVariable_isTypeFloatingPoint(varPercentage))
+				{
+					iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_compRelated(thisCode, varPercentage), false);
+					return(NULL);
+				}
+
+				// Grab the value
+				lfAlp = iiVariable_getAs_f32(thisCode, varPercentage, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varPercentage), false);	return(NULL);	}
+
+				// Must be in the range 0.0 to 1.0
+				if (lfAlp < 0.0f || lfAlp > 1.0f)
+				{
+					iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_compRelated(thisCode, varPercentage), false);
+					return(NULL);
+				}
+				// If we get here, we're good
+
+			} else {
+				// They didn't specify a percentage, use default values
+				if (tlApplyColorTarget)		lfAlp = 0.5f;		// colorize() 50% / 50%
+				else						lfAlp = 1.0f;		// grayscale() 100%
+			}
+
+			// Compute our malp
+			lfMalp = 1.0f - lfAlp;
+
+
+		//////////
+		// Grab the color
+		//////
+			// Extract the color
+			lnColor = iiVariable_getAs_u32(thisCode, varColor, false, &error, &errorNum);
+			if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varColor), false);	return(NULL);	}
+
+			// Extract channels
+			lfRedC = (f32)red(lnColor);
+			lfGrnC = (f32)grn(lnColor);
+			lfBluC = (f32)blu(lnColor);
+			lfAlpC = (f32)alp(lnColor);
+
+
+		//////////
+		// Grab the color target
+		//////
+			if (tlApplyColorTarget)
+			{
+				// Extract the color target
+				lnColorTarget = iiVariable_getAs_u32(thisCode, varColorTarget, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varColor), false);	return(NULL);	}
+
+				// Extract channels
+				lfRedT = (f32)red(lnColorTarget);
+				lfGrnT = (f32)grn(lnColorTarget);
+				lfBluT = (f32)blu(lnColorTarget);
+				lfAlpT = (f32)alp(lnColorTarget);
+
+
+				//////////
+				// Generate the combined color (original color * malp) + (color target * alp)
+				//////
+					lfRedNew	= (lfRedC * lfMalp) + (lfRedT * lfAlp);
+					lfGrnNew	= (lfGrnC * lfMalp) + (lfGrnT * lfAlp);
+					lfBluNew	= (lfBluC * lfMalp) + (lfBluT * lfAlp);
+					lfAlpNew	= (lfAlpC * lfMalp) + (lfAlpT * lfAlp);
+
+
+			} else {
+				// We are grayscaling
+				lfGray		= max(min((lfRedC * 0.35f) + (lfGrnC * 0.54f) + (lfBluC * 0.11f), 1.0f), 0.0f);
+
+				// Generate the new grayscaled color (original color * malp) + (grayscale * alp)
+				lfRedNew	= (lfRedC * lfMalp) + (lfGray * lfAlp);
+				lfGrnNew	= (lfGrnC * lfMalp) + (lfGray * lfAlp);
+				lfBluNew	= (lfBluC * lfMalp) + (lfGray * lfAlp);
+				lfAlpNew	= (lfAlpC * lfMalp) + (lfGray * lfAlp);
+			}
+
+
+		//////////
+		// Construct the new color into an integer
+		//////
+			lnColorNew = rgba((u32)lfRedNew, (u32)lfGrnNew, (u32)lfBluNew, (u32)lfAlpNew);
+
+
+		//////////
+		// Construct our result
+		//////
+			result = iVariable_create(thisCode, _VAR_TYPE_U32, NULL);
+			if (!result)
+			{
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Populate and return our result
+		//////
+			*result->value.data_u32 = lnColorNew;
+			return(result);
+	}
 
 
 
@@ -2416,6 +2591,34 @@
 	{
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
 		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Function: GRAYSCALE()
+// Grayscales a color.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.16.2015
+//////
+// Change log:
+//     Mar.16.2015 - Initial creation
+//////
+// Parameters:
+//     varColor			-- The color to grayscale.
+//     varPercentage	-- (Optional) A percentage to grayscale (0.05 leaves almost all the color data, 0.95 is almost completely grayscaled)
+//////
+// Returns:
+//    The input pathname with the new stem.
+//////
+	SVariable* function_grayscale(SThisCode* thisCode, SVariable* varColor, SVariable* varPercentage)
+	{
+		return(ifunction_colorize_common(thisCode, varColor, NULL, varPercentage, false));
 	}
 
 
