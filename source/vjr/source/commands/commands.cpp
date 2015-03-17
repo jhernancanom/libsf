@@ -1321,6 +1321,37 @@
 
 
 
+//////////
+//
+// Function: CEILING()
+// Returns the next highest integer that is greater than or equal to the specified numeric expression.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.16.2015
+//////
+// Change log:
+//     Mar.16.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    CEILING(n) of the value in p1
+//////
+// Example:
+//    ? CEILING(2.2)		&& Display 3
+//////
+    SVariable* function_ceiling(SThisCode* thisCode, SVariable* varNumber)
+    {
+        // Return ceiling
+
+        return(ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_CEILING, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings)));
+	}
+
+
 
 //////////
 //
@@ -1919,6 +1950,37 @@
 
 //////////
 //
+// Function: DTOR()
+// Converts degrees to radians.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.16.2015
+//////
+// Change log:
+//     Mar.16.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    DTOR(n) of the value in p1
+//////
+// Example:
+//    ? DTOR(180)		&& Display 3.14
+//////
+    SVariable* function_dtor(SThisCode* thisCode, SVariable* varNumber)
+    {
+        // Return exp
+        return(ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_DTOR, _VAR_TYPE_F64, false));
+	}
+
+
+
+//////////
+//
 // Function: EXP()
 // Returns the value of e^x where x is a specified numeric expression.
 //
@@ -1943,11 +2005,11 @@
     SVariable* function_exp(SThisCode* thisCode, SVariable* varNumber)
     {
         // Return exp
-        return(ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_EXP, true));
+        return(ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_EXP, _VAR_TYPE_F64, false));
 	}
 
-	// Common numeric functions used for EXP(), LOG(), LOG10(), PI(), SQRT().
-    SVariable* ifunction_commonNumbers(SThisCode* thisCode, SVariable* varNumber, u32 functionType, bool resultFloatingPoint)
+	// Common numeric functions used for EXP(), LOG(), LOG10(), PI(), SQRT(), CEILING(), FLOOR(), DTOR(), RTOD().
+    SVariable* ifunction_commonNumbers(SThisCode* thisCode, SVariable* varNumber, u32 functionType, const u32 resultType, bool sameInputType)
     {
 		f64			lfValue;
 		u32			errorNum;
@@ -2007,7 +2069,6 @@
 						lfValue = sqrt(lfValue);	
 						break;
 
-
 // EXP()
 				case _FP_COMMON_EXP:
 					lfValue = exp(lfValue);	
@@ -2017,7 +2078,6 @@
 				case _FP_COMMON_PI:
 					lfValue = _MATH_PI;
 					break;
-
 
 // LOG()
 // LOG10()
@@ -2042,7 +2102,25 @@
 						else									lfValue = log10(lfValue);	
 						break;
 
+// CEILING()
+				case _FP_COMMON_CEILING:
+					lfValue = ceil(lfValue);
+					break;
 
+// FLOOR()
+				case _FP_COMMON_FLOOR:
+					lfValue = floor(lfValue);
+					break;
+
+// DTOR()
+				case _FP_COMMON_DTOR:
+					lfValue = lfValue * _MATH_PI180;
+					break;
+
+// RTOD()
+				case _FP_COMMON_RTOD:
+					lfValue = lfValue * _MATH_180PI;
+					break;
 				default:
 					// Programmer error... this is an internal function and we should never get here
 					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_compRelated(thisCode, varNumber), false);
@@ -2053,8 +2131,8 @@
 		//////////
 		// Create output variable
 		//////
-			if (resultFloatingPoint)	result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL);
-			else						result = iVariable_create(thisCode, varNumber->varType, NULL); 
+			if (sameInputType)	result = iVariable_create(thisCode, varNumber->varType, NULL);
+			else				result = iVariable_create(thisCode, resultType, NULL); 
 
 			if (!result)
 			{
@@ -2077,6 +2155,35 @@
 	}
 
 
+//////////
+//
+// Function: FLOOR()
+// Returns the nearest integer that is less than or equal to the specified numeric expression.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.16.2015
+//////
+// Change log:
+//     Mar.16.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    FLOOR(n) of the value in p1
+//////
+// Example:
+//    ? FLOOR(2.2)		&& Display 2
+//////
+    SVariable* function_floor(SThisCode* thisCode, SVariable* varNumber)
+    {
+        // Return floor
+
+        return(ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_FLOOR, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings)));
+	}
 
 
 //////////
@@ -2845,7 +2952,7 @@
 		//////////
         // Return log
 		//////
-	        return ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_LOG, true);   
+	        return ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_LOG, _VAR_TYPE_F64, false);   
 	}
 
 
@@ -2879,7 +2986,7 @@
 		//////////
         // Return log10
 		//////
-	        return ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_LOG10, true);   
+	        return ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_LOG10, _VAR_TYPE_F64, false);   
 	}
 
 
@@ -3959,7 +4066,7 @@
 //////
 	SVariable* function_pi(SThisCode* thisCode)
 	{
-		return ifunction_commonNumbers(thisCode, NULL, _FP_COMMON_PI, true);
+		return ifunction_commonNumbers(thisCode, NULL, _FP_COMMON_PI, _VAR_TYPE_F64, false);
 	}
 
 
@@ -4729,6 +4836,37 @@
 
 //////////
 //
+// Function: RTOD()
+// Converts radians to its equivalent in degrees.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.16.2015
+//////
+// Change log:
+//     Mar.16.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    RTOD(n) of the value in p1
+//////
+// Example:
+//    ? RTOD(PI())		&& Display 180.00
+//////
+    SVariable* function_rtod(SThisCode* thisCode, SVariable* varNumber)
+    {
+        // Return exp
+        return(ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_RTOD, _VAR_TYPE_F64, false));
+	}
+
+
+
+//////////
+//
 // Function: RTRIM()
 // Trims spaces off the end of the string.
 //
@@ -4874,7 +5012,7 @@
 
 
 		//////////
-        // Return sign, converted to s64
+        // Return sign
 		//////
 	        return result;
     }
@@ -4986,7 +5124,7 @@
 		//////////
         // Return sqrt
 		//////
-		return ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_SQRT, true);
+		return ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_SQRT, _VAR_TYPE_F64, false);
 	}
 
 

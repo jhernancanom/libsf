@@ -259,6 +259,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_ceiling[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_chr[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -289,7 +294,17 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_dtor[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_exp[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_floor[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
@@ -461,6 +476,11 @@
 	};
 
 	SSourceLightData gsSourceLight_right[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_rtod[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
