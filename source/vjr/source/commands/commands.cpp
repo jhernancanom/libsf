@@ -1973,8 +1973,8 @@
 //////
     SVariable* function_dtor(SThisCode* thisCode, SVariable* varNumber)
     {
-        // Return exp
-        return(ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_DTOR, _VAR_TYPE_F64, false));
+		// Return exp
+		return(ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_DTOR, _VAR_TYPE_F64, false));
 	}
 
 
@@ -2004,8 +2004,8 @@
 //////
     SVariable* function_exp(SThisCode* thisCode, SVariable* varNumber)
     {
-        // Return exp
-        return(ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_EXP, _VAR_TYPE_F64, false));
+		// Return exp
+		return(ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_EXP, _VAR_TYPE_F64, false));
 	}
 
 	// Common numeric functions used for EXP(), LOG(), LOG10(), PI(), SQRT(), CEILING(), FLOOR(), DTOR(), RTOD().
@@ -2181,8 +2181,7 @@
     SVariable* function_floor(SThisCode* thisCode, SVariable* varNumber)
     {
         // Return floor
-
-        return(ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_FLOOR, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings)));
+		return(ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_FLOOR, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings)));
 	}
 
 
@@ -2949,10 +2948,8 @@
 //////
     SVariable* function_log(SThisCode* thisCode, SVariable* varNumber)
     {
-		//////////
         // Return log
-		//////
-	        return ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_LOG, _VAR_TYPE_F64, false);   
+		return ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_LOG, _VAR_TYPE_F64, false);   
 	}
 
 
@@ -2983,10 +2980,8 @@
 //////
     SVariable* function_log10(SThisCode* thisCode, SVariable* varNumber)
     {
-		//////////
         // Return log10
-		//////
-	        return ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_LOG10, _VAR_TYPE_F64, false);   
+		return ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_LOG10, _VAR_TYPE_F64, false);
 	}
 
 
@@ -4066,6 +4061,7 @@
 //////
 	SVariable* function_pi(SThisCode* thisCode)
 	{
+		// Return pi
 		return ifunction_commonNumbers(thisCode, NULL, _FP_COMMON_PI, _VAR_TYPE_F64, false);
 	}
 
@@ -4859,9 +4855,10 @@
 //////
     SVariable* function_rtod(SThisCode* thisCode, SVariable* varNumber)
     {
-        // Return exp
-        return(ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_RTOD, _VAR_TYPE_F64, false));
+        // Return rtod
+		return(ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_RTOD, _VAR_TYPE_F64, false));
 	}
+
 
 
 
@@ -5094,6 +5091,8 @@
 	}
 
 
+
+
 //////////
 //
 // Function: SQRT()
@@ -5121,9 +5120,7 @@
 //////
     SVariable* function_sqrt(SThisCode* thisCode, SVariable* varNumber)
 	{
-		//////////
-        // Return sqrt
-		//////
+		// Return sqrt
 		return ifunction_commonNumbers(thisCode, varNumber, _FP_COMMON_SQRT, _VAR_TYPE_F64, false);
 	}
 
@@ -6867,39 +6864,40 @@ debug_break;
 				lnSaveLines = 0;
 			}
 
-
-			//////////
-			// Prepare for the clear
-			//////
-				memset(&ecb, 0, sizeof(ecb));
-				ecb._callback = (uptr)&iiCommand_clear_keep_callback;
-				ecb.extra1 = (uptr)lnSaveLines;
-				ecb.extra2 = (uptr)iSEM_renumber(screenData, 1);
-
-
-			//////////
-			// Clear
-			//////
-				iSEM_deleteChainWithCallback(&screenData, false, &ecb);
-
-
-			//////////
-			// Count what remains, and set _tally
-			//////
-				iEngine_update_tally(thisCode, iSEM_renumber(screenData, 1));
-
-
-			//////////
-			// Redraw what remains
-			//////
-				iSEM_navigateToEndLine(screenData, _screen);
-				screen_editbox->isDirtyRender = true;
-				iWindow_render(NULL, gWinJDebi, false);
-				// All done
-
 		} else {
-			iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, compClear, false);
+			// Clear them all
+			lnSaveLines = 0;
 		}
+
+
+		//////////
+		// Prepare for the clear
+		//////
+			memset(&ecb, 0, sizeof(ecb));
+			ecb._callback = (uptr)&iiCommand_clear_keep_callback;
+			ecb.extra1 = (uptr)lnSaveLines;
+			ecb.extra2 = (uptr)iSEM_renumber(screenData, 1);
+
+
+		//////////
+		// Clear
+		//////
+			iSEM_deleteChainWithCallback(&screenData, false, &ecb);
+
+
+		//////////
+		// Count what remains, and set _tally
+		//////
+			iEngine_update_tally(thisCode, iSEM_renumber(screenData, 1));
+
+
+		//////////
+		// Redraw what remains
+		//////
+			iSEM_navigateToEndLine(screenData, _screen);
+			screen_editbox->isDirtyRender = true;
+			iWindow_render(NULL, gWinJDebi, false);
+			// All done
 	}
 
 	// Tests the line number, only saves the tail
@@ -7240,8 +7238,6 @@ debug_break;
 					{
 						// We found the setting and the default variable type
 						varSetNewValue = iEngine_get_variableName_fromComponent(thisCode, compSetValue, &llManufactured);
-						if (varSetNewValue)
-						{
 //////////
 // Note:
 //		Settings are handled a little differently compared to other objects.
@@ -7250,26 +7246,23 @@ debug_break;
 //		function instead of the standard setterObject() function.
 //////////
 
-							// Try to set the value using our special set values
-							if (objProp->_setterObject_set)
-							{
-								// We have our own value, use it
-								if (objProp->setterObject_set(thisCode, varSet, compSetValue, varSetNewValue, llManufactured))
-								{
-									return;		// If we get here, we're good
-								}
+						// Try to set the value using our special set values
+						if (objProp->_setterObject_set)
+						{
+							// We have our own value, use it
+							if (objProp->setterObject_set(thisCode, varSet, compSetValue, varSetNewValue, llManufactured))
+								return;		// If we get here, we're good
 
-								// If we get here, it couldn't be set
-								iError_reportByNumber(thisCode, _ERROR_SYNTAX, compSetValue, false);
-								return;
-							}
+							// If we get here, it couldn't be set
+							iError_reportByNumber(thisCode, _ERROR_SYNTAX, compSetValue, false);
+							return;
+						}
 
-							// If we get here, try the standard method
-							if (!iObjProp_set(thisCode, _settings, compSetTarget->iCode, varSetNewValue))
-							{
-								iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, compSetTarget, false);
-								return;
-							}
+						// If we get here, try the standard method
+						if (!iObjProp_set(thisCode, _settings, compSetTarget->iCode, varSetNewValue))
+						{
+							iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, compSetTarget, false);
+							return;
 						}
 					}
 					// If we get here, invalid setting

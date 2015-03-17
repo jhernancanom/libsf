@@ -240,7 +240,7 @@ struct SThisCode;
 	void					iVariable_createDefaultValues				(SThisCode* thisCode);
 	void					iVariable_createPropsMaster					(SThisCode* thisCode);
 	bool					iVariable_isVarTypeValid					(SThisCode* thisCode, s32 tnVarType, SVariable** varDefaultValue);
-	bool					iVariable_areTypesCompatible				(SVariable* var1, SVariable* var2);
+	bool					iVariable_areTypesCompatible				(SThisCode* thisCode, SVariable* var1, SVariable* var2);
 	bool					iVariable_copy								(SThisCode* thisCode, SVariable* varDst, SVariable* varSrc);
 	SVariable*				iVariable_copy								(SThisCode* thisCode, SVariable* varSrc, bool tlMakeReference);
 	bool					iVariable_set								(SThisCode* thisCode, SVariable* varDst, SVariable* varSrc);

@@ -750,39 +750,47 @@ debug_break;
 	SLine* iSEM_appendLine(SEM* sem, u8* tcText, s32 tnTextLength, bool tlSetNewLineFlag)
 	{
 		s32		lnI, lnJ, lnPass, lnTextLength, lnCount;
-		SLine*	ec;
+		SLine*	line;
 
 
 // Not logged because this function is called by the logging function. :-)
 //		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
 		// Note:  We do not test for tcText and tnTextLength because we can add blank lines
-		ec = NULL;
+		line = NULL;
 		if (sem && !sem->isReadOnly)
 		{
 			// Allocate our new structure
 			if (sem->lastLine)
 			{
 				// Append after the last line
-				ec = (SLine*)iLl_appendNewNodeAtEnd((SLL**)&sem->lastLine, sizeof(SLine));
+				if (sem == screenData && sem->lastLine == sem->firstLine && sem->line_cursor->sourceCode_populatedLength == 0)
+				{
+					// A special case for the command window, where the top line persists after a CLEAR, and must be populated before continuing
+					// So, we don't do anything here ... just leave re-use the existing line
+					line = sem->line_cursor;
+
+				} else {
+					line = (SLine*)iLl_appendNewNodeAtEnd((SLL**)&sem->lastLine, sizeof(SLine));
+				}
 
 			} else {
 				// This is the first line, add it and set the last line to the same
-				ec = (SLine*)iLl_appendNewNodeAtEnd((SLL**)&sem->firstLine, sizeof(SLine));
-				if (ec)
+				line = (SLine*)iLl_appendNewNodeAtEnd((SLL**)&sem->firstLine, sizeof(SLine));
+				if (line)
 				{
 					// Update defaults
-					sem->line_cursor			= ec;
-					sem->line_cursorLast		= ec;
-					sem->line_top				= ec;
+					sem->line_cursor			= line;
+					sem->line_cursorLast		= line;
+					sem->line_top				= line;
 				}
 			}
 
 			// Update and populate if added
-			if (ec)
+			if (line)
 			{
 				// We've added it to the end
-				sem->lastLine = ec;
+				sem->lastLine = line;
 
 				// Make sure the length is valid
 				if (tnTextLength == -1)
@@ -811,7 +819,7 @@ debug_break;
 							{
 								// Expand the difference with spaces
 								for (lnJ = 0; lnJ < lnCount; lnJ++)
-									ec->sourceCode->data[lnTextLength + lnJ] = 32;		// Fill with spaces
+									line->sourceCode->data[lnTextLength + lnJ] = 32;		// Fill with spaces
 							}
 
 							// Skip past our added space
@@ -820,7 +828,7 @@ debug_break;
 						} else {
 							// Copy one character on pass 1
 							if (lnPass == 1)
-								ec->sourceCode->data[lnTextLength] = tcText[lnI];
+								line->sourceCode->data[lnTextLength] = tcText[lnI];
 
 							// Increase by one
 							++lnTextLength;
@@ -831,14 +839,14 @@ debug_break;
 					if (lnPass == 0)
 					{
 						// Allocate the datum
-						ec->sourceCode = iDatum_allocate((u8*)NULL, 0);
+						line->sourceCode = iDatum_allocate((u8*)NULL, 0);
 
 						// Allocate space for the copy if there's any data
 						if (lnTextLength != 0)
-							iDatum_allocateSpace(ec->sourceCode, lnTextLength);
+							iDatum_allocateSpace(line->sourceCode, lnTextLength);
 
 						// Set the populated length
-						ec->sourceCode_populatedLength	= lnTextLength;
+						line->sourceCode_populatedLength	= lnTextLength;
 					}
 				}
 
@@ -846,8 +854,8 @@ debug_break;
 				//////////
 				// Copy the content to the original content
 				//////
-					ec->isNewLine	= tlSetNewLineFlag;
-					ec->sourceCodeOriginal = iDatum_allocate(ec->sourceCode->data_u8, ec->sourceCode_populatedLength);
+					line->isNewLine	= tlSetNewLineFlag;
+					line->sourceCodeOriginal = iDatum_allocate(line->sourceCode->data_u8, line->sourceCode_populatedLength);
 
 
 				//////////
@@ -860,7 +868,7 @@ debug_break;
 		}
 
 		// Indicate our status
-		return(ec);
+		return(line);
 	}
 
 

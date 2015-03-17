@@ -868,6 +868,7 @@
 	const s32		_ICODE_ALL										= 2289;
 	const s32       _ICODE_ALTER                                    = 2002;
 	const s32       _ICODE_ALTERNATE                                = 2003;
+	const s32		_ICODE_AMERICAN									= 2305;
 	const s32       _ICODE_ANSI                                     = 2004;
 	const s32       _ICODE_APP                                      = 2005;
 	const s32       _ICODE_APPEND                                   = 2006;
@@ -886,6 +887,7 @@
 	const s32       _ICODE_BLOCKSIZE                                = 2017;
 	const s32       _ICODE_BORDER                                   = 2018;
 	const s32       _ICODE_BOX                                      = 2019;
+	const s32		_ICODE_BRITISH									= 2317;
 	const s32       _ICODE_BROWSE                                   = 2020;
 	const s32       _ICODE_BROWSEIME                                = 2021;
 	const s32       _ICODE_BRSTATUS                                 = 2022;
@@ -996,11 +998,13 @@
 	const s32       _ICODE_FORMAT                                   = 2114;
 	const s32       _ICODE_FORM                                     = 2115;
 	const s32       _ICODE_FREE                                     = 2116;
+	const s32		_ICODE_FRENCH									= 2318;
 	const s32       _ICODE_FROM                                     = 2117;
 	const s32       _ICODE_FUNCTION                                 = 2118;
 	const s32       _ICODE_FWEEK                                    = 2119;
 	const s32       _ICODE_GATHER                                   = 2120;
 	const s32       _ICODE_GENERAL                                  = 2121;
+	const s32		_ICODE_GERMAN									= 2319;
 	const s32       _ICODE_GETEXPR                                  = 2122;
 	const s32       _ICODE_GETS                                     = 2123;
 	const s32       _ICODE_GET                                      = 2124;
@@ -1022,6 +1026,8 @@
 	const s32       _ICODE_INPUT                                    = 2136;
 	const s32       _ICODE_INSERT                                   = 2137;
 	const s32       _ICODE_INTENSITY                                = 2138;
+	const s32		_ICODE_ITALIAN									= 2320;
+	const s32		_ICODE_JAPAN									= 2321;
 	const s32       _ICODE_JOIN                                     = 2139;
 	const s32		_ICODE_KEEP										= 2291;
 	const s32       _ICODE_KEYBOARD                                 = 2140;
@@ -1151,6 +1157,7 @@
 	const s32       _ICODE_TABLEVALIDATE                            = 2246;
 	const s32       _ICODE_TABLES                                   = 2247;
 	const s32       _ICODE_TABLE                                    = 2248;
+	const s32		_ICODE_TAIWAN									= 2322;
 	const s32       _ICODE_TALK                                     = 2249;
 	const s32       _ICODE_TEXT                                     = 2250;
 	const s32       _ICODE_TO                                       = 2251;
@@ -1165,6 +1172,7 @@
 	const s32		_ICODE_UNLOADRECEIVESPARAMS						= 2315;
 	const s32       _ICODE_UNLOCK                                   = 2260;
 	const s32       _ICODE_UPDATE                                   = 2261;
+	const s32		_ICODE_USA										= 2323;
 	const s32       _ICODE_USE                                      = 2262;
 	const s32       _ICODE_VALIDATE                                 = 2263;
 	const s32		_ICODE_VARIABLESFIRST							= 2316;
@@ -1175,6 +1183,7 @@
 	const s32       _ICODE_WINDOWS                                  = 2268;
 	const s32       _ICODE_WINDOW                                   = 2269;
 	const s32       _ICODE_WITH                                     = 2270;
+	const s32		_ICODE_YMD										= 2324;
 	const s32       _ICODE_ZAP                                      = 2271;
 	// _ICODE_DOCASE												= 2272;
 	// _ICODE_DOFORM												= 2273;
@@ -1209,7 +1218,7 @@
 	// _ICODE_LANGUAGE												= 2302;
 	// _ICODE_LOAD_RECEIVES_PARAMS									= 2303;
 	// _ICODE_LOCKSCREEN											= 2304;
-	//										unused, available		= 2305;
+	// _ICODE_AMERICAN												= 2305;
 	// _ICODE_NAMINGCONVENTIONS										= 2306;
 	// _ICODE_NCSETCEILINGFLOOR										= 2307;
 	// _ICODE_NCSETSIGNSIGN2										= 2308;
@@ -1221,6 +1230,15 @@
 	// _ICODE_TABLEOBJECTS											= 2314;
 	// _ICODE_UNLOADRECEIVESPARAMS									= 2315;
 	// _ICODE_VARIABLESFIRST										= 2316;
+	// _ICODE_BRITISH												= 2317;
+	// _ICODE_FRENCH												= 2318;
+	// _ICODE_GERMAN												= 2319;
+	// _ICODE_ITALIAN												= 2320;
+	// _ICODE_JAPAN													= 2321;
+	// _ICODE_TAIWAN												= 2322;
+	// _ICODE_USA													= 2323;
+	// _ICODE_YMD													= 2324;
+
 
 //////////
 // VXB iCat codes
@@ -1667,6 +1685,7 @@
 	const s8		cgc_tablerevert[]								= "tablerevert";
 	const s8		cgc_tableupdate[]								= "tableupdate";
 	const s8		cgc_tag[]										= "tag";
+	const s8		cgc_taiwan[]									= "taiwan";
 	const s8		cgc_tagcount[]									= "tagcount";
 	const s8		cgc_tagno[]										= "tagno";
 	const s8		cgc_tan[]										= "tan";
@@ -1726,6 +1745,7 @@
 	const s8		cgc_all[]										= "all";
 	const s8		cgc_alter[]										= "alter";
 	const s8		cgc_alternate[]									= "alternate";
+	const s8		cgc_american[]									= "american";
 	const s8		cgc_ansi[]										= "ansi";
 	const s8		cgc_app[]										= "app";
 	const s8		cgc_append[]									= "append";
@@ -1743,6 +1763,7 @@
 	const s8		cgc_blocksize[]									= "blocksize";
 	const s8		cgc_border[]									= "border";
 	const s8		cgc_box[]										= "box";
+	const s8		cgc_british[]									= "british";
 	const s8		cgc_browse[]									= "browse";
 	const s8		cgc_browseime[]									= "browseime";
 	const s8		cgc_brstatus[]									= "brstatus";
@@ -1850,12 +1871,14 @@
 	const s8		cgc_form[]										= "form";
 	const s8		cgc_for[]										= "for";
 	const s8		cgc_free[]										= "free";
+	const s8		cgc_french[]									= "french";
 	const s8		cgc_from[]										= "from";
 //	const s8		cgc_fullpath[]									= "fullpath";
 	const s8		cgc_function[]									= "function";
 	const s8		cgc_fweek[]										= "fweek";
 	const s8		cgc_gather[]									= "gather";
 	const s8		cgc_general[]									= "general";
+	const s8		cgc_german[]									= "german";
 	const s8		cgc_getexpr[]									= "getexpr";
 	const s8		cgc_gets[]										= "gets";
 	const s8		cgc_get[]										= "get";
@@ -1873,6 +1896,8 @@
 	const s8		cgc_input[]										= "input";
 	const s8		cgc_insert[]									= "insert";
 	const s8		cgc_intensity[]									= "intensity";
+	const s8		cgc_italian[]									= "italian";
+	const s8		cgc_japan[]										= "japan";
 	const s8		cgc_join[]										= "join";
 //	const s8		cgc_key[]										= "key";
 	const s8		cgc_keyboard[]									= "keyboard";
@@ -2025,6 +2050,7 @@
 //	const s8		cgc_unique[]									= "unique";
 	const s8		cgc_unlock[]									= "unlock";
 	const s8		cgc_update[]									= "update";
+	const s8		cgc_usa[]										= "usa";
 	const s8		cgc_use[]										= "use";
 	const s8		cgc_validate[]									= "validate";
 	const s8		cgc_views[]										= "views";
@@ -2034,6 +2060,7 @@
 	const s8		cgc_windows[]									= "windows";
 	const s8		cgc_window[]									= "window";
 	const s8		cgc_with[]										= "with";
+	const s8		cgc_ymd[]										= "ymd";
 	const s8		cgc_zap[]										= "zap";
 
 	// keywords

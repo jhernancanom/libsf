@@ -835,6 +835,7 @@ struct SBasePropMap;
 	const u32		_INDEX_WORDWRAP											= 347;
 	const u32		_INDEX_ZOOMBOX											= 348;
 	// For _settings object
+	const u32		_INDEX_SET_FIRST_ITEM							= 349;
 	const u32		_INDEX_SET_AUTO_CONVERT									= 349;
 	const u32		_INDEX_SET_AUTO_VALIDATE								= 350;
 	const u32		_INDEX_SET_CASE_SENSITIVE_COMPARES						= 351;
@@ -851,7 +852,7 @@ struct SBasePropMap;
 	const u32		_INDEX_SET_INITIALIZE_DEFAULT_VALUE						= 362;
 	const u32		_INDEX_SET_LANGUAGE										= 363;
 	const u32		_INDEX_SET_LOAD_RECEIVES_PARAMS							= 364;
-	const u32		_INDEX_SET_LOCK_SCREEN											= 365;
+	const u32		_INDEX_SET_LOCK_SCREEN									= 365;
 	const u32		_INDEX_SET_LOGICAL										= 366;
 	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 367;
 	const u32		_INDEX_SET_NCSET_CEILING_FLOOR							= 368;

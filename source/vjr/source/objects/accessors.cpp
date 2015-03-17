@@ -115,9 +115,10 @@
 			if (var)
 			{
 				// Validate against the object class if available, and if not then the base class if available, and if not then just copy
-				     if (objProp->_setterObject)	llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
-				else if (baseProp->_setterBase)		llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
-				else								llResult = iVariable_copy(thisCode, var, varNewValue);
+				     if (objProp->_setterObject && tnIndex < _INDEX_SET_FIRST_ITEM)			llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
+				else if (objProp->_setterObject_set && tnIndex >= _INDEX_SET_FIRST_ITEM)	llResult = objProp->setterObject_set(thisCode, var, NULL, varNewValue, false);
+				else if (baseProp->_setterBase)												llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
+				else																		llResult = iVariable_copy(thisCode, var, varNewValue);
 
 				// Indicate our status
 				return(llResult);
@@ -158,9 +159,10 @@
 				varNewValue->bmp = bmp;
 
 				// Perform the set
-				     if (objProp->_setterObject)	llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
-				else if (baseProp->_setterBase)		llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
-				else								llResult = iVariable_set_bitmap(thisCode, var, bmp);
+				     if (objProp->_setterObject && tnIndex < _INDEX_SET_FIRST_ITEM)			llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
+				else if (objProp->_setterObject_set && tnIndex >= _INDEX_SET_FIRST_ITEM)	llResult = objProp->setterObject_set(thisCode, var, NULL, varNewValue, false);
+				else if (baseProp->_setterBase)												llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
+				else																		llResult = iVariable_set_bitmap(thisCode, var, bmp);
 
 				// If they just set the picture on an image or checkbox, then we need to propagate through to the down and over
 				if ((obj->objType == _OBJ_TYPE_IMAGE || obj->objType == _OBJ_TYPE_CHECKBOX) && tnIndex == _INDEX_PICTUREBMP)
@@ -238,9 +240,10 @@
 				varNewValue = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, tcText, tnTextLength);
 
 				// Perform the set
-				     if (objProp->_setterObject)	llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
-				else if (baseProp->_setterBase)		llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
-				else								llResult = iVariable_copy(thisCode, var, varNewValue);
+				     if (objProp->_setterObject && tnIndex < _INDEX_SET_FIRST_ITEM)			llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
+				else if (objProp->_setterObject_set && tnIndex >= _INDEX_SET_FIRST_ITEM)	llResult = objProp->setterObject_set(thisCode, var, NULL, varNewValue, false);
+				else if (baseProp->_setterBase)												llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
+				else																		llResult = iVariable_copy(thisCode, var, varNewValue);
 
 				// Delete our temporary variable
 				iVariable_delete(thisCode, varNewValue, true);
@@ -273,9 +276,10 @@
 				varNewValue = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, datum);
 
 				// Perform the set
-				     if (objProp->_setterObject)	llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
-				else if (baseProp->_setterBase)		llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
-				else								llResult = iVariable_copy(thisCode, var, varNewValue);
+				     if (objProp->_setterObject && tnIndex < _INDEX_SET_FIRST_ITEM)			llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
+				else if (objProp->_setterObject_set && tnIndex >= _INDEX_SET_FIRST_ITEM)	llResult = objProp->setterObject_set(thisCode, var, NULL, varNewValue, false);
+				else if (baseProp->_setterBase)												llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
+				else																		llResult = iVariable_copy(thisCode, var, varNewValue);
 
 				// Delete our temporary variable
 				iVariable_delete(thisCode, varNewValue, true);
@@ -303,11 +307,11 @@
 
 	bool iObjProp_set_logical_fromLogicalConstants(SThisCode* thisCode, SObject* obj, s32 tnIndex, s32 tnValue)
 	{
-		bool				llResult;
+		bool			llResult;
 		SBasePropMap*	baseProp;
 		SObjPropMap*	objProp;
-		SVariable*			varNewValue;
-		SVariable*			var;
+		SVariable*		varNewValue;
+		SVariable*		var;
 
 
 		// Make sure the environment is sane
@@ -341,9 +345,10 @@
 					iVariable_set_logical(thisCode, varNewValue, tnValue);
 
 					// Perform the set
-						 if (objProp->_setterObject)	llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
-					else if (baseProp->_setterBase)		llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
-					else								llResult = iVariable_copy(thisCode, var, varNewValue);
+						 if (objProp->_setterObject && tnIndex < _INDEX_SET_FIRST_ITEM)			llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else if (objProp->_setterObject_set && tnIndex >= _INDEX_SET_FIRST_ITEM)	llResult = objProp->setterObject_set(thisCode, var, NULL, varNewValue, false);
+					else if (baseProp->_setterBase)												llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else																		llResult = iVariable_copy(thisCode, var, varNewValue);
 
 					// Delete our temporary variable
 					iVariable_delete(thisCode, varNewValue, true);
@@ -390,9 +395,10 @@
 					iVariable_set_s32(thisCode, varNewValue, tnValue);
 
 					// Perform the set
-						 if (objProp->_setterObject)	llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
-					else if (baseProp->_setterBase)		llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
-					else								llResult = iVariable_copy(thisCode, var, varNewValue);
+						 if (objProp->_setterObject && tnIndex < _INDEX_SET_FIRST_ITEM)			llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else if (objProp->_setterObject_set && tnIndex >= _INDEX_SET_FIRST_ITEM)	llResult = objProp->setterObject_set(thisCode, var, NULL, varNewValue, false);
+					else if (baseProp->_setterBase)												llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else																		llResult = iVariable_copy(thisCode, var, varNewValue);
 
 					// Delete our temporary variable
 					iVariable_delete(thisCode, varNewValue, true);
@@ -439,9 +445,10 @@
 					iVariable_set_u32(thisCode, varNewValue, tnValue);
 
 					// Perform the set
-						 if (objProp->_setterObject)	llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
-					else if (baseProp->_setterBase)		llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
-					else								llResult = iVariable_copy(thisCode, var, varNewValue);
+						 if (objProp->_setterObject && tnIndex < _INDEX_SET_FIRST_ITEM)			llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else if (objProp->_setterObject_set && tnIndex >= _INDEX_SET_FIRST_ITEM)	llResult = objProp->setterObject_set(thisCode, var, NULL, varNewValue, false);
+					else if (baseProp->_setterBase)												llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else																		llResult = iVariable_copy(thisCode, var, varNewValue);
 
 					// Delete our temporary variable
 					iVariable_delete(thisCode, varNewValue, true);
@@ -488,9 +495,10 @@
 					iVariable_set_f32(thisCode, varNewValue, tfValue);
 
 					// Perform the set
-						 if (objProp->_setterObject)	llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
-					else if (baseProp->_setterBase)		llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
-					else								llResult = iVariable_copy(thisCode, var, varNewValue);
+						 if (objProp->_setterObject && tnIndex < _INDEX_SET_FIRST_ITEM)			llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else if (objProp->_setterObject_set && tnIndex >= _INDEX_SET_FIRST_ITEM)	llResult = objProp->setterObject_set(thisCode, var, NULL, varNewValue, false);
+					else if (baseProp->_setterBase)												llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else																		llResult = iVariable_copy(thisCode, var, varNewValue);
 
 					// Delete our temporary variable
 					iVariable_delete(thisCode, varNewValue, true);
@@ -537,9 +545,10 @@
 					iVariable_set_f64(thisCode, varNewValue, tfValue);
 
 					// Perform the set
-						 if (objProp->_setterObject)	llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
-					else if (baseProp->_setterBase)		llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
-					else								llResult = iVariable_copy(thisCode, var, varNewValue);
+						 if (objProp->_setterObject && tnIndex < _INDEX_SET_FIRST_ITEM)			llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else if (objProp->_setterObject_set && tnIndex >= _INDEX_SET_FIRST_ITEM)	llResult = objProp->setterObject_set(thisCode, var, NULL, varNewValue, false);
+					else if (baseProp->_setterBase)												llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else																		llResult = iVariable_copy(thisCode, var, varNewValue);
 
 					// Delete our temporary variable
 					iVariable_delete(thisCode, varNewValue, true);
@@ -586,9 +595,10 @@
 					iVariable_set_u32(thisCode, varNewValue, color.color);
 
 					// Perform the set
-						 if (objProp->_setterObject)	llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
-					else if (baseProp->_setterBase)		llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
-					else								llResult = iVariable_copy(thisCode, var, varNewValue);
+						 if (objProp->_setterObject && tnIndex < _INDEX_SET_FIRST_ITEM)			llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else if (objProp->_setterObject_set && tnIndex >= _INDEX_SET_FIRST_ITEM)	llResult = objProp->setterObject_set(thisCode, var, NULL, varNewValue, false);
+					else if (baseProp->_setterBase)												llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
+					else																		llResult = iVariable_copy(thisCode, var, varNewValue);
 
 					// Delete our temporary variable
 					iVariable_delete(thisCode, varNewValue, true);
@@ -640,7 +650,34 @@
 //////
 	bool iObjProp_setOnOff(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet)
 	{
-		return(false);
+		bool llResult;
+
+
+		//////////
+		// Validate the component is an ON or OFF
+		//////
+			llResult = false;
+			if (compNew && (compNew->iCode == _ICODE_ON || compNew->iCode == _ICODE_OFF))
+			{
+				// Set the value
+				iVariable_set_logical(thisCode, varSet, ((compNew->iCode == _ICODE_ON) ? _LOGICAL_TRUE : _LOGICAL_FALSE));
+
+				// Indicate success
+				llResult = true;
+			}
+
+
+		//////////
+		// Optionally clean house
+		//////
+			if (tlDeleteVarNewAfterSet)
+				iVariable_delete(thisCode, varNew, true);
+
+
+		//////////
+		// Indicate our status
+		//////
+			return(llResult);
 	}
 
 
@@ -653,7 +690,52 @@
 //////
 	bool iObjProp_setDate(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet)
 	{
-		return(false);
+		u32		lnDateType;
+		bool	llResult;
+
+		
+		// Make sure we have a component
+		if (compNew)
+		{
+			// Default to success
+			llResult = true;
+			switch (compNew->iCode)
+			{
+				case _ICODE_AMERICAN:		lnDateType = _SET_DATE_AMERICAN;		break;
+				case _ICODE_ANSI:			lnDateType = _SET_DATE_ANSI;			break;
+				case _ICODE_BRITISH:		lnDateType = _SET_DATE_BRITISH;			break;
+				case _ICODE_DMY:			lnDateType = _SET_DATE_DMY;				break;
+				case _ICODE_FRENCH:			lnDateType = _SET_DATE_FRENCH;			break;
+				case _ICODE_GERMAN:			lnDateType = _SET_DATE_GERMAN;			break;
+				case _ICODE_ITALIAN:		lnDateType = _SET_DATE_ITALIAN;			break;
+				case _ICODE_JAPAN:			lnDateType = _SET_DATE_JAPAN;			break;
+				case _ICODE_LONG:			lnDateType = _SET_DATE_LONG;			break;
+				case _ICODE_MDY:			lnDateType = _SET_DATE_MDY;				break;
+				case _ICODE_SHORT:			lnDateType = _SET_DATE_SHORT;			break;
+				case _ICODE_TAIWAN:			lnDateType = _SET_DATE_TAIWAN;			break;
+				case _ICODE_USA:			lnDateType = _SET_DATE_USA;				break;
+				case _ICODE_YMD:			lnDateType = _SET_DATE_YMD;				break;
+
+				default:
+					// Failure ... syntax error
+					llResult = false;
+			}
+
+
+			//////////
+			// Should the value be set?
+			//////
+				if (llResult)
+					iVariable_set_u32(thisCode, varSet, lnDateType);
+
+
+		} else {
+			// Invalid component
+			llResult = false;
+		}
+
+		// Indicate our result
+		return(llResult);
 	}
 
 
@@ -701,7 +783,7 @@
 
 
 		//////////
-		// If we get here, failure
+		// Indicate our status
 		//////
 			return(llResult);
 	}
@@ -716,7 +798,44 @@
 //////
 	bool iObjProp_setInteger(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet)
 	{
-		return(false);
+		s64		lnValue;
+		bool	llResult;
+		bool	error;
+		u32		errorNum;
+
+
+		//////////
+		// Validate it's numeric
+		//////
+			llResult = false;
+			if (iVariable_isTypeNumeric(varNew))
+			{
+				//////////
+				// Grab our value
+				//////
+					lnValue = iiVariable_getAs_s64(thisCode, varNew, false, &error, &errorNum);
+					if (!error)
+					{
+						// Set the value
+						iVariable_set(thisCode, varSet, varNew);
+
+						// Indicate success
+						llResult = true;
+					}
+			}
+
+
+		//////////
+		// Optionally clean house
+		//////
+			if (tlDeleteVarNewAfterSet)
+				iVariable_delete(thisCode, varNew, true);
+
+
+		//////////
+		// Indicate our status
+		//////
+			return(llResult);
 	}
 
 
@@ -742,7 +861,34 @@
 //////
 	bool iObjProp_setLogical(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet)
 	{
-		return(false);
+		bool llResult;
+
+
+		//////////
+		// Validate it's numeric
+		//////
+			llResult = false;
+			if (iVariable_isFundamentalTypeLogical(varNew))
+			{
+				// Set the value
+				iVariable_set(thisCode, varSet, varNew);
+
+				// Indicate success
+				llResult = true;
+			}
+
+
+		//////////
+		// Optionally clean house
+		//////
+			if (tlDeleteVarNewAfterSet)
+				iVariable_delete(thisCode, varNew, true);
+
+
+		//////////
+		// Indicate our status
+		//////
+			return(llResult);
 	}
 
 
