@@ -89,15 +89,15 @@
 //////
 	void iTest_execute(void)
 	{
-		uptr lnHandle;
+		uptr lnWorkArea;
 
-return;
+//return;
 
 		//////////
 		// Open the test table
 		//////
-			lnHandle = iDbf_open(NULL, "c:\\libsf_offline\\source\\vjr\\test\\cdx\\test.dbf", "test", true, false, true);
-			if (lnHandle > _UPTR_ERROR)
+			lnWorkArea = iDbf_open(NULL, "c:\\libsf_offline\\source\\vjr\\test\\cdx\\test.dbf", "test", true, false, true);
+			if (lnWorkArea > _UPTR_ERROR)
 			{
 				// An error occurred
 				debug_break;

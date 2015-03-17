@@ -102,22 +102,26 @@
 	#define		_CDX_ERROR_INVALID_INDEX			-211
 	#define		_CDX_ERROR_NO_INDEX_IN_USE			-212
 	#define		_CDX_LOCK_FAILURE					-213
+	#define		_CDX_ERROR_OPENING_INDEX			-214
+	#define		_CDX_ERROR_LOCKING_HEADER_IDX		-215
+	#define		_CDX_ERROR_LOCKING_HEADER_CDX		-216
 	#define		_CDX_ERROR_CONTEXTUAL				-10000
 
 	// Index header flags
-	#define		_BIT_UNIQUE					0x1
-	#define		_BIT_TEMPORARY				0x2
-	#define		_BIT_CUSTOM					0x4
-	#define		_BIT_FOR_CLAUSE				0x8
-	#define		_BIT_COMPACT_INDEX			0x20
-	#define		_BIT_COMPOUND_INDEX			0x40
-	#define		_BIT_STRUCTURAL_INDEX		0x80
+	#define		_BIT_UNIQUE							0x1
+	#define		_BIT_TEMPORARY						0x2
+	#define		_BIT_CUSTOM							0x4
+	#define		_BIT_FOR_CLAUSE						0x8
+	#define		_BIT_COMPACT_INDEX					0x20
+	#define		_BIT_COMPOUND_INDEX					0x40
+	#define		_BIT_STRUCTURAL_INDEX				0x80
 
 	// Explicit index types for cdx_open()
-	#define		_INDEX_IS_IDX						1
-	#define		_INDEX_IS_CDX						2
-	#define		_INDEX_IS_SDX						3
-	#define		_INDEX_IS_DCX						4
+	#define		_INDEX_NONE							0
+	#define		_INDEX_IDX							1
+	#define		_INDEX_CDX							2
+	#define		_INDEX_SDX							3
+	#define		_INDEX_DCX							4
 
 	// CDX no find result
 	#define		_CDX_FIND_NEAR						-2
@@ -131,3 +135,10 @@
 	#define		_CDX_NODE_ROOT_LEAF					3
 	// Other node types have been observed, but I don't know what they indicate.
 	// I use the function iiGetIndexNodeType() to mask off only the lower 2 bits (00,01,10,11 = 0,1,2,3)
+
+	const s8	cgcValidateBegin[]					= "Validate begin";
+	const s8	cgcValidateEnd[]					= "Validate end";
+	const s8	cgcValidateInvalidNode[]			= "Invalid internal index node was encountered";
+	const s8	cgcValidateKeyNotPresent[]			= "An index node indicated N keys present, unable to retrieve all of them";
+	const s8	cgcValidateEmptyNode[]				= "An empty index node was found";
+	const s8	cgcValidateKeysOutOfOrder[]			= "Index keys are out of order";

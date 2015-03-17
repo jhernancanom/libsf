@@ -207,14 +207,15 @@
 			u32				thisWorkArea;				// Added to hold this entry's slot number
 			bool			isCursor;					// For temporary tables, the tables, memo files, and indexes are deleted on close
 			bool			isExclusive;				// true if this index was used exclusively
-			bool			isIndexLoaded;				// true if an index is loaded
+			bool			isIndexLoaded;				// true if an index is loaded (idx, cdx, dcx)
+			bool			isSdxLoaded;				// true if an sdx index is loaded
 			bool			isCached;					// If the table's been cached, then it will be true, otherwise false
 			bool			isVisualTable;				// Only visual tables can have DBC backlinks
 
 			// Names
-			s8				tablePathname[256];			// Filename to get to the table
+			s8				tablePathname[_MAX_PATH];	// Filename to get to the table
 			s32				tablePathnameLength;		// Length of the table filename
-			s8				alias[32];					// Alias associated with this
+			s8				alias[_MAX_ALIAS_NAME_LENGTH];	// Alias associated with this
 			s32				aliasLength;				// Length of the alias name
 
 
@@ -245,21 +246,27 @@
 				uptr		_cachedTable;
 				s8*			cachedTable;				// If isCached, then this holds the entire table contents as of when it was cached
 			};
+
+			// Row data
 			union {
 				uptr		_data;
-				s8*			data;						// Pointer to this record's line of data if locality=_DISK, or the entire table if locality=_MEMORY
+				s8*			data;
 				s8*			data_s8;
 				u8*			data_u8;
 			};
+
+			// Original row data (before cached changes were made)
 			union {
 				uptr		_odata;
-				s8*			odata;						// Pointer to this record's original line data before any changes were made
+				s8*			odata;
 				s8*			odata_s8;
 				u8*			odata_u8;
 			};
+
+			// Data used/copied for creating index keys
 			union {
 				uptr		_idata;
-				s8*			idata;						// Pointer to a pseudo-record suitable for constructing an index key to find through manual input
+				s8*			idata;
 				s8*			idata_s8;
 				u8*			idata_u8;
 			};
@@ -267,7 +274,7 @@
 			// Memo field data
 			union {
 				uptr		_mdata;
-				s8*			mdata;						// Pointer to this record's line of data
+				s8*			mdata;
 				s8*			mdata_s8;
 				u8*			mdata_u8;
 			};
@@ -277,13 +284,14 @@
 			//////////
 			// IDX and CDX index support
 			//////
-				s8				indexPathname[_MAX_PATH];	// Filename to get to the index (either .cdx or .idx)
-				u32				indexPathnameLength;		// Length of the index filename
-				_isSKeyFinds	cdx_keyOps[_MAX_CDX_TAGS];	// Room for up to N tags
-				bool			isCdx;						// Is it a CDX?  If no, then is IDX.
-				bool			isIdxCompact;				// If it's IDX, is it a compact IDX?
+				s8				idxCdxDcxPathname[_MAX_PATH];	// Filename to get to the index (either .cdx or .idx)
+				u32				idxCdxDcxPathnameLength;		// Length of the index filename
+				_isSKeyFinds	cdx_keyOps[_MAX_CDX_TAGS];		// Room for up to N tags
+				bool			isCdx;							// Is it a CDX (also DCX)?  If no, then is IDX.
+				bool			isIdxCompact;					// If it's IDX, is it a compact IDX?
+				u32				cdx_activeTagRootNode;			// Current active tag's root node
 				union {
-					// CDX support
+					// CDX/DCX support
 					SCdxHeader*	cdx_root;
 					s8*			_cdx_header;
 
@@ -293,6 +301,24 @@
 				};
 
 				// Index file operations
-				s32				fhIndex;					// File handle for the index
-				SBuilder*		cdxFileLocks;				// Locks for shared access
+				s32				fhIdxCdxDcx;				// File handle for the index
+				SBuilder*		idxCdxDcxFileLocks;			// Locks for shared access
+
+
+			//////////
+			// SDX index support
+			//////
+				s8				sdxPathname[_MAX_PATH];		// Filename to get to the index (either .cdx or .idx)
+				u32				sdxPathnameLength;			// Length of the index filename
+				_isSKeyFinds	sdx_keyOps[_MAX_SDX_TAGS];	// Room for up to N tags
+				bool			isSdx;						// Is an SDX loaded?
+				union {
+					// CDX support
+					SSdxHeader*	sdx_root;
+					s8*			_sdx_header;
+				};
+
+				// Index file operations
+				s32				fhSdx;						// File handle for the index
+				SBuilder*		sdxFileLocks;				// Locks for shared access
 		};

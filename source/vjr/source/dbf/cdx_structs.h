@@ -308,6 +308,14 @@ struct SCdxKeyOp;
 		// Total size: 512 bytes
 	};
 
+	// This structure is the first found in the SDX
+	struct SSdxHeader
+	{
+		s8			keyData[4096];				// 0,4096	Key data used for decrypting the rest of the SDX
+		// 4096 bytes
+// Note: This is a placeholder.  The remainder of the SDX file structure has not been released publicly yet.
+	};
+
 
 
 

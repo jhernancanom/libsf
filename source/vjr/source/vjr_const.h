@@ -150,6 +150,7 @@ typedef SEM**		SEMpp;
 	#define iVariable_isFundamentalTypeLogical(var)		(var->varType == _VAR_TYPE_LOGICAL || (iVariable_areTypesCompatible(thisCode, var, varDefault_logical)))
 	#define iVariable_isTypeCharacter(var)				(var->varType == _VAR_TYPE_CHARACTER)
 	#define iVariable_isTypeNumeric(var)				(var->varType >= _VAR_TYPE_NUMERIC_START && var->varType <= _VAR_TYPE_NUMERIC_END)
+	#define iVariable_isTypeInteger(var)				(var->varType >= _VAR_TYPE_NUMERIC_INTEGER_START && var->varType <= _VAR_TYPE_NUMERIC_INTEGER_END)
 	#define iVariable_isNumeric64Bit(var)				(var->varType == _VAR_TYPE_S64 || var->varType == _VAR_TYPE_U64 || var->varType == _VAR_TYPE_CURRENCY)
 	#define iVariable_isTypeDate(var)					(var->varType == _VAR_TYPE_DATE)
 	#define iVariable_isTypeDatetime(var)				(var->varType == _VAR_TYPE_DATETIME)

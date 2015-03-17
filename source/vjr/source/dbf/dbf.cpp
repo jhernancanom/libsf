@@ -312,14 +312,14 @@
 	{
 		s32				lnI, lnI_max, lnIndexType;
 		sptr			lnWorkArea, lnLength;
-		u32				lnField, lnFieldNameLength, lShareFlag, lStructure_size, numread;
+		u32				lnField, lShareFlag, lStructure_size, numread;
 		s32*			lnCurrentWorkArea;
 		bool			llDbcIsValid;
 		SFieldRecord1*	lfrPtr;
 		SFieldRecord2*	lfr2Ptr;
 		SWorkArea*		waBase;		// Work Area base (used to access VCX, SCX, DBF work areas, etc.)
 		SWorkArea*		wa;
-		s8				cdxFilename[_MAX_PATH];
+		s8				cdxSdxOrDcxFilename[_MAX_PATH];
 		union {
 			uptr		_validateStruture;
 			bool		(*validateStructure)(SWorkArea* wa);
@@ -329,7 +329,7 @@
 		//////////
 		// Based on the type of table, it goes into its own area
 		//////
-			lnIndexType	= 0;
+			lnIndexType	= _INDEX_NONE;
 			lnLength	= strlen(alias);
 			if (lnLength == sizeof(cgcDbcKeyName) - 1 && _memicmp(alias, cgcDbcKeyName, lnLength) == 0)
 			{
@@ -339,7 +339,7 @@
 				lnI_max				= _MAX_DBC_SLOTS;
 				waBase				= &gsDbcArea[0];
 				_validateStruture	= (uptr)&iDbf_validate_isDbc;
-				lnIndexType			= _INDEX_IS_DCX;
+				lnIndexType			= _INDEX_DCX;
 
 			} else if (lnLength == sizeof(cgcScxKeyName) - 1 && _memicmp(alias, cgcScxKeyName, lnLength) == 0) {
 				// It's an SCX
@@ -380,7 +380,7 @@
 				lnI_max				= _MAX_DBF_SLOTS;
 				waBase				= &gsWorkArea[0];
 				_validateStruture	= (uptr)0;
-				lnIndexType			= _INDEX_IS_CDX;
+				lnIndexType			= _INDEX_CDX;
 			}
 
 
@@ -432,7 +432,7 @@
 		//////
 			memset(wa->tablePathname,	0, sizeof(wa->tablePathname));
 			memset(wa->alias,			0, sizeof(wa->alias));
-			memset(wa->indexPathname,	0, sizeof(wa->indexPathname));
+			memset(wa->idxCdxDcxPathname,	0, sizeof(wa->idxCdxDcxPathname));
 
 
 		//////////
@@ -633,7 +633,7 @@
 							lfrPtr->fillChar	= 32;
 							break;
 
-						default:
+						default:	// Uhhh... okay
 							lfrPtr->indexFixup	= _DBF_INDEX_FIXUP_NONE;
 							lfrPtr->fillChar	= 32;
 							break;
@@ -649,37 +649,36 @@
 			}
 			// When we get here, lfrPtr is pointing to the structure termination byte.
 			// If this table has a container, the next byte will be the start of the relative backlink to the table
-			wa->backlink = (s8*)lfrPtr + 1;	// +1 skips past the trailing CHR(13) which terminates the structure list
+			wa->backlink		= (s8*)lfrPtr + 1;				// The "+1" skips past the trailing CHR(13) which terminates the structure list ... what a way to delineate data in a fixed-length structure.  "FieldCount" anyone?  Hello!?!? :-) :-) :-)
+			wa->backlinkLength	= (u32)strlen(wa->backlink);	// If there is no name, it will immediately hit a NULL characterand the length will be 0
 
 
 		//////////
 		// If it's a visual table, it might have a DBC backlink
 		//////
-			if (wa->isVisualTable && lnIndexType != 0)
+			if (wa->isVisualTable && lnIndexType != _INDEX_NONE)
 			{
-				// Backlink is specified
-				wa->backlinkLength	= (u32)strlen(wa->backlink);
-
 				// Prepare to see if it has an associated CDX
-				memset(cdxFilename, 0, sizeof(cdxFilename));
+				memset(cdxSdxOrDcxFilename, 0, sizeof(cdxSdxOrDcxFilename));
 				if (wa->tablePathnameLength >= 5)
 				{
 					// Filename is at least something like "a.dbf"
-					memcpy(cdxFilename, wa->tablePathname, wa->tablePathnameLength);
-					if (lnIndexType == _INDEX_IS_CDX)
+					memcpy(cdxSdxOrDcxFilename, wa->tablePathname, wa->tablePathnameLength);
+					if (lnIndexType == _INDEX_CDX)
 					{
 						// It's a cdx
-						memcpy(cdxFilename + wa->tablePathnameLength - sizeof(cgcCdxExtension) - 1, cgcCdxExtension, sizeof(cgcCdxExtension) - 1);
+						memcpy(cdxSdxOrDcxFilename + wa->tablePathnameLength - (sizeof(cgcCdxExtension) - 1), cgcCdxExtension, sizeof(cgcCdxExtension) - 1);
 
-					} else if (lnIndexType == _INDEX_IS_DCX) {
+					} else if (lnIndexType == _INDEX_SDX) {
+						// It's a sdx
+						memcpy(cdxSdxOrDcxFilename + wa->tablePathnameLength - (sizeof(cgcCdxExtension) - 1), cgcSdxExtension, sizeof(cgcSdxExtension) - 1);
+
+					} else if (lnIndexType == _INDEX_DCX) {
 						// It's a dcx
-						memcpy(cdxFilename + wa->tablePathnameLength - sizeof(cgcCdxExtension) - 1, cgcDcxExtension, sizeof(cgcDcxExtension) - 1);
+						memcpy(cdxSdxOrDcxFilename + wa->tablePathnameLength - (sizeof(cgcCdxExtension) - 1), cgcDcxExtension, sizeof(cgcDcxExtension) - 1);
 					}
+					// else ... note, we only automatically open these index types.  There may be others, but we won't open them as well.
 				}
-
-			} else {
-				// No backlink
-				wa->backlinkLength	= 0;
 			}
 
 
@@ -688,51 +687,55 @@
 		//////
 			lfrPtr = wa->fieldPtr1;
 			for (lnField = 0; lnField < wa->fieldCount; lnField++, lfrPtr++)
-			{
-// TODO:  We could possibly use strlen() here ... I don't remember for sure if it's always NULL terminated at 11th char.
-				lfrPtr->fieldName_length = 0;
-				for (lnFieldNameLength = 0; lnFieldNameLength < 10 && lfrPtr->name[lnFieldNameLength] != 0; lnFieldNameLength++)
-					++lfrPtr->fieldName_length;
-			}
+				lfrPtr->fieldName_length = strlen(lfrPtr->name);
+
 			// When we get here, all of the fields have their field length as well
 
 
 		//////////
-		// Copy to the SFieldRecord2.  If it's part of a container, flush out the full name.
+		// Copy to the SFieldRecord2.  If it's part of a container, name2 will be flushed out to the full field name later
 		//////
 			wa->field2Ptr = (SFieldRecord2*)malloc(wa->fieldCount * sizeof(SFieldRecord2));
+			if (!wa->field2Ptr)
+			{
+				// Unable to allocate memory for the fieldrecord2 data
+				_close(wa->fhDbf);
+				return(_DBF_ERROR_MEMORY);
+			}
+
+			// Copy over what we have
 			memset(wa->field2Ptr, 0, wa->fieldCount * sizeof(SFieldRecord2));
 
-			lfrPtr	= wa->fieldPtr1;
-			lfr2Ptr	= wa->field2Ptr;
-			for (lnField = 1; lnField <= wa->fieldCount; lnField++, lfrPtr++, lfr2Ptr++)
+			// Iterate through every field
+			for (lnField = 1, lfrPtr = wa->fieldPtr1, lfr2Ptr = wa->field2Ptr; lnField <= wa->fieldCount; lnField++, lfrPtr++, lfr2Ptr++)
 			{
 				//////////
 				// Copy the short names over
 				//////
 					memcpy(lfr2Ptr->name,	lfrPtr->name, 11);		// Copy the full short name
 					memcpy(lfr2Ptr->name2,	lfrPtr->name, 11);		// Copy the full short name
-					lfr2Ptr->fieldName_length = (s32)strlen((s8*)lfrPtr->name);
 
 
 				//////////
 				// Copy normal attributes
 				//////
-					lfr2Ptr->type			= lfrPtr->type;
-					lfr2Ptr->offset			= lfrPtr->offset;
-					lfr2Ptr->length			= lfrPtr->length;
-					lfr2Ptr->decimals		= lfrPtr->decimals;
-					lfr2Ptr->flags			= lfrPtr->flags;
-					lfr2Ptr->fieldNumber	= lnField;
-					lfr2Ptr->autoIncNext	= lfrPtr->autoIncNext;
-					lfr2Ptr->autoIncStep	= lfrPtr->autoIncStep;
-					lfr2Ptr->indexFixup		= lfrPtr->indexFixup;
-					lfr2Ptr->fillChar		= lfrPtr->fillChar;
+					lfr2Ptr->fieldNumber		= lnField;
+					lfr2Ptr->fieldName_length	= lfrPtr->fieldName_length;		// This length will be adjusted later if it's part of a container with a long field name
+
+					lfr2Ptr->type				= lfrPtr->type;
+					lfr2Ptr->offset				= lfrPtr->offset;
+					lfr2Ptr->length				= lfrPtr->length;
+					lfr2Ptr->decimals			= lfrPtr->decimals;
+					lfr2Ptr->flags				= lfrPtr->flags;
+					lfr2Ptr->autoIncNext		= lfrPtr->autoIncNext;
+					lfr2Ptr->autoIncStep		= lfrPtr->autoIncStep;
+					lfr2Ptr->indexFixup			= lfrPtr->indexFixup;
+					lfr2Ptr->fillChar			= lfrPtr->fillChar;
 			}
 
 
 		//////////
-		// Reset the pointers
+		// Reset our pointers
 		//////
 			lfrPtr	= wa->fieldPtr1;
 			lfr2Ptr	= wa->field2Ptr;
@@ -745,8 +748,19 @@
 			if (wa->isVisualTable && wa->backlinkLength != 0)
 			{
 				// Try to open the backlink
-				iiDbc_lookupTableField(thisCode, &gsWorkArea[lnI], &llDbcIsValid, tlExclusive);
+				iiDbc_lookupTableField(thisCode, wa, &llDbcIsValid, tlExclusive);
 				// llDbcIsValid is populated as a passed-in return parameter
+
+				// Are we good?
+				if (!llDbcIsValid)
+				{
+					// Signal the failure
+					iError_signal(thisCode, _ERROR_UNABLE_TO_OPEN_DBC, NULL, false, wa->tablePathname, false);
+
+					// Return failure
+					_close(wa->fhDbf);
+					return(_DBF_ERROR_DBC);
+				}
 			}
 
 
@@ -790,19 +804,6 @@
 
 
 		//////////
-		// We're done loading (or attempting to load) everything!
-		// Right now, the structure has been loaded into gsWorkArea[i].fieldPtr1, and gsWorkArea[i].field2ptr
-		// And the test here indicates final success or failure on the table itself and dbc itself.
-		//////////
-			if (wa->isVisualTable && wa->backlinkLength != 0 && !llDbcIsValid)
-			{
-				// Close what we've opened, and un-allocate what we've allocated
-				iDbf_close(thisCode, wa);
-				return(_DBF_ERROR_DBC);
-			}
-
-
-		//////////
 		// Success.
 		// Set initial flags
 		//////
@@ -813,20 +814,22 @@
 
 
 		//////////
-		// Move to the first record
+		// Open any automatic indexes
 		//////
-			if (cdxFilename[0] != 0)
+			if (cdxSdxOrDcxFilename[0] != 0)
 			{
-				// Try to open the associated cdx
-				cdx_open(thisCode, wa, cdxFilename, (u32)strlen(cdxFilename), lnIndexType, tlValidate);
-
-				// Right now, it will either be open or not
-				if (wa->isIndexLoaded && wa->isCdx)
-					iiCdx_setPrimaryKey(thisCode, wa);
+				// Try to open the associated cdx, then sdx
+				cdx_open(thisCode, wa, cdxSdxOrDcxFilename, (u32)strlen(cdxSdxOrDcxFilename),	lnIndexType,	tlValidate);
+//				sdx_open(thisCode, wa, cdxSdxOrDcxFilename, (u32)strlen(cdxSdxOrDcxFilename),	_INDEX_SDX,		tlValidate);
+// 				if (wa->isSdxLoaded && wa->isSdx)
+// 					iiSdx_setPrimaryKey(thisCode, wa);
 			}
 
-			// Move to the top of the table
-			iDbf_gotoTop(thisCode, wa);
+
+		//////////
+		// Move to the first record
+		//////
+			iDbf_gotoTop(thisCode, wa);		// If an index is active, it will use that
 
 
 		//////////
@@ -1765,28 +1768,47 @@
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
+// TODO:  We should add a comparison here between wa->data and wa->odata to see if anything's changed, and if so signal a warning
 
 		//////////
 		// Make sure the record they want to go to exists
 		//////
 			if (recordNumber <= (s32)wa->header.records)
 			{
+				// Do we need to fetch the data?
 				if (wa->isCached)
 				{
 					// We have it cached, so just change .data to point to the right place
 					wa->data = wa->cachedTable + ((recordNumber - 1) * wa->header.recordLength);
 
 				} else {
-					// Manual seek in the table, and a manual read
-					// Seek to the indicated offset, and read in the record
-					_lseeki64(	wa->fhDbf,
-								wa->header.firstRecord + ((recordNumber - 1) * wa->header.recordLength),
-								SEEK_SET);
 
-					// Read in the record
-					lnNumread = _read(wa->fhDbf, wa->data, wa->header.recordLength);
-					if (lnNumread != wa->header.recordLength)
-						return(-1);
+					//////////
+					// Seek
+					//////
+						_lseeki64(	wa->fhDbf,
+									wa->header.firstRecord + ((recordNumber - 1) * wa->header.recordLength),
+									SEEK_SET);
+
+
+					//////////
+					// Lock
+					//////
+// TODO:  working here
+
+
+					//////////
+					// Read
+					//////
+						lnNumread = _read(wa->fhDbf, wa->data, wa->header.recordLength);
+						if (lnNumread != wa->header.recordLength)
+							return(-1);
+
+
+					//////////
+					// Unlock
+					//////
+// TODO:  working here
 				}
 
 				// Set the current record, and lower the dirty flag
@@ -1813,7 +1835,7 @@
 	{
 		// If the work area is valid, move to the appropriate record
 		if (iDbf_isWorkAreaValid(thisCode, wa, NULL))
-			return(iDbf_gotoRecord(thisCode, wa, ((wa->isIndexLoaded) ? iCdx_gotoTop(thisCode, wa) : 1)));
+			return(iDbf_gotoRecord(thisCode, wa, ((wa->isIndexLoaded && iiCdx_isPrimaryKeySet(thisCode, wa)) ? iCdx_gotoTop(thisCode, wa) : 1)));
 
 		// If we get here, invalid work area
 		return(-1);
@@ -3277,6 +3299,9 @@
 		//////////
 		// Initialize
 		//////
+			// Lower the flag
+			*tlIsValid = false;
+
 			// Get the full path for what would be the container
 			iiDbf_getRelativeDbc(thisCode, wa, &dbcName[0]);
 			lnDbcLength = (s32)strlen(dbcName);
@@ -3288,7 +3313,7 @@
 			// If it has no backlink, we're done
 			if (wa->backlink[0] == 0)
 				return;
-//return;
+
 
 		//////////
 		// Is the DBC already open?
@@ -3304,7 +3329,7 @@
 						// See if it's OUR dbc
 						if (_memicmp(gsDbcArea[lnI].tablePathname, dbcName, wa->tablePathnameLength) == 0)
 						{
-							// This is our container
+							// This is our container already open
 							lnDbcHandle = gsDbcArea[lnI].thisWorkArea;
 							wa->dbc = &gsDbcArea[lnI];
 							break;
@@ -3312,12 +3337,16 @@
 					}
 				}
 
-				// It is not already open, so we need to open it
-				lnDbcHandle = (u32)iDbf_open(thisCode, (cs8*)dbcName, (cs8*)cgcDbcKeyName, tlExcusive, false, false);
-				if ((s32)lnDbcHandle >= 0)
+				// Di we find our slot?
+				if (!wa->dbc)
 				{
-					// We're good
-					wa->dbc = &gsWorkArea[lnDbcHandle];
+					// No, we need to try to open it
+					lnDbcHandle = (u32)iDbf_open(thisCode, (cs8*)dbcName, (cs8*)cgcDbcKeyName, tlExcusive, false, false);
+					if ((s32)lnDbcHandle >= 0)
+					{
+						// We're good
+						wa->dbc = &gsWorkArea[lnDbcHandle];
+					}
 				}
 			}
 
