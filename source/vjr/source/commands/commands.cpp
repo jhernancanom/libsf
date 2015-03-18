@@ -2463,7 +2463,7 @@
 	}
 
 	// Common numeric functions used for EXP(), LOG(), LOG10(), PI(), SQRT(), CEILING(), FLOOR(), DTOR(), RTOD().
-    SVariable* ifunction_numbers_common(SThisCode* thisCode, SVariable* varNumber, u32 functionType, const u32 resultType, bool sameInputType)
+    SVariable* ifunction_numbers_common(SThisCode* thisCode, SVariable* varNumber, u32 tnFunctionType, const u32 tnResultType, bool tlSameInputType)
     {
 		f64			lfValue;
 		u32			errorNum;
@@ -2500,7 +2500,7 @@
 		//////////
 		// Compute numeric function
 		//////
-			switch (functionType)
+			switch (tnFunctionType)
 			{
 
 // SQRT()
@@ -2552,7 +2552,7 @@
 					//////////
 					// Compute
 					//////
-						if (functionType == _FP_COMMON_LOG)		lfValue = log(lfValue);	
+						if (tnFunctionType == _FP_COMMON_LOG)		lfValue = log(lfValue);	
 						else									lfValue = log10(lfValue);	
 						break;
 
@@ -2609,7 +2609,7 @@
 					//////////
 					// Compute
 					//////
-						if (functionType == _FP_COMMON_ACOS)		lfValue = acos(lfValue);	
+						if (tnFunctionType == _FP_COMMON_ACOS)		lfValue = acos(lfValue);	
 						else										lfValue = asin(lfValue);
 					break;
 
@@ -2641,8 +2641,8 @@
 		//////////
 		// Create output variable
 		//////
-			if (sameInputType)	result = iVariable_create(thisCode, varNumber->varType, NULL);
-			else				result = iVariable_create(thisCode, resultType, NULL); 
+			if (tlSameInputType)	result = iVariable_create(thisCode, varNumber->varType, NULL);
+			else				result = iVariable_create(thisCode, tnResultType, NULL); 
 
 			if (!result)
 			{
@@ -2834,9 +2834,14 @@
 // Example:
 //   ? FV(500, 0.006, 48)	&& Displays 27717.50
 //////
-    SVariable* function_fv (SThisCode* thisCode, SVariable* nPayment, SVariable* nInterestRate, SVariable* nPeriods)
+	SVariable* function_fv(SThisCode* thisCode, SVariable* nPayment, SVariable* nInterestRate, SVariable* nPeriods)
+	{
+		return ifunction_fv_pv_common(thisCode, nPayment, nInterestRate, nPeriods, true);
+	}
+
+    SVariable* ifunction_fv_pv_common(SThisCode* thisCode, SVariable* nPayment, SVariable* nInterestRate, SVariable* nPeriods, bool tlFV)
     {
-		f64			lfFV, lfPayment, lfInterestRate, lfPeriods;
+		f64			lfFV_PV, lfPayment, lfInterestRate, lfPeriods;
 		bool		error;
 		u32			errorNum;
 		SVariable*	result;
@@ -2901,17 +2906,20 @@
 				return(NULL);
 			}
 
-
 		//////////
 		// Compute the future value of a financial investment
 		//////
-			lfFV = 0.0;
-			if (lfPayment != 0.0 && lfInterestRate != 0.0)
+			lfFV_PV = 0.0;
+			if ( tlFV )
 			{
-				lfFV = (pow((1 + lfInterestRate), lfPeriods) - 1) / lfInterestRate * lfPayment;
+			//the future value of a financial investment
+				if (lfPayment != 0.0 && lfInterestRate != 0.0)
+					lfFV_PV = (pow((1 + lfInterestRate), lfPeriods) - 1) / lfInterestRate * lfPayment;
+			} else {
+			//the present value of an investment.
+				if (lfInterestRate != 0.0)
+					lfFV_PV = lfPayment * ((1 - pow((1 + lfInterestRate), -lfPeriods)) / lfInterestRate);
 			}
-
-
 		//////////
 		// Create output variable
 		//////
@@ -2927,7 +2935,7 @@
 		//////////
 		// Set the value
 		//////
-			if (!iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfFV, NULL, NULL, NULL, NULL))
+			if (!iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfFV_PV, NULL, NULL, NULL, NULL))
 				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, nPayment), false);
 
 
@@ -2935,6 +2943,7 @@
         // Return result
 		//////
 	        return result; 
+
 	}
 
 
@@ -4996,6 +5005,39 @@
         // Return our converted result
 		//////
 	        return result;
+	}
+
+	
+	
+	
+//////////
+//
+// Function: PV()
+// Returns the present value of an investment.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.18.2015
+//////
+// Change log:
+//     Mar.18.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Specifies the periodic payment amount.
+//     p2			-- Specifies the periodic interest rate.
+//     p3			-- Specifies the total number of payments.
+//
+//////
+// Returns:
+//    PV( ) computes the present value of an investment based on a series of equal periodic payments at a constant periodic interest rate.
+//////
+// Example:
+//   ? PV(500, 0.006, 48)	&& Displays 20799.41
+//////
+	SVariable* function_pv(SThisCode* thisCode, SVariable* nPayment, SVariable* nInterestRate, SVariable* nPeriods)
+	{
+		return ifunction_fv_pv_common(thisCode, nPayment, nInterestRate, nPeriods, false);
 	}
 
 

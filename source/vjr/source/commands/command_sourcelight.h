@@ -515,6 +515,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_pv[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_ranger[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
