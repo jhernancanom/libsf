@@ -167,12 +167,15 @@ struct SThisCode;
 //
 //////
 	SVariable*			function_abs		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
+	SVariable*			function_acos		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_addbs								(SThisCode* thisCode, SVariable* varString);
 	SVariable*			function_alltrim							(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2);
 	SVariable*			ifunction_trim_common						(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2, bool trimStart, bool trimEnd);
 	SVariable*			function_alp								(SThisCode* thisCode, SVariable* varColor);
 	SVariable*			function_asc								(SThisCode* thisCode, SVariable* varString);
+	SVariable*			function_asin		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_at									(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence);
+	SVariable*			function_atan		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_atc								(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence);
 	SVariable*			ifunction_at_occurs_common					(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence, bool tlCaseSensitive, bool tlScanBackward, u32* tnFoundCount);
 	SVariable*			function_blu								(SThisCode* thisCode, SVariable* varColor);
@@ -337,11 +340,14 @@ struct SThisCode;
 		//	iCode					Count		Function Algorithm				Required		Maximum Count	SourceLight data
 		//  ------------------		------		--------------------------		----------		-------------	----------------------------------
 		{	_ICODE_ABS,				1,			(uptr)&function_abs,			1,				1,				&gsSourceLight_abs[0]			},	// ABS() by Stefano D'Amico, VJr 0.56, Mar.18.2015
+		{	_ICODE_ACOS,			1,			(uptr)&function_acos,			1,				1,				&gsSourceLight_acos[0]			},	// ACOS() by Stefano D'Amico, VJr 0.56, Mar.18.2015
 		{	_ICODE_ADDBS,			1,			(uptr)&function_addbs,			1,				4,				&gsSourceLight_alltrim[0]		},
 		{	_ICODE_ALLTRIM,			1,			(uptr)&function_alltrim,		1,				4,				&gsSourceLight_alltrim[0]		},
 		{	_ICODE_ALP,				1,			(uptr)&function_alp,			1,				1,				&gsSourceLight_alp[0]			},
 		{	_ICODE_ASC,				1,			(uptr)&function_asc,			1,				1,				&gsSourceLight_asc[0]			},
+		{	_ICODE_ASIN,			1,			(uptr)&function_asin,			1,				1,				&gsSourceLight_asin[0]			},	// ACOS() by Stefano D'Amico, VJr 0.56, Mar.18.2015
 		{	_ICODE_AT,				1,			(uptr)&function_at,				2,				3,				&gsSourceLight_at[0]			},
+		{	_ICODE_ATAN,			1,			(uptr)&function_atan,			1,				1,				&gsSourceLight_atan[0]			},	// ACOS() by Stefano D'Amico, VJr 0.56, Mar.18.2015
 		{	_ICODE_ATC,				1,			(uptr)&function_atc,			2,				3,				&gsSourceLight_atc[0]			},
 		{	_ICODE_BGR,				1,			(uptr)&function_bgr,			3,				3,				&gsSourceLight_bgr[0]			},
 		{	_ICODE_BGRA,			1,			(uptr)&function_bgra,			4,				4,				&gsSourceLight_bgra[0]			},

@@ -590,6 +590,7 @@
 
 
 
+
 //////////
 //
 // Function: ABS()
@@ -615,8 +616,40 @@
 //////
     SVariable* function_abs(SThisCode* thisCode, SVariable* varNumber)
     {
-		// Return exp
+		// Return abs
 		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_ABS, _VAR_TYPE_F64, true));
+	}
+
+
+
+
+//////////
+//
+// Function: ACOS()
+// Returns the arc cosine of a specified numeric expression.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.18.2015
+//////
+// Change log:
+//     Mar.18.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    ACOS(n) of the value in p1
+//////
+// Example:
+//    ? ACOS(0)		&& Display 1.57
+//////
+    SVariable* function_acos(SThisCode* thisCode, SVariable* varNumber)
+    {
+		// Return acos
+		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_ACOS, _VAR_TYPE_F64, false));
 	}
 
 
@@ -1191,6 +1224,70 @@
 
 //////////
 //
+// Function: ASIN()
+// Returns in radians the arc sine of a numeric expression.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.18.2015
+//////
+// Change log:
+//     Mar.18.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    ASIN(n) of the value in p1
+//////
+// Example:
+//    ? ASIN(1)		&& Display 1.57
+//////
+    SVariable* function_asin(SThisCode* thisCode, SVariable* varNumber)
+    {
+		// Return asin
+		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_ASIN, _VAR_TYPE_F64, false));
+	}
+
+
+
+
+//////////
+//
+// Function: ATAN()
+// Returns in radians the arc tangent of a numeric expression.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.18.2015
+//////
+// Change log:
+//     Mar.18.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    ATAN(n) of the value in p1
+//////
+// Example:
+//    ? ATAN(1.57)		&& Display 1.00
+//////
+    SVariable* function_atan(SThisCode* thisCode, SVariable* varNumber)
+    {
+		// Return atan
+		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_ATAN, _VAR_TYPE_F64, false));
+	}
+	
+
+
+
+//////////
+//
 // Functions:  AT(), ATC(), RAT(), RATC()
 // Takes a character input to search for, an expression to search, and an optional occurrence
 // to find, with and optionally with regard to case (trailing "C").
@@ -1499,7 +1596,6 @@
     SVariable* function_ceiling(SThisCode* thisCode, SVariable* varNumber)
     {
         // Return ceiling
-
         return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_CEILING, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings)));
 	}
 
@@ -1956,7 +2052,7 @@
 //////
     SVariable* function_cos(SThisCode* thisCode, SVariable* varNumber)
     {
-		// Return exp
+		// Return cos
 		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_COS, _VAR_TYPE_F64, false));
 	}
 
@@ -2331,7 +2427,7 @@
 //////
     SVariable* function_dtor(SThisCode* thisCode, SVariable* varNumber)
     {
-		// Return exp
+		// Return dtor
 		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_DTOR, _VAR_TYPE_F64, false));
 	}
 
@@ -2493,6 +2589,47 @@
 // ABS()
 				case _FP_COMMON_ABS:
 					lfValue = abs(lfValue);
+					break;
+
+// ACOS()
+// ASIN()
+				case _FP_COMMON_ACOS:
+				case _FP_COMMON_ASIN:
+
+					//////////
+					// Verify p1 > 0
+					//////
+						if (lfValue < -1 || lfValue > 1)
+						{
+							// Oops!
+							iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_compRelated(thisCode, varNumber), false);
+							return(NULL);
+						}
+
+					//////////
+					// Compute
+					//////
+						if (functionType == _FP_COMMON_ACOS)		lfValue = acos(lfValue);	
+						else										lfValue = asin(lfValue);
+					break;
+
+// ATAN()
+				case _FP_COMMON_ATAN:
+
+					//////////
+					// Verify p1 > 0
+					//////
+						if (lfValue < -_MATH_PI2 || lfValue > _MATH_PI2)
+						{
+							// Oops!
+							iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_compRelated(thisCode, varNumber), false);
+							return(NULL);
+						}
+
+					//////////
+					// Compute
+					//////
+						lfValue = atan(lfValue);	
 					break;
 				default:
 					// Programmer error... this is an internal function and we should never get here
@@ -5724,7 +5861,7 @@
 //////
     SVariable* function_sin(SThisCode* thisCode, SVariable* varNumber)
     {
-		// Return exp
+		// Return sin
 		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_SIN, _VAR_TYPE_F64, false));
 	}
 
