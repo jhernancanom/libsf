@@ -118,6 +118,9 @@
 	#define		_DBF_ERROR_DBC						-12
 	#define		_DBF_ERROR_NO_MORE_WORK_AREAS		-13
 	#define		_DBF_ERROR_INVALID_WORK_AREA		-14
+	#define		_DBF_ERROR_LOCKING					-15
+	#define		_DBF_ERROR_WRITING					-16
+	#define		_DBF_ERROR_SEEKING					-17
 
 	// For field flags
 	#define 	_DBF_FIELD_SYSTEM					0x01

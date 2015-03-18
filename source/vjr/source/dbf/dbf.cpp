@@ -113,6 +113,9 @@
 
 				// Set its number
 				gsWorkArea[lnI].thisWorkArea = lnI;
+
+				// Allocate its lock buffer
+				iBuilder_createAndInitialize(&gsWorkArea[lnI].dbfLocks, -1);
 			}
 
 
@@ -153,7 +156,7 @@
 			if (gsWorkArea[lnI].isUsed == _YES)
 			{
 				// This slot is used
-				if (gsWorkArea[lnI].dirty == _YES)
+				if (gsWorkArea[lnI].isDirty)
 				{
 					// And changes need to be written to disk
 					iDbf_close(NULL, &gsWorkArea[lnI]);
@@ -1756,7 +1759,10 @@
 //////
 	sptr iDbf_gotoRecord(SThisCode* thisCode, SWorkArea* wa, s32 recordNumber)
 	{
-		u64 lnNumread;
+		s64			lnOffset;
+		u64			lnNumread;
+		sptr		lnResult;
+		SDiskLock*	dl;
 
 
 		//////////
@@ -1768,7 +1774,17 @@
 			if (wa->isUsed != _YES)
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
-// TODO:  We should add a comparison here between wa->data and wa->odata to see if anything's changed, and if so signal a warning
+
+		//////////
+		// If they have changed data, needs to be written
+		//////
+			if (wa->isDirty)
+			{
+				// Write the changes to disk
+				if ((lnResult = iDbf_writeChanges(thisCode, wa)) != _DBF_OKAY)
+					return(lnResult);
+			}
+
 
 		//////////
 		// Make sure the record they want to go to exists
@@ -1778,7 +1794,7 @@
 				// Do we need to fetch the data?
 				if (wa->isCached)
 				{
-					// We have it cached, so just change .data to point to the right place
+					// We have the table cached, so just change .data to point to the right place
 					wa->data = wa->cachedTable + ((recordNumber - 1) * wa->header.recordLength);
 
 				} else {
@@ -1786,15 +1802,22 @@
 					//////////
 					// Seek
 					//////
-						_lseeki64(	wa->fhDbf,
-									wa->header.firstRecord + ((recordNumber - 1) * wa->header.recordLength),
-									SEEK_SET);
+						lnOffset = (s64)(wa->header.firstRecord + ((recordNumber - 1) * wa->header.recordLength));
+						if (wa->isExclusive)
+							_lseeki64(wa->fhDbf, lnOffset, SEEK_SET);
 
 
 					//////////
 					// Lock
 					//////
-// TODO:  working here
+						if (!wa->isExclusive)
+						{
+							// Shared access, lock the record
+							dl = iDisk_lock_range_retryCallback(thisCode, wa->dbfLocks, wa->fhDbf, lnOffset, wa->header.recordLength, (uptr)&iiDbf_continueWithLockOperation, (uptr)&dl);
+							if (dl->nLength != wa->header.recordLength)
+								return(_DBF_ERROR_LOCKING);
+							// If we get here, we're locked
+						}
 
 
 					//////////
@@ -1808,12 +1831,13 @@
 					//////////
 					// Unlock
 					//////
-// TODO:  working here
+						if (!wa->isExclusive)
+							iDisk_unlock(thisCode, wa->dbfLocks, dl);
 				}
 
 				// Set the current record, and lower the dirty flag
 				wa->currentRecord	= recordNumber;
-				wa->dirty			= 0;
+				wa->isDirty			= false;
 
 				// Copy to the original record
 				memcpy(wa->odata, wa->data, wa->header.recordLength);
@@ -1849,9 +1873,11 @@
 // Called to write any changes to the fields to disk
 //
 //////
-	uptr iDbf_writeChanges(SThisCode* thisCode, SWorkArea* wa)
+	sptr iDbf_writeChanges(SThisCode* thisCode, SWorkArea* wa)
 	{
-		u32 lnNumread;
+		u32			lnNumread;
+		s64			lnOffset;
+		SDiskLock*	dl;
 
 
 		//////////
@@ -1867,27 +1893,58 @@
 		//////////
 		// Make sure the record they want to go to exists
 		//////
-			if (wa->currentRecord <= wa->header.records && wa->dirty != 0)
+			if (wa->currentRecord <= wa->header.records && wa->isDirty)
 			{
-				// Write the record
-				// Seek to the indicated offset, and read in the record
-				_lseeki64(	wa->fhDbf,
-							wa->header.firstRecord + ((wa->currentRecord - 1) * wa->header.recordLength),
-							SEEK_SET);
+				//////////
+				// Seek
+				//////
+					lnOffset = (s64)(wa->header.firstRecord + ((wa->currentRecord - 1) * wa->header.recordLength));
+					if (wa->isExclusive)
+					{
+						// Try to seek
+						if (_lseeki64(wa->fhDbf, lnOffset, SEEK_SET) != lnOffset)
+							return(_DBF_ERROR_SEEKING);
+						// If we get here, we're good
+					}
+				
 
-				// Write the record
-				lnNumread = _write(wa->fhDbf, wa->data, wa->header.recordLength);
-				if (lnNumread != wa->header.recordLength)
-					return(-1);
+				//////////
+				// Lock
+				//////
+					if (!wa->isExclusive)
+					{
+						// Shared access, lock the record
+						dl = iDisk_lock_range_retryCallback(thisCode, wa->dbfLocks, wa->fhDbf, lnOffset, wa->header.recordLength, (uptr)&iiDbf_continueWithLockOperation, (uptr)&dl);
+						if (dl->nLength != wa->header.recordLength)
+							return(_DBF_ERROR_LOCKING);
+						// If we get here, we're locked
+					}
+					
 
-				// Set the current record, and lower the dirty flag
-				wa->dirty = 0;
+				//////////
+				// Write
+				//////
+					lnNumread = _write(wa->fhDbf, wa->data, wa->header.recordLength);
+					if (lnNumread != wa->header.recordLength)
+						return(_DBF_ERROR_WRITING);
 
-				// Copy what is now the disk record to the original record
-				memcpy(wa->odata, wa->data, wa->header.recordLength);
+
+				//////////
+				// Unlock
+				//////
+					if (!wa->isExclusive)
+						iDisk_unlock(thisCode, wa->dbfLocks, dl);
+
+
+				//////////
+				// Lower the dirty flag, and copy to the original data
+				//////
+					wa->isDirty = false;
+					memcpy(wa->odata, wa->data, wa->header.recordLength);
 			}
+
 			// If we get here, nothing to do
-			return(0);
+			return(_DBF_OKAY);
 	}
 
 
@@ -2848,7 +2905,7 @@
 					memcpy(wa->data + lfrp->offset, src, min(lfrp->length, srcLength));
 
 					// Indicate the record is dirty
-					wa->dirty = _YES;
+					wa->isDirty = true;
 
 					// Flush the row to disk
 					iDbf_writeChanges(thisCode, wa);

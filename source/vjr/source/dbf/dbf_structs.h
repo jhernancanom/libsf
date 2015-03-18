@@ -203,7 +203,7 @@
 		struct SWorkArea
 		{
 			// Internal flags
-			u32				isUsed;						// _YES or _NO
+			bool			isUsed;						// Is the work area used?
 			u32				thisWorkArea;				// Added to hold this entry's slot number
 			bool			isCursor;					// For temporary tables, the tables, memo files, and indexes are deleted on close
 			bool			isExclusive;				// true if this index was used exclusively
@@ -211,6 +211,7 @@
 			bool			isSdxLoaded;				// true if an sdx index is loaded
 			bool			isCached;					// If the table's been cached, then it will be true, otherwise false
 			bool			isVisualTable;				// Only visual tables can have DBC backlinks
+			bool			isDirty;					// When data is written to the current record, but not flushed to disk, this is raised
 
 			// Names
 			s8				tablePathname[_MAX_PATH];	// Filename to get to the table
@@ -240,6 +241,8 @@
 			SFieldRecord2*	field2Ptr;					// Memory area holding the field listing (using a format suitable for long field names through containers)
 			u32				fieldCount;					// Number of fields in the table
 
+			// Locks
+			SBuilder*		dbfLocks;					// Disk locks for shared file access
 
 			// Memory for whatever
 			union {
@@ -278,7 +281,6 @@
 				s8*			mdata_s8;
 				u8*			mdata_u8;
 			};
-			u32				dirty;						// (locality=_MEMORY only) A flag indicating whether or not the data here is dirty (has been changed) and is not written to disk yet
 
 
 			//////////

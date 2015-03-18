@@ -115,10 +115,7 @@
 	{
 		bool		llIsValid;
 		u64			lnFileSize, lnNumread;
-		union {
-			SDiskLock*	dl;
-			uptr		_dl;
-		};
+		SDiskLock*	dl;
 
 
 		//////////
