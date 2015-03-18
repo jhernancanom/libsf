@@ -244,6 +244,11 @@
 		{	0,										0,	0,	0,	0,	0	},
 	};
 
+	SSourceLightData gsSourceLight_abs[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_alp[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}

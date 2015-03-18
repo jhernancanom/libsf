@@ -589,6 +589,37 @@
 
 
 
+//////////
+//
+// Function: ABS()
+// Returns the absolute value of the specified numeric expression.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.18.2015
+//////
+// Change log:
+//     Mar.18.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    ABS(n) of the value in p1
+//////
+// Example:
+//    ? ABS(-10)		&& Display 10
+//////
+    SVariable* function_abs(SThisCode* thisCode, SVariable* varNumber)
+    {
+		// Return exp
+		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_ABS, _VAR_TYPE_F64, true));
+	}
+
+
+
 
 //////////
 //
@@ -2456,6 +2487,11 @@
 // SIN()
 				case _FP_COMMON_SIN:
 					lfValue = sin(lfValue);
+					break;
+
+// ABS()
+				case _FP_COMMON_ABS:
+					lfValue = abs(lfValue);
 					break;
 				default:
 					// Programmer error... this is an internal function and we should never get here
