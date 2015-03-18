@@ -2813,6 +2813,135 @@
 
 //////////
 //
+// Function: FV()
+// Returns the future value of a financial investment.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.18.2015
+//////
+// Change log:
+//     Mar.18.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    FV(n) of the value in p1
+//////
+// Example:
+//   ? FV(500, 0.006, 48)	&& Displays 27717.50
+//////
+    SVariable* function_fv (SThisCode* thisCode, SVariable* nPayment, SVariable* nInterestRate, SVariable* nPeriods)
+    {
+		f64			lfFV, lfPayment, lfInterestRate, lfPeriods;
+		bool		error;
+		u32			errorNum;
+		SVariable*	result;
+
+
+		//////////
+		// Parameter 1 must be numeric
+		//////
+			if (!iVariable_isValid(nPayment) || !iVariable_isTypeNumeric(nPayment))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, nPayment), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Parameter 2 must be numeric
+		//////
+			if (!iVariable_isValid(nInterestRate) || !iVariable_isTypeNumeric(nInterestRate))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_compRelated(thisCode, nInterestRate), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Parameter 3 must be numeric
+		//////
+			if (!iVariable_isValid(nPeriods) || !iVariable_isTypeNumeric(nPeriods))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_compRelated(thisCode, nPeriods), false);
+				return(NULL);
+			}
+
+		//////////
+		// Grab nPayment, convert to f64
+		//////
+			lfPayment = iiVariable_getAs_f64(thisCode, nPayment, false, &error, &errorNum);
+			if (error)
+			{
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, nPayment), false);
+				return(NULL);
+			}
+
+		//////////
+		// Grab nInterestRate, convert to f64
+		//////
+			lfInterestRate = abs(iiVariable_getAs_f64(thisCode, nInterestRate, false, &error, &errorNum));
+			if (error)
+			{
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, nInterestRate), false);
+				return(NULL);
+			}
+
+		//////////
+		// Grab nPeriods, convert to f64
+		//////
+			lfPeriods= abs(iiVariable_getAs_f64(thisCode, nPeriods, false, &error, &errorNum));
+			if (error)
+			{
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, nPeriods), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Compute the future value of a financial investment
+		//////
+			lfFV = 0.0;
+			if (lfPayment != 0.0 && lfInterestRate != 0.0)
+			{
+				lfFV = (pow((1 + lfInterestRate), lfPeriods) - 1) / lfInterestRate * lfPayment;
+			}
+
+
+		//////////
+		// Create output variable
+		//////
+			result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL);
+
+			if (!result)
+			{
+				iError_report(cgcInternalError, false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Set the value
+		//////
+			if (!iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfFV, NULL, NULL, NULL, NULL))
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, nPayment), false);
+
+
+		//////////
+        // Return result
+		//////
+	        return result; 
+	}
+
+
+
+
+//////////
+//
 // Function: GRAYSCALE()
 // Grayscales a color.
 //

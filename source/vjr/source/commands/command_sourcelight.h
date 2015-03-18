@@ -379,6 +379,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_fv[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_grayscale[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}

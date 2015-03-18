@@ -200,6 +200,7 @@ struct SThisCode;
 	SVariable*			function_forcefname							(SThisCode* thisCode, SVariable* varPathname, SVariable varNewFilename);
 	SVariable*			function_forcepath							(SThisCode* thisCode, SVariable* varPathname, SVariable varNewPathname);
 	SVariable*			function_forcestem							(SThisCode* thisCode, SVariable* varPathname, SVariable varNewStem);
+	SVariable*			function_fv			/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* nPayment, SVariable* nInterestRate, SVariable* nPeriods);
 	SVariable*			function_grayscale							(SThisCode* thisCode, SVariable* varColor, SVariable* varPercentage);
 	SVariable*			function_grn								(SThisCode* thisCode, SVariable* varColor);
 	SVariable*			function_int								(SThisCode* thisCode, SVariable* varNumber);
@@ -345,9 +346,9 @@ struct SThisCode;
 		{	_ICODE_ALLTRIM,			1,			(uptr)&function_alltrim,		1,				4,				&gsSourceLight_alltrim[0]		},
 		{	_ICODE_ALP,				1,			(uptr)&function_alp,			1,				1,				&gsSourceLight_alp[0]			},
 		{	_ICODE_ASC,				1,			(uptr)&function_asc,			1,				1,				&gsSourceLight_asc[0]			},
-		{	_ICODE_ASIN,			1,			(uptr)&function_asin,			1,				1,				&gsSourceLight_asin[0]			},	// ACOS() by Stefano D'Amico, VJr 0.56, Mar.18.2015
+		{	_ICODE_ASIN,			1,			(uptr)&function_asin,			1,				1,				&gsSourceLight_asin[0]			},	// ASIN() by Stefano D'Amico, VJr 0.56, Mar.18.2015
 		{	_ICODE_AT,				1,			(uptr)&function_at,				2,				3,				&gsSourceLight_at[0]			},
-		{	_ICODE_ATAN,			1,			(uptr)&function_atan,			1,				1,				&gsSourceLight_atan[0]			},	// ACOS() by Stefano D'Amico, VJr 0.56, Mar.18.2015
+		{	_ICODE_ATAN,			1,			(uptr)&function_atan,			1,				1,				&gsSourceLight_atan[0]			},	// ATAN() by Stefano D'Amico, VJr 0.56, Mar.18.2015
 		{	_ICODE_ATC,				1,			(uptr)&function_atc,			2,				3,				&gsSourceLight_atc[0]			},
 		{	_ICODE_BGR,				1,			(uptr)&function_bgr,			3,				3,				&gsSourceLight_bgr[0]			},
 		{	_ICODE_BGRA,			1,			(uptr)&function_bgra,			4,				4,				&gsSourceLight_bgra[0]			},
@@ -368,6 +369,7 @@ struct SThisCode;
 		{	_ICODE_FORCEFNAME,		1,			(uptr)&function_forcefname,		2,				2,				&gsSourceLight_forcefname[0]	},
 		{	_ICODE_FORCEPATH,		1,			(uptr)&function_forcepath,		2,				2,				&gsSourceLight_forcepath[0]		},
 		{	_ICODE_FORCESTEM,		1,			(uptr)&function_forcestem,		2,				2,				&gsSourceLight_forcestem[0]		},
+		{	_ICODE_FV,				1,			(uptr)&function_fv,				3,				3,				&gsSourceLight_fv[0]			},
 		{	_ICODE_GRAYSCALE,		1,			(uptr)&function_grayscale,		1,				2,				&gsSourceLight_grayscale[0]		},
 		{	_ICODE_GRN,				1,			(uptr)&function_grn,			1,				1,				&gsSourceLight_grn[0]			},
 		{	_ICODE_INT,				1,			(uptr)&function_int,			1,				1,				&gsSourceLight_int[0]			},
