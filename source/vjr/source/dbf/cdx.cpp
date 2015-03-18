@@ -121,9 +121,9 @@
 		//////////
 		// Validate that our environment is sane
 		//////
-		if (!iDbf_isWorkAreaUsed(thisCode, wa, &llIsValid) || !llIsValid)
+			if (!iDbf_isWorkAreaUsed(thisCode, wa, &llIsValid) || !llIsValid)
 				return(_CDX_ERROR_INVALID_WORK_AREA);		// Invalid work area
-			if (tnCdxFilenameLength >= sizeof(wa->indexPathname))
+			if (tnCdxFilenameLength >= sizeof(wa->idxCdxDcxPathname))
 				return(_CDX_ERROR_INDEX_NAME_TOO_LONG);
 
 
@@ -139,35 +139,40 @@
 			if (tcCdxFilename && tnCdxFilenameLength != 0)
 			{
 				// They specified a name
-				tnCdxFilenameLength = min(tnCdxFilenameLength, sizeof(wa->indexPathname) - 1);
-				memcpy(wa->indexPathname, tcCdxFilename, tnCdxFilenameLength);
-				wa->indexPathnameLength = tnCdxFilenameLength;
+				tnCdxFilenameLength = min(tnCdxFilenameLength, sizeof(wa->idxCdxDcxPathname) - 1);
+				memcpy(wa->idxCdxDcxPathname, tcCdxFilename, tnCdxFilenameLength);
+				wa->idxCdxDcxPathnameLength = tnCdxFilenameLength;
 
 			} else {
 				// Build the name from the table name
-				memcpy(wa->indexPathname, wa->tablePathname, wa->tablePathnameLength);
-				memcpy(wa->indexPathname + wa->tablePathnameLength - 4, ".cdx", 4);
-				wa->indexPathnameLength = wa->tablePathnameLength;
+				memcpy(wa->idxCdxDcxPathname, wa->tablePathname, wa->tablePathnameLength);
+				memcpy(wa->idxCdxDcxPathname + wa->tablePathnameLength - 4, ".cdx", 4);
+				wa->idxCdxDcxPathnameLength = wa->tablePathnameLength;
 			}
+
+			// NULL terminate
+			wa->idxCdxDcxPathname[wa->idxCdxDcxPathnameLength] = 0;
 
 
 		//////////
 		// Determine if it was a .cdx or .idx
 		//////
-			if (tnExplicitIndexType == _INDEX_IS_IDX || (tnExplicitIndexType == 0 && _memicmp(wa->indexPathname + wa->indexPathnameLength - sizeof(cgcIdxExtension) - 1, cgcIdxExtension, sizeof(cgcIdxExtension) - 1) == 0))
+			wa->isCdx = false;
+			wa->isSdx = false;
+			if (tnExplicitIndexType == _INDEX_IDX || (tnExplicitIndexType == _INDEX_NONE && _memicmp(wa->idxCdxDcxPathname + wa->idxCdxDcxPathnameLength - sizeof(cgcIdxExtension) - 1, cgcIdxExtension, sizeof(cgcIdxExtension) - 1) == 0))
 			{
 				// It's a .idx
 				wa->isCdx = false;
 
-			} else if (tnExplicitIndexType == _INDEX_IS_CDX || (tnExplicitIndexType == 0 && _memicmp(wa->indexPathname + wa->indexPathnameLength - sizeof(cgcCdxExtension) - 1, cgcCdxExtension, sizeof(cgcCdxExtension) - 1) == 0)) {
+			} else if (tnExplicitIndexType == _INDEX_CDX || (tnExplicitIndexType == _INDEX_NONE && _memicmp(wa->idxCdxDcxPathname + wa->idxCdxDcxPathnameLength - sizeof(cgcCdxExtension) - 1, cgcCdxExtension, sizeof(cgcCdxExtension) - 1) == 0)) {
 				// It's a .cdx
 				wa->isCdx = true;
 
-// 			} else if (tnExplicitIndexType == _INDEX_IS_SDX || (tnExplicitIndexType == 0 && _memicmp(wa->indexPathname + wa->indexPathnameLength - sizeof(cgcSdxExtension) - 1, cgcSdxExtension, sizeof(cgcSdxExtension) - 1) == 0)) {
-// 				// It's a .sdx
-// 				wa->isSdx = true;
+			} else if (tnExplicitIndexType == _INDEX_SDX || (tnExplicitIndexType == _INDEX_NONE && _memicmp(wa->idxCdxDcxPathname + wa->idxCdxDcxPathnameLength - sizeof(cgcSdxExtension) - 1, cgcSdxExtension, sizeof(cgcSdxExtension) - 1) == 0)) {
+				// It's a .sdx
+				wa->isSdx = true;
 
-			} else if (tnExplicitIndexType == _INDEX_IS_DCX || (tnExplicitIndexType == 0 && _memicmp(wa->indexPathname + wa->indexPathnameLength - sizeof(cgcDcxExtension) - 1, cgcDcxExtension, sizeof(cgcDcxExtension) - 1) == 0)) {
+			} else if (tnExplicitIndexType == _INDEX_DCX || (tnExplicitIndexType == _INDEX_NONE && _memicmp(wa->idxCdxDcxPathname + wa->idxCdxDcxPathnameLength - sizeof(cgcDcxExtension) - 1, cgcDcxExtension, sizeof(cgcDcxExtension) - 1) == 0)) {
 				// It's a .cdx, albeit in sheep's clothing
 				wa->isCdx = true;
 
@@ -180,8 +185,8 @@
 		//////////
 		// Make sure we have a lock area
 		//////
-			if (!wa->cdxFileLocks)
-				iBuilder_createAndInitialize(&wa->cdxFileLocks, -1);
+			if (!wa->idxCdxDcxFileLocks)
+				iBuilder_createAndInitialize(&wa->idxCdxDcxFileLocks, -1);
 
 
 		//////////
@@ -190,22 +195,22 @@
 			if (wa->isExclusive)
 			{
 				// Exclusive
-				wa->fhIndex = iDisk_openExclusive(wa->indexPathname, _O_BINARY | _O_RDWR);
+				wa->fhIdxCdxDcx = iDisk_openExclusive(wa->idxCdxDcxPathname, _O_BINARY | _O_RDWR);
 
 			} else {
 				// Shared
-				wa->fhIndex = iDisk_openShared(wa->indexPathname, _O_BINARY | _O_RDWR);
+				wa->fhIdxCdxDcx = iDisk_openShared(wa->idxCdxDcxPathname, _O_BINARY | _O_RDWR);
 			}
 
 			// Was it opened successfully?
-			if (!wa->fhIndex)
-				return(-3);
+			if (!wa->fhIdxCdxDcx)
+				return(_CDX_ERROR_OPENING_INDEX);
 
 
 		//////////
 		// Find out how big it is
 		//////
-			lnFileSize = iDisk_getFileSize(wa->fhIndex);
+			lnFileSize = iDisk_getFileSize(wa->fhIdxCdxDcx);
 
 
 		//////////
@@ -227,7 +232,7 @@
 				//////////
 				// Read the first block
 				/////
-					lnNumread = _read(wa->fhIndex, wa->idx_header, sizeof(wa->idx_header));
+					lnNumread = _read(wa->fhIdxCdxDcx, wa->idx_header, sizeof(wa->idx_header));
 					if (lnNumread != sizeof(wa->idx_header))
 					{
 						cdx_close(thisCode, wa);
@@ -253,7 +258,7 @@
 				//////////
 				// Allocate
 				/////
-					wa->cdx_root = (SCdxHeader*)malloc(sizeof(wa->cdx_root));
+					wa->cdx_root = (SCdxHeader*)malloc(sizeof(*wa->cdx_root));
 					if (!wa->cdx_root)
 					{
 						cdx_close(thisCode, wa);
@@ -262,25 +267,37 @@
 
 
 				//////////
-				// Read in the file
+				// Lock
 				//////
-// TODO:  Working here
 					if (!wa->isExclusive)
 					{
 						// Shared access, lock the header
-						dl = iDisk_lock_range_retryCallback(wa->cdxFileLocks, wa->fhIndex, 0, sizeof(wa->cdx_root), (uptr)&iiDbf_continueWithLockOperation, (uptr)&dl);
-						if (dl->nLength != sizeof(wa->cdx_root))
+						dl = iDisk_lock_range_retryCallback(thisCode, wa->idxCdxDcxFileLocks, wa->fhIdxCdxDcx, 0, sizeof(*wa->cdx_root), (uptr)&iiDbf_continueWithLockOperation, (uptr)&dl);
+						if (dl->nLength != sizeof(*wa->cdx_root))
 						{
 							// Error locking the file
+							cdx_close(thisCode, wa);
+							return(_CDX_ERROR_LOCKING_HEADER_CDX);
 						}
 					}
 
-					lnNumread = _read(wa->fhIndex, wa->cdx_root, sizeof(wa->cdx_root));
-					if (lnNumread != sizeof(wa->cdx_root))
+
+				//////////
+				// Read
+				//////
+					lnNumread = _read(wa->fhIdxCdxDcx, wa->cdx_root, sizeof(*wa->cdx_root));
+					if (lnNumread != sizeof(*wa->cdx_root))
 					{
 						cdx_close(thisCode, wa);
 						return(_CDX_ERROR_READING_HEADER_CDX);
 					}
+
+
+				//////////
+				// Unlock
+				//////
+					if (!wa->isExclusive)
+						iDisk_unlock(thisCode, wa->idxCdxDcxFileLocks, dl);
 
 
 				//////////
@@ -295,10 +312,7 @@
 				// Auto-validate the index if need be
 				//////
 					if (tlValidate || propGet_settings_AutoValidate(_settings))
-					{
-						// Auto-validate
-// TODO:  Working here
-					}
+						iCdx_validateCdx(thisCode, wa, -1, NULL, 0, NULL, 0);	// Will signal ON VALIDATE messages for any errors found
 			}
 
 
@@ -330,8 +344,8 @@
 		//////////
 		// Release any and all locks
 		//////
-			if (wa->cdxFileLocks)
-				iDisk_unlock_all(wa->cdxFileLocks);
+			if (wa->idxCdxDcxFileLocks)
+				iDisk_unlock_all(thisCode, wa->idxCdxDcxFileLocks);
 
 
 		//////////
@@ -342,10 +356,10 @@
 				//////////
 				// Close the index file handle
 				//////
-					if (wa->fhIndex)
+					if (wa->fhIdxCdxDcx)
 					{
-						_close(wa->fhIndex);
-						wa->fhIndex = null0;
+						_close(wa->fhIdxCdxDcx);
+						wa->fhIdxCdxDcx = null0;
 					}
 
 
@@ -393,8 +407,8 @@
 				//////////
 				// Clear out the filename
 				//////
-					memset(wa->indexPathname, 0, sizeof(wa->indexPathname));
-					wa->indexPathnameLength = 0;
+					memset(wa->idxCdxDcxPathname, 0, sizeof(wa->idxCdxDcxPathname));
+					wa->idxCdxDcxPathnameLength = 0;
 
 
 				//////////
@@ -486,18 +500,18 @@
 
 				// Store the flags
 				// 1 unique, 8 FOR clause, 32 compact index, 64 compound index
-				if (iiCdx_isCompact(head))			sprintf(tcCompact1, "Y");
-				else								sprintf(tcCompact1, "N");
+				if (iiCdx_isCompact(thisCode, head))		sprintf(tcCompact1, "Y");
+				else										sprintf(tcCompact1, "N");
 
-				if (iiCdx_isCompound(head))			sprintf(tcCompound1, "Y");
-				else								sprintf(tcCompound1, "N");
+				if (iiCdx_isCompound(thisCode, head))		sprintf(tcCompound1, "Y");
+				else										sprintf(tcCompound1, "N");
 
-				if (iiCdx_isUnique(head))			sprintf(tcUnique1, "Y");
-				else								sprintf(tcUnique1, "N");
+				if (iiCdx_isUnique(thisCode, head))			sprintf(tcUnique1, "Y");
+				else										sprintf(tcUnique1, "N");
 
 // Will have to nail this down better at some point, to determine the entire structure of this child node
-				if (iiCdx_isDescending(head))		sprintf(tcOrder1, "D");
-				else								sprintf(tcOrder1, "A");
+				if (iiCdx_isDescending(thisCode, head))		sprintf(tcOrder1, "D");
+				else										sprintf(tcOrder1, "A");
 
 				// Indicate the length of the key as a success
 				return(tagRoot.keyLength);
@@ -816,26 +830,6 @@
 
 //////////
 //
-// Called to set the primary index (if it exists)
-//
-//////
-	bool iiCdx_setPrimaryKey(SThisCode* thisCode, SWorkArea* wa)
-	{
-		// See if we're in a CDX
-		if (wa->isIndexLoaded)
-		{
-			// Iterate through each key to see if we have a primary key
-		}
-
-		// If we get here, no primary key
-		return(false);
-	}
-
-
-
-
-//////////
-//
 // Called to validate that the IDX header is valid
 //
 //////
@@ -1087,26 +1081,63 @@
 //
 // Called to validate that the compound CDX header is valid
 //
+// Note:  Use tnTagIndex of -1 to validate all tags
+//
 //////
-	s32 iCdx_validateCdx(SThisCode* thisCode, SWorkArea* wa, s32 tnTagIndex, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength)
+	s32 iCdx_validateCdx(SThisCode* thisCode, SWorkArea* wa, s32 tnTagIndex, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorData, u32 tnErrorDataLength)
 	{
-		u32					lnTagNum, lnNodeNumber, lnKeyNumber, lnStartTagNum, lnEndTagNum, lnTotalKeyCount;
-		bool				llProcessed;
-		SCdxNode*			node;
-		SCdxKey				key, keyLast;
-		STagRoot			tagRoot;
-		u8					buffer[256];
-		u8					output[256];
-		SBuilder*			metaData;
-		SBuilder*			errorData;
-//		SCdxHeader*			head;
+		u32				lnTagNum, lnNodeNumber, lnKeyNumber, lnStartTagNum, lnEndTagNum, lnTotalKeyCount;
+		bool			llProcessed, llContinue;
+		SCdxNode*		node;
+		SCdxKey			key, keyLast;
+		STagRoot		tagRoot;
+		u8				buffer[256];
+		u8				output[256];
+		SBuilder*		metaData;
+		SBuilder*		errorData;
+		SCdxHeader*		head;
+		SVariable*		varTableName;
+		SVariable*		varAlias;
+		SVariable*		varCdxName;
+		SVariable*		varTag;
+		SVariable*		varMessage;
+		SVariable*		varIsError;
+		SVariable*		varRebuildIndexRequired;
 
 
 		//////////
-		// Get common pointers
+		// Initialize
 		//////
-			iBuilder_createAndInitialize(&metaData, -1);
-			iBuilder_createAndInitialize(&errorData, -1);
+			if (tcMetaData)		iBuilder_createAndInitialize(&metaData, -1);
+			else				metaData = NULL;
+
+			if (tcErrorData)	iBuilder_createAndInitialize(&errorData, -1);
+			else				errorData = NULL;
+
+
+		//////////
+		// Create callback variables
+		//////
+			varTableName			= iVariable_createAndPopulate(thisCode,		_VAR_TYPE_CHARACTER,	wa->tablePathname,		wa->tablePathnameLength);
+			varAlias				= iVariable_createAndPopulate(thisCode,		_VAR_TYPE_CHARACTER,	wa->alias,				wa->aliasLength);
+			varCdxName				= iVariable_createAndPopulate(thisCode,		_VAR_TYPE_CHARACTER,	wa->idxCdxDcxPathname,	wa->idxCdxDcxPathnameLength);
+			varTag					= iVariable_create(thisCode,				_VAR_TYPE_CHARACTER,	NULL);
+			varMessage				= iVariable_create(thisCode,				_VAR_TYPE_CHARACTER,	NULL);
+			varIsError				= iVariable_create(thisCode,				_VAR_TYPE_LOGICAL,		NULL);
+			varRebuildIndexRequired	= iVariable_create(thisCode,				_VAR_TYPE_LOGICAL,		NULL);
+
+			// Were they all created okay?
+			if (!varTableName || !varAlias || !varCdxName || !varTag || !varMessage || !varIsError || !varRebuildIndexRequired)
+			{
+
+				//////////
+				// Signal the error and fail
+				//////
+					iError_signal(thisCode, _ERROR_UNABLE_TO_AUTOVALIDATE, NULL, false, NULL, false);
+					llProcessed = false;
+					goto clean_house;
+
+			}
 
 
 		//////////
@@ -1126,7 +1157,7 @@
 			}
 
 			// Iterate through one tag, or all of the tags
-			for (lnTagNum = lnStartTagNum, llProcessed = false; lnTagNum <= lnEndTagNum && iCdx_getCompoundTagRoot(thisCode, wa, wa->cdx_root, NULL, lnTagNum, &tagRoot); lnTagNum++)
+			for (lnTagNum = lnStartTagNum, llProcessed = false, llContinue = true; llContinue && lnTagNum <= lnEndTagNum && iCdx_getCompoundTagRoot(thisCode, wa, wa->cdx_root, NULL, lnTagNum, &tagRoot); lnTagNum++)
 			{
 				// Indicate we processed at last one thing
 				llProcessed = true;
@@ -1135,16 +1166,30 @@
 				//////////
 				// Meta data
 				//////
-					iBuilder_appendData(metaData, (cu8*)"Tag: ", -1);
-					iBuilder_appendData(metaData, tagRoot.tagName, sizeof(tagRoot.tagName));
-					iBuilder_backoffTrailingWhitespaces(metaData);
+					if (metaData)
+					{
+						// Building the list
+						iBuilder_appendData(metaData, (cu8*)"Tag: ", -1);
+						iBuilder_appendData(metaData, tagRoot.tagName, sizeof(tagRoot.tagName));
+						iBuilder_backoffTrailingWhitespaces(metaData);
+
+					} else {
+						// Signal validation begin
+						iVariable_set_character(thisCode,	varTag,						tagRoot.tagName,	iiCountContiguousCharacters(&tagRoot.tagName[0], sizeof(tagRoot.tagName)));
+						iVariable_set_character(thisCode,	varMessage,					(u8*)cgcValidateBegin,	sizeof(cgcValidateBegin) - 1);
+						iVariable_set_logical(thisCode,		varIsError,					false);
+						iVariable_set_logical(thisCode,		varRebuildIndexRequired,	false);
+						llContinue = iEngine_signal_onValidate(thisCode, varTableName, varAlias, varCdxName, varTag, varMessage, varIsError, varRebuildIndexRequired);
+						if (!llContinue)
+							return(0);
+					}
 
 
 				//////////
 				// Validate the header for a this compact .IDX
 				//////
 					node			= iCdx_getCompactIdxNode_byOffset(thisCode, wa->cdx_root, tagRoot.leftmostNode);
-//					head			= (SCdxHeader*)iCdx_getCompactIdxNode_byOffset(wa->cdx_root, tagRoot.keyNode);
+					head			= (SCdxHeader*)iCdx_getCompactIdxNode_byOffset(thisCode, wa->cdx_root, tagRoot.keyNode);
 					lnTotalKeyCount	= 0;
 					while (node)
 					{
@@ -1162,9 +1207,20 @@
 									break;
 
 								default:
-									debug_break;
-									sprintf((s8*)output, "Node %u: Unknown type of node encountered, expected 0=index, 1=root, 2=leaf, 3=root+leaf, found %u=???\r\n\0", lnNodeNumber, node->type);
-									iBuilder_appendData(errorData, output, -1);
+									if (errorData)
+									{
+										// Append to the error data
+										sprintf((s8*)output, "Node %u: Unknown type of node encountered, expected 0=index, 1=root, 2=leaf, 3=root+leaf, found %u=???\r\n\0", lnNodeNumber, node->type);
+										iBuilder_appendData(errorData, output, -1);
+
+									} else {
+										// Signal validation error
+										iVariable_set_character(thisCode,	varMessage,					(u8*)cgcValidateInvalidNode,	sizeof(cgcValidateInvalidNode) - 1);
+										iVariable_set_logical(thisCode,		varIsError,					true);
+										iVariable_set_logical(thisCode,		varRebuildIndexRequired,	true);
+										llContinue = iEngine_signal_onValidate(thisCode, varTableName, varAlias, varCdxName, varTag, varMessage, varIsError, varRebuildIndexRequired);
+									}
+
 									// Bad index
 									goto we_are_done;
 							}
@@ -1204,8 +1260,21 @@
 													if (memcmp(&key.key, &keyLast.key, key.keyLength) > 0)
 													{
 														// We found a key out of order
-														sprintf((s8*)output, "Key number %u is out of index order on node %u\r\n\0", lnKeyNumber, lnNodeNumber);
-														iBuilder_appendData(errorData, output, -1);
+														if (errorData)
+														{
+															// Append to the error list
+															sprintf((s8*)output, "Key number %u is out of index order on node %u\r\n\0", lnKeyNumber, lnNodeNumber);
+															iBuilder_appendData(errorData, output, -1);
+
+														} else {
+															// Signal validation error
+															iVariable_set_character(thisCode,	varMessage,					(u8*)cgcValidateKeysOutOfOrder,	sizeof(cgcValidateKeysOutOfOrder) - 1);
+															iVariable_set_logical(thisCode,		varIsError,					true);
+															iVariable_set_logical(thisCode,		varRebuildIndexRequired,	false);
+															llContinue = iEngine_signal_onValidate(thisCode, varTableName, varAlias, varCdxName, varTag, varMessage, varIsError, varRebuildIndexRequired);
+															if (!llContinue)
+																goto we_are_done;
+														}
 													}
 
 												} else {
@@ -1213,8 +1282,21 @@
 													if (memcmp(&key.key, &keyLast.key, key.keyLength) < 0)
 													{
 														// We found a key out of order
-														sprintf((s8*)output, "Key number %u is out of index order on node %u\r\n\0", lnKeyNumber, lnNodeNumber);
-														iBuilder_appendData(errorData, output, -1);
+														if (errorData)
+														{
+															// Append to the error list
+															sprintf((s8*)output, "Key number %u is out of index order on node %u\r\n\0", lnKeyNumber, lnNodeNumber);
+															iBuilder_appendData(errorData, output, -1);
+
+														} else {
+															// Signal validation error
+															iVariable_set_character(thisCode,	varMessage,					(u8*)cgcValidateKeysOutOfOrder,	sizeof(cgcValidateKeysOutOfOrder) - 1);
+															iVariable_set_logical(thisCode,		varIsError,					true);
+															iVariable_set_logical(thisCode,		varRebuildIndexRequired,	false);
+															llContinue = iEngine_signal_onValidate(thisCode, varTableName, varAlias, varCdxName, varTag, varMessage, varIsError, varRebuildIndexRequired);
+															if (!llContinue)
+																goto we_are_done;
+														}
 													}
 												}
 											}
@@ -1222,8 +1304,21 @@
 
 									} else {
 										// Should not happen
-										sprintf((s8*)output, "Unable to access key number %u of node %u\r\n\0", lnKeyNumber, lnNodeNumber);
-										iBuilder_appendData(errorData, output, -1);
+										if (errorData)
+										{
+											// Append error information
+											sprintf((s8*)output, "Unable to access key number %u of node %u\r\n\0", lnKeyNumber, lnNodeNumber);
+											iBuilder_appendData(errorData, output, -1);
+
+										} else {
+											// Signal validation error
+											iVariable_set_character(thisCode,	varMessage,					(u8*)cgcValidateKeyNotPresent,	sizeof(cgcValidateKeyNotPresent) - 1);
+											iVariable_set_logical(thisCode,		varIsError,					true);
+											iVariable_set_logical(thisCode,		varRebuildIndexRequired,	true);
+											llContinue = iEngine_signal_onValidate(thisCode, varTableName, varAlias, varCdxName, varTag, varMessage, varIsError, varRebuildIndexRequired);
+										}
+
+										goto we_are_done;
 									}
 								}
 
@@ -1231,8 +1326,20 @@
 								// No keys on this node
 								if (node->nodeLeft != (u32)-1 || node->nodeRight != (u32)-1)
 								{
-									sprintf((s8*)output, "No index keys were found on node %u\r\n\0", lnNodeNumber);
-									iBuilder_appendData(metaData, output, -1);
+									if (metaData)
+									{
+										sprintf((s8*)output, "No index keys were found on node %u\r\n\0", lnNodeNumber);
+										iBuilder_appendData(metaData, output, -1);
+
+									} else {
+										// Signal validation error
+										iVariable_set_character(thisCode,	varMessage,					(u8*)cgcValidateEmptyNode,	sizeof(cgcValidateEmptyNode) - 1);
+										iVariable_set_logical(thisCode,		varIsError,					true);
+										iVariable_set_logical(thisCode,		varRebuildIndexRequired,	false);
+										llContinue = iEngine_signal_onValidate(thisCode, varTableName, varAlias, varCdxName, varTag, varMessage, varIsError, varRebuildIndexRequired);
+										if (!llContinue)
+											goto we_are_done;
+									}
 								}
 								//else this is the only node, which means no keys in index
 							}
@@ -1252,32 +1359,64 @@ we_are_done:
 				//////////
 				// Meta data -- the number of keys
 				//////
-					sprintf((s8*)output, " %u keys in index.\r\n\0", lnTotalKeyCount);
-					iBuilder_appendData(metaData, output, -1);
+					if (metaData)
+					{
+						sprintf((s8*)output, " %u keys in index.\r\n\0", lnTotalKeyCount);
+						iBuilder_appendData(metaData, output, -1);
+
+					} else {
+						// Signal validation ends
+						if (llContinue)
+						{
+							// We're good, indicate the number of keys
+							sprintf((s8*)output, "%s, %u keys in index\0", cgcValidateEnd, lnTotalKeyCount);
+							iVariable_set_character(thisCode,	varMessage,		output,	strlen(output));
+
+						} else {
+							// Indicate we are done
+							iVariable_set_character(thisCode,	varMessage,		(u8*)cgcValidateEnd,	sizeof(cgcValidateEnd) - 1);
+						}
+						iVariable_set_logical(thisCode,		varIsError,					false);
+						iVariable_set_logical(thisCode,		varRebuildIndexRequired,	false);
+						llContinue = iEngine_signal_onValidate(thisCode, varTableName, varAlias, varCdxName, varTag, varMessage, varIsError, varRebuildIndexRequired);
+					}
 			}
 
 
 		//////////
 		// Copy the data back
 		//////
-			if (tcMetaData)
+			if (tcMetaData && metaData)
 				memcpy(tcMetaData, metaData->data_s8, min(tnMetaDataLength, metaData->populatedLength));
 
-			if (tcErrorsFound)
-				memcpy(tcErrorsFound, errorData->data_s8, min(tnErrorsFoundLength, errorData->populatedLength));
+			if (tcErrorData && errorData)
+				memcpy(tcErrorData, errorData->data_s8, min(tnErrorDataLength, errorData->populatedLength));
 
 
 		//////////
 		// Clean house
 		//////
-			iBuilder_freeAndRelease(&metaData);
-			iBuilder_freeAndRelease(&errorData);
+clean_house:
+			if (metaData)		iBuilder_freeAndRelease(&metaData);
+			if (errorData)		iBuilder_freeAndRelease(&errorData);
+
+
+		//////////
+		// Delete any variables that actually did make it
+		//////
+			iVariable_delete(thisCode, varTableName,			true);
+			iVariable_delete(thisCode, varAlias,				true);
+			iVariable_delete(thisCode, varCdxName,				true);
+			iVariable_delete(thisCode, varTag,					true);
+			iVariable_delete(thisCode, varMessage,				true);
+			iVariable_delete(thisCode, varIsError,				true);
+			iVariable_delete(thisCode, varRebuildIndexRequired,	true);
 
 
 		//////////
 		// If we found no errors, indicate success
 		//////
-			return(((llProcessed) ? 1 : -1));
+			return(((llProcessed && llContinue) ? 1 : -1));
 	}
 
 
@@ -1349,10 +1488,10 @@ we_are_done:
 			iBuilder_appendData(metaData, tagHeader->keyExpression, tagHeader->keyExpressionLength - 1);
 			iBuilder_appendData(metaData, (cu8*)" ", -1);
 
-			if (iiCdx_isUnique(tagHeader))
+			if (iiCdx_isUnique(thisCode, tagHeader))
 				iBuilder_appendData(metaData, (cu8*)"UNIQUE ", -1);
 
-			if (iiCdx_isDescending(tagHeader))
+			if (iiCdx_isDescending(thisCode, tagHeader))
 				iBuilder_appendData(metaData, (cu8*)"DESCENDING ", -1);
 
 			if (tagHeader->forClauseLength > 1)
@@ -1467,8 +1606,8 @@ we_are_done:
 				// Sort the DBF keys
 				//////
 					gnCdx_sort_keyLength = tagRoot.keyLength + 4;
-					if (iiCdx_isDescending(tagHeader))		qsort(dbfKeys->buffer,	lnDbfKeyCount,	tagRoot.keyLength + 4,	iiKeys_sortDescending);
-					else									qsort(dbfKeys->buffer,	lnDbfKeyCount,	tagRoot.keyLength + 4,	iiKeys_sortAscending);
+					if (iiCdx_isDescending(thisCode, tagHeader))	qsort(dbfKeys->buffer,	lnDbfKeyCount,	tagRoot.keyLength + 4,	iiKeys_qsortDescending_callback);
+					else											qsort(dbfKeys->buffer,	lnDbfKeyCount,	tagRoot.keyLength + 4,	iiKeys_qsortAscending_callback);
 			}
 
 
@@ -1501,7 +1640,7 @@ we_are_done:
 		// Iterate through all of the dbfKeys and make sure there is a matching entry in
 		// the cdxKeys.  Report any errors.
 		//////
-			if (iiCdx_isUnique(tagHeader))
+			if (iiCdx_isUnique(thisCode, tagHeader))
 			{
 				//////////
 				// The index key must match the first entry found in the dbfKeys
@@ -1639,13 +1778,13 @@ close_and_quit:
 			return(((llResult) ? 1 : -1));
 	}
 
-	int iiKeys_sortDescending(const void* l, const void* r)
+	int iiKeys_qsortDescending_callback(const void* l, const void* r)
 	{
 		// Return reversed memcmp result
 		return(memcmp(l, r, gnCdx_sort_keyLength) * -1);
 	}
 
-	int iiKeys_sortAscending(const void* l, const void* r)
+	int iiKeys_qsortAscending_callback(const void* l, const void* r)
 	{
 		// Return memcmp result
 		return(memcmp(l, r, gnCdx_sort_keyLength));
@@ -1661,7 +1800,7 @@ close_and_quit:
 //////
 	s32 iCdx_validateIdxKeys(SThisCode* thisCode, SWorkArea* wa, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength)
 	{
-		// Not currently supported
+// TODO:  Not currently supported
 		return(-1);
 	}
 
@@ -3103,7 +3242,7 @@ debug_break;
 							// Determine what field type the index expression is
 // TODO:  This is not fool-proof, but rather it works only with concatenated character fields, or single fields or additive single fields
 							tagRoot->fillChar		= iDbf_getField_type(thisCode, wa, (u8*)nodeTag + 512, &tagRoot->swapEndians, &tagRoot->needsSignBitToggled);
-							tagRoot->indexIsDesc	= iiCdx_isDescending(nodeTag);
+							tagRoot->indexIsDesc	= iiCdx_isDescending(thisCode, nodeTag);
 
 							// See if that first/highest node is an index node, if so then we descend until we find the left-most leaf node
 							nodeFirst				= iCdx_getCompactIdxNode_byOffset(thisCode, head, tagRoot->leftmostNode);
@@ -3242,28 +3381,51 @@ debug_break;
 //		Descending setting.  Returns true if descending, otherwise false.
 //
 //////
-	bool iiCdx_isCompact(SCdxHeader* head)
+	bool iiCdx_isCompact(SThisCode* thisCode, SCdxHeader* head)
 	{
 		if ((head->options & _BIT_COMPACT_INDEX) != 0)		return(true);
 		else												return(false);
 	}
 
-	bool iiCdx_isCompound(SCdxHeader* head)
+	bool iiCdx_isCompound(SThisCode* thisCode, SCdxHeader* head)
 	{
 		if ((head->options & _BIT_COMPOUND_INDEX) != 0)		return(true);
 		else												return(false);
 	}
 
-	bool iiCdx_isUnique(SCdxHeader* head)
+	bool iiCdx_isUnique(SThisCode* thisCode, SCdxHeader* head)
 	{
 		if ((head->options & _BIT_UNIQUE) != 0)				return(true);
 		else												return(false);
 	}
 
-	bool iiCdx_isDescending(SCdxHeader* head)
+	bool iiCdx_isDescending(SThisCode* thisCode, SCdxHeader* head)
 	{
 		if (head->order != 0)								return(true);
 		else												return(false);
+	}
+
+	bool iiCdx_isPrimaryKeySet(SThisCode* thisCode, SWorkArea* wa)
+	{
+		// Is an index loaded?
+		if (wa->isIndexLoaded)
+		{
+			// What type of index?
+			if (!wa->isCdx)
+			{
+				// It's .idx
+				return(true);
+
+			} else {
+				// It's .cdx
+				// If there's an active tag that's been set, the active tag node will be set
+				return(wa->cdx_activeTagRootNode != 0);
+			}
+
+		}
+
+		// If we get here, no primary key is set
+		return(false);
 	}
 
 	bool iCdx_isForClauseComplex(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* head, SForClause** tsFor)
@@ -3625,7 +3787,7 @@ debug_break;
 //////////
 
 				// Grab the node-specific key information
-				iiCdx_extractExteriorNode_nodeKeyAccessData(node, tnKeyNumberThis, &keyTrail);
+				iiCdx_extractExteriorNode_nodeKeyAccessData(thisCode, node, tnKeyNumberThis, &keyTrail);
 
 				// See if we've already computed this index previously
 //////////
@@ -3770,7 +3932,7 @@ debug_break;
 
 	SBuilder* cdxNodeCache = NULL;
 
-	bool iiCdx_checkNodeCache(SCdxNode* node, u32 tnKeyNumber, SCdxKey* key)
+	bool iiCdx_checkNodeCache(SThisCode* thisCode, SCdxNode* node, u32 tnKeyNumber, SCdxKey* key)
 	{
 		SCdxNodeCache*	nodeCache;
 		SCdxKeyPtr*		lckp;
@@ -3836,7 +3998,7 @@ debug_break;
 // search operations.
 //
 //////
-	void iiCdx_addToNodeCache(SCdxNode* node, u32 tnKeyNumber, SCdxKey* key)
+	void iiCdx_addToNodeCache(SThisCode* thisCode, SCdxNode* node, u32 tnKeyNumber, SCdxKey* key)
 	{
 		SCdxNodeCache*	nodeCache;
 		SCdxKeyPtr*		lckp;
@@ -4021,7 +4183,7 @@ debug_break;
 		u8		after[4];			// Puts a buffer after keyBuffer
 	};
 
-	void iiCdx_extractExteriorNode_nodeKeyAccessData(SCdxNode* node, u32 tnNumber, SCdxKeyTrail* keyTrail)
+	void iiCdx_extractExteriorNode_nodeKeyAccessData(SThisCode* thisCode, SCdxNode* node, u32 tnNumber, SCdxKeyTrail* keyTrail)
 	{
 		u32			lnBitsPerKey, lnFirstByte;
 		SSafeData	data;
@@ -4105,7 +4267,7 @@ debug_break;
 //
 // Called to lock the entire file
 //////
-	uptr iiCdx_lock_file(SWorkArea* wa, STagRoot* tagRoot)
+	uptr iiCdx_lock_file(SThisCode* thisCode, SWorkArea* wa, STagRoot* tagRoot)
 	{
 		s32			lnFileSize;
 		SDiskLock*	dl;
@@ -4116,8 +4278,8 @@ debug_break;
 		if (wa->isIndexLoaded)
 		{
 			// Retry until stopped
-			lnFileSize	= (s32)iDisk_getFileSize(wa->fhIndex);
-			dl			= iDisk_lock_range_retryCallback(wa->cdxFileLocks, wa->fhIndex, 0, lnFileSize, 0, 0);
+			lnFileSize	= (s32)iDisk_getFileSize(wa->fhIdxCdxDcx);
+			dl			= iDisk_lock_range_retryCallback(thisCode, wa->idxCdxDcxFileLocks, wa->fhIdxCdxDcx, 0, lnFileSize, 0, 0);
 
 			// Indicate our success or failure
 			return(((dl && dl->nLength == lnFileSize) ? _CDX_OKAY : _CDX_LOCK_FAILURE));
@@ -4135,7 +4297,7 @@ debug_break;
 //
 // Called to lock the indicated range
 //////
-	uptr iiCdx_lock_node(SWorkArea* wa, STagRoot* tagRoot, s32 tnNode)
+	uptr iiCdx_lock_node(SThisCode* thisCode, SWorkArea* wa, STagRoot* tagRoot, s32 tnNode)
 	{
 		SDiskLock* dl;
 
@@ -4144,7 +4306,7 @@ debug_break;
 		if (wa->isIndexLoaded)
 		{
 			// Retry until stopped
-			dl = iDisk_lock_range_retryCallback(wa->cdxFileLocks, wa->fhIndex, (tnNode * 512), 512, 0, 0);
+			dl = iDisk_lock_range_retryCallback(thisCode, wa->idxCdxDcxFileLocks, wa->fhIdxCdxDcx, (tnNode * 512), 512, 0, 0);
 
 			// Indicate our success or failure
 			return(((dl && dl->nLength == 512) ? _CDX_OKAY : _CDX_LOCK_FAILURE));
@@ -4162,7 +4324,7 @@ debug_break;
 //
 // Called to lock the entire file
 //////
-	uptr iiCdx_lock_range(SWorkArea* wa, STagRoot* tagRoot, s32 tnOffset, s32 tnLength)
+	uptr iiCdx_lock_range(SThisCode* thisCode, SWorkArea* wa, STagRoot* tagRoot, s32 tnOffset, s32 tnLength)
 	{
 		SDiskLock* dl;
 
@@ -4171,7 +4333,7 @@ debug_break;
 		if (wa->isIndexLoaded)
 		{
 			// Retry until stopped
-			dl = iDisk_lock_range_retryCallback(wa->cdxFileLocks, wa->fhIndex, tnOffset, tnLength, 0, 0);
+			dl = iDisk_lock_range_retryCallback(thisCode, wa->idxCdxDcxFileLocks, wa->fhIdxCdxDcx, tnOffset, tnLength, 0, 0);
 
 			// Indicate our success or failure
 			return(((dl && dl->nLength == tnLength) ? _CDX_OKAY : _CDX_LOCK_FAILURE));
@@ -4189,7 +4351,7 @@ debug_break;
 //
 // Called to lock the entire file
 //////
-	bool iiCdx_unlock(SWorkArea* wa, uptr tnHandle)
+	bool iiCdx_unlock(SThisCode* thisCode, SWorkArea* wa, SDiskLock* dl)
 	{
-		return(iDisk_unlock(wa->cdxFileLocks, tnHandle));
+		return(iDisk_unlock(thisCode, wa->idxCdxDcxFileLocks, dl));
 	}

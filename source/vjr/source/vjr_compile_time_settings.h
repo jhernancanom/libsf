@@ -84,9 +84,23 @@
 // For debugging, the splash screen gets in the way if you're doing debugging
 // on a single monitor machine (like a notebook) during the initial startup.
 // You can set this property to false and prevent the splash screen from appearing.
+// Also the focus border can sometimes be annoying if it's not rendered in blue
+// and is merely a defined window consuming screen real-estable, but not re-rendering
+// itself because the process is suspended in the debugger.  Oh, the humanity! :-)
 //////
- 	bool glShowSplash = true;
-// 	bool glShowSplash = false;
+
+	//////////
+	// Splash
+	//////
+ 		//bool glShowSplashScreen = true;
+ 		bool glShowSplashScreen = false;
+
+
+	//////////
+	// Focus highlight border
+	//////
+		//bool glShowFocusHighlightBorder = true;
+		bool glShowFocusHighlightBorder = false;
 
 
 //////////

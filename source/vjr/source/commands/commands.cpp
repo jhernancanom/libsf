@@ -177,6 +177,7 @@
 			case _ERROR_DIVISION_BY_ZERO:					{	iError_report(cgcDivisionByZero, tlInvasive);					break;	}
 			case _ERROR_CANNOT_BE_NEGATIVE:					{	iError_report(cgcCannotBeNegative, tlInvasive);					break;	}
 			case _ERROR_CANNOT_BE_ZERO_OR_NEGATIVE:			{	iError_report(cgcCannotBeZeroOrNegative, tlInvasive);			break;	}
+			case _ERROR_UNABLE_TO_AUTOVALIDATE:				{	iError_report(cgcUnableToAutoValidate, tlInvasive);				break;	}
 															
 
 		}

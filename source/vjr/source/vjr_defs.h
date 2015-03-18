@@ -528,6 +528,8 @@ struct SObjPropMap;
 	bool					iDoesHaystackStartWithNeedleCase		(s8* haystack, s32 haystackLength, s8* needle, s32 needleLength);
 	s8						iLowerCharacter							(s8 ch);
 	u32						iSkipWhitespaces						(s8* source, u32* offset, u32 maxLength);
+	u32						iiCountContiguousCharacters				(s8* source, u32 maxExpectedLength);
+	u32						iiCountContiguousCharacters				(u8* source, u32 maxExpectedLength);
 
 	s64						iMath_delta								(s64 tnBaseValue, s64 tnSubtractionValue);
 	s8*						iMath_roundTo							(f64* tfValue, f64 tfRoundTo);

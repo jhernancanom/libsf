@@ -128,14 +128,13 @@ struct SThisCode;
 																			u8* tcDecodeExpression,		u32 tnDecodeExpressionLength,
 																			s8* tcKeyLength4);
 
-	bool				iiCdx_setPrimaryKey								(SThisCode* thisCode, SWorkArea* wa);
 	bool				iCdx_validateIdx								(SThisCode* thisCode, SWorkArea* wa, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
 	bool				iCdx_validateIdx_compact						(SThisCode* thisCode, SWorkArea* wa, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
 	bool				iCdx_validateIdx_standard						(SThisCode* thisCode, SWorkArea* wa, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
-	s32					iCdx_validateCdx								(SThisCode* thisCode, SWorkArea* wa, s32 tnTagIndex, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
+	s32					iCdx_validateCdx								(SThisCode* thisCode, SWorkArea* wa, s32 tnTagIndex, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorData, u32 tnErrorDataLength);
 	s32					iCdx_validateCdxKeys							(SThisCode* thisCode, SWorkArea* wa, u32 tnWorkArea, s32 tnTagIndex, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
-	int					iiKeys_sortDescending							(const void* l, const void* r);
-	int					iiKeys_sortAscending							(const void* l, const void* r);
+	int					iiKeys_qsortDescending_callback					(const void* l, const void* r);
+	int					iiKeys_qsortAscending_callback					(const void* l, const void* r);
 	s32					iCdx_validateIdxKeys							(SThisCode* thisCode, SWorkArea* wa,                                  s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
 //////////
 // These are for generating new keys from DBF data, or from manual data loaded for index finds
@@ -178,10 +177,11 @@ struct SThisCode;
 	bool				iCdx_getCompoundTagRoot							(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* head, SCdxNode* node, u32 lnTagNum, STagRoot* tagRoot);
 	bool				iCdx_getCompactRootNode							(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* head, SCdxNode* node,               STagRoot* tagRoot);
 	bool				iCdx_getStandardRootNode						(SThisCode* thisCode, SWorkArea* wa, SIdxHeader* head, SIdxNode* node,               STagRoot* tagRoot);
-	bool				iiCdx_isCompact									(SCdxHeader* head);
-	bool				iiCdx_isCompound								(SCdxHeader* head);
-	bool				iiCdx_isUnique									(SCdxHeader* head);
-	bool				iiCdx_isDescending								(SCdxHeader* head);
+	bool				iiCdx_isCompact									(SThisCode* thisCode, SCdxHeader* head);
+	bool				iiCdx_isCompound								(SThisCode* thisCode, SCdxHeader* head);
+	bool				iiCdx_isUnique									(SThisCode* thisCode, SCdxHeader* head);
+	bool				iiCdx_isDescending								(SThisCode* thisCode, SCdxHeader* head);
+	bool				iiCdx_isPrimaryKeySet							(SThisCode* thisCode, SWorkArea* wa);
 	bool				iCdx_isForClauseComplex							(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* head, SForClause** tsFor);
 	SIdxNode*			iCdx_getStandardIdxNode_byNumber				(SThisCode* thisCode,                SIdxHeader* head, u32 tnNodeNumber);
 	SIdxNode*			iCdx_getStandardIdxNode_byOffset				(SThisCode* thisCode,                SIdxHeader* head, u32 tnOffset);
@@ -189,22 +189,22 @@ struct SThisCode;
 	SCdxNode*			iCdx_getCompactIdxNode_byNumber					(SThisCode* thisCode,                SCdxHeader* head, u32 tnNodeNumber);
 	SCdxNode*			iCdx_getCompactIdxNode_byOffset					(SThisCode* thisCode,                SCdxHeader* head, u32 tnOffset);
 	bool				iCdx_getCompactIdxKey_byNumber					(SThisCode* thisCode,                SCdxHeader* head, u32 keyLength, u8 tcFillChar, u32 tnKeyNumber, u32 tnKeyNumberThis, SCdxNode* node, SCdxKey* key, STagRoot* tagRoot, bool tlFixupEndian, bool tlFixupSignBit);
-	bool				iiCdx_checkNodeCache							(SCdxNode* node, u32 tnKeyNumber, SCdxKey* key);
+	bool				iiCdx_checkNodeCache							(SThisCode* thisCode, SCdxNode* node, u32 tnKeyNumber, SCdxKey* key);
 	int					iiCdx_checkNodeCache_callback_bsearchAndQsort	(const void* l, const void* r);
-	void				iiCdx_addToNodeCache							(SCdxNode* node, u32 tnKeyNumber, SCdxKey* key);
+	void				iiCdx_addToNodeCache							(SThisCode* thisCode, SCdxNode* node, u32 tnKeyNumber, SCdxKey* key);
 	u32					iCdx_descendToLeftmostNode						(SThisCode* thisCode,                SCdxHeader* head, u32 keyLength, SCdxNode* node, STagRoot* tagRoot);
 	// Internal functions that do not have special testing
-	void				iiCdx_extractExteriorNode_nodeKeyAccessData		(SCdxNode* node, u32 tnNumber, SCdxKeyTrail* keyTrail);
+	void				iiCdx_extractExteriorNode_nodeKeyAccessData		(SThisCode* thisCode, SCdxNode* node, u32 tnNumber, SCdxKeyTrail* keyTrail);
 
 
 //////////
 // These are for non-exclusive use indexes
 // BEGIN
 //////
-	uptr				iiCdx_lock_file									(SWorkArea* wa, STagRoot* tagRoot);
-	uptr				iiCdx_lock_node									(SWorkArea* wa, STagRoot* tagRoot, s32 tnNode);
-	uptr				iiCdx_lock_range								(SWorkArea* wa, STagRoot* tagRoot, s32 tnOffset, s32 tnLength);
-	bool				iiCdx_unlock									(SWorkArea* wa, uptr tnHandle);
+	uptr				iiCdx_lock_file									(SThisCode* thisCode, SWorkArea* wa, STagRoot* tagRoot);
+	uptr				iiCdx_lock_node									(SThisCode* thisCode, SWorkArea* wa, STagRoot* tagRoot, s32 tnNode);
+	uptr				iiCdx_lock_range								(SThisCode* thisCode, SWorkArea* wa, STagRoot* tagRoot, s32 tnOffset, s32 tnLength);
+	bool				iiCdx_unlock									(SThisCode* thisCode, SWorkArea* wa, SDiskLock* dl);
 //////
 // END
 //////////

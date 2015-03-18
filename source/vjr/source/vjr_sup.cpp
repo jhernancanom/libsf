@@ -1749,6 +1749,13 @@
 
 
 		//////////
+		// Are they shunning the focus highlight borders?
+		//////
+			if (!glShowFocusHighlightBorder)
+				return;		// Yes
+
+
+		//////////
 		// See if the class is already defined
 		//////
 			if (!GetClassInfoEx(GetModuleHandle(NULL), (cs8*)cgcFocusHighlightClass, &wcex))
@@ -2707,6 +2714,36 @@
 			++lnLength;
 			++*offset;
 		}
+		return(lnLength);
+	}
+
+
+
+
+//////////
+//
+// Called to count contiguous characters (non-nulls, non-whitespaces)
+//
+//////
+	u32 iiCountContiguousCharacters(u8* source, u32 maxExpectedLength)
+	{
+		return(iiCountContiguousCharacters((s8*)source, maxExpectedLength));
+	}
+
+	u32 iiCountContiguousCharacters(s8* source, u32 maxExpectedLength)
+	{
+		u32 lnLength;
+
+
+		// Iterate until we find a null, or whitespace, or reach the maximum expected length
+		for (lnLength = 0; lnLength < maxExpectedLength; lnLength++, source++)
+		{
+			// See if we're on a null, or whitespace
+			if (*source == 0 || *source == 9 || *source == 32)
+				break;		// Yes, we're done
+		}
+
+		// Indicate our length
 		return(lnLength);
 	}
 

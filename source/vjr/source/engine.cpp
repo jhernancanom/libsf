@@ -755,6 +755,22 @@
 
 
 
+///////////
+//
+// Signaled repeatedly during VALIDATE and ON VALIDATE from SET AUTOVALIDATE ON to
+// convey both meta data as well as 
+//
+//////
+	bool iEngine_signal_onValidate(SThisCode* thisCode, SVariable* varTableName, SVariable* varAlias, SVariable* varCdxName, SVariable* varTag, SVariable* varcMessage, SVariable* varIsError, SVariable* varRebuildIndexRequired)
+	{
+		// Returns the return variable, if we should continue
+		// For now, simulate continuing
+		return(true);
+	}
+
+
+
+
 //////////
 //
 // Called to update the global _tally value

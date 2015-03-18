@@ -337,7 +337,7 @@
 			iBmp_fillRect(bmpRadio, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);		// And cover it up with white
 
 
-		if (glShowSplash)
+		if (glShowSplashScreen)
 		{
 			// Load the splash screen
 			bmpVjrSplash = iBmp_rawLoad(cgc_splashBmp);
@@ -348,7 +348,7 @@
 		// Play the startup music if any
 		sprintf((s8*)logBuffer, "VJr launched %u milliseconds after system boot\0", systemStartedTickCount);
 		iVjr_appendSystemLog(logBuffer);
-		if (glShowSplash)
+		if (glShowSplashScreen)
 			CreateThread(0, 0, &iPlay_ariaSplash, (LPVOID)cgcSoundStartupWav, 0, 0);
 
 		// Focus window accumulator

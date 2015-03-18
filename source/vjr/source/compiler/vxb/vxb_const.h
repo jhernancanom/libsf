@@ -143,38 +143,41 @@
 	const u32		_NODE_RIGHT										= 5;
 
 	const u32		_VAR_TYPE_NULL									= 0;
-	const u32		_VAR_TYPE_OBJECT								= 1;// Object reference
-	const u32		_VAR_TYPE_THISCODE								= 2;// Code reference
+	const u32		_VAR_TYPE_OBJECT								= 1;	// Object reference
+	const u32		_VAR_TYPE_THISCODE								= 2;	// Code reference
 	const u32		_VAR_TYPE_CHARACTER								= 3;
 	const u32								_VAR_TYPE_NUMERIC_START	= 4;
-//	const u32		_VAR_TYPE_INTEGER								= 4;// Stored as an s32, a 4-byte signed integer
-	const u32		_VAR_TYPE_NUMERIC								= 5;// Stored as a character (like "200.50"), but converted to numeric at each reference.
-//	const u32		_VAR_TYPE_FLOAT									= 6;// Stored as an f32
-//	const u32		_VAR_TYPE_DOUBLE								= 7;// Stored as an f64
-	const u32		_VAR_TYPE_CURRENCY								= 8;// Stored as an s64 with an implied 4-decimals (divide by 10,000 to get the actual floating point value)
-	const u32		_VAR_TYPE_S32									= 9;
-	const u32		_VAR_TYPE_S64									= 10;
-	const u32		_VAR_TYPE_U32									= 11;
-	const u32		_VAR_TYPE_U64									= 12;
-	const u32		_VAR_TYPE_F32									= 13;
-	const u32		_VAR_TYPE_F64									= 14;
-	const u32		_VAR_TYPE_BI									= 15;// Uses the big number library for integers
-	const u32		_VAR_TYPE_BFP									= 16;// Uses the big number library for floating points
-	const u32		_VAR_TYPE_S16									= 17;
-	const u32		_VAR_TYPE_S8									= 18;
-	const u32		_VAR_TYPE_U16									= 19;
-	const u32		_VAR_TYPE_U8									= 20;
-	const u32								_VAR_TYPE_NUMERIC_END	= 20;
-	const u32		_VAR_TYPE_DATE									= 21;
-	const u32		_VAR_TYPE_DATETIME								= 22;
-	const u32		_VAR_TYPE_LOGICAL								= 23;// Note:  This includes the logicalx types, but the value stored determines the logicalx setting.
-	const u32		_VAR_TYPE_BITMAP								= 24;
+	const u32						_VAR_TYPE_NUMERIC_INTEGER_START	= 4;
+	const u32		_VAR_TYPE_S64									= 4;
+	const u32		_VAR_TYPE_U64									= 5;
+//	const u32		_VAR_TYPE_INTEGER								= 6;	// Stored as an s32, a 4-byte signed integer
+	const u32		_VAR_TYPE_S32									= 6;
+	const u32		_VAR_TYPE_U32									= 7;
+	const u32		_VAR_TYPE_S16									= 8;
+	const u32		_VAR_TYPE_S8									= 9;
+	const u32		_VAR_TYPE_U16									= 10;
+	const u32		_VAR_TYPE_U8									= 11;
+	const u32						_VAR_TYPE_NUMERIC_INTEGER_END	= 12;
+	const u32		_VAR_TYPE_NUMERIC								= 13;	// Stored as a character (like "200.50"), but converted to numeric at each reference.
+	const u32		_VAR_TYPE_CURRENCY								= 14;	// Stored as an s64 with an implied 4-decimals (divide by 10,000 to get the actual floating point value)
+//	const u32		_VAR_TYPE_FLOAT									= 15;	// Stored as an f32
+//	const u32		_VAR_TYPE_DOUBLE								= 16;	// Stored as an f64
+	const u32		_VAR_TYPE_F32									= 15;
+	const u32		_VAR_TYPE_F64									= 16;
+	const u32		_VAR_TYPE_BI									= 17;	// Uses the big number library for integers
+	const u32		_VAR_TYPE_BFP									= 18;	// Uses the big number library for floating points
+	const u32								_VAR_TYPE_NUMERIC_END	= 18;
+	// 19 is not used
+	const u32		_VAR_TYPE_DATE									= 20;
+	const u32		_VAR_TYPE_DATETIME								= 21;
+	const u32		_VAR_TYPE_LOGICAL								= 22;// Note:  This includes the logicalx types, but the value stored determines the logicalx setting.
+	const u32		_VAR_TYPE_BITMAP								= 23;
 // TODO:  Not yet implemented
-	const u32		_VAR_TYPE_DATETIMEX								= 25;
-	const u32		_VAR_TYPE_ARRAY									= 26;
-	const u32		_VAR_TYPE_GUID8									= 27;
-	const u32		_VAR_TYPE_GUID16								= 28;
-	const u32		_VAR_TYPE_FIELD									= 29;
+	const u32		_VAR_TYPE_DATETIMEX								= 24;
+	const u32		_VAR_TYPE_ARRAY									= 25;
+	const u32		_VAR_TYPE_GUID8									= 26;
+	const u32		_VAR_TYPE_GUID16								= 27;
+	const u32		_VAR_TYPE_FIELD									= 28;
 
 
 //////////
@@ -244,6 +247,7 @@
 	const u32		_ERROR_DIVISION_BY_ZERO							= 39;
 	const u32		_ERROR_CANNOT_BE_NEGATIVE						= 40;
 	const u32		_ERROR_CANNOT_BE_ZERO_OR_NEGATIVE				= 41;
+	const u32		_ERROR_UNABLE_TO_AUTOVALIDATE					= 42;
 
 	// Fill ins
 	const u8		cgc_notFoundOrInvalidDataType[]					= "not found or is invalid data type";
@@ -295,6 +299,7 @@
 	const u8		cgcCannotBeNegative[]							= "parameter cannot be negative";
 	const u8		cgcFatalSystemError_tally[]						= "system variable _tally could not be found";
 	const u8		cgcCannotBeZeroOrNegative[]						= "parameter cannot be negative or 0";
+	const u8		cgcUnableToAutoValidate[]						= "unable to auto-validate";
 #else
 	#error Language not specified
 #endif

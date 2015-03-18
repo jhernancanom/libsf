@@ -92,8 +92,11 @@
 	#define		_MAX_FRX_SLOTS						32			// Up to 32 reports can be opened simultaneously
 	#define		_MAX_MNX_SLOTS						128			// Up to 128 menus can be opened simultaneously
 	#define		_MAX_CDX_TAGS						128			// Up to 128 index tags are supported per CDX, per DBF
+	#define		_MAX_SDX_TAGS						128			// Up to 128 index tags are supported per SDX, per DBF
 	#define		_MAX_IDX_KEY_LENGTH					100			// Up to 100 bytes per IDX key
 	#define		_MAX_CDX_KEY_LENGTH					240			// Up to 240 bytes per CDX key
+	#define		_MAX_SDX_KEY_LENGTH					2000		// Up to 2000 bytes per SDX key
+	#define		_MAX_ALIAS_NAME_LENGTH				128			// Why not? :-)
 
 	#define		_MIN_SLEEP_INTERVAL_BETWEEN_LOCK_FILE_RETRY_ATTEMPTS 20		// Minimum of 0.05 seconds between attempts
 	#define		_MAX_SLEEP_INTERVAL_BETWEEN_LOCK_FILE_RETRY_ATTEMPTS 10000	// Up to 10 seconds between retry attempts
@@ -115,6 +118,9 @@
 	#define		_DBF_ERROR_DBC						-12
 	#define		_DBF_ERROR_NO_MORE_WORK_AREAS		-13
 	#define		_DBF_ERROR_INVALID_WORK_AREA		-14
+	#define		_DBF_ERROR_LOCKING					-15
+	#define		_DBF_ERROR_WRITING					-16
+	#define		_DBF_ERROR_SEEKING					-17
 
 	// For field flags
 	#define 	_DBF_FIELD_SYSTEM					0x01

@@ -172,7 +172,7 @@ struct SFieldRecord2;
 
 	sptr				iDbf_gotoRecord									(SThisCode* thisCode, SWorkArea* wa, s32 recordNumber);
 	sptr				iDbf_gotoTop									(SThisCode* thisCode, SWorkArea* wa);
-	uptr				iDbf_writeChanges								(SThisCode* thisCode, SWorkArea* wa);
+	sptr				iDbf_writeChanges								(SThisCode* thisCode, SWorkArea* wa);
 
 	uptr				iDbf_getFieldCount								(SThisCode* thisCode, SWorkArea* wa);
 	uptr				iDbf_getReccount								(SThisCode* thisCode, SWorkArea* wa);
