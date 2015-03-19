@@ -93,7 +93,7 @@ struct SThisCode;
 // Note:  Many of the functions referred to in these functions are defined in dbf_defs.h.
 //
 //////
-	u32					cdx_open										(SThisCode* thisCode, SWorkArea* wa, s8* tcCdxFilename, u32 tnCdxFilenameLength, u32 tnExplicitIndexType, bool tlValidate);
+	u32					cdx_open										(SThisCode* thisCode, SWorkArea* wa, s8* tcCdxFilename, u32 tnCdxFilenameLength, u32 tnExplicitIndexType, bool tlValidate, bool tlDescending);
 	u32					cdx_close										(SThisCode* thisCode, SWorkArea* wa);
 	u32					cdx_get_tag										(SThisCode* thisCode, SWorkArea* wa,
 																			u32 tnTagIndex,

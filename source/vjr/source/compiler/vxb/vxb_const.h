@@ -236,18 +236,37 @@
 	const u32		_ERROR_ALIAS_ALREADY_IN_USE						= 28;
 	const u32		_ERROR_PARENTHESIS_EXPECTED						= 29;
 	const u32		_ERROR_MISSING_PARAMETER						= 30;
-	const u32		_ERROR_UNABLE_TO_OPEN_TABLE						= 31;
-	const u32		_ERROR_WORK_AREA_ALREADY_IN_USE					= 32;
-	const u32		_ERROR_ERROR_OPENING_DBC						= 33;
-	const u32		_ERROR_CONFLICTING_PARAMETERS					= 34;
-	const u32		_ERROR_PARAMETER_IS_INCORRECT					= 35;
-	const u32		_ERROR_TABLE_ALREADY_IN_USE						= 36;
-	const u32		_ERROR_PARAMETER_TOO_LONG						= 37;
-	const u32		_ERROR_UNABLE_TO_OPEN_DBC						= 38;
-	const u32		_ERROR_DIVISION_BY_ZERO							= 39;
-	const u32		_ERROR_CANNOT_BE_NEGATIVE						= 40;
-	const u32		_ERROR_CANNOT_BE_ZERO_OR_NEGATIVE				= 41;
-	const u32		_ERROR_UNABLE_TO_AUTOVALIDATE					= 42;
+
+	// These relate in a 1:1 ratio with the _DBF_ERROR_* and _CDX_ERROR_* constants of the same name, that are defined internally in dbf.cpp, and cdx.cpp
+	const u32		_ERROR_DBF_UNABLE_TO_OPEN_TABLE					= 31;
+	const u32		_ERROR_DBF_WORK_AREA_ALREADY_IN_USE				= 32;
+	const u32		_ERROR_DBF_ERROR_OPENING_DBC					= 33;
+	const u32		_ERROR_DBF_WORK_AREA_NOT_IN_USE					= 34;
+	const u32		_ERROR_DBF_ERROR_READING_HEADER1				= 35;
+	const u32		_ERROR_DBF_UNKNOWN_TABLE_TYPE					= 36;
+	const u32		_ERROR_DBF_MEMORY_ALLOCATION					= 37;
+	const u32		_ERROR_DBF_ERROR_READING_HEADER2				= 38;
+	const u32		_ERROR_DBF_TABLE_NAME_TOO_LONG					= 39;
+	const u32		_ERROR_DBF_MEMORY_ROW							= 40;
+	const u32		_ERROR_DBF_MEMORY_ORIGINAL						= 41;
+	const u32		_ERROR_DBF_MEMORY_INDEX							= 42;
+	const u32		_ERROR_DBF_INVALID_WORK_AREA					= 43;
+	const u32		_ERROR_DBF_NO_MORE_WORK_AREAS					= 44;
+	const u32		_ERROR_DBF_LOCKING								= 45;
+	const u32		_ERROR_DBF_WRITING								= 46;
+	const u32		_ERROR_DBF_SEEKING								= 47;
+	const u32		_ERROR_DBF_NO_DATA								= 48;
+
+	const u32		_ERROR_CONFLICTING_PARAMETERS					= 49;
+	const u32		_ERROR_PARAMETER_IS_INCORRECT					= 50;
+	const u32		_ERROR_TABLE_ALREADY_IN_USE						= 51;
+	const u32		_ERROR_PARAMETER_TOO_LONG						= 52;
+	const u32		_ERROR_UNABLE_TO_OPEN_DBC						= 53;
+	const u32		_ERROR_DIVISION_BY_ZERO							= 54;
+	const u32		_ERROR_CANNOT_BE_NEGATIVE						= 55;
+	const u32		_ERROR_CANNOT_BE_ZERO_OR_NEGATIVE				= 56;
+	const u32		_ERROR_UNABLE_TO_AUTOVALIDATE					= 57;
+	const u32		_ERROR_DBF_GENERAL_ERROR						= 58;
 
 	// Fill ins
 	const u8		cgc_notFoundOrInvalidDataType[]					= "not found or is invalid data type";
@@ -287,9 +306,26 @@
 	const u8		cgcAliasAlreadyInUse[]							= "alias already in use";
 	const u8		cgcParenthesisExpected[]						= "parenthesis expected";
 	const u8		cgcMissingParameter[]							= "missing parameter";
-	const u8		cgcUnableToOpenTable[]							= "unable to open table";
-	const u8		cgcWorkAreaAlreadyInUse[]						= "work area already in use";
-	const u8		cgcErrorOpeningDbc[]							= "error in opening dbc";
+
+	const u8		cgcDbfUnableToOpenTable[]						= "unable to open table";
+	const u8		cgcDbfWorkAreaAlreadyInUse[]					= "work area already in use";
+	const u8		cgcDbfErrorOpeningDbc[]							= "error in opening dbc";
+	const u8		cgcDbfWorkAreaNotInUse[]						= "work area not in use";
+	const u8		cgcDbfErrorReadingHeader1[]						= "reading header(1)";
+	const u8		cgcDbfUnknownTableType[]						= "unknown table type";
+	const u8		cgcDbfMemoryAllocation[]						= "memory allocation";
+	const u8		cgcDbfErrorReadingHeader2[]						= "reading header(2)";
+	const u8		cgcDbfTableNameTooLong[]						= "table name too long";
+	const u8		cgcDbfMemoryRow[]								= "memory row buffer";
+	const u8		cgcDbfMemoryOriginal[]							= "memory original buffer";
+	const u8		cgcDbfMemoryIndex[]								= "memory index buffer";
+	const u8		cgcDbfInvalidWorkArea[]							= "invalid work area";
+	const u8		cgcDbfNoMoreWorkAreas[]							= "no more work areas";
+	const u8		cgcDbfLocking[]									= "locking";
+	const u8		cgcDbfWriting[]									= "writing";
+	const u8		cgcDbfSeeking[]									= "seeking";
+	const u8		cgcDbfNoData[]									= "no data";
+
 	const u8		cgcConflictingParameters[]						= "conflicting parameters";
 	const u8		cgcParameterIsIncorrect[]						= "parameter is incorrect";
 	const u8		cgcTableAlreadyInUse[]							= "table already in use";
@@ -300,6 +336,7 @@
 	const u8		cgcFatalSystemError_tally[]						= "system variable _tally could not be found";
 	const u8		cgcCannotBeZeroOrNegative[]						= "parameter cannot be negative or 0";
 	const u8		cgcUnableToAutoValidate[]						= "unable to auto-validate";
+	const u8		cgcGeneralErrorDbf[]							= "dbf general error";
 #else
 	#error Language not specified
 #endif
@@ -859,6 +896,8 @@
 	const s32		_ICODE_XMLTOCURSOR                              = 1428;
 	const s32		_ICODE_XMLUPDATEGRAM                            = 1429;
 	const s32		_ICODE_YEAR                                     = 1430;
+	// Temporary for Rick's testing:
+	const s32		_ICODE__TEST									= 999999999;
 	// occursc			= 1431				addobject		= 1432
 	// strtranc			= 1433				ascending		= 1434
 	// in				= 1435				noupdate		= 1436
@@ -1054,6 +1093,7 @@
 	const s32       _ICODE_KEYCOMP                                  = 2141;
 	const s32       _ICODE_LABEL                                    = 2142;
 	const s32		_ICODE_LANGUAGE									= 2302;
+	const s32		_ICODE_LAST										= 2327;
 	const s32		_ICODE_LELSE									= 2281;
 	const s32		_ICODE_LELSEIF									= 2282;
 	const s32       _ICODE_LIBRARY                                  = 2143;
@@ -1086,6 +1126,8 @@
 	const s32		_ICODE_NAMINGCONVENTIONS						= 2306;
 	const s32		_ICODE_NCSETALPHAISOPAQUE						= 2325;
 	const s32		_ICODE_NCSETCEILINGFLOOR						= 2307;
+	const s32		_ICODE_NCSETOPTIMIZETABLEWRITES					= 2326;
+	const s32		_ICODE_NCSETOPTIMIZEVARIABLES					= 2328;
 	const s32		_ICODE_NCSETSIGNSIGN2							= 2308;
 	const s32       _ICODE_NEAR                                     = 2167;
 // 	const s32       _ICODE_NEXT                                     = 2168;
@@ -1260,6 +1302,9 @@
 	// _ICODE_USA													= 2323;
 	// _ICODE_YMD													= 2324;
 	// _ICODE_NCSETALPHAISOPAQUE									= 2325;
+	// _ICODE_NCSETOPTIMIZETABLEWRITES								= 2326;
+	// _ICODE_LAST													= 2327;
+	// _ICODE_NCSETOPTIMIZEVARIABLES								= 2328;
 
 
 //////////
@@ -1762,6 +1807,7 @@
 	const s8		cgc_xmltocursor[]								= "xmltocursor";
 	const s8		cgc_xmlupdategram[]								= "xmlupdategram";
 	const s8		cgc_year[]										= "year";
+	const s8		cgc__test[]										= "_test";
 
 	// Temporarily added until the processing engine is completed	    until the processing en
 	const s8		cgc_concatenate[]								= "concatenate";
@@ -1935,6 +1981,7 @@
 	const s8		cgc_keyboard[]									= "keyboard";
 	const s8		cgc_keycomp[]									= "keycomp";
 	const s8		cgc_label[]										= "label";
+	const s8		cgc_last[]										= "last";
 	const s8		cgc_lelse[]										= "lelse";
 	const s8		cgc_library[]									= "library";
 	const s8		cgc_lif[]										= "lif";

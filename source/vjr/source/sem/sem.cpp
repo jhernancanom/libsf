@@ -3200,7 +3200,7 @@ renderAsOnlyText:
 								sem->line_cursor	= (SLine*)sem->line_cursor->ll.prev;
 							}
 						}
-				}
+					}
 
 
 				//////////

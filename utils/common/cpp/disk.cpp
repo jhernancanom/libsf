@@ -275,14 +275,14 @@
 				// Create a new one
 				dl = (SDiskLock*)iBuilder_appendData(buffRoot, NULL, sizeof(SDiskLock));
 				// Note:  disk members are all initialized to 0s
-				dl->isValid = true;
 			}
 
 
 		//////////
 		// Physically try the lock
 		//////
-			dl->nFile		= tnFile;
+			dl->isValid = true;
+			dl->nFile	= tnFile;
 			dl->nOffset	= tnOffset;
 			dl->nLength	= 0;
 

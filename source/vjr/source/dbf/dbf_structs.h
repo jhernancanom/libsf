@@ -191,6 +191,12 @@
 			u8		name2[129];				// Long field name
 			u32		fieldNumber;			// Field number within the table
 
+			// Memo  data
+			s8*		mdata;					// Current version
+			u32		memoLength;
+			s8*		omdata;					// As originally loaded from disk
+			u32		omemoLength;
+
 			// Used for index creation
 			u8		fillChar;				// The fill character required for this type of field
 			u32		dbcRecno;				// The related dbc RECNO() this entry was found on
@@ -212,6 +218,8 @@
 			bool			isCached;					// If the table's been cached, then it will be true, otherwise false
 			bool			isVisualTable;				// Only visual tables can have DBC backlinks
 			bool			isDirty;					// When data is written to the current record, but not flushed to disk, this is raised
+			bool			isUnbuffered;				// Immediate writes upon every change
+			bool			isDescending;				// If the table is displayed in descending order
 
 			// Names
 			s8				tablePathname[_MAX_PATH];	// Filename to get to the table

@@ -471,6 +471,8 @@ struct SBasePropMap;
 	const s8		cgc_setNamingConvention[]								= "namingConvention";
 	const s8		cgc_setNcsetAlphaIsOpaque[]								= "ncsetAlphaIsOpaque";
 	const s8		cgc_setNcsetCeilingFloor[]								= "ncsetCeilingFloor";
+	const s8		cgc_setNcsetOptimizeTableWrites[]						= "ncsetOptimizeTableWrites";
+	const s8		cgc_setNcsetOptimizeVariables[]							= "ncsetOptimizeVariables";
 	const s8		cgc_setNcsetSignSign2[]									= "ncsetSignSign2";
 	const s8		cgc_setReprocess[]										= "reprocess";
 	const s8		cgc_setReprocessAttempts[]								= "reprocessAttempts";
@@ -858,19 +860,21 @@ struct SBasePropMap;
 	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 367;
 	const u32		_INDEX_SET_NCSET_ALPHA_IS_OPAQUE						= 368;
 	const u32		_INDEX_SET_NCSET_CEILING_FLOOR							= 369;
-	const u32		_INDEX_SET_NCSET_SIGN_SIGN2								= 370;
-	const u32		_INDEX_SET_REPROCESS									= 371;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 372;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
-	const u32		_INDEX_SET_REPROCESSINTERVAL							= 373;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
-	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 374;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_SLOPPY_PRINTING								= 375;
-	const u32		_INDEX_SET_STICKY_PARAMETERS							= 376;
-	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 377;
-	const u32		_INDEX_SET_TABLE_OBJECTS								= 378;
-	const u32		_INDEX_SET_TALK											= 379;
-	const u32		_INDEX_SET_TIME											= 380;
-	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 381;
-	const u32		_INDEX_SET_VARIABLES_FIRST								= 382;
+	const u32		_INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES					= 370;
+	const u32		_INDEX_SET_NCSET_OPTIMIZE_VARIABLES						= 371;
+	const u32		_INDEX_SET_NCSET_SIGN_SIGN2								= 372;
+	const u32		_INDEX_SET_REPROCESS									= 373;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 374;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
+	const u32		_INDEX_SET_REPROCESSINTERVAL							= 375;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
+	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 376;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_SLOPPY_PRINTING								= 377;
+	const u32		_INDEX_SET_STICKY_PARAMETERS							= 378;
+	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 379;
+	const u32		_INDEX_SET_TABLE_OBJECTS								= 380;
+	const u32		_INDEX_SET_TALK											= 381;
+	const u32		_INDEX_SET_TIME											= 382;
+	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 383;
+	const u32		_INDEX_SET_VARIABLES_FIRST								= 384;
 
 
 	// Basic setters and getters
@@ -1347,6 +1351,7 @@ struct SBasePropMap;
 		{	_INDEX_ZOOMBOX,									-1,					cgc_zoomBox,							sizeof(cgc_zoomBox) - 1,							_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=shows zoom box, .f.=does not show (default), for backward compatibility, not used
 
 		// Settings objects always appear at the end ... so make sure their numbers are always appropriate and sequential, immediately after the last one above
+		// All of these settings must appear in the gsProps_settings[].  They should be in alphabetical order, and their numbers sequential.
 		//	Index within master props						 icode								property text						length of property text								default property type	 init get set		default value					init value (set at launch)
 		{	_INDEX_SET_AUTO_CONVERT,						_ICODE_AUTOCONVERT,					cgc_setAutoConvert,					sizeof(cgc_setAutoConvert) - 1,						_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=auto-converts mismatched variable types, such as "fred " + 5, converted to "fred" + "5", .f.=signals error
 		{	_INDEX_SET_AUTO_VALIDATE,						_ICODE_AUTOVALIDATE,				cgc_setAutoValidate,				sizeof(cgc_setAutoValidate) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=auto-validates indexes on load, .f.=(default) does not validate indexes on load
@@ -1369,6 +1374,9 @@ struct SBasePropMap;
 		{	_INDEX_SET_NAMING_CONVENTIONS,					_ICODE_NAMINGCONVENTIONS,			cgc_setNamingConvention,			sizeof(cgc_setNamingConvention) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=Field and variables are examined for standard naming conventions with errors reported, .f.=no checks are made
 		{	_INDEX_SET_NCSET_ALPHA_IS_OPAQUE,				_ICODE_NCSETALPHAISOPAQUE,			cgc_setNcsetAlphaIsOpaque,			sizeof(cgc_setNcsetAlphaIsOpaque) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=alpha channel color in rgb() and bgr() is opaque (255), .f.=alpha channel is transparent (0)
 		{	_INDEX_SET_NCSET_CEILING_FLOOR,					_ICODE_NCSETCEILINGFLOOR,			cgc_setNcsetCeilingFloor,			sizeof(cgc_setNcsetCeilingFloor) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=ceiling() and floor() return floating point values if floating point input, .f.=always returns integer
+		{	_INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES,			_ICODE_NCSETOPTIMIZETABLEWRITES,	cgc_setNcsetOptimizeTableWrites,	sizeof(cgc_setNcsetOptimizeTableWrites) - 1,		_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=field update content is examined before writing out, and if it hasn't changed it is not written, .f.=any content updated, even identical content as before, is always written
+		{	_INDEX_SET_NCSET_OPTIMIZE_VARIABLES,			_ICODE_NCSETOPTIMIZEVARIABLES,		cgc_setNcsetOptimizeVariables,		sizeof(cgc_setNcsetOptimizeVariables) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=oft-used variables are moved to the top of the linked list, .f.=variables always persist in their "as defined" order
+		
 		{	_INDEX_SET_NCSET_SIGN_SIGN2,					_ICODE_NCSETSIGNSIGN2,				cgc_setNcsetSignSign2,				sizeof(cgc_setNcsetSignSign2) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=sign() and sign2() return floating point values if floating point input, .f.=always returns integer
 		{	_INDEX_SET_REPROCESS,							_ICODE_REPROCESS,					cgc_setReprocess,					sizeof(cgc_setReprocess) - 1,						_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=Reprocessing is set to automatic, .f. is not supported, if it's not .t. it must be signed numeric with negative indicating attempts, and positive indicating seconds
 		{	_INDEX_SET_REPROCESSATTEMPTS,					_ICODE_REPROCESSATTEMPTS,			cgc_setReprocessAttempts,			sizeof(cgc_setReprocessAttempts) - 1,				_VAR_TYPE_S32,				0, 0, 0,		30								,NULL	},	// Number of reprocessing attempts when set to automatic, typically 30 for 30 seconds of retries after pausing 1 second between each
@@ -3515,6 +3523,7 @@ struct SBasePropMap;
 	const s32 gnProps_exceptionSize = sizeof(gsProps_exception) / sizeof(SObjPropMap) - 1;
 
 	// _OBJ_TYPE_SETTINGS
+	// Note:  Any changes made here need to make sure their _ICODE_* value is also updated in gsProps_master[]
 	SObjPropMap gsProps_settings[] =
 	{	//  index                                    init set get
 		{	_INDEX_BASECLASS,							0, 0, 0 },
@@ -3543,6 +3552,8 @@ struct SBasePropMap;
 		{	_INDEX_SET_NAMING_CONVENTIONS,				0, (uptr)&iObjProp_setOnOff,		0 },	// bool
 		{	_INDEX_SET_NCSET_ALPHA_IS_OPAQUE,			0, (uptr)&iObjProp_setLogical,		0 },	// bool
 		{	_INDEX_SET_NCSET_CEILING_FLOOR,				0, (uptr)&iObjProp_setLogical,		0 },	// bool
+		{	_INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES,		0, (uptr)&iObjProp_setLogical,		0 },	// bool
+		{	_INDEX_SET_NCSET_OPTIMIZE_VARIABLES,		0, (uptr)&iObjProp_setLogical,		0 },	// bool
 		{	_INDEX_SET_NCSET_SIGN_SIGN2,				0, (uptr)&iObjProp_setLogical,		0 },	// bool
 		{	_INDEX_SET_REPROCESS,						0, (uptr)&iObjProp_setReprocess,	0 },	// bool or s32 
 		{	_INDEX_SET_REPROCESSATTEMPTS,				0, (uptr)&iObjProp_setInteger,		0 },	// s32

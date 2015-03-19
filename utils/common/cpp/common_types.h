@@ -131,6 +131,3 @@
 	// For a null that is lower-case ... as it should be. :-)
 	#define null NULL
 #endif
-
-#define	_NO		0
-#define _YES	1

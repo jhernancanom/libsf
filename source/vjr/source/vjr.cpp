@@ -471,7 +471,4 @@
 
 // 		// Create a thread to display the content in 3D
 // 		CreateThread(0, 0, &iGrace, 0, 0, 0);
-
-		// Execute any test code
-		iTest_execute();
 	}

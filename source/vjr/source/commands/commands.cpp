@@ -166,9 +166,26 @@
 			case _ERROR_ALIAS_ALREADY_IN_USE:				{	iError_report(cgcAliasAlreadyInUse, tlInvasive);				break;	}
 			case _ERROR_PARENTHESIS_EXPECTED:				{	iError_report(cgcParenthesisExpected, tlInvasive);				break;	}
 			case _ERROR_MISSING_PARAMETER:					{	iError_report(cgcMissingParameter, tlInvasive);					break;	}
-			case _ERROR_UNABLE_TO_OPEN_TABLE:				{	iError_report(cgcUnableToOpenTable, tlInvasive);				break;	}
-			case _ERROR_WORK_AREA_ALREADY_IN_USE:			{	iError_report(cgcWorkAreaAlreadyInUse, tlInvasive);				break;	}
-			case _ERROR_ERROR_OPENING_DBC:					{	iError_report(cgcErrorOpeningDbc, tlInvasive);					break;	}
+
+			case _ERROR_DBF_UNABLE_TO_OPEN_TABLE:			{	iError_report(cgcDbfUnableToOpenTable, tlInvasive);				break;	}
+			case _ERROR_DBF_WORK_AREA_ALREADY_IN_USE:		{	iError_report(cgcDbfWorkAreaAlreadyInUse, tlInvasive);			break;	}
+			case _ERROR_DBF_ERROR_OPENING_DBC:				{	iError_report(cgcDbfErrorOpeningDbc, tlInvasive);				break;	}
+			case _ERROR_DBF_WORK_AREA_NOT_IN_USE:			{	iError_report(cgcDbfWorkAreaNotInUse, tlInvasive);				break;	}
+			case _ERROR_DBF_ERROR_READING_HEADER1:			{	iError_report(cgcDbfErrorReadingHeader1, tlInvasive);			break;	}
+			case _ERROR_DBF_UNKNOWN_TABLE_TYPE:				{	iError_report(cgcDbfUnknownTableType, tlInvasive);				break;	}
+			case _ERROR_DBF_MEMORY_ALLOCATION:				{	iError_report(cgcDbfMemoryAllocation, tlInvasive);				break;	}
+			case _ERROR_DBF_ERROR_READING_HEADER2:			{	iError_report(cgcDbfErrorReadingHeader2, tlInvasive);			break;	}
+			case _ERROR_DBF_TABLE_NAME_TOO_LONG:			{	iError_report(cgcDbfTableNameTooLong, tlInvasive);				break;	}
+			case _ERROR_DBF_MEMORY_ROW:						{	iError_report(cgcDbfMemoryRow, tlInvasive);						break;	}
+			case _ERROR_DBF_MEMORY_ORIGINAL:				{	iError_report(cgcDbfMemoryOriginal, tlInvasive);				break;	}
+			case _ERROR_DBF_MEMORY_INDEX:					{	iError_report(cgcDbfMemoryIndex, tlInvasive);					break;	}
+			case _ERROR_DBF_INVALID_WORK_AREA:				{	iError_report(cgcDbfInvalidWorkArea, tlInvasive);				break;	}
+			case _ERROR_DBF_NO_MORE_WORK_AREAS:				{	iError_report(cgcDbfNoMoreWorkAreas, tlInvasive);				break;	}
+			case _ERROR_DBF_LOCKING:						{	iError_report(cgcDbfLocking, tlInvasive);						break;	}
+			case _ERROR_DBF_WRITING:						{	iError_report(cgcDbfWriting, tlInvasive);						break;	}
+			case _ERROR_DBF_SEEKING:						{	iError_report(cgcDbfSeeking, tlInvasive);						break;	}
+			case _ERROR_DBF_NO_DATA:						{	iError_report(cgcDbfNoData, tlInvasive);						break;	}
+
 			case _ERROR_CONFLICTING_PARAMETERS:				{	iError_report(cgcConflictingParameters, tlInvasive);			break;	}
 			case _ERROR_PARAMETER_IS_INCORRECT:				{	iError_report(cgcParameterIsIncorrect, tlInvasive);				break;	}
 			case _ERROR_TABLE_ALREADY_IN_USE:				{	iError_report(cgcTableAlreadyInUse, tlInvasive);				break;	}
@@ -178,6 +195,7 @@
 			case _ERROR_CANNOT_BE_NEGATIVE:					{	iError_report(cgcCannotBeNegative, tlInvasive);					break;	}
 			case _ERROR_CANNOT_BE_ZERO_OR_NEGATIVE:			{	iError_report(cgcCannotBeZeroOrNegative, tlInvasive);			break;	}
 			case _ERROR_UNABLE_TO_AUTOVALIDATE:				{	iError_report(cgcUnableToAutoValidate, tlInvasive);				break;	}
+			case _ERROR_DBF_GENERAL_ERROR:					{	iError_report(cgcGeneralErrorDbf, tlInvasive);					break;	}
 															
 
 		}
@@ -4186,7 +4204,7 @@
 //////
 	SVariable* function_ncset(SThisCode* thisCode, SVariable* varIndex, SVariable* varP1, SVariable* varP2, SVariable* varP3, SVariable* varP4, SVariable* varP5, SVariable* varP6)
 	{
-		s32			lnIndex;
+		s32			lnIndex, lnIndexProp;
 		bool		llEnabled, llNewValue;
 		bool		error;
 		u32			errorNum;
@@ -4206,101 +4224,26 @@
 
 
 		//////////
-		// Create the return variable
-		//////
-			result = iVariable_create(thisCode, _VAR_TYPE_LOGICAL, NULL);
-			if (!result)
-			{
-				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_compRelated(thisCode, varIndex), false);
-				return(NULL);
-			}
-
-
-		//////////
 		// What function are they requesting?
 		//////
 			// Based on the index, set the value
 			switch (lnIndex)
 			{
-				//////////
-				// SIGN(), SIGN2()
-				//////
-					case _NCSET_SIGN_SIGN2:
-						// Get the value
-						llEnabled = propGet_settings_ncset_signSign2(_settings);
-						if (varP1)
-						{
-							// They are setting the value
-							if (iVariable_isFundamentalTypeLogical(varP1))
-							{
-								// Obtain its value as a logical
-								llNewValue = iiVariable_getAs_bool(thisCode, varP1, false, &error, &errorNum);
-								if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varIndex), false);	return(NULL);	}
-
-								// Set the new value
-								propSet_settings_ncset_signSign2_fromBool(_settings, llNewValue);
-
-							} else {
-								// The variable is not a type that can be processed as logical
-								iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varP1), false);
-								return(NULL);
-							}
-						}
-						break;
-
-
-				//////////
-				// CEILING(), FLOOR()
-				//////
-					case _NCSET_CEILING_FLOOR:
-						// Get the value
-						llEnabled = propGet_settings_ncset_ceilingFloor(_settings);
-						if (varP1)
-						{
-							// They are setting the value
-							if (iVariable_isFundamentalTypeLogical(varP1))
-							{
-								// Obtain its value as a logical
-								llNewValue = iiVariable_getAs_bool(thisCode, varP1, false, &error, &errorNum);
-								if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varIndex), false);	return(NULL);	}
-
-								// Set the new value
-								propSet_settings_ncset_ceilingFloor_fromBool(_settings, llNewValue);
-
-							} else {
-								// The variable is not a type that can be processed as logical
-								iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varP1), false);
-								return(NULL);
-							}
-						}
-						break;
-
-
-				//////////
-				// Alpha channel is opaque in RGB() and BGR() colors
-				//////
-					case _NCSET_RGBA_ALPHA_IS_OPAQUE:
-						// Get the value
-						llEnabled = propGet_settings_ncset_alphaIsOpaque(_settings);
-						if (varP1)
-						{
-							// They are setting the value
-							if (iVariable_isFundamentalTypeLogical(varP1))
-							{
-								// Obtain its value as a logical
-								llNewValue = iiVariable_getAs_bool(thisCode, varP1, false, &error, &errorNum);
-								if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varIndex), false);	return(NULL);	}
-
-								// Set the new value
-								propSet_settings_ncset_alphaIsOpaque_fromBool(_settings, llNewValue);
-
-							} else {
-								// The variable is not a type that can be processed as logical
-								iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varP1), false);
-								return(NULL);
-							}
-						}
-						break;
+				case _NCSET_SIGN_SIGN2:
+					lnIndexProp = _INDEX_SET_NCSET_SIGN_SIGN2;
+					break;
+				case _NCSET_CEILING_FLOOR:
+					lnIndexProp = _INDEX_SET_NCSET_CEILING_FLOOR;
+					break;
+				case _NCSET_RGBA_ALPHA_IS_OPAQUE:
+					lnIndexProp = _INDEX_SET_NCSET_ALPHA_IS_OPAQUE;
+					break;
+				case _NCSET_OPTIMIZE_TABLE_WRITES:
+					lnIndexProp = _INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES;
+					break;
+				case _NCSET_OPTIMIZE_VARIABLES:
+					lnIndexProp = _INDEX_SET_NCSET_OPTIMIZE_VARIABLES;
+					break;
 
 				default:
 					// Unrecognized option
@@ -4310,9 +4253,39 @@
 
 
 		//////////
-		// Set the result based on the value, and return it
+		// Update
 		//////
-			*result->value.data_s8 = ((llEnabled) ? _LOGICAL_TRUE : _LOGICAL_FALSE);
+			// Get the existing value
+			llEnabled = propGet_settings_ncset(_settings, lnIndexProp);
+			if (varP1)
+			{
+				// They are setting the value
+				if (iVariable_isFundamentalTypeLogical(varP1))
+				{
+					// Obtain its value as a logical
+					llNewValue = iiVariable_getAs_bool(thisCode, varP1, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varIndex), false);	return(NULL);	}
+
+					// Set the new value
+					propSet_settings_ncset_fromBool(_settings, lnIndexProp, llNewValue);
+
+				} else {
+					// The variable is not a type that can be processed as logical
+					iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varP1), false);
+					return(NULL);
+				}
+			}
+
+
+		//////////
+		// Create the return variable
+		//////
+			result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL, (cs8*)((llEnabled) ? &_LOGICAL_TRUE : &_LOGICAL_FALSE), 1);
+			if (!result)
+			{
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_compRelated(thisCode, varIndex), false);
+				return(NULL);
+			}
 			return(result);
 	}
 
@@ -6601,6 +6574,53 @@ debug_break;
 
 
 //////////
+// Rick's test code functionality using the _test() function
+//////
+	SVariable* function__test(SThisCode* thisCode, SVariable* varIndex)
+	{
+		s32			lnIndex;
+		bool		llValid;
+		SVariable*	result;
+
+
+		//////////
+		// Parameter 1 must be valid
+		//////
+			if (!iVariable_isValid(varIndex) || !iVariable_isTypeNumeric(varIndex))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varIndex), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Execute the function
+		//////
+			llValid	= false;
+			lnIndex	= iiVariable_getAs_s32(thisCode, varIndex, false, NULL, NULL);
+			switch (lnIndex)
+			{
+				case 1:
+					iTest1();
+					break;
+
+				default:
+					iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_compRelated(thisCode, varIndex), false);
+					break;
+			}
+
+
+		//////////
+		// Create our return variable
+		/////
+			result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL, (cs8*)((llValid) ? &_LOGICAL_TRUE : &_LOGICAL_FALSE), 1);
+			return(result);
+	}
+
+
+
+
+//////////
 //
 // Function: TRANSFORM()
 // Converts any variable input to a character form, and applies formatting based on codes.
@@ -7458,7 +7478,7 @@ debug_break;
 //////
 	void command_clear(SThisCode* thisCode, SComp* compClear)
 	{
-		s32				lnSaveLines;
+		s32				lnClearLines, lnSaveLines;
 		bool			llManufactured;
 		SEM_callback	ecb;
 		SVariable*		var;
@@ -7473,6 +7493,8 @@ debug_break;
 // 		SComp*	compClassLibName	= iComps_getNth(compClassLib, 1);
 		SComp*	compKeep			= iComps_findNextBy_iCode(compClear, _ICODE_KEEP,	NULL);;
 		SComp*	compKeepCount		= iComps_getNth(compKeep, 1);
+		SComp*	compLast			= iComps_findNextBy_iCode(compClear, _ICODE_LAST,	NULL);;
+		SComp*	compLastCount		= iComps_getNth(compLast, 1);
 // 		SComp*	compDebug			= iComps_findNextBy_iCode(compModify, _ICODE_DEBUG,		NULL);
 // 		SComp*	compDlls			= iComps_findNextBy_iCode(compModify, _ICODE_DLLS,		NULL);
 // 		SComp*	compDllAlias		= iComps_getNth(compDlls, 1);
@@ -7492,8 +7514,91 @@ debug_break;
 // 		SComp*	compWindows			= iComps_findNextBy_iCode(compModify, _ICODE_WINDOWS,	NULL);
 // 		SComp*	compFilename		= iComps_getNth(compWindows, 1);
 
-		if (compKeep)
+		if (compLast)
 		{
+			// CLEAR LAST -- Clears the last few lines at the end of a buffer
+			if (compLastCount)
+			{
+				//////////
+				// CLEAR LAST nCount
+				//////
+					var = iEngine_get_variableName_fromComponent(thisCode, compLastCount, &llManufactured);
+					if (!var)
+					{
+						// Unknown parameter
+						iError_reportByNumber(thisCode, _ERROR_UNRECOGNIZED_PARAMETER, compLastCount, false);
+						return;
+					}
+
+
+				//////////
+				// Find out how many lines
+				//////
+					lnClearLines = iiVariable_getAs_s32(thisCode, var, false, &error, &errorNum);
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, compLastCount, false);
+						return;
+					}
+
+
+				//////////
+				// Clean house
+				//////
+					if (llManufactured)
+						iVariable_delete(thisCode, var, true);
+
+
+				//////////
+				// Validate the number is in range
+				//////
+					if (lnClearLines < 0)
+					{
+						iError_reportByNumber(thisCode, _ERROR_CANNOT_BE_NEGATIVE, compLastCount, false);
+						return;
+					}
+
+			} else {
+				// Clear them all
+				lnClearLines = 0;
+			}
+
+
+			//////////
+			// Prepare for the clear
+			//////
+				memset(&ecb, 0, sizeof(ecb));
+				ecb._callback = (uptr)&iiCommand_clear_last_callback;
+				ecb.extra1 = (uptr)lnClearLines;
+				ecb.extra2 = (uptr)iSEM_renumber(screenData, 1);
+
+
+			//////////
+			// Clear
+			//////
+				iSEM_deleteChainWithCallback(&screenData, false, &ecb);
+
+
+			//////////
+			// Count what remains, and set _tally
+			//////
+				iEngine_update_tally(thisCode, iSEM_renumber(screenData, 1));
+
+
+			//////////
+			// Redraw what remains
+			//////
+				iSEM_navigateToEndLine(screenData, _screen);
+				screen_editbox->isDirtyRender = true;
+				iWindow_render(NULL, gWinJDebi, false);
+
+			//////////
+			// All done
+			//////
+				return;
+
+
+		} else if (compKeep) {
 			// CLEAR KEEP -- Keeps a certain number of lines at the end of the buffer, and clears the rest
 			if (compKeepCount)
 			{
@@ -7575,6 +7680,13 @@ debug_break;
 			screen_editbox->isDirtyRender = true;
 			iWindow_render(NULL, gWinJDebi, false);
 			// All done
+	}
+
+	// Tests the line number, only deletes the tail
+	bool iiCommand_clear_last_callback(SEM_callback* ecb)
+	{
+		// If lineNum >= (endNum - clearCount) ... delete it
+		return(ecb->line->lineNumber > ecb->sem->lastLine->lineNumber - ecb->extra1);
 	}
 
 	// Tests the line number, only saves the tail
@@ -7813,7 +7925,7 @@ debug_break;
 		//////////
 		// Try to open it
 		//////
-			lnDbcArea = iDbf_open(thisCode, (cs8*)dbcNameBuffer, (cs8*)cgcDbcKeyName, llIsExclusive, false, false);
+			lnDbcArea = iDbf_open(thisCode, (cs8*)dbcNameBuffer, (cs8*)cgcDbcKeyName, llIsExclusive, false, false, false);
 			if (lnDbcArea < 0)
 			{
 				// Unable to open
@@ -7982,7 +8094,7 @@ debug_break;
 		SComp*		comp2;
 		SComp*		comp3;
 		SComp*		comp4;
-		SVariable*	varInXyz;
+		SVariable*	varInWorkArea;
 		SVariable*	varTableName;
 		SVariable*	varAliasName;
 		u32			errorNum;
@@ -7992,7 +8104,7 @@ debug_break;
 		//////////
 		// Initialize
 		//////
-			varInXyz					= NULL;
+			varInWorkArea					= NULL;
 			varTableName				= 0;
 			varAliasName				= 0;
 			llManufacturedTableName		= false;
@@ -8095,7 +8207,7 @@ debug_break;
 				if (compUse && !compUse->ll.next)
 				{
 					// USE ... They have specified USE by itself, closing the current work area
-					if ((lnWorkArea = iDbf_get_workArea_current(thisCode, null)))
+					if ((lnWorkArea = iDbf_get_workArea_current(thisCode, cgcDbfKeyName)) >= 0)
 					{
 						// Close it
 						iDbf_close(thisCode, &gsWorkArea[lnWorkArea]);
@@ -8161,11 +8273,11 @@ debug_break;
 					// Once we get here, we know we have SELECT(...something
 
 					// They've specified USE IN SELECT(something)
-					varInXyz = iEngine_get_variableName_fromComponent(thisCode, comp3, &llManufacturedAliasName);
+					varInWorkArea = iEngine_get_variableName_fromComponent(thisCode, comp3, &llManufacturedAliasName);
 
 				} else {
 					// They must've specified a number or alias name
-					varInXyz = iEngine_get_variableName_fromComponent(thisCode, compIn, &llManufacturedAliasName);
+					varInWorkArea = iEngine_get_variableName_fromComponent(thisCode, compIn, &llManufacturedAliasName);
 				}
 			}
 
@@ -8173,33 +8285,33 @@ debug_break;
 		//////////
 		// See if they specified an integer or character for the SELECT()
 		//////
-			if (varInXyz)
+			if (varInWorkArea)
 			{
 				//////////
 				// See what they specified
 				//////
-					if (iVariable_isTypeNumeric(varInXyz))
+					if (iVariable_isTypeNumeric(varInWorkArea))
 					{
 						// They're are specifying a number
-						lnWorkArea = iiVariable_getAs_s32(thisCode, varInXyz, false, &error, &errorNum);
+						lnWorkArea = iiVariable_getAs_s32(thisCode, varInWorkArea, false, &error, &errorNum);
 						if (error)	{ iError_reportByNumber(thisCode, errorNum, compIn, false); return; }
 
-					} else if (iVariable_isTypeCharacter(varInXyz)) {
+					} else if (iVariable_isTypeCharacter(varInWorkArea)) {
 						// They specified something character (could be a work area letter, or alias)
-						if (iDbf_isWorkAreaLetter(thisCode, varInXyz))
+						if (iDbf_isWorkAreaLetter(thisCode, varInWorkArea))
 						{
 							// Work area letter
-							lnWorkArea = (s32)iUpperCase(varInXyz->value.data_s8[0]) - (s32)'A' + 1;
+							lnWorkArea = (s32)iUpperCase(varInWorkArea->value.data_s8[0]) - (s32)'A' + 1;
 
 						} else {
 							// Alias name
-							lnWorkArea = (s32)iDbf_get_workArea_byAlias(thisCode, varInXyz, null);
+							lnWorkArea = (s32)iDbf_get_workArea_byAlias(thisCode, varInWorkArea, null);
 						}
 
 						// Did we get a valid work area?
 						if (lnWorkArea < 0)
 						{
-							iError_reportByNumber(thisCode, _ERROR_ALIAS_NOT_FOUND, iVariable_compRelated(thisCode, varInXyz), false);
+							iError_reportByNumber(thisCode, _ERROR_ALIAS_NOT_FOUND, iVariable_compRelated(thisCode, varInWorkArea), false);
 							goto clean_exit;
 						}
 						// If we get here, we have our work area number
@@ -8212,7 +8324,7 @@ debug_break;
 
 			} else {
 				// Just grab the current work area
-				lnWorkArea = (s32)iDbf_get_workArea_current(thisCode, null);
+				lnWorkArea = (s32)iDbf_get_workArea_current(thisCode, cgcDbfKeyName);
 			}
 
 
@@ -8281,6 +8393,7 @@ debug_break;
 			if (!compAgain)
 			{
 				// No AGAIN clause was specified, so make sure it isn't already found as being in use
+// TODO:  Need FULLPATH() here
 				if (iDbf_get_workArea_byTablePathname(thisCode, varTableName, null) >= 0)
 				{
 					// It was found, which means it's already in use
@@ -8347,32 +8460,11 @@ debug_break;
 		// Get the alias
 		//////
 			iDbf_set_workArea_current(thisCode, (u32)lnWorkArea, null);
-			lnWorkArea = iDbf_open(thisCode, varTableName, varAliasName, llIsExclusive, (compAgain != NULL), (compValidate != NULL));
+			lnWorkArea = iDbf_open(thisCode, varTableName, varAliasName, llIsExclusive, (compAgain != NULL), (compValidate != NULL), (compDescending != NULL));
 			if (lnWorkArea < 0)
 			{
 				// The negative work area number indicates the error
-				switch (lnWorkArea)
-				{
-					case -1:
-						// General error
-						iError_reportByNumber(thisCode, _ERROR_UNABLE_TO_OPEN_TABLE, compUse, false);
-						break;
-
-					case -2:
-						// Work area is not free
-						iError_reportByNumber(thisCode, _ERROR_WORK_AREA_ALREADY_IN_USE, compUse, false);
-						break;
-
-					case -3:
-						// Error in DBC
-						iError_reportByNumber(thisCode, _ERROR_ERROR_OPENING_DBC, compUse, false);
-						break;
-
-					default:
-						// Unexpected error (shouldn't happen)
-						iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, compUse, false);
-						break;
-				}
+				iError_signal(thisCode, iDbf_translateError(thisCode, lnWorkArea), compUse, false, NULL, false);
 
 			} else {
 				// Set any meta data about the table
@@ -8395,7 +8487,7 @@ debug_break;
 
 clean_exit:
 			// Release variables
-			if (varInXyz)			iVariable_delete(thisCode, varInXyz,		true);
+			if (varInWorkArea)		iVariable_delete(thisCode, varInWorkArea,	true);
 			if (varTableName)		iVariable_delete(thisCode, varTableName,	true);
 			if (varAliasName)		iVariable_delete(thisCode, varAliasName,	true);
 	}

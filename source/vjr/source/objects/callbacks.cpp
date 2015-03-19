@@ -222,7 +222,7 @@
 			return(false);
 
 		// Grab the units
-		lnUnits = (u16)iiVariable_getAs_s32(thisCode, varUnits, false, NULL, NULL);
+		lnUnits = iiVariable_getAs_s32(thisCode, varUnits, false, NULL, NULL);
 
 
 		// Assume we consumed the mouse wheel, and that the parent doesn't need to receive it

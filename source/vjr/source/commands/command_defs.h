@@ -249,6 +249,7 @@ struct SThisCode;
 	SVariable*			function_sys								(SThisCode* thisCode, SVariable* varIndex, SVariable* varP1, SVariable* varP2, SVariable* varP3, SVariable* varP4, SVariable* varP5, SVariable* varP6);
 	SVariable*			iFunction_sys2015							(SThisCode* thisCode, u32 tnPrefixWidth, u32 tnPostfixWidth);
 	SVariable*			function_sysmetric							(SThisCode* thisCode, SVariable* varIndex);
+	SVariable*			function__test								(SThisCode* thisCode, SVariable* varIndex);
 	SVariable*			function_transform							(SThisCode* thisCode, SVariable* varVariable, SVariable* varFormat);
 	SVariable*			function_upper								(SThisCode* thisCode, SVariable* varString);
 	SVariable*			function_version							(SThisCode* thisCode, SVariable* varIndex);
@@ -274,6 +275,7 @@ struct SThisCode;
 //
 //////
 	void				command_clear								(SThisCode* thisCode, SComp* compClear);
+	bool				iiCommand_clear_last_callback				(SEM_callback* ecb);
 	bool				iiCommand_clear_keep_callback				(SEM_callback* ecb);
 	void				command_modify								(SThisCode* thisCode, SComp* compModify);
 	void				command_open								(SThisCode* thisCode, SComp* compOpen);
@@ -406,6 +408,7 @@ struct SThisCode;
 		{	_ICODE_STUFF,			1,			(uptr)&function_stuff,			3,				4,				&gsSourceLight_stuff[0]			},
 		{	_ICODE_SYS,				1,			(uptr)&function_sys,			1,				7,				&gsSourceLight_sys[0]			},
 		{	_ICODE_SYSMETRIC,		1,			(uptr)&function_sysmetric,		1,				1,				&gsSourceLight_sysmetric[0]		},
+		{	_ICODE__TEST,			1,			(uptr)&function__test,			1,				1,				NULL							},
 		{	_ICODE_TRANSFORM,		1,			(uptr)&function_transform,		1,				2,				&gsSourceLight_transform[0]		},
 		{	_ICODE_TRIM,			1,			(uptr)&function_rtrim,			1,				1,				&gsSourceLight_rtrim[0]			},
 		{	_ICODE_UPPER,			1,			(uptr)&function_upper,			1,				1,				&gsSourceLight_upper[0]			},

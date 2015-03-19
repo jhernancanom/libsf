@@ -104,12 +104,13 @@
 	// Errors
 	#define		_DBF_ERROR__INTERNAL_PROGRAMMER		-9999
 	#define		_DBF_OKAY							0
+	// Note:  Make sure these are sync'd up with iDbf_signalError()
 	#define		_DBF_ERROR_WORK_AREA_NOT_IN_USE		-1
 	#define		_DBF_ERROR_WORK_AREA_ALREADY_IN_USE	-2
-	#define		_DBF_ERROR_TABLE_NOT_FOUND			-3
+	#define		_DBF_ERROR_UNABLE_TO_OPEN_TABLE		-3
 	#define		_DBF_ERROR_ERROR_READING_HEADER1	-4
 	#define		_DBF_ERROR_UNKNOWN_TABLE_TYPE		-5
-	#define		_DBF_ERROR_MEMORY					-6
+	#define		_DBF_ERROR_MEMORY_ALLOCATION		-6
 	#define		_DBF_ERROR_ERROR_READING_HEADER2	-7
 	#define		_DBF_ERROR_TABLE_NAME_TOO_LONG		-8
 	#define		_DBF_ERROR_MEMORY_ROW				-9
@@ -121,6 +122,7 @@
 	#define		_DBF_ERROR_LOCKING					-15
 	#define		_DBF_ERROR_WRITING					-16
 	#define		_DBF_ERROR_SEEKING					-17
+	#define		_DBF_ERROR_NO_DATA					-18
 
 	// For field flags
 	#define 	_DBF_FIELD_SYSTEM					0x01

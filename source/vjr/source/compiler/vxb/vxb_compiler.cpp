@@ -5085,24 +5085,139 @@ debug_break;
 //        rather than a name-driven model.  However, names are still used nearly everywhere. :-)
 //
 //////
-	SVariable* iVariable_searchForName(SThisCode* thisCode, SVariable* varRoot, s8* tcVarName, u32 tnVarNameLength, SComp* comp)
+	SVariable* iVariable_searchForName(SThisCode* thisCode, s8* tcVarName, u32 tnVarNameLength, SComp* comp)
 	{
+		SThisCode*	thisCodeSearch;
 		SVariable*	var;
-		SComp*		compNext;
-		SComp*		compNext2;
 
 
+		//////////
 		// Make sure our environment is sane
-		var = NULL;
-		if (varRoot)
-		{
-			// Make sure our length is set
-			if (tnVarNameLength == -1)
-				tnVarNameLength = strlen(tcVarName);
+		//////
+			if (thisCode)
+			{
+				//////////
+				// Make sure our length is set
+				//////
+					if (tnVarNameLength == -1)
+						tnVarNameLength = strlen(tcVarName);
 
-			// Iterate from beginning through
-			var = varRoot;
-			while (var)
+
+				//////////
+				// Params
+				//////
+					var = iiVariable_searchForName_variables(thisCode, thisCode->live->params, tcVarName, tnVarNameLength, comp);
+					if (var)
+						return(var);
+
+
+				//////////
+				// Return variables
+				//////
+					var = iiVariable_searchForName_variables(thisCode, thisCode->live->returns, tcVarName, tnVarNameLength, comp);
+					if (var)
+						return(var);
+
+
+				///////////
+				// How are we searching for the rest?
+				//		(1) Params, (2) Returns,                   (3) Locals, (4) parent chain Private, (5) Globals,     (6) Fields
+				// or	(1) Params, (2) Returns,    (3) Fields,    (4) Locals, (5) parent chain Private, (6) Globals
+				//////
+					if (propGet_settings_VariablesFirst(_settings))
+					{
+						//////////
+						// (3) Locals
+						//////
+							var = iiVariable_searchForName_variables(thisCode, thisCode->live->locals, tcVarName, tnVarNameLength, comp);
+							if (var)
+								return(var);
+
+
+						//////////
+						// (4) Search recursively up the all stack for private variables
+						//////
+							for (thisCodeSearch = thisCode; thisCodeSearch; thisCodeSearch = (SThisCode*)thisCodeSearch->ll.prev)
+							{
+								// Search at this level
+								var = iiVariable_searchForName_variables(thisCode, thisCodeSearch->live->privates, tcVarName, tnVarNameLength, comp);
+								if (var)
+									return(var);
+							}
+
+
+						//////////
+						// (5) Globals
+						//////
+							var = iiVariable_searchForName_variables(thisCode, varGlobals, tcVarName, tnVarNameLength, comp);
+							if (var)
+								return(var);
+
+
+						//////////
+						// (6) Fields
+						//////
+							var = iiVariable_searchForName_fields(thisCode, tcVarName, tnVarNameLength, comp);
+							if (var)
+								return(var);
+
+					} else {
+						//////////
+						// (3) Fields
+						//////
+							var = iiVariable_searchForName_fields(thisCode, tcVarName, tnVarNameLength, comp);
+							if (var)
+								return(var);
+
+
+						//////////
+						// (4) Locals
+						//////
+							var = iiVariable_searchForName_variables(thisCode, thisCode->live->locals, tcVarName, tnVarNameLength, comp);
+							if (var)
+								return(var);
+
+
+						//////////
+						// (5) Search recursively up the all stack for private variables
+						//////
+							for (thisCodeSearch = thisCode; thisCodeSearch; thisCodeSearch = (SThisCode*)thisCodeSearch->ll.prev)
+							{
+								// Search at this level
+								var = iiVariable_searchForName_variables(thisCode, thisCodeSearch->live->privates, tcVarName, tnVarNameLength, comp);
+								if (var)
+									return(var);
+							}
+
+
+						//////////
+						// (6) Globals
+						//////
+							var = iiVariable_searchForName_variables(thisCode, varGlobals, tcVarName, tnVarNameLength, comp);
+							if (var)
+								return(var);
+					}
+			}
+
+
+		//////////
+		// If we get here, not found
+		//////
+			return(NULL);
+	}
+
+	SVariable* iiVariable_searchForName_variables(SThisCode* thisCode, SVariable* varRoot, s8* tcVarName, u32 tnVarNameLength, SComp* comp)
+	{
+		s32			lnDepth;
+		SComp*		compNext1;
+		SComp*		compNext2;
+		SVariable*	var;
+
+
+		//////////
+		// Iterate through until we find it
+		//////
+			for (var = varRoot, lnDepth = 0; var; var = (SVariable*)var->ll.next)
 			{
 				// Is the name the same length?  And if so, does it match?
 				if (var->name.length == (s32)tnVarNameLength && _memicmp(tcVarName, var->name.data, tnVarNameLength) == 0)
@@ -5112,7 +5227,7 @@ debug_break;
 					{
 						case _VAR_TYPE_OBJECT:
 							// If the next component is a ., and the one after that is an alpha or alphanumeric, then they are referencing an object property
-							if ((compNext = comp->ll.nextComp) && compNext->iCode == _ICODE_DOT && (compNext2 = compNext->ll.nextComp) && (compNext2->iCode == _ICODE_ALPHA || compNext2->iCode == _ICODE_ALPHANUMERIC))
+							if ((compNext1 = comp->ll.nextComp) && compNext1->iCode == _ICODE_DOT && (compNext2 = compNext1->ll.nextComp) && (compNext2->iCode == _ICODE_ALPHA || compNext2->iCode == _ICODE_ALPHANUMERIC))
 							{
 								// We've found something like "lo." where lo is an object, and there is a name reference after it
 								var = iObj_getPropertyAsVariable(thisCode, var->obj, compNext2->line->sourceCode->data + compNext2->start, compNext2->length, compNext2);
@@ -5122,7 +5237,7 @@ debug_break;
 
 						case _VAR_TYPE_THISCODE:
 							// They could be referencing a variable from that location
-							if ((compNext = comp->ll.nextComp) && compNext->iCode == _ICODE_DOT)
+							if ((compNext1 = comp->ll.nextComp) && compNext1->iCode == _ICODE_DOT)
 							{
 								// We've found something like "fred." where fred is a thisCode, and there is a name reference after it
 // TODO:  We need to search the thisCode object for the indicated name
@@ -5133,19 +5248,26 @@ debug_break;
 					}
 
 // TODO:  A possible performance enhancement here would be to move this variable to the top of its ll chain if it's below, say, the 10th position...
-// TODO:  A system variable SET OPTIMIZEVARIABLES TO nValue could be used instead of 10 ... to allow runtime peculiarities to be examined
+// 					if (lnDepth > propGet_settings_optimizeVariablesDepth(_settings) && propGet_settings_ncset_optimizeVariables(_settings))
+// 					{
+// 						// It can be moved up in the chain here
+// 						// iLl_deleteNode(..., false);
+// 						// iLl_appendExistingNodeAtBeginning(...);
+// 					}
+// TODO:  A second performance enhancement, would be to set a trigger on the ncset variable, so that when it's changed it updates a common global public structure containing these variables which can be accessed immediately, rather than through SVariable protocols
 
 					// If we get here, this is our variable
 					return(var);
 				}
-
-				// Move to next variable
-				var = (SVariable*)var->ll.next;
 			}
-		}
 
 		// Indicate our status
 		return(var);
+	}
+
+	SVariable* iiVariable_searchForName_fields(SThisCode* thisCode, s8* tcVarName, u32 tnVarNameLength, SComp* comp)
+	{
+		return(iDbf_getField_byName2_asVariable(thisCode, iDbf_get_workArea_current_wa(thisCode, cgcDbfKeyName), (u8*)tcVarName, tnVarNameLength));
 	}
 
 

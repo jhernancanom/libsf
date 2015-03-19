@@ -668,6 +668,7 @@
 		{ cgc_xmltocursor,			11,			false,		_ICODE_XMLTOCURSOR,						false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_xmlupdategram,		13,			false,		_ICODE_XMLUPDATEGRAM,					false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_year,					4,			false,		_ICODE_YEAR,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
+		{ cgc__test,				5,			false,		_ICODE__TEST,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 
 // Temporarily added until the processing engine is completed
 		{ cgc_concatenate,			11,			false,		_ICODE_CONCATENATE,						false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
@@ -843,6 +844,7 @@
 		{ cgc_keyboard,				8,			false,		_ICODE_KEYBOARD,						false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_keycomp,				7,			false,		_ICODE_KEYCOMP,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_label,				5,			false,		_ICODE_LABEL,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
+		{ cgc_last,					4,			false,		_ICODE_LAST,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_lelse,				5,			false,		_ICODE_LELSE,							false,				_ICAT_FLOW,			&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_library,				7,			false,		_ICODE_LIBRARY,							false,				_ICAT_GENERIC,		&colorSynHi_command,		false,						null0,		null0 },
 		{ cgc_lif,					3,			false,		_ICODE_LIF,								false,				_ICAT_FLOW,			&colorSynHi_command,		false,						null0,		null0 },

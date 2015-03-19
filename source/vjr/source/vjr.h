@@ -189,6 +189,14 @@
 
 	#include "bmps\graphics\bitmaps.h"
 
+
+	//////////
+	// Added for test purposes
+	//////
+		void iTest1(void);
+		#include "test\test.cpp"
+
+
 	//////////
 	// Source files are all included in this one source file
 	// for ease of compilation across platforms and compilers.
@@ -331,6 +339,14 @@
 
 	#include "bmps/graphics/bitmaps.h"
 
+
+	//////////
+	// Added for test purposes
+	//////
+		void iTest1(void);
+		#include "test/test.cpp"
+
+
 	//////////
 	// Source files are all included in this one source file
 	// for ease of compilation across platforms and compilers.
@@ -371,10 +387,3 @@
 #else
 	#error Unknown target for compilation (must be Windows or Linux)
 #endif
-
-
-//////////
-// Added for test purposes
-//////
-	void iTest_execute(void);
-	#include "test/test.cpp"

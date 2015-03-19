@@ -857,6 +857,50 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="forms3d"
+					>
+					<File
+						RelativePath="..\..\source\forms3d\grace.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|x64"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|x64"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\source\forms3d\grace.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="dbf"
@@ -1647,10 +1691,10 @@
 				</Filter>
 			</Filter>
 			<Filter
-				Name="forms3d"
+				Name="disk"
 				>
 				<File
-					RelativePath="..\..\source\forms3d\grace.cpp"
+					RelativePath="..\..\..\..\utils\common\cpp\disk.cpp"
 					>
 					<FileConfiguration
 						Name="Debug|Win32"
@@ -1686,7 +1730,7 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\source\forms3d\grace.h"
+					RelativePath="..\..\..\..\utils\common\cpp\disk.h"
 					>
 				</File>
 			</Filter>

@@ -151,9 +151,11 @@ struct SFieldRecord2;
 	// User interaction functions
 	bool				iiDbf_continueWithLockOperation					(SThisCode* thisCode, SDiskLockCallback* dcb, s32 tnAttempts, s32 tnMillisecondsSpentThusFar);
 
+	s32					iDbf_translateError								(SThisCode* thisCode, s32 tnDbfErrorCode);
+
 	// DBF functions
-	uptr				iDbf_open										(SThisCode* thisCode, SVariable* table,	SVariable* alias,	bool tlExclusive, bool tlAgain, bool tlValidate);
-	uptr				iDbf_open										(SThisCode* thisCode, cs8* table,		cs8* alias,			bool tlExclusive, bool tlAgain, bool tlValidate);
+	uptr				iDbf_open										(SThisCode* thisCode, SVariable* table,	SVariable* alias,	bool tlExclusive, bool tlAgain, bool tlValidate, bool tlDescending);
+	uptr				iDbf_open										(SThisCode* thisCode, cs8* table,		cs8* alias,			bool tlExclusive, bool tlAgain, bool tlValidate, bool tlDescending);
 	uptr				iDbf_openRemote									(SThisCode* thisCode, s8* connString);
 	uptr				iDbf_cacheAllRowData							(SThisCode* thisCode, SWorkArea* wa);
 	uptr				iDbf_close										(SThisCode* thisCode, SWorkArea* wa);
@@ -163,6 +165,7 @@ struct SFieldRecord2;
 	bool				iDbf_isWorkAreaLetter							(SThisCode* thisCode, SVariable* var);
 	sptr				iDbf_set_workArea_current						(SThisCode* thisCode, u32 tnWorkArea,			cu8* tcSpecialKeyName);
 	sptr				iDbf_get_workArea_current						(SThisCode* thisCode, 							cu8* tcSpecialKeyName);
+	SWorkArea*			iDbf_get_workArea_current_wa					(SThisCode* thisCode, 							cu8* tcSpecialKeyName);
 	sptr				iDbf_get_workArea_lowestFree					(SThisCode* thisCode, 							cu8* tcSpecialKeyName);
 	sptr				iDbf_get_workArea_highestFree					(SThisCode* thisCode, 							cu8* tcSpecialKeyName);
 	sptr				iDbf_get_workArea_byTablePathname				(SThisCode* thisCode, SVariable* varPathname,	cu8* tcSpecialKeyName);
@@ -193,13 +196,14 @@ struct SFieldRecord2;
 	s8*					iiDbf_getField_data2							(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength, bool tlRetrieveAsIndexKey);
 	uptr				iDbf_getField_dataOffset						(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber);
 	uptr				iDbf_getIndexFixupOp							(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber);
-	uptr				iDbf_setField_data								(SThisCode* thisCode, SWorkArea* wa, s32 fieldNumber, u8* dest, u32 destLength);
+	uptr				iDbf_setField_data								(SThisCode* thisCode, SWorkArea* wa, s32 fieldNumber, u8* dest, u32 destLength, bool tlPartOfATransaction);
 	uptr				iDbf_getField_validateContents					(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* src, u32 srcLength);
 
 	SFieldRecord1*		iDbf_getField_byName1							(SThisCode* thisCode, SWorkArea* wa, cu8* fieldName);
 	SFieldRecord1*		iDbf_getField_byNumber1							(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber);
 	SFieldRecord2*		iDbf_getField_byName2							(SThisCode* thisCode, SWorkArea* wa, cu8* fieldName);
 	SFieldRecord2*		iDbf_getField_byNumber2							(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber);
+	SVariable*			iDbf_getField_byName2_asVariable				(SThisCode* thisCode, SWorkArea* wa, u8* fieldName, u32 fieldNameLength);
 	u8					iDbf_getField_type								(SThisCode* thisCode, SWorkArea* wa, u8* keyExpression, bool* swapEndians, bool* needsSignBitToggled);
 	uptr				iDbf_getField_name								(SThisCode* thisCode, u8* expression, const u8* foundFieldName);
 

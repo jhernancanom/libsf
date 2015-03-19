@@ -440,7 +440,7 @@ struct SObjPropMap;
 	bool					iiEventDispatch_onMouseDown				(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks);
 	bool					iiEventDispatch_onMouseClickEx			(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks);
 	bool					iiEventDispatch_onMouseUp				(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks);
-	bool					iiEventDispatch_onMouseWheel			(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks, u32 tnDeltaY);
+	bool					iiEventDispatch_onMouseWheel			(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks, s32 tnDeltaY);
 	bool					iiEventDispatch_onKeyDown				(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, u16 tnAsciiChar, u16 tvKey, bool tlIsCAS, bool tlIsAscii);
 	bool					iiEventDispatch_onKeyUp					(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, u16 tnAsciiChar, u16 tvKey, bool tlIsCAS, bool tlIsAscii);
 

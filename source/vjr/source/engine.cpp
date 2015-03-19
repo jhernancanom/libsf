@@ -222,7 +222,7 @@
 
 							// If we get here, we have the variable they're storing
 							// Based on the name from comp, see if it's a variable we already possess
-							varExisting = iVariable_searchForName(NULL, varGlobals, comp->line->sourceCode->data + comp->start, comp->length, comp);
+							varExisting = iVariable_searchForName(thisCode, comp->line->sourceCode->data + comp->start, comp->length, comp);
 							if (varExisting)
 							{
 								// We are updating the value
@@ -504,10 +504,14 @@
 				case _ICODE_ALPHANUMERIC:
 				case _ICODE_ALPHA:
 					// It's some kind of text, could be a field or variable
+
+debug_break;
+// TODO:  Working here, making the retrieve variable logic smarter ...
+// In the component parser, needs to recognize filename patterns (drive:\...\... and \\server\...\... forms) before further processing so they do not hit as alpha or alphanumeric
 					if (propGet_settings_VariablesFirst(_settings))
 					{
 						// Searching variables first, field names last.
-						if ((var = iVariable_searchForName(NULL, varGlobals, comp->line->sourceCode->data + comp->start, comp->length, comp)))
+						if ((var = iVariable_searchForName(thisCode, comp->line->sourceCode->data + comp->start, comp->length, comp)))
 						{
 							// It was found in the global variables
 
@@ -524,7 +528,7 @@
 							// It was found in a table field
 							return(var);
 
-						} else*/ if ((var = iVariable_searchForName(NULL, varGlobals, comp->line->sourceCode->data + comp->start, comp->length, comp))) {
+						} else*/ if ((var = iVariable_searchForName(thisCode, comp->line->sourceCode->data + comp->start, comp->length, comp))) {
 							// It was found in the global variables
 						}
 					}
@@ -785,7 +789,7 @@
 		//////////
 		// Locate the variable
 		//////
-			varTally = iVariable_searchForName(NULL, varGlobals, (s8*)cgcName_tally, -1, NULL);
+			varTally = iiVariable_searchForName_variables(thisCode, varGlobals, (s8*)cgcName_tally, -1, NULL);
 			if (!varTally)
 			{
 				// This should never happen
@@ -1031,10 +1035,10 @@
 
 			// Delete the items
 			iFunction_politelyDeleteChain(&sc->firstFunction);
-			iVariable_politelyDeleteChain(&sc->params,	true);
-			iVariable_politelyDeleteChain(&sc->globals,	true);
-			iVariable_politelyDeleteChain(&sc->locals,	true);
-			iVariable_politelyDeleteChain(&sc->returns,	true);
-			iVariable_politelyDeleteChain(&sc->scoped,	true);
+			iVariable_politelyDeleteChain(&sc->params,		true);
+			iVariable_politelyDeleteChain(&sc->returns,		true);
+			iVariable_politelyDeleteChain(&sc->privates,	true);
+			iVariable_politelyDeleteChain(&sc->locals,		true);
+			iVariable_politelyDeleteChain(&sc->scoped,		true);
 		}
 	}

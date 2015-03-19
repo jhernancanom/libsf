@@ -122,10 +122,10 @@
 		SFunction*		firstFunction;			// First function in the program
 
 		SVariable*		params;					// The first parameter in the function
-		SVariable*		globals;				// The first global variable declared
-		SVariable*		locals;					// The first local variable declared
 		SVariable*		returns;				// The first return variable declared
-		SVariable*		scoped;					// The first scoped/temporary variable needed by the function
+		SVariable*		privates;				// The first private variable declared
+		SVariable*		locals;					// The first local variable declared
+		SVariable*		scoped;					// The first scoped/temporary variable used by the function
 
 		SEM*			sourceCode;				// The source code for this program
 	};

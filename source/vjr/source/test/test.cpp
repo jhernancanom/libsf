@@ -87,21 +87,17 @@
 // Added to allow a simple place to execute various tests.
 //
 //////
-	void iTest_execute(void)
+	void iTest1(void)
 	{
 		uptr lnWorkArea;
 
-//return;
 
 		//////////
 		// Open the test table
 		//////
-			lnWorkArea = iDbf_open(NULL, "c:\\libsf_offline\\source\\vjr\\test\\cdx\\test.dbf", "test", true, false, true);
+			lnWorkArea = iDbf_open(NULL, "c:\\libsf_offline\\source\\vjr\\test\\cdx\\test.dbf", "test", true, false, true, false);
 			if (lnWorkArea > _UPTR_ERROR)
-			{
-				// An error occurred
-				debug_break;
-			}
+				debug_break;	// An error occurred
 
 
 		//////////

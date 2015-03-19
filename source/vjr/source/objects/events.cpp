@@ -226,7 +226,7 @@
 			if (!varAlt_onMouseWheel)			varAlt_onMouseWheel		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
 			if (!varShift_onMouseWheel)			varShift_onMouseWheel	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
 			if (!varClick_onMouseWheel)			varClick_onMouseWheel	= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
-			if (!varDeltaY_onMouseWheel)		varDeltaY_onMouseWheel	= iVariable_create(thisCode, _VAR_TYPE_U32,		NULL);
+			if (!varDeltaY_onMouseWheel)		varDeltaY_onMouseWheel	= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
 
 
 		//////////
@@ -466,7 +466,7 @@
 // SVariable variables, so as to align with conventional source code processing.
 //
 //////
-	bool iiEventDispatch_onMouseWheel(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks, u32 tnDeltaY)
+	bool iiEventDispatch_onMouseWheel(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks, s32 tnDeltaY)
 	{
 		//////////
 		// Prepare for dispatch
@@ -477,7 +477,7 @@
 			iVariable_set_logical	(thisCode, varAlt_onMouseWheel,			((tlAlt)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
 			iVariable_set_logical	(thisCode, varShift_onMouseWheel,		((tlShift)	? _LOGICAL_TRUE : _LOGICAL_FALSE));
 			iVariable_set_s32		(thisCode, varClick_onMouseWheel,		tnClicks);
-			iVariable_set_u32		(thisCode, varDeltaY_onMouseWheel,		tnDeltaY);
+			iVariable_set_s32		(thisCode, varDeltaY_onMouseWheel,		tnDeltaY);
 
 
 		//////////

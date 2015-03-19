@@ -111,7 +111,7 @@
 //		tnExplicitIndexType	--
 //
 //////
-	u32 cdx_open(SThisCode* thisCode, SWorkArea* wa, s8* tcCdxFilename, u32 tnCdxFilenameLength, u32 tnExplicitIndexType, bool tlValidate)
+	u32 cdx_open(SThisCode* thisCode, SWorkArea* wa, s8* tcCdxFilename, u32 tnCdxFilenameLength, u32 tnExplicitIndexType, bool tlValidate, bool tlDescending)
 	{
 		bool		llIsValid;
 		u64			lnFileSize, lnNumread;
@@ -247,10 +247,11 @@
 					if (wa->isIdxCompact)
 					{
 						// Compact IDX headers need to be stored in the CDX structure
-						wa->cdx_root				= (SCdxHeader*)wa->idx_header;
-						wa->idx_header				= NULL;
-						wa->isIndexLoaded			= _YES;
-						wa->cdx_root->fileSize		= (u32)lnFileSize;
+						wa->cdx_root			= (SCdxHeader*)wa->idx_header;
+						wa->idx_header			= NULL;
+						wa->isIndexLoaded		= true;
+						wa->isDescending		= tlDescending;
+						wa->cdx_root->fileSize	= (u32)lnFileSize;
 					}
 
 			} else /* It's CDX */ {
@@ -303,9 +304,10 @@
 				//////////
 				// Indicate it's a compact index, store the file size manually
 				//////
-					wa->isIdxCompact			= true;		// All CDXs are compact indexes
-					wa->isIndexLoaded			= _YES;
-					wa->cdx_root->fileSize		= (u32)lnFileSize;
+					wa->isIdxCompact		= true;		// All CDXs are compact indexes
+					wa->isIndexLoaded		= true;
+					wa->isDescending		= tlDescending;
+					wa->cdx_root->fileSize	= (u32)lnFileSize;
 
 
 				//////////
@@ -414,7 +416,7 @@
 				//////////
 				// No longer open
 				//////
-					wa->isIndexLoaded = _NO;
+					wa->isIndexLoaded = false;
 
 				// Indicate success
 				return(0);
@@ -551,7 +553,7 @@
 		// Validate that our environment is sane
 		//////
 			if (tnWorkArea >= _MAX_DBF_SLOTS)								return(_DBF_ERROR_INVALID_WORK_AREA);
-			if (gsWorkArea[tnWorkArea].isUsed != _YES)						return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
+			if (!gsWorkArea[tnWorkArea].isUsed)								return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 			if (tnKeyLength == 0 || tnKeyLength > _MAX_CDX_KEY_LENGTH)		return(_CDX_ERROR_INVALID_KEY_LENGTH);
 			if (!tcKey)														return(_CDX_ERROR_INVALID_KEY);
 
@@ -624,8 +626,8 @@
 		//////////
 		// Validate that our environment is sane
 		//////
-			if (tnWorkArea >= _MAX_DBF_SLOTS)				return(_DBF_ERROR_INVALID_WORK_AREA);
-			if (gsWorkArea[tnWorkArea].isUsed != _YES)		return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
+			if (tnWorkArea >= _MAX_DBF_SLOTS)			return(_DBF_ERROR_INVALID_WORK_AREA);
+			if (!gsWorkArea[tnWorkArea].isUsed)			return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		//////////
@@ -737,8 +739,8 @@
 		//////////
 		// Validate that our environment is sane
 		//////
-			if (tnWorkArea >= _MAX_DBF_SLOTS)				return(_DBF_ERROR_INVALID_WORK_AREA);
-			if (gsWorkArea[tnWorkArea].isUsed != _YES)		return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
+			if (tnWorkArea >= _MAX_DBF_SLOTS)			return(_DBF_ERROR_INVALID_WORK_AREA);
+			if (!gsWorkArea[tnWorkArea].isUsed)			return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		//////////
@@ -774,8 +776,8 @@
 		//////////
 		// Validate that our environment is sane
 		//////
-			if (tnWorkArea >= _MAX_DBF_SLOTS)				return(_DBF_ERROR_INVALID_WORK_AREA);
-			if (gsWorkArea[tnWorkArea].isUsed != _YES)		return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
+			if (tnWorkArea >= _MAX_DBF_SLOTS)			return(_DBF_ERROR_INVALID_WORK_AREA);
+			if (!gsWorkArea[tnWorkArea].isUsed)			return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		//////////
@@ -813,8 +815,8 @@
 		//////////
 		// Validate that our environment is sane
 		//////
-			if (tnWorkArea >= _MAX_DBF_SLOTS)				return(_DBF_ERROR_INVALID_WORK_AREA);
-			if (gsWorkArea[tnWorkArea].isUsed != _YES)		return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
+			if (tnWorkArea >= _MAX_DBF_SLOTS)			return(_DBF_ERROR_INVALID_WORK_AREA);
+			if (!gsWorkArea[tnWorkArea].isUsed)			return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
 		//////////
