@@ -244,6 +244,16 @@
 		{	0,										0,	0,	0,	0,	0	},
 	};
 
+	SSourceLightData gsSourceLight_abs[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_acos[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_alp[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -254,7 +264,17 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_asin[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_at[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_atan[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
@@ -355,6 +375,11 @@
 	};
 
 	SSourceLightData gsSourceLight_forcestem[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_fv[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
@@ -486,6 +511,11 @@
 	};
 
 	SSourceLightData gsSourceLight_proper[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_pv[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};

@@ -611,6 +611,70 @@
 
 //////////
 //
+// Function: ABS()
+// Returns the absolute value of the specified numeric expression.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.18.2015
+//////
+// Change log:
+//     Mar.18.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    ABS(n) of the value in p1
+//////
+// Example:
+//    ? ABS(-10)		&& Display 10
+//////
+    SVariable* function_abs(SThisCode* thisCode, SVariable* varNumber)
+    {
+		// Return abs
+		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_ABS, _VAR_TYPE_F64, true));
+	}
+
+
+
+
+//////////
+//
+// Function: ACOS()
+// Returns the arc cosine of a specified numeric expression.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.18.2015
+//////
+// Change log:
+//     Mar.18.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    ACOS(n) of the value in p1
+//////
+// Example:
+//    ? ACOS(0)		&& Display 1.57
+//////
+    SVariable* function_acos(SThisCode* thisCode, SVariable* varNumber)
+    {
+		// Return acos
+		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_ACOS, _VAR_TYPE_F64, false));
+	}
+
+
+
+
+//////////
+//
 // Function: ADDBS()
 // Adds a backslash to a path if it needs one
 //
@@ -1178,6 +1242,70 @@
 
 //////////
 //
+// Function: ASIN()
+// Returns in radians the arc sine of a numeric expression.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.18.2015
+//////
+// Change log:
+//     Mar.18.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    ASIN(n) of the value in p1
+//////
+// Example:
+//    ? ASIN(1)		&& Display 1.57
+//////
+    SVariable* function_asin(SThisCode* thisCode, SVariable* varNumber)
+    {
+		// Return asin
+		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_ASIN, _VAR_TYPE_F64, false));
+	}
+
+
+
+
+//////////
+//
+// Function: ATAN()
+// Returns in radians the arc tangent of a numeric expression.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.18.2015
+//////
+// Change log:
+//     Mar.18.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    ATAN(n) of the value in p1
+//////
+// Example:
+//    ? ATAN(1.57)		&& Display 1.00
+//////
+    SVariable* function_atan(SThisCode* thisCode, SVariable* varNumber)
+    {
+		// Return atan
+		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_ATAN, _VAR_TYPE_F64, false));
+	}
+	
+
+
+
+//////////
+//
 // Functions:  AT(), ATC(), RAT(), RATC()
 // Takes a character input to search for, an expression to search, and an optional occurrence
 // to find, with and optionally with regard to case (trailing "C").
@@ -1486,7 +1614,6 @@
     SVariable* function_ceiling(SThisCode* thisCode, SVariable* varNumber)
     {
         // Return ceiling
-
         return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_CEILING, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings)));
 	}
 
@@ -1943,7 +2070,7 @@
 //////
     SVariable* function_cos(SThisCode* thisCode, SVariable* varNumber)
     {
-		// Return exp
+		// Return cos
 		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_COS, _VAR_TYPE_F64, false));
 	}
 
@@ -2318,7 +2445,7 @@
 //////
     SVariable* function_dtor(SThisCode* thisCode, SVariable* varNumber)
     {
-		// Return exp
+		// Return dtor
 		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_DTOR, _VAR_TYPE_F64, false));
 	}
 
@@ -2354,7 +2481,7 @@
 	}
 
 	// Common numeric functions used for EXP(), LOG(), LOG10(), PI(), SQRT(), CEILING(), FLOOR(), DTOR(), RTOD().
-    SVariable* ifunction_numbers_common(SThisCode* thisCode, SVariable* varNumber, u32 functionType, const u32 resultType, bool sameInputType)
+    SVariable* ifunction_numbers_common(SThisCode* thisCode, SVariable* varNumber, u32 tnFunctionType, const u32 tnResultType, bool tlSameInputType)
     {
 		f64			lfValue;
 		u32			errorNum;
@@ -2391,7 +2518,7 @@
 		//////////
 		// Compute numeric function
 		//////
-			switch (functionType)
+			switch (tnFunctionType)
 			{
 
 // SQRT()
@@ -2443,7 +2570,7 @@
 					//////////
 					// Compute
 					//////
-						if (functionType == _FP_COMMON_LOG)		lfValue = log(lfValue);	
+						if (tnFunctionType == _FP_COMMON_LOG)		lfValue = log(lfValue);	
 						else									lfValue = log10(lfValue);	
 						break;
 
@@ -2476,6 +2603,52 @@
 				case _FP_COMMON_SIN:
 					lfValue = sin(lfValue);
 					break;
+
+// ABS()
+				case _FP_COMMON_ABS:
+					lfValue = abs(lfValue);
+					break;
+
+// ACOS()
+// ASIN()
+				case _FP_COMMON_ACOS:
+				case _FP_COMMON_ASIN:
+
+					//////////
+					// Verify p1 > 0
+					//////
+						if (lfValue < -1 || lfValue > 1)
+						{
+							// Oops!
+							iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_compRelated(thisCode, varNumber), false);
+							return(NULL);
+						}
+
+					//////////
+					// Compute
+					//////
+						if (tnFunctionType == _FP_COMMON_ACOS)		lfValue = acos(lfValue);	
+						else										lfValue = asin(lfValue);
+					break;
+
+// ATAN()
+				case _FP_COMMON_ATAN:
+
+					//////////
+					// Verify p1 > 0
+					//////
+						if (lfValue < -_MATH_PI2 || lfValue > _MATH_PI2)
+						{
+							// Oops!
+							iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_compRelated(thisCode, varNumber), false);
+							return(NULL);
+						}
+
+					//////////
+					// Compute
+					//////
+						lfValue = atan(lfValue);	
+					break;
 				default:
 					// Programmer error... this is an internal function and we should never get here
 					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_compRelated(thisCode, varNumber), false);
@@ -2486,8 +2659,8 @@
 		//////////
 		// Create output variable
 		//////
-			if (sameInputType)	result = iVariable_create(thisCode, varNumber->varType, NULL);
-			else				result = iVariable_create(thisCode, resultType, NULL); 
+			if (tlSameInputType)	result = iVariable_create(thisCode, varNumber->varType, NULL);
+			else				result = iVariable_create(thisCode, tnResultType, NULL); 
 
 			if (!result)
 			{
@@ -2651,6 +2824,144 @@
 	{
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
 		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Function: FV()
+// Returns the future value of a financial investment.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.18.2015
+//////
+// Change log:
+//     Mar.18.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Numeric or floating point
+//
+//////
+// Returns:
+//    FV(n) of the value in p1
+//////
+// Example:
+//   ? FV(500, 0.006, 48)	&& Displays 27717.50
+//////
+	SVariable* function_fv(SThisCode* thisCode, SVariable* nPayment, SVariable* nInterestRate, SVariable* nPeriods)
+	{
+		return ifunction_fv_pv_common(thisCode, nPayment, nInterestRate, nPeriods, true);
+	}
+
+    SVariable* ifunction_fv_pv_common(SThisCode* thisCode, SVariable* nPayment, SVariable* nInterestRate, SVariable* nPeriods, bool tlFV)
+    {
+		f64			lfFV_PV, lfPayment, lfInterestRate, lfPeriods;
+		bool		error;
+		u32			errorNum;
+		SVariable*	result;
+
+
+		//////////
+		// Parameter 1 must be numeric
+		//////
+			if (!iVariable_isValid(nPayment) || !iVariable_isTypeNumeric(nPayment))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, nPayment), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Parameter 2 must be numeric
+		//////
+			if (!iVariable_isValid(nInterestRate) || !iVariable_isTypeNumeric(nInterestRate))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_compRelated(thisCode, nInterestRate), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Parameter 3 must be numeric
+		//////
+			if (!iVariable_isValid(nPeriods) || !iVariable_isTypeNumeric(nPeriods))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_compRelated(thisCode, nPeriods), false);
+				return(NULL);
+			}
+
+		//////////
+		// Grab nPayment, convert to f64
+		//////
+			lfPayment = iiVariable_getAs_f64(thisCode, nPayment, false, &error, &errorNum);
+			if (error)
+			{
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, nPayment), false);
+				return(NULL);
+			}
+
+		//////////
+		// Grab nInterestRate, convert to f64
+		//////
+			lfInterestRate = abs(iiVariable_getAs_f64(thisCode, nInterestRate, false, &error, &errorNum));
+			if (error)
+			{
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, nInterestRate), false);
+				return(NULL);
+			}
+
+		//////////
+		// Grab nPeriods, convert to f64
+		//////
+			lfPeriods= abs(iiVariable_getAs_f64(thisCode, nPeriods, false, &error, &errorNum));
+			if (error)
+			{
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, nPeriods), false);
+				return(NULL);
+			}
+
+		//////////
+		// Compute the future value of a financial investment
+		//////
+			lfFV_PV = 0.0;
+			if ( tlFV )
+			{
+			//the future value of a financial investment
+				if (lfPayment != 0.0 && lfInterestRate != 0.0)
+					lfFV_PV = (pow((1 + lfInterestRate), lfPeriods) - 1) / lfInterestRate * lfPayment;
+			} else {
+			//the present value of an investment.
+				if (lfInterestRate != 0.0)
+					lfFV_PV = lfPayment * ((1 - pow((1 + lfInterestRate), -lfPeriods)) / lfInterestRate);
+			}
+		//////////
+		// Create output variable
+		//////
+			result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL);
+
+			if (!result)
+			{
+				iError_report(cgcInternalError, false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Set the value
+		//////
+			if (!iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfFV_PV, NULL, NULL, NULL, NULL))
+				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, nPayment), false);
+
+
+		//////////
+        // Return result
+		//////
+	        return result; 
+
 	}
 
 
@@ -4669,6 +4980,39 @@
 	        return result;
 	}
 
+	
+	
+	
+//////////
+//
+// Function: PV()
+// Returns the present value of an investment.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.18.2015
+//////
+// Change log:
+//     Mar.18.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Specifies the periodic payment amount.
+//     p2			-- Specifies the periodic interest rate.
+//     p3			-- Specifies the total number of payments.
+//
+//////
+// Returns:
+//    PV( ) computes the present value of an investment based on a series of equal periodic payments at a constant periodic interest rate.
+//////
+// Example:
+//   ? PV(500, 0.006, 48)	&& Displays 20799.41
+//////
+	SVariable* function_pv(SThisCode* thisCode, SVariable* nPayment, SVariable* nInterestRate, SVariable* nPeriods)
+	{
+		return ifunction_fv_pv_common(thisCode, nPayment, nInterestRate, nPeriods, false);
+	}
+
 
 
 
@@ -5661,7 +6005,7 @@
 //////
     SVariable* function_sin(SThisCode* thisCode, SVariable* varNumber)
     {
-		// Return exp
+		// Return sin
 		return(ifunction_numbers_common(thisCode, varNumber, _FP_COMMON_SIN, _VAR_TYPE_F64, false));
 	}
 
