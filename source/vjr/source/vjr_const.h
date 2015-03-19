@@ -833,6 +833,11 @@ typedef SEM**		SEMpp;
 	const u32			_FP_COMMON_ASIN						= 13;
 	const u32			_FP_COMMON_ATAN						= 14;
 	const u32			_FP_COMMON_ATN2						= 15;
+	const u32			_FP_COMMON_MOD						= 16;
+	const u32			_FP_COMMON_FV						= 17;
+	const u32			_FP_COMMON_PV						= 18;
+	const u32			_FP_COMMON_PAYMENT					= 19;
+	const u32			_FP_COMMON_TAN						= 20;
 
 
 //////////

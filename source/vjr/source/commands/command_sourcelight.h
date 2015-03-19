@@ -510,6 +510,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 	
+	SSourceLightData gsSourceLight_payment[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+	
 	SSourceLightData gsSourceLight_pi[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -620,6 +625,11 @@
 	};
 
 	SSourceLightData gsSourceLight_sysmetric[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+	
+	SSourceLightData gsSourceLight_tan[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
