@@ -1519,7 +1519,7 @@
 //    ATN2(y,x)
 //////
 // Example:
-//    ? ATN2(3.1415,2)		&& Display 1.00
+//    ? ATN2(5,3)		&& Display 1.03
 //////
 	SVariable* function_atn2(SThisCode* thisCode, SVariable* varY, SVariable* varX)
 	{
