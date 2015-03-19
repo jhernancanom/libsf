@@ -95,6 +95,9 @@
 	{
 // TODO:  This will need to potentially break the program execution
 		iError_reportByNumber(thisCode, tnErrorNum, comp, tlInvasive);
+
+		if (tlInvasive)
+			debug_break;
 	}
 
 

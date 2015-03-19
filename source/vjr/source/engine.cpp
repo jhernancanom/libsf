@@ -505,7 +505,7 @@
 				case _ICODE_ALPHA:
 					// It's some kind of text, could be a field or variable
 
-debug_break;
+debug_nop;
 // TODO:  Working here, making the retrieve variable logic smarter ...
 // In the component parser, needs to recognize filename patterns (drive:\...\... and \\server\...\... forms) before further processing so they do not hit as alpha or alphanumeric
 					if (propGet_settings_VariablesFirst(_settings))
@@ -789,7 +789,7 @@ debug_break;
 		//////////
 		// Locate the variable
 		//////
-			varTally = iiVariable_searchForName_variables(thisCode, varGlobals, (s8*)cgcName_tally, -1, NULL);
+			varTally = iiVariable_searchForName_variables(thisCode, varGlobals, (s8*)cgcName_tally, sizeof(cgcName_tally) - 1, NULL);
 			if (!varTally)
 			{
 				// This should never happen

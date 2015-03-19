@@ -3348,6 +3348,9 @@
 		SVariable*		var;
 
 
+// Temporarily disabled
+return(NULL);
+
 		//////////
 		// Check for errors
 		//////

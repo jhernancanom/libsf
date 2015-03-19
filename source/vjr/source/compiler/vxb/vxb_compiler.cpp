@@ -5092,111 +5092,117 @@ debug_break;
 
 
 		//////////
-		// Make sure our environment is sane
+		// Make sure our length is set
+		//////
+			if (tnVarNameLength == -1)
+				tnVarNameLength = strlen(tcVarName);
+
+
+		//////////
+		// Params
 		//////
 			if (thisCode)
 			{
+				var = iiVariable_searchForName_variables(thisCode, thisCode->live->params, tcVarName, tnVarNameLength, comp);
+				if (var)
+					return(var);
+			}
+
+
+		//////////
+		// Return variables
+		//////
+			if (thisCode)
+			{
+				var = iiVariable_searchForName_variables(thisCode, thisCode->live->returns, tcVarName, tnVarNameLength, comp);
+				if (var)
+					return(var);
+			}
+
+
+		///////////
+		// How are we searching for the rest?
+		//		(1) Params, (2) Returns,                   (3) Locals, (4) parent chain Private, (5) Globals,     (6) Fields
+		// or	(1) Params, (2) Returns,    (3) Fields,    (4) Locals, (5) parent chain Private, (6) Globals
+		//////
+			if (propGet_settings_VariablesFirst(_settings))
+			{
 				//////////
-				// Make sure our length is set
+				// (3) Locals
 				//////
-					if (tnVarNameLength == -1)
-						tnVarNameLength = strlen(tcVarName);
-
-
-				//////////
-				// Params
-				//////
-					var = iiVariable_searchForName_variables(thisCode, thisCode->live->params, tcVarName, tnVarNameLength, comp);
-					if (var)
-						return(var);
-
-
-				//////////
-				// Return variables
-				//////
-					var = iiVariable_searchForName_variables(thisCode, thisCode->live->returns, tcVarName, tnVarNameLength, comp);
-					if (var)
-						return(var);
-
-
-				///////////
-				// How are we searching for the rest?
-				//		(1) Params, (2) Returns,                   (3) Locals, (4) parent chain Private, (5) Globals,     (6) Fields
-				// or	(1) Params, (2) Returns,    (3) Fields,    (4) Locals, (5) parent chain Private, (6) Globals
-				//////
-					if (propGet_settings_VariablesFirst(_settings))
+					if (thisCode)
 					{
-						//////////
-						// (3) Locals
-						//////
-							var = iiVariable_searchForName_variables(thisCode, thisCode->live->locals, tcVarName, tnVarNameLength, comp);
-							if (var)
-								return(var);
-
-
-						//////////
-						// (4) Search recursively up the all stack for private variables
-						//////
-							for (thisCodeSearch = thisCode; thisCodeSearch; thisCodeSearch = (SThisCode*)thisCodeSearch->ll.prev)
-							{
-								// Search at this level
-								var = iiVariable_searchForName_variables(thisCode, thisCodeSearch->live->privates, tcVarName, tnVarNameLength, comp);
-								if (var)
-									return(var);
-							}
-
-
-						//////////
-						// (5) Globals
-						//////
-							var = iiVariable_searchForName_variables(thisCode, varGlobals, tcVarName, tnVarNameLength, comp);
-							if (var)
-								return(var);
-
-
-						//////////
-						// (6) Fields
-						//////
-							var = iiVariable_searchForName_fields(thisCode, tcVarName, tnVarNameLength, comp);
-							if (var)
-								return(var);
-
-					} else {
-						//////////
-						// (3) Fields
-						//////
-							var = iiVariable_searchForName_fields(thisCode, tcVarName, tnVarNameLength, comp);
-							if (var)
-								return(var);
-
-
-						//////////
-						// (4) Locals
-						//////
-							var = iiVariable_searchForName_variables(thisCode, thisCode->live->locals, tcVarName, tnVarNameLength, comp);
-							if (var)
-								return(var);
-
-
-						//////////
-						// (5) Search recursively up the all stack for private variables
-						//////
-							for (thisCodeSearch = thisCode; thisCodeSearch; thisCodeSearch = (SThisCode*)thisCodeSearch->ll.prev)
-							{
-								// Search at this level
-								var = iiVariable_searchForName_variables(thisCode, thisCodeSearch->live->privates, tcVarName, tnVarNameLength, comp);
-								if (var)
-									return(var);
-							}
-
-
-						//////////
-						// (6) Globals
-						//////
-							var = iiVariable_searchForName_variables(thisCode, varGlobals, tcVarName, tnVarNameLength, comp);
-							if (var)
-								return(var);
+						var = iiVariable_searchForName_variables(thisCode, thisCode->live->locals, tcVarName, tnVarNameLength, comp);
+						if (var)
+							return(var);
 					}
+
+
+				//////////
+				// (4) Search recursively up the all stack for private variables
+				//////
+					for (thisCodeSearch = thisCode; thisCodeSearch; thisCodeSearch = (SThisCode*)thisCodeSearch->ll.prev)
+					{
+						// Search at this level
+						var = iiVariable_searchForName_variables(thisCode, thisCodeSearch->live->privates, tcVarName, tnVarNameLength, comp);
+						if (var)
+							return(var);
+					}
+
+
+				//////////
+				// (5) Globals
+				//////
+					var = iiVariable_searchForName_variables(thisCode, varGlobals, tcVarName, tnVarNameLength, comp);
+					if (var)
+						return(var);
+
+
+				//////////
+				// (6) Fields
+				//////
+					var = iiVariable_searchForName_fields(thisCode, tcVarName, tnVarNameLength, comp);
+					if (var)
+						return(var);
+
+			} else {
+				//////////
+				// (3) Fields
+				//////
+					var = iiVariable_searchForName_fields(thisCode, tcVarName, tnVarNameLength, comp);
+					if (var)
+						return(var);
+
+
+				//////////
+				// (4) Locals
+				//////
+					if (thisCode)
+					{
+						var = iiVariable_searchForName_variables(thisCode, thisCode->live->locals, tcVarName, tnVarNameLength, comp);
+						if (var)
+							return(var);
+					}
+
+
+				//////////
+				// (5) Search recursively up the all stack for private variables
+				//////
+					for (thisCodeSearch = thisCode; thisCodeSearch; thisCodeSearch = (SThisCode*)thisCodeSearch->ll.prev)
+					{
+						// Search at this level
+						var = iiVariable_searchForName_variables(thisCode, thisCodeSearch->live->privates, tcVarName, tnVarNameLength, comp);
+						if (var)
+							return(var);
+					}
+
+
+				//////////
+				// (6) Globals
+				//////
+					var = iiVariable_searchForName_variables(thisCode, varGlobals, tcVarName, tnVarNameLength, comp);
+					if (var)
+						return(var);
 			}
 
 
