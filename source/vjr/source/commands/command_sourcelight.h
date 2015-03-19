@@ -284,6 +284,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_atn2[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_bgr[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
