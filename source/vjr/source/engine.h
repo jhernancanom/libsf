@@ -87,8 +87,8 @@
 //
 //////
 	const u32	_LOGICAL_TF						= 1;
-	const u32	_LOGICAL_YN						= 2;
-	const u32	_LOGICAL_UD						= 3;
+	const u32	_LOGICAL_UD						= 2;
+	const u32	_LOGICAL_YN						= 3;
 
 
 //////////
@@ -157,7 +157,7 @@
 
 	bool					iiEngine_getParametersBetween			(SThisCode* thisCode, SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable** p1, SVariable** p2, SVariable** p3, SVariable** p4, SVariable** p5, SVariable** p6, SVariable** p7);
 
-	void					iBreakpoint_delete						(SBreakpoint** breakpoint);
-	SBreakpoint* 			iBreakpoint_add							(SBreakpoint** breakpoint, u32 tnType);
+	void					iBreakpoint_delete						(SThisCode* thisCode, SBreakpoint** breakpoint);
+	SBreakpoint* 			iBreakpoint_add							(SThisCode* thisCode, SBreakpoint** breakpoint, u32 tnType);
 
-	void					iSourceCode_delete						(SSourceCode** sourceCode);
+	void					iSourceCode_delete						(SThisCode* thisCode, SSourceCode** sourceCode);

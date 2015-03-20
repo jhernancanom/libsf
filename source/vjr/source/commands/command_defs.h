@@ -119,8 +119,8 @@ struct SThisCode;
 //////
 	// Temporary error reporting until the proper engine is constructed.
 	void				iError_signal								(SThisCode* thisCode, u32 tnErrorNum, SComp* comp, bool tlInvasive, s8* tcExtraInfo, bool tlFatal);
-	void				iError_report								(cu8* constantErrorText, bool tlInvasive);
-	void				iError_report								(u8* errorText, bool tlInvasive);
+	void				iError_report								(SThisCode* thisCode, cu8* constantErrorText, bool tlInvasive);
+	void				iError_report								(SThisCode* thisCode, u8* errorText, bool tlInvasive);
 	void				iError_reportByNumber						(SThisCode* thisCode, u32 tnErrorNum, SComp* comp, bool tlInvasive);
 
 	// Called to check if potential errors exist
@@ -244,6 +244,7 @@ struct SThisCode;
 	SVariable*			function_round		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber, SVariable* varDecimalPlaces);
 	SVariable*			function_rtod		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_rtrim								(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2);
+	SVariable*			function_set								(SThisCode* thisCode, SVariable* varIdentifier);
 	SVariable*			function_sign		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_sign2								(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			ifunction_sign_common						(SThisCode* thisCode, SVariable* varNumber, bool tlIncrementZero);
@@ -414,6 +415,7 @@ struct SThisCode;
 		{	_ICODE_ROUND,			1,			(uptr)&function_round,			2,				2,				&gsSourceLight_round[0]			},	// ROUND() by Stefano D'Amico, VJr 0.56, Mar.16.2015
 		{	_ICODE_RTOD,			1,			(uptr)&function_rtod,			1,				1,				&gsSourceLight_rtod[0]			},	// RTOD() by Stefano D'Amico, VJr 0.56, Mar.16.2015
 		{	_ICODE_RTRIM,			1,			(uptr)&function_rtrim,			1,				1,				&gsSourceLight_rtrim[0]			},
+		{	_ICODE_SET,				1,			(uptr)&function_set,			1,				1,				&gsSourceLight_set[0]			},
 		{	_ICODE_SIGN,			1,			(uptr)&function_sign,			1,				1,				&gsSourceLight_sign[0]			},	// SIGN() by Stefano D'Amico, VJr 0.56, Mar.14.2015
 		{	_ICODE_SIN,				1,			(uptr)&function_sin,			1,				1,				&gsSourceLight_sin[0]			},	// SIN() by Stefano D'Amico, VJr 0.56, Mar.17.2015
 		{	_ICODE_SPACE,			1,			(uptr)&function_space,			1,				1,				&gsSourceLight_space[0]			},

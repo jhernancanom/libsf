@@ -1879,7 +1879,7 @@ close_and_quit:
 					//////////
 					// Find out how long this key is
 					//////
-						lnKeyFieldNameLength = (s32)iDbf_getField_name(thisCode, keyStart, &fieldName[0]);
+						lnKeyFieldNameLength = (s32)iDbf_getFieldExpression_name(thisCode, keyStart, &fieldName[0]);
 						if (lnKeyFieldNameLength < 1)
 							goto failed_parsing;
 
@@ -2023,7 +2023,7 @@ failed_parsing:
 			//////////
 			// Find out how long this key is
 			//////
-				lnKeyFieldNameLength = (s32)iDbf_getField_name(thisCode, keyStart, &fieldName[0]);
+				lnKeyFieldNameLength = (s32)iDbf_getFieldExpression_name(thisCode, keyStart, &fieldName[0]);
 				if (lnKeyFieldNameLength < 1)
 					return(-1);
 

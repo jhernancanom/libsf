@@ -107,7 +107,7 @@
 // start over.
 //
 //////
-	u32 compile_vxb(SEM* codeBlock, SCompileVxbContext* vxbParam, SCompileStats* stats)
+	u32 compile_vxb(SThisCode* thisCode, SEM* codeBlock, SCompileVxbContext* vxbParam, SCompileStats* stats)
 	{
 		SCompileVxbContext*	vxb;
 		SCompileVxbContext	vxbLocal;
@@ -149,13 +149,13 @@
 			if (vxb->codeBlock && vxb->codeBlock->firstLine)
 			{
 				// Before compilation, we need to remove any dependencies on things that have changed
-				iiCompile_vxb_precompile_forLiveCode(vxb);
+				iiCompile_vxb_precompile_forLiveCode(thisCode, vxb);
 
 				// Physically compile
-				iiCompile_vxb_compile_forLiveCode(vxb);		// Note:  Compilation compiles source code, and generates executable ops
+				iiCompile_vxb_compile_forLiveCode(thisCode, vxb);		// Note:  Compilation compiles source code, and generates executable ops
 
 				// After compilation, clean up anything that's dead
-				iiCompile_vxb_postcompile_forLiveCode(vxb);
+				iiCompile_vxb_postcompile_forLiveCode(thisCode, vxb);
 			}
 
 
@@ -180,7 +180,7 @@
 // references what will become the new function, new adhoc, or new variable.
 //
 //////
-	void iiCompile_vxb_precompile_forLiveCode(SCompileVxbContext* vxb)
+	void iiCompile_vxb_precompile_forLiveCode(SThisCode* thisCode, SCompileVxbContext* vxb)
 	{
 		SLine*	line;
 
@@ -192,7 +192,7 @@
 			for (line = vxb->codeBlock->firstLine; line; line = line->ll.nextLine)
 			{
 				// If this line has existing compilerInfo_LiveCode, free it
-				iiCompile_LiveCode_free(line->compilerInfo_LiveCode);
+				iiCompile_LiveCode_free(thisCode, line->compilerInfo_LiveCode);
 			}
 		}
 	}
@@ -205,7 +205,7 @@
 // Called to physically compile each line of source code.
 //
 //////
-	void iiCompile_vxb_compile_forLiveCode(SCompileVxbContext* vxb)
+	void iiCompile_vxb_compile_forLiveCode(SThisCode* thisCode, SCompileVxbContext* vxb)
 	{
 		// Begin compiling
 		vxb->currentFunction	= NULL;
@@ -224,7 +224,7 @@
 
 			// Make sure we have a compilerInfo object
 			if (!vxb->line->compilerInfo)
-				vxb->line->compilerInfo = iCompiler_allocate(vxb->line);
+				vxb->line->compilerInfo = iCompiler_allocate(thisCode, vxb->line);
 
 			// Is there anything to parse on this line?
 			if (vxb->line->sourceCode && vxb->line->sourceCode_populatedLength > 0)
@@ -301,14 +301,14 @@
 						//////////
 						// We need to clear out anything from any prior compile
 						//////
-							iComps_deleteAll_byLine(vxb->line);
-							iCompiler_delete(&vxb->line->compilerInfo, false);
+							iComps_deleteAll_byLine(thisCode, vxb->line);
+							iCompiler_delete(thisCode, &vxb->line->compilerInfo, false);
 
 
 						//////////
 						// Convert raw source code to known character sequences
 						//////
-							iComps_translateSourceLineTo(&cgcFundamentalSymbols[0], vxb->line);
+							iComps_translateSourceLineTo(thisCode, &cgcFundamentalSymbols[0], vxb->line);
 							if (!vxb->line->compilerInfo->firstComp)
 							{
 								++vxb->stats->blankLineCount;
@@ -330,15 +330,15 @@
 						//////////
 						// Perform fixups
 						//////
-							iComps_removeStartEndComments(vxb->line);			// Remove /* comments */
-							iComps_fixupNaturalGroupings(vxb->line);			// Fixup natural groupings [_][aaa][999] becomes [_aaa999], [999][.][99] becomes [999.99], etc.
-							iComps_removeWhitespaces(vxb->line);				// Remove whitespaces [use][whitespace][foo] becomes [use][foo]
+							iComps_removeStartEndComments(thisCode, vxb->line);			// Remove /* comments */
+							iComps_fixupNaturalGroupings(thisCode, vxb->line);			// Fixup natural groupings [_][aaa][999] becomes [_aaa999], [999][.][99] becomes [999.99], etc.
+							iComps_removeWhitespaces(thisCode, vxb->line);				// Remove whitespaces [use][whitespace][foo] becomes [use][foo]
 
 
 						//////////
 						// Translate sequences to known keywords
 						//////
-							iComps_translateToOthers(&cgcKeywordsVxb[0], vxb->line);
+							iComps_translateToOthers(thisCode, &cgcKeywordsVxb[0], vxb->line);
 
 
 						//////////
@@ -347,45 +347,45 @@
 							if (vxb->comp->iCode == _ICODE_FUNCTION)
 							{
 								// They are adding another function
-								vxb->currentFunction = iiComps_decodeSyntax_function(vxb);
+								vxb->currentFunction = iiComps_decodeSyntax_function(thisCode, vxb);
 
 
 							} else if (vxb->comp->iCode == _ICODE_ADHOC) {
 								// They are adding an adhoc function
-								iiComps_decodeSyntax_adhoc(vxb);
+								iiComps_decodeSyntax_adhoc(thisCode, vxb);
 
 
 							} else if (vxb->comp->iCode == _ICODE_PARAMS) {
 								// They are adding parameters
 								// Process the PARAMS line
 // TODO:  working here
-								iiComps_decodeSyntax_params(vxb);
+								iiComps_decodeSyntax_params(thisCode, vxb);
 
 
 							} else if (vxb->comp->iCode == _ICODE_LOBJECT) {
 								// They are adding parameters via an object
 								// Process the LOBJECT line
 // TODO:  working here
-								iiComps_decodeSyntax_lobject(vxb);
+								iiComps_decodeSyntax_lobject(thisCode, vxb);
 
 
 							} else if (vxb->comp->iCode == _ICODE_LPARAMETERS) {
 								// They are adding lparameters
 								// Process the LPARAMETERS line
 // TODO:  working here
-								iiComps_decodeSyntax_lparameters(vxb);
+								iiComps_decodeSyntax_lparameters(thisCode, vxb);
 
 
 							} else if (vxb->comp->iCode == _ICODE_RETURNS) {
 								// They are specifying returns
 								// Process the RETURNS line
 // TODO:  working here
-								iiComps_decodeSyntax_returns(vxb);
+								iiComps_decodeSyntax_returns(thisCode, vxb);
 
 
 							} else {
 								// Translate into operations
-								iiComps_xlatToNodes(vxb->line, vxb->line->compilerInfo);
+								iiComps_xlatToNodes(thisCode, vxb->line, vxb->line->compilerInfo);
 								// Note:  Right now, line->errors and line->warnings have notes attached to them about the compilation of this line
 							}
 
@@ -405,7 +405,7 @@
 // Called to post-compile, primarily to flag variables that are not referenced
 //
 //////
-	void iiCompile_vxb_postcompile_forLiveCode(SCompileVxbContext* vxb)
+	void iiCompile_vxb_postcompile_forLiveCode(SThisCode* thisCode, SCompileVxbContext* vxb)
 	{
 	}
 
@@ -419,7 +419,7 @@
 // Syntax:	FUNCTION cFunctionName
 //
 //////
-	SFunction* iiComps_decodeSyntax_function(SCompileVxbContext* vxb)
+	SFunction* iiComps_decodeSyntax_function(SThisCode* thisCode, SCompileVxbContext* vxb)
 	{
 		SComp*		comp;
 		SComp*		compName;
@@ -443,7 +443,7 @@
 // TODO:  We need to do a lookup on this name to see if we're replacing a function, or adding a new one
 
 						// Create the new function
-						func = iFunction_allocate(compName);
+						func = iFunction_allocate(thisCode, compName);
 
 						// Indicate information about this function
 						func->firstLine	= vxb->line;
@@ -452,7 +452,7 @@
 // TODO:  Needs added to the current function chain
 
 						// Generate warnings for ignored components if any appear after
-						iComp_reportWarningsOnRemainder(compName->ll.nextComp, _WARNING_SPURIOUS_COMPONENTS_IGNORED, (cu8*)cgcSpuriousIgnored);
+						iComp_reportWarningsOnRemainder(thisCode, compName->ll.nextComp, _WARNING_SPURIOUS_COMPONENTS_IGNORED, (cu8*)cgcSpuriousIgnored);
 					}
 				}
 			}
@@ -472,7 +472,7 @@
 // Syntax:	ADHOC cAdhocName
 //
 //////
-	SFunction* iiComps_decodeSyntax_adhoc(SCompileVxbContext* vxb)
+	SFunction* iiComps_decodeSyntax_adhoc(SThisCode* thisCode, SCompileVxbContext* vxb)
 	{
 		SComp*		comp;
 		SComp*		compName;
@@ -496,7 +496,7 @@
 // TODO:  We need to do a lookup on this name to see if we're replacing an adhoc, or adding a new one
 
 						// Create the new adhoc
-						adhoc = iFunction_allocate(compName);
+						adhoc = iFunction_allocate(thisCode, compName);
 
 						// Indicate information about this adhoc
 						adhoc->firstLine	= vxb->line;
@@ -505,7 +505,7 @@
 // TODO:  Needs added to the current function
 
 						// Generate warnings for ignored components if any appear after
-						iComp_reportWarningsOnRemainder(compName->ll.nextComp, _WARNING_SPURIOUS_COMPONENTS_IGNORED, cgcSpuriousIgnored);
+						iComp_reportWarningsOnRemainder(thisCode, compName->ll.nextComp, _WARNING_SPURIOUS_COMPONENTS_IGNORED, cgcSpuriousIgnored);
 					}
 				}
 			}
@@ -518,22 +518,22 @@
 
 
 
-void iiComps_decodeSyntax_params(SCompileVxbContext* vxb)
+void iiComps_decodeSyntax_params(SThisCode* thisCode, SCompileVxbContext* vxb)
 {
 // TODO:  write this function
 }
 
-void iiComps_decodeSyntax_lobject(SCompileVxbContext* vxb)
+void iiComps_decodeSyntax_lobject(SThisCode* thisCode, SCompileVxbContext* vxb)
 {
 // TODO:  write this function
 }
 
-void iiComps_decodeSyntax_lparameters(SCompileVxbContext* vxb)
+void iiComps_decodeSyntax_lparameters(SThisCode* thisCode, SCompileVxbContext* vxb)
 {
 // TODO:  write this function
 }
 
-void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
+void iiComps_decodeSyntax_returns(SThisCode* thisCode, SCompileVxbContext* vxb)
 {
 // TODO:  write this function
 }
@@ -546,7 +546,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Release the compiler info contained here
 //
 //////
-	void iiCompile_LiveCode_free(SCompiler* compiler)
+	void iiCompile_LiveCode_free(SThisCode* thisCode, SCompiler* compiler)
 	{
 		//////////
 		// Free this copy of the original source code line if need be
@@ -561,8 +561,8 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 		//////////
 		// Free the components and whitespaces
 		//////
-			iComps_deleteAll(compiler->firstComp);
-			iComps_deleteAll(compiler->firstWhitespace);
+			iComps_deleteAll(thisCode, compiler->firstComp);
+			iComps_deleteAll(thisCode, compiler->firstWhitespace);
 
 
 		//////////
@@ -593,15 +593,15 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 		//////////
 		// Delete any errors, warnings, or notes
 		//////
-			iCompileNote_removeAll(&compiler->firstError);
-			iCompileNote_removeAll(&compiler->firstWarning);
-			iCompileNote_removeAll(&compiler->firstNote);
+			iCompileNote_removeAll(thisCode, &compiler->firstError);
+			iCompileNote_removeAll(thisCode, &compiler->firstWarning);
+			iCompileNote_removeAll(thisCode, &compiler->firstNote);
 
 
 		//////////
 		// Delete any extra info that's stored
 		//////
-			iExtraInfo_removeAll(NULL, NULL, &compiler->firstExtraInfo, true);
+			iExtraInfo_removeAll(thisCode, NULL, NULL, &compiler->firstExtraInfo, true);
 	}
 
 
@@ -612,7 +612,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Translates components into a sequence of sub-instruction operations.
 //
 /////
-	bool iiComps_xlatToNodes(SLine* line, SCompiler* compiler)
+	bool iiComps_xlatToNodes(SThisCode* thisCode, SLine* line, SCompiler* compiler)
 	{
 		SComp*		comp;
 		SNode*		nodeActive;			// Current active node
@@ -621,7 +621,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 		// Iterate through every component building the operations as we go
 		comp		= line->compilerInfo->firstComp;
 //		compLast	= comp;
-		nodeActive	= iNode_create(&compiler->firstNodeEngaged, NULL, 0, NULL, NULL, NULL, NULL, NULL);
+		nodeActive	= iNode_create(thisCode, &compiler->firstNodeEngaged, NULL, 0, NULL, NULL, NULL, NULL, NULL);
 		while (comp)
 		{
 			//////////
@@ -631,12 +631,12 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 				{
 					// (
 					case _ICODE_PARENTHESIS_LEFT:
-						nodeActive = iiComps_xlatToNodes_parenthesis_left(&compiler->firstNodeEngaged, nodeActive, comp);
+						nodeActive = iiComps_xlatToNodes_parenthesis_left(thisCode, &compiler->firstNodeEngaged, nodeActive, comp);
 						break;
 
 					// )
 					case _ICODE_PARENTHESIS_RIGHT:
-						nodeActive = iiComps_xlatToNodes_parenthesis_right(&compiler->firstNodeEngaged, nodeActive, comp);
+						nodeActive = iiComps_xlatToNodes_parenthesis_right(thisCode, &compiler->firstNodeEngaged, nodeActive, comp);
 						break;
 
 					// [
@@ -798,15 +798,14 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 //          [?]
 //
 //////
-	SNode* iiComps_xlatToNodes_parenthesis_left(SNode** root, SNode* active, SComp* comp)
+	SNode* iiComps_xlatToNodes_parenthesis_left(SThisCode* thisCode, SNode** root, SNode* active, SComp* comp)
 	{
-		SThisCode*	thisCode = NULL;
 		SNode*		node;
 		SVariable*	var;
 
 
 		// Insert a parenthesis node at the active node, and direct the active node to the right
-		node = iNode_insertBetween(root, active->parent, active, _NODE_PARENT, _NODE_RIGHT);
+		node = iNode_insertBetween(thisCode, root, active->parent, active, _NODE_PARENT, _NODE_RIGHT);
 		if (node)
 		{
 			//////////
@@ -823,11 +822,11 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 				if (var)
 				{
 					// Append the temporary variable
-					iOp_setVariable_scoped(&node->opData->op, var, true);
+					iOp_setVariable_scoped(thisCode, &node->opData->op, var, true);
 
 				} else {
 					// Internal compile error
-					iComp_appendError(comp, _ERROR_OUT_OF_MEMORY, (u8*)cgcOutOfMemory);
+					iComp_appendError(thisCode, comp, _ERROR_OUT_OF_MEMORY, (u8*)cgcOutOfMemory);
 					iOp_setNull(&node->opData->op);
 				}
 		}
@@ -844,7 +843,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Process the right parenthesis.
 //
 //////
-	SNode* iiComps_xlatToNodes_parenthesis_right(SNode** root, SNode* active, SComp* comp)
+	SNode* iiComps_xlatToNodes_parenthesis_right(SThisCode* thisCode, SNode** root, SNode* active, SComp* comp)
 	{
 // TODO:  Working here
 		return(NULL);
@@ -859,7 +858,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 //
 //
 //////
-	void iComps_deleteAll(SComp* comp)
+	void iComps_deleteAll(SThisCode* thisCode, SComp* comp)
 	{
 		SComp* compNext;
 
@@ -871,7 +870,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 			compNext = comp->ll.nextComp;
 
 			// Delete this one
-			iComps_delete(comp, true);
+			iComps_delete(thisCode, comp, true);
 
 			// Move to the next one
 			comp = compNext;
@@ -886,19 +885,19 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Called to remove all components for this line
 //
 //////
-	void iComps_deleteAll_byLine(SLine* line)
+	void iComps_deleteAll_byLine(SThisCode* thisCode, SLine* line)
 	{
 		// Make sure our environment is sane
 		if (line && line->compilerInfo)
 		{
 			// Delete all components
-			iComps_deleteAll(line->compilerInfo->firstComp);
+			iComps_deleteAll(thisCode, line->compilerInfo->firstComp);
 
 			// Reset the pointer
 			line->compilerInfo->firstComp = NULL;
 
 			// Clear the compilerInfo
-			iCompiler_delete(&line->compilerInfo, true);
+			iCompiler_delete(thisCode, &line->compilerInfo, true);
 		}
 	}
 
@@ -910,7 +909,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Deletes everything from this first component
 //
 //////
-	void iComps_deleteAll_byFirstComp(SComp** firstComp)
+	void iComps_deleteAll_byFirstComp(SThisCode* thisCode, SComp** firstComp)
 	{
 		SComp* comp;
 		SComp* compNext;
@@ -926,7 +925,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 				compNext = comp->ll.nextComp;
 
 				// Delete this one
-				iComps_delete(comp, true);
+				iComps_delete(thisCode, comp, true);
 
 				// Move to the next one
 				comp = compNext;
@@ -945,7 +944,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Called to delete the indicated comp
 //
 //////
-	void iComps_delete(SComp* comp, bool tlDeleteSelf)
+	void iComps_delete(SThisCode* thisCode, SComp* comp, bool tlDeleteSelf)
 	{
 		// If there is a bitmap cache, delete it
 		if (comp->bc)
@@ -968,7 +967,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 //		The first component created (if any)
 //
 //////
-	SComp* iComps_translateSourceLineTo(SAsciiCompSearcher* tsComps, SLine* line)
+	SComp* iComps_translateSourceLineTo(SThisCode* thisCode, SAsciiCompSearcher* tsComps, SLine* line)
 	{
 		s32						lnI, lnMaxLength, lnStart, lnLength, lnLacsLength;
 		SComp*					compFirst;
@@ -1000,11 +999,11 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					lnLacsLength	= abs(lacs->length);
 
 					// Process through this entry
-					if ((!lacs->firstOnLine || lnI == 0 || iComps_areAllPrecedingCompsWhitespaces(compLast)) && lnLacsLength <= lnMaxLength - lnI)
+					if ((!lacs->firstOnLine || lnI == 0 || iComps_areAllPrecedingCompsWhitespaces(thisCode, compLast)) && lnLacsLength <= lnMaxLength - lnI)
 					{
 						// There is enough room for this component to be examined
 						// See if it matches
-						if (iTranslateToCompsTest(lacs->keyword_u8, lcData + lnI, lacs->length) == 0)
+						if (iTranslateToCompsTest(thisCode, lacs->keyword_u8, lcData + lnI, lacs->length) == 0)
 						{
 							// It matches
 							// mark its current condition
@@ -1014,7 +1013,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 							if (lacs->repeats)
 							{
 								while (	lnStart + lnLength + lnLacsLength <= lnMaxLength
-										&& iTranslateToCompsTest(lacs->keyword_u8, lcData + lnStart + lnLength, lacs->length) == 0)
+										&& iTranslateToCompsTest(thisCode, lacs->keyword_u8, lcData + lnStart + lnLength, lacs->length) == 0)
 								{
 									// We found another repeated entry
 									lnLength += lnLacsLength;
@@ -1027,7 +1026,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 							//////////
 							// Allocate this entry
 							///////
-								comp = (SComp*)iLl_appendNewNode((SLL**)&line->compilerInfo->firstComp, (SLL*)compLast, NULL, (SLL*)compLast, iGetNextUid(), sizeof(SComp));
+								comp = (SComp*)iLl_appendNewNode((SLL**)&line->compilerInfo->firstComp, (SLL*)compLast, NULL, (SLL*)compLast, iGetNextUid(thisCode), sizeof(SComp));
 
 
 							//////////
@@ -1105,7 +1104,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // alpha/alphanumeric/numeric forms to other forms.
 //
 //////
-	bool iComps_translateToOthers(SAsciiCompSearcher* tacsRoot, SLine* line)
+	bool iComps_translateToOthers(SThisCode* thisCode, SAsciiCompSearcher* tacsRoot, SLine* line)
 	{
 		bool					llResult;
 		s32						lnTacsLength;
@@ -1133,10 +1132,10 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					{
 						// We only test if this item is not the first item on line, or if must be the first
 						// item on the line, then this component must be the first component on the line.  Simple, yes? :-)
-						if (!tacs->firstOnLine || !comp->ll.prev || iComps_areAllPrecedingCompsWhitespaces(comp))
+						if (!tacs->firstOnLine || !comp->ll.prev || iComps_areAllPrecedingCompsWhitespaces(thisCode, comp))
 						{
 							// Physically conduct the exact comparison
-							if (iComps_translateToOthers_testIfMatch(tacs->keyword_u8, comp->line->sourceCode->data_cu8 + comp->start, tacs->length) == 0)
+							if (iComps_translateToOthers_testIfMatch(thisCode, tacs->keyword_u8, comp->line->sourceCode->data_cu8 + comp->start, tacs->length) == 0)
 							{
 								// This is a match
 								llResult			= true;
@@ -1180,7 +1179,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // component on the line.
 //
 //////
-	bool iComps_areAllPrecedingCompsWhitespaces(SComp* comp)
+	bool iComps_areAllPrecedingCompsWhitespaces(SThisCode* thisCode, SComp* comp)
 	{
 		while (comp)
 		{
@@ -1216,7 +1215,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 //		!0		= does not tmach
 //
 //////
-	s32 iComps_translateToOthers_testIfMatch(cu8* tcHaystack, cu8* tcNeedle, s32 tnLength)
+	s32 iComps_translateToOthers_testIfMatch(SThisCode* thisCode, cu8* tcHaystack, cu8* tcNeedle, s32 tnLength)
 	{
 		u32		lnI;
 		bool	llSigned;
@@ -1311,7 +1310,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 //		If NULL, the compLastScanned indicates the last component that was searched where it wasn't found
 //
 //////
-	SComp* iComps_findNextBy_iCode(SComp* comp, s32 tniCode, SComp** compLastScanned)
+	SComp* iComps_findNextBy_iCode(SThisCode* thisCode, SComp* comp, s32 tniCode, SComp** compLastScanned)
 	{
 		// Initially indicate failure
 		if (compLastScanned)
@@ -1344,7 +1343,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Returns which component the cursor is currently on
 //
 //////
-	SComp* iComps_activeComp_inSEM(SEM* sem)
+	SComp* iComps_activeComp_inSEM(SThisCode* thisCode, SEM* sem)
 	{
 		SComp* comp;
 
@@ -1378,7 +1377,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // or backward in source code).
 //
 //////
-	bool iComps_getMateDirection(SComp* comp, s32* tnMateDirection)
+	bool iComps_getMateDirection(SThisCode* thisCode, SComp* comp, s32* tnMateDirection)
 	{
 		if (comp && tnMateDirection)
 		{
@@ -1487,9 +1486,9 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // search the appropriate direction and find the matching one, and return those components.
 //
 //////
-	bool iComps_findClosest_parensBracketsBraces(SComp* compRelative, SComp* compStart, SComp** compPBBLeft, SComp** compPBBRight)
+	bool iComps_findClosest_parensBracketsBraces(SThisCode* thisCode, SComp* compRelative, SComp* compStart, SComp** compPBBLeft, SComp** compPBBRight)
 	{
-		s32		lnDirection, lniCodeNeedle, lniCodeNeedleMate, lnLevel;
+		s32 lnDirection, lniCodeNeedle, lniCodeNeedleMate, lnLevel;
 
 
 		// Make sure our environment is sane
@@ -1558,7 +1557,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 							case _ICODE_PARENTHESIS_RIGHT:
 							case _ICODE_BRACKET_RIGHT:
 							case _ICODE_BRACE_RIGHT:
-								if (!iComps_findClosest_parensBracketsBraces(compRelative, compStart, compPBBLeft, compPBBRight))
+								if (!iComps_findClosest_parensBracketsBraces(thisCode, compRelative, compStart, compPBBLeft, compPBBRight))
 									return(false);
 
 								// If the left component begins before our reference component we're good, otherwise we're still looking
@@ -1624,7 +1623,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Called to see if a component is a parenthesis, bracket, or brace
 //
 //////
-	bool iComps_isParensBracketsBraces(SComp* comp)
+	bool iComps_isParensBracketsBraces(SThisCode* thisCode, SComp* comp)
 	{
 		// Make sure our environment is sane
 		if (comp)
@@ -1654,7 +1653,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Is the reference the mate of iCodeMate
 //
 //////
-	bool iComps_isMateOf(SComp* compTest, s32 tniCodeMate)
+	bool iComps_isMateOf(SThisCode* thisCode, SComp* compTest, s32 tniCodeMate)
 	{
 		switch (tniCodeMate)
 		{
@@ -1724,7 +1723,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Searches for the next component that is not of type tniIcode, including itself
 //
 //////
-	SComp* iComps_skipPast_iCode(SComp* comp, s32 tniCode)
+	SComp* iComps_skipPast_iCode(SThisCode* thisCode, SComp* comp, s32 tniCode)
 	{
 		while (comp && comp->iCode == tniCode)
 		{
@@ -1743,7 +1742,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Searches beyond this component until we find the indicated component
 //
 //////
-	SComp* iComps_skipTo_iCode(SComp* comp, s32 tniCode)
+	SComp* iComps_skipTo_iCode(SThisCode* thisCode, SComp* comp, s32 tniCode)
 	{
 		// Skip to next comp
 		comp = comp->ll.nextComp;
@@ -1764,7 +1763,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Returns the Nth component beyond the current one
 //
 //////
-	SComp* iComps_getNth(SComp* comp, s32 tnCount)
+	SComp* iComps_getNth(SThisCode* thisCode, SComp* comp, s32 tnCount)
 	{
 		s32 lnI;
 
@@ -1786,7 +1785,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // iCode is updated as well.
 //
 //////
-	u32 iComps_combineN(SComp* comp, u32 tnCount, s32 tnNewICode, s32 tnNewICat, SBgra* newColor)
+	u32 iComps_combineN(SThisCode* thisCode, SComp* comp, u32 tnCount, s32 tnNewICode, s32 tnNewICat, SBgra* newColor)
 	{
 		u32		lnCount;
 		SComp*	compNext;
@@ -1807,7 +1806,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					if (compNext)
 					{
 						// Add in the length of the next component, plus any spaces between them
-						comp->length	+= (compNext->length + iiComps_get_charactersBetween(comp, compNext));
+						comp->length	+= (compNext->length + iiComps_get_charactersBetween(thisCode, comp, compNext));
 						comp->nbspCount	+= compNext->nbspCount;
 
 						// Delete the next component
@@ -1853,7 +1852,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // component of [c:\some\dir\file.txt].
 //
 //////
-	u32 iComps_combineAdjacent(SComp* compLeftmost, s32 tniCode, s32 tniCat, SBgra* tnColor, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount)
+	u32 iComps_combineAdjacent(SThisCode* thisCode, SComp* compLeftmost, s32 tniCode, s32 tniCat, SBgra* tnColor, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount)
 	{
 		u32 lnCombined;
 
@@ -1866,14 +1865,14 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 			for ( ; compLeftmost->ll.next; lnCombined++)
 			{
 				// And continue so long as they are immediately adjacent
-				if (iiComps_get_charactersBetween(compLeftmost, compLeftmost->ll.nextComp) != 0)
+				if (iiComps_get_charactersBetween(thisCode, compLeftmost, compLeftmost->ll.nextComp) != 0)
 					return(lnCombined);	// All done
 
 				// Validate if need be
 				if (tnValid_iCodeArrayCount > 0 && valid_iCodeArray)
 				{
 					// If it's valid, add it
-					if (!iiComps_validate(compLeftmost->ll.nextComp, valid_iCodeArray, tnValid_iCodeArrayCount))
+					if (!iiComps_validate(thisCode, compLeftmost->ll.nextComp, valid_iCodeArray, tnValid_iCodeArrayCount))
 						return(lnCombined);		// Invalid
 
 					// If we get here, it is still valid
@@ -1881,7 +1880,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 				// else no validation is required
 
 				// Combine these two...
-				iComps_combineN(compLeftmost, 2, tniCode, tniCat, tnColor);
+				iComps_combineN(thisCode, compLeftmost, 2, tniCode, tniCat, tnColor);
 				// ...and continue on to the next component after
 			}
 		}
@@ -1900,7 +1899,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // branded as alphanumeric.
 //
 //////
-	u32 iComps_combineAdjacentAlphanumeric(SLine* line)
+	u32 iComps_combineAdjacentAlphanumeric(SThisCode* thisCode, SLine* line)
 	{
 		u32		lnCombined;
 		SComp*	comp;
@@ -1924,7 +1923,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					{
 						// Combine so long as the following are immediately adjacent, and are one of underscore, alpha, numeric, alphanumeric
 						while (	(compNext = comp->ll.nextComp)
-								&& iiComps_get_charactersBetween(comp, compNext) == 0
+								&& iiComps_get_charactersBetween(thisCode, comp, compNext) == 0
 								&& (	compNext->iCode == _ICODE_UNDERSCORE
 									||	compNext->iCode == _ICODE_ALPHA
 									||	compNext->iCode == _ICODE_NUMERIC
@@ -1933,7 +1932,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 							)
 						{
 							// Combine this comp and the next one into one
-							iComps_combineN(comp, 2, _ICODE_ALPHANUMERIC, comp->iCat, comp->color);
+							iComps_combineN(thisCode, comp, 2, _ICODE_ALPHANUMERIC, comp->iCat, comp->color);
 							++lnCombined;
 						}
 					}
@@ -1959,7 +1958,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // adjacent, it is included as well.
 //
 //////
-	u32 iComps_combineAdjacentNumeric(SLine* line)
+	u32 iComps_combineAdjacentNumeric(SThisCode* thisCode, SLine* line)
 	{
 		u32		lnCombined;
 		SComp*	comp;
@@ -1977,7 +1976,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 			while (comp)
 			{
 				// Grab the next component
-				if ((compNext1 = comp->ll.nextComp) && iiComps_get_charactersBetween(comp, compNext1) == 0)
+				if ((compNext1 = comp->ll.nextComp) && iiComps_get_charactersBetween(thisCode, comp, compNext1) == 0)
 				{
 					// Is this an underscore, alpha, or alphanumeric?
 					if ((comp->iCode == _ICODE_PLUS || comp->iCode == _ICODE_HYPHEN) && compNext1->iCode == _ICODE_NUMERIC)
@@ -1989,18 +1988,18 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 							if ((compNext3 = compNext2->ll.nextComp) && compNext3->iCode == _ICODE_NUMERIC)
 							{
 								// We have +-999.99
-								iComps_combineN(comp, 4, _ICODE_NUMERIC, comp->iCat, comp->color);
+								iComps_combineN(thisCode, comp, 4, _ICODE_NUMERIC, comp->iCat, comp->color);
 								lnCombined += 3;
 
 							} else {
 								// Combine the +- with the 999 and the .
-								iComps_combineN(comp, 3, _ICODE_NUMERIC, comp->iCat, comp->color);
+								iComps_combineN(thisCode, comp, 3, _ICODE_NUMERIC, comp->iCat, comp->color);
 								lnCombined += 2;
 							}
 
 						} else {
 							// Combine the +- with the 999 into one
-							iComps_combineN(comp, 2, _ICODE_NUMERIC, comp->iCat, comp->color);
+							iComps_combineN(thisCode, comp, 2, _ICODE_NUMERIC, comp->iCat, comp->color);
 							++lnCombined;
 						}
 
@@ -2012,12 +2011,12 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 							if ((compNext2 = compNext1->ll.nextComp) && compNext2->iCode == _ICODE_NUMERIC)
 							{
 								// We have 999.99
-								iComps_combineN(comp, 3, _ICODE_NUMERIC, comp->iCat, comp->color);
+								iComps_combineN(thisCode, comp, 3, _ICODE_NUMERIC, comp->iCat, comp->color);
 								lnCombined += 2;
 
 							} else {
 								// We just have 999.
-								iComps_combineN(comp, 2, _ICODE_NUMERIC, comp->iCat, comp->color);
+								iComps_combineN(thisCode, comp, 2, _ICODE_NUMERIC, comp->iCat, comp->color);
 								++lnCombined;
 							}
 						}
@@ -2042,7 +2041,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Called to combine things like [.][t][.] into [.t.], [xyz][.][abc] into [xyz.abc]
 //
 //////
-	u32 iComps_combineAdjacentDotForms(SLine* line)
+	u32 iComps_combineAdjacentDotForms(SThisCode* thisCode, SLine* line)
 	{
 		u32		lnCombined;
 		u8		c;
@@ -2083,8 +2082,8 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					// Grab the next two components, they must all be adjacent, and the third one must also be a dot
 					if (	compSecond	&&	compThird
 						&&	compThird->iCode == _ICODE_DOT
-						&&	iiComps_get_charactersBetween(compFirst, compSecond) == 0
-						&&	iiComps_get_charactersBetween(compSecond, compThird) == 0)
+						&&	iiComps_get_charactersBetween(thisCode, compFirst, compSecond) == 0
+						&&	iiComps_get_charactersBetween(thisCode, compSecond, compThird) == 0)
 					{
 						// What is the component in the middle?
 						if (compSecond->iCode == _ICODE_ALPHA)
@@ -2096,13 +2095,13 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 									c = compSecond->line->sourceCode->data[compSecond->start];
 
 									// Which one is it?
-										 if (c == 't' || c == 'T')				{ iComps_combineN(compFirst, 3, _ICODE_TRUE,			compFirst->iCat, compFirst->color);		lnCombined += 3; }
-									else if (c == 'f' || c == 'F')				{ iComps_combineN(compFirst, 3, _ICODE_FALSE,			compFirst->iCat, compFirst->color);		lnCombined += 3; }
-									else if (c == 'o' || c == 'O')				{ iComps_combineN(compFirst, 3, _ICODE_OTHER,			compFirst->iCat, compFirst->color);		lnCombined += 3; }
-									else if (c == 'p' || c == 'P')				{ iComps_combineN(compFirst, 3, _ICODE_PARTIAL,			compFirst->iCat, compFirst->color);		lnCombined += 3; }
-									else if (c == 'x' || c == 'X')				{ iComps_combineN(compFirst, 3, _ICODE_EXTRA,			compFirst->iCat, compFirst->color);		lnCombined += 3; }
-									else if (c == 'y' || c == 'Y')				{ iComps_combineN(compFirst, 3, _ICODE_YET_ANOTHER,		compFirst->iCat, compFirst->color);		lnCombined += 3; }
-									else if (c == 'z' || c == 'Z')				{ iComps_combineN(compFirst, 3, _ICODE_ZATS_ALL_FOLKS,	compFirst->iCat, compFirst->color);		lnCombined += 3; }
+										 if (c == 't' || c == 'T')				{ iComps_combineN(thisCode, compFirst, 3, _ICODE_TRUE,				compFirst->iCat, compFirst->color);		lnCombined += 3; }
+									else if (c == 'f' || c == 'F')				{ iComps_combineN(thisCode, compFirst, 3, _ICODE_FALSE,				compFirst->iCat, compFirst->color);		lnCombined += 3; }
+									else if (c == 'o' || c == 'O')				{ iComps_combineN(thisCode, compFirst, 3, _ICODE_OTHER,				compFirst->iCat, compFirst->color);		lnCombined += 3; }
+									else if (c == 'p' || c == 'P')				{ iComps_combineN(thisCode, compFirst, 3, _ICODE_PARTIAL,			compFirst->iCat, compFirst->color);		lnCombined += 3; }
+									else if (c == 'x' || c == 'X')				{ iComps_combineN(thisCode, compFirst, 3, _ICODE_EXTRA,				compFirst->iCat, compFirst->color);		lnCombined += 3; }
+									else if (c == 'y' || c == 'Y')				{ iComps_combineN(thisCode, compFirst, 3, _ICODE_YET_ANOTHER,		compFirst->iCat, compFirst->color);		lnCombined += 3; }
+									else if (c == 'z' || c == 'Z')				{ iComps_combineN(thisCode, compFirst, 3, _ICODE_ZATS_ALL_FOLKS,	compFirst->iCat, compFirst->color);		lnCombined += 3; }
 									llProcessed = true;
 									break;
 
@@ -2110,7 +2109,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 									// Could be .or.
 									if (_memicmp(compSecond->line->sourceCode->data, "or", 2) == 0)
 									{
-										iComps_combineN(compFirst, 3, _ICODE_OR, compFirst->iCat, compFirst->color);
+										iComps_combineN(thisCode, compFirst, 3, _ICODE_OR, compFirst->iCat, compFirst->color);
 										lnCombined += 3;
 									}
 									llProcessed = true;
@@ -2121,12 +2120,12 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 									if (_memicmp(compSecond->line->sourceCode->data, "and", 3) == 0)
 									{
 										// AND
-										iComps_combineN(compFirst, 3, _ICODE_AND, compFirst->iCat, compFirst->color);
+										iComps_combineN(thisCode, compFirst, 3, _ICODE_AND, compFirst->iCat, compFirst->color);
 										lnCombined += 3;
 
 									} else if (_memicmp(compSecond->line->sourceCode->data, "not", 3) == 0) {
 										// NOT
-										iComps_combineN(compFirst, 3, _ICODE_NOT, compFirst->iCat, compFirst->color);
+										iComps_combineN(thisCode, compFirst, 3, _ICODE_NOT, compFirst->iCat, compFirst->color);
 										lnCombined += 3;
 									}
 									llProcessed = true;
@@ -2137,7 +2136,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 									if (_memicmp(compSecond->line->sourceCode->data, "null", 4) == 0)
 									{
 										// NULL
-										iComps_combineN(compFirst, 3, _ICODE_NULL, compFirst->iCat, compFirst->color);
+										iComps_combineN(thisCode, compFirst, 3, _ICODE_NULL, compFirst->iCat, compFirst->color);
 										lnCombined += 3;
 									}
 									llProcessed = true;
@@ -2153,9 +2152,9 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 						// Move to the next component
 						compThis = compThis->ll.nextComp;
 
-					} else if (compThird && iiComps_get_charactersBetween(compFirst, compThird) == 0 && (compThird->iCode == _ICODE_ALPHA || compThird->iCode == _ICODE_ALPHANUMERIC)) {
+					} else if (compThird && iiComps_get_charactersBetween(thisCode, compFirst, compThird) == 0 && (compThird->iCode == _ICODE_ALPHA || compThird->iCode == _ICODE_ALPHANUMERIC)) {
 						// It's a dot variable of some kind
-						iComps_combineN(compThis, 3, _ICODE_DOT_VARIABLE, _ICAT_DOT_VARIABLE, &colorSynHi_dotVariable);
+						iComps_combineN(thisCode, compThis, 3, _ICODE_DOT_VARIABLE, _ICAT_DOT_VARIABLE, &colorSynHi_dotVariable);
 
 					} else {
 						// Nothing, skip to the next component
@@ -2186,7 +2185,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // After:		[u8][whitespace][name][left bracket][right bracket][whitespace][equal][whitespace][double quote text]
 //
 //////
-	u32 iComps_combineAllBetween(SLine* line, s32 tniCodeNeedle, s32 tniCodeCombined, SBgra* syntaxHighlightColor)
+	u32 iComps_combineAllBetween(SThisCode* thisCode, SLine* line, s32 tniCodeNeedle, s32 tniCodeCombined, SBgra* syntaxHighlightColor)
 	{
 		u32		lnCount;
 		SComp*	compNext;
@@ -2272,7 +2271,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Called to search for unmatched codes, a left and right, and combines everything between
 //
 //////
-	u32 iComps_combineAllBetween2(SLine* line, s32 tniCodeNeedleLeft, s32 tniCodeNeedleRight, s32 tniCodeCombined, s32 tniCat, SBgra* syntaxHighlightColor, bool tlUseBoldFont)
+	u32 iComps_combineAllBetween2(SThisCode* thisCode, SLine* line, s32 tniCodeNeedleLeft, s32 tniCodeNeedleRight, s32 tniCodeCombined, s32 tniCat, SBgra* syntaxHighlightColor, bool tlUseBoldFont)
 	{
 		u32		lnCount;
 		SComp*	compNext;
@@ -2362,7 +2361,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Called to combine everything after the indicated component into that one component.
 //
 //////
-	u32 iComps_combineAllAfter(SLine* line, s32 tniCodeNeedle)
+	u32 iComps_combineAllAfter(SThisCode* thisCode, SLine* line, s32 tniCodeNeedle)
 	{
 		u32		lnCombined;
 		SComp*	comp;
@@ -2385,7 +2384,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					while (comp->ll.next)
 					{
 						// Combine
-						iComps_combineN(comp, 2, tniCodeNeedle, comp->iCat, comp->color);
+						iComps_combineN(thisCode, comp, 2, tniCodeNeedle, comp->iCat, comp->color);
 
 						// Indicate the number combined
 						++lnCombined;
@@ -2409,7 +2408,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Called to delete everything after the indicated component
 //
 //////
-	u32 iComps_deleteAllAfter(SLine* line, s32 tniCodeNeedle)
+	u32 iComps_deleteAllAfter(SThisCode* thisCode, SLine* line, s32 tniCodeNeedle)
 	{
 		u32		lnDeleted;
 		SComp*	comp;
@@ -2441,7 +2440,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					}
 
 					// Delete from here on out
-					iComps_deleteAll_byFirstComp(compLast);
+					iComps_deleteAll_byFirstComp(thisCode, compLast);
 					break;
 				}
 
@@ -2464,7 +2463,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Note:  This function can be called at any time.
 //
 //////
-	u32 iComps_removeLeadingWhitespaces(SLine* line)
+	u32 iComps_removeLeadingWhitespaces(SThisCode* thisCode, SLine* line)
 	{
 		u32		lnRemoved;
 		SComp*	comp;
@@ -2501,7 +2500,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 //        processed, such that all quoted text items are already combined into a single icode.
 //
 //////
-	u32 iComps_removeWhitespaces(SLine* line)
+	u32 iComps_removeWhitespaces(SThisCode* thisCode, SLine* line)
 	{
 		u32		lnRemoved;
 		SComp*	comp;
@@ -2552,7 +2551,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Called to remove any /* comments */ from the current chain of comps.
 //
 //////
-	void iComps_removeStartEndComments(SLine* line)
+	void iComps_removeStartEndComments(SThisCode* thisCode, SLine* line)
 	{
 		SComp*	comp;
 		SComp*	compNext;
@@ -2572,11 +2571,11 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					{
 						// Delete everything forward until we reach _ICODE_COMMENT_END or the last comp
 						while ((compNext = comp->ll.nextComp) && compNext->iCode != _ICODE_COMMENT_END)
-							iComps_combineN(comp, 2, comp->iCode, comp->iCat, comp->color);
+							iComps_combineN(thisCode, comp, 2, comp->iCode, comp->iCat, comp->color);
 
 						// When we get here, we're sitting on the _ICODE_COMMENT_END
 						if ((compNext = comp->ll.nextComp) && compNext->iCode == _ICODE_COMMENT_END)
-							iComps_combineN(comp, 2, comp->iCode, comp->iCat, comp->color);
+							iComps_combineN(thisCode, comp, 2, comp->iCode, comp->iCat, comp->color);
 					}
 
 
@@ -2597,7 +2596,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Called to combine casks
 //
 //////
-	void iComps_combineCasks(SLine* line)
+	void iComps_combineCasks(SThisCode* thisCode, SLine* line)
 	{
 		SComp* comp;
 
@@ -2613,16 +2612,16 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 				if (comp->iCode >= _ICODE_CASK_SIDE_MINIMUM && comp->iCode <= _ICODE_CASK_SIDE_MAXIMUM)
 				{
 					// Try normal forms without parameters
-					iComps_combineAllBetween2(line,		_ICODE_CASK_ROUND_OPEN,				_ICODE_CASK_ROUND_CLOSE,				_ICODE_CASK_ROUND,				_ICAT_CASK, (SBgra*)&blackColor, false);
-					iComps_combineAllBetween2(line,		_ICODE_CASK_SQUARE_OPEN,			_ICODE_CASK_SQUARE_CLOSE,				_ICODE_CASK_SQUARE,				_ICAT_CASK, (SBgra*)&blackColor, false);
-					iComps_combineAllBetween2(line,		_ICODE_CASK_TRIANGLE_OPEN,			_ICODE_CASK_TRIANGLE_CLOSE,				_ICODE_CASK_TRIANGLE,			_ICAT_CASK, (SBgra*)&blackColor, false);
-					iComps_combineAllBetween2(line,		_ICODE_CASK_TILDE_OPEN,				_ICODE_CASK_TILDE_CLOSE,				_ICODE_CASK_TILDE,				_ICAT_CASK, (SBgra*)&blackColor, false);
+					iComps_combineAllBetween2(thisCode, line,		_ICODE_CASK_ROUND_OPEN,				_ICODE_CASK_ROUND_CLOSE,				_ICODE_CASK_ROUND,				_ICAT_CASK, (SBgra*)&blackColor, false);
+					iComps_combineAllBetween2(thisCode, line,		_ICODE_CASK_SQUARE_OPEN,			_ICODE_CASK_SQUARE_CLOSE,				_ICODE_CASK_SQUARE,				_ICAT_CASK, (SBgra*)&blackColor, false);
+					iComps_combineAllBetween2(thisCode, line,		_ICODE_CASK_TRIANGLE_OPEN,			_ICODE_CASK_TRIANGLE_CLOSE,				_ICODE_CASK_TRIANGLE,			_ICAT_CASK, (SBgra*)&blackColor, false);
+					iComps_combineAllBetween2(thisCode, line,		_ICODE_CASK_TILDE_OPEN,				_ICODE_CASK_TILDE_CLOSE,				_ICODE_CASK_TILDE,				_ICAT_CASK, (SBgra*)&blackColor, false);
 
 					// Try normal forms with parameters
-					iComps_combineAllBetween2(line,		_ICODE_CASK_ROUND_OPEN_PARAMS,		_ICODE_CASK_ROUND_CLOSE_PARAMS,			_ICODE_CASK_ROUND_PARAMS,		_ICAT_CASK, (SBgra*)&blackColor, false);
-					iComps_combineAllBetween2(line,		_ICODE_CASK_SQUARE_OPEN_PARAMS,		_ICODE_CASK_SQUARE_CLOSE_PARAMS,		_ICODE_CASK_SQUARE_PARAMS,		_ICAT_CASK, (SBgra*)&blackColor, false);
-					iComps_combineAllBetween2(line,		_ICODE_CASK_TRIANGLE_OPEN_PARAMS,	_ICODE_CASK_TRIANGLE_CLOSE_PARAMS,		_ICODE_CASK_TRIANGLE_PARAMS,	_ICAT_CASK, (SBgra*)&blackColor, false);
-					iComps_combineAllBetween2(line,		_ICODE_CASK_TILDE_OPEN_PARAMS,		_ICODE_CASK_TILDE_CLOSE_PARAMS,			_ICODE_CASK_TILDE_PARAMS,		_ICAT_CASK, (SBgra*)&blackColor, false);
+					iComps_combineAllBetween2(thisCode, line,		_ICODE_CASK_ROUND_OPEN_PARAMS,		_ICODE_CASK_ROUND_CLOSE_PARAMS,			_ICODE_CASK_ROUND_PARAMS,		_ICAT_CASK, (SBgra*)&blackColor, false);
+					iComps_combineAllBetween2(thisCode, line,		_ICODE_CASK_SQUARE_OPEN_PARAMS,		_ICODE_CASK_SQUARE_CLOSE_PARAMS,		_ICODE_CASK_SQUARE_PARAMS,		_ICAT_CASK, (SBgra*)&blackColor, false);
+					iComps_combineAllBetween2(thisCode, line,		_ICODE_CASK_TRIANGLE_OPEN_PARAMS,	_ICODE_CASK_TRIANGLE_CLOSE_PARAMS,		_ICODE_CASK_TRIANGLE_PARAMS,	_ICAT_CASK, (SBgra*)&blackColor, false);
+					iComps_combineAllBetween2(thisCode, line,		_ICODE_CASK_TILDE_OPEN_PARAMS,		_ICODE_CASK_TILDE_CLOSE_PARAMS,			_ICODE_CASK_TILDE_PARAMS,		_ICAT_CASK, (SBgra*)&blackColor, false);
 
 					// Done
 					return;
@@ -2642,16 +2641,16 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Fixes up common things found in VXB source code.
 //
 //////
-	void iComps_fixupNaturalGroupings(SLine* line)
+	void iComps_fixupNaturalGroupings(SThisCode* thisCode, SLine* line)
 	{
 		if (line && line->compilerInfo && line->compilerInfo->firstComp)
 		{
 			//////////
 			// Fixup quotes, comments
 			//////
-				iComps_combineAllBetween(line, _ICODE_SINGLE_QUOTE,		_ICODE_SINGLE_QUOTED_TEXT,	&colorSynHi_quotedText);
-				iComps_combineAllBetween(line, _ICODE_DOUBLE_QUOTE,		_ICODE_DOUBLE_QUOTED_TEXT,	&colorSynHi_quotedText);
-				iComps_combineAllAfter(line, _ICODE_LINE_COMMENT);
+				iComps_combineAllBetween(thisCode, line, _ICODE_SINGLE_QUOTE,		_ICODE_SINGLE_QUOTED_TEXT,	&colorSynHi_quotedText);
+				iComps_combineAllBetween(thisCode, line, _ICODE_DOUBLE_QUOTE,		_ICODE_DOUBLE_QUOTED_TEXT,	&colorSynHi_quotedText);
+				iComps_combineAllAfter(thisCode, line, _ICODE_LINE_COMMENT);
 
 
 			//////////
@@ -2659,9 +2658,9 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 			// which then alternate in some form of alpha, numeric, underscore, etc., and translate to
 			// alphanumeric.  For numeric it looks for +-999.99 completely adjacent, and combines into one.
 			//////
-				iComps_combineAdjacentAlphanumeric(line);
-				iComps_combineAdjacentNumeric(line);
-				iComps_combineAdjacentDotForms(line);
+				iComps_combineAdjacentAlphanumeric(thisCode, line);
+				iComps_combineAdjacentNumeric(thisCode, line);
+				iComps_combineAdjacentDotForms(thisCode, line);
 		}
 	}
 
@@ -2673,7 +2672,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Returns the number of characters between two components.
 //
 //////
-	s32 iiComps_get_charactersBetween(SComp* compLeft, SComp* compRight)
+	s32 iiComps_get_charactersBetween(SThisCode* thisCode, SComp* compLeft, SComp* compRight)
 	{
 		// Start of right component and end of left component
 		return(compRight->start - (compLeft->start + compLeft->length));
@@ -2687,7 +2686,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Called to convert the value in this component to an s32 integer
 //
 //////
-	s32 iComps_getAs_s32(SComp* comp)
+	s32 iComps_getAs_s32(SThisCode* thisCode, SComp* comp)
 	{
 		s8 buffer[16];
 
@@ -2713,7 +2712,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Called to get the length of the contiguous components
 //
 //////
-	s32 iComps_getContiguousLength(SComp* comp, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount, s32* tnCount)
+	s32 iComps_getContiguousLength(SThisCode* thisCode, SComp* comp, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount, s32* tnCount)
 	{
 		s32		lnCount, lnLength, lnThisSpacing;
 		bool	llAtLeastOne, llIsValid;
@@ -2735,7 +2734,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					//////////
 					// See if it's contiguously adjoined
 					//////
-						if ((lnThisSpacing = iiComps_get_charactersBetween(comp, comp->ll.nextComp)) != 0)
+						if ((lnThisSpacing = iiComps_get_charactersBetween(thisCode, comp, comp->ll.nextComp)) != 0)
 							break;		// We're done
 
 
@@ -2745,7 +2744,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 						if (tnValid_iCodeArrayCount > 0 && valid_iCodeArray)
 						{
 							// We do need to validate
-							if (!iiComps_validate(comp, valid_iCodeArray, tnValid_iCodeArrayCount))
+							if (!iiComps_validate(thisCode, comp, valid_iCodeArray, tnValid_iCodeArrayCount))
 							{
 								// If we get here, it did not pass validation
 								llIsValid = false;
@@ -2783,7 +2782,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					if (tnValid_iCodeArrayCount > 0 && valid_iCodeArray)
 					{
 						// If it's valid, add it
-						if (iiComps_validate(comp, valid_iCodeArray, tnValid_iCodeArrayCount))
+						if (iiComps_validate(thisCode, comp, valid_iCodeArray, tnValid_iCodeArrayCount))
 						{
 							lnLength += comp->length;	// It's valid
 							++lnCount;
@@ -2814,7 +2813,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Called to validate the indicated component against a valid array list
 //
 //////
-	bool iiComps_validate(SComp* comp, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount)
+	bool iiComps_validate(SThisCode* thisCode, SComp* comp, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount)
 	{
 		s32 lnI;
 
@@ -2839,7 +2838,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Visualizes the components in text form
 //
 //////
-	s8* iComps_visualize(SComp* comp, s32 tnCount, s8* outputBuffer, s32 tnBufferLength, bool tlUseDefaultCompSearcher, SAsciiCompSearcher* tsComps1, SAsciiCompSearcher* tsComps2)
+	s8* iComps_visualize(SThisCode* thisCode, SComp* comp, s32 tnCount, s8* outputBuffer, s32 tnBufferLength, bool tlUseDefaultCompSearcher, SAsciiCompSearcher* tsComps1, SAsciiCompSearcher* tsComps2)
 	{
 		s32						lnI, lnJ, lnLength, lnOffset;
 		bool					llFound;
@@ -2946,7 +2945,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // nothing whitespaces, content, and total line length (including cr/lf combinations at the end)
 //
 //////
-	u32 iBreakoutAsciiTextDataIntoLines_ScanLine(s8* tcData, u32 tnMaxLength, u32* tnLength, u32* tnWhitespaces)
+	u32 iBreakoutAsciiTextDataIntoLines_ScanLine(SThisCode* thisCode, s8* tcData, u32 tnMaxLength, u32* tnLength, u32* tnWhitespaces)
 	{
 		u32 lnLength, lnWhitespaces, lnCRLF_Length;
 
@@ -2958,13 +2957,13 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 		if (tcData && tnMaxLength > 0)
 		{
 			// Skip past any whitespaces
-			lnWhitespaces = iSkipWhitespaces(tcData, tnMaxLength);
+			lnWhitespaces = iSkipWhitespaces(thisCode, tcData, tnMaxLength);
 			if (tnWhitespaces)
 				*tnWhitespaces = lnWhitespaces;
 
 
 			// Skip to the ending carriage return / line feed
-			lnLength = iSkipToCarriageReturnLineFeed(tcData + lnWhitespaces, tnMaxLength - lnWhitespaces, &lnCRLF_Length);
+			lnLength = iSkipToCarriageReturnLineFeed(thisCode, tcData + lnWhitespaces, tnMaxLength - lnWhitespaces, &lnCRLF_Length);
 			if (tnLength)
 				*tnLength = lnLength;
 		}
@@ -2984,7 +2983,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 //		false	- not found, tnPosition unchanged
 //
 //////
-	bool iFindFirstOccurrenceOfAsciiCharacter(s8* tcHaystack, u32 tnHaystackLength, s8 tcNeedle, u32* tnPosition)
+	bool iFindFirstOccurrenceOfAsciiCharacter(SThisCode* thisCode, s8* tcHaystack, u32 tnHaystackLength, s8 tcNeedle, u32* tnPosition)
 	{
 		u32		lnI;
 		bool	llFound;
@@ -3025,7 +3024,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Called to translate the indicated keywords into their corresponding operation.
 //
 //////
-	void iiComps_xlatToSubInstr(SLine* line)
+	void iiComps_xlatToSubInstr(SThisCode* thisCode, SLine* line)
 	{
 		SNode	si;
 
@@ -3039,7 +3038,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 		//////////
 		// Find the inmost expression
 		//////
-			while (iiComps_xlatToSubInstr_findInmostExpression(&si, line))
+			while (iiComps_xlatToSubInstr_findInmostExpression(thisCode, &si, line))
 			{
 				// Was it a valid operation?
 				if (si.opData->subInstr >= 0)
@@ -3061,7 +3060,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 		// There are no more "inner" expressions.
 		// Now we parse out by keyword.
 		//////
-			if (iiComps_xlatToSubInstr_isEqualAssignment(line))
+			if (iiComps_xlatToSubInstr_isEqualAssignment(thisCode, line))
 			{
 				// It's something like x = y, but it could be x,y,z = a(b,c)
 
@@ -3088,7 +3087,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 //		(6)
 //
 //////
-	SComp* iiComps_xlatToSubInstr_findInmostExpression(SNode* si, SLine* line)
+	SComp* iiComps_xlatToSubInstr_findInmostExpression(SThisCode* thisCode, SNode* si, SLine* line)
 	{
 		bool	llFound;
 		SComp*	comp;
@@ -3173,7 +3172,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // We scan backwards until we get to any component other than a period or exclamation point.
 //
 //////
-	void iiComps_xlatToSubInstr_findStartOfComponent(SComp* compRoot, SOp* op)
+	void iiComps_xlatToSubInstr_findStartOfComponent(SThisCode* thisCode, SComp* compRoot, SOp* op)
 	{
 		SComp*	comp;
 		SComp*	compPrev;
@@ -3184,7 +3183,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 		//////
 			comp		= compRoot;
 			op->count	= 0;
-			while (comp && comp->ll.prev && iiComps_get_charactersBetween((SComp*)comp->ll.prev, comp) == 0)
+			while (comp && comp->ll.prev && iiComps_get_charactersBetween(thisCode, (SComp*)comp->ll.prev, comp) == 0)
 			{
 				//////////
 				// Previous component
@@ -3222,7 +3221,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // immediately adjacent.
 //
 //////
-	void iiComps_xlatToSubInstr_findFullComponent(SComp* compRoot, SOp* op)
+	void iiComps_xlatToSubInstr_findFullComponent(SThisCode* thisCode, SComp* compRoot, SOp* op)
 	{
 		SComp*	comp;
 		SComp*	compNext;
@@ -3233,7 +3232,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 		//////
 			comp		= compRoot;
 			op->count	= 0;
-			while (comp && comp->ll.next && iiComps_get_charactersBetween(comp, comp->ll.nextComp) == 0)
+			while (comp && comp->ll.next && iiComps_get_charactersBetween(thisCode, comp, comp->ll.nextComp) == 0)
 			{
 				//////////
 				// Next component
@@ -3271,7 +3270,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 //		x = y
 //
 //////
-	bool iiComps_xlatToSubInstr_isEqualAssignment(SLine* line)
+	bool iiComps_xlatToSubInstr_isEqualAssignment(SThisCode* thisCode, SLine* line)
 	{
 // TODO:  Write this function :-)
 		return(false);
@@ -3285,7 +3284,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Scans from the indicated location forward until finding a non-whitespace character
 //
 //////
-	u32 iSkipWhitespaces(s8* tcData, u32 tnMaxLength)
+	u32 iSkipWhitespaces(SThisCode* thisCode, s8* tcData, u32 tnMaxLength)
 	{
 		u32 lnLength;
 
@@ -3311,7 +3310,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Scans from the indicated location forward until finding CR/LF or any combination thereof
 //
 //////
-	u32 iSkipToCarriageReturnLineFeed(s8* tcData, u32 tnMaxLength, u32* tnCRLF_Length)
+	u32 iSkipToCarriageReturnLineFeed(SThisCode* thisCode, s8* tcData, u32 tnMaxLength, u32* tnCRLF_Length)
 	{
 		u32 lnLength, lnCRLF_Length;
 
@@ -3366,19 +3365,29 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 // Get the next Unique ID
 //
 //////
-	u32 iGetNextUid(void)
+	u32 iGetNextUid(SThisCode* thisCode)
 	{
 		u32 lnValue;
 
+
+		//////////
 		// Synchronized access
-		EnterCriticalSection(&cs_uniqueIdAccess);
+		//////
+			EnterCriticalSection(&cs_uniqueIdAccess);
 
+
+		//////////
 		// Get our value and increment
-		lnValue = gnNextUniqueId;
-		++gnNextUniqueId;
+		//////
+			lnValue = gnNextUniqueId;
+			++gnNextUniqueId;
 
+
+		//////////
 		// All done
-		LeaveCriticalSection(&cs_uniqueIdAccess);
+		//////
+			LeaveCriticalSection(&cs_uniqueIdAccess);
+
 
 		// Return that value
 		return(lnValue);
@@ -3386,18 +3395,18 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 
 
 
-	void* iSEChain_prepend(SStartEnd* ptrSE, u32 tnUniqueId, u32 tnUniqueIdExtra, u32 tnSize, u32 tnBlockSizeIfNewBlockNeeded, bool* tlResult)
+	void* iSEChain_prepend(SThisCode* thisCode, SStartEnd* ptrSE, u32 tnUniqueId, u32 tnUniqueIdExtra, u32 tnSize, u32 tnBlockSizeIfNewBlockNeeded, bool* tlResult)
 	{
-		return(iSEChain_appendOrPrepend(ptrSE, tnUniqueId, tnUniqueIdExtra, tnSize, tnBlockSizeIfNewBlockNeeded, true, tlResult));
+		return(iSEChain_appendOrPrepend(thisCode, ptrSE, tnUniqueId, tnUniqueIdExtra, tnSize, tnBlockSizeIfNewBlockNeeded, true, tlResult));
 	}
 
-	void* iSEChain_append(SStartEnd* ptrSE, u32 tnUniqueId, u32 tnUniqueIdExtra, u32 tnSize, u32 tnBlockSizeIfNewBlockNeeded, bool* tlResult)
+	void* iSEChain_append(SThisCode* thisCode, SStartEnd* ptrSE, u32 tnUniqueId, u32 tnUniqueIdExtra, u32 tnSize, u32 tnBlockSizeIfNewBlockNeeded, bool* tlResult)
 	{
-		return(iSEChain_appendOrPrepend(ptrSE, tnUniqueId, tnUniqueIdExtra, tnSize, tnBlockSizeIfNewBlockNeeded, false, tlResult));
+		return(iSEChain_appendOrPrepend(thisCode, ptrSE, tnUniqueId, tnUniqueIdExtra, tnSize, tnBlockSizeIfNewBlockNeeded, false, tlResult));
 	}
 
 	// Prepends or appends to the Start/end chain
-	void* iSEChain_appendOrPrepend (SStartEnd* ptrSE, u32 tnUniqueId, u32 tnUniqueIdExtra, u32 tnSize, u32 tnBlockSizeIfNewBlockNeeded, bool tlPrepend, bool* tlResult)
+	void* iSEChain_appendOrPrepend (SThisCode* thisCode, SStartEnd* ptrSE, u32 tnUniqueId, u32 tnUniqueIdExtra, u32 tnSize, u32 tnBlockSizeIfNewBlockNeeded, bool tlPrepend, bool* tlResult)
 	{
 		SLL*			ptrCaller;
 		SMasterList*	ptrNew;
@@ -3471,7 +3480,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 					}
 
 					// Store it in the master list (so when VM is suspended, this data gets saved)
-					iSEChain_appendMasterList(ptrSE, ptrNew, 0, tnBlockSizeIfNewBlockNeeded);
+					iSEChain_appendMasterList(thisCode, ptrSE, ptrNew, 0, tnBlockSizeIfNewBlockNeeded);
 
 					// All done!
 				}
@@ -3487,7 +3496,7 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 	}
 
 	// NOTE!  Do not call this function directly!  Call iAppendToStarEndChain() only.
-	void iSEChain_appendMasterList(SStartEnd* ptrSE, SMasterList* ptrNew, u32 tnHint, u32 tnBlockSizeIfNewBlockNeeded)
+	void iSEChain_appendMasterList(SThisCode* thisCode, SStartEnd* ptrSE, SMasterList* ptrNew, u32 tnHint, u32 tnBlockSizeIfNewBlockNeeded)
 	{
 		// This function should not be called directly.  It is automatically called from
 		// iAppendToStarEndChain().  It stores pointers in the master list, pointers
@@ -3522,13 +3531,13 @@ void iiComps_decodeSyntax_returns(SCompileVxbContext* vxb)
 			// If we get here, no slots are available, add some more
 
 			// Allocate some pointer space
-			iSEChain_allocateAdditionalMasterSlots(ptrSE, tnBlockSizeIfNewBlockNeeded);
+			iSEChain_allocateAdditionalMasterSlots(thisCode, ptrSE, tnBlockSizeIfNewBlockNeeded);
 			// We never break out of this loop because we will always return above from it
 		}
 	}
 
 
-	bool iSEChain_allocateAdditionalMasterSlots(SStartEnd* ptrSE, u32 tnBlockSize)
+	bool iSEChain_allocateAdditionalMasterSlots(SThisCode* thisCode, SStartEnd* ptrSE, u32 tnBlockSize)
 	{
 		bool			llResult;
 		SMasterList**	lml;
@@ -3600,7 +3609,7 @@ debug_break;
 //		!0		= does not tmach
 //
 //////
-	s32 iTranslateToCompsTest(cu8* tcHaystack, cu8* tcNeedle, s32 tnLength)
+	s32 iTranslateToCompsTest(SThisCode* thisCode, cu8* tcHaystack, cu8* tcNeedle, s32 tnLength)
 	{
 		u32		lnI;
 		bool	llCase;
@@ -3652,7 +3661,7 @@ debug_break;
 // Note:  Always returns false, so it will continue being fed every component
 //
 //////
-	bool iioss_translateCompsToOthersCallback(SStartEndCallback* cb)
+	bool iioss_translateCompsToOthersCallback(SThisCode* thisCode, SStartEndCallback* cb)
 	{
 		s32						lnLacsLength;
 		SComp*					comp;
@@ -3682,7 +3691,8 @@ debug_break;
 					if (!lacs->firstOnLine || !comp->ll.prev)
 					{
 						// Physically conduct the exact comparison
-						if (iTranslateToCompsTest(lacs->keyword_u8,
+						if (iTranslateToCompsTest(thisCode, 
+													lacs->keyword_u8,
 													comp->line->sourceCode->data_u8 + comp->start,
 													lacs->length) == 0)
 						{
@@ -3714,7 +3724,7 @@ debug_break;
 //		The associated pointer if found
 //
 //////
-	void* iSEChain_searchByCallback(SStartEnd* ptrSE, SStartEndCallback* cb)
+	void* iSEChain_searchByCallback(SThisCode* thisCode, SStartEnd* ptrSE, SStartEndCallback* cb)
 	{
 		u32 lnI;
 
@@ -3753,7 +3763,7 @@ debug_break;
 //		The associated pointer if found
 //
 //////
-	void* iSEChain_searchByUniqueId(SStartEnd* ptrSE, u64 tnUniqueId)
+	void* iSEChain_searchByUniqueId(SThisCode* thisCode, SStartEnd* ptrSE, u64 tnUniqueId)
 	{
 		u32 lnI;
 
@@ -3783,7 +3793,7 @@ debug_break;
 // Iterates through the indicated Start/End list, calling back the callback function for every item.
 //
 //////
-	void iSEChain_iterateThroughForCallback(SStartEnd* ptrSE, SStartEndCallback* cb)
+	void iSEChain_iterateThroughForCallback(SThisCode* thisCode, SStartEnd* ptrSE, SStartEndCallback* cb)
 	{
 		u32 lnI;
 
@@ -3818,7 +3828,7 @@ debug_break;
 //        then it will need to be either manually added to the line->comps, or manually tended to.
 //
 //////
-	void iiComps_xlatToOthersCallback__insertCompByCompCallback(SComp* compRef, SComp* compNew, bool tlInsertAfter)
+	void iiComps_xlatToOthersCallback__insertCompByCompCallback(SThisCode* thisCode, SComp* compRef, SComp* compNew, bool tlInsertAfter)
 	{
 // TODO:  untested code, breakpoint and examine
 debug_break;
@@ -3856,7 +3866,7 @@ debug_break;
 // Called as a callback from the custom handler callback function, to do some manual insertion.
 //
 //////
-	void iiComps_xlatToOthersCallback__insertCompByParamsCallback(SComp* compRef, SLine* line, u32 tniCode, u32 tnStart, s32 tnLength, bool tlInsertAfter)
+	void iiComps_xlatToOthersCallback__insertCompByParamsCallback(SThisCode* thisCode, SComp* compRef, SLine* line, u32 tniCode, u32 tnStart, s32 tnLength, bool tlInsertAfter)
 	{
 		SComp* compNew;
 
@@ -3867,7 +3877,7 @@ debug_break;
 		if (compRef && line && line->compilerInfo)
 		{
 			// Allocate a new pointer
-			compNew = (SComp*)iLl_appendNewNode((SLL**)&line->compilerInfo->firstComp, NULL, NULL, NULL, iGetNextUid(), sizeof(SComp));
+			compNew = (SComp*)iLl_appendNewNode((SLL**)&line->compilerInfo->firstComp, NULL, NULL, NULL, iGetNextUid(thisCode), sizeof(SComp));
 			if (compNew)
 			{
 				// Initialize it
@@ -3880,7 +3890,7 @@ debug_break;
 				compNew->length		= tnLength;
 
 				// Add the new component as a component
-				iiComps_xlatToOthersCallback__insertCompByCompCallback(compRef, compNew, tlInsertAfter);
+				iiComps_xlatToOthersCallback__insertCompByCompCallback(thisCode, compRef, compNew, tlInsertAfter);
 			}
 		}
 	}
@@ -3894,7 +3904,7 @@ debug_break;
 // indicated component.
 //
 //////
-	void iiComps_xlatToOthersCallback__deleteCompsCallback(SComp* comp, SLine* line)
+	void iiComps_xlatToOthersCallback__deleteCompsCallback(SThisCode* thisCode, SComp* comp, SLine* line)
 	{
 // TODO:  untested code, breakpoint and examine
 debug_break;
@@ -3934,7 +3944,7 @@ debug_break;
 // component.  If line is not NULL, the component is automatically added to line->comps;
 //
 //////
-	SComp* iiComps_xlatToOthersCallback__cloneCompsCallback(SComp* comp, SLine* line)
+	SComp* iiComps_xlatToOthersCallback__cloneCompsCallback(SThisCode* thisCode, SComp* comp, SLine* line)
 	{
 		SComp* compNew;
 
@@ -3949,7 +3959,7 @@ debug_break;
 			if (line && line->compilerInfo)
 			{
 				// Add the new component to line->comps
-				compNew = (SComp*)iLl_appendNewNode((SLL**)&line->compilerInfo->firstComp, NULL, NULL, NULL, iGetNextUid(), sizeof(SComp));
+				compNew = (SComp*)iLl_appendNewNode((SLL**)&line->compilerInfo->firstComp, NULL, NULL, NULL, iGetNextUid(thisCode), sizeof(SComp));
 
 			} else {
 				// Just create a rogue one
@@ -3990,7 +4000,7 @@ debug_break;
 //        handle that condition.
 //
 //////
-	SComp* iiComps_xlatToOthersCallback__mergeCompsCallback(SComp* comp, SLine* line, u32 tnCount, u32 tniCodeNew)
+	SComp* iiComps_xlatToOthersCallback__mergeCompsCallback(SThisCode* thisCode, SComp* comp, SLine* line, u32 tnCount, u32 tniCodeNew)
 	{
 		u32			lnI;
 		SComp*	compThis;
@@ -4008,7 +4018,7 @@ debug_break;
 				comp->length += compThis->length;
 
 				// Delete this component
-				iiComps_xlatToOthersCallback__deleteCompsCallback(compThis, comp->line);
+				iiComps_xlatToOthersCallback__deleteCompsCallback(thisCode, compThis, comp->line);
 
 				// Note:  compThis is always assigned comp->ll.next, because its next component keeps being updated after the delete
 			}
@@ -4026,7 +4036,7 @@ debug_break;
 // Delete the indicated item from the chain
 //
 //////
-	void iSEChain_deleteFrom(SStartEnd* ptrSE, void* ptrCaller, bool tlDeletePointers)
+	void iSEChain_deleteFrom(SThisCode* thisCode, SStartEnd* ptrSE, void* ptrCaller, bool tlDeletePointers)
 	{
 		u32				lnI;
 		SMasterList*	ptrDel;
@@ -4118,7 +4128,7 @@ debug_break;
 // to another, by either pointer or physical position number.
 //
 //////
-	SLL* iSEChain_completelyMigrateSLLByPtr(SStartEnd* ptrSEDst, SStartEnd* ptrSESrc, SLL* ptr, u32 tnHint, u32 tnBlockSize)
+	SLL* iSEChain_completelyMigrateSLLByPtr(SThisCode* thisCode, SStartEnd* ptrSEDst, SStartEnd* ptrSESrc, SLL* ptr, u32 tnHint, u32 tnBlockSize)
 	{
 		u32 lnI;
 
@@ -4133,7 +4143,7 @@ debug_break;
 				{
 					// This is our man, migrate it
 // TODO:  (enhancement) we want some kind of better hinting algorithm here, such as the end of the list - common block size, for now we'll just pass 0
-					return(iSEChain_completelyMigrateSLLByNum(ptrSEDst, ptrSESrc, lnI, 0, tnBlockSize));
+					return(iSEChain_completelyMigrateSLLByNum(thisCode, ptrSEDst, ptrSESrc, lnI, 0, tnBlockSize));
 				}
 			}
 			// If we get here, not found
@@ -4142,7 +4152,7 @@ debug_break;
 		return(NULL);
 	}
 
-	SLL* iSEChain_completelyMigrateSLLByNum(SStartEnd* ptrSEDst, SStartEnd* ptrSESrc, u32 lnSrcNum, u32 tnHint, u32 tnBlockSize)
+	SLL* iSEChain_completelyMigrateSLLByNum(SThisCode* thisCode, SStartEnd* ptrSEDst, SStartEnd* ptrSESrc, u32 lnSrcNum, u32 tnHint, u32 tnBlockSize)
 	{
 		SLL*			lllPrev;
 		SLL*			lllNext;
@@ -4154,7 +4164,7 @@ debug_break;
 		if (ptrSEDst && ptrSESrc && lnSrcNum < ptrSESrc->masterCount && lnSrcNum <= ptrSESrc->masterCount)
 		{
 			// Migrate it, and get its SMasterList entry
-			lml = iSEChain_migrateByNum(ptrSEDst, ptrSESrc, lnSrcNum, tnHint, tnBlockSize);
+			lml = iSEChain_migrateByNum(thisCode, ptrSEDst, ptrSESrc, lnSrcNum, tnHint, tnBlockSize);
 			if (lml && lml->ptr)
 			{
 				// Grab the pointer to the SLL entry
@@ -4195,7 +4205,7 @@ debug_break;
 		return(NULL);
 	}
 
-	SMasterList* iSEChain_migrateByNum(SStartEnd* ptrSEDst, SStartEnd* ptrSESrc, u32 lnSrcNum, u32 tnHint, u32 tnBlockSize)
+	SMasterList* iSEChain_migrateByNum(SThisCode* thisCode, SStartEnd* ptrSEDst, SStartEnd* ptrSESrc, u32 lnSrcNum, u32 tnHint, u32 tnBlockSize)
 	{
 		u32				lnI;
 		SMasterList*	lml;
@@ -4267,7 +4277,7 @@ debug_break;
 					}
 				}
 				// If we get here, no empty slots. Allocate some, rinse, and repeat. :-)
-				iSEChain_allocateAdditionalMasterSlots(ptrSEDst, tnBlockSize);
+				iSEChain_allocateAdditionalMasterSlots(thisCode, ptrSEDst, tnBlockSize);
 
 				// Process through again beginning at the newly added portion
 				tnHint = lnI;
@@ -4287,7 +4297,7 @@ debug_break;
 // Called to create a new node and attach it to the hint as indicated.
 //
 //////
-	SNode* iNode_create(SNode** root, SNode* hint, u32 tnDirection, SNode* parent, SNode* prev, SNode* next, SNode* left, SNode* right)
+	SNode* iNode_create(SThisCode* thisCode, SNode** root, SNode* hint, u32 tnDirection, SNode* parent, SNode* prev, SNode* next, SNode* left, SNode* right)
 	{
 		SNode*		nodeNew;
 		SNode**		nodePrev;
@@ -4384,7 +4394,7 @@ debug_break;
 // Creates a new node and inserts it where node1 currently points to node2.
 //
 //////
-	SNode* iNode_insertBetween(SNode** root, SNode* node1, SNode* node2, u32 tnNode1Direction, u32 tnNode2Direction)
+	SNode* iNode_insertBetween(SThisCode* thisCode, SNode** root, SNode* node1, SNode* node2, u32 tnNode1Direction, u32 tnNode2Direction)
 	{
 		u32		lnNode1Direction, lnNode2Direction;
 		SNode*	nodeNew;
@@ -4431,7 +4441,7 @@ debug_break;
 
 
 			// Create an orphan node
-			nodeNew = iNode_create(root, NULL, 0, NULL, NULL, NULL, NULL, NULL);
+			nodeNew = iNode_create(thisCode, root, NULL, 0, NULL, NULL, NULL, NULL, NULL);
 			if (nodeNew)
 			{
 				//////////
@@ -4521,7 +4531,7 @@ debug_break;
 // Called to delete the entire node change recursively
 //
 //////
-	void iNode_politelyDeleteAll(SNode** root, bool tlDeleteSelf, bool tlTraverseParent, bool tlTraversePrev, bool tlTraverseNext, bool tlTraverseLeft, bool tlTraverseRight)
+	void iNode_politelyDeleteAll(SThisCode* thisCode, SNode** root, bool tlDeleteSelf, bool tlTraverseParent, bool tlTraversePrev, bool tlTraverseNext, bool tlTraverseLeft, bool tlTraverseRight)
 	{
 		SNode* node;
 
@@ -4539,7 +4549,7 @@ debug_break;
 			//////
 				if (tlTraverseParent && node->parent)
 				{
-					iNode_politelyDeleteAll(&node->parent, true, node->parent->parent != node, node->prev->prev != node, node->prev->next != node, node->prev->left != node, node->prev->right != node);
+					iNode_politelyDeleteAll(thisCode, &node->parent, true, node->parent->parent != node, node->prev->prev != node, node->prev->next != node, node->prev->left != node, node->prev->right != node);
 					node->prev = NULL;
 				}
 
@@ -4549,7 +4559,7 @@ debug_break;
 			//////
 				if (tlTraversePrev && node->prev)
 				{
-					iNode_politelyDeleteAll(&node->prev, true, node->parent->parent != node, node->prev->prev != node, node->prev->next != node, node->prev->left != node, node->prev->right != node);
+					iNode_politelyDeleteAll(thisCode, &node->prev, true, node->parent->parent != node, node->prev->prev != node, node->prev->next != node, node->prev->left != node, node->prev->right != node);
 					node->prev = NULL;
 				}
 
@@ -4559,7 +4569,7 @@ debug_break;
 			//////
 				if (tlTraverseNext && node->next)
 				{
-					iNode_politelyDeleteAll(&node->next, true, node->parent->parent != node, node->next->prev != node, node->next->next != node, node->next->left != node, node->next->right != node);
+					iNode_politelyDeleteAll(thisCode, &node->next, true, node->parent->parent != node, node->next->prev != node, node->next->next != node, node->next->left != node, node->next->right != node);
 					node->next = NULL;
 				}
 
@@ -4569,7 +4579,7 @@ debug_break;
 			//////
 				if (tlTraverseLeft && node->left)
 				{
-					iNode_politelyDeleteAll(&node->left, true, node->parent->parent != node, node->left->prev != node, node->left->next != node, node->left->left != node, node->left->right != node);
+					iNode_politelyDeleteAll(thisCode, &node->left, true, node->parent->parent != node, node->left->prev != node, node->left->next != node, node->left->left != node, node->left->right != node);
 					node->left = NULL;
 				}
 
@@ -4579,7 +4589,7 @@ debug_break;
 			//////
 				if (tlTraverseRight && node->right)
 				{
-					iNode_politelyDeleteAll(&node->right, true, node->parent->parent != node, node->right->prev != node, node->right->next != node, node->right->left != node, node->right->right != node);
+					iNode_politelyDeleteAll(thisCode, &node->right, true, node->parent->parent != node, node->right->prev != node, node->right->next != node, node->right->left != node, node->right->right != node);
 					node->right = NULL;
 				}
 
@@ -4587,14 +4597,14 @@ debug_break;
 			//////////
 			// Delete the op if need be
 			//////
-				iOp_politelyDelete(&node->opData->op, false);
+				iOp_politelyDelete(thisCode, &node->opData->op, false);
 
 
 			//////////
 			// Delete the variable chain
 			//////
 				if (node->opData->firstVariable)
-					iVariable_politelyDeleteChain(&node->opData->firstVariable, true);
+					iVariable_politelyDeleteChain(thisCode, &node->opData->firstVariable, true);
 
 
 			//////////
@@ -4617,7 +4627,7 @@ debug_break;
 // Called to create an empty function with a name.
 //
 //////
-	SFunction* iFunction_allocate(SComp* compName)
+	SFunction* iFunction_allocate(SThisCode* thisCode, SComp* compName)
 	{
 		SFunction* funcNew;
 
@@ -4648,7 +4658,7 @@ debug_break;
 		return(funcNew);
 	}
 
-	SFunction* iFunction_allocate(u8* tcFuncName)
+	SFunction* iFunction_allocate(SThisCode* thisCode, u8* tcFuncName)
 	{
 		SFunction* funcNew;
 
@@ -4677,7 +4687,7 @@ debug_break;
 // Called to add a scoped variable to the function
 //
 //////
-	SVariable* iFunction_addVariable_scoped(SFunction* func)
+	SVariable* iFunction_addVariable_scoped(SThisCode* thisCode, SFunction* func)
 	{
 		SVariable*	varNew;
 
@@ -4704,7 +4714,7 @@ debug_break;
 // information, including all variables that were found.
 //
 //////
-	void iFunction_politelyDeleteCompiledInfo(SFunction* func, bool tlDeleteSelf)
+	void iFunction_politelyDeleteCompiledInfo(SThisCode* thisCode, SFunction* func, bool tlDeleteSelf)
 	{
 		bool	llContinue;
 		SLine*	line;
@@ -4724,8 +4734,8 @@ debug_break;
 				if (line->compilerInfo && line->compilerInfo->firstNodeEngaged)
 				{
 					// Delete from regular components, and whitespaces
-					iComps_deleteAll_byFirstComp(&line->compilerInfo->firstComp);
-					iComps_deleteAll_byFirstComp(&line->compilerInfo->firstWhitespace);
+					iComps_deleteAll_byFirstComp(thisCode, &line->compilerInfo->firstComp);
+					iComps_deleteAll_byFirstComp(thisCode, &line->compilerInfo->firstWhitespace);
 				}
 
 				// Mark it so that it will be force-re-compiled
@@ -4750,7 +4760,7 @@ debug_break;
 // Called to politely delete everything contained within the function
 //
 //////
-	void iFunction_politelyDeleteChain(SFunction** rootFunc)
+	void iFunction_politelyDeleteChain(SThisCode* thisCode, SFunction** rootFunc)
 	{
 		SFunction* func;
 
@@ -4771,14 +4781,14 @@ debug_break;
 			iDatum_delete(&func->name, false);
 
 			// Delete this function's variables
-			iVariable_politelyDeleteChain(&func->params, true);
-			iVariable_politelyDeleteChain(&func->locals, true);
-			iVariable_politelyDeleteChain(&func->returns, true);
-			iVariable_politelyDeleteChain(&func->scoped, true);
-			iVariable_politelyDeleteChain(&func->params, true);
+			iVariable_politelyDeleteChain(thisCode, &func->params, true);
+			iVariable_politelyDeleteChain(thisCode, &func->locals, true);
+			iVariable_politelyDeleteChain(thisCode, &func->returns, true);
+			iVariable_politelyDeleteChain(thisCode, &func->scoped, true);
+			iVariable_politelyDeleteChain(thisCode, &func->params, true);
 
 			// Delete the adhocs for this function
-			iFunction_politelyDeleteChain(&func->firstAdhoc);
+			iFunction_politelyDeleteChain(thisCode, &func->firstAdhoc);
 		}
 	}
 
@@ -4792,9 +4802,9 @@ debug_break;
 //////
 	SVariable* iiVariable_terminateIndirect(SThisCode* thisCode, SVariable* var)
 	{
-		// Is there an indirect reference?
-		if (var && var->indirect)
-			return(iiVariable_terminateIndirect(thisCode, var->indirect));
+		// Dereference all indirect references
+		while (var && var->indirect)
+			var = var->indirect;	// Move to next level
 
 		// We're done
 		return(var);
@@ -4826,6 +4836,9 @@ debug_break;
 		//////
 			if (varNew)
 			{
+				// Dereference
+				varIndirect = iiVariable_terminateIndirect(thisCode, varIndirect);
+
 				// Initialize
 				memset(varNew, 0, sizeof(SVariable));
 
@@ -5223,7 +5236,7 @@ debug_break;
 		//////////
 		// Iterate through until we find it
 		//////
-			for (var = varRoot, lnDepth = 0; var; var = (SVariable*)var->ll.next)
+			for (var = varRoot, lnDepth = 0; var; var = (SVariable*)var->ll.next, lnDepth++)
 			{
 				// Is the name the same length?  And if so, does it match?
 				if (var->name.length == (s32)tnVarNameLength && _memicmp(tcVarName, var->name.data, tnVarNameLength) == 0)
@@ -5306,6 +5319,10 @@ debug_break;
 	{
 		if (var)
 		{
+			// De-reference the variable
+			var = iiVariable_terminateIndirect(thisCode, var);
+
+			// What type is it?
 			switch (var->varType)
 			{
 				case _VAR_TYPE_NULL:
@@ -5465,7 +5482,9 @@ debug_break;
 						debug_break;
 				}
 
-// Should never happen
+// This is a debugging check.  It should never happen.
+// If it does happen, it's because something is not setup properly in the gsProps_master[] array.
+// The current value of lnI should give you a hint
 if (!gsProps_master[lnI].varInit)
 	debug_break;
 			}
@@ -5588,6 +5607,13 @@ if (!gsProps_master[lnI].varInit)
 		if (var1 && var2)
 		{
 			//////////
+			// De-reference the variable
+			//////
+				var1 = iiVariable_terminateIndirect(thisCode, var1);
+				var2 = iiVariable_terminateIndirect(thisCode, var2);
+
+
+			//////////
 			// Are they the same?  If so, they're compatible. :-)
 			//////
 				if (var1->varType == var2->varType)
@@ -5680,12 +5706,11 @@ if (!gsProps_master[lnI].varInit)
 			//////////
 			// Make sure we're dealing with the actual variable
 			//////
-				varDst = iiVariable_terminateIndirect(thisCode, varDst);
 				varSrc = iiVariable_terminateIndirect(thisCode, varSrc);
 
 
 			//////////
-			// Are they being goofballs?
+			// Are they being goofballs? LOL! :-)
 			//////
 				if (varDst == varSrc)
 					return(true);	// Yes
@@ -5757,12 +5782,12 @@ if (!gsProps_master[lnI].varInit)
 		SVariable* varDst;
 
 
-		// De-reference the variable
-		varSrc = iiVariable_terminateIndirect(thisCode, varSrc);
-
 		// Are we still valid?
 		if (varSrc)
 		{
+			// De-reference the variable
+			varSrc = iiVariable_terminateIndirect(thisCode, varSrc);
+
 			// Should we create a real variable? Or a reference?
 			if (tlMakeReference)
 			{
@@ -6119,6 +6144,9 @@ do_as_numeric:
 		};
 
 
+		// De-reference the variable
+		varSrc = iiVariable_terminateIndirect(thisCode, varSrc);
+
 		// Make sure our environment is sane
 		if (varDst && varDst->value.data && varDst->value.length > 0 && varSrc && varSrc->value.data && varSrc->value.length > 0)
 		{
@@ -6432,6 +6460,9 @@ do_as_numeric:
 		s8	buffer[32];
 
 
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(thisCode, var);
+
 		// Make sure our environment is sane
 		if (var && var->value.data && var->value.length > 0)
 		{
@@ -6558,6 +6589,9 @@ do_as_numeric:
 		s8	formatter[16];
 		s8	buffer[32];
 
+
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(thisCode, var);
 
 		// Make sure our environment is sane
 		if (var && var->value.data && var->value.length > 0)
@@ -6686,6 +6720,9 @@ do_as_numeric:
 		s8	buffer[32];
 
 
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(thisCode, var);
+
 		// Make sure our environment is sane
 		if (var && var->value.data && var->value.length > 0)
 		{
@@ -6802,6 +6839,9 @@ do_as_numeric:
 		s8	formatter[16];
 		s8	buffer[32];
 
+
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(thisCode, var);
 
 		// Make sure our environment is sane
 		if (var && var->value.data && var->value.length > 0)
@@ -6920,6 +6960,9 @@ do_as_numeric:
 		s8	buffer[32];
 
 
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(thisCode, var);
+
 		// Make sure our environment is sane
 		if (var && var->value.data && var->value.length > 0)
 		{
@@ -7037,6 +7080,9 @@ do_as_numeric:
 		s8	buffer[32];
 
 
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(thisCode, var);
+
 		// Make sure our environment is sane
 		if (var && var->value.data && var->value.length > 0)
 		{
@@ -7149,6 +7195,9 @@ do_as_numeric:
 //////
 	SDatum* iVariable_setName(SThisCode* thisCode, SVariable* var, cu8* tcName, s32 tnNameLength)
 	{
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(thisCode, var);
+
 		// Make sure our environment is sane
 		if (var && tcName && tnNameLength > 0)
 		{
@@ -7375,6 +7424,9 @@ do_as_numeric:
 //////
 	bool iVariable_set_bitmap(SThisCode* thisCode, SVariable* var, SBitmap* bmp)
 	{
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(thisCode, var);
+
 		// Make sure the environment is sane
 		if (var && bmp)
 		{
@@ -7421,6 +7473,9 @@ do_as_numeric:
 //////
 	bool iVariable_set_character(SThisCode* thisCode, SVariable* var, u8* tcData, u32 tnDataLength)
 	{
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(thisCode, var);
+
 		// Make sure our environment is sane
 		if (var && tcData && tnDataLength != 0)
 		{
@@ -7456,6 +7511,9 @@ do_as_numeric:
 
 	bool iVariable_set_character(SThisCode* thisCode, SVariable* var, SDatum* datum)
 	{
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(thisCode, var);
+
 		// Make sure our environment is sane
 		if (var && datum)
 		{
@@ -7590,6 +7648,9 @@ debug_break;
 		u8			buffer[64];
 		s8			formatter[16];
 
+
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(thisCode, var);
 
 		// Make sure our environment is sane
 		varDisp = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL);
@@ -7870,6 +7931,9 @@ debug_break;
 //////
 	void iVariable_delete(SThisCode* thisCode, SVariable* var, bool tlDeleteSelf)
 	{
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(thisCode, var);
+
 		// Make sure our environment is sane
 		if (var)
 		{
@@ -7937,7 +8001,7 @@ debug_break;
 // to delete all of them
 //
 //////
-	void iVariable_politelyDeleteChain(SVariable** root, bool tlDeleteSelf)
+	void iVariable_politelyDeleteChain(SThisCode* thisCode, SVariable** root, bool tlDeleteSelf)
 	{
 		SVariable*		var;
 		SLLCallback		cb;
@@ -8009,6 +8073,9 @@ debug_break;
 		bool	llError;
 		u32		lnErrorNum;
 
+
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(thisCode, var);
 
 		// Make sure we have error and errorNum parameters
 		if (!tlError)		tlError		= &llError;
@@ -8104,6 +8171,9 @@ debug_break;
 		bool	llError;
 		u32		lnErrorNum;
 
+
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(thisCode, var);
 
 		// Make sure we have error and errorNum parameters
 		if (!tlError)		tlError		= &llError;
@@ -8333,7 +8403,7 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
 					//////
-						lnValue_s64 = iiVariable_computeDatetimeDifference(var, _datetime_Jan_01_2000);
+						lnValue_s64 = iiVariable_computeDatetimeDifference(thisCode, var, _datetime_Jan_01_2000);
 						if (lnValue_s64 >= (s64)_s16_min && lnValue_s64 <= (s64)_s16_max)
 							return((s16)lnValue_s64);
 
@@ -8404,6 +8474,9 @@ debug_break;
 		bool	llError;
 		u32		lnErrorNum;
 
+
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(thisCode, var);
 
 		// Make sure we have error and errorNum parameters
 		if (!tlError)		tlError		= &llError;
@@ -8613,7 +8686,7 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
 					//////
-						lnValue_s64 = iiVariable_computeDatetimeDifference(var, _datetime_Jan_01_2000);
+						lnValue_s64 = iiVariable_computeDatetimeDifference(thisCode, var, _datetime_Jan_01_2000);
 						if (lnValue_s64 > (s64)_s32_min && lnValue_s64 < (s64)_s32_max)
 							return((s32)lnValue_s64);
 
@@ -8685,6 +8758,9 @@ debug_break;
 		bool	llError;
 		u32		lnErrorNum;
 
+
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(thisCode, var);
 
 		// Make sure we have error and errorNum parameters
 		if (!tlError)		tlError		= &llError;
@@ -8875,7 +8951,7 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an u32 then we're good to go
 					//////
-						lnValue_s64 = iiVariable_computeDatetimeDifference(var, _datetime_Jan_01_2000);
+						lnValue_s64 = iiVariable_computeDatetimeDifference(thisCode, var, _datetime_Jan_01_2000);
 						if (lnValue_s64 >= 0 && lnValue_s64 <= (s64)_u16_max)
 							return((u16)lnValue_s64);
 
@@ -8946,6 +9022,9 @@ debug_break;
 		bool	llError;
 		u32		lnErrorNum;
 
+
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(thisCode, var);
 
 		// Make sure we have error and errorNum parameters
 		if (!tlError)		tlError		= &llError;
@@ -9136,7 +9215,7 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an u32 then we're good to go
 					//////
-						lnValue_s64 = iiVariable_computeDatetimeDifference(var, _datetime_Jan_01_2000);
+						lnValue_s64 = iiVariable_computeDatetimeDifference(thisCode, var, _datetime_Jan_01_2000);
 						if (lnValue_s64 >= 0 && lnValue_s64 <= (s64)_u32_max)
 							return((u32)lnValue_s64);
 
@@ -9207,6 +9286,9 @@ debug_break;
 		bool	llError;
 		u32		lnErrorNum;
 
+
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(thisCode, var);
 
 		// Make sure we have error and errorNum parameters
 		if (!tlError)		tlError		= &llError;
@@ -9333,7 +9415,7 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
 					//////
-						return(iiVariable_computeDatetimeDifference(var, _datetime_Jan_01_2000));
+						return(iiVariable_computeDatetimeDifference(thisCode, var, _datetime_Jan_01_2000));
 				}
 				break;
 		}
@@ -9373,6 +9455,9 @@ debug_break;
 		bool	llError;
 		u32		lnErrorNum;
 
+
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(thisCode, var);
 
 		// Make sure we have error and errorNum parameters
 		if (!tlError)		tlError		= &llError;
@@ -9467,7 +9552,7 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
 					//////
-						return((f32)iiVariable_computeDatetimeDifference(var, _datetime_Jan_01_2000));
+						return((f32)iiVariable_computeDatetimeDifference(thisCode, var, _datetime_Jan_01_2000));
 				}
 				break;
 		}
@@ -9507,6 +9592,9 @@ debug_break;
 		bool	llError;
 		u32		lnErrorNum;
 
+
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(thisCode, var);
 
 		// Make sure we have error and errorNum parameters
 		if (!tlError)		tlError		= &llError;
@@ -9585,7 +9673,7 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
 					//////
-						return((f64)iiVariable_computeDatetimeDifference(var, _datetime_Jan_01_2000));
+						return((f64)iiVariable_computeDatetimeDifference(thisCode, var, _datetime_Jan_01_2000));
 				}
 				break;
 		}
@@ -9763,12 +9851,17 @@ debug_break;
 // formula:  result = (dt1 - dt2).
 //
 //////
-	s64 iiVariable_computeDatetimeDifference(SVariable* dtVar1, SVariable* dtVar2)
+	s64 iiVariable_computeDatetimeDifference(SThisCode* thisCode, SVariable* dtVar1, SVariable* dtVar2)
 	{
 		SDateTime*	dt1;
 		SDateTime*	dt2;
 		f64			diffJulian, diffSeconds;
 		s64			result;
+
+
+		// De-reference the variables
+		dtVar1 = iiVariable_terminateIndirect(thisCode, dtVar1);
+		dtVar2 = iiVariable_terminateIndirect(thisCode, dtVar2);
 
 
 		//////////
@@ -9858,11 +9951,11 @@ debug_break;
 		return(false);
 	}
 
-	bool iOp_setVariable_param(SOp* op, SVariable* var, bool isOpAllocated)
+	bool iOp_setVariable_param(SThisCode* thisCode, SOp* op, SVariable* var, bool isOpAllocated)
 	{
 		if (op)
 		{
-			op->variable		= var;
+			op->variable		= iiVariable_terminateIndirect(thisCode, var);
 			op->opType			= _OP_TYPE_PARAM;
 			op->isOpDataAllocated	= isOpAllocated;
 			return(true);
@@ -9872,11 +9965,11 @@ debug_break;
 		return(false);
 	}
 
-	bool iOp_setVariable_local(SOp* op, SVariable* var, bool isOpAllocated)
+	bool iOp_setVariable_local(SThisCode* thisCode, SOp* op, SVariable* var, bool isOpAllocated)
 	{
 		if (op)
 		{
-			op->variable		= var;
+			op->variable		= iiVariable_terminateIndirect(thisCode, var);
 			op->opType			= _OP_TYPE_LOCAL;
 			op->isOpDataAllocated	= isOpAllocated;
 			return(true);
@@ -9886,11 +9979,11 @@ debug_break;
 		return(false);
 	}
 
-	bool iOp_setVariable_scoped(SOp* op, SVariable* var, bool isOpAllocated)
+	bool iOp_setVariable_scoped(SThisCode* thisCode, SOp* op, SVariable* var, bool isOpAllocated)
 	{
 		if (op)
 		{
-			op->variable		= var;
+			op->variable		= iiVariable_terminateIndirect(thisCode, var);
 			op->opType			= _OP_TYPE_SCOPED;
 			op->isOpDataAllocated	= isOpAllocated;
 			return(true);
@@ -9900,11 +9993,11 @@ debug_break;
 		return(false);
 	}
 
-	bool iOp_setVariable_return(SOp* op, SVariable* var, bool isOpAllocated)
+	bool iOp_setVariable_return(SThisCode* thisCode, SOp* op, SVariable* var, bool isOpAllocated)
 	{
 		if (op)
 		{
-			op->variable		= var;
+			op->variable		= iiVariable_terminateIndirect(thisCode, var);
 			op->opType			= _OP_TYPE_RETURNS;
 			op->isOpDataAllocated	= isOpAllocated;
 			return(true);
@@ -9922,7 +10015,7 @@ debug_break;
 // Called to delete anything on the op, and optionally the op itself.
 //
 //////
-	void iOp_politelyDelete(SOp* op, bool tlDeleteSelf)
+	void iOp_politelyDelete(SThisCode* thisCode, SOp* op, bool tlDeleteSelf)
 	{
 		// Make sure our environment is sane
 		if (op && op->isOpDataAllocated)
@@ -9980,10 +10073,10 @@ debug_break;
 // Called to append an error to the indicated component
 //
 //////
-	void iComp_appendError(SComp* comp, u32 tnErrorNum, cu8* tcMessage)
+	void iComp_appendError(SThisCode* thisCode, SComp* comp, u32 tnErrorNum, cu8* tcMessage)
 	{
 		if (comp && comp->line)
-			iLine_appendError(comp->line, tnErrorNum, tcMessage, comp->start, comp->length);
+			iLine_appendError(thisCode, comp->line, tnErrorNum, tcMessage, comp->start, comp->length);
 	}
 
 
@@ -9994,10 +10087,10 @@ debug_break;
 // Called to append a warning to the indicated component
 //
 //////
-	void iComp_appendWarning(SComp* comp, u32 tnWarningNum, cu8* tcMessage)
+	void iComp_appendWarning(SThisCode* thisCode, SComp* comp, u32 tnWarningNum, cu8* tcMessage)
 	{
 		if (comp && comp->line)
-			iLine_appendWarning(comp->line, tnWarningNum, tcMessage, comp->start, comp->length);
+			iLine_appendWarning(thisCode, comp->line, tnWarningNum, tcMessage, comp->start, comp->length);
 	}
 
 
@@ -10008,12 +10101,12 @@ debug_break;
 // Called to report the indicated message
 //
 //////
-	void iComp_reportWarningsOnRemainder(SComp* comp, u32 tnWarningNum, cu8* tcMessage)
+	void iComp_reportWarningsOnRemainder(SThisCode* thisCode, SComp* comp, u32 tnWarningNum, cu8* tcMessage)
 	{
 		while (comp)
 		{
 			// Append the warning
-			iComp_appendWarning(comp, tnWarningNum, ((tcMessage) ? tcMessage : (u8*)cgcUnspecifiedWarning));
+			iComp_appendWarning(thisCode, comp, tnWarningNum, ((tcMessage) ? tcMessage : (u8*)cgcUnspecifiedWarning));
 
 			// Move to next component
 			comp = comp->ll.nextComp;
@@ -10028,11 +10121,11 @@ debug_break;
 // Called to append an error the indicated source code line
 //
 //////
-	void iLine_appendError(SLine* line, u32 tnErrorNum, cu8* tcMessage, u32 tnStartColumn, u32 tnLength)
+	void iLine_appendError(SThisCode* thisCode, SLine* line, u32 tnErrorNum, cu8* tcMessage, u32 tnStartColumn, u32 tnLength)
 	{
 		if (line && line->compilerInfo)
 		{
-			iCompileNote_appendMessage(&line->compilerInfo->firstError, tnStartColumn, tnStartColumn + tnLength, tnErrorNum, tcMessage);
+			iCompileNote_appendMessage(thisCode, &line->compilerInfo->firstError, tnStartColumn, tnStartColumn + tnLength, tnErrorNum, tcMessage);
 		}
 	}
 
@@ -10044,11 +10137,11 @@ debug_break;
 // Called to append a warning to the indicated source code line
 //
 //////
-	void iLine_appendWarning(SLine* line, u32 tnWarningNum, cu8* tcMessage, u32 tnStartColumn, u32 tnLength)
+	void iLine_appendWarning(SThisCode* thisCode, SLine* line, u32 tnWarningNum, cu8* tcMessage, u32 tnStartColumn, u32 tnLength)
 	{
 		if (line && line->compilerInfo)
 		{
-			iCompileNote_appendMessage(&line->compilerInfo->firstError, tnStartColumn, tnStartColumn + tnLength, tnWarningNum, tcMessage);
+			iCompileNote_appendMessage(thisCode, &line->compilerInfo->firstError, tnStartColumn, tnStartColumn + tnLength, tnWarningNum, tcMessage);
 		}
 	}
 
@@ -10060,7 +10153,7 @@ debug_break;
 // Allocates an SCompiler structure.  Initializes it to all NULLs.
 //
 //////
-	SCompiler* iCompiler_allocate(SLine* parent)
+	SCompiler* iCompiler_allocate(SThisCode* thisCode, SLine* parent)
 	{
 		SCompiler* compilerNew;
 
@@ -10098,7 +10191,7 @@ debug_break;
 // Called to delete the previous allocated compiler data
 //
 //////
-	void iCompiler_delete(SCompiler** root, bool tlDeleteSelf)
+	void iCompiler_delete(SThisCode* thisCode, SCompiler** root, bool tlDeleteSelf)
 	{
 		SCompiler* compilerInfo;
 
@@ -10110,12 +10203,12 @@ debug_break;
 			compilerInfo = *root;
 
 			// Delete the items here
-			iCompileNote_removeAll(&compilerInfo->firstWarning);
-			iCompileNote_removeAll(&compilerInfo->firstError);
+			iCompileNote_removeAll(thisCode, &compilerInfo->firstWarning);
+			iCompileNote_removeAll(thisCode, &compilerInfo->firstError);
 
 			// Delete from regular components, and whitespaces
-			iComps_deleteAll_byFirstComp(&compilerInfo->firstComp);
-			iComps_deleteAll_byFirstComp(&compilerInfo->firstWhitespace);
+			iComps_deleteAll_byFirstComp(thisCode, &compilerInfo->firstComp);
+			iComps_deleteAll_byFirstComp(thisCode, &compilerInfo->firstWhitespace);
 
 			// Delete self if need be
 			if (tlDeleteSelf)
@@ -10134,7 +10227,7 @@ debug_break;
 // Called to create a new note
 //
 //////
-	SCompileNote* iCompileNote_create(SCompileNote** noteRoot, u32 tnStart, u32 tnEnd, u32 tnNumber, cu8* tcMessage)
+	SCompileNote* iCompileNote_create(SThisCode* thisCode, SCompileNote** noteRoot, u32 tnStart, u32 tnEnd, u32 tnNumber, cu8* tcMessage)
 	{
 		SCompileNote* note;
 
@@ -10164,7 +10257,7 @@ debug_break;
 // Called to append a compiler note
 //
 //////
-	SCompileNote* iCompileNote_appendMessage(SCompileNote** noteRoot, u32 tnStartColumn, u32 tnEndColumn, u32 tnNumber, cu8* tcMessage)
+	SCompileNote* iCompileNote_appendMessage(SThisCode* thisCode, SCompileNote** noteRoot, u32 tnStartColumn, u32 tnEndColumn, u32 tnNumber, cu8* tcMessage)
 	{
 		SCompileNote* noteNew;
 
@@ -10174,7 +10267,7 @@ debug_break;
 		if (noteRoot && tcMessage)
 		{
 			// Create the new note
-			noteNew = iCompileNote_create(noteRoot, tnStartColumn, tnEndColumn, tnNumber, tcMessage);
+			noteNew = iCompileNote_create(thisCode, noteRoot, tnStartColumn, tnEndColumn, tnNumber, tcMessage);
 		}
 
 		// Indicate our status
@@ -10189,7 +10282,7 @@ debug_break;
 // Called to remove all compile notes in the chain
 //
 //////
-	void iCompileNote_removeAll(SCompileNote** noteRoot)
+	void iCompileNote_removeAll(SThisCode* thisCode, SCompileNote** noteRoot)
 	{
 		// Make sure our environment is sane
 		if (noteRoot && *noteRoot)

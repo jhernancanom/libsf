@@ -256,17 +256,18 @@
 	const u32		_ERROR_DBF_WRITING								= 46;
 	const u32		_ERROR_DBF_SEEKING								= 47;
 	const u32		_ERROR_DBF_NO_DATA								= 48;
+	const u32		_ERROR_DBF_UNKNOWN_MEMO_FORMAT					= 49;
 
-	const u32		_ERROR_CONFLICTING_PARAMETERS					= 49;
-	const u32		_ERROR_PARAMETER_IS_INCORRECT					= 50;
-	const u32		_ERROR_TABLE_ALREADY_IN_USE						= 51;
-	const u32		_ERROR_PARAMETER_TOO_LONG						= 52;
-	const u32		_ERROR_UNABLE_TO_OPEN_DBC						= 53;
-	const u32		_ERROR_DIVISION_BY_ZERO							= 54;
-	const u32		_ERROR_CANNOT_BE_NEGATIVE						= 55;
-	const u32		_ERROR_CANNOT_BE_ZERO_OR_NEGATIVE				= 56;
-	const u32		_ERROR_UNABLE_TO_AUTOVALIDATE					= 57;
-	const u32		_ERROR_DBF_GENERAL_ERROR						= 58;
+	const u32		_ERROR_CONFLICTING_PARAMETERS					= 80;
+	const u32		_ERROR_PARAMETER_IS_INCORRECT					= 81;
+	const u32		_ERROR_TABLE_ALREADY_IN_USE						= 82;
+	const u32		_ERROR_PARAMETER_TOO_LONG						= 83;
+	const u32		_ERROR_UNABLE_TO_OPEN_DBC						= 84;
+	const u32		_ERROR_DIVISION_BY_ZERO							= 85;
+	const u32		_ERROR_CANNOT_BE_NEGATIVE						= 86;
+	const u32		_ERROR_CANNOT_BE_ZERO_OR_NEGATIVE				= 87;
+	const u32		_ERROR_UNABLE_TO_AUTOVALIDATE					= 88;
+	const u32		_ERROR_DBF_GENERAL_ERROR						= 89;
 
 	// Fill ins
 	const u8		cgc_notFoundOrInvalidDataType[]					= "not found or is invalid data type";
@@ -325,6 +326,7 @@
 	const u8		cgcDbfWriting[]									= "writing";
 	const u8		cgcDbfSeeking[]									= "seeking";
 	const u8		cgcDbfNoData[]									= "no data";
+	const u8		cgcDbfUnknownMemoFormat[]						= "unknown memo format";
 
 	const u8		cgcConflictingParameters[]						= "conflicting parameters";
 	const u8		cgcParameterIsIncorrect[]						= "parameter is incorrect";
@@ -1107,6 +1109,7 @@
 	const s32		_ICODE_LOCKSCREEN								= 2304;
 	const s32       _ICODE_LOGERRORS                                = 2149;
 	const s32       _ICODE_LOOP                                     = 2150;
+	const s32		_ICODE_LONG										= 2332;
 	const s32       _ICODE_LPARAMETERS                              = 2151;
 	const s32       _ICODE_MACKEY                                   = 2152;
 	const s32       _ICODE_MACROS                                   = 2153;
@@ -1198,6 +1201,7 @@
 	const s32       _ICODE_SCROLL                                   = 2228;
 	const s32       _ICODE_SELECTION                                = 2229;
 	const s32       _ICODE_SEPARATOR                                = 2230;
+	const s32		_ICODE_SHORT									= 2333;
 	const s32       _ICODE_SHOW                                     = 2231;
 	const s32       _ICODE_SHUTDOWN                                 = 2232;
 	const s32       _ICODE_SIZE                                     = 2233;
@@ -1223,6 +1227,7 @@
 	const s32		_ICODE_TAIWAN									= 2322;
 	const s32       _ICODE_TALK                                     = 2249;
 	const s32       _ICODE_TEXT                                     = 2250;
+	const s32		_ICODE_TF										= 2329;
 	const s32       _ICODE_TO                                       = 2251;
 	const s32       _ICODE_TOPIC                                    = 2252;
 	const s32       _ICODE_TOTAL                                    = 2253;
@@ -1231,6 +1236,7 @@
 	const s32       _ICODE_TRIGGER                                  = 2256;
 	const s32       _ICODE_TRY                                      = 2257;
 	const s32       _ICODE_TYPEAHEAD                                = 2258;
+	const s32		_ICODE_UD										= 2330;
 	const s32       _ICODE_UDFPARMS                                 = 2259;
 	const s32		_ICODE_UNLOADRECEIVESPARAMS						= 2315;
 	const s32       _ICODE_UNLOCK                                   = 2260;
@@ -1247,64 +1253,39 @@
 	const s32       _ICODE_WINDOW                                   = 2269;
 	const s32       _ICODE_WITH                                     = 2270;
 	const s32		_ICODE_YMD										= 2324;
+	const s32		_ICODE_YN										= 2331;
 	const s32       _ICODE_ZAP                                      = 2271;
-	// _ICODE_DOCASE												= 2272;
-	// _ICODE_DOFORM												= 2273;
-	// _ICODE_DOPROGRAM												= 2274;
-	// _ICODE_DOWHILE												= 2275;
-	// _ICODE_ENDFUNCTION											= 2276;
-	// _ICODE_ENDPROCEDURE											= 2277;
-	// _ICODE_LELSE													= 2278;
-	// _ICODE_LIF													= 2279;
-	// _ICODE_ELSE													= 2280;
-	// _ICODE_LESLE													= 2281;
-	// _ICODE_LESLEIF												= 2282;
-	// _ICODE_FELSEIF												= 2283;
-	// _ICODE_FIF													= 2284;
-	// _ICODE_ROLL													= 2285;
-	// _ICODE_REPROCESSATTEMPTS										= 2286;
-	// _ICODE_SYSTEM												= 2287;
-	// _ICODE_RECOVER												= 2288;
-	// _ICODE_ALL													= 2289;
-	// _ICODE_RESOURCES												= 2290;
-	// _ICODE_KEEP													= 2291;
-	// _ICODE_AUTOCONVERT											= 2292;
-	// _ICODE_AUTOVALIDATE											= 2293;
-	// _ICODE_CASESENSITIVECOMPARES									= 2294;
-	// _ICODE_CASESENSITIVENAMES									= 2295;
-	// _ICODE_FOCUSHIGHLIGHTBORDERPIXELS							= 2296;
-	// _ICODE_FOCUSHIGHLIGHTPIXELS									= 2297;
-	// _ICODE_HONORBARRIERS											= 2298;
-	// _ICODE_IMPLICITPARAMS										= 2299;
-	// _ICODE_INDEXMETADATA											= 2300;
-	// _ICODE_INITIALIZEDEFAULTVALUE								= 2301;
-	// _ICODE_LANGUAGE												= 2302;
-	// _ICODE_LOAD_RECEIVES_PARAMS									= 2303;
-	// _ICODE_LOCKSCREEN											= 2304;
-	// _ICODE_AMERICAN												= 2305;
-	// _ICODE_NAMINGCONVENTIONS										= 2306;
-	// _ICODE_NCSETCEILINGFLOOR										= 2307;
-	// _ICODE_NCSETSIGNSIGN2										= 2308;
-	// _ICODE_REPROCESSINTERVAL										= 2309;
-	// _ICODE_REPROCESSSYSTEM										= 2310;
-	// _ICODE_SLOPPYPRINTING										= 2311;
-	// _ICODE_STICKYPARAMETERS										= 2312;
-	// _ICODE_TABLEEQUALASSIGNMENTS									= 2313;
-	// _ICODE_TABLEOBJECTS											= 2314;
-	// _ICODE_UNLOADRECEIVESPARAMS									= 2315;
-	// _ICODE_VARIABLESFIRST										= 2316;
-	// _ICODE_BRITISH												= 2317;
-	// _ICODE_FRENCH												= 2318;
-	// _ICODE_GERMAN												= 2319;
-	// _ICODE_ITALIAN												= 2320;
-	// _ICODE_JAPAN													= 2321;
-	// _ICODE_TAIWAN												= 2322;
-	// _ICODE_USA													= 2323;
-	// _ICODE_YMD													= 2324;
-	// _ICODE_NCSETALPHAISOPAQUE									= 2325;
-	// _ICODE_NCSETOPTIMIZETABLEWRITES								= 2326;
-	// _ICODE_LAST													= 2327;
-	// _ICODE_NCSETOPTIMIZEVARIABLES								= 2328;
+	// DOCASE				= 2272			DOFORM					= 2273
+	// DOPROGRAM			= 2274			DOWHILE					= 2275
+	// ENDFUNCTION			= 2276			ENDPROCEDURE			= 2277
+	// LELSE				= 2278			LIF						= 2279
+	// ELSE					= 2280			LESLE					= 2281
+	// LESLEIF				= 2282			FELSEIF					= 2283
+	// FIF					= 2284			ROLL					= 2285
+	// REPROCESSATTEMPTS	= 2286			SYSTEM					= 2287
+	// RECOVER				= 2288			ALL						= 2289
+	// RESOURCES			= 2290			KEEP					= 2291
+	// AUTOCONVERT			= 2292			AUTOVALIDATE			= 2293
+	// CASESENSITIVECOMPARES = 2294			CASESENSITIVENAMES		= 2295
+	// FOCUSHIGHLIGHTBORDERPIXELS = 2296	FOCUSHIGHLIGHTPIXELS	= 2297
+	// HONORBARRIERS		= 2298			IMPLICITPARAMS			= 2299
+	// INDEXMETADATA		= 2300			INITIALIZEDEFAULTVALUE	= 2301
+	// LANGUAGE				= 2302			LOAD_RECEIVES_PARAMS	= 2303
+	// LOCKSCREEN			= 2304			AMERICAN				= 2305
+	// NAMINGCONVENTIONS	= 2306			NCSETCEILINGFLOOR		= 2307
+	// NCSETSIGNSIGN2		= 2308			REPROCESSINTERVAL		= 2309
+	// REPROCESSSYSTEM		= 2310			SLOPPYPRINTING			= 2311
+	// STICKYPARAMETERS		= 2312			TABLEEQUALASSIGNMENTS	= 2313
+	// TABLEOBJECTS			= 2314			UNLOADRECEIVESPARAMS	= 2315
+	// VARIABLESFIRST		= 2316			BRITISH					= 2317
+	// FRENCH				= 2318			GERMAN					= 2319
+	// ITALIAN				= 2320			JAPAN					= 2321
+	// TAIWAN				= 2322			USA						= 2323
+	// YMD					= 2324			NCSETALPHAISOPAQUE		= 2325
+	// NCSETOPTIMIZETABLEWRITES = 2326		LAST					= 2327
+	// NCSETOPTIMIZEVARIABLES = 2328		TF						= 2329
+	// UD					= 2330			YN						= 2331
+	// LONG					= 2332			SHORT					= 2333
 
 
 //////////
@@ -1721,6 +1702,7 @@
 	const s8		cgc_seek[]										= "seek";
 	const s8		cgc_select[]									= "select";
 	const s8		cgc_set[]										= "set";
+	const s8		cgc_short[]										= "short";
 	const s8		cgc_setfldstate[]								= "setfldstate";
 	const s8		cgc_setresultset[]								= "setresultset";
 	const s8		cgc_shared[]									= "shared";
@@ -1992,6 +1974,7 @@
 	const s8		cgc_locate[]									= "locate";
 //	const s8		cgc_lock[]										= "lock";
 	const s8		cgc_logerrors[]									= "logerrors";
+	const s8		cgc_long[]										= "long";
 	const s8		cgc_loop[]										= "loop";
 	const s8		cgc_lparameters[]								= "lparameters";
 	const s8		cgc_mackey[]									= "mackey";
@@ -2116,6 +2099,7 @@
 	const s8		cgc_talk[]										= "talk";
 //	const s8		cgc_textmerge[]									= "textmerge";
 	const s8		cgc_text[]										= "text";
+	const s8		cgc_tf[]										= "tf";
 	const s8		cgc_to[]										= "to";
 	const s8		cgc_topic[]										= "topic";
 	const s8		cgc_total[]										= "total";
@@ -2125,6 +2109,7 @@
 	const s8		cgc_try[]										= "try";
 //	const s8		cgc_type[]										= "type";
 	const s8		cgc_typeahead[]									= "typeahead";
+	const s8		cgc_ud[]										= "ud";
 	const s8		cgc_udfparms[]									= "udfparms";
 //	const s8		cgc_unique[]									= "unique";
 	const s8		cgc_unlock[]									= "unlock";
@@ -2140,6 +2125,7 @@
 	const s8		cgc_window[]									= "window";
 	const s8		cgc_with[]										= "with";
 	const s8		cgc_ymd[]										= "ymd";
+	const s8		cgc_yn[]										= "yn";
 	const s8		cgc_zap[]										= "zap";
 
 	// keywords

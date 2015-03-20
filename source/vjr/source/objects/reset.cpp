@@ -697,8 +697,8 @@
 				propSetDisabledBackColor(editbox, disabledBackColor);
 				propSetDisabledForeColor(editbox, disabledForeColor);
 
-				iSEM_deleteChain(&editbox->p.sem, true);
-				editbox->p.sem = iSEM_allocate(false);
+				iSEM_deleteChain(thisCode, &editbox->p.sem, true);
+				editbox->p.sem = iSEM_allocate(thisCode, false);
 
 
 			//////////

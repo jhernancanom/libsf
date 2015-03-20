@@ -88,7 +88,7 @@
 // Called to create a new EM (Edit Manager)
 //
 //////
-	SEM* iSEM_allocate(bool tlIsSourceCode)
+	SEM* iSEM_allocate(SThisCode* thisCode, bool tlIsSourceCode)
 	{
 		SEM* sem;
 
@@ -134,7 +134,7 @@
 // Called to accumulate the indicated line range into a builder buffer.
 //
 //////
-	SBuilder* iSEM_accumulateBuilder(SEM* sem, SLine* ecHintStart, SLine* ecHintEnd)
+	SBuilder* iSEM_accumulateBuilder(SThisCode* thisCode, SEM* sem, SLine* ecHintStart, SLine* ecHintEnd)
 	{
 		SBuilder*	b;
 		SLine*		line;
@@ -211,7 +211,7 @@
 // Called to save the indicated EM to disk.  Saved as a raw text file.
 //
 //////
-	bool iSEM_saveToDisk(SEM* sem, cu8* tcPathname)
+	bool iSEM_saveToDisk(SThisCode* thisCode, SEM* sem, cu8* tcPathname)
 	{
 		SBuilder* content;
 
@@ -221,7 +221,7 @@
 		if (sem && tcPathname)
 		{
 			// Grab the content
-			content = iSEM_accumulateBuilder(sem, NULL, NULL);
+			content = iSEM_accumulateBuilder(thisCode, sem, NULL, NULL);
 			if (content)
 			{
 				// Write it out
@@ -246,7 +246,7 @@
 // Loads in a text file into an EM beginning optionally near ecHint.
 //
 //////
-	bool iSEM_loadFromDisk(SEM* sem, cu8* tcPathname, bool isSourceCode, bool tlLogIt)
+	bool iSEM_loadFromDisk(SThisCode* thisCode, SEM* sem, cu8* tcPathname, bool isSourceCode, bool tlLogIt)
 	{
 		s32			lnI, lnJ, lnLast;
 		bool		llOtherCharacters;
@@ -283,11 +283,11 @@
 						if (!llOtherCharacters)
 						{
 							// We only had CR+LF characters, no data
-							end = iSEM_appendLine(sem, content->data_u8 + lnLast, 0, false);
+							end = iSEM_appendLine(thisCode, sem, content->data_u8 + lnLast, 0, false);
 
 						} else {
 							// We had at least some data
-							end = iSEM_appendLine(sem, content->data_u8 + lnLast, lnI - lnJ - lnLast, false);
+							end = iSEM_appendLine(thisCode, sem, content->data_u8 + lnLast, lnI - lnJ - lnLast, false);
 						}
 						if (!start)
 							start = end;
@@ -307,7 +307,7 @@
 				iBuilder_freeAndRelease(&content);
 
 				// Renumber everything
-				iSEM_renumber(sem, 1);
+				iSEM_renumber(thisCode, sem, 1);
 
 				// Parse the content if it's source code
 				if (isSourceCode)
@@ -327,14 +327,14 @@
 				{
 					// Log it
 					sprintf((s8*)buffer, "Load %s\0", tcPathname);
-					iVjr_appendSystemLog(buffer);
+					iVjr_appendSystemLog(thisCode, buffer);
 				}
 				return(true);
 
 			} else if (tlLogIt) {
 				// Log it
 				sprintf((s8*)buffer, "Load inquiry %s\0", tcPathname);
-				iVjr_appendSystemLog(buffer);
+				iVjr_appendSystemLog(thisCode, buffer);
 			}
 		}
 		// If we get here, failure
@@ -349,7 +349,7 @@
 // Duplicate the entire SEM
 //
 //////
-	bool iSEM_duplicate(SEM** root, SEM* semSource, bool tlIncludeUndoHistory)
+	bool iSEM_duplicate(SThisCode* thisCode, SEM** root, SEM* semSource, bool tlIncludeUndoHistory)
 	{
 // 		SEM*	ecmNew;
 // 		SEditChain*			ecSource;
@@ -366,7 +366,7 @@
 		// Create the master record
 // TODO:  COMPLETELY UNTESTED.  BREAKPOINT AND EXAMINE.
 debug_break;
-// 		ecmNew = (SEM*)malloc(sizeof(SEM));
+// 		ecmNew = (SEM*)malloc(thisCode, sizeof(SEM));
 // 		if (ecmNew)
 // 		{
 // 			//////////
@@ -550,7 +550,7 @@ debug_break;
 // Called to free the EM content, and optionally itself
 //
 //////
-	void iSEM_delete(SEM** root, bool tlDeleteSelf)
+	void iSEM_delete(SThisCode* thisCode, SEM** root, bool tlDeleteSelf)
 	{
 		SEM* sem;
 
@@ -570,13 +570,13 @@ debug_break;
 					// Free undo history
 					//////
 						if (sem->undoHistory)
-							iSEM_delete(&sem->undoHistory, true);
+							iSEM_delete(thisCode, &sem->undoHistory, true);
 
 
 					//////////
 					// Free content
 					//////
-						iSEMLine_free(&sem->firstLine, true);
+						iSEMLine_free(thisCode, &sem->firstLine, true);
 				}
 
 
@@ -599,15 +599,15 @@ debug_break;
 // Called to delete the entire chain explicitly
 //
 //////
-	void iSEM_deleteChain(SEM** root, bool tlDeleteSelf)
+	void iSEM_deleteChain(SThisCode* thisCode, SEM** root, bool tlDeleteSelf)
 	{
 		logfunc(__FUNCTION__);
 
 		// Delete, but with no callback
-		iSEM_deleteChainWithCallback(root, tlDeleteSelf, NULL);
+		iSEM_deleteChainWithCallback(thisCode, root, tlDeleteSelf, NULL);
 	}
 
-	void iSEM_deleteChainWithCallback(SEM** root, bool tlDeleteSelf, SEM_callback* ecb)
+	void iSEM_deleteChainWithCallback(SThisCode* thisCode, SEM** root, bool tlDeleteSelf, SEM_callback* ecb)
 	{
 		bool			llDeleteThisLine;
 		SLL*			nodeNext;
@@ -659,7 +659,7 @@ debug_break;
 				//////
 					ecb->sem->line_cursor = ecb->line;
 					if (llDeleteThisLine)
-						iSEM_deleteLine(ecb->sem);
+						iSEM_deleteLine(thisCode, ecb->sem);
 
 
 				//////////
@@ -678,7 +678,7 @@ debug_break;
 // Renumber the source code lines
 //
 //////
-	u32 iSEM_renumber(SEM* sem, u32 tnStartingLineNumber)
+	u32 iSEM_renumber(SThisCode* thisCode, SEM* sem, u32 tnStartingLineNumber)
 	{
 		SLine* line;
 
@@ -747,7 +747,7 @@ debug_break;
 // Called to append a line of text to the indicated SEM.
 //
 //////
-	SLine* iSEM_appendLine(SEM* sem, u8* tcText, s32 tnTextLength, bool tlSetNewLineFlag)
+	SLine* iSEM_appendLine(SThisCode* thisCode, SEM* sem, u8* tcText, s32 tnTextLength, bool tlSetNewLineFlag)
 	{
 		s32		lnI, lnJ, lnPass, lnTextLength, lnCount;
 		SLine*	line;
@@ -863,7 +863,7 @@ debug_break;
 				//////
 // TODO:  We could do a speedup here if we are appending to the end, we only need to add one to the previous line
 					if (sem->showLineNumbers)
-						iSEM_renumber(sem, 1);
+						iSEM_renumber(thisCode, sem, 1);
 			}
 		}
 
@@ -879,7 +879,7 @@ debug_break;
 // Called to insert a line before or after the indicated line
 //
 //////
-	SLine* iSEM_insertLine(SEM* sem, u8* tcText, s32 tnTextLength, SLine* line, bool tlInsertAfter, bool tlSetNewLineFlag)
+	SLine* iSEM_insertLine(SThisCode* thisCode, SEM* sem, u8* tcText, s32 tnTextLength, SLine* line, bool tlInsertAfter, bool tlSetNewLineFlag)
 	{
 		SLine* ec;
 
@@ -966,7 +966,7 @@ debug_break;
 
 				// Renumber if need be
 				if (sem->showLineNumbers)
-					iSEM_renumber(sem, 1);
+					iSEM_renumber(thisCode, sem, 1);
 			}
 		}
 
@@ -982,7 +982,7 @@ debug_break;
 // Delete the indicated line
 //
 //////
-	void iSEM_deleteLine(SEM* sem)
+	void iSEM_deleteLine(SThisCode* thisCode, SEM* sem)
 	{
 		SLine* lineDeleted;
 		SLine* lineNewCursorLine;
@@ -1027,7 +1027,7 @@ debug_break;
 
 			// Renumber if need be
 			if (sem->showLineNumbers)
-				iSEM_renumber(sem, 1);
+				iSEM_renumber(thisCode, sem, 1);
 		}
 	}
 
@@ -1039,7 +1039,7 @@ debug_break;
 // Called to get the colors
 //
 //////
-	void iSEM_getColors(SEM* sem, SObject* obj, SBgra& backColor, SBgra& foreColor)
+	void iSEM_getColors(SThisCode* thisCode, SEM* sem, SObject* obj, SBgra& backColor, SBgra& foreColor)
 	{
 		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
@@ -1066,7 +1066,7 @@ debug_break;
 // otherwise we use the object's rc.
 //
 //////
-	SFont* iSEM_getRectAndFont(SEM* sem, SObject* obj, RECT* rc)
+	SFont* iSEM_getRectAndFont(SThisCode* thisCode, SEM* sem, SObject* obj, RECT* rc)
 	{
 		SFont* font;
 
@@ -1137,7 +1137,7 @@ debug_break;
 						if (sem && sem->line_cursor)
 						{
 							// Toggle it
-							iSEMLine_toggleBreakpoint(sem);
+							iSEMLine_toggleBreakpoint(thisCode, sem);
 
 							// Force the redraw
 							iObj_setDirtyRender_ascent(thisCode, obj, true);
@@ -1159,7 +1159,7 @@ debug_break;
 							if (!glShuttingDown)
 							{
 								// Move to next line and redraw
-								iSEM_navigate(sem, obj, 1, 0);
+								iSEM_navigate(thisCode, sem, obj, 1, 0);
 								iWindow_render(thisCode, win, false);
 							}
 							return(true);
@@ -1185,7 +1185,7 @@ debug_break;
 								if (!glShuttingDown)
 								{
 									// Draw it like normal
-									iSEM_returnKey(sem, obj);
+									iSEM_returnKey(thisCode, sem, obj);
 									iWindow_render(NULL, win, false);
 								}
 								return(true);
@@ -1221,11 +1221,11 @@ debug_break;
 						// Mate, they're searching for this component's mate
 						// If they're on the cursor line, on a flow control directive, and holding down Ctrl+Alt+Shift, then we want to show that directive's mate on the line above
 						line = sem->line_cursor;
-						comp = iComps_activeComp_inSEM(sem);
-						if (comp->iCat == _ICAT_FLOW && iComps_getMateDirection(comp, &lnMateDirection))
+						comp = iComps_activeComp_inSEM(thisCode, sem);
+						if (comp->iCat == _ICAT_FLOW && iComps_getMateDirection(thisCode, comp, &lnMateDirection))
 						{
 							// Search for the mated line
-							lineMate = (SLine*)iSEM_findMate(sem, line, comp);
+							lineMate = (SLine*)iSEM_findMate(thisCode, sem, line, comp);
 
 							// Was it found?
 							if (lineMate)
@@ -1236,8 +1236,8 @@ debug_break;
 
 							} else {
 								// Display mate not found
-								if (lnMateDirection == -1)		iSEM_addTooltipHighlight(sem, line, obj, (s8*)cgc_noMateFound, -1, true);	// Show above
-								else							iSEM_addTooltipHighlight(sem, line, obj, (s8*)cgc_noMateFound, -1, false);	// Show below
+								if (lnMateDirection == -1)		iSEM_addTooltipHighlight(thisCode, sem, line, obj, (s8*)cgc_noMateFound, -1, true);	// Show above
+								else							iSEM_addTooltipHighlight(thisCode, sem, line, obj, (s8*)cgc_noMateFound, -1, false);	// Show below
 							}
 						}
 
@@ -1303,60 +1303,60 @@ debug_break;
 				switch (lnVKey)
 				{
 					case VK_UP:
-						if (iSEM_isSelecting(sem))
+						if (iSEM_isSelecting(thisCode, sem))
 						{
 							// They want to navigate from the selection, so we go to the top
-							iSEM_navigateToSelectStart(sem, obj, false);
-							iSEM_selectStop(sem);
+							iSEM_navigateToSelectStart(thisCode, sem, obj, false);
+							iSEM_selectStop(thisCode, sem);
 						}
 
 						// Navigate up one
-						iSEM_navigate(sem, obj, -1, 0);
+						iSEM_navigate(thisCode, sem, obj, -1, 0);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_DOWN:
-						if (iSEM_isSelecting(sem))
+						if (iSEM_isSelecting(thisCode, sem))
 						{
 							// They want to navigate from the selection, so we go to the top
-							iSEM_navigateToSelectEnd(sem, obj, false);
-							iSEM_selectStop(sem);
+							iSEM_navigateToSelectEnd(thisCode, sem, obj, false);
+							iSEM_selectStop(thisCode, sem);
 						}
 
 						// Navigate down one
-						iSEM_navigate(sem, obj, 1, 0);
+						iSEM_navigate(thisCode, sem, obj, 1, 0);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_PRIOR:		// Page up
-						iSEM_selectStop(sem);
-						iSEM_navigatePages(sem, obj, -1);
+						iSEM_selectStop(thisCode, sem);
+						iSEM_navigatePages(thisCode, sem, obj, -1);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_NEXT:		// Page down
-						iSEM_selectStop(sem);
-						iSEM_navigatePages(sem, obj, 1);
+						iSEM_selectStop(thisCode, sem);
+						iSEM_navigatePages(thisCode, sem, obj, 1);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_ESCAPE:		// They hit escape, and are cancelling the input
-						iSEM_clearLine(sem, obj);
+						iSEM_clearLine(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_TAB:
-						iSEM_tabIn(sem, obj);
+						iSEM_tabIn(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
@@ -1364,48 +1364,48 @@ debug_break;
 
 					case VK_RETURN:
 						// Draw it like normal
-						iSEM_returnKey(sem, obj);
+						iSEM_returnKey(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_LEFT:
-						if (iSEM_isSelecting(sem))
+						if (iSEM_isSelecting(thisCode, sem))
 						{
 							// They want to navigate from the selection, so we go to the top
-							iSEM_navigateToSelectStart(sem, obj, false);
-							iSEM_selectStop(sem);
+							iSEM_navigateToSelectStart(thisCode, sem, obj, false);
+							iSEM_selectStop(thisCode, sem);
 						}
 
 						// Navigate left one
-						iSEM_navigate(sem, obj, 0, -1);
+						iSEM_navigate(thisCode, sem, obj, 0, -1);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_RIGHT:
-						if (iSEM_isSelecting(sem))
+						if (iSEM_isSelecting(thisCode, sem))
 						{
 							// They want to navigate from the selection, so we go to the top
-							iSEM_navigateToSelectEnd(sem, obj, false);
-							iSEM_selectStop(sem);
+							iSEM_navigateToSelectEnd(thisCode, sem, obj, false);
+							iSEM_selectStop(thisCode, sem);
 						}
 
 						// Navigate right one
-						iSEM_navigate(sem, obj, 0, 1);
+						iSEM_navigate(thisCode, sem, obj, 0, 1);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_HOME:
-						if (iSEM_isSelecting(sem))
+						if (iSEM_isSelecting(thisCode, sem))
 						{
 							// They want to navigate from the selection, so we go to the top
-							iSEM_navigateToSelectStart(sem, obj, false);
-							iSEM_selectStop(sem);
+							iSEM_navigateToSelectStart(thisCode, sem, obj, false);
+							iSEM_selectStop(thisCode, sem);
 						}
 
 						// Navigate to the start of the line
@@ -1440,53 +1440,53 @@ debug_break;
 
 						// Navigate
 						if (lnDeltaX != 0)
-							iSEM_navigate(sem, obj, 0, lnDeltaX);
+							iSEM_navigate(thisCode, sem, obj, 0, lnDeltaX);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_END:
-						if (iSEM_isSelecting(sem))
+						if (iSEM_isSelecting(thisCode, sem))
 						{
 							// They want to navigate from the selection, so we go to the top
-							iSEM_navigateToSelectEnd(sem, obj, false);
-							iSEM_selectStop(sem);
+							iSEM_navigateToSelectEnd(thisCode, sem, obj, false);
+							iSEM_selectStop(thisCode, sem);
 						}
 
 						// Navigate to the end of the line
 						if (sem->columnEdit != sem->line_cursor->sourceCode_populatedLength)
-							iSEM_navigate(sem, obj, 0, sem->line_cursor->sourceCode_populatedLength - sem->columnEdit);
+							iSEM_navigate(thisCode, sem, obj, 0, sem->line_cursor->sourceCode_populatedLength - sem->columnEdit);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_INSERT:
-						iSEM_toggleInsert(sem, obj);
+						iSEM_toggleInsert(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_BACK:
-						iSEM_deleteLeft(sem, obj);
-						iSEM_selectStop(sem);
+						iSEM_deleteLeft(thisCode, sem, obj);
+						iSEM_selectStop(thisCode, sem);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_DELETE:
-						iSEM_deleteRight(sem, obj);
-						iSEM_selectStop(sem);
+						iSEM_deleteRight(thisCode, sem, obj);
+						iSEM_selectStop(thisCode, sem);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_CLEAR:
-						iSEM_centerCursorLine(sem, obj);
+						iSEM_centerCursorLine(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
@@ -1500,7 +1500,7 @@ debug_break;
 					case VK_ADD:
 						if (sem->font)			sem->font = iFont_bigger(sem->font,		true);
 						else					sem->font = iFont_bigger(obj->p.font,	false);
-						iSEM_verifyCursorIsVisible(sem, obj);
+						iSEM_verifyCursorIsVisible(thisCode, sem, obj);
 						iObj_setDirtyRender_ascent(thisCode, obj, true);
 						llProcessed = true;
 						break;
@@ -1508,34 +1508,34 @@ debug_break;
 					case VK_SUBTRACT:
 						if (sem->font)			sem->font = iFont_smaller(sem->font,		true);
 						else					sem->font = iFont_smaller(obj->p.font,	false);
-						iSEM_verifyCursorIsVisible(sem, obj);
+						iSEM_verifyCursorIsVisible(thisCode, sem, obj);
 						iObj_setDirtyRender_ascent(thisCode, obj, true);
 						llProcessed = true;
 						break;
 
 					case 'A':		// Select all
-						iSEM_selectAll(sem, obj);
+						iSEM_selectAll(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case 'X':		// Cut
-						iSEM_cut(sem, obj);
+						iSEM_cut(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case 'C':		// Copy
-						iSEM_copy(sem, obj);
+						iSEM_copy(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case 'V':		// Paste
-						iSEM_paste(sem, obj);
+						iSEM_paste(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
@@ -1548,56 +1548,56 @@ debug_break;
 						break;
 
 					case VK_UP:		// Up
-						iSEM_rollUp(sem, obj);
+						iSEM_rollUp(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_DOWN:	// Down
-						iSEM_rollDown(sem, obj);
+						iSEM_rollDown(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_LEFT:	// Word left
-						iSEM_navigateWordLeft(sem, obj, true);
+						iSEM_navigateWordLeft(thisCode, sem, obj, true);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_RIGHT:	// Word right
-						iSEM_navigateWordRight(sem, obj, true);
+						iSEM_navigateWordRight(thisCode, sem, obj, true);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_HOME:	// Home (go to top of content)
-						iSEM_navigateToTopLine(sem, obj);
+						iSEM_navigateToTopLine(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_END:	// Page down (go to end of content)
-						iSEM_navigateToEndLine(sem, obj);
+						iSEM_navigateToEndLine(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_BACK:
-						iSEM_deleteWordLeft(sem, obj);
+						iSEM_deleteWordLeft(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_DELETE:
-						iSEM_deleteWordRight(sem, obj);
+						iSEM_deleteWordRight(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
@@ -1609,63 +1609,63 @@ debug_break;
 				switch (lnVKey)
 				{
 					case VK_LEFT:	// Select left
-						iSEM_selectLeft(sem, obj);
+						iSEM_selectLeft(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_RIGHT:	// Select right
-						iSEM_selectRight(sem, obj);
+						iSEM_selectRight(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_UP:		// Select line up
-						iSEM_selectLineUp(sem, obj);
+						iSEM_selectLineUp(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_DOWN:	// Select line down
-						iSEM_selectLineDown(sem, obj);
+						iSEM_selectLineDown(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_END:	// Select to end
-						iSEM_selectToEndOfLine(sem, obj);
+						iSEM_selectToEndOfLine(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_HOME:	// Select to start
-						iSEM_selectToBeginOfLine(sem, obj);
+						iSEM_selectToBeginOfLine(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_TAB:	// Shift tab
-						iSEM_tabOut(sem, obj);
+						iSEM_tabOut(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_PRIOR:		// Page up
-						iSEM_navigatePages(sem, obj, -1);
+						iSEM_navigatePages(thisCode, sem, obj, -1);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_NEXT:		// Page down
-						iSEM_navigatePages(sem, obj, 1);
+						iSEM_navigatePages(thisCode, sem, obj, 1);
 
 						// Indicate our key was processed
 						llProcessed = true;
@@ -1682,14 +1682,14 @@ debug_break;
 				switch (lnVKey)
 				{
 					case 'K':		// Select column mode
-						iSEM_selectColumnToggle(sem, obj);
+						iSEM_selectColumnToggle(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case 'L':		// Select full line mode
-						iSEM_selectLineToggle(sem, obj);
+						iSEM_selectLineToggle(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
@@ -1701,44 +1701,44 @@ debug_break;
 				switch (lnVKey)
 				{
 					case VK_END:	// Select to end
-						iSEM_selectToEndLine(sem, obj);
+						iSEM_selectToEndLine(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_HOME:	// Select to start
-						iSEM_selectToTopLine(sem, obj);
+						iSEM_selectToTopLine(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_UP:		// Select line up
-						iSEM_selectStart(sem, _SEM_SELECT_MODE_ANCHOR);
-						iSEM_rollUp(sem, obj);
+						iSEM_selectStart(thisCode, sem, _SEM_SELECT_MODE_ANCHOR);
+						iSEM_rollUp(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_DOWN:	// Select line down
-						iSEM_selectStart(sem, _SEM_SELECT_MODE_ANCHOR);
-						iSEM_rollDown(sem, obj);
+						iSEM_selectStart(thisCode, sem, _SEM_SELECT_MODE_ANCHOR);
+						iSEM_rollDown(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_LEFT:	// Select word left
-						iSEM_selectWordLeft(sem, obj);
+						iSEM_selectWordLeft(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
 						break;
 
 					case VK_RIGHT:	// Select word right
-						iSEM_selectWordRight(sem, obj);
+						iSEM_selectWordRight(thisCode, sem, obj);
 
 						// Indicate our key was processed
 						llProcessed = true;
@@ -1758,7 +1758,7 @@ debug_break;
 
 			// If we get here, it wasn't processed above.  Try to stick it in the buffer
 			if (!llProcessed && llIsAscii)
-				iSEM_keystroke(sem, obj, (u8)lcAscii);		// It's a regular input key
+				iSEM_keystroke(thisCode, sem, obj, (u8)lcAscii);		// It's a regular input key
 		}
 
 		// Re-render the window if need be
@@ -1776,7 +1776,7 @@ debug_break;
 // Moves through source code to find the mated component to the line indicated
 //
 //////
-	void* iSEM_findMate(SEM* sem, SLine* line, SComp* comp)
+	void* iSEM_findMate(SThisCode* thisCode, SEM* sem, SLine* line, SComp* comp)
 	{
 		s32		lnMateDirection, lnLevel;
 		SComp*	compRunner;
@@ -1784,7 +1784,7 @@ debug_break;
 
 		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
-		if (sem && line && comp && iComps_getMateDirection(comp, &lnMateDirection))
+		if (sem && line && comp && iComps_getMateDirection(thisCode, comp, &lnMateDirection))
 		{
 			// Based on the directive, search backward or forward to find the mate
 			lnLevel = 0;
@@ -1804,7 +1804,7 @@ debug_break;
 							// We're going a level deeper
 							--lnLevel;
 
-						} else if (iComps_isMateOf(line->compilerInfo->firstComp, comp->iCode)) {
+						} else if (iComps_isMateOf(thisCode, line->compilerInfo->firstComp, comp->iCode)) {
 							if (lnLevel == 0)
 								return(line);
 
@@ -1831,7 +1831,7 @@ debug_break;
 							// We're going a level deeper
 							--lnLevel;
 
-						} else if (iComps_isMateOf(compRunner, comp->iCode)) {
+						} else if (iComps_isMateOf(thisCode, compRunner, comp->iCode)) {
 							if (lnLevel == 0)
 								return(comp);
 
@@ -1856,7 +1856,7 @@ debug_break;
 // Called to create a tooltip above the highlighted line
 //
 //////
-	void iSEM_addTooltipHighlight(SEM* sem, SLine* line, SObject* obj, s8* tcText, s32 tnTextLength, bool tlShowAbove)
+	void iSEM_addTooltipHighlight(SThisCode* thisCode, SEM* sem, SLine* line, SObject* obj, s8* tcText, s32 tnTextLength, bool tlShowAbove)
 	{
 		RECT		lrc, lrcObjInScreenCoords, lrcTooltip;
 		SBitmap*	bmp;
@@ -1909,7 +1909,7 @@ debug_break;
 				//////////
 				// Overlay the text
 				//////
-					font = iSEM_getRectAndFont(sem, obj, NULL);
+					font = iSEM_getRectAndFont(thisCode, sem, obj, NULL);
 					SelectObject(bmp->hdc, ((font) ? font->hfont : gsFontDefaultTooltip->hfont));
 					SetBkMode(bmp->hdc, TRANSPARENT);
 					SetTextColor(bmp->hdc, RGB(tooltipForecolor.red, tooltipForecolor.grn, tooltipForecolor.blu));
@@ -1934,7 +1934,7 @@ debug_break;
 // Called to render the SEM in the indicated rectangle on the object's bitmap
 //
 //////
-	u32 iSEM_render(SEM* sem, SObject* obj, bool tlRenderCursorline)
+	u32 iSEM_render(SThisCode* thisCode, SEM* sem, SObject* obj, bool tlRenderCursorline)
 	{
 		u32			lnPixelsRendered;
 		s32			lnI, lnJ, lnTop, lnSkip, lnDeltaX, lnLevel, lnBufferLength;
@@ -1975,8 +1975,8 @@ debug_break;
 			//////////
 			// Grab font, coordinates, and colors
 			//////
-				font = iSEM_getRectAndFont(sem, obj, &rc);
-				iSEM_getColors(sem, obj, defaultBackColor, defaultForeColor);
+				font = iSEM_getRectAndFont(thisCode, sem, obj, &rc);
+				iSEM_getColors(thisCode, sem, obj, defaultBackColor, defaultForeColor);
 				backColorLast.color			= defaultBackColor.color;
 				foreColorLast.color			= defaultForeColor.color;
 				iMisc_adjustColorBrightness(backColorLast, -5.0f);
@@ -1987,7 +1987,7 @@ debug_break;
 			//////////
 			// Determine what component they're currently on, and highlight any same-named references on-screen
 			//////
-				compHighlight = iComps_activeComp_inSEM(sem);
+				compHighlight = iComps_activeComp_inSEM(thisCode, sem);
 				if (compHighlight && (!compHighlight->line || !compHighlight->line->sourceCode || !compHighlight->line->sourceCode->data))
 					compHighlight = NULL;	// Invalid, ignore it
 
@@ -2046,10 +2046,10 @@ debug_break;
 									if (sem->columnEdit >= comp->start && sem->columnEdit <= comp->start + comp->length)
 									{
 										// This is the current component we're highlighting
-										if (iComps_findClosest_parensBracketsBraces(comp, comp, &compPBBLeft, &compPBBRight))
+										if (iComps_findClosest_parensBracketsBraces(thisCode, comp, comp, &compPBBLeft, &compPBBRight))
 										{
 											// We found something
-											if (iComps_isParensBracketsBraces(comp))
+											if (iComps_isParensBracketsBraces(thisCode, comp))
 											{
 												// Mark all commas between as highlighted
 												comp2	= (SComp*)compPBBLeft->ll.next;
@@ -2065,7 +2065,7 @@ debug_break;
 														comp2->overrideMatchingBackColor	= &overrideMatchingBackColorMultiple;
 														comp2->overrideMatchingForeColor	= &overrideMatchingForeColorMultiple;
 
-													} else if (iComps_isMateOf(comp2, compPBBLeft->iCode)) {
+													} else if (iComps_isMateOf(thisCode, comp2, compPBBLeft->iCode)) {
 														// If the left-most is (, then this is a ), going shallow
 														++lnLevel;
 
@@ -2172,8 +2172,8 @@ debug_break;
 						if (line->compilerInfo && line->compilerInfo->firstComp)
 						{
 							// Highlight both components and whitespaces
-							iSEM_render_highlightSelectedComps(sem, line->compilerInfo->firstComp);
-							iSEM_render_highlightSelectedComps(sem, line->compilerInfo->firstWhitespace);
+							iSEM_render_highlightSelectedComps(thisCode, sem, line->compilerInfo->firstComp);
+							iSEM_render_highlightSelectedComps(thisCode, sem, line->compilerInfo->firstWhitespace);
 						}
 
 
@@ -2601,7 +2601,7 @@ renderAsOnlyText:
 						SetRect(&lrc3, sem->rcLineNumberLastRender.right - 4, lrc2.top, sem->rcLineNumberLastRender.right - 1, lrc2.bottom);
 						if (!sem->hideEditCues)
 						{
-							if (iSEMLine_hasChanged(line))
+							if (iSEMLine_hasChanged(thisCode, line))
 							{
 								// The content has changed
 								iBmp_fillRect(bmp, &lrc3, sem->changedColor, sem->changedColor, sem->changedColor, sem->changedColor, false, NULL, false);
@@ -2782,7 +2782,7 @@ renderAsOnlyText:
 // Called to 
 //
 //////
-	void iSEM_render_highlightSelectedComps(SEM* sem, SComp* firstComp)
+	void iSEM_render_highlightSelectedComps(SThisCode* thisCode, SEM* sem, SComp* firstComp)
 	{
 		bool	llSetSelectedColor;
 		SComp*	comp;
@@ -2919,7 +2919,7 @@ renderAsOnlyText:
 // Called to verify the cursor is visible by adjusting sem->leftColumn
 //
 //////
-	bool iSEM_verifyCursorIsVisible(SEM* sem, SObject* obj)
+	bool iSEM_verifyCursorIsVisible(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		s32		lnI, lnUp, lnDn, lnNewLeftColumn, lnCols, lnRows, lnWidth, lnHeight, lnExtra;
 		bool	llChanged;
@@ -2936,7 +2936,7 @@ renderAsOnlyText:
 			//////////
 			// Indicate initially that no changes were made that require a re-render
 			//////
-				font = iSEM_getRectAndFont(sem, obj, &lrc);
+				font = iSEM_getRectAndFont(thisCode, sem, obj, &lrc);
 
 
 			//////////
@@ -3063,11 +3063,11 @@ renderAsOnlyText:
 		}
 
 		// Signal the arrival on this line
-		iExtraInfo_arrival(sem, sem->line_cursor);
+		iExtraInfo_arrival(thisCode, sem, sem->line_cursor);
 
 		// If something has changed, we need to re-render
 		iObj_setDirtyRender_ascent(NULL, obj, true);
-		iSEM_selectUpdateExtents(sem);
+		iSEM_selectUpdateExtents(thisCode, sem);
 
 		// Indicate our status
 		return(llChanged);
@@ -3081,7 +3081,7 @@ renderAsOnlyText:
 // Called to process the ASCII character into the input buffer.
 //
 //////
-	bool iSEM_keystroke(SEM* sem, SObject* obj, u8 asciiChar)
+	bool iSEM_keystroke(SThisCode* thisCode, SEM* sem, SObject* obj, u8 asciiChar)
 	{
 		bool	llChanged;
 
@@ -3101,14 +3101,14 @@ renderAsOnlyText:
 			// Are we on a line?
 			//////
 				if (!sem->firstLine)
-					iSEM_appendLine(sem, NULL, 0, true);		// Append a blank line to receive this keystroke
+					iSEM_appendLine(thisCode, sem, NULL, 0, true);		// Append a blank line to receive this keystroke
 
 
 			//////////
 			// Is a line currently selected?
 			//////
 				if (!sem->line_cursor)
-					iSEM_navigateToTopLine(sem, obj);
+					iSEM_navigateToTopLine(thisCode, sem, obj);
 
 
 			//////////
@@ -3124,7 +3124,7 @@ renderAsOnlyText:
 
 					} else {
 						// We are just overwriting whatever's there
-						llChanged = iSEMLine_characterInsert(sem, asciiChar);
+						llChanged = iSEMLine_characterInsert(thisCode, sem, asciiChar);
 					}
 
 				} else {
@@ -3136,7 +3136,7 @@ renderAsOnlyText:
 
 					} else {
 						// We are just overwriting whatever's there
-						llChanged = iSEMLine_characterOverwrite(sem, asciiChar);
+						llChanged = iSEMLine_characterOverwrite(thisCode, sem, asciiChar);
 					}
 				}
 		}
@@ -3148,10 +3148,10 @@ renderAsOnlyText:
 			obj->isDirtyRender = true;
 
 			// Reprocess the source code on the line
-			iEngine_parseSourceCodeLine(NULL, sem->line_cursor);
+			iEngine_parseSourceCodeLine(thisCode, sem->line_cursor);
 
 			// Verify our cursor is visible
-			iSEM_verifyCursorIsVisible(sem, obj);
+			iSEM_verifyCursorIsVisible(thisCode, sem, obj);
 		}
 
 		// Indicate our status
@@ -3167,7 +3167,7 @@ renderAsOnlyText:
 // Called to scroll rows (deltaY) or columns (deltaX) or both.
 //
 //////
-	bool iSEM_scroll(SEM* sem, SObject* obj, s32 deltaY, s32 deltaX)
+	bool iSEM_scroll(SThisCode* thisCode, SEM* sem, SObject* obj, s32 deltaY, s32 deltaX)
 	{
 		s32 lnI;
 
@@ -3225,7 +3225,7 @@ renderAsOnlyText:
 				//////////
 				// Verify we're visible
 				//////
-					iSEM_verifyCursorIsVisible(sem, obj);
+					iSEM_verifyCursorIsVisible(thisCode, sem, obj);
 
 
 				// Indicate success
@@ -3245,7 +3245,7 @@ renderAsOnlyText:
 // Called to navigate rows (deltaY) or columns (deltaX) or both.
 //
 //////
-	bool iSEM_navigate(SEM* sem, SObject* obj, s32 deltaY, s32 deltaX)
+	bool iSEM_navigate(SThisCode* thisCode, SEM* sem, SObject* obj, s32 deltaY, s32 deltaX)
 	{
 		s32			lnI, lnTop, lnBottom;
 		bool		llResetTopLine;
@@ -3260,7 +3260,7 @@ renderAsOnlyText:
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iSEM_getRectAndFont(sem, obj, &lrc);
+			font = iSEM_getRectAndFont(thisCode, sem, obj, &lrc);
 
 
 		//////////
@@ -3348,9 +3348,9 @@ renderAsOnlyText:
 							{
 								// Need to move to the end of the line above
 								lineTest = sem->line_cursor;
-								iSEM_navigate(sem, obj, -1, 0);
+								iSEM_navigate(thisCode, sem, obj, -1, 0);
 								if (sem->line_cursor != lineTest)
-									return(iSEM_navigate(sem, obj, 0, sem->line_cursor->sourceCode_populatedLength));
+									return(iSEM_navigate(thisCode, sem, obj, 0, sem->line_cursor->sourceCode_populatedLength));
 
 							} else {
 								// Just moving over
@@ -3366,7 +3366,7 @@ renderAsOnlyText:
 
 							} else {
 								// Once they get to the end, move to the start of the next line
-								return(iSEM_navigate(sem, obj, 1, -sem->columnEdit));
+								return(iSEM_navigate(thisCode, sem, obj, 1, -sem->columnEdit));
 							}
 						}
 					}
@@ -3375,7 +3375,7 @@ renderAsOnlyText:
 				//////////
 				// Verify we're visible
 				//////
-					iSEM_verifyCursorIsVisible(sem, obj);
+					iSEM_verifyCursorIsVisible(thisCode, sem, obj);
 
 
 				// Indicate success
@@ -3395,7 +3395,7 @@ renderAsOnlyText:
 // Called to navigate pages (deltaY) forward or backward)
 //
 //////
-	bool iSEM_navigatePages(SEM* sem, SObject* obj, s32 deltaY)
+	bool iSEM_navigatePages(SThisCode* thisCode, SEM* sem, SObject* obj, s32 deltaY)
 	{
 		s32		lnI;
 		bool	llMoveForward;
@@ -3408,7 +3408,7 @@ renderAsOnlyText:
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iSEM_getRectAndFont(sem, obj, &lrc);
+			font = iSEM_getRectAndFont(thisCode, sem, obj, &lrc);
 
 
 		//////////
@@ -3481,7 +3481,7 @@ renderAsOnlyText:
 				//////////
 				// Verify we're visible
 				//////
-					iSEM_verifyCursorIsVisible(sem, obj);
+					iSEM_verifyCursorIsVisible(thisCode, sem, obj);
 
 
 				// Indicate success
@@ -3501,7 +3501,7 @@ renderAsOnlyText:
 // Called to clear the entire line.
 //
 //////
-	bool iSEM_clearLine(SEM* sem, SObject* obj)
+	bool iSEM_clearLine(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
 		if (sem && !sem->isReadOnly && sem->line_cursor && obj)
@@ -3525,7 +3525,7 @@ renderAsOnlyText:
 // Called to clear from where we are to the end of the line
 //
 //////
-	bool iSEM_clearToEndOfLine(SEM* sem, SObject* obj)
+	bool iSEM_clearToEndOfLine(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
 		if (sem && !sem->isReadOnly && sem->line_cursor && obj)
@@ -3550,7 +3550,7 @@ renderAsOnlyText:
 // Called to clear from one character left of where we are to the beginning of the line
 //
 //////
-	bool iSEM_clearToBeginningOfLine(SEM* sem, SObject* obj)
+	bool iSEM_clearToBeginningOfLine(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		s32 lnI;
 
@@ -3578,7 +3578,7 @@ renderAsOnlyText:
 // Called to toggle insert mode
 //
 //////
-	bool iSEM_toggleInsert(SEM* sem, SObject* obj)
+	bool iSEM_toggleInsert(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
 		if (sem)
@@ -3605,7 +3605,7 @@ renderAsOnlyText:
 // Called when the users press TAB
 //
 //////
-	bool iSEM_tabIn(SEM* sem, SObject* obj)
+	bool iSEM_tabIn(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
 		return(false);
@@ -3619,7 +3619,7 @@ renderAsOnlyText:
 // Called when the users presses SHIFT+TAB
 //
 //////
-	bool iSEM_tabOut(SEM* sem, SObject* obj)
+	bool iSEM_tabOut(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
 		return(false);
@@ -3633,7 +3633,7 @@ renderAsOnlyText:
 // 
 //
 //////
-	bool iSEM_returnKey(SEM* sem, SObject* obj)
+	bool iSEM_returnKey(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
 		// Make sure the environment is sane
@@ -3643,16 +3643,16 @@ renderAsOnlyText:
 			if (!sem->isOverwrite)
 			{
 				// Insert mode
-				iSEM_insertLine(sem, NULL, 0, sem->line_cursor, true, true);	// Append a new line after the cursor line
+				iSEM_insertLine(thisCode, sem, NULL, 0, sem->line_cursor, true, true);	// Append a new line after the cursor line
 
 			} else {
 				// Overwrite mode
 				if (!sem->line_cursor->ll.next)
-					iSEM_appendLine(sem, NULL, 0, true);		// Append a new line at the end
+					iSEM_appendLine(thisCode, sem, NULL, 0, true);		// Append a new line at the end
 			}
 
 			// Move to the new line, and to the start of that line
-			iSEM_navigate(sem, obj, 1, -sem->columnEdit);
+			iSEM_navigate(thisCode, sem, obj, 1, -sem->columnEdit);
 
 			// Indicate success
 			return(true);
@@ -3671,7 +3671,7 @@ renderAsOnlyText:
 // Called to select everything
 //
 //////
-	bool iSEM_selectAll(SEM* sem, SObject* obj)
+	bool iSEM_selectAll(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
 
@@ -3686,7 +3686,7 @@ renderAsOnlyText:
 // Called to cut to the clipboard
 //
 //////
-	bool iSEM_cut(SEM* sem, SObject* obj)
+	bool iSEM_cut(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
 		return(false);
@@ -3700,7 +3700,7 @@ renderAsOnlyText:
 // Called to copy to the clipboard
 //
 //////
-	bool iSEM_copy(SEM* sem, SObject* obj)
+	bool iSEM_copy(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
 		return(false);
@@ -3714,7 +3714,7 @@ renderAsOnlyText:
 // Called to paste from the clipboard
 //
 //////
-	bool iSEM_paste(SEM* sem, SObject* obj)
+	bool iSEM_paste(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
 		return(false);
@@ -3728,7 +3728,7 @@ renderAsOnlyText:
 // Called to navigate one word left
 //
 //////
-	bool iSEM_navigateWordLeft(SEM* sem, SObject* obj, bool tlVerifyCursorIsVisible)
+	bool iSEM_navigateWordLeft(SThisCode* thisCode, SEM* sem, SObject* obj, bool tlVerifyCursorIsVisible)
 	{
 		SLine* line;
 
@@ -3754,21 +3754,21 @@ renderAsOnlyText:
 						if (sem->firstLine != line)
 						{
 							// Go up one line
-							iSEM_navigate(sem, obj, -1, 0);
+							iSEM_navigate(thisCode, sem, obj, -1, 0);
 
 							// Go to the end of this line
-							iSEM_navigate(sem, obj, 0, sem->line_cursor->sourceCode_populatedLength);
+							iSEM_navigate(thisCode, sem, obj, 0, sem->line_cursor->sourceCode_populatedLength);
 
 							// Continue looking word left on this line
-							return(iSEM_navigateWordLeft(sem, obj, true));
+							return(iSEM_navigateWordLeft(thisCode, sem, obj, true));
 						}
 
 					} else if (line->sourceCode_populatedLength < sem->columnEdit) {
 						// We're beyond end of line, move to the end of line
-						iSEM_navigate(sem, obj, 0, sem->line_cursor->sourceCode_populatedLength - sem->columnEdit);
+						iSEM_navigate(thisCode, sem, obj, 0, sem->line_cursor->sourceCode_populatedLength - sem->columnEdit);
 
 						// Then continue looking word left on this line
-						return(iSEM_navigateWordLeft(sem, obj, true));
+						return(iSEM_navigateWordLeft(thisCode, sem, obj, true));
 
 					} else {
 						//////////
@@ -3781,7 +3781,7 @@ renderAsOnlyText:
 						// If we're on a whitespace character, scan left until we reach a non-whitespace character
 						//////
 							// When we get to the first non-whitespace, we break
-							for ( ; sem->columnEdit > 0 && iiSEM_isBreakingCharacter(sem, line, 0); )
+							for ( ; sem->columnEdit > 0 && iiSEM_isBreakingCharacter(thisCode, sem, line, 0); )
 								--sem->columnEdit;
 
 
@@ -3794,7 +3794,7 @@ renderAsOnlyText:
 								for ( ; sem->columnEdit > 0; sem->columnEdit--)
 								{
 									// Did we find a whitespace to our left?
-									if (iiSEM_isBreakingCharacter(sem, line, -1))
+									if (iiSEM_isBreakingCharacter(thisCode, sem, line, -1))
 										break;	// Yes
 								}
 							}
@@ -3805,7 +3805,7 @@ renderAsOnlyText:
 				// Verify we're visible
 				//////
 					if (tlVerifyCursorIsVisible)
-						iSEM_verifyCursorIsVisible(sem, obj);
+						iSEM_verifyCursorIsVisible(thisCode, sem, obj);
 
 
 				// Indicate success
@@ -3825,7 +3825,7 @@ renderAsOnlyText:
 // Called to navigate one word right
 //
 //////
-	bool iSEM_navigateWordRight(SEM* sem, SObject* obj, bool tlVerifyCursorIsVisible)
+	bool iSEM_navigateWordRight(SThisCode* thisCode, SEM* sem, SObject* obj, bool tlVerifyCursorIsVisible)
 	{
 		SLine* line;
 
@@ -3851,14 +3851,14 @@ renderAsOnlyText:
 						if (sem->lastLine != line)
 						{
 							// Go down one line
-							iSEM_navigate(sem, obj, 1, 0);
+							iSEM_navigate(thisCode, sem, obj, 1, 0);
 
 							// Go to the start of the line
 							if (sem->columnEdit > 0)
-								iSEM_navigate(sem, obj, 0, -sem->columnEdit);
+								iSEM_navigate(thisCode, sem, obj, 0, -sem->columnEdit);
 
 							// Continue looking word left on this line
-							return(iSEM_navigateWordRight(sem, obj, true));
+							return(iSEM_navigateWordRight(thisCode, sem, obj, true));
 						}
 
 					} else {
@@ -3873,17 +3873,17 @@ renderAsOnlyText:
 						//////////
 						// If we're on a whitespace character, scan left until we reach a non-whitespace character
 						//////
-							if (!iiSEM_isBreakingCharacter(sem, line, 0))
+							if (!iiSEM_isBreakingCharacter(thisCode, sem, line, 0))
 							{
 								// Continue until we find a whitespace
-								for ( ; sem->columnEdit < line->sourceCode_populatedLength && !iiSEM_isBreakingCharacter(sem, line, 0); )
+								for ( ; sem->columnEdit < line->sourceCode_populatedLength && !iiSEM_isBreakingCharacter(thisCode, sem, line, 0); )
 									++sem->columnEdit;
 							}
 
-							if (iiSEM_isBreakingCharacter(sem, line, 0))
+							if (iiSEM_isBreakingCharacter(thisCode, sem, line, 0))
 							{
 								// When we get to the first non-whitespace, we break
-								for ( ; sem->columnEdit < line->sourceCode_populatedLength && iiSEM_isBreakingCharacter(sem, line, 0); )
+								for ( ; sem->columnEdit < line->sourceCode_populatedLength && iiSEM_isBreakingCharacter(thisCode, sem, line, 0); )
 									++sem->columnEdit;
 							}
 
@@ -3897,14 +3897,14 @@ renderAsOnlyText:
 								if (sem->lastLine != line)
 								{
 									// Go down one line
-									iSEM_navigate(sem, obj, 1, 0);
+									iSEM_navigate(thisCode, sem, obj, 1, 0);
 
 									// Go to the start of the line
 									if (sem->columnEdit > 0)
-										iSEM_navigate(sem, obj, 0, -sem->columnEdit);
+										iSEM_navigate(thisCode, sem, obj, 0, -sem->columnEdit);
 
 									// Continue looking word left on this line
-									return(iSEM_navigateWordRight(sem, obj, true));
+									return(iSEM_navigateWordRight(thisCode, sem, obj, true));
 								}
 							}
 					}
@@ -3914,7 +3914,7 @@ renderAsOnlyText:
 				// Verify we're visible
 				//////
 					if (tlVerifyCursorIsVisible)
-						iSEM_verifyCursorIsVisible(sem, obj);
+						iSEM_verifyCursorIsVisible(thisCode, sem, obj);
 
 
 				// Indicate success
@@ -3934,7 +3934,7 @@ renderAsOnlyText:
 // Called to navigate to the top of the chain
 //
 //////
-	bool iSEM_navigateToTopLine(SEM* sem, SObject* obj)
+	bool iSEM_navigateToTopLine(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
 		// Make sure the environment is sane
@@ -3956,7 +3956,7 @@ renderAsOnlyText:
 			//////////
 			// Verify we're visible
 			//////
-				iSEM_verifyCursorIsVisible(sem, obj);
+				iSEM_verifyCursorIsVisible(thisCode, sem, obj);
 
 
 			// Indicate we did something
@@ -3976,7 +3976,7 @@ renderAsOnlyText:
 // Called to navigate to the end of the chain
 //
 //////
-	bool iSEM_navigateToEndLine(SEM* sem, SObject* obj)
+	bool iSEM_navigateToEndLine(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		s32			lnTop, lnBottom;
 		SFont*		font;
@@ -3988,7 +3988,7 @@ renderAsOnlyText:
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iSEM_getRectAndFont(sem, obj, &lrc);
+			font = iSEM_getRectAndFont(thisCode, sem, obj, &lrc);
 
 
 		//////////
@@ -4041,7 +4041,7 @@ renderAsOnlyText:
 				//////////
 				// Verify we're visible
 				//////
-					iSEM_verifyCursorIsVisible(sem, obj);
+					iSEM_verifyCursorIsVisible(thisCode, sem, obj);
 
 
 				// Indicate success
@@ -4061,13 +4061,13 @@ renderAsOnlyText:
 // Called to navigate to the start of the selected block
 //
 //////
-	bool iSEM_navigateToSelectStart(SEM* sem, SObject* obj, bool tlMoveByOrigin)
+	bool iSEM_navigateToSelectStart(SThisCode* thisCode, SEM* sem, SObject* obj, bool tlMoveByOrigin)
 	{
 		logfunc(__FUNCTION__);
 		//////////
 		// Make sure we're valid
 		//////
-			if (sem && iSEM_isSelecting(sem))
+			if (sem && iSEM_isSelecting(thisCode, sem))
 			{
 				//////////
 				// Move to the start
@@ -4087,7 +4087,7 @@ renderAsOnlyText:
 				//////////
 				// Verify we're visible
 				//////
-					iSEM_verifyCursorIsVisible(sem, obj);
+					iSEM_verifyCursorIsVisible(thisCode, sem, obj);
 
 
 				// Indicate success
@@ -4107,13 +4107,13 @@ renderAsOnlyText:
 // Called to navigate to the end of the selected block
 //
 //////
-	bool iSEM_navigateToSelectEnd(SEM* sem, SObject* obj, bool tlMoveByOrigin)
+	bool iSEM_navigateToSelectEnd(SThisCode* thisCode, SEM* sem, SObject* obj, bool tlMoveByOrigin)
 	{
 		logfunc(__FUNCTION__);
 		//////////
 		// Make sure we're valid
 		//////
-			if (sem && iSEM_isSelecting(sem))
+			if (sem && iSEM_isSelecting(thisCode, sem))
 			{
 				//////////
 				// Move to the start
@@ -4133,7 +4133,7 @@ renderAsOnlyText:
 				//////////
 				// Verify we're visible
 				//////
-					iSEM_verifyCursorIsVisible(sem, obj);
+					iSEM_verifyCursorIsVisible(thisCode, sem, obj);
 
 
 				// Indicate success
@@ -4153,7 +4153,7 @@ renderAsOnlyText:
 // Called to roll the screen up one line
 //
 //////
-	bool iSEM_rollUp(SEM* sem, SObject* obj)
+	bool iSEM_rollUp(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		bool llChanged;
 
@@ -4179,7 +4179,7 @@ renderAsOnlyText:
 
 			// If we moved anything...
 			if (llChanged)
-				iSEM_verifyCursorIsVisible(sem, obj);
+				iSEM_verifyCursorIsVisible(thisCode, sem, obj);
 		}
 
 		// Indicate our status
@@ -4194,7 +4194,7 @@ renderAsOnlyText:
 // Called to roll the screen down one line
 //
 //////
-	bool iSEM_rollDown(SEM* sem, SObject* obj)
+	bool iSEM_rollDown(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		bool llChanged;
 
@@ -4220,7 +4220,7 @@ renderAsOnlyText:
 
 			// If we moved anything...
 			if (llChanged)
-				iSEM_verifyCursorIsVisible(sem, obj);
+				iSEM_verifyCursorIsVisible(thisCode, sem, obj);
 		}
 
 		// Indicate our status
@@ -4235,7 +4235,7 @@ renderAsOnlyText:
 // Moves the cursor line to the middle of the visible screen
 //
 //////
-	bool iSEM_centerCursorLine(SEM* sem, SObject* obj)
+	bool iSEM_centerCursorLine(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		s32			lnI, lnRows;
 		SFont*		font;
@@ -4247,7 +4247,7 @@ renderAsOnlyText:
 		//////////
 		// Grab the rectangle we're working in
 		//////
-			font = iSEM_getRectAndFont(sem, obj, &lrc);
+			font = iSEM_getRectAndFont(thisCode, sem, obj, &lrc);
 
 
 		//////////
@@ -4279,7 +4279,7 @@ renderAsOnlyText:
 				//////////
 				// Verify we're visible
 				//////
-					iSEM_verifyCursorIsVisible(sem, obj);
+					iSEM_verifyCursorIsVisible(thisCode, sem, obj);
 
 
 				//////////
@@ -4303,11 +4303,11 @@ renderAsOnlyText:
 //        which begins at an arbitrary column, and ends at an arbitrary column.
 //
 //////
-	bool iSEM_selectLineUp(SEM* sem, SObject* obj)
+	bool iSEM_selectLineUp(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		iSEM_selectStart(sem, _SEM_SELECT_MODE_ANCHOR);
-		return(iSEM_navigate(sem, obj, -1, 0));
+		iSEM_selectStart(thisCode, sem, _SEM_SELECT_MODE_ANCHOR);
+		return(iSEM_navigate(thisCode, sem, obj, -1, 0));
 	}
 
 
@@ -4320,11 +4320,11 @@ renderAsOnlyText:
 //        which begins at an arbitrary column, and ends at an arbitrary column.
 //
 //////
-	bool iSEM_selectLineDown(SEM* sem, SObject* obj)
+	bool iSEM_selectLineDown(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		iSEM_selectStart(sem, _SEM_SELECT_MODE_ANCHOR);
-		return(iSEM_navigate(sem, obj, 1, 0));
+		iSEM_selectStart(thisCode, sem, _SEM_SELECT_MODE_ANCHOR);
+		return(iSEM_navigate(thisCode, sem, obj, 1, 0));
 	}
 
 
@@ -4337,11 +4337,11 @@ renderAsOnlyText:
 //        the end of the line, at which time we will navigate to the next line.
 //
 //////
-	bool iSEM_selectLeft(SEM* sem, SObject* obj)
+	bool iSEM_selectLeft(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		iSEM_selectStart(sem, _SEM_SELECT_MODE_ANCHOR);
-		return(iSEM_navigate(sem, obj, 0, -1));
+		iSEM_selectStart(thisCode, sem, _SEM_SELECT_MODE_ANCHOR);
+		return(iSEM_navigate(thisCode, sem, obj, 0, -1));
 	}
 
 
@@ -4352,11 +4352,11 @@ renderAsOnlyText:
 // Called to select right one character.
 //
 //////
-	bool iSEM_selectRight(SEM* sem, SObject* obj)
+	bool iSEM_selectRight(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		iSEM_selectStart(sem, _SEM_SELECT_MODE_ANCHOR);
-		return(iSEM_navigate(sem, obj, 0, 1));
+		iSEM_selectStart(thisCode, sem, _SEM_SELECT_MODE_ANCHOR);
+		return(iSEM_navigate(thisCode, sem, obj, 0, 1));
 	}
 
 
@@ -4367,7 +4367,7 @@ renderAsOnlyText:
 // Called to select from where we are to the end of line
 //
 //////
-	bool iSEM_selectToEndOfLine(SEM* sem, SObject* obj)
+	bool iSEM_selectToEndOfLine(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		bool llResult;
 
@@ -4376,13 +4376,13 @@ renderAsOnlyText:
 		if (sem->columnEdit >= sem->line_cursor->sourceCode_populatedLength)
 		{
 			// We're past the end of the line
-			llResult = iSEM_navigate(sem, obj, 0, -(sem->columnEdit - sem->line_cursor->sourceCode_populatedLength));
-			iSEM_selectStart(sem, _SEM_SELECT_MODE_ANCHOR);
+			llResult = iSEM_navigate(thisCode, sem, obj, 0, -(sem->columnEdit - sem->line_cursor->sourceCode_populatedLength));
+			iSEM_selectStart(thisCode, sem, _SEM_SELECT_MODE_ANCHOR);
 
 		} else {
 			// We're before the end of the line
-			iSEM_selectStart(sem, _SEM_SELECT_MODE_ANCHOR);
-			llResult = iSEM_navigate(sem, obj, 0, sem->line_cursor->sourceCode_populatedLength - sem->columnEdit);
+			iSEM_selectStart(thisCode, sem, _SEM_SELECT_MODE_ANCHOR);
+			llResult = iSEM_navigate(thisCode, sem, obj, 0, sem->line_cursor->sourceCode_populatedLength - sem->columnEdit);
 		}
 
 		// Indicate our result
@@ -4397,11 +4397,11 @@ renderAsOnlyText:
 // Called to left one character of where we are to the beginning of line
 //
 //////
-	bool iSEM_selectToBeginOfLine(SEM* sem, SObject* obj)
+	bool iSEM_selectToBeginOfLine(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		iSEM_selectStart(sem, _SEM_SELECT_MODE_ANCHOR);
-		if (sem->columnEdit > 0)		return(iSEM_navigate(sem, obj, 0, -sem->columnEdit));
+		iSEM_selectStart(thisCode, sem, _SEM_SELECT_MODE_ANCHOR);
+		if (sem->columnEdit > 0)		return(iSEM_navigate(thisCode, sem, obj, 0, -sem->columnEdit));
 		else					return(true);
 	}
 
@@ -4413,18 +4413,18 @@ renderAsOnlyText:
 // Called to toggle selection by column mode
 //
 //////
-	bool iSEM_selectColumnToggle(SEM* sem, SObject* obj)
+	bool iSEM_selectColumnToggle(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
 		if (sem->selectMode != _SEM_SELECT_MODE_NONE)
 		{
 			// Turn off selecting mode
 			sem->selectMode = _SEM_SELECT_MODE_NONE;
-			iSEM_selectStop(sem);
+			iSEM_selectStop(thisCode, sem);
 
 		} else {
 			// Turn on column select mode
-			iSEM_selectStart(sem, _SEM_SELECT_MODE_COLUMN);
+			iSEM_selectStart(thisCode, sem, _SEM_SELECT_MODE_COLUMN);
 		}
 		return(true);
 	}
@@ -4437,18 +4437,18 @@ renderAsOnlyText:
 // Called to toggle selection by line mode
 //
 //////
-	bool iSEM_selectLineToggle(SEM* sem, SObject* obj)
+	bool iSEM_selectLineToggle(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
 		if (sem->selectMode != _SEM_SELECT_MODE_NONE)
 		{
 			// Turn off selecting mode
 			sem->selectMode = _SEM_SELECT_MODE_NONE;
-			iSEM_selectStop(sem);
+			iSEM_selectStop(thisCode, sem);
 
 		} else {
 			// Turn on line select mode
-			iSEM_selectStart(sem, _SEM_SELECT_MODE_LINE);
+			iSEM_selectStart(thisCode, sem, _SEM_SELECT_MODE_LINE);
 		}
 		return(true);
 	}
@@ -4461,18 +4461,18 @@ renderAsOnlyText:
 // Called to toggle selection by line mode
 //
 //////
-	bool iSEM_selectAnchorToggle(SEM* sem, SObject* obj)
+	bool iSEM_selectAnchorToggle(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
 		if (sem->selectMode != _SEM_SELECT_MODE_NONE)
 		{
 			// Turn off selecting mode
 			sem->selectMode = _SEM_SELECT_MODE_NONE;
-			iSEM_selectStop(sem);
+			iSEM_selectStop(thisCode, sem);
 
 		} else {
 			// Turn on anchor select mode
-			iSEM_selectStart(sem, _SEM_SELECT_MODE_ANCHOR);
+			iSEM_selectStart(thisCode, sem, _SEM_SELECT_MODE_ANCHOR);
 		}
 		return(true);
 	}
@@ -4488,11 +4488,11 @@ renderAsOnlyText:
 //        and all of the previous line will be selected.
 //
 //////
-	bool iSEM_selectWordLeft(SEM* sem, SObject* obj)
+	bool iSEM_selectWordLeft(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		iSEM_selectStart(sem, _SEM_SELECT_MODE_ANCHOR);
-		return(iSEM_navigateWordLeft(sem, obj, true));
+		iSEM_selectStart(thisCode, sem, _SEM_SELECT_MODE_ANCHOR);
+		return(iSEM_navigateWordLeft(thisCode, sem, obj, true));
 	}
 
 
@@ -4506,11 +4506,11 @@ renderAsOnlyText:
 //        of the next line will be selected.
 //
 //////
-	bool iSEM_selectWordRight(SEM* sem, SObject* obj)
+	bool iSEM_selectWordRight(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		iSEM_selectStart(sem, _SEM_SELECT_MODE_ANCHOR);
-		return(iSEM_navigateWordRight(sem, obj, true));
+		iSEM_selectStart(thisCode, sem, _SEM_SELECT_MODE_ANCHOR);
+		return(iSEM_navigateWordRight(thisCode, sem, obj, true));
 	}
 
 
@@ -4521,11 +4521,11 @@ renderAsOnlyText:
 // Select from where we are to the top of the file
 //
 //////
-	bool iSEM_selectToTopLine(SEM* sem, SObject* obj)
+	bool iSEM_selectToTopLine(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		iSEM_selectStart(sem, _SEM_SELECT_MODE_ANCHOR);
-		return(iSEM_navigateToTopLine(sem, obj));
+		iSEM_selectStart(thisCode, sem, _SEM_SELECT_MODE_ANCHOR);
+		return(iSEM_navigateToTopLine(thisCode, sem, obj));
 	}
 
 
@@ -4536,11 +4536,11 @@ renderAsOnlyText:
 // Select from where we are to the top of the file
 //
 //////
-	bool iSEM_selectToEndLine(SEM* sem, SObject* obj)
+	bool iSEM_selectToEndLine(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		iSEM_selectStart(sem, _SEM_SELECT_MODE_ANCHOR);
-		return(iSEM_navigateToEndLine(sem, obj));
+		iSEM_selectStart(thisCode, sem, _SEM_SELECT_MODE_ANCHOR);
+		return(iSEM_navigateToEndLine(thisCode, sem, obj));
 	}
 
 
@@ -4551,7 +4551,7 @@ renderAsOnlyText:
 // Called to delete one character left (backspace)
 //
 //////
-	bool iSEM_deleteLeft(SEM* sem, SObject* obj)
+	bool iSEM_deleteLeft(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		SLine*	line;
 		SLine*	lineLast;
@@ -4573,16 +4573,16 @@ renderAsOnlyText:
 					if (sem->firstLine != sem->lastLine)
 					{
 						// Delete the current line
-						iSEM_deleteLine(sem);
+						iSEM_deleteLine(thisCode, sem);
 
 						if (lineLast != line)
 						{
 							// Navigate up one line
-							iSEM_navigate(sem, obj, -1, 0);
+							iSEM_navigate(thisCode, sem, obj, -1, 0);
 						}
 
 						// Navigate to the end of the current line
-						iSEM_navigate(sem, obj, 0, sem->line_cursor->sourceCode_populatedLength - sem->columnEdit);
+						iSEM_navigate(thisCode, sem, obj, 0, sem->line_cursor->sourceCode_populatedLength - sem->columnEdit);
 					}
 
 				} else {
@@ -4592,16 +4592,16 @@ renderAsOnlyText:
 						if (sem->firstLine != sem->lastLine)
 						{
 							// Delete the current line
-							iSEM_deleteLine(sem);
+							iSEM_deleteLine(thisCode, sem);
 
 							if (lineLast != line)
 							{
 								// Navigate up one line
-								iSEM_navigate(sem, obj, -1, 0);
+								iSEM_navigate(thisCode, sem, obj, -1, 0);
 							}
 
 							// Navigate to the end of the current line
-							iSEM_navigate(sem, obj, 0, sem->line_cursor->sourceCode_populatedLength - sem->columnEdit);
+							iSEM_navigate(thisCode, sem, obj, 0, sem->line_cursor->sourceCode_populatedLength - sem->columnEdit);
 						}
 
 					} else if (sem->columnEdit > 0 && sem->columnEdit <= line->sourceCode_populatedLength) {
@@ -4612,11 +4612,11 @@ renderAsOnlyText:
 						if (!sem->isOverwrite)
 						{
 							// We're in insert mode, so we drag everything with us
-							iSEMLine_characterDelete(sem);
+							iSEMLine_characterDelete(thisCode, sem);
 
 						} else {
 							// We're in overwrite mode, so we just insert a space
-							iSEMLine_characterOverwrite(sem, ' ');
+							iSEMLine_characterOverwrite(thisCode, sem, ' ');
 
 							// The overwrite moves us back right again, so we reduce our column position
 							--sem->columnEdit;
@@ -4631,7 +4631,7 @@ renderAsOnlyText:
 				//////////
 				// Verify we're visible
 				//////
-					iSEM_verifyCursorIsVisible(sem, obj);
+					iSEM_verifyCursorIsVisible(thisCode, sem, obj);
 
 
 				// Indicate success
@@ -4651,7 +4651,7 @@ renderAsOnlyText:
 // Called to select one character right (delete key)
 //
 //////
-	bool iSEM_deleteRight(SEM* sem, SObject* obj)
+	bool iSEM_deleteRight(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
 		//////////
@@ -4663,11 +4663,11 @@ renderAsOnlyText:
 				{
 					// There's no data on this line, if we're in insert mode delete the line
 					if (!sem->isOverwrite && sem->firstLine != sem->lastLine)
-						iSEM_deleteLine(sem);
+						iSEM_deleteLine(thisCode, sem);
 
 				} else {
 					// Delete everything to the right
-					iSEMLine_characterDelete(sem);
+					iSEMLine_characterDelete(thisCode, sem);
 				}
 
 				// Reprocess the source code on the line
@@ -4677,7 +4677,7 @@ renderAsOnlyText:
 				//////////
 				// Verify we're visible
 				//////
-					iSEM_verifyCursorIsVisible(sem, obj);
+					iSEM_verifyCursorIsVisible(thisCode, sem, obj);
 
 
 				// Indicate success
@@ -4697,7 +4697,7 @@ renderAsOnlyText:
 // Called to delete one word left (ctrl+backspace)
 //
 //////
-	bool iSEM_deleteWordLeft(SEM* sem, SObject* obj)
+	bool iSEM_deleteWordLeft(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		s32		lnI, lnColumnStart, lnColumnEnd;
 		SLine*	line;
@@ -4714,7 +4714,7 @@ renderAsOnlyText:
 				line			= sem->line_cursor;
 
 				// See if we can navigate right
-				if (iSEM_navigateWordLeft(sem, obj, false))
+				if (iSEM_navigateWordLeft(thisCode, sem, obj, false))
 				{
 					// Are we still on the same line?
 					if (sem->line_cursor == line && sem->columnEdit < lnColumnStart)
@@ -4722,17 +4722,17 @@ renderAsOnlyText:
 						// Delete the indicated number of characters
 						lnColumnEnd = lnColumnStart - sem->columnEdit;
 						for (lnI = 0; lnI < lnColumnEnd; lnI++)
-							iSEMLine_characterDelete(sem);
+							iSEMLine_characterDelete(thisCode, sem);
 
 					} else if (sem->line_cursor == line && sem->columnEdit == 0 && line->sourceCode_populatedLength > 0) {
 						// Delete to the start of line
 						lnColumnEnd = line->sourceCode_populatedLength;
 						for (lnI = 0; lnI < lnColumnEnd; lnI++)
-							iSEMLine_characterDelete(sem);
+							iSEMLine_characterDelete(thisCode, sem);
 
 					} else if (sem->line_cursor != line && sem->columnEdit < sem->line_cursor->sourceCode_populatedLength) {
 						// Navigate to the end so the next delete will work
-						iSEM_navigate(sem, obj, 0, sem->line_cursor->sourceCode_populatedLength - sem->columnEdit);
+						iSEM_navigate(thisCode, sem, obj, 0, sem->line_cursor->sourceCode_populatedLength - sem->columnEdit);
 					}
 
 					// Reprocess the source code on the line if need be
@@ -4757,7 +4757,7 @@ renderAsOnlyText:
 // Called to delete one word right (ctrl+delete)
 //
 //////
-	bool iSEM_deleteWordRight(SEM* sem, SObject* obj)
+	bool iSEM_deleteWordRight(SThisCode* thisCode, SEM* sem, SObject* obj)
 	{
 		s32		lnI, lnColumnStart, lnColumnEnd;
 		SLine*	line;
@@ -4774,7 +4774,7 @@ renderAsOnlyText:
 				line			= sem->line_cursor;
 
 				// See if we can navigate right
-				if (iSEM_navigateWordRight(sem, obj, false))
+				if (iSEM_navigateWordRight(thisCode, sem, obj, false))
 				{
 					// Are we still on the same line?
 					if (sem->line_cursor == line || line->sourceCode_populatedLength > lnColumnStart)
@@ -4797,7 +4797,7 @@ renderAsOnlyText:
 							// Delete the indicated number of characters
 							lnColumnEnd = lnColumnEnd - lnColumnStart;
 							for (lnI = 0; lnI < lnColumnEnd; lnI++)
-								iSEMLine_characterDelete(sem);
+								iSEMLine_characterDelete(thisCode, sem);
 
 							// Reprocess the source code on the line if need be
 							if (sem->isSourceCode)
@@ -4814,7 +4814,7 @@ renderAsOnlyText:
 							// Delete to the end of line
 							lnColumnEnd = line->sourceCode_populatedLength - sem->columnEdit;
 							for (lnI = 0; lnI < lnColumnEnd; lnI++)
-								iSEMLine_characterDelete(sem);
+								iSEMLine_characterDelete(thisCode, sem);
 
 							// Reprocess the source code on the line if need be
 							if (sem->isSourceCode)
@@ -4840,7 +4840,7 @@ renderAsOnlyText:
 // Called to navigate to the indicated position on the screen
 //
 //////
-	bool iSEM_navigateTo_pixelXY(SEM* sem, SObject* obj, s32 x, s32 y)
+	bool iSEM_navigateTo_pixelXY(SThisCode* thisCode, SEM* sem, SObject* obj, s32 x, s32 y)
 	{
 		s32			lnI, lnRow, lnExtra, lnCandidateCol;
 		bool		llResult;
@@ -4857,7 +4857,7 @@ renderAsOnlyText:
 			//////////
 			// Grab the rectangle we're working in
 			//////
-				font = iSEM_getRectAndFont(sem, obj, &lrc);
+				font = iSEM_getRectAndFont(thisCode, sem, obj, &lrc);
 
 
 			//////////
@@ -4906,7 +4906,7 @@ renderAsOnlyText:
 			//////////
 			// Verify we're visible
 			//////
-				iSEM_verifyCursorIsVisible(sem, obj);
+				iSEM_verifyCursorIsVisible(thisCode, sem, obj);
 
 
 			// Indicate success
@@ -4925,7 +4925,7 @@ renderAsOnlyText:
 // Indicates if the character under the cursor is a breaking character
 //
 //////
-	bool iiSEM_isBreakingCharacter(SEM* sem, SLine* line, s32 tnDeltaTest)
+	bool iiSEM_isBreakingCharacter(SThisCode* thisCode, SEM* sem, SLine* line, s32 tnDeltaTest)
 	{
 		u8 c;
 
@@ -4969,7 +4969,7 @@ renderAsOnlyText:
 // Selecting begins at the current coordinates if it's not already selected.
 //
 //////
-	void iSEM_selectStart(SEM* sem, u32 tnSelectMode)
+	void iSEM_selectStart(SThisCode* thisCode, SEM* sem, u32 tnSelectMode)
 	{
 		if (sem && sem->selectMode == _SEM_SELECT_MODE_NONE && sem->line_cursor)
 		{
@@ -4979,7 +4979,7 @@ renderAsOnlyText:
 				case _SEM_SELECT_MODE_LINE:
 				case _SEM_SELECT_MODE_COLUMN:
 				case _SEM_SELECT_MODE_ANCHOR:
-					iSEM_renumber(sem, 1);
+					iSEM_renumber(thisCode, sem, 1);
 					sem->selectMode = tnSelectMode;
 
 					// Note where we start
@@ -4989,7 +4989,7 @@ renderAsOnlyText:
 					sem->selectOrigin.line			= sem->line_cursor;
 
 					// Update the extents
-					iSEM_selectUpdateExtents(sem);
+					iSEM_selectUpdateExtents(thisCode, sem);
 					break;
 			}
 		}
@@ -5003,7 +5003,7 @@ renderAsOnlyText:
 // Are we selecting?
 //
 //////
-	bool iSEM_isSelecting(SEM* sem)
+	bool iSEM_isSelecting(SThisCode* thisCode, SEM* sem)
 	{
 		return(sem && sem->selectMode != _SEM_SELECT_MODE_NONE);
 	}
@@ -5016,7 +5016,7 @@ renderAsOnlyText:
 // Selecting has stopped
 //
 //////
-	void iSEM_selectStop(SEM* sem)
+	void iSEM_selectStop(SThisCode* thisCode, SEM* sem)
 	{
 		if (sem && sem->selectMode != _SEM_SELECT_MODE_NONE)
 			sem->selectMode = _SEM_SELECT_MODE_NONE;
@@ -5030,7 +5030,7 @@ renderAsOnlyText:
 // Selecting to the current location
 //
 //////
-	void iSEM_selectUpdateExtents(SEM* sem)
+	void iSEM_selectUpdateExtents(SThisCode* thisCode, SEM* sem)
 	{
 		if (sem && sem->selectMode != _SEM_SELECT_MODE_NONE && sem->line_cursor)
 		{

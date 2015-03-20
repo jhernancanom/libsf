@@ -455,14 +455,14 @@ struct SObjPropMap;
 	void					iInit_create_jdebi						(void);
 	void					iInit_createDefaultDatetimes			(void);
 	SBitmap*				iiVjr_buildSplashScreen					(SBitmap* bmpSplash);
-	void					iVjr_appendSystemLog					(u8* tcLogText);
-	void					iVjr_flushSystemLog						(void);
+	void					iVjr_appendSystemLog					(SThisCode* thisCode, u8* tcLogText);
+	void					iVjr_flushSystemLog						(SThisCode* thisCode);
 	void					iVjr_releaseMemory						(void);
 	void					iVjr_releaseAllDefaultDatetimes			(void);
 	void					iVjr_releaseAllDefaultObjects			(void);
 	void					iVjr_release_jdebi						(void);
 	void					iVjr_releaseCaskIcons					(void);
-	void					iVjr_shutdown							(void);
+	void					iVjr_shutdown							(SThisCode* thisCode);
 
 	DWORD	WINAPI			iSplash_show							(LPVOID/*SBitmap* bmp*/ lpParameter);
 	DWORD	WINAPI			iSplash_delete							(LPVOID/*bool tlWait*/ lpParameter);

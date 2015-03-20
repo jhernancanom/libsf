@@ -193,15 +193,30 @@
 
 			// Memo  data
 			s8*		mdata;					// Current version
-			u32		memoLength;
+			u32		mdataLength;
 			s8*		omdata;					// As originally loaded from disk
-			u32		omemoLength;
+			u32		omdataLength;
 
 			// Used for index creation
 			u8		fillChar;				// The fill character required for this type of field
 			u32		dbcRecno;				// The related dbc RECNO() this entry was found on
 			u32		indexFixup;				// The fixup required to make the cdx work for this type of field
 		};
+
+
+	//////////
+	// Memo header structure (if present)
+	//////
+		struct SMemoHeader
+		{
+			u32		nextFreeBlock;			// Next free block in the file
+			u16		unused1;
+			u16		blockSize;				// BLOCKSIZE (if 1..32, indicates # of 512 blocks to allocate, if 33+, indicates block size)
+			// Total: 8
+			s8		unused2[504];
+			// Total: 512
+		};
+
 
 	//////////
 	// Internal work area structures, relates to SELECT() locations
@@ -282,13 +297,13 @@
 				u8*			idata_u8;
 			};
 
-			// Memo field data
-			union {
-				uptr		_mdata;
-				s8*			mdata;
-				s8*			mdata_s8;
-				u8*			mdata_u8;
-			};
+
+			//////////
+			// Memo data
+			//////
+				s32				fhMemo;							// Memo file handle
+				SMemoHeader		memoHeader;						// Memo header
+				SBuilder*		memoLocks;						// Disk locks for shared file access
 
 
 			//////////

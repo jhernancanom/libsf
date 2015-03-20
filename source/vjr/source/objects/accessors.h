@@ -453,6 +453,7 @@ struct SBasePropMap;
 	const s8		cgc_zoomBox[]											= "zoomBox";
 	const s8		cgc_setAutoConvert[]									= "autoConvert";
 	const s8		cgc_setAutoValidate[]									= "autoValidate";
+	const s8		cgc_setBlocksize[]										= "blocksize";
 	const s8		cgc_setCaseSensitiveCompares[]							= "caseSensitiveCompares";
 	const s8		cgc_setCaseSensitiveNames[]								= "caseSensitiveNames";
 	const s8		cgc_setCentury[]										= "century";
@@ -841,40 +842,41 @@ struct SBasePropMap;
 	const u32		_INDEX_SET_FIRST_ITEM							= 349;
 	const u32		_INDEX_SET_AUTO_CONVERT									= 349;
 	const u32		_INDEX_SET_AUTO_VALIDATE								= 350;
-	const u32		_INDEX_SET_CASE_SENSITIVE_COMPARES						= 351;
-	const u32		_INDEX_SET_CASE_SENSITIVE_NAMES							= 352;
-	const u32		_INDEX_SET_CENTURY										= 353;
-	const u32		_INDEX_SET_DATE											= 354;
-	const u32		_INDEX_SET_DECIMALS										= 355;
-	const u32		_INDEX_SET_EXCLUSIVE									= 356;
-	const u32		_INDEX_SET_FOCUS_HIGHLIGHT_BORDER_PIXELS				= 357;
-	const u32		_INDEX_SET_FOCUS_HIGHLIGHT_PIXELS						= 358;
-	const u32		_INDEX_SET_HONOR_BARRIERS								= 359;
-	const u32		_INDEX_SET_IMPLICIT_PARAMS								= 360;
-	const u32		_INDEX_SET_INDEX_META_DATA								= 361;
-	const u32		_INDEX_SET_INITIALIZE_DEFAULT_VALUE						= 362;
-	const u32		_INDEX_SET_LANGUAGE										= 363;
-	const u32		_INDEX_SET_LOAD_RECEIVES_PARAMS							= 364;
-	const u32		_INDEX_SET_LOCK_SCREEN									= 365;
-	const u32		_INDEX_SET_LOGICAL										= 366;
-	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 367;
-	const u32		_INDEX_SET_NCSET_ALPHA_IS_OPAQUE						= 368;
-	const u32		_INDEX_SET_NCSET_CEILING_FLOOR							= 369;
-	const u32		_INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES					= 370;
-	const u32		_INDEX_SET_NCSET_OPTIMIZE_VARIABLES						= 371;
-	const u32		_INDEX_SET_NCSET_SIGN_SIGN2								= 372;
-	const u32		_INDEX_SET_REPROCESS									= 373;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 374;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
-	const u32		_INDEX_SET_REPROCESSINTERVAL							= 375;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
-	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 376;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_SLOPPY_PRINTING								= 377;
-	const u32		_INDEX_SET_STICKY_PARAMETERS							= 378;
-	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 379;
-	const u32		_INDEX_SET_TABLE_OBJECTS								= 380;
-	const u32		_INDEX_SET_TALK											= 381;
-	const u32		_INDEX_SET_TIME											= 382;
-	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 383;
-	const u32		_INDEX_SET_VARIABLES_FIRST								= 384;
+	const u32		_INDEX_SET_BLOCKSIZE									= 351;
+	const u32		_INDEX_SET_CASE_SENSITIVE_COMPARES						= 352;
+	const u32		_INDEX_SET_CASE_SENSITIVE_NAMES							= 353;
+	const u32		_INDEX_SET_CENTURY										= 354;
+	const u32		_INDEX_SET_DATE											= 355;
+	const u32		_INDEX_SET_DECIMALS										= 356;
+	const u32		_INDEX_SET_EXCLUSIVE									= 357;
+	const u32		_INDEX_SET_FOCUS_HIGHLIGHT_BORDER_PIXELS				= 358;
+	const u32		_INDEX_SET_FOCUS_HIGHLIGHT_PIXELS						= 359;
+	const u32		_INDEX_SET_HONOR_BARRIERS								= 360;
+	const u32		_INDEX_SET_IMPLICIT_PARAMS								= 361;
+	const u32		_INDEX_SET_INDEX_META_DATA								= 362;
+	const u32		_INDEX_SET_INITIALIZE_DEFAULT_VALUE						= 363;
+	const u32		_INDEX_SET_LANGUAGE										= 364;
+	const u32		_INDEX_SET_LOAD_RECEIVES_PARAMS							= 365;
+	const u32		_INDEX_SET_LOCK_SCREEN									= 366;
+	const u32		_INDEX_SET_LOGICAL										= 367;
+	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 368;
+	const u32		_INDEX_SET_NCSET_ALPHA_IS_OPAQUE						= 369;
+	const u32		_INDEX_SET_NCSET_CEILING_FLOOR							= 370;
+	const u32		_INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES					= 371;
+	const u32		_INDEX_SET_NCSET_OPTIMIZE_VARIABLES						= 372;
+	const u32		_INDEX_SET_NCSET_SIGN_SIGN2								= 373;
+	const u32		_INDEX_SET_REPROCESS									= 374;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 375;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
+	const u32		_INDEX_SET_REPROCESSINTERVAL							= 376;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
+	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 377;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_SLOPPY_PRINTING								= 378;
+	const u32		_INDEX_SET_STICKY_PARAMETERS							= 379;
+	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 380;
+	const u32		_INDEX_SET_TABLE_OBJECTS								= 381;
+	const u32		_INDEX_SET_TALK											= 382;
+	const u32		_INDEX_SET_TIME											= 383;
+	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 384;
+	const u32		_INDEX_SET_VARIABLES_FIRST								= 385;
 
 
 	// Basic setters and getters
@@ -900,10 +902,22 @@ struct SBasePropMap;
 	bool					iObjProp_setDate						(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
 	bool					iObjProp_setDecimals					(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
 	bool					iObjProp_setInteger						(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
+	bool					iObjProp_set_u16						(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
 	bool					iObjProp_setLanguage					(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
 	bool					iObjProp_setLogical						(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
+	bool					iObjProp_setLogicalX					(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
 	bool					iObjProp_setReprocess					(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
 	bool					iObjProp_setTime						(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
+
+	// Used for SET("xyz")
+	SVariable* 				iObjProp_getOnOff						(SThisCode* thisCode, SVariable* varSet);
+	SVariable* 				iObjProp_getDate						(SThisCode* thisCode, SVariable* varSet);
+	SVariable* 				iObjProp_getInteger						(SThisCode* thisCode, SVariable* varSet);
+	SVariable* 				iObjProp_getLanguage					(SThisCode* thisCode, SVariable* varSet);
+	SVariable* 				iObjProp_getLogical						(SThisCode* thisCode, SVariable* varSet);
+	SVariable* 				iObjProp_getLogicalX					(SThisCode* thisCode, SVariable* varSet);
+	SVariable* 				iObjProp_getReprocess					(SThisCode* thisCode, SVariable* varSet);
+	SVariable* 				iObjProp_getTime						(SThisCode* thisCode, SVariable* varSet);
 
 	SVariable*				iObjProp_get							(SThisCode* thisCode, SObject* obj, s32 tnIndex);
 	s32						iObjProp_getVarAndType					(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable** varDst);
@@ -1355,6 +1369,7 @@ struct SBasePropMap;
 		//	Index within master props						 icode								property text						length of property text								default property type	 init get set		default value					init value (set at launch)
 		{	_INDEX_SET_AUTO_CONVERT,						_ICODE_AUTOCONVERT,					cgc_setAutoConvert,					sizeof(cgc_setAutoConvert) - 1,						_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=auto-converts mismatched variable types, such as "fred " + 5, converted to "fred" + "5", .f.=signals error
 		{	_INDEX_SET_AUTO_VALIDATE,						_ICODE_AUTOVALIDATE,				cgc_setAutoValidate,				sizeof(cgc_setAutoValidate) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=auto-validates indexes on load, .f.=(default) does not validate indexes on load
+		{	_INDEX_SET_BLOCKSIZE,							_ICODE_BLOCKSIZE,					cgc_setBlocksize,					sizeof(cgc_setBlocksize) - 1,						_VAR_TYPE_U16,				0, 0, 0,		64								,NULL	},	// 1..32 = number of 512 byte blocks to allocate, 33+ blocksize is same as value
 		{	_INDEX_SET_CASE_SENSITIVE_COMPARES,				_ICODE_CASESENSITIVECOMPARES,		cgc_setCaseSensitiveCompares,		sizeof(cgc_setCaseSensitiveCompares) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=character compares are case sensitive, .f.=not case sensitive
 		{	_INDEX_SET_CASE_SENSITIVE_NAMES,				_ICODE_CASESENSITIVENAMES,			cgc_setCaseSensitiveNames,			sizeof(cgc_setCaseSensitiveNames) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=token names are case sensitive, .f.=not case sensitive
 		{	_INDEX_SET_CENTURY,								_ICODE_CENTURY,						cgc_setCentury,						sizeof(cgc_setCentury) - 1,							_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=4-digit years, .f.=2-digit years
@@ -3531,42 +3546,43 @@ struct SBasePropMap;
 		{	_INDEX_NAME,								0, 0, 0 },
 		{	_INDEX_ENABLED,								0, 0, 0 },
 		// Specific to settings
-		{	_INDEX_SET_AUTO_CONVERT,					0, (uptr)&iObjProp_setOnOff,		0 },	// bool
-		{	_INDEX_SET_AUTO_VALIDATE,					0, (uptr)&iObjProp_setOnOff,		0 },	// bool
-		{	_INDEX_SET_CASE_SENSITIVE_COMPARES,			0, (uptr)&iObjProp_setOnOff,		0 },	// bool
-		{	_INDEX_SET_CASE_SENSITIVE_NAMES,			0, (uptr)&iObjProp_setOnOff,		0 },	// bool
-		{	_INDEX_SET_CENTURY,							0, (uptr)&iObjProp_setOnOff,		0 },	// bool
-		{	_INDEX_SET_DATE,							0, (uptr)&iObjProp_setDate,			0 },	// s32
-		{	_INDEX_SET_DECIMALS,						0, (uptr)&iObjProp_setDecimals,		0 },	// s32
-		{	_INDEX_SET_EXCLUSIVE,						0, (uptr)&iObjProp_setOnOff,		0 },	// bool
-		{	_INDEX_SET_FOCUS_HIGHLIGHT_BORDER_PIXELS,	0, (uptr)&iObjProp_setInteger,		0 },	// s32
-		{	_INDEX_SET_FOCUS_HIGHLIGHT_PIXELS,			0, (uptr)&iObjProp_setInteger,		0 },	// s32
-		{	_INDEX_SET_HONOR_BARRIERS,					0, (uptr)&iObjProp_setOnOff,		0 },	// bool
-		{	_INDEX_SET_IMPLICIT_PARAMS,					0, (uptr)&iObjProp_setOnOff,		0 },	// bool
-		{	_INDEX_SET_INDEX_META_DATA,					0, (uptr)&iObjProp_setOnOff,		0 },	// bool
+		{	_INDEX_SET_AUTO_CONVERT,					0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
+		{	_INDEX_SET_AUTO_VALIDATE,					0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
+		{	_INDEX_SET_BLOCKSIZE,						0, (uptr)&iObjProp_set_u16,			(uptr)&iObjProp_getInteger },	// u16
+		{	_INDEX_SET_CASE_SENSITIVE_COMPARES,			0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
+		{	_INDEX_SET_CASE_SENSITIVE_NAMES,			0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
+		{	_INDEX_SET_CENTURY,							0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
+		{	_INDEX_SET_DATE,							0, (uptr)&iObjProp_setDate,			(uptr)&iObjProp_getDate },		// s32
+		{	_INDEX_SET_DECIMALS,						0, (uptr)&iObjProp_setDecimals,		(uptr)&iObjProp_getInteger },	// s32
+		{	_INDEX_SET_EXCLUSIVE,						0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
+		{	_INDEX_SET_FOCUS_HIGHLIGHT_BORDER_PIXELS,	0, (uptr)&iObjProp_setInteger,		(uptr)&iObjProp_getInteger },	// s32
+		{	_INDEX_SET_FOCUS_HIGHLIGHT_PIXELS,			0, (uptr)&iObjProp_setInteger,		(uptr)&iObjProp_getInteger },	// s32
+		{	_INDEX_SET_HONOR_BARRIERS,					0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
+		{	_INDEX_SET_IMPLICIT_PARAMS,					0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
+		{	_INDEX_SET_INDEX_META_DATA,					0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
 		{	_INDEX_SET_INITIALIZE_DEFAULT_VALUE,		0, 0, 0 },		// Varies, but initially it is bool
-		{	_INDEX_SET_LANGUAGE,						0, (uptr)&iObjProp_setLanguage,		0 },	// SDatum
-		{	_INDEX_SET_LOAD_RECEIVES_PARAMS,			0, (uptr)&iObjProp_setOnOff,		0 },	// bool
-		{	_INDEX_SET_LOCK_SCREEN,						0, (uptr)&iObjProp_setOnOff,		0 },	// bool
-		{	_INDEX_SET_LOGICAL,							0, (uptr)&iObjProp_setLogical,		0 },	// s32
-		{	_INDEX_SET_NAMING_CONVENTIONS,				0, (uptr)&iObjProp_setOnOff,		0 },	// bool
-		{	_INDEX_SET_NCSET_ALPHA_IS_OPAQUE,			0, (uptr)&iObjProp_setLogical,		0 },	// bool
-		{	_INDEX_SET_NCSET_CEILING_FLOOR,				0, (uptr)&iObjProp_setLogical,		0 },	// bool
-		{	_INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES,		0, (uptr)&iObjProp_setLogical,		0 },	// bool
-		{	_INDEX_SET_NCSET_OPTIMIZE_VARIABLES,		0, (uptr)&iObjProp_setLogical,		0 },	// bool
-		{	_INDEX_SET_NCSET_SIGN_SIGN2,				0, (uptr)&iObjProp_setLogical,		0 },	// bool
-		{	_INDEX_SET_REPROCESS,						0, (uptr)&iObjProp_setReprocess,	0 },	// bool or s32 
-		{	_INDEX_SET_REPROCESSATTEMPTS,				0, (uptr)&iObjProp_setInteger,		0 },	// s32
-		{	_INDEX_SET_REPROCESSINTERVAL,				0, (uptr)&iObjProp_setInteger,		0 },	// s32
-		{	_INDEX_SET_REPROCESS_SYSTEM,				0, (uptr)&iObjProp_setReprocess,	0 },	// bool or s32
-		{	_INDEX_SET_SLOPPY_PRINTING,					0, (uptr)&iObjProp_setOnOff,		0 },	// bool
-		{	_INDEX_SET_STICKY_PARAMETERS,				0, (uptr)&iObjProp_setOnOff,		0 },	// bool
-		{	_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS,			0, (uptr)&iObjProp_setOnOff,		0 },	// bool
-		{	_INDEX_SET_TABLE_OBJECTS,					0, (uptr)&iObjProp_setOnOff,		0 },	// bool
-		{	_INDEX_SET_TALK,							0, (uptr)&iObjProp_setOnOff,		0 },	// bool
-		{	_INDEX_SET_TIME,							0, (uptr)&iObjProp_setTime,			0 },	// s32
-		{	_INDEX_SET_UNLOAD_RECEIVES_PARAMS,			0, (uptr)&iObjProp_setLogical,		0 },	// bool
-		{	_INDEX_SET_VARIABLES_FIRST,					0, (uptr)&iObjProp_setOnOff,		0 },	// bool
+		{	_INDEX_SET_LANGUAGE,						0, (uptr)&iObjProp_setLanguage,		(uptr)&iObjProp_getLanguage },	// SDatum
+		{	_INDEX_SET_LOAD_RECEIVES_PARAMS,			0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
+		{	_INDEX_SET_LOCK_SCREEN,						0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
+		{	_INDEX_SET_LOGICAL,							0, (uptr)&iObjProp_setLogicalX,		(uptr)&iObjProp_getLogicalX },	// s32
+		{	_INDEX_SET_NAMING_CONVENTIONS,				0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
+		{	_INDEX_SET_NCSET_ALPHA_IS_OPAQUE,			0, (uptr)&iObjProp_setLogical,		(uptr)&iObjProp_getLogical },	// bool
+		{	_INDEX_SET_NCSET_CEILING_FLOOR,				0, (uptr)&iObjProp_setLogical,		(uptr)&iObjProp_getLogical },	// bool
+		{	_INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES,		0, (uptr)&iObjProp_setLogical,		(uptr)&iObjProp_getLogical },	// bool
+		{	_INDEX_SET_NCSET_OPTIMIZE_VARIABLES,		0, (uptr)&iObjProp_setLogical,		(uptr)&iObjProp_getLogical },	// bool
+		{	_INDEX_SET_NCSET_SIGN_SIGN2,				0, (uptr)&iObjProp_setLogical,		(uptr)&iObjProp_getLogical },	// bool
+		{	_INDEX_SET_REPROCESS,						0, (uptr)&iObjProp_setReprocess,	(uptr)&iObjProp_getReprocess },	// bool (automatic) or s32 (negative attempts, positive seconds)
+		{	_INDEX_SET_REPROCESSATTEMPTS,				0, (uptr)&iObjProp_setInteger,		(uptr)&iObjProp_getInteger },	// s32
+		{	_INDEX_SET_REPROCESSINTERVAL,				0, (uptr)&iObjProp_setInteger,		(uptr)&iObjProp_getInteger },	// s32
+		{	_INDEX_SET_REPROCESS_SYSTEM,				0, (uptr)&iObjProp_setReprocess,	(uptr)&iObjProp_getReprocess },	// bool (automatic) or s32 (negative attempts, positive seconds)
+		{	_INDEX_SET_SLOPPY_PRINTING,					0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
+		{	_INDEX_SET_STICKY_PARAMETERS,				0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
+		{	_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS,			0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
+		{	_INDEX_SET_TABLE_OBJECTS,					0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
+		{	_INDEX_SET_TALK,							0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
+		{	_INDEX_SET_TIME,							0, (uptr)&iObjProp_setTime,			(uptr)&iObjProp_getTime },		// s32
+		{	_INDEX_SET_UNLOAD_RECEIVES_PARAMS,			0, (uptr)&iObjProp_setLogical,		(uptr)&iObjProp_getLogical },	// bool
+		{	_INDEX_SET_VARIABLES_FIRST,					0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
 		{	0,											0, 0, 0 }
 	};
 	const s32 gnProps_settingsSize = sizeof(gsProps_settings) / sizeof(SObjPropMap) - 1;

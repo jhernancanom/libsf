@@ -232,12 +232,12 @@
 			if (llCtrl)
 			{
 				// They are just moving the cursor line
-				iSEM_navigate(obj->p.sem, obj, lnUnits * ((llShift) ? -1 : -3), 0);
+				iSEM_navigate(thisCode, obj->p.sem, obj, lnUnits * ((llShift) ? -1 : -3), 0);
 
 			// MouseWheel is a scroll
 			} else {
 				// They want to scroll the entire window, including the cursor line
-				iSEM_scroll(obj->p.sem, obj, lnUnits * ((llShift) ? -1 : -3), 0);
+				iSEM_scroll(thisCode, obj->p.sem, obj, lnUnits * ((llShift) ? -1 : -3), 0);
 			}
 			iObj_setDirtyRender_ascent(thisCode, obj, true);
 			iWindow_render(thisCode, win, false);
@@ -284,10 +284,10 @@
 				// They are clicking and dragging
 
 				// Need to navigate to the indicated x,y coordinate
-				iSEM_navigateTo_pixelXY(obj->p.sem, obj, lnX, lnY);
+				iSEM_navigateTo_pixelXY(thisCode, obj->p.sem, obj, lnX, lnY);
 
 				// Mark the mouse activity
-				iSEM_selectStart(obj->p.sem, _SEM_SELECT_MODE_ANCHOR);
+				iSEM_selectStart(thisCode, obj->p.sem, _SEM_SELECT_MODE_ANCHOR);
 
 				// Redraw our changes
 				iObj_setDirtyRender_ascent(thisCode, obj, true);
@@ -369,11 +369,11 @@
 
 		} else if (obj->objType == _OBJ_TYPE_EDITBOX) {
 			// Need to navigate to the indicated x,y coordinate
-			iSEM_navigateTo_pixelXY(obj->p.sem, obj, lnX, lnY);
+			iSEM_navigateTo_pixelXY(thisCode, obj->p.sem, obj, lnX, lnY);
 
 			// Mark the mouse activity
-			if (!llShift)		iSEM_selectStop(obj->p.sem);
-			else				iSEM_selectStart(obj->p.sem, _SEM_SELECT_MODE_ANCHOR);
+			if (!llShift)		iSEM_selectStop(thisCode, obj->p.sem);
+			else				iSEM_selectStart(thisCode, obj->p.sem, _SEM_SELECT_MODE_ANCHOR);
 
 		} else if (obj->objType == _OBJ_TYPE_RADIO) {
 			// The mouse indicates the position
@@ -397,8 +397,8 @@
 				case _OBJ_TYPE_IMAGE:
 					if (propIsName(obj, cgcName_iconClose)) {
 						// Close
-						iVjr_shutdown();	// They clicked quit
-						return(false);		// When we get here, the object no longer exists
+						iVjr_shutdown(thisCode);	// They clicked quit
+						return(false);				// When we get here, the object no longer exists
 
 					} else if (propIsName(obj, cgcName_iconMove)) {
 						// Move

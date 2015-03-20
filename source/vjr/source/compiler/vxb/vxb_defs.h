@@ -115,61 +115,61 @@ struct SThisCode;
 //////////
 // compiler.cpp
 //////////
-	u32						compile_vxb									(SEM* codeBlock, SCompileVxbContext* vxbParam, SCompileStats* stats);
-	void					iiCompile_vxb_precompile_forLiveCode		(SCompileVxbContext* vxb);
-	void					iiCompile_vxb_compile_forLiveCode			(SCompileVxbContext* vxb);
-	void					iiCompile_vxb_postcompile_forLiveCode		(SCompileVxbContext* vxb);
+	u32						compile_vxb									(SThisCode* thisCode, SEM* codeBlock, SCompileVxbContext* vxbParam, SCompileStats* stats);
+	void					iiCompile_vxb_precompile_forLiveCode		(SThisCode* thisCode, SCompileVxbContext* vxb);
+	void					iiCompile_vxb_compile_forLiveCode			(SThisCode* thisCode, SCompileVxbContext* vxb);
+	void					iiCompile_vxb_postcompile_forLiveCode		(SThisCode* thisCode, SCompileVxbContext* vxb);
 
-	SFunction*				iiComps_decodeSyntax_function				(SCompileVxbContext* vxb);
-	SFunction*				iiComps_decodeSyntax_adhoc					(SCompileVxbContext* vxb);
-	void					iiComps_decodeSyntax_params					(SCompileVxbContext* vxb);
-	void					iiComps_decodeSyntax_lobject				(SCompileVxbContext* vxb);
-	void					iiComps_decodeSyntax_lparameters			(SCompileVxbContext* vxb);
-	void					iiComps_decodeSyntax_returns				(SCompileVxbContext* vxb);
+	SFunction*				iiComps_decodeSyntax_function				(SThisCode* thisCode, SCompileVxbContext* vxb);
+	SFunction*				iiComps_decodeSyntax_adhoc					(SThisCode* thisCode, SCompileVxbContext* vxb);
+	void					iiComps_decodeSyntax_params					(SThisCode* thisCode, SCompileVxbContext* vxb);
+	void					iiComps_decodeSyntax_lobject				(SThisCode* thisCode, SCompileVxbContext* vxb);
+	void					iiComps_decodeSyntax_lparameters			(SThisCode* thisCode, SCompileVxbContext* vxb);
+	void					iiComps_decodeSyntax_returns				(SThisCode* thisCode, SCompileVxbContext* vxb);
 
 	// LiveCode
-	void					iiCompile_LiveCode_free						(SCompiler* compiler);
+	void					iiCompile_LiveCode_free						(SThisCode* thisCode, SCompiler* compiler);
 
-	bool					iiComps_xlatToNodes							(SLine* line, SCompiler* compiler);
-	SNode*					iiComps_xlatToNodes_parenthesis_left		(SNode** root, SNode* active, SComp* comp);
-	SNode*					iiComps_xlatToNodes_parenthesis_right		(SNode** root, SNode* active, SComp* comp);
+	bool					iiComps_xlatToNodes							(SThisCode* thisCode, SLine* line, SCompiler* compiler);
+	SNode*					iiComps_xlatToNodes_parenthesis_left		(SThisCode* thisCode, SNode** root, SNode* active, SComp* comp);
+	SNode*					iiComps_xlatToNodes_parenthesis_right		(SThisCode* thisCode, SNode** root, SNode* active, SComp* comp);
 
-	void					iComps_deleteAll							(SComp* comp);
-	void					iComps_deleteAll_byLine						(SLine* line);
-	void					iComps_deleteAll_byFirstComp				(SComp** firstComp);
-	void					iComps_delete								(SComp* comp, bool tlDeleteSelf);
- 	SComp*					iComps_translateSourceLineTo				(SAsciiCompSearcher* tsComps, SLine* line);
- 	bool					iComps_translateToOthers					(SAsciiCompSearcher* tsComps, SLine* line);
-	bool					iComps_areAllPrecedingCompsWhitespaces		(SComp* comp);
-	s32						iComps_translateToOthers_testIfMatch		(cu8* tcHaystack, cu8* tcNeedle, s32 tnLength);
-	SComp*					iComps_findNextBy_iCode						(SComp* comp, s32 tniCode, SComp** compLastScanned);
-	SComp*					iComps_activeComp_inSEM						(SEM* sem);
-	bool					iComps_getMateDirection						(SComp* comp, s32* tnMateDirection);
-	bool					iComps_findClosest_parensBracketsBraces		(SComp* compRelative, SComp* compStart, SComp** compPBBLeft, SComp** compPBBRight);
-	bool					iComps_isParensBracketsBraces				(SComp* comp);
-	bool					iComps_isMateOf								(SComp* compTest, s32 tniCodeMate);
-	SComp*					iComps_skipPast_iCode						(SComp* comp, s32 tniCode);
-	SComp*					iComps_skipTo_iCode							(SComp* comp, s32 tniCode);
-	SComp*					iComps_getNth								(SComp* comp, s32 tnCount);
-	u32						iComps_combineN								(SComp* comp, u32 tnCount, s32 tnNewICode, s32 tnNewICat, SBgra* newColor);
+	void					iComps_deleteAll							(SThisCode* thisCode, SComp* comp);
+	void					iComps_deleteAll_byLine						(SThisCode* thisCode, SLine* line);
+	void					iComps_deleteAll_byFirstComp				(SThisCode* thisCode, SComp** firstComp);
+	void					iComps_delete								(SThisCode* thisCode, SComp* comp, bool tlDeleteSelf);
+ 	SComp*					iComps_translateSourceLineTo				(SThisCode* thisCode, SAsciiCompSearcher* tsComps, SLine* line);
+ 	bool					iComps_translateToOthers					(SThisCode* thisCode, SAsciiCompSearcher* tsComps, SLine* line);
+	bool					iComps_areAllPrecedingCompsWhitespaces		(SThisCode* thisCode, SComp* comp);
+	s32						iComps_translateToOthers_testIfMatch		(SThisCode* thisCode, cu8* tcHaystack, cu8* tcNeedle, s32 tnLength);
+	SComp*					iComps_findNextBy_iCode						(SThisCode* thisCode, SComp* comp, s32 tniCode, SComp** compLastScanned);
+	SComp*					iComps_activeComp_inSEM						(SThisCode* thisCode, SEM* sem);
+	bool					iComps_getMateDirection						(SThisCode* thisCode, SComp* comp, s32* tnMateDirection);
+	bool					iComps_findClosest_parensBracketsBraces		(SThisCode* thisCode, SComp* compRelative, SComp* compStart, SComp** compPBBLeft, SComp** compPBBRight);
+	bool					iComps_isParensBracketsBraces				(SThisCode* thisCode, SComp* comp);
+	bool					iComps_isMateOf								(SThisCode* thisCode, SComp* compTest, s32 tniCodeMate);
+	SComp*					iComps_skipPast_iCode						(SThisCode* thisCode, SComp* comp, s32 tniCode);
+	SComp*					iComps_skipTo_iCode							(SThisCode* thisCode, SComp* comp, s32 tniCode);
+	SComp*					iComps_getNth								(SThisCode* thisCode, SComp* comp, s32 tnCount);
+	u32						iComps_combineN								(SThisCode* thisCode, SComp* comp, u32 tnCount, s32 tnNewICode, s32 tnNewICat, SBgra* newColor);
 	u32						iComps_combineAdjacent						(SComp* compLeftmost, s32 tniCode, s32 tniCat, SBgra* tnColor, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount);
-	u32						iComps_combineAdjacentAlphanumeric			(SLine* line);
-	u32						iComps_combineAdjacentNumeric				(SLine* line);
-	u32						iComps_combineAdjacentDotForms				(SLine* line);
-	u32						iComps_combineAllBetween					(SLine* line, s32 tniCodeNeedle,		s32 tniCodeCombined,											SBgra* syntaxHighlightColor);
-	u32						iComps_combineAllBetween2					(SLine* line, s32 tniCodeNeedleLeft,	s32 tniCodeNeedleRight,		s32 tniCodeCombined,	s32 tniCat, SBgra* syntaxHighlightColor, bool tlUseBoldFont);
-	u32						iComps_combineAllAfter						(SLine* line, s32 tniCodeNeedle);
-	u32						iComps_deleteAllAfter						(SLine* line, s32 tniCodeNeedle);
-	u32						iComps_removeLeadingWhitespaces				(SLine* line);
-	u32						iComps_removeWhitespaces					(SLine* line);
-	void					iComps_removeStartEndComments				(SLine* line);
-	void					iComps_combineCasks							(SLine* line);
-	void					iComps_fixupNaturalGroupings				(SLine* line);
-	s32						iiComps_get_charactersBetween				(SComp* compLeft, SComp* compRight);
-	s32						iComps_getAs_s32							(SComp* comp);
-	s32						iComps_getContiguousLength					(SComp* comp, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount, s32* tnCount);
-	bool					iiComps_validate							(SComp* comp, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount);
-	s8*						iComps_visualize							(SComp* comp, s32 tnCount, s8* outputBuffer, s32 tnBufferLength, bool tlUseDefaultCompSearcher, SAsciiCompSearcher* tsComps1, SAsciiCompSearcher* tsComps2);
+	u32						iComps_combineAdjacentAlphanumeric			(SThisCode* thisCode, SLine* line);
+	u32						iComps_combineAdjacentNumeric				(SThisCode* thisCode, SLine* line);
+	u32						iComps_combineAdjacentDotForms				(SThisCode* thisCode, SLine* line);
+	u32						iComps_combineAllBetween					(SThisCode* thisCode, SLine* line, s32 tniCodeNeedle,		s32 tniCodeCombined,											SBgra* syntaxHighlightColor);
+	u32						iComps_combineAllBetween2					(SThisCode* thisCode, SLine* line, s32 tniCodeNeedleLeft,	s32 tniCodeNeedleRight,		s32 tniCodeCombined,	s32 tniCat, SBgra* syntaxHighlightColor, bool tlUseBoldFont);
+	u32						iComps_combineAllAfter						(SThisCode* thisCode, SLine* line, s32 tniCodeNeedle);
+	u32						iComps_deleteAllAfter						(SThisCode* thisCode, SLine* line, s32 tniCodeNeedle);
+	u32						iComps_removeLeadingWhitespaces				(SThisCode* thisCode, SLine* line);
+	u32						iComps_removeWhitespaces					(SThisCode* thisCode, SLine* line);
+	void					iComps_removeStartEndComments				(SThisCode* thisCode, SLine* line);
+	void					iComps_combineCasks							(SThisCode* thisCode, SLine* line);
+	void					iComps_fixupNaturalGroupings				(SThisCode* thisCode, SLine* line);
+	s32						iiComps_get_charactersBetween				(SThisCode* thisCode, SComp* compLeft, SComp* compRight);
+	s32						iComps_getAs_s32							(SThisCode* thisCode, SComp* comp);
+	s32						iComps_getContiguousLength					(SThisCode* thisCode, SComp* comp, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount, s32* tnCount);
+	bool					iiComps_validate							(SThisCode* thisCode, SComp* comp, s32 valid_iCodeArray[], s32 tnValid_iCodeArrayCount);
+	s8*						iComps_visualize							(SThisCode* thisCode, SComp* comp, s32 tnCount, s8* outputBuffer, s32 tnBufferLength, bool tlUseDefaultCompSearcher, SAsciiCompSearcher* tsComps1, SAsciiCompSearcher* tsComps2);
 
 //////////
 // Jun.25.2014 -- This block of code was originally created before I began working on
@@ -177,53 +177,53 @@ struct SThisCode;
 // refactored or deleted.
 // BEGIN
 //////
-	void					iiComps_xlatToSubInstr						(SLine* line);
-	SComp*					iiComps_xlatToSubInstr_findInmostExpression	(SNode* si, SLine* line);
-	void					iiComps_xlatToSubInstr_findStartOfComponent	(SComp* compRoot, SOp* op);
-	void					iiComps_xlatToSubInstr_findFullComponent	(SComp* compRoot, SOp* op);
-	bool					iiComps_xlatToSubInstr_isEqualAssignment	(SLine* line);
+	void					iiComps_xlatToSubInstr						(SThisCode* thisCode, SLine* line);
+	SComp*					iiComps_xlatToSubInstr_findInmostExpression	(SThisCode* thisCode, SNode* si, SLine* line);
+	void					iiComps_xlatToSubInstr_findStartOfComponent	(SThisCode* thisCode, SComp* compRoot, SOp* op);
+	void					iiComps_xlatToSubInstr_findFullComponent	(SThisCode* thisCode, SComp* compRoot, SOp* op);
+	bool					iiComps_xlatToSubInstr_isEqualAssignment	(SThisCode* thisCode, SLine* line);
 //////
 // END
 //////////
 
-	u32						iBreakoutAsciiTextDataIntoLines_ScanLine	(s8* tcData, u32 tnMaxLength, u32* tnLength, u32* tnWhitespaces);
-	bool					iFindFirstOccurrenceOfAsciiCharacter		(s8* tcHaystack, u32 tnHaystackLength, s8 tcNeedle, u32* tnPosition);
-	u32						iGetNextUid									(void);
+	u32						iBreakoutAsciiTextDataIntoLines_ScanLine	(SThisCode* thisCode, s8* tcData, u32 tnMaxLength, u32* tnLength, u32* tnWhitespaces);
+	bool					iFindFirstOccurrenceOfAsciiCharacter		(SThisCode* thisCode, s8* tcHaystack, u32 tnHaystackLength, s8 tcNeedle, u32* tnPosition);
+	u32						iGetNextUid									(SThisCode* thisCode);
 
-	void*					iSEChain_prepend							(SStartEnd* ptrSE, u32 tnUniqueId, u32 tnUniqueIdExtra, u32 tnSize, u32 tnBlockSizeIfNewBlockNeeded, bool* tlResult);
-	void*					iSEChain_append								(SStartEnd* ptrSE, u32 tnUniqueId, u32 tnUniqueIdExtra, u32 tnSize, u32 tnBlockSizeIfNewBlockNeeded, bool* tlResult);
-	void*					iSEChain_appendOrPrepend					(SStartEnd* ptrSE, u32 tnUniqueId, u32 tnUniqueIdExtra, u32 tnSize, u32 tnBlockSizeIfNewBlockNeeded, bool tlPrepend, bool* tlResult);
-	u32						iSkipWhitespaces							(s8* tcData, u32 tnMaxLength);
-	u32						iSkipToCarriageReturnLineFeed				(s8* tcData, u32 tnMaxLength, u32* tnCRLF_Length);
-	void					iSEChain_appendMasterList					(SStartEnd* ptrSE, SMasterList* ptrNew, u32 tnHint, u32 tnBlockSizeIfNewBlockNeeded);
-	bool					iSEChain_allocateAdditionalMasterSlots		(SStartEnd* ptrSE, u32 tnBlockSize);
+	void*					iSEChain_prepend							(SThisCode* thisCode, SStartEnd* ptrSE, u32 tnUniqueId, u32 tnUniqueIdExtra, u32 tnSize, u32 tnBlockSizeIfNewBlockNeeded, bool* tlResult);
+	void*					iSEChain_append								(SThisCode* thisCode, SStartEnd* ptrSE, u32 tnUniqueId, u32 tnUniqueIdExtra, u32 tnSize, u32 tnBlockSizeIfNewBlockNeeded, bool* tlResult);
+	void*					iSEChain_appendOrPrepend					(SThisCode* thisCode, SStartEnd* ptrSE, u32 tnUniqueId, u32 tnUniqueIdExtra, u32 tnSize, u32 tnBlockSizeIfNewBlockNeeded, bool tlPrepend, bool* tlResult);
+	u32						iSkipWhitespaces							(SThisCode* thisCode, s8* tcData, u32 tnMaxLength);
+	u32						iSkipToCarriageReturnLineFeed				(SThisCode* thisCode, s8* tcData, u32 tnMaxLength, u32* tnCRLF_Length);
+	void					iSEChain_appendMasterList					(SThisCode* thisCode, SStartEnd* ptrSE, SMasterList* ptrNew, u32 tnHint, u32 tnBlockSizeIfNewBlockNeeded);
+	bool					iSEChain_allocateAdditionalMasterSlots		(SThisCode* thisCode, SStartEnd* ptrSE, u32 tnBlockSize);
 
-	s32						iTranslateToCompsTest						(cu8* tcHaystack, cu8* tcNeedle, s32 tnLength);
-	bool					iioss_translateCompsToOthersCallback		(SStartEndCallback* cb);
-	void*					iSEChain_searchByCallback					(SStartEnd* ptrSE, SStartEndCallback* cb);
-	void*					iSEChain_searchByUniqueId					(SStartEnd* ptrSE, u64 tnUniqueId);
-	void					iSEChain_iterateThroughForCallback			(SStartEnd* ptrSE, SStartEndCallback* cb);
-	void					iiComps_xlatToOthersCallback__insertCompByCompCallback		(SComp* compRef, SComp* compNew, bool tlInsertAfter);
-	void					iiComps_xlatToOthersCallback__insertCompByParamsCallback	(SComp* compRef, SLine* line, u32 tniCode, u32 tnStart, s32 tnLength, bool tlInsertAfter);
-	void					iiComps_xlatToOthersCallback__deleteCompsCallback			(SComp* comp, SLine* line);
-	SComp*					iiComps_xlatToOthersCallback__cloneCompsCallback			(SComp* comp, SLine* line);
-	SComp*					iiComps_xlatToOthersCallback__mergeCompsCallback			(SComp* comp, SLine* line, u32 tnCount, u32 tniCodeNew);
-	void					iSEChain_deleteFrom							(SStartEnd* ptrSE, void* ptrCaller, bool tlDeletePointers);
-	SLL*					iSEChain_completelyMigrateSLLByPtr			(SStartEnd* ptrSEDst, SStartEnd* ptrSESrc, SLL* ptr, u32 tnHint, u32 tnBlockSize);
-	SLL*					iSEChain_completelyMigrateSLLByNum			(SStartEnd* ptrSEDst, SStartEnd* ptrSESrc, u32 lnSrcNum, u32 tnHint, u32 tnBlockSize);
-	SMasterList*			iSEChain_migrateByNum						(SStartEnd* ptrSEDst, SStartEnd* ptrSESrc, u32 lnSrcNum, u32 tnHint, u32 tnBlockSize);
+	s32						iTranslateToCompsTest						(SThisCode* thisCode, cu8* tcHaystack, cu8* tcNeedle, s32 tnLength);
+	bool					iioss_translateCompsToOthersCallback		(SThisCode* thisCode, SStartEndCallback* cb);
+	void*					iSEChain_searchByCallback					(SThisCode* thisCode, SStartEnd* ptrSE, SStartEndCallback* cb);
+	void*					iSEChain_searchByUniqueId					(SThisCode* thisCode, SStartEnd* ptrSE, u64 tnUniqueId);
+	void					iSEChain_iterateThroughForCallback			(SThisCode* thisCode, SStartEnd* ptrSE, SStartEndCallback* cb);
+	void					iiComps_xlatToOthersCallback__insertCompByCompCallback		(SThisCode* thisCode, SComp* compRef, SComp* compNew, bool tlInsertAfter);
+	void					iiComps_xlatToOthersCallback__insertCompByParamsCallback	(SThisCode* thisCode, SComp* compRef, SLine* line, u32 tniCode, u32 tnStart, s32 tnLength, bool tlInsertAfter);
+	void					iiComps_xlatToOthersCallback__deleteCompsCallback			(SThisCode* thisCode, SComp* comp, SLine* line);
+	SComp*					iiComps_xlatToOthersCallback__cloneCompsCallback			(SThisCode* thisCode, SComp* comp, SLine* line);
+	SComp*					iiComps_xlatToOthersCallback__mergeCompsCallback			(SThisCode* thisCode, SComp* comp, SLine* line, u32 tnCount, u32 tniCodeNew);
+	void					iSEChain_deleteFrom							(SThisCode* thisCode, SStartEnd* ptrSE, void* ptrCaller, bool tlDeletePointers);
+	SLL*					iSEChain_completelyMigrateSLLByPtr			(SThisCode* thisCode, SStartEnd* ptrSEDst, SStartEnd* ptrSESrc, SLL* ptr, u32 tnHint, u32 tnBlockSize);
+	SLL*					iSEChain_completelyMigrateSLLByNum			(SThisCode* thisCode, SStartEnd* ptrSEDst, SStartEnd* ptrSESrc, u32 lnSrcNum, u32 tnHint, u32 tnBlockSize);
+	SMasterList*			iSEChain_migrateByNum						(SThisCode* thisCode, SStartEnd* ptrSEDst, SStartEnd* ptrSESrc, u32 lnSrcNum, u32 tnHint, u32 tnBlockSize);
 
 	// Node functions
-	SNode*					iNode_create								(SNode** root, SNode* hint, u32 tnDirection, SNode* parent, SNode* prev, SNode* next, SNode* left, SNode* right);
-	SNode*					iNode_insertBetween							(SNode** root, SNode* node1, SNode* node2, u32 tnNode1Direction, u32 tnNode2Direction);
-	void					iNode_politelyDeleteAll						(SNode** root, bool tlDeleteSelf, bool tlTraverseParent, bool tlTraversePrev, bool tlTraverseNext, bool tlTraverseLeft, bool tlTraverseRight);
+	SNode*					iNode_create								(SThisCode* thisCode, SNode** root, SNode* hint, u32 tnDirection, SNode* parent, SNode* prev, SNode* next, SNode* left, SNode* right);
+	SNode*					iNode_insertBetween							(SThisCode* thisCode, SNode** root, SNode* node1, SNode* node2, u32 tnNode1Direction, u32 tnNode2Direction);
+	void					iNode_politelyDeleteAll						(SThisCode* thisCode, SNode** root, bool tlDeleteSelf, bool tlTraverseParent, bool tlTraversePrev, bool tlTraverseNext, bool tlTraverseLeft, bool tlTraverseRight);
 
 	// Function functions (LOL)
-	SFunction*				iFunction_allocate							(SComp* compName);
-	SFunction*				iFunction_allocate							(u8* tcFuncName);
-	SVariable*				iFunction_addVariable_scoped				(SFunction* func);
-	void					iFunction_politelyDeleteCompiledInfo		(SFunction* func, bool tlDeleteSelf);
-	void					iFunction_politelyDeleteChain				(SFunction** rootFunc);
+	SFunction*				iFunction_allocate							(SThisCode* thisCode, SComp* compName);
+	SFunction*				iFunction_allocate							(SThisCode* thisCode, u8* tcFuncName);
+	SVariable*				iFunction_addVariable_scoped				(SThisCode* thisCode, SFunction* func);
+	void					iFunction_politelyDeleteCompiledInfo		(SThisCode* thisCode, SFunction* func, bool tlDeleteSelf);
+	void					iFunction_politelyDeleteChain				(SThisCode* thisCode, SFunction** rootFunc);
 
 	// Variable functions
 	SVariable*				iiVariable_terminateIndirect				(SThisCode* thisCode, SVariable* var);
@@ -269,7 +269,7 @@ struct SThisCode;
 	void					iVariable_reset								(SThisCode* thisCode, SVariable* var);
 	SVariable*				iVariable_convertForDisplay					(SThisCode* thisCode, SVariable* var);
 	void					iVariable_delete							(SThisCode* thisCode, SVariable* var, bool tlDeleteSelf);
-	void					iVariable_politelyDeleteChain				(SVariable** root, bool tlDeleteSelf);
+	void					iVariable_politelyDeleteChain				(SThisCode* thisCode, SVariable** root, bool tlDeleteSelf);
 	void					iVariable_politelyDeleteChain_callback		(SLLCallback* cb);
 	bool					iiVariable_getAs_bool						(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	s16						iiVariable_getAs_s16						(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
@@ -286,32 +286,32 @@ struct SThisCode;
 	s32						iiVariable_julianDayNumber_fromYyyyMmDd			(f32* tnJulianDayNumber, u32  year, u32  month, u32  day);
 	void					iiVariable_computeYyyyMmDd_fromJulianDayNumber	(u32  tnJulianDayNumber, u32* year, u32* month, u32* day);
 	void					iiVariable_computeHhMmSsMss_fromf32			(f32 tfSeconds, u32* hour, u32* minute, u32* second, u32* millisecond);
-	s64						iiVariable_computeDatetimeDifference		(SVariable* dtVar1, SVariable* dtVar2);
+	s64						iiVariable_computeDatetimeDifference		(SThisCode* thisCode, SVariable* dtVar1, SVariable* dtVar2);
 	bool					iVariable_isDayValidForDate					(u32 year, u32 month, u32 day);
 
 	// Op functions
 	bool					iOp_setNull									(SOp* op);
-	bool					iOp_setVariable_param						(SOp* op, SVariable* var, bool isOpAllocated);
-	bool					iOp_setVariable_local						(SOp* op, SVariable* var, bool isOpAllocated);
-	bool					iOp_setVariable_scoped						(SOp* op, SVariable* var, bool isOpAllocated);
-	bool					iOp_setVariable_return						(SOp* op, SVariable* var, bool isOpAllocated);
-	void					iOp_politelyDelete							(SOp* op, bool tlDeleteSelf);
+	bool					iOp_setVariable_param						(SThisCode* thisCode, SOp* op, SVariable* var, bool isOpAllocated);
+	bool					iOp_setVariable_local						(SThisCode* thisCode, SOp* op, SVariable* var, bool isOpAllocated);
+	bool					iOp_setVariable_scoped						(SThisCode* thisCode, SOp* op, SVariable* var, bool isOpAllocated);
+	bool					iOp_setVariable_return						(SThisCode* thisCode, SOp* op, SVariable* var, bool isOpAllocated);
+	void					iOp_politelyDelete							(SThisCode* thisCode, SOp* op, bool tlDeleteSelf);
 
 	// Error and warning functions
-	void					iComp_appendError							(SComp* comp, u32 tnErrorNum,   cu8* tcMessage);
-	void					iComp_appendWarning							(SComp* comp, u32 tnWarningNum, cu8* tcMessage);
-	void					iComp_reportWarningsOnRemainder				(SComp* comp, u32 tnWarningNum, cu8* tcMessage);
+	void					iComp_appendError							(SThisCode* thisCode, SComp* comp, u32 tnErrorNum,   cu8* tcMessage);
+	void					iComp_appendWarning							(SThisCode* thisCode, SComp* comp, u32 tnWarningNum, cu8* tcMessage);
+	void					iComp_reportWarningsOnRemainder				(SThisCode* thisCode, SComp* comp, u32 tnWarningNum, cu8* tcMessage);
 
 
 	// Line functions
-	void					iLine_appendError							(SLine* line, u32 tnErrorNum,   cu8* tcMessage, u32 tnStartColumn, u32 tnLength);
-	void					iLine_appendWarning							(SLine* line, u32 tnWarningNum, cu8* tcMessage, u32 tnStartColumn, u32 tnLength);
+	void					iLine_appendError							(SThisCode* thisCode, SLine* line, u32 tnErrorNum,   cu8* tcMessage, u32 tnStartColumn, u32 tnLength);
+	void					iLine_appendWarning							(SThisCode* thisCode, SLine* line, u32 tnWarningNum, cu8* tcMessage, u32 tnStartColumn, u32 tnLength);
 
 	// Compiler functions
-	SCompiler*				iCompiler_allocate							(SLine* parent);
-	void					iCompiler_delete							(SCompiler** root, bool tlDeleteSelf);
+	SCompiler*				iCompiler_allocate							(SThisCode* thisCode, SLine* parent);
+	void					iCompiler_delete							(SThisCode* thisCode, SCompiler** root, bool tlDeleteSelf);
 
 	// Compile note functions
-	SCompileNote*			iCompileNote_create							(SCompileNote** noteRoot, u32 tnStart,			u32 tnEnd,			u32 tnNumber, cu8* tcMessage);
-	SCompileNote*			iCompileNote_appendMessage					(SCompileNote** noteRoot, u32 tnStartColumn,	u32 tnEndColumn,	u32 tnNumber, cu8* tcMessage);
-	void					iCompileNote_removeAll						(SCompileNote** noteRoot);
+	SCompileNote*			iCompileNote_create							(SThisCode* thisCode, SCompileNote** noteRoot, u32 tnStart,			u32 tnEnd,			u32 tnNumber, cu8* tcMessage);
+	SCompileNote*			iCompileNote_appendMessage					(SThisCode* thisCode, SCompileNote** noteRoot, u32 tnStartColumn,	u32 tnEndColumn,	u32 tnNumber, cu8* tcMessage);
+	void					iCompileNote_removeAll						(SThisCode* thisCode, SCompileNote** noteRoot);

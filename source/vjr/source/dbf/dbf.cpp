@@ -281,6 +281,7 @@
 				case _DBF_ERROR_WRITING:						return(_ERROR_DBF_WRITING);
 				case _DBF_ERROR_SEEKING:						return(_ERROR_DBF_SEEKING);
 				case _DBF_ERROR_NO_DATA:						return(_ERROR_DBF_NO_DATA);
+				case _DBF_ERROR_UNKNOWN_MEMO_FORMAT:			return(_ERROR_DBF_UNKNOWN_MEMO_FORMAT);
 			}
 
 
@@ -1895,10 +1896,12 @@
 //////
 	sptr iDbf_gotoRecord(SThisCode* thisCode, SWorkArea* wa, s32 recordNumber)
 	{
-		s64			lnOffset;
-		u64			lnNumread;
-		sptr		lnResult;
-		SDiskLock*	dl;
+		s32				lnI;
+		s64				lnOffset;
+		u64				lnNumread;
+		sptr			lnResult;
+		SFieldRecord2*	lfr2Ptr;
+		SDiskLock*		dl;
 
 
 		//////////
@@ -1956,6 +1959,7 @@
 
 					//////////
 					// Read
+					// Note:  memo field content is not loaded at this time, but only upon direct request
 					//////
 						lnNumread = _read(wa->fhDbf, wa->data, wa->header.recordLength);
 						if (lnNumread != wa->header.recordLength)
@@ -1975,6 +1979,36 @@
 
 				// Copy to the original record
 				memcpy(wa->odata, wa->data, wa->header.recordLength);
+
+
+				//////////
+				// Release any prior memo content
+				//////
+					for (lnI = 0, lfr2Ptr = iDbf_getField_byNumber2(thisCode, wa, 1); lnI < (s32)wa->fieldCount; lnI++, lfr2Ptr++)
+					{
+						// Is it a memo field?
+						if (lfr2Ptr->type == 'M')
+						{
+							//////////
+							// Release current memo data
+							//////
+								if (lfr2Ptr->mdata)
+								{
+									iiFreeAndSetToNull((void**)&lfr2Ptr->mdata);
+									lfr2Ptr->mdataLength = 0;
+								}
+
+
+							//////////
+							// Release original memo data
+							//////
+								if (lfr2Ptr->omdata)
+								{
+									iiFreeAndSetToNull((void**)&lfr2Ptr->omdata);
+									lfr2Ptr->omdataLength = 0;
+								}
+						}
+					}
 			}
 			// Indicate where we are
 			return(wa->currentRecord);
@@ -2072,6 +2106,86 @@
 
 			// If we get here, nothing to do
 			return(_DBF_OKAY);
+	}
+
+
+
+
+//////////
+//
+// Called to read the indicated field's memo contents (if any)
+//
+//////
+	bool iiDbf_readMemo(SThisCode* thisCode, SWorkArea* wa, SFieldRecord2* fr2Ptr)
+	{
+		bool llFourByte, llAppend, llDeleteOld;
+
+
+		// Make sure our environment is sane
+		if (fr2Ptr->type == 'M')
+		{
+// TODO:  If we want to support general and picture, we can do some other tests here for type, and then set the pointers (like fr2Ptr->mdata being fr2Ptr->gdata for general, etc.)
+			// See if it has any memo data
+			if (fr2Ptr->length == 4)
+			{
+				//////////
+				// 4-byte form
+				//////
+					llFourByte = true;
+					if (*(u32*)(wa->data + fr2Ptr->offset) != 0)
+					{
+						// There was something there previously
+						llAppend	= (fr2Ptr->mdataLength > fr2Ptr->omdataLength);
+						llDeleteOld	= !llAppend;
+
+					} else {
+						// Brand new data
+						llAppend	= true;
+						llDeleteOld	= false;
+					}
+
+			} else if (fr2Ptr->length == 10) {
+				//////////
+				// 10-byte form
+				//////
+					llFourByte = false;
+
+			} else {
+				// Hmmm... unexpected I must say
+				iError_signal(thisCode, _ERROR_DBF_UNKNOWN_MEMO_FORMAT, NULL, false, NULL, false);
+			}
+		}
+
+		// If we get here, failure
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to write the indicated field's memo contents (if any, and optionally
+// only if changed if ncset(4) is enabled.
+//
+//////
+	bool iiDbf_writeMemo(SThisCode* thisCode, SWorkArea* wa, SFieldRecord2* fr2Ptr)
+	{
+		// Make sure our environment is sane
+		if (fr2Ptr->type == 'M')
+		{
+			// See if it has any memo data
+			if (fr2Ptr->length == 4)
+			{
+				// 4-byte form
+
+			} else {
+				// 10-byte form
+			}
+		}
+
+		// If we get here, failure
+		return(false);
 	}
 
 
@@ -3349,7 +3463,7 @@
 
 
 // Temporarily disabled
-return(NULL);
+// return(NULL);
 
 		//////////
 		// Check for errors
@@ -3368,7 +3482,7 @@ return(NULL);
 			if (lfr2Ptr)
 			{
 				// Search for the name
-				for (lnI = 1; lnI <= (s32)wa->fieldCount; lnI++, lfr2Ptr++)
+				for (lnI = 0, var = NULL; lnI < (s32)wa->fieldCount; lnI++, lfr2Ptr++)
 				{
 					// Length must match, and the field name must match
 					if (lfr2Ptr->fieldName_length == fieldNameLength && _memicmp(lfr2Ptr->name2, fieldName, fieldNameLength) == 0)
@@ -3379,10 +3493,10 @@ return(NULL);
 							case 'N':	// Numeric
 								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_NUMERIC,		(cs8*)wa->data + lfr2Ptr->offset, fieldNameLength);
 								break;
-// TODO:  Add memo field support
-// 							case 'M':	// Memo
-// 								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL,		(cs8*)lfr2Ptr->mdata, lfr2Ptr->mdataLength);
-// 								break;
+							case 'M':	// Memo
+								if (iiDbf_readMemo(thisCode, wa, lfr2Ptr))
+									var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER,	(cs8*)lfr2Ptr->mdata, lfr2Ptr->mdataLength);
+								break;
 							case 'C':	// Character
 								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER,	(cs8*)wa->data + lfr2Ptr->offset, fieldNameLength);
 								break;
@@ -3516,7 +3630,7 @@ return(NULL);
 // at plus signs, parenthesis, etc.
 //
 //////
-	uptr iDbf_getField_name(SThisCode* thisCode, u8* sourceExpression, u8* foundFieldName)
+	uptr iDbf_getFieldExpression_name(SThisCode* thisCode, u8* sourceExpression, u8* foundFieldName)
 	{
 		u32		lnLength;
 		s8		c;

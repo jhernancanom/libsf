@@ -108,17 +108,17 @@
 // Reports an error
 //
 //////
-	void iError_report(cu8* constantErrorText, bool tlInvasive)
+	void iError_report(SThisCode* thisCode, cu8* constantErrorText, bool tlInvasive)
 	{
-		iError_report((u8*)constantErrorText, tlInvasive);
+		iError_report(thisCode, (u8*)constantErrorText, tlInvasive);
 	}
 
-	void iError_report(u8* errorText, bool tlInvasive)
+	void iError_report(SThisCode* thisCode, u8* errorText, bool tlInvasive)
 	{
 		if (!tlInvasive)
 		{
 			// Append the error to the EM
-			iSEM_appendLine(screenData, errorText, -1, false);
+			iSEM_appendLine(thisCode, screenData, errorText, -1, false);
 			screen_editbox->isDirtyRender = true;
 
 		} else {
@@ -139,66 +139,67 @@
 	{
 		switch (tnErrorNum)
 		{
-			case _ERROR_OUT_OF_MEMORY:						{	iError_report(cgcOutOfMemory, tlInvasive);						break;	}
-			case _ERROR_UNEXPECTED_COMMAND:					{	iError_report(cgcUnexpectedCommand, tlInvasive);				break;	}
-			case _ERROR_CONTEXT_HAS_CHANGED:				{	iError_report(cgcContextHasChanged, tlInvasive);				break;	}
-			case _ERROR_FULL_RECOMPILE_REQUIRED:			{	iError_report(cgcFullRecompileRequired, tlInvasive);			break;	}
-			case _ERROR_NOT_A_VARIABLE:						{	iError_report(cgcNotAVariable, tlInvasive);						break;	}
-			case _ERROR_NUMERIC_OVERFLOW:					{	iError_report(cgcNumericOverflow, tlInvasive);					break;	}
-			case _ERROR_NOT_NUMERIC:						{	iError_report(cgcNotNumeric, tlInvasive);						break;	}
-			case _ERROR_EMPTY_STRING:						{	iError_report(cgcEmptyString, tlInvasive);						break;	}
-			case _ERROR_SYNTAX:								{	iError_report(cgcSyntaxError, tlInvasive);						break;	}
-			case _ERROR_UNRECOGNIZED_PARAMETER:				{	iError_report(cgcUnrecognizedParameter, tlInvasive);			break;	}
-			case _ERROR_OUT_OF_RANGE:						{	iError_report(cgcOutOfRange, tlInvasive);						break;	}
-			case _ERROR_COMMA_EXPECTED:						{	iError_report(cgcCommaExpected, tlInvasive);					break;	}
-			case _ERROR_TOO_MANY_PARAMETERS:				{	iError_report(cgcTooManyParameters, tlInvasive);				break;	}
-			case _ERROR_DATA_TYPE_MISMATCH:					{	iError_report(cgcDataTypeMismatch, tlInvasive);					break;	}
-			case _ERROR_FEATURE_NOT_AVAILABLE:				{	iError_report(cgcFeatureNotAvailable, tlInvasive);				break;	}
-			case _ERROR_P1_IS_INCORRECT:					{	iError_report(cgcP1IsIncorrect, tlInvasive);					break;	}
-			case _ERROR_P2_IS_INCORRECT:					{	iError_report(cgcP2IsIncorrect, tlInvasive);					break;	}
-			case _ERROR_P3_IS_INCORRECT:					{	iError_report(cgcP3IsIncorrect, tlInvasive);					break;	}
-			case _ERROR_P4_IS_INCORRECT:					{	iError_report(cgcP4IsIncorrect, tlInvasive);					break;	}
-			case _ERROR_P5_IS_INCORRECT:					{	iError_report(cgcP5IsIncorrect, tlInvasive);					break;	}
-			case _ERROR_P6_IS_INCORRECT:					{	iError_report(cgcP6IsIncorrect, tlInvasive);					break;	}
-			case _ERROR_P7_IS_INCORRECT:					{	iError_report(cgcP7IsIncorrect, tlInvasive);					break;	}
-			case _ERROR_INTERNAL_ERROR:						{	iError_report(cgcInternalError, tlInvasive);					break;	}
-			case _ERROR_INVALID_ARGUMENT_TYPE_COUNT:		{	iError_report(cgcInvalidArgumentTypeCountError, tlInvasive);	break;	}
-			case _ERROR_VARIABLE_NOT_FOUND:					{	iError_report(cgcVariableNotFoundError, tlInvasive);			break;	}
-			case _ERROR_ALIAS_NOT_FOUND:					{	iError_report(cgcAliasNotFoundError, tlInvasive);				break;	}
-			case _ERROR_INVALID_WORK_AREA:					{	iError_report(cgcInvalidWorkArea, tlInvasive);					break;	}
-			case _ERROR_ALIAS_ALREADY_IN_USE:				{	iError_report(cgcAliasAlreadyInUse, tlInvasive);				break;	}
-			case _ERROR_PARENTHESIS_EXPECTED:				{	iError_report(cgcParenthesisExpected, tlInvasive);				break;	}
-			case _ERROR_MISSING_PARAMETER:					{	iError_report(cgcMissingParameter, tlInvasive);					break;	}
+			case _ERROR_OUT_OF_MEMORY:						{	iError_report(thisCode, cgcOutOfMemory, tlInvasive);					break;	}
+			case _ERROR_UNEXPECTED_COMMAND:					{	iError_report(thisCode, cgcUnexpectedCommand, tlInvasive);				break;	}
+			case _ERROR_CONTEXT_HAS_CHANGED:				{	iError_report(thisCode, cgcContextHasChanged, tlInvasive);				break;	}
+			case _ERROR_FULL_RECOMPILE_REQUIRED:			{	iError_report(thisCode, cgcFullRecompileRequired, tlInvasive);			break;	}
+			case _ERROR_NOT_A_VARIABLE:						{	iError_report(thisCode, cgcNotAVariable, tlInvasive);					break;	}
+			case _ERROR_NUMERIC_OVERFLOW:					{	iError_report(thisCode, cgcNumericOverflow, tlInvasive);				break;	}
+			case _ERROR_NOT_NUMERIC:						{	iError_report(thisCode, cgcNotNumeric, tlInvasive);						break;	}
+			case _ERROR_EMPTY_STRING:						{	iError_report(thisCode, cgcEmptyString, tlInvasive);					break;	}
+			case _ERROR_SYNTAX:								{	iError_report(thisCode, cgcSyntaxError, tlInvasive);					break;	}
+			case _ERROR_UNRECOGNIZED_PARAMETER:				{	iError_report(thisCode, cgcUnrecognizedParameter, tlInvasive);			break;	}
+			case _ERROR_OUT_OF_RANGE:						{	iError_report(thisCode, cgcOutOfRange, tlInvasive);						break;	}
+			case _ERROR_COMMA_EXPECTED:						{	iError_report(thisCode, cgcCommaExpected, tlInvasive);					break;	}
+			case _ERROR_TOO_MANY_PARAMETERS:				{	iError_report(thisCode, cgcTooManyParameters, tlInvasive);				break;	}
+			case _ERROR_DATA_TYPE_MISMATCH:					{	iError_report(thisCode, cgcDataTypeMismatch, tlInvasive);				break;	}
+			case _ERROR_FEATURE_NOT_AVAILABLE:				{	iError_report(thisCode, cgcFeatureNotAvailable, tlInvasive);			break;	}
+			case _ERROR_P1_IS_INCORRECT:					{	iError_report(thisCode, cgcP1IsIncorrect, tlInvasive);					break;	}
+			case _ERROR_P2_IS_INCORRECT:					{	iError_report(thisCode, cgcP2IsIncorrect, tlInvasive);					break;	}
+			case _ERROR_P3_IS_INCORRECT:					{	iError_report(thisCode, cgcP3IsIncorrect, tlInvasive);					break;	}
+			case _ERROR_P4_IS_INCORRECT:					{	iError_report(thisCode, cgcP4IsIncorrect, tlInvasive);					break;	}
+			case _ERROR_P5_IS_INCORRECT:					{	iError_report(thisCode, cgcP5IsIncorrect, tlInvasive);					break;	}
+			case _ERROR_P6_IS_INCORRECT:					{	iError_report(thisCode, cgcP6IsIncorrect, tlInvasive);					break;	}
+			case _ERROR_P7_IS_INCORRECT:					{	iError_report(thisCode, cgcP7IsIncorrect, tlInvasive);					break;	}
+			case _ERROR_INTERNAL_ERROR:						{	iError_report(thisCode, cgcInternalError, tlInvasive);					break;	}
+			case _ERROR_INVALID_ARGUMENT_TYPE_COUNT:		{	iError_report(thisCode, cgcInvalidArgumentTypeCountError, tlInvasive);	break;	}
+			case _ERROR_VARIABLE_NOT_FOUND:					{	iError_report(thisCode, cgcVariableNotFoundError, tlInvasive);			break;	}
+			case _ERROR_ALIAS_NOT_FOUND:					{	iError_report(thisCode, cgcAliasNotFoundError, tlInvasive);				break;	}
+			case _ERROR_INVALID_WORK_AREA:					{	iError_report(thisCode, cgcInvalidWorkArea, tlInvasive);				break;	}
+			case _ERROR_ALIAS_ALREADY_IN_USE:				{	iError_report(thisCode, cgcAliasAlreadyInUse, tlInvasive);				break;	}
+			case _ERROR_PARENTHESIS_EXPECTED:				{	iError_report(thisCode, cgcParenthesisExpected, tlInvasive);			break;	}
+			case _ERROR_MISSING_PARAMETER:					{	iError_report(thisCode, cgcMissingParameter, tlInvasive);				break;	}
 
-			case _ERROR_DBF_UNABLE_TO_OPEN_TABLE:			{	iError_report(cgcDbfUnableToOpenTable, tlInvasive);				break;	}
-			case _ERROR_DBF_WORK_AREA_ALREADY_IN_USE:		{	iError_report(cgcDbfWorkAreaAlreadyInUse, tlInvasive);			break;	}
-			case _ERROR_DBF_ERROR_OPENING_DBC:				{	iError_report(cgcDbfErrorOpeningDbc, tlInvasive);				break;	}
-			case _ERROR_DBF_WORK_AREA_NOT_IN_USE:			{	iError_report(cgcDbfWorkAreaNotInUse, tlInvasive);				break;	}
-			case _ERROR_DBF_ERROR_READING_HEADER1:			{	iError_report(cgcDbfErrorReadingHeader1, tlInvasive);			break;	}
-			case _ERROR_DBF_UNKNOWN_TABLE_TYPE:				{	iError_report(cgcDbfUnknownTableType, tlInvasive);				break;	}
-			case _ERROR_DBF_MEMORY_ALLOCATION:				{	iError_report(cgcDbfMemoryAllocation, tlInvasive);				break;	}
-			case _ERROR_DBF_ERROR_READING_HEADER2:			{	iError_report(cgcDbfErrorReadingHeader2, tlInvasive);			break;	}
-			case _ERROR_DBF_TABLE_NAME_TOO_LONG:			{	iError_report(cgcDbfTableNameTooLong, tlInvasive);				break;	}
-			case _ERROR_DBF_MEMORY_ROW:						{	iError_report(cgcDbfMemoryRow, tlInvasive);						break;	}
-			case _ERROR_DBF_MEMORY_ORIGINAL:				{	iError_report(cgcDbfMemoryOriginal, tlInvasive);				break;	}
-			case _ERROR_DBF_MEMORY_INDEX:					{	iError_report(cgcDbfMemoryIndex, tlInvasive);					break;	}
-			case _ERROR_DBF_INVALID_WORK_AREA:				{	iError_report(cgcDbfInvalidWorkArea, tlInvasive);				break;	}
-			case _ERROR_DBF_NO_MORE_WORK_AREAS:				{	iError_report(cgcDbfNoMoreWorkAreas, tlInvasive);				break;	}
-			case _ERROR_DBF_LOCKING:						{	iError_report(cgcDbfLocking, tlInvasive);						break;	}
-			case _ERROR_DBF_WRITING:						{	iError_report(cgcDbfWriting, tlInvasive);						break;	}
-			case _ERROR_DBF_SEEKING:						{	iError_report(cgcDbfSeeking, tlInvasive);						break;	}
-			case _ERROR_DBF_NO_DATA:						{	iError_report(cgcDbfNoData, tlInvasive);						break;	}
+			case _ERROR_DBF_UNABLE_TO_OPEN_TABLE:			{	iError_report(thisCode, cgcDbfUnableToOpenTable, tlInvasive);			break;	}
+			case _ERROR_DBF_WORK_AREA_ALREADY_IN_USE:		{	iError_report(thisCode, cgcDbfWorkAreaAlreadyInUse, tlInvasive);		break;	}
+			case _ERROR_DBF_ERROR_OPENING_DBC:				{	iError_report(thisCode, cgcDbfErrorOpeningDbc, tlInvasive);				break;	}
+			case _ERROR_DBF_WORK_AREA_NOT_IN_USE:			{	iError_report(thisCode, cgcDbfWorkAreaNotInUse, tlInvasive);			break;	}
+			case _ERROR_DBF_ERROR_READING_HEADER1:			{	iError_report(thisCode, cgcDbfErrorReadingHeader1, tlInvasive);			break;	}
+			case _ERROR_DBF_UNKNOWN_TABLE_TYPE:				{	iError_report(thisCode, cgcDbfUnknownTableType, tlInvasive);			break;	}
+			case _ERROR_DBF_MEMORY_ALLOCATION:				{	iError_report(thisCode, cgcDbfMemoryAllocation, tlInvasive);			break;	}
+			case _ERROR_DBF_ERROR_READING_HEADER2:			{	iError_report(thisCode, cgcDbfErrorReadingHeader2, tlInvasive);			break;	}
+			case _ERROR_DBF_TABLE_NAME_TOO_LONG:			{	iError_report(thisCode, cgcDbfTableNameTooLong, tlInvasive);			break;	}
+			case _ERROR_DBF_MEMORY_ROW:						{	iError_report(thisCode, cgcDbfMemoryRow, tlInvasive);					break;	}
+			case _ERROR_DBF_MEMORY_ORIGINAL:				{	iError_report(thisCode, cgcDbfMemoryOriginal, tlInvasive);				break;	}
+			case _ERROR_DBF_MEMORY_INDEX:					{	iError_report(thisCode, cgcDbfMemoryIndex, tlInvasive);					break;	}
+			case _ERROR_DBF_INVALID_WORK_AREA:				{	iError_report(thisCode, cgcDbfInvalidWorkArea, tlInvasive);				break;	}
+			case _ERROR_DBF_NO_MORE_WORK_AREAS:				{	iError_report(thisCode, cgcDbfNoMoreWorkAreas, tlInvasive);				break;	}
+			case _ERROR_DBF_LOCKING:						{	iError_report(thisCode, cgcDbfLocking, tlInvasive);						break;	}
+			case _ERROR_DBF_WRITING:						{	iError_report(thisCode, cgcDbfWriting, tlInvasive);						break;	}
+			case _ERROR_DBF_SEEKING:						{	iError_report(thisCode, cgcDbfSeeking, tlInvasive);						break;	}
+			case _ERROR_DBF_NO_DATA:						{	iError_report(thisCode, cgcDbfNoData, tlInvasive);						break;	}
+			case _ERROR_DBF_UNKNOWN_MEMO_FORMAT:			{	iError_report(thisCode, cgcDbfUnknownMemoFormat, tlInvasive);			break;	}
 
-			case _ERROR_CONFLICTING_PARAMETERS:				{	iError_report(cgcConflictingParameters, tlInvasive);			break;	}
-			case _ERROR_PARAMETER_IS_INCORRECT:				{	iError_report(cgcParameterIsIncorrect, tlInvasive);				break;	}
-			case _ERROR_TABLE_ALREADY_IN_USE:				{	iError_report(cgcTableAlreadyInUse, tlInvasive);				break;	}
-			case _ERROR_PARAMETER_TOO_LONG:					{	iError_report(cgcParameterTooLong, tlInvasive);					break;	}
-			case _ERROR_UNABLE_TO_OPEN_DBC:					{	iError_report(cgcUnableToOpenDbc, tlInvasive);					break;	}
-			case _ERROR_DIVISION_BY_ZERO:					{	iError_report(cgcDivisionByZero, tlInvasive);					break;	}
-			case _ERROR_CANNOT_BE_NEGATIVE:					{	iError_report(cgcCannotBeNegative, tlInvasive);					break;	}
-			case _ERROR_CANNOT_BE_ZERO_OR_NEGATIVE:			{	iError_report(cgcCannotBeZeroOrNegative, tlInvasive);			break;	}
-			case _ERROR_UNABLE_TO_AUTOVALIDATE:				{	iError_report(cgcUnableToAutoValidate, tlInvasive);				break;	}
-			case _ERROR_DBF_GENERAL_ERROR:					{	iError_report(cgcGeneralErrorDbf, tlInvasive);					break;	}
+			case _ERROR_CONFLICTING_PARAMETERS:				{	iError_report(thisCode, cgcConflictingParameters, tlInvasive);			break;	}
+			case _ERROR_PARAMETER_IS_INCORRECT:				{	iError_report(thisCode, cgcParameterIsIncorrect, tlInvasive);			break;	}
+			case _ERROR_TABLE_ALREADY_IN_USE:				{	iError_report(thisCode, cgcTableAlreadyInUse, tlInvasive);				break;	}
+			case _ERROR_PARAMETER_TOO_LONG:					{	iError_report(thisCode, cgcParameterTooLong, tlInvasive);				break;	}
+			case _ERROR_UNABLE_TO_OPEN_DBC:					{	iError_report(thisCode, cgcUnableToOpenDbc, tlInvasive);				break;	}
+			case _ERROR_DIVISION_BY_ZERO:					{	iError_report(thisCode, cgcDivisionByZero, tlInvasive);					break;	}
+			case _ERROR_CANNOT_BE_NEGATIVE:					{	iError_report(thisCode, cgcCannotBeNegative, tlInvasive);				break;	}
+			case _ERROR_CANNOT_BE_ZERO_OR_NEGATIVE:			{	iError_report(thisCode, cgcCannotBeZeroOrNegative, tlInvasive);			break;	}
+			case _ERROR_UNABLE_TO_AUTOVALIDATE:				{	iError_report(thisCode, cgcUnableToAutoValidate, tlInvasive);			break;	}
+			case _ERROR_DBF_GENERAL_ERROR:					{	iError_report(thisCode, cgcGeneralErrorDbf, tlInvasive);				break;	}
 															
 
 		}
@@ -910,7 +911,7 @@
 	        result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL);
 			if (!result)
 			{
-				iError_report(cgcInternalError, false);
+				iError_report(thisCode, cgcInternalError, false);
 				return(NULL);
 			}
 
@@ -1223,7 +1224,7 @@
 	        result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL);
 			if (!result)
 			{
-				iError_report(cgcInternalError, false);
+				iError_report(thisCode, cgcInternalError, false);
 				return(NULL);
 			}
 
@@ -1401,7 +1402,7 @@
 				// Validate that the occurrence is
 				if (lnOccurrence <= 0)
 				{
-					iError_report((cu8*)"Parameter 3 must be 1 or greater", false);
+					iError_report(thisCode, (cu8*)"Parameter 3 must be 1 or greater", false);
 					return(NULL);
 				}
 
@@ -1706,7 +1707,7 @@
 
 			} else if (value > 255 || value < 0) {
 				// We report our own error
-				iError_report((u8*)"Parameter must be in the range 0..255", false);
+				iError_report(thisCode, (u8*)"Parameter must be in the range 0..255", false);
 				return(NULL);
 			}
 
@@ -1717,7 +1718,7 @@
 	        result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL);
 			if (!result)
 			{
-				iError_report((u8*)"Internal error.", false);
+				iError_report(thisCode, (u8*)"Internal error.", false);
 				return(NULL);
 			}
 
@@ -2163,7 +2164,7 @@
 			lnObjType = iiObj_getBaseclassType_byName(thisCode, varClass->value.data, varClass->value.length);
 			if (lnObjType <= 0)
 			{
-				iError_report((cu8*)"Unknown class", false);
+				iError_report(thisCode, (cu8*)"Unknown class", false);
 				return(NULL);
 			}
 
@@ -2171,7 +2172,7 @@
 			obj = iObj_create(thisCode, lnObjType, NULL);
 			if (!obj)
 			{
-				iError_report((cu8*)"Internal error on create object.", false);
+				iError_report(thisCode, (cu8*)"Internal error on create object.", false);
 				return(NULL);
 			}
 
@@ -2183,7 +2184,7 @@
 			if (!result)
 			{
 				iObj_delete(thisCode, &obj, true, true, true);
-				iError_report((cu8*)"Internal error on create variable.", false);
+				iError_report(thisCode, (cu8*)"Internal error on create variable.", false);
 				return(NULL);
 			}
 
@@ -2300,7 +2301,7 @@
 					// They gave us a pYear
 					if (!iVariable_isTypeNumeric(varYear))
 					{
-						iError_report((cu8*)"Year must be numeric", false);
+						iError_report(thisCode, (cu8*)"Year must be numeric", false);
 						return(NULL);
 					}
 					lst.wYear = (u16)iiVariable_getAs_s32(thisCode, varYear, false, &error, &errorNum);
@@ -2320,7 +2321,7 @@
 					// They gave us a pMonth
 					if (!iVariable_isTypeNumeric(varMonth))
 					{
-						iError_report((cu8*)"Month must be numeric", false);
+						iError_report(thisCode, (cu8*)"Month must be numeric", false);
 						return(NULL);
 					}
 					lst.wMonth = (u16)iiVariable_getAs_s32(thisCode, varMonth, false, &error, &errorNum);
@@ -2340,7 +2341,7 @@
 					// They gave us a pDay
 					if (!iVariable_isTypeNumeric(varDay))
 					{
-						iError_report((cu8*)"Day must be numeric", false);
+						iError_report(thisCode, (cu8*)"Day must be numeric", false);
 						return(NULL);
 					}
 					lst.wDay = (u16)iiVariable_getAs_s32(thisCode, varDay, false, &error, &errorNum);
@@ -2360,7 +2361,7 @@
 					// They gave us a pHour
 					if (!iVariable_isTypeNumeric(varHour))
 					{
-						iError_report((cu8*)"Hours must be numeric", false);
+						iError_report(thisCode, (cu8*)"Hours must be numeric", false);
 						return(NULL);
 					}
 					lst.wHour = (u16)iiVariable_getAs_s32(thisCode, varHour, false, &error, &errorNum);
@@ -2380,7 +2381,7 @@
 					// They gave us a pMinute
 					if (!iVariable_isTypeNumeric(varMinute))
 					{
-						iError_report((cu8*)"Minutes must be numeric", false);
+						iError_report(thisCode, (cu8*)"Minutes must be numeric", false);
 						return(NULL);
 					}
 					lst.wMinute = (u16)iiVariable_getAs_s32(thisCode, varMinute, false, &error, &errorNum);
@@ -2400,7 +2401,7 @@
 					// They gave us a pSecond
 					if (!iVariable_isTypeNumeric(varSecond))
 					{
-						iError_report((cu8*)"Seconds must be numeric", false);
+						iError_report(thisCode, (cu8*)"Seconds must be numeric", false);
 						return(NULL);
 					}
 					lst.wSecond = (u16)iiVariable_getAs_s32(thisCode, varSecond, false, &error, &errorNum);
@@ -2420,7 +2421,7 @@
 					// They gave us a pMillisecond
 					if (!iVariable_isTypeNumeric(varMillisecond))
 					{
-						iError_report((cu8*)"Milliseconds must be numeric", false);
+						iError_report(thisCode, (cu8*)"Milliseconds must be numeric", false);
 						return(NULL);
 					}
 					lst.wMilliseconds = (u16)iiVariable_getAs_s32(thisCode, varMillisecond, false, &error, &errorNum);
@@ -3637,7 +3638,7 @@
 	        result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL);
 			if (!result)
 			{
-				iError_report(cgcInternalError, false);
+				iError_report(thisCode, cgcInternalError, false);
 				return(NULL);
 			}
 
@@ -3699,7 +3700,7 @@
 	        result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL);
 			if (!result)
 			{
-				iError_report(cgcInternalError, false);
+				iError_report(thisCode, cgcInternalError, false);
 				return(NULL);
 			}
 
@@ -3823,7 +3824,7 @@
 	        result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL);
 			if (!result)
 			{
-				iError_report(cgcInternalError, false);
+				iError_report(thisCode, cgcInternalError, false);
 				return(NULL);
 			}
 
@@ -4543,7 +4544,7 @@
 	        result = iVariable_create(thisCode, varDividend->varType, NULL);
 			if (!result)
 			{
-				iError_report(cgcInternalError, false);
+				iError_report(thisCode, cgcInternalError, false);
 				return(NULL);
 			}
 
@@ -4832,7 +4833,7 @@
 				// Validate the pad character is at least one character long
 				if (varPadCharacter->value.length == 0)
 				{
-					iError_report((cu8*)"Parameter 3 must be at least one character", false);
+					iError_report(thisCode, (cu8*)"Parameter 3 must be at least one character", false);
 					return(NULL);
 				}
 
@@ -5005,7 +5006,7 @@
 			result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL);
 			if (!result)
 			{
-				iError_report(cgcInternalError, false);
+				iError_report(thisCode, cgcInternalError, false);
 				return(NULL);
 			}
 
@@ -5318,7 +5319,7 @@
 			result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL);
 			if (!result)
 			{
-				iError_report(cgcInternalError, false);
+				iError_report(thisCode, cgcInternalError, false);
 				return(NULL);
 			}
 
@@ -5519,7 +5520,7 @@
 	        result = iVariable_create(thisCode, _VAR_TYPE_U32, NULL);
 			if (!result)
 			{
-				iError_report(cgcInternalError, false);
+				iError_report(thisCode, cgcInternalError, false);
 				return(NULL);
 			}
 
@@ -5716,7 +5717,7 @@
 	        result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL);
 			if (!result)
 			{
-				iError_report(cgcInternalError, false);
+				iError_report(thisCode, cgcInternalError, false);
 				return(NULL);
 			}
 
@@ -5844,7 +5845,7 @@
 	        result = iVariable_create(thisCode, varNumber->varType, NULL);
 			if (!result)
 			{
-				iError_report(cgcInternalError, false);
+				iError_report(thisCode, cgcInternalError, false);
 				return(NULL);
 			}
 
@@ -5921,6 +5922,34 @@
 	SVariable* function_rtrim(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2)
 	{
 		return(ifunction_trim_common(thisCode, varString, varCaseInsensitive, varTrimChars1, varTrimChars2, false, true));
+	}
+
+
+
+
+//////////
+//
+// Function: SET()
+// Retrieves current settings
+//
+//////
+// Version 0.56
+// Last update:
+//     Jul.12.2014
+//////
+// Change log:
+//     Jul.12.2014 - Initial creation
+//////
+// Parameters:
+//     pString		-- Character, the string to trim
+//
+//////
+// Returns:
+//    Character		-- The string with any trailing spaces removed
+//////
+	SVariable* function_set(SThisCode* thisCode, SVariable* varIdentifier)
+	{
+		return(NULL);
 	}
 
 
@@ -6138,7 +6167,7 @@
 			result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL);
 			if (!result)
 			{
-				iError_report(cgcInternalError, false);
+				iError_report(thisCode, cgcInternalError, false);
 				return(NULL);
 			}
 
@@ -6556,7 +6585,7 @@
 	        result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL);
 			if (!result)
 			{
-				iError_report((u8*)"Internal error.", false);
+				iError_report(thisCode, (u8*)"Internal error.", false);
 				return(NULL);
 			}
 
@@ -6819,7 +6848,7 @@ debug_break;
 
 			} else if (index > 34 || index < 1) {
 				// We report our own error
-				iError_report((cu8*)"Parameter must be in the range 1..34", false);
+				iError_report(thisCode, (cu8*)"Parameter must be in the range 1..34", false);
 				return(NULL);
 			}
 
@@ -6830,7 +6859,7 @@ debug_break;
 	        result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL);
 			if (!result)
 			{
-				iError_report(cgcInternalError, false);
+				iError_report(thisCode, cgcInternalError, false);
 				return(NULL);
 			}
 
@@ -7171,7 +7200,7 @@ debug_break;
 			result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL);
 			if (!result)
 			{
-				iError_report(cgcInternalError, false);
+				iError_report(thisCode, cgcInternalError, false);
 				return(NULL);
 			}
 
@@ -7254,7 +7283,7 @@ debug_break;
 
 				} else if (index < 1 || index > 5) {
 					// We report our own error
-					iError_report((cu8*)"Parameter must be in the range 1..5", false);
+					iError_report(thisCode, (cu8*)"Parameter must be in the range 1..5", false);
 					return(NULL);
 				}
 			}
@@ -7299,7 +7328,7 @@ debug_break;
 			}
 			if (!result)
 			{
-				iError_report(cgcInternalError, false);
+				iError_report(thisCode, cgcInternalError, false);
 				return(NULL);
 			}
 
@@ -7902,32 +7931,32 @@ debug_break;
 		u32				errorNum;
 
 
-// 		SComp*	compAll				= iComps_findNextBy_iCode(compModify, _ICODE_ALL,		NULL);
-// 		SComp*	compClass			= iComps_findNextBy_iCode(compModify, _ICODE_CLASS,		NULL);
-// 		SComp*	compClassName		= iComps_getNth(compClass, 1);
-// 		SComp*	compClassLib		= iComps_findNextBy_iCode(compModify, _ICODE_CLASSLIB,	NULL);
-// 		SComp*	compClassLibName	= iComps_getNth(compClassLib, 1);
-		SComp*	compKeep			= iComps_findNextBy_iCode(compClear, _ICODE_KEEP,	NULL);;
-		SComp*	compKeepCount		= iComps_getNth(compKeep, 1);
-		SComp*	compLast			= iComps_findNextBy_iCode(compClear, _ICODE_LAST,	NULL);;
-		SComp*	compLastCount		= iComps_getNth(compLast, 1);
-// 		SComp*	compDebug			= iComps_findNextBy_iCode(compModify, _ICODE_DEBUG,		NULL);
-// 		SComp*	compDlls			= iComps_findNextBy_iCode(compModify, _ICODE_DLLS,		NULL);
-// 		SComp*	compDllAlias		= iComps_getNth(compDlls, 1);
-// 		SComp*	compEvents			= iComps_findNextBy_iCode(compModify, _ICODE_EVENTS,	NULL);
-// 		SComp*	compError			= iComps_findNextBy_iCode(compModify, _ICODE_ERROR,		NULL);
-// 		SComp*	compFields			= iComps_findNextBy_iCode(compModify, _ICODE_FIELDS,	NULL);
-// 		SComp*	compGets			= iComps_findNextBy_iCode(compModify, _ICODE_GETS,		NULL);
-// 		SComp*	compMacros			= iComps_findNextBy_iCode(compModify, _ICODE_MACROS,	NULL);
-// 		SComp*	compMemory			= iComps_findNextBy_iCode(compModify, _ICODE_MEMORY,	NULL);
-// 		SComp*	compMenus			= iComps_findNextBy_iCode(compModify, _ICODE_MENUS,		NULL);
-// 		SComp*	compPopups			= iComps_findNextBy_iCode(compModify, _ICODE_POPUPS,	NULL);
-// 		SComp*	compProgram			= iComps_findNextBy_iCode(compModify, _ICODE_PROGRAM,	NULL);
-// 		SComp*	compPrompt			= iComps_findNextBy_iCode(compModify, _ICODE_PROMPT,	NULL);
-// 		SComp*	compRead			= iComps_findNextBy_iCode(compModify, _ICODE_READ,		NULL);
-// 		SComp*	compResources		= iComps_findNextBy_iCode(compModify, _ICODE_RESOURCES,	NULL);
-// 		SComp*	compTypeahead		= iComps_findNextBy_iCode(compModify, _ICODE_TYPEAHEAD,	NULL);
-// 		SComp*	compWindows			= iComps_findNextBy_iCode(compModify, _ICODE_WINDOWS,	NULL);
+// 		SComp*	compAll				= iComps_findNextBy_iCode(thisCode, compModify, _ICODE_ALL,			NULL);
+// 		SComp*	compClass			= iComps_findNextBy_iCode(thisCode, compModify, _ICODE_CLASS,		NULL);
+// 		SComp*	compClassName		= iComps_getNth(thisCode, compClass, 1);
+// 		SComp*	compClassLib		= iComps_findNextBy_iCode(thisCode, compModify, _ICODE_CLASSLIB,	NULL);
+// 		SComp*	compClassLibName	= iComps_getNth(thisCode, compClassLib, 1);
+		SComp*	compKeep			= iComps_findNextBy_iCode(thisCode, compClear, _ICODE_KEEP,			NULL);
+		SComp*	compKeepCount		= iComps_getNth(thisCode, compKeep, 1);
+		SComp*	compLast			= iComps_findNextBy_iCode(thisCode, compClear, _ICODE_LAST,			NULL);
+		SComp*	compLastCount		= iComps_getNth(thisCode, compLast, 1);
+// 		SComp*	compDebug			= iComps_findNextBy_iCode(thisCode, compModify, _ICODE_DEBUG,		NULL);
+// 		SComp*	compDlls			= iComps_findNextBy_iCode(thisCode, compModify, _ICODE_DLLS,		NULL);
+// 		SComp*	compDllAlias		= iComps_getNth(thisCode, compDlls, 1);
+// 		SComp*	compEvents			= iComps_findNextBy_iCode(thisCode, compModify, _ICODE_EVENTS,		NULL);
+// 		SComp*	compError			= iComps_findNextBy_iCode(thisCode, compModify, _ICODE_ERROR,		NULL);
+// 		SComp*	compFields			= iComps_findNextBy_iCode(thisCode, compModify, _ICODE_FIELDS,		NULL);
+// 		SComp*	compGets			= iComps_findNextBy_iCode(thisCode, compModify, _ICODE_GETS,		NULL);
+// 		SComp*	compMacros			= iComps_findNextBy_iCode(thisCode, compModify, _ICODE_MACROS,		NULL);
+// 		SComp*	compMemory			= iComps_findNextBy_iCode(thisCode, compModify, _ICODE_MEMORY,		NULL);
+// 		SComp*	compMenus			= iComps_findNextBy_iCode(thisCode, compModify, _ICODE_MENUS,		NULL);
+// 		SComp*	compPopups			= iComps_findNextBy_iCode(thisCode, compModify, _ICODE_POPUPS,		NULL);
+// 		SComp*	compProgram			= iComps_findNextBy_iCode(thisCode, compModify, _ICODE_PROGRAM,		NULL);
+// 		SComp*	compPrompt			= iComps_findNextBy_iCode(thisCode, compModify, _ICODE_PROMPT,		NULL);
+// 		SComp*	compRead			= iComps_findNextBy_iCode(thisCode, compModify, _ICODE_READ,		NULL);
+// 		SComp*	compResources		= iComps_findNextBy_iCode(thisCode, compModify, _ICODE_RESOURCES,	NULL);
+// 		SComp*	compTypeahead		= iComps_findNextBy_iCode(thisCode, compModify, _ICODE_TYPEAHEAD,	NULL);
+// 		SComp*	compWindows			= iComps_findNextBy_iCode(thisCode, compModify, _ICODE_WINDOWS,		NULL);
 // 		SComp*	compFilename		= iComps_getNth(compWindows, 1);
 
 		if (compLast)
@@ -7986,25 +8015,25 @@ debug_break;
 				memset(&ecb, 0, sizeof(ecb));
 				ecb._callback = (uptr)&iiCommand_clear_last_callback;
 				ecb.extra1 = (uptr)lnClearLines;
-				ecb.extra2 = (uptr)iSEM_renumber(screenData, 1);
+				ecb.extra2 = (uptr)iSEM_renumber(thisCode, screenData, 1);
 
 
 			//////////
 			// Clear
 			//////
-				iSEM_deleteChainWithCallback(&screenData, false, &ecb);
+				iSEM_deleteChainWithCallback(thisCode, &screenData, false, &ecb);
 
 
 			//////////
 			// Count what remains, and set _tally
 			//////
-				iEngine_update_tally(thisCode, iSEM_renumber(screenData, 1));
+				iEngine_update_tally(thisCode, iSEM_renumber(thisCode, screenData, 1));
 
 
 			//////////
 			// Redraw what remains
 			//////
-				iSEM_navigateToEndLine(screenData, _screen);
+				iSEM_navigateToEndLine(thisCode, screenData, _screen);
 				screen_editbox->isDirtyRender = true;
 				iWindow_render(NULL, gWinJDebi, false);
 
@@ -8074,25 +8103,25 @@ debug_break;
 			memset(&ecb, 0, sizeof(ecb));
 			ecb._callback = (uptr)&iiCommand_clear_keep_callback;
 			ecb.extra1 = (uptr)lnSaveLines;
-			ecb.extra2 = (uptr)iSEM_renumber(screenData, 1);
+			ecb.extra2 = (uptr)iSEM_renumber(thisCode, screenData, 1);
 
 
 		//////////
 		// Clear
 		//////
-			iSEM_deleteChainWithCallback(&screenData, false, &ecb);
+			iSEM_deleteChainWithCallback(thisCode, &screenData, false, &ecb);
 
 
 		//////////
 		// Count what remains, and set _tally
 		//////
-			iEngine_update_tally(thisCode, iSEM_renumber(screenData, 1));
+			iEngine_update_tally(thisCode, iSEM_renumber(thisCode, screenData, 1));
 
 
 		//////////
 		// Redraw what remains
 		//////
-			iSEM_navigateToEndLine(screenData, _screen);
+			iSEM_navigateToEndLine(thisCode, screenData, _screen);
 			screen_editbox->isDirtyRender = true;
 			iWindow_render(NULL, gWinJDebi, false);
 			// All done
@@ -8143,7 +8172,7 @@ debug_break;
 		//////////
 		// Make sure there's something after the modify command
 		//////
-			if (!(compType = iComps_getNth(compModify, 1)))
+			if (!(compType = iComps_getNth(thisCode, compModify, 1)))
 			{
 				// There was nothing after, which means syntax error
 				iError_reportByNumber(thisCode, _ERROR_MISSING_PARAMETER, compModify, false);
@@ -8273,11 +8302,11 @@ debug_break;
 		//////////
 		// Access the options which are available for this command
 		//////
-			compDatabase	= iComps_findNextBy_iCode(compOpen, _ICODE_DATABASE,	NULL);
-			compExclusive	= iComps_findNextBy_iCode(compOpen, _ICODE_EXCLUSIVE,	NULL);
-			compShared		= iComps_findNextBy_iCode(compOpen, _ICODE_SHARED,		NULL);
-			compValidate	= iComps_findNextBy_iCode(compOpen, _ICODE_VALIDATE,	NULL);
-			compRecover		= iComps_findNextBy_iCode(compOpen, _ICODE_RECOVER,		NULL);
+			compDatabase	= iComps_findNextBy_iCode(thisCode, compOpen, _ICODE_DATABASE,	NULL);
+			compExclusive	= iComps_findNextBy_iCode(thisCode, compOpen, _ICODE_EXCLUSIVE,	NULL);
+			compShared		= iComps_findNextBy_iCode(thisCode, compOpen, _ICODE_SHARED,		NULL);
+			compValidate	= iComps_findNextBy_iCode(thisCode, compOpen, _ICODE_VALIDATE,	NULL);
+			compRecover		= iComps_findNextBy_iCode(thisCode, compOpen, _ICODE_RECOVER,		NULL);
 
 
 		//////////
@@ -8296,13 +8325,13 @@ debug_break;
 				return;
 			}
 			// Grab the component after [database]
-			compPathname = iComps_getNth(compDatabase, 1);
+			compPathname = iComps_getNth(thisCode, compDatabase, 1);
 
 
 		//////////
 		// Extract the DBC name
 		//////
-			lnLength = iComps_getContiguousLength(compPathname, NULL, 0, NULL);
+			lnLength = iComps_getContiguousLength(thisCode, compPathname, NULL, 0, NULL);
 			if (lnLength >= (s32)sizeof(dbcNameBuffer))
 			{
 				// Parameter is too long
@@ -8397,7 +8426,7 @@ debug_break;
 		//////////
 		// Get the next component
 		//////
-			compSetTarget = iComps_getNth(compSet, 1);
+			compSetTarget = iComps_getNth(thisCode, compSet, 1);
 			if (compSetTarget)
 			{
 				// SET SOMETHING
@@ -8406,11 +8435,11 @@ debug_break;
 				//////////
 				// The thing after should be the value, or the keyword TO
 				//////
-					compSetValue = iComps_getNth(compSetTarget, 1);
+					compSetValue = iComps_getNth(thisCode, compSetTarget, 1);
 
 					// TO is superfluous, so if it exists, skip it
 					if (compSetValue && compSetValue->iCode == _ICODE_TO)
-						compSetValue = iComps_getNth(compSetValue, 1);
+						compSetValue = iComps_getNth(thisCode, compSetValue, 1);
 
 
 				//////////
@@ -8531,22 +8560,22 @@ debug_break;
 		//////////
 		// Access the options which are available for this command
 		//////
-			SComp*	compAgain				= iComps_findNextBy_iCode(compUse, _ICODE_AGAIN,				NULL);
-//			SComp*	compNoRequery			= iComps_findNextBy_iCode(compUse, _ICODE_NOREQUERY,			NULL);
-//			SComp*	compNoData				= iComps_findNextBy_iCode(compUse, _ICODE_NODATA,				NULL);
-//			SComp*	compNoUpdate			= iComps_findNextBy_iCode(compUse, _ICODE_NOUPDATE,				NULL);
-//			SComp*	compExclamationPoint	= iComps_findNextBy_iCode(compUse, _ICODE_EXCLAMATION_POINT,	NULL);
-			SComp*	compIn					= iComps_findNextBy_iCode(compUse, _ICODE_IN,					NULL);
-//			SComp*	compIndex				= iComps_findNextBy_iCode(compUse, _ICODE_INDEX,				NULL);
-//			SComp*	compOrder				= iComps_findNextBy_iCode(compUse, _ICODE_ORDER,				NULL);
-//			SComp*	compTag					= iComps_findNextBy_iCode(compUse, _ICODE_TAG,					NULL);
-			SComp*	compAscending			= iComps_findNextBy_iCode(compUse, _ICODE_ASCENDING,			NULL);
-			SComp*	compDescending			= iComps_findNextBy_iCode(compUse, _ICODE_DESCENDING,			NULL);
-			SComp*	compAlias				= iComps_findNextBy_iCode(compUse, _ICODE_ALIAS,				NULL);
-			SComp*	compExclusive			= iComps_findNextBy_iCode(compUse, _ICODE_EXCLUSIVE,			NULL);
-			SComp*	compShared				= iComps_findNextBy_iCode(compUse, _ICODE_SHARED,				NULL);
-//			SComp*	compConnString			= iComps_findNextBy_iCode(compUse, _ICODE_CONNSTRING,			NULL);
-			SComp*	compValidate			= iComps_findNextBy_iCode(compUse, _ICODE_VALIDATE,				NULL);
+			SComp*	compAgain				= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_AGAIN,				NULL);
+//			SComp*	compNoRequery			= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_NOREQUERY,			NULL);
+//			SComp*	compNoData				= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_NODATA,				NULL);
+//			SComp*	compNoUpdate			= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_NOUPDATE,			NULL);
+//			SComp*	compExclamationPoint	= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_EXCLAMATION_POINT,	NULL);
+			SComp*	compIn					= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_IN,					NULL);
+//			SComp*	compIndex				= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_INDEX,				NULL);
+//			SComp*	compOrder				= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_ORDER,				NULL);
+//			SComp*	compTag					= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_TAG,				NULL);
+			SComp*	compAscending			= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_ASCENDING,			NULL);
+			SComp*	compDescending			= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_DESCENDING,			NULL);
+			SComp*	compAlias				= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_ALIAS,				NULL);
+			SComp*	compExclusive			= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_EXCLUSIVE,			NULL);
+			SComp*	compShared				= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_SHARED,				NULL);
+//			SComp*	compConnString			= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_CONNSTRING,			NULL);
+			SComp*	compValidate			= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_VALIDATE,			NULL);
 
 
 		//////////
@@ -8651,7 +8680,7 @@ debug_break;
 				// Get what comes after the IN
 				comp3 = NULL;
 				comp4 = NULL;
-				if ((comp2 = iComps_getNth(compIn, 1)) && (comp3 = iComps_getNth(comp2, 1)) && (comp4 = iComps_getNth(comp3, 1)))
+				if ((comp2 = iComps_getNth(thisCode, compIn, 1)) && (comp3 = iComps_getNth(thisCode, comp2, 1)) && (comp4 = iComps_getNth(thisCode, comp3, 1)))
 				{
 					// Placeholder to allow engagement through the if expression as far as it will go
 				}
@@ -8676,7 +8705,7 @@ debug_break;
 						iError_reportByNumber(thisCode, _ERROR_MISSING_PARAMETER, comp2, false);
 						goto clean_exit;
 
-					} else if (!(comp4 = iComps_getNth(comp3, 1))) {
+					} else if (!(comp4 = iComps_getNth(thisCode, comp3, 1))) {
 						// Syntax error
 						iError_reportByNumber(thisCode, _ERROR_SYNTAX, comp3, false);
 						goto clean_exit;

@@ -176,6 +176,8 @@ struct SFieldRecord2;
 	sptr				iDbf_gotoRecord									(SThisCode* thisCode, SWorkArea* wa, s32 recordNumber);
 	sptr				iDbf_gotoTop									(SThisCode* thisCode, SWorkArea* wa);
 	sptr				iDbf_writeChanges								(SThisCode* thisCode, SWorkArea* wa);
+	bool				iiDbf_readMemo									(SThisCode* thisCode, SWorkArea* wa, SFieldRecord2* fr2Ptr);
+	bool				iiDbf_writeMemo									(SThisCode* thisCode, SWorkArea* wa, SFieldRecord2* fr2Ptr);
 
 	uptr				iDbf_getFieldCount								(SThisCode* thisCode, SWorkArea* wa);
 	uptr				iDbf_getReccount								(SThisCode* thisCode, SWorkArea* wa);
@@ -205,7 +207,7 @@ struct SFieldRecord2;
 	SFieldRecord2*		iDbf_getField_byNumber2							(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber);
 	SVariable*			iDbf_getField_byName2_asVariable				(SThisCode* thisCode, SWorkArea* wa, u8* fieldName, u32 fieldNameLength);
 	u8					iDbf_getField_type								(SThisCode* thisCode, SWorkArea* wa, u8* keyExpression, bool* swapEndians, bool* needsSignBitToggled);
-	uptr				iDbf_getField_name								(SThisCode* thisCode, u8* expression, const u8* foundFieldName);
+	uptr				iDbf_getFieldExpression_name					(SThisCode* thisCode, u8* expression, const u8* foundFieldName);
 
 
 //////////

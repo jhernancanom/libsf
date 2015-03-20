@@ -2625,14 +2625,14 @@ if (!obj->props[lnI])
 		// Any properties within
 		//////
 			if (tlResetProperties)
-				iVariable_politelyDeleteChain(&obj->firstProperty, true);
+				iVariable_politelyDeleteChain(thisCode, &obj->firstProperty, true);
 
 
 		//////////
 		// Any methods defined
 		//////
 			if (tlResetMethods)
-				iSEM_deleteChain(&obj->firstMethod, true);
+				iSEM_deleteChain(thisCode, &obj->firstMethod, true);
 
 
 		//////////

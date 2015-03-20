@@ -626,7 +626,7 @@
 // Append to the system log
 //
 //////
-	void iVjr_appendSystemLog(u8* tcLogText)
+	void iVjr_appendSystemLog(SThisCode* thisCode, u8* tcLogText)
 	{
 		u8 buffer[2048];
 
@@ -636,7 +636,7 @@
 
 		// Append to it
 		sprintf((s8*)buffer, (s8*)"[%u] %s\0", (u32)((s64)GetTickCount() - systemStartedTickCount), (s8*)tcLogText);
-		iSEM_appendLine(systemLog, buffer, -1, false);
+		iSEM_appendLine(thisCode, systemLog, buffer, -1, false);
 
 		// Release it
 		LeaveCriticalSection(&cs_logData);
@@ -656,9 +656,9 @@
 // Called to flush the system log to disk
 //
 //////
-	void iVjr_flushSystemLog(void)
+	void iVjr_flushSystemLog(SThisCode* thisCode)
 	{
-		iSEM_saveToDisk(systemLog, cgcSystemLogFilename);
+		iSEM_saveToDisk(thisCode, systemLog, cgcSystemLogFilename);
 	}
 
 
@@ -816,23 +816,23 @@
 // Called as a central location to shutdown the system politely.
 //
 //////
-	void iVjr_shutdown(void)
+	void iVjr_shutdown(SThisCode* thisCode)
 	{
 		// Indicate we're shutting down
 		glShuttingDown = true;
 
 		// System is shutting down
-		iVjr_appendSystemLog((u8*)"Unengage VJr");
+		iVjr_appendSystemLog(thisCode, (u8*)"Unengage VJr");
 
 		// Tell OS to unengage our process
-		iVjr_appendSystemLog((u8*)"Notify OS to shutdown");
+		iVjr_appendSystemLog(thisCode, (u8*)"Notify OS to shutdown");
 
 		// Flush the log
-		iVjr_flushSystemLog();
+		iVjr_flushSystemLog(thisCode);
 
 		// Save where we were
-		iSEM_saveToDisk(screenData,				cgcScreenDataFilename);
-		iSEM_saveToDisk(command_editbox->p.sem,	cgcCommandHistoryFilename);
+		iSEM_saveToDisk(thisCode, screenData,				cgcScreenDataFilename);
+		iSEM_saveToDisk(thisCode, command_editbox->p.sem,	cgcCommandHistoryFilename);
 
 		// Close the allocated memory blocks
 		iVjr_releaseMemory();
@@ -853,6 +853,7 @@
 //////
 	DWORD WINAPI iSplash_show(LPVOID/*SBitmap**/ lpParameter)
 	{
+		SThisCode*		thisCode = NULL;
 		s32				lnLeft, lnTop;
 		WNDCLASSEXA		classex;
 		RECT			lrcWindow, lrcClient;
@@ -923,7 +924,7 @@
 				}
 		}
 		// Log it
-		iVjr_appendSystemLog((u8*)"Splash screen unengaged");
+		iVjr_appendSystemLog(thisCode, (u8*)"Splash screen unengaged");
 
 		// Delete the timer
 		KillTimer(gSplash.hwnd, 0);
@@ -952,6 +953,9 @@
 //////
 	DWORD WINAPI iSplash_delete(LPVOID lpParameter)
 	{
+		SThisCode* thisCode = NULL;
+
+
 		// Close any prior splash screen
 		if (gSplash.isValid)
 		{
@@ -959,7 +963,7 @@
 			Sleep((DWORD)(uptr)lpParameter);
 
 			// Log it
-			iVjr_appendSystemLog((u8*)"Splash screen can unengage");
+			iVjr_appendSystemLog(thisCode, (u8*)"Splash screen can unengage");
 
 			// Indicate no longer valid
 			gSplash.isValid = false;
@@ -1027,10 +1031,11 @@
 //////
 	DWORD WINAPI iPlay_ariaSplash(LPVOID lpParameter)
 	{
-		u32		stopTickCount;
-		f32		lfVolume;
-		u64		lnSoundHandle;
-		u8		buffer[256];
+		SThisCode*	thisCode = NULL;
+		u32			stopTickCount;
+		f32			lfVolume;
+		u64			lnSoundHandle;
+		u8			buffer[256];
 
 
 		// Load the sound file (if it exists)
@@ -1038,16 +1043,16 @@
 		{
 			// Log it
 			sprintf((s8*)buffer, "Engage %s\0", (s8*)lpParameter);
-			iVjr_appendSystemLog(buffer);
+			iVjr_appendSystemLog(thisCode, buffer);
 
 			// Begin at the beginning
 			soundOffset = 0;
 			soundCount	/= 4;	// Each sound item is an f32
 
 			// Attempt to create the sound stream
-			lnSoundHandle	= sound_createStream(44100, (u64)&iPlay_ariaSplash_callback);
+			lnSoundHandle	= sound_createStream(thisCode, 44100, (u64)&iPlay_ariaSplash_callback);
 			lfVolume		= 1.0f;//0.25f;
-			sound_playStart(lnSoundHandle, lfVolume);
+			sound_playStart(thisCode, lnSoundHandle, lfVolume);
 
 			// Repeat until the splash screen is over, or the song ends
 			stopTickCount = GetTickCount() + 2500;
@@ -1066,17 +1071,17 @@
 			{
 				// Turn down the volume 1/10th
 				lfVolume -= 0.025f;
-				sound_setVolume(lnSoundHandle, lfVolume);
+				sound_setVolume(thisCode, lnSoundHandle, lfVolume);
 
 				// Wait 1/10th second
 				Sleep(100);
 			}
 			// Log it
 			sprintf((s8*)buffer, "Unengage %s\0", (s8*)lpParameter);
-			iVjr_appendSystemLog(buffer);
+			iVjr_appendSystemLog(thisCode, buffer);
 
 			// When we get here, we're done playing
-			sound_playCancel(lnSoundHandle);
+			sound_playCancel(thisCode, lnSoundHandle);
 
 			// Raise the termination flag until we can shut down the playback
 			soundOffset = soundCount;
@@ -1086,12 +1091,12 @@
 			soundData_s8 = NULL;
 
 			// Clear the handle
-			sound_deleteHandle(lnSoundHandle);
+			sound_deleteHandle(thisCode, lnSoundHandle);
 
 		} else {
 			// Log it
 			sprintf((s8*)buffer, "Inquiry on sound file %s\0", (s8*)lpParameter);
-			iVjr_appendSystemLog(buffer);
+			iVjr_appendSystemLog(thisCode, buffer);
 		}
 
 		// Completed
@@ -4059,7 +4064,7 @@
 		if (gobj_splashListing && gobj_splashListingEditbox)
 		{
 			// Move to the end of the list
-			iSEM_navigateToEndLine(gobj_splashListingEditbox->p.sem, gobj_splashListing);
+			iSEM_navigateToEndLine(thisCode, gobj_splashListingEditbox->p.sem, gobj_splashListing);
 
 			if (trc && gobj_splashListing->bmp)
 			{

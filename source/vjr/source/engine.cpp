@@ -124,7 +124,7 @@
 				{
 					case _ICODE_QUIT:
 						// They want to quit
-						iVjr_shutdown();
+						iVjr_shutdown(thisCode);
 						break;
 // 
 // 					case _ICODE_CLEAR:
@@ -140,8 +140,8 @@
 						if (!compNext)
 						{
 							// Syntax error, expected "? something" got only "?"
-							iSEM_appendLine(screenData, (u8*)cgcSyntaxError, -1, false);
-							iSEM_navigateToEndLine(screenData, _screen);
+							iSEM_appendLine(thisCode, screenData, (u8*)cgcSyntaxError, -1, false);
+							iSEM_navigateToEndLine(thisCode, screenData, _screen);
 							screen_editbox->isDirtyRender = true;
 							iWindow_render(NULL, gWinJDebi, false);
 							return(false);
@@ -157,7 +157,7 @@
 								{
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error
-									screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(screenData, _screen);
+									screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(thisCode, screenData, _screen);
 									iWindow_render(NULL, gWinJDebi, false);
 									return(false);
 								}
@@ -168,8 +168,8 @@
 								if (!var)
 								{
 									// Unknown parameter
-									iError_report(cgcUnrecognizedParameter, false);
-									screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(screenData, _screen);
+									iError_report(thisCode, cgcUnrecognizedParameter, false);
+									screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(thisCode, screenData, _screen);
 									iWindow_render(NULL, gWinJDebi, false);
 									return(false);
 								}
@@ -178,8 +178,8 @@
 							varText = iVariable_convertForDisplay(NULL, var);
 
 							// Add its contents to _screen
-							iSEM_appendLine(screenData, varText->value.data_u8, varText->value.length, false);
-							iSEM_navigateToEndLine(screenData, _screen);
+							iSEM_appendLine(thisCode, screenData, varText->value.data_u8, varText->value.length, false);
+							iSEM_navigateToEndLine(thisCode, screenData, _screen);
 							screen_editbox->isDirtyRender = true;
 							iWindow_render(NULL, gWinJDebi, false);
 
@@ -203,7 +203,7 @@
 								{
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error
-									screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(screenData, _screen);
+									screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(thisCode, screenData, _screen);
 									iWindow_render(NULL, gWinJDebi, false);
 									return(false);
 								}
@@ -213,8 +213,8 @@
 								if (!(var = iEngine_get_variableName_fromComponent(thisCode, compThird, &llManufactured)))
 								{
 									// Unknown parameter
-									iError_report(cgcUnrecognizedParameter, false);
-									screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(screenData, _screen);
+									iError_report(thisCode, cgcUnrecognizedParameter, false);
+									screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(thisCode, screenData, _screen);
 									iWindow_render(NULL, gWinJDebi, false);
 									return(false);
 								}
@@ -279,19 +279,19 @@
 		//////////
 		// If we have existing compiler data, get rid of it
 		//////
-			if (line->compilerInfo)		iCompiler_delete(&line->compilerInfo, false);
-			else						line->compilerInfo = iCompiler_allocate(line);		// Allocate a new one
+			if (line->compilerInfo)		iCompiler_delete(thisCode, &line->compilerInfo, false);
+			else						line->compilerInfo = iCompiler_allocate(thisCode, line);		// Allocate a new one
 
 
 		//////////
 		// Parse out the line
 		//////
-			iComps_translateSourceLineTo(&cgcFundamentalSymbols[0], line);
+			iComps_translateSourceLineTo(thisCode, &cgcFundamentalSymbols[0], line);
 			if (!line->compilerInfo->firstComp)
 				return(NULL);		// Nothing to compile on this line
 
 			// Remove whitespaces [use][whitespace][foo] becomes [use][foo]
-			iComps_removeLeadingWhitespaces(line);
+			iComps_removeLeadingWhitespaces(thisCode, line);
 
 
 		//////////
@@ -301,7 +301,7 @@
 			{
 				// Combine every item after this to a single comment
 // TODO:  This algorithm will need to be changed so casks in comments show up graphically, rather than as raw text
-				iComps_combineN(line->compilerInfo->firstComp, 99999, line->compilerInfo->firstComp->iCode, line->compilerInfo->firstComp->iCat, line->compilerInfo->firstComp->color);
+				iComps_combineN(thisCode, line->compilerInfo->firstComp, 99999, line->compilerInfo->firstComp->iCode, line->compilerInfo->firstComp->iCat, line->compilerInfo->firstComp->color);
 
 				// Return the first component
 				return(line->compilerInfo->firstComp);
@@ -311,17 +311,17 @@
 		//////////
 		// Perform natural source code fixups
 		//////
-			iComps_removeStartEndComments(line);		// Remove /* comments */
-			iComps_combineCasks(line);					// Replace [(|][alpha][|)] with [(|alpha|)]
-			iComps_fixupNaturalGroupings(line);			// Fixup natural groupings [_][aaa][999] becomes [_aaa999], [999][.][99] becomes [999.99], etc.
-			iComps_combineAdjacentDotForms(line);		// Fixup [thisForm][.][width] into [thisForm.width]
-			iComps_removeWhitespaces(line);				// Remove all whitespaces after everything else was parsed [use][whitespace][foo] becomes [use][foo]
+			iComps_removeStartEndComments(thisCode, line);		// Remove /* comments */
+			iComps_combineCasks(thisCode, line);				// Replace [(|][alpha][|)] with [(|alpha|)]
+			iComps_fixupNaturalGroupings(thisCode, line);		// Fixup natural groupings [_][aaa][999] becomes [_aaa999], [999][.][99] becomes [999.99], etc.
+			iComps_combineAdjacentDotForms(thisCode, line);		// Fixup [thisForm][.][width] into [thisForm.width]
+			iComps_removeWhitespaces(thisCode, line);			// Remove all whitespaces after everything else was parsed [use][whitespace][foo] becomes [use][foo]
 
 
 		//////////
 		// Translate sequences to known keywords
 		//////
-			iComps_translateToOthers((SAsciiCompSearcher*)&cgcKeywordsVxb[0], line);
+			iComps_translateToOthers(thisCode, (SAsciiCompSearcher*)&cgcKeywordsVxb[0], line);
 
 
 		//////////
@@ -618,12 +618,12 @@ debug_nop;
 				case _ICODE_DOUBLE_QUOTED_TEXT:
 				case _ICODE_SINGLE_QUOTED_TEXT:
 					// By definition, quoted content is its own independent thing
-					varPathname = iVariable_createAndPopulate(NULL, _VAR_TYPE_CHARACTER, comp->line->sourceCode->data_u8 + comp->start, comp->length);
+					varPathname = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, comp->line->sourceCode->data_u8 + comp->start, comp->length);
 					break;
 
 				default:
 					// Get every contiguous component
-					varPathname	= iVariable_createAndPopulate(NULL, _VAR_TYPE_CHARACTER, comp->line->sourceCode->data_u8 + comp->start, iComps_getContiguousLength(comp, valid_iCodeArray, tnValid_iCodeArrayCount, NULL));
+					varPathname	= iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, comp->line->sourceCode->data_u8 + comp->start, iComps_getContiguousLength(thisCode, comp, valid_iCodeArray, tnValid_iCodeArrayCount, NULL));
 					break;
 			}
 		}
@@ -901,7 +901,7 @@ debug_nop;
 // Called to delete the indicated breakpoint
 //
 //////
-	void iBreakpoint_delete(SBreakpoint** breakpoint)
+	void iBreakpoint_delete(SThisCode* thisCode, SBreakpoint** breakpoint)
 	{
 		SBreakpoint* bp;
 
@@ -922,7 +922,7 @@ debug_nop;
 
 			// Delete any source code for this breakpoint
 			if (bp->executeCode)
-				iSourceCode_delete(&bp->executeCode);
+				iSourceCode_delete(thisCode, &bp->executeCode);
 		}
 	}
 
@@ -936,7 +936,7 @@ debug_nop;
 // and added manually by the code in the calling algorithm.
 //
 //////
-	SBreakpoint* iBreakpoint_add(SBreakpoint** breakpoint, u32 tnType)
+	SBreakpoint* iBreakpoint_add(SThisCode* thisCode, SBreakpoint** breakpoint, u32 tnType)
 	{
 		u32				lnI;
 		SBreakpoint*	bp;
@@ -1019,7 +1019,7 @@ debug_nop;
 // Called to delete the source code item
 //
 //////
-	void iSourceCode_delete(SSourceCode** sourceCode)
+	void iSourceCode_delete(SThisCode* thisCode, SSourceCode** sourceCode)
 	{
 		SSourceCode* sc;
 
@@ -1034,11 +1034,11 @@ debug_nop;
 			*sourceCode = NULL;
 
 			// Delete the items
-			iFunction_politelyDeleteChain(&sc->firstFunction);
-			iVariable_politelyDeleteChain(&sc->params,		true);
-			iVariable_politelyDeleteChain(&sc->returns,		true);
-			iVariable_politelyDeleteChain(&sc->privates,	true);
-			iVariable_politelyDeleteChain(&sc->locals,		true);
-			iVariable_politelyDeleteChain(&sc->scoped,		true);
+			iFunction_politelyDeleteChain(thisCode, &sc->firstFunction);
+			iVariable_politelyDeleteChain(thisCode, &sc->params,		true);
+			iVariable_politelyDeleteChain(thisCode, &sc->returns,		true);
+			iVariable_politelyDeleteChain(thisCode, &sc->privates,		true);
+			iVariable_politelyDeleteChain(thisCode, &sc->locals,		true);
+			iVariable_politelyDeleteChain(thisCode, &sc->scoped,		true);
 		}
 	}

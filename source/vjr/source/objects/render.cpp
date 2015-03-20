@@ -853,13 +853,13 @@
 		if (obj && obj->isRendered)
 		{
 			// Grab the rectangle
-			iSEM_getRectAndFont(obj->p.sem, obj, &lrc);
+			iSEM_getRectAndFont(thisCode, obj->p.sem, obj, &lrc);
 
 			// Are we rendering?
 			if (obj->isDirtyRender)
 			{
 				// Re-render
-				lnPixelsRendered = iSEM_render(obj->p.sem, obj, obj->p.hasFocus);
+				lnPixelsRendered = iSEM_render(thisCode, obj->p.sem, obj, obj->p.hasFocus);
 
 				// Get colors
 				borderColor = propBorderColor(obj);
@@ -1128,7 +1128,7 @@
 					if (buffer[strlen(buffer)] == '.')
 						buffer[strlen(buffer)] = 0;
 
-					lnSkip = iSkipWhitespaces(buffer, (u32)strlen(buffer));
+					lnSkip = iSkipWhitespaces(thisCode, buffer, (u32)strlen(buffer));
 
 					SetRect(&lrc2,	obj->bmp->bi.biWidth / 7,
 									(obj->bmp->bi.biHeight / 2) - (obj->bmp->bi.biHeight / 7),

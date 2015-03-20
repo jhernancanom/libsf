@@ -122,7 +122,7 @@
 				propSetEnabled(emptyNew, _LOGICAL_TRUE);
 				emptyNew->isRendered	= true;
 				emptyNew->isPublished	= true;
-				var = iObjProp_get_variable_byIndex(thisCode, emptyNew, _INDEX_NAME);				iDatum_duplicate(&var->value, cgcName_empty, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, emptyNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_empty, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, emptyNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_empty, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, emptyNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_empty, -1);
 
@@ -663,7 +663,7 @@
 				propSetEnabled(editboxNew, _LOGICAL_TRUE);
 				editboxNew->isRendered	= true;
 				editboxNew->isPublished	= true;
-				var = iObjProp_get_variable_byIndex(thisCode, editboxNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_editbox, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, editboxNew, _INDEX_NAME);				iDatum_duplicate(&var->value, cgcName_editbox, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, editboxNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_editbox, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, editboxNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_editbox, -1);
 				iEvents_resetToDefault(thisCode, &editboxNew->ev);

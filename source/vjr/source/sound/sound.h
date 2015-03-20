@@ -193,11 +193,11 @@
 	void			iisound_generateTones		(_isSSound* tss, u32 tnSamples);
 
 	// These two create functions return a handle
-	u64				sound_createTone			(f32 tfHertz1, f32 tfHertz2, f32 tfHertz3, f32 tfHertz4, u32 tnDurationMilliseconds);
-	u64				sound_createStream			(u32 tnSamplesPerSecond, u64 tnSoundFillerCallbackFunction);
+	u64				sound_createTone			(SThisCode* thisCode, f32 tfHertz1, f32 tfHertz2, f32 tfHertz3, f32 tfHertz4, u32 tnDurationMilliseconds);
+	u64				sound_createStream			(SThisCode* thisCode, u32 tnSamplesPerSecond, u64 tnSoundFillerCallbackFunction);
 
 	// These functions are used once a tone or stream was already created
-	u64				sound_setVolume				(u64 tnHandle, f32 tfVolume);	// Volume in range 0..1
-	u64				sound_playStart				(u64 tnHandle, f32 tfVolume);
-	u64				sound_playCancel			(u64 tnHandle);
-	u64				sound_deleteHandle			(u64 tnHandle);
+	u64				sound_setVolume				(SThisCode* thisCode, u64 tnHandle, f32 tfVolume);	// Volume in range 0..1
+	u64				sound_playStart				(SThisCode* thisCode, u64 tnHandle, f32 tfVolume);
+	u64				sound_playCancel			(SThisCode* thisCode, u64 tnHandle);
+	u64				sound_deleteHandle			(SThisCode* thisCode, u64 tnHandle);
