@@ -6018,10 +6018,72 @@
 // Returns:
 //    Character		-- The string with any trailing spaces removed
 //////
-	SVariable* function_set(SThisCode* thisCode, SVariable* varIdentifier)
+	SVariable* function_set(SThisCode* thisCode, SVariable* varIdentifier, SVariable* varExtraInfo)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		s32				lnIndex;
+		SBasePropMap*	baseProp;
+		SObjPropMap*	objProp;
+		SVariable*		var;
+
+
+		//////////
+		// Parameter 1 must be character
+		//////
+			if (!iVariable_isValid(varIdentifier) || !iVariable_isTypeCharacter(varIdentifier))
+			{
+				iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_compRelated(thisCode, varIdentifier), false);
+				return(NULL);
+			}
+
+		
+		//////////
+		// Parameter 2 is ignored for now
+		//////
+
+
+
+		//////////
+		// Locate the indicated setting
+		//////
+			for (lnIndex = _INDEX_SET_FIRST_ITEM; gsProps_master[lnIndex].index != 0; lnIndex++)
+			{
+				// Does this setting name match?
+				if (gsProps_master[lnIndex].propLength == varIdentifier->value.length && _memicmp(gsProps_master[lnIndex].propName_s8, varIdentifier->value.data_s8, varIdentifier->value.length) == 0)
+				{
+
+					//////////
+					// This is the setting
+					//////
+						var = iObjProp_get_variable_byIndex(thisCode, _settings, gsProps_master[lnIndex].index, &baseProp, &objProp);
+						if (!var || !baseProp || !objProp)
+						{
+							// Should never happen, if it does it means something's not setup properly in the properties, or there's a memory corruption
+							iError_signal(thisCode, _ERROR_INTERNAL_ERROR, iVariable_compRelated(thisCode, varIdentifier), false, NULL, false);
+							return(NULL);
+						}
+
+
+					//////////
+					// Translate the actual variable content to its display form
+					//////
+						if (objProp->_getterObject_set)
+							 return(objProp->getterObject_set(thisCode, var, iVariable_compRelated(thisCode, varIdentifier), true));
+
+
+					//////////
+					// If we get here, return the actual value as is
+					//////
+						return(var);
+
+				}
+			}
+
+
+		//////////
+		// If we get here, we didn't find that setting
+		//////
+			iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+			return(NULL);
 	}
 
 
@@ -6079,8 +6141,8 @@
 	SVariable* ifunction_sign_common(SThisCode* thisCode, SVariable* varNumber, bool tlIncrementZero)
 	{
 		f64			lfValue;
+		bool		error;
 		u32			errorNum;
-        bool		error;
         SVariable*	result;
 
 

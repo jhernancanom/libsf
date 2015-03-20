@@ -910,14 +910,14 @@ struct SBasePropMap;
 	bool					iObjProp_setTime						(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
 
 	// Used for SET("xyz")
-	SVariable* 				iObjProp_getOnOff						(SThisCode* thisCode, SVariable* varSet);
-	SVariable* 				iObjProp_getDate						(SThisCode* thisCode, SVariable* varSet);
-	SVariable* 				iObjProp_getInteger						(SThisCode* thisCode, SVariable* varSet);
-	SVariable* 				iObjProp_getLanguage					(SThisCode* thisCode, SVariable* varSet);
-	SVariable* 				iObjProp_getLogical						(SThisCode* thisCode, SVariable* varSet);
-	SVariable* 				iObjProp_getLogicalX					(SThisCode* thisCode, SVariable* varSet);
-	SVariable* 				iObjProp_getReprocess					(SThisCode* thisCode, SVariable* varSet);
-	SVariable* 				iObjProp_getTime						(SThisCode* thisCode, SVariable* varSet);
+	SVariable* 				iObjProp_getOnOff						(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarSetBeforeReturning);
+	SVariable* 				iObjProp_getDate						(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarSetBeforeReturning);
+	SVariable* 				iObjProp_getInteger						(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarSetBeforeReturning);
+	SVariable* 				iObjProp_getLanguage					(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarSetBeforeReturning);
+	SVariable* 				iObjProp_getLogical						(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarSetBeforeReturning);
+	SVariable* 				iObjProp_getLogicalX					(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarSetBeforeReturning);
+	SVariable* 				iObjProp_getReprocess					(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarSetBeforeReturning);
+	SVariable* 				iObjProp_getTime						(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarSetBeforeReturning);
 
 	SVariable*				iObjProp_get							(SThisCode* thisCode, SObject* obj, s32 tnIndex);
 	s32						iObjProp_getVarAndType					(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable** varDst);
@@ -1391,7 +1391,6 @@ struct SBasePropMap;
 		{	_INDEX_SET_NCSET_CEILING_FLOOR,					_ICODE_NCSETCEILINGFLOOR,			cgc_setNcsetCeilingFloor,			sizeof(cgc_setNcsetCeilingFloor) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=ceiling() and floor() return floating point values if floating point input, .f.=always returns integer
 		{	_INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES,			_ICODE_NCSETOPTIMIZETABLEWRITES,	cgc_setNcsetOptimizeTableWrites,	sizeof(cgc_setNcsetOptimizeTableWrites) - 1,		_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=field update content is examined before writing out, and if it hasn't changed it is not written, .f.=any content updated, even identical content as before, is always written
 		{	_INDEX_SET_NCSET_OPTIMIZE_VARIABLES,			_ICODE_NCSETOPTIMIZEVARIABLES,		cgc_setNcsetOptimizeVariables,		sizeof(cgc_setNcsetOptimizeVariables) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=oft-used variables are moved to the top of the linked list, .f.=variables always persist in their "as defined" order
-		
 		{	_INDEX_SET_NCSET_SIGN_SIGN2,					_ICODE_NCSETSIGNSIGN2,				cgc_setNcsetSignSign2,				sizeof(cgc_setNcsetSignSign2) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=sign() and sign2() return floating point values if floating point input, .f.=always returns integer
 		{	_INDEX_SET_REPROCESS,							_ICODE_REPROCESS,					cgc_setReprocess,					sizeof(cgc_setReprocess) - 1,						_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=Reprocessing is set to automatic, .f. is not supported, if it's not .t. it must be signed numeric with negative indicating attempts, and positive indicating seconds
 		{	_INDEX_SET_REPROCESSATTEMPTS,					_ICODE_REPROCESSATTEMPTS,			cgc_setReprocessAttempts,			sizeof(cgc_setReprocessAttempts) - 1,				_VAR_TYPE_S32,				0, 0, 0,		30								,NULL	},	// Number of reprocessing attempts when set to automatic, typically 30 for 30 seconds of retries after pausing 1 second between each
@@ -1429,6 +1428,8 @@ struct SBasePropMap;
 		union {
 			uptr		_getterObject;
 			SVariable*	(*getterObject)		(SThisCode* thisCode, SObject* obj, u32 tnIndex);
+			uptr		_getterObject_set;
+			SVariable*	(*getterObject_set)	(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarNewAfterSet);
 		};
 	};
 

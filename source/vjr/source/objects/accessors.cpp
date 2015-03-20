@@ -1152,37 +1152,49 @@
 // Called to obtain the on/off status of the indicated variable
 //
 //////
-	SVariable* iObjProp_getOnOff(SThisCode* thisCode, SVariable* varSet)
+	SVariable* iObjProp_getOnOff(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarSetBeforeReturning)
 	{
 		bool		llOn;
 		bool		error;
 		u32			errorNum;
-		SVariable*	var;
+		SVariable*	result;
 
 
+		//////////
 		// Make sure our environment is sane
-		var = NULL;
-		if (iVariable_isValid(varSet) && iVariable_isTypeLogical(varSet))
-		{
-			// Get the ON/OFF setting as a logical
-			llOn = iiVariable_getAs_bool(thisCode, varSet, false, &error, &errorNum);
-			if (!error)
+		//////
+			result = NULL;
+			if (iVariable_isValid(varSet) && iVariable_isTypeLogical(varSet))
 			{
-				// Okay... are we ON or OFF?
-				if (llOn)
+				// Get the ON/OFF setting as a logical
+				llOn = iiVariable_getAs_bool(thisCode, varSet, false, &error, &errorNum);
+				if (!error)
 				{
-					// ON
-					var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_on, sizeof(cgc_on) - 1);
+					// Okay... are we ON or OFF?
+					if (llOn)
+					{
+						// ON
+						result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_on, sizeof(cgc_on) - 1);
 
-				} else {
-					// OFF
-					var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_on, sizeof(cgc_on) - 1);
+					} else {
+						// OFF
+						result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_on, sizeof(cgc_on) - 1);
+					}
 				}
 			}
-		}
 
+
+		//////////
+		// Optionally clean house
+		//////
+			if (tlDeleteVarSetBeforeReturning)
+				iVariable_delete(thisCode, varSet, true);
+
+
+		//////////
 		// Indicate our result
-		return(var);
+		//////
+			return(result);
 	}
 
 
@@ -1193,74 +1205,86 @@
 // Called to obtain the date type of the indicated variable
 //
 //////
-	SVariable* iObjProp_getDate(SThisCode* thisCode, SVariable* varSet)
+	SVariable* iObjProp_getDate(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarSetBeforeReturning)
 	{
 		s32			lnValue;
 		bool		error;
 		u32			errorNum;
-		SVariable*	var;
+		SVariable*	result;
 
 
+		//////////
 		// Make sure our environment is sane
-		var = NULL;
-		if (iVariable_isValid(varSet) && iVariable_isTypeNumeric(varSet))
-		{
-			// Get the setting as an s32
-			lnValue = iiVariable_getAs_s32(thisCode, varSet, false, &error, &errorNum);
-			if (!error)
+		//////
+			result = NULL;
+			if (iVariable_isValid(varSet) && iVariable_isTypeNumeric(varSet))
 			{
-				// Okay... which one are we?
-				switch (lnValue)
+				// Get the setting as an s32
+				lnValue = iiVariable_getAs_s32(thisCode, varSet, false, &error, &errorNum);
+				if (!error)
 				{
-					default:
-					case _SET_DATE_AMERICAN:
-						var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_american, sizeof(cgc_american) - 1);
-						break;
-					case _SET_DATE_ANSI:
-						var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_ansi, sizeof(cgc_ansi) - 1);
-						break;
-					case _SET_DATE_BRITISH:
-						var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_british, sizeof(cgc_british) - 1);
-						break;
-					case _SET_DATE_DMY:
-						var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_dmy, sizeof(cgc_dmy) - 1);
-						break;
-					case _SET_DATE_FRENCH:
-						var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_french, sizeof(cgc_french) - 1);
-						break;
-					case _SET_DATE_GERMAN:
-						var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_german, sizeof(cgc_german) - 1);
-						break;
-					case _SET_DATE_ITALIAN:
-						var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_italian, sizeof(cgc_italian) - 1);
-						break;
-					case _SET_DATE_JAPAN:
-						var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_japan, sizeof(cgc_japan) - 1);
-						break;
-					case _SET_DATE_LONG:
-						var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_long, sizeof(cgc_long) - 1);
-						break;
-					case _SET_DATE_MDY:
-						var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_mdy, sizeof(cgc_mdy) - 1);
-						break;
-					case _SET_DATE_SHORT:
-						var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_short, sizeof(cgc_short) - 1);
-						break;
-					case _SET_DATE_TAIWAN:
-						var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_taiwan, sizeof(cgc_taiwan) - 1);
-						break;
-					case _SET_DATE_USA:
-						var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_usa, sizeof(cgc_usa) - 1);
-						break;
-					case _SET_DATE_YMD:
-						var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_ymd, sizeof(cgc_ymd) - 1);
-						break;
+					// Okay... which one are we?
+					switch (lnValue)
+					{
+						default:
+						case _SET_DATE_AMERICAN:
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_american, sizeof(cgc_american) - 1);
+							break;
+						case _SET_DATE_ANSI:
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_ansi, sizeof(cgc_ansi) - 1);
+							break;
+						case _SET_DATE_BRITISH:
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_british, sizeof(cgc_british) - 1);
+							break;
+						case _SET_DATE_DMY:
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_dmy, sizeof(cgc_dmy) - 1);
+							break;
+						case _SET_DATE_FRENCH:
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_french, sizeof(cgc_french) - 1);
+							break;
+						case _SET_DATE_GERMAN:
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_german, sizeof(cgc_german) - 1);
+							break;
+						case _SET_DATE_ITALIAN:
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_italian, sizeof(cgc_italian) - 1);
+							break;
+						case _SET_DATE_JAPAN:
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_japan, sizeof(cgc_japan) - 1);
+							break;
+						case _SET_DATE_LONG:
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_long, sizeof(cgc_long) - 1);
+							break;
+						case _SET_DATE_MDY:
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_mdy, sizeof(cgc_mdy) - 1);
+							break;
+						case _SET_DATE_SHORT:
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_short, sizeof(cgc_short) - 1);
+							break;
+						case _SET_DATE_TAIWAN:
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_taiwan, sizeof(cgc_taiwan) - 1);
+							break;
+						case _SET_DATE_USA:
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_usa, sizeof(cgc_usa) - 1);
+							break;
+						case _SET_DATE_YMD:
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_ymd, sizeof(cgc_ymd) - 1);
+							break;
+					}
 				}
 			}
-		}
 
+
+		//////////
+		// Optionally clean house
+		//////
+			if (tlDeleteVarSetBeforeReturning)
+				iVariable_delete(thisCode, varSet, true);
+
+
+		//////////
 		// Indicate our result
-		return(var);
+		//////
+			return(result);
 	}
 
 
@@ -1271,18 +1295,30 @@
 // Called to obtain the integer of the indicated variable
 //
 //////
-	SVariable* iObjProp_getInteger(SThisCode* thisCode, SVariable* varSet)
+	SVariable* iObjProp_getInteger(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarSetBeforeReturning)
 	{
-		SVariable* var;
+		SVariable* result;
 
 
+		//////////
 		// Make sure our environment is sane
-		var = NULL;
-		if (iVariable_isValid(varSet) && iVariable_isTypeNumeric(varSet))
-			var = iVariable_copy(thisCode, varSet, false);
+		//////
+			result = NULL;
+			if (iVariable_isValid(varSet) && iVariable_isTypeNumeric(varSet))
+				result = iVariable_copy(thisCode, varSet, false);
 
+
+		//////////
+		// Optionally clean house
+		//////
+			if (tlDeleteVarSetBeforeReturning)
+				iVariable_delete(thisCode, varSet, true);
+
+
+		//////////
 		// Indicate our result
-		return(var);
+		//////
+			return(result);
 	}
 
 
@@ -1293,7 +1329,7 @@
 // Called to obtain the language setting of the indicated variable
 //
 //////
-	SVariable* iObjProp_getLanguage(SThisCode* thisCode, SVariable* varSet)
+	SVariable* iObjProp_getLanguage(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarSetBeforeReturning)
 	{
 // TODO:  This will need to be implemented once we get resources moved out to loadable DLLs.  We'll look for a vjrres_en.dll, for example
 		return(NULL);
@@ -1307,18 +1343,30 @@
 // Called to obtain the logical setting of the indicated variable
 //
 //////
-	SVariable* iObjProp_getLogical(SThisCode* thisCode, SVariable* varSet)
+	SVariable* iObjProp_getLogical(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarSetBeforeReturning)
 	{
-		SVariable* var;
+		SVariable* result;
 
 
+		//////////
 		// Make sure our environment is sane
-		var = NULL;
-		if (iVariable_isValid(varSet) && iVariable_isTypeLogical(varSet))
-			var = iVariable_copy(thisCode, varSet, false);
+		//////
+			result = NULL;
+			if (iVariable_isValid(varSet) && iVariable_isTypeLogical(varSet))
+				result = iVariable_copy(thisCode, varSet, false);
 
+
+		//////////
+		// Optionally clean house
+		//////
+			if (tlDeleteVarSetBeforeReturning)
+				iVariable_delete(thisCode, varSet, true);
+
+
+		//////////
 		// Indicate our result
-		return(var);
+		//////
+			return(result);
 	}
 
 
@@ -1329,41 +1377,53 @@
 // Called to obtain the logicalx setting of the indicated variable
 //
 //////
-	SVariable* iObjProp_getLogicalX(SThisCode* thisCode, SVariable* varSet)
+	SVariable* iObjProp_getLogicalX(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarSetBeforeReturning)
 	{
 		s32			lnValue;
 		bool		error;
 		u32			errorNum;
-		SVariable*	var;
+		SVariable*	result;
 
 
+		//////////
 		// Make sure our environment is sane
-		var = NULL;
-		if (iVariable_isValid(varSet) && iVariable_isTypeNumeric(varSet))
-		{
-			// Get the setting as an s32
-			lnValue = iiVariable_getAs_s32(thisCode, varSet, false, &error, &errorNum);
-			if (!error)
+		//////
+			result = NULL;
+			if (iVariable_isValid(varSet) && iVariable_isTypeNumeric(varSet))
 			{
-				// Okay... which one are we?
-				switch (lnValue)
+				// Get the setting as an s32
+				lnValue = iiVariable_getAs_s32(thisCode, varSet, false, &error, &errorNum);
+				if (!error)
 				{
-					default:
-					case _LOGICAL_TF:
-						var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_default, sizeof(cgc_default) - 1);
-						break;
-					case _LOGICAL_YN:
-						var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_yn, sizeof(cgc_yn) - 1);
-						break;
-					case _LOGICAL_UD:
-						var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_ud, sizeof(cgc_ud) - 1);
-						break;
+					// Okay... which one are we?
+					switch (lnValue)
+					{
+						default:
+						case _LOGICAL_TF:
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_default, sizeof(cgc_default) - 1);
+							break;
+						case _LOGICAL_YN:
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_yn, sizeof(cgc_yn) - 1);
+							break;
+						case _LOGICAL_UD:
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_ud, sizeof(cgc_ud) - 1);
+							break;
+					}
 				}
 			}
-		}
 
+
+		//////////
+		// Optionally clean house
+		//////
+			if (tlDeleteVarSetBeforeReturning)
+				iVariable_delete(thisCode, varSet, true);
+
+
+		//////////
 		// Indicate our result
-		return(var);
+		//////
+			return(result);
 	}
 
 
@@ -1374,64 +1434,76 @@
 // Called to obtain the reprocess setting of the indicated variable
 //
 //////
-	SVariable* iObjProp_getReprocess(SThisCode* thisCode, SVariable* varSet)
+	SVariable* iObjProp_getReprocess(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarSetBeforeReturning)
 	{
 		s32			lnValue;
 		bool		llAutomatic;
 		bool		error;
 		u32			errorNum;
-		SVariable*	var;
+		SVariable*	result;
 		s8			buffer[32];
 
 
+		//////////
 		// Make sure our environment is sane
-		var = NULL;
-		if (iVariable_isValid(varSet))
-		{
-			if (iVariable_isTypeLogical(varSet))
+		//////
+			result = NULL;
+			if (iVariable_isValid(varSet))
 			{
-				// If .T. then AUTOMATIC, if .F. then it's an error because only logical true is supported here
-				llAutomatic = iiVariable_getAs_bool(thisCode, varSet, false, &error, &errorNum);
-				if (!error)
+				if (iVariable_isTypeLogical(varSet))
 				{
-					// If true, it's valid
-					if (llAutomatic)
+					// If .T. then AUTOMATIC, if .F. then it's an error because only logical true is supported here
+					llAutomatic = iiVariable_getAs_bool(thisCode, varSet, false, &error, &errorNum);
+					if (!error)
 					{
-						// It's set to automatic
-						var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_automatic, sizeof(cgc_automatic) - 1);
+						// If true, it's valid
+						if (llAutomatic)
+						{
+							// It's set to automatic
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_automatic, sizeof(cgc_automatic) - 1);
 
-					} else {
-						// This should never happen
-						iError_signal(thisCode, _ERROR_INTERNAL_ERROR, NULL, false, NULL, false);
-						debug_nop;
-					}
-				}
-
-			} else {
-				// It's set to either a number of attempts or seconds
-				// Get the setting as an s32
-				lnValue = iiVariable_getAs_s32(thisCode, varSet, false, &error, &errorNum);
-				if (!error)
-				{
-					// Positive = seconds, negative = attempts
-					if (lnValue >= 0)
-					{
-						// Seconds
-						sprintf(buffer, "%d %s\0", lnValue, cgc_seconds);
-
-					} else {
-						// Attempts
-						sprintf(buffer, "%d\n", lnValue * (-1));
+						} else {
+							// This should never happen
+							iError_signal(thisCode, _ERROR_INTERNAL_ERROR, NULL, false, NULL, false);
+							debug_nop;
+						}
 					}
 
-					// Create the variable
-					var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, buffer, strlen(buffer));
+				} else {
+					// It's set to either a number of attempts or seconds
+					// Get the setting as an s32
+					lnValue = iiVariable_getAs_s32(thisCode, varSet, false, &error, &errorNum);
+					if (!error)
+					{
+						// Positive = seconds, negative = attempts
+						if (lnValue >= 0)
+						{
+							// Seconds
+							sprintf(buffer, "%d %s\0", lnValue, cgc_seconds);
+
+						} else {
+							// Attempts
+							sprintf(buffer, "%d\n", lnValue * (-1));
+						}
+
+						// Create the variable
+						result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, buffer, strlen(buffer));
+					}
 				}
 			}
-		}
 
+
+		//////////
+		// Optionally clean house
+		//////
+			if (tlDeleteVarSetBeforeReturning)
+				iVariable_delete(thisCode, varSet, true);
+
+
+		//////////
 		// Indicate our result
-		return(var);
+		//////
+			return(result);
 	}
 
 
@@ -1442,39 +1514,51 @@
 // Called to obtain the time setting of the indicated variable
 //
 //////
-	SVariable* iObjProp_getTime(SThisCode* thisCode, SVariable* varSet)
+	SVariable* iObjProp_getTime(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarSetBeforeReturning)
 	{
 		s32			lnValue;
 		bool		error;
 		u32			errorNum;
-		SVariable*	var;
+		SVariable*	result;
 
 
+		//////////
 		// Make sure our environment is sane
-		var = NULL;
-		if (iVariable_isValid(varSet) && iVariable_isTypeNumeric(varSet))
-		{
-			// Get the ON/OFF setting as a logical
-			lnValue = iiVariable_getAs_s32(thisCode, varSet, false, &error, &errorNum);
-			if (!error)
+		//////
+			result = NULL;
+			if (iVariable_isValid(varSet) && iVariable_isTypeNumeric(varSet))
 			{
-				// Okay... are we LOCAL or SYSTEM?
-				switch (lnValue)
+				// Get the ON/OFF setting as a logical
+				lnValue = iiVariable_getAs_s32(thisCode, varSet, false, &error, &errorNum);
+				if (!error)
 				{
-					default:
-					case _TIME_LOCAL:
-						var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_local, sizeof(cgc_local) - 1);
-						break;
+					// Okay... are we LOCAL or SYSTEM?
+					switch (lnValue)
+					{
+						default:
+						case _TIME_LOCAL:
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_local, sizeof(cgc_local) - 1);
+							break;
 
-					case _TIME_SYSTEM:
-						var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_system, sizeof(cgc_system) - 1);
-						break;
+						case _TIME_SYSTEM:
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_system, sizeof(cgc_system) - 1);
+							break;
+					}
 				}
 			}
-		}
 
+
+		//////////
+		// Optionally clean house
+		//////
+			if (tlDeleteVarSetBeforeReturning)
+				iVariable_delete(thisCode, varSet, true);
+
+
+		//////////
 		// Indicate our result
-		return(var);
+		//////
+			return(result);
 	}
 
 
