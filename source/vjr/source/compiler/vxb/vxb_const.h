@@ -268,6 +268,7 @@
 	const u32		_ERROR_CANNOT_BE_ZERO_OR_NEGATIVE				= 87;
 	const u32		_ERROR_UNABLE_TO_AUTOVALIDATE					= 88;
 	const u32		_ERROR_DBF_GENERAL_ERROR						= 89;
+	const u32		_ERROR_CANNOT_BE_ZERO							= 90;
 
 	// Fill ins
 	const u8		cgc_notFoundOrInvalidDataType[]					= "not found or is invalid data type";
@@ -339,6 +340,7 @@
 	const u8		cgcCannotBeZeroOrNegative[]						= "parameter cannot be negative or 0";
 	const u8		cgcUnableToAutoValidate[]						= "unable to auto-validate";
 	const u8		cgcGeneralErrorDbf[]							= "dbf general error";
+	const u8		cgcCannotBeZero[]								= "parameter cannot be 0";
 #else
 	#error Language not specified
 #endif
