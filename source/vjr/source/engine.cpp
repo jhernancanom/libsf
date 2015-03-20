@@ -872,6 +872,8 @@ debug_nop;
 			// Derive whatever this is as a variable
 			//////
 /*SVariable* var;*/
+// TODO:  Working here...
+// TODO:  Need to update this so it accesses all existing variables by reference here
 				     if (lnParamCount == 1)		{	/*var =*/ (*p1 = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
 				else if (lnParamCount == 2)		{	/*var =*/ (*p2 = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
 				else if (lnParamCount == 3)		{	/*var =*/ (*p3 = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}

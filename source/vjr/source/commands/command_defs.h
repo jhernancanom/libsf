@@ -194,9 +194,9 @@ struct SThisCode;
 	SVariable*			function_curdir								(SThisCode* thisCode);
 	SVariable*			function_datetime							(SThisCode* thisCode, SVariable* varYear, SVariable* varMonth, SVariable* varDay, SVariable* varHour, SVariable* varMinute, SVariable* varSecond, SVariable* varMillisecond);
 	SVariable*			function_dtor		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
-	SVariable*			function_empty		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varExpression);
-	bool				function_isempty_common						(SThisCode* thisCode, SVariable* varExpression);
-	SVariable*			function_evl		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varExpression1, SVariable* varExpression2);
+	SVariable*			function_empty		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varExpr);
+	bool				function_isempty_common						(SThisCode* thisCode, SVariable* varExpr);
+	SVariable*			function_evl		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varExpr1, SVariable* varExpr2);
 	SVariable*			function_exp		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			ifunction_numbers_common					(SThisCode* thisCode, SVariable* varNumber1, SVariable* varNumber2, SVariable* varNumber3, u32 tnFunctionType, const u32 tnResultType, bool tlSameInputType, bool tlNoEmptyParam);
 	SVariable*			function_floor		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
@@ -226,15 +226,17 @@ struct SThisCode;
 	SVariable*			function_ncset								(SThisCode* thisCode, SVariable* varIndex, SVariable* varP1, SVariable* varP2, SVariable* varP3, SVariable* varP4, SVariable* varP5, SVariable* varP6);
 	SVariable*			function_occurs								(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack);
 	SVariable*			function_occursc							(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack);
-	SVariable*			function_padc								(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter);
-	SVariable*			function_padl								(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter);
-	SVariable*			function_padr								(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter);
-	SVariable*			ifunction_pad_common						(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter, bool tlPadLeft, bool tlPadRight);
+	SVariable*			function_padc								(SThisCode* thisCode, SVariable* varExpr, SVariable* varResultSize, SVariable* varPadCharacter);
+	SVariable*			function_padl								(SThisCode* thisCode, SVariable* varExpr, SVariable* varResultSize, SVariable* varPadCharacter);
+	SVariable*			function_padr								(SThisCode* thisCode, SVariable* varExpr, SVariable* varResultSize, SVariable* varPadCharacter);
+	SVariable*			ifunction_pad_common						(SThisCode* thisCode, SVariable* varExpr, SVariable* varResultSize, SVariable* varPadCharacter, bool tlPadLeft, bool tlPadRight);
 	SVariable*			function_payment	/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varPayment, SVariable* varInterestRate, SVariable* varPeriods);
 	SVariable*			function_pi			/* Stefano D'Amico */	(SThisCode* thisCode);
 	SVariable*			function_proper								(SThisCode* thisCode, SVariable* varString);
 	SVariable*			function_pv			/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varPayment, SVariable* varInterestRate, SVariable* varPeriods);
-	SVariable*			function_ranger		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varExpression, SVariable* varMin, SVariable* varMax);
+	SVariable*			function_ranger		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varExpr, SVariable* varMin, SVariable* varMax);
+	SVariable*			function_ranger2							(SThisCode* thisCode, SVariable* varExpr, SVariable* varMin, SVariable* varMax);
+	SVariable*			ifunction_ranger_common						(SThisCode* thisCode, SVariable* varExpr, SVariable* varMin, SVariable* varMax, bool* tlRanged);
 	SVariable*			function_rat								(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence);
 	SVariable*			function_ratc								(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence);
 	SVariable*			function_replicate							(SThisCode* thisCode, SVariable* varString, SVariable* varCount);
@@ -412,6 +414,7 @@ struct SThisCode;
 		{	_ICODE_PROPER,			1,			(uptr)&function_proper,			1,				1,				&gsSourceLight_proper[0]		},
 		{	_ICODE_PV,				1,			(uptr)&function_pv,				3,				3,				&gsSourceLight_pv[0]			},	// PV() by Stefano D'Amico, VJr 0.56, Mar.18.2015
 		{	_ICODE_RANGER,			1,			(uptr)&function_ranger,			3,				3,				&gsSourceLight_ranger[0]		},	// RANGER() by Stefano D'Amico, VJr 0.56, Mar.14.2015
+		{	_ICODE_RANGER2,			1,			(uptr)&function_ranger2,		3,				3,				&gsSourceLight_ranger2[0]		},
 		{	_ICODE_RAT,				1,			(uptr)&function_rat,			2,				3,				&gsSourceLight_rat[0]			},
 		{	_ICODE_RATC,			1,			(uptr)&function_ratc,			2,				3,				&gsSourceLight_ratc[0]			},
 		{	_ICODE_RED,				1,			(uptr)&function_red,			1,				1,				&gsSourceLight_red[0]			},

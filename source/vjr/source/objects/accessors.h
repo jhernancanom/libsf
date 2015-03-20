@@ -475,7 +475,9 @@ struct SBasePropMap;
 	const s8		cgc_setNcsetOptimizeTableWrites[]						= "ncsetOptimizeTableWrites";
 	const s8		cgc_setNcsetOptimizeVariables[]							= "ncsetOptimizeVariables";
 	const s8		cgc_setNcsetSignSign2[]									= "ncsetSignSign2";
+	const s8		cgc_setPoint[]											= "point";
 	const s8		cgc_setReprocess[]										= "reprocess";
+	const s8		cgc_setSeparator[]										= "separator";
 	const s8		cgc_setReprocessAttempts[]								= "reprocessAttempts";
 	const s8		cgc_setReprocessInterval[]								= "reprocessInterval";
 	const s8		cgc_setSloppyPrinting[]									= "sloppyPrinting";
@@ -865,18 +867,20 @@ struct SBasePropMap;
 	const u32		_INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES					= 371;
 	const u32		_INDEX_SET_NCSET_OPTIMIZE_VARIABLES						= 372;
 	const u32		_INDEX_SET_NCSET_SIGN_SIGN2								= 373;
-	const u32		_INDEX_SET_REPROCESS									= 374;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 375;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
-	const u32		_INDEX_SET_REPROCESSINTERVAL							= 376;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
-	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 377;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_SLOPPY_PRINTING								= 378;
-	const u32		_INDEX_SET_STICKY_PARAMETERS							= 379;
-	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 380;
-	const u32		_INDEX_SET_TABLE_OBJECTS								= 381;
-	const u32		_INDEX_SET_TALK											= 382;
-	const u32		_INDEX_SET_TIME											= 383;
-	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 384;
-	const u32		_INDEX_SET_VARIABLES_FIRST								= 385;
+	const u32		_INDEX_SET_POINT										= 374;
+	const u32		_INDEX_SET_REPROCESS									= 375;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 376;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
+	const u32		_INDEX_SET_REPROCESSINTERVAL							= 377;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
+	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 378;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_SEPARATOR									= 379;
+	const u32		_INDEX_SET_SLOPPY_PRINTING								= 380;
+	const u32		_INDEX_SET_STICKY_PARAMETERS							= 381;
+	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 382;
+	const u32		_INDEX_SET_TABLE_OBJECTS								= 383;
+	const u32		_INDEX_SET_TALK											= 384;
+	const u32		_INDEX_SET_TIME											= 385;
+	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 386;
+	const u32		_INDEX_SET_VARIABLES_FIRST								= 387;
 
 
 	// Basic setters and getters
@@ -908,6 +912,7 @@ struct SBasePropMap;
 	bool					iObjProp_setLogicalX					(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
 	bool					iObjProp_setReprocess					(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
 	bool					iObjProp_setTime						(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
+	bool					iObjProp_setCharacter1					(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
 
 	// Used for SET("xyz")
 	SVariable* 				iObjProp_getOnOff						(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarSetBeforeReturning);
@@ -930,6 +935,7 @@ struct SBasePropMap;
 	// Note:  The s32 value returned will be a _LOGICAL_* or _LOGICALX_* value.  To test for .T., use (x != _LOGICAL_FALSE).
 	s32						iObjProp_get_logical_fromLogicalConstants(SThisCode* thisCode, SObject* obj, s32 tnIndex);
 	SVariable*				iObjProp_get_object						(SThisCode* thisCode, SObject* obj, s32 tnIndex);
+	s8						iObjProp_get_s8_direct					(SThisCode* thisCode, SObject* obj, s32 tnIndex);
 	s32						iObjProp_get_s32_direct					(SThisCode* thisCode, SObject* obj, s32 tnIndex);
 	SBgra					iObjProp_get_sbgra_direct				(SThisCode* thisCode, SObject* obj, s32 tnIndex);
 
@@ -1392,10 +1398,12 @@ struct SBasePropMap;
 		{	_INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES,			_ICODE_NCSETOPTIMIZETABLEWRITES,	cgc_setNcsetOptimizeTableWrites,	sizeof(cgc_setNcsetOptimizeTableWrites) - 1,		_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=field update content is examined before writing out, and if it hasn't changed it is not written, .f.=any content updated, even identical content as before, is always written
 		{	_INDEX_SET_NCSET_OPTIMIZE_VARIABLES,			_ICODE_NCSETOPTIMIZEVARIABLES,		cgc_setNcsetOptimizeVariables,		sizeof(cgc_setNcsetOptimizeVariables) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=oft-used variables are moved to the top of the linked list, .f.=variables always persist in their "as defined" order
 		{	_INDEX_SET_NCSET_SIGN_SIGN2,					_ICODE_NCSETSIGNSIGN2,				cgc_setNcsetSignSign2,				sizeof(cgc_setNcsetSignSign2) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=sign() and sign2() return floating point values if floating point input, .f.=always returns integer
+		{	_INDEX_SET_POINT,								_ICODE_POINT,						cgc_setPoint,						sizeof(cgc_setPoint) - 1,							_VAR_TYPE_CHARACTER,		0, 0, 0,		(uptr)&cgcPointChar[0]			,NULL	},	// One bye separator for the decimal point in numbers
 		{	_INDEX_SET_REPROCESS,							_ICODE_REPROCESS,					cgc_setReprocess,					sizeof(cgc_setReprocess) - 1,						_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=Reprocessing is set to automatic, .f. is not supported, if it's not .t. it must be signed numeric with negative indicating attempts, and positive indicating seconds
 		{	_INDEX_SET_REPROCESSATTEMPTS,					_ICODE_REPROCESSATTEMPTS,			cgc_setReprocessAttempts,			sizeof(cgc_setReprocessAttempts) - 1,				_VAR_TYPE_S32,				0, 0, 0,		30								,NULL	},	// Number of reprocessing attempts when set to automatic, typically 30 for 30 seconds of retries after pausing 1 second between each
 		{	_INDEX_SET_REPROCESSINTERVAL,					_ICODE_REPROCESSINTERVAL,			cgc_setReprocessInterval,			sizeof(cgc_setReprocessInterval) - 1,				_VAR_TYPE_S32,				0, 0, 0,		30								,NULL	},	// Number of milliseconds to pause between retry attempts, typically 1000
 		{	_INDEX_SET_REPROCESS_SYSTEM,					_ICODE_REPROCESSSYSTEM,				cgc_setReprocess,					sizeof(cgc_setReprocess) - 1,						_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=Reprocessing is set to automatic, .f. is not supported, if it's not .t. it must be signed numeric with negative indicating attempts, and positive indicating seconds
+		{	_INDEX_SET_SEPARATOR,							_ICODE_SEPARATOR,					cgc_setSeparator,					sizeof(cgc_setSeparator) - 1,						_VAR_TYPE_CHARACTER,		0, 0, 0,		(uptr)&cgcSeparatorChar[0]		,NULL	},	// One bye separator for the 1000s place in numbers
 		{	_INDEX_SET_SLOPPY_PRINTING,						_ICODE_SLOPPYPRINTING,				cgc_setSloppyPrinting,				sizeof(cgc_setSloppyPrinting) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=items outside of printer margins do not throw errors, but are simply clipped, .f.=items outside of printer margins throw errors
 		{	_INDEX_SET_STICKY_PARAMETERS,					_ICODE_STICKYPARAMETERS,			cgc_setStickyParameters,			sizeof(cgc_setStickyParameters) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=allows parameters for functions to maintain their last value allowing access after use, and not requiring initialization , .f.=parameters are reset to logical .f.
 		{	_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS,				_ICODE_TABLEEQUALASSIGNMENTS,		cgc_setTableObjects,				sizeof(cgc_setTableObjects) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=instead of REPLACE cField WITH .t., cField = .t. can be used, .f.=requires REPLACE or UPDATE
@@ -1404,7 +1412,7 @@ struct SBasePropMap;
 		{	_INDEX_SET_TIME,								_ICODE_TIME,						cgc_setTime,						sizeof(cgc_setTime) - 1,							_VAR_TYPE_S32,				0, 0, 0,		_TIME_LOCAL						,NULL	},	// Refer to _TIME_* constants, either uses local time (adjusted for timezone) or system time (raw time) for all time references.
 		{	_INDEX_SET_UNLOAD_RECEIVES_PARAMS,				_ICODE_UNLOADRECEIVESPARAMS,		cgc_setUnloadReceivesParams,		sizeof(cgc_setUnloadReceivesParams) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=Unload() events receive the same parameters that were passed to init(), .f.=(default) Unload() does not receive any parameters
 		{	_INDEX_SET_VARIABLES_FIRST,						_ICODE_VARIABLESFIRST,				cgc_setVariablesFirst,				sizeof(cgc_setVariablesFirst) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=memory variables are searched first without m., .f.=the current alias is searched first, and then memory variables
-		{	0,												0,									NULL,							0,											0,						    0, 0, 0,		0								,NULL	}
+		{	0,												0,									NULL,								0,													0,						    0, 0, 0,		0								,NULL	}
 	};
 	const s32 gsProps_masterSize = sizeof(gsProps_master) / sizeof(SBasePropMap) - 1;
 
@@ -3572,10 +3580,12 @@ struct SBasePropMap;
 		{	_INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES,		0, (uptr)&iObjProp_setLogical,		(uptr)&iObjProp_getLogical },	// bool
 		{	_INDEX_SET_NCSET_OPTIMIZE_VARIABLES,		0, (uptr)&iObjProp_setLogical,		(uptr)&iObjProp_getLogical },	// bool
 		{	_INDEX_SET_NCSET_SIGN_SIGN2,				0, (uptr)&iObjProp_setLogical,		(uptr)&iObjProp_getLogical },	// bool
+		{	_INDEX_SET_POINT,							0, (uptr)&iObjProp_setCharacter1,	0	},		// character
 		{	_INDEX_SET_REPROCESS,						0, (uptr)&iObjProp_setReprocess,	(uptr)&iObjProp_getReprocess },	// bool (automatic) or s32 (negative attempts, positive seconds)
 		{	_INDEX_SET_REPROCESSATTEMPTS,				0, (uptr)&iObjProp_setInteger,		(uptr)&iObjProp_getInteger },	// s32
 		{	_INDEX_SET_REPROCESSINTERVAL,				0, (uptr)&iObjProp_setInteger,		(uptr)&iObjProp_getInteger },	// s32
 		{	_INDEX_SET_REPROCESS_SYSTEM,				0, (uptr)&iObjProp_setReprocess,	(uptr)&iObjProp_getReprocess },	// bool (automatic) or s32 (negative attempts, positive seconds)
+		{	_INDEX_SET_SEPARATOR,						0, (uptr)&iObjProp_setCharacter1,	0	},		// character
 		{	_INDEX_SET_SLOPPY_PRINTING,					0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
 		{	_INDEX_SET_STICKY_PARAMETERS,				0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
 		{	_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS,			0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool

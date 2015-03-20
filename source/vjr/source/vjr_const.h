@@ -233,9 +233,11 @@ typedef SEM**		SEMpp;
 	#define propGet_settings_ncset_optimizeTableWrites(obj)			propGet_settings_ncset(obj, _INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES)
 	#define propGet_settings_ncset_optimizeVariables(obj)			propGet_settings_ncset(obj, _INDEX_SET_NCSET_OPTIMIZE_VARIABLES)
 	#define propGet_settings_ncset_signSign2(obj)					propGet_settings_ncset(obj, _INDEX_SET_NCSET_SIGN_SIGN2)
+	#define propGet_settings_Point(obj)								iObjProp_get_character			(thisCode, obj, _INDEX_SET_POINT)
 	#define propGet_settings_Reprocess(obj)							iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_REPROCESS)	// negative attempts, positive seconds
 	#define propGet_settings_ReprocessAttempts(obj)					iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_REPROCESSATTEMPTS)
 	#define propGet_settings_ReprocessInterval(obj)					iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_REPROCESSINTERVAL)
+	#define propGet_settings_Separator(obj)							iObjProp_get_character			(thisCode, obj, _INDEX_SET_SEPARATOR)
 	#define propGet_settings_Talk(obj)								(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_TALK)					!= _LOGICAL_FALSE)
 	#define propGet_settings_VariablesFirst(obj)					(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_VARIABLES_FIRST)		!= _LOGICAL_FALSE)
 
@@ -915,6 +917,8 @@ typedef SEM**		SEMpp;
 	const u8			cgc_defaultNumeric[10]				= { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00 };	// Numeric values are internally stored as 80-bit BCDs, 18 significant digits with sign
 	const u8			cgc_defaultDate[]					= "        ";
 	const u8			cgc_spaceText[]						= " ";
+	const u8			cgcPointChar[]						= ".";
+	const u8			cgcSeparatorChar[]					= ",";
 
 
 

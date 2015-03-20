@@ -272,6 +272,7 @@ struct SThisCode;
 	void					iVariable_politelyDeleteChain				(SThisCode* thisCode, SVariable** root, bool tlDeleteSelf);
 	void					iVariable_politelyDeleteChain_callback		(SLLCallback* cb);
 	bool					iiVariable_getAs_bool						(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
+	s8						iiVariable_getAs_s8							(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	s16						iiVariable_getAs_s16						(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	s32						iiVariable_getAs_s32						(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	u16						iiVariable_getAs_u16						(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);

@@ -2516,20 +2516,29 @@
 //    ? EMPTY("  ")	&& Display .T.
 //    ? EMPTY(0.0)	&& Display .T.
 //////
-	SVariable* function_empty(SThisCode* thisCode, SVariable* varExpression)
+	SVariable* function_empty(SThisCode* thisCode, SVariable* varExpr)
 	{
 		bool		llEmpty;
 		SVariable*	result;
 
-		//Is Empty?
-		llEmpty = function_isempty_common(thisCode, varExpression);
+
+		//////////
+		// Verify the expression is correct
+		//////
+			if (!iVariable_isValid(varExpr))
+			{
+				iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_compRelated(thisCode, varExpr), false);
+				return(NULL);
+			}
+
 
 		//////////
 		// Create and populate the return variable
 		//////
-			result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL, (cs8*)((llEmpty) ? &_LOGICAL_TRUE : &_LOGICAL_FALSE), 1);
+			llEmpty	= function_isempty_common(thisCode, varExpr);
+			result	= iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL, (cs8*)((llEmpty) ? &_LOGICAL_TRUE : &_LOGICAL_FALSE), 1);
 			if (!result)
-				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_compRelated(thisCode, varExpression), false);
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_compRelated(thisCode, varExpr), false);
 
 
 		//////////
@@ -2538,90 +2547,112 @@
 			return(result);
 	}
 
-	bool function_isempty_common(SThisCode* thisCode, SVariable* varExpression)
+	bool function_isempty_common(SThisCode* thisCode, SVariable* varExpr)
 	{
+		s8			c, cPointChar;
 		u32			lnI;
 		bool		llEmpty;
-
-
-		//////////
-		// Is the parameter valid?
-		//////
-			if (!iVariable_isValid(varExpression))
-			{
-				iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_compRelated(thisCode, varExpression), false);
-				return(NULL);
-			}
+		SVariable*	varPoint;
 
 
 		//////////
 		// Determine what we're evaluating
 		//////
 			llEmpty = true;
-			switch (varExpression->varType)
+			switch (varExpr->varType)
 			{
+				case _VAR_TYPE_NULL:
+					llEmpty = true;
+					break;
+
 				case _VAR_TYPE_DATE:	// Note:  Dates are stored internally as YYYYMMDD, so they can be directly compared
 				case _VAR_TYPE_CHARACTER:
 					// Character expressions must have no length, or be completely blank to be considered empty
-					for (lnI = 0; lnI < (u32)varExpression->value.length; lnI++)
-					{
-						// If we encounter anything other than spaces, not empty
-						if (varExpression->value.data[lnI] != 32)
+
+					//////////
+					// Iterate through each character
+					//////
+						for (lnI = 0; lnI < (u32)varExpr->value.length; lnI++)
 						{
-							llEmpty = false;
-							break;
+							// If we encounter anything other than spaces, not empty
+							if (varExpr->value.data[lnI] != 32)
+							{
+								llEmpty = false;
+								break;
+							}
 						}
-					}
-					break;
+						break;
+
 
 				case _VAR_TYPE_NUMERIC:
-					// Numerics are stored as numbers, possibly with a minus sign and a period
-					for (lnI = 0; lnI < (u32)varExpression->value.length; lnI++)
-					{
-						// If we encounter a non-space, or non-zero, not empty
-						if (varExpression->value.data[lnI] != 32 && varExpression->value.data[lnI] != '0')
+					// Numerics are stored as numbers, possibly with a minus sign and the point separator
+
+					//////////
+					// Grab the point character
+					//////
+						if ((varPoint = propGet_settings_Point(_settings)))
 						{
-							llEmpty = false;
-							break;
+							// Extract it
+							cPointChar	= varPoint->value.data_s8[0];
+							iVariable_delete(thisCode, varPoint, true);
+
+						} else {
+							// Default to the standard period
+							cPointChar	= cgcPointChar[0];
 						}
-					}
-					break;
+
+
+					//////////
+					// Iterate through
+					//////
+						for (lnI = 0; lnI < (u32)varExpr->value.length; lnI++)
+						{
+							// If we encounter a non-space, non-zero, or a non-point character, it's then not empty
+							c = varExpr->value.data[lnI];
+							if (c != 32 && c != '0' && c != cPointChar)
+							{
+								llEmpty = false;
+								break;
+							}
+						}
+						break;
+
 
 				case _VAR_TYPE_DATETIME:
-					llEmpty = ((varExpression->value.data_dt->julian == 0) && (varExpression->value.data_dt->seconds == 0.0f));
+					llEmpty = ((varExpr->value.data_dt->julian == 0) && (varExpr->value.data_dt->seconds == 0.0f));
 					break;
 
 				case _VAR_TYPE_LOGICAL:
-					llEmpty = !(varExpression->value.data_s8[0] == _LOGICAL_TRUE);
+					llEmpty = !(varExpr->value.data_s8[0] == _LOGICAL_TRUE);
 					break;
 
 				case _VAR_TYPE_S8:
 				case _VAR_TYPE_U8:
-					llEmpty = (*varExpression->value.data_u8 == 0);
+					llEmpty = (*varExpr->value.data_u8 == 0);
 					break;
 
 				case _VAR_TYPE_S16:
 				case _VAR_TYPE_U16:
-					llEmpty = (*varExpression->value.data_u16 == 0);
+					llEmpty = (*varExpr->value.data_u16 == 0);
 					break;
 
 				case _VAR_TYPE_S32:
 				case _VAR_TYPE_U32:
-					llEmpty = (*varExpression->value.data_u32 == 0);
+					llEmpty = (*varExpr->value.data_u32 == 0);
 					break;
 
 				case _VAR_TYPE_S64:
 				case _VAR_TYPE_U64:
 				case _VAR_TYPE_CURRENCY:
-					llEmpty = (*varExpression->value.data_u64 == 0);
+					llEmpty = (*varExpr->value.data_u64 == 0);
 					break;
 
 				case _VAR_TYPE_F32:
-					llEmpty = (*varExpression->value.data_f32 == 0.0f);
+					llEmpty = (*varExpr->value.data_f32 == 0.0f);
 					break;
 
 				case _VAR_TYPE_F64:
-					llEmpty = (*varExpression->value.data_f64 == 0.0);
+					llEmpty = (*varExpr->value.data_f64 == 0.0);
 					break;
 
 //				case _VAR_TYPE_BI:
@@ -2636,6 +2667,7 @@
 					iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
 					return(NULL);
 			}
+
 
 		//////////
 		// Signify our result
@@ -2658,6 +2690,7 @@
 //     Mar.20.2015
 //////
 // Change log:
+//     Mar.20.2015 - Some refactoring by Rick C. Hodgin
 //     Mar.20.2015 - Initial creation by Stefano D'Amico
 //////
 // Parameters:
@@ -2669,33 +2702,42 @@
 //    EVL( ) returns p1 if it does not evaluate to an empty value; otherwise, it returns p2.
 //////
 // Example:
-//    ? EMPTY("  ", "None")	&& Display "None"
+//    ? EVL("  ", "None")	&& Display "None"
 //////
-	SVariable* function_evl(SThisCode* thisCode, SVariable* varExpression1, SVariable* varExpression2)
+	SVariable* function_evl(SThisCode* thisCode, SVariable* varExpr1, SVariable* varExpr2)
 	{
 		bool		llEmpty;
 		SVariable*	result;
 
-		llEmpty = function_isempty_common(thisCode, varExpression1);
 
-		if (llEmpty)
-		{
-			// Copy whatever it already is
-			result = iVariable_create(thisCode, varExpression2->varType, NULL);
+		//////////
+		// Verify p1 is correct
+		//////
+			if (!iVariable_isValid(varExpr1))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varExpr1), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Verify p2 is correct
+		//////
+			if (!iVariable_isValid(varExpr2))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_compRelated(thisCode, varExpr2), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Create our result
+		//////
+			llEmpty	= function_isempty_common(thisCode, varExpr1);
+			result	= iVariable_copy(thisCode, ((llEmpty) ? varExpr2 : varExpr1), false);
 			if (!result)
-				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_compRelated(thisCode, varExpression1), false);
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_compRelated(thisCode, ((llEmpty) ? varExpr2 : varExpr1)), false);
 			
-			iDatum_duplicate(&result->value, &varExpression2->value);
-
-		} else {
-			// Copy whatever it already is
-			result = iVariable_create(thisCode, varExpression1->varType, NULL);
-			if (!result)
-				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_compRelated(thisCode, varExpression2), false);
-
-			iDatum_duplicate(&result->value, &varExpression1->value);
-
-		}
 
 		//////////
 		// Signify our result
@@ -4888,22 +4930,22 @@
 //                         then padded to its destination size. If the string is larger than
 //                         the destination, then it remains as it is.
 //////
-	SVariable* function_padc(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter)
+	SVariable* function_padc(SThisCode* thisCode, SVariable* varExpr, SVariable* varResultSize, SVariable* varPadCharacter)
 	{
-		return(ifunction_pad_common(thisCode, varExpression, varResultSize, varPadCharacter, true, true));
+		return(ifunction_pad_common(thisCode, varExpr, varResultSize, varPadCharacter, true, true));
 	}
 
-	SVariable* function_padl(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter)
+	SVariable* function_padl(SThisCode* thisCode, SVariable* varExpr, SVariable* varResultSize, SVariable* varPadCharacter)
 	{
-		return(ifunction_pad_common(thisCode, varExpression, varResultSize, varPadCharacter, true, false));
+		return(ifunction_pad_common(thisCode, varExpr, varResultSize, varPadCharacter, true, false));
 	}
 
-	SVariable* function_padr(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter)
+	SVariable* function_padr(SThisCode* thisCode, SVariable* varExpr, SVariable* varResultSize, SVariable* varPadCharacter)
 	{
-		return(ifunction_pad_common(thisCode, varExpression, varResultSize, varPadCharacter, false, true));
+		return(ifunction_pad_common(thisCode, varExpr, varResultSize, varPadCharacter, false, true));
 	}
 
-	SVariable* ifunction_pad_common(SThisCode* thisCode, SVariable* varExpression, SVariable* varResultSize, SVariable* varPadCharacter, bool tlPadLeft, bool tlPadRight)
+	SVariable* ifunction_pad_common(SThisCode* thisCode, SVariable* varExpr, SVariable* varResultSize, SVariable* varPadCharacter, bool tlPadLeft, bool tlPadRight)
 	{
 		u32			errorNum;
 		s32			lnI, lnResultSize, lnCopyStart, lnPadLeftStopper, lnPadRightStart, lnPadRightStopper;
@@ -4925,7 +4967,7 @@
 		//////////
 		// Parameter 1 must be valid
 		//////
-			if (!iVariable_isValid(varExpression))
+			if (!iVariable_isValid(varExpr))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, NULL, false);
 				return(NULL);
@@ -4972,7 +5014,7 @@
 		//////////
 		// Create the return variable
 		//////
-			tempVar = iVariable_convertForDisplay(thisCode, varExpression);
+			tempVar = iVariable_convertForDisplay(thisCode, varExpr);
 
 			// If it wasn't created, or it's already as long or longer than its target, return it
 			if (!tempVar || tempVar->value.length >= lnResultSize)
@@ -5262,11 +5304,11 @@
 //     Mar.14.2015
 //////
 // Change log:
-//     Mar.14.2015 - GitHub commit by Rick C. Hodgin, refactoring into varExpression type
+//     Mar.14.2015 - GitHub commit by Rick C. Hodgin, refactoring into varExpr type
 //     Mar.13.2015 - Initial creation by Stefano D'Amico
 //////
 // Parameters:
-//    varExpression	-- Specifies the expression to valuate
+//    varExpr	-- Specifies the expression to valuate
 //    varMin		-- Specifies the min range
 //    varMin		-- Specifies the max range
 //
@@ -5281,7 +5323,37 @@
 //	x = RANGER(x, 20, 80)          && Can be used as assignment
 //	? x							   && Displays 20
 //////
-	SVariable* function_ranger(SThisCode* thisCode, SVariable* varExpression, SVariable* varMin, SVariable* varMax)
+	SVariable* function_ranger(SThisCode* thisCode, SVariable* varExpr, SVariable* varMin, SVariable* varMax)
+	{
+		return(ifunction_ranger_common(thisCode, varExpr, varMin, varMax, NULL));
+	}
+
+	SVariable* function_ranger2(SThisCode* thisCode, SVariable* varExpr, SVariable* varMin, SVariable* varMax)
+	{
+		bool		llRanged;
+		SVariable*	result;
+
+
+		//////////
+		// Range the result
+		//////
+			result = ifunction_ranger_common(thisCode, varExpr, varMin, varMax, &llRanged);
+
+
+		//////////
+		// If ranged, update varExpr to the new range
+		//////
+			if (llRanged && result && iVariable_isValid(varExpr))
+				iVariable_set(thisCode, varExpr, result);
+
+
+		//////////
+		// Indicate our result
+		//////
+			return(result);
+	}
+
+	SVariable* ifunction_ranger_common(SThisCode* thisCode, SVariable* varExpr, SVariable* varMin, SVariable* varMax, bool* tlRanged)
 	{
 		SVariable*	tempMin;
 		SVariable*	tempMax;
@@ -5293,9 +5365,9 @@
 		//////////
 		// Test Parameter 1
 		//////
-			if (!iVariable_isValid(varExpression))
+			if (!iVariable_isValid(varExpr))
 			{
-				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varExpression), false);
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varExpr), false);
 				return(NULL);
 			}
 
@@ -5323,13 +5395,13 @@
 		//////////
 		// They must be the same type
 		//////
-			if (iVariable_fundamentalType(thisCode, varExpression) != iVariable_fundamentalType(thisCode, varMin))
+			if (iVariable_fundamentalType(thisCode, varExpr) != iVariable_fundamentalType(thisCode, varMin))
 			{
 				// Operand mismatch
 				iError_reportByNumber(thisCode, _ERROR_DATA_TYPE_MISMATCH, iVariable_compRelated(thisCode, varMin), false);
 				return(NULL);
 			}	
-			if (iVariable_fundamentalType(thisCode, varExpression) != iVariable_fundamentalType(thisCode, varMax))
+			if (iVariable_fundamentalType(thisCode, varExpr) != iVariable_fundamentalType(thisCode, varMax))
 			{
 				// Operand mismatch
 				iError_reportByNumber(thisCode, _ERROR_DATA_TYPE_MISMATCH, iVariable_compRelated(thisCode, varMax), false);
@@ -5340,9 +5412,9 @@
 		//////////
 		// Initialize
 		//////
-			tempMin		= NULL;
-			tempMax		= NULL;
-			tempResult1	= NULL;
+			tempMin			= NULL;
+			tempMax			= NULL;
+			tempResult1		= NULL;
 			tempResult2		= NULL;
 
 
@@ -5368,7 +5440,7 @@
 			// RANGER() executed as "result = MIN(MAX(xVar, xMin), xMax))"
 			//////
 				// Compute first part of result
-				if ((tempResult1 = function_max(thisCode, varExpression, tempMin)) == NULL)
+				if ((tempResult1 = function_max(thisCode, varExpr, tempMin)) == NULL)
 				{
 					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_compRelated(thisCode, varMax), false);
 					break;
@@ -5378,16 +5450,16 @@
 				if ((tempResult2 = function_min(thisCode, tempResult1, tempMax)) == NULL)
 					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_compRelated(thisCode, varMax), false);
 
-				// Force the result into the same form as varExpression originally was
+				// Force the result into the same form as varExpr originally was
 				if (tempResult2)
 				{
 					// Create one of the same type, and populate
-					result = iVariable_create(thisCode, varExpression->varType, NULL);
+					result = iVariable_create(thisCode, varExpr->varType, NULL);
 					if (result)
 					{
 						// Convert to the target type for propagation through the expression
 						if (!iVariable_setNumeric_toDestinationType(thisCode, result, tempResult2))
-							iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_compRelated(thisCode, varExpression), false);
+							iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_compRelated(thisCode, varExpr), false);
 					}
 				}
 

@@ -782,6 +782,7 @@
 	const s32		_ICODE_PV                                       = 1316;
 	const s32		_ICODE_QUARTER                                  = 1317;
 	const s32		_ICODE_RANGER									= 1448;
+	const s32		_ICODE_RANGER2									= 1460;
 	const s32		_ICODE_RAISEEVENT                               = 1318;
 	const s32		_ICODE_RAND                                     = 1319;
 	const s32		_ICODE_RATC                                     = 1320;
@@ -916,7 +917,7 @@
 	// alp				= 1453				blu				= 1454
 	// grn				= 1455				red				= 1456
 	// malp				= 1457				grayscale		= 1458
-	// colorize			= 1459
+	// colorize			= 1459				ranger2			= 1460
 
 // Temporarily added until the processing engine is coded
 	const s32		_ICODE_CONCATENATE								= 1900;
@@ -1672,6 +1673,7 @@
 	const s8		cgc_pv[]										= "pv";
 	const s8		cgc_quarter[]									= "quarter";
 	const s8		cgc_ranger[]									= "ranger";
+	const s8		cgc_ranger2[]									= "ranger2";
 	const s8		cgc_raiseevent[]								= "raiseevent";
 	const s8		cgc_rand[]										= "rand";
 	const s8		cgc_ratc[]										= "ratc";

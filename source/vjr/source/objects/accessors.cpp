@@ -1149,6 +1149,46 @@
 
 //////////
 //
+// Called to set the expression to the left-most character of the input character expression
+//
+//////
+	bool iObjProp_setCharacter1(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet)
+	{
+		bool llResult;
+
+
+		//////////
+		// Validate the variable is character
+		//////
+			llResult = false;
+			if (iVariable_isTypeCharacter(varNew) && varNew->value.length >= 1)
+			{
+				// Set the value
+				iDatum_duplicate(&varSet->value, varNew->value.data_cs8, 1);
+
+				// Indicate success
+				llResult = true;
+			}
+
+
+		//////////
+		// Optionally clean house
+		//////
+			if (tlDeleteVarNewAfterSet)
+				iVariable_delete(thisCode, varNew, true);
+
+
+		//////////
+		// Indicate our status
+		//////
+			return(llResult);
+	}
+
+
+
+
+//////////
+//
 // Called to obtain the on/off status of the indicated variable
 //
 //////
@@ -1974,6 +2014,41 @@ debug_break;
 
 //////////
 //
+// Called to get the s8 from the indicated object directly
+//
+//////
+	s8 iObjProp_get_s8_direct(SThisCode* thisCode, SObject* obj, s32 tnIndex)
+	{
+		bool		error;
+		s32			lnResult;
+		u32			errorNum;
+		SVariable*	var;
+
+
+		// Make sure the environment is sane
+		if (obj)
+		{
+			// Grab the variable associated with this object's property
+			var = iObjProp_get_variable_byIndex(thisCode, obj, tnIndex);
+			if (var)
+			{
+				// Try to get the value
+				lnResult = iiVariable_getAs_s8(thisCode, var, false, &error, &errorNum);
+
+				// If we got it...
+				if (!error)
+					return(lnResult);	// ...return the value
+			}
+		}
+		// If we get here, failure
+		return(-1);
+	}
+
+
+
+
+//////////
+//
 // Called to get the s32 from the indicated object directly
 //
 //////
@@ -1982,7 +2057,7 @@ debug_break;
 		bool		error;
 		s32			lnResult;
 		u32			errorNum;
-		SVariable* var;
+		SVariable*	var;
 
 
 		// Make sure the environment is sane
