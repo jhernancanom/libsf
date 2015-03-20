@@ -354,6 +354,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_empty[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_exp[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}

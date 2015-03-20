@@ -194,6 +194,7 @@ struct SThisCode;
 	SVariable*			function_curdir								(SThisCode* thisCode);
 	SVariable*			function_datetime							(SThisCode* thisCode, SVariable* varYear, SVariable* varMonth, SVariable* varDay, SVariable* varHour, SVariable* varMinute, SVariable* varSecond, SVariable* varMillisecond);
 	SVariable*			function_dtor		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
+	SVariable*			function_empty		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varExpression);
 	SVariable*			function_exp		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			ifunction_numbers_common					(SThisCode* thisCode, SVariable* varNumber1, SVariable* varNumber2, SVariable* varNumber3, u32 tnFunctionType, const u32 tnResultType, bool tlSameInputType);
 	SVariable*			function_floor		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
@@ -371,6 +372,7 @@ struct SThisCode;
 		{	_ICODE_CURDIR,			1,			(uptr)&function_curdir,			0,				0,				&gsSourceLight_curdir[0]		},
 		{	_ICODE_DATETIME,		1,			(uptr)&function_datetime,		0,				7,				&gsSourceLight_datetime[0]		},
 		{	_ICODE_DTOR,			1,			(uptr)&function_dtor,			1,				1,				&gsSourceLight_dtor[0]			},	// DTOR() by Stefano D'Amico, VJr 0.56, Mar.16.2015
+		{	_ICODE_EMPTY,			1,			(uptr)&function_empty,			1,				1,				&gsSourceLight_empty[0]			},	// EMPTY() by Stefano D'Amico, VJr 0.56, Mar.19.2015
 		{	_ICODE_EXP,				1,			(uptr)&function_exp,			1,				1,				&gsSourceLight_exp[0]			},	// EXP() by Stefano D'Amico, VJr 0.56, Mar.15.2015
 		{	_ICODE_FLOOR,			1,			(uptr)&function_floor,			1,				1,				&gsSourceLight_floor[0]			},	// FLOOR() by Stefano D'Amico, VJr 0.56, Mar.15.2015
 		{	_ICODE_FORCEEXT,		1,			(uptr)&function_forceext,		2,				2,				&gsSourceLight_forceext[0]		},

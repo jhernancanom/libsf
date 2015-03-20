@@ -2487,6 +2487,152 @@
 
 
 
+
+//////////
+//
+// Function: EMPTY()
+// Determines whether an expression evaluates to empty.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.19.2015
+//////
+// Change log:
+//     Mar.19.2015 - Refactoring by Rick C. Hodgin
+//     Mar.19.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1	-- Specifies the expression that EMPTY( ) evaluates.
+//
+//////
+// Returns:
+//    EMPTY( ) returns True (.T.) if the expression eExpression evaluates to empty;
+//    otherwise, EMPTY( ) returns False (.F.)
+//////
+// Example:
+//    ? EMPTY("AA")	&& Display .F.
+//    ? EMPTY("  ")	&& Display .T.
+//    ? EMPTY(0.0)	&& Display .T.
+//////
+	SVariable* function_empty(SThisCode* thisCode, SVariable* varExpression)
+	{
+		u32			lnI;
+		bool		llEmpty;
+		SVariable*	result;
+
+
+		//////////
+		// Is the parameter valid?
+		//////
+			if (!iVariable_isValid(varExpression))
+			{
+				iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_compRelated(thisCode, varExpression), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Determine what we're evaluating
+		//////
+			llEmpty = true;
+			switch (varExpression->varType)
+			{
+				case _VAR_TYPE_DATE:	// Note:  Dates are stored internally as YYYYMMDD, so they can be directly compared
+				case _VAR_TYPE_CHARACTER:
+					// Character expressions must have no length, or be completely blank to be considered empty
+					for (lnI = 0; lnI < (u32)varExpression->value.length; lnI++)
+					{
+						// If we encounter anything other than spaces, not empty
+						if (varExpression->value.data[lnI] != 32)
+						{
+							llEmpty = false;
+							break;
+						}
+					}
+					break;
+
+				case _VAR_TYPE_NUMERIC:
+					// Numerics are stored as numbers, possibly with a minus sign and a period
+					for (lnI = 0; lnI < (u32)varExpression->value.length; lnI++)
+					{
+						// If we encounter a non-space, or non-zero, not empty
+						if (varExpression->value.data[lnI] != 32 && varExpression->value.data[lnI] != '0')
+						{
+							llEmpty = false;
+							break;
+						}
+					}
+					break;
+
+				case _VAR_TYPE_DATETIME:
+					llEmpty = ((varExpression->value.data_dt->julian == 0) && (varExpression->value.data_dt->seconds == 0.0f));
+					break;
+
+				case _VAR_TYPE_LOGICAL:
+					llEmpty = !(varExpression->value.data_s8[0] == _LOGICAL_TRUE);
+					break;
+
+				case _VAR_TYPE_S8:
+				case _VAR_TYPE_U8:
+					llEmpty = (*varExpression->value.data_u8 == 0);
+					break;
+
+				case _VAR_TYPE_S16:
+				case _VAR_TYPE_U16:
+					llEmpty = (*varExpression->value.data_u16 == 0);
+					break;
+
+				case _VAR_TYPE_S32:
+				case _VAR_TYPE_U32:
+					llEmpty = (*varExpression->value.data_u32 == 0);
+					break;
+
+				case _VAR_TYPE_S64:
+				case _VAR_TYPE_U64:
+				case _VAR_TYPE_CURRENCY:
+					llEmpty = (*varExpression->value.data_u64 == 0);
+					break;
+
+				case _VAR_TYPE_F32:
+					llEmpty = (*varExpression->value.data_f32 == 0.0f);
+					break;
+
+				case _VAR_TYPE_F64:
+					llEmpty = (*varExpression->value.data_f64 == 0.0);
+					break;
+
+//				case _VAR_TYPE_BI:
+//					// Big integer
+//					break;
+
+//				case _VAR_TYPE_BFP:
+//					// Big floating point
+//					break;
+
+				default:
+					iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+					return(NULL);
+			}
+
+
+		//////////
+		// Create and populate the return variable
+		//////
+			result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL, (cs8*)((llEmpty) ? &_LOGICAL_TRUE : &_LOGICAL_FALSE), 1);
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_compRelated(thisCode, varExpression), false);
+
+
+		//////////
+		// Signify our result
+		//////
+			return(result);
+	}
+
+
+
+
 //////////
 //
 // Function: EXP()
@@ -2519,13 +2665,12 @@
 	// Common numeric functions used for EXP(), LOG(), LOG10(), PI(), SQRT(), CEILING(), FLOOR(), DTOR(), RTOD(), ...
     SVariable* ifunction_numbers_common(SThisCode* thisCode, SVariable* varNumber1, SVariable* varNumber2, SVariable* varNumber3, u32 tnFunctionType, const u32 tnResultType, bool tlSameInputType)
     {
-		f64			lfValue1, lfValue2, lfValue3;
+		f64			lfResult, lfValue1, lfValue2, lfValue3;
 		u32			errorNum;
         bool		error;
         SVariable*	result;
 
 
-		// Is a number required?
 		//////////
 		// If varNumber1 is provided, must also be numeric
 		//////
@@ -2585,6 +2730,7 @@
 				lfValue2 = 0.0;
 			}
 
+
 		//////////
 		// If varNumber3 is provided, must also be numeric
 		//////
@@ -2614,6 +2760,7 @@
 				lfValue3 = 0.0;
 			}
 
+
 		//////////
 		// Compute numeric function
 		//////
@@ -2637,17 +2784,17 @@
 					//////////
 					// Compute sqrt
 					//////
-						lfValue1 = sqrt(lfValue1);	
+						lfResult = sqrt(lfValue1);	
 						break;
 
 // EXP()
 				case _FP_COMMON_EXP:
-					lfValue1 = exp(lfValue1);	
+					lfResult = exp(lfValue1);	
 					break;
 
 // PI()
 				case _FP_COMMON_PI:
-					lfValue1 = _MATH_PI;
+					lfResult = _MATH_PI;
 					break;
 
 // LOG()
@@ -2669,43 +2816,43 @@
 					//////////
 					// Compute
 					//////
-						if (tnFunctionType == _FP_COMMON_LOG)		lfValue1 = log(lfValue1);	
-						else									lfValue1 = log10(lfValue1);	
+						if (tnFunctionType == _FP_COMMON_LOG)		lfResult = log(lfValue1);	
+						else										lfResult = log10(lfValue1);	
 						break;
 
 // CEILING()
 				case _FP_COMMON_CEILING:
-					lfValue1 = ceil(lfValue1);
+					lfResult = ceil(lfValue1);
 					break;
 
 // FLOOR()
 				case _FP_COMMON_FLOOR:
-					lfValue1 = floor(lfValue1);
+					lfResult = floor(lfValue1);
 					break;
 
 // DTOR()
 				case _FP_COMMON_DTOR:
-					lfValue1 = lfValue1 * _MATH_PI180;
+					lfResult = lfValue1 * _MATH_PI180;
 					break;
 
 // RTOD()
 				case _FP_COMMON_RTOD:
-					lfValue1 = lfValue1 * _MATH_180PI;
+					lfResult = lfValue1 * _MATH_180PI;
 					break;
 
 // COS()
 				case _FP_COMMON_COS:
-					lfValue1 = cos(lfValue1);
+					lfResult = cos(lfValue1);
 					break;
 
 // SIN()
 				case _FP_COMMON_SIN:
-					lfValue1 = sin(lfValue1);
+					lfResult = sin(lfValue1);
 					break;
 
 // ABS()
 				case _FP_COMMON_ABS:
-					lfValue1 = abs(lfValue1);
+					lfResult = abs(lfValue1);
 					break;
 
 // ACOS()
@@ -2726,8 +2873,8 @@
 					//////////
 					// Compute
 					//////
-						if (tnFunctionType == _FP_COMMON_ACOS)		lfValue1 = acos(lfValue1);	
-						else										lfValue1 = asin(lfValue1);
+						if (tnFunctionType == _FP_COMMON_ACOS)		lfResult = acos(lfValue1);	
+						else										lfResult = asin(lfValue1);
 						break;
 
 // ATAN()
@@ -2746,16 +2893,16 @@
 					//////////
 					// Compute
 					//////
-						lfValue1 = atan(lfValue1);	
+						lfResult = atan(lfValue1);	
 						break;
 
 // ATN2()
 				case _FP_COMMON_ATN2:
-					lfValue1 = atan2(lfValue1, lfValue2);
+					lfResult = atan2(lfValue1, lfValue2);
 					break;
 // TAN()
 				case _FP_COMMON_TAN:
-					lfValue1 = tan(lfValue1);
+					lfResult = tan(lfValue1);
 					break;
 // MOD()
 				case _FP_COMMON_MOD:
@@ -2770,12 +2917,13 @@
 							return(NULL);
 						}
 
+
 					//////////
 					// Compute
 					//////
-						lfValue1 = fmod(lfValue1, abs(lfValue2));
-						if (lfValue2 < 0 && lfValue1 != 0.0)			// Mar.14.2015
-							lfValue1 += lfValue2;
+						lfResult = fmod(lfValue1, abs(lfValue2));
+						if (lfValue2 < 0 && lfResult != 0.0)			// Mar.14.2015
+							lfResult += lfValue2;
 
 					break;
 
@@ -2785,9 +2933,11 @@
 					//////////
 					// Future value
 					//////
+// TODO:  Stefano, there needs to be an error reported here if 0
+// TODO:  I suggest passing a flag in to the common function to check varNumber1, varNumber2, varNumber3 if they cannot be 0
 						if (lfValue1 != 0.0 && lfValue2 != 0.0)
-							lfValue1 = (pow((1 + lfValue2), lfValue3) - 1) / lfValue2 * lfValue1;
-					break;
+							lfResult = (pow((1 + lfValue2), lfValue3) - 1) / lfValue2 * lfValue1;
+						break;
 
 // PV()
 				case _FP_COMMON_PV:
@@ -2795,9 +2945,11 @@
 					//////////
 					// Present value
 					//////
+// TODO:  Stefano, there needs to be an error reported here if 0
+// TODO:  I suggest passing a flag in to the common function to check varNumber1, varNumber2, varNumber3 if they cannot be 0
 						if (lfValue2 != 0.0)
-							lfValue1 = lfValue1 * ((1 - pow((1 + lfValue2), -lfValue3)) / lfValue2);
-					break;
+							lfResult = lfValue1 * ((1 - pow((1 + lfValue2), -lfValue3)) / lfValue2);
+						break;
 
 // PAYMENT()
 				case _FP_COMMON_PAYMENT:
@@ -2805,9 +2957,11 @@
 					//////////
 					// Payment
 					//////
+// TODO:  Stefano, there needs to be an error reported here if 0
+// TODO:  I suggest passing a flag in to the common function to check varNumber1, varNumber2, varNumber3 if they cannot be 0
 						if (lfValue3 != 0.0)
 							lfValue1 = (lfValue1 * pow(lfValue2 + 1, lfValue3) * lfValue2) / (pow(lfValue2 + 1, lfValue3) - 1);
-					break;
+						break;
 
 				default:
 					// Programmer error... this is an internal function and we should never get here
@@ -2832,7 +2986,7 @@
 		//////////
 		// Set the value
 		//////
-			if (!iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfValue1, NULL, NULL, NULL, NULL))
+			if (!iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfResult, NULL, NULL, NULL, NULL))
 				iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber1), false);
 
 
@@ -2841,6 +2995,8 @@
 		//////
 	        return result;   
 	}
+
+
 
 
 //////////
@@ -2871,6 +3027,8 @@
         // Return floor
 		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_FLOOR, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings)));
 	}
+
+
 
 
 //////////
@@ -5862,6 +6020,7 @@
 //////
 	SVariable* function_set(SThisCode* thisCode, SVariable* varIdentifier)
 	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
 		return(NULL);
 	}
 
