@@ -195,8 +195,10 @@ struct SThisCode;
 	SVariable*			function_datetime							(SThisCode* thisCode, SVariable* varYear, SVariable* varMonth, SVariable* varDay, SVariable* varHour, SVariable* varMinute, SVariable* varSecond, SVariable* varMillisecond);
 	SVariable*			function_dtor		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_empty		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varExpression);
+	bool				function_isempty_common						(SThisCode* thisCode, SVariable* varExpression);
+	SVariable*			function_evl		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varExpression1, SVariable* varExpression2);
 	SVariable*			function_exp		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
-	SVariable*			ifunction_numbers_common					(SThisCode* thisCode, SVariable* varNumber1, SVariable* varNumber2, SVariable* varNumber3, u32 tnFunctionType, const u32 tnResultType, bool tlSameInputType);
+	SVariable*			ifunction_numbers_common					(SThisCode* thisCode, SVariable* varNumber1, SVariable* varNumber2, SVariable* varNumber3, u32 tnFunctionType, const u32 tnResultType, bool tlSameInputType, bool tlNoEmptyParam);
 	SVariable*			function_floor		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_forceext							(SThisCode* thisCode, SVariable* varPathname, SVariable varNewExtension);
 	SVariable*			function_forcefname							(SThisCode* thisCode, SVariable* varPathname, SVariable varNewFilename);
@@ -373,6 +375,7 @@ struct SThisCode;
 		{	_ICODE_DATETIME,		1,			(uptr)&function_datetime,		0,				7,				&gsSourceLight_datetime[0]		},
 		{	_ICODE_DTOR,			1,			(uptr)&function_dtor,			1,				1,				&gsSourceLight_dtor[0]			},	// DTOR() by Stefano D'Amico, VJr 0.56, Mar.16.2015
 		{	_ICODE_EMPTY,			1,			(uptr)&function_empty,			1,				1,				&gsSourceLight_empty[0]			},	// EMPTY() by Stefano D'Amico, VJr 0.56, Mar.19.2015
+		{	_ICODE_EVL,				1,			(uptr)&function_evl,			2,				2,				&gsSourceLight_evl[0]			},	// EVL() by Stefano D'Amico, VJr 0.56, Mar.20.2015
 		{	_ICODE_EXP,				1,			(uptr)&function_exp,			1,				1,				&gsSourceLight_exp[0]			},	// EXP() by Stefano D'Amico, VJr 0.56, Mar.15.2015
 		{	_ICODE_FLOOR,			1,			(uptr)&function_floor,			1,				1,				&gsSourceLight_floor[0]			},	// FLOOR() by Stefano D'Amico, VJr 0.56, Mar.15.2015
 		{	_ICODE_FORCEEXT,		1,			(uptr)&function_forceext,		2,				2,				&gsSourceLight_forceext[0]		},

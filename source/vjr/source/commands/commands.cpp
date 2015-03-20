@@ -200,7 +200,7 @@
 			case _ERROR_CANNOT_BE_ZERO_OR_NEGATIVE:			{	iError_report(thisCode, cgcCannotBeZeroOrNegative, tlInvasive);			break;	}
 			case _ERROR_UNABLE_TO_AUTOVALIDATE:				{	iError_report(thisCode, cgcUnableToAutoValidate, tlInvasive);			break;	}
 			case _ERROR_DBF_GENERAL_ERROR:					{	iError_report(thisCode, cgcGeneralErrorDbf, tlInvasive);				break;	}
-															
+			case _ERROR_CANNOT_BE_ZERO:						{	iError_report(thisCode, cgcCannotBeZero, tlInvasive);					break;	}															
 
 		}
 
@@ -639,7 +639,7 @@
     SVariable* function_abs(SThisCode* thisCode, SVariable* varNumber)
     {
 		// Return abs
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_ABS, _VAR_TYPE_F64, true));
+		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_ABS, _VAR_TYPE_F64, true, false));
 	}
 
 
@@ -671,7 +671,7 @@
     SVariable* function_acos(SThisCode* thisCode, SVariable* varNumber)
     {
 		// Return acos
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_ACOS, _VAR_TYPE_F64, false));
+		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_ACOS, _VAR_TYPE_F64, false, false));
 	}
 
 
@@ -1270,7 +1270,7 @@
     SVariable* function_asin(SThisCode* thisCode, SVariable* varNumber)
     {
 		// Return asin
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_ASIN, _VAR_TYPE_F64, false));
+		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_ASIN, _VAR_TYPE_F64, false, false));
 	}
 
 
@@ -1302,7 +1302,7 @@
     SVariable* function_atan(SThisCode* thisCode, SVariable* varNumber)
     {
 		// Return atan
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_ATAN, _VAR_TYPE_F64, false));
+		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_ATAN, _VAR_TYPE_F64, false, false));
 	}
 	
 
@@ -1527,7 +1527,7 @@
 //////
 	SVariable* function_atn2(SThisCode* thisCode, SVariable* varY, SVariable* varX)
 	{
-		return(ifunction_numbers_common(thisCode, varY, varX, NULL, _FP_COMMON_ATN2, _VAR_TYPE_F64, false));
+		return(ifunction_numbers_common(thisCode, varY, varX, NULL, _FP_COMMON_ATN2, _VAR_TYPE_F64, false, false));
 	}
 
 
@@ -1650,7 +1650,7 @@
     SVariable* function_ceiling(SThisCode* thisCode, SVariable* varNumber)
     {
         // Return ceiling
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_CEILING, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings)));
+		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_CEILING, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings), false));
 	}
 
 
@@ -2107,7 +2107,7 @@
     SVariable* function_cos(SThisCode* thisCode, SVariable* varNumber)
     {
 		// Return cos
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_COS, _VAR_TYPE_F64, false));
+		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_COS, _VAR_TYPE_F64, false, false));
 	}
 
 
@@ -2482,7 +2482,7 @@
     SVariable* function_dtor(SThisCode* thisCode, SVariable* varNumber)
     {
 		// Return dtor
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_DTOR, _VAR_TYPE_F64, false));
+		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_DTOR, _VAR_TYPE_F64, false, false));
 	}
 
 
@@ -2496,9 +2496,10 @@
 //////
 // Version 0.56
 // Last update:
-//     Mar.19.2015
+//     Mar.20.2015
 //////
 // Change log:
+//     Mar.20.2015 - Refactoring by Stefano D'Amico
 //     Mar.19.2015 - Refactoring by Rick C. Hodgin
 //     Mar.19.2015 - Initial creation by Stefano D'Amico
 //////
@@ -2517,9 +2518,30 @@
 //////
 	SVariable* function_empty(SThisCode* thisCode, SVariable* varExpression)
 	{
-		u32			lnI;
 		bool		llEmpty;
 		SVariable*	result;
+
+		//Is Empty?
+		llEmpty = function_isempty_common(thisCode, varExpression);
+
+		//////////
+		// Create and populate the return variable
+		//////
+			result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL, (cs8*)((llEmpty) ? &_LOGICAL_TRUE : &_LOGICAL_FALSE), 1);
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_compRelated(thisCode, varExpression), false);
+
+
+		//////////
+		// Signify our result
+		//////
+			return(result);
+	}
+
+	bool function_isempty_common(SThisCode* thisCode, SVariable* varExpression)
+	{
+		u32			lnI;
+		bool		llEmpty;
 
 
 		//////////
@@ -2615,14 +2637,65 @@
 					return(NULL);
 			}
 
-
 		//////////
-		// Create and populate the return variable
+		// Signify our result
 		//////
-			result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL, (cs8*)((llEmpty) ? &_LOGICAL_TRUE : &_LOGICAL_FALSE), 1);
-			if (!result)
-				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_compRelated(thisCode, varExpression), false);
+			return(llEmpty);
 
+	}
+
+	
+	
+	
+//////////
+//
+// Function: EVL()
+// Returns a non-empty value from two expressions. 
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.20.2015
+//////
+// Change log:
+//     Mar.20.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1	-- Specifies the expression that EMPTY( ) evaluates.
+//     p2	-- Specifies the expression to return if p1 is empty. 
+//
+//////
+// Returns:
+//    EVL( ) returns p1 if it does not evaluate to an empty value; otherwise, it returns p2.
+//////
+// Example:
+//    ? EMPTY("  ", "None")	&& Display "None"
+//////
+	SVariable* function_evl(SThisCode* thisCode, SVariable* varExpression1, SVariable* varExpression2)
+	{
+		bool		llEmpty;
+		SVariable*	result;
+
+		llEmpty = function_isempty_common(thisCode, varExpression1);
+
+		if (llEmpty)
+		{
+			// Copy whatever it already is
+			result = iVariable_create(thisCode, varExpression2->varType, NULL);
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_compRelated(thisCode, varExpression1), false);
+			
+			iDatum_duplicate(&result->value, &varExpression2->value);
+
+		} else {
+			// Copy whatever it already is
+			result = iVariable_create(thisCode, varExpression1->varType, NULL);
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_compRelated(thisCode, varExpression2), false);
+
+			iDatum_duplicate(&result->value, &varExpression1->value);
+
+		}
 
 		//////////
 		// Signify our result
@@ -2659,11 +2732,11 @@
     SVariable* function_exp(SThisCode* thisCode, SVariable* varNumber)
     {
 		// Return exp
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_EXP, _VAR_TYPE_F64, false));
+		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_EXP, _VAR_TYPE_F64, false, false));
 	}
 
 	// Common numeric functions used for EXP(), LOG(), LOG10(), PI(), SQRT(), CEILING(), FLOOR(), DTOR(), RTOD(), ...
-    SVariable* ifunction_numbers_common(SThisCode* thisCode, SVariable* varNumber1, SVariable* varNumber2, SVariable* varNumber3, u32 tnFunctionType, const u32 tnResultType, bool tlSameInputType)
+    SVariable* ifunction_numbers_common(SThisCode* thisCode, SVariable* varNumber1, SVariable* varNumber2, SVariable* varNumber3, u32 tnFunctionType, const u32 tnResultType, bool tlSameInputType, bool tlNoEmptyParam)
     {
 		f64			lfResult, lfValue1, lfValue2, lfValue3;
 		u32			errorNum;
@@ -2693,6 +2766,15 @@
 					if (error)
 					{
 						iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber1), false);
+						return(NULL);
+					}
+
+				//////////
+				// Check empty param
+				//////
+					if (tlNoEmptyParam && lfValue1 == 0.0)
+					{
+						iError_reportByNumber(thisCode, _ERROR_CANNOT_BE_ZERO, iVariable_compRelated(thisCode, varNumber1), false);
 						return(NULL);
 					}
 
@@ -2726,6 +2808,15 @@
 						return(NULL);
 					}
 
+				//////////
+				// Check empty param
+				//////
+					if (tlNoEmptyParam && lfValue2 == 0.0)
+					{
+						iError_reportByNumber(thisCode, _ERROR_CANNOT_BE_ZERO, iVariable_compRelated(thisCode, varNumber2), false);
+						return(NULL);
+					}
+
 			} else {
 				lfValue2 = 0.0;
 			}
@@ -2753,6 +2844,15 @@
 					if (error)
 					{
 						iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varNumber3), false);
+						return(NULL);
+					}
+
+				//////////
+				// Check empty param
+				//////
+					if (tlNoEmptyParam && lfValue3 == 0.0)
+					{
+						iError_reportByNumber(thisCode, _ERROR_CANNOT_BE_ZERO, iVariable_compRelated(thisCode, varNumber3), false);
 						return(NULL);
 					}
 
@@ -2933,10 +3033,7 @@
 					//////////
 					// Future value
 					//////
-// TODO:  Stefano, there needs to be an error reported here if 0
-// TODO:  I suggest passing a flag in to the common function to check varNumber1, varNumber2, varNumber3 if they cannot be 0
-						if (lfValue1 != 0.0 && lfValue2 != 0.0)
-							lfResult = (pow((1 + lfValue2), lfValue3) - 1) / lfValue2 * lfValue1;
+						lfResult = (pow((1 + lfValue2), lfValue3) - 1) / lfValue2 * lfValue1;
 						break;
 
 // PV()
@@ -2945,10 +3042,7 @@
 					//////////
 					// Present value
 					//////
-// TODO:  Stefano, there needs to be an error reported here if 0
-// TODO:  I suggest passing a flag in to the common function to check varNumber1, varNumber2, varNumber3 if they cannot be 0
-						if (lfValue2 != 0.0)
-							lfResult = lfValue1 * ((1 - pow((1 + lfValue2), -lfValue3)) / lfValue2);
+						lfResult = lfValue1 * ((1 - pow((1 + lfValue2), -lfValue3)) / lfValue2);
 						break;
 
 // PAYMENT()
@@ -2957,10 +3051,7 @@
 					//////////
 					// Payment
 					//////
-// TODO:  Stefano, there needs to be an error reported here if 0
-// TODO:  I suggest passing a flag in to the common function to check varNumber1, varNumber2, varNumber3 if they cannot be 0
-						if (lfValue3 != 0.0)
-							lfValue1 = (lfValue1 * pow(lfValue2 + 1, lfValue3) * lfValue2) / (pow(lfValue2 + 1, lfValue3) - 1);
+						lfValue1 = (lfValue1 * pow(lfValue2 + 1, lfValue3) * lfValue2) / (pow(lfValue2 + 1, lfValue3) - 1);
 						break;
 
 				default:
@@ -3025,7 +3116,7 @@
     SVariable* function_floor(SThisCode* thisCode, SVariable* varNumber)
     {
         // Return floor
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_FLOOR, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings)));
+		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_FLOOR, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings), false));
 	}
 
 
@@ -3174,7 +3265,7 @@
 	SVariable* function_fv(SThisCode* thisCode, SVariable* varPayment, SVariable* varInterestRate, SVariable* varPeriods)
 	{
 		//Return FV
-		return(ifunction_numbers_common(thisCode, varPayment, varInterestRate, varPeriods, _FP_COMMON_FV, _VAR_TYPE_F64, false));
+		return(ifunction_numbers_common(thisCode, varPayment, varInterestRate, varPeriods, _FP_COMMON_FV, _VAR_TYPE_F64, false, true));
 	}
 	
 
@@ -3884,7 +3975,7 @@
     SVariable* function_log(SThisCode* thisCode, SVariable* varNumber)
     {
         // Return log
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_LOG, _VAR_TYPE_F64, false));
+		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_LOG, _VAR_TYPE_F64, false, false));
 	}
 
 
@@ -3916,7 +4007,7 @@
     SVariable* function_log10(SThisCode* thisCode, SVariable* varNumber)
     {
         // Return log10
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_LOG10, _VAR_TYPE_F64, false));
+		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_LOG10, _VAR_TYPE_F64, false, false));
 	}
 
 
@@ -4593,7 +4684,7 @@
 	SVariable* function_mod(SThisCode* thisCode, SVariable* varDividend, SVariable* varDivisor)
 	{
 		// Return mod
-		return(ifunction_numbers_common(thisCode, varDividend, varDivisor, NULL, _FP_COMMON_MOD, _VAR_TYPE_F64, true));
+		return(ifunction_numbers_common(thisCode, varDividend, varDivisor, NULL, _FP_COMMON_MOD, _VAR_TYPE_F64, true, false));
 	}
 
 
@@ -4994,7 +5085,7 @@
 	SVariable* function_payment(SThisCode* thisCode, SVariable* varPayment, SVariable* varInterestRate, SVariable* varPeriods)
 	{
 		//Return PAYMENT
-		return(ifunction_numbers_common(thisCode, varPayment, varInterestRate, varPeriods, _FP_COMMON_PAYMENT, _VAR_TYPE_F64, false));
+		return(ifunction_numbers_common(thisCode, varPayment, varInterestRate, varPeriods, _FP_COMMON_PAYMENT, _VAR_TYPE_F64, false, true));
 	}
 
 
@@ -5025,7 +5116,7 @@
 	SVariable* function_pi(SThisCode* thisCode)
 	{
 		// Return pi
-		return(ifunction_numbers_common(thisCode, NULL, NULL, NULL, _FP_COMMON_PI, _VAR_TYPE_F64, false));
+		return(ifunction_numbers_common(thisCode, NULL, NULL, NULL, _FP_COMMON_PI, _VAR_TYPE_F64, false, false));
 	}
 
 
@@ -5154,7 +5245,7 @@
 	SVariable* function_pv(SThisCode* thisCode, SVariable* varPayment, SVariable* varInterestRate, SVariable* varPeriods)
 	{
 		//Return PV
-		return(ifunction_numbers_common(thisCode, varPayment, varInterestRate, varPeriods, _FP_COMMON_PV, _VAR_TYPE_F64, false));
+		return(ifunction_numbers_common(thisCode, varPayment, varInterestRate, varPeriods, _FP_COMMON_PV, _VAR_TYPE_F64, false, true));
 	}
 
 
@@ -5964,7 +6055,7 @@
     SVariable* function_rtod(SThisCode* thisCode, SVariable* varNumber)
     {
         // Return rtod
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_RTOD, _VAR_TYPE_F64, false));
+		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_RTOD, _VAR_TYPE_F64, false, false));
 	}
 
 
@@ -6242,7 +6333,7 @@
     SVariable* function_sin(SThisCode* thisCode, SVariable* varNumber)
     {
 		// Return sin
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_SIN, _VAR_TYPE_F64, false));
+		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_SIN, _VAR_TYPE_F64, false, false));
 	}
 
 
@@ -6352,7 +6443,7 @@
     SVariable* function_sqrt(SThisCode* thisCode, SVariable* varNumber)
 	{
 		// Return sqrt
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_SQRT, _VAR_TYPE_F64, false));
+		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_SQRT, _VAR_TYPE_F64, false, false));
 	}
 
 
@@ -7180,7 +7271,7 @@ debug_break;
     SVariable* function_tan(SThisCode* thisCode, SVariable* varNumber)
     {
 		// Return sin
-		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_TAN, _VAR_TYPE_F64, false));
+		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_TAN, _VAR_TYPE_F64, false, false));
 	}
 
 

@@ -359,6 +359,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_evl[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_exp[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
