@@ -158,7 +158,7 @@
 			if (var)
 			{
 				// Create a temporary variable
-				varNewValue = iVariable_create(thisCode, _VAR_TYPE_NULL, NULL);
+				varNewValue = iVariable_create(thisCode, _VAR_TYPE_NULL, NULL, true);
 				varNewValue->bmp = bmp;
 
 				// Perform the set
@@ -240,7 +240,7 @@
 			if (var)
 			{
 				// Create a temporary variable
-				varNewValue = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, tcText, tnTextLength);
+				varNewValue = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, tcText, tnTextLength, true);
 
 				// Perform the set
 				     if (objProp->_setterObject && tnIndex < _INDEX_SET_FIRST_ITEM)			llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
@@ -276,7 +276,7 @@
 			if (var)
 			{
 				// Create a temporary variable
-				varNewValue = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, datum);
+				varNewValue = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, datum, true);
 
 				// Perform the set
 				     if (objProp->_setterObject && tnIndex < _INDEX_SET_FIRST_ITEM)			llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
@@ -341,7 +341,7 @@
 			if (var)
 			{
 				// Create a temporary variable
-				varNewValue = iVariable_create(thisCode, _VAR_TYPE_LOGICAL, NULL);
+				varNewValue = iVariable_create(thisCode, _VAR_TYPE_LOGICAL, NULL, true);
 				if (varNewValue)
 				{
 					// Populate the variable the indicated value
@@ -391,7 +391,7 @@
 			if (var)
 			{
 				// Create a temporary variable
-				varNewValue = iVariable_create(thisCode, _VAR_TYPE_S32, NULL);
+				varNewValue = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
 				if (varNewValue)
 				{
 					// Populate the variable the indicated value
@@ -441,7 +441,7 @@
 			if (var)
 			{
 				// Create a temporary variable
-				varNewValue = iVariable_create(thisCode, _VAR_TYPE_U32, NULL);
+				varNewValue = iVariable_create(thisCode, _VAR_TYPE_U32, NULL, true);
 				if (varNewValue)
 				{
 					// Populate the variable the indicated value
@@ -491,7 +491,7 @@
 			if (var)
 			{
 				// Create a temporary variable
-				varNewValue = iVariable_create(thisCode, _VAR_TYPE_F32, NULL);
+				varNewValue = iVariable_create(thisCode, _VAR_TYPE_F32, NULL, true);
 				if (varNewValue)
 				{
 					// Populate the variable the indicated value
@@ -541,7 +541,7 @@
 			if (var)
 			{
 				// Create a temporary variable
-				varNewValue = iVariable_create(thisCode, _VAR_TYPE_F64, NULL);
+				varNewValue = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
 				if (varNewValue)
 				{
 					// Populate the variable the indicated value
@@ -591,7 +591,7 @@
 			if (var)
 			{
 				// Create a temporary variable
-				varNewValue = iVariable_create(thisCode, _VAR_TYPE_U32, NULL);
+				varNewValue = iVariable_create(thisCode, _VAR_TYPE_U32, NULL, true);
 				if (varNewValue)
 				{
 					// Populate the variable the indicated value
@@ -1214,11 +1214,11 @@
 					if (llOn)
 					{
 						// ON
-						result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_on, sizeof(cgc_on) - 1);
+						result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_on, sizeof(cgc_on) - 1, true);
 
 					} else {
 						// OFF
-						result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_on, sizeof(cgc_on) - 1);
+						result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_on, sizeof(cgc_on) - 1, true);
 					}
 				}
 			}
@@ -1268,46 +1268,46 @@
 					{
 						default:
 						case _SET_DATE_AMERICAN:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_american, sizeof(cgc_american) - 1);
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_american, sizeof(cgc_american) - 1, true);
 							break;
 						case _SET_DATE_ANSI:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_ansi, sizeof(cgc_ansi) - 1);
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_ansi, sizeof(cgc_ansi) - 1, true);
 							break;
 						case _SET_DATE_BRITISH:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_british, sizeof(cgc_british) - 1);
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_british, sizeof(cgc_british) - 1, true);
 							break;
 						case _SET_DATE_DMY:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_dmy, sizeof(cgc_dmy) - 1);
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_dmy, sizeof(cgc_dmy) - 1, true);
 							break;
 						case _SET_DATE_FRENCH:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_french, sizeof(cgc_french) - 1);
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_french, sizeof(cgc_french) - 1, true);
 							break;
 						case _SET_DATE_GERMAN:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_german, sizeof(cgc_german) - 1);
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_german, sizeof(cgc_german) - 1, true);
 							break;
 						case _SET_DATE_ITALIAN:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_italian, sizeof(cgc_italian) - 1);
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_italian, sizeof(cgc_italian) - 1, true);
 							break;
 						case _SET_DATE_JAPAN:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_japan, sizeof(cgc_japan) - 1);
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_japan, sizeof(cgc_japan) - 1, true);
 							break;
 						case _SET_DATE_LONG:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_long, sizeof(cgc_long) - 1);
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_long, sizeof(cgc_long) - 1, true);
 							break;
 						case _SET_DATE_MDY:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_mdy, sizeof(cgc_mdy) - 1);
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_mdy, sizeof(cgc_mdy) - 1, true);
 							break;
 						case _SET_DATE_SHORT:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_short, sizeof(cgc_short) - 1);
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_short, sizeof(cgc_short) - 1, true);
 							break;
 						case _SET_DATE_TAIWAN:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_taiwan, sizeof(cgc_taiwan) - 1);
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_taiwan, sizeof(cgc_taiwan) - 1, true);
 							break;
 						case _SET_DATE_USA:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_usa, sizeof(cgc_usa) - 1);
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_usa, sizeof(cgc_usa) - 1, true);
 							break;
 						case _SET_DATE_YMD:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_ymd, sizeof(cgc_ymd) - 1);
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_ymd, sizeof(cgc_ymd) - 1, true);
 							break;
 					}
 				}
@@ -1440,13 +1440,13 @@
 					{
 						default:
 						case _LOGICAL_TF:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_default, sizeof(cgc_default) - 1);
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_default, sizeof(cgc_default) - 1, true);
 							break;
 						case _LOGICAL_YN:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_yn, sizeof(cgc_yn) - 1);
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_yn, sizeof(cgc_yn) - 1, true);
 							break;
 						case _LOGICAL_UD:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_ud, sizeof(cgc_ud) - 1);
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_ud, sizeof(cgc_ud) - 1, true);
 							break;
 					}
 				}
@@ -1500,7 +1500,7 @@
 						if (llAutomatic)
 						{
 							// It's set to automatic
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_automatic, sizeof(cgc_automatic) - 1);
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_automatic, sizeof(cgc_automatic) - 1, true);
 
 						} else {
 							// This should never happen
@@ -1527,7 +1527,7 @@
 						}
 
 						// Create the variable
-						result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, buffer, strlen(buffer));
+						result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, buffer, strlen(buffer), true);
 					}
 				}
 			}
@@ -1577,11 +1577,11 @@
 					{
 						default:
 						case _TIME_LOCAL:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_local, sizeof(cgc_local) - 1);
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_local, sizeof(cgc_local) - 1, true);
 							break;
 
 						case _TIME_SYSTEM:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_system, sizeof(cgc_system) - 1);
+							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_system, sizeof(cgc_system) - 1, true);
 							break;
 					}
 				}

@@ -191,28 +191,28 @@
 		// Initialize primitive variables
 		iVariable_createDefaultValues(NULL);
 		iVariable_createPropsMaster(NULL);
-		varConstant_space		= iVariable_createAndPopulate(NULL, _VAR_TYPE_CHARACTER, cgc_spaceText, 1);
-		varEmptyString			= iVariable_createAndPopulate(NULL, _VAR_TYPE_CHARACTER, (cu8*)NULL, 0);
-		var2000Spaces			= iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL);
-		varTrue					= iVariable_createAndPopulate(NULL, _VAR_TYPE_LOGICAL, (cu8*)NULL, 0);
-		varFalse				= iVariable_createAndPopulate(NULL, _VAR_TYPE_LOGICAL, (cu8*)NULL, 0);
-		varZero					= iVariable_create(NULL, _VAR_TYPE_S64, NULL);
+		varConstant_space		= iVariable_createAndPopulate(NULL, _VAR_TYPE_CHARACTER, cgc_spaceText, 1,	false);
+		varEmptyString			= iVariable_createAndPopulate(NULL, _VAR_TYPE_CHARACTER, (cu8*)NULL, 0,		false);
+		var2000Spaces			= iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL, true);
+		varTrue					= iVariable_createAndPopulate(NULL, _VAR_TYPE_LOGICAL, (cu8*)NULL, 0,		false);
+		varFalse				= iVariable_createAndPopulate(NULL, _VAR_TYPE_LOGICAL, (cu8*)NULL, 0,		false);
+		varZero					= iVariable_create(NULL, _VAR_TYPE_S64, NULL, true);
 
 		// 6
 		lnValue					= 6;
-		varSix					= iVariable_createAndPopulate(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, sizeof(lnValue));
+		varSix					= iVariable_createAndPopulate(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, sizeof(lnValue), true);
 
 		// 255
 		lnValue					= 255;
-		varTwoFiftyFive			= iVariable_createAndPopulate(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, sizeof(lnValue));
+		varTwoFiftyFive			= iVariable_createAndPopulate(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, sizeof(lnValue), true);
 
 		// 0.5
 		lfValue					= 0.5f;
-		varFiftyPercent			= iVariable_createAndPopulate(NULL, _VAR_TYPE_F32, (cu8*)&lfValue, sizeof(lfValue));
+		varFiftyPercent			= iVariable_createAndPopulate(NULL, _VAR_TYPE_F32, (cu8*)&lfValue, sizeof(lfValue), true);
 
 		// 1.0
 		lfValue					= 0.5f;
-		varOneHundredPercent	= iVariable_createAndPopulate(NULL, _VAR_TYPE_F32, (cu8*)&lfValue, sizeof(lfValue));
+		varOneHundredPercent	= iVariable_createAndPopulate(NULL, _VAR_TYPE_F32, (cu8*)&lfValue, sizeof(lfValue), true);
 
 		// 2000 blank spaces
 		iDatum_allocateSpace(&var2000Spaces->value, 2000);

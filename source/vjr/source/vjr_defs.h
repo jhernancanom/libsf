@@ -151,7 +151,7 @@ struct SObjPropMap;
 	void					iObj_duplicateChildren					(SThisCode* thisCode, SObject*  objDst, SObject* objSrc);
 	void					iObj_setSize							(SThisCode* thisCode, SObject*  obj, s32 tnLeft, s32 tnTop, s32 tnWidth, s32 tnHeight);
 	SWindow* 				iObj_createWindowForForm				(SThisCode* thisCode, SObject*  form, SWindow* win, s32 icon);
-	SVariable*				iObj_getPropertyAsVariable				(SThisCode* thisCode, SObject*  obj, s8* tcPropertyName, u32 tnPropertyNameLength, SComp* comp);
+	SVariable*				iObj_getPropertyAsVariable				(SThisCode* thisCode, SObject*  obj, s8* tcPropertyName, u32 tnPropertyNameLength, SComp* comp, bool tlCreateAsReference);
 	void					iiObj_resetToDefault					(SThisCode* thisCode, SObject*  obj, bool tlResetProperties, bool tlResetMethods);
 	void					iiObj_resetToDefaultCommon				(SThisCode* thisCode, SObject*  obj, bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, s32 tnPropCount);
 	s32						iiObj_getBaseclassType_byName			(SThisCode* thisCode, s8* tcTextname, s32 tnTextnameLength);

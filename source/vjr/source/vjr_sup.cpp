@@ -549,7 +549,7 @@
 		//////////
 		// Jan.01.2000 00:00:00.000
 		//////
-			_datetime_Jan_01_2000 = iVariable_create(NULL, _VAR_TYPE_DATETIME, NULL);
+			_datetime_Jan_01_2000 = iVariable_create(NULL, _VAR_TYPE_DATETIME, NULL, true);
 			dt.julian	= 2451545;
 			dt.seconds	= 0.0f;
 			iDatum_duplicate(&_datetime_Jan_01_2000->value, (u8*)&dt, 8);

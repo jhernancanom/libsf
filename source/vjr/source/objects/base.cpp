@@ -2429,7 +2429,7 @@
 // Searches the indicated object for the indicated property
 //
 //////
-	SVariable* iObj_getPropertyAsVariable(SThisCode* thisCode, SObject* obj, s8* tcPropertyName, u32 tnPropertyNameLength, SComp* comp)
+	SVariable* iObj_getPropertyAsVariable(SThisCode* thisCode, SObject* obj, s8* tcPropertyName, u32 tnPropertyNameLength, SComp* comp, bool tlCreateAsReference)
 	{
 		SBaseClassMap*	lbcl;
 		SObjPropMap*	lpm;
@@ -2449,7 +2449,7 @@
 				{
 					// Is this the name?
 					if (gsProps_master[lpm->index].propLength == tnPropertyNameLength && _memicmp(tcPropertyName, gsProps_master[lpm->index].propName_u8, tnPropertyNameLength) == 0)
-						return(obj->props[lpm->index]);		// This is the property, retrieve its value
+						return(iVariable_copy(thisCode, obj->props[lpm->index], tlCreateAsReference));
 
 					// Move to next property
 					++lpm;

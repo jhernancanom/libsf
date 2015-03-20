@@ -222,7 +222,7 @@
 
 							// If we get here, we have the variable they're storing
 							// Based on the name from comp, see if it's a variable we already possess
-							varExisting = iVariable_searchForName(thisCode, comp->line->sourceCode->data + comp->start, comp->length, comp);
+							varExisting = iVariable_searchForName(thisCode, comp->line->sourceCode->data + comp->start, comp->length, comp, true);
 							if (varExisting)
 							{
 								// We are updating the value
@@ -394,13 +394,13 @@
 							if (lnValue >= (s64)_s32_min && lnValue <= (s64)_s32_max)
 							{
 								// Store as 32-bits
-								var = iVariable_create(NULL, _VAR_TYPE_S32, NULL);
+								var = iVariable_create(NULL, _VAR_TYPE_S32, NULL, true);
 								if (var)
 									*var->value.data_s32 = (s32)lnValue;
 
 							} else {
 								// Store as 64-bits
-								var = iVariable_create(NULL, _VAR_TYPE_S64, NULL);
+								var = iVariable_create(NULL, _VAR_TYPE_S64, NULL, true);
 								if (var)
 									*var->value.data_s64 = lnValue;
 							}
@@ -417,13 +417,13 @@
 							if (lfValue >= (f64)_f32_min && lfValue <= (f64)_f32_max)
 							{
 								// Store as 32-bits
-								var = iVariable_create(NULL, _VAR_TYPE_F32, NULL);
+								var = iVariable_create(NULL, _VAR_TYPE_F32, NULL, true);
 								if (var)
 									*var->value.data_f32 = (f32)lfValue;
 
 							} else {
 								// Store as 64-bits
-								var = iVariable_create(NULL, _VAR_TYPE_F64, NULL);
+								var = iVariable_create(NULL, _VAR_TYPE_F64, NULL, true);
 								if (var)
 									*var->value.data_f64 = lfValue;
 							}
@@ -441,7 +441,7 @@
 				case _ICODE_YES:
 				case _ICODE_UP:
 					// It's a .T. or some equivalent
-					var = iVariable_create(NULL, _VAR_TYPE_LOGICAL, NULL);
+					var = iVariable_create(NULL, _VAR_TYPE_LOGICAL, NULL, true);
 					if (var)
 					{
 						*tlManufactured		= true;
@@ -455,7 +455,7 @@
 				case _ICODE_NO:
 				case _ICODE_DOWN:
 					// It's a .F. or some equivalent
-					var = iVariable_create(NULL, _VAR_TYPE_LOGICAL, NULL);
+					var = iVariable_create(NULL, _VAR_TYPE_LOGICAL, NULL, true);
 					if (var)
 					{
 						*tlManufactured		= true;
@@ -467,7 +467,7 @@
 
 				case _ICODE_EXTRA:
 					// It's a .X.
-					var = iVariable_create(NULL, _VAR_TYPE_LOGICAL, NULL);
+					var = iVariable_create(NULL, _VAR_TYPE_LOGICAL, NULL, true);
 					if (var)
 					{
 						*tlManufactured		= true;
@@ -479,7 +479,7 @@
 
 				case _ICODE_YET_ANOTHER:
 					// It's a .Y.
-					var = iVariable_create(NULL, _VAR_TYPE_LOGICAL, NULL);
+					var = iVariable_create(NULL, _VAR_TYPE_LOGICAL, NULL, true);
 					if (var)
 					{
 						*tlManufactured		= true;
@@ -491,7 +491,7 @@
 
 				case _ICODE_ZATS_ALL_FOLKS:
 					// It's a .X.
-					var = iVariable_create(NULL, _VAR_TYPE_LOGICAL, NULL);
+					var = iVariable_create(NULL, _VAR_TYPE_LOGICAL, NULL, true);
 					if (var)
 					{
 						*tlManufactured		= true;
@@ -511,7 +511,7 @@ debug_nop;
 					if (propGet_settings_VariablesFirst(_settings))
 					{
 						// Searching variables first, field names last.
-						if ((var = iVariable_searchForName(thisCode, comp->line->sourceCode->data + comp->start, comp->length, comp)))
+						if ((var = iVariable_searchForName(thisCode, comp->line->sourceCode->data + comp->start, comp->length, comp, true)))
 						{
 							// It was found in the global variables
 
@@ -528,7 +528,7 @@ debug_nop;
 							// It was found in a table field
 							return(var);
 
-						} else*/ if ((var = iVariable_searchForName(thisCode, comp->line->sourceCode->data + comp->start, comp->length, comp))) {
+						} else*/ if ((var = iVariable_searchForName(thisCode, comp->line->sourceCode->data + comp->start, comp->length, comp, true))) {
 							// It was found in the global variables
 						}
 					}
@@ -539,25 +539,25 @@ debug_nop;
 						if (var->varType == _VAR_TYPE_NULL)
 						{
 							// It's a null variable
-							varCopy = iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL);
+							varCopy = iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL, true);
 							if (varCopy)
 								iDatum_duplicate(&varCopy->value, cgcNullText, -1);
 
 						} else if (var->varType == _VAR_TYPE_OBJECT) {
 							// It's an object
-							varCopy = iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL);
+							varCopy = iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL, true);
 							if (varCopy)
 								iDatum_duplicate(&varCopy->value, cgcObjectText, -1);
 
 						} else if (var->varType == _VAR_TYPE_THISCODE) {
 							// It's a thisCode reference
-							varCopy = iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL);
+							varCopy = iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL, true);
 							if (varCopy)
 								iDatum_duplicate(&varCopy->value, cgcThisCodeText, -1);
 
 						} else {
 							// It's a traditional variable
-							varCopy = iVariable_create(NULL, var->varType, NULL);
+							varCopy = iVariable_create(NULL, var->varType, NULL, true);
 							if (varCopy)
 								iDatum_duplicate(&varCopy->value, &var->value);
 						}
@@ -573,7 +573,7 @@ debug_nop;
 					// Create and populate our output variable
 					//////
 						*tlManufactured	= true;
-						var = iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL);
+						var = iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL, true);
 						if (var)
 							iDatum_duplicate(&var->value, comp->line->sourceCode->data_u8 + comp->start + 1, comp->length - 2);
 
@@ -618,12 +618,12 @@ debug_nop;
 				case _ICODE_DOUBLE_QUOTED_TEXT:
 				case _ICODE_SINGLE_QUOTED_TEXT:
 					// By definition, quoted content is its own independent thing
-					varPathname = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, comp->line->sourceCode->data_u8 + comp->start, comp->length);
+					varPathname = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, comp->line->sourceCode->data_u8 + comp->start, comp->length, true);
 					break;
 
 				default:
 					// Get every contiguous component
-					varPathname	= iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, comp->line->sourceCode->data_u8 + comp->start, iComps_getContiguousLength(thisCode, comp, valid_iCodeArray, tnValid_iCodeArrayCount, NULL));
+					varPathname	= iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, comp->line->sourceCode->data_u8 + comp->start, iComps_getContiguousLength(thisCode, comp, valid_iCodeArray, tnValid_iCodeArrayCount, NULL), true);
 					break;
 			}
 		}
@@ -789,7 +789,7 @@ debug_nop;
 		//////////
 		// Locate the variable
 		//////
-			varTally = iiVariable_searchForName_variables(thisCode, varGlobals, (s8*)cgcName_tally, sizeof(cgcName_tally) - 1, NULL);
+			varTally = iiVariable_searchForName_variables(thisCode, varGlobals, (s8*)cgcName_tally, sizeof(cgcName_tally) - 1, NULL, true);
 			if (!varTally)
 			{
 				// This should never happen
@@ -872,8 +872,6 @@ debug_nop;
 			// Derive whatever this is as a variable
 			//////
 /*SVariable* var;*/
-// TODO:  Working here...
-// TODO:  Need to update this so it accesses all existing variables by reference here
 				     if (lnParamCount == 1)		{	/*var =*/ (*p1 = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
 				else if (lnParamCount == 2)		{	/*var =*/ (*p2 = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
 				else if (lnParamCount == 3)		{	/*var =*/ (*p3 = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}

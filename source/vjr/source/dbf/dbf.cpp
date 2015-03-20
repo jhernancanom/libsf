@@ -3455,7 +3455,7 @@
 		return(NULL);
 	}
 
-	SVariable* iDbf_getField_byName2_asVariable(SThisCode* thisCode, SWorkArea* wa, u8* fieldName, u32 fieldNameLength)
+	SVariable* iDbf_getField_byName2_asVariable(SThisCode* thisCode, SWorkArea* wa, u8* fieldName, u32 fieldNameLength, bool tlCreateAsReference)
 	{
 		s32				lnI;
 		SFieldRecord2*	lfr2Ptr;
@@ -3491,35 +3491,44 @@
 						switch (lfr2Ptr->type)
 						{
 							case 'N':	// Numeric
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_NUMERIC,		(cs8*)wa->data + lfr2Ptr->offset, fieldNameLength);
+								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_NUMERIC, wa->data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
+
 							case 'M':	// Memo
 								if (iiDbf_readMemo(thisCode, wa, lfr2Ptr))
-									var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER,	(cs8*)lfr2Ptr->mdata, lfr2Ptr->mdataLength);
+									var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER,	lfr2Ptr->mdata, lfr2Ptr->mdataLength, false);
 								break;
+
 							case 'C':	// Character
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER,	(cs8*)wa->data + lfr2Ptr->offset, fieldNameLength);
+								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER,	wa->data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
+
 							case 'I':	// Integer
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_S32,			(cs8*)wa->data + lfr2Ptr->offset, fieldNameLength);
+								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_S32,			wa->data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
+
 							case 'F':	// Float
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_NUMERIC,		(cs8*)wa->data + lfr2Ptr->offset, fieldNameLength);
+								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_NUMERIC,		wa->data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
+
 							case 'B':	// Double
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_F64,			(cs8*)wa->data + lfr2Ptr->offset, fieldNameLength);
+								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_F64,			wa->data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
+
 							case 'L':	// Logical
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL,		(cs8*)wa->data + lfr2Ptr->offset, fieldNameLength);
+								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL,		wa->data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
+
 							case 'D':	// Date
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL,		(cs8*)wa->data + lfr2Ptr->offset, fieldNameLength);
+								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL,		wa->data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
+
 							case 'T':	// DateTime
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL,		(cs8*)wa->data + lfr2Ptr->offset, fieldNameLength);
+								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL,		wa->data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
+
 							case 'Y':	// Currency
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CURRENCY,		(cs8*)wa->data + lfr2Ptr->offset, fieldNameLength);
+								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CURRENCY,		wa->data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
 //							case 'G':	// General
 // 							case 'P':	// Picture

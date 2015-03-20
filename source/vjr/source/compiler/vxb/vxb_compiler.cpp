@@ -818,7 +818,7 @@ void iiComps_decodeSyntax_returns(SThisCode* thisCode, SCompileVxbContext* vxb)
 			//////////
 			// Indicate we'll need a temporary variable for our result
 			//////
-				var = iVariable_create(thisCode, _VAR_TYPE_NULL, NULL);
+				var = iVariable_create(thisCode, _VAR_TYPE_NULL, NULL, true);
 				if (var)
 				{
 					// Append the temporary variable
@@ -4819,7 +4819,7 @@ debug_break;
 // no identity.
 //
 //////
-	SVariable* iVariable_create(SThisCode* thisCode, s32 tnVarType, SVariable* varIndirect)
+	SVariable* iVariable_create(SThisCode* thisCode, s32 tnVarType, SVariable* varIndirect, bool tlAllocateDefaultValue)
 	{
 		SVariable*	varDefault;
 		SVariable*	varNew;
@@ -4843,14 +4843,14 @@ debug_break;
 				memset(varNew, 0, sizeof(SVariable));
 
 				// Populate
-				varNew->indirect		= varIndirect;
-				varNew->isVarAllocated	= true;
-				varNew->varType			= tnVarType;
+				varNew->indirect	= varIndirect;
+				varNew->varType		= tnVarType;
 
 				// If it's not an indirect reference, we need to initialize the data
-				if (!varNew->indirect)
+				if (!varNew->indirect && tlAllocateDefaultValue)
 				{
 					// Initially allocate for certain fixed variable types
+					varNew->isVarAllocated = true;
 					switch (tnVarType)
 					{
 						case _VAR_TYPE_NULL:
@@ -4914,11 +4914,11 @@ debug_break;
 								// Grab the default initialization type, which is logical false unless otherwise set
 								varDefault = propGet_settings_InitializeDefaultValue(_settings);
 								if (varDefault)		varNew = iVariable_copy(thisCode, varDefault, false);
-								else				varNew = iVariable_create(thisCode, _VAR_TYPE_LOGICAL, NULL);
+								else				varNew = iVariable_create(thisCode, _VAR_TYPE_LOGICAL, NULL, true);
 
 							} else {
 								// Create default type until initialization is complete
-								varNew = iVariable_create(thisCode, _VAR_TYPE_LOGICAL, NULL);
+								varNew = iVariable_create(thisCode, _VAR_TYPE_LOGICAL, NULL, true);
 							}
 					}
 				}
@@ -4939,19 +4939,19 @@ debug_break;
 // Called to create and populate a new variable in one go
 //
 //////
-	SVariable* iVariable_createAndPopulate(SThisCode* thisCode, s32 tnVarType, SDatum* datum)
+	SVariable* iVariable_createAndPopulate(SThisCode* thisCode, s32 tnVarType, SDatum* datum, bool tlCreateReference)
 	{
-		if (datum)		return(iVariable_createAndPopulate(thisCode, tnVarType, datum->data_u8, datum->length));
+		if (datum)		return(iVariable_createAndPopulate(thisCode, tnVarType, datum->data_u8, datum->length, tlCreateReference));
 		else			return(NULL);
 	}
 
-	SVariable* iVariable_createAndPopulate(SThisCode* thisCode, s32 tnVarType, u8* tcData, u32 tnDataLength)
+	SVariable* iVariable_createAndPopulate(SThisCode* thisCode, s32 tnVarType, u8* tcData, u32 tnDataLength, bool tlCreateReference)
 	{
 		SVariable* var;
 
 
 		// Create the variable
-		var = iVariable_create(thisCode, tnVarType, NULL);
+		var = iVariable_create(thisCode, tnVarType, NULL, !tlCreateReference);
 		if (var && tcData && tnDataLength > 0)
 		{
 			// Populate it
@@ -4959,12 +4959,24 @@ debug_break;
 			{
 				// Allocate the SDatum
 				if (tcData && tnDataLength > 0)
-					iDatum_duplicate(&var->value, tcData, tnDataLength);
+				{
+					// Should we create a reference to the existing data?  Or copy it?
+					if (tlCreateReference)
+					{
+						// Reference
+						var->value.data_u8	= tcData;
+						var->value.length	= tnDataLength;
+
+					} else {
+						// Copy
+						iDatum_duplicate(&var->value, tcData, tnDataLength);
+
+						// Indicate the content within this variable has been allocated
+						var->isValueAllocated = true;
+					}
+				}
 
 // TODO:  We may need to add a validation here to indicate that for the specific types it should remain the length it must be for the type
-
-				// Indicate the content within this variable has been allocated
-				var->isValueAllocated = true;
 			}
 		}
 
@@ -4972,19 +4984,19 @@ debug_break;
 		return(var);
 	}
 
-	SVariable* iVariable_createAndPopulate(SThisCode* thisCode, s32 tnVarType, s8* tcData, u32 tnDataLength)
+	SVariable* iVariable_createAndPopulate(SThisCode* thisCode, s32 tnVarType, s8* tcData, u32 tnDataLength, bool tlCreateReference)
 	{
-		return(iVariable_createAndPopulate(thisCode, tnVarType, (u8*)tcData, tnDataLength));
+		return(iVariable_createAndPopulate(thisCode, tnVarType, (u8*)tcData, tnDataLength, tlCreateReference));
 	}
 
-	SVariable* iVariable_createAndPopulate(SThisCode* thisCode, s32 tnVarType, cu8* tcData, u32 tnDataLength)
+	SVariable* iVariable_createAndPopulate(SThisCode* thisCode, s32 tnVarType, cu8* tcData, u32 tnDataLength, bool tlCreateReference)
 	{
-		return(iVariable_createAndPopulate(thisCode, tnVarType, (u8*)tcData, tnDataLength));
+		return(iVariable_createAndPopulate(thisCode, tnVarType, (u8*)tcData, tnDataLength, tlCreateReference));
 	}
 
-	SVariable* iVariable_createAndPopulate(SThisCode* thisCode, s32 tnVarType, cs8* tcData, u32 tnDataLength)
+	SVariable* iVariable_createAndPopulate(SThisCode* thisCode, s32 tnVarType, cs8* tcData, u32 tnDataLength, bool tlCreateReference)
 	{
-		return(iVariable_createAndPopulate(thisCode, tnVarType, (u8*)tcData, tnDataLength));
+		return(iVariable_createAndPopulate(thisCode, tnVarType, (u8*)tcData, tnDataLength, tlCreateReference));
 	}
 
 
@@ -5063,7 +5075,7 @@ debug_break;
 				//////////
 				// Create the variable
 				//////
-					result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, buffer, lnI + tnPrefixChars + tnPostfixChars);
+					result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, buffer, lnI + tnPrefixChars + tnPostfixChars, true);
 					if (result)
 					{
 						// Reset everything
@@ -5098,7 +5110,7 @@ debug_break;
 //        rather than a name-driven model.  However, names are still used nearly everywhere. :-)
 //
 //////
-	SVariable* iVariable_searchForName(SThisCode* thisCode, s8* tcVarName, u32 tnVarNameLength, SComp* comp)
+	SVariable* iVariable_searchForName(SThisCode* thisCode, s8* tcVarName, u32 tnVarNameLength, SComp* comp, bool tlCreateAsReference)
 	{
 		SThisCode*	thisCodeSearch;
 		SVariable*	var;
@@ -5116,7 +5128,7 @@ debug_break;
 		//////
 			if (thisCode)
 			{
-				var = iiVariable_searchForName_variables(thisCode, thisCode->live->params, tcVarName, tnVarNameLength, comp);
+				var = iiVariable_searchForName_variables(thisCode, thisCode->live->params, tcVarName, tnVarNameLength, comp, tlCreateAsReference);
 				if (var)
 					return(var);
 			}
@@ -5127,7 +5139,7 @@ debug_break;
 		//////
 			if (thisCode)
 			{
-				var = iiVariable_searchForName_variables(thisCode, thisCode->live->returns, tcVarName, tnVarNameLength, comp);
+				var = iiVariable_searchForName_variables(thisCode, thisCode->live->returns, tcVarName, tnVarNameLength, comp, tlCreateAsReference);
 				if (var)
 					return(var);
 			}
@@ -5145,7 +5157,7 @@ debug_break;
 				//////
 					if (thisCode)
 					{
-						var = iiVariable_searchForName_variables(thisCode, thisCode->live->locals, tcVarName, tnVarNameLength, comp);
+						var = iiVariable_searchForName_variables(thisCode, thisCode->live->locals, tcVarName, tnVarNameLength, comp, tlCreateAsReference);
 						if (var)
 							return(var);
 					}
@@ -5157,7 +5169,7 @@ debug_break;
 					for (thisCodeSearch = thisCode; thisCodeSearch; thisCodeSearch = (SThisCode*)thisCodeSearch->ll.prev)
 					{
 						// Search at this level
-						var = iiVariable_searchForName_variables(thisCode, thisCodeSearch->live->privates, tcVarName, tnVarNameLength, comp);
+						var = iiVariable_searchForName_variables(thisCode, thisCodeSearch->live->privates, tcVarName, tnVarNameLength, comp, tlCreateAsReference);
 						if (var)
 							return(var);
 					}
@@ -5166,7 +5178,7 @@ debug_break;
 				//////////
 				// (5) Globals
 				//////
-					var = iiVariable_searchForName_variables(thisCode, varGlobals, tcVarName, tnVarNameLength, comp);
+					var = iiVariable_searchForName_variables(thisCode, varGlobals, tcVarName, tnVarNameLength, comp, tlCreateAsReference);
 					if (var)
 						return(var);
 
@@ -5174,7 +5186,7 @@ debug_break;
 				//////////
 				// (6) Fields
 				//////
-					var = iiVariable_searchForName_fields(thisCode, tcVarName, tnVarNameLength, comp);
+					var = iiVariable_searchForName_fields(thisCode, tcVarName, tnVarNameLength, comp, tlCreateAsReference);
 					if (var)
 						return(var);
 
@@ -5182,7 +5194,7 @@ debug_break;
 				//////////
 				// (3) Fields
 				//////
-					var = iiVariable_searchForName_fields(thisCode, tcVarName, tnVarNameLength, comp);
+					var = iiVariable_searchForName_fields(thisCode, tcVarName, tnVarNameLength, comp, tlCreateAsReference);
 					if (var)
 						return(var);
 
@@ -5192,7 +5204,7 @@ debug_break;
 				//////
 					if (thisCode)
 					{
-						var = iiVariable_searchForName_variables(thisCode, thisCode->live->locals, tcVarName, tnVarNameLength, comp);
+						var = iiVariable_searchForName_variables(thisCode, thisCode->live->locals, tcVarName, tnVarNameLength, comp, tlCreateAsReference);
 						if (var)
 							return(var);
 					}
@@ -5204,7 +5216,7 @@ debug_break;
 					for (thisCodeSearch = thisCode; thisCodeSearch; thisCodeSearch = (SThisCode*)thisCodeSearch->ll.prev)
 					{
 						// Search at this level
-						var = iiVariable_searchForName_variables(thisCode, thisCodeSearch->live->privates, tcVarName, tnVarNameLength, comp);
+						var = iiVariable_searchForName_variables(thisCode, thisCodeSearch->live->privates, tcVarName, tnVarNameLength, comp, tlCreateAsReference);
 						if (var)
 							return(var);
 					}
@@ -5213,7 +5225,7 @@ debug_break;
 				//////////
 				// (6) Globals
 				//////
-					var = iiVariable_searchForName_variables(thisCode, varGlobals, tcVarName, tnVarNameLength, comp);
+					var = iiVariable_searchForName_variables(thisCode, varGlobals, tcVarName, tnVarNameLength, comp, tlCreateAsReference);
 					if (var)
 						return(var);
 			}
@@ -5225,7 +5237,7 @@ debug_break;
 			return(NULL);
 	}
 
-	SVariable* iiVariable_searchForName_variables(SThisCode* thisCode, SVariable* varRoot, s8* tcVarName, u32 tnVarNameLength, SComp* comp)
+	SVariable* iiVariable_searchForName_variables(SThisCode* thisCode, SVariable* varRoot, s8* tcVarName, u32 tnVarNameLength, SComp* comp, bool tlCreateAsReference)
 	{
 		s32			lnDepth;
 		SComp*		compNext1;
@@ -5249,7 +5261,7 @@ debug_break;
 							if ((compNext1 = comp->ll.nextComp) && compNext1->iCode == _ICODE_DOT && (compNext2 = compNext1->ll.nextComp) && (compNext2->iCode == _ICODE_ALPHA || compNext2->iCode == _ICODE_ALPHANUMERIC))
 							{
 								// We've found something like "lo." where lo is an object, and there is a name reference after it
-								var = iObj_getPropertyAsVariable(thisCode, var->obj, compNext2->line->sourceCode->data + compNext2->start, compNext2->length, compNext2);
+								var = iObj_getPropertyAsVariable(thisCode, var->obj, compNext2->line->sourceCode->data + compNext2->start, compNext2->length, compNext2, tlCreateAsReference);
 							}
 							// If we get here, then they did not have a "." after the the object reference, and are referencing the object directly
 							break;
@@ -5284,9 +5296,9 @@ debug_break;
 		return(var);
 	}
 
-	SVariable* iiVariable_searchForName_fields(SThisCode* thisCode, s8* tcVarName, u32 tnVarNameLength, SComp* comp)
+	SVariable* iiVariable_searchForName_fields(SThisCode* thisCode, s8* tcVarName, u32 tnVarNameLength, SComp* comp, bool tlCreateAsReference)
 	{
-		return(iDbf_getField_byName2_asVariable(thisCode, iDbf_get_workArea_current_wa(thisCode, cgcDbfKeyName), (u8*)tcVarName, tnVarNameLength));
+		return(iDbf_getField_byName2_asVariable(thisCode, iDbf_get_workArea_current_wa(thisCode, cgcDbfKeyName), (u8*)tcVarName, tnVarNameLength, tlCreateAsReference));
 	}
 
 
@@ -5378,24 +5390,24 @@ debug_break;
 //////
 	void iVariable_createDefaultValues(SThisCode* thisCode)
 	{
-		varDefault_null			= iVariable_create(thisCode, _VAR_TYPE_NULL,		NULL);
-		varDefault_numeric		= iVariable_create(thisCode, _VAR_TYPE_NUMERIC,		NULL);
-		varDefault_s32			= iVariable_create(thisCode, _VAR_TYPE_S32,			NULL);
-		varDefault_u32			= iVariable_create(thisCode, _VAR_TYPE_U32,			NULL);
-		varDefault_f32			= iVariable_create(thisCode, _VAR_TYPE_F32,			NULL);
-		varDefault_s64			= iVariable_create(thisCode, _VAR_TYPE_S64,			NULL);
-		varDefault_u64			= iVariable_create(thisCode, _VAR_TYPE_U64,			NULL);
-		varDefault_f64			= iVariable_create(thisCode, _VAR_TYPE_F64,			NULL);
-		varDefault_date			= iVariable_create(thisCode, _VAR_TYPE_DATE,		NULL);
-		varDefault_datetime		= iVariable_create(thisCode, _VAR_TYPE_DATETIME,	NULL);
-		varDefault_currency		= iVariable_create(thisCode, _VAR_TYPE_CURRENCY,	NULL);
-		varDefault_s16			= iVariable_create(thisCode, _VAR_TYPE_S16,			NULL);
-		varDefault_u16			= iVariable_create(thisCode, _VAR_TYPE_U16,			NULL);
-		varDefault_s8			= iVariable_create(thisCode, _VAR_TYPE_S8,			NULL);
-		varDefault_u8			= iVariable_create(thisCode, _VAR_TYPE_U8,			NULL);
-		varDefault_logical		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,		NULL);
-		varDefault_bitmap		= iVariable_create(thisCode, _VAR_TYPE_BITMAP,		NULL);
-		varDefault_thiscode		= iVariable_create(thisCode, _VAR_TYPE_THISCODE,	NULL);
+		varDefault_null			= iVariable_create(thisCode, _VAR_TYPE_NULL,		NULL, true);
+		varDefault_numeric		= iVariable_create(thisCode, _VAR_TYPE_NUMERIC,		NULL, true);
+		varDefault_s32			= iVariable_create(thisCode, _VAR_TYPE_S32,			NULL, true);
+		varDefault_u32			= iVariable_create(thisCode, _VAR_TYPE_U32,			NULL, true);
+		varDefault_f32			= iVariable_create(thisCode, _VAR_TYPE_F32,			NULL, true);
+		varDefault_s64			= iVariable_create(thisCode, _VAR_TYPE_S64,			NULL, true);
+		varDefault_u64			= iVariable_create(thisCode, _VAR_TYPE_U64,			NULL, true);
+		varDefault_f64			= iVariable_create(thisCode, _VAR_TYPE_F64,			NULL, true);
+		varDefault_date			= iVariable_create(thisCode, _VAR_TYPE_DATE,		NULL, true);
+		varDefault_datetime		= iVariable_create(thisCode, _VAR_TYPE_DATETIME,	NULL, true);
+		varDefault_currency		= iVariable_create(thisCode, _VAR_TYPE_CURRENCY,	NULL, true);
+		varDefault_s16			= iVariable_create(thisCode, _VAR_TYPE_S16,			NULL, true);
+		varDefault_u16			= iVariable_create(thisCode, _VAR_TYPE_U16,			NULL, true);
+		varDefault_s8			= iVariable_create(thisCode, _VAR_TYPE_S8,			NULL, true);
+		varDefault_u8			= iVariable_create(thisCode, _VAR_TYPE_U8,			NULL, true);
+		varDefault_logical		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,		NULL, true);
+		varDefault_bitmap		= iVariable_create(thisCode, _VAR_TYPE_BITMAP,		NULL, true);
+		varDefault_thiscode		= iVariable_create(thisCode, _VAR_TYPE_THISCODE,	NULL, true);
 	}
 
 
@@ -5414,7 +5426,7 @@ debug_break;
 		for (lnI = 0; lnI < gsProps_masterSize; lnI++)
 		{
 			// Create the variable
-			gsProps_master[lnI].varInit = iVariable_create(thisCode, gsProps_master[lnI].varType, NULL);
+			gsProps_master[lnI].varInit = iVariable_create(thisCode, gsProps_master[lnI].varType, NULL, true);
 
 			// If a valid variable was created, initialize it to the static baseclass values
 			if (gsProps_master[lnI].varInit)
@@ -5792,11 +5804,11 @@ if (!gsProps_master[lnI].varInit)
 			if (tlMakeReference)
 			{
 				// Just create a reference to the variable
-				varDst = iVariable_create(thisCode, varSrc->varType, varSrc);
+				varDst = iVariable_create(thisCode, varSrc->varType, varSrc, true);
 
 			} else {
 				// Create a new real variable, a full copy of the original
-				varDst = iVariable_create(thisCode, varSrc->varType, NULL);
+				varDst = iVariable_create(thisCode, varSrc->varType, NULL, true);
 				iVariable_copy(thisCode, varDst, varSrc);
 			}
 
@@ -7653,7 +7665,7 @@ debug_break;
 		var = iiVariable_terminateIndirect(thisCode, var);
 
 		// Make sure our environment is sane
-		varDisp = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL);
+		varDisp = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
 		if (var && varDisp)
 		{
 			// Initialize

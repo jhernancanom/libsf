@@ -205,7 +205,7 @@ struct SFieldRecord2;
 	SFieldRecord1*		iDbf_getField_byNumber1							(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber);
 	SFieldRecord2*		iDbf_getField_byName2							(SThisCode* thisCode, SWorkArea* wa, cu8* fieldName);
 	SFieldRecord2*		iDbf_getField_byNumber2							(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber);
-	SVariable*			iDbf_getField_byName2_asVariable				(SThisCode* thisCode, SWorkArea* wa, u8* fieldName, u32 fieldNameLength);
+	SVariable*			iDbf_getField_byName2_asVariable				(SThisCode* thisCode, SWorkArea* wa, u8* fieldName, u32 fieldNameLength, bool tlCreateAsReference);
 	u8					iDbf_getField_type								(SThisCode* thisCode, SWorkArea* wa, u8* keyExpression, bool* swapEndians, bool* needsSignBitToggled);
 	uptr				iDbf_getFieldExpression_name					(SThisCode* thisCode, u8* expression, const u8* foundFieldName);
 

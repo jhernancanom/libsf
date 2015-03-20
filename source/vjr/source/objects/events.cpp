@@ -176,83 +176,83 @@
 		//////////
 		// onMouseMove
 		//////
-			if (!varX_onMouseMove)				varX_onMouseMove		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
-			if (!varY_onMouseMove)				varY_onMouseMove		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
-			if (!varCtrl_onMouseMove)			varCtrl_onMouseMove		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varAlt_onMouseMove)			varAlt_onMouseMove		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varShift_onMouseMove)			varShift_onMouseMove	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varClick_onMouseMove)			varClick_onMouseMove	= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
+			if (!varX_onMouseMove)				varX_onMouseMove		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL, true);
+			if (!varY_onMouseMove)				varY_onMouseMove		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL, true);
+			if (!varCtrl_onMouseMove)			varCtrl_onMouseMove		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varAlt_onMouseMove)			varAlt_onMouseMove		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varShift_onMouseMove)			varShift_onMouseMove	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varClick_onMouseMove)			varClick_onMouseMove	= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL, true);
 
 
 		//////////
 		// onMouseDown
 		//////
-			if (!varX_onMouseDown)				varX_onMouseDown		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
-			if (!varY_onMouseDown)				varY_onMouseDown		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
-			if (!varCtrl_onMouseDown)			varCtrl_onMouseDown		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varAlt_onMouseDown)			varAlt_onMouseDown		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varShift_onMouseDown)			varShift_onMouseDown	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varClick_onMouseDown)			varClick_onMouseDown	= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
+			if (!varX_onMouseDown)				varX_onMouseDown		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL, true);
+			if (!varY_onMouseDown)				varY_onMouseDown		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL, true);
+			if (!varCtrl_onMouseDown)			varCtrl_onMouseDown		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varAlt_onMouseDown)			varAlt_onMouseDown		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varShift_onMouseDown)			varShift_onMouseDown	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varClick_onMouseDown)			varClick_onMouseDown	= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL, true);
 
 
 		//////////
 		// onMouseClickEx
 		//////
-			if (!varX_onMouseClickEx)			varX_onMouseClickEx		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
-			if (!varY_onMouseClickEx)			varY_onMouseClickEx		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
-			if (!varCtrl_onMouseClickEx)		varCtrl_onMouseClickEx	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varAlt_onMouseClickEx)			varAlt_onMouseClickEx	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varShift_onMouseClickEx)		varShift_onMouseClickEx	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varClick_onMouseClickEx)		varClick_onMouseClickEx	= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
+			if (!varX_onMouseClickEx)			varX_onMouseClickEx		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL, true);
+			if (!varY_onMouseClickEx)			varY_onMouseClickEx		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL, true);
+			if (!varCtrl_onMouseClickEx)		varCtrl_onMouseClickEx	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varAlt_onMouseClickEx)			varAlt_onMouseClickEx	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varShift_onMouseClickEx)		varShift_onMouseClickEx	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varClick_onMouseClickEx)		varClick_onMouseClickEx	= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL, true);
 
 
 		//////////
 		// onMouseUp
 		//////
-			if (!varX_onMouseUp)				varX_onMouseUp			= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
-			if (!varY_onMouseUp)				varY_onMouseUp			= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
-			if (!varCtrl_onMouseUp)				varCtrl_onMouseUp		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varAlt_onMouseUp)				varAlt_onMouseUp		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varShift_onMouseUp)			varShift_onMouseUp		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varClick_onMouseUp)			varClick_onMouseUp		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
+			if (!varX_onMouseUp)				varX_onMouseUp			= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL, true);
+			if (!varY_onMouseUp)				varY_onMouseUp			= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL, true);
+			if (!varCtrl_onMouseUp)				varCtrl_onMouseUp		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varAlt_onMouseUp)				varAlt_onMouseUp		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varShift_onMouseUp)			varShift_onMouseUp		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varClick_onMouseUp)			varClick_onMouseUp		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL, true);
 
 
 		//////////
 		// onMouseWheel
 		//////
-			if (!varX_onMouseWheel)				varX_onMouseWheel		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
-			if (!varY_onMouseWheel)				varY_onMouseWheel		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
-			if (!varCtrl_onMouseWheel)			varCtrl_onMouseWheel	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varAlt_onMouseWheel)			varAlt_onMouseWheel		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varShift_onMouseWheel)			varShift_onMouseWheel	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varClick_onMouseWheel)			varClick_onMouseWheel	= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
-			if (!varDeltaY_onMouseWheel)		varDeltaY_onMouseWheel	= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL);
+			if (!varX_onMouseWheel)				varX_onMouseWheel		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL, true);
+			if (!varY_onMouseWheel)				varY_onMouseWheel		= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL, true);
+			if (!varCtrl_onMouseWheel)			varCtrl_onMouseWheel	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varAlt_onMouseWheel)			varAlt_onMouseWheel		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varShift_onMouseWheel)			varShift_onMouseWheel	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varClick_onMouseWheel)			varClick_onMouseWheel	= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL, true);
+			if (!varDeltaY_onMouseWheel)		varDeltaY_onMouseWheel	= iVariable_create(thisCode, _VAR_TYPE_S32,		NULL, true);
 
 
 		//////////
 		// onKeyDown
 		//////
-			if (!varCtrl_onKeyDown)				varCtrl_onKeyDown		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varAlt_onKeyDown)				varAlt_onKeyDown		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varShift_onKeyDown)			varShift_onKeyDown		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varCaps_onKeyDown)				varCaps_onKeyDown		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varAsciiChar_onKeyDown)		varAsciiChar_onKeyDown	= iVariable_create(thisCode, _VAR_TYPE_U16,		NULL);
-			if (!varVKey_onKeyDown)				varVKey_onKeyDown		= iVariable_create(thisCode, _VAR_TYPE_S16,		NULL);
-			if (!varIsCAS_onKeyDown)			varIsCAS_onKeyDown		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varIsAscii_onKeyDown)			varIsAscii_onKeyDown	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varCtrl_onKeyDown)				varCtrl_onKeyDown		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varAlt_onKeyDown)				varAlt_onKeyDown		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varShift_onKeyDown)			varShift_onKeyDown		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varCaps_onKeyDown)				varCaps_onKeyDown		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varAsciiChar_onKeyDown)		varAsciiChar_onKeyDown	= iVariable_create(thisCode, _VAR_TYPE_U16,		NULL, true);
+			if (!varVKey_onKeyDown)				varVKey_onKeyDown		= iVariable_create(thisCode, _VAR_TYPE_S16,		NULL, true);
+			if (!varIsCAS_onKeyDown)			varIsCAS_onKeyDown		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varIsAscii_onKeyDown)			varIsAscii_onKeyDown	= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
 
 
 		//////////
 		// onKeyUp
 		//////
-			if (!varCtrl_onKeyUp)				varCtrl_onKeyUp			= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varAlt_onKeyUp)				varAlt_onKeyUp			= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varShift_onKeyUp)				varShift_onKeyUp		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varCaps_onKeyUp)				varCaps_onKeyUp			= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varAsciiChar_onKeyUp)			varAsciiChar_onKeyUp	= iVariable_create(thisCode, _VAR_TYPE_U16,		NULL);
-			if (!varVKey_onKeyUp)				varVKey_onKeyUp			= iVariable_create(thisCode, _VAR_TYPE_S16,		NULL);
-			if (!varIsCAS_onKeyUp)				varIsCAS_onKeyUp		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
-			if (!varIsAscii_onKeyUp)			varIsAscii_onKeyUp		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL);
+			if (!varCtrl_onKeyUp)				varCtrl_onKeyUp			= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varAlt_onKeyUp)				varAlt_onKeyUp			= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varShift_onKeyUp)				varShift_onKeyUp		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varCaps_onKeyUp)				varCaps_onKeyUp			= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varAsciiChar_onKeyUp)			varAsciiChar_onKeyUp	= iVariable_create(thisCode, _VAR_TYPE_U16,		NULL, true);
+			if (!varVKey_onKeyUp)				varVKey_onKeyUp			= iVariable_create(thisCode, _VAR_TYPE_S16,		NULL, true);
+			if (!varIsCAS_onKeyUp)				varIsCAS_onKeyUp		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
+			if (!varIsAscii_onKeyUp)			varIsAscii_onKeyUp		= iVariable_create(thisCode, _VAR_TYPE_LOGICAL,	NULL, true);
 	}
 
 
