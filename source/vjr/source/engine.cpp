@@ -642,18 +642,9 @@ debug_nop;
 //////
 	SVariable* iEngine_get_functionResult(SThisCode* thisCode, SComp* comp)
 	{
-		u32				lnParamsFound;
+		u32				lnI, lnParamsFound;
 		SFunctionData*	lfl;
-		SVariable*		p1;
-		SVariable*		p2;
-		SVariable*		p3;
-		SVariable*		p4;
-		SVariable*		p5;
-		SVariable*		p6;
-		SVariable*		p7;
-		SVariable*		p8;
-		SVariable*		p9;
-		SVariable*		p10;
+		SVariable*		params[26];
 		SVariable*		result;
 		SComp*			compLeftParen;
 		
@@ -670,54 +661,59 @@ debug_nop;
 				// Is this the named function?
 				if (lfl->iCode == comp->iCode)
 				{
+					//////////
 					// We need to find the minimum number of parameters between)
-					if (!iiEngine_getParametersBetween(thisCode, compLeftParen, &lnParamsFound, lfl->requiredCount, lfl->parameterCount, &p1, &p2, &p3, &p4, &p5, &p6, &p7, &p8, &p9, &p10))
-						return(NULL);
-
-					// When we get here we found the correct number of parameters
-					switch (lfl->parameterCount)
-					{
-						case 0:			result = lfl->func_0p(NULL);
-							break;
-						case 1:			result = lfl->func_1p(NULL, p1);
-							break;
-						case 2:			result = lfl->func_2p(NULL, p1, p2);
-							break;
-						case 3:			result = lfl->func_3p(NULL, p1, p2, p3);
-							break;
-						case 4:			result = lfl->func_4p(NULL, p1, p2, p3, p4);
-							break;
-						case 5:			result = lfl->func_5p(NULL, p1, p2, p3, p4, p5);
-							break;
-						case 6:			result = lfl->func_6p(NULL, p1, p2, p3, p4, p5, p6);
-							break;
-						case 7:			result = lfl->func_7p(NULL, p1, p2, p3, p4, p5, p6, p7);
-							break;
-						case 8:			result = lfl->func_8p(NULL, p1, p2, p3, p4, p5, p6, p7, p8);
-							break;
-						case 9:			result = lfl->func_9p(NULL, p1, p2, p3, p4, p5, p6, p7, p8, p9);
-							break;
-						case 10:		result = lfl->func_10p(NULL, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
-							break;
-
-						default:
-							MessageBox(null0, "Need to add more parameter functions to iEngine_getFunctionResult()", "VJr Programmer Error", MB_OK);
+					//////
+						if (!iiEngine_getParametersBetween(thisCode, compLeftParen, &lnParamsFound, lfl->requiredCount, lfl->parameterCount, &params[0]))
 							return(NULL);
-					}
-					// We need to free anything that needs freed
-					if (p1)		iVariable_delete(thisCode, p1, true);
-					if (p2)		iVariable_delete(thisCode, p2, true);
-					if (p3)		iVariable_delete(thisCode, p3, true);
-					if (p4)		iVariable_delete(thisCode, p4, true);
-					if (p5)		iVariable_delete(thisCode, p5, true);
-					if (p6)		iVariable_delete(thisCode, p6, true);
-					if (p7)		iVariable_delete(thisCode, p7, true);
-					if (p8)		iVariable_delete(thisCode, p8, true);
-					if (p9)		iVariable_delete(thisCode, p9, true);
-					if (p10)	iVariable_delete(thisCode, p10, true);
 
+
+					//////////
+					// When we get here we found the correct number of parameters
+					//////
+						switch (lfl->parameterCount)
+						{
+							case 0:			result = lfl->func_0p(NULL);
+								break;
+							case 1:			result = lfl->func_1p(NULL, params[0]);
+								break;
+							case 2:			result = lfl->func_2p(NULL, params[0], params[1]);
+								break;
+							case 3:			result = lfl->func_3p(NULL, params[0], params[1], params[2]);
+								break;
+							case 4:			result = lfl->func_4p(NULL, params[0], params[1], params[2], params[3]);
+								break;
+							case 5:			result = lfl->func_5p(NULL, params[0], params[1], params[2], params[3], params[4]);
+								break;
+							case 6:			result = lfl->func_6p(NULL, params[0], params[1], params[2], params[3], params[4], params[5]);
+								break;
+							case 7:			result = lfl->func_7p(NULL, params[0], params[1], params[2], params[3], params[4], params[5], params[6]);
+								break;
+							case 8:			result = lfl->func_8p(NULL, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7]);
+								break;
+							case 9:			result = lfl->func_9p(NULL, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8]);
+								break;
+							case 10:		result = lfl->func_10p(NULL, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9]);
+								break;
+							default:		result = lfl->func_26p(NULL, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9], params);
+								break;
+						}
+
+
+					//////////
+					// We need to free anything that needs freed
+					//////
+						for (lnI = 0; lnI < _MAX_PARAMETER_COUNT; lnI++)
+						{
+							if (params[lnI])
+								iVariable_delete(thisCode, params[lnI], true);
+						}
+
+
+					//////////
 					// Indicate our return value
-					return(result);
+					//////
+						return(result);
 				}
 
 				// Move to next function
@@ -821,78 +817,73 @@ debug_nop;
 // Called to obtain the parameters between the indicated parenthesis.
 //
 //////
-	bool iiEngine_getParametersBetween(SThisCode* thisCode, SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable** p1, SVariable** p2, SVariable** p3, SVariable** p4, SVariable** p5, SVariable** p6, SVariable** p7, SVariable** p8, SVariable** p9, SVariable** p10)
+	bool iiEngine_getParametersBetween(SThisCode* thisCode, SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable* params[])
 	{
-		u32			lnParamCount;
+		u32			lnI, lnParamCount;
 		bool		llManufactured;
 		SComp*		comp;
 		SComp*		compComma;
 
 
+		//////////
 		// Initialize the parameters to null
-		*p1 = NULL;
-		*p2 = NULL;
-		*p3 = NULL;
-		*p4 = NULL;
-		*p5 = NULL;
-		*p6 = NULL;
-		*p7 = NULL;
-		*p8 = NULL;
-		*p9 = NULL;
-		*p10 = NULL;
+		//////
+			for (lnI = 0; lnI < _MAX_PARAMETER_COUNT; lnI++)
+				params[lnI] = 0;
 
+
+		//////////
 		// Begin to the thing to the right of the left parenthesis
-		lnParamCount	= 1;
-		comp			= compLeftParen->ll.nextComp;
-		while (comp && comp->iCode != _ICODE_PARENTHESIS_RIGHT)
-		{
-			//////////
-			// See if we've gone over our limit
-			//////
-				if (lnParamCount > maxCount)
-				{
-					// Too many parameters
-					iError_reportByNumber(thisCode, _ERROR_TOO_MANY_PARAMETERS, comp, false);
-					return(NULL);
-				}
-
-			//////////
-			// The component after this must be a comma
-			//////
-				compComma = comp->ll.nextComp;
-				if (!compComma || (compComma->iCode != _ICODE_COMMA && compComma->iCode != _ICODE_PARENTHESIS_RIGHT && lnParamCount > requiredCount))
-				{
-					// Comma expected error
-					iError_reportByNumber(thisCode, _ERROR_COMMA_EXPECTED, comp, false);
-					return(NULL);
-				}
+		//////
+			lnParamCount	= 1;
+			comp			= compLeftParen->ll.nextComp;
+			for (lnI = 0; comp && comp->iCode != _ICODE_PARENTHESIS_RIGHT; lnI++)
+			{
+				//////////
+				// See if we've gone over our limit
+				//////
+					if (lnParamCount > maxCount)
+					{
+						// Too many parameters
+						iError_reportByNumber(thisCode, _ERROR_TOO_MANY_PARAMETERS, comp, false);
+						return(NULL);
+					}
 
 
-			//////////
-			// Derive whatever this is as a variable
-			//////
-				     if (lnParamCount == 1)		{	/*var =*/ (*p1  = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
-				else if (lnParamCount == 2)		{	/*var =*/ (*p2  = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
-				else if (lnParamCount == 3)		{	/*var =*/ (*p3  = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
-				else if (lnParamCount == 4)		{	/*var =*/ (*p4  = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
-				else if (lnParamCount == 5)		{	/*var =*/ (*p5  = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
-				else if (lnParamCount == 6)		{	/*var =*/ (*p6  = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
-				else if (lnParamCount == 7)		{	/*var =*/ (*p7  = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
-				else if (lnParamCount == 8)		{	/*var =*/ (*p8  = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
-				else if (lnParamCount == 9)		{	/*var =*/ (*p9  = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
-				else if (lnParamCount == 10)	{	/*var =*/ (*p10 = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
+				//////////
+				// The component after this must be a comma
+				//////
+					compComma = comp->ll.nextComp;
+					if (!compComma || (compComma->iCode != _ICODE_COMMA && compComma->iCode != _ICODE_PARENTHESIS_RIGHT && lnParamCount > requiredCount))
+					{
+						// Comma expected error
+						iError_reportByNumber(thisCode, _ERROR_COMMA_EXPECTED, comp, false);
+						return(NULL);
+					}
 
 
-			// Move to next component
-			++lnParamCount;
-			comp = compComma->ll.nextComp;
-		}
+				//////////
+				// Derive whatever this is as a variable
+				//////
+					params[lnI] = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured);
 
+
+				// Move to next component
+				++lnParamCount;
+				comp = compComma->ll.nextComp;
+			}
+
+
+		//////////
 		// Indicate how many we found
-		*paramsFound = --lnParamCount;
+		//////
+			*paramsFound = --lnParamCount;
 
+
+		//////////
 		// Indicate success
-		return(lnParamCount >= requiredCount && lnParamCount <= maxCount);
+		//////
+			return(lnParamCount >= requiredCount && lnParamCount <= maxCount);
 	}
 
 

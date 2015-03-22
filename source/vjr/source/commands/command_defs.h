@@ -216,6 +216,8 @@ struct SThisCode;
 	SVariable*			function_fv			/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varPayment, SVariable* varInterestRate, SVariable* varPeriods);
 	SVariable*			function_grayscale							(SThisCode* thisCode, SVariable* varColor, SVariable* varPercentage);
 	SVariable*			function_grn								(SThisCode* thisCode, SVariable* varColor);
+	SVariable*			function_iif								(SThisCode* thisCode, SVariable* varTest, SVariable* varTrue, SVariable* varFalse);
+	SVariable*			function_inlist								(SThisCode* thisCode, SVariable* varValue, SVariable* varList1, SVariable* varList2, SVariable* varList3, SVariable* varList4, SVariable* varList5, SVariable* varList6, SVariable* varList7, SVariable* varList8, SVariable* varList9, SVariable* varParams[]);
 	SVariable*			function_int								(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_justdrive							(SThisCode* thisCode, SVariable* varString);
 	SVariable*			function_justext							(SThisCode* thisCode, SVariable* varString);
@@ -354,6 +356,7 @@ struct SThisCode;
 				SVariable*	(*func_8p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6, SVariable* p7, SVariable* p8);
 				SVariable*	(*func_9p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6, SVariable* p7, SVariable* p8, SVariable* p9);
 				SVariable*	(*func_10p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6, SVariable* p7, SVariable* p8, SVariable* p9, SVariable* p10);
+				SVariable*	(*func_26p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6, SVariable* p7, SVariable* p8, SVariable* p9, SVariable* p10, SVariable* params[]);
 			};
 
 
@@ -419,6 +422,8 @@ struct SThisCode;
 		{	_ICODE_FV,				1,			(uptr)&function_fv,				3,				3,				&gsSourceLight_fv[0]			},	// FV() by Stefano D'Amico, VJr 0.56, Mar.18.2015
 		{	_ICODE_GRAYSCALE,		1,			(uptr)&function_grayscale,		1,				2,				&gsSourceLight_grayscale[0]		},
 		{	_ICODE_GRN,				1,			(uptr)&function_grn,			1,				1,				&gsSourceLight_grn[0]			},
+		{	_ICODE_IIF,				1,			(uptr)&function_iif,			2,				3,				&gsSourceLight_iif[0]			},
+		{	_ICODE_INLIST,			1,			(uptr)&function_inlist,			2,				26,				&gsSourceLight_inlist[0]		},
 		{	_ICODE_INT,				1,			(uptr)&function_int,			1,				1,				&gsSourceLight_int[0]			},
 		{	_ICODE_JUSTDRIVE,		1,			(uptr)&function_justdrive,		1,				1,				&gsSourceLight_justdrive[0]		},
 		{	_ICODE_JUSTEXT,			1,			(uptr)&function_justext,		1,				1,				&gsSourceLight_justext[0]		},

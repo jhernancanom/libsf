@@ -83,6 +83,12 @@
 
 
 //////////
+// Constants
+//////
+	const u32	_MAX_PARAMETER_COUNT			= 26;
+
+
+//////////
 // Constants for .T. and .F. settings using LOGICALX()
 //
 //////
@@ -155,7 +161,7 @@
 
 	s64						iEngine_update_tally					(SThisCode* thisCode, s64 tnValue);
 
-	bool					iiEngine_getParametersBetween			(SThisCode* thisCode, SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable** p1, SVariable** p2, SVariable** p3, SVariable** p4, SVariable** p5, SVariable** p6, SVariable** p7, SVariable** p8, SVariable** p9, SVariable** p10);
+	bool					iiEngine_getParametersBetween			(SThisCode* thisCode, SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable* params[]);
 
 	void					iBreakpoint_delete						(SThisCode* thisCode, SBreakpoint** breakpoint);
 	SBreakpoint* 			iBreakpoint_add							(SThisCode* thisCode, SBreakpoint** breakpoint, u32 tnType);

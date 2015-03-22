@@ -2896,7 +2896,7 @@
 //     Mar.22.2015
 //////
 // Change log:
-//     Mar.22.2015 - Initial creation
+//     Mar.22.2015 - Initial creation (originally proposed by Stefano D'Amico)
 //////
 // Parameters:
 //     varString	-- Original string
@@ -3618,6 +3618,70 @@
 	SVariable* function_grn(SThisCode* thisCode, SVariable* varColor)
 	{
 		return(ifunction_color_common(thisCode, varColor, 0x0000ff00, 8));
+	}
+
+
+
+
+//////////
+//
+// Function: IIF()
+// Immediate if.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.22.2015
+//////
+// Change log:
+//     Mar.22.2015 - Initial creation
+//////
+// Parameters:
+//     varTest		-- The logical test result
+//     varTrue		-- The value to use if true
+//     varFalse		-- The value to use if false
+//
+//////
+// Returns:
+//    A copy of either varTrue or varFalse.
+//////
+	SVariable* function_iif(SThisCode* thisCode, SVariable* varTest, SVariable* varTrue, SVariable* varFalse)
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varTest), false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Function: INLIST()
+// A test if the value is in the list.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.22.2015
+//////
+// Change log:
+//     Mar.22.2015 - Initial creation
+//////
+// Parameters:
+//     varValue		-- The value to compare
+//     varList1		-- A value in the list
+//     varList2		-- A value in the list
+//     ..
+//     varList9		-- A value in the list
+//
+//////
+// Returns:
+//    Logical		-- .t. if the item is found in the list, .f. otherwise
+//////
+	SVariable* function_inlist(SThisCode* thisCode, SVariable* varValue, SVariable* varList1, SVariable* varList2, SVariable* varList3, SVariable* varList4, SVariable* varList5, SVariable* varList6, SVariable* varList7, SVariable* varList8, SVariable* varList9, SVariable* varParams[])
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varValue), false);
+		return(NULL);
 	}
 
 
@@ -6817,7 +6881,7 @@
 //     Mar.22.2015
 //////
 // Change log:
-//     Mar.22.2015 - Initial creation
+//     Mar.22.2015 - Initial creation (originally proposed by Stefano D'Amico)
 //////
 // Parameters:
 //     varString	-- Original string
