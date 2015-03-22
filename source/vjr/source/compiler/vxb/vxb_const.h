@@ -525,6 +525,7 @@
 	const s32		_ICODE_BITRSHIFT                                = 1062;
 	const s32		_ICODE_BITSET                                   = 1063;
 	const s32		_ICODE_BITSLICE									= 1466;
+	const s32		_ICODE_BITSTR									= 1475;
 	const s32		_ICODE_BITTEST                                  = 1064;
 	const s32		_ICODE_BITXOR                                   = 1065;
 	const s32		_ICODE_BOF                                      = 1066;
@@ -607,6 +608,8 @@
 	const s32		_ICODE_DTOT                                     = 1141;
 	const s32		_ICODE_EDITSOURCE                               = 1142;
 	const s32		_ICODE_EMPTY                                    = 1143;
+	const s32		_ICODE_ENDSWITH									= 1476;
+	const s32		_ICODE_ENDSWITHC								= 1478;
 	const s32		_ICODE_EOF                                      = 1144;
 	const s32		_ICODE_ERROR                                    = 1145;
 	const s32		_ICODE_EVALUATE                                 = 1146;
@@ -855,6 +858,8 @@
 	const s32		_ICODE_SQLTABLES                                = 1370;
 	const s32		_ICODE_SQRT                                     = 1371;
 	const s32		_ICODE_SROWS                                    = 1372;
+	const s32		_ICODE_STARTSWITH								= 1477;
+	const s32		_ICODE_STARTSWITHC								= 1479;
 	const s32		_ICODE_STRCONV                                  = 1373;
 	const s32		_ICODE_STREXTRACT                               = 1374;
 	const s32		_ICODE_STRTOFILE                                = 1375;
@@ -897,6 +902,7 @@
 	const s32		_ICODE_VECCOUNT									= 1462;
 	const s32		_ICODE_VECEL									= 1463;
 	const s32		_ICODE_VECSLICE									= 1468;
+	const s32		_ICODE_VECSTR									= 1474;
 	const s32		_ICODE_VECSTUFF									= 1464;
 	const s32		_ICODE_VECSYMBOL								= 1465;
 	const s32		_ICODE_VERSION                                  = 1408;
@@ -945,7 +951,10 @@
 	// slice			= 1467				vecslice		= 1468
 	// bits				= 1469				bits8			= 1470
 	// bits16			= 1471				bits32			= 1472
-	// bits64			= 1473
+	// bits64			= 1473				vecstr			= 1474
+	// bitstr			= 1475				endswith		= 1476
+	// startswith		= 1477				endswithc		= 1478
+	// startswithc		= 1479
 
 // Temporarily added until the processing engine is coded
 	const s32		_ICODE_CONCATENATE								= 1900;
@@ -1431,6 +1440,13 @@
 	const s8		cgc_bitrshift[]									= "bitrshift";
 	const s8		cgc_bitset[]									= "bitset";
 	const s8		cgc_bittest[]									= "bittest";
+	const s8		cgc_bits[]										= "bits";
+	const s8		cgc_bits8[]										= "bits8";
+	const s8		cgc_bits16[]									= "bits16";
+	const s8		cgc_bits32[]									= "bits32";
+	const s8		cgc_bits64[]									= "bits64";
+	const s8		cgc_bitslice[]									= "bitslice";
+	const s8		cgc_bitstr[]									= "bitstr";
 	const s8		cgc_bitxor[]									= "bitxor";
 	const s8		cgc_blu[]										= "blu";
 	const s8		cgc_bof[]										= "bof";
@@ -1513,6 +1529,8 @@
 	const s8		cgc_dtot[]										= "dtot";
 	const s8		cgc_editsource[]								= "editsource";
 	const s8		cgc_empty[]										= "empty";
+	const s8		cgc_endswith[]									= "endswith";
+	const s8		cgc_endswithc[]									= "endswithc";
 	const s8		cgc_eof[]										= "eof";
 	const s8		cgc_error[]										= "error";
 	const s8		cgc_evaluate[]									= "evaluate";
@@ -1540,7 +1558,7 @@
 	const s8		cgc_floor[]										= "floor";
 	const s8		cgc_fontmetric[]								= "fontmetric";
 	const s8		cgc_fopen[]										= "fopen";
-	//		co		st char cgc_for[]								= "har cgc_for";
+//	const s8		cgc_for[]										= "for";
 	const s8		cgc_forceext[]									= "forceext";
 	const s8		cgc_forcefname[]								= "forcefname";
 	const s8		cgc_forcepath[]									= "forcepath";
@@ -1763,6 +1781,8 @@
 	const s8		cgc_sqltables[]									= "sqltables";
 	const s8		cgc_sqrt[]										= "sqrt";
 	const s8		cgc_srows[]										= "srows";
+	const s8		cgc_startswith[]								= "startswith";
+	const s8		cgc_startswithc[]								= "startswithc";
 	const s8		cgc_strconv[]									= "strconv";
 	const s8		cgc_strextract[]								= "strextract";
 	const s8		cgc_strtofile[]									= "strtofile";
@@ -1805,6 +1825,7 @@
 	const s8		cgc_veccount[]									= "veccount";
 	const s8		cgc_vecel[]										= "vecel";
 	const s8		cgc_vecslice[]									= "vecslice";
+	const s8		cgc_vecstr[]									= "vecstr";
 	const s8		cgc_vecstuff[]									= "vecstuff";
 	const s8		cgc_vecsymbol[]									= "vecsymbol";
 	const s8		cgc_version[]									= "version";
@@ -1832,14 +1853,14 @@
 	const s8		cgc_year[]										= "year";
 	const s8		cgc__test[]										= "_test";
 
-	// Temporarily added until the processing engine is completed	    until the processing en
+// Temporarily added until the processing engine is completed until the processing engine is completed
 	const s8		cgc_concatenate[]								= "concatenate";
 	const s8		cgc_add[]										= "add";
 	const s8		cgc_sub[]										= "sub";
 	const s8		cgc_mul[]										= "mul";
 	const s8		cgc_div[]										= "div";
 
-	// Commands
+// Commands
 	const s8		cgc_activate[]									= "activate";
 //	const s8		cgc_add[]										= "add";
 	const s8		cgc_all[]										= "all";

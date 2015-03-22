@@ -1711,6 +1711,36 @@
 
 //////////
 //
+// Function: BITSTR()
+// Converts a value into its bit pattern.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.22.2015
+//////
+// Change log:
+//     Mar.22.2015 - Initial creation
+//////
+// Parameters:
+//     varValue		-- Numeric value from which to extract.
+//     varLength	-- Number of bits to extract, including leading 0s
+//
+//////
+// Returns:
+//    Character		-- The extracted bits as a character string
+//////
+	SVariable* function_bitstr(SThisCode* thisCode, SVariable* varValue, SVariable* varLength)
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
 // Function: BLU()
 // Retrieves the blue channel from an RGBA or BGRA color.
 //
@@ -2852,6 +2882,54 @@
 
 	}
 
+
+
+
+//////////
+//
+// Function: ENDSWITH()
+// Determines if the character string ends with the search string.
+//
+//////
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Mar.22.2015
+//////
+// Change log:
+//     Mar.22.2015 - Initial creation (originally proposed by Stefano D'Amico)
+//////
+// Parameters:
+//     varString	-- Original string
+//     varSearch	-- Search string to replace
+//     varStart		-- Starting location within the string
+//     varEnd		-- Ending location within the string
+//
+//////
+// Returns:
+//    Logical		-- .t. if the search string is found in the string, .f. otherwise
+//
+//////
+	SVariable* function_endswith(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varStart, SVariable* varEnd)
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varString), false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Function: ENDSWITHC()
+// Case-insensitive version of ENDSWITH()
+//
+//////
+	SVariable* function_endswithc(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varStart, SVariable* varEnd)
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varString), false);
+		return(NULL);
+	}
+
 	
 	
 	
@@ -3540,6 +3618,70 @@
 	SVariable* function_grn(SThisCode* thisCode, SVariable* varColor)
 	{
 		return(ifunction_color_common(thisCode, varColor, 0x0000ff00, 8));
+	}
+
+
+
+
+//////////
+//
+// Function: IIF()
+// Immediate if.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.22.2015
+//////
+// Change log:
+//     Mar.22.2015 - Initial creation
+//////
+// Parameters:
+//     varTest		-- The logical test result
+//     varTrue		-- The value to use if true
+//     varFalse		-- The value to use if false
+//
+//////
+// Returns:
+//    A copy of either varTrue or varFalse.
+//////
+	SVariable* function_iif(SThisCode* thisCode, SVariable* varTest, SVariable* varTrue, SVariable* varFalse)
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varTest), false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Function: INLIST()
+// A test if the value is in the list.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.22.2015
+//////
+// Change log:
+//     Mar.22.2015 - Initial creation
+//////
+// Parameters:
+//     varValue		-- The value to compare
+//     varList1		-- A value in the list
+//     varList2		-- A value in the list
+//     ..
+//     varList9		-- A value in the list
+//
+//////
+// Returns:
+//    Logical		-- .t. if the item is found in the list, .f. otherwise
+//////
+	SVariable* function_inlist(SThisCode* thisCode, SVariable* varValue, SVariable* varList1, SVariable* varList2, SVariable* varList3, SVariable* varList4, SVariable* varList5, SVariable* varList6, SVariable* varList7, SVariable* varList8, SVariable* varList9, SVariable* varParams[])
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varValue), false);
+		return(NULL);
 	}
 
 
@@ -6730,6 +6872,53 @@
 
 //////////
 //
+// Function: STARTSWITH()
+// Determines if the character string starts with the search string.
+//
+//////
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Mar.22.2015
+//////
+// Change log:
+//     Mar.22.2015 - Initial creation (originally proposed by Stefano D'Amico)
+//////
+// Parameters:
+//     varString	-- Original string
+//     varSearch	-- Search string to replace
+//     varStart		-- Starting location within the string
+//
+//////
+// Returns:
+//    Logical		-- .t. if the search string is found in the string, .f. otherwise
+//
+//////
+	SVariable* function_startswith(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varStart)
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varString), false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Function: STARTSWITHC()
+// Case-insensitive version of STARTSWITH().
+//
+//////
+	SVariable* function_startswithc(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varStart)
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varString), false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
 // Function: STRTRAN()
 // Converts the matching portions of the string from one form to another.
 //
@@ -7790,19 +7979,19 @@ debug_break;
 //						Leading blanks are ignored. 
 //						VAL( ) returns 0 if the first character of the character expression is not a number, a dollar sign ($), a plus sign (+), or minus sign (-).
 //////
-	SVariable* function_val(SThisCode* thisCode, SVariable* varExpr, SVariable* varIgnoreList)
+	SVariable* function_val(SThisCode* thisCode, SVariable* varExpr, SVariable* varIgnoreChars)
 	{
-		s32 lnValue32;
-		s64 lnValue64;
-		f64 lfValue;
-		u32	lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond;
-		u32	lnI, lnJ, lnK;
-		SDateTime*	dt;
-		u8 buffer[64];
-		s8* buffer_string;
+		s32			lnI, lnK, lnJ;
+		s64			lnValue;
+		f64			lfValue;
+		bool		llAsInteger;
+		SVariable*	varCurrency;
+		SVariable*	varPoint;
+		SVariable*	varSeparator;
+		SVariable*	result;
 		u32			errorNum;
         bool		error;
-        SVariable*	result;
+		s8			buffer[64];
 		
 
 		//////////
@@ -7814,138 +8003,181 @@ debug_break;
 				return(NULL);
 			}
 
+		//////////
+		// If numeric, copy whatever's already there
+		//////
+			if (varExpr->varType >= _VAR_TYPE_NUMERIC_START && varExpr->varType <= _VAR_TYPE_NUMERIC_END)
+			{
+				// Copy The existing variable
+				result = iVariable_copy(thisCode, varExpr, false);
+				if (!result)
+					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varExpr), false);
+
+				// Success or failure, return our result
+				return(result);
+			}
+
+
 
 		//////////
-		// Parameter 2 must be valid
+		// Determine what we're evaluating
 		//////
-			if (varIgnoreList)
+			switch (varExpr->varType)
 			{
-				if (!iVariable_isValid(varIgnoreList) || !iVariable_isTypeCharacter(varIgnoreList))
-				{
-					iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varIgnoreList), false);
-					return(NULL);
-				}
-			}
-		// Copy whatever it already is
-		if (varExpr->varType >= _VAR_TYPE_NUMERIC_START && varExpr->varType <= _VAR_TYPE_NUMERIC_END)
-		{
-			result = iVariable_copy(thisCode, varExpr, false);
-		} else {
+				case _VAR_TYPE_NULL:
+					iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varExpr), false);
+					return(NULL);								
+					break;
+
+				case _VAR_TYPE_LOGICAL:		// 0=.F., 1=.T.
+				case _VAR_TYPE_DATE:		// YYYYMMDD
+					result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
+					if (result)
+					{
+						// Populate the s32
+						*result->value.data_s32 = iiVariable_getAs_s32(thisCode, varExpr, true, &error, &errorNum);
+						if (error)
+							iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varExpr), false);
+					}
+					break;
+
+				case _VAR_TYPE_DATETIME:
+					// YYYYMMDDHHMMSSMss as s64
+					result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
+					if (result)
+					{
+						// Populate the s64
+						*result->value.data_s64 = iiVariable_getAs_s64(thisCode, varExpr, true, &error, &errorNum);
+						if (error)
+							iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varExpr), false);
+					}
+					break;
+
+				case _VAR_TYPE_CHARACTER:
+
 					//////////
-					// Determine what we're evaluating
+					// Parameter 2 must be valid
 					//////
-						switch (varExpr->varType)
+						if (varIgnoreChars)
 						{
-							case _VAR_TYPE_NULL:
-								iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varExpr), false);
-								return(NULL);								
-								break;
-
-							case _VAR_TYPE_LOGICAL:
-								result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
-								if (result)
-								{
-									lnValue32 = (varExpr->value.data[0] == _LOGICAL_TRUE)? 1: 0; //I do not use because iiVariable_getAs_s32() returns -1 for true value (?!?)
-									iVariable_setNumeric_toNumericType(thisCode, result, NULL, NULL, &lnValue32, NULL, NULL, NULL);
-								}
-								break;
-
-							case _VAR_TYPE_DATE:  //YYYYMMDD
-								lnValue32 = iiVariable_getAs_s32(thisCode, varExpr, true, &error, &errorNum);
-								if (error)
-								{
-									iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varExpr), false);
-									return(NULL);
-								}
-								result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
-								if (result)
-									iVariable_setNumeric_toNumericType(thisCode, result, NULL, NULL, &lnValue32, NULL, NULL, NULL);
-								break;
-
-							case _VAR_TYPE_DATETIME:
-								// YYYYMMDDHHMMSSMss as s64
-								dt = (SDateTime*)varExpr->value.data;
-								iiVariable_computeYyyyMmDd_fromJulianDayNumber(dt->julian, &lnYear, &lnMonth, &lnDay);
-								iiVariable_computeHhMmSsMss_fromf32(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
-
-								sprintf((s8*)buffer, "%04u%02u%02u%02u%02u%02u%03u", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
-								lnValue64 = *(s64*)_strtoui64((s8*)buffer, NULL, 10);
-
-								result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
-								if (result)
-									iVariable_setNumeric_toNumericType(thisCode, result, NULL, NULL, NULL, NULL, &lnValue64, NULL);
-								break;
-
-							case _VAR_TYPE_CHARACTER:
-
-								//////////
-								// Iterate through each character
-								//////
-									lnJ = 0;
-									bool bTrimSpace = true, bCheckCurrency = true, bIsCurrency = false, bIgnoreChar;
-
-									buffer_string = (s8*)malloc((u32)varExpr->value.length*sizeof(s8));
-									for (lnI = 0; lnI < (u32)varExpr->value.length; lnI++)
-									{
-										// If we encounter anything other than spaces, not empty
-										if (! (isspace(varExpr->value.data[lnI]) && bTrimSpace))
-										{
-											bTrimSpace = false;	//stop trimming space
-											if (varExpr->value.data[lnI] == '$' && bCheckCurrency)
-											{
-												bIsCurrency = true;
-												bCheckCurrency = false;
-											} else {
-												//Ignore list?
-												bIgnoreChar = false;
-												if (varIgnoreList)
-												{
-													for (lnK = 0; lnK < (u32)varIgnoreList->value.length; lnK++)
-														if ((u8)varExpr->value.data[lnI] == (u8)varIgnoreList->value.data[lnK])
-														{
-															bIgnoreChar = true;
-															break;
-														}
-												}
-												if (! bIgnoreChar)
-												{
-													// TODO -- Check Set Point and Set Separator, replace Set Point char with "." and remove Separator Char
-													buffer_string[lnJ++] = (u8)varExpr->value.data[lnI];
-												}
-											}
-
-										}
-
-									}
-
-								//Terminate string
-								buffer_string[lnJ] = '\0';
-
-								//Convert string to numeric
-								lfValue = 0.0;
-								if ((s8*)varExpr->value.length != 0)
-									lfValue = (f64)strtod((s8*)buffer_string, NULL);
-								
-								free(buffer_string);
-
-								if (bIsCurrency)
-									result = iVariable_create(thisCode, _VAR_TYPE_CURRENCY, NULL, true);	//TODO -- lfValue*10000 ???
-								else
-									result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
-
-								if (result)
-									iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfValue, NULL, NULL, NULL, NULL);
-								break;
+							if (!iVariable_isValid(varIgnoreChars) || !iVariable_isTypeCharacter(varIgnoreChars))
+							{
+								iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varIgnoreChars), false);
+								return(NULL);
+							}
 						}
 
-		}
 
-		//Is good?
-		if (!result)
-		{
-			iError_report(thisCode, cgcInternalError, false);
-			return(NULL);
-		}
+					//////////
+					// Prepare our characters
+					//////
+						varCurrency		= propGet_settings_Currency(_settings);
+						varPoint		= propGet_settings_Point(_settings);
+						varSeparator	= propGet_settings_Separator(_settings);
+
+
+					//////////
+					// Iterate through each character
+					//////
+						lnJ = 0;
+						bool bTrimSpace = true, bCheckCurrency = true, bIsCurrency = false, bIgnoreChar;
+
+						for (lnI = 0; lnI < (s32)varExpr->value.length && lnJ < (s32)sizeof(buffer) - 1; lnI++)
+						{
+							// If we encounter anything other than spaces, not empty
+							if (!(isspace(varExpr->value.data[lnI]) && bTrimSpace))
+							{
+								bTrimSpace = false;	//stop trimming space
+								if (varExpr->value.data[lnI] == varCurrency->value.data_s8[0] && bCheckCurrency)
+								{
+									bIsCurrency = true;
+									bCheckCurrency = false;
+								} else {
+									//Ignore list?
+									bIgnoreChar = false;
+									if (varIgnoreChars)
+									{
+										for (lnK = 0; lnK < (u32)varIgnoreChars->value.length; lnK++)
+											if (varExpr->value.data[lnI] == varIgnoreChars->value.data[lnK])
+											{
+												bIgnoreChar = true;
+												break;
+											}
+									}
+									// Add char, remove separator, replace point
+									if (!bIgnoreChar && varExpr->value.data[lnI] != varSeparator->value.data_s8[0])
+									{
+										if (varExpr->value.data[lnI] == varPoint->value.data_s8[0])
+											buffer[lnJ++] = '.';
+										else
+											buffer[lnJ++] = varExpr->value.data[lnI];
+									}
+								}
+
+							}
+
+						}
+
+						// NULL terminate
+						buffer[lnI] = 0;
+
+
+					//////////
+					// Convert to f64, and s64
+					//////
+						lfValue = atof(buffer);
+						lnValue = _strtoi64(buffer, NULL, 10);
+
+
+					//////////
+					// Is currency or not? If it's an integer value, store it as the same, otherwise use floating point
+					//////
+						if (bIsCurrency)
+						{
+							llAsInteger = false;
+							result = iVariable_create(thisCode, _VAR_TYPE_CURRENCY, NULL, true);
+							lfValue = lfValue * 10000;
+						}
+						else
+							if ((f64)lnValue == lfValue)
+							{
+								// We can return as an integer
+								llAsInteger = true;
+								if (lnValue < (s64)_s32_max)
+								{
+									// We can create as an s32
+									result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
+
+								} else {
+									// Create as an s64
+									result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
+								}
+
+							} else {
+								// Must return as f64
+								llAsInteger = false;
+								result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
+							}
+
+
+					//////////
+					// Store the result
+					//////
+						if (result)
+						{
+							if (llAsInteger)		iVariable_setNumeric_toNumericType(thisCode, result, NULL, NULL, NULL, NULL, &lnValue, NULL);
+							else					iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfValue, NULL, NULL, NULL, NULL);
+						}
+						break;
+			}
+
+
+		//////////
+		// Is it good?
+		//////
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varExpr), false);
+
 
 		//////////
         // Return our converted result
@@ -8050,7 +8282,7 @@ debug_break;
 
 //////////
 //
-// Function: VESLICE()
+// Function: VECSLICE()
 // Extracts elements from a vector.
 //
 //////
@@ -8081,7 +8313,37 @@ debug_break;
 
 //////////
 //
-// Function: VESTUFF()
+// Function: VECSTR()
+// Generates a character string containing the vectors.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.21.2015
+//////
+// Change log:
+//     Mar.21.2015 - Initial creation
+//////
+// Parameters:
+//     varVec				- Vector
+//     varSymbolOverride	- A symbol to use between vectors
+//
+//////
+// Returns:
+//     A character string containing the vector values interspersed with symbol space, or the varSymbolOverride
+//////
+	SVariable* function_vecstr(SThisCode* thisCode, SVariable* varVec, SVariable* varSymbolOverride)
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Function: VECSTUFF()
 // Updates or resizes a vector element. Works like STUFF().
 //
 //////

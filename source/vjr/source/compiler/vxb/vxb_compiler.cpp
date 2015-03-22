@@ -8990,8 +8990,17 @@ debug_break;
 				//////////
 				// Convert this from its logical form into numeric
 				//////
-					if (var->value.data[0] == _LOGICAL_FALSE)	return(_LOGICAL_FALSE);
-					else										return(_LOGICAL_TRUE);
+					if (tlForceConvert)
+					{
+						// Return as an integer, 0 or 1
+						if (var->value.data[0] == _LOGICAL_FALSE)	return(0);
+						else										return(1);
+
+					} else {
+						// Returns the actual value internally associated with logical .F. and .T.
+						if (var->value.data[0] == _LOGICAL_FALSE)	return(_LOGICAL_FALSE);
+						else										return(_LOGICAL_TRUE);
+					}
 				// If we get here, an invalid variable type was encountered
 
 
@@ -9586,7 +9595,6 @@ debug_break;
 //////
 	s64 iiVariable_getAs_s64(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
-		s8		buffer[16];
 		union {
 			s8			lnValue_s8;
 			s16			lnValue_s16;
@@ -9597,18 +9605,19 @@ debug_break;
 			u64			lnValue_u64;
 			f32			lnValue_f32;
 			f64			lnValue_f64;
-			SDateTime	dt;
 		};
-		bool	llError;
-		u32		lnErrorNum;
+		u32		lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond;
+		s8		buffer[64];
+		bool	error;
+		u32		errorNum;
 
 
 		// De-reference the variable
 		var = iiVariable_terminateIndirect(thisCode, var);
 
 		// Make sure we have error and errorNum parameters
-		if (!tlError)		tlError		= &llError;
-		if (!tnErrorNum)	tnErrorNum	= &lnErrorNum;
+		if (!tlError)		tlError		= &error;
+		if (!tnErrorNum)	tnErrorNum	= &errorNum;
 
 		// Begin
 		*tlError	= false;
@@ -9729,9 +9738,14 @@ debug_break;
 				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
-					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
+					// We can convert this from its text form into numeric
 					//////
-						return(iiVariable_computeDatetimeDifference(thisCode, var, _datetime_Jan_01_2000));
+						iiVariable_computeYyyyMmDd_fromJulianDayNumber(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+						iiVariable_computeHhMmSsMss_fromf32(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+
+						// Create the string for the numeric portion
+						sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
+						return(_strtoi64((s8*)buffer, NULL, 10));
 				}
 				break;
 		}

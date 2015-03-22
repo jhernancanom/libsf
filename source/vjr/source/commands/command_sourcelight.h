@@ -319,6 +319,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_bitstr[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_bgr[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -389,6 +394,16 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_endswith[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_endswithc[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_evl[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -435,6 +450,16 @@
 	};
 
 	SSourceLightData gsSourceLight_grn[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_iif[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_inlist[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
@@ -660,6 +685,16 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_startswith[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_startswithc[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_strtran[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -725,6 +760,11 @@
 	};
 
 	SSourceLightData gsSourceLight_vecslice[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_vecstr[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
