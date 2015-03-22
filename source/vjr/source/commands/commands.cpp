@@ -7781,7 +7781,8 @@ debug_break;
 //     Mar.21.2015 - Initial creation by Stefano D'Amico
 //////
 // Parameters:
-//     pExpression		-- Any, to convert
+//     varExpr			-- Any, to convert
+//	   varIgnoreList	-- Charasters to ignore
 //
 //////
 // Returns:
@@ -7789,14 +7790,16 @@ debug_break;
 //						Leading blanks are ignored. 
 //						VAL( ) returns 0 if the first character of the character expression is not a number, a dollar sign ($), a plus sign (+), or minus sign (-).
 //////
-	SVariable* function_val(SThisCode* thisCode, SVariable* varExpr)
+	SVariable* function_val(SThisCode* thisCode, SVariable* varExpr, SVariable* varIgnoreList)
 	{
 		s32 lnValue32;
 		s64 lnValue64;
 		f64 lfValue;
-		u32			lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond;
+		u32	lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond;
+		u32	lnI, lnJ, lnK;
 		SDateTime*	dt;
 		u8 buffer[64];
+		s8* buffer_string;
 		u32			errorNum;
         bool		error;
         SVariable*	result;
@@ -7811,6 +7814,18 @@ debug_break;
 				return(NULL);
 			}
 
+
+		//////////
+		// Parameter 2 must be valid
+		//////
+			if (varIgnoreList)
+			{
+				if (!iVariable_isValid(varIgnoreList) || !iVariable_isTypeCharacter(varIgnoreList))
+				{
+					iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varIgnoreList), false);
+					return(NULL);
+				}
+			}
 		// Copy whatever it already is
 		if (varExpr->varType >= _VAR_TYPE_NUMERIC_START && varExpr->varType <= _VAR_TYPE_NUMERIC_END)
 		{
@@ -7862,12 +7877,62 @@ debug_break;
 								break;
 
 							case _VAR_TYPE_CHARACTER:
-								// TODO -- Currency check!
+
+								//////////
+								// Iterate through each character
+								//////
+									lnJ = 0;
+									bool bTrimSpace = true, bCheckCurrency = true, bIsCurrency = false, bIgnoreChar;
+
+									buffer_string = (s8*)malloc((u32)varExpr->value.length*sizeof(s8));
+									for (lnI = 0; lnI < (u32)varExpr->value.length; lnI++)
+									{
+										// If we encounter anything other than spaces, not empty
+										if (! (isspace(varExpr->value.data[lnI]) && bTrimSpace))
+										{
+											bTrimSpace = false;	//stop trimming space
+											if (varExpr->value.data[lnI] == '$' && bCheckCurrency)
+											{
+												bIsCurrency = true;
+												bCheckCurrency = false;
+											} else {
+												//Ignore list?
+												bIgnoreChar = false;
+												if (varIgnoreList)
+												{
+													for (lnK = 0; lnK < (u32)varIgnoreList->value.length; lnK++)
+														if ((u8)varExpr->value.data[lnI] == (u8)varIgnoreList->value.data[lnK])
+														{
+															bIgnoreChar = true;
+															break;
+														}
+												}
+												if (! bIgnoreChar)
+												{
+													// TODO -- Check Set Point and Set Separator, replace Set Point char with "." and remove Separator Char
+													buffer_string[lnJ++] = (u8)varExpr->value.data[lnI];
+												}
+											}
+
+										}
+
+									}
+
+								//Terminate string
+								buffer_string[lnJ] = '\0';
+
+								//Convert string to numeric
 								lfValue = 0.0;
 								if ((s8*)varExpr->value.length != 0)
-									lfValue = (f64)strtod((s8*)varExpr->value.data, NULL);
+									lfValue = (f64)strtod((s8*)buffer_string, NULL);
+								
+								free(buffer_string);
 
-								result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
+								if (bIsCurrency)
+									result = iVariable_create(thisCode, _VAR_TYPE_CURRENCY, NULL, true);	//TODO -- lfValue*10000 ???
+								else
+									result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
+
 								if (result)
 									iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfValue, NULL, NULL, NULL, NULL);
 								break;
