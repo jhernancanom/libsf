@@ -457,6 +457,7 @@ struct SBasePropMap;
 	const s8		cgc_setCaseSensitiveCompares[]							= "caseSensitiveCompares";
 	const s8		cgc_setCaseSensitiveNames[]								= "caseSensitiveNames";
 	const s8		cgc_setCentury[]										= "century";
+	const s8		cgc_setCurrency[]										= "currency";
 	const s8		cgc_setDate[]											= "date";
 	const s8		cgc_setDecimals[]										= "decimals";
 	const s8		cgc_setExclusive[]										= "exclusive";
@@ -849,40 +850,41 @@ struct SBasePropMap;
 	const u32		_INDEX_SET_CASE_SENSITIVE_COMPARES						= 352;
 	const u32		_INDEX_SET_CASE_SENSITIVE_NAMES							= 353;
 	const u32		_INDEX_SET_CENTURY										= 354;
-	const u32		_INDEX_SET_DATE											= 355;
-	const u32		_INDEX_SET_DECIMALS										= 356;
-	const u32		_INDEX_SET_EXCLUSIVE									= 357;
-	const u32		_INDEX_SET_FOCUS_HIGHLIGHT_BORDER_PIXELS				= 358;
-	const u32		_INDEX_SET_FOCUS_HIGHLIGHT_PIXELS						= 359;
-	const u32		_INDEX_SET_HONOR_BARRIERS								= 360;
-	const u32		_INDEX_SET_IMPLICIT_PARAMS								= 361;
-	const u32		_INDEX_SET_INDEX_META_DATA								= 362;
-	const u32		_INDEX_SET_INITIALIZE_DEFAULT_VALUE						= 363;
-	const u32		_INDEX_SET_LANGUAGE										= 364;
-	const u32		_INDEX_SET_LOAD_RECEIVES_PARAMS							= 365;
-	const u32		_INDEX_SET_LOCK_SCREEN									= 366;
-	const u32		_INDEX_SET_LOGICAL										= 367;
-	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 368;
-	const u32		_INDEX_SET_NCSET_ALPHA_IS_OPAQUE						= 369;
-	const u32		_INDEX_SET_NCSET_CEILING_FLOOR							= 370;
-	const u32		_INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES					= 371;
-	const u32		_INDEX_SET_NCSET_OPTIMIZE_VARIABLES						= 372;
-	const u32		_INDEX_SET_NCSET_SIGN_SIGN2								= 373;
-	const u32		_INDEX_SET_POINT										= 374;
-	const u32		_INDEX_SET_REPROCESS									= 375;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 376;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
-	const u32		_INDEX_SET_REPROCESSINTERVAL							= 377;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
-	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 378;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_SEPARATOR									= 379;
-	const u32		_INDEX_SET_SLOPPY_PRINTING								= 380;
-	const u32		_INDEX_SET_STICKY_PARAMETERS							= 381;
-	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 382;
-	const u32		_INDEX_SET_TABLE_OBJECTS								= 383;
-	const u32		_INDEX_SET_TALK											= 384;
-	const u32		_INDEX_SET_TIME											= 385;
-	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 386;
-	const u32		_INDEX_SET_VARIABLES_FIRST								= 387;
-	const u32		_INDEX_SET_VECSEPARATOR									= 388;
+	const u32		_INDEX_SET_CURRENCY										= 355;
+	const u32		_INDEX_SET_DATE											= 356;
+	const u32		_INDEX_SET_DECIMALS										= 357;
+	const u32		_INDEX_SET_EXCLUSIVE									= 358;
+	const u32		_INDEX_SET_FOCUS_HIGHLIGHT_BORDER_PIXELS				= 359;
+	const u32		_INDEX_SET_FOCUS_HIGHLIGHT_PIXELS						= 360;
+	const u32		_INDEX_SET_HONOR_BARRIERS								= 361;
+	const u32		_INDEX_SET_IMPLICIT_PARAMS								= 362;
+	const u32		_INDEX_SET_INDEX_META_DATA								= 363;
+	const u32		_INDEX_SET_INITIALIZE_DEFAULT_VALUE						= 364;
+	const u32		_INDEX_SET_LANGUAGE										= 365;
+	const u32		_INDEX_SET_LOAD_RECEIVES_PARAMS							= 366;
+	const u32		_INDEX_SET_LOCK_SCREEN									= 367;
+	const u32		_INDEX_SET_LOGICAL										= 368;
+	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 369;
+	const u32		_INDEX_SET_NCSET_ALPHA_IS_OPAQUE						= 370;
+	const u32		_INDEX_SET_NCSET_CEILING_FLOOR							= 371;
+	const u32		_INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES					= 372;
+	const u32		_INDEX_SET_NCSET_OPTIMIZE_VARIABLES						= 373;
+	const u32		_INDEX_SET_NCSET_SIGN_SIGN2								= 374;
+	const u32		_INDEX_SET_POINT										= 375;
+	const u32		_INDEX_SET_REPROCESS									= 376;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 377;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
+	const u32		_INDEX_SET_REPROCESSINTERVAL							= 378;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
+	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 379;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_SEPARATOR									= 380;
+	const u32		_INDEX_SET_SLOPPY_PRINTING								= 381;
+	const u32		_INDEX_SET_STICKY_PARAMETERS							= 382;
+	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 383;
+	const u32		_INDEX_SET_TABLE_OBJECTS								= 384;
+	const u32		_INDEX_SET_TALK											= 385;
+	const u32		_INDEX_SET_TIME											= 386;
+	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 387;
+	const u32		_INDEX_SET_VARIABLES_FIRST								= 388;
+	const u32		_INDEX_SET_VECSEPARATOR									= 389;
 
 
 	// Basic setters and getters
@@ -1381,6 +1383,7 @@ struct SBasePropMap;
 		{	_INDEX_SET_CASE_SENSITIVE_COMPARES,				_ICODE_CASESENSITIVECOMPARES,		cgc_setCaseSensitiveCompares,		sizeof(cgc_setCaseSensitiveCompares) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=character compares are case sensitive, .f.=not case sensitive
 		{	_INDEX_SET_CASE_SENSITIVE_NAMES,				_ICODE_CASESENSITIVENAMES,			cgc_setCaseSensitiveNames,			sizeof(cgc_setCaseSensitiveNames) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=token names are case sensitive, .f.=not case sensitive
 		{	_INDEX_SET_CENTURY,								_ICODE_CENTURY,						cgc_setCentury,						sizeof(cgc_setCentury) - 1,							_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=4-digit years, .f.=2-digit years
+		{	_INDEX_SET_CURRENCY,							_ICODE_CURRENCY,					cgc_setCurrency,					sizeof(cgc_setCurrency) - 1,						_VAR_TYPE_CHARACTER,		0, 0, 0,		(uptr)&cgcDollarSign[0]			,NULL	},	// Currency symbol for display
 		{	_INDEX_SET_DATE,								_ICODE_DATE,						cgc_setDate,						sizeof(cgc_setDate) -1,								_VAR_TYPE_S32,				0, 0, 0,		_SET_DATE_USA					,NULL	},	// See the _SET_DATE_* constants
 		{	_INDEX_SET_DECIMALS,							_ICODE_DECIMALS,					cgc_setDecimals,					sizeof(cgc_setDecimals) - 1,						_VAR_TYPE_S32,				0, 0, 0,		2								,NULL	},	// Number of decimals
 		{	_INDEX_SET_EXCLUSIVE,							_ICODE_EXCLUSIVE,					cgc_setExclusive,					sizeof(cgc_setExclusive) - 1,						_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=exclusive access, .f.=shared access
@@ -1414,7 +1417,7 @@ struct SBasePropMap;
 		{	_INDEX_SET_TIME,								_ICODE_TIME,						cgc_setTime,						sizeof(cgc_setTime) - 1,							_VAR_TYPE_S32,				0, 0, 0,		_TIME_LOCAL						,NULL	},	// Refer to _TIME_* constants, either uses local time (adjusted for timezone) or system time (raw time) for all time references.
 		{	_INDEX_SET_UNLOAD_RECEIVES_PARAMS,				_ICODE_UNLOADRECEIVESPARAMS,		cgc_setUnloadReceivesParams,		sizeof(cgc_setUnloadReceivesParams) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=Unload() events receive the same parameters that were passed to init(), .f.=(default) Unload() does not receive any parameters
 		{	_INDEX_SET_VARIABLES_FIRST,						_ICODE_VARIABLESFIRST,				cgc_setVariablesFirst,				sizeof(cgc_setVariablesFirst) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=memory variables are searched first without m., .f.=the current alias is searched first, and then memory variables
-		{	_INDEX_SET_VECSEPARATOR,						_ICODE_VECSEPARATOR,				cgc_setVecSeparator,				sizeof(cgc_setVecSeparator) - 1,					_VAR_TYPE_CHARACTER,		0, 0, 0,		(uptr)&cgcPointChar[0]			,NULL	},	// One byte default separator for the vector values
+		{	_INDEX_SET_VECSEPARATOR,						_ICODE_VECSEPARATOR,				cgc_setVecSeparator,				sizeof(cgc_setVecSeparator) - 1,					_VAR_TYPE_CHARACTER,		0, 0, 0,		(uptr)&cgcComma[0]				,NULL	},	// One byte default separator for the vector values
 		{	0,												0,									NULL,								0,													0,						    0, 0, 0,		0								,NULL	}
 	};
 	const s32 gsProps_masterSize = sizeof(gsProps_master) / sizeof(SBasePropMap) - 1;
@@ -3564,6 +3567,7 @@ struct SBasePropMap;
 		{	_INDEX_SET_CASE_SENSITIVE_COMPARES,			0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
 		{	_INDEX_SET_CASE_SENSITIVE_NAMES,			0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
 		{	_INDEX_SET_CENTURY,							0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
+		{	_INDEX_SET_CURRENCY,						0, (uptr)&iObjProp_setCharacter1,	0	},		// character
 		{	_INDEX_SET_DATE,							0, (uptr)&iObjProp_setDate,			(uptr)&iObjProp_getDate },		// s32
 		{	_INDEX_SET_DECIMALS,						0, (uptr)&iObjProp_setDecimals,		(uptr)&iObjProp_getInteger },	// s32
 		{	_INDEX_SET_EXCLUSIVE,						0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool

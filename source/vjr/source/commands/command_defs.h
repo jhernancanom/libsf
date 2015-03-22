@@ -275,7 +275,7 @@ struct SThisCode;
 	SVariable*			function__test								(SThisCode* thisCode, SVariable* varIndex);
 	SVariable*			function_transform							(SThisCode* thisCode, SVariable* varVariable, SVariable* varFormat);
 	SVariable*			function_upper								(SThisCode* thisCode, SVariable* varString);
-	SVariable*			function_val		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varExpr);
+	SVariable*			function_val		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varExpr, SVariable* varIgnoreChars);
 	SVariable*			function_vec								(SThisCode* thisCode, SVariable* varV1, SVariable* varV2, SVariable* varV3, SVariable* varV4, SVariable* varV5, SVariable* varV6, SVariable* varV7, SVariable* varV8, SVariable* varV9, SVariable* varV10);
 	SVariable*			function_veccount							(SThisCode* thisCode, SVariable* varVec);
 	SVariable*			function_vecel								(SThisCode* thisCode, SVariable* varVec, SVariable* varEl, SVariable* varNewValue);
@@ -467,7 +467,7 @@ struct SThisCode;
 		{	_ICODE_TRANSFORM,		1,			(uptr)&function_transform,		1,				2,				&gsSourceLight_transform[0]		},
 		{	_ICODE_TRIM,			1,			(uptr)&function_rtrim,			1,				1,				&gsSourceLight_rtrim[0]			},
 		{	_ICODE_UPPER,			1,			(uptr)&function_upper,			1,				1,				&gsSourceLight_upper[0]			},
-		{	_ICODE_VAL,				1,			(uptr)&function_val,			1,				1,				&gsSourceLight_val[0]			}, 	// VAL() by Stefano D'Amico, VJr 0.56, Mar.22.2015
+		{	_ICODE_VAL,				1,			(uptr)&function_val,			1,				2,				&gsSourceLight_val[0]			}, 	// VAL() by Stefano D'Amico, VJr 0.56, Mar.22.2015
 		{	_ICODE_VEC,				1,			(uptr)&function_vec,			1,				10,				&gsSourceLight_vec[0]			},
 		{	_ICODE_VECCOUNT,		1,			(uptr)&function_veccount,		1,				1,				&gsSourceLight_veccount[0]		},
 		{	_ICODE_VECEL,			1,			(uptr)&function_vecel,			1,				3,				&gsSourceLight_vecel[0]			},

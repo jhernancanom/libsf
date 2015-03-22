@@ -7819,17 +7819,17 @@ debug_break;
 //						Leading blanks are ignored. 
 //						VAL( ) returns 0 if the first character of the character expression is not a number, a dollar sign ($), a plus sign (+), or minus sign (-).
 //////
-	SVariable* function_val(SThisCode* thisCode, SVariable* varExpr)
+	SVariable* function_val(SThisCode* thisCode, SVariable* varExpr, SVariable* varIgnoreChars)
 	{
-		s32 lnValue32;
-		s64 lnValue64;
-		f64 lfValue;
-		u32			lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond;
-		SDateTime*	dt;
-		u8 buffer[64];
+		s32			lnI;
+		s64			lnValue;
+		f64			lfValue;
+		bool		llAsInteger;
+		SVariable*	varCurrency;
+		SVariable*	result;
 		u32			errorNum;
         bool		error;
-        SVariable*	result;
+		s8			buffer[64];
 		
 
 		//////////
@@ -7841,76 +7841,137 @@ debug_break;
 				return(NULL);
 			}
 
-		// Copy whatever it already is
-		if (varExpr->varType >= _VAR_TYPE_NUMERIC_START && varExpr->varType <= _VAR_TYPE_NUMERIC_END)
-		{
-			result = iVariable_copy(thisCode, varExpr, false);
-		} else {
+
+		//////////
+		// If numeric, copy whatever's already there
+		//////
+			if (varExpr->varType >= _VAR_TYPE_NUMERIC_START && varExpr->varType <= _VAR_TYPE_NUMERIC_END)
+			{
+				// Copy The existing variable
+				result = iVariable_copy(thisCode, varExpr, false);
+				if (!result)
+					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varExpr), false);
+
+				// Success or failure, return our result
+				return(result);
+			}
+
+
+		//////////
+		// Determine what we're evaluating
+		//////
+			switch (varExpr->varType)
+			{
+				case _VAR_TYPE_NULL:
+					iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varExpr), false);
+					return(NULL);								
+					break;
+
+				case _VAR_TYPE_LOGICAL:		// 0=.F., 1=.T.
+				case _VAR_TYPE_DATE:		// YYYYMMDD
+					result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
+					if (result)
+					{
+						// Populate the s32
+						*result->value.data_s32 = iiVariable_getAs_s32(thisCode, varExpr, true, &error, &errorNum);
+						if (error)
+							iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varExpr), false);
+					}
+					break;
+
+				case _VAR_TYPE_DATETIME:
+					// YYYYMMDDHHMMSSMss as s64
+					result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
+					if (result)
+					{
+						// Populate the s64
+						*result->value.data_s64 = iiVariable_getAs_s64(thisCode, varExpr, true, &error, &errorNum);
+						if (error)
+							iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varExpr), false);
+					}
+					break;
+
+				case _VAR_TYPE_CHARACTER:
 					//////////
-					// Determine what we're evaluating
+					// Prepare our characters
 					//////
-						switch (varExpr->varType)
+						varCurrency = propGet_settings_Currency(_settings);
+						if (varIgnoreChars)
 						{
-							case _VAR_TYPE_NULL:
-								iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varExpr), false);
-								return(NULL);								
-								break;
+							// Make sure our ignore characters variable is character
+							if (!iVariable_isTypeCharacter(varIgnoreChars))
+							{
+								iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varIgnoreChars), false);
+								return(NULL);
+							}
 
-							case _VAR_TYPE_LOGICAL:
-								result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
-								if (result)
-								{
-									lnValue32 = (varExpr->value.data[0] == _LOGICAL_TRUE)? 1: 0; //I do not use because iiVariable_getAs_s32() returns -1 for true value (?!?)
-									iVariable_setNumeric_toNumericType(thisCode, result, NULL, NULL, &lnValue32, NULL, NULL, NULL);
-								}
-								break;
+							// Copy the numeric portions ignoring the currency symbol and anything in varIgnoreChars
+							for (lnI = 0; lnI < varExpr->value.length && lnI < sizeof(buffer) - 1; lnI++)
+							{
+								// if not [varCurrency->value.data_s8[0] 0..9 + - .] then check varIgnoreChars, if not one of them then done converting
+							}
 
-							case _VAR_TYPE_DATE:  //YYYYMMDD
-								lnValue32 = iiVariable_getAs_s32(thisCode, varExpr, true, &error, &errorNum);
-								if (error)
-								{
-									iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varExpr), false);
-									return(NULL);
-								}
-								result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
-								if (result)
-									iVariable_setNumeric_toNumericType(thisCode, result, NULL, NULL, &lnValue32, NULL, NULL, NULL);
-								break;
-
-							case _VAR_TYPE_DATETIME:
-								// YYYYMMDDHHMMSSMss as s64
-								dt = (SDateTime*)varExpr->value.data;
-								iiVariable_computeYyyyMmDd_fromJulianDayNumber(dt->julian, &lnYear, &lnMonth, &lnDay);
-								iiVariable_computeHhMmSsMss_fromf32(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
-
-								sprintf((s8*)buffer, "%04u%02u%02u%02u%02u%02u%03u", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
-								lnValue64 = *(s64*)_strtoui64((s8*)buffer, NULL, 10);
-
-								result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
-								if (result)
-									iVariable_setNumeric_toNumericType(thisCode, result, NULL, NULL, NULL, NULL, &lnValue64, NULL);
-								break;
-
-							case _VAR_TYPE_CHARACTER:
-								// TODO -- Currency check!
-								lfValue = 0.0;
-								if ((s8*)varExpr->value.length != 0)
-									lfValue = (f64)strtod((s8*)varExpr->value.data, NULL);
-
-								result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
-								if (result)
-									iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfValue, NULL, NULL, NULL, NULL);
-								break;
+						} else {
+							// Copy the numeric portions to the buffer ignoring the currency symbol
+							for (lnI = 0; lnI < varExpr->value.length && lnI < sizeof(buffer) - 1; lnI++)
+							{
+								// if not [varCurrency->value.data_s8[0] 0..9 + - .] then done converting
+							}
 						}
 
-		}
+						// NULL terminate
+						buffer[lnI] = 0;
 
-		//Is good?
-		if (!result)
-		{
-			iError_report(thisCode, cgcInternalError, false);
-			return(NULL);
-		}
+
+					//////////
+					// Convert to f64, and s64
+					//////
+						lfValue = atof(buffer);
+						lnValue = _strtoi64(buffer, NULL, 10);
+
+
+					//////////
+					// If it's an integer value, store it as the same, otherwise use floating point
+					//////
+						if ((f64)lnValue == lfValue)
+						{
+							// We can return as an integer
+							llAsInteger = true;
+							if (lnValue < (s64)_s32_max)
+							{
+								// We can create as an s32
+								result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
+
+							} else {
+								// Create as an s64
+								result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
+							}
+
+						} else {
+							// Must return as f64
+							llAsInteger = false;
+							result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
+						}
+
+
+					//////////
+					// Store the result
+					//////
+						if (result)
+						{
+							if (llAsInteger)		iVariable_setNumeric_toNumericType(thisCode, result, NULL, NULL, NULL, NULL, &lnValue, NULL);
+							else					iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfValue, NULL, NULL, NULL, NULL);
+						}
+						break;
+			}
+
+
+		//////////
+		// Is it good?
+		//////
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varExpr), false);
+
 
 		//////////
         // Return our converted result

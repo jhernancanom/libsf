@@ -217,6 +217,7 @@ typedef SEM**		SEMpp;
 	#define propGet_settings_AutoConvert(obj)						(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_AUTO_CONVERT)			!= _LOGICAL_FALSE)
 	#define propGet_settings_AutoValidate(obj)						(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_AUTO_VALIDATE)			!= _LOGICAL_FALSE)
 	#define propGet_settings_Century(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_CENTURY)					!= _LOGICAL_FALSE)
+	#define propGet_settings_Currency(obj)							iObjProp_get_character			(thisCode, obj, _INDEX_SET_CURRENCY)
 	#define propGet_settings_Date(obj)								iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_DATE)
 	#define propGet_settings_Decimals(obj)							iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_DECIMALS)
 	#define propGet_settings_Exclusive(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_EXCLUSIVE)				!= _LOGICAL_FALSE)
@@ -240,6 +241,7 @@ typedef SEM**		SEMpp;
 	#define propGet_settings_Separator(obj)							iObjProp_get_character			(thisCode, obj, _INDEX_SET_SEPARATOR)
 	#define propGet_settings_Talk(obj)								(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_TALK)					!= _LOGICAL_FALSE)
 	#define propGet_settings_VariablesFirst(obj)					(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_VARIABLES_FIRST)		!= _LOGICAL_FALSE)
+	#define propGet_settings_VecSeparator(obj)						iObjProp_get_character			(thisCode, obj, _INDEX_SET_VECSEPARATOR)
 
 
 //////////
@@ -919,6 +921,8 @@ typedef SEM**		SEMpp;
 	const u8			cgc_spaceText[]						= " ";
 	const u8			cgcPointChar[]						= ".";
 	const u8			cgcSeparatorChar[]					= ",";
+	const u8			cgcComma[]							= ",";
+	const u8			cgcDollarSign[]						= "$";
 
 
 
