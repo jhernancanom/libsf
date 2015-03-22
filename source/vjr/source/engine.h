@@ -86,6 +86,7 @@
 // Constants
 //////
 	const u32	_MAX_PARAMETER_COUNT			= 26;
+	const u32	_MAX_RETURN_COUNT				= 10;
 
 
 //////////
@@ -146,8 +147,8 @@
 
 	struct SReturnsParams
 	{
-		SVariable*		returns[10];
-		SVariable*		params[26];
+		SVariable*		returns[_MAX_RETURN_COUNT];			// Return parameters
+		SVariable*		params[_MAX_PARAMETER_COUNT];		// Input parameters
 	};
 
 
