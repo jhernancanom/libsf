@@ -8228,12 +8228,18 @@ debug_break;
 									bIgnoreChar = false;
 									if (varIgnoreChars)
 									{
-										for (lnK = 0; lnK < (u32)varIgnoreChars->value.length; lnK++)
+										for (lnK = 0; lnK < (s32)varIgnoreChars->value.length; lnK++)
+										{
+											// If $ in IgnoreChar must set bIsCurrency=false
+											if (varIgnoreChars->value.data[lnK] == varCurrency->value.data_s8[0])
+												bIsCurrency = false;
+											// To ignore
 											if (varExpr->value.data[lnI] == varIgnoreChars->value.data[lnK])
 											{
 												bIgnoreChar = true;
 												break;
 											}
+										}
 									}
 									// Add char, remove separator, replace point
 									if (!bIgnoreChar && varExpr->value.data[lnI] != varSeparator->value.data_s8[0])
