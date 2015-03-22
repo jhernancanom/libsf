@@ -267,6 +267,7 @@ struct SThisCode;
 	SVariable*			function__test								(SThisCode* thisCode, SVariable* varIndex);
 	SVariable*			function_transform							(SThisCode* thisCode, SVariable* varVariable, SVariable* varFormat);
 	SVariable*			function_upper								(SThisCode* thisCode, SVariable* varString);
+	SVariable*			function_val								(SThisCode* thisCode, SVariable* varExpr);
 	SVariable*			function_version							(SThisCode* thisCode, SVariable* varIndex);
 // Added temporarily until the processing engine is coded
 	SVariable*			function_concatenate						(SThisCode* thisCode, SVariable* varString1, SVariable* varString2);
@@ -440,6 +441,7 @@ struct SThisCode;
 		{	_ICODE_TRANSFORM,		1,			(uptr)&function_transform,		1,				2,				&gsSourceLight_transform[0]		},
 		{	_ICODE_TRIM,			1,			(uptr)&function_rtrim,			1,				1,				&gsSourceLight_rtrim[0]			},
 		{	_ICODE_UPPER,			1,			(uptr)&function_upper,			1,				1,				&gsSourceLight_upper[0]			},
+		{	_ICODE_VAL,				1,			(uptr)&function_val,			1,				1,				&gsSourceLight_val[0]			},
 		{	_ICODE_VERSION,			1,			(uptr)&function_version,		0,				1,				&gsSourceLight_version[0]		},
 // Added temporarily until the processing engine is coded
 		{	_ICODE_CONCATENATE,		1,			(uptr)&function_concatenate,	2,				2,				&gsSourceLight_concatenate[0]	},

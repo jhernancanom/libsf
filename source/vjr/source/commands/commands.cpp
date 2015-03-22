@@ -7557,6 +7557,127 @@ debug_break;
 	        return result;
 	}
 
+	
+	
+	
+//////////
+//
+// Function: VAL()
+// Returns a numeric or currency value from a expression.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.21.2015
+//////
+// Change log:
+//     Mar.21.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     pExpression		-- Any, to convert
+//
+//////
+// Returns:
+//    Numeric		--	VAL( ) returns the numbers in the character expression from left to right until a non-numeric character is encountered.
+//						Leading blanks are ignored. 
+//						VAL( ) returns 0 if the first character of the character expression is not a number, a dollar sign ($), a plus sign (+), or minus sign (-).
+//////
+	SVariable* function_val(SThisCode* thisCode, SVariable* varExpr)
+	{
+		s32 lnValue32;
+		s64 lnValue64;
+		f64 lfValue;
+		u32			lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond;
+		SDateTime*	dt;
+		u8 buffer[64];
+		u32			errorNum;
+        bool		error;
+        SVariable*	result;
+		
+
+		//////////
+		// Parameter 1 must be valid
+		//////
+			if (!iVariable_isValid(varExpr))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varExpr), false);
+				return(NULL);
+			}
+
+		// Copy whatever it already is
+		if (varExpr->varType >= _VAR_TYPE_NUMERIC_START && varExpr->varType <= _VAR_TYPE_NUMERIC_END)
+		{
+			result = iVariable_copy(thisCode, varExpr, false);
+		} else {
+					//////////
+					// Determine what we're evaluating
+					//////
+						switch (varExpr->varType)
+						{
+							case _VAR_TYPE_NULL:
+								iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_compRelated(thisCode, varExpr), false);
+								return(NULL);								
+								break;
+
+							case _VAR_TYPE_LOGICAL:
+								result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
+								if (result)
+								{
+									lnValue32 = *(s32*)(varExpr->value.data[0] == _LOGICAL_TRUE)? 1: 0; //I do not use because iiVariable_getAs_s32() returns -1 for true value (?!?)
+									iVariable_setNumeric_toNumericType(thisCode, result, NULL, NULL, &lnValue32, NULL, NULL, NULL);
+								}
+								break;
+
+							case _VAR_TYPE_DATE:  //YYYYMMDD
+								lnValue32 = iiVariable_getAs_s32(thisCode, varExpr, true, &error, &errorNum);
+								if (error)
+								{
+									iError_reportByNumber(thisCode, errorNum, iVariable_compRelated(thisCode, varExpr), false);
+									return(NULL);
+								}
+								result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
+								if (result)
+									iVariable_setNumeric_toNumericType(thisCode, result, NULL, NULL, &lnValue32, NULL, NULL, NULL);
+								break;
+
+							case _VAR_TYPE_DATETIME:
+								// YYYYMMDDHHMMSSMss as s64
+								dt = (SDateTime*)varExpr->value.data;
+								iiVariable_computeYyyyMmDd_fromJulianDayNumber(dt->julian, &lnYear, &lnMonth, &lnDay);
+								iiVariable_computeHhMmSsMss_fromf32(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+
+								sprintf((s8*)buffer, "%04u%02u%02u%02u%02u%02u%03u", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
+								lnValue64 = *(s64*)_strtoui64((s8*)buffer, NULL, 10);
+
+								result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
+								if (result)
+									iVariable_setNumeric_toNumericType(thisCode, result, NULL, NULL, NULL, NULL, &lnValue64, NULL);
+								break;
+
+							case _VAR_TYPE_CHARACTER:
+								// TODO -- Currency check!
+								lfValue = (f64)strtod((s8*)varExpr->value.data, NULL);
+
+								result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
+								if (result)
+									iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfValue, NULL, NULL, NULL, NULL);
+								break;
+						}
+
+		}
+
+		//Is good?
+		if (!result)
+		{
+			iError_report(thisCode, cgcInternalError, false);
+			return(NULL);
+		}
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
+	}
 
 
 
