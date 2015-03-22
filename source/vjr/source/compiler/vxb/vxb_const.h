@@ -512,6 +512,11 @@
 	const s32		_ICODE_BLU										= 1454;
 	const s32		_ICODE_BINDEVENT                                = 1055;
 	const s32		_ICODE_BINTOC                                   = 1056;
+	const s32		_ICODE_BITS										= 1469;
+	const s32		_ICODE_BITS8									= 1470;
+	const s32		_ICODE_BITS16									= 1471;
+	const s32		_ICODE_BITS32									= 1472;
+	const s32		_ICODE_BITS64									= 1473;
 	const s32		_ICODE_BITAND                                   = 1057;
 	const s32		_ICODE_BITCLEAR                                 = 1058;
 	const s32		_ICODE_BITLSHIFT                                = 1059;
@@ -519,6 +524,7 @@
 	const s32		_ICODE_BITOR                                    = 1061;
 	const s32		_ICODE_BITRSHIFT                                = 1062;
 	const s32		_ICODE_BITSET                                   = 1063;
+	const s32		_ICODE_BITSLICE									= 1466;
 	const s32		_ICODE_BITTEST                                  = 1064;
 	const s32		_ICODE_BITXOR                                   = 1065;
 	const s32		_ICODE_BOF                                      = 1066;
@@ -830,6 +836,7 @@
 	const s32		_ICODE_SIN                                      = 1352;
 	const s32		_ICODE_SKPBAR                                   = 1353;
 	const s32		_ICODE_SKPPAD                                   = 1354;
+	const s32		_ICODE_SLICE									= 1467;
 	const s32		_ICODE_SOUNDEX                                  = 1355;
 	const s32		_ICODE_SPACE                                    = 1356;
 	const s32		_ICODE_SQLCANCEL                                = 1357;
@@ -889,6 +896,7 @@
 	const s32		_ICODE_VEC										= 1461;
 	const s32		_ICODE_VECCOUNT									= 1462;
 	const s32		_ICODE_VECEL									= 1463;
+	const s32		_ICODE_VECSLICE									= 1468;
 	const s32		_ICODE_VECSTUFF									= 1464;
 	const s32		_ICODE_VECSYMBOL								= 1465;
 	const s32		_ICODE_VERSION                                  = 1408;
@@ -933,7 +941,11 @@
 	// colorize			= 1459				ranger2			= 1460
 	// vec				= 1461				veccount		= 1462
 	// vecel			= 1463				vecsstuff		= 1464
-	// vecsymbol		= 1465
+	// vecsymbol		= 1465				bitslice		= 1466
+	// slice			= 1467				vecslice		= 1468
+	// bits				= 1469				bits8			= 1470
+	// bits16			= 1471				bits32			= 1472
+	// bits64			= 1473
 
 // Temporarily added until the processing engine is coded
 	const s32		_ICODE_CONCATENATE								= 1900;
@@ -1732,6 +1744,7 @@
 	const s8		cgc_sin[]										= "sin";
 	const s8		cgc_skpbar[]									= "skpbar";
 	const s8		cgc_skppad[]									= "skppad";
+	const s8		cgc_slice[]										= "slice";
 	const s8		cgc_soundex[]									= "soundex";
 	const s8		cgc_space[]										= "space";
 	const s8		cgc_sqlcancel[]									= "sqlcancel";
@@ -1791,6 +1804,7 @@
 	const s8		cgc_vec[]										= "vec";
 	const s8		cgc_veccount[]									= "veccount";
 	const s8		cgc_vecel[]										= "vecel";
+	const s8		cgc_vecslice[]									= "vecslice";
 	const s8		cgc_vecstuff[]									= "vecstuff";
 	const s8		cgc_vecsymbol[]									= "vecsymbol";
 	const s8		cgc_version[]									= "version";

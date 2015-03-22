@@ -1535,6 +1535,182 @@
 
 //////////
 //
+// Function: BITS()
+// Creates the closest larger 2^n numeric value than the size indicated by bits.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.22.2015
+//////
+// Change log:
+//     Mar.22.2015 - Initial creation
+//////
+// Parameters:
+//     varBits		-- A sequence of binary bits
+//
+//////
+// Returns:
+//    Numeric		-- Input bits converted to an unsigned integer of the appropriate size (up to 64-bits)
+//////
+	SVariable* function_bits(SThisCode* thisCode, SVariable* varBits)
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Function: BITS8()
+// Creates an 8-bit integer populated with the indicated bits.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.22.2015
+//////
+// Change log:
+//     Mar.22.2015 - Initial creation
+//////
+// Parameters:
+//     varBits		-- A sequence of binary bits
+//
+//////
+// Returns:
+//    Numeric		-- Input bits converted to an 8-bit unsigned integer
+//////
+	SVariable* function_bits8(SThisCode* thisCode, SVariable* varBits)
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Function: BITS16()
+// Creates a 16-bit integer populated with the indicated bits.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.22.2015
+//////
+// Change log:
+//     Mar.22.2015 - Initial creation
+//////
+// Parameters:
+//     varBits		-- A sequence of binary bits
+//
+//////
+// Returns:
+//    Numeric		-- Input bits converted to an 16-bit unsigned integer
+//////
+	SVariable* function_bits16(SThisCode* thisCode, SVariable* varBits)
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Function: BITS32()
+// Creates a 32-bit integer populated with the indicated bits.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.22.2015
+//////
+// Change log:
+//     Mar.22.2015 - Initial creation
+//////
+// Parameters:
+//     varBits		-- A sequence of binary bits
+//
+//////
+// Returns:
+//    Numeric		-- Input bits converted to an 32-bit unsigned integer
+//////
+	SVariable* function_bits32(SThisCode* thisCode, SVariable* varBits)
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Function: BITS64()
+// Creates a 64-bit integer populated with the indicated bits.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.22.2015
+//////
+// Change log:
+//     Mar.22.2015 - Initial creation
+//////
+// Parameters:
+//     varBits		-- A sequence of binary bits
+//
+//////
+// Returns:
+//    Numeric		-- Input bits converted to an 64-bit unsigned integer
+//////
+	SVariable* function_bits64(SThisCode* thisCode, SVariable* varBits)
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Function: BITSLICE()
+// Extracts a bit portion from a value.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.22.2015
+//////
+// Change log:
+//     Mar.22.2015 - Initial creation
+//////
+// Parameters:
+//     varValue		-- Numeric value from which to extract.
+//     varBitStart	-- Starting bit position (little-endian, so starting position will be greatest bit value)
+//     varBitEnd    -- Ending bit position (little-endian, so ending position will be lowest bit value)
+//
+//////
+// Returns:
+//    Numeric		-- The extracted bits as a numeric unsigned integer of the same size as the original.
+//////
+	SVariable* function_bitslice(SThisCode* thisCode, SVariable* varValue, SVariable* varBitStart, SVariable* varBitEnd)
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
 // Function: BLU()
 // Retrieves the blue channel from an RGBA or BGRA color.
 //
@@ -6413,6 +6589,37 @@
 
 //////////
 //
+// Function: SLICE()
+// Extracts a portion of a string.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.22.2015
+//////
+// Change log:
+//     Mar.22.2015 - Initial creation, proposed by Stefano D'Amico.
+//////
+// Parameters:
+//     varString	-- The string to slice into.
+//     varStart		-- The offset to start the slice.  If negative, then backs off from LEN(varString).
+//     varEnd		-- The offset to end at.  If negative, then backs off from LEN(varString).
+//
+//////
+// Returns:
+//    Character		-- The string which was extracted.
+//////
+	SVariable* function_slice(SThisCode* thisCode, SVariable* varString, SVariable* varStart, SVariable* varEnd)
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
 // Function: SPACE()
 // Creates a character variable initialized with spaces.
 //
@@ -7647,6 +7854,37 @@ debug_break;
 	SVariable* function_vecel(SThisCode* thisCode, SVariable* varVec, SVariable* varEl, SVariable* varNewValue)
 	{
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varVec), false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Function: VESLICE()
+// Extracts elements from a vector.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.22.2015
+//////
+// Change log:
+//     Mar.22.2015 - Initial creation
+//////
+// Parameters:
+//     varVec			- Vector
+//     varStartEl		- Element to start the operation at.
+//     varEndEl			- The number of elements to remove
+//
+//////
+// Returns:
+//     The extracted element or elements as a vector.
+//////
+	SVariable* function_vecslice(SThisCode* thisCode, SVariable* varVec, SVariable* varStartEl, SVariable* varEndEl)
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
 		return(NULL);
 	}
 
