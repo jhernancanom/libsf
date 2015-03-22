@@ -7826,6 +7826,8 @@ debug_break;
 		f64			lfValue;
 		bool		llAsInteger;
 		SVariable*	varCurrency;
+		SVariable*	varPoint;
+		SVariable*	varSeparator;
 		SVariable*	result;
 		u32			errorNum;
         bool		error;
@@ -7895,7 +7897,9 @@ debug_break;
 					//////////
 					// Prepare our characters
 					//////
-						varCurrency = propGet_settings_Currency(_settings);
+						varCurrency		= propGet_settings_Currency(_settings);
+						varPoint		= propGet_settings_Point(_settings);
+						varSeparator	= propGet_settings_Separator(_settings);
 						if (varIgnoreChars)
 						{
 							// Make sure our ignore characters variable is character
@@ -7908,14 +7912,14 @@ debug_break;
 							// Copy the numeric portions ignoring the currency symbol and anything in varIgnoreChars
 							for (lnI = 0; lnI < varExpr->value.length && lnI < sizeof(buffer) - 1; lnI++)
 							{
-								// if not [varCurrency->value.data_s8[0] 0..9 + - .] then check varIgnoreChars, if not one of them then done converting
+								// if not [varCurrency->value.data_s8[0] 0..9 + - varPoint->value.data_s8[0] varSeparator->value.data_s8[0]] then check varIgnoreChars, if not one of them then done converting
 							}
 
 						} else {
 							// Copy the numeric portions to the buffer ignoring the currency symbol
 							for (lnI = 0; lnI < varExpr->value.length && lnI < sizeof(buffer) - 1; lnI++)
 							{
-								// if not [varCurrency->value.data_s8[0] 0..9 + - .] then done converting
+								// if not [varCurrency->value.data_s8[0] 0..9 + - varPoint->value.data_s8[0] varSeparator->value.data_s8[0]] then done converting
 							}
 						}
 
