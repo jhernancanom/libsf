@@ -7775,7 +7775,7 @@ debug_break;
 //////
 // Version 0.56
 // Last update:
-//     Mar.21.2015
+//     Mar.22.2015
 //////
 // Change log:
 //     Mar.21.2015 - Initial creation by Stefano D'Amico
@@ -7830,7 +7830,7 @@ debug_break;
 								result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
 								if (result)
 								{
-									lnValue32 = *(s32*)(varExpr->value.data[0] == _LOGICAL_TRUE)? 1: 0; //I do not use because iiVariable_getAs_s32() returns -1 for true value (?!?)
+									lnValue32 = (varExpr->value.data[0] == _LOGICAL_TRUE)? 1: 0; //I do not use because iiVariable_getAs_s32() returns -1 for true value (?!?)
 									iVariable_setNumeric_toNumericType(thisCode, result, NULL, NULL, &lnValue32, NULL, NULL, NULL);
 								}
 								break;
