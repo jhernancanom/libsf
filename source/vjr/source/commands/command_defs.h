@@ -179,6 +179,12 @@ struct SThisCode;
 	SVariable*			function_atc								(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence);
 	SVariable*			ifunction_at_occurs_common					(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence, bool tlCaseSensitive, bool tlScanBackward, u32* tnFoundCount);
 	SVariable*			function_atn2								(SThisCode* thisCode, SVariable* varY, SVariable* varX);
+	SVariable*			function_bits								(SThisCode* thisCode, SVariable* varBits);
+	SVariable*			function_bits8								(SThisCode* thisCode, SVariable* varBits);
+	SVariable*			function_bits16								(SThisCode* thisCode, SVariable* varBits);
+	SVariable*			function_bits32								(SThisCode* thisCode, SVariable* varBits);
+	SVariable*			function_bits64								(SThisCode* thisCode, SVariable* varBits);
+	SVariable*			function_bitslice							(SThisCode* thisCode, SVariable* varValue, SVariable* varBitStart, SVariable* varBitEnd);
 	SVariable*			function_blu								(SThisCode* thisCode, SVariable* varColor);
 	SVariable*			function_bgr								(SThisCode* thisCode, SVariable* varBlu, SVariable* varGrn, SVariable* varRed);
 	SVariable*			function_bgra								(SThisCode* thisCode, SVariable* varBlu, SVariable* varGrn, SVariable* varRed, SVariable* varAlp);
@@ -254,6 +260,7 @@ struct SThisCode;
 	SVariable*			function_sign2								(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			ifunction_sign_common						(SThisCode* thisCode, SVariable* varNumber, bool tlIncrementZero);
 	SVariable*			function_sin		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
+	SVariable*			function_slice								(SThisCode* thisCode, SVariable* varString, SVariable* varStart, SVariable* varEnd);
 	SVariable*			function_space								(SThisCode* thisCode, SVariable* varCount);
 	SVariable*			function_sqrt		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_strtran							(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount);
@@ -267,7 +274,13 @@ struct SThisCode;
 	SVariable*			function__test								(SThisCode* thisCode, SVariable* varIndex);
 	SVariable*			function_transform							(SThisCode* thisCode, SVariable* varVariable, SVariable* varFormat);
 	SVariable*			function_upper								(SThisCode* thisCode, SVariable* varString);
-	SVariable*			function_val								(SThisCode* thisCode, SVariable* varExpr);
+	SVariable*			function_val		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varExpr);
+	SVariable*			function_vec								(SThisCode* thisCode, SVariable* varV1, SVariable* varV2, SVariable* varV3, SVariable* varV4, SVariable* varV5, SVariable* varV6, SVariable* varV7, SVariable* varV8, SVariable* varV9, SVariable* varV10);
+	SVariable*			function_veccount							(SThisCode* thisCode, SVariable* varVec);
+	SVariable*			function_vecel								(SThisCode* thisCode, SVariable* varVec, SVariable* varEl, SVariable* varNewValue);
+	SVariable*			function_vecslice							(SThisCode* thisCode, SVariable* varVec, SVariable* varStartEl, SVariable* varEndEl);
+	SVariable*			function_vecstuff							(SThisCode* thisCode, SVariable* varVec, SVariable* varStartEl, SVariable* varRemoveCount, SVariable* varVecStuff);
+	SVariable*			function_vecsymbol							(SThisCode* thisCode, SVariable* varVec, SVariable* varEl, SVariable* varNewSymbol);
 	SVariable*			function_version							(SThisCode* thisCode, SVariable* varIndex);
 // Added temporarily until the processing engine is coded
 	SVariable*			function_concatenate						(SThisCode* thisCode, SVariable* varString1, SVariable* varString2);
@@ -332,6 +345,9 @@ struct SThisCode;
 				SVariable*	(*func_5p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5);
 				SVariable*	(*func_6p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6);
 				SVariable*	(*func_7p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6, SVariable* p7);
+				SVariable*	(*func_8p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6, SVariable* p7, SVariable* p8);
+				SVariable*	(*func_9p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6, SVariable* p7, SVariable* p8, SVariable* p9);
+				SVariable*	(*func_10p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6, SVariable* p7, SVariable* p8, SVariable* p9, SVariable* p10);
 			};
 
 
@@ -364,6 +380,12 @@ struct SThisCode;
 		{	_ICODE_ATAN,			1,			(uptr)&function_atan,			1,				1,				&gsSourceLight_atan[0]			},	// ATAN() by Stefano D'Amico, VJr 0.56, Mar.18.2015
 		{	_ICODE_ATC,				1,			(uptr)&function_atc,			2,				3,				&gsSourceLight_atc[0]			},
 		{	_ICODE_ATN2,			1,			(uptr)&function_atn2,			2,				2,				&gsSourceLight_atn2[0]			},
+		{	_ICODE_BITS,			1,			(uptr)&function_bits,			1,				1,				&gsSourceLight_bits[0]			},
+		{	_ICODE_BITS8,			1,			(uptr)&function_bits8,			1,				1,				&gsSourceLight_bits8[0]			},
+		{	_ICODE_BITS16,			1,			(uptr)&function_bits16,			1,				1,				&gsSourceLight_bits16[0]		},
+		{	_ICODE_BITS32,			1,			(uptr)&function_bits32,			1,				1,				&gsSourceLight_bits32[0]		},
+		{	_ICODE_BITS64,			1,			(uptr)&function_bits64,			1,				1,				&gsSourceLight_bits64[0]		},
+		{	_ICODE_BITSLICE,		1,			(uptr)&function_bitslice,		2,				3,				&gsSourceLight_bitslice[0]		},
 		{	_ICODE_BGR,				1,			(uptr)&function_bgr,			3,				3,				&gsSourceLight_bgr[0]			},
 		{	_ICODE_BGRA,			1,			(uptr)&function_bgra,			4,				4,				&gsSourceLight_bgra[0]			},
 		{	_ICODE_BLU,				1,			(uptr)&function_blu,			1,				1,				&gsSourceLight_blu[0]			},
@@ -429,6 +451,7 @@ struct SThisCode;
 		{	_ICODE_SET,				1,			(uptr)&function_set,			1,				2,				&gsSourceLight_set[0]			},
 		{	_ICODE_SIGN,			1,			(uptr)&function_sign,			1,				1,				&gsSourceLight_sign[0]			},	// SIGN() by Stefano D'Amico, VJr 0.56, Mar.14.2015
 		{	_ICODE_SIN,				1,			(uptr)&function_sin,			1,				1,				&gsSourceLight_sin[0]			},	// SIN() by Stefano D'Amico, VJr 0.56, Mar.17.2015
+		{	_ICODE_SLICE,			1,			(uptr)&function_slice,			2,				3,				&gsSourceLight_slice[0]			},
 		{	_ICODE_SPACE,			1,			(uptr)&function_space,			1,				1,				&gsSourceLight_space[0]			},
 		{	_ICODE_SQRT,			1,			(uptr)&function_sqrt,			1,				1,				&gsSourceLight_sqrt[0]			},	// SQRT() by Stefano D'Amico, VJr 0.56, Mar.15.2015
 		{	_ICODE_STRTRAN,			1,			(uptr)&function_strtran,		2,				4,				&gsSourceLight_strtran[0]		},
@@ -441,7 +464,13 @@ struct SThisCode;
 		{	_ICODE_TRANSFORM,		1,			(uptr)&function_transform,		1,				2,				&gsSourceLight_transform[0]		},
 		{	_ICODE_TRIM,			1,			(uptr)&function_rtrim,			1,				1,				&gsSourceLight_rtrim[0]			},
 		{	_ICODE_UPPER,			1,			(uptr)&function_upper,			1,				1,				&gsSourceLight_upper[0]			},
-		{	_ICODE_VAL,				1,			(uptr)&function_val,			1,				1,				&gsSourceLight_val[0]			},
+		{	_ICODE_VAL,				1,			(uptr)&function_val,			1,				1,				&gsSourceLight_val[0]			}, 	// VAL() by Stefano D'Amico, VJr 0.56, Mar.22.2015
+		{	_ICODE_VEC,				1,			(uptr)&function_vec,			1,				10,				&gsSourceLight_vec[0]			},
+		{	_ICODE_VECCOUNT,		1,			(uptr)&function_veccount,		1,				1,				&gsSourceLight_veccount[0]		},
+		{	_ICODE_VECEL,			1,			(uptr)&function_vecel,			1,				3,				&gsSourceLight_vecel[0]			},
+		{	_ICODE_VECSLICE,		1,			(uptr)&function_vecslice,		2,				3,				&gsSourceLight_vecslice[0]		},
+		{	_ICODE_VECSTUFF,		1,			(uptr)&function_vecstuff,		3,				4,				&gsSourceLight_vecstuff[0]		},
+		{	_ICODE_VECSYMBOL,		1,			(uptr)&function_vecsymbol,		1,				3,				&gsSourceLight_vecsymbol[0]		},
 		{	_ICODE_VERSION,			1,			(uptr)&function_version,		0,				1,				&gsSourceLight_version[0]		},
 // Added temporarily until the processing engine is coded
 		{	_ICODE_CONCATENATE,		1,			(uptr)&function_concatenate,	2,				2,				&gsSourceLight_concatenate[0]	},

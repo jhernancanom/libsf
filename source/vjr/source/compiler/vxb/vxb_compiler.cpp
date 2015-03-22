@@ -5309,7 +5309,7 @@ debug_break;
 // Returns the fundamental type
 //
 //////
-	SComp* iVariable_compRelated(SThisCode* thisCode, SVariable* var)
+	SComp* iVariable_getRelatedComp(SThisCode* thisCode, SVariable* var)
 	{
 		// If it's valid, convey
 		if (var)
@@ -10021,6 +10021,68 @@ debug_break;
 	f64 iiVariable_getCompAs_f64(SComp* comp)
 	{
 		return(atof(comp->line->sourceCode->data + comp->start));
+	}
+
+
+
+
+//////////
+//
+// Compares two variables and returns -1, 0, or +1 indicating the relationship of the
+// left variable being less than, equal to, or greater than the right.
+//
+// Returns:
+//		-9999	-- Error
+//		-1		-- Left less than right
+//		0		-- Left exactly equals right
+//		1		-- Left greater than right
+//
+//////
+	s32 iVariable_compare(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
+	{
+// Working here
+debug_break;
+// 		// Make sure our environment is sane
+// 		if (varLeft && varRight)
+// 		{
+// 			// Are they the same type exactly?
+// 			if (varLeft->varType == varRight->varType)
+// 			{
+// 				// Do a direct compare
+// 				return(iiVariable_compare(thisCode, varLeft, varRight));
+// 
+// 			} else if (iVariable_fundamentalType(thisCode, varLeft) == iVariable_fundamentalType(thisCode, varRight)) {
+// 				// They are the same general type
+// 				if (iVariable_fundamentalType(thisCode, varLeft) == _VAR_TYPE_NUMERIC)
+// 				{
+// 					// They are both numbers
+// 
+// 				} else {
+// 				}
+// 
+// 			} else {
+// 				// They are different
+// 			}
+// 
+// 		} else {
+			// Something is invalid
+			*tlError	= true;
+			*tnErrorNum	= _ERROR_INVALID_ARGUMENT_TYPE_COUNT;
+			return(0);
+// 		}
+	}
+
+
+
+
+//////////
+//
+// Compares two types of variables that are known to be exactly the same type.
+//
+//////
+	s32 iiVariable_compare(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight)
+	{
+		return(0);
 	}
 
 

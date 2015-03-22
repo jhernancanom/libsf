@@ -155,7 +155,7 @@
 
 	s64						iEngine_update_tally					(SThisCode* thisCode, s64 tnValue);
 
-	bool					iiEngine_getParametersBetween			(SThisCode* thisCode, SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable** p1, SVariable** p2, SVariable** p3, SVariable** p4, SVariable** p5, SVariable** p6, SVariable** p7);
+	bool					iiEngine_getParametersBetween			(SThisCode* thisCode, SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable** p1, SVariable** p2, SVariable** p3, SVariable** p4, SVariable** p5, SVariable** p6, SVariable** p7, SVariable** p8, SVariable** p9, SVariable** p10);
 
 	void					iBreakpoint_delete						(SThisCode* thisCode, SBreakpoint** breakpoint);
 	SBreakpoint* 			iBreakpoint_add							(SThisCode* thisCode, SBreakpoint** breakpoint, u32 tnType);
