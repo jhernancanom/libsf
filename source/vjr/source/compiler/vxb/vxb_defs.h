@@ -237,7 +237,7 @@ struct SThisCode;
 	SVariable*				iVariable_searchForName						(SThisCode* thisCode, s8* tcVarName, u32 tnVarNameLength, SComp* comp, bool tlCreateAsReference);
 	SVariable*				iiVariable_searchForName_variables			(SThisCode* thisCode, SVariable* varRoot, s8* tcVarName, u32 tnVarNameLength, SComp* comp, bool tlCreateAsReference);
 	SVariable*				iiVariable_searchForName_fields				(SThisCode* thisCode, s8* tcVarName, u32 tnVarNameLength, SComp* comp, bool tlCreateAsReference);
-	SComp*					iVariable_compRelated						(SThisCode* thisCode, SVariable* var);
+	SComp*					iVariable_getRelatedComp					(SThisCode* thisCode, SVariable* var);
 	s32						iVariable_fundamentalType					(SThisCode* thisCode, SVariable* var);
 	void					iVariable_createDefaultValues				(SThisCode* thisCode);
 	void					iVariable_createPropsMaster					(SThisCode* thisCode);
@@ -282,6 +282,8 @@ struct SThisCode;
 	f64						iiVariable_getAs_f64						(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	s64						iiVariable_getCompAs_s64					(SComp* comp);
 	f64						iiVariable_getCompAs_f64					(SComp* comp);
+	s32						iVariable_compare							(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
+	s32						iiVariable_compare							(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight);
 
 	// Support functions
 	s32						iiVariable_julianDayNumber_fromYyyyMmDd			(f32* tnJulianDayNumber, u32  year, u32  month, u32  day);

@@ -651,6 +651,9 @@ debug_nop;
 		SVariable*		p5;
 		SVariable*		p6;
 		SVariable*		p7;
+		SVariable*		p8;
+		SVariable*		p9;
+		SVariable*		p10;
 		SVariable*		result;
 		SComp*			compLeftParen;
 		
@@ -668,42 +671,33 @@ debug_nop;
 				if (lfl->iCode == comp->iCode)
 				{
 					// We need to find the minimum number of parameters between)
-					if (!iiEngine_getParametersBetween(thisCode, compLeftParen, &lnParamsFound, lfl->requiredCount, lfl->parameterCount, &p1, &p2, &p3, &p4, &p5, &p6, &p7))
+					if (!iiEngine_getParametersBetween(thisCode, compLeftParen, &lnParamsFound, lfl->requiredCount, lfl->parameterCount, &p1, &p2, &p3, &p4, &p5, &p6, &p7, &p8, &p9, &p10))
 						return(NULL);
 
 					// When we get here we found the correct number of parameters
 					switch (lfl->parameterCount)
 					{
-						case 0:			// Zero parameters for this function
-							result = lfl->func_0p(NULL);
+						case 0:			result = lfl->func_0p(NULL);
 							break;
-
-						case 1:			// One parameter max
-							result = lfl->func_1p(NULL, p1);
+						case 1:			result = lfl->func_1p(NULL, p1);
 							break;
-
-						case 2:			// Two parameters max
-							result = lfl->func_2p(NULL, p1, p2);
+						case 2:			result = lfl->func_2p(NULL, p1, p2);
 							break;
-
-						case 3:			// Two parameters max
-							result = lfl->func_3p(NULL, p1, p2, p3);
+						case 3:			result = lfl->func_3p(NULL, p1, p2, p3);
 							break;
-
-						case 4:			// Two parameters max
-							result = lfl->func_4p(NULL, p1, p2, p3, p4);
+						case 4:			result = lfl->func_4p(NULL, p1, p2, p3, p4);
 							break;
-
-						case 5:			// Two parameters max
-							result = lfl->func_5p(NULL, p1, p2, p3, p4, p5);
+						case 5:			result = lfl->func_5p(NULL, p1, p2, p3, p4, p5);
 							break;
-
-						case 6:			// Two parameters max
-							result = lfl->func_6p(NULL, p1, p2, p3, p4, p5, p6);
+						case 6:			result = lfl->func_6p(NULL, p1, p2, p3, p4, p5, p6);
 							break;
-
-						case 7:			// Two parameters max
-							result = lfl->func_7p(NULL, p1, p2, p3, p4, p5, p6, p7);
+						case 7:			result = lfl->func_7p(NULL, p1, p2, p3, p4, p5, p6, p7);
+							break;
+						case 8:			result = lfl->func_8p(NULL, p1, p2, p3, p4, p5, p6, p7, p8);
+							break;
+						case 9:			result = lfl->func_9p(NULL, p1, p2, p3, p4, p5, p6, p7, p8, p9);
+							break;
+						case 10:		result = lfl->func_10p(NULL, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10);
 							break;
 
 						default:
@@ -718,6 +712,9 @@ debug_nop;
 					if (p5)		iVariable_delete(thisCode, p5, true);
 					if (p6)		iVariable_delete(thisCode, p6, true);
 					if (p7)		iVariable_delete(thisCode, p7, true);
+					if (p8)		iVariable_delete(thisCode, p8, true);
+					if (p9)		iVariable_delete(thisCode, p9, true);
+					if (p10)	iVariable_delete(thisCode, p10, true);
 
 					// Indicate our return value
 					return(result);
@@ -824,7 +821,7 @@ debug_nop;
 // Called to obtain the parameters between the indicated parenthesis.
 //
 //////
-	bool iiEngine_getParametersBetween(SThisCode* thisCode, SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable** p1, SVariable** p2, SVariable** p3, SVariable** p4, SVariable** p5, SVariable** p6, SVariable** p7)
+	bool iiEngine_getParametersBetween(SThisCode* thisCode, SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable** p1, SVariable** p2, SVariable** p3, SVariable** p4, SVariable** p5, SVariable** p6, SVariable** p7, SVariable** p8, SVariable** p9, SVariable** p10)
 	{
 		u32			lnParamCount;
 		bool		llManufactured;
@@ -840,6 +837,9 @@ debug_nop;
 		*p5 = NULL;
 		*p6 = NULL;
 		*p7 = NULL;
+		*p8 = NULL;
+		*p9 = NULL;
+		*p10 = NULL;
 
 		// Begin to the thing to the right of the left parenthesis
 		lnParamCount	= 1;
@@ -871,14 +871,16 @@ debug_nop;
 			//////////
 			// Derive whatever this is as a variable
 			//////
-/*SVariable* var;*/
-				     if (lnParamCount == 1)		{	/*var =*/ (*p1 = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
-				else if (lnParamCount == 2)		{	/*var =*/ (*p2 = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
-				else if (lnParamCount == 3)		{	/*var =*/ (*p3 = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
-				else if (lnParamCount == 4)		{	/*var =*/ (*p4 = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
-				else if (lnParamCount == 5)		{	/*var =*/ (*p5 = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
-				else if (lnParamCount == 6)		{	/*var =*/ (*p6 = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
-				else if (lnParamCount == 7)		{	/*var =*/ (*p7 = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
+				     if (lnParamCount == 1)		{	/*var =*/ (*p1  = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
+				else if (lnParamCount == 2)		{	/*var =*/ (*p2  = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
+				else if (lnParamCount == 3)		{	/*var =*/ (*p3  = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
+				else if (lnParamCount == 4)		{	/*var =*/ (*p4  = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
+				else if (lnParamCount == 5)		{	/*var =*/ (*p5  = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
+				else if (lnParamCount == 6)		{	/*var =*/ (*p6  = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
+				else if (lnParamCount == 7)		{	/*var =*/ (*p7  = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
+				else if (lnParamCount == 8)		{	/*var =*/ (*p8  = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
+				else if (lnParamCount == 9)		{	/*var =*/ (*p9  = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
+				else if (lnParamCount == 10)	{	/*var =*/ (*p10 = iEngine_get_variableName_fromComponent(thisCode, comp, &llManufactured));		}
 
 
 			// Move to next component

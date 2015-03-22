@@ -267,6 +267,11 @@ struct SThisCode;
 	SVariable*			function__test								(SThisCode* thisCode, SVariable* varIndex);
 	SVariable*			function_transform							(SThisCode* thisCode, SVariable* varVariable, SVariable* varFormat);
 	SVariable*			function_upper								(SThisCode* thisCode, SVariable* varString);
+	SVariable*			function_vec								(SThisCode* thisCode, SVariable* varV1, SVariable* varV2, SVariable* varV3, SVariable* varV4, SVariable* varV5, SVariable* varV6, SVariable* varV7, SVariable* varV8, SVariable* varV9, SVariable* varV10);
+	SVariable*			function_veccount							(SThisCode* thisCode, SVariable* varVec);
+	SVariable*			function_vecel								(SThisCode* thisCode, SVariable* varVec, SVariable* varEl, SVariable* varNewValue);
+	SVariable*			function_vecstuff							(SThisCode* thisCode, SVariable* varVec, SVariable* varStartEl, SVariable* varRemoveCount, SVariable* varVecStuff);
+	SVariable*			function_vecsymbol							(SThisCode* thisCode, SVariable* varVec, SVariable* varEl, SVariable* varNewSymbol);
 	SVariable*			function_version							(SThisCode* thisCode, SVariable* varIndex);
 // Added temporarily until the processing engine is coded
 	SVariable*			function_concatenate						(SThisCode* thisCode, SVariable* varString1, SVariable* varString2);
@@ -331,6 +336,9 @@ struct SThisCode;
 				SVariable*	(*func_5p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5);
 				SVariable*	(*func_6p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6);
 				SVariable*	(*func_7p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6, SVariable* p7);
+				SVariable*	(*func_8p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6, SVariable* p7, SVariable* p8);
+				SVariable*	(*func_9p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6, SVariable* p7, SVariable* p8, SVariable* p9);
+				SVariable*	(*func_10p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6, SVariable* p7, SVariable* p8, SVariable* p9, SVariable* p10);
 			};
 
 
@@ -440,6 +448,11 @@ struct SThisCode;
 		{	_ICODE_TRANSFORM,		1,			(uptr)&function_transform,		1,				2,				&gsSourceLight_transform[0]		},
 		{	_ICODE_TRIM,			1,			(uptr)&function_rtrim,			1,				1,				&gsSourceLight_rtrim[0]			},
 		{	_ICODE_UPPER,			1,			(uptr)&function_upper,			1,				1,				&gsSourceLight_upper[0]			},
+		{	_ICODE_VEC,				1,			(uptr)&function_vec,			1,				10,				&gsSourceLight_vec[0]			},
+		{	_ICODE_VECCOUNT,		1,			(uptr)&function_veccount,		1,				1,				&gsSourceLight_veccount[0]		},
+		{	_ICODE_VECEL,			1,			(uptr)&function_vecel,			1,				3,				&gsSourceLight_vecel[0]			},
+		{	_ICODE_VECSTUFF,		1,			(uptr)&function_vecstuff,		3,				4,				&gsSourceLight_vecstuff[0]		},
+		{	_ICODE_VECSYMBOL,		1,			(uptr)&function_vecsymbol,		1,				3,				&gsSourceLight_vecsymbol[0]		},
 		{	_ICODE_VERSION,			1,			(uptr)&function_version,		0,				1,				&gsSourceLight_version[0]		},
 // Added temporarily until the processing engine is coded
 		{	_ICODE_CONCATENATE,		1,			(uptr)&function_concatenate,	2,				2,				&gsSourceLight_concatenate[0]	},

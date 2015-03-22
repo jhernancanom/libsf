@@ -142,42 +142,50 @@
 	const u32		_NODE_LEFT										= 4;
 	const u32		_NODE_RIGHT										= 5;
 
+//////////
+// Fundamental variable types
+//////
 	const u32		_VAR_TYPE_NULL									= 0;
-	const u32		_VAR_TYPE_OBJECT								= 1;	// Object reference
-	const u32		_VAR_TYPE_THISCODE								= 2;	// Code reference
-	const u32		_VAR_TYPE_CHARACTER								= 3;
-	const u32								_VAR_TYPE_NUMERIC_START	= 4;
-	const u32						_VAR_TYPE_NUMERIC_INTEGER_START	= 4;
-	const u32		_VAR_TYPE_S64									= 4;
-	const u32		_VAR_TYPE_U64									= 5;
-//	const u32		_VAR_TYPE_INTEGER								= 6;	// Stored as an s32, a 4-byte signed integer
+	const u32								_VAR_TYPE_NUMERIC_START	= 1;
+	const u32						_VAR_TYPE_NUMERIC_INTEGER_START	= 1;
+	const u32		_VAR_TYPE_S8									= 1;
+	const u32		_VAR_TYPE_U8									= 2;
+	const u32		_VAR_TYPE_S16									= 3;
+	const u32		_VAR_TYPE_U16									= 4;
+//	const u32		_VAR_TYPE_INTEGER								= 5;	// Stored as an s32, a 4-byte signed integer
 	const u32		_VAR_TYPE_S32									= 6;
 	const u32		_VAR_TYPE_U32									= 7;
-	const u32		_VAR_TYPE_S16									= 8;
-	const u32		_VAR_TYPE_S8									= 9;
-	const u32		_VAR_TYPE_U16									= 10;
-	const u32		_VAR_TYPE_U8									= 11;
-	const u32						_VAR_TYPE_NUMERIC_INTEGER_END	= 12;
-	const u32		_VAR_TYPE_NUMERIC								= 13;	// Stored as a character (like "200.50"), but converted to numeric at each reference.
-	const u32		_VAR_TYPE_CURRENCY								= 14;	// Stored as an s64 with an implied 4-decimals (divide by 10,000 to get the actual floating point value)
-//	const u32		_VAR_TYPE_FLOAT									= 15;	// Stored as an f32
-//	const u32		_VAR_TYPE_DOUBLE								= 16;	// Stored as an f64
-	const u32		_VAR_TYPE_F32									= 15;
-	const u32		_VAR_TYPE_F64									= 16;
-	const u32		_VAR_TYPE_BI									= 17;	// Uses the big number library for integers
-	const u32		_VAR_TYPE_BFP									= 18;	// Uses the big number library for floating points
-	const u32								_VAR_TYPE_NUMERIC_END	= 18;
-	// 19 is not used
-	const u32		_VAR_TYPE_DATE									= 20;
-	const u32		_VAR_TYPE_DATETIME								= 21;
-	const u32		_VAR_TYPE_LOGICAL								= 22;// Note:  This includes the logicalx types, but the value stored determines the logicalx setting.
-	const u32		_VAR_TYPE_BITMAP								= 23;
-// TODO:  Not yet implemented
-	const u32		_VAR_TYPE_DATETIMEX								= 24;
-	const u32		_VAR_TYPE_ARRAY									= 25;
-	const u32		_VAR_TYPE_GUID8									= 26;
-	const u32		_VAR_TYPE_GUID16								= 27;
-	const u32		_VAR_TYPE_FIELD									= 28;
+	const u32		_VAR_TYPE_S64									= 8;
+	const u32		_VAR_TYPE_U64									= 9;
+	const u32		_VAR_TYPE_CURRENCY								= 10;	// Stored as an s64 with an implied 4-decimals (divide by 10,000 to get the actual floating point value)
+	const u32						_VAR_TYPE_NUMERIC_INTEGER_END	= 10;
+	const u32				_VAR_TYPE_NUMERIC_FLOATING_POINT_START	= 11;
+	const u32		_VAR_TYPE_NUMERIC								= 11;	// Stored as a character (like "200.50"), but converted to numeric at each reference.
+//	const u32		_VAR_TYPE_FLOAT									= 12;	// Stored as an f32
+//	const u32		_VAR_TYPE_DOUBLE								= 13;	// Stored as an f64
+	const u32		_VAR_TYPE_F32									= 12;
+	const u32		_VAR_TYPE_F64									= 13;
+	const u32		_VAR_TYPE_BFP									= 14;	// Uses the big number library for floating points
+	const u32				_VAR_TYPE_NUMERIC_FLOATING_POINT_END	= 14;
+	const u32		_VAR_TYPE_BI									= 15;	// Uses the big number library for integers
+	const u32								_VAR_TYPE_NUMERIC_END	= 15;
+	const u32		_VAR_TYPE_CHARACTER								= 16;
+	const u32		_VAR_TYPE_UNICODE								= 17;
+	const u32		_VAR_TYPE_DATE									= 18;
+	const u32		_VAR_TYPE_DATETIME								= 19;
+	const u32		_VAR_TYPE_DATETIMEX								= 20;
+	const u32		_VAR_TYPE_LOGICAL								= 21;	// Note:  This includes the logicalx types, but the value stored determines the logicalx setting.
+	const u32		_VAR_TYPE_GUID8									= 22;
+	const u32		_VAR_TYPE_GUID16								= 23;
+	const u32		_VAR_TYPE_FIELD									= 24;
+	const u32		_VAR_TYPE_VECTOR								= 25;	// A vector format of multiple items with symbols between, like an ip4 address comprised of integers, 1.2.3.4, or a version 1.2.3. Support for ip6 hex:hex:hex:hex values will also be supported as vectors.
+	// Extended variable types
+	const u32		_VAR_TYPE_OBJECT								= 100;	// Object reference
+	const u32		_VAR_TYPE_BITMAP								= 200;	// Image reference
+	const u32		_VAR_TYPE_BITMAP_MOVIE							= 201;	// Image sequence reference
+	const u32		_VAR_TYPE_THISCODE								= 300;	// Code reference
+	// Multi-types
+	const u32		_VAR_TYPE_ARRAY									= 9999;	// An array of SVariable* following three 4-byte integers indicating row dimensions.
 
 
 //////////
@@ -878,6 +886,11 @@
 	const s32		_ICODE_VAL                                      = 1405;
 	const s32		_ICODE_VARREAD                                  = 1406;
 	const s32		_ICODE_VARTYPE                                  = 1407;
+	const s32		_ICODE_VEC										= 1461;
+	const s32		_ICODE_VECCOUNT									= 1462;
+	const s32		_ICODE_VECEL									= 1463;
+	const s32		_ICODE_VECSTUFF									= 1464;
+	const s32		_ICODE_VECSYMBOL								= 1465;
 	const s32		_ICODE_VERSION                                  = 1408;
 	const s32		_ICODE_WBORDER                                  = 1409;
 	const s32		_ICODE_WCHILD                                   = 1410;
@@ -918,6 +931,9 @@
 	// grn				= 1455				red				= 1456
 	// malp				= 1457				grayscale		= 1458
 	// colorize			= 1459				ranger2			= 1460
+	// vec				= 1461				veccount		= 1462
+	// vecel			= 1463				vecsstuff		= 1464
+	// vecsymbol		= 1465
 
 // Temporarily added until the processing engine is coded
 	const s32		_ICODE_CONCATENATE								= 1900;
@@ -1248,6 +1264,7 @@
 	const s32       _ICODE_USE                                      = 2262;
 	const s32       _ICODE_VALIDATE                                 = 2263;
 	const s32		_ICODE_VARIABLESFIRST							= 2316;
+	const s32		_ICODE_VECSEPARATOR								= 2334;
 	const s32       _ICODE_VIEWS                                    = 2264;
 	const s32       _ICODE_VIEW                                     = 2265;
 	const s32       _ICODE_WAIT                                     = 2266;
@@ -1289,6 +1306,7 @@
 	// NCSETOPTIMIZEVARIABLES = 2328		TF						= 2329
 	// UD					= 2330			YN						= 2331
 	// LONG					= 2332			SHORT					= 2333
+	// vecseparator			= 2334
 
 
 //////////
@@ -1770,6 +1788,11 @@
 	const s8		cgc_val[]										= "val";
 	const s8		cgc_varread[]									= "varread";
 	const s8		cgc_vartype[]									= "vartype";
+	const s8		cgc_vec[]										= "vec";
+	const s8		cgc_veccount[]									= "veccount";
+	const s8		cgc_vecel[]										= "vecel";
+	const s8		cgc_vecstuff[]									= "vecstuff";
+	const s8		cgc_vecsymbol[]									= "vecsymbol";
 	const s8		cgc_version[]									= "version";
 	const s8		cgc_wborder[]									= "wborder";
 	const s8		cgc_wchild[]									= "wchild";

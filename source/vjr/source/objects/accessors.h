@@ -487,6 +487,7 @@ struct SBasePropMap;
 	const s8		cgc_setTalk[]											= "talk";
 	const s8		cgc_setTime[]											= "time";
 	const s8		cgc_setVariablesFirst[]									= "variablesFirst";
+	const s8		cgc_setVecSeparator[]									= "vecseparator";
 	const s8		cgc_setUnloadReceivesParams[]							= "unloadReceivesParams";
 	const s8		cgc_setInitializeDefaultValue[]							= "initializeDefaultValue";
 
@@ -881,6 +882,7 @@ struct SBasePropMap;
 	const u32		_INDEX_SET_TIME											= 385;
 	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 386;
 	const u32		_INDEX_SET_VARIABLES_FIRST								= 387;
+	const u32		_INDEX_SET_VECSEPARATOR									= 388;
 
 
 	// Basic setters and getters
@@ -1398,7 +1400,7 @@ struct SBasePropMap;
 		{	_INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES,			_ICODE_NCSETOPTIMIZETABLEWRITES,	cgc_setNcsetOptimizeTableWrites,	sizeof(cgc_setNcsetOptimizeTableWrites) - 1,		_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=field update content is examined before writing out, and if it hasn't changed it is not written, .f.=any content updated, even identical content as before, is always written
 		{	_INDEX_SET_NCSET_OPTIMIZE_VARIABLES,			_ICODE_NCSETOPTIMIZEVARIABLES,		cgc_setNcsetOptimizeVariables,		sizeof(cgc_setNcsetOptimizeVariables) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=oft-used variables are moved to the top of the linked list, .f.=variables always persist in their "as defined" order
 		{	_INDEX_SET_NCSET_SIGN_SIGN2,					_ICODE_NCSETSIGNSIGN2,				cgc_setNcsetSignSign2,				sizeof(cgc_setNcsetSignSign2) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=sign() and sign2() return floating point values if floating point input, .f.=always returns integer
-		{	_INDEX_SET_POINT,								_ICODE_POINT,						cgc_setPoint,						sizeof(cgc_setPoint) - 1,							_VAR_TYPE_CHARACTER,		0, 0, 0,		(uptr)&cgcPointChar[0]			,NULL	},	// One bye separator for the decimal point in numbers
+		{	_INDEX_SET_POINT,								_ICODE_POINT,						cgc_setPoint,						sizeof(cgc_setPoint) - 1,							_VAR_TYPE_CHARACTER,		0, 0, 0,		(uptr)&cgcPointChar[0]			,NULL	},	// One byte separator for the decimal point in numbers
 		{	_INDEX_SET_REPROCESS,							_ICODE_REPROCESS,					cgc_setReprocess,					sizeof(cgc_setReprocess) - 1,						_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=Reprocessing is set to automatic, .f. is not supported, if it's not .t. it must be signed numeric with negative indicating attempts, and positive indicating seconds
 		{	_INDEX_SET_REPROCESSATTEMPTS,					_ICODE_REPROCESSATTEMPTS,			cgc_setReprocessAttempts,			sizeof(cgc_setReprocessAttempts) - 1,				_VAR_TYPE_S32,				0, 0, 0,		30								,NULL	},	// Number of reprocessing attempts when set to automatic, typically 30 for 30 seconds of retries after pausing 1 second between each
 		{	_INDEX_SET_REPROCESSINTERVAL,					_ICODE_REPROCESSINTERVAL,			cgc_setReprocessInterval,			sizeof(cgc_setReprocessInterval) - 1,				_VAR_TYPE_S32,				0, 0, 0,		30								,NULL	},	// Number of milliseconds to pause between retry attempts, typically 1000
@@ -1412,6 +1414,7 @@ struct SBasePropMap;
 		{	_INDEX_SET_TIME,								_ICODE_TIME,						cgc_setTime,						sizeof(cgc_setTime) - 1,							_VAR_TYPE_S32,				0, 0, 0,		_TIME_LOCAL						,NULL	},	// Refer to _TIME_* constants, either uses local time (adjusted for timezone) or system time (raw time) for all time references.
 		{	_INDEX_SET_UNLOAD_RECEIVES_PARAMS,				_ICODE_UNLOADRECEIVESPARAMS,		cgc_setUnloadReceivesParams,		sizeof(cgc_setUnloadReceivesParams) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=Unload() events receive the same parameters that were passed to init(), .f.=(default) Unload() does not receive any parameters
 		{	_INDEX_SET_VARIABLES_FIRST,						_ICODE_VARIABLESFIRST,				cgc_setVariablesFirst,				sizeof(cgc_setVariablesFirst) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=memory variables are searched first without m., .f.=the current alias is searched first, and then memory variables
+		{	_INDEX_SET_VECSEPARATOR,						_ICODE_VECSEPARATOR,				cgc_setVecSeparator,				sizeof(cgc_setVecSeparator) - 1,					_VAR_TYPE_CHARACTER,		0, 0, 0,		(uptr)&cgcPointChar[0]			,NULL	},	// One byte default separator for the vector values
 		{	0,												0,									NULL,								0,													0,						    0, 0, 0,		0								,NULL	}
 	};
 	const s32 gsProps_masterSize = sizeof(gsProps_master) / sizeof(SBasePropMap) - 1;
@@ -3594,6 +3597,7 @@ struct SBasePropMap;
 		{	_INDEX_SET_TIME,							0, (uptr)&iObjProp_setTime,			(uptr)&iObjProp_getTime },		// s32
 		{	_INDEX_SET_UNLOAD_RECEIVES_PARAMS,			0, (uptr)&iObjProp_setLogical,		(uptr)&iObjProp_getLogical },	// bool
 		{	_INDEX_SET_VARIABLES_FIRST,					0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
+		{	_INDEX_SET_VECSEPARATOR,					0, (uptr)&iObjProp_setCharacter1,	0	},		// character
 		{	0,											0, 0, 0 }
 	};
 	const s32 gnProps_settingsSize = sizeof(gsProps_settings) / sizeof(SObjPropMap) - 1;
