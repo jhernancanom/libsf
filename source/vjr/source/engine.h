@@ -86,6 +86,7 @@
 // Constants
 //////
 	const u32	_MAX_PARAMETER_COUNT			= 26;
+	const u32	_MAX_RETURN_COUNT				= 10;
 
 
 //////////
@@ -142,6 +143,12 @@
 
 		SSourceCode*	definition;				// As defined at compile time
 		SSourceCode*	live;					// As exists live in this instance at this level
+	};
+
+	struct SReturnsParams
+	{
+		SVariable*		returns[_MAX_RETURN_COUNT];			// Return parameters
+		SVariable*		params[_MAX_PARAMETER_COUNT];		// Input parameters
 	};
 
 

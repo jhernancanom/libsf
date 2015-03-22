@@ -372,7 +372,7 @@
 			iVjr_appendSystemLog(thisCode, (u8*)"Create global variables");
 
 			// _startupTime
-			varGlobals = function_datetime(NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+			varGlobals = function_datetime(NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 			iDatum_duplicate(&varGlobals->name, cgcName_startupTime, -1);
 
 			// _tally

@@ -1803,7 +1803,7 @@
 			if (varPathname)
 			{
 				// Grab the stem part of the name
-				varAlias = function_juststem(thisCode, varPathname, varSix);
+				varAlias = function_juststem(thisCode, varPathname, varSix, NULL);
 
 				// If it's invalid, or unreachable, then just use a default alias name
 				if (!iVariable_isTypeCharacter(varAlias) || iVariable_isEmpty(varAlias))
