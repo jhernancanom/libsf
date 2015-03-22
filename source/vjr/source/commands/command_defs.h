@@ -185,6 +185,7 @@ struct SThisCode;
 	SVariable*			function_bits32								(SThisCode* thisCode, SVariable* varBits);
 	SVariable*			function_bits64								(SThisCode* thisCode, SVariable* varBits);
 	SVariable*			function_bitslice							(SThisCode* thisCode, SVariable* varValue, SVariable* varBitStart, SVariable* varBitEnd);
+	SVariable*			function_bitstr								(SThisCode* thisCode, SVariable* varValue, SVariable* varLength);
 	SVariable*			function_blu								(SThisCode* thisCode, SVariable* varColor);
 	SVariable*			function_bgr								(SThisCode* thisCode, SVariable* varBlu, SVariable* varGrn, SVariable* varRed);
 	SVariable*			function_bgra								(SThisCode* thisCode, SVariable* varBlu, SVariable* varGrn, SVariable* varRed, SVariable* varAlp);
@@ -278,6 +279,7 @@ struct SThisCode;
 	SVariable*			function_veccount							(SThisCode* thisCode, SVariable* varVec);
 	SVariable*			function_vecel								(SThisCode* thisCode, SVariable* varVec, SVariable* varEl, SVariable* varNewValue);
 	SVariable*			function_vecslice							(SThisCode* thisCode, SVariable* varVec, SVariable* varStartEl, SVariable* varEndEl);
+	SVariable*			function_vecstr								(SThisCode* thisCode, SVariable* varVec, SVariable* varSymbolOverride);
 	SVariable*			function_vecstuff							(SThisCode* thisCode, SVariable* varVec, SVariable* varStartEl, SVariable* varRemoveCount, SVariable* varVecStuff);
 	SVariable*			function_vecsymbol							(SThisCode* thisCode, SVariable* varVec, SVariable* varEl, SVariable* varNewSymbol);
 	SVariable*			function_version							(SThisCode* thisCode, SVariable* varIndex);
@@ -385,6 +387,7 @@ struct SThisCode;
 		{	_ICODE_BITS32,			1,			(uptr)&function_bits32,			1,				1,				&gsSourceLight_bits32[0]		},
 		{	_ICODE_BITS64,			1,			(uptr)&function_bits64,			1,				1,				&gsSourceLight_bits64[0]		},
 		{	_ICODE_BITSLICE,		1,			(uptr)&function_bitslice,		2,				3,				&gsSourceLight_bitslice[0]		},
+		{	_ICODE_BITSTR,			1,			(uptr)&function_bitstr,			1,				2,				&gsSourceLight_bitstr[0]		},
 		{	_ICODE_BGR,				1,			(uptr)&function_bgr,			3,				3,				&gsSourceLight_bgr[0]			},
 		{	_ICODE_BGRA,			1,			(uptr)&function_bgra,			4,				4,				&gsSourceLight_bgra[0]			},
 		{	_ICODE_BLU,				1,			(uptr)&function_blu,			1,				1,				&gsSourceLight_blu[0]			},
@@ -467,6 +470,7 @@ struct SThisCode;
 		{	_ICODE_VECCOUNT,		1,			(uptr)&function_veccount,		1,				1,				&gsSourceLight_veccount[0]		},
 		{	_ICODE_VECEL,			1,			(uptr)&function_vecel,			1,				3,				&gsSourceLight_vecel[0]			},
 		{	_ICODE_VECSLICE,		1,			(uptr)&function_vecslice,		2,				3,				&gsSourceLight_vecslice[0]		},
+		{	_ICODE_VECSTR,			1,			(uptr)&function_vecstr,			1,				2,				&gsSourceLight_vecstr[0]		},
 		{	_ICODE_VECSTUFF,		1,			(uptr)&function_vecstuff,		3,				4,				&gsSourceLight_vecstuff[0]		},
 		{	_ICODE_VECSYMBOL,		1,			(uptr)&function_vecsymbol,		1,				3,				&gsSourceLight_vecsymbol[0]		},
 		{	_ICODE_VERSION,			1,			(uptr)&function_version,		0,				1,				&gsSourceLight_version[0]		},

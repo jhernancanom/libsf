@@ -525,6 +525,7 @@
 	const s32		_ICODE_BITRSHIFT                                = 1062;
 	const s32		_ICODE_BITSET                                   = 1063;
 	const s32		_ICODE_BITSLICE									= 1466;
+	const s32		_ICODE_BITSTR									= 1475;
 	const s32		_ICODE_BITTEST                                  = 1064;
 	const s32		_ICODE_BITXOR                                   = 1065;
 	const s32		_ICODE_BOF                                      = 1066;
@@ -897,6 +898,7 @@
 	const s32		_ICODE_VECCOUNT									= 1462;
 	const s32		_ICODE_VECEL									= 1463;
 	const s32		_ICODE_VECSLICE									= 1468;
+	const s32		_ICODE_VECSTR									= 1474;
 	const s32		_ICODE_VECSTUFF									= 1464;
 	const s32		_ICODE_VECSYMBOL								= 1465;
 	const s32		_ICODE_VERSION                                  = 1408;
@@ -945,7 +947,8 @@
 	// slice			= 1467				vecslice		= 1468
 	// bits				= 1469				bits8			= 1470
 	// bits16			= 1471				bits32			= 1472
-	// bits64			= 1473
+	// bits64			= 1473				vecstr			= 1474
+	// bitstr			= 1475
 
 // Temporarily added until the processing engine is coded
 	const s32		_ICODE_CONCATENATE								= 1900;
@@ -1431,6 +1434,13 @@
 	const s8		cgc_bitrshift[]									= "bitrshift";
 	const s8		cgc_bitset[]									= "bitset";
 	const s8		cgc_bittest[]									= "bittest";
+	const s8		cgc_bits[]										= "bits";
+	const s8		cgc_bits8[]										= "bits8";
+	const s8		cgc_bits16[]									= "bits16";
+	const s8		cgc_bits32[]									= "bits32";
+	const s8		cgc_bits64[]									= "bits64";
+	const s8		cgc_bitslice[]									= "bitslice";
+	const s8		cgc_bitstr[]									= "bitstr";
 	const s8		cgc_bitxor[]									= "bitxor";
 	const s8		cgc_blu[]										= "blu";
 	const s8		cgc_bof[]										= "bof";
@@ -1805,6 +1815,7 @@
 	const s8		cgc_veccount[]									= "veccount";
 	const s8		cgc_vecel[]										= "vecel";
 	const s8		cgc_vecslice[]									= "vecslice";
+	const s8		cgc_vecstr[]									= "vecstr";
 	const s8		cgc_vecstuff[]									= "vecstuff";
 	const s8		cgc_vecsymbol[]									= "vecsymbol";
 	const s8		cgc_version[]									= "version";

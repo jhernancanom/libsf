@@ -1711,6 +1711,36 @@
 
 //////////
 //
+// Function: BITSTR()
+// Converts a value into its bit pattern.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.22.2015
+//////
+// Change log:
+//     Mar.22.2015 - Initial creation
+//////
+// Parameters:
+//     varValue		-- Numeric value from which to extract.
+//     varLength	-- Number of bits to extract, including leading 0s
+//
+//////
+// Returns:
+//    Character		-- The extracted bits as a character string
+//////
+	SVariable* function_bitstr(SThisCode* thisCode, SVariable* varValue, SVariable* varLength)
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
 // Function: BLU()
 // Retrieves the blue channel from an RGBA or BGRA color.
 //
@@ -7862,7 +7892,7 @@ debug_break;
 
 //////////
 //
-// Function: VESLICE()
+// Function: VECSLICE()
 // Extracts elements from a vector.
 //
 //////
@@ -7893,7 +7923,37 @@ debug_break;
 
 //////////
 //
-// Function: VESTUFF()
+// Function: VECSTR()
+// Generates a character string containing the vectors.
+//
+//////
+// Version 0.56
+// Last update:
+//     Mar.21.2015
+//////
+// Change log:
+//     Mar.21.2015 - Initial creation
+//////
+// Parameters:
+//     varVec				- Vector
+//     varSymbolOverride	- A symbol to use between vectors
+//
+//////
+// Returns:
+//     A character string containing the vector values interspersed with symbol space, or the varSymbolOverride
+//////
+	SVariable* function_vecstr(SThisCode* thisCode, SVariable* varVec, SVariable* varSymbolOverride)
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Function: VECSTUFF()
 // Updates or resizes a vector element. Works like STUFF().
 //
 //////

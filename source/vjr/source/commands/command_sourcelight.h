@@ -319,6 +319,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_bitstr[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_bgr[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -720,6 +725,11 @@
 	};
 
 	SSourceLightData gsSourceLight_vecslice[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_vecstr[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
