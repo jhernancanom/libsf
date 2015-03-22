@@ -200,7 +200,8 @@
 			case _ERROR_CANNOT_BE_ZERO_OR_NEGATIVE:			{	iError_report(thisCode, cgcCannotBeZeroOrNegative, tlInvasive);			break;	}
 			case _ERROR_UNABLE_TO_AUTOVALIDATE:				{	iError_report(thisCode, cgcUnableToAutoValidate, tlInvasive);			break;	}
 			case _ERROR_DBF_GENERAL_ERROR:					{	iError_report(thisCode, cgcGeneralErrorDbf, tlInvasive);				break;	}
-			case _ERROR_CANNOT_BE_ZERO:						{	iError_report(thisCode, cgcCannotBeZero, tlInvasive);					break;	}															
+			case _ERROR_CANNOT_BE_ZERO:						{	iError_report(thisCode, cgcCannotBeZero, tlInvasive);					break;	}
+			case _ERROR_MUST_BE_LOGICAL:					{	iError_report(thisCode, cgcMustBeLogical, tlInvasive);					break;	}
 
 		}
 
@@ -3647,8 +3648,58 @@
 //////
 	SVariable* function_iif(SThisCode* thisCode, SVariable* varTest, SVariable* varTrue, SVariable* varFalse, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varTest), false);
-		return(NULL);
+		bool		llTest;
+		SVariable*	result;
+		u32			errorNum;
+        bool		error;
+
+
+		//////////
+		// Parameter 1 must be logical
+		//////
+			if (!iVariable_isValid(varTest) || !iVariable_isFundamentalTypeLogical(varTest))
+			{
+				iError_reportByNumber(thisCode, _ERROR_MUST_BE_LOGICAL, iVariable_getRelatedComp(thisCode, varTest), false);
+				return(NULL);
+			}
+
+
+		//////////
+        // Grab the test result
+		//////
+			llTest = iiVariable_getAs_bool(thisCode, varTest, false, &error, &errorNum);
+			if (error)
+			{
+				iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varTest), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Based on the test, copy either varTrue or varFalse
+		//////
+			if (llTest)
+			{
+				// Copy true
+				result = iVariable_copy(thisCode, varTrue, false);
+
+			} else {
+				// Copy false
+				result = iVariable_copy(thisCode, varFalse, false);
+			}
+
+
+		//////////
+		// Are we good?
+		//////
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, ((llTest) ? varTrue : varFalse)), false);
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return result;
 	}
 
 
@@ -3680,8 +3731,88 @@
 //////
 	SVariable* function_inlist(SThisCode* thisCode, SVariable* varValue, SVariable* varList1, SVariable* varList2, SVariable* varList3, SVariable* varList4, SVariable* varList5, SVariable* varList6, SVariable* varList7, SVariable* varList8, SVariable* varList9, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varValue), false);
-		return(NULL);
+		bool		llResult;
+		s32			lnI, lnType;
+		SVariable*	result;
+		u32			errorNum;
+        bool		error;
+
+
+		//////////
+		// Parameters 1 and 2 must be present, and of equal types
+		//////
+			if (!iVariable_isValid(varValue))
+			{
+				iError_reportByNumber(thisCode, _ERROR_MISSING_PARAMETER, iVariable_getRelatedComp(thisCode, varValue), false);
+				return(NULL);
+			}
+			if (!iVariable_isValid(varList1))
+			{
+				iError_reportByNumber(thisCode, _ERROR_MISSING_PARAMETER, iVariable_getRelatedComp(thisCode, varList1), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Each type must be fundamentally the same type
+		//////
+			for (lnI = 1, lnType = iVariable_fundamentalType(thisCode, varValue); lnI < _MAX_PARAMETER_COUNT && returnsParams->params[lnI]; lnI++)
+			{
+
+				//////////
+				// Make sure this variable type matches the test value
+				//////
+					if (iVariable_fundamentalType(thisCode, returnsParams->params[lnI]) != lnType)
+					{
+						// The types do not match
+						iError_reportByNumber(thisCode, _ERROR_DATA_TYPE_MISMATCH, iVariable_getRelatedComp(thisCode, returnsParams->params[lnI]), false);
+						return(NULL);
+					}
+
+			}
+
+
+		//////////
+		// Iterate through to see if the parameters are equal
+		//////
+			for (lnI = 1, llResult = false; lnI < _MAX_PARAMETER_COUNT && returnsParams->params[lnI]; lnI++)
+			{
+
+				//////////
+				// Compare the value with each list item
+				//////
+					if (iVariable_compare(thisCode, varValue, returnsParams->params[lnI], false, &error, &errorNum) == 0 && !error)
+					{
+						// We found a match
+						llResult = true;
+						break;
+					}
+
+
+				//////////
+				// Report on errors
+				//////
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, returnsParams->params[lnI]), false);
+						return(NULL);
+					}
+
+			}
+
+
+		//////////
+		// Based on the result, create the return result
+		//////
+			result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL, ((llResult) ? (s8*)&_LOGICAL_TRUE : (s8*)&_LOGICAL_FALSE), 1, false);
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varValue), false);
+
+
+		//////////
+		// Indicate our result
+		//////
+			return(result);
 	}
 
 
