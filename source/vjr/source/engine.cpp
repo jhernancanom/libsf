@@ -644,7 +644,7 @@ debug_nop;
 	{
 		u32				lnI, lnParamsFound;
 		SFunctionData*	lfl;
-		SVariable*		params[26];
+		SReturnsParams	returnsParams;
 		SVariable*		result;
 		SComp*			compLeftParen;
 		
@@ -664,7 +664,7 @@ debug_nop;
 					//////////
 					// We need to find the minimum number of parameters between)
 					//////
-						if (!iiEngine_getParametersBetween(thisCode, compLeftParen, &lnParamsFound, lfl->requiredCount, lfl->parameterCount, &params[0]))
+						if (!iiEngine_getParametersBetween(thisCode, compLeftParen, &lnParamsFound, lfl->requiredCount, lfl->parameterCount, &returnsParams.params[0]))
 							return(NULL);
 
 
@@ -673,29 +673,27 @@ debug_nop;
 					//////
 						switch (lfl->parameterCount)
 						{
-							case 0:			result = lfl->func_0p(NULL);
+							case 0:			result = lfl->func_0p(NULL, &returnsParams);
 								break;
-							case 1:			result = lfl->func_1p(NULL, params[0]);
+							case 1:			result = lfl->func_1p(NULL, returnsParams.params[0], &returnsParams);
 								break;
-							case 2:			result = lfl->func_2p(NULL, params[0], params[1]);
+							case 2:			result = lfl->func_2p(NULL, returnsParams.params[0], returnsParams.params[1], &returnsParams);
 								break;
-							case 3:			result = lfl->func_3p(NULL, params[0], params[1], params[2]);
+							case 3:			result = lfl->func_3p(NULL, returnsParams.params[0], returnsParams.params[1], returnsParams.params[2], &returnsParams);
 								break;
-							case 4:			result = lfl->func_4p(NULL, params[0], params[1], params[2], params[3]);
+							case 4:			result = lfl->func_4p(NULL, returnsParams.params[0], returnsParams.params[1], returnsParams.params[2], returnsParams.params[3], &returnsParams);
 								break;
-							case 5:			result = lfl->func_5p(NULL, params[0], params[1], params[2], params[3], params[4]);
+							case 5:			result = lfl->func_5p(NULL, returnsParams.params[0], returnsParams.params[1], returnsParams.params[2], returnsParams.params[3], returnsParams.params[4], &returnsParams);
 								break;
-							case 6:			result = lfl->func_6p(NULL, params[0], params[1], params[2], params[3], params[4], params[5]);
+							case 6:			result = lfl->func_6p(NULL, returnsParams.params[0], returnsParams.params[1], returnsParams.params[2], returnsParams.params[3], returnsParams.params[4], returnsParams.params[5], &returnsParams);
 								break;
-							case 7:			result = lfl->func_7p(NULL, params[0], params[1], params[2], params[3], params[4], params[5], params[6]);
+							case 7:			result = lfl->func_7p(NULL, returnsParams.params[0], returnsParams.params[1], returnsParams.params[2], returnsParams.params[3], returnsParams.params[4], returnsParams.params[5], returnsParams.params[6], &returnsParams);
 								break;
-							case 8:			result = lfl->func_8p(NULL, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7]);
+							case 8:			result = lfl->func_8p(NULL, returnsParams.params[0], returnsParams.params[1], returnsParams.params[2], returnsParams.params[3], returnsParams.params[4], returnsParams.params[5], returnsParams.params[6], returnsParams.params[7], &returnsParams);
 								break;
-							case 9:			result = lfl->func_9p(NULL, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8]);
+							case 9:			result = lfl->func_9p(NULL, returnsParams.params[0], returnsParams.params[1], returnsParams.params[2], returnsParams.params[3], returnsParams.params[4], returnsParams.params[5], returnsParams.params[6], returnsParams.params[7], returnsParams.params[8], &returnsParams);
 								break;
-							case 10:		result = lfl->func_10p(NULL, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9]);
-								break;
-							default:		result = lfl->func_26p(NULL, params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7], params[8], params[9], params);
+							default:		result = lfl->func_10p(NULL, returnsParams.params[0], returnsParams.params[1], returnsParams.params[2], returnsParams.params[3], returnsParams.params[4], returnsParams.params[5], returnsParams.params[6], returnsParams.params[7], returnsParams.params[8], returnsParams.params[9], &returnsParams);
 								break;
 						}
 
@@ -705,8 +703,9 @@ debug_nop;
 					//////
 						for (lnI = 0; lnI < _MAX_PARAMETER_COUNT; lnI++)
 						{
-							if (params[lnI])
-								iVariable_delete(thisCode, params[lnI], true);
+							// Delete anything that's populated
+							if (returnsParams.params[lnI])
+								iVariable_delete(thisCode, returnsParams.params[lnI], true);
 						}
 
 

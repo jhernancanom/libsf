@@ -144,6 +144,12 @@
 		SSourceCode*	live;					// As exists live in this instance at this level
 	};
 
+	struct SReturnsParams
+	{
+		SVariable*		returns[10];
+		SVariable*		params[26];
+	};
+
 
 //////////
 // Forward declarations
