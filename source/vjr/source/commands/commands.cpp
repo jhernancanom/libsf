@@ -2882,6 +2882,54 @@
 
 	}
 
+
+
+
+//////////
+//
+// Function: ENDSWITH()
+// Determines if the character string ends with the search string.
+//
+//////
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Mar.22.2015
+//////
+// Change log:
+//     Mar.22.2015 - Initial creation
+//////
+// Parameters:
+//     varString	-- Original string
+//     varSearch	-- Search string to replace
+//     varStart		-- Starting location within the string
+//     varEnd		-- Ending location within the string
+//
+//////
+// Returns:
+//    Logical		-- .t. if the search string is found in the string, .f. otherwise
+//
+//////
+	SVariable* function_endswith(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varStart, SVariable* varEnd)
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varString), false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Function: ENDSWITHC()
+// Case-insensitive version of ENDSWITH()
+//
+//////
+	SVariable* function_endswithc(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varStart, SVariable* varEnd)
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varString), false);
+		return(NULL);
+	}
+
 	
 	
 	
@@ -6753,6 +6801,53 @@
 	{
 		// Return sqrt
 		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_SQRT, _VAR_TYPE_F64, false, false));
+	}
+
+
+
+
+//////////
+//
+// Function: STARTSWITH()
+// Determines if the character string starts with the search string.
+//
+//////
+// Version 0.56   (Determine the current version from the header in vjr.cpp)
+// Last update:
+//     Mar.22.2015
+//////
+// Change log:
+//     Mar.22.2015 - Initial creation
+//////
+// Parameters:
+//     varString	-- Original string
+//     varSearch	-- Search string to replace
+//     varStart		-- Starting location within the string
+//
+//////
+// Returns:
+//    Logical		-- .t. if the search string is found in the string, .f. otherwise
+//
+//////
+	SVariable* function_startswith(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varStart)
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varString), false);
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Function: STARTSWITHC()
+// Case-insensitive version of STARTSWITH().
+//
+//////
+	SVariable* function_startswithc(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varStart)
+	{
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varString), false);
+		return(NULL);
 	}
 
 

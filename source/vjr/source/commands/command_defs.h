@@ -203,6 +203,8 @@ struct SThisCode;
 	SVariable*			function_dtor		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			function_empty		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varExpr);
 	bool				function_isempty_common						(SThisCode* thisCode, SVariable* varExpr);
+	SVariable*			function_endswith							(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varStart, SVariable* varEnd);
+	SVariable*			function_endswithc							(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varStart, SVariable* varEnd);
 	SVariable*			function_evl		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varExpr1, SVariable* varExpr2);
 	SVariable*			function_exp		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
 	SVariable*			ifunction_numbers_common					(SThisCode* thisCode, SVariable* varNumber1, SVariable* varNumber2, SVariable* varNumber3, u32 tnFunctionType, const u32 tnResultType, bool tlSameInputType, bool tlNoEmptyParam);
@@ -264,6 +266,8 @@ struct SThisCode;
 	SVariable*			function_slice								(SThisCode* thisCode, SVariable* varString, SVariable* varStart, SVariable* varEnd);
 	SVariable*			function_space								(SThisCode* thisCode, SVariable* varCount);
 	SVariable*			function_sqrt		/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varNumber);
+	SVariable*			function_startswith							(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varStart);
+	SVariable*			function_startswithc						(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varStart);
 	SVariable*			function_strtran							(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount);
 	SVariable*			function_strtranc							(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount);
 	SVariable*			ifunction_strtran_common					(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount, bool tlCaseSensitive);
@@ -403,6 +407,8 @@ struct SThisCode;
 		{	_ICODE_DATETIME,		1,			(uptr)&function_datetime,		0,				7,				&gsSourceLight_datetime[0]		},
 		{	_ICODE_DTOR,			1,			(uptr)&function_dtor,			1,				1,				&gsSourceLight_dtor[0]			},	// DTOR() by Stefano D'Amico, VJr 0.56, Mar.16.2015
 		{	_ICODE_EMPTY,			1,			(uptr)&function_empty,			1,				1,				&gsSourceLight_empty[0]			},	// EMPTY() by Stefano D'Amico, VJr 0.56, Mar.19.2015
+		{	_ICODE_ENDSWITH,		1,			(uptr)&function_endswith,		2,				4,				&gsSourceLight_endswith[0]		},
+		{	_ICODE_ENDSWITHC,		1,			(uptr)&function_endswith,		2,				4,				&gsSourceLight_endswithc[0]		},
 		{	_ICODE_EVL,				1,			(uptr)&function_evl,			2,				2,				&gsSourceLight_evl[0]			},	// EVL() by Stefano D'Amico, VJr 0.56, Mar.20.2015
 		{	_ICODE_EXP,				1,			(uptr)&function_exp,			1,				1,				&gsSourceLight_exp[0]			},	// EXP() by Stefano D'Amico, VJr 0.56, Mar.15.2015
 		{	_ICODE_FLOOR,			1,			(uptr)&function_floor,			1,				1,				&gsSourceLight_floor[0]			},	// FLOOR() by Stefano D'Amico, VJr 0.56, Mar.15.2015
@@ -457,6 +463,8 @@ struct SThisCode;
 		{	_ICODE_SLICE,			1,			(uptr)&function_slice,			2,				3,				&gsSourceLight_slice[0]			},
 		{	_ICODE_SPACE,			1,			(uptr)&function_space,			1,				1,				&gsSourceLight_space[0]			},
 		{	_ICODE_SQRT,			1,			(uptr)&function_sqrt,			1,				1,				&gsSourceLight_sqrt[0]			},	// SQRT() by Stefano D'Amico, VJr 0.56, Mar.15.2015
+		{	_ICODE_STARTSWITH,		1,			(uptr)&function_startswith,		2,				4,				&gsSourceLight_startswith[0]	},
+		{	_ICODE_STARTSWITHC,		1,			(uptr)&function_startswithc,	2,				4,				&gsSourceLight_startswithc[0]	},
 		{	_ICODE_STRTRAN,			1,			(uptr)&function_strtran,		2,				4,				&gsSourceLight_strtran[0]		},
 		{	_ICODE_STRTRANC,		1,			(uptr)&function_strtranc,		2,				4,				&gsSourceLight_strtranc[0]		},
 		{	_ICODE_STUFF,			1,			(uptr)&function_stuff,			3,				4,				&gsSourceLight_stuff[0]			},

@@ -394,6 +394,16 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_endswith[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_endswithc[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_evl[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -661,6 +671,16 @@
 	};
 
 	SSourceLightData gsSourceLight_sqrt[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_startswith[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_startswithc[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
