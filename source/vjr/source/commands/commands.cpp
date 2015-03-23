@@ -5641,7 +5641,8 @@
 //////////
 //
 // Function: OUTSIDE()
-// Determines whether the value of an expression is not inclusively between the values of two expressions of the same type.
+// Determines whether the value of an expression is not inclusively
+// between the values of two expressions of the same type.
 //
 //////
 // Version 0.57
@@ -5658,27 +5659,30 @@
 //
 //////
 // Returns:
-//    Logical		-- .t. if the item is not inclusively between the values of two expressions of the same type, .f. otherwise
+//    Logical		-- .t. if the item is not inclusively between the values of two expressions of the same type, .f. if between
 //////
 	SVariable* function_outside(SThisCode* thisCode, SVariable* varValue, SVariable* varLowValue, SVariable* varHighValue, SReturnsParams* returnsParams)
 	{
 		SVariable*	result;
+
 
 		//////////
 		// Invoke BETWEEN()
 		//////
 			result = function_between(thisCode, varValue, varLowValue, varHighValue, returnsParams);
 
+
 		//////////
 		// OUTSIDE() is reverse of BETWEEN()
 		//////
 			if (result)
-				result->value.data_s8[0] = ~result->value.data_s8[0];
+				result->value.data_u8[0] = ~result->value.data_u8[0];
+
 
 		//////////
 		// Indicate our result
 		//////
-			return result;
+			return(result);
 
 	}
 
