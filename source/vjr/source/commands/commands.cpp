@@ -8101,7 +8101,8 @@ debug_break;
 //     Mar.21.2015 - Initial creation by Stefano D'Amico
 //////
 // Parameters:
-//     pExpression		-- Any, to convert
+//     varExpr			-- Any, to convert
+//	   varIgnoreList	-- Charasters to ignore
 //
 //////
 // Returns:
@@ -8111,7 +8112,7 @@ debug_break;
 //////
 	SVariable* function_val(SThisCode* thisCode, SVariable* varExpr, SVariable* varIgnoreChars, SReturnsParams* returnsParams)
 	{
-		s32			lnI;
+		s32			lnI, lnK, lnJ;
 		s64			lnValue;
 		f64			lfValue;
 		bool		llAsInteger;
@@ -8133,7 +8134,6 @@ debug_break;
 				return(NULL);
 			}
 
-
 		//////////
 		// If numeric, copy whatever's already there
 		//////
@@ -8147,6 +8147,7 @@ debug_break;
 				// Success or failure, return our result
 				return(result);
 			}
+
 
 
 		//////////
@@ -8184,33 +8185,74 @@ debug_break;
 					break;
 
 				case _VAR_TYPE_CHARACTER:
+
+					//////////
+					// Parameter 2 must be valid
+					//////
+						if (varIgnoreChars)
+						{
+							if (!iVariable_isValid(varIgnoreChars) || !iVariable_isTypeCharacter(varIgnoreChars))
+							{
+								iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varIgnoreChars), false);
+								return(NULL);
+							}
+						}
+
+
 					//////////
 					// Prepare our characters
 					//////
 						varCurrency		= propGet_settings_Currency(_settings);
 						varPoint		= propGet_settings_Point(_settings);
 						varSeparator	= propGet_settings_Separator(_settings);
-						if (varIgnoreChars)
+
+
+					//////////
+					// Iterate through each character
+					//////
+						lnJ = 0;
+						bool bTrimSpace = true, bCheckCurrency = true, bIsCurrency = false, bIgnoreChar;
+
+						for (lnI = 0; lnI < (s32)varExpr->value.length && lnJ < (s32)sizeof(buffer) - 1; lnI++)
 						{
-							// Make sure our ignore characters variable is character
-							if (!iVariable_isTypeCharacter(varIgnoreChars))
+							// If we encounter anything other than spaces, not empty
+							if (!(isspace(varExpr->value.data[lnI]) && bTrimSpace))
 							{
-								iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varIgnoreChars), false);
-								return(NULL);
+								bTrimSpace = false;	//stop trimming space
+								if (varExpr->value.data[lnI] == varCurrency->value.data_s8[0] && bCheckCurrency)
+								{
+									bIsCurrency = true;
+									bCheckCurrency = false;
+								} else {
+									//Ignore list?
+									bIgnoreChar = false;
+									if (varIgnoreChars)
+									{
+										for (lnK = 0; lnK < (s32)varIgnoreChars->value.length; lnK++)
+										{
+											// If $ in IgnoreChar must set bIsCurrency=false
+											if (varIgnoreChars->value.data[lnK] == varCurrency->value.data_s8[0])
+												bIsCurrency = false;
+											// To ignore
+											if (varExpr->value.data[lnI] == varIgnoreChars->value.data[lnK])
+											{
+												bIgnoreChar = true;
+												break;
+											}
+										}
+									}
+									// Add char, remove separator, replace point
+									if (!bIgnoreChar && varExpr->value.data[lnI] != varSeparator->value.data_s8[0])
+									{
+										if (varExpr->value.data[lnI] == varPoint->value.data_s8[0])
+											buffer[lnJ++] = '.';
+										else
+											buffer[lnJ++] = varExpr->value.data[lnI];
+									}
+								}
+
 							}
 
-							// Copy the numeric portions ignoring the currency symbol and anything in varIgnoreChars
-							for (lnI = 0; lnI < varExpr->value.length && lnI < sizeof(buffer) - 1; lnI++)
-							{
-								// if not [varCurrency->value.data_s8[0] 0..9 + - varPoint->value.data_s8[0] varSeparator->value.data_s8[0]] then check varIgnoreChars, if not one of them then done converting
-							}
-
-						} else {
-							// Copy the numeric portions to the buffer ignoring the currency symbol
-							for (lnI = 0; lnI < varExpr->value.length && lnI < sizeof(buffer) - 1; lnI++)
-							{
-								// if not [varCurrency->value.data_s8[0] 0..9 + - varPoint->value.data_s8[0] varSeparator->value.data_s8[0]] then done converting
-							}
 						}
 
 						// NULL terminate
@@ -8225,27 +8267,34 @@ debug_break;
 
 
 					//////////
-					// If it's an integer value, store it as the same, otherwise use floating point
+					// Is currency or not? If it's an integer value, store it as the same, otherwise use floating point
 					//////
-						if ((f64)lnValue == lfValue)
+						if (bIsCurrency)
 						{
-							// We can return as an integer
-							llAsInteger = true;
-							if (lnValue < (s64)_s32_max)
+							llAsInteger = false;
+							result = iVariable_create(thisCode, _VAR_TYPE_CURRENCY, NULL, true);
+							lfValue = lfValue * 10000;
+						}
+						else
+							if ((f64)lnValue == lfValue)
 							{
-								// We can create as an s32
-								result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
+								// We can return as an integer
+								llAsInteger = true;
+								if (lnValue < (s64)_s32_max)
+								{
+									// We can create as an s32
+									result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
+
+								} else {
+									// Create as an s64
+									result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
+								}
 
 							} else {
-								// Create as an s64
-								result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
+								// Must return as f64
+								llAsInteger = false;
+								result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
 							}
-
-						} else {
-							// Must return as f64
-							llAsInteger = false;
-							result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
-						}
 
 
 					//////////
