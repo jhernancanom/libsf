@@ -202,6 +202,8 @@
 			case _ERROR_DBF_GENERAL_ERROR:					{	iError_report(thisCode, cgcGeneralErrorDbf, tlInvasive);				break;	}
 			case _ERROR_CANNOT_BE_ZERO:						{	iError_report(thisCode, cgcCannotBeZero, tlInvasive);					break;	}
 			case _ERROR_MUST_BE_LOGICAL:					{	iError_report(thisCode, cgcMustBeLogical, tlInvasive);					break;	}
+			case _ERROR_PARAMETER_MUST_BE_8_16_32_64:		{	iError_report(thisCode, cgcParameterMustBe8_16_32_64, tlInvasive);		break;	}
+			case _ERROR_TOO_BIG_FOR_TARGET:					{	iError_report(thisCode, cgcTooBigForTarget, tlInvasive);		break;	}
 
 		}
 
@@ -1667,10 +1669,176 @@
 // Returns:
 //    Numeric		-- Input bits converted to an unsigned integer of the appropriate size (up to 64-bits)
 //////
-	SVariable* function_bits(SThisCode* thisCode, SVariable* varBits, SReturnsParams* returnsParams)
+	SVariable* function_bits(SThisCode* thisCode, SVariable* varBits, SVariable* varBitWidth, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_bits_common(thisCode, varBits, varBitWidth, returnsParams));
+	}
+
+	SVariable* ifunction_bits_common(SThisCode* thisCode, SVariable* varBits, SVariable* varBitWidth, SReturnsParams* returnsParams)
+	{
+		s8			c;
+		u8			lnOrValue;
+		s32			lnWidth, lnBit;
+		SVariable*	result;
+		bool		error;
+		u32			errorNum;
+
+
+		//////////
+		// varBits must be character
+		//////
+			if (!iVariable_isValid(varBits) || !iVariable_isTypeCharacter(varBits) || varBits->value.length > 64)
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varBits), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// If present, varBitWidth must be numeric
+		//////
+			if (varBitWidth)
+			{
+				if (!iVariable_isValid(varBitWidth) || !iVariable_isTypeNumeric(varBitWidth))
+				{
+					iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varBitWidth), false);
+					return(NULL);
+				}
+
+				// Grab the width
+				lnWidth = iiVariable_getAs_s32(thisCode, varBitWidth, false, &error, &errorNum);
+				if (error)
+				{
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varBitWidth), false);
+					return(NULL);
+				}
+
+				// Must be 8, 16, 32, or 64
+				if (lnWidth != 8 && lnWidth != 16 && lnWidth != 32 && lnWidth != 64)
+				{
+					iError_reportByNumber(thisCode, _ERROR_PARAMETER_MUST_BE_8_16_32_64, iVariable_getRelatedComp(thisCode, varBitWidth), false);
+					return(NULL);
+				}
+
+			} else {
+				// It will be sized based on what is required for the value it contains
+				lnWidth = -1;
+			}
+
+
+		//////////
+		// Make sure every digit in the character string is either a '1' or '0', and the total is 
+		//////
+			for (lnBit = 0; lnBit < varBits->value.length; lnBit++)
+			{
+				// Grab the character
+				c = varBits->value.data_s8[lnBit];
+
+				// Is it anything other than binary digits
+				if (c != '0' && c != '1')
+				{
+					iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varBits), false);
+					return(NULL);
+				}
+			}
+			// When we get here, we know how wide it is maximum
+			if (lnWidth == -1)
+			{
+				// Always default to 64-bit or 32-bit
+				if (lnBit > 32)		lnWidth = 64;
+				else				lnWidth = 32;
+			}
+
+
+		//////////
+		// Make sure our result will fit
+		//////
+			if (lnBit > lnWidth)
+			{
+				iError_reportByNumber(thisCode, _ERROR_TOO_BIG_FOR_TARGET, iVariable_getRelatedComp(thisCode, varBits), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Create our result
+		//////
+			switch (lnWidth)
+			{
+				case 8:
+					result = iVariable_create(thisCode, _VAR_TYPE_U8, NULL, true);
+					break;
+				case 16:
+					result = iVariable_create(thisCode, _VAR_TYPE_U16, NULL, true);
+					break;
+				case 32:
+					result = iVariable_create(thisCode, _VAR_TYPE_U32, NULL, true);
+					break;
+				case 64:
+					result = iVariable_create(thisCode, _VAR_TYPE_U64, NULL, true);
+					break;
+				default:
+					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varBits), false);
+					return(NULL);
+			}
+		
+
+		//////////
+		// Are we good?
+		//////
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varBits), false);
+
+
+		//////////
+		// Populate
+		//////
+			if (result)
+			{
+				// Iterate through each bit loading in its value
+				for (lnBit = 0; lnBit < varBits->value.length; lnBit++)
+				{
+
+					//////////
+					// Grab our OR value
+					//////
+						lnOrValue = varBits->value.data_u8[lnBit] - (u8)'0';
+
+
+					//////////
+					// Shift our destination
+					//////
+						switch (result->varType)
+						{
+							case _VAR_TYPE_U8:
+								result->value.data_u8[0] <<= 1;
+								result->value.data_u8[0] |= lnOrValue;
+								break;
+
+							case _VAR_TYPE_U16:
+								result->value.data_u16[0] <<= 1;
+								result->value.data_u16[0] |= lnOrValue;
+								break;
+
+							case _VAR_TYPE_U32:
+								result->value.data_u32[0] <<= 1;
+								result->value.data_u32[0] |= lnOrValue;
+								break;
+
+							case _VAR_TYPE_U64:
+								result->value.data_u64[0] <<= 1;
+								result->value.data_u64[0] |= lnOrValue;
+								break;
+						}
+
+				}
+			}
+
+
+		//////////
+		// Return our result
+		//////
+			return(result);
 	}
 
 
@@ -1698,8 +1866,7 @@
 //////
 	SVariable* function_bits8(SThisCode* thisCode, SVariable* varBits, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_bits_common(thisCode, varBits, varEight, returnsParams));
 	}
 
 
@@ -1727,8 +1894,7 @@
 //////
 	SVariable* function_bits16(SThisCode* thisCode, SVariable* varBits, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_bits_common(thisCode, varBits, varSixteen, returnsParams));
 	}
 
 
@@ -1756,8 +1922,7 @@
 //////
 	SVariable* function_bits32(SThisCode* thisCode, SVariable* varBits, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_bits_common(thisCode, varBits, varThirtyTwo, returnsParams));
 	}
 
 
@@ -1785,8 +1950,7 @@
 //////
 	SVariable* function_bits64(SThisCode* thisCode, SVariable* varBits, SReturnsParams* returnsParams)
 	{
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		return(ifunction_bits_common(thisCode, varBits, varSixtyFour, returnsParams));
 	}
 
 
@@ -8406,11 +8570,11 @@ debug_break;
 									// Are we still in a valid sequence of characters to skip?
 									if (c == ' ' || c == cSeparator)
 									{
-										// It's a character we're skipping naturally (space, currency symbol, separator symbol)
+										// It's a character we're skipping naturally (space, separator symbol)
 										// We don't do anything here ... it's just more clear to keep this logic visible rather than inverting it. :-)
 
 									} else if (c == cCurrency) {
-										// If we encounter the currency symbol, the output is currency
+										// We encountered the currency symbol, so the output will be currency
 										llCurrency = true;
 
 									} else if (varIgnoreChars) {

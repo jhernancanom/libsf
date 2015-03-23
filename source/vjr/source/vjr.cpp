@@ -202,6 +202,22 @@
 		lnValue					= 6;
 		varSix					= iVariable_createAndPopulate(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, sizeof(lnValue), true);
 
+		// 8
+		lnValue					= 8;
+		varEight				= iVariable_createAndPopulate(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, sizeof(lnValue), true);
+
+		// 16
+		lnValue					= 16;
+		varSixteen				= iVariable_createAndPopulate(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, sizeof(lnValue), true);
+
+		// 32
+		lnValue					= 32;
+		varThirtyTwo			= iVariable_createAndPopulate(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, sizeof(lnValue), true);
+
+		// 64
+		lnValue					= 64;
+		varSixtyFour			= iVariable_createAndPopulate(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, sizeof(lnValue), true);
+
 		// 255
 		lnValue					= 255;
 		varTwoFiftyFive			= iVariable_createAndPopulate(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, sizeof(lnValue), true);
