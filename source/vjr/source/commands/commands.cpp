@@ -10234,7 +10234,7 @@ debug_break;
 			if (lnWorkArea < 0)
 			{
 				// The negative work area number indicates the error
-				iError_signal(thisCode, iDbf_translateError(thisCode, lnWorkArea), compUse, false, NULL, false);
+				iError_signal(thisCode, iDbf_translateError(thisCode, (s32)lnWorkArea), compUse, false, NULL, false);
 
 			} else {
 				// Set any meta data about the table

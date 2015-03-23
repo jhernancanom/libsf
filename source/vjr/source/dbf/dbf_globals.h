@@ -99,24 +99,24 @@
 //////
 	// Tables and cursors
     SWorkArea	gsWorkArea[_MAX_DBF_SLOTS];
-	s32			gnDbf_currentWorkArea		= -1;
+	sptr		gnDbf_currentWorkArea		= -1;
 
 	// Containers
 	SWorkArea	gsDbcArea[_MAX_DBC_SLOTS];
-	s32			gnDbc_currentWorkArea		= -1;
+	sptr		gnDbc_currentWorkArea		= -1;
 
 	// Forms
 	SWorkArea	gsScxArea[_MAX_SCX_SLOTS];
-	s32			gnScx_currentWorkArea		= -1;
+	sptr		gnScx_currentWorkArea		= -1;
 
 	// Classes
 	SWorkArea	gsVcxArea[_MAX_VCX_SLOTS];
-	s32			gnVcx_currentWorkArea		= -1;
+	sptr		gnVcx_currentWorkArea		= -1;
 
 	// Reports
 	SWorkArea	gsFrxArea[_MAX_FRX_SLOTS];
-	s32			gnFrx_currentWorkArea		= -1;
+	sptr		gnFrx_currentWorkArea		= -1;
 
 	// Menus
 	SWorkArea	gsMnxArea[_MAX_MNX_SLOTS];
-	s32			gnMnx_currentWorkArea		= -1;
+	sptr		gnMnx_currentWorkArea		= -1;

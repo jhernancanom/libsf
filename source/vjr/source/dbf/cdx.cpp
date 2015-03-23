@@ -1372,7 +1372,7 @@ we_are_done:
 						{
 							// We're good, indicate the number of keys
 							sprintf((s8*)output, "%s, %u keys in index\0", cgcValidateEnd, lnTotalKeyCount);
-							iVariable_set_character(thisCode,	varMessage,		output,	strlen(output));
+							iVariable_set_character(thisCode,	varMessage,		output, (u32)strlen(output));
 
 						} else {
 							// Indicate we are done

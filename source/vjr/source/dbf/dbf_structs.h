@@ -225,7 +225,7 @@
 		{
 			// Internal flags
 			bool			isUsed;						// Is the work area used?
-			u32				thisWorkArea;				// Added to hold this entry's slot number
+			sptr			thisWorkArea;				// Added to hold this entry's slot number
 			bool			isCursor;					// For temporary tables, the tables, memo files, and indexes are deleted on close
 			bool			isExclusive;				// true if this index was used exclusively
 			bool			isIndexLoaded;				// true if an index is loaded (idx, cdx, dcx)

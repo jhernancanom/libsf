@@ -1527,7 +1527,7 @@
 						}
 
 						// Create the variable
-						result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, buffer, strlen(buffer), true);
+						result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, buffer, (u32)strlen(buffer), true);
 					}
 				}
 			}

@@ -357,10 +357,10 @@
 	// Note:  an alias is not required
 	uptr iDbf_open(SThisCode* thisCode, cs8* table, cs8* alias, bool tlExclusive, bool tlAgain, bool tlValidate, bool tlDescending)
 	{
-		s32				lnI, lnI_max, lnIndexType;
+		sptr			lnI, lnI_max, lnIndexType;
 		sptr			lnWorkArea, lnLength;
 		u32				lnField, lShareFlag, lStructure_size, numread;
-		s32*			lnCurrentWorkArea;
+		sptr*			lnCurrentWorkArea;
 		bool			llDbcIsValid;
 		SFieldRecord1*	lfrPtr;
 		SFieldRecord2*	lfr2Ptr;
@@ -734,7 +734,7 @@
 		//////
 			lfrPtr = wa->fieldPtr1;
 			for (lnField = 0; lnField < wa->fieldCount; lnField++, lfrPtr++)
-				lfrPtr->fieldName_length = strlen(lfrPtr->name);
+				lfrPtr->fieldName_length = (u8)strlen(lfrPtr->name);
 
 			// When we get here, all of the fields have their field length as well
 
@@ -866,8 +866,8 @@
 			if (cdxSdxOrDcxFilename[0] != 0)
 			{
 				// Try to open the associated cdx, then sdx
-				cdx_open(thisCode, wa, cdxSdxOrDcxFilename, (u32)strlen(cdxSdxOrDcxFilename),	lnIndexType,	tlValidate, tlDescending);
-//				sdx_open(thisCode, wa, cdxSdxOrDcxFilename, (u32)strlen(cdxSdxOrDcxFilename),	_INDEX_SDX,		tlValidate);
+				cdx_open(thisCode, wa, cdxSdxOrDcxFilename, (u32)strlen(cdxSdxOrDcxFilename),	(u32)lnIndexType,	tlValidate, tlDescending);
+//				sdx_open(thisCode, wa, cdxSdxOrDcxFilename, (u32)strlen(cdxSdxOrDcxFilename),	_INDEX_SDX,			tlValidate);
 // 				if (wa->isSdxLoaded && wa->isSdx)
 // 					iiSdx_setPrimaryKey(thisCode, wa);
 			}
@@ -3699,8 +3699,8 @@
 //////
 	void iiDbc_lookupTableField(SThisCode* thisCode, SWorkArea* wa, bool* tlIsValid, bool tlExcusive)
 	{
-		u32				lnI, lnDbcHandle, lnRecno, lnAliasLength, lnField;
-		sptr			lnObjectId, lnParentId, lnObjectType, lnObjectName;
+		u32				lnI, lnRecno, lnAliasLength, lnField;
+		sptr			lnObjectId, lnParentId, lnObjectType, lnObjectName, lnDbcHandle;
 		s32				lnDbcLength;
 		bool			llSearchingForTable, llFoundFirstField;
 		s8*				lcObjectId;

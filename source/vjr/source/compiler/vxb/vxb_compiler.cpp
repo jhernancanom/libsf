@@ -5120,7 +5120,7 @@ debug_break;
 		// Make sure our length is set
 		//////
 			if (tnVarNameLength == -1)
-				tnVarNameLength = strlen(tcVarName);
+				tnVarNameLength = (u32)strlen(tcVarName);
 
 
 		//////////
