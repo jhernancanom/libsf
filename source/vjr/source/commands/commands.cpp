@@ -1538,6 +1538,119 @@
 
 //////////
 //
+// Function: BETWEEN()
+// Determines whether the value of an expression is inclusively between the values of two expressions of the same type.
+//
+//////
+// Version 0.57
+// Last update:
+//     Mar.23.2015
+//////
+// Change log:
+//     Mar.23.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     varValue		-- Specifies an expression to evaluate.
+//     varLowValue	-- Specifies the lower value in the range.
+//     varHighValue	-- Specifies the upper value in the range.
+//
+//////
+// Returns:
+//    Logical		-- .t. if the item is inclusively between the values of two expressions of the same type, .f. otherwise
+//////
+	SVariable* function_between(SThisCode* thisCode, SVariable* varValue, SVariable* varLowValue, SVariable* varHighValue, SReturnsParams* returnsParams)
+	{
+		s32			lnI, lnType, lnComp;
+		bool		llResult;
+		SVariable*	result;
+		u32			errorNum;
+        bool		error;
+
+
+		//////////
+		// Parameters 1, 2 and 3 must be present, and of equal types
+		//////
+			if (!iVariable_isValid(varValue))
+			{
+				iError_reportByNumber(thisCode, _ERROR_MISSING_PARAMETER, iVariable_getRelatedComp(thisCode, varValue), false);
+				return(NULL);
+			}
+			if (!iVariable_isValid(varLowValue))
+			{
+				iError_reportByNumber(thisCode, _ERROR_MISSING_PARAMETER, iVariable_getRelatedComp(thisCode, varLowValue), false);
+				return(NULL);
+			}
+			if (!iVariable_isValid(varHighValue))
+			{
+				iError_reportByNumber(thisCode, _ERROR_MISSING_PARAMETER, iVariable_getRelatedComp(thisCode, varHighValue), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Each type must be fundamentally the same type
+		//////
+			for (lnI = 1, lnType = iVariable_fundamentalType(thisCode, varValue); lnI < _MAX_PARAMETER_COUNT && returnsParams->params[lnI]; lnI++)
+			{
+
+				//////////
+				// Make sure this variable type matches the test value
+				//////
+					if (iVariable_fundamentalType(thisCode, returnsParams->params[lnI]) != lnType)
+					{
+						// The types do not match
+						iError_reportByNumber(thisCode, _ERROR_DATA_TYPE_MISMATCH, iVariable_getRelatedComp(thisCode, returnsParams->params[lnI]), false);
+						return(NULL);
+					}
+
+			}
+
+
+		//////////
+		// Compare
+		//////
+			llResult = false;
+
+			lnComp = iVariable_compare(thisCode, varValue, varLowValue, false, &error, &errorNum);
+			if (error)
+			{
+				iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varLowValue), false);
+				return(NULL);
+			}
+
+			if (lnComp == 0 || lnComp == 1)
+			{
+				lnComp = iVariable_compare(thisCode, varValue, varHighValue, false, &error, &errorNum);
+				if (error)
+				{
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varHighValue), false);
+					return(NULL);
+				}		
+
+				if (lnComp == 0 || lnComp == -1)
+					llResult = true;
+			}
+
+
+		//////////
+		// Based on the result, create the return result
+		//////
+			result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL, ((llResult) ? (s8*)&_LOGICAL_TRUE : (s8*)&_LOGICAL_FALSE), 1, false);
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varValue), false);
+
+
+		//////////
+		// Indicate our result
+		//////
+			return(result);
+	}
+
+
+
+
+//////////
+//
 // Function: BITS()
 // Creates the closest larger 2^n numeric value than the size indicated by bits.
 //
