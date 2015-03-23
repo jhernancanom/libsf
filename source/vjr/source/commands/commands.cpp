@@ -8116,7 +8116,7 @@ debug_break;
 		s32			lnI, lnJ, lnBuffOffset;
 		s64			lnValue;
 		f64			lfValue;
-		bool		llAsInteger, llStillGoing;
+		bool		llAsInteger, llStillGoing, llCurrency;
 		SVariable*	varCurrency;
 		SVariable*	varPoint;
 		SVariable*	varSeparator;
@@ -8225,7 +8225,7 @@ debug_break;
 					//////////
 					// Iterate through each character
 					//////
-						for (lnI = 0, lnBuffOffset = 0, llStillGoing = true; llStillGoing && lnI < (s32)varExpr->value.length && lnBuffOffset < (s32)sizeof(buffer) - 1; lnI++)
+						for (lnI = 0, lnBuffOffset = 0, llStillGoing = true, llCurrency = false; llStillGoing && lnI < (s32)varExpr->value.length && lnBuffOffset < (s32)sizeof(buffer) - 1; lnI++)
 						{
 
 							//////////
@@ -8244,10 +8244,14 @@ debug_break;
 
 								} else {
 									// Are we still in a valid sequence of characters to skip?
-									if (c == ' ' || c == cCurrency || c == cSeparator)
+									if (c == ' ' || c == cSeparator)
 									{
 										// It's a character we're skipping naturally (space, currency symbol, separator symbol)
 										// We don't do anything here ... it's just more clear to keep this logic visible rather than inverting it. :-)
+
+									} else if (c == cCurrency) {
+										// If we encounter the currency symbol, the output is currency
+										llCurrency = true;
 
 									} else if (varIgnoreChars) {
 										// We won't continue unless we're sitting on a character in the varIgnoreChars
@@ -8291,20 +8295,37 @@ debug_break;
 						{
 							// We can return as an integer
 							llAsInteger = true;
-							if (lnValue < (s64)_s32_max)
+							if (llCurrency)
 							{
-								// We can create as an s32
-								result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
+								// Multiply by 10000 to obtain the 4 implied decimal places
+								lnValue = lnValue * 10000;
+								result	= iVariable_create(thisCode, _VAR_TYPE_CURRENCY, NULL, true);
 
 							} else {
-								// Create as an s64
-								result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
+								if (lnValue < (s64)_s32_max)
+								{
+									// We can create as an s32
+									result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
+
+								} else {
+									// Create as an s64
+									result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
+								}
 							}
 
 						} else {
 							// Must return as f64
 							llAsInteger	= false;
-							result		= iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
+							if (llCurrency)
+							{
+								// As currency
+								lfValue	*= 10000.0;
+								result	= iVariable_create(thisCode, _VAR_TYPE_CURRENCY, NULL, true);
+
+							} else {
+								// As is
+								result	= iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
+							}
 						}
 
 
