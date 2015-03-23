@@ -565,6 +565,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_outside[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_padc[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}

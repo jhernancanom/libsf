@@ -239,6 +239,7 @@ struct SReturnsParams;
 	SVariable*			function_ncset								(SThisCode* thisCode, SVariable* varIndex, SVariable* varP1, SVariable* varP2, SVariable* varP3, SVariable* varP4, SVariable* varP5, SVariable* varP6, SReturnsParams* returnsParams);
 	SVariable*			function_occurs								(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SReturnsParams* returnsParams);
 	SVariable*			function_occursc							(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SReturnsParams* returnsParams);
+	SVariable*			function_outside	/* Stefano D'Amico */	(SThisCode* thisCode, SVariable* varValue, SVariable* varLowValue, SVariable* varHighValue, SReturnsParams* returnsParams);
 	SVariable*			function_padc								(SThisCode* thisCode, SVariable* varExpr, SVariable* varResultSize, SVariable* varPadCharacter, SReturnsParams* returnsParams);
 	SVariable*			function_padl								(SThisCode* thisCode, SVariable* varExpr, SVariable* varResultSize, SVariable* varPadCharacter, SReturnsParams* returnsParams);
 	SVariable*			function_padr								(SThisCode* thisCode, SVariable* varExpr, SVariable* varResultSize, SVariable* varPadCharacter, SReturnsParams* returnsParams);
@@ -445,6 +446,7 @@ struct SReturnsParams;
 		{	_ICODE_NCSET,			1,			(uptr)&function_ncset,			1,				7,				&gsSourceLight_ncset[0]			},
 		{	_ICODE_OCCURS,			1,			(uptr)&function_occurs,			2,				2,				&gsSourceLight_occurs[0]		},
 		{	_ICODE_OCCURSC,			1,			(uptr)&function_occursc,		2,				2,				&gsSourceLight_occursc[0]		},
+		{	_ICODE_OUTSIDE,			1,			(uptr)&function_outside,		3,				3,				&gsSourceLight_outside[0]		},	// OUTSIDE() by Stefano D'Amico, VJr 0.57, Mar.23.2015
 		{	_ICODE_PADC,			1,			(uptr)&function_padc,			2,				3,				&gsSourceLight_padc[0]			},
 		{	_ICODE_PADL,			1,			(uptr)&function_padl,			2,				3,				&gsSourceLight_padl[0]			},
 		{	_ICODE_PADR,			1,			(uptr)&function_padr,			2,				3,				&gsSourceLight_padr[0]			},

@@ -777,6 +777,7 @@
 	const s32		_ICODE_ORDER                                    = 1292;
 	const s32		_ICODE_OS                                       = 1293;
 	const s32		_ICODE_OVERVIEW                                 = 1294;
+	const s32		_ICODE_OUTSIDE									= 1480;
 	const s32		_ICODE_PADC                                     = 1295;
 	const s32		_ICODE_PADL                                     = 1296;
 	const s32		_ICODE_PADR                                     = 1297;
@@ -956,7 +957,7 @@
 	// bits64			= 1473				vecstr			= 1474
 	// bitstr			= 1475				endswith		= 1476
 	// startswith		= 1477				endswithc		= 1478
-	// startswithc		= 1479
+	// startswithc		= 1479				outside			= 1480
 
 // Temporarily added until the processing engine is coded
 	const s32		_ICODE_CONCATENATE								= 1900;
@@ -1699,6 +1700,7 @@
 	const s8		cgc_order[]										= "order";
 	const s8		cgc_os[]										= "os";
 	const s8		cgc_overview[]									= "overview";
+	const s8		cgc_outside[]									= "outside";
 	const s8		cgc_padc[]										= "padc";
 	const s8		cgc_padl[]										= "padl";
 	const s8		cgc_padr[]										= "padr";
