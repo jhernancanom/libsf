@@ -8112,10 +8112,11 @@ debug_break;
 //////
 	SVariable* function_val(SThisCode* thisCode, SVariable* varExpr, SVariable* varIgnoreChars, SReturnsParams* returnsParams)
 	{
-		s32			lnI, lnK, lnJ;
+		s8			c, cCurrency, cPoint, cSeparator;
+		s32			lnI, lnJ, lnBuffOffset;
 		s64			lnValue;
 		f64			lfValue;
-		bool		llAsInteger;
+		bool		llAsInteger, llStillGoing;
 		SVariable*	varCurrency;
 		SVariable*	varPoint;
 		SVariable*	varSeparator;
@@ -8187,13 +8188,13 @@ debug_break;
 				case _VAR_TYPE_CHARACTER:
 
 					//////////
-					// Parameter 2 must be valid
+					// If present, parameter 2 must be valid
 					//////
 						if (varIgnoreChars)
 						{
 							if (!iVariable_isValid(varIgnoreChars) || !iVariable_isTypeCharacter(varIgnoreChars))
 							{
-								iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varIgnoreChars), false);
+								iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varIgnoreChars), false);
 								return(NULL);
 							}
 						}
@@ -8205,58 +8206,71 @@ debug_break;
 						varCurrency		= propGet_settings_Currency(_settings);
 						varPoint		= propGet_settings_Point(_settings);
 						varSeparator	= propGet_settings_Separator(_settings);
+						if (!varCurrency || !varPoint || !varSeparator)
+						{
+							// Should never happen
+							iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+							return(NULL);
+						}
+
+
+					//////////
+					// Create single characters
+					//////
+						cCurrency	= varCurrency->value.data_s8[0];
+						cPoint		= varPoint->value.data_s8[0];
+						cSeparator	= varSeparator->value.data_s8[0];
 
 
 					//////////
 					// Iterate through each character
 					//////
-						lnJ = 0;
-						bool bTrimSpace = true, bCheckCurrency = true, bIsCurrency = false, bIgnoreChar;
-
-						for (lnI = 0; lnI < (s32)varExpr->value.length && lnJ < (s32)sizeof(buffer) - 1; lnI++)
+						for (lnI = 0, lnBuffOffset = 0, llStillGoing = true; llStillGoing && lnI < (s32)varExpr->value.length && lnBuffOffset < (s32)sizeof(buffer) - 1; lnI++)
 						{
-							// If we encounter anything other than spaces, not empty
-							if (!(isspace(varExpr->value.data[lnI]) && bTrimSpace))
-							{
-								bTrimSpace = false;	//stop trimming space
-								if (varExpr->value.data[lnI] == varCurrency->value.data_s8[0] && bCheckCurrency)
+
+							//////////
+							// Grab this character
+							//////
+								c = varExpr->value.data[lnI];
+
+
+							//////////
+							// Is it a character we're including in our buffer (a number, or natural number-related symbol)?
+							//////
+								if ((c >= '0' && c <= '9' ) || c == '+' || c == '-' || c == cPoint)
 								{
-									bIsCurrency = true;
-									bCheckCurrency = false;
+									// Yes, Copy this character
+									buffer[lnBuffOffset++] = c;
+
 								} else {
-									//Ignore list?
-									bIgnoreChar = false;
-									if (varIgnoreChars)
+									// Are we still in a valid sequence of characters to skip?
+									if (c == ' ' || c == cCurrency || c == cSeparator)
 									{
-										for (lnK = 0; lnK < (s32)varIgnoreChars->value.length; lnK++)
+										// It's a character we're skipping naturally (space, currency symbol, separator symbol)
+										// We don't do anything here ... it's just more clear to keep this logic visible rather than inverting it. :-)
+										
+									} else if (varIgnoreChars) {
+										// We won't continue unless we're sitting on a character in the varIgnoreChars
+										for (lnJ = 0, llStillGoing = false; lnJ < varIgnoreChars->value.length; lnJ++)
 										{
-											// If $ in IgnoreChar must set bIsCurrency=false
-											if (varIgnoreChars->value.data[lnK] == varCurrency->value.data_s8[0])
-												bIsCurrency = false;
-											// To ignore
-											if (varExpr->value.data[lnI] == varIgnoreChars->value.data[lnK])
+											// Is this one of our skip characters?
+											if (c == varIgnoreChars->value.data_s8[lnJ])
 											{
-												bIgnoreChar = true;
+												llStillGoing = true;
 												break;
 											}
 										}
-									}
-									// Add char, remove separator, replace point
-									if (!bIgnoreChar && varExpr->value.data[lnI] != varSeparator->value.data_s8[0])
-									{
-										if (varExpr->value.data[lnI] == varPoint->value.data_s8[0])
-											buffer[lnJ++] = '.';
-										else
-											buffer[lnJ++] = varExpr->value.data[lnI];
+
+									} else {
+										// We're done
+										break;
 									}
 								}
-
-							}
 
 						}
 
 						// NULL terminate
-						buffer[lnI] = 0;
+						buffer[lnBuffOffset] = 0;
 
 
 					//////////
@@ -8269,32 +8283,25 @@ debug_break;
 					//////////
 					// Is currency or not? If it's an integer value, store it as the same, otherwise use floating point
 					//////
-						if (bIsCurrency)
+						if ((f64)lnValue == lfValue)
 						{
-							llAsInteger = false;
-							result = iVariable_create(thisCode, _VAR_TYPE_CURRENCY, NULL, true);
-							lfValue = lfValue * 10000;
-						}
-						else
-							if ((f64)lnValue == lfValue)
+							// We can return as an integer
+							llAsInteger = true;
+							if (lnValue < (s64)_s32_max)
 							{
-								// We can return as an integer
-								llAsInteger = true;
-								if (lnValue < (s64)_s32_max)
-								{
-									// We can create as an s32
-									result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
-
-								} else {
-									// Create as an s64
-									result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
-								}
+								// We can create as an s32
+								result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
 
 							} else {
-								// Must return as f64
-								llAsInteger = false;
-								result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
+								// Create as an s64
+								result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
 							}
+
+						} else {
+							// Must return as f64
+							llAsInteger	= false;
+							result		= iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
+						}
 
 
 					//////////
@@ -8302,15 +8309,20 @@ debug_break;
 					//////
 						if (result)
 						{
-							if (llAsInteger)		iVariable_setNumeric_toNumericType(thisCode, result, NULL, NULL, NULL, NULL, &lnValue, NULL);
-							else					iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfValue, NULL, NULL, NULL, NULL);
+							if (llAsInteger)	iVariable_setNumeric_toNumericType(thisCode, result, NULL, NULL, NULL, NULL, &lnValue, NULL);
+							else				iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfValue, NULL, NULL, NULL, NULL);
 						}
 						break;
+
+				default:
+					// Unrecognized type
+					iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varExpr), false);
+					return(NULL);
 			}
 
 
 		//////////
-		// Is it good?
+		// Are we good?
 		//////
 			if (!result)
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varExpr), false);
