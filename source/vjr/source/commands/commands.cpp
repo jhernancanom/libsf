@@ -1305,7 +1305,7 @@
 		// Return atan
 		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_ATAN, _VAR_TYPE_F64, false, false, returnsParams));
 	}
-	
+
 
 
 
@@ -2931,13 +2931,13 @@
 		return(NULL);
 	}
 
-	
-	
-	
+
+
+
 //////////
 //
 // Function: EVL()
-// Returns a non-empty value from two expressions. 
+// Returns a non-empty value from two expressions.
 //
 //////
 // Version 0.56
@@ -2950,7 +2950,7 @@
 //////
 // Parameters:
 //     p1	-- Specifies the expression that EMPTY( ) evaluates.
-//     p2	-- Specifies the expression to return if p1 is empty. 
+//     p2	-- Specifies the expression to return if p1 is empty.
 //
 //////
 // Returns:
@@ -2992,7 +2992,7 @@
 			result	= iVariable_copy(thisCode, ((llEmpty) ? varExpr2 : varExpr1), false);
 			if (!result)
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, ((llEmpty) ? varExpr2 : varExpr1)), false);
-			
+
 
 		//////////
 		// Signify our result
@@ -3181,12 +3181,12 @@
 					//////////
 					// Compute sqrt
 					//////
-						lfResult = sqrt(lfValue1);	
+						lfResult = sqrt(lfValue1);
 						break;
 
 // EXP()
 				case _FP_COMMON_EXP:
-					lfResult = exp(lfValue1);	
+					lfResult = exp(lfValue1);
 					break;
 
 // PI()
@@ -3213,8 +3213,8 @@
 					//////////
 					// Compute
 					//////
-						if (tnFunctionType == _FP_COMMON_LOG)		lfResult = log(lfValue1);	
-						else										lfResult = log10(lfValue1);	
+						if (tnFunctionType == _FP_COMMON_LOG)		lfResult = log(lfValue1);
+						else										lfResult = log10(lfValue1);
 						break;
 
 // CEILING()
@@ -3270,7 +3270,7 @@
 					//////////
 					// Compute
 					//////
-						if (tnFunctionType == _FP_COMMON_ACOS)		lfResult = acos(lfValue1);	
+						if (tnFunctionType == _FP_COMMON_ACOS)		lfResult = acos(lfValue1);
 						else										lfResult = asin(lfValue1);
 						break;
 
@@ -3290,7 +3290,7 @@
 					//////////
 					// Compute
 					//////
-						lfResult = atan(lfValue1);	
+						lfResult = atan(lfValue1);
 						break;
 
 // ATN2()
@@ -3362,7 +3362,7 @@
 		// Create output variable
 		//////
 			if (tlSameInputType)	result = iVariable_create(thisCode, varNumber1->varType, NULL, true);
-			else					result = iVariable_create(thisCode, tnResultType, NULL, true); 
+			else					result = iVariable_create(thisCode, tnResultType, NULL, true);
 
 			if (!result)
 			{
@@ -3381,7 +3381,7 @@
 		//////////
         // Return result
 		//////
-	        return result;   
+	        return result;
 	}
 
 
@@ -3564,7 +3564,7 @@
 		//Return FV
 		return(ifunction_numbers_common(thisCode, varPayment, varInterestRate, varPeriods, _FP_COMMON_FV, _VAR_TYPE_F64, false, true, returnsParams));
 	}
-	
+
 
 
 
@@ -5545,9 +5545,9 @@
 			return(result);
 	}
 
-	
-	
-	
+
+
+
 //////////
 //
 // Function: PAYMENT()
@@ -5705,8 +5705,8 @@
 	}
 
 
-	
-	
+
+
 //////////
 //
 // Function: PV()
@@ -5832,7 +5832,7 @@
 
 
 		//////////
-		// Test Parameter 3 
+		// Test Parameter 3
 		//////
 			if (!iVariable_isValid(varMax))
 			{
@@ -5849,7 +5849,7 @@
 				// Operand mismatch
 				iError_reportByNumber(thisCode, _ERROR_DATA_TYPE_MISMATCH, iVariable_getRelatedComp(thisCode, varMin), false);
 				return(NULL);
-			}	
+			}
 			if (iVariable_fundamentalType(thisCode, varExpr) != iVariable_fundamentalType(thisCode, varMax))
 			{
 				// Operand mismatch
@@ -5857,7 +5857,7 @@
 				return(NULL);
 			}
 
-		
+
 		//////////
 		// Initialize
 		//////
@@ -6433,7 +6433,7 @@
 //
 // Function: ROUND()
 // Returns a numeric expression rounded to a specified number of decimal places.
-//  
+//
 //////
 // Version 0.56   (Determine the current version from the header in vjr.cpp)
 // Last update:
@@ -6647,7 +6647,7 @@
 				return(NULL);
 			}
 
-		
+
 		//////////
 		// Parameter 2 is ignored for now
 		//////
@@ -6804,7 +6804,7 @@
 			if (lfValue != 0.0)
 			{
 				// Converting of lfValue to 1 or -1
-				lfValue = lfValue / abs(lfValue);	
+				lfValue = lfValue / abs(lfValue);
 
 			} else if (tlIncrementZero) {
 				// Should we increment a 0 value (so it will be returned as 1 instead of 0)?
@@ -6826,7 +6826,7 @@
     }
 
 
-	
+
 
 //////////
 //
@@ -7841,9 +7841,9 @@ debug_break;
 	        return result;
     }
 
-	
-	
-	
+
+
+
 //////////
 //
 // Function: TAN()
@@ -8084,9 +8084,9 @@ debug_break;
 	        return result;
 	}
 
-	
-	
-	
+
+
+
 //////////
 //
 // Function: VAL()
@@ -8107,7 +8107,7 @@ debug_break;
 //////
 // Returns:
 //    Numeric		--	VAL( ) returns the numbers in the character expression from left to right until a non-numeric character is encountered.
-//						Leading blanks are ignored. 
+//						Leading blanks are ignored.
 //						VAL( ) returns 0 if the first character of the character expression is not a number, a dollar sign ($), a plus sign (+), or minus sign (-).
 //////
 	SVariable* function_val(SThisCode* thisCode, SVariable* varExpr, SVariable* varIgnoreChars, SReturnsParams* returnsParams)
@@ -8124,7 +8124,7 @@ debug_break;
 		u32			errorNum;
         bool		error;
 		s8			buffer[64];
-		
+
 
 		//////////
 		// Parameter 1 must be valid
@@ -8158,7 +8158,7 @@ debug_break;
 			{
 				case _VAR_TYPE_NULL:
 					iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varExpr), false);
-					return(NULL);								
+					return(NULL);
 					break;
 
 				case _VAR_TYPE_LOGICAL:		// 0=.F., 1=.T.
@@ -8248,7 +8248,7 @@ debug_break;
 									{
 										// It's a character we're skipping naturally (space, currency symbol, separator symbol)
 										// We don't do anything here ... it's just more clear to keep this logic visible rather than inverting it. :-)
-										
+
 									} else if (varIgnoreChars) {
 										// We won't continue unless we're sitting on a character in the varIgnoreChars
 										for (lnJ = 0, llStillGoing = false; lnJ < varIgnoreChars->value.length; lnJ++)
@@ -8277,7 +8277,11 @@ debug_break;
 					// Convert to f64, and s64
 					//////
 						lfValue = atof(buffer);
+#ifdef __GNUC__
+						lnValue = strtoll(buffer, NULL, 10);
+#else
 						lnValue = _strtoi64(buffer, NULL, 10);
+#endif
 
 
 					//////////
@@ -9224,7 +9228,7 @@ debug_break;
 			return(result);
 	}
 
- 
+
 
 
 //////////
@@ -9465,8 +9469,8 @@ debug_break;
 		// If (endNum - saveCount) > lineNum ... delete it
 		return(ecb->sem->lastLine->lineNumber - ecb->extra1 >= ecb->line->lineNumber);
 	}
-	
- 
+
+
 
 
 //////////

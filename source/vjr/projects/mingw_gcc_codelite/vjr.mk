@@ -12,11 +12,11 @@ OutDir                 := $(IntermediateDirectory)
 CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
-User                   :=rhodgin
-Date                   :=03/19/15
+User                   :=Rick
+Date                   :=03/22/15
 CodeLitePath           :="C:\Program Files (x86)\CodeLite"
-LinkerName             :=C:/MinGW/bin/g++.exe 
-SharedObjectLinkerName :=C:/MinGW/bin/g++.exe -shared -fPIC
+LinkerName             :=C:\MinGW-4.8.1\bin\g++.exe 
+SharedObjectLinkerName :=C:\MinGW-4.8.1\bin\g++.exe -shared -fPIC
 ObjectSuffix           :=.o
 DependSuffix           :=.o.d
 PreprocessSuffix       :=.i
@@ -36,7 +36,7 @@ ObjectsFileList        :="vjr.txt"
 PCHCompileFlags        :=
 MakeDirCommand         :=makedir
 RcCmpOptions           := 
-RcCompilerName         :=C:/MinGW/bin/windres.exe 
+RcCompilerName         :=C:\MinGW-4.8.1\bin\windres.exe 
 LinkOptions            :=  -g
 IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). $(IncludeSwitch)C:/libsf/source/vjr/projects/vs2010/ 
 IncludePCH             := 
@@ -49,13 +49,13 @@ LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)C:/libsf/sou
 ## Common variables
 ## AR, CXX, CC, AS, CXXFLAGS and CFLAGS can be overriden using an environment variables
 ##
-AR       := C:/MinGW/bin/ar.exe rcu
-CXX      := C:/MinGW/bin/g++.exe 
-CC       := C:/MinGW/bin/gcc.exe 
+AR       := C:\MinGW-4.8.1\bin\ar.exe rcu
+CXX      := C:\MinGW-4.8.1\bin\g++.exe 
+CC       := C:\MinGW-4.8.1\bin\gcc.exe 
 CXXFLAGS :=  -g -O0 -Wall -Wno-comment -Wno-multichar -Wno-narrowing -Wno-write-strings -Wno-format-contains-nul $(Preprocessors)
 CFLAGS   :=  -g -O0 -Wall -Wno-comment -Wno-multichar -Wno-narrowing -Wno-write-strings -Wno-format-contains-nul $(Preprocessors)
 ASFLAGS  := 
-AS       := C:/MinGW/bin/as.exe 
+AS       := C:\MinGW-4.8.1\bin\as.exe 
 
 
 ##
@@ -112,10 +112,14 @@ $(IntermediateDirectory)/bmps_bmps.cpp$(PreprocessSuffix): ../../source/bmps/bmp
 ## Clean
 ##
 clean:
-	$(RM) ./Debug/*$(ObjectSuffix)
-	$(RM) ./Debug/*$(DependSuffix)
+	$(RM) $(IntermediateDirectory)/source_vjr.cpp$(ObjectSuffix)
+	$(RM) $(IntermediateDirectory)/source_vjr.cpp$(DependSuffix)
+	$(RM) $(IntermediateDirectory)/source_vjr.cpp$(PreprocessSuffix)
+	$(RM) $(IntermediateDirectory)/bmps_bmps.cpp$(ObjectSuffix)
+	$(RM) $(IntermediateDirectory)/bmps_bmps.cpp$(DependSuffix)
+	$(RM) $(IntermediateDirectory)/bmps_bmps.cpp$(PreprocessSuffix)
 	$(RM) $(OutputFile)
 	$(RM) $(OutputFile).exe
-	$(RM) ".build-debug/vjr"
+	$(RM) ".build-release/vjr"
 
 

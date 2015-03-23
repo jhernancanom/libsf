@@ -3691,7 +3691,7 @@ debug_break;
 					if (!lacs->firstOnLine || !comp->ll.prev)
 					{
 						// Physically conduct the exact comparison
-						if (iTranslateToCompsTest(thisCode, 
+						if (iTranslateToCompsTest(thisCode,
 													lacs->keyword_u8,
 													comp->line->sourceCode->data_u8 + comp->start,
 													lacs->length) == 0)
@@ -9745,7 +9745,11 @@ debug_break;
 
 						// Create the string for the numeric portion
 						sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
+#ifdef __GNUC__
+						return(strtoll(buffer, NULL, 10));
+#else
 						return(_strtoi64((s8*)buffer, NULL, 10));
+#endif
 				}
 				break;
 		}
@@ -10064,20 +10068,20 @@ debug_break;
 // 			{
 // 				// Do a direct compare
 // 				return(iiVariable_compare(thisCode, varLeft, varRight));
-// 
+//
 // 			} else if (iVariable_fundamentalType(thisCode, varLeft) == iVariable_fundamentalType(thisCode, varRight)) {
 // 				// They are the same general type
 // 				if (iVariable_fundamentalType(thisCode, varLeft) == _VAR_TYPE_NUMERIC)
 // 				{
 // 					// They are both numbers
-// 
+//
 // 				} else {
 // 				}
-// 
+//
 // 			} else {
 // 				// They are different
 // 			}
-// 
+//
 // 		} else {
 			// Something is invalid
 			*tlError	= true;

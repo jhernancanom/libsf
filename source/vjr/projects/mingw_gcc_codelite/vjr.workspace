@@ -2,10 +2,10 @@
 <CodeLite_Workspace Name="vjr" Database="">
   <Project Name="vjr" Path="vjr.project" Active="Yes"/>
   <BuildMatrix>
-    <WorkspaceConfiguration Name="Debug" Selected="yes">
+    <WorkspaceConfiguration Name="Debug" Selected="no">
       <Project Name="vjr" ConfigName="Debug"/>
     </WorkspaceConfiguration>
-    <WorkspaceConfiguration Name="Release" Selected="no">
+    <WorkspaceConfiguration Name="Release" Selected="yes">
       <Project Name="vjr" ConfigName="Debug"/>
     </WorkspaceConfiguration>
   </BuildMatrix>
