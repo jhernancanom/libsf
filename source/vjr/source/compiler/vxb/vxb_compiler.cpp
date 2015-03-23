@@ -10058,36 +10058,42 @@ debug_break;
 //////
 	s32 iVariable_compare(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
-// Working here
-debug_break;
-// 		// Make sure our environment is sane
-// 		if (varLeft && varRight)
-// 		{
-// 			// Are they the same type exactly?
-// 			if (varLeft->varType == varRight->varType)
-// 			{
-// 				// Do a direct compare
-// 				return(iiVariable_compare(thisCode, varLeft, varRight));
-//
-// 			} else if (iVariable_fundamentalType(thisCode, varLeft) == iVariable_fundamentalType(thisCode, varRight)) {
-// 				// They are the same general type
-// 				if (iVariable_fundamentalType(thisCode, varLeft) == _VAR_TYPE_NUMERIC)
-// 				{
-// 					// They are both numbers
-//
-// 				} else {
-// 				}
-//
-// 			} else {
-// 				// They are different
-// 			}
-//
-// 		} else {
-			// Something is invalid
+		//////////
+		// Make sure our environment is sane
+		//////
+			if (varLeft && varRight)
+			{
+				// Clear the error
+				*tlError	= false;
+				*tnErrorNum	= _ERROR_OKAY;
+
+				// Are they the same type exactly?
+				if (varLeft->varType == varRight->varType)
+				{
+					// Do a direct compare
+					return(iiVariable_compareMatchingTypes(thisCode, varLeft, varRight, tlError, tnErrorNum));
+
+				} else if (iVariable_fundamentalType(thisCode, varLeft) == iVariable_fundamentalType(thisCode, varRight)) {
+					// They are the same general type
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_FEATURE_NOT_AVAILABLE;
+					return(0);
+
+				} else {
+					// They are different
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_FEATURE_NOT_AVAILABLE;
+					return(0);
+				}
+			}
+
+
+		//////////
+		// Something is invalid
+		//////
 			*tlError	= true;
 			*tnErrorNum	= _ERROR_INVALID_ARGUMENT_TYPE_COUNT;
 			return(0);
-// 		}
 	}
 
 
@@ -10098,9 +10104,133 @@ debug_break;
 // Compares two types of variables that are known to be exactly the same type.
 //
 //////
-	s32 iiVariable_compare(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight)
+	s32 iiVariable_compareMatchingTypes(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool* tlError, u32* tnErrorNum)
 	{
-		return(0);
+		s32		lnResult;
+		s64		lnLeft, lnRight;
+
+
+		//////////
+		// Based on type, perform the compare
+		//////
+			switch (varLeft->varType)
+			{
+				case _VAR_TYPE_S8:
+						 if (*varLeft->value.data_s8 == *varRight->value.data_s8)		return(0);		// Equals
+					else if (*varLeft->value.data_s8 < *varRight->value.data_s8)		return(-1);		// Less than
+					else																return(1);		// Greater than
+
+
+				case _VAR_TYPE_U8:
+						 if (*varLeft->value.data_u8 == *varRight->value.data_u8)		return(0);		// Equals
+					else if (*varLeft->value.data_u8 < *varRight->value.data_u8)		return(-1);		// Less than
+					else																return(1);		// Greater than
+
+
+				case _VAR_TYPE_S16:
+						 if (*varLeft->value.data_s16 == *varRight->value.data_s16)		return(0);		// Equals
+					else if (*varLeft->value.data_s16 < *varRight->value.data_s16)		return(-1);		// Less than
+					else																return(1);		// Greater than
+
+
+				case _VAR_TYPE_U16:
+						 if (*varLeft->value.data_u16 == *varRight->value.data_u16)		return(0);		// Equals
+					else if (*varLeft->value.data_u16 < *varRight->value.data_u16)		return(-1);		// Less than
+					else																return(1);		// Greater than
+
+
+				case _VAR_TYPE_S32:
+						 if (*varLeft->value.data_s32 == *varRight->value.data_s32)		return(0);		// Equals
+					else if (*varLeft->value.data_s32 < *varRight->value.data_s32)		return(-1);		// Less than
+					else																return(1);		// Greater than
+
+
+				case _VAR_TYPE_U32:
+						 if (*varLeft->value.data_u32 == *varRight->value.data_u32)		return(0);		// Equals
+					else if (*varLeft->value.data_u32 < *varRight->value.data_u32)		return(-1);		// Less than
+					else																return(1);		// Greater than
+
+
+				case _VAR_TYPE_CURRENCY:
+				case _VAR_TYPE_S64:
+						 if (*varLeft->value.data_s64 == *varRight->value.data_s64)		return(0);		// Equals
+					else if (*varLeft->value.data_s64 < *varRight->value.data_s64)		return(-1);		// Less than
+					else																return(1);		// Greater than
+
+
+				case _VAR_TYPE_U64:
+						 if (*varLeft->value.data_u64 == *varRight->value.data_u64)		return(0);		// Equals
+					else if (*varLeft->value.data_u64 < *varRight->value.data_u64)		return(-1);		// Less than
+					else																return(1);		// Greater than
+
+
+				case _VAR_TYPE_F32:
+					// Compare directly
+						 if (*varLeft->value.data_f32 == *varRight->value.data_f32)		return(0);		// Equals
+					else if (*varLeft->value.data_f32 < *varRight->value.data_f32)		return(-1);		// Less than
+					else																return(1);		// Greater than
+
+
+				case _VAR_TYPE_F64:
+					// Compare directly
+						 if (*varLeft->value.data_f64 == *varRight->value.data_f64)		return(0);		// Equals
+					else if (*varLeft->value.data_f64 < *varRight->value.data_f64)		return(-1);		// Less than
+					else																return(1);		// Greater than
+
+
+				case _VAR_TYPE_DATETIMEX:
+				case _VAR_TYPE_DATETIME:
+					//////////
+					// Convert each to numeric
+					//////
+						lnLeft	= iiVariable_getAs_s64(thisCode, varLeft, false, tlError, tnErrorNum);
+						if (tlError)
+							return(0);
+
+						lnRight	= iiVariable_getAs_s64(thisCode, varLeft, false, tlError, tnErrorNum);
+						if (tlError)
+							return(0);
+
+
+					//////////
+					// Compare the results
+					//////
+							 if (lnLeft == lnRight)		return(0);			// Equals
+						else if (lnLeft < lnRight)		return(-1);			// Less than
+						else							return(1);			// Greater than
+
+
+				case _VAR_TYPE_CHARACTER:
+					//////////
+					// Can they be compared exactly?
+					//////
+						if (varLeft->value.length == varRight->value.length)
+							return(memcmp(varLeft->value.data_s8, varRight->value.data_s8, varLeft->value.length));
+
+
+					//////////
+					// They must be compared, and if equal, the one that is shorter is less than
+					//////
+						lnResult = memcmp(varLeft->value.data_s8, varRight->value.data_s8, varLeft->value.length);
+						if (lnResult != 0)
+							return(lnResult);													// Less than or greater than
+
+
+					//////////
+					// When they are equal, then the one which is shorter is considered less than
+					//////
+						if (varLeft->value.length < varRight->value.length)		return(-1);		// Less than
+						else													return(1);		// Greater than
+
+			}
+
+
+		//////////
+		// If we get here, there's something trying to compare against something that shouldn't be
+		//////
+			*tlError	= true;
+			*tnErrorNum	= _ERROR_FEATURE_NOT_AVAILABLE;
+			return(0);
 	}
 
 

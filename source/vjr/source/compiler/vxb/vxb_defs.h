@@ -283,7 +283,7 @@ struct SThisCode;
 	s64						iiVariable_getCompAs_s64					(SComp* comp);
 	f64						iiVariable_getCompAs_f64					(SComp* comp);
 	s32						iVariable_compare							(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
-	s32						iiVariable_compare							(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight);
+	s32						iiVariable_compareMatchingTypes				(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool* tlError, u32* tnErrorNum);
 
 	// Support functions
 	s32						iiVariable_julianDayNumber_fromYyyyMmDd			(f32* tnJulianDayNumber, u32  year, u32  month, u32  day);

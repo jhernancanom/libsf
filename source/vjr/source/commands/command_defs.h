@@ -391,12 +391,8 @@ struct SReturnsParams;
 		{	_ICODE_ATAN,			1,			(uptr)&function_atan,			1,				1,				&gsSourceLight_atan[0]			},	// ATAN() by Stefano D'Amico, VJr 0.56, Mar.18.2015
 		{	_ICODE_ATC,				1,			(uptr)&function_atc,			2,				3,				&gsSourceLight_atc[0]			},
 		{	_ICODE_ATN2,			1,			(uptr)&function_atn2,			2,				2,				&gsSourceLight_atn2[0]			},
-<<<<<<< HEAD
-		{	_ICODE_BITS,			1,			(uptr)&function_bits,			1,				2,				&gsSourceLight_bits[0]			},
-=======
 		{	_ICODE_BETWEEN,			1,			(uptr)&function_between,		3,				3,				&gsSourceLight_between[0]		},	// BETWEEN() by Stefano D'Amico, VJr 0.57, Mar.23.2015
-		{	_ICODE_BITS,			1,			(uptr)&function_bits,			1,				1,				&gsSourceLight_bits[0]			},
->>>>>>> 95c262b6ff024804ac7553a9b936e231b5b7d180
+		{	_ICODE_BITS,			1,			(uptr)&function_bits,			1,				2,				&gsSourceLight_bits[0]			},
 		{	_ICODE_BITS8,			1,			(uptr)&function_bits8,			1,				1,				&gsSourceLight_bits8[0]			},
 		{	_ICODE_BITS16,			1,			(uptr)&function_bits16,			1,				1,				&gsSourceLight_bits16[0]		},
 		{	_ICODE_BITS32,			1,			(uptr)&function_bits32,			1,				1,				&gsSourceLight_bits32[0]		},

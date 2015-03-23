@@ -1539,7 +1539,8 @@
 //////////
 //
 // Function: BETWEEN()
-// Determines whether the value of an expression is inclusively between the values of two expressions of the same type.
+// Determines whether the value of an expression is inclusively
+// between the values of two expressions of the same type.
 //
 //////
 // Version 0.57
@@ -1561,14 +1562,14 @@
 	SVariable* function_between(SThisCode* thisCode, SVariable* varValue, SVariable* varLowValue, SVariable* varHighValue, SReturnsParams* returnsParams)
 	{
 		s32			lnI, lnType, lnComp;
-		bool		llResult;
+		bool		llInRange;
 		SVariable*	result;
 		u32			errorNum;
         bool		error;
 
 
 		//////////
-		// Parameters 1, 2 and 3 must be present, and of equal types
+		// Parameters 1, 2 and 3 must be present
 		//////
 			if (!iVariable_isValid(varValue))
 			{
@@ -1590,9 +1591,8 @@
 		//////////
 		// Each type must be fundamentally the same type
 		//////
-			for (lnI = 1, lnType = iVariable_fundamentalType(thisCode, varValue); lnI < _MAX_PARAMETER_COUNT && returnsParams->params[lnI]; lnI++)
+			for (lnI = 1, lnType = iVariable_fundamentalType(thisCode, varValue); lnI <= 3 && returnsParams->params[lnI]; lnI++)
 			{
-
 				//////////
 				// Make sure this variable type matches the test value
 				//////
@@ -1607,10 +1607,8 @@
 
 
 		//////////
-		// Compare
+		// Compare value and low
 		//////
-			llResult = false;
-
 			lnComp = iVariable_compare(thisCode, varValue, varLowValue, false, &error, &errorNum);
 			if (error)
 			{
@@ -1618,8 +1616,17 @@
 				return(NULL);
 			}
 
-			if (lnComp == 0 || lnComp == 1)
+			// If the value is greater than or equal to the low value, we're good
+			llInRange = (lnComp == 1/*greater than*/ || lnComp == 0/*equal to*/);
+
+
+		//////////
+		// If we're still in range,
+		// compare value and high
+		//////
+			if (llInRange)
 			{
+				// Compare value to high
 				lnComp = iVariable_compare(thisCode, varValue, varHighValue, false, &error, &errorNum);
 				if (error)
 				{
@@ -1627,15 +1634,15 @@
 					return(NULL);
 				}		
 
-				if (lnComp == 0 || lnComp == -1)
-					llResult = true;
+				// If value is less than or equal to high, we're good
+				llInRange = (lnComp == -1/*less than*/ || lnComp == 0/*equal to*/);
 			}
 
 
 		//////////
 		// Based on the result, create the return result
 		//////
-			result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL, ((llResult) ? (s8*)&_LOGICAL_TRUE : (s8*)&_LOGICAL_FALSE), 1, false);
+			result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL, ((llInRange) ? (s8*)&_LOGICAL_TRUE : (s8*)&_LOGICAL_FALSE), 1, false);
 			if (!result)
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varValue), false);
 

@@ -214,6 +214,7 @@
 //////////
 // Errors
 //////
+	const u32		_ERROR_OKAY										= 0;
 	const u32		_ERROR_OUT_OF_MEMORY							= 1;
 	const u32		_ERROR_UNEXPECTED_COMMAND						= 2;
 	const u32		_ERROR_CONTEXT_HAS_CHANGED						= 3;
