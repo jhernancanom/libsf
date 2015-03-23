@@ -278,6 +278,8 @@
 	const u32		_ERROR_DBF_GENERAL_ERROR						= 89;
 	const u32		_ERROR_CANNOT_BE_ZERO							= 90;
 	const u32		_ERROR_MUST_BE_LOGICAL							= 91;
+	const u32		_ERROR_PARAMETER_MUST_BE_8_16_32_64				= 92;
+	const u32		_ERROR_TOO_BIG_FOR_TARGET						= 93;
 
 	// Fill ins
 	const u8		cgc_notFoundOrInvalidDataType[]					= "not found or is invalid data type";
@@ -351,6 +353,8 @@
 	const u8		cgcGeneralErrorDbf[]							= "dbf general error";
 	const u8		cgcCannotBeZero[]								= "parameter cannot be 0";
 	const u8		cgcMustBeLogical[]								= "parameter must be logical";
+	const u8		cgcParameterMustBe8_16_32_64[]					= "parameter must be 8, 16, 32, or 64";
+	const u8		cgcTooBigForTarget[]							= "too big for target";
 #else
 	#error Language not specified
 #endif

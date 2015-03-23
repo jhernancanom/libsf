@@ -180,7 +180,8 @@ struct SReturnsParams;
 	SVariable*			function_atc								(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence, SReturnsParams* returnsParams);
 	SVariable*			ifunction_at_occurs_common					(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence, bool tlCaseSensitive, bool tlScanBackward, u32* tnFoundCount, SReturnsParams* returnsParams);
 	SVariable*			function_atn2								(SThisCode* thisCode, SVariable* varY, SVariable* varX, SReturnsParams* returnsParams);
-	SVariable*			function_bits								(SThisCode* thisCode, SVariable* varBits, SReturnsParams* returnsParams);
+	SVariable*			function_bits								(SThisCode* thisCode, SVariable* varBits, SVariable* varBitWidth, SReturnsParams* returnsParams);
+	SVariable*			ifunction_bits_common						(SThisCode* thisCode, SVariable* varBits, SVariable* varBitWidth, SReturnsParams* returnsParams);
 	SVariable*			function_bits8								(SThisCode* thisCode, SVariable* varBits, SReturnsParams* returnsParams);
 	SVariable*			function_bits16								(SThisCode* thisCode, SVariable* varBits, SReturnsParams* returnsParams);
 	SVariable*			function_bits32								(SThisCode* thisCode, SVariable* varBits, SReturnsParams* returnsParams);
@@ -389,7 +390,7 @@ struct SReturnsParams;
 		{	_ICODE_ATAN,			1,			(uptr)&function_atan,			1,				1,				&gsSourceLight_atan[0]			},	// ATAN() by Stefano D'Amico, VJr 0.56, Mar.18.2015
 		{	_ICODE_ATC,				1,			(uptr)&function_atc,			2,				3,				&gsSourceLight_atc[0]			},
 		{	_ICODE_ATN2,			1,			(uptr)&function_atn2,			2,				2,				&gsSourceLight_atn2[0]			},
-		{	_ICODE_BITS,			1,			(uptr)&function_bits,			1,				1,				&gsSourceLight_bits[0]			},
+		{	_ICODE_BITS,			1,			(uptr)&function_bits,			1,				2,				&gsSourceLight_bits[0]			},
 		{	_ICODE_BITS8,			1,			(uptr)&function_bits8,			1,				1,				&gsSourceLight_bits8[0]			},
 		{	_ICODE_BITS16,			1,			(uptr)&function_bits16,			1,				1,				&gsSourceLight_bits16[0]		},
 		{	_ICODE_BITS32,			1,			(uptr)&function_bits32,			1,				1,				&gsSourceLight_bits32[0]		},

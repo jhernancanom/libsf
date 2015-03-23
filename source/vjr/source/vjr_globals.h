@@ -178,6 +178,10 @@
 	SVariable*			varTrue								= NULL;									// A constant .T.
 	SVariable*			varFalse							= NULL;									// A constant .F.
 	SVariable*			varSix								= NULL;									// A numeric value of 6, used for padding widths
+	SVariable*			varEight							= NULL;									// A numeric value of 8, used for BITS8()
+	SVariable*			varSixteen							= NULL;									// A numeric value of 16, used for BITS16()
+	SVariable*			varThirtyTwo						= NULL;									// A numeric value of 32, used for BITS32()
+	SVariable*			varSixtyFour						= NULL;									// A numeric value of 64, used for BITS64()
 	SVariable*			varTwoFiftyFive						= NULL;									// A numeric value of 255, used for color channels
 	SVariable*			varFiftyPercent						= NULL;									// An f32 0.5
 	SVariable*			varOneHundredPercent				= NULL;									// An f32 1.0
