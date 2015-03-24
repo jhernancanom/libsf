@@ -231,6 +231,7 @@
 			bool			isIndexLoaded;				// true if an index is loaded (idx, cdx, dcx)
 			bool			isSdxLoaded;				// true if an sdx index is loaded
 			bool			isCached;					// If the table's been cached, then it will be true, otherwise false
+			bool			mayHaveCdxSdx;				// Only certain table types can have indexes
 			bool			isVisualTable;				// Only visual tables can have DBC backlinks
 			bool			isDirty;					// When data is written to the current record, but not flushed to disk, this is raised
 			bool			isUnbuffered;				// Immediate writes upon every change
@@ -273,29 +274,13 @@
 				s8*			cachedTable;				// If isCached, then this holds the entire table contents as of when it was cached
 			};
 
+
+			//////////
 			// Row data
-			union {
-				uptr		_data;
-				s8*			data;
-				s8*			data_s8;
-				u8*			data_u8;
-			};
-
-			// Original row data (before cached changes were made)
-			union {
-				uptr		_odata;
-				s8*			odata;
-				s8*			odata_s8;
-				u8*			odata_u8;
-			};
-
-			// Data used/copied for creating index keys
-			union {
-				uptr		_idata;
-				s8*			idata;
-				s8*			idata_s8;
-				u8*			idata_u8;
-			};
+			//////
+				SDatum			row;					// Row data for current RECNO()
+				SDatum			orow;					// Original row data, or after last flush
+				SDatum			irow;					// Index accumulator row (for creating index keys)
 
 
 			//////////

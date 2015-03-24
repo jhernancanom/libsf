@@ -161,13 +161,14 @@
 //////
 	void iVjr_init(HACCEL* hAccelTable)
 	{
-		SThisCode*	thisCode = NULL;
-		s32			lnValue;
-		f32			lfValue;
-		RECT		lrc;
-		u8			logBuffer[256];
-		SBitmap*	bmp;
-		SVariable*	var;
+		SThisCode*		thisCode = NULL;
+		s32				lnValue;
+		f32				lfValue;
+		RECT			lrc;
+		u8				logBuffer[256];
+		SBitmap*		bmp;
+		SVariable*		var;
+		SReturnsParams	lsReturnsParams;
 
 
 		// Get startup time
@@ -388,7 +389,8 @@
 			iVjr_appendSystemLog(thisCode, (u8*)"Create global variables");
 
 			// _startupTime
-			varGlobals = function_datetime(NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+			memset(&lsReturnsParams, 0, sizeof(lsReturnsParams));
+			varGlobals = function_datetime(NULL, &lsReturnsParams);
 			iDatum_duplicate(&varGlobals->name, cgcName_startupTime, -1);
 
 			// _tally

@@ -645,7 +645,6 @@ debug_nop;
 		u32				lnI, lnParamsFound;
 		SFunctionData*	lfl;
 		SReturnsParams	returnsParams;
-		SVariable*		result;
 		SComp*			compLeftParen;
 		
 		
@@ -682,41 +681,17 @@ debug_nop;
 
 
 						//////////
-						// When we get here we found the correct number of parameters
+						// Perform the function
 						//////
-							switch (lfl->parameterCount)
-							{
-								case 0:			result = lfl->func_0p(NULL, &returnsParams);
-									break;
-								case 1:			result = lfl->func_1p(NULL, returnsParams.params[0], &returnsParams);
-									break;
-								case 2:			result = lfl->func_2p(NULL, returnsParams.params[0], returnsParams.params[1], &returnsParams);
-									break;
-								case 3:			result = lfl->func_3p(NULL, returnsParams.params[0], returnsParams.params[1], returnsParams.params[2], &returnsParams);
-									break;
-								case 4:			result = lfl->func_4p(NULL, returnsParams.params[0], returnsParams.params[1], returnsParams.params[2], returnsParams.params[3], &returnsParams);
-									break;
-								case 5:			result = lfl->func_5p(NULL, returnsParams.params[0], returnsParams.params[1], returnsParams.params[2], returnsParams.params[3], returnsParams.params[4], &returnsParams);
-									break;
-								case 6:			result = lfl->func_6p(NULL, returnsParams.params[0], returnsParams.params[1], returnsParams.params[2], returnsParams.params[3], returnsParams.params[4], returnsParams.params[5], &returnsParams);
-									break;
-								case 7:			result = lfl->func_7p(NULL, returnsParams.params[0], returnsParams.params[1], returnsParams.params[2], returnsParams.params[3], returnsParams.params[4], returnsParams.params[5], returnsParams.params[6], &returnsParams);
-									break;
-								case 8:			result = lfl->func_8p(NULL, returnsParams.params[0], returnsParams.params[1], returnsParams.params[2], returnsParams.params[3], returnsParams.params[4], returnsParams.params[5], returnsParams.params[6], returnsParams.params[7], &returnsParams);
-									break;
-								case 9:			result = lfl->func_9p(NULL, returnsParams.params[0], returnsParams.params[1], returnsParams.params[2], returnsParams.params[3], returnsParams.params[4], returnsParams.params[5], returnsParams.params[6], returnsParams.params[7], returnsParams.params[8], &returnsParams);
-									break;
-								default:		result = lfl->func_10p(NULL, returnsParams.params[0], returnsParams.params[1], returnsParams.params[2], returnsParams.params[3], returnsParams.params[4], returnsParams.params[5], returnsParams.params[6], returnsParams.params[7], returnsParams.params[8], returnsParams.params[9], &returnsParams);
-									break;
-							}
+							returnsParams.returns[0] = lfl->func(NULL, &returnsParams);
 
 
 						//////////
-						// We need to free anything that needs freed
+						// Free every parameter we created
 						//////
 							for (lnI = 0; lnI < _MAX_PARAMETER_COUNT; lnI++)
 							{
-								// Delete anything that's populated
+								// Delete if populated
 								if (returnsParams.params[lnI])
 									iVariable_delete(thisCode, returnsParams.params[lnI], true);
 							}
@@ -725,7 +700,7 @@ debug_nop;
 						//////////
 						// Indicate our return value
 						//////
-							return(result);
+							return(returnsParams.returns[0]);
 					}
 
 					// Move to next function

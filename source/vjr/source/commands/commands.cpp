@@ -2288,9 +2288,9 @@
 		//////////
 		// Parameter 1 must be numeric
 		//////
-			if (!iVariable_isValid(varNumer) || !iVariable_isTypeNumeric(varNumer))
+			if (!iVariable_isValid(varNumber) || !iVariable_isTypeNumeric(varNumber))
 			{
-				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNumer), false);
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNumber), false);
 				return(NULL);
 			}
 
@@ -2298,12 +2298,12 @@
 		//////////
         // It must be in the range 0..255
 		//////
-			value = iiVariable_getAs_s32(thisCode, varNumer, false, &error, &errorNum);
+			value = iiVariable_getAs_s32(thisCode, varNumber, false, &error, &errorNum);
 			if (error)
 			{
 				// The iVariable_getAs_s32() function reported an error.
 				// This means the user is trying to obtain an integer value from a logical, or something similar.
-				iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNumer), false);
+				iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNumber), false);
 				return(NULL);
 
 			} else if (value > 255 || value < 0) {
@@ -5101,8 +5101,15 @@
 // Returns:
 //    Character		-- The string with any leading spaces removed
 //////
-	SVariable* function_ltrim(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2, SReturnsParams* returnsParams)
+	SVariable* function_ltrim(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varString			= returnsParams->params[0];
+		SVariable* varCaseInsensitive	= returnsParams->params[1];
+		SVariable* varTrimChars1		= returnsParams->params[2];
+		SVariable* varTrimChars2		= returnsParams->params[3];
+
+
+		// Return ltrim
 		return(ifunction_trim_common(thisCode, varString, varCaseInsensitive, varTrimChars1, varTrimChars2, true, false, returnsParams));
 	}
 
@@ -5900,16 +5907,13 @@
 //////
 	SVariable* function_outside(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		SVariable*	varValue		= returnsParams->params[0];
-		SVariable*	varLowValue		= returnsParams->params[1];
-		SVariable*	varHighValue	= returnsParams->params[2];
-		SVariable*	result;
+		SVariable* result;
 
 
 		//////////
 		// Invoke BETWEEN()
 		//////
-			result = function_between(thisCode, varValue, varLowValue, varHighValue, returnsParams);
+			result = function_between(thisCode, returnsParams);
 
 
 		//////////
@@ -6232,9 +6236,9 @@
 // Returns:
 //    Character		-- The string with all words proper'd (if I can use that as a verb)
 //////
-	SVariable* function_proper(SThisCode* thisCode, SVariable* varString, SReturnsParams* returnsParams)
+	SVariable* function_proper(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-// TODO:  Working here
+		SVariable*	varString = returnsParams->params[0];
 		s32			lnI;
 		bool		llUpperNext;
         SVariable*	result;
@@ -6332,9 +6336,14 @@
 // Example:
 //   ? PV(500, 0.006, 48)	&& Displays 20799.41
 //////
-	SVariable* function_pv(SThisCode* thisCode, SVariable* varPayment, SVariable* varInterestRate, SVariable* varPeriods, SReturnsParams* returnsParams)
+	SVariable* function_pv(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		//Return PV
+		SVariable* varPayment		= returnsParams->params[0];
+		SVariable* varInterestRate	= returnsParams->params[1];
+		SVariable* varPeriods		= returnsParams->params[2];
+
+
+		// Return pv
 		return(ifunction_numbers_common(thisCode, varPayment, varInterestRate, varPeriods, _FP_COMMON_PV, _VAR_TYPE_F64, false, true, returnsParams));
 	}
 
@@ -6371,13 +6380,22 @@
 //	x = RANGER(x, 20, 80)          && Can be used as assignment
 //	? x							   && Displays 20
 //////
-	SVariable* function_ranger(SThisCode* thisCode, SVariable* varExpr, SVariable* varMin, SVariable* varMax, SReturnsParams* returnsParams)
+	SVariable* function_ranger(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varExpr	= returnsParams->params[0];
+		SVariable* varMin	= returnsParams->params[1];
+		SVariable* varMax	= returnsParams->params[2];
+
+
+		// Return ranger
 		return(ifunction_ranger_common(thisCode, varExpr, varMin, varMax, NULL, returnsParams));
 	}
 
-	SVariable* function_ranger2(SThisCode* thisCode, SVariable* varExpr, SVariable* varMin, SVariable* varMax, SReturnsParams* returnsParams)
+	SVariable* function_ranger2(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varExpr	= returnsParams->params[0];
+		SVariable*	varMin	= returnsParams->params[1];
+		SVariable*	varMax	= returnsParams->params[2];
 		bool		llRanged;
 		SVariable*	result;
 
@@ -6403,11 +6421,13 @@
 
 	SVariable* ifunction_ranger_common(SThisCode* thisCode, SVariable* varExpr, SVariable* varMin, SVariable* varMax, bool* tlRanged, SReturnsParams* returnsParams)
 	{
-		SVariable*	tempMin;
-		SVariable*	tempMax;
-		SVariable*	tempResult1;
-		SVariable*	tempResult2;
-		SVariable*	result;
+		SVariable*		tempMin;
+		SVariable*		tempMax;
+		SVariable*		tempResult1;
+		SVariable*		tempResult2;
+		SVariable*		result;
+		SReturnsParams	lsReturnsParams;
+
 
 
 		//////////
@@ -6471,13 +6491,15 @@
 		//////
 			do {
 				// Loop entered for structured programming
-				if ((tempMin = function_min(thisCode, varMin, varMax, NULL)) == NULL)
+				memcpy(&lsReturnsParams, returnsParams, sizeof(lsReturnsParams));
+				lsReturnsParams.params[0] = varMin;
+				lsReturnsParams.params[1] = varMax;
+				if ((tempMin = function_min(thisCode, &lsReturnsParams)) == NULL)
 				{
 					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varMax), false);
 					return(NULL);
 				}
-
-				if ((tempMax = function_max(thisCode, varMin, varMax, NULL)) == NULL)
+				if ((tempMax = function_max(thisCode, &lsReturnsParams)) == NULL)
 				{
 					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varMax), false);
 					break;
@@ -6488,14 +6510,18 @@
 			// RANGER() executed as "result = MIN(MAX(xVar, xMin), xMax))"
 			//////
 				// Compute first part of result
-				if ((tempResult1 = function_max(thisCode, varExpr, tempMin, NULL)) == NULL)
+				lsReturnsParams.params[0] = varExpr;
+				lsReturnsParams.params[1] = tempMin;
+				if ((tempResult1 = function_max(thisCode, &lsReturnsParams)) == NULL)
 				{
 					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varMax), false);
 					break;
 				}
 
 				// Compute the final result
-				if ((tempResult2 = function_min(thisCode, tempResult1, tempMax, NULL)) == NULL)
+				lsReturnsParams.params[0] = tempResult1;
+				lsReturnsParams.params[1] = tempMax;
+				if ((tempResult2 = function_min(thisCode, &lsReturnsParams)) == NULL)
 					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varMax), false);
 
 				// Force the result into the same form as varExpr originally was
@@ -6556,8 +6582,10 @@
 // Returns:
 //    Character		-- The string of the input replicated N times
 //////
-	SVariable* function_replicate(SThisCode* thisCode, SVariable* varString, SVariable* varCount, SReturnsParams* returnsParams)
+	SVariable* function_replicate(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varString	= returnsParams->params[0];
+		SVariable*	varCount	= returnsParams->params[1];
 		s32			lnI, lnCopies;
 		u32			errorNum;
 		bool		error;
@@ -6646,8 +6674,14 @@
 //    Numeric		-- Constructed RGB() integer
 //
 //////
-	SVariable* function_rgb(SThisCode* thisCode, SVariable* varRed, SVariable* varGrn, SVariable* varBlu, SReturnsParams* returnsParams)
+	SVariable* function_rgb(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varRed	= returnsParams->params[0];
+		SVariable* varGrn	= returnsParams->params[1];
+		SVariable* varBlu	= returnsParams->params[2];
+
+
+		// Return rgb
 		return(ifunction_rgba_common(thisCode, varRed, varGrn, varBlu, NULL, returnsParams));
 	}
 
@@ -6846,8 +6880,15 @@
 //    Numeric		-- Constructed RGBA() integer
 //
 //////
-	SVariable* function_rgba(SThisCode* thisCode, SVariable* varRed, SVariable* varGrn, SVariable* varBlu, SVariable* varAlp, SReturnsParams* returnsParams)
+	SVariable* function_rgba(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varRed	= returnsParams->params[0];
+		SVariable* varGrn	= returnsParams->params[1];
+		SVariable* varBlu	= returnsParams->params[2];
+		SVariable* varAlp	= returnsParams->params[3];
+
+
+		// Return rgba
 		return(ifunction_rgba_common(thisCode, varRed, varGrn, varBlu, varAlp, returnsParams));
 	}
 
@@ -6874,8 +6915,12 @@
 // Returns:
 //    Numeric	-- Input number converted to ASCII value number
 //////
-	SVariable* function_red(SThisCode* thisCode, SVariable* varColor, SReturnsParams* returnsParams)
+	SVariable* function_red(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varColor = returnsParams->params[0];
+
+
+		// Return red
 		return(ifunction_color_common(thisCode, varColor, 0x000000ff, 0, returnsParams));
 	}
 
@@ -6954,8 +6999,10 @@
 // Returns:
 //    Character		-- The string of the right N characters
 //////
-	SVariable* function_right(SThisCode* thisCode, SVariable* varString, SVariable* varCount, SReturnsParams* returnsParams)
+	SVariable* function_right(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varString	= returnsParams->params[0];
+		SVariable*	varCount	= returnsParams->params[1];
 		s32			lnStart, lnLength;
 		u32			errorNum;
 		bool		error;
@@ -7053,14 +7100,16 @@
 //    ? ROUND(53.213, 2)   && 53.21
 //    ? ROUND(532, -2)     && 500
 //////
-	SVariable* function_round(SThisCode* thisCode, SVariable* varNumber, SVariable* varDecimalPlaces, SReturnsParams* returnsParams)
+	SVariable* function_round(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varNumber			= returnsParams->params[0];
+		SVariable*	varDecimalPlaces	= returnsParams->params[1];
 		f64			lfValue, lfRounded;
 		s32			lnDecimalPlaces;
 		bool		error;
 		u32			errorNum;
-
 		SVariable*	result;
+
 
 //TODO: more speed by type checking :-)
 
@@ -7172,8 +7221,11 @@
 // Example:
 //    ? RTOD(PI())		&& Display 180.00
 //////
-    SVariable* function_rtod(SThisCode* thisCode, SVariable* varNumber, SReturnsParams* returnsParams)
+    SVariable* function_rtod(SThisCode* thisCode, SReturnsParams* returnsParams)
     {
+		SVariable* varNumber = returnsParams->params[0];
+
+
         // Return rtod
 		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_RTOD, _VAR_TYPE_F64, false, false, returnsParams));
 	}
@@ -7201,8 +7253,15 @@
 // Returns:
 //    Character		-- The string with any trailing spaces removed
 //////
-	SVariable* function_rtrim(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2, SReturnsParams* returnsParams)
+	SVariable* function_rtrim(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varString			= returnsParams->params[0];
+		SVariable* varCaseInsensitive	= returnsParams->params[1];
+		SVariable* varTrimChars1		= returnsParams->params[2];
+		SVariable* varTrimChars2		= returnsParams->params[3];
+
+
+		// Return rtrim
 		return(ifunction_trim_common(thisCode, varString, varCaseInsensitive, varTrimChars1, varTrimChars2, false, true, returnsParams));
 	}
 
@@ -7229,8 +7288,10 @@
 // Returns:
 //    Character		-- The string with any trailing spaces removed
 //////
-	SVariable* function_set(SThisCode* thisCode, SVariable* varIdentifier, SVariable* varExtraInfo, SReturnsParams* returnsParams)
+	SVariable* function_set(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*		varIdentifier	= returnsParams->params[0];
+		SVariable*		varExtraInfo	= returnsParams->params[1];
 		s32				lnIndex;
 		SBasePropMap*	baseProp;
 		SObjPropMap*	objProp;
@@ -7337,15 +7398,21 @@
 //    ? sign(2.65656)		&& Displays 1
 //    ? sign(-2.65656)		&& Displays -1
 //////
-    SVariable* function_sign(SThisCode* thisCode, SVariable* varNumber, SReturnsParams* returnsParams)
+    SVariable* function_sign(SThisCode* thisCode, SReturnsParams* returnsParams)
     {
-		// SIGN() returns -1, 0, or 1
+		SVariable* varNumber = returnsParams->params[0];
+
+
+		// Return sign -- returns -1, 0, or 1
 		return(ifunction_sign_common(thisCode, varNumber, false, returnsParams));
 	}
 
-	SVariable* function_sign2(SThisCode* thisCode, SVariable* varNumber, SReturnsParams* returnsParams)
+	SVariable* function_sign2(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		// SIGN2() returns -1 if non-zero negative, 1 otherwise
+		SVariable* varNumber = returnsParams->params[0];
+
+
+		// Return sign2 -- returns -1 if non-zero negative, 1 otherwise
 		return(ifunction_sign_common(thisCode, varNumber, true, returnsParams));
 	}
 
@@ -7450,8 +7517,11 @@
 // Example:
 //    ? SIN(0)		&& Display 0.00
 //////
-    SVariable* function_sin(SThisCode* thisCode, SVariable* varNumber, SReturnsParams* returnsParams)
+    SVariable* function_sin(SThisCode* thisCode, SReturnsParams* returnsParams)
     {
+		SVariable* varNumber = returnsParams->params[0];
+
+
 		// Return sin
 		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_SIN, _VAR_TYPE_F64, false, false, returnsParams));
 	}
@@ -7481,8 +7551,14 @@
 // Returns:
 //    Character		-- The string which was extracted.
 //////
-	SVariable* function_slice(SThisCode* thisCode, SVariable* varString, SVariable* varStart, SVariable* varEnd, SReturnsParams* returnsParams)
+	SVariable* function_slice(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varString	= returnsParams->params[0];
+		SVariable* varStart		= returnsParams->params[1];
+		SVariable* varEnd		= returnsParams->params[2];
+
+
+		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
 		return(NULL);
 	}
@@ -7510,8 +7586,9 @@
 // Returns:
 //    Character		-- The string with any leading and trailing spaces removed
 //////
-	SVariable* function_space(SThisCode* thisCode, SVariable* varCount, SReturnsParams* returnsParams)
+	SVariable* function_space(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varCount = returnsParams->params[0];
 		s32			lnLength;
 		u32			errorNum;
 		bool		error;
@@ -7591,8 +7668,11 @@
 //    ? SQRT(2.0)	&& Display 1.41
 //    ? SQRT(-2)	&& Error: argument cannot be negative
 //////
-    SVariable* function_sqrt(SThisCode* thisCode, SVariable* varNumber, SReturnsParams* returnsParams)
+    SVariable* function_sqrt(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varNumber = returnsParams->params[0];
+
+
 		// Return sqrt
 		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_SQRT, _VAR_TYPE_F64, false, false, returnsParams));
 	}
@@ -7623,8 +7703,14 @@
 //    Logical		-- .t. if the search string is found in the string, .f. otherwise
 //
 //////
-	SVariable* function_startswith(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varStart, SReturnsParams* returnsParams)
+	SVariable* function_startswith(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varString	= returnsParams->params[0];
+		SVariable* varSearch	= returnsParams->params[1];
+		SVariable* varStart		= returnsParams->params[2];
+
+
+		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varString), false);
 		return(NULL);
 	}
@@ -7638,8 +7724,14 @@
 // Case-insensitive version of STARTSWITH().
 //
 //////
-	SVariable* function_startswithc(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varStart, SReturnsParams* returnsParams)
+	SVariable* function_startswithc(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varString	= returnsParams->params[0];
+		SVariable* varSearch	= returnsParams->params[1];
+		SVariable* varStart		= returnsParams->params[2];
+
+
+		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varString), false);
 		return(NULL);
 	}
@@ -7671,13 +7763,27 @@
 //    Character		-- The original string with all components replaced
 //
 //////
-	SVariable* function_strtran(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount, SReturnsParams* returnsParams)
+	SVariable* function_strtran(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varString			= returnsParams->params[0];
+		SVariable* varSearch			= returnsParams->params[1];
+		SVariable* varReplace			= returnsParams->params[2];
+		SVariable* varRecursiveCount	= returnsParams->params[3];
+
+
+		// Return strtran
 		return(ifunction_strtran_common(thisCode, varString, varSearch, varReplace, varRecursiveCount, true, returnsParams));
 	}
 
-	SVariable* function_strtranc(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SVariable* varRecursiveCount, SReturnsParams* returnsParams)
+	SVariable* function_strtranc(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varString			= returnsParams->params[0];
+		SVariable* varSearch			= returnsParams->params[1];
+		SVariable* varReplace			= returnsParams->params[2];
+		SVariable* varRecursiveCount	= returnsParams->params[3];
+
+
+		// Return strtranc
 		return(ifunction_strtran_common(thisCode, varString, varSearch, varReplace, varRecursiveCount, false, returnsParams));
 	}
 
@@ -7901,8 +8007,12 @@
 //    Character		-- String has been modified as per the STUFF() function.
 //
 //////
-	SVariable* function_stuff(SThisCode* thisCode, SVariable* varOriginalString, SVariable* varStartPos, SVariable* varNumToRemove, SVariable* varStuffString, SReturnsParams* returnsParams)
+	SVariable* function_stuff(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varOriginalString	= returnsParams->params[0];
+		SVariable*	varStartPos			= returnsParams->params[1];
+		SVariable*	varNumToRemove		= returnsParams->params[2];
+		SVariable*	varStuffString		= returnsParams->params[3];
 		s32			lnStartPosition, lnRemoveCount, lnBufferLength;
 		bool		error;
 		u32			errorNum;
@@ -8055,8 +8165,11 @@
 // Returns:
 //		2015			-- Character, unique procedure name
 //////
-	SVariable* function_sys(SThisCode* thisCode, SVariable* varIndex, SVariable* varP1, SVariable* varP2, SVariable* varP3, SVariable* varP4, SVariable* varP5, SVariable* varP6, SReturnsParams* returnsParams)
+	SVariable* function_sys(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varIndex	= returnsParams->params[0];
+		SVariable*	varP1		= returnsParams->params[1];
+		SVariable*	varP2		= returnsParams->params[2];
 		s32			lnIndex;
 		u32			lnExtraPrefixWidth, lnExtraPostfixWidth;
 		s64			ln2015;
@@ -8197,21 +8310,35 @@ clean_exit:
 	// Note:  Helper function.  iFunction_sys2015() is a shortcut function for accessing the oft-used get-unique-procedure-name feature
 	SVariable* iFunction_sys2015(SThisCode* thisCode, u32 tnPrefixWidth, u32 tnPostfixWidth)
 	{
+		s32				ln2015;
+		SVariable*		varSys2015;
+		SReturnsParams	returnsParams;
+
+
 // TODO:  Untested function, breakpoint and examine
 debug_break;
-		s32			ln2015		= 2015;
-		SVariable*	var2015		= iVariable_createAndPopulate(thisCode, _VAR_TYPE_S32,	(cu8*)&ln2015,			sizeof(ln2015),			true);
-		SVariable*	varPrefix	= iVariable_createAndPopulate(thisCode, _VAR_TYPE_S32,	(cu8*)&tnPrefixWidth,	sizeof(tnPrefixWidth),	true);
-		SVariable*	varPostfix	= iVariable_createAndPopulate(thisCode, _VAR_TYPE_S32,	(cu8*)&tnPostfixWidth,	sizeof(tnPostfixWidth), true);
-		SVariable*	varSys2015	= function_sys(thisCode, var2015, varPrefix, varPostfix, NULL, NULL, NULL, NULL, NULL);
+		//////////
+		// Setup the function call variables
+		//////
+			memset(&returnsParams, 0, sizeof(returnsParams));
+			ln2015 = 2015;
+			returnsParams.params[0/*2015*/]		= iVariable_createAndPopulate(thisCode, _VAR_TYPE_S32,	(cu8*)&ln2015,			sizeof(ln2015),			true);
+			returnsParams.params[1/*prefix*/]	= iVariable_createAndPopulate(thisCode, _VAR_TYPE_S32,	(cu8*)&tnPrefixWidth,	sizeof(tnPrefixWidth),	true);
+			returnsParams.params[2/*postfix*/]	= iVariable_createAndPopulate(thisCode, _VAR_TYPE_S32,	(cu8*)&tnPostfixWidth,	sizeof(tnPostfixWidth), true);
+
+
+		//////////
+		// Call the function
+		//////
+			varSys2015 = function_sys(thisCode, &returnsParams);
 
 
 		//////////
 		// Clean house
 		//////
-			iVariable_delete(thisCode, var2015,		true);
-			iVariable_delete(thisCode, varPrefix,	true);
-			iVariable_delete(thisCode, varPostfix,	true);
+			iVariable_delete(thisCode, returnsParams.params[0], true);
+			iVariable_delete(thisCode, returnsParams.params[1], true);
+			iVariable_delete(thisCode, returnsParams.params[2], true);
 
 
 		//////////
@@ -8243,8 +8370,9 @@ debug_break;
 // Returns:
 //    Numeric		-- Depending on index, various value ranges are returned
 //////
-    SVariable* function_sysmetric(SThisCode* thisCode, SVariable* varIndex, SReturnsParams* returnsParams)
+    SVariable* function_sysmetric(SThisCode* thisCode, SReturnsParams* returnsParams)
     {
+		SVariable*	varIndex = returnsParams->params[0];
         s32			index;
 		RECT		lrc;
 		u32			errorNum;
@@ -8466,8 +8594,11 @@ debug_break;
 // Example:
 //    ? TAN(0)		&& Display 0.00
 //////
-    SVariable* function_tan(SThisCode* thisCode, SVariable* varNumber, SReturnsParams* returnsParams)
+    SVariable* function_tan(SThisCode* thisCode, SReturnsParams* returnsParams)
     {
+		SVariable* varNumber = returnsParams->params[0];
+
+
 		// Return sin
 		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_TAN, _VAR_TYPE_F64, false, false, returnsParams));
 	}
@@ -8477,8 +8608,9 @@ debug_break;
 //////////
 // Rick's test code functionality using the _test() function
 //////
-	SVariable* function__test(SThisCode* thisCode, SVariable* varIndex, SReturnsParams* returnsParams)
+	SVariable* function__test(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varIndex = returnsParams->params[0];
 		s32			lnIndex;
 		bool		llValid;
 		SVariable*	result;
@@ -8502,7 +8634,7 @@ debug_break;
 			switch (lnIndex)
 			{
 				case 1:
-					iTest1();
+					iTest1(thisCode, returnsParams);
 					break;
 
 				default:
@@ -8542,8 +8674,10 @@ debug_break;
 // Returns:
 //    Character		-- The string after the variable was converted and formatted
 //////
-	SVariable* function_transform(SThisCode* thisCode, SVariable* varVariable, SVariable* varFormat, SReturnsParams* returnsParams)
+	SVariable* function_transform(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varVariable	= returnsParams->params[0];
+		SVariable* varFormat	= returnsParams->params[1];
 		SVariable* result;
 
 
@@ -8634,8 +8768,9 @@ debug_break;
 // Returns:
 //    Character		-- The string with all lowercase characters converted to uppercase
 //////
-	SVariable* function_upper(SThisCode* thisCode, SVariable* varString, SReturnsParams* returnsParams)
+	SVariable* function_upper(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varString = returnsParams->params[0];
 		s32			lnI;
         SVariable*	result;
 
@@ -8709,8 +8844,10 @@ debug_break;
 //						Leading blanks are ignored.
 //						VAL( ) returns 0 if the first character of the character expression is not a number, a dollar sign ($), a plus sign (+), or minus sign (-).
 //////
-	SVariable* function_val(SThisCode* thisCode, SVariable* varExpr, SVariable* varIgnoreChars, SReturnsParams* returnsParams)
+	SVariable* function_val(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varExpr			= returnsParams->params[0];
+		SVariable*	varIgnoreChars	= returnsParams->params[1];
 		s8			c, cCurrency, cPoint, cSeparator;
 		s32			lnI, lnJ, lnBuffOffset;
 		s64			lnValue;
@@ -8983,8 +9120,12 @@ debug_break;
 // Returns:
 //    Vector		-- The concatenated value, assumes the current SET VECSEPARATOR symbol
 //////
-	SVariable* function_vec(SThisCode* thisCode, SVariable* varV1, SVariable* varV2, SVariable* varV3, SVariable* varV4, SVariable* varV5, SVariable* varV6, SVariable* varV7, SVariable* varV8, SVariable* varV9, SVariable* varV10, SReturnsParams* returnsParams)
+	SVariable* function_vec(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varV1 = returnsParams->params[0];
+
+
+		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varV1), false);
 		return(NULL);
 	}
@@ -9012,8 +9153,12 @@ debug_break;
 // Returns:
 //     Numeric, the number of elements in the vector.
 //////
-	SVariable* function_veccount(SThisCode* thisCode, SVariable* varVec, SReturnsParams* returnsParams)
+	SVariable* function_veccount(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varVec = returnsParams->params[0];
+
+
+		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varVec), false);
 		return(NULL);
 	}
@@ -9044,8 +9189,14 @@ debug_break;
 //    if varNewValue was specified, returns the new vector
 //    else                          returns the value of that element
 //////
-	SVariable* function_vecel(SThisCode* thisCode, SVariable* varVec, SVariable* varEl, SVariable* varNewValue, SReturnsParams* returnsParams)
+	SVariable* function_vecel(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varVec		= returnsParams->params[0];
+		SVariable* varEl		= returnsParams->params[1];
+		SVariable* varNewValue	= returnsParams->params[2];
+
+
+		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varVec), false);
 		return(NULL);
 	}
@@ -9075,8 +9226,14 @@ debug_break;
 // Returns:
 //     The extracted element or elements as a vector.
 //////
-	SVariable* function_vecslice(SThisCode* thisCode, SVariable* varVec, SVariable* varStartEl, SVariable* varEndEl, SReturnsParams* returnsParams)
+	SVariable* function_vecslice(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varVec		= returnsParams->params[0];
+		SVariable* varStartEl	= returnsParams->params[1];
+		SVariable* varEndEl		= returnsParams->params[2];
+
+
+		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
 		return(NULL);
 	}
@@ -9105,8 +9262,13 @@ debug_break;
 // Returns:
 //     A character string containing the vector values interspersed with symbol space, or the varSymbolOverride
 //////
-	SVariable* function_vecstr(SThisCode* thisCode, SVariable* varVec, SVariable* varSymbolOverride, SReturnsParams* returnsParams)
+	SVariable* function_vecstr(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varVec				= returnsParams->params[0];
+		SVariable* varSymbolOverride	= returnsParams->params[1];
+
+
+		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
 		return(NULL);
 	}
@@ -9138,8 +9300,15 @@ debug_break;
 //    if varNewValue was specified, returns the new vector
 //    else                          returns the value of that element
 //////
-	SVariable* function_vecstuff(SThisCode* thisCode, SVariable* varVec, SVariable* varStartEl, SVariable* varRemoveCount, SVariable* varVecStuff, SReturnsParams* returnsParams)
+	SVariable* function_vecstuff(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varVec			= returnsParams->params[0];
+		SVariable* varStartEl		= returnsParams->params[1];
+		SVariable* varRemoveCount	= returnsParams->params[2];
+		SVariable* varVecStuff		= returnsParams->params[3];
+
+
+		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varVec), false);
 		return(NULL);
 	}
@@ -9170,8 +9339,14 @@ debug_break;
 //    if varNewSymbol was specified, returns the old symbol
 //    else                           returns the current symbol
 //////
-	SVariable* function_vecsymbol(SThisCode* thisCode, SVariable* varVec, SVariable* varEl, SVariable* varNewSymbol, SReturnsParams* returnsParams)
+	SVariable* function_vecsymbol(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varVec		= returnsParams->params[0];
+		SVariable* varEl		= returnsParams->params[1];
+		SVariable* varNewSymbol	= returnsParams->params[2];
+
+
+		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varVec), false);
 		return(NULL);
 	}
@@ -9199,8 +9374,9 @@ debug_break;
 // Returns:
 //    Numeric or Character	-- Depending on index, various values are returned
 //////
-    SVariable* function_version(SThisCode* thisCode, SVariable* varIndex, SReturnsParams* returnsParams)
+    SVariable* function_version(SThisCode* thisCode, SReturnsParams* returnsParams)
     {
+		SVariable*	varIndex = returnsParams->params[0];
         s32			index;
 		u32			errorNum;
         bool		error;
@@ -9314,8 +9490,10 @@ debug_break;
 //    The sum of p1 + p2
 //
 //////
-	SVariable* function_concatenate(SThisCode* thisCode, SVariable* varString1, SVariable* varString2, SReturnsParams* returnsParams)
+	SVariable* function_concatenate(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varString1	= returnsParams->params[0];
+		SVariable*	varString2	= returnsParams->params[1];
 		SVariable*	result;
 
 
@@ -9381,8 +9559,10 @@ debug_break;
 //    The sum of p1 + p2
 //
 //////
-	SVariable* function_add(SThisCode* thisCode, SVariable* varNum1, SVariable* varNum2, SReturnsParams* returnsParams)
+	SVariable* function_add(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varNum1	= returnsParams->params[0];
+		SVariable*	varNum2	= returnsParams->params[1];
 		s64			lnValue1, lnValue2;
 		f64			lfValue1, lfValue2;
 		bool		error;
@@ -9505,8 +9685,10 @@ debug_break;
 //    The sum of p1 - p2
 //
 //////
-	SVariable* function_sub(SThisCode* thisCode, SVariable* varSub1, SVariable* varSub2, SReturnsParams* returnsParams)
+	SVariable* function_sub(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varNum1	= returnsParams->params[0];
+		SVariable*	varNum2	= returnsParams->params[1];
 		s64			lnValue1, lnValue2;
 		f64			lfValue1, lfValue2;
 		bool		error;
@@ -9517,9 +9699,9 @@ debug_break;
 		//////////
 		// Parameter 1 must be numeric
 		//////
-			if (!iVariable_isValid(varSub1) || !iVariable_isTypeNumeric(varSub1))
+			if (!iVariable_isValid(varNum1) || !iVariable_isTypeNumeric(varNum1))
 			{
-				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varSub1), false);
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNum1), false);
 				return(NULL);
 			}
 
@@ -9527,9 +9709,9 @@ debug_break;
 		//////////
 		// Parameter 2 must be numeric
 		//////
-			if (!iVariable_isValid(varSub2) || !iVariable_isTypeNumeric(varSub2))
+			if (!iVariable_isValid(varNum2) || !iVariable_isTypeNumeric(varNum2))
 			{
-				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varSub2), false);
+				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNum2), false);
 				return(NULL);
 			}
 
@@ -9537,29 +9719,29 @@ debug_break;
 		//////////
 		// Determine what we're comparing
 		//////
-			if (iVariable_isTypeFloatingPoint(varSub1))
+			if (iVariable_isTypeFloatingPoint(varNum1))
 			{
 				// p1 is floating point, meaning the result will be too
-				lfValue1 = iiVariable_getAs_f64(thisCode, varSub1, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varSub1), false);	return(NULL);	}
+				lfValue1 = iiVariable_getAs_f64(thisCode, varNum1, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum1), false);	return(NULL);	}
 
 				// Create our floating point result
 				result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
 
 				// Grab p2
-				if (iVariable_isTypeFloatingPoint(varSub2))
+				if (iVariable_isTypeFloatingPoint(varNum2))
 				{
 					// p2 is floating point
-					lfValue2 = iiVariable_getAs_f64(thisCode, varSub2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varSub2), false);	return(NULL);	}
+					lfValue2 = iiVariable_getAs_f64(thisCode, varNum2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
 
 					// Store the result
 					*(f64*)result->value.data = lfValue1 - lfValue2;
 
 				} else  {
 					// p2 is not floating point, so we'll get it as an integer
-					lnValue2 = iiVariable_getAs_s64(thisCode, varSub2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varSub2), false);	return(NULL);	}
+					lnValue2 = iiVariable_getAs_s64(thisCode, varNum2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
 
 					// Store the result
 					*(f64*)result->value.data = lfValue1 - (f64)lnValue2;
@@ -9567,15 +9749,15 @@ debug_break;
 
 			} else {
 				// p1 is integer, result is determined by what p2 is, either integer or floating point
-				lnValue1 = iiVariable_getAs_s64(thisCode, varSub1, false, &error, &errorNum);
-				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varSub1), false);	return(NULL);	}
+				lnValue1 = iiVariable_getAs_s64(thisCode, varNum1, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum1), false);	return(NULL);	}
 
 				// Grab p2
-				if (iVariable_isTypeFloatingPoint(varSub2))
+				if (iVariable_isTypeFloatingPoint(varNum2))
 				{
 					// p2 is floating point
-					lfValue2 = iiVariable_getAs_f64(thisCode, varSub2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varSub2), false);	return(NULL);	}
+					lfValue2 = iiVariable_getAs_f64(thisCode, varNum2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
 
 					// Create our floating point result
 					result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
@@ -9585,8 +9767,8 @@ debug_break;
 
 				} else  {
 					// p2 is not floating point, so we'll get it as an integer
-					lnValue2 = iiVariable_getAs_s64(thisCode, varSub2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varSub2), false);	return(NULL);	}
+					lnValue2 = iiVariable_getAs_s64(thisCode, varNum2, false, &error, &errorNum);
+					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
 
 					// Create our floating point result
 					result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
@@ -9629,8 +9811,10 @@ debug_break;
 //    The sum of p1 * p2
 //
 //////
-	SVariable* function_mul(SThisCode* thisCode, SVariable* varNum1, SVariable* varNum2, SReturnsParams* returnsParams)
+	SVariable* function_mul(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varNum1	= returnsParams->params[0];
+		SVariable*	varNum2	= returnsParams->params[1];
 		s64			lnValue1, lnValue2;
 		f64			lfValue1, lfValue2;
 		bool		error;
@@ -9753,8 +9937,10 @@ debug_break;
 //    The sum of p1 / p2
 //
 //////
-	SVariable* function_div(SThisCode* thisCode, SVariable* varNum1, SVariable* varNum2, SReturnsParams* returnsParams)
+	SVariable* function_div(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varNum1	= returnsParams->params[0];
+		SVariable*	varNum2	= returnsParams->params[1];
 		s64			lnValue1, lnValue2;
 		f64			lfValue1, lfValue2;
 		bool		error;
@@ -9870,8 +10056,9 @@ debug_break;
 // Returns:
 //		Nothing, but whatever it is that's being modified may be open for modifying.
 //////
-	void command_clear(SThisCode* thisCode, SComp* compClear, SReturnsParams* returnsParams)
+	void command_clear(SThisCode* thisCode, SComp* compCommand, SReturnsParams* returnsParams)
 	{
+		SComp*			compClear = compCommand;
 		s32				lnClearLines, lnSaveLines;
 		bool			llManufactured;
 		SEM_callback	ecb;
@@ -10112,8 +10299,9 @@ debug_break;
 // Returns:
 //		Nothing, but whatever it is that's being modified may be open for modifying.
 //////
-	void command_modify(SThisCode* thisCode, SComp* compModify, SReturnsParams* returnsParams)
+	void command_modify(SThisCode* thisCode, SComp* compCommand, SReturnsParams* returnsParams)
 	{
+		SComp*	compModify = compCommand;
 		SComp*	compType;
 //		SComp*	compTarget;
 
@@ -10234,8 +10422,9 @@ debug_break;
 // Returns:
 //		Nothing, but the environment may be changed.
 //////
-	void command_open(SThisCode* thisCode, SComp* compOpen, SReturnsParams* returnsParams)
+	void command_open(SThisCode* thisCode, SComp* compCommand, SReturnsParams* returnsParams)
 	{
+		SComp*	compOpen = compCommand;
 		s32		lnLength;
 		sptr	lnDbcArea;
 		bool	llIsExclusive;
@@ -10358,8 +10547,9 @@ debug_break;
 // Returns:
 //    Nothing, but the environment may be changed.
 //////
-	void command_set(SThisCode* thisCode, SComp* compSet, SReturnsParams* returnsParams)
+	void command_set(SThisCode* thisCode, SComp* compCommand, SReturnsParams* returnsParams)
 	{
+		SComp*			compSet = compCommand;
 		s32				lnIndex;
 		bool			llManufactured;
 		SComp*			compSetTarget;
@@ -10481,8 +10671,9 @@ debug_break;
 // Returns:
 //    Nothing, but the environment may be changed.
 //////
-	void command_use(SThisCode* thisCode, SComp* compUse, SReturnsParams* returnsParams)
+	void command_use(SThisCode* thisCode, SComp* compCommand, SReturnsParams* returnsParams)
 	{
+		SComp*		compUse = compCommand;
 		sptr		lnWorkArea, lnWorkAreaAlias;
 		bool		llIsInUse, llIsValidWorkArea, llManufacturedTableName, llManufacturedAliasName, llIsExclusive;
 		SComp*		comp2;

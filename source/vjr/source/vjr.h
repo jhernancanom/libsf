@@ -193,7 +193,7 @@
 	//////////
 	// Added for test purposes
 	//////
-		void iTest1(void);
+		void iTest1(SThisCode* thisCode, SReturnsParams* returnsParams);
 		#include "test\test.cpp"
 
 
@@ -343,7 +343,7 @@
 	//////////
 	// Added for test purposes
 	//////
-		void iTest1(void);
+		void iTest1(SThisCode* thisCode, SReturnsParams* returnsParams);
 		#include "test/test.cpp"
 
 

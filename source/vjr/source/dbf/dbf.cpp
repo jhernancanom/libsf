@@ -371,6 +371,8 @@
 			uptr		_validateStruture;
 			bool		(*validateStructure)(SWorkArea* wa);
 		};
+		bool			error;
+		u32				errorNum;
 
 
 		//////////
@@ -460,12 +462,9 @@
 		//////////
 		// We can only populate into the indicated work area
 		//////
-			if (waBase[lnI].isUsed)
-			{
-				// This slot is already in use, and therefore invalid
-				return(_DBF_ERROR_WORK_AREA_ALREADY_IN_USE);
-			}
 			wa = waBase + lnI;
+			if (wa->isUsed)
+				return(_DBF_ERROR_WORK_AREA_ALREADY_IN_USE);	// This slot is already in use, and therefore invalid
 
 
 		//////////
@@ -477,8 +476,8 @@
 		//////////
 		// Initialize
 		//////
-			memset(wa->tablePathname,	0, sizeof(wa->tablePathname));
-			memset(wa->alias,			0, sizeof(wa->alias));
+			memset(wa->tablePathname,		0, sizeof(wa->tablePathname));
+			memset(wa->alias,				0, sizeof(wa->alias));
 			memset(wa->idxCdxDcxPathname,	0, sizeof(wa->idxCdxDcxPathname));
 
 
@@ -492,52 +491,55 @@
 				return(_DBF_ERROR_TABLE_NAME_TOO_LONG);
 			}
 			memcpy(wa->tablePathname, table, wa->tablePathnameLength);
+
+
+		//////////
+		// Alias
+		//////
 			if (alias != NULL)
 			{
 				// The alias is allowed to be as long as the alias space is, or shorter
 				wa->aliasLength = (((s32)strlen(alias) >= (s32)sizeof(wa->alias)) ? (s32)sizeof(wa->alias) : (u32)strlen(alias));
 				memcpy(wa->alias, alias, wa->aliasLength);
+
+			} else {
+				// We need to create a random alias
+// TODO:  Code this
 			}
 
 
 		//////////
 		// Set the flags based on shared or exclusive
 		//////
-			if (tlExclusive)
-			{
-				// Exclusive
-				lShareFlag = _SH_DENYRW;	// Deny reads and writes
-
-			} else {
-				// Shared
-				lShareFlag = _SH_DENYNO;	// Deny none
-			}
+			lShareFlag = ((tlExclusive) ? _SH_DENYRW/*Exclusive denies reads and writes*/ : _SH_DENYNO/*Shared denies none*/);
 
 
 		//////////
-		// Open the table based on the shared/exclusive mode
+		// Open the table based on the shared mode with the shared/exclusive flag
 		//////
 			wa->fhDbf = _sopen(table, _O_BINARY | _O_RDWR, lShareFlag);
 			if (wa->fhDbf < 0)
 			{
+
+				//////////
 				// Unable to open
 				// See if it's already open and if we can use it again
-				if (tlAgain && (lnWorkArea = iDbf_get_workArea_byTablePathname(thisCode, table, null)) >= 0)
-				{
-					// We found the work area where this table is already open ... share its file handle
-					wa->fhDbf = _dup(gsWorkArea[lnWorkArea].fhDbf);
-				}
+				//////
+					if (tlAgain && (lnWorkArea = iDbf_get_workArea_byTablePathname(thisCode, table, null)) >= 0)
+						wa->fhDbf = _dup(gsWorkArea[lnWorkArea].fhDbf);	// We found the work area where this table is already open ... share its file handle
 
-				if (wa->fhDbf < 0)
-				{
-					// Unable to open the specified table
-					return(_DBF_ERROR_UNABLE_TO_OPEN_TABLE);
-				}
+
+				//////////
+				// Did we get it?
+				//////
+					if (wa->fhDbf < 0)
+						return(_DBF_ERROR_UNABLE_TO_OPEN_TABLE);	// Unable to open the specified table
+
 			}
 
 
 		//////////
-		// Read the header
+		// Read the fixed portion of the header
 		//////
 			numread = (u32)_read(wa->fhDbf, &wa->header, sizeof(wa->header));
 			if (numread != sizeof(wa->header))
@@ -558,6 +560,9 @@
 // 		0xf5   FoxPro 2.x (or earlier) with memo
 // 		0xfb   FoxBASE
 //
+// Future types (James 4:15):
+//		0x33   Visual FreePro
+//
 // Not currently supported:
 // 		0x43   dBASE IV SQL table files, no memo
 // 		0x63   dBASE IV SQL system files, no memo
@@ -567,20 +572,22 @@
 		//////////
 		// Parse the header
 		//////
-			wa->isVisualTable = false;
+			wa->mayHaveCdxSdx	= false;
+			wa->isVisualTable	= false;
 			switch (wa->header.type)
 			{
 				case 0x30:		// Visual FoxPro 3.0 or higher
-				case 0x31:		// Visual FoxPro 3.0 or higher, with autoincrement enabled
+				case 0x31:		// Visual FoxPro 3.0 or higher, with auto-increment enabled
 					wa->isVisualTable = true;
+					// Fall through to raise the mayHaveCdxSdx flag
+
+				case 0xf5:		// FoxPro 2.x (or earlier), with memo
+					wa->mayHaveCdxSdx = true;
 					break;
 
 				case 0x02:		// FoxBASE, no memo
 				case 0x03:		// FoxBASE+, no memo
-					break;
-
 				case 0x83:		// FoxBASE+, with memo
-				case 0xf5:		// FoxPro 2.x (or earlier), with memo
 				case 0xfb:		// FoxBASE, with memo
 					break;
 
@@ -592,7 +599,7 @@
 
 
 		//////////
-		// Allocate enough memory for the table structure
+		// Allocate enough memory for the variable portion of the header (table structure)
 		//////
 			lStructure_size		= wa->header.firstRecord - sizeof(STableHeader);
 			wa->fieldPtr1		= (SFieldRecord1*)malloc(lStructure_size);
@@ -606,9 +613,8 @@
 		//////////
 		// Read in the fields
 		//////
-			_lseek(wa->fhDbf, sizeof(STableHeader), SEEK_SET);
-			numread = (u32)_read(wa->fhDbf, wa->fieldPtr1, lStructure_size);
-			if (numread != lStructure_size)
+			numread = iDisk_read(wa->fhDbf, sizeof(STableHeader), (s8*)wa->fieldPtr1, lStructure_size, &error, &errorNum);
+			if (error || numread != lStructure_size)
 			{
 				_close(wa->fhDbf);
 				return(_DBF_ERROR_ERROR_READING_HEADER2);
@@ -618,14 +624,18 @@
 		//////////
 		// Parse the fields to determine the count
 		//////
-			lfrPtr			= wa->fieldPtr1;
-			wa->fieldCount	= 0;
-			while (lfrPtr->name[0] != 0 && lfrPtr->name[0] != 13)
+			for (wa->fieldCount = 0, lfrPtr = wa->fieldPtr1; lfrPtr->name[0] != 0 && lfrPtr->name[0] != 13; lfrPtr++)
 			{
 				//////////
 				// Increase the field count
 				//////
 					++wa->fieldCount;
+
+
+				//////////
+				// Field name length
+				//////
+					lfrPtr->fieldName_length = (u8)strlen(lfrPtr->name);
 
 
 				//////////
@@ -690,57 +700,49 @@
 					if (lfrPtr->flags & _DBF_FIELD_NULLS)
 						lfrPtr->indexFixup |= _DBF_INDEX_FIXUP_NULL;
 
-
-				// Move to the next field in the field structure
-				++lfrPtr;
 			}
 			// When we get here, lfrPtr is pointing to the structure termination byte.
-			// If this table has a container, the next byte will be the start of the relative backlink to the table
+
+
+		//////////
+		// DBC backlink (if the table is inside a container)
+		//////
 			wa->backlink		= (s8*)lfrPtr + 1;				// The "+1" skips past the trailing CHR(13) which terminates the structure list ... what a way to delineate data in a fixed-length structure.  "FieldCount" anyone?  Hello!?!? :-) :-) :-)
 			wa->backlinkLength	= (u32)strlen(wa->backlink);	// If there is no name, it will immediately hit a NULL characterand the length will be 0
 
 
 		//////////
-		// If it's a visual table, it might have a DBC backlink
+		// It might have a CDX
 		//////
-			if (wa->isVisualTable && lnIndexType != _INDEX_NONE)
+			if (wa->mayHaveCdxSdx && lnIndexType != _INDEX_NONE)
 			{
-				// Prepare to see if it has an associated CDX
+// TODO:  This will need to be refactored when SDX support is given, so that both a CDX and an SDX can be open at the same time
+				// Prepare to see if it has an associated CDX or SDX
 				memset(cdxSdxOrDcxFilename, 0, sizeof(cdxSdxOrDcxFilename));
 				if (wa->tablePathnameLength >= 5)
 				{
-					// Filename is at least something like "a.dbf"
-					memcpy(cdxSdxOrDcxFilename, wa->tablePathname, wa->tablePathnameLength);
-					if (lnIndexType == _INDEX_CDX)
-					{
-						// It's a cdx
-						memcpy(cdxSdxOrDcxFilename + wa->tablePathnameLength - (sizeof(cgcCdxExtension) - 1), cgcCdxExtension, sizeof(cgcCdxExtension) - 1);
 
-					} else if (lnIndexType == _INDEX_SDX) {
-						// It's a sdx
-						memcpy(cdxSdxOrDcxFilename + wa->tablePathnameLength - (sizeof(cgcCdxExtension) - 1), cgcSdxExtension, sizeof(cgcSdxExtension) - 1);
+					//////////
+					// Copy "filename.dbf"
+					//////
+						memcpy(cdxSdxOrDcxFilename, wa->tablePathname, wa->tablePathnameLength);
 
-					} else if (lnIndexType == _INDEX_DCX) {
-						// It's a dcx
-						memcpy(cdxSdxOrDcxFilename + wa->tablePathnameLength - (sizeof(cgcCdxExtension) - 1), cgcDcxExtension, sizeof(cgcDcxExtension) - 1);
-					}
-					// else ... note, we only automatically open these index types.  There may be others, but we won't open them as well.
+
+					//////////
+					// Convert to "filename.cdx/sdx/dcx"
+					//////
+							 if (lnIndexType == _INDEX_CDX)		memcpy(cdxSdxOrDcxFilename + wa->tablePathnameLength - (sizeof(cgcCdxExtension) - 1), cgcCdxExtension, sizeof(cgcCdxExtension) - 1);
+						else if (lnIndexType == _INDEX_SDX)		memcpy(cdxSdxOrDcxFilename + wa->tablePathnameLength - (sizeof(cgcCdxExtension) - 1), cgcSdxExtension, sizeof(cgcSdxExtension) - 1);
+						else if (lnIndexType == _INDEX_DCX)		memcpy(cdxSdxOrDcxFilename + wa->tablePathnameLength - (sizeof(cgcCdxExtension) - 1), cgcDcxExtension, sizeof(cgcDcxExtension) - 1);
+						else									memset(cdxSdxOrDcxFilename, 0, sizeof(cdxSdxOrDcxFilename));
+
 				}
 			}
 
 
 		//////////
-		// For each field, determine its name length
-		//////
-			lfrPtr = wa->fieldPtr1;
-			for (lnField = 0; lnField < wa->fieldCount; lnField++, lfrPtr++)
-				lfrPtr->fieldName_length = (u8)strlen(lfrPtr->name);
-
-			// When we get here, all of the fields have their field length as well
-
-
-		//////////
-		// Copy to the SFieldRecord2.  If it's part of a container, name2 will be flushed out to the full field name later
+		// Copy out to SFieldRecord2
+		// Note:  If the table's part of a container, this name2 will be flushed out to the full field name later
 		//////
 			wa->field2Ptr = (SFieldRecord2*)malloc(wa->fieldCount * sizeof(SFieldRecord2));
 			if (!wa->field2Ptr)
@@ -750,10 +752,16 @@
 				return(_DBF_ERROR_MEMORY_ALLOCATION);
 			}
 
-			// Copy over what we have
+
+		//////////
+		// Initialize
+		//////
 			memset(wa->field2Ptr, 0, wa->fieldCount * sizeof(SFieldRecord2));
 
-			// Iterate through every field
+
+		//////////
+		// Copy every field
+		//////
 			for (lnField = 1, lfrPtr = wa->fieldPtr1, lfr2Ptr = wa->field2Ptr; lnField <= wa->fieldCount; lnField++, lfrPtr++, lfr2Ptr++)
 			{
 				//////////
@@ -782,32 +790,32 @@
 
 
 		//////////
-		// Reset our pointers
-		//////
-			lfrPtr	= wa->fieldPtr1;
-			lfr2Ptr	= wa->field2Ptr;
-
-
-		//////////
 		// See if there's an entry in the container for this table,
 		// and if so update the field names to their longer form
 		//////
 			if (wa->isVisualTable && wa->backlinkLength != 0)
 			{
+
+				//////////
 				// Try to open the backlink
-				iiDbc_lookupTableField(thisCode, wa, &llDbcIsValid, tlExclusive);
-				// llDbcIsValid is populated as a passed-in return parameter
+				//////
+					iiDbc_lookupTableField(thisCode, wa, &llDbcIsValid, tlExclusive);
+					// llDbcIsValid is populated as a passed-in return parameter
 
+
+				//////////
 				// Are we good?
-				if (!llDbcIsValid)
-				{
-					// Signal the failure
-					iError_signal(thisCode, _ERROR_UNABLE_TO_OPEN_DBC, NULL, false, wa->tablePathname, false);
+				//////
+					if (!llDbcIsValid)
+					{
+						// Signal the failure
+						iError_signal(thisCode, _ERROR_UNABLE_TO_OPEN_DBC, NULL, false, wa->tablePathname, false);
 
-					// Return failure
-					_close(wa->fhDbf);
-					return(_DBF_ERROR_DBC);
-				}
+						// Return failure
+						_close(wa->fhDbf);
+						return(_DBF_ERROR_DBC);
+					}
+
 			}
 
 
@@ -815,39 +823,39 @@
 		// Allocate enough space for one row of data
 		// Active data changed per current row
 		//////
-			wa->data = (s8*)malloc(wa->header.recordLength);
-			if (wa->data == NULL)
+			iDatum_allocateSpace(&wa->row, wa->header.recordLength);
+			if (!wa->row.data)
 			{
 				_close(wa->fhDbf);
 				return(_DBF_ERROR_MEMORY_ROW);
 			}
-			memset(wa->data, 0, wa->header.recordLength);
 
 
 		//////////
 		// Allocate enough space for one row of data
 		// Original data
 		//////
-			wa->odata = (s8*)malloc(wa->header.recordLength);
-			if (wa->odata == NULL)
+			iDatum_allocateSpace(&wa->orow, wa->header.recordLength);
+			if (wa->orow.data == NULL)
 			{
 				_close(wa->fhDbf);
+				iDatum_delete(&wa->row, false);
 				return(_DBF_ERROR_MEMORY_ORIGINAL);
 			}
-			memset(wa->odata, 0, wa->header.recordLength);		// For original copy of loaded data (allows reversion)
 
 
 		//////////
 		// Allocate enough space for one row of data
 		// Index data (for the creation of index keys, population of a data source for key generation, without affecting the current row's record data)
 		//////
-			wa->idata = (s8*)malloc(wa->header.recordLength);
-			if (wa->idata == NULL)
+			iDatum_allocateSpace(&wa->irow, wa->header.recordLength);
+			if (wa->irow.data == NULL)
 			{
 				_close(wa->fhDbf);
+				iDatum_delete(&wa->row, false);
+				iDatum_delete(&wa->orow, false);
 				return(_DBF_ERROR_MEMORY_INDEX);
 			}
-			memset(wa->idata, 0, wa->header.recordLength);		// For original copy of loaded data (allows reversion)
 
 
 		//////////
@@ -1038,7 +1046,7 @@
 			wa->isCached = true;
 
 			// Free data
-			iiFreeAndSetToNull((void **)&wa->data);
+			iDatum_delete(&wa->row, false);
 
 			// Reset the file pointer to where it was
 			_lseeki64(wa->fhDbf, lnOriginalFilePosition, SEEK_SET);
@@ -1085,8 +1093,11 @@
 		//////////
 		// File close
 		//////
-			_close(wa->fhDbf);				// Note:  No non-null checking here because: a) It should never be non-null and b) if it is, we don't care because we're making it that way anyway
-			wa->fhDbf = 0;
+			if (wa->fhDbf != 0)
+			{
+				_close(wa->fhDbf);
+				wa->fhDbf = 0;
+			}
 
 
 		//////////
@@ -1102,16 +1113,14 @@
 
 			} else {
 				// Free data
-				iiFreeAndSetToNull((void **)&wa->data);
+				iDatum_delete(&wa->row, false);
 			}
 
 			// Release our original record buffer
-			if (wa->odata != NULL && wa->odata != (s8*)-1)
-				iiFreeAndSetToNull((void **)&wa->odata);
+			iDatum_delete(&wa->orow, false);
 
 			// Release our buffer for building index keys
-			if (wa->idata != NULL && wa->idata != (s8*)-1)
-				iiFreeAndSetToNull((void **)&wa->idata);
+			iDatum_delete(&wa->irow, false);
 
 
 		//////////
@@ -1791,9 +1800,10 @@
 //////
 	SVariable* iDbf_get_alias_fromPathname(SThisCode* thisCode, SVariable* varPathname, cu8* tcSpecialKeyName)
 	{
-		u32			lnI_max, lnAppendValue;
-		bool		llAppendedSix;
-		SVariable*	varAlias;
+		u32				lnI_max, lnAppendValue;
+		bool			llAppendedSix;
+		SVariable*		varAlias;
+		SReturnsParams	returnsParams;
 
 
 		//////////
@@ -1803,7 +1813,9 @@
 			if (varPathname)
 			{
 				// Grab the stem part of the name
-				varAlias = function_juststem(thisCode, varPathname, varSix, NULL);
+				returnsParams.params[0] = varPathname;
+				returnsParams.params[1] = varSix;
+				varAlias = function_juststem(thisCode, &returnsParams);
 
 				// If it's invalid, or unreachable, then just use a default alias name
 				if (!iVariable_isTypeCharacter(varAlias) || iVariable_isEmpty(varAlias))
@@ -1934,7 +1946,7 @@
 				if (wa->isCached)
 				{
 					// We have the table cached, so just change .data to point to the right place
-					wa->data = wa->cachedTable + ((recordNumber - 1) * wa->header.recordLength);
+					wa->row.data = wa->cachedTable + ((recordNumber - 1) * wa->header.recordLength);
 
 				} else {
 
@@ -1961,7 +1973,7 @@
 					// Read
 					// Note:  memo field content is not loaded at this time, but only upon direct request
 					//////
-						lnNumread = _read(wa->fhDbf, wa->data, wa->header.recordLength);
+						lnNumread = _read(wa->fhDbf, wa->row.data, wa->header.recordLength);
 						if (lnNumread != wa->header.recordLength)
 							return(-1);
 
@@ -1978,7 +1990,7 @@
 				wa->isDirty			= false;
 
 				// Copy to the original record
-				memcpy(wa->odata, wa->data, wa->header.recordLength);
+				memcpy(wa->orow.data, wa->row.data, wa->header.recordLength);
 
 
 				//////////
@@ -2085,7 +2097,7 @@
 				//////////
 				// Write
 				//////
-					lnNumread = _write(wa->fhDbf, wa->data, wa->header.recordLength);
+					lnNumread = _write(wa->fhDbf, wa->row.data, wa->header.recordLength);
 					if (lnNumread != wa->header.recordLength)
 						return(_DBF_ERROR_WRITING);
 
@@ -2101,7 +2113,7 @@
 				// Lower the dirty flag, and copy to the original data
 				//////
 					wa->isDirty = false;
-					memcpy(wa->odata, wa->data, wa->header.recordLength);
+					memcpy(wa->orow.data, wa->row.data, wa->header.recordLength);
 			}
 
 			// If we get here, nothing to do
@@ -2132,7 +2144,7 @@
 				// 4-byte form
 				//////
 					llFourByte = true;
-					if (*(u32*)(wa->data + fr2Ptr->offset) != 0)
+					if (*(u32*)(wa->row.data + fr2Ptr->offset) != 0)
 					{
 						// There was something there previously
 						llAppend	= (fr2Ptr->mdataLength > fr2Ptr->omdataLength);
@@ -2223,7 +2235,7 @@
 		return(wa->fieldCount);
 	}
 
-	uptr iDbf_getReccount(SThisCode* thisCode, SWorkArea* wa)
+	sptr iDbf_getReccount(SThisCode* thisCode, SWorkArea* wa)
 	{
 		//////////
 		// Check for errors
@@ -2236,7 +2248,7 @@
 
 
 		// Iterate through the fields until we find the one they want
-		return(wa->header.records);
+		return((s32)wa->header.records);
 	}
 
 	// Returns 10-digit field name
@@ -2666,7 +2678,7 @@
 				if (iDbf_getNull_offsetAndMask(thisCode, wa, fieldNumber, &lnOffset, &lnBitMask))
 				{
 					// See if this field is actually null
-					if ((wa->data[lnOffset] & lnBitMask) != 0)
+					if ((wa->row.data[lnOffset] & lnBitMask) != 0)
 					{
 						// It's .NULL.
 						lnNull = 1;
@@ -2862,7 +2874,7 @@
 			if (dest)
 			{
 				// Copy the data
-				memcpy(dest, wa->data + lfrp->offset, min(lfrp->length, destLength));
+				memcpy(dest, wa->row.data + lfrp->offset, min(lfrp->length, destLength));
 
 				// Return the length
 				_value = min(lfrp->length, destLength);
@@ -2870,7 +2882,7 @@
 
 			} else {
 				// Return the offset to the actual data
-				return(wa->data_s8 + lfrp->offset);
+				return(wa->row.data_s8 + lfrp->offset);
 			}
 		}
 		// If we get here, failure
@@ -2909,7 +2921,7 @@
 
 				// Copy the data
 				lnLength += min(lfrp->length, destLength);
-				memcpy(dest, wa->data + lfrp->offset, lnLength);
+				memcpy(dest, wa->row.data + lfrp->offset, lnLength);
 
 				// Fixup if need be
 				if (tlRetrieveAsIndexKey && lfrp->indexFixup != 0)
@@ -3035,7 +3047,7 @@
 
 			} else {
 				// Return the offset to the actual data
-				return(wa->data_s8 + lfrp->offset);
+				return(wa->row.data_s8 + lfrp->offset);
 			}
 		}
 		// If we get here, failure
@@ -3140,9 +3152,9 @@
 					{
 						// idata
 						wa->isDirty = true;
-						memcpy(wa->idata + lfrp->offset, src, min(lfrp->length, srcLength));
+						memcpy(wa->irow.data + lfrp->offset, src, min(lfrp->length, srcLength));
 						if (lfrp->length > srcLength)
-							memset(wa->idata + lfrp->offset + srcLength, lfrp->fillChar, lfrp->length - srcLength);
+							memset(wa->irow.data + lfrp->offset + srcLength, lfrp->fillChar, lfrp->length - srcLength);
 
 					} else {
 						// data
@@ -3160,9 +3172,9 @@
 						// Do the physical update
 						//////
 							wa->isDirty = true;
-							memcpy(wa->data + lfrp->offset, src, min(lfrp->length, srcLength));
+							memcpy(wa->row.data + lfrp->offset, src, min(lfrp->length, srcLength));
 							if (lfrp->length > srcLength)
-								memset(wa->data + lfrp->offset + srcLength, lfrp->fillChar, lfrp->length - srcLength);
+								memset(wa->row.data + lfrp->offset + srcLength, lfrp->fillChar, lfrp->length - srcLength);
 
 
 						//////////
@@ -3273,7 +3285,7 @@
 				for (lnErrors = 0, lnI = lfrp->offset; lnI < lfrp->offset + lfrp->length; lnI++)
 				{
 					// Grab the character
-					c = wa->data[lnI];
+					c = wa->row.data[lnI];
 
 					// Are all ASCII characters allowed
 					if (llAllowAllStd)
@@ -3491,7 +3503,7 @@
 						switch (lfr2Ptr->type)
 						{
 							case 'N':	// Numeric
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_NUMERIC, wa->data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
+								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_NUMERIC, wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
 
 							case 'M':	// Memo
@@ -3500,35 +3512,35 @@
 								break;
 
 							case 'C':	// Character
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER,	wa->data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
+								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER,	wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
 
 							case 'I':	// Integer
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_S32,			wa->data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
+								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_S32,			wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
 
 							case 'F':	// Float
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_NUMERIC,		wa->data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
+								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_NUMERIC,		wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
 
 							case 'B':	// Double
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_F64,			wa->data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
+								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_F64,			wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
 
 							case 'L':	// Logical
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL,		wa->data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
+								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL,		wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
 
 							case 'D':	// Date
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL,		wa->data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
+								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL,		wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
 
 							case 'T':	// DateTime
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL,		wa->data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
+								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL,		wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
 
 							case 'Y':	// Currency
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CURRENCY,		wa->data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
+								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CURRENCY,		wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
 //							case 'G':	// General
 // 							case 'P':	// Picture
@@ -3802,7 +3814,7 @@
 					iDbf_gotoRecord(thisCode, wa->dbc, lnRecno);
 
 					// Is it deleted?
-					if (wa->dbc->data[0] == 32)
+					if (wa->dbc->row.data[0] == 32)
 					{
 						// Not deleted
 						if (llSearchingForTable)
@@ -3851,7 +3863,7 @@
 						iDbf_gotoRecord(thisCode, wa->dbc, lnRecno);
 
 						// Is it deleted?
-						if (gsWorkArea[lnDbcHandle].odata[0] == 32)
+						if (gsWorkArea[lnDbcHandle].orow.data[0] == 32)
 						{
 							// Not deleted
 							// Looking for "Field" entries
@@ -4069,73 +4081,73 @@
 				{
 					case _FOR_CLAUSE_OPS_EQUAL_ROW_DATA:
 						// It's equal to something
-						if (memcmp(wa->data + lfo->offsetL, wa->data + lfo->offsetR, lfo->lengthL) != 0)
+						if (memcmp(wa->row.data + lfo->offsetL, wa->row.data + lfo->offsetR, lfo->lengthL) != 0)
 							return(false);		// Is not equal
 						break;
 
 					case _FOR_CLAUSE_OPS_NOT | _FOR_CLAUSE_OPS_EQUAL_ROW_DATA:
 						// It's not equal to something
-						if (memcmp(wa->data + lfo->offsetL, wa->data + lfo->offsetR, lfo->lengthL) == 0)
+						if (memcmp(wa->row.data + lfo->offsetL, wa->row.data + lfo->offsetR, lfo->lengthL) == 0)
 							return(false);		// Is equal
 						break;
 
 					case _FOR_CLAUSE_OPS_LESS_THAN_ROW_DATA:
 						// It's less than row data
-						if (memcmp(wa->data + lfo->offsetL, wa->data + lfo->offsetR, lfo->lengthL) >= 0)
+						if (memcmp(wa->row.data + lfo->offsetL, wa->row.data + lfo->offsetR, lfo->lengthL) >= 0)
 							return(false);		// Is greater than or equal to
 						break;
 
 					case _FOR_CLAUSE_OPS_NOT | _FOR_CLAUSE_OPS_LESS_THAN_ROW_DATA:
 						// It's not less than row data
-						if (memcmp(wa->data + lfo->offsetL, wa->data + lfo->offsetR, lfo->lengthL) < 0)
+						if (memcmp(wa->row.data + lfo->offsetL, wa->row.data + lfo->offsetR, lfo->lengthL) < 0)
 							return(false);		// Is less than
 						break;
 
 					case _FOR_CLAUSE_OPS_GREATER_THAN_ROW_DATA:
 						// It's greater than row data
-						if (memcmp(wa->data + lfo->offsetL, wa->data + lfo->offsetR, lfo->lengthL) <= 0)
+						if (memcmp(wa->row.data + lfo->offsetL, wa->row.data + lfo->offsetR, lfo->lengthL) <= 0)
 							return(false);		// Is less than or equal to
 						break;
 
 					case _FOR_CLAUSE_OPS_NOT | _FOR_CLAUSE_OPS_GREATER_THAN_ROW_DATA:
 						// It's not greater than row data
-						if (memcmp(wa->data + lfo->offsetL, wa->data + lfo->offsetR, lfo->lengthL) > 0)
+						if (memcmp(wa->row.data + lfo->offsetL, wa->row.data + lfo->offsetR, lfo->lengthL) > 0)
 							return(false);		// Is greater than
 						break;
 
 					case _FOR_CLAUSE_OPS_EQUAL_TEMPORARY:
 						// It's equal to a temporary
-						if (memcmp(wa->data + lfo->offsetL, lftr->data, min(lfo->lengthL, lftr->length)) != 0)
+						if (memcmp(wa->row.data + lfo->offsetL, lftr->data, min(lfo->lengthL, lftr->length)) != 0)
 							return(false);		// Is not equal
 						break;
 
 					case _FOR_CLAUSE_OPS_NOT | _FOR_CLAUSE_OPS_EQUAL_TEMPORARY:
 						// It's not equal to a temporary
-						if (memcmp(wa->data + lfo->offsetL, lftr->data, min(lfo->lengthL, lftr->length)) == 0)
+						if (memcmp(wa->row.data + lfo->offsetL, lftr->data, min(lfo->lengthL, lftr->length)) == 0)
 							return(false);		// Is equal
 						break;
 
 					case _FOR_CLAUSE_OPS_LESS_THAN_TEMPORARY:
 						// It's less than a temporary
-						if (memcmp(wa->data + lfo->offsetL, lftr->data, min(lfo->lengthL, lftr->length)) >= 0)
+						if (memcmp(wa->row.data + lfo->offsetL, lftr->data, min(lfo->lengthL, lftr->length)) >= 0)
 							return(false);		// Is greater than or equal to
 						break;
 
 					case _FOR_CLAUSE_OPS_NOT | _FOR_CLAUSE_OPS_LESS_THAN_TEMPORARY:
 						// It's not less than a temporary
-						if (memcmp(wa->data + lfo->offsetL, lftr->data, min(lfo->lengthL, lftr->length)) < 0)
+						if (memcmp(wa->row.data + lfo->offsetL, lftr->data, min(lfo->lengthL, lftr->length)) < 0)
 							return(false);		// Is less than
 						break;
 
 					case _FOR_CLAUSE_OPS_GREATER_THAN_TEMPORARY:
 						// It's greater than a temporary
-						if (memcmp(wa->data + lfo->offsetL, lftr->data, min(lfo->lengthL, lftr->length)) >= 0)
+						if (memcmp(wa->row.data + lfo->offsetL, lftr->data, min(lfo->lengthL, lftr->length)) >= 0)
 							return(false);		// Is greater than or equal to
 						break;
 
 					case _FOR_CLAUSE_OPS_NOT | _FOR_CLAUSE_OPS_GREATER_THAN_TEMPORARY:
 						// It's not greater than a temporary
-						if (memcmp(wa->data + lfo->offsetL, lftr->data, min(lfo->lengthL, lftr->length)) > 0)
+						if (memcmp(wa->row.data + lfo->offsetL, lftr->data, min(lfo->lengthL, lftr->length)) > 0)
 							return(false);		// Is greater than
 						break;
 

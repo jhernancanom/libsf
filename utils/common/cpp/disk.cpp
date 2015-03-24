@@ -147,6 +147,112 @@
 
 //////////
 //
+// Called to optionally seek, then read in the indicated size.
+// If no seek is required, send a negative value for tnSeekOffset.
+//
+//////
+	s32 iDisk_read(s32 tnFile, s64 tnSeekOffset, s8* tcData, s32 tnReadCount, bool* tlError, u32* tnErrorNum)
+	{
+		s64 lnSeekOffset;
+
+
+		//////////
+		// Lower the error flag
+		//////
+			*tlError	= false;
+			*tnErrorNum	= 0;
+
+
+		//////////
+		// Optionally seek
+		//////
+			if (tnSeekOffset >= 0)
+			{
+
+				//////////
+				// Seek
+				//////
+					lnSeekOffset = _lseeki64(tnFile, tnSeekOffset, SEEK_SET);
+
+
+				//////////
+				// Are we there?
+				//////
+					if (lnSeekOffset != tnSeekOffset)
+					{
+						*tlError	= true;
+						*tnErrorNum	= errno;
+						return(-1);
+					}
+
+			}
+
+
+		//////////
+		// Read
+		//////
+			return(_read(tnFile, tcData, tnReadCount));
+
+	}
+
+
+
+
+//////////
+//
+// Called to optionally seek, then write out the indicated size.
+// If no seek is required, send a negative value for tnSeekOffset.
+//
+//////
+	s32 iDisk_write(s32 tnFile, s64 tnSeekOffset, s8* tcData, s32 tnWriteCount, bool* tlError, u32* tnErrorNum)
+	{
+		s64 lnSeekOffset;
+
+
+		//////////
+		// Lower the error flag
+		//////
+			*tlError	= false;
+			*tnErrorNum	= 0;
+
+
+		//////////
+		// Optionally seek
+		//////
+			if (tnSeekOffset >= 0)
+			{
+
+				//////////
+				// Seek
+				//////
+					lnSeekOffset = _lseeki64(tnFile, tnSeekOffset, SEEK_SET);
+
+
+				//////////
+				// Are we there?
+				//////
+					if (lnSeekOffset != tnSeekOffset)
+					{
+						*tlError	= true;
+						*tnErrorNum	= errno;
+						return(-1);
+					}
+
+			}
+
+
+		//////////
+		// Read
+		//////
+			return(_write(tnFile, tcData, tnWriteCount));
+
+	}
+
+
+
+
+//////////
+//
 // Called to potentially retry so long as the callback returns true.
 //
 //////

@@ -180,7 +180,7 @@ struct SFieldRecord2;
 	bool				iiDbf_writeMemo									(SThisCode* thisCode, SWorkArea* wa, SFieldRecord2* fr2Ptr);
 
 	uptr				iDbf_getFieldCount								(SThisCode* thisCode, SWorkArea* wa);
-	uptr				iDbf_getReccount								(SThisCode* thisCode, SWorkArea* wa);
+	sptr				iDbf_getReccount								(SThisCode* thisCode, SWorkArea* wa);
 	uptr				iDbf_getField_name								(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength);
 	uptr				iDbf_getField_type								(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength);
 	uptr				iDbf_getField_type_verbose						(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength);

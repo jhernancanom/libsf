@@ -315,13 +315,13 @@ struct SReturnsParams;
 // STEP1B: Define your command
 //
 //////
-	void				command_clear								(SThisCode* thisCode, SComp* compClear, SReturnsParams* returnsParams);
+	void				command_clear								(SThisCode* thisCode, SComp* compCommand, SReturnsParams* returnsParams);
 	bool				iiCommand_clear_last_callback				(SEM_callback* ecb);
 	bool				iiCommand_clear_keep_callback				(SEM_callback* ecb);
-	void				command_modify								(SThisCode* thisCode, SComp* compModify, SReturnsParams* returnsParams);
-	void				command_open								(SThisCode* thisCode, SComp* compOpen, SReturnsParams* returnsParams);
-	void				command_set									(SThisCode* thisCode, SComp* compSet, SReturnsParams* returnsParams);
-	void				command_use									(SThisCode* thisCode, SComp* compUse, SReturnsParams* returnsParams);
+	void				command_modify								(SThisCode* thisCode, SComp* compCommand, SReturnsParams* returnsParams);
+	void				command_open								(SThisCode* thisCode, SComp* compCommand, SReturnsParams* returnsParams);
+	void				command_set									(SThisCode* thisCode, SComp* compCommand, SReturnsParams* returnsParams);
+	void				command_use									(SThisCode* thisCode, SComp* compCommand, SReturnsParams* returnsParams);
 
 
 
@@ -332,46 +332,37 @@ struct SReturnsParams;
 	struct SFunctionData
 	{
 		//////////
-		// The iCode relates to the known functions.
-		// See cgcFundamentalSymbols and cgcKeywordKeywords in compiler_globals.h
+		// iCode relates to the keyword identified in source code, tranlated to a usable number.
+		// See cgcKeywordsVxb in vxb_globals.h.
+		// There are also other areas, so a generic "cgcKeywords" search might yield additional locations.
 		//////
 			s32		iCode;
 
 
 		//////////
-		// Return variables this function generates
+		// Number of return variables this function generates
 		//////
 			s32		returnCount;
 
 
 		//////////
-		// Function prototypes to call internally
+		// Function to call to conduct the work
 		//////
 			union {
 				uptr		_func;
-				SVariable*	(*func_0p)		(SThisCode* thisCode, SReturnsParams* returnsParams);
-				SVariable*	(*func_1p)		(SThisCode* thisCode, SVariable* p1, SReturnsParams* returnsParams);
-				SVariable*	(*func_2p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SReturnsParams* returnsParams);
-				SVariable*	(*func_3p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SReturnsParams* returnsParams);
-				SVariable*	(*func_4p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SReturnsParams* returnsParams);
-				SVariable*	(*func_5p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SReturnsParams* returnsParams);
-				SVariable*	(*func_6p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6, SReturnsParams* returnsParams);
-				SVariable*	(*func_7p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6, SVariable* p7, SReturnsParams* returnsParams);
-				SVariable*	(*func_8p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6, SVariable* p7, SVariable* p8, SReturnsParams* returnsParams);
-				SVariable*	(*func_9p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6, SVariable* p7, SVariable* p8, SVariable* p9, SReturnsParams* returnsParams);
-				SVariable*	(*func_10p)		(SThisCode* thisCode, SVariable* p1, SVariable* p2, SVariable* p3, SVariable* p4, SVariable* p5, SVariable* p6, SVariable* p7, SVariable* p8, SVariable* p9, SVariable* p10, SReturnsParams* returnsParams);
+				SVariable*	(*func)		(SThisCode* thisCode, SReturnsParams* returnsParams);
 			};
 
 
 		//////////
-		// Input parameters this function handles
+		// Input parameters the function handles
 		//////
 			s32		requiredCount;
 			s32		parameterCount;
 
 
 		//////////
-		// SourceLight information
+		// SourceLight information for syntax highlighting during input
 		//////
 			SSourceLightData*	data;
 	};
@@ -466,7 +457,7 @@ struct SReturnsParams;
 		{	_ICODE_RIGHT,			1,			(uptr)&function_right,			2,				2,				&gsSourceLight_right[0]			},
 		{	_ICODE_ROUND,			1,			(uptr)&function_round,			2,				2,				&gsSourceLight_round[0]			},	// ROUND() by Stefano D'Amico, VJr 0.56, Mar.16.2015
 		{	_ICODE_RTOD,			1,			(uptr)&function_rtod,			1,				1,				&gsSourceLight_rtod[0]			},	// RTOD() by Stefano D'Amico, VJr 0.56, Mar.16.2015
-		{	_ICODE_RTRIM,			1,			(uptr)&function_rtrim,			1,				1,				&gsSourceLight_rtrim[0]			},
+		{	_ICODE_RTRIM,			1,			(uptr)&function_rtrim,			1,				4,				&gsSourceLight_rtrim[0]			},
 		{	_ICODE_SET,				1,			(uptr)&function_set,			1,				2,				&gsSourceLight_set[0]			},
 		{	_ICODE_SIGN,			1,			(uptr)&function_sign,			1,				1,				&gsSourceLight_sign[0]			},	// SIGN() by Stefano D'Amico, VJr 0.56, Mar.14.2015
 		{	_ICODE_SIN,				1,			(uptr)&function_sin,			1,				1,				&gsSourceLight_sin[0]			},	// SIN() by Stefano D'Amico, VJr 0.56, Mar.17.2015
@@ -483,7 +474,7 @@ struct SReturnsParams;
 		{	_ICODE_TAN,				1,			(uptr)&function_tan,			1,				1,				&gsSourceLight_tan[0]			},	// TAN() by Stefano D'Amico, VJr 0.56, Mar.19.2015
 		{	_ICODE__TEST,			1,			(uptr)&function__test,			1,				1,				NULL							},
 		{	_ICODE_TRANSFORM,		1,			(uptr)&function_transform,		1,				2,				&gsSourceLight_transform[0]		},
-		{	_ICODE_TRIM,			1,			(uptr)&function_rtrim,			1,				1,				&gsSourceLight_rtrim[0]			},
+		{	_ICODE_TRIM,			1,			(uptr)&function_rtrim,			1,				4,				&gsSourceLight_rtrim[0]			},
 		{	_ICODE_UPPER,			1,			(uptr)&function_upper,			1,				1,				&gsSourceLight_upper[0]			},
 		{	_ICODE_VAL,				1,			(uptr)&function_val,			1,				2,				&gsSourceLight_val[0]			}, 	// VAL() by Stefano D'Amico, VJr 0.56, Mar.22.2015
 		{	_ICODE_VEC,				1,			(uptr)&function_vec,			1,				10,				&gsSourceLight_vec[0]			},

@@ -154,6 +154,8 @@
 	s32				iDisk_openShared						(s8* tcPathname, s32 tnType, s32 tnShare);
 	s32				iDisk_openExclusive						(s8* tcPathname, s32 tnType, s32 tnShare);
 	s64				iDisk_getFileSize						(s32 tnFile);
+	s32				iDisk_read								(s32 tnFile, s64 tnSeekOffset, s8* tcData, s32 tnReadCount,  bool* tlError, u32* tnErrorNum);
+	s32				iDisk_write								(s32 tnFile, s64 tnSeekOffset, s8* tcData, s32 tnWriteCount, bool* tlError, u32* tnErrorNum);
 
 
 //////////

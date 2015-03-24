@@ -142,13 +142,13 @@ struct SThisCode;
 //////
 	SCdxKeyOp*			iiCdx_generateKey_buildOps						(SThisCode* thisCode, SWorkArea* wa, u8* keyExpression, s32* tnKeyOpCount);
 	bool				iiCdx_generateKey_buildOps_markClosingParenthesis(SThisCode* thisCode, u8* leftParenthesis, u8 fixupAscii);
-	u32					iiCdx_generateKey								(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* head, u8* keyStorageArea);
-	void				iiCdx_generateKey_byOps							(SThisCode* thisCode, SWorkArea* wa, SCdxKeyOp* keyOps, s32 tnKeyOpCount, u8* keyStorageArea, bool tlBuildFromIndexData);
+	u32					iiCdx_generateKey								(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* head, u8* keyOut);
+	void				iiCdx_generateKey_byOps							(SThisCode* thisCode, SWorkArea* wa, SCdxKeyOp* keyOps, s32 tnKeyOpCount, u8* keyOut, bool tlBuildFromIndexData);
 	void				iiCdx_generateKey_byOps_fixup_swapEndian		(SThisCode* thisCode, SCdxKeyOp* lko, u8* keyPart);
 	void				iiCdx_generateKey_byOps_fixup_date				(SThisCode* thisCode, SCdxKeyOp* lko, u8* keyPart);
 	void				iiCdx_generateKey_byOps_fixup_double			(SThisCode* thisCode, SCdxKeyOp* lko, u8* keyPart);
 	void				iiCdx_generateKey_byOps_fixup_numeric			(SThisCode* thisCode, SCdxKeyOp* lko, u8* keyPart, SWorkArea* wa);
-	bool				iiCdx_generateKey_byOps_fixup					(SThisCode* thisCode, SWorkArea* wa, SCdxKeyOp* keyOps, s32 tnKeyOpCount, u8* keyStorageArea, bool tlIsCdxKey);
+	bool				iiCdx_generateKey_byOps_fixup					(SThisCode* thisCode, SWorkArea* wa, SCdxKeyOp* keyOps, s32 tnKeyOpCount, u8* keyOut, bool tlIsCdxKey);
 	bool				iiCdx_get_buildOps								(SThisCode* thisCode, SWorkArea* wa, u32 tnTagIndex, SCdxHeader* tagHeader, SForClause** tsFor, SCdxKeyOp** tsKeyOp, u32* tnKeyOpCount, u32* tnResult);
 //////
 // END
@@ -174,7 +174,8 @@ struct SThisCode;
 	s32					iiCdx_translateActualResultThroughIndexOrder	(STagRoot* tagRoot, u8* keyLeft, u8* keyRight, u32 tnKeyLength);
 	u32					iCdx_getAllKeysCdx								(SThisCode* thisCode, SWorkArea* wa, s32 tnTagIndex, u8* tcKeySpace, u32 tnKeySpaceLength, u8* tcDecodeExpression, u32 tnDecodeExpressionLength, s8* tcKeyLength4);
 	u32					iCdx_getAllKeysIdx								(SThisCode* thisCode, SWorkArea* wa,                 u8* tcKeySpace, u32 tnKeySpaceLength, u8* tcDecodeExpression, u32 tnDecodeExpressionLength, s8* tcKeyLength4);
-	bool				iCdx_getCompoundTagRoot							(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* head, SCdxNode* node, u32 lnTagNum, STagRoot* tagRoot);
+	bool				iCdx_setActiveTag								(SThisCode* thisCode, SWorkArea* wa, s32 tnTagIndex, STagRoot* tagRoot, bool* tlError, u32* tnErrorNum);
+	bool				iCdx_getCompoundTagRoot							(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* head, SCdxNode* node, s32 lnTagNum, STagRoot* tagRoot);
 	bool				iCdx_getCompactRootNode							(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* head, SCdxNode* node,               STagRoot* tagRoot);
 	bool				iCdx_getStandardRootNode						(SThisCode* thisCode, SWorkArea* wa, SIdxHeader* head, SIdxNode* node,               STagRoot* tagRoot);
 	bool				iiCdx_isCompact									(SThisCode* thisCode, SCdxHeader* head);

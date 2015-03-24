@@ -87,21 +87,50 @@
 // Added to allow a simple place to execute various tests.
 //
 //////
-	void iTest1(void)
+	void iTest1(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		uptr lnWorkArea;
+		s32				lnI;
+		union {
+			sptr		_wa;
+			SWorkArea*	wa;
+		};
+		STagRoot		tagRoot;
+		bool			error;
+		u32				errorNum;
 
 
 		//////////
 		// Open the test table
 		//////
-			lnWorkArea = iDbf_open(NULL, "c:\\libsf_offline\\source\\vjr\\test\\cdx\\test.dbf", "test", true, false, true, false);
-			if (lnWorkArea > _UPTR_ERROR)
+			_wa = iDbf_open(thisCode, "c:\\libsf_offline\\source\\vjr\\test\\cdx\\test.dbf", "test", true, false, true, false);
+			if (_wa >= 0)
 				debug_break;	// An error occurred
 
 
 		//////////
-		// Try to find every key
+		// Set the index
 		//////
+			if (!iCdx_setActiveTag(thisCode, wa, 0, &tagRoot, &error, &errorNum))
+				debug_break;
+
+
+		//////////
+		// Iterate through the table
+		//////
+			for (lnI = 1; lnI <= iDbf_getReccount(thisCode, wa); lnI++)
+			{
+
+				//////////
+				// Go to the record
+				//////
+					if (iDbf_gotoRecord(thisCode, wa, lnI) != lnI)
+						debug_break;	// Error seeking to the indicated record
+
+
+				//////////
+				// Create the index key for this row
+				//////
+//					iiCdx_generateKey
+			}
 
 	}

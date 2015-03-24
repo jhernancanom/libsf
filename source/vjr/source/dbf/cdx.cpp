@@ -2004,10 +2004,10 @@ failed_parsing:
 //
 // Called to generate a single key based on current DBF record, its current data (which may or may
 // not be stale -- it is incumbent upon the caller here to know this), and the associated index
-// header key directly.  It does not
+// header key directly.
 //
 //////
-	u32 iiCdx_generateKey(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* head, u8* keyStorageArea)
+	u32 iiCdx_generateKey(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* head, u8* keyOut)
 	{
 		s32				lnKeyLength, lnFieldLength, lnKeyFieldNameLength;
 		u8*				keyStart;
@@ -2042,13 +2042,13 @@ failed_parsing:
 			//////////
 			// Append the contents of this key
 			//////
-				iiDbf_getField_data2(thisCode, wa, lfptr2->fieldNumber, keyStorageArea, lnFieldLength, true);
+				iiDbf_getField_data2(thisCode, wa, lfptr2->fieldNumber, keyOut, lnFieldLength, true);
 
 
 			//////////
 			// Move past the data stored for this key
 			//////
-				keyStorageArea	+= lnFieldLength;
+				keyOut	+= lnFieldLength;
 				lnKeyLength		+= lnFieldLength;
 
 
@@ -2072,7 +2072,7 @@ failed_parsing:
 // Called to populate the key by the data stored in the ops
 //
 //////
-	void iiCdx_generateKey_byOps(SThisCode* thisCode, SWorkArea* wa, SCdxKeyOp* keyOps, s32 tnKeyOpCount, u8* keyStorageArea, bool tlBuildFromIndexData)
+	void iiCdx_generateKey_byOps(SThisCode* thisCode, SWorkArea* wa, SCdxKeyOp* keyOps, s32 tnKeyOpCount, u8* keyOut, bool tlBuildFromIndexData)
 	{
 		s32			lnI, lnJ;
 		u8*			keyPart;
@@ -2081,19 +2081,19 @@ failed_parsing:
 
 
 		// Grab our data source
-		dataSource = ((tlBuildFromIndexData) ? wa->idata : wa->data);
+		dataSource = ((tlBuildFromIndexData) ? wa->irow.data : wa->row.data);
 
 		// Iterate through each op at warp speed
 		for (lnI = 0, lko = &keyOps[0]; lnI < tnKeyOpCount; lnI++, lko++)
 		{
 			// Peform the copy
-			memcpy(keyStorageArea + lko->offsetKey, dataSource + lko->offsetRow, lko->length);
+			memcpy(keyOut + lko->offsetKey, dataSource + lko->offsetRow, lko->length);
 
 			// Is there a fixup?
 			if (lko->indexFixup)
 			{
 				// Get our pointer to this part of the key
-				keyPart = keyStorageArea + lko->offsetKey;
+				keyPart = keyOut + lko->offsetKey;
 
 				// Apply the fixup
 				switch (lko->indexFixup & _DBF_INDEX_FIXUP_MASK)
@@ -2275,7 +2275,7 @@ failed_parsing:
 		//////////
 		// Copy the entire numeric field contents
 		//////
-			memcpy(numericBuffer, wa->data + lko->offsetRow, lko->fieldLength);
+			memcpy(numericBuffer, wa->row.data + lko->offsetRow, lko->fieldLength);
 			numericBuffer[lko->fieldLength] = 0;
 
 
@@ -2310,7 +2310,7 @@ failed_parsing:
 // If used on CDX index keys, only certain operations are performed, so use tlIsCdxKey = true.
 //
 //////
-	bool iiCdx_generateKey_byOps_fixup(SThisCode* thisCode, SWorkArea* wa, SCdxKeyOp* keyOps, s32 tnKeyOpCount, u8* keyStorageArea, bool tlIsCdxKey)
+	bool iiCdx_generateKey_byOps_fixup(SThisCode* thisCode, SWorkArea* wa, SCdxKeyOp* keyOps, s32 tnKeyOpCount, u8* keyOut, bool tlIsCdxKey)
 	{
 		s32		lnI, lnJ;
 		bool	llAnyFixupApplied;	// used for early-out by the caller
@@ -2328,7 +2328,7 @@ failed_parsing:
 				llAnyFixupApplied = true;
 
 				// Get our pointer to this part of the key
-				keyPart = keyStorageArea + keyOps[lnI].offsetKey;
+				keyPart = keyOut + keyOps[lnI].offsetKey;
 
 				// Apply the fixup
 				switch (keyOps[lnI].indexFixup & _DBF_INDEX_FIXUP_MASK)
@@ -3187,6 +3187,28 @@ debug_break;
 
 //////////
 //
+// Called to set the active index tag to the indicated tag number / index.
+//
+//////
+	bool iCdx_setActiveTag(SThisCode* thisCode, SWorkArea* wa, s32 tnTagIndex, STagRoot* tagRoot, bool* tlError, u32* tnErrorNum)
+	{
+		// Make sure our environment is sane
+		if (thisCode && wa && tagRoot)
+		{
+			// Verify the work area is valid, and that a CDX is loaded
+// TODO:  Working here
+			return(iCdx_getCompoundTagRoot(thisCode, wa, wa->cdx_root, NULL, tnTagIndex, tagRoot));
+		}
+
+		// If we get here, parameter error
+		return(false);
+	}
+
+
+
+
+//////////
+//
 // Called to get the indicated tag number root node.  The tags are stored in node 1 (offset 1536)
 // and can proceed into other nodes if there are many tags.
 //
@@ -3195,7 +3217,7 @@ debug_break;
 // than is head->keyLength, which is why all tag names are limited to 10 characters.
 //
 //////
-	bool iCdx_getCompoundTagRoot(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* head, SCdxNode* node, u32 lnTagNum, STagRoot* tagRoot)
+	bool iCdx_getCompoundTagRoot(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* head, SCdxNode* node, s32 lnTagNum, STagRoot* tagRoot)
 	{
 		SCdxKey			key;
 		SCdxHeader*		nodeTag;
