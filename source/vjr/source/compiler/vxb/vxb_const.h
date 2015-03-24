@@ -294,6 +294,8 @@
 	const u32		_ERROR_MUST_BE_LOGICAL							= 91;
 	const u32		_ERROR_PARAMETER_MUST_BE_8_16_32_64				= 92;
 	const u32		_ERROR_TOO_BIG_FOR_TARGET						= 93;
+	const u32		_ERROR_NO_INDEX_IS_LOADED						= 94;
+	const u32		_ERROR_INVALID_INDEX_TAG						= 95;
 
 	// Fill ins
 	const u8		cgc_notFoundOrInvalidDataType[]					= "not found or is invalid data type";
@@ -369,6 +371,8 @@
 	const u8		cgcMustBeLogical[]								= "parameter must be logical";
 	const u8		cgcParameterMustBe8_16_32_64[]					= "parameter must be 8, 16, 32, or 64";
 	const u8		cgcTooBigForTarget[]							= "too big for target";
+	const u8		cgcNoIndexIsLoaded[]							= "no index is loaded";
+	const u8		cgcInvalidIndextag[]							= "invalid index tag";
 #else
 	#error Language not specified
 #endif

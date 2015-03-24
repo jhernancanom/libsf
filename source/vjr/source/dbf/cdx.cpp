@@ -3195,9 +3195,41 @@ debug_break;
 		// Make sure our environment is sane
 		if (thisCode && wa && tagRoot)
 		{
-			// Verify the work area is valid, and that a CDX is loaded
-// TODO:  Working here
-			return(iCdx_getCompoundTagRoot(thisCode, wa, wa->cdx_root, NULL, tnTagIndex, tagRoot));
+			// Is it a valid work area?
+			if (iDbf_isWorkAreaValid(thisCode, wa, NULL) && wa->isUsed)
+			{
+				// Is there an index loaded?
+				if (wa->isIndexLoaded && wa->isCdx)
+				{
+					// Try to access the indicated tag
+					*tlError = !iCdx_getCompoundTagRoot(thisCode, wa, wa->cdx_root, NULL, tnTagIndex, tagRoot);
+					if (*tlError)
+					{
+						// Error accessing the index tag
+						*tnErrorNum = _ERROR_INVALID_INDEX_TAG;
+
+					} else {
+						// We're good
+						*tnErrorNum = _ERROR_OKAY;
+						return(true);
+					}
+
+				} else {
+					// No CDX is loaded
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NO_INDEX_IS_LOADED;
+				}
+
+			} else {
+				// Work area is not in use
+				*tlError	= true;
+				*tnErrorNum	= _ERROR_INVALID_WORK_AREA;
+			}
+
+		} else {
+			// Invalid parameters
+			*tlError	= true;
+			*tnErrorNum	= _ERROR_INTERNAL_ERROR;
 		}
 
 		// If we get here, parameter error

@@ -203,7 +203,9 @@
 			case _ERROR_CANNOT_BE_ZERO:						{	iError_report(thisCode, cgcCannotBeZero, tlInvasive);					break;	}
 			case _ERROR_MUST_BE_LOGICAL:					{	iError_report(thisCode, cgcMustBeLogical, tlInvasive);					break;	}
 			case _ERROR_PARAMETER_MUST_BE_8_16_32_64:		{	iError_report(thisCode, cgcParameterMustBe8_16_32_64, tlInvasive);		break;	}
-			case _ERROR_TOO_BIG_FOR_TARGET:					{	iError_report(thisCode, cgcTooBigForTarget, tlInvasive);		break;	}
+			case _ERROR_TOO_BIG_FOR_TARGET:					{	iError_report(thisCode, cgcTooBigForTarget, tlInvasive);				break;	}
+			case _ERROR_NO_INDEX_IS_LOADED:					{	iError_report(thisCode, cgcNoIndexIsLoaded, tlInvasive);				break;	}
+			case _ERROR_INVALID_INDEX_TAG:					{	iError_report(thisCode, cgcInvalidIndextag, tlInvasive);				break;	}
 
 		}
 
