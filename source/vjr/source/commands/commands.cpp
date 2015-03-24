@@ -639,8 +639,11 @@
 // Example:
 //    ? ABS(-10)		&& Display 10
 //////
-    SVariable* function_abs(SThisCode* thisCode, SVariable* varNumber, SReturnsParams* returnsParams)
+    SVariable* function_abs(SThisCode* thisCode, SReturnsParams* returnsParams)
     {
+		SVariable* varNumber = returnsParams->params[0];
+
+
 		// Return abs
 		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_ABS, _VAR_TYPE_F64, true, false, returnsParams));
 	}
@@ -671,8 +674,11 @@
 // Example:
 //    ? ACOS(0)		&& Display 1.57
 //////
-    SVariable* function_acos(SThisCode* thisCode, SVariable* varNumber, SReturnsParams* returnsParams)
+    SVariable* function_acos(SThisCode* thisCode, SReturnsParams* returnsParams)
     {
+		SVariable* varNumber = returnsParams->params[0];
+
+
 		// Return acos
 		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_ACOS, _VAR_TYPE_F64, false, false, returnsParams));
 	}
@@ -699,9 +705,10 @@
 // Returns:
 //     Character		-- The string with a trailing backspace added if need be
 //////
-	SVariable* function_addbs(SThisCode* thisCode, SVariable* varString, SReturnsParams* returnsParams)
+	SVariable* function_addbs(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-        SVariable* result;
+		SVariable*	varString = returnsParams->params[0];
+        SVariable*	result;
 
 
 		//////////
@@ -771,8 +778,15 @@
 // Returns:
 //    Character		-- The string with any leading and trailing spaces removed
 //////
-	SVariable* function_alltrim(SThisCode* thisCode, SVariable* varString, SVariable* varCaseInsensitive, SVariable* varTrimChars1, SVariable* varTrimChars2, SReturnsParams* returnsParams)
+	SVariable* function_alltrim(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varString			= returnsParams->params[0];
+		SVariable* varCaseInsensitive	= returnsParams->params[1];
+		SVariable* varTrimChars1		= returnsParams->params[2];
+		SVariable* varTrimChars2		= returnsParams->params[3];
+
+
+		// Return alltrim
 		return(ifunction_trim_common(thisCode, varString, varCaseInsensitive, varTrimChars1, varTrimChars2, true, true, returnsParams));
 	}
 
@@ -1164,8 +1178,12 @@
 // Returns:
 //    Numeric	-- Input number converted to ASCII value number
 //////
-	SVariable* function_alp(SThisCode* thisCode, SVariable* varColor, SReturnsParams* returnsParams)
+	SVariable* function_alp(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varColor = returnsParams->params[0];
+
+
+		// Return alp
 		return(ifunction_color_common(thisCode, varColor, 0xff000000, 24, returnsParams));
 	}
 
@@ -1192,8 +1210,9 @@
 // Returns:
 //    Numeric	-- Input number converted to ASCII value number
 //////
-    SVariable* function_asc(SThisCode* thisCode, SVariable* varString, SReturnsParams* returnsParams)
+    SVariable* function_asc(SThisCode* thisCode, SReturnsParams* returnsParams)
     {
+		SVariable*	varString = returnsParams->params[0];
         u8 			value;
         SVariable*	result;
 
@@ -1270,8 +1289,11 @@
 // Example:
 //    ? ASIN(1)		&& Display 1.57
 //////
-    SVariable* function_asin(SThisCode* thisCode, SVariable* varNumber, SReturnsParams* returnsParams)
+    SVariable* function_asin(SThisCode* thisCode, SReturnsParams* returnsParams)
     {
+		SVariable* varNumber = returnsParams->params[0];
+
+
 		// Return asin
 		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_ASIN, _VAR_TYPE_F64, false, false, returnsParams));
 	}
@@ -1302,8 +1324,11 @@
 // Example:
 //    ? ATAN(1.57)		&& Display 1.00
 //////
-    SVariable* function_atan(SThisCode* thisCode, SVariable* varNumber, SReturnsParams* returnsParams)
+    SVariable* function_atan(SThisCode* thisCode, SReturnsParams* returnsParams)
     {
+		SVariable* varNumber = returnsParams->params[0];
+
+
 		// Return atan
 		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_ATAN, _VAR_TYPE_F64, false, false, returnsParams));
 	}
@@ -1338,23 +1363,47 @@
 // Returns:
 //    u32			-- Location of the find, or 0 if not found
 //////
-	SVariable* function_at(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence, SReturnsParams* returnsParams)
+	SVariable* function_at(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varNeedle		= returnsParams->params[0];
+		SVariable* varHaystack		= returnsParams->params[1];
+		SVariable* varOccurrence	= returnsParams->params[2];
+
+
+		// Return at
 		return(ifunction_at_occurs_common(thisCode, varNeedle, varHaystack, varOccurrence, true, false, NULL, returnsParams));
 	}
 
-	SVariable* function_atc(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence, SReturnsParams* returnsParams)
+	SVariable* function_atc(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varNeedle		= returnsParams->params[0];
+		SVariable* varHaystack		= returnsParams->params[1];
+		SVariable* varOccurrence	= returnsParams->params[2];
+
+
+		// Return atc
 		return(ifunction_at_occurs_common(thisCode, varNeedle, varHaystack, varOccurrence, false, false, NULL, returnsParams));
 	}
 
-	SVariable* function_rat(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence, SReturnsParams* returnsParams)
+	SVariable* function_rat(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varNeedle		= returnsParams->params[0];
+		SVariable* varHaystack		= returnsParams->params[1];
+		SVariable* varOccurrence	= returnsParams->params[2];
+
+
+		// Return rat
 		return(ifunction_at_occurs_common(thisCode, varNeedle, varHaystack, varOccurrence, true, true, NULL, returnsParams));
 	}
 
-	SVariable* function_ratc(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SVariable* varOccurrence, SReturnsParams* returnsParams)
+	SVariable* function_ratc(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varNeedle		= returnsParams->params[0];
+		SVariable* varHaystack		= returnsParams->params[1];
+		SVariable* varOccurrence	= returnsParams->params[2];
+
+
+		// Return ratc
 		return(ifunction_at_occurs_common(thisCode, varNeedle, varHaystack, varOccurrence, false, true, NULL, returnsParams));
 	}
 
@@ -1528,8 +1577,13 @@
 // Example:
 //    ? ATN2(5,3)		&& Display 1.03
 //////
-	SVariable* function_atn2(SThisCode* thisCode, SVariable* varY, SVariable* varX, SReturnsParams* returnsParams)
+	SVariable* function_atn2(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varY = returnsParams->params[0];
+		SVariable* varX = returnsParams->params[1];
+
+
+		// Return atn2
 		return(ifunction_numbers_common(thisCode, varY, varX, NULL, _FP_COMMON_ATN2, _VAR_TYPE_F64, false, false, returnsParams));
 	}
 
@@ -1559,8 +1613,11 @@
 // Returns:
 //    Logical		-- .t. if the item is inclusively between the values of two expressions of the same type, .f. otherwise
 //////
-	SVariable* function_between(SThisCode* thisCode, SVariable* varValue, SVariable* varLowValue, SVariable* varHighValue, SReturnsParams* returnsParams)
+	SVariable* function_between(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varValue		= returnsParams->params[0];
+		SVariable*	varLowValue		= returnsParams->params[1];
+		SVariable*	varHighValue	= returnsParams->params[2];
 		s32			lnI, lnType, lnComp;
 		bool		llInRange;
 		SVariable*	result;
@@ -1676,8 +1733,13 @@
 // Returns:
 //    Numeric		-- Input bits converted to an unsigned integer of the appropriate size (up to 64-bits)
 //////
-	SVariable* function_bits(SThisCode* thisCode, SVariable* varBits, SVariable* varBitWidth, SReturnsParams* returnsParams)
+	SVariable* function_bits(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varBits		= returnsParams->params[0];
+		SVariable* varBitWidth	= returnsParams->params[1];
+
+
+		// Return bits
 		return(ifunction_bits_common(thisCode, varBits, varBitWidth, returnsParams));
 	}
 
@@ -1871,8 +1933,12 @@
 // Returns:
 //    Numeric		-- Input bits converted to an 8-bit unsigned integer
 //////
-	SVariable* function_bits8(SThisCode* thisCode, SVariable* varBits, SReturnsParams* returnsParams)
+	SVariable* function_bits8(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varBits = returnsParams->params[0];
+
+
+		// Return bits8()
 		return(ifunction_bits_common(thisCode, varBits, varEight, returnsParams));
 	}
 
@@ -1899,8 +1965,12 @@
 // Returns:
 //    Numeric		-- Input bits converted to an 16-bit unsigned integer
 //////
-	SVariable* function_bits16(SThisCode* thisCode, SVariable* varBits, SReturnsParams* returnsParams)
+	SVariable* function_bits16(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varBits = returnsParams->params[0];
+
+
+		// Return bits16()
 		return(ifunction_bits_common(thisCode, varBits, varSixteen, returnsParams));
 	}
 
@@ -1927,8 +1997,12 @@
 // Returns:
 //    Numeric		-- Input bits converted to an 32-bit unsigned integer
 //////
-	SVariable* function_bits32(SThisCode* thisCode, SVariable* varBits, SReturnsParams* returnsParams)
+	SVariable* function_bits32(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varBits = returnsParams->params[0];
+
+
+		// Return bits32()
 		return(ifunction_bits_common(thisCode, varBits, varThirtyTwo, returnsParams));
 	}
 
@@ -1955,8 +2029,12 @@
 // Returns:
 //    Numeric		-- Input bits converted to an 64-bit unsigned integer
 //////
-	SVariable* function_bits64(SThisCode* thisCode, SVariable* varBits, SReturnsParams* returnsParams)
+	SVariable* function_bits64(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varBits = returnsParams->params[0];
+
+
+		// Return bits64()
 		return(ifunction_bits_common(thisCode, varBits, varSixtyFour, returnsParams));
 	}
 
@@ -1985,8 +2063,14 @@
 // Returns:
 //    Numeric		-- The extracted bits as a numeric unsigned integer of the same size as the original.
 //////
-	SVariable* function_bitslice(SThisCode* thisCode, SVariable* varValue, SVariable* varBitStart, SVariable* varBitEnd, SReturnsParams* returnsParams)
+	SVariable* function_bitslice(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varValue		= returnsParams->params[0];
+		SVariable* varBitStart	= returnsParams->params[1];
+		SVariable* varBitEnd	= returnsParams->params[2];
+
+
+		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
 		return(NULL);
 	}
@@ -2015,8 +2099,13 @@
 // Returns:
 //    Character		-- The extracted bits as a character string
 //////
-	SVariable* function_bitstr(SThisCode* thisCode, SVariable* varValue, SVariable* varLength, SReturnsParams* returnsParams)
+	SVariable* function_bitstr(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varValue		= returnsParams->params[0];
+		SVariable* varLength	= returnsParams->params[1];
+
+
+		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
 		return(NULL);
 	}
@@ -2044,8 +2133,12 @@
 // Returns:
 //    Numeric	-- Input number converted to ASCII value number
 //////
-	SVariable* function_blu(SThisCode* thisCode, SVariable* varColor, SReturnsParams* returnsParams)
+	SVariable* function_blu(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varColor = returnsParams->params[0];
+
+
+		// Return blu
 		return(ifunction_color_common(thisCode, varColor, 0x00ff0000, 16, returnsParams));
 	}
 
@@ -2075,8 +2168,14 @@
 //    Numeric		-- Constructed system-wide RGBA() integer
 //
 //////
-	SVariable* function_bgr(SThisCode* thisCode, SVariable* varBlu, SVariable* varGrn, SVariable* varRed, SReturnsParams* returnsParams)
+	SVariable* function_bgr(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varBlu = returnsParams->params[0];
+		SVariable* varGrn = returnsParams->params[1];
+		SVariable* varRed = returnsParams->params[2];
+
+
+		// Return bgr
 		return(ifunction_rgba_common(thisCode, varRed, varGrn, varBlu, NULL, returnsParams));
 	}
 
@@ -2107,8 +2206,15 @@
 //    Numeric		-- Constructed system-wide RGBA() integer
 //
 //////
-	SVariable* function_bgra(SThisCode* thisCode, SVariable* varBlu, SVariable* varGrn, SVariable* varRed, SVariable* varAlp, SReturnsParams* returnsParams)
+	SVariable* function_bgra(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varBlu = returnsParams->params[0];
+		SVariable* varGrn = returnsParams->params[1];
+		SVariable* varRed = returnsParams->params[2];
+		SVariable* varAlp = returnsParams->params[3];
+
+
+		// Return bgra
 		return(ifunction_rgba_common(thisCode, varRed, varGrn, varBlu, varAlp, returnsParams));
 	}
 
@@ -2138,8 +2244,11 @@
 // Example:
 //    ? CEILING(2.2)		&& Display 3
 //////
-    SVariable* function_ceiling(SThisCode* thisCode, SVariable* varNumber, SReturnsParams* returnsParams)
+    SVariable* function_ceiling(SThisCode* thisCode, SReturnsParams* returnsParams)
     {
+		SVariable* varNumber = returnsParams->params[0];
+
+
         // Return ceiling
 		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_CEILING, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings), false, returnsParams));
 	}
@@ -2166,8 +2275,9 @@
 // Returns:
 //    Character		-- Input number converted to character
 //////
-    SVariable* function_chr(SThisCode* thisCode, SVariable* varNumer, SReturnsParams* returnsParams)
+    SVariable* function_chr(SThisCode* thisCode, SReturnsParams* returnsParams)
     {
+		SVariable*	varNumber = returnsParams->params[0];
         s32			value;
 		u32			errorNum;
         bool		error;
@@ -2254,13 +2364,25 @@
 //    A copy of the pOriginalString with everything converted.
 //
 //////
-	SVariable* function_chrtran(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SReturnsParams* returnsParams)
+	SVariable* function_chrtran(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varString	= returnsParams->params[0];
+		SVariable* varSearch	= returnsParams->params[1];
+		SVariable* varReplace	= returnsParams->params[2];
+
+
+		// Return chrtran
 		return(ifunction_chrtran_common(thisCode, varString, varSearch, varReplace, true, returnsParams));
 	}
 
-	SVariable* function_chrtranc(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, SReturnsParams* returnsParams)
+	SVariable* function_chrtranc(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varString	= returnsParams->params[0];
+		SVariable* varSearch	= returnsParams->params[1];
+		SVariable* varReplace	= returnsParams->params[2];
+
+
+		// Return chrtranc
 		return(ifunction_chrtran_common(thisCode, varString, varSearch, varReplace, false, returnsParams));
 	}
 
@@ -2421,8 +2543,14 @@
 //    Numeric			-- The resulting colorized color
 //
 //////
-	SVariable* function_colorize(SThisCode* thisCode, SVariable* varColor, SVariable* varColorTarget, SVariable* varPercentage, SReturnsParams* returnsParams)
+	SVariable* function_colorize(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varColor			= returnsParams->params[0];
+		SVariable* varColorTarget	= returnsParams->params[1];
+		SVariable* varPercentage	= returnsParams->params[2];
+
+
+		// Return colorize
 		return(ifunction_colorize_common(thisCode, varColor, varColorTarget, varPercentage, true, returnsParams));
 	}
 
@@ -2595,8 +2723,11 @@
 // Example:
 //    ? COS(0)		&& Display 1.00
 //////
-    SVariable* function_cos(SThisCode* thisCode, SVariable* varNumber, SReturnsParams* returnsParams)
+    SVariable* function_cos(SThisCode* thisCode, SReturnsParams* returnsParams)
     {
+		SVariable* varNumber = returnsParams->params[0];
+
+
 		// Return cos
 		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_COS, _VAR_TYPE_F64, false, false, returnsParams));
 	}
@@ -2625,8 +2756,9 @@
 //    Object		-- The class instance object is returned
 //
 //////
-	SVariable* function_createobject(SThisCode* thisCode, SVariable* varClass, SReturnsParams* returnsParams)
+	SVariable* function_createobject(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varClass = returnsParams->params[0];
 		s32			lnObjType;
 		SObject*	obj;
         SVariable*	result;
@@ -2756,8 +2888,15 @@
 //    Datetime		-- Current datetime(), or input converted to datetime
 //
 //////
-	SVariable* function_datetime(SThisCode* thisCode, SVariable* varYear, SVariable* varMonth, SVariable* varDay, SVariable* varHour, SVariable* varMinute, SVariable* varSecond, SVariable* varMillisecond, SReturnsParams* returnsParams)
+	SVariable* function_datetime(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varYear			= returnsParams->params[0];
+		SVariable*	varMonth		= returnsParams->params[1];
+		SVariable*	varDay			= returnsParams->params[2];
+		SVariable*	varHour			= returnsParams->params[3];
+		SVariable*	varMinute		= returnsParams->params[4];
+		SVariable*	varSecond		= returnsParams->params[5];
+		SVariable*	varMillisecond	= returnsParams->params[6];
 		SVariable*	result;
 		SDateTime*	dt;
 		f32			lfJulian;
@@ -2970,8 +3109,11 @@
 // Example:
 //    ? DTOR(180)		&& Display 3.14
 //////
-    SVariable* function_dtor(SThisCode* thisCode, SVariable* varNumber, SReturnsParams* returnsParams)
+    SVariable* function_dtor(SThisCode* thisCode, SReturnsParams* returnsParams)
     {
+		SVariable* varNumber = returnsParams->params[0];
+
+
 		// Return dtor
 		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_DTOR, _VAR_TYPE_F64, false, false, returnsParams));
 	}
@@ -3007,8 +3149,9 @@
 //    ? EMPTY("  ")	&& Display .T.
 //    ? EMPTY(0.0)	&& Display .T.
 //////
-	SVariable* function_empty(SThisCode* thisCode, SVariable* varExpr, SReturnsParams* returnsParams)
+	SVariable* function_empty(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varExpr = returnsParams->params[0];
 		bool		llEmpty;
 		SVariable*	result;
 
@@ -3194,8 +3337,15 @@
 //    Logical		-- .t. if the search string is found in the string, .f. otherwise
 //
 //////
-	SVariable* function_endswith(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varStart, SVariable* varEnd, SReturnsParams* returnsParams)
+	SVariable* function_endswith(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varString	= returnsParams->params[0];
+		SVariable* varSearch	= returnsParams->params[1];
+		SVariable* varStart		= returnsParams->params[2];
+		SVariable* varEnd		= returnsParams->params[3];
+
+
+		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varString), false);
 		return(NULL);
 	}
@@ -3209,8 +3359,15 @@
 // Case-insensitive version of ENDSWITH()
 //
 //////
-	SVariable* function_endswithc(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varStart, SVariable* varEnd, SReturnsParams* returnsParams)
+	SVariable* function_endswithc(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varString	= returnsParams->params[0];
+		SVariable* varSearch	= returnsParams->params[1];
+		SVariable* varStart		= returnsParams->params[2];
+		SVariable* varEnd		= returnsParams->params[3];
+
+
+		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varString), false);
 		return(NULL);
 	}
@@ -3243,8 +3400,10 @@
 // Example:
 //    ? EVL("  ", "None")	&& Display "None"
 //////
-	SVariable* function_evl(SThisCode* thisCode, SVariable* varExpr1, SVariable* varExpr2, SReturnsParams* returnsParams)
+	SVariable* function_evl(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varExpr1 = returnsParams->params[0];
+		SVariable*	varExpr2 = returnsParams->params[1];
 		bool		llEmpty;
 		SVariable*	result;
 
@@ -3310,8 +3469,11 @@
 // Example:
 //    ? EXP(2)		&& Display 7.39
 //////
-    SVariable* function_exp(SThisCode* thisCode, SVariable* varNumber, SReturnsParams* returnsParams)
+    SVariable* function_exp(SThisCode* thisCode, SReturnsParams* returnsParams)
     {
+		SVariable* varNumber = returnsParams->params[0];
+
+
 		// Return exp
 		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_EXP, _VAR_TYPE_F64, false, false, returnsParams));
 	}
@@ -3694,8 +3856,11 @@
 // Example:
 //    ? FLOOR(2.2)		&& Display 2
 //////
-    SVariable* function_floor(SThisCode* thisCode, SVariable* varNumber, SReturnsParams* returnsParams)
+    SVariable* function_floor(SThisCode* thisCode, SReturnsParams* returnsParams)
     {
+		SVariable* varNumber = returnsParams->params[0];
+
+
         // Return floor
 		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_FLOOR, _VAR_TYPE_S64, propGet_settings_ncset_ceilingFloor(_settings), false, returnsParams));
 	}
@@ -3723,8 +3888,13 @@
 // Returns:
 //    The input pathname with the next extension.
 //////
-	SVariable* function_forceext(SThisCode* thisCode, SVariable* varPathname, SVariable varNewExtension, SReturnsParams* returnsParams)
+	SVariable* function_forceext(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varPathname		= returnsParams->params[0];
+		SVariable* varNewExtension	= returnsParams->params[1];
+
+
+		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
 		return(NULL);
 	}
@@ -3752,8 +3922,13 @@
 // Returns:
 //    The input pathname with the filename.
 //////
-	SVariable* function_forcefname(SThisCode* thisCode, SVariable* varPathname, SVariable varNewFilename, SReturnsParams* returnsParams)
+	SVariable* function_forcefname(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varPathname		= returnsParams->params[0];
+		SVariable* varNewFilename	= returnsParams->params[1];
+
+
+		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
 		return(NULL);
 	}
@@ -3781,8 +3956,13 @@
 // Returns:
 //    The input pathname with the new path.
 //////
-	SVariable* function_forcepath(SThisCode* thisCode, SVariable* varPathname, SVariable varNewPathname, SReturnsParams* returnsParams)
+	SVariable* function_forcepath(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varPathname		= returnsParams->params[0];
+		SVariable* varNewPathname	= returnsParams->params[1];
+
+
+		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
 		return(NULL);
 	}
@@ -3810,8 +3990,13 @@
 // Returns:
 //    The input pathname with the new stem.
 //////
-	SVariable* function_forcestem(SThisCode* thisCode, SVariable* varPathname, SVariable varNewStem, SReturnsParams* returnsParams)
+	SVariable* function_forcestem(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varPathname	= returnsParams->params[0];
+		SVariable* varNewStem	= returnsParams->params[1];
+
+
+		// Not yet completed
 		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
 		return(NULL);
 	}
@@ -3843,9 +4028,14 @@
 // Example:
 //   ? FV(500, 0.006, 48)	&& Displays 27717.50
 //////
-	SVariable* function_fv(SThisCode* thisCode, SVariable* varPayment, SVariable* varInterestRate, SVariable* varPeriods, SReturnsParams* returnsParams)
+	SVariable* function_fv(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		//Return FV
+		SVariable* varPayment		= returnsParams->params[0];
+		SVariable* varInterestRate	= returnsParams->params[1];
+		SVariable* varPeriods		= returnsParams->params[2];
+
+
+		// Return fv
 		return(ifunction_numbers_common(thisCode, varPayment, varInterestRate, varPeriods, _FP_COMMON_FV, _VAR_TYPE_F64, false, true, returnsParams));
 	}
 
@@ -3872,8 +4062,13 @@
 // Returns:
 //    The input pathname with the new stem.
 //////
-	SVariable* function_grayscale(SThisCode* thisCode, SVariable* varColor, SVariable* varPercentage, SReturnsParams* returnsParams)
+	SVariable* function_grayscale(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varColor			= returnsParams->params[0];
+		SVariable* varPercentage	= returnsParams->params[1];
+
+
+		// Return grayscale
 		return(ifunction_colorize_common(thisCode, varColor, NULL, varPercentage, false, returnsParams));
 	}
 
@@ -3900,8 +4095,12 @@
 // Returns:
 //    Numeric	-- Input number converted to ASCII value number
 //////
-	SVariable* function_grn(SThisCode* thisCode, SVariable* varColor, SReturnsParams* returnsParams)
+	SVariable* function_grn(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varColor = returnsParams->params[0];
+
+
+		// Return grn
 		return(ifunction_color_common(thisCode, varColor, 0x0000ff00, 8, returnsParams));
 	}
 
@@ -3930,8 +4129,11 @@
 // Returns:
 //    A copy of either varTrue or varFalse.
 //////
-	SVariable* function_iif(SThisCode* thisCode, SVariable* varTest, SVariable* varTrue, SVariable* varFalse, SReturnsParams* returnsParams)
+	SVariable* function_iif(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varTest		= returnsParams->params[0];
+		SVariable*	varTrue		= returnsParams->params[1];
+		SVariable*	varFalse	= returnsParams->params[2];
 		bool		llTest;
 		SVariable*	result;
 		u32			errorNum;
@@ -4013,8 +4215,10 @@
 // Returns:
 //    Logical		-- .t. if the item is found in the list, .f. otherwise
 //////
-	SVariable* function_inlist(SThisCode* thisCode, SVariable* varValue, SVariable* varList1, SVariable* varList2, SVariable* varList3, SVariable* varList4, SVariable* varList5, SVariable* varList6, SVariable* varList7, SVariable* varList8, SVariable* varList9, SReturnsParams* returnsParams)
+	SVariable* function_inlist(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varValue = returnsParams->params[0];
+		SVariable*	varList1 = returnsParams->params[1];
 		bool		llResult;
 		s32			lnI, lnType;
 		SVariable*	result;
@@ -4122,8 +4326,9 @@
 // Returns:
 //    INT(n) of the value in p1
 //////
-    SVariable* function_int(SThisCode* thisCode, SVariable* varNumber, SReturnsParams* returnsParams)
+    SVariable* function_int(SThisCode* thisCode, SReturnsParams* returnsParams)
     {
+		SVariable*	varNumber = returnsParams->params[0];
 		f64			fValue;
 		u32			errorNum;
         bool		error;
@@ -4187,8 +4392,9 @@
 // Returns:
 //		Character		-- The drive component of the pathname, or the current drive if it wasn't specified, ("c:" of "c:\path\to\sample.txt")
 //////
-	SVariable* function_justdrive(SThisCode* thisCode, SVariable* varString, SReturnsParams* returnsParams)
+	SVariable* function_justdrive(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varString = returnsParams->params[0];
 		u8*			ptr;
         SVariable*	result;
 
@@ -4257,8 +4463,9 @@
 // Returns:
 //		Character		-- The file extension component, or an empty string if one was not specified, ("txt" of "c:\path\to\sample.txt")
 //////
-	SVariable* function_justext(SThisCode* thisCode, SVariable* varString, SReturnsParams* returnsParams)
+	SVariable* function_justext(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varString = returnsParams->params[0];
 		s32			lnI, lnLength;
 		u8*			ptr;
         SVariable*	result;
@@ -4330,8 +4537,9 @@
 // Returns:
 //		Character		-- The file name portion of the pathname ("sample.txt" of "c:\path\to\sample.txt")
 //////
-	SVariable* function_justfname(SThisCode* thisCode, SVariable* varString, SReturnsParams* returnsParams)
+	SVariable* function_justfname(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varString = returnsParams->params[0];
 		s32			lnI, lnLength;
 		u8*			ptr;
         SVariable*	result;
@@ -4406,8 +4614,9 @@
 // Returns:
 //		Character		-- The file path of the pathname ("c:\path\to" of "c:\path\to\sample.txt")
 //////
-	SVariable* function_justpath(SThisCode* thisCode, SVariable* varString, SReturnsParams* returnsParams)
+	SVariable* function_justpath(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varString = returnsParams->params[0];
 		s32			lnLength;
 		u8*			ptr;
         SVariable*	result;
@@ -4482,8 +4691,10 @@
 // Returns:
 //		Character		-- The file name portion of the pathname ("sample" of "c:\path\to\sample.txt")
 //////
-	SVariable* function_juststem(SThisCode* thisCode, SVariable* varString, SVariable* varPostfixWidth, SReturnsParams* returnsParams)
+	SVariable* function_juststem(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varString		= returnsParams->params[0];
+		SVariable*	varPostfixWidth	= returnsParams->params[1];
 		s32			lnI, lnLength, lnPostfixWidth;
 		u8*			ptr;
 		bool		error;
@@ -4599,8 +4810,10 @@
 // Returns:
 //    Character		-- The string of the left N characters
 //////
-	SVariable* function_left(SThisCode* thisCode, SVariable* varString, SVariable* varCount, SReturnsParams* returnsParams)
+	SVariable* function_left(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varString	= returnsParams->params[0];
+		SVariable*	varCount	= returnsParams->params[1];
 		s32			lnLength;
 		u32			errorNum;
 		bool		error;
@@ -4685,8 +4898,9 @@
 // Returns:
 //    Numeric		-- The length of the string
 //////
-	SVariable* function_len(SThisCode* thisCode, SVariable* varString, SReturnsParams* returnsParams)
+	SVariable* function_len(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varString = returnsParams->params[0];
         SVariable* result;
 
 
@@ -4747,8 +4961,11 @@
 // Example:
 //    ? LOG(2)		&& Display 0.69
 //////
-    SVariable* function_log(SThisCode* thisCode, SVariable* varNumber, SReturnsParams* returnsParams)
+    SVariable* function_log(SThisCode* thisCode, SReturnsParams* returnsParams)
     {
+		SVariable* varNumber = returnsParams->params[0];
+
+
         // Return log
 		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_LOG, _VAR_TYPE_F64, false, false, returnsParams));
 	}
@@ -4779,8 +4996,11 @@
 // Example:
 //    ? LOG10(2)		&& Display 0.30
 //////
-    SVariable* function_log10(SThisCode* thisCode, SVariable* varNumber, SReturnsParams* returnsParams)
+    SVariable* function_log10(SThisCode* thisCode, SReturnsParams* returnsParams)
     {
+		SVariable* varNumber = returnsParams->params[0];
+
+
         // Return log10
 		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_LOG10, _VAR_TYPE_F64, false, false, returnsParams));
 	}
@@ -4808,8 +5028,9 @@
 // Returns:
 //    Character		-- The string with all lowercase characters converted to lowercase
 //////
-	SVariable* function_lower(SThisCode* thisCode, SVariable* varString, SReturnsParams* returnsParams)
+	SVariable* function_lower(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varString = returnsParams->params[0];
 		s32			lnI;
         SVariable*	result;
 
@@ -4914,8 +5135,10 @@
 //   ? malp(lnColor, .t.)     && Returns integer
 //   ? malp(lnColor, .f.)     && Returns floating point
 //////
-	SVariable* function_malp(SThisCode* thisCode, SVariable* varColor, SVariable* varAsInteger, SReturnsParams* returnsParams)
+	SVariable* function_malp(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varColor		= returnsParams->params[0];
+		SVariable*	varAsInteger	= returnsParams->params[1];
 		u32			lnColor;
 		f32			lfMalp;
 		bool		llAsInteger;
@@ -5024,8 +5247,10 @@
 //    If they're equal, a copy of pLeft is returned.
 //
 //////
-	SVariable* function_max(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, SReturnsParams* returnsParams)
+	SVariable* function_max(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varLeft		= returnsParams->params[0];
+		SVariable*	varRight	= returnsParams->params[1];
 		bool		llLeft;
 		s32			lnLeft32, lnRight32;
 		s64			lnLeft64, lnRight64;
@@ -5236,8 +5461,10 @@
 //    If they're equal, a copy of pLeft is returned.
 //
 //////
-	SVariable* function_min(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, SReturnsParams* returnsParams)
+	SVariable* function_min(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varLeft		= returnsParams->params[0];
+		SVariable*	varRight	= returnsParams->params[1];
 		bool		llLeft;
 		s32			lnLeft32, lnRight32;
 		s64			lnLeft64, lnRight64;
@@ -5456,8 +5683,12 @@
 //    ? MOD(5.3, 2)    && 1.3
 //    ? MOD(5.3, -2)   && -0.7
 //////
-	SVariable* function_mod(SThisCode* thisCode, SVariable* varDividend, SVariable* varDivisor, SReturnsParams* returnsParams)
+	SVariable* function_mod(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varDividend	= returnsParams->params[0];
+		SVariable*	varDivisor	= returnsParams->params[1];
+
+
 		// Return mod
 		return(ifunction_numbers_common(thisCode, varDividend, varDivisor, NULL, _FP_COMMON_MOD, _VAR_TYPE_F64, true, false, returnsParams));
 	}
@@ -5487,8 +5718,10 @@
 // Returns:
 //    s32			-- The number of times
 //////
-	SVariable* function_ncset(SThisCode* thisCode, SVariable* varIndex, SVariable* varP1, SVariable* varP2, SVariable* varP3, SVariable* varP4, SVariable* varP5, SVariable* varP6, SReturnsParams* returnsParams)
+	SVariable* function_ncset(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varIndex	= returnsParams->params[0];
+		SVariable*	varP1		= returnsParams->params[1];
 		s32			lnIndex, lnIndexProp;
 		bool		llEnabled, llNewValue;
 		bool		error;
@@ -5599,8 +5832,10 @@
 // Returns:
 //    s32			-- The number of times
 //////
-	SVariable* function_occurs(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SReturnsParams* returnsParams)
+	SVariable* function_occurs(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varNeedle	= returnsParams->params[0];
+		SVariable*	varHaystack	= returnsParams->params[1];
 		u32			lnFoundCount;
 		SVariable*	result;
 
@@ -5617,8 +5852,10 @@
 		return(result);
 	}
 
-	SVariable* function_occursc(SThisCode* thisCode, SVariable* varNeedle, SVariable* varHaystack, SReturnsParams* returnsParams)
+	SVariable* function_occursc(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varNeedle	= returnsParams->params[0];
+		SVariable*	varHaystack	= returnsParams->params[1];
 		u32			lnFoundCount;
 		SVariable*	result;
 
@@ -5661,8 +5898,11 @@
 // Returns:
 //    Logical		-- .t. if the item is not inclusively between the values of two expressions of the same type, .f. if between
 //////
-	SVariable* function_outside(SThisCode* thisCode, SVariable* varValue, SVariable* varLowValue, SVariable* varHighValue, SReturnsParams* returnsParams)
+	SVariable* function_outside(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable*	varValue		= returnsParams->params[0];
+		SVariable*	varLowValue		= returnsParams->params[1];
+		SVariable*	varHighValue	= returnsParams->params[2];
 		SVariable*	result;
 
 
@@ -5714,18 +5954,36 @@
 //                         then padded to its destination size. If the string is larger than
 //                         the destination, then it remains as it is.
 //////
-	SVariable* function_padc(SThisCode* thisCode, SVariable* varExpr, SVariable* varResultSize, SVariable* varPadCharacter, SReturnsParams* returnsParams)
+	SVariable* function_padc(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varExpr			= returnsParams->params[0];
+		SVariable* varResultSize	= returnsParams->params[1];
+		SVariable* varPadCharacter	= returnsParams->params[2];
+
+
+		// Return padc
 		return(ifunction_pad_common(thisCode, varExpr, varResultSize, varPadCharacter, true, true, returnsParams));
 	}
 
-	SVariable* function_padl(SThisCode* thisCode, SVariable* varExpr, SVariable* varResultSize, SVariable* varPadCharacter, SReturnsParams* returnsParams)
+	SVariable* function_padl(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varExpr			= returnsParams->params[0];
+		SVariable* varResultSize	= returnsParams->params[1];
+		SVariable* varPadCharacter	= returnsParams->params[2];
+
+
+		// Return padl
 		return(ifunction_pad_common(thisCode, varExpr, varResultSize, varPadCharacter, true, false, returnsParams));
 	}
 
-	SVariable* function_padr(SThisCode* thisCode, SVariable* varExpr, SVariable* varResultSize, SVariable* varPadCharacter, SReturnsParams* returnsParams)
+	SVariable* function_padr(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
+		SVariable* varExpr			= returnsParams->params[0];
+		SVariable* varResultSize	= returnsParams->params[1];
+		SVariable* varPadCharacter	= returnsParams->params[2];
+
+
+		// Return padr
 		return(ifunction_pad_common(thisCode, varExpr, varResultSize, varPadCharacter, false, true, returnsParams));
 	}
 
@@ -5908,9 +6166,14 @@
 // Example:
 //   ? PAYMENT(500, 0.006, 48)	&& Displays 12.02
 //////
-	SVariable* function_payment(SThisCode* thisCode, SVariable* varPayment, SVariable* varInterestRate, SVariable* varPeriods, SReturnsParams* returnsParams)
+	SVariable* function_payment(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		//Return PAYMENT
+		SVariable* varPayment		= returnsParams->params[0];
+		SVariable* varInterestRate	= returnsParams->params[1];
+		SVariable* varPeriods		= returnsParams->params[2];
+
+
+		// Return payment
 		return(ifunction_numbers_common(thisCode, varPayment, varInterestRate, varPeriods, _FP_COMMON_PAYMENT, _VAR_TYPE_F64, false, true, returnsParams));
 	}
 
@@ -5971,6 +6234,7 @@
 //////
 	SVariable* function_proper(SThisCode* thisCode, SVariable* varString, SReturnsParams* returnsParams)
 	{
+// TODO:  Working here
 		s32			lnI;
 		bool		llUpperNext;
         SVariable*	result;
