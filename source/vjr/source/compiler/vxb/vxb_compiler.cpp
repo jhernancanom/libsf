@@ -9765,6 +9765,179 @@ debug_break;
 
 //////////
 //
+// Called to return the value of the indicated variable as an unsigned 64-bit integer
+//
+//////
+	u64 iiVariable_getAs_u64(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
+	{
+		union {
+			s8			lnValue_s8;
+			s16			lnValue_s16;
+			u8			lnValue_u8;
+			u16			lnValue_u16;
+			u32			lnValue_u32;
+			s64			lnValue_s64;
+			u64			lnValue_u64;
+			f32			lnValue_f32;
+			f64			lnValue_f64;
+		};
+		u32		lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond;
+		s8		buffer[64];
+		bool	error;
+		u32		errorNum;
+
+
+		// De-reference the variable
+		var = iiVariable_terminateIndirect(thisCode, var);
+
+		// Make sure we have error and errorNum parameters
+		if (!tlError)		tlError		= &error;
+		if (!tnErrorNum)	tnErrorNum	= &errorNum;
+
+		// Begin
+		*tlError	= false;
+		*tnErrorNum	= 0;
+		// Based on the type of variable it is, return the value
+		switch (var->varType)
+		{
+			case _VAR_TYPE_S32:				return((u64)var->value.data_s32[0]);
+			case _VAR_TYPE_U32:				return((u64)var->value.data_u32[0]);
+			case _VAR_TYPE_S64:				return((u64)var->value.data_s64[0]);
+			case _VAR_TYPE_S16:				return((u64)var->value.data_s16[0]);
+			case _VAR_TYPE_S8:				return((u64)var->value.data_s8[0]);
+			case _VAR_TYPE_U16:				return((u64)var->value.data_u16[0]);
+			case _VAR_TYPE_U8:				return((u64)var->value.data_u8[0]);
+			case _VAR_TYPE_CURRENCY:		return((var->value.data_s64[0] / 10000));
+			case _VAR_TYPE_U64:				return(var->value.data_u64[0]);
+
+			case _VAR_TYPE_NUMERIC:
+#ifdef __GNUC__
+				return(strtoull(var->value.data, NULL, 10));
+#else
+				return(_strtoui64((s8*)var->value.data, NULL, 10));
+#endif
+
+			case _VAR_TYPE_F32:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					lnValue_f32 = *(f32*)var->value.data;
+					if (lnValue_f32 < (f32)_u64_max)
+						return((u64)lnValue_f32);
+
+
+				//////////
+				// If we get here, it's not in range
+				//////
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+
+
+			case _VAR_TYPE_F64:
+				//////////
+				// We can return the value after verifying it is not out of range for a 32-bit signed integer
+				//////
+					lnValue_f64 = *(f64*)var->value.data;
+					if (lnValue_f64 < (f64)_u64_max)
+						return((u64)lnValue_f64);
+
+
+				//////////
+				// If we get here, it's not in range
+				//////
+					*tlError	= true;
+					*tnErrorNum	= _ERROR_NUMERIC_OVERFLOW;
+					return(0);
+
+
+			case _VAR_TYPE_BI:
+// TODO:  BI needs coded
+				break;
+
+			case _VAR_TYPE_BFP:
+// TODO:  BFP needs coded
+				break;
+
+			case _VAR_TYPE_CHARACTER:
+				// We can convert it to s32 if auto-convert is on, or if it has been force converted
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
+				{
+					//////////
+					// We can convert this from its text form into numeric
+					//////
+#ifdef __GNUC__
+						return(strtoull(var->value.data, NULL, 10));
+#else
+						return(_strtoui64((s8*)var->value.data, NULL, 10));
+#endif
+				}
+				// If we get here, an invalid variable type was encountered
+				break;
+
+			case _VAR_TYPE_DATE:
+				// We can convert this from its text form into numeric if we're auto-converting
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
+				{
+					//////////
+					// Dates are stored internally in text form as YYYYMMDD.
+					// This will produce an integer suitable for sorting, comparing, etc.
+					//////
+						buffer[8] = 0;
+						memcpy(buffer, var->value.data, 8);
+#ifdef __GNUC__
+						return(strtoull(buffer, NULL, 10));
+#else
+						return(_strtoui64((s8*)buffer, NULL, 10));
+#endif
+				}
+
+
+			case _VAR_TYPE_LOGICAL:
+				// We can convert it to s32 if auto-convert is on, or if it has been force converted
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
+				{
+					//////////
+					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
+					//////
+						if (var->value.data[0] == 0)	return(0);
+						else							return(1);
+				}
+				// If we get here, an invalid variable type was encountered
+
+
+			case _VAR_TYPE_DATETIME:
+				// We can convert it to s32 if auto-convert is on, or if it has been force converted
+				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
+				{
+					//////////
+					// We can convert this from its text form into numeric
+					//////
+						iiVariable_computeYyyyMmDd_fromJulianDayNumber(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+						iiVariable_computeHhMmSsMss_fromf32(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+
+						// Create the string for the numeric portion
+						sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
+#ifdef __GNUC__
+						return(strtoull(buffer, NULL, 10));
+#else
+						return(_strtoui64((s8*)buffer, NULL, 10));
+#endif
+				}
+				break;
+		}
+
+		// If we get here, we could not convert it
+		*tlError	= true;
+		*tnErrorNum	= _ERROR_NOT_NUMERIC;
+		return(0);
+	}
+
+
+
+
+//////////
+//
 // Called to return the value of the indicated variable as an f32 (32-bit floating point).
 //
 // Uses:
@@ -9773,7 +9946,6 @@ debug_break;
 //////
 	f32 iiVariable_getAs_f32(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
-		s8		buffer[16];
 		union {
 			s8			lnValue_s8;
 			s16			lnValue_s16;
@@ -9786,6 +9958,8 @@ debug_break;
 			f64			lnValue_f64;
 			SDateTime	dt;
 		};
+		u32		lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond;
+		s8		buffer[64];
 		bool	llError;
 		u32		lnErrorNum;
 
@@ -9884,9 +10058,18 @@ debug_break;
 				if (tlForceConvert || propGet_settings_AutoConvert(_settings))
 				{
 					//////////
-					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
+					// We can convert this from its text form into numeric
 					//////
-						return((f32)iiVariable_computeDatetimeDifference(thisCode, var, _datetime_Jan_01_2000));
+						iiVariable_computeYyyyMmDd_fromJulianDayNumber(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+						iiVariable_computeHhMmSsMss_fromf32(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+
+						// Create the string for the numeric portion
+						sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
+#ifdef __GNUC__
+						return((f32)strtoull(buffer, NULL, 10));
+#else
+						return((f32)_strtoui64((s8*)buffer, NULL, 10));
+#endif
 				}
 				break;
 		}
@@ -9910,7 +10093,6 @@ debug_break;
 //////
 	f64 iiVariable_getAs_f64(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
-		s8		buffer[16];
 		union {
 			s8			lnValue_s8;
 			s16			lnValue_s16;
@@ -9923,6 +10105,7 @@ debug_break;
 			f64			lnValue_f64;
 			SDateTime	dt;
 		};
+		s8		buffer[64];
 		bool	llError;
 		u32		lnErrorNum;
 
@@ -10058,6 +10241,19 @@ debug_break;
 //////
 	s32 iVariable_compare(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
 	{
+		u32		lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, lnDate;
+		u64		lnDatetime;
+		bool	llLeftFp, llRightFp, llLeftInt, llRightInt, llLeftSigned, llRightSigned, llLeftNum, llRightNum;
+		s8		buffer[64];
+
+
+		//////////
+		// De-reference the variables
+		//////
+			varLeft		= iiVariable_terminateIndirect(thisCode, varLeft);
+			varRight	= iiVariable_terminateIndirect(thisCode, varRight);
+
+
 		//////////
 		// Make sure our environment is sane
 		//////
@@ -10073,14 +10269,154 @@ debug_break;
 					// Do a direct compare
 					return(iiVariable_compareMatchingTypes(thisCode, varLeft, varRight, tlError, tnErrorNum));
 
+
 				} else if (iVariable_fundamentalType(thisCode, varLeft) == iVariable_fundamentalType(thisCode, varRight)) {
 					// They are the same general type
+					llLeftFp		= (varLeft->varType  >= _VAR_TYPE_NUMERIC_FLOATING_POINT_START	&&	varLeft->varType  <= _VAR_TYPE_NUMERIC_FLOATING_POINT_END);
+					llRightFp		= (varRight->varType >= _VAR_TYPE_NUMERIC_FLOATING_POINT_START	&&	varRight->varType <= _VAR_TYPE_NUMERIC_FLOATING_POINT_END);
+					llLeftInt		= (varLeft->varType  >= _VAR_TYPE_INTEGER_START					&&	varLeft->varType  <= _VAR_TYPE_INTEGER_END);
+					llRightInt		= (varRight->varType >= _VAR_TYPE_INTEGER_START					&&	varRight->varType <= _VAR_TYPE_INTEGER_END);
+					llLeftNum		= (varLeft->varType  >= _VAR_TYPE_NUMERIC_START					&&	varLeft->varType  <= _VAR_TYPE_NUMERIC_END);
+					llRightNum		= (varRight->varType >= _VAR_TYPE_NUMERIC_START					&&	varRight->varType <= _VAR_TYPE_NUMERIC_END);
+					llLeftSigned	= (varLeft->varType >= _VAR_TYPE_SIGNED_INTEGER_START			&&	varLeft->varType >= _VAR_TYPE_SIGNED_INTEGER_END);
+					llRightSigned	= (varRight->varType >= _VAR_TYPE_SIGNED_INTEGER_START			&&	varRight->varType >= _VAR_TYPE_SIGNED_INTEGER_END);
+
+					if (llLeftFp && llRightFp)
+					{
+						// They are both floating point
+						return(iiVariable_compareNonmatchingTypesAs_f64(thisCode, varLeft, varRight, tlForceConvert, tlError, tnErrorNum));
+
+
+					} else if (llLeftInt && llRightInt) {
+						// They are both integer
+						     if (llLeftSigned && llRightSigned)			return(iiVariable_compareNonmatchingTypesAs_s64(thisCode, varLeft, varRight, tlForceConvert, tlError, tnErrorNum));
+						else if (!llLeftSigned && !llRightSigned)		return(iiVariable_compareNonmatchingTypesAs_u64(thisCode, varLeft, varRight, tlForceConvert, tlError, tnErrorNum));
+						else											return(iiVariable_compareNonmatchingTypesAs_f64(thisCode, varLeft, varRight, tlForceConvert, tlError, tnErrorNum));
+
+
+					} else if (llLeftNum && llRightNum) {
+						// They are all numbers, so we'll just compare them as floats
+						return(iiVariable_compareNonmatchingTypesAs_f64(thisCode, varLeft, varRight, tlForceConvert, tlError, tnErrorNum));
+					}
+
+					// If we get here, they're trying to compare things we don't current have defined as to how to compare
 					*tlError	= true;
 					*tnErrorNum	= _ERROR_FEATURE_NOT_AVAILABLE;
 					return(0);
 
+
+				} else if (varLeft->varType == _VAR_TYPE_DATE) {
+					// Dates can be directly compared to a few things
+					switch (varRight->varType)
+					{
+						case _VAR_TYPE_DATETIME:
+							// Grab related information from the datetime
+							iiVariable_computeYyyyMmDd_fromJulianDayNumber(varLeft->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+
+							// Create the string for the numeric portion
+							sprintf(buffer, "%04u%02u%02u\0", lnYear, lnMonth, lnDay);
+
+							// Indicate our result
+							return(memcmp(varLeft->value.data_s8, buffer, varRight->value.length));
+
+						case _VAR_TYPE_CHARACTER:
+							return(memcmp(varLeft->value.data_s8, varRight->value.data_s8, min(varLeft->value.length, varRight->value.length)));
+					}
+
+					// Compute the value of the date
+					memcpy(buffer, varLeft->value.data_s8, varLeft->value.length);
+					buffer[varLeft->value.length] = 0;
+					lnDate = atoi(buffer);
+
+					switch (varRight->varType)
+					{
+						case _VAR_TYPE_S32:
+								 if ((s32)lnDate == varRight->value.data_s32[0])		return(0);			// Equal
+							else if ((s32)lnDate <  varRight->value.data_s32[0])		return(-1);			// Less than
+							else														return(1);			// Greater than
+
+						case _VAR_TYPE_U32:
+								 if ((u32)lnDate == varRight->value.data_u32[0])		return(0);			// Equal
+							else if ((u32)lnDate <  varRight->value.data_u32[0])		return(-1);			// Less than
+							else														return(1);			// Greater than
+
+						case _VAR_TYPE_S64:
+								 if ((s64)lnDate == varRight->value.data_s64[0])		return(0);			// Equal
+							else if ((s64)lnDate <  varRight->value.data_s64[0])		return(-1);			// Less than
+							else														return(1);			// Greater than
+
+						case _VAR_TYPE_U64:
+								 if ((u64)lnDate == varRight->value.data_u64[0])		return(0);			// Equal
+							else if ((u64)lnDate <  varRight->value.data_u64[0])		return(-1);			// Less than
+							else														return(1);			// Greater than
+
+						case _VAR_TYPE_F32:
+								 if ((f32)lnDate == varRight->value.data_f32[0])		return(0);			// Equal
+							else if ((f32)lnDate <  varRight->value.data_f32[0])		return(-1);			// Less than
+							else														return(1);			// Greater than
+
+						case _VAR_TYPE_F64:
+								 if ((f64)lnDate == varRight->value.data_f64[0])		return(0);			// Equal
+							else if ((f64)lnDate <  varRight->value.data_f64[0])		return(-1);			// Less than
+							else														return(1);			// Greater than
+
+// 						case _VAR_TYPE_BI:
+// 							break;
+// 						case _VAR_TYPE_BFP:
+// 							break;
+					}
+
+
+				} else if (varLeft->varType == _VAR_TYPE_DATETIME) {
+					// Datetimes can be compared to 64-bit numeric values
+					iiVariable_computeYyyyMmDd_fromJulianDayNumber(varLeft->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+					iiVariable_computeHhMmSsMss_fromf32(varLeft->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+
+					// Create the string for the numeric portion
+					sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
+
+					// How are we comparing?
+					switch (varRight->varType)
+					{
+						case _VAR_TYPE_DATE:
+							return(memcmp(buffer, varRight->value.data_s8, varRight->value.length));
+
+						case _VAR_TYPE_CHARACTER:
+							return(memcmp(buffer, varRight->value.data_s8, min(varRight->value.length, strlen(buffer))));
+					}
+
+					// Grab the value
+					lnDatetime = _strtoui64(buffer, NULL, 10);
+					switch (varRight->varType)
+					{
+						case _VAR_TYPE_S64:
+								 if ((s64)lnDatetime == varRight->value.data_s64[0])		return(0);			// Equal
+							else if ((s64)lnDatetime <  varRight->value.data_s64[0])		return(-1);			// Less than
+							else															return(1);			// Greater than
+
+						case _VAR_TYPE_U64:
+								 if ((u64)lnDatetime == varRight->value.data_u64[0])		return(0);			// Equal
+							else if ((u64)lnDatetime <  varRight->value.data_u64[0])		return(-1);			// Less than
+							else															return(1);			// Greater than
+
+						case _VAR_TYPE_F32:
+								 if ((f32)lnDatetime == varRight->value.data_f32[0])		return(0);			// Equal
+							else if ((f32)lnDatetime <  varRight->value.data_f32[0])		return(-1);			// Less than
+							else															return(1);			// Greater than
+
+						case _VAR_TYPE_F64:
+								 if ((f64)lnDatetime == varRight->value.data_f64[0])		return(0);			// Equal
+							else if ((f64)lnDatetime <  varRight->value.data_f64[0])		return(-1);			// Less than
+							else															return(1);			// Greater than
+
+// 						case _VAR_TYPE_BI:
+// 							break;
+// 						case _VAR_TYPE_BFP:
+// 							break;
+					}
+
 				} else {
-					// They are different
+					// They are different enough we can't compare them
 					*tlError	= true;
 					*tnErrorNum	= _ERROR_FEATURE_NOT_AVAILABLE;
 					return(0);
@@ -10094,6 +10430,90 @@ debug_break;
 			*tlError	= true;
 			*tnErrorNum	= _ERROR_INVALID_ARGUMENT_TYPE_COUNT;
 			return(0);
+	}
+
+	s32 iiVariable_compareNonmatchingTypesAs_f64(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
+	{
+		f64 lfLeft, lfRight;
+
+
+		//////////
+		// Grab left
+		//////
+			lfLeft = iiVariable_getAs_f64(thisCode, varLeft, tlForceConvert, tlError, tnErrorNum);
+			if (*tlError)
+				return(0);
+
+		//////////
+		// Grab right
+		//////
+			lfRight = iiVariable_getAs_f64(thisCode, varRight, tlForceConvert, tlError, tnErrorNum);
+			if (*tlError)
+				return(0);
+
+
+		//////////
+		// Compare
+		//////
+			     if (lfLeft == lfRight)			return(0);			// Equal
+			else if (lfLeft < lfRight)			return(-1);			// Less than
+			else								return(1);			// Greater than
+	}
+
+	s32 iiVariable_compareNonmatchingTypesAs_s64(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
+	{
+		s64 lnLeft, lnRight;
+
+
+		//////////
+		// Grab left
+		//////
+			lnLeft = iiVariable_getAs_s64(thisCode, varLeft, tlForceConvert, tlError, tnErrorNum);
+			if (*tlError)
+				return(0);
+
+		//////////
+		// Grab right
+		//////
+			lnRight = iiVariable_getAs_s64(thisCode, varRight, tlForceConvert, tlError, tnErrorNum);
+			if (*tlError)
+				return(0);
+
+
+		//////////
+		// Compare
+		//////
+				 if (lnLeft == lnRight)			return(0);			// Equal
+			else if (lnLeft < lnRight)			return(-1);			// Less than
+			else								return(1);			// Greater than
+	}
+
+	s32 iiVariable_compareNonmatchingTypesAs_u64(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool tlForceConvert, bool* tlError, u32* tnErrorNum)
+	{
+		u64 lnLeft, lnRight;
+
+
+		//////////
+		// Grab left
+		//////
+			lnLeft = iiVariable_getAs_u64(thisCode, varLeft, tlForceConvert, tlError, tnErrorNum);
+			if (*tlError)
+				return(0);
+
+		//////////
+		// Grab right
+		//////
+			lnRight = iiVariable_getAs_u64(thisCode, varRight, tlForceConvert, tlError, tnErrorNum);
+			if (*tlError)
+				return(0);
+
+
+		//////////
+		// Compare
+		//////
+				 if (lnLeft == lnRight)			return(0);			// Equal
+			else if (lnLeft < lnRight)			return(-1);			// Less than
+			else								return(1);			// Greater than
 	}
 
 
@@ -10184,11 +10604,11 @@ debug_break;
 					// Convert each to numeric
 					//////
 						lnLeft	= iiVariable_getAs_s64(thisCode, varLeft, false, tlError, tnErrorNum);
-						if (tlError)
+						if (*tlError)
 							return(0);
 
-						lnRight	= iiVariable_getAs_s64(thisCode, varLeft, false, tlError, tnErrorNum);
-						if (tlError)
+						lnRight	= iiVariable_getAs_s64(thisCode, varRight, false, tlError, tnErrorNum);
+						if (*tlError)
 							return(0);
 
 

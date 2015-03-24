@@ -278,11 +278,15 @@ struct SThisCode;
 	u16						iiVariable_getAs_u16						(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	u32						iiVariable_getAs_u32						(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	s64						iiVariable_getAs_s64						(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
+	u64						iiVariable_getAs_u64						(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	f32						iiVariable_getAs_f32						(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	f64						iiVariable_getAs_f64						(SThisCode* thisCode, SVariable* var, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	s64						iiVariable_getCompAs_s64					(SComp* comp);
 	f64						iiVariable_getCompAs_f64					(SComp* comp);
 	s32						iVariable_compare							(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
+	s32						iiVariable_compareNonmatchingTypesAs_f64	(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
+	s32						iiVariable_compareNonmatchingTypesAs_s64	(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
+	s32						iiVariable_compareNonmatchingTypesAs_u64	(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool tlForceConvert, bool* tlError, u32* tnErrorNum);
 	s32						iiVariable_compareMatchingTypes				(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool* tlError, u32* tnErrorNum);
 
 	// Support functions

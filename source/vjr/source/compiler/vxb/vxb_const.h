@@ -146,39 +146,52 @@
 // Fundamental variable types
 //////
 	const u32		_VAR_TYPE_NULL									= 0;
-	const u32								_VAR_TYPE_NUMERIC_START	= 1;
+
+	// Signed
+	const u32						_VAR_TYPE_NUMERIC_START			= 1;
 	const u32						_VAR_TYPE_NUMERIC_INTEGER_START	= 1;
+	const u32						_VAR_TYPE_SIGNED_INTEGER_START	= 1;
+	const u32						_VAR_TYPE_INTEGER_START			= 1;
 	const u32		_VAR_TYPE_S8									= 1;
-	const u32		_VAR_TYPE_U8									= 2;
-	const u32		_VAR_TYPE_S16									= 3;
-	const u32		_VAR_TYPE_U16									= 4;
-//	const u32		_VAR_TYPE_INTEGER								= 5;	// Stored as an s32, a 4-byte signed integer
-	const u32		_VAR_TYPE_S32									= 6;
+	const u32		_VAR_TYPE_S16									= 2;
+	const u32		_VAR_TYPE_S32									= 3;	// Formerly _VAR_TYPE_INTEGER
+	const u32		_VAR_TYPE_S64									= 4;
+	const u32						_VAR_TYPE_SIGNED_INTEGER_END	= 4;
+
+	// Unsigned
+	const u32						_VAR_TYPE_UNSIGNED_INTEGER_START = 5;
+	const u32		_VAR_TYPE_U8									= 5;
+	const u32		_VAR_TYPE_U16									= 6;
 	const u32		_VAR_TYPE_U32									= 7;
-	const u32		_VAR_TYPE_S64									= 8;
-	const u32		_VAR_TYPE_U64									= 9;
-	const u32		_VAR_TYPE_CURRENCY								= 10;	// Stored as an s64 with an implied 4-decimals (divide by 10,000 to get the actual floating point value)
-	const u32						_VAR_TYPE_NUMERIC_INTEGER_END	= 10;
-	const u32				_VAR_TYPE_NUMERIC_FLOATING_POINT_START	= 11;
-	const u32		_VAR_TYPE_NUMERIC								= 11;	// Stored as a character (like "200.50"), but converted to numeric at each reference.
-//	const u32		_VAR_TYPE_FLOAT									= 12;	// Stored as an f32
-//	const u32		_VAR_TYPE_DOUBLE								= 13;	// Stored as an f64
-	const u32		_VAR_TYPE_F32									= 12;
-	const u32		_VAR_TYPE_F64									= 13;
-	const u32		_VAR_TYPE_BFP									= 14;	// Uses the big number library for floating points
-	const u32				_VAR_TYPE_NUMERIC_FLOATING_POINT_END	= 14;
-	const u32		_VAR_TYPE_BI									= 15;	// Uses the big number library for integers
-	const u32								_VAR_TYPE_NUMERIC_END	= 15;
-	const u32		_VAR_TYPE_CHARACTER								= 16;
-	const u32		_VAR_TYPE_UNICODE								= 17;
-	const u32		_VAR_TYPE_DATE									= 18;
-	const u32		_VAR_TYPE_DATETIME								= 19;
-	const u32		_VAR_TYPE_DATETIMEX								= 20;
-	const u32		_VAR_TYPE_LOGICAL								= 21;	// Note:  This includes the logicalx types, but the value stored determines the logicalx setting.
-	const u32		_VAR_TYPE_GUID8									= 22;
-	const u32		_VAR_TYPE_GUID16								= 23;
-	const u32		_VAR_TYPE_FIELD									= 24;
-	const u32		_VAR_TYPE_VECTOR								= 25;	// A vector format of multiple items with symbols between, like an ip4 address comprised of integers, 1.2.3.4, or a version 1.2.3. Support for ip6 hex:hex:hex:hex values will also be supported as vectors.
+	const u32		_VAR_TYPE_U64									= 8;
+	const u32						_VAR_TYPE_INTEGER_END			= 8;
+	const u32						_VAR_TYPE_UNSIGNED_INTEGER_END	= 8;
+	const u32						_VAR_TYPE_NUMERIC_INTEGER_END	= 8;
+
+	// Floating point
+	const u32				_VAR_TYPE_NUMERIC_FLOATING_POINT_START	= 9;
+	const u32		_VAR_TYPE_NUMERIC								= 9;	// Stored as a character (like "200.50"), but converted to numeric at each reference.
+	const u32		_VAR_TYPE_F32									= 10;	// _VAR_TYPE_SINGLE
+	const u32		_VAR_TYPE_F64									= 11;	// _VAR_TYPE_DOUBLE
+	const u32		_VAR_TYPE_CURRENCY								= 12;	// Stored as an s64 with an implied 4-decimals (divide by 10,000 to get the actual floating point value)
+	const u32						_VAR_TYPE_BIG_NUMBER_START		= 13;
+	const u32		_VAR_TYPE_BFP									= 13;	// Uses the big number library for floating points
+	const u32				_VAR_TYPE_NUMERIC_FLOATING_POINT_END	= 13;
+	const u32		_VAR_TYPE_BI									= 14;	// Uses the big number library for integers
+	const u32						_VAR_TYPE_NUMERIC_END			= 14;
+	const u32						_VAR_TYPE_BIG_NUMBER_END		= 14;
+
+	// Fundamental types
+	const u32		_VAR_TYPE_CHARACTER								= 15;
+	const u32		_VAR_TYPE_UNICODE								= 16;
+	const u32		_VAR_TYPE_DATE									= 17;
+	const u32		_VAR_TYPE_DATETIME								= 18;
+	const u32		_VAR_TYPE_DATETIMEX								= 19;
+	const u32		_VAR_TYPE_LOGICAL								= 20;	// Note:  This includes the logicalx types, but the value stored determines the logicalx setting.
+	const u32		_VAR_TYPE_GUID8									= 21;
+	const u32		_VAR_TYPE_GUID16								= 22;
+	const u32		_VAR_TYPE_FIELD									= 23;
+	const u32		_VAR_TYPE_VECTOR								= 24;	// A vector format of multiple items with symbols between, like an ip4 address comprised of integers, 1.2.3.4, or a version 1.2.3. Support for ip6 hex:hex:hex:hex values will also be supported as vectors.
 	// Extended variable types
 	const u32		_VAR_TYPE_OBJECT								= 100;	// Object reference
 	const u32		_VAR_TYPE_BITMAP								= 200;	// Image reference

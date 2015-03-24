@@ -1573,17 +1573,17 @@
 		//////
 			if (!iVariable_isValid(varValue))
 			{
-				iError_reportByNumber(thisCode, _ERROR_MISSING_PARAMETER, iVariable_getRelatedComp(thisCode, varValue), false);
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varValue), false);
 				return(NULL);
 			}
 			if (!iVariable_isValid(varLowValue))
 			{
-				iError_reportByNumber(thisCode, _ERROR_MISSING_PARAMETER, iVariable_getRelatedComp(thisCode, varLowValue), false);
+				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varLowValue), false);
 				return(NULL);
 			}
 			if (!iVariable_isValid(varHighValue))
 			{
-				iError_reportByNumber(thisCode, _ERROR_MISSING_PARAMETER, iVariable_getRelatedComp(thisCode, varHighValue), false);
+				iError_reportByNumber(thisCode, _ERROR_P3_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varHighValue), false);
 				return(NULL);
 			}
 
