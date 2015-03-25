@@ -28,12 +28,44 @@
 //     Aug.02.2014 - Initial creation
 //////
 //
-// This software is released as Liberty Software under a Repeat License, as governed
+// This document is released as Liberty Software under a Repeat License, as governed
 // by the Public Benefit License v1.0 or later (PBL).
 //
-// You are free to use, copy, modify and share this software.  However, it can only
-// be released under the PBL version indicated, and every project must include a copy
-// of the pbl.txt document for its version as is at http://www.libsf.org/licenses/.
+// The PBL is a public domain license with a caveat:  self accountability unto God.
+// You are free to use, copy, modify and share this software for any purpose, however,
+// it is the desire of those working on this project that the software remain open.
+// It is our request that you maintain it that way.  This is not a legal request unto
+// our court systems, but rather a personal matter between you and God.  Our talents
+// were received from God, and given to you through this forum.  And it is our wish
+// that those talents reach out to as many as possible in a form allowing them to wield
+// this content for their own betterment, as you are now considering doing.  And whereas
+// we could've forced the issue through something like a copyleft-protected release, the
+// truth is we are all giving an account of our lives unto God continually by the daily
+// choices we make.  And here again is another case where you get to demonstrate your
+// character unto God, and unto your fellow man.
+//
+// Jesus came to this Earth to set the captives free, to save men's eternal souls from
+// the punishment demanded by our sin.  Each one of us is given the opportunity to
+// receive Him in this world and be saved.  Whether we choose to receive Him, and follow
+// Him, and purpose our lives on the goals He has for each of us (all of which are
+// beneficial for all involved), is one way we reveal our character continually.  God
+// sees straight through to the heart, bypassing all of the words, all of the facades.
+// He is our Creator, and He knows who we are truly.
+//
+// Jesus is called "Christ" because He saves men from the eternal flames of Hell, the
+// just punishment of rebellion against God (rebellion against truth) by eternal beings,
+// which each of us are.
+//
+// Do not let His free gift escape you because of some desire to shortcut what is right
+// in your life. Instead, do what is right, and do it because He is who He is, and what
+// He has done to save us from such a fate.  Demonstrate to Him, to me, and to all of
+// mankind, and to all of the Heavenly hosts, exactly who you are on the inside.  Receive
+// Jesus Christ into your heart, learn of Him, of how He came here to guide us into that
+// which is of His Kingdom and will be forever hereafter we leave this world.  Do this,
+// and live.
+//
+// Every project released by Liberty Software Foundation will include a copy of the
+// pbl.txt document, which can be found at http://www.libsf.org/licenses/.
 //
 // For additional information about this project, or to view the license, see:
 //
@@ -41,11 +73,9 @@
 //     http://www.libsf.org/licenses/
 //     http://www.visual-freepro.org/vjr/indexmain.html
 //     http://www.visual-freepro.org/wiki/index.php/PBL
-//     http://www.visual-freepro.org/wiki/index.php/Repeat_License
 //
 // Thank you.  And may The Lord bless you richly as you lift up your life, your
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
-//
 //
 
 #pragma once
@@ -62,13 +92,13 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 //////////
 // Forward declarations
 //////
-	u32				xml_load_file									(s8* filename);
-	u32				xml_load										(s8* buffer, u32 tnLength);
-	u32				xml_write_file									(u32 handle, s8* filename);
-	u32				xml_access_node									(u32 handle, s8* tcNode, s8* tcReturn_value, u32 tnReturn_value_length);
-	bool			xml_access_node_bool							(u32 handle, s8* tcNode);
-	u32				xml_access_node_integer							(u32 handle, s8* tcNode);
-	f64				xml_access_node_f64								(u32 handle, s8* tcNode);
+	uptr 			xml_load_file									(s8* filename);
+	uptr 			xml_load										(s8* buffer, u32 tnLength);
+	uptr 			xml_write_file									(uptr handle, s8* filename);
+	uptr 			xml_access_node									(uptr handle, s8* tcNode, s8* tcReturn_value, u32 tnReturn_value_length);
+	bool			xml_access_node_bool							(uptr handle, s8* tcNode);
+	uptr 			xml_access_node_integer							(uptr handle, s8* tcNode);
+	f64				xml_access_node_f64								(uptr handle, s8* tcNode);
 	void			iXml_load__skip_white_spaces					(s8* buffer, u32 tnOffset, u32& tnThis, u32 tnLength);
 	void			iXml_load__attributes							(CXml* toTag, s8* buffer, u32 tnOffset, u32& tnThis, u32 tnLength);
 	u32				iXml_write_file__write_tag						(int tfh, CXml* toTag);
@@ -169,7 +199,7 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 		{
 			if (tcData)
 			{
-				m_length = strlen(tcData);
+				m_length = (u32)strlen(tcData);
 				m_data = (s8*)malloc(m_length);
 				if (m_data)
 					memcpy(m_data, tcData, m_length);
@@ -202,9 +232,11 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 		void		set_next(XmlData* d)	{ if (this) m_next		= d;		}
 
 	// Getters
-		s8*			get_data()				{ if (this) return(m_data);	else return(0);		}
-		u32			get_length()			{ if (this) return(m_length); else return(0);	}
-		XmlData*	get_next()				{ if (this) return(m_next); else return(0);		}
+		s8*			as_s8p()				{ if (this) return(m_data);			else return(0);		}
+		u8*			as_u8p()				{ if (this) return((u8*)m_data);	else return(0);		}
+		s32			as_s32()				{ if (this) return(atoi(m_data));	else return(0);		}
+		u32			length()				{ if (this) return(m_length);		else return(0);		}
+		XmlData*	next()					{ if (this) return(m_next);			else return(0);		}
 
 		// Returns whether the value is set to the specified character
 		bool is_value(s8 ch)
@@ -277,7 +309,7 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 //////////
 //
 // Xml holds the base structure defining an XML.
-// When utils_xml_load() is called, it returns a handle to the XMLTag*, which is the root node.
+// When xml_load() is called, it returns a handle to the XMLTag*, which is the root node.
 // Each XML that's parsed has the root node, which actually then points as its first child to the real root node of the parsed XML file.
 //
 /////
@@ -404,12 +436,12 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 
 			if (this)
 			{
-				if (get_child())
+				if (child())
 				{
 					// We have to append to the end of the child tags
-					tChild = get_child();
-					while (tChild->get_next())
-						tChild = tChild->get_next();
+					tChild = child();
+					while (tChild->next())
+						tChild = tChild->next();
 
 					// Append to the end of this chain
 					tNew->set_parent(this);
@@ -436,12 +468,12 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 
 			if (this)
 			{
-				if (get_next())
+				if (next())
 				{
 					// We have to append to the end of the next tags
-					tNext = get_next();
-					while (tNext->get_next())
-						tNext = tNext->get_next();
+					tNext = next();
+					while (tNext->next())
+						tNext = tNext->next();
 
 					// Append to the end of this chain
 					tNew->set_prev(this);
@@ -477,12 +509,12 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 
 
 				// See where we add it
-				if (get_attribute())
+				if (attribute())
 				{
 					// We have to append to the end of the next tags
-					tNext = get_attribute();
-					while (tNext->get_attribute())
-						tNext = tNext->get_attribute();
+					tNext = attribute();
+					while (tNext->attribute())
+						tNext = tNext->attribute();
 
 					// Append to the end of this chain
 					tNew->set_parent(this);
@@ -515,12 +547,12 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 
 
 				// See where we add it
-				if (get_attribute())
+				if (attribute())
 				{
 					// We have to append to the end of the next tags
-					tNext = get_attribute();
-					while (tNext->get_attribute())
-						tNext = tNext->get_attribute();
+					tNext = attribute();
+					while (tNext->attribute())
+						tNext = tNext->attribute();
 
 					// Append to the end of this chain
 					tNew->set_parent(this);
@@ -551,8 +583,8 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 				{
 					// We have to append to the end of the next tags
 					tNext = m_attribute;
-					while (tNext->get_attribute())
-						tNext = tNext->get_attribute();
+					while (tNext->attribute())
+						tNext = tNext->attribute();
 
 					// Append to the end of this chain
 					tNew->set_parent(this);
@@ -578,7 +610,7 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 		void			set_parent(CXml* t)				{ if (this) m_parent	= t;		}
 		void			set_next(CXml* t)				{ if (this) m_next		= t;		}
 		void			set_child(CXml* t)				{ if (this) m_child		= t;		}
-		void			set_tag(XmlData* t)			{ if (this) m_tag		= t;		}
+		void			set_tag(XmlData* t)				{ if (this) m_tag		= t;		}
 		void			set_data(XmlData* t)			{ if (this) m_data		= t;		}
 		void			set_cdata(XmlData* t)			{ if (this) m_cdata		= t;		}
 		void			set_closed(void)				{ if (this) m_closed	= true;		}
@@ -596,18 +628,18 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 				{
 					// Search through attributes to see if a matching attribute tag is found
 					// If so, we replace its contents with the new one
-					lnLength	= t->get_data()->get_length();
+					lnLength	= t->data()->length();
 					tSearch		= m_attribute;
-					while (tSearch->get_attribute())
+					while (tSearch->attribute())
 					{
-						if (tSearch->get_tag()->get_length() == lnLength)
+						if (tSearch->tag()->length() == lnLength)
 						{
 							// Same length, possible match
-							if (_memicmp(tSearch->get_tag()->get_data(), t->get_tag()->get_data(), lnLength) == 0)
+							if (_memicmp(tSearch->tag()->as_s8p(), t->tag()->as_s8p(), lnLength) == 0)
 							{
 								// It was a match, this is the one they're replacing
 								// Update its pointer to point to the new thing
-								t->append_attribute(tSearch->get_attribute());	// We append because this tag could have a whole slew of attributes behind it
+								t->append_attribute(tSearch->attribute());	// We append because this tag could have a whole slew of attributes behind it
 
 								// The old attribute is no longer needed
 								delete tSearch;
@@ -617,7 +649,7 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 
 							}
 						}
-						tSearch = tSearch->get_attribute();
+						tSearch = tSearch->attribute();
 					}
 					// If we get here, it wasn't found, append it
 					tSearch->set_attribute(t);
@@ -650,18 +682,18 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 				{
 					// Search through attributes to see if a matching attribute tag is found
 					// If so, we replace its contents with the new one
-					lnLength	= strlen(tcTag);
+					lnLength	= (u32)strlen(tcTag);
 					tSearch		= m_attribute;
-					while (tSearch->get_attribute())
+					while (tSearch->attribute())
 					{
-						if (tSearch->get_tag()->get_length() == lnLength)
+						if (tSearch->tag()->length() == lnLength)
 						{
 							// Same length, possible match
-							if (_memicmp(tSearch->get_tag()->get_data(), tcTag, lnLength) == 0)
+							if (_memicmp(tSearch->tag()->as_s8p(), tcTag, lnLength) == 0)
 							{
 								// It was a match, this is the one they're updating
-								if (tSearch->get_data())
-									delete tSearch->get_data();
+								if (tSearch->data())
+									delete tSearch->data();
 
 								// Update its pointer to point to the new thing
 								tSearch->set_data(t);
@@ -671,7 +703,7 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 
 							}
 						}
-						tSearch = tSearch->get_attribute();
+						tSearch = tSearch->attribute();
 					}
 					// If we get here, it wasn't found
 					// We append it to the end
@@ -684,65 +716,82 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 
 
 	// Accessors
-		CXml*			get_prev()						{ if (this) return(m_prev); else return(NULL); }
-		CXml*			get_parent()					{ if (this) return(m_parent); else return(NULL); }
-		CXml*			get_next()						{ if (this) return(m_next); else return(NULL); }
-		CXml*			get_child()						{ if (this) return(m_child); else return(NULL); }
-		CXml*			get_attribute()					{ if (this) return(m_attribute); else return(NULL); }
-		XmlData*		get_tag()						{ if (this) return(m_tag); else return(NULL); }
-		XmlData*		get_data()						{ if (this) return(m_data); else return(NULL); }
-		XmlData*		get_cdata()						{ if (this) return(m_cdata); else return(NULL); }
-		bool			is_closed()						{ if (this) return(m_closed); else return(NULL); }
+		CXml*			prev()						{ if (this) return(m_prev);			else return(NULL); }
+		CXml*			parent()					{ if (this) return(m_parent);		else return(NULL); }
+		CXml*			next()						{ if (this) return(m_next);			else return(NULL); }
+		CXml*			child()						{ if (this) return(m_child);		else return(NULL); }
+		CXml*			attribute()					{ if (this) return(m_attribute);	else return(NULL); }
+		XmlData*		tag()						{ if (this) return(m_tag);			else return(NULL); }
+		XmlData*		data()						{ if (this) return(m_data);			else return(NULL); }
+		XmlData*		cdata()						{ if (this) return(m_cdata);		else return(NULL); }
+		bool			is_closed()					{ if (this) return(m_closed);		else return(NULL); }
 
 
 	// Functions
-		CXml* get_child(const s8* text)		{	return(get_child((s8*)text));			}
-		CXml* get_child(s8* text)
+		s32 childCount(void)
+		{
+			s32		lnCount;
+			CXml*	child;
+
+			lnCount = 0;
+			if (this)
+			{
+				// Count through each child
+				for (child = this->child(); child; child = child->next())
+					++lnCount;
+			}
+
+			// Indicate our count
+			return(lnCount);
+		}
+
+		CXml* child(const s8* text)		{	return(child((s8*)text));			}
+		CXml* child(s8* text)
 		{
 			u32 lnLength;
 			CXml* child;
 
-			lnLength = strlen(text);
-			child = get_child();
+			lnLength = (u32)strlen(text);
+			child = this->child();
 			while (child)
 			{
-				if (child->get_tag()->get_length() == lnLength)
+				if (child->tag()->length() == lnLength)
 				{
 					// They're the same length, it's possible
-					if (_memicmp(child->get_tag()->get_data(), text, lnLength) == 0)
+					if (_memicmp(child->tag()->as_s8p(), text, lnLength) == 0)
 					{
 						// It's a match
 						return(child);
 					}
 				}
 				// Move to next child/sibling
-				child = child->get_next();
+				child = child->next();
 			}
 			// Not found it we get here
 			return(NULL);
 		}
 
-		CXml* get_attribute(const s8* text)		{	return(get_attribute((s8*)text));			}
-		CXml* get_attribute(s8* text)
+		CXml* attribute(const s8* text)		{	return(attribute((s8*)text));			}
+		CXml* attribute(s8* text)
 		{
 			u32 lnLength;
-			CXml* attribute;
+			CXml* attr;
 
-			lnLength	= strlen(text);
-			attribute	= get_attribute();
-			while (attribute)
+			lnLength	= (u32)strlen(text);
+			attr	= this->attribute();
+			while (attr)
 			{
-				if (attribute->get_tag()->get_length() == lnLength)
+				if (attr->tag()->length() == lnLength)
 				{
 					// They're the same length, it's possible
-					if (_memicmp(attribute->get_tag()->get_data(), text, lnLength) == 0)
+					if (_memicmp(attr->tag()->as_s8p(), text, lnLength) == 0)
 					{
 						// It's a match
-						return(attribute);
+						return(attr);
 					}
 				}
 				// Move to next attribute/sibling
-				attribute = attribute->get_attribute();
+				attr = attr->attribute();
 			}
 			// Not found it we get here
 			return(NULL);
@@ -753,11 +802,11 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 		{
 			u32 lnLength;
 
-			lnLength = strlen(text);
-			if (get_tag()->get_length() == lnLength)
+			lnLength = (u32)strlen(text);
+			if (tag()->length() == lnLength)
 			{
 				// They're the same length, it's possible
-				if (_memicmp(get_tag()->get_data(), text, lnLength) == 0)
+				if (_memicmp(tag()->as_s8p(), text, lnLength) == 0)
 				{
 					// It's a match
 					return(true);
@@ -771,11 +820,11 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 		{
 			u32 lnLength;
 
-			lnLength = strlen(text);
-			if (get_data()->get_length() == lnLength)
+			lnLength = (u32)strlen(text);
+			if (data()->length() == lnLength)
 			{
 				// They're the same length, it's possible
-				if (memcmp(get_data()->get_data(), text, lnLength) == 0)
+				if (memcmp(data()->as_s8p(), text, lnLength) == 0)
 				{
 					// It's a match
 					return(true);
@@ -789,11 +838,11 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 		{
 			u32 lnLength;
 
-			lnLength = strlen(text);
-			if (get_data()->get_length() == lnLength)
+			lnLength = (u32)strlen(text);
+			if (data()->length() == lnLength)
 			{
 				// They're the same length, it's possible
-				if (_memicmp(get_data()->get_data(), text, lnLength) == 0)
+				if (_memicmp(data()->as_s8p(), text, lnLength) == 0)
 				{
 					// It's a match
 					return(true);
@@ -806,19 +855,19 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 		{
 			if (this)
 			{
-				CXml* tNew = new CXml(this->get_tag()->copy(), this->get_data()->copy());
-				if (this->get_cdata())
-					tNew->set_cdata(this->get_cdata()->copy());
+				CXml* tNew = new CXml(this->tag()->copy(), this->data()->copy());
+				if (this->cdata())
+					tNew->set_cdata(this->cdata()->copy());
 
 
 				// Copy the attributes
 				if (tlCopyAttributes)
-					tNew->copy_attributes(this->get_attribute());
+					tNew->copy_attributes(this->attribute());
 
 
 				// Copy the child nodes
 				if (tlCopyChildren)
-					tNew->copy_children(this->get_child());
+					tNew->copy_children(this->child());
 
 
 				// Finished
@@ -832,18 +881,18 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 			if (this && tc)
 			{
 				// Iterate until there are no more children to add
-				CXml* tNewChild = new CXml(tc->get_tag()->copy(), tc->get_data()->copy());
+				CXml* tNewChild = new CXml(tc->tag()->copy(), tc->data()->copy());
 				append_child(tNewChild);
 
 
 				// Copy whatever is required to duplicate this item
-				if (tc->get_cdata())
-					tNewChild->set_cdata(tc->get_cdata()->copy());
+				if (tc->cdata())
+					tNewChild->set_cdata(tc->cdata()->copy());
 
 
 				// Copy attributes and any of the specified's children
-				tNewChild->copy_attributes	(tc->get_attribute());
-				tNewChild->copy_children	(tc->get_child());
+				tNewChild->copy_attributes	(tc->attribute());
+				tNewChild->copy_children	(tc->child());
 			}
 		}
 
@@ -855,18 +904,18 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 				while (ta)
 				{
 					// Attributes are easy to copy, because all they ever have is a name and the data item, which is "name='data'"
-					append_attribute(new CXml(ta->get_attribute()->get_tag()->copy(), ta->get_attribute()->get_data()->copy()));
+					append_attribute(new CXml(ta->attribute()->tag()->copy(), ta->attribute()->data()->copy()));
 
 					// Move to next attribute
-					ta = ta->get_attribute();
+					ta = ta->attribute();
 				}
 				// When we get here we have copied all attributes
 			}
 		}
 
 
-		u32 save(const s8* tcFilename)	{	return(save((s8*)tcFilename));			}
-		u32 save(s8* tcFilename = NULL, s8** tcOut = NULL, CXml* t = NULL)
+		uptr save(const s8* tcFilename)	{	return(save((s8*)tcFilename));			}
+		uptr save(s8* tcFilename = NULL, s8** tcOut = NULL, CXml* t = NULL)
 		{
 			s32 lnLevel = 0;
 			s32 lnResult = 0;
@@ -915,7 +964,7 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 
 
 private:
-		u32 save__go(int tfh, s8** tcOut, CXml* t, s32& tnFileLength, s32& tnLevel)
+		uptr save__go(int tfh, s8** tcOut, CXml* t, s32& tnFileLength, s32& tnLevel)
 		{
 			// This function is called iteratively, so we increment the level each time
 			++tnLevel;
@@ -927,10 +976,10 @@ private:
 				//	3)	Child
 				//	4)	Closing tag
 				//	4)	Next
-				if (t->get_data() || t->get_cdata() || t->get_child())
+				if (t->data() || t->cdata() || t->child())
 				{
 					// Write tag
-					if (!save__write_item(tfh, tcOut, t->get_tag()->get_data(), t->get_tag()->get_length(), t->get_attribute(), (s8*)"<", (s8*)">", tnFileLength))
+					if (!save__write_item(tfh, tcOut, t->tag()->as_s8p(), t->tag()->length(), t->attribute(), (s8*)"<", (s8*)">", tnFileLength))
 					{
 						// An error writing
 						--tnLevel;
@@ -938,10 +987,10 @@ private:
 					}
 
 					// Write data
-					if (t->get_data())
+					if (t->data())
 					{
 						// Write data section
-						if (!save__write_item(tfh, tcOut, t->get_data()->get_data(), t->get_data()->get_length(), NULL, (s8*)"", (s8*)"", tnFileLength))
+						if (!save__write_item(tfh, tcOut, t->data()->as_s8p(), t->data()->length(), NULL, (s8*)"", (s8*)"", tnFileLength))
 						{
 							// An error writing
 							--tnLevel;
@@ -951,10 +1000,10 @@ private:
 					}
 
 					// Write CDATA
-					if (t->get_cdata())
+					if (t->cdata())
 					{
 						// Write CDATA section
-						if (!save__write_item(tfh, tcOut, t->get_cdata()->get_data(), t->get_cdata()->get_length(), NULL, (s8*)"<![CDATA[", (s8*)"]]>", tnFileLength))
+						if (!save__write_item(tfh, tcOut, t->cdata()->as_s8p(), t->cdata()->length(), NULL, (s8*)"<![CDATA[", (s8*)"]]>", tnFileLength))
 						{
 							// An error writing
 							--tnLevel;
@@ -964,10 +1013,10 @@ private:
 					}
 
 					// Write child entries
-					if (t->get_child())
+					if (t->child())
 					{
 						// Write child portion
-						if (save__go(tfh, tcOut, t->get_child(), tnFileLength, tnLevel) != 0)
+						if (save__go(tfh, tcOut, t->child(), tnFileLength, tnLevel) != 0)
 						{
 							// Some error occurred
 							--tnLevel;
@@ -976,7 +1025,7 @@ private:
 					}
 
 					// Write closing tag
-					if (!save__write_item(tfh, tcOut, t->get_tag()->get_data(), t->get_tag()->get_length(), NULL, (s8*)"</", (s8*)">", tnFileLength))
+					if (!save__write_item(tfh, tcOut, t->tag()->as_s8p(), t->tag()->length(), NULL, (s8*)"</", (s8*)">", tnFileLength))
 					{
 						// An error writing
 						--tnLevel;
@@ -985,9 +1034,9 @@ private:
 
 				//	1)	Tag + attributes in closing tag
 				//	2)	Next
-				} else if (t->get_attribute()) {
+				} else if (t->attribute()) {
 					// It's something <like this='x'/>
-					if (!save__write_item(tfh, tcOut, t->get_tag()->get_data(), t->get_tag()->get_length(), t->get_attribute(), (s8*)"<", (s8*)"/>", tnFileLength))
+					if (!save__write_item(tfh, tcOut, t->tag()->as_s8p(), t->tag()->length(), t->attribute(), (s8*)"<", (s8*)"/>", tnFileLength))
 					{
 						// An error writing
 						--tnLevel;
@@ -997,7 +1046,7 @@ private:
 				} else {
 					// It's just a single tag
 					// It should have no children, no data, no cdata, no attributes
-					if (!save__write_item(tfh, tcOut, t->get_tag()->get_data(), t->get_tag()->get_length(), t->get_attribute(), (s8*)"<", (s8*)"/>", tnFileLength))
+					if (!save__write_item(tfh, tcOut, t->tag()->as_s8p(), t->tag()->length(), t->attribute(), (s8*)"<", (s8*)"/>", tnFileLength))
 					{
 						// An error writing
 						--tnLevel;
@@ -1007,7 +1056,7 @@ private:
 				}
 
 				// Move to next item
-				t = t->get_next();
+				t = t->next();
 			}
 
 			// Decrement the level operator and see where we are
@@ -1057,7 +1106,7 @@ private:
 				// Write this data
 				if (tfh)
 				{
-					numread1 = _write(tfh, tcOpenCharacters, strlen(tcOpenCharacters));
+					numread1 = _write(tfh, tcOpenCharacters, (u32)strlen(tcOpenCharacters));
 					numread2 = _write(tfh, tcData, tnLength);
 					if (numread1 != strlen(tcOpenCharacters) || numread2 != tnLength)
 					{
@@ -1085,7 +1134,7 @@ private:
 					memcpy(*tcOut + tnFileLength,								tcOpenCharacters,	strlen(tcOpenCharacters));
 					memcpy(*tcOut + tnFileLength + strlen(tcOpenCharacters),	tcData,				tnLength);
 				}
-				tnFileLength += strlen(tcOpenCharacters);
+				tnFileLength += (s32)strlen(tcOpenCharacters);
 				tnFileLength += tnLength;
 
 
@@ -1096,7 +1145,7 @@ private:
 				// Close the tag
 				if (tfh)
 				{
-					numread3 = _write(tfh, tcCloseCharacters, strlen(tcCloseCharacters));
+					numread3 = _write(tfh, tcCloseCharacters, (u32)strlen(tcCloseCharacters));
 					if (numread3 != strlen(tcCloseCharacters))
 					{
 						// Some error writing
@@ -1106,7 +1155,7 @@ private:
 				if (tcOut && *tcOut)
 					memcpy(*tcOut + tnFileLength, tcCloseCharacters, strlen(tcCloseCharacters));
 
-				tnFileLength += strlen(tcCloseCharacters);
+				tnFileLength += (s32)strlen(tcCloseCharacters);
 
 				// We're good
 				return(true);
@@ -1125,23 +1174,23 @@ private:
 			// Write any attributes
 			while (a)
 			{
-				if (a->get_tag())
+				if (a->tag())
 				{
 					// There is a tag here
-					if (a->get_data())
+					if (a->data())
 					{
 						// And data, we're good to go
 						length1 = 1;
-						length2 = a->get_tag()->get_length();
+						length2 = a->tag()->length();
 						length3 = 2;
-						length4 = a->get_data()->get_length();
+						length4 = a->data()->length();
 						length5 = 1;
 						if (tfh)
 						{
 							numread1 = _write(tfh, " ",							length1);
-							numread2 = _write(tfh, a->get_tag()->get_data(),	length2);
+							numread2 = _write(tfh, a->tag()->as_s8p(),	length2);
 							numread3 = _write(tfh, "='",						length3);
-							numread4 = _write(tfh, a->get_data()->get_data(),	length4);
+							numread4 = _write(tfh, a->data()->as_s8p(),	length4);
 							numread5 = _write(tfh, "'",							length5);
 							if (numread1 != length1 || numread2 != length2 || numread3 != length3 || numread4 != length4 || numread5 != length5)
 							{
@@ -1153,9 +1202,9 @@ private:
 						if (tcOut && *tcOut)
 						{
 							memcpy(*tcOut + tnFileLength,											" ",						length1);
-							memcpy(*tcOut + tnFileLength + length1,									a->get_tag()->get_data(),	length2);
+							memcpy(*tcOut + tnFileLength + length1,									a->tag()->as_s8p(),	length2);
 							memcpy(*tcOut + tnFileLength + length1 + length2,						"='",						length3);
-							memcpy(*tcOut + tnFileLength + length1 + length2 + length3,				a->get_data()->get_data(),	length4);
+							memcpy(*tcOut + tnFileLength + length1 + length2 + length3,				a->data()->as_s8p(),	length4);
 							memcpy(*tcOut + tnFileLength + length1 + length2 + length3 + length4,	"'",						length5);
 
 						}
@@ -1168,7 +1217,7 @@ private:
 				}
 
 				// Move to next attribute
-				a = a->get_attribute();
+				a = a->attribute();
 			}
 			// No error
 			return(true);

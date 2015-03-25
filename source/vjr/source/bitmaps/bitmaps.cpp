@@ -145,6 +145,46 @@
 
 //////////
 //
+// Called to allow the bitmaps to be loaded by name, as per the array_bmp.bxml file.
+//
+//////
+	SBitmap* iBmp_copyArrayBmp(CXml* baseArrayBmp, SBitmap* baseBmp[], s8* tcName, u32 tnNameLength)
+	{
+		s32		lnIndex;
+		CXml*	icon;
+		CXml*	name;
+
+
+		// Make sure our environment is sane
+		if (tcName && tnNameLength > 0 && baseArrayBmp && baseBmp)
+		{
+			// Iterate through each child
+			for (lnIndex = 0, icon = baseArrayBmp->child(); icon; lnIndex++, icon = icon->next())
+			{
+				// Grab the name attribute
+				name = icon->attribute("name");
+
+				// Is the length good?
+				if (name && name->data()->length() == tnNameLength)
+				{
+					// Does the text match?
+					if (_memicmp(tcName, name->data()->as_s8p(), tnNameLength) == 0)
+						return(iBmp_copy(baseBmp[lnIndex]));
+
+					// If we get here, invalid
+				}
+			}
+		}
+
+		// If we get here, invalid parameters, or name not found
+		return(NULL);
+	}
+
+
+
+
+//////////
+//
 // Called to make sure there is a copy, and if not it creates it, and if so
 // then makes sure they are the same size, and if not then deletes the existing
 // one and creates a new copy of the same size.

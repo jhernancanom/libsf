@@ -145,6 +145,9 @@
 	#include "\libsf\utils\common\cpp\disk.h"
 	#include "\libsf\utils\common\cpp\disk.cpp"
 
+	#include "\libsf\utils\common\cpp\xml\xml.h"
+	#include "\libsf\utils\common\cpp\xml\xml.cpp"
+
 	#include "vjr_structs0.h"
 
 	#include "compiler\common\compiler_common.h"
@@ -293,6 +296,9 @@
 
 	#include "/libsf/utils/common/cpp/disk.h"
 	#include "/libsf/utils/common/cpp/disk.cpp"
+
+	#include "/libsf/utils/common/cpp/xml/xml.h"
+	#include "/libsf/utils/common/cpp/xml/xml.cpp"
 
 	#include "vjr_structs0.h"
 

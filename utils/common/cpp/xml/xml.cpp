@@ -28,12 +28,44 @@
 //     Aug.02.2014 - Initial creation
 //////
 //
-// This software is released as Liberty Software under a Repeat License, as governed
+// This document is released as Liberty Software under a Repeat License, as governed
 // by the Public Benefit License v1.0 or later (PBL).
 //
-// You are free to use, copy, modify and share this software.  However, it can only
-// be released under the PBL version indicated, and every project must include a copy
-// of the pbl.txt document for its version as is at http://www.libsf.org/licenses/.
+// The PBL is a public domain license with a caveat:  self accountability unto God.
+// You are free to use, copy, modify and share this software for any purpose, however,
+// it is the desire of those working on this project that the software remain open.
+// It is our request that you maintain it that way.  This is not a legal request unto
+// our court systems, but rather a personal matter between you and God.  Our talents
+// were received from God, and given to you through this forum.  And it is our wish
+// that those talents reach out to as many as possible in a form allowing them to wield
+// this content for their own betterment, as you are now considering doing.  And whereas
+// we could've forced the issue through something like a copyleft-protected release, the
+// truth is we are all giving an account of our lives unto God continually by the daily
+// choices we make.  And here again is another case where you get to demonstrate your
+// character unto God, and unto your fellow man.
+//
+// Jesus came to this Earth to set the captives free, to save men's eternal souls from
+// the punishment demanded by our sin.  Each one of us is given the opportunity to
+// receive Him in this world and be saved.  Whether we choose to receive Him, and follow
+// Him, and purpose our lives on the goals He has for each of us (all of which are
+// beneficial for all involved), is one way we reveal our character continually.  God
+// sees straight through to the heart, bypassing all of the words, all of the facades.
+// He is our Creator, and He knows who we are truly.
+//
+// Jesus is called "Christ" because He saves men from the eternal flames of Hell, the
+// just punishment of rebellion against God (rebellion against truth) by eternal beings,
+// which each of us are.
+//
+// Do not let His free gift escape you because of some desire to shortcut what is right
+// in your life. Instead, do what is right, and do it because He is who He is, and what
+// He has done to save us from such a fate.  Demonstrate to Him, to me, and to all of
+// mankind, and to all of the Heavenly hosts, exactly who you are on the inside.  Receive
+// Jesus Christ into your heart, learn of Him, of how He came here to guide us into that
+// which is of His Kingdom and will be forever hereafter we leave this world.  Do this,
+// and live.
+//
+// Every project released by Liberty Software Foundation will include a copy of the
+// pbl.txt document, which can be found at http://www.libsf.org/licenses/.
 //
 // For additional information about this project, or to view the license, see:
 //
@@ -41,11 +73,9 @@
 //     http://www.libsf.org/licenses/
 //     http://www.visual-freepro.org/vjr/indexmain.html
 //     http://www.visual-freepro.org/wiki/index.php/PBL
-//     http://www.visual-freepro.org/wiki/index.php/Repeat_License
 //
 // Thank you.  And may The Lord bless you richly as you lift up your life, your
 // talents, your gifts, your praise, unto Him.  In Jesus' name I pray.  Amen.
-//
 //
 
 
@@ -63,11 +93,12 @@
 //		-103			- Unable to read file into memory
 //
 /////
-	u32 xml_load_file(s8* filename)
+	uptr xml_load_file(s8* filename)
 	{
-		int lfh;
-		u32 lnFileSize, lnNumread, lnReturnVal;
-		s8* tptr;
+		s32		lfh;
+		s32		lnFileSize, lnNumread;
+		uptr	lnReturnVal;
+		s8*		tptr;
 
 
 		// Open the file specified by the user
@@ -130,7 +161,7 @@
 //		-2				- Syntax error
 //
 /////
-	u32 xml_load(s8* buffer, u32 tnLength)
+	uptr xml_load(s8* buffer, u32 tnLength)
 	{
 		u32 lnOffset, lnThis, lnLastSkip;
 		bool lbStop;
@@ -146,7 +177,7 @@
 		// We must now be at the root node
 		lnOffset = 0;
 		if (tnLength == 0)
-			tnLength = strlen(buffer);
+			tnLength = (u32)strlen(buffer);
 
 		// Beginning of a tag
 		loTag   = new CXml();
@@ -248,7 +279,7 @@
 									lnOffset += lnThis + 3;
 									lnThis = 0;
 									// Right now, we're on the character immediate after whatever this thing we just found was
-									if (!loTag->get_cdata())
+									if (!loTag->cdata())
 									{
 										// Store the CDATA section on this tag
 										loTag->set_cdata(loCData);
@@ -337,11 +368,11 @@
 								{
 									// This tag is not closed yet
 									// See if this is a match
-									if (loTag->get_tag() && loTag->get_tag()->get_length() == lnThis)
+									if (loTag->tag() && loTag->tag()->length() == lnThis)
 									{
 										// They're the same length
 										// See if the data comparison is a match
-										if (_memicmp(&buffer[lnOffset], loTag->get_tag()->get_data(), lnThis) == 0)
+										if (_memicmp(&buffer[lnOffset], loTag->tag()->as_s8p(), lnThis) == 0)
 										{
 											// This is a match
 											loTag->set_closed();
@@ -350,7 +381,7 @@
 									}
 								}
 								// If it's not this item, it must be a parent item
-								loTag = loTag->get_parent();
+								loTag = loTag->parent();
 							}
 							lnOffset += lnThis;
 							lnThis = 0;
@@ -377,7 +408,7 @@
 								{
 									// We've reached the end of the XML file
 									// If this was the last tag, that's okay, otherwise, not so much
-									if (loTag->get_parent() != loRoot)
+									if (loTag->parent() != loRoot)
 										return(-1);
 									//else
 									//We're good!
@@ -400,11 +431,11 @@
 							// Note:  This logic is maintained through the processing path below.
 							if (!loTag->is_closed())
 							{
-								if (loTag->get_child())
+								if (loTag->child())
 								{
 									// The first child already exists, which means we've already traversed the children's branch.
 									// Now, we are adding the next item
-									loNew->set_parent(loTag->get_parent());
+									loNew->set_parent(loTag->parent());
 									loNew->set_prev(loTag);
 									loTag->set_next(loNew);
 
@@ -422,7 +453,7 @@
 							{
 								// The current level is closed
 								// We add this one as a next
-								loNew->set_parent(loTag->get_parent());
+								loNew->set_parent(loTag->parent());
 								loNew->set_prev(loTag);
 								loTag->set_next(loNew);
 
@@ -497,7 +528,7 @@
 
 									case '>':
 										// We've reached the closing tag name
-										if (loTagNameData->get_length() == 0)
+										if (loTagNameData->length() == 0)
 											loTagNameData->set_length(lnThis - 1);		// We have not set the name length
 										
 										if (lnOffset + lnThis + 1 >= tnLength)
@@ -510,7 +541,7 @@
 
 									case '/':
 										// We've reached the end of a single-item tag
-										if (loTagNameData->get_length() == 0)
+										if (loTagNameData->length() == 0)
 											loTagNameData->set_length(lnThis - 1);		// We have not set the name length
 										
 
@@ -588,7 +619,7 @@
 				// Note:  If there are trailing spaces that are there as whitespaces, they ARE included in this text portion
 
 				// Append the data to the current item, whatever it is
-				if (loTag && !loTag->get_data())
+				if (loTag && !loTag->data())
 				{
 					// First one, we have to add it to the raw thing
 					loTag->set_data(loData);
@@ -603,7 +634,7 @@
 			}
 		}
 		// When we get here, we need to have the root node closed to be successful
-		if (loTag->get_parent() == loRoot && loTag->is_closed())
+		if (loTag->parent() == loRoot && loTag->is_closed())
 		{
 			// We're good
 			return((u32)loRoot);
@@ -632,16 +663,16 @@
 //		-2				- Unable to write something
 //
 /////
-	u32 xml_write_file(u32 handle, s8* filename)
+	uptr xml_write_file(uptr handle, s8* filename)
 	{
-		u32		lnResult;
+		uptr	lnResult;
 		CXml*	loRoot;
 		CXml*	loTag;
 
 
 		// Process through the child tags, beginning at the top
 		loRoot		= (CXml*)handle;
-		loTag		= loRoot->get_child();
+		loTag		= loRoot->child();
 		lnResult	= loTag->save(filename);
 		return(lnResult);
 	}
@@ -680,7 +711,7 @@
 //		data_or_cdata		- 0 for data, 1 for cdata, others invalid
 //
 /////
-	bool xml_access_node_bool(u32 handle, s8* tcNode)
+	bool xml_access_node_bool(uptr handle, s8* tcNode)
 	{
 		s8 buffer[32];
 		if (xml_access_node(handle, tcNode, &buffer[0], sizeof(buffer)) > 0)
@@ -690,7 +721,7 @@
 		return(false);
 	}
 
-	u32 xml_access_node_integer(u32 handle, s8* tcNode)
+	uptr xml_access_node_integer(uptr handle, s8* tcNode)
 	{
 		s8 buffer[32];
 		if (xml_access_node(handle, tcNode, &buffer[0], sizeof(buffer)) > 0)
@@ -699,7 +730,7 @@
 		return(-1);
 	}
 
-	f64 xml_access_node_f64(u32 handle, s8* tcNode)
+	f64 xml_access_node_f64(uptr handle, s8* tcNode)
 	{
 		s8 buffer[32];
 		if (xml_access_node(handle, tcNode, &buffer[0], sizeof(buffer)) > 0)
@@ -716,7 +747,7 @@
 
 
 
-	u32 xml_access_node(u32 handle, s8* tcNode, s8* tcReturn_value, u32 tnReturn_value_length)
+	uptr xml_access_node(uptr handle, s8* tcNode, s8* tcReturn_value, u32 tnReturn_value_length)
 	{
 		u32			lnStart, lnLength, lnMaxLength, lnCount;
 		CXml*		loRoot;
@@ -737,7 +768,7 @@
 		// Determine this level of node we're looking for
 		lnStart		= 0;
 		lnLength	= 0;
-		lnMaxLength	= strlen(tcNode);
+		lnMaxLength	= (u32)strlen(tcNode);
 		loNodeRoot = iXml_access_node__get_node_segments(tcNode, lnMaxLength);
 		if (!loNodeRoot)
 		{
@@ -752,7 +783,7 @@
 
 		// Grab the root and first reference
 		loRoot = (CXml*)handle;
-		loTag = loRoot->get_child();
+		loTag = loRoot->child();
 
 
 		// Iterate through each node specified until we reach the end, then return the DATA value or CDATA value
@@ -760,10 +791,10 @@
 		while (loTag && loNode)
 		{
 			// Iterate through this level to find the first node name
-			if (loNode->get_length() == 0 || (loTag->get_tag() && loTag->get_tag()->get_length() == loNode->get_length()))
+			if (loNode->get_length() == 0 || (loTag->tag() && loTag->tag()->length() == loNode->get_length()))
 			{
 				// Possible match based on length
-				if (loNode->get_length() == 0 || (_memicmp(loTag->get_tag()->get_data(), loNode->get_name(), loNode->get_length()) == 0))
+				if (loNode->get_length() == 0 || (_memicmp(loTag->tag()->as_s8p(), loNode->get_name(), loNode->get_length()) == 0))
 				{
 					// It's a match, are we through our iterate yet?
 					if (loNode->get_count() >= loNode->get_iterate())
@@ -781,7 +812,7 @@
 						{
 							case XmlNode::data:
 								// It's time to return the data
-								iXml_access_node__copy_data(lnCount, loTag->get_data(), tcReturn_value, tnReturn_value_length);
+								iXml_access_node__copy_data(lnCount, loTag->data(), tcReturn_value, tnReturn_value_length);
 								// All done
 								delete loNodeRoot;
 								return(lnCount);
@@ -789,7 +820,7 @@
 
 							case XmlNode::cdata:
 								// It's time to return the cdata
-								iXml_access_node__copy_data(lnCount, loTag->get_cdata(), tcReturn_value, tnReturn_value_length);
+								iXml_access_node__copy_data(lnCount, loTag->cdata(), tcReturn_value, tnReturn_value_length);
 								// All done
 								delete loNodeRoot;
 								return(lnCount);
@@ -799,7 +830,7 @@
 							case XmlNode::attrib_value:
 								// It's time to return one of the attributes
 								// We have to iterate through the attributes to figure out which one they want to return
-								if (!loTag->get_attribute())
+								if (!loTag->attribute())
 								{
 									// There are no attributes
 									delete loNodeRoot;
@@ -809,19 +840,19 @@
 								}
 
 								// There is at least one attribute
-								loTag = loTag->get_attribute();
+								loTag = loTag->attribute();
 								if (loNode->get_iterate() == -1)
 								{
 									// We are searching for the specified name
 									while (loTag)
 									{
-										if (loNode->get_length() == 0 || (loTag->get_tag() && loTag->get_tag()->get_length() == loNode->get_length()))
+										if (loNode->get_length() == 0 || (loTag->tag() && loTag->tag()->length() == loNode->get_length()))
 										{
 											// Possible match based on length
-											if (loNode->get_length() == 0 || (_memicmp(loTag->get_tag()->get_data(), loNode->get_name(), loNode->get_length()) == 0))
+											if (loNode->get_length() == 0 || (_memicmp(loTag->tag()->as_s8p(), loNode->get_name(), loNode->get_length()) == 0))
 											{
 												// This is the attribute, since we know it by name we are not returning the name type, but always the value
-												iXml_access_node__copy_data(lnCount, loTag->get_data(), tcReturn_value, tnReturn_value_length);
+												iXml_access_node__copy_data(lnCount, loTag->data(), tcReturn_value, tnReturn_value_length);
 												// All done
 												delete loNodeRoot;
 												return(lnCount);
@@ -829,7 +860,7 @@
 										}
 
 										// Move to the next attribute
-										loTag = loTag->get_attribute();
+										loTag = loTag->attribute();
 									}
 									// If we get here, attribute name was not found
 									delete loNodeRoot;
@@ -844,7 +875,7 @@
 									while (loTag && loNode->get_count() < loNode->get_iterate())
 									{
 										// We need to go to the next attribute
-										loTag = loTag->get_attribute();
+										loTag = loTag->attribute();
 										loNode->set_count(loNode->get_count() + 1);
 									}
 									if (loTag)
@@ -854,12 +885,12 @@
 										{
 											case XmlNode::attrib_name:
 												// Copy the name
-												iXml_access_node__copy_data(lnCount, loTag->get_tag(), tcReturn_value, tnReturn_value_length);
+												iXml_access_node__copy_data(lnCount, loTag->tag(), tcReturn_value, tnReturn_value_length);
 												break;
 
 											case XmlNode::attrib_value:
 												// Copy the value
-												iXml_access_node__copy_data(lnCount, loTag->get_data(), tcReturn_value, tnReturn_value_length);
+												iXml_access_node__copy_data(lnCount, loTag->data(), tcReturn_value, tnReturn_value_length);
 												break;
 
 										}
@@ -891,7 +922,7 @@
 								}
 								// There is another level after this one
 								loNode	= loNode->get_next();
-								loTag	= loTag->get_child();
+								loTag	= loTag->child();
 								break;
 
 						}
@@ -902,7 +933,7 @@
 						// Increase our count by one
 						loNode->set_count(loNode->get_count() + 1);
 						// Move to the next at this level
-						loTag = loTag->get_next();
+						loTag = loTag->next();
 						// And continue looking for this matching tag
 
 					}
@@ -911,7 +942,7 @@
 				else
 				{
 					// Move to next at this level
-					loTag = loTag->get_next();
+					loTag = loTag->next();
 
 				}
 
@@ -919,7 +950,7 @@
 			else
 			{
 				// Move to next at this level
-				loTag = loTag->get_next();
+				loTag = loTag->next();
 
 			}
 
@@ -1745,11 +1776,11 @@
 		// See if we can copy anything
 		if (toData && tcReturn_value)
 		{
-			while (tnCount < toData->get_length() &&
+			while (tnCount < toData->length() &&
 				tnCount < tnReturn_value_length)
 			{
 				// Copy the next character
-				tcReturn_value[tnCount] = toData->get_data()[tnCount];
+				tcReturn_value[tnCount] = toData->as_s8p()[tnCount];
 
 				// Move to the next position
 				++tnCount;

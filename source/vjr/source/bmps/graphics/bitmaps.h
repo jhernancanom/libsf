@@ -141,7 +141,9 @@
 	#include "h\grace\node_port_ball_yellow.h"
 
 	#include "h\cask_icons.h"
+	
 	#include "h\array_bmp.h"
+	#include "h\array_bmp_bxml.h"
 
 #elif defined(__GNUC__)
 	#include "h/app_icon.h"
@@ -213,7 +215,9 @@
 	#include "h/grace/node_port_ball_yellow.h"
 
 	#include "h/cask_icons.h"
+	
 	#include "h/array_bmp.h"
+	#include "h/array_bmp_bxml.h"
 
 #else
 	#error Unknown target for compilation (must be Windows or Linux)

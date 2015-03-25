@@ -107,6 +107,7 @@ struct SObjPropMap;
 	void					iVjr_init								(HACCEL* hAccelTable);
 	void					iVjr_init_loadCaskIcons					(void);
 	void					iVjr_init_loadBitmapArray				(void);
+	void					iVjr_init_decorateJDebiWithIcons		(void);
 	void					iVjr_createOverlayListing				(SBitmap* bmp, RECT* trc);
 	void					iVjr_renderOverlayListing				(SBitmap* bmp, RECT* trc);
 	void					iiVjr_renderAccomplishment				(SBitmap* bmp, RECT* trc, s32 tnRAG, cs8* tcAccomplishment, s8* tcVersion, bool tlBold, bool tlItalic, bool tlUnderline, s32 tnAdjustAccomplishmentFontSize, s32 tnAdjustVersionFontSize);

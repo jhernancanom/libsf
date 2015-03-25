@@ -435,6 +435,9 @@
 			sourceCode_editbox->p.sem->isSourceCode		= true;
 			sourceCode_editbox->p.sem->showLineNumbers	= true;
 
+			// Decorate with icons
+			iVjr_init_decorateJDebiWithIcons();
+
 
 		//////////
 		// Locals window caption and font
@@ -3958,29 +3961,67 @@
 //////
 	void iVjr_init_loadBitmapArray(void)
 	{
-		s32 lnIndex, lnY, lnX;
+		s32 lnIndex, lnY, lnX, lnXStart, lnStrideY, lnStrideX, lnBmpWidth, lnBmpHeight, lnMaxCount;
 
 
 		//////////
 		// Load the raw array content in strip form
 		//////
-			bmpArrayTiled = iBmp_rawLoad(cgc_arrayBmp);
+			bmpArrayTiled		= iBmp_rawLoad(cgc_arrayBmp);
+			bxmlArrayBmp		= (CXml*)xml_load((s8*)cgc_bxmlArrayBmp, (s32)strlen(cgc_bxmlArrayBmp));
+			// Note:  This XML structure comes from an embedded source (see cgc_bxmlArrayBmp[]), so its syntax will match what's indicated
+			bxmlArrayBmpIcons	= bxmlArrayBmp->child("jdebi")->child("icons");
+
+
+		//////////
+		// Allocate memory for all of the children
+		//////
+			lnMaxCount	= bxmlArrayBmpIcons->childCount();
+			bmpArray	= (SBitmap**)malloc(lnMaxCount * sizeof(SBitmap*));
+			if (!bmpArray)
+				debug_break;	// Should never happen
+
+			// Initialize
+			memset(bmpArray, 0, (lnMaxCount * sizeof(SBitmap*)));
 
 
 		//////////
 		// Iterate throughout extracting the icons into the actual bmps into the array
 		// Each element of the array is 38x38, but the bitmap content is centered within, 36x36
 		//////
+			lnY			= bxmlArrayBmpIcons->attribute("uly")->data()->as_s32();
+			lnXStart	= bxmlArrayBmpIcons->attribute("ulx")->data()->as_s32();
+			lnStrideY	= bxmlArrayBmpIcons->attribute("stridey")->data()->as_s32();
+			lnStrideX	= bxmlArrayBmpIcons->attribute("stridex")->data()->as_s32();
+			lnBmpWidth	= bxmlArrayBmpIcons->attribute("width")->data()->as_s32();
+			lnBmpHeight	= bxmlArrayBmpIcons->attribute("height")->data()->as_s32();
+
 			// Iterate vertically
-			for (lnY = 2, lnIndex = 0; lnY < bmpArrayTiled->bi.biHeight && lnIndex < (s32)_BMP__ARRAY_MAX; lnY += _BMP__ARRAY_STRIDE_HEIGHT)
+			for (lnIndex = 0; lnY < bmpArrayTiled->bi.biHeight; lnY += lnStrideY)
 			{
 				// Iterate horizontally
-				for (lnX = 2; lnX < bmpArrayTiled->bi.biWidth && lnIndex < (s32)_BMP__ARRAY_MAX; lnX += _BMP__ARRAY_STRIDE_WIDTH, lnIndex++)
+				for (lnX = lnXStart; lnX < bmpArrayTiled->bi.biWidth; lnIndex++, lnX += lnStrideX)
 				{
 					// Extract this element of the tiled strip into the sequential array
-					bmpArray[lnIndex] = iBmp_createAndExtractRect(bmpArrayTiled, lnX, lnY, lnX + _BMP__ARRAY_WIDTH, lnY + _BMP__ARRAY_HEIGHT);
+					bmpArray[lnIndex] = iBmp_createAndExtractRect(bmpArrayTiled, lnX, lnY, lnX + lnBmpWidth, lnY + lnBmpHeight);
 				}
 			}
+	}
+
+
+
+
+//////////
+//
+// Called to decorate the jdebi source code window with icons
+//
+//////
+	void iVjr_init_decorateJDebiWithIcons(void)
+	{
+// 		SBitmap* bmp;
+// 
+// 
+//		bmp = iBmp_copyArrayBmp(bxmlArrayBmpIcons, bmpArray, tcName, u32 tnNameLength)
 	}
 
 

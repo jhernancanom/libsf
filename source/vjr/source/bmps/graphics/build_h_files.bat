@@ -70,4 +70,6 @@
 \libsf\vvm\bin\f2h raw\grace\node_port_ball_yellow.bmp /ie=_BMP_LOCALITY nodePortBallYellowBmp h\grace\node_port_ball_yellow.h
 
 \libsf\vvm\bin\f2h raw_tiled\cask_icons.bmp /ie=_BMP_LOCALITY caskIconsBmp h\cask_icons.h
+
 \libsf\vvm\bin\f2h raw_tiled\array_bmp.bmp /ie=_BMP_LOCALITY arrayBmp h\array_bmp.h
+\libsf\vvm\bin\f2h raw_tiled\array_bmp.bxml /ie=_BMP_LOCALITY bxmlArrayBmp h\array_bmp_bxml.h
