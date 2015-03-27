@@ -1,31 +1,18 @@
 //////////
 //
-// /libsf/source/vjr/source/vjr_compile_time_settings.h
-//
-//////
-//    _     _ _     _____ _____ 
-//   | |   (_) |__ / ____|  ___|
-//   | |   | | '_ \\___ \|  __|
-//   | |___| | |_) |___) | |
-//   |_____|_|_.__/_____/|_|
-//
-//   Liberty Software Foundation
-// and the Village Freedom Project
-//   __     _______     ____  
-//   \ \   / /  ___| __|  _ \ 
-//    \ \ / /| |_ | '__| |_) |
-//     \ V / |  _|| |  |  __/ 
-//      \_/  |_|  |_|  |_|
+// /libsf/source/vjr/bmps/graphics/bitmaps.h
 //
 //////
 // Version 0.56
 // Copyright (c) 2014 by Rick C. Hodgin
 //////
 // Last update:
-//     Nov.05.2014
+//     Mar.26.2015
 //////
 // Change log:
-//     Nov.05.2014 - Initial creation
+//     Mar.26.2015 - Initial creation
+//////
+// Note:  To re-generate the files for compilation, run build_h_files.bat.
 //////
 //
 // This document is released as Liberty Software under a Repeat License, as governed
@@ -80,84 +67,14 @@
 //
 
 
-//////////
-// For debugging, the splash screen gets in the way if you're doing debugging
-// on a single monitor machine (like a notebook) during the initial startup.
-// You can set this property to false and prevent the splash screen from appearing.
-// Also the focus border can sometimes be annoying if it's not rendered in blue
-// and is merely a defined window consuming screen real-estable, but not re-rendering
-// itself because the process is suspended in the debugger.  Oh, the humanity! :-)
-//////
-
-	//////////
-	// Splash
-	//////
- 		bool glShowSplashScreen = true;
- 		//bool glShowSplashScreen = false;
 
 
-	//////////
-	// Focus highlight border
-	//////
-		bool glShowFocusHighlightBorder = true;
-		//bool glShowFocusHighlightBorder = false;
+#if defined(_MSC_VER)
+	#include "h\jdebi_source_code.h"
 
+#elif defined(__GNUC__)
+	#include "h/jdebi_source_code.h"
 
-//////////
-// Compiler-specific settings
-//////
-	#ifdef __GNUC__
-		// gcc
-		#define debug_break			asm("int $3")
-		#define debug_nop			asm("nop")
-		#ifndef __amd64
-			#define __32_BIT_COMPILER__
-		#else
-			#define __64_BIT_COMPILER__
-		#endif
-	#else
-		// visual studio
-		#ifndef _M_X64
-			// 32-bit
-			#define debug_break		_asm int 3
-			#define debug_nop		_asm nop
-			#define __32_BIT_COMPILER__
-		#else
-			// 64-bit
-			void debugBreak(void)	{	int i = 4;	}
-			void debugNop(void)		{	int i = 4;	}
-			#define debug_break		debugBreak();
-			#define debug_nop		debugNop();
-			#define __64_BIT_COMPILER__
-		#endif
-	#endif
-
-
-//////////
-// Aug.11.2014 -- Added to track down functions that were slowing down the system
-//#define _VJR_LOG_ALL
-//////
-	#ifdef _VJR_LOG_ALL
-		#define logfunc(x)		iVjr_appendSystemLog((s8*)x)
-	#else
-		#define logfunc(x)
-	#endif
-
-
-//////////
-// Force the bitmaps to be declared external for linking
-//////
-	#ifndef _BMP_LOCALITY
-		#define _BMP_LOCALITY 0
-	#endif
-
-
-//////////
-// The language to compile for:
-//		EN - English
-//		IT - Italian
-//		ES - Spanish
-//////
-	#define _LANG_EN
-// 	#define _LANG_IT
-// 	#define _LANG_ES
+#else
+	#error Unknown target for compilation (must be Windows or Linux)
+#endif

@@ -405,7 +405,7 @@
 
 		// Create our main screen window
 		iVjr_appendSystemLog(thisCode, (u8*)"TEMPORARY:  Manually create _jdebi");
-		iInit_create_jdebi();
+		iInit_jdebi_create();
 
 		// Initially render each one
 		iVjr_appendSystemLog(thisCode, (u8*)"Render _jdebi");

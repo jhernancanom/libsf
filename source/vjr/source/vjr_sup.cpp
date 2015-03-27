@@ -283,7 +283,7 @@
 // Temporary manual function to create the new JDebi screen.
 //
 //////
-	void iInit_create_jdebi(void)
+	void iInit_jdebi_create(void)
 	{
 		SThisCode*	thisCode = NULL;
 		s32			lnLeft, lnTop, lnWidth, lnHeight;
@@ -402,7 +402,7 @@
 		// Position and size each control
 		//////
 			lnHeight = (_jdebi->rcClient.bottom - _jdebi->rcClient.top) / 8;
-			iObj_setSize(thisCode, sourceCode_editbox,	48,	24,		sourceCode->rcClient.right	- sourceCode->rcClient.left - 48,	sourceCode->rcClient.bottom		- sourceCode->rcClient.top - 24);
+			iObj_setSize(thisCode, sourceCode_editbox,	36,	0,		sourceCode->rcClient.right	- sourceCode->rcClient.left - 36,	sourceCode->rcClient.bottom		- sourceCode->rcClient.top - sourceCode->rcClient.top);
 			iObj_setSize(thisCode, locals_editbox,		8,	0,		locals->rcClient.right		- locals->rcClient.left - 8,		locals->rcClient.bottom			- locals->rcClient.top);
 			iObj_setSize(thisCode, watch_editbox,		8,	0,		watch->rcClient.right		- watch->rcClient.left - 8,			watch->rcClient.bottom			- watch->rcClient.top);
 			iObj_setSize(thisCode, command_editbox,		8,	0,		command->rcClient.right		- command->rcClient.left - 8,		command->rcClient.bottom		- command->rcClient.top);
@@ -436,7 +436,7 @@
 			sourceCode_editbox->p.sem->showLineNumbers	= true;
 
 			// Decorate with icons
-			iVjr_init_decorateJDebiWithIcons();
+			iInit_debi_decorateWithIcons();
 
 
 		//////////
@@ -535,6 +535,105 @@
 		//////
 			propSetVisible(_jdebi, _LOGICAL_TRUE);
 	}
+
+
+
+
+//////////
+//
+// Temporary:  Called to decorate the jdebi source code window with icons
+//
+//////
+	void iInit_debi_decorateWithIcons(void)
+	{
+		s32			lnStyle, lnWidth;
+		SBitmap*	bmp;
+		CXml*		bxmlJDebiSettings;
+		CXml*		bxmlToolbars;
+		CXml*		bxmlThisToolbar;
+		XmlData*	bxmlStyle;
+		XmlData*	bxmlWidth;
+		CXml*		bxmlIcon;
+		XmlData*	bxmlIconName;
+		SObject*	loToolbar;
+
+
+// Temporarily disabled
+return;
+
+		//////////
+		// Load our default JDebi settings
+		//////
+			bxmlJDebiSettings = (CXml*)xml_load((s8*)cgc_JDebiSourceCode, sizeof(cgc_JDebiSourceCode) - 1);
+			if (!bxmlJDebiSettings)
+				debug_break;	// Should never happen
+
+
+		//////////
+		// Build the indicated toolbars within
+		//////
+			bxmlToolbars = bxmlJDebiSettings->child(cgc_toolbars);
+			for (bxmlThisToolbar = bxmlToolbars->child(cgc_toolbar); bxmlThisToolbar; bxmlThisToolbar = bxmlThisToolbar->next())
+			{
+				//////////
+				// Create a toolbar for this one
+				//////
+					bxmlStyle	= bxmlThisToolbar->attribute("style")->data();
+					bxmlWidth	= bxmlThisToolbar->attribute("width")->data();
+
+
+				//////////
+				// Horizontal or vertical?
+				//////
+					if (!bxmlStyle || bxmlStyle->length() != sizeof(cgc_vertical) - 1 || _memicmp(bxmlStyle->as_s8p(), cgc_vertical, sizeof(cgc_vertical) - 1) != 0)
+					{
+						// Horizontal (default)
+						lnStyle = _TOOLBAR_STYLE_HORIZONTAL;
+
+					} else {
+						// Vertical
+						lnStyle = _TOOLBAR_STYLE_VERTICAL;
+					}
+
+
+				//////////
+				// Grab our width (number of icons which are rendered horizontally)
+				//////
+					if (bxmlWidth)		lnWidth = bxmlWidth->as_s32();
+					else				lnWidth = _TOOLBAR_WIDTH_UNLIMITED;
+
+
+				//////////
+				// Construct the actual class
+				//////
+					loToolbar = iObj_create(NULL, _OBJ_TYPE_TOOLBAR, NULL);
+					if (!loToolbar)
+						debug_break;	// Should never happen
+
+
+				//////////
+				// Iterate through each icon for this toolbar
+				//////
+					for (bxmlIcon = bxmlThisToolbar->child(cgc_icon); bxmlIcon; bxmlIcon = bxmlIcon->next())
+					{
+
+						//////////
+						// Lookup the associated bitmap
+						//////
+							bxmlIconName = bxmlIcon->attribute("name")->data();
+							if (!bxmlIconName || !(bmp = iBmp_copyArrayBmp(bxmlArrayBmp, bmpArray, bxmlIconName->as_s8p(), bxmlIconName->length())))
+								debug_break;	// They specified an icon that is not known
+
+
+						//////////
+						// Append this image to the toolbar
+						//////
+							
+					}
+
+			}
+	}
+
 
 
 
@@ -4006,22 +4105,6 @@
 					bmpArray[lnIndex] = iBmp_createAndExtractRect(bmpArrayTiled, lnX, lnY, lnX + lnBmpWidth, lnY + lnBmpHeight);
 				}
 			}
-	}
-
-
-
-
-//////////
-//
-// Called to decorate the jdebi source code window with icons
-//
-//////
-	void iVjr_init_decorateJDebiWithIcons(void)
-	{
-// 		SBitmap* bmp;
-// 
-// 
-//		bmp = iBmp_copyArrayBmp(bxmlArrayBmpIcons, bmpArray, tcName, u32 tnNameLength)
 	}
 
 

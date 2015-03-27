@@ -6,20 +6,20 @@
 		<icon name="pursueRejectOne" tip="Reject one level of the current pursues"/>
 		<icon name="noStepIntoFunctionEnable" tip="Allow this function to be stepped into"/>
 		<icon name="noStepIntoFunctionDisable" tip="Disallow this function to be stepped into"/>
-		<icon name="breadcrumbsPrevDocument" tip="Move to the previous breadcrumb"/>
-		<icon name="breadcrumbsNextDocument" tip="Move to the next breadcrumb"/>
-		<icon name="breadcrumbsLineEnable" tip="Line breadcrumbs"/>
+		<icon name="breadcrumbsPrev" tip="Move to the previous breadcrumb"/>
+		<icon name="breadcrumbsNext" tip="Move to the next breadcrumb"/>
+		<icon name="breadcrumbsEnableLine" tip="Line breadcrumbs"/>
 		<icon name="breadcrumbsDisable" tip="Disable breadcrumbs"/>
 		
 		<icon name="stepInto" tip="Steps into the current source code line"/>
 		<icon name="stepOver" tip="Steps over the current source code line"/>
 		<icon name="stepOut" tip="Steps out of the current function"/>
-		<icon name="stepOutAll" tip="Steps forward to next return"/>
+		<icon name="stepAlmostOut" tip="Steps forward to next return"/>
 		<icon name="stepToCursorLine" tip="Steps forward to the cursor line"/>
 		<icon name="stepInHorizontal" tip="Steps horizontally into the current source code line"/>
 		<icon name="stepOutHorizontal" tip="Steps horizontally out of the current source code line"/>
-		<icon name="stepOutOne" tip="Steps out of the current block"/>
-		<icon name="stepToError" tip="Steps back to the line causing the error"/>
+		<icon name="stepOutBlock" tip="Steps out of the current block"/>
+		<icon name="stepBackToInquiry" tip="Steps back to the line causing the inquiry"/>
 		
 		<icon name="breakpointSetLine" tip="Set an unconditional breakpoint on the current line"/>
 		<icon name="breakpointView" tip="View all breakpoints"/>
@@ -75,10 +75,10 @@
 		<icon name="locals" tip="Display the locals window"/>
 		<icon name="watch" tip="Display the watch window"/>
 		<icon name="hover" tip="Display the hover window"/>
-		<icon name="play" tip="Resume normal execution"/>
-		<icon name="pause" tip="Pause execution of the current thread"/>
-		<icon name="unused" tip="unused"/>
-		<icon name="restart" tip="Restart with normal execution"/>
+		<icon name="play" tip="Resume normal engagement"/>
+		<icon name="pause" tip="Pause engagement of the current thread"/>
+		<icon name="stop" tip="Stop engagement of the current thread"/>
+		<icon name="restart" tip="Restart engagement from the beginning"/>
 		<icon name="assemblyMix" tip="Toggle display of virtual machine disassembly"/>
 		
 		<icon name="breadcrumbsPrev" tip="Move to the previous breadcrumbs only in the current function"/>
@@ -87,7 +87,7 @@
 		<icon name="breadcrumbsNextFunction" tip="Move to the breadcrumbs in next function"/>
 		<icon name="pursuePrev" tip="Examine previous pursue level" var1="pursueCurrent-1"/>
 		<icon name="pursueNext" tip="Examine next pursue level" var1="pursueCurrent+1"/>
-		<icon name="breadcrumbsDeltasEnable" tip="Breadcrumb deltas enabled"/>
+		<icon name="breadcrumbsEnableDeltas" tip="Breadcrumb deltas enabled"/>
 		<icon name="stack" tip="Display stack"/>
 		<icon name="scratch" tip="Display scratch memory"/>
 		
@@ -122,14 +122,14 @@
 		<icon name="nextFunction" tip="Move top top of next function"/>
 		
 		<icon name="nextBlockIn" tip="Move down to top of next inner block"/>
-		<icon name="clipListNew" tip="Create a new clip list"/>
-		<icon name="clipListDelete" tip="Delete the active clip list entry"/>
-		<icon name="clipListCopyBlock" tip="Copy selected block to clip list"/>
-		<icon name="clipListCutBlock" tip="Cut selected block to clip list"/>
-		<icon name="clipListPaste" tip="Paste from clip list"/>
-		<icon name="clipListPrepend" tip="Set clip list to prepend added items"/>
-		<icon name="clipListAppend" tip="Set clip list to append added items"/>
-		<icon name="clipListView" tip="View/edit clip list entries"/>
+		<icon name="clipringNew" tip="Create a new clip ring"/>
+		<icon name="clipringDelete" tip="Delete the active clip ring entry"/>
+		<icon name="clipringCopyBlock" tip="Copy selected block to clip ring"/>
+		<icon name="clipringCutBlock" tip="Cut selected block to clip ring"/>
+		<icon name="clipringPaste" tip="Paste from clip ring"/>
+		<icon name="clipringPrepend" tip="Set clip ring to prepend added items"/>
+		<icon name="clipringAppend" tip="Set clip ring to append added items"/>
+		<icon name="clipringView" tip="View/edit clip ring entries"/>
 		
 		<icon name="assemblyOff" tip="Toggle display of virtual machine disassembly"/>
 		<icon name="pursueCount" tip="Shows current pursue view level, and total nested levels" var1="pursueCurrent" var2="pursueCount"/>
@@ -139,7 +139,7 @@
 		<icon name="resume" tip="Resume the virtual machine" var1="resume1" var2="resume2" var3="resume3" var4="resume4" var5="resume5" var6="resume6" var7="resume7" var8="resume8"/>
 		<icon name="breadcrumbsCount" tip="Shows the breadcrumbs count" var1="breadcrumbsCount"/>
 		<icon name="pursueEnabled" tip="Shown when pursue mode is enabled"/>
-		<icon name="clipListCount" tip="Shows how many items are in the clip list"/>
+		<icon name="clipringCount" tip="Shows how many items are in the clip ring"/>
 		
 		<icon name="chainDelete" tip="Deletes the current chain view"/>
 		<icon name="chainCount" tip="Shows how many chain views there are"/>
@@ -151,25 +151,25 @@
 		<icon name="stepToCursorHorizontal" tip="Steps forward to the horizontal cursor position on the current line"/>
 		<icon name="stepInOne" tip="Steps in to the next deeper block"/>
 		
-		<icon name="clipListTrailingCRLF_On" tip="Each appended item will automatically append a trailing CR/LF"/>
-		<icon name="clipListTrailingCRLF_Off" tip="Each appended item will not automatically append a trailing CR/LF"/>
-		<icon name="clipListCopyLine" tip="Copy current line to clip list"/>
-		<icon name="clipListCutLine" tip="Cut current line to clip list"/>
-		<icon name="clipListCopyHorizontal" tip="Copy horizontal portion to clip list"/>
-		<icon name="clipListCutHorizontal" tip="Cut horizontal portion to clip list"/>
-		<icon name="clipListCopyDocument" tip="Copy entire document to clip list"/>
-		<icon name="clipListCutDocument" tip="Cut entire document to clip list"/>
-		<icon name="clipListPasteDelete" tip="Paste from and delete clip list"/>
+		<icon name="clipringTrailingCRLF_On" tip="Each appended item will automatically append a trailing CR/LF"/>
+		<icon name="clipringTrailingCRLF_Off" tip="Each appended item will not automatically append a trailing CR/LF"/>
+		<icon name="clipringCopyLine" tip="Copy current line to clip ring"/>
+		<icon name="clipringCutLine" tip="Cut current line to clip ring"/>
+		<icon name="clipringCopyHorizontal" tip="Copy horizontal portion to clip ring"/>
+		<icon name="clipringCutHorizontal" tip="Cut horizontal portion to clip ring"/>
+		<icon name="clipringCopyDocument" tip="Copy entire document to clip ring"/>
+		<icon name="clipringCutDocument" tip="Cut entire document to clip ring"/>
+		<icon name="clipringPasteDelete" tip="Paste from and delete clip ring"/>
 		
-		<icon name="clipListCopyBlockNew" tip="Copy selected block to a new clip list"/>
-		<icon name="clipListCutBlockNew" tip="Cut selected block to a new clip list"/>
-		<icon name="clipListCopyLineNew" tip="Copy current line to a new clip list"/>
-		<icon name="clipListCutLineNew" tip="Cut current line to a new clip list"/>
-		<icon name="clipListCopyHorizontalNew" tip="Copy horizontal portion to a new clip list"/>
-		<icon name="clipListCutHorizontalNew" tip="Cut horizontal portion to a new clip list"/>
-		<icon name="clipListCopyDocumentNew" tip="Copy entire document to a new clip list"/>
-		<icon name="clipListCutDocumentNew" tip="Cut entire document to a new clip list"/>
-		<icon name="clipListReplace" tip="Set clip list to replace added items"/>
+		<icon name="clipringCopyBlockNew" tip="Copy selected block to a new clip ring"/>
+		<icon name="clipringCutBlockNew" tip="Cut selected block to a new clip ring"/>
+		<icon name="clipringCopyLineNew" tip="Copy current line to a new clip ring"/>
+		<icon name="clipringCutLineNew" tip="Cut current line to a new clip ring"/>
+		<icon name="clipringCopyHorizontalNew" tip="Copy horizontal portion to a new clip ring"/>
+		<icon name="clipringCutHorizontalNew" tip="Cut horizontal portion to a new clip ring"/>
+		<icon name="clipringCopyDocumentNew" tip="Copy entire document to a new clip ring"/>
+		<icon name="clipringCutDocumentNew" tip="Cut entire document to a new clip ring"/>
+		<icon name="clipringReplace" tip="Set clip ring to replace added items"/>
 		
 		<icon name="breakpointToggleEnabledEnable" tip="Toggle the breakpoint's enabled status"/>
 		<icon name="breakpointToggleEnabledDisable" tip="Toggle the breakpoint's enabled status"/>
@@ -241,8 +241,8 @@
 		<icon name="selectUnionMode_Toggle" tip="Toggle trimming the current selection down to the union with the new selected region"/>
 		<icon name="vvmSettings" tip="View the VVM settings"/>
 		
-		<icon name="breadcrumbsHorizontalEnable" tip="Horizontal breadcrumbs"/>
-		<icon name="breadcrumbsDeltasDisable" tip="Breadcrumb deltas disabled"/>
+		<icon name="breadcrumbsEnableHorizontal" tip="Horizontal breadcrumbs"/>
+		<icon name="breadcrumbsDisableDeltas" tip="Breadcrumb deltas disabled"/>
 		<icon name="breadcrumbsClear" tip="Enable breadcrumbs deltas"/>
 		<icon name="vvmDebuggers" tip="View the multiple VVM debugger instance running"/>
 		<icon name="vvmLink" tip="Link this debugger instance to another debugger instance"/>
@@ -253,9 +253,9 @@
 		
 		<icon name="vvmPrev" tip="Move to previous debugger instance"/>
 		<icon name="chainAddBreadcrumbs" tip="Add breadcrumbs to the active chain view window"/>
-		<icon name="stepSetCurrentLine" tip="Set the next source code line to execute"/>
-		<icon name="stepShowCurrentLine" tip="Show the current executing source code line"/>
-		<icon name="stepSetCurrentHorizontal" tip="Set the next source code command to execute horizontally"/>
+		<icon name="setNext" tip="Sets the next source code line for engagement"/>
+		<icon name="showNext" tip="Shows the current engagement source code line"/>
+		<icon name="setNextHorizontal" tip="Set the next source code command for engagement horizontally"/>
 		<icon name="chainAddBreadcrumbsAndDeltas" tip="Add breadcrumbs and deltas to the active chain view window"/>
 		<icon name="chainAddBreadcrumbsDeltasOnly" tip="Add breadcrumb deltas to the active chain view window"/>
 		<icon name="viewEdit" tip="Switch to source code edit view"/>
@@ -263,8 +263,8 @@
 		
 		<icon name="viewSpreadsheet" tip="Switch to spreadsheet edit view"/>
 		<icon name="resizer" tip="Resize the control"/>
-		<icon name="breadcrumbsDeltaPrevDocument" tip="Move to previous breadcrumb which had a delta"/>
-		<icon name="breadcrumbsDeltaNextDocument" tip="Move to next breadcrumb which had a delta"/>
+		<icon name="breadcrumbsDeltaPrev" tip="Move to previous breadcrumb which had a delta"/>
+		<icon name="breadcrumbsDeltaNext" tip="Move to next breadcrumb which had a delta"/>
 		<icon name="pursueDeltaPrev" tip="Move to the previous delta in the current pursue"/>
 		<icon name="pursueDeltaNext" tip="Move to the next delta in the current pursue"/>
 		<icon name="deltaPrev" tip="Move to the previous delta"/>
@@ -282,7 +282,7 @@
 		<icon name="exit" tip="Exit icon"/>
 		
 		<icon name="unused" tip="unused"/>
-		<icon name="unused" tip="unused"/>
+		<icon name="debug" tip="unused"/>
 		<icon name="new" tip="Creates a new document"/>
 		<icon name="run" tip="Run a new program"/>
 		<icon name="SourceLight" tip="SourceLight icon"/>
@@ -291,8 +291,8 @@
 		<icon name="open" tip="Opens an existing document"/>
 		<icon name="cross" tip="Cross icon"/>
 		
-		<icon name="unused" tip="unused"/>
-		<icon name="unused" tip="unused"/>
+		<icon name="navBack" tip="Navigate backward"/>
+		<icon name="navFore" tip="Naviate forward"/>
 		<icon name="unused" tip="unused"/>
 		<icon name="unused" tip="unused"/>
 		<icon name="unused" tip="unused"/>

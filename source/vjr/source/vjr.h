@@ -108,6 +108,8 @@
 #define _WIN32_IE 0x0600        // Change this to the appropriate value to target other versions of IE.
 #endif
 
+#define _BXML_SETTINGS_LOCALITY 1
+
 #include "vjr_compile_time_settings.h"
 
 
@@ -191,6 +193,7 @@
 	#include "objects\accessors.h"
 
 	#include "bmps\graphics\bitmaps.h"
+	#include "settings\settings.h"
 
 
 	//////////
@@ -344,6 +347,7 @@
 	#include "objects/accessors.h"
 
 	#include "bmps/graphics/bitmaps.h"
+	#include "settings/settings.h"
 
 
 	//////////

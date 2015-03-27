@@ -150,29 +150,46 @@
 //////
 	SBitmap* iBmp_copyArrayBmp(CXml* baseArrayBmp, SBitmap* baseBmp[], s8* tcName, u32 tnNameLength)
 	{
-		s32		lnIndex;
-		CXml*	icon;
-		CXml*	name;
+		s32			lnIndex;
+		CXml*		icon;
+		CXml*		name;
+		XmlData*	nameData;
 
 
 		// Make sure our environment is sane
-		if (tcName && tnNameLength > 0 && baseArrayBmp && baseBmp)
+		if (baseArrayBmp && baseBmp && tcName && tnNameLength > 0)
 		{
-			// Iterate through each child
+			// Iterate through each child to find the matching name
 			for (lnIndex = 0, icon = baseArrayBmp->child(); icon; lnIndex++, icon = icon->next())
 			{
-				// Grab the name attribute
-				name = icon->attribute("name");
 
-				// Is the length good?
-				if (name && name->data()->length() == tnNameLength)
-				{
-					// Does the text match?
-					if (_memicmp(tcName, name->data()->as_s8p(), tnNameLength) == 0)
-						return(iBmp_copy(baseBmp[lnIndex]));
+				//////////
+				// Grab the name attribute for this icon
+				//////
+					name = icon->attribute("name");
+					if (name)
+					{
 
-					// If we get here, invalid
-				}
+						//////////
+						// Grab a pointer to the name's data (it's actual name in text form)
+						//////
+							nameData = name->data();
+
+
+						//////////
+						// Pointer valid?  Length the same?
+						//////
+							if (nameData && nameData->length() == tnNameLength)
+							{
+								// Does the text also match?
+								if (_memicmp(tcName, nameData->as_s8p(), tnNameLength) == 0)
+									return(iBmp_copy(baseBmp[lnIndex]));
+
+								// If we get here, names don't match
+							}
+
+					}
+
 			}
 		}
 
@@ -3081,8 +3098,8 @@
 		SBgra*	lbgras;
 
 
-// Temporarily disabled until the bmpcache is implemented
-// return;
+// Temporarily disabled
+return;
 
 		// Make sure the environment is sane
 		if (bmp && bmpDapple)

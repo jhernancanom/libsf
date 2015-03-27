@@ -544,6 +544,14 @@ typedef SEM**		SEMpp;
 
 
 //////////
+// Toolbar class constants
+//////
+	const u32		_TOOLBAR_WIDTH_UNLIMITED				= -1;
+	const u32		_TOOLBAR_STYLE_HORIZONTAL				= 1;
+	const u32		_TOOLBAR_STYLE_VERTICAL					= 2;
+
+
+//////////
 // Object mouse pointers
 //////
 	const u32			_MOUSE_POINTER_DEFAULT				= 0;
@@ -911,6 +919,15 @@ typedef SEM**		SEMpp;
 
 	// The form caption
 	const u8			cgcName_formCaption[]				= "VJr Form";
+
+
+//////////
+// Some BXML property settings
+//////
+	const s8			cgc_vertical[]						= "vertical";
+	const s8			cgc_horizontal[]					= "horizontal";
+	const s8			cgc_toolbar[]						= "toolbar";
+	const s8			cgc_toolbars[]						= "toolbars";
 
 
 //////////
