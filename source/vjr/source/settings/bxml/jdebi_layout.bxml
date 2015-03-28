@@ -1,11 +1,13 @@
 <jdebi>
-	<layout>
-		<toolbar name="debug"/>
-		<toolbar name="file" columns="2"/>
-		<toolbar name="breakpoints" columns="2"/>
-		<toolbar name="edit" columns="2"/>
-		<toolbar name="clipring" columns="2"/>
-		<toolbar name="bookmarks" columns="2"/>
-		<toolbar name="breadcrumbs" columns="2"/>
-	</layout>
+	<source_code>
+		<layout>
+			<toolbar name="debug"/>
+			<toolbar name="file" columns="2"/>
+			<toolbar name="breakpoints" columns="2"/>
+			<toolbar name="edit" columns="2"/>
+			<toolbar name="clipring" columns="2"/>
+			<toolbar name="bookmarks" columns="2"/>
+			<toolbar name="breadcrumbs" columns="2"/>
+		</layout>
+	</source_code>
 </jdebi>

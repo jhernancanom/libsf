@@ -84,6 +84,182 @@
 
 //////////
 //
+// Creates a new toolbar from the indicated XML file
+//
+//////
+	SObject* iToolbar_loadFrom_xml(SThisCode* thisCode, cu8* tcXml, u32 tnXmlLength, cs8* tcTagRoot, cs8* tcTagSub)
+	{
+		SBitmap*	bmpIcon;
+		CXml*		bxml;
+		CXml*		bxmlRoot;
+		CXml*		bxmlRootSub;
+		CXml*		bxmlToolbars;
+		CXml*		bxmlToolbar;
+		CXml*		bxmlIcon;
+		CXml*		bxmlName;
+		XmlData*	bxmlNameTag;
+		XmlData*	bxmlNameData;
+		SObject*	loToolbarRoot;
+		SObject*	loToolbar;
+		SObject*	lo;
+
+
+		//////////
+		// Load our bxml file
+		//////
+			bxml = xml_loadAs_cxml(tcXml, tnXmlLength);
+			if (!bxml)
+			{
+				debug_break;	// Should never happen
+				return(NULL);
+			}
+
+
+		//////////
+		// Looking for <tctagRoot><tcTagSub><toolbars> to iterate through each <toolbar> item within
+		// <tcTagRoot>
+		//////
+			bxmlRoot = bxml->child(tcTagRoot);
+			if (!bxmlRoot)
+			{
+				debug_break;	// Should not happen
+				return(NULL);
+			}
+			
+
+		//////////
+		//	<tcTagRoot>
+		//		<tcTagSub>
+		//////
+			bxmlRootSub = bxmlRoot->child(tcTagSub);
+			if (!bxmlRootSub)
+			{
+				debug_break;	// Should not happen
+				return(NULL);
+			}
+			
+
+		//////////
+		//	<tcTagRoot>
+		//		<tcTagSub>
+		//			<toolbars>
+		//////
+			bxmlToolbars = bxmlRootSub->child(cgc_toolbars);
+			if (!bxmlToolbars)
+			{
+				debug_break;	// Should not happen
+				return(NULL);
+			}
+
+
+		//////////
+		// Iterate through the toolbar looking for toolbar items
+		//	<tcTagRoot>
+		//		<tcTagSub>
+		//			<toolbars name="...">
+		//				<toolbar name="..."/>
+		//////
+			for (bxmlToolbar = bxmlToolbars->child(), loToolbarRoot = NULL; bxmlToolbar; bxmlToolbar = bxmlToolbar->next())
+			{
+				// Looking only for the toolbar tags
+				if ((bxmlName = bxmlToolbar->attribute(cgc_name)) && (bxmlNameTag = bxmlName->tag()) && bxmlToolbar->tag()->length() == sizeof(cgc_toolbar) - 1 && _memicmp(bxmlToolbar->tag()->as_s8p(), cgc_toolbar, sizeof(cgc_toolbar) - 1) == 0)
+				{
+
+					//////////
+					// Construct the toolbar class instance
+					//////
+						loToolbar = iObj_create(NULL, _OBJ_TYPE_TOOLBAR, NULL);
+						if (!loToolbar)
+						{
+							debug_break;	// Should never happen
+
+						} else {
+
+							//////////
+							// Assign its name
+							//////
+								iObjProp_set_character_direct(thisCode, loToolbar, _INDEX_NAME,  bxmlNameTag->as_s8p(), bxmlNameTag->length());
+
+
+							//////////
+							// Set our root toolbar on the first instance
+							//////
+								if (!loToolbarRoot)
+									loToolbarRoot = loToolbar;
+
+
+							//////////
+							// Iterate through each icon for this toolbar
+							//////
+								for (bxmlIcon = bxmlToolbar->child(cgc_icon); bxmlIcon; bxmlIcon = bxmlIcon->next())
+								{
+									// Extract the name attribute
+									bxmlName = bxmlIcon->attribute(cgc_name);
+									if (bxmlName && (bxmlNameData = bxmlName->data()))
+									{
+
+										//////////
+										// Find out what it is
+										//////
+											if (bxmlNameData->length() == sizeof(cgc_separator) - 1 && _memicmp(bxmlNameData->as_s8p(), cgc_separator, sizeof(cgc_separator) - 1) == 0)
+											{
+
+												//////////
+												// Append the separator
+												//////
+													lo = iObj_addChild(NULL, _OBJ_TYPE_SEPARATOR, loToolbar);
+													if (!lo)
+														debug_break;	// Should never happen
+
+
+											} else {
+
+												//////////
+												// Locate the associated icon
+												//////
+													bmpIcon = iBmp_copyArrayBmp(bxmlArrayBmp, bmpArray, bxmlNameData->as_s8p(), bxmlNameData->length());
+													if (!bmpIcon)
+														debug_break;	// Should never happen
+
+
+												//////////
+												// Append the image
+												//////
+													lo = iObj_addChild(NULL, _OBJ_TYPE_IMAGE, loToolbar);
+													if (!lo)
+														debug_break;	// Should never happen
+
+
+												//////////
+												// Set properties
+												//////
+													iObj_setSize(NULL, lo, 0, 0, bmpIcon->bi.biWidth, bmpIcon->bi.biHeight);
+													propSetPictureBmp		(lo, bmpIcon);
+													propSetPictureBmpDown	(lo, bmpIcon);
+
+											}
+
+									}
+								}
+
+						}
+
+				}
+			}
+
+
+		//////////
+		// Indicate the fruits of our labors
+		//////
+			return(loToolbarRoot);
+	}
+
+
+
+
+
+//////////
+//
 // Creates the message window used for communicating actions
 //
 //////
@@ -546,147 +722,14 @@
 //////
 	void iInit_debi_decorateWithIcons(void)
 	{
-		s32			lnStyle, lnWidth, lnIconNameLength;
-		s8*			lcIconName;
-		SBitmap*	bmpIcon;
-		CXml*		bxmlJDebiSettings;
-		CXml*		bxmlToolbars;
-		CXml*		bxmlThisToolbar;
-		XmlData*	bxmlStyle;
-		XmlData*	bxmlWidth;
-		CXml*		bxmlIcon;
-		CXml*		bxmlIconName;
-		XmlData*	bxmlIconNameData;
-		SObject*	loToolbar;
-		SObject*	lo;
-
-
 // Temporarily disabled
-// return;
+return;
 
 		//////////
-		// Load our default JDebi settings
+		// Load the master toolbars
 		//////
-			bxmlJDebiSettings = xml_loadAs_cxml(cgc_JDebiSourceCode, (u32)sizeof(cgc_JDebiSourceCode));
-			if (!bxmlJDebiSettings)
-				debug_break;	// Should never happen
-
-
-		//////////
-		// Build the indicated toolbars within
-		//////
-			bxmlToolbars = bxmlJDebiSettings->child(cgc_jdebi)->child(cgc_toolbars);
-			for (bxmlThisToolbar = bxmlToolbars->child(cgc_toolbar); bxmlThisToolbar; bxmlThisToolbar = bxmlThisToolbar->next())
-			{
-
-				//////////
-				// Create a toolbar for this one
-				//////
-					bxmlStyle	= bxmlThisToolbar->attribute(cgc_style)->data();
-					bxmlWidth	= bxmlThisToolbar->attribute(cgc_width)->data();
-
-
-				//////////
-				// Horizontal or vertical?
-				//////
-					if (!bxmlStyle || bxmlStyle->length() != sizeof(cgc_vertical) - 1 || _memicmp(bxmlStyle->as_s8p(), cgc_vertical, sizeof(cgc_vertical) - 1) != 0)
-					{
-						// Horizontal (default)
-						lnStyle = _TOOLBAR_STYLE_HORIZONTAL;
-
-					} else {
-						// Vertical
-						lnStyle = _TOOLBAR_STYLE_VERTICAL;
-					}
-
-
-				//////////
-				// Grab our width (number of icons which are rendered horizontally)
-				//////
-					if (bxmlWidth)		lnWidth = bxmlWidth->as_s32();
-					else				lnWidth = _TOOLBAR_WIDTH_UNLIMITED;
-
-
-				//////////
-				// Construct the actual class
-				//////
-					loToolbar = iObj_create(NULL, _OBJ_TYPE_TOOLBAR, NULL);
-					if (!loToolbar)
-						debug_break;	// Should never happen
-
-
-				//////////
-				// Iterate through each icon for this toolbar
-				//////
-					for (bxmlIcon = bxmlThisToolbar->child(cgc_icon); bxmlIcon; bxmlIcon = bxmlIcon->next())
-					{
-						// Extract the name attribute
-						bxmlIconName = bxmlIcon->attribute(cgc_name);
-						if (bxmlIconName)
-						{
-							// Grab the name attribute
-							bxmlIconNameData = bxmlIconName->data();
-							if (bxmlIconNameData)
-							{
-
-								//////////
-								// Grab the icon name
-								//////
-									lnIconNameLength	= bxmlIconNameData->length();
-									lcIconName			= bxmlIconNameData->as_s8p();
-									if (!lcIconName)
-										debug_break;	// They specified an icon that is not known
-
-
-								//////////
-								// Find out what it is
-								//////
-									if (lnIconNameLength == sizeof(cgc_separator) - 1 && _memicmp(lcIconName, cgc_separator, lnIconNameLength) == 0)
-									{
-
-										//////////
-										// Append the separator
-										//////
-											lo = iObj_addChild(NULL, _OBJ_TYPE_SEPARATOR, loToolbar);
-											if (!lo)
-												debug_break;	// Should never happen
-
-
-									} else {
-
-										//////////
-										// Locate the associated icon
-										//////
-											bmpIcon = iBmp_copyArrayBmp(bxmlArrayBmp, bmpArray, lcIconName, lnIconNameLength);
-											if (!bmpIcon)
-												debug_break;	// Should never happen
-
-
-										//////////
-										// Append the image
-										//////
-											lo = iObj_addChild(NULL, _OBJ_TYPE_IMAGE, loToolbar);
-											if (!lo)
-												debug_break;	// Should never happen
-
-
-										//////////
-										// Set properties
-										//////
-											iObj_setSize(NULL, lo, 0, 0, bmpIcon->bi.biWidth, bmpIcon->bi.biHeight);
-											propSetPictureBmp		(lo, bmpIcon);
-											propSetPictureBmpDown	(lo, bmpIcon);
-											propSetVisible			(lo, _LOGICAL_TRUE);
-
-									}
-
-							}
-						}
-					}
-
-			}
+			jdebiToolbars = iToolbar_loadFrom_xml(NULL, cgc_JDebiBxml, sizeof(cgc_JDebiBxml), cgc_jdebi, cgc_source_code);
 	}
-
 
 
 

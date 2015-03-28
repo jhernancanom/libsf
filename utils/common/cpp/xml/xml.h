@@ -750,7 +750,8 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 			return(lnCount);
 		}
 
-		CXml* child(const s8* text)		{	return(child((s8*)text));			}
+		CXml* child(cu8* text)		{	return(child((s8*)text));			}
+		CXml* child(cs8* text)		{	return(child((s8*)text));			}
 		CXml* child(s8* text)
 		{
 			u32 lnLength;

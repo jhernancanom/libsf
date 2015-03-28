@@ -218,6 +218,16 @@
 // Called to set the character variable to the indicated input
 //
 //////
+	bool iObjProp_set_character_direct (SThisCode* thisCode, SObject* obj, s32 tnIndex, cs8* tcText, u32 tnTextLength)
+	{
+		return(iObjProp_set_character_direct(thisCode, obj, tnIndex, (u8*)tcText, tnTextLength));
+	}
+
+	bool iObjProp_set_character_direct (SThisCode* thisCode, SObject* obj, s32 tnIndex, s8* tcText, u32 tnTextLength)
+	{
+		return(iObjProp_set_character_direct(thisCode, obj, tnIndex, (u8*)tcText, tnTextLength));
+	}
+
 	bool iObjProp_set_character_direct (SThisCode* thisCode, SObject* obj, s32 tnIndex, cu8* tcText, u32 tnTextLength)
 	{
 		return(iObjProp_set_character_direct(thisCode, obj, tnIndex, (u8*)tcText, tnTextLength));

@@ -926,6 +926,7 @@ typedef SEM**		SEMpp;
 // Some BXML property settings
 //////
 	const s8			cgc_jdebi[]							= "jdebi";
+	const s8			cgc_source_code[]					= "source_code";
 	const s8			cgc_icons[]							= "icons";
 	const s8			cgc_vertical[]						= "vertical";
 	const s8			cgc_horizontal[]					= "horizontal";

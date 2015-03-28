@@ -70,10 +70,12 @@
 
 
 #if defined(_MSC_VER)
-	#include "h\jdebi_source_code.h"
+	#include "h\jdebi.h"
+	#include "h\jdebi_layout.h"
 
 #elif defined(__GNUC__)
-	#include "h/jdebi_source_code.h"
+	#include "h/jdebi.h"
+	#include "h/jdebi_layout.h"
 
 #else
 	#error Unknown target for compilation (must be Windows or Linux)

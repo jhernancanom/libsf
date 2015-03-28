@@ -642,6 +642,7 @@
 	SObject*			_screen								= NULL;
 	SObject*			screen_editbox						= NULL;
 	SObject*			_jdebi								= NULL;
+	SObject*			jdebiToolbars						= NULL;
 	SObject*			sourceCode							= NULL;
 	SObject*			locals								= NULL;
 	SObject*			watch								= NULL;

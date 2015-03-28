@@ -893,6 +893,8 @@ struct SBasePropMap;
 	bool					iObjProp_set							(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* varNewValue, bool tlNestedSet = false);
 	bool					iObjProp_set_bitmap_direct				(SThisCode* thisCode, SObject* obj, s32 tnIndex, SBitmap* bmp);
 	bool					iObjProp_set_character					(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* varNewValue);
+	bool					iObjProp_set_character_direct			(SThisCode* thisCode, SObject* obj, s32 tnIndex, cs8* tcText, u32 tnTextLength);
+	bool					iObjProp_set_character_direct			(SThisCode* thisCode, SObject* obj, s32 tnIndex,  s8* tcText, u32 tnTextLength);
 	bool					iObjProp_set_character_direct			(SThisCode* thisCode, SObject* obj, s32 tnIndex, cu8* tcText, u32 tnTextLength);
 	bool					iObjProp_set_character_direct			(SThisCode* thisCode, SObject* obj, s32 tnIndex,  u8* tcText, u32 tnTextLength);
 	bool					iObjProp_set_character_direct			(SThisCode* thisCode, SObject* obj, s32 tnIndex, SDatum* datum);

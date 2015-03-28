@@ -189,6 +189,7 @@ RDC Specifications Document
 	optimize	-- Provides an optimization level hint (0=none)
 	nodebug		-- Declares that a function should not be entered on single-step debugging
 	breakpoint	-- Code will trap to the debugger if connected and engaged, ignored otherwise
+	accessor	-- Indicates the member function is an accessor, thereby removing the accessor() syntax requirement from those member functions
 
 	do			-- Loop which always enters once, requires trailing while test
 	while		-- Conditionally tests loop logic and continues in the loop if true

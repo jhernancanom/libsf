@@ -447,6 +447,13 @@ struct SObjPropMap;
 
 
 //////////
+// Toolbar related
+//////
+	SObject*				iToolbar_loadFrom_xml					(SThisCode* thisCode, cu8* tcXml, u32 tnXmlLength, cs8* tcTagRoot, cs8* tcTagSub);
+
+
+
+//////////
 // vjr_sup.cpp
 //////
 	void					iInit_createMessageWindow				(void);
