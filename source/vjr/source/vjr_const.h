@@ -142,74 +142,75 @@ typedef SEM**		SEMpp;
 //////////
 // Macro helpers
 //////
-	#define iVariable_isValid(var)						(var && (var->varType == _VAR_TYPE_CHARACTER/*0-length character variables do not have allocated buffers*/ || (var->value.data && var->value.length != 0)))
 	#define iVariable_getType(var)						var->varType
-	#define iVariable_isTypeObject(var)					(var->varType == _VAR_TYPE_OBJECT)
-	#define iVariable_isTypethisCode(var)				(var->varType == _VAR_TYPE_THISCODE)
-	#define iVariable_isTypeLogical(var)				(var->varType == _VAR_TYPE_LOGICAL)
 	#define iVariable_isFundamentalTypeLogical(var)		(var->varType == _VAR_TYPE_LOGICAL || (iVariable_areTypesCompatible(thisCode, var, varDefault_logical)))
-	#define iVariable_isTypeCharacter(var)				(var->varType == _VAR_TYPE_CHARACTER)
-	#define iVariable_isTypeNumeric(var)				(var->varType >= _VAR_TYPE_NUMERIC_START && var->varType <= _VAR_TYPE_NUMERIC_END)
-	#define iVariable_isTypeInteger(var)				(var->varType >= _VAR_TYPE_NUMERIC_INTEGER_START && var->varType <= _VAR_TYPE_NUMERIC_INTEGER_END)
 	#define iVariable_isNumeric64Bit(var)				(var->varType == _VAR_TYPE_S64 || var->varType == _VAR_TYPE_U64 || var->varType == _VAR_TYPE_CURRENCY)
+	#define iVariable_isTypeBig(var)					(var->varType == _VAR_TYPE_BI || var->varType == _VAR_TYPE_BFP)
+	#define iVariable_isTypeBigFloatingPoint(var)		(var->varType == _VAR_TYPE_BFP)
+	#define iVariable_isTypeBigInteger(var)				(var->varType == _VAR_TYPE_BI)
+	#define iVariable_isTypeCharacter(var)				(var->varType == _VAR_TYPE_CHARACTER)
+	#define iVariable_isTypeCurrency(var)				(var->varType == _VAR_TYPE_CURRENCY)
 	#define iVariable_isTypeDate(var)					(var->varType == _VAR_TYPE_DATE)
 	#define iVariable_isTypeDatetime(var)				(var->varType == _VAR_TYPE_DATETIME)
-	#define iVariable_isTypeBig(var)					(var->varType == _VAR_TYPE_BI || var->varType == _VAR_TYPE_BFP)
-	#define iVariable_isTypeFloatingPoint(var)			(var->varType == _VAR_TYPE_F32 || var->varType == _VAR_TYPE_F64)
-	#define iVariable_isTypeFloat(var)					(var->varType == _VAR_TYPE_F32)
 	#define iVariable_isTypeDouble(var)					(var->varType == _VAR_TYPE_F64)
-	#define iVariable_isTypeCurrency(var)				(var->varType == _VAR_TYPE_CURRENCY)
-	#define iVariable_isTypeBigInteger(var)				(var->varType == _VAR_TYPE_BI)
-	#define iVariable_isTypeBigFloatingPoint(var)		(var->varType == _VAR_TYPE_BFP)
+	#define iVariable_isTypeFloat(var)					(var->varType == _VAR_TYPE_F32)
+	#define iVariable_isTypeFloatingPoint(var)			(var->varType == _VAR_TYPE_F32 || var->varType == _VAR_TYPE_F64)
+	#define iVariable_isTypeInteger(var)				(var->varType >= _VAR_TYPE_NUMERIC_INTEGER_START && var->varType <= _VAR_TYPE_NUMERIC_INTEGER_END)
+	#define iVariable_isTypeLogical(var)				(var->varType == _VAR_TYPE_LOGICAL)
+	#define iVariable_isTypeNumeric(var)				(var->varType >= _VAR_TYPE_NUMERIC_START && var->varType <= _VAR_TYPE_NUMERIC_END)
+	#define iVariable_isTypeObject(var)					(var->varType == _VAR_TYPE_OBJECT)
+	#define iVariable_isTypethisCode(var)				(var->varType == _VAR_TYPE_THISCODE)
+	#define iVariable_isValid(var)						(var && (var->varType == _VAR_TYPE_CHARACTER/*0-length character variables do not have allocated buffers*/ || (var->value.data && var->value.length != 0)))
 	#define iVariable_isEmpty(var)						(!var->value.data || var->value.length <= 0)
 
+	#define propIsEnabled(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_ENABLED)		!= _LOGICAL_FALSE)
 	#define propIsFalse(obj, index)						(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, index)				== _LOGICAL_FALSE)
+	#define propIsName(obj, text)						(iObjProp_compare_character		(thisCode, obj, _INDEX_NAME,		(s8*)text,		sizeof(text) - 1) == 0)
+	#define propIsReadonly(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_READONLY)	!= _LOGICAL_FALSE)
 	#define propIsTrue(obj, index)						(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, index)				!= _LOGICAL_FALSE)
 	#define propIsVisible(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_VISIBLE)		!= _LOGICAL_FALSE)
-	#define propIsEnabled(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_ENABLED)		!= _LOGICAL_FALSE)
-	#define propIsReadonly(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_READONLY)	!= _LOGICAL_FALSE)
-	#define propIsName(obj, text)						(iObjProp_compare_character		(thisCode, obj, _INDEX_NAME,		(s8*)text,		sizeof(text) - 1) == 0)
 
-	#define propBackStyle(obj)							iObjProp_get_s32_direct			(thisCode, obj, _INDEX_BACKSTYLE)
-	#define propBorderStyle(obj)						iObjProp_get_s32_direct			(thisCode, obj, _INDEX_BORDERSTYLE)
-	#define propBorderColor(obj)						iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_BORDERCOLOR)
-	#define propForeColor(obj)							iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_FORECOLOR)
-	#define propBackColor(obj)							iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_BACKCOLOR)
-	#define propNwRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_NWCOLOR)
-	#define propNeRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_NECOLOR)
-	#define propSwRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_SWCOLOR)
-	#define propSeRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_SECOLOR)
 	#define propAlignment(obj)							iObjProp_get_s32_direct			(thisCode, obj, _INDEX_ALIGNMENT)
+	#define propBackColor(obj)							iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_BACKCOLOR)
+	#define propBackStyle(obj)							iObjProp_get_s32_direct			(thisCode, obj, _INDEX_BACKSTYLE)
+	#define propBorderColor(obj)						iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_BORDERCOLOR)
+	#define propBorderStyle(obj)						iObjProp_get_s32_direct			(thisCode, obj, _INDEX_BORDERSTYLE)
+	#define propForeColor(obj)							iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_FORECOLOR)
+	#define propNeRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_NECOLOR)
+	#define propNwRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_NWCOLOR)
+	#define propSeRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_SECOLOR)
+	#define propSwRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_SWCOLOR)
 	#define propTitleBar(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_TITLEBAR)	!= _LOGICAL_FALSE)
 
-	#define propSetValue_s32(obj, value)				iObjProp_set_s32_direct			(thisCode, obj, _INDEX_VALUE,				value)
-	#define propSetValue_f64(obj, value)				iObjProp_set_f64_direct			(thisCode, obj, _INDEX_VALUE,				value)
-	#define propSetValueMinimum(obj, value)				iObjProp_set_f64_direct			(thisCode, obj, _INDEX_VALUE_MINIMUM,		value)
 	#define propSetValueMaximum(obj, value)				iObjProp_set_f64_direct			(thisCode, obj, _INDEX_VALUE_MAXIMUM,		value)
+	#define propSetValueMinimum(obj, value)				iObjProp_set_f64_direct			(thisCode, obj, _INDEX_VALUE_MINIMUM,		value)
+	#define propSetValue_f64(obj, value)				iObjProp_set_f64_direct			(thisCode, obj, _INDEX_VALUE,				value)
+	#define propSetValue_s32(obj, value)				iObjProp_set_s32_direct			(thisCode, obj, _INDEX_VALUE,				value)
 	#define propSetValueRoundTo(obj, value)				iObjProp_set_f64_direct			(thisCode, obj, _INDEX_ROUND_TO,			value)
 
 	#define propSetBackColor(obj, color)				iObjProp_set_sbgra_direct		(thisCode, obj, _INDEX_BACKCOLOR,			color)
-	#define propSetForeColor(obj, color)				iObjProp_set_sbgra_direct		(thisCode, obj, _INDEX_FORECOLOR,			color)
 	#define propSetBorderColor(obj, color)				iObjProp_set_sbgra_direct		(thisCode, obj, _INDEX_BORDERCOLOR,			color)
 	#define propSetDisabledBackColor(obj, color)		iObjProp_set_sbgra_direct		(thisCode, obj, _INDEX_DISABLEDBACKCOLOR,	color)
 	#define propSetDisabledForeColor(obj, color)		iObjProp_set_sbgra_direct		(thisCode, obj, _INDEX_DISABLEDFORECOLOR,	color)
+	#define propSetForeColor(obj, color)				iObjProp_set_sbgra_direct		(thisCode, obj, _INDEX_FORECOLOR,			color)
 	#define propSetSelectedBackColor(obj, color)		iObjProp_set_sbgra_direct		(thisCode, obj, _INDEX_SELECTEDBACKCOLOR,	color);
 	#define propSetSelectedForeColor(obj, color)		iObjProp_set_sbgra_direct		(thisCode, obj, _INDEX_SELECTEDFORECOLOR,	color);
 
-	#define propSetAnchor(obj, value)					iObjProp_set_s32_direct			(thisCode, obj, _INDEX_ANCHOR,			value)
-	#define propSetIcon(obj, bmp)						iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_ICON,			bmp)
-	#define propSetVisible(obj, value)					iObjProp_set_logical_fromLogicalConstants(thisCode, obj, _INDEX_VISIBLE, value)
-	#define propSetEnabled(obj, value)					iObjProp_set_logical_fromLogicalConstants(thisCode, obj, _INDEX_ENABLED, value);
 	#define propSetAlignment(obj, value)				iObjProp_set_s32_direct			(thisCode, obj, _INDEX_ALIGNMENT,		value)
-	#define propSetStyle(obj, value)					iObjProp_set_s32_direct			(thisCode, obj, _INDEX_STYLE,			value)
+	#define propSetAnchor(obj, value)					iObjProp_set_s32_direct			(thisCode, obj, _INDEX_ANCHOR,			value)
 	#define propSetBackStyle(obj, value)				iObjProp_set_s32_direct			(thisCode, obj, _INDEX_BACKSTYLE,		value)
 	#define propSetBorderStyle(obj, value)				iObjProp_set_s32_direct			(thisCode, obj, _INDEX_BORDERSTYLE,		value)
 	#define propSetCaption(obj, value)					iObjProp_set_character_direct	(thisCode, obj, _INDEX_CAPTION,			(u8*)value,		sizeof(value) - 1)
 	#define propSetCount(obj, value)					iObjProp_set_s32_direct			(thisCode, obj, _INDEX_COUNT,			value)
+	#define propSetEnabled(obj, value)					iObjProp_set_logical_fromLogicalConstants(thisCode, obj, _INDEX_ENABLED, value);
+	#define propSetIcon(obj, bmp)						iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_ICON,			bmp)
 	#define propSetMultiSelect(obj, value)				iObjProp_set_logical_fromLogicalConstants(thisCode, obj, _INDEX_MULTISELECT, value)
 	#define propSetPictureBmp(obj, bmp)					iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_PICTUREBMP,		bmp)
-	#define propSetPictureBmpDown(obj, bmp)				iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_PICTUREBMP_DOWN,	bmp)
+	#define propSetPictureBmpDown(obj, bmp)				iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_PICTUREBMP_DOWN, bmp)
+	#define propSetStyle(obj, value)					iObjProp_set_s32_direct			(thisCode, obj, _INDEX_STYLE,			value)
+	#define propSetVisible(obj, value)					iObjProp_set_logical_fromLogicalConstants(thisCode, obj, _INDEX_VISIBLE, value)
 	#define propSetPictureBmpOver(obj, bmp)				iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_PICTUREBMP_OVER,	bmp)
+
 
 //////////
 // _settings macros
@@ -924,6 +925,8 @@ typedef SEM**		SEMpp;
 //////////
 // Some BXML property settings
 //////
+	const s8			cgc_jdebi[]							= "jdebi";
+	const s8			cgc_icons[]							= "icons";
 	const s8			cgc_vertical[]						= "vertical";
 	const s8			cgc_horizontal[]					= "horizontal";
 	const s8			cgc_toolbar[]						= "toolbar";

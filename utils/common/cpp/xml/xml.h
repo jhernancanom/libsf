@@ -93,7 +93,12 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 // Forward declarations
 //////
 	uptr 			xml_load_file									(s8* filename);
+	uptr 			xml_load										(cs8* buffer, u32 tnLength);
 	uptr 			xml_load										(s8* buffer, u32 tnLength);
+	CXml*			xml_loadAs_cxml									(cs8* buffer, u32 tnLength);
+	CXml*			xml_loadAs_cxml									(s8* buffer, u32 tnLength);
+	CXml*			xml_loadAs_cxml									(cu8* buffer, u32 tnLength);
+	CXml*			xml_loadAs_cxml									(u8* buffer, u32 tnLength);
 	uptr 			xml_write_file									(uptr handle, s8* filename);
 	uptr 			xml_access_node									(uptr handle, s8* tcNode, s8* tcReturn_value, u32 tnReturn_value_length);
 	bool			xml_access_node_bool							(uptr handle, s8* tcNode);
@@ -750,11 +755,13 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 		{
 			u32 lnLength;
 			CXml* child;
+s8* debug_text;
 
 			lnLength = (u32)strlen(text);
 			child = this->child();
 			while (child)
 			{
+debug_text = child->tag()->as_s8p();
 				if (child->tag()->length() == lnLength)
 				{
 					// They're the same length, it's possible

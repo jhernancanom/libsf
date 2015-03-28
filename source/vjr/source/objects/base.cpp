@@ -226,8 +226,8 @@
 
 //////////
 //
-// Called to create an object and append it to the
-// indicated object as a child.
+// Called to create an object and append it to the end of the
+// indicated object as a child object.
 //
 //////
 //

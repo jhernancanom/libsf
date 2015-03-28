@@ -1,6 +1,6 @@
 <jdebi>
 	<toolbars>
-		<toolbar name="file" style="vertical" width="2">
+		<toolbar name="file" style="vertical">
 			<icon name="new"/>
 			<icon name="save"/>
 			<icon name="saveAll"/>
@@ -36,18 +36,18 @@
 			<icon name="setNext"/>
 			<icon name="gotoNext"/>
 		</toolbar>
-		<toolbar name="clipring" style="vertical" width="2">
+		<toolbar name="clipring" style="vertical">
 			<icon name="clipringCopyBlock"/>
 			<icon name="clipringCutBlock"/>
 			<icon name="clipringPaste"/>
 		</toolbar>
-		<toolbar name="bookmarks" style="vertical" width="2">
+		<toolbar name="bookmarks" style="vertical">
 			<icon name="bookmarkAdd"/>
 			<icon name="bookmarkDelete"/>
 			<icon name="bookmarkPrev"/>
 			<icon name="bookmarkNext"/>
 		</toolbar>
-		<toolbar name="breadcrumbs" style="vertical" width="2">
+		<toolbar name="breadcrumbs" style="vertical">
 			<icon name="breadcrumbsEnableLine"/>
 			<icon name="breadcrumbsDisable"/>
 			<icon name="breadcrumbsClear"/>

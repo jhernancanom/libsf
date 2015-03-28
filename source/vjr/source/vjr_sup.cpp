@@ -546,25 +546,28 @@
 //////
 	void iInit_debi_decorateWithIcons(void)
 	{
-		s32			lnStyle, lnWidth;
-		SBitmap*	bmp;
+		s32			lnStyle, lnWidth, lnIconNameLength;
+		s8*			lcIconName;
+		SBitmap*	bmpIcon;
 		CXml*		bxmlJDebiSettings;
 		CXml*		bxmlToolbars;
 		CXml*		bxmlThisToolbar;
 		XmlData*	bxmlStyle;
 		XmlData*	bxmlWidth;
 		CXml*		bxmlIcon;
-		XmlData*	bxmlIconName;
+		CXml*		bxmlIconName;
+		XmlData*	bxmlIconNameData;
 		SObject*	loToolbar;
+		SObject*	lo;
 
 
 // Temporarily disabled
-return;
+// return;
 
 		//////////
 		// Load our default JDebi settings
 		//////
-			bxmlJDebiSettings = (CXml*)xml_load((s8*)cgc_JDebiSourceCode, sizeof(cgc_JDebiSourceCode) - 1);
+			bxmlJDebiSettings = xml_loadAs_cxml(cgc_JDebiSourceCode, (u32)sizeof(cgc_JDebiSourceCode));
 			if (!bxmlJDebiSettings)
 				debug_break;	// Should never happen
 
@@ -572,14 +575,15 @@ return;
 		//////////
 		// Build the indicated toolbars within
 		//////
-			bxmlToolbars = bxmlJDebiSettings->child(cgc_toolbars);
+			bxmlToolbars = bxmlJDebiSettings->child(cgc_jdebi)->child(cgc_toolbars);
 			for (bxmlThisToolbar = bxmlToolbars->child(cgc_toolbar); bxmlThisToolbar; bxmlThisToolbar = bxmlThisToolbar->next())
 			{
+
 				//////////
 				// Create a toolbar for this one
 				//////
-					bxmlStyle	= bxmlThisToolbar->attribute("style")->data();
-					bxmlWidth	= bxmlThisToolbar->attribute("width")->data();
+					bxmlStyle	= bxmlThisToolbar->attribute(cgc_style)->data();
+					bxmlWidth	= bxmlThisToolbar->attribute(cgc_width)->data();
 
 
 				//////////
@@ -616,19 +620,68 @@ return;
 				//////
 					for (bxmlIcon = bxmlThisToolbar->child(cgc_icon); bxmlIcon; bxmlIcon = bxmlIcon->next())
 					{
+						// Extract the name attribute
+						bxmlIconName = bxmlIcon->attribute(cgc_name);
+						if (bxmlIconName)
+						{
+							// Grab the name attribute
+							bxmlIconNameData = bxmlIconName->data();
+							if (bxmlIconNameData)
+							{
 
-						//////////
-						// Lookup the associated bitmap
-						//////
-							bxmlIconName = bxmlIcon->attribute("name")->data();
-							if (!bxmlIconName || !(bmp = iBmp_copyArrayBmp(bxmlArrayBmp, bmpArray, bxmlIconName->as_s8p(), bxmlIconName->length())))
-								debug_break;	// They specified an icon that is not known
+								//////////
+								// Grab the icon name
+								//////
+									lnIconNameLength	= bxmlIconNameData->length();
+									lcIconName			= bxmlIconNameData->as_s8p();
+									if (!lcIconName)
+										debug_break;	// They specified an icon that is not known
 
 
-						//////////
-						// Append this image to the toolbar
-						//////
-							
+								//////////
+								// Find out what it is
+								//////
+									if (lnIconNameLength == sizeof(cgc_separator) - 1 && _memicmp(lcIconName, cgc_separator, lnIconNameLength) == 0)
+									{
+
+										//////////
+										// Append the separator
+										//////
+											lo = iObj_addChild(NULL, _OBJ_TYPE_SEPARATOR, loToolbar);
+											if (!lo)
+												debug_break;	// Should never happen
+
+
+									} else {
+
+										//////////
+										// Locate the associated icon
+										//////
+											bmpIcon = iBmp_copyArrayBmp(bxmlArrayBmp, bmpArray, lcIconName, lnIconNameLength);
+											if (!bmpIcon)
+												debug_break;	// Should never happen
+
+
+										//////////
+										// Append the image
+										//////
+											lo = iObj_addChild(NULL, _OBJ_TYPE_IMAGE, loToolbar);
+											if (!lo)
+												debug_break;	// Should never happen
+
+
+										//////////
+										// Set properties
+										//////
+											iObj_setSize(NULL, lo, 0, 0, bmpIcon->bi.biWidth, bmpIcon->bi.biHeight);
+											propSetPictureBmp		(lo, bmpIcon);
+											propSetPictureBmpDown	(lo, bmpIcon);
+											propSetVisible			(lo, _LOGICAL_TRUE);
+
+									}
+
+							}
+						}
 					}
 
 			}
@@ -4067,9 +4120,9 @@ return;
 		// Load the raw array content in strip form
 		//////
 			bmpArrayTiled		= iBmp_rawLoad(cgc_arrayBmp);
-			bxmlArrayBmp		= (CXml*)xml_load((s8*)cgc_bxmlArrayBmp, (s32)strlen(cgc_bxmlArrayBmp));
+			bxmlArrayBmp		= xml_loadAs_cxml(cgc_bxmlArrayBmp, (u32)strlen(cgc_bxmlArrayBmp));
 			// Note:  This XML structure comes from an embedded source (see cgc_bxmlArrayBmp[]), so its syntax will match what's indicated
-			bxmlArrayBmpIcons	= bxmlArrayBmp->child("jdebi")->child("icons");
+			bxmlArrayBmpIcons	= bxmlArrayBmp->child(cgc_jdebi)->child(cgc_icons);
 
 
 		//////////

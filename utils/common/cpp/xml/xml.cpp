@@ -152,6 +152,7 @@
 //////////
 //
 // Physically parse the raw text of the input file.
+//
 // Note:  This process only accepts ASCII files.
 //        It will not parse UNICODE or wide-character files.
 //
@@ -161,6 +162,12 @@
 //		-2				- Syntax error
 //
 /////
+	CXml* xml_loadAs_cxml(cs8* buffer, u32 tnLength)		{	return((CXml*)xml_load((s8*)buffer, tnLength));		}
+	CXml* xml_loadAs_cxml(s8* buffer, u32 tnLength)			{	return((CXml*)xml_load(buffer, tnLength));			}
+	CXml* xml_loadAs_cxml(cu8* buffer, u32 tnLength)		{	return((CXml*)xml_load((s8*)buffer, tnLength));		}
+	CXml* xml_loadAs_cxml(u8* buffer, u32 tnLength)			{	return((CXml*)xml_load((s8*)buffer, tnLength));		}
+	uptr xml_load(cs8* buffer, u32 tnLength)				{	return(xml_load((s8*)buffer, tnLength));			}
+
 	uptr xml_load(s8* buffer, u32 tnLength)
 	{
 		u32 lnOffset, lnThis, lnLastSkip;
@@ -176,7 +183,7 @@
 
 		// We must now be at the root node
 		lnOffset = 0;
-		if (tnLength == 0)
+		if (tnLength <= 0)
 			tnLength = (u32)strlen(buffer);
 
 		// Beginning of a tag
