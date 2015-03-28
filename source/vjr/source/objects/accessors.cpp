@@ -184,7 +184,7 @@
 					objChild = obj->firstChild;
 					while (objChild)
 					{
-						if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_icon))
+						if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_icon))
 						{
 							// Sets the three by setting the one (see how it handles _INDEX_PICTUREBMP above)
 							iObjProp_set_bitmap_direct(thisCode, objChild, _INDEX_PICTUREBMP, bmp);
@@ -194,7 +194,7 @@
 						}
 
 						// Move to the next sibling
-						objChild = objChild->ll.nextObject;
+						objChild = objChild->ll.nextObj;
 
 					}
 				}
@@ -235,11 +235,11 @@
 
 	bool iObjProp_set_character_direct(SThisCode* thisCode, SObject* obj, s32 tnIndex, u8* tcText, u32 tnTextLength)
 	{
-		bool				llResult;
+		bool			llResult;
 		SBasePropMap*	baseProp;
 		SObjPropMap*	objProp;
-		SVariable*			varNewValue;
-		SVariable*			var;
+		SVariable*		varNewValue;
+		SVariable*		var;
 
 
 		// Make sure the environment is sane
@@ -271,11 +271,11 @@
 
 	bool iObjProp_set_character_direct(SThisCode* thisCode, SObject* obj, s32 tnIndex, SDatum* datum)
 	{
-		bool				llResult;
+		bool			llResult;
 		SBasePropMap*	baseProp;
 		SObjPropMap*	objProp;
-		SVariable*			varNewValue;
-		SVariable*			var;
+		SVariable*		varNewValue;
+		SVariable*		var;
 
 
 		// Make sure the environment is sane
@@ -2242,7 +2242,7 @@ debug_break;
 			while (objChild)
 			{
 				// Is this the one
-				if (propIsName(objChild, cgcName_caption))
+				if (propIsName_byText(objChild, cgcName_caption))
 				{
 					// Set the caption here
 					varChild = iObjProp_get_variable_byIndex(thisCode, objChild, _INDEX_CAPTION);
@@ -2254,7 +2254,7 @@ debug_break;
 				}
 
 				// Move to next sibling
-				objChild = objChild->ll.nextObject;
+				objChild = objChild->ll.nextObj;
 			}
 		}
 
@@ -2289,7 +2289,7 @@ debug_break;
 			while (objChild)
 			{
 				// Is this the one
-				if (propIsName(objChild, cgcName_icon))
+				if (propIsName_byText(objChild, cgcName_icon))
 				{
 					// Set the caption here
 					varChild = iObjProp_get_variable_byIndex(thisCode, objChild, _INDEX_ICON);
@@ -2301,7 +2301,7 @@ debug_break;
 				}
 
 				// Move to next sibling
-				objChild = objChild->ll.nextObject;
+				objChild = objChild->ll.nextObj;
 			}
 		}
 

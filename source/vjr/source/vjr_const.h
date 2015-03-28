@@ -165,8 +165,9 @@ typedef SEM**		SEMpp;
 
 	#define propIsEnabled(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_ENABLED)		!= _LOGICAL_FALSE)
 	#define propIsFalse(obj, index)						(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, index)				== _LOGICAL_FALSE)
-	#define propIsName(obj, text)						(iObjProp_compare_character		(thisCode, obj, _INDEX_NAME,		(s8*)text,		sizeof(text) - 1) == 0)
-	#define propIsReadonly(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_READONLY)	!= _LOGICAL_FALSE)
+	#define propIsName_byText(obj, t)					(iObjProp_compare_character		(thisCode, obj, _INDEX_NAME,		(s8*)t,		sizeof(t) - 1) == 0)
+	#define propIsName_byDatum(obj, d)					(iObjProp_compare_character		(thisCode, obj, _INDEX_NAME,		d->data_s8, d->length) == 0)
+	#define propIsReadonly(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_READONLY)		!= _LOGICAL_FALSE)
 	#define propIsTrue(obj, index)						(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, index)				!= _LOGICAL_FALSE)
 	#define propIsVisible(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_VISIBLE)		!= _LOGICAL_FALSE)
 
@@ -209,6 +210,7 @@ typedef SEM**		SEMpp;
 	#define propSetPictureBmpDown(obj, bmp)				iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_PICTUREBMP_DOWN, bmp)
 	#define propSetStyle(obj, value)					iObjProp_set_s32_direct			(thisCode, obj, _INDEX_STYLE,			value)
 	#define propSetVisible(obj, value)					iObjProp_set_logical_fromLogicalConstants(thisCode, obj, _INDEX_VISIBLE, value)
+	#define propSetVisible_fromBool(obj, value)			iObjProp_set_logical_direct(thisCode, obj, _INDEX_VISIBLE, value)
 	#define propSetPictureBmpOver(obj, bmp)				iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_PICTUREBMP_OVER,	bmp)
 
 
@@ -925,13 +927,24 @@ typedef SEM**		SEMpp;
 //////////
 // Some BXML property settings
 //////
-	const s8			cgc_jdebi[]							= "jdebi";
-	const s8			cgc_source_code[]					= "source_code";
-	const s8			cgc_icons[]							= "icons";
-	const s8			cgc_vertical[]						= "vertical";
-	const s8			cgc_horizontal[]					= "horizontal";
-	const s8			cgc_toolbar[]						= "toolbar";
-	const s8			cgc_toolbars[]						= "toolbars";
+	// Bxml tag names
+	const s8			cgcTag_jdebi[]						= "jdebi";
+	const s8			cgcTag_source_code[]				= "source_code";
+	const s8			cgcTag_icons[]						= "icons";
+	const s8			cgcTag_icon[]						= "icon";
+	const s8			cgcTag_toolbars[]					= "toolbars";
+	const s8			cgcTag_toolbar[]					= "toolbar";
+	const s8			cgcTag_separator[]					= "separator";
+	// Attribute tag names
+	const s8			cgcTag_vertical[]					= "vertical";
+	const s8			cgcTag_horizontal[]					= "horizontal";
+	const s8			cgcTag_layout[]						= "layout";
+	const s8			cgcTag_name[]						= "name";
+	const s8			cgcTag_x[]							= "x";
+	const s8			cgcTag_y[]							= "y";
+	const s8			cgcTag_width[]						= "width";
+	const s8			cgcTag_height[]						= "height";
+	const s8			cgcTag_visible[]					= "visible";
 
 
 //////////

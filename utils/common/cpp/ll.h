@@ -77,14 +77,14 @@ struct SThisCode;
 			SLL*		next;					// Next entry in linked list
 			SComp*		nextComp;
 			SLine*		nextLine;
-			SObject*	nextObject;
+			SObject*	nextObj;
 			SExtraInfo*	nextExtraInfo;
 		};
 		union {
 			SLL*		prev;					// Previous entry in linked list
 			SComp*		prevComp;
 			SLine*		prevLine;
-			SObject*	prevObject;
+			SObject*	prevObj;
 			SExtraInfo*	prevExtraInfo;
 		};
 		u32				uniqueId;				// Unique id associated with this object

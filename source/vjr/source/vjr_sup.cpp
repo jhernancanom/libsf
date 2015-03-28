@@ -99,7 +99,7 @@
 		CXml*		bxmlName;
 		XmlData*	bxmlNameTag;
 		XmlData*	bxmlNameData;
-		SObject*	loToolbarRoot;
+		SObject*	loContainer;
 		SObject*	loToolbar;
 		SObject*	lo;
 
@@ -144,10 +144,21 @@
 		//		<tcTagSub>
 		//			<toolbars>
 		//////
-			bxmlToolbars = bxmlRootSub->child(cgc_toolbars);
+			bxmlToolbars = bxmlRootSub->child(cgcTag_toolbars);
 			if (!bxmlToolbars)
 			{
 				debug_break;	// Should not happen
+				return(NULL);
+			}
+
+
+		//////////
+		// Create the container
+		//////
+			loContainer = iObj_create(thisCode, _OBJ_TYPE_CONTAINER, NULL);
+			if (!loContainer)
+			{
+				debug_break;	// Should never happen
 				return(NULL);
 			}
 
@@ -159,16 +170,16 @@
 		//			<toolbars name="...">
 		//				<toolbar name="..."/>
 		//////
-			for (bxmlToolbar = bxmlToolbars->child(), loToolbarRoot = NULL; bxmlToolbar; bxmlToolbar = bxmlToolbar->next())
+			for (bxmlToolbar = bxmlToolbars->child(); bxmlToolbar; bxmlToolbar = bxmlToolbar->next())
 			{
 				// Looking only for the toolbar tags
-				if ((bxmlName = bxmlToolbar->attribute(cgc_name)) && (bxmlNameTag = bxmlName->tag()) && bxmlToolbar->tag()->length() == sizeof(cgc_toolbar) - 1 && _memicmp(bxmlToolbar->tag()->as_s8p(), cgc_toolbar, sizeof(cgc_toolbar) - 1) == 0)
+				if ((bxmlName = bxmlToolbar->attribute(cgcTag_name)) && (bxmlNameTag = bxmlName->tag()) && bxmlToolbar->tag()->length() == sizeof(cgcTag_toolbar) - 1 && _memicmp(bxmlToolbar->tag()->as_s8p(), cgcTag_toolbar, sizeof(cgcTag_toolbar) - 1) == 0)
 				{
 
 					//////////
 					// Construct the toolbar class instance
 					//////
-						loToolbar = iObj_create(NULL, _OBJ_TYPE_TOOLBAR, NULL);
+						loToolbar = iObj_create(NULL, _OBJ_TYPE_TOOLBAR, loContainer);
 						if (!loToolbar)
 						{
 							debug_break;	// Should never happen
@@ -182,26 +193,19 @@
 
 
 							//////////
-							// Set our root toolbar on the first instance
-							//////
-								if (!loToolbarRoot)
-									loToolbarRoot = loToolbar;
-
-
-							//////////
 							// Iterate through each icon for this toolbar
 							//////
-								for (bxmlIcon = bxmlToolbar->child(cgc_icon); bxmlIcon; bxmlIcon = bxmlIcon->next())
+								for (bxmlIcon = bxmlToolbar->child(cgcTag_icon); bxmlIcon; bxmlIcon = bxmlIcon->next())
 								{
 									// Extract the name attribute
-									bxmlName = bxmlIcon->attribute(cgc_name);
+									bxmlName = bxmlIcon->attribute(cgcTag_name);
 									if (bxmlName && (bxmlNameData = bxmlName->data()))
 									{
 
 										//////////
 										// Find out what it is
 										//////
-											if (bxmlNameData->length() == sizeof(cgc_separator) - 1 && _memicmp(bxmlNameData->as_s8p(), cgc_separator, sizeof(cgc_separator) - 1) == 0)
+											if (bxmlNameData->length() == sizeof(cgcTag_separator) - 1 && _memicmp(bxmlNameData->as_s8p(), cgcTag_separator, sizeof(cgcTag_separator) - 1) == 0)
 											{
 
 												//////////
@@ -251,9 +255,157 @@
 		//////////
 		// Indicate the fruits of our labors
 		//////
-			return(loToolbarRoot);
+			return(loContainer);
 	}
 
+
+
+
+//////////
+//
+// Called to create toolbars on the individual object
+//
+//////
+	bool iToolbar_applyTo_obj(SThisCode* thisCode, SObject* obj, SObject* objToolbarContainer, cu8* tcXml, u32 tnXmlLength, cs8* tcTagRoot, cs8* tcTagSub)
+	{
+		s32			lnX, lnY, lnWidth, lnHeight;
+		bool		llResult, llVisible;
+		CXmlp		bxml, bxmlRoot, bxmlRootSub, bxmlToolbars, bxmlToolbar, bxmlName, bxmlX, bxmlY, bxmlWidth, bxmlHeight, bxmlVisible;
+		XmlDatap	xdTag, xdX, xdY, xdWidth, xdHeight, xdVisible;
+		SObject*	loToolbarSource;		// The source instance in the toolbar container
+		SObject*	loToolbarCopy;			// The copy we create
+		SDatum		d;
+
+
+		//////////
+		// Load our bxml file
+		//////
+			bxml = xml_loadAs_cxml(tcXml, tnXmlLength);
+			if (!bxml)
+			{
+				debug_break;	// Should never happen
+				return(false);
+			}
+
+
+		//////////
+		// Looking for <tctagRoot><tcTagSub><layout> to iterate through each <toolbar> item within
+		// <tcTagRoot>
+		//////
+			bxmlRoot = bxml->child(tcTagRoot);
+			if (!bxmlRoot)
+			{
+				debug_break;	// Should not happen
+				return(false);
+			}
+			
+
+		//////////
+		//	<tcTagRoot>
+		//		<tcTagSub>
+		//////
+			bxmlRootSub = bxmlRoot->child(tcTagSub);
+			if (!bxmlRootSub)
+			{
+				debug_break;	// Should not happen
+				return(false);
+			}
+			
+
+		//////////
+		//	<tcTagRoot>
+		//		<tcTagSub>
+		//			<layout>
+		//////
+			bxmlToolbars = bxmlRootSub->child(cgcTag_toolbars);
+			if (!bxmlToolbars)
+			{
+				debug_break;	// Should not happen
+				return(false);
+			}
+
+
+		//////////
+		// Iterate through the toolbar looking for toolbar items
+		//	<tcTagRoot>
+		//		<tcTagSub>
+		//			<layout>
+		//				<toolbar name="..."/>
+		//////
+			memset(&d, 0, sizeof(d));
+			for (llResult = true, bxmlToolbar = bxmlToolbars->child(); bxmlToolbar; bxmlToolbar = bxmlToolbar->next())
+			{
+				// Looking only for the toolbar tags
+				if ((bxmlName = bxmlToolbar->attribute(cgcTag_name)) && (xdTag = bxmlName->tag()) && bxmlToolbar->tag()->length() == sizeof(cgcTag_toolbar) - 1 && _memicmp(bxmlToolbar->tag()->as_s8p(), cgcTag_toolbar, sizeof(cgcTag_toolbar) - 1) == 0)
+				{
+					// Make sure this toolbar reference is in the container
+					if ((loToolbarSource = iiObj_findChildObject_byName(thisCode, objToolbarContainer, xdTag->as_datum(&d), false, true, false)))
+					{
+
+						//////////
+						// Construct the toolbar class copy
+						//////
+							loToolbarCopy = iObj_copy(NULL, loToolbarSource, NULL, obj, true, true);
+							if (!loToolbarCopy)
+								debug_break;	// Should never happen
+
+
+						//////////
+						// Check layout properties and assign coordinates and sizes
+						//////
+							bxmlX		= bxmlToolbar->attribute(cgcTag_x);
+							bxmlY		= bxmlToolbar->attribute(cgcTag_y);
+							bxmlWidth	= bxmlToolbar->attribute(cgcTag_width);
+							bxmlHeight	= bxmlToolbar->attribute(cgcTag_height);
+							bxmlVisible	= bxmlToolbar->attribute(cgcTag_visible);
+
+
+						//////////
+						// Convert found tags to data
+						//////
+							xdX			= (XmlData*)iif(iIsNotNull(bxmlX),			bxmlX->data(),			NULL);
+							xdY			= (XmlData*)iif(iIsNotNull(bxmlY),			bxmlY->data(),			NULL);
+							xdWidth		= (XmlData*)iif(iIsNotNull(bxmlWidth),		bxmlWidth->data(),		NULL);
+							xdHeight	= (XmlData*)iif(iIsNotNull(bxmlHeight),		bxmlHeight->data(),		NULL);
+							xdVisible	= (XmlData*)iif(iIsNotNull(bxmlVisible),	bxmlVisible->data(),	NULL);
+
+
+						//////////
+						// Derive their values
+						//////
+							lnX			= iif(iIsNotNull(xdX),			xdX->as_s32(),		0);
+							lnY			= iif(iIsNotNull(xdY),			xdY->as_s32(),		0);
+							lnWidth		= iif(iIsNotNull(xdWidth),		xdWidth->as_s32(),	16);
+							lnHeight	= iif(iIsNotNull(xdHeight),		xdHeight->as_s32(),	16);
+
+							if (xdVisible)
+							{
+								// Try to derive the actual value
+								if (!iIsBoolText(xdHeight->as_datum(&d), &llVisible, false))
+									llVisible = true;	// Fall back on true
+
+							} else {
+								llVisible = true;
+							}
+
+
+						//////////
+						// Set the properties for this toolbar
+						//////
+							iObj_setSize(thisCode, loToolbarCopy, lnX, lnY, lnWidth, lnHeight);
+							propSetVisible(loToolbarCopy, llVisible);
+
+					}
+				}
+			}
+
+
+		//////////
+		// Indicate the fruits of our labors
+		//////
+			return(llResult);
+
+	}
 
 
 
@@ -722,13 +874,27 @@
 //////
 	void iInit_debi_decorateWithIcons(void)
 	{
+
 // Temporarily disabled
 return;
 
-		//////////
-		// Load the master toolbars
-		//////
-			jdebiToolbars = iToolbar_loadFrom_xml(NULL, cgc_JDebiBxml, sizeof(cgc_JDebiBxml), cgc_jdebi, cgc_source_code);
+
+		// Make sure our environment is sane
+		if (_jdebi && sourceCode)
+		{
+
+			//////////
+			// Load the master JDebi toolbars
+			//////
+				jdebiToolbarsContainer = iToolbar_loadFrom_xml(NULL, cgc_JDebiBxml, sizeof(cgc_JDebiBxml), cgcTag_jdebi, cgcTag_source_code);
+
+
+			//////////
+			// Apply whatever toolbars are live and visible as they're currently laid out
+			//////
+				iToolbar_applyTo_obj(NULL, sourceCode, jdebiToolbarsContainer, cgc_JDebiLayoutBxml, sizeof(cgc_JDebiLayoutBxml), cgcTag_jdebi, cgcTag_source_code);
+
+		}
 	}
 
 
@@ -763,7 +929,7 @@ return;
 // These items to the left look like wings or road-signs, each independent.
 //						 ____________________ _____________________
 // 	[o New feature #1]	|                    |                     |
-// 	[o New feature #2]	|                    |                     |
+// 	[o New feature #2]	|   vjr_splash.bmp   |                     |
 // 	[o New feature #3]	|                    |                     |
 // 	[o New feature #4]	|                    |	[Loading item 1]   |
 // 						|                    |	[Loading item 2]   |
@@ -2808,6 +2974,130 @@ return;
 		return(false);
 	}
 
+	// We allow for:  .t., .f., .o., .p., .x., .y., .z., true, false, yes, no, 0, 1
+	bool iIsBoolText(SDatum* d, bool* tlStoreValue, bool tlAllowLogicalX)
+	{
+		bool llResult, llStoreValue;
+
+
+		//////////
+		// Is the datum valid?
+		//////
+			llResult		= false;
+			llStoreValue	= false;
+			if (d && d->data && d->length > 0)
+			{
+				// Could be 0 or 1
+				if (d->length == 1)
+				{
+					if (*d->data_s8 == '0')
+					{
+						// It's false
+						llResult		= true;
+						llStoreValue	= false;
+
+					} else if (*d->data_s8 == '1') {
+						// It's true
+						llResult		= true;
+						llStoreValue	= false;
+					}
+
+
+				// Can only be no
+				} else if (d->length == 2) {
+					if (_memicmp(d->data_s8, cgc_no, sizeof(cgc_no) - 1) == 0)
+					{
+						llResult		= true;
+						llStoreValue	= false;
+					}
+
+
+				// Can be yes, .t., .f., .o., .p., .x., .y. or .z.
+				} else if (d->length == 3) {
+					if (_memicmp(d->data_s8, cgc_t_dots, sizeof(cgc_t_dots) - 1) == 0)
+					{
+						llResult		= true;
+						llStoreValue	= true;
+
+					} else if (_memicmp(d->data_s8, cgc_f_dots, sizeof(cgc_f_dots) - 1) == 0) {
+						llResult		= true;
+						llStoreValue	= false;
+
+					} else if (tlAllowLogicalX) {
+						// Has to be .o., .p., .x., .y. or .z.
+						if (_memicmp(d->data_s8, cgc_o_dots, sizeof(cgc_o_dots) - 1) == 0) {
+							llResult		= true;
+							llStoreValue	= false;
+
+						} else if (_memicmp(d->data_s8, cgc_p_dots, sizeof(cgc_p_dots) - 1) == 0) {
+							llResult		= true;
+							llStoreValue	= false;
+
+						} else if (_memicmp(d->data_s8, cgc_x_dots, sizeof(cgc_x_dots) - 1) == 0) {
+							llResult		= true;
+							llStoreValue	= false;
+
+						} else if (_memicmp(d->data_s8, cgc_y_dots, sizeof(cgc_y_dots) - 1) == 0) {
+							llResult		= true;
+							llStoreValue	= false;
+
+						} else if (_memicmp(d->data_s8, cgc_z_dots, sizeof(cgc_z_dots) - 1) == 0) {
+							llResult		= true;
+							llStoreValue	= false;
+						}
+					}
+
+
+				// Can only be true
+				} else if (d->length == 4) {
+					if (_memicmp(d->data_s8, cgc_true, sizeof(cgc_true) - 1) == 0)
+					{
+						llResult		= true;
+						llStoreValue	= true;
+					}
+
+
+				// Can only be false
+				} else if (d->length == 5) {
+					if (_memicmp(d->data_s8, cgc_false, sizeof(cgc_false) - 1) == 0)
+					{
+						llResult		= true;
+						llStoreValue	= false;
+					}
+				}
+			}
+
+
+		//////////
+		// Store the actual value (if need be)
+		//////
+			if (tlStoreValue)
+				*tlStoreValue = llStoreValue;
+
+
+		//////////
+		// Indicate our status
+		//////
+			return(llResult);
+	}
+
+	bool iIsNotNull(void* p)
+	{
+		return(p != NULL);
+	}
+
+	void* iif(bool tlTest, void* ifTrue, void* ifFalse)
+	{
+		if (tlTest)		return(ifTrue);
+		else			return(ifFalse);
+	}
+
+	s32 iif(bool tlTest, s32 ifTrue, s32 ifFalse)
+	{
+		if (tlTest)		return(ifTrue);
+		else			return(ifFalse);
+	}
+
 	s64 iMath_delta(s64 tnBaseValue, s64 tnSubtractionValue)
 	{
 		return(tnBaseValue - tnSubtractionValue);
@@ -3587,14 +3877,14 @@ return;
 			if (tlProcessSiblings)
 			{
 				// Begin at the next sibling
-				objSib = obj->ll.nextObject;
+				objSib = obj->ll.nextObj;
 				while (objSib)
 				{
 					// Process this sibling
 					iiMouse_processMouseEvents_mouseMove(thisCode, win, objSib, rc, true, false, tlProcessed);
 
 					// Move to next sibling
-					objSib = objSib->ll.nextObject;
+					objSib = objSib->ll.nextObj;
 				}
 			}
 	}
@@ -3764,7 +4054,7 @@ return;
 					if (llContinue && tlProcessSiblings)
 					{
 						// Begin at the next sibling
-						objSib = obj->ll.nextObject;
+						objSib = obj->ll.nextObj;
 						while (llContinue && !*tlProcessed && objSib)
 						{
 							// Process this sibling
@@ -3773,7 +4063,7 @@ return;
 								break;
 
 							// Move to next sibling
-							objSib = objSib->ll.nextObject;
+							objSib = objSib->ll.nextObj;
 						}
 					}
 			}
@@ -4165,7 +4455,7 @@ return;
 			bmpArrayTiled		= iBmp_rawLoad(cgc_arrayBmp);
 			bxmlArrayBmp		= xml_loadAs_cxml(cgc_bxmlArrayBmp, (u32)strlen(cgc_bxmlArrayBmp));
 			// Note:  This XML structure comes from an embedded source (see cgc_bxmlArrayBmp[]), so its syntax will match what's indicated
-			bxmlArrayBmpIcons	= bxmlArrayBmp->child(cgc_jdebi)->child(cgc_icons);
+			bxmlArrayBmpIcons	= bxmlArrayBmp->child(cgcTag_jdebi)->child(cgcTag_icons);
 
 
 		//////////

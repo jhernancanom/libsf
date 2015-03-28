@@ -415,6 +415,7 @@ struct SObject
 		SObjNode*	fromBottom;										// First node in the south direction
 #endif
 };
+typedef SObject* SObjectp;
 
 struct SFocusHighlight
 {

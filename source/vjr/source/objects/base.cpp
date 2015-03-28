@@ -356,11 +356,11 @@
 				if (tlDeleteSiblings && obj->ll.next)
 				{
 					// Iterate by looking ahead to the next entry, so we update the chain
-					objSib = obj->ll.nextObject;
+					objSib = obj->ll.nextObj;
 					while (objSib)
 					{
 						// Grab the next sibling
-						objSibNext = objSib->ll.nextObject;
+						objSibNext = objSib->ll.nextObj;
 
 						// Delete this sibling
 						iObj_delete(thisCode, &objSib, true, true, false);
@@ -584,14 +584,14 @@
 		if (tlClearSiblings && obj->ll.next)
 		{
 			// Begin at the next sibling
-			objSib = obj->ll.nextObject;
+			objSib = obj->ll.nextObj;
 			while (objSib)
 			{
 				// Clear this sibling
 				iObj_clearFocus(thisCode, win, objSib, true, false);
 
 				// Move to the next sibling
-				objSib = objSib->ll.nextObject;
+				objSib = objSib->ll.nextObj;
 			}
 		}
 	}
@@ -719,7 +719,7 @@
 				if (tlProcessSiblings)
 				{
 					// Begin at the first sibling
-					objSib = objThis->ll.nextObject;
+					objSib = objThis->ll.nextObj;
 					while (objSib)
 					{
 						// Process this sibling
@@ -727,7 +727,7 @@
 							return(true);
 
 						// Move to the next sibling
-						objSib = objSib->ll.nextObject;
+						objSib = objSib->ll.nextObj;
 					}
 				}
 			}
@@ -747,7 +747,7 @@
 	SObject* iObj_find_thisForm(SThisCode* thisCode, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		return(iObj_findParentObject(thisCode, obj, _OBJ_TYPE_FORM, true));
+		return(iiObj_findParentObject_byType(thisCode, obj, _OBJ_TYPE_FORM, true));
 	}
 
 
@@ -761,7 +761,7 @@
 	SObject* iObj_find_thisSubform(SThisCode* thisCode, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		return(iObj_findParentObject(thisCode, obj, _OBJ_TYPE_SUBFORM, true));
+		return(iiObj_findParentObject_byType(thisCode, obj, _OBJ_TYPE_SUBFORM, true));
 	}
 
 
@@ -775,7 +775,7 @@
 	SObject* iObj_find_thisRider(SThisCode* thisCode, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		return(iObj_findParentObject(thisCode, obj, _OBJ_TYPE_RIDER, true));
+		return(iiObj_findParentObject_byType(thisCode, obj, _OBJ_TYPE_RIDER, true));
 	}
 
 
@@ -786,20 +786,73 @@
 // Called to search for the indicated object
 //
 //////
-	SObject* iObj_findParentObject(SThisCode* thisCode, SObject* objStart, s32 objType, bool tlIncludeSelfInSearch)
+	SObject* iiObj_findParentObject_byType(SThisCode* thisCode, SObject* objStart, s32 objType, bool tlSearchSelf)
 	{
 		logfunc(__FUNCTION__);
 
-		if (objStart->objType == objType && tlIncludeSelfInSearch)
+		if (tlSearchSelf && objStart->objType == objType)
 		{
 			// This is the subform
 			return(objStart);
 
 		} else {
 			// If we can traverse higher, go higher, if not we're done
-			if (objStart->parent)		return(iObj_findParentObject(thisCode, objStart->parent, objType, true));
+			if (objStart->parent)		return(iiObj_findParentObject_byType(thisCode, objStart->parent, objType, true));
 			else						return(NULL);
 		}
+	}
+
+
+
+
+//////////
+//
+// Called to find the indicated child object by name
+//
+//////
+	SObject* iiObj_findChildObject_byName(SThisCode* thisCode, SObject* objStart, SDatum* name, bool tlSearchSelf, bool tlSearchChildren, bool tlSearchSiblings)
+	{
+		SObject*	objFound;
+		SObject*	objSib;
+
+
+		logfunc(__FUNCTION__);
+
+		//////////
+		// See if this is the name
+		//////
+			if (tlSearchSelf && propIsName_byDatum(objStart, name))
+				return(objStart);
+
+
+		//////////
+		// See if they are searching grandchildren
+		//////
+			if (tlSearchChildren && objStart->firstChild)
+			{
+				if ((objFound = iiObj_findChildObject_byName(thisCode, objStart->firstChild, name, true, tlSearchSiblings, tlSearchChildren)))
+					return(objFound);
+			}
+
+
+		//////////
+		// Search siblings
+		//////
+			if (tlSearchSiblings)
+			{
+				for (objSib = objStart->ll.nextObj; objSib; objSib = objSib->ll.nextObj)
+				{
+					// Search this sibling
+					if ((objFound = iiObj_findChildObject_byName(thisCode, objStart->firstChild, name, true, tlSearchChildren, false)))
+						return(objFound);
+				}
+			}
+
+
+		//////////
+		// If we get here, not found
+		//////
+			return(NULL);
 	}
 
 
@@ -932,14 +985,14 @@
 				if (tlProcessSiblings)
 				{
 					// Begin at the first sibling
-					objSib = obj->ll.nextObject;
+					objSib = obj->ll.nextObj;
 					while (objSib)
 					{
 						// Process this sibling
 						iObj_setFocusHighlights(thisCode, win, objSib, x, y, true, false);
 
 						// Move to the next sibling
-						objSib = objSib->ll.nextObject;
+						objSib = objSib->ll.nextObj;
 					}
 				}
 		}
@@ -979,14 +1032,14 @@
 			if (tlProcessSiblings)
 			{
 				// Iterate through every sibling and process it, but don't process its siblings
-				objSib = obj->ll.nextObject;
+				objSib = obj->ll.nextObj;
 				while (objSib)
 				{
 					// Process this sibling
 					iObj_findFocusControls(thisCode, objSib, objFocusControls, false);
 
 					// Move to next sibling
-					objSib = objSib->ll.nextObject;
+					objSib = objSib->ll.nextObj;
 				}
 			}
 	}
@@ -1023,7 +1076,7 @@
 		// Attempt the focus
 		logfunc(__FUNCTION__);
 		if (obj->ll.next)
-			return(iObj_setFocus(thisCode, win, obj->ll.nextObject, true));
+			return(iObj_setFocus(thisCode, win, obj->ll.nextObj, true));
 
 		// Nothing after
 		return(false);
@@ -1076,7 +1129,7 @@
 			if (tlCheckSiblings && obj->ll.next)
 			{
 				// Skip to the sibling
-				objSib = obj->ll.nextObject;
+				objSib = obj->ll.nextObj;
 				while (objSib)
 				{
 					// See if this one has focus
@@ -1084,7 +1137,7 @@
 						return(objFocus);
 
 					// Move to next sibling
-					objSib = objSib->ll.nextObject;
+					objSib = objSib->ll.nextObj;
 				}
 			}
 
@@ -1154,14 +1207,14 @@
 				if (tlProcessSiblings && obj->ll.next)
 				{
 					// Grab the first sibling
-					objSib = obj->ll.nextObject;
+					objSib = obj->ll.nextObj;
 					while (objSib)
 					{
 						// Process this sibling
 						iObj_setDirtyRender_descent(thisCode, objSib, true, false);
 
 						// Move to next sibling
-						objSib = objSib->ll.nextObject;
+						objSib = objSib->ll.nextObj;
 					}
 				}
 		}
@@ -1224,14 +1277,14 @@
 				if (tlProcessSiblings && obj->ll.next)
 				{
 					// Grab the first sibling
-					objSib = obj->ll.nextObject;
+					objSib = obj->ll.nextObj;
 					while (objSib)
 					{
 						// Process this sibling
 						iObj_setDirtyPublish_descent(thisCode, objSib, true, false);
 
 						// Move to next sibling
-						objSib = objSib->ll.nextObject;
+						objSib = objSib->ll.nextObj;
 					}
 				}
 		}
@@ -1461,7 +1514,7 @@
 			if (tlCheckSiblings && obj->ll.next)
 			{
 				// Skip to the sibling
-				objSib = obj->ll.nextObject;
+				objSib = obj->ll.nextObj;
 				while (objSib)
 				{
 					// See if this one needs rendering
@@ -1469,7 +1522,7 @@
 						return(true);
 
 					// Move to next sibling
-					objSib = objSib->ll.nextObject;
+					objSib = objSib->ll.nextObj;
 				}
 			}
 
@@ -1515,14 +1568,14 @@
 		//////
 			if (tlRenderSiblings && obj->ll.next)
 			{
-				objSib = obj->ll.nextObject;
+				objSib = obj->ll.nextObj;
 				while (objSib)
 				{
 					// Render this sibling
 					lnPixelsRendered += iObj_renderChildrenAndSiblings(thisCode, objSib, true, false, tlForceRender);
 
 					// Move to next sibling
-					objSib = objSib->ll.nextObject;
+					objSib = objSib->ll.nextObj;
 				}
 			}
 
@@ -1742,14 +1795,14 @@
 				if (tlPublishSiblings)
 				{
 					// Begin at the next sibling
-					objSib = obj->ll.nextObject;
+					objSib = obj->ll.nextObj;
 					while (objSib)
 					{
 						// Publish this sibling
 						lnPixelsRendered += iObj_publish(thisCode, objSib, rc, bmpDst, true, false, tlForcePublish, tnLevel);
 
 						// Move to next sibling
-						objSib = objSib->ll.nextObject;
+						objSib = objSib->ll.nextObj;
 					}
 				}
 		}
@@ -1794,7 +1847,7 @@
 			if (tlCheckSiblings && obj->ll.next)
 			{
 				// Skip to the sibling
-				objSib = obj->ll.nextObject;
+				objSib = obj->ll.nextObj;
 				while (objSib)
 				{
 					// See if this one needs to be published
@@ -1802,7 +1855,7 @@
 						return(true);
 
 					// Move to next sibling
-					objSib = objSib->ll.nextObject;
+					objSib = objSib->ll.nextObj;
 				}
 			}
 
@@ -2015,7 +2068,7 @@
 					iObj_appendObjToParent(thisCode, objDst, objChild);
 
 				// Move to next
-				objChild = objChild->ll.nextObject;
+				objChild = objChild->ll.nextObj;
 			}
 		}
 	}
@@ -2117,7 +2170,7 @@
 					while (objChild)
 					{
 						// See which object this is
-						if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_icon))
+						if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_icon))
 						{
 							logfunc("form icon");
 							// Form icon
@@ -2130,7 +2183,7 @@
 							// Update the size
 							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName(objChild, cgcName_caption)) {
+						} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName_byText(objChild, cgcName_caption)) {
 							// Caption
 							logfunc("form caption");
 							SetRect(&objChild->rc,
@@ -2142,7 +2195,7 @@
 							// Update the size
 							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconMove)) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconMove)) {
 							// Move icon
 							logfunc("form move icon");
 							SetRect(&objChild->rc,
@@ -2154,7 +2207,7 @@
 							// Update the size
 							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconMinimize)) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconMinimize)) {
 							// Minimize icon
 							logfunc("form minimize icon");
 							SetRect(&objChild->rc,
@@ -2166,7 +2219,7 @@
 							// Update the size
 							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconMaximize)) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconMaximize)) {
 							// Maximize icon
 							logfunc("form maximize icon");
 							SetRect(&objChild->rc,
@@ -2178,7 +2231,7 @@
 							// Update the size
 							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconClose)) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconClose)) {
 							// Close icon
 							logfunc("form close icon");
 							SetRect(&objChild->rc,
@@ -2190,7 +2243,7 @@
 							// Update the size
 							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconScaleUl)) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconScaleUl)) {
 							// Upper left arrow
 							logfunc("form ul scale");
 							SetRect(&objChild->rc,
@@ -2202,7 +2255,7 @@
 							// Update the size
 							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconScaleUr)) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconScaleUr)) {
 							// Upper right arrow
 							logfunc("form ur scale");
 							SetRect(&objChild->rc,
@@ -2214,7 +2267,7 @@
 							// Update the size
 							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconScaleLr)) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconScaleLr)) {
 							// Lower right arrow
 							logfunc("form lr scale");
 							SetRect(&objChild->rc,
@@ -2226,7 +2279,7 @@
 							// Update the size
 							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconScaleLl)) {
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconScaleLl)) {
 							// Lower left arrow
 							logfunc("form ll scale");
 							SetRect(&objChild->rc,
@@ -2240,7 +2293,7 @@
 						}
 
 						// Move to next object
-						objChild = objChild->ll.nextObject;
+						objChild = objChild->ll.nextObj;
 					}
 				break;
 
@@ -2256,7 +2309,7 @@
 					while (objChild)
 					{
 						// See which object this is
-						if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_icon))
+						if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_icon))
 						{
 							// Subform icon
 							logfunc("subform icon");
@@ -2269,7 +2322,7 @@
 							// Update the size
 							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
-						} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName(objChild, cgcName_caption)) {
+						} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName_byText(objChild, cgcName_caption)) {
 							// Caption
 							logfunc("subform caption");
 							SetRect(&objChild->rc,
@@ -2287,7 +2340,7 @@
 						}
 
 						// Move to next object
-						objChild = objChild->ll.nextObject;
+						objChild = objChild->ll.nextObj;
 					}
 				break;
 
@@ -2313,7 +2366,7 @@
 					while (objChild)
 					{
 						// See which object this is
-						if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_checkboxImage))
+						if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_checkboxImage))
 						{
 							// Adjust the size and position
 							logfunc("checkbox image");
@@ -2359,7 +2412,7 @@
 							// Mark it for re-render
 							objChild->isDirtyRender = true;
 
-						} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName(objChild, cgcName_checkboxLabel)) {
+						} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName_byText(objChild, cgcName_checkboxLabel)) {
 							// Adjust the size
 							logfunc("checkbox label");
 							switch (propAlignment(obj))
@@ -2379,7 +2432,7 @@
 						}
 
 						// Move to next object
-						objChild = objChild->ll.nextObject;
+						objChild = objChild->ll.nextObj;
 					}
 				break;
 

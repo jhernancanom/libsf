@@ -136,6 +136,9 @@
 
 	#include "vjr_const.h"
 
+	#include "\libsf\utils\common\cpp\datum.h"
+	#include "\libsf\utils\common\cpp\datum.cpp"
+
 	#include "\libsf\utils\common\cpp\builder.h"
 	#include "\libsf\utils\common\cpp\builder.cpp"
 
@@ -232,7 +235,6 @@
 		#include "dbf\dbf.cpp"
 		#include "dbf\cdx.cpp"
 		#include "forms3d\grace.cpp"
-		#include "\libsf\utils\common\cpp\datum.cpp"
 		#include "fonts.cpp"
 
 
@@ -289,6 +291,9 @@
 		#include "/libsf/utils/common/cpp/linux/hwndx.h"
 	#endif
 
+	#include "/libsf/utils/common/cpp/datum.h"
+	#include "/libsf/utils/common/cpp/datum.cpp"
+
 	#include "/libsf/utils/common/cpp/builder.h"
 	#include "/libsf/utils/common/cpp/builder.cpp"
 
@@ -338,7 +343,6 @@
 	#include "vjr_globals.h"
 
 	#include "fonts.h"
-	#include "/libsf/utils/common/cpp/datum.h"
 	#include "bitmaps/bitmaps.h"
 
 	#include "commands/command_defs.h"
@@ -386,7 +390,6 @@
 		#include "dbf/dbf.cpp"
 		#include "dbf/cdx.cpp"
 		#include "forms3d/grace.cpp"
-		#include "/libsf/utils/common/cpp/datum.cpp"
 		#include "fonts.cpp"
 
 		#if defined(__linux__)

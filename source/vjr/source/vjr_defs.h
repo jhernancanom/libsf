@@ -129,7 +129,8 @@ struct SObjPropMap;
 	SObject*				iObj_find_thisForm						(SThisCode* thisCode, SObject* obj);
 	SObject*				iObj_find_thisSubform					(SThisCode* thisCode, SObject* obj);
 	SObject*				iObj_find_thisRider						(SThisCode* thisCode, SObject* obj);
-	SObject*				iObj_findParentObject					(SThisCode* thisCode, SObject* objStart, s32 objType, bool tlIncludeSelfInSearch);
+	SObject*				iiObj_findParentObject_byType			(SThisCode* thisCode, SObject* objStart, s32 objType, bool tlSearchSelf);
+	SObject*				iiObj_findChildObject_byName			(SThisCode* thisCode, SObject* objStart, SDatum* name, bool tlSearchSelf, bool tlSearchChildren, bool tlSearchSiblings);
 	bool					iObj_isCommandWindow					(SThisCode* thisCode, SObject* obj);
 	void					iObj_setFocusHighlights					(SThisCode* thisCode, SWindow* win, SObject* obj, s32 x, s32 y, bool tlProcessChildren, bool tlProcessSiblings);
 	void					iObj_findFocusControls					(SThisCode* thisCode, SObject* obj, SBuilder* objFocusControls, bool tlProcessSiblings);
@@ -449,7 +450,8 @@ struct SObjPropMap;
 //////////
 // Toolbar related
 //////
-	SObject*				iToolbar_loadFrom_xml					(SThisCode* thisCode, cu8* tcXml, u32 tnXmlLength, cs8* tcTagRoot, cs8* tcTagSub);
+	SObject*				iToolbar_loadFrom_xml					(SThisCode* thisCode,                                             cu8* tcXml, u32 tnXmlLength, cs8* tcTagRoot, cs8* tcTagSub);
+	bool					iToolbar_applyTo_obj					(SThisCode* thisCode, SObject* obj, SObject* objToolbarContainer, cu8* tcXml, u32 tnXmlLength, cs8* tcTagRoot, cs8* tcTagSub);
 
 
 
@@ -532,6 +534,10 @@ struct SObjPropMap;
 	bool					iIsCharacterInHaystackCase				(s8* haystack, s32 haystackLength, s8 needle, u32* tnOffset);
 	bool					iIsCharacterInHaystackReversed			(s8* haystack, s32 haystackLength, s8 needle, u32* tnOffset);
 	bool					iIsCharacterInHaystackReversedCase		(s8* haystack, s32 haystackLength, s8 needle, u32* tnOffset);
+	bool					iIsBoolText								(SDatum* d, bool* tlStoreValue, bool tlAllowLogicalX);
+	bool					iIsNotNull								(void* p);
+	void*					iif										(bool tlTest, void* ifTrue, void* ifFalse);
+	s32						iif										(bool tlTest, s32 ifTrue, s32 ifFalse);
 	bool					iDoesHaystackStartWithNeedle			(s8* haystack, s32 haystackLength, s8* needle, s32 needleLength);
 	bool					iDoesHaystackStartWithNeedleCase		(s8* haystack, s32 haystackLength, s8* needle, s32 needleLength);
 	s8						iLowerCharacter							(s8 ch);

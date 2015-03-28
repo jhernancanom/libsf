@@ -170,7 +170,7 @@
 				while (objChild)
 				{
 					// See which object this is
-					if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_icon))
+					if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_icon))
 					{
 						// Adjust the size
 						iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
@@ -186,7 +186,7 @@
 						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
 						propSetVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName(objChild, cgcName_caption)) {
+					} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName_byText(objChild, cgcName_caption)) {
 						// Caption
 						propSetCaption(objChild, cgcName_formCaption);
 						iObjProp_set_s32_direct(thisCode, objChild, _INDEX_BACKSTYLE, _BACK_STYLE_TRANSPARENT);
@@ -194,7 +194,7 @@
 						objChild->p.font		= iFont_create(cgcFontName_windowTitleBar, 12, FW_NORMAL, false, false);
 						propSetVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconMove)) {
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconMove)) {
 						// Adjust the size
 						iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
@@ -209,7 +209,7 @@
 						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
 						propSetVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconMinimize)) {
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconMinimize)) {
 						// Adjust the size
 						iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
@@ -226,7 +226,7 @@
 						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
 						propSetVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconMaximize)) {
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconMaximize)) {
 						// Adjust the size
 						iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
@@ -241,7 +241,7 @@
 						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
 						propSetVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconClose)) {
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconClose)) {
 						// Adjust the size
 						iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
@@ -256,7 +256,7 @@
 						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
 						propSetVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconScaleUl)) {
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconScaleUl)) {
 						// Adjust the size
 						iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
@@ -271,7 +271,7 @@
 						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
 						propSetVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconScaleUr)) {
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconScaleUr)) {
 						// Adjust the size
 						iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
@@ -286,7 +286,7 @@
 						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
 						propSetVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconScaleLr)) {
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconScaleLr)) {
 						// Adjust the size
 						iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
@@ -301,7 +301,7 @@
 						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
 						propSetVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconScaleLl)) {
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconScaleLl)) {
 						// Adjust the size
 						iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
 
@@ -318,7 +318,7 @@
 					}
 
 					// Move to next object
-					objChild = objChild->ll.nextObject;
+					objChild = objChild->ll.nextObj;
 				}
 		}
 	}
@@ -380,7 +380,7 @@
 				while (objChild)
 				{
 					// See which object this is
-					if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_icon))
+					if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_icon))
 					{
 						// Adjust the size
 						iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, bmpVjrIcon->bi.biWidth, bmpVjrIcon->bi.biHeight);
@@ -396,7 +396,7 @@
 						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
 						propSetVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName(objChild, cgcName_caption)) {
+					} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName_byText(objChild, cgcName_caption)) {
 						// Caption
 						iObjProp_set_character_direct(thisCode, objChild, _INDEX_CAPTION, cgcName_formCaption, -1);
 						iObjProp_set_s32_direct(thisCode, objChild, _INDEX_BACKSTYLE, _BACK_STYLE_TRANSPARENT);
@@ -406,7 +406,7 @@
 					}
 
 					// Move to next object
-					objChild = objChild->ll.nextObject;
+					objChild = objChild->ll.nextObj;
 				}
 		}
 	}
@@ -446,7 +446,7 @@
 				while (objChild)
 				{
 					// See which object this is
-					if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_icon))
+					if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_icon))
 					{
 						// Adjust the size
 						iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, bmpCarouselIcon->bi.biWidth, bmpCarouselIcon->bi.biHeight);
@@ -461,7 +461,7 @@
 						bmp = iObjProp_get_bitmap(thisCode, objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
 						propSetVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName(objChild, cgcName_caption)) {
+					} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName_byText(objChild, cgcName_caption)) {
 						// Caption
 						propSetCaption(objChild, cgcName_formCaption);
 						iObjProp_set_s32_direct(thisCode, objChild, _INDEX_BACKSTYLE, _BACK_STYLE_TRANSPARENT);
@@ -469,7 +469,7 @@
 						objChild->p.font = iFont_create(cgcFontName_windowTitleBar, 12, FW_NORMAL, false, false);
 						propSetVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_iconClose)) {
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconClose)) {
 						// Adjust the size
 						iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, bmpCarouselIcon->bi.biWidth, bmpCarouselIcon->bi.biHeight);
 
@@ -485,7 +485,7 @@
 					}
 
 					// Move to next object
-					objChild = objChild->ll.nextObject;
+					objChild = objChild->ll.nextObj;
 				}
 
 		}
@@ -807,7 +807,7 @@
 				while (objChild)
 				{
 					// See which object this is
-					if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName(objChild, cgcName_checkboxImage))
+					if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_checkboxImage))
 					{
 						// Adjust the size
 						iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, 17, objChild->rc.bottom);
@@ -843,7 +843,7 @@
 						objChild->isDirtyRender	= true;
 						propSetVisible(objChild, _LOGICAL_TRUE);
 
-					} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName(objChild, cgcName_checkboxLabel)) {
+					} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName_byText(objChild, cgcName_checkboxLabel)) {
 						// Adjust the size
 						iObj_setSize(thisCode, objChild, 17, 0, 60, objChild->rc.bottom);
 
@@ -859,7 +859,7 @@
 					}
 
 					// Move to next object
-					objChild = objChild->ll.nextObject;
+					objChild = objChild->ll.nextObj;
 				}
 		}
 	}

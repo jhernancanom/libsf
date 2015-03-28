@@ -243,6 +243,17 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 		u32			length()				{ if (this) return(m_length);		else return(0);		}
 		XmlData*	next()					{ if (this) return(m_next);			else return(0);		}
 
+		// Populates a datum with information for passing
+		SDatum* as_datum(SDatum* d)
+		{
+			if (d)
+			{
+				d->data_s8	= m_data;
+				d->length	= m_length;
+			}
+			return(d);
+		}
+
 		// Returns whether the value is set to the specified character
 		bool is_value(s8 ch)
 		{
@@ -302,6 +313,7 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 		s8*			m_data;			// Data to store here (pointer to existing data only, data is not copied)
 		u32			m_length;		// Length of the data there
 	};
+	typedef XmlData* XmlDatap;
 
 
 
@@ -1247,3 +1259,5 @@ private:
 
 		bool			m_closed;		// Indicates whether or not this node has been properly closed.  For a well-formed XML document, all nodes will be closed properly
 	};
+
+	typedef CXml* CXmlp;
