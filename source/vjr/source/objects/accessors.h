@@ -1700,8 +1700,12 @@ struct SBasePropMap;
 		{	_INDEX_MINHEIGHT,				0, 0, 0 },
 		{	_INDEX_MINWIDTH,				0, 0, 0 },
 		{	_INDEX_NAME,					0, 0, 0 },
+		{	_INDEX_NECOLOR,					0, 0, 0 },
+		{	_INDEX_NWCOLOR,					0, 0, 0 },
 		{	_INDEX_OBJECTS,					0, 0, 0 },
 		{	_INDEX_READONLY,				0, 0, 0 },
+		{	_INDEX_SECOLOR,					0, 0, 0 },
+		{	_INDEX_SWCOLOR,					0, 0, 0 },
 		{	_INDEX_TOP,						0, 0, 0 },
 		{	_INDEX_VISIBLE,					0, 0, 0 },
 		{	_INDEX_WIDTH,					0, 0, 0 },
@@ -1715,6 +1719,7 @@ struct SBasePropMap;
 	{
 		{	_INDEX_ACTIVECONTROL,			0, 0, 0 },		// Item in this.controls[] which is being presented currently for this rider
 		{	_INDEX_ALIGNMENT,				0, 0, 0 },		// _ALIGNMENT_FIXED, or _ALIGNMENT_SPINS
+		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_CAPTION,					0, 0, 0 },		// Text appended to carousel caption
 		{	_INDEX_CLASS,					0, 0, 0 },
@@ -2294,6 +2299,7 @@ struct SBasePropMap;
 		{	_INDEX_VALUE,					0, 0, 0 },
 		{	_INDEX_VALUE_MAXIMUM,			0, 0, 0 },
 		{	_INDEX_VALUE_MINIMUM,			0, 0, 0 },
+		{	_INDEX_VISIBLE,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
 	const s32 gnProps_radioSize = sizeof(gsProps_radio) / sizeof(SObjPropMap) - 1;
@@ -2397,6 +2403,7 @@ struct SBasePropMap;
 		{	_INDEX_ANCHOR,					0, 0, 0 },
 		{	_INDEX_APPLICATION,				0, 0, 0 },
 		{	_INDEX_AUTOHIDESCROLLBAR,		0, 0, 0 },
+		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_BORDERCOLOR,				0, 0, 0 },
 		{	_INDEX_BOUNDCOLUMN,				0, 0, 0 },
@@ -2500,6 +2507,7 @@ struct SBasePropMap;
 		{	_INDEX_ANCHOR,					0, 0, 0 },
 		{	_INDEX_APPLICATION,				0, 0, 0 },
 		{	_INDEX_BACKCOLOR,				0, 0, 0 },
+		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_BORDERCOLOR,				0, 0, 0 },
 		{	_INDEX_BORDERSTYLE,				0, 0, 0 },
@@ -2618,6 +2626,7 @@ struct SBasePropMap;
 		{	_INDEX_ACTIVEFORM,				0, 0, 0 },
 		{	_INDEX_APPLICATION,				0, 0, 0 },
 		{	_INDEX_AUTORELEASE,				0, 0, 0 },
+		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_BUFFERMODE,				0, 0, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
@@ -2655,6 +2664,7 @@ struct SBasePropMap;
 		{	_INDEX_ACTIVECONTROL,			0, 0, 0 },
 		{	_INDEX_APPLICATION,				0, 0, 0 },
 		{	_INDEX_BACKCOLOR,				0, 0, 0 },
+		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_CAPTION,					0, (uptr)&iObjProp_setter_captionOnChild, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
@@ -2707,6 +2717,7 @@ struct SBasePropMap;
 	SObjPropMap gsProps_separator[] =
 	{
 		{	_INDEX_APPLICATION,				0, 0, 0 },
+		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_CLASSLIBRARY,			0, 0, 0 },
@@ -2728,6 +2739,7 @@ struct SBasePropMap;
 	{
 		{	_INDEX_ANCHOR,					0, 0, 0 },
 		{	_INDEX_APPLICATION,				0, 0, 0 },
+		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_BORDERCOLOR,				0, 0, 0 },
 		{	_INDEX_BORDERSTYLE,				0, 0, 0 },
@@ -2938,6 +2950,7 @@ struct SBasePropMap;
 		{	_INDEX_ANCHOR,					0, 0, 0 },
 		{	_INDEX_APPLICATION,				0, 0, 0 },
 		{	_INDEX_BACKCOLOR,				0, 0, 0 },
+		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_CHILDORDER,				0, 0, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
@@ -3032,6 +3045,7 @@ struct SBasePropMap;
 		{	_INDEX_ALIGNMENT,				0, 0, 0 },
 		{	_INDEX_APPLICATION,				0, 0, 0 },
 		{	_INDEX_BACKCOLOR,				0, 0, 0 },
+		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_BOUND,					0, 0, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
@@ -3099,6 +3113,7 @@ struct SBasePropMap;
 		{	_INDEX_ANCHOR,					0, 0, 0 },
 		{	_INDEX_APPLICATION,				0, 0, 0 },
 		{	_INDEX_BACKCOLOR,				0, 0, 0 },
+		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_CAPTION,					0, (uptr)&iObjProp_setter_captionOnChild, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
@@ -3130,6 +3145,7 @@ struct SBasePropMap;
 		{	_INDEX_STATUSBARTEXT,			0, 0, 0 },
 		{	_INDEX_TAG,						0, 0, 0 },
 		{	_INDEX_TOOLTIPTEXT,				0, 0, 0 },
+		{	_INDEX_VISIBLE,					0, 0, 0 },
 		{	_INDEX_WORDWRAP,				0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
@@ -3143,6 +3159,7 @@ struct SBasePropMap;
 		{	_INDEX_AUTOACTIVATE,			0, 0, 0 },
 		{	_INDEX_AUTOSIZE,				0, 0, 0 },
 		{	_INDEX_AUTOVERBMENU,			0, 0, 0 },
+		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_CLASSLIBRARY,			0, 0, 0 },
@@ -3189,6 +3206,7 @@ struct SBasePropMap;
 		{	_INDEX_AUTOACTIVATE,			0, 0, 0 },
 		{	_INDEX_AUTOSIZE,				0, 0, 0 },
 		{	_INDEX_AUTOVERBMENU,			0, 0, 0 },
+		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_CANCEL,					0, 0, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
@@ -3234,6 +3252,7 @@ struct SBasePropMap;
 		{	_INDEX_ANCHOR,					0, 0, 0 },
 		{	_INDEX_APPLICATION,				0, 0, 0 },
 		{	_INDEX_BACKCOLOR,				0, 0, 0 },
+		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_BORDERCOLOR,				0, 0, 0 },
 		{	_INDEX_BORDERSTYLE,				0, 0, 0 },
@@ -3314,6 +3333,7 @@ struct SBasePropMap;
 	SObjPropMap gsProps_timer[] =
 	{
 		{	_INDEX_APPLICATION,				0, 0, 0 },
+		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_CLASSLIBRARY,			0, 0, 0 },
@@ -3329,6 +3349,7 @@ struct SBasePropMap;
 		{	_INDEX_TAG,						0, 0, 0 },
 		{	_INDEX_TOP,						0, 0, 0 },
 		{	_INDEX_WIDTH,					0, 0, 0 },
+		{	_INDEX_VISIBLE,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
 	const s32 gnProps_timerSize = sizeof(gsProps_timer) / sizeof(SObjPropMap) - 1;
@@ -3337,6 +3358,7 @@ struct SBasePropMap;
 	SObjPropMap gsProps_hyperlink[] =
 	{
 		{	_INDEX_APPLICATION,				0, 0, 0 },
+		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_CLASSLIBRARY,			0, 0, 0 },
@@ -3347,6 +3369,7 @@ struct SBasePropMap;
 		{	_INDEX_PARENTCLASS,				0, 0, 0 },
 		{	_INDEX_READONLY,				0, 0, 0 },
 		{	_INDEX_TAG,						0, 0, 0 },
+		{	_INDEX_VISIBLE,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
 	const s32 gnProps_hyperlinkSize = sizeof(gsProps_hyperlink) / sizeof(SObjPropMap) - 1;
@@ -3354,6 +3377,7 @@ struct SBasePropMap;
 	// _OBJ_TYPE_COLLECTION
 	SObjPropMap gsProps_collection[] =
 	{
+		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_CLASSLIBRARY,			0, 0, 0 },
@@ -3366,6 +3390,7 @@ struct SBasePropMap;
 		{	_INDEX_PARENTCLASS,				0, 0, 0 },
 		{	_INDEX_READONLY,				0, 0, 0 },
 		{	_INDEX_TAG,						0, 0, 0 },
+		{	_INDEX_VISIBLE,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
 	const s32 gnProps_collectionSize = sizeof(gsProps_collection) / sizeof(SObjPropMap) - 1;
@@ -3420,6 +3445,7 @@ struct SBasePropMap;
 		{	_INDEX_READONLY,				0, 0, 0 },
 		{	_INDEX_TAG,						0, 0, 0 },
 		{	_INDEX_TOOLTIPTEXT,				0, 0, 0 },
+		{	_INDEX_VISIBLE,					0, 0, 0 },
 		{	_INDEX_WHATSTHISHELPID,			0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
@@ -3431,6 +3457,7 @@ struct SBasePropMap;
 		{	_INDEX_ACTIVEPAGE,				0, 0, 0 },
 		{	_INDEX_ANCHOR,					0, 0, 0 },
 		{	_INDEX_APPLICATION,				0, 0, 0 },
+		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_BORDERCOLOR,				0, 0, 0 },
 		{	_INDEX_BORDERWIDTH,				0, 0, 0 },
@@ -3485,6 +3512,7 @@ struct SBasePropMap;
 	SObjPropMap gsProps_session[] =
 	{
 		{	_INDEX_APPLICATION,				0, 0, 0 },
+		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_CLASSLIBRARY,			0, 0, 0 },
@@ -3497,6 +3525,7 @@ struct SBasePropMap;
 		{	_INDEX_PARENTCLASS,				0, 0, 0 },
 		{	_INDEX_READONLY,				0, 0, 0 },
 		{	_INDEX_TAG,						0, 0, 0 },
+		{	_INDEX_VISIBLE,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
 	const s32 gnProps_sessionSize = sizeof(gsProps_session) / sizeof(SObjPropMap) - 1;
@@ -3505,6 +3534,7 @@ struct SBasePropMap;
 	SObjPropMap gsProps_custom[] =
 	{
 		{	_INDEX_APPLICATION,				0, 0, 0 },
+		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_CLASSLIBRARY,			0, 0, 0 },
@@ -3526,6 +3556,7 @@ struct SBasePropMap;
 		{	_INDEX_READONLY,				0, 0, 0 },
 		{	_INDEX_TAG,						0, 0, 0 },
 		{	_INDEX_TOP,						0, 0, 0 },
+		{	_INDEX_VISIBLE,					0, 0, 0 },
 		{	_INDEX_WHATSTHISHELPID,			0, 0, 0 },
 		{	_INDEX_WIDTH,					0, 0, 0 },
 		{	0,								0, 0, 0 }
@@ -3535,6 +3566,7 @@ struct SBasePropMap;
 	// _OBJ_TYPE_EXCEPTION
 	SObjPropMap gsProps_exception[] =
 	{
+		{	_INDEX_BACKSTYLE,				0, 0, 0 },
 		{	_INDEX_BASECLASS,				0, 0, 0 },
 		{	_INDEX_CLASS,					0, 0, 0 },
 		{	_INDEX_CLASSLIBRARY,			0, 0, 0 },
@@ -3553,6 +3585,7 @@ struct SBasePropMap;
 		{	_INDEX_STACKLEVEL,				0, 0, 0 },
 		{	_INDEX_TAG,						0, 0, 0 },
 		{	_INDEX_USERVALUE,				0, 0, 0 },
+		{	_INDEX_VISIBLE,					0, 0, 0 },
 		{	0,								0, 0, 0 }
 	};
 	const s32 gnProps_exceptionSize = sizeof(gsProps_exception) / sizeof(SObjPropMap) - 1;
@@ -3561,10 +3594,12 @@ struct SBasePropMap;
 	// Note:  Any changes made here need to make sure their _ICODE_* value is also updated in gsProps_master[]
 	SObjPropMap gsProps_settings[] =
 	{	//  index                                    init set get
+		{	_INDEX_BACKSTYLE,							0, 0, 0 },
 		{	_INDEX_BASECLASS,							0, 0, 0 },
 		{	_INDEX_CLASS,								0, 0, 0 },
-		{	_INDEX_NAME,								0, 0, 0 },
 		{	_INDEX_ENABLED,								0, 0, 0 },
+		{	_INDEX_NAME,								0, 0, 0 },
+		{	_INDEX_VISIBLE,								0, 0, 0 },
 		// Specific to settings
 		{	_INDEX_SET_AUTO_CONVERT,					0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
 		{	_INDEX_SET_AUTO_VALIDATE,					0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool

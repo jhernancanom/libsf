@@ -113,6 +113,16 @@
 
 	bool iDefaultCallback_onRender(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
+
+//////////
+// Debug trap:  Rendered objects signal this event by default ... to find when a particular object is being rendered, trap here
+//////
+// 	if (obj->objType == _OBJ_TYPE_CAROUSEL)
+// 		debug_break;
+// 	if (obj->objType == _OBJ_TYPE_RIDER)
+// 		debug_break;
+
+
 		// Assume it was rendered okay
 		return(true);
 	}
@@ -403,19 +413,19 @@
 					} else if (propIsName_byText(obj, cgcName_iconMove)) {
 						// Move
 						llMouseDown					= false;
-						obj->ev.mouse.isMouseOver	= false;
+						obj->ev.isMouseOver	= false;
 						iWindow_move(win);
 
 					} else if (propIsName_byText(obj, cgcName_iconMinimize)) {
 						// Minimize
 						llMouseDown					= false;
-						obj->ev.mouse.isMouseOver	= false;
+						obj->ev.isMouseOver	= false;
 						iWindow_minimize(win);
 
 					} else if (propIsName_byText(obj, cgcName_iconMaximize)) {
 						// Maximize
 						llMouseDown					= false;
-						obj->ev.mouse.isMouseOver	= false;
+						obj->ev.isMouseOver	= false;
 						iWindow_maximize(win);
 					}
 					break;
@@ -423,7 +433,7 @@
 		}
 
 		// Update our condition
-		obj->ev.mouse.isMouseDown = llMouseDown;
+		obj->ev.isMouseDown = llMouseDown;
 		iObj_setDirtyRender_ascent(thisCode, obj, true);
 		iWindow_render(thisCode, win, false);
 		return(true);
@@ -442,8 +452,8 @@
 
 
 		// We are leaving this object, lower the flag
-		obj->ev.mouse.isMouseDown = (obj->ev.mouse.thisClick != 0);	// Indicate if the mouse is down here
-		obj->ev.mouse.isMouseDown = false;
+		obj->ev.isMouseDown = (obj->ev.thisClick != 0);	// Indicate if the mouse is down here
+		obj->ev.isMouseDown = false;
 		iObj_setDirtyRender_ascent(thisCode, obj, true);
 		iWindow_render(thisCode, win, false);
 		return(false);
@@ -452,10 +462,10 @@
 	bool iDefaultCallback_onMouseEnter(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// We are newly over this object, raise the flag
-		obj->ev.mouse.isMouseDown = (obj->ev.mouse.thisClick != 0);	// Indicate if the mouse is down here
-		if (!obj->ev.mouse.isMouseOver)
+		obj->ev.isMouseDown = (obj->ev.thisClick != 0);	// Indicate if the mouse is down here
+		if (!obj->ev.isMouseOver)
 		{
-			obj->ev.mouse.isMouseOver = true;
+			obj->ev.isMouseOver = true;
 			iObj_setDirtyRender_ascent(thisCode, obj, true);
 			iWindow_render(thisCode, win, false);
 		}
@@ -467,9 +477,9 @@
 	bool iDefaultCallback_onMouseLeave(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume we consumed the leave, and that the parent doesn't need to receive it
-		if (obj->ev.mouse.isMouseOver)
+		if (obj->ev.isMouseOver)
 		{
-			obj->ev.mouse.isMouseOver = false;
+			obj->ev.isMouseOver = false;
 			iObj_setDirtyRender_ascent(thisCode, obj, true);
 			iWindow_render(thisCode, win, false);
 		}

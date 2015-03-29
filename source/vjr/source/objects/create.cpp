@@ -127,7 +127,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, emptyNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_empty, -1);
 
 				// Events
-				iEvents_resetToDefault(thisCode, &emptyNew->ev);
+				iEvents_resetToDefault(thisCode, emptyNew);
 
 				// Initialize based on template
 				if (template_empty)
@@ -228,7 +228,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, formNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_form, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, formNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_form, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, formNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_form, -1);
-				iEvents_resetToDefault(thisCode, &formNew->ev);
+				iEvents_resetToDefault(thisCode, formNew);
 				iObj_setSize(thisCode, formNew, 0, 0, 375, 250);
 
 				// Initialize based on template
@@ -305,7 +305,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, subformNew, _INDEX_NAME);				iDatum_duplicate(&var->value, cgcName_subform, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, subformNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_subform, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, subformNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_subform, -1);
-				iEvents_resetToDefault(thisCode, &subformNew->ev);
+				iEvents_resetToDefault(thisCode, subformNew);
 				iObj_setSize(thisCode, subformNew, 0, 0, 200, 100);
 
 				// Initialize based on template
@@ -386,7 +386,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, carouselNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_carousel, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, carouselNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_carousel, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, carouselNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_carousel, -1);
-				iEvents_resetToDefault(thisCode, &carouselNew->ev);
+				iEvents_resetToDefault(thisCode, carouselNew);
 				iObj_setSize(thisCode, carouselNew, 0, 0, 320, 480);
 
 				// Initialize based on template
@@ -442,7 +442,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, riderNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_rider, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, riderNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_rider, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, riderNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_rider, -1);
-				iEvents_resetToDefault(thisCode, &riderNew->ev);
+				iEvents_resetToDefault(thisCode, riderNew);
 				iObj_setSize(thisCode, riderNew, 0, 0, 320, 480);
 
 				// Initialize based on template
@@ -498,7 +498,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, labelNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_label, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, labelNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_label, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, labelNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_label, -1);
-				iEvents_resetToDefault(thisCode, &labelNew->ev);
+				iEvents_resetToDefault(thisCode, labelNew);
 				iObj_setSize(thisCode, labelNew, 0, 0, 40, 17);
 
 				// Initialize based on template
@@ -554,7 +554,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, textboxNew, _INDEX_NAME);				iDatum_duplicate(&var->value, cgcName_textbox, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, textboxNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_textbox, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, textboxNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_textbox, -1);
-				iEvents_resetToDefault(thisCode, &textboxNew->ev);
+				iEvents_resetToDefault(thisCode, textboxNew);
 				iObj_setSize(thisCode, textboxNew, 0, 0, 100, 23);
 
 				// Initialize based on template
@@ -610,7 +610,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, buttonNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_button, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, buttonNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_button, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, buttonNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_button, -1);
-				iEvents_resetToDefault(thisCode, &buttonNew->ev);
+				iEvents_resetToDefault(thisCode, buttonNew);
 				iObj_setSize(thisCode, buttonNew, 0, 0, 84, 27);
 
 				// Initialize based on template
@@ -666,7 +666,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, editboxNew, _INDEX_NAME);				iDatum_duplicate(&var->value, cgcName_editbox, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, editboxNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_editbox, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, editboxNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_editbox, -1);
-				iEvents_resetToDefault(thisCode, &editboxNew->ev);
+				iEvents_resetToDefault(thisCode, editboxNew);
 				iObj_setSize(thisCode, editboxNew, 0, 0, 100, 53);
 
 				// Initialize based on template
@@ -722,7 +722,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, imageNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_image, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, imageNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_image, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, imageNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_image, -1);
-				iEvents_resetToDefault(thisCode, &imageNew->ev);
+				iEvents_resetToDefault(thisCode, imageNew);
 				iObj_setSize(thisCode, imageNew, 0, 0, 100, 36);
 
 				// Initialize based on template
@@ -800,7 +800,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, checkboxNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_checkbox, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, checkboxNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_checkbox, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, checkboxNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_checkbox, -1);
-				iEvents_resetToDefault(thisCode, &checkboxNew->ev);
+				iEvents_resetToDefault(thisCode, checkboxNew);
 				iObj_setSize(thisCode, checkboxNew, 0, 0, 60, 17);
 
 				// Initialize based on template
@@ -856,7 +856,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, optionNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_option, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, optionNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_option, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, optionNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_option, -1);
-				iEvents_resetToDefault(thisCode, &optionNew->ev);
+				iEvents_resetToDefault(thisCode, optionNew);
 				iObj_setSize(thisCode, optionNew, 0, 0, 60, 40);
 
 				// Initialize based on template
@@ -912,7 +912,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, radioNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_radio, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, radioNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_radio, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, radioNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_radio, -1);
-				iEvents_resetToDefault(thisCode, &radioNew->ev);
+				iEvents_resetToDefault(thisCode, radioNew);
 				iObj_setSize(thisCode, radioNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -968,7 +968,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, cmdGroupNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_cmdgroup, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, cmdGroupNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_cmdgroup, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, cmdGroupNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_cmdgroup, -1);
-				iEvents_resetToDefault(thisCode, &cmdGroupNew->ev);
+				iEvents_resetToDefault(thisCode, cmdGroupNew);
 				iObj_setSize(thisCode, cmdGroupNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -1024,7 +1024,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, optGroupNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_optgroup, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, optGroupNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_optgroup, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, optGroupNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_optgroup, -1);
-				iEvents_resetToDefault(thisCode, &optGroupNew->ev);
+				iEvents_resetToDefault(thisCode, optGroupNew);
 				iObj_setSize(thisCode, optGroupNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -1080,7 +1080,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, listboxNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_listbox, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, listboxNew, _INDEX_CLASS);		iDatum_duplicate(&var->value, cgcName_listbox, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, listboxNew, _INDEX_BASECLASS);	iDatum_duplicate(&var->value, cgcName_listbox, -1);
-				iEvents_resetToDefault(thisCode, &listboxNew->ev);
+				iEvents_resetToDefault(thisCode, listboxNew);
 				iObj_setSize(thisCode, listboxNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -1136,7 +1136,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, comboboxNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_combobox, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, comboboxNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_combobox, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, comboboxNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_combobox, -1);
-				iEvents_resetToDefault(thisCode, &comboboxNew->ev);
+				iEvents_resetToDefault(thisCode, comboboxNew);
 				iObj_setSize(thisCode, comboboxNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -1192,7 +1192,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, formsetNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_formset, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, formsetNew, _INDEX_CLASS);		iDatum_duplicate(&var->value, cgcName_formset, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, formsetNew, _INDEX_BASECLASS);	iDatum_duplicate(&var->value, cgcName_formset, -1);
-				iEvents_resetToDefault(thisCode, &formsetNew->ev);
+				iEvents_resetToDefault(thisCode, formsetNew);
 				iObj_setSize(thisCode, formsetNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -1248,7 +1248,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, toolbarNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_toolbar, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, toolbarNew, _INDEX_CLASS);		iDatum_duplicate(&var->value, cgcName_toolbar, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, toolbarNew, _INDEX_BASECLASS);	iDatum_duplicate(&var->value, cgcName_toolbar, -1);
-				iEvents_resetToDefault(thisCode, &toolbarNew->ev);
+				iEvents_resetToDefault(thisCode, toolbarNew);
 				iObj_setSize(thisCode, toolbarNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -1304,7 +1304,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, separatorNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_separator, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, separatorNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_separator, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, separatorNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_separator, -1);
-				iEvents_resetToDefault(thisCode, &separatorNew->ev);
+				iEvents_resetToDefault(thisCode, separatorNew);
 				iObj_setSize(thisCode, separatorNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -1360,7 +1360,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, lineNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_line, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, lineNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_line, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, lineNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_line, -1);
-				iEvents_resetToDefault(thisCode, &lineNew->ev);
+				iEvents_resetToDefault(thisCode, lineNew);
 				iObj_setSize(thisCode, lineNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -1416,7 +1416,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, shapeNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_shape, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, shapeNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_shape, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, shapeNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_shape, -1);
-				iEvents_resetToDefault(thisCode, &shapeNew->ev);
+				iEvents_resetToDefault(thisCode, shapeNew);
 				iObj_setSize(thisCode, shapeNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -1472,7 +1472,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, containerNew, _INDEX_NAME);		iDatum_duplicate(&var->value, cgcName_container, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, containerNew, _INDEX_CLASS);		iDatum_duplicate(&var->value, cgcName_container, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, containerNew, _INDEX_BASECLASS);	iDatum_duplicate(&var->value, cgcName_container, -1);
-				iEvents_resetToDefault(thisCode, &containerNew->ev);
+				iEvents_resetToDefault(thisCode, containerNew);
 				iObj_setSize(thisCode, containerNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -1528,7 +1528,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, controlNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_control, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, controlNew, _INDEX_CLASS);		iDatum_duplicate(&var->value, cgcName_control, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, controlNew, _INDEX_BASECLASS);	iDatum_duplicate(&var->value, cgcName_control, -1);
-				iEvents_resetToDefault(thisCode, &controlNew->ev);
+				iEvents_resetToDefault(thisCode, controlNew);
 				iObj_setSize(thisCode, controlNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -1584,7 +1584,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, gridNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_grid, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, gridNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_grid, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, gridNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_grid, -1);
-				iEvents_resetToDefault(thisCode, &gridNew->ev);
+				iEvents_resetToDefault(thisCode, gridNew);
 				iObj_setSize(thisCode, gridNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -1640,7 +1640,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, columnNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_column, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, columnNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_column, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, columnNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_column, -1);
-				iEvents_resetToDefault(thisCode, &columnNew->ev);
+				iEvents_resetToDefault(thisCode, columnNew);
 				iObj_setSize(thisCode, columnNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -1696,7 +1696,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, headerNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_header, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, headerNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_header, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, headerNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_header, -1);
-				iEvents_resetToDefault(thisCode, &headerNew->ev);
+				iEvents_resetToDefault(thisCode, headerNew);
 				iObj_setSize(thisCode, headerNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -1752,7 +1752,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, oleBoundNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_olebound, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, oleBoundNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_olebound, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, oleBoundNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_olebound, -1);
-				iEvents_resetToDefault(thisCode, &oleBoundNew->ev);
+				iEvents_resetToDefault(thisCode, oleBoundNew);
 				iObj_setSize(thisCode, oleBoundNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -1808,7 +1808,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, oleContainNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_olecontain, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, oleContainNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_olecontain, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, oleContainNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_olecontain, -1);
-				iEvents_resetToDefault(thisCode, &oleContainNew->ev);
+				iEvents_resetToDefault(thisCode, oleContainNew);
 				iObj_setSize(thisCode, oleContainNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -1864,7 +1864,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, spinnerNew, _INDEX_NAME);				iDatum_duplicate(&var->value, cgcName_spinner, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, spinnerNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_spinner, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, spinnerNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_spinner, -1);
-				iEvents_resetToDefault(thisCode, &spinnerNew->ev);
+				iEvents_resetToDefault(thisCode, spinnerNew);
 				iObj_setSize(thisCode, spinnerNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -1920,7 +1920,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, timerNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_timer, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, timerNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_timer, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, timerNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_timer, -1);
-				iEvents_resetToDefault(thisCode, &timerNew->ev);
+				iEvents_resetToDefault(thisCode, timerNew);
 				iObj_setSize(thisCode, timerNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -1976,7 +1976,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, hyperlinkNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_hyperlink, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, hyperlinkNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_hyperlink, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, hyperlinkNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_hyperlink, -1);
-				iEvents_resetToDefault(thisCode, &hyperlinkNew->ev);
+				iEvents_resetToDefault(thisCode, hyperlinkNew);
 				iObj_setSize(thisCode, hyperlinkNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -2032,7 +2032,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, collectionNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_collection, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, collectionNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_collection, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, collectionNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_collection, -1);
-				iEvents_resetToDefault(thisCode, &collectionNew->ev);
+				iEvents_resetToDefault(thisCode, collectionNew);
 				iObj_setSize(thisCode, collectionNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -2088,7 +2088,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, pageNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_page, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, pageNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_page, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, pageNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_page, -1);
-				iEvents_resetToDefault(thisCode, &pageNew->ev);
+				iEvents_resetToDefault(thisCode, pageNew);
 				iObj_setSize(thisCode, pageNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -2144,7 +2144,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, pageframeNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_pageframe, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, pageframeNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_pageframe, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, pageframeNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_pageframe, -1);
-				iEvents_resetToDefault(thisCode, &pageframeNew->ev);
+				iEvents_resetToDefault(thisCode, pageframeNew);
 				iObj_setSize(thisCode, pageframeNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -2200,7 +2200,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, sessionNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_session, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, sessionNew, _INDEX_CLASS);		iDatum_duplicate(&var->value, cgcName_session, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, sessionNew, _INDEX_BASECLASS);	iDatum_duplicate(&var->value, cgcName_session, -1);
-				iEvents_resetToDefault(thisCode, &sessionNew->ev);
+				iEvents_resetToDefault(thisCode, sessionNew);
 				iObj_setSize(thisCode, sessionNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -2256,7 +2256,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, customNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_custom, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, customNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_custom, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, customNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_custom, -1);
-				iEvents_resetToDefault(thisCode, &customNew->ev);
+				iEvents_resetToDefault(thisCode, customNew);
 				iObj_setSize(thisCode, customNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -2312,7 +2312,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, exceptionNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_exception, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, exceptionNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_exception, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, exceptionNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_exception, -1);
-				iEvents_resetToDefault(thisCode, &exceptionNew->ev);
+				iEvents_resetToDefault(thisCode, exceptionNew);
 				iObj_setSize(thisCode, exceptionNew, 0, 0, 100, 100);
 
 				// Initialize based on template
@@ -2367,7 +2367,7 @@
 				var = iObjProp_get_variable_byIndex(thisCode, settingsNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_settings, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, settingsNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_settings, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, settingsNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_settings, -1);
-				iEvents_resetToDefault(thisCode, &settingsNew->ev);
+				iEvents_resetToDefault(thisCode, settingsNew);
 
 				// Initialize based on template
 				if (template_Settings)

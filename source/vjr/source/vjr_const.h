@@ -414,37 +414,51 @@ typedef SEM**		SEMpp;
 	const u32			_OBJ_TYPE_SETTINGS					= 39;						// Settings (SET TALK ON, etc.)
 
 //////////
-// A shortcut timesaver offered out of the goodness of my heart. :-)
-// 	switch (obj->objType)
-// 	{
-// 		case _OBJ_TYPE_EMPTY:
-// 			break;
-// 		case _OBJ_TYPE_FORM:
-// 			break;
-// 		case _OBJ_TYPE_SUBFORM:
-// 			break;
-// 		case _OBJ_TYPE_CAROUSEL:
-// 			break;
-// 		case _OBJ_TYPE_RIDER:
-// 			break;
-// 		case _OBJ_TYPE_LABEL:
-// 			break;
-// 		case _OBJ_TYPE_TEXTBOX:
-// 			break;
-// 		case _OBJ_TYPE_BUTTON:
-// 			break;
-// 		case _OBJ_TYPE_EDITBOX:
-// 			break;
-// 		case _OBJ_TYPE_IMAGE:
-// 			break;
-// 		case _OBJ_TYPE_CHECKBOX:
-// 			break;
-// 		case _OBJ_TYPE_OPTION:
-// 			break;
-// 		case _OBJ_TYPE_RADIO:
-// 			break;
-// 	}
+// Event signals
+// See:  SEvents
 //////
+	// Internal signals
+	const u32			_EVENT_RESIZE						= 0;
+
+	// External source code / member methods
+	const u32			_EVENT_ONLOAD						= 1;
+	const u32			_EVENT_ONINIT						= 2;
+	const u32			_EVENT_ONCREATED					= 3;
+	const u32			_EVENT_ONRESIZE						= 4;
+	const u32			_EVENT_ONMOVED						= 5;
+	const u32			_EVENT_ONRENDER						= 6;
+	const u32			_EVENT_ONPUBLISH					= 7;
+	const u32			_EVENT_ONQUERYUNLOAD				= 8;
+	const u32			_EVENT_ONDESTROY					= 9;
+	const u32			_EVENT_ONUNLOAD						= 10;
+	const u32			_EVENT_ONGOTFOCUS					= 11;
+	const u32			_EVENT_ONLOSTFOCUS					= 12;
+	const u32			_EVENT_ONADDOBJECT					= 13;
+	const u32			_EVENT_ONADDPROPERTY				= 14;
+	const u32			_EVENT_ONERROR						= 15;
+	const u32			_EVENT_ONSCROLLED					= 16;
+	const u32			_EVENT_ACTIVATE						= 17;
+	const u32			_EVENT_DEACTIVATE					= 18;
+	const u32			_EVENT_ONSELECT						= 19;
+	const u32			_EVENT_ONDESELECT					= 20;
+	const u32			_EVENT_ONINTERACTIVECHANGE			= 21;
+	const u32			_EVENT_ONPROGRAMMATICCHANGE			= 22;
+
+	const u32			_EVENT_ONSETACTIVECONTROL			= 23;
+	const u32			_EVENT_ONSPIN						= 24;
+
+	const u32			_EVENT_ONMOUSECLICKEX				= 25;
+	const u32			_EVENT_ONMOUSEDBLCLICKEX			= 26;
+	const u32			_EVENT_ONMOUSEWHEEL					= 27;
+	const u32			_EVENT_ONMOUSEMOVE					= 28;
+	const u32			_EVENT_ONMOUSEDOWN					= 29;
+	const u32			_EVENT_ONMOUSEUP					= 30;
+	const u32			_EVENT_ONMOUSEENTER					= 31;
+	const u32			_EVENT_ONMOUSELEAVE					= 32;
+	const u32			_EVENT_ONMOUSEHOVER					= 33;
+
+	const u32			_EVENT_ONKEYDOWN					= 34;
+	const u32			_EVENT_ONKEYUP						= 35;
 
 
 //////////

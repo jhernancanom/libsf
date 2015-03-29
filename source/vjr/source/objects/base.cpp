@@ -544,8 +544,7 @@
 			iObj_setDirtyRender_ascent(thisCode, obj, true);
 
 			// Signal the change
-			if (obj->ev.general._onGotFocus)
-				obj->ev.general.onGotFocus(thisCode, win, obj);
+			iEngine_raise_event(thisCode, _EVENT_ONGOTFOCUS, win, obj);
 
 			// Indicate we set focus
 			return(true);
@@ -598,8 +597,7 @@
 			}
 
 			// Signal the change
-			if (obj->ev.general._onLostFocus)
-				obj->ev.general.onLostFocus(thisCode, win, obj);
+			iEngine_raise_event(thisCode, _EVENT_ONLOSTFOCUS, win, obj);
 		}
 
 		// Clear siblings
@@ -1335,7 +1333,7 @@
 			//////////
 			// If they're forcing a render, set it up
 			//////
-				obj->isDirtyRender		|= tlForceRender;
+				obj->isDirtyRender							|= tlForceRender;
 				obj->ogl.quad.updateTextureWithNewBitmap	= obj->isDirtyRender;
 
 
@@ -1363,16 +1361,13 @@
 			//////////
 			// See if there is any onRender() algorithm associated with this object
 			//////
-				if (obj->ev.general._onRender)
+				// Find the root object
+				objRoot = iObj_find_rootmostObject(thisCode, obj);
+				if (objRoot)
 				{
-					// Find the root object
-					objRoot = iObj_find_rootmostObject(thisCode, obj);
-					if (objRoot)
-					{
-						// Locate the associated window (if any)
-						win = iWindow_findByObj(objRoot);
-						obj->ev.general.onRender(thisCode, win, obj);
-					}
+					// Locate the associated window (if any)
+					win = iWindow_findByObj(objRoot);
+					iEngine_raise_event(thisCode, _EVENT_ONRENDER, win, obj);
 				}
 
 
@@ -1389,6 +1384,12 @@
 						break;
 					case _OBJ_TYPE_SUBFORM:		// A new class which has its own drawing content and can be moved about using UI features
 						lnPixelsRendered += iSubobj_renderSubform(thisCode, obj);
+						break;
+					case _OBJ_TYPE_CAROUSEL:	// A new class which holds riders, and allows multiple contents drawn in a new way
+						lnPixelsRendered += iSubobj_renderCarousel(thisCode, obj);
+						break;
+					case _OBJ_TYPE_RIDER:		// A new class which holds other objects, and allows its content to be drawn in a new way
+						lnPixelsRendered += iSubobj_renderRider(thisCode, obj);
 						break;
 					case _OBJ_TYPE_LABEL:		// A label
 						lnPixelsRendered += iSubobj_renderLabel(thisCode, obj);
@@ -1699,16 +1700,13 @@
 					//////////
 					// See if there is any onPublish() algorithm associated with this object
 					//////
-						if (obj->ev.general._onPublish)
+						// Find the root object
+						objRoot = iObj_find_rootmostObject(thisCode, obj);
+						if (objRoot)
 						{
-							// Find the root object
-							objRoot = iObj_find_rootmostObject(thisCode, obj);
-							if (objRoot)
-							{
-								// Locate the associated window (if any)
-								win = iWindow_findByObj(objRoot);
-								obj->ev.general.onPublish(thisCode, win, obj);
-							}
+							// Locate the associated window (if any)
+							win = iWindow_findByObj(objRoot);
+							iEngine_raise_event(thisCode, _EVENT_ONPUBLISH, win, obj);
 						}
 
 
@@ -2321,7 +2319,7 @@
 
 			case _OBJ_TYPE_SUBFORM:
 				if (propBorderStyle(obj) != _BORDER_STYLE_NONE)		SetRect(&obj->rcClient, 1, bmpArrowUl->bi.biHeight + 1, tnWidth - 8 - 1, tnHeight - 1);
-				else											SetRect(&obj->rcClient, 0, bmpArrowUl->bi.biHeight, tnWidth - 8, tnHeight);
+				else												SetRect(&obj->rcClient, 0, bmpArrowUl->bi.biHeight, tnWidth - 8, tnHeight);
 
 				//////////
 				// Default child settings:
@@ -2364,6 +2362,76 @@
 						// Move to next object
 						objChild = objChild->ll.nextObj;
 					}
+				break;
+
+			case _OBJ_TYPE_CAROUSEL:
+				if (propBorderStyle(obj) != _BORDER_STYLE_NONE)		SetRect(&obj->rcClient, 1, bmpArrowUl->bi.biHeight + 1, tnWidth - 8 - 1, tnHeight - 1);
+				else												SetRect(&obj->rcClient, 0, bmpArrowUl->bi.biHeight, tnWidth - 8, tnHeight);
+
+				//////////
+				// Default child settings:
+				// [icon][caption                     ]
+				//////
+					objChild = obj->firstChild;
+					while (objChild)
+					{
+						// See which object this is
+						if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_icon))
+						{
+							// Subform icon
+							logfunc("carousel icon");
+							SetRect(&objChild->rc,
+										1,
+										1 - obj->rcClient.top,
+										1 + bmpArrowUl->bi.biWidth,
+										1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
+
+							// Update the size
+							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
+
+						} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName_byText(objChild, cgcName_caption)) {
+							// Caption
+							logfunc("carousel caption");
+							SetRect(&objChild->rc,
+										1 + bmpArrowUl->bi.biWidth + 4,
+										2 - obj->rcClient.top,
+										tnWidth - 4 - bmpArrowUl->bi.biWidth,
+										2 - obj->rcClient.top + objChild->p.font->tm.tmHeight + 2);
+
+							// Update the size
+							iObj_setSize(thisCode,	objChild,
+													objChild->rc.left,
+													objChild->rc.top,
+													objChild->rc.right  - objChild->rc.left,
+													objChild->rc.bottom - objChild->rc.top);
+
+						} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName_byText(objChild, cgcName_iconClose)) {
+							// Close button
+							logfunc("carousel close button");
+							SetRect(&objChild->rc,
+										obj->rcClient.right - 2 - bmpArrowUl->bi.biWidth,
+										2 - obj->rcClient.top,
+										tnWidth - 2,
+										2 - obj->rcClient.top + objChild->p.font->tm.tmHeight + 2);
+
+							// Update the size
+							iObj_setSize(thisCode,	objChild,
+													objChild->rc.left,
+													objChild->rc.top,
+													objChild->rc.right  - objChild->rc.left,
+													objChild->rc.bottom - objChild->rc.top);
+
+						}
+
+						// Move to next object
+						objChild = objChild->ll.nextObj;
+					}
+				break;
+
+				break;
+
+			case _OBJ_TYPE_RIDER:
+				// Just use the default rcClient settings above
 				break;
 
 			case _OBJ_TYPE_LABEL:
@@ -2703,6 +2771,7 @@ if (!obj->props[lnI])
 			obj->isRendered		= true;
 			obj->isPublished	= true;
 			obj->isDirtyRender	= true;
+			obj->isDirtyPublish	= true;
 
 
 		//////////
@@ -2722,7 +2791,7 @@ if (!obj->props[lnI])
 		//////////
 		// Events
 		//////
-			iEvents_resetToDefault(thisCode, &obj->ev);
+			iEvents_resetToDefault(thisCode, obj);
 
 
 		//////////
@@ -2731,6 +2800,7 @@ if (!obj->props[lnI])
 			iBmp_delete(&obj->bmp, true, true);
 			iBmp_delete(&obj->bmpPriorRendered, true, true);
 			iBmp_delete(&obj->bmpScaled, true, true);
+
 			obj->scrollOffsetX	= 0;
 			obj->scrollOffsetY	= 0;
 			obj->isScaled		= false;

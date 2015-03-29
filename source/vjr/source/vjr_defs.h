@@ -437,15 +437,14 @@ struct SObjPropMap;
 //////////
 // objects/events.cpp
 //////
-	void					iEvents_init							(SThisCode* thisCode);
-	void					iEvents_resetToDefault					(SThisCode* thisCode, SEvents* ev);
-	bool					iiEventDispatch_onMouseMove				(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks);
-	bool					iiEventDispatch_onMouseDown				(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks);
-	bool					iiEventDispatch_onMouseClickEx			(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks);
-	bool					iiEventDispatch_onMouseUp				(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks);
-	bool					iiEventDispatch_onMouseWheel			(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks, s32 tnDeltaY);
-	bool					iiEventDispatch_onKeyDown				(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, u16 tnAsciiChar, u16 tvKey, bool tlIsCAS, bool tlIsAscii);
-	bool					iiEventDispatch_onKeyUp					(SThisCode* thisCode, SEvents* ev, SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, u16 tnAsciiChar, u16 tvKey, bool tlIsCAS, bool tlIsAscii);
+	void					iEvents_resetToDefault					(SThisCode* thisCode,               SObject* obj);
+	bool					iiEventDispatch_onMouseMove				(SThisCode* thisCode, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks);
+	bool					iiEventDispatch_onMouseDown				(SThisCode* thisCode, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks);
+	bool					iiEventDispatch_onMouseClickEx			(SThisCode* thisCode, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks);
+	bool					iiEventDispatch_onMouseUp				(SThisCode* thisCode, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks);
+	bool					iiEventDispatch_onMouseWheel			(SThisCode* thisCode, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks, s32 tnDeltaY);
+	bool					iiEventDispatch_onKeyDown				(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, u16 tnAsciiChar, u16 tvKey, bool tlIsCAS, bool tlIsAscii);
+	bool					iiEventDispatch_onKeyUp					(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, u16 tnAsciiChar, u16 tvKey, bool tlIsCAS, bool tlIsAscii);
 
 
 
@@ -464,7 +463,7 @@ struct SObjPropMap;
 	bool					isValidWindow							(uptr tnWindow);
 	void					iInit_createDefaultObjects				(void);
 	void					iInit_jdebi_create						(void);
-	void					iInit_debi_decorateWithIcons			(void);
+	void					iInit_jdebi_addToolbars					(void);
 	void					iInit_createDefaultDatetimes			(void);
 	SBitmap*				iiVjr_buildSplashScreen					(SBitmap* bmpSplash);
 	void					iVjr_appendSystemLog					(SThisCode* thisCode, u8* tcLogText);

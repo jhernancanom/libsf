@@ -581,13 +581,13 @@
 
 					// Colorize the area
 					SetRect(&lrc2, lrc.left, lrc.top, lrc.right - ((lrc.bottom - lrc.top) / 2), lrc.bottom);
-					     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc2, colorMouseDown,	false, 0.0f);
-					else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc2, colorMouseOver,	false, 0.0f);
+					     if (obj->ev.isMouseDown)		iBmp_colorize(obj->bmp, &lrc2, colorMouseDown,	false, 0.0f);
+					else if (obj->ev.isMouseOver)		iBmp_colorize(obj->bmp, &lrc2, colorMouseOver,	false, 0.0f);
 
 				} else if (backStyle == _BACK_STYLE_OPAQUE) {
 					// Colorize the area
-					     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
-					else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
+					     if (obj->ev.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
+					else if (obj->ev.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
 				}
 
 
@@ -649,8 +649,8 @@
 				borderColor	= propBorderColor(obj);
 
 				// Colorize
-				     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,		false, 0.0f);
-				else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,		false, 0.0f);
+				     if (obj->ev.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,		false, 0.0f);
+				else if (obj->ev.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,		false, 0.0f);
 				else									iBmp_colorize(obj->bmp, &lrc, propBackColor(obj),	false, 0.0f);
 
 				// Inset slightly for the text part
@@ -757,8 +757,8 @@
 				borderColor	= propBorderColor(obj);
 
 				// Colorize
-				     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,		false, 0.0f);
-				else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,		false, 0.0f);
+				     if (obj->ev.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,		false, 0.0f);
+				else if (obj->ev.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,		false, 0.0f);
 				else									iBmp_colorize(obj->bmp, &lrc, propBackColor(obj),	false, 0.0f);
 
 				// Inset slightly for the text part
@@ -917,12 +917,12 @@
 			if (obj->isDirtyRender)
 			{
 				// Based on the current conditions, render the appropriate image
-				if (obj->ev.mouse.isMouseDown)
+				if (obj->ev.isMouseDown)
 				{
 					// Mouse is down on this item
 					bmp = iObjProp_get_bitmap(thisCode, obj, _INDEX_PICTUREBMP_DOWN);
 
-				} else if (obj->ev.mouse.isMouseOver) {
+				} else if (obj->ev.isMouseOver) {
 					// Mouse is over this item
 					bmp = iObjProp_get_bitmap(thisCode, obj, _INDEX_PICTUREBMP_OVER);
 
@@ -938,8 +938,8 @@
 				if (obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX)
 				{
 					// Colorize
-						 if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
-					else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
+						 if (obj->ev.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
+					else if (obj->ev.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
 				}
 
 
@@ -1142,8 +1142,8 @@
 
 
 				// Colorize
-				     if (obj->ev.mouse.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
-				else if (obj->ev.mouse.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
+				     if (obj->ev.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
+				else if (obj->ev.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);
 				else									iBmp_colorize(obj->bmp, &lrc, propBackColor(obj),	false, 0.0f);
 
 

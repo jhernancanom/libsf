@@ -686,19 +686,23 @@
 		//////////
 		// Add the editbox controls to the subforms
 		//////
-			sourceCode_editbox	= iObj_addChild(thisCode, _OBJ_TYPE_EDITBOX,	sourceCode);
-			locals_editbox		= iObj_addChild(thisCode, _OBJ_TYPE_EDITBOX,	locals);
-			watch_editbox		= iObj_addChild(thisCode, _OBJ_TYPE_EDITBOX,	watch);
-			command_editbox		= iObj_addChild(thisCode, _OBJ_TYPE_EDITBOX,	command);
-			debug_editbox		= iObj_addChild(thisCode, _OBJ_TYPE_EDITBOX,	debug);
-			output_editbox		= iObj_addChild(thisCode, _OBJ_TYPE_EDITBOX,	output);
-			screen_editbox		= iObj_addChild(thisCode, _OBJ_TYPE_EDITBOX,	_screen);
-			sourceLight_empty	= iObj_addChild(thisCode, _OBJ_TYPE_EMPTY,		sourceLight);
+			sourceCode_carousel	= iObj_addChild(thisCode,	_OBJ_TYPE_CAROUSEL,		sourceCode);
+			sourceCode_rider	= iObj_addChild(thisCode,	_OBJ_TYPE_RIDER,		sourceCode_carousel);
+			sourceCode_editbox	= iObj_addChild(thisCode,	_OBJ_TYPE_EDITBOX,		sourceCode_rider);
+			locals_editbox		= iObj_addChild(thisCode,	_OBJ_TYPE_EDITBOX,		locals);
+			watch_editbox		= iObj_addChild(thisCode,	_OBJ_TYPE_EDITBOX,		watch);
+			command_editbox		= iObj_addChild(thisCode,	_OBJ_TYPE_EDITBOX,		command);
+			debug_editbox		= iObj_addChild(thisCode,	_OBJ_TYPE_EDITBOX,		debug);
+			output_editbox		= iObj_addChild(thisCode,	_OBJ_TYPE_EDITBOX,		output);
+			screen_editbox		= iObj_addChild(thisCode,	_OBJ_TYPE_EDITBOX,		_screen);
+			sourceLight_empty	= iObj_addChild(thisCode,	_OBJ_TYPE_EMPTY,		sourceLight);
 
 
 		//////////
-		// Add the editbox controls to the subforms
+		// Add the controls to the subforms
 		//////
+			propSetVisible(sourceCode_carousel,	_LOGICAL_TRUE);
+			propSetVisible(sourceCode_rider,	_LOGICAL_TRUE);
 			propSetVisible(sourceCode_editbox,	_LOGICAL_TRUE);
 			propSetVisible(locals_editbox,		_LOGICAL_TRUE);
 			propSetVisible(watch_editbox,		_LOGICAL_TRUE);
@@ -713,14 +717,17 @@
 		// Position and size each control
 		//////
 			lnHeight = (_jdebi->rcClient.bottom - _jdebi->rcClient.top) / 8;
-			iObj_setSize(thisCode, sourceCode_editbox,	36,	0,		sourceCode->rcClient.right	- sourceCode->rcClient.left - 36,	sourceCode->rcClient.bottom		- sourceCode->rcClient.top - sourceCode->rcClient.top);
-			iObj_setSize(thisCode, locals_editbox,		8,	0,		locals->rcClient.right		- locals->rcClient.left - 8,		locals->rcClient.bottom			- locals->rcClient.top);
-			iObj_setSize(thisCode, watch_editbox,		8,	0,		watch->rcClient.right		- watch->rcClient.left - 8,			watch->rcClient.bottom			- watch->rcClient.top);
-			iObj_setSize(thisCode, command_editbox,		8,	0,		command->rcClient.right		- command->rcClient.left - 8,		command->rcClient.bottom		- command->rcClient.top);
-			iObj_setSize(thisCode, debug_editbox,		8,	0,		debug->rcClient.right		- debug->rcClient.left - 8,			debug->rcClient.bottom			- debug->rcClient.top);
-			iObj_setSize(thisCode, output_editbox,		8,	0,		output->rcClient.right		- output->rcClient.left - 8,		output->rcClient.bottom			- output->rcClient.top);
-			iObj_setSize(thisCode, screen_editbox,		8,	0,		_screen->rcClient.right		- _screen->rcClient.left - 8,		_screen->rcClient.bottom		- _screen->rcClient.top);
-			iObj_setSize(thisCode, sourceLight_empty,	0,	0,		sourceLight->rcClient.right	- sourceLight->rcClient.left,		sourceLight->rcClient.bottom	- sourceLight->rcClient.top);
+			iObj_setSize(thisCode, sourceCode_carousel,	50,	8,		sourceCode->rcClient.right			- sourceCode->rcClient.left - 50,			sourceCode->rcClient.bottom				- sourceCode->rcClient.top);
+			iObj_setSize(thisCode, sourceCode_rider,	0,	0,		sourceCode_carousel->rcClient.right	- sourceCode_carousel->rcClient.left,		sourceCode_carousel->rcClient.bottom	- sourceCode_carousel->rcClient.top);
+			iObj_setSize(thisCode, sourceCode_editbox,	0,	0,		sourceCode_rider->rcClient.right	- sourceCode_rider->rcClient.left,			sourceCode_rider->rcClient.bottom		- sourceCode_rider->rcClient.top);
+			iEngine_raise_event(thisCode, _EVENT_RESIZE, NULL, sourceCode_carousel);
+			iObj_setSize(thisCode, locals_editbox,		8,	0,		locals->rcClient.right				- locals->rcClient.left - 8,				locals->rcClient.bottom					- locals->rcClient.top);
+			iObj_setSize(thisCode, watch_editbox,		8,	0,		watch->rcClient.right				- watch->rcClient.left - 8,					watch->rcClient.bottom					- watch->rcClient.top);
+			iObj_setSize(thisCode, command_editbox,		8,	0,		command->rcClient.right				- command->rcClient.left - 8,				command->rcClient.bottom				- command->rcClient.top);
+			iObj_setSize(thisCode, debug_editbox,		8,	0,		debug->rcClient.right				- debug->rcClient.left - 8,					debug->rcClient.bottom					- debug->rcClient.top);
+			iObj_setSize(thisCode, output_editbox,		8,	0,		output->rcClient.right				- output->rcClient.left - 8,				output->rcClient.bottom					- output->rcClient.top);
+			iObj_setSize(thisCode, screen_editbox,		8,	0,		_screen->rcClient.right				- _screen->rcClient.left - 8,				_screen->rcClient.bottom				- _screen->rcClient.top);
+			iObj_setSize(thisCode, sourceLight_empty,	0,	0,		sourceLight->rcClient.right			- sourceLight->rcClient.left,				sourceLight->rcClient.bottom			- sourceLight->rcClient.top);
 
 
 		//////////
@@ -739,24 +746,23 @@
 			((SObject*)sourceCode->firstChild->ll.next)->rc.right = 90;
 
 			sourceCode_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			sourceCode_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown_sourceCode;
+			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, sourceCode_editbox, (uptr)&iSEM_onKeyDown_sourceCode);
 			propSetBorderStyle(sourceCode_editbox, _BORDER_STYLE_FIXED);
 			propSetBorderColor(sourceCode_editbox, lineNumberBackColor);
 			sourceCode_editbox->p.sem->showCursorLine	= true;
 			sourceCode_editbox->p.sem->isSourceCode		= true;
 			sourceCode_editbox->p.sem->showLineNumbers	= true;
 
-			// Decorate with icons
-			iInit_debi_decorateWithIcons();
+			// Decorate with toolbars
+			iInit_jdebi_addToolbars();
 
 
 		//////////
 		// Locals window caption and font
 		//////
-// TODO:  Working here...
 			iObjProp_set_character_direct(thisCode, locals, _INDEX_CAPTION, cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
 			locals_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			locals_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
+			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, locals_editbox, (uptr)&iSEM_onKeyDown);
 
 			// Adjust the caption width
 			((SObject*)locals->firstChild->ll.next)->rc.right = 65;
@@ -767,8 +773,8 @@
 		//////
 			iObjProp_set_character_direct(thisCode, watch, _INDEX_CAPTION, cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
 			watch_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			watch_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
-			watch_editbox->p.sem->showCursorLine		= true;
+			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, watch_editbox, (uptr)&iSEM_onKeyDown);
+			watch_editbox->p.sem->showCursorLine	= true;
 
 			// Adjust the caption width
 			((SObject*)watch->firstChild->ll.next)->rc.right = 65;
@@ -779,10 +785,10 @@
 		//////
 			iObjProp_set_character_direct(thisCode, command, _INDEX_CAPTION, cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
 			command_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			command_editbox->ev.keyboard._onKeyDown		= (uptr)&iSEM_onKeyDown_sourceCode;
+			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, command_editbox, (uptr)&iSEM_onKeyDown);
 			command_editbox->p.hasFocus					= true;
 			command_editbox->p.sem->showCursorLine		= true;
-			command_editbox->p.sem->isSourceCode			= true;
+			command_editbox->p.sem->isSourceCode		= true;
 			command_editbox->p.sem->showLineNumbers		= true;
 
 			// Adjust the caption width
@@ -794,8 +800,8 @@
 		//////
 			iObjProp_set_character_direct(thisCode, debug, _INDEX_CAPTION, cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
 			debug_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			debug_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
-			debug_editbox->p.sem->showCursorLine		= true;
+			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, debug_editbox, (uptr)&iSEM_onKeyDown);
+			debug_editbox->p.sem->showCursorLine	= true;
 
 			// Adjust the caption width
 			((SObject*)debug->firstChild->ll.next)->rc.right = 65;
@@ -806,7 +812,7 @@
 		//////
 			iObjProp_set_character_direct(thisCode, output, _INDEX_CAPTION, cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
 			output_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 8, FW_MEDIUM, false, false);
-			output_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
+			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, output_editbox, (uptr)&iSEM_onKeyDown);
 			output_editbox->p.sem->showCursorLine	= true;
 
 			// Adjust the caption width
@@ -820,7 +826,7 @@
 			sourceLight->p.font = iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			propSetVisible(sourceLight, _LOGICAL_TRUE);
 			propSetBackStyle(sourceLight, _BACK_STYLE_OPAQUE);
-			sourceLight_empty->ev.general._onRender = (uptr)&iSourceLight_copy;
+			iEngine_set_event(thisCode, _EVENT_ONRENDER, NULL, sourceLight_empty, (uptr)&iSourceLight_copy);
 
 
 		//////////
@@ -833,11 +839,11 @@
 		//////////
 		// Setup _screen's editbox
 		//////
-			screen_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			screen_editbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
-			screenData								= screen_editbox->p.sem;
-			screenData->showCursorLine				= true;
-			screenData->showEndLine					= true;
+			screen_editbox->p.font		= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, screen_editbox, (uptr)&iSEM_onKeyDown);
+			screenData					= screen_editbox->p.sem;
+			screenData->showCursorLine	= true;
+			screenData->showEndLine		= true;
 			propSetVisible(_screen, _LOGICAL_TRUE);
 
 
@@ -855,7 +861,7 @@
 // Temporary:  Called to decorate the jdebi source code window with icons
 //
 //////
-	void iInit_debi_decorateWithIcons(void)
+	void iInit_jdebi_addToolbars(void)
 	{
 
 // Temporarily disabled
@@ -2009,7 +2015,7 @@
 					iObj_publish(thisCode, win->obj, &win->rc, win->bmp, true, true, tlForce, 0);
 
 //////////
-// Disabled ... cannot find a good (realtime) scaling algorithm for forms bitmaps
+// Disabled ... cannot find a good (or should I say "real-time") scaling algorithm for forms bitmaps
 //////
 	// Update the openGL window
 	// iGrace_display();
@@ -3532,10 +3538,10 @@
 		//////////
 		// Determine the click flags
 		//////
-			obj->ev.mouse.thisClick = 0;
-			obj->ev.mouse.thisClick	|= ((win->mouseCurrent.buttonLeft)		? _MOUSE_LEFT_BUTTON	: 0);
-			obj->ev.mouse.thisClick	|= ((win->mouseCurrent.buttonMiddle)	? _MOUSE_MIDDLE_BUTTON	: 0);
-			obj->ev.mouse.thisClick	|= ((win->mouseCurrent.buttonRight)		? _MOUSE_RIGHT_BUTTON	: 0);
+			obj->ev.thisClick = 0;
+			obj->ev.thisClick	|= ((win->mouseCurrent.buttonLeft)		? _MOUSE_LEFT_BUTTON	: 0);
+			obj->ev.thisClick	|= ((win->mouseCurrent.buttonMiddle)	? _MOUSE_MIDDLE_BUTTON	: 0);
+			obj->ev.thisClick	|= ((win->mouseCurrent.buttonRight)		? _MOUSE_RIGHT_BUTTON	: 0);
 
 
 		//////////
@@ -3576,8 +3582,8 @@
 						iiMouse_processMouseEvents_mouseMove(thisCode, win, obj, &obj->rc, true, true, &llProcessed);
 
 						// The mouse has moved, reset the hover counter
-						obj->ev.mouse.startHoverTickCount	= GetTickCount();
-						obj->ev.mouse.hasHoverSignaled		= false;
+						obj->ev.startHoverTickCount	= GetTickCount();
+						obj->ev.hasHoverSignaled		= false;
 					}
 					break;
 
@@ -3589,7 +3595,7 @@
 					if (iiMouse_processMouseEvents_common(thisCode, win, obj, &obj->rc, msg, true, true, &llProcessed))
 					{
 						// Set the last click
-						obj->ev.mouse._lastClick = obj->ev.mouse.thisClick;
+						obj->ev._lastClick = obj->ev.thisClick;
 					}
 					break;
 
@@ -3800,12 +3806,9 @@
 			{
 				// We are in this object
 				*tlProcessed = true;	// Indicate we've processed this
-				if (!obj->ev.mouse.isMouseOver)
-				{
-					// Signal the mouseEnter event
-					if (obj->ev.mouse._onMouseEnter)
-						obj->ev.mouse.onMouseEnter(thisCode, win, obj);
-				}
+				if (!obj->ev.isMouseOver)
+					iEngine_raise_event(thisCode, _EVENT_ONMOUSEENTER, win, obj);
+
 
 				// Are we in the client area?
 				if (llInClientArea)
@@ -3813,14 +3816,11 @@
 					//////////
 					// Signal the mouseMove event
 					//////
-						if (obj->ev.mouse._onMouseMove)
-						{
-							iiEventDispatch_onMouseMove(thisCode, &obj->ev, win, obj,
-														win->mouseCurrent.position.x - lrc.left,
-														win->mouseCurrent.position.y - lrc.top,
-														win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
-														win->obj->ev.mouse.thisClick);
-						}
+						iiEventDispatch_onMouseMove(thisCode, win, obj,
+													win->mouseCurrent.position.x - lrc.left,
+													win->mouseCurrent.position.y - lrc.top,
+													win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
+													win->obj->ev.thisClick);
 
 				} else {
 					// We are in the non-client area
@@ -3833,24 +3833,17 @@
 					// with values extending beyond the width and height if it is in the outer area
 					//////
 						*tlProcessed = true;	// Indicate we've processed this
-						if (obj->ev.mouse._onMouseMove)
-						{
-							iiEventDispatch_onMouseMove(thisCode, &obj->ev, win, obj,
-														win->mouseCurrent.position.x - lrcClient.left,
-														win->mouseCurrent.position.y - lrcClient.top,
-														win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
-														win->obj->ev.mouse.thisClick);
-						}
+						iiEventDispatch_onMouseMove(thisCode, win, obj,
+													win->mouseCurrent.position.x - lrcClient.left,
+													win->mouseCurrent.position.y - lrcClient.top,
+													win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
+													win->obj->ev.thisClick);
 				}
 
 			} else {
 				// We are outside of this object
-				if (obj->ev.mouse.isMouseOver)
-				{
-					// Signal the mouseLeave event
-					if (obj->ev.mouse._onMouseLeave)
-						obj->ev.mouse.onMouseLeave(thisCode, win, obj);
-				}
+				if (obj->ev.isMouseOver)
+					iEngine_raise_event(thisCode, _EVENT_ONMOUSELEAVE, win, obj);
 			}
 
 
@@ -3909,7 +3902,7 @@
 				if (!*tlProcessed)
 				{
 					// Indicate if the mouse is still down here
-					obj->ev.mouse.isMouseDown = (obj->ev.mouse.thisClick != 0);
+					obj->ev.isMouseDown = (obj->ev.thisClick != 0);
 
 					// Are we in this object?
 					if (llInClientArea)
@@ -3922,20 +3915,20 @@
 							case WM_MBUTTONDOWN:
 								// Signal the mouseDown event
 								*tlProcessed = true;		// Indicate we've processed this
-								if (llContinue && obj->ev.mouse._onMouseDown)
-									llContinue = iiEventDispatch_onMouseDown(thisCode, &obj->ev, win, obj,
+								if (llContinue)
+									llContinue = iiEventDispatch_onMouseDown(thisCode, win, obj,
 																				win->mouseCurrent.position.x - lrc.left,
 																				win->mouseCurrent.position.y - lrc.top,
 																				win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
-																				win->obj->ev.mouse.thisClick);
+																				win->obj->ev.thisClick);
 
 								// Signal the click event
-								if (llContinue && obj->ev.mouse._onMouseClickEx)
-									llContinue = iiEventDispatch_onMouseClickEx(thisCode, &obj->ev, win, obj,
+								if (llContinue)
+									llContinue = iiEventDispatch_onMouseClickEx(thisCode, win, obj,
 																					win->mouseCurrent.position.x - lrc.left,
 																					win->mouseCurrent.position.y - lrc.top,
 																					win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
-																					win->obj->ev.mouse.thisClick);
+																					win->obj->ev.thisClick);
 									break;
 
 							case WM_LBUTTONUP:
@@ -3943,12 +3936,12 @@
 							case WM_MBUTTONUP:
 								// Signal the mouseUp event
 								*tlProcessed = true;		// Indicate we've processed this
-								if (llContinue && obj->ev.mouse._onMouseUp)
-									llContinue = iiEventDispatch_onMouseUp(thisCode, &obj->ev, win, obj,
+								if (llContinue)
+									llContinue = iiEventDispatch_onMouseUp(thisCode, win, obj,
 																			win->mouseCurrent.position.x - lrc.left,
 																			win->mouseCurrent.position.y - lrc.top,
 																			win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
-																			win->obj->ev.mouse.thisClick);
+																			win->obj->ev.thisClick);
 								break;
 
 							case WM_MOUSEWHEEL:
@@ -3957,12 +3950,12 @@
 #endif
 								// Signal the mouseWheel event
 								*tlProcessed = true;		// Indicate we've processed this
-								if (llContinue && obj->ev.mouse._onMouseWheel)
-									llContinue = iiEventDispatch_onMouseWheel(thisCode, &obj->ev, win, obj,
+								if (llContinue)
+									llContinue = iiEventDispatch_onMouseWheel(thisCode, win, obj,
 																				win->mouseCurrent.position.x - lrc.left,
 																				win->mouseCurrent.position.y - lrc.top,
 																				win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
-																				win->obj->ev.mouse.thisClick,
+																				win->obj->ev.thisClick,
 																				win->mouseCurrent.wheelDeltaV);
 								break;
 						}
@@ -3984,33 +3977,33 @@
 							case WM_MBUTTONDOWN:
 								// Signal the mouseDown event
 								*tlProcessed = true;		// Indicate we've processed this
-								if (llContinue && obj->ev.mouse._onMouseDown)
-									llContinue = iiEventDispatch_onMouseDown(thisCode, &obj->ev, win, obj,
+								if (llContinue)
+									llContinue = iiEventDispatch_onMouseDown(thisCode, win, obj,
 																				win->mouseCurrent.position.x - lrcClient.left,
 																				win->mouseCurrent.position.y - lrcClient.top,
 																				win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
-																				win->obj->ev.mouse.thisClick);
+																				win->obj->ev.thisClick);
 
 
 								// Signal the click event
-								if (llContinue && obj->ev.mouse._onMouseClickEx)
-									llContinue = iiEventDispatch_onMouseClickEx(thisCode, &obj->ev, win, obj,
+								if (llContinue)
+									llContinue = iiEventDispatch_onMouseClickEx(thisCode, win, obj,
 																					win->mouseCurrent.position.x - lrcClient.left,
 																					win->mouseCurrent.position.y - lrcClient.top,
 																					win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
-																					win->obj->ev.mouse.thisClick);
+																					win->obj->ev.thisClick);
 
 							case WM_LBUTTONUP:
 							case WM_RBUTTONUP:
 							case WM_MBUTTONUP:
 								// Signal the mouseUp event
 								*tlProcessed = true;		// Indicate we've processed this
-								if (llContinue && obj->ev.mouse._onMouseUp)
-									llContinue = iiEventDispatch_onMouseUp(thisCode, &obj->ev, win, obj,
+								if (llContinue)
+									llContinue = iiEventDispatch_onMouseUp(thisCode, win, obj,
 																			win->mouseCurrent.position.x - lrcClient.left,
 																			win->mouseCurrent.position.y - lrcClient.top,
 																			win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
-																			win->obj->ev.mouse.thisClick);
+																			win->obj->ev.thisClick);
 								break;
 
 							case WM_MOUSEWHEEL:
@@ -4019,12 +4012,12 @@
 #endif
 								// Signal the mouseWheel event
 								*tlProcessed = true;		// Indicate we've processed this
-								if (llContinue && obj->ev.mouse._onMouseWheel)
-									llContinue = iiEventDispatch_onMouseWheel(thisCode, &obj->ev, win, obj,
+								if (llContinue)
+									llContinue = iiEventDispatch_onMouseWheel(thisCode, win, obj,
 																				win->mouseCurrent.position.x - lrcClient.left,
 																				win->mouseCurrent.position.y - lrcClient.top,
 																				win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
-																				win->obj->ev.mouse.thisClick,
+																				win->obj->ev.thisClick,
 																				win->mouseCurrent.wheelDeltaV);
 								break;
 						}
@@ -4327,14 +4320,14 @@
 				obj	= *(SObject**)(objFocusControls->data_u8 + (lnI * sizeof(SObject*)));
 
 				// Call the appropriate handler
-				if (m == WM_KEYDOWN && obj->ev.keyboard._onKeyDown)
+				if (m == WM_KEYDOWN)
 				{
 					// Signal the down key event
-					iiEventDispatch_onKeyDown(thisCode, &obj->ev, win, obj, llCtrl, llAlt, llShift, llCaps, lnAsciiChar, (u16)vKey, llIsCAS, llIsAscii);
+					iiEventDispatch_onKeyDown(thisCode, win, obj, llCtrl, llAlt, llShift, llCaps, lnAsciiChar, (u16)vKey, llIsCAS, llIsAscii);
 
-				} else if (m == WM_KEYUP && obj->ev.keyboard._onKeyUp) {
+				} else if (m == WM_KEYUP) {
 					// Signal the up key event
-					iiEventDispatch_onKeyUp(thisCode, &obj->ev, win, obj, llCtrl, llAlt, llShift, llCaps, lnAsciiChar, (u16)vKey, llIsCAS, llIsAscii);
+					iiEventDispatch_onKeyUp(thisCode, win, obj, llCtrl, llAlt, llShift, llCaps, lnAsciiChar, (u16)vKey, llIsCAS, llIsAscii);
 				}
 			}
 
@@ -4526,7 +4519,7 @@
 			iBmp_createBySize(gobj_splashListingEditbox->bmp, gobj_splashListing->rcClient.right - gobj_splashListing->rcClient.left, gobj_splashListing->rcClient.bottom - gobj_splashListing->rcClient.top, bmp->bi.biBitCount);
 			gobj_splashListingEditbox->p.font					= iFont_create(cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
 			gobj_splashListingEditbox->p.sem->font				= iFont_create(cgcFontName_defaultFixed, 8, FW_NORMAL, false, false);
-			gobj_splashListingEditbox->ev.keyboard._onKeyDown	= (uptr)&iSEM_onKeyDown;
+			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, gobj_splashListingEditbox, (uptr)&iSEM_onKeyDown);
 			iObjProp_set_logical_fromLogicalConstants(thisCode, gobj_splashListingEditbox, _INDEX_VISIBLE, _LOGICAL_TRUE);
 			systemLog											= gobj_splashListingEditbox->p.sem;
 			systemLog->showEndLine								= true;

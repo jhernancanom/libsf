@@ -123,182 +123,273 @@ struct SHover
 	SBitmap*	bmp;						// Bitmap for the hover text
 };
 
-struct SEventsGeneral
-{
-	union {
-		uptr	_onLoad;					// Called to load anything needed by the init() event (holds a template/skeleton object)
-		bool	(*onLoad)					(SThisCode* thisCode, SWindow* win, SObject* obj);
-	};
-	union {
-		uptr	_onInit;					// Called to initialize anything
-		bool	(*onInit)					(SThisCode* thisCode, SWindow* win, SObject* obj);
-	};
-	union {
-		uptr	_onCreated;					// Called after initialization, before the object is sized
-		bool	(*onCreated)				(SThisCode* thisCode, SWindow* win, SObject* obj);
-	};
-	union {
-		uptr	_onResize;					// Called to size or resize the object
-		bool	(*onResize)					(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* widthRequired_out, SVariable* heightRequired_out);
-	};
-	union {
-		uptr	_onMoved;					// Called when the object has been moved
-		bool	(*onMoved)					(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* xOverride_out, SVariable* yOverride_out);
-	};
-	union {
-		uptr	_onRender;					// Called to render to bmp (returns if anything was drawn)
-		bool	(*onRender)					(SThisCode* thisCode, SWindow* win, SObject* obj);
-	};
-	union {
-		uptr	_onPublish;					// Called to publish the control onto the parent (which will populate bmpScale if need be)
-		bool	(*onPublish)				(SThisCode* thisCode, SWindow* win, SObject* obj);
-	};
-	union {
-		uptr	_onQueryUnload;				// Called before onDestroy, determines if the form should actually be destroyed
-		bool	(*onQueryUnload)			(SThisCode* thisCode, SWindow* win, SObject* obj);
-	};
-	union {
-		uptr	_onDestroy;					// Called when the object will be destroyed
-		bool	(*onDestroy)				(SThisCode* thisCode, SWindow* win, SObject* obj);
-	};
-	union {
-		uptr	_onUnload;					// Called after the object has been destroyed, to unload anything (holds a template/skeleton object)
-		bool	(*onUnload)					(SThisCode* thisCode, SWindow* win, SObject* obj);
-	};
-	union {
-		uptr	_onGotFocus;				// Called when the object receives focus (note multiple items can have simultaneous focus)
-		bool	(*onGotFocus)				(SThisCode* thisCode, SWindow* win, SObject* obj);
-	};
-	union {
-		uptr	_onLostFocus;				// Called when the object loses focus
-		bool	(*onLostFocus)				(SThisCode* thisCode, SWindow* win, SObject* obj);
-	};
-	union {
-		uptr	_onAddObject;				// Called when an object is added
-		bool	(*onAddObject)				(SThisCode* thisCode, SWindow* win, SObject* obj);
-	};
-	union {
-		uptr	_onAddProperty;				// Called when a property is added
-		bool	(*onAddProperty)			(SThisCode* thisCode, SWindow* win, SObject* obj);
-	};
-	union {
-		uptr	_onError;					// Called when an error is triggered in code on an object
-		bool	(*onError)					(SThisCode* thisCode, SWindow* win, SObject* obj);
-	};
-	union {
-		uptr	_onScrolled;				// Called when an object has been scrolled
-		bool	(*onScrolled)				(SThisCode* thisCode, SWindow* win, SObject* obj);
-	};
-	union {
-		uptr	_activate;					// Called when activated
-		bool	(*activate)					(SThisCode* thisCode, SWindow* win, SObject* obj);
-	};
-	union {
-		uptr	_deactivate;				// Called when deactivated
-		bool	(*deactivate)				(SThisCode* thisCode, SWindow* win, SObject* obj);
-	};
-	union {
-		uptr	_onSelect;					// When an option is selected
-		bool	(*onSelect)					(SThisCode* thisCode, SWindow* win, SObject* obj, SObject* oItem);
-	};
-	union {
-		uptr	_onDeselect;				// When an option is deselected
-		bool	(*onDeselect)				(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* objItem);
-	};
-	union {
-		uptr	_onInteractiveChange;		// Called when the data changes
-		bool	(*onInteractiveChange)		(SThisCode* thisCode, SWindow* win, SObject* obj);
-	};
-	union {
-		uptr	_onProgrammaticChange;		// Called when the data changes
-		bool	(*onProgrammaticChange)		(SThisCode* thisCode, SWindow* win, SObject* obj);
-	};
-
-
+// struct SEventsGeneral
+// {
+// 	union {
+// 		uptr	_onLoad;					// Called to load anything needed by the init() event (holds a template/skeleton object)
+// 		bool	(*onLoad)					(SThisCode* thisCode, SWindow* win, SObject* obj);
+// 	};
+// 	union {
+// 		uptr	_onInit;					// Called to initialize anything
+// 		bool	(*onInit)					(SThisCode* thisCode, SWindow* win, SObject* obj);
+// 	};
+// 	union {
+// 		uptr	_onCreated;					// Called after initialization, before the object is sized
+// 		bool	(*onCreated)				(SThisCode* thisCode, SWindow* win, SObject* obj);
+// 	};
+// 	union {
+// 		uptr	_onResize;					// Called to size or resize the object
+// 		bool	(*onResize)					(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* widthRequired_out, SVariable* heightRequired_out);
+// 	};
+// 	union {
+// 		uptr	_onMoved;					// Called when the object has been moved
+// 		bool	(*onMoved)					(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* xOverride_out, SVariable* yOverride_out);
+// 	};
+// 	union {
+// 		uptr	_onRender;					// Called to render to bmp (returns if anything was drawn)
+// 		bool	(*onRender)					(SThisCode* thisCode, SWindow* win, SObject* obj);
+// 	};
+// 	union {
+// 		uptr	_onPublish;					// Called to publish the control onto the parent (which will populate bmpScale if need be)
+// 		bool	(*onPublish)				(SThisCode* thisCode, SWindow* win, SObject* obj);
+// 	};
+// 	union {
+// 		uptr	_onQueryUnload;				// Called before onDestroy, determines if the form should actually be destroyed
+// 		bool	(*onQueryUnload)			(SThisCode* thisCode, SWindow* win, SObject* obj);
+// 	};
+// 	union {
+// 		uptr	_onDestroy;					// Called when the object will be destroyed
+// 		bool	(*onDestroy)				(SThisCode* thisCode, SWindow* win, SObject* obj);
+// 	};
+// 	union {
+// 		uptr	_onUnload;					// Called after the object has been destroyed, to unload anything (holds a template/skeleton object)
+// 		bool	(*onUnload)					(SThisCode* thisCode, SWindow* win, SObject* obj);
+// 	};
+// 	union {
+// 		uptr	_onGotFocus;				// Called when the object receives focus (note multiple items can have simultaneous focus)
+// 		bool	(*onGotFocus)				(SThisCode* thisCode, SWindow* win, SObject* obj);
+// 	};
+// 	union {
+// 		uptr	_onLostFocus;				// Called when the object loses focus
+// 		bool	(*onLostFocus)				(SThisCode* thisCode, SWindow* win, SObject* obj);
+// 	};
+// 	union {
+// 		uptr	_onAddObject;				// Called when an object is added
+// 		bool	(*onAddObject)				(SThisCode* thisCode, SWindow* win, SObject* obj);
+// 	};
+// 	union {
+// 		uptr	_onAddProperty;				// Called when a property is added
+// 		bool	(*onAddProperty)			(SThisCode* thisCode, SWindow* win, SObject* obj);
+// 	};
+// 	union {
+// 		uptr	_onError;					// Called when an error is triggered in code on an object
+// 		bool	(*onError)					(SThisCode* thisCode, SWindow* win, SObject* obj);
+// 	};
+// 	union {
+// 		uptr	_onScrolled;				// Called when an object has been scrolled
+// 		bool	(*onScrolled)				(SThisCode* thisCode, SWindow* win, SObject* obj);
+// 	};
+// 	union {
+// 		uptr	_activate;					// Called when activated
+// 		bool	(*activate)					(SThisCode* thisCode, SWindow* win, SObject* obj);
+// 	};
+// 	union {
+// 		uptr	_deactivate;				// Called when deactivated
+// 		bool	(*deactivate)				(SThisCode* thisCode, SWindow* win, SObject* obj);
+// 	};
+// 	union {
+// 		uptr	_onSelect;					// When an option is selected
+// 		bool	(*onSelect)					(SThisCode* thisCode, SWindow* win, SObject* obj, SObject* objItem);
+// 	};
+// 	union {
+// 		uptr	_onDeselect;				// When an option is deselected
+// 		bool	(*onDeselect)				(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* objItem);
+// 	};
+// 	union {
+// 		uptr	_onInteractiveChange;		// Called when the data changes
+// 		bool	(*onInteractiveChange)		(SThisCode* thisCode, SWindow* win, SObject* obj);
+// 	};
+// 	union {
+// 		uptr	_onProgrammaticChange;		// Called when the data changes
+// 		bool	(*onProgrammaticChange)		(SThisCode* thisCode, SWindow* win, SObject* obj);
+// 	};
+// 
+// 
 //////////
 // Added for carousels and riders
 //////
-	union {
-		uptr	_onSetActiveControl;		// Fired programmatically, specifies the object to make active
-		bool	(*onSetActiveControl)		(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* objActive);
-	};
-	union {
-		uptr	_onSpin;					// Fired programmatically, specifies the object to make active
-		bool	(*onSpin)					(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* tnDelta, SVariable* tnDirection, SVariable* tnType);
-	};
-};
+// 	union {
+// 		uptr	_onSetActiveControl;		// Fired programmatically, specifies the object to make active
+// 		bool	(*onSetActiveControl)		(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* objActive);
+// 	};
+// 	union {
+// 		uptr	_onSpin;					// Fired programmatically, specifies the object to make active
+// 		bool	(*onSpin)					(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* tnDelta, SVariable* tnDirection, SVariable* tnType);
+// 	};
+// };
+// 
+// struct SEventsMouse
+// {
+// 	// Holds status for changes
+// 	u32			_lastClick;													// When the last mouseClickEx was called, what was the tnClick value?
+// 	u32			thisClick;													// The tnClick parameter passed below, it is the _MOUSE_*_BUTTON amalgam based on the current mouse button state
+// 	bool		isMouseDown;												// Is the mouse down over this item?
+// 	bool		isMouseOver;												// Used for signaling enter/leave events
+// 	u32			startHoverTickCount;										// At each last mouseMove the startHoverTickCount is set, if the interval elapses the hover event is triggered
+// 	SHover*		hover;														// If there's an active hover, this value is not NULL
+// 	bool		hasHoverSignaled;											// If the hover has signaled already on this control
+//
+// 	// Mouse callbacks issued by VJr to the internal object controller.
+// 	// These will be translated by the internal object controller into executable VJr VXB code.
+// 	// Return value indicates if the event should be sent to its parent instead (if NODEFAULT was issued during execution).
+// 	union {
+// 		uptr	_onMouseClickEx;
+// 		bool	(*onMouseClickEx)		(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);	// varClick is 1=left, 2=middle, 4=right, 2^n bit positions indicate which buttons are clicked
+// 	};
+// 	union {
+// 		uptr	_onMouseDblClickEx;
+// 		bool	(*onMouseDblClickEx)	(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
+// 	};
+// 	union {
+// 		uptr	_onMouseWheel;
+// 		bool	(*onMouseWheel)			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick, SVariable* varUnits);	// Signed units indicating direction and velocity
+// 	};
+// 	union {
+// 		uptr	_onMouseMove;
+// 		bool	(*onMouseMove)			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
+// 	};
+// 	union {
+// 		uptr	_onMouseDown;
+// 		bool	(*onMouseDown)			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
+// 	};
+// 	union {
+// 		uptr	_onMouseUp;
+// 		bool	(*onMouseUp)			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
+// 	};
+// 	union {
+// 		uptr	_onMouseEnter;
+// 		bool	(*onMouseEnter)			(SThisCode* thisCode, SWindow* win, SObject* obj);
+// 	};
+// 	union {
+// 		uptr	_onMouseLeave;
+// 		bool	(*onMouseLeave)			(SThisCode* thisCode, SWindow* win, SObject* obj);
+// 	};
+// 	union {
+// 		uptr	_onMouseHover;
+// 		bool	(*onMouseHover)			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
+// 	};
+// };
+// 
+// struct SEventsKeyboard
+// {
+// 	// Keyboard callbacks
+// 	// Bool indicates if the event should be sent to its parent instead
+// 	union {
+// 		uptr	_onKeyDown;
+// 		bool	(*onKeyDown)		(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii);
+// 	};
+// 	union {
+// 		uptr	_onKeyUp;
+// 		bool	(*onKeyUp)			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii);
+// 	};
+//};
 
-struct SEventsMouse
+struct SEvent
 {
-	// Holds status for changes
-	u32			_lastClick;													// When the last mouseClickEx was called, what was the tnClick value?
-	u32			thisClick;													// The tnClick parameter passed below, it is the _MOUSE_*_BUTTON amalgam based on the current mouse button state
-	bool		isMouseDown;												// Is the mouse down over this item?
-	bool		isMouseOver;												// Used for signaling enter/leave events
-	u32			startHoverTickCount;										// At each last mouseMove the startHoverTickCount is set, if the interval elapses the hover event is triggered
-	SHover*		hover;														// If there's an active hover, this value is not NULL
-	bool		hasHoverSignaled;											// If the hover has signaled already on this control
+	union {
+		uptr	_event;
 
-	// Mouse callbacks issued by VJr to the internal object controller.
-	// These will be translated by the internal object controller into executable VJr VXB code.
-	// Return value indicates if the event should be sent to its parent instead (if NODEFAULT was issued during execution).
-	union {
-		uptr	_onMouseClickEx;
-		bool	(*onMouseClickEx)		(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);	// varClick is 1=left, 2=middle, 4=right, 2^n bit positions indicate which buttons are clicked
-	};
-	union {
-		uptr	_onMouseDblClickEx;
-		bool	(*onMouseDblClickEx)	(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
-	};
-	union {
-		uptr	_onMouseWheel;
-		bool	(*onMouseWheel)			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick, SVariable* varUnits);	// Signed units indicating direction and velocity
-	};
-	union {
-		uptr	_onMouseMove;
-		bool	(*onMouseMove)			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
-	};
-	union {
-		uptr	_onMouseDown;
-		bool	(*onMouseDown)			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
-	};
-	union {
-		uptr	_onMouseUp;
-		bool	(*onMouseUp)			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
-	};
-	union {
-		uptr	_onMouseEnter;
-		bool	(*onMouseEnter)			(SThisCode* thisCode, SWindow* win, SObject* obj);
-	};
-	union {
-		uptr	_onMouseLeave;
-		bool	(*onMouseLeave)			(SThisCode* thisCode, SWindow* win, SObject* obj);
-	};
-	union {
-		uptr	_onMouseHover;
-		bool	(*onMouseHover)			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
-	};
-};
-
-struct SEventsKeyboard
-{
-	// Keyboard callbacks
-	// Bool indicates if the event should be sent to its parent instead
-	union {
-		uptr	_onKeyDown;
-		bool	(*onKeyDown)		(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii);
-	};
-	union {
-		uptr	_onKeyUp;
-		bool	(*onKeyUp)			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii);
+		// Based on the event type, the appropriate form is called
+		bool	(*event_1)		(SThisCode* thisCode, SWindow* win, SObject* obj);
+		bool	(*event_2)		(SThisCode* thisCode, SWindow* win, SObject* obj, SObject* obj1);
+		bool	(*event_3)		(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* var1);
+		bool	(*event_4)		(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* var1, SVariable* var2);
+		bool	(*event_5)		(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* var1, SVariable* var2, SVariable* var3);
+		bool	(*event_6)		(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* var1, SVariable* var2, SVariable* var3, SVariable* var4);
+		bool	(*event_7)		(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* var1, SVariable* var2, SVariable* var3, SVariable* var4, SVariable* var5);
+		bool	(*event_8)		(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* var1, SVariable* var2, SVariable* var3, SVariable* var4, SVariable* var5, SVariable* var6);
+		bool	(*event_9)		(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* var1, SVariable* var2, SVariable* var3, SVariable* var4, SVariable* var5, SVariable* var6, SVariable* var7);
+		bool	(*event_10)		(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* var1, SVariable* var2, SVariable* var3, SVariable* var4, SVariable* var5, SVariable* var6, SVariable* var7, SVariable* var8);
 	};
 };
 
 struct SEvents
 {
-	SEventsGeneral		general;									// General object events
-	SEventsMouse		mouse;										// Mouse events for the object
-	SEventsKeyboard		keyboard;									// Keyboard events for the object
+	// Array of events for the class
+	SEvent**	methods;											// Pointer to the events array
+	u32			eventsCount;										// Number of events allocated for this object
+
+	// Holds status for changes
+	u32			_lastClick;											// When the last mouseClickEx was called, what was the tnClick value?
+	u32			thisClick;											// The tnClick parameter passed below, it is the _MOUSE_*_BUTTON amalgam based on the current mouse button state
+	bool		isMouseDown;										// Is the mouse down over this item?
+	bool		isMouseOver;										// Used for signaling enter/leave events
+
+	u32			startHoverTickCount;								// At each last mouseMove the startHoverTickCount is set, if the interval elapses the hover event is triggered
+	SHover*		hover;												// If there's an active hover, this value is not NULL
+	bool		hasHoverSignaled;									// If the hover has signaled already on this control
+
+	// onMouseMove
+	SVariable*	varX_onMouseMove;
+	SVariable*	varY_onMouseMove;
+	SVariable*	varCtrl_onMouseMove;
+	SVariable*	varAlt_onMouseMove;
+	SVariable*	varShift_onMouseMove;
+	SVariable*	varClick_onMouseMove;
+
+	// onMouseDown
+	SVariable*	varX_onMouseDown;
+	SVariable*	varY_onMouseDown;
+	SVariable*	varCtrl_onMouseDown;
+	SVariable*	varAlt_onMouseDown;
+	SVariable*	varShift_onMouseDown;
+	SVariable*	varClick_onMouseDown;
+
+	// onMouseClickEx
+	SVariable*	varX_onMouseClickEx;
+	SVariable*	varY_onMouseClickEx;
+	SVariable*	varCtrl_onMouseClickEx;
+	SVariable*	varAlt_onMouseClickEx;
+	SVariable*	varShift_onMouseClickEx;
+	SVariable*	varClick_onMouseClickEx;
+
+	// onMouseUp
+	SVariable*	varX_onMouseUp;
+	SVariable*	varY_onMouseUp;
+	SVariable*	varCtrl_onMouseUp;
+	SVariable*	varAlt_onMouseUp;
+	SVariable*	varShift_onMouseUp;
+	SVariable*	varClick_onMouseUp;
+
+	// onMouseWheel
+	SVariable*	varX_onMouseWheel;
+	SVariable*	varY_onMouseWheel;
+	SVariable*	varCtrl_onMouseWheel;
+	SVariable*	varAlt_onMouseWheel;
+	SVariable*	varShift_onMouseWheel;
+	SVariable*	varClick_onMouseWheel;
+	SVariable*	varDeltaY_onMouseWheel;
+
+	// onKeyDown
+	SVariable*	varCtrl_onKeyDown;
+	SVariable*	varAlt_onKeyDown;
+	SVariable*	varShift_onKeyDown;
+	SVariable*	varCaps_onKeyDown;
+	SVariable*	varAsciiChar_onKeyDown;
+	SVariable*	varVKey_onKeyDown;
+	SVariable*	varIsCAS_onKeyDown;
+	SVariable*	varIsAscii_onKeyDown;
+
+	// onKeyUp
+	SVariable*	varCtrl_onKeyUp;
+	SVariable*	varAlt_onKeyUp;
+	SVariable*	varShift_onKeyUp;
+	SVariable*	varCaps_onKeyUp;
+	SVariable*	varAsciiChar_onKeyUp;
+	SVariable*	varVKey_onKeyUp;
+	SVariable*	varIsCAS_onKeyUp;
+	SVariable*	varIsAscii_onKeyUp;
+
 };
 
 struct SProperties
