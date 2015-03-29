@@ -3503,44 +3503,44 @@
 						switch (lfr2Ptr->type)
 						{
 							case 'N':	// Numeric
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_NUMERIC, wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
+								var = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_NUMERIC, wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
 
 							case 'M':	// Memo
 								if (iiDbf_readMemo(thisCode, wa, lfr2Ptr))
-									var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER,	lfr2Ptr->mdata, lfr2Ptr->mdataLength, false);
+									var = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER,	lfr2Ptr->mdata, lfr2Ptr->mdataLength, false);
 								break;
 
 							case 'C':	// Character
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER,	wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
+								var = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER,	wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
 
 							case 'I':	// Integer
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_S32,			wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
+								var = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_S32,			wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
 
 							case 'F':	// Float
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_NUMERIC,		wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
+								var = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_NUMERIC,		wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
 
 							case 'B':	// Double
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_F64,			wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
+								var = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_F64,			wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
 
 							case 'L':	// Logical
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL,		wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
+								var = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_LOGICAL,		wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
 
 							case 'D':	// Date
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL,		wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
+								var = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_LOGICAL,		wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
 
 							case 'T':	// DateTime
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL,		wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
+								var = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_LOGICAL,		wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
 
 							case 'Y':	// Currency
-								var = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CURRENCY,		wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
+								var = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CURRENCY,		wa->row.data + lfr2Ptr->offset, fieldNameLength, tlCreateAsReference);
 								break;
 //							case 'G':	// General
 // 							case 'P':	// Picture

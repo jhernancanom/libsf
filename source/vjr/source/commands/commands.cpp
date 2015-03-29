@@ -1701,7 +1701,7 @@
 		//////////
 		// Based on the result, create the return result
 		//////
-			result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL, ((llInRange) ? (s8*)&_LOGICAL_TRUE : (s8*)&_LOGICAL_FALSE), 1, false);
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_LOGICAL, ((llInRange) ? (s8*)&_LOGICAL_TRUE : (s8*)&_LOGICAL_FALSE), 1, false);
 			if (!result)
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varValue), false);
 
@@ -2434,7 +2434,7 @@
 		//////////
 		// Allocate a copy of the original string
 		//////
-			result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, varString->value.data_u8, varString->value.length, true);
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, varString->value.data_u8, varString->value.length, true);
 
 			// If the original string is empty, or the characters to search for are empty, then we don't need to do anything
 			if (varString->value.length == 0 || varSearch->value.length == 0)
@@ -2856,7 +2856,7 @@
 		GetCurrentDirectory(_MAX_PATH, (s8*)curdir);
 
 		// Create the output variable
-		result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, curdir, (u32)strlen(curdir), true);
+		result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, curdir, (u32)strlen(curdir), true);
 		return(result);
 	}
 
@@ -3172,7 +3172,7 @@
 		// Create and populate the return variable
 		//////
 			llEmpty	= function_isempty_common(thisCode, varExpr, returnsParams);
-			result	= iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL, (cs8*)((llEmpty) ? &_LOGICAL_TRUE : &_LOGICAL_FALSE), 1, true);
+			result	= iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_LOGICAL, (cs8*)((llEmpty) ? &_LOGICAL_TRUE : &_LOGICAL_FALSE), 1, true);
 			if (!result)
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varExpr), false);
 
@@ -4294,7 +4294,7 @@
 		//////////
 		// Based on the result, create the return result
 		//////
-			result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL, ((llResult) ? (s8*)&_LOGICAL_TRUE : (s8*)&_LOGICAL_FALSE), 1, false);
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_LOGICAL, ((llResult) ? (s8*)&_LOGICAL_TRUE : (s8*)&_LOGICAL_FALSE), 1, false);
 			if (!result)
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varValue), false);
 
@@ -5807,7 +5807,7 @@
 		//////////
 		// Create the return variable
 		//////
-			result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL, (cs8*)((llEnabled) ? &_LOGICAL_TRUE : &_LOGICAL_FALSE), 1, true);
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_LOGICAL, (cs8*)((llEnabled) ? &_LOGICAL_TRUE : &_LOGICAL_FALSE), 1, true);
 			if (!result)
 			{
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varIndex), false);
@@ -7866,7 +7866,7 @@
 			if (varSearch->value.length == 0 || varSearch->value.length > varString->value.length)
 			{
 				// Allocate a full copy of the original string
-				result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, varString->value.data_u8, varString->value.length, true);
+				result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, varString->value.data_u8, varString->value.length, true);
 				return(result);
 			}
 
@@ -7914,7 +7914,7 @@
 				{
 					// If we haven't made an official copy yet, we need to do so now
 					if (result == varString)
-						result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, varString->value.data_u8, varString->value.length, true);
+						result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, varString->value.data_u8, varString->value.length, true);
 
 					// Return our result
 					return(result);
@@ -8324,9 +8324,9 @@ debug_break;
 		//////
 			memset(&returnsParams, 0, sizeof(returnsParams));
 			ln2015 = 2015;
-			returnsParams.params[0/*2015*/]		= iVariable_createAndPopulate(thisCode, _VAR_TYPE_S32,	(cu8*)&ln2015,			sizeof(ln2015),			true);
-			returnsParams.params[1/*prefix*/]	= iVariable_createAndPopulate(thisCode, _VAR_TYPE_S32,	(cu8*)&tnPrefixWidth,	sizeof(tnPrefixWidth),	true);
-			returnsParams.params[2/*postfix*/]	= iVariable_createAndPopulate(thisCode, _VAR_TYPE_S32,	(cu8*)&tnPostfixWidth,	sizeof(tnPostfixWidth), true);
+			returnsParams.params[0/*2015*/]		= iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_S32,	(cu8*)&ln2015,			sizeof(ln2015),			true);
+			returnsParams.params[1/*prefix*/]	= iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_S32,	(cu8*)&tnPrefixWidth,	sizeof(tnPrefixWidth),	true);
+			returnsParams.params[2/*postfix*/]	= iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_S32,	(cu8*)&tnPostfixWidth,	sizeof(tnPostfixWidth), true);
 
 
 		//////////
@@ -8648,7 +8648,7 @@ debug_break;
 		//////////
 		// Create our return variable
 		/////
-			result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_LOGICAL, (cs8*)((llValid) ? &_LOGICAL_TRUE : &_LOGICAL_FALSE), 1, true);
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_LOGICAL, (cs8*)((llValid) ? &_LOGICAL_TRUE : &_LOGICAL_FALSE), 1, true);
 			return(result);
 	}
 

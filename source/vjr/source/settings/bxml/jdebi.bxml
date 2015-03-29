@@ -40,8 +40,8 @@
 			<toolbar name="bookmarks">
 				<icon name="bookmarkAdd"/>
 				<icon name="bookmarkDelete"/>
-				<icon name="bookmarkPrev"/>
-				<icon name="bookmarkNext"/>
+				<icon name="bookmarkPrevAllDocuments"/>
+				<icon name="bookmarkNextAllDocuments"/>
 			</toolbar>
 			<toolbar name="breadcrumbs">
 				<icon name="breadcrumbsEnableLine"/>

@@ -150,6 +150,15 @@
 	#ifndef _BMP_LOCALITY
 		#define _BMP_LOCALITY 0
 	#endif
+	#ifndef _BXML_LOCALITY
+		#define _BXML_LOCALITY 0
+	#endif
+
+
+///////////
+// Should extra debugging information be included?
+//////
+	#define _EXTRA_DEBUGGING_DATA
 
 
 //////////

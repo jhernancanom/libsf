@@ -97,7 +97,8 @@ class CXml;
 //////
 	SBitmap*				iBmp_allocate							(void);
 	SBitmap*				iBmp_copy								(SBitmap* bmpSrc);
-	SBitmap*				iBmp_copyArrayBmp						(CXml* baseArrayBmp, SBitmap* baseBmp[], s8* tcName, u32 tnNameLength);
+	SBitmap*				iBmp_arrayBmp_copy						(CXml* baseArrayBmp, SBitmap* baseBmp[], s8* tcName, u32 tnNameLength);
+	SBitmap*				iBmp_arrayBmp_get						(CXml* baseArrayBmp, SBitmap* baseBmp[], s8* tcName, u32 tnNameLength);
 	SBitmap*				iBmp_verifyCopyIsSameSize				(SBitmap* bmpCopy, SBitmap* bmp);
 	SBitmap*				iBmp_verifySizeOrResize					(SBitmap* bmp, u32 tnWidth, u32 tnHeight, u32 tnBitCount);
 	SBitmap*				iBmp_rawLoad							(cu8* bmpRawFileData);

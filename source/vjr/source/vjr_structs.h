@@ -346,6 +346,11 @@ struct SObject
 	SObject*	parent;												// Pointer to parent object for this instance
 	SObject*	firstChild;											// Pointer to child objects (all objects are containers)
 
+#ifdef _EXTRA_DEBUGGING_DATA
+	SDatum		dbgClass;
+	SDatum		dbgName;
+#endif
+
 	// Defined class, class information
 	s32			objType;											// Object base type/class (see _OBJECT_TYPE_* constants)
 

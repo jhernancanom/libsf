@@ -266,7 +266,7 @@
 // Copy the indicated object
 //
 //////
-	SObject* iObj_copy(SThisCode* thisCode, SObject* template_obj, SObject* next, SObject* parent, bool tlCopyChildren, bool tlCreateSeparateBitmapBuffers)
+	SObject* iObj_copy(SThisCode* thisCode, SObject* template_obj, SObject* next, SObject* parent, bool tlCopyChildren, bool tlCopySiblings, bool tlCreateSeparateBitmapBuffers)
 	{
 		SObject* obj;
 
@@ -285,7 +285,6 @@
 			//////////
 			// Copy the object's existing contents
 			//////
-// TODO:  Need to copy other properties here as well
 				if (template_obj)
 					memcpy(&obj->p, &template_obj->p, sizeof(obj->p));		// Copy the existing object properties
 
@@ -298,18 +297,28 @@
 				obj->bmpScaled	= NULL;
 
 
+// TODO:  Working here on copying all properties
+
+
 			//////////
-			// Copy the bitmap, subojects, and/or children (if need be)
+			// Copy the bitmap, sub-objects, and/or children (if need be)
 			//////
 				if (template_obj)
 				{
-					// Duplicate the bitmap buffer if need be
-					if (tlCreateSeparateBitmapBuffers)
-						obj->bmp = iBmp_copy(template_obj->bmp);
 
+					//////////
+					// Duplicate the bitmap buffer if need be
+					//////
+						if (tlCreateSeparateBitmapBuffers)
+							obj->bmp = iBmp_copy(template_obj->bmp);
+
+
+					//////////
 					// Copy children if need be
-					if (tlCopyChildren && template_obj->firstChild)
-						obj->firstChild = iObj_copy(thisCode, template_obj->firstChild, NULL, obj, true, tlCreateSeparateBitmapBuffers);
+					//////
+						if (tlCopyChildren && template_obj->firstChild)
+							obj->firstChild = iObj_copy(thisCode, template_obj->firstChild, NULL, obj, true, true, tlCreateSeparateBitmapBuffers);
+
 				}
 		}
 
@@ -843,7 +852,7 @@
 				for (objSib = objStart->ll.nextObj; objSib; objSib = objSib->ll.nextObj)
 				{
 					// Search this sibling
-					if ((objFound = iiObj_findChildObject_byName(thisCode, objStart->firstChild, name, true, tlSearchChildren, false)))
+					if ((objFound = iiObj_findChildObject_byName(thisCode, objSib, name, true, tlSearchChildren, false)))
 						return(objFound);
 				}
 			}
@@ -1889,7 +1898,7 @@
 			while (chain)
 			{
 				// Create this object
-				obj = iObj_copy(thisCode, chain, NULL, chain, true, true);
+				obj = iObj_copy(thisCode, chain, NULL, chain, true, false, true);
 				if (obj)
 				{
 					// Update the duplicate object's forward pointer in the chain

@@ -145,15 +145,16 @@
 
 //////////
 //
-// Called to allow the bitmaps to be loaded by name, as per the array_bmp.bxml file.
+// Called to search the bitmaps loaded from an arrayBmp.
 //
 //////
-	SBitmap* iBmp_copyArrayBmp(CXml* baseArrayBmp, SBitmap* baseBmp[], s8* tcName, u32 tnNameLength)
+	SBitmap* iBmp_arrayBmp_copy(CXml* baseArrayBmp, SBitmap* baseBmp[], s8* tcName, u32 tnNameLength)
 	{
 		s32			lnIndex;
 		CXml*		icon;
 		CXml*		name;
 		XmlData*	nameData;
+		SDatum		d;
 
 
 		// Make sure our environment is sane
@@ -162,33 +163,43 @@
 			// Iterate through each child to find the matching name
 			for (lnIndex = 0, icon = baseArrayBmp->child(); icon; lnIndex++, icon = icon->next())
 			{
-
-				//////////
 				// Grab the name attribute for this icon
-				//////
-					name = icon->attribute("name");
-					if (name)
-					{
+				if ((name = icon->attribute(cgcTag_name)) && (nameData = name->data()) && nameData->length() == tnNameLength && iDatum_compare(nameData->as_datum(&d), tcName, tnNameLength) == 0)
+					return(iBmp_copy(baseBmp[lnIndex]));
 
-						//////////
-						// Grab a pointer to the name's data (it's actual name in text form)
-						//////
-							nameData = name->data();
+			}
+		}
+
+		// If we get here, invalid parameters, or name not found
+		return(NULL);
+	}
 
 
-						//////////
-						// Pointer valid?  Length the same?
-						//////
-							if (nameData && nameData->length() == tnNameLength)
-							{
-								// Does the text also match?
-								if (_memicmp(tcName, nameData->as_s8p(), tnNameLength) == 0)
-									return(iBmp_copy(baseBmp[lnIndex]));
 
-								// If we get here, names don't match
-							}
 
-					}
+//////////
+//
+// Called to get the bitmaps loaded from an arrayBmp.
+//
+//////
+	SBitmap* iBmp_arrayBmp_get(CXml* baseArrayBmp, SBitmap* baseBmp[], s8* tcName, u32 tnNameLength)
+	{
+		s32			lnIndex;
+		CXml*		icon;
+		CXml*		name;
+		XmlData*	nameData;
+		SDatum		d;
+
+
+		// Make sure our environment is sane
+		if (baseArrayBmp && baseBmp && tcName && tnNameLength > 0)
+		{
+			// Iterate through each child to find the matching name
+			for (lnIndex = 0, icon = baseArrayBmp->child(); icon; lnIndex++, icon = icon->next())
+			{
+				// Grab the name attribute for this icon
+				if ((name = icon->attribute(cgcTag_name)) && (nameData = name->data()) && nameData->length() == tnNameLength && iDatum_compare(nameData->as_datum(&d), tcName, tnNameLength) == 0)
+					return(baseBmp[lnIndex]);
 
 			}
 		}

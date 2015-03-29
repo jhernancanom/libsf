@@ -618,12 +618,12 @@ debug_nop;
 				case _ICODE_DOUBLE_QUOTED_TEXT:
 				case _ICODE_SINGLE_QUOTED_TEXT:
 					// By definition, quoted content is its own independent thing
-					varPathname = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, comp->line->sourceCode->data_u8 + comp->start, comp->length, true);
+					varPathname = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, comp->line->sourceCode->data_u8 + comp->start, comp->length, true);
 					break;
 
 				default:
 					// Get every contiguous component
-					varPathname	= iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, comp->line->sourceCode->data_u8 + comp->start, iComps_getContiguousLength(thisCode, comp, valid_iCodeArray, tnValid_iCodeArrayCount, NULL), true);
+					varPathname	= iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, comp->line->sourceCode->data_u8 + comp->start, iComps_getContiguousLength(thisCode, comp, valid_iCodeArray, tnValid_iCodeArrayCount, NULL), true);
 					break;
 			}
 		}
