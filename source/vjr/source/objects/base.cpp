@@ -292,9 +292,19 @@
 			//////////
 			// Update the next and parent, and clear out any bmpScaled
 			//////
-				obj->ll.next	= (SLL*)next;
-				obj->parent		= parent;
-				obj->bmpScaled	= NULL;
+				obj->ll.next				= (SLL*)next;
+				obj->parent					= parent;
+
+				obj->objType				= template_obj->objType;
+				obj->isRendered				= template_obj->isRendered;
+				obj->isPublished			= template_obj->isPublished;
+				obj->isDirtyRender			= template_obj->isDirtyRender;
+				obj->isDirtyPublish			= template_obj->isDirtyPublish;
+
+				CopyRect(&obj->rc,			&template_obj->rc);
+				CopyRect(&obj->rco,			&template_obj->rco);
+				CopyRect(&obj->rcp,			&template_obj->rcp);
+				CopyRect(&obj->rcClient,	&template_obj->rcClient);
 
 
 			//////////
@@ -2611,11 +2621,14 @@
 
 
 		logfunc(__FUNCTION__);
+
 		//////////
 		// Make sure the properties are allocated
 		//////
 			if (!obj->props)
 			{
+
+				// Allocate
 				lnAllocationSize	= tnPropCount * sizeof(SVariable*);
 				obj->props			= (SVariable**)malloc(lnAllocationSize);
 				if (!obj->props)
@@ -2624,7 +2637,11 @@
 					debug_break;
 					return;
 				}
+
+				// Initialize
 				memset(obj->props, 0, lnAllocationSize);
+				obj->propsCount = tnPropCount;
+
 			}
 
 
@@ -2633,6 +2650,7 @@
 		//////
 			for (lnI = 0; lnI < tnPropCount; lnI++)
 			{
+
 				//////////
 				// Grab the index of this entry in the master list
 				//////
@@ -2675,6 +2693,7 @@ if (!obj->props[lnI])
 				//////
 					if (propMap[lnI]._initterObject)
 						propMap[lnI].initterObject(thisCode, obj, lnIndex);
+
 			}
 
 
@@ -2687,7 +2706,7 @@ if (!obj->props[lnI])
 
 
 		//////////
-		// Any properties within
+		// Any dynamic properties within
 		//////
 			if (tlResetProperties)
 				iVariable_politelyDeleteChain(thisCode, &obj->firstProperty, true);

@@ -683,11 +683,9 @@
 		bool	llResult;
 
 
-// Untested code, breakpiont and examine
-debug_break;
 		// Make sure the environment is sane
 		llResult = false;
-		if (thisCode && objDst && objSrc && objSrc->props && objSrc->propsCount > 0)
+		if (objDst && objSrc && objSrc->props && objSrc->propsCount > 0)
 		{
 			//////////
 			// Delete any properties which already exist
@@ -727,7 +725,8 @@ debug_break;
 					//////////
 					// Iterate through each prop one by one
 					//////
-						for (lnI = 0; objSrc->propsCount; lnI++)
+						objDst->propsCount = objSrc->propsCount;
+						for (lnI = 0; lnI < objSrc->propsCount; lnI++)
 						{
 							// Copy the property if populated
 							if (objSrc->props[lnI])
@@ -766,10 +765,8 @@ debug_break;
 
 
 		// Make sure our environment is sane
-// Untested code, breakpiont and examine
-debug_break;
 		llResult = false;
-		if (thisCode && objDst && objSrc)
+		if (objDst && objSrc)
 		{
 
 			//////////
@@ -777,6 +774,8 @@ debug_break;
 			//////
 				if (objDst->firstProperty)
 				{
+// Untested code, breakpoint and examine
+debug_break;
 					// Delete each property in the chain
 					for (var = objDst->firstProperty; var; var = varNext)
 					{
@@ -802,6 +801,8 @@ debug_break;
 			//////////
 			// Copy all of the existing properties
 			//////
+// Untested code, breakpoint and examine
+debug_break;
 				varLast = &objSrc->firstProperty;
 				for (var = objSrc->firstProperty; var; var = var->ll.nextVar)
 				{
