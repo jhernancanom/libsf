@@ -4939,13 +4939,13 @@ debug_break;
 // Called to create and populate a new variable in one go
 //
 //////
-	SVariable* iVariable_createAndPopulate(SThisCode* thisCode, s32 tnVarType, SDatum* datum, bool tlCreateReference)
+	SVariable* iVariable_createAndPopulate_byDatum(SThisCode* thisCode, s32 tnVarType, SDatum* datum, bool tlCreateReference)
 	{
-		if (datum)		return(iVariable_createAndPopulate(thisCode, tnVarType, datum->data_u8, datum->length, tlCreateReference));
+		if (datum)		return(iVariable_createAndPopulate_byText(thisCode, tnVarType, datum->data_u8, datum->length, tlCreateReference));
 		else			return(NULL);
 	}
 
-	SVariable* iVariable_createAndPopulate(SThisCode* thisCode, s32 tnVarType, u8* tcData, u32 tnDataLength, bool tlCreateReference)
+	SVariable* iVariable_createAndPopulate_byText(SThisCode* thisCode, s32 tnVarType, u8* tcData, u32 tnDataLength, bool tlCreateReference)
 	{
 		SVariable* var;
 
@@ -4984,19 +4984,19 @@ debug_break;
 		return(var);
 	}
 
-	SVariable* iVariable_createAndPopulate(SThisCode* thisCode, s32 tnVarType, s8* tcData, u32 tnDataLength, bool tlCreateReference)
+	SVariable* iVariable_createAndPopulate_byText(SThisCode* thisCode, s32 tnVarType, s8* tcData, u32 tnDataLength, bool tlCreateReference)
 	{
-		return(iVariable_createAndPopulate(thisCode, tnVarType, (u8*)tcData, tnDataLength, tlCreateReference));
+		return(iVariable_createAndPopulate_byText(thisCode, tnVarType, (u8*)tcData, tnDataLength, tlCreateReference));
 	}
 
-	SVariable* iVariable_createAndPopulate(SThisCode* thisCode, s32 tnVarType, cu8* tcData, u32 tnDataLength, bool tlCreateReference)
+	SVariable* iVariable_createAndPopulate_byText(SThisCode* thisCode, s32 tnVarType, cu8* tcData, u32 tnDataLength, bool tlCreateReference)
 	{
-		return(iVariable_createAndPopulate(thisCode, tnVarType, (u8*)tcData, tnDataLength, tlCreateReference));
+		return(iVariable_createAndPopulate_byText(thisCode, tnVarType, (u8*)tcData, tnDataLength, tlCreateReference));
 	}
 
-	SVariable* iVariable_createAndPopulate(SThisCode* thisCode, s32 tnVarType, cs8* tcData, u32 tnDataLength, bool tlCreateReference)
+	SVariable* iVariable_createAndPopulate_byText(SThisCode* thisCode, s32 tnVarType, cs8* tcData, u32 tnDataLength, bool tlCreateReference)
 	{
-		return(iVariable_createAndPopulate(thisCode, tnVarType, (u8*)tcData, tnDataLength, tlCreateReference));
+		return(iVariable_createAndPopulate_byText(thisCode, tnVarType, (u8*)tcData, tnDataLength, tlCreateReference));
 	}
 
 
@@ -5075,7 +5075,7 @@ debug_break;
 				//////////
 				// Create the variable
 				//////
-					result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, buffer, lnI + tnPrefixChars + tnPostfixChars, true);
+					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, buffer, lnI + tnPrefixChars + tnPostfixChars, true);
 					if (result)
 					{
 						// Reset everything
@@ -5759,7 +5759,7 @@ if (!gsProps_master[lnI].varInit)
 						{
 							case _VAR_TYPE_OBJECT:
 								// Copy the object
-								varDst->obj = iObj_copy(thisCode, varSrc->obj, NULL, NULL, true, true);
+								varDst->obj = iObj_copy(thisCode, varSrc->obj, NULL, NULL, true, false, true);
 								break;
 
 							case _VAR_TYPE_BITMAP:

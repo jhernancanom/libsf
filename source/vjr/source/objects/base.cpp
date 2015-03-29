@@ -266,7 +266,7 @@
 // Copy the indicated object
 //
 //////
-	SObject* iObj_copy(SThisCode* thisCode, SObject* template_obj, SObject* next, SObject* parent, bool tlCopyChildren, bool tlCreateSeparateBitmapBuffers)
+	SObject* iObj_copy(SThisCode* thisCode, SObject* template_obj, SObject* next, SObject* parent, bool tlCopyChildren, bool tlCopySiblings, bool tlCreateSeparateBitmapBuffers)
 	{
 		SObject* obj;
 
@@ -285,7 +285,6 @@
 			//////////
 			// Copy the object's existing contents
 			//////
-// TODO:  Need to copy other properties here as well
 				if (template_obj)
 					memcpy(&obj->p, &template_obj->p, sizeof(obj->p));		// Copy the existing object properties
 
@@ -293,23 +292,46 @@
 			//////////
 			// Update the next and parent, and clear out any bmpScaled
 			//////
-				obj->ll.next	= (SLL*)next;
-				obj->parent		= parent;
-				obj->bmpScaled	= NULL;
+				obj->ll.next				= (SLL*)next;
+				obj->parent					= parent;
+
+				obj->objType				= template_obj->objType;
+				obj->isRendered				= template_obj->isRendered;
+				obj->isPublished			= template_obj->isPublished;
+				obj->isDirtyRender			= template_obj->isDirtyRender;
+				obj->isDirtyPublish			= template_obj->isDirtyPublish;
+
+				CopyRect(&obj->rc,			&template_obj->rc);
+				CopyRect(&obj->rco,			&template_obj->rco);
+				CopyRect(&obj->rcp,			&template_obj->rcp);
+				CopyRect(&obj->rcClient,	&template_obj->rcClient);
 
 
 			//////////
-			// Copy the bitmap, subojects, and/or children (if need be)
+			// Copy all of the properties one-by-one
+			//////
+				iObjProp_copyAll(thisCode, obj, template_obj, true);
+
+
+			//////////
+			// Copy the bitmap, sub-objects, and/or children (if need be)
 			//////
 				if (template_obj)
 				{
-					// Duplicate the bitmap buffer if need be
-					if (tlCreateSeparateBitmapBuffers)
-						obj->bmp = iBmp_copy(template_obj->bmp);
 
+					//////////
+					// Duplicate the bitmap buffer if need be
+					//////
+						if (tlCreateSeparateBitmapBuffers)
+							obj->bmp = iBmp_copy(template_obj->bmp);
+
+
+					//////////
 					// Copy children if need be
-					if (tlCopyChildren && template_obj->firstChild)
-						obj->firstChild = iObj_copy(thisCode, template_obj->firstChild, NULL, obj, true, tlCreateSeparateBitmapBuffers);
+					//////
+						if (tlCopyChildren && template_obj->firstChild)
+							obj->firstChild = iObj_copy(thisCode, template_obj->firstChild, NULL, obj, true, true, tlCreateSeparateBitmapBuffers);
+
 				}
 		}
 
@@ -843,7 +865,7 @@
 				for (objSib = objStart->ll.nextObj; objSib; objSib = objSib->ll.nextObj)
 				{
 					// Search this sibling
-					if ((objFound = iiObj_findChildObject_byName(thisCode, objStart->firstChild, name, true, tlSearchChildren, false)))
+					if ((objFound = iiObj_findChildObject_byName(thisCode, objSib, name, true, tlSearchChildren, false)))
 						return(objFound);
 				}
 			}
@@ -1889,7 +1911,7 @@
 			while (chain)
 			{
 				// Create this object
-				obj = iObj_copy(thisCode, chain, NULL, chain, true, true);
+				obj = iObj_copy(thisCode, chain, NULL, chain, true, false, true);
 				if (obj)
 				{
 					// Update the duplicate object's forward pointer in the chain
@@ -2599,11 +2621,14 @@
 
 
 		logfunc(__FUNCTION__);
+
 		//////////
 		// Make sure the properties are allocated
 		//////
 			if (!obj->props)
 			{
+
+				// Allocate
 				lnAllocationSize	= tnPropCount * sizeof(SVariable*);
 				obj->props			= (SVariable**)malloc(lnAllocationSize);
 				if (!obj->props)
@@ -2612,7 +2637,11 @@
 					debug_break;
 					return;
 				}
+
+				// Initialize
 				memset(obj->props, 0, lnAllocationSize);
+				obj->propsCount = tnPropCount;
+
 			}
 
 
@@ -2621,6 +2650,7 @@
 		//////
 			for (lnI = 0; lnI < tnPropCount; lnI++)
 			{
+
 				//////////
 				// Grab the index of this entry in the master list
 				//////
@@ -2663,6 +2693,7 @@ if (!obj->props[lnI])
 				//////
 					if (propMap[lnI]._initterObject)
 						propMap[lnI].initterObject(thisCode, obj, lnIndex);
+
 			}
 
 
@@ -2675,7 +2706,7 @@ if (!obj->props[lnI])
 
 
 		//////////
-		// Any properties within
+		// Any dynamic properties within
 		//////
 			if (tlResetProperties)
 				iVariable_politelyDeleteChain(thisCode, &obj->firstProperty, true);

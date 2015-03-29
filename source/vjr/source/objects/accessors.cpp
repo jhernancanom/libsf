@@ -250,7 +250,7 @@
 			if (var)
 			{
 				// Create a temporary variable
-				varNewValue = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, tcText, tnTextLength, true);
+				varNewValue = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, tcText, tnTextLength, true);
 
 				// Perform the set
 				     if (objProp->_setterObject && tnIndex < _INDEX_SET_FIRST_ITEM)			llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
@@ -286,13 +286,29 @@
 			if (var)
 			{
 				// Create a temporary variable
-				varNewValue = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, datum, true);
+				varNewValue = iVariable_createAndPopulate_byDatum(thisCode, _VAR_TYPE_CHARACTER, datum, true);
 
 				// Perform the set
 				     if (objProp->_setterObject && tnIndex < _INDEX_SET_FIRST_ITEM)			llResult = objProp->setterObject(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
 				else if (objProp->_setterObject_set && tnIndex >= _INDEX_SET_FIRST_ITEM)	llResult = objProp->setterObject_set(thisCode, var, NULL, varNewValue, false);
 				else if (baseProp->_setterBase)												llResult = baseProp->setterBase	(thisCode, obj, tnIndex, var, varNewValue, baseProp, objProp);
 				else																		llResult = iVariable_copy(thisCode, var, varNewValue);
+
+//////////
+// Include some extra debugging information to aid in tracking down those little peskies
+//////
+#ifdef _EXTRA_DEBUGGING_DATA
+	switch (tnIndex)
+	{
+		case _INDEX_CLASS:
+			iDatum_duplicate(&obj->dbgClass, varNewValue);
+			break;
+
+		case _INDEX_NAME:
+			iDatum_duplicate(&obj->dbgName, varNewValue);
+			break;
+	}
+#endif
 
 				// Delete our temporary variable
 				iVariable_delete(thisCode, varNewValue, true);
@@ -651,6 +667,156 @@
 		}
 		// If we get here, failure
 		return(false);
+	}
+
+
+
+
+//////////
+//
+// Copy all of the properties
+//
+//////
+	bool iObjProp_copyAll(SThisCode* thisCode, SObject* objDst, SObject* objSrc, bool tlCopyDynamicProperties)
+	{
+		s32		lnI;
+		bool	llResult;
+
+
+		// Make sure the environment is sane
+		llResult = false;
+		if (objDst && objSrc && objSrc->props && objSrc->propsCount > 0)
+		{
+			//////////
+			// Delete any properties which already exist
+			//////
+				if (objDst->props && objDst->propsCount > 0)
+				{
+					// Delete the variables one-by-one
+					for (lnI = 0; lnI < objDst->propsCount; lnI++)
+					{
+						// Not all properties may be populated, but they should be
+						if (objDst->props[lnI])
+						{
+							// Delete the variable
+							iVariable_delete(thisCode, objDst->props[lnI], true);
+							objDst->props[lnI] = NULL;
+						}
+					}
+
+					// Delete the props allocation
+					free(objDst->props);
+					objDst->props = NULL;
+				}
+
+
+			//////////
+			// Allocate space for the props
+			//////
+				objDst->props = (SVariable**)malloc(objSrc->propsCount * sizeof(SObject*));
+				if (!objDst->props)
+				{
+					// Should never happen
+					debug_break;
+					iError_track();
+
+				} else {
+
+					//////////
+					// Iterate through each prop one by one
+					//////
+						objDst->propsCount = objSrc->propsCount;
+						for (lnI = 0; lnI < objSrc->propsCount; lnI++)
+						{
+							// Copy the property if populated
+							if (objSrc->props[lnI])
+								objDst->props[lnI] = iVariable_copy(thisCode, objSrc->props[lnI], false);
+						}
+
+
+					//////////
+					// Copy dynamic properties if need be
+					//////
+						if (tlCopyDynamicProperties)		llResult = iObjProp_copyDynamic(thisCode, objDst, objSrc);
+						else								llResult = true;
+				}
+
+		}
+
+		// Indicate success or failure
+		return(llResult);
+	}
+
+
+
+
+//////////
+//
+// Copy the dynamic runtime properties
+//
+//////
+	bool iObjProp_copyDynamic(SThisCode* thisCode, SObject* objDst, SObject* objSrc)
+	{
+		bool		llResult;
+		SVariable*	var;
+		SVariable*	varNew;
+		SVariable*	varNext;
+		SVariable**	varLast;
+
+
+		// Make sure our environment is sane
+		llResult = false;
+		if (objDst && objSrc)
+		{
+
+			//////////
+			// Delete any existing properties
+			//////
+				if (objDst->firstProperty)
+				{
+// Untested code, breakpoint and examine
+debug_break;
+					// Delete each property in the chain
+					for (var = objDst->firstProperty; var; var = varNext)
+					{
+						// Grab the next property
+						varNext = var->ll.nextVar;
+
+						// Delete it
+						iVariable_delete(thisCode, var, true);
+					}
+
+					// Indicate they're gone
+					objDst->firstProperty = NULL;
+				}
+
+
+			//////////
+			// Early out
+			//////
+				if (!objSrc->firstProperty)
+					return(true);		// Nothing to copy
+
+
+			//////////
+			// Copy all of the existing properties
+			//////
+// Untested code, breakpoint and examine
+debug_break;
+				varLast = &objSrc->firstProperty;
+				for (var = objSrc->firstProperty; var; var = var->ll.nextVar)
+				{
+					// Copy it
+					varNew = iVariable_copy(thisCode, var, false);
+
+					// Append it
+					iLl_appendExistingNodeAtEnd((SLL**)&objSrc->firstProperty, (SLL*)varNew);
+				}
+
+		}
+
+		// Indicate our status
+		return(llResult);
 	}
 
 
@@ -1224,11 +1390,11 @@
 					if (llOn)
 					{
 						// ON
-						result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_on, sizeof(cgc_on) - 1, true);
+						result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_on, sizeof(cgc_on) - 1, true);
 
 					} else {
 						// OFF
-						result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_on, sizeof(cgc_on) - 1, true);
+						result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_on, sizeof(cgc_on) - 1, true);
 					}
 				}
 			}
@@ -1278,46 +1444,46 @@
 					{
 						default:
 						case _SET_DATE_AMERICAN:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_american, sizeof(cgc_american) - 1, true);
+							result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_american, sizeof(cgc_american) - 1, true);
 							break;
 						case _SET_DATE_ANSI:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_ansi, sizeof(cgc_ansi) - 1, true);
+							result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_ansi, sizeof(cgc_ansi) - 1, true);
 							break;
 						case _SET_DATE_BRITISH:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_british, sizeof(cgc_british) - 1, true);
+							result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_british, sizeof(cgc_british) - 1, true);
 							break;
 						case _SET_DATE_DMY:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_dmy, sizeof(cgc_dmy) - 1, true);
+							result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_dmy, sizeof(cgc_dmy) - 1, true);
 							break;
 						case _SET_DATE_FRENCH:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_french, sizeof(cgc_french) - 1, true);
+							result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_french, sizeof(cgc_french) - 1, true);
 							break;
 						case _SET_DATE_GERMAN:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_german, sizeof(cgc_german) - 1, true);
+							result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_german, sizeof(cgc_german) - 1, true);
 							break;
 						case _SET_DATE_ITALIAN:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_italian, sizeof(cgc_italian) - 1, true);
+							result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_italian, sizeof(cgc_italian) - 1, true);
 							break;
 						case _SET_DATE_JAPAN:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_japan, sizeof(cgc_japan) - 1, true);
+							result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_japan, sizeof(cgc_japan) - 1, true);
 							break;
 						case _SET_DATE_LONG:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_long, sizeof(cgc_long) - 1, true);
+							result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_long, sizeof(cgc_long) - 1, true);
 							break;
 						case _SET_DATE_MDY:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_mdy, sizeof(cgc_mdy) - 1, true);
+							result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_mdy, sizeof(cgc_mdy) - 1, true);
 							break;
 						case _SET_DATE_SHORT:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_short, sizeof(cgc_short) - 1, true);
+							result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_short, sizeof(cgc_short) - 1, true);
 							break;
 						case _SET_DATE_TAIWAN:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_taiwan, sizeof(cgc_taiwan) - 1, true);
+							result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_taiwan, sizeof(cgc_taiwan) - 1, true);
 							break;
 						case _SET_DATE_USA:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_usa, sizeof(cgc_usa) - 1, true);
+							result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_usa, sizeof(cgc_usa) - 1, true);
 							break;
 						case _SET_DATE_YMD:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_ymd, sizeof(cgc_ymd) - 1, true);
+							result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_ymd, sizeof(cgc_ymd) - 1, true);
 							break;
 					}
 				}
@@ -1450,13 +1616,13 @@
 					{
 						default:
 						case _LOGICAL_TF:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_default, sizeof(cgc_default) - 1, true);
+							result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_default, sizeof(cgc_default) - 1, true);
 							break;
 						case _LOGICAL_YN:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_yn, sizeof(cgc_yn) - 1, true);
+							result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_yn, sizeof(cgc_yn) - 1, true);
 							break;
 						case _LOGICAL_UD:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_ud, sizeof(cgc_ud) - 1, true);
+							result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_ud, sizeof(cgc_ud) - 1, true);
 							break;
 					}
 				}
@@ -1510,7 +1676,7 @@
 						if (llAutomatic)
 						{
 							// It's set to automatic
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_automatic, sizeof(cgc_automatic) - 1, true);
+							result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_automatic, sizeof(cgc_automatic) - 1, true);
 
 						} else {
 							// This should never happen
@@ -1537,7 +1703,7 @@
 						}
 
 						// Create the variable
-						result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, buffer, (u32)strlen(buffer), true);
+						result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, buffer, (u32)strlen(buffer), true);
 					}
 				}
 			}
@@ -1587,11 +1753,11 @@
 					{
 						default:
 						case _TIME_LOCAL:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_local, sizeof(cgc_local) - 1, true);
+							result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_local, sizeof(cgc_local) - 1, true);
 							break;
 
 						case _TIME_SYSTEM:
-							result = iVariable_createAndPopulate(thisCode, _VAR_TYPE_CHARACTER, cgc_system, sizeof(cgc_system) - 1, true);
+							result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgc_system, sizeof(cgc_system) - 1, true);
 							break;
 					}
 				}

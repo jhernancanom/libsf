@@ -346,6 +346,11 @@ struct SObject
 	SObject*	parent;												// Pointer to parent object for this instance
 	SObject*	firstChild;											// Pointer to child objects (all objects are containers)
 
+#ifdef _EXTRA_DEBUGGING_DATA
+	SDatum		dbgClass;
+	SDatum		dbgName;
+#endif
+
 	// Defined class, class information
 	s32			objType;											// Object base type/class (see _OBJECT_TYPE_* constants)
 
@@ -370,7 +375,7 @@ struct SObject
 	//////
 		SProperties		p;											// Common object properties
 		SVariable**		props;										// An allocated array of properties (varies in size by object)
-		u32				propsCount;									// The number of property variables allocated
+		s32				propsCount;									// The number of property variables allocated
 
 		// Related position in the member hierarchy
 		SVariable*	firstProperty;									// User-defined property (design time and runtime)

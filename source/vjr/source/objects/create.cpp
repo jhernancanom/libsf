@@ -225,9 +225,9 @@
 				propSetEnabled(formNew, _LOGICAL_TRUE);
 				formNew->isRendered		= true;
 				formNew->isPublished	= true;
-				var = iObjProp_get_variable_byIndex(thisCode, formNew, _INDEX_NAME);				iDatum_duplicate(&var->value, cgcName_form, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, formNew, _INDEX_CLASS);				iDatum_duplicate(&var->value, cgcName_form, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, formNew, _INDEX_BASECLASS);			iDatum_duplicate(&var->value, cgcName_form, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, formNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_form, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, formNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_form, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, formNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_form, -1);
 				iEvents_resetToDefault(thisCode, &formNew->ev);
 				iObj_setSize(thisCode, formNew, 0, 0, 375, 250);
 
@@ -495,7 +495,7 @@
 				propSetEnabled(labelNew, _LOGICAL_TRUE);
 				labelNew->isRendered	= true;
 				labelNew->isPublished	= true;
-				var = iObjProp_get_variable_byIndex(thisCode, labelNew, _INDEX_NAME);				iDatum_duplicate(&var->value, cgcName_label, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, labelNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_label, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, labelNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_label, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, labelNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_label, -1);
 				iEvents_resetToDefault(thisCode, &labelNew->ev);
@@ -719,7 +719,7 @@
 				propSetEnabled(imageNew, _LOGICAL_TRUE);
 				imageNew->isRendered	= true;
 				imageNew->isPublished	= true;
-				var = iObjProp_get_variable_byIndex(thisCode, imageNew, _INDEX_NAME);				iDatum_duplicate(&var->value, cgcName_image, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, imageNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_image, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, imageNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_image, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, imageNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_image, -1);
 				iEvents_resetToDefault(thisCode, &imageNew->ev);
@@ -910,8 +910,8 @@
 				radioNew->isRendered	= true;
 				radioNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(thisCode, radioNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_radio, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, radioNew, _INDEX_CLASS);		iDatum_duplicate(&var->value, cgcName_radio, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, radioNew, _INDEX_BASECLASS);	iDatum_duplicate(&var->value, cgcName_radio, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, radioNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_radio, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, radioNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_radio, -1);
 				iEvents_resetToDefault(thisCode, &radioNew->ev);
 				iObj_setSize(thisCode, radioNew, 0, 0, 100, 100);
 
@@ -1078,8 +1078,8 @@
 				listboxNew->isRendered		= true;
 				listboxNew->isPublished		= true;
 				var = iObjProp_get_variable_byIndex(thisCode, listboxNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_listbox, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, listboxNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_listbox, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, listboxNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_listbox, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, listboxNew, _INDEX_CLASS);		iDatum_duplicate(&var->value, cgcName_listbox, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, listboxNew, _INDEX_BASECLASS);	iDatum_duplicate(&var->value, cgcName_listbox, -1);
 				iEvents_resetToDefault(thisCode, &listboxNew->ev);
 				iObj_setSize(thisCode, listboxNew, 0, 0, 100, 100);
 
@@ -1190,8 +1190,8 @@
 				formsetNew->isRendered		= true;
 				formsetNew->isPublished		= true;
 				var = iObjProp_get_variable_byIndex(thisCode, formsetNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_formset, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, formsetNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_formset, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, formsetNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_formset, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, formsetNew, _INDEX_CLASS);		iDatum_duplicate(&var->value, cgcName_formset, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, formsetNew, _INDEX_BASECLASS);	iDatum_duplicate(&var->value, cgcName_formset, -1);
 				iEvents_resetToDefault(thisCode, &formsetNew->ev);
 				iObj_setSize(thisCode, formsetNew, 0, 0, 100, 100);
 
@@ -1246,8 +1246,8 @@
 				toolbarNew->isRendered		= true;
 				toolbarNew->isPublished		= true;
 				var = iObjProp_get_variable_byIndex(thisCode, toolbarNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_toolbar, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, toolbarNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_toolbar, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, toolbarNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_toolbar, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, toolbarNew, _INDEX_CLASS);		iDatum_duplicate(&var->value, cgcName_toolbar, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, toolbarNew, _INDEX_BASECLASS);	iDatum_duplicate(&var->value, cgcName_toolbar, -1);
 				iEvents_resetToDefault(thisCode, &toolbarNew->ev);
 				iObj_setSize(thisCode, toolbarNew, 0, 0, 100, 100);
 
@@ -1302,8 +1302,8 @@
 				separatorNew->isRendered	= true;
 				separatorNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(thisCode, separatorNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_separator, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, separatorNew, _INDEX_CLASS);		iDatum_duplicate(&var->value, cgcName_separator, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, separatorNew, _INDEX_BASECLASS);	iDatum_duplicate(&var->value, cgcName_separator, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, separatorNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_separator, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, separatorNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_separator, -1);
 				iEvents_resetToDefault(thisCode, &separatorNew->ev);
 				iObj_setSize(thisCode, separatorNew, 0, 0, 100, 100);
 
@@ -1414,8 +1414,8 @@
 				shapeNew->isRendered	= true;
 				shapeNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(thisCode, shapeNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_shape, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, shapeNew, _INDEX_CLASS);		iDatum_duplicate(&var->value, cgcName_shape, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, shapeNew, _INDEX_BASECLASS);	iDatum_duplicate(&var->value, cgcName_shape, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, shapeNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_shape, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, shapeNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_shape, -1);
 				iEvents_resetToDefault(thisCode, &shapeNew->ev);
 				iObj_setSize(thisCode, shapeNew, 0, 0, 100, 100);
 
@@ -1469,7 +1469,7 @@
 				propSetEnabled(containerNew, _LOGICAL_TRUE);
 				containerNew->isRendered	= true;
 				containerNew->isPublished	= true;
-				var = iObjProp_get_variable_byIndex(thisCode, containerNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_container, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, containerNew, _INDEX_NAME);		iDatum_duplicate(&var->value, cgcName_container, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, containerNew, _INDEX_CLASS);		iDatum_duplicate(&var->value, cgcName_container, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, containerNew, _INDEX_BASECLASS);	iDatum_duplicate(&var->value, cgcName_container, -1);
 				iEvents_resetToDefault(thisCode, &containerNew->ev);
@@ -1526,8 +1526,8 @@
 				controlNew->isRendered		= true;
 				controlNew->isPublished		= true;
 				var = iObjProp_get_variable_byIndex(thisCode, controlNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_control, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, controlNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_control, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, controlNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_control, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, controlNew, _INDEX_CLASS);		iDatum_duplicate(&var->value, cgcName_control, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, controlNew, _INDEX_BASECLASS);	iDatum_duplicate(&var->value, cgcName_control, -1);
 				iEvents_resetToDefault(thisCode, &controlNew->ev);
 				iObj_setSize(thisCode, controlNew, 0, 0, 100, 100);
 
@@ -1861,7 +1861,7 @@
 				propSetEnabled(spinnerNew, _LOGICAL_TRUE);
 				spinnerNew->isRendered		= true;
 				spinnerNew->isPublished		= true;
-				var = iObjProp_get_variable_byIndex(thisCode, spinnerNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_spinner, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, spinnerNew, _INDEX_NAME);				iDatum_duplicate(&var->value, cgcName_spinner, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, spinnerNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_spinner, -1);
 				var = iObjProp_get_variable_byIndex(thisCode, spinnerNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_spinner, -1);
 				iEvents_resetToDefault(thisCode, &spinnerNew->ev);
@@ -1918,8 +1918,8 @@
 				timerNew->isRendered	= true;
 				timerNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(thisCode, timerNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_timer, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, timerNew, _INDEX_CLASS);		iDatum_duplicate(&var->value, cgcName_timer, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, timerNew, _INDEX_BASECLASS);	iDatum_duplicate(&var->value, cgcName_timer, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, timerNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_timer, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, timerNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_timer, -1);
 				iEvents_resetToDefault(thisCode, &timerNew->ev);
 				iObj_setSize(thisCode, timerNew, 0, 0, 100, 100);
 
@@ -1974,8 +1974,8 @@
 				hyperlinkNew->isRendered	= true;
 				hyperlinkNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(thisCode, hyperlinkNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_hyperlink, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, hyperlinkNew, _INDEX_CLASS);		iDatum_duplicate(&var->value, cgcName_hyperlink, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, hyperlinkNew, _INDEX_BASECLASS);	iDatum_duplicate(&var->value, cgcName_hyperlink, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, hyperlinkNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_hyperlink, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, hyperlinkNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_hyperlink, -1);
 				iEvents_resetToDefault(thisCode, &hyperlinkNew->ev);
 				iObj_setSize(thisCode, hyperlinkNew, 0, 0, 100, 100);
 
@@ -2142,8 +2142,8 @@
 				pageframeNew->isRendered	= true;
 				pageframeNew->isPublished	= true;
 				var = iObjProp_get_variable_byIndex(thisCode, pageframeNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_pageframe, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, pageframeNew, _INDEX_CLASS);		iDatum_duplicate(&var->value, cgcName_pageframe, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, pageframeNew, _INDEX_BASECLASS);	iDatum_duplicate(&var->value, cgcName_pageframe, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, pageframeNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_pageframe, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, pageframeNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_pageframe, -1);
 				iEvents_resetToDefault(thisCode, &pageframeNew->ev);
 				iObj_setSize(thisCode, pageframeNew, 0, 0, 100, 100);
 
@@ -2198,8 +2198,8 @@
 				sessionNew->isRendered		= true;
 				sessionNew->isPublished		= true;
 				var = iObjProp_get_variable_byIndex(thisCode, sessionNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_session, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, sessionNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_session, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, sessionNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_session, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, sessionNew, _INDEX_CLASS);		iDatum_duplicate(&var->value, cgcName_session, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, sessionNew, _INDEX_BASECLASS);	iDatum_duplicate(&var->value, cgcName_session, -1);
 				iEvents_resetToDefault(thisCode, &sessionNew->ev);
 				iObj_setSize(thisCode, sessionNew, 0, 0, 100, 100);
 
@@ -2310,8 +2310,8 @@
 				exceptionNew->isRendered		= true;
 				exceptionNew->isPublished		= true;
 				var = iObjProp_get_variable_byIndex(thisCode, exceptionNew, _INDEX_NAME);			iDatum_duplicate(&var->value, cgcName_exception, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, exceptionNew, _INDEX_CLASS);		iDatum_duplicate(&var->value, cgcName_exception, -1);
-				var = iObjProp_get_variable_byIndex(thisCode, exceptionNew, _INDEX_BASECLASS);	iDatum_duplicate(&var->value, cgcName_exception, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, exceptionNew, _INDEX_CLASS);			iDatum_duplicate(&var->value, cgcName_exception, -1);
+				var = iObjProp_get_variable_byIndex(thisCode, exceptionNew, _INDEX_BASECLASS);		iDatum_duplicate(&var->value, cgcName_exception, -1);
 				iEvents_resetToDefault(thisCode, &exceptionNew->ev);
 				iObj_setSize(thisCode, exceptionNew, 0, 0, 100, 100);
 

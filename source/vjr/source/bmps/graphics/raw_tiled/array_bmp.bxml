@@ -44,7 +44,7 @@
 		<icon name="bookmarkAddHorizontal" tip="Adds horizontal bookmark at the current line and column"/>
 		<icon name="bookmarkDeleteHorizontal" tip="Delete horizontal bookmark at the current line and column"/>
 		<icon name="bookmarkPrevAllDocuments" tip="Goto the previous bookmark in all documents"/>
-		<icon name="bookmakrNextAllDocuments" tip="Goto the next bookmark in all documents"/>
+		<icon name="bookmarkNextAllDocuments" tip="Goto the next bookmark in all documents"/>
 		<icon name="bookmarkPrevCurrentDocument" tip="Goto the previous bookmark in the current document"/>
 		<icon name="bookmarkNextCurrentDocument" tip="Goto the next bookmark in the current document"/>
 		<icon name="bookmarkAdd" tip="Add bookmark at the current line"/>
@@ -281,8 +281,8 @@
 		<icon name="pull" tip="Pull icon"/>
 		<icon name="exit" tip="Exit icon"/>
 		
-		<icon name="unused" tip="unused"/>
-		<icon name="debug" tip="unused"/>
+		<icon name="close" tip="Close icon"/>
+		<icon name="debug" tip="Debug icon"/>
 		<icon name="new" tip="Creates a new document"/>
 		<icon name="run" tip="Run a new program"/>
 		<icon name="SourceLight" tip="SourceLight icon"/>

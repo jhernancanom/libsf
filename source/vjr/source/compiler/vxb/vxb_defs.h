@@ -228,11 +228,11 @@ struct SThisCode;
 	// Variable functions
 	SVariable*				iiVariable_terminateIndirect				(SThisCode* thisCode, SVariable* var);
 	SVariable*				iVariable_create							(SThisCode* thisCode, s32 tnVarType, SVariable* varIndirect, bool tlAllocateDefaultValue);
-	SVariable*				iVariable_createAndPopulate					(SThisCode* thisCode, s32 tnVarType, SDatum* datum, bool tlCreateReference);
-	SVariable*				iVariable_createAndPopulate					(SThisCode* thisCode, s32 tnVarType, u8*  tcData, u32 tnDataLength, bool tlCreateReference);
-	SVariable*				iVariable_createAndPopulate					(SThisCode* thisCode, s32 tnVarType, s8*  tcData, u32 tnDataLength, bool tlCreateReference);
-	SVariable*				iVariable_createAndPopulate					(SThisCode* thisCode, s32 tnVarType, cu8* tcData, u32 tnDataLength, bool tlCreateReference);
-	SVariable*				iVariable_createAndPopulate					(SThisCode* thisCode, s32 tnVarType, cs8* tcData, u32 tnDataLength, bool tlCreateReference);
+	SVariable*				iVariable_createAndPopulate_byDatum			(SThisCode* thisCode, s32 tnVarType, SDatum* datum, bool tlCreateReference);
+	SVariable*				iVariable_createAndPopulate_byText			(SThisCode* thisCode, s32 tnVarType, u8*  tcData, u32 tnDataLength, bool tlCreateReference);
+	SVariable*				iVariable_createAndPopulate_byText			(SThisCode* thisCode, s32 tnVarType, s8*  tcData, u32 tnDataLength, bool tlCreateReference);
+	SVariable*				iVariable_createAndPopulate_byText			(SThisCode* thisCode, s32 tnVarType, cu8* tcData, u32 tnDataLength, bool tlCreateReference);
+	SVariable*				iVariable_createAndPopulate_byText			(SThisCode* thisCode, s32 tnVarType, cs8* tcData, u32 tnDataLength, bool tlCreateReference);
 	SVariable*				iVariable_createByRadix						(SThisCode* thisCode, u64 tnValue, u64 tnBase, u32 tnPrefixChars, u32 tnPostfixChars);
 	SVariable*				iVariable_searchForName						(SThisCode* thisCode, s8* tcVarName, u32 tnVarNameLength, SComp* comp, bool tlCreateAsReference);
 	SVariable*				iiVariable_searchForName_variables			(SThisCode* thisCode, SVariable* varRoot, s8* tcVarName, u32 tnVarNameLength, SComp* comp, bool tlCreateAsReference);

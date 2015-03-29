@@ -112,6 +112,8 @@ struct SObjPropMap;
 	void					iiVjr_renderAccomplishment				(SBitmap* bmp, RECT* trc, s32 tnRAG, cs8* tcAccomplishment, s8* tcVersion, bool tlBold, bool tlItalic, bool tlUnderline, s32 tnAdjustAccomplishmentFontSize, s32 tnAdjustVersionFontSize);
 	void					iVjr_renderAccomplishments				(SBitmap* bmp, RECT* trc);
 
+	void					iDatum_duplicate						(SDatum* datumDst, SVariable* varSrc);
+
 
 //////////
 // objects/base.cpp
@@ -119,7 +121,7 @@ struct SObjPropMap;
 //////
 	SObject*				iObj_create								(SThisCode* thisCode, s32 objType, SObject* objParent);
 	SObject*				iObj_addChild							(SThisCode* thisCode, s32 objType, SObject* objParent);
-	SObject*				iObj_copy								(SThisCode* thisCode, SObject* template_obj, SObject* next, SObject* parent, bool tlCopyChildren, bool tlCreateSeparateBitmapBuffers);
+	SObject*				iObj_copy								(SThisCode* thisCode, SObject* template_obj, SObject* next, SObject* parent, bool tlCopyChildren, bool tlCopySiblings, bool tlCreateSeparateBitmapBuffers);
 	void					iObj_delete								(SThisCode* thisCode, SObject** obj, bool tlDeleteSelf, bool tlDeleteChildren, bool tlDeleteSiblings);
 	bool					iObj_setFocus							(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlClearOtherControlsWithFocus);
 	void					iObj_clearFocus							(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlClearChildren, bool tlClearSiblings);

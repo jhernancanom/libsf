@@ -905,7 +905,10 @@ struct SBasePropMap;
 	bool					iObjProp_set_f32_direct					(SThisCode* thisCode, SObject* obj, s32 tnIndex, f32 tfValue);
 	bool					iObjProp_set_f64_direct					(SThisCode* thisCode, SObject* obj, s32 tnIndex, f64 tfValue);
 	bool					iObjProp_set_sbgra_direct				(SThisCode* thisCode, SObject* obj, s32 tnIndex, SBgra color);
+
 	bool					iObjProp_copy_byIndex					(SThisCode* thisCode, SObject* objDst, s32 tnIndexDst, SObject* objSrc, s32 tnIndexSrc);
+	bool					iObjProp_copyAll						(SThisCode* thisCode, SObject* objDst, SObject* objSrc, bool tlCopyDynamicProperties);
+	bool					iObjProp_copyDynamic					(SThisCode* thisCode, SObject* objDst, SObject* objSrc);
 
 	// Used for SET xyz TO compNew/VarNew
 	bool					iObjProp_setOnOff						(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
