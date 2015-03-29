@@ -375,7 +375,7 @@ struct SObject
 	//////
 		SProperties		p;											// Common object properties
 		SVariable**		props;										// An allocated array of properties (varies in size by object)
-		u32				propsCount;									// The number of property variables allocated
+		s32				propsCount;									// The number of property variables allocated
 
 		// Related position in the member hierarchy
 		SVariable*	firstProperty;									// User-defined property (design time and runtime)

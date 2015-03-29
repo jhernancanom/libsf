@@ -222,6 +222,20 @@
 
 //////////
 //
+// An internal error track that could be used to report information in the runtime
+// environment
+//
+//////
+	void iError_track(void)
+	{
+		debug_nop;
+	}
+
+
+
+
+//////////
+//
 // Called to signal an error if the f32 value is outside the valid range for the target type
 //
 //////

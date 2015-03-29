@@ -674,6 +674,155 @@
 
 //////////
 //
+// Copy all of the properties
+//
+//////
+	bool iObjProp_copyAll(SThisCode* thisCode, SObject* objDst, SObject* objSrc, bool tlCopyDynamicProperties)
+	{
+		s32		lnI;
+		bool	llResult;
+
+
+// Untested code, breakpiont and examine
+debug_break;
+		// Make sure the environment is sane
+		llResult = false;
+		if (thisCode && objDst && objSrc && objSrc->props && objSrc->propsCount > 0)
+		{
+			//////////
+			// Delete any properties which already exist
+			//////
+				if (objDst->props && objDst->propsCount > 0)
+				{
+					// Delete the variables one-by-one
+					for (lnI = 0; lnI < objDst->propsCount; lnI++)
+					{
+						// Not all properties may be populated, but they should be
+						if (objDst->props[lnI])
+						{
+							// Delete the variable
+							iVariable_delete(thisCode, objDst->props[lnI], true);
+							objDst->props[lnI] = NULL;
+						}
+					}
+
+					// Delete the props allocation
+					free(objDst->props);
+					objDst->props = NULL;
+				}
+
+
+			//////////
+			// Allocate space for the props
+			//////
+				objDst->props = (SVariable**)malloc(objSrc->propsCount * sizeof(SObject*));
+				if (!objDst->props)
+				{
+					// Should never happen
+					debug_break;
+					iError_track();
+
+				} else {
+
+					//////////
+					// Iterate through each prop one by one
+					//////
+						for (lnI = 0; objSrc->propsCount; lnI++)
+						{
+							// Copy the property if populated
+							if (objSrc->props[lnI])
+								objDst->props[lnI] = iVariable_copy(thisCode, objSrc->props[lnI], false);
+						}
+
+
+					//////////
+					// Copy dynamic properties if need be
+					//////
+						if (tlCopyDynamicProperties)		llResult = iObjProp_copyDynamic(thisCode, objDst, objSrc);
+						else								llResult = true;
+				}
+
+		}
+
+		// Indicate success or failure
+		return(llResult);
+	}
+
+
+
+
+//////////
+//
+// Copy the dynamic runtime properties
+//
+//////
+	bool iObjProp_copyDynamic(SThisCode* thisCode, SObject* objDst, SObject* objSrc)
+	{
+		bool		llResult;
+		SVariable*	var;
+		SVariable*	varNew;
+		SVariable*	varNext;
+		SVariable**	varLast;
+
+
+		// Make sure our environment is sane
+// Untested code, breakpiont and examine
+debug_break;
+		llResult = false;
+		if (thisCode && objDst && objSrc)
+		{
+
+			//////////
+			// Delete any existing properties
+			//////
+				if (objDst->firstProperty)
+				{
+					// Delete each property in the chain
+					for (var = objDst->firstProperty; var; var = varNext)
+					{
+						// Grab the next property
+						varNext = var->ll.nextVar;
+
+						// Delete it
+						iVariable_delete(thisCode, var, true);
+					}
+
+					// Indicate they're gone
+					objDst->firstProperty = NULL;
+				}
+
+
+			//////////
+			// Early out
+			//////
+				if (!objSrc->firstProperty)
+					return(true);		// Nothing to copy
+
+
+			//////////
+			// Copy all of the existing properties
+			//////
+				varLast = &objSrc->firstProperty;
+				for (var = objSrc->firstProperty; var; var = var->ll.nextVar)
+				{
+					// Copy it
+					varNew = iVariable_copy(thisCode, var, false);
+
+					// Append it
+					iLl_appendExistingNodeAtEnd((SLL**)&objSrc->firstProperty, (SLL*)varNew);
+				}
+
+		}
+
+		// Indicate our status
+		return(llResult);
+	}
+
+
+
+
+//////////
+//
 // Called to set the value using an on/off component
 //
 //////

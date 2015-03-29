@@ -297,7 +297,10 @@
 				obj->bmpScaled	= NULL;
 
 
-// TODO:  Working here on copying all properties
+			//////////
+			// Copy all of the properties one-by-one
+			//////
+				iObjProp_copyAll(thisCode, obj, template_obj, true);
 
 
 			//////////
