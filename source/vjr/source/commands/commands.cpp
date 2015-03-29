@@ -3890,15 +3890,133 @@
 // Returns:
 //    The input pathname with the next extension.
 //////
+// Example:
+//    ? FORCEEXT("C:\MyDir\Foo.cpp", "txt")		&& Display "C:\MyDir\Foo.txt"
+//    ? FORCEEXT("C:\MyDir\Foo.cpp", ".txt")	&& Display "C:\MyDir\Foo.txt"
+//    ? FORCEEXT("C:\MyDir\Foo.cpp  ", "txt")	&& Display "C:\MyDir\Foo.txt"
+//    ? FORCEEXT("C:\MyDir.MyDir\Foo", "txt")	&& Display "C:\MyDir.MyDir\Foo.txt"
+//    ? FORCEEXT("C:\MyDir\Foo.cpp", "")		&& Display "C:\MyDir\Foo"
+//////
 	SVariable* function_forceext(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
 		SVariable* varPathname		= returnsParams->params[0];
 		SVariable* varNewExtension	= returnsParams->params[1];
+		SVariable*	result;
+		s32			lnFNamePos, lnExtPos;
+		
+		
+		//////////
+		// Parameter 1 must be character
+		//////
+			if (!iVariable_isValid(varPathname) || !iVariable_isTypeCharacter(varPathname))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varPathname), false);
+				return(NULL);
+			}
+
+		
+		//////////
+		// Parameter 2 must be character
+		//////
+			if (!iVariable_isValid(varNewExtension) || !iVariable_isTypeCharacter(varNewExtension))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNewExtension), false);
+				return(NULL);
+			}
+
+		//////////
+		// Based on its type, process it accordingly
+		//////
+			result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
+
+			if (ifunction_parser_pathname(thisCode, varPathname, &lnFNamePos, &lnExtPos, true))
+			{
+
+				if (varNewExtension->value.length >= 1)
+				{
+					// Do we need to add a point?
+					if (varNewExtension->value.data_s8[0] != '.')
+					{
+						// We need to append the string plus a point and the new extension
+						iDatum_allocateSpace(&result->value, lnExtPos + varNewExtension->value.length + 1);
+						memcpy(result->value.data_s8, varPathname->value.data_s8, lnExtPos);
+						result->value.data_u8[lnExtPos] = '.';
+						memcpy(result->value.data_s8 + lnExtPos + 1, varNewExtension->value.data_s8, varNewExtension->value.length);
+
+					} else {
+						// We need to append the string plus the new extension
+						iDatum_allocateSpace(&result->value, lnExtPos + varNewExtension->value.length);
+						memcpy(result->value.data_s8, varPathname->value.data_s8, lnExtPos);
+						memcpy(result->value.data_s8 + lnExtPos, varNewExtension->value.data_s8, varNewExtension->value.length);
+					}
+				} else {
+					// If varNewExtension is empty, we remove extension
+					iDatum_allocateSpace(&result->value, lnExtPos);
+					memcpy(result->value.data_s8, varPathname->value.data_s8, lnExtPos);
+				}			
+			}
 
 
-		// Not yet completed
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+		//////////
+		// Return our converted result
+		//////
+			return result;
+	}
+
+//////////
+// tnFNamePos indicate the position of the first character of file name
+// tnExtPos indicate the position of the first character of extension
+//////
+	bool ifunction_parser_pathname(SThisCode* thisCode, SVariable* varPathname, s32* tnFNamePos, s32* tnExtPos, bool tlRtrim)	
+	{
+		s8 lc;
+		s32 lnI;
+
+		//////////
+		// Make sure our environment is sane
+		//////
+			if (varPathname->value.length >= 1)
+			{
+
+				//////////
+				// We need to find "\" and period.
+				//////
+					*tnExtPos = varPathname->value.length;
+					*tnFNamePos = 0;
+
+					for (lnI =  varPathname->value.length - 1; lnI > 0; lnI--)
+					{
+						// Grab the character
+						lc = varPathname->value.data_u8[lnI];
+				
+						if (tlRtrim && lc == 32)
+						{
+							//RTrim space, if we are here we have not found yet a period or a valid character other than "\"
+							*tnExtPos = lnI;
+
+						}
+						else if (lc == '\\') {
+							// We found "\", we have finish
+							*tnFNamePos = lnI;
+							break;
+
+						}
+						else if (lc == '.')	{
+							// We found extension
+							*tnExtPos = lnI;
+
+						} else 
+							// If we encounter a character other than "\", "." or space we stop trimming
+							tlRtrim = false;
+					}
+
+				// varPathname is not empty
+				return true;
+			}
+
+		// varPathname is empty 
+		return false;
+
 	}
 
 
@@ -3929,10 +4047,66 @@
 		SVariable* varPathname		= returnsParams->params[0];
 		SVariable* varNewFilename	= returnsParams->params[1];
 
+		SVariable*	result;
+		s32			lnFNamePos, lnExtPos;
 
-		// Not yet completed
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+
+		//////////
+		// Parameter 1 must be character
+		//////
+			if (!iVariable_isValid(varPathname) || !iVariable_isTypeCharacter(varPathname))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varPathname), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Parameter 2 must be character
+		//////
+			if (!iVariable_isValid(varNewFilename) || !iVariable_isTypeCharacter(varNewFilename))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNewFilename), false);
+				return(NULL);
+			}
+
+		//////////
+		// Based on its type, process it accordingly
+		//////
+			result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
+
+			if (ifunction_parser_pathname(thisCode, varPathname, &lnFNamePos, &lnExtPos, true))
+			{
+
+				if (varNewFilename->value.length >= 1)
+				{
+					// Do we need to add a point?
+					if (varNewFilename->value.data_s8[0] != '\\')
+					{
+						// We need to append the string plus a point and the new extension
+						iDatum_allocateSpace(&result->value, lnFNamePos + varNewFilename->value.length + 1);
+						memcpy(result->value.data_s8, varPathname->value.data_s8, lnFNamePos);
+						result->value.data_u8[lnFNamePos] = '\\';
+						memcpy(result->value.data_s8 + lnFNamePos + 1, varNewFilename->value.data_s8, varNewFilename->value.length);
+
+					} else {
+						// We need to append the string plus the new extension
+						iDatum_allocateSpace(&result->value, lnFNamePos + varNewFilename->value.length);
+						memcpy(result->value.data_s8, varPathname->value.data_s8, lnFNamePos);
+						memcpy(result->value.data_s8 + lnFNamePos, varNewFilename->value.data_s8, varNewFilename->value.length);
+					}
+				} else {
+					// If varNewExtension is empty, we remove extension
+					iDatum_allocateSpace(&result->value, lnFNamePos);
+					memcpy(result->value.data_s8, varPathname->value.data_s8, lnFNamePos);
+				}			
+			}
+
+
+		//////////
+		// Return our converted result
+		//////
+			return result;
 	}
 
 
@@ -3940,7 +4114,7 @@
 
 //////////
 //
-// Function: FORCEEXT()
+// Function: FORCEPATH()
 // Takes a pathname and forces the path to the new value
 //
 //////
@@ -3963,10 +4137,69 @@
 		SVariable* varPathname		= returnsParams->params[0];
 		SVariable* varNewPathname	= returnsParams->params[1];
 
+		SVariable*	result;
+		s32			lnFNamePos, lnExtPos, lnLenght;
 
-		// Not yet completed
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+
+
+		//////////
+		// Parameter 1 must be character
+		//////
+			if (!iVariable_isValid(varPathname) || !iVariable_isTypeCharacter(varPathname))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varPathname), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Parameter 2 must be character
+		//////
+		if (!iVariable_isValid(varNewPathname) || !iVariable_isTypeCharacter(varNewPathname))
+		{
+			iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNewPathname), false);
+			return(NULL);
+		}
+
+		//////////
+		// Based on its type, process it accordingly
+		//////
+			result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
+
+			if (ifunction_parser_pathname(thisCode, varPathname, &lnFNamePos, &lnExtPos, true))
+			{
+				lnLenght = varPathname->value.length - lnFNamePos;
+				lnFNamePos++;
+
+				if (varNewPathname->value.length >= 1)
+				{
+					// Do we need to add a point?
+					if (varNewPathname->value.data_s8[varNewPathname->value.length-1] != '\\')
+					{
+						// We need to append the string plus a point and the new extension
+						iDatum_allocateSpace(&result->value, lnLenght + varNewPathname->value.length);
+						memcpy(result->value.data_s8, varNewPathname->value.data_s8, varNewPathname->value.length);
+						result->value.data_u8[varNewPathname->value.length] = '\\';
+						memcpy(result->value.data_s8 + varNewPathname->value.length + 1, varPathname->value.data_s8 + lnFNamePos, lnLenght);
+
+					} else {
+						// We need to append the string plus the new path
+						iDatum_allocateSpace(&result->value, lnLenght + varNewPathname->value.length - 1);
+						memcpy(result->value.data_s8, varNewPathname->value.data_s8, varNewPathname->value.length);
+						memcpy(result->value.data_s8 + varNewPathname->value.length, varPathname->value.data_s8 + lnFNamePos, lnLenght);
+					}
+				} else {
+					// If varNewPathname is empty, we remove path
+					iDatum_allocateSpace(&result->value, lnLenght - 1);
+					memcpy(result->value.data_s8, varPathname->value.data_s8 + lnFNamePos, lnLenght);
+				}			
+			}
+
+
+		//////////
+		// Return our converted result
+		//////
+			return result;
 	}
 
 
@@ -3997,10 +4230,63 @@
 		SVariable* varPathname	= returnsParams->params[0];
 		SVariable* varNewStem	= returnsParams->params[1];
 
+		SVariable*	result;
+		s32			lnFNamePos, lnExtPos, lnLenghtStem, lnLenghtExt;
 
-		// Not yet completed
-		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, NULL, false);
-		return(NULL);
+
+
+		//////////
+		// Parameter 1 must be character
+		//////
+			if (!iVariable_isValid(varPathname) || !iVariable_isTypeCharacter(varPathname))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varPathname), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Parameter 2 must be character
+		//////
+			if (!iVariable_isValid(varNewStem) || !iVariable_isTypeCharacter(varNewStem))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNewStem), false);
+				return(NULL);
+			}
+
+		//////////
+		// Based on its type, process it accordingly
+		//////
+			result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
+
+			if (ifunction_parser_pathname(thisCode, varPathname, &lnFNamePos, &lnExtPos, true))
+			{
+				lnLenghtStem = varPathname->value.length - lnFNamePos - lnExtPos;
+				lnLenghtExt = varPathname->value.length - lnExtPos;
+				lnFNamePos++;
+
+				if (varNewStem->value.length >= 1)
+				{
+					// We need to append the string plus the new path
+					iDatum_allocateSpace(&result->value, lnFNamePos + varNewStem->value.length + lnLenghtExt);
+					memcpy(result->value.data_s8, varPathname->value.data_s8, lnFNamePos);
+					memcpy(result->value.data_s8 + lnFNamePos, varNewStem->value.data_s8, varNewStem->value.length);
+					memcpy(result->value.data_s8 + lnFNamePos + varNewStem->value.length, varPathname->value.data_s8 + lnExtPos, lnLenghtExt);
+
+				} else {
+					// If varNewPathname is empty, we remove path
+					iDatum_allocateSpace(&result->value, lnFNamePos + lnLenghtExt);
+					memcpy(result->value.data_s8, varPathname->value.data_s8, lnFNamePos);
+					memcpy(result->value.data_s8 + lnFNamePos, varPathname->value.data_s8 + lnExtPos, lnLenghtExt);
+				}			
+			}
+
+
+		//////////
+		// Return our converted result
+		//////
+			return result;
+
 	}
 
 
@@ -8838,7 +9124,7 @@ debug_break;
 //////
 // Parameters:
 //     varExpr			-- Any, to convert
-//	   varIgnoreList	-- Charasters to ignore
+//	   varIgnoreList	-- Characters to ignore
 //
 //////
 // Returns:
