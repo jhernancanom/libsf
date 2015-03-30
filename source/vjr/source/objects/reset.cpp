@@ -149,13 +149,6 @@
 
 
 			//////////
-			// Events
-			//////
-				*(uptr*)&form->ev.general.activate		= (uptr)&iDefaultCallback_onActivate;
-				*(uptr*)&form->ev.general.deactivate	= (uptr)&iDefaultCallback_onDeactivate;
-
-
-			//////////
 			// Reset our min/max
 			//////
 				SetRect(&form->p.rcMax, -1, -1, -1, -1);
@@ -363,13 +356,6 @@
 				propSetForeColor(subform, blackColor);
 				propSetIcon(subform, bmpVjrIcon);
 				propSetCaption(subform, cgcName_subform);
-
-
-			//////////
-			// Events
-			//////
-				*(uptr*)&subform->ev.general.activate		= (uptr)&iDefaultCallback_onActivate;
-				*(uptr*)&subform->ev.general.deactivate		= (uptr)&iDefaultCallback_onDeactivate;
 
 
 			//////////
@@ -602,12 +588,6 @@
 				propSetDisabledBackColor(textbox, disabledBackColor);
 				propSetDisabledForeColor(textbox, disabledForeColor);
 
-
-			//////////
-			// Indicate the callback handler
-			//////
-				*(u32*)&textbox->ev.general.onInteractiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
-				*(u32*)&textbox->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
@@ -648,12 +628,6 @@
 				propSetDisabledBackColor(button, disabledBackColor);
 				propSetDisabledForeColor(button, disabledForeColor);
 
-
-			//////////
-			// Events
-			//////
-				*(u32*)&button->ev.general.onInteractiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
-				*(u32*)&button->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
@@ -700,12 +674,6 @@
 				iSEM_deleteChain(thisCode, &editbox->p.sem, true);
 				editbox->p.sem = iSEM_allocate(thisCode, false);
 
-
-			//////////
-			// Events
-			//////
-				*(u32*)&editbox->ev.general.onInteractiveChange		= *(u32*)&iDefaultCallback_onInteractiveChange;
-				*(u32*)&editbox->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
@@ -737,11 +705,6 @@
 				propSetStyle(image, _IMAGE_STYLE_OPAQUE);
 				propSetPictureBmp(image, bmpNoImage);
 
-
-			//////////
-			// Events
-			//////
-				*(u32*)&image->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
@@ -790,13 +753,6 @@
 				propSetBorderColor(checkbox, blackColor);
 				propSetDisabledBackColor(checkbox, disabledBackColor);
 				propSetDisabledForeColor(checkbox, disabledForeColor);
-
-
-			//////////
-			// Events
-			//////
-				*(u32*)&checkbox->ev.general.onInteractiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
-				*(u32*)&checkbox->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 
 
 			//////////
@@ -899,14 +855,6 @@
 				propSetCount(option, 0);
 				propSetMultiSelect(option, _LOGICAL_FALSE);
 
-
-			//////////
-			// Events
-			//////
-				*(u32*)&option->ev.general.onSelect				= *(u32*)&iDefaultCallback_onSelect;
-				*(u32*)&option->ev.general.onDeselect			= *(u32*)&iDefaultCallback_onDeselect;
-				*(u32*)&option->ev.general.onInteractiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
-				*(u32*)&option->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 
@@ -954,12 +902,6 @@
 				propSetDisabledBackColor(radio, disabledBackColor);
 				propSetDisabledForeColor(radio, disabledForeColor);
 
-
-			//////////
-			// Events
-			//////
-				*(u32*)&radio->ev.general.onInteractiveChange	= *(u32*)&iDefaultCallback_onInteractiveChange;
-				*(u32*)&radio->ev.general.onProgrammaticChange	= *(u32*)&iDefaultCallback_onProgrammaticChange;
 		}
 	}
 

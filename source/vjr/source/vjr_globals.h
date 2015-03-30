@@ -651,6 +651,8 @@
 	SObject*			output								= NULL;
 	SObject*			sourceLight							= NULL;
 	SObject*			sourceLight_empty					= NULL;
+	SObject*			sourceCode_carousel					= NULL;
+	SObject*			sourceCode_rider					= NULL;
 	SObject*			sourceCode_editbox					= NULL;
 	SObject*			locals_editbox						= NULL;
 	SObject*			watch_editbox						= NULL;

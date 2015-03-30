@@ -186,9 +186,6 @@
 		bmpNoImage = iBmp_allocate();
 		iBmp_createBySize(bmpNoImage, 1, 1, 24);
 
-		// Initialize event dispatch variables
-		iEvents_init(NULL);
-
 		// Initialize primitive variables
 		iVariable_createDefaultValues(NULL);
 		iVariable_createPropsMaster(NULL);
