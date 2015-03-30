@@ -87,6 +87,12 @@
 // Default callbacks
 //
 //////
+	bool iDefaultCallback_resize(SThisCode* thisCode, SWindow* win, SObject* obj)
+	{
+		// Assume the resize was okay
+		return(true);
+	}
+
 	bool iDefaultCallback_onLoad(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
 		// Assume it's okay to load

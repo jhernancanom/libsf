@@ -785,7 +785,7 @@
 		//////
 			iObjProp_set_character_direct(thisCode, command, _INDEX_CAPTION, cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
 			command_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, command_editbox, (uptr)&iSEM_onKeyDown);
+			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, command_editbox, (uptr)&iSEM_onKeyDown_sourceCode);
 			command_editbox->p.hasFocus					= true;
 			command_editbox->p.sem->showCursorLine		= true;
 			command_editbox->p.sem->isSourceCode		= true;

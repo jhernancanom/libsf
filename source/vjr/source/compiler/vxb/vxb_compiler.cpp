@@ -8808,7 +8808,7 @@ debug_break;
 				//////////
 				// We can directly return the value
 				//////
-					return(*(u32*)var->value.data);
+					return(*(s32*)var->value.data);
 
 
 			case _VAR_TYPE_U32:

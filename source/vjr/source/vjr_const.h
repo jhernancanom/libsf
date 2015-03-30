@@ -460,6 +460,8 @@ typedef SEM**		SEMpp;
 	const u32			_EVENT_ONKEYDOWN					= 34;
 	const u32			_EVENT_ONKEYUP						= 35;
 
+	const u32			_EVENT_MAX_COUNT					= 35;
+
 
 //////////
 // Image styles

@@ -395,6 +395,7 @@ struct SObjPropMap;
 //////////
 // objects/callbacks.cpp
 //////
+	bool					iDefaultCallback_resize					(SThisCode* thisCode, SWindow* win, SObject* obj);
 	bool					iDefaultCallback_onLoad					(SThisCode* thisCode, SWindow* win, SObject* obj);
 	bool					iDefaultCallback_onInit					(SThisCode* thisCode, SWindow* win, SObject* obj);
 	bool					iDefaultCallback_onCreated				(SThisCode* thisCode, SWindow* win, SObject* obj);
@@ -405,7 +406,7 @@ struct SObjPropMap;
 	bool					iDefaultCallback_onUnload				(SThisCode* thisCode, SWindow* win, SObject* obj);
 	bool					iDefaultCallback_onGotFocus				(SThisCode* thisCode, SWindow* win, SObject* obj);
 	bool					iDefaultCallback_onLostFocus			(SThisCode* thisCode, SWindow* win, SObject* obj);
-	bool					iiDefaultCallback_processMouseVariables	(SThisCode* thisCode, 							 SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick, s32* lnX, s32* lnY, bool* llCtrl, bool* llAlt, bool* llShift, u32* lnClick);
+	bool					iiDefaultCallback_processMouseVariables	(SThisCode* thisCode, 							  SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick, s32* lnX, s32* lnY, bool* llCtrl, bool* llAlt, bool* llShift, u32* lnClick);
 	bool					iDefaultCallback_onMouseClickEx			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
 	bool					iDefaultCallback_onMouseDblClickEx		(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
 	bool					iDefaultCallback_onMouseWheel			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick, SVariable* varUnits);

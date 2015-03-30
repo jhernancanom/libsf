@@ -178,54 +178,42 @@
 			//////////
 			// Reset general events
 			//////
-// TODO:  Working here ... replacing these events with an index into obj->ev.methods[] for each...
- 				*(uptr*)&g->onLoad					= (uptr)&iDefaultCallback_onLoad;
-// 				*(uptr*)&g->onInit					= (uptr)&iDefaultCallback_onInit;
-// 				*(uptr*)&g->onCreated				= (uptr)&iDefaultCallback_onCreated;
-// 				*(uptr*)&g->onResize				= (uptr)&iDefaultCallback_onResize;
-// 				*(uptr*)&g->onMoved					= (uptr)&iDefaultCallback_onMoved;
-// 				*(uptr*)&g->onRender				= (uptr)&iDefaultCallback_onRender;
-// 				*(uptr*)&g->onPublish				= (uptr)&iDefaultCallback_onPublish;
-// 				*(uptr*)&g->onQueryUnload			= (uptr)&iDefaultCallback_onQueryUnload;
-// 				*(uptr*)&g->onDestroy				= (uptr)&iDefaultCallback_onDestroy;
-// 				*(uptr*)&g->onUnload				= (uptr)&iDefaultCallback_onUnload;
-// 				*(uptr*)&g->onGotFocus				= (uptr)&iDefaultCallback_onGotFocus;
-// 				*(uptr*)&g->onLostFocus				= (uptr)&iDefaultCallback_onLostFocus;
-// 				*(uptr*)&g->onAddObject				= (uptr)&iDefaultCallback_onAddObject;
-// 				*(uptr*)&g->onAddProperty			= (uptr)&iDefaultCallback_onAddProperty;
-// 				*(uptr*)&g->onError					= (uptr)&iDefaultCallback_onError;
-// 				*(uptr*)&g->onScrolled				= (uptr)&iDefaultCallback_onScrolled;
-// 				*(uptr*)&g->activate				= (uptr)&iDefaultCallback_onActivate;
-// 				*(uptr*)&g->deactivate				= (uptr)&iDefaultCallback_onDeactivate;
-// 				*(uptr*)&g->onSelect				= (uptr)&iDefaultCallback_onSelect;
-// 				*(uptr*)&g->onDeselect				= (uptr)&iDefaultCallback_onDeselect;
-// 				*(uptr*)&g->onInteractiveChange		= (uptr)&iDefaultCallback_onInteractiveChange;
-// 				*(uptr*)&g->onProgrammaticChange	= (uptr)&iDefaultCallback_onProgrammaticChange;
-// 				*(uptr*)&g->onSetActiveControl		= (uptr)&iDefaultCallback_onSetActiveControl;
-// 				*(uptr*)&g->onSpin					= (uptr)&iDefaultCallback_onSpin;
-// 				*(uptr*)&g->onSpin					= (uptr)&iDefaultCallback_onSpin;
-// 
-// 
-// 			//////////
-// 			// Reset mouse events
-// 			//////
-// 				*(uptr*)&m->onMouseClickEx			= (uptr)&iDefaultCallback_onMouseClickEx;
-// 				*(uptr*)&m->onMouseDblClickEx		= (uptr)&iDefaultCallback_onMouseDblClickEx;
-// 				*(uptr*)&m->onMouseWheel			= (uptr)&iDefaultCallback_onMouseWheel;
-// 				*(uptr*)&m->onMouseMove				= (uptr)&iDefaultCallback_onMouseMove;
-// 				*(uptr*)&m->onMouseDown				= (uptr)&iDefaultCallback_onMouseDown;
-// 				*(uptr*)&m->onMouseUp				= (uptr)&iDefaultCallback_onMouseUp;
-// 				*(uptr*)&m->onMouseEnter			= (uptr)&iDefaultCallback_onMouseEnter;
-// 				*(uptr*)&m->onMouseLeave			= (uptr)&iDefaultCallback_onMouseLeave;
-// 				*(uptr*)&m->onMouseHover			= (uptr)&iDefaultCallback_onMouseHover;
-// 
-// 
-// 			//////////
-// 			// Reset keyboard events
-// 			//////
-// 				*(uptr*)&k->onKeyDown			= (uptr)&iDefaultCallback_onKeyDown;
-// 				*(uptr*)&k->onKeyUp				= (uptr)&iDefaultCallback_onKeyUp;
-
+				obj->ev.methods[_EVENT_RESIZE]._event					= (uptr)&iDefaultCallback_resize;
+				obj->ev.methods[_EVENT_ONLOAD]._event					= (uptr)&iDefaultCallback_onLoad;
+				obj->ev.methods[_EVENT_ONINIT]._event					= (uptr)&iDefaultCallback_onInit;
+				obj->ev.methods[_EVENT_ONCREATED]._event				= (uptr)&iDefaultCallback_onCreated;
+				obj->ev.methods[_EVENT_ONRESIZE]._event					= (uptr)&iDefaultCallback_onResize;
+				obj->ev.methods[_EVENT_ONMOVED]._event					= (uptr)&iDefaultCallback_onMoved;
+				obj->ev.methods[_EVENT_ONRENDER]._event					= (uptr)&iDefaultCallback_onRender;
+				obj->ev.methods[_EVENT_ONPUBLISH]._event				= (uptr)&iDefaultCallback_onPublish;
+				obj->ev.methods[_EVENT_ONQUERYUNLOAD]._event			= (uptr)&iDefaultCallback_onQueryUnload;
+				obj->ev.methods[_EVENT_ONDESTROY]._event				= (uptr)&iDefaultCallback_onDestroy;
+				obj->ev.methods[_EVENT_ONUNLOAD]._event					= (uptr)&iDefaultCallback_onUnload;
+				obj->ev.methods[_EVENT_ONGOTFOCUS]._event				= (uptr)&iDefaultCallback_onGotFocus;
+				obj->ev.methods[_EVENT_ONLOSTFOCUS]._event				= (uptr)&iDefaultCallback_onLostFocus;
+				obj->ev.methods[_EVENT_ONADDOBJECT]._event				= (uptr)&iDefaultCallback_onAddObject;
+				obj->ev.methods[_EVENT_ONADDPROPERTY]._event			= (uptr)&iDefaultCallback_onAddProperty;
+				obj->ev.methods[_EVENT_ONERROR]._event					= (uptr)&iDefaultCallback_onError;
+				obj->ev.methods[_EVENT_ONSCROLLED]._event				= (uptr)&iDefaultCallback_onScrolled;
+				obj->ev.methods[_EVENT_ACTIVATE]._event					= (uptr)&iDefaultCallback_onActivate;
+				obj->ev.methods[_EVENT_DEACTIVATE]._event				= (uptr)&iDefaultCallback_onDeactivate;
+				obj->ev.methods[_EVENT_ONSELECT]._event					= (uptr)&iDefaultCallback_onSelect;
+				obj->ev.methods[_EVENT_ONDESELECT]._event				= (uptr)&iDefaultCallback_onDeselect;
+				obj->ev.methods[_EVENT_ONINTERACTIVECHANGE]._event		= (uptr)&iDefaultCallback_onInteractiveChange;
+				obj->ev.methods[_EVENT_ONPROGRAMMATICCHANGE]._event		= (uptr)&iDefaultCallback_onProgrammaticChange;
+				obj->ev.methods[_EVENT_ONSETACTIVECONTROL]._event		= (uptr)&iDefaultCallback_onSetActiveControl;
+				obj->ev.methods[_EVENT_ONSPIN]._event					= (uptr)&iDefaultCallback_onSpin;
+				obj->ev.methods[_EVENT_ONMOUSECLICKEX]._event			= (uptr)&iDefaultCallback_onMouseClickEx;
+				obj->ev.methods[_EVENT_ONMOUSEDBLCLICKEX]._event		= (uptr)&iDefaultCallback_onMouseDblClickEx;
+				obj->ev.methods[_EVENT_ONMOUSEWHEEL]._event				= (uptr)&iDefaultCallback_onMouseWheel;
+				obj->ev.methods[_EVENT_ONMOUSEMOVE]._event				= (uptr)&iDefaultCallback_onMouseMove;
+				obj->ev.methods[_EVENT_ONMOUSEDOWN]._event				= (uptr)&iDefaultCallback_onMouseDown;
+				obj->ev.methods[_EVENT_ONMOUSEUP]._event				= (uptr)&iDefaultCallback_onMouseUp;
+				obj->ev.methods[_EVENT_ONMOUSEENTER]._event				= (uptr)&iDefaultCallback_onMouseEnter;
+				obj->ev.methods[_EVENT_ONMOUSELEAVE]._event				= (uptr)&iDefaultCallback_onMouseLeave;
+				obj->ev.methods[_EVENT_ONMOUSEHOVER]._event				= (uptr)&iDefaultCallback_onMouseHover;
+				obj->ev.methods[_EVENT_ONKEYDOWN]._event				= (uptr)&iDefaultCallback_onKeyDown;
+				obj->ev.methods[_EVENT_ONKEYUP]._event					= (uptr)&iDefaultCallback_onKeyUp;
 		}
 	}
 

@@ -316,8 +316,7 @@ struct SEvent
 struct SEvents
 {
 	// Array of events for the class
-	SEvent**	methods;											// Pointer to the events array
-	u32			eventsCount;										// Number of events allocated for this object
+	SEvent		methods[_EVENT_MAX_COUNT];							// Pointer to the the array for every built-in event/method handler
 
 	// Holds status for changes
 	u32			_lastClick;											// When the last mouseClickEx was called, what was the tnClick value?
@@ -326,7 +325,7 @@ struct SEvents
 	bool		isMouseOver;										// Used for signaling enter/leave events
 
 	u32			startHoverTickCount;								// At each last mouseMove the startHoverTickCount is set, if the interval elapses the hover event is triggered
-	SHover*		hover;												// If there's an active hover, this value is not NULL
+	SHover		hover;												// If there's an active hover, this value is not NULL
 	bool		hasHoverSignaled;									// If the hover has signaled already on this control
 
 	// onMouseMove

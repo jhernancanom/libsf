@@ -769,40 +769,44 @@ debug_nop;
 			switch (tnEventId)
 			{
 				case _EVENT_ONMOUSEMOVE:
-					return(obj->ev.methods[_EVENT_ONMOUSEMOVE]->event_8(thisCode, win, obj,		obj->ev.varX_onMouseMove,			obj->ev.varY_onMouseMove,
+					return(obj->ev.methods[_EVENT_ONMOUSEMOVE].event_8(thisCode, win, obj,		obj->ev.varX_onMouseMove,			obj->ev.varY_onMouseMove,
 																								obj->ev.varCtrl_onMouseMove,		obj->ev.varAlt_onMouseMove,			obj->ev.varShift_onMouseMove,
 																								obj->ev.varClick_onMouseMove));
 
 				case _EVENT_ONMOUSEDOWN:
-					return(obj->ev.methods[_EVENT_ONMOUSEMOVE]->event_8(thisCode, win, obj,		obj->ev.varX_onMouseDown,			obj->ev.varY_onMouseDown,
+					return(obj->ev.methods[_EVENT_ONMOUSEDOWN].event_8(thisCode, win, obj,		obj->ev.varX_onMouseDown,			obj->ev.varY_onMouseDown,
 																								obj->ev.varCtrl_onMouseDown,		obj->ev.varAlt_onMouseDown,			obj->ev.varShift_onMouseDown,
 																								obj->ev.varClick_onMouseDown));
 				case _EVENT_ONMOUSEUP:
-					return(obj->ev.methods[_EVENT_ONMOUSEUP]->event_8(thisCode, win, obj,		obj->ev.varX_onMouseUp,				obj->ev.varY_onMouseUp,
+					return(obj->ev.methods[_EVENT_ONMOUSEUP].event_8(thisCode, win, obj,		obj->ev.varX_onMouseUp,				obj->ev.varY_onMouseUp,
 																								obj->ev.varCtrl_onMouseUp,			obj->ev.varAlt_onMouseUp,			obj->ev.varShift_onMouseUp,
 																								obj->ev.varClick_onMouseUp));
 				case _EVENT_ONMOUSEENTER:
+					return(obj->ev.methods[_EVENT_ONMOUSEENTER].event_1(thisCode, win, obj));
+
 				case _EVENT_ONMOUSELEAVE:
+					return(obj->ev.methods[_EVENT_ONMOUSELEAVE].event_1(thisCode, win, obj));
+
 				case _EVENT_ONMOUSEHOVER:
-					break;
+					return(obj->ev.methods[_EVENT_ONMOUSEHOVER].event_1(thisCode, win, obj));
 
 				case _EVENT_ONMOUSEWHEEL:
-					return(obj->ev.methods[_EVENT_ONMOUSEWHEEL]->event_9(thisCode, win, obj,	obj->ev.varX_onMouseWheel,			obj->ev.varY_onMouseWheel,
+					return(obj->ev.methods[_EVENT_ONMOUSEWHEEL].event_9(thisCode, win, obj,		obj->ev.varX_onMouseWheel,			obj->ev.varY_onMouseWheel,
 																								obj->ev.varCtrl_onMouseWheel,		obj->ev.varAlt_onMouseWheel,		obj->ev.varShift_onMouseWheel,
 																								obj->ev.varClick_onMouseWheel,
 																								obj->ev.varDeltaY_onMouseWheel));
 				case _EVENT_ONMOUSECLICKEX:
-					return(obj->ev.methods[_EVENT_ONMOUSECLICKEX]->event_8(thisCode, win, obj,	obj->ev.varX_onMouseClickEx,		obj->ev.varY_onMouseClickEx,
+					return(obj->ev.methods[_EVENT_ONMOUSECLICKEX].event_8(thisCode, win, obj,	obj->ev.varX_onMouseClickEx,		obj->ev.varY_onMouseClickEx,
 																								obj->ev.varCtrl_onMouseClickEx,		obj->ev.varAlt_onMouseClickEx,		obj->ev.varShift_onMouseClickEx,
 																								obj->ev.varClick_onMouseClickEx));
 
 
 				case _EVENT_ONKEYDOWN:
-					return(obj->ev.methods[_EVENT_ONKEYDOWN]->event_10(thisCode, win, obj,		obj->ev.varCtrl_onKeyDown,			obj->ev.varAlt_onKeyDown,			obj->ev.varShift_onKeyDown,
+					return(obj->ev.methods[_EVENT_ONKEYDOWN].event_10(thisCode, win, obj,		obj->ev.varCtrl_onKeyDown,			obj->ev.varAlt_onKeyDown,			obj->ev.varShift_onKeyDown,
 																								obj->ev.varCaps_onKeyDown,			obj->ev.varAsciiChar_onKeyDown,		obj->ev.varVKey_onKeyDown,
 																								obj->ev.varIsCAS_onKeyDown,			obj->ev.varIsAscii_onKeyDown));
 				case _EVENT_ONKEYUP:
-					return(obj->ev.methods[_EVENT_ONKEYUP]->event_10(thisCode, win, obj,		obj->ev.varCtrl_onKeyUp,			obj->ev.varAlt_onKeyUp,				obj->ev.varShift_onKeyUp,
+					return(obj->ev.methods[_EVENT_ONKEYUP].event_10(thisCode, win, obj,			obj->ev.varCtrl_onKeyUp,			obj->ev.varAlt_onKeyUp,				obj->ev.varShift_onKeyUp,
 																								obj->ev.varCaps_onKeyUp,			obj->ev.varAsciiChar_onKeyUp,		obj->ev.varVKey_onKeyUp,
 																								obj->ev.varIsCAS_onKeyUp,			obj->ev.varIsAscii_onKeyUp));
 			}
@@ -822,6 +826,21 @@ debug_nop;
 //////
 	bool iEngine_set_event(SThisCode* thisCode, s32 tnEventId, SWindow* win, SObject* obj, uptr p1)
 	{
+		// Make sure our environment is sane
+		if (obj)
+		{
+			// Is it a valid event range?
+			if (tnEventId >= 0 && tnEventId <= _EVENT_MAX_COUNT)
+			{
+				// Set the event
+				obj->ev.methods[tnEventId]._event = p1;
+
+				// Indicate success
+				return(true);
+			}
+		}
+
+		// Indicate failure
 		return(false);
 	}
 
