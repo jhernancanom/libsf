@@ -438,7 +438,7 @@
 						iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, bmpCarouselIcon->bi.biWidth, bmpCarouselIcon->bi.biHeight);
 
 						// Carousel icon
-						iObjProp_set_bitmap_direct(thisCode, objChild, _INDEX_PICTUREBMP,			bmpCarouselIcon);
+						iObjProp_set_bitmap_direct(thisCode, objChild, _INDEX_PICTUREBMP,		bmpCarouselIcon);
 						iObjProp_set_bitmap_direct(thisCode, objChild, _INDEX_PICTUREBMP_DOWN,	bmpCarouselIcon);
 						iObjProp_set_bitmap_direct(thisCode, objChild, _INDEX_PICTUREBMP_OVER,	bmpCarouselIcon);
 
@@ -446,6 +446,7 @@
 						bmp = iObjProp_get_bitmap(thisCode, objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
 						bmp = iObjProp_get_bitmap(thisCode, objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
 						propSetVisible(objChild, _LOGICAL_TRUE);
+
 
 					} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName_byText(objChild, cgcName_caption)) {
 						// Caption
@@ -455,12 +456,28 @@
 						objChild->p.font = iFont_create(cgcFontName_windowTitleBar, 12, FW_NORMAL, false, false);
 						propSetVisible(objChild, _LOGICAL_TRUE);
 
+
+					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconCarousel)) {
+						// Adjust the size
+						iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, bmpCarouselTabsIcon->bi.biWidth, bmpCarouselTabsIcon->bi.biHeight);
+
+						// Carousel tabs icon
+						iObjProp_set_bitmap_direct(thisCode, objChild, _INDEX_PICTUREBMP,		bmpCarouselTabsIcon);
+						iObjProp_set_bitmap_direct(thisCode, objChild, _INDEX_PICTUREBMP_DOWN,	bmpCarouselTabsIcon);
+						iObjProp_set_bitmap_direct(thisCode, objChild, _INDEX_PICTUREBMP_OVER,	bmpCarouselTabsIcon);
+
+						// Add highlighting for the over and down
+						bmp = iObjProp_get_bitmap(thisCode, objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
+						bmp = iObjProp_get_bitmap(thisCode, objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
+						propSetVisible(objChild, _LOGICAL_TRUE);
+
+
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconClose)) {
 						// Adjust the size
 						iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, bmpCarouselIcon->bi.biWidth, bmpCarouselIcon->bi.biHeight);
 
 						// Close icon
-						iObjProp_set_bitmap_direct(thisCode, objChild, _INDEX_PICTUREBMP,			bmpClose);
+						iObjProp_set_bitmap_direct(thisCode, objChild, _INDEX_PICTUREBMP,		bmpClose);
 						iObjProp_set_bitmap_direct(thisCode, objChild, _INDEX_PICTUREBMP_DOWN,	bmpClose);
 						iObjProp_set_bitmap_direct(thisCode, objChild, _INDEX_PICTUREBMP_OVER,	bmpClose);
 

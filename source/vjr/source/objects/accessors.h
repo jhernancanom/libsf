@@ -1677,6 +1677,7 @@ struct SBasePropMap;
 	SObjPropMap gsProps_carousel[] =
 	{
 		{	_INDEX_ACTIVECONTROL,			0, 0, 0 },		// Item in this.controls[] which is being presented left-most
+		{	_INDEX_ALIGNMENT,				0, 0, 0 },		// Where should the tabs be?  Left, Right, Top, Bottom?
 		{	_INDEX_AUTOSIZE,				0, 0, 0 },
 		{	_INDEX_BACKCOLOR,				0, 0, 0 },
 		{	_INDEX_BACKSTYLE,				0, 0, 0 },
@@ -1705,7 +1706,9 @@ struct SBasePropMap;
 		{	_INDEX_OBJECTS,					0, 0, 0 },
 		{	_INDEX_READONLY,				0, 0, 0 },
 		{	_INDEX_SECOLOR,					0, 0, 0 },
+		{	_INDEX_SPECIALEFFECT,			0, 0, 0	},
 		{	_INDEX_SWCOLOR,					0, 0, 0 },
+		{	_INDEX_TITLEBAR,				0, 0, 0 },
 		{	_INDEX_TOP,						0, 0, 0 },
 		{	_INDEX_VISIBLE,					0, 0, 0 },
 		{	_INDEX_WIDTH,					0, 0, 0 },

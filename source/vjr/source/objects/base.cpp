@@ -2103,8 +2103,8 @@
 //////
 	void iObj_setSize(SThisCode* thisCode, SObject* obj, s32 tnLeft, s32 tnTop, s32 tnWidth, s32 tnHeight)
 	{
-		s32			lnAlignment, lnBorderStyle;
-		bool		llTitleBar;
+		s32			lnAlignment, lnBorderStyle, lnLeft, lnRight, lnTop, lnBottom;
+		bool		llTitleBar, llBorder;
 		SObject*	objChild;
 		SBitmap*	bmp;
 		RECT		lrc;
@@ -2129,6 +2129,8 @@
 			case _OBJ_TYPE_EMPTY:
 				// Just use the default rcClient settings above
 				break;
+
+
 
 			case _OBJ_TYPE_FORM:
 				// The client portion of a form is inset so as to allow for the border
@@ -2203,6 +2205,7 @@
 							// Update the size
 							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
+
 						} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName_byText(objChild, cgcName_caption)) {
 							// Caption
 							logfunc("form caption");
@@ -2214,6 +2217,7 @@
 
 							// Update the size
 							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
+
 
 						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconMove)) {
 							// Move icon
@@ -2227,6 +2231,7 @@
 							// Update the size
 							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
+
 						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconMinimize)) {
 							// Minimize icon
 							logfunc("form minimize icon");
@@ -2238,6 +2243,7 @@
 
 							// Update the size
 							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
+
 
 						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconMaximize)) {
 							// Maximize icon
@@ -2251,6 +2257,7 @@
 							// Update the size
 							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
+
 						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconClose)) {
 							// Close icon
 							logfunc("form close icon");
@@ -2262,6 +2269,7 @@
 
 							// Update the size
 							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
+
 
 						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconScaleUl)) {
 							// Upper left arrow
@@ -2275,6 +2283,7 @@
 							// Update the size
 							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
+
 						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconScaleUr)) {
 							// Upper right arrow
 							logfunc("form ur scale");
@@ -2287,6 +2296,7 @@
 							// Update the size
 							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 
+
 						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconScaleLr)) {
 							// Lower right arrow
 							logfunc("form lr scale");
@@ -2298,6 +2308,7 @@
 
 							// Update the size
 							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
+
 
 						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconScaleLl)) {
 							// Lower left arrow
@@ -2317,9 +2328,11 @@
 					}
 				break;
 
+
+
 			case _OBJ_TYPE_SUBFORM:
 				if (propBorderStyle(obj) != _BORDER_STYLE_NONE)		SetRect(&obj->rcClient, 1, bmpArrowUl->bi.biHeight + 1, tnWidth - 8 - 1, tnHeight - 1);
-				else												SetRect(&obj->rcClient, 0, bmpArrowUl->bi.biHeight, tnWidth - 8, tnHeight);
+				else												SetRect(&obj->rcClient, 0, bmpArrowUl->bi.biHeight,     tnWidth - 8,     tnHeight);
 
 				//////////
 				// Default child settings:
@@ -2341,6 +2354,7 @@
 
 							// Update the size
 							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
+
 
 						} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName_byText(objChild, cgcName_caption)) {
 							// Caption
@@ -2364,9 +2378,64 @@
 					}
 				break;
 
+
+
 			case _OBJ_TYPE_CAROUSEL:
-				if (propBorderStyle(obj) != _BORDER_STYLE_NONE)		SetRect(&obj->rcClient, 1, bmpArrowUl->bi.biHeight + 1, tnWidth - 8 - 1, tnHeight - 1);
-				else												SetRect(&obj->rcClient, 0, bmpArrowUl->bi.biHeight, tnWidth - 8, tnHeight);
+
+				//////////
+				// Adjust for the border if need be
+				//////
+					llBorder = (propBorderStyle(obj) != _BORDER_STYLE_NONE);
+					if (llBorder)		SetRect(&obj->rcClient, 2, 2, tnWidth - 2, tnHeight - 2);
+					else				SetRect(&obj->rcClient, 0, 0, tnWidth,     tnHeight);
+
+
+				//////////
+				// Adjust for title bar area
+				//////
+					llTitleBar = propTitleBar(obj);
+					if (llTitleBar)
+						obj->rcClient.top += (bmpArrowUl->bi.biHeight + 2);		// Adjusts down for the caption
+
+
+				//////////
+				// Adjust for the tabs placement
+				//////
+					lnLeft		= 0;
+					lnRight		= 0;
+					lnTop		= 0;
+					lnBottom	= 0;
+					switch (propAlignment(obj))
+					{
+						case _ALIGNMENT_LEFT:		// Tabs are at the left
+							obj->rcClient.left		+= bmpArrowUl->bi.biWidth;
+							lnLeft					= bmpArrowUl->bi.biWidth;
+							break;
+
+						case _ALIGNMENT_RIGHT:		// Tabs are at the right
+							obj->rcClient.right		-= bmpArrowUl->bi.biWidth;
+							lnRight					= bmpArrowUl->bi.biWidth;
+							break;
+
+						case _ALIGNMENT_TOP:		// Tabs are at the top
+							obj->rcClient.top		+= bmpArrowUl->bi.biWidth;
+							lnTop					= bmpArrowUl->bi.biWidth;
+							break;
+
+						default:
+						case _ALIGNMENT_BOTTOM:		// Tabs are at the bottom
+							obj->rcClient.bottom	-= bmpArrowUl->bi.biWidth;
+							lnBottom				= bmpArrowUl->bi.biWidth;
+							break;
+					}
+
+
+				//////////
+				// Make sure the coordinates remain valid
+				//////
+					obj->rcClient.bottom	= max(obj->rcClient.bottom,	obj->rcClient.top  + 1);
+					obj->rcClient.right		= max(obj->rcClient.right,	obj->rcClient.left + 1);
+
 
 				//////////
 				// Default child settings:
@@ -2378,49 +2447,98 @@
 						// See which object this is
 						if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_icon))
 						{
-							// Subform icon
+							// Carousel icon
 							logfunc("carousel icon");
-							SetRect(&objChild->rc,
-										1,
-										1 - obj->rcClient.top,
-										1 + bmpArrowUl->bi.biWidth,
-										1 + bmpArrowUl->bi.biHeight - obj->rcClient.top);
+							if (llTitleBar)
+							{
+								// Make the content visible
+								if (!propIsVisible(objChild))
+									propSetVisible_fromBool(objChild, false);
 
-							// Update the size
-							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
+								// Set the appropriate size
+								SetRect(&objChild->rc,	obj->rcClient.left - lnLeft,
+														obj->rcClient.top - bmpArrowUl->bi.biHeight - lnTop,
+														obj->rcClient.left + bmpArrowUl->bi.biWidth + lnRight,
+														obj->rcClient.top + lnBottom);
+
+								// Update the size
+								iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
+
+							} else {
+								// Make this content invisible
+								if (propIsVisible(objChild))
+									propSetVisible_fromBool(objChild, false);
+							}
+
 
 						} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName_byText(objChild, cgcName_caption)) {
 							// Caption
 							logfunc("carousel caption");
-							SetRect(&objChild->rc,
-										1 + bmpArrowUl->bi.biWidth + 4,
-										2 - obj->rcClient.top,
-										tnWidth - 4 - bmpArrowUl->bi.biWidth,
-										2 - obj->rcClient.top + objChild->p.font->tm.tmHeight + 2);
+							if (llTitleBar)
+							{
+								SetRect(&objChild->rc,	obj->rcClient.left + bmpArrowUl->bi.biWidth + 4 - lnLeft,
+														obj->rcClient.top - bmpArrowUl->bi.biHeight - lnTop,
+														obj->rcClient.right - 4 - (2 * bmpArrowUl->bi.biWidth) + lnRight,
+														obj->rcClient.top + lnBottom);
 
+								// Update the size
+								iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
+
+							} else {
+								// Make this content invisible
+								if (propIsVisible(objChild))
+									propSetVisible_fromBool(objChild, false);
+							}
+
+
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconCarousel)) {
+							// Tabs/carousel icon
+							logfunc("carousel icon button");
+							if (llTitleBar)
+							{
+								SetRect(&objChild->rc,	obj->rcClient.right - 2 - bmpArrowUl->bi.biWidth - 2 - bmpArrowUl->bi.biWidth - lnLeft,
+														obj->rcClient.top - bmpArrowUl->bi.biHeight - lnTop,
+														obj->rcClient.right - 2 - bmpArrowUl->bi.biWidth + lnRight,
+														obj->rcClient.top + lnBottom);
+
+								// Update the size
+								iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
+
+							} else {
+								// Make this content invisible
+								if (propIsVisible(objChild))
+									propSetVisible_fromBool(objChild, false);
+							}
+
+
+						} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconClose)) {
+							// Close carousel image
+							logfunc("carousel close");
+							if (llTitleBar)
+							{
+								SetRect(&objChild->rc,	obj->rcClient.right - 2 - bmpArrowUl->bi.biWidth - lnLeft,
+														obj->rcClient.top - bmpArrowUl->bi.biHeight - lnTop,
+														obj->rcClient.right - 2 + lnRight,
+														obj->rcClient.top + lnBottom);
+
+								// Update the size
+								iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
+
+							} else {
+								// Make this content invisible
+								if (propIsVisible(objChild))
+									propSetVisible_fromBool(objChild, false);
+							}
+
+
+						} else if (objChild->objType == _OBJ_TYPE_RIDER) {
+							// Set the rider size
+							CopyRect(&objChild->rc,	&obj->rcClient);
+							if (llBorder)
+								InflateRect(&objChild->rc, -2, -2);		// Reduce down for the 2-pixel border
+							
 							// Update the size
-							iObj_setSize(thisCode,	objChild,
-													objChild->rc.left,
-													objChild->rc.top,
-													objChild->rc.right  - objChild->rc.left,
-													objChild->rc.bottom - objChild->rc.top);
-
-						} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName_byText(objChild, cgcName_iconClose)) {
-							// Close button
-							logfunc("carousel close button");
-							SetRect(&objChild->rc,
-										obj->rcClient.right - 2 - bmpArrowUl->bi.biWidth,
-										2 - obj->rcClient.top,
-										tnWidth - 2,
-										2 - obj->rcClient.top + objChild->p.font->tm.tmHeight + 2);
-
-							// Update the size
-							iObj_setSize(thisCode,	objChild,
-													objChild->rc.left,
-													objChild->rc.top,
-													objChild->rc.right  - objChild->rc.left,
-													objChild->rc.bottom - objChild->rc.top);
-
+							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
 						}
 
 						// Move to next object

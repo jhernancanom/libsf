@@ -717,10 +717,10 @@
 		// Position and size each control
 		//////
 			lnHeight = (_jdebi->rcClient.bottom - _jdebi->rcClient.top) / 8;
-			iObj_setSize(thisCode, sourceCode_carousel,	50,	8,		sourceCode->rcClient.right			- sourceCode->rcClient.left - 50,			sourceCode->rcClient.bottom				- sourceCode->rcClient.top);
+			iObj_setSize(thisCode, sourceCode_carousel,	50,	8,		sourceCode->rcClient.right			- sourceCode->rcClient.left - 50,			sourceCode->rcClient.bottom				- sourceCode->rcClient.top - 8);
 			iObj_setSize(thisCode, sourceCode_rider,	0,	0,		sourceCode_carousel->rcClient.right	- sourceCode_carousel->rcClient.left,		sourceCode_carousel->rcClient.bottom	- sourceCode_carousel->rcClient.top);
 			iObj_setSize(thisCode, sourceCode_editbox,	0,	0,		sourceCode_rider->rcClient.right	- sourceCode_rider->rcClient.left,			sourceCode_rider->rcClient.bottom		- sourceCode_rider->rcClient.top);
-			iEngine_raise_event(thisCode, _EVENT_RESIZE, NULL, sourceCode_carousel);
+			iEngine_raise_event(thisCode, _EVENT_RESIZE, NULL, sourceCode_carousel, &sourceCode_carousel->rc);
 			iObj_setSize(thisCode, locals_editbox,		8,	0,		locals->rcClient.right				- locals->rcClient.left - 8,				locals->rcClient.bottom					- locals->rcClient.top);
 			iObj_setSize(thisCode, watch_editbox,		8,	0,		watch->rcClient.right				- watch->rcClient.left - 8,					watch->rcClient.bottom					- watch->rcClient.top);
 			iObj_setSize(thisCode, command_editbox,		8,	0,		command->rcClient.right				- command->rcClient.left - 8,				command->rcClient.bottom				- command->rcClient.top);

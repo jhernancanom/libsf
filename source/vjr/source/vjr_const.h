@@ -163,6 +163,7 @@ typedef SEM**		SEMpp;
 	#define iVariable_isValid(var)						(var && (var->varType == _VAR_TYPE_CHARACTER/*0-length character variables do not have allocated buffers*/ || (var->value.data && var->value.length != 0)))
 	#define iVariable_isEmpty(var)						(!var->value.data || var->value.length <= 0)
 
+	#define propHasCaption(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_HASCAPTION)	!= _LOGICAL_FALSE)
 	#define propIsEnabled(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_ENABLED)		!= _LOGICAL_FALSE)
 	#define propIsFalse(obj, index)						(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, index)				== _LOGICAL_FALSE)
 	#define propIsName_byText(obj, t)					(iObjProp_compare_character		(thisCode, obj, _INDEX_NAME,		(s8*)t,		sizeof(t) - 1) == 0)
@@ -180,6 +181,7 @@ typedef SEM**		SEMpp;
 	#define propNeRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_NECOLOR)
 	#define propNwRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_NWCOLOR)
 	#define propSeRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_SECOLOR)
+	#define propSpecialEffect(obj)						iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SPECIALEFFECT)
 	#define propSwRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_SWCOLOR)
 	#define propTitleBar(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_TITLEBAR)	!= _LOGICAL_FALSE)
 
@@ -493,6 +495,9 @@ typedef SEM**		SEMpp;
 	const u32			_ALIGNMENT_BOTTOM_LEFT				= 7;
 	const u32			_ALIGNMENT_BOTTOM_RIGHT				= 8;
 	const u32			_ALIGNMENT_BOTTOM_CENTER			= 9;
+	// For carousel tab placement (along with left and right above, default is bottom)
+	const u32			_ALIGNMENT_TOP						= 10;
+	const u32			_ALIGNMENT_BOTTOM					= 11;
 	// For rider objects (how they behave inside of carousels)
 	const u32			_ALIGNMENT_FIXED					= 100;
 	const u32			_ALIGNMENT_SPINS					= 101;
@@ -533,6 +538,19 @@ typedef SEM**		SEMpp;
 	const u32			_FILL_STYLE_LL2UR_DIAGONAL			= 5;						// Lower-left to upper-right diagonal
 	const u32			_FILL_STYLE_HORIZONTAL_AND_VERTICAL	= 6;						// Squares, both horizontal and vertical lines
 	const u32			_FILL_STYLE_BOTH_DIAGONALS			= 7;						// Diamonds, both diagonal directions
+
+
+//////////
+// Special effects for rendering
+//////
+	const u32			_SPECIAL_EFFECT_DEFAULT				= 0;
+	const u32			_SPECIAL_EFFECT_RAISED				= 0;
+	const u32			_SPECIAL_EFFECT_PLAIN				= 1;
+	const u32			_SPECIAL_EFFECT_SUNKEN				= 1;
+	const u32			_SPECIAL_EFFECT_HOT_TRACKING		= 2;
+	const u32			_SPECIAL_EFFECT_FLAT				= 2;
+	const u32			_SPECIAL_EFFECT_TABS				= 10;
+	const u32			_SPECIAL_EFFECT_CAROUSEL			= 11;
 
 
 //////////
@@ -982,6 +1000,7 @@ typedef SEM**		SEMpp;
 //////
 	const u8			cgcName_icon[]						= "_icon";								// Forms automatically get an app icon
 	const u8			cgcName_caption[]					= "_caption";							// Forms, subforms automatically get a caption
+	const u8			cgcName_iconCarousel[]				= "_carousel";							// Carousels, get an icon to toggle between tabs and carousel mode
 	const u8			cgcName_iconMove[]					= "_move";								// Forms automatically get a move button (to move any subforms within using bars)
 	const u8			cgcName_iconMinimize[]				= "_minimize";							// Forms automatically get a minimize button
 	const u8			cgcName_iconMaximize[]				= "_maximize";							// Forms automatically get a maximize button

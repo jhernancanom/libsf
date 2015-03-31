@@ -395,7 +395,7 @@ struct SObjPropMap;
 //////////
 // objects/callbacks.cpp
 //////
-	bool					iDefaultCallback_resize					(SThisCode* thisCode, SWindow* win, SObject* obj);
+	bool					iDefaultCallback_resize					(SThisCode* thisCode, SWindow* win, SObject* obj, RECT* rc);
 	bool					iDefaultCallback_onLoad					(SThisCode* thisCode, SWindow* win, SObject* obj);
 	bool					iDefaultCallback_onInit					(SThisCode* thisCode, SWindow* win, SObject* obj);
 	bool					iDefaultCallback_onCreated				(SThisCode* thisCode, SWindow* win, SObject* obj);

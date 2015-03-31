@@ -333,6 +333,7 @@
 		SObject*	carouselNew;
 		SObject*	icon;
 		SObject*	caption;
+		SObject*	carouselIcon;
 		SObject*	close;
 		SVariable*	var;
 
@@ -360,17 +361,19 @@
 				//////////
 				// Create the default children for this object
 				//////
-					icon		= iObj_addChild(thisCode, _OBJ_TYPE_IMAGE, carouselNew);
-					caption		= iObj_addChild(thisCode, _OBJ_TYPE_LABEL, carouselNew);
-					close		= iObj_addChild(thisCode, _OBJ_TYPE_IMAGE, carouselNew);
+					icon			= iObj_addChild(thisCode, _OBJ_TYPE_IMAGE, carouselNew);
+					caption			= iObj_addChild(thisCode, _OBJ_TYPE_LABEL, carouselNew);
+					carouselIcon	= iObj_addChild(thisCode, _OBJ_TYPE_IMAGE, carouselNew);
+					close			= iObj_addChild(thisCode, _OBJ_TYPE_IMAGE, carouselNew);
 
 
 				//////////
 				// Give them proper names
 				//////
-					var = iObjProp_get_variable_byIndex(thisCode, icon,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_icon,		-1);
-					var = iObjProp_get_variable_byIndex(thisCode, caption,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_caption,	-1);
-					var = iObjProp_get_variable_byIndex(thisCode, close,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconClose,	-1);
+					var = iObjProp_get_variable_byIndex(thisCode, icon,			_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_icon,			-1);
+					var = iObjProp_get_variable_byIndex(thisCode, caption,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_caption,		-1);
+					var = iObjProp_get_variable_byIndex(thisCode, carouselIcon,	_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconCarousel,	-1);
+					var = iObjProp_get_variable_byIndex(thisCode, close,		_INDEX_NAME);		iDatum_duplicate(&var->value,	cgcName_iconClose,		-1);
 
 
 				//////////

@@ -87,10 +87,20 @@
 // Default callbacks
 //
 //////
-	bool iDefaultCallback_resize(SThisCode* thisCode, SWindow* win, SObject* obj)
+	bool iDefaultCallback_resize(SThisCode* thisCode, SWindow* win, SObject* obj, RECT* rc)
 	{
 		// Assume the resize was okay
-		return(true);
+		if (obj && rc)
+		{
+			// Resize
+			iObj_setSize(thisCode, obj, rc->left, rc->top, rc->right - rc->left, rc->bottom - rc->top);
+
+			// Indicate success
+			return(true);
+		}
+
+		// If we get here, error
+		return(false);
 	}
 
 	bool iDefaultCallback_onLoad(SThisCode* thisCode, SWindow* win, SObject* obj)
