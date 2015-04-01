@@ -54,6 +54,7 @@
 \libsf\vvm\bin\f2h raw\carousel_tabs_icon.bmp /ie=_BMP_LOCALITY carouselTabsBmp h\carousel_tabs_icon.h
 \libsf\vvm\bin\f2h raw\carousel_pad.bmp /ie=_BMP_LOCALITY carouselPadBmp h\carousel_pad.h
 \libsf\vvm\bin\f2h raw\carousel_icon.bmp /ie=_BMP_LOCALITY carouselIconBmp h\carousel_icon.h
+\libsf\vvm\bin\f2h raw\carousel_ridertab_close.bmp /ie=_BMP_LOCALITY carouselRiderTabCloseBmp h\carousel_ridertab_close.h
 
 \libsf\vvm\bin\f2h raw\grace\node_pad_blue.bmp /ie=_BMP_LOCALITY nodePadBlueBmp h\grace\node_pad_blue.h
 \libsf\vvm\bin\f2h raw\grace\node_pad_green.bmp /ie=_BMP_LOCALITY nodePadGreenBmp h\grace\node_pad_green.h

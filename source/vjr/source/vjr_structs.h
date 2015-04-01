@@ -396,12 +396,19 @@ struct SProperties
 {
 	RECT		rcMax;												// The maximum rectangle for the form
 	RECT		rcMin;												// The minimum rectangle for the form
+	SFont*		font;												// Default font for the control
 
+	// For form/subform object processing
 	bool		hasFocus;											// Does this object have focus?
  	bool		processKeyPreviewEvents;							// Do keystrokes for controls on the form go through the form's Key* events as well?
 
-	SEM*		sem;												// The content being edited
-	SFont*		font;												// Default font instance
+	// For any SEM related to this control (typically only used on editbox classes)
+	SEM*		sem;												// (SEM)		-- The content being edited
+
+	// For Carousel
+	SBitmap*	bmpTabs;											// (Carousel)	-- Bitmap holding the rendered tabs
+	RECT*		rcTabs;												// (Carousel)	-- An array of rectangles for each rider's tab
+	s32			rcTabsCount;										// (Carousel)	-- Number of RECTs for tabs allocated
 };
 
 struct SObjNodeData

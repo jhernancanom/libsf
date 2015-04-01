@@ -246,20 +246,40 @@
 // Loads in a text file into an EM beginning optionally near ecHint.
 //
 //////
-	bool iSEM_loadFromDisk(SThisCode* thisCode, SEM* sem, cu8* tcPathname, bool isSourceCode, bool tlLogIt)
+	bool iSEM_loadFromDisk(SThisCode* thisCode, SObject* objParent, SEM* sem, cu8* tcPathname, bool isSourceCode, bool tlLogIt)
 	{
-		s32			lnI, lnJ, lnLast;
+		s32			lnI, lnJ, lnLast, lnPathnameLength, lnFnameLength;
 		bool		llOtherCharacters;
 		SBuilder*	content;
 		SLine*		start;
 		SLine*		end;
+		s8*			lcFname;
 		u8			buffer[_MAX_PATH + 64];
 
 
 		logfunc(__FUNCTION__);
 		// Make sure our environment is sane
-		if (sem && tcPathname)
+		if (sem && tcPathname && (lnPathnameLength = (s32)strlen((s8*)tcPathname)) < sizeof(sem->fileName) - 1 && lnPathnameLength > 0)
 		{
+			// Store the last loaded filename
+			memset(sem->fileName, 0, sizeof(sem->fileName));
+			memcpy(sem->fileName, tcPathname, lnPathnameLength);
+
+			// Update the name on the riderTab (if need be)
+			if (objParent)
+			{
+				// Try to extract just the pathname
+				if (iFile_get_justfname((s8*)tcPathname, lnPathnameLength, &lcFname, &lnFnameLength))
+				{
+					// Set it to the extracted portion
+					propSetRiderTab(objParent, lcFname, lnFnameLength);
+
+				} else {
+					// Fall back on "rider" text
+					propSetRiderTab(objParent, cgcName_rider, sizeof(cgcName_rider) - 1);
+				}
+			}
+
 			// Read it in
 			content = NULL;
 			if (iBuilder_asciiReadFromFile(&content, tcPathname))
@@ -2764,11 +2784,16 @@ renderAsOnlyText:
 			SelectObject(bmp->hdc, hfontOld);
 
 //////////
-// This is a nice appearance, but it is slow.  If the background rendering algorithm was drawn, and the bitmap cached, it would be okay.
+// This is a nice appearance effect, but it is slow.
+// If the background rendering algorithm was drawn, and the bitmap cached, it would be okay.
 // 			// Apply a dappling
-// 			iBmp_dapple(bmp, bmpDapple1, 225.0f, 10);
+//			iBmp_dapple(bmp, bmpDapple1, 225.0f, 10);
 //////
 		}
+
+		// Indicate the object is now dirty
+		iObj_setDirtyRender_ascent(thisCode, obj, true);
+		iObj_setDirtyPublish_ascent(thisCode, obj, true);
 
 		// Indicate how many pixels were rendered
 		return(lnPixelsRendered);
@@ -3066,7 +3091,7 @@ renderAsOnlyText:
 		iExtraInfo_arrival(thisCode, sem, sem->line_cursor);
 
 		// If something has changed, we need to re-render
-		iObj_setDirtyRender_ascent(NULL, obj, true);
+		iObj_setDirtyRender_ascent(thisCode, obj, true);
 		iSEM_selectUpdateExtents(thisCode, sem);
 
 		// Indicate our status
@@ -3145,7 +3170,7 @@ renderAsOnlyText:
 		if (llChanged)
 		{
 			// Indicate the object needs re-rendered
-			obj->isDirtyRender = true;
+			iObj_setDirtyRender_ascent(thisCode, obj, true);
 
 			// Reprocess the source code on the line
 			iEngine_parseSourceCodeLine(thisCode, sem->line_cursor);

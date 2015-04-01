@@ -658,7 +658,7 @@
 			propSetIcon(_screen,		bmpVjrIcon);
 			propSetIcon(_jdebi,			bmpJDebiIcon);
 
-			// Make them visible
+			// Make them enabled and visible
 			propSetVisible(sourceCode,	_LOGICAL_TRUE);
 			propSetVisible(locals,		_LOGICAL_TRUE);
 			propSetVisible(watch,		_LOGICAL_TRUE);
@@ -699,7 +699,7 @@
 
 
 		//////////
-		// Add the controls to the subforms
+		// Add the controls to the subforms, carousel, and rider
 		//////
 			propSetVisible(sourceCode_carousel,	_LOGICAL_TRUE);
 			propSetVisible(sourceCode_rider,	_LOGICAL_TRUE);
@@ -763,6 +763,10 @@
 			iObjProp_set_character_direct(thisCode, locals, _INDEX_CAPTION, cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
 			locals_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, locals_editbox, (uptr)&iSEM_onKeyDown);
+			locals_editbox->p.sem->showCursorLine	= true;
+			locals_editbox->p.sem->isSourceCode		= true;
+			locals_editbox->p.sem->showLineNumbers	= true;
+			iSEM_appendLine(thisCode, locals_editbox->p.sem, NULL, 0, false);
 
 			// Adjust the caption width
 			((SObject*)locals->firstChild->ll.next)->rc.right = 65;
@@ -775,6 +779,9 @@
 			watch_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
 			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, watch_editbox, (uptr)&iSEM_onKeyDown);
 			watch_editbox->p.sem->showCursorLine	= true;
+			watch_editbox->p.sem->isSourceCode		= true;
+			watch_editbox->p.sem->showLineNumbers	= true;
+			iSEM_appendLine(thisCode, watch_editbox->p.sem, NULL, 0, false);
 
 			// Adjust the caption width
 			((SObject*)watch->firstChild->ll.next)->rc.right = 65;
@@ -1043,6 +1050,7 @@
 		iBmp_delete(&bmpCarouselTabsIcon,			true, true);
 		iBmp_delete(&bmpCarouselPad,				true, true);
 		iBmp_delete(&bmpCarouselIcon,				true, true);
+		iBmp_delete(&bmpCarouselRiderTabClose,		true, true);
 		iBmp_delete(&bmpNoImage,					true, true);
 		iBmp_delete(&bmpClose,						true, true);
 		iBmp_delete(&bmpMaximize,					true, true);
@@ -2717,6 +2725,42 @@
 
 //////////
 //
+// Search backwards for the start of the string, or the first \ found
+//
+//////
+	bool iFile_get_justfname(s8* tcPathname, s32 tnFilenameLength, s8** tcFname, s32* tnFnameLength)
+	{
+		s32 lnI, lnLength;
+
+
+		// Make sure our environment is sane
+		if (tcPathname && tcFname && tnFnameLength && tnFnameLength)
+		{
+			// Scan backwards
+			for (lnI = tnFilenameLength - 1, lnLength = 1; lnI > 0; lnI--, lnLength++)
+			{
+				// Have we reached the \ ?
+				if (tcPathname[lnI] == '\\')
+					break;
+			}
+
+			// Indicate our pointer and length
+			*tcFname		= tcPathname + lnI;
+			*tnFnameLength	= lnLength;
+
+			// Indicate success
+			return(true);
+		}
+
+		// If we get here, failure
+		return(false);
+	}
+
+
+
+
+//////////
+//
 // Adjusts the brightness of the indicated color by the indicated percentage.
 //
 //////
@@ -3774,95 +3818,112 @@
 // Called to process mouseEnter and mouseLeave events based on mouse movement
 //
 //////
-	void iiMouse_processMouseEvents_mouseMove(SThisCode* thisCode, SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed)
+	bool iiMouse_processMouseEvents_mouseMove(SThisCode* thisCode, SWindow* win, SObject* obj, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed)
 	{
-		bool		llInClientArea;
+		bool		llContinue, llInClientArea;
 		RECT		lrc, lrcClient;
 		SObject*	objSib;
 
 
 		// Make sure our object environment is sane
-		if (!propIsEnabled(obj) || !obj->bmp)
-			return;
+		llContinue = true;
+		while (propIsEnabled(obj) && obj->bmp)
+		{ // Block entered only for structured programming
+
+			//////////
+			// Get the rectangle we're in at this level
+			/////
+				llInClientArea = iiMouse_processMouseEvents_getRectDescent(thisCode, win, obj, rc, lrc, lrcClient);
 
 
-		//////////
-		// Get the rectangle we're in at this level
-		/////
-			llInClientArea = iiMouse_processMouseEvents_getRectDescent(thisCode, win, obj, rc, lrc, lrcClient);
-
-
-		//////////
-		// Process any children
-		//////
-			if (tlProcessChildren && obj->firstChild)
-				iiMouse_processMouseEvents_mouseMove(thisCode, win, obj->firstChild, &lrcClient, true, true, tlProcessed);
-
-
-		//////////
-		// Are we within this object?
-		//////
-			if (PtInRect(&lrc, win->mouseCurrent.position))
-			{
-				// We are in this object
-				*tlProcessed = true;	// Indicate we've processed this
-				if (!obj->ev.isMouseOver)
-					iEngine_raise_event(thisCode, _EVENT_ONMOUSEENTER, win, obj);
-
-
-				// Are we in the client area?
-				if (llInClientArea)
+			//////////
+			// Process any children
+			//////
+				if (tlProcessChildren && obj->firstChild)
 				{
-					//////////
-					// Signal the mouseMove event
-					//////
-						iiEventDispatch_onMouseMove(thisCode, win, obj,
-													win->mouseCurrent.position.x - lrc.left,
-													win->mouseCurrent.position.y - lrc.top,
-													win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
-													win->obj->ev.thisClick);
+					llContinue = iiMouse_processMouseEvents_mouseMove(thisCode, win, obj->firstChild, &lrcClient, true, true, tlProcessed);
+					if (!llContinue)
+						break;
+				}
+
+
+			//////////
+			// Are we within this object?
+			//////
+				if (PtInRect(&lrc, win->mouseCurrent.position))
+				{
+					// We are in this object
+					*tlProcessed = true;	// Indicate we've processed this
+					if (!obj->ev.isMouseOver)
+						iEngine_raise_event(thisCode, _EVENT_ONMOUSEENTER, win, obj);
+
+
+					// Are we in the client area?
+					if (llInClientArea)
+					{
+						//////////
+						// Signal the mouseMove event
+						//////
+							llContinue = iiEventDispatch_onMouseMove(thisCode, win, obj,
+																		win->mouseCurrent.position.x - lrc.left,
+																		win->mouseCurrent.position.y - lrc.top,
+																		win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
+																		win->obj->ev.thisClick);
+							if (!llContinue)
+								break;
+
+					} else {
+						// We are in the non-client area
+
+						//////////
+						// Signal the mouseMove event in the non-client area, which means negative values, or
+						// values outside of the width
+						//
+						// For non-client areas, we translate to negative is to the left or above the client area,
+						// with values extending beyond the width and height if it is in the outer area
+						//////
+							*tlProcessed = true;	// Indicate we've processed this
+							llContinue = iiEventDispatch_onMouseMove(thisCode, win, obj,
+																		win->mouseCurrent.position.x - lrcClient.left,
+																		win->mouseCurrent.position.y - lrcClient.top,
+																		win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
+																		win->obj->ev.thisClick);
+							if (!llContinue)
+								break;
+					}
 
 				} else {
-					// We are in the non-client area
-
-					//////////
-					// Signal the mouseMove event in the non-client area, which means negative values, or
-					// values outside of the width
-					//
-					// For non-client areas, we translate to negative is to the left or above the client area,
-					// with values extending beyond the width and height if it is in the outer area
-					//////
-						*tlProcessed = true;	// Indicate we've processed this
-						iiEventDispatch_onMouseMove(thisCode, win, obj,
-													win->mouseCurrent.position.x - lrcClient.left,
-													win->mouseCurrent.position.y - lrcClient.top,
-													win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
-													win->obj->ev.thisClick);
+					// We are outside of this object
+					if (obj->ev.isMouseOver)
+						iEngine_raise_event(thisCode, _EVENT_ONMOUSELEAVE, win, obj);
 				}
 
-			} else {
-				// We are outside of this object
-				if (obj->ev.isMouseOver)
-					iEngine_raise_event(thisCode, _EVENT_ONMOUSELEAVE, win, obj);
-			}
 
-
-		//////////
-		// Process any siblings
-		//////
-			if (tlProcessSiblings)
-			{
-				// Begin at the next sibling
-				objSib = obj->ll.nextObj;
-				while (objSib)
+			//////////
+			// Process any siblings
+			//////
+				if (llContinue && tlProcessSiblings)
 				{
-					// Process this sibling
-					iiMouse_processMouseEvents_mouseMove(thisCode, win, objSib, rc, true, false, tlProcessed);
+					// Begin at the next sibling
+					objSib = obj->ll.nextObj;
+					while (objSib)
+					{
+						// Process this sibling
+						llContinue = iiMouse_processMouseEvents_mouseMove(thisCode, win, objSib, rc, true, false, tlProcessed);
+						if (!llContinue)
+							break;
 
-					// Move to next sibling
-					objSib = objSib->ll.nextObj;
+						// Move to next sibling
+						objSib = objSib->ll.nextObj;
+					}
 				}
-			}
+
+			// Exit block
+				break;
+		}
+
+		// Indicate our status
+		return(llContinue);
 	}
 
 
@@ -3875,32 +3936,34 @@
 //////
 	bool iiMouse_processMouseEvents_common(SThisCode* thisCode, SWindow* win, SObject* obj, RECT* rc, UINT m, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed)
 	{
-		bool		llInClientArea, llContinue;
+		bool		llInClientArea, llContinue, llEnabled, llVisible;
 		RECT		lrc, lrcClient;
 		SObject*	objSib;
 
 
 		// Make sure our environment is sane
-		llContinue = false;
-		if (obj && propIsEnabled(obj) && obj->bmp)
+		llContinue = true;
+		if (obj)
 		{
-			// Get the rectangle we're in at this level
-			llContinue		= true;
-			llInClientArea	= iiMouse_processMouseEvents_getRectDescent(thisCode, win, obj, rc, lrc, lrcClient);
+			// Only enabled, visible things receive mouse events
+			llEnabled	= propIsEnabled(obj);
+			llVisible	= propIsVisible(obj);
+			if (llEnabled && llVisible && obj->bmp)
+			{
+				// Get the rectangle we're in at this level
+				llInClientArea	= iiMouse_processMouseEvents_getRectDescent(thisCode, win, obj, rc, lrc, lrcClient);
 
 
-			//////////
-			// Process any children
-			//////
-				if (tlProcessChildren && obj->firstChild)
-					llContinue = iiMouse_processMouseEvents_common(thisCode, win, obj->firstChild, &lrcClient, m, true, true, tlProcessed);
+				//////////
+				// Process any children
+				//////
+					if (tlProcessChildren && obj->firstChild)
+						llContinue = iiMouse_processMouseEvents_common(thisCode, win, obj->firstChild, &lrcClient, m, true, true, tlProcessed);
 
 
-			//////////
-			// Are we still needing processing?
-			//////
-				if (!*tlProcessed)
-				{
+				//////////
+				// Are we still needing processing?
+				//////
 					// Indicate if the mouse is still down here
 					obj->ev.isMouseDown = (obj->ev.thisClick != 0);
 
@@ -3929,7 +3992,8 @@
 																					win->mouseCurrent.position.y - lrc.top,
 																					win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
 																					win->obj->ev.thisClick);
-									break;
+
+								break;
 
 							case WM_LBUTTONUP:
 							case WM_RBUTTONUP:
@@ -3993,6 +4057,8 @@
 																					win->mouseCurrent.isCtrl, win->mouseCurrent.isAlt, win->mouseCurrent.isShift,
 																					win->obj->ev.thisClick);
 
+								break;
+
 							case WM_LBUTTONUP:
 							case WM_RBUTTONUP:
 							case WM_MBUTTONUP:
@@ -4023,26 +4089,28 @@
 						}
 					}
 
-
-				//////////
-				// Process any siblings
-				//////
-					if (llContinue && tlProcessSiblings)
-					{
-						// Begin at the next sibling
-						objSib = obj->ll.nextObj;
-						while (llContinue && !*tlProcessed && objSib)
-						{
-							// Process this sibling
-							llContinue = iiMouse_processMouseEvents_common(thisCode, win, objSib, rc, m, true, false, tlProcessed);
-							if (!llContinue)
-								break;
-
-							// Move to next sibling
-							objSib = objSib->ll.nextObj;
-						}
-					}
 			}
+
+
+			//////////
+			// Process any siblings
+			//////
+				if (llContinue && tlProcessSiblings)
+				{
+					// Begin at the next sibling
+					objSib = obj->ll.nextObj;
+					while (llContinue && objSib)
+					{
+						// Process this sibling
+						llContinue = iiMouse_processMouseEvents_common(thisCode, win, objSib, rc, m, true, false, tlProcessed);
+						if (!llContinue)
+							break;
+
+						// Move to next sibling
+						objSib = objSib->ll.nextObj;
+					}
+				}
+
 		}
 
 		// Indicate if the caller should continue

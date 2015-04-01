@@ -84,7 +84,12 @@
 
 //////////
 //
-// Default callbacks
+// Default callbacks are found below.
+//
+//////
+//
+// Note:  The return value indicates if this event should continue to be propagated to other objects.
+// Note:  If the event is consumed here, the return value should be false.
 //
 //////
 	bool iDefaultCallback_resize(SThisCode* thisCode, SWindow* win, SObject* obj, RECT* rc)
@@ -96,34 +101,34 @@
 			iObj_setSize(thisCode, obj, rc->left, rc->top, rc->right - rc->left, rc->bottom - rc->top);
 
 			// Indicate success
-			return(true);
+			return(false);
 		}
 
-		// If we get here, error
-		return(false);
+		// If we get here, error, continue propagating
+		return(true);
 	}
 
 	bool iDefaultCallback_onLoad(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
-		// Assume it's okay to load
-		return(true);
+		// Do not continue to propagate this message to other objects
+		return(false);
 	}
 
 	bool iDefaultCallback_onInit(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
-		// Assume we consumed the gotFocus, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
 	bool iDefaultCallback_onCreated(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
-		// Assume we consumed the gotFocus, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
 	bool iDefaultCallback_onResize(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* widthRequired_out, SVariable* heightRequired_out)
 	{
-		// Assume we consumed the gotFocus, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
@@ -139,37 +144,37 @@
 // 		debug_break;
 
 
-		// Assume it was rendered okay
-		return(true);
+		// Do not continue to propagate this message to other objects
+		return(false);
 	}
 
 	bool iDefaultCallback_onPublish(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
-		// Assume it was published okay
-		return(true);
+		// Do not continue to propagate this message to other objects
+		return(false);
 	}
 
 	bool iDefaultCallback_onDestroy(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
-		// Assume we consumed the gotFocus, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
 	bool iDefaultCallback_onUnload(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
-		// Assume we consumed the gotFocus, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
 	bool iDefaultCallback_onGotFocus(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
-		// Assume we consumed the gotFocus, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
 	bool iDefaultCallback_onLostFocus(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
-		// Assume we consumed the lostFocus, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
@@ -199,7 +204,7 @@
 
 
 		//////////
-		// Indicate success
+		// Indicate we successfully parsed the variables
 		//////
 			return(true);
 	}
@@ -216,7 +221,7 @@
 			return(false);
 
 
-		// Assume we consumed the mouse click, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
@@ -232,7 +237,7 @@
 			return(false);
 
 
-		// Assume we consumed the mouse click, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
@@ -245,7 +250,7 @@
 
 		// Make sure our environment is sane
 		if (!iiDefaultCallback_processMouseVariables(thisCode, varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick) || !iVariable_isValid(varUnits) || !iVariable_isTypeNumeric(varUnits))
-			return(false);
+			return(false);	// Do not continue consuming
 
 		// Grab the units
 		lnUnits = iiVariable_getAs_s32(thisCode, varUnits, false, NULL, NULL);
@@ -268,6 +273,8 @@
 			iObj_setDirtyRender_ascent(thisCode, obj, true);
 			iWindow_render(thisCode, win, false);
 		}
+
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
@@ -282,7 +289,7 @@
 
 		// Make sure our environment is sane
 		if (!iiDefaultCallback_processMouseVariables(thisCode, varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
-			return(false);
+			return(false);	// Do not continue consuming
 
 
 		// If we're clicking on a radio button, adjust the dial
@@ -321,7 +328,8 @@
 			}
 		}
 
-		return(false);
+		// Mouse moves continue to propagate all the way through, so as to signal appropriate enter and leave events
+		return(true);
 	}
 
 	bool iDefaultCallback_onMouseDown(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick)
@@ -337,7 +345,7 @@
 
 		// Make sure our environment is sane
 		if (!iiDefaultCallback_processMouseVariables(thisCode, varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
-			return(false);
+			return(false);	// Do not continue consuming
 
 
 		// Set the flag
@@ -404,11 +412,11 @@
 		} else if (obj->objType == _OBJ_TYPE_RADIO) {
 			// The mouse indicates the position
 			// Determine theta
-			lfWidth							= (f64)(obj->rc.right  - obj->rc.left);
-			lfHeight						= (f64)(obj->rc.bottom - obj->rc.top);
-			lfX								= (f64)lnX - (lfWidth / 2.0);
-			lfY								= (lfHeight - (f64)lnY) - (lfHeight / 2.0);
-			lfPercent						= atan2(lfY, lfX) / (M_PI * 2.0);
+			lfWidth		= (f64)(obj->rc.right  - obj->rc.left);
+			lfHeight	= (f64)(obj->rc.bottom - obj->rc.top);
+			lfX			= (f64)lnX - (lfWidth / 2.0);
+			lfY			= (lfHeight - (f64)lnY) - (lfHeight / 2.0);
+			lfPercent	= atan2(lfY, lfX) / (M_PI * 2.0);
 			if (lfPercent < 0.0)
 				lfPercent += 1.0;
 
@@ -428,19 +436,19 @@
 
 					} else if (propIsName_byText(obj, cgcName_iconMove)) {
 						// Move
-						llMouseDown					= false;
+						llMouseDown			= false;
 						obj->ev.isMouseOver	= false;
 						iWindow_move(win);
 
 					} else if (propIsName_byText(obj, cgcName_iconMinimize)) {
 						// Minimize
-						llMouseDown					= false;
+						llMouseDown			= false;
 						obj->ev.isMouseOver	= false;
 						iWindow_minimize(win);
 
 					} else if (propIsName_byText(obj, cgcName_iconMaximize)) {
 						// Maximize
-						llMouseDown					= false;
+						llMouseDown			= false;
 						obj->ev.isMouseOver	= false;
 						iWindow_maximize(win);
 					}
@@ -452,7 +460,9 @@
 		obj->ev.isMouseDown = llMouseDown;
 		iObj_setDirtyRender_ascent(thisCode, obj, true);
 		iWindow_render(thisCode, win, false);
-		return(true);
+
+		// Do not continue to propagate this message to other objects
+		return(false);
 	}
 
 	bool iDefaultCallback_onMouseUp(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick)
@@ -464,7 +474,7 @@
 
 		// Make sure our environment is sane
 		if (!iiDefaultCallback_processMouseVariables(thisCode, varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
-			return(false);
+			return(false);	// Do not continue consuming
 
 
 		// We are leaving this object, lower the flag
@@ -472,6 +482,8 @@
 		obj->ev.isMouseDown = false;
 		iObj_setDirtyRender_ascent(thisCode, obj, true);
 		iWindow_render(thisCode, win, false);
+
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
@@ -486,7 +498,7 @@
 			iWindow_render(thisCode, win, false);
 		}
 
-		// Assume we consumed the enter, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
@@ -499,6 +511,8 @@
 			iObj_setDirtyRender_ascent(thisCode, obj, true);
 			iWindow_render(thisCode, win, false);
 		}
+
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
@@ -511,10 +525,9 @@
 
 		// Make sure our environment is sane
 		if (!iiDefaultCallback_processMouseVariables(thisCode, varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
-			return(false);
+			return(false);	// Do not continue consuming
 
-
-		// Assume we consumed the hover, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
@@ -528,13 +541,13 @@
 		//////
 			if (!iVariable_isValid(varCtrl) || !iVariable_isValid(varAlt) || !iVariable_isValid(varShift) || !iVariable_isValid(varCaps) || !iVariable_isValid(varIsAscii) || !iVariable_isValid(varAscii)	|| !iVariable_isValid(varVKey))
 			{
-				// Something is invalid, ignore it
-				return(false);
+				// Something is invalid
+				return(false);	// Do not continue consuming
 			}
 			if (!iVariable_isTypeLogical(varCtrl) || !iVariable_isTypeLogical(varAlt) || !iVariable_isTypeLogical(varShift) || !iVariable_isTypeLogical(varCaps) || !iVariable_isTypeLogical(varIsAscii) || !iVariable_isTypeNumeric(varAscii)	|| !iVariable_isTypeNumeric(varVKey))
 			{
-				// Something is not a proper variable, ignore it
-				return(false);
+				// Something is not a proper variable
+				return(false);	// Do not continue consuming
 			}
 			*llCtrl		= iiVariable_getAs_bool(thisCode, varCtrl,		false, NULL, NULL);
 			*llAlt		= iiVariable_getAs_bool(thisCode, varAlt,		false, NULL, NULL);
@@ -547,7 +560,7 @@
 
 
 		//////////
-		// Indicate success
+		// Indicate we successfully parsed the keyboard variables
 		//////
 			return(true);
 	}
@@ -564,7 +577,7 @@
 
 		// Make sure our environment is sane
 		if (!iiDefaultCallback_processKeyVariables(thisCode, varCtrl, varAlt, varShift, varCaps, varAscii, varVKey, varIsCAS, varIsAscii, &llCtrl, &llAlt, &llShift, &llCaps, &llIsCAS, &llIsAscii, &lcAscii, &lnVKey))
-			return(false);
+			return(false);	// Do not continue consuming
 
 
 		//////////
@@ -595,13 +608,16 @@
 					if (objRender2 != objCheckbox)
 						iObj_setDirtyRender_ascent(thisCode, objRender2, false);
 
+
 				} else if (llShift && lnVKey == VK_TAB) {
 					// Move to previous object
 					llRender = iObj_setFocusObjectPrev(thisCode, win, objCheckbox);
 
+
 				} else if (lnVKey == VK_TAB) {
 					// Move to next object
 					llRender = iObj_setFocusObjectNext(thisCode, win, objCheckbox);
+
 
 				} else if (llIsAscii) {
 					if ((u8)lcAscii == 't' || (u8)lcAscii == 'T' || (u8)lcAscii == 'y' || (u8)lcAscii == 'Y' || (u8)lcAscii == '1')
@@ -648,6 +664,7 @@
 			iWindow_render(thisCode, win, false);
 		}
 		
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
@@ -660,82 +677,82 @@
 
 		// Make sure our environment is sane
 		if (!iiDefaultCallback_processKeyVariables(thisCode, varCtrl, varAlt, varShift, varCaps, varAscii, varVKey, varIsCAS, varIsAscii, &llCtrl, &llAlt, &llShift, &llCaps, &llIsCAS, &llIsAscii, &lcAscii, &lnVKey))
-			return(false);
+			return(false);	// Do not continue consuming
 
 
-		// Assume we consumed the keyup, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
 	bool iDefaultCallback_onActivate(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
-		// Assume we consumed the activate, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
 	bool iDefaultCallback_onDeactivate(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
-		// Assume we consumed the deactivate, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
 	bool iDefaultCallback_onInteractiveChange(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
-		// Assume we consumed the interactiveChange, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
 	bool iDefaultCallback_onProgrammaticChange(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
-		// Assume we consumed the programmaticChange, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
 	bool iDefaultCallback_onSelect(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
-		// Assume we consumed the onSelect, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
 	bool iDefaultCallback_onDeselect(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
-		// Assume we consumed the onDeselect, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
 	bool iDefaultCallback_onMoved(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* xOverride_out, SVariable* yOverride_out)
 	{
-		// Assume we consumed the onDeselect, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
 	bool iDefaultCallback_onQueryUnload(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
-		// Assume we consumed the onDeselect, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
 	bool iDefaultCallback_onAddObject(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
-		// Assume we consumed the onDeselect, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
 	bool iDefaultCallback_onAddProperty(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
-		// Assume we consumed the onDeselect, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
 	bool iDefaultCallback_onError(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
-		// Assume we consumed the onDeselect, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
 	bool iDefaultCallback_onScrolled(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
-		// Assume we consumed the onDeselect, and that the parent doesn't need to receive it
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
@@ -748,6 +765,8 @@
 		// Mark dirty
 		// If on rider, mark parent carousel dirty
 		// Trigger refresh
+
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
@@ -757,5 +776,7 @@
 		// tnDelta		= units (in riders, or pixels based on tnType), defaults to riders
 		// tnDirection	= negative=left, positive=right, defaults to right
 		// tnType		= 0=riders/toolbars, 1=pixels, defaults to riders
+
+		// Do not continue to propagate this message to other objects
 		return(false);
 	}

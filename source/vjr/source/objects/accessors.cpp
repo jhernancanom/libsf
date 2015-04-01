@@ -2398,7 +2398,7 @@ debug_break;
 
 
 		// Make sure our environment is sane
-		if (obj && (obj->objType == _OBJ_TYPE_FORM || obj->objType == _OBJ_TYPE_SUBFORM) && var && varNewValue)
+		if (obj && var && varNewValue)
 		{
 			// Set the caption
 			iVariable_copy(thisCode, var, varNewValue);
@@ -2445,7 +2445,7 @@ debug_break;
 
 
 		// Make sure our environment is sane
-		if (obj && obj->objType == _OBJ_TYPE_SUBFORM && var && varNewValue)
+		if (obj && var && varNewValue)
 		{
 			// Set the caption
 			iVariable_copy(thisCode, var, varNewValue);

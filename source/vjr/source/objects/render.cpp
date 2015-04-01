@@ -165,7 +165,7 @@
 							else												iBmp_fillRect(obj->bmp, &lrc, nwRgba, neRgba, swRgba, seRgba, true, NULL,			false);
 
 							// Apply a dappling
-							iBmp_dapple(obj->bmp, bmpDapple1, 215.0f, 3);
+							iBmp_dapple(obj->bmp, bmpDapple1, 215.0f, 10);
 
 							// Save the cache
 							iBmp_createCache(&obj->bc, obj->bmp, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, 0, true);
@@ -272,20 +272,18 @@
 							if (propBackStyle(obj) == _BACK_STYLE_OPAQUE)
 							{
 								// Render the subform and client area
-								if (llIsFocusSubform)		iBmp_fillRect(obj->bmp, &lrc, NwFocusColor,		NeFocusColor,	SwFocusColor,	SeFocusColor,	true, &obj->rcClient,	true);
-								else						iBmp_fillRect(obj->bmp, &lrc, nwRgba,			neRgba,			swRgba,			seRgba,			true, &obj->rcClient,	true);
+								iBmp_fillRect(obj->bmp, &lrc, nwRgba, neRgba, swRgba, seRgba, true, &obj->rcClient, true);
 
 								// Make the client area white
 								iBmp_fillRect(obj->bmp, &obj->rcClient, backColor, backColor, backColor, backColor, false, NULL, false);
 
 							} else {
 								// Render the subform
-								if (llIsFocusSubform)		iBmp_fillRect(obj->bmp, &lrc, NwFocusColor,		NeFocusColor,	SwFocusColor,	SeFocusColor,	true, NULL, false);
-								else						iBmp_fillRect(obj->bmp, &lrc, nwRgba,			neRgba,			swRgba,			seRgba,			true, NULL, false);
+								iBmp_fillRect(obj->bmp, &lrc, nwRgba, neRgba, swRgba, seRgba, true, NULL, false);
 							}
 
 							// Apply a dappling
-							iBmp_dapple(obj->bmp, bmpDapple2, 225.0f, 3);
+							iBmp_dapple(obj->bmp, bmpDapple1, 225.0f, 10);
 
 							// Save the cache
 							iBmp_createCache(&obj->bc, obj->bmp, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)llIsFocusSubform, true);
@@ -340,14 +338,25 @@
 // Renders the carousel.  Note that carousels are not normally displayed.  The only time
 // they'll be displayed by their rendered nature below is if they do not possess any riders.
 //
+// 		carouselFrameColor					= { rgba(94, 94, 128, 255) };			// Purleish-gray
+// 		carouselBackColor					= { rgba(255, 255, 255, 255) };			// White
+// 		carouselTabBackColor				= { rgba(255, 255, 255, 255) };			// White
+// 		carouselTabForeColor				= { rgba(64, 64, 88, 255) };			// Darker purpleish-gray
+// 		carouselTabForeColorHighlight		= { rgba(32, 32, 44, 255) };			// Darkest purpleish-gray
+//
+// Note:  Carousel Riders each have one child object which is the thing they convey.
+// Note:  However, only one object per rider at a time can be visible.
+//
 //////
 	u32 iSubobj_renderCarousel(SThisCode* thisCode, SObject* obj)
 	{
+		s32			lnI, lnWidth, lnAlignment, lnCount, lnLeft, lnCenter;
 		u32			lnPixelsRendered;
-		bool		llIsFocusCarousel;
-		SBgra		nwRgba, neRgba, swRgba, seRgba;
-		RECT		lrc;
-		SObject*	objFocus;
+		bool		llBorder, llOrientDown, llCloseable, llVisible;
+		SBgra		nwRgba, neRgba, swRgba, seRgba, frameColor;
+		RECT		lrc, lrc2, lrc3, lrc4;
+		SVariable*	varTabText;
+		SObject*	objRider;
 
 
 		// Make sure our environment is sane
@@ -364,33 +373,297 @@
 				// Re-render
 				if (obj->isDirtyRender)
 				{
-					// Grab colors
-					nwRgba = propNwRgba(obj);
-					neRgba = propNeRgba(obj);
-					swRgba = propSwRgba(obj);
-					seRgba = propSeRgba(obj);
-
 
 					//////////
 					// Frame it
 					//////
-						// Determine if a control on this subform has focus
-						objFocus			= iObj_focus_descentCheckObj(thisCode, obj, true, false);
-						llIsFocusCarousel	= (objFocus != NULL);
-						if (!obj->bc || !iBmp_isValidCache(&obj->bc, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)llIsFocusCarousel))
+						// Grab colors
+						nwRgba = propNwRgba(obj);
+						neRgba = propNeRgba(obj);
+						swRgba = propSwRgba(obj);
+						seRgba = propSeRgba(obj);
+
+						// Determine if a control on this carousel has focus
+						if (true/*!obj->bc || !iBmp_isValidCache(&obj->bc, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, NULL)*/)
 						{
 							// The bitmap cache is no longer valid
 							iBmp_deleteCache(&obj->bc);
 
-							// Draw the default background
-							if (llIsFocusCarousel)		iBmp_fillRect(obj->bmp, &lrc, NwFocusColor,		NeFocusColor,	SwFocusColor,	SeFocusColor,	true, NULL, false);
-							else						iBmp_fillRect(obj->bmp, &lrc, nwRgba,			neRgba,			swRgba,			seRgba,			true, NULL, false);
 
-							// Apply a dappling
-							iBmp_dapple(obj->bmp, bmpDapple2, 225.0f, 3);
+							//////////
+							// Draw the default background, and apply a dappling
+							//////
+								iBmp_fillRect(obj->bmp, &lrc, nwRgba, neRgba, swRgba, seRgba, true, &obj->rcClient, true);
+								iBmp_dapple(obj->bmp, bmpDapple1, 225.0f, 10);
 
+
+							//////////
+							// Overlay the frame
+							//////
+								llBorder = (propBorderStyle(obj) != _BORDER_STYLE_NONE);
+								if (llBorder)
+								{
+									// Render the border
+									CopyRect(&lrc2, &obj->rcClient);
+									InflateRect(&lrc2, 1, 1);
+									iBmp_frameRect(obj->bmp, &lrc2, carouselFrameColor, carouselFrameColor, carouselFrameColor, carouselFrameColor, false, NULL, false);
+									InflateRect(&lrc2, 1, 1);
+									iBmp_frameRect(obj->bmp, &lrc2, carouselFrameColor, carouselFrameColor, carouselFrameColor, carouselFrameColor, false, NULL, false);
+								}
+
+
+							//////////
+							// Find out how many riders there are, and the size of their texts.
+							/////
+								SelectObject(obj->bmp->hdc, obj->p.font->hfont);
+								for (objRider = obj->firstChild, lnWidth = 0, lnCount = 0; objRider; objRider = objRider->ll.nextObj, lnCount++)
+								{
+									// Is it a rider?
+									if (objRider->objType == _OBJ_TYPE_RIDER && propIsEnabled(objRider) && (varTabText = propRiderTab(objRider)) && varTabText->value.data && varTabText->value.length >= 1)
+									{
+
+										//////////
+										// Determine the raw text size
+										//////
+											SetRect(&lrc3, 0, 0, 0, 0);
+											DrawText(obj->bmp->hdc, varTabText->value.data, varTabText->value.length, &lrc3, DT_CALCRECT);
+
+
+										//////////
+										// Increase the width
+										//////
+											// Spacer between items
+											lnWidth += ((lnWidth != 0) ? 4 : 0);
+
+											// 2 border + 4 margin + text width + 4 margin + (close icon if closeable + 4 margin) + 2 border
+											lnWidth += 2 + 4 + (lrc3.right - lrc3.left) + 4 + ((propRiderTabCloseable(objRider)) ? bmpCarouselRiderTabClose->bi.biWidth + 4 : 0) + 2;
+
+									}
+								}
+
+
+							//////////
+							// Allocate RECTs
+							//////
+								if (!obj->p.rcTabs || obj->p.rcTabsCount != lnCount)
+								{
+
+									//////////
+									// Delete the existing RECTs array (if any)
+									//////
+										if (obj->p.rcTabs)
+											free(obj->p.rcTabs);
+										
+
+									//////////
+									// Initialize the RECT array
+									//////
+										obj->p.rcTabsCount	= lnCount;
+										obj->p.rcTabs		= (RECT*)malloc(lnCount * sizeof(RECT));
+
+
+									//////////
+									// Initialize
+									//////
+										if (obj->p.rcTabs)
+											memset(obj->p.rcTabs, 0, lnCount * sizeof(RECT));
+								}
+
+
+							//////////
+							// Allocate a bitmap
+							// Note:  The bitmap is always allocated and rendered horizontally as though it were on the bottom
+							//////
+								if (!obj->p.bmpTabs || obj->p.bmpTabs->bi.biWidth != lnWidth)
+								{
+
+									//////////
+									// Delete the existing bitmap (if any)
+									//////
+										if (obj->p.bmpTabs)
+											iBmp_delete(&obj->p.bmpTabs, true, true);
+
+
+									//////////
+									// Create a new bitmap
+									//////
+										obj->p.bmpTabs = iBmp_allocate();
+										if (obj->p.bmpTabs)
+											iBmp_createBySize(obj->p.bmpTabs, lnWidth, bmpArrowUl->bi.biWidth + 2, 24);
+
+								}
+
+
+							//////////
+							// Render the tabs
+							//////
+								if (obj->p.bmpTabs)
+								{
+									// Set the font
+									SelectObject(obj->p.bmpTabs->hdc, obj->p.font->hfont);
+
+
+									//////////
+									// Initially populate with the entire strip with the transparent color
+									//////
+										iBmp_fillRect(obj->p.bmpTabs, &lrc3, transparentColor, transparentColor, transparentColor, transparentColor, false, NULL, false);
+
+
+									//////////
+									// Determine how to draw
+									//////
+										lnAlignment = propAlignment(obj);
+										switch (lnAlignment)
+										{
+											case _ALIGNMENT_RIGHT:
+											case _ALIGNMENT_TOP:
+												llOrientDown = true;
+												break;
+
+											default:
+//											case _ALIGNMENT_LEFT:
+// 											case _ALIGNMENT_BOTTOM:
+												llOrientDown = false;
+												break;
+										}
+
+
+									//////////
+									// Iterate through each rider
+									//////
+										for (lnI = 0, objRider = obj->firstChild, lnLeft = 0; objRider; lnI++, objRider = objRider->ll.nextObj)
+										{
+											// Is it a rider?
+											if (objRider->objType == _OBJ_TYPE_RIDER && propIsEnabled(objRider) && (varTabText = propRiderTab(objRider)) && varTabText->value.data && varTabText->value.length >= 1)
+											{
+
+												//////////
+												// Determine the raw text size
+												//////
+													SetRect(&lrc3, 0, 0, 0, 0);
+													DrawText(obj->p.bmpTabs->hdc, varTabText->value.data, varTabText->value.length, &lrc3, DT_CALCRECT);
+
+
+												//////////
+												// Render the appropriate rectangle
+												//////
+													// 2 border + 4 margin + text width + 4 margin + (close icon if closeable + 4 margin) + 2 border
+													llCloseable	= propRiderTabCloseable(objRider);
+													lnWidth		= 2 + 4 + (lrc3.right - lrc3.left) + 4 + ((llCloseable) ? bmpCarouselRiderTabClose->bi.biWidth + 4 : 0) + 2;
+													SetRect(&lrc3, lnLeft, 0, lnLeft + lnWidth, obj->p.bmpTabs->bi.biHeight);
+
+
+												//////////
+												// Determine the orientation
+												//////
+													// Border
+													llVisible = propIsVisible(objRider);
+													if (llOrientDown)
+													{
+														//////////
+														// Tab looks like this:  +-------------+
+														//                       |  file.prg  x|
+														//                       |             |
+														//////
+															SetRect(&lrc4, lrc3.left + 2, lrc3.top + 2, lrc3.right - 2, lrc3.bottom - 1);
+
+
+													} else {
+
+														//////////
+														//                       |             |
+														// Tab looks like this:  |  file.prg  x|
+														//                       +-------------+
+														//////
+															SetRect(&lrc4, lrc3.left + 2, lrc3.top + 1, lrc3.right - 2, lrc3.bottom - 2);
+
+													}
+
+													// Store this rectangle for future mouse reference
+													CopyRect(&obj->p.rcTabs[lnI], &lrc4);
+
+
+												//////////
+												// Determine our color
+												//////
+													if (llVisible)		frameColor = carouselFrameColor;			// Active tab
+													else				frameColor = carouselFrameInactiveColor;	// Inactive tab
+
+
+												//////////
+												// Frame it
+												//////
+													iBmp_frameRect(obj->p.bmpTabs, &lrc3, frameColor, frameColor, frameColor, frameColor, false, NULL, false);
+													InflateRect(&lrc3, -1, -1);
+													iBmp_frameRect(obj->p.bmpTabs, &lrc3, frameColor, frameColor, frameColor, frameColor, false, NULL, false);
+
+
+												//////////
+												// Fill the middle
+												//////
+													iBmp_fillRect(obj->p.bmpTabs, &lrc4, carouselTabBackColor, carouselTabBackColor, carouselTabBackColor, carouselTabBackColor, false, NULL, false);
+
+
+												//////////
+												// Render the text toward the left
+												//////
+													SetTextColor(obj->p.bmpTabs->hdc, RGB(carouselTabForeColor.red, carouselTabForeColor.grn, carouselTabForeColor.blu));
+													SetBkMode(obj->p.bmpTabs->hdc, TRANSPARENT);
+													lrc4.left	+= 4;		// Margin between left border and text
+													DrawText(obj->p.bmpTabs->hdc, varTabText->value.data_s8, varTabText->value.length, &lrc4, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+
+
+												//////////
+												// Close button
+												//////
+													if (llCloseable)
+													{
+														lnCenter = 2 + ((lrc4.bottom + lrc4.top) / 2);
+														SetRect(&lrc4, lrc4.right - 2 - bmpCarouselRiderTabClose->bi.biWidth, lnCenter - (bmpCarouselRiderTabClose->bi.biHeight / 2), lrc4.right - 2, lnCenter + (bmpCarouselRiderTabClose->bi.biHeight / 2));
+														iBmp_bitBltMask(obj->p.bmpTabs, &lrc4, bmpCarouselRiderTabClose);
+													}
+
+
+												//////////
+												// Move over for the next one
+												//////
+													lnLeft += lnWidth + 4;
+											}
+										}
+
+								}
+
+
+							//////////
+							// Overlay the tabs
+							//////
+								switch (lnAlignment)
+								{
+									case _ALIGNMENT_RIGHT:
+debug_break;
+										break;
+
+									case _ALIGNMENT_TOP:
+										SetRect(&lrc, obj->rcClient.left, 0, obj->rcClient.right, obj->rcClient.top);
+										iBmp_bitBlt(obj->bmp, &lrc, obj->p.bmpTabs);
+										break;
+
+									case _ALIGNMENT_LEFT:
+debug_break;
+										break;
+
+									default:
+									case _ALIGNMENT_BOTTOM:
+										SetRect(&lrc, obj->rcClient.left, obj->rcClient.bottom, obj->rcClient.right, obj->bmp->bi.biHeight);
+										iBmp_bitBlt(obj->bmp, &lrc, obj->p.bmpTabs);
+										break;
+								}
+
+
+							//////////
 							// Save the cache
-							iBmp_createCache(&obj->bc, obj->bmp, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)llIsFocusCarousel, true);
+							//////
+								iBmp_createCache(&obj->bc, obj->bmp, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, NULL, true);
 
 						} else {
 							// Copy everything over from the cache
@@ -430,12 +703,13 @@
 
 //////////
 //
-// Renders the rider.
+// Render the rider and its children
 //
 //////
 	u32 iSubobj_renderRider(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
+		SBgra	backColor;
 		RECT	lrc;
 
 
@@ -446,11 +720,21 @@
 		{
 			if (obj->isDirtyRender)
 			{
+
 				//////////
 				// Fill in the background
 				//////
 					SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
-					iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+					if (!obj->firstChild)
+					{
+						// Fill in with the back color
+						backColor = propBackColor(obj);
+						iBmp_fillRect(obj->bmp, &lrc, backColor, backColor, backColor, backColor, false, NULL, false);
+
+					} else {
+						// Overlay the rider's child
+						iBmp_bitBlt(obj->bmp, &lrc, obj->firstChild->bmp);
+					}
 
 
 				//////////
@@ -462,6 +746,7 @@
 					// Copy to the prior rendered version
 					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
 					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
 
 			} else {
 				// Render from its prior rendered version
@@ -488,7 +773,7 @@
 //////
 	u32 iSubobj_renderLabel(SThisCode* thisCode, SObject* obj)
 	{
-		s32			backStyle;
+		s32			lnBackStyle, lnAlignment;
 		u32			lnPixelsRendered, lnFormat;
 		SBgra		backColor, foreColor, borderColor;
 		SVariable*	caption;
@@ -506,8 +791,8 @@
 				borderColor	= propBorderColor(obj);
 				backColor	= propBackColor(obj);
 				foreColor	= propForeColor(obj);
-				backStyle	= propBackStyle(obj);
-				if (backStyle == _BACK_STYLE_OPAQUE)
+				lnBackStyle	= propBackStyle(obj);
+				if (lnBackStyle == _BACK_STYLE_OPAQUE)
 				{
 					// Use the back color
 					SetBkColor(obj->bmp->hdc,	RGB(backColor.red, backColor.grn, backColor.blu));
@@ -528,19 +813,41 @@
 				SelectObject(obj->bmp->hdc, obj->p.font->hfont);
 
 				// Determine our orientation
-				switch (propAlignment(obj))
+				lnAlignment = propAlignment(obj);
+				switch (lnAlignment)
 				{
 					default:
+//					case _ALIGNMENT_MIDDLE_LEFT:
 					case _ALIGNMENT_LEFT:
-						lnFormat = DT_LEFT;
+						lnFormat = DT_LEFT | DT_VCENTER;
+						break;
+					case _ALIGNMENT_TOP_LEFT:
+						lnFormat = DT_LEFT | DT_TOP;
+						break;
+					case _ALIGNMENT_BOTTOM_LEFT:
+						lnFormat = DT_LEFT | DT_BOTTOM;
 						break;
 
+//					case _ALIGNMENT_MIDDLE_RIGHT:
 					case _ALIGNMENT_RIGHT:
-						lnFormat = DT_RIGHT;
+						lnFormat = DT_RIGHT | DT_VCENTER;
+						break;
+					case _ALIGNMENT_TOP_RIGHT:
+						lnFormat = DT_RIGHT | DT_TOP;
+						break;
+					case _ALIGNMENT_BOTTOM_RIGHT:
+						lnFormat = DT_RIGHT | DT_BOTTOM;
 						break;
 
+//					case _ALIGNMENT_MIDDLE_CENTER:
 					case _ALIGNMENT_CENTER:
-						lnFormat = DT_CENTER;
+						lnFormat = DT_CENTER | DT_VCENTER;
+						break;
+					case _ALIGNMENT_TOP_CENTER:
+						lnFormat = DT_CENTER | DT_TOP;
+						break;
+					case _ALIGNMENT_BOTTOM_CENTER:
+						lnFormat = DT_CENTER | DT_BOTTOM;
 						break;
 				}
 
@@ -549,12 +856,12 @@
 
 				// Adjust if need be
 				if (obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX)
-					lrc.left += 4;
+					lrc.left += 4;	// Adjusts between the left-side checkbox image, and the text
 
 				// Draw the text
 				caption = iObjProp_get_variable_byIndex(thisCode, obj, _INDEX_CAPTION);
 				value	= iObjProp_get_variable_byIndex(thisCode, obj, _INDEX_VALUE);
-				DrawText(obj->bmp->hdc, caption->value.data, caption->value.length, &lrc, lnFormat | DT_VCENTER | DT_END_ELLIPSIS);
+				DrawText(obj->bmp->hdc, caption->value.data, caption->value.length, &lrc, lnFormat | DT_END_ELLIPSIS | DT_SINGLELINE);
 
 				// And adjust back if need be
 				if (obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX)
@@ -584,7 +891,7 @@
 					     if (obj->ev.isMouseDown)		iBmp_colorize(obj->bmp, &lrc2, colorMouseDown,	false, 0.0f);
 					else if (obj->ev.isMouseOver)		iBmp_colorize(obj->bmp, &lrc2, colorMouseOver,	false, 0.0f);
 
-				} else if (backStyle == _BACK_STYLE_OPAQUE) {
+				} else if (lnBackStyle == _BACK_STYLE_OPAQUE) {
 					// Colorize the area
 					     if (obj->ev.isMouseDown)		iBmp_colorize(obj->bmp, &lrc, colorMouseDown,	false, 0.0f);
 					else if (obj->ev.isMouseOver)		iBmp_colorize(obj->bmp, &lrc, colorMouseOver,	false, 0.0f);

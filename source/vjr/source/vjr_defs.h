@@ -517,6 +517,7 @@ struct SObjPropMap;
 	bool					iSourceLight_copy						(SWindow* win, SObject* obj);
 
 	bool					iFile_readContents						(s8* tcFilename, FILE** tfh, s8** data, u32* dataLength);
+	bool					iFile_get_justfname						(s8* tcPathname, s32 tnFilenameLength, s8** tcFname, s32* tnFnameLength);
 
 	void					iMisc_adjustColorBrightness				(SBgra& color, f32 tfPercent);
 	bool					iInit_shutdownPolitely					(void);
@@ -559,7 +560,7 @@ struct SObjPropMap;
 	void					iiMouse_translatePosition				(SThisCode* thisCode, SWindow* win, POINTS* pt, UINT msg);
 	s32						iiMouse_processMouseEvents				(SThisCode* thisCode, SWindow* win, UINT msg, WPARAM w, LPARAM l);
 	void					iiMouse_processMouseEvents_windowSpecial(SThisCode* thisCode, SWindow* win);
-	void					iiMouse_processMouseEvents_mouseMove	(SThisCode* thisCode, SWindow* win, SObject* obj, RECT* rc,         bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed);
+	bool					iiMouse_processMouseEvents_mouseMove	(SThisCode* thisCode, SWindow* win, SObject* obj, RECT* rc,         bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed);
 	bool					iiMouse_processMouseEvents_common		(SThisCode* thisCode, SWindow* win, SObject* obj, RECT* rc, UINT m, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed);
 //	s32						iiMouse_processMouseEvents_nonclient	(SThisCode* thisCode, SWindow* win, UINT m, WPARAM w, LPARAM l);
 	void					iiMouse_getFlags_wparam					(WPARAM w, bool* tlCtrl, bool* tlAlt, bool* tlShift, bool* tlLeft, bool* tlMiddle, bool* tlRight, bool* tlCaps, bool* tlAnyButton);

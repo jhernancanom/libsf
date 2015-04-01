@@ -305,6 +305,7 @@
 			bmpCarouselTabsIcon				= iBmp_rawLoad(cgc_carouselTabsBmp);
 			bmpCarouselPad					= iBmp_rawLoad(cgc_carouselPadBmp);
 			bmpCarouselIcon					= iBmp_rawLoad(cgc_carouselIconBmp);
+			bmpCarouselRiderTabClose		= iBmp_rawLoad(cgc_carouselRiderTabCloseBmp);
 
 			bmpClose						= iBmp_rawLoad(cgc_closeBmp);
 			bmpMaximize						= iBmp_rawLoad(cgc_maximizeBmp);
@@ -415,7 +416,7 @@
 
 		// Initially populate _screen
 		// Load in the history if it exists
-		if (!iSEM_loadFromDisk(thisCode, screenData, cgcScreenDataFilename, false, true))
+		if (!iSEM_loadFromDisk(thisCode, NULL, screenData, cgcScreenDataFilename, false, true))
 		{
 			// Indicate success
 			sprintf((s8*)logBuffer, "Loaded: %s\0", cgcScreenDataFilename);
@@ -448,7 +449,7 @@
 
 		// Initially populate _jdebi
 		// Load in the history if it exists
-		if (!iSEM_loadFromDisk(thisCode, command_editbox->p.sem, cgcCommandHistoryFilename, true, true))
+		if (!iSEM_loadFromDisk(thisCode, NULL, command_editbox->p.sem, cgcCommandHistoryFilename, true, true))
 		{
 			// Indicate success
 			sprintf((s8*)logBuffer, "Loaded: %s\0", cgcCommandHistoryFilename);
@@ -472,7 +473,7 @@
 		}
 
 		// Load some source code
-		if (iSEM_loadFromDisk(thisCode, sourceCode_editbox->p.sem, cgcStartupPrgFilename, true, true))
+		if (iSEM_loadFromDisk(thisCode, sourceCode_rider, sourceCode_editbox->p.sem, cgcStartupPrgFilename, true, true))
 		{
 			// Indicate success
 			sprintf((s8*)logBuffer, "Loaded: %s\0", cgcStartupPrgFilename);

@@ -948,7 +948,10 @@
 					else if (focusUnused == NULL)						focusUnused	= focus;
 				}
 
-				// Check the checkbox
+
+			//////////
+			// Check the checkbox
+			//////
 				llChildHasFocus = false;
 				if (obj->objType == _OBJ_TYPE_CHECKBOX)
 				{
@@ -957,8 +960,11 @@
 					llChildHasFocus |= (obj->firstChild && obj->firstChild->ll.next && ((SObject*)obj->firstChild->ll.next)->p.hasFocus);
 				}
 
-				// Should this control have focus?
-				if ((obj->p.hasFocus || llChildHasFocus) && !(obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX))
+
+			//////////
+			// Should this control have focus?
+			//////
+				if ((obj->p.hasFocus || llChildHasFocus) && obj->objType != _OBJ_TYPE_CAROUSEL && obj->objType != _OBJ_TYPE_RIDER && !(obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX))
 				{
 					// This needs to be a focus window
 					if (!llFound)
@@ -1183,9 +1189,11 @@
 		{
 			// Mark the object dirty
 			obj->isDirtyRender	= true;
+// TODO:  Consider if this should mark something dirty for publishing as well...
 			obj->isDirtyPublish	= true;
 
 			// Mark the parent
+// TODO:  This can be made into an iterative loop rather than a recursive function
 			if (tlMarkParents && obj->parent)
 				iObj_setDirtyRender_ascent(thisCode, obj->parent, true);
 		}
@@ -1257,6 +1265,7 @@
 			obj->isDirtyPublish = true;
 
 			// Mark the parent
+// TODO:  This can be made into an iterative loop rather than a recursive function
 			if (tlMarkParents && obj->parent)
 				iObj_setDirtyPublish_ascent(thisCode, obj->parent, true);
 		}
@@ -1287,14 +1296,14 @@
 			//////////
 			// Process children?
 			//////
-				if (tlProcessChildren && obj->firstChild)
+				if ((tlProcessChildren || obj->objType == _OBJ_TYPE_CAROUSEL || obj->objType == _OBJ_TYPE_RIDER) && obj->firstChild)
 					iObj_setDirtyPublish_descent(thisCode, obj, true, true);
 
 
 			//////////
 			// Process siblings
 			//////
-				if (tlProcessSiblings && obj->ll.next)
+				if ((tlProcessSiblings || obj->objType == _OBJ_TYPE_CAROUSEL || obj->objType == _OBJ_TYPE_RIDER) && obj->ll.next)
 				{
 					// Grab the first sibling
 					objSib = obj->ll.nextObj;
@@ -2381,7 +2390,6 @@
 
 
 			case _OBJ_TYPE_CAROUSEL:
-
 				//////////
 				// Adjust for the border if need be
 				//////
@@ -2395,7 +2403,7 @@
 				//////
 					llTitleBar = propTitleBar(obj);
 					if (llTitleBar)
-						obj->rcClient.top += (bmpArrowUl->bi.biHeight + 2);		// Adjusts down for the caption
+						obj->rcClient.top += bmpArrowUl->bi.biHeight;		// Adjusts down for the caption
 
 
 				//////////
@@ -2405,7 +2413,8 @@
 					lnRight		= 0;
 					lnTop		= 0;
 					lnBottom	= 0;
-					switch (propAlignment(obj))
+					lnAlignment	= propAlignment(obj);
+					switch (lnAlignment)
 					{
 						case _ALIGNMENT_LEFT:		// Tabs are at the left
 							obj->rcClient.left		+= bmpArrowUl->bi.biWidth;
@@ -2453,13 +2462,13 @@
 							{
 								// Make the content visible
 								if (!propIsVisible(objChild))
-									propSetVisible_fromBool(objChild, false);
+									propSetVisible_fromBool(objChild, true);
 
 								// Set the appropriate size
 								SetRect(&objChild->rc,	obj->rcClient.left - lnLeft,
 														obj->rcClient.top - bmpArrowUl->bi.biHeight - lnTop,
-														obj->rcClient.left + bmpArrowUl->bi.biWidth + lnRight,
-														obj->rcClient.top + lnBottom);
+														obj->rcClient.left + bmpArrowUl->bi.biWidth - lnLeft,
+														obj->rcClient.top - lnTop);
 
 								// Update the size
 								iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
@@ -2476,10 +2485,15 @@
 							logfunc("carousel caption");
 							if (llTitleBar)
 							{
+								// Make the content visible
+								if (!propIsVisible(objChild))
+									propSetVisible_fromBool(objChild, true);
+
+								// Set the appropriate size
 								SetRect(&objChild->rc,	obj->rcClient.left + bmpArrowUl->bi.biWidth + 4 - lnLeft,
 														obj->rcClient.top - bmpArrowUl->bi.biHeight - lnTop,
-														obj->rcClient.right - 4 - (2 * bmpArrowUl->bi.biWidth) + lnRight,
-														obj->rcClient.top + lnBottom);
+														obj->rcClient.right - 4 - (2 * bmpArrowUl->bi.biWidth) - lnLeft,
+														obj->rcClient.top - lnTop);
 
 								// Update the size
 								iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
@@ -2496,10 +2510,15 @@
 							logfunc("carousel icon button");
 							if (llTitleBar)
 							{
-								SetRect(&objChild->rc,	obj->rcClient.right - 2 - bmpArrowUl->bi.biWidth - 2 - bmpArrowUl->bi.biWidth - lnLeft,
+								// Make the content visible
+								if (!propIsVisible(objChild))
+									propSetVisible_fromBool(objChild, true);
+
+								// Set the appropriate size
+								SetRect(&objChild->rc,	obj->rcClient.right - bmpArrowUl->bi.biWidth - bmpArrowUl->bi.biWidth,
 														obj->rcClient.top - bmpArrowUl->bi.biHeight - lnTop,
-														obj->rcClient.right - 2 - bmpArrowUl->bi.biWidth + lnRight,
-														obj->rcClient.top + lnBottom);
+														obj->rcClient.right - bmpArrowUl->bi.biWidth,
+														obj->rcClient.top - lnTop);
 
 								// Update the size
 								iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
@@ -2516,10 +2535,15 @@
 							logfunc("carousel close");
 							if (llTitleBar)
 							{
-								SetRect(&objChild->rc,	obj->rcClient.right - 2 - bmpArrowUl->bi.biWidth - lnLeft,
+								// Make the content visible
+								if (!propIsVisible(objChild))
+									propSetVisible_fromBool(objChild, true);
+
+								// Set the appropriate size
+								SetRect(&objChild->rc,	obj->rcClient.right - bmpArrowUl->bi.biWidth,
 														obj->rcClient.top - bmpArrowUl->bi.biHeight - lnTop,
-														obj->rcClient.right - 2 + lnRight,
-														obj->rcClient.top + lnBottom);
+														obj->rcClient.right,
+														obj->rcClient.top - lnTop);
 
 								// Update the size
 								iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);
@@ -2534,8 +2558,6 @@
 						} else if (objChild->objType == _OBJ_TYPE_RIDER) {
 							// Set the rider size
 							CopyRect(&objChild->rc,	&obj->rcClient);
-							if (llBorder)
-								InflateRect(&objChild->rc, -2, -2);		// Reduce down for the 2-pixel border
 							
 							// Update the size
 							iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, objChild->rc.right - objChild->rc.left, objChild->rc.bottom - objChild->rc.top);

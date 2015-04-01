@@ -181,6 +181,8 @@ typedef SEM**		SEMpp;
 	#define propNeRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_NECOLOR)
 	#define propNwRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_NWCOLOR)
 	#define propSeRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_SECOLOR)
+	#define propRiderTab(obj)							iObjProp_get_character			(thisCode, obj, _INDEX_RIDERTAB)
+	#define propRiderTabCloseable(obj)					(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_RIDERTABCLOSEABLE)	!= _LOGICAL_FALSE)
 	#define propSpecialEffect(obj)						iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SPECIALEFFECT)
 	#define propSwRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_SWCOLOR)
 	#define propTitleBar(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_TITLEBAR)	!= _LOGICAL_FALSE)
@@ -199,21 +201,23 @@ typedef SEM**		SEMpp;
 	#define propSetSelectedBackColor(obj, color)		iObjProp_set_sbgra_direct		(thisCode, obj, _INDEX_SELECTEDBACKCOLOR,	color);
 	#define propSetSelectedForeColor(obj, color)		iObjProp_set_sbgra_direct		(thisCode, obj, _INDEX_SELECTEDFORECOLOR,	color);
 
-	#define propSetAlignment(obj, value)				iObjProp_set_s32_direct			(thisCode, obj, _INDEX_ALIGNMENT,		value)
-	#define propSetAnchor(obj, value)					iObjProp_set_s32_direct			(thisCode, obj, _INDEX_ANCHOR,			value)
-	#define propSetBackStyle(obj, value)				iObjProp_set_s32_direct			(thisCode, obj, _INDEX_BACKSTYLE,		value)
-	#define propSetBorderStyle(obj, value)				iObjProp_set_s32_direct			(thisCode, obj, _INDEX_BORDERSTYLE,		value)
-	#define propSetCaption(obj, value)					iObjProp_set_character_direct	(thisCode, obj, _INDEX_CAPTION,			(u8*)value,		sizeof(value) - 1)
-	#define propSetCount(obj, value)					iObjProp_set_s32_direct			(thisCode, obj, _INDEX_COUNT,			value)
+	#define propSetAlignment(obj, value)				iObjProp_set_s32_direct			(thisCode, obj, _INDEX_ALIGNMENT,			value)
+	#define propSetAnchor(obj, value)					iObjProp_set_s32_direct			(thisCode, obj, _INDEX_ANCHOR,				value)
+	#define propSetBackStyle(obj, value)				iObjProp_set_s32_direct			(thisCode, obj, _INDEX_BACKSTYLE,			value)
+	#define propSetBorderStyle(obj, value)				iObjProp_set_s32_direct			(thisCode, obj, _INDEX_BORDERSTYLE,			value)
+	#define propSetCaption(obj, value)					iObjProp_set_character_direct	(thisCode, obj, _INDEX_CAPTION,				(u8*)value,		sizeof(value) - 1)
+	#define propSetCount(obj, value)					iObjProp_set_s32_direct			(thisCode, obj, _INDEX_COUNT,				value)
 	#define propSetEnabled(obj, value)					iObjProp_set_logical_fromLogicalConstants(thisCode, obj, _INDEX_ENABLED, value);
-	#define propSetIcon(obj, bmp)						iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_ICON,			bmp)
+	#define propSetIcon(obj, bmp)						iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_ICON,				bmp)
 	#define propSetMultiSelect(obj, value)				iObjProp_set_logical_fromLogicalConstants(thisCode, obj, _INDEX_MULTISELECT, value)
-	#define propSetPictureBmp(obj, bmp)					iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_PICTUREBMP,		bmp)
-	#define propSetPictureBmpDown(obj, bmp)				iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_PICTUREBMP_DOWN, bmp)
-	#define propSetStyle(obj, value)					iObjProp_set_s32_direct			(thisCode, obj, _INDEX_STYLE,			value)
-	#define propSetVisible(obj, value)					iObjProp_set_logical_fromLogicalConstants(thisCode, obj, _INDEX_VISIBLE, value)
+	#define propSetPictureBmp(obj, bmp)					iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_PICTUREBMP,			bmp)
+	#define propSetPictureBmpDown(obj, bmp)				iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_PICTUREBMP_DOWN,		bmp)
+	#define propSetRiderTab(obj, value, valueLength)	iObjProp_set_character_direct	(thisCode, obj, _INDEX_RIDERTAB,			(u8*)value,		valueLength)
+	#define propSetStyle(obj, value)					iObjProp_set_s32_direct			(thisCode, obj, _INDEX_STYLE,				value)
+	#define propSetTitlebar(obj, value)					iObjProp_set_logical_fromLogicalConstants(thisCode, obj, _INDEX_TITLEBAR,	value)
+	#define propSetVisible(obj, value)					iObjProp_set_logical_fromLogicalConstants(thisCode, obj, _INDEX_VISIBLE,	value)
 	#define propSetVisible_fromBool(obj, value)			iObjProp_set_logical_direct(thisCode, obj, _INDEX_VISIBLE, value)
-	#define propSetPictureBmpOver(obj, bmp)				iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_PICTUREBMP_OVER,	bmp)
+	#define propSetPictureBmpOver(obj, bmp)				iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_PICTUREBMP_OVER,		bmp)
 
 
 //////////
@@ -954,8 +958,9 @@ typedef SEM**		SEMpp;
 	const u8			cgcName_exception[]					= "exception";
 	const u8			cgcName_settings[]					= "_settings";
 
-	// The form caption
+	// Various captions
 	const u8			cgcName_formCaption[]				= "VJr Form";
+	const u8			cgcName_carouselCaption[]			= "Carousel";
 
 
 //////////

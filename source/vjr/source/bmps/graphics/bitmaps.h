@@ -125,6 +125,7 @@
 	#include "h\carousel_tabs_icon.h"
 	#include "h\carousel_pad.h"
 	#include "h\carousel_icon.h"
+	#include "h\carousel_ridertab_close.h"
 
 	#include "h\grace\node_pad_blue.h"
 	#include "h\grace\node_pad_green.h"
@@ -199,6 +200,7 @@
 	#include "h/carousel_tabs_icon.h"
 	#include "h/carousel_pad.h"
 	#include "h/carousel_icon.h"
+	#include "h/carousel_ridertab_close.h"
 
 	#include "h/grace/node_pad_blue.h"
 	#include "h/grace/node_pad_green.h"

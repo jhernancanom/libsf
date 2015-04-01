@@ -910,8 +910,14 @@
 
 		// Use the system bitblt for speed
 #ifdef _MSC_VER
-		BitBlt(bmpDst->hdc, trc->left, trc->top, trc->right - trc->left, trc->bottom - trc->top, bmpSrc->hdc, 0, 0, SRCCOPY);
-		return(bmpSrc->bi.biSizeImage);
+		if (bmpDst && bmpSrc)
+		{
+			BitBlt(bmpDst->hdc, trc->left, trc->top, trc->right - trc->left, trc->bottom - trc->top, bmpSrc->hdc, 0, 0, SRCCOPY);
+			return(bmpSrc->bi.biSizeImage);
+
+		} else {
+			return(0);
+		}
 #endif
 
 

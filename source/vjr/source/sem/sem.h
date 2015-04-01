@@ -180,6 +180,9 @@
 			bool		allowMoveBeyondEndOfLine;						// Do we allow them to move beyond the end of the line?
 			RECT		rcLineNumberLastRender;							// Used for mouse clicking, to determine how much we adjust
 
+			// Loaded filename (if any)
+			s8			fileName[_MAX_PATH];
+
 			// Editing cues
 			bool		hideEditCues;									// If true, will not show the changedColor or newColor
 			SBgra		changedColor;									// The color when data has changed
@@ -258,8 +261,8 @@
 //////
 	SEM*					iSEM_allocate						(SThisCode* thisCode, bool tlIsSourceCode);
 	SBuilder*				iSEM_accumulateBuilder				(SThisCode* thisCode, SEM* sem, SLine* ecHintStart, SLine* ecHintEnd);
-	bool					iSEM_saveToDisk						(SThisCode* thisCode, SEM* sem, cu8* tcPathname);
-	bool					iSEM_loadFromDisk					(SThisCode* thisCode, SEM* sem, cu8* tcPathname, bool isSourceCode, bool tlLogIt);
+	bool					iSEM_saveToDisk						(SThisCode* thisCode,                     SEM* sem, cu8* tcPathname);
+	bool					iSEM_loadFromDisk					(SThisCode* thisCode, SObject* objParent, SEM* sem, cu8* tcPathname, bool isSourceCode, bool tlLogIt);
 	bool					iSEM_duplicate						(SThisCode* thisCode, SEM** root, SEM* chain, bool tlIncludeUndoHistory);
 	void					iSEM_delete							(SThisCode* thisCode, SEM** root, bool tlDeleteSelf);
 	void					iSEM_deleteChain					(SThisCode* thisCode, SEM** root, bool tlDeleteSelf);

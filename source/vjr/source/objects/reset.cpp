@@ -181,10 +181,13 @@
 
 					} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName_byText(objChild, cgcName_caption)) {
 						// Caption
+						// Adjust the size
+						iObj_setSize(thisCode, objChild, objChild->rc.left + bmpVjrIcon->bi.biWidth + 2, objChild->rc.top, objChild->rc.right - objChild->rc.left, bmpVjrIcon->bi.biHeight);
+
 						propSetCaption(objChild, cgcName_formCaption);
 						iObjProp_set_s32_direct(thisCode, objChild, _INDEX_BACKSTYLE, _BACK_STYLE_TRANSPARENT);
 						iFont_delete(&objChild->p.font, true);
-						objChild->p.font		= iFont_create(cgcFontName_windowTitleBar, 12, FW_NORMAL, false, false);
+						objChild->p.font		= iFont_create(cgcFontName_windowTitleBar, 11, FW_NORMAL, false, false);
 						propSetVisible(objChild, _LOGICAL_TRUE);
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconMove)) {
@@ -399,6 +402,7 @@
 
 	void iiSubobj_resetToDefaultCarousel(SThisCode* thisCode, SObject* carousel, bool tlResetProperties, bool tlResetMethods, SObjPropMap* propList, u32 tnPropCount)
 	{
+		bool		llVisible;
 		RECT		lrc;
 		SBitmap*	bmp;
 		SObject*	objChild;
@@ -411,6 +415,16 @@
 			// Reset the common settings
 			//////
 				iiObj_resetToDefaultCommon(thisCode, carousel, true, true, propList, tnPropCount);
+
+
+			//////////
+			// Standard default settings
+			//////
+				propSetAlignment(carousel, _ALIGNMENT_BOTTOM);
+				propSetTitlebar(carousel, _LOGICAL_FALSE);
+				propSetBorderStyle(carousel, _BORDER_STYLE_OUTLINE);
+				iFont_delete(&carousel->p.font, true);
+				carousel->p.font = iFont_create(cgcFontName_windowTitleBar, 10, FW_NORMAL, false, false);
 
 
 			//////////
@@ -428,63 +442,61 @@
 			// Default child settings
 			//////
 				SetRect(&lrc, 0, 0, bmpArrowUl->bi.biWidth, bmpArrowUl->bi.biHeight);
-				objChild = carousel->firstChild;
+				llVisible	= propTitleBar(carousel);
+				objChild	= carousel->firstChild;
 				while (objChild)
 				{
 					// See which object this is
 					if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_icon))
 					{
-						// Adjust the size
-						iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, bmpCarouselIcon->bi.biWidth, bmpCarouselIcon->bi.biHeight);
-
 						// Carousel icon
 						iObjProp_set_bitmap_direct(thisCode, objChild, _INDEX_PICTUREBMP,		bmpCarouselIcon);
 						iObjProp_set_bitmap_direct(thisCode, objChild, _INDEX_PICTUREBMP_DOWN,	bmpCarouselIcon);
 						iObjProp_set_bitmap_direct(thisCode, objChild, _INDEX_PICTUREBMP_OVER,	bmpCarouselIcon);
+						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
 
 						// Add highlighting for the over and down
 						bmp = iObjProp_get_bitmap(thisCode, objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
 						bmp = iObjProp_get_bitmap(thisCode, objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
-						propSetVisible(objChild, _LOGICAL_TRUE);
+						propSetVisible_fromBool(objChild, llVisible);
 
 
 					} else if (objChild->objType == _OBJ_TYPE_LABEL && propIsName_byText(objChild, cgcName_caption)) {
 						// Caption
-						propSetCaption(objChild, cgcName_formCaption);
-						iObjProp_set_s32_direct(thisCode, objChild, _INDEX_BACKSTYLE, _BACK_STYLE_TRANSPARENT);
+						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
+						propSetAlignment(objChild, _ALIGNMENT_MIDDLE_LEFT);
+						propSetVisible_fromBool(objChild, llVisible);
+
+						// Titlebar font
 						iFont_delete(&objChild->p.font, true);
-						objChild->p.font = iFont_create(cgcFontName_windowTitleBar, 12, FW_NORMAL, false, false);
-						propSetVisible(objChild, _LOGICAL_TRUE);
+						objChild->p.font = iFont_create(cgcFontName_windowTitleBar, 10, FW_NORMAL, false, false);
+						propSetCaption(carousel, cgcName_carouselCaption);
 
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconCarousel)) {
-						// Adjust the size
-						iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, bmpCarouselTabsIcon->bi.biWidth, bmpCarouselTabsIcon->bi.biHeight);
-
 						// Carousel tabs icon
 						iObjProp_set_bitmap_direct(thisCode, objChild, _INDEX_PICTUREBMP,		bmpCarouselTabsIcon);
 						iObjProp_set_bitmap_direct(thisCode, objChild, _INDEX_PICTUREBMP_DOWN,	bmpCarouselTabsIcon);
 						iObjProp_set_bitmap_direct(thisCode, objChild, _INDEX_PICTUREBMP_OVER,	bmpCarouselTabsIcon);
+						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
 
 						// Add highlighting for the over and down
 						bmp = iObjProp_get_bitmap(thisCode, objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
 						bmp = iObjProp_get_bitmap(thisCode, objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
-						propSetVisible(objChild, _LOGICAL_TRUE);
+						propSetVisible_fromBool(objChild, llVisible);
 
 
 					} else if (objChild->objType == _OBJ_TYPE_IMAGE && propIsName_byText(objChild, cgcName_iconClose)) {
-						// Adjust the size
-						iObj_setSize(thisCode, objChild, objChild->rc.left, objChild->rc.top, bmpCarouselIcon->bi.biWidth, bmpCarouselIcon->bi.biHeight);
-
 						// Close icon
 						iObjProp_set_bitmap_direct(thisCode, objChild, _INDEX_PICTUREBMP,		bmpClose);
 						iObjProp_set_bitmap_direct(thisCode, objChild, _INDEX_PICTUREBMP_DOWN,	bmpClose);
 						iObjProp_set_bitmap_direct(thisCode, objChild, _INDEX_PICTUREBMP_OVER,	bmpClose);
+						propSetBackStyle(objChild, _BACK_STYLE_TRANSPARENT);
 
 						// Add highlighting for the over and down
 						bmp = iObjProp_get_bitmap(thisCode, objChild, _INDEX_PICTUREBMP_OVER);			iBmp_colorize(bmp, &lrc, colorMouseOver, false, 0.25f);
 						bmp = iObjProp_get_bitmap(thisCode, objChild, _INDEX_PICTUREBMP_DOWN);			iBmp_colorize(bmp, &lrc, colorMouseDown, false, 0.25f);
-						propSetVisible(objChild, _LOGICAL_TRUE);
+						propSetVisible_fromBool(objChild, llVisible);
 					}
 
 					// Move to next object

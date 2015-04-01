@@ -761,6 +761,7 @@ debug_nop;
 // Called to raise an event.
 // See:  SEvents.
 //
+// Note:  The return value indicates if the calling signaler should continue propagating this event through to other parent objects (at the same coordinates).
 //////
 	bool iEngine_raise_event(SThisCode* thisCode, s32 tnEventId, SWindow* win, SObject* obj, void* p)
 	{
@@ -799,8 +800,10 @@ debug_nop;
 																						obj->ev.varIsCAS_onKeyUp,			obj->ev.varIsAscii_onKeyUp));
 				case _EVENT_RESIZE:
 					// The passed parameter p must be valid, and is the RECT* of its new size and position
-					if (p)		return(obj->ev.methods[tnEventId].event_11(thisCode, win, obj, (RECT*)p));
-					else		return(false);
+					if (p)
+						return(obj->ev.methods[tnEventId].event_11(thisCode, win, obj, (RECT*)p));
+
+					break;
 
 				default:
 					// The rest of these events are all handled in the standard way
@@ -836,8 +839,9 @@ debug_nop;
 			}
 		}
 
-		// Indicate failure
-		return(false);
+		// Failure on this object if we get here
+		// Indicate the caller should continue to signal this event on other objects
+		return(true);
 	}
 
 
