@@ -352,7 +352,7 @@
 	{
 		s32			lnI, lnWidth, lnAlignment, lnCount, lnLeft, lnCenter;
 		u32			lnPixelsRendered;
-		bool		llBorder, llOrientDown, llCloseable, llVisible;
+		bool		llBorder, llOrientDown, llCloseable, llVisible, llTitleBar;
 		SBgra		nwRgba, neRgba, swRgba, seRgba, frameColor;
 		RECT		lrc, lrc2, lrc3, lrc4;
 		SVariable*	varTabText;
@@ -400,7 +400,8 @@
 							//////////
 							// Overlay the frame
 							//////
-								llBorder = (propBorderStyle(obj) != _BORDER_STYLE_NONE);
+								llTitleBar	= propTitleBar(obj);
+								llBorder	= (propBorderStyle(obj) != _BORDER_STYLE_NONE);
 								if (llBorder)
 								{
 									// Render the border
@@ -618,7 +619,7 @@
 												//////
 													if (llCloseable)
 													{
-														lnCenter = 2 + ((lrc4.bottom + lrc4.top) / 2);
+														lnCenter = ((lrc4.bottom + lrc4.top) / 2);
 														SetRect(&lrc4, lrc4.right - 2 - bmpCarouselRiderTabClose->bi.biWidth, lnCenter - (bmpCarouselRiderTabClose->bi.biHeight / 2), lrc4.right - 2, lnCenter + (bmpCarouselRiderTabClose->bi.biHeight / 2));
 														iBmp_bitBltMask(obj->p.bmpTabs, &lrc4, bmpCarouselRiderTabClose);
 													}
@@ -640,16 +641,19 @@
 								switch (lnAlignment)
 								{
 									case _ALIGNMENT_RIGHT:
-debug_break;
+										SetRect(&lrc, obj->rcClient.right, obj->rcClient.top, obj->bmp->bi.biWidth, obj->rcClient.bottom);
+										iBmp_bitBlt_rotated(obj->bmp, &lrc, obj->p.bmpTabs, 90);
 										break;
 
 									case _ALIGNMENT_TOP:
-										SetRect(&lrc, obj->rcClient.left, 0, obj->rcClient.right, obj->rcClient.top);
+										if (llTitleBar)		SetRect(&lrc, obj->rcClient.left, bmpArrowUl->bi.biHeight, obj->rcClient.right, bmpArrowUl->bi.biHeight + obj->p.bmpTabs->bi.biHeight);
+										else				SetRect(&lrc, obj->rcClient.left, 0, obj->rcClient.right, obj->rcClient.top);
 										iBmp_bitBlt(obj->bmp, &lrc, obj->p.bmpTabs);
 										break;
 
 									case _ALIGNMENT_LEFT:
-debug_break;
+										SetRect(&lrc, 0, obj->rcClient.top, obj->p.bmpTabs->bi.biHeight, obj->rcClient.bottom - 1);
+										iBmp_bitBlt_rotated(obj->bmp, &lrc, obj->p.bmpTabs, 270);
 										break;
 
 									default:

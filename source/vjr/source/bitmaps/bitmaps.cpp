@@ -908,23 +908,21 @@
 		SBgra*		lbgraSrc;
 
 
-		// Use the system bitblt for speed
-#ifdef _MSC_VER
-		if (bmpDst && bmpSrc)
-		{
-			BitBlt(bmpDst->hdc, trc->left, trc->top, trc->right - trc->left, trc->bottom - trc->top, bmpSrc->hdc, 0, 0, SRCCOPY);
-			return(bmpSrc->bi.biSizeImage);
-
-		} else {
-			return(0);
-		}
-#endif
-
 
 		// Make sure the environment is sane
 		lnPixelsRendered = 0;
 		if (bmpDst && bmpSrc && trc)
 		{
+
+		//////////
+		// Use the system bitblt for speed
+		//////
+#ifdef _MSC_VER
+			BitBlt(bmpDst->hdc, trc->left, trc->top, trc->right - trc->left, trc->bottom - trc->top, bmpSrc->hdc, 0, 0, SRCCOPY);
+			return(bmpSrc->bi.biSizeImage);
+#endif
+
+
 		//////////
 		// Draw it
 		//////
@@ -1058,6 +1056,233 @@
 					}
 				}
 			}
+		}
+
+
+		//////////
+		// Indicate how many pixels were rendered
+		//////
+			return(lnPixelsRendered);
+	}
+
+
+
+
+//////////
+//
+// Called to blt the bitmap rotated 90, 180, or 270 degrees.
+//
+//////
+	u32 iBmp_bitBlt_rotated(SBitmap* bmpDst, RECT* trc, SBitmap* bmpSrc, s32 tnDegrees_90_180_270)
+	{
+		u32			lnPixelsRendered;
+		s32			lnY, lnX, lnYDst, lnXDst, lnYDstStart, lnXDstStart, lnYDstEnd, lnXDstEnd, lnXinc_onX, lnXinc_onY, lnYinc_onX, lnYinc_onY;
+		f64			lfAlp, lfMalp;
+		SBgr*		lbgrDst;
+		SBgr*		lbgrSrc;
+		SBgra*		lbgraDst;
+		SBgra*		lbgraSrc;
+
+
+		// Make sure the environment is sane
+		lnPixelsRendered = 0;
+		if (bmpDst && bmpSrc && trc)
+		{
+			//////////
+			// Validate the angle
+			//////
+				switch (tnDegrees_90_180_270)
+				{
+					case 0:
+						// Do a normal bitBlt
+						return(iBmp_bitBlt(bmpDst, trc, bmpSrc));
+
+					case 90:
+						// Clock-wise 90 degrees
+						lnXDstStart	= trc->right;
+						lnYDstStart	= trc->top;
+						lnXDstEnd	= trc->left - 1;
+						lnYDstEnd	= trc->bottom + 1;
+						lnXinc_onY	= -1;
+						lnYinc_onY	= 0;
+						lnXinc_onX	= 0;
+						lnYinc_onX	= 1;
+						break;
+
+					case 180:
+						// Clock-wise 180 degrees
+						lnXDstStart	= trc->right;
+						lnYDstStart	= trc->top;
+						lnXDstEnd	= trc->left - 1;
+						lnYDstEnd	= trc->bottom + 1;
+						lnXinc_onY	= 0;
+						lnYinc_onY	= 1;
+						lnXinc_onX	= -1;
+						lnYinc_onX	= 0;
+						break;
+
+					case 270:
+						// Clock-wise 270 degrees
+						lnXDstStart	= trc->left;
+						lnYDstStart	= trc->bottom;
+						lnXDstEnd	= trc->right + 1;
+						lnYDstEnd	= trc->top - 1;
+						lnXinc_onY	= 1;
+						lnYinc_onY	= 0;
+						lnXinc_onX	= 0;
+						lnYinc_onX	= -1;
+						break;
+
+					default:
+						// Failure
+						return(0);
+				}
+
+
+			//////////
+			// Draw it
+			//////
+				for (
+						lnY = 0, lnXDst = lnXDstStart, lnYDst = lnYDstStart;
+						lnY < bmpSrc->bi.biHeight && lnYDst != lnYDstEnd && lnXDst != lnXDstEnd;
+						lnXDstStart += lnXinc_onY, lnYDstStart += lnYinc_onY, lnYDst = lnYDstStart, lnY++
+					)
+				{
+					// Are we on the image?
+					if (lnYDst >= 0 && lnYDst < bmpDst->bi.biHeight)
+					{
+						// Build the pointers
+						lbgrSrc		= (SBgr*) ((s8*)bmpSrc->bd + ((bmpSrc->bi.biHeight - lnY - 1) * bmpSrc->rowWidth));
+						lbgraSrc	= (SBgra*)((s8*)bmpSrc->bd + ((bmpSrc->bi.biHeight - lnY - 1) * bmpSrc->rowWidth));
+
+						// What exactly are we copying?
+						if (bmpSrc->bi.biBitCount == 24)
+						{
+							// 24-bit source
+							if (bmpDst->bi.biBitCount == 24)
+							{
+								// 24-bit to 24-bit
+								// Iterate through every visible column
+								for (lnX = 0, lnXDst = lnXDstStart; lnX < bmpSrc->bi.biWidth && lnXDst != lnXDstEnd; lnXDst += lnXinc_onX, lnYDst += lnYinc_onX, lnX++)
+								{
+									// Build our destination pointer
+									lbgrDst = (SBgr*)((s8*)bmpDst->bd + ((bmpDst->bi.biHeight - lnYDst - 1) * bmpDst->rowWidth) + (lnXDst * (bmpDst->bi.biBitCount / 8)));
+
+									// Are we on the image?
+									if (lnXDst >= 0 && lnXDst < bmpDst->bi.biWidth && lnYDst >= 0 && lnYDst < bmpDst->bi.biHeight)
+									{
+										// Copy the pixel
+										lbgrDst->red	= lbgrSrc->red;
+										lbgrDst->grn	= lbgrSrc->grn;
+										lbgrDst->blu	= lbgrSrc->blu;
+										++lnPixelsRendered;
+									}
+
+									// Move to next pixel
+									++lbgrSrc;
+								}
+
+							} else {
+								// 24-bit to 32-bit
+								// Iterate through every visible column
+								for (lnX = 0, lnXDst = lnXDstStart; lnX < bmpSrc->bi.biWidth && lnXDst != lnXDstEnd; lnXDst += lnXinc_onX, lnYDst += lnYinc_onX, lnX++)
+								{
+									// Build our destination pointer
+									lbgraDst = (SBgra*)((s8*)bmpDst->bd + ((bmpDst->bi.biHeight - lnYDst - 1) * bmpDst->rowWidth) + (lnXDst * (bmpDst->bi.biBitCount / 8)));
+
+									// Are we on the image?
+									if (lnXDst >= 0 && lnXDst < bmpDst->bi.biWidth && lnYDst >= 0 && lnYDst < bmpDst->bi.biHeight)
+									{
+										// Copy the pixel
+										lbgraDst->alp	= 255;
+										lbgraDst->red	= lbgrSrc->red;
+										lbgraDst->grn	= lbgrSrc->grn;
+										lbgraDst->blu	= lbgrSrc->blu;
+										++lnPixelsRendered;
+									}
+
+									// Move to next pixel
+									++lbgrSrc;
+								}
+							}
+
+						} else if (bmpSrc->bi.biBitCount == 32) {
+							// 32-bit source
+							if (bmpDst->bi.biBitCount == 24)
+							{
+								// 32-bit to 24-bit
+								// Iterate through every visible column
+								for (lnX = 0, lnXDst = lnXDstStart; lnX < bmpSrc->bi.biWidth && lnXDst != lnXDstEnd; lnXDst += lnXinc_onX, lnYDst += lnYinc_onX, lnX++)
+								{
+									// Build our destination pointers
+									lbgrDst = (SBgr*)((s8*)bmpDst->bd + ((bmpDst->bi.biHeight - lnYDst - 1) * bmpDst->rowWidth) + (lnXDst * (bmpDst->bi.biBitCount / 8)));
+
+									// Are we on the image?
+									if (lnXDst >= 0 && lnXDst < bmpDst->bi.biWidth && lnYDst >= 0 && lnYDst < bmpDst->bi.biHeight && lbgraSrc->alp != 0)
+									{
+										// Copy the pixel
+										if (lbgraSrc->alp == 255)
+										{
+											// Opaque
+											lbgrDst->red	= lbgraSrc->red;
+											lbgrDst->grn	= lbgraSrc->grn;
+											lbgrDst->blu	= lbgraSrc->blu;
+
+										} else {
+											// Some degree of transparency
+											lfAlp			= ((f64)lbgraSrc->alp / 255.0);
+											lfMalp			= 1.0 - lfAlp;
+											lbgrDst->red	= (u8)min(max(((f64)lbgrDst->red * lfMalp) + (lbgraSrc->red * lfAlp), 0.0), 255.0);
+											lbgrDst->grn	= (u8)min(max(((f64)lbgrDst->grn * lfMalp) + (lbgraSrc->grn * lfAlp), 0.0), 255.0);
+											lbgrDst->blu	= (u8)min(max(((f64)lbgrDst->blu * lfMalp) + (lbgraSrc->blu * lfAlp), 0.0), 255.0);
+										}
+										++lnPixelsRendered;
+									}
+
+									// Move to next pixel
+									++lbgraSrc;
+								}
+
+							} else {
+								// 32-bit to 32-bit
+								// Iterate through every visible column
+								for (lnX = 0, lnXDst = lnXDstStart; lnX < bmpSrc->bi.biWidth && lnXDst != lnXDstEnd; lnXDst += lnXinc_onX, lnYDst += lnYinc_onX, lnX++)
+								{
+									// Build our destination pointers
+									lbgraDst = (SBgra*)((s8*)bmpDst->bd + ((bmpDst->bi.biHeight - lnYDst - 1) * bmpDst->rowWidth) + (lnXDst * (bmpDst->bi.biBitCount / 8)));
+
+									// Are we on the image?
+									if (lnXDst >= 0 && lnXDst < bmpDst->bi.biWidth && lnYDst >= 0 && lnYDst < bmpDst->bi.biHeight && lbgraSrc->alp != 0)
+									{
+										// Copy the pixel
+										if (lbgraSrc->alp == 255)
+										{
+											// Opaque
+											lbgraDst->alp	= 255;
+											lbgraDst->red	= lbgraSrc->red;
+											lbgraDst->grn	= lbgraSrc->grn;
+											lbgraDst->blu	= lbgraSrc->blu;
+
+										} else {
+											// Some degree of transparency
+											lfAlp			= ((f64)lbgraSrc->alp / 255.0);
+											lfMalp			= 1.0 - lfAlp;
+	 										lbgraDst->alp	= 255;
+											lbgraDst->red	= (u8)min(max(((f64)lbgraDst->red * lfMalp) + (lbgraSrc->red * lfAlp), 0.0), 255.0);
+											lbgraDst->grn	= (u8)min(max(((f64)lbgraDst->grn * lfMalp) + (lbgraSrc->grn * lfAlp), 0.0), 255.0);
+											lbgraDst->blu	= (u8)min(max(((f64)lbgraDst->blu * lfMalp) + (lbgraSrc->blu * lfAlp), 0.0), 255.0);
+										}
+										++lnPixelsRendered;
+									}
+
+									// Move to next pixel
+									++lbgraSrc;
+								}
+							}
+						}
+					}
+				}
+
 		}
 
 

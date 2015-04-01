@@ -320,7 +320,7 @@
 //		Errors below -200			-- DBC errors
 //
 /////
-	uptr iDbf_open(SThisCode* thisCode, SVariable* table, SVariable* alias, bool tlExclusive, bool tlAgain, bool tlValidate, bool tlDescending)
+	uptr iDbf_open(SThisCode* thisCode, SVariable* table, SVariable* alias, bool tlExclusive, bool tlAgain, bool tlValidate, bool tlDescending, bool tlVisualize, bool tlJournal)
 	{
 		s8 tableBuffer[_MAX_PATH + 1];
 		s8 aliasBuffer[_MAX_PATH + 1];
@@ -344,7 +344,7 @@
 			//////////
 			// Open
 			//////
-				return(iDbf_open(thisCode, tableBuffer, aliasBuffer, tlExclusive, tlAgain, tlValidate, tlDescending));
+				return(iDbf_open(thisCode, tableBuffer, aliasBuffer, tlExclusive, tlAgain, tlValidate, tlDescending, tlVisualize, tlJournal));
 		}
 
 		// Should never happen
@@ -355,11 +355,11 @@
 
 	// Note:  table and alias must be NULL-terminated
 	// Note:  an alias is not required
-	uptr iDbf_open(SThisCode* thisCode, cs8* table, cs8* alias, bool tlExclusive, bool tlAgain, bool tlValidate, bool tlDescending)
+	uptr iDbf_open(SThisCode* thisCode, cs8* table, cs8* alias, bool tlExclusive, bool tlAgain, bool tlValidate, bool tlDescending, bool tlVisualize, bool tlJournal)
 	{
 		sptr			lnI, lnI_max, lnIndexType;
 		sptr			lnWorkArea, lnLength;
-		u32				lnField, lShareFlag, lStructure_size, numread;
+		u32				lnField, lnShareFlag, lStructure_size, numread;
 		sptr*			lnCurrentWorkArea;
 		bool			llDbcIsValid;
 		SFieldRecord1*	lfrPtr;
@@ -367,6 +367,7 @@
 		SWorkArea*		waBase;		// Work Area base (used to access VCX, SCX, DBF work areas, etc.)
 		SWorkArea*		wa;
 		s8				cdxSdxOrDcxFilename[_MAX_PATH];
+		s8				journalFilename[_MAX_PATH];
 		union {
 			uptr		_validateStruture;
 			bool		(*validateStructure)(SWorkArea* wa);
@@ -511,13 +512,13 @@
 		//////////
 		// Set the flags based on shared or exclusive
 		//////
-			lShareFlag = ((tlExclusive) ? _SH_DENYRW/*Exclusive denies reads and writes*/ : _SH_DENYNO/*Shared denies none*/);
+			lnShareFlag = ((tlExclusive) ? _SH_DENYRW/*Exclusive denies reads and writes*/ : _SH_DENYNO/*Shared denies none*/);
 
 
 		//////////
 		// Open the table based on the shared mode with the shared/exclusive flag
 		//////
-			wa->fhDbf = _sopen(table, _O_BINARY | _O_RDWR, lShareFlag);
+			wa->fhDbf = iDisk_open(table, _O_BINARY | _O_RDWR, lnShareFlag, false);
 			if (wa->fhDbf < 0)
 			{
 
@@ -526,7 +527,7 @@
 				// See if it's already open and if we can use it again
 				//////
 					if (tlAgain && (lnWorkArea = iDbf_get_workArea_byTablePathname(thisCode, table, null)) >= 0)
-						wa->fhDbf = _dup(gsWorkArea[lnWorkArea].fhDbf);	// We found the work area where this table is already open ... share its file handle
+						wa->fhDbf = iDisk_duplicateFileHandle(gsWorkArea[lnWorkArea].fhDbf);	// We found the work area where this table is already open ... share its file handle
 
 
 				//////////
@@ -541,11 +542,11 @@
 		//////////
 		// Read the fixed portion of the header
 		//////
-			numread = (u32)_read(wa->fhDbf, &wa->header, sizeof(wa->header));
-			if (numread != sizeof(wa->header))
+			numread = iDisk_read(wa->fhDbf, 0, (s8*)&wa->header, sizeof(wa->header), &error, &errorNum);
+			if (error || numread != sizeof(wa->header))
 			{
 				// Unable to read the header
-				_close(wa->fhDbf);
+				iDisk_close(wa->fhDbf);
 				return(_DBF_ERROR_ERROR_READING_HEADER1);
 			}
 
@@ -593,7 +594,7 @@
 
 				default:
 					// No idea.	 So, we'll say it's a bad, bad table.
-					_close(wa->fhDbf);
+					iDisk_close(wa->fhDbf);
 					return(_DBF_ERROR_UNKNOWN_TABLE_TYPE);
 			}
 
@@ -605,7 +606,7 @@
 			wa->fieldPtr1		= (SFieldRecord1*)malloc(lStructure_size);
 			if (wa->fieldPtr1 == NULL)
 			{
-				_close(wa->fhDbf);
+				iDisk_close(wa->fhDbf);
 				return(_DBF_ERROR_MEMORY_ALLOCATION);
 			}
 
@@ -616,7 +617,7 @@
 			numread = iDisk_read(wa->fhDbf, sizeof(STableHeader), (s8*)wa->fieldPtr1, lStructure_size, &error, &errorNum);
 			if (error || numread != lStructure_size)
 			{
-				_close(wa->fhDbf);
+				iDisk_close(wa->fhDbf);
 				return(_DBF_ERROR_ERROR_READING_HEADER2);
 			}
 
@@ -748,7 +749,7 @@
 			if (!wa->field2Ptr)
 			{
 				// Unable to allocate memory for the fieldrecord2 data
-				_close(wa->fhDbf);
+				iDisk_close(wa->fhDbf);
 				return(_DBF_ERROR_MEMORY_ALLOCATION);
 			}
 
@@ -812,7 +813,7 @@
 						iError_signal(thisCode, _ERROR_UNABLE_TO_OPEN_DBC, NULL, false, wa->tablePathname, false);
 
 						// Return failure
-						_close(wa->fhDbf);
+						iDisk_close(wa->fhDbf);
 						return(_DBF_ERROR_DBC);
 					}
 
@@ -826,7 +827,7 @@
 			iDatum_allocateSpace(&wa->row, wa->header.recordLength);
 			if (!wa->row.data)
 			{
-				_close(wa->fhDbf);
+				iDisk_close(wa->fhDbf);
 				return(_DBF_ERROR_MEMORY_ROW);
 			}
 
@@ -838,7 +839,7 @@
 			iDatum_allocateSpace(&wa->orow, wa->header.recordLength);
 			if (wa->orow.data == NULL)
 			{
-				_close(wa->fhDbf);
+				iDisk_close(wa->fhDbf);
 				iDatum_delete(&wa->row, false);
 				return(_DBF_ERROR_MEMORY_ORIGINAL);
 			}
@@ -851,7 +852,7 @@
 			iDatum_allocateSpace(&wa->irow, wa->header.recordLength);
 			if (wa->irow.data == NULL)
 			{
-				_close(wa->fhDbf);
+				iDisk_close(wa->fhDbf);
 				iDatum_delete(&wa->row, false);
 				iDatum_delete(&wa->orow, false);
 				return(_DBF_ERROR_MEMORY_INDEX);
@@ -866,6 +867,26 @@
 			wa->isCached		= false;
 			wa->currentRecord	= 0;
 			wa->isUsed			= true;
+			wa->isVisualized	= tlVisualize;
+			wa->isJournaled		= tlJournal;
+
+
+		//////////
+		// Try to open or create the journal file
+		//////
+			memset(journalFilename, 0, sizeof(journalFilename));
+			if (wa->tablePathnameLength >= 5)
+			{
+				// Copy "filename.dbf"
+				memcpy(journalFilename, wa->tablePathname, wa->tablePathnameLength);
+
+				// Convert to "filename.jrn"
+				memcpy(journalFilename + wa->tablePathnameLength - (sizeof(cgcJrnExtension) - 1), cgcJrnExtension, sizeof(cgcJrnExtension) - 1);
+
+				// Try to open or create it
+				wa->fhJrn = iDisk_open(journalFilename, _O_BINARY | _O_RDWR, lnShareFlag, true);
+			}
+
 
 
 		//////////
@@ -1012,6 +1033,8 @@
 	uptr iDbf_cacheAllRowData(SThisCode* thisCode, SWorkArea* wa)
 	{
 		u64 lnCacheSize, lnOriginalFilePosition, lnNumread;
+		bool	error;
+		u32		errorNum;
 
 
 		// Make sure it's valid
@@ -1021,16 +1044,18 @@
 			return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
+		// See if it's already cached
+		if (wa->cachedTable)
+		{
+			free(wa->cachedTable);
+			wa->cachedTable	= NULL;
+			wa->isCached	= false;
+		}
+
+
 		// Find out how big the file is
-		lnOriginalFilePosition = _telli64(wa->fhDbf);
-		_lseeki64(wa->fhDbf, 0, SEEK_END);
-		lnCacheSize = _telli64(wa->fhDbf) - (u32)wa->header.firstRecord;
-		_lseeki64(wa->fhDbf, wa->header.firstRecord, SEEK_SET);
-
-
-		// If we're smaller than 200 MB we'll go ahead and cache, otherwise ... not so much
-		if (lnCacheSize > 200 * 1024 * 1000)
-			return(-5);		// Too big to cache
+		lnOriginalFilePosition	= iDisk_getFilePosition(wa->fhDbf);
+		lnCacheSize				= iDisk_getFileSize(wa->fhDbf);
 
 
 		// Allocate that much space
@@ -1038,18 +1063,23 @@
 		if (wa->cachedTable)
 		{
 			// Read in the table
-			lnNumread = _read(wa->fhDbf, wa->cachedTable, (u32)lnCacheSize);
-			if (lnNumread != lnCacheSize)
+			lnNumread = iDisk_read(wa->fhDbf, wa->header.firstRecord, wa->cachedTable, (u32)lnCacheSize, &error, &errorNum);
+			if (error || lnNumread != lnCacheSize)
+			{
+				free(wa->cachedTable);
+				wa->cachedTable	= NULL;
+				wa->isCached	= false;
 				return(-1);
+			}
 
 			// Raise the flag
 			wa->isCached = true;
 
-			// Free data
+			// Free row data because now we point into the cached data only
 			iDatum_delete(&wa->row, false);
 
 			// Reset the file pointer to where it was
-			_lseeki64(wa->fhDbf, lnOriginalFilePosition, SEEK_SET);
+			iDisk_setFilePosition(wa->fhDbf, lnOriginalFilePosition);
 
 			// Set data to where it should be in the cache
 			iDbf_gotoRecord(thisCode, wa, wa->currentRecord);
@@ -1171,8 +1201,7 @@
 		// See if that file exists
 		//////
 			hFind = FindFirstFile(cdxName, &ffd);
-			if (hFind == INVALID_HANDLE_VALUE)		return(0);		// Not found
-			else									return(1);		// Found
+			return(((hFind == INVALID_HANDLE_VALUE) ? 0 : 1));
 	}
 
 
@@ -1914,6 +1943,8 @@
 		sptr			lnResult;
 		SFieldRecord2*	lfr2Ptr;
 		SDiskLock*		dl;
+		bool			error;
+		u32				errorNum;
 
 
 		//////////
@@ -1964,7 +1995,7 @@
 
 						} else {
 							// Seek only
-							if (_lseeki64(wa->fhDbf, lnOffset, SEEK_SET) != lnOffset)
+							if (iDisk_setFilePosition(wa->fhDbf, lnOffset) != lnOffset)
 								return(_DBF_ERROR_SEEKING);
 						}
 
@@ -1973,8 +2004,8 @@
 					// Read
 					// Note:  memo field content is not loaded at this time, but only upon direct request
 					//////
-						lnNumread = _read(wa->fhDbf, wa->row.data, wa->header.recordLength);
-						if (lnNumread != wa->header.recordLength)
+						lnNumread = iDisk_read(wa->fhDbf, -1, wa->row.data, wa->header.recordLength, &error, &errorNum);
+						if (error || lnNumread != wa->header.recordLength)
 							return(-1);
 
 
@@ -2058,6 +2089,8 @@
 		u32			lnNumread;
 		s64			lnOffset;
 		SDiskLock*	dl;
+		bool		error;
+		u32			errorNum;
 
 
 		//////////
@@ -2089,7 +2122,7 @@
 
 					} else {
 						// Seek only
-						if (_lseeki64(wa->fhDbf, lnOffset, SEEK_SET) != lnOffset)
+						if (iDisk_setFilePosition(wa->fhDbf, lnOffset) != lnOffset)
 							return(_DBF_ERROR_SEEKING);
 					}
 					
@@ -2097,7 +2130,7 @@
 				//////////
 				// Write
 				//////
-					lnNumread = _write(wa->fhDbf, wa->row.data, wa->header.recordLength);
+					lnNumread = iDisk_write(wa->fhDbf, -1, wa->row.data, wa->header.recordLength, &error, &errorNum);
 					if (lnNumread != wa->header.recordLength)
 						return(_DBF_ERROR_WRITING);
 
@@ -2133,6 +2166,8 @@
 		bool llFourByte, llAppend, llDeleteOld;
 
 
+// TODO:  Incomplete function
+debug_break;
 		// Make sure our environment is sane
 		if (fr2Ptr->type == 'M')
 		{
@@ -2183,6 +2218,8 @@
 //////
 	bool iiDbf_writeMemo(SThisCode* thisCode, SWorkArea* wa, SFieldRecord2* fr2Ptr)
 	{
+// TODO:  Incomplete function
+debug_break;
 		// Make sure our environment is sane
 		if (fr2Ptr->type == 'M')
 		{
@@ -2231,7 +2268,15 @@
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
-		// Iterate through the fields until we find the one they want
+		//////////
+		// Indicate the result
+		//////
+			return((uptr)iiDbf_getFieldCount(wa));
+	}
+
+	u32 iiDbf_getFieldCount(SWorkArea* wa)
+	{
+		// Indicate the count
 		return(wa->fieldCount);
 	}
 
@@ -2247,8 +2292,17 @@
 				return(_DBF_ERROR_WORK_AREA_NOT_IN_USE);
 
 
+		//////////
+		// Indicate the result
+		//////
+			return((sptr)iiDbf_getReccount(wa));
+	}
+
+
+	u32 iiDbf_getReccount(SWorkArea* wa)
+	{
 		// Iterate through the fields until we find the one they want
-		return((s32)wa->header.records);
+		return(wa->header.records);
 	}
 
 	// Returns 10-digit field name
@@ -3771,7 +3825,7 @@
 				if (!wa->dbc)
 				{
 					// No, we need to try to open it
-					lnDbcHandle = (u32)iDbf_open(thisCode, (cs8*)dbcName, (cs8*)cgcDbcKeyName, tlExcusive, false, false, false);
+					lnDbcHandle = (u32)iDbf_open(thisCode, (cs8*)dbcName, (cs8*)cgcDbcKeyName, tlExcusive, false, false, false, false, false);
 					if ((s32)lnDbcHandle >= 0)
 					{
 						// We're good

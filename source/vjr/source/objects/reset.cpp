@@ -422,7 +422,7 @@
 			//////
 				propSetAlignment(carousel, _ALIGNMENT_BOTTOM);
 				propSetTitlebar(carousel, _LOGICAL_FALSE);
-				propSetBorderStyle(carousel, _BORDER_STYLE_OUTLINE);
+				propSetBorderStyle(carousel, _BORDER_STYLE_FIXED);
 				iFont_delete(&carousel->p.font, true);
 				carousel->p.font = iFont_create(cgcFontName_windowTitleBar, 10, FW_NORMAL, false, false);
 

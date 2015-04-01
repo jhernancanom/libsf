@@ -96,37 +96,87 @@
 // or explicitly exclusive.
 //
 //////
-	s32 iDisk_open(s8* tcPathname, s32 tnType, s32 tnShare)
+	s32 iDisk_open(cs8* tcPathname, s32 tnType, s32 tnShare, bool tlCreateIfCannotOpen)
+	{
+		s32	lnFh;
+
+
+		//////////
+		// Attempt to open if valid
+		//////
+			if (tcPathname)
+			{
+				// Try to open existing
+				lnFh = _sopen(tcPathname, tnType, tnShare);
+				if (lnFh == -1)
+				{
+					// Error opening
+					switch (errno)
+					{
+						default:
+						case EACCES:	// The path is a directory, or the file is read-only, but an "open-for-write" was specified
+						case EEXIST:	// _O_CREAT and _O_EXCL flags were specified, but filename already exists
+						case EINVAL:	// Invalid type or share argument
+						case EMFILE:	// No more file descriptors are available
+							// All valid errors, indicate failure
+							break;
+
+						case ENOENT:
+							// File or path was not found
+							if (tlCreateIfCannotOpen)
+							{
+								// Try to create
+								lnFh = _creat(tcPathname, _S_IREAD | _S_IWRITE);
+								// Right now, it's either open or not
+							}
+							break;
+					}
+				}
+
+				// Indicate our (potentially new) status
+				return(lnFh);
+			}
+
+
+		//////////
+		// If we get here, could not open (or possibly create)
+		//////
+			return(-1);
+	}
+
+	s32 iDisk_openShared(cs8* tcPathname, s32 tnType, bool tlCreateIfCannotOpen)
 	{
 		// Attempt to open if valid
 		if (tcPathname)
-			return(_sopen(tcPathname, tnType, tnShare));
+			return(iDisk_open(tcPathname, tnType, _SH_DENYNO, tlCreateIfCannotOpen));
 
 
 		// If we get here, invalid filename
 		return(-1);
 	}
 
-	s32 iDisk_openShared(s8* tcPathname, s32 tnType)
+	s32 iDisk_openExclusive(cs8* tcPathname, s32 tnType, bool tlCreateIfCannotOpen)
 	{
 		// Attempt to open if valid
 		if (tcPathname)
-			return(_sopen(tcPathname, tnType, _SH_DENYNO));
+			return(iDisk_open(tcPathname, tnType, _SH_DENYRW, tlCreateIfCannotOpen));
 
 
 		// If we get here, invalid filename
 		return(-1);
 	}
 
-	s32 iDisk_openExclusive(s8* tcPathname, s32 tnType)
+
+
+
+//////////
+//
+// Called to close the indicated file handle
+//
+//////
+	s32 iDisk_close(s32 tnFile)
 	{
-		// Attempt to open if valid
-		if (tcPathname)
-			return(_sopen(tcPathname, tnType, _SH_DENYRW));
-
-
-		// If we get here, invalid filename
-		return(-1);
+		return(_close(tnFile));
 	}
 
 
@@ -147,11 +197,37 @@
 
 //////////
 //
+// Obtain the current file position
+//
+//////
+	s64 iDisk_getFilePosition(s32 tnFile)
+	{
+		return(_lseeki64(tnFile, 0, SEEK_CUR));
+	}
+
+
+
+
+//////////
+//
+// Called to set the file position to the indicated offset
+//
+//////
+	s64 iDisk_setFilePosition(s32 tnFile, s64 tnSeekOffset)
+	{
+		return(_lseeki64(tnFile, tnSeekOffset, SEEK_SET));
+	}
+
+
+
+
+//////////
+//
 // Called to optionally seek, then read in the indicated size.
 // If no seek is required, send a negative value for tnSeekOffset.
 //
 //////
-	s32 iDisk_read(s32 tnFile, s64 tnSeekOffset, s8* tcData, s32 tnReadCount, bool* tlError, u32* tnErrorNum)
+	s32 iDisk_read(s32 tnFile, s64 tnSeekOffset, void* tcData, s32 tnReadCount, bool* tlError, u32* tnErrorNum)
 	{
 		s64 lnSeekOffset;
 
@@ -246,6 +322,20 @@
 		//////
 			return(_write(tnFile, tcData, tnWriteCount));
 
+	}
+
+
+
+
+//////////
+//
+// Called to duplicate the indicated file handle (if possible).
+//
+//////
+	s32 iDisk_duplicateFileHandle(s32 tnFile)
+	{
+		// The OS will return a duplicate handle, or -1
+		return(_dup(tnFile));
 	}
 
 

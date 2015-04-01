@@ -10524,7 +10524,7 @@ debug_break;
 		//////////
 		// Try to open it
 		//////
-			lnDbcArea = iDbf_open(thisCode, (cs8*)dbcNameBuffer, (cs8*)cgcDbcKeyName, llIsExclusive, false, false, false);
+			lnDbcArea = iDbf_open(thisCode, (cs8*)dbcNameBuffer, (cs8*)cgcDbcKeyName, llIsExclusive, false, false, false, false, false);
 			if (lnDbcArea < 0)
 			{
 				// Unable to open
@@ -10732,6 +10732,8 @@ debug_break;
 			SComp*	compShared				= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_SHARED,				NULL);
 //			SComp*	compConnString			= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_CONNSTRING,			NULL);
 			SComp*	compValidate			= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_VALIDATE,			NULL);
+			SComp*	compVisualize			= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_VISUALIZE,			NULL);		// USE fred.dbf VISUALIZE	&& Creates disk-defrag-like display of table and index
+			SComp*	compJournal				= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_JOURNAL,			NULL);		// USE fred.dbf JOURNAL		&& Creates fred.jrn with every write change made to table or index
 
 
 		//////////
@@ -11061,7 +11063,7 @@ debug_break;
 		// Get the alias
 		//////
 			iDbf_set_workArea_current(thisCode, (u32)lnWorkArea, null);
-			lnWorkArea = iDbf_open(thisCode, varTableName, varAliasName, llIsExclusive, (compAgain != NULL), (compValidate != NULL), (compDescending != NULL));
+			lnWorkArea = iDbf_open(thisCode, varTableName, varAliasName, llIsExclusive, (compAgain != NULL), (compValidate != NULL), (compDescending != NULL), (compVisualize != NULL), (compJournal != NULL));
 			if (lnWorkArea < 0)
 			{
 				// The negative work area number indicates the error

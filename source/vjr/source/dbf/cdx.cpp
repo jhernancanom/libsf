@@ -116,6 +116,8 @@
 		bool		llIsValid;
 		u64			lnFileSize, lnNumread;
 		SDiskLock*	dl;
+		bool		error;
+		u32			errorNum;
 
 
 		//////////
@@ -195,11 +197,11 @@
 			if (wa->isExclusive)
 			{
 				// Exclusive
-				wa->fhIdxCdxDcx = iDisk_openExclusive(wa->idxCdxDcxPathname, _O_BINARY | _O_RDWR);
+				wa->fhIdxCdxDcx = iDisk_openExclusive(wa->idxCdxDcxPathname, _O_BINARY | _O_RDWR, false);
 
 			} else {
 				// Shared
-				wa->fhIdxCdxDcx = iDisk_openShared(wa->idxCdxDcxPathname, _O_BINARY | _O_RDWR);
+				wa->fhIdxCdxDcx = iDisk_openShared(wa->idxCdxDcxPathname, _O_BINARY | _O_RDWR, false);
 			}
 
 			// Was it opened successfully?
@@ -232,8 +234,8 @@
 				//////////
 				// Read the first block
 				/////
-					lnNumread = _read(wa->fhIdxCdxDcx, wa->idx_header, sizeof(wa->idx_header));
-					if (lnNumread != sizeof(wa->idx_header))
+					lnNumread = iDisk_read(wa->fhIdxCdxDcx, -1, wa->idx_header, sizeof(wa->idx_header), &error, &errorNum);
+					if (error || lnNumread != sizeof(wa->idx_header))
 					{
 						cdx_close(thisCode, wa);
 						return(_CDX_ERROR_READING_HEADER_IDX);
@@ -286,8 +288,8 @@
 				//////////
 				// Read
 				//////
-					lnNumread = _read(wa->fhIdxCdxDcx, wa->cdx_root, sizeof(*wa->cdx_root));
-					if (lnNumread != sizeof(*wa->cdx_root))
+					lnNumread = iDisk_read(wa->fhIdxCdxDcx, -1, wa->cdx_root, sizeof(*wa->cdx_root), &error, &errorNum);
+					if (error || lnNumread != sizeof(*wa->cdx_root))
 					{
 						cdx_close(thisCode, wa);
 						return(_CDX_ERROR_READING_HEADER_CDX);

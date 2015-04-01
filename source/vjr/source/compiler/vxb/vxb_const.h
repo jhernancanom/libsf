@@ -1155,6 +1155,7 @@
 	const s32		_ICODE_ITALIAN									= 2320;
 	const s32		_ICODE_JAPAN									= 2321;
 	const s32       _ICODE_JOIN                                     = 2139;
+	const s32		_ICODE_JOURNAL									= 2336;
 	const s32		_ICODE_KEEP										= 2291;
 	const s32       _ICODE_KEYBOARD                                 = 2140;
 	const s32       _ICODE_KEYCOMP                                  = 2141;
@@ -1313,6 +1314,7 @@
 	const s32		_ICODE_VECSEPARATOR								= 2334;
 	const s32       _ICODE_VIEWS                                    = 2264;
 	const s32       _ICODE_VIEW                                     = 2265;
+	const s32		_ICODE_VISUALIZE								= 2335;
 	const s32       _ICODE_WAIT                                     = 2266;
 	const s32       _ICODE_WHILE                                    = 2267;
 	const s32       _ICODE_WINDOWS                                  = 2268;
@@ -1352,7 +1354,8 @@
 	// NCSETOPTIMIZEVARIABLES = 2328		TF						= 2329
 	// UD					= 2330			YN						= 2331
 	// LONG					= 2332			SHORT					= 2333
-	// vecseparator			= 2334
+	// vecseparator			= 2334			visualize				= 2335
+	// journal				= 2336
 
 
 //////////
@@ -2047,6 +2050,7 @@
 	const s8		cgc_italian[]									= "italian";
 	const s8		cgc_japan[]										= "japan";
 	const s8		cgc_join[]										= "join";
+	const s8		cgc_journal[]									= "journal";
 //	const s8		cgc_key[]										= "key";
 	const s8		cgc_keyboard[]									= "keyboard";
 	const s8		cgc_keycomp[]									= "keycomp";
@@ -2207,6 +2211,7 @@
 	const s8		cgc_validate[]									= "validate";
 	const s8		cgc_views[]										= "views";
 	const s8		cgc_view[]										= "view";
+	const s8		cgc_visualize[]									= "visualize";
 	const s8		cgc_wait[]										= "wait";
 	const s8		cgc_while[]										= "while";
 	const s8		cgc_windows[]									= "windows";

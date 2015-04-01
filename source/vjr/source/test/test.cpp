@@ -102,7 +102,7 @@
 		//////////
 		// Open the test table
 		//////
-			_wa = iDbf_open(thisCode, "c:\\libsf_offline\\source\\vjr\\test\\cdx\\test.dbf", "test", true, false, true, false);
+			_wa = iDbf_open(thisCode, "c:\\libsf_offline\\source\\vjr\\test\\cdx\\test.dbf", "test", true, false, true, false, false, false);
 			if (_wa >= 0)
 				debug_break;	// An error occurred
 

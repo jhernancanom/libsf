@@ -154,8 +154,8 @@ struct SFieldRecord2;
 	s32					iDbf_translateError								(SThisCode* thisCode, s32 tnDbfErrorCode);
 
 	// DBF functions
-	uptr				iDbf_open										(SThisCode* thisCode, SVariable* table,	SVariable* alias,	bool tlExclusive, bool tlAgain, bool tlValidate, bool tlDescending);
-	uptr				iDbf_open										(SThisCode* thisCode, cs8* table,		cs8* alias,			bool tlExclusive, bool tlAgain, bool tlValidate, bool tlDescending);
+	uptr				iDbf_open										(SThisCode* thisCode, SVariable* table,	SVariable* alias,	bool tlExclusive, bool tlAgain, bool tlValidate, bool tlDescending, bool tlVisualize, bool tlJournal);
+	uptr				iDbf_open										(SThisCode* thisCode, cs8* table,		cs8* alias,			bool tlExclusive, bool tlAgain, bool tlValidate, bool tlDescending, bool tlVisualize, bool tlJournal);
 	uptr				iDbf_openRemote									(SThisCode* thisCode, s8* connString);
 	uptr				iDbf_cacheAllRowData							(SThisCode* thisCode, SWorkArea* wa);
 	uptr				iDbf_close										(SThisCode* thisCode, SWorkArea* wa);
@@ -180,7 +180,10 @@ struct SFieldRecord2;
 	bool				iiDbf_writeMemo									(SThisCode* thisCode, SWorkArea* wa, SFieldRecord2* fr2Ptr);
 
 	uptr				iDbf_getFieldCount								(SThisCode* thisCode, SWorkArea* wa);
+	u32					iiDbf_getFieldCount								(SWorkArea* wa);
 	sptr				iDbf_getReccount								(SThisCode* thisCode, SWorkArea* wa);
+	u32					iiDbf_getReccount								(SWorkArea* wa);
+
 	uptr				iDbf_getField_name								(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength);
 	uptr				iDbf_getField_type								(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength);
 	uptr				iDbf_getField_type_verbose						(SThisCode* thisCode, SWorkArea* wa, u32 fieldNumber, u8* dest, u32 destLength);

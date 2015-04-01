@@ -124,6 +124,7 @@
 	#include <share.h>
 	#include <sql.h>
 	#include <sqlext.h>
+	#include <errno.h>
 	#include "resource.h"
 
 	#define _USE_MATH_DEFINES
@@ -264,6 +265,7 @@
 	#include <string.h>
 	#include <pthread.h>
 	#include <time.h>
+	#include <errno.h>
 	#include <semaphore.h>
 
 	// Seriously, X11??  "Illegal access??"  Really??

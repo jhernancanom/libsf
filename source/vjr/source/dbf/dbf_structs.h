@@ -237,6 +237,10 @@
 			bool			isUnbuffered;				// Immediate writes upon every change
 			bool			isDescending;				// If the table is displayed in descending order
 
+			// Added primarily for debugging
+			bool			isVisualized;				// Allows a graphical representation to be created similar to a disk defragger, with zooming in per block
+			bool			isJournaled;				// Allows a journaled record of every change made
+
 			// Names
 			s8				tablePathname[_MAX_PATH];	// Filename to get to the table
 			s32				tablePathnameLength;		// Length of the table filename
@@ -286,9 +290,16 @@
 			//////////
 			// Memo data
 			//////
-				s32				fhMemo;							// Memo file handle
-				SMemoHeader		memoHeader;						// Memo header
-				SBuilder*		memoLocks;						// Disk locks for shared file access
+				s32				fhMemo;					// Memo file handle
+				SMemoHeader		memoHeader;				// Memo header
+				SBuilder*		memoLocks;				// Disk locks for shared file access
+
+			
+			//////////
+			// Journaling
+			//////
+				s32				fhJrn;					// Journal file handle
+				SBuilder*		journal;				// Records transactions until written
 
 
 			//////////
