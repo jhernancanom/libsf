@@ -3909,9 +3909,11 @@
 //////
 // Version 0.56
 // Last update:
-//     Mar.12.2015
+//     Mar.30.2015
 //////
 // Change log:
+//     Apr.02.2015 - Refactoring by Rick C. Hodgin
+//     Mar.30.2015 - Coded by Stefano D'Amico
 //     Mar.12.2015 - Framed, incomplete
 //////
 // Parameters:
@@ -3922,18 +3924,20 @@
 //    The input pathname with the next extension.
 //////
 // Example:
-//    ? FORCEEXT("C:\MyDir\Foo.cpp", "txt")		&& Display "C:\MyDir\Foo.txt"
-//    ? FORCEEXT("C:\MyDir\Foo.cpp", ".txt")	&& Display "C:\MyDir\Foo.txt"
-//    ? FORCEEXT("C:\MyDir\Foo.cpp  ", "txt")	&& Display "C:\MyDir\Foo.txt"
-//    ? FORCEEXT("C:\MyDir.MyDir\Foo", "txt")	&& Display "C:\MyDir.MyDir\Foo.txt"
-//    ? FORCEEXT("C:\MyDir\Foo.cpp", "")		&& Display "C:\MyDir\Foo"
+//    ? FORCEEXT("C:\MyDir\Foo.cpp",	"txt")		&& Display "C:\MyDir\Foo.txt"
+//    ? FORCEEXT("C:\MyDir\Foo.cpp",	".txt")		&& Display "C:\MyDir\Foo.txt"
+//    ? FORCEEXT("C:\MyDir\Foo.cpp  ",	"txt")		&& Display "C:\MyDir\Foo.txt"
+//    ? FORCEEXT("C:\MyDir.MyDir\Foo",	"txt")		&& Display "C:\MyDir.MyDir\Foo.txt"
+//    ? FORCEEXT("C:\MyDir\Foo.cpp",	"")			&& Display "C:\MyDir\Foo"
 //////
 	SVariable* function_forceext(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
 		SVariable* varPathname		= returnsParams->params[0];
 		SVariable* varNewExtension	= returnsParams->params[1];
+
+		s32			lnFNameOffset, lnExtOffset, lnLength;
+		s8			newFilename[_MAX_PATH + 1];
 		SVariable*	result;
-		s32			lnFNamePos, lnExtPos;
 		
 		
 		//////////
@@ -3951,62 +3955,110 @@
 		//////
 			if (!iVariable_isValid(varNewExtension) || !iVariable_isTypeCharacter(varNewExtension))
 			{
-				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNewExtension), false);
+				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNewExtension), false);
 				return(NULL);
 			}
+
 
 		//////////
 		// Based on its type, process it accordingly
 		//////
-			result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
-			if (!result)
-			{
-				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
-			}
-
-			if (ifunction_pathname_common(thisCode, varPathname, &lnFNamePos, &lnExtPos, true))
+			if (ifunction_pathname_common(thisCode, varPathname, &lnFNameOffset, &lnExtOffset))
 			{
 
-				if (varNewExtension->value.length >= 1)
-				{
-					// Do we need to add a point?
-					if (varNewExtension->value.data_s8[0] != '.')
+				//////////
+				// Initialize our target filename
+				//////
+					memset(newFilename, 0, sizeof(newFilename));
+					memcpy(newFilename, varPathname->value.data_s8, lnExtOffset);
+
+
+				//////////
+				// Copy appropriately
+				//////
+					if (varNewExtension->value.length >= 1)
 					{
-						// We need to append the string plus a point and the new extension
-						iDatum_allocateSpace(&result->value, lnExtPos + varNewExtension->value.length + 1);
-						memcpy(result->value.data_s8, varPathname->value.data_s8, lnExtPos);
-						result->value.data_u8[lnExtPos] = '.';
-						memcpy(result->value.data_s8 + lnExtPos + 1, varNewExtension->value.data_s8, varNewExtension->value.length);
+						// Does it already have a point?
+						if (varNewExtension->value.data_s8[0] == '.')
+						{
+							// Will the new filename be too big?
+							lnLength = lnExtOffset + varNewExtension->value.length;			// pathname up to extension + new extension (which already has a period)
+							if (lnLength >= sizeof(newFilename))
+							{
+								// Too big
+								iError_reportByNumber(thisCode, _ERROR_TOO_BIG_FOR_TARGET, iVariable_getRelatedComp(thisCode, varNewExtension), false);
+								return(NULL);
+							}
+
+							// Copy new extension (which already has a period)
+							memcpy(newFilename + lnExtOffset, varNewExtension->value.data_s8, varNewExtension->value.length);
+
+						} else {
+							// Will the new filename be too big?
+							lnLength = lnExtOffset + 1 + varNewExtension->value.length;		// pathname up to extension + new period + new extension
+							if (lnLength >= sizeof(newFilename))
+							{
+								// Too big
+								iError_reportByNumber(thisCode, _ERROR_TOO_BIG_FOR_TARGET, iVariable_getRelatedComp(thisCode, varNewExtension), false);
+								return(NULL);
+							}
+
+							// Copy new period, and new extension (without period)
+							newFilename[lnExtOffset] = '.';
+							memcpy(newFilename + lnExtOffset + 1, varNewExtension->value.data_s8, varNewExtension->value.length);
+						}
 
 					} else {
-						// We need to append the string plus the new extension
-						iDatum_allocateSpace(&result->value, lnExtPos + varNewExtension->value.length);
-						memcpy(result->value.data_s8, varPathname->value.data_s8, lnExtPos);
-						memcpy(result->value.data_s8 + lnExtPos, varNewExtension->value.data_s8, varNewExtension->value.length);
+						// Copy everything except the extension
+						lnLength = lnExtOffset;
 					}
-				} else {
-					// If varNewExtension is empty, we remove extension
-					iDatum_allocateSpace(&result->value, lnExtPos);
-					memcpy(result->value.data_s8, varPathname->value.data_s8, lnExtPos);
-				}			
+
+
+				//////////
+				// Allocate our result
+				//////
+					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, newFilename, lnLength, false);
+
+
+			} else {
+				// Unable to parse the string properly, so return whatever they supplied
+				lnLength	= varPathname->value.length;
+				result		= iVariable_copy(thisCode, varPathname, false);
 			}
 
 
 		//////////
-		// Return our converted result
+		// Are we good?
 		//////
-			return result;
+			if (!result->value.data || result->value.length != lnLength)
+			{
+				// Unable to allocate our variable's contents
+				iVariable_delete(thisCode, result, true);
+				result = NULL;
+			}
+			
+			if (!result)
+				iError_report(thisCode, cgcInternalError, false);
+
+
+		//////////
+		// Return our result
+		//////
+			return(result);
 	}
 
 //////////
-// tnFNamePos indicate the position of the first character of file name
-// tnExtPos indicate the position of the first character of extension
+// varPathname		-- Something like "c:\my\dir\file.ext" or "file.ext"
+// tnFNameOffset	-- offset to start of file name
+// tnExtOffset		-- offset to start of file extension
 //////
-	bool ifunction_pathname_common(SThisCode* thisCode, SVariable* varPathname, s32* tnFNamePos, s32* tnExtPos, bool tlRtrim)	
+	bool ifunction_pathname_common(SThisCode* thisCode, SVariable* varPathname, s32* tnFNameOffset, s32* tnExtOffset)
 	{
-		s8 lc;
-		s32 lnI;
+		s8		lc;
+		s32		lnI, lnLookingFor;
+		cs32	_PERIOD		= 1;
+		cs32	_BACKSLASH	= 2;
+
 
 		//////////
 		// Make sure our environment is sane
@@ -4015,44 +4067,60 @@
 			{
 
 				//////////
+				// Initialize to the beginning for filename, and end for period
+				//////
+					*tnFNameOffset	= 0;
+					*tnExtOffset	= varPathname->value.length;
+
+
+				//////////
 				// We need to find "\" and period.
 				//////
-					*tnExtPos = varPathname->value.length;
-					*tnFNamePos = 0;
-
-					for (lnI =  varPathname->value.length - 1; lnI > 0; lnI--)
+					for (lnI = varPathname->value.length - 1, lnLookingFor = _PERIOD; lnI >= 0; lnI--)
 					{
+
+						//////////
 						// Grab the character
-						lc = varPathname->value.data_u8[lnI];
-				
-						if (tlRtrim && lc == 32)
-						{
-							//RTrim space, if we are here we have not found yet a period or a valid character other than "\"
-							*tnExtPos = lnI;
+						//////
+							lc = varPathname->value.data_u8[lnI];
 
-						}
-						else if (lc == '\\') {
-							// We found "\", we have finish
-							*tnFNamePos = lnI;
-							break;
 
-						}
-						else if (lc == '.')	{
-							// We found extension
-							*tnExtPos = lnI;
+						//////////
+						// What are we looking for?
+						//////
+							if (lnLookingFor == _PERIOD)
+							{
+								// Searching for the file extension
+								if (lc == '.')
+								{
+									// Found the period
+									*tnExtOffset	= lnI;
+									lnLookingFor	= _BACKSLASH;	// Now looking for backslash
 
-						} else 
-							// If we encounter a character other than "\", "." or space we stop trimming
-							tlRtrim = false;
+								} else if (lc == '\\') {
+									// We've found the backslash before the period
+									*tnFNameOffset = lnI + 1;
+									return(true);
+								}
+
+							} else if (lnLookingFor == _BACKSLASH) {
+								// Looking for the backslash
+								if (lc == '\\')
+								{
+									*tnFNameOffset = lnI + 1;
+									return(true);
+								}
+							}
+
 					}
-
-				// varPathname is not empty
-				return true;
+					// If we get here, we didn't find
 			}
 
-		// varPathname is empty 
-		return false;
 
+		//////////
+		// varPathname is empty
+		//////
+			return(false);
 	}
 
 
@@ -4066,9 +4134,11 @@
 //////
 // Version 0.56
 // Last update:
-//     Mar.12.2015
+//     Mar.30.2015
 //////
 // Change log:
+//     Apr.02.2015 - Refactoring by Rick C. Hodgin
+//     Mar.30.2015 - Coded by Stefano D'Amico
 //     Mar.12.2015 - Framed, incomplete
 //////
 // Parameters:
@@ -4083,8 +4153,9 @@
 		SVariable* varPathname		= returnsParams->params[0];
 		SVariable* varNewFilename	= returnsParams->params[1];
 
+		s32			lnFNameOffset, lnExtOffset, lnLength;
+		s8			newFilename[_MAX_PATH + 1];
 		SVariable*	result;
-		s32			lnFNamePos, lnExtPos;
 
 
 		//////////
@@ -4106,47 +4177,74 @@
 				return(NULL);
 			}
 
+
 		//////////
 		// Based on its type, process it accordingly
 		//////
-			result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
-			if (!result)
-			{
-				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
-			}
-			if (ifunction_pathname_common(thisCode, varPathname, &lnFNamePos, &lnExtPos, true))
+			if (ifunction_pathname_common(thisCode, varPathname, &lnFNameOffset, &lnExtOffset))
 			{
 
-				if (varNewFilename->value.length >= 1)
-				{
-					// Do we need to add a point?
-					if (varNewFilename->value.data_s8[0] != '\\')
+				//////////
+				// Initialize our target filename
+				//////
+					memset(newFilename, 0, sizeof(newFilename));
+					memcpy(newFilename, varPathname->value.data_s8, lnFNameOffset);
+
+
+				//////////
+				// Copy appropriately
+				//////
+					if (varNewFilename->value.length >= 1)
 					{
-						// We need to append the string plus a point and the new extension
-						iDatum_allocateSpace(&result->value, lnFNamePos + varNewFilename->value.length + 1);
-						memcpy(result->value.data_s8, varPathname->value.data_s8, lnFNamePos);
-						result->value.data_u8[lnFNamePos] = '\\';
-						memcpy(result->value.data_s8 + lnFNamePos + 1, varNewFilename->value.data_s8, varNewFilename->value.length);
+						// Will the new filename be too big?
+						lnLength = lnFNameOffset + varNewFilename->value.length;
+						if (lnLength >= sizeof(newFilename))
+						{
+							// Too big
+							iError_reportByNumber(thisCode, _ERROR_TOO_BIG_FOR_TARGET, iVariable_getRelatedComp(thisCode, varNewFilename), false);
+							return(NULL);
+						}
+
+						// Copy new filename
+						memcpy(newFilename + lnFNameOffset, varNewFilename->value.data_s8, varNewFilename->value.length);
 
 					} else {
-						// We need to append the string plus the new extension
-						iDatum_allocateSpace(&result->value, lnFNamePos + varNewFilename->value.length);
-						memcpy(result->value.data_s8, varPathname->value.data_s8, lnFNamePos);
-						memcpy(result->value.data_s8 + lnFNamePos, varNewFilename->value.data_s8, varNewFilename->value.length);
-					}
-				} else {
-					// If varNewExtension is empty, we remove extension
-					iDatum_allocateSpace(&result->value, lnFNamePos);
-					memcpy(result->value.data_s8, varPathname->value.data_s8, lnFNamePos);
-				}			
+						// If varNewFilename is empty, we remove filename
+						lnLength = lnFNameOffset;
+					}			
+
+
+				//////////
+				// Allocate our result
+				//////
+					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, newFilename, lnLength, false);
+
+
+			} else {
+				// Unable to parse the string properly, so return whatever they supplied
+				lnLength	= varPathname->value.length;
+				result		= iVariable_copy(thisCode, varPathname, false);
 			}
 
 
 		//////////
-		// Return our converted result
+		// Are we good?
 		//////
-			return result;
+			if (!result->value.data || result->value.length != lnLength)
+			{
+				// Unable to allocate our variable's contents
+				iVariable_delete(thisCode, result, true);
+				result = NULL;
+			}
+			
+			if (!result)
+				iError_report(thisCode, cgcInternalError, false);
+
+
+		//////////
+		// Return our result
+		//////
+			return(result);
 	}
 
 
@@ -4160,9 +4258,11 @@
 //////
 // Version 0.56
 // Last update:
-//     Mar.12.2015
+//     Mar.30.2015
 //////
 // Change log:
+//     Apr.02.2015 - Refactoring by Rick C. Hodgin
+//     Mar.30.2015 - Coded by Stefano D'Amico
 //     Mar.12.2015 - Framed, incomplete
 //////
 // Parameters:
@@ -4177,8 +4277,9 @@
 		SVariable* varPathname		= returnsParams->params[0];
 		SVariable* varNewPathname	= returnsParams->params[1];
 
+		s32			lnFNameOffset, lnExtOffset, lnFNameLength, lnLength;
+		s8			newFilename[_MAX_PATH + 1];
 		SVariable*	result;
-		s32			lnFNamePos, lnExtPos, lnLenght;
 
 
 
@@ -4204,46 +4305,96 @@
 		//////////
 		// Based on its type, process it accordingly
 		//////
-			result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
-			if (!result)
+			if (ifunction_pathname_common(thisCode, varPathname, &lnFNameOffset, &lnExtOffset))
 			{
-				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
-			}
-			if (ifunction_pathname_common(thisCode, varPathname, &lnFNamePos, &lnExtPos, true))
-			{
-				lnLenght = varPathname->value.length - lnFNamePos;
-				lnFNamePos++;
 
-				if (varNewPathname->value.length >= 1)
-				{
-					// Do we need to add a point?
-					if (varNewPathname->value.data_s8[varNewPathname->value.length-1] != '\\')
+				//////////
+				// Initialize our target filename
+				//////
+					memset(newFilename, 0, sizeof(newFilename));
+
+
+				//////////
+				// Compute the length of the non-path portion
+				//////
+					lnFNameLength = varPathname->value.length - lnFNameOffset;
+
+
+				//////////
+				// Copy appropriately
+				//////
+					if (varNewPathname->value.length >= 1)
 					{
-						// We need to append the string plus a point and the new extension
-						iDatum_allocateSpace(&result->value, lnLenght + varNewPathname->value.length);
-						memcpy(result->value.data_s8, varNewPathname->value.data_s8, varNewPathname->value.length);
-						result->value.data_u8[varNewPathname->value.length] = '\\';
-						memcpy(result->value.data_s8 + varNewPathname->value.length + 1, varPathname->value.data_s8 + lnFNamePos, lnLenght);
+						// Do we need to add a backslash?
+						if (varNewPathname->value.data_s8[varNewPathname->value.length - 1] != '\\')
+						{
+							// Will the new filename be too big?
+							lnLength = varNewPathname->value.length + 1 + lnFNameLength;
+							if (lnLength >= sizeof(newFilename))
+							{
+								// Too big
+								iError_reportByNumber(thisCode, _ERROR_TOO_BIG_FOR_TARGET, iVariable_getRelatedComp(thisCode, varNewPathname), false);
+								return(NULL);
+							}
+
+							// Copy new path, plus trailing backslash, plus whatever was there before
+							memcpy(newFilename, varNewPathname->value.data_s8, varNewPathname->value.length);
+							newFilename[varNewPathname->value.length] = '\\';
+							memcpy(newFilename + varNewPathname->value.length + 1, varPathname->value.data_s8 + lnFNameOffset, lnFNameLength);
+
+						} else {
+							// Will the new filename be too big?
+							lnLength = varNewPathname->value.length + lnFNameLength;
+							if (lnLength >= sizeof(newFilename))
+							{
+								// Too big
+								iError_reportByNumber(thisCode, _ERROR_TOO_BIG_FOR_TARGET, iVariable_getRelatedComp(thisCode, varNewPathname), false);
+								return(NULL);
+							}
+
+							// Copy new path, plus whatever was there before
+							memcpy(newFilename, varNewPathname->value.data_s8, varNewPathname->value.length);
+							memcpy(newFilename + varNewPathname->value.length, varPathname->value.data_s8 + lnFNameOffset, lnFNameLength);
+						}
 
 					} else {
-						// We need to append the string plus the new path
-						iDatum_allocateSpace(&result->value, lnLenght + varNewPathname->value.length - 1);
-						memcpy(result->value.data_s8, varNewPathname->value.data_s8, varNewPathname->value.length);
-						memcpy(result->value.data_s8 + varNewPathname->value.length, varPathname->value.data_s8 + lnFNamePos, lnLenght);
+						// Remove path
+						lnLength = lnFNameLength;
+						memcpy(newFilename, varPathname->value.data_s8 + lnFNameOffset, lnFNameLength);
 					}
-				} else {
-					// If varNewPathname is empty, we remove path
-					iDatum_allocateSpace(&result->value, lnLenght - 1);
-					memcpy(result->value.data_s8, varPathname->value.data_s8 + lnFNamePos, lnLenght);
-				}			
+
+
+				//////////
+				// Allocate our result
+				//////
+					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, newFilename, lnLength, false);
+
+
+			} else {
+				// Unable to parse the string properly, so return whatever they supplied
+				lnFNameLength	= varPathname->value.length;
+				result		= iVariable_copy(thisCode, varPathname, false);
 			}
 
 
 		//////////
-		// Return our converted result
+		// Are we good?
 		//////
-			return result;
+			if (!result->value.data || result->value.length != lnLength)
+			{
+				// Unable to allocate our variable's contents
+				iVariable_delete(thisCode, result, true);
+				result = NULL;
+			}
+			
+			if (!result)
+				iError_report(thisCode, cgcInternalError, false);
+
+
+		//////////
+		// Return our result
+		//////
+			return(result);
 	}
 
 
@@ -4257,9 +4408,11 @@
 //////
 // Version 0.56
 // Last update:
-//     Mar.12.2015
+//     Mar.30.2015
 //////
 // Change log:
+//     Apr.02.2015 - Refactoring by Rick C. Hodgin
+//     Mar.30.2015 - Coded by Stefano D'Amico
 //     Mar.12.2015 - Framed, incomplete
 //////
 // Parameters:
@@ -4274,9 +4427,9 @@
 		SVariable* varPathname	= returnsParams->params[0];
 		SVariable* varNewStem	= returnsParams->params[1];
 
+		s32			lnFNameOffset, lnExtOffset, lnLengthStem, lnLengthExt, lnLength;
+		s8			newFilename[_MAX_PATH + 1];
 		SVariable*	result;
-		s32			lnFNamePos, lnExtPos, lnLenghtStem, lnLenghtExt;
-
 
 
 		//////////
@@ -4298,43 +4451,83 @@
 				return(NULL);
 			}
 
+
 		//////////
 		// Based on its type, process it accordingly
 		//////
-			result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
-			if (!result)
+			if (ifunction_pathname_common(thisCode, varPathname, &lnFNameOffset, &lnExtOffset))
 			{
-				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
-			}
-			if (ifunction_pathname_common(thisCode, varPathname, &lnFNamePos, &lnExtPos, true))
-			{
-				lnLenghtStem = varPathname->value.length - lnFNamePos - lnExtPos;
-				lnLenghtExt = varPathname->value.length - lnExtPos;
-				lnFNamePos++;
 
-				if (varNewStem->value.length >= 1)
-				{
-					// We need to append the string plus the new path
-					iDatum_allocateSpace(&result->value, lnFNamePos + varNewStem->value.length + lnLenghtExt);
-					memcpy(result->value.data_s8, varPathname->value.data_s8, lnFNamePos);
-					memcpy(result->value.data_s8 + lnFNamePos, varNewStem->value.data_s8, varNewStem->value.length);
-					memcpy(result->value.data_s8 + lnFNamePos + varNewStem->value.length, varPathname->value.data_s8 + lnExtPos, lnLenghtExt);
+				//////////
+				// Initialize our target filename
+				//////
+					memset(newFilename, 0, sizeof(newFilename));
 
-				} else {
-					// If varNewPathname is empty, we remove path
-					iDatum_allocateSpace(&result->value, lnFNamePos + lnLenghtExt);
-					memcpy(result->value.data_s8, varPathname->value.data_s8, lnFNamePos);
-					memcpy(result->value.data_s8 + lnFNamePos, varPathname->value.data_s8 + lnExtPos, lnLenghtExt);
-				}			
+
+				//////////
+				// Compute the length of the non-path portion
+				//////
+					lnLengthStem	= varPathname->value.length - lnFNameOffset - lnExtOffset;
+					lnLengthExt		= varPathname->value.length - lnExtOffset;
+
+
+				//////////
+				// Copy appropriately
+				//////
+					if (varNewStem->value.length >= 1)
+					{
+						// Will the new filename be too big?
+						lnLength = lnFNameOffset + varNewStem->value.length + lnLengthExt;
+						if (lnLength >= sizeof(newFilename))
+						{
+							// Too big
+							iError_reportByNumber(thisCode, _ERROR_TOO_BIG_FOR_TARGET, iVariable_getRelatedComp(thisCode, varNewStem), false);
+							return(NULL);
+						}
+
+						// Copy path, plus new stem, plus original extension
+						memcpy(newFilename, varPathname->value.data_s8, lnFNameOffset);
+						memcpy(newFilename + lnFNameOffset, varNewStem->value.data_s8, varNewStem->value.length);
+						memcpy(newFilename + lnFNameOffset + varNewStem->value.length, varPathname->value.data_s8 + lnExtOffset, lnLengthExt);
+
+					} else {
+						// Copy original path, plus original extension
+						lnLength = lnFNameOffset + lnLengthExt;
+						memcpy(newFilename, varPathname->value.data_s8, lnFNameOffset);
+						memcpy(newFilename + lnFNameOffset, varPathname->value.data_s8 + lnExtOffset, lnLengthExt);
+					}			
+
+
+				//////////
+				// Allocate our result
+				//////
+					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, newFilename, lnLength, false);
+
+
+			} else {
+				// Unable to parse the string properly, so return whatever they supplied
+				result = iVariable_copy(thisCode, varPathname, false);
 			}
 
 
 		//////////
-		// Return our converted result
+		// Are we good?
 		//////
-			return result;
+			if (!result->value.data || result->value.length != lnLength)
+			{
+				// Unable to allocate our variable's contents
+				iVariable_delete(thisCode, result, true);
+				result = NULL;
+			}
+			
+			if (!result)
+				iError_report(thisCode, cgcInternalError, false);
 
+
+		//////////
+		// Return our result
+		//////
+			return(result);
 	}
 
 

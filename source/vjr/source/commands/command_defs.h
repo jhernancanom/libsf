@@ -214,7 +214,7 @@ struct SReturnsParams;
 	SVariable*			ifunction_numbers_common					(SThisCode* thisCode, SVariable* varNumber1, SVariable* varNumber2, SVariable* varNumber3, u32 tnFunctionType, const u32 tnResultType, bool tlSameInputType, bool tlNoEmptyParam, SReturnsParams* returnsParams);
 	SVariable*			function_floor		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_forceext	/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
-	bool				ifunction_pathname_common					(SThisCode* thisCode, SVariable* varPathname, s32* tnFNamePos, s32* tnExtPos, bool tlRtrim);
+	bool				ifunction_pathname_common					(SThisCode* thisCode, SVariable* varPathname, s32* tnFNamePos, s32* tnExtPos);
 	SVariable*			function_forcefname	/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_forcepath	/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_forcestem	/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
