@@ -3924,11 +3924,11 @@
 //    The input pathname with the next extension.
 //////
 // Example:
-//    ? FORCEEXT("C:\MyDir\Foo.cpp",	"txt")		&& Display "C:\MyDir\Foo.txt"
-//    ? FORCEEXT("C:\MyDir\Foo.cpp",	".txt")		&& Display "C:\MyDir\Foo.txt"
-//    ? FORCEEXT("C:\MyDir\Foo.cpp  ",	"txt")		&& Display "C:\MyDir\Foo.txt"
-//    ? FORCEEXT("C:\MyDir.MyDir\Foo",	"txt")		&& Display "C:\MyDir.MyDir\Foo.txt"
-//    ? FORCEEXT("C:\MyDir\Foo.cpp",	"")			&& Display "C:\MyDir\Foo"
+//    ? FORCEEXT("c:\mydir\fred.txt",	"prg")		&& Displays "c:\mydir\fred.prg"
+//    ? FORCEEXT("c:\mydir\fred.txt",	".prg")		&& Displays "c:\mydir\fred.prg"
+//    ? FORCEEXT("c:\mydir\fred.txt ",	"prg")		&& Displays "c:\mydir\fred.prg"
+//    ? FORCEEXT("c:\mydir.mydir\foo",	"prg")		&& Displays "c:\mydir.mydir\fred.prg"
+//    ? FORCEEXT("c:\mydir\fred.txt",	"")			&& Displays "c:\mydir\fred"
 //////
 	SVariable* function_forceext(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
@@ -4173,7 +4173,7 @@
 		//////
 			if (!iVariable_isValid(varNewFilename) || !iVariable_isTypeCharacter(varNewFilename))
 			{
-				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNewFilename), false);
+				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNewFilename), false);
 				return(NULL);
 			}
 
@@ -4298,7 +4298,7 @@
 		//////
 		if (!iVariable_isValid(varNewPathname) || !iVariable_isTypeCharacter(varNewPathname))
 		{
-			iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNewPathname), false);
+			iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNewPathname), false);
 			return(NULL);
 		}
 
@@ -4447,7 +4447,7 @@
 		//////
 			if (!iVariable_isValid(varNewStem) || !iVariable_isTypeCharacter(varNewStem))
 			{
-				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNewStem), false);
+				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNewStem), false);
 				return(NULL);
 			}
 
