@@ -771,7 +771,7 @@
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -945,7 +945,7 @@
 
 
 		//////////
-        // Create our return result
+        // Create our return(result)
 		//////
 	        result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
 			if (!result)
@@ -1174,7 +1174,7 @@
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -1263,7 +1263,7 @@
 
 
 		//////////
-        // Create our return result
+        // Create our return(result)
 		//////
 	        result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
 			if (!result)
@@ -1282,7 +1282,7 @@
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
     }
 
 
@@ -1724,7 +1724,7 @@
 
 
 		//////////
-		// Based on the result, create the return result
+		// Based on the result, create the return(result)
 		//////
 			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_LOGICAL, ((llInRange) ? (s8*)&_LOGICAL_TRUE : (s8*)&_LOGICAL_FALSE), 1, false);
 			if (!result)
@@ -2341,7 +2341,7 @@
 
 
 		//////////
-        // Create our return result
+        // Create our return(result)
 		//////
 	        result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
 			if (!result)
@@ -2362,7 +2362,7 @@
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
     }
 
 
@@ -2828,7 +2828,7 @@
 
 
 		//////////
-        // Create our return result variable, which is a reference to the new object
+        // Create our return(result) variable, which is a reference to the new object
 		//////
 	        result = iVariable_create(thisCode, _VAR_TYPE_OBJECT, NULL, true);
 			if (!result)
@@ -2845,7 +2845,7 @@
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -3113,7 +3113,7 @@
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -3858,9 +3858,9 @@
 
 
 		//////////
-        // Return result
+        // return(result)
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -4714,7 +4714,7 @@
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -4819,7 +4819,7 @@
 
 
 		//////////
-		// Based on the result, create the return result
+		// Based on the result, create the return(result)
 		//////
 			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_LOGICAL, ((llResult) ? (s8*)&_LOGICAL_TRUE : (s8*)&_LOGICAL_FALSE), 1, false);
 			if (!result)
@@ -4843,9 +4843,10 @@
 //////
 // Version 0.56
 // Last update:
-//     Jul.13.2014
+//     Apr.02.2015
 //////
 // Change log:
+//     Apr.02.2015 - Refactoring
 //     Jul.13.2014 - Initial creation
 //////
 // Parameters:
@@ -4869,7 +4870,7 @@
 		//////
 			if (!iVariable_isValid(varNumber) || !iVariable_isTypeNumeric(varNumber))
 			{
-				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNumber), false);
+				iError_reportByNumber(thisCode, _ERROR_PARAMETER_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNumber), false);
 				return(NULL);
 			}
 
@@ -4884,30 +4885,29 @@
 
 				// Convert to S64
 				result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
-				if (!result)
-				{
-					iError_report(thisCode, cgcInternalError, false);
-					return(NULL);
-				}
-
-				*(s64*)result->value.data = (s64)fValue;
+				if (result)
+					*(s64*)result->value.data = (s64)fValue;
 
 			} else {
 				// Copy whatever it already is
-				result = iVariable_create(thisCode, varNumber->varType, NULL, true);
-				if (!result)
-				{
-					iError_report(thisCode, cgcInternalError, false);
-					return(NULL);
-				}
-				iDatum_duplicate(&result->value, &varNumber->value);
+				result = iVariable_copy(thisCode, varNumber, false);
+			}
+
+
+		//////////
+		// Are we good?
+		//////
+			if (!result)
+			{
+				iError_report(thisCode, cgcInternalError, false);
+				return(NULL);
 			}
 
 
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
     }
 
 
@@ -4984,7 +4984,7 @@
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -5001,6 +5001,7 @@
 //		Dec.25.2014
 //////
 // Change log:
+//      Apr.02.2015 - Refactoring
 //		Dec.25.2014 - Initial creation
 //////
 // Parameters:
@@ -5030,14 +5031,7 @@
 		//////////
         // Based on its type, process it accordingly
 		//////
-			ptr		= NULL;
-			result	= iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
-			if (!result)
-			{
-				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
-			}
-
+			ptr = NULL;
 			if (varString->value.length >= 1)
 			{
 				// Iterate backwards until we find a period.
@@ -5057,14 +5051,31 @@
 		//////////
 		// Populate if need be
 		//////
-			if (ptr)
-				iDatum_duplicate(&result->value, ptr, lnLength);
+			if (!ptr)
+			{
+				// Create a blank string
+				result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
+
+			} else {
+				// Create and copy our portion
+				result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, ptr, lnLength, false);
+			}
+
+
+		//////////
+		// Are we good?
+		//////
+			if (!result)
+			{
+				iError_report(thisCode, cgcInternalError, false);
+				return(NULL);
+			}
 
 
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -5110,14 +5121,7 @@
 		//////////
         // Based on its type, process it accordingly
 		//////
-			ptr		= NULL;
-			result	= iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
-			if (!result)
-			{
-				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
-			}
-
+			ptr = NULL;
 			if (varString->value.length >= 1)
 			{
 				// Iterate backwards until we find a period.
@@ -5140,14 +5144,31 @@
 		//////////
 		// Populate if need be
 		//////
-			if (ptr)
-				iDatum_duplicate(&result->value, ptr, lnLength);
+			if (!ptr)
+			{
+				// Create a blank string
+				result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
+
+			} else {
+				// Create and copy our portion
+				result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, ptr, lnLength, false);
+			}
+
+
+		//////////
+		// Are we good?
+		//////
+			if (!result)
+			{
+				iError_report(thisCode, cgcInternalError, false);
+				return(NULL);
+			}
 
 
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -5161,9 +5182,10 @@
 //////
 // Version 0.56
 // Last update:
-//		Dec.25.2014
+//		Apr.02.2015
 //////
 // Change log:
+//      Apr.02.2015 - Refactoring
 //		Dec.25.2014 - Initial creation
 //////
 // Parameters:
@@ -5193,14 +5215,7 @@
 		//////////
         // Based on its type, process it accordingly
 		//////
-			ptr		= NULL;
-			result	= iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
-			if (!result)
-			{
-				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
-			}
-
+			ptr = NULL;
 			if (varString->value.length >= 1)
 			{
 				// Iterate backwards until we find a period.
@@ -5222,14 +5237,31 @@
 		//////////
 		// Populate if need be
 		//////
-			if (ptr)
-				iDatum_duplicate(&result->value, ptr, lnLength);
+			if (!ptr)
+			{
+				// Create a blank string
+				result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
+
+			} else {
+				// Create and copy our portion
+				result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, ptr, lnLength, false);
+			}
+
+
+		//////////
+		// Are we good?
+		//////
+			if (!result)
+			{
+				iError_report(thisCode, cgcInternalError, false);
+				return(NULL);
+			}
 
 
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -5353,7 +5385,7 @@
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -5422,7 +5454,7 @@
 
 
 		//////////
-        // Create our return result
+        // Create our return(result)
 		//////
 	        result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
 			if (!result)
@@ -5442,7 +5474,7 @@
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -5485,7 +5517,7 @@
 
 
 		//////////
-        // Create our return result
+        // Create our return(result)
 		//////
 	        result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
 			if (!result)
@@ -5504,7 +5536,7 @@
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -5616,7 +5648,7 @@
 
 
 		//////////
-        // Create our return result
+        // Create our return(result)
 		//////
 	        result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
 			if (!result)
@@ -5645,7 +5677,7 @@
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -6005,6 +6037,7 @@
 					return(NULL);
 				}
 
+				// Populate
 				iDatum_duplicate(&result->value, &varRight->value);
 
 			} else {
@@ -6016,6 +6049,7 @@
 					return(NULL);
 				}
 
+				// Populate
 				iDatum_duplicate(&result->value, &varLeft->value);
 			}
 
@@ -6231,6 +6265,7 @@
 					return(NULL);
 				}
 
+				// Populate
 				iDatum_duplicate(&result->value, &varLeft->value);
 
 			} else {
@@ -6242,6 +6277,7 @@
 					return(NULL);
 				}
 
+				// Populate
 				iDatum_duplicate(&result->value, &varRight->value);
 			}
 
@@ -6667,6 +6703,7 @@
 				return(NULL);
 			}
 
+			// Populate
 			iDatum_allocateSpace(&result->value, lnResultSize);
 
 
@@ -6731,7 +6768,10 @@
 			// Copy the string
 			memcpy(result->value.data + lnCopyStart, tempVar->value.data, tempVar->value.length);
 
-			// Delete our temporary variable
+
+		//////////
+		// Delete our temporary variable
+		//////
 			iVariable_delete(thisCode, tempVar, true);
 
 
@@ -6854,7 +6894,7 @@
 
 
 		//////////
-        // Create our return result
+        // Create our return(result)
 		//////
 			result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
 			if (!result)
@@ -6903,7 +6943,7 @@
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -7223,7 +7263,7 @@
 
 
 		//////////
-        // Create our return result
+        // Create our return(result)
 		//////
 			result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
 			if (!result)
@@ -7244,7 +7284,7 @@
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -7430,7 +7470,7 @@
 
 
 		//////////
-        // Create the return result
+        // Create the return(result)
 		//////
 	        result = iVariable_create(thisCode, _VAR_TYPE_U32, NULL, true);
 			if (!result)
@@ -7449,7 +7489,7 @@
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -7640,7 +7680,7 @@
 
 
 		//////////
-        // Create our return result
+        // Create our return(result)
 		//////
 	        result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
 			if (!result)
@@ -7668,7 +7708,7 @@
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -7770,7 +7810,7 @@
 
 
 		//////////
-        // Create the return result
+        // Create the return(result)
 		//////
 	        result = iVariable_create(thisCode, varNumber->varType, NULL, true);
 			if (!result)
@@ -7790,7 +7830,7 @@
 		//////////
         // Return our result
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -8087,7 +8127,7 @@
 		//////////
         // Return sign
 		//////
-	        return result;
+	        return(result);
     }
 
 
@@ -8216,7 +8256,7 @@
 
 
 		//////////
-        // Create our return result
+        // Create our return(result)
 		//////
 			result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
 			if (!result)
@@ -8236,7 +8276,7 @@
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -8714,7 +8754,7 @@
 
 
 		//////////
-        // Create the return result
+        // Create the return(result)
 		//////
 	        result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
 			if (!result)
@@ -8739,7 +8779,7 @@
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -9006,7 +9046,7 @@ debug_break;
 
 
 		//////////
-        // Create our return result
+        // Create our return(result)
 		//////
 	        result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
 			if (!result)
@@ -9164,7 +9204,7 @@ debug_break;
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
     }
 
 
@@ -9385,7 +9425,7 @@ debug_break;
 
 
 		//////////
-        // Create our return result
+        // Create our return(result)
 		//////
 			result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
 			if (!result)
@@ -9414,7 +9454,7 @@ debug_break;
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -9691,7 +9731,7 @@ debug_break;
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
 	}
 
 
@@ -10014,7 +10054,7 @@ debug_break;
 
 
 		//////////
-        // Create our return result
+        // Create our return(result)
 		//////
 			if (lptr || index == 1 || index == 4)
 			{
@@ -10060,7 +10100,7 @@ debug_break;
 		//////////
         // Return our converted result
 		//////
-	        return result;
+	        return(result);
     }
 
 
@@ -10126,9 +10166,11 @@ debug_break;
 				return(NULL);
 			}
 
+			// Populate
 			iDatum_allocateSpace(&result->value, varString1->value.length + varString2->value.length);
+
 			// Create the concatenated string
-			memcpy(result->value.data,						varString1->value.data,		varString1->value.length);
+			memcpy(result->value.data,								varString1->value.data,		varString1->value.length);
 			memcpy(result->value.data + varString1->value.length,	varString2->value.data,		varString2->value.length);
 
 
@@ -10206,29 +10248,26 @@ debug_break;
 
 				// Create our floating point result
 				result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
-				if (!result)
+				if (result)
 				{
-					iError_report(thisCode, cgcInternalError, false);
-					return(NULL);
-				}
+					// Grab p2
+					if (iVariable_isTypeFloatingPoint(varNum2))
+					{
+						// p2 is floating point
+						lfValue2 = iiVariable_getAs_f64(thisCode, varNum2, false, &error, &errorNum);
+						if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
 
-				// Grab p2
-				if (iVariable_isTypeFloatingPoint(varNum2))
-				{
-					// p2 is floating point
-					lfValue2 = iiVariable_getAs_f64(thisCode, varNum2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
+						// Store the result
+						*(f64*)result->value.data = lfValue1 + lfValue2;
 
-					// Store the result
-					*(f64*)result->value.data = lfValue1 + lfValue2;
+					} else  {
+						// p2 is not floating point, so we'll get it as an integer
+						lnValue2 = iiVariable_getAs_s64(thisCode, varNum2, false, &error, &errorNum);
+						if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
 
-				} else  {
-					// p2 is not floating point, so we'll get it as an integer
-					lnValue2 = iiVariable_getAs_s64(thisCode, varNum2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
-
-					// Store the result
-					*(f64*)result->value.data = lfValue1 + (f64)lnValue2;
+						// Store the result
+						*(f64*)result->value.data = lfValue1 + (f64)lnValue2;
+					}
 				}
 
 			} else {
@@ -10245,14 +10284,8 @@ debug_break;
 
 					// Create our floating point result
 					result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
-					if (!result)
-					{
-						iError_report(thisCode, cgcInternalError, false);
-						return(NULL);
-					}
-
-					// Store the result
-					*(f64*)result->value.data = (f64)lnValue1 + lfValue2;
+					if (result)
+						*(f64*)result->value.data = (f64)lnValue1 + lfValue2;
 
 				} else  {
 					// p2 is not floating point, so we'll get it as an integer
@@ -10261,16 +10294,17 @@ debug_break;
 
 					// Create our floating point result
 					result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
-					if (!result)
-					{
-						iError_report(thisCode, cgcInternalError, false);
-						return(NULL);
-					}
-
-					// Store the result
-					*(s64*)result->value.data = lnValue1 + lnValue2;
+					if (result)
+						*(s64*)result->value.data = lnValue1 + lnValue2;
 				}
 			}
+
+
+		//////////
+		// Are we good?
+		//////
+			if (!result)
+				iError_report(thisCode, cgcInternalError, false);
 
 
 		//////////
@@ -10347,29 +10381,26 @@ debug_break;
 
 				// Create our floating point result
 				result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
-				if (!result)
+				if (result)
 				{
-					iError_report(thisCode, cgcInternalError, false);
-					return(NULL);
-				}
+					// Grab p2
+					if (iVariable_isTypeFloatingPoint(varNum2))
+					{
+						// p2 is floating point
+						lfValue2 = iiVariable_getAs_f64(thisCode, varNum2, false, &error, &errorNum);
+						if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
 
-				// Grab p2
-				if (iVariable_isTypeFloatingPoint(varNum2))
-				{
-					// p2 is floating point
-					lfValue2 = iiVariable_getAs_f64(thisCode, varNum2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
+						// Store the result
+						*(f64*)result->value.data = lfValue1 - lfValue2;
 
-					// Store the result
-					*(f64*)result->value.data = lfValue1 - lfValue2;
+					} else  {
+						// p2 is not floating point, so we'll get it as an integer
+						lnValue2 = iiVariable_getAs_s64(thisCode, varNum2, false, &error, &errorNum);
+						if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
 
-				} else  {
-					// p2 is not floating point, so we'll get it as an integer
-					lnValue2 = iiVariable_getAs_s64(thisCode, varNum2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
-
-					// Store the result
-					*(f64*)result->value.data = lfValue1 - (f64)lnValue2;
+						// Store the result
+						*(f64*)result->value.data = lfValue1 - (f64)lnValue2;
+					}
 				}
 
 			} else {
@@ -10386,14 +10417,8 @@ debug_break;
 
 					// Create our floating point result
 					result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
-					if (!result)
-					{
-						iError_report(thisCode, cgcInternalError, false);
-						return(NULL);
-					}
-
-					// Store the result
-					*(f64*)result->value.data = (f64)lnValue1 - lfValue2;
+					if (result)
+						*(f64*)result->value.data = (f64)lnValue1 - lfValue2;
 
 				} else  {
 					// p2 is not floating point, so we'll get it as an integer
@@ -10402,16 +10427,17 @@ debug_break;
 
 					// Create our floating point result
 					result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
-					if (!result)
-					{
-						iError_report(thisCode, cgcInternalError, false);
-						return(NULL);
-					}
-
-					// Store the result
-					*(s64*)result->value.data = lnValue1 - lnValue2;
+					if (result)
+						*(s64*)result->value.data = lnValue1 - lnValue2;
 				}
 			}
+
+
+		//////////
+		// Are we good?
+		//////
+			if (!result)
+				iError_report(thisCode, cgcInternalError, false);
 
 
 		//////////
@@ -10488,29 +10514,26 @@ debug_break;
 
 				// Create our floating point result
 				result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
-				if (!result)
+				if (result)
 				{
-					iError_report(thisCode, cgcInternalError, false);
-					return(NULL);
-				}
+					// Grab p2
+					if (iVariable_isTypeFloatingPoint(varNum2))
+					{
+						// p2 is floating point
+						lfValue2 = iiVariable_getAs_f64(thisCode, varNum2, false, &error, &errorNum);
+						if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
 
-				// Grab p2
-				if (iVariable_isTypeFloatingPoint(varNum2))
-				{
-					// p2 is floating point
-					lfValue2 = iiVariable_getAs_f64(thisCode, varNum2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
+						// Store the result
+						*(f64*)result->value.data = lfValue1 * lfValue2;
 
-					// Store the result
-					*(f64*)result->value.data = lfValue1 * lfValue2;
+					} else  {
+						// p2 is not floating point, so we'll get it as an integer
+						lnValue2 = iiVariable_getAs_s64(thisCode, varNum2, false, &error, &errorNum);
+						if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
 
-				} else  {
-					// p2 is not floating point, so we'll get it as an integer
-					lnValue2 = iiVariable_getAs_s64(thisCode, varNum2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
-
-					// Store the result
-					*(f64*)result->value.data = lfValue1 * (f64)lnValue2;
+						// Store the result
+						*(f64*)result->value.data = lfValue1 * (f64)lnValue2;
+					}
 				}
 
 			} else {
@@ -10527,14 +10550,8 @@ debug_break;
 
 					// Create our floating point result
 					result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
-					if (!result)
-					{
-						iError_report(thisCode, cgcInternalError, false);
-						return(NULL);
-					}
-
-					// Store the result
-					*(f64*)result->value.data = (f64)lnValue1 * lfValue2;
+					if (result)
+						*(f64*)result->value.data = (f64)lnValue1 * lfValue2;
 
 				} else  {
 					// p2 is not floating point, so we'll get it as an integer
@@ -10543,16 +10560,17 @@ debug_break;
 
 					// Create our floating point result
 					result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
-					if (!result)
-					{
-						iError_report(thisCode, cgcInternalError, false);
-						return(NULL);
-					}
-
-					// Store the result
-					*(s64*)result->value.data = lnValue1 * lnValue2;
+					if (result)
+						*(s64*)result->value.data = lnValue1 * lnValue2;
 				}
 			}
+
+
+		//////////
+		// Are we good?
+		//////
+			if (!result)
+				iError_report(thisCode, cgcInternalError, false);
 
 
 		//////////
@@ -10619,6 +10637,17 @@ debug_break;
 
 
 		//////////
+		// Parameter 2 cannot be 0
+		//////
+			lfValue1 = iiVariable_getAs_f64(thisCode, varNum2, false, &error, &errorNum);
+			if (lfValue1 == 0.0 || error)
+			{
+				iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNum2), false);
+				return(NULL);
+			}
+
+
+		//////////
 		// Determine what we're comparing
 		//////
 			if (iVariable_isTypeFloatingPoint(varNum1))
@@ -10629,29 +10658,26 @@ debug_break;
 
 				// Create our floating point result
 				result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
-				if (!result)
+				if (result)
 				{
-					iError_report(thisCode, cgcInternalError, false);
-					return(NULL);
-				}
+					// Grab p2
+					if (iVariable_isTypeFloatingPoint(varNum2))
+					{
+						// p2 is floating point
+						lfValue2 = iiVariable_getAs_f64(thisCode, varNum2, false, &error, &errorNum);
+						if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
 
-				// Grab p2
-				if (iVariable_isTypeFloatingPoint(varNum2))
-				{
-					// p2 is floating point
-					lfValue2 = iiVariable_getAs_f64(thisCode, varNum2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
+						// Store the result
+						*(f64*)result->value.data = lfValue1 / lfValue2;
 
-					// Store the result
-					*(f64*)result->value.data = lfValue1 / lfValue2;
+					} else  {
+						// p2 is not floating point, so we'll get it as an integer
+						lnValue2 = iiVariable_getAs_s64(thisCode, varNum2, false, &error, &errorNum);
+						if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
 
-				} else  {
-					// p2 is not floating point, so we'll get it as an integer
-					lnValue2 = iiVariable_getAs_s64(thisCode, varNum2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
-
-					// Store the result
-					*(f64*)result->value.data = lfValue1 / (f64)lnValue2;
+						// Store the result
+						*(f64*)result->value.data = lfValue1 / (f64)lnValue2;
+					}
 				}
 
 			} else {
@@ -10661,31 +10687,35 @@ debug_break;
 
 				// Create our floating point result
 				result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
-				if (!result)
+				if (result)
 				{
-					iError_report(thisCode, cgcInternalError, false);
-					return(NULL);
-				}
+					// Grab p2
+					if (iVariable_isTypeFloatingPoint(varNum2))
+					{
+						// p2 is floating point
+						lfValue2 = iiVariable_getAs_f64(thisCode, varNum2, false, &error, &errorNum);
+						if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
 
-				// Grab p2
-				if (iVariable_isTypeFloatingPoint(varNum2))
-				{
-					// p2 is floating point
-					lfValue2 = iiVariable_getAs_f64(thisCode, varNum2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
+						// Store the result
+						*(f64*)result->value.data = (f64)lnValue1 / lfValue2;
 
-					// Store the result
-					*(f64*)result->value.data = (f64)lnValue1 / lfValue2;
+					} else  {
+						// p2 is not floating point, so we'll get it as an integer
+						lnValue2 = iiVariable_getAs_s64(thisCode, varNum2, false, &error, &errorNum);
+						if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
 
-				} else  {
-					// p2 is not floating point, so we'll get it as an integer
-					lnValue2 = iiVariable_getAs_s64(thisCode, varNum2, false, &error, &errorNum);
-					if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNum2), false);	return(NULL);	}
-
-					// Store the result
-					*(f64*)result->value.data = (f64)lnValue1 / (f64)lnValue2;
+						// Store the result
+						*(f64*)result->value.data = (f64)lnValue1 / (f64)lnValue2;
+					}
 				}
 			}
+
+
+		//////////
+		// Are we good?
+		//////
+			if (!result)
+				iError_report(thisCode, cgcInternalError, false);
 
 
 		//////////
