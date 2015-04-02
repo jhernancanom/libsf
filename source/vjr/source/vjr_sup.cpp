@@ -210,9 +210,13 @@
 											} else {
 
 												// Locate the associated icon
-												bmpIconRef = iBmp_arrayBmp_get(bxmlArrayBmpIcons, bmpArray, xdIconNameData->as_s8p(), xdIconNameData->length());
+												bmpIconRef = iBmp_arrayBmp_getRef(bxmlArrayBmpIcons, bmpArray, xdIconNameData->as_s8p(), xdIconNameData->length());
 												if (!bmpIconRef)
-													debug_break;	// Should never happen
+												{
+													// Should never happen
+													// If we get here, we're searching for the tag in xdIconNameData, which is not a known icon in the bmpArray icon strip
+													debug_break;
+												}
 
 												// Append the image instance
 												lo = iObj_addChild(NULL, _OBJ_TYPE_IMAGE, loToolbar);
@@ -248,14 +252,15 @@
 // Called to create toolbars on the individual object
 //
 //////
-	bool iToolbar_applyTo_obj(SThisCode* thisCode, SObject* obj, SObject* objToolbarContainer, cu8* tcXml, u32 tnXmlLength, cs8* tcTagRoot, cs8* tcTagSub)
+	bool iToolbar_applyTo_obj(SThisCode* thisCode, SObject* objParent, SObject* objToolbarContainer, cu8* tcXml, u32 tnXmlLength, cs8* tcTagRoot, cs8* tcTagSub)
 	{
-		s32			lnX, lnY, lnWidth, lnHeight;
+		s32			lnX, lnY, lnWidth, lnHeight, lnIconWidth, lnIconHeight;
 		bool		llResult, llVisible;
-		CXmlp		bxml, bxmlRoot, bxmlRootSub, bxmlToolbars, bxmlToolbar, bxmlName, bxmlX, bxmlY, bxmlWidth, bxmlHeight, bxmlVisible;
-		XmlDatap	xdTag, xdTagName, xdX, xdY, xdWidth, xdHeight, xdVisible;
+		CXmlp		bxml, bxmlRoot, bxmlRootSub, bxmlToolbars, bxmlToolbar, bxmlName, bxmlX, bxmlY, bxmlWidth, bxmlHeight, bxmlIconWidth, bxmlIconHeight, bxmlVisible;
+		XmlDatap	xdTag, xdTagName, xdX, xdY, xdWidth, xdHeight, xdIconWidth, xdIconHeight, xdVisible;
 		SObject*	loToolbarSource;		// The source instance in the toolbar container
 		SObject*	loToolbarCopy;			// The copy we create
+		SObject*	objToolbarItem;
 		SDatum		d;
 
 
@@ -327,39 +332,61 @@
 							//////////
 							// Construct the toolbar class copy
 							//////
-								loToolbarCopy = iObj_copy(NULL, loToolbarSource, NULL, obj, false, true, true);
+								loToolbarCopy = iObj_copy(NULL, loToolbarSource, NULL, NULL, NULL, true, false, true);
 								if (!loToolbarCopy)
 									debug_break;	// Should never happen
+
+								// Right now, loToolbarCopy is an orphan object
+								// Give it a parent
+								if (!iLl_appendExistingNodeAtEnd((SLL**)&objParent, (SLL*)loToolbarCopy))
+									debug_break;	// Should never happen
+
+								// Locate the first icon in the toolbar
+								for (objToolbarItem = loToolbarCopy->firstChild; objToolbarItem; objToolbarItem = objToolbarItem->ll.nextObj)
+								{
+									if (objToolbarItem->objType == _OBJ_TYPE_IMAGE)
+										break;
+								}
 
 
 							//////////
 							// Check layout properties and assign coordinates and sizes
 							//////
-								bxmlX		= bxmlToolbar->attribute(cgcTag_x);
-								bxmlY		= bxmlToolbar->attribute(cgcTag_y);
-								bxmlWidth	= bxmlToolbar->attribute(cgcTag_width);
-								bxmlHeight	= bxmlToolbar->attribute(cgcTag_height);
-								bxmlVisible	= bxmlToolbar->attribute(cgcTag_visible);
+								bxmlX			= bxmlToolbar->attribute(cgcTag_x);
+								bxmlY			= bxmlToolbar->attribute(cgcTag_y);
+								bxmlWidth		= bxmlToolbar->attribute(cgcTag_width);
+								bxmlHeight		= bxmlToolbar->attribute(cgcTag_height);
+								bxmlIconWidth	= bxmlToolbar->attribute(cgcTag_iconWidth);
+								bxmlIconHeight	= bxmlToolbar->attribute(cgcTag_iconHeight);
+								bxmlVisible		= bxmlToolbar->attribute(cgcTag_visible);
 
 
 							//////////
 							// Convert found tags to data
 							//////
-								xdX			= (XmlData*)iif(iIsNotNull(bxmlX),			bxmlX->data(),			NULL);
-								xdY			= (XmlData*)iif(iIsNotNull(bxmlY),			bxmlY->data(),			NULL);
-								xdWidth		= (XmlData*)iif(iIsNotNull(bxmlWidth),		bxmlWidth->data(),		NULL);
-								xdHeight	= (XmlData*)iif(iIsNotNull(bxmlHeight),		bxmlHeight->data(),		NULL);
-								xdVisible	= (XmlData*)iif(iIsNotNull(bxmlVisible),	bxmlVisible->data(),	NULL);
+								xdX				= (XmlData*)iif(iIsNotNull(bxmlX),				bxmlX->data(),				NULL);
+								xdY				= (XmlData*)iif(iIsNotNull(bxmlY),				bxmlY->data(),				NULL);
+								xdWidth			= (XmlData*)iif(iIsNotNull(bxmlWidth),			bxmlWidth->data(),			NULL);
+								xdHeight		= (XmlData*)iif(iIsNotNull(bxmlHeight),			bxmlHeight->data(),			NULL);
+								xdIconWidth		= (XmlData*)iif(iIsNotNull(bxmlIconWidth),		bxmlIconWidth->data(),		NULL);
+								xdIconHeight	= (XmlData*)iif(iIsNotNull(bxmlIconHeight),		bxmlIconHeight->data(),		NULL);
 
 
 							//////////
 							// Derive their values
 							//////
-								lnX			= iif(iIsNotNull(xdX),			xdX->as_s32(),		0);
-								lnY			= iif(iIsNotNull(xdY),			xdY->as_s32(),		0);
-								lnWidth		= iif(iIsNotNull(xdWidth),		xdWidth->as_s32(),	16);
-								lnHeight	= iif(iIsNotNull(xdHeight),		xdHeight->as_s32(),	16);
+								lnX				= iif(iIsNotNull(xdX),				xdX->as_s32(),		0);
+								lnY				= iif(iIsNotNull(xdY),				xdY->as_s32(),		0);
+								lnWidth			= iif(iIsNotNull(xdWidth),			xdWidth->as_s32(),	16);
+								lnHeight		= iif(iIsNotNull(xdHeight),			xdHeight->as_s32(),	16);
+								lnIconWidth		= iif(iIsNotNull(xdIconWidth),		xdIconWidth->as_s32(),	iif(iIsNotNull(objToolbarItem), objToolbarItem->rc.right - objToolbarItem->rc.left, 36));
+								lnIconHeight	= iif(iIsNotNull(xdIconHeight),		xdIconHeight->as_s32(),	iif(iIsNotNull(objToolbarItem), objToolbarItem->rc.bottom - objToolbarItem->rc.top, 36));
 
+
+							//////////
+							// Set the visible status
+							//////
+								xdVisible = (XmlData*)iif(iIsNotNull(bxmlVisible), bxmlVisible->data(), NULL);
 								if (xdVisible)
 								{
 									// Try to derive the actual value
@@ -367,7 +394,23 @@
 										llVisible = true;	// Fall back on true
 
 								} else {
+									// Default to visible
 									llVisible = true;
+								}
+
+
+							//////////
+							// Toolbars can be sized smaller than the icons they initially possess.
+							// We trim down the icon's rectangular size to the indicated iconX and iconY sizes.
+							//////
+								for (objToolbarItem = loToolbarCopy->firstChild; objToolbarItem; objToolbarItem = objToolbarItem->ll.nextObj)
+								{
+									// Make it appropriately visible or not visible
+									propSetVisible_fromBool(objToolbarItem, llVisible);
+
+									// Is it an icon?
+									if (objToolbarItem->objType == _OBJ_TYPE_IMAGE)
+										iObj_setSize(thisCode, objToolbarItem, objToolbarItem->rc.left, objToolbarItem->rc.top, lnIconWidth, lnIconHeight);
 								}
 
 
@@ -375,7 +418,8 @@
 							// Set the properties for this toolbar
 							//////
 								iObj_setSize(thisCode, loToolbarCopy, lnX, lnY, lnWidth, lnHeight);
-								propSetVisible(loToolbarCopy, llVisible);
+								propSetVisible_fromBool(loToolbarCopy, llVisible);
+								propSetMargin(loToolbarCopy, 6);
 
 						}
 					}
@@ -659,12 +703,12 @@
 			propSetIcon(_jdebi,			bmpJDebiIcon);
 
 			// Make them enabled and visible
-			propSetVisible(sourceCode,	_LOGICAL_TRUE);
-			propSetVisible(locals,		_LOGICAL_TRUE);
-			propSetVisible(watch,		_LOGICAL_TRUE);
-			propSetVisible(command,		_LOGICAL_TRUE);
-			propSetVisible(sourceLight,	_LOGICAL_TRUE);
-			propSetVisible(_screen,		_LOGICAL_TRUE);
+			propSetVisible(sourceCode,	_LOGICAL_TRUE);		propSetBorderStyle(sourceCode,	_BORDER_STYLE_FIXED);
+			propSetVisible(locals,		_LOGICAL_TRUE);		propSetBorderStyle(locals,		_BORDER_STYLE_FIXED);
+			propSetVisible(watch,		_LOGICAL_TRUE);		propSetBorderStyle(watch,		_BORDER_STYLE_FIXED);
+			propSetVisible(command,		_LOGICAL_TRUE);		propSetBorderStyle(command,		_BORDER_STYLE_FIXED);
+			propSetVisible(sourceLight,	_LOGICAL_TRUE);		propSetBorderStyle(sourceLight,	_BORDER_STYLE_FIXED);
+			propSetVisible(_screen,		_LOGICAL_TRUE);		propSetBorderStyle(_screen,		_BORDER_STYLE_FIXED);
 
 
 		//////////
@@ -717,7 +761,7 @@
 		// Position and size each control
 		//////
 			lnHeight = (_jdebi->rcClient.bottom - _jdebi->rcClient.top) / 8;
-			iObj_setSize(thisCode, sourceCode_carousel,	50,	8,		sourceCode->rcClient.right			- sourceCode->rcClient.left - 50,			sourceCode->rcClient.bottom				- sourceCode->rcClient.top - 8);
+			iObj_setSize(thisCode, sourceCode_carousel,	50,	-1,		sourceCode->rcClient.right			- sourceCode->rcClient.left - 49,			sourceCode->rcClient.bottom				- sourceCode->rcClient.top - 2);
 			iObj_setSize(thisCode, sourceCode_rider,	0,	0,		sourceCode_carousel->rcClient.right	- sourceCode_carousel->rcClient.left,		sourceCode_carousel->rcClient.bottom	- sourceCode_carousel->rcClient.top);
 			iObj_setSize(thisCode, sourceCode_editbox,	0,	0,		sourceCode_rider->rcClient.right	- sourceCode_rider->rcClient.left,			sourceCode_rider->rcClient.bottom		- sourceCode_rider->rcClient.top);
 			iEngine_raise_event(thisCode, _EVENT_RESIZE, NULL, sourceCode_carousel, &sourceCode_carousel->rc);
@@ -870,11 +914,6 @@
 //////
 	void iInit_jdebi_addToolbars(void)
 	{
-
-// Temporarily disabled
-// return;
-
-
 		// Make sure our environment is sane
 		if (_jdebi && sourceCode)
 		{
@@ -1269,8 +1308,9 @@
 		SetWindowPos(gSplash.hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW | SWP_NOACTIVATE);
 
 		// Read until the splash window goes bye bye
-		gSplash.isValid = true;
-		while (glIsMouseOverSplash || gSplash.isValid)
+		gSplash.isEnabled = true;
+		gSplash.isVisible = true;
+		while (glIsMouseOverSplash || gSplash.isEnabled)
 		{
 			//////////
 			// Read and process a message
@@ -1298,7 +1338,8 @@
 
 		// Destroy the window
 		DestroyWindow(gSplash.hwnd);
-		gSplash.hwnd = 0;
+		gSplash.hwnd		= 0;
+		gSplash.isVisible	= false;
 
 		// All done
 		return(0);
@@ -1318,7 +1359,7 @@
 
 
 		// Close any prior splash screen
-		if (gSplash.isValid)
+		if (gSplash.isEnabled)
 		{
 			// Sleep for the indicated time
 			Sleep((DWORD)(uptr)lpParameter);
@@ -1327,7 +1368,7 @@
 			iVjr_appendSystemLog(thisCode, (u8*)"Splash screen can unengage");
 
 			// Indicate no longer valid
-			gSplash.isValid = false;
+			gSplash.isEnabled = false;
 		}
 
 		// All done
@@ -1417,7 +1458,7 @@
 
 			// Repeat until the splash screen is over, or the song ends
 			stopTickCount = GetTickCount() + 2500;
-			while (glIsMouseOverSplash || (gSplash.isValid && soundOffset < soundCount) || GetTickCount() < stopTickCount)
+			while (glIsMouseOverSplash || (gSplash.isEnabled && soundOffset < soundCount) || GetTickCount() < stopTickCount)
 			{
 				// Continue looping so long as the mouse is over
 				if (glIsMouseOverSplash && soundOffset >= soundCount)
@@ -2183,7 +2224,21 @@
 		// Display the window
 		//////
 			focus->isValid = true;
-			SetWindowPos(focus->hwnd, HWND_TOPMOST, lrcParent.left + rc->left, lrcParent.top + rc->top, rc->right - rc->left, rc->bottom - rc->top, SWP_SHOWWINDOW | SWP_NOACTIVATE);
+			SetWindowPos(focus->hwnd, HWND_TOPMOST, lrcParent.left + rc->left, lrcParent.top + rc->top, rc->right - rc->left, rc->bottom - rc->top, ((gSplash.isVisible) ? SWP_HIDEWINDOW : SWP_SHOWWINDOW) | SWP_NOACTIVATE);
+	}
+
+
+
+
+//////////
+//
+// Called to show the active focus highlight window
+//
+//////
+	void iFocusHighlight_show(SFocusHighlight* focus)
+	{
+		if (focus)
+			ShowWindow(focus->hwnd, ((gSplash.isVisible) ? SW_HIDE : SW_SHOW));
 	}
 
 
@@ -3418,6 +3473,30 @@
 		// If we get here, it was not inside at any point
 		//////
 			return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to compute the deltas between rectangle points, creating each delta in
+// each relative position.
+//
+// Uses:
+//	rcDelta.x = (rcNow.x - rcPrior.x)
+//
+//////
+	RECT* iiMath_computeRectDeltas(RECT* rcDelta, RECT* rcNow, RECT* rcPrior)
+	{
+		// Compute deltas for each
+		rcDelta->left	= rcNow->left - rcPrior->left;
+		rcDelta->top	= rcNow->top - rcPrior->top;
+		rcDelta->right	= rcNow->right - rcPrior->right;
+		rcDelta->bottom	= rcNow->bottom - rcPrior->bottom;
+
+		// Return our delta
+		return(rcDelta);
 	}
 
 

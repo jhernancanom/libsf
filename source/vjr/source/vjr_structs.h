@@ -552,7 +552,8 @@ struct STooltip
 
 struct SSplash
 {
-	bool		isValid;											// Is the splash screen active/displayed?
+	bool		isVisible;											// Is the splash screen still visible?
+	bool		isEnabled;											// Is the splash screen active, able to have content displayed?
 
 	HWND		hwnd;												// The HWND to the splash screen
 	RECT		rc;													// In screen coordinates

@@ -141,6 +141,7 @@
 	{
 		SLL				ll;
 
+		SWindow*		win;					// Current window
 		SSourceCode*	definition;				// As defined at compile time
 		SSourceCode*	live;					// As exists live in this instance at this level
 	};

@@ -98,7 +98,7 @@ class CXml;
 	SBitmap*				iBmp_allocate							(void);
 	SBitmap*				iBmp_copy								(SBitmap* bmpSrc);
 	SBitmap*				iBmp_arrayBmp_copy						(CXml* baseArrayBmp, SBitmap* baseBmp[], s8* tcName, u32 tnNameLength);
-	SBitmap*				iBmp_arrayBmp_get						(CXml* baseArrayBmp, SBitmap* baseBmp[], s8* tcName, u32 tnNameLength);
+	SBitmap*				iBmp_arrayBmp_getRef						(CXml* baseArrayBmp, SBitmap* baseBmp[], s8* tcName, u32 tnNameLength);
 	SBitmap*				iBmp_verifyCopyIsSameSize				(SBitmap* bmpCopy, SBitmap* bmp);
 	SBitmap*				iBmp_verifySizeOrResize					(SBitmap* bmp, u32 tnWidth, u32 tnHeight, u32 tnBitCount);
 	SBitmap*				iBmp_rawLoad							(cu8* bmpRawFileData);
@@ -138,7 +138,7 @@ class CXml;
 	SBitmap*				iBmp_nbsp_createAndPopulate				(SComp* comp, SFont* font, f32 tfMinColor, f32 tfMaxColor, s32 tnWidth, s32 tnHeight, SBgra backColor, SBgra textColor);
 	void					iBmp_colorizeAsCommonTooltipBackground	(SBitmap* bmp);
 	void					iBmp_colorizeHighlightGradient			(SBitmap* bmp, RECT* rc, SBgra color, f32 tfLeftOpaque, f32 tfRightOpaque);
-	void					iBmp_dapple								(SBitmap* bmp, SBitmap* bmpDapple, f32 tfBias, f32 tfInfluence);
+	void					iBmp_dapple								(SBitmap* bmp, SBitmap* bmpDapple, SBitmap* bmpDappleTmp, f32 tfBias, f32 tfInfluence);
 // TODO:  The following void functions need to be changed to u32 and indicate how many pixels were rendered
 	void					iBmp_drawPoint							(SBitmap* bmp, s32 tnX, s32 tnY, SBgra color);
 	void					iBmp_fillRect							(SBitmap* bmp, RECT* rc, SBgra colorNW, SBgra colorNE, SBgra colorSW, SBgra colorSE, bool tlUseGradient, RECT* rcClip, bool tluseClip);

@@ -121,38 +121,40 @@ struct SObjPropMap;
 //////
 	SObject*				iObj_create								(SThisCode* thisCode, s32 objType, SObject* objParent);
 	SObject*				iObj_addChild							(SThisCode* thisCode, s32 objType, SObject* objParent);
-	SObject*				iObj_copy								(SThisCode* thisCode, SObject* template_obj, SObject* next, SObject* parent, bool tlCopyChildren, bool tlCopySiblings, bool tlCreateSeparateBitmapBuffers);
+	SObject*				iObj_copy								(SThisCode* thisCode, SObject*  template_obj, SObject* prevObj, SObject* nextObj, SObject* parent, bool tlCopyChildren, bool tlCopySiblings, bool tlCreateSeparateBitmapBuffers);
 	void					iObj_delete								(SThisCode* thisCode, SObject** obj, bool tlDeleteSelf, bool tlDeleteChildren, bool tlDeleteSiblings);
-	bool					iObj_setFocus							(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlClearOtherControlsWithFocus);
-	void					iObj_clearFocus							(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlClearChildren, bool tlClearSiblings);
-	SObject*				iObj_find_rootmostObject				(SThisCode* thisCode, SObject* obj);
-	bool					iObj_find_screenRect					(SThisCode* thisCode, SObject* obj, RECT* rc);
-	bool					iObj_find_relativeRect					(SThisCode* thisCode, SObject* objThis, SObject* objTarget, s32 x, s32 y, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings);
-	SObject*				iObj_find_thisForm						(SThisCode* thisCode, SObject* obj);
-	SObject*				iObj_find_thisSubform					(SThisCode* thisCode, SObject* obj);
-	SObject*				iObj_find_thisRider						(SThisCode* thisCode, SObject* obj);
-	SObject*				iiObj_findParentObject_byType			(SThisCode* thisCode, SObject* objStart, s32 objType, bool tlSearchSelf);
-	SObject*				iiObj_findChildObject_byName			(SThisCode* thisCode, SObject* objStart, SDatum* name, bool tlSearchSelf, bool tlSearchChildren, bool tlSearchSiblings);
-	bool					iObj_isCommandWindow					(SThisCode* thisCode, SObject* obj);
-	void					iObj_setFocusHighlights					(SThisCode* thisCode, SWindow* win, SObject* obj, s32 x, s32 y, bool tlProcessChildren, bool tlProcessSiblings);
-	void					iObj_findFocusControls					(SThisCode* thisCode, SObject* obj, SBuilder* objFocusControls, bool tlProcessSiblings);
-	bool					iObj_setFocusObjectPrev					(SThisCode* thisCode, SWindow* win, SObject* obj);
-	bool					iObj_setFocusObjectNext					(SThisCode* thisCode, SWindow* win, SObject* obj);
-	bool					iObj_focus_descentCheck					(SThisCode* thisCode, SObject* obj, bool tlCheckChildren, bool tlCheckSiblings);
-	SObject*				iObj_focus_descentCheckObj				(SThisCode* thisCode, SObject* obj, bool tlCheckChildren, bool tlCheckSiblings);
-	void					iObj_setDirtyRender_ascent				(SThisCode* thisCode, SObject* obj, bool tlMarkParents);
-	void					iObj_setDirtyRender_descent				(SThisCode* thisCode, SObject* obj, bool tlProcessChildren, bool tlProcessSiblings);
-	void					iObj_setDirtyPublish_ascent				(SThisCode* thisCode, SObject* obj, bool tlMarkParents);
-	void					iObj_setDirtyPublish_descent			(SThisCode* thisCode, SObject* obj, bool tlProcessChildren, bool tlProcessSiblings);
-	u32						iObj_render								(SThisCode* thisCode, SObject* obj, bool tlForceRender);
-	bool					iObj_render_descentCheck				(SThisCode* thisCode, SObject* obj, bool tlCheckChildren, bool tlCheckSiblings);
-	u32						iObj_renderChildrenAndSiblings			(SThisCode* thisCode, SObject* obj, bool tlRenderChildren, bool tlRenderSiblings, bool tlForceRender);
-	u32						iObj_publish							(SThisCode* thisCode, SObject* obj, RECT* rc, SBitmap* bmpDst, bool tlPublishChildren, bool tlPublishSiblings, bool tlForcePublish, s32 tnLevel);
-	bool					iObj_publish_descentCheck				(SThisCode* thisCode, SObject * obj, bool tlCheckChildren, bool tlCheckSiblings);
+	bool					iObj_setFocus							(SThisCode* thisCode, SWindow*  win, SObject* obj, bool tlClearOtherControlsWithFocus);
+	void					iObj_clearFocus							(SThisCode* thisCode, SWindow*  win, SObject* obj, bool tlClearChildren, bool tlClearSiblings);
+	SObject*				iObj_find_rootmostObject				(SThisCode* thisCode, SObject*  obj);
+	bool					iObj_find_screenRect					(SThisCode* thisCode, SObject*  obj, RECT* rc);
+	bool					iObj_find_relativeRect					(SThisCode* thisCode, SObject*  objThis, SObject* objTarget, s32 x, s32 y, RECT* rc, bool tlProcessChildren, bool tlProcessSiblings);
+	SObject*				iObj_find_thisForm						(SThisCode* thisCode, SObject*  obj);
+	SObject*				iObj_find_thisSubform					(SThisCode* thisCode, SObject*  obj);
+	SObject*				iObj_find_thisRider						(SThisCode* thisCode, SObject*  obj);
+	SObject*				iiObj_findParentObject_byType			(SThisCode* thisCode, SObject*  objStart, s32 objType, bool tlSearchSelf);
+	SObject*				iiObj_findChildObject_byName			(SThisCode* thisCode, SObject*  objStart, SDatum* name, bool tlSearchSelf, bool tlSearchChildren, bool tlSearchSiblings);
+	bool					iObj_isCommandWindow					(SThisCode* thisCode, SObject*  obj);
+	void					iObj_setFocusHighlights					(SThisCode* thisCode, SWindow*  win, SObject* obj, s32 x, s32 y, bool tlProcessChildren, bool tlProcessSiblings);
+	void					iObj_findFocusControls					(SThisCode* thisCode, SObject*  obj, SBuilder* objFocusControls, bool tlProcessSiblings);
+	bool					iObj_setFocusObjectPrev					(SThisCode* thisCode, SWindow*  win, SObject* obj);
+	bool					iObj_setFocusObjectNext					(SThisCode* thisCode, SWindow*  win, SObject* obj);
+	bool					iObj_focus_descentCheck					(SThisCode* thisCode, SObject*  obj, bool tlCheckChildren, bool tlCheckSiblings);
+	SObject*				iObj_focus_descentCheckObj				(SThisCode* thisCode, SObject*  obj, bool tlCheckChildren, bool tlCheckSiblings);
+	void					iObj_setDirtyRender_ascent				(SThisCode* thisCode, SObject*  obj, bool tlMarkParents);
+	void					iObj_setDirtyRender_descent				(SThisCode* thisCode, SObject*  obj, bool tlProcessChildren, bool tlProcessSiblings);
+	void					iObj_setDirtyPublish_ascent				(SThisCode* thisCode, SObject*  obj, bool tlMarkParents);
+	void					iObj_setDirtyPublish_descent			(SThisCode* thisCode, SObject*  obj, bool tlProcessChildren, bool tlProcessSiblings);
+	u32						iObj_render								(SThisCode* thisCode, SObject*  obj, bool tlForceRender);
+	bool					iObj_render_descentCheck				(SThisCode* thisCode, SObject*  obj, bool tlCheckChildren, bool tlCheckSiblings);
+	u32						iObj_renderChildrenAndSiblings			(SThisCode* thisCode, SObject*  obj, bool tlRenderChildren, bool tlRenderSiblings, bool tlForceRender);
+	u32						iObj_publish							(SThisCode* thisCode, SObject*  obj, RECT* rc, SBitmap* bmpDst, bool tlPublishChildren, bool tlPublishSiblings, bool tlForcePublish, s32 tnLevel);
+	bool					iObj_publish_descentCheck				(SThisCode* thisCode, SObject*  obj, bool tlCheckChildren, bool tlCheckSiblings);
 	void					iObj_duplicateChain						(SThisCode* thisCode, SObject** root, SObject* chain);
 	void					iObj_appendObjToParent					(SThisCode* thisCode, SObject*  parent, SObject* obj);
 	void					iObj_duplicateChildren					(SThisCode* thisCode, SObject*  objDst, SObject* objSrc);
+	void					iObj_setPosition						(SThisCode* thisCode, SObject*  obj, s32 tnLeft, s32 tnTop);
 	void					iObj_setSize							(SThisCode* thisCode, SObject*  obj, s32 tnLeft, s32 tnTop, s32 tnWidth, s32 tnHeight);
+	void					iiObj_setSize_snapForToolbar			(SThisCode* thisCode, SObject*  obj, s32* tnWidth, s32* tnHeight);
 	SWindow* 				iObj_createWindowForForm				(SThisCode* thisCode, SObject*  form, SWindow* win, s32 icon);
 	SVariable*				iObj_getPropertyAsVariable				(SThisCode* thisCode, SObject*  obj, s8* tcPropertyName, u32 tnPropertyNameLength, SComp* comp, bool tlCreateAsReference);
 	void					iiObj_resetToDefault					(SThisCode* thisCode, SObject*  obj, bool tlResetProperties, bool tlResetMethods);
@@ -452,8 +454,8 @@ struct SObjPropMap;
 //////////
 // Toolbar related
 //////
-	SObject*				iToolbar_loadFrom_xml					(SThisCode* thisCode,                                             cu8* tcXml, u32 tnXmlLength, cs8* tcTagRoot, cs8* tcTagSub);
-	bool					iToolbar_applyTo_obj					(SThisCode* thisCode, SObject* obj, SObject* objToolbarContainer, cu8* tcXml, u32 tnXmlLength, cs8* tcTagRoot, cs8* tcTagSub);
+	SObject*				iToolbar_loadFrom_xml					(SThisCode* thisCode,                                                   cu8* tcXml, u32 tnXmlLength, cs8* tcTagRoot, cs8* tcTagSub);
+	bool					iToolbar_applyTo_obj					(SThisCode* thisCode, SObject* objParent, SObject* objToolbarContainer, cu8* tcXml, u32 tnXmlLength, cs8* tcTagRoot, cs8* tcTagSub);
 
 
 
@@ -501,6 +503,7 @@ struct SObjPropMap;
 	bool					iWindow_isPointerValid					(SWindow* win);
 
 	void					iFocusHighlight_create					(SFocusHighlight* focus, RECT* rc);
+	void					iFocusHighlight_show					(SFocusHighlight* focus);
 	void					iFocusHighlight_delete					(SFocusHighlight* focus);
 	void					iFocusHighlight_deleteAll				(void);
 	SFocusHighlight*		iFocusHighlight_findByHwnd				(HWND hwnd);
@@ -552,6 +555,7 @@ struct SObjPropMap;
 	s8*						iMath_roundTo							(f64* tfValue, f64 tfRoundTo);
 	bool					iMath_between							(s32 tnValue, s32 tnN1, s32 tnN2);
 	bool					iMath_isRectInRect						(RECT* rcHaystack, RECT* rcNeedle, bool tlIncludeOversizes);
+	RECT*					iiMath_computeRectDeltas				(RECT* rcDelta, RECT* rcNow, RECT* rcPrior);
 
 	s8*						iDuplicateString						(s8* tcText);
 

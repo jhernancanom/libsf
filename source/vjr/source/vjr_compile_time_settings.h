@@ -92,8 +92,8 @@
 	//////////
 	// Splash
 	//////
- 		//bool glShowSplashScreen = true;
- 		bool glShowSplashScreen = false;
+ 		bool glShowSplashScreen = true;
+ 		//bool glShowSplashScreen = false;
 
 
 	//////////
@@ -134,7 +134,9 @@
 
 
 //////////
-// Aug.11.2014 -- Added to track down functions that were slowing down the system
+// Aug.11.2014 -- Added to track down functions that were slowing down the system.
+//                Note:  This should be normally OFF as it is resource intensive.
+//                Note:  It could also be refactored into a function to examine variables.
 //#define _VJR_LOG_ALL
 //////
 	#ifdef _VJR_LOG_ALL
@@ -145,7 +147,7 @@
 
 
 //////////
-// Force the bitmaps to be declared external for linking
+// Force the bitmaps to be declared external for assignment through linking the bmps project
 //////
 	#ifndef _BMP_LOCALITY
 		#define _BMP_LOCALITY 0

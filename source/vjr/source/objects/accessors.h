@@ -2701,6 +2701,7 @@ struct SBasePropMap;
 		{	_INDEX_KEYPREVIEW,				0, 0, 0 },
 		{	_INDEX_LEFT,					0, 0, 0 },
 		{	_INDEX_LOCKSCREEN,				0, 0, 0 },
+		{	_INDEX_MARGIN,					0, 0, 0 },
 		{	_INDEX_MOUSEICON,				0, 0, 0 },
 		{	_INDEX_MOUSEPOINTER,			0, 0, 0 },
 		{	_INDEX_MOVABLE,					0, 0, 0 },

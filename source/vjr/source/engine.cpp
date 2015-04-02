@@ -767,6 +767,15 @@ debug_nop;
 	{
 		if (obj)
 		{
+			if (tnEventId < 0 || tnEventId > _EVENT_MAX_COUNT || obj->ev.methods[tnEventId]._event == 0)
+			{
+				// Should never happen
+// TODO:  For the extra info, we could add a call stack trace here
+				iError_signal(thisCode, _ERROR_INTERNAL_ERROR, NULL, true, NULL, false);
+				return(false);
+			}
+
+			// Which event?
 			switch (tnEventId)
 			{
 				case _EVENT_ONMOUSEMOVE:
@@ -801,8 +810,43 @@ debug_nop;
 				case _EVENT_RESIZE:
 					// The passed parameter p must be valid, and is the RECT* of its new size and position
 					if (p)
+					{
+						// Signal the resize event
 						return(obj->ev.methods[tnEventId].event_11(thisCode, win, obj, (RECT*)p));
 
+					} else {
+						// Should never happen, if it does it's a programming error
+// TODO:  For the extra info, we could add a call stack trace here
+						iError_signal(thisCode, _ERROR_INTERNAL_ERROR, NULL, true, NULL, false);
+					}
+					break;
+
+				case _EVENT_ONRESIZE:
+					// The passed parameter indicates a delta RECT, showing how much each axis resized
+					if (p)
+					{
+						// Signal the onResize() event
+						return(obj->ev.methods[tnEventId].event_11(thisCode, win, obj, (RECT*)p));
+
+					} else {
+						// Should never happen, if it does it's a programming error
+// TODO:  For the extra info, we could add a call stack trace here
+						iError_signal(thisCode, _ERROR_INTERNAL_ERROR, NULL, true, NULL, false);
+					}
+					break;
+
+				case _EVENT_ONMOVED:
+					// The passed parameter indicates the new RECT (new position)
+					if (p)
+					{
+						// Signal the onMoved event
+						return(obj->ev.methods[tnEventId].event_11(thisCode, win, obj, (RECT*)p));
+
+					} else {
+						// Should never happen, if it does it's a programming error
+// TODO:  For the extra info, we could add a call stack trace here
+						iError_signal(thisCode, _ERROR_INTERNAL_ERROR, NULL, true, NULL, false);
+					}
 					break;
 
 				default:
@@ -814,8 +858,6 @@ debug_nop;
 					//	_EVENT_ONLOAD
 					//	_EVENT_ONINIT
 					//	_EVENT_ONCREATED
-					//	_EVENT_ONRESIZE
-					//	_EVENT_ONMOVED
 					//	_EVENT_ONRENDER
 					//	_EVENT_ONPUBLISH
 					//	_EVENT_ONQUERYUNLOAD

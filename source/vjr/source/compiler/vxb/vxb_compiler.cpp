@@ -5759,7 +5759,7 @@ if (!gsProps_master[lnI].varInit)
 						{
 							case _VAR_TYPE_OBJECT:
 								// Copy the object
-								varDst->obj = iObj_copy(thisCode, varSrc->obj, NULL, NULL, true, false, true);
+								varDst->obj = iObj_copy(thisCode, varSrc->obj, NULL, NULL, NULL, true, false, true);
 								break;
 
 							case _VAR_TYPE_BITMAP:

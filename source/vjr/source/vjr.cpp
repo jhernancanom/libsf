@@ -331,7 +331,10 @@
 			bmpConditionalFalseCountdown	= iBmp_rawLoad(cgc_breakpointConditionalFalseCountdown);
 
 			bmpDapple1						= iBmp_rawLoad(cgc_dappleBmp);
+			bmpDapple1Tmp					= iBmp_rawLoad(cgc_dappleBmp);
 			bmpDapple2						= iBmp_rawLoad(cgc_dapple2Bmp);
+			bmpDapple2Tmp					= iBmp_rawLoad(cgc_dapple2Bmp);
+
 
 		//////////
 		// Casks

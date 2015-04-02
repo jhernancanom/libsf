@@ -165,7 +165,7 @@
 							else												iBmp_fillRect(obj->bmp, &lrc, nwRgba, neRgba, swRgba, seRgba, true, NULL,			false);
 
 							// Apply a dappling
-							iBmp_dapple(obj->bmp, bmpDapple1, 215.0f, 10);
+							iBmp_dapple(obj->bmp, bmpDapple1, bmpDapple1Tmp, 215.0f, 10);
 
 							// Save the cache
 							iBmp_createCache(&obj->bc, obj->bmp, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, 0, true);
@@ -283,7 +283,7 @@
 							}
 
 							// Apply a dappling
-							iBmp_dapple(obj->bmp, bmpDapple1, 225.0f, 10);
+							iBmp_dapple(obj->bmp, bmpDapple1, bmpDapple1Tmp, 215.0f, 10);
 
 							// Save the cache
 							iBmp_createCache(&obj->bc, obj->bmp, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)llIsFocusSubform, true);
@@ -298,7 +298,11 @@
 						{
 							CopyRect(&lrc2, &obj->rcClient);
 							InflateRect(&lrc2, 1, 1);
+							lrc2.left	= -1;
+							lrc2.bottom	= obj->bmp->bi.biHeight + 1;
 							iBmp_frameRect(obj->bmp, &lrc2,	borderColor, borderColor, borderColor, borderColor, false, NULL, false);
+							lrc.left	= -1;
+							lrc.bottom	= obj->bmp->bi.biHeight + 1;
 							iBmp_frameRect(obj->bmp, &lrc,	borderColor, borderColor, borderColor, borderColor, false, NULL, false);
 						}
 
@@ -394,7 +398,7 @@
 							// Draw the default background, and apply a dappling
 							//////
 								iBmp_fillRect(obj->bmp, &lrc, nwRgba, neRgba, swRgba, seRgba, true, &obj->rcClient, true);
-								iBmp_dapple(obj->bmp, bmpDapple1, 225.0f, 10);
+								iBmp_dapple(obj->bmp, bmpDapple1, bmpDapple1Tmp, 215.0f, 10);
 
 
 							//////////
@@ -507,7 +511,7 @@
 									//////////
 									// Initially populate with the entire strip with the transparent color
 									//////
-										iBmp_fillRect(obj->p.bmpTabs, &lrc3, transparentColor, transparentColor, transparentColor, transparentColor, false, NULL, false);
+										iBmp_fillRect(obj->p.bmpTabs, &lrc3, maskColor, maskColor, maskColor, maskColor, false, NULL, false);
 
 
 									//////////
@@ -1243,7 +1247,17 @@
 				}
 
 				// Render it
-				lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, bmp);
+				if (bmp->bi.biWidth == lrc.right - lrc.left && bmp->bi.biHeight == lrc.bottom - lrc.top)
+				{
+					// Direct copy
+					lnPixelsRendered += iBmp_bitBlt(obj->bmp, &lrc, bmp);
+
+				} else {
+					// Scaled render
+// 					SetStretchBltMode(obj->bmp->hdc, HALFTONE);
+// 					StretchBlt(obj->bmp->hdc, lrc.left, lrc.top, lrc.right - lrc.left, lrc.bottom - lrc.top, bmp->hdc, 0, 0, bmp->bi.biWidth, bmp->bi.biHeight, SRCCOPY);
+					iBmp_scale(obj->bmp, bmp);
+				}
 
 				// For checkbox images, we colorize them differently
 				if (obj->parent && obj->parent->objType == _OBJ_TYPE_CHECKBOX)
@@ -1748,6 +1762,7 @@
 	u32 iSubobj_renderToolbar(SThisCode* thisCode, SObject* obj)
 	{
 		u32		lnPixelsRendered;
+		SBgra	bgra;
 		RECT	lrc;
 
 
@@ -1760,8 +1775,9 @@
 			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
 			if (obj->isDirtyRender)
 			{
-				// Render a white box as a placeholder
-				iBmp_fillRect(obj->bmp, &lrc, whiteColor, whiteColor, whiteColor, whiteColor, false, NULL, false);
+				// Render a transparent background
+				bgra = propBackColor(obj);
+				iBmp_fillRect(obj->bmp, &lrc, bgra, bgra, bgra, bgra, false, NULL, false);
 
 
 				//////////
@@ -1773,6 +1789,7 @@
 					// Copy to the prior rendered version
 					memcpy(obj->bmpPriorRendered->bd, obj->bmp->bd, obj->bmpPriorRendered->bi.biSizeImage);
 					// Right now, we can use the bmpPriorRendered for a fast copy rather than 
+
 
 			} else {
 				// Render from its prior rendered version

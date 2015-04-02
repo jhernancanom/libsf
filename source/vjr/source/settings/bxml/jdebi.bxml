@@ -1,21 +1,21 @@
 <jdebi>
 	<source_code>
 		<toolbars>
-			<toolbar name="edit">
-				<icon name="debug">
-			</toolbar>
 			<toolbar name="debug">
-				<icon name="edit">
+				<icon name="edit"/>
 				<icon name="play"/>
 				<icon name="pause"/>
 				<icon name="stop"/>
 				<icon name="restart"/>
-				<icon name="runToCursor"/>
-				<icon name="stepInto"/>
 				<icon name="stepOver"/>
+				<icon name="stepInto"/>
 				<icon name="stepOut"/>
+				<icon name="stepToCursorLine"/>
 				<icon name="setNext"/>
-				<icon name="gotoNext"/>
+				<icon name="showNext"/>
+			</toolbar>
+			<toolbar name="edit">
+				<icon name="debug"/>
 			</toolbar>
 			<toolbar name="file">
 				<icon name="new"/>

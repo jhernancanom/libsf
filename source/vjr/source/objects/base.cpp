@@ -263,19 +263,26 @@
 
 //////////
 //
-// Copy the indicated object
+// Copy the indicated object.
 //
 //////
-	SObject* iObj_copy(SThisCode* thisCode, SObject* template_obj, SObject* next, SObject* parent, bool tlCopyChildren, bool tlCopySiblings, bool tlCreateSeparateBitmapBuffers)
+	SObject* iObj_copy(SThisCode* thisCode, SObject* template_obj, SObject* prevObj, SObject* nextObj, SObject* parent, bool tlCopyChildren, bool tlCopySiblings, bool tlCreateSeparateBitmapBuffers)
 	{
 		SObject* obj;
+		SObject* objSib;
+		SObject* objNew;
 
 
 		// Create the object
 		logfunc(__FUNCTION__);
+		if (!template_obj)
+			return(NULL);
+
+		// Create the new object
 		obj = (SObject*)malloc(sizeof(SObject));
 		if (obj)
 		{
+
 			//////////
 			// Initialize the object
 			//////
@@ -285,14 +292,20 @@
 			//////////
 			// Copy the object's existing contents
 			//////
-				if (template_obj)
-					memcpy(&obj->p, &template_obj->p, sizeof(obj->p));		// Copy the existing object properties
+				memcpy(&obj->p, &template_obj->p, sizeof(obj->p));		// Copy the existing object properties
+
+
+			//////////
+			// Copy existing events
+			//////
+				memcpy(&obj->ev, &template_obj->ev, sizeof(obj->ev));
 
 
 			//////////
 			// Update the next and parent, and clear out any bmpScaled
 			//////
-				obj->ll.next				= (SLL*)next;
+				obj->ll.prevObj				= prevObj;
+				obj->ll.nextObj				= nextObj;
 				obj->parent					= parent;
 
 				obj->objType				= template_obj->objType;
@@ -314,25 +327,52 @@
 
 
 			//////////
-			// Copy the bitmap, sub-objects, and/or children (if need be)
+			// Duplicate the bitmap buffer if need be
 			//////
-				if (template_obj)
+				if (tlCreateSeparateBitmapBuffers)
+					obj->bmp = iBmp_copy(template_obj->bmp);
+
+
+			//////////
+			// Copy children if need be
+			//////
+				if (tlCopyChildren && template_obj->firstChild)
+					obj->firstChild = iObj_copy(thisCode, template_obj->firstChild, NULL, NULL, obj, true, true, tlCreateSeparateBitmapBuffers);
+
+
+			//////////
+			// Copy siblings if need be
+			//////
+				if (tlCopySiblings && template_obj->ll.nextObj)
 				{
 
 					//////////
-					// Duplicate the bitmap buffer if need be
+					//
+					// Iterate through each sibling, appending it:
+					//
+					//		objSib		-- Iterates through template_obj
+					//		objNew		-- Copy of each objSib created
+					//		objPrev		-- The last object which needs to point forward to its next sibling
+					//
 					//////
-						if (tlCreateSeparateBitmapBuffers)
-							obj->bmp = iBmp_copy(template_obj->bmp);
+						for (objSib = template_obj->ll.nextObj; objSib; objSib = objSib->ll.nextObj)
+						{
+							// Copy this sibling
+							objNew = iObj_copy(thisCode, objSib, NULL, NULL, obj, true, false, tlCreateSeparateBitmapBuffers);
+							if (objNew)
+							{
+								// Append it to the chain
+								iLl_appendExistingNodeAtEnd((SLL**)&obj, (SLL*)objNew);
 
-
-					//////////
-					// Copy children if need be
-					//////
-						if (tlCopyChildren && template_obj->firstChild)
-							obj->firstChild = iObj_copy(thisCode, template_obj->firstChild, NULL, obj, true, true, tlCreateSeparateBitmapBuffers);
+							} else {
+								// Should never happen
+// TODO:  For extra info, we could create the call stack
+								iError_signal(thisCode, _ERROR_INTERNAL_ERROR, NULL, true, NULL, false);
+							}
+						}
 
 				}
+
 		}
 
 		// Indicate our success or failure
@@ -1918,7 +1958,7 @@
 			while (chain)
 			{
 				// Create this object
-				obj = iObj_copy(thisCode, chain, NULL, chain, true, false, true);
+				obj = iObj_copy(thisCode, chain, NULL, NULL, chain, true, false, true);
 				if (obj)
 				{
 					// Update the duplicate object's forward pointer in the chain
@@ -2107,7 +2147,54 @@
 
 //////////
 //
-// Called to set the object size
+// Called to set the position for this item.
+//
+// Note:  This is an internal call, and not the user-code setting thisObj.left = 5, for example.  It sets all values at once, signling only onMoved().
+// Note:  For normal event signaling, use iObjProp_set...() with the _INDEX_LEFT, _INDEX_TOP, _INDEX_WIDTH, and/or _INDEX_HEIGHT
+//        This will signal the onMoved() event if it actually moved.
+//
+//////
+	void iObj_setPosition(SThisCode* thisCode, SObject* obj, s32 tnLeft, s32 tnTop)
+	{
+		RECT lrco;
+
+
+		// Reposition
+		logfunc(__FUNCTION__);
+		if (!obj)
+			return;
+
+		// Note the original locations
+		CopyRect(&lrco, &obj->rc);
+
+		// Set the new position
+		obj->rc.left	= tnLeft;
+		obj->rc.top		= tnTop;
+
+
+		//////////
+		// Signal onMoved() if it moved
+		//////
+			if (memcmp(&lrco, &obj->rc, sizeof(lrco)) != 0)
+			{
+				// Has the position changed?
+				if (lrco.left != obj->rc.left || lrco.top != obj->rc.top)
+					iEngine_raise_event(thisCode, _EVENT_ONMOVED, ((thisCode) ? thisCode->win : NULL), obj, &obj->rc);
+			}
+
+
+// TODO:  We need to see if there are any left_assign() or top_assign() custom methods defined
+	}
+
+
+
+
+//////////
+//
+// Called to set the object size and position.
+//
+// Note:  This is an internal call, and not the user-code setting thisObj.left = 5, for example.
+//        This will signal the onMoved() event if it actually moved.
 //
 //////
 	void iObj_setSize(SThisCode* thisCode, SObject* obj, s32 tnLeft, s32 tnTop, s32 tnWidth, s32 tnHeight)
@@ -2116,11 +2203,22 @@
 		bool		llTitleBar, llBorder;
 		SObject*	objChild;
 		SBitmap*	bmp;
-		RECT		lrc;
+		RECT		lrc, lrco, lrcDeltas;
 
 
 		// Resize if need be (32-bit bitmap for labels, 24-bit for everything else)
 		logfunc(__FUNCTION__);
+		if (!obj)
+			return;
+
+		// If it's a toolbar, the size they dictate may not be the final size
+		if (obj->objType == _OBJ_TYPE_TOOLBAR)
+			iiObj_setSize_snapForToolbar(thisCode, obj, &tnWidth, &tnHeight);	// Determine the real size requirement for the toolbar given this "proposed" width
+
+		// Note the original locations
+		CopyRect(&lrco, &obj->rc);
+
+		// Delete the current buffer if the size has changed
 		if (obj->bmp && (obj->bmp->bi.biWidth != tnWidth || obj->bmp->bi.biHeight != tnHeight))
 			iBmp_delete(&obj->bmp, true, true);
 
@@ -2673,10 +2771,134 @@
 			case _OBJ_TYPE_RADIO:
 				// Just use the default rcClient settings above
 				break;
+
+			case _OBJ_TYPE_TOOLBAR:
+				// Arrange all items within so they fit horizontally until the width is reached, then begin down below
+				break;
 		}
 
+
+		//////////
+		// Signal any needed events for this change
+		//////
+			if (memcmp(&lrco, &obj->rc, sizeof(lrco)) != 0)
+			{
+
+				//////////
+				// Something has changed
+				//////
+					// Position?
+					if (lrco.left != obj->rc.left || lrco.top != obj->rc.top)
+						iEngine_raise_event(thisCode, _EVENT_ONMOVED, ((thisCode) ? thisCode->win : NULL), obj, &obj->rc);
+
+					// Size?
+					if (lrco.right - lrco.left != obj->rc.right - obj->rc.left || lrco.bottom - lrco.top != obj->rc.bottom - obj->rc.top)
+						iEngine_raise_event(thisCode, _EVENT_ONRESIZE, ((thisCode) ? thisCode->win : NULL), obj, iiMath_computeRectDeltas(&lrcDeltas, &lrco, &obj->rc));
+			}
+
+
+// TODO:  We need to see if there are any left_assign(), top_assign(), width_assign(), or height_assign() custom methods defined
+
+
+		//////////
 		// Mark it dirty for a full re-render
-		obj->isDirtyRender = true;
+		//////
+			obj->isDirtyRender = true;
+	}
+
+
+
+
+//////////
+//
+// Snap to the smallest width encountered which accommodates the child items contained within,
+// and auto-adjust the height to the appropriate height.
+//
+//////
+	void iiObj_setSize_snapForToolbar(SThisCode* thisCode, SObject* obj, s32* tnWidth, s32* tnHeight)
+	{
+		s32			lnMargin, lnMaxWidth, lnMaxHeight, lnWidth, lnHeight, lnNewX, lnNewY, lnRowWidth, lnRowHeight, lnBackoff;
+		bool		llAtLeastOne;
+		SObject*	objChild;
+
+
+		//////////
+		// Initialize
+		//////
+			lnMaxWidth	= 0;		// Overall maximum width encountered
+			lnMaxHeight	= 0;		// Overall maximum height encountered
+			lnRowWidth	= 0;		// Building row width
+			lnRowHeight	= 0;		// Building row height
+
+
+		//////////
+		// Iterate through every child, fitting them where they will fit
+		//////
+			lnMargin = propMargin(obj);		// Spacing between toolbar items
+			for (objChild = obj->firstChild, llAtLeastOne = false; objChild; objChild = objChild->ll.nextObj, llAtLeastOne = true)
+			{
+				//////////
+				// Grab our size for this one
+				//////
+					lnWidth		= objChild->rc.right - objChild->rc.left;
+					lnHeight	= objChild->rc.bottom - objChild->rc.top;
+					lnNewX		= lnRowWidth + ((lnRowWidth != 0) ? lnMargin : 0) + lnWidth;
+					lnNewY		= lnMaxHeight;
+					lnRowHeight	= max(lnHeight,	lnRowHeight);
+
+
+				//////////
+				// Are we off the reservation?
+				//////
+					if (lnNewX > *tnWidth)
+					{
+						// This will be too big for our width
+						// Move down for the start of the next row
+						lnMaxHeight += lnRowHeight + ((lnMaxHeight != 0) ? lnMargin : 0);
+
+						// Was this the first item?
+						if (lnRowWidth = 0)
+						{
+							// Yes, so we have to snap to at least this size
+							lnBackoff	= lnWidth;
+
+						} else {
+							// No, so we need to move to this item to the start of the next row
+							lnNewX		= 0;
+							lnBackoff	= 0;
+							lnNewY		= lnMaxHeight;
+							lnMaxHeight	= max(lnRowHeight,	lnMaxHeight);
+						}
+
+					} else {
+						// We're continuing across this row
+						lnRowWidth	= max(lnWidth, lnNewX);
+						lnBackoff	= lnWidth;
+					}
+
+
+				//////////
+				// Observe our width extent thus far
+				//////
+					lnMaxWidth = max(lnRowWidth, lnMaxWidth);
+
+
+				//////////
+				// Position this child object at its new location
+				//////
+					iObj_setSize(thisCode, objChild, obj->rc.left + lnNewX - lnBackoff, obj->rc.top + lnNewY, lnWidth, lnHeight);
+			}
+
+
+		//////////
+		// Store our extents as the snap values
+		//////
+			if (llAtLeastOne)
+			{
+				lnMaxHeight	= max(lnRowHeight,	lnMaxHeight);
+				*tnWidth	= lnMaxWidth;
+				*tnHeight	= lnMaxHeight;
+			}
 	}
 
 

@@ -265,7 +265,10 @@
 
 	// Dapple
 	SBitmap*			bmpDapple1							= NULL;
+	SBitmap*			bmpDapple1Tmp						= NULL;
 	SBitmap*			bmpDapple2							= NULL;
+	SBitmap*			bmpDapple2Tmp						= NULL;
+
 
 //////////
 // Cask graphics
@@ -452,7 +455,6 @@
 		const SBgra		whiteColor							= { _whiteColor };
 		const SBgra		grayColor							= { _grayColor };
 		const SBgra		blackColor							= { _blackColor };
-		const SBgra		transparentColor					= { rgba(222, 22, 222, 255) };
 		const SBgra		yellowColor							= { rgba(255, 255, 0, 255) };
 		const SBgra		redColor							= { rgba(255, 0, 0, 255) };
 		const SBgra		greenColor							= { rgba(0, 255, 0, 255) };
@@ -511,10 +513,10 @@
 
 		// Forms four-corner window color schemes (eventually these will be loaded from themes.dbf)
 // Orange theme:
-		const SBgra		NwFocusColor						= { rgba(255, 218, 148, 255) };
-		const SBgra		NeFocusColor						= { rgba(255, 208, 115, 255) };
-		const SBgra		SwFocusColor						= { rgba(255, 208, 115, 255) };
-		const SBgra		SeFocusColor						= { rgba(235, 198, 105, 255) };
+		const SBgra		NwFocusColor						= { _nwFocusColor };
+		const SBgra		NeFocusColor						= { _neFocusColor };
+		const SBgra		SwFocusColor						= { _swFocusColor };
+		const SBgra		SeFocusColor						= { _seFocusColor };
 // Purple theme
 // 		const SBgra		NwFocusColor						= { rgba(233, 219, 255, 255) };
 // 		const SBgra		NeFocusColor						= { rgba(205, 172, 255, 255) };

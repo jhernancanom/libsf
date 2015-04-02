@@ -2787,7 +2787,7 @@ renderAsOnlyText:
 // This is a nice appearance effect, but it is slow.
 // If the background rendering algorithm was drawn, and the bitmap cached, it would be okay.
 // 			// Apply a dappling
-//			iBmp_dapple(bmp, bmpDapple1, 225.0f, 10);
+// 			iBmp_dapple(bmp, bmpDapple1, bmpDapple1Tmp, 215.0f, 10);
 //////
 		}
 

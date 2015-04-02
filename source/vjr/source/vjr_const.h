@@ -105,9 +105,23 @@ typedef SEM**		SEMpp;
 //////
 	struct SBgr
 	{
-		u8	blu;
-		u8	grn;
-		u8	red;
+		union {
+			u8	blu;
+			u8	blu_u8;
+			s8	blu_s8;
+		};
+
+		union {
+			u8	grn;
+			u8	grn_u8;
+			s8	grn_s8;
+		};
+
+		union {
+			u8	red;
+			u8	red_u8;
+			s8	red_s8;
+		};
 	};
 
 	struct SBgra
@@ -115,10 +129,26 @@ typedef SEM**		SEMpp;
 		union {
 			u32		color;
 			struct {
-				u8	blu;
-				u8	grn;
-				u8	red;
-				u8	alp;
+				union {
+					u8	blu;
+					u8	blu_u8;
+					s8	blu_s8;
+				};
+				union {
+					u8	grn;
+					u8	grn_u8;
+					s8	grn_s8;
+				};
+				union {
+					u8	red;
+					u8	red_u8;
+					s8	red_s8;
+				};
+				union {
+					u8	alp;
+					u8	alp_u8;
+					s8	alp_s8;
+				};
 			};
 		};
 	};
@@ -178,6 +208,7 @@ typedef SEM**		SEMpp;
 	#define propBorderColor(obj)						iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_BORDERCOLOR)
 	#define propBorderStyle(obj)						iObjProp_get_s32_direct			(thisCode, obj, _INDEX_BORDERSTYLE)
 	#define propForeColor(obj)							iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_FORECOLOR)
+	#define propMargin(obj)								iObjProp_get_s32_direct			(thisCode, obj, _INDEX_MARGIN)
 	#define propNeRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_NECOLOR)
 	#define propNwRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_NWCOLOR)
 	#define propSeRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_SECOLOR)
@@ -209,6 +240,7 @@ typedef SEM**		SEMpp;
 	#define propSetCount(obj, value)					iObjProp_set_s32_direct			(thisCode, obj, _INDEX_COUNT,				value)
 	#define propSetEnabled(obj, value)					iObjProp_set_logical_fromLogicalConstants(thisCode, obj, _INDEX_ENABLED, value);
 	#define propSetIcon(obj, bmp)						iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_ICON,				bmp)
+	#define propSetMargin(obj, value)					iObjProp_set_s32_direct			(thisCode, obj, _INDEX_MARGIN,				value)
 	#define propSetMultiSelect(obj, value)				iObjProp_set_logical_fromLogicalConstants(thisCode, obj, _INDEX_MULTISELECT, value)
 	#define propSetPictureBmp(obj, bmp)					iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_PICTUREBMP,			bmp)
 	#define propSetPictureBmpDown(obj, bmp)				iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_PICTUREBMP_DOWN,		bmp)
@@ -288,10 +320,16 @@ typedef SEM**		SEMpp;
 	#define _blackColor						rgba(0, 0, 0, 255)
 	#define _selectedBackColor				rgba(220, 235, 255, 255)
 	#define _selectedForeColor				rgba(0, 0, 164, 255)
-	#define _nwColor						rgba(230, 230, 255, 255)
-	#define _neColor						rgba(192, 212, 255, 255)
-	#define _swColor						rgba(212, 212, 255, 255)
-	#define _seColor						rgba(172, 192, 235, 255)
+
+	#define _nwFocusColor					rgba(255, 245, 235, 255)
+	#define _neFocusColor					rgba(245, 225, 215, 255)
+	#define _swFocusColor					rgba(245, 225, 215, 255)
+	#define _seFocusColor					rgba(235, 215, 215, 255)
+
+	#define _nwColor						rgba(245, 250, 255, 255)
+	#define _neColor						rgba(220, 240, 255, 255)
+	#define _swColor						rgba(235, 245, 255, 255)
+	#define _seColor						rgba(205, 225, 245, 255)
 
 
 //////////
@@ -983,6 +1021,8 @@ typedef SEM**		SEMpp;
 	const s8			cgcTag_y[]							= "y";
 	const s8			cgcTag_width[]						= "width";
 	const s8			cgcTag_height[]						= "height";
+	const s8			cgcTag_iconWidth[]					= "iconwidth";
+	const s8			cgcTag_iconHeight[]					= "iconheight";
 	const s8			cgcTag_visible[]					= "visible";
 
 

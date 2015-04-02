@@ -1006,6 +1006,8 @@
 			// Reset the common settings
 			//////
 				iiObj_resetToDefaultCommon(thisCode, toolbar, true, true, propList, tnPropCount);
+
+				propSetBackStyle(toolbar, _BACK_STYLE_TRANSPARENT);
 		}
 	}
 
