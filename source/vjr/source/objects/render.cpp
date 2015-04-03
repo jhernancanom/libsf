@@ -1775,9 +1775,12 @@
 			SetRect(&lrc, 0, 0, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight);
 			if (obj->isDirtyRender)
 			{
+
+				//////////
 				// Render a transparent background
-				bgra = propBackColor(obj);
-				iBmp_fillRect(obj->bmp, &lrc, bgra, bgra, bgra, bgra, false, NULL, false);
+				//////
+					bgra = propBackColor(obj);
+					iBmp_fillRect(obj->bmp, &lrc, bgra, bgra, bgra, bgra, false, NULL, false);
 
 
 				//////////

@@ -44,13 +44,12 @@
 				<icon name="bookmarkNextAllDocuments"/>
 			</toolbar>
 			<toolbar name="breadcrumbs">
-				<icon name="breadcrumbsEnableLine"/>
 				<icon name="breadcrumbsDisable"/>
 				<icon name="breadcrumbsClear"/>
-				<icon name="breadcrumbsPrev"/>
 				<icon name="breadcrumbsNext"/>
-				<icon name="breadcrumbsDeltaPrev"/>
+				<icon name="breadcrumbsPrev"/>
 				<icon name="breadcrumbsDeltaNext"/>
+				<icon name="breadcrumbsDeltaPrev"/>
 			</toolbar>
 		</toolbars>
 	</source_code>

@@ -509,6 +509,7 @@
 		SBgra			carouselTabBackColor				= { rgba(255, 255, 255, 255) };			// White
 		SBgra			carouselTabForeColor				= { rgba(64, 64, 88, 255) };			// Darker purpleish-gray
 		SBgra			carouselTabForeColorHighlight		= { rgba(32, 32, 44, 255) };			// Darkest purpleish-gray
+		SBgra			toolbarBackColor					= { _nwColor };
 
 
 		// Forms four-corner window color schemes (eventually these will be loaded from themes.dbf)

@@ -2817,7 +2817,7 @@
 //////
 	void iiObj_setSize_snapForToolbar(SThisCode* thisCode, SObject* obj, s32* tnWidth, s32* tnHeight)
 	{
-		s32			lnMargin, lnMaxWidth, lnMaxHeight, lnWidth, lnHeight, lnNewX, lnNewY, lnRowWidth, lnRowHeight, lnBackoff;
+		s32			lnI, lnMargin, lnMaxWidth, lnMaxHeight, lnWidth, lnHeight, lnNewX, lnNewY, lnRowWidth, lnRowHeight;
 		bool		llAtLeastOne;
 		SObject*	objChild;
 
@@ -2835,58 +2835,55 @@
 		// Iterate through every child, fitting them where they will fit
 		//////
 			lnMargin = propMargin(obj);		// Spacing between toolbar items
-			for (objChild = obj->firstChild, llAtLeastOne = false; objChild; objChild = objChild->ll.nextObj, llAtLeastOne = true)
+			for (objChild = obj->firstChild, llAtLeastOne = false, lnI = 0; objChild; objChild = objChild->ll.nextObj, llAtLeastOne = true, lnI++)
 			{
 				//////////
 				// Grab our size for this one
 				//////
 					lnWidth		= objChild->rc.right - objChild->rc.left;
 					lnHeight	= objChild->rc.bottom - objChild->rc.top;
-					lnNewX		= lnRowWidth + ((lnRowWidth != 0) ? lnMargin : 0) + lnWidth;
-					lnNewY		= lnMaxHeight;
 					lnRowHeight	= max(lnHeight,	lnRowHeight);
+				
+
+				//////////
+				// Coordinate for the new object (if we're not over width)
+				//////
+					lnNewX	= lnRowWidth + ((lnRowWidth != 0) ? lnMargin : 0);
+					lnNewY	= lnMaxHeight;
 
 
 				//////////
 				// Are we off the reservation?
 				//////
-					if (lnNewX > *tnWidth)
+					if (lnNewX + lnWidth > *tnWidth)
 					{
 						// This will be too big for our width
 						// Move down for the start of the next row
 						lnMaxHeight += lnRowHeight + ((lnMaxHeight != 0) ? lnMargin : 0);
 
-						// Was this the first item?
-						if (lnRowWidth = 0)
-						{
-							// Yes, so we have to snap to at least this size
-							lnBackoff	= lnWidth;
-
-						} else {
-							// No, so we need to move to this item to the start of the next row
-							lnNewX		= 0;
-							lnBackoff	= 0;
-							lnNewY		= lnMaxHeight;
-							lnMaxHeight	= max(lnRowHeight,	lnMaxHeight);
-						}
+						// No, so we need to move to this item to the start of the next row
+						lnNewX		= 0;
+						lnNewY		= lnMaxHeight;
+						lnRowWidth	= lnWidth;
+						lnRowHeight = lnHeight;
 
 					} else {
 						// We're continuing across this row
-						lnRowWidth	= max(lnWidth, lnNewX);
-						lnBackoff	= lnWidth;
+						lnRowWidth += lnWidth;
 					}
 
 
 				//////////
 				// Observe our width extent thus far
 				//////
-					lnMaxWidth = max(lnRowWidth, lnMaxWidth);
+					lnMaxWidth	= max(max(lnNewX, lnMaxWidth), lnRowWidth);
+					lnMaxHeight	= max(lnNewY, lnMaxHeight);
 
 
 				//////////
 				// Position this child object at its new location
 				//////
-					iObj_setSize(thisCode, objChild, obj->rc.left + lnNewX - lnBackoff, obj->rc.top + lnNewY, lnWidth, lnHeight);
+					iObj_setSize(thisCode, objChild, obj->rc.left + lnNewX, obj->rc.top + lnNewY, lnWidth, lnHeight);
 			}
 
 
@@ -2895,9 +2892,8 @@
 		//////
 			if (llAtLeastOne)
 			{
-				lnMaxHeight	= max(lnRowHeight,	lnMaxHeight);
 				*tnWidth	= lnMaxWidth;
-				*tnHeight	= lnMaxHeight;
+				*tnHeight	= lnMaxHeight + lnRowHeight;
 			}
 	}
 

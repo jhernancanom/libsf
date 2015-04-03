@@ -1007,6 +1007,7 @@
 			//////
 				iiObj_resetToDefaultCommon(thisCode, toolbar, true, true, propList, tnPropCount);
 
+				propSetBackColor(toolbar, toolbarBackColor);
 				propSetBackStyle(toolbar, _BACK_STYLE_TRANSPARENT);
 		}
 	}
