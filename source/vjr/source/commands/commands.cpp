@@ -2998,10 +2998,10 @@
 //////
 // Version 0.57
 // Last update:
-//     Apr.04.2014
+//     Apr.04.2015
 //////
 // Change log:
-//     Apr.04.2014 - Initial creation by Stefano D'Amico
+//     Apr.04.2015 - Initial creation by Stefano D'Amico
 //////
 // Parameters:
 //     pYear		-- (optional) Numeric, in the range 1600..2400
@@ -3011,7 +3011,6 @@
 //////
 // Returns:
 //    Date			-- Current date(), or input converted to date
-//
 //////
 	SVariable* function_date(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
@@ -3023,7 +3022,8 @@
 		u32			errorNum;
 		bool		error;
 		SYSTEMTIME	lst;
-		s8		buffer[9];
+		s8			buffer[16];
+
 
 		// Have they provided us with data?
 		if (!varYear)
@@ -3032,8 +3032,8 @@
 			GetLocalTime(&lst);
 
 		} else {
-			// They have provided us datetime parameters.
-			// Default to 01/01/1600 00:00:00.000 for any
+			// They have provided us date parameters.
+			// Default to 01/01/1600 for any date
 			lst.wYear			= 1600;
 			lst.wMonth			= 1;
 			lst.wDay			= 1;
@@ -3042,84 +3042,80 @@
 			//////////
 			// pYear must be numeric, and in the range of 1600..2400
 			//////
-			if (iVariable_isValid(varYear))
-			{
-				// They gave us a pYear
-				if (!iVariable_isTypeNumeric(varYear))
+				if (iVariable_isValid(varYear))
 				{
-					iError_report(thisCode, (cu8*)"Year must be numeric", false);
-					return(NULL);
+					// They gave us a pYear
+					if (!iVariable_isTypeNumeric(varYear))
+					{
+						iError_report(thisCode, (cu8*)"Year must be numeric", false);
+						return(NULL);
+					}
+					lst.wYear = (u16)iiVariable_getAs_s32(thisCode, varYear, false, &error, &errorNum);
+					if (!error && (lst.wYear < 1600 || lst.wYear > 2400))
+					{
+						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varYear), false);
+						return(NULL);
+					}
 				}
-				lst.wYear = (u16)iiVariable_getAs_s32(thisCode, varYear, false, &error, &errorNum);
-				if (!error && (lst.wYear < 1600 || lst.wYear > 2400))
-				{
-					iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varYear), false);
-					return(NULL);
-				}
-			}
 
 
 			//////////
 			// pMonth must be numeric, and in the range of 1..12
 			//////
-			if (iVariable_isValid(varMonth))
-			{
-				// They gave us a pMonth
-				if (!iVariable_isTypeNumeric(varMonth))
+				if (iVariable_isValid(varMonth))
 				{
-					iError_report(thisCode, (cu8*)"Month must be numeric", false);
-					return(NULL);
+					// They gave us a pMonth
+					if (!iVariable_isTypeNumeric(varMonth))
+					{
+						iError_report(thisCode, (cu8*)"Month must be numeric", false);
+						return(NULL);
+					}
+					lst.wMonth = (u16)iiVariable_getAs_s32(thisCode, varMonth, false, &error, &errorNum);
+					if (!error && (lst.wMonth < 1 || lst.wMonth > 12))
+					{
+						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varMonth), false);
+						return(NULL);
+					}
 				}
-				lst.wMonth = (u16)iiVariable_getAs_s32(thisCode, varMonth, false, &error, &errorNum);
-				if (!error && (lst.wMonth < 1 || lst.wMonth > 12))
-				{
-					iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varMonth), false);
-					return(NULL);
-				}
-			}
 
 
 			//////////
 			// pDay must be numeric, and in a valid range for the year and month
 			//////
-			if (iVariable_isValid(varDay))
-			{
-				// They gave us a pDay
-				if (!iVariable_isTypeNumeric(varDay))
+				if (iVariable_isValid(varDay))
 				{
-					iError_report(thisCode, (cu8*)"Day must be numeric", false);
-					return(NULL);
+					// They gave us a pDay
+					if (!iVariable_isTypeNumeric(varDay))
+					{
+						iError_report(thisCode, (cu8*)"Day must be numeric", false);
+						return(NULL);
+					}
+					lst.wDay = (u16)iiVariable_getAs_s32(thisCode, varDay, false, &error, &errorNum);
+					if (!error && !iVariable_isDayValidForDate(lst.wYear, lst.wMonth, lst.wDay))
+					{
+						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varDay), false);
+						return(NULL);
+					}
 				}
-				lst.wDay = (u16)iiVariable_getAs_s32(thisCode, varDay, false, &error, &errorNum);
-				if (!error && !iVariable_isDayValidForDate(lst.wYear, lst.wMonth, lst.wDay))
-				{
-					iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varDay), false);
-					return(NULL);
-				}
-			}
+
 		}
+
 
 		//////////
 		// Convert lst.* into a VJr date variable
 		//////
-		result = iVariable_create(thisCode, _VAR_TYPE_DATE, NULL, true);
-		if (!result)
-		{
-			iError_report(thisCode, cgcInternalError, false);
-			return(NULL);
-		}
-
-
-		// Date is stored as YYYYMMDD
-		sprintf(buffer, "%04u%02u%02u\0", lst.wYear, lst.wMonth, lst.wDay);
-		iDatum_duplicate(&result->value, buffer, 8);
-
+			// Date is stored as YYYYMMDD
+			sprintf(buffer, "%04u%02u%02u\0", lst.wYear, lst.wMonth, lst.wDay);
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
 
 
 		//////////
 		// Return our converted result
 		//////
-		return(result);
+			return(result);
+
 	}
 
 

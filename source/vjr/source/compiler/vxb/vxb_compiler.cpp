@@ -7866,6 +7866,7 @@ debug_break;
 							memcpy(buffer + 6, var->value.data + lnYearOffset, 4 - lnYearOffset);
 							break;
 					}
+					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
 
 				case _VAR_TYPE_LOGICAL:
