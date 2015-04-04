@@ -290,12 +290,12 @@ struct SThisCode;
 	s32						iiVariable_compareMatchingTypes				(SThisCode* thisCode, SVariable* varLeft, SVariable* varRight, bool* tlError, u32* tnErrorNum);
 
 	// Support functions
-	s32						iiVariable_julianDayNumber_fromYyyyMmDd			(f32* tnJulianDayNumber, u32  year, u32  month, u32  day);
-	void					iiVariable_computeYyyyMmDd_fromJulianDayNumber	(u32  tnJulianDayNumber, u32* year, u32* month, u32* day);
+	s32						iiVariable_julian_fromYyyyMmDd				(f32* tnJulianDayNumber, u32  year, u32  month, u32  day);
+	void					iiVariable_computeYyyyMmDd_fromJulian		(u32  tnJulianDayNumber, u32* year, u32* month, u32* day);
+	void					iiVariable_computeYyyyMmDd_fromYYYYMMDD		(u8* YYYYMMDD, u32* year, u32* month, u32* day);
 	void					iiVariable_computeHhMmSsMss_fromf32			(f32 tfSeconds, u32* hour, u32* minute, u32* second, u32* millisecond);
 	s64						iiVariable_computeDatetimeDifference		(SThisCode* thisCode, SVariable* dtVar1, SVariable* dtVar2);
 	bool					iVariable_isDayValidForDate					(u32 year, u32 month, u32 day);
-	void					iiVariable_computeYyyyMmDd_fromYYYYMMDD		(u8* YYYYMMDD, u32* year, u32* month, u32* day);
 
 	// Op functions
 	bool					iOp_setNull									(SOp* op);

@@ -7897,7 +7897,7 @@ debug_break;
 // TODO:  We need to honor the _set_date settings.  For now we use MM/DD/YYYY HH:MM:SS.Mss
 // TODO:  We need to add the AM/PM settings.  For now we just use military time.
 					dt = (SDateTime*)var->value.data;
-					iiVariable_computeYyyyMmDd_fromJulianDayNumber(dt->julian, &lnYear, &lnMonth, &lnDay);
+					iiVariable_computeYyyyMmDd_fromJulian(dt->julian, &lnYear, &lnMonth, &lnDay);
 					iiVariable_computeHhMmSsMss_fromf32(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 					sprintf((s8*)buffer, "%02u/%02u/%04u %02u:%02u:%02u.%03u", lnMonth, lnDay, lnYear, lnHour, lnMinute, lnSecond, lnMillisecond);
 					varDisp->isValueAllocated = true;
@@ -9740,7 +9740,7 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric
 					//////
-						iiVariable_computeYyyyMmDd_fromJulianDayNumber(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+						iiVariable_computeYyyyMmDd_fromJulian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
 						iiVariable_computeHhMmSsMss_fromf32(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 						// Create the string for the numeric portion
@@ -9913,7 +9913,7 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric
 					//////
-						iiVariable_computeYyyyMmDd_fromJulianDayNumber(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+						iiVariable_computeYyyyMmDd_fromJulian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
 						iiVariable_computeHhMmSsMss_fromf32(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 						// Create the string for the numeric portion
@@ -10060,7 +10060,7 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric
 					//////
-						iiVariable_computeYyyyMmDd_fromJulianDayNumber(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+						iiVariable_computeYyyyMmDd_fromJulian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
 						iiVariable_computeHhMmSsMss_fromf32(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 						// Create the string for the numeric portion
@@ -10311,7 +10311,7 @@ debug_break;
 					{
 						case _VAR_TYPE_DATETIME:
 							// Grab related information from the datetime
-							iiVariable_computeYyyyMmDd_fromJulianDayNumber(varLeft->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+							iiVariable_computeYyyyMmDd_fromJulian(varLeft->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
 
 							// Create the string for the numeric portion
 							sprintf(buffer, "%04u%02u%02u\0", lnYear, lnMonth, lnDay);
@@ -10369,7 +10369,7 @@ debug_break;
 
 				} else if (varLeft->varType == _VAR_TYPE_DATETIME) {
 					// Datetimes can be compared to 64-bit numeric values
-					iiVariable_computeYyyyMmDd_fromJulianDayNumber(varLeft->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+					iiVariable_computeYyyyMmDd_fromJulian(varLeft->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
 					iiVariable_computeHhMmSsMss_fromf32(varLeft->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 					// Create the string for the numeric portion
@@ -10683,7 +10683,7 @@ debug_break;
 //		julian		-- The julian day number
 //
 //////
-	s32 iiVariable_julianDayNumber_fromYyyyMmDd(f32* tfJulianDayNumber, u32 year, u32 month, u32 day)
+	s32 iiVariable_julian_fromYyyyMmDd(f32* tfJulianDayNumber, u32 year, u32 month, u32 day)
 	{
 		s32		monthAdjust1, monthAdjust2;
 		f64		a, y, m;
@@ -10732,34 +10732,7 @@ debug_break;
 	}
 
 
-//////////
-//
-// Computes the day, month, and year from text form YYYYMMDD.
-//
-// Returns:
-//		year		-- The year
-//		month		-- The month
-//		day			-- The day
-//
-//////
-	void iiVariable_computeYyyyMmDd_fromYYYYMMDD(u8* YYYYMMDD, u32* year, u32* month, u32* day)
-	{
-		s8		buffer[5];
 
-		//////////
-		// Dates are stored internally in text form as YYYYMMDD.
-		//////
-			buffer[4] = 0;
-			memcpy(buffer, YYYYMMDD, 4);
-			*year = (u32) atoi(buffer);	
-
-			buffer[2] = 0;
-			memcpy(buffer, YYYYMMDD + 4, 2);
-			*month = (u32) atoi(buffer);		
-
-			memcpy(buffer, YYYYMMDD + 6, 2);
-			*day = (u32) atoi(buffer);	
-	}
 
 //////////
 //
@@ -10774,7 +10747,7 @@ debug_break;
 //		day			-- The day
 //
 //////
-	void iiVariable_computeYyyyMmDd_fromJulianDayNumber(u32 tnJulianDayNumber, u32* year, u32* month, u32* day)
+	void iiVariable_computeYyyyMmDd_fromJulian(u32 tnJulianDayNumber, u32* year, u32* month, u32* day)
 	{
 		u32 a, b, c, d, e, m;
 
@@ -10787,6 +10760,39 @@ debug_break;
 		*day	= e - (((153 * m) + 2) / 5) + 1;
 		*month	= m + 3 - (12 * (m / 10));
 		*year	= (b * 100) + d - 4800 + (m / 10);
+	}
+
+
+
+
+//////////
+//
+// Computes the day, month, and year from text form YYYYMMDD.
+//
+// Returns:
+//		year		-- The year
+//		month		-- The month
+//		day			-- The day
+//
+//////
+	void iiVariable_computeYyyyMmDd_fromYYYYMMDD(u8* YYYYMMDD, u32* year, u32* month, u32* day)
+	{
+		s8 buffer[16];
+
+
+		// Year
+		memcpy(buffer, YYYYMMDD, 4);
+		buffer[4] = 0;
+		*year = (u32)atoi(buffer);	
+
+		// Month
+		memcpy(buffer, YYYYMMDD + 4, 2);
+		buffer[2] = 0;
+		*month = (u32)atoi(buffer);		
+
+		// Day
+		memcpy(buffer, YYYYMMDD + 6, 2);
+		*day = (u32)atoi(buffer);	
 	}
 
 

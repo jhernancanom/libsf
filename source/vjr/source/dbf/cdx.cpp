@@ -1125,10 +1125,10 @@
 			varTableName			= iVariable_createAndPopulate_byText(thisCode,		_VAR_TYPE_CHARACTER,	wa->tablePathname,		wa->tablePathnameLength,		true);
 			varAlias				= iVariable_createAndPopulate_byText(thisCode,		_VAR_TYPE_CHARACTER,	wa->alias,				wa->aliasLength,				true);
 			varCdxName				= iVariable_createAndPopulate_byText(thisCode,		_VAR_TYPE_CHARACTER,	wa->idxCdxDcxPathname,	wa->idxCdxDcxPathnameLength,	true);
-			varTag					= iVariable_create(thisCode,				_VAR_TYPE_CHARACTER,	NULL, true);
-			varMessage				= iVariable_create(thisCode,				_VAR_TYPE_CHARACTER,	NULL, true);
-			varIsError				= iVariable_create(thisCode,				_VAR_TYPE_LOGICAL,		NULL, true);
-			varRebuildIndexRequired	= iVariable_create(thisCode,				_VAR_TYPE_LOGICAL,		NULL, true);
+			varTag					= iVariable_create(thisCode,	_VAR_TYPE_CHARACTER,	NULL, true);
+			varMessage				= iVariable_create(thisCode,	_VAR_TYPE_CHARACTER,	NULL, true);
+			varIsError				= iVariable_create(thisCode,	_VAR_TYPE_LOGICAL,		NULL, true);
+			varRebuildIndexRequired	= iVariable_create(thisCode,	_VAR_TYPE_LOGICAL,		NULL, true);
 
 			// Were they all created okay?
 			if (!varTableName || !varAlias || !varCdxName || !varTag || !varMessage || !varIsError || !varRebuildIndexRequired)

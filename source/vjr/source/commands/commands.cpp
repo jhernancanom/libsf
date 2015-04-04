@@ -945,7 +945,7 @@
 
 
 		//////////
-        // Create our return(result)
+        // Create our return result
 		//////
 	        result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
 			if (!result)
@@ -1263,7 +1263,7 @@
 
 
 		//////////
-        // Create our return(result)
+        // Create our return result
 		//////
 	        result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
 			if (!result)
@@ -2272,44 +2272,63 @@
 //	  dt = datetime()	&& Apr.06.2015
 //    ? CDOW(dt)		&& Displays Monday
 //////
+	static s8 cgCdowData[] = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 };
+
 	SVariable* function_cdow(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		SVariable* varDate = returnsParams->params[0];
+		SVariable* varParam = returnsParams->params[0];
 		
-		SVariable* result;
-		u32		lnYear, lnMonth, lnDay;
-		s8		lnIdx;
+		u32			lnYear, lnMonth, lnDay;
+		s8			lnDow;
+		SVariable*	result;
 
 
 		//////////
 		// Parameter 1 must be date or datetime
 		//////
-			if (!iVariable_isValid(varDate) || !(iVariable_isTypeDate(varDate) || iVariable_isTypeDatetime(varDate)))
+// TODO:  Must also support DATETIMEX at some point
+			if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
 			{
-				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varDate), false);
+				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
 				return(NULL);
 			}
 
-		if iVariable_isTypeDatetime(varDate)
-			// Grab related information from the datetime
-			iiVariable_computeYyyyMmDd_fromJulianDayNumber(varDate->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-		else
-			// Grab related information from the date
-			iiVariable_computeYyyyMmDd_fromYYYYMMDD((u8*) varDate->value.data, &lnYear, &lnMonth, &lnDay);
+
+		//////////
+		// Grab year, month, day from datetime or date
+		//////
+			if iVariable_isTypeDatetime(varParam)		iiVariable_computeYyyyMmDd_fromJulian			(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+			else /* date */								iiVariable_computeYyyyMmDd_fromYYYYMMDD			(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 
 		//////////
 		// Compute day of week
 		//////
-			s8 t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
+			if (lnMonth < 3)
+				--lnYear;									// Leap year is in February
 
-			lnYear -= lnMonth < 3;
-			lnIdx = (lnYear + lnYear/4 - lnYear/100 + lnYear/400 + t[lnMonth-1] + lnDay) % 7;
+			// Compute the day of week
+			lnDow	= (		lnYear +						// Base year
+							(lnYear / 4)					// Leap years
+						-	(lnYear / 100)					// Not centuries not evenly divisible by 100
+						+	(lnYear / 400)					// And centuries evenly divisible by 400
+						+	cgCdowData[lnMonth - 1]			// Plus the "magic" number
+						+	lnDay			)				// Plus day of month
+					/*-------------------------------*/
+						%	7;								// Modulo to a day of week
+
 
 		//////////
-		// Create our return(result)
+		// Create our result
 		//////
-			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgcDayOfWeek[lnIdx], (u32)strlen((u8*)cgcDayOfWeek[lnIdx]), true);
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, (cs8*)cgcDayOfWeekNames[lnDow], (u32)strlen(cgcDayOfWeekNames[lnDow]), false);
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
+
+
+		//////////
+		// Indicate our result
+		//////
 			return(result);
 
 	}
@@ -2410,7 +2429,7 @@
 
 
 		//////////
-        // Create our return(result)
+        // Create our return result
 		//////
 	        result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
 			if (!result)
@@ -2897,7 +2916,7 @@
 
 
 		//////////
-        // Create our return(result) variable, which is a reference to the new object
+        // Create our return result variable, which is a reference to the new object
 		//////
 	        result = iVariable_create(thisCode, _VAR_TYPE_OBJECT, NULL, true);
 			if (!result)
@@ -3173,7 +3192,7 @@
 			dt = (SDateTime*)result->value.data;
 
 			// Date is stored as julian day number
-			dt->julian	= iiVariable_julianDayNumber_fromYyyyMmDd(&lfJulian, lst.wYear, lst.wMonth, lst.wDay);
+			dt->julian	= iiVariable_julian_fromYyyyMmDd(&lfJulian, lst.wYear, lst.wMonth, lst.wDay);
 
 			// Time is stored as seconds since midnight
 			dt->seconds = (f32)(lst.wHour * 60 * 60) + (f32)(lst.wMinute * 60) + (f32)lst.wSecond + ((f32)lst.wMilliseconds / 1000.0f);
@@ -5523,7 +5542,7 @@
 
 
 		//////////
-        // Create our return(result)
+        // Create our return result
 		//////
 	        result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
 			if (!result)
@@ -5586,7 +5605,7 @@
 
 
 		//////////
-        // Create our return(result)
+        // Create our return result
 		//////
 	        result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
 			if (!result)
@@ -5717,7 +5736,7 @@
 
 
 		//////////
-        // Create our return(result)
+        // Create our return result
 		//////
 	        result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
 			if (!result)
@@ -6963,7 +6982,7 @@
 
 
 		//////////
-        // Create our return(result)
+        // Create our return result
 		//////
 			result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
 			if (!result)
@@ -7332,7 +7351,7 @@
 
 
 		//////////
-        // Create our return(result)
+        // Create our return result
 		//////
 			result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
 			if (!result)
@@ -7749,7 +7768,7 @@
 
 
 		//////////
-        // Create our return(result)
+        // Create our return result
 		//////
 	        result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
 			if (!result)
@@ -8325,7 +8344,7 @@
 
 
 		//////////
-        // Create our return(result)
+        // Create our return result
 		//////
 			result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
 			if (!result)
@@ -9115,7 +9134,7 @@ debug_break;
 
 
 		//////////
-        // Create our return(result)
+        // Create our return result
 		//////
 	        result = iVariable_create(thisCode, _VAR_TYPE_S32, NULL, true);
 			if (!result)
@@ -9494,7 +9513,7 @@ debug_break;
 
 
 		//////////
-        // Create our return(result)
+        // Create our return result
 		//////
 			result = iVariable_create(thisCode, _VAR_TYPE_CHARACTER, NULL, true);
 			if (!result)
@@ -10123,7 +10142,7 @@ debug_break;
 
 
 		//////////
-        // Create our return(result)
+        // Create our return result
 		//////
 			if (lptr || index == 1 || index == 4)
 			{

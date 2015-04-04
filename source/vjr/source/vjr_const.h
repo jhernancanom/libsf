@@ -371,12 +371,6 @@ typedef SEM**		SEMpp;
 
 
 //////////
-// Days of week
-//////
-	const u8			cgcDayOfWeek[7][10]					= {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-
-
-//////////
 // Min/max constants
 //////
 	const s8			_s8_min								= (s8)-128;
@@ -744,6 +738,13 @@ typedef SEM**		SEMpp;
 //////
 	const u32			_STRICT_DATE_LOOSE					= 0;
 	const u32			_STRICT_DATE_STRICT					= 1;
+
+
+//////////
+// Days of week
+//////
+	// These can be altered if/when languages are changed
+	s8*					cgcDayOfWeekNames[7]						= { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 
 
 //////////
