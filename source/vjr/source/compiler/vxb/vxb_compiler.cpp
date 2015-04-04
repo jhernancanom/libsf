@@ -7900,7 +7900,18 @@ debug_break;
 					dt = (SDateTime*)var->value.data;
 					iiVariable_computeYyyyMmDd_fromJulian(dt->julian, &lnYear, &lnMonth, &lnDay);
 					iiVariable_computeHhMmSsMss_fromf32(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
-					sprintf((s8*)buffer, "%02u/%02u/%04u %02u:%02u:%02u.%03u", lnMonth, lnDay, lnYear, lnHour, lnMinute, lnSecond, lnMillisecond);
+
+					// Format for century settings
+					if (propGet_settings_Century(_settings))
+					{
+						// SET CENTURY ON
+						sprintf((s8*)buffer, "%02u/%02u/%04u %02u:%02u:%02u.%03u", lnMonth, lnDay, lnYear, lnHour, lnMinute, lnSecond, lnMillisecond);
+
+					} else {
+						// SET CENTURY OFF
+						sprintf((s8*)buffer, "%02u/%02u/%02u %02u:%02u:%02u.%03u", lnMonth, lnDay, lnYear % 100, lnHour, lnMinute, lnSecond, lnMillisecond);
+					}
+
 					varDisp->isValueAllocated = true;
 					iDatum_duplicate(&varDisp->value, buffer, -1);
 					break;
