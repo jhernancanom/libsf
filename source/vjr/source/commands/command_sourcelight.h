@@ -389,6 +389,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_date[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_datetime[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
