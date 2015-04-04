@@ -97,6 +97,7 @@
 
 
 struct SDateTime;
+struct SDate;
 struct SBgra;
 struct SBgr;
 
@@ -121,6 +122,7 @@ struct SBgr;
 
 			// Common structures
 			SDateTime*	data_dt;				// To access the data as a datetime
+			SDate*		data_date;				// To access the data as a date in the text-form YYYYMMDD
 			SBgra*		data_bgra;				// To access the data as SBgra
 			SBgr*		data_bgr;				// To access the data as SBgr
 		};

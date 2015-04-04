@@ -88,6 +88,14 @@ struct SDateTime
 	f32		seconds;													// Seconds elapsed since midnight
 };
 
+// Text format of YyyyMmDd date, as in 20150404 for Apr.04.2015
+struct SDate
+{
+	u8		yyyy[4];						// 4-digit year
+	u8		mm[4];							// 2-digit month
+	u8		dd[4];							// 2-digit day
+};
+
 struct SFont
 {
 	bool		isUsed;						// Is this font slot used?

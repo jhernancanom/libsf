@@ -2271,6 +2271,7 @@
 // Example:
 //	  dt = datetime()	&& Apr.06.2015
 //    ? CDOW(dt)		&& Displays Monday
+//    ? CDOW()          && Displays current date's character day of week
 //////
 	static cs8 cgCdowData[] = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 };
 
@@ -2280,34 +2281,47 @@
 		
 		u32			lnYear, lnMonth, lnDay;
 		s8			lnDow;
+		SYSTEMTIME	lst;
 		SVariable*	result;
 
 
 		//////////
-		// Parameter 1 must be date or datetime
+		// If provided, parameter 1 must be date or datetime
 		//////
-// TODO:  Must also support DATETIMEX at some point
-			if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
+			if (varParam)
 			{
-				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
-				return(NULL);
+// TODO:  Must also support DATETIMEX at some point
+				if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
+				{
+					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
+					return(NULL);
+				}
+
+			//////////
+			// Grab year, month, day from datetime or date
+			//////
+				if iVariable_isTypeDatetime(varParam)			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+				else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+
+			} else {
+				// Use the current date
+				GetLocalTime(&lst);
+				lnYear	= lst.wYear;
+				lnMonth	= lst.wMonth;
+				lnDay	= lst.wDay;
 			}
 
 
 		//////////
-		// Grab year, month, day from datetime or date
+		// Adjust for leap year calculation
 		//////
-			if iVariable_isTypeDatetime(varParam)			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-			else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+			if (lnMonth <= 2)
+				--lnYear;									// Leap year is in February
 
 
 		//////////
-		// Compute day of week
+		// Compute the day of week
 		//////
-			if (lnMonth < 3)
-				--lnYear;									// Leap year is in February
-
-			// Compute the day of week
 			lnDow	= (		lnYear +						// Base year
 							(lnYear / 4)					// Leap years
 						-	(lnYear / 100)					// Not centuries not evenly divisible by 100
@@ -3229,6 +3243,7 @@
 // Example:
 //	  dt = datetime()	&& Apr.06.2015
 //    ? DAY(dt)		&& Displays 6
+//    ? DAY()       && Displays current date's day of month
 //////
 	SVariable* function_day(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
@@ -3241,63 +3256,71 @@
 	// Common date functions used for DAY(), MONTH(), YEAR()
 	SVariable* ifunction_day_month_year_common(SThisCode* thisCode, SVariable* varParam, u32 tnFunctionType)
 	{
-		u32			lnYear, lnMonth, lnDay, lnResult;
+		u32			lnResult, lnYear, lnMonth, lnDay;
+		SYSTEMTIME	lst;
 		SVariable*	result;
 
 
 		//////////
-		// Parameter 1 must be date or datetime
+		// If Parameter 1 is provided, it must be date or datetime
 		//////
-		// TODO:  Must also support DATETIMEX at some point
-		if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
-		{
-			iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
-			return(NULL);
-		}
+// TODO:  Must also support DATETIMEX at some point
+			if (varParam)
+			{
+				if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
+				{
+					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
+					return(NULL);
+				}
 
 
-		//////////
-		// Grab year, month, day from datetime or date
-		//////
-		if iVariable_isTypeDatetime(varParam)			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-		else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+				//////////
+				// Grab year, month, day from datetime or date
+				//////
+					if iVariable_isTypeDatetime(varParam)			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+
+
+			} else {
+				// Use the current date
+				GetLocalTime(&lst);
+				lnYear	= lst.wYear;
+				lnMonth	= lst.wMonth;
+				lnDay	= lst.wDay;
+			}
+
 
 		//////////
 		// Create output variable
 		//////
-		result = iVariable_create(thisCode, _VAR_TYPE_U32, NULL, true);
+			switch (tnFunctionType)
+			{
+				case _FP_COMMON_DAY:
+					lnResult = lnDay;
+					break;
 
-		if (!result)
-		{
-			iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
-			return(NULL);
-		}
+				case _FP_COMMON_MONTH:
+					lnResult = lnMonth;
+					break;
 
-		switch (tnFunctionType)
-		{
-			case _FP_COMMON_DAY:
-				lnResult = lnDay;
-				break;
-
-			case _FP_COMMON_MONTH:
-				lnResult = lnMonth;
-				break;
-
-			default:
-				lnResult =lnYear;
-		}
-
-		//////////
-		// Set the value
-		//////
-		if (!iVariable_setNumeric_toNumericType(thisCode, result, NULL, NULL, NULL, &lnResult, NULL, NULL))
-			iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
+				default:
+					lnResult =lnYear;
+			}
 
 
 		//////////
-		// return(result)
+		// Create the value
 		//////
-		return(result);
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_U32, (cs8*)&lnResult, sizeof(lnResult), false);
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
+
+
+		//////////
+		// Return the result
+		//////
+			return(result);
+
 	}
 
 
@@ -6539,6 +6562,7 @@
 // Example:
 //	  dt = datetime()	&& Apr.06.2015
 //    ? MONTH(dt)		&& Displays 4
+//    ? MONTH()			&& Displays current date's month number
 //////
 	SVariable* function_month(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
@@ -10345,6 +10369,7 @@ debug_break;
 // Example:
 //	  dt = datetime()	&& Apr.06.2015
 //    ? YEAR(dt)		&& Displays 2015
+//    ? YEAR()			&& Displays current date's year number
 //////
 	SVariable* function_year(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
