@@ -295,6 +295,7 @@ struct SThisCode;
 	void					iiVariable_computeHhMmSsMss_fromf32			(f32 tfSeconds, u32* hour, u32* minute, u32* second, u32* millisecond);
 	s64						iiVariable_computeDatetimeDifference		(SThisCode* thisCode, SVariable* dtVar1, SVariable* dtVar2);
 	bool					iVariable_isDayValidForDate					(u32 year, u32 month, u32 day);
+	void					iiVariable_computeYyyyMmDd_fromYYYYMMDD		(u8* YYYYMMDD, u32* year, u32* month, u32* day);
 
 	// Op functions
 	bool					iOp_setNull									(SOp* op);

@@ -10732,7 +10732,34 @@ debug_break;
 	}
 
 
+//////////
+//
+// Computes the day, month, and year from text form YYYYMMDD.
+//
+// Returns:
+//		year		-- The year
+//		month		-- The month
+//		day			-- The day
+//
+//////
+	void iiVariable_computeYyyyMmDd_fromYYYYMMDD(u8* YYYYMMDD, u32* year, u32* month, u32* day)
+	{
+		s8		buffer[5];
 
+		//////////
+		// Dates are stored internally in text form as YYYYMMDD.
+		//////
+			buffer[4] = 0;
+			memcpy(buffer, YYYYMMDD, 4);
+			*year = (u32) atoi(buffer);	
+
+			buffer[2] = 0;
+			memcpy(buffer, YYYYMMDD + 4, 2);
+			*month = (u32) atoi(buffer);		
+
+			memcpy(buffer, YYYYMMDD + 6, 2);
+			*day = (u32) atoi(buffer);	
+	}
 
 //////////
 //

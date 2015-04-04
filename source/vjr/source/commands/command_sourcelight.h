@@ -344,6 +344,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_cdow[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_ceiling[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}

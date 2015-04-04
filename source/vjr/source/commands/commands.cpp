@@ -2250,6 +2250,75 @@
 
 //////////
 //
+// Function: CDOW()
+// Returns the day of the week from a given Date or DateTime expression.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.04.2015
+//////
+// Change log:
+//     Apr.04.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Date or DateTime
+//
+//////
+// Returns:
+//    CDOW() returns the name of the day of the week as a string in proper noun format.
+//////
+// Example:
+//	  dt = datetime()	&& Apr.06.2015
+//    ? CDOW(dt)		&& Displays Monday
+//////
+	SVariable* function_cdow(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varDate = returnsParams->params[0];
+		
+		SVariable* result;
+		u32		lnYear, lnMonth, lnDay;
+		s8		lnIdx;
+
+
+		//////////
+		// Parameter 1 must be date or datetime
+		//////
+			if (!iVariable_isValid(varDate) || !(iVariable_isTypeDate(varDate) || iVariable_isTypeDatetime(varDate)))
+			{
+				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varDate), false);
+				return(NULL);
+			}
+
+		if iVariable_isTypeDatetime(varDate)
+			// Grab related information from the datetime
+			iiVariable_computeYyyyMmDd_fromJulianDayNumber(varDate->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+		else
+			// Grab related information from the date
+			iiVariable_computeYyyyMmDd_fromYYYYMMDD((u8*) varDate->value.data, &lnYear, &lnMonth, &lnDay);
+
+
+		//////////
+		// Compute day of week
+		//////
+			s8 t[] = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
+
+			lnYear -= lnMonth < 3;
+			lnIdx = (lnYear + lnYear/4 - lnYear/100 + lnYear/400 + t[lnMonth-1] + lnDay) % 7;
+
+		//////////
+		// Create our return(result)
+		//////
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, cgcDayOfWeek[lnIdx], (u32)strlen((u8*)cgcDayOfWeek[lnIdx]), true);
+			return(result);
+
+	}
+
+
+
+
+//////////
+//
 // Function: CEILING()
 // Returns the next highest integer that is greater than or equal to the specified numeric expression.
 //
