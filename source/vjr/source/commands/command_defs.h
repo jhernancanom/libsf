@@ -193,6 +193,7 @@ struct SReturnsParams;
 	SVariable*			function_blu								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_bgr								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_bgra								(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_cdow		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_ceiling	/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_chr								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_chrtran							(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -396,6 +397,7 @@ struct SReturnsParams;
 		{	_ICODE_BGR,				1,			(uptr)&function_bgr,			3,				3,				&gsSourceLight_bgr[0]			},
 		{	_ICODE_BGRA,			1,			(uptr)&function_bgra,			4,				4,				&gsSourceLight_bgra[0]			},
 		{	_ICODE_BLU,				1,			(uptr)&function_blu,			1,				1,				&gsSourceLight_blu[0]			},
+		{	_ICODE_CDOW,			1,			(uptr)&function_cdow,			1,				1,				&gsSourceLight_cdow[0]			},	// CDOW() by Stefano D'Amico, VJr 0.57, Apr.04.2015
 		{	_ICODE_CEILING,			1,			(uptr)&function_ceiling,		1,				1,				&gsSourceLight_ceiling[0]		},	// CEILING() by Stefano D'Amico, VJr 0.56, Mar.15.2015
 		{	_ICODE_CHR,				1,			(uptr)&function_chr,			1,				1,				&gsSourceLight_chr[0]			},
 		{	_ICODE_CHRTRAN,			1,			(uptr)&function_chrtran,		2,				3,				&gsSourceLight_chrtran[0]		},
