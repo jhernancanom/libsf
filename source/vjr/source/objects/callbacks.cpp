@@ -326,6 +326,13 @@
 				iObj_setDirtyRender_ascent(thisCode, obj, true);
 				iWindow_render(thisCode, win, false);
 			}
+
+		} else if (obj->objType == _OBJ_TYPE_CAROUSEL) {
+			if ((lnClick & _MOUSE_LEFT_BUTTON) != 0)
+			{
+				// They are clicking and dragging
+				iEvents_carouselDragStart(thisCode, obj, lnX, lnY, llCtrl, llAlt, llShift, lnClick);
+			}
 		}
 
 		// Mouse moves continue to propagate all the way through, so as to signal appropriate enter and leave events
@@ -423,6 +430,9 @@
 			valueMin	= iObjProp_get_variable_byIndex(thisCode, obj, _INDEX_VALUE_MINIMUM);
 			lfValue		= get_f64(valueMin) + (lfPercent * (iObjProp_get_f64_direct(thisCode, obj, _INDEX_VALUE_MAXIMUM) - get_f64(valueMin)));
 			iObjProp_set_f64_direct(thisCode, obj, _INDEX_VALUE, lfValue);
+
+		} else if (obj->objType == _OBJ_TYPE_CAROUSEL) {
+			// 
 
 		} else {
 			// Assume we consumed the mouse down event, and that the parent doesn't need to receive it

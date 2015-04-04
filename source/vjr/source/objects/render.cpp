@@ -359,7 +359,7 @@
 		bool					llBorder, llOrientDown, llCloseable, llVisible, llTitleBar;
 		SBgra					nwRgba, neRgba, swRgba, seRgba, frameColor;
 		RECT					lrc, lrc2, lrc3, lrc4;
-		SObjCarouselTabData*	objTabData;
+		SObjCarouselTabData*	thisTab;
 		SVariable*				varTabText;
 		SVariable*				varTabText_riderActive;
 		SObject*				objRider;
@@ -581,13 +581,13 @@
 													}
 
 													// Store this rectangle for future mouse reference
-													objTabData = (SObjCarouselTabData*)iBuilder_allocateBytes(obj->p.rcTabs, sizeof(SObjCarouselTabData));
-													if (objTabData)
+													thisTab = (SObjCarouselTabData*)iBuilder_allocateBytes(obj->p.rcTabs, sizeof(SObjCarouselTabData));
+													if (thisTab)
 													{
 														// Populate the carousel tab data item
-														objTabData->rider		= objRider;
-														objTabData->isCloseable	= llCloseable;
-														CopyRect(&objTabData->rcTab, &lrc4);
+														thisTab->rider		= objRider;
+														thisTab->isCloseable	= llCloseable;
+														CopyRect(&thisTab->rc, &lrc4);
 													}
 
 
@@ -629,7 +629,7 @@
 														lnCenter = ((lrc4.bottom + lrc4.top) / 2);
 														SetRect(&lrc4, lrc4.right - 2 - bmpCarouselRiderTabClose->bi.biWidth, lnCenter - (bmpCarouselRiderTabClose->bi.biHeight / 2), lrc4.right - 2, lnCenter + (bmpCarouselRiderTabClose->bi.biHeight / 2));
 														iBmp_bitBltMask(obj->p.bmpTabs, &lrc4, bmpCarouselRiderTabClose);
-														CopyRect(&objTabData->rcClose, &lrc4);
+														CopyRect(&thisTab->rcClose, &lrc4);
 													}
 
 

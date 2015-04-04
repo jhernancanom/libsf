@@ -449,6 +449,8 @@ struct SObjPropMap;
 	bool					iiEventDispatch_onKeyDown				(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, u16 tnAsciiChar, u16 tvKey, bool tlIsCAS, bool tlIsAscii);
 	bool					iiEventDispatch_onKeyUp					(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, u16 tnAsciiChar, u16 tvKey, bool tlIsCAS, bool tlIsAscii);
 
+	bool					iEvents_carouselDragStart				(SThisCode* thisCode, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick);
+
 
 
 //////////

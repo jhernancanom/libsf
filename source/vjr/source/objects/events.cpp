@@ -417,3 +417,17 @@
 		//////
 			return(iEngine_raise_event(thisCode, _EVENT_ONKEYUP, win, obj));
 	}
+
+
+
+
+//////////
+//
+// Called when a drag starts on something related to a carousel.
+// This event determines if it is a real drag, or just a mouse move with the mouse button down.
+//
+//////
+	bool iEvents_carouselDragStart(SThisCode* thisCode, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick)
+	{
+		return(true);
+	}

@@ -448,7 +448,8 @@ struct SObjNode
 struct SObjCarouselTabData
 {
 	SObject*	rider;												// The rider this tab relates to
-	RECT		rcTab;												// Rectangle within carousel->p.bmpTabs
+	RECT		rc;													// Rectangle within carousel->p.bmpTabs
+
 	bool		isCloseable;										// Is this tab closable?
 	RECT		rcClose;											// Closing 'x' if shown
 };
