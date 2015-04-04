@@ -2992,6 +2992,141 @@
 
 //////////
 //
+// Function: DATE()
+// Returns the current local time, or uses the input variables to create the indicated date.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.04.2014
+//////
+// Change log:
+//     Apr.04.2014 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     pYear		-- (optional) Numeric, in the range 1600..2400
+//     pMonth		-- (optional) Numeric, in the range 1..12
+//     pDay			-- (optional) Numeric, in the range 1..(varies based on month+year, not more than 31)
+//
+//////
+// Returns:
+//    Date			-- Current date(), or input converted to date
+//
+//////
+	SVariable* function_date(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable*	varYear			= returnsParams->params[0];
+		SVariable*	varMonth		= returnsParams->params[1];
+		SVariable*	varDay			= returnsParams->params[2];
+
+		SVariable*	result;
+		u32			errorNum;
+		bool		error;
+		SYSTEMTIME	lst;
+		s8		buffer[9];
+
+		// Have they provided us with data?
+		if (!varYear)
+		{
+			// Nope, we are creating the current system time
+			GetLocalTime(&lst);
+
+		} else {
+			// They have provided us datetime parameters.
+			// Default to 01/01/1600 00:00:00.000 for any
+			lst.wYear			= 1600;
+			lst.wMonth			= 1;
+			lst.wDay			= 1;
+
+
+			//////////
+			// pYear must be numeric, and in the range of 1600..2400
+			//////
+			if (iVariable_isValid(varYear))
+			{
+				// They gave us a pYear
+				if (!iVariable_isTypeNumeric(varYear))
+				{
+					iError_report(thisCode, (cu8*)"Year must be numeric", false);
+					return(NULL);
+				}
+				lst.wYear = (u16)iiVariable_getAs_s32(thisCode, varYear, false, &error, &errorNum);
+				if (!error && (lst.wYear < 1600 || lst.wYear > 2400))
+				{
+					iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varYear), false);
+					return(NULL);
+				}
+			}
+
+
+			//////////
+			// pMonth must be numeric, and in the range of 1..12
+			//////
+			if (iVariable_isValid(varMonth))
+			{
+				// They gave us a pMonth
+				if (!iVariable_isTypeNumeric(varMonth))
+				{
+					iError_report(thisCode, (cu8*)"Month must be numeric", false);
+					return(NULL);
+				}
+				lst.wMonth = (u16)iiVariable_getAs_s32(thisCode, varMonth, false, &error, &errorNum);
+				if (!error && (lst.wMonth < 1 || lst.wMonth > 12))
+				{
+					iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varMonth), false);
+					return(NULL);
+				}
+			}
+
+
+			//////////
+			// pDay must be numeric, and in a valid range for the year and month
+			//////
+			if (iVariable_isValid(varDay))
+			{
+				// They gave us a pDay
+				if (!iVariable_isTypeNumeric(varDay))
+				{
+					iError_report(thisCode, (cu8*)"Day must be numeric", false);
+					return(NULL);
+				}
+				lst.wDay = (u16)iiVariable_getAs_s32(thisCode, varDay, false, &error, &errorNum);
+				if (!error && !iVariable_isDayValidForDate(lst.wYear, lst.wMonth, lst.wDay))
+				{
+					iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varDay), false);
+					return(NULL);
+				}
+			}
+		}
+
+		//////////
+		// Convert lst.* into a VJr date variable
+		//////
+		result = iVariable_create(thisCode, _VAR_TYPE_DATE, NULL, true);
+		if (!result)
+		{
+			iError_report(thisCode, cgcInternalError, false);
+			return(NULL);
+		}
+
+
+		// Date is stored as YYYYMMDD
+		sprintf(buffer, "%04u%02u%02u\0", lst.wYear, lst.wMonth, lst.wDay);
+		iDatum_duplicate(&result->value, buffer, 8);
+
+
+
+		//////////
+		// Return our converted result
+		//////
+		return(result);
+	}
+
+
+
+
+//////////
+//
 // Function: DATETIME()
 // Returns the current local time, or uses the input variables to create the indicated datetime.
 //
