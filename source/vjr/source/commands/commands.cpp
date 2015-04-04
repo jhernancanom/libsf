@@ -3204,6 +3204,102 @@
 	        return(result);
 	}
 
+	
+	
+//////////
+//
+// Function: DAY()
+// Returns the numeric day of the month for a given Date or DateTime expression.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.04.2015
+//////
+// Change log:
+//     Apr.04.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Date or DateTime
+//
+//////
+// Returns:
+//    DAY( ) returns a number from 1 through 31.
+//////
+// Example:
+//	  dt = datetime()	&& Apr.06.2015
+//    ? DAY(dt)		&& Displays 6
+//////
+	SVariable* function_day(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varParam = returnsParams->params[0];
+
+		// Return day
+		return(ifunction_day_month_year_common(thisCode, varParam, _FP_COMMON_DAY));
+	}
+	
+	// Common date functions used for DAY(), MONTH(), YEAR()
+	SVariable* ifunction_day_month_year_common(SThisCode* thisCode, SVariable* varParam, u32 tnFunctionType)
+	{
+		u32			lnYear, lnMonth, lnDay, lnResult;
+		SVariable*	result;
+
+
+		//////////
+		// Parameter 1 must be date or datetime
+		//////
+		// TODO:  Must also support DATETIMEX at some point
+		if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
+		{
+			iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
+			return(NULL);
+		}
+
+
+		//////////
+		// Grab year, month, day from datetime or date
+		//////
+		if iVariable_isTypeDatetime(varParam)			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+		else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+
+		//////////
+		// Create output variable
+		//////
+		result = iVariable_create(thisCode, _VAR_TYPE_U32, NULL, true);
+
+		if (!result)
+		{
+			iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
+			return(NULL);
+		}
+
+		switch (tnFunctionType)
+		{
+			case _FP_COMMON_DAY:
+				lnResult = lnDay;
+				break;
+
+			case _FP_COMMON_MONTH:
+				lnResult = lnMonth;
+				break;
+
+			default:
+				lnResult =lnYear;
+		}
+
+		//////////
+		// Set the value
+		//////
+		if (!iVariable_setNumeric_toNumericType(thisCode, result, NULL, NULL, NULL, &lnResult, NULL, NULL))
+			iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
+
+
+		//////////
+		// return(result)
+		//////
+		return(result);
+	}
+
 
 
 
@@ -6415,6 +6511,41 @@
 
 		// Return mod
 		return(ifunction_numbers_common(thisCode, varDividend, varDivisor, NULL, _FP_COMMON_MOD, _VAR_TYPE_F64, true, false, returnsParams));
+	}
+
+
+
+
+//////////
+//
+// Function: MONTH()
+// Returns the number of the month for a given Date or DateTime expression.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.04.2015
+//////
+// Change log:
+//     Apr.04.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Date or DateTime
+//
+//////
+// Returns:
+//    MONTH( ) returns a number from 1 through 12. January is month 1, and December is month 12.
+//////
+// Example:
+//	  dt = datetime()	&& Apr.06.2015
+//    ? MONTH(dt)		&& Displays 4
+//////
+	SVariable* function_month(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varParam = returnsParams->params[0];
+
+		// Return month
+		return(ifunction_day_month_year_common(thisCode, varParam, _FP_COMMON_MONTH));
 	}
 
 
@@ -10190,6 +10321,38 @@ debug_break;
 		//////
 	        return(result);
     }
+
+//////////
+//
+// Function: YEAR()
+// Returns the number of the month for a given Date or DateTime expression.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.04.2015
+//////
+// Change log:
+//     Apr.04.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Date or DateTime
+//
+//////
+// Returns:
+//    YEAR() always returns the year with the century.
+//////
+// Example:
+//	  dt = datetime()	&& Apr.06.2015
+//    ? YEAR(dt)		&& Displays 2015
+//////
+	SVariable* function_year(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varParam = returnsParams->params[0];
+
+		// Return year
+		return(ifunction_day_month_year_common(thisCode, varParam, _FP_COMMON_YEAR));
+	}
 
 
 

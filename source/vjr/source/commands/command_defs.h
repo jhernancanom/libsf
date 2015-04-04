@@ -205,6 +205,8 @@ struct SReturnsParams;
 	SVariable*			function_createobject						(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_curdir								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_datetime							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_day		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			ifunction_day_month_year_common				(SThisCode* thisCode, SVariable* varParam, u32 tnFunctionType);
 	SVariable*			function_dtor		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_empty		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	bool				function_isempty_common						(SThisCode* thisCode, SVariable* varExpr, SReturnsParams* returnsParams);
@@ -240,6 +242,7 @@ struct SReturnsParams;
 	SVariable*			function_max								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_min								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_mod		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_month		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_ncset								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_occurs								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_occursc							(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -297,6 +300,7 @@ struct SReturnsParams;
 	SVariable*			function_vecstuff							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_vecsymbol							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_version							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_year		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 // Added temporarily until the processing engine is coded
 	SVariable*			function_concatenate						(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_add								(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -407,6 +411,7 @@ struct SReturnsParams;
 		{	_ICODE_CREATEOBJECT,	1,			(uptr)&function_createobject,	1,				1,				&gsSourceLight_createobject[0]	},
 		{	_ICODE_CURDIR,			1,			(uptr)&function_curdir,			0,				0,				&gsSourceLight_curdir[0]		},
 		{	_ICODE_DATETIME,		1,			(uptr)&function_datetime,		0,				7,				&gsSourceLight_datetime[0]		},
+		{	_ICODE_DAY,				1,			(uptr)&function_day,			1,				1,				&gsSourceLight_day[0]			},	// DAY() by Stefano D'Amico, VJr 0.57, Apr.04.2015
 		{	_ICODE_DTOR,			1,			(uptr)&function_dtor,			1,				1,				&gsSourceLight_dtor[0]			},	// DTOR() by Stefano D'Amico, VJr 0.56, Mar.16.2015
 		{	_ICODE_EMPTY,			1,			(uptr)&function_empty,			1,				1,				&gsSourceLight_empty[0]			},	// EMPTY() by Stefano D'Amico, VJr 0.56, Mar.19.2015
 		{	_ICODE_ENDSWITH,		1,			(uptr)&function_endswith,		2,				4,				&gsSourceLight_endswith[0]		},
@@ -439,6 +444,7 @@ struct SReturnsParams;
 		{	_ICODE_MAX,				1,			(uptr)&function_max,			2,				2,				&gsSourceLight_max[0]			},
 		{	_ICODE_MIN,				1,			(uptr)&function_min,			2,				2,				&gsSourceLight_min[0]			},
 		{	_ICODE_MOD,				1,			(uptr)&function_mod,			2,				2,				&gsSourceLight_mod[0]			},	// MOD() by Stefano D'Amico, VJr 0.56, Mar.08.2015
+		{	_ICODE_MONTH,			1,			(uptr)&function_month,			1,				1,				&gsSourceLight_month[0]			},	// MONTH() by Stefano D'Amico, VJr 0.57, Apr.04.2015
 		{	_ICODE_NCSET,			1,			(uptr)&function_ncset,			1,				7,				&gsSourceLight_ncset[0]			},
 		{	_ICODE_OCCURS,			1,			(uptr)&function_occurs,			2,				2,				&gsSourceLight_occurs[0]		},
 		{	_ICODE_OCCURSC,			1,			(uptr)&function_occursc,		2,				2,				&gsSourceLight_occursc[0]		},
@@ -489,6 +495,7 @@ struct SReturnsParams;
 		{	_ICODE_VECSTUFF,		1,			(uptr)&function_vecstuff,		3,				4,				&gsSourceLight_vecstuff[0]		},
 		{	_ICODE_VECSYMBOL,		1,			(uptr)&function_vecsymbol,		1,				3,				&gsSourceLight_vecsymbol[0]		},
 		{	_ICODE_VERSION,			1,			(uptr)&function_version,		0,				1,				&gsSourceLight_version[0]		},
+		{	_ICODE_YEAR,			1,			(uptr)&function_year,			1,				1,				&gsSourceLight_year[0]			},	// YEAR() by Stefano D'Amico, VJr 0.57, Apr.04.2015
 // Added temporarily until the processing engine is coded
 		{	_ICODE_CONCATENATE,		1,			(uptr)&function_concatenate,	2,				2,				&gsSourceLight_concatenate[0]	},
 		{	_ICODE_ADD,				1,			(uptr)&function_add,			2,				2,				&gsSourceLight_add[0]			},
