@@ -111,6 +111,7 @@ struct SBitmap
 struct SBmpCache
 {
 	SBitmap*		bmpCached;
+
 	u32				data1;
 	u32				data2;
 	u32				data3;
@@ -120,6 +121,11 @@ struct SBmpCache
 	u32				data7;
 	u32				data8;
 	u32				data9;
+	u32				data10;
+	u32				data11;
+	u32				data12;
+	u32				data13;
+	u32				data14;
 };
 
 

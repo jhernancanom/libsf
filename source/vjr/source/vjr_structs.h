@@ -407,8 +407,7 @@ struct SProperties
 
 	// For Carousel
 	SBitmap*	bmpTabs;											// (Carousel)	-- Bitmap holding the rendered tabs
-	RECT*		rcTabs;												// (Carousel)	-- An array of rectangles for each rider's tab
-	s32			rcTabsCount;										// (Carousel)	-- Number of RECTs for tabs allocated
+	SBuilder*	rcTabs;												// (Carousel)	-- An array of rectangles for each rider's tab
 };
 
 struct SObjNodeData
@@ -436,6 +435,14 @@ struct SObjNode
 	bool			to_isWest;										// Does the to terminate from the west?
 	s32				to_slotNum;										// The node slot number for the to
 	s32				to_maxTextLength;								// Maximum text length along this to_ll chain
+};
+
+struct SObjCarouselTabData
+{
+	SObject*	rider;												// The rider this tab relates to
+	RECT		rcTab;												// Rectangle within carousel->p.bmpTabs
+	bool		isCloseable;										// Is this tab closable?
+	RECT		rcClose;											// Closing 'x' if shown
 };
 
 struct SObject

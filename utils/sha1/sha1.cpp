@@ -523,6 +523,90 @@
 #endif
 	}
 
+	u64 sha1_computeAs_u64(const u8* tcData, u32 tnLength)
+	{
+		SSha1Context	lsContext;
+		u8				sha20Bytes[_SHA1_NUMBER_SIZE];
+
+
+		// Initialize our context
+		sha1_initialize(&lsContext);
+		sha1_continueOnThisData(&lsContext, tcData, tnLength);
+		sha1_finalize(&lsContext, sha20Bytes, false);
+
+		// Convert to u64
+		return(sha1_convertSha20To64Bit(sha20Bytes));
+	}
+
+	u64 sha1_computeAs_u64(SDatum* datum)
+	{
+		// Make sure our environment is sane
+		if (datum && datum->data && datum->length >= 1)
+		{
+			// Compute the value
+			return(sha1_computeAs_u64(datum->data_u8, datum->length));
+
+		} else {
+			// Invalid, so just return 0
+			return(0);
+		}
+	}
+
+	u64 sha1_computeAs_u64(SVariable* var)
+	{
+		if (var && var->value.data && var->value.length >= 1)
+		{
+			// Compute the value
+			return(sha1_computeAs_u64(var->value.data_u8, var->value.length));
+
+		} else {
+			// Invalid, so just return 0
+			return(0);
+		}
+	}
+
+	u32 sha1_computeAs_u32(const u8* tcData, u32 tnLength)
+	{
+		SSha1Context	lsContext;
+		u8				sha20Bytes[_SHA1_NUMBER_SIZE];
+
+
+		// Initialize our context
+		sha1_initialize(&lsContext);
+		sha1_continueOnThisData(&lsContext, tcData, tnLength);
+		sha1_finalize(&lsContext, sha20Bytes, false);
+
+		// Convert to u32
+		return(sha1_convertSha20To32Bit(sha20Bytes));
+	}
+
+	u32 sha1_computeAs_u32(SDatum* datum)
+	{
+		// Make sure our environment is sane
+		if (datum && datum->data && datum->length >= 1)
+		{
+			// Compute the value
+			return(sha1_computeAs_u32(datum->data_u8, datum->length));
+
+		} else {
+			// Invalid, so just return 0
+			return(0);
+		}
+	}
+
+	u32 sha1_computeAs_u32(SVariable* var)
+	{
+		if (var && var->value.data && var->value.length >= 1)
+		{
+			// Compute the value
+			return(sha1_computeAs_u32(var->value.data_u8, var->value.length));
+
+		} else {
+			// Invalid, so just return 0
+			return(0);
+		}
+	}
+
 
 
 

@@ -2312,7 +2312,7 @@ debug_break;
 										if (comp->iCode >= _ICODE_CASK_MINIMUM && comp->iCode <= _ICODE_CASK_MAXIMUM)
 										{
 											// Is there a cask cache from a previous screen render?
-											if (!comp->bc || !iBmp_isValidCache(&comp->bc, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, compFillColor.color, compBackColor.color))
+											if (!comp->bc || !iBmp_isValidCache(&comp->bc, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, compFillColor.color, compBackColor.color, 0, 0, 0, 0, 0))
 											{
 												// The bitmap cache is no longer valid
 												iBmp_deleteCache(&obj->bc);
@@ -2350,7 +2350,7 @@ debug_break;
 												}
 
 												// Save the cache
-												iBmp_createCache(&comp->bc, bmpCask, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, compFillColor.color, compBackColor.color, false);
+												iBmp_createCache(&comp->bc, bmpCask, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, compFillColor.color, compBackColor.color, 0, 0, 0, 0, 0, false);
 
 											} else {
 												// Use the bitmap cache
@@ -2383,7 +2383,7 @@ renderAsText:
 												// This will be drawn on a background that is a slightly altered background for its current color so it visually stands out, but the background will fade away from the edges sort of like the way the splash screen does along the left-side list.
 
 												// Is there a cask cache from a previous screen render?
-												if (!comp->bc || !iBmp_isValidCache(&comp->bc, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, compFillColor.color, compBackColor.color))
+												if (!comp->bc || !iBmp_isValidCache(&comp->bc, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, compFillColor.color, compBackColor.color, 0, 0, 0, 0, 0))
 												{
 													// The bitmap cache is no longer valid
 													iBmp_deleteCache(&obj->bc);
@@ -2405,7 +2405,7 @@ renderAsText:
 																							compForeColor);
 
 													// Save the cache
-													iBmp_createCache(&comp->bc, bmpNbsp, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, compFillColor.color, compBackColor.color, false);
+													iBmp_createCache(&comp->bc, bmpNbsp, defaultBackColor.color, defaultForeColor.color, fillColor.color, (lrcComp.right - lrcComp.left), (lrcComp.bottom - lrcComp.top), comp->iCode, lrcComp.left, compFillColor.color, compBackColor.color, 0, 0, 0, 0, 0, false);
 
 												} else {
 													// Use the bitmap cache

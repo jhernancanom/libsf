@@ -155,7 +155,7 @@
 					//////////
 					// Frame it
 					//////
-						if (!obj->bc || !iBmp_isValidCache(&obj->bc, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, 0))
+						if (!obj->bc || !iBmp_isValidCache(&obj->bc, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, 0, 0, 0, 0, 0, 0))
 						{
 							// The bitmap cache is no longer valid
 							iBmp_deleteCache(&obj->bc);
@@ -168,7 +168,7 @@
 							iBmp_dapple(obj->bmp, bmpDapple1, bmpDapple1Tmp, 215.0f, 10);
 
 							// Save the cache
-							iBmp_createCache(&obj->bc, obj->bmp, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, 0, true);
+							iBmp_createCache(&obj->bc, obj->bmp, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, 0, 0, 0, 0, 0, 0, true);
 
 						} else {
 							// Copy everything over from the cache
@@ -263,7 +263,7 @@
 					//////
 						// Determine if a control on this subform has focus
 						llIsFocusSubform = iObj_focus_descentCheck(thisCode, obj, true, false);
-						if (!obj->bc || !iBmp_isValidCache(&obj->bc, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)llIsFocusSubform))
+						if (!obj->bc || !iBmp_isValidCache(&obj->bc, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)llIsFocusSubform, 0, 0, 0, 0, 0))
 						{
 							// The bitmap cache is no longer valid
 							iBmp_deleteCache(&obj->bc);
@@ -286,7 +286,7 @@
 							iBmp_dapple(obj->bmp, bmpDapple1, bmpDapple1Tmp, 215.0f, 10);
 
 							// Save the cache
-							iBmp_createCache(&obj->bc, obj->bmp, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)llIsFocusSubform, true);
+							iBmp_createCache(&obj->bc, obj->bmp, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)llIsFocusSubform, 0, 0, 0, 0, 0, true);
 
 						} else {
 							// Copy everything over from the cache
@@ -354,13 +354,16 @@
 //////
 	u32 iSubobj_renderCarousel(SThisCode* thisCode, SObject* obj)
 	{
-		s32			lnI, lnWidth, lnAlignment, lnCount, lnLeft, lnCenter;
-		u32			lnPixelsRendered;
-		bool		llBorder, llOrientDown, llCloseable, llVisible, llTitleBar;
-		SBgra		nwRgba, neRgba, swRgba, seRgba, frameColor;
-		RECT		lrc, lrc2, lrc3, lrc4;
-		SVariable*	varTabText;
-		SObject*	objRider;
+		s32						lnI, lnWidth, lnAlignment, lnCount, lnLeft, lnCenter;
+		u32						lnPixelsRendered, lnSha1;
+		bool					llBorder, llOrientDown, llCloseable, llVisible, llTitleBar;
+		SBgra					nwRgba, neRgba, swRgba, seRgba, frameColor;
+		RECT					lrc, lrc2, lrc3, lrc4;
+		SObjCarouselTabData*	objTabData;
+		SVariable*				varTabText;
+		SVariable*				varTabText_riderActive;
+		SObject*				objRider;
+		SObject*				objRider_visible;
 
 
 		// Make sure our environment is sane
@@ -368,6 +371,7 @@
 		lnPixelsRendered = 0;
 		if (obj && obj->isRendered)
 		{
+
 			//////////
 			// If we need re-rendering, re-render
 			//////
@@ -387,11 +391,61 @@
 						swRgba = propSwRgba(obj);
 						seRgba = propSeRgba(obj);
 
-						// Determine if a control on this carousel has focus
-						if (true/*!obj->bc || !iBmp_isValidCache(&obj->bc, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, NULL)*/)
+
+					//////////
+					// Find out how many riders there are, and the size of their texts.
+					/////
+						SelectObject(obj->bmp->hdc, obj->p.font->hfont);
+						for (objRider = obj->firstChild, lnWidth = 0, lnCount = 0, objRider_visible = NULL; objRider; objRider = objRider->ll.nextObj, lnCount++)
 						{
+							// Is it a rider?
+							if (objRider->objType == _OBJ_TYPE_RIDER && propIsEnabled(objRider) && (varTabText = propRiderTab(objRider)) && varTabText->value.data && varTabText->value.length >= 1)
+							{
+
+								//////////
+								// Determine the raw text size
+								//////
+									SetRect(&lrc3, 0, 0, 0, 0);
+									DrawText(obj->bmp->hdc, varTabText->value.data, varTabText->value.length, &lrc3, DT_CALCRECT);
+
+
+								//////////
+								// Increase the width
+								//////
+									// Spacer between items
+									lnWidth += ((lnWidth != 0) ? 4 : 0);
+
+									// 2 border + 4 margin + text width + 4 margin + (close icon if closeable + 4 margin) + 2 border
+									lnWidth += 2 + 4 + (lrc3.right - lrc3.left) + 4 + ((propRiderTabCloseable(objRider)) ? bmpCarouselRiderTabClose->bi.biWidth + 4 : 0) + 2;
+
+							}
+
+							// Is this rider the first visible one?
+							if (!objRider_visible && propIsVisible(objRider))
+							{
+								// Store it for comparison with other content
+								objRider_visible		= objRider;
+								varTabText_riderActive	= varTabText;
+								lnSha1					= sha1_computeAs_u32(varTabText);
+							}
+						}
+
+
+					//////////
+					// Determine if a control on this carousel has focus
+					//////
+						if (!obj->bc || !iBmp_isValidCache(&obj->bc, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)objRider_visible, (u32)varTabText_riderActive, varTabText_riderActive->value._data, varTabText_riderActive->value.length, lnSha1, 0))
+						{
+
 							// The bitmap cache is no longer valid
 							iBmp_deleteCache(&obj->bc);
+
+
+							//////////
+							// Allocate RECTs
+							//////
+								if (!obj->p.rcTabs)			iBuilder_createAndInitialize(&obj->p.rcTabs, -1);
+								else						obj->p.rcTabs->populatedLength = 0;		// We re-populate each re-render
 
 
 							//////////
@@ -414,64 +468,6 @@
 									iBmp_frameRect(obj->bmp, &lrc2, carouselFrameColor, carouselFrameColor, carouselFrameColor, carouselFrameColor, false, NULL, false);
 									InflateRect(&lrc2, 1, 1);
 									iBmp_frameRect(obj->bmp, &lrc2, carouselFrameColor, carouselFrameColor, carouselFrameColor, carouselFrameColor, false, NULL, false);
-								}
-
-
-							//////////
-							// Find out how many riders there are, and the size of their texts.
-							/////
-								SelectObject(obj->bmp->hdc, obj->p.font->hfont);
-								for (objRider = obj->firstChild, lnWidth = 0, lnCount = 0; objRider; objRider = objRider->ll.nextObj, lnCount++)
-								{
-									// Is it a rider?
-									if (objRider->objType == _OBJ_TYPE_RIDER && propIsEnabled(objRider) && (varTabText = propRiderTab(objRider)) && varTabText->value.data && varTabText->value.length >= 1)
-									{
-
-										//////////
-										// Determine the raw text size
-										//////
-											SetRect(&lrc3, 0, 0, 0, 0);
-											DrawText(obj->bmp->hdc, varTabText->value.data, varTabText->value.length, &lrc3, DT_CALCRECT);
-
-
-										//////////
-										// Increase the width
-										//////
-											// Spacer between items
-											lnWidth += ((lnWidth != 0) ? 4 : 0);
-
-											// 2 border + 4 margin + text width + 4 margin + (close icon if closeable + 4 margin) + 2 border
-											lnWidth += 2 + 4 + (lrc3.right - lrc3.left) + 4 + ((propRiderTabCloseable(objRider)) ? bmpCarouselRiderTabClose->bi.biWidth + 4 : 0) + 2;
-
-									}
-								}
-
-
-							//////////
-							// Allocate RECTs
-							//////
-								if (!obj->p.rcTabs || obj->p.rcTabsCount != lnCount)
-								{
-
-									//////////
-									// Delete the existing RECTs array (if any)
-									//////
-										if (obj->p.rcTabs)
-											free(obj->p.rcTabs);
-										
-
-									//////////
-									// Initialize the RECT array
-									//////
-										obj->p.rcTabsCount	= lnCount;
-										obj->p.rcTabs		= (RECT*)malloc(lnCount * sizeof(RECT));
-
-
-									//////////
-									// Initialize
-									//////
-										if (obj->p.rcTabs)
-											memset(obj->p.rcTabs, 0, lnCount * sizeof(RECT));
 								}
 
 
@@ -585,7 +581,14 @@
 													}
 
 													// Store this rectangle for future mouse reference
-													CopyRect(&obj->p.rcTabs[lnI], &lrc4);
+													objTabData = (SObjCarouselTabData*)iBuilder_allocateBytes(obj->p.rcTabs, sizeof(SObjCarouselTabData));
+													if (objTabData)
+													{
+														// Populate the carousel tab data item
+														objTabData->rider		= objRider;
+														objTabData->isCloseable	= llCloseable;
+														CopyRect(&objTabData->rcTab, &lrc4);
+													}
 
 
 												//////////
@@ -626,6 +629,7 @@
 														lnCenter = ((lrc4.bottom + lrc4.top) / 2);
 														SetRect(&lrc4, lrc4.right - 2 - bmpCarouselRiderTabClose->bi.biWidth, lnCenter - (bmpCarouselRiderTabClose->bi.biHeight / 2), lrc4.right - 2, lnCenter + (bmpCarouselRiderTabClose->bi.biHeight / 2));
 														iBmp_bitBltMask(obj->p.bmpTabs, &lrc4, bmpCarouselRiderTabClose);
+														CopyRect(&objTabData->rcClose, &lrc4);
 													}
 
 
@@ -671,7 +675,7 @@
 							//////////
 							// Save the cache
 							//////
-								iBmp_createCache(&obj->bc, obj->bmp, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, NULL, true);
+								iBmp_createCache(&obj->bc, obj->bmp, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)objRider_visible, (u32)varTabText_riderActive, varTabText_riderActive->value._data, varTabText_riderActive->value.length, lnSha1, 0, true);
 
 						} else {
 							// Copy everything over from the cache

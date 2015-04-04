@@ -105,6 +105,7 @@ struct SBgr;
 	{
 		union {
 			s8*			data;					// Content
+			uptr		_data;					// Address of content
 			s8*			data_s8;				// To access the data as s8
 			u8*			data_u8;				// To access the data as u8
 			u64*		data_u64;				// To access the data as u64

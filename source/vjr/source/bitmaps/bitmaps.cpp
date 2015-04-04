@@ -352,7 +352,7 @@
 // to determine on subsequent usage if the cache is still valid.
 //
 //////
-	SBitmap* iBmp_isValidCache(SBmpCache** bmpCache, u32 data1, u32 data2, u32 data3, u32 data4, u32 data5, u32 data6, u32 data7, u32 data8, u32 data9)
+	SBitmap* iBmp_isValidCache(SBmpCache** bmpCache, u32 data1, u32 data2, u32 data3, u32 data4, u32 data5, u32 data6, u32 data7, u32 data8, u32 data9, u32 data10, u32 data11, u32 data12, u32 data13, u32 data14)
 	{
 		SBmpCache* bc;
 
@@ -377,6 +377,11 @@
 			if (data7 != bc->data7)		return(NULL);
 			if (data8 != bc->data8)		return(NULL);
 			if (data9 != bc->data9)		return(NULL);
+			if (data10 != bc->data10)	return(NULL);
+			if (data11 != bc->data11)	return(NULL);
+			if (data12 != bc->data12)	return(NULL);
+			if (data13 != bc->data13)	return(NULL);
+			if (data14 != bc->data14)	return(NULL);
 
 			// If we get here, we're good
 			return(bc->bmpCached);
@@ -394,7 +399,7 @@
 // Create a bitmap cache.
 //
 //////
-	SBitmap* iBmp_createCache(SBmpCache** bmpCache, SBitmap* bmp, u32 data1, u32 data2, u32 data3, u32 data4, u32 data5, u32 data6, u32 data7, u32 data8, u32 data9, bool tlCopyBitmap)
+	SBitmap* iBmp_createCache(SBmpCache** bmpCache, SBitmap* bmp, u32 data1, u32 data2, u32 data3, u32 data4, u32 data5, u32 data6, u32 data7, u32 data8, u32 data9, u32 data10, u32 data11, u32 data12, u32 data13, u32 data14, bool tlCopyBitmap)
 	{
 		SBmpCache* bc;
 
@@ -435,6 +440,11 @@
 			bc->data7	= data7;
 			bc->data8	= data8;
 			bc->data9	= data9;
+			bc->data10	= data10;
+			bc->data11	= data11;
+			bc->data12	= data12;
+			bc->data13	= data13;
+			bc->data14	= data14;
 
 			// Store or copy the bitmap
 			if (tlCopyBitmap)		bc->bmpCached = iBmp_copy(bmp);
@@ -3119,10 +3129,8 @@
 			// Scale the bitmap into its target size
 			//////
 				if (tnWidth == bmpCask->bi.biWidth && tnHeight == bmpCask->bi.biHeight)
-				{
-					// We already have the correct size
-					return(bmpCask);
-				}
+					return(bmpCask);	// We already have the correct size
+
 				// Build the scaled version
 				bmpNew = iBmp_allocate();
 				iBmp_createBySize(bmpNew, tnWidth, tnHeight, 24);

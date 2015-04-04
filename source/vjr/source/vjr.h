@@ -199,6 +199,9 @@
 	#include "bmps\graphics\bitmaps.h"
 	#include "settings\settings.h"
 
+	#include "\libsf\utils\sha1\sha1.h"
+	#include "\libsf\utils\sha1\sha1.cpp"
+
 
 	//////////
 	// Added for test purposes
@@ -354,6 +357,9 @@
 
 	#include "bmps/graphics/bitmaps.h"
 	#include "settings/settings.h"
+
+	#include "/libsf/utils/sha1/sha1.h"
+	#include "/libsf/utils/sha1/sha1.cpp"
 
 
 	//////////
