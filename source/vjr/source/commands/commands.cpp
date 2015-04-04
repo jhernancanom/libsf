@@ -2272,7 +2272,7 @@
 //	  dt = datetime()	&& Apr.06.2015
 //    ? CDOW(dt)		&& Displays Monday
 //////
-	static s8 cgCdowData[] = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 };
+	static cs8 cgCdowData[] = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 };
 
 	SVariable* function_cdow(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
@@ -2297,8 +2297,8 @@
 		//////////
 		// Grab year, month, day from datetime or date
 		//////
-			if iVariable_isTypeDatetime(varParam)		iiVariable_computeYyyyMmDd_fromJulian			(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-			else /* date */								iiVariable_computeYyyyMmDd_fromYYYYMMDD			(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+			if iVariable_isTypeDatetime(varParam)			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+			else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 
 		//////////
@@ -2312,7 +2312,7 @@
 							(lnYear / 4)					// Leap years
 						-	(lnYear / 100)					// Not centuries not evenly divisible by 100
 						+	(lnYear / 400)					// And centuries evenly divisible by 400
-						+	cgCdowData[lnMonth - 1]			// Plus the "magic" number
+						+	cgCdowData[lnMonth - 1]			// Plus the "magic" month number
 						+	lnDay			)				// Plus day of month
 					/*-------------------------------*/
 						%	7;								// Modulo to a day of week
