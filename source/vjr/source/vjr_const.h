@@ -742,9 +742,9 @@ typedef SEM**		SEMpp;
 //////////
 // Common date functions constants
 //////
-	const u32			_FP_COMMON_DAY						= 0;
-	const u32			_FP_COMMON_MONTH					= 1;
-	const u32			_FP_COMMON_YEAR						= 2;
+	const u32			_DMY_COMMON_DAY						= 0;
+	const u32			_DMY_COMMON_MONTH					= 1;
+	const u32			_DMY_COMMON_YEAR					= 2;
 
 //////////
 // Days of week

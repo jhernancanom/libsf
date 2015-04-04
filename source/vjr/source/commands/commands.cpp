@@ -3250,7 +3250,7 @@
 		SVariable* varParam = returnsParams->params[0];
 
 		// Return day
-		return(ifunction_day_month_year_common(thisCode, varParam, _FP_COMMON_DAY));
+		return(ifunction_day_month_year_common(thisCode, varParam, _DMY_COMMON_DAY));
 	}
 	
 	// Common date functions used for DAY(), MONTH(), YEAR()
@@ -3295,16 +3295,14 @@
 		//////
 			switch (tnFunctionType)
 			{
-				case _FP_COMMON_DAY:
-					lnResult = lnDay;
-					break;
+				case _DMY_COMMON_DAY:		lnResult = lnDay;		break;
+				case _DMY_COMMON_MONTH:		lnResult = lnMonth;		break;
+				case _DMY_COMMON_YEAR:		lnResult = lnYear;		break;
 
-				case _FP_COMMON_MONTH:
-					lnResult = lnMonth;
-					break;
-
+				// Should never happen
 				default:
-					lnResult =lnYear;
+					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
+					return(NULL);
 			}
 
 
@@ -6569,7 +6567,7 @@
 		SVariable* varParam = returnsParams->params[0];
 
 		// Return month
-		return(ifunction_day_month_year_common(thisCode, varParam, _FP_COMMON_MONTH));
+		return(ifunction_day_month_year_common(thisCode, varParam, _DMY_COMMON_MONTH));
 	}
 
 
@@ -10376,7 +10374,7 @@ debug_break;
 		SVariable* varParam = returnsParams->params[0];
 
 		// Return year
-		return(ifunction_day_month_year_common(thisCode, varParam, _FP_COMMON_YEAR));
+		return(ifunction_day_month_year_common(thisCode, varParam, _DMY_COMMON_YEAR));
 	}
 
 
