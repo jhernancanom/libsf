@@ -394,6 +394,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_day[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_dtor[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -551,6 +556,11 @@
 	};
 
 	SSourceLightData gsSourceLight_mod[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_month[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
@@ -795,6 +805,11 @@
 	};
 
 	SSourceLightData gsSourceLight_version[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_year[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
