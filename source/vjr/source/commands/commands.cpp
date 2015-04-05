@@ -2646,7 +2646,90 @@
 		/////
 			return(result);
 	}
-;
+
+
+
+
+//////////
+//
+// Function: CMONTH()
+// Returns the name of the month from a given date or DateTime expression.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.05.2015
+//////
+// Change log:
+//     Apr.05.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Date or DateTime
+//
+//////
+// Returns:
+//    CMONTH( ) returns the name of the month as a string in proper noun format.
+//////
+// Example:
+//	  dt = datetime()	&& Apr.06.2015
+//    ? CMONTH(dt)		&& Displays April
+//    ? CMONTH()        && Displays current date's character month
+//////
+SVariable* function_cmonth(SThisCode* thisCode, SReturnsParams* returnsParams)
+{
+	SVariable* varParam = returnsParams->params[0];
+
+	u32			lnYear, lnMonth, lnDay;
+	s8			lnMonthIdx;
+	SYSTEMTIME	lst;
+	SVariable*	result;
+
+
+	//////////
+	// If provided, parameter 1 must be date or datetime
+	//////
+	if (varParam)
+	{
+		// TODO:  Must also support DATETIMEX at some point
+		if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
+		{
+			iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
+			return(NULL);
+		}
+
+		//////////
+		// Grab year, month, day from datetime or date
+		//////
+		if iVariable_isTypeDatetime(varParam)			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+		else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+
+	} else {
+		// Use the current date
+		GetLocalTime(&lst);
+		lnYear	= lst.wYear;
+		lnMonth	= lst.wMonth;
+		lnDay	= lst.wDay;
+	}
+
+	//////////
+	// Compute index
+	//////
+	lnMonthIdx = lnMonth -1 ;
+
+	//////////
+	// Create our result
+	//////
+	result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, (cs8*)cgcMonthNames[lnMonthIdx], (u32)strlen(cgcMonthNames[lnMonthIdx]), false);
+	if (!result)
+		iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
+
+
+	//////////
+	// Indicate our result
+	//////
+	return(result);
+
+}
 
 
 

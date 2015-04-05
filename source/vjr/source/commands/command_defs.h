@@ -199,6 +199,7 @@ struct SReturnsParams;
 	SVariable*			function_chrtran							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_chrtranc							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			ifunction_chrtran_common					(SThisCode* thisCode, SVariable* varString, SVariable* varSearch, SVariable* varReplace, bool tlCaseSensitive, SReturnsParams* returnsParams);
+	SVariable*			function_cmonth		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_colorize							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			ifunction_colorize_common					(SThisCode* thisCode, SVariable* varColor, SVariable* varColorTarget, SVariable* varPercentage, bool tlApplyColorTarget, SReturnsParams* returnsParams);
 	SVariable*			function_cos		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -408,6 +409,7 @@ struct SReturnsParams;
 		{	_ICODE_CHR,				1,			(uptr)&function_chr,			1,				1,				&gsSourceLight_chr[0]			},
 		{	_ICODE_CHRTRAN,			1,			(uptr)&function_chrtran,		2,				3,				&gsSourceLight_chrtran[0]		},
 		{	_ICODE_CHRTRANC,		1,			(uptr)&function_chrtranc,		2,				3,				&gsSourceLight_chrtranc[0]		},
+		{	_ICODE_CMONTH,			1,			(uptr)&function_cmonth,			0,				1,				&gsSourceLight_cmonth[0]		},	// CMONTH() by Stefano D'Amico, VJr 0.57, Apr.05.2015
 		{	_ICODE_COLORIZE,		1,			(uptr)&function_colorize,		2,				3,				&gsSourceLight_colorize[0]		},
 		{	_ICODE_COS,				1,			(uptr)&function_cos,			1,				1,				&gsSourceLight_cos[0]			},	// COS() by Stefano D'Amico, VJr 0.56, Mar.17.2015
 		{	_ICODE_CREATEOBJECT,	1,			(uptr)&function_createobject,	1,				1,				&gsSourceLight_createobject[0]	},
