@@ -1239,7 +1239,8 @@
 		iSEM_saveToDisk(thisCode, command_editbox->p.sem,	cgcCommandHistoryFilename);
 
 		// Save the system layout
-		iObj_saveLayoutAs_bxml(thisCode, _jdebi, cgcScreenLayoutFilename, true, true, true, &error, &errorNum);
+// Temporarily disabled
+//		iObj_saveLayoutAs_bxml(thisCode, _jdebi, cgcScreenLayoutFilename, true, true, true, &error, &errorNum);
 
 		// Close the allocated memory blocks
 		iVjr_releaseMemory();
