@@ -759,6 +759,11 @@ typedef SEM**		SEMpp;
 	// These can be altered if/when languages are changed
 	s8*					cgcDayOfWeekNames[7]						= { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 
+//////////
+// Month names
+//////
+	// These can be altered if/when languages are changed
+	s8*					cgcMonthNames[12]							= { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 
 //////////
 // Stretch mode

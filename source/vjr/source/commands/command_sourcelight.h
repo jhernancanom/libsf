@@ -369,6 +369,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_cmonth[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_colorize[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -621,6 +626,11 @@
 	};
 
 	SSourceLightData gsSourceLight_pv[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_quarter[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};

@@ -2646,7 +2646,90 @@
 		/////
 			return(result);
 	}
-;
+
+
+
+
+//////////
+//
+// Function: CMONTH()
+// Returns the name of the month from a given date or DateTime expression.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.05.2015
+//////
+// Change log:
+//     Apr.05.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Date or DateTime
+//
+//////
+// Returns:
+//    CMONTH( ) returns the name of the month as a string in proper noun format.
+//////
+// Example:
+//	  dt = datetime()	&& Apr.06.2015
+//    ? CMONTH(dt)		&& Displays April
+//    ? CMONTH()        && Displays current date's character month
+//////
+SVariable* function_cmonth(SThisCode* thisCode, SReturnsParams* returnsParams)
+{
+	SVariable* varParam = returnsParams->params[0];
+
+	u32			lnYear, lnMonth, lnDay;
+	s8			lnMonthIdx;
+	SYSTEMTIME	lst;
+	SVariable*	result;
+
+
+	//////////
+	// If provided, parameter 1 must be date or datetime
+	//////
+	if (varParam)
+	{
+		// TODO:  Must also support DATETIMEX at some point
+		if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
+		{
+			iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
+			return(NULL);
+		}
+
+		//////////
+		// Grab year, month, day from datetime or date
+		//////
+		if iVariable_isTypeDatetime(varParam)			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+		else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+
+	} else {
+		// Use the current date
+		GetLocalTime(&lst);
+		lnYear	= lst.wYear;
+		lnMonth	= lst.wMonth;
+		lnDay	= lst.wDay;
+	}
+
+	//////////
+	// Compute index
+	//////
+	lnMonthIdx = lnMonth -1 ;
+
+	//////////
+	// Create our result
+	//////
+	result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, (cs8*)cgcMonthNames[lnMonthIdx], (u32)strlen(cgcMonthNames[lnMonthIdx]), false);
+	if (!result)
+		iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
+
+
+	//////////
+	// Indicate our result
+	//////
+	return(result);
+
+}
 
 
 
@@ -7409,6 +7492,114 @@
 
 		// Return pv
 		return(ifunction_numbers_common(thisCode, varPayment, varInterestRate, varPeriods, _FP_COMMON_PV, _VAR_TYPE_F64, false, true, returnsParams));
+	}
+
+	
+	
+	
+//////////
+//
+// Function: QUARTER()
+// Returns the quarter of the year in which a date or datetime expression occurs.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.05.2015
+//////
+// Change log:
+//     Apr.05.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Date or DateTime
+//     p2			-- Specifies an optional starting month to the examined quarter
+//
+//////
+// Returns:
+//    Numeric data type.
+//	  QUARTER( ) returns the quarter of the year in which a date occurs, and the values can be 1, 2, 3, or 4.
+//
+//////
+	SVariable* function_quarter(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varParam = returnsParams->params[0];
+		SVariable* varMonth = returnsParams->params[1];
+
+		u32			lnYear, lnMonth, lnDay, lnStartingMonth, lnQuarter;
+		u32			errorNum;
+		bool		error;
+		SYSTEMTIME	lst;
+		SVariable*	result;
+
+
+		//////////
+		// If provided, parameter 1 must be date or datetime
+		//////
+		if (varParam)
+		{
+			// TODO:  Must also support DATETIMEX at some point
+			if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
+			{
+				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
+				return(NULL);
+			}
+
+			//////////
+			// Grab year, month, day from datetime or date
+			//////
+			if iVariable_isTypeDatetime(varParam)			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+			else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+
+		} else {
+			// Use the current date
+			GetLocalTime(&lst);
+			lnYear	= lst.wYear;
+			lnMonth	= lst.wMonth;
+			lnDay	= lst.wDay;
+		}
+
+		//////////
+		// If provided, parameter 2 must be numeric, and in the range of 1..12
+		//////
+		lnStartingMonth = 1;
+
+		if (varMonth)
+		{
+			if (iVariable_isValid(varMonth))
+			{
+				// They gave us a pMonth
+				if (!iVariable_isTypeNumeric(varMonth))
+				{
+					iError_report(thisCode, (cu8*)"Month must be numeric", false);
+					return(NULL);
+				}
+				lnStartingMonth = (u16)iiVariable_getAs_s32(thisCode, varMonth, false, &error, &errorNum);
+				if (!error && (lnStartingMonth < 1 || lnStartingMonth > 12))
+				{
+					iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varMonth), false);
+					return(NULL);
+				}
+			}
+		}
+
+		//////////
+		// Compute quarter of the year
+		//////
+		lnQuarter = (u32) (((lnMonth + 12 - lnStartingMonth) % 12) / 3 + 1);
+
+		//////////
+		// Create the value
+		//////
+		result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_U32, (cs8*)&lnQuarter, sizeof(lnQuarter), false);
+		if (!result)
+			iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
+
+
+		//////////
+		// Return the result
+		//////
+		return(result);
+
 	}
 
 
