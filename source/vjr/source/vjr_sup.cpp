@@ -635,7 +635,7 @@
 
 //////////
 //
-// Temporary manual function to create the new JDebi screen.
+// Temporary manual function to create the new JDebi screen
 //
 //////
 	void iInit_jdebi_create(void)
@@ -1218,6 +1218,10 @@
 //////
 	void iVjr_shutdown(SThisCode* thisCode)
 	{
+		bool	error;
+		u32		errorNum;
+
+
 		// Indicate we're shutting down
 		glShuttingDown = true;
 
@@ -1230,9 +1234,12 @@
 		// Flush the log
 		iVjr_flushSystemLog(thisCode);
 
-		// Save where we were
+		// Save where we are
 		iSEM_saveToDisk(thisCode, screenData,				cgcScreenDataFilename);
 		iSEM_saveToDisk(thisCode, command_editbox->p.sem,	cgcCommandHistoryFilename);
+
+		// Save the system layout
+		iObj_saveLayoutAs_bxml(thisCode, _jdebi, cgcScreenLayoutFilename, true, true, true, &error, &errorNum);
 
 		// Close the allocated memory blocks
 		iVjr_releaseMemory();

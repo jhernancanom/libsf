@@ -206,6 +206,8 @@
 			case _ERROR_TOO_BIG_FOR_TARGET:					{	iError_report(thisCode, cgcTooBigForTarget,					tlInvasive);		break;	}
 			case _ERROR_NO_INDEX_IS_LOADED:					{	iError_report(thisCode, cgcNoIndexIsLoaded,					tlInvasive);		break;	}
 			case _ERROR_INVALID_INDEX_TAG:					{	iError_report(thisCode, cgcInvalidIndextag,					tlInvasive);		break;	}
+			case _ERROR_UNABLE_TO_SAVE:						{	iError_report(thisCode, cgcUnableToSave,					tlInvasive);		break;	}
+			case _ERROR_INVALID_PARAMETERS:					{	iError_report(thisCode, cgcInvalidParameters,				tlInvasive);		break;	}
 
 		}
 

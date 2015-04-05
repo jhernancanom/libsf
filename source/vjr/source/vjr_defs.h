@@ -149,6 +149,8 @@ struct SObjPropMap;
 	u32						iObj_renderChildrenAndSiblings			(SThisCode* thisCode, SObject*  obj, bool tlRenderChildren, bool tlRenderSiblings, bool tlForceRender);
 	u32						iObj_publish							(SThisCode* thisCode, SObject*  obj, RECT* rc, SBitmap* bmpDst, bool tlPublishChildren, bool tlPublishSiblings, bool tlForcePublish, s32 tnLevel);
 	bool					iObj_publish_descentCheck				(SThisCode* thisCode, SObject*  obj, bool tlCheckChildren, bool tlCheckSiblings);
+	CXml*					iObj_saveLayoutAs_bxml					(SThisCode* thisCode, SObject* obj, cu8* tcFilename, bool tlFullProperties, bool tlSaveChildren, bool tlSaveSiblings, bool* error, u32* errorNum);
+	CXml*					iiObj_saveLayoutAs_bxml_saveObject		(SThisCode* thisCode, CXml* bxml, SObject* obj, bool tlFullProperties, bool tlSaveChildren, bool tlSaveSiblings);
 	void					iObj_duplicateChain						(SThisCode* thisCode, SObject** root, SObject* chain);
 	void					iObj_appendObjToParent					(SThisCode* thisCode, SObject*  parent, SObject* obj);
 	void					iObj_duplicateChildren					(SThisCode* thisCode, SObject*  objDst, SObject* objSrc);

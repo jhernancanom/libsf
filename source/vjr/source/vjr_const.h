@@ -1143,5 +1143,6 @@ typedef SEM**		SEMpp;
 	const u8			cgcScreenDataFilename[]				= "screen.vjr";
 	const u8			cgcCommandHistoryFilename[]			= "command.vjr";
 	const u8			cgcStartupPrgFilename[]				= "startup.prg";
+	const u8			cgcScreenLayoutFilename[]			= "layout.bxml";
 	const u8			cgcSoundStartupWav[]				= "startup_44100_f32.wav";
 

@@ -296,6 +296,8 @@
 	const u32		_ERROR_TOO_BIG_FOR_TARGET						= 93;
 	const u32		_ERROR_NO_INDEX_IS_LOADED						= 94;
 	const u32		_ERROR_INVALID_INDEX_TAG						= 95;
+	const u32		_ERROR_UNABLE_TO_SAVE							= 96;
+	const u32		_ERROR_INVALID_PARAMETERS						= 97;
 
 	// Fill ins
 	const u8		cgc_notFoundOrInvalidDataType[]					= "not found or is invalid data type";
@@ -373,6 +375,8 @@
 	const u8		cgcTooBigForTarget[]							= "too big for target";
 	const u8		cgcNoIndexIsLoaded[]							= "no index is loaded";
 	const u8		cgcInvalidIndextag[]							= "invalid index tag";
+	const u8		cgcUnableToSave[]								= "unable to save";
+	const u8		cgcInvalidParameters[]							= "invalid parameters";
 #else
 	#error Language not specified
 #endif

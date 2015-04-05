@@ -1940,6 +1940,90 @@
 
 //////////
 //
+// Saves the object layout from the current object
+//
+//////
+	CXml* iObj_saveLayoutAs_bxml(SThisCode* thisCode, SObject* obj, cu8* tcFilename, bool tlFullProperties, bool tlSaveChildren, bool tlSaveSiblings, bool* error, u32* errorNum)
+	{
+		uptr		lnResult;
+		union {
+			uptr	_bxml;
+			CXmlp	bxml;
+		};
+		CXmlp		bxmlJDebi, bxmlLayout;
+
+
+		//////////
+		// Make sure the environment is sane
+		//////
+			if (!(obj && tcFilename && error && errorNum))
+			{
+				*error		= true;
+				*errorNum	= _ERROR_INVALID_PARAMETERS;
+				return(NULL);
+			}
+
+
+		//////////
+		// Create the root node (which is one level above jdebi in this content)
+		//////
+			_bxml = xml_load("<jdebi><layout></layout></jdebi>", -1);
+			if (!bxml)
+			{
+				*error		= true;
+				*errorNum	= _ERROR_INTERNAL_ERROR;
+				return(NULL);
+			}
+
+
+		//////////
+		// Access the jdebi and layout tags
+		//////
+			bxmlJDebi	= bxml->child(cgcTag_jdebi);
+			bxmlLayout	= bxmlJDebi->child(cgcTag_layout);
+
+
+		//////////
+		// Iterate through each object, appending its content
+		//////
+			iiObj_saveLayoutAs_bxml_saveObject(thisCode, bxml, obj, tlFullProperties, tlSaveChildren, tlSaveSiblings);
+			
+
+		//////////
+		// Save the result
+		//////
+			lnResult = xml_write_file(_bxml, tcFilename);
+			if (lnResult == 0)
+			{
+				// Success
+				*error		= false;
+				*errorNum	= 0;
+				return(bxml);
+			}
+			*error		= true;
+			*errorNum	= _ERROR_UNABLE_TO_SAVE;
+			return(bxml);
+	}
+
+
+
+
+//////////
+//
+// Save the indicated object to the indicated bxml
+//
+//////
+	CXml* iiObj_saveLayoutAs_bxml_saveObject(SThisCode* thisCode, CXml* bxml, SObject* obj, bool tlFullProperties, bool tlSaveChildren, bool tlSaveSiblings)
+	{
+// TODO:  working here
+		return(bxml);
+	}
+
+
+
+
+//////////
+//
 // Duplicate the chain of ObjectLabels, so the destination has a copy of each.
 //
 //////

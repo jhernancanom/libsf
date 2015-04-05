@@ -93,6 +93,21 @@
 //		-103			- Unable to read file into memory
 //
 /////
+	uptr xml_load_file(cs8* filename)
+	{
+		return(xml_load_file((s8*)filename));
+	}
+
+	uptr xml_load_file(cu8* filename)
+	{
+		return(xml_load_file((s8*)filename));
+	}
+
+	uptr xml_load_file(u8* filename)
+	{
+		return(xml_load_file((s8*)filename));
+	}
+
 	uptr xml_load_file(s8* filename)
 	{
 		s32		lfh;
@@ -167,6 +182,8 @@
 	CXml* xml_loadAs_cxml(cu8* buffer, u32 tnLength)		{	return((CXml*)xml_load((s8*)buffer, tnLength));		}
 	CXml* xml_loadAs_cxml(u8* buffer, u32 tnLength)			{	return((CXml*)xml_load((s8*)buffer, tnLength));		}
 	uptr xml_load(cs8* buffer, u32 tnLength)				{	return(xml_load((s8*)buffer, tnLength));			}
+	uptr xml_load(cu8* buffer, u32 tnLength)				{	return(xml_load((s8*)buffer, tnLength));			}
+	uptr xml_load(u8* buffer, u32 tnLength)					{	return(xml_load((s8*)buffer, tnLength));			}
 
 	uptr xml_load(s8* buffer, u32 tnLength)
 	{
@@ -682,6 +699,21 @@
 		loTag		= loRoot->child();
 		lnResult	= loTag->save(filename);
 		return(lnResult);
+	}
+
+	uptr xml_write_file(uptr handle, cs8* filename)
+	{
+		return(xml_write_file(handle, (s8*)filename));
+	}
+
+	uptr xml_write_file(uptr handle, u8* filename)
+	{
+		return(xml_write_file(handle, (s8*)filename));
+	}
+
+	uptr xml_write_file(uptr handle, cu8* filename)
+	{
+		return(xml_write_file(handle, (s8*)filename));
 	}
 
 
