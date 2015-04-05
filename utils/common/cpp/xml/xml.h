@@ -297,7 +297,7 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 
 
 	// Duplicators
-		XmlData*	copy(void)
+		XmlData* copy(void)
 		{
 			XmlData* d = NULL;
 			s8* new_data;
@@ -345,7 +345,7 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 	class CXml
 	{
 	public:
-		CXml(s8* tcTag = NULL, s8* tcData = NULL, s8* tcAttributeTag = NULL, s8* tcAttributeData = NULL) :
+		CXml(s8* tcTag = NULL, s8* tcData = NULL, u32 tnDataLength = -1, s8* tcAttributeTag = NULL, s8* tcAttributeData = NULL, u32 tnAttributeDataLength = -1) :
 				   m_prev(NULL),
 				   m_parent(NULL),
 				   m_next(NULL),
@@ -356,7 +356,7 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 				   m_cdata(NULL),
 				   m_closed(false)
 		{
-			CXml* tNew;
+			CXml* tNewTag;
 			XmlData* dNew;
 
 
@@ -370,19 +370,27 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 
 			if (tcData)
 			{
-				dNew = new XmlData(tcData);
+				if (tnDataLength == -1)
+					tnDataLength = strlen(tcData);
+
+				dNew = new XmlData(tcData, tnDataLength);
 				set_data(dNew);
 			}
 
 			if (tcAttributeTag)
 			{
-				tNew = new CXml();
-				tNew->set_tag(new XmlData(tcAttributeTag));
+				tNewTag = new CXml();
+				tNewTag->set_tag(new XmlData(tcAttributeTag));
 
 				if (tcAttributeData)
-					tNew->set_data(new XmlData(tcAttributeData));
+				{
+					if (tnAttributeDataLength == -1)
+						tnAttributeDataLength = strlen(tcAttributeData);
 
-				set_attribute(tNew);
+					tNewTag->set_data(new XmlData(tcAttributeData, tnAttributeDataLength));
+				}
+
+				set_attribute(tNewTag);
 			}
 		}
 

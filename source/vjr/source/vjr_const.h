@@ -202,6 +202,11 @@ typedef SEM**		SEMpp;
 	#define propIsTrue(obj, index)						(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, index)				!= _LOGICAL_FALSE)
 	#define propIsVisible(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_VISIBLE)		!= _LOGICAL_FALSE)
 
+	#define propX(obj)									((obj) ? obj->rc.left : 0)
+	#define propY(obj)									((obj) ? obj->rc.top : 0)
+	#define propWidth(obj)								((obj) ? obj->rc.right - obj->rc.left: 0)
+	#define propHeight(obj)								((obj) ? obj->rc.bottom - obj->rc.top : 0)
+
 	#define propAlignment(obj)							iObjProp_get_s32_direct			(thisCode, obj, _INDEX_ALIGNMENT)
 	#define propBackColor(obj)							iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_BACKCOLOR)
 	#define propBackStyle(obj)							iObjProp_get_s32_direct			(thisCode, obj, _INDEX_BACKSTYLE)
@@ -209,6 +214,7 @@ typedef SEM**		SEMpp;
 	#define propBorderStyle(obj)						iObjProp_get_s32_direct			(thisCode, obj, _INDEX_BORDERSTYLE)
 	#define propForeColor(obj)							iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_FORECOLOR)
 	#define propMargin(obj)								iObjProp_get_s32_direct			(thisCode, obj, _INDEX_MARGIN)
+	#define propName(obj)								iObjProp_get_character			(thisCode, obj, _INDEX_NAME);
 	#define propNeRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_NECOLOR)
 	#define propNwRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_NWCOLOR)
 	#define propSeRgba(obj)								iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_SECOLOR)
@@ -1032,8 +1038,13 @@ typedef SEM**		SEMpp;
 	const s8			cgcTag_horizontal[]					= "horizontal";
 	const s8			cgcTag_layout[]						= "layout";
 	const s8			cgcTag_name[]						= "name";
-	const s8			cgcTag_x[]							= "x";
-	const s8			cgcTag_y[]							= "y";
+	const s8			cgcTag_object[]						= "object";
+	const s8			cgcTag_p[]							= "p";			// Fixed properties
+	const s8			cgcTag_prop[]						= "prop";		// Class properties
+	const s8			cgcTag_h[]							= "h";			// Height
+	const s8			cgcTag_x[]							= "x";			// X
+	const s8			cgcTag_y[]							= "y";			// Y
+	const s8			cgcTag_w[]							= "w";			// Width
 	const s8			cgcTag_width[]						= "width";
 	const s8			cgcTag_height[]						= "height";
 	const s8			cgcTag_iconWidth[]					= "iconwidth";

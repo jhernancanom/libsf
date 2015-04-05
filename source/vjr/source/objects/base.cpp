@@ -2015,7 +2015,51 @@
 //////
 	CXml* iiObj_saveLayoutAs_bxml_saveObject(SThisCode* thisCode, CXml* bxml, SObject* obj, bool tlFullProperties, bool tlSaveChildren, bool tlSaveSiblings)
 	{
-// TODO:  working here
+		CXmlp		bxmlObj;
+		SVariable*	varName;
+		s8			buffer[64];
+
+
+		// Make sure there's an object
+		if (obj)
+		{
+
+			//////////
+			// Create the child for this object
+			//	<object name="whatever">
+			//////
+				varName = propName(obj);
+				bxmlObj = bxml->append_child(new CXml((s8*)cgcTag_object, NULL, 0, (s8*)cgcTag_name, varName->value.data, varName->value.length));
+			
+
+			//////////
+			// Append the standard properties
+			//////
+				// X
+				sprintf(buffer, "%d\0", propX(obj));
+				bxmlObj->append_child(new CXml((s8*)cgcTag_p, NULL, 0, (s8*)cgcTag_x, buffer, -1));
+
+				// Y
+				sprintf(buffer, "%d\0", propY(obj));
+				bxmlObj->append_child(new CXml((s8*)cgcTag_p, NULL, 0, (s8*)cgcTag_y, buffer, -1));
+
+				// Width
+				sprintf(buffer, "%d\0", propWidth(obj));
+				bxmlObj->append_child(new CXml((s8*)cgcTag_p, NULL, 0, (s8*)cgcTag_w, buffer, -1));
+
+				// Height
+				sprintf(buffer, "%d\0", propHeight(obj));
+				bxmlObj->append_child(new CXml((s8*)cgcTag_p, NULL, 0, (s8*)cgcTag_h, buffer, -1));
+
+				// Class
+
+				// Baseclass
+
+				// Classlib
+
+		}
+
+		// Return our input
 		return(bxml);
 	}
 
