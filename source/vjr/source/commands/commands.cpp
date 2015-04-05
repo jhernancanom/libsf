@@ -6730,51 +6730,98 @@
 	{
 		SVariable*	varIndex	= returnsParams->params[0];
 		SVariable*	varP1		= returnsParams->params[1];
-		s32			lnIndex, lnIndexProp;
-		bool		llEnabled, llNewValue;
-		bool		error;
-		u32			errorNum;
-		SVariable*	result;
+
+		s32					lnIndex, lnIndexProp;
+		bool				llEnabled, llNewValue, llFound;
+		SBasePropMap*		baseProp;
+		SAsciiCompSearcher*	asciiComp;
+		SVariable*			result;
+		bool				error;
+		u32					errorNum;
 
 
 		//////////
 		// nIndex must be numeric
 		//////
-			if (!iVariable_isValid(varIndex) || !iVariable_isTypeNumeric(varIndex))
+			if (!iVariable_isValid(varIndex))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varIndex), false);
 				return(NULL);
 			}
-			lnIndex = iiVariable_getAs_s32(thisCode, varIndex, false, &error, &errorNum);
-			if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varIndex), false);	return(NULL);	}
-
-
-		//////////
-		// What function are they requesting?
-		//////
-			// Based on the index, set the value
-			switch (lnIndex)
+			if (iVariable_isTypeNumeric(varIndex))
 			{
-				case _NCSET_SIGN_SIGN2:
-					lnIndexProp = _INDEX_SET_NCSET_SIGN_SIGN2;
-					break;
-				case _NCSET_CEILING_FLOOR:
-					lnIndexProp = _INDEX_SET_NCSET_CEILING_FLOOR;
-					break;
-				case _NCSET_RGBA_ALPHA_IS_OPAQUE:
-					lnIndexProp = _INDEX_SET_NCSET_ALPHA_IS_OPAQUE;
-					break;
-				case _NCSET_OPTIMIZE_TABLE_WRITES:
-					lnIndexProp = _INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES;
-					break;
-				case _NCSET_OPTIMIZE_VARIABLES:
-					lnIndexProp = _INDEX_SET_NCSET_OPTIMIZE_VARIABLES;
-					break;
+				// They have specified an index
+				// We'll receive whatever they give, as it will be reported in error below
+				lnIndex = iiVariable_getAs_s32(thisCode, varIndex, false, &error, &errorNum);
+				if (error)	{	iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varIndex), false);	return(NULL);	}
 
-				default:
-					// Unrecognized option
+
+			//////////
+			// What function are they requesting?
+			//////
+				// Based on the index, set the value
+				switch (lnIndex)
+				{
+					case _NCSET_CEILING_FLOOR:
+						lnIndexProp = _INDEX_SET_NCSET_CEILING_FLOOR;
+						break;
+
+					case _NCSET_DATETIME_MILLISECONDS:
+						lnIndexProp = _INDEX_SET_NCSET_DATETIME_MILLISECONDS;
+						break;
+
+					case _NCSET_OPTIMIZE_TABLE_WRITES:
+						lnIndexProp = _INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES;
+						break;
+
+					case _NCSET_OPTIMIZE_VARIABLES:
+						lnIndexProp = _INDEX_SET_NCSET_OPTIMIZE_VARIABLES;
+						break;
+
+					case _NCSET_RGBA_ALPHA_IS_OPAQUE:
+						lnIndexProp = _INDEX_SET_NCSET_ALPHA_IS_OPAQUE;
+						break;
+
+					case _NCSET_SIGN_SIGN2:
+						lnIndexProp = _INDEX_SET_NCSET_SIGN_SIGN2;
+						break;
+
+					default:
+						// Unrecognized option
+						iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varIndex), false);
+						return(NULL);
+				}
+
+
+			} else if (iVariable_isTypeCharacter(varIndex)) {
+				// They have specified a character string, so we can lookup the identifying tag
+				for (lnIndex = _INDEX_SET_NCSET_START, baseProp = &gsProps_master[_INDEX_SET_NCSET_START - 1], llFound = false; !llFound && lnIndex <= _INDEX_SET_NCSET_END; lnIndex++, baseProp++)
+				{
+					// Translate the property _INDEX to its related iCode
+					for (asciiComp = &cgcKeywordsVxb[0]; asciiComp->iCode != 0; asciiComp++)
+					{
+						// If this is the component which relates to the indicated iCode...
+						if (asciiComp->iCode == baseProp->associated_iCode)
+						{
+							// It's the right iCode, see if the text they've provided matches up
+							if (varIndex->value.length == asciiComp->length && iDatum_compare(&varIndex->value, asciiComp->keyword_s8, asciiComp->length) == 0)
+							{
+								lnIndexProp	= lnIndex;
+								llFound		= true;
+								break;
+							}
+						}
+					}
+				}
+
+				if (!llFound)
+				{
+					// They've specified something we don't have
 					iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varIndex), false);
 					return(NULL);
+				}
+
+				// When we get here, lnIndexProp is set
 			}
 
 

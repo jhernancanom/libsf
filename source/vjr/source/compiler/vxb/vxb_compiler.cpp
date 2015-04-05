@@ -7905,11 +7905,27 @@ debug_break;
 					if (propGet_settings_Century(_settings))
 					{
 						// SET CENTURY ON
-						sprintf((s8*)buffer, "%02u/%02u/%04u %02u:%02u:%02u.%03u", lnMonth, lnDay, lnYear, lnHour, lnMinute, lnSecond, lnMillisecond);
+						if (propGet_settings_ncset_datetimeMilliseconds(_settings))
+						{
+							// Include milliseconds
+							sprintf((s8*)buffer, "%02u/%02u/%04u %02u:%02u:%02u.%03u", lnMonth, lnDay, lnYear, lnHour, lnMinute, lnSecond, lnMillisecond);
+
+						} else {
+							// No milliseconds
+							sprintf((s8*)buffer, "%02u/%02u/%04u %02u:%02u:%02u", lnMonth, lnDay, lnYear, lnHour, lnMinute, lnSecond);
+						}
 
 					} else {
 						// SET CENTURY OFF
-						sprintf((s8*)buffer, "%02u/%02u/%02u %02u:%02u:%02u.%03u", lnMonth, lnDay, lnYear % 100, lnHour, lnMinute, lnSecond, lnMillisecond);
+						if (propGet_settings_ncset_datetimeMilliseconds(_settings))
+						{
+							// Include milliseconds
+							sprintf((s8*)buffer, "%02u/%02u/%02u %02u:%02u:%02u.%03u", lnMonth, lnDay, lnYear % 100, lnHour, lnMinute, lnSecond, lnMillisecond);
+
+						} else {
+							// No milliseconds
+							sprintf((s8*)buffer, "%02u/%02u/%02u %02u:%02u:%02u", lnMonth, lnDay, lnYear % 100, lnHour, lnMinute, lnSecond);
+						}
 					}
 
 					varDisp->isValueAllocated = true;

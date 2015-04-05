@@ -1066,6 +1066,14 @@
 		{ cgc_y_dots,				3,			false,		_ICODE_YET_ANOTHER,						false,				_ICAT_GENERIC,		&colorSynHi_logical,		true,						null0,		null0 },
 		{ cgc_z_dots,				3,			false,		_ICODE_ZATS_ALL_FOLKS,					false,				_ICAT_GENERIC,		&colorSynHi_logical,		true,						null0,		null0 },
 
+		// NCSET() specific
+		{ cgc_ncset_alphaisopaque,			13,		false,	_ICODE_NCSETALPHAISOPAQUE,				false,				_ICAT_GENERIC,		&colorSynHi_logical,		true,						null0,		null0 },
+		{ cgc_ncset_ceilingfloor,			12,		false,	_ICODE_NCSETCEILINGFLOOR,				false,				_ICAT_GENERIC,		&colorSynHi_logical,		true,						null0,		null0 },
+		{ cgc_ncset_datetimemilliseconds,	20,		false,	_ICODE_NCSETDATETIMEMILLISECONDS,		false,				_ICAT_GENERIC,		&colorSynHi_logical,		true,						null0,		null0 },
+		{ cgc_ncset_optimizetablewrites,	19,		false,	_ICODE_NCSETOPTIMIZETABLEWRITES,		false,				_ICAT_GENERIC,		&colorSynHi_logical,		true,						null0,		null0 },
+		{ cgc_ncset_optimizevariables,		17,		false,	_ICODE_NCSETOPTIMIZEVARIABLES,			false,				_ICAT_GENERIC,		&colorSynHi_logical,		true,						null0,		null0 },
+		{ cgc_ncset_signsign2,				9,		false,	_ICODE_NCSETSIGNSIGN2,					false,				_ICAT_GENERIC,		&colorSynHi_logical,		true,						null0,		null0 },
+
 		// VXB specific
 		{ cgc__screen,				7,			false,		_ICODE_SCREEN,							false,				_ICAT_GENERIC,		&colorSynHi_variable,		true,						null0,		null0 },
 		{ cgc__vjr,					4,			false,		_ICODE_VJR,								false,				_ICAT_GENERIC,		&colorSynHi_variable,		true,						null0,		null0 },

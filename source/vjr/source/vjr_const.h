@@ -272,6 +272,7 @@ typedef SEM**		SEMpp;
 	#define propSet_settings_ncset_fromBool(obj, index, value)		iObjProp_set_logical_direct		(thisCode, obj, index, value)
 	#define propGet_settings_ncset_alphaIsOpaque(obj)				propGet_settings_ncset(obj, _INDEX_SET_NCSET_ALPHA_IS_OPAQUE)
 	#define propGet_settings_ncset_ceilingFloor(obj)				propGet_settings_ncset(obj, _INDEX_SET_NCSET_CEILING_FLOOR)
+	#define propGet_settings_ncset_datetimeMilliseconds(obj)		propGet_settings_ncset(obj, _INDEX_SET_NCSET_DATETIME_MILLISECONDS)
 	#define propGet_settings_ncset_optimizeTableWrites(obj)			propGet_settings_ncset(obj, _INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES)
 	#define propGet_settings_ncset_optimizeVariables(obj)			propGet_settings_ncset(obj, _INDEX_SET_NCSET_OPTIMIZE_VARIABLES)
 	#define propGet_settings_ncset_signSign2(obj)					propGet_settings_ncset(obj, _INDEX_SET_NCSET_SIGN_SIGN2)
@@ -896,9 +897,10 @@ typedef SEM**		SEMpp;
 /////
 	const u32			_NCSET_SIGN_SIGN2					= 1;
 	const u32			_NCSET_CEILING_FLOOR				= 2;
-	const u32			_NCSET_RGBA_ALPHA_IS_OPAQUE			= 3;
-	const u32			_NCSET_OPTIMIZE_TABLE_WRITES		= 4;
-	const u32			_NCSET_OPTIMIZE_VARIABLES			= 5;
+	const u32			_NCSET_OPTIMIZE_TABLE_WRITES		= 3;
+	const u32			_NCSET_OPTIMIZE_VARIABLES			= 4;
+	const u32			_NCSET_RGBA_ALPHA_IS_OPAQUE			= 5;
+	const u32			_NCSET_DATETIME_MILLISECONDS		= 6;
 
 
 //////////

@@ -475,6 +475,7 @@ struct SBasePropMap;
 	const s8		cgc_setNamingConvention[]								= "namingConvention";
 	const s8		cgc_setNcsetAlphaIsOpaque[]								= "ncsetAlphaIsOpaque";
 	const s8		cgc_setNcsetCeilingFloor[]								= "ncsetCeilingFloor";
+	const s8		cgc_setNcsetDatetimeMilliseconds[]						= "ncsetDatetimeMilliseconds";
 	const s8		cgc_setNcsetOptimizeTableWrites[]						= "ncsetOptimizeTableWrites";
 	const s8		cgc_setNcsetOptimizeVariables[]							= "ncsetOptimizeVariables";
 	const s8		cgc_setNcsetSignSign2[]									= "ncsetSignSign2";
@@ -869,26 +870,29 @@ struct SBasePropMap;
 	const u32		_INDEX_SET_LOCK_SCREEN									= 369;
 	const u32		_INDEX_SET_LOGICAL										= 370;
 	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 371;
+	const u32									_INDEX_SET_NCSET_START	= 372;
 	const u32		_INDEX_SET_NCSET_ALPHA_IS_OPAQUE						= 372;
 	const u32		_INDEX_SET_NCSET_CEILING_FLOOR							= 373;
-	const u32		_INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES					= 374;
-	const u32		_INDEX_SET_NCSET_OPTIMIZE_VARIABLES						= 375;
-	const u32		_INDEX_SET_NCSET_SIGN_SIGN2								= 376;
-	const u32		_INDEX_SET_POINT										= 377;
-	const u32		_INDEX_SET_REPROCESS									= 378;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 379;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
-	const u32		_INDEX_SET_REPROCESSINTERVAL							= 380;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
-	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 381;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_SEPARATOR									= 382;
-	const u32		_INDEX_SET_SLOPPY_PRINTING								= 383;
-	const u32		_INDEX_SET_STICKY_PARAMETERS							= 384;
-	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 385;
-	const u32		_INDEX_SET_TABLE_OBJECTS								= 386;
-	const u32		_INDEX_SET_TALK											= 387;
-	const u32		_INDEX_SET_TIME											= 388;
-	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 389;
-	const u32		_INDEX_SET_VARIABLES_FIRST								= 390;
-	const u32		_INDEX_SET_VECSEPARATOR									= 391;
+	const u32		_INDEX_SET_NCSET_DATETIME_MILLISECONDS					= 374;
+	const u32		_INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES					= 375;
+	const u32		_INDEX_SET_NCSET_OPTIMIZE_VARIABLES						= 376;
+	const u32		_INDEX_SET_NCSET_SIGN_SIGN2								= 377;
+	const u32									_INDEX_SET_NCSET_END	= 377;
+	const u32		_INDEX_SET_POINT										= 378;
+	const u32		_INDEX_SET_REPROCESS									= 379;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 380;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
+	const u32		_INDEX_SET_REPROCESSINTERVAL							= 381;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
+	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 382;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_SEPARATOR									= 383;
+	const u32		_INDEX_SET_SLOPPY_PRINTING								= 384;
+	const u32		_INDEX_SET_STICKY_PARAMETERS							= 385;
+	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 386;
+	const u32		_INDEX_SET_TABLE_OBJECTS								= 387;
+	const u32		_INDEX_SET_TALK											= 388;
+	const u32		_INDEX_SET_TIME											= 389;
+	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 390;
+	const u32		_INDEX_SET_VARIABLES_FIRST								= 391;
+	const u32		_INDEX_SET_VECSEPARATOR									= 392;
 
 
 
@@ -1413,6 +1417,7 @@ struct SBasePropMap;
 		{	_INDEX_SET_NAMING_CONVENTIONS,					_ICODE_NAMINGCONVENTIONS,			cgc_setNamingConvention,			sizeof(cgc_setNamingConvention) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=Field and variables are examined for standard naming conventions with errors reported, .f.=no checks are made
 		{	_INDEX_SET_NCSET_ALPHA_IS_OPAQUE,				_ICODE_NCSETALPHAISOPAQUE,			cgc_setNcsetAlphaIsOpaque,			sizeof(cgc_setNcsetAlphaIsOpaque) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=alpha channel color in rgb() and bgr() is opaque (255), .f.=alpha channel is transparent (0)
 		{	_INDEX_SET_NCSET_CEILING_FLOOR,					_ICODE_NCSETCEILINGFLOOR,			cgc_setNcsetCeilingFloor,			sizeof(cgc_setNcsetCeilingFloor) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=ceiling() and floor() return floating point values if floating point input, .f.=always returns integer
+		{	_INDEX_SET_NCSET_DATETIME_MILLISECONDS,			_ICODE_NCSETDATETIMEMILLISECONDS,	cgc_setNcsetDatetimeMilliseconds,	sizeof(cgc_setNcsetDatetimeMilliseconds) - 1,		_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=datetime() includes milliseconds, .f.=milliseconds is not included
 		{	_INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES,			_ICODE_NCSETOPTIMIZETABLEWRITES,	cgc_setNcsetOptimizeTableWrites,	sizeof(cgc_setNcsetOptimizeTableWrites) - 1,		_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=field update content is examined before writing out, and if it hasn't changed it is not written, .f.=any content updated, even identical content as before, is always written
 		{	_INDEX_SET_NCSET_OPTIMIZE_VARIABLES,			_ICODE_NCSETOPTIMIZEVARIABLES,		cgc_setNcsetOptimizeVariables,		sizeof(cgc_setNcsetOptimizeVariables) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=oft-used variables are moved to the top of the linked list, .f.=variables always persist in their "as defined" order
 		{	_INDEX_SET_NCSET_SIGN_SIGN2,					_ICODE_NCSETSIGNSIGN2,				cgc_setNcsetSignSign2,				sizeof(cgc_setNcsetSignSign2) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=sign() and sign2() return floating point values if floating point input, .f.=always returns integer
@@ -3640,6 +3645,7 @@ struct SBasePropMap;
 		{	_INDEX_SET_NAMING_CONVENTIONS,				0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
 		{	_INDEX_SET_NCSET_ALPHA_IS_OPAQUE,			0, (uptr)&iObjProp_setLogical,		(uptr)&iObjProp_getLogical },	// bool
 		{	_INDEX_SET_NCSET_CEILING_FLOOR,				0, (uptr)&iObjProp_setLogical,		(uptr)&iObjProp_getLogical },	// bool
+		{	_INDEX_SET_NCSET_DATETIME_MILLISECONDS,		0, (uptr)&iObjProp_setLogical,		(uptr)&iObjProp_getLogical },	// bool
 		{	_INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES,		0, (uptr)&iObjProp_setLogical,		(uptr)&iObjProp_getLogical },	// bool
 		{	_INDEX_SET_NCSET_OPTIMIZE_VARIABLES,		0, (uptr)&iObjProp_setLogical,		(uptr)&iObjProp_getLogical },	// bool
 		{	_INDEX_SET_NCSET_SIGN_SIGN2,				0, (uptr)&iObjProp_setLogical,		(uptr)&iObjProp_getLogical },	// bool

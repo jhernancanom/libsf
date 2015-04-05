@@ -1195,6 +1195,7 @@
 	const s32		_ICODE_NAMINGCONVENTIONS						= 2306;
 	const s32		_ICODE_NCSETALPHAISOPAQUE						= 2325;
 	const s32		_ICODE_NCSETCEILINGFLOOR						= 2307;
+	const s32		_ICODE_NCSETDATETIMEMILLISECONDS				= 2337;
 	const s32		_ICODE_NCSETOPTIMIZETABLEWRITES					= 2326;
 	const s32		_ICODE_NCSETOPTIMIZEVARIABLES					= 2328;
 	const s32		_ICODE_NCSETSIGNSIGN2							= 2308;
@@ -1355,7 +1356,7 @@
 	// UD					= 2330			YN						= 2331
 	// LONG					= 2332			SHORT					= 2333
 	// vecseparator			= 2334			visualize				= 2335
-	// journal				= 2336
+	// journal				= 2336			NCSETDATETIMEMILLISECONDS = 2337
 
 
 //////////
@@ -2255,6 +2256,14 @@
 	const s8		cgc_x_dots[]									= ".x.";
 	const s8		cgc_y_dots[]									= ".y.";
 	const s8		cgc_z_dots[]									= ".z.";
+
+	// NCSET() specific
+	const s8		cgc_ncset_alphaisopaque[]						= "alphaIsOpaque";
+	const s8		cgc_ncset_ceilingfloor[]						= "ceilingfloor";
+	const s8		cgc_ncset_datetimemilliseconds[]				= "datetimemilliseconds";
+	const s8		cgc_ncset_optimizetablewrites[]					= "optimizetablewrites";
+	const s8		cgc_ncset_optimizevariables[]					= "optimizevariables";
+	const s8		cgc_ncset_signsign2[]							= "signsign2";
 
 	// VXB specific
 	const s8		cgc__screen[]									= "_screen";
