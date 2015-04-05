@@ -8593,7 +8593,7 @@
 			for (lnIndex = _INDEX_SET_FIRST_ITEM; gsProps_master[lnIndex].index != 0; lnIndex++)
 			{
 				// Does this setting name match?
-				if (gsProps_master[lnIndex].propLength == varIdentifier->value.length && _memicmp(gsProps_master[lnIndex].propName_s8, varIdentifier->value.data_s8, varIdentifier->value.length) == 0)
+				if (gsProps_master[lnIndex].propNameLength == varIdentifier->value.length && _memicmp(gsProps_master[lnIndex].propName_s8, varIdentifier->value.data_s8, varIdentifier->value.length) == 0)
 				{
 
 					//////////
@@ -10017,6 +10017,39 @@ debug_break;
 		//////
 			return(result);
 	}
+
+
+
+
+//////////
+//
+// Function: TYPEDETAIL()
+// Returns the detailed TYPE() information.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.05.2015
+//////
+// Change log:
+//     Apr.05.2015 - Initial creation
+//////
+// Parameters:
+//     p1			-- The variable to examine
+//
+//////
+// Returns:
+//    Character		-- The expanded detail type string
+//////
+	SVariable* function_typedetail(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* var = returnsParams->params[0];
+
+
+		// Return the typedetail
+		return(iVariable_get_typeDetail(thisCode, var));
+	}
+
 
 
 

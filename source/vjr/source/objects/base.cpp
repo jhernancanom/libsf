@@ -1998,10 +1998,12 @@
 				// Success
 				*error		= false;
 				*errorNum	= 0;
-				return(bxml);
+
+			} else {
+				// An error writing the output
+				*error		= true;
+				*errorNum	= _ERROR_UNABLE_TO_SAVE;
 			}
-			*error		= true;
-			*errorNum	= _ERROR_UNABLE_TO_SAVE;
 			return(bxml);
 	}
 
@@ -2015,9 +2017,14 @@
 //////
 	CXml* iiObj_saveLayoutAs_bxml_saveObject(SThisCode* thisCode, CXml* bxml, SObject* obj, bool tlFullProperties, bool tlSaveChildren, bool tlSaveSiblings)
 	{
-		CXmlp		bxmlObj;
-		SVariable*	varName;
-		s8			buffer[64];
+		s32				lnI;
+		SBaseClassMap*	baseClassMap;
+		SBasePropMap*	basePropMap;
+		SObjPropMap*	thisObjProp;
+		CXmlp			bxmlObj, bxmlP, bxmlProps, bxmlProp;
+		SVariable*		varData;
+		SVariable*		varTypeDetail;
+		s8				buffer[64];
 
 
 		// Make sure there's an object
@@ -2028,35 +2035,118 @@
 			// Create the child for this object
 			//	<object name="whatever">
 			//////
-				varName = propName(obj);
-				bxmlObj = bxml->append_child(new CXml((s8*)cgcTag_object, NULL, 0, (s8*)cgcTag_name, varName->value.data, varName->value.length));
+				varData		= propName(obj);
+				bxmlObj	= bxml->append_child(new CXml((s8*)cgcTag_object, -1, NULL, 0, (s8*)cgcTag_name, varData->value.data, varData->value.length));
 			
 
 			//////////
 			// Append the standard properties
 			//////
+				bxmlP	= bxmlObj->append_child(new CXml((s8*)cgcTag_p));
 				// X
 				sprintf(buffer, "%d\0", propX(obj));
-				bxmlObj->append_child(new CXml((s8*)cgcTag_p, NULL, 0, (s8*)cgcTag_x, buffer, -1));
+				bxmlP->append_attribute(new CXml((s8*)cgcTag_x, -1, buffer, -1, NULL, NULL, 0));
 
 				// Y
 				sprintf(buffer, "%d\0", propY(obj));
-				bxmlObj->append_child(new CXml((s8*)cgcTag_p, NULL, 0, (s8*)cgcTag_y, buffer, -1));
+				bxmlP->append_attribute(new CXml((s8*)cgcTag_y, -1, buffer, -1, NULL, NULL, 0));
 
 				// Width
 				sprintf(buffer, "%d\0", propWidth(obj));
-				bxmlObj->append_child(new CXml((s8*)cgcTag_p, NULL, 0, (s8*)cgcTag_w, buffer, -1));
+				bxmlP->append_attribute(new CXml((s8*)cgcTag_w, -1, buffer, -1, NULL, NULL, 0));
 
 				// Height
 				sprintf(buffer, "%d\0", propHeight(obj));
-				bxmlObj->append_child(new CXml((s8*)cgcTag_p, NULL, 0, (s8*)cgcTag_h, buffer, -1));
+				bxmlP->append_attribute(new CXml((s8*)cgcTag_h, -1, buffer, -1, NULL, NULL, 0));
 
 				// Class
+				varData = propClass(obj);
+				bxmlP->append_attribute(new CXml((s8*)cgcTag_class, -1, varData->value.data, varData->value.length, NULL, NULL, 0));
 
 				// Baseclass
+				varData = propBaseclass(obj);
+				bxmlP->append_attribute(new CXml((s8*)cgcTag_baseclass, -1, varData->value.data, varData->value.length, NULL, NULL, 0));
 
-				// Classlib
+				// ClassLibrary
+				varData = propClassLibrary(obj);
+				bxmlP->append_attribute(new CXml((s8*)cgcTag_classLibrary, -1, varData->value.data, varData->value.length, NULL, NULL, 0));
 
+
+			//////////
+			// Append object properties if specified
+			//////
+				if (tlFullProperties)
+				{
+					// Locate the base class
+// TODO:  We could add a speedup here by storing the baseClassMap location in the object itself at the time of creation
+					baseClassMap = iiObj_getBaseclass_byType(thisCode, obj->objType);
+					if (baseClassMap)
+					{
+						// Create the props tag
+						bxmlProps = bxmlObj->append_child(new CXml((s8*)cgcTag_props));
+
+						// Locate the property within the object's properties
+						thisObjProp = baseClassMap->objProps;
+						for (lnI = 0; lnI < baseClassMap->objPropsCount; lnI++)
+						{
+							switch (lnI)
+							{
+								case _INDEX_BASECLASS:
+								case _INDEX_CLASS:
+								case _INDEX_CLASSLIBRARY:
+								case _INDEX_NAME:
+									// Already recorded above
+									break;
+
+								default:
+									//////////
+									//	<props>
+									//		<prop>
+									//////
+										bxmlProp = bxmlProps->append_child(new CXml((s8*)cgcTag_prop));
+
+
+									//////////
+									// Grab a pointer to the master prop
+									//////
+										basePropMap	= &gsProps_master[thisObjProp[lnI].index - 1];
+
+
+									//////////
+									// Get the current property in a display-as-text form
+									//////
+										varData	= iVariable_convertForDisplay(thisCode, iObjProp_get(thisCode, obj, lnI));
+										varTypeDetail = iVariable_get_typeDetail(thisCode, varData);
+
+
+									//////////
+									//	<prop name="..." td="..." val="..."/>
+									//////
+										bxmlProp->append_attribute((s8*)cgcTag_name,			sizeof(cgcTag_name) - 1,			(s8*)basePropMap->propName_s8,		basePropMap->propNameLength);
+										bxmlProp->append_attribute((s8*)cgcTag_typeDetail,		sizeof(cgcTag_typeDetail) - 1,		varTypeDetail->value.data,			varTypeDetail->value.length);
+										bxmlProp->append_attribute((s8*)cgcTag_value,			sizeof(cgcTag_value) - 1,			varData->value.data,				varData->value.length);
+
+
+									//////////
+									// Delete the variables
+									//////
+										iVariable_delete(thisCode, varData,			true);
+										iVariable_delete(thisCode, varTypeDetail,	true);
+										break;
+							}
+
+							;
+							&thisObjProp[lnI];
+						}
+						// If we get here, not found
+					}
+
+// This should never happen.
+// If it does it's a design-time error.  Search the call stack to determine which _INDEX_* variable was referenced.
+debug_break;
+					// Invalid
+					return(NULL);
+				}
 		}
 
 		// Return our input
@@ -3077,7 +3167,7 @@
 				while (lpm && gsProps_master[lpm->index].propName_u8)
 				{
 					// Is this the name?
-					if (gsProps_master[lpm->index].propLength == tnPropertyNameLength && _memicmp(tcPropertyName, gsProps_master[lpm->index].propName_u8, tnPropertyNameLength) == 0)
+					if (gsProps_master[lpm->index].propNameLength == tnPropertyNameLength && _memicmp(tcPropertyName, gsProps_master[lpm->index].propName_u8, tnPropertyNameLength) == 0)
 						return(iVariable_copy(thisCode, obj->props[lpm->index], tlCreateAsReference));
 
 					// Move to next property
@@ -3232,7 +3322,7 @@
 if (!obj->props[lnI])
 	debug_break;
 					// Set its name
-					iVariable_setName(thisCode, obj->props[lnI], gsProps_master[lnIndex - 1].propName_u8, gsProps_master[lnIndex - 1].propLength);
+					iVariable_setName(thisCode, obj->props[lnI], gsProps_master[lnIndex - 1].propName_u8, gsProps_master[lnIndex - 1].propNameLength);
 
 
 				//////////

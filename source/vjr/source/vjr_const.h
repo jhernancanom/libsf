@@ -210,8 +210,11 @@ typedef SEM**		SEMpp;
 	#define propAlignment(obj)							iObjProp_get_s32_direct			(thisCode, obj, _INDEX_ALIGNMENT)
 	#define propBackColor(obj)							iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_BACKCOLOR)
 	#define propBackStyle(obj)							iObjProp_get_s32_direct			(thisCode, obj, _INDEX_BACKSTYLE)
+	#define propBaseclass(obj)							iObjProp_get_character			(thisCode, obj, _INDEX_BASECLASS);
 	#define propBorderColor(obj)						iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_BORDERCOLOR)
 	#define propBorderStyle(obj)						iObjProp_get_s32_direct			(thisCode, obj, _INDEX_BORDERSTYLE)
+	#define propClass(obj)								iObjProp_get_character			(thisCode, obj, _INDEX_CLASS);
+	#define propClassLibrary(obj)						iObjProp_get_character			(thisCode, obj, _INDEX_CLASSLIBRARY);
 	#define propForeColor(obj)							iObjProp_get_sbgra_direct		(thisCode, obj, _INDEX_FORECOLOR)
 	#define propMargin(obj)								iObjProp_get_s32_direct			(thisCode, obj, _INDEX_MARGIN)
 	#define propName(obj)								iObjProp_get_character			(thisCode, obj, _INDEX_NAME);
@@ -746,6 +749,7 @@ typedef SEM**		SEMpp;
 	const u32			_STRICT_DATE_LOOSE					= 0;
 	const u32			_STRICT_DATE_STRICT					= 1;
 
+
 //////////
 // Common date functions constants
 //////
@@ -753,17 +757,14 @@ typedef SEM**		SEMpp;
 	const u32			_DMY_COMMON_MONTH					= 1;
 	const u32			_DMY_COMMON_YEAR					= 2;
 
+
 //////////
-// Days of week
+// Days of week, months of year
 //////
 	// These can be altered if/when languages are changed
 	s8*					cgcDayOfWeekNames[7]						= { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
-
-//////////
-// Month names
-//////
-	// These can be altered if/when languages are changed
 	s8*					cgcMonthNames[12]							= { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+
 
 //////////
 // Stretch mode
@@ -1043,9 +1044,15 @@ typedef SEM**		SEMpp;
 	const s8			cgcTag_horizontal[]					= "horizontal";
 	const s8			cgcTag_layout[]						= "layout";
 	const s8			cgcTag_name[]						= "name";
-	const s8			cgcTag_object[]						= "object";
+	const s8			cgcTag_value[]						= "val";
+	const s8			cgcTag_typeDetail[]					= "td";
+	const s8			cgcTag_object[]						= "obj";
+	const s8			cgcTag_baseclass[]					= "bc";
+	const s8			cgcTag_class[]						= "c";
+	const s8			cgcTag_classLibrary[]				= "cl";
 	const s8			cgcTag_p[]							= "p";			// Fixed properties
-	const s8			cgcTag_prop[]						= "prop";		// Class properties
+	const s8			cgcTag_props[]						= "props";		// Class properties container
+	const s8			cgcTag_prop[]						= "prop";		// Class property
 	const s8			cgcTag_h[]							= "h";			// Height
 	const s8			cgcTag_x[]							= "x";			// X
 	const s8			cgcTag_y[]							= "y";			// Y

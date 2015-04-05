@@ -990,7 +990,7 @@ struct SBasePropMap;
 		};
 
 		// Length of the property name
-		u32			propLength;
+		u32			propNameLength;
 
 		// Default variable type
 		s32			varType;
@@ -3675,47 +3675,47 @@ struct SBasePropMap;
 // Baseclass translation text name to objType, and objType to full record
 //////
 	SBaseClassMap gsKnownBaseclasses[] = {
-		//	objType					Text name				Length of name						Base object property list
-		//	------------------		-----------------		-------------------------------		-------------------------------
-		{	_OBJ_TYPE_EMPTY,		cgcName_empty,			sizeof(cgcName_empty)		- 1,	(uptr)&gsProps_empty[0]			},
-		{	_OBJ_TYPE_FORM,			cgcName_form,			sizeof(cgcName_form)		- 1,	(uptr)&gsProps_form[0]			},
-		{	_OBJ_TYPE_SUBFORM,		cgcName_subform,		sizeof(cgcName_subform)		- 1,	(uptr)&gsProps_subform[0]		},
-		{	_OBJ_TYPE_CAROUSEL,		cgcName_carousel,		sizeof(cgcName_carousel)	- 1,	(uptr)&gsProps_carousel[0]		},
-		{	_OBJ_TYPE_RIDER,		cgcName_rider,			sizeof(cgcName_rider)		- 1,	(uptr)&gsProps_rider[0]			},
-		{	_OBJ_TYPE_LABEL,		cgcName_label,			sizeof(cgcName_label)		- 1,	(uptr)&gsProps_label[0]			},
-		{	_OBJ_TYPE_TEXTBOX,		cgcName_textbox,		sizeof(cgcName_textbox)		- 1,	(uptr)&gsProps_textbox[0]		},
-		{	_OBJ_TYPE_BUTTON,		cgcName_button,			sizeof(cgcName_button)		- 1,	(uptr)&gsProps_button[0]		},
-		{	_OBJ_TYPE_EDITBOX,		cgcName_editbox,		sizeof(cgcName_editbox)		- 1,	(uptr)&gsProps_editbox[0]		},
-		{	_OBJ_TYPE_IMAGE,		cgcName_image,			sizeof(cgcName_image)		- 1,	(uptr)&gsProps_image[0]			},
-		{	_OBJ_TYPE_CHECKBOX,		cgcName_checkbox,		sizeof(cgcName_checkbox)	- 1,	(uptr)&gsProps_checkbox[0]		},
-		{	_OBJ_TYPE_OPTION,		cgcName_option,			sizeof(cgcName_option)		- 1,	(uptr)&gsProps_option[0]		},
-		{	_OBJ_TYPE_RADIO,		cgcName_radio,			sizeof(cgcName_radio)		- 1,	(uptr)&gsProps_radio[0]			},
-		{	_OBJ_TYPE_CMDGROUP,		cgcName_cmdgroup,		sizeof(cgcName_cmdgroup)	- 1,	(uptr)&gsProps_cmdgroup[0]		},
-		{	_OBJ_TYPE_OPTGROUP,		cgcName_optgroup,		sizeof(cgcName_optgroup)	- 1,	(uptr)&gsProps_optgroup[0]		},
-		{	_OBJ_TYPE_LISTBOX,		cgcName_listbox,		sizeof(cgcName_listbox)		- 1,	(uptr)&gsProps_listbox[0]		},
-		{	_OBJ_TYPE_COMBOBOX,		cgcName_combobox,		sizeof(cgcName_combobox)	- 1,	(uptr)&gsProps_combobox[0]		},
-		{	_OBJ_TYPE_FORMSET,		cgcName_formset,		sizeof(cgcName_formset)		- 1,	(uptr)&gsProps_formset[0]		},
-		{	_OBJ_TYPE_TOOLBAR,		cgcName_toolbar,		sizeof(cgcName_toolbar)		- 1,	(uptr)&gsProps_toolbar[0]		},
-		{	_OBJ_TYPE_SEPARATOR,	cgcName_separator,		sizeof(cgcName_separator)	- 1,	(uptr)&gsProps_separator[0]		},
-		{	_OBJ_TYPE_LINE,			cgcName_line,			sizeof(cgcName_line)		- 1,	(uptr)&gsProps_line[0]			},
-		{	_OBJ_TYPE_SHAPE,		cgcName_shape,			sizeof(cgcName_shape)		- 1,	(uptr)&gsProps_shape[0]			},
-		{	_OBJ_TYPE_CONTAINER,	cgcName_container,		sizeof(cgcName_container)	- 1,	(uptr)&gsProps_container[0]		},
-		{	_OBJ_TYPE_CONTROL,		cgcName_control,		sizeof(cgcName_control)		- 1,	(uptr)&gsProps_control[0]		},
-		{	_OBJ_TYPE_GRID,			cgcName_grid,			sizeof(cgcName_grid)		- 1,	(uptr)&gsProps_grid[0]			},
-		{	_OBJ_TYPE_COLUMN,		cgcName_column,			sizeof(cgcName_column)		- 1,	(uptr)&gsProps_column[0]		},
-		{	_OBJ_TYPE_HEADER,		cgcName_header,			sizeof(cgcName_header)		- 1,	(uptr)&gsProps_header[0]		},
-		{	_OBJ_TYPE_OLEBOUND,		cgcName_olebound,		sizeof(cgcName_olebound)	- 1,	(uptr)&gsProps_olebound[0]		},
-		{	_OBJ_TYPE_OLECONTAIN,	cgcName_olecontain,		sizeof(cgcName_olecontain)	- 1,	(uptr)&gsProps_olecontain[0]	},
-		{	_OBJ_TYPE_SPINNER,		cgcName_spinner,		sizeof(cgcName_spinner)		- 1,	(uptr)&gsProps_spinner[0]		},
-		{	_OBJ_TYPE_TIMER,		cgcName_timer,			sizeof(cgcName_timer)		- 1,	(uptr)&gsProps_timer[0]			},
-		{	_OBJ_TYPE_HYPERLINK,	cgcName_hyperlink,		sizeof(cgcName_hyperlink)	- 1,	(uptr)&gsProps_hyperlink[0]		},
-		{	_OBJ_TYPE_COLLECTION,	cgcName_collection,		sizeof(cgcName_collection)	- 1,	(uptr)&gsProps_collection[0]	},
-		{	_OBJ_TYPE_PAGE,			cgcName_page,			sizeof(cgcName_page)		- 1,	(uptr)&gsProps_page[0]			},
-		{	_OBJ_TYPE_PAGEFRAME,	cgcName_pageframe,		sizeof(cgcName_pageframe)	- 1,	(uptr)&gsProps_pageframe[0]		},
-		{	_OBJ_TYPE_SESSION,		cgcName_session,		sizeof(cgcName_session)		- 1,	(uptr)&gsProps_session[0]		},
-		{	_OBJ_TYPE_CUSTOM,		cgcName_custom,			sizeof(cgcName_custom)		- 1,	(uptr)&gsProps_custom[0]		},
-		{	_OBJ_TYPE_EXCEPTION,	cgcName_exception,		sizeof(cgcName_exception)	- 1,	(uptr)&gsProps_exception[0]		},
-		{	_OBJ_TYPE_SETTINGS,		cgcName_settings,		sizeof(cgcName_settings)	- 1,	(uptr)&gsProps_settings[0]		},
+		//	objType					Text name				Length of name						Base object property list			Number of properties defined
+		//	------------------		-----------------		-------------------------------		-------------------------------		----------------------------
+		{	_OBJ_TYPE_EMPTY,		cgcName_empty,			sizeof(cgcName_empty)		- 1,	(uptr)&gsProps_empty[0],			gnProps_emptySize				},
+		{	_OBJ_TYPE_FORM,			cgcName_form,			sizeof(cgcName_form)		- 1,	(uptr)&gsProps_form[0],				gnProps_formSize				},
+		{	_OBJ_TYPE_SUBFORM,		cgcName_subform,		sizeof(cgcName_subform)		- 1,	(uptr)&gsProps_subform[0],			gnProps_subformSize				},
+		{	_OBJ_TYPE_CAROUSEL,		cgcName_carousel,		sizeof(cgcName_carousel)	- 1,	(uptr)&gsProps_carousel[0],			gnProps_carouselSize			},
+		{	_OBJ_TYPE_RIDER,		cgcName_rider,			sizeof(cgcName_rider)		- 1,	(uptr)&gsProps_rider[0],			gnProps_riderSize				},
+		{	_OBJ_TYPE_LABEL,		cgcName_label,			sizeof(cgcName_label)		- 1,	(uptr)&gsProps_label[0],			gnProps_labelSize				},
+		{	_OBJ_TYPE_TEXTBOX,		cgcName_textbox,		sizeof(cgcName_textbox)		- 1,	(uptr)&gsProps_textbox[0],			gnProps_textboxSize				},
+		{	_OBJ_TYPE_BUTTON,		cgcName_button,			sizeof(cgcName_button)		- 1,	(uptr)&gsProps_button[0],			gnProps_buttonSize				},
+		{	_OBJ_TYPE_EDITBOX,		cgcName_editbox,		sizeof(cgcName_editbox)		- 1,	(uptr)&gsProps_editbox[0],			gnProps_editboxSize				},
+		{	_OBJ_TYPE_IMAGE,		cgcName_image,			sizeof(cgcName_image)		- 1,	(uptr)&gsProps_image[0],			gnProps_imageSize				},
+		{	_OBJ_TYPE_CHECKBOX,		cgcName_checkbox,		sizeof(cgcName_checkbox)	- 1,	(uptr)&gsProps_checkbox[0],			gnProps_checkboxSize			},
+		{	_OBJ_TYPE_OPTION,		cgcName_option,			sizeof(cgcName_option)		- 1,	(uptr)&gsProps_option[0],			gnProps_optionSize				},
+		{	_OBJ_TYPE_RADIO,		cgcName_radio,			sizeof(cgcName_radio)		- 1,	(uptr)&gsProps_radio[0],			gnProps_radioSize				},
+		{	_OBJ_TYPE_CMDGROUP,		cgcName_cmdgroup,		sizeof(cgcName_cmdgroup)	- 1,	(uptr)&gsProps_cmdgroup[0],			gnProps_cmdgroupSize			},
+		{	_OBJ_TYPE_OPTGROUP,		cgcName_optgroup,		sizeof(cgcName_optgroup)	- 1,	(uptr)&gsProps_optgroup[0],			gnProps_optgroupSize			},
+		{	_OBJ_TYPE_LISTBOX,		cgcName_listbox,		sizeof(cgcName_listbox)		- 1,	(uptr)&gsProps_listbox[0],			gnProps_listboxSize				},
+		{	_OBJ_TYPE_COMBOBOX,		cgcName_combobox,		sizeof(cgcName_combobox)	- 1,	(uptr)&gsProps_combobox[0],			gnProps_comboboxSize			},
+		{	_OBJ_TYPE_FORMSET,		cgcName_formset,		sizeof(cgcName_formset)		- 1,	(uptr)&gsProps_formset[0],			gnProps_formsetSize				},
+		{	_OBJ_TYPE_TOOLBAR,		cgcName_toolbar,		sizeof(cgcName_toolbar)		- 1,	(uptr)&gsProps_toolbar[0],			gnProps_toolbarSize				},
+		{	_OBJ_TYPE_SEPARATOR,	cgcName_separator,		sizeof(cgcName_separator)	- 1,	(uptr)&gsProps_separator[0],		gnProps_separatorSize			},
+		{	_OBJ_TYPE_LINE,			cgcName_line,			sizeof(cgcName_line)		- 1,	(uptr)&gsProps_line[0],				gnProps_lineSize				},
+		{	_OBJ_TYPE_SHAPE,		cgcName_shape,			sizeof(cgcName_shape)		- 1,	(uptr)&gsProps_shape[0],			gnProps_shapeSize				},
+		{	_OBJ_TYPE_CONTAINER,	cgcName_container,		sizeof(cgcName_container)	- 1,	(uptr)&gsProps_container[0],		gnProps_containerSize			},
+		{	_OBJ_TYPE_CONTROL,		cgcName_control,		sizeof(cgcName_control)		- 1,	(uptr)&gsProps_control[0],			gnProps_controlSize				},
+		{	_OBJ_TYPE_GRID,			cgcName_grid,			sizeof(cgcName_grid)		- 1,	(uptr)&gsProps_grid[0],				gnProps_gridSize				},
+		{	_OBJ_TYPE_COLUMN,		cgcName_column,			sizeof(cgcName_column)		- 1,	(uptr)&gsProps_column[0],			gnProps_columnSize				},
+		{	_OBJ_TYPE_HEADER,		cgcName_header,			sizeof(cgcName_header)		- 1,	(uptr)&gsProps_header[0],			gnProps_headerSize				},
+		{	_OBJ_TYPE_OLEBOUND,		cgcName_olebound,		sizeof(cgcName_olebound)	- 1,	(uptr)&gsProps_olebound[0],			gnProps_oleboundSize			},
+		{	_OBJ_TYPE_OLECONTAIN,	cgcName_olecontain,		sizeof(cgcName_olecontain)	- 1,	(uptr)&gsProps_olecontain[0],		gnProps_olecontainSize			},
+		{	_OBJ_TYPE_SPINNER,		cgcName_spinner,		sizeof(cgcName_spinner)		- 1,	(uptr)&gsProps_spinner[0],			gnProps_spinnerSize				},
+		{	_OBJ_TYPE_TIMER,		cgcName_timer,			sizeof(cgcName_timer)		- 1,	(uptr)&gsProps_timer[0],			gnProps_timerSize				},
+		{	_OBJ_TYPE_HYPERLINK,	cgcName_hyperlink,		sizeof(cgcName_hyperlink)	- 1,	(uptr)&gsProps_hyperlink[0],		gnProps_hyperlinkSize			},
+		{	_OBJ_TYPE_COLLECTION,	cgcName_collection,		sizeof(cgcName_collection)	- 1,	(uptr)&gsProps_collection[0],		gnProps_collectionSize			},
+		{	_OBJ_TYPE_PAGE,			cgcName_page,			sizeof(cgcName_page)		- 1,	(uptr)&gsProps_page[0],				gnProps_pageSize				},
+		{	_OBJ_TYPE_PAGEFRAME,	cgcName_pageframe,		sizeof(cgcName_pageframe)	- 1,	(uptr)&gsProps_pageframe[0],		gnProps_pageframeSize			},
+		{	_OBJ_TYPE_SESSION,		cgcName_session,		sizeof(cgcName_session)		- 1,	(uptr)&gsProps_session[0],			gnProps_sessionSize				},
+		{	_OBJ_TYPE_CUSTOM,		cgcName_custom,			sizeof(cgcName_custom)		- 1,	(uptr)&gsProps_custom[0],			gnProps_customSize				},
+		{	_OBJ_TYPE_EXCEPTION,	cgcName_exception,		sizeof(cgcName_exception)	- 1,	(uptr)&gsProps_exception[0],		gnProps_exceptionSize			},
+		{	_OBJ_TYPE_SETTINGS,		cgcName_settings,		sizeof(cgcName_settings)	- 1,	(uptr)&gsProps_settings[0],			gnProps_settingsSize			},
 		// Note:  Do not delete this line, it is used to terminate the search list
 		{	0,						NULL,					0,									0	}
 	};

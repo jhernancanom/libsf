@@ -345,7 +345,7 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 	class CXml
 	{
 	public:
-		CXml(s8* tcTag = NULL, s8* tcData = NULL, u32 tnDataLength = -1, s8* tcAttributeTag = NULL, s8* tcAttributeData = NULL, u32 tnAttributeDataLength = -1) :
+		CXml(s8* tcTag = NULL, u32 tnTagLength = -1, s8* tcData = NULL, u32 tnDataLength = -1, s8* tcAttributeTag = NULL, s8* tcAttributeData = NULL, u32 tnAttributeDataLength = -1) :
 				   m_prev(NULL),
 				   m_parent(NULL),
 				   m_next(NULL),
@@ -364,7 +364,10 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 			if (tcTag)
 			{
 				// Store the tag and the data
-				dNew = new XmlData(tcTag);
+				if (tnTagLength == -1)
+					tnTagLength = strlen(tcTag);
+
+				dNew = new XmlData(tcTag, tnTagLength);
 				set_tag(dNew);
 			}
 
@@ -530,10 +533,7 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 			return(NULL);
 		}
 
-		CXml* append_attribute(const s8* tcTag, const s8* tcData)	{	return(append_attribute((s8*)tcTag, (s8*)tcData));		}
-		CXml* append_attribute(const s8* tcTag, s8* tcData)			{	return(append_attribute((s8*)tcTag,      tcData));		}
-		CXml* append_attribute(s8* tcTag, const s8* tcData)			{	return(append_attribute(     tcTag, (s8*)tcData));		}
-		CXml* append_attribute(s8* tcTag, s8* tcData)
+		CXml* append_attribute(s8* tcTag, u32 tnTagLength, s8* tcData, u32 tnDataLength)
 		{
 			CXml* tNew;
 			CXml* tNext;
@@ -542,7 +542,7 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 			if (this)
 			{
 				// Create the new tag
-				tNew = new CXml(tcTag, tcData);
+				tNew = new CXml(tcTag, tnTagLength, tcData, tnDataLength);
 
 
 				// See where we add it
@@ -570,6 +570,10 @@ class CXml;			// Holds a fully-qualified root XML object (every xml can be a roo
 			}
 			return(NULL);
 		}
+		CXml* append_attribute(const s8* tcTag, const s8* tcData)	{	return(append_attribute((s8*)tcTag, -1, (s8*)tcData, -1));		}
+		CXml* append_attribute(const s8* tcTag, s8* tcData)			{	return(append_attribute((s8*)tcTag, -1,      tcData, -1));		}
+		CXml* append_attribute(s8* tcTag, const s8* tcData)			{	return(append_attribute(     tcTag, -1, (s8*)tcData, -1));		}
+		CXml* append_attribute(s8* tcTag, s8* tcData)				{	return(append_attribute(     tcTag, -1,      tcData, -1));		}
 
 		CXml* append_attribute(XmlData* tcTag, XmlData* tcData)
 		{

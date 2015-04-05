@@ -5432,7 +5432,7 @@ debug_break;
 			if (gsProps_master[lnI].varInit)
 			{
 				// Give it its name
-				iDatum_duplicate(&gsProps_master[lnI].varInit->name, gsProps_master[lnI].propName_u8, gsProps_master[lnI].propLength);
+				iDatum_duplicate(&gsProps_master[lnI].varInit->name, gsProps_master[lnI].propName_u8, gsProps_master[lnI].propNameLength);
 
 				// Populate it
 				switch (gsProps_master[lnI].varType)
@@ -7959,6 +7959,52 @@ debug_break;
 
 		// Indicate our status
 		return(varDisp);
+	}
+
+
+
+
+//////////
+//
+// Returns a unique type code for every variable type.
+//
+//////
+	SVariable* iVariable_get_typeDetail(SThisCode* thisCode, SVariable* var)
+	{
+		SVariable*		result;
+		SVarTypeXlat	xlatLocalData;
+		SVarTypeXlat*	xlat;
+
+
+		//////////
+		// Make sure the environment is sane
+		//////
+			if (var->varType >= _VAR_TYPE_START && var->varType <= _VAR_TYPE_END)
+			{
+				// It's valid, return the associated TYPEDETAIL() code
+				xlat = &gsVarTypeXlat[var->varType];
+
+			} else {
+				// It's invalid
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+
+				// Set it to an unknown type
+				xlat						= &xlatLocalData;
+				xlatLocalData.keyword		= cgc_unknown;
+				xlatLocalData.keywordLength	= sizeof(cgc_unknown) - 1;
+			}
+
+
+		//////////
+		// Create a new variable
+		//////
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, xlat->keyword, xlat->keywordLength, false);
+
+		
+		//////////
+		// Indicate our result
+		//////
+			return(result);
 	}
 
 

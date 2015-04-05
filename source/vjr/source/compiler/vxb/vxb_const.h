@@ -142,64 +142,6 @@
 	const u32		_NODE_LEFT										= 4;
 	const u32		_NODE_RIGHT										= 5;
 
-//////////
-// Fundamental variable types
-//////
-	const u32		_VAR_TYPE_NULL									= 0;
-
-	// Signed
-	const u32						_VAR_TYPE_NUMERIC_START			= 1;
-	const u32						_VAR_TYPE_NUMERIC_INTEGER_START	= 1;
-	const u32						_VAR_TYPE_SIGNED_INTEGER_START	= 1;
-	const u32						_VAR_TYPE_INTEGER_START			= 1;
-	const u32		_VAR_TYPE_S8									= 1;
-	const u32		_VAR_TYPE_S16									= 2;
-	const u32		_VAR_TYPE_S32									= 3;	// Formerly _VAR_TYPE_INTEGER
-	const u32		_VAR_TYPE_S64									= 4;
-	const u32						_VAR_TYPE_SIGNED_INTEGER_END	= 4;
-
-	// Unsigned
-	const u32						_VAR_TYPE_UNSIGNED_INTEGER_START = 5;
-	const u32		_VAR_TYPE_U8									= 5;
-	const u32		_VAR_TYPE_U16									= 6;
-	const u32		_VAR_TYPE_U32									= 7;
-	const u32		_VAR_TYPE_U64									= 8;
-	const u32						_VAR_TYPE_INTEGER_END			= 8;
-	const u32						_VAR_TYPE_UNSIGNED_INTEGER_END	= 8;
-	const u32						_VAR_TYPE_NUMERIC_INTEGER_END	= 8;
-
-	// Floating point
-	const u32				_VAR_TYPE_NUMERIC_FLOATING_POINT_START	= 9;
-	const u32		_VAR_TYPE_NUMERIC								= 9;	// Stored as a character (like "200.50"), but converted to numeric at each reference.
-	const u32		_VAR_TYPE_F32									= 10;	// _VAR_TYPE_SINGLE
-	const u32		_VAR_TYPE_F64									= 11;	// _VAR_TYPE_DOUBLE
-	const u32		_VAR_TYPE_CURRENCY								= 12;	// Stored as an s64 with an implied 4-decimals (divide by 10,000 to get the actual floating point value)
-	const u32						_VAR_TYPE_BIG_NUMBER_START		= 13;
-	const u32		_VAR_TYPE_BFP									= 13;	// Uses the big number library for floating points
-	const u32				_VAR_TYPE_NUMERIC_FLOATING_POINT_END	= 13;
-	const u32		_VAR_TYPE_BI									= 14;	// Uses the big number library for integers
-	const u32						_VAR_TYPE_NUMERIC_END			= 14;
-	const u32						_VAR_TYPE_BIG_NUMBER_END		= 14;
-
-	// Fundamental types
-	const u32		_VAR_TYPE_CHARACTER								= 15;
-	const u32		_VAR_TYPE_UNICODE								= 16;
-	const u32		_VAR_TYPE_DATE									= 17;
-	const u32		_VAR_TYPE_DATETIME								= 18;
-	const u32		_VAR_TYPE_DATETIMEX								= 19;
-	const u32		_VAR_TYPE_LOGICAL								= 20;	// Note:  This includes the logicalx types, but the value stored determines the logicalx setting.
-	const u32		_VAR_TYPE_GUID8									= 21;
-	const u32		_VAR_TYPE_GUID16								= 22;
-	const u32		_VAR_TYPE_FIELD									= 23;
-	const u32		_VAR_TYPE_VECTOR								= 24;	// A vector format of multiple items with symbols between, like an ip4 address comprised of integers, 1.2.3.4, or a version 1.2.3. Support for ip6 hex:hex:hex:hex values will also be supported as vectors.
-	// Extended variable types
-	const u32		_VAR_TYPE_OBJECT								= 100;	// Object reference
-	const u32		_VAR_TYPE_BITMAP								= 200;	// Image reference
-	const u32		_VAR_TYPE_BITMAP_MOVIE							= 201;	// Image sequence reference
-	const u32		_VAR_TYPE_THISCODE								= 300;	// Code reference
-	// Multi-types
-	const u32		_VAR_TYPE_ARRAY									= 9999;	// An array of SVariable* following three 4-byte integers indicating row dimensions.
-
 
 //////////
 // Logical and LogicalX definitions
@@ -918,6 +860,7 @@
 	const s32		_ICODE_TXNLEVEL                                 = 1397;
 	const s32		_ICODE_TXTWIDTH                                 = 1398;
 	const s32		_ICODE_TYPE                                     = 1399;
+	const s32		_ICODE_TYPEDETAIL								= 1481;
 	const s32		_ICODE_UNBINDEVENTS                             = 1400;
 	const s32		_ICODE_UNLOADPARAMS								= 1444;
 	const s32		_ICODE_UNIQUE                                   = 1401;
@@ -984,6 +927,7 @@
 	// bitstr			= 1475				endswith		= 1476
 	// startswith		= 1477				endswithc		= 1478
 	// startswithc		= 1479				outside			= 1480
+	// typedetail		= 1481
 
 // Temporarily added until the processing engine is coded
 	const s32		_ICODE_CONCATENATE								= 1900;
@@ -1846,6 +1790,7 @@
 	const s8		cgc_txnlevel[]									= "txnlevel";
 	const s8		cgc_txtwidth[]									= "txtwidth";
 	const s8		cgc_type[]										= "type";
+	const s8		cgc_typedetail[]								= "typedetail";
 	const s8		cgc_unbindevents[]								= "unbindevents";
 	const s8		cgc_unloadparams[]								= "unloadparams";
 	const s8		cgc_unique[]									= "unique";
@@ -2316,4 +2261,110 @@
 	const s8		cgc_u8[]										= "u8";
 	const s8		cgc_adhoc[]										= "adhoc";
 	const s8		cgc_endadhoc[]									= "endadhoc";
+	const s8		cgc_numeric[]									= "numeric";
+	const s8		cgc_unicode[]									= "unicode";
+	const s8		cgc_datetimex[]									= "datetimex";
+	const s8		cgc_guid8[]										= "guid8";
+	const s8		cgc_guid16[]									= "guid16";
+	const s8		cgc_bitmap[]									= "bitmap";
+	const s8		cgc_bitmap_movie[]								= "bitmapMovie";
+	const s8		cgc_vector[]									= "vector";
+	const s8		cgc_unknown[]									= "unknown";
 
+
+//////////
+// Fundamental variable types
+//////
+	const u32						_VAR_TYPE_START					= 0;
+	const u32		_VAR_TYPE_NULL									= 0;
+
+	// Signed
+	const u32						_VAR_TYPE_NUMERIC_START			= 1;
+	const u32						_VAR_TYPE_NUMERIC_INTEGER_START	= 1;
+	const u32						_VAR_TYPE_SIGNED_INTEGER_START	= 1;
+	const u32						_VAR_TYPE_INTEGER_START			= 1;
+	const u32		_VAR_TYPE_S8									= 1;
+	const u32		_VAR_TYPE_S16									= 2;
+	const u32		_VAR_TYPE_S32									= 3;	// Formerly _VAR_TYPE_INTEGER
+	const u32		_VAR_TYPE_S64									= 4;
+	const u32						_VAR_TYPE_SIGNED_INTEGER_END	= 4;
+
+	// Unsigned
+	const u32						_VAR_TYPE_UNSIGNED_INTEGER_START = 5;
+	const u32		_VAR_TYPE_U8									= 5;
+	const u32		_VAR_TYPE_U16									= 6;
+	const u32		_VAR_TYPE_U32									= 7;
+	const u32		_VAR_TYPE_U64									= 8;
+	const u32						_VAR_TYPE_INTEGER_END			= 8;
+	const u32						_VAR_TYPE_UNSIGNED_INTEGER_END	= 8;
+	const u32						_VAR_TYPE_NUMERIC_INTEGER_END	= 8;
+
+	// Floating point
+	const u32				_VAR_TYPE_NUMERIC_FLOATING_POINT_START	= 9;
+	const u32		_VAR_TYPE_NUMERIC								= 9;	// Stored as a character (like "200.50"), but converted to numeric at each reference.
+	const u32		_VAR_TYPE_F32									= 10;	// _VAR_TYPE_SINGLE
+	const u32		_VAR_TYPE_F64									= 11;	// _VAR_TYPE_DOUBLE
+	const u32		_VAR_TYPE_CURRENCY								= 12;	// Stored as an s64 with an implied 4-decimals (divide by 10,000 to get the actual floating point value)
+	const u32						_VAR_TYPE_BIG_NUMBER_START		= 13;
+	const u32		_VAR_TYPE_BFP									= 13;	// Uses the big number library for floating points
+	const u32				_VAR_TYPE_NUMERIC_FLOATING_POINT_END	= 13;
+	const u32		_VAR_TYPE_BI									= 14;	// Uses the big number library for integers
+	const u32						_VAR_TYPE_NUMERIC_END			= 14;
+	const u32						_VAR_TYPE_BIG_NUMBER_END		= 14;
+
+	// Fundamental types
+	const u32		_VAR_TYPE_CHARACTER								= 15;
+	const u32		_VAR_TYPE_UNICODE								= 16;
+	const u32		_VAR_TYPE_DATE									= 17;
+	const u32		_VAR_TYPE_DATETIME								= 18;
+	const u32		_VAR_TYPE_DATETIMEX								= 19;
+	const u32		_VAR_TYPE_LOGICAL								= 20;	// Note:  This includes the logicalx types, but the value stored determines the logicalx setting.
+	const u32		_VAR_TYPE_GUID8									= 21;
+	const u32		_VAR_TYPE_GUID16								= 22;
+	const u32		_VAR_TYPE_FIELD									= 23;
+	const u32		_VAR_TYPE_VECTOR								= 24;	// A vector format of multiple items with symbols between, like an ip4 address comprised of integers, 1.2.3.4, or a version 1.2.3. Support for ip6 hex:hex:hex:hex values will also be supported as vectors.
+
+	// Extended variable types
+	const u32						_VAR_TYPE_EXTENDED_START		= 25;
+	const u32		_VAR_TYPE_OBJECT								= 26;	// Object reference
+	const u32		_VAR_TYPE_BITMAP								= 27;	// Image reference
+	const u32		_VAR_TYPE_BITMAP_MOVIE							= 28;	// Image sequence reference
+	const u32		_VAR_TYPE_THISCODE								= 29;	// Code reference
+	const u32		_VAR_TYPE_ARRAY									= 30;	// An array of SVariable* following three 4-byte integers indicating row dimensions.
+	const u32						_VAR_TYPE_EXTENDED_END			= 31;
+	const u32						_VAR_TYPE_END					= 31;
+
+
+//////////
+// Translate between variable types, and their corresponding unique variable type codes
+//////
+	SVarTypeXlat	gsVarTypeXlat[] =	 {	{	_VAR_TYPE_NULL,							cgc_null,			sizeof(cgc_null)		 - 1	},
+											{	_VAR_TYPE_S8,							cgc_s8,				sizeof(cgc_s8)			 - 1	},
+											{	_VAR_TYPE_S16,							cgc_s16,			sizeof(cgc_s16)			 - 1	},
+											{	_VAR_TYPE_S32,							cgc_s32,			sizeof(cgc_s32)			 - 1	},
+											{	_VAR_TYPE_S64,							cgc_s64,			sizeof(cgc_s64)			 - 1	},
+											{	_VAR_TYPE_U8,							cgc_u8,				sizeof(cgc_u8)			 - 1	},
+											{	_VAR_TYPE_U16,							cgc_u16,			sizeof(cgc_u16)			 - 1	},
+											{	_VAR_TYPE_U32,							cgc_u32,			sizeof(cgc_u32)			 - 1	},
+											{	_VAR_TYPE_U64,							cgc_u64,			sizeof(cgc_u64)			 - 1	},
+											{	_VAR_TYPE_NUMERIC,						cgc_numeric,		sizeof(cgc_numeric)		 - 1	},
+											{	_VAR_TYPE_F32,							cgc_f32,			sizeof(cgc_f32)			 - 1	},
+											{	_VAR_TYPE_F64,							cgc_f64,			sizeof(cgc_f64)			 - 1	},
+											{	_VAR_TYPE_CURRENCY,						cgc_currency,		sizeof(cgc_currency)	 - 1	},
+											{	_VAR_TYPE_BFP,							cgc_bfp,			sizeof(cgc_bfp)			 - 1	},
+											{	_VAR_TYPE_BI,							cgc_bi,				sizeof(cgc_bi)			 - 1	},
+											{	_VAR_TYPE_CHARACTER,					cgc_character,		sizeof(cgc_character)	 - 1	},
+											{	_VAR_TYPE_UNICODE,						cgc_unicode,		sizeof(cgc_unicode)		 - 1	},
+											{	_VAR_TYPE_DATE,							cgc_date,			sizeof(cgc_date)		 - 1	},
+											{	_VAR_TYPE_DATETIME,						cgc_datetime,		sizeof(cgc_datetime)	 - 1	},
+											{	_VAR_TYPE_DATETIMEX,					cgc_datetimex,		sizeof(cgc_datetimex)	 - 1	},
+											{	_VAR_TYPE_LOGICAL,						cgc_logical,		sizeof(cgc_logical)		 - 1	},
+											{	_VAR_TYPE_GUID8,						cgc_guid8,			sizeof(cgc_guid8)		 - 1	},
+											{	_VAR_TYPE_GUID16,						cgc_guid16,			sizeof(cgc_guid16)		 - 1	},
+											{	_VAR_TYPE_FIELD,						cgc_field,			sizeof(cgc_field)		 - 1	},
+											{	_VAR_TYPE_VECTOR,						cgc_vector,			sizeof(cgc_vector)		 - 1	},
+											{	_VAR_TYPE_OBJECT,						cgc_object,			sizeof(cgc_object)		 - 1	},
+											{	_VAR_TYPE_BITMAP,						cgc_bitmap,			sizeof(cgc_bitmap)		 - 1	},
+											{	_VAR_TYPE_BITMAP_MOVIE,					cgc_bitmap_movie,	sizeof(cgc_bitmap_movie) - 1	},
+											{	_VAR_TYPE_THISCODE,						cgc_thiscode,		sizeof(cgc_thiscode)	 - 1	},
+											{	_VAR_TYPE_ARRAY,						cgc_array,			sizeof(cgc_array)		 - 1	}		};

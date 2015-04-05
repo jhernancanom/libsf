@@ -334,6 +334,14 @@ struct SVariable
 	SEM*		firstAssign;											// Source code executed whenever this variable is assigned
 };
 
+struct SVarTypeXlat
+{
+	s32		varType;													// _VAR_TYPE_* constants
+
+	cs8*	keyword;													// Keyword for each type, such as "s8" or "numeric"
+	u32		keywordLength;												// Length of the keyword
+};
+
 struct SBaseClassMap
 {
 	s32				objType;											// Translation between objType...
@@ -343,9 +351,11 @@ struct SBaseClassMap
 	s32				baseclassNameLength;
 
 	union {
-		uptr				_objProps;
-		SObjPropMap*	objProps;									// Root property map for this object
+		uptr			_objProps;
+		SObjPropMap*	objProps;										// Root property map for this object
 	};
+
+	s32				objPropsCount;										// Number of object properties as defined
 };
 
 struct SAsciiCompSearcher

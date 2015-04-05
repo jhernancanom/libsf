@@ -268,6 +268,7 @@ struct SThisCode;
 	bool					iVariable_set_character						(SThisCode* thisCode, SVariable* var, SDatum* datum);
 	void					iVariable_reset								(SThisCode* thisCode, SVariable* var);
 	SVariable*				iVariable_convertForDisplay					(SThisCode* thisCode, SVariable* var);
+	SVariable*				iVariable_get_typeDetail					(SThisCode* thisCode, SVariable* var);
 	void					iVariable_delete							(SThisCode* thisCode, SVariable* var, bool tlDeleteSelf);
 	void					iVariable_politelyDeleteChain				(SThisCode* thisCode, SVariable** root, bool tlDeleteSelf);
 	void					iVariable_politelyDeleteChain_callback		(SLLCallback* cb);

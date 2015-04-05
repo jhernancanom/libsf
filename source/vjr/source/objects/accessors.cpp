@@ -1864,7 +1864,7 @@ debug_break;
 				// Locate the property within the object's properties
 				thisObjProp = baseClassMap->objProps;
 // TODO:  We could add a speedup by sorting at startup each baseclassList->objProps, and then use a binary search
-				for (lnI = 0; lnI < thisObjProp[lnI].index; lnI++)
+				for (lnI = 0; lnI < baseClassMap->objPropsCount && lnI < thisObjProp[lnI].index; lnI++)
 				{
 					// Is this it?
 					if (thisObjProp[lnI].index == tnIndex)
@@ -1902,8 +1902,8 @@ debug_break;
 	SVariable* iObjProp_get_variable_byName(SThisCode* thisCode, SObject* obj, u8* tcName, u32 tnNameLength, bool tlSearchBaseProps, bool tlSearchClassProps, s32* tnIndex)
 	{
 		s32					lnI, lnIndex;
-		SBaseClassMap*		lbcl;
-		SObjPropMap*		objProps;
+		SBaseClassMap*		baseClassMap;
+		SObjPropMap*		thisObjProp;
 
 
 		// Make sure the environment is sane
@@ -1914,18 +1914,18 @@ debug_break;
 			{
 				// Locate the base class
 // TODO:  We could add a speedup here by storing the lbcl location in the object itself at the time of creation
-				lbcl = iiObj_getBaseclass_byType(thisCode, obj->objType);
-				if (lbcl)
+				baseClassMap = iiObj_getBaseclass_byType(thisCode, obj->objType);
+				if (baseClassMap)
 				{
 					// Locate the property within the object's properties
-					objProps = lbcl->objProps;
-					for (lnI = 0; lnI < objProps[lnI].index; lnI++)
+					thisObjProp = baseClassMap->objProps;
+					for (lnI = 0; lnI < baseClassMap->objPropsCount && lnI < thisObjProp[lnI].index; lnI++)
 					{
 						// Grab this property's index
-						lnIndex = objProps[lnI].index;
+						lnIndex = thisObjProp[lnI].index;
 
 						// Search the name associated with that property
-						if (iTestExactlyEqual(tcName, tnNameLength, gsProps_master[lnIndex - 1].propName_u8, gsProps_master[lnIndex - 1].propLength))
+						if (iTestExactlyEqual(tcName, tnNameLength, gsProps_master[lnIndex - 1].propName_u8, gsProps_master[lnIndex - 1].propNameLength))
 							return(obj->props[lnI]);	// Return the variable associated with this position
 					}
 					// If we get here, not found

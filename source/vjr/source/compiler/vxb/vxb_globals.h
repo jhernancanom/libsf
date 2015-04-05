@@ -650,6 +650,7 @@
 		{ cgc_txnlevel,				8,			false,		_ICODE_TXNLEVEL,						false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_txtwidth,				8,			false,		_ICODE_TXTWIDTH,						false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_type,					4,			false,		_ICODE_TYPE,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
+		{ cgc_typedetail,			10,			false,		_ICODE_TYPEDETAIL,						false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_unbindevents,			12,			false,		_ICODE_UNBINDEVENTS,					false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_unique,				6,			false,		_ICODE_UNIQUE,							false,				_ICAT_FUNCTION,		&colorSynHi_function,		false,						null0,		null0 },
 		{ cgc_unloadparams,			14,			false,		_ICODE_UNLOADPARAMS,					false,				_ICAT_OPTION,		&colorSynHi_flag,			false,						null0,		null0 },

@@ -293,6 +293,7 @@ struct SReturnsParams;
 	SVariable*			function_tan		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function__test								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_transform							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_typedetail							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_upper								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_val		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_vec								(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -474,6 +475,7 @@ struct SReturnsParams;
 		{	_ICODE_ROUND,			1,			(uptr)&function_round,			2,				2,				&gsSourceLight_round[0]			},	// ROUND() by Stefano D'Amico, VJr 0.56, Mar.16.2015
 		{	_ICODE_RTOD,			1,			(uptr)&function_rtod,			1,				1,				&gsSourceLight_rtod[0]			},	// RTOD() by Stefano D'Amico, VJr 0.56, Mar.16.2015
 		{	_ICODE_RTRIM,			1,			(uptr)&function_rtrim,			1,				4,				&gsSourceLight_rtrim[0]			},
+		{	_ICODE_TRIM,			1,			(uptr)&function_rtrim,			1,				4,				&gsSourceLight_rtrim[0]			},
 		{	_ICODE_SET,				1,			(uptr)&function_set,			1,				2,				&gsSourceLight_set[0]			},
 		{	_ICODE_SIGN,			1,			(uptr)&function_sign,			1,				1,				&gsSourceLight_sign[0]			},	// SIGN() by Stefano D'Amico, VJr 0.56, Mar.14.2015
 		{	_ICODE_SIN,				1,			(uptr)&function_sin,			1,				1,				&gsSourceLight_sin[0]			},	// SIN() by Stefano D'Amico, VJr 0.56, Mar.17.2015
@@ -490,7 +492,7 @@ struct SReturnsParams;
 		{	_ICODE_TAN,				1,			(uptr)&function_tan,			1,				1,				&gsSourceLight_tan[0]			},	// TAN() by Stefano D'Amico, VJr 0.56, Mar.19.2015
 		{	_ICODE__TEST,			1,			(uptr)&function__test,			1,				1,				NULL							},
 		{	_ICODE_TRANSFORM,		1,			(uptr)&function_transform,		1,				2,				&gsSourceLight_transform[0]		},
-		{	_ICODE_TRIM,			1,			(uptr)&function_rtrim,			1,				4,				&gsSourceLight_rtrim[0]			},
+		{	_ICODE_TYPEDETAIL,		1,			(uptr)&function_typedetail,		1,				1,				&gsSourceLight_typedetail[0]	},
 		{	_ICODE_UPPER,			1,			(uptr)&function_upper,			1,				1,				&gsSourceLight_upper[0]			},
 		{	_ICODE_VAL,				1,			(uptr)&function_val,			1,				2,				&gsSourceLight_val[0]			}, 	// VAL() by Stefano D'Amico, VJr 0.56, Mar.22.2015
 		{	_ICODE_VEC,				1,			(uptr)&function_vec,			1,				10,				&gsSourceLight_vec[0]			},
