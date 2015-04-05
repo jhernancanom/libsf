@@ -7574,7 +7574,7 @@
 				{
 					// Grab the value
 					lnStartingMonth = (u16)iiVariable_getAs_s32(thisCode, varMonth, false, &error, &errorNum);
-					if (!error)
+					if (error)
 					{
 						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varMonth), false);
 						return(NULL);
