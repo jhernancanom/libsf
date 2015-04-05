@@ -256,6 +256,7 @@ struct SReturnsParams;
 	SVariable*			function_pi			/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_proper								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_pv			/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_quarter	/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_ranger		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_ranger2							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			ifunction_ranger_common						(SThisCode* thisCode, SVariable* varExpr, SVariable* varMin, SVariable* varMax, bool* tlRanged, SReturnsParams* returnsParams);
@@ -458,6 +459,7 @@ struct SReturnsParams;
 		{	_ICODE_PI,				1,			(uptr)&function_pi,				0,				0,				&gsSourceLight_pi[0]			},	// PI() by Stefano D'Amico, VJr 0.56, Mar.15.2015
 		{	_ICODE_PROPER,			1,			(uptr)&function_proper,			1,				1,				&gsSourceLight_proper[0]		},
 		{	_ICODE_PV,				1,			(uptr)&function_pv,				3,				3,				&gsSourceLight_pv[0]			},	// PV() by Stefano D'Amico, VJr 0.56, Mar.18.2015
+		{	_ICODE_QUARTER,			1,			(uptr)&function_quarter,		0,				2,				&gsSourceLight_quarter[0]		},	// QUARTER() by Stefano D'Amico, VJr 0.57, Apr.05.2015
 		{	_ICODE_RANGER,			1,			(uptr)&function_ranger,			3,				3,				&gsSourceLight_ranger[0]		},	// RANGER() by Stefano D'Amico, VJr 0.56, Mar.14.2015
 		{	_ICODE_RANGER2,			1,			(uptr)&function_ranger2,		3,				3,				&gsSourceLight_ranger2[0]		},
 		{	_ICODE_RAT,				1,			(uptr)&function_rat,			2,				3,				&gsSourceLight_rat[0]			},

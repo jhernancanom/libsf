@@ -625,6 +625,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_quarter[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_ranger[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
