@@ -6820,8 +6820,12 @@
 					iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varIndex), false);
 					return(NULL);
 				}
-
 				// When we get here, lnIndexProp is set
+
+			} else {
+				// Invalid
+				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varIndex), false);
+				return(NULL);
 			}
 
 
