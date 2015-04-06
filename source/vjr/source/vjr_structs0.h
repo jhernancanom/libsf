@@ -85,6 +85,7 @@
 // Forward definition for references
 struct SObject;
 struct SVariable;
+struct SField;
 struct SEM;
 struct SLine;
 struct SComp;
@@ -323,6 +324,7 @@ struct SVariable
 		SObject*		obj;											// The object this item relates to.  If isValueAllocated is set, this variable owns the object.
 		SFunction*		thisCode;										// Pointer to the code block this relates to
 		SBitmap*		bmp;											// The bitmap this item points to
+		SField*			field;											// Pointer to a table/cursor field
 		SDatum			value;											// The actual value
 	};
 

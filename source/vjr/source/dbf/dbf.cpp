@@ -678,6 +678,7 @@
 							break;
 
 						case 'M':	// Memo
+// Note:  W,G,Q,V are unsupported in VJr.  They are always pass-thru only.
 						case 'W':	// Blob
 						case 'G':	// General
 						case 'Q':	// Varbinary

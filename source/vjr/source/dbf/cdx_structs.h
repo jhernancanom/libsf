@@ -215,6 +215,26 @@ struct SCdxKeyOp;
 												// 512 bytes max
 	};
 
+	struct SCdxNodeKey
+	{
+		SDatum		key;						// Pointer to the key
+		u32			recno;						// The associated record number
+	};
+
+	struct SCdxNodeKeyDecode
+	{
+		u32				nodeNum;				// Physical node number in the index file
+		u32				nodeParentIndex;		// Parent index node which points down to the range of keys in this block, if NULL then no index nodes exist
+
+		bool			isDirty;				// Does this decode buffer contain uncommitted changes?
+		u32				keyCount;				// The number of keys on this node
+		SCdxNodeKey**	keys;					// The key pointers
+
+		// Actual loaded node data
+		SCdxNode		node;
+		s8				nodeKeyBuffer[512 - sizeof(SCdxNode)];
+	};
+
 	// This structure is the first found in the CDX, but it is also the same structure used
 	// for each index tag contained within.
 	struct SCdxHeader

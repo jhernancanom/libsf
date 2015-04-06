@@ -1029,6 +1029,10 @@
 					RelativePath="..\..\source\dbf\dbf_globals.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\source\dbf\dbf_structs.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="compilers"

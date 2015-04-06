@@ -454,6 +454,14 @@ struct SObjCarouselTabData
 	RECT		rcClose;											// Closing 'x' if shown
 };
 
+struct SField
+{
+	SWorkArea*		wa;												// Pointer to the work area
+
+	SFieldRecord1*	fr1;											// Pointer to the associated field record 1
+	SFieldRecord2*	fr2;											// Pointer to the associated field record 2
+};
+
 struct SObject
 {
 	SLL			ll;													// Linked list

@@ -293,6 +293,7 @@ struct SReturnsParams;
 	SVariable*			function_tan		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function__test								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_transform							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_type								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_typedetail							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_upper								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_val		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -492,6 +493,7 @@ struct SReturnsParams;
 		{	_ICODE_TAN,				1,			(uptr)&function_tan,			1,				1,				&gsSourceLight_tan[0]			},	// TAN() by Stefano D'Amico, VJr 0.56, Mar.19.2015
 		{	_ICODE__TEST,			1,			(uptr)&function__test,			1,				1,				NULL							},
 		{	_ICODE_TRANSFORM,		1,			(uptr)&function_transform,		1,				2,				&gsSourceLight_transform[0]		},
+		{	_ICODE_TYPE,			1,			(uptr)&function_type,			1,				2,				&gsSourceLight_type[0]	},
 		{	_ICODE_TYPEDETAIL,		1,			(uptr)&function_typedetail,		1,				1,				&gsSourceLight_typedetail[0]	},
 		{	_ICODE_UPPER,			1,			(uptr)&function_upper,			1,				1,				&gsSourceLight_upper[0]			},
 		{	_ICODE_VAL,				1,			(uptr)&function_val,			1,				2,				&gsSourceLight_val[0]			}, 	// VAL() by Stefano D'Amico, VJr 0.56, Mar.22.2015

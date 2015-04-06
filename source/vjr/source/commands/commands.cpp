@@ -208,6 +208,7 @@
 			case _ERROR_INVALID_INDEX_TAG:					{	iError_report(thisCode, cgcInvalidIndextag,					tlInvasive);		break;	}
 			case _ERROR_UNABLE_TO_SAVE:						{	iError_report(thisCode, cgcUnableToSave,					tlInvasive);		break;	}
 			case _ERROR_INVALID_PARAMETERS:					{	iError_report(thisCode, cgcInvalidParameters,				tlInvasive);		break;	}
+			case _ERROR_PARAMETER_MUST_BE_1:				{	iError_report(thisCode, cgcParameterMustBeOne,				tlInvasive);		break;	}
 
 		}
 
@@ -10016,6 +10017,242 @@ debug_break;
 		// Indicate our status
 		//////
 			return(result);
+	}
+
+
+
+
+//////////
+//
+// Function: TYPE()
+// Returns the TYPE() for the indicated variable
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.05.2015
+//////
+// Change log:
+//     Apr.05.2015 - Initial creation
+//////
+// Parameters:
+//     p1			-- The variable to examine
+//     p2			-- (Optional) If present, must be 1, indicating extended TYPE() information
+//
+//////
+// Returns:
+//    Character		-- A one-digit code indicating the type
+//////
+	SVariable* function_type(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varLookup	= returnsParams->params[0];
+		SVariable* varExtraInfo	= returnsParams->params[1];
+
+		s32				lnExtraInfo;
+		s8				c;
+		bool			llExtraInfo, llManufactured;
+		SComp*			compVarLookup;
+		SBaseClassMap*	baseClassMap;
+		SVariable*		var;
+		SVariable*		result;
+		bool			error;
+		u32				errorNum;
+
+
+		//////////
+		// varLookup must be character
+		//////
+			if (!iVariable_isValid(varLookup) || !iVariable_isTypeCharacter(varLookup))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varLookup), false);
+				return(NULL);
+			}
+		
+
+		//////////
+		// If varExtraInfo is specified, must be numeric, and 1
+		//////
+			if (varExtraInfo)
+			{
+
+				//////////
+				// Must be numeric
+				//////
+					if (!iVariable_isValid(varExtraInfo) || !iVariable_isTypeNumeric(varExtraInfo))
+					{
+						iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varExtraInfo), false);
+						return(NULL);
+					}
+
+
+				//////////
+				// Grab the value
+				//////
+					lnExtraInfo = iiVariable_getAs_s32(thisCode, varExtraInfo, false, &error, &errorNum);
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varExtraInfo), false);
+						return(NULL);
+					}
+
+
+				//////////
+				// Must be 1
+				//////
+					if (lnExtraInfo != 1)
+					{
+						iError_reportByNumber(thisCode, _ERROR_PARAMETER_MUST_BE_1, iVariable_getRelatedComp(thisCode, varExtraInfo), false);
+						return(NULL);
+					}
+
+
+				//////////
+				// If we get here, we're good
+				//////
+					llExtraInfo = true;
+
+
+			} else {
+				// No extra info
+				llExtraInfo = false;
+			}
+
+
+		//////////
+		// The varLookup points to something that needs to be looked up indirectly
+		//////
+			compVarLookup			= iVariable_getRelatedComp(thisCode, varLookup);
+// TODO:  Need to modify this to examine dot-based variables
+			compVarLookup->iCode	= _ICODE_ALPHANUMERIC;
+			compVarLookup->start	+= 1;		// Skip leading quote for start
+			compVarLookup->length	-= 2;		// Back off for both quotes for length
+			var = iEngine_get_variableName_fromComponent(thisCode, compVarLookup, &llManufactured);
+			if (!var)
+			{
+				iError_reportByNumber(thisCode, _ERROR_VARIABLE_NOT_FOUND, iVariable_getRelatedComp(thisCode, varLookup), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// var holds the actual type we're testing
+		//////
+			if (llExtraInfo)
+			{
+				// Returning extra information
+				if (var->varType == _VAR_TYPE_OBJECT)
+				{
+					// It is a collection class?
+					baseClassMap = iiObj_getBaseclass_byType(thisCode, var->obj->objType);
+					if (baseClassMap && baseClassMap->objProps == &gsProps_collection[0])
+					{
+						// It is a collection
+						c = 'C';
+
+					} else {
+						// Unknown
+						c = 'U';
+					}
+
+				} else if (var->varType == _VAR_TYPE_ARRAY) {
+					// It's an array
+					c = 'A';
+
+				} else {
+					// Unknown
+					c = 'U';
+				}
+
+			} else {
+				// Standard
+				switch (var->varType)
+				{
+					case _VAR_TYPE_CHARACTER:
+						c = 'C';
+						break;
+
+					case _VAR_TYPE_LOGICAL:
+						c = 'L';
+						break;
+
+					case _VAR_TYPE_DATE:
+						c = 'D';
+						break;
+
+					case _VAR_TYPE_DATETIME:
+					case _VAR_TYPE_DATETIMEX:
+						c = 'T';
+						break;
+
+					case _VAR_TYPE_FIELD:
+						// Based on the associated field type
+						switch(var->field->fr2->type)
+						{
+							case 'D':	// Date
+							case 'T':	// Datetime
+							case 'L':	// Logical
+							case 'N':	// Numeric
+							case 'Y':	// currency, which is technically an 8-byte integer (s64)
+							case 'C':	// Character
+								c = var->field->fr2->type;
+
+							case 'I':	// 4-byte integer (s32)
+							case 'F':	// Float
+							case 'B':	// Double (f64)
+								c = 'N';
+								break;
+
+							case 'M':	// Memo
+								c = 'C';
+								break;
+
+// Unsupported in VJr:
+// 							case 'W':	// Blob
+// 							case 'G':	// General
+// 							case 'Q':	// Varbinary
+// 							case 'V':	// Varchar
+							default:
+								c = 'U';
+								break;
+						}
+						break;
+
+					case _VAR_TYPE_OBJECT:
+						c = 'O';
+						break;
+
+					default:
+						if (var->varType == _VAR_TYPE_CURRENCY)
+						{
+							// Currency
+							c = 'Y';
+
+						} else if (var->varType >= _VAR_TYPE_NUMERIC_START && var->varType <= _VAR_TYPE_NUMERIC_END) {
+							// Numeric
+							c = 'N';
+
+						} else {
+							// Unknown
+							c = 'U';
+						}
+						break;
+				}
+			}
+
+
+		//////////
+		// Create our return result
+		//////
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, &c, 1, false);
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+
+
+		//////////
+		// Indicate our result
+		//////
+			return(result);
+
 	}
 
 

@@ -135,7 +135,21 @@ struct SThisCode;
 	s32					iCdx_validateCdxKeys							(SThisCode* thisCode, SWorkArea* wa, u32 tnWorkArea, s32 tnTagIndex, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
 	int					iiKeys_qsortDescending_callback					(const void* l, const void* r);
 	int					iiKeys_qsortAscending_callback					(const void* l, const void* r);
-	s32					iCdx_validateIdxKeys							(SThisCode* thisCode, SWorkArea* wa,                                  s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
+	s32					iCdx_validateIdxKeys							(SThisCode* thisCode, SWorkArea* wa, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength);
+
+
+//////////
+// These are for extracting and re-generating keys in a node, and for adding and deleting nodes
+// BEGIN
+//////
+	SCdxNodeKeyDecode*	iCdx_getNodeKeys								(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, SCdxNode* node);
+	void				iiCdx_getNodeKeys_allocate						(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, SCdxNode* node);
+	void				iiCdx_getNodeKeys_delete						(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, SCdxNodeKeyDecode* nodeKeys);
+//////
+// END
+//////////
+
+
 //////////
 // These are for generating new keys from DBF data, or from manual data loaded for index finds
 // BEGIN
@@ -149,10 +163,11 @@ struct SThisCode;
 	void				iiCdx_generateKey_byOps_fixup_double			(SThisCode* thisCode, SCdxKeyOp* lko, u8* keyPart);
 	void				iiCdx_generateKey_byOps_fixup_numeric			(SThisCode* thisCode, SCdxKeyOp* lko, u8* keyPart, SWorkArea* wa);
 	bool				iiCdx_generateKey_byOps_fixup					(SThisCode* thisCode, SWorkArea* wa, SCdxKeyOp* keyOps, s32 tnKeyOpCount, u8* keyOut, bool tlIsCdxKey);
-	bool				iiCdx_get_buildOps								(SThisCode* thisCode, SWorkArea* wa, u32 tnTagIndex, SCdxHeader* tagHeader, SForClause** tsFor, SCdxKeyOp** tsKeyOp, u32* tnKeyOpCount, u32* tnResult);
+	bool				iiCdx_get_buildOps								(SThisCode* thisCode, SWorkArea* wa, s32 tnTagIndex, SCdxHeader* tagHeader, SForClause** tsFor, SCdxKeyOp** tsKeyOp, u32* tnKeyOpCount, u32* tnResult);
 //////
 // END
 //////////
+
 
 //////////
 // Index navigation
@@ -170,6 +185,7 @@ struct SThisCode;
 //////
 // END
 //////////
+
 
 	s32					iiCdx_translateActualResultThroughIndexOrder	(STagRoot* tagRoot, u8* keyLeft, u8* keyRight, u32 tnKeyLength);
 	u32					iCdx_getAllKeysCdx								(SThisCode* thisCode, SWorkArea* wa, s32 tnTagIndex, u8* tcKeySpace, u32 tnKeySpaceLength, u8* tcDecodeExpression, u32 tnDecodeExpressionLength, s8* tcKeyLength4);

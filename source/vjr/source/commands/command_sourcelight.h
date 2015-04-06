@@ -769,6 +769,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_type[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_typedetail[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}

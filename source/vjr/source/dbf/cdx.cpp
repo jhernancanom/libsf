@@ -2476,7 +2476,7 @@ failed_parsing:
 // Called to obtain or create the buildOps for the indicated index tag.
 //
 //////
-	bool iiCdx_get_buildOps(SThisCode* thisCode, SWorkArea* wa, u32 tnTagIndex, SCdxHeader* tagHeader, SForClause** tsFor, SCdxKeyOp** tsKeyOp, u32* tnKeyOpCount, u32* tnResult)
+	bool iiCdx_get_buildOps(SThisCode* thisCode, SWorkArea* wa, s32 tnTagIndex, SCdxHeader* tagHeader, SForClause** tsFor, SCdxKeyOp** tsKeyOp, u32* tnKeyOpCount, u32* tnResult)
 	{
 		//////////
 		// Are we trying to access a key beyond what we have?

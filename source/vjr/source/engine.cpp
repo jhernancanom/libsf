@@ -557,9 +557,7 @@ debug_nop;
 
 						} else {
 							// It's a traditional variable
-							varCopy = iVariable_create(NULL, var->varType, NULL, true);
-							if (varCopy)
-								iDatum_duplicate(&varCopy->value, &var->value);
+							varCopy = iVariable_copy(NULL, var, false);
 						}
 						varCopy->compRelated = comp;
 						return(varCopy);
