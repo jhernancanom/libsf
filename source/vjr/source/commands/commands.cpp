@@ -2303,7 +2303,7 @@
 			//////////
 			// Grab year, month, day from datetime or date
 			//////
-				if iVariable_isTypeDatetime(varParam)			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+				if (iVariable_isTypeDatetime(varParam))			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
 				else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 			} else {
@@ -2702,7 +2702,7 @@
 				//////////
 				// Grab year, month, day from datetime or date
 				//////
-					if iVariable_isTypeDatetime(varParam)			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					if (iVariable_isTypeDatetime(varParam))			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
 					else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 
@@ -3498,7 +3498,7 @@
 				//////////
 				// Grab year, month, day from datetime or date
 				//////
-					if iVariable_isTypeDatetime(varParam)			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					if (iVariable_isTypeDatetime(varParam))			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
 					else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 
@@ -5049,7 +5049,7 @@
 		//////////
 		// Grab year, month, day from datetime or date
 		//////
-			if iVariable_isTypeDatetime(varParam)			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
+			if (iVariable_isTypeDatetime(varParam))			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
 			else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
 
 
@@ -5137,7 +5137,7 @@
 				//////////
 				// Create our return value
 				//////
-					if iVariable_isTypeDatetime(varParam)
+					if (iVariable_isTypeDatetime(varParam))
 					{
 						// Datetime
 						result = iVariable_create(thisCode, _VAR_TYPE_DATETIME, NULL, true);
@@ -7732,7 +7732,7 @@
 				//////////
 				// Grab year, month, day from datetime or date
 				//////
-					if iVariable_isTypeDatetime(varParam)			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					if (iVariable_isTypeDatetime(varParam))			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
 					else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 
