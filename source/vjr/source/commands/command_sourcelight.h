@@ -799,6 +799,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_vartype[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_vec[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}

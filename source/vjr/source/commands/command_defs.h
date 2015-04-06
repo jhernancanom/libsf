@@ -295,9 +295,11 @@ struct SReturnsParams;
 	SVariable*			function__test								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_transform							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_type								(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			ifunction_type_common						(SThisCode* thisCode, SVariable* var, bool tlExtraInfo, bool tlIsVartype, bool tlNullIsType);
 	SVariable*			function_typedetail							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_upper								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_val		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_vartype							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_vec								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_veccount							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_vecel								(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -499,6 +501,7 @@ struct SReturnsParams;
 		{	_ICODE_TYPEDETAIL,		1,			(uptr)&function_typedetail,		1,				1,				&gsSourceLight_typedetail[0]	},
 		{	_ICODE_UPPER,			1,			(uptr)&function_upper,			1,				1,				&gsSourceLight_upper[0]			},
 		{	_ICODE_VAL,				1,			(uptr)&function_val,			1,				2,				&gsSourceLight_val[0]			}, 	// VAL() by Stefano D'Amico, VJr 0.56, Mar.22.2015
+		{	_ICODE_VARTYPE,			1,			(uptr)&function_vartype,		1,				2,				&gsSourceLight_vartype[0]		},
 		{	_ICODE_VEC,				1,			(uptr)&function_vec,			1,				10,				&gsSourceLight_vec[0]			},
 		{	_ICODE_VECCOUNT,		1,			(uptr)&function_veccount,		1,				1,				&gsSourceLight_veccount[0]		},
 		{	_ICODE_VECEL,			1,			(uptr)&function_vecel,			1,				3,				&gsSourceLight_vecel[0]			},

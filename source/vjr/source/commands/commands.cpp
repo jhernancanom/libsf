@@ -10229,10 +10229,8 @@ debug_break;
 		SVariable* varExtraInfo	= returnsParams->params[1];
 
 		s32				lnExtraInfo;
-		s8				c;
 		bool			llExtraInfo, llManufactured;
 		SComp*			compVarLookup;
-		SBaseClassMap*	baseClassMap;
 		SVariable*		var;
 		SVariable*		result;
 		bool			error;
@@ -10315,9 +10313,37 @@ debug_break;
 
 
 		//////////
+		// Compute our result
+		//////
+			result = ifunction_type_common(thisCode, var, llExtraInfo, false, false);
+
+
+		//////////
+		// Clean house
+		//////
+			if (llManufactured)
+				iVariable_delete(thisCode, var, true);
+
+
+		//////////
+		// Return our result
+		//////
+			return(result);
+
+	}
+
+	// Handles type() and vartype()
+	SVariable* ifunction_type_common(SThisCode* thisCode, SVariable* var, bool tlExtraInfo, bool tlIsVartype, bool tlNullIsType)
+	{
+		s8				c;
+		SBaseClassMap*	baseClassMap;
+		SVariable*		result;
+
+
+		//////////
 		// var holds the actual type we're testing
 		//////
-			if (llExtraInfo)
+			if (tlExtraInfo)
 			{
 				// Returning extra information
 				if (var->varType == _VAR_TYPE_OBJECT)
@@ -10418,6 +10444,13 @@ debug_break;
 						break;
 				}
 			}
+
+
+		//////////
+		// For vartype(), if nulls are to return x then we need to possibly adjust it
+		//////
+			if (tlIsVartype && !tlNullIsType && (var->varType == _VAR_TYPE_NULL || !var->value.data || var->value.length == 0))
+				c = 'X';	// It is NULL
 
 
 		//////////
@@ -10817,6 +10850,91 @@ debug_break;
 		//////
 	        return(result);
 	}
+
+
+
+
+//////////
+//
+// Function: VARTYPE()
+// Returns the variable type, parsing NULL values.
+//
+//////
+// Version 0.56
+// Last update:
+//     Apr.06.2015
+//////
+// Change log:
+//     Apr.06.2015 - Initial creation
+//////
+// Parameters:
+//     P1			-- The variable to examine
+//     P2			-- (Optional) If provided, .t. or .f. indicating if NULL values should return the type (default to .f.)
+//
+//////
+// Returns:
+//    Character		-- A one-digit value indicating the type
+//////
+	SVariable* function_vartype(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* var		= returnsParams->params[0];
+		SVariable* varNull	= returnsParams->params[1];
+
+		bool	llNullIsType;
+		bool	error;
+		u32		errorNum;
+
+
+		//////////
+		// varLookup must exist
+		//////
+			if (!iVariable_isValid(var))
+			{
+				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, var), false);
+				return(NULL);
+			}
+		
+
+		//////////
+		// If varNull is specified, must be logical
+		//////
+			if (varNull)
+			{
+
+				//////////
+				// Must be logical
+				//////
+					if (!iVariable_isValid(varNull) || !iVariable_isTypeLogical(varNull))
+					{
+						iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varNull), false);
+						return(NULL);
+					}
+
+
+				//////////
+				// Grab the value
+				//////
+					llNullIsType = iiVariable_getAs_bool(thisCode, varNull, false, &error, &errorNum);
+					if (error)
+					{
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varNull), false);
+						return(NULL);
+					}
+
+
+			} else {
+				// Do not report on NULL types
+				llNullIsType = false;
+			}
+
+
+		//////////
+		// Compute our result
+		//////
+			return(ifunction_type_common(thisCode, var, false, true, llNullIsType));
+
+	}
+
 
 
 
