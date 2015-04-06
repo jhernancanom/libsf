@@ -5026,41 +5026,48 @@
 		SVariable* varParam = returnsParams->params[0];
 		SVariable* varMonth = returnsParams->params[1];
 
-		u32			lnYear, lnDay, lnLastDay;
-		s32			lnNumOfMonths, lnMonth;
-		s8			buffer[16];
-		SDateTime*	dt;
+		s32			lnNumOfMonths, lnYear, lnMonth;
+		u32			lnDay, lnLastDay;
 		f32			lfJulian;
-
+		SVariable*	result;
+		s8			buffer[16];
 		u32			errorNum;
 		bool		error;
-		SVariable*	result;
 
 
 		//////////
 		// Parameter 1 must be date or datetime
 		//////
-		// TODO:  Must also support DATETIMEX at some point
-		if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
-		{
-			iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
-			return(NULL);
-		}
+// TODO:  Must also support DATETIMEX at some point
+			if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
+			{
+				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
+				return(NULL);
+			}
+
 
 		//////////
 		// Grab year, month, day from datetime or date
 		//////
-		if iVariable_isTypeDatetime(varParam)			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, (u32*)&lnMonth, &lnDay);
-		else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			&lnYear, (u32*)&lnMonth, &lnDay);
+			if iVariable_isTypeDatetime(varParam)			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
+			else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
 
 
 
 		//////////
 		// Parameter 2 must be numeric, positive or negative (GOMONTH( ) does not support dates earlier than 1753.)
 		//////
-		if (iVariable_isValid(varMonth) && iVariable_isTypeNumeric(varMonth))
-		{
-			// Grab the value
+			if (!iVariable_isValid(varMonth) || !iVariable_isTypeNumeric(varMonth))
+			{
+				// Invalid second parameter
+				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varMonth), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Grab the value
+		//////
 			lnNumOfMonths = iiVariable_getAs_s32(thisCode, varMonth, false, &error, &errorNum);
 			if (error)
 			{
@@ -5068,94 +5075,102 @@
 				return(NULL);
 			}
 
-		} else {
-			// Invalid second parameter
-			iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varMonth), false);
-			return(NULL);
-		}
 
-
-		if (lnNumOfMonths != 0)
-		{
-			//////////
-			// Compute new date
-			//////
-			// New year
-			if (lnNumOfMonths > 0)
-				lnYear += (lnMonth + lnNumOfMonths) / 12;
-			else
-			{	
-				if (lnMonth + lnNumOfMonths <= 0)
-					lnYear += (lnMonth + lnNumOfMonths) / 12 - 1;
-			}
-			// Is year in range 1600..2400
-			if (lnYear < 1600 || lnYear > 2400)
+		//////////
+		// Compute new date
+		//////
+			if (lnNumOfMonths != 0)
 			{
-				iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varParam), false);
-				return(NULL);
-			}
 
-			// New month
-			lnMonth = (lnMonth + lnNumOfMonths) % 12;
-			if (lnMonth < 1)
-				lnMonth += 12;
-
-			// Is day valid for date? if day is in range 1..28 is always valid
-			if (lnDay > 28)
-			{
-				// Grab last day of month
-				if (lnMonth == 2 && lnYear % 4 == 0 && (lnYear % 100 != 0 || lnYear % 400 == 0))	//February, leap year?
-					lnLastDay = 29;
-				else
-					lnLastDay = cgGoMonthData[lnMonth - 1];
-
-				//Is in range?
-				lnDay = min(lnLastDay, lnDay);
-			}
-
-			if iVariable_isTypeDatetime(varParam)
-			{
 				//////////
-				// Create output variable
+				// Adjust year
 				//////
-				result = iVariable_create(thisCode, _VAR_TYPE_DATETIME, NULL, true);
-				if (!result)
-				{
-					iError_report(thisCode, cgcInternalError, false);
-					return(NULL);
-				}
+					if (lnNumOfMonths > 0)
+					{
+						// Year may move forward
+						lnYear += (lnMonth + lnNumOfMonths - 1) / 12;
 
-				dt = (SDateTime*)result->value.data;
+					} else {	
+						// Year may move backwards
+						if (lnMonth + lnNumOfMonths <= 0)
+							lnYear += (lnMonth + lnNumOfMonths) / 12 - 1;
+					}
 
-				// Date is stored as julian day number
-				dt->julian	= iiVariable_julian_fromYyyyMmDd(&lfJulian, lnYear, (u32)lnMonth, lnDay);
+					// Is year in range 1600..2400
+					if (lnYear < 1600 || lnYear > 2400)
+					{
+						iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varParam), false);
+						return(NULL);
+					}
 
-				dt->seconds = varParam->value.data_dt->seconds;
+
+				//////////
+				// Adjust month
+				//////
+					lnMonth = (lnMonth + lnNumOfMonths) % 12;
+					if (lnMonth < 1)
+						lnMonth += 12;
+
+
+				//////////
+				// Is day valid for the new date?
+				//////
+					// Day range 1..28 is always valid
+					if (lnDay > 28)
+					{
+						// Grab last day of month
+						if (lnMonth == 2 && iVariable_isLeapYear(lnYear))
+						{
+							// February leap year
+							lnLastDay = 29;
+
+						} else {
+							// Get the last day of the month for the indicated month
+							lnLastDay = cgGoMonthData[lnMonth - 1];
+						}
+
+						// Force the new date's day number into the valid range
+						lnDay = min(lnLastDay, lnDay);
+					}
+
+
+				//////////
+				// Create our return value
+				//////
+					if iVariable_isTypeDatetime(varParam)
+					{
+						// Datetime
+						result = iVariable_create(thisCode, _VAR_TYPE_DATETIME, NULL, true);
+						if (result)
+						{
+							// Date is stored as julian day number
+							result->value.data_dt->julian	= iiVariable_julian_fromYyyyMmDd(&lfJulian, lnYear, (u32)lnMonth, lnDay);
+							result->value.data_dt->seconds = varParam->value.data_dt->seconds;
+						}
+
+					} else {
+						// Date is stored as YYYYMMDD
+						sprintf(buffer, "%04u%02u%02u\0", lnYear, (u32)lnMonth, lnDay);
+						result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
+					}
 
 			} else {
-
-				// Date is stored as YYYYMMDD
-				sprintf(buffer, "%04u%02u%02u\0", lnYear, (u32)lnMonth, lnDay);
-				result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
-				if (!result)
-					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+				// No month movement, copy original
+				result	= iVariable_copy(thisCode, varParam, false);
 			}
 
-		} else {
 
-			//////////
-			// Create output variable
-			//////
-			result	= iVariable_copy(thisCode, varParam, false);
+		//////////
+		// Are we good?
+		//////
 			if (!result)
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
-		}
 
 
 		//////////
 		// Return the result
 		//////
-		return(result);
+			return(result);
 
 	}
 

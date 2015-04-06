@@ -10975,13 +10975,26 @@ debug_break;
 		if (month == 4 || month == 6 || month == 9 || month == 11)
 			return(false);
 
-		// Now, for february we have to compute if we're in a leap year
-		// Leap years occur every 4 years, except in century years, except for centuries evenly divisible by 400
-		if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0) && day <= 29)
-			return(true);		// We are in a leap year
+		// We'll only get here if we're in February
+		if (iVariable_isLeapYear(year) && day <= 29)
+			return(true);		// We are in a leap year, 29 days or less is valid
 
-		// If we get here, it's not a leap year
+		// If we get here, it's not a leap year, so we're invalid
 		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to determine if the year is a leap year
+// Leap years occur every 4 years, except in century years, except for centuries evenly divisible by 400
+//
+//////
+	bool iVariable_isLeapYear(u32 year)
+	{
+		return((year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)));
 	}
 
 
