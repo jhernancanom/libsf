@@ -3552,6 +3552,119 @@
 
 //////////
 //
+// Function: DMY()
+// Returns a character expression in day-month-year format (for example, 31 May 1998).
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.07.2015
+//////
+// Change log:
+//     Apr.07.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Date or DateTime
+//
+//////
+// Returns:
+//    Character - If SET CENTURY is OFF, DMY( ) returns a character string in a dd-Month-yy format (for example, 16 February 98). 
+//////
+	SVariable* function_dmy(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varParam = returnsParams->params[0];
+
+		return(ifunction_dtoc_common(thisCode, varParam, _DMY_COMMON_DMY));
+	}
+
+	SVariable* ifunction_dtoc_common(SThisCode* thisCode, SVariable* varParam, u32 tnFunctionType)
+	{
+		u32			lnYear, lnMonth, lnDay;
+		s8			lnMonthIdx;
+		SYSTEMTIME	lst;
+		s8			buffer[64];
+		SVariable*	result;
+
+
+		//////////
+		// If provided, parameter 1 must be date or datetime
+		//////
+			if (varParam)
+			{
+	// TODO:  Must also support DATETIMEX at some point
+				if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
+				{
+					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
+					return(NULL);
+				}
+
+
+				//////////
+				// Grab year, month, day from datetime or date
+				//////
+					if (iVariable_isTypeDatetime(varParam))			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+
+
+			} else {
+				// Use the current date
+				if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
+				else				GetLocalTime(&lst);
+				lnYear	= lst.wYear;
+				lnMonth	= lst.wMonth;
+				lnDay	= lst.wDay;
+			}
+
+
+		//////////
+		// Concatenate string
+		//////
+			switch(tnFunctionType)
+			{
+				case _DMY_COMMON_DMY:
+				case _DMY_COMMON_MDY:
+					lnMonthIdx = max(min(lnMonth, 12), 1) - 1;		// Force into range 1..12, then backoff one for base-0 array reference
+					if ((_settings) && !propGet_settings_Century(_settings))
+						// YY
+						if (tnFunctionType == _DMY_COMMON_DMY)	sprintf(buffer, "%02u %s %02u\0", lnDay, cgcMonthNames[lnMonthIdx], lnYear % 100);
+						else /*MDY*/							sprintf(buffer, "%s %02u, %02u\0", cgcMonthNames[lnMonthIdx], lnDay, lnYear % 100);
+					else
+						// YYYY
+						if (tnFunctionType == _DMY_COMMON_DMY)	sprintf(buffer, "%02u %s %04u\0", lnDay, cgcMonthNames[lnMonthIdx], lnYear);
+						else /*MDY*/							sprintf(buffer, "%s %02u, %04u\0", cgcMonthNames[lnMonthIdx], lnDay, lnYear);
+				
+					break;
+
+				case _DMY_COMMON_DTOS:
+					// Date is stored as YYYYMMDD
+					sprintf(buffer, "%04u%02u%02u\0", lnYear, lnMonth, lnDay);
+					break;
+
+				// Should never happen
+				default:
+					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
+					return(NULL);
+			}
+			
+		//////////
+		// Create our result
+		//////
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, (cs8*)buffer, (u32)strlen(buffer), false);
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+
+
+		//////////
+		// Indicate our result
+		//////
+			return(result);
+
+	}
+
+
+
+//////////
+//
 // Function: DTOR()
 // Converts degrees to radians.
 //
@@ -3580,6 +3693,157 @@
 
 		// Return dtor
 		return(ifunction_numbers_common(thisCode, varNumber, NULL, NULL, _FP_COMMON_DTOR, _VAR_TYPE_F64, false, false, returnsParams));
+	}
+
+
+
+
+//////////
+//
+// Function: DTOC()
+// Returns a Character-type date from a Date or DateTime expression.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.07.2015
+//////
+// Change log:
+//     Apr.07.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Date or DateTime
+//	   p2			-- If 1 returns the date in a format suitable for indexing
+//
+//////
+// Returns:
+//    DTOC( ) returns a character string corresponding to a Date or DateTime expression.
+//	  The date format is determined by SET CENTURY and SET DATE. 
+//
+//////
+	SVariable* function_dtoc(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varParam	= returnsParams->params[0];
+		SVariable* varFlag	= returnsParams->params[1];
+
+		s32		lnFlag;
+		u32		lnYear, lnMonth, lnDay;
+		SYSTEMTIME lst;
+		s8			buffer[16];
+
+		SVariable*	varDate;
+		SVariable*	result;
+
+		u32		errorNum;
+		bool	error;
+
+		//////////
+		// Parameter 2 must be numeric
+		//////
+			if (varFlag)
+			{
+				if (!iVariable_isValid(varFlag) || !iVariable_isTypeNumeric(varFlag))
+				{
+					iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varFlag), false);
+					return(NULL);
+				}
+
+				// Grab the flag
+				lnFlag = iiVariable_getAs_s32(thisCode, varFlag, false, &error, &errorNum);
+				if (error)
+				{
+					// An error extracting the value (should never happen)
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varFlag), false);
+					return(NULL);
+				}		
+
+				// DTOC(--, 1) => DTOS(--)
+				if (lnFlag == 1)
+					return(ifunction_dtoc_common(thisCode, varParam, _DMY_COMMON_DTOS));
+			}
+
+		//////////
+		// Parameter 1 must be date or datetime
+		//////			
+			if (varParam)
+			{
+				// TODO:  Must also support DATETIMEX at some point
+				if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
+				{
+					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
+					return(NULL);
+				}
+
+				// If date we finished
+				if (iVariable_isTypeDate(varParam))
+					return(iVariable_convertForDisplay(thisCode, varParam));
+				
+				//////////
+				// Grab year, month, day from datetime
+				//////
+					iiVariable_computeYyyyMmDd_fromJulian (varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+
+			} else {
+				// Use the current date
+				if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
+				else				GetLocalTime(&lst);
+				lnYear	= lst.wYear;
+				lnMonth	= lst.wMonth;
+				lnDay	= lst.wDay;
+			}
+		
+		//////////
+		// Convert datetime or lst.* into a VJr date variable
+		//////
+			// Date is stored as YYYYMMDD
+			sprintf(buffer, "%04u%02u%02u\0", lnYear, lnMonth, lnDay);
+			varDate = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
+			if (!varDate)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+
+		//////////
+		// Create and populate the return variable
+		//////
+			result = iVariable_convertForDisplay(thisCode, varDate);
+			iVariable_delete(thisCode, varDate, true);
+
+		//////////
+		// Signify our result
+		//////
+			return(result);
+
+	}
+
+
+
+
+//////////
+//
+// Function: DTOS()
+// Returns a character-string date in a yyyymmdd format from a specified Date or DateTime expression.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.07.2015
+//////
+// Change log:
+//     Apr.07.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Date or DateTime
+//
+//////
+// Returns:
+//    Character - This function is useful for indexing tables on a Date or DateTime field.
+//	  It is equivalent to DTOC( ) when its optional 1 argument is included. 
+//
+//////
+	SVariable* function_dtos(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varParam = returnsParams->params[0];
+
+		return(ifunction_dtoc_common(thisCode, varParam, _DMY_COMMON_DTOS));
 	}
 
 
@@ -6764,6 +7028,37 @@
 
 			// Indicate our result
 			return(result);
+	}
+
+
+
+
+//////////
+//
+// Function: MDY()
+// Returns the specified date or datetime expression in month-day-year format with the name of the month spelled out.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.07.2015
+//////
+// Change log:
+//     Apr.07.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Date or DateTime
+//
+//////
+// Returns:
+//    Character - If SET CENTURY is OFF, the character expression is returned in a month dd, yy format. 
+//	  If SET CENTURY is ON, the format is month dd, yyyy.
+//////
+	SVariable* function_mdy(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varParam = returnsParams->params[0];
+
+		return(ifunction_dtoc_common(thisCode, varParam, _DMY_COMMON_MDY));
 	}
 
 

@@ -409,7 +409,22 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_dmy[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_dtoc[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_dtor[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_dtos[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
@@ -571,6 +586,11 @@
 	};
 
 	SSourceLightData gsSourceLight_min[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_mdy[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
