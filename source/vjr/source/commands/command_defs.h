@@ -214,6 +214,7 @@ struct SReturnsParams;
 	SVariable*			function_dtoc		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_dtor		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_dtos		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_dtot		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_empty		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	bool				function_isempty_common						(SThisCode* thisCode, SVariable* varExpr, SReturnsParams* returnsParams);
 	SVariable*			function_endswith							(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -304,6 +305,8 @@ struct SReturnsParams;
 	SVariable*			function_tan		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function__test								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_transform							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_ttoc		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_ttod		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_type								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			ifunction_type_common						(SThisCode* thisCode, SVariable* var, bool tlExtraInfo, bool tlIsVartype, bool tlNullIsType);
 	SVariable*			function_typedetail							(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -436,6 +439,7 @@ struct SReturnsParams;
 		{	_ICODE_DTOC,			1,			(uptr)&function_dtoc,			0,				2,				&gsSourceLight_dtoc[0]			},	// DTOC() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_DTOR,			1,			(uptr)&function_dtor,			1,				1,				&gsSourceLight_dtor[0]			},	// DTOR() by Stefano D'Amico, VJr 0.56, Mar.16.2015
 		{	_ICODE_DTOS,			1,			(uptr)&function_dtos,			0,				1,				&gsSourceLight_dtos[0]			},	// DTOS() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_DTOT,			1,			(uptr)&function_dtot,			1,				1,				&gsSourceLight_dtot[0]			},	// DTOT() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_EMPTY,			1,			(uptr)&function_empty,			1,				1,				&gsSourceLight_empty[0]			},	// EMPTY() by Stefano D'Amico, VJr 0.56, Mar.19.2015
 		{	_ICODE_ENDSWITH,		1,			(uptr)&function_endswith,		2,				4,				&gsSourceLight_endswith[0]		},
 		{	_ICODE_ENDSWITHC,		1,			(uptr)&function_endswith,		2,				4,				&gsSourceLight_endswithc[0]		},
@@ -515,6 +519,8 @@ struct SReturnsParams;
 		{	_ICODE_TAN,				1,			(uptr)&function_tan,			1,				1,				&gsSourceLight_tan[0]			},	// TAN() by Stefano D'Amico, VJr 0.56, Mar.19.2015
 		{	_ICODE__TEST,			1,			(uptr)&function__test,			1,				1,				NULL							},
 		{	_ICODE_TRANSFORM,		1,			(uptr)&function_transform,		1,				2,				&gsSourceLight_transform[0]		},
+		{	_ICODE_TTOC,			1,			(uptr)&function_ttoc,			1,				2,				&gsSourceLight_ttoc[0]			},	// TTOC() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_TTOD,			1,			(uptr)&function_ttod,			1,				1,				&gsSourceLight_ttod[0]			},	// TTOD() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_TYPE,			1,			(uptr)&function_type,			1,				2,				&gsSourceLight_type[0]	},
 		{	_ICODE_TYPEDETAIL,		1,			(uptr)&function_typedetail,		1,				1,				&gsSourceLight_typedetail[0]	},
 		{	_ICODE_UPPER,			1,			(uptr)&function_upper,			1,				1,				&gsSourceLight_upper[0]			},

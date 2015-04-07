@@ -3873,6 +3873,78 @@
 
 //////////
 //
+// Function: DTOT()
+// Returns a DateTime value from a Date expression.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.07.2015
+//////
+// Change log:
+//     Apr.07.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Date
+//
+//////
+// Returns:
+//    Datetime	-- DTOT( ) adds a default time of 12:00:00 AM (if SET HOURS is 12) or 00:00:00 (if SET HOURS is 24) to the date to produce a valid DateTime value.
+//////
+	SVariable* function_dtot(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varParam = returnsParams->params[0];
+
+		u32			lnYear, lnMonth, lnDay;
+		f32			lfJulian;
+		SVariable*	result;
+
+
+		//////////
+		// Parameter 1 must be date
+		//////
+			if (!iVariable_isValid(varParam) || !iVariable_isTypeDate(varParam))
+			{
+				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Grab year, month, day from date
+		//////
+			iiVariable_computeYyyyMmDd_fromYYYYMMDD(varParam->value.data_u8, &lnYear, &lnMonth, &lnDay);
+
+
+		//////////
+		// Convert date into a VJr datetime variable
+		//////
+			result = iVariable_create(thisCode, _VAR_TYPE_DATETIME, NULL, true);
+			if (!result)
+			{
+				iError_report(thisCode, cgcInternalError, false);
+				return(NULL);
+			}
+
+			// Date is stored as julian day number
+			result->value.data_dt->julian	= iiVariable_julian_fromYyyyMmDd(&lfJulian, lnYear, lnMonth, lnDay);
+
+			// Time is stored as seconds since midnight
+			result->value.data_dt->seconds = 0.0f;
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return(result);
+
+	}
+
+
+
+
+//////////
+//
 // Function: EMPTY()
 // Determines whether an expression evaluates to empty.
 //
@@ -10757,6 +10829,173 @@ debug_break;
 		// Indicate our status
 		//////
 			return(result);
+	}
+
+
+
+
+//////////
+//
+// Function: TTOC()
+// Converts a DateTime expression to a Character value with the specified format.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.07.2015
+//////
+// Change log:
+//     Apr.07.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Datetime
+//	   p2			-- Numeric: 
+//						1 -- yyyymmddhhmmss
+//						2 -- only the time portion of p1
+//						3 -- yyyy-mm-ddThh:mm:ss 
+//////
+// Returns:
+//    Character. TTOC( ) returns a DateTime expression as a character string.
+//////
+	SVariable* function_ttoc(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varParam = returnsParams->params[0];
+		SVariable* varFlag = returnsParams->params[1];
+
+		u32			lnYear, lnMonth, lnDay, lnFlag;
+		s8			buffer[16];
+		u32			errorNum;
+		bool		error;
+
+		SVariable*	result;
+
+
+		//////////
+		// Parameter 1 must be datetime
+		//////
+// TODO:  Must also support DATETIMEX at some point
+			if (!iVariable_isValid(varParam) || !iVariable_isTypeDatetime(varParam))
+			{
+				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
+				return(NULL);
+			}
+
+		//////////
+		// If Parameter 2 is provided, it must be numeric
+		//////
+			if (varFlag)
+			{
+				if (!iVariable_isValid(varFlag) || !iVariable_isTypeNumeric(varFlag))
+				{
+					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varFlag), false);
+					return(NULL);
+				}
+
+				// Grab the flag
+				lnFlag = iiVariable_getAs_s32(thisCode, varFlag, false, &error, &errorNum);
+				if (error)
+				{
+					// An error extracting the value (should never happen)
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varFlag), false);
+					return(NULL);
+				}	
+
+				switch(lnFlag)
+				{
+					case 1:
+						//	yyyymmddhhmmss 
+						// TODO
+					case 2:
+						//	HH:MM
+						// TODO
+					case 3:
+						// yyyy-mm-ddThh:mm:ss 
+						// TODO
+					default:
+						// If we get here, invalid parameter specified
+						iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varFlag), false);
+						return(NULL);
+				}
+			}
+
+
+		//////////
+		// Create and populate the return variable
+		//////
+			result = iVariable_convertForDisplay(thisCode, varParam);
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
+
+
+		//////////
+		// Signify our result
+		//////
+			return(result);
+
+	}
+
+
+
+
+//////////
+//
+// Function: TTOD()
+// Returns a Date value from a Datetime expression.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.07.2015
+//////
+// Change log:
+//     Apr.07.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Datetime
+//
+//////
+// Returns:
+//    Datetime	-- DTOT( ) adds a default time of 12:00:00 AM (if SET HOURS is 12) or 00:00:00 (if SET HOURS is 24) to the date to produce a valid DateTime value.
+//////
+	SVariable* function_ttod(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varParam = returnsParams->params[0];
+
+		u32			lnYear, lnMonth, lnDay;
+		s8			buffer[16];
+
+		SVariable*	result;
+
+
+		//////////
+		// Parameter 1 must be datetime
+		//////
+			if (!iVariable_isValid(varParam) || !iVariable_isTypeDatetime(varParam))
+			{
+				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Grab year, month, day from datetime
+		//////
+			iiVariable_computeYyyyMmDd_fromJulian(varParam->value.data_dt->julian, (u32*)&lnYear, (u32*)&lnMonth, &lnDay);
+
+
+		//////////
+		// Convert datetime into a VJr date variable
+		//////
+			// Date is stored as YYYYMMDD
+			sprintf(buffer, "%04u%02u%02u\0", lnYear, lnMonth, lnDay);
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return(result);
+
 	}
 
 
