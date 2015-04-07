@@ -563,7 +563,7 @@
 													{
 														//////////
 														// Tab looks like this:  +-------------+
-														//                       |  file.prg  x|
+														//                       |x  file.prg  |
 														//                       |             |
 														//////
 															SetRect(&lrc4, lrc3.left + 2, lrc3.top + 2, lrc3.right - 2, lrc3.bottom - 1);
@@ -573,7 +573,7 @@
 
 														//////////
 														//                       |             |
-														// Tab looks like this:  |  file.prg  x|
+														// Tab looks like this:  |x  file.prg  |
 														//                       +-------------+
 														//////
 															SetRect(&lrc4, lrc3.left + 2, lrc3.top + 1, lrc3.right - 2, lrc3.bottom - 2);
@@ -609,18 +609,18 @@
 
 
 												//////////
-												// Fill the middle
+												// Fill the background
 												//////
 													iBmp_fillRect(obj->p.bmpTabs, &lrc4, carouselTabBackColor, carouselTabBackColor, carouselTabBackColor, carouselTabBackColor, false, NULL, false);
 
 
 												//////////
-												// Render the text toward the left
+												// Render the text toward the right
 												//////
 													SetTextColor(obj->p.bmpTabs->hdc, RGB(carouselTabForeColor.red, carouselTabForeColor.grn, carouselTabForeColor.blu));
 													SetBkMode(obj->p.bmpTabs->hdc, TRANSPARENT);
-													lrc4.left	+= 4;		// Margin between left border and text
-													DrawText(obj->p.bmpTabs->hdc, varTabText->value.data_s8, varTabText->value.length, &lrc4, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+													lrc4.right -= 4;		// Margin between right border and text
+													DrawText(obj->p.bmpTabs->hdc, varTabText->value.data_s8, varTabText->value.length, &lrc4, DT_RIGHT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
 
 
 												//////////
@@ -629,7 +629,7 @@
 													if (llCloseable)
 													{
 														lnCenter = ((lrc4.bottom + lrc4.top) / 2);
-														SetRect(&lrc4, lrc4.right - 2 - bmpCarouselRiderTabClose->bi.biWidth, lnCenter - (bmpCarouselRiderTabClose->bi.biHeight / 2), lrc4.right - 2, lnCenter + (bmpCarouselRiderTabClose->bi.biHeight / 2));
+														SetRect(&lrc4, lrc4.left + 2, lnCenter - (bmpCarouselRiderTabClose->bi.biHeight / 2), lrc4.left + 2 + bmpCarouselRiderTabClose->bi.biWidth, lnCenter + (bmpCarouselRiderTabClose->bi.biHeight / 2));
 														iBmp_bitBltMask(obj->p.bmpTabs, &lrc4, bmpCarouselRiderTabClose);
 														CopyRect(&thisTab->rcClose, &lrc4);
 													}

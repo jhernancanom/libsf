@@ -5075,7 +5075,7 @@ debug_break;
 				//////////
 				// Create the variable
 				//////
-					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, buffer, lnI + tnPrefixChars + tnPostfixChars, true);
+					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, buffer, lnI + tnPrefixChars + tnPostfixChars, false);
 					if (result)
 					{
 						// Reset everything

@@ -546,6 +546,7 @@
 		// Make sure our environment is sane
 		if (obj)
 		{
+// TODO:  Eventually we'll need to signal runtime user-events on this... for now we just ignore it.
 			// Find the associated carousel sub-object
 			lnTarget = iiEvents_carousel_findTarget(thisCode, obj, lnX, lnY, &octd);
 			switch (lnTarget)
