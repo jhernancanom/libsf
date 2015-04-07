@@ -2565,7 +2565,7 @@
 		//////////
 		// Allocate a copy of the original string
 		//////
-			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, varString->value.data_u8, varString->value.length, true);
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, varString->value.data_u8, varString->value.length, false);
 
 			// If the original string is empty, or the characters to search for are empty, then we don't need to do anything
 			if (varString->value.length == 0 || varSearch->value.length == 0)
@@ -3075,7 +3075,11 @@
 		GetCurrentDirectory(_MAX_PATH, (s8*)curdir);
 
 		// Create the output variable
-		result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, curdir, (u32)strlen(curdir), true);
+		result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, curdir, (u32)strlen(curdir), false);
+		if (!result)
+			iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+
+		// Indicate our result
 		return(result);
 	}
 
@@ -3992,7 +3996,7 @@
 		// Create and populate the return variable
 		//////
 			llEmpty	= function_isempty_common(thisCode, varExpr, returnsParams);
-			result	= iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_LOGICAL, (cs8*)((llEmpty) ? &_LOGICAL_TRUE : &_LOGICAL_FALSE), 1, true);
+			result	= iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_LOGICAL, (cs8*)((llEmpty) ? &_LOGICAL_TRUE : &_LOGICAL_FALSE), 1, false);
 			if (!result)
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varExpr), false);
 
@@ -4001,6 +4005,7 @@
 		// Signify our result
 		//////
 			return(result);
+
 	}
 
 	bool function_isempty_common(SThisCode* thisCode, SVariable* varExpr, SReturnsParams* returnsParams)
@@ -4018,7 +4023,8 @@
 			switch (varExpr->varType)
 			{
 				case _VAR_TYPE_NULL:
-					llEmpty = true;
+					// NULL values are considered "not empty" even though they really are.
+					llEmpty = false;
 					break;
 
 				case _VAR_TYPE_DATE:	// Note:  Dates are stored internally as YYYYMMDD, so they can be directly compared
@@ -7652,7 +7658,7 @@
 		//////////
 		// Create the return variable
 		//////
-			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_LOGICAL, (cs8*)((llEnabled) ? &_LOGICAL_TRUE : &_LOGICAL_FALSE), 1, true);
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_LOGICAL, (cs8*)((llEnabled) ? &_LOGICAL_TRUE : &_LOGICAL_FALSE), 1, false);
 			if (!result)
 			{
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varIndex), false);
@@ -9321,7 +9327,7 @@
 		//////////
 		// Create and populate output variable
 		//////
-			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_F64, (s8*)&lfResult, sizeof(lfResult), true);
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_F64, (s8*)&lfResult, sizeof(lfResult), false);
 			if (!result)
 			{
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
@@ -9949,7 +9955,7 @@
 			if (varSearch->value.length == 0 || varSearch->value.length > varString->value.length)
 			{
 				// Allocate a full copy of the original string
-				result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, varString->value.data_u8, varString->value.length, true);
+				result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, varString->value.data_u8, varString->value.length, false);
 				return(result);
 			}
 
@@ -9997,7 +10003,7 @@
 				{
 					// If we haven't made an official copy yet, we need to do so now
 					if (result == varString)
-						result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, varString->value.data_u8, varString->value.length, true);
+						result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, varString->value.data_u8, varString->value.length, false);
 
 					// Return our result
 					return(result);
@@ -10265,7 +10271,7 @@
 
 
 // TODO:  Untested function, breakpoint and examine
-debug_break;
+// debug_break;
 		//////////
 		// Parameter 1 must be numeric
 		//////
@@ -10408,9 +10414,9 @@ debug_break;
 		//////
 			memset(&returnsParams, 0, sizeof(returnsParams));
 			ln2015 = 2015;
-			returnsParams.params[0/*2015*/]		= iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_S32,	(cu8*)&ln2015,			sizeof(ln2015),			true);
-			returnsParams.params[1/*prefix*/]	= iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_S32,	(cu8*)&tnPrefixWidth,	sizeof(tnPrefixWidth),	true);
-			returnsParams.params[2/*postfix*/]	= iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_S32,	(cu8*)&tnPostfixWidth,	sizeof(tnPostfixWidth), true);
+			returnsParams.params[0/*2015*/]		= iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_S32,	(cu8*)&ln2015,			sizeof(ln2015),			false);
+			returnsParams.params[1/*prefix*/]	= iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_S32,	(cu8*)&tnPrefixWidth,	sizeof(tnPrefixWidth),	false);
+			returnsParams.params[2/*postfix*/]	= iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_S32,	(cu8*)&tnPostfixWidth,	sizeof(tnPostfixWidth), false);
 
 
 		//////////

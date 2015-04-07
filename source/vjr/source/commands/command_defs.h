@@ -106,7 +106,7 @@ struct SReturnsParams;
 #define get_u8(a)		(*a->value.data_u8)
 #define get_f32(a)		(*a->value.data_f32)
 #define get_f64(a)		(*a->value.data_f64)
-#define get_bool(a)		(*a->value.data_u8 != 0)
+#define get_bool(a)		(*a->value.data_u8 != _LOGICAL_FALSE)
 #define get_bgra(a)		(*a->value.data_bgra)
 #define get_bgr(a)		(*a->value.data_bgr)
 
@@ -402,7 +402,7 @@ struct SReturnsParams;
 		//  ------------------		------		--------------------------		----------		-------------	----------------------------------
 		{	_ICODE_ABS,				1,			(uptr)&function_abs,			1,				1,				&gsSourceLight_abs[0]			},	// ABS() by Stefano D'Amico, VJr 0.56, Mar.18.2015
 		{	_ICODE_ACOS,			1,			(uptr)&function_acos,			1,				1,				&gsSourceLight_acos[0]			},	// ACOS() by Stefano D'Amico, VJr 0.56, Mar.18.2015
-		{	_ICODE_ADDBS,			1,			(uptr)&function_addbs,			1,				4,				&gsSourceLight_alltrim[0]		},
+		{	_ICODE_ADDBS,			1,			(uptr)&function_addbs,			1,				4,				&gsSourceLight_addbs[0]		},
 		{	_ICODE_ALLTRIM,			1,			(uptr)&function_alltrim,		1,				4,				&gsSourceLight_alltrim[0]		},
 		{	_ICODE_ALP,				1,			(uptr)&function_alp,			1,				1,				&gsSourceLight_alp[0]			},
 		{	_ICODE_ASC,				1,			(uptr)&function_asc,			1,				1,				&gsSourceLight_asc[0]			},

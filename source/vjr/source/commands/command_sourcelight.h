@@ -224,6 +224,11 @@
 //////////*****[ GENERATED FILE ]*****
 // ALLTRIM()
 //////
+	SSourceLightData gsSourceLight_addbs[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_alltrim[] =
 	{
 		// lcResult = ALLTRIM(cString, lIgnoreCase|nIgnoreCase, cTrimChars1, cTrimChars2)
