@@ -2278,7 +2278,7 @@
 // Fundamental variable types
 //////
 	const u32						_VAR_TYPE_START					= 0;
-	const u32		_VAR_TYPE_NULL									= 0;
+	const u32		_VAR_TYPE_NULL									= 0;	// Note:  This is an explicit .NULL. variable type.  However, other types can also be .NULL. and retain their type.  As such, var->varType cannot be the ONLY test used.  Also check var->value.data, and var->value.length. If those are NULL or 0, then it is also .NULL.
 
 	// Signed
 	const u32						_VAR_TYPE_NUMERIC_START			= 1;
