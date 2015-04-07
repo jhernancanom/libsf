@@ -7897,8 +7897,6 @@ debug_break;
 
 				case _VAR_TYPE_DATETIME:
 					// Translate from encoded form to components, then assemble as MM/DD/YYYY HH:MM:SS AM/PM
-// TODO:  We need to honor the _set_date settings.  For now we use MM/DD/YYYY HH:MM:SS.Mss
-// TODO:  We need to add the AM/PM settings.  For now we just use military time.
 					dt = (SDateTime*)var->value.data;
 					iiVariable_computeYyyyMmDd_fromJulian(dt->julian, &lnYear, &lnMonth, &lnDay);
 					iiVariable_computeHhMmSsMss_fromf32(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
@@ -7908,6 +7906,7 @@ debug_break;
 					lnHourAdjusted	= iTime_adjustHour_toAMPM(lnHour, !llHour24);
 					lcAmPmText		= (cs8*)((llHour24) ? "" : (cs8*)iTime_amOrPm(lnHour, (void*)cgc_space_am_uppercase, (void*)cgc_space_pm_lowercase));
 
+// TODO:  We need to honor the SET DATE settings.  For now we use MM/DD/YYYY HH:MM:SS.Mss AM
 					// Format for century settings
 					if (propGet_settings_Century(_settings))
 					{

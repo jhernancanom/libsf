@@ -3591,7 +3591,7 @@
 		//////
 			if (varParam)
 			{
-	// TODO:  Must also support DATETIMEX at some point
+// TODO:  Must also support DATETIMEX at some point
 				if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
 				{
 					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
@@ -3624,7 +3624,7 @@
 				case _DMY_COMMON_DMY:
 				case _DMY_COMMON_MDY:
 					lnMonthIdx = max(min(lnMonth, 12), 1) - 1;		// Force into range 1..12, then backoff one for base-0 array reference
-					if ((_settings) && !propGet_settings_Century(_settings))
+					if (_settings && !propGet_settings_Century(_settings))
 						// YY
 						if (tnFunctionType == _DMY_COMMON_DMY)	sprintf(buffer, "%02u %s %02u\0", lnDay, cgcMonthNames[lnMonthIdx], lnYear % 100);
 						else /*MDY*/							sprintf(buffer, "%s %02u, %02u\0", cgcMonthNames[lnMonthIdx], lnDay, lnYear % 100);
@@ -3726,16 +3726,15 @@
 		SVariable* varParam	= returnsParams->params[0];
 		SVariable* varFlag	= returnsParams->params[1];
 
-		s32		lnFlag;
-		u32		lnYear, lnMonth, lnDay;
-		SYSTEMTIME lst;
+		s32			lnFlag;
+		u32			lnYear, lnMonth, lnDay;
+		SYSTEMTIME	lst;
 		s8			buffer[16];
-
-		SVariable*	varDate;
+		SVariable*	varTempDate;
 		SVariable*	result;
+		bool		error;
+		u32			errorNum;
 
-		u32		errorNum;
-		bool	error;
 
 		//////////
 		// Parameter 2 must be numeric
@@ -3757,17 +3756,22 @@
 					return(NULL);
 				}		
 
-				// DTOC(--, 1) => DTOS(--)
+				// DTOC(--, 1) is DTOS(--)
 				if (lnFlag == 1)
 					return(ifunction_dtoc_common(thisCode, varParam, _DMY_COMMON_DTOS));
+
+				// If we get here, invalid parameter specified
+				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varFlag), false);
+				return(NULL);
 			}
+
 
 		//////////
 		// Parameter 1 must be date or datetime
 		//////			
 			if (varParam)
 			{
-				// TODO:  Must also support DATETIMEX at some point
+// TODO:  Must also support DATETIMEX at some point
 				if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
 				{
 					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
@@ -3778,10 +3782,12 @@
 				if (iVariable_isTypeDate(varParam))
 					return(iVariable_convertForDisplay(thisCode, varParam));
 				
+
 				//////////
 				// Grab year, month, day from datetime
 				//////
 					iiVariable_computeYyyyMmDd_fromJulian (varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+
 
 			} else {
 				// Use the current date
@@ -3792,20 +3798,34 @@
 				lnDay	= lst.wDay;
 			}
 		
+
 		//////////
 		// Convert datetime or lst.* into a VJr date variable
 		//////
 			// Date is stored as YYYYMMDD
 			sprintf(buffer, "%04u%02u%02u\0", lnYear, lnMonth, lnDay);
-			varDate = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
-			if (!varDate)
+			varTempDate = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
+			if (!varTempDate)
+			{
+				// Fatal error
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+				return(NULL);
+			}
+
 
 		//////////
 		// Create and populate the return variable
 		//////
-			result = iVariable_convertForDisplay(thisCode, varDate);
-			iVariable_delete(thisCode, varDate, true);
+			result = iVariable_convertForDisplay(thisCode, varTempDate);
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
+
+
+		//////////
+		// Clean house
+		//////
+			iVariable_delete(thisCode, varTempDate, true);
+
 
 		//////////
 		// Signify our result
@@ -3843,6 +3863,8 @@
 	{
 		SVariable* varParam = returnsParams->params[0];
 
+
+		// Return dtos
 		return(ifunction_dtoc_common(thisCode, varParam, _DMY_COMMON_DTOS));
 	}
 
@@ -7058,6 +7080,8 @@
 	{
 		SVariable* varParam = returnsParams->params[0];
 
+
+		// Return mdy
 		return(ifunction_dtoc_common(thisCode, varParam, _DMY_COMMON_MDY));
 	}
 
