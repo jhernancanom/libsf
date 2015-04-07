@@ -209,7 +209,11 @@ struct SReturnsParams;
 	SVariable*			function_datetime							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_day		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			ifunction_day_month_year_common				(SThisCode* thisCode, SVariable* varParam, u32 tnFunctionType);
+	SVariable*			function_dmy		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			ifunction_dtoc_common						(SThisCode* thisCode, SVariable* varParam, u32 tnFunctionType);
+	SVariable*			function_dtoc		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_dtor		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_dtos		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_empty		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	bool				function_isempty_common						(SThisCode* thisCode, SVariable* varExpr, SReturnsParams* returnsParams);
 	SVariable*			function_endswith							(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -245,6 +249,7 @@ struct SReturnsParams;
 	SVariable*			function_ltrim								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_malp								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_max								(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_mdy		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_min								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_minute		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_mod		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -427,7 +432,10 @@ struct SReturnsParams;
 		{	_ICODE_DATE,			1,			(uptr)&function_date,			0,				3,				&gsSourceLight_date[0]			},	// DATE() by Stefano D'Amico, VJr 0.57, Apr.04.2015
 		{	_ICODE_DATETIME,		1,			(uptr)&function_datetime,		0,				7,				&gsSourceLight_datetime[0]		},
 		{	_ICODE_DAY,				1,			(uptr)&function_day,			0,				1,				&gsSourceLight_day[0]			},	// DAY() by Stefano D'Amico, VJr 0.57, Apr.04.2015
+		{	_ICODE_DMY,				1,			(uptr)&function_dmy,			0,				1,				&gsSourceLight_dmy[0]			},	// DMY() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_DTOC,			1,			(uptr)&function_dtoc,			0,				2,				&gsSourceLight_dtoc[0]			},	// DTOC() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_DTOR,			1,			(uptr)&function_dtor,			1,				1,				&gsSourceLight_dtor[0]			},	// DTOR() by Stefano D'Amico, VJr 0.56, Mar.16.2015
+		{	_ICODE_DTOS,			1,			(uptr)&function_dtos,			0,				1,				&gsSourceLight_dtos[0]			},	// DTOS() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_EMPTY,			1,			(uptr)&function_empty,			1,				1,				&gsSourceLight_empty[0]			},	// EMPTY() by Stefano D'Amico, VJr 0.56, Mar.19.2015
 		{	_ICODE_ENDSWITH,		1,			(uptr)&function_endswith,		2,				4,				&gsSourceLight_endswith[0]		},
 		{	_ICODE_ENDSWITHC,		1,			(uptr)&function_endswith,		2,				4,				&gsSourceLight_endswithc[0]		},
@@ -459,6 +467,7 @@ struct SReturnsParams;
 		{	_ICODE_LTRIM,			1,			(uptr)&function_ltrim,			1,				1,				&gsSourceLight_ltrim[0]			},
 		{	_ICODE_MALP,			1,			(uptr)&function_malp,			1,				2,				&gsSourceLight_malp[0]			},
 		{	_ICODE_MAX,				1,			(uptr)&function_max,			2,				2,				&gsSourceLight_max[0]			},
+		{	_ICODE_MDY,				1,			(uptr)&function_mdy,			0,				1,				&gsSourceLight_mdy[0]			},	// MDY() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_MIN,				1,			(uptr)&function_min,			2,				2,				&gsSourceLight_min[0]			},
 		{	_ICODE_MINUTE,			1,			(uptr)&function_minute,			0,				1,				&gsSourceLight_minute[0]		},	// MINUTE() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_MOD,				1,			(uptr)&function_mod,			2,				2,				&gsSourceLight_mod[0]			},	// MOD() by Stefano D'Amico, VJr 0.56, Mar.08.2015

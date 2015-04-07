@@ -772,7 +772,9 @@ typedef SEM**		SEMpp;
 	const u32			_DMY_COMMON_DAY						= 0;
 	const u32			_DMY_COMMON_MONTH					= 1;
 	const u32			_DMY_COMMON_YEAR					= 2;
-
+	const u32			_DMY_COMMON_DMY						= 3;
+	const u32			_DMY_COMMON_MDY						= 4;
+	const u32			_DMY_COMMON_DTOS					= 5;
 
 //////////
 // Common time functions constants
