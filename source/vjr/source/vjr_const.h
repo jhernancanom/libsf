@@ -769,6 +769,14 @@ typedef SEM**		SEMpp;
 
 
 //////////
+// Common time functions constants
+//////
+	const u32			_HMS_COMMON_HOUR					= 0;
+	const u32			_HMS_COMMON_MINUTE					= 1;
+	const u32			_HMS_COMMON_SECOND					= 2;
+
+
+//////////
 // Days of week, months of year
 //////
 	// These can be altered if/when languages are changed

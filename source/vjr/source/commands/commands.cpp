@@ -5244,6 +5244,103 @@
 
 //////////
 //
+// Function: HOUR()
+// Returns the hour portion from a DateTime expression.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.07.2015
+//////
+// Change log:
+//     Apr.07.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     varParam		-- Specifies a DateTime expression from which HOUR( ) returns the hour
+//
+//////
+// Returns:
+//    HOUR( ) returns a numeric value based on a 24 hour format.
+//////
+	SVariable* function_hour(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable*	varParam	= returnsParams->params[0];
+
+		// Return hour
+		return(ifunction_hhmmss_common(thisCode, varParam, _HMS_COMMON_HOUR));
+	}
+
+	SVariable* ifunction_hhmmss_common (SThisCode* thisCode, SVariable* varParam, u32 tnFunctionType)
+	{
+
+		u32			lnResult, lnHour, lnMinute, lnSecond, lnMillisecond; 
+
+		SVariable*	result;
+		SYSTEMTIME	lst;
+
+		//////////
+		// If Parameter 1 is provided, it must be datetime
+		//////
+// TODO:  Must also support DATETIMEX at some point
+			if (varParam)
+			{
+				if (!iVariable_isValid(varParam) || !iVariable_isTypeDatetime(varParam))
+				{
+					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
+					return(NULL);
+				}
+
+
+				//////////
+				// Grab hour, minute, second, millisecod from datetime
+				//////
+					iiVariable_computeHhMmSsMss_fromf32(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+
+			} else {
+				// Use the current datetime
+				GetLocalTime(&lst);
+				lnHour			= lst.wHour;
+				lnMinute		= lst.wMinute;
+				lnSecond		= lst.wSecond;
+				lnMillisecond	= lst.wMilliseconds;
+
+			}
+
+		//////////
+		// Create output variable
+		//////
+			switch (tnFunctionType)
+			{
+				case _HMS_COMMON_HOUR:		lnResult = lnHour;		break;
+				case _HMS_COMMON_MINUTE:	lnResult = lnMinute;	break;
+				case _HMS_COMMON_SECOND:	lnResult = lnSecond;	break;
+
+				// Should never happen
+				default:
+					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
+					return(NULL);
+			}
+
+
+		//////////
+		// Create the value
+		//////
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_U32, (cs8*)&lnResult, sizeof(lnResult), false);
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
+
+
+		//////////
+		// Return the result
+		//////
+			return(result);
+	}
+
+
+
+
+//////////
+//
 // Function: IIF()
 // Immediate if.
 //
@@ -6891,6 +6988,36 @@
 			return(result);
 	}
 
+
+
+
+//////////
+//
+// Function: MINUTE()
+// Returns the minute portion from a DateTime expression.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.07.2015
+//////
+// Change log:
+//     Apr.07.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     varParam		-- Specifies a DateTime expression from which MINUTE( ) returns the minute
+//
+//////
+// Returns:
+//    MINUTE( ) returns a numeric value.
+//////
+	SVariable* function_minute(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable*	varParam	= returnsParams->params[0];
+
+		// Return minute
+		return(ifunction_hhmmss_common(thisCode, varParam, _HMS_COMMON_MINUTE));
+	}
 
 
 
@@ -8717,6 +8844,99 @@
 
 		// Return rtrim
 		return(ifunction_trim_common(thisCode, varString, varCaseInsensitive, varTrimChars1, varTrimChars2, false, true, returnsParams));
+	}
+
+
+
+
+//////////
+//
+// Function: SEC()
+// Returns the seconds portion from a DateTime expression.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.07.2015
+//////
+// Change log:
+//     Apr.07.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     varParam		-- Specifies a DateTime expression from which SEC( ) returns the seconds
+//
+//////
+// Returns:
+//    SEC( ) returns a numeric value.
+//////
+	SVariable* function_sec(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable*	varParam	= returnsParams->params[0];
+
+		// Return hour
+		return(ifunction_hhmmss_common(thisCode, varParam, _HMS_COMMON_SECOND));
+	}
+
+
+
+
+//////////
+//
+// Function: SECONDS()
+// Returns the number of seconds that have elapsed since midnight.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.07.2015
+//////
+// Change log:
+//     Apr.07.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     none
+//
+//////
+// Returns:
+//    Numeric. SECONDS( ) returns a numeric value in decimal format with a resolution of 1 millisecond.
+//////
+	SVariable* function_seconds(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		f64		lfResult;
+		SYSTEMTIME	lst;
+
+		SVariable*	result;
+
+
+		//////////
+		// Compute the number of seconds that have elapsed since midnight
+		//////
+			GetLocalTime(&lst);
+			lfResult = lst.wHour * 3600 + lst.wMinute * 60 + lst.wSecond + lst.wMilliseconds * 0.001;
+
+		//////////
+		// Create output variable
+		//////
+			result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
+
+			if (!result)
+			{
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Set the value
+		//////
+			if (!iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfResult, NULL, NULL, NULL, NULL))
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+
+
+		//////////
+        // return(result)
+		//////
+	        return(result);
 	}
 
 
