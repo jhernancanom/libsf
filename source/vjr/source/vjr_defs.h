@@ -451,8 +451,14 @@ struct SObjPropMap;
 	bool					iiEventDispatch_onKeyDown				(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, u16 tnAsciiChar, u16 tvKey, bool tlIsCAS, bool tlIsAscii);
 	bool					iiEventDispatch_onKeyUp					(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, u16 tnAsciiChar, u16 tvKey, bool tlIsCAS, bool tlIsAscii);
 
-	bool					iEvents_carouselDragStart				(SThisCode* thisCode, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick);
-
+	// Carousel
+	bool					iEvents_carouselMouseWheel				(SThisCode* thisCode, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick);
+	bool					iEvents_carouselMouseMove				(SThisCode* thisCode, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick);
+	bool					iEvents_carouselMouseDown				(SThisCode* thisCode, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick);
+	bool					iEvents_carouselMouseUp					(SThisCode* thisCode, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick);
+	bool					iEvents_carousel_dragStart_tab			(SThisCode* thisCode, SObject* obj, SBitmap* bmp);
+	bool					iEvents_carousel_dragStart_titlebar		(SThisCode* thisCode, SObject* obj, SBitmap* bmp);
+	u32						iiEvents_carousel_findTarget			(SThisCode* thisCode, SObject* obj, s32 tnX, s32 tnY, SObjCarouselTabData** toctd);
 
 
 //////////

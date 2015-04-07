@@ -518,6 +518,16 @@ typedef SEM**		SEMpp;
 
 
 //////////
+// Carousel internal specific
+//////
+	const u32			_EVENT_CAROUSEL_AWAY				= 0;			// Elsewhere (not on a header, tab, tab close, or in the tab area)
+	const u32			_EVENT_CAROUSEL_HEADER				= 1;			// Somewhere in the header's rectangular area
+	const u32			_EVENT_CAROUSEL_TAB					= 2;			// On a physical tab
+	const u32			_EVENT_CAROUSEL_TAB_CLOSE			= 3;			// On a physical tab's close button
+	const u32			_EVENT_CAROUSEL_TAB_RECTANGLE		= 4;			// Somewhere in the tab rectangle, but not on a tab
+
+
+//////////
 // Image styles
 //////
 	const u32			_IMAGE_STYLE_OPAQUE					= 0;

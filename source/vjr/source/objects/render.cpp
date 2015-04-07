@@ -581,11 +581,13 @@
 													}
 
 													// Store this rectangle for future mouse reference
+// TODO:  Working here
+// TODO:  Need to move allocation to the place where riders are added, and not here
 													thisTab = (SObjCarouselTabData*)iBuilder_allocateBytes(obj->p.rcTabs, sizeof(SObjCarouselTabData));
 													if (thisTab)
 													{
 														// Populate the carousel tab data item
-														thisTab->rider		= objRider;
+														thisTab->rider			= objRider;
 														thisTab->isCloseable	= llCloseable;
 														CopyRect(&thisTab->rc, &lrc4);
 													}

@@ -423,11 +423,274 @@
 
 //////////
 //
-// Called when a drag starts on something related to a carousel.
-// This event determines if it is a real drag, or just a mouse move with the mouse button down.
+// Called when the user mouse-wheels on a carousel somewhere outside of the client area
 //
 //////
-	bool iEvents_carouselDragStart(SThisCode* thisCode, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick)
+	bool iEvents_carouselMouseWheel(SThisCode* thisCode, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick)
 	{
+		u32						lnTarget;
+		SObjCarouselTabData*	octd;
+
+
+		// Make sure our environment is sane
+		if (obj)
+		{
+			// Find the associated carousel sub-object
+			lnTarget = iiEvents_carousel_findTarget(thisCode, obj, lnX, lnY, &octd);
+			switch (lnTarget)
+			{
+				case _EVENT_CAROUSEL_HEADER:
+					// It's a header event
+					break;
+
+				case _EVENT_CAROUSEL_TAB:
+				case _EVENT_CAROUSEL_TAB_CLOSE:
+				case _EVENT_CAROUSEL_TAB_RECTANGLE:
+					// It's a tab event
+					break;
+			}
+		}
+
+		// Do not continue processing further
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called when the user moves the mouse on a carousel somewhere outside of the client area
+//
+//////
+	bool iEvents_carouselMouseMove(SThisCode* thisCode, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick)
+	{
+		u32						lnTarget;
+		SObjCarouselTabData*	octd;
+
+
+		// Make sure our environment is sane
+		if (obj)
+		{
+			// Find the associated carousel sub-object
+			lnTarget = iiEvents_carousel_findTarget(thisCode, obj, lnX, lnY, &octd);
+			switch (lnTarget)
+			{
+				case _EVENT_CAROUSEL_TAB:
+					// It's a tab event
+					break;
+
+				case _EVENT_CAROUSEL_TAB_CLOSE:
+					// It's a tab event
+					break;
+			}
+		}
+
+		// Do not continue processing further
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called when the user mouse downs (presses down a mouse button) on a carousel somewhere outside of the client area
+//
+//////
+	bool iEvents_carouselMouseDown(SThisCode* thisCode, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick)
+	{
+		u32						lnTarget;
+		SObjCarouselTabData*	octd;
+
+
+		// Make sure our environment is sane
+		if (obj)
+		{
+			// Find the associated carousel sub-object
+			lnTarget = iiEvents_carousel_findTarget(thisCode, obj, lnX, lnY, &octd);
+			switch (lnTarget)
+			{
+				case _EVENT_CAROUSEL_HEADER:
+					// It's a header event
+					break;
+
+				case _EVENT_CAROUSEL_TAB:
+					// It's a tab event
+					break;
+
+				case _EVENT_CAROUSEL_TAB_CLOSE:
+					// It's a tab event
+					break;
+			}
+		}
+
+		// If we get here, continue processing
 		return(true);
+	}
+
+
+
+
+//////////
+//
+// Called when the user mouse ups (releases the mouse button) on a carousel somewhere outside of the client area
+//
+//////
+	bool iEvents_carouselMouseUp(SThisCode* thisCode, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick)
+	{
+		u32						lnTarget;
+		SObjCarouselTabData*	octd;
+
+
+		// Make sure our environment is sane
+		if (obj)
+		{
+			// Find the associated carousel sub-object
+			lnTarget = iiEvents_carousel_findTarget(thisCode, obj, lnX, lnY, &octd);
+			switch (lnTarget)
+			{
+				case _EVENT_CAROUSEL_HEADER:
+					// It's a header event
+					break;
+
+				case _EVENT_CAROUSEL_TAB:
+					// It's a tab event
+					break;
+
+				case _EVENT_CAROUSEL_TAB_CLOSE:
+					// It's a tab event
+					break;
+			}
+		}
+
+		// Do not continue processing further
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called when a user begins dragging on a carousel tab.
+//
+//////
+	bool iEvents_carousel_dragStart_tab(SThisCode* thisCode, SObject* obj, SBitmap* bmp)
+	{
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called when a user begins dragging on a carousel titlebar.
+//
+//////
+	bool iEvents_carousel_dragStart_titlebar(SThisCode* thisCode, SObject* obj, SBitmap* bmp)
+	{
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Called to find out what the target is for the indicated coordinate within the carousel (header, or a tab)
+//
+//////
+	u32 iiEvents_carousel_findTarget(SThisCode* thisCode, SObject* obj, s32 tnX, s32 tnY, SObjCarouselTabData** toctd)
+	{
+		s32						lnResult;
+		u32						lnI;
+		RECT					lrc;
+		POINT					pt;
+		SObjCarouselTabData*	octd;
+
+
+		//////////
+		// Create a point at the actual coordinates
+		/////
+			pt.x = tnX;
+			pt.y = tnY;
+
+
+		//////////
+		// Is it on a tab?
+		//////
+			if (obj->p.rcTabs && obj->p.rcTabs->buffer)
+			{
+				// Iterate through all the tabs to update the isMouseOver* flags
+				for (lnResult = -1, lnI = 0, octd = (SObjCarouselTabData*)obj->p.rcTabs->buffer; lnI < obj->p.rcTabs->populatedLength; lnI += sizeof(SObjCarouselTabData), octd++)
+				{
+
+					//////////
+					// Is it on the close button?
+					//////
+						SetRect(&lrc, octd->rcClose.left + obj->p.bmpTabsScrolled, octd->rcClose.top, octd->rcClose.right + obj->p.bmpTabsScrolled, octd->rcClose.bottom);
+						if (PtInRect(&lrc, pt))
+						{
+							// Yes
+							*toctd					= octd;
+							lnResult				= _EVENT_CAROUSEL_TAB_CLOSE;
+							octd->isMouseOverClose	= true;
+
+						} else {
+							// Nope
+							octd->isMouseOverClose	= false;
+
+							//////////
+							// Is it on this tab at all?
+							//////
+								SetRect(&lrc, octd->rc.left + obj->p.bmpTabsScrolled, octd->rc.top, octd->rc.right + obj->p.bmpTabsScrolled, octd->rc.bottom);
+								if (PtInRect(&lrc, pt))
+								{
+									// Yes
+									*toctd				= octd;
+									lnResult			= _EVENT_CAROUSEL_TAB;
+									octd->isMouseOver	= true;
+
+								} else {
+									// Nope
+									octd->isMouseOver	= false;
+								}
+						}
+
+				}
+
+				// When we get here, lnResult is >= 0 if we encountered something
+				if (lnResult >= 0)
+					return(lnResult);
+			}
+
+
+		//////////
+		// See if it's on the header
+		//////
+			if (propTitleBar(obj))
+			{
+				
+				//////////
+				// The titlebar is displayed
+				//////
+					SetRect(&lrc, 0, 0, obj->rc.right - obj->rc.left, bmpArrowUl->bi.biHeight);
+
+
+				//////////
+				// Is it within that rectangle?
+				//////
+					if (PtInRect(&lrc, pt))
+						return(_EVENT_CAROUSEL_HEADER);		// Yes
+
+			}
+
+
+		//////////
+		// If we get here, it's away from the header or a tab
+		//////
+			return(_EVENT_CAROUSEL_AWAY);
+
 	}

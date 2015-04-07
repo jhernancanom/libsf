@@ -246,6 +246,7 @@
 		s32		lnX, lnY, lnUnits;
 		u32		lnClick;
 		bool	llCtrl, llAlt, llShift;
+		POINT	pt;
 
 
 		// Make sure our environment is sane
@@ -272,6 +273,15 @@
 			}
 			iObj_setDirtyRender_ascent(thisCode, obj, true);
 			iWindow_render(thisCode, win, false);
+
+		} else if (obj->objType == _OBJ_TYPE_CAROUSEL) {
+			// Create a point
+			pt.x = lnX;
+			pt.y = lnY;
+
+			// They are they outside of the client area?
+			if (!PtInRect(&obj->rcClient, pt))
+				return(iEvents_carouselMouseWheel(thisCode, obj, lnX, lnY, llCtrl, llAlt, llShift, lnClick));
 		}
 
 		// Do not continue to propagate this message to other objects
@@ -281,10 +291,11 @@
 	bool iDefaultCallback_onMouseMove(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick)
 	{
 		f64			lfPercent, lfX, lfY, lfWidth, lfHeight;
-		SVariable*	valueMin;
 		s32			lnX, lnY;
 		u32			lnClick;
 		bool		llCtrl, llAlt, llShift;
+		POINT		pt;
+		SVariable*	valueMin;
 
 
 		// Make sure our environment is sane
@@ -328,11 +339,13 @@
 			}
 
 		} else if (obj->objType == _OBJ_TYPE_CAROUSEL) {
-			if ((lnClick & _MOUSE_LEFT_BUTTON) != 0)
-			{
-				// They are clicking and dragging
-				iEvents_carouselDragStart(thisCode, obj, lnX, lnY, llCtrl, llAlt, llShift, lnClick);
-			}
+			// Create a point
+			pt.x = lnX;
+			pt.y = lnY;
+
+			// They are they outside of the client area?
+			if (!PtInRect(&obj->rcClient, pt))
+				return(iEvents_carouselMouseMove(thisCode, obj, lnX, lnY, llCtrl, llAlt, llShift, lnClick));
 		}
 
 		// Mouse moves continue to propagate all the way through, so as to signal appropriate enter and leave events
@@ -343,11 +356,12 @@
 	{
 		bool		llMouseDown;
 		f64			lfPercent, lfX, lfY, lfWidth, lfHeight, lfValue;
-		SVariable*	valueMin;
-		SObject*	objRoot;
 		s32			lnX, lnY;
 		u32			lnClick;
 		bool		llCtrl, llAlt, llShift;
+		POINT		pt;
+		SVariable*	valueMin;
+		SObject*	objRoot;
 
 
 		// Make sure our environment is sane
@@ -432,7 +446,13 @@
 			iObjProp_set_f64_direct(thisCode, obj, _INDEX_VALUE, lfValue);
 
 		} else if (obj->objType == _OBJ_TYPE_CAROUSEL) {
-			// 
+			// Create a point
+			pt.x = lnX;
+			pt.y = lnY;
+
+			// They are they outside of the client area?
+			if (!PtInRect(&obj->rcClient, pt))
+				return(iEvents_carouselMouseDown(thisCode, obj, lnX, lnY, llCtrl, llAlt, llShift, lnClick));
 
 		} else {
 			// Assume we consumed the mouse down event, and that the parent doesn't need to receive it
@@ -480,12 +500,24 @@
 		s32		lnX, lnY;
 		u32		lnClick;
 		bool	llCtrl, llAlt, llShift;
+		POINT	pt;
 
 
 		// Make sure our environment is sane
 		if (!iiDefaultCallback_processMouseVariables(thisCode, varX, varY, varCtrl, varAlt, varShift, varClick, &lnX, &lnY, &llCtrl, &llAlt, &llShift, &lnClick))
 			return(false);	// Do not continue consuming
 
+
+		if (obj->objType == _OBJ_TYPE_CAROUSEL)
+		{
+			// Create a point
+			pt.x = lnX;
+			pt.y = lnY;
+
+			// They are they outside of the client area?
+			if (!PtInRect(&obj->rcClient, pt))
+				return(iEvents_carouselMouseUp(thisCode, obj, lnX, lnY, llCtrl, llAlt, llShift, lnClick));
+		}
 
 		// We are leaving this object, lower the flag
 		obj->ev.isMouseDown = (obj->ev.thisClick != 0);	// Indicate if the mouse is down here

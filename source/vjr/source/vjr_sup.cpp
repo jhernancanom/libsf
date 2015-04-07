@@ -1218,8 +1218,8 @@
 //////
 	void iVjr_shutdown(SThisCode* thisCode)
 	{
-		bool	error;
-		u32		errorNum;
+// 		bool	error;
+// 		u32		errorNum;
 
 
 		// Indicate we're shutting down

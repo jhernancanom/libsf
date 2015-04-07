@@ -415,7 +415,8 @@ struct SProperties
 
 	// For Carousel
 	SBitmap*	bmpTabs;											// (Carousel)	-- Bitmap holding the rendered tabs
-	SBuilder*	rcTabs;												// (Carousel)	-- An array of rectangles for each rider's tab
+	s32			bmpTabsScrolled;									// (Carousel)	-- How many pixels are the tabs scrolled (if the bmpTabs->bi.biWidth is bigger than the carousel's width, and one of the tabs beyond the width is active and displayed)
+	SBuilder*	rcTabs;												// (Carousel)	-- An array of SObjCarouselTabData items, one for each rider's tab
 };
 
 struct SObjNodeData
@@ -449,6 +450,9 @@ struct SObjCarouselTabData
 {
 	SObject*	rider;												// The rider this tab relates to
 	RECT		rc;													// Rectangle within carousel->p.bmpTabs
+
+	bool		isMouseOver;										// Is the mouse currently over this item?
+	bool		isMouseOverClose;									// Is the mouse currently over the close button?
 
 	bool		isCloseable;										// Is this tab closable?
 	RECT		rcClose;											// Closing 'x' if shown
