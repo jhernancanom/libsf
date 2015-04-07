@@ -7653,8 +7653,10 @@ debug_break;
 	SVariable* iVariable_convertForDisplay(SThisCode* thisCode, SVariable* var)
 	{
 		s32			lnI, lnYearOffset, lnSetLogical;
-		u32			lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond;
+		u32			lnYear, lnMonth, lnDay, lnHour, lnHourAdjusted, lnMinute, lnSecond, lnMillisecond;
 		f64			lfValue64;
+		bool		llHour24;
+		cs8*		lcAmPmText;
 		SVariable*	varDisp;
 		SDateTime*	dt;
 		u8			buffer[64];
@@ -7901,6 +7903,11 @@ debug_break;
 					iiVariable_computeYyyyMmDd_fromJulian(dt->julian, &lnYear, &lnMonth, &lnDay);
 					iiVariable_computeHhMmSsMss_fromf32(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
+					// Adjust for our 24-hour settings
+					llHour24		= propGet_settings_Hours24(_settings);
+					lnHourAdjusted	= iTime_adjustHour_toAMPM(lnHour, !llHour24);
+					lcAmPmText		= (cs8*)((llHour24) ? "" : (cs8*)iTime_amOrPm(lnHour, (void*)cgc_space_am_uppercase, (void*)cgc_space_pm_lowercase));
+
 					// Format for century settings
 					if (propGet_settings_Century(_settings))
 					{
@@ -7908,11 +7915,11 @@ debug_break;
 						if (propGet_settings_ncset_datetimeMilliseconds(_settings))
 						{
 							// Include milliseconds
-							sprintf((s8*)buffer, "%02u/%02u/%04u %02u:%02u:%02u.%03u", lnMonth, lnDay, lnYear, lnHour, lnMinute, lnSecond, lnMillisecond);
+							sprintf((s8*)buffer, "%02u/%02u/%04u %02u:%02u:%02u.%03u%s\0", lnMonth, lnDay, lnYear, lnHourAdjusted, lnMinute, lnSecond, lnMillisecond, lcAmPmText);
 
 						} else {
 							// No milliseconds
-							sprintf((s8*)buffer, "%02u/%02u/%04u %02u:%02u:%02u", lnMonth, lnDay, lnYear, lnHour, lnMinute, lnSecond);
+							sprintf((s8*)buffer, "%02u/%02u/%04u %02u:%02u:%02u%s\0", lnMonth, lnDay, lnYear, lnHourAdjusted, lnMinute, lnSecond, lcAmPmText);
 						}
 
 					} else {
@@ -7920,11 +7927,11 @@ debug_break;
 						if (propGet_settings_ncset_datetimeMilliseconds(_settings))
 						{
 							// Include milliseconds
-							sprintf((s8*)buffer, "%02u/%02u/%02u %02u:%02u:%02u.%03u", lnMonth, lnDay, lnYear % 100, lnHour, lnMinute, lnSecond, lnMillisecond);
+							sprintf((s8*)buffer, "%02u/%02u/%02u %02u:%02u:%02u.%03u%s\0", lnMonth, lnDay, lnYear % 100, lnHourAdjusted, lnMinute, lnSecond, lnMillisecond, lcAmPmText);
 
 						} else {
 							// No milliseconds
-							sprintf((s8*)buffer, "%02u/%02u/%02u %02u:%02u:%02u", lnMonth, lnDay, lnYear % 100, lnHour, lnMinute, lnSecond);
+							sprintf((s8*)buffer, "%02u/%02u/%02u %02u:%02u:%02u%s\0", lnMonth, lnDay, lnYear % 100, lnHourAdjusted, lnMinute, lnSecond, lcAmPmText);
 						}
 					}
 

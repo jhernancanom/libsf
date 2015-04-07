@@ -102,6 +102,9 @@
 	s64						iTime_computeMilliseconds				(SYSTEMTIME* time);
 	s64						iTime_getSystemMs						(void);
 	s64						iTime_getLocalMs						(void);
+	void					iTime_getLocalOrSystem					(SYSTEMTIME* time, bool tlLocal);
+	u32						iTime_adjustHour_toAMPM					(u32 tnHour, bool tlAdjustToAmPm);
+	void*					iTime_amOrPm							(u32 lnHour, void* tcAmText, void* tcPmText);
 
 
 #endif	// __TIME_H__

@@ -173,3 +173,24 @@
 		GetLocalTime(&time);
 		return(iTime_computeMilliseconds(&time));
 	}
+
+	void iTime_getLocalOrSystem(SYSTEMTIME* time, bool tlLocal)
+	{
+		if (time)
+		{
+			if (tlLocal)		GetLocalTime(time);
+			else				GetSystemTime(time);
+		}
+	}
+
+	u32 iTime_adjustHour_toAMPM(u32 tnHour, bool tlAdjustToAmPm)
+	{
+		if (tlAdjustToAmPm && tnHour > 12)		return(tnHour - 12);
+		else									return(tnHour);
+	}
+
+	void* iTime_amOrPm(u32 lnHour, void* tcAmText, void* tcPmText)
+	{
+		if (lnHour >= 12)		return(tcPmText);
+		else					return(tcAmText);
+	}

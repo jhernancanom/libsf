@@ -272,6 +272,9 @@ typedef SEM**		SEMpp;
 	#define propGet_settings_Decimals(obj)							iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_DECIMALS)
 	#define propGet_settings_Exclusive(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_EXCLUSIVE)				!= _LOGICAL_FALSE)
 	#define propGet_settings_FocusHighlightBorderPixels(obj)		iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_FOCUS_HIGHLIGHT_BORDER_PIXELS)
+	#define propGet_settings_Hours(obj)								iObjProp_get_s32_direct		(thisCode, obj, _INDEX_SET_HOURS)
+	#define propGet_settings_Hours12(obj)							(iObjProp_get_s32_direct		(thisCode, obj, _INDEX_SET_HOURS)							== 12)
+	#define propGet_settings_Hours24(obj)							(iObjProp_get_s32_direct		(thisCode, obj, _INDEX_SET_HOURS)							== 24)
 	#define propGet_settings_FocusHighlightPixels(obj)				iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_FOCUS_HIGHLIGHT_PIXELS)
 	#define propGet_settings_InitializeDefaultValue(obj)			iObjProp_get_variable_byIndex	(thisCode, obj, _INDEX_SET_INITIALIZE_DEFAULT_VALUE)
 	#define propGet_settings_LoadReceivesParams(obj)				(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_LOAD_RECEIVES_PARAMS)	!= _LOGICAL_FALSE)
@@ -291,6 +294,9 @@ typedef SEM**		SEMpp;
 	#define propGet_settings_ReprocessInterval(obj)					iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_REPROCESSINTERVAL)
 	#define propGet_settings_Separator(obj)							iObjProp_get_character			(thisCode, obj, _INDEX_SET_SEPARATOR)
 	#define propGet_settings_Talk(obj)								(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_TALK)					!= _LOGICAL_FALSE)
+	#define propGet_settings_Time(obj)								iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_TIME)
+	#define propGet_settings_TimeLocal(obj)							(iObjProp_get_s32_direct		(thisCode, obj, _INDEX_SET_TIME)							== _TIME_LOCAL)
+	#define propGet_settings_TimeSystem(obj)						(iObjProp_get_s32_direct		(thisCode, obj, _INDEX_SET_TIME)							== _TIME_SYSTEM)
 	#define propGet_settings_VariablesFirst(obj)					(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_VARIABLES_FIRST)		!= _LOGICAL_FALSE)
 	#define propGet_settings_VecSeparator(obj)						iObjProp_get_character			(thisCode, obj, _INDEX_SET_VECSEPARATOR)
 
@@ -1092,8 +1098,14 @@ typedef SEM**		SEMpp;
 	const u8			cgcSeparatorChar[]					= ",";
 	const u8			cgcComma[]							= ",";
 	const u8			cgcDollarSign[]						= "$";
-
-
+	const u8			cgc_space_pm_uppercase[]			= " PM";
+	const u8			cgc_space_am_uppercase[]			= " AM";
+	const u8			cgc_space_pm_lowercase[]			= " pm";
+	const u8			cgc_space_am_lowercase[]			= " am";
+	const u8			cgc_pm_uppercase[]					= "PM";
+	const u8			cgc_am_uppercase[]					= "AM";
+	const u8			cgc_pm_lowercase[]					= "pm";
+	const u8			cgc_am_lowercase[]					= "am";
 
 
 //////////

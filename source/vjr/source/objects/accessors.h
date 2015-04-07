@@ -466,6 +466,7 @@ struct SBasePropMap;
 	const s8		cgc_setFocusHighlightBorderPixels[]						= "focusHighlightBorderPixels";
 	const s8		cgc_setFocusHighlightPixels[]							= "focusHighlightPixels";
 	const s8		cgc_setHonorBarriers[]									= "honorBarriers";
+	const s8		cgc_setHours[]											= "hours";
 	const s8		cgc_setImplicitParams[]									= "implicitParams";
 	const s8		cgc_setIndexMetaData[]									= "indexMetaData";
 	const s8		cgc_setLanguage[]										= "language";
@@ -862,37 +863,38 @@ struct SBasePropMap;
 	const u32		_INDEX_SET_FOCUS_HIGHLIGHT_BORDER_PIXELS				= 361;
 	const u32		_INDEX_SET_FOCUS_HIGHLIGHT_PIXELS						= 362;
 	const u32		_INDEX_SET_HONOR_BARRIERS								= 363;
-	const u32		_INDEX_SET_IMPLICIT_PARAMS								= 364;
-	const u32		_INDEX_SET_INDEX_META_DATA								= 365;
-	const u32		_INDEX_SET_INITIALIZE_DEFAULT_VALUE						= 366;
-	const u32		_INDEX_SET_LANGUAGE										= 367;
-	const u32		_INDEX_SET_LOAD_RECEIVES_PARAMS							= 368;
-	const u32		_INDEX_SET_LOCK_SCREEN									= 369;
-	const u32		_INDEX_SET_LOGICAL										= 370;
-	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 371;
-	const u32									_INDEX_SET_NCSET_START	= 372;
-	const u32		_INDEX_SET_NCSET_ALPHA_IS_OPAQUE						= 372;
-	const u32		_INDEX_SET_NCSET_CEILING_FLOOR							= 373;
-	const u32		_INDEX_SET_NCSET_DATETIME_MILLISECONDS					= 374;
-	const u32		_INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES					= 375;
-	const u32		_INDEX_SET_NCSET_OPTIMIZE_VARIABLES						= 376;
-	const u32		_INDEX_SET_NCSET_SIGN_SIGN2								= 377;
-	const u32									_INDEX_SET_NCSET_END	= 377;
-	const u32		_INDEX_SET_POINT										= 378;
-	const u32		_INDEX_SET_REPROCESS									= 379;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 380;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
-	const u32		_INDEX_SET_REPROCESSINTERVAL							= 381;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
-	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 382;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_SEPARATOR									= 383;
-	const u32		_INDEX_SET_SLOPPY_PRINTING								= 384;
-	const u32		_INDEX_SET_STICKY_PARAMETERS							= 385;
-	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 386;
-	const u32		_INDEX_SET_TABLE_OBJECTS								= 387;
-	const u32		_INDEX_SET_TALK											= 388;
-	const u32		_INDEX_SET_TIME											= 389;
-	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 390;
-	const u32		_INDEX_SET_VARIABLES_FIRST								= 391;
-	const u32		_INDEX_SET_VECSEPARATOR									= 392;
+	const u32		_INDEX_SET_HOURS										= 364;
+	const u32		_INDEX_SET_IMPLICIT_PARAMS								= 365;
+	const u32		_INDEX_SET_INDEX_META_DATA								= 366;
+	const u32		_INDEX_SET_INITIALIZE_DEFAULT_VALUE						= 367;
+	const u32		_INDEX_SET_LANGUAGE										= 368;
+	const u32		_INDEX_SET_LOAD_RECEIVES_PARAMS							= 369;
+	const u32		_INDEX_SET_LOCK_SCREEN									= 370;
+	const u32		_INDEX_SET_LOGICAL										= 371;
+	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 372;
+	const u32									_INDEX_SET_NCSET_START	= 373;
+	const u32		_INDEX_SET_NCSET_ALPHA_IS_OPAQUE						= 373;
+	const u32		_INDEX_SET_NCSET_CEILING_FLOOR							= 374;
+	const u32		_INDEX_SET_NCSET_DATETIME_MILLISECONDS					= 375;
+	const u32		_INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES					= 376;
+	const u32		_INDEX_SET_NCSET_OPTIMIZE_VARIABLES						= 377;
+	const u32		_INDEX_SET_NCSET_SIGN_SIGN2								= 378;
+	const u32									_INDEX_SET_NCSET_END	= 378;
+	const u32		_INDEX_SET_POINT										= 379;
+	const u32		_INDEX_SET_REPROCESS									= 380;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 381;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
+	const u32		_INDEX_SET_REPROCESSINTERVAL							= 382;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
+	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 383;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_SEPARATOR									= 384;
+	const u32		_INDEX_SET_SLOPPY_PRINTING								= 385;
+	const u32		_INDEX_SET_STICKY_PARAMETERS							= 386;
+	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 387;
+	const u32		_INDEX_SET_TABLE_OBJECTS								= 388;
+	const u32		_INDEX_SET_TALK											= 389;
+	const u32		_INDEX_SET_TIME											= 390;
+	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 391;
+	const u32		_INDEX_SET_VARIABLES_FIRST								= 392;
+	const u32		_INDEX_SET_VECSEPARATOR									= 393;
 
 
 
@@ -925,6 +927,7 @@ struct SBasePropMap;
 	bool					iObjProp_setDate						(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
 	bool					iObjProp_setDecimals					(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
 	bool					iObjProp_setInteger						(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
+	bool					iObjProp_setIneger_12_24				(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
 	bool					iObjProp_set_u16						(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
 	bool					iObjProp_setLanguage					(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
 	bool					iObjProp_setLogical						(SThisCode* thisCode, SVariable* varSet, SComp* compNew, SVariable* varNew, bool tlDeleteVarNewAfterSet);
@@ -1407,6 +1410,7 @@ struct SBasePropMap;
 		{	_INDEX_SET_FOCUS_HIGHLIGHT_BORDER_PIXELS,		_ICODE_FOCUSHIGHLIGHTBORDERPIXELS,	cgc_setFocusHighlightBorderPixels,	sizeof(cgc_setFocusHighlightBorderPixels) -1,		_VAR_TYPE_S32,				0, 0, 0,		0								,NULL	},	// Number of pixels between the object and the focus highlight border
 		{	_INDEX_SET_FOCUS_HIGHLIGHT_PIXELS,				_ICODE_FOCUSHIGHLIGHTPIXELS,		cgc_setFocusHighlightPixels,		sizeof(cgc_setFocusHighlightPixels) - 1,			_VAR_TYPE_S32,				0, 0, 0,		4								,NULL	},	// Number of pixels thick the focus highlight border is
 		{	_INDEX_SET_HONOR_BARRIERS,						_ICODE_HONORBARRIERS,				cgc_setHonorBarriers,				sizeof(cgc_setHonorBarriers) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_TRUE					,NULL	},	// .t.=honors the 2GB file size barrier, .f.=allows file sizes larger than 2GB
+		{	_INDEX_SET_HOURS,								_ICODE_HOURS,						cgc_setHours,						sizeof(cgc_setHours) - 1,							_VAR_TYPE_S32,				0, 0, 0,		12								,NULL	},	// 12=uses am/pm, 24=no military
 		{	_INDEX_SET_IMPLICIT_PARAMS,						_ICODE_IMPLICITPARAMS,				cgc_setImplicitParams,				sizeof(cgc_setImplicitParams) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=allows empty or partially empty parameters, .f.=requires 1:1 received parameters to passed parameters
 		{	_INDEX_SET_INDEX_META_DATA,						_ICODE_INDEXMETADATA,				cgc_setIndexMetaData,				sizeof(cgc_setIndexMetaData) - 1,					_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=stores meta data for dates, defined variables inside the index, .f.=uses live environment on subsequent index tag reopens
 		{	_INDEX_SET_INITIALIZE_DEFAULT_VALUE,			_ICODE_INITIALIZEDEFAULTVALUE,		cgc_setInitializeDefaultValue,		sizeof(cgc_setInitializeDefaultValue) - 1,			_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// The default initialize variable type for new variables, such as "LOCAL fred" ... by default, logical false
@@ -1460,8 +1464,8 @@ struct SBasePropMap;
 		union {
 			uptr		_getterObject;
 			SVariable*	(*getterObject)		(SThisCode* thisCode, SObject* obj, u32 tnIndex);
-			uptr		_getterObject_set;
-			SVariable*	(*getterObject_set)	(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarNewAfterSet);
+			uptr		_getterObject_get;
+			SVariable*	(*getterObject_get)	(SThisCode* thisCode, SVariable* varSet, SComp* compIdentifier, bool tlDeleteVarNewAfterSet);
 		};
 	};
 
@@ -3635,6 +3639,7 @@ struct SBasePropMap;
 		{	_INDEX_SET_FOCUS_HIGHLIGHT_BORDER_PIXELS,	0, (uptr)&iObjProp_setInteger,		(uptr)&iObjProp_getInteger },	// s32
 		{	_INDEX_SET_FOCUS_HIGHLIGHT_PIXELS,			0, (uptr)&iObjProp_setInteger,		(uptr)&iObjProp_getInteger },	// s32
 		{	_INDEX_SET_HONOR_BARRIERS,					0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
+		{	_INDEX_SET_HOURS,							0, (uptr)&iObjProp_setIneger_12_24,	(uptr)&iObjProp_getInteger},	// s32
 		{	_INDEX_SET_IMPLICIT_PARAMS,					0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
 		{	_INDEX_SET_INDEX_META_DATA,					0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
 		{	_INDEX_SET_INITIALIZE_DEFAULT_VALUE,		0, 0, 0 },		// Varies, but initially it is bool

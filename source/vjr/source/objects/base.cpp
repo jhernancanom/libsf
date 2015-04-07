@@ -3319,6 +3319,8 @@ debug_break;
 					obj->props[lnI] = iVariable_copy(thisCode, gsProps_master[lnIndex - 1].varInit, false);
 
 // Should never happen
+// This usually means a property was added to a gsProps_class, but not to the full gsProps_master
+// See accessors.h for this lnIndex property number
 if (!obj->props[lnI])
 	debug_break;
 					// Set its name

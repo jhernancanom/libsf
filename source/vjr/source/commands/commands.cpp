@@ -2308,7 +2308,8 @@
 
 			} else {
 				// Use the current date
-				GetLocalTime(&lst);
+				if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
+				else				GetLocalTime(&lst);
 				lnYear	= lst.wYear;
 				lnMonth	= lst.wMonth;
 				lnDay	= lst.wDay;
@@ -2708,7 +2709,8 @@
 
 			} else {
 				// Use the current date
-				GetLocalTime(&lst);
+				if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
+				else				GetLocalTime(&lst);
 				lnYear	= lst.wYear;
 				lnMonth	= lst.wMonth;
 				lnDay	= lst.wDay;
@@ -3119,7 +3121,8 @@
 		if (!varYear)
 		{
 			// Nope, we are creating the current system time
-			GetLocalTime(&lst);
+			if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
+			else				GetLocalTime(&lst);
 
 		} else {
 			// They have provided us date parameters.
@@ -3259,7 +3262,8 @@
 		if (!varYear)
 		{
 			// Nope, we are creating the current system time
-			GetLocalTime(&lst);
+			if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
+			else				GetLocalTime(&lst);
 
 		} else {
 			// They have provided us datetime parameters.
@@ -3504,7 +3508,8 @@
 
 			} else {
 				// Use the current date
-				GetLocalTime(&lst);
+				if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
+				else				GetLocalTime(&lst);
 				lnYear	= lst.wYear;
 				lnMonth	= lst.wMonth;
 				lnDay	= lst.wDay;
@@ -5274,9 +5279,9 @@
 	{
 
 		u32			lnResult, lnHour, lnMinute, lnSecond, lnMillisecond; 
-
-		SVariable*	result;
 		SYSTEMTIME	lst;
+		SVariable*	result;
+
 
 		//////////
 		// If Parameter 1 is provided, it must be datetime
@@ -5292,13 +5297,14 @@
 
 
 				//////////
-				// Grab hour, minute, second, millisecod from datetime
+				// Grab hour, minute, second, millisecond from datetime
 				//////
 					iiVariable_computeHhMmSsMss_fromf32(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 			} else {
 				// Use the current datetime
-				GetLocalTime(&lst);
+				if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
+				else				GetLocalTime(&lst);
 				lnHour			= lst.wHour;
 				lnMinute		= lst.wMinute;
 				lnSecond		= lst.wSecond;
@@ -7013,7 +7019,8 @@
 //////
 	SVariable* function_minute(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		SVariable*	varParam	= returnsParams->params[0];
+		SVariable*	varParam = returnsParams->params[0];
+
 
 		// Return minute
 		return(ifunction_hhmmss_common(thisCode, varParam, _HMS_COMMON_MINUTE));
@@ -7865,7 +7872,8 @@
 
 			} else {
 				// Use the current date
-				GetLocalTime(&lst);
+				if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
+				else				GetLocalTime(&lst);
 				lnYear	= lst.wYear;
 				lnMonth	= lst.wMonth;
 				lnDay	= lst.wDay;
@@ -8871,9 +8879,10 @@
 //////
 	SVariable* function_sec(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		SVariable*	varParam	= returnsParams->params[0];
+		SVariable*	varParam = returnsParams->params[0];
 
-		// Return hour
+
+		// Return second
 		return(ifunction_hhmmss_common(thisCode, varParam, _HMS_COMMON_SECOND));
 	}
 
@@ -8902,35 +8911,31 @@
 //////
 	SVariable* function_seconds(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		f64		lfResult;
+		f64			lfResult;
 		SYSTEMTIME	lst;
-
 		SVariable*	result;
 
 
 		//////////
 		// Compute the number of seconds that have elapsed since midnight
 		//////
-			GetLocalTime(&lst);
-			lfResult = lst.wHour * 3600 + lst.wMinute * 60 + lst.wSecond + lst.wMilliseconds * 0.001;
+			if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
+			else				GetLocalTime(&lst);
+			lfResult =		((f64)lst.wHour			* 3600.0	)
+						+	((f64)lst.wMinute		* 60.0		)
+						+	((f64)lst.wSecond					)
+						+	((f64)lst.wMilliseconds	* 0.001		);
+
 
 		//////////
-		// Create output variable
+		// Create and populate output variable
 		//////
-			result = iVariable_create(thisCode, _VAR_TYPE_F64, NULL, true);
-
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_F64, (s8*)&lfResult, sizeof(lfResult), true);
 			if (!result)
 			{
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
 				return(NULL);
 			}
-
-
-		//////////
-		// Set the value
-		//////
-			if (!iVariable_setNumeric_toNumericType(thisCode, result, NULL, &lfResult, NULL, NULL, NULL, NULL))
-				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
 
 
 		//////////
@@ -8970,6 +8975,7 @@
 		SBasePropMap*	baseProp;
 		SObjPropMap*	objProp;
 		SVariable*		var;
+		SVariable*		result;
 
 
 		//////////
@@ -9007,19 +9013,33 @@
 							iError_signal(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varIdentifier), false, NULL, false);
 							return(NULL);
 						}
+						// Note:  var is the actual _settings variable, so a copy must be made if returning this value.
 
 
 					//////////
-					// Translate the actual variable content to its display form
+					// If there's a getter, translate the actual variable into its displayable form
 					//////
-						if (objProp->_getterObject_set)
-							 return(objProp->getterObject_set(thisCode, var, iVariable_getRelatedComp(thisCode, varIdentifier), true));
+						if (objProp->_getterObject_get)
+							 return(objProp->getterObject_get(thisCode, var, iVariable_getRelatedComp(thisCode, varIdentifier), false));
 
 
 					//////////
-					// If we get here, return the actual value as is
+					// If we get here, return a copy of the value
 					//////
-						return(var);
+						result = iVariable_copy(thisCode, var, false);
+
+
+					//////////
+					// Are we good?
+					//////
+						if (!result)
+							iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varIdentifier), false);
+
+
+					//////////
+					// Indicate the result
+					//////
+						return(result);
 
 				}
 			}
@@ -9881,7 +9901,8 @@ debug_break;
 			{
 				case 2015:
 					// Unique procedure names take on the form YYYYMMDDHHMMSSmmm converted to base-36, prefixed with an underscore
-					GetLocalTime(&lst);
+					if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
+					else				GetLocalTime(&lst);
 					ln2015 =	(lst.wYear		* 10000000000000) +
 								(lst.wMonth		* 100000000000) +
 								(lst.wDay		* 1000000000) +
