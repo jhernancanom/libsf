@@ -484,6 +484,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_hour[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_iif[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -566,6 +571,11 @@
 	};
 
 	SSourceLightData gsSourceLight_min[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_minute[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
@@ -696,6 +706,16 @@
 	};
 
 	SSourceLightData gsSourceLight_rtrim[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_sec[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_seconds[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
