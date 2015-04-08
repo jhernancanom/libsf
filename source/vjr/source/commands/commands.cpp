@@ -3877,6 +3877,78 @@
 
 //////////
 //
+// Function: DTOT()
+// Returns a DateTime value from a Date expression.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.07.2015
+//////
+// Change log:
+//     Apr.07.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Date
+//
+//////
+// Returns:
+//    Datetime	-- DTOT( ) adds a default time of 12:00:00 AM (if SET HOURS is 12) or 00:00:00 (if SET HOURS is 24) to the date to produce a valid DateTime value.
+//////
+	SVariable* function_dtot(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varParam = returnsParams->params[0];
+
+		u32			lnYear, lnMonth, lnDay;
+		f32			lfJulian;
+		SVariable*	result;
+
+
+		//////////
+		// Parameter 1 must be date
+		//////
+			if (!iVariable_isValid(varParam) || !iVariable_isTypeDate(varParam))
+			{
+				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Grab year, month, day from date
+		//////
+			iiVariable_computeYyyyMmDd_fromYYYYMMDD(varParam->value.data_u8, &lnYear, &lnMonth, &lnDay);
+
+
+		//////////
+		// Convert date into a VJr datetime variable
+		//////
+			result = iVariable_create(thisCode, _VAR_TYPE_DATETIME, NULL, true);
+			if (!result)
+			{
+				iError_report(thisCode, cgcInternalError, false);
+				return(NULL);
+			}
+
+			// Date is stored as julian day number
+			result->value.data_dt->julian	= iiVariable_julian_fromYyyyMmDd(&lfJulian, lnYear, lnMonth, lnDay);
+
+			// Time is stored as seconds since midnight
+			result->value.data_dt->seconds = 0.0f;
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return(result);
+
+	}
+
+
+
+
+//////////
+//
 // Function: EMPTY()
 // Determines whether an expression evaluates to empty.
 //
@@ -10171,17 +10243,26 @@
 // SYS function support (Dec.27.2014 incomplete)
 //
 ///////
-// Version 0.56
+// Version 0.57
 // Last update:
-//     Dec.27.2014
+//     Apr.08.2015
 //////
 // Change log:
+//	   Apr.08.2015 - SYS(10) added by Stefano D'Amico
+//	   Apr.08.2015 - SYS(2) added by Stefano D'Amico
+//	   Apr.08.2015 - SYS(1) added by Stefano D'Amico
 //     Dec.27.2014 - Initial creation
 //////
 // Parameters:
+//		1				-- none
+//		2				-- none
+//		10				-- Numeric, julian day number 
 //		2015			-- none
 //////
 // Returns:
+//		1				-- Character, returns the current system date as a Julian day number character string
+//		2				-- Numeric, returns the number of seconds elapsed since midnight
+//		10				-- Character, returns a Character-type date from a Julian day number 
 //		2015			-- Character, unique procedure name
 //////
 	SVariable* function_sys(SThisCode* thisCode, SReturnsParams* returnsParams)
@@ -10190,11 +10271,15 @@
 		SVariable*	varP1		= returnsParams->params[1];
 		SVariable*	varP2		= returnsParams->params[2];
 		s32			lnIndex;
+		f32			lfJulian;
+		u32			lnYear, lnMonth, lnDay;
+		s8			buffer[64];
 		u32			lnExtraPrefixWidth, lnExtraPostfixWidth;
 		s64			ln2015;
 		u32			errorNum;
         bool		error;
 		SYSTEMTIME	lst;
+		SVariable*	varTemp;
 		SVariable*	result;
 
 
@@ -10224,6 +10309,119 @@
 		//////
 			switch (lnIndex)
 			{
+				case 1:
+					// Current system date as a Julian day number character string
+					if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
+					else				GetLocalTime(&lst);
+
+
+					//////////
+					// Grab and convert julian date
+					//////
+						iiVariable_julian_fromYyyyMmDd(&lfJulian, lst.wYear, lst.wMonth, lst.wDay);
+						sprintf(buffer, "%d\0", (s32)lfJulian);
+
+
+					//////////
+					// Create our result
+					//////
+						result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, (cs8*)buffer, (u32)strlen(buffer), false);
+						if (!result)
+						{
+							iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varIndex), false);
+							return(NULL);
+						}
+
+
+					//////////
+					// Indicate our result
+					//////
+						return(result);
+				case 2:
+					//  Number of seconds elapsed since midnight
+					varTemp = function_seconds(thisCode, returnsParams);
+					if (varTemp)
+					{
+						result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
+						// Convert to S64, we not have to round (37431.854 is 37431, have not yet passed 37432 seconds)
+						if (result)
+							*(s64*)result->value.data = (s64)*varTemp->value.data_f64;
+
+						iVariable_delete(thisCode, varTemp, true);
+					} 
+
+					if (!result)
+					{
+						iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varIndex), false);
+						return(NULL);
+					}
+
+
+					//////////
+					// Indicate our result
+					//////
+						return(result);
+
+				case 10:
+					// a Character-type date from a Julian day number 
+
+					//////////
+					// Parameter 1 must be numeric
+					//////
+						if (!iVariable_isValid(varP1) || !iVariable_isTypeNumeric(varP1))
+						{
+							iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP1), false);
+							return(NULL);
+						}
+
+
+					//////////
+					// Grab year, month, day from julian number
+					//////
+						lfJulian = iiVariable_getAs_f32(thisCode, varP1, false, &error, &errorNum);
+						if (error)
+						{
+							iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varP1), false);
+							return(NULL);
+						}
+
+						iiVariable_computeYyyyMmDd_fromJulian((u32)lfJulian, &lnYear, &lnMonth, &lnDay);
+
+
+					//////////
+					// Convert julian date into a VJr date variable
+					//////
+						// Date is stored as YYYYMMDD
+						sprintf(buffer, "%04u%02u%02u\0", lnYear, lnMonth, lnDay);
+						varTemp = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
+						if (!varTemp)
+						{
+							// Fatal error
+							iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+							return(NULL);
+						}
+
+
+					//////////
+					// Create and populate the return variable
+					//////
+						result = iVariable_convertForDisplay(thisCode, varTemp);
+						if (!result)
+							iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varP1), false);
+
+
+					//////////
+					// Clean house
+					//////
+						iVariable_delete(thisCode, varTemp, true);
+
+
+					//////////
+					// Signify our result
+					//////
+						return(result);
+
+
 				case 2015:
 					// Unique procedure names take on the form YYYYMMDDHHMMSSmmm converted to base-36, prefixed with an underscore
 					if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
@@ -10763,6 +10961,232 @@ debug_break;
 		// Indicate our status
 		//////
 			return(result);
+	}
+
+
+
+
+//////////
+//
+// Function: TTOC()
+// Converts a DateTime expression to a Character value with the specified format.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.07.2015
+//////
+// Change log:
+//     Apr.07.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Datetime
+//	   p2			-- Numeric: 
+//						1 -- yyyymmddhhmmss
+//						2 -- only the time portion of p1
+//						3 -- yyyy-mm-ddThh:mm:ss 
+//////
+// Returns:
+//    Character. TTOC( ) returns a DateTime expression as a character string.
+//////
+	SVariable* function_ttoc(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varParam = returnsParams->params[0];
+		SVariable* varFlag	= returnsParams->params[1];
+
+		u32			lnYear, lnMonth, lnDay, lnFlag;
+		u32			lnHour, lnHourAdjusted, lnMinute, lnSecond, lnMillisecond;
+		bool		llHour24;
+		cs8*		lcAmPmText;
+		s8			buffer[64];
+		u32			errorNum;
+		bool		error;
+
+		SVariable*	result;
+
+
+		//////////
+		// Parameter 1 must be datetime
+		//////
+// TODO:  Must also support DATETIMEX at some point
+			if (!iVariable_isValid(varParam) || !iVariable_isTypeDatetime(varParam))
+			{
+				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
+				return(NULL);
+			}
+
+		//////////
+		// If Parameter 2 is provided, it must be numeric
+		//////
+			if (varFlag)
+			{
+				if (!iVariable_isValid(varFlag) || !iVariable_isTypeNumeric(varFlag))
+				{
+					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varFlag), false);
+					return(NULL);
+				}
+
+				//////////
+				// Grab the flag value
+				//////
+					lnFlag = iiVariable_getAs_s32(thisCode, varFlag, false, &error, &errorNum);
+					if (error)
+					{
+						// An error extracting the value (should never happen)
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varFlag), false);
+						return(NULL);
+					}	
+
+
+				//////////
+				// Grab the value
+				//////
+					iiVariable_computeYyyyMmDd_fromJulian(varParam->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+					iiVariable_computeHhMmSsMss_fromf32(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+
+				switch(lnFlag)
+				{
+					case 1:		//	YYYYMMDDHHMMSSmm
+
+						if (_settings && propGet_settings_ncset_datetimeMilliseconds(_settings))
+						{
+							// Include milliseconds
+							sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
+
+						} else {
+							// No milliseconds
+							sprintf(buffer, "%04u%02u%02u%02u%02u%02u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond);
+						}
+						break;
+
+					case 2:
+						//	HH:MM
+						// Adjust for our 24-hour settings
+						llHour24		= propGet_settings_Hours24(_settings);
+						lnHourAdjusted	= iTime_adjustHour_toAMPM(lnHour, !llHour24);
+						lcAmPmText		= (cs8*)((llHour24) ? "" : (cs8*)iTime_amOrPm(lnHour, (void*)cgc_space_am_uppercase, (void*)cgc_space_pm_lowercase));
+
+						if (propGet_settings_ncset_datetimeMilliseconds(_settings))
+						{
+							// Include milliseconds
+							sprintf(buffer, "%02u:%02u:%02u.%03u%s\0", lnHourAdjusted, lnMinute, lnSecond, lnMillisecond, lcAmPmText);
+
+						} else {
+							// No milliseconds
+							sprintf(buffer, "%02u:%02u:%02u%s\0", lnHourAdjusted, lnMinute, lnSecond, lcAmPmText);
+						}
+						break;
+
+					case 3:		// YYYY-MM-DDThh:mm:ss 
+
+						if (_settings && propGet_settings_ncset_datetimeMilliseconds(_settings))
+						{
+							// Include milliseconds
+							sprintf(buffer, "%04u-%02u-%02uT%02u:%02u:%02u.%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
+
+						} else {
+							// No milliseconds (XML DateTime format)
+							sprintf(buffer, "%04u-%02u-%02uT%02u:%02u:%02u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond);
+						}
+						break;
+
+					default:
+						// If we get here, invalid parameter specified
+						iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varFlag), false);
+						return(NULL);
+				}
+
+				//////////
+				// Create and populate the return variable
+				//////
+					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, (cs8*)buffer, (u32)strlen(buffer), false);
+
+
+				//////////
+				// Return our converted result
+				//////
+					return(result);
+
+			} else {
+
+				//////////
+				// Create and populate the return variable
+				//////
+					result = iVariable_convertForDisplay(thisCode, varParam);
+					if (!result)
+						iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
+
+
+				//////////
+				// Signify our result
+				//////
+					return(result);
+			}
+
+	}
+
+
+
+
+//////////
+//
+// Function: TTOD()
+// Returns a Date value from a Datetime expression.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.07.2015
+//////
+// Change log:
+//     Apr.07.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Datetime
+//
+//////
+// Returns:
+//    Datetime	-- DTOT( ) adds a default time of 12:00:00 AM (if SET HOURS is 12) or 00:00:00 (if SET HOURS is 24) to the date to produce a valid DateTime value.
+//////
+	SVariable* function_ttod(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varParam = returnsParams->params[0];
+
+		u32			lnYear, lnMonth, lnDay;
+		s8			buffer[16];
+
+		SVariable*	result;
+
+
+		//////////
+		// Parameter 1 must be datetime
+		//////
+			if (!iVariable_isValid(varParam) || !iVariable_isTypeDatetime(varParam))
+			{
+				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
+				return(NULL);
+			}
+
+
+		//////////
+		// Grab year, month, day from datetime
+		//////
+			iiVariable_computeYyyyMmDd_fromJulian(varParam->value.data_dt->julian, (u32*)&lnYear, (u32*)&lnMonth, &lnDay);
+
+
+		//////////
+		// Convert datetime into a VJr date variable
+		//////
+			// Date is stored as YYYYMMDD
+			sprintf(buffer, "%04u%02u%02u\0", lnYear, lnMonth, lnDay);
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
+
+
+		//////////
+        // Return our converted result
+		//////
+	        return(result);
+
 	}
 
 

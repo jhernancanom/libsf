@@ -434,6 +434,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_dtot[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_empty[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -815,6 +820,16 @@
 	};
 
 	SSourceLightData gsSourceLight_transform[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_ttoc[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_ttod[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};
