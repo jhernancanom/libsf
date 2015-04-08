@@ -10866,10 +10866,13 @@ debug_break;
 	SVariable* function_ttoc(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
 		SVariable* varParam = returnsParams->params[0];
-		SVariable* varFlag = returnsParams->params[1];
+		SVariable* varFlag	= returnsParams->params[1];
 
 		u32			lnYear, lnMonth, lnDay, lnFlag;
-		s8			buffer[16];
+		u32			lnHour, lnHourAdjusted, lnMinute, lnSecond, lnMillisecond;
+		bool		llHour24;
+		cs8*		lcAmPmText;
+		s8			buffer[64];
 		u32			errorNum;
 		bool		error;
 
@@ -10897,46 +10900,102 @@ debug_break;
 					return(NULL);
 				}
 
-				// Grab the flag
-				lnFlag = iiVariable_getAs_s32(thisCode, varFlag, false, &error, &errorNum);
-				if (error)
-				{
-					// An error extracting the value (should never happen)
-					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varFlag), false);
-					return(NULL);
-				}	
+				//////////
+				// Grab the flag value
+				//////
+					lnFlag = iiVariable_getAs_s32(thisCode, varFlag, false, &error, &errorNum);
+					if (error)
+					{
+						// An error extracting the value (should never happen)
+						iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varFlag), false);
+						return(NULL);
+					}	
+
+
+				//////////
+				// Grab the value
+				//////
+					iiVariable_computeYyyyMmDd_fromJulian(varParam->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+					iiVariable_computeHhMmSsMss_fromf32(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 				switch(lnFlag)
 				{
-					case 1:
-						//	yyyymmddhhmmss 
-						// TODO
+					case 1:		//	YYYYMMDDHHMMSSmm
+
+						if (_settings && propGet_settings_ncset_datetimeMilliseconds(_settings))
+						{
+							// Include milliseconds
+							sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
+
+						} else {
+							// No milliseconds
+							sprintf(buffer, "%04u%02u%02u%02u%02u%02u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond);
+						}
+						break;
+
 					case 2:
 						//	HH:MM
-						// TODO
-					case 3:
-						// yyyy-mm-ddThh:mm:ss 
-						// TODO
+						// Adjust for our 24-hour settings
+						llHour24		= propGet_settings_Hours24(_settings);
+						lnHourAdjusted	= iTime_adjustHour_toAMPM(lnHour, !llHour24);
+						lcAmPmText		= (cs8*)((llHour24) ? "" : (cs8*)iTime_amOrPm(lnHour, (void*)cgc_space_am_uppercase, (void*)cgc_space_pm_lowercase));
+
+						if (propGet_settings_ncset_datetimeMilliseconds(_settings))
+						{
+							// Include milliseconds
+							sprintf(buffer, "%02u:%02u:%02u.%03u%s\0", lnHourAdjusted, lnMinute, lnSecond, lnMillisecond, lcAmPmText);
+
+						} else {
+							// No milliseconds
+							sprintf(buffer, "%02u:%02u:%02u%s\0", lnHourAdjusted, lnMinute, lnSecond, lcAmPmText);
+						}
+						break;
+
+					case 3:		// YYYY-MM-DDThh:mm:ss 
+
+						if (_settings && propGet_settings_ncset_datetimeMilliseconds(_settings))
+						{
+							// Include milliseconds
+							sprintf(buffer, "%04u-%02u-%02uT%02u:%02u:%02u.%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
+
+						} else {
+							// No milliseconds (XML DateTime format)
+							sprintf(buffer, "%04u-%02u-%02uT%02u:%02u:%02u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond);
+						}
+						break;
+
 					default:
 						// If we get here, invalid parameter specified
 						iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varFlag), false);
 						return(NULL);
 				}
+
+				//////////
+				// Create and populate the return variable
+				//////
+					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, (cs8*)buffer, (u32)strlen(buffer), false);
+
+
+				//////////
+				// Return our converted result
+				//////
+					return(result);
+
+			} else {
+
+				//////////
+				// Create and populate the return variable
+				//////
+					result = iVariable_convertForDisplay(thisCode, varParam);
+					if (!result)
+						iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
+
+
+				//////////
+				// Signify our result
+				//////
+					return(result);
 			}
-
-
-		//////////
-		// Create and populate the return variable
-		//////
-			result = iVariable_convertForDisplay(thisCode, varParam);
-			if (!result)
-				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
-
-
-		//////////
-		// Signify our result
-		//////
-			return(result);
 
 	}
 
