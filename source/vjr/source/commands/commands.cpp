@@ -10243,17 +10243,26 @@
 // SYS function support (Dec.27.2014 incomplete)
 //
 ///////
-// Version 0.56
+// Version 0.57
 // Last update:
-//     Dec.27.2014
+//     Apr.08.2015
 //////
 // Change log:
+//	   Apr.08.2015 - SYS(10) added by Stefano D'Amico
+//	   Apr.08.2015 - SYS(2) added by Stefano D'Amico
+//	   Apr.08.2015 - SYS(1) added by Stefano D'Amico
 //     Dec.27.2014 - Initial creation
 //////
 // Parameters:
+//		1				-- none
+//		2				-- none
+//		10				-- Numeric, julian day number 
 //		2015			-- none
 //////
 // Returns:
+//		1				-- Character, returns the current system date as a Julian day number character string
+//		2				-- Numeric, returns the number of seconds elapsed since midnight
+//		10				-- Character, returns a Character-type date from a Julian day number 
 //		2015			-- Character, unique procedure name
 //////
 	SVariable* function_sys(SThisCode* thisCode, SReturnsParams* returnsParams)
@@ -10262,11 +10271,15 @@
 		SVariable*	varP1		= returnsParams->params[1];
 		SVariable*	varP2		= returnsParams->params[2];
 		s32			lnIndex;
+		f32			lfJulian;
+		u32			lnYear, lnMonth, lnDay;
+		s8			buffer[64];
 		u32			lnExtraPrefixWidth, lnExtraPostfixWidth;
 		s64			ln2015;
 		u32			errorNum;
         bool		error;
 		SYSTEMTIME	lst;
+		SVariable*	varTemp;
 		SVariable*	result;
 
 
@@ -10296,6 +10309,119 @@
 		//////
 			switch (lnIndex)
 			{
+				case 1:
+					// Current system date as a Julian day number character string
+					if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
+					else				GetLocalTime(&lst);
+
+
+					//////////
+					// Grab and convert julian date
+					//////
+						iiVariable_julian_fromYyyyMmDd(&lfJulian, lst.wYear, lst.wMonth, lst.wDay);
+						sprintf(buffer, "%d\0", (s32)lfJulian);
+
+
+					//////////
+					// Create our result
+					//////
+						result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, (cs8*)buffer, (u32)strlen(buffer), false);
+						if (!result)
+						{
+							iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varIndex), false);
+							return(NULL);
+						}
+
+
+					//////////
+					// Indicate our result
+					//////
+						return(result);
+				case 2:
+					//  Number of seconds elapsed since midnight
+					varTemp = function_seconds(thisCode, returnsParams);
+					if (varTemp)
+					{
+						result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
+						// Convert to S64, we not have to round (37431.854 is 37431, have not yet passed 37432 seconds)
+						if (result)
+							*(s64*)result->value.data = (s64)*varTemp->value.data_f64;
+
+						iVariable_delete(thisCode, varTemp, true);
+					} 
+
+					if (!result)
+					{
+						iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varIndex), false);
+						return(NULL);
+					}
+
+
+					//////////
+					// Indicate our result
+					//////
+						return(result);
+
+				case 10:
+					// a Character-type date from a Julian day number 
+
+					//////////
+					// Parameter 1 must be numeric
+					//////
+						if (!iVariable_isValid(varP1) || !iVariable_isTypeNumeric(varP1))
+						{
+							iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varP1), false);
+							return(NULL);
+						}
+
+
+					//////////
+					// Grab year, month, day from julian number
+					//////
+						lfJulian = iiVariable_getAs_f32(thisCode, varP1, false, &error, &errorNum);
+						if (error)
+						{
+							iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varP1), false);
+							return(NULL);
+						}
+
+						iiVariable_computeYyyyMmDd_fromJulian((u32)lfJulian, &lnYear, &lnMonth, &lnDay);
+
+
+					//////////
+					// Convert julian date into a VJr date variable
+					//////
+						// Date is stored as YYYYMMDD
+						sprintf(buffer, "%04u%02u%02u\0", lnYear, lnMonth, lnDay);
+						varTemp = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
+						if (!varTemp)
+						{
+							// Fatal error
+							iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+							return(NULL);
+						}
+
+
+					//////////
+					// Create and populate the return variable
+					//////
+						result = iVariable_convertForDisplay(thisCode, varTemp);
+						if (!result)
+							iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varP1), false);
+
+
+					//////////
+					// Clean house
+					//////
+						iVariable_delete(thisCode, varTemp, true);
+
+
+					//////////
+					// Signify our result
+					//////
+						return(result);
+
+
 				case 2015:
 					// Unique procedure names take on the form YYYYMMDDHHMMSSmmm converted to base-36, prefixed with an underscore
 					if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
