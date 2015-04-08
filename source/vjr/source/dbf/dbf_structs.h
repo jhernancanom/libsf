@@ -228,6 +228,7 @@
 			sptr			thisWorkArea;				// Added to hold this entry's slot number
 			bool			isCursor;					// For temporary tables, the tables, memo files, and indexes are deleted on close
 			bool			isExclusive;				// true if this index was used exclusively
+			bool			isNoUpdate;					// true if this is a read-only usage
 			bool			isIndexLoaded;				// true if an index is loaded (idx, cdx, dcx)
 			bool			isSdxLoaded;				// true if an sdx index is loaded
 			bool			isCached;					// If the table's been cached, then it will be true, otherwise false
@@ -310,6 +311,7 @@
 				_isSKeyFinds	cdx_keyOps[_MAX_CDX_TAGS];		// Room for up to N tags
 				bool			isCdx;							// Is it a CDX (also DCX)?  If no, then is IDX.
 				bool			isIdxCompact;					// If it's IDX, is it a compact IDX?
+				u32				idxCdxDcxLastError;				// The last index error that was encountered
 				u32				cdx_activeTagRootNode;			// Current active tag's root node
 				union {
 					// CDX/DCX support
@@ -324,10 +326,11 @@
 				// Index file operations
 				s32				fhIdxCdxDcx;				// File handle for the index
 				SBuilder*		idxCdxDcxFileLocks;			// Locks for shared access
+				SBuilder*		idxCdxDcxNodeCache;			// Cached node blocks (SCdxNodeCache)
 
 
 			//////////
-			// SDX index support
+			// SDX (secure) index support
 			//////
 				s8				sdxPathname[_MAX_PATH];		// Filename to get to the index (either .cdx or .idx)
 				u32				sdxPathnameLength;			// Length of the index filename

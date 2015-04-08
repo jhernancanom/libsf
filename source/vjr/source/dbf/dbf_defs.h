@@ -154,8 +154,8 @@ struct SFieldRecord2;
 	s32					iDbf_translateError								(SThisCode* thisCode, s32 tnDbfErrorCode);
 
 	// DBF functions
-	uptr				iDbf_open										(SThisCode* thisCode, SVariable* table,	SVariable* alias,	bool tlExclusive, bool tlAgain, bool tlValidate, bool tlDescending, bool tlVisualize, bool tlJournal);
-	uptr				iDbf_open										(SThisCode* thisCode, cs8* table,		cs8* alias,			bool tlExclusive, bool tlAgain, bool tlValidate, bool tlDescending, bool tlVisualize, bool tlJournal);
+	uptr				iDbf_open										(SThisCode* thisCode, SVariable* table,	SVariable* alias,	bool tlExclusive, bool tlAgain, bool tlValidate, bool tlDescending, bool tlVisualize, bool tlJournal, bool tlNoUpdate);
+	uptr				iDbf_open										(SThisCode* thisCode, cs8* table,		cs8* alias,			bool tlExclusive, bool tlAgain, bool tlValidate, bool tlDescending, bool tlVisualize, bool tlJournal, bool tlNoUpdate);
 	uptr				iDbf_openRemote									(SThisCode* thisCode, s8* connString);
 	uptr				iDbf_cacheAllRowData							(SThisCode* thisCode, SWorkArea* wa);
 	uptr				iDbf_close										(SThisCode* thisCode, SWorkArea* wa);

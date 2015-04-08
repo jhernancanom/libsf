@@ -124,6 +124,7 @@
 	#define		_DBF_ERROR_SEEKING					-17
 	#define		_DBF_ERROR_NO_DATA					-18
 	#define		_DBF_ERROR_UNKNOWN_MEMO_FORMAT		-19
+	#define		_DBF_ERROR_UNABLE_TO_OPEN_JOURNAL	-20
 
 	// For field flags
 	#define 	_DBF_FIELD_SYSTEM					0x01

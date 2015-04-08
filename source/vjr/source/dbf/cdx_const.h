@@ -105,6 +105,9 @@
 	#define		_CDX_ERROR_OPENING_INDEX			-214
 	#define		_CDX_ERROR_LOCKING_HEADER_IDX		-215
 	#define		_CDX_ERROR_LOCKING_HEADER_CDX		-216
+	#define		_CDX_ERROR_INVALID_NODE				-217
+	#define		_CDX_ERROR_INTERNAL					-218
+	#define		_CDX_ERROR_READING_NODE				-219
 	#define		_CDX_ERROR_CONTEXTUAL				-10000
 
 	// Index header flags

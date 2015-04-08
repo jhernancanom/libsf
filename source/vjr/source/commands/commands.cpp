@@ -209,6 +209,9 @@
 			case _ERROR_UNABLE_TO_SAVE:						{	iError_report(thisCode, cgcUnableToSave,					tlInvasive);		break;	}
 			case _ERROR_INVALID_PARAMETERS:					{	iError_report(thisCode, cgcInvalidParameters,				tlInvasive);		break;	}
 			case _ERROR_PARAMETER_MUST_BE_1:				{	iError_report(thisCode, cgcParameterMustBeOne,				tlInvasive);		break;	}
+			case _ERROR_INVALID_CORRUPT_NEEDS_REBUILT:		{	iError_report(thisCode, cgcIndexCorruptNeedsRebuilt,		tlInvasive);		break;	}
+			case _ERROR_UNABLE_TO_LOCK_FOR_WRITE:			{	iError_report(thisCode, cgcUnableToLockForWrite,			tlInvasive);		break;	}
+			case _ERROR_UNABLE_TO_LOCK_FOR_READ:			{	iError_report(thisCode, cgcUnableToLockForRead,				tlInvasive);		break;	}
 
 		}
 
@@ -13342,13 +13345,14 @@ debug_break;
 		SComp*	compOpen = compCommand;
 		s32		lnLength;
 		sptr	lnDbcArea;
-		bool	llIsExclusive;
+		bool	llIsExclusive, llIsNoUpdate;
 		SComp*	compPathname;
 		SComp*	compDatabase;
 		SComp*	compExclusive;
 		SComp*	compShared;
 		SComp*	compValidate;
 		SComp*	compRecover;
+		SComp*	compNoUpdate;
 		s8		dbcNameBuffer[_MAX_PATH];
 
 
@@ -13357,9 +13361,10 @@ debug_break;
 		//////
 			compDatabase	= iComps_findNextBy_iCode(thisCode, compOpen, _ICODE_DATABASE,	NULL);
 			compExclusive	= iComps_findNextBy_iCode(thisCode, compOpen, _ICODE_EXCLUSIVE,	NULL);
-			compShared		= iComps_findNextBy_iCode(thisCode, compOpen, _ICODE_SHARED,		NULL);
+			compShared		= iComps_findNextBy_iCode(thisCode, compOpen, _ICODE_SHARED,	NULL);
 			compValidate	= iComps_findNextBy_iCode(thisCode, compOpen, _ICODE_VALIDATE,	NULL);
-			compRecover		= iComps_findNextBy_iCode(thisCode, compOpen, _ICODE_RECOVER,		NULL);
+			compRecover		= iComps_findNextBy_iCode(thisCode, compOpen, _ICODE_RECOVER,	NULL);
+			compNoUpdate	= iComps_findNextBy_iCode(thisCode, compOpen, _ICODE_NOUPDATE,	NULL);
 
 
 		//////////
@@ -13421,9 +13426,15 @@ debug_break;
 
 
 		//////////
+		// Read-only?
+		//////
+			llIsNoUpdate = (compNoUpdate != NULL);
+
+
+		//////////
 		// Try to open it
 		//////
-			lnDbcArea = iDbf_open(thisCode, (cs8*)dbcNameBuffer, (cs8*)cgcDbcKeyName, llIsExclusive, false, false, false, false, false);
+			lnDbcArea = iDbf_open(thisCode, (cs8*)dbcNameBuffer, (cs8*)cgcDbcKeyName, llIsExclusive, false, false, false, false, false, llIsNoUpdate);
 			if (lnDbcArea < 0)
 			{
 				// Unable to open
@@ -13629,6 +13640,7 @@ debug_break;
 			SComp*	compAlias				= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_ALIAS,				NULL);
 			SComp*	compExclusive			= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_EXCLUSIVE,			NULL);
 			SComp*	compShared				= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_SHARED,				NULL);
+			SComp*	compNoUpdate			= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_NOUPDATE,			NULL);
 //			SComp*	compConnString			= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_CONNSTRING,			NULL);
 			SComp*	compValidate			= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_VALIDATE,			NULL);
 			SComp*	compVisualize			= iComps_findNextBy_iCode(thisCode, compUse, _ICODE_VISUALIZE,			NULL);		// USE fred.dbf VISUALIZE	&& Creates disk-defrag-like display of table and index
@@ -13962,7 +13974,7 @@ debug_break;
 		// Get the alias
 		//////
 			iDbf_set_workArea_current(thisCode, (u32)lnWorkArea, null);
-			lnWorkArea = iDbf_open(thisCode, varTableName, varAliasName, llIsExclusive, (compAgain != NULL), (compValidate != NULL), (compDescending != NULL), (compVisualize != NULL), (compJournal != NULL));
+			lnWorkArea = iDbf_open(thisCode, varTableName, varAliasName, llIsExclusive, (compAgain != NULL), (compValidate != NULL), (compDescending != NULL), (compVisualize != NULL), (compJournal != NULL), (compNoUpdate != NULL));
 			if (lnWorkArea < 0)
 			{
 				// The negative work area number indicates the error

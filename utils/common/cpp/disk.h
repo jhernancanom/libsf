@@ -158,7 +158,10 @@
 	s64				iDisk_getFilePosition					(s32 tnFile);
 	s64				iDisk_setFilePosition					(s32 tnFile, s64 tnSeekOffset);
 	s32				iDisk_read								(s32 tnFile, s64 tnSeekOffset, void* tcData, s32 tnReadCount,  bool* tlError, u32* tnErrorNum);
-	s32				iDisk_write								(s32 tnFile, s64 tnSeekOffset, s8*   tcData, s32 tnWriteCount, bool* tlError, u32* tnErrorNum);
+	s32				iDisk_write								(s32 tnFile, s64 tnSeekOffset, void* tcData, s32 tnWriteCount, bool* tlError, u32* tnErrorNum);
+	s32				iDisk_readShared_withRetryCallback		(SThisCode* thisCode, SBuilder* lockRoot, s32 tnFile, s64 tnSeekOffset, void* tcData, s32 tnReadCount,  bool* tlError, u32* tnErrorNum, uptr tnCallbackFunction, uptr tnExtra, SDiskLock** diskLock, bool tlUnlockAfter);
+	s32				iDisk_writeShared_withRetryCallback		(SThisCode* thisCode, SBuilder* lockRoot, s32 tnFile, s64 tnSeekOffset, void* tcData, s32 tnWriteCount, bool* tlError, u32* tnErrorNum, uptr tnCallbackFunction, uptr tnExtra, SDiskLock** diskLock, bool tlUnlockAfter);
+	s32				iiDisk_rwShared_withRetryCallback_common(SThisCode* thisCode, SBuilder* lockRoot, s32 tnFile, s64 tnSeekOffset, void* tcData, s32 tnCount, bool* tlError, u32* tnErrorNum, uptr tnCallbackFunction, uptr tnExtra, SDiskLock** diskLock, bool tlUnlockAfter, u32 tnErrorNumIfError, bool tlRead);
 	s32				iDisk_duplicateFileHandle				(s32 tnFile);
 
 
@@ -167,17 +170,17 @@
 // BEGIN
 //////
 	// Standard instance validation
-	SDiskLock*		iDisk_lock_range_retryCallback			(SThisCode* thisCode, SBuilder* buffRoot, s32 tnFile, s64 tnOffset, s32 tnLength, uptr tnCallbackFunction, uptr tnExtra);
-	SDiskLock*		iDisk_lock_range						(SThisCode* thisCode, SBuilder* buffRoot, s32 tnFile, s64 tnOffset, s32 tnLength, uptr tnExtra);
-	bool			iDisk_unlock							(SThisCode* thisCode, SBuilder* buffRoot, SDiskLock* dl);
-	void			iDisk_unlock_all						(SThisCode* thisCode, SBuilder* buffRoot);
-	s32				iDisk_unlock_all_byCallback				(SThisCode* thisCode, SBuilder* buffRoot, uptr tnCallbackFunction, uptr tnExtra);
+	SDiskLock*		iDisk_lock_range_retryCallback			(SThisCode* thisCode, SBuilder* lockRoot, s32 tnFile, s64 tnOffset, s32 tnLength, uptr tnCallbackFunction, uptr tnExtra);
+	SDiskLock*		iDisk_lock_range						(SThisCode* thisCode, SBuilder* lockRoot, s32 tnFile, s64 tnOffset, s32 tnLength, uptr tnExtra);
+	bool			iDisk_unlock							(SThisCode* thisCode, SBuilder* lockRoot, SDiskLock* dl);
+	void			iDisk_unlock_all						(SThisCode* thisCode, SBuilder* lockRoot);
+	s32				iDisk_unlock_all_byCallback				(SThisCode* thisCode, SBuilder* lockRoot, uptr tnCallbackFunction, uptr tnExtra);
 
 	// Faster functions with no validation
-	SDiskLock*		iiDisk_lock_range						(SThisCode* thisCode, SBuilder* buffRoot, s32 tnFile, s64 tnOffset, s32 tnLength, uptr tnExtra);
-	bool			iiDisk_unlock							(SThisCode* thisCode, SBuilder* buffRoot, SDiskLock* dl);
-	void			iiDisk_unlock_all						(SThisCode* thisCode, SBuilder* buffRoot);
-	s32				iiDisk_unlock_all_byCallback			(SThisCode* thisCode, SBuilder* buffRoot, uptr tnCallbackFunction, uptr tnExtra);
+	SDiskLock*		iiDisk_lock_range						(SThisCode* thisCode, SBuilder* lockRoot, s32 tnFile, s64 tnOffset, s32 tnLength, uptr tnExtra);
+	bool			iiDisk_unlock							(SThisCode* thisCode, SBuilder* lockRoot, SDiskLock* dl);
+	void			iiDisk_unlock_all						(SThisCode* thisCode, SBuilder* lockRoot);
+	s32				iiDisk_unlock_all_byCallback			(SThisCode* thisCode, SBuilder* lockRoot, uptr tnCallbackFunction, uptr tnExtra);
 
 	// Support functions
 	bool			iiDisk_isValidLockHandle				(SThisCode* thisCode, SBuilder* buffRoot, SDiskLock* dl);

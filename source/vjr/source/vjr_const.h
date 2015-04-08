@@ -410,6 +410,86 @@ typedef SEM**		SEMpp;
 
 
 //////////
+// Errors
+//////
+	const u32		_ERROR_OKAY										= 0;
+	const u32		_ERROR_OUT_OF_MEMORY							= 1;
+	const u32		_ERROR_UNEXPECTED_COMMAND						= 2;
+	const u32		_ERROR_CONTEXT_HAS_CHANGED						= 3;
+	const u32		_ERROR_FULL_RECOMPILE_REQUIRED					= 4;
+	const u32		_ERROR_NOT_A_VARIABLE							= 5;
+	const u32		_ERROR_NUMERIC_OVERFLOW							= 6;
+	const u32		_ERROR_NOT_NUMERIC								= 7;
+	const u32		_ERROR_EMPTY_STRING								= 8;
+	const u32		_ERROR_SYNTAX									= 9;
+	const u32		_ERROR_UNRECOGNIZED_PARAMETER					= 10;
+	const u32		_ERROR_OUT_OF_RANGE								= 11;
+	const u32		_ERROR_COMMA_EXPECTED							= 12;
+	const u32		_ERROR_TOO_MANY_PARAMETERS						= 13;
+	const u32		_ERROR_DATA_TYPE_MISMATCH						= 14;
+	const u32		_ERROR_FEATURE_NOT_AVAILABLE					= 15;
+	const u32		_ERROR_P1_IS_INCORRECT							= 16;
+	const u32		_ERROR_P2_IS_INCORRECT							= 17;
+	const u32		_ERROR_P3_IS_INCORRECT							= 18;
+	const u32		_ERROR_P4_IS_INCORRECT							= 19;
+	const u32		_ERROR_P5_IS_INCORRECT							= 20;
+	const u32		_ERROR_P6_IS_INCORRECT							= 21;
+	const u32		_ERROR_P7_IS_INCORRECT							= 22;
+	const u32		_ERROR_INTERNAL_ERROR							= 23;
+	const u32		_ERROR_INVALID_ARGUMENT_TYPE_COUNT				= 24;
+	const u32		_ERROR_VARIABLE_NOT_FOUND						= 25;
+	const u32		_ERROR_ALIAS_NOT_FOUND							= 26;
+	const u32		_ERROR_INVALID_WORK_AREA						= 27;
+	const u32		_ERROR_ALIAS_ALREADY_IN_USE						= 28;
+	const u32		_ERROR_PARENTHESIS_EXPECTED						= 29;
+	const u32		_ERROR_MISSING_PARAMETER						= 30;
+
+	// These relate in a 1:1 ratio with the _DBF_ERROR_* and _CDX_ERROR_* constants of the same name, that are defined internally in dbf.cpp, and cdx.cpp
+	const u32		_ERROR_DBF_UNABLE_TO_OPEN_TABLE					= 31;
+	const u32		_ERROR_DBF_WORK_AREA_ALREADY_IN_USE				= 32;
+	const u32		_ERROR_DBF_ERROR_OPENING_DBC					= 33;
+	const u32		_ERROR_DBF_WORK_AREA_NOT_IN_USE					= 34;
+	const u32		_ERROR_DBF_ERROR_READING_HEADER1				= 35;
+	const u32		_ERROR_DBF_UNKNOWN_TABLE_TYPE					= 36;
+	const u32		_ERROR_DBF_MEMORY_ALLOCATION					= 37;
+	const u32		_ERROR_DBF_ERROR_READING_HEADER2				= 38;
+	const u32		_ERROR_DBF_TABLE_NAME_TOO_LONG					= 39;
+	const u32		_ERROR_DBF_MEMORY_ROW							= 40;
+	const u32		_ERROR_DBF_MEMORY_ORIGINAL						= 41;
+	const u32		_ERROR_DBF_MEMORY_INDEX							= 42;
+	const u32		_ERROR_DBF_INVALID_WORK_AREA					= 43;
+	const u32		_ERROR_DBF_NO_MORE_WORK_AREAS					= 44;
+	const u32		_ERROR_DBF_LOCKING								= 45;
+	const u32		_ERROR_DBF_WRITING								= 46;
+	const u32		_ERROR_DBF_SEEKING								= 47;
+	const u32		_ERROR_DBF_NO_DATA								= 48;
+	const u32		_ERROR_DBF_UNKNOWN_MEMO_FORMAT					= 49;
+
+	const u32		_ERROR_CONFLICTING_PARAMETERS					= 80;
+	const u32		_ERROR_PARAMETER_IS_INCORRECT					= 81;
+	const u32		_ERROR_TABLE_ALREADY_IN_USE						= 82;
+	const u32		_ERROR_PARAMETER_TOO_LONG						= 83;
+	const u32		_ERROR_UNABLE_TO_OPEN_DBC						= 84;
+	const u32		_ERROR_DIVISION_BY_ZERO							= 85;
+	const u32		_ERROR_CANNOT_BE_NEGATIVE						= 86;
+	const u32		_ERROR_CANNOT_BE_ZERO_OR_NEGATIVE				= 87;
+	const u32		_ERROR_UNABLE_TO_AUTOVALIDATE					= 88;
+	const u32		_ERROR_DBF_GENERAL_ERROR						= 89;
+	const u32		_ERROR_CANNOT_BE_ZERO							= 90;
+	const u32		_ERROR_MUST_BE_LOGICAL							= 91;
+	const u32		_ERROR_PARAMETER_MUST_BE_8_16_32_64				= 92;
+	const u32		_ERROR_TOO_BIG_FOR_TARGET						= 93;
+	const u32		_ERROR_NO_INDEX_IS_LOADED						= 94;
+	const u32		_ERROR_INVALID_INDEX_TAG						= 95;
+	const u32		_ERROR_UNABLE_TO_SAVE							= 96;
+	const u32		_ERROR_INVALID_PARAMETERS						= 97;
+	const u32		_ERROR_PARAMETER_MUST_BE_1						= 98;
+	const u32		_ERROR_INVALID_CORRUPT_NEEDS_REBUILT			= 99;
+	const u32		_ERROR_UNABLE_TO_LOCK_FOR_WRITE					= 100;
+	const u32		_ERROR_UNABLE_TO_LOCK_FOR_READ					= 101;
+
+
+//////////
 // System constants
 //////
 	const s32			_MENU_BAR_HEIGHT					= 16;						// Each menu is 16 pixels high

@@ -142,9 +142,11 @@ struct SThisCode;
 // These are for extracting and re-generating keys in a node, and for adding and deleting nodes
 // BEGIN
 //////
-	SCdxNodeKeyDecode*	iCdx_getNodeKeys								(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, SCdxNode* node);
-	void				iiCdx_getNodeKeys_allocate						(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, SCdxNode* node);
-	void				iiCdx_getNodeKeys_delete						(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, SCdxNodeKeyDecode* nodeKeys);
+	SCdxNodeCache*		iCdx_cacheNode									(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, s32 tnNodeNum, SCdxNode** nodeDst);
+	SCdxNodeCache*		iiCdx_cacheNode_allocate						(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, s32 tnNodeNum, bool tlAutoPopulate);
+	void				iiCdx_cacheNode_populate						(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, SCdxNodeCache* nodeKeys);
+	void				iiCdx_cacheNode_depopulate						(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, SCdxNodeCache* nodeKeys);
+	void				iiCdx_cacheNode_delete							(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, SCdxNodeCache* nodeKeys, bool tlImmediateReuse);
 //////
 // END
 //////////
@@ -191,7 +193,7 @@ struct SThisCode;
 	u32					iCdx_getAllKeysCdx								(SThisCode* thisCode, SWorkArea* wa, s32 tnTagIndex, u8* tcKeySpace, u32 tnKeySpaceLength, u8* tcDecodeExpression, u32 tnDecodeExpressionLength, s8* tcKeyLength4);
 	u32					iCdx_getAllKeysIdx								(SThisCode* thisCode, SWorkArea* wa,                 u8* tcKeySpace, u32 tnKeySpaceLength, u8* tcDecodeExpression, u32 tnDecodeExpressionLength, s8* tcKeyLength4);
 	bool				iCdx_setActiveTag								(SThisCode* thisCode, SWorkArea* wa, s32 tnTagIndex, STagRoot* tagRoot, bool* tlError, u32* tnErrorNum);
-	bool				iCdx_getCompoundTagRoot							(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* head, SCdxNode* node, s32 lnTagNum, STagRoot* tagRoot);
+	bool				iCdx_getRootmostCompoundTag_byTagnum			(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* head, SCdxNode* node, s32 lnTagNum, STagRoot* tagRoot);
 	bool				iCdx_getCompactRootNode							(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* head, SCdxNode* node,               STagRoot* tagRoot);
 	bool				iCdx_getStandardRootNode						(SThisCode* thisCode, SWorkArea* wa, SIdxHeader* head, SIdxNode* node,               STagRoot* tagRoot);
 	bool				iiCdx_isCompact									(SThisCode* thisCode, SCdxHeader* head);
@@ -205,10 +207,7 @@ struct SThisCode;
 	bool				iCdx_getStandardIdxKey_byNumber					(SThisCode* thisCode,                SIdxHeader* head, u8 tcFillChar, u32 tnNumber, SIdxNode* node, SIdxKey* key, STagRoot* tagRoot, bool tlFixupEndian, bool tlFixupSignBit);
 	SCdxNode*			iCdx_getCompactIdxNode_byNumber					(SThisCode* thisCode,                SCdxHeader* head, u32 tnNodeNumber);
 	SCdxNode*			iCdx_getCompactIdxNode_byOffset					(SThisCode* thisCode,                SCdxHeader* head, u32 tnOffset);
-	bool				iCdx_getCompactIdxKey_byNumber					(SThisCode* thisCode,                SCdxHeader* head, u32 keyLength, u8 tcFillChar, u32 tnKeyNumber, u32 tnKeyNumberThis, SCdxNode* node, SCdxKey* key, STagRoot* tagRoot, bool tlFixupEndian, bool tlFixupSignBit);
-	bool				iiCdx_checkNodeCache							(SThisCode* thisCode, SCdxNode* node, u32 tnKeyNumber, SCdxKey* key);
-	int					iiCdx_checkNodeCache_callback_bsearchAndQsort	(const void* l, const void* r);
-	void				iiCdx_addToNodeCache							(SThisCode* thisCode, SCdxNode* node, u32 tnKeyNumber, SCdxKey* key);
+	bool				iCdx_getCompactIdxKey_byNumber					(SThisCode* thisCode,                SCdxHeader* head, u32 keyLength, u8 tcFillChar, u32 tnKeyNumber, u32 tnKeyNumberThis, SCdxNode* node, SCdxKeyLeafRaw* key, STagRoot* tagRoot, bool tlFixupEndian, bool tlFixupSignBit);
 	u32					iCdx_descendToLeftmostNode						(SThisCode* thisCode,                SCdxHeader* head, u32 keyLength, SCdxNode* node, STagRoot* tagRoot);
 	// Internal functions that do not have special testing
 	void				iiCdx_extractExteriorNode_nodeKeyAccessData		(SThisCode* thisCode, SCdxNode* node, u32 tnNumber, SCdxKeyTrail* keyTrail);

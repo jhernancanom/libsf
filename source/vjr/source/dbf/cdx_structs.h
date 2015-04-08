@@ -120,7 +120,7 @@ struct SCdxKeyOp;
 	};
 
 	// A CDX key pointer into a leaf node
-	struct SCdxKeyPtr
+	struct SCdxKeyLeaf
 	{
 		// If keyLength is 0, then this will be node, otherwise it's the record number in big-endian form (needs BSWAP run on it)
 		union {
@@ -136,13 +136,13 @@ struct SCdxKeyOp;
 
 	//////////
 	// Note:  There is a constraint in the design that this always be the last member.
-	//        The data is copied above using memcpy(dst, src, sizeof(SCdxKeyPtr) - sizeof(dst.keyPtr));
+	//        The data is copied above using memcpy(dst, src, sizeof(SCdxKeyLeaf) - sizeof(dst.keyPtr));
 	//////
 		u8*			keyPtr;						// Reconstructed key from its compact form
 	};
 
-	// A copy of the data in SCdxKeyPtr, but one which holds the actual key contents, used for passing keys back and forth
-	struct SCdxKey
+	// A copy of the data in SCdxKeyLeaf, but one which holds the actual key contents, used for passing keys back and forth
+	struct SCdxKeyLeafRaw
 	{
 		// If keyLength is 0, then this will be node, otherwise it's the record number in big-endian form (needs BSWAP run on it)
 		union {
@@ -161,7 +161,7 @@ struct SCdxKeyOp;
 	struct SCdxKeyTrailInterior
 	{
 		u32			record2;					// Record number
-		u32			fileOffset;				// File offset to access related node
+		u32			fileOffset;					// File offset to access related node
 	};
 
 	// Holds information about the leaf key header (the part which increases from offset 0)
@@ -212,7 +212,9 @@ struct SCdxKeyOp;
 		u8			bits_TC;					// 22,1		Number of bits used for trail count
 		u8			totalBytesIn_RNDCTC;		// 23,1		?? Don't know
 		// Keys begin immediately after this	// 24,N		Up to 488 bytes for the compact index keys
-												// 512 bytes max
+		// Key data
+		u8			keyBuffer[488];				// 24,488
+		// 512 bytes max
 	};
 
 	struct SCdxNodeKey
@@ -221,18 +223,23 @@ struct SCdxKeyOp;
 		u32			recno;						// The associated record number
 	};
 
-	struct SCdxNodeKeyDecode
+	struct SCdxNodeCache
 	{
-		u32				nodeNum;				// Physical node number in the index file
-		u32				nodeParentIndex;		// Parent index node which points down to the range of keys in this block, if NULL then no index nodes exist
+		bool			isUsed;					// 0,1		Is this node cache entry actually in use?
+		bool			isDirty;				// 1,1		Does this decode buffer contain any uncommitted changes?
 
-		bool			isDirty;				// Does this decode buffer contain uncommitted changes?
-		u32				keyCount;				// The number of keys on this node
-		SCdxNodeKey**	keys;					// The key pointers
+		u16				keyCount;				// 2,2		Number of keys allocated in this.keys, indicating the number of keys in this node.
+												//////////
+												//	Note:  this.keyCount may be different than this.cachedNode->keyCount.  The this.keyCount value
+												//	       indicates the number of keys currently in the node, while this.cachedNode->keyCount
+												//	       indicates the number of keys on the node on the disk.  In a shared environment they
+												//	       should always be in sync.  In an exclusive environment, they can be vastly different.
+												//////////
 
-		// Actual loaded node data
-		SCdxNode		node;
-		s8				nodeKeyBuffer[512 - sizeof(SCdxNode)];
+		SCdxNodeKey**	keyBuffer;				// 4,4		Pointers to all of the keys in this node (first key = keys[0], second = keys[1], and so on)
+		u32				nodeNum;				// 8,4		Physical node within the index file on disk (may be uncommitted, existing only in memory)
+		SCdxNode*		cachedNode;				// 12,4		Node header and key buffer cached previously from disk (may be NULL)
+		// Total:  16 bytes
 	};
 
 	// This structure is the first found in the CDX, but it is also the same structure used
