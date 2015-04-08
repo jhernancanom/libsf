@@ -12295,6 +12295,111 @@ debug_break;
 	        return(result);
     }
 
+
+
+
+//////////
+//
+// Function: WEEK()
+// Returns a number representing the week of the year from a Date or DateTime expression.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.08.2015
+//////
+// Change log:
+//     Apr.08.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1			-- Date or DateTime
+//	   p2			-- Numeric, Specifies the requirements for the first week of the year
+//	   p3			-- Numeric, Specifies the first day of the week
+//
+//////
+// Returns:
+//    Numeric, returns a number representing the week of the year.
+//////
+	SVariable* function_week(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable*	varParam			= returnsParams->params[0];
+		SVariable*	varFirstWeek		= returnsParams->params[1];
+		SVariable*	varFirstDayOfWeek	= returnsParams->params[2];
+
+		f32			lnDayOfYear;
+		u32			lnYear, lnMonth, lnDay, m, y, y_1;
+		s32			lnResult;
+		SYSTEMTIME	lst;
+
+		bool		error;
+		u32			errorNum;
+		SVariable*	result;
+
+		//////////
+		// If Parameter 1 is provided, it must be date or datetime
+		//////
+// TODO:  Must also support DATETIMEX at some point
+			if (varParam)
+			{
+				if (!iVariable_isValid(varParam) || !(iVariable_isTypeDate(varParam) || iVariable_isTypeDatetime(varParam)))
+				{
+					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
+					return(NULL);
+				}
+
+
+				//////////
+				// Grab year, month, day from datetime or date
+				//////
+					if (iVariable_isTypeDatetime(varParam))			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+
+
+			} else {
+				// Use the current date
+				if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
+				else				GetLocalTime(&lst);
+				lnYear	= lst.wYear;
+				lnMonth	= lst.wMonth;
+				lnDay	= lst.wDay;
+			}
+
+		//////////
+		// Compute a, m
+		//////
+			m = (lnMonth + 9) % 12;
+			y = lnYear - m/10;
+			y_1 = lnYear - 1;
+
+		//////////
+		// What's the Current Day Number?
+		//////
+			lnDayOfYear = (f32)	((365*y + y/4 - y/100 + y/400 + (m*306 + 5)/10 + lnDay) -
+								(365*y_1 + y_1/4 - y_1/100 + y_1/400 + 306));
+
+		//////////
+		// Compute the week number
+		//////		
+			lnResult = (s32)(lnDayOfYear / 7 + 1);
+
+
+		//////////
+		// Create the value
+		//////
+			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_S32, (s8*)&lnResult, sizeof(lnDayOfYear), false);
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
+
+
+		//////////
+		// Return the result
+		//////
+			return(result);
+	}
+
+
+
+
 //////////
 //
 // Function: YEAR()

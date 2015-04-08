@@ -904,6 +904,11 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
+	SSourceLightData gsSourceLight_week[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
 	SSourceLightData gsSourceLight_year[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}

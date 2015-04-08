@@ -321,6 +321,7 @@ struct SReturnsParams;
 	SVariable*			function_vecstuff							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_vecsymbol							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_version							(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_week		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_year		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 // Added temporarily until the processing engine is coded
 	SVariable*			function_concatenate						(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -534,6 +535,7 @@ struct SReturnsParams;
 		{	_ICODE_VECSTUFF,		1,			(uptr)&function_vecstuff,		3,				4,				&gsSourceLight_vecstuff[0]		},
 		{	_ICODE_VECSYMBOL,		1,			(uptr)&function_vecsymbol,		1,				3,				&gsSourceLight_vecsymbol[0]		},
 		{	_ICODE_VERSION,			1,			(uptr)&function_version,		0,				1,				&gsSourceLight_version[0]		},
+		{	_ICODE_WEEK,			1,			(uptr)&function_week,			0,				3,				&gsSourceLight_week[0]			},	// WEEK() by Stefano D'Amico, VJr 0.57, Apr.08.2015
 		{	_ICODE_YEAR,			1,			(uptr)&function_year,			0,				1,				&gsSourceLight_year[0]			},	// YEAR() by Stefano D'Amico, VJr 0.57, Apr.04.2015
 // Added temporarily until the processing engine is coded
 		{	_ICODE_CONCATENATE,		1,			(uptr)&function_concatenate,	2,				2,				&gsSourceLight_concatenate[0]	},
