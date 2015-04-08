@@ -1918,7 +1918,7 @@
 // Called to search the known windows for the indicated window by object
 //
 //////
-	SWindow* iWindow_findByObj(SObject* obj)
+	SWindow* iWindow_findByObj(SThisCode* thisCode, SObject* obj)
 	{
 		u32			lnI;
 		SObject*	wobj;
@@ -1956,6 +1956,19 @@
 		}
 		// If we get here, not found
 		return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Called to search for the window from the object on a 
+//
+//////
+	SWindow* iWindow_findRoot_byObj(SThisCode* thisCode, SObject* obj)
+	{
+		return(iWindow_findByObj(thisCode, iObj_find_rootmostObject(thisCode, obj)));
 	}
 
 

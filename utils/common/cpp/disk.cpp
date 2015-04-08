@@ -189,6 +189,7 @@
 //////
 	s64 iDisk_getFileSize(s32 tnFile)
 	{
+		// Note:  Will return -1 if there's an error
 		return(_filelengthi64(tnFile));
 	}
 
@@ -280,7 +281,7 @@
 // If no seek is required, send a negative value for tnSeekOffset.
 //
 //////
-	s32 iDisk_write(s32 tnFile, s64 tnSeekOffset, s8* tcData, s32 tnWriteCount, bool* tlError, u32* tnErrorNum)
+	s32 iDisk_write(s32 tnFile, s64 tnSeekOffset, void* tcData, s32 tnWriteCount, bool* tlError, u32* tnErrorNum)
 	{
 		s64 lnSeekOffset;
 
@@ -329,6 +330,101 @@
 
 //////////
 //
+// Called to lock, read, and optionally unlock a file with retry callback
+//
+//////
+	s32 iDisk_readShared_withRetryCallback(SThisCode* thisCode, SBuilder* lockRoot, s32 tnFile, s64 tnSeekOffset, void* tcData, s32 tnReadCount,  bool* tlError, u32* tnErrorNum, uptr tnCallbackFunction, uptr tnExtra, SDiskLock** diskLock, bool tlUnlockAfter)
+	{
+		return(iiDisk_rwShared_withRetryCallback_common(thisCode, lockRoot, tnFile, tnSeekOffset, tcData, tnReadCount, tlError, tnErrorNum, tnCallbackFunction, tnExtra, diskLock, tlUnlockAfter, _ERROR_UNABLE_TO_LOCK_FOR_READ, true));
+	}
+
+
+
+
+//////////
+//
+// Called to lock, write, and optionally unlock a file with retry callback
+//
+//////
+	s32 iDisk_writeShared_withRetryCallback(SThisCode* thisCode, SBuilder* lockRoot, s32 tnFile, s64 tnSeekOffset, void* tcData, s32 tnWriteCount, bool* tlError, u32* tnErrorNum, uptr tnCallbackFunction, uptr tnExtra, SDiskLock** diskLock, bool tlUnlockAfter)
+	{
+		return(iiDisk_rwShared_withRetryCallback_common(thisCode, lockRoot, tnFile, tnSeekOffset, tcData, tnWriteCount, tlError, tnErrorNum, tnCallbackFunction, tnExtra, diskLock, tlUnlockAfter, _ERROR_UNABLE_TO_LOCK_FOR_WRITE, false));
+	}
+
+
+
+
+//////////
+//
+// Common operation for iDisk_readShared_withRetryCallback() and iDisk_writeShared_withRetryCallback()
+//
+//////
+	s32 iiDisk_rwShared_withRetryCallback_common(SThisCode* thisCode, SBuilder* lockRoot, s32 tnFile, s64 tnSeekOffset, void* tcData, s32 tnCount, bool* tlError, u32* tnErrorNum, uptr tnCallbackFunction, uptr tnExtra, SDiskLock** diskLock, bool tlUnlockAfter, u32 tnErrorNumIfError, bool tlRead)
+	{
+		s32			lnNum;
+		SDiskLock*	dl;
+
+
+		//////////
+		// Initialize
+		//////
+			if (tlError)		*tlError	= false;
+			if (tnErrorNum)		*tnErrorNum	= _ERROR_OKAY;
+
+
+		//////////
+		// Lock
+		//////
+			dl = iDisk_lock_range_retryCallback(thisCode, lockRoot, tnFile, tnSeekOffset, tnCount, tnCallbackFunction, tnExtra);
+			if (!dl)
+			{
+				// Error locking
+				if (tlError)		*tlError = true;
+				if (tnErrorNum)		*tnErrorNum = tnErrorNumIfError;
+
+				// Indicate failure
+				return(-1);
+			}
+
+
+		//////////
+		// Read/write
+		//////
+			if (tlRead)		lnNum = iDisk_read (tnFile, -1, tcData, tnCount, tlError, tnErrorNum);
+			else			lnNum = iDisk_write(tnFile, -1, tcData, tnCount, tlError, tnErrorNum);
+			// Right now, lnNum and error are our keys ... if lnNum == tnCount and !error, it was a success
+
+
+		//////////
+		// Unlock
+		//////
+			if (tlUnlockAfter)
+			{
+				// Unlocking
+				if (diskLock)
+					*diskLock = NULL;
+
+				// Unlock
+				iDisk_unlock(thisCode, lockRoot, dl);
+
+			} else {
+				// Not unlocking, signal the disk lock
+				if (diskLock)
+					*diskLock = dl;
+			}
+
+
+		//////////
+		// Indicate the number written
+		//////
+			return(lnNum);
+	}
+
+
+
+
+//////////
+//
 // Called to duplicate the indicated file handle (if possible).
 //
 //////
@@ -346,7 +442,7 @@
 // Called to potentially retry so long as the callback returns true.
 //
 //////
-	SDiskLock* iDisk_lock_range_retryCallback(SThisCode* thisCode, SBuilder* buffRoot, s32 tnFile, s64 tnOffset, s32 tnLength, uptr tnCallbackFunction, uptr tnExtra)
+	SDiskLock* iDisk_lock_range_retryCallback(SThisCode* thisCode, SBuilder* lockRoot, s32 tnFile, s64 tnOffset, s32 tnLength, uptr tnCallbackFunction, uptr tnExtra)
 	{
 		s32					lnAttempts, lnMillisecondsDelta;
 		s64					lnMillisecondsStart;
@@ -375,7 +471,7 @@
 				// Try to lock
 				//////
 					++lnAttempts;
-					dl = iDisk_lock_range(thisCode, buffRoot, tnFile, tnOffset, tnLength, tnExtra);
+					dl = iDisk_lock_range(thisCode, lockRoot, tnFile, tnOffset, tnLength, tnExtra);
 
 
 				//////////
@@ -432,13 +528,13 @@
 //                        when the error occurred.
 //
 //////
-	SDiskLock* iDisk_lock_range(SThisCode* thisCode, SBuilder* buffRoot, s32 tnFile, s64 tnOffset, s32 tnLength, uptr tnExtra)
+	SDiskLock* iDisk_lock_range(SThisCode* thisCode, SBuilder* lockRoot, s32 tnFile, s64 tnOffset, s32 tnLength, uptr tnExtra)
 	{
 		// Make sure our environment is sane
-		if (buffRoot && buffRoot->buffer && buffRoot->populatedLength % sizeof(SDiskLock) == 0)
+		if (lockRoot && lockRoot->buffer && lockRoot->populatedLength % sizeof(SDiskLock) == 0)
 		{
 			// Lock it
-			return(iiDisk_lock_range(thisCode, buffRoot, tnFile, tnOffset, tnLength, tnExtra));
+			return(iiDisk_lock_range(thisCode, lockRoot, tnFile, tnOffset, tnLength, tnExtra));
 
 		} else {
 			// Indicate error
@@ -446,7 +542,7 @@
 		}
 	}
 
-	SDiskLock* iiDisk_lock_range(SThisCode* thisCode, SBuilder* buffRoot, s32 tnFile, s64 tnOffset, s32 tnLength, uptr tnExtra)
+	SDiskLock* iiDisk_lock_range(SThisCode* thisCode, SBuilder* lockRoot, s32 tnFile, s64 tnOffset, s32 tnLength, uptr tnExtra)
 	{
 		u32			lnI;
 		SDiskLock*	dl;
@@ -455,7 +551,7 @@
 		//////////
 		// Iterate to find an empty slot
 		//////
-			for (lnI = 0, dl = (SDiskLock*)buffRoot->buffer; lnI < buffRoot->populatedLength; lnI += sizeof(SDiskLock), dl++)
+			for (lnI = 0, dl = (SDiskLock*)lockRoot->buffer; lnI < lockRoot->populatedLength; lnI += sizeof(SDiskLock), dl++)
 			{
 				// Is this slot empty?
 				if (!dl->isValid)
@@ -466,10 +562,10 @@
 		//////////
 		// When we get here, we have a slot or not
 		//////
-			if (lnI >= buffRoot->populatedLength)
+			if (lnI >= lockRoot->populatedLength)
 			{
 				// Create a new one
-				dl = (SDiskLock*)iBuilder_appendData(buffRoot, NULL, sizeof(SDiskLock));
+				dl = (SDiskLock*)iBuilder_appendData(lockRoot, NULL, sizeof(SDiskLock));
 				// Note:  disk members are all initialized to 0s
 			}
 
@@ -514,20 +610,20 @@
 // Note:  After unlocking, the slot in the original buffRoot is freed, available for re-use.
 //
 //////
-	bool iDisk_unlock(SThisCode* thisCode, SBuilder* buffRoot, SDiskLock* dl)
+	bool iDisk_unlock(SThisCode* thisCode, SBuilder* lockRoot, SDiskLock* dl)
 	{
 		// Make sure our environment is sane
-		if (iiDisk_isValidLockHandle(thisCode, buffRoot, dl))
+		if (iiDisk_isValidLockHandle(thisCode, lockRoot, dl))
 		{
 			// Unlock it
-			return(iiDisk_unlock(thisCode, buffRoot, dl));
+			return(iiDisk_unlock(thisCode, lockRoot, dl));
 		}
 
 		// If we get here, failure
 		return(false);
 	}
 
-	bool iiDisk_unlock(SThisCode* thisCode, SBuilder* buffRoot, SDiskLock* dl)
+	bool iiDisk_unlock(SThisCode* thisCode, SBuilder* lockRoot, SDiskLock* dl)
 	{
 		bool llResult;
 
@@ -566,24 +662,24 @@
 //        slot in the buffRoot buffer is available for re-use.
 //
 //////
-	void iDisk_unlock_all(SThisCode* thisCode, SBuilder* buffRoot)
+	void iDisk_unlock_all(SThisCode* thisCode, SBuilder* lockRoot)
 	{
 		// Make sure our environment is sane
-		if (buffRoot && buffRoot->buffer && buffRoot->populatedLength % sizeof(SDiskLock) == 0)
+		if (lockRoot && lockRoot->buffer && lockRoot->populatedLength % sizeof(SDiskLock) == 0)
 		{
 			// Unlock it
-			iiDisk_unlock_all(thisCode, buffRoot);
+			iiDisk_unlock_all(thisCode, lockRoot);
 		}
 	}
 
-	void iiDisk_unlock_all(SThisCode* thisCode, SBuilder* buffRoot)
+	void iiDisk_unlock_all(SThisCode* thisCode, SBuilder* lockRoot)
 	{
 		u32			lnI;
 		SDiskLock*	dl;
 
 
 		// If it's a valid lock, unlock it
-		for (lnI = 0, dl = (SDiskLock*)buffRoot->buffer; lnI < buffRoot->populatedLength; lnI += sizeof(SDiskLock), dl++)
+		for (lnI = 0, dl = (SDiskLock*)lockRoot->buffer; lnI < lockRoot->populatedLength; lnI += sizeof(SDiskLock), dl++)
 		{
 			// Is this one locked?
 			if (dl->isValid)
@@ -617,13 +713,13 @@
 //        locked unless they are manually unlocked.
 //
 //////
-	s32 iDisk_unlock_all_byCallback(SThisCode* thisCode, SBuilder* buffRoot, uptr tnFunction, uptr tnExtra)
+	s32 iDisk_unlock_all_byCallback(SThisCode* thisCode, SBuilder* lockRoot, uptr tnFunction, uptr tnExtra)
 	{
 		// Make sure our environment is sane
-		if (buffRoot && buffRoot->buffer && buffRoot->populatedLength % sizeof(SDiskLock) == 0)
+		if (lockRoot && lockRoot->buffer && lockRoot->populatedLength % sizeof(SDiskLock) == 0)
 		{
 			// Unlock it
-			return(iiDisk_unlock_all_byCallback(thisCode, buffRoot, tnFunction, tnExtra));
+			return(iiDisk_unlock_all_byCallback(thisCode, lockRoot, tnFunction, tnExtra));
 
 		} else {
 			// Something's awry, if we have a valid buffRoot, then indicate 0 records were unlocked
@@ -631,7 +727,7 @@
 		}
 	}
 
-	s32 iiDisk_unlock_all_byCallback(SThisCode* thisCode, SBuilder* buffRoot, uptr tnFunction, uptr tnExtra)
+	s32 iiDisk_unlock_all_byCallback(SThisCode* thisCode, SBuilder* lockRoot, uptr tnFunction, uptr tnExtra)
 	{
 		u32					lnI, lnUnlockedCount;
 		SDiskLock*			dl;
@@ -644,7 +740,7 @@
 		dcb.extra				= tnExtra;
 
 		// If it's a valid lock, unlock it
-		for (lnI = 0, lnUnlockedCount = 0, dl = (SDiskLock*)buffRoot->buffer; lnI < buffRoot->populatedLength; lnI += sizeof(SDiskLock), dl++)
+		for (lnI = 0, lnUnlockedCount = 0, dl = (SDiskLock*)lockRoot->buffer; lnI < lockRoot->populatedLength; lnI += sizeof(SDiskLock), dl++)
 		{
 			// Is this one locked?  And do they want to release it?
 			if (dl->isValid && (!dcb._diskUnlockCallback || !dcb.diskUnlockCallback(thisCode, &dcb)))
@@ -678,12 +774,12 @@
 // Check the handle to make sure it's valid
 //
 //////
-	bool iiDisk_isValidLockHandle(SThisCode* thisCode, SBuilder* buffRoot, SDiskLock* dl)
+	bool iiDisk_isValidLockHandle(SThisCode* thisCode, SBuilder* lockRoot, SDiskLock* dl)
 	{
 		//////////
 		// Verify the handle is valid
 		//////
-			if (dl && iBuilder_isPointer(buffRoot, (uptr)dl))
+			if (dl && iBuilder_isPointer(lockRoot, (uptr)dl))
 			{
 				// It's in range, but the valid condition depends upon its property
 				return(dl->isValid);

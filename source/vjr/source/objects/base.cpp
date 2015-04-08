@@ -695,7 +695,7 @@
 			objRoot = iObj_find_rootmostObject(thisCode, obj);
 
 			// It must be a form, so we look for the form on the window
-			win = iWindow_findByObj(objRoot);
+			win = iWindow_findByObj(thisCode, objRoot);
 			if (win)
 			{
 				// Get the coordinates
@@ -1415,7 +1415,7 @@
 				if (objRoot)
 				{
 					// Locate the associated window (if any)
-					win = iWindow_findByObj(objRoot);
+					win = iWindow_findByObj(thisCode, objRoot);
 					iEngine_raise_event(thisCode, _EVENT_ONRENDER, win, obj);
 				}
 
@@ -1754,7 +1754,7 @@
 						if (objRoot)
 						{
 							// Locate the associated window (if any)
-							win = iWindow_findByObj(objRoot);
+							win = iWindow_findByObj(thisCode, objRoot);
 							iEngine_raise_event(thisCode, _EVENT_ONPUBLISH, win, obj);
 						}
 
@@ -3452,32 +3452,4 @@ if (!obj->props[lnI])
 
 		// If we get here, invalid
 		return(NULL);
-	}
-
-
-
-
-//////////
-//
-// Called to publish the carousel.
-//
-//////
-	u32 iSubobj_publishCarousel(SObject* carousel, bool tlForcePublish)
-	{
-// TODO:  Working here
-		return(0);
-	}
-
-
-
-
-//////////
-//
-// Called to publish the rider within the carousel
-//
-//////
-	u32 iSubobj_publishRider(SObject* rider, bool tlForcePublish)
-	{
-// TODO:  Working here
-		return(0);
 	}

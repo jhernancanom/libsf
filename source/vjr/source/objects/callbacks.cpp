@@ -180,7 +180,7 @@
 
 	bool iiDefaultCallback_processMouseVariables(	SThisCode* thisCode, 
 													SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick,
-													s32* lnX, s32* lnY, bool* llCtrl, bool* llAlt, bool* llShift, u32* lnClick)
+													s32* lnX, s32* lnY, bool* tlCtrl, bool* tlAlt, bool* tlShift, u32* lnClick)
 	{
 		//////////
 		// Validate the variables are appropriate
@@ -197,9 +197,9 @@
 			}
 			*lnX		= (s16)iiVariable_getAs_s32(thisCode,	varX,		false, NULL, NULL);
 			*lnY		= (u16)iiVariable_getAs_s32(thisCode,	varY,		false, NULL, NULL);
-			*llCtrl		= iiVariable_getAs_bool(thisCode,		varCtrl,	false, NULL, NULL);
-			*llAlt		= iiVariable_getAs_bool(thisCode,		varAlt,		false, NULL, NULL);
-			*llShift	= iiVariable_getAs_bool(thisCode,		varShift,	false, NULL, NULL);
+			*tlCtrl		= iiVariable_getAs_bool(thisCode,		varCtrl,	false, NULL, NULL);
+			*tlAlt		= iiVariable_getAs_bool(thisCode,		varAlt,		false, NULL, NULL);
+			*tlShift	= iiVariable_getAs_bool(thisCode,		varShift,	false, NULL, NULL);
 			*lnClick	= iiVariable_getAs_u32(thisCode,		varClick,	false, NULL, NULL);
 
 
@@ -281,7 +281,7 @@
 
 			// They are they outside of the client area?
 			if (!PtInRect(&obj->rcClient, pt))
-				return(iEvents_carouselMouseWheel(thisCode, obj, lnX, lnY, llCtrl, llAlt, llShift, lnClick));
+				return(iEvents_carouselMouseWheel(thisCode, win, obj, lnX, lnY, llCtrl, llAlt, llShift, lnClick));
 		}
 
 		// Do not continue to propagate this message to other objects
@@ -294,7 +294,6 @@
 		s32			lnX, lnY;
 		u32			lnClick;
 		bool		llCtrl, llAlt, llShift;
-		POINT		pt;
 		SVariable*	valueMin;
 
 
@@ -339,13 +338,8 @@
 			}
 
 		} else if (obj->objType == _OBJ_TYPE_CAROUSEL) {
-			// Create a point
-			pt.x = lnX;
-			pt.y = lnY;
-
-			// They are they outside of the client area?
-			if (!PtInRect(&obj->rcClient, pt))
-				return(iEvents_carouselMouseMove(thisCode, obj, lnX, lnY, llCtrl, llAlt, llShift, lnClick));
+			// We always track mouse movements to hightlight and un-hightlight tabs
+			return(iEvents_carouselMouseMove(thisCode, win, obj, lnX, lnY, llCtrl, llAlt, llShift, lnClick));
 		}
 
 		// Mouse moves continue to propagate all the way through, so as to signal appropriate enter and leave events
@@ -452,7 +446,7 @@
 
 			// They are they outside of the client area?
 			if (!PtInRect(&obj->rcClient, pt))
-				return(iEvents_carouselMouseDown(thisCode, obj, lnX, lnY, llCtrl, llAlt, llShift, lnClick));
+				return(iEvents_carouselMouseDown(thisCode, win, obj, lnX, lnY, llCtrl, llAlt, llShift, lnClick));
 
 		} else {
 			// Assume we consumed the mouse down event, and that the parent doesn't need to receive it
@@ -516,7 +510,7 @@
 
 			// They are they outside of the client area?
 			if (!PtInRect(&obj->rcClient, pt))
-				return(iEvents_carouselMouseUp(thisCode, obj, lnX, lnY, llCtrl, llAlt, llShift, lnClick));
+				return(iEvents_carouselMouseUp(thisCode, win, obj, lnX, lnY, llCtrl, llAlt, llShift, lnClick));
 		}
 
 		// We are leaving this object, lower the flag
@@ -575,7 +569,7 @@
 
 	bool iiDefaultCallback_processKeyVariables(	SThisCode* thisCode, 
 												SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii,
-												bool* llCtrl, bool* llAlt, bool* llShift, bool* llCaps, bool* llIsCAS, bool* llIsAscii,
+												bool* tlCtrl, bool* tlAlt, bool* tlShift, bool* tlCaps, bool* tlIsCAS, bool* tlIsAscii,
 												s16* lcAscii, u16* lnVKey)
 	{
 		//////////
@@ -591,12 +585,12 @@
 				// Something is not a proper variable
 				return(false);	// Do not continue consuming
 			}
-			*llCtrl		= iiVariable_getAs_bool(thisCode, varCtrl,		false, NULL, NULL);
-			*llAlt		= iiVariable_getAs_bool(thisCode, varAlt,		false, NULL, NULL);
-			*llShift	= iiVariable_getAs_bool(thisCode, varShift,		false, NULL, NULL);
-			*llCaps		= iiVariable_getAs_bool(thisCode, varCaps,		false, NULL, NULL);
-			*llIsCAS	= iiVariable_getAs_bool(thisCode, varIsCAS,		false, NULL, NULL);
-			*llIsAscii	= iiVariable_getAs_bool(thisCode, varIsAscii,	false, NULL, NULL);
+			*tlCtrl		= iiVariable_getAs_bool(thisCode, varCtrl,		false, NULL, NULL);
+			*tlAlt		= iiVariable_getAs_bool(thisCode, varAlt,		false, NULL, NULL);
+			*tlShift	= iiVariable_getAs_bool(thisCode, varShift,		false, NULL, NULL);
+			*tlCaps		= iiVariable_getAs_bool(thisCode, varCaps,		false, NULL, NULL);
+			*tlIsCAS	= iiVariable_getAs_bool(thisCode, varIsCAS,		false, NULL, NULL);
+			*tlIsAscii	= iiVariable_getAs_bool(thisCode, varIsAscii,	false, NULL, NULL);
 			*lcAscii	= iiVariable_getAs_s16(thisCode, varAscii,		false, NULL, NULL);
 			*lnVKey		= iiVariable_getAs_u16(thisCode, varVKey,		false, NULL, NULL);
 
@@ -819,6 +813,54 @@
 		// tnDirection	= negative=left, positive=right, defaults to right
 		// tnType		= 0=riders/toolbars, 1=pixels, defaults to riders
 
+		// Do not continue to propagate this message to other objects
+		return(false);
+	}
+
+	bool iDefaultCallback_onTabClose(SThisCode* thisCode, SWindow* win, SObject* obj)
+	{
+		// Do not continue to propagate this message to other objects
+		return(false);
+	}
+
+	bool iDefaultCallback_onTabClick(SThisCode* thisCode, SWindow* win, SObject* obj)
+	{
+		// Do not continue to propagate this message to other objects
+		return(false);
+	}
+
+	bool iDefaultCallback_onTabMouseWheel(SThisCode* thisCode, SWindow* win, SObject* obj)
+	{
+		// Do not continue to propagate this message to other objects
+		return(false);
+	}
+
+	bool iDefaultCallback_onTabMouseMove(SThisCode* thisCode, SWindow* win, SObject* obj)
+	{
+		// Do not continue to propagate this message to other objects
+		return(false);
+	}
+
+	bool iDefaultCallback_onTabMouseDown(SThisCode* thisCode, SWindow* win, SObject* obj)
+	{
+		// Do not continue to propagate this message to other objects
+		return(false);
+	}
+
+	bool iDefaultCallback_onTabMouseUp(SThisCode* thisCode, SWindow* win, SObject* obj)
+	{
+		// Do not continue to propagate this message to other objects
+		return(false);
+	}
+
+	bool iDefaultCallback_onTabMouseEnter(SThisCode* thisCode, SWindow* win, SObject* obj)
+	{
+		// Do not continue to propagate this message to other objects
+		return(false);
+	}
+
+	bool iDefaultCallback_onTabMouseLeave(SThisCode* thisCode, SWindow* win, SObject* obj)
+	{
 		// Do not continue to propagate this message to other objects
 		return(false);
 	}

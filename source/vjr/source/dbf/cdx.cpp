@@ -194,17 +194,13 @@
 		//////////
 		// Open it
 		//////
-			if (wa->isExclusive)
-			{
-				// Exclusive
-				wa->fhIdxCdxDcx = iDisk_openExclusive(wa->idxCdxDcxPathname, _O_BINARY | _O_RDWR, false);
+			if (wa->isExclusive)		wa->fhIdxCdxDcx = iDisk_openExclusive(wa->idxCdxDcxPathname, _O_BINARY | _O_RDWR, false);
+			else						wa->fhIdxCdxDcx = iDisk_openShared(wa->idxCdxDcxPathname, _O_BINARY | _O_RDWR, false);
 
-			} else {
-				// Shared
-				wa->fhIdxCdxDcx = iDisk_openShared(wa->idxCdxDcxPathname, _O_BINARY | _O_RDWR, false);
-			}
 
-			// Was it opened successfully?
+		//////////
+		// Are we good?
+		//////
 			if (!wa->fhIdxCdxDcx)
 				return(_CDX_ERROR_OPENING_INDEX);
 
@@ -220,6 +216,9 @@
 		//////
 			if (!wa->isCdx)
 			{
+	//////////
+	// IDX
+	//////
 				//////////
 				// Allocate
 				//////
@@ -233,12 +232,25 @@
 
 				//////////
 				// Read the first block
-				/////
-					lnNumread = iDisk_read(wa->fhIdxCdxDcx, -1, wa->idx_header, sizeof(wa->idx_header), &error, &errorNum);
+				//////
+					if (wa->isExclusive)		lnNumread = iDisk_read(wa->fhIdxCdxDcx, 0, wa->idx_header, sizeof(wa->idx_header), &error, &errorNum);
+					else						lnNumread = iDisk_readShared_withRetryCallback(thisCode, wa->idxCdxDcxFileLocks, wa->fhIdxCdxDcx, 0, wa->idx_header, sizeof(wa->idx_header), &error, &errorNum, (uptr)&iiDbf_continueWithLockOperation, (uptr)&dl, &dl, true);
+
+
+				//////////
+				// Are we good?
+				//////
+					if (error && errorNum == _ERROR_UNABLE_TO_LOCK_FOR_READ)
+					{
+						// Adjust the error to make it specific
+						cdx_close(thisCode, wa);
+						return(_CDX_ERROR_READING_HEADER_IDX);
+					}
+
 					if (error || lnNumread != sizeof(wa->idx_header))
 					{
 						cdx_close(thisCode, wa);
-						return(_CDX_ERROR_READING_HEADER_IDX);
+						return(_CDX_ERROR_READING_HEADER_CDX);
 					}
 
 
@@ -256,8 +268,11 @@
 						wa->cdx_root->fileSize	= (u32)lnFileSize;
 					}
 
-			} else /* It's CDX */ {
 
+			} else {
+	//////////
+	// CDX
+	//////
 				//////////
 				// Allocate
 				/////
@@ -270,37 +285,26 @@
 
 
 				//////////
-				// Lock
+				// Read
 				//////
-					if (!wa->isExclusive)
-					{
-						// Shared access, lock the header
-						dl = iDisk_lock_range_retryCallback(thisCode, wa->idxCdxDcxFileLocks, wa->fhIdxCdxDcx, 0, sizeof(*wa->cdx_root), (uptr)&iiDbf_continueWithLockOperation, (uptr)&dl);
-						if (dl->nLength != sizeof(*wa->cdx_root))
-						{
-							// Error locking the file
-							cdx_close(thisCode, wa);
-							return(_CDX_ERROR_LOCKING_HEADER_CDX);
-						}
-					}
+					if (wa->isExclusive)		lnNumread = iDisk_read(wa->fhIdxCdxDcx, 0, wa->cdx_root, sizeof(*wa->cdx_root), &error, &errorNum);
+					else						lnNumread = iDisk_readShared_withRetryCallback(thisCode, wa->idxCdxDcxFileLocks, wa->fhIdxCdxDcx, 0, wa->cdx_root, sizeof(*wa->cdx_root), &error, &errorNum, (uptr)&iiDbf_continueWithLockOperation, (uptr)&dl, &dl, true);
 
 
 				//////////
-				// Read
+				// Are we good?
 				//////
-					lnNumread = iDisk_read(wa->fhIdxCdxDcx, -1, wa->cdx_root, sizeof(*wa->cdx_root), &error, &errorNum);
+					if (error && errorNum == _ERROR_UNABLE_TO_LOCK_FOR_READ)
+					{
+						cdx_close(thisCode, wa);
+						return(_CDX_ERROR_LOCKING_HEADER_CDX);
+					}
+
 					if (error || lnNumread != sizeof(*wa->cdx_root))
 					{
 						cdx_close(thisCode, wa);
 						return(_CDX_ERROR_READING_HEADER_CDX);
 					}
-
-
-				//////////
-				// Unlock
-				//////
-					if (!wa->isExclusive)
-						iDisk_unlock(thisCode, wa->idxCdxDcxFileLocks, dl);
 
 
 				//////////
@@ -469,7 +473,7 @@
 		//////////
 		// Iterate through the various tags
 		//////
-			if (iCdx_getCompoundTagRoot(thisCode, wa, head, NULL, tnTagIndex, &tagRoot))
+			if (iCdx_getRootmostCompoundTag_byTagnum(thisCode, wa, head, NULL, tnTagIndex, &tagRoot))
 			{
 				// Copy the tag name
 				for (lnI = 0; lnI < tagRoot.keyLength && lnI < tnTagNameLength; lnI++)
@@ -570,7 +574,7 @@
 		// Grab the index tag header info so we can generate the keys
 		//////
 			memset(&tagRoot, 0, sizeof(tagRoot));
-			if (!iCdx_getCompoundTagRoot(thisCode, wa, wa->cdx_root, NULL, tnTagIndex, &tagRoot))
+			if (!iCdx_getRootmostCompoundTag_byTagnum(thisCode, wa, wa->cdx_root, NULL, tnTagIndex, &tagRoot))
 				return(_CDX_ERROR_INVALID_TAG);
 
 			// Right now, head and tagRoot are setup
@@ -620,7 +624,7 @@
 		SForClause*		lsFor;
 		u8				keyBuffer[256];
 		SCdxHeader*		tagHeader;		// Holds the tag key expression and FOR clause
-		SCdxKeyOp*		lsKeyOp;		// Key ops for generating the DBF keys
+		SCdxKeyOp*		cko;			// Key ops for generating the DBF keys
 		STagRoot		tagRoot;
 		SWorkArea*		wa;
 
@@ -642,7 +646,7 @@
 		// Grab the index tag header info so we can generate the keys
 		//////
 			memset(&tagRoot, 0, sizeof(tagRoot));
-			if (!iCdx_getCompoundTagRoot(thisCode, wa, wa->cdx_root, NULL, tnTagIndex, &tagRoot))
+			if (!iCdx_getRootmostCompoundTag_byTagnum(thisCode, wa, wa->cdx_root, NULL, tnTagIndex, &tagRoot))
 				return(-2);
 
 			// Right now, head and tagRoot are setup
@@ -660,14 +664,14 @@
 		//////////
 		// Get or build the buildOps for this key
 		//////
-			if (!iiCdx_get_buildOps(thisCode, wa, tnTagIndex, tagHeader, &lsFor, &lsKeyOp, &lnKeyOpCount, &lnResult))
+			if (!iiCdx_get_buildOps(thisCode, wa, tnTagIndex, tagHeader, &lsFor, &cko, &lnKeyOpCount, &lnResult))
 				return(_CDX_ERROR_CONTEXTUAL + lnResult);	// Something is invalid
 
 
 		//////////
 		// Build keys from the DBF's index field data
 		//////
-			iiCdx_generateKey_byOps(thisCode, wa, lsKeyOp, lnKeyOpCount, keyBuffer, true);
+			iiCdx_generateKey_byOps(thisCode, wa, cko, lnKeyOpCount, keyBuffer, true);
 			// Right now, keyBuffer is populated with the key to find
 
 
@@ -856,7 +860,7 @@
 		u32					lnI, lnNode, lnMaxNode, lnKeyNumber;
 		SCdxHeader*			head;
 		SCdxNode*			node;
-		SCdxKey				key;
+		SCdxKeyLeafRaw		key;
 		STagRoot			tagRoot;
 		u8					buffer[256];
 		u8					output[256];
@@ -1093,7 +1097,7 @@
 		u32				lnTagNum, lnNodeNumber, lnKeyNumber, lnStartTagNum, lnEndTagNum, lnTotalKeyCount;
 		bool			llProcessed, llContinue;
 		SCdxNode*		node;
-		SCdxKey			key, keyLast;
+		SCdxKeyLeafRaw	key, keyLast;
 		STagRoot		tagRoot;
 		u8				buffer[256];
 		u8				output[256];
@@ -1161,7 +1165,7 @@
 			}
 
 			// Iterate through one tag, or all of the tags
-			for (lnTagNum = lnStartTagNum, llProcessed = false, llContinue = true; llContinue && lnTagNum <= lnEndTagNum && iCdx_getCompoundTagRoot(thisCode, wa, wa->cdx_root, NULL, lnTagNum, &tagRoot); lnTagNum++)
+			for (lnTagNum = lnStartTagNum, llProcessed = false, llContinue = true; llContinue && lnTagNum <= lnEndTagNum && iCdx_getRootmostCompoundTag_byTagnum(thisCode, wa, wa->cdx_root, NULL, lnTagNum, &tagRoot); lnTagNum++)
 			{
 				// Indicate we processed at last one thing
 				llProcessed = true;
@@ -1451,7 +1455,7 @@ clean_house:
 		SBuilder*		metaData;
 		SBuilder*		errorsFound;
 		SCdxHeader*		tagHeader;	// Holds the tag key expression and FOR clause
-		SCdxKeyOp*		lsKeyOp;	// Key ops for generating the DBF keys
+		SCdxKeyOp*		cko;		// Key ops for generating the DBF keys
 		STagRoot		tagRoot;
 
 
@@ -1459,7 +1463,7 @@ clean_house:
 		// Grab the index tag header info so we can generate the keys
 		//////
 			memset(&tagRoot, 0, sizeof(tagRoot));
-			if (!iCdx_getCompoundTagRoot(thisCode, wa, wa->cdx_root, NULL, tnTagIndex, &tagRoot))
+			if (!iCdx_getRootmostCompoundTag_byTagnum(thisCode, wa, wa->cdx_root, NULL, tnTagIndex, &tagRoot))
 			{
 				sprintf(tcMetaData, "Unable to access tag index %u\n", tnTagIndex);
 				return(-1);
@@ -1473,7 +1477,7 @@ clean_house:
 		// Initialize
 		//////
 			llResult	= true;		// Assume everything is correct from the get-go
-			lsKeyOp		= NULL;		// No ops initially allocated
+			cko		= NULL;		// No ops initially allocated
 			iBuilder_createAndInitialize(&dbfKeys,			-1);
 			iBuilder_createAndInitialize(&dbfKeysUnique,	-1);
 			iBuilder_createAndInitialize(&cdxKeys,			-1);
@@ -1530,8 +1534,8 @@ clean_house:
 		// Generate DBF keys based on raw table data
 		//////
 			iBuilder_allocateBytes(dbfKeys, wa->header.records * (tagRoot.keyLength + 4));
-			lsKeyOp = iiCdx_generateKey_buildOps(thisCode, wa, &tagHeader->keyExpression[0], &lnKeyOpCount);
-			if (!lsKeyOp)
+			cko = iiCdx_generateKey_buildOps(thisCode, wa, &tagHeader->keyExpression[0], &lnKeyOpCount);
+			if (!cko)
 			{
 				// Key expression could not be parsed
 				llResult = false;
@@ -1565,7 +1569,7 @@ clean_house:
 				//////////
 				// Generate and store the key
 				//////
-					iiCdx_generateKey_byOps(thisCode, wa, lsKeyOp, lnKeyOpCount, dbfKeys->data_u8 + (lnDbfKeyCount * (tagRoot.keyLength + 4)), false);
+					iiCdx_generateKey_byOps(thisCode, wa, cko, lnKeyOpCount, dbfKeys->data_u8 + (lnDbfKeyCount * (tagRoot.keyLength + 4)), false);
 
 					// Append the record number
 					*(u32*)(dbfKeys->data_u8 + (lnDbfKeyCount * (tagRoot.keyLength + 4) + tagRoot.keyLength)) = iiBswap32(lnRecno);
@@ -1621,7 +1625,7 @@ clean_house:
 			for (lnI = 0; lnI < (s32)dbfKeys->populatedLength; lnI += (tagRoot.keyLength + 4))
 			{
 				// Fixup any on the key data
-				iiCdx_generateKey_byOps_fixup(thisCode, wa, lsKeyOp, lnKeyOpCount, dbfKeys->data_u8 + lnI, false);
+				iiCdx_generateKey_byOps_fixup(thisCode, wa, cko, lnKeyOpCount, dbfKeys->data_u8 + lnI, false);
 
 				// Fixup the recno()
 				*(u32*)(dbfKeys->buffer + lnI + tagRoot.keyLength) = iiBswap32(*(u32*)(dbfKeys->buffer + lnI + tagRoot.keyLength));
@@ -1635,7 +1639,7 @@ clean_house:
 			for (lnI = 0; lnI < (s32)cdxKeys->populatedLength; lnI += (tagRoot.keyLength + 4))
 			{
 				// Early out
-				if (!iiCdx_generateKey_byOps_fixup(thisCode, wa, lsKeyOp, lnKeyOpCount, cdxKeys->data_u8 + lnI, true))
+				if (!iiCdx_generateKey_byOps_fixup(thisCode, wa, cko, lnKeyOpCount, cdxKeys->data_u8 + lnI, true))
 					break;
 			}
 
@@ -1765,8 +1769,8 @@ close_and_quit:
 				iDbf_forClause_delete(thisCode, &lsFor);
 
 			// Free key ops
-			if (lsKeyOp)
-				free(lsKeyOp);
+			if (cko)
+				free(cko);
 
 			// Free builders
 			iBuilder_freeAndRelease(&dbfKeys);
@@ -1805,7 +1809,279 @@ close_and_quit:
 	s32 iCdx_validateIdxKeys(SThisCode* thisCode, SWorkArea* wa, s8* tcMetaData, u32 tnMetaDataLength, s8* tcErrorsFound, u32 tnErrorsFoundLength)
 	{
 // TODO:  Not currently supported
+		debug_break;
 		return(-1);
+	}
+
+
+
+
+//////////
+//
+// Called to load and decode the CDX keys for the indicated node.  If they've already been cached, then if in
+// non-exclusive mode it validates the node on disk still matches that which is in memory, and either dumps the
+// cache and re-decodes if different, or immediately returns the cached data if still the same.  If in exclusive
+// mode, then it immediate returns what was cached.  If it hasn't yet been cached, it loads and decodes, and
+// then returns cached.
+//
+// If at any point the disk data cannot be read, the operation fails.
+//
+// Note:  Nodes are base-1, so the disk location is calculated as ((node-1) * 512).
+//
+//////
+	SCdxNodeCache* iCdx_cacheNode(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, s32 tnNodeNum, SCdxNode** nodeDst)
+	{
+		s32				lnNumread;
+		u32				lnI;
+		s64				lnCdxSize, lnOffset;
+		SDiskLock*		dl;
+		SCdxNode		diskNode;
+		SCdxNodeCache*	thisNodeCache;
+		bool			error;
+		u32				errorNum;
+
+
+		//////////
+		// Is our environment sane?
+		//////
+			if (!wa || !wa->isCdx || !tagHeader)
+			{
+				// Invalid environment
+				wa->idxCdxDcxLastError = _CDX_ERROR_INVALID_INDEX;
+				return(NULL);
+			}
+
+
+		//////////
+		// Grab the file's size
+		//////
+			lnCdxSize = iDisk_getFileSize(wa->fhIdxCdxDcx);
+			if (lnCdxSize < 0)
+			{
+				// File handle is not valid
+				wa->idxCdxDcxLastError = _CDX_ERROR_INVALID_INDEX;
+				return(NULL);
+			}
+
+
+		//////////
+		// Is the node they're seeking valid?
+		//////
+			lnOffset = (s64)(tnNodeNum - 1) * 512;
+			if (lnOffset + 511 >= lnCdxSize)
+			{
+				// Out of range
+				wa->idxCdxDcxLastError = _CDX_ERROR_INVALID_NODE;
+				return(NULL);
+			}
+
+
+		//////////
+		// Make sure we have a node cache buffer
+		//////
+			if (!wa->idxCdxDcxNodeCache)
+			{
+				// Allocate the buffer
+				iBuilder_createAndInitialize(&wa->idxCdxDcxNodeCache, -1);
+				if (!wa->idxCdxDcxNodeCache || !wa->idxCdxDcxNodeCache->buffer)
+				{
+					// Trouble allocating
+					wa->idxCdxDcxLastError = _CDX_ERROR_INTERNAL;
+					return(NULL);
+				}
+			}
+
+
+		//////////
+		// When we get here, the node is within the file's size.
+		// See if we already have it cached.
+		//////
+			for (lnI = 0, thisNodeCache = (SCdxNodeCache*)wa->idxCdxDcxNodeCache->buffer; lnI < wa->idxCdxDcxNodeCache->populatedLength; lnI++, thisNodeCache++)
+			{
+				// See if our node matches
+				if (thisNodeCache->isUsed && thisNodeCache->nodeNum == tnNodeNum)
+				{
+
+					//////////
+					// Are we exclusive?
+					//////
+						if (wa->isExclusive)
+						{
+							// Store the node data (if needed)
+							if (nodeDst)
+								*nodeDst = thisNodeCache->cachedNode;
+
+							// Indicate success
+							return(thisNodeCache);
+						}
+						// If we get here, we're shared
+
+
+					//////////
+					// Validate what we have cached is still in sync with whatever's presently on disk
+					//////
+						lnNumread = iDisk_readShared_withRetryCallback(thisCode, wa->idxCdxDcxFileLocks, wa->fhIdxCdxDcx, lnOffset, &diskNode, 512, &error, &errorNum, (uptr)&iiDbf_continueWithLockOperation, (uptr)&dl, &dl, true);
+						if (error || lnNumread != 512 || !dl)
+						{
+							// Error reading this node
+							wa->idxCdxDcxLastError = _CDX_ERROR_READING_NODE;
+							return(NULL);
+						}
+						// We've read the content
+
+
+					//////////
+					// Is it still the same as what we last loaded?
+					//////
+						if (thisNodeCache->cachedNode && memcmp(&diskNode, thisNodeCache->cachedNode, 512) == 0)
+						{
+							// Store the node data (if needed)
+							if (nodeDst)
+								*nodeDst = thisNodeCache->cachedNode;
+
+							// Indicate success
+							return(thisNodeCache);
+						}
+
+
+					//////////
+					// We need to dump what we have and reload the cache
+					//////
+						iiCdx_cacheNode_delete(thisCode, wa, tagHeader, thisNodeCache, true);
+
+				}
+			}
+			// When we get here, we do not already have this node cached
+
+
+		//////////
+		// Allocate a cache node
+		//////
+			thisNodeCache = iiCdx_cacheNode_allocate(thisCode, wa, tagHeader, tnNodeNum, true);
+			if (!thisNodeCache)
+			{
+				wa->idxCdxDcxLastError = _CDX_ERROR_MEMORY_CDX;
+				return(NULL);
+			}
+
+
+		//////////
+		// Populate it
+		//////
+			thisNodeCache->cachedNode = (SCdxNode*)malloc(sizeof(SCdxNode));
+			if (!thisNodeCache->cachedNode)
+			{
+				wa->idxCdxDcxLastError = _CDX_ERROR_MEMORY_CDX;
+				return(NULL);
+			}
+			thisNodeCache->isUsed		= true;
+			thisNodeCache->nodeNum		= tnNodeNum;
+
+			return(NULL);
+	}
+
+
+
+
+//////////
+//
+// Called to allocate a new node for caching.
+// Note:  If node is specified, it goes ahead and automatically populates the keys into the cache
+//
+//////
+	SCdxNodeCache* iiCdx_cacheNode_allocate(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, s32 tnNodeNum, bool tlAutoPopulate)
+	{
+		SCdxNodeCache* thisNodeCache;
+
+
+		//////////
+		// Allocate
+		//////
+			thisNodeCache = (SCdxNodeCache*)iBuilder_allocateBytes(wa->idxCdxDcxNodeCache, sizeof(SCdxNodeCache));
+			if (!thisNodeCache)
+			{
+				wa->idxCdxDcxLastError = _CDX_ERROR_MEMORY_CDX;
+				return(NULL);
+			}
+
+
+		//////////
+		// And the node buffer
+		//////
+			thisNodeCache->cachedNode = (SCdxNode*)malloc(sizeof(SCdxNode));
+			if (!thisNodeCache->cachedNode)
+			{
+				wa->idxCdxDcxLastError = _CDX_ERROR_MEMORY_CDX;
+				return(NULL);
+			}
+
+			// Populate hard constants
+			thisNodeCache->isUsed		= true;
+			thisNodeCache->nodeNum		= tnNodeNum;
+
+
+		//////////
+		// Populate the node?
+		//////
+			if (tlAutoPopulate)
+				iiCdx_cacheNode_populate(thisCode, wa, tagHeader, thisNodeCache);
+// TODO:  Working here
+
+
+		//////////
+		// Indicate our result
+		//////
+			return(thisNodeCache);
+
+	}
+
+
+
+
+//////////
+//
+// Called to populate the previously allocated node cache with new keys read from disk.
+// Will automatically de-populate if already populated.
+//
+//////
+	void iiCdx_cacheNode_populate(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, SCdxNodeCache* nodeKeys)
+	{
+		//////////
+		// Remove any existing keys
+		//////
+			if (nodeKeys->keyCount != 0 && nodeKeys->keyBuffer)
+				iiCdx_cacheNode_depopulate(thisCode, wa, tagHeader, nodeKeys);
+
+
+		//////////
+		// Load the node (LOL)
+		//////
+// TODO:  Working here
+	}
+
+
+
+
+//////////
+//
+// Called to depopulate the previously populated cached keys for the indicated node cache
+//
+//////
+	void iiCdx_cacheNode_depopulate(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, SCdxNodeCache* nodeKeys)
+	{
+	}
+
+
+
+
+//////////
+//
+// Called to delete the cached node's contents.  If tlImmediateReuse is true, then the node is not marked isUsed = false,
+// but rather it is kept as isUsed = true so it doesn't need to be allocated again.
+//
+//////
+	void iiCdx_cacheNode_delete(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, SCdxNodeCache* nodeKeys, bool tlImmediateReuse)
+	{
 	}
 
 
@@ -1826,18 +2102,18 @@ close_and_quit:
 		u8*			keyStart;
 		u8			fieldName[128];
 		bool		llIsValid;
-		SCdxKeyOp*	lko;
+		SCdxKeyOp*	cko;
 
 
 		//////////
 		// Allocate for up to N ops
 		//////
-			lko = (SCdxKeyOp*)malloc(100 * sizeof(SCdxKeyOp));
-			if (!lko)
+			cko = (SCdxKeyOp*)malloc(100 * sizeof(SCdxKeyOp));
+			if (!cko)
 				return(NULL);
 
 			// Initialize
-			memset(lko, 0, 100 * sizeof(SCdxKeyOp));
+			memset(cko, 0, 100 * sizeof(SCdxKeyOp));
 
 
 		// Iterate through each field grabbing the key data
@@ -1854,11 +2130,11 @@ close_and_quit:
 					//////
 						lnKeyFieldNameLength		= 9;									// Length of the "DELETED()" text
 						lnFieldLength				= 1;									// Always 1 byte per deleted() mark
-						lko[lnLkoNum].offsetRow		= 0;									// The DELETED() tag is at offset 0 on all tables
-						lko[lnLkoNum].offsetKey		= lnKeyLength;							// Where it goes in the key
-						lko[lnLkoNum].length		= lnFieldLength;						// Always 1 byte per deleted() mark
-						lko[lnLkoNum].fieldLength	= lnFieldLength;						// Always 1 byte per deleted() mark
-						lko[lnLkoNum].indexFixup	= _DBF_INDEX_FIXUP_DELETED | lnFixup;	// Convert deleted byte to the logical test
+						cko[lnLkoNum].offsetRow		= 0;									// The DELETED() tag is at offset 0 on all tables
+						cko[lnLkoNum].offsetKey		= lnKeyLength;							// Where it goes in the key
+						cko[lnLkoNum].length		= lnFieldLength;						// Always 1 byte per deleted() mark
+						cko[lnLkoNum].fieldLength	= lnFieldLength;						// Always 1 byte per deleted() mark
+						cko[lnLkoNum].indexFixup	= _DBF_INDEX_FIXUP_DELETED | lnFixup;	// Convert deleted byte to the logical test
 						llIsValid					= true;
 
 				} else if (_memicmp(keyStart, "upper(", 6) == 0) {
@@ -1908,7 +2184,7 @@ close_and_quit:
 						if (iDbf_getField_allowNulls(thisCode, wa, (u32)lnFieldNumber, NULL, 0))
 						{
 							// Grab the offset and mask for rapid updating as we generate each field
-							iDbf_getNull_offsetAndMask(thisCode, wa, (u32)lnFieldNumber, &lko[lnLkoNum].null_offset, &lko[lnLkoNum].null_mask);
+							iDbf_getNull_offsetAndMask(thisCode, wa, (u32)lnFieldNumber, &cko[lnLkoNum].null_offset, &cko[lnLkoNum].null_mask);
 							++lnIndexLength;
 						}
 
@@ -1916,11 +2192,11 @@ close_and_quit:
 					//////////
 					// Append the contents of this key to the op
 					//////
-						lko[lnLkoNum].offsetRow		= (u32)iDbf_getField_dataOffset(thisCode, wa, (u32)lnFieldNumber);
-						lko[lnLkoNum].offsetKey		= lnKeyLength;
-						lko[lnLkoNum].length		= lnIndexLength;
-						lko[lnLkoNum].fieldLength	= lnFieldLength;
-						lko[lnLkoNum].indexFixup	= (u32)iDbf_getIndexFixupOp(thisCode, wa, (u32)lnFieldNumber) | lnFixup;
+						cko[lnLkoNum].offsetRow		= (u32)iDbf_getField_dataOffset(thisCode, wa, (u32)lnFieldNumber);
+						cko[lnLkoNum].offsetKey		= lnKeyLength;
+						cko[lnLkoNum].length		= lnIndexLength;
+						cko[lnLkoNum].fieldLength	= lnFieldLength;
+						cko[lnLkoNum].indexFixup	= (u32)iDbf_getIndexFixupOp(thisCode, wa, (u32)lnFieldNumber) | lnFixup;
 						llIsValid					= true;
 
 				} else {
@@ -1955,11 +2231,11 @@ close_and_quit:
 
 		// Indicate how long the key is
 		*tnKeyOpCount = lnLkoNum;
-		return(lko);
+		return(cko);
 
 
 failed_parsing:
-		free(lko);
+		free(cko);
 		*tnKeyOpCount = -1;
 		return(NULL);
 	}
@@ -2078,7 +2354,7 @@ failed_parsing:
 	{
 		s32			lnI, lnJ;
 		u8*			keyPart;
-		SCdxKeyOp*	lko;
+		SCdxKeyOp*	cko;
 		s8*			dataSource;
 
 
@@ -2086,28 +2362,28 @@ failed_parsing:
 		dataSource = ((tlBuildFromIndexData) ? wa->irow.data : wa->row.data);
 
 		// Iterate through each op at warp speed
-		for (lnI = 0, lko = &keyOps[0]; lnI < tnKeyOpCount; lnI++, lko++)
+		for (lnI = 0, cko = &keyOps[0]; lnI < tnKeyOpCount; lnI++, cko++)
 		{
 			// Peform the copy
-			memcpy(keyOut + lko->offsetKey, dataSource + lko->offsetRow, lko->length);
+			memcpy(keyOut + cko->offsetKey, dataSource + cko->offsetRow, cko->length);
 
 			// Is there a fixup?
-			if (lko->indexFixup)
+			if (cko->indexFixup)
 			{
 				// Get our pointer to this part of the key
-				keyPart = keyOut + lko->offsetKey;
+				keyPart = keyOut + cko->offsetKey;
 
 				// Apply the fixup
-				switch (lko->indexFixup & _DBF_INDEX_FIXUP_MASK)
+				switch (cko->indexFixup & _DBF_INDEX_FIXUP_MASK)
 				{
 					case _DBF_INDEX_FIXUP_SWAP_ENDIAN:
 						// Fixup integers stored as 4-byte or 8-byte (currency)
-						iiCdx_generateKey_byOps_fixup_swapEndian(thisCode, lko, keyPart);
+						iiCdx_generateKey_byOps_fixup_swapEndian(thisCode, cko, keyPart);
 						break;
 
 					case _DBF_INDEX_FIXUP_FLOAT_DOUBLE:
 						// Fixup float or double
-						iiCdx_generateKey_byOps_fixup_double(thisCode, lko, keyPart);
+						iiCdx_generateKey_byOps_fixup_double(thisCode, cko, keyPart);
 						break;
 
 					case _DBF_INDEX_FIXUP_DATETIME:
@@ -2124,7 +2400,7 @@ failed_parsing:
 
 					case _DBF_INDEX_FIXUP_DATE:
 						// Dates are stored as Julian day numbers
-						iiCdx_generateKey_byOps_fixup_date(thisCode, lko, keyPart);
+						iiCdx_generateKey_byOps_fixup_date(thisCode, cko, keyPart);
 						// All done
 						break;
 
@@ -2136,7 +2412,7 @@ failed_parsing:
 
 					case _DBF_INDEX_FIXUP_NUMERIC:
 						// Numeric fields are converted to f64 for comparison
-						iiCdx_generateKey_byOps_fixup_numeric(thisCode, lko, keyPart, wa);
+						iiCdx_generateKey_byOps_fixup_numeric(thisCode, cko, keyPart, wa);
 						break;
 				}
 
@@ -2144,26 +2420,26 @@ failed_parsing:
 				//////////
 				// Perform explicit fixups
 				//////
-					if (lko->indexFixup & _DBF_INDEX_FIXUP_NULL)
+					if (cko->indexFixup & _DBF_INDEX_FIXUP_NULL)
 					{
 						// Scooch it over one byte
-						memmove(keyPart + 1, keyPart, lko->length - 1);
+						memmove(keyPart + 1, keyPart, cko->length - 1);
 
 						// Add in the NULL condition for this field
-						*(u8*)keyPart = ((dataSource[lko->null_offset] & lko->null_mask) ? 0 : 0x80);
+						*(u8*)keyPart = ((dataSource[cko->null_offset] & cko->null_mask) ? 0 : 0x80);
 					}
 
-					if (lko->indexFixup & _DBF_INDEX_FIXUP_UPPER)
+					if (cko->indexFixup & _DBF_INDEX_FIXUP_UPPER)
 					{
 						// Convert the raw DBF data to upper-case
-						for (lnJ = 0; lnJ < lko->length; lnJ++)
+						for (lnJ = 0; lnJ < cko->length; lnJ++)
 							iiUpperCase(keyPart + lnJ);
 					}
 
-					if (lko->indexFixup & _DBF_INDEX_FIXUP_LOWER)
+					if (cko->indexFixup & _DBF_INDEX_FIXUP_LOWER)
 					{
 						// Convert the raw DBF data to lower-case
-						for (lnJ = 0; lnJ < lko->length; lnJ++)
+						for (lnJ = 0; lnJ < cko->length; lnJ++)
 							iiLowerCase(keyPart + lnJ);
 					}
 			}
@@ -2553,7 +2829,7 @@ failed_parsing:
 		s32				lnTranslatedResult;
 		u32				lnKeyNumber;
 		SCdxNode*		node;
-		SCdxKey			key;
+		SCdxKeyLeafRaw	key;
 
 
 debug_break;
@@ -2876,7 +3152,7 @@ debug_break;
 	{
 		u32				lnKeyNumber, lnTotalKeyCount;
 		SCdxNode*		node;
-		SCdxKey			key;
+		SCdxKeyLeafRaw	key;
 		STagRoot		tagRoot;
 		u8				buffer[256];
 		SBuilder*		keys;
@@ -2893,7 +3169,7 @@ debug_break;
 		//////
 			lnTotalKeyCount	= 0;
 			memset(&tagRoot, 0, sizeof(tagRoot));
-			if (iCdx_getCompoundTagRoot(thisCode, wa, wa->cdx_root, NULL, tnTagIndex, &tagRoot))
+			if (iCdx_getRootmostCompoundTag_byTagnum(thisCode, wa, wa->cdx_root, NULL, tnTagIndex, &tagRoot))
 			{
 				//////////
 				// Iterate through the keys
@@ -3044,7 +3320,7 @@ debug_break;
 			SIdxNode*		nodeIdx;
 		};
 		union {
-			SCdxKey			keyCdx;
+			SCdxKeyLeafRaw	keyCdx;
 			SIdxKey			keyIdx;
 		};
 		STagRoot			tagRoot;
@@ -3204,7 +3480,7 @@ debug_break;
 				if (wa->isIndexLoaded && wa->isCdx)
 				{
 					// Try to access the indicated tag
-					*tlError = !iCdx_getCompoundTagRoot(thisCode, wa, wa->cdx_root, NULL, tnTagIndex, tagRoot);
+					*tlError = !iCdx_getRootmostCompoundTag_byTagnum(thisCode, wa, wa->cdx_root, NULL, tnTagIndex, tagRoot);
 					if (*tlError)
 					{
 						// Error accessing the index tag
@@ -3243,28 +3519,44 @@ debug_break;
 
 //////////
 //
-// Called to get the indicated tag number root node.  The tags are stored in node 1 (offset 1536)
-// and can proceed into other nodes if there are many tags.
+// Called to get the indicated tag number's root node.  The tags are stored at the first non-header node
+// (offset 1536) and can spill over into other nodes if there are many tags.
 //
-// I did a test with over 5,000 tags and VFP even went into index nodes, so the system used to serve
-// up tag names is basically its own index within the CDX that is searched using a different keyLength
-// than is head->keyLength, which is why all tag names are limited to 10 characters.
+// A test with over 5,000 tags indicated the index's own tag system is its own index within the index.
+// It uses the same logic to find the tag as it does to search keys within a tag.  There is no specific
+// reason why index tag name lengths can't be larger than 10 characters.  It seems to be merely convention.
 //
 //////
-	bool iCdx_getCompoundTagRoot(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* head, SCdxNode* node, s32 lnTagNum, STagRoot* tagRoot)
+	bool iCdx_getRootmostCompoundTag_byTagnum(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* head, SCdxNode* node, s32 lnTagNum, STagRoot* tagRoot)
 	{
-		SCdxKey			key;
+		SCdxKeyLeafRaw	key;
 		SCdxHeader*		nodeTag;
 		SCdxNode*		nodeFirst;
 
 
-		// Make sure we have a CDX to work with
-		if (!head)
-			return(false);
+		//////////
+		// Make sure our environment is sane
+		//////
+			// Work area
+			if (!wa)
+				return(false);
 
-		// We allow the root tag node to be passed as NULL, and then populated with the head
-		if (!node)
-			node = (SCdxNode*)((s8*)head + sizeof(SCdxHeader));
+			// CDX
+			if (!head)
+			{
+				// Invalid header
+				wa->idxCdxDcxLastError = _CDX_ERROR_INVALID_INDEX;	// Note:  Could possibly be an internal programmer error
+				return(false);
+			}
+
+			// Current node
+			if (!node && !iCdx_cacheNode(thisCode, wa, head, 3, &node))
+			{
+				// Node is not available
+				wa->idxCdxDcxLastError = _CDX_ERROR_INVALID_NODE;
+				return(false);
+			}
+
 
 		// Based on the type of node we will traverse appropriately
 		while (node)
@@ -3327,8 +3619,10 @@ debug_break;
 					break;
 
 				default:
-					// Should not happen
-					return(false);
+					// Should never happen.
+					// It means the indicated node was loaded, but it did not identify itself as a valid _CDX_NODE_* type.
+					// This usually means the index is corrupt and needs to be rebuilt.
+					iError_signal(thisCode, _ERROR_INVALID_CORRUPT_NEEDS_REBUILT, NULL, false, NULL, false);
 					break;
 			}
 		}
@@ -3814,13 +4108,13 @@ debug_break;
 //////
 // END
 //////////
-	bool iCdx_getCompactIdxKey_byNumber(SThisCode* thisCode, SCdxHeader* head, u32 keyLength, u8 tcFillChar, u32 tnKeyNumberTarget, u32 tnKeyNumberThis, SCdxNode* node, SCdxKey* key, STagRoot* tagRoot, bool tlFixupEndian, bool tlFixupSignBit)
+	bool iCdx_getCompactIdxKey_byNumber(SThisCode* thisCode, SCdxHeader* head, u32 keyLength, u8 tcFillChar, u32 tnKeyNumberTarget, u32 tnKeyNumberThis, SCdxNode* node, SCdxKeyLeafRaw* key, STagRoot* tagRoot, bool tlFixupEndian, bool tlFixupSignBit)
 	{
 		u32						lnKeyLength, lnVariableLength;
 		s8*						keyPtr;
 		SCdxKeyTrail			keyTrail;
 		SCdxKeyTrailInterior*	keyTrailInterior;
-		SCdxKey					keyPrior;
+		SCdxKeyLeafRaw			keyPrior;
 
 
 		// Is this us?
@@ -3829,76 +4123,40 @@ debug_break;
 			if (iiGetIndexNodeType(node->type) == 2 || iiGetIndexNodeType(node->type) == 3)
 			{
 				// Process the exterior/leaf node
-//////////
-// Tried to add a speedup, but it's not working... needs debugging
-// BEGIN
-//////
-// 				// Is it the same key as was accessed last time?
-// 				if (keyLastNumber == tnKeyNumber && tagRootLast == tagRoot && nodeLast == node && headLast == head)
-// 				{
-// 					// Yes, we can shortcut
-// 					memcpy(key, &keyLast, sizeof(SCdxKey));
-// 					return(true);
-// 				}
-//////
-// END
-//////////
+				iiCdx_extractExteriorNode_nodeKeyAccessData(thisCode, node, tnKeyNumberThis, &keyTrail);	// Node-specific key information
 
-				// Grab the node-specific key information
-				iiCdx_extractExteriorNode_nodeKeyAccessData(thisCode, node, tnKeyNumberThis, &keyTrail);
+				// If we are duplicating bytes from the previous key, we need that key
+				if (tnKeyNumberThis != 0)
+				{
+					// Grab the prior key, which may grab the prior key, which may grab the prior key, and so on... UGH!  What a horrible design.
+					iCdx_getCompactIdxKey_byNumber(thisCode, head, keyLength, tcFillChar, tnKeyNumberTarget, tnKeyNumberThis - 1, node, &keyPrior, tagRoot, false, false);
 
-				// See if we've already computed this index previously
-//////////
-// Speedup disabled:
-// BEGIN
-//////
-// 				if (!iiCdx_checkNodeCache(node, tnKeyNumber, key))
-// 				{
-//////
-// END
-//////////
-					// If we are duplicating bytes from the previous key, we need that key
-					if (tnKeyNumberThis != 0)
-					{
-						// Grab the prior key, which may grab the prior key, which may grab the prior key, and so on... UGH!  What a horrible design.
-						iCdx_getCompactIdxKey_byNumber(thisCode, head, keyLength, tcFillChar, tnKeyNumberTarget, tnKeyNumberThis - 1, node, &keyPrior, tagRoot, false, false);
+					// Copy the prior key if need be
+					if (keyTrail.count_DC != 0)
+						memcpy(&key->key[0], &keyPrior.key, keyTrail.count_DC);
 
-						// Copy the prior key if need be
-						if (keyTrail.count_DC != 0)
-							memcpy(&key->key[0], &keyPrior.key, keyTrail.count_DC);
+				} else {
+					// No prior key, initialize it all to 0s
+					memset(&keyPrior, 0, sizeof(keyPrior));
+				}
 
-					} else {
-						// No prior key, initialize it all to 0s
-						memset(&keyPrior, 0, sizeof(keyPrior));
-					}
+				// Determine our variable length part
+				lnVariableLength	= max((s32)(keyLength - keyTrail.count_DC - keyTrail.count_TC), 0);
+				key->offset			= keyPrior.offset + lnVariableLength;
+				key->keyLength		= keyLength;
 
-					// Determine our variable length part
-					lnVariableLength	= max((s32)(keyLength - keyTrail.count_DC - keyTrail.count_TC), 0);
-					key->offset			= keyPrior.offset + lnVariableLength;
-					key->keyLength		= keyLength;
+				// Append it in there if need be
+				if (lnVariableLength != 0)
+					memcpy(&key->key[keyTrail.count_DC], (s8*)node + 512 - key->offset, lnVariableLength);
 
-					// Append it in there if need be
-					if (lnVariableLength != 0)
-						memcpy(&key->key[keyTrail.count_DC], (s8*)node + 512 - key->offset, lnVariableLength);
+				// Append the trailing blanks if need be
+				if (keyTrail.count_TC != 0)
+					memset(&key->key[keyLength - keyTrail.count_TC], tcFillChar, keyTrail.count_TC);
 
-					// Append the trailing blanks if need be
-					if (keyTrail.count_TC != 0)
-						memset(&key->key[keyLength - keyTrail.count_TC], tcFillChar, keyTrail.count_TC);
+				// Store the record number
+				key->recordNumber		= keyTrail.record;
+				key->record2	= 0;
 
-					// Store the record number
-					key->recordNumber		= keyTrail.record;
-					key->record2	= 0;
-
-//////////
-// Speedup disabled:
-// BEGIN
-//////
-// 					// Add this to the cache before we fixup the sign so next time it doesn't have to be computed
-// 					iiCdx_addToNodeCache(node, tnKeyNumber, key);
-// 				}
-//////
-// END
-//////////
 
 			} else {
 				// Process the interior node
@@ -3946,26 +4204,6 @@ debug_break;
 				}
 
 
-//////////
-// Speedup disabled:
-// BEGIN
-//////
-// 			//////////
-// 			// Save the previous key
-// 			//////
-// 				if (tnKeyNumber != 0)
-// 				{
-// 					keyLastNumber	= tnKeyNumber;
-// 					headLast		= head;
-// 					nodeLast		= node;
-// 					tagRootLast		= tagRoot;
-// 					memcpy(&keyLast, key, sizeof(SCdxKey));
-// 				}
-//////
-// END
-//////////
-
-
 			// Indicate success
 			return(true);
 		}
@@ -3978,196 +4216,13 @@ debug_break;
 
 //////////
 //
-// Called to see if the node key has already been cached, and if so use that key rather than
-// recomputing it.
-//
-//////
-	struct SCdxNodeCache
-	{
-		SCdxNode*		node;
-		SCdxKeyPtr*		keyPtrArray;
-	};
-
-	SBuilder* cdxNodeCache = NULL;
-
-	bool iiCdx_checkNodeCache(SThisCode* thisCode, SCdxNode* node, u32 tnKeyNumber, SCdxKey* key)
-	{
-		SCdxNodeCache*	nodeCache;
-		SCdxKeyPtr*		lckp;
-
-
-		//////////
-		// Is the cache valid?
-		//////
-			if (!cdxNodeCache || tnKeyNumber == 0 || tnKeyNumber > node->keyCount)
-				return(false);
-
-
-		//////////
-		// Search for the node
-		//////
-			nodeCache = NULL;
-			if (cdxNodeCache->populatedLength != 0)
-				nodeCache = (SCdxNodeCache*)bsearch(&node, cdxNodeCache->buffer, cdxNodeCache->populatedLength / sizeof(SCdxNodeCache), sizeof(SCdxNodeCache), iiCdx_checkNodeCache_callback_bsearchAndQsort);
-
-
-		//////////
-		// Add it if we need
-		//////
-			if (nodeCache)
-			{
-				// Has it already been added?
-				lckp = (SCdxKeyPtr*)&nodeCache->keyPtrArray[tnKeyNumber - 1];
-				if (lckp->keyPtr)
-				{
-					// It already exists
-					if (key)
-					{
-						// Copy it
-						memcpy(key, lckp, sizeof(SCdxKeyPtr) - sizeof(lckp->keyPtr));
-						memcpy(key->key, lckp->keyPtr, lckp->keyLength);
-					}
-					return(true);
-				}
-			}
-
-
-		//////////
-		// If we get here, it hasn't been added yet
-		//////
-			return(false);
-	}
-
-	int iiCdx_checkNodeCache_callback_bsearchAndQsort(const void* l, const void* r)
-	{
-		     if (*(u32*)l == *(u32*)r)		return(0);
-		else if (*(u32*)l <  *(u32*)r)		return(-1);
-		else								return(1);
-	}
-
-
-
-
-//////////
-//
-// Called to add the node to the cache.  Note, while this is not a particularly expensive operation
-// in terms of compute, it should still only be called when it is known the key is not already in
-// the cache as it will affect the speed of searching, which would become visible in many successive
-// search operations.
-//
-//////
-	void iiCdx_addToNodeCache(SThisCode* thisCode, SCdxNode* node, u32 tnKeyNumber, SCdxKey* key)
-	{
-		SCdxNodeCache*	nodeCache;
-		SCdxKeyPtr*		lckp;
-
-
-		//////////
-		// Make sure our environment is sane
-		//////
-			if (tnKeyNumber > node->keyCount || tnKeyNumber == 0)
-				return;
-
-
-		//////////
-		// Is the cache valid?
-		//////
-			if (!cdxNodeCache)
-				iBuilder_createAndInitialize(&cdxNodeCache, -1);
-
-
-		//////////
-		// Search for the node
-		//////
-			nodeCache = NULL;
-			if (cdxNodeCache->populatedLength != 0)
-				nodeCache = (SCdxNodeCache*)bsearch(&node, cdxNodeCache->buffer, cdxNodeCache->populatedLength / sizeof(SCdxNodeCache), sizeof(SCdxNodeCache), iiCdx_checkNodeCache_callback_bsearchAndQsort);
-
-
-		//////////
-		// Add it if we need
-		//////
-			if (!nodeCache)
-			{
-				// Append a new entry for this node
-				nodeCache = (SCdxNodeCache*)iBuilder_allocateBytes(cdxNodeCache, sizeof(SCdxNodeCache));
-				if (!nodeCache)
-					return;
-
-				// Initialize
-				nodeCache->node = node;
-
-				// Are we now into a list that needs sorted for future binary searches (bsearch)?
-				if (cdxNodeCache->populatedLength != sizeof(SCdxNodeCache))
-				{
-					// Sort the cache
-					qsort(cdxNodeCache->buffer, cdxNodeCache->populatedLength / sizeof(SCdxNodeCache), sizeof(SCdxNodeCache), iiCdx_checkNodeCache_callback_bsearchAndQsort);
-
-					// Search again for the node
-					nodeCache = (SCdxNodeCache*)bsearch(&node, cdxNodeCache->buffer, cdxNodeCache->populatedLength / sizeof(SCdxNodeCache), sizeof(SCdxNodeCache), iiCdx_checkNodeCache_callback_bsearchAndQsort);
-					if (!nodeCache)
-						debug_break;		// qsort failure... should never happen because we just added nodeCache, and then sorted the list
-				}
-			}
-
-
-		//////////
-		// Allocate the node array if we need
-		//////
-			if (!nodeCache->keyPtrArray)
-			{
-				// The full key count
-// TODO:  An optimization.  This could be created as a builder in the SCdxNodeCache to keep from constantly allocating small blocks, and to have it be allocated only one time
-				nodeCache->keyPtrArray = (SCdxKeyPtr*)malloc(node->keyCount * sizeof(SCdxKeyPtr));
-				if (!nodeCache->keyPtrArray)
-					return;
-
-				// Initialize the block
-				memset(nodeCache->keyPtrArray, 0, node->keyCount * sizeof(SCdxKeyPtr));
-			}
-
-
-		//////////
-		// Has it already been added?
-		//////
-			lckp = (SCdxKeyPtr*)&nodeCache->keyPtrArray[tnKeyNumber - 1];
-			if (!lckp->keyPtr)
-			{
-				// Allocate space for lckp->keyPtr
-// TODO:  An optimization.  This could be created as a builder in the SCdxNodeCache to keep from constantly allocating small blocks, and to have it be allocated only one time
-				lckp->keyPtr = (u8*)malloc(lckp->keyLength);
-				if (!lckp->keyPtr)
-					return;
-
-				// Note: No need to initialize as the full key length is copied below
-			}
-
-
-		//////////
-		// Copy over the data if there's room
-		//////
-			if (lckp->keyPtr)
-			{
-				// Copy the key details (recno(), offset into the row data for access)
-				memcpy(lckp, key, sizeof(SCdxKeyPtr) - sizeof(lckp->keyPtr));
-
-				// And the actual key itself the "iId value" if "INDEX ON iId TAG main"
-				memcpy(lckp->keyPtr, key->key, lckp->keyLength);
-			}
-	}
-
-
-
-
-//////////
-//
 // Called to descend the tree to find the left-most node by offset
 //
 //////
 	u32 iCdx_descendToLeftmostNode(SThisCode* thisCode, SCdxHeader* head, u32 keyLength, SCdxNode* node, STagRoot* tagRoot)
 	{
-		u32			lnNodeType;
-		SCdxKey		key;
+		u32				lnNodeType;
+		SCdxKeyLeafRaw	key;
 
 
 		// Make sure our environment is sane

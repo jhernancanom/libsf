@@ -137,6 +137,8 @@ RDC Specifications Document
 	const,ro	-- Augments a type to indicate it is read-only
 	rw			-- Augments a type to explicitly indicate it is read-write
 	volatile	-- Augments a type to indicate it is to be coded as conveyed
+	successive	-- Variables put into the successive block are always expressed exactly that way in memory (no reordering)
+	literal		-- Specifies the data form is to be used literally, and remain unchanged changed even during optimization
 	hide		-- Augments a type to indicate it should not be visible in SourceLight (typically used for unused / reserved members)
 	unsigned	-- Augments char, short, int, long to make it unsigned
 	static		-- Augments a definition to make it a singleton

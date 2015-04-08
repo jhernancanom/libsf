@@ -320,7 +320,7 @@
 //		Errors below -200			-- DBC errors
 //
 /////
-	uptr iDbf_open(SThisCode* thisCode, SVariable* table, SVariable* alias, bool tlExclusive, bool tlAgain, bool tlValidate, bool tlDescending, bool tlVisualize, bool tlJournal)
+	uptr iDbf_open(SThisCode* thisCode, SVariable* table, SVariable* alias, bool tlExclusive, bool tlAgain, bool tlValidate, bool tlDescending, bool tlVisualize, bool tlJournal, bool tlNoUpdate)
 	{
 		s8 tableBuffer[_MAX_PATH + 1];
 		s8 aliasBuffer[_MAX_PATH + 1];
@@ -344,7 +344,7 @@
 			//////////
 			// Open
 			//////
-				return(iDbf_open(thisCode, tableBuffer, aliasBuffer, tlExclusive, tlAgain, tlValidate, tlDescending, tlVisualize, tlJournal));
+				return(iDbf_open(thisCode, tableBuffer, aliasBuffer, tlExclusive, tlAgain, tlValidate, tlDescending, tlVisualize, tlJournal, tlNoUpdate));
 		}
 
 		// Should never happen
@@ -355,13 +355,14 @@
 
 	// Note:  table and alias must be NULL-terminated
 	// Note:  an alias is not required
-	uptr iDbf_open(SThisCode* thisCode, cs8* table, cs8* alias, bool tlExclusive, bool tlAgain, bool tlValidate, bool tlDescending, bool tlVisualize, bool tlJournal)
+	uptr iDbf_open(SThisCode* thisCode, cs8* table, cs8* alias, bool tlExclusive, bool tlAgain, bool tlValidate, bool tlDescending, bool tlVisualize, bool tlJournal, bool tlNoUpdate)
 	{
 		sptr			lnI, lnI_max, lnIndexType;
 		sptr			lnWorkArea, lnLength;
-		u32				lnField, lnShareFlag, lStructure_size, numread;
+		u32				lnField, lnFileShareFlag, lnFileUpdateFlag, lStructure_size, numread;
 		sptr*			lnCurrentWorkArea;
 		bool			llDbcIsValid;
+		SDiskLock*		dl;
 		SFieldRecord1*	lfrPtr;
 		SFieldRecord2*	lfr2Ptr;
 		SWorkArea*		waBase;		// Work Area base (used to access VCX, SCX, DBF work areas, etc.)
@@ -512,13 +513,21 @@
 		//////////
 		// Set the flags based on shared or exclusive
 		//////
-			lnShareFlag = ((tlExclusive) ? _SH_DENYRW/*Exclusive denies reads and writes*/ : _SH_DENYNO/*Shared denies none*/);
+			wa->isExclusive	= tlExclusive;
+			lnFileShareFlag	= ((tlExclusive) ? _SH_DENYRW/*Exclusive denies reads and writes*/ : _SH_DENYNO/*Shared denies none*/);
+
+
+		//////////
+		// Set the flag based on update or no update
+		//////
+			wa->isNoUpdate		= tlNoUpdate;
+			lnFileUpdateFlag	= _O_BINARY | ((tlNoUpdate) ? _O_RDONLY/*Read only*/ : _O_RDWR/*Read and write*/);
 
 
 		//////////
 		// Open the table based on the shared mode with the shared/exclusive flag
 		//////
-			wa->fhDbf = iDisk_open(table, _O_BINARY | _O_RDWR, lnShareFlag, false);
+			wa->fhDbf = iDisk_open(table, lnFileUpdateFlag, lnFileShareFlag, false);
 			if (wa->fhDbf < 0)
 			{
 
@@ -542,7 +551,13 @@
 		//////////
 		// Read the fixed portion of the header
 		//////
-			numread = iDisk_read(wa->fhDbf, 0, (s8*)&wa->header, sizeof(wa->header), &error, &errorNum);
+			if (tlExclusive)		numread = iDisk_read(wa->fhDbf, 0, &wa->header, sizeof(wa->header), &error, &errorNum);
+			else					numread = iDisk_readShared_withRetryCallback(thisCode, wa->dbfLocks, wa->fhDbf, 0, &wa->header, sizeof(wa->header), &error, &errorNum, (uptr)&iiDbf_continueWithLockOperation, (uptr)&dl, &dl, true);
+
+
+		//////////
+		// Are we good?
+		//////
 			if (error || numread != sizeof(wa->header))
 			{
 				// Unable to read the header
@@ -580,7 +595,8 @@
 				case 0x30:		// Visual FoxPro 3.0 or higher
 				case 0x31:		// Visual FoxPro 3.0 or higher, with auto-increment enabled
 					wa->isVisualTable = true;
-					// Fall through to raise the mayHaveCdxSdx flag
+					wa->mayHaveCdxSdx = true;
+					break;
 
 				case 0xf5:		// FoxPro 2.x (or earlier), with memo
 					wa->mayHaveCdxSdx = true;
@@ -614,7 +630,13 @@
 		//////////
 		// Read in the fields
 		//////
-			numread = iDisk_read(wa->fhDbf, sizeof(STableHeader), (s8*)wa->fieldPtr1, lStructure_size, &error, &errorNum);
+			if (wa->isExclusive)		numread = iDisk_read(wa->fhDbf, sizeof(STableHeader), (s8*)wa->fieldPtr1, lStructure_size, &error, &errorNum);
+			else						numread = iDisk_readShared_withRetryCallback(thisCode, wa->dbfLocks, wa->fhDbf, sizeof(STableHeader), (s8*)wa->fieldPtr1, lStructure_size, &error, &errorNum, (uptr)&iiDbf_continueWithLockOperation, (uptr)&dl, &dl, true);
+
+
+		//////////
+		// Are we good?
+		//////
 			if (error || numread != lStructure_size)
 			{
 				iDisk_close(wa->fhDbf);
@@ -876,7 +898,7 @@
 		// Try to open or create the journal file
 		//////
 			memset(journalFilename, 0, sizeof(journalFilename));
-			if (wa->tablePathnameLength >= 5)
+			if (tlJournal && wa->tablePathnameLength >= 5)
 			{
 				// Copy "filename.dbf"
 				memcpy(journalFilename, wa->tablePathname, wa->tablePathnameLength);
@@ -885,7 +907,14 @@
 				memcpy(journalFilename + wa->tablePathnameLength - (sizeof(cgcJrnExtension) - 1), cgcJrnExtension, sizeof(cgcJrnExtension) - 1);
 
 				// Try to open or create it
-				wa->fhJrn = iDisk_open(journalFilename, _O_BINARY | _O_RDWR, lnShareFlag, true);
+				wa->fhJrn = iDisk_open(journalFilename, _O_BINARY | _O_RDWR, lnFileShareFlag, true);
+				if (wa->fhJrn < 0)
+				{
+					iDisk_close(wa->fhDbf);
+					iDatum_delete(&wa->row, false);
+					iDatum_delete(&wa->orow, false);
+					return(_DBF_ERROR_UNABLE_TO_OPEN_JOURNAL);
+				}
 			}
 
 
@@ -3826,7 +3855,7 @@ debug_break;
 				if (!wa->dbc)
 				{
 					// No, we need to try to open it
-					lnDbcHandle = (u32)iDbf_open(thisCode, (cs8*)dbcName, (cs8*)cgcDbcKeyName, tlExcusive, false, false, false, false, false);
+					lnDbcHandle = (u32)iDbf_open(thisCode, (cs8*)dbcName, (cs8*)cgcDbcKeyName, tlExcusive, false, false, false, false, false, wa->isNoUpdate);
 					if ((s32)lnDbcHandle >= 0)
 					{
 						// We're good
