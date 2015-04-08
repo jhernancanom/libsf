@@ -214,6 +214,16 @@
 				obj->ev.methods[_EVENT_ONMOUSEHOVER]._event				= (uptr)&iDefaultCallback_onMouseHover;
 				obj->ev.methods[_EVENT_ONKEYDOWN]._event				= (uptr)&iDefaultCallback_onKeyDown;
 				obj->ev.methods[_EVENT_ONKEYUP]._event					= (uptr)&iDefaultCallback_onKeyUp;
+
+				obj->ev.methods[_EVENT_CAROUSEL_ONTABCLOSE]._event		= (uptr)&iDefaultCallback_onTabClose;
+				obj->ev.methods[_EVENT_CAROUSEL_ONTABCLICK]._event		= (uptr)&iDefaultCallback_onTabClick;
+				obj->ev.methods[_EVENT_CAROUSEL_ONTABMOUSEWHEEL]._event	= (uptr)&iDefaultCallback_onTabMouseWheel;
+				obj->ev.methods[_EVENT_CAROUSEL_ONTABMOUSEMOVE]._event	= (uptr)&iDefaultCallback_onTabMouseMove;
+				obj->ev.methods[_EVENT_CAROUSEL_ONTABMOUSEDOWN]._event	= (uptr)&iDefaultCallback_onTabMouseDown;
+				obj->ev.methods[_EVENT_CAROUSEL_ONTABMOUSEUP]._event	= (uptr)&iDefaultCallback_onTabMouseUp;
+				obj->ev.methods[_EVENT_CAROUSEL_ONTABMOUSEENTER]._event	= (uptr)&iDefaultCallback_onTabMouseEnter;
+				obj->ev.methods[_EVENT_CAROUSEL_ONTABMOUSELEAVE]._event	= (uptr)&iDefaultCallback_onTabMouseLeave;
+
 		}
 	}
 
@@ -426,9 +436,10 @@
 // Called when the user mouse-wheels on a carousel somewhere outside of the client area
 //
 //////
-	bool iEvents_carouselMouseWheel(SThisCode* thisCode, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick)
+	bool iEvents_carouselMouseWheel(SThisCode* thisCode, SWindow* win, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick)
 	{
 		u32						lnTarget;
+		bool					llFocusChanged;
 		SObjCarouselTabData*	octd;
 
 
@@ -436,19 +447,23 @@
 		if (obj)
 		{
 			// Find the associated carousel sub-object
-			lnTarget = iiEvents_carousel_findTarget(thisCode, obj, lnX, lnY, &octd);
+			lnTarget = iiEvents_carousel_findTarget(thisCode, win, obj, lnX, lnY, &octd, &llFocusChanged);
 			switch (lnTarget)
 			{
-				case _EVENT_CAROUSEL_HEADER:
-					// It's a header event
-					break;
-
 				case _EVENT_CAROUSEL_TAB:
 				case _EVENT_CAROUSEL_TAB_CLOSE:
 				case _EVENT_CAROUSEL_TAB_RECTANGLE:
 					// It's a tab event
+					iEngine_raise_event(thisCode, _EVENT_CAROUSEL_ONTABMOUSEWHEEL, win, obj, (void*)lnClick);
 					break;
 			}
+		}
+
+		// If something changed, we need to re-render
+		if (llFocusChanged)
+		{
+			iObj_setDirtyRender_ascent(thisCode, obj, true);
+			iWindow_render(thisCode, iWindow_findRoot_byObj(thisCode, obj), false);
 		}
 
 		// Do not continue processing further
@@ -463,9 +478,10 @@
 // Called when the user moves the mouse on a carousel somewhere outside of the client area
 //
 //////
-	bool iEvents_carouselMouseMove(SThisCode* thisCode, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick)
+	bool iEvents_carouselMouseMove(SThisCode* thisCode, SWindow* win, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick)
 	{
 		u32						lnTarget;
+		bool					llFocusChanged;
 		SObjCarouselTabData*	octd;
 
 
@@ -473,17 +489,26 @@
 		if (obj)
 		{
 			// Find the associated carousel sub-object
-			lnTarget = iiEvents_carousel_findTarget(thisCode, obj, lnX, lnY, &octd);
+			lnTarget = iiEvents_carousel_findTarget(thisCode, win, obj, lnX, lnY, &octd, &llFocusChanged);
 			switch (lnTarget)
 			{
 				case _EVENT_CAROUSEL_TAB:
-					// It's a tab event
+					// Moving on the tab
+					iEngine_raise_event(thisCode, _EVENT_CAROUSEL_ONTABMOUSEMOVE, win, obj, NULL);
 					break;
 
 				case _EVENT_CAROUSEL_TAB_CLOSE:
-					// It's a tab event
+					// Moving over the close button, but still on the tab
+					iEngine_raise_event(thisCode, _EVENT_CAROUSEL_ONTABMOUSEMOVE, win, obj, NULL);
 					break;
 			}
+		}
+
+		// If something changed, we need to re-render
+		if (llFocusChanged)
+		{
+			iObj_setDirtyRender_ascent(thisCode, obj, true);
+			iWindow_render(thisCode, iWindow_findRoot_byObj(thisCode, obj), false);
 		}
 
 		// Do not continue processing further
@@ -498,9 +523,10 @@
 // Called when the user mouse downs (presses down a mouse button) on a carousel somewhere outside of the client area
 //
 //////
-	bool iEvents_carouselMouseDown(SThisCode* thisCode, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick)
+	bool iEvents_carouselMouseDown(SThisCode* thisCode, SWindow* win, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick)
 	{
 		u32						lnTarget;
+		bool					llFocusChanged;
 		SObjCarouselTabData*	octd;
 
 
@@ -508,21 +534,27 @@
 		if (obj)
 		{
 			// Find the associated carousel sub-object
-			lnTarget = iiEvents_carousel_findTarget(thisCode, obj, lnX, lnY, &octd);
+			lnTarget = iiEvents_carousel_findTarget(thisCode, win, obj, lnX, lnY, &octd, &llFocusChanged);
 			switch (lnTarget)
 			{
-				case _EVENT_CAROUSEL_HEADER:
-					// It's a header event
-					break;
-
 				case _EVENT_CAROUSEL_TAB:
-					// It's a tab event
+					// Clicking on a tab
+					iEngine_raise_event(thisCode, _EVENT_CAROUSEL_ONTABMOUSEDOWN, win, obj, NULL);
+					iEngine_raise_event(thisCode, _EVENT_CAROUSEL_ONTABCLICK, win, obj, NULL);
 					break;
 
 				case _EVENT_CAROUSEL_TAB_CLOSE:
-					// It's a tab event
+					// Clicking close on a tab
+					iEngine_raise_event(thisCode, _EVENT_CAROUSEL_ONTABCLOSE, win, obj, NULL);
 					break;
 			}
+		}
+
+		// If something changed, we need to re-render
+		if (llFocusChanged)
+		{
+			iObj_setDirtyRender_ascent(thisCode, obj, true);
+			iWindow_render(thisCode, iWindow_findRoot_byObj(thisCode, obj), false);
 		}
 
 		// If we get here, continue processing
@@ -537,32 +569,32 @@
 // Called when the user mouse ups (releases the mouse button) on a carousel somewhere outside of the client area
 //
 //////
-	bool iEvents_carouselMouseUp(SThisCode* thisCode, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick)
+	bool iEvents_carouselMouseUp(SThisCode* thisCode, SWindow* win, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick)
 	{
 		u32						lnTarget;
+		bool					llFocusChanged;
 		SObjCarouselTabData*	octd;
 
 
 		// Make sure our environment is sane
 		if (obj)
 		{
-// TODO:  Eventually we'll need to signal runtime user-events on this... for now we just ignore it.
 			// Find the associated carousel sub-object
-			lnTarget = iiEvents_carousel_findTarget(thisCode, obj, lnX, lnY, &octd);
+			lnTarget = iiEvents_carousel_findTarget(thisCode, win, obj, lnX, lnY, &octd, &llFocusChanged);
 			switch (lnTarget)
 			{
-				case _EVENT_CAROUSEL_HEADER:
-					// It's a header event
-					break;
-
 				case _EVENT_CAROUSEL_TAB:
-					// It's a tab event
-					break;
-
-				case _EVENT_CAROUSEL_TAB_CLOSE:
-					// It's a tab event
+					// Releasing the mouse on a tab
+					iEngine_raise_event(thisCode, _EVENT_CAROUSEL_ONTABMOUSEUP, win, obj, NULL);
 					break;
 			}
+		}
+
+		// If something changed, we need to re-render
+		if (llFocusChanged)
+		{
+			iObj_setDirtyRender_ascent(thisCode, obj, true);
+			iWindow_render(thisCode, iWindow_findRoot_byObj(thisCode, obj), false);
 		}
 
 		// Do not continue processing further
@@ -577,7 +609,7 @@
 // Called when a user begins dragging on a carousel tab.
 //
 //////
-	bool iEvents_carousel_dragStart_tab(SThisCode* thisCode, SObject* obj, SBitmap* bmp)
+	bool iEvents_carousel_dragStart_tab(SThisCode* thisCode, SWindow* win, SObject* obj, SBitmap* bmp)
 	{
 		return(false);
 	}
@@ -590,7 +622,7 @@
 // Called when a user begins dragging on a carousel titlebar.
 //
 //////
-	bool iEvents_carousel_dragStart_titlebar(SThisCode* thisCode, SObject* obj, SBitmap* bmp)
+	bool iEvents_carousel_dragStart_titlebar(SThisCode* thisCode, SWindow* win, SObject* obj, SBitmap* bmp)
 	{
 		return(false);
 	}
@@ -603,9 +635,9 @@
 // Called to find out what the target is for the indicated coordinate within the carousel (header, or a tab)
 //
 //////
-	u32 iiEvents_carousel_findTarget(SThisCode* thisCode, SObject* obj, s32 tnX, s32 tnY, SObjCarouselTabData** toctd)
+	u32 iiEvents_carousel_findTarget(SThisCode* thisCode, SWindow* win, SObject* obj, s32 tnX, s32 tnY, SObjCarouselTabData** toctd, bool* tlHighlightChanged)
 	{
-		s32						lnResult;
+		s32						lnResult, lnAlignment;
 		u32						lnI;
 		RECT					lrc;
 		POINT					pt;
@@ -615,13 +647,26 @@
 		//////////
 		// Create a point at the actual coordinates
 		/////
-			pt.x = tnX;
-			pt.y = tnY;
+			pt.x = tnX - obj->rcExtra.left;		// Back off for the tab location's X coordinate
+			pt.y = tnY - obj->rcExtra.top;		// Back off for the tab location's Y coordinate
+
+
+		//////////
+		// Adjust for alignment
+		//////
+			lnAlignment = propAlignment(obj);
+			switch (lnAlignment)
+			{
+				case _ALIGNMENT_LEFT:
+					pt.y = obj->rcClient.bottom - pt.y;
+					break;
+			}
 
 
 		//////////
 		// Is it on a tab?
 		//////
+			*tlHighlightChanged = false;
 			if (obj->p.rcTabs && obj->p.rcTabs->buffer)
 			{
 				// Iterate through all the tabs to update the isMouseOver* flags
@@ -637,10 +682,27 @@
 							// Yes
 							*toctd					= octd;
 							lnResult				= _EVENT_CAROUSEL_TAB_CLOSE;
+
+							if (!octd->isMouseOverClose || octd->isMouseOver)
+							{
+								*tlHighlightChanged	= true;
+
+								// Are we entering the tab?
+								if (!octd->isMouseOverClose && !octd->isMouseOver)
+									iEngine_raise_event(thisCode, _EVENT_CAROUSEL_ONTABMOUSEENTER, win, obj, NULL);
+							}
+
 							octd->isMouseOverClose	= true;
+							octd->isMouseOver		= false;
 
 						} else {
 							// Nope
+							if (octd->isMouseOverClose)
+							{
+								*tlHighlightChanged	= true;
+								iEngine_raise_event(thisCode, _EVENT_CAROUSEL_ONTABMOUSELEAVE, win, obj, NULL);
+							}
+
 							octd->isMouseOverClose	= false;
 
 							//////////
@@ -652,10 +714,27 @@
 									// Yes
 									*toctd				= octd;
 									lnResult			= _EVENT_CAROUSEL_TAB;
+
+									if (!octd->isMouseOverClose)
+									{
+										*tlHighlightChanged	= true;
+
+										// Entering the tab
+										iEngine_raise_event(thisCode, _EVENT_CAROUSEL_ONTABMOUSEENTER, win, obj, NULL);
+									}
+
 									octd->isMouseOver	= true;
 
 								} else {
 									// Nope
+									if (octd->isMouseOverClose)
+									{
+										*tlHighlightChanged	= true;
+
+										// Leaving the tab
+										iEngine_raise_event(thisCode, _EVENT_CAROUSEL_ONTABMOUSELEAVE, win, obj, NULL);
+									}
+
 									octd->isMouseOver	= false;
 								}
 						}
@@ -665,27 +744,6 @@
 				// When we get here, lnResult is >= 0 if we encountered something
 				if (lnResult >= 0)
 					return(lnResult);
-			}
-
-
-		//////////
-		// See if it's on the header
-		//////
-			if (propTitleBar(obj))
-			{
-				
-				//////////
-				// The titlebar is displayed
-				//////
-					SetRect(&lrc, 0, 0, obj->rc.right - obj->rc.left, bmpArrowUl->bi.biHeight);
-
-
-				//////////
-				// Is it within that rectangle?
-				//////
-					if (PtInRect(&lrc, pt))
-						return(_EVENT_CAROUSEL_HEADER);		// Yes
-
 			}
 
 

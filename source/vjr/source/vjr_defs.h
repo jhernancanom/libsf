@@ -391,11 +391,6 @@ struct SObjPropMap;
 	u32						iSubobj_renderSettings					(SThisCode* thisCode, SObject* settings);
 
 
-	// Default publish of carousels and riders
-	u32						iSubobj_publishCarousel					(SThisCode* thisCode, SObject* carousel,	bool tlForcePublish);
-	u32						iSubobj_publishRider					(SThisCode* thisCode, SObject* rider,	bool tlForcePublish);
-
-
 //////////
 // objects/callbacks.cpp
 //////
@@ -410,7 +405,7 @@ struct SObjPropMap;
 	bool					iDefaultCallback_onUnload				(SThisCode* thisCode, SWindow* win, SObject* obj);
 	bool					iDefaultCallback_onGotFocus				(SThisCode* thisCode, SWindow* win, SObject* obj);
 	bool					iDefaultCallback_onLostFocus			(SThisCode* thisCode, SWindow* win, SObject* obj);
-	bool					iiDefaultCallback_processMouseVariables	(SThisCode* thisCode, 							  SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick, s32* lnX, s32* lnY, bool* llCtrl, bool* llAlt, bool* llShift, u32* lnClick);
+	bool					iiDefaultCallback_processMouseVariables	(SThisCode* thisCode, 							  SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick, s32* lnX, s32* lnY, bool* tlCtrl, bool* tlAlt, bool* tlShift, u32* lnClick);
 	bool					iDefaultCallback_onMouseClickEx			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
 	bool					iDefaultCallback_onMouseDblClickEx		(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
 	bool					iDefaultCallback_onMouseWheel			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick, SVariable* varUnits);
@@ -420,7 +415,7 @@ struct SObjPropMap;
 	bool					iDefaultCallback_onMouseEnter			(SThisCode* thisCode, SWindow* win, SObject* obj);
 	bool					iDefaultCallback_onMouseLeave			(SThisCode* thisCode, SWindow* win, SObject* obj);
 	bool					iDefaultCallback_onMouseHover			(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick);
-	bool					iiDefaultCallback_processKeyVariables	(SThisCode* thisCode, 							 SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii, bool* llCtrl, bool* llAlt, bool* llShift, bool* llCaps, bool* llIsCAS, bool* llIsAscii, s16* lcAscii, u16* lnVKey);
+	bool					iiDefaultCallback_processKeyVariables	(SThisCode* thisCode, 							 SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii, bool* tlCtrl, bool* tlAlt, bool* tlShift, bool* tlCaps, bool* tlIsCAS, bool* tlIsAscii, s16* lcAscii, u16* lnVKey);
 	bool					iDefaultCallback_onKeyDown				(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii);
 	bool					iDefaultCallback_onKeyUp				(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varCaps, SVariable* varAscii, SVariable* varVKey, SVariable* varIsCAS, SVariable* varIsAscii);
 	bool					iDefaultCallback_onActivate				(SThisCode* thisCode, SWindow* win, SObject* obj);
@@ -438,6 +433,16 @@ struct SObjPropMap;
 	bool					iDefaultCallback_onSetActiveControl		(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* toActive);
 	bool					iDefaultCallback_onSpin					(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* tnDelta, SVariable* tnDirection, SVariable* tnType);
 
+	// Carousel tab-specific
+	bool					iDefaultCallback_onTabClose				(SThisCode* thisCode, SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onTabClick				(SThisCode* thisCode, SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onTabMouseWheel		(SThisCode* thisCode, SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onTabMouseMove			(SThisCode* thisCode, SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onTabMouseDown			(SThisCode* thisCode, SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onTabMouseUp			(SThisCode* thisCode, SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onTabMouseEnter		(SThisCode* thisCode, SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onTabMouseLeave		(SThisCode* thisCode, SWindow* win, SObject* obj);
+
 
 //////////
 // objects/events.cpp
@@ -452,13 +457,13 @@ struct SObjPropMap;
 	bool					iiEventDispatch_onKeyUp					(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlCtrl, bool tlAlt, bool tlShift, bool tlCaps, u16 tnAsciiChar, u16 tvKey, bool tlIsCAS, bool tlIsAscii);
 
 	// Carousel
-	bool					iEvents_carouselMouseWheel				(SThisCode* thisCode, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick);
-	bool					iEvents_carouselMouseMove				(SThisCode* thisCode, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick);
-	bool					iEvents_carouselMouseDown				(SThisCode* thisCode, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick);
-	bool					iEvents_carouselMouseUp					(SThisCode* thisCode, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick);
-	bool					iEvents_carousel_dragStart_tab			(SThisCode* thisCode, SObject* obj, SBitmap* bmp);
-	bool					iEvents_carousel_dragStart_titlebar		(SThisCode* thisCode, SObject* obj, SBitmap* bmp);
-	u32						iiEvents_carousel_findTarget			(SThisCode* thisCode, SObject* obj, s32 tnX, s32 tnY, SObjCarouselTabData** toctd);
+	bool					iEvents_carouselMouseWheel				(SThisCode* thisCode, SWindow* win, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick);
+	bool					iEvents_carouselMouseMove				(SThisCode* thisCode, SWindow* win, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick);
+	bool					iEvents_carouselMouseDown				(SThisCode* thisCode, SWindow* win, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick);
+	bool					iEvents_carouselMouseUp					(SThisCode* thisCode, SWindow* win, SObject* obj, s32 lnX, s32 lnY, bool llCtrl, bool llAlt, bool llShift, u32 lnClick);
+	bool					iEvents_carousel_dragStart_tab			(SThisCode* thisCode, SWindow* win, SObject* obj, SBitmap* bmp);
+	bool					iEvents_carousel_dragStart_titlebar		(SThisCode* thisCode, SWindow* win, SObject* obj, SBitmap* bmp);
+	u32						iiEvents_carousel_findTarget			(SThisCode* thisCode, SWindow* win, SObject* obj, s32 tnX, s32 tnY, SObjCarouselTabData** toctd, bool* tlHighlightChanged);
 
 
 //////////
@@ -503,7 +508,8 @@ struct SObjPropMap;
 	void					iWindow_releaseAll						(SBuilder** windowRoot, bool tlDeleteSelf);
 	void					iWindow_delete							(SThisCode* thisCode, SWindow* win, bool tlDeleteSelf);
 	SWindow*				iWindow_findByHwnd						(HWND hwnd);
-	SWindow*				iWindow_findByObj						(SObject* obj);
+	SWindow*				iWindow_findByObj						(SThisCode* thisCode, SObject* obj);
+	SWindow*				iWindow_findRoot_byObj					(SThisCode* thisCode, SObject* obj);
 	SWindow*				iWindow_allocate						(void);
 	void					iWindow_disconnectObj					(SWindow* win, SObject* obj);
 	void					iWindow_render							(SThisCode* thisCode, SWindow* win, bool tlForceRedraw);

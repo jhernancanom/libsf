@@ -522,17 +522,26 @@ typedef SEM**		SEMpp;
 	const u32			_EVENT_ONKEYDOWN					= 34;
 	const u32			_EVENT_ONKEYUP						= 35;
 
-	const u32			_EVENT_MAX_COUNT					= 35;
+	// Carousel tab events
+	const u32			_EVENT_CAROUSEL_ONTABCLOSE			= 36;
+	const u32			_EVENT_CAROUSEL_ONTABCLICK			= 37;
+	const u32			_EVENT_CAROUSEL_ONTABMOUSEWHEEL		= 38;
+	const u32			_EVENT_CAROUSEL_ONTABMOUSEMOVE		= 39;
+	const u32			_EVENT_CAROUSEL_ONTABMOUSEDOWN		= 40;
+	const u32			_EVENT_CAROUSEL_ONTABMOUSEUP		= 41;
+	const u32			_EVENT_CAROUSEL_ONTABMOUSEENTER		= 42;
+	const u32			_EVENT_CAROUSEL_ONTABMOUSELEAVE		= 43;
+
+	const u32			_EVENT_MAX_COUNT					= 43;
 
 
 //////////
 // Carousel internal specific
 //////
 	const u32			_EVENT_CAROUSEL_AWAY				= 0;			// Elsewhere (not on a header, tab, tab close, or in the tab area)
-	const u32			_EVENT_CAROUSEL_HEADER				= 1;			// Somewhere in the header's rectangular area
-	const u32			_EVENT_CAROUSEL_TAB					= 2;			// On a physical tab
-	const u32			_EVENT_CAROUSEL_TAB_CLOSE			= 3;			// On a physical tab's close button
-	const u32			_EVENT_CAROUSEL_TAB_RECTANGLE		= 4;			// Somewhere in the tab rectangle, but not on a tab
+	const u32			_EVENT_CAROUSEL_TAB					= 1;			// On a physical tab
+	const u32			_EVENT_CAROUSEL_TAB_CLOSE			= 2;			// On a physical tab's close button
+	const u32			_EVENT_CAROUSEL_TAB_RECTANGLE		= 3;			// Somewhere in the tab rectangle, but not on a tab
 
 
 //////////

@@ -494,6 +494,7 @@ struct SObject
 		RECT		rco;											// Object's original position in its parent
 		RECT		rcp;											// Original size of parent at creation
 		RECT		rcClient;										// Client portion within the size of the object
+		RECT		rcExtra;										// An extra portion used for object-specific components, such as rider tab location on carousels
 
 
 	//////////

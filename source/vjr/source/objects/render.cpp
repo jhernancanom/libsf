@@ -354,7 +354,7 @@
 //////
 	u32 iSubobj_renderCarousel(SThisCode* thisCode, SObject* obj)
 	{
-		s32						lnI, lnWidth, lnAlignment, lnCount, lnLeft, lnCenter;
+		s32						lnI, lnWidth, lnAlignment, lnCount, lnLeft, lnCenter, lnSize;
 		u32						lnPixelsRendered, lnSha1;
 		bool					llBorder, llOrientDown, llCloseable, llVisible, llTitleBar;
 		SBgra					nwRgba, neRgba, swRgba, seRgba, frameColor;
@@ -396,11 +396,16 @@
 					// Find out how many riders there are, and the size of their texts.
 					/////
 						SelectObject(obj->bmp->hdc, obj->p.font->hfont);
-						for (objRider = obj->firstChild, lnWidth = 0, lnCount = 0, objRider_visible = NULL; objRider; objRider = objRider->ll.nextObj, lnCount++)
+						for (objRider = obj->firstChild, lnWidth = 0, lnCount = 0, objRider_visible = NULL; objRider; objRider = objRider->ll.nextObj)
 						{
 							// Is it a rider?
 							if (objRider->objType == _OBJ_TYPE_RIDER && propIsEnabled(objRider) && (varTabText = propRiderTab(objRider)) && varTabText->value.data && varTabText->value.length >= 1)
 							{
+								//////////
+								// Increase our count
+								//////
+									++lnCount;
+
 
 								//////////
 								// Determine the raw text size
@@ -432,20 +437,27 @@
 
 
 					//////////
+					// Make sure we have enough tabs space allocated
+					//////
+						// Make sure we have a pointer
+						if (!obj->p.rcTabs)
+							iBuilder_createAndInitialize(&obj->p.rcTabs, -1);
+
+						// And that it is big enough
+						lnSize = lnCount * sizeof(SObjCarouselTabData);
+						iBuilder_verifySizeForNewBytes(obj->p.rcTabs, lnSize);
+						obj->p.rcTabs->populatedLength = lnSize;
+
+
+					//////////
 					// Determine if a control on this carousel has focus
 					//////
-						if (!obj->bc || !iBmp_isValidCache(&obj->bc, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)objRider_visible, (u32)varTabText_riderActive, varTabText_riderActive->value._data, varTabText_riderActive->value.length, lnSha1, 0))
+// TODO:  We need a way to determine if the focus of a sub-tab has changed... it should be by building a string expression, processing a SHA1 on it, and then using that as well
+						if (true/*Force a render every time for now ... !obj->bc || !iBmp_isValidCache(&obj->bc, nwRgba.color, neRgba.color, swRgba.color, seRgba.color, obj->rc.right - obj->rc.left, obj->rc.bottom - obj->rc.top, obj->bmp->bi.biWidth, obj->bmp->bi.biHeight, (u32)objRider_visible, (u32)varTabText_riderActive, varTabText_riderActive->value._data, varTabText_riderActive->value.length, lnSha1, 0)*/)
 						{
 
 							// The bitmap cache is no longer valid
 							iBmp_deleteCache(&obj->bc);
-
-
-							//////////
-							// Allocate RECTs
-							//////
-								if (!obj->p.rcTabs)			iBuilder_createAndInitialize(&obj->p.rcTabs, -1);
-								else						obj->p.rcTabs->populatedLength = 0;		// We re-populate each re-render
 
 
 							//////////
@@ -532,6 +544,7 @@
 									//////////
 									// Iterate through each rider
 									//////
+										thisTab = (SObjCarouselTabData*)obj->p.rcTabs->buffer;
 										for (lnI = 0, objRider = obj->firstChild, lnLeft = 0; objRider; lnI++, objRider = objRider->ll.nextObj)
 										{
 											// Is it a rider?
@@ -580,17 +593,13 @@
 
 													}
 
-													// Store this rectangle for future mouse reference
-// TODO:  Working here
-// TODO:  Need to move allocation to the place where riders are added, and not here
-													thisTab = (SObjCarouselTabData*)iBuilder_allocateBytes(obj->p.rcTabs, sizeof(SObjCarouselTabData));
-													if (thisTab)
-													{
-														// Populate the carousel tab data item
-														thisTab->rider			= objRider;
-														thisTab->isCloseable	= llCloseable;
-														CopyRect(&thisTab->rc, &lrc4);
-													}
+
+												//////////
+												// Store this rectangle for future mouse reference
+												//////
+													thisTab->rider			= objRider;
+													thisTab->isCloseable	= llCloseable;
+													CopyRect(&thisTab->rc, &lrc4);
 
 
 												//////////
@@ -609,9 +618,13 @@
 
 
 												//////////
-												// Fill the background
+												// Fill it
 												//////
 													iBmp_fillRect(obj->p.bmpTabs, &lrc4, carouselTabBackColor, carouselTabBackColor, carouselTabBackColor, carouselTabBackColor, false, NULL, false);
+
+													// Is the mouse is over this tab right now, actively?
+												     if (thisTab->isMouseOver)
+														 iBmp_colorize(obj->p.bmpTabs, &lrc4, colorMouseOver, false, 0.25f);
 
 
 												//////////
@@ -630,15 +643,24 @@
 													{
 														lnCenter = ((lrc4.bottom + lrc4.top) / 2);
 														SetRect(&lrc4, lrc4.left + 2, lnCenter - (bmpCarouselRiderTabClose->bi.biHeight / 2), lrc4.left + 2 + bmpCarouselRiderTabClose->bi.biWidth, lnCenter + (bmpCarouselRiderTabClose->bi.biHeight / 2));
-														iBmp_bitBltMask(obj->p.bmpTabs, &lrc4, bmpCarouselRiderTabClose);
+														InflateRect(&lrc4, 3, 3);
+														if (thisTab->isMouseOverClose)
+														{
+															iBmp_colorize(obj->p.bmpTabs, &lrc4, colorMouseOver, false, 0.25f);
+															iBmp_frameRect(obj->p.bmpTabs, &lrc4, frameColor, frameColor, frameColor, frameColor, false, NULL, false);
+														}
 														CopyRect(&thisTab->rcClose, &lrc4);
+
+														InflateRect(&lrc4, -3, -3);
+														iBmp_bitBltMask(obj->p.bmpTabs, &lrc4, bmpCarouselRiderTabClose);
 													}
 
 
 												//////////
-												// Move over for the next one
+												// Move for the next one
 												//////
 													lnLeft += lnWidth + 4;
+													++thisTab;
 											}
 										}
 
@@ -672,6 +694,9 @@
 										iBmp_bitBlt(obj->bmp, &lrc, obj->p.bmpTabs);
 										break;
 								}
+
+								// Copy for later reference
+								CopyRect(&obj->rcExtra, &lrc);
 
 
 							//////////

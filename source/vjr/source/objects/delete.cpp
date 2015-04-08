@@ -100,7 +100,7 @@
 		//////////
 		// See if this object is the top-level object to any windows, and if so disconnect it
 		//////
-			win = iWindow_findByObj(obj);
+			win = iWindow_findByObj(thisCode, obj);
 			if (win)
 				iWindow_disconnectObj(win, obj);
 
