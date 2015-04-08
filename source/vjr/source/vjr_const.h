@@ -172,6 +172,8 @@ typedef SEM**		SEMpp;
 //////////
 // Macro helpers
 //////
+	// Note:  A variable can still have its original type and be NULL, so you must also test var->value members:
+	#define iVariable_isNull(var)						(var->varType == _VAR_TYPE_NULL || !var->value.data || var->value.length == 0)
 	#define iVariable_getType(var)						var->varType
 	#define iVariable_isFundamentalTypeLogical(var)		(var->varType == _VAR_TYPE_LOGICAL || (iVariable_areTypesCompatible(thisCode, var, varDefault_logical)))
 	#define iVariable_isNumeric64Bit(var)				(var->varType == _VAR_TYPE_S64 || var->varType == _VAR_TYPE_U64 || var->varType == _VAR_TYPE_CURRENCY)
