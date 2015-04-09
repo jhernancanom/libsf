@@ -2306,8 +2306,8 @@
 			//////////
 			// Grab year, month, day from datetime or date
 			//////
-				if (iVariable_isTypeDatetime(varParam))			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-				else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+				if (iVariable_isTypeDatetime(varParam))			iiVariable_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+				else /* date */									iiVariable_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 			} else {
 				// Use the current date
@@ -2706,8 +2706,8 @@
 				//////////
 				// Grab year, month, day from datetime or date
 				//////
-					if (iVariable_isTypeDatetime(varParam))			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-					else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+					if (iVariable_isTypeDatetime(varParam))			iiVariable_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					else /* date */									iiVariable_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 
 			} else {
@@ -3205,7 +3205,7 @@
 		// Convert lst.* into a VJr date variable
 		//////
 			// Date is stored as YYYYMMDD
-			sprintf(buffer, "%04u%02u%02u\0", lst.wYear, lst.wMonth, lst.wDay);
+			iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lst.wYear, lst.wMonth, lst.wDay);
 			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
 			if (!result)
 				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
@@ -3438,7 +3438,7 @@
 			dt = (SDateTime*)result->value.data;
 
 			// Date is stored as julian day number
-			dt->julian	= iiVariable_julian_fromYyyyMmDd(&lfJulian, lst.wYear, lst.wMonth, lst.wDay);
+			dt->julian	= iiVariable_julian_from_YyyyMmDd(&lfJulian, lst.wYear, lst.wMonth, lst.wDay);
 
 			// Time is stored as seconds since midnight
 			dt->seconds = (f32)(lst.wHour * 60 * 60) + (f32)(lst.wMinute * 60) + (f32)lst.wSecond + ((f32)lst.wMilliseconds / 1000.0f);
@@ -3509,8 +3509,8 @@
 				//////////
 				// Grab year, month, day from datetime or date
 				//////
-					if (iVariable_isTypeDatetime(varParam))			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-					else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+					if (iVariable_isTypeDatetime(varParam))			iiVariable_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					else /* date */									iiVariable_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 
 			} else {
@@ -3609,8 +3609,8 @@
 				//////////
 				// Grab year, month, day from datetime or date
 				//////
-					if (iVariable_isTypeDatetime(varParam))			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-					else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+					if (iVariable_isTypeDatetime(varParam))			iiVariable_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					else /* date */									iiVariable_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 
 			} else {
@@ -3644,7 +3644,7 @@
 
 				case _DMY_COMMON_DTOS:
 					// Date is stored as YYYYMMDD
-					sprintf(buffer, "%04u%02u%02u\0", lnYear, lnMonth, lnDay);
+					iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
 					break;
 
 				// Should never happen
@@ -3793,7 +3793,7 @@
 				//////////
 				// Grab year, month, day from datetime
 				//////
-					iiVariable_computeYyyyMmDd_fromJulian (varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					iiVariable_extract_YyyyMmDd_from_Julian (varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
 
 
 			} else {
@@ -3810,7 +3810,7 @@
 		// Convert datetime or lst.* into a VJr date variable
 		//////
 			// Date is stored as YYYYMMDD
-			sprintf(buffer, "%04u%02u%02u\0", lnYear, lnMonth, lnDay);
+			iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
 			varTempDate = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
 			if (!varTempDate)
 			{
@@ -3960,7 +3960,7 @@
 		//////////
 		// Grab year, month, day from date
 		//////
-			iiVariable_computeYyyyMmDd_fromYYYYMMDD(varParam->value.data_u8, &lnYear, &lnMonth, &lnDay);
+			iiVariable_extract_YyyyMmDd_from_YYYYMMDD(varParam->value.data_u8, &lnYear, &lnMonth, &lnDay);
 
 
 		//////////
@@ -3973,7 +3973,7 @@
 				iError_report(thisCode, cgcInternalError, false);
 
 			} else {
-				result->value.data_dt->julian	= iiVariable_julian_fromYyyyMmDd(&lfJulian, lnYear, lnMonth, lnDay);
+				result->value.data_dt->julian	= iiVariable_julian_from_YyyyMmDd(&lfJulian, lnYear, lnMonth, lnDay);
 				result->value.data_dt->seconds	= lfSeconds;
 			}
 
@@ -5459,8 +5459,8 @@
 		//////////
 		// Grab year, month, day from datetime or date
 		//////
-			if (iVariable_isTypeDatetime(varParam))			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
-			else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
+			if (iVariable_isTypeDatetime(varParam))			iiVariable_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
+			else /* date */									iiVariable_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			(u32*)&lnYear, (u32*)&lnMonth, &lnDay);
 
 
 
@@ -5554,13 +5554,13 @@
 						if (result)
 						{
 							// Date is stored as julian day number
-							result->value.data_dt->julian	= iiVariable_julian_fromYyyyMmDd(&lfJulian, lnYear, (u32)lnMonth, lnDay);
+							result->value.data_dt->julian	= iiVariable_julian_from_YyyyMmDd(&lfJulian, lnYear, (u32)lnMonth, lnDay);
 							result->value.data_dt->seconds = varParam->value.data_dt->seconds;
 						}
 
 					} else {
 						// Date is stored as YYYYMMDD
-						sprintf(buffer, "%04u%02u%02u\0", lnYear, (u32)lnMonth, lnDay);
+						iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, (u32)lnMonth, lnDay);
 						result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
 					}
 
@@ -5704,7 +5704,7 @@
 				//////////
 				// Grab hour, minute, second, millisecond from datetime
 				//////
-					iiVariable_computeHhMmSsMss_fromf32(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+					iiVariable_extract_HhMmSsMss_from_f32(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 			} else {
 				// Use the current datetime
@@ -8304,8 +8304,8 @@
 				//////////
 				// Grab year, month, day from datetime or date
 				//////
-					if (iVariable_isTypeDatetime(varParam))			iiVariable_computeYyyyMmDd_fromJulian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
-					else /* date */									iiVariable_computeYyyyMmDd_fromYYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
+					if (iVariable_isTypeDatetime(varParam))			iiVariable_extract_YyyyMmDd_from_Julian		(varParam->value.data_dt->julian,	&lnYear, &lnMonth, &lnDay);
+					else /* date */									iiVariable_extract_YyyyMmDd_from_YYYYMMDD		(varParam->value.data_u8,			&lnYear, &lnMonth, &lnDay);
 
 
 			} else {
@@ -10363,7 +10363,7 @@
 					//////////
 					// Convert to julian
 					//////
-						iiVariable_julian_fromYyyyMmDd(&lfJulian, lst.wYear, lst.wMonth, lst.wDay);
+						iiVariable_julian_from_YyyyMmDd(&lfJulian, lst.wYear, lst.wMonth, lst.wDay);
 						sprintf(buffer, "%d\0", (s32)lfJulian);
 
 
@@ -10441,14 +10441,14 @@
 					//////////
 					// Translate into standard year, month, day
 					//////
-						iiVariable_computeYyyyMmDd_fromJulian((u32)lfJulian, &lnYear, &lnMonth, &lnDay);
+						iiVariable_extract_YyyyMmDd_from_Julian((u32)lfJulian, &lnYear, &lnMonth, &lnDay);
 
 
 					//////////
 					// Convert julian date into a VJr date variable
 					//////
 						// Date is stored as YYYYMMDD
-						sprintf(buffer, "%04u%02u%02u\0", lnYear, lnMonth, lnDay);
+						iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
 						varTemp = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
 						if (!varTemp)
 						{
@@ -11098,8 +11098,8 @@ debug_break;
 				//////////
 				// Grab the value
 				//////
-					iiVariable_computeYyyyMmDd_fromJulian(varParam->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-					iiVariable_computeHhMmSsMss_fromf32(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+					iiVariable_extract_YyyyMmDd_from_Julian(varParam->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+					iiVariable_extract_HhMmSsMss_from_f32(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 
 				//////////
@@ -11233,14 +11233,14 @@ debug_break;
 		//////////
 		// Grab year, month, day from datetime
 		//////
-			iiVariable_computeYyyyMmDd_fromJulian(varParam->value.data_dt->julian, (u32*)&lnYear, (u32*)&lnMonth, &lnDay);
+			iiVariable_extract_YyyyMmDd_from_Julian(varParam->value.data_dt->julian, (u32*)&lnYear, (u32*)&lnMonth, &lnDay);
 
 
 		//////////
 		// Convert datetime into a VJr date variable
 		//////
 			// Date is stored as YYYYMMDD
-			sprintf(buffer, "%04u%02u%02u\0", lnYear, lnMonth, lnDay);
+			iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
 			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
 
 

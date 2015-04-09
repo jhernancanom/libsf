@@ -7899,8 +7899,8 @@ debug_break;
 				case _VAR_TYPE_DATETIME:
 					// Translate from encoded form to components, then assemble as MM/DD/YYYY HH:MM:SS AM/PM
 					dt = (SDateTime*)var->value.data;
-					iiVariable_computeYyyyMmDd_fromJulian(dt->julian, &lnYear, &lnMonth, &lnDay);
-					iiVariable_computeHhMmSsMss_fromf32(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+					iiVariable_extract_YyyyMmDd_from_Julian(dt->julian, &lnYear, &lnMonth, &lnDay);
+					iiVariable_extract_HhMmSsMss_from_f32(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 					// Adjust for our 24-hour settings
 					llHour24		= propGet_settings_Hours24(_settings);
@@ -9821,8 +9821,8 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric
 					//////
-						iiVariable_computeYyyyMmDd_fromJulian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-						iiVariable_computeHhMmSsMss_fromf32(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+						iiVariable_extract_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+						iiVariable_extract_HhMmSsMss_from_f32(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 						// Create the string for the numeric portion
 						sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
@@ -9994,8 +9994,8 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric
 					//////
-						iiVariable_computeYyyyMmDd_fromJulian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-						iiVariable_computeHhMmSsMss_fromf32(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+						iiVariable_extract_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+						iiVariable_extract_HhMmSsMss_from_f32(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 						// Create the string for the numeric portion
 						sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
@@ -10141,8 +10141,8 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric
 					//////
-						iiVariable_computeYyyyMmDd_fromJulian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-						iiVariable_computeHhMmSsMss_fromf32(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+						iiVariable_extract_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+						iiVariable_extract_HhMmSsMss_from_f32(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 						// Create the string for the numeric portion
 						sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
@@ -10392,10 +10392,8 @@ debug_break;
 					{
 						case _VAR_TYPE_DATETIME:
 							// Grab related information from the datetime
-							iiVariable_computeYyyyMmDd_fromJulian(varLeft->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-
-							// Create the string for the numeric portion
-							sprintf(buffer, "%04u%02u%02u\0", lnYear, lnMonth, lnDay);
+							iiVariable_extract_YyyyMmDd_from_Julian(varLeft->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+							iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
 
 							// Indicate our result
 							return(memcmp(varLeft->value.data_s8, buffer, varRight->value.length));
@@ -10450,8 +10448,8 @@ debug_break;
 
 				} else if (varLeft->varType == _VAR_TYPE_DATETIME) {
 					// Datetimes can be compared to 64-bit numeric values
-					iiVariable_computeYyyyMmDd_fromJulian(varLeft->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-					iiVariable_computeHhMmSsMss_fromf32(varLeft->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+					iiVariable_extract_YyyyMmDd_from_Julian(varLeft->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
+					iiVariable_extract_HhMmSsMss_from_f32(varLeft->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 					// Create the string for the numeric portion
 					sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
@@ -10764,7 +10762,7 @@ debug_break;
 //		julian		-- The julian day number
 //
 //////
-	s32 iiVariable_julian_fromYyyyMmDd(f32* tfJulianDayNumber, u32 year, u32 month, u32 day)
+	s32 iiVariable_julian_from_YyyyMmDd(f32* tfJulianDayNumber, u32 year, u32 month, u32 day)
 	{
 		s32		monthAdjust1, monthAdjust2;
 		f64		a, y, m;
@@ -10828,7 +10826,7 @@ debug_break;
 //		day			-- The day
 //
 //////
-	void iiVariable_computeYyyyMmDd_fromJulian(u32 tnJulianDayNumber, u32* year, u32* month, u32* day)
+	void iiVariable_extract_YyyyMmDd_from_Julian(u32 tnJulianDayNumber, u32* year, u32* month, u32* day)
 	{
 		u32 a, b, c, d, e, m;
 
@@ -10856,7 +10854,7 @@ debug_break;
 //		day			-- The day
 //
 //////
-	void iiVariable_computeYyyyMmDd_fromYYYYMMDD(u8* YYYYMMDD, u32* year, u32* month, u32* day)
+	void iiVariable_extract_YyyyMmDd_from_YYYYMMDD(u8* YYYYMMDD, u32* year, u32* month, u32* day)
 	{
 		s8 buffer[16];
 
@@ -10884,7 +10882,7 @@ debug_break;
 // Takes the number of seconds elapsed since midnight and computes the time.
 //
 //////
-	void iiVariable_computeHhMmSsMss_fromf32(f32 tfSeconds, u32* hour, u32* minute, u32* second, u32* millisecond)
+	void iiVariable_extract_HhMmSsMss_from_f32(f32 tfSeconds, u32* hour, u32* minute, u32* second, u32* millisecond)
 	{
 		// Compute hour
 		*hour			= (u32)tfSeconds / (60 * 60);
@@ -10900,6 +10898,34 @@ debug_break;
 
 		// Compute milliseconds
 		*millisecond	= (u32)(tfSeconds * 999.0);
+	}
+
+
+
+
+//////////
+//
+// Computes the YYYYMMDD text from the day, month, and year.
+// Note:  No check is done on month and day to make sure they're actually valid.
+//
+// Returns:
+//		YYYYMMDD[0..7] populated with the 8-character string
+//
+//////
+	void iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd(u8* YYYYMMDD, u32 year, u32 month, u32 day)
+	{
+		return(iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd((s8*)YYYYMMDD, year, month, day));
+	}
+
+	void iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd(s8* YYYYMMDD, u32 year, u32 month, u32 day)
+	{
+		// Make sure they're in range for target
+		year	= max(min(year, 9999), 1600);
+		month	= max(min(month, 12), 1);
+		day		= max(min(day, 31), 1);
+
+		// Render
+		sprintf(YYYYMMDD, "%04u%02u%02u", year, month, day);
 	}
 
 
