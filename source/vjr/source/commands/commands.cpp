@@ -10428,8 +10428,13 @@
 					//////
 						if (lfJulian < 2361222/*Sep.14.1752*/ || lfJulian > 5373484/*Dec.31.9999*/)
 						{
-							iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varP1), false);
-							return(NULL);
+							// For these values, return a blank date
+							result = iVariable_create(thisCode, _VAR_TYPE_DATE, NULL, true);
+							if (result)
+								memset(result->value.data, 32, result->value.length);	// Make it all spaces
+
+							// Check our result
+							goto clean_exit;
 						}
 
 
