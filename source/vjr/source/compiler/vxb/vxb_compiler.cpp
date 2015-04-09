@@ -8800,7 +8800,7 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
 					//////
-						lnValue_s64 = iiVariable_computeDatetimeDifference(thisCode, var, _datetime_Jan_01_2000);
+						lnValue_s64 = iiVariable_compute_DatetimeDifference(thisCode, var, _datetime_Jan_01_2000);
 						if (lnValue_s64 >= (s64)_s16_min && lnValue_s64 <= (s64)_s16_max)
 							return((s16)lnValue_s64);
 
@@ -9092,7 +9092,7 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
 					//////
-						lnValue_s64 = iiVariable_computeDatetimeDifference(thisCode, var, _datetime_Jan_01_2000);
+						lnValue_s64 = iiVariable_compute_DatetimeDifference(thisCode, var, _datetime_Jan_01_2000);
 						if (lnValue_s64 > (s64)_s32_min && lnValue_s64 < (s64)_s32_max)
 							return((s32)lnValue_s64);
 
@@ -9357,7 +9357,7 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an u32 then we're good to go
 					//////
-						lnValue_s64 = iiVariable_computeDatetimeDifference(thisCode, var, _datetime_Jan_01_2000);
+						lnValue_s64 = iiVariable_compute_DatetimeDifference(thisCode, var, _datetime_Jan_01_2000);
 						if (lnValue_s64 >= 0 && lnValue_s64 <= (s64)_u16_max)
 							return((u16)lnValue_s64);
 
@@ -9621,7 +9621,7 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an u32 then we're good to go
 					//////
-						lnValue_s64 = iiVariable_computeDatetimeDifference(thisCode, var, _datetime_Jan_01_2000);
+						lnValue_s64 = iiVariable_compute_DatetimeDifference(thisCode, var, _datetime_Jan_01_2000);
 						if (lnValue_s64 >= 0 && lnValue_s64 <= (s64)_u32_max)
 							return((u32)lnValue_s64);
 
@@ -10271,7 +10271,7 @@ debug_break;
 					//////////
 					// We can convert this from its text form into numeric, and if it's in the range of an s32 then we're good to go
 					//////
-						return((f64)iiVariable_computeDatetimeDifference(thisCode, var, _datetime_Jan_01_2000));
+						return((f64)iiVariable_compute_DatetimeDifference(thisCode, var, _datetime_Jan_01_2000));
 				}
 				break;
 		}
@@ -10762,7 +10762,7 @@ debug_break;
 //		julian		-- The julian day number
 //
 //////
-	s32 iiVariable_julian_from_YyyyMmDd(f32* tfJulianDayNumber, u32 year, u32 month, u32 day)
+	s32 iiVariable_extract_Julian_from_YyyyMmDd(f32* tfJulianDayNumber, u32 year, u32 month, u32 day)
 	{
 		s32		monthAdjust1, monthAdjust2;
 		f64		a, y, m;
@@ -10937,7 +10937,7 @@ debug_break;
 // formula:  result = (dt1 - dt2).
 //
 //////
-	s64 iiVariable_computeDatetimeDifference(SThisCode* thisCode, SVariable* dtVar1, SVariable* dtVar2)
+	s64 iiVariable_compute_DatetimeDifference(SThisCode* thisCode, SVariable* dtVar1, SVariable* dtVar2)
 	{
 		SDateTime*	dt1;
 		SDateTime*	dt2;

@@ -3438,7 +3438,7 @@
 			dt = (SDateTime*)result->value.data;
 
 			// Date is stored as julian day number
-			dt->julian	= iiVariable_julian_from_YyyyMmDd(&lfJulian, lst.wYear, lst.wMonth, lst.wDay);
+			dt->julian	= iiVariable_extract_Julian_from_YyyyMmDd(&lfJulian, lst.wYear, lst.wMonth, lst.wDay);
 
 			// Time is stored as seconds since midnight
 			dt->seconds = (f32)(lst.wHour * 60 * 60) + (f32)(lst.wMinute * 60) + (f32)lst.wSecond + ((f32)lst.wMilliseconds / 1000.0f);
@@ -3973,7 +3973,7 @@
 				iError_report(thisCode, cgcInternalError, false);
 
 			} else {
-				result->value.data_dt->julian	= iiVariable_julian_from_YyyyMmDd(&lfJulian, lnYear, lnMonth, lnDay);
+				result->value.data_dt->julian	= iiVariable_extract_Julian_from_YyyyMmDd(&lfJulian, lnYear, lnMonth, lnDay);
 				result->value.data_dt->seconds	= lfSeconds;
 			}
 
@@ -5554,7 +5554,7 @@
 						if (result)
 						{
 							// Date is stored as julian day number
-							result->value.data_dt->julian	= iiVariable_julian_from_YyyyMmDd(&lfJulian, lnYear, (u32)lnMonth, lnDay);
+							result->value.data_dt->julian	= iiVariable_extract_Julian_from_YyyyMmDd(&lfJulian, lnYear, (u32)lnMonth, lnDay);
 							result->value.data_dt->seconds = varParam->value.data_dt->seconds;
 						}
 
@@ -10363,7 +10363,7 @@
 					//////////
 					// Convert to julian
 					//////
-						iiVariable_julian_from_YyyyMmDd(&lfJulian, lst.wYear, lst.wMonth, lst.wDay);
+						iiVariable_extract_Julian_from_YyyyMmDd(&lfJulian, lst.wYear, lst.wMonth, lst.wDay);
 						sprintf(buffer, "%d\0", (s32)lfJulian);
 
 
