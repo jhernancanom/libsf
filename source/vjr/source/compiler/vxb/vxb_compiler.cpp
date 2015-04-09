@@ -5009,7 +5009,7 @@ debug_break;
 //////
 	SVariable* iVariable_createByRadix(SThisCode* thisCode, u64 tnValue, u64 tnBase, u32 tnPrefixChars, u32 tnPostfixChars)
 	{
-		s32			lnI;
+		s32			lnI, lnLength;
 		SVariable*	result;
 		cu8*		base;
 		u8			buffer[256];
@@ -5052,10 +5052,10 @@ debug_break;
 				//////////
 				// Extract out the radix "digits"
 				//////
-					for (lnI = 0, memset(buffer, 0, sizeof(buffer)); tnValue != 0; lnI++)
+					for (lnLength = 0, memset(buffer, 0, sizeof(buffer)); tnValue != 0; lnLength++)
 					{
 						// Store this digit
-						buffer[lnI] = base[(u32)(tnValue % tnBase)];
+						buffer[lnLength] = base[(u32)(tnValue % tnBase)];
 
 						// Divide it out
 						tnValue /= tnBase;
@@ -5065,9 +5065,9 @@ debug_break;
 				//////////
 				// If the value was 0, force a zero in there
 				//////
-					if (lnI == 0)
+					if (lnLength == 0)
 					{
-						++lnI;
+						++lnLength;
 						buffer[0] = '0';
 					}
 
@@ -5075,19 +5075,20 @@ debug_break;
 				//////////
 				// Create the variable
 				//////
-					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, buffer, lnI + tnPrefixChars + tnPostfixChars, false);
+					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, buffer, lnLength + tnPrefixChars + tnPostfixChars, false);
 					if (result)
 					{
 						// Reset everything
 						memset(result->value.data_s8, 32, result->value.length);
 
-						// Copy the radix content to its proper location in the prefix and postfix areas
-						memcpy(result->value.data_s8 + tnPrefixChars, buffer, lnI);
+						// Copy the radix content (in reverse order) to its proper location in the prefix and postfix areas
+						for (lnI = 0; lnI < lnLength; lnI++)
+							result->value.data_s8[tnPrefixChars + lnLength - lnI - 1] = buffer[lnI];
 					}
 
 
 			} else {
-				// Nope.  No, sir.  Uh uh.
+				// Base is invalid
 				result = NULL;
 			}
 

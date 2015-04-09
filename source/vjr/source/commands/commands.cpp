@@ -3893,18 +3893,23 @@
 //////
 // Parameters:
 //     p1			-- Date
+//     p2			-- (Optional) Fractional number of seconds to use for the time (0.0 to 86400.0)
 //
 //////
 // Returns:
 //    Datetime	-- DTOT( ) adds a default time of 12:00:00 AM (if SET HOURS is 12) or 00:00:00 (if SET HOURS is 24) to the date to produce a valid DateTime value.
+//                 If the second parameter is provided and is valid, it will override the default midnight time.
 //////
 	SVariable* function_dtot(SThisCode* thisCode, SReturnsParams* returnsParams)
 	{
-		SVariable* varParam = returnsParams->params[0];
+		SVariable* varParam	= returnsParams->params[0];
+		SVariable* varFlag	= returnsParams->params[1];
 
 		u32			lnYear, lnMonth, lnDay;
-		f32			lfJulian;
+		f32			lfJulian, lfSeconds;
 		SVariable*	result;
+		bool		error;
+		u32			errorNum;
 
 
 		//////////
@@ -3914,6 +3919,41 @@
 			{
 				iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varParam), false);
 				return(NULL);
+			}
+
+
+		//////////
+		// If Parameter 2 provided, it must be numeric
+		//////
+			if (varFlag)
+			{
+				// Is it numeric?
+				if (!iVariable_isValid(varFlag) || !iVariable_isTypeNumeric(varFlag))
+				{
+					iError_reportByNumber(thisCode, _ERROR_P2_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varFlag), false);
+					return(NULL);
+				}
+
+				// Grab it as a float
+				lfSeconds = iiVariable_getAs_f32(thisCode, varFlag, false, &error, &errorNum);
+				if (error)
+				{
+					iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varFlag), false);
+					return(NULL);
+				}
+
+				// Is it in range?
+				if (lfSeconds < 0.0f || lfSeconds > 24*60*60)
+				{
+					iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varFlag), false);
+					return(NULL);
+				}
+				// Right now, lfSeconds is the seconds to inject
+
+
+			} else {
+				// Initialize to 0.0f, which is midnight
+				lfSeconds = 0.0f;
 			}
 
 
@@ -3929,15 +3969,13 @@
 			result = iVariable_create(thisCode, _VAR_TYPE_DATETIME, NULL, true);
 			if (!result)
 			{
+				// Unable to create the variable
 				iError_report(thisCode, cgcInternalError, false);
-				return(NULL);
+
+			} else {
+				result->value.data_dt->julian	= iiVariable_julian_fromYyyyMmDd(&lfJulian, lnYear, lnMonth, lnDay);
+				result->value.data_dt->seconds	= lfSeconds;
 			}
-
-			// Date is stored as julian day number
-			result->value.data_dt->julian	= iiVariable_julian_fromYyyyMmDd(&lfJulian, lnYear, lnMonth, lnDay);
-
-			// Time is stored as seconds since midnight
-			result->value.data_dt->seconds = 0.0f;
 
 
 		//////////
@@ -9330,6 +9368,7 @@
 		//////////
 		// Create and populate output variable
 		//////
+			// Note:  There is a dependency in SYS(2) that this value be an f64 type:
 			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_F64, (s8*)&lfResult, sizeof(lfResult), false);
 			if (!result)
 			{
@@ -10312,62 +10351,57 @@
 		//////
 			switch (lnIndex)
 			{
+				// SYS(1) -- Current system date as a Julian day number character string
 				case 1:
-					// Current system date as a Julian day number character string
-					if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
-					else				GetLocalTime(&lst);
+					//////////
+					// Get the current time
+					//////
+						if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
+						else				GetLocalTime(&lst);
 
 
 					//////////
-					// Grab and convert julian date
+					// Convert to julian
 					//////
 						iiVariable_julian_fromYyyyMmDd(&lfJulian, lst.wYear, lst.wMonth, lst.wDay);
 						sprintf(buffer, "%d\0", (s32)lfJulian);
 
 
 					//////////
-					// Create our result
+					// Create our result and exit to report any errors
 					//////
 						result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, (cs8*)buffer, (u32)strlen(buffer), false);
-						if (!result)
+						goto clean_exit;
+
+
+				// SYS(2) -- Number of seconds elapsed since midnight
+				case 2:
+					//////////
+					// Grab seconds()
+					//////
+						result = function_seconds(thisCode, returnsParams);
+						if (result)
 						{
-							iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varIndex), false);
-							return(NULL);
+							// Validation (should not be needed, but just to be safe)
+							if (result->varType == _VAR_TYPE_F64)
+							{
+								// Convert f64 to s64
+								*result->value.data_s64	= (s64)*result->value.data_f64;
+								result->varType			= _VAR_TYPE_S64;
+
+								// Report any errors
+								goto clean_exit;
+
+							} else {
+								// This should never happen
+								// It indicates refactoring was done on function_seconds() to change the size of the return value from f64 to something else
+								debug_break;
+							}
 						}
 
 
-					//////////
-					// Indicate our result
-					//////
-						return(result);
-				case 2:
-					//  Number of seconds elapsed since midnight
-					varTemp = function_seconds(thisCode, returnsParams);
-					if (varTemp)
-					{
-						result = iVariable_create(thisCode, _VAR_TYPE_S64, NULL, true);
-						// Convert to S64, we not have to round (37431.854 is 37431, have not yet passed 37432 seconds)
-						if (result)
-							*(s64*)result->value.data = (s64)*varTemp->value.data_f64;
-
-						iVariable_delete(thisCode, varTemp, true);
-					} 
-
-					if (!result)
-					{
-						iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varIndex), false);
-						return(NULL);
-					}
-
-
-					//////////
-					// Indicate our result
-					//////
-						return(result);
-
+				// SYS(3) -- Character date from a Julian day number 
 				case 10:
-					// a Character-type date from a Julian day number 
-
 					//////////
 					// Parameter 1 must be numeric
 					//////
@@ -10379,15 +10413,29 @@
 
 
 					//////////
-					// Grab year, month, day from julian number
+					// Grab julian number
 					//////
 						lfJulian = iiVariable_getAs_f32(thisCode, varP1, false, &error, &errorNum);
 						if (error)
 						{
-							iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varP1), false);
+							iError_reportByNumber(thisCode, errorNum, iVariable_getRelatedComp(thisCode, varP1), false);
 							return(NULL);
 						}
 
+					
+					//////////
+					// Must be in the range -- Sep.14.1752 to Dec.31.9999
+					//////
+						if (lfJulian < 2361222/*Sep.14.1752*/ || lfJulian > 5373484/*Dec.31.9999*/)
+						{
+							iError_reportByNumber(thisCode, _ERROR_OUT_OF_RANGE, iVariable_getRelatedComp(thisCode, varP1), false);
+							return(NULL);
+						}
+
+
+					//////////
+					// Translate into standard year, month, day
+					//////
 						iiVariable_computeYyyyMmDd_fromJulian((u32)lfJulian, &lnYear, &lnMonth, &lnDay);
 
 
@@ -10409,33 +10457,29 @@
 					// Create and populate the return variable
 					//////
 						result = iVariable_convertForDisplay(thisCode, varTemp);
-						if (!result)
-							iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varP1), false);
 
 
 					//////////
-					// Clean house
+					// Clean house and exit to report any errors
 					//////
 						iVariable_delete(thisCode, varTemp, true);
+						goto clean_exit;
 
 
-					//////////
-					// Signify our result
-					//////
-						return(result);
-
-
+				// SYS(2015) -- Unique procedure name
 				case 2015:
 					// Unique procedure names take on the form YYYYMMDDHHMMSSmmm converted to base-36, prefixed with an underscore
 					if (_settings)		iTime_getLocalOrSystem(&lst, propGet_settings_TimeLocal(_settings));
 					else				GetLocalTime(&lst);
-					ln2015 =	(lst.wYear		* 10000000000000) +
-								(lst.wMonth		* 100000000000) +
-								(lst.wDay		* 1000000000) +
-								(lst.wHour		* 10000000) +
-								(lst.wMinute	* 100000) +
-								(lst.wSecond	* 1000) +
-								lst.wMilliseconds;
+
+					// Create a single large integer
+					ln2015 =	((s64)lst.wYear		* 10000000000000) +
+								((s64)lst.wMonth	* 100000000000) +
+								((s64)lst.wDay		* 1000000000) +
+								((s64)lst.wHour		* 10000000) +
+								((s64)lst.wMinute	* 100000) +
+								((s64)lst.wSecond	* 1000) +
+								 (s64)lst.wMilliseconds;
 
 					// Optional 2nd and 3rd parameter indicate how many extra prefix and postfix characters to insert
 					if (iVariable_isValid(varP1))
@@ -10511,15 +10555,15 @@
 				default:
 					// Not currently supported
 					iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varIndex), false);
-					result = iVariable_create(thisCode, _VAR_TYPE_LOGICAL, varFalse, true);
-					break;
+					return(NULL);
 			}
 
 clean_exit:
 		//////////
-		// Clean house
+		// Are we good?
 		//////
-			// Currently nothing to clean
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
 
 
 		//////////
@@ -10985,9 +11029,9 @@ debug_break;
 // Parameters:
 //     p1			-- Datetime
 //	   p2			-- Numeric: 
-//						1 -- yyyymmddhhmmss
+//						1 -- yyyymmddhhmmss[.mss]
 //						2 -- only the time portion of p1
-//						3 -- yyyy-mm-ddThh:mm:ss 
+//						3 -- yyyy-mm-ddThh:mm:ss[.mss]
 //////
 // Returns:
 //    Character. TTOC( ) returns a DateTime expression as a character string.
@@ -11019,15 +11063,20 @@ debug_break;
 			}
 
 		//////////
-		// If Parameter 2 is provided, it must be numeric
+		// If Parameter 2 is provided, must be numeric
 		//////
 			if (varFlag)
 			{
-				if (!iVariable_isValid(varFlag) || !iVariable_isTypeNumeric(varFlag))
-				{
-					iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varFlag), false);
-					return(NULL);
-				}
+
+				//////////
+				// Numeric?
+				//////
+					if (!iVariable_isValid(varFlag) || !iVariable_isTypeNumeric(varFlag))
+					{
+						iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varFlag), false);
+						return(NULL);
+					}
+
 
 				//////////
 				// Grab the flag value
@@ -11047,84 +11096,90 @@ debug_break;
 					iiVariable_computeYyyyMmDd_fromJulian(varParam->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
 					iiVariable_computeHhMmSsMss_fromf32(varParam->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
-				switch(lnFlag)
-				{
-					case 1:		//	YYYYMMDDHHMMSSmm
 
-						if (_settings && propGet_settings_ncset_datetimeMilliseconds(_settings))
-						{
-							// Include milliseconds
-							sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
+				//////////
+				// Generate the output
+				//////
+					switch(lnFlag)
+					{
+						// YYYYMMDDHhMmSs[Mss]
+						case 1:
+							if (_settings && propGet_settings_ncset_datetimeMilliseconds(_settings))
+							{
+								// Include milliseconds
+								sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
 
-						} else {
-							// No milliseconds
-							sprintf(buffer, "%04u%02u%02u%02u%02u%02u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond);
-						}
-						break;
+							} else {
+								// No milliseconds
+								sprintf(buffer, "%04u%02u%02u%02u%02u%02u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond);
+							}
+							break;
 
-					case 2:
-						//	HH:MM
-						// Adjust for our 24-hour settings
-						llHour24		= propGet_settings_Hours24(_settings);
-						lnHourAdjusted	= iTime_adjustHour_toAMPM(lnHour, !llHour24);
-						lcAmPmText		= (cs8*)((llHour24) ? "" : (cs8*)iTime_amOrPm(lnHour, (void*)cgc_space_am_uppercase, (void*)cgc_space_pm_lowercase));
 
-						if (propGet_settings_ncset_datetimeMilliseconds(_settings))
-						{
-							// Include milliseconds
-							sprintf(buffer, "%02u:%02u:%02u.%03u%s\0", lnHourAdjusted, lnMinute, lnSecond, lnMillisecond, lcAmPmText);
+						// Hh:Mm:Ss[.Mss]
+						case 2:
+							// Adjust for our 24-hour settings
+							llHour24		= propGet_settings_Hours24(_settings);
+							lnHourAdjusted	= iTime_adjustHour_toAMPM(lnHour, !llHour24);
+							lcAmPmText		= (cs8*)((llHour24) ? "" : (cs8*)iTime_amOrPm(lnHour, (void*)cgc_space_am_uppercase, (void*)cgc_space_pm_lowercase));
 
-						} else {
-							// No milliseconds
-							sprintf(buffer, "%02u:%02u:%02u%s\0", lnHourAdjusted, lnMinute, lnSecond, lcAmPmText);
-						}
-						break;
+							if (propGet_settings_ncset_datetimeMilliseconds(_settings))
+							{
+								// Include milliseconds
+								sprintf(buffer, "%02u:%02u:%02u.%03u%s\0", lnHourAdjusted, lnMinute, lnSecond, lnMillisecond, lcAmPmText);
 
-					case 3:		// YYYY-MM-DDThh:mm:ss 
+							} else {
+								// No milliseconds
+								sprintf(buffer, "%02u:%02u:%02u%s\0", lnHourAdjusted, lnMinute, lnSecond, lcAmPmText);
+							}
+							break;
 
-						if (_settings && propGet_settings_ncset_datetimeMilliseconds(_settings))
-						{
-							// Include milliseconds
-							sprintf(buffer, "%04u-%02u-%02uT%02u:%02u:%02u.%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
 
-						} else {
-							// No milliseconds (XML DateTime format)
-							sprintf(buffer, "%04u-%02u-%02uT%02u:%02u:%02u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond);
-						}
-						break;
+						// YYYY-MM-DDThh:mm:ss[.Mss]
+						case 3:
+							if (_settings && propGet_settings_ncset_datetimeMilliseconds(_settings))
+							{
+								// Include milliseconds
+								sprintf(buffer, "%04u-%02u-%02uT%02u:%02u:%02u.%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
 
-					default:
-						// If we get here, invalid parameter specified
-						iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varFlag), false);
-						return(NULL);
-				}
+							} else {
+								// No milliseconds (XML DateTime format)
+								sprintf(buffer, "%04u-%02u-%02uT%02u:%02u:%02u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond);
+							}
+							break;
+
+						default:
+							// If we get here, invalid parameter specified
+							iError_reportByNumber(thisCode, _ERROR_INVALID_ARGUMENT_TYPE_COUNT, iVariable_getRelatedComp(thisCode, varFlag), false);
+							return(NULL);
+					}
+
 
 				//////////
 				// Create and populate the return variable
 				//////
 					result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, (cs8*)buffer, (u32)strlen(buffer), false);
 
-
-				//////////
-				// Return our converted result
-				//////
-					return(result);
-
 			} else {
 
 				//////////
-				// Create and populate the return variable
+				// Create and populate the return variable from the standard / default ttoc() algorithm
 				//////
 					result = iVariable_convertForDisplay(thisCode, varParam);
-					if (!result)
-						iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, iVariable_getRelatedComp(thisCode, varParam), false);
-
-
-				//////////
-				// Signify our result
-				//////
-					return(result);
 			}
+
+
+		//////////
+		// Are we good?
+		//////
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
+
+
+		//////////
+		// Return our converted result
+		//////
+			return(result);
 
 	}
 
@@ -11157,7 +11212,6 @@ debug_break;
 
 		u32			lnYear, lnMonth, lnDay;
 		s8			buffer[16];
-
 		SVariable*	result;
 
 
@@ -11183,6 +11237,13 @@ debug_break;
 			// Date is stored as YYYYMMDD
 			sprintf(buffer, "%04u%02u%02u\0", lnYear, lnMonth, lnDay);
 			result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
+
+
+		//////////
+		// Are we good?
+		//////
+			if (!result)
+				iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
 
 
 		//////////

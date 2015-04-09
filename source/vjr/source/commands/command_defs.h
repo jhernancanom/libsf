@@ -439,7 +439,7 @@ struct SReturnsParams;
 		{	_ICODE_DTOC,			1,			(uptr)&function_dtoc,			0,				2,				&gsSourceLight_dtoc[0]			},	// DTOC() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_DTOR,			1,			(uptr)&function_dtor,			1,				1,				&gsSourceLight_dtor[0]			},	// DTOR() by Stefano D'Amico, VJr 0.56, Mar.16.2015
 		{	_ICODE_DTOS,			1,			(uptr)&function_dtos,			0,				1,				&gsSourceLight_dtos[0]			},	// DTOS() by Stefano D'Amico, VJr 0.57, Apr.07.2015
-		{	_ICODE_DTOT,			1,			(uptr)&function_dtot,			1,				1,				&gsSourceLight_dtot[0]			},	// DTOT() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_DTOT,			1,			(uptr)&function_dtot,			1,				2,				&gsSourceLight_dtot[0]			},	// DTOT() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_EMPTY,			1,			(uptr)&function_empty,			1,				1,				&gsSourceLight_empty[0]			},	// EMPTY() by Stefano D'Amico, VJr 0.56, Mar.19.2015
 		{	_ICODE_ENDSWITH,		1,			(uptr)&function_endswith,		2,				4,				&gsSourceLight_endswith[0]		},
 		{	_ICODE_ENDSWITHC,		1,			(uptr)&function_endswith,		2,				4,				&gsSourceLight_endswithc[0]		},
