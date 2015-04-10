@@ -167,7 +167,7 @@
 // Called to send over some data
 //
 //////
-	void jdebic_data(s8* tcDescription, SDatum data, u32 tnDataType)
+	void jdebic_data(s8* tcDescription, SDatum* data, u32 tnDataType)
 	{
 		if (ijdebic_connect())
 		{
@@ -210,6 +210,27 @@
 //////
 	void ijdebic_thisCode(SThisCode* thisCode, SBuilder* data)
 	{
+// 		struct SSourceCode
+// 		{
+// 			SFunction*		firstFunction;			// First function in the program
+// 
+// 			SVariable*		params;					// The first parameter in the function
+// 			SVariable*		returns;				// The first return variable declared
+// 			SVariable*		privates;				// The first private variable declared
+// 			SVariable*		locals;					// The first local variable declared
+// 			SVariable*		scoped;					// The first scoped/temporary variable used by the function
+// 
+// 			SEM*			sourceCode;				// The source code for this program
+// 		};
+// 
+// 		struct SThisCode
+// 		{
+// 			SLL				ll;
+// 
+// 			SWindow*		win;					// Current window
+// 			SSourceCode*	definition;				// As defined at compile time
+// 			SSourceCode*	live;					// As exists live in this instance at this level
+// 		};
 	}
 
 
@@ -222,6 +243,29 @@
 //////
 	void ijdebic_win(SWindow* win, SBuilder* data)
 	{
+// 		bool				isValid;										// When windows fall out of scope they are marked not valid
+// 
+// 		HWND				hwnd;											// The window's hwnd
+// 		SBitmap*			bmp;											// Accumulation buffer for drawing
+// 		RECT				rc;												// Rectangle of window's physical position
+// 		SObject*			obj;											// The top-level object being rendered in this window
+// 
+// 		// Mouse data
+// 		SMouseData			mousePrior;										// Mouse activity before the most recent mouse activity
+// 		SMouseData			mouseCurrent;									// Current mouse activity
+// 
+// 		// For manual movement
+// 		bool				isMoving;										// Is this window moving?
+// 		bool				isResizing;										// Is this window resizing?
+// 		SMouseData			mouseMoveResizeStart;							// The mouse data within the window when the move or resize started
+// 		RECT				rcMoveResizeStart;								// The location and size of the window when the move or resize started
+// 		u32					resizingFrom;									// If resizing, the arrow (upper-left, upper-right, lower-left, lower-right)
+// 		s32					movingLastDeltaX;								// When moving, this was the last delta-X for the last redraw
+// 		s32					movingLastDeltaY;								// When moving, this was the last delta-Y for the last redraw
+// 
+// 		// Updated as the mouse moves across the form
+// 		POINT				mousePositionClick;								// When the mouse was last left-clicked, this is where it was clicked
+// 		POINT				mousePositionClickScreen;						// In screen coordinates, the location where the mouse was last left-button clicked down
 	}
 
 
@@ -234,4 +278,66 @@
 //////
 	void ijdebic_obj(SObject* obj, SBuilder* data)
 	{
+// 			SLL			ll;													// Linked list
+// 			SObject*	parent;												// Pointer to parent object for this instance
+// 			SObject*	firstChild;											// Pointer to child objects (all objects are containers)
+// 
+// 	#ifdef _EXTRA_DEBUGGING_DATA
+// 			SDatum		dbgClass;
+// 			SDatum		dbgName;
+// 	#endif
+// 
+// 			// Defined class, class information
+// 			s32			objType;											// Object base type/class (see _OBJECT_TYPE_* constants)
+// 
+// 			// Object flags
+// 			bool		isRendered;											// Is it rendered (can be rendered even if it's not visible)?
+// 			bool		isPublished;										// Should this control be published?  Every object has a .lockScreen property which allows it to not be published while changes are made.
+// 			bool		isDirtyRender;										// Is set if this or any child object needs re-rendered
+// 			bool		isDirtyPublish;										// Is set if this or any child object needs re-published
+// 
+// 
+// 			//////////
+// 			// Object size in pixels, per the .Left, .Top, .Width, and .Height properties
+// 			//////
+// 				RECT		rc;												// Object's current position in its parent
+// 				RECT		rco;											// Object's original position in its parent
+// 				RECT		rcp;											// Original size of parent at creation
+// 				RECT		rcClient;										// Client portion within the size of the object
+// 				RECT		rcExtra;										// An extra portion used for object-specific components, such as rider tab location on carousels
+// 
+// 
+// 			//////////
+// 			// Common properties that are literal(p) and allocated(pa) values
+// 			//////
+// 				SProperties		p;											// Common object properties
+// 				SVariable**		props;										// An allocated array of properties (varies in size by object)
+// 				s32				propsCount;									// The number of property variables allocated
+// 
+// 				// Related position in the member hierarchy
+// 				SVariable*	firstProperty;									// User-defined property (design time and runtime)
+// 				SEM*		firstMethod;									// User-defined methods (design time and runtime)
+// 
+// 				// Related access and assign methods
+// 				bool		anyPropertyHasAccessOrAssignMethods;
+// 				SEM*		firstAccess;									// User-defined property access methods (design time and runtime)
+// 				SEM*		firstAssign;									// User-defined property assignment methods (design time and runtime)
+// 
+// 				// Events
+// 				SEvents		ev;												// Events for this object
+// 
+// 
+// 			//////////
+// 			// Base drawing canvas
+// 			//////
+// 				SBitmap*	bmp;											// If exists, canvas for the content
+// 				SBitmap*	bmpPriorRendered;								// Used for speedups when not isDirty
+// 				SBmpCache*	bc;												// For certain compute intensive operations (color gradient controls), the bitmap is only drawn/computed once and then copied thereafter, unless any of eight data points change
+// 				// If not scaled:
+// 				s32			scrollOffsetX;									// If the bmp->bi coordinates are larger than its display area, the upper-left X coordinate
+// 				s32			scrollOffsetY;									// ...the upper-left Y coordinate
+// 				// If scaled, updated only during publish():
+// 				bool		isScaled;										// If the bmp->bi coordinates are larger than its display area, should it be scaled?
+// 				SBitmap*	bmpScaled;										// The bmp scaled into RC's size
+
 	}

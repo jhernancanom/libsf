@@ -116,7 +116,7 @@
 //////
 	void		jdebic_debug					(SThisCode* thisCode, SWindow* win, SObject* obj);
 	void		jdebic_text						(s8* tcText);
-	void		jdebic_data						(s8* tcDescription, SDatum data, u32 tnDataType);
+	void		jdebic_data						(s8* tcDescription, SDatum* data, u32 tnDataType);
 
 	// Helper functions
 	bool		ijdebic_connect					(void);

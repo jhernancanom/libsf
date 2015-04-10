@@ -512,7 +512,7 @@ struct SObject
 		// Related access and assign methods
 		bool		anyPropertyHasAccessOrAssignMethods;
 		SEM*		firstAccess;									// User-defined property access methods (design time and runtime)
-		SEM*		firstAssign;									// User-defined property assignment methods (designt ime and runtime)
+		SEM*		firstAssign;									// User-defined property assignment methods (design time and runtime)
 
 		// Events
 		SEvents		ev;												// Events for this object
