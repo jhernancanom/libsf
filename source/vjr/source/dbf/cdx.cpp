@@ -2024,7 +2024,7 @@ close_and_quit:
 		// Populate the node?
 		//////
 			if (tlAutoPopulate)
-				iiCdx_cacheNode_populate(thisCode, wa, tagHeader, thisNodeCache);
+				iiCdx_cacheNode_populate(thisCode, wa, tagHeader, thisNodeCache, true);
 // TODO:  Working here
 
 
@@ -2044,19 +2044,117 @@ close_and_quit:
 // Will automatically de-populate if already populated.
 //
 //////
-	void iiCdx_cacheNode_populate(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, SCdxNodeCache* nodeKeys)
+	void iiCdx_cacheNode_populate(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, SCdxNodeCache* nodeKeys, bool tlAllocateLiberally)
 	{
+		s32				lnI, lnCount, lnNumread, lnKeyAllocateCount;
+		SDiskLock*		dl;
+		SCdxKeyLeafRaw	key;
+		STagRoot		tagRoot;
+		bool			error;
+		u32				errorNum;
+
+
 		//////////
 		// Remove any existing keys
 		//////
-			if (nodeKeys->keyCount != 0 && nodeKeys->keyBuffer)
+			if (nodeKeys->keyDecodedAllocated != 0 || nodeKeys->keyDecodedBuffer)
 				iiCdx_cacheNode_depopulate(thisCode, wa, tagHeader, nodeKeys);
+
+
+		//////////
+		// If there isn't already a cached node, allocate it
+		//////
+			if (!nodeKeys->cachedNode)
+				nodeKeys->cachedNode = (SCdxNode*)malloc(sizeof(SCdxNode));
 
 
 		//////////
 		// Load the node (LOL)
 		//////
+			if (nodeKeys->cachedNode)
+			{
+
+				//////////
+				// Physical read from disk
+				//////
+					if (wa->isExclusive)		lnNumread = iDisk_read(wa->fhIdxCdxDcx, nodeKeys->nodeNum * 512, nodeKeys->cachedNode, 512, &error, &errorNum);
+					else						lnNumread = iDisk_readShared_withRetryCallback(thisCode, wa->idxCdxDcxFileLocks, wa->fhIdxCdxDcx, nodeKeys->nodeNum * 512, nodeKeys->cachedNode, 512, &error, &errorNum, (uptr)&iiDbf_continueWithLockOperation, (uptr)&dl, &dl, true);
+			
+
+				//////////
+				// Are we good?
+				//////
+					if (error || lnNumread != 512)
+					{
+						// Failure
+						free(nodeKeys->cachedNode);
+						nodeKeys->cachedNode = NULL;
+						return;
+					}
+
+
+				//////////
+				// Calculate allocation space for key decoding
+				//////
+					if (!wa->isNoUpdate && tlAllocateLiberally)
+					{
+
+						//////////
+						//
+						// They want to allocate extra room for additional keys beyond the number present.
+						//
+						// Generally speaking, the maximum number of keys that can fit in a node is less
+						// than 200, with a theoretical maximum of:
+						//
+						//		(((488 - keylength - 4) * (N)) / 8); where (N) is:  bits_RN + bits_DC + bits_TC
+						//
+						// A theoretically minimum of probably 5 bits total would be possible (depending on
+						// the key length and key data per node) so that would yield about 300 keys max per
+						// node.  Unlikely though.  Typically keys consume about 5 bytes each, and that yields
+						// a maximum of fewer than 100 keys per node (on average) due to node data overhead.
+						//
+						// We'll use a simple algorithm (bits per key as it exists through the populated key
+						// space in the node thus far, then extended out to all of key space, and rounded up
+						// by 25% for wiggle room, with a minimum allocation value of 100 keys per node):
+						//
+						//		N = ((1.25 * 488) / (((488 - keylength- 4) - node->nodeFreeSpace) / node->keyCount))
+						//
+						//////
+							lnKeyAllocateCount = max(100, (s32)((1.25f * 488.0f) / (((488.0f - (f32)tagHeader->keyLength - 4.0f) - (f32)nodeKeys->cachedNode->nodeFreeSpace) / (f32)nodeKeys->cachedNode->keyCount)));
+
+					} else {
+						// Allocate for the existing number of keys
+						lnKeyAllocateCount = nodeKeys->cachedNode->keyCount;
+					}
+
+
+				//////////
+				// Allocate
+				//////
+					nodeKeys->keyDecodedBuffer = (SCdxNodeKey**)malloc(lnKeyAllocateCount * sizeof(SCdxNodeKey));
+					if (!nodeKeys->keyDecodedBuffer)
+					{
+						// Failure
+						free(nodeKeys->cachedNode);
+						nodeKeys->cachedNode = NULL;
+						return;
+					}
+
+
+				//////////
+				// Decode
+				//////
 // TODO:  Working here
+// 					iCdx_getCompactRootNode(thisCode, wa, tagHeader, NULL, &tagRoot);
+// 					for (lnI = 0, lnCount = (s32)nodeKeys->cachedNode->keyCount; lnI < lnCount; lnI++)
+// 					{
+// 						if (!iCdx_getCompactIdxKey_byNumber(thisCode, wa->cdx_root, tagHeader->keyLength, ->fillChar, lnKeyNumber, lnKeyNumber, node, &key, &tagRoot, true, true))
+// 						{
+// 
+// 						}
+// 					}
+			}
+
 	}
 
 
@@ -2064,11 +2162,40 @@ close_and_quit:
 
 //////////
 //
-// Called to depopulate the previously populated cached keys for the indicated node cache
+// Called to depopulate the previously populated cached keys for the indicated node cache.
+// This removes both the keys and the keyBuffer (because each node rarely has the exact
+// same number of keys).
 //
 //////
 	void iiCdx_cacheNode_depopulate(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, SCdxNodeCache* nodeKeys)
 	{
+		u32 lnI;
+
+
+		//////////
+		// Anything to free?
+		//////
+			if (nodeKeys->keyDecodedBuffer)
+			{
+				// Iterate through each SDatum, freeing its contents
+				for (lnI = 0; lnI < (u32)nodeKeys->keyDecodedAllocated; lnI++)
+				{
+					// Free the key
+					if (nodeKeys->keyDecodedBuffer[lnI]->key.data)
+						iDatum_delete(&nodeKeys->keyDecodedBuffer[lnI]->key, false);
+				}
+
+				// Release the keyBuffer
+				free(nodeKeys->keyDecodedBuffer);
+				nodeKeys->keyDecodedBuffer = NULL;
+			}
+		
+
+		//////////
+		// Reset the count
+		//////
+			nodeKeys->keyDecodedAllocated = 0;
+
 	}
 
 

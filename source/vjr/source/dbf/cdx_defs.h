@@ -144,7 +144,7 @@ struct SThisCode;
 //////
 	SCdxNodeCache*		iCdx_cacheNode									(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, s32 tnNodeNum, SCdxNode** nodeDst);
 	SCdxNodeCache*		iiCdx_cacheNode_allocate						(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, s32 tnNodeNum, bool tlAutoPopulate);
-	void				iiCdx_cacheNode_populate						(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, SCdxNodeCache* nodeKeys);
+	void				iiCdx_cacheNode_populate						(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, SCdxNodeCache* nodeKeys, bool tlAllocateLiberally);
 	void				iiCdx_cacheNode_depopulate						(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, SCdxNodeCache* nodeKeys);
 	void				iiCdx_cacheNode_delete							(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, SCdxNodeCache* nodeKeys, bool tlImmediateReuse);
 //////

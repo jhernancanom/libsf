@@ -276,6 +276,7 @@
 //////
 	SComp* iEngine_parseSourceCodeLine(SThisCode* thisCode, SLine* line)
 	{
+
 		//////////
 		// If we have existing compiler data, get rid of it
 		//////
@@ -368,6 +369,10 @@
 		{
 			switch (comp->iCode)
 			{
+				case _ICODE_NULL:
+					*tlManufactured = true;
+					return(iVariable_create(NULL, _VAR_TYPE_NULL, NULL, true));
+
 				case _ICODE_NUMERIC:
 					// It's a raw number
 					// See if it has a dot/period in it

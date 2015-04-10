@@ -225,20 +225,23 @@ struct SCdxKeyOp;
 
 	struct SCdxNodeCache
 	{
-		bool			isUsed;					// 0,1		Is this node cache entry actually in use?
-		bool			isDirty;				// 1,1		Does this decode buffer contain any uncommitted changes?
-
-		u16				keyCount;				// 2,2		Number of keys allocated in this.keys, indicating the number of keys in this node.
-												//////////
-												//	Note:  this.keyCount may be different than this.cachedNode->keyCount.  The this.keyCount value
-												//	       indicates the number of keys currently in the node, while this.cachedNode->keyCount
-												//	       indicates the number of keys on the node on the disk.  In a shared environment they
-												//	       should always be in sync.  In an exclusive environment, they can be vastly different.
-												//////////
-
-		SCdxNodeKey**	keyBuffer;				// 4,4		Pointers to all of the keys in this node (first key = keys[0], second = keys[1], and so on)
-		u32				nodeNum;				// 8,4		Physical node within the index file on disk (may be uncommitted, existing only in memory)
-		SCdxNode*		cachedNode;				// 12,4		Node header and key buffer cached previously from disk (may be NULL)
+//////////
+//	Note:  this.keyDecodedInUse may be different than this.cachedNode->keyCount.  The this.keyDecodedInUse
+//	       value indicates the number of keys currently in the node, while this.cachedNode->keyCount
+//	       indicates the number of keys on the node on the disk.  In a shared environment they should
+//	       always be in sync.  In an exclusive environment, they can be vastly different.
+//////////
+		struct {
+			bool		isUsed				: 1;	// 0,1		Is this node cache entry actually in use?
+			bool		isDirty				: 1;	// 1,1		Does this decode buffer contain any uncommitted changes?
+			u16			free				: 12;	// 2,12		Unused
+			u32			keyDecodedAllocated	: 9;	// 14,9		Allocated key count
+			u32			keyDecodedInUse		: 9;	// 23,9		Decoded key (in use) count
+		};											// ------
+													// 0,4		32 bits total in the bit structure
+		SCdxNodeKey**	keyDecodedBuffer;			// 4,4		Pointers to all of the keys in this node (first key = keys[0], second = keys[1], and so on)
+		u32				nodeNum;					// 8,4		Physical node within the index file on disk (may be uncommitted, existing only in memory)
+		SCdxNode*		cachedNode;					// 12,4		Node header and key buffer cached previously from disk (may be NULL)
 		// Total:  16 bytes
 	};
 
