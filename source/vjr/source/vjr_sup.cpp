@@ -3698,7 +3698,7 @@
 			{
 				case WM_MOUSEWHEEL:
 					// Signal a mouseScroll
-					if (!win->isMoving && ! win->isResizing)
+					if (!win->isMoving && !win->isResizing)
 					{
 						win->mouseCurrent.wheelDeltaV	= (s32)((s16)(((u32)w) >> 16)) / WHEEL_DELTA;
 						win->mouseCurrent.wheelDeltaH	= 0;
@@ -3709,7 +3709,7 @@
 #ifdef WM_MOUSEHWHEEL
 				case WM_MOUSEHWHEEL:
 					// Signal a mouseHScroll
-					if (!win->isMoving && ! win->isResizing)
+					if (!win->isMoving && !win->isResizing)
 					{
 						win->mouseCurrent.wheelDeltaV	= 0;
 						win->mouseCurrent.wheelDeltaH	= (s32)((s16)(((u32)w) >> 16)) / WHEEL_DELTA;
@@ -3720,7 +3720,7 @@
 
 				case WM_MOUSEMOVE:
 					// Check for mouseEnter and mouseLeave, then a mouseMove
-					if (!win->isMoving && ! win->isResizing)
+					if (!win->isMoving && !win->isResizing)
 					{
 						// Process normal mouse moves
 						iiMouse_processMouseEvents_mouseMove(thisCode, win, obj, &obj->rc, true, true, &llProcessed);
@@ -3747,7 +3747,7 @@
 				case WM_RBUTTONUP:
 				case WM_MBUTTONUP:
 					// Signal a mouseUp
-					if (!win->isMoving && ! win->isResizing)
+					if (!win->isMoving && !win->isResizing)
 					{
 						// A mouse button was released
 						iiMouse_processMouseEvents_common(thisCode, win, obj, &obj->rc, msg, true, true, &llProcessed);
@@ -4036,12 +4036,13 @@
 //////
 	bool iiMouse_processMouseEvents_common(SThisCode* thisCode, SWindow* win, SObject* obj, RECT* rc, UINT m, bool tlProcessChildren, bool tlProcessSiblings, bool* tlProcessed)
 	{
-		bool		llInClientArea, llContinue, llEnabled, llVisible;
+		bool		llInObjectArea, llInClientArea, llContinue, llEnabled, llVisible;
 		RECT		lrc, lrcClient;
 		SObject*	objSib;
 
 
 		// Make sure our environment is sane
+jdebic_debug(thisCode, win, obj);
 		llContinue = true;
 		if (obj)
 		{
@@ -4051,7 +4052,8 @@
 			if (llEnabled && llVisible && obj->bmp)
 			{
 				// Get the rectangle we're in at this level
-				llInClientArea	= iiMouse_processMouseEvents_getRectDescent(thisCode, win, obj, rc, lrc, lrcClient);
+				llInObjectArea	= (PtInRect(&lrc, win->mouseCurrent.position) == TRUE);
+				llInClientArea	= iiMouse_processMouseEvents_getRectDescent(thisCode, win, obj, rc, lrc, lrcClient) || (/*Carousels always receive wheel events no matter what*/llInObjectArea && (obj->objType == _OBJ_TYPE_CAROUSEL));
 
 
 				//////////
@@ -4124,7 +4126,7 @@
 								break;
 						}
 
-					} else if (PtInRect(&lrc, win->mouseCurrent.position)) {
+					} else if (llInObjectArea) {
 						//////////
 						// Signal the mouseMove event in the non-client area, which means negative values, or values
 						// outside of the width.  For non-client areas, we translate to negative is to the left or

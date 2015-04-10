@@ -435,19 +435,20 @@ struct SObjPropMap;
 
 	// Carousel tab-specific
 	bool					iDefaultCallback_onTabClose				(SThisCode* thisCode, SWindow* win, SObject* obj);
-	bool					iDefaultCallback_onTabClick				(SThisCode* thisCode, SWindow* win, SObject* obj);
-	bool					iDefaultCallback_onTabMouseWheel		(SThisCode* thisCode, SWindow* win, SObject* obj);
-	bool					iDefaultCallback_onTabMouseMove			(SThisCode* thisCode, SWindow* win, SObject* obj);
-	bool					iDefaultCallback_onTabMouseDown			(SThisCode* thisCode, SWindow* win, SObject* obj);
-	bool					iDefaultCallback_onTabMouseUp			(SThisCode* thisCode, SWindow* win, SObject* obj);
-	bool					iDefaultCallback_onTabMouseEnter		(SThisCode* thisCode, SWindow* win, SObject* obj);
-	bool					iDefaultCallback_onTabMouseLeave		(SThisCode* thisCode, SWindow* win, SObject* obj);
+	bool					iDefaultCallback_onTabClick				(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlOnClose);
+	bool					iDefaultCallback_onTabMouseWheel		(SThisCode* thisCode, SWindow* win, SObject* obj, sptr tnClicks);
+	bool					iDefaultCallback_onTabMouseMove			(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlOnClose);
+	bool					iDefaultCallback_onTabMouseDown			(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlOnClose);
+	bool					iDefaultCallback_onTabMouseUp			(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlOnClose);
+	bool					iDefaultCallback_onTabMouseEnter		(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlOnClose);
+	bool					iDefaultCallback_onTabMouseLeave		(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlOnClose);
 
 
 //////////
 // objects/events.cpp
 //////
 	void					iEvents_resetToDefault					(SThisCode* thisCode,               SObject* obj);
+	// Helper functions to translate strongly typed values to weakly typed variables
 	bool					iiEventDispatch_onMouseMove				(SThisCode* thisCode, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks);
 	bool					iiEventDispatch_onMouseDown				(SThisCode* thisCode, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks);
 	bool					iiEventDispatch_onMouseClickEx			(SThisCode* thisCode, SWindow* win, SObject* obj, s32 x, s32 y, bool tlCtrl, bool tlAlt, bool tlShift, u32 tnClicks);

@@ -280,8 +280,11 @@
 			pt.y = lnY;
 
 			// They are they outside of the client area?
-			if (!PtInRect(&obj->rcClient, pt))
-				return(iEvents_carouselMouseWheel(thisCode, win, obj, lnX, lnY, llCtrl, llAlt, llShift, lnClick));
+			return(iEvents_carouselMouseWheel(thisCode, win, obj, lnX, lnY, llCtrl, llAlt, llShift, lnClick));
+
+		} else {
+			// Continue propagating
+			return(true);
 		}
 
 		// Do not continue to propagate this message to other objects
@@ -348,7 +351,7 @@
 
 	bool iDefaultCallback_onMouseDown(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick)
 	{
-		bool		llMouseDown;
+		bool		llMouseDown, llResult;
 		f64			lfPercent, lfX, lfY, lfWidth, lfHeight, lfValue;
 		s32			lnX, lnY;
 		u32			lnClick;
@@ -363,8 +366,9 @@
 			return(false);	// Do not continue consuming
 
 
-		// Set the flag
+		// Set the flags
 		llMouseDown = true;
+		llResult	= true;
 
 		// If focus isn't already set on this control, set focus on this control
 		if (!obj->p.hasFocus)
@@ -416,6 +420,9 @@
 									obj->parent->rc.right  - obj->parent->rc.left,
 									obj->parent->rc.bottom - obj->parent->rc.top);
 
+			// Do not continue to propagate
+			llResult = false;
+
 		} else if (obj->objType == _OBJ_TYPE_EDITBOX) {
 			// Need to navigate to the indicated x,y coordinate
 			iSEM_navigateTo_pixelXY(thisCode, obj->p.sem, obj, lnX, lnY);
@@ -423,6 +430,9 @@
 			// Mark the mouse activity
 			if (!llShift)		iSEM_selectStop(thisCode, obj->p.sem);
 			else				iSEM_selectStart(thisCode, obj->p.sem, _SEM_SELECT_MODE_ANCHOR);
+
+			// Do not continue to propagate
+			llResult = false;
 
 		} else if (obj->objType == _OBJ_TYPE_RADIO) {
 			// The mouse indicates the position
@@ -438,6 +448,9 @@
 			valueMin	= iObjProp_get_variable_byIndex(thisCode, obj, _INDEX_VALUE_MINIMUM);
 			lfValue		= get_f64(valueMin) + (lfPercent * (iObjProp_get_f64_direct(thisCode, obj, _INDEX_VALUE_MAXIMUM) - get_f64(valueMin)));
 			iObjProp_set_f64_direct(thisCode, obj, _INDEX_VALUE, lfValue);
+
+			// Do not continue to propagate
+			llResult = false;
 
 		} else if (obj->objType == _OBJ_TYPE_CAROUSEL) {
 			// Create a point
@@ -486,7 +499,7 @@
 		iWindow_render(thisCode, win, false);
 
 		// Do not continue to propagate this message to other objects
-		return(false);
+		return(llResult);
 	}
 
 	bool iDefaultCallback_onMouseUp(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* varX, SVariable* varY, SVariable* varCtrl, SVariable* varAlt, SVariable* varShift, SVariable* varClick)
@@ -823,43 +836,43 @@
 		return(false);
 	}
 
-	bool iDefaultCallback_onTabClick(SThisCode* thisCode, SWindow* win, SObject* obj)
+	bool iDefaultCallback_onTabClick(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlOnClose)
 	{
 		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
-	bool iDefaultCallback_onTabMouseWheel(SThisCode* thisCode, SWindow* win, SObject* obj)
+	bool iDefaultCallback_onTabMouseWheel(SThisCode* thisCode, SWindow* win, SObject* obj, sptr tnClicks)
 	{
 		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
-	bool iDefaultCallback_onTabMouseMove(SThisCode* thisCode, SWindow* win, SObject* obj)
+	bool iDefaultCallback_onTabMouseMove(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlOnClose)
 	{
 		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
-	bool iDefaultCallback_onTabMouseDown(SThisCode* thisCode, SWindow* win, SObject* obj)
+	bool iDefaultCallback_onTabMouseDown(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlOnClose)
 	{
 		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
-	bool iDefaultCallback_onTabMouseUp(SThisCode* thisCode, SWindow* win, SObject* obj)
+	bool iDefaultCallback_onTabMouseUp(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlOnClose)
 	{
 		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
-	bool iDefaultCallback_onTabMouseEnter(SThisCode* thisCode, SWindow* win, SObject* obj)
+	bool iDefaultCallback_onTabMouseEnter(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlOnClose)
 	{
 		// Do not continue to propagate this message to other objects
 		return(false);
 	}
 
-	bool iDefaultCallback_onTabMouseLeave(SThisCode* thisCode, SWindow* win, SObject* obj)
+	bool iDefaultCallback_onTabMouseLeave(SThisCode* thisCode, SWindow* win, SObject* obj, bool tlOnClose)
 	{
 		// Do not continue to propagate this message to other objects
 		return(false);
