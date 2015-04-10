@@ -124,27 +124,40 @@
 //////////
 // Structures used for processing
 //////
-	struct SSourceCode
-	{
-		SFunction*		firstFunction;			// First function in the program
 
-		SVariable*		params;					// The first parameter in the function
-		SVariable*		returns;				// The first return variable declared
-		SVariable*		privates;				// The first private variable declared
-		SVariable*		locals;					// The first local variable declared
-		SVariable*		scoped;					// The first scoped/temporary variable used by the function
+	//////////
+	// Changes made here must sync up with iJDebiC_thisCode()
+	// BEGIN
+	//////
+		//////
+			//
+			struct SSourceCode
+			{
+				SFunction*		firstFunction;			// First function in the program
 
-		SEM*			sourceCode;				// The source code for this program
-	};
+				SVariable*		params;					// The first parameter in the function
+				SVariable*		returns;				// The first return variable declared
+				SVariable*		privates;				// The first private variable declared
+				SVariable*		locals;					// The first local variable declared
+				SVariable*		scoped;					// The first scoped/temporary variable used by the function
 
-	struct SThisCode
-	{
-		SLL				ll;
+				SEM*			sourceCode;				// The source code for this program
+			};
 
-		SWindow*		win;					// Current window
-		SSourceCode*	definition;				// As defined at compile time
-		SSourceCode*	live;					// As exists live in this instance at this level
-	};
+			struct SThisCode
+			{
+				SLL				ll;
+
+				SWindow*		win;					// Current window
+				SSourceCode*	definition;				// As defined at compile time
+				SSourceCode*	live;					// As exists live in this instance at this level
+			};
+			//
+		//////
+	//////
+	// END
+	//////////
+
 
 	struct SReturnsParams
 	{

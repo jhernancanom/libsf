@@ -4042,7 +4042,7 @@
 
 
 		// Make sure our environment is sane
-jdebic_debug(thisCode, win, obj);
+JDebiC_debug(thisCode, win, obj);
 		llContinue = true;
 		if (obj)
 		{
@@ -4051,9 +4051,18 @@ jdebic_debug(thisCode, win, obj);
 			llVisible	= propIsVisible(obj);
 			if (llEnabled && llVisible && obj->bmp)
 			{
+
+				//////////
 				// Get the rectangle we're in at this level
-				llInObjectArea	= (PtInRect(&lrc, win->mouseCurrent.position) == TRUE);
-				llInClientArea	= iiMouse_processMouseEvents_getRectDescent(thisCode, win, obj, rc, lrc, lrcClient) || (/*Carousels always receive wheel events no matter what*/llInObjectArea && (obj->objType == _OBJ_TYPE_CAROUSEL));
+				//////
+					llInClientArea	= iiMouse_processMouseEvents_getRectDescent(thisCode, win, obj, rc, lrc, lrcClient);
+					llInObjectArea	= (PtInRect(&lrc, win->mouseCurrent.position) == TRUE);
+
+
+				//////////
+				// Carousels always receive wheel events no matter what
+				//////
+					llInClientArea	= (llInObjectArea && (obj->objType == _OBJ_TYPE_CAROUSEL));
 
 
 				//////////

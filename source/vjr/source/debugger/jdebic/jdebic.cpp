@@ -95,26 +95,32 @@
 // Called to send over debugging information for the current context
 //
 //////
-	void jdebic_debug(SThisCode* thisCode, SWindow* win, SObject* obj)
+	void JDebiC_debug(SThisCode* thisCode, SWindow* win, SObject* obj)
 	{
-		SBuilder*	tcBuilder;
-		SBuilder*	wBuilder;
-		SBuilder*	oBuilder;
+		SDatum		data;
+		SBuilder*	builder;
 
 
 		// Are we connected?
-		if (ijdebic_connect())
+		if (iJDebiC_connect() && thisCode || win || obj)
 		{
+
+			//////////
+			// Initialize
+			//////
+				iBuilder_createAndInitialize(&builder, -1);
+				data.data = builder->buffer;
+
 
 			//////////
 			// thisCode
 			//////
 				if (thisCode)
 				{
-					iBuilder_createAndInitialize(&tcBuilder, -1);
-					ijdebic_thisCode(thisCode, tcBuilder);
-					ijdebic_transmit(tcBuilder);
-					iBuilder_freeAndRelease(&tcBuilder);
+					iJDebiC_thisCode(thisCode, builder);
+					data.length = builder->populatedLength;
+					iJDebiC_transmit_viaPipe(&data, NULL, _WMJDEBIC_DATA_TYPE_THISCODE);
+					iBuilder_rewind(builder);
 				}
 
 
@@ -123,10 +129,10 @@
 			//////
 				if (win)
 				{
-					iBuilder_createAndInitialize(&wBuilder, -1);
-					ijdebic_win(win, wBuilder);
-					ijdebic_transmit(wBuilder);
-					iBuilder_freeAndRelease(&wBuilder);
+					iJDebiC_win(win, builder);
+					data.length = builder->populatedLength;
+					iJDebiC_transmit_viaPipe(&data, NULL, _WMJDEBIC_DATA_TYPE_WIN);
+					iBuilder_rewind(builder);
 				}
 
 
@@ -135,11 +141,17 @@
 			//////
 				if (obj)
 				{
-					iBuilder_createAndInitialize(&oBuilder, -1);
-					ijdebic_obj(obj, oBuilder);
-					ijdebic_transmit(oBuilder);
-					iBuilder_freeAndRelease(&oBuilder);
+					iJDebiC_obj(obj, builder);
+					data.length = builder->populatedLength;
+					iJDebiC_transmit_viaPipe(&data, NULL, _WMJDEBIC_DATA_TYPE_OBJ);
+					iBuilder_rewind(builder);
 				}
+
+
+			//////////
+			// Clean house
+			//////
+				iBuilder_freeAndRelease(&builder);
 
 		}
 	}
@@ -152,11 +164,14 @@
 // Called to send over some text
 //
 //////
-	void jdebic_text(s8* tcText)
+	void JDebiC_text(s8* tcText)
 	{
-		if (ijdebic_connect())
-		{
-		}
+		SDatum data;
+
+
+		data.data	= tcText;
+		data.length	= strlen(tcText);
+		iJDebiC_transmit_viaPipe(&data, NULL, _WMJDEBIC_DATA_TYPE_TEXT);
 	}
 
 
@@ -167,11 +182,52 @@
 // Called to send over some data
 //
 //////
-	void jdebic_data(s8* tcDescription, SDatum* data, u32 tnDataType)
+	void JDebiC_data(s8* tcData, s32 tnDataLength)
 	{
-		if (ijdebic_connect())
-		{
-		}
+		SDatum data;
+
+
+		data.data	= tcData;
+		data.length	= tnDataLength;
+		iJDebiC_transmit_viaPipe(&data, NULL, _WMJDEBIC_DATA_TYPE_DATA);
+	}
+
+
+
+
+//////////
+//
+// Called to send over some data for a bitmap
+//
+//////
+	void JDebiC_hexdump(SBitmap* bmp)
+	{
+		SDatum data1, data2;
+
+
+		data1.data		= (s8*)bmp;
+		data1.length	= sizeof(*bmp);
+		data2.data		= bmp->bd;
+		data2.length	= bmp->bi.biSizeImage;
+		iJDebiC_transmit_viaPipe(&data1, &data2, _WMJDEBIC_DATA_TYPE_BITMAP);
+	}
+
+
+
+
+//////////
+//
+// Called to send over some data for a hex dump
+//
+//////
+	void JDebiC_hexdump(s8* tcData, s32 tnDataLength)
+	{
+		SDatum data;
+
+
+		data.data	= tcData;
+		data.length	= tnDataLength;
+		iJDebiC_transmit_viaPipe(&data, NULL, _WMJDEBIC_DATA_TYPE_HEXDUMP);
 	}
 
 
@@ -182,10 +238,95 @@
 // Called to verify we're online, and if not then try to connect
 //
 //////
-	bool ijdebic_connect(void)
+	HANDLE iJDebiC_createPipeHandle(cs8* lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile)
 	{
-// TODO:  Named pipe connection
-		return(true);
+//		s32		lnError1, lnError2;
+		HANDLE	hPipe;
+
+
+		//////////
+		// Create the indicated pipe
+		//////
+			hPipe		= CreateFile(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
+//			lnError1	= GetLastError();
+			if (hPipe != INVALID_HANDLE_VALUE)
+			{
+				ConnectNamedPipe(hPipe, NULL);
+//				lnError2 = GetLastError();
+			}
+
+
+		//////////
+		// Indicate our status
+		//////
+			return(hPipe);
+
+	}
+
+
+
+
+//////////
+//
+// Validates we're still connected to JDebiC, or tries to connect to it
+//
+//////
+	bool iJDebiC_connect(void)
+	{
+		bool	llNeedHandles;
+		s8		pipeNameOut[_MAX_PATH];
+
+
+		//////////
+		// Locate the existing JDebiC window
+		//////
+			// Is the window (still) known and viable?
+			if (!hwndJDebiC || !IsWindow(hwndJDebiC))
+			{
+				// Our reference needs updated ... try to find it
+				hwndJDebiC		= FindWindow(cgcJDebiCClassName, NULL);
+				llNeedHandles	= true;		// If it was found, our handles are now invalid and must be re-requested
+
+			} else {
+				// It is known ... see if we have the handles
+				llNeedHandles = (handleJDebiCOut == null);
+			}
+
+
+		//////////
+		// Are we still viable?
+		//////
+			if (!hwndJDebiC)
+				return(false);	// Nope
+
+
+		//////////
+		// We are viable, but do we need handles?
+		//////
+			if (llNeedHandles)
+			{
+				// Request our number to use for our named pipes
+				gnJDebiCOutPipeNumber = SendMessage(hwndJDebiC, _WMJDEBIC_PIPE_REQUEST, 0, 0);
+
+				// Create the pipe names
+				sprintf(pipeNameOut, "\\\\.\\pipe\\JDebiC_pipe_%08x\0", gnJDebiCOutPipeNumber);
+
+				// Non-owners connect to an existing pipe
+				handleJDebiCOut = (u32)iJDebiC_createPipeHandle(pipeNameOut, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+			}
+
+
+		//////////
+		// Check values
+		//////
+			if (handleJDebiCOut == (u32)INVALID_HANDLE_VALUE)
+				handleJDebiCOut = NULL;
+
+
+		//////////
+		// Write the output data
+		//////
+			return((handleJDebiCOut != NULL));
 	}
 
 
@@ -196,8 +337,40 @@
 // Called to transmit the data to the remote
 //
 //////
-	void ijdebic_transmit(SBuilder* data)
+	s32 iJDebiC_transmit_viaPipe(SDatum* data1, SDatum* data2, u32 tnDataType)
 	{
+		DWORD lnNumwritten1, lnNumwritten2;
+
+
+		//////////
+		// Make sure we're connected
+		//////
+			lnNumwritten1 = 0;
+			lnNumwritten2 = 0;
+			if (iJDebiC_connect())
+			{
+				// Transmit and signal the transmission
+				if (data1)		WriteFile((HANDLE)handleJDebiCOut, data1->data, data1->length, &lnNumwritten1, NULL);
+				if (data2)		WriteFile((HANDLE)handleJDebiCOut, data2->data, data2->length, &lnNumwritten2, NULL);
+
+				// Did we write anything?
+				if (lnNumwritten1 + lnNumwritten2 > 0)
+					SendMessage(hwndJDebiC, tnDataType, lnNumwritten1 + lnNumwritten2, gnJDebiCOutPipeNumber);
+			}
+
+
+		//////////
+		// Clean house
+		//////
+			if (data1)		data1->length = 0;
+			if (data2)		data2->length = 0;
+
+
+		//////////
+		// Indicate how many bytes were transmitted
+		//////
+			return((s32)(lnNumwritten1 + lnNumwritten2));
+
 	}
 
 
@@ -208,7 +381,7 @@
 // Called to process a thisCode object into its call stack hierarchy
 //
 //////
-	void ijdebic_thisCode(SThisCode* thisCode, SBuilder* data)
+	void iJDebiC_thisCode(SThisCode* thisCode, SBuilder* data)
 	{
 // 		struct SSourceCode
 // 		{
@@ -241,31 +414,48 @@
 // Called to process a windows object into text
 //
 //////
-	void ijdebic_win(SWindow* win, SBuilder* data)
+	void iJDebiC_win(SWindow* win, SBuilder* data)
 	{
-// 		bool				isValid;										// When windows fall out of scope they are marked not valid
-// 
-// 		HWND				hwnd;											// The window's hwnd
-// 		SBitmap*			bmp;											// Accumulation buffer for drawing
-// 		RECT				rc;												// Rectangle of window's physical position
-// 		SObject*			obj;											// The top-level object being rendered in this window
-// 
-// 		// Mouse data
-// 		SMouseData			mousePrior;										// Mouse activity before the most recent mouse activity
-// 		SMouseData			mouseCurrent;									// Current mouse activity
-// 
-// 		// For manual movement
-// 		bool				isMoving;										// Is this window moving?
-// 		bool				isResizing;										// Is this window resizing?
-// 		SMouseData			mouseMoveResizeStart;							// The mouse data within the window when the move or resize started
-// 		RECT				rcMoveResizeStart;								// The location and size of the window when the move or resize started
-// 		u32					resizingFrom;									// If resizing, the arrow (upper-left, upper-right, lower-left, lower-right)
-// 		s32					movingLastDeltaX;								// When moving, this was the last delta-X for the last redraw
-// 		s32					movingLastDeltaY;								// When moving, this was the last delta-Y for the last redraw
-// 
-// 		// Updated as the mouse moves across the form
-// 		POINT				mousePositionClick;								// When the mouse was last left-clicked, this is where it was clicked
-// 		POINT				mousePositionClickScreen;						// In screen coordinates, the location where the mouse was last left-button clicked down
+		s8 buffer[4096];
+
+
+		// Make sure our environment is sane
+		if (win && data)
+		{
+// Must sync up with the SWindow structure
+			iBuilder_append_label_logical(data, "isValid", win->isValid);
+			iBuilder_append_label_uptr(data, "hwnd", (uptr)win->hwnd);
+			iBuilder_append_label_uptr(data, "bmp", (uptr)win->bmp);
+
+			iiJDebiC_decode_Rect(buffer, &win->rc);
+			iBuilder_append_label_text(data, "rc", buffer);
+
+			iBuilder_append_label_uptr(data, "obj", (uptr)win->obj);
+
+			iiJDebiC_decode_SMouseData(buffer, &win->mousePrior);
+			iBuilder_append_label_text(data, "mousePrior", buffer);
+
+			iiJDebiC_decode_SMouseData(buffer, &win->mouseCurrent);
+			iBuilder_append_label_text(data, "mousePrior", buffer);
+
+			iBuilder_append_label_logical(data, "isMoving", win->isMoving);
+			iBuilder_append_label_logical(data, "isResizing", win->isResizing);
+
+			iiJDebiC_decode_SMouseData(buffer, &win->mouseMoveResizeStart);
+			iBuilder_append_label_text(data, "mouseMoveResizeStart", buffer);
+
+			iiJDebiC_decode_Rect(buffer, &win->rcMoveResizeStart);
+			iBuilder_append_label_text(data, "rcMoveResizeStart", buffer);
+
+			iBuilder_append_label_sptr(data, "movingLastDeltaX", (uptr)win->movingLastDeltaX);
+			iBuilder_append_label_sptr(data, "movingLastDeltaY", (uptr)win->movingLastDeltaY);
+
+			iiJDebiC_decode_POINT(buffer, win->mousePositionClick);
+			iBuilder_append_label_text(data, "mousePositionClick", buffer);
+
+			iiJDebiC_decode_POINT(buffer, win->mousePositionClickScreen);
+			iBuilder_append_label_text(data, "mousePositionClickScreen", buffer);
+		}
 	}
 
 
@@ -276,7 +466,7 @@
 // Called to process an object, and all its poems, into text
 //
 //////
-	void ijdebic_obj(SObject* obj, SBuilder* data)
+	void iJDebiC_obj(SObject* obj, SBuilder* data)
 	{
 // 			SLL			ll;													// Linked list
 // 			SObject*	parent;												// Pointer to parent object for this instance
@@ -340,4 +530,39 @@
 // 				bool		isScaled;										// If the bmp->bi coordinates are larger than its display area, should it be scaled?
 // 				SBitmap*	bmpScaled;										// The bmp scaled into RC's size
 
+	}
+
+
+
+
+//////////
+//
+// Helper functions for decoding sub-variables
+//
+//////
+	void iiJDebiC_decode_Rect(s8* buffer, RECT* rc)
+	{
+		sprintf(buffer, "{ left = %u, top = %u, right = %u, bottom = %u }\0", rc->left, rc->top, rc->right, rc->bottom);
+	}
+
+	void iiJDebiC_decode_POINT(s8* buffer, POINT pt)
+	{
+		sprintf(buffer, "{ x = %u, y = %u }\0", pt.x, pt.y);
+	}
+
+	void iiJDebiC_decode_SMouseData(s8* buffer, SMouseData* md)
+	{
+		sprintf(buffer,   "{ positionInOsDesktop = { x = %u, y = %u }, "
+							"position = { x = %u, y = %u }, "
+							"whelDeltaV = %u, wheelDeltaH = %u, "
+
+							"buttonLeft = %u, buttonMiddle = %u, buttonRight = %u, buttonAnyDown = %u, "
+							"isCaps = %s, isCtrl = %s, isAlt = %s, isShift = % }\0",
+
+							md->positionInOsDesktop.x,	md->positionInOsDesktop.y,
+							md->position.x,				md->position.y,
+							md->wheelDeltaV,			md->wheelDeltaH,
+
+							md->buttonLeft,		md->buttonMiddle,	md->buttonRight,	md->buttonAnyDown,
+							md->isCaps,			md->isCtrl,			md->isAlt,			md->isShift);
 	}

@@ -213,7 +213,22 @@
 //		Pointer to the point in the buffer where the text was inserted, can be used
 //		for a furthering or continuance of this function embedded in a higher call.
 //////
-	u8* iBuilder_appendData(SBuilder* buffRoot, cu8* tcData, u32 tnDataLength)
+	cs8* iBuilder_appendData(SBuilder* buffRoot, SDatum* data)
+	{
+		// Make sure there's something to update
+		if (buffRoot && data && data->data && data->length > 0)
+			return((cs8*)iBuilder_appendData(buffRoot, data->data_cu8, data->length));
+
+		// Return our original input
+		return(NULL);
+	}
+
+	cs8* iBuilder_appendData(SBuilder* buffRoot, cs8* tcData, u32 tnDataLength)
+	{
+		return((cs8*)iBuilder_appendData(buffRoot, (cu8*)tcData, tnDataLength));
+	}
+
+	cu8* iBuilder_appendData(SBuilder* buffRoot, cu8* tcData, u32 tnDataLength)
 	{
 		// Make sure our environment is sane
 		if (buffRoot)
@@ -286,7 +301,7 @@
 //////
 	u8* iBuilder_appendCrLf(SBuilder* buffRoot)
 	{
-		return(iBuilder_appendData(buffRoot, (cu8*)"\r\n", 2));
+		return((u8*)iBuilder_appendData(buffRoot, (cu8*)"\r\n", 2));
 	}
 
 
@@ -329,6 +344,20 @@
 			memset(buffRoot->buffer, 0, buffRoot->totSize);
 			buffRoot->populatedLength = 0;
 		}
+	}
+
+
+
+
+//////////
+//
+// Called to reset the buffer to 0 bytes
+//
+//////
+	void iBuilder_rewind(SBuilder* buffRoot)
+	{
+		if (buffRoot)
+			buffRoot->populatedLength = 0;
 	}
 
 
@@ -808,4 +837,172 @@
 		//////
 			if (tlFound)	*tlFound = false;
 			return(-2);		// Is invalid configuration
+	}
+
+
+
+
+//////////
+//
+// Called to append a label and an unsigned value, followed by CR/LF
+// "name = 12345[cr/lf]"
+//
+//////
+	s32 iBuilder_append_label_uptr(SBuilder* buffRoot, s8* tcLabelText, uptr udata)
+	{
+		s32	lnStart;
+		s8	buffer[32];
+
+
+		// Make sure our environment's sane
+		if (buffRoot && tcLabelText)
+		{
+			// Note our size at the stat
+			lnStart = buffRoot->populatedLength;
+
+			// Label
+			iBuilder_appendData(buffRoot, tcLabelText, strlen(tcLabelText));
+
+			// Equals
+			iBuilder_appendData(buffRoot, " = ", 3);
+
+			// Value
+			sprintf(buffer, "%u\0", udata);
+			iBuilder_appendData(buffRoot, buffer, strlen(buffer));
+
+			// CR/LF
+			iBuilder_appendCrLf(buffRoot);
+
+			// Indicate how many bytes were written
+			return(buffRoot->populatedLength - lnStart);
+
+		} else {
+			// Failure
+			return(0);
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to append a label and a signed value, followed by CR/LF
+// "name = 12345[cr/lf]"
+//
+//////
+	s32 iBuilder_append_label_sptr(SBuilder* buffRoot, s8* tcLabelText, sptr sdata)
+	{
+		s32	lnStart;
+		s8	buffer[32];
+
+
+		// Make sure our environment's sane
+		if (buffRoot && tcLabelText)
+		{
+			// Note our size at the stat
+			lnStart = buffRoot->populatedLength;
+
+			// Label
+			iBuilder_appendData(buffRoot, tcLabelText, strlen(tcLabelText));
+
+			// Equals
+			iBuilder_appendData(buffRoot, " = ", 3);
+
+			// Value
+			sprintf(buffer, "%d\0", sdata);
+			iBuilder_appendData(buffRoot, buffer, strlen(buffer));
+
+			// CR/LF
+			iBuilder_appendCrLf(buffRoot);
+
+			// Indicate how many bytes were written
+			return(buffRoot->populatedLength - lnStart);
+
+		} else {
+			// Failure
+			return(0);
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to append a label and some text, followed by CR/LF
+// "name = text[cr/lf]"
+//
+//////
+	s32 iBuilder_append_label_text(SBuilder* buffRoot, s8* tcLabelText, s8* tcText)
+	{
+		s32	lnStart;
+
+
+		// Make sure our environment's sane
+		if (buffRoot && tcLabelText)
+		{
+			// Note our size at the stat
+			lnStart = buffRoot->populatedLength;
+
+			// Label
+			iBuilder_appendData(buffRoot, tcLabelText, strlen(tcLabelText));
+
+			// Equals
+			iBuilder_appendData(buffRoot, " = ", 3);
+
+			// Text
+			iBuilder_appendData(buffRoot, tcText, strlen(tcText));
+
+			// CR/LF
+			iBuilder_appendCrLf(buffRoot);
+
+			// Indicate how many bytes were written
+			return(buffRoot->populatedLength - lnStart);
+
+		} else {
+			// Failure
+			return(0);
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to append a label and a logical value as "true" or "false", followed by CR/LF
+// "name = true[cr/lf]"
+//
+//////
+	s32 iBuilder_append_label_logical(SBuilder* buffRoot, s8* tcLabelText, bool tlValue)
+	{
+		s32	lnStart;
+
+
+		// Make sure our environment's sane
+		if (buffRoot && tcLabelText)
+		{
+			// Note our size at the stat
+			lnStart = buffRoot->populatedLength;
+
+			// Label
+			iBuilder_appendData(buffRoot, tcLabelText, strlen(tcLabelText));
+
+			// Equals
+			iBuilder_appendData(buffRoot, " = ", 3);
+
+			// True/false
+			iBuilder_appendData(buffRoot, ((tlValue) ? "true" : "false"), ((tlValue) ? 4 : 5));
+
+			// CR/LF
+			iBuilder_appendCrLf(buffRoot);
+
+			// Indicate how many bytes were written
+			return(buffRoot->populatedLength - lnStart);
+
+		} else {
+			// Failure
+			return(0);
+		}
 	}

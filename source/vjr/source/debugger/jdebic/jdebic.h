@@ -93,18 +93,18 @@
 //////////
 //
 // Data preparation functions:
-//		jdebic_debug		-- Prepare and transmit thisCode, win, obj data to the remote
-//		jdebic_text			-- Prepare and transmit text to display in the text window
-//		jdebic_data			-- Prepare and transmit data to parse remotely and have available for display
+//		JDebiC_debug		-- Prepare and transmit thisCode, win, obj data to the remote
+//		JDebiC_text			-- Prepare and transmit text to display in the text window
+//		JDebiC_data			-- Prepare and transmit data to parse remotely and have available for display
 //
 // Communication functions:
-//		ijdebic_connect		-- Connects to remote process
-//		ijdebic_transmit	-- Transmits data from this process to the other
+//		iJDebiC_connect		-- Connects to remote process
+//		iJDebiC_transmit	-- Transmits data from this process to the other
 //
 // Serialization functions:
-//		ijdebic_thisCode	-- Converts a thisCode object into its call stack for examination
-//		ijdebic_win			-- Converts information about a window into text
-//		ijdebic_obj			-- Converts an object into its text form
+//		iJDebiC_thisCode	-- Converts a thisCode object into its call stack for examination
+//		iJDebiC_win			-- Converts information about a window into text
+//		iJDebiC_obj			-- Converts an object into its text form
 //
 //////////
 
@@ -114,22 +114,48 @@
 //////////
 // Forward declarations
 //////
-	void		jdebic_debug					(SThisCode* thisCode, SWindow* win, SObject* obj);
-	void		jdebic_text						(s8* tcText);
-	void		jdebic_data						(s8* tcDescription, SDatum* data, u32 tnDataType);
+	void		JDebiC_debug					(SThisCode* thisCode, SWindow* win, SObject* obj);
+	void		JDebiC_text						(s8* tcText);
+	void		JDebiC_data						(s8* tcData, s32 tnDataLength, u32 tnDataType);
 
 	// Helper functions
-	bool		ijdebic_connect					(void);
-	void		ijdebic_transmit				(SBuilder* data);
+	bool		iJDebiC_connect					(void);
+	s32			iJDebiC_transmit_viaPipe		(SDatum* data1, SDatum* data2, u32 tnDataType);
+	HANDLE		iJDebiC_createPipeHandle		(cs8* lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile);
 
 	// Processes each structure into text
-	void		ijdebic_thisCode				(SThisCode*	thisCode,	SBuilder* data);
-	void		ijdebic_win						(SWindow*	win,		SBuilder* data);
-	void		ijdebic_obj						(SObject*	obj,		SBuilder* data);
+	void		iJDebiC_thisCode				(SThisCode*	thisCode,	SBuilder* data);
+	void		iJDebiC_win						(SWindow*	win,		SBuilder* data);
+	void		iJDebiC_obj						(SObject*	obj,		SBuilder* data);
+
+	// Process sub-components
+	void		iiJDebiC_decode_Rect			(s8* buffer, RECT* rc);
+	void		iiJDebiC_decode_POINT			(s8* buffer, POINT pt);
+	void		iiJDebiC_decode_SMouseData		(s8* buffer, SMouseData* md);
 
 
 //////////
-// Data types
+// JDebiC
 //////
-	#define		_JDEBIC_DATA_TYPE_BITMAP		1
-	#define		_JDEBIC_DATA_TYPE_HEXDUMP		1
+	HWND		hwndJDebiC;						// The HWND to the remote
+	u32			handleJDebiCOut;				// The pipe handle to write data
+	u32			gnJDebiCOutPipeNumber;			// The pipe number we were allocated from the remote
+
+
+//////////
+// Transmission types
+//////
+	cu32		_WMJDEBIC_PIPE_REQUEST			= WM_USER + 0;
+	cu32		_WMJDEBIC_DATA_TYPE_DATA		= WM_USER + 1;
+	cu32		_WMJDEBIC_DATA_TYPE_BITMAP		= WM_USER + 2;
+	cu32		_WMJDEBIC_DATA_TYPE_HEXDUMP		= WM_USER + 3;
+	cu32		_WMJDEBIC_DATA_TYPE_TEXT		= WM_USER + 4;
+	cu32		_WMJDEBIC_DATA_TYPE_THISCODE	= WM_USER + 5;
+	cu32		_WMJDEBIC_DATA_TYPE_WIN			= WM_USER + 6;
+	cu32		_WMJDEBIC_DATA_TYPE_OBJ			= WM_USER + 7;
+
+
+//////////
+// Constants
+//////
+	cs8			cgcJDebiCClassName[]			= "JDebiC_RemoteApp_PipeMessageReceptor";

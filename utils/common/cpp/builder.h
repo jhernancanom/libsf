@@ -106,11 +106,14 @@
 	void		iBuilder_verifySizeForNewBytes				(SBuilder* buffRoot, u32 tnDataLength);
 	void		iBuilder_createAndInitialize				(SBuilder** buffRoot, u32 tnAllocationBlockSize);
 	bool		iBuilder_isPointer							(SBuilder* buffRoot, uptr testptr);
-	u8*			iBuilder_appendData							(SBuilder* buffRoot, cu8* tcData, u32 tnDataLength);
+	cs8*		iBuilder_appendData							(SBuilder* buffRoot, SDatum* data);
+	cs8*		iBuilder_appendData							(SBuilder* buffRoot, cs8* tcData, u32 tnDataLength);
+	cu8*		iBuilder_appendData							(SBuilder* buffRoot, cu8* tcData, u32 tnDataLength);
 	u8*			iBuilder_append_uptr						(SBuilder* buffRoot, uptr tnValue);
 	u8*			iBuilder_appendCrLf							(SBuilder* buffRoot);
 	void		iBuilder_delete								(SBuilder* buffRoot, u32 tnStartOffset, u32 tnDeleteLength);
 	void		iBuilder_reset								(SBuilder* buffRoot);
+	void		iBuilder_rewind								(SBuilder* buffRoot);
 	s8*			iBuilder_allocateBytes						(SBuilder* buffRoot, u32 tnDataLength);
 	void		iBuilder_backoffTrailingWhitespaces			(SBuilder* buffRoot);
 	void		iBuilder_setSize							(SBuilder* buffRoot, u32 tnBufferLength);
@@ -120,6 +123,13 @@
 	void		iBuilder_compactData						(SBuilder* buffRoot, u32 tnStart, u32 tnStride, u32 tnCompactCallbackFunction);
 	s8*			iBuilder_insertBytes						(SBuilder* buffRoot, u32 tnStart, u32 tnLength);
 	u32			iBuilder_binarySearch						(SBuilder* haystack, s8* tcNeedle, u32 tnNeedleLength, bool* tlFound, bool tlInsertIfNotFound);
+
+	// Added to append "name = something" strings with a terminating CR/LF
+	s32			iBuilder_append_label_uptr					(SBuilder* buffRoot, s8* tcLabelText, uptr udata);
+	s32			iBuilder_append_label_sptr					(SBuilder* buffRoot, s8* tcLabelText, sptr sdata);
+	s32			iBuilder_append_label_text					(SBuilder* buffRoot, s8* tcLabelText, s8* tcText);
+	s32			iBuilder_append_label_logical				(SBuilder* buffRoot, s8* tcLabelText, bool tlValue);
+
 
 
 #endif	// __BUILDER_H__
