@@ -2107,7 +2107,7 @@ void iiComps_decodeSyntax_returns(SThisCode* thisCode, SCompileVxbContext* vxb)
 
 								case 2:
 									// Could be .or.
-									if (_memicmp(compSecond->line->sourceCode->data, "or", 2) == 0)
+									if (_memicmp(compSecond->line->sourceCode->data + compSecond->start, "or", 2) == 0)
 									{
 										iComps_combineN(thisCode, compFirst, 3, _ICODE_OR, compFirst->iCat, compFirst->color);
 										lnCombined += 3;
@@ -2117,13 +2117,13 @@ void iiComps_decodeSyntax_returns(SThisCode* thisCode, SCompileVxbContext* vxb)
 
 								case 3:
 									// Could be .and., .not.
-									if (_memicmp(compSecond->line->sourceCode->data, "and", 3) == 0)
+									if (_memicmp(compSecond->line->sourceCode->data + compSecond->start, "and", 3) == 0)
 									{
 										// AND
 										iComps_combineN(thisCode, compFirst, 3, _ICODE_AND, compFirst->iCat, compFirst->color);
 										lnCombined += 3;
 
-									} else if (_memicmp(compSecond->line->sourceCode->data, "not", 3) == 0) {
+									} else if (_memicmp(compSecond->line->sourceCode->data + compSecond->start, "not", 3) == 0) {
 										// NOT
 										iComps_combineN(thisCode, compFirst, 3, _ICODE_NOT, compFirst->iCat, compFirst->color);
 										lnCombined += 3;
@@ -2133,7 +2133,7 @@ void iiComps_decodeSyntax_returns(SThisCode* thisCode, SCompileVxbContext* vxb)
 
 								case 4:
 									// Could be .null.
-									if (_memicmp(compSecond->line->sourceCode->data, "null", 4) == 0)
+									if (_memicmp(compSecond->line->sourceCode->data + compSecond->start, "null", 4) == 0)
 									{
 										// NULL
 										iComps_combineN(thisCode, compFirst, 3, _ICODE_NULL, compFirst->iCat, compFirst->color);
