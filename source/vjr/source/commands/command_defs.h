@@ -203,6 +203,9 @@ struct SReturnsParams;
 	SVariable*			function_colorize							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			ifunction_colorize_common					(SThisCode* thisCode, SVariable* varColor, SVariable* varColorTarget, SVariable* varPercentage, bool tlApplyColorTarget, SReturnsParams* returnsParams);
 	SVariable*			function_cos		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_ctod		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			ifunction_ctod_common						(SThisCode* thisCode, SVariable* varString, bool tlDate);
+	SVariable*			function_ctot		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_createobject						(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_curdir								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_date		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -321,7 +324,6 @@ struct SReturnsParams;
 	SVariable*			function_vecstuff							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_vecsymbol							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_version							(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_week		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_year		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 // Added temporarily until the processing engine is coded
 	SVariable*			function_concatenate						(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -431,6 +433,8 @@ struct SReturnsParams;
 		{	_ICODE_CMONTH,			1,			(uptr)&function_cmonth,			0,				1,				&gsSourceLight_cmonth[0]		},	// CMONTH() by Stefano D'Amico, VJr 0.57, Apr.05.2015
 		{	_ICODE_COLORIZE,		1,			(uptr)&function_colorize,		2,				3,				&gsSourceLight_colorize[0]		},
 		{	_ICODE_COS,				1,			(uptr)&function_cos,			1,				1,				&gsSourceLight_cos[0]			},	// COS() by Stefano D'Amico, VJr 0.56, Mar.17.2015
+		{	_ICODE_CTOD,			1,			(uptr)&function_ctod,			1,				1,				&gsSourceLight_ctod[0]			},	// CTOD() by Stefano D'Amico, VJr 0.57, Apr.11.2015
+		{	_ICODE_CTOT,			1,			(uptr)&function_ctot,			1,				1,				&gsSourceLight_ctot[0]			},	// CTOT() by Stefano D'Amico, VJr 0.57, Apr.11.2015
 		{	_ICODE_CREATEOBJECT,	1,			(uptr)&function_createobject,	1,				1,				&gsSourceLight_createobject[0]	},
 		{	_ICODE_CURDIR,			1,			(uptr)&function_curdir,			0,				0,				&gsSourceLight_curdir[0]		},
 		{	_ICODE_DATE,			1,			(uptr)&function_date,			0,				3,				&gsSourceLight_date[0]			},	// DATE() by Stefano D'Amico, VJr 0.57, Apr.04.2015
@@ -535,7 +539,6 @@ struct SReturnsParams;
 		{	_ICODE_VECSTUFF,		1,			(uptr)&function_vecstuff,		3,				4,				&gsSourceLight_vecstuff[0]		},
 		{	_ICODE_VECSYMBOL,		1,			(uptr)&function_vecsymbol,		1,				3,				&gsSourceLight_vecsymbol[0]		},
 		{	_ICODE_VERSION,			1,			(uptr)&function_version,		0,				1,				&gsSourceLight_version[0]		},
-		{	_ICODE_WEEK,			1,			(uptr)&function_week,			0,				3,				&gsSourceLight_week[0]			},	// WEEK() by Stefano D'Amico, VJr 0.57, Apr.08.2015
 		{	_ICODE_YEAR,			1,			(uptr)&function_year,			0,				1,				&gsSourceLight_year[0]			},	// YEAR() by Stefano D'Amico, VJr 0.57, Apr.04.2015
 // Added temporarily until the processing engine is coded
 		{	_ICODE_CONCATENATE,		1,			(uptr)&function_concatenate,	2,				2,				&gsSourceLight_concatenate[0]	},
