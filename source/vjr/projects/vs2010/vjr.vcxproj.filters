@@ -58,6 +58,12 @@
     <Filter Include="compiler\licoa_assembler">
       <UniqueIdentifier>{b6632999-217b-4158-b23e-266666a11af6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="debugger">
+      <UniqueIdentifier>{24488a06-c8c0-48f2-b1c0-a78cba850d03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="debugger\jdebic">
+      <UniqueIdentifier>{7a3a50a4-3dc8-4b46-976d-84a3500048ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="small.ico">
@@ -165,6 +171,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\utils\common\cpp\xml\xml.cpp">
       <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\debugger\jdebic\jdebic.cpp">
+      <Filter>debugger\jdebic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -308,6 +317,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\utils\common\cpp\xml\xml.h">
       <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\debugger\jdebic\jdebic.h">
+      <Filter>debugger\jdebic</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

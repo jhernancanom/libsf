@@ -852,6 +852,20 @@ debug_nop;
 					}
 					break;
 
+				case _EVENT_CAROUSEL_ONTABCLOSE:
+					return(obj->ev.methods[tnEventId].event_1(thisCode, win, obj));
+					break;
+
+				case _EVENT_CAROUSEL_ONTABCLICK:
+				case _EVENT_CAROUSEL_ONTABMOUSEWHEEL:
+				case _EVENT_CAROUSEL_ONTABMOUSEMOVE:
+				case _EVENT_CAROUSEL_ONTABMOUSEDOWN:
+				case _EVENT_CAROUSEL_ONTABMOUSEUP:
+				case _EVENT_CAROUSEL_ONTABMOUSEENTER:
+				case _EVENT_CAROUSEL_ONTABMOUSELEAVE:
+					return(obj->ev.methods[tnEventId].event_12(thisCode, win, obj, p));
+					break;
+
 				default:
 					// The rest of these events are all handled in the standard way
 					return(obj->ev.methods[tnEventId].event_1(thisCode, win, obj));
@@ -880,14 +894,6 @@ debug_nop;
 					//	_EVENT_ONPROGRAMMATICCHANGE
 					//	_EVENT_ONSETACTIVECONTROL
 					//	_EVENT_ONSPIN
-
-					// 	_EVENT_CAROUSEL_ONTABCLOSE
-					// 	_EVENT_CAROUSEL_ONTABCLICK
-					// 	_EVENT_CAROUSEL_ONTABMOUSEMOVE
-					// 	_EVENT_CAROUSEL_ONTABMOUSEDOWN
-					// 	_EVENT_CAROUSEL_ONTABMOUSEUP
-					// 	_EVENT_CAROUSEL_ONTABMOUSEENTER
-					// 	_EVENT_CAROUSEL_ONTABMOUSELEAVE
 
 			}
 		}

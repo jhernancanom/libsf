@@ -319,6 +319,7 @@ struct SEvent
 		bool	(*event_9)		(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* var1, SVariable* var2, SVariable* var3, SVariable* var4, SVariable* var5, SVariable* var6, SVariable* var7);
 		bool	(*event_10)		(SThisCode* thisCode, SWindow* win, SObject* obj, SVariable* var1, SVariable* var2, SVariable* var3, SVariable* var4, SVariable* var5, SVariable* var6, SVariable* var7, SVariable* var8);
 		bool	(*event_11)		(SThisCode* thisCode, SWindow* win, SObject* obj, RECT* rc);
+		bool	(*event_12)		(SThisCode* thisCode, SWindow* win, SObject* obj, void* p);
 	};
 };
 
@@ -466,88 +467,101 @@ struct SField
 	SFieldRecord2*	fr2;											// Pointer to the associated field record 2
 };
 
-struct SObject
-{
-	SLL			ll;													// Linked list
-	SObject*	parent;												// Pointer to parent object for this instance
-	SObject*	firstChild;											// Pointer to child objects (all objects are containers)
+
+//////////
+// Changes made here must sync up with iJDebiC_obj()
+// BEGIN
+//////
+	//////
+		//
+		struct SObject
+		{
+			SLL			ll;													// Linked list
+			SObject*	parent;												// Pointer to parent object for this instance
+			SObject*	firstChild;											// Pointer to child objects (all objects are containers)
 
 #ifdef _EXTRA_DEBUGGING_DATA
-	SDatum		dbgClass;
-	SDatum		dbgName;
+			SDatum		dbgClass;
+			SDatum		dbgName;
 #endif
 
-	// Defined class, class information
-	s32			objType;											// Object base type/class (see _OBJECT_TYPE_* constants)
+			// Defined class, class information
+			s32			objType;											// Object base type/class (see _OBJECT_TYPE_* constants)
 
-	// Object flags
-	bool		isRendered;											// Is it rendered (can be rendered even if it's not visible)?
-	bool		isPublished;										// Should this control be published?  Every object has a .lockScreen property which allows it to not be published while changes are made.
-	bool		isDirtyRender;										// Is set if this or any child object needs re-rendered
-	bool		isDirtyPublish;										// Is set if this or any child object needs re-published
-
-
-	//////////
-	// Object size in pixels, per the .Left, .Top, .Width, and .Height properties
-	//////
-		RECT		rc;												// Object's current position in its parent
-		RECT		rco;											// Object's original position in its parent
-		RECT		rcp;											// Original size of parent at creation
-		RECT		rcClient;										// Client portion within the size of the object
-		RECT		rcExtra;										// An extra portion used for object-specific components, such as rider tab location on carousels
+			// Object flags
+			bool		isRendered;											// Is it rendered (can be rendered even if it's not visible)?
+			bool		isPublished;										// Should this control be published?  Every object has a .lockScreen property which allows it to not be published while changes are made.
+			bool		isDirtyRender;										// Is set if this or any child object needs re-rendered
+			bool		isDirtyPublish;										// Is set if this or any child object needs re-published
 
 
-	//////////
-	// Common properties that are literal(p) and allocated(pa) values
-	//////
-		SProperties		p;											// Common object properties
-		SVariable**		props;										// An allocated array of properties (varies in size by object)
-		s32				propsCount;									// The number of property variables allocated
-
-		// Related position in the member hierarchy
-		SVariable*	firstProperty;									// User-defined property (design time and runtime)
-		SEM*		firstMethod;									// User-defined methods (design time and runtime)
-
-		// Related access and assign methods
-		bool		anyPropertyHasAccessOrAssignMethods;
-		SEM*		firstAccess;									// User-defined property access methods (design time and runtime)
-		SEM*		firstAssign;									// User-defined property assignment methods (designt ime and runtime)
-
-		// Events
-		SEvents		ev;												// Events for this object
+			//////////
+			// Object size in pixels, per the .Left, .Top, .Width, and .Height properties
+			//////
+				RECT		rc;												// Object's current position in its parent
+				RECT		rco;											// Object's original position in its parent
+				RECT		rcp;											// Original size of parent at creation
+				RECT		rcClient;										// Client portion within the size of the object
+				RECT		rcExtra;										// An extra portion used for object-specific components, such as rider tab location on carousels
 
 
-	//////////
-	// Base drawing canvas
-	//////
-		SBitmap*	bmp;											// If exists, canvas for the content
-		SBitmap*	bmpPriorRendered;								// Used for speedups when not isDirty
-		SBmpCache*	bc;												// For certain compute intensive operations (color gradient controls), the bitmap is only drawn/computed once and then copied thereafter, unless any of eight data points change
-		// If not scaled:
-		s32			scrollOffsetX;									// If the bmp->bi coordinates are larger than its display area, the upper-left X coordinate
-		s32			scrollOffsetY;									// ...the upper-left Y coordinate
-		// If scaled, updated only during publish():
-		bool		isScaled;										// If the bmp->bi coordinates are larger than its display area, should it be scaled?
-		SBitmap*	bmpScaled;										// The bmp scaled into RC's size
+			//////////
+			// Common properties that are literal(p) and allocated(pa) values
+			//////
+				SProperties		p;											// Common object properties
+				SVariable**		props;										// An allocated array of properties (varies in size by object)
+				s32				propsCount;									// The number of property variables allocated
+
+				// Related position in the member hierarchy
+				SVariable*	firstProperty;									// User-defined property (design time and runtime)
+				SEM*		firstMethod;									// User-defined methods (design time and runtime)
+
+				// Related access and assign methods
+				bool		anyPropertyHasAccessOrAssignMethods;
+				SEM*		firstAccess;									// User-defined property access methods (design time and runtime)
+				SEM*		firstAssign;									// User-defined property assignment methods (design time and runtime)
+
+				// Events
+				SEvents		ev;												// Events for this object
+
+
+			//////////
+			// Base drawing canvas
+			//////
+				SBitmap*	bmp;											// If exists, canvas for the content
+				SBitmap*	bmpPriorRendered;								// Used for speedups when not isDirty
+				SBmpCache*	bc;												// For certain compute intensive operations (color gradient controls), the bitmap is only drawn/computed once and then copied thereafter, unless any of eight data points change
+				// If not scaled:
+				s32			scrollOffsetX;									// If the bmp->bi coordinates are larger than its display area, the upper-left X coordinate
+				s32			scrollOffsetY;									// ...the upper-left Y coordinate
+				// If scaled, updated only during publish():
+				bool		isScaled;										// If the bmp->bi coordinates are larger than its display area, should it be scaled?
+				SBitmap*	bmpScaled;										// The bmp scaled into RC's size
 
 
 #ifdef _GRACE_OGL
-	//////////
-	// OpenGL
-	//////
-		// Visualization
-		SGraceOgl	ogl;											// Open GL coordinates
+			//////////
+			// OpenGL
+			//////
+				// Visualization
+				SGraceOgl	ogl;											// Open GL coordinates
 
-		// Nodes connect to this object on the left or top
-		SObjNode*	toLeft;											// First node in the west direction
-		SObjNode*	toTop;											// First node in the east direction
+				// Nodes connect to this object on the left or top
+				SObjNode*	toLeft;											// First node in the west direction
+				SObjNode*	toTop;											// First node in the east direction
 
-		// This node connects to other things from the right or bottom
-		SObjNode*	fromRight;										// First node in the north direction
-		SObjNode*	fromBottom;										// First node in the south direction
+				// This node connects to other things from the right or bottom
+				SObjNode*	fromRight;										// First node in the north direction
+				SObjNode*	fromBottom;										// First node in the south direction
 #endif
-};
-typedef SObject* SObjectp;
+		};
+		typedef SObject* SObjectp;
+		//
+	//////
+//////
+// END
+//////////
+
 
 struct SFocusHighlight
 {

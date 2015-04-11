@@ -188,6 +188,7 @@
 	#include "vjr_defs.h"
 	#include "vjr_globals.h"
 
+	#include "debugger\jdebic\jdebic.h"
 	#include "fonts.h"
 	#include "bitmaps\bitmaps.h"
 
@@ -229,6 +230,7 @@
 		#include "compiler\vxb\vxb_dictionary.cpp"
 		#include "compiler\rdc\rdc_compiler.cpp"
 		#include "compiler\licoa\licoa_compiler.cpp"
+		#include "debugger\jdebic\jdebic.cpp"
 		#include "commands\commands.cpp"
 		#include "engine.cpp"
 		#include "sem\sem.cpp"
@@ -347,6 +349,7 @@
 	#include "vjr_defs.h"
 	#include "vjr_globals.h"
 
+	#include "debugger/jdebic/jdebic.h"
 	#include "fonts.h"
 	#include "bitmaps/bitmaps.h"
 
@@ -388,6 +391,7 @@
 		#include "compiler/vxb/vxb_dictionary.cpp"
 		#include "compiler/rdc/rdc_compiler.cpp"
 		#include "compiler/licoa/licoa_compiler.cpp"
+		#include "debugger/jdebic/jdebic.cpp"
 		#include "commands/commands.cpp"
 		#include "engine.cpp"
 		#include "sem/sem.cpp"

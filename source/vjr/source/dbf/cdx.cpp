@@ -2046,10 +2046,10 @@ close_and_quit:
 //////
 	void iiCdx_cacheNode_populate(SThisCode* thisCode, SWorkArea* wa, SCdxHeader* tagHeader, SCdxNodeCache* nodeKeys, bool tlAllocateLiberally)
 	{
-		s32				lnI, lnCount, lnNumread, lnKeyAllocateCount;
+		s32				/*lnI, lnCount,*/ lnNumread, lnKeyAllocateCount;
 		SDiskLock*		dl;
-		SCdxKeyLeafRaw	key;
-		STagRoot		tagRoot;
+// 		SCdxKeyLeafRaw	key;
+// 		STagRoot		tagRoot;
 		bool			error;
 		u32				errorNum;
 
