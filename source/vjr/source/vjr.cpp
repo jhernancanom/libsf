@@ -167,7 +167,6 @@
 		RECT			lrc;
 		u8				logBuffer[256];
 		SBitmap*		bmp;
-		SVariable*		var;
 		SReturnsParams	lsReturnsParams;
 
 
@@ -389,15 +388,53 @@
 		//////
 			iVjr_appendSystemLog(thisCode, (u8*)"Create global variables");
 
-			// _startupTime
+
+		//////////
+		// _startupTime
+		//////
 			memset(&lsReturnsParams, 0, sizeof(lsReturnsParams));
 			varGlobals = function_datetime(NULL, &lsReturnsParams);
 			iDatum_duplicate(&varGlobals->name, cgcName_startupTime, -1);
 
-			// _tally
-			var = iVariable_copy(NULL, varZero, false);
-			iDatum_duplicate(&var->name, cgcName_tally, -1);
-			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)var);
+
+		//////////
+		// _tally
+		//////
+			varTally = iVariable_create(NULL, _VAR_TYPE_S64, NULL, true);
+			iDatum_duplicate(&varTally->name, cgcName_tally, -1);
+			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varTally);
+
+
+		//////////
+		// _meta1 through _meta9
+		//////
+			varMeta1 = iVariable_create(NULL, _VAR_TYPE_S64, NULL, true);
+			varMeta2 = iVariable_create(NULL, _VAR_TYPE_S64, NULL, true);
+			varMeta3 = iVariable_create(NULL, _VAR_TYPE_S64, NULL, true);
+			varMeta4 = iVariable_create(NULL, _VAR_TYPE_S64, NULL, true);
+			varMeta5 = iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL, true);
+			varMeta6 = iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL, true);
+			varMeta7 = iVariable_create(NULL, _VAR_TYPE_LOGICAL, NULL, true);
+			varMeta8 = iVariable_create(NULL, _VAR_TYPE_LOGICAL, NULL, true);
+			varMeta9 = iVariable_create(NULL, _VAR_TYPE_LOGICAL, NULL, true);
+			iDatum_duplicate(&varMeta1->name, cgcName_meta1, -1);
+			iDatum_duplicate(&varMeta2->name, cgcName_meta2, -1);
+			iDatum_duplicate(&varMeta3->name, cgcName_meta3, -1);
+			iDatum_duplicate(&varMeta4->name, cgcName_meta4, -1);
+			iDatum_duplicate(&varMeta5->name, cgcName_meta5, -1);
+			iDatum_duplicate(&varMeta6->name, cgcName_meta6, -1);
+			iDatum_duplicate(&varMeta7->name, cgcName_meta7, -1);
+			iDatum_duplicate(&varMeta8->name, cgcName_meta8, -1);
+			iDatum_duplicate(&varMeta9->name, cgcName_meta9, -1);
+			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varMeta1);
+			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varMeta2);
+			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varMeta3);
+			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varMeta4);
+			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varMeta5);
+			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varMeta6);
+			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varMeta7);
+			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varMeta8);
+			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varMeta9);
 
 
 		// Create our default objects

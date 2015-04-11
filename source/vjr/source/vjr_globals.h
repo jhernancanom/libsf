@@ -171,6 +171,16 @@
 
 	// Global variables
 	SVariable*			varGlobals							= NULL;									// All global variables are stored
+	SVariable*			varTally							= NULL;
+	SVariable*			varMeta1							= NULL;
+	SVariable*			varMeta2							= NULL;
+	SVariable*			varMeta3							= NULL;
+	SVariable*			varMeta4							= NULL;
+	SVariable*			varMeta5							= NULL;
+	SVariable*			varMeta6							= NULL;
+	SVariable*			varMeta7							= NULL;
+	SVariable*			varMeta8							= NULL;
+	SVariable*			varMeta9							= NULL;
 	SVariable*			varConstant_space					= NULL;									// Holds a single space, and is a constant
 	SVariable*			varEmptyString						= NULL;
 	SVariable*			var2000Spaces						= NULL;

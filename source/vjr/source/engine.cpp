@@ -941,38 +941,90 @@ debug_nop;
 //////
 	s64 iEngine_update_tally(SThisCode* thisCode, s64 tnValue)
 	{
-		s64			lnOldValue;
-		SVariable*	varTally;
+		s64 lnOldValue;
 
 
-		//////////
-		// Locate the variable
-		//////
-			varTally = iiVariable_searchForName_variables(thisCode, varGlobals, (s8*)cgcName_tally, sizeof(cgcName_tally) - 1, NULL, true);
-			if (!varTally)
-			{
-				// This should never happen
-				iError_signal(thisCode, _ERROR_INTERNAL_ERROR, NULL, true, (s8*)cgcFatalSystemError_tally, true);
-				// Control will never return here
-			}
+		// Grab the old value and update
+		lnOldValue					= *varTally->value.data_s64;
+		*varTally->value.data_s64	= tnValue;
+		return(lnOldValue);
+	}
 
 
-		//////////
-		// Grab the old value
-		//////
-			lnOldValue = *varTally->value.data_s64;
 
 
-		//////////
-		// Update with the new value
-		//////
-			*varTally->value.data_s64 = tnValue;
+//////////
+//
+// Called to update the global _metaN values
+//
+//////
+	s64 iEngine_update_meta1(SThisCode* thisCode, s64 tnValue)
+	{
+		s64 lnOldValue;
 
 
-		//////////
-		// Return the old value
-		//////
-			return(lnOldValue);
+		// Grab the old value and update
+		lnOldValue					= *varMeta1->value.data_s64;
+		*varMeta1->value.data_s64	= tnValue;
+		return(lnOldValue);
+	}
+
+	s64 iEngine_update_meta2(SThisCode* thisCode, s64 tnValue)
+	{
+		s64 lnOldValue;
+
+
+		// Grab the old value and update
+		lnOldValue					= *varMeta2->value.data_s64;
+		*varMeta2->value.data_s64	= tnValue;
+		return(lnOldValue);
+	}
+
+	s64 iEngine_update_meta3(SThisCode* thisCode, s64 tnValue)
+	{
+		s64 lnOldValue;
+
+
+		// Grab the old value and update
+		lnOldValue					= *varMeta3->value.data_s64;
+		*varMeta3->value.data_s64	= tnValue;
+		return(lnOldValue);
+	}
+
+	s64 iEngine_update_meta4(SThisCode* thisCode, s64 tnValue)
+	{
+		s64 lnOldValue;
+
+
+		// Grab the old value and update
+		lnOldValue					= *varMeta4->value.data_s64;
+		*varMeta4->value.data_s64	= tnValue;
+		return(lnOldValue);
+	}
+
+	void iEngine_update_meta5(SThisCode* thisCode, SDatum* data)
+	{
+		iDatum_duplicate(&varMeta5->value, data);
+	}
+
+	void iEngine_update_meta6(SThisCode* thisCode, SDatum* data)
+	{
+		iDatum_duplicate(&varMeta6->value, data);
+	}
+
+	void iEngine_update_meta7(SThisCode* thisCode, SVariable* varSrc)
+	{
+		iVariable_copy(NULL, varMeta7, varSrc);
+	}
+
+	void iEngine_update_meta8(SThisCode* thisCode, SVariable* varSrc)
+	{
+		iVariable_copy(NULL, varMeta8, varSrc);
+	}
+
+	void iEngine_update_meta9(SThisCode* thisCode, SVariable* varSrc)
+	{
+		iVariable_copy(NULL, varMeta9, varSrc);
 	}
 
 

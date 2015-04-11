@@ -1095,6 +1095,15 @@ typedef SEM**		SEMpp;
 //////
 	const u8			cgcName_startupTime[]				= "_startupTime";
 	const u8			cgcName_tally[]						= "_tally";
+	const u8			cgcName_meta1[]						= "_meta1";
+	const u8			cgcName_meta2[]						= "_meta2";
+	const u8			cgcName_meta3[]						= "_meta3";
+	const u8			cgcName_meta4[]						= "_meta4";
+	const u8			cgcName_meta5[]						= "_meta5";
+	const u8			cgcName_meta6[]						= "_meta6";
+	const u8			cgcName_meta7[]						= "_meta7";
+	const u8			cgcName_meta8[]						= "_meta8";
+	const u8			cgcName_meta9[]						= "_meta9";
 
 
 //////////
