@@ -183,6 +183,15 @@
 	bool					iEngine_set_event						(SThisCode* thisCode, s32 tnEventId, SWindow* win, SObject* obj, uptr tnEventAddress);
 
 	s64						iEngine_update_tally					(SThisCode* thisCode, s64 tnValue);
+	s64						iEngine_update_meta1					(SThisCode* thisCode, s64 tnValue);
+	s64						iEngine_update_meta2					(SThisCode* thisCode, s64 tnValue);
+	s64						iEngine_update_meta3					(SThisCode* thisCode, s64 tnValue);
+	s64						iEngine_update_meta4					(SThisCode* thisCode, s64 tnValue);
+	void					iEngine_update_meta5					(SThisCode* thisCode, SDatum* data);
+	void					iEngine_update_meta6					(SThisCode* thisCode, SDatum* data);
+	void					iEngine_update_meta7					(SThisCode* thisCode, SVariable* varSrc);
+	void					iEngine_update_meta8					(SThisCode* thisCode, SVariable* varSrc);
+	void					iEngine_update_meta9					(SThisCode* thisCode, SVariable* varSrc);
 
 	bool					iiEngine_getParametersBetween			(SThisCode* thisCode, SComp* compLeftParen, u32* paramsFound, u32 requiredCount, u32 maxCount, SVariable* params[]);
 

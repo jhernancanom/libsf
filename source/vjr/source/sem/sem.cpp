@@ -2120,7 +2120,7 @@ debug_break;
 				// Determine the position
 				//////
 					SetRect(&lrc2, rc.left, rc.top + lnTop, rc.right, rc.top + lnTop + (font->tm.tmHeight * 2));
-					DrawText(bmp->hdc, var2000Spaces->value.data, 1, &lrc2, DT_CALCRECT);
+					DrawText(bmp->hdc, cvarSpace2000->value.data, 1, &lrc2, DT_CALCRECT);
 					SetRect(&lrc, rc.left, rc.top + lnTop, rc.right, rc.top + lnTop + (lrc2.bottom - lrc2.top));
 					if (lrc.bottom > rc.bottom)
 						lrc.bottom = rc.bottom;
@@ -2282,12 +2282,12 @@ debug_break;
 
 										// Find out where it starts
 										SetRect(&lrcCompCalcStart, 0, 0, 200000, lrc.bottom);
-										if (comp->start != 0)		DrawText(bmp->hdc, var2000Spaces->value.data, comp->start, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
+										if (comp->start != 0)		DrawText(bmp->hdc, cvarSpace2000->value.data, comp->start, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
 										else						SetRect(&lrcCompCalcStart, 0, 0, 0, lrc.bottom);
 
 										// Find out how long it dwells
 										SetRect(&lrcCompCalcDwell, lrcCompCalcStart.right, 0, 200000, lrc.bottom);
-										DrawText(bmp->hdc, var2000Spaces->value.data, comp->length, &lrcCompCalcDwell, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
+										DrawText(bmp->hdc, cvarSpace2000->value.data, comp->length, &lrcCompCalcDwell, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
 										SetRect(&lrcComp, rc.left + lrcCompCalcDwell.left, lrc2.top, rc.left + lrcCompCalcDwell.right, lrc2.bottom);
 
 										// Do we need to adjust it back for scrolling?
@@ -2502,14 +2502,14 @@ renderAsOnlyText:
 						if (sem->columnEdit != 0)
 						{
 							// It's somewhere on the line
-							DrawText(bmp->hdc, var2000Spaces->value.data, sem->columnEdit - sem->columnLeft, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
+							DrawText(bmp->hdc, cvarSpace2000->value.data, sem->columnEdit - sem->columnLeft, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
 							SetRect(&lrcCompCalcDwell, lrcCompCalcStart.right, 0, lrc.right, lrc.bottom);
-							DrawText(bmp->hdc, var2000Spaces->value.data, 1, &lrcCompCalcDwell, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
+							DrawText(bmp->hdc, cvarSpace2000->value.data, 1, &lrcCompCalcDwell, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
 							SetRect(&lrcComp, rc.left + lrcCompCalcDwell.left, lrc2.top, rc.left + lrcCompCalcDwell.right, lrc2.bottom);
 
 						} else {
 							// It's all the way to the left
-							DrawText(bmp->hdc, var2000Spaces->value.data, 1, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
+							DrawText(bmp->hdc, cvarSpace2000->value.data, 1, &lrcCompCalcStart, DT_VCENTER | DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_CALCRECT);
 							SetRect(&lrcComp, rc.left + ((sem->isOverwrite) ? 0 : 1), lrc.top, rc.left + lrcCompCalcStart.right, lrc.bottom);
 						}
 

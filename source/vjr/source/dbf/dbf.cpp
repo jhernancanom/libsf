@@ -1873,7 +1873,7 @@
 			{
 				// Grab the stem part of the name
 				returnsParams.params[0] = varPathname;
-				returnsParams.params[1] = varSix;
+				returnsParams.params[1] = cvarSix;
 				varAlias = function_juststem(thisCode, &returnsParams);
 
 				// If it's invalid, or unreachable, then just use a default alias name

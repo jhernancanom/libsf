@@ -1,0 +1,8 @@
+LIBRARY	"jdebic"
+
+EXPORTS
+
+	jdebic_go_online
+	jdebic_go_offline
+	jdebic_receive_message
+	jdebic_send_message

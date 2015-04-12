@@ -926,7 +926,7 @@
 	bool iObj_isCommandWindow(SThisCode* thisCode, SObject* obj)
 	{
 		logfunc(__FUNCTION__);
-		return(obj == command);
+		return(obj == _cmd);
 	}
 
 
@@ -2658,6 +2658,17 @@ debug_break;
 			case _OBJ_TYPE_SUBFORM:
 				if (propBorderStyle(obj) != _BORDER_STYLE_NONE)		SetRect(&obj->rcClient, 1, bmpArrowUl->bi.biHeight + 1, tnWidth - 8 - 1, tnHeight - 1);
 				else												SetRect(&obj->rcClient, 0, bmpArrowUl->bi.biHeight,     tnWidth - 8,     tnHeight);
+
+
+				/////////
+				// If it's _screen, we need to also setup _asciirows and _asciicols
+				//////
+					if (propIsName_byText(obj, cgcName_screen))
+					{
+						*varAsciiRows->value.data_s32	= (obj->rcClient.bottom - obj->rcClient.top) / obj->p.font->tm.tmHeight;
+						*varAsciiCols->value.data_s32	= (obj->rcClient.right - obj->rcClient.left) / obj->p.font->tm.tmAveCharWidth;
+					}
+
 
 				//////////
 				// Default child settings:

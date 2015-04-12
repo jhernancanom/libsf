@@ -55,10 +55,15 @@
 //    Link List -- Simple link list algorithms.
 //////////
 
+#ifndef __LL_H_
+#define __LL_H_
+
 
 
 
 struct SComp;
+struct SObject;
+struct SVariable;
 struct SLine;
 struct SExtraInfo;
 struct SThisCode;
@@ -141,3 +146,6 @@ struct SThisCode;
 	SLL*					iLl_getFirstNode							(SLL* node);
 	SLL*					iLl_getLastNode								(SLL* node);
 	u32						iLl_countNodesToEnd							(SLL* node);
+
+#endif __LL_H_
+

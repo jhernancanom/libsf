@@ -902,6 +902,7 @@ struct SBasePropMap;
 	// Basic setters and getters
 	// Note:  The _direct()* function variations are used to bypass the normal setters
 	//         and getters, and should be used for internal use only.
+	void					iObjProp_init_fixup						(void);
 	bool					iObjProp_set							(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* varNewValue, bool tlNestedSet = false);
 	bool					iObjProp_set_bitmap_direct				(SThisCode* thisCode, SObject* obj, s32 tnIndex, SBitmap* bmp);
 	bool					iObjProp_set_character					(SThisCode* thisCode, SObject* obj, s32 tnIndex, SVariable* varNewValue);

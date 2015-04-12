@@ -253,6 +253,7 @@ typedef SEM**		SEMpp;
 	#define propSetIcon(obj, bmp)						iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_ICON,				bmp)
 	#define propSetMargin(obj, value)					iObjProp_set_s32_direct			(thisCode, obj, _INDEX_MARGIN,				value)
 	#define propSetMultiSelect(obj, value)				iObjProp_set_logical_fromLogicalConstants(thisCode, obj, _INDEX_MULTISELECT, value)
+	#define propSetName(obj, value, valueLength)		iObjProp_set_character_direct	(thisCode, obj, _INDEX_NAME,				(u8*)value,		valueLength)
 	#define propSetPictureBmp(obj, bmp)					iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_PICTUREBMP,			bmp)
 	#define propSetPictureBmpDown(obj, bmp)				iObjProp_set_bitmap_direct		(thisCode, obj, _INDEX_PICTUREBMP_DOWN,		bmp)
 	#define propSetRiderTab(obj, value, valueLength)	iObjProp_set_character_direct	(thisCode, obj, _INDEX_RIDERTAB,			(u8*)value,		valueLength)
@@ -1093,8 +1094,65 @@ typedef SEM**		SEMpp;
 //////////
 // Internal variable names
 //////
+	const u8			cgcName_asciicols[]					= "_asciicols";
+	const u8			cgcName_asciirows[]					= "_asciirows";
+	const u8			cgcName_beautify[]					= "_beautify";
+	const u8			cgcName_browser[]					= "_browser";
+	const u8			cgcName_builder[]					= "_builder";
+	const u8			cgcName_calcmem[]					= "_calcmem";
+	const u8			cgcName_calcvalue[]					= "_calcvalue";
+	const u8			cgcName_cliptext[]					= "_cliptext";
+	const u8			cgcName_codesense[]					= "_codesense";
+	const u8			cgcName_converter[]					= "_converter";
+	const u8			cgcName_coverage[]					= "_coverage";
+	const u8			cgcName_dblclick[]					= "_dblclick";
+	const u8			cgcName_diarydate[]					= "_diarydate";
+	const u8			cgcName_dos[]						= "_dos";
+	const u8			cgcName_foxcode[]					= "foxcode";
+	const u8			cgcName_foxref[]					= "_foxref";
+	const u8			cgcName_foxtask[]					= "_foxtask";
+	const u8			cgcName_gallery[]					= "_gallery";
+	const u8			cgcName_genhtml[]					= "_genhtml";
+	const u8			cgcName_genmenu[]					= "_genmenu";
+	const u8			cgcName_getexpr[]					= "_getexpr";
+	const u8			cgcName_incseek[]					= "_incseek";
+	const u8			cgcName_include[]					= "_include";
+	const u8			cgcName_mac[]						= "_mac";
+	const u8			cgcName_meta1[]						= "_meta1";
+	const u8			cgcName_meta2[]						= "_meta2";
+	const u8			cgcName_meta3[]						= "_meta3";
+	const u8			cgcName_meta4[]						= "_meta4";
+	const u8			cgcName_meta5[]						= "_meta5";
+	const u8			cgcName_meta6[]						= "_meta6";
+	const u8			cgcName_meta7[]						= "_meta7";
+	const u8			cgcName_meta8[]						= "_meta8";
+	const u8			cgcName_meta9[]						= "_meta9";
+	const u8			cgcName_mline[]						= "_mline";
+	const u8			cgcName_objectbrowser[]				= "_objectbrowser";
+	const u8			cgcName_pageno[]					= "_pageno";
+	const u8			cgcName_pagetotal[]					= "_pagetotal";
+	const u8			cgcName_pretext[]					= "_pretext";
+	const u8			cgcName_reportbuilder[]				= "_reportbuilder";
+	const u8			cgcName_reportoutput[]				= "_reportoutput";
+	const u8			cgcName_reportpreview[]				= "_reportpreview";
+	const u8			cgcName_samples[]					= "_samples";
+	const u8			cgcName_scctext[]					= "_scctext";
+	const u8			cgcName_shell[]						= "_shell";
+	const u8			cgcName_spellchk[]					= "_spellchk";
+	const u8			cgcName_startup[]					= "_startup";
 	const u8			cgcName_startupTime[]				= "_startupTime";
+	const u8			cgcName_tasklist[]					= "_tasklist";
+	const u8			cgcName_taskpane[]					= "_taskpane";
 	const u8			cgcName_tally[]						= "_tally";
+	const u8			cgcName_text[]						= "_text";
+	const u8			cgcName_throttle[]					= "_throttle";
+	const u8			cgcName_toolbox[]					= "_toolbox";
+	const u8			cgcName_triggerlevel[]				= "_triggerlevel";
+	const u8			cgcName_unix[]						= "_unix";
+	const u8			cgcName_vfp[]						= "_vfp";
+	const u8			cgcName_windows[]					= "_windows";
+	const u8			cgcName_wizard[]					= "_wizard";
+
 
 
 //////////
@@ -1199,6 +1257,20 @@ typedef SEM**		SEMpp;
 	const u8			cgc_am_uppercase[]					= "AM";
 	const u8			cgc_pm_lowercase[]					= "pm";
 	const u8			cgc_am_lowercase[]					= "am";
+
+
+//////////
+// Primary object names
+//////
+	const u8			cgcName_sourceCode[]				= "_sourcecode";
+	const u8			cgcName_locals[]					= "_locals";
+	const u8			cgcName_watch[]						= "_watch";
+	const u8			cgcName_command[]					= "_cmd";
+	const u8			cgcName_debug[]						= "_debug";
+	const u8			cgcName_output[]					= "_output";
+	const u8			cgcName_sourceLight[]				= "_sourcelight";
+	const u8			cgcName_screen[]					= "_screen";
+	const u8			cgcName_jdebi[]						= "_jdebi";
 
 
 //////////

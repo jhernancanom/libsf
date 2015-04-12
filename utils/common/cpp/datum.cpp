@@ -142,7 +142,7 @@
 			{
 				// We may need to set the length
 				if (dataLength < 0)
-					dataLength = (s32)strlen(data);
+					dataLength = (s32)strlen((s8*)data);
 
 				// Initialize
 				memset(datumNew, 0, sizeof(SDatum));
@@ -163,7 +163,7 @@
 		{
 			// We may need to set the length
 			if (dataLength < 0)
-				dataLength = (s32)strlen(data);
+				dataLength = (s32)strlen((s8*)data);
 
 			// Release anything that's already there
 			iiDatum_delete(datum);

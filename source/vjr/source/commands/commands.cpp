@@ -119,7 +119,7 @@
 		{
 			// Append the error to the EM
 			iSEM_appendLine(thisCode, screenData, errorText, -1, false);
-			screen_editbox->isDirtyRender = true;
+			_screen_editbox->isDirtyRender = true;
 
 		} else {
 			// Immediate need
@@ -1972,7 +1972,7 @@
 
 
 		// Return bits8()
-		return(ifunction_bits_common(thisCode, varBits, varEight, returnsParams));
+		return(ifunction_bits_common(thisCode, varBits, cvarEight, returnsParams));
 	}
 
 
@@ -2004,7 +2004,7 @@
 
 
 		// Return bits16()
-		return(ifunction_bits_common(thisCode, varBits, varSixteen, returnsParams));
+		return(ifunction_bits_common(thisCode, varBits, cvarSixteen, returnsParams));
 	}
 
 
@@ -2036,7 +2036,7 @@
 
 
 		// Return bits32()
-		return(ifunction_bits_common(thisCode, varBits, varThirtyTwo, returnsParams));
+		return(ifunction_bits_common(thisCode, varBits, cvarThirtyTwo, returnsParams));
 	}
 
 
@@ -2068,7 +2068,7 @@
 
 
 		// Return bits64()
-		return(ifunction_bits_common(thisCode, varBits, varSixtyFour, returnsParams));
+		return(ifunction_bits_common(thisCode, varBits, cvarSixtyFour, returnsParams));
 	}
 
 
@@ -2556,7 +2556,7 @@
 			if (!iVariable_isValid(varReplace))
 			{
 				// They didn't provide a 3rd parameter, so we'll use a pseudo placeholder which is an empty string
-				varReplace = varEmptyString;
+				varReplace = cvarEmptyString;
 
 			} else if (!iVariable_isTypeCharacter(varReplace)) {
 				// It is invalid
@@ -8285,7 +8285,7 @@
 
 			} else {
 				// The first occurrence is what we're after
-				varPadCharacter = varConstant_space;
+				varPadCharacter = cvarSpace1;
 			}
 
 
@@ -9102,8 +9102,8 @@
 
 			} else {
 				// Default to fully transparent or fully opaque based on its ncset()
-				if (propGet_settings_ncset_alphaIsOpaque(_settings))	varAlp = varTwoFiftyFive;
-				else													varAlp = varZero;
+				if (propGet_settings_ncset_alphaIsOpaque(_settings))	varAlp = cvarTwoFiftyFive;
+				else													varAlp = cvarZero;
 			}
 
 
@@ -10293,7 +10293,7 @@
 			if (!iVariable_isValid(varReplace))
 			{
 				// They didn't provide a 3rd parameter, so we'll use a pseudo placeholder which is an empty string
-				varReplace = varEmptyString;
+				varReplace = cvarEmptyString;
 
 			} else if (!iVariable_isTypeCharacter(varReplace)) {
 				// It is invalid
@@ -13495,7 +13495,7 @@ debug_break;
 			// Redraw what remains
 			//////
 				iSEM_navigateToEndLine(thisCode, screenData, _screen);
-				screen_editbox->isDirtyRender = true;
+				_screen_editbox->isDirtyRender = true;
 				iWindow_render(NULL, gWinJDebi, false);
 
 			//////////
@@ -13583,7 +13583,7 @@ debug_break;
 		// Redraw what remains
 		//////
 			iSEM_navigateToEndLine(thisCode, screenData, _screen);
-			screen_editbox->isDirtyRender = true;
+			_screen_editbox->isDirtyRender = true;
 			iWindow_render(NULL, gWinJDebi, false);
 			// All done
 	}
@@ -13855,7 +13855,7 @@ debug_break;
 		//////
 			// Pass it our output screen
 			if (compValidate)
-				iDbc_validate(thisCode, &gsDbcArea[lnDbcArea], (compRecover != NULL), ((propGet_settings_Talk(_settings)) ? screen_editbox->p.sem : NULL), gWinJDebi);
+				iDbc_validate(thisCode, &gsDbcArea[lnDbcArea], (compRecover != NULL), ((propGet_settings_Talk(_settings)) ? _screen_editbox->p.sem : NULL), gWinJDebi);
 	}
 
 
