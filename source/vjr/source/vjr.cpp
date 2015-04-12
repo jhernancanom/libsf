@@ -161,25 +161,21 @@
 //////
 	void iVjr_init(HACCEL* hAccelTable)
 	{
-		SThisCode*		thisCode = NULL;
-		s32				lnValue;
-		f32				lfValue;
-		RECT			lrc;
-		u8				logBuffer[256];
-		SBitmap*		bmp;
-		SReturnsParams	lsReturnsParams;
+		SThisCode*	thisCode = NULL;
+		RECT		lrc;
+		u8			logBuffer[256];
+		SBitmap*	bmp;
 
 
 		// Get startup time
 		systemStartedTickCount	= GetTickCount();
 		systemStartedMs			= iTime_getLocalMs();
 
+		// Fixup values that can't be properly encoded at compile-time
+		iObjProp_init_fixup();
+
 		// Initialize basic data engine
 		iDbf_startup(true);
-
-		// Default value for spinners
-		gsProps_master[_INDEX_INCREMENT - 1]._f64	= 1.0;		// Default to 1.0 for incrementing
-		gsProps_master[_INDEX_ROUND_TO  - 1]._f64	= 0.01;		// Default to 2 decimal places
 
 		// Create a 1x1 no image bitmap placeholder
 		bmpNoImage = iBmp_allocate();
@@ -188,55 +184,7 @@
 		// Initialize primitive variables
 		iVariable_createDefaultValues(NULL);
 		iVariable_createPropsMaster(NULL);
-		varConstant_space		= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_CHARACTER, cgc_spaceText, 1,	false);
-		varEmptyString			= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_CHARACTER, (cu8*)NULL, 0,		false);
-		var2000Spaces			= iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL, true);
-		varTrue					= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_LOGICAL, (cu8*)NULL, 0,		false);
-		varFalse				= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_LOGICAL, (cu8*)NULL, 0,		false);
-		varZero					= iVariable_create(NULL, _VAR_TYPE_S64, NULL, true);
-
-		// 6
-		lnValue					= 6;
-		varSix					= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, sizeof(lnValue), false);
-
-		// 8
-		lnValue					= 8;
-		varEight				= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, sizeof(lnValue), false);
-
-		// 16
-		lnValue					= 16;
-		varSixteen				= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, sizeof(lnValue), false);
-
-		// 32
-		lnValue					= 32;
-		varThirtyTwo			= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, sizeof(lnValue), false);
-
-		// 64
-		lnValue					= 64;
-		varSixtyFour			= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, sizeof(lnValue), false);
-
-		// 255
-		lnValue					= 255;
-		varTwoFiftyFive			= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, sizeof(lnValue), false);
-
-		// 0.5
-		lfValue					= 0.5f;
-		varFiftyPercent			= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_F32, (cu8*)&lfValue, sizeof(lfValue), false);
-
-		// 1.0
-		lfValue					= 0.5f;
-		varOneHundredPercent	= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_F32, (cu8*)&lfValue, sizeof(lfValue), false);
-
-		// 2000 blank spaces
-		iDatum_allocateSpace(&var2000Spaces->value, 2000);
-		memset(var2000Spaces->value.data, 32, 2000);
-
-		// Constant logical
-		*varTrue->value.data_s8		= (s8)_LOGICAL_TRUE;
-		*varFalse->value.data_s8	= (s8)_LOGICAL_FALSE;
-
-//		// Keyboard shortcuts
-//		*hAccelTable = LoadAccelerators(ghInstance, MAKEINTRESOURCE(IDC_VJR));
+		iInit_createConstants();
 
 		// Initialize our critical sections
 		InitializeCriticalSection(&cs_uniqueIdAccess);
@@ -382,60 +330,9 @@
 		iVjr_appendSystemLog(thisCode, (u8*)"Create message window");
 		iInit_createMessageWindow();
 
-
-		//////////
 		// Create our global variables
-		//////
-			iVjr_appendSystemLog(thisCode, (u8*)"Create global variables");
-
-
-		//////////
-		// _startupTime
-		//////
-			memset(&lsReturnsParams, 0, sizeof(lsReturnsParams));
-			varGlobals = function_datetime(NULL, &lsReturnsParams);
-			iDatum_duplicate(&varGlobals->name, cgcName_startupTime, -1);
-
-
-		//////////
-		// _tally
-		//////
-			varTally = iVariable_create(NULL, _VAR_TYPE_S64, NULL, true);
-			iDatum_duplicate(&varTally->name, cgcName_tally, -1);
-			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varTally);
-
-
-		//////////
-		// _meta1 through _meta9
-		//////
-			varMeta1 = iVariable_create(NULL, _VAR_TYPE_S64, NULL, true);
-			varMeta2 = iVariable_create(NULL, _VAR_TYPE_S64, NULL, true);
-			varMeta3 = iVariable_create(NULL, _VAR_TYPE_S64, NULL, true);
-			varMeta4 = iVariable_create(NULL, _VAR_TYPE_S64, NULL, true);
-			varMeta5 = iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL, true);
-			varMeta6 = iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL, true);
-			varMeta7 = iVariable_create(NULL, _VAR_TYPE_LOGICAL, NULL, true);
-			varMeta8 = iVariable_create(NULL, _VAR_TYPE_LOGICAL, NULL, true);
-			varMeta9 = iVariable_create(NULL, _VAR_TYPE_LOGICAL, NULL, true);
-			iDatum_duplicate(&varMeta1->name, cgcName_meta1, -1);
-			iDatum_duplicate(&varMeta2->name, cgcName_meta2, -1);
-			iDatum_duplicate(&varMeta3->name, cgcName_meta3, -1);
-			iDatum_duplicate(&varMeta4->name, cgcName_meta4, -1);
-			iDatum_duplicate(&varMeta5->name, cgcName_meta5, -1);
-			iDatum_duplicate(&varMeta6->name, cgcName_meta6, -1);
-			iDatum_duplicate(&varMeta7->name, cgcName_meta7, -1);
-			iDatum_duplicate(&varMeta8->name, cgcName_meta8, -1);
-			iDatum_duplicate(&varMeta9->name, cgcName_meta9, -1);
-			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varMeta1);
-			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varMeta2);
-			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varMeta3);
-			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varMeta4);
-			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varMeta5);
-			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varMeta6);
-			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varMeta7);
-			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varMeta8);
-			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varMeta9);
-
+		iVjr_appendSystemLog(thisCode, (u8*)"Create global and system variables");
+		iInit_createGlobalSystemVariables();
 
 		// Create our default objects
 		iVjr_appendSystemLog(thisCode, (u8*)"Create default objects");
@@ -460,7 +357,7 @@
 		{
 			// Indicate success
 			sprintf((s8*)logBuffer, "Loaded: %s\0", cgcScreenDataFilename);
-			iSEM_appendLine(thisCode, output_editbox->p.sem, logBuffer, (s32)strlen(logBuffer), false);
+			iSEM_appendLine(thisCode, _output_editbox->p.sem, logBuffer, (s32)strlen(logBuffer), false);
 			iVjr_appendSystemLog(thisCode, (u8*)"Populate _screen with default data");
 			iSEM_appendLine(thisCode, screenData, (u8*)cgcScreenTitle, -1, false);
 			iSEM_appendLine(thisCode, screenData, NULL, 0, false);
@@ -489,35 +386,35 @@
 
 		// Initially populate _jdebi
 		// Load in the history if it exists
-		if (!iSEM_loadFromDisk(thisCode, NULL, command_editbox->p.sem, cgcCommandHistoryFilename, true, true))
+		if (!iSEM_loadFromDisk(thisCode, NULL, _command_editbox->p.sem, cgcCommandHistoryFilename, true, true))
 		{
 			// Indicate success
 			sprintf((s8*)logBuffer, "Loaded: %s\0", cgcCommandHistoryFilename);
-			iSEM_appendLine(thisCode, output_editbox->p.sem, logBuffer, (s32)strlen(logBuffer), false);
-			iSEM_appendLine(thisCode, command_editbox->p.sem, (u8*)"*** Welcome to Visual FreePro, Junior! :-)", -1, false);
-			iSEM_appendLine(thisCode, command_editbox->p.sem, (u8*)"*** For now, this can be thought of as a command window ... with a twist.", -1, false);
-			iSEM_appendLine(thisCode, command_editbox->p.sem, (u8*)"*** It works like an editor window.  You can insert new lines, edit old ones, etc.", -1, false);
-			iSEM_appendLine(thisCode, command_editbox->p.sem, (u8*)"*** To execute a command, press F6. If you're on the last line use F6 or Enter.", -1, false);
-			iSEM_appendLine(thisCode, command_editbox->p.sem, (u8*)"*** See http://www.visual-freepro.org/wiki/index.php/VXB for supported commands.", -1, false);
-			iSEM_appendLine(thisCode, command_editbox->p.sem, (u8*)"*** Remember always:  Love makes you smile. It keeps an inner peace like no other. :-)", -1, false);
+			iSEM_appendLine(thisCode, _output_editbox->p.sem, logBuffer, (s32)strlen(logBuffer), false);
+			iSEM_appendLine(thisCode, _command_editbox->p.sem, (u8*)"*** Welcome to Visual FreePro, Junior! :-)", -1, false);
+			iSEM_appendLine(thisCode, _command_editbox->p.sem, (u8*)"*** For now, this can be thought of as a command window ... with a twist.", -1, false);
+			iSEM_appendLine(thisCode, _command_editbox->p.sem, (u8*)"*** It works like an editor window.  You can insert new lines, edit old ones, etc.", -1, false);
+			iSEM_appendLine(thisCode, _command_editbox->p.sem, (u8*)"*** To execute a command, press F6. If you're on the last line use F6 or Enter.", -1, false);
+			iSEM_appendLine(thisCode, _command_editbox->p.sem, (u8*)"*** See http://www.visual-freepro.org/wiki/index.php/VXB for supported commands.", -1, false);
+			iSEM_appendLine(thisCode, _command_editbox->p.sem, (u8*)"*** Remember always:  Love makes you smile. It keeps an inner peace like no other. :-)", -1, false);
 		}
 
 		// Navigate to the last line
-		iSEM_navigateToEndLine(thisCode, command_editbox->p.sem, command_editbox);
+		iSEM_navigateToEndLine(thisCode, _command_editbox->p.sem, _command_editbox);
 
 		// Make sure there's a blank line at the end
-		if (command_editbox->p.sem->line_cursor->sourceCode_populatedLength != 0)
+		if (_command_editbox->p.sem->line_cursor->sourceCode_populatedLength != 0)
 		{
-			iSEM_appendLine(thisCode, command_editbox->p.sem, NULL, 0, false);
-			iSEM_navigateToEndLine(thisCode, command_editbox->p.sem, command_editbox);
+			iSEM_appendLine(thisCode, _command_editbox->p.sem, NULL, 0, false);
+			iSEM_navigateToEndLine(thisCode, _command_editbox->p.sem, _command_editbox);
 		}
 
 		// Load some source code
-		if (iSEM_loadFromDisk(thisCode, sourceCode_rider, sourceCode_editbox->p.sem, cgcStartupPrgFilename, true, true))
+		if (iSEM_loadFromDisk(thisCode, _sourceCode_rider, _sourceCode_editbox->p.sem, cgcStartupPrgFilename, true, true))
 		{
 			// Indicate success
 			sprintf((s8*)logBuffer, "Loaded: %s\0", cgcStartupPrgFilename);
-			iSEM_appendLine(thisCode, output_editbox->p.sem, logBuffer, (s32)strlen(logBuffer), false);
+			iSEM_appendLine(thisCode, _output_editbox->p.sem, logBuffer, (s32)strlen(logBuffer), false);
 		}
 
 		// Redraw

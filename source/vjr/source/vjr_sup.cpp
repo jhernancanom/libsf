@@ -575,6 +575,160 @@
 
 //////////
 //
+// 
+//
+//////
+	void iInit_createConstants(void)
+	{
+		s32 lnValue;
+		f32 lfValue;
+
+
+		// System constants used internally
+		cvarSpace1				= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_CHARACTER, cgc_spaceText, 1,	false);
+		cvarEmptyString			= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_CHARACTER, (cu8*)NULL, 0,		false);
+		cvarSpace2000			= iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL, true);
+		cvarTrue				= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_LOGICAL, (cu8*)NULL, 0,		false);
+		cvarFalse				= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_LOGICAL, (cu8*)NULL, 0,		false);
+		cvarZero				= iVariable_create(NULL, _VAR_TYPE_S64, NULL, true);
+
+		lnValue	= 6;
+		cvarSix					= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, 4, false);
+		lnValue	= 8;
+		cvarEight				= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, 4, false);
+		lnValue	= 16;
+		cvarSixteen				= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, 4, false);
+		lnValue	= 32;
+		cvarThirtyTwo			= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, 4, false);
+		lnValue	= 64;
+		cvarSixtyFour			= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, 4, false);
+		lnValue	= 255;
+		cvarTwoFiftyFive		= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_S32, (cu8*)&lnValue, 4, false);
+
+		lfValue	= 0.5f;
+		cvarFiftyPercent		= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_F32, (cu8*)&lfValue, 4, false);
+		lfValue	= 0.5f;
+		cvarOneHundredPercent	= iVariable_createAndPopulate_byText(NULL, _VAR_TYPE_F32, (cu8*)&lfValue, 4, false);
+
+		// 2000 blank spaces
+		iDatum_allocateSpace(&cvarSpace2000->value, 2000);
+		memset(cvarSpace2000->value.data, 32, 2000);
+
+		// Constant logical
+		*cvarTrue->value.data_s8	= (s8)_LOGICAL_TRUE;
+		*cvarFalse->value.data_s8	= (s8)_LOGICAL_FALSE;
+	}
+
+
+
+
+//////////
+//
+// Called to create the global system variables
+//
+//////
+	void iInit_createGlobalSystemVariables(void)
+	{
+		s8				lnVal_s8;
+		s32				lnVal_s32;
+		SReturnsParams	lsReturnsParams;
+
+
+		//////////
+		// _startupTime
+		//////
+			memset(&lsReturnsParams, 0, sizeof(lsReturnsParams));
+			varStartupTime = function_datetime(NULL, &lsReturnsParams);
+			iDatum_duplicate(&varStartupTime->name, cgcName_startupTime, -1);
+			iLl_appendExistingNodeAtBeginning((SLL**)&varGlobals, (SLL*)varStartupTime);
+
+
+		//////////
+		// The rest...
+		//////
+			iiInit_createGlobalSystemVariable(&varAsciiCols,		_VAR_TYPE_S32,			cgcName_asciicols);
+			iiInit_createGlobalSystemVariable(&varAsciiRows,		_VAR_TYPE_S32,			cgcName_asciirows);
+			iiInit_createGlobalSystemVariable(&varBeautify,			_VAR_TYPE_CHARACTER,	cgcName_beautify);
+			iiInit_createGlobalSystemVariable(&varBrowser,			_VAR_TYPE_CHARACTER,	cgcName_browser);
+			iiInit_createGlobalSystemVariable(&varBuilder,			_VAR_TYPE_CHARACTER,	cgcName_builder);
+			iiInit_createGlobalSystemVariable(&varCalcMem,			_VAR_TYPE_F64,			cgcName_calcmem);
+			iiInit_createGlobalSystemVariable(&varCalcValue,		_VAR_TYPE_F64,			cgcName_calcvalue);
+			iiInit_createGlobalSystemVariable(&varCliptext,			_VAR_TYPE_CHARACTER,	cgcName_cliptext);
+			iiInit_createGlobalSystemVariable(&varCodesense,		_VAR_TYPE_CHARACTER,	cgcName_codesense);
+			iiInit_createGlobalSystemVariable(&varConverter,		_VAR_TYPE_CHARACTER,	cgcName_converter);
+			iiInit_createGlobalSystemVariable(&varCoverage,			_VAR_TYPE_CHARACTER,	cgcName_coverage);
+			lnVal_s32 = GetDoubleClickTime();
+			iiInit_createGlobalSystemVariable(&varDblclick,			_VAR_TYPE_S32,			cgcName_dblclick,		(cs8*)&lnVal_s32,	4);
+			iiInit_createGlobalSystemVariable(&varDiaryDate,		_VAR_TYPE_DATE,			cgcName_diarydate);
+			iiInit_createGlobalSystemVariable(&varDos,				_VAR_TYPE_LOGICAL,		cgcName_dos);
+			iiInit_createGlobalSystemVariable(&varFoxcode,			_VAR_TYPE_CHARACTER,	cgcName_foxcode);
+			iiInit_createGlobalSystemVariable(&varFoxref,			_VAR_TYPE_CHARACTER,	cgcName_foxref);
+			iiInit_createGlobalSystemVariable(&varFoxtask,			_VAR_TYPE_CHARACTER,	cgcName_foxtask);
+			iiInit_createGlobalSystemVariable(&varGallery,			_VAR_TYPE_CHARACTER,	cgcName_gallery);
+			iiInit_createGlobalSystemVariable(&varGenhtml,			_VAR_TYPE_CHARACTER,	cgcName_genhtml);
+			iiInit_createGlobalSystemVariable(&varGenmenu,			_VAR_TYPE_CHARACTER,	cgcName_genmenu);
+			iiInit_createGlobalSystemVariable(&varGetexpr,			_VAR_TYPE_CHARACTER,	cgcName_getexpr);
+			iiInit_createGlobalSystemVariable(&varIncseek,			_VAR_TYPE_S32,			cgcName_incseek);
+			iiInit_createGlobalSystemVariable(&varInclude,			_VAR_TYPE_CHARACTER,	cgcName_include);
+			iiInit_createGlobalSystemVariable(&varMac,				_VAR_TYPE_LOGICAL,		cgcName_mac);
+			iiInit_createGlobalSystemVariable(&varMeta1,			_VAR_TYPE_S64,			cgcName_meta1);
+			iiInit_createGlobalSystemVariable(&varMeta2,			_VAR_TYPE_S64,			cgcName_meta2);
+			iiInit_createGlobalSystemVariable(&varMeta3,			_VAR_TYPE_S64,			cgcName_meta3);
+			iiInit_createGlobalSystemVariable(&varMeta4,			_VAR_TYPE_S64,			cgcName_meta4);
+			iiInit_createGlobalSystemVariable(&varMeta5,			_VAR_TYPE_CHARACTER,	cgcName_meta5);
+			iiInit_createGlobalSystemVariable(&varMeta6,			_VAR_TYPE_CHARACTER,	cgcName_meta6);
+			iiInit_createGlobalSystemVariable(&varMeta7,			_VAR_TYPE_LOGICAL,		cgcName_meta7);
+			iiInit_createGlobalSystemVariable(&varMeta8,			_VAR_TYPE_LOGICAL,		cgcName_meta8);
+			iiInit_createGlobalSystemVariable(&varMeta9,			_VAR_TYPE_LOGICAL,		cgcName_meta9);
+			iiInit_createGlobalSystemVariable(&varMline,			_VAR_TYPE_S32,			cgcName_mline);
+			iiInit_createGlobalSystemVariable(&varObjectBrowser,	_VAR_TYPE_CHARACTER,	cgcName_objectbrowser);
+			iiInit_createGlobalSystemVariable(&varPageno,			_VAR_TYPE_S32,			cgcName_pageno);
+			iiInit_createGlobalSystemVariable(&varPagetotal,		_VAR_TYPE_S32,			cgcName_pagetotal);
+			iiInit_createGlobalSystemVariable(&varPretext,			_VAR_TYPE_CHARACTER,	cgcName_pretext);
+			iiInit_createGlobalSystemVariable(&varReportBuilder,	_VAR_TYPE_CHARACTER,	cgcName_reportbuilder);
+			iiInit_createGlobalSystemVariable(&varReportOutput,		_VAR_TYPE_CHARACTER,	cgcName_reportoutput);
+			iiInit_createGlobalSystemVariable(&varReportpreview,	_VAR_TYPE_CHARACTER,	cgcName_reportpreview);
+			iiInit_createGlobalSystemVariable(&varSamples,			_VAR_TYPE_CHARACTER,	cgcName_samples);
+			iiInit_createGlobalSystemVariable(&varScctext,			_VAR_TYPE_CHARACTER,	cgcName_scctext);
+			// varScreen is initialized as _screen system-wide
+			iiInit_createGlobalSystemVariable(&varShell,			_VAR_TYPE_CHARACTER,	cgcName_shell);
+			iiInit_createGlobalSystemVariable(&varSpellchk,			_VAR_TYPE_CHARACTER,	cgcName_spellchk);
+			iiInit_createGlobalSystemVariable(&varStartup,			_VAR_TYPE_CHARACTER,	cgcName_startup,		(cs8*)&cgcStartupPrgFilename[0], sizeof(cgcStartupPrgFilename) - 1);
+			// varStartupTime is set above
+			iiInit_createGlobalSystemVariable(&varTasklist,			_VAR_TYPE_CHARACTER,	cgcName_tasklist);
+			iiInit_createGlobalSystemVariable(&varTaskpane,			_VAR_TYPE_CHARACTER,	cgcName_taskpane);
+			iiInit_createGlobalSystemVariable(&varTally,			_VAR_TYPE_S64,			cgcName_tally);
+			iiInit_createGlobalSystemVariable(&varText,				_VAR_TYPE_CHARACTER,	cgcName_text);
+			lnVal_s32 = 1;
+			iiInit_createGlobalSystemVariable(&varThrottle,			_VAR_TYPE_S32,			cgcName_throttle,		(cs8*)&lnVal_s32,	4);
+			iiInit_createGlobalSystemVariable(&varToolbox,			_VAR_TYPE_CHARACTER,	cgcName_toolbox);
+			iiInit_createGlobalSystemVariable(&varTriggerlevel,		_VAR_TYPE_S32,			cgcName_triggerlevel);
+			iiInit_createGlobalSystemVariable(&varUnix,				_VAR_TYPE_LOGICAL,		cgcName_unix);
+			// varVfp is initialized as _vjr system-wide
+			lnVal_s8 = _LOGICAL_TRUE;
+			iiInit_createGlobalSystemVariable(&varWindows,			_VAR_TYPE_LOGICAL,		cgcName_windows,		(cs8*)&lnVal_s8,	1);
+			iiInit_createGlobalSystemVariable(&varWizard,			_VAR_TYPE_CHARACTER,	cgcName_wizard);
+
+	}
+
+	void iiInit_createGlobalSystemVariable(SVariable** var, s32 tnType, cu8* tcName, cs8* tcInitValue, u32 tnInitValueLength)
+	{
+		// Create it
+		if (!tcInitValue)		*var = iVariable_create(NULL, tnType, NULL, true);
+		else					*var = iVariable_createAndPopulate_byText(NULL, tnType, tcInitValue, tnInitValueLength, false);
+
+		// Name it
+		iDatum_duplicate(&(*var)->name, tcName, -1);
+
+		// Append it to global variables
+		iLl_appendExistingNodeAtEnd((SLL**)&varGlobals, (SLL*)*var);
+	}
+
+
+
+
+//////////
+//
 // Loads the default settings for each object, populating them in turn.
 //
 //////
@@ -682,33 +836,42 @@
 		//////////
 		// Create the subforms
 		//////
-			sourceCode		= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
-			locals			= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
-			watch			= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
-			command			= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
-			debug			= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
-			output			= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
-			sourceLight		= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
+			_sourceCode		= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
+			_locals			= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
+			_watch			= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
+			_cmd			= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
+			_debug			= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
+			_output			= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
+			_sourceLight	= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
 			_screen			= iObj_addChild(thisCode, _OBJ_TYPE_SUBFORM, _jdebi);
 
-			// Set the icons
-			propSetIcon(sourceCode,		bmpSourceCodeIcon);
-			propSetIcon(locals,			bmpLocalsIcon);
-			propSetIcon(watch,			bmpWatchIcon);
-			propSetIcon(command,		bmpCommandIcon);
-			propSetIcon(debug,			bmpDebugIcon);
-			propSetIcon(output,			bmpOutputIcon);
-			propSetIcon(sourceLight,	bmpSourceLightIcon);
+			// Set the names, icons, and make them visible
+			propSetName(_sourceCode,	cgcName_sourceCode,		sizeof(cgcName_sourceCode) - 1);
+			propSetName(_locals,		cgcName_locals,			sizeof(cgcName_locals) - 1);
+			propSetName(_watch,			cgcName_watch,			sizeof(cgcName_watch) - 1);
+			propSetName(_cmd,			cgcName_command,		sizeof(cgcName_command) - 1);
+			propSetName(_debug,			cgcName_debug,			sizeof(cgcName_debug) - 1);
+			propSetName(_output,		cgcName_output,			sizeof(cgcName_output) - 1);
+			propSetName(_sourceLight,	cgcName_sourceLight,	sizeof(cgcName_sourceLight) - 1);
+			propSetName(_screen,		cgcName_screen,			sizeof(cgcName_screen) - 1);
+			propSetName(_jdebi,			cgcName_jdebi,			sizeof(cgcName_jdebi) - 1);
+
+			propSetIcon(_sourceCode,	bmpSourceCodeIcon);
+			propSetIcon(_locals,		bmpLocalsIcon);
+			propSetIcon(_watch,			bmpWatchIcon);
+			propSetIcon(_cmd,			bmpCommandIcon);
+			propSetIcon(_debug,			bmpDebugIcon);
+			propSetIcon(_output,		bmpOutputIcon);
+			propSetIcon(_sourceLight,	bmpSourceLightIcon);
 			propSetIcon(_screen,		bmpVjrIcon);
 			propSetIcon(_jdebi,			bmpJDebiIcon);
 
-			// Make them enabled and visible
-			propSetVisible(sourceCode,	_LOGICAL_TRUE);		propSetBorderStyle(sourceCode,	_BORDER_STYLE_FIXED);
-			propSetVisible(locals,		_LOGICAL_TRUE);		propSetBorderStyle(locals,		_BORDER_STYLE_FIXED);
-			propSetVisible(watch,		_LOGICAL_TRUE);		propSetBorderStyle(watch,		_BORDER_STYLE_FIXED);
-			propSetVisible(command,		_LOGICAL_TRUE);		propSetBorderStyle(command,		_BORDER_STYLE_FIXED);
-			propSetVisible(sourceLight,	_LOGICAL_TRUE);		propSetBorderStyle(sourceLight,	_BORDER_STYLE_FIXED);
-			propSetVisible(_screen,		_LOGICAL_TRUE);		propSetBorderStyle(_screen,		_BORDER_STYLE_FIXED);
+			propSetVisible(_sourceCode,		_LOGICAL_TRUE);		propSetBorderStyle(_sourceCode,		_BORDER_STYLE_FIXED);
+			propSetVisible(_locals,			_LOGICAL_TRUE);		propSetBorderStyle(_locals,			_BORDER_STYLE_FIXED);
+			propSetVisible(_watch,			_LOGICAL_TRUE);		propSetBorderStyle(_watch,			_BORDER_STYLE_FIXED);
+			propSetVisible(_cmd,			_LOGICAL_TRUE);		propSetBorderStyle(_cmd,			_BORDER_STYLE_FIXED);
+			propSetVisible(_sourceLight,	_LOGICAL_TRUE);		propSetBorderStyle(_sourceLight,	_BORDER_STYLE_FIXED);
+			propSetVisible(_screen,			_LOGICAL_TRUE);		propSetBorderStyle(_screen,			_BORDER_STYLE_FIXED);
 
 
 		//////////
@@ -716,12 +879,12 @@
 		//////
 			lnWidth		= (_jdebi->rcClient.right - _jdebi->rcClient.left) / 8;
 			lnHeight	= (_jdebi->rcClient.bottom - _jdebi->rcClient.top) / 8;
-			iObj_setSize(thisCode, sourceCode,	0,						0,							4 * lnWidth,																4 * lnHeight);
-			iObj_setSize(thisCode, locals,		sourceCode->rc.right,	0,							lnWidth * 3 / 2,															3 * lnHeight / 2);
-			iObj_setSize(thisCode, watch,		locals->rc.right,		0,							(_jdebi->rcClient.right - _jdebi->rcClient.left) - locals->rc.right,		3 * lnHeight / 2);
-			iObj_setSize(thisCode, command,		0,						sourceCode->rc.bottom,		4 * lnWidth,																(_jdebi->rcClient.bottom - _jdebi->rcClient.top) - sourceCode->rc.bottom);
-			iObj_setSize(thisCode, sourceLight,	sourceCode->rc.right,	watch->rc.bottom,			(_jdebi->rcClient.right - _jdebi->rcClient.left) - sourceCode->rc.right,	3 * lnHeight);
-			iObj_setSize(thisCode, _screen,		sourceCode->rc.right,	sourceLight->rc.bottom,		(_jdebi->rcClient.right - _jdebi->rcClient.left) - sourceCode->rc.right,	(_jdebi->rcClient.bottom - _jdebi->rcClient.top) - sourceLight->rc.bottom);
+			iObj_setSize(thisCode, _sourceCode,	0,						0,							4 * lnWidth,																4 * lnHeight);
+			iObj_setSize(thisCode, _locals,			_sourceCode->rc.right,	0,							lnWidth * 3 / 2,															3 * lnHeight / 2);
+			iObj_setSize(thisCode, _watch,			_locals->rc.right,		0,							(_jdebi->rcClient.right - _jdebi->rcClient.left) - _locals->rc.right,		3 * lnHeight / 2);
+			iObj_setSize(thisCode, _cmd,			0,						_sourceCode->rc.bottom,		4 * lnWidth,																(_jdebi->rcClient.bottom - _jdebi->rcClient.top) - _sourceCode->rc.bottom);
+			iObj_setSize(thisCode, _sourceLight,	_sourceCode->rc.right,	_watch->rc.bottom,			(_jdebi->rcClient.right - _jdebi->rcClient.left) - _sourceCode->rc.right,	3 * lnHeight);
+			iObj_setSize(thisCode, _screen,			_sourceCode->rc.right,	_sourceLight->rc.bottom,	(_jdebi->rcClient.right - _jdebi->rcClient.left) - _sourceCode->rc.right,	(_jdebi->rcClient.bottom - _jdebi->rcClient.top) - _sourceLight->rc.bottom);
 
 			// These are created, but they are not visible
 // 			iObj_setSize(debug,			command->rc.right,		watch->rc.bottom,			(sourceCode->rc.right - command->rc.right) / 2,									(_jdebi->rcClient.bottom - _jdebi->rcClient.top) - watch->rc.bottom);
@@ -730,48 +893,48 @@
 		//////////
 		// Add the editbox controls to the subforms
 		//////
-			sourceCode_carousel	= iObj_addChild(thisCode,	_OBJ_TYPE_CAROUSEL,		sourceCode);
-			sourceCode_rider	= iObj_addChild(thisCode,	_OBJ_TYPE_RIDER,		sourceCode_carousel);
-			sourceCode_editbox	= iObj_addChild(thisCode,	_OBJ_TYPE_EDITBOX,		sourceCode_rider);
-			locals_editbox		= iObj_addChild(thisCode,	_OBJ_TYPE_EDITBOX,		locals);
-			watch_editbox		= iObj_addChild(thisCode,	_OBJ_TYPE_EDITBOX,		watch);
-			command_editbox		= iObj_addChild(thisCode,	_OBJ_TYPE_EDITBOX,		command);
-			debug_editbox		= iObj_addChild(thisCode,	_OBJ_TYPE_EDITBOX,		debug);
-			output_editbox		= iObj_addChild(thisCode,	_OBJ_TYPE_EDITBOX,		output);
-			screen_editbox		= iObj_addChild(thisCode,	_OBJ_TYPE_EDITBOX,		_screen);
-			sourceLight_empty	= iObj_addChild(thisCode,	_OBJ_TYPE_EMPTY,		sourceLight);
+			_sourceCode_carousel	= iObj_addChild(thisCode,	_OBJ_TYPE_CAROUSEL,		_sourceCode);
+			_sourceCode_rider		= iObj_addChild(thisCode,	_OBJ_TYPE_RIDER,		_sourceCode_carousel);
+			_sourceCode_editbox		= iObj_addChild(thisCode,	_OBJ_TYPE_EDITBOX,		_sourceCode_rider);
+			_locals_editbox			= iObj_addChild(thisCode,	_OBJ_TYPE_EDITBOX,		_locals);
+			_watch_editbox			= iObj_addChild(thisCode,	_OBJ_TYPE_EDITBOX,		_watch);
+			_command_editbox		= iObj_addChild(thisCode,	_OBJ_TYPE_EDITBOX,		_cmd);
+			_debug_editbox			= iObj_addChild(thisCode,	_OBJ_TYPE_EDITBOX,		_debug);
+			_output_editbox			= iObj_addChild(thisCode,	_OBJ_TYPE_EDITBOX,		_output);
+			_screen_editbox			= iObj_addChild(thisCode,	_OBJ_TYPE_EDITBOX,		_screen);
+			_sourceLight_empty		= iObj_addChild(thisCode,	_OBJ_TYPE_EMPTY,		_sourceLight);
 
 
 		//////////
 		// Add the controls to the subforms, carousel, and rider
 		//////
-			propSetVisible(sourceCode_carousel,	_LOGICAL_TRUE);
-			propSetVisible(sourceCode_rider,	_LOGICAL_TRUE);
-			propSetVisible(sourceCode_editbox,	_LOGICAL_TRUE);
-			propSetVisible(locals_editbox,		_LOGICAL_TRUE);
-			propSetVisible(watch_editbox,		_LOGICAL_TRUE);
-			propSetVisible(command_editbox,		_LOGICAL_TRUE);
-			propSetVisible(debug_editbox,		_LOGICAL_TRUE);
-			propSetVisible(output_editbox,		_LOGICAL_TRUE);
-			propSetVisible(screen_editbox,		_LOGICAL_TRUE);
-			propSetVisible(sourceLight_empty,	_LOGICAL_TRUE);
+			propSetVisible(_sourceCode_carousel,	_LOGICAL_TRUE);
+			propSetVisible(_sourceCode_rider,		_LOGICAL_TRUE);
+			propSetVisible(_sourceCode_editbox,		_LOGICAL_TRUE);
+			propSetVisible(_locals_editbox,			_LOGICAL_TRUE);
+			propSetVisible(_watch_editbox,			_LOGICAL_TRUE);
+			propSetVisible(_command_editbox,		_LOGICAL_TRUE);
+			propSetVisible(_debug_editbox,			_LOGICAL_TRUE);
+			propSetVisible(_output_editbox,			_LOGICAL_TRUE);
+			propSetVisible(_screen_editbox,			_LOGICAL_TRUE);
+			propSetVisible(_sourceLight_empty,		_LOGICAL_TRUE);
 
 
 		//////////
 		// Position and size each control
 		//////
 			lnHeight = (_jdebi->rcClient.bottom - _jdebi->rcClient.top) / 8;
-			iObj_setSize(thisCode, sourceCode_carousel,	50,	-1,		sourceCode->rcClient.right			- sourceCode->rcClient.left - 49,			sourceCode->rcClient.bottom				- sourceCode->rcClient.top - 2);
-			iObj_setSize(thisCode, sourceCode_rider,	0,	0,		sourceCode_carousel->rcClient.right	- sourceCode_carousel->rcClient.left,		sourceCode_carousel->rcClient.bottom	- sourceCode_carousel->rcClient.top);
-			iObj_setSize(thisCode, sourceCode_editbox,	0,	0,		sourceCode_rider->rcClient.right	- sourceCode_rider->rcClient.left,			sourceCode_rider->rcClient.bottom		- sourceCode_rider->rcClient.top);
-			iEngine_raise_event(thisCode, _EVENT_RESIZE, NULL, sourceCode_carousel, &sourceCode_carousel->rc);
-			iObj_setSize(thisCode, locals_editbox,		8,	0,		locals->rcClient.right				- locals->rcClient.left - 8,				locals->rcClient.bottom					- locals->rcClient.top);
-			iObj_setSize(thisCode, watch_editbox,		8,	0,		watch->rcClient.right				- watch->rcClient.left - 8,					watch->rcClient.bottom					- watch->rcClient.top);
-			iObj_setSize(thisCode, command_editbox,		8,	0,		command->rcClient.right				- command->rcClient.left - 8,				command->rcClient.bottom				- command->rcClient.top);
-			iObj_setSize(thisCode, debug_editbox,		8,	0,		debug->rcClient.right				- debug->rcClient.left - 8,					debug->rcClient.bottom					- debug->rcClient.top);
-			iObj_setSize(thisCode, output_editbox,		8,	0,		output->rcClient.right				- output->rcClient.left - 8,				output->rcClient.bottom					- output->rcClient.top);
-			iObj_setSize(thisCode, screen_editbox,		8,	0,		_screen->rcClient.right				- _screen->rcClient.left - 8,				_screen->rcClient.bottom				- _screen->rcClient.top);
-			iObj_setSize(thisCode, sourceLight_empty,	0,	0,		sourceLight->rcClient.right			- sourceLight->rcClient.left,				sourceLight->rcClient.bottom			- sourceLight->rcClient.top);
+			iObj_setSize(thisCode, _sourceCode_carousel,	50,	-1,		_sourceCode->rcClient.right				- _sourceCode->rcClient.left - 49,		_sourceCode->rcClient.bottom			- _sourceCode->rcClient.top - 2);
+			iObj_setSize(thisCode, _sourceCode_rider,		0,	0,		_sourceCode_carousel->rcClient.right	- _sourceCode_carousel->rcClient.left,	_sourceCode_carousel->rcClient.bottom	- _sourceCode_carousel->rcClient.top);
+			iObj_setSize(thisCode, _sourceCode_editbox,		0,	0,		_sourceCode_rider->rcClient.right		- _sourceCode_rider->rcClient.left,		_sourceCode_rider->rcClient.bottom		- _sourceCode_rider->rcClient.top);
+			iEngine_raise_event(thisCode, _EVENT_RESIZE, NULL, _sourceCode_carousel, &_sourceCode_carousel->rc);
+			iObj_setSize(thisCode, _locals_editbox,			8,	0,		_locals->rcClient.right					- _locals->rcClient.left - 8,			_locals->rcClient.bottom				- _locals->rcClient.top);
+			iObj_setSize(thisCode, _watch_editbox,			8,	0,		_watch->rcClient.right					- _watch->rcClient.left - 8,			_watch->rcClient.bottom					- _watch->rcClient.top);
+			iObj_setSize(thisCode, _command_editbox,		8,	0,		_cmd->rcClient.right					- _cmd->rcClient.left - 8,				_cmd->rcClient.bottom					- _cmd->rcClient.top);
+			iObj_setSize(thisCode, _debug_editbox,			8,	0,		_debug->rcClient.right					- _debug->rcClient.left - 8,			_debug->rcClient.bottom					- _debug->rcClient.top);
+			iObj_setSize(thisCode, _output_editbox,			8,	0,		_output->rcClient.right					- _output->rcClient.left - 8,			_output->rcClient.bottom				- _output->rcClient.top);
+			iObj_setSize(thisCode, _screen_editbox,			8,	0,		_screen->rcClient.right					- _screen->rcClient.left - 8,			_screen->rcClient.bottom				- _screen->rcClient.top);
+			iObj_setSize(thisCode, _sourceLight_empty,		0,	0,		_sourceLight->rcClient.right			- _sourceLight->rcClient.left,			_sourceLight->rcClient.bottom			- _sourceLight->rcClient.top);
 
 
 		//////////
@@ -783,19 +946,19 @@
 		//////////
 		// SourceCode window caption and font
 		//////
-			propSetBackStyle(sourceCode, _BACK_STYLE_TRANSPARENT);
-			propSetCaption(sourceCode, cgcSourceCodeTitle);
+			propSetBackStyle(_sourceCode, _BACK_STYLE_TRANSPARENT);
+			propSetCaption(_sourceCode, cgcSourceCodeTitle);
 
 			// Adjust the caption width
-			((SObject*)sourceCode->firstChild->ll.next)->rc.right = 90;
+			((SObject*)_sourceCode->firstChild->ll.next)->rc.right = 90;
 
-			sourceCode_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, sourceCode_editbox, (uptr)&iSEM_onKeyDown_sourceCode);
-			propSetBorderStyle(sourceCode_editbox, _BORDER_STYLE_FIXED);
-			propSetBorderColor(sourceCode_editbox, lineNumberBackColor);
-			sourceCode_editbox->p.sem->showCursorLine	= true;
-			sourceCode_editbox->p.sem->isSourceCode		= true;
-			sourceCode_editbox->p.sem->showLineNumbers	= true;
+			_sourceCode_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, _sourceCode_editbox, (uptr)&iSEM_onKeyDown_sourceCode);
+			propSetBorderStyle(_sourceCode_editbox, _BORDER_STYLE_FIXED);
+			propSetBorderColor(_sourceCode_editbox, lineNumberBackColor);
+			_sourceCode_editbox->p.sem->showCursorLine	= true;
+			_sourceCode_editbox->p.sem->isSourceCode		= true;
+			_sourceCode_editbox->p.sem->showLineNumbers	= true;
 
 			// Decorate with toolbars
 			iInit_jdebi_addToolbars();
@@ -804,80 +967,80 @@
 		//////////
 		// Locals window caption and font
 		//////
-			iObjProp_set_character_direct(thisCode, locals, _INDEX_CAPTION, cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
-			locals_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, locals_editbox, (uptr)&iSEM_onKeyDown);
-			locals_editbox->p.sem->showCursorLine	= true;
-			locals_editbox->p.sem->isSourceCode		= true;
-			locals_editbox->p.sem->showLineNumbers	= true;
-			iSEM_appendLine(thisCode, locals_editbox->p.sem, NULL, 0, false);
+			iObjProp_set_character_direct(thisCode, _locals, _INDEX_CAPTION, cgcLocalsTitle, sizeof(cgcLocalsTitle) - 1);
+			_locals_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, _locals_editbox, (uptr)&iSEM_onKeyDown);
+			_locals_editbox->p.sem->showCursorLine	= true;
+			_locals_editbox->p.sem->isSourceCode		= true;
+			_locals_editbox->p.sem->showLineNumbers	= true;
+			iSEM_appendLine(thisCode, _locals_editbox->p.sem, NULL, 0, false);
 
 			// Adjust the caption width
-			((SObject*)locals->firstChild->ll.next)->rc.right = 65;
+			((SObject*)_locals->firstChild->ll.next)->rc.right = 65;
 
 
 		//////////
 		// Watch window caption and font
 		//////
-			iObjProp_set_character_direct(thisCode, watch, _INDEX_CAPTION, cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
-			watch_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, watch_editbox, (uptr)&iSEM_onKeyDown);
-			watch_editbox->p.sem->showCursorLine	= true;
-			watch_editbox->p.sem->isSourceCode		= true;
-			watch_editbox->p.sem->showLineNumbers	= true;
-			iSEM_appendLine(thisCode, watch_editbox->p.sem, NULL, 0, false);
+			iObjProp_set_character_direct(thisCode, _watch, _INDEX_CAPTION, cgcWatchTitle, sizeof(cgcWatchTitle) - 1);
+			_watch_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, _watch_editbox, (uptr)&iSEM_onKeyDown);
+			_watch_editbox->p.sem->showCursorLine	= true;
+			_watch_editbox->p.sem->isSourceCode		= true;
+			_watch_editbox->p.sem->showLineNumbers	= true;
+			iSEM_appendLine(thisCode, _watch_editbox->p.sem, NULL, 0, false);
 
 			// Adjust the caption width
-			((SObject*)watch->firstChild->ll.next)->rc.right = 65;
+			((SObject*)_watch->firstChild->ll.next)->rc.right = 65;
 
 
 		//////////
 		// Command window caption and font
 		//////
-			iObjProp_set_character_direct(thisCode, command, _INDEX_CAPTION, cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
-			command_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, command_editbox, (uptr)&iSEM_onKeyDown_sourceCode);
-			command_editbox->p.hasFocus					= true;
-			command_editbox->p.sem->showCursorLine		= true;
-			command_editbox->p.sem->isSourceCode		= true;
-			command_editbox->p.sem->showLineNumbers		= true;
+			iObjProp_set_character_direct(thisCode, _cmd, _INDEX_CAPTION, cgcCommandTitle, sizeof(cgcCommandTitle) - 1);
+			_command_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, _command_editbox, (uptr)&iSEM_onKeyDown_sourceCode);
+			_command_editbox->p.hasFocus					= true;
+			_command_editbox->p.sem->showCursorLine		= true;
+			_command_editbox->p.sem->isSourceCode		= true;
+			_command_editbox->p.sem->showLineNumbers		= true;
 
 			// Adjust the caption width
-			((SObject*)command->firstChild->ll.next)->rc.right = 80;
+			((SObject*)_cmd->firstChild->ll.next)->rc.right = 80;
 
 
 		//////////
 		// Debug window caption and font
 		//////
-			iObjProp_set_character_direct(thisCode, debug, _INDEX_CAPTION, cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
-			debug_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, debug_editbox, (uptr)&iSEM_onKeyDown);
-			debug_editbox->p.sem->showCursorLine	= true;
+			iObjProp_set_character_direct(thisCode, _debug, _INDEX_CAPTION, cgcDebugTitle, sizeof(cgcDebugTitle) - 1);
+			_debug_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, _debug_editbox, (uptr)&iSEM_onKeyDown);
+			_debug_editbox->p.sem->showCursorLine	= true;
 
 			// Adjust the caption width
-			((SObject*)debug->firstChild->ll.next)->rc.right = 65;
+			((SObject*)_debug->firstChild->ll.next)->rc.right = 65;
 
 
 		//////////
 		// Output window caption and font
 		//////
-			iObjProp_set_character_direct(thisCode, output, _INDEX_CAPTION, cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
-			output_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 8, FW_MEDIUM, false, false);
-			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, output_editbox, (uptr)&iSEM_onKeyDown);
-			output_editbox->p.sem->showCursorLine	= true;
+			iObjProp_set_character_direct(thisCode, _output, _INDEX_CAPTION, cgcOutputTitle, sizeof(cgcOutputTitle) - 1);
+			_output_editbox->p.font					= iFont_create(cgcFontName_defaultFixed, 8, FW_MEDIUM, false, false);
+			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, _output_editbox, (uptr)&iSEM_onKeyDown);
+			_output_editbox->p.sem->showCursorLine	= true;
 
 			// Adjust the caption width
-			((SObject*)output->firstChild->ll.next)->rc.right = 70;
+			((SObject*)_output->firstChild->ll.next)->rc.right = 70;
 
 
 		//////////
 		// SourceLight a caption and font
 		//////
-			iObjProp_set_character_direct(thisCode, sourceLight, _INDEX_CAPTION, cgcSourceLightTitle, sizeof(cgcSourceLightTitle) - 1);
-			sourceLight->p.font = iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			propSetVisible(sourceLight, _LOGICAL_TRUE);
-			propSetBackStyle(sourceLight, _BACK_STYLE_OPAQUE);
-			iEngine_set_event(thisCode, _EVENT_ONRENDER, NULL, sourceLight_empty, (uptr)&iSourceLight_copy);
+			iObjProp_set_character_direct(thisCode, _sourceLight, _INDEX_CAPTION, cgcSourceLightTitle, sizeof(cgcSourceLightTitle) - 1);
+			_sourceLight->p.font = iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			propSetVisible(_sourceLight, _LOGICAL_TRUE);
+			propSetBackStyle(_sourceLight, _BACK_STYLE_OPAQUE);
+			iEngine_set_event(thisCode, _EVENT_ONRENDER, NULL, _sourceLight_empty, (uptr)&iSourceLight_copy);
 
 
 		//////////
@@ -890,9 +1053,9 @@
 		//////////
 		// Setup _screen's editbox
 		//////
-			screen_editbox->p.font		= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
-			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, screen_editbox, (uptr)&iSEM_onKeyDown);
-			screenData					= screen_editbox->p.sem;
+			_screen_editbox->p.font		= iFont_create(cgcFontName_defaultFixed, 10, FW_MEDIUM, false, false);
+			iEngine_set_event(thisCode, _EVENT_ONKEYDOWN, NULL, _screen_editbox, (uptr)&iSEM_onKeyDown);
+			screenData					= _screen_editbox->p.sem;
 			screenData->showCursorLine	= true;
 			screenData->showEndLine		= true;
 			propSetVisible(_screen, _LOGICAL_TRUE);
@@ -915,7 +1078,7 @@
 	void iInit_jdebi_addToolbars(void)
 	{
 		// Make sure our environment is sane
-		if (_jdebi && sourceCode)
+		if (_jdebi && _sourceCode)
 		{
 
 			//////////
@@ -927,7 +1090,7 @@
 			//////////
 			// Apply whatever toolbars are live and visible as they're currently laid out
 			//////
-				iToolbar_applyTo_obj(NULL, sourceCode, jdebiToolbarsContainer, cgc_JDebiLayoutBxml, sizeof(cgc_JDebiLayoutBxml), cgcTag_jdebi, cgcTag_source_code);
+				iToolbar_applyTo_obj(NULL, _sourceCode, jdebiToolbarsContainer, cgc_JDebiLayoutBxml, sizeof(cgc_JDebiLayoutBxml), cgcTag_jdebi, cgcTag_source_code);
 
 		}
 	}
@@ -1136,11 +1299,11 @@
 
 		// Global variables
 		iVariable_delete(NULL, varGlobals,			true);
-		iVariable_delete(NULL, varConstant_space,	true);
-		iVariable_delete(NULL, varEmptyString,		true);
-		iVariable_delete(NULL, var2000Spaces,		true);
-		iVariable_delete(NULL, varTrue,				true);
-		iVariable_delete(NULL, varFalse,			true);
+		iVariable_delete(NULL, cvarSpace1,			true);
+		iVariable_delete(NULL, cvarEmptyString,		true);
+		iVariable_delete(NULL, cvarSpace2000,		true);
+		iVariable_delete(NULL, cvarTrue,			true);
+		iVariable_delete(NULL, cvarFalse,			true);
 
 		// Delete the splash objects and images
 		iObj_delete(NULL, &gobj_splashListing, true, true, true);
@@ -1236,7 +1399,7 @@
 
 		// Save where we are
 		iSEM_saveToDisk(thisCode, screenData,				cgcScreenDataFilename);
-		iSEM_saveToDisk(thisCode, command_editbox->p.sem,	cgcCommandHistoryFilename);
+		iSEM_saveToDisk(thisCode, _command_editbox->p.sem,	cgcCommandHistoryFilename);
 
 		// Save the system layout
 // Temporarily disabled

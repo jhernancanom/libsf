@@ -93,6 +93,22 @@
 
 
 
+//////////
+//
+// Called one time at startup to initialize the settings for a particular value
+// since MSVC doesn't allow population of a variable type into a union, except
+// for the first named member, at compile time.
+//
+//////
+	void iObjProp_init_fixup(void)
+	{
+		// Fixups to populate SBasePropMap values that cannot be populated into the union at compile time (without resorting to an obtuse integer-based hex encoding)
+		gsProps_master[_INDEX_INCREMENT - 1]._f64	= 1.0;		// Default to 1.0 for incrementing
+		gsProps_master[_INDEX_ROUND_TO  - 1]._f64	= 0.01;		// Default to 2 decimal places
+	}
+
+
+
 
 //////////
 //
@@ -1306,11 +1322,11 @@ debug_break;
 					if (compSystem)
 					{
 						// Setting the system reprocess to true (automatic)
-						iObjProp_set(thisCode, _settings, _INDEX_SET_REPROCESS_SYSTEM, varTrue, true);
+						iObjProp_set(thisCode, _settings, _INDEX_SET_REPROCESS_SYSTEM, cvarTrue, true);
 
 					} else {
 						// Setting the normal reprocess to true (automatic)
-						iObjProp_set(thisCode, _settings, _INDEX_SET_REPROCESS, varTrue, true);
+						iObjProp_set(thisCode, _settings, _INDEX_SET_REPROCESS, cvarTrue, true);
 					}
 			}
 

@@ -142,7 +142,7 @@
 							// Syntax error, expected "? something" got only "?"
 							iSEM_appendLine(thisCode, screenData, (u8*)cgcSyntaxError, -1, false);
 							iSEM_navigateToEndLine(thisCode, screenData, _screen);
-							screen_editbox->isDirtyRender = true;
+							_screen_editbox->isDirtyRender = true;
 							iWindow_render(NULL, gWinJDebi, false);
 							return(false);
 
@@ -157,7 +157,7 @@
 								{
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error
-									screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(thisCode, screenData, _screen);
+									_screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(thisCode, screenData, _screen);
 									iWindow_render(NULL, gWinJDebi, false);
 									return(false);
 								}
@@ -169,7 +169,7 @@
 								{
 									// Unknown parameter
 									iError_report(thisCode, cgcUnrecognizedParameter, false);
-									screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(thisCode, screenData, _screen);
+									_screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(thisCode, screenData, _screen);
 									iWindow_render(NULL, gWinJDebi, false);
 									return(false);
 								}
@@ -180,7 +180,7 @@
 							// Add its contents to _screen
 							iSEM_appendLine(thisCode, screenData, varText->value.data_u8, varText->value.length, false);
 							iSEM_navigateToEndLine(thisCode, screenData, _screen);
-							screen_editbox->isDirtyRender = true;
+							_screen_editbox->isDirtyRender = true;
 							iWindow_render(NULL, gWinJDebi, false);
 
 							// Release the variable if it was manufactured
@@ -203,7 +203,7 @@
 								{
 									// Unknown function, or parameters were not correct
 									// In any case, the iEngine_getFunctionResult() has reported the error
-									screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(thisCode, screenData, _screen);
+									_screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(thisCode, screenData, _screen);
 									iWindow_render(NULL, gWinJDebi, false);
 									return(false);
 								}
@@ -214,7 +214,7 @@
 								{
 									// Unknown parameter
 									iError_report(thisCode, cgcUnrecognizedParameter, false);
-									screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(thisCode, screenData, _screen);
+									_screen_editbox->isDirtyRender |= iSEM_navigateToEndLine(thisCode, screenData, _screen);
 									iWindow_render(NULL, gWinJDebi, false);
 									return(false);
 								}

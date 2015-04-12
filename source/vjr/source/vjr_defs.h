@@ -480,6 +480,9 @@ struct SObjPropMap;
 //////
 	void					iInit_createMessageWindow				(void);
 	bool					isValidWindow							(uptr tnWindow);
+	void					iInit_createConstants					(void);
+	void					iInit_createGlobalSystemVariables		(void);
+	void					iiInit_createGlobalSystemVariable		(SVariable** var, s32 tnType, cu8* tcName, cs8* tcInitValue = NULL, u32 tnInitValueLength = 0);
 	void					iInit_createDefaultObjects				(void);
 	void					iInit_jdebi_create						(void);
 	void					iInit_jdebi_addToolbars					(void);
