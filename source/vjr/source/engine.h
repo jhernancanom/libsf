@@ -141,7 +141,7 @@
 				SVariable*		locals;					// The first local variable declared
 				SVariable*		scoped;					// The first scoped/temporary variable used by the function
 
-				SEM*			sourceCode;				// The source code for this program
+				SEM*			sem;					// The source code for this program
 			};
 
 			struct SThisCode

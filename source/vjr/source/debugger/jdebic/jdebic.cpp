@@ -101,6 +101,8 @@
 		SBuilder*	builder;
 
 
+// Temporarily disabled
+return;
 		// Are we connected?
 		if (iJDebiC_connect() && thisCode || win || obj)
 		{
@@ -240,7 +242,7 @@
 //////
 	HANDLE iJDebiC_createPipeHandle(cs8* lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile)
 	{
-//		s32		lnError1, lnError2;
+		s32		lnError1, lnError2;
 		HANDLE	hPipe;
 
 
@@ -248,11 +250,11 @@
 		// Create the indicated pipe
 		//////
 			hPipe		= CreateFile(lpFileName, dwDesiredAccess, dwShareMode, lpSecurityAttributes, dwCreationDisposition, dwFlagsAndAttributes, hTemplateFile);
-//			lnError1	= GetLastError();
+			lnError1	= GetLastError();
 			if (hPipe != INVALID_HANDLE_VALUE)
 			{
 				ConnectNamedPipe(hPipe, NULL);
-//				lnError2 = GetLastError();
+				lnError2 = GetLastError();
 			}
 
 
@@ -380,30 +382,47 @@
 //
 // Called to process a thisCode object into its call stack hierarchy
 //
+// Note:  Must sync up with the SThisCode structure
+//
 //////
 	void iJDebiC_thisCode(SThisCode* thisCode, SBuilder* data)
 	{
-// 		struct SSourceCode
-// 		{
-// 			SFunction*		firstFunction;			// First function in the program
-// 
-// 			SVariable*		params;					// The first parameter in the function
-// 			SVariable*		returns;				// The first return variable declared
-// 			SVariable*		privates;				// The first private variable declared
-// 			SVariable*		locals;					// The first local variable declared
-// 			SVariable*		scoped;					// The first scoped/temporary variable used by the function
-// 
-// 			SEM*			sourceCode;				// The source code for this program
-// 		};
-// 
-// 		struct SThisCode
-// 		{
-// 			SLL				ll;
-// 
-// 			SWindow*		win;					// Current window
-// 			SSourceCode*	definition;				// As defined at compile time
-// 			SSourceCode*	live;					// As exists live in this instance at this level
-// 		};
+		s8 buffer[64];
+
+
+		// Make sure our environment is sane
+		if (thisCode && data)
+		{
+
+			//////////
+			// Ids
+			//////
+				iBuilder_appendData(data, "thisCode = { ", -1);
+				sprintf(buffer, "id = %08x, \0", (u32)(uptr)thisCode);
+				iBuilder_appendData(data, buffer, -1);
+
+				iBuilder_append_label_uptr(data, "prev",		(uptr)thisCode->ll.prev);
+				iBuilder_append_label_uptr(data, "next",		(uptr)thisCode->ll.next);
+				iBuilder_append_label_uptr(data, "window",		(uptr)thisCode->win);
+				iBuilder_append_label_uptr(data, "definition",	(uptr)thisCode->definition);
+				iBuilder_append_label_uptr(data, "live",		(uptr)thisCode->live);
+
+				iBuilder_appendData(data, " }", -1);
+
+
+			//////////
+			// definition
+			//////
+				if (thisCode->definition)
+					iJDebiC_sourceCode(thisCode->definition, data);
+
+
+			//////////
+			// live
+			//////
+				if (thisCode->live)
+					iJDebiC_sourceCode(thisCode->live, data);
+		}
 	}
 
 
@@ -411,7 +430,212 @@
 
 //////////
 //
-// Called to process a windows object into text
+// Called to append information about a sourceCode member
+//
+// Note:  Must sync up with the SSourceCode structure
+//
+//////
+	void iJDebiC_sourceCode(SSourceCode* sourceCode, SBuilder* data)
+	{
+		s8 buffer[64];
+
+
+		// Make sure our environment is sane
+		if (sourceCode && data)
+		{
+
+			//////////
+			// Ids
+			//////
+				iBuilder_appendData(data, "sourceCode = { ", -1);
+				sprintf(buffer, "id = %08x, \0", (u32)(uptr)sourceCode);
+				iBuilder_appendData(data, buffer, -1);
+				if (sourceCode->firstFunction)		iBuilder_append_label_uptr(data, "firstFunction",	(uptr)sourceCode->firstFunction);
+				if (sourceCode->params)				iBuilder_append_label_uptr(data, "params",			(uptr)sourceCode->params);
+				if (sourceCode->returns)			iBuilder_append_label_uptr(data, "returns",			(uptr)sourceCode->returns);
+				if (sourceCode->privates)			iBuilder_append_label_uptr(data, "privates",		(uptr)sourceCode->privates);
+				if (sourceCode->locals)				iBuilder_append_label_uptr(data, "locals",			(uptr)sourceCode->locals);
+				if (sourceCode->scoped)				iBuilder_append_label_uptr(data, "scoped",			(uptr)sourceCode->scoped);
+				if (sourceCode->sem)				iBuilder_append_label_uptr(data, "sem",				(uptr)sourceCode->sem);
+				iBuilder_appendData(data, " }", -1);
+
+
+			//////////
+			// Append related items
+			//////
+				if (sourceCode->firstFunction)		iJDebiC_function(sourceCode->firstFunction,	data);
+				if (sourceCode->params)				iJDebiC_variable(sourceCode->params,		data);
+				if (sourceCode->returns)			iJDebiC_variable(sourceCode->returns,		data);
+				if (sourceCode->privates)			iJDebiC_variable(sourceCode->privates,		data);
+				if (sourceCode->locals)				iJDebiC_variable(sourceCode->locals,		data);
+				if (sourceCode->scoped)				iJDebiC_variable(sourceCode->scoped,		data);
+				if (sourceCode->sem)				iJDebiC_sem(sourceCode->sem,				data);
+
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to append information about a function member
+//
+// Note:  Must sync up with the SFunction structure
+//
+//////
+	void iJDebiC_function(SFunction* func, SBuilder* data)
+	{
+		s8 buffer[64];
+
+
+		// Make sure our environment is sane
+		if (func && data)
+		{
+			//////////
+			// Ids
+			//////
+				iBuilder_appendData(data, "function = { ", -1);
+				sprintf(buffer, "id = %08x, \0", (u32)(uptr)func);
+				iBuilder_appendData(data, buffer, -1);
+
+				if (func->next)					iBuilder_append_label_uptr(data,	"firstFunction",	(uptr)func->next);
+				if (func->name.data)			iBuilder_append_label_datum(data,	"name",				&func->name);
+
+				if (func->params)				iBuilder_append_label_uptr(data,	"params",			(uptr)func->params);
+				if (func->locals)				iBuilder_append_label_uptr(data,	"locals",			(uptr)func->locals);
+				if (func->returns)				iBuilder_append_label_uptr(data,	"returns",			(uptr)func->returns);
+				if (func->scoped)				iBuilder_append_label_uptr(data,	"scoped",			(uptr)func->scoped);
+
+				if (func->firstAdhoc)			iBuilder_append_label_uptr(data,	"firstAdhoc",		(uptr)func->firstAdhoc);
+				if (func->firstFlowof)			iBuilder_append_label_uptr(data,	"firstAdhoc",		(uptr)func->firstFlowof);
+
+				if (func->firstLine)			iBuilder_append_label_uptr(data,	"firstLine",		(uptr)func->firstLine);
+				if (func->lastLine)				iBuilder_append_label_uptr(data,	"lastLine",			(uptr)func->lastLine);
+				iBuilder_appendData(data, " }", -1);
+
+
+			//////////
+			// Append related items
+			//////
+				if (func->next)					iJDebiC_function(func->next, data);
+
+				if (func->params)				iJDebiC_variable(func->params,		data);
+				if (func->locals)				iJDebiC_variable(func->locals,		data);
+				if (func->returns)				iJDebiC_variable(func->returns,		data);
+				if (func->scoped)				iJDebiC_variable(func->scoped,		data);
+
+				if (func->firstAdhoc)			iJDebiC_function(func->firstAdhoc,	data);
+				if (func->firstFlowof)			iJDebiC_function(func->firstFlowof,	data);
+		}
+	}
+
+
+
+
+//////////
+//
+// Called to append information about a variable member
+//
+// Note:  Must sync up with the SVariable structure
+//
+//////
+	void iJDebiC_variable(SVariable* var, SBuilder* data)
+	{
+		s8 buffer[64];
+
+
+		// Make sure our environment is sane
+		if (var && data)
+		{
+			//////////
+			// Ids
+			//////
+				iBuilder_appendData(data, "variable = { ", -1);
+				sprintf(buffer, "id = %08x, \0", (u32)(uptr)var);
+				iBuilder_appendData(data, buffer, -1);
+
+				if (var->name.data)				iBuilder_append_label_datum(data,	"name",			&var->name);
+				if (var->ll.prev)				iBuilder_append_label_uptr(data,	"prev",			(uptr)var->ll.prev);
+				if (var->ll.next)				iBuilder_append_label_uptr(data,	"next",			(uptr)var->ll.next);
+				if (var->firstAccess)			iBuilder_append_label_uptr(data,	"firstAccess",	(uptr)var->firstAccess);
+				if (var->firstAssign)			iBuilder_append_label_uptr(data,	"firstAssign",	(uptr)var->firstAssign);
+
+				iBuilder_append_label_logical(data,	"varAllocated", var->isVarAllocated);
+
+
+			//////////
+			// Actual variable, or indirect?
+			//////
+				if (var->indirect)
+				{
+					// This variable points to another variable
+					iBuilder_append_label_uptr(data,	"indirect",		(uptr)var->indirect);
+					iBuilder_appendData(data, " }", -1);
+
+					if (var->firstAccess)		iJDebiC_sem(var->firstAccess,	data);
+					if (var->firstAssign)		iJDebiC_sem(var->firstAssign,	data);
+
+					iJDebiC_variable(var->indirect, data);
+
+				} else {
+					// The variable is not a reference, but points to itself
+					iBuilder_append_label_logical(data,	"valueAllocated", var->isValueAllocated);
+					iBuilder_appendData(data, " }", -1);
+
+					if (var->firstAccess)		iJDebiC_sem(var->firstAccess,	data);
+					if (var->firstAssign)		iJDebiC_sem(var->firstAssign,	data);
+// TODO:  Working here...
+				}
+
+		}
+
+// 		// If this variable is related to a component, indicate it here
+// 		SComp*		compRelated;											// Can vary regularly, but when available at compile time and in immediate scope, relates to a component
+// 
+// 		// Variable data
+// 		SDatum		name;													// Name of this variable (alway allocated)
+// 		u32			arrayRows;												// If created as an array, how many rows
+// 		u32			arrayCols;												// If created as an array, how many columns
+// 
+// 		// Variable content based on type
+// 		u32			varType;												// Variable type (see _VAR_TYPE_* constants)
+// 		bool		isValueAllocated;										// If true, the data pointed to by this->value.data, or this->obj, or this->bmp, or this->thisCode was allocated
+// 		union {
+// 			SObject*		obj;											// The object this item relates to.  If isValueAllocated is set, this variable owns the object.
+// 			SFunction*		thisCode;										// Pointer to the code block this relates to
+// 			SBitmap*		bmp;											// The bitmap this item points to
+// 			SField*			field;											// Pointer to a table/cursor field
+// 			SDatum			value;											// The actual value
+// 		};
+// 
+// 		// If assign or access
+// 		SEM*		firstAccess;											// Source code executed whenever this variable is accessed
+// 		SEM*		firstAssign;											// Source code executed whenever this variable is assigned
+	}
+
+
+
+
+//////////
+//
+// Called to append information about a sem (edit manager) member
+//
+// Note:  Must sync up with the SEM structure
+//
+//////
+	void iJDebiC_sem(SEM* sem, SBuilder* data)
+	{
+	}
+
+
+
+
+//////////
+//
+// Called to process a windows object into text.
+//
+//		window = { id = 083829983, ... }
 //
 //////
 	void iJDebiC_win(SWindow* win, SBuilder* data)
@@ -422,6 +646,9 @@
 		// Make sure our environment is sane
 		if (win && data)
 		{
+			iBuilder_appendData(data, "window = { ", -1);
+			sprintf(buffer, "id = %08x, \0", (u32)(uptr)win);
+
 // Must sync up with the SWindow structure
 			iBuilder_append_label_logical(data, "isValid", win->isValid);
 			iBuilder_append_label_uptr(data, "hwnd", (uptr)win->hwnd);
@@ -455,6 +682,8 @@
 
 			iiJDebiC_decode_POINT(buffer, win->mousePositionClickScreen);
 			iBuilder_append_label_text(data, "mousePositionClickScreen", buffer);
+
+			iBuilder_appendData(data, " }", -1);
 		}
 	}
 

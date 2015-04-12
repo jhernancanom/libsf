@@ -124,9 +124,13 @@
 	HANDLE		iJDebiC_createPipeHandle		(cs8* lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile);
 
 	// Processes each structure into text
-	void		iJDebiC_thisCode				(SThisCode*	thisCode,	SBuilder* data);
-	void		iJDebiC_win						(SWindow*	win,		SBuilder* data);
-	void		iJDebiC_obj						(SObject*	obj,		SBuilder* data);
+	void		iJDebiC_thisCode				(SThisCode*	thisCode,		SBuilder* data);
+	void		iJDebiC_sourceCode				(SSourceCode* sourceCode,	SBuilder* data);
+	void		iJDebiC_function				(SFunction* func,			SBuilder* data);
+	void		iJDebiC_variable				(SVariable* var,			SBuilder* data);
+	void		iJDebiC_sem						(SEM* sem,					SBuilder* data);
+	void		iJDebiC_win						(SWindow*	win,			SBuilder* data);
+	void		iJDebiC_obj						(SObject*	obj,			SBuilder* data);
 
 	// Process sub-components
 	void		iiJDebiC_decode_Rect			(s8* buffer, RECT* rc);
