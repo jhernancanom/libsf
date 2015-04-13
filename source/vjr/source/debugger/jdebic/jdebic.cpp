@@ -99,6 +99,7 @@
 	{
 		SDatum		data;
 		SBuilder*	builder;
+		SBuilder*	items;
 
 
 // Temporarily disabled
@@ -119,7 +120,7 @@ return;
 			//////
 				if (thisCode)
 				{
-					iJDebiC_thisCode(thisCode, builder);
+					iJDebiC_thisCode(builder, items, thisCode);
 					data.length = builder->populatedLength;
 					iJDebiC_transmit_viaPipe(&data, NULL, _WMJDEBIC_DATA_TYPE_THISCODE);
 					iBuilder_rewind(builder);
@@ -131,7 +132,7 @@ return;
 			//////
 				if (win)
 				{
-					iJDebiC_win(win, builder);
+					iJDebiC_win(builder, items, win);
 					data.length = builder->populatedLength;
 					iJDebiC_transmit_viaPipe(&data, NULL, _WMJDEBIC_DATA_TYPE_WIN);
 					iBuilder_rewind(builder);
@@ -143,7 +144,7 @@ return;
 			//////
 				if (obj)
 				{
-					iJDebiC_obj(obj, builder);
+					iJDebiC_obj(builder, items, obj);
 					data.length = builder->populatedLength;
 					iJDebiC_transmit_viaPipe(&data, NULL, _WMJDEBIC_DATA_TYPE_OBJ);
 					iBuilder_rewind(builder);
@@ -270,6 +271,44 @@ return;
 
 //////////
 //
+// Called to see if the indicated pointer has already been processed in this iteration
+//
+//////
+	bool iJDebiC_alreadyProcessedItem(SBuilder* items, void* item)
+	{
+		u32 lnI;
+
+
+		// Iterate through every item
+		for (lnI = 0; lnI < items->populatedLength; lnI += sizeof(item))
+		{
+			// Is this item already recorded?
+			if (*((void**)(items->buffer + lnI)) == item)
+				return(true);
+		}
+
+		// If we get here, not processed
+		return(false);
+	}
+
+
+
+
+//////////
+//
+// Append the indicated item to the list of processed items
+//
+//////
+	void iJDebiC_recordNewItem(SBuilder* items, void* item)
+	{
+		iBuilder_appendData(items, (cs8*)&item, sizeof(item));
+	}
+
+
+
+
+//////////
+//
 // Validates we're still connected to JDebiC, or tries to connect to it
 //
 //////
@@ -385,14 +424,19 @@ return;
 // Note:  Must sync up with the SThisCode structure
 //
 //////
-	void iJDebiC_thisCode(SThisCode* thisCode, SBuilder* data)
+	void iJDebiC_thisCode(SBuilder* data, SBuilder* items, SThisCode* thisCode)
 	{
 		s8 buffer[64];
 
 
 		// Make sure our environment is sane
-		if (thisCode && data)
+		if (thisCode && data && !iJDebiC_alreadyProcessedItem(items, thisCode))
 		{
+			//////////
+			// Record our processing this thisCode
+			//////
+				iJDebiC_recordNewItem(items, thisCode);
+
 
 			//////////
 			// Ids
@@ -414,14 +458,14 @@ return;
 			// definition
 			//////
 				if (thisCode->definition)
-					iJDebiC_sourceCode(thisCode->definition, data);
+					iJDebiC_sourceCode(data, items, thisCode->definition);
 
 
 			//////////
 			// live
 			//////
 				if (thisCode->live)
-					iJDebiC_sourceCode(thisCode->live, data);
+					iJDebiC_sourceCode(data, items, thisCode->live);
 		}
 	}
 
@@ -435,14 +479,19 @@ return;
 // Note:  Must sync up with the SSourceCode structure
 //
 //////
-	void iJDebiC_sourceCode(SSourceCode* sourceCode, SBuilder* data)
+	void iJDebiC_sourceCode(SBuilder* data, SBuilder* items, SSourceCode* sourceCode)
 	{
 		s8 buffer[64];
 
 
 		// Make sure our environment is sane
-		if (sourceCode && data)
+		if (sourceCode && data && !iJDebiC_alreadyProcessedItem(items, sourceCode))
 		{
+			//////////
+			// Record our processing this sourceCode
+			//////
+				iJDebiC_recordNewItem(items, sourceCode);
+
 
 			//////////
 			// Ids
@@ -463,13 +512,13 @@ return;
 			//////////
 			// Append related items
 			//////
-				if (sourceCode->firstFunction)		iJDebiC_function(sourceCode->firstFunction,	data);
-				if (sourceCode->params)				iJDebiC_variable(sourceCode->params,		data);
-				if (sourceCode->returns)			iJDebiC_variable(sourceCode->returns,		data);
-				if (sourceCode->privates)			iJDebiC_variable(sourceCode->privates,		data);
-				if (sourceCode->locals)				iJDebiC_variable(sourceCode->locals,		data);
-				if (sourceCode->scoped)				iJDebiC_variable(sourceCode->scoped,		data);
-				if (sourceCode->sem)				iJDebiC_sem(sourceCode->sem,				data);
+				if (sourceCode->firstFunction)		iJDebiC_function(data, items, sourceCode->firstFunction);
+				if (sourceCode->params)				iJDebiC_variable(data, items, sourceCode->params);
+				if (sourceCode->returns)			iJDebiC_variable(data, items, sourceCode->returns);
+				if (sourceCode->privates)			iJDebiC_variable(data, items, sourceCode->privates);
+				if (sourceCode->locals)				iJDebiC_variable(data, items, sourceCode->locals);
+				if (sourceCode->scoped)				iJDebiC_variable(data, items, sourceCode->scoped);
+				if (sourceCode->sem)				iJDebiC_sem(data, items, sourceCode->sem);
 
 		}
 	}
@@ -484,14 +533,20 @@ return;
 // Note:  Must sync up with the SFunction structure
 //
 //////
-	void iJDebiC_function(SFunction* func, SBuilder* data)
+	void iJDebiC_function(SBuilder* data, SBuilder* items, SFunction* func)
 	{
 		s8 buffer[64];
 
 
 		// Make sure our environment is sane
-		if (func && data)
+		if (func && data && !iJDebiC_alreadyProcessedItem(items, func))
 		{
+			//////////
+			// Record our processing this function
+			//////
+				iJDebiC_recordNewItem(items, func);
+
+
 			//////////
 			// Ids
 			//////
@@ -518,15 +573,15 @@ return;
 			//////////
 			// Append related items
 			//////
-				if (func->next)					iJDebiC_function(func->next, data);
+				if (func->next)					iJDebiC_function(data, items, func->next);
 
-				if (func->params)				iJDebiC_variable(func->params,		data);
-				if (func->locals)				iJDebiC_variable(func->locals,		data);
-				if (func->returns)				iJDebiC_variable(func->returns,		data);
-				if (func->scoped)				iJDebiC_variable(func->scoped,		data);
+				if (func->params)				iJDebiC_variable(data, items, func->params);
+				if (func->locals)				iJDebiC_variable(data, items, func->locals);
+				if (func->returns)				iJDebiC_variable(data, items, func->returns);
+				if (func->scoped)				iJDebiC_variable(data, items, func->scoped);
 
-				if (func->firstAdhoc)			iJDebiC_function(func->firstAdhoc,	data);
-				if (func->firstFlowof)			iJDebiC_function(func->firstFlowof,	data);
+				if (func->firstAdhoc)			iJDebiC_function(data, items, func->firstAdhoc);
+				if (func->firstFlowof)			iJDebiC_function(data, items, func->firstFlowof);
 		}
 	}
 
@@ -540,14 +595,20 @@ return;
 // Note:  Must sync up with the SVariable structure
 //
 //////
-	void iJDebiC_variable(SVariable* var, SBuilder* data)
+	void iJDebiC_variable(SBuilder* data, SBuilder* items, SVariable* var)
 	{
 		s8 buffer[64];
 
 
 		// Make sure our environment is sane
-		if (var && data)
+		if (var && data && !iJDebiC_alreadyProcessedItem(items, var))
 		{
+			//////////
+			// Record our processing this variable
+			//////
+				iJDebiC_recordNewItem(items, var);
+
+
 			//////////
 			// Ids
 			//////
@@ -573,18 +634,18 @@ return;
 					iBuilder_append_label_uptr(data,	"indirect",		(uptr)var->indirect);
 					iBuilder_appendData(data, " }", -1);
 
-					if (var->firstAccess)		iJDebiC_sem(var->firstAccess,	data);
-					if (var->firstAssign)		iJDebiC_sem(var->firstAssign,	data);
+					if (var->firstAccess)		iJDebiC_sem(data, items, var->firstAccess);
+					if (var->firstAssign)		iJDebiC_sem(data, items, var->firstAssign);
 
-					iJDebiC_variable(var->indirect, data);
+					iJDebiC_variable(data, items, var->indirect);
 
 				} else {
 					// The variable is not a reference, but points to itself
 					iBuilder_append_label_logical(data,	"valueAllocated", var->isValueAllocated);
 					iBuilder_appendData(data, " }", -1);
 
-					if (var->firstAccess)		iJDebiC_sem(var->firstAccess,	data);
-					if (var->firstAssign)		iJDebiC_sem(var->firstAssign,	data);
+					if (var->firstAccess)		iJDebiC_sem(data, items, var->firstAccess);
+					if (var->firstAssign)		iJDebiC_sem(data, items, var->firstAssign);
 // TODO:  Working here...
 				}
 
@@ -624,8 +685,30 @@ return;
 // Note:  Must sync up with the SEM structure
 //
 //////
-	void iJDebiC_sem(SEM* sem, SBuilder* data)
+	void iJDebiC_sem(SBuilder* data, SBuilder* items, SEM* sem)
 	{
+		s8 buffer[64];
+
+
+		// Make sure our environment is sane
+		if (sem && data && !iJDebiC_alreadyProcessedItem(items, sem))
+		{
+			//////////
+			// Record our processing this edit manager
+			//////
+				iJDebiC_recordNewItem(items, sem);
+
+
+			//////////
+			// Ids and values
+			//////
+				iBuilder_appendData(data, "sem = { ", -1);
+				sprintf(buffer, "id = %08x, \0", (u32)(uptr)sem);
+				iBuilder_appendData(data, buffer, -1);
+
+				iBuilder_appendData(data, " }", -1);
+
+		}
 	}
 
 
@@ -638,52 +721,62 @@ return;
 //		window = { id = 083829983, ... }
 //
 //////
-	void iJDebiC_win(SWindow* win, SBuilder* data)
+	void iJDebiC_win(SBuilder* data, SBuilder* items, SWindow* win)
 	{
 		s8 buffer[4096];
 
 
 		// Make sure our environment is sane
-		if (win && data)
+		if (win && data && !iJDebiC_alreadyProcessedItem(items, win))
 		{
-			iBuilder_appendData(data, "window = { ", -1);
-			sprintf(buffer, "id = %08x, \0", (u32)(uptr)win);
+			//////////
+			// Record our processing this window
+			//////
+				iJDebiC_recordNewItem(items, win);
+
+
+			//////////
+			// Ids and values
+			//////
+				iBuilder_appendData(data, "window = { ", -1);
+				sprintf(buffer, "id = %08x, \0", (u32)(uptr)win);
+				iBuilder_appendData(data, buffer, -1);
 
 // Must sync up with the SWindow structure
-			iBuilder_append_label_logical(data, "isValid", win->isValid);
-			iBuilder_append_label_uptr(data, "hwnd", (uptr)win->hwnd);
-			iBuilder_append_label_uptr(data, "bmp", (uptr)win->bmp);
+				iBuilder_append_label_logical(data, "isValid", win->isValid);
+				iBuilder_append_label_uptr(data, "hwnd", (uptr)win->hwnd);
+				iBuilder_append_label_uptr(data, "bmp", (uptr)win->bmp);
 
-			iiJDebiC_decode_Rect(buffer, &win->rc);
-			iBuilder_append_label_text(data, "rc", buffer);
+				iiJDebiC_decode_Rect(buffer, &win->rc);
+				iBuilder_append_label_text(data, "rc", buffer);
 
-			iBuilder_append_label_uptr(data, "obj", (uptr)win->obj);
+				iBuilder_append_label_uptr(data, "obj", (uptr)win->obj);
 
-			iiJDebiC_decode_SMouseData(buffer, &win->mousePrior);
-			iBuilder_append_label_text(data, "mousePrior", buffer);
+				iiJDebiC_decode_SMouseData(buffer, &win->mousePrior);
+				iBuilder_append_label_text(data, "mousePrior", buffer);
 
-			iiJDebiC_decode_SMouseData(buffer, &win->mouseCurrent);
-			iBuilder_append_label_text(data, "mousePrior", buffer);
+				iiJDebiC_decode_SMouseData(buffer, &win->mouseCurrent);
+				iBuilder_append_label_text(data, "mousePrior", buffer);
 
-			iBuilder_append_label_logical(data, "isMoving", win->isMoving);
-			iBuilder_append_label_logical(data, "isResizing", win->isResizing);
+				iBuilder_append_label_logical(data, "isMoving", win->isMoving);
+				iBuilder_append_label_logical(data, "isResizing", win->isResizing);
 
-			iiJDebiC_decode_SMouseData(buffer, &win->mouseMoveResizeStart);
-			iBuilder_append_label_text(data, "mouseMoveResizeStart", buffer);
+				iiJDebiC_decode_SMouseData(buffer, &win->mouseMoveResizeStart);
+				iBuilder_append_label_text(data, "mouseMoveResizeStart", buffer);
 
-			iiJDebiC_decode_Rect(buffer, &win->rcMoveResizeStart);
-			iBuilder_append_label_text(data, "rcMoveResizeStart", buffer);
+				iiJDebiC_decode_Rect(buffer, &win->rcMoveResizeStart);
+				iBuilder_append_label_text(data, "rcMoveResizeStart", buffer);
 
-			iBuilder_append_label_sptr(data, "movingLastDeltaX", (uptr)win->movingLastDeltaX);
-			iBuilder_append_label_sptr(data, "movingLastDeltaY", (uptr)win->movingLastDeltaY);
+				iBuilder_append_label_sptr(data, "movingLastDeltaX", (uptr)win->movingLastDeltaX);
+				iBuilder_append_label_sptr(data, "movingLastDeltaY", (uptr)win->movingLastDeltaY);
 
-			iiJDebiC_decode_POINT(buffer, win->mousePositionClick);
-			iBuilder_append_label_text(data, "mousePositionClick", buffer);
+				iiJDebiC_decode_POINT(buffer, win->mousePositionClick);
+				iBuilder_append_label_text(data, "mousePositionClick", buffer);
 
-			iiJDebiC_decode_POINT(buffer, win->mousePositionClickScreen);
-			iBuilder_append_label_text(data, "mousePositionClickScreen", buffer);
+				iiJDebiC_decode_POINT(buffer, win->mousePositionClickScreen);
+				iBuilder_append_label_text(data, "mousePositionClickScreen", buffer);
 
-			iBuilder_appendData(data, " }", -1);
+				iBuilder_appendData(data, " }", -1);
 		}
 	}
 
@@ -695,8 +788,28 @@ return;
 // Called to process an object, and all its poems, into text
 //
 //////
-	void iJDebiC_obj(SObject* obj, SBuilder* data)
+	void iJDebiC_obj(SBuilder* data, SBuilder* items, SObject* obj)
 	{
+		s8 buffer[4096];
+
+
+		// Make sure our environment is sane
+		if (obj && data && !iJDebiC_alreadyProcessedItem(items, obj))
+		{
+			//////////
+			// Record our processing this object
+			//////
+				iJDebiC_recordNewItem(items, obj);
+
+
+			//////////
+			// Ids and values
+			//////
+				iBuilder_appendData(data, "object = { ", -1);
+				sprintf(buffer, "id = %08x, \0", (u32)(uptr)obj);
+				iBuilder_appendData(data, buffer, -1);
+
+		}
 // 			SLL			ll;													// Linked list
 // 			SObject*	parent;												// Pointer to parent object for this instance
 // 			SObject*	firstChild;											// Pointer to child objects (all objects are containers)
