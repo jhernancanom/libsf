@@ -11431,77 +11431,88 @@ debug_break;
 
 			} else {
 				// Standard
-				switch (var->varType)
+				if ((!var->value.data || var->value.length == 0) && tlIsVartype)
 				{
-					case _VAR_TYPE_CHARACTER:
-						c = 'C';
-						break;
+					// NULL
+					c = 'X';
 
-					case _VAR_TYPE_LOGICAL:
-						c = 'L';
-						break;
+				} else {
+					switch (var->varType)
+					{
+						case _VAR_TYPE_NULL:
+							c = ((tlIsVartype) ? 'X' : 'L');
+							break;
 
-					case _VAR_TYPE_DATE:
-						c = 'D';
-						break;
+						case _VAR_TYPE_CHARACTER:
+							c = 'C';
+							break;
 
-					case _VAR_TYPE_DATETIME:
-					case _VAR_TYPE_DATETIMEX:
-						c = 'T';
-						break;
+						case _VAR_TYPE_LOGICAL:
+							c = 'L';
+							break;
 
-					case _VAR_TYPE_FIELD:
-						// Based on the associated field type
-						switch(var->field->fr2->type)
-						{
-							case 'D':	// Date
-							case 'T':	// Datetime
-							case 'L':	// Logical
-							case 'N':	// Numeric
-							case 'Y':	// currency, which is technically an 8-byte integer (s64)
-							case 'C':	// Character
-								c = var->field->fr2->type;
+						case _VAR_TYPE_DATE:
+							c = 'D';
+							break;
 
-							case 'I':	// 4-byte integer (s32)
-							case 'F':	// Float
-							case 'B':	// Double (f64)
-								c = 'N';
-								break;
+						case _VAR_TYPE_DATETIME:
+						case _VAR_TYPE_DATETIMEX:
+							c = 'T';
+							break;
 
-							case 'M':	// Memo
-								c = 'C';
-								break;
+						case _VAR_TYPE_FIELD:
+							// Based on the associated field type
+							switch(var->field->fr2->type)
+							{
+								case 'D':	// Date
+								case 'T':	// Datetime
+								case 'L':	// Logical
+								case 'N':	// Numeric
+								case 'Y':	// currency, which is technically an 8-byte integer (s64)
+								case 'C':	// Character
+									c = var->field->fr2->type;
+
+								case 'I':	// 4-byte integer (s32)
+								case 'F':	// Float
+								case 'B':	// Double (f64)
+									c = 'N';
+									break;
+
+								case 'M':	// Memo
+									c = 'C';
+									break;
 
 // Unsupported in VJr:
-// 							case 'W':	// Blob
-// 							case 'G':	// General
-// 							case 'Q':	// Varbinary
-// 							case 'V':	// Varchar
-							default:
+// 								case 'W':	// Blob
+// 								case 'G':	// General
+// 								case 'Q':	// Varbinary
+// 								case 'V':	// Varchar
+								default:
+									c = 'U';
+									break;
+							}
+							break;
+
+						case _VAR_TYPE_OBJECT:
+							c = 'O';
+							break;
+
+						default:
+							if (var->varType == _VAR_TYPE_CURRENCY)
+							{
+								// Currency
+								c = 'Y';
+
+							} else if (var->varType >= _VAR_TYPE_NUMERIC_START && var->varType <= _VAR_TYPE_NUMERIC_END) {
+								// Numeric
+								c = 'N';
+
+							} else {
+								// Unknown
 								c = 'U';
-								break;
-						}
-						break;
-
-					case _VAR_TYPE_OBJECT:
-						c = 'O';
-						break;
-
-					default:
-						if (var->varType == _VAR_TYPE_CURRENCY)
-						{
-							// Currency
-							c = 'Y';
-
-						} else if (var->varType >= _VAR_TYPE_NUMERIC_START && var->varType <= _VAR_TYPE_NUMERIC_END) {
-							// Numeric
-							c = 'N';
-
-						} else {
-							// Unknown
-							c = 'U';
-						}
-						break;
+							}
+							break;
+					}
 				}
 			}
 
@@ -11948,7 +11959,7 @@ debug_break;
 		//////////
 		// varLookup must exist
 		//////
-			if (!iVariable_isValid(var))
+			if (!iVariable_isValidType(var))
 			{
 				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, var), false);
 				return(NULL);

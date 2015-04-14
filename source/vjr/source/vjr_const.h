@@ -192,7 +192,8 @@ typedef SEM**		SEMpp;
 	#define iVariable_isTypeNumeric(var)				(var->varType >= _VAR_TYPE_NUMERIC_START && var->varType <= _VAR_TYPE_NUMERIC_END)
 	#define iVariable_isTypeObject(var)					(var->varType == _VAR_TYPE_OBJECT)
 	#define iVariable_isTypethisCode(var)				(var->varType == _VAR_TYPE_THISCODE)
-	#define iVariable_isValid(var)						(var && (var->varType == _VAR_TYPE_CHARACTER/*0-length character variables do not have allocated buffers*/ || (var->value.data && var->value.length != 0)))
+	#define iVariable_isValid(var)						(var && var->varType >= _VAR_TYPE_START && var->varType <= _VAR_TYPE_END && var->value.data && var->value.length > 0)
+	#define iVariable_isValidType(var)					(var && var->varType >= _VAR_TYPE_START && var->varType <= _VAR_TYPE_END)
 	#define iVariable_isEmpty(var)						(!var->value.data || var->value.length <= 0)
 
 	#define propHasCaption(obj)							(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_HASCAPTION)	!= _LOGICAL_FALSE)

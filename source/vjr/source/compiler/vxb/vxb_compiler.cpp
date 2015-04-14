@@ -7674,284 +7674,297 @@ debug_break;
 			// Initialize
 			memset(buffer, 0, sizeof(buffer));
 
-			// Based on the type, convert to a form for display
-			switch (var->varType)
+			// Is it null?
+			if (!var->value.data || var->value.length == 0)
 			{
-				case _VAR_TYPE_NUMERIC:
-				case _VAR_TYPE_CHARACTER:
-					// Numeric and character forms are already stored as text
-					varDisp->isValueAllocated = true;
-					iDatum_duplicate(&varDisp->value, &var->value);
-					break;
+				varDisp->isValueAllocated = true;
+				iDatum_duplicate(&varDisp->value, cgcNullText, sizeof(cgcNullText) - 1);
 
-				case _VAR_TYPE_S32:
-					// Convert to integer form, then store text
-					sprintf((s8*)buffer, "%d\0", *(s32*)var->value.data);
-					varDisp->isValueAllocated = true;
-					iDatum_duplicate(&varDisp->value, buffer, -1);
-					break;
-
-				case _VAR_TYPE_U32:
-					// Convert to unsigned integer form, then store text
-					sprintf((s8*)buffer, "%u\0", *(u32*)var->value.data);
-					varDisp->isValueAllocated = true;
-					iDatum_duplicate(&varDisp->value, buffer, -1);
-					break;
-
-				case _VAR_TYPE_U64:
-					// Convert to unsigned integer form, then store text
-					sprintf((s8*)buffer, "%I64u\0", *(u64*)var->value.data);
-					varDisp->isValueAllocated = true;
-					iDatum_duplicate(&varDisp->value, buffer, -1);
-					break;
-
-				case _VAR_TYPE_S64:
-					// Convert to unsigned integer form, then store text
-					sprintf((s8*)buffer, "%I64d\0", *(s64*)var->value.data);
-					varDisp->isValueAllocated = true;
-					iDatum_duplicate(&varDisp->value, buffer, -1);
-					break;
-
-				case _VAR_TYPE_S16:
-					// Convert to integer form, then store text
-					sprintf((s8*)buffer, "%d\0", (s32)*(s16*)var->value.data);
-					varDisp->isValueAllocated = true;
-					iDatum_duplicate(&varDisp->value, buffer, -1);
-					break;
-
-				case _VAR_TYPE_S8:
-					// Convert to integer form, then store text
-					sprintf((s8*)buffer, "%d\0", (s32)*(s8*)var->value.data);
-					varDisp->isValueAllocated = true;
-					iDatum_duplicate(&varDisp->value, buffer, -1);
-					break;
-
-				case _VAR_TYPE_U16:
-					// Convert to unsigned integer form, then store text
-					sprintf((s8*)buffer, "%u\0", (u32)*(u16*)var->value.data);
-					varDisp->isValueAllocated = true;
-					iDatum_duplicate(&varDisp->value, buffer, -1);
-					break;
-
-				case _VAR_TYPE_U8:
-					// Convert to unsigned integer form, then store text
-					sprintf((s8*)buffer, "%u\0", (u32)*(u8*)var->value.data);
-					varDisp->isValueAllocated = true;
-					iDatum_duplicate(&varDisp->value, buffer, -1);
-					break;
-
-				case _VAR_TYPE_F32:
-					// Convert to floating point form, then store text after leading zeros
-					sprintf(formatter, "%%020.%df\0", propGet_settings_Decimals(_settings));
-					sprintf((s8*)buffer, formatter, *(f32*)var->value.data);
-
-					// Skip past leading zeros
-					for (lnI = 0; buffer[lnI] == '0'; )
-						++lnI;
-
-					// Append its form
-					varDisp->isValueAllocated = true;
-					iDatum_duplicate(&varDisp->value, buffer + lnI, -1);
-					break;
-
-				case _VAR_TYPE_F64:
-					// Convert to floating point form, then store text after leading zeros
-					sprintf(formatter, "%%020.%dlf\0", propGet_settings_Decimals(_settings));
-					sprintf((s8*)buffer, formatter, *(f64*)var->value.data);
-
-					// Skip past leading zeros
-					for (lnI = 0; buffer[lnI] == '0'; )
-						++lnI;
-
-					// Append its form
-					varDisp->isValueAllocated = true;
-					iDatum_duplicate(&varDisp->value, buffer + lnI, -1);
-					break;
-
-				case _VAR_TYPE_BI:
-// TODO:  BI needs coded
-					varDisp->isValueAllocated = true;
-					iDatum_duplicate(&varDisp->value, cgcBigInteger, -1);
-					break;
-
-				case _VAR_TYPE_BFP:
-// TODO:  BFP needs coded
-					varDisp->isValueAllocated = true;
-					iDatum_duplicate(&varDisp->value, cgcBigFloatingPoint, -1);
-					break;
-
-				case _VAR_TYPE_DATE:
-					// We can convert this from its text form into numeric if we're auto-converting
-// TODO:  This needs to go into a DTOC() function
-					// Prepare for our year
-					if (propGet_settings_Century(_settings))	lnYearOffset = 0;
-					else										lnYearOffset = 2;
-
-					// Based on type, convert
-					switch (propGet_settings_Date(_settings))
-					{
-						case _SET_DATE_MDY:
-						case _SET_DATE_AMERICAN:		// mm/dd/yy
-							memcpy(buffer + 0, var->value.data + 4, 2);
-							buffer[2] = '/';
-							memcpy(buffer + 3, var->value.data + 6, 2);
-							buffer[5] = '/';
-							memcpy(buffer + 6, var->value.data + lnYearOffset, 4 - lnYearOffset);
-							break;
-
-						case _SET_DATE_ANSI:			// yy.mm.dd
-							memcpy(buffer + 0, var->value.data + 4, 2);
-							buffer[2] = '.';
-							memcpy(buffer + 3, var->value.data + 6, 2);
-							buffer[5] = '.';
-							memcpy(buffer + 6, var->value.data + lnYearOffset, 4 - lnYearOffset);
-							break;
-
-						case _SET_DATE_BRITISH:			// dd/mm/yy
-						case _SET_DATE_FRENCH:			// dd/mm/yy
-						case _SET_DATE_DMY:				// dd/mm/yy
-							memcpy(buffer + 0, var->value.data + 6, 2);
-							buffer[2] = '/';
-							memcpy(buffer + 3, var->value.data + 4, 2);
-							buffer[5] = '/';
-							memcpy(buffer + 6, var->value.data + lnYearOffset, 4 - lnYearOffset);
-							break;
-
-						case _SET_DATE_GERMAN:			// dd.mm.yy
-							memcpy(buffer + 0, var->value.data + 6, 2);
-							buffer[2] = '.';
-							memcpy(buffer + 3, var->value.data + 4, 2);
-							buffer[5] = '.';
-							memcpy(buffer + 6, var->value.data + lnYearOffset, 4 - lnYearOffset);
-							break;
-
-						case _SET_DATE_ITALIAN:			// dd-mm-yy
-							memcpy(buffer + 0, var->value.data + 6, 2);
-							buffer[2] = '-';
-							memcpy(buffer + 3, var->value.data + 4, 2);
-							buffer[5] = '-';
-							memcpy(buffer + 6, var->value.data + lnYearOffset, 4 - lnYearOffset);
-							break;
-
-						case _SET_DATE_TAIWAN:			// yy/mm/dd
-						case _SET_DATE_YMD:				// yy/mm/dd
-						case _SET_DATE_JAPAN:			// yy/mm/dd
-							memcpy(buffer + 0, var->value.data + lnYearOffset, 4 - lnYearOffset);
-							buffer[4 - lnYearOffset] = '-';
-							memcpy(buffer + 5 - lnYearOffset, var->value.data + 4, 2);
-							buffer[7 - lnYearOffset] = '-';
-							memcpy(buffer + 8 - lnYearOffset, var->value.data + 6, 2);
-							break;
-
-						case _SET_DATE_LONG:			// Dayofweek, Month dd, yyyy
-							iDatum_duplicate(&varDisp->value, cgcFeatureNotYetSupported, -1);
-							break;
-
-						case _SET_DATE_SHORT:			// m/d/yy
-							if (var->value.data[4] == '0')		memcpy(buffer + strlen(buffer), var->value.data + 5, 1);
-							else								memcpy(buffer + strlen(buffer), var->value.data + 4, 2);
-
-							buffer[strlen(buffer)] = '/';
-
-							if (var->value.data[6] == '0')		memcpy(buffer + strlen(buffer), var->value.data + 7, 1);
-							else								memcpy(buffer + strlen(buffer), var->value.data + 6, 2);
-
-							buffer[strlen(buffer)] = '/';
-
-							memcpy(buffer + strlen(buffer), var->value.data + lnYearOffset, 4 - lnYearOffset);
-							break;
-
-						case _SET_DATE_USA:				// mm-dd-yy
-							memcpy(buffer + 0, var->value.data + 4, 2);
-							buffer[2] = '-';
-							memcpy(buffer + 3, var->value.data + 6, 2);
-							buffer[5] = '-';
-							memcpy(buffer + 6, var->value.data + lnYearOffset, 4 - lnYearOffset);
-							break;
-					}
-					iDatum_duplicate(&varDisp->value, buffer, -1);
-					break;
-
-				case _VAR_TYPE_LOGICAL:
-					// Based on setting, display as indicated
-					lnSetLogical = propGet_settings_Logical(_settings);
-					if (lnSetLogical == _LOGICAL_TF)
-					{
-						// True/False
+			} else {
+				// Based on the type, convert to a form for display
+				switch (var->varType)
+				{
+					case _VAR_TYPE_NULL:
 						varDisp->isValueAllocated = true;
-						if (var->value.data[0] == _LOGICAL_FALSE)		iDatum_duplicate(&varDisp->value, cgc_f_dots, -1);
-						else											iDatum_duplicate(&varDisp->value, cgc_t_dots, -1);
+						iDatum_duplicate(&varDisp->value, cgcNullText, sizeof(cgcNullText) - 1);
+						break;
 
-					} else if (lnSetLogical == _LOGICAL_YN) {
-						// Yes/No
+					case _VAR_TYPE_NUMERIC:
+					case _VAR_TYPE_CHARACTER:
+						// Numeric and character forms are already stored as text
 						varDisp->isValueAllocated = true;
-						if (var->value.data[0] == _LOGICAL_FALSE)		iDatum_duplicate(&varDisp->value, cgc_no_dots, -1);
-						else											iDatum_duplicate(&varDisp->value, cgc_yes_dots, -1);
+						iDatum_duplicate(&varDisp->value, &var->value);
+						break;
 
-					} else {
-						// Up/Down
-						var->isValueAllocated = true;
-						if (var->value.data[0] == _LOGICAL_FALSE)		iDatum_duplicate(&varDisp->value, cgc_down_dots, -1);
-						else											iDatum_duplicate(&varDisp->value, cgc_up_dots, -1);
-					}
-					break;
+					case _VAR_TYPE_S32:
+						// Convert to integer form, then store text
+						sprintf((s8*)buffer, "%d\0", *(s32*)var->value.data);
+						varDisp->isValueAllocated = true;
+						iDatum_duplicate(&varDisp->value, buffer, -1);
+						break;
 
-				case _VAR_TYPE_DATETIME:
-					// Translate from encoded form to components, then assemble as MM/DD/YYYY HH:MM:SS AM/PM
-					dt = (SDateTime*)var->value.data;
-					iiVariable_extract_YyyyMmDd_from_Julian(dt->julian, &lnYear, &lnMonth, &lnDay);
-					iiVariable_extract_HhMmSsMss_from_f32(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+					case _VAR_TYPE_U32:
+						// Convert to unsigned integer form, then store text
+						sprintf((s8*)buffer, "%u\0", *(u32*)var->value.data);
+						varDisp->isValueAllocated = true;
+						iDatum_duplicate(&varDisp->value, buffer, -1);
+						break;
 
-					// Adjust for our 24-hour settings
-					llHour24		= propGet_settings_Hours24(_settings);
-					lnHourAdjusted	= iTime_adjustHour_toAMPM(lnHour, !llHour24);
-					lcAmPmText		= (cs8*)((llHour24) ? "" : (cs8*)iTime_amOrPm(lnHour, (void*)cgc_space_am_uppercase, (void*)cgc_space_pm_lowercase));
+					case _VAR_TYPE_U64:
+						// Convert to unsigned integer form, then store text
+						sprintf((s8*)buffer, "%I64u\0", *(u64*)var->value.data);
+						varDisp->isValueAllocated = true;
+						iDatum_duplicate(&varDisp->value, buffer, -1);
+						break;
+
+					case _VAR_TYPE_S64:
+						// Convert to unsigned integer form, then store text
+						sprintf((s8*)buffer, "%I64d\0", *(s64*)var->value.data);
+						varDisp->isValueAllocated = true;
+						iDatum_duplicate(&varDisp->value, buffer, -1);
+						break;
+
+					case _VAR_TYPE_S16:
+						// Convert to integer form, then store text
+						sprintf((s8*)buffer, "%d\0", (s32)*(s16*)var->value.data);
+						varDisp->isValueAllocated = true;
+						iDatum_duplicate(&varDisp->value, buffer, -1);
+						break;
+
+					case _VAR_TYPE_S8:
+						// Convert to integer form, then store text
+						sprintf((s8*)buffer, "%d\0", (s32)*(s8*)var->value.data);
+						varDisp->isValueAllocated = true;
+						iDatum_duplicate(&varDisp->value, buffer, -1);
+						break;
+
+					case _VAR_TYPE_U16:
+						// Convert to unsigned integer form, then store text
+						sprintf((s8*)buffer, "%u\0", (u32)*(u16*)var->value.data);
+						varDisp->isValueAllocated = true;
+						iDatum_duplicate(&varDisp->value, buffer, -1);
+						break;
+
+					case _VAR_TYPE_U8:
+						// Convert to unsigned integer form, then store text
+						sprintf((s8*)buffer, "%u\0", (u32)*(u8*)var->value.data);
+						varDisp->isValueAllocated = true;
+						iDatum_duplicate(&varDisp->value, buffer, -1);
+						break;
+
+					case _VAR_TYPE_F32:
+						// Convert to floating point form, then store text after leading zeros
+						sprintf(formatter, "%%020.%df\0", propGet_settings_Decimals(_settings));
+						sprintf((s8*)buffer, formatter, *(f32*)var->value.data);
+
+						// Skip past leading zeros
+						for (lnI = 0; buffer[lnI] == '0'; )
+							++lnI;
+
+						// Append its form
+						varDisp->isValueAllocated = true;
+						iDatum_duplicate(&varDisp->value, buffer + lnI, -1);
+						break;
+
+					case _VAR_TYPE_F64:
+						// Convert to floating point form, then store text after leading zeros
+						sprintf(formatter, "%%020.%dlf\0", propGet_settings_Decimals(_settings));
+						sprintf((s8*)buffer, formatter, *(f64*)var->value.data);
+
+						// Skip past leading zeros
+						for (lnI = 0; buffer[lnI] == '0'; )
+							++lnI;
+
+						// Append its form
+						varDisp->isValueAllocated = true;
+						iDatum_duplicate(&varDisp->value, buffer + lnI, -1);
+						break;
+
+					case _VAR_TYPE_BI:
+	// TODO:  BI needs coded
+						varDisp->isValueAllocated = true;
+						iDatum_duplicate(&varDisp->value, cgcBigInteger, -1);
+						break;
+
+					case _VAR_TYPE_BFP:
+	// TODO:  BFP needs coded
+						varDisp->isValueAllocated = true;
+						iDatum_duplicate(&varDisp->value, cgcBigFloatingPoint, -1);
+						break;
+
+					case _VAR_TYPE_DATE:
+						// We can convert this from its text form into numeric if we're auto-converting
+	// TODO:  This needs to go into a DTOC() function
+						// Prepare for our year
+						if (propGet_settings_Century(_settings))	lnYearOffset = 0;
+						else										lnYearOffset = 2;
+
+						// Based on type, convert
+						switch (propGet_settings_Date(_settings))
+						{
+							case _SET_DATE_MDY:
+							case _SET_DATE_AMERICAN:		// mm/dd/yy
+								memcpy(buffer + 0, var->value.data + 4, 2);
+								buffer[2] = '/';
+								memcpy(buffer + 3, var->value.data + 6, 2);
+								buffer[5] = '/';
+								memcpy(buffer + 6, var->value.data + lnYearOffset, 4 - lnYearOffset);
+								break;
+
+							case _SET_DATE_ANSI:			// yy.mm.dd
+								memcpy(buffer + 0, var->value.data + 4, 2);
+								buffer[2] = '.';
+								memcpy(buffer + 3, var->value.data + 6, 2);
+								buffer[5] = '.';
+								memcpy(buffer + 6, var->value.data + lnYearOffset, 4 - lnYearOffset);
+								break;
+
+							case _SET_DATE_BRITISH:			// dd/mm/yy
+							case _SET_DATE_FRENCH:			// dd/mm/yy
+							case _SET_DATE_DMY:				// dd/mm/yy
+								memcpy(buffer + 0, var->value.data + 6, 2);
+								buffer[2] = '/';
+								memcpy(buffer + 3, var->value.data + 4, 2);
+								buffer[5] = '/';
+								memcpy(buffer + 6, var->value.data + lnYearOffset, 4 - lnYearOffset);
+								break;
+
+							case _SET_DATE_GERMAN:			// dd.mm.yy
+								memcpy(buffer + 0, var->value.data + 6, 2);
+								buffer[2] = '.';
+								memcpy(buffer + 3, var->value.data + 4, 2);
+								buffer[5] = '.';
+								memcpy(buffer + 6, var->value.data + lnYearOffset, 4 - lnYearOffset);
+								break;
+
+							case _SET_DATE_ITALIAN:			// dd-mm-yy
+								memcpy(buffer + 0, var->value.data + 6, 2);
+								buffer[2] = '-';
+								memcpy(buffer + 3, var->value.data + 4, 2);
+								buffer[5] = '-';
+								memcpy(buffer + 6, var->value.data + lnYearOffset, 4 - lnYearOffset);
+								break;
+
+							case _SET_DATE_TAIWAN:			// yy/mm/dd
+							case _SET_DATE_YMD:				// yy/mm/dd
+							case _SET_DATE_JAPAN:			// yy/mm/dd
+								memcpy(buffer + 0, var->value.data + lnYearOffset, 4 - lnYearOffset);
+								buffer[4 - lnYearOffset] = '-';
+								memcpy(buffer + 5 - lnYearOffset, var->value.data + 4, 2);
+								buffer[7 - lnYearOffset] = '-';
+								memcpy(buffer + 8 - lnYearOffset, var->value.data + 6, 2);
+								break;
+
+							case _SET_DATE_LONG:			// Dayofweek, Month dd, yyyy
+								iDatum_duplicate(&varDisp->value, cgcFeatureNotYetSupported, -1);
+								break;
+
+							case _SET_DATE_SHORT:			// m/d/yy
+								if (var->value.data[4] == '0')		memcpy(buffer + strlen(buffer), var->value.data + 5, 1);
+								else								memcpy(buffer + strlen(buffer), var->value.data + 4, 2);
+
+								buffer[strlen(buffer)] = '/';
+
+								if (var->value.data[6] == '0')		memcpy(buffer + strlen(buffer), var->value.data + 7, 1);
+								else								memcpy(buffer + strlen(buffer), var->value.data + 6, 2);
+
+								buffer[strlen(buffer)] = '/';
+
+								memcpy(buffer + strlen(buffer), var->value.data + lnYearOffset, 4 - lnYearOffset);
+								break;
+
+							case _SET_DATE_USA:				// mm-dd-yy
+								memcpy(buffer + 0, var->value.data + 4, 2);
+								buffer[2] = '-';
+								memcpy(buffer + 3, var->value.data + 6, 2);
+								buffer[5] = '-';
+								memcpy(buffer + 6, var->value.data + lnYearOffset, 4 - lnYearOffset);
+								break;
+						}
+						iDatum_duplicate(&varDisp->value, buffer, -1);
+						break;
+
+					case _VAR_TYPE_LOGICAL:
+						// Based on setting, display as indicated
+						lnSetLogical = propGet_settings_Logical(_settings);
+						if (lnSetLogical == _LOGICAL_TF)
+						{
+							// True/False
+							varDisp->isValueAllocated = true;
+							if (var->value.data[0] == _LOGICAL_FALSE)		iDatum_duplicate(&varDisp->value, cgc_f_dots, -1);
+							else											iDatum_duplicate(&varDisp->value, cgc_t_dots, -1);
+
+						} else if (lnSetLogical == _LOGICAL_YN) {
+							// Yes/No
+							varDisp->isValueAllocated = true;
+							if (var->value.data[0] == _LOGICAL_FALSE)		iDatum_duplicate(&varDisp->value, cgc_no_dots, -1);
+							else											iDatum_duplicate(&varDisp->value, cgc_yes_dots, -1);
+
+						} else {
+							// Up/Down
+							var->isValueAllocated = true;
+							if (var->value.data[0] == _LOGICAL_FALSE)		iDatum_duplicate(&varDisp->value, cgc_down_dots, -1);
+							else											iDatum_duplicate(&varDisp->value, cgc_up_dots, -1);
+						}
+						break;
+
+					case _VAR_TYPE_DATETIME:
+						// Translate from encoded form to components, then assemble as MM/DD/YYYY HH:MM:SS AM/PM
+						dt = (SDateTime*)var->value.data;
+						iiVariable_extract_YyyyMmDd_from_Julian(dt->julian, &lnYear, &lnMonth, &lnDay);
+						iiVariable_extract_HhMmSsMss_from_f32(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+
+						// Adjust for our 24-hour settings
+						llHour24		= propGet_settings_Hours24(_settings);
+						lnHourAdjusted	= iTime_adjustHour_toAMPM(lnHour, !llHour24);
+						lcAmPmText		= (cs8*)((llHour24) ? "" : (cs8*)iTime_amOrPm(lnHour, (void*)cgc_space_am_uppercase, (void*)cgc_space_pm_lowercase));
 
 // TODO:  We need to honor the SET DATE settings.  For now we use MM/DD/YYYY HH:MM:SS.Mss AM
-					// Format for century settings
-					if (propGet_settings_Century(_settings))
-					{
-						// SET CENTURY ON
-						if (propGet_settings_ncset_datetimeMilliseconds(_settings))
+						// Format for century settings
+						if (propGet_settings_Century(_settings))
 						{
-							// Include milliseconds
-							sprintf((s8*)buffer, "%02u/%02u/%04u %02u:%02u:%02u.%03u%s\0", lnMonth, lnDay, lnYear, lnHourAdjusted, lnMinute, lnSecond, lnMillisecond, lcAmPmText);
+							// SET CENTURY ON
+							if (propGet_settings_ncset_datetimeMilliseconds(_settings))
+							{
+								// Include milliseconds
+								sprintf((s8*)buffer, "%02u/%02u/%04u %02u:%02u:%02u.%03u%s\0", lnMonth, lnDay, lnYear, lnHourAdjusted, lnMinute, lnSecond, lnMillisecond, lcAmPmText);
+
+							} else {
+								// No milliseconds
+								sprintf((s8*)buffer, "%02u/%02u/%04u %02u:%02u:%02u%s\0", lnMonth, lnDay, lnYear, lnHourAdjusted, lnMinute, lnSecond, lcAmPmText);
+							}
 
 						} else {
-							// No milliseconds
-							sprintf((s8*)buffer, "%02u/%02u/%04u %02u:%02u:%02u%s\0", lnMonth, lnDay, lnYear, lnHourAdjusted, lnMinute, lnSecond, lcAmPmText);
+							// SET CENTURY OFF
+							if (propGet_settings_ncset_datetimeMilliseconds(_settings))
+							{
+								// Include milliseconds
+								sprintf((s8*)buffer, "%02u/%02u/%02u %02u:%02u:%02u.%03u%s\0", lnMonth, lnDay, lnYear % 100, lnHourAdjusted, lnMinute, lnSecond, lnMillisecond, lcAmPmText);
+
+							} else {
+								// No milliseconds
+								sprintf((s8*)buffer, "%02u/%02u/%02u %02u:%02u:%02u%s\0", lnMonth, lnDay, lnYear % 100, lnHourAdjusted, lnMinute, lnSecond, lcAmPmText);
+							}
 						}
 
-					} else {
-						// SET CENTURY OFF
-						if (propGet_settings_ncset_datetimeMilliseconds(_settings))
-						{
-							// Include milliseconds
-							sprintf((s8*)buffer, "%02u/%02u/%02u %02u:%02u:%02u.%03u%s\0", lnMonth, lnDay, lnYear % 100, lnHourAdjusted, lnMinute, lnSecond, lnMillisecond, lcAmPmText);
+						varDisp->isValueAllocated = true;
+						iDatum_duplicate(&varDisp->value, buffer, -1);
+						break;
 
-						} else {
-							// No milliseconds
-							sprintf((s8*)buffer, "%02u/%02u/%02u %02u:%02u:%02u%s\0", lnMonth, lnDay, lnYear % 100, lnHourAdjusted, lnMinute, lnSecond, lcAmPmText);
-						}
-					}
+					case _VAR_TYPE_CURRENCY:
+						// Translate to f64, then use fixed 4 decimals
+						lfValue64 = ((f64)*(s64*)var->value.data / 10000.0);
+						sprintf((s8*)buffer, "%020.4lf\0", lfValue64);
 
-					varDisp->isValueAllocated = true;
-					iDatum_duplicate(&varDisp->value, buffer, -1);
-					break;
+						// Skip past leading zeros
+						for (lnI = 0; buffer[lnI] == '0'; )
+							++lnI;
 
-				case _VAR_TYPE_CURRENCY:
-					// Translate to f64, then use fixed 4 decimals
-					lfValue64 = ((f64)*(s64*)var->value.data / 10000.0);
-					sprintf((s8*)buffer, "%020.4lf\0", lfValue64);
-
-					// Skip past leading zeros
-					for (lnI = 0; buffer[lnI] == '0'; )
-						++lnI;
-
-					// Append its form
-					varDisp->isValueAllocated = true;
-					iDatum_duplicate(&varDisp->value, buffer + lnI, -1);
-					break;
+						// Append its form
+						varDisp->isValueAllocated = true;
+						iDatum_duplicate(&varDisp->value, buffer + lnI, -1);
+						break;
+				}
 			}
 
 		} else {

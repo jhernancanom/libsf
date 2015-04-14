@@ -371,7 +371,7 @@
 			{
 				case _ICODE_NULL:
 					*tlManufactured = true;
-					return(iVariable_create(NULL, _VAR_TYPE_NULL, NULL, true));
+					return(iVariable_create(NULL, _VAR_TYPE_LOGICAL, NULL, false));
 
 				case _ICODE_NUMERIC:
 					// It's a raw number
@@ -541,14 +541,8 @@ debug_nop;
 					if (var)
 					{
 						// Create a copy of the variable
-						if (var->varType == _VAR_TYPE_NULL)
+						if (var->varType == _VAR_TYPE_OBJECT)
 						{
-							// It's a null variable
-							varCopy = iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL, true);
-							if (varCopy)
-								iDatum_duplicate(&varCopy->value, cgcNullText, -1);
-
-						} else if (var->varType == _VAR_TYPE_OBJECT) {
 							// It's an object
 							varCopy = iVariable_create(NULL, _VAR_TYPE_CHARACTER, NULL, true);
 							if (varCopy)
@@ -1047,7 +1041,7 @@ debug_nop;
 		// Initialize the parameters to null
 		//////
 			for (lnI = 0; lnI < _MAX_PARAMETER_COUNT; lnI++)
-				params[lnI] = 0;
+				params[lnI] = NULL;
 
 
 		//////////
