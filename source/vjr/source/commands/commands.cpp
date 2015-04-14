@@ -3076,9 +3076,10 @@
 		// Get the current directory
 		memset(curdir, 0, sizeof(curdir));
 		GetCurrentDirectory(_MAX_PATH, (s8*)curdir);
+		memcpy(curdir + strlen(curdir), "\\\0", 2);
 
 		// Create the output variable
-		result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, curdir, (u32)strlen(curdir), false);
+		result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_CHARACTER, curdir + 2, (u32)strlen(curdir + 2), false);
 		if (!result)
 			iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
 
