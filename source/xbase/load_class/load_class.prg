@@ -22,7 +22,7 @@
 * Copyright (c) 2015 by Rick C. Hodgin
 ***
 * Last update:
-*     Apr.13.2015
+*     Apr.14.2015
 ***
 * Change log:
 *     Apr.13.2015 - Initial creation
@@ -82,26 +82,40 @@
 
 
 
+loNew = load_class("classname", "c:\path\to\classlib.vcx")
 SET STEP ON
-DO load_class WITH "classname", "c:\path\to\classlib.vcx"
+SET STEP ON
 
 
 
 
 FUNCTION load_class
 LPARAMETERS tcClass, tcLibrary
-LOCAL laInitEvents
 
-	DIMENSION laInitEvents[1]
-	iload_class(tcClass, tcLibrary, .NULL., @laInitEvents, .f.)
+	return(iload_class(tcClass, tcClass, tcLibrary, .NULL., .f.))
 
 
 
 
+**********
+* A property is added to each class as new code is added:
+*	this.__MethodCode
+*****
+* The layers of this.__MethodCode[n] relate to the loaded class layer.
+* The actual class that was loaded is this.__MethodCode[1], with the class
+* it was based on being this.__MethodCode[2], and so on.  Every child or
+* sibling class that's loaded also has its own this.__MethodCode.  Base
+* class objects do not have these, as they are applied to the loaded class
+* layer, rather than the base class layer.
+*****
+*	this.__MethodCode[n, 1]		-- Event or method name (init, activate, etc.)
+*	this.__MethodCode[n, 2]		-- 		laCode[m, 1] -- Class this code relates to
+*										laCode[m, 2] -- Source code lines
+*****
 FUNCTION iload_class
-LPARAMETERS tcClass, tcLibrary, toParent, taInitEvents, tlAugmentProperties
-LOCAL lnI, lcAlias, loNew, loClass, lcPropName, lcPropNameDescent, lcThisName, lcValue, lnEqualPos, llError, lcLibraryNext
-EXTERNAL ARRAY taInitEvents
+LPARAMETERS tcName, tcClass, tcLibrary, toParent, tlAugmentProperties
+LOCAL lnI, lnJ, lcAlias, loNew, loClass, lcPropName, lcPropNameDescent, lcThisName
+LOCAL lcValue, lnEqualPos, llError, lcLibraryNext, lcCodeArrayName, lnFoundRecno
 
 
 	**********
@@ -129,12 +143,12 @@ EXTERNAL ARRAY taInitEvents
 			? "Error accessing class " + tcClass + " in " + tcLibrary
 			SET STEP ON
 		ENDIF
+		lnFoundRecno = RECNO()
 
 
 	**********
 	* Create the instance
 	*****
-		lcName = &lcAlias..objName
 		IF tlAugmentProperties
 			* We are augmenting the parent class with our properties
 			loNew = toParent
@@ -143,12 +157,12 @@ EXTERNAL ARRAY taInitEvents
 			IF ISNULL(toParent)
 				* Creating the initial instance
 				loNew		= CREATEOBJECT(&lcAlias..baseclass)
-				loNew.Name	= lcName
+				loNew.Name	= tcName
 
 			ELSE
 				* Appending this class to the parent
-				toParent.ADDOBJECT(lcName, &lcAlias..baseClass)
-				loNew = toParent.&lcName
+				toParent.ADDOBJECT(tcName, &lcAlias..baseClass)
+				loNew = toParent.&tcName
 			ENDIF
 		ENDIF
 	
@@ -160,7 +174,7 @@ EXTERNAL ARRAY taInitEvents
 		lcLibraryNext	= FULLPATH(ADDBS(JUSTPATH(tcLibrary)) + ALLTRIM(&lcAlias..classloc))
 		IF NOT EMPTY(&lcAlias..classloc) AND (lcClassNext != tcClass OR lcLibraryNext != tcLibrary)
 			* Add all parent classes
-			iload_class(lcClassNext, lcLibraryNext, loNew, @taInitEvents, .t.)
+			iload_class(&lcAlias..objName, lcClassNext, lcLibraryNext, loNew, .t.)
 		ENDIF
 	
 	
@@ -168,32 +182,164 @@ EXTERNAL ARRAY taInitEvents
 	* Append any siblings
 	*****
 		SELECT (lcAlias)
-		SCAN FOR parent = tcClass
+		* Add any sibling that has a class
+		SCAN FOR LOWER(parent) == LOWER(tcClass) AND NOT EMPTY(classloc)
 			lcClassNext		= &lcAlias..class
 			lcLibraryNext	= FULLPATH(ADDBS(JUSTPATH(tcLibrary)) + ALLTRIM(&lcAlias..classloc))
-			IF NOT EMPTY(&lcAlias..classloc)
-				* Add this sibling
-				iload_class(lcClassNext, lcLibraryNext, loNew, @taInitEvents, .f.)
-			ENDIF
+			iload_class(&lcAlias..objName, lcClassNext, lcLibraryNext, loNew, .f.)
+		ENDSCAN
+
+		* Add an sibling that is a base class
+		SCAN FOR LOWER(parent) == LOWER(tcClass) AND EMPTY(classloc)
+			lcName			= &lcAlias..objName
+			lcClassNext		= &lcAlias..class
+			loNew.ADDOBJECT(lcName, lcClassNext)
+			iiload_class_add_methods(loNew.&lcName)
 		ENDSCAN
 	
 	
 	**********
-	* Parse out the method code and prepend it to the stack
+	* Get back to our original record
 	*****
-		* Incomplete
+		GOTO lnFoundRecno
 	
 	
 	**********
-	* Append this class to the list of events to signal for init
+	* Append any events or methods which do not already exist
 	*****
-		IF NOT tlAugmentProperties
-			* Only signal the init event on highest-level objects
-			* They will propagate down automatically
-			IF TYPE("taInitEvents[ALEN(taInitEvents, 1)]") != "L"
-				DECLARE taInitEvents[ALEN(taInitEvents, 1) + 1]
-			ENDIF
-			taInitEvents[ALEN(taInitEvents, 1)] = lcName + ".init()"
+		iiload_class_add_methods(loNew)
+	
+	
+	**********
+	* Parse out the method code and prepend it to each object's method stack
+	*****
+		IF NOT EMPTY(&lcAlias..methods)
+
+			**********
+			* There are procedures within
+			* Parse and add/append as encountered
+			*****
+				RELEASE laSourceCode
+				ALINES(laSourceCode, &lcAlias..methods)
+				FOR lnI = 1 TO ALEN(laSourceCode, 1) STEP 0
+
+					**********
+					* Look for procedures or functions
+					*****
+						IF UPPER(LEFT(laSourceCode[lnI], 4)) = "PROC" OR UPPER(LEFT(laSourceCode[lnI], 4)) = "FUNC"
+
+							**********
+							* Beginning of a procedure or function
+							*****
+								lcProcName	= LOWER(ALLTRIM(SUBSTR(laSourceCode[lnI], AT(SPACE(1), laSourceCode[lnI]) + 1)))
+								lniStart	= lnI
+
+
+							**********
+							* Look for the end
+							*****
+								lcCodeBlock = SPACE(0)
+								FOR lniEnd = lniStart + 1 TO ALEN(laSourceCode, 1)
+									IF UPPER(LEFT(laSourceCode[lniEnd], 4)) = "ENDP" OR UPPER(LEFT(laSourceCode[lniEnd], 4)) = "ENDF"
+										* End of the procedure or function
+										EXIT
+									ENDIF
+									lcCodeBlock = lcCodeBlock + laSourceCode[lniEnd] + CHR(13)
+								NEXT
+								* When we get here, lniStart..lniEnd is the source code range, and lcCodeBlock is the actual source code
+
+
+							**********
+							* See if this method name already exists
+							*****
+								IF "." $ lcProcName
+									* It is code added to a nested class
+SET STEP ON
+* TODO:  This needs to be developed
+
+								ELSE
+									* It is code added directly to this class
+
+									**********
+									* Search for the existing method
+									*****
+										llFound = .f.
+										FOR lnJ = 1 TO ALEN(loNew.__MethodCode, 1)
+											IF LOWER(loNew.__MethodCode[lnJ, 1]) = lcProcName
+												* We found the existing
+												llFound			= .t.
+												lcCodeArrayName = loNew.__MethodCode[lnJ, 2]
+												EXIT
+											ENDIF
+										NEXT
+
+
+									**********
+									* If it was found, update it
+									*****
+										IF llFound
+											IF &lcCodeArrayName[1, 1] != loNew
+												**********
+												* It is a different object, so we insert new code before what exists
+												* Bump everything down one and assign this layer of code to itself
+												*****
+													iiload_class_bump_array_down(@&lcCodeArrayName)
+													&lcCodeArrayName[1, 1] = loNew
+
+											ELSE
+												* This method relates to this class
+												* There shouldn't already be any code here
+												* If there is, it means the method name appears
+												* twice in the class definition.
+												IF NOT EMPTY(&lcCodeArrayName[1, 2])
+													? "Duplicate method code found in " + loNew.Name + "." + lcProcName + "()"
+													SET STEP ON
+												ENDIF
+												* If we get here, we're good... we can add it
+											ENDIF
+
+										ELSE
+											**********
+											* Not found, add new method to the class
+											*****
+												lcCodeArrayName	= SYS(2015)
+												PUBLIC &lcCodeArrayName
+												DIMENSION &lcCodeArrayName[1, 2]
+
+												DIMENSION loNew.__MethodCode[ALEN(loNew.__MethodCode, 1) + 1, ALEN(loNew.__MethodCode, 2)]
+												loNew.__MethodCode[ALEN(loNew.__MethodCode, 1), 1] = lcProcName
+												loNew.__MethodCode[ALEN(loNew.__MethodCode, 1), 2] = lcCodeArrayName
+
+
+											**********
+											* Insert the reference for this class at this level
+											*****
+												&lcCodeArrayName[1, 1] = loNew
+												&lcCodeArrayName[1, 2] = SPACE(0)	&& No code yet
+
+										ENDIF
+
+								ENDIF
+
+
+							**********
+							* Append the method code
+							*****
+								&lcCodeArrayName[1, 2] = lcCodeBlock
+
+
+							**********
+							* Get ready for the next block
+							*****
+								lnI = lniEnd + 1
+
+						ELSE
+							* Increase to next line
+							lnI = lnI + 1
+						ENDIF
+
+				NEXT
+				RELEASE laSourceCode
 		ENDIF
 
 
@@ -208,10 +354,10 @@ EXTERNAL ARRAY taInitEvents
 				* Get the name = value for this line
 				lcPropName	= ALLTRIM(LEFT(laLines[lnI], lnEqualPos - 1))
 				lcValue		= ALLTRIM(SUBSTR(laLines[lnI], lnEqualPos + 1))
-				
+
 				* Set all properties except name
 				IF LOWER(lcPropName) != "name"
-				
+
 					**********
 					* Get to the property's location
 					*****
@@ -232,8 +378,8 @@ EXTERNAL ARRAY taInitEvents
 							ENDDO
 							lcPropName = lcPropNameDescent
 						ENDIF
-					
-					
+
+
 					**********
 					* Add the property if need be
 					*****
@@ -241,8 +387,8 @@ EXTERNAL ARRAY taInitEvents
 							* Property does not exist, add it
 							loClass.ADDPROPERTY(lcPropName)
 						ENDIF
-						
-					
+
+
 					**********
 					* Assign it
 					*****
@@ -261,13 +407,12 @@ EXTERNAL ARRAY taInitEvents
 				ENDIF
 			ENDIF
 		NEXT
-	
-	
-	**********
-	* Clean house
-	*****
-		USE IN (lcAlias)
 
+
+	**********
+	* Indicate the fruit of our labor
+	*****
+		RETURN loNew
 
 
 
@@ -317,3 +462,117 @@ LOCAL llIsNumeric
 	* If we get here, return it as it is (as character)
 	*****
 		RETURN lcValue
+
+
+
+
+FUNCTION iiload_class_add_methods
+LPARAMETERS toNew
+LOCAL lnI, lnJ, llFound, laMems, lcCodeArrayName
+
+	**********
+	* Make sure it has a __MethodCode[] array
+	*****
+		IF TYPE(toNew.name + "__MethodCode[1,2]") = "U"
+			toNew.addProperty("__MethodCode[1,2]")
+		ENDIF
+
+
+	**********
+	* Populate it with its members
+	*****
+		DIMENSION laMems[1]
+		AMEMBERS(laMems, toNew, 1)
+		FOR lnI = 1 TO ALEN(laMems, 1)
+			IF INLIST(LOWER(laMems[lnI, 2]), "method", "event")
+			
+				**********
+				* Make sure this one exists in our methods array
+				*****
+					llFound = .f.
+					IF TYPE("toNew.__MethodCode[1, 1]") != "L"
+						* Search the existing ones to see if it's found
+						FOR lnJ = 1 TO ALEN(toNew.__MethodCode, 1)
+							IF LOWER(toNew.__MethodCode[lnJ, 1]) = LOWER(laMems[lnI, 1])
+								* We've found a match
+								llFound = .t.
+								EXIT
+							ENDIF
+						NEXT
+					ENDIF
+
+				
+				**********
+				* If it wasn't found, add it
+				*****
+					IF llFound
+
+						**********
+						* Insert this reference at the top
+						*****
+							lcCodeArrayName	= toNew.__MethodCode[ALEN(toNew.__MethodCode, 1), 2]
+
+							iiload_class_bump_array_down(@&lcCodeArrayName)
+
+							&lcCodeArrayName[1, 1] = toNew
+							&lcCodeArrayName[1, 2] = SPACE(0)	&& No code yet
+						
+
+					ELSE
+					
+						**********
+						* Add this new method
+						*****
+							lcCodeArrayName	= SYS(2015)
+							PUBLIC &lcCodeArrayName
+							DIMENSION &lcCodeArrayName[1, 2]
+
+
+						**********
+						* Add a slot for the new item if need be
+						*****
+							IF TYPE("toNew.__MethodCode[1, 1]") != "L"
+								DIMENSION toNew.__MethodCode[ALEN(toNew.__MethodCode, 1) + 1, ALEN(toNew.__MethodCode, 2)]
+							ENDIF
+
+
+						**********
+						* Store the method name, and its associated array
+						*****
+							toNew.__MethodCode[ALEN(toNew.__MethodCode, 1), 1] = LOWER(laMems[lnI, 1])
+							toNew.__MethodCode[ALEN(toNew.__MethodCode, 1), 2] = lcCodeArrayName
+
+
+						**********
+						* Insert the reference for this class at this level
+						*****
+							&lcCodeArrayName[1, 1] = toNew
+							&lcCodeArrayName[1, 2] = SPACE(0)	&& No code yet
+
+					ENDIF
+
+			ENDIF
+		NEXT
+
+
+
+
+FUNCTION iiload_class_bump_array_down
+LPARAMETERS taArray
+LOCAL lnI, lnJ
+
+	**********
+	* Add a new slot to the laCode
+	*****
+		EXTERNAL ARRAY taArray
+		DIMENSION taArray[ALEN(taArray, 1) + 1, ALEN(taArray, 2)]
+	
+	
+	**********
+	* Bump everything down ... x[i+1, j] = x[i, j]
+	*****
+		FOR lnI = ALEN(taArray, 1) - 1 TO 1 STEP -1
+			FOR lnJ = 1 TO ALEN(taArray, 2)
+				taArray[lnI + 1, lnJ] = taArray[lnI, lnJ]
+			NEXT
+		NEXT
