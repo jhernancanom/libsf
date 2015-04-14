@@ -351,10 +351,7 @@
 		SVariable*	varCopy;
 
 
-//////////
-// TODO:  We currently have no context as to what this relates to.
-//        We need to pass something here so it can look to a function definition for parameters, locals, return variables
-//////////
+// TODO:  Need to have this search for dot variables as well
 		// Make sure our environment is sane
 		if (!tlManufactured)
 		{

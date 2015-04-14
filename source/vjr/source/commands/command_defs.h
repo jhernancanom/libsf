@@ -204,6 +204,9 @@ struct SReturnsParams;
 	SVariable*			ifunction_colorize_common					(SThisCode* thisCode, SVariable* varColor, SVariable* varColorTarget, SVariable* varPercentage, bool tlApplyColorTarget, SReturnsParams* returnsParams);
 	SVariable*			function_cos		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_createobject						(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_ctod								(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			ifunction_ctod_common						(SThisCode* thisCode, SVariable* varString, bool tlIncludeTime);
+	SVariable*			function_ctot								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_curdir								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_date		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_datetime							(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -431,6 +434,8 @@ struct SReturnsParams;
 		{	_ICODE_COLORIZE,		1,			(uptr)&function_colorize,		2,				3,				&gsSourceLight_colorize[0]		},
 		{	_ICODE_COS,				1,			(uptr)&function_cos,			1,				1,				&gsSourceLight_cos[0]			},	// COS() by Stefano D'Amico, VJr 0.56, Mar.17.2015
 		{	_ICODE_CREATEOBJECT,	1,			(uptr)&function_createobject,	1,				1,				&gsSourceLight_createobject[0]	},
+		{	_ICODE_CTOD,			1,			(uptr)&function_ctod,			1,				1,				&gsSourceLight_ctod[0]			},	// CTOD() by Stefano D'Amico, VJr 0.57, Apr.11.2015
+		{	_ICODE_CTOT,			1,			(uptr)&function_ctot,			1,				1,				&gsSourceLight_ctot[0]			},	// CTOT() by Stefano D'Amico, VJr 0.57, Apr.11.2015
 		{	_ICODE_CURDIR,			1,			(uptr)&function_curdir,			0,				0,				&gsSourceLight_curdir[0]		},
 		{	_ICODE_DATE,			1,			(uptr)&function_date,			0,				3,				&gsSourceLight_date[0]			},	// DATE() by Stefano D'Amico, VJr 0.57, Apr.04.2015
 		{	_ICODE_DATETIME,		1,			(uptr)&function_datetime,		0,				7,				&gsSourceLight_datetime[0]		},

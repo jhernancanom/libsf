@@ -7912,7 +7912,7 @@ debug_break;
 						// Translate from encoded form to components, then assemble as MM/DD/YYYY HH:MM:SS AM/PM
 						dt = (SDateTime*)var->value.data;
 						iiVariable_extract_YyyyMmDd_from_Julian(dt->julian, &lnYear, &lnMonth, &lnDay);
-						iiVariable_extract_HhMmSsMss_from_f32(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+						iiVariable_extract_HhMmSsMss_from_seconds(dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 						// Adjust for our 24-hour settings
 						llHour24		= propGet_settings_Hours24(_settings);
@@ -9835,7 +9835,7 @@ debug_break;
 					// We can convert this from its text form into numeric
 					//////
 						iiVariable_extract_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-						iiVariable_extract_HhMmSsMss_from_f32(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+						iiVariable_extract_HhMmSsMss_from_seconds(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 						// Create the string for the numeric portion
 						sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
@@ -10008,7 +10008,7 @@ debug_break;
 					// We can convert this from its text form into numeric
 					//////
 						iiVariable_extract_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-						iiVariable_extract_HhMmSsMss_from_f32(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+						iiVariable_extract_HhMmSsMss_from_seconds(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 						// Create the string for the numeric portion
 						sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
@@ -10155,7 +10155,7 @@ debug_break;
 					// We can convert this from its text form into numeric
 					//////
 						iiVariable_extract_YyyyMmDd_from_Julian(var->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-						iiVariable_extract_HhMmSsMss_from_f32(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+						iiVariable_extract_HhMmSsMss_from_seconds(var->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 						// Create the string for the numeric portion
 						sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
@@ -10462,7 +10462,7 @@ debug_break;
 				} else if (varLeft->varType == _VAR_TYPE_DATETIME) {
 					// Datetimes can be compared to 64-bit numeric values
 					iiVariable_extract_YyyyMmDd_from_Julian(varLeft->value.data_dt->julian, &lnYear, &lnMonth, &lnDay);
-					iiVariable_extract_HhMmSsMss_from_f32(varLeft->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
+					iiVariable_extract_HhMmSsMss_from_seconds(varLeft->value.data_dt->seconds, &lnHour, &lnMinute, &lnSecond, &lnMillisecond);
 
 					// Create the string for the numeric portion
 					sprintf(buffer, "%04u%02u%02u%02u%02u%02u%03u\0", lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond);
@@ -10750,6 +10750,58 @@ debug_break;
 
 //////////
 //
+// Called to retrieve the current system date setting template
+//
+//////
+	SVariable* iiVariable_get_dateTemplate(s32 tnDateFormat)
+	{
+		SThisCode* thisCode = NULL;
+
+
+		// Populate if missing
+		if (tnDateFormat < _SET_DATE_START || tnDateFormat > _SET_DATE_END)
+			tnDateFormat = propGet_settings_Date(_settings);
+
+		// Which date is it?
+		switch (tnDateFormat)
+		{
+			case _SET_DATE_AMERICAN:			// mm/dd/yy
+				return(cvarSetDateAmerican);
+			case _SET_DATE_ANSI:				// yy.mm.dd
+				return(cvarSetDateAnsi);
+			case _SET_DATE_BRITISH:				// dd/mm/yy
+				return(cvarSetDateBritish);
+			case _SET_DATE_FRENCH:				// dd/mm/yy
+				return(cvarSetDateFrench);
+			case _SET_DATE_GERMAN:				// dd.mm.yy
+				return(cvarSetDateGerman);
+			case _SET_DATE_ITALIAN:				// dd-mm-yy
+				return(cvarSetDateItalian);
+			case _SET_DATE_JAPAN:				// yy/mm/dd
+				return(cvarSetDateJapan);
+			case _SET_DATE_TAIWAN:				// yy/mm/dd
+				return(cvarSetDateTaiwan);
+			case _SET_DATE_LONG:				// Dayofweek, Month dd, yyyy
+				return(cvarSetDateLong);
+			case _SET_DATE_SHORT:				// m/d/yy
+				return(cvarSetDateShort);
+			case _SET_DATE_USA:					// mm-dd-yy
+				return(cvarSetDateUsa);
+			case _SET_DATE_DMY:					// dd/mm/yy
+				return(cvarSetDateDmy);
+			case _SET_DATE_MDY:					// mm/dd/yy
+				return(cvarSetDateMdy);
+			default:
+			case _SET_DATE_YMD:					// yy/mm/dd
+				return(cvarSetDateYmd);
+		}
+	}
+
+
+
+
+//////////
+//
 // Computes the julian day number from a day, month, year.
 // Algorithm used from:
 //		https://en.wikipedia.org/wiki/Julian_day#Calculation
@@ -10895,7 +10947,7 @@ debug_break;
 // Takes the number of seconds elapsed since midnight and computes the time.
 //
 //////
-	void iiVariable_extract_HhMmSsMss_from_f32(f32 tfSeconds, u32* hour, u32* minute, u32* second, u32* millisecond)
+	void iiVariable_extract_HhMmSsMss_from_seconds(f32 tfSeconds, u32* hour, u32* minute, u32* second, u32* millisecond)
 	{
 		// Compute hour
 		*hour			= (u32)tfSeconds / (60 * 60);
@@ -10911,6 +10963,34 @@ debug_break;
 
 		// Compute milliseconds
 		*millisecond	= (u32)(tfSeconds * 999.0);
+	}
+
+
+
+
+//////////
+//
+// Takes the hour, minute, second, and millisecond, and creates a seconds
+//
+//////
+	f32 iiVariable_extract_seconds_from_HhMmSsMss(u32 hour, u32 minute, u32 second, u32 millisecond)
+	{
+		f32 lfSeconds;
+
+
+		//////////
+		// Compute seconds
+		//////
+			lfSeconds =		(f32)(hour   * 60 * 60)
+						+	(f32)(minute * 60)
+						+	(f32)(second)
+						+	((f32)millisecond / 1000.0f);
+
+
+		//////////
+		// Return our result
+		//////
+			return(lfSeconds);
 	}
 
 

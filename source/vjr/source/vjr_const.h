@@ -284,6 +284,7 @@ typedef SEM**		SEMpp;
 	#define propGet_settings_LoadReceivesParams(obj)				(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_LOAD_RECEIVES_PARAMS)	!= _LOGICAL_FALSE)
 	#define propGet_settings_LockScreen(obj)						(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, _INDEX_SET_LOCK_SCREEN)			!= _LOGICAL_FALSE)
 	#define propGet_settings_Logical(obj)							iObjProp_get_s32_direct			(thisCode, obj, _INDEX_SET_LOGICAL)
+	#define propGet_settings_Mark(obj)								iObjProp_get_character			(thisCode, obj, _INDEX_SET_MARK)
 	#define propGet_settings_ncset(obj, index)						(iObjProp_get_logical_fromLogicalConstants(thisCode, obj, index)							!= _LOGICAL_FALSE)
 	#define propSet_settings_ncset_fromBool(obj, index, value)		iObjProp_set_logical_direct		(thisCode, obj, index, value)
 	#define propGet_settings_ncset_alphaIsOpaque(obj)				propGet_settings_ncset(obj, _INDEX_SET_NCSET_ALPHA_IS_OPAQUE)

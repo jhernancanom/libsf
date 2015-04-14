@@ -473,6 +473,7 @@ struct SBasePropMap;
 	const s8		cgc_setLoadReceivesParams[]								= "loadReceivesParams";
 	const s8		cgc_setLockScreen[]										= "lockScreen";
 	const s8		cgc_setLogical[]										= "logical";
+	const s8		cgc_setMark[]											= "mark";
 	const s8		cgc_setNamingConvention[]								= "namingConvention";
 	const s8		cgc_setNcsetAlphaIsOpaque[]								= "ncsetAlphaIsOpaque";
 	const s8		cgc_setNcsetCeilingFloor[]								= "ncsetCeilingFloor";
@@ -871,30 +872,31 @@ struct SBasePropMap;
 	const u32		_INDEX_SET_LOAD_RECEIVES_PARAMS							= 369;
 	const u32		_INDEX_SET_LOCK_SCREEN									= 370;
 	const u32		_INDEX_SET_LOGICAL										= 371;
-	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 372;
-	const u32									_INDEX_SET_NCSET_START	= 373;
-	const u32		_INDEX_SET_NCSET_ALPHA_IS_OPAQUE						= 373;
-	const u32		_INDEX_SET_NCSET_CEILING_FLOOR							= 374;
-	const u32		_INDEX_SET_NCSET_DATETIME_MILLISECONDS					= 375;
-	const u32		_INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES					= 376;
-	const u32		_INDEX_SET_NCSET_OPTIMIZE_VARIABLES						= 377;
-	const u32		_INDEX_SET_NCSET_SIGN_SIGN2								= 378;
-	const u32									_INDEX_SET_NCSET_END	= 378;
-	const u32		_INDEX_SET_POINT										= 379;
-	const u32		_INDEX_SET_REPROCESS									= 380;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 381;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
-	const u32		_INDEX_SET_REPROCESSINTERVAL							= 382;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
-	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 383;		// logical, or numeric (negative = attempts, positive = seconds)
-	const u32		_INDEX_SET_SEPARATOR									= 384;
-	const u32		_INDEX_SET_SLOPPY_PRINTING								= 385;
-	const u32		_INDEX_SET_STICKY_PARAMETERS							= 386;
-	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 387;
-	const u32		_INDEX_SET_TABLE_OBJECTS								= 388;
-	const u32		_INDEX_SET_TALK											= 389;
-	const u32		_INDEX_SET_TIME											= 390;
-	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 391;
-	const u32		_INDEX_SET_VARIABLES_FIRST								= 392;
-	const u32		_INDEX_SET_VECSEPARATOR									= 393;
+	const u32		_INDEX_SET_MARK											= 372;
+	const u32		_INDEX_SET_NAMING_CONVENTIONS							= 373;
+	const u32									_INDEX_SET_NCSET_START	= 374;
+	const u32		_INDEX_SET_NCSET_ALPHA_IS_OPAQUE						= 374;
+	const u32		_INDEX_SET_NCSET_CEILING_FLOOR							= 375;
+	const u32		_INDEX_SET_NCSET_DATETIME_MILLISECONDS					= 376;
+	const u32		_INDEX_SET_NCSET_OPTIMIZE_TABLE_WRITES					= 377;
+	const u32		_INDEX_SET_NCSET_OPTIMIZE_VARIABLES						= 378;
+	const u32		_INDEX_SET_NCSET_SIGN_SIGN2								= 379;
+	const u32									_INDEX_SET_NCSET_END	= 379;
+	const u32		_INDEX_SET_POINT										= 380;
+	const u32		_INDEX_SET_REPROCESS									= 381;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_REPROCESSATTEMPTS							= 382;		// numeric, 30 by default, but can be changed with SET REPROCESSATTEMPTS TO 30
+	const u32		_INDEX_SET_REPROCESSINTERVAL							= 383;		// numeric, 1000 by default indicating 1000 milliseconds, or 1 second
+	const u32		_INDEX_SET_REPROCESS_SYSTEM								= 384;		// logical, or numeric (negative = attempts, positive = seconds)
+	const u32		_INDEX_SET_SEPARATOR									= 385;
+	const u32		_INDEX_SET_SLOPPY_PRINTING								= 386;
+	const u32		_INDEX_SET_STICKY_PARAMETERS							= 387;
+	const u32		_INDEX_SET_TABLE_EQUAL_ASSIGNMENTS						= 388;
+	const u32		_INDEX_SET_TABLE_OBJECTS								= 389;
+	const u32		_INDEX_SET_TALK											= 390;
+	const u32		_INDEX_SET_TIME											= 391;
+	const u32		_INDEX_SET_UNLOAD_RECEIVES_PARAMS						= 392;
+	const u32		_INDEX_SET_VARIABLES_FIRST								= 393;
+	const u32		_INDEX_SET_VECSEPARATOR									= 394;
 
 
 
@@ -1419,6 +1421,7 @@ struct SBasePropMap;
 		{	_INDEX_SET_LOAD_RECEIVES_PARAMS,				_ICODE_LOAD_RECEIVES_PARAMS,		cgc_setLoadReceivesParams,			sizeof(cgc_setLoadReceivesParams) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=Load() events receive the same parameters that will be passed to init(), .f.=(default) Load() does not receive any parameters
 		{	_INDEX_SET_LOCK_SCREEN,							_ICODE_LOCKSCREEN,					cgc_setLockScreen,					sizeof(cgc_setLockScreen) - 1,						_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=Screen is locked and will not be rendered or updated, .f.=(default) Screen is updated
 		{	_INDEX_SET_LOGICAL,								_ICODE_LOGICAL,						cgc_setLogical,						sizeof(cgc_setLogical) - 1,							_VAR_TYPE_S32,				0, 0, 0,		_LOGICAL_TF						,NULL	},	// See _LOGICAL_* constants
+		{	_INDEX_SET_MARK,								_ICODE_MARK,						cgc_setMark,						sizeof(cgc_setMark) - 1,							_VAR_TYPE_CHARACTER,		0, 0, 0,		(uptr)&cgcNullString			,NULL	},	// The override mark character for dates
 		{	_INDEX_SET_NAMING_CONVENTIONS,					_ICODE_NAMINGCONVENTIONS,			cgc_setNamingConvention,			sizeof(cgc_setNamingConvention) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=Field and variables are examined for standard naming conventions with errors reported, .f.=no checks are made
 		{	_INDEX_SET_NCSET_ALPHA_IS_OPAQUE,				_ICODE_NCSETALPHAISOPAQUE,			cgc_setNcsetAlphaIsOpaque,			sizeof(cgc_setNcsetAlphaIsOpaque) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=alpha channel color in rgb() and bgr() is opaque (255), .f.=alpha channel is transparent (0)
 		{	_INDEX_SET_NCSET_CEILING_FLOOR,					_ICODE_NCSETCEILINGFLOOR,			cgc_setNcsetCeilingFloor,			sizeof(cgc_setNcsetCeilingFloor) - 1,				_VAR_TYPE_LOGICAL,			0, 0, 0,		_LOGICAL_FALSE					,NULL	},	// .t.=ceiling() and floor() return floating point values if floating point input, .f.=always returns integer
@@ -3648,6 +3651,7 @@ struct SBasePropMap;
 		{	_INDEX_SET_LOAD_RECEIVES_PARAMS,			0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
 		{	_INDEX_SET_LOCK_SCREEN,						0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
 		{	_INDEX_SET_LOGICAL,							0, (uptr)&iObjProp_setLogicalX,		(uptr)&iObjProp_getLogicalX },	// s32
+		{	_INDEX_SET_MARK,							0, (uptr)&iObjProp_setCharacter1,	0	},		// character
 		{	_INDEX_SET_NAMING_CONVENTIONS,				0, (uptr)&iObjProp_setOnOff,		(uptr)&iObjProp_getOnOff },		// bool
 		{	_INDEX_SET_NCSET_ALPHA_IS_OPAQUE,			0, (uptr)&iObjProp_setLogical,		(uptr)&iObjProp_getLogical },	// bool
 		{	_INDEX_SET_NCSET_CEILING_FLOOR,				0, (uptr)&iObjProp_setLogical,		(uptr)&iObjProp_getLogical },	// bool
