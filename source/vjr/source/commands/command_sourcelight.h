@@ -389,16 +389,6 @@
 		{	0,										0,	0,	0,	0,	0	}
 	};
 
-	SSourceLightData gsSourceLight_ctod[] =
-	{
-		{	0,										0,	0,	0,	0,	0	}
-	};
-
-	SSourceLightData gsSourceLight_ctot[] =
-	{
-		{	0,										0,	0,	0,	0,	0	}
-	};
-
 	SSourceLightData gsSourceLight_createobject[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
@@ -455,6 +445,11 @@
 	};
 
 	SSourceLightData gsSourceLight_dtot[] =
+	{
+		{	0,										0,	0,	0,	0,	0	}
+	};
+
+	SSourceLightData gsSourceLight_dtransform[] =
 	{
 		{	0,										0,	0,	0,	0,	0	}
 	};

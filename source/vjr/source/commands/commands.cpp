@@ -2961,343 +2961,6 @@
 
 //////////
 //
-// Function: CTOD()
-// Converts a character expression to a date expression.
-//
-//////
-// Version 0.57
-// Last update:
-//     Apr.10.2015
-//////
-// Change log:
-//     Apr.10.2015 - Initial creation by Stefano D'Amico
-//////
-// Parameters:
-//     p1			-- Character
-//
-//////
-// Returns:
-//    Date data type. CTOD( ) returns a Date value
-// 
-//////
-// Example:
-//    SET DATE MDY
-//    ?CTOD("12/25/15") &&Displays 12-25-2015
-//    ?CTOD("12/25/2015") &&Displays 12-25-2015
-//    ?CTOD("12-25-15") &&Displays 12-25-2015
-//    ?CTOD("12-25-15 12:33:44 AM") &&Displays 12-25-2015
-//    ?CTOD("12-25-15 12:33:44.555") &&Displays 12-25-2015
-//
-//////
-	SVariable* function_ctod(SThisCode* thisCode, SReturnsParams* returnsParams)
-	{
-		SVariable* varString = returnsParams->params[0];
-
-		//Return date
-		return(ifunction_ctod_common(thisCode, varString, true));
-	}
-
-    SVariable* ifunction_ctod_common(SThisCode* thisCode, SVariable* varString, bool tlDate)
-    {
-		u32	lnYear, lnMonth, lnDay, lnHour, lnMinute, lnSecond, lnMillisecond, lnI, lnJ;
-		u32	lnD, lnB, lnY, lnH, lnM, lnS, lnm, lnAP;
-		s8	buffer[16];
-		s8	day_buffer[4];
-		s8	month_buffer[4];
-		s8	year_buffer[8];
-		s8	hour_buffer[4];
-		s8	minute_buffer[4];
-		s8	second_buffer[4];
-		s8	millisecond_buffer[8];
-		s8	ampm_buffer[4];
-		s8*	lcFormat;
-		s8	c;
-		f32	lfJulian;
-
-		//bool error;
-		//u32 errorNum;
-		SVariable*	result;
-
-		//////////
-		// Parameter 1 must be character
-		//////
-			if (!iVariable_isValid(varString) || !iVariable_isTypeCharacter(varString))
-			{
-				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varString), false);
-				return(NULL);
-			}
-
-		//////////
-		// Create date string model	
-		//	DDxBBxYYYY HH:MM:SS.mmm XX
-		//	22-11-3333 12:34:56.789 AM
-		//////
-			switch (propGet_settings_Date(_settings))
-			{
-				case _SET_DATE_MDY:				// BBxDDxYYYY
-				case _SET_DATE_AMERICAN:		
-				case _SET_DATE_USA:				
-				case _SET_DATE_LONG:			
-				case _SET_DATE_SHORT:			
-					lcFormat = "BBxDDxYYYYTHH:MM:SS.mmm XX";
-					break;
-
-				case _SET_DATE_ANSI:			// YYYYxBBxDD
-				case _SET_DATE_TAIWAN:			
-				case _SET_DATE_YMD:				
-				case _SET_DATE_JAPAN:			
-					lcFormat = "YYYYxBBxDDTHH:MM:SS.mmm XX";
-					break;
-
-				case _SET_DATE_BRITISH:			// DDxBBxYYYY
-				case _SET_DATE_FRENCH:			
-				case _SET_DATE_DMY:				
-				case _SET_DATE_GERMAN:			
-				case _SET_DATE_ITALIAN:			
-					lcFormat = "DDxBBxYYYYTHH:MM:SS.mmm XX";
-					break;
-				default:
-					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
-					return(NULL);
-			}
-
-		//////////
-		// Parsing
-		//////
-			lnD = lnB = lnY = lnH = lnM = lnS = lnm = lnAP = 0;
-			for (lnJ = 0, lnI = 0; lnI < 26 && lnJ < (u32)varString->value.length; lnI++)
-			{
-				c = varString->value.data[lnJ++];
-				if((c >= '0' && c <= '9' ) || (c >= '-' && c <= '/') || c == ' ' || c == 'T' || c == ':' || c == 'A' || c == 'M' || c == 'p' || c == 'm')
-				{
-					switch (lcFormat[lnI])
-					{
-						case 'D':	//Day
-							if (c >= '0' && c <= '9' )
-								day_buffer[lnD++] = c;
-							break;
-
-						case 'B':	//Month
-							if (c >= '0' && c <= '9' )
-								month_buffer[lnB++] = c;
-							break;
-
-						case 'Y':	//Year
-							if (c >= '0' && c <= '9' )
-								year_buffer[lnY++] = c;
-							else // YY -> YYYY
-							{
-								lnJ--;
-								lnI += 3 - lnY;
-							}
-							break;
-
-						case 'H':	//Hour
-							if (c >= '0' && c <= '9' )
-								hour_buffer[lnH++] = c;
-							break;
-
-						case 'M':	//Minute
-							if (c >= '0' && c <= '9' )
-								minute_buffer[lnM++] = c;
-							break;
-
-						case 'S':	//Second
-							if (c >= '0' && c <= '9' )
-								second_buffer[lnS++] = c;
-							break;
-
-						case 'm':	//Millisecond
-							if (c >= '0' && c <= '9' )
-								millisecond_buffer[lnm++] = c;
-							break;
-				
-						case 'T':	//Date-Time delimiter (' ','T')
-							if (!(c == ' ' || c == 'T'))
-							{
-								//Error
-								iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
-								return(NULL);
-							}
-							break;
-
-						case 'x':	//Date delimiter ('.','/','-')
-							if (!(c >= '-' && c <= '/' ))
-							{
-								//Error
-								iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
-								return(NULL);
-							}
-							break;
-
-						case ':':	//Time delimiter
-						case ' ':	//AM/pm delimiter
-							if (c != lcFormat[lnI]) {
-								//Error
-								iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
-								return(NULL);
-							}
-							break;
-						case '.':	//Milliseconds delimiter
-							if (c != '.') 
-							{
-								// No milliseconds
-								lnJ--;
-								lnI += 3;
-							}
-							break;
-						case 'X':	//AM pm
-							if (c == 'A' || c == 'M' || c == 'p' || c == 'm')
-								ampm_buffer[lnAP++] = c;
-							else {
-								//Error
-								iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
-								return(NULL);
-							}
-							break;
-						default:
-							iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
-							return(NULL);
-					}
-				} else {
-					//Error
-					iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varString), false);
-					return(NULL);
-				}
-			}			
-
-
-		//////////
-		// Null string
-		//////
-			day_buffer[lnD] = 0;
-			month_buffer[lnB] = 0;
-			year_buffer[lnY] = 0;
-			hour_buffer[lnH] = 0;
-			minute_buffer[lnM] = 0;
-			second_buffer[lnS] = 0;
-			millisecond_buffer[lnm] = 0;
-			ampm_buffer[lnAP] = 0;
-
-
-		//////////
-		// Create date value
-		//////
-			lnDay = (u32)atoi(day_buffer);
-			lnMonth = (u32)atoi(month_buffer);
-			lnYear = (u32)atoi(year_buffer);
-
-//TODO -- Rollover SET CENTURY TO nn ROLLOVER mm
-			if (lnYear >= 65 && lnYear <= 99)
-				lnYear += 1900; 
-			else if (lnYear >= 0 && lnYear <= 64)
-				lnYear += 2000; 
-
-			// Check for valid date
-			if (lnMonth < 1 || lnMonth > 12 || lnYear < 1600 || lnYear > 2400 || !iVariable_isDayValidForDate(lnYear, lnMonth, lnDay))
-			{
-				iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varString), false);
-				return(NULL);
-			}
-
-			if (tlDate)
-			{
-				// Date is stored as YYYYMMDD
-				iiVariable_convertTo_YYYYMMDD_from_YyyyMmDd(buffer, lnYear, lnMonth, lnDay);
-				result = iVariable_createAndPopulate_byText(thisCode, _VAR_TYPE_DATE, buffer, 8, false);
-				if (!result)
-					iError_reportByNumber(thisCode, _ERROR_INTERNAL_ERROR, NULL, false);
-
-			} else {
-
-				//////////
-				// Create time value
-				//////
-					lnHour = (u32)atoi(hour_buffer);
-					// Adjust AM pm
-					if (lnAP > 0)
-					{
-						lnHour = lnHour % 12;
-						if (memcmp(ampm_buffer, "pm", 2) == 0)
-							lnHour += 12;
-					} 
-
-					lnMinute = (u32)atoi(minute_buffer);
-					lnSecond = (u32)atoi(second_buffer);
-					lnMillisecond = (u32)atoi(millisecond_buffer);
-
-					// Check for valid time
-					if (lnHour < 0 || lnHour > 24 || lnMinute < 0 || lnMinute > 60 || lnSecond < 0 || lnSecond > 60 || lnMillisecond < 0 || lnMillisecond > 999)
-					{
-						iError_reportByNumber(thisCode, _ERROR_P1_IS_INCORRECT, iVariable_getRelatedComp(thisCode, varString), false);
-						return(NULL);
-					}
-
-					result = iVariable_create(thisCode, _VAR_TYPE_DATETIME, NULL, true);
-					if (!result)
-					{
-						iError_report(thisCode, cgcInternalError, false);
-						return(NULL);
-					}
-
-					// Date is stored as julian day number
-					result->value.data_dt->julian	= iiVariable_extract_Julian_from_YyyyMmDd(&lfJulian, lnYear, lnMonth, lnDay);
-
-					// Time is stored as seconds since midnight
-					result->value.data_dt->seconds = (f32)(lnHour * 60 * 60) + (f32)(lnMinute * 60) + (f32)lnSecond + ((f32)lnMillisecond / 1000.0f);
-			}
-
-		//////////
-		// Return our converted result
-		//////
-			return(result);
-	}
-
-
-
-
-//////////
-//
-// Function: CTOT()
-// Converts a character expression to a datetime expression.
-//
-//////
-// Version 0.57
-// Last update:
-//     Apr.11.2015
-//////
-// Change log:
-//     Apr.11.2015 - Initial creation by Stefano D'Amico
-//////
-// Parameters:
-//     p1			-- Character
-//
-//////
-// Returns:
-//    Datetime data type. CTOT( ) returns a Datetime value
-//////
-// Example:
-//    SET DATE MDY
-//    ?CTOD("12/25/15") &&Displays 12-25-2015 00:00:00
-//    ?CTOD("12/25/2015") &&Displays 12-25-2015 00:00:00
-//    ?CTOD("12-25-15") &&Displays 12-25-2015 00:00:00
-//    ?CTOD("12-25-15 12:33:44 AM") &&Displays 12-25-2015 00:33:44
-//    ?CTOD("12-25-15 12:33:44.555") &&Displays 12-25-2015 12:33:44
-//
-//////
-	SVariable* function_ctot(SThisCode* thisCode, SReturnsParams* returnsParams)
-	{
-		SVariable* varString = returnsParams->params[0];
-
-		//Return datetime
-		return(ifunction_ctod_common(thisCode, varString, false));
-	}
-
-
-
-
-//////////
-//
 // Function: CREATEOBJECT()
 // Instantiates and instance of the indicated class.
 //
@@ -4655,6 +4318,83 @@ debug_break;
 		//////
 	        return(result);
 
+	}
+
+
+
+
+//////////
+//
+// Function: DTRANSFROM()
+//  It takes an input formatting string and one or more dates or datetimes and 
+//	creates an output character string which prepares date information as indicated, 
+//	interspersed with other text.
+//
+//////
+// Version 0.57
+// Last update:
+//     Apr.16.2015
+//////
+// Change log:
+//     Apr.16.2015 - Initial creation by Stefano D'Amico
+//////
+// Parameters:
+//     p1	-- Specifies the formatting string.
+//     p2	-- Specifies the first date/datetime.
+//	   ..
+//     p26	-- Specifies the last date/datetime.
+//
+//////
+// Returns:
+//    Formatted string.
+//////
+	SVariable* function_dtransform(SThisCode* thisCode, SReturnsParams* returnsParams)
+	{
+		SVariable* varFormattingString = returnsParams->params[0];
+
+		/*
+		**********
+		* Long forms
+		*****
+			%D  Day                   02
+			%B  Month                 04
+			%Y  Year                  2015
+			%H  Hour                  14      02 If %P is in string
+			%M  Minute                05
+			%S  Second                55
+			%N  Milliseconds          020
+			%P  AM/PM                 PM
+			%J  Julian                2457115
+			%A  Day of week           Thursday
+			%O  Month                 April
+			%T  Timestamp			  20150402140555
+			%-	Date mark			  SET("MARK")
+
+		**********
+		* Short forms
+		*****
+			%d  day                   2
+			%b  month                 4
+			%y  year                  15
+			%h  hour                  14      2 If %P is in string
+			%m  minute                5
+			%s  second                55
+			%p  am/pm                 pm
+			%j  Day of year           92
+			%a  Day of week           Thu
+			%o  Month                 Apr
+			%t  Timestamp			  20150402
+		*/
+
+		// Not yet completed
+		iError_reportByNumber(thisCode, _ERROR_FEATURE_NOT_AVAILABLE, iVariable_getRelatedComp(thisCode, varFormattingString), false);
+		return(NULL);
+	}
+
+	u32 ifunction_dtran_common(SThisCode* thisCode, SReturnsParams* returnsParams, s8** result, bool tlTextMerge)
+	{
+		// Not yet completed
+		return(0);
 	}
 
 

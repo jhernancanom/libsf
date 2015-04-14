@@ -203,9 +203,6 @@ struct SReturnsParams;
 	SVariable*			function_colorize							(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			ifunction_colorize_common					(SThisCode* thisCode, SVariable* varColor, SVariable* varColorTarget, SVariable* varPercentage, bool tlApplyColorTarget, SReturnsParams* returnsParams);
 	SVariable*			function_cos		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			function_ctod		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
-	SVariable*			ifunction_ctod_common						(SThisCode* thisCode, SVariable* varString, bool tlDate);
-	SVariable*			function_ctot		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_createobject						(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_ctod								(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			ifunction_ctod_common						(SThisCode* thisCode, SVariable* varString, bool tlIncludeTime);
@@ -221,6 +218,8 @@ struct SReturnsParams;
 	SVariable*			function_dtor		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_dtos		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	SVariable*			function_dtot		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+	SVariable*			function_dtransform	/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
+	u32					ifunction_dtran_common						(SThisCode* thisCode, SReturnsParams* returnsParams, s8** result, bool tlTextMerge);
 	SVariable*			function_empty		/* Stefano D'Amico */	(SThisCode* thisCode, SReturnsParams* returnsParams);
 	bool				function_isempty_common						(SThisCode* thisCode, SVariable* varExpr, SReturnsParams* returnsParams);
 	SVariable*			function_endswith							(SThisCode* thisCode, SReturnsParams* returnsParams);
@@ -436,8 +435,6 @@ struct SReturnsParams;
 		{	_ICODE_CMONTH,			1,			(uptr)&function_cmonth,			0,				1,				&gsSourceLight_cmonth[0]		},	// CMONTH() by Stefano D'Amico, VJr 0.57, Apr.05.2015
 		{	_ICODE_COLORIZE,		1,			(uptr)&function_colorize,		2,				3,				&gsSourceLight_colorize[0]		},
 		{	_ICODE_COS,				1,			(uptr)&function_cos,			1,				1,				&gsSourceLight_cos[0]			},	// COS() by Stefano D'Amico, VJr 0.56, Mar.17.2015
-		{	_ICODE_CTOD,			1,			(uptr)&function_ctod,			1,				1,				&gsSourceLight_ctod[0]			},	// CTOD() by Stefano D'Amico, VJr 0.57, Apr.11.2015
-		{	_ICODE_CTOT,			1,			(uptr)&function_ctot,			1,				1,				&gsSourceLight_ctot[0]			},	// CTOT() by Stefano D'Amico, VJr 0.57, Apr.11.2015
 		{	_ICODE_CREATEOBJECT,	1,			(uptr)&function_createobject,	1,				1,				&gsSourceLight_createobject[0]	},
 		{	_ICODE_CTOD,			1,			(uptr)&function_ctod,			1,				1,				&gsSourceLight_ctod[0]			},	// CTOD() by Stefano D'Amico, VJr 0.57, Apr.11.2015
 		{	_ICODE_CTOT,			1,			(uptr)&function_ctot,			1,				1,				&gsSourceLight_ctot[0]			},	// CTOT() by Stefano D'Amico, VJr 0.57, Apr.11.2015
@@ -450,6 +447,7 @@ struct SReturnsParams;
 		{	_ICODE_DTOR,			1,			(uptr)&function_dtor,			1,				1,				&gsSourceLight_dtor[0]			},	// DTOR() by Stefano D'Amico, VJr 0.56, Mar.16.2015
 		{	_ICODE_DTOS,			1,			(uptr)&function_dtos,			0,				1,				&gsSourceLight_dtos[0]			},	// DTOS() by Stefano D'Amico, VJr 0.57, Apr.07.2015
 		{	_ICODE_DTOT,			1,			(uptr)&function_dtot,			1,				2,				&gsSourceLight_dtot[0]			},	// DTOT() by Stefano D'Amico, VJr 0.57, Apr.07.2015
+		{	_ICODE_DTRANSFORM,		1,			(uptr)&function_dtransform,		1,				26,				&gsSourceLight_dtransform[0]	},	// DTRANSFORM() by Stefano D'Amico, VJr 0.57, Apr.16.2015
 		{	_ICODE_EMPTY,			1,			(uptr)&function_empty,			1,				1,				&gsSourceLight_empty[0]			},	// EMPTY() by Stefano D'Amico, VJr 0.56, Mar.19.2015
 		{	_ICODE_ENDSWITH,		1,			(uptr)&function_endswith,		2,				4,				&gsSourceLight_endswith[0]		},
 		{	_ICODE_ENDSWITHC,		1,			(uptr)&function_endswith,		2,				4,				&gsSourceLight_endswithc[0]		},
