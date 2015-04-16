@@ -114,9 +114,8 @@ LPARAMETERS tcClass, tcLibrary
 *****
 FUNCTION iload_class
 LPARAMETERS tcName, tcClass, tcLibrary, toParent, tlAugmentProperties
-LOCAL lnI, lnJ, lcAlias, loNew, loClass, lcPropName, lcPropNameDescent, lcThisName
+LOCAL lnI, lnJ, lcAlias, loNew, loNewSib, loClass, lcPropName, lcPropNameDescent, lcThisName
 LOCAL lcValue, lnEqualPos, llError, lcLibraryNext, lcCodeArrayName, lnFoundRecno
-
 
 	**********
 	* Locate the library
@@ -179,238 +178,51 @@ LOCAL lcValue, lnEqualPos, llError, lcLibraryNext, lcCodeArrayName, lnFoundRecno
 	
 	
 	**********
-	* Append any siblings
+	* Non-base class siblings
 	*****
 		SELECT (lcAlias)
-		* Add any sibling that has a class
 		SCAN FOR LOWER(parent) == LOWER(tcClass) AND NOT EMPTY(classloc)
+		
+			* Create the object
 			lcClassNext		= &lcAlias..class
 			lcLibraryNext	= FULLPATH(ADDBS(JUSTPATH(tcLibrary)) + ALLTRIM(&lcAlias..classloc))
 			iload_class(&lcAlias..objName, lcClassNext, lcLibraryNext, loNew, .f.)
+			
+			* Note:  Their methods are added when they are added
+		
 		ENDSCAN
 
-		* Add an sibling that is a base class
+
+	**********
+	* Base class siblings
+	*****
 		SCAN FOR LOWER(parent) == LOWER(tcClass) AND EMPTY(classloc)
+		
+			* Create the object
 			lcName			= &lcAlias..objName
 			lcClassNext		= &lcAlias..class
 			loNew.ADDOBJECT(lcName, lcClassNext)
-			iiload_class_add_methods(loNew.&lcName)
+			loNewSib		= loNew.&lcName
+			
+			* Set any properties, events or methods, and their code
+			iiload_class_set_properties(loNewSib, &lcAlias..properties)
+			iiload_class_add_methods(loNewSib)
+			iiload_class_populate_methods(loNewSib, &lcAlias..methods)
+
 		ENDSCAN
 	
 	
 	**********
-	* Get back to our original record
+	* Set any properties, events or methods, and their code
 	*****
 		GOTO lnFoundRecno
-	
-	
-	**********
-	* Append any events or methods which do not already exist
-	*****
+		iiload_class_set_properties(loNew, &lcAlias..properties)
 		iiload_class_add_methods(loNew)
-	
-	
-	**********
-	* Parse out the method code and prepend it to each object's method stack
-	*****
-		IF NOT EMPTY(&lcAlias..methods)
-
-			**********
-			* There are procedures within
-			* Parse and add/append as encountered
-			*****
-				RELEASE laSourceCode
-				ALINES(laSourceCode, &lcAlias..methods)
-				FOR lnI = 1 TO ALEN(laSourceCode, 1) STEP 0
-
-					**********
-					* Look for procedures or functions
-					*****
-						IF UPPER(LEFT(laSourceCode[lnI], 4)) = "PROC" OR UPPER(LEFT(laSourceCode[lnI], 4)) = "FUNC"
-
-							**********
-							* Beginning of a procedure or function
-							*****
-								lcProcName	= LOWER(ALLTRIM(SUBSTR(laSourceCode[lnI], AT(SPACE(1), laSourceCode[lnI]) + 1)))
-								lniStart	= lnI
-
-
-							**********
-							* Look for the end
-							*****
-								lcCodeBlock = SPACE(0)
-								FOR lniEnd = lniStart + 1 TO ALEN(laSourceCode, 1)
-									IF UPPER(LEFT(laSourceCode[lniEnd], 4)) = "ENDP" OR UPPER(LEFT(laSourceCode[lniEnd], 4)) = "ENDF"
-										* End of the procedure or function
-										EXIT
-									ENDIF
-									lcCodeBlock = lcCodeBlock + laSourceCode[lniEnd] + CHR(13)
-								NEXT
-								* When we get here, lniStart..lniEnd is the source code range, and lcCodeBlock is the actual source code
-
-
-							**********
-							* See if this method name already exists
-							*****
-								IF "." $ lcProcName
-									* It is code added to a nested class
-SET STEP ON
-* TODO:  This needs to be developed
-
-								ELSE
-									* It is code added directly to this class
-
-									**********
-									* Search for the existing method
-									*****
-										llFound = .f.
-										FOR lnJ = 1 TO ALEN(loNew.__MethodCode, 1)
-											IF LOWER(loNew.__MethodCode[lnJ, 1]) = lcProcName
-												* We found the existing
-												llFound			= .t.
-												lcCodeArrayName = loNew.__MethodCode[lnJ, 2]
-												EXIT
-											ENDIF
-										NEXT
-
-
-									**********
-									* If it was found, update it
-									*****
-										IF llFound
-											IF &lcCodeArrayName[1, 1] != loNew
-												**********
-												* It is a different object, so we insert new code before what exists
-												* Bump everything down one and assign this layer of code to itself
-												*****
-													iiload_class_bump_array_down(@&lcCodeArrayName)
-													&lcCodeArrayName[1, 1] = loNew
-
-											ELSE
-												* This method relates to this class
-												* There shouldn't already be any code here
-												* If there is, it means the method name appears
-												* twice in the class definition.
-												IF NOT EMPTY(&lcCodeArrayName[1, 2])
-													? "Duplicate method code found in " + loNew.Name + "." + lcProcName + "()"
-													SET STEP ON
-												ENDIF
-												* If we get here, we're good... we can add it
-											ENDIF
-
-										ELSE
-											**********
-											* Not found, add new method to the class
-											*****
-												lcCodeArrayName	= SYS(2015)
-												PUBLIC &lcCodeArrayName
-												DIMENSION &lcCodeArrayName[1, 2]
-
-												DIMENSION loNew.__MethodCode[ALEN(loNew.__MethodCode, 1) + 1, ALEN(loNew.__MethodCode, 2)]
-												loNew.__MethodCode[ALEN(loNew.__MethodCode, 1), 1] = lcProcName
-												loNew.__MethodCode[ALEN(loNew.__MethodCode, 1), 2] = lcCodeArrayName
-
-
-											**********
-											* Insert the reference for this class at this level
-											*****
-												&lcCodeArrayName[1, 1] = loNew
-												&lcCodeArrayName[1, 2] = SPACE(0)	&& No code yet
-
-										ENDIF
-
-								ENDIF
-
-
-							**********
-							* Append the method code
-							*****
-								&lcCodeArrayName[1, 2] = lcCodeBlock
-
-
-							**********
-							* Get ready for the next block
-							*****
-								lnI = lniEnd + 1
-
-						ELSE
-							* Increase to next line
-							lnI = lnI + 1
-						ENDIF
-
-				NEXT
-				RELEASE laSourceCode
-		ENDIF
+		iiload_class_populate_methods(loNew, &lcAlias..methods)
 
 
 	**********
-	* Set the properties
-	*****
-		SELECT (lcAlias)
-		lnLines = ALINES(laLines, &lcalias..properties)
-		FOR lnI = 1 TO lnLines
-			lnEqualPos = AT("=", laLines[lnI])
-			IF lnEqualPos > 0
-				* Get the name = value for this line
-				lcPropName	= ALLTRIM(LEFT(laLines[lnI], lnEqualPos - 1))
-				lcValue		= ALLTRIM(SUBSTR(laLines[lnI], lnEqualPos + 1))
-
-				* Set all properties except name
-				IF LOWER(lcPropName) != "name"
-
-					**********
-					* Get to the property's location
-					*****
-						loClass = loNew
-						IF "." $ lcPropName
-							* Iterate downward until we get to the final object
-							lcPropNameDescent = lcPropName
-							DO WHILE "." $ lcPropNameDescent
-								lcThisName = LEFT(lcPropNameDescent, AT(".", lcPropNameDescent) - 1)
-								IF PEMSTATUS(loClass, lcThisName, 5)
-									* Continue downward
-									loClass				= loClass.&lcThisName
-									lcPropNameDescent	= SUBSTR(lcPropNameDescent, LEN(lcThisName) + 2)
-								ELSE
-									? "Error accessing " + lcThisName + " on " + loClass.name + " of " + loNew.name + "." + lcPropName
-									SET STEP ON
-								ENDIF
-							ENDDO
-							lcPropName = lcPropNameDescent
-						ENDIF
-
-
-					**********
-					* Add the property if need be
-					*****
-						IF !PEMSTATUS(loClass, lcPropName, 5)
-							* Property does not exist, add it
-							loClass.ADDPROPERTY(lcPropName)
-						ENDIF
-
-
-					**********
-					* Assign it
-					*****
-						llError = .t.
-						TRY
-							loClass.&lcPropName	= iiload_class_determine_varType(lcValue)
-							llError = .f.
-						CATCH
-						ENDTRY
-						
-						IF llError
-							? "Error assigning [" + lcValue + "] to " + loClass.Name + "." + lcPropName
-							SET STEP ON
-						ENDIF
-
-				ENDIF
-			ENDIF
-		NEXT
-
-
-	**********
-	* Indicate the fruit of our labor
+	* Indicate the fruits of our labor
 	*****
 		RETURN loNew
 
@@ -467,14 +279,14 @@ LOCAL llIsNumeric
 
 
 FUNCTION iiload_class_add_methods
-LPARAMETERS toNew
+LPARAMETERS toObj
 LOCAL lnI, lnJ, llFound, laMems, lcCodeArrayName
 
 	**********
 	* Make sure it has a __MethodCode[] array
 	*****
-		IF TYPE(toNew.name + "__MethodCode[1,2]") = "U"
-			toNew.addProperty("__MethodCode[1,2]")
+		IF TYPE(toObj.name + "__MethodCode[1,2]") = "U"
+			toObj.addProperty("__MethodCode[1,2]")
 		ENDIF
 
 
@@ -482,7 +294,7 @@ LOCAL lnI, lnJ, llFound, laMems, lcCodeArrayName
 	* Populate it with its members
 	*****
 		DIMENSION laMems[1]
-		AMEMBERS(laMems, toNew, 1)
+		AMEMBERS(laMems, toObj, 1)
 		FOR lnI = 1 TO ALEN(laMems, 1)
 			IF INLIST(LOWER(laMems[lnI, 2]), "method", "event")
 			
@@ -490,10 +302,10 @@ LOCAL lnI, lnJ, llFound, laMems, lcCodeArrayName
 				* Make sure this one exists in our methods array
 				*****
 					llFound = .f.
-					IF TYPE("toNew.__MethodCode[1, 1]") != "L"
+					IF TYPE("toObj.__MethodCode[1, 1]") != "L"
 						* Search the existing ones to see if it's found
-						FOR lnJ = 1 TO ALEN(toNew.__MethodCode, 1)
-							IF LOWER(toNew.__MethodCode[lnJ, 1]) = LOWER(laMems[lnI, 1])
+						FOR lnJ = 1 TO ALEN(toObj.__MethodCode, 1)
+							IF LOWER(toObj.__MethodCode[lnJ, 1]) = LOWER(laMems[lnI, 1])
 								* We've found a match
 								llFound = .t.
 								EXIT
@@ -510,11 +322,11 @@ LOCAL lnI, lnJ, llFound, laMems, lcCodeArrayName
 						**********
 						* Insert this reference at the top
 						*****
-							lcCodeArrayName	= toNew.__MethodCode[ALEN(toNew.__MethodCode, 1), 2]
+							lcCodeArrayName	= toObj.__MethodCode[ALEN(toObj.__MethodCode, 1), 2]
 
 							iiload_class_bump_array_down(@&lcCodeArrayName)
 
-							&lcCodeArrayName[1, 1] = toNew
+							&lcCodeArrayName[1, 1] = toObj
 							&lcCodeArrayName[1, 2] = SPACE(0)	&& No code yet
 						
 
@@ -531,28 +343,230 @@ LOCAL lnI, lnJ, llFound, laMems, lcCodeArrayName
 						**********
 						* Add a slot for the new item if need be
 						*****
-							IF TYPE("toNew.__MethodCode[1, 1]") != "L"
-								DIMENSION toNew.__MethodCode[ALEN(toNew.__MethodCode, 1) + 1, ALEN(toNew.__MethodCode, 2)]
+							IF TYPE("toObj.__MethodCode[1, 1]") != "L"
+								DIMENSION toObj.__MethodCode[ALEN(toObj.__MethodCode, 1) + 1, ALEN(toObj.__MethodCode, 2)]
 							ENDIF
 
 
 						**********
 						* Store the method name, and its associated array
 						*****
-							toNew.__MethodCode[ALEN(toNew.__MethodCode, 1), 1] = LOWER(laMems[lnI, 1])
-							toNew.__MethodCode[ALEN(toNew.__MethodCode, 1), 2] = lcCodeArrayName
+							toObj.__MethodCode[ALEN(toObj.__MethodCode, 1), 1] = LOWER(laMems[lnI, 1])
+							toObj.__MethodCode[ALEN(toObj.__MethodCode, 1), 2] = lcCodeArrayName
 
 
 						**********
 						* Insert the reference for this class at this level
 						*****
-							&lcCodeArrayName[1, 1] = toNew
+							&lcCodeArrayName[1, 1] = toObj
 							&lcCodeArrayName[1, 2] = SPACE(0)	&& No code yet
 
 					ENDIF
 
 			ENDIF
 		NEXT
+
+
+
+
+FUNCTION iiload_class_populate_methods
+LPARAMETERS toObj, lcMethodCode
+LOCAL laSourceCode, lnI, lcProcName, lniStart, lniEnd, lcCodeBlock, llFound, lcCodeArrayName
+
+
+	**********
+	* There are procedures within
+	* Parse and add/append as encountered
+	*****
+		DIMENSION laSourceCode[1]
+		ALINES(laSourceCode, lcMethodCode)
+		FOR lnI = 1 TO ALEN(laSourceCode, 1) STEP 0
+
+			**********
+			* Look for procedures or functions
+			*****
+				IF UPPER(LEFT(laSourceCode[lnI], 4)) = "PROC" OR UPPER(LEFT(laSourceCode[lnI], 4)) = "FUNC"
+
+					**********
+					* Beginning of a procedure or function
+					*****
+						lcProcName	= LOWER(ALLTRIM(SUBSTR(laSourceCode[lnI], AT(SPACE(1), laSourceCode[lnI]) + 1)))
+						lniStart	= lnI
+
+
+					**********
+					* Look for the end
+					*****
+						lcCodeBlock = SPACE(0)
+						FOR lniEnd = lniStart + 1 TO ALEN(laSourceCode, 1)
+							IF UPPER(LEFT(laSourceCode[lniEnd], 4)) = "ENDP" OR UPPER(LEFT(laSourceCode[lniEnd], 4)) = "ENDF"
+								* End of the procedure or function
+								EXIT
+							ENDIF
+							lcCodeBlock = lcCodeBlock + laSourceCode[lniEnd] + CHR(13)
+						NEXT
+						* When we get here, lniStart..lniEnd is the source code range, and lcCodeBlock is the actual source code
+
+
+					**********
+					* See if this method name already exists
+					*****
+						IF "." $ lcProcName
+							* It is code added to a nested class
+SET STEP ON
+
+						ELSE
+							* It is code added directly to this class
+
+							**********
+							* Search for the existing method
+							*****
+								llFound = .f.
+								FOR lnJ = 1 TO ALEN(toObj.__MethodCode, 1)
+									IF LOWER(toObj.__MethodCode[lnJ, 1]) = lcProcName
+										* We found the existing
+										llFound			= .t.
+										lcCodeArrayName = toObj.__MethodCode[lnJ, 2]
+										EXIT
+									ENDIF
+								NEXT
+
+
+							**********
+							* If it was found, update it
+							*****
+								IF llFound
+									IF &lcCodeArrayName[1, 1] != toObj
+										**********
+										* It is a different object, so we insert new code before what exists
+										* Bump everything down one and assign this layer of code to itself
+										*****
+											iiload_class_bump_array_down(@&lcCodeArrayName)
+											&lcCodeArrayName[1, 1] = toObj
+
+									ELSE
+										* This method relates to this class
+										* There shouldn't already be any code here
+										* If there is, it means the method name appears
+										* twice in the class definition.
+										IF NOT EMPTY(&lcCodeArrayName[1, 2])
+											? "Duplicate method code found in " + toObj.Name + "." + lcProcName + "()"
+											SET STEP ON
+										ENDIF
+										* If we get here, we're good... we can add it
+									ENDIF
+
+								ELSE
+									**********
+									* Not found, add new method to the class
+									*****
+										lcCodeArrayName	= SYS(2015)
+										PUBLIC &lcCodeArrayName
+										DIMENSION &lcCodeArrayName[1, 2]
+
+										DIMENSION toObj.__MethodCode[ALEN(toObj.__MethodCode, 1) + 1, ALEN(toObj.__MethodCode, 2)]
+										toObj.__MethodCode[ALEN(toObj.__MethodCode, 1), 1] = lcProcName
+										toObj.__MethodCode[ALEN(toObj.__MethodCode, 1), 2] = lcCodeArrayName
+
+
+									**********
+									* Insert the reference for this class at this level
+									*****
+										&lcCodeArrayName[1, 1] = toObj
+										&lcCodeArrayName[1, 2] = SPACE(0)	&& No code yet
+
+								ENDIF
+
+						ENDIF
+
+
+					**********
+					* Append the method code
+					*****
+						&lcCodeArrayName[1, 2] = lcCodeBlock
+
+
+					**********
+					* Get ready for the next block
+					*****
+						lnI = lniEnd + 1
+
+				ELSE
+					* Increase to next line
+					lnI = lnI + 1
+				ENDIF
+
+		NEXT
+		RELEASE laSourceCode
+
+
+
+
+FUNCTION iiload_class_set_properties
+LPARAMETERS toObj, tcPropertyCode
+LOCAL laLines, lnLines, lnI, lnEqualPos, lcPropName, lcValue, loClass, lcPropNameDescent, lcThisName, llError
+
+	DIMENSION laLines[1]
+	lnLines = ALINES(laLines, tcPropertyCode)
+	FOR lnI = 1 TO lnLines
+		lnEqualPos = AT("=", laLines[lnI])
+		IF lnEqualPos > 0
+			* Get the name = value for this line
+			lcPropName	= ALLTRIM(LEFT(laLines[lnI], lnEqualPos - 1))
+			lcValue		= ALLTRIM(SUBSTR(laLines[lnI], lnEqualPos + 1))
+
+			* Set all properties except name
+			IF LOWER(lcPropName) != "name"
+
+				**********
+				* Get to the property's location
+				*****
+					loClass = toObj
+					IF "." $ lcPropName
+						* Iterate downward until we get to the final object
+						lcPropNameDescent = lcPropName
+						DO WHILE "." $ lcPropNameDescent
+							lcThisName = LEFT(lcPropNameDescent, AT(".", lcPropNameDescent) - 1)
+							IF PEMSTATUS(loClass, lcThisName, 5)
+								* Continue downward
+								loClass				= loClass.&lcThisName
+								lcPropNameDescent	= SUBSTR(lcPropNameDescent, LEN(lcThisName) + 2)
+							ELSE
+								? "Error accessing " + lcThisName + " on " + loClass.name + " of " + toObj.name + "." + lcPropName
+								SET STEP ON
+							ENDIF
+						ENDDO
+						lcPropName = lcPropNameDescent
+					ENDIF
+
+
+				**********
+				* Add the property if need be
+				*****
+					IF !PEMSTATUS(loClass, lcPropName, 5)
+						* Property does not exist, add it
+						loClass.ADDPROPERTY(lcPropName)
+					ENDIF
+
+
+				**********
+				* Assign it
+				*****
+					llError = .t.
+					TRY
+						loClass.&lcPropName	= iiload_class_determine_varType(lcValue)
+						llError = .f.
+					CATCH
+					ENDTRY
+					
+					IF llError
+						? "Error assigning [" + lcValue + "] to " + loClass.Name + "." + lcPropName
+						SET STEP ON
+					ENDIF
+
+			ENDIF
+		ENDIF
+	NEXT
 
 
 
